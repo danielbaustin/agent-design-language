@@ -114,7 +114,7 @@ if not runner_test.exists():
     )
 
 fast_summary_step = step_block("PR fast coverage summary (json)")
-if 'cargo llvm-cov report --json --summary-only --output-path coverage-summary.json' not in fast_summary_step:
+if 'coverage-summary.json' not in fast_summary_step:
     raise SystemExit(
         "PR fast coverage summary must emit coverage-summary.json inside the adl working directory; "
         "workflow is missing that output path"

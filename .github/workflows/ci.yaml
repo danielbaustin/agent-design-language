@@ -370,18 +370,47 @@ jobs:
             --head "${{ github.event.pull_request.head.sha }}" \
             --print-risk-filters > adl/coverage-impact-filters.txt
           if test -s adl/coverage-impact-filters.txt; then
+            mapfile -t coverage_filters < adl/coverage-impact-filters.txt
+            run_cli_smoke_process_status=false
+            run_finish_bins=false
+            has_finish=false
+            for filter in "${coverage_filters[@]}"; do
+              case "$filter" in
+                process_status)
+                  run_cli_smoke_process_status=true
+                  ;;
+                finish)
+                  run_finish_bins=true
+                  has_finish=true
+                  ;;
+              esac
+            done
+            generic_filters=()
+            for filter in "${coverage_filters[@]}"; do
+              case "$filter" in
+                process_status|finish)
+                  ;;
+                cli|usage)
+                  if [ "$has_finish" != "true" ]; then
+                    generic_filters+=("$filter")
+                  fi
+                  ;;
+                *)
+                  generic_filters+=("$filter")
+                  ;;
+              esac
+            done
             echo "needs_fast_summary=true" >> "$GITHUB_OUTPUT"
             echo "filters=$(paste -sd' ' adl/coverage-impact-filters.txt)" >> "$GITHUB_OUTPUT"
-            if [ "$(wc -l < adl/coverage-impact-filters.txt | tr -d ' ')" = "1" ] \
-              && [ "$(cat adl/coverage-impact-filters.txt)" = "process_status" ]; then
-              echo "selector_mode=cli_smoke_process_status" >> "$GITHUB_OUTPUT"
-            else
-              echo "selector_mode=generic" >> "$GITHUB_OUTPUT"
-            fi
+            echo "run_cli_smoke_process_status=$run_cli_smoke_process_status" >> "$GITHUB_OUTPUT"
+            echo "run_finish_bins=$run_finish_bins" >> "$GITHUB_OUTPUT"
+            echo "generic_filters=${generic_filters[*]}" >> "$GITHUB_OUTPUT"
           else
             echo "needs_fast_summary=false" >> "$GITHUB_OUTPUT"
             echo "filters=" >> "$GITHUB_OUTPUT"
-            echo "selector_mode=generic" >> "$GITHUB_OUTPUT"
+            echo "run_cli_smoke_process_status=false" >> "$GITHUB_OUTPUT"
+            echo "run_finish_bins=false" >> "$GITHUB_OUTPUT"
+            echo "generic_filters=" >> "$GITHUB_OUTPUT"
           fi
         working-directory: .
 
@@ -451,12 +480,39 @@ jobs:
       - name: PR fast coverage summary (json)
         if: github.event_name == 'pull_request' && steps.path-policy.outputs.coverage_required == 'true' && steps.path-policy.outputs.full_coverage_required != 'true' && steps.coverage-impact.outputs.needs_fast_summary == 'true'
         run: |
-          if [ "${{ steps.coverage-impact.outputs.selector_mode }}" = "cli_smoke_process_status" ]; then
+          summary_files=()
+          if [ "${{ steps.coverage-impact.outputs.run_cli_smoke_process_status }}" = "true" ]; then
             CARGO_INCREMENTAL=0 cargo llvm-cov nextest --workspace --test cli_smoke process_status --no-report
-          else
-            CARGO_INCREMENTAL=0 cargo llvm-cov nextest --workspace --status-level all --final-status-level slow --no-report -- ${{ steps.coverage-impact.outputs.filters }}
+            cargo llvm-cov report --json --summary-only --output-path coverage-summary-process-status.json
+            summary_files+=(coverage-summary-process-status.json)
           fi
-          cargo llvm-cov report --json --summary-only --output-path coverage-summary.json
+          if [ "${{ steps.coverage-impact.outputs.run_finish_bins }}" = "true" ]; then
+            CARGO_INCREMENTAL=0 cargo llvm-cov nextest --workspace --bin adl-pr-finish finish --no-report
+            cargo llvm-cov report --json --summary-only --output-path coverage-summary-finish.json
+            summary_files+=(coverage-summary-finish.json)
+          fi
+          if [ -n "${{ steps.coverage-impact.outputs.generic_filters }}" ]; then
+            CARGO_INCREMENTAL=0 cargo llvm-cov nextest --workspace --status-level all --final-status-level slow --no-report -- ${{ steps.coverage-impact.outputs.generic_filters }}
+            cargo llvm-cov report --json --summary-only --output-path coverage-summary-generic.json
+            summary_files+=(coverage-summary-generic.json)
+          fi
+          if [ "${#summary_files[@]}" -eq 1 ]; then
+            cp "${summary_files[0]}" coverage-summary.json
+          else
+            jq -s '
+              {
+                cargo_llvm_cov: (.[0].cargo_llvm_cov),
+                type: (.[0].type),
+                version: (.[0].version),
+                data: [
+                  {
+                    files: (map(.data[]?.files // []) | add),
+                    totals: (.[0].data[0].totals)
+                  }
+                ]
+              }
+            ' "${summary_files[@]}" > coverage-summary.json
+          fi
 
       - name: Coverage-impact changed-source gate
         if: github.event_name == 'pull_request' && steps.path-policy.outputs.full_coverage_required == 'true'
