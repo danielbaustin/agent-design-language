@@ -33,6 +33,10 @@ pub struct ExecuteStepPayload {
     pub kind: String,
     pub provider: String,
     pub prompt: String,
+    /// Optional conversation turn metadata preserved for ACIP-facing
+    /// invocation context without widening remote execution into scheduling.
+    #[serde(default)]
+    pub conversation: Option<adl::ConversationTurnSpec>,
     #[serde(default)]
     pub tools: Vec<String>,
     pub provider_spec: adl::ProviderSpec,

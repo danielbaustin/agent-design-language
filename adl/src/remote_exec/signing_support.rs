@@ -216,6 +216,7 @@ mod tests {
                 kind: "agent".to_string(),
                 provider: "provider".to_string(),
                 prompt: "hello".to_string(),
+                conversation: None,
                 tools: vec!["web".to_string()],
                 provider_spec: ProviderSpec {
                     id: None,

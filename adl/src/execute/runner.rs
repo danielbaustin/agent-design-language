@@ -296,6 +296,74 @@ pub(super) fn enforce_delegation_policy_for_step_actions(
     Ok(())
 }
 
+pub(super) struct RemoteExecuteRequestContext<'a> {
+    pub doc: &'a crate::adl::AdlDoc,
+    pub run_id: &'a str,
+    pub workflow_id: &'a str,
+    pub provider_id: &'a str,
+    pub prompt_text: &'a str,
+    pub inputs: &'a HashMap<String, String>,
+    pub saved_state: &'a HashMap<String, String>,
+    pub adl_base_dir: &'a Path,
+    pub spec: &'a crate::adl::ProviderSpec,
+    pub model_override: Option<&'a str>,
+}
+
+pub(super) fn build_remote_execute_request(
+    step: &crate::resolve::ResolvedStep,
+    ctx: &RemoteExecuteRequestContext<'_>,
+) -> Result<remote_exec::ExecuteRequest> {
+    let remote = ctx.doc.run.remote.as_ref().ok_or_else(|| {
+        crate::remote_exec::RemoteExecuteClientError::new(
+            crate::remote_exec::RemoteExecuteClientErrorKind::SchemaViolation,
+            "REMOTE_SCHEMA_VIOLATION",
+            "run.remote.endpoint is required when placement=remote",
+        )
+    })?;
+    let timeout_ms = remote.timeout_ms.unwrap_or(30_000);
+    Ok(remote_exec::ExecuteRequest {
+        protocol_version: remote_exec::PROTOCOL_VERSION.to_string(),
+        run_id: ctx.run_id.to_string(),
+        workflow_id: ctx.workflow_id.to_string(),
+        step_id: step.id.clone(),
+        step: remote_exec::ExecuteStepPayload {
+            kind: "task".to_string(),
+            provider: ctx.provider_id.to_string(),
+            prompt: ctx.prompt_text.to_string(),
+            conversation: step.conversation.clone(),
+            tools: Vec::new(),
+            provider_spec: ctx.spec.clone(),
+            model_override: ctx.model_override.map(|v| v.to_string()),
+        },
+        inputs: remote_exec::ExecuteInputsPayload {
+            inputs: ctx.inputs.clone(),
+            state: ctx.saved_state.clone(),
+        },
+        timeout_ms,
+        security: Some(remote_exec::ExecuteSecurityEnvelope {
+            require_signature: remote.require_signed_requests,
+            require_key_id: remote.require_key_id,
+            signed: ctx.doc.signature.is_some(),
+            key_id: ctx.doc.signature.as_ref().map(|s| s.key_id.clone()),
+            signature_alg: ctx.doc.signature.as_ref().map(|s| s.alg.clone()),
+            key_source: ctx
+                .doc
+                .signature
+                .as_ref()
+                .and_then(|s| s.public_key_b64.as_ref().map(|_| "embedded".to_string())),
+            request_signature: None,
+            allowed_algs: remote.verify_allowed_algs.clone(),
+            allowed_key_sources: remote.verify_allowed_key_sources.clone(),
+            sandbox_root: Some(ctx.adl_base_dir.display().to_string()),
+            requested_paths: step
+                .write_to
+                .as_ref()
+                .map(|w| vec![w.clone()])
+                .unwrap_or_default(),
+        }),
+    })
+}
+
 pub(super) fn execute_step_with_retry(
     step: &crate::resolve::ResolvedStep,
     doc: &crate::adl::AdlDoc,
@@ -422,44 +490,19 @@ where
                         )
                     })?;
                     let timeout_ms = remote.timeout_ms.unwrap_or(30_000);
-                    let mut req = remote_exec::ExecuteRequest {
-                        protocol_version: remote_exec::PROTOCOL_VERSION.to_string(),
-                        run_id: run_id.to_string(),
-                        workflow_id: workflow_id.to_string(),
-                        step_id: step_id.clone(),
-                        step: remote_exec::ExecuteStepPayload {
-                            kind: "task".to_string(),
-                            provider: provider_id.to_string(),
-                            prompt: prompt_text.clone(),
-                            tools: Vec::new(),
-                            provider_spec: spec.clone(),
-                            model_override: model_override.map(|v| v.to_string()),
-                        },
-                        inputs: remote_exec::ExecuteInputsPayload {
-                            inputs: inputs.clone(),
-                            state: saved_state.clone(),
-                        },
-                        timeout_ms,
-                        security: Some(remote_exec::ExecuteSecurityEnvelope {
-                            require_signature: remote.require_signed_requests,
-                            require_key_id: remote.require_key_id,
-                            signed: doc.signature.is_some(),
-                            key_id: doc.signature.as_ref().map(|s| s.key_id.clone()),
-                            signature_alg: doc.signature.as_ref().map(|s| s.alg.clone()),
-                            key_source: doc.signature.as_ref().and_then(|s| {
-                                s.public_key_b64.as_ref().map(|_| "embedded".to_string())
-                            }),
-                            request_signature: None,
-                            allowed_algs: remote.verify_allowed_algs.clone(),
-                            allowed_key_sources: remote.verify_allowed_key_sources.clone(),
-                            sandbox_root: Some(adl_base_dir.display().to_string()),
-                            requested_paths: step
-                                .write_to
-                                .as_ref()
-                                .map(|w| vec![w.clone()])
-                                .unwrap_or_default(),
-                        }),
+                    let request_context = RemoteExecuteRequestContext {
+                        doc,
+                        run_id,
+                        workflow_id,
+                        provider_id,
+                        prompt_text: &prompt_text,
+                        inputs: &inputs,
+                        saved_state,
+                        adl_base_dir,
+                        spec,
+                        model_override,
                     };
+                    let mut req = build_remote_execute_request(step, &request_context)?;
                     remote_exec::maybe_attach_request_signature_from_env(&mut req).with_context(
                         || {
                             format!(
