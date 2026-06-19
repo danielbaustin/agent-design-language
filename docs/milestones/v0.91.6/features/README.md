@@ -17,6 +17,8 @@ They are planning and bridge documents, not runtime implementation proof.
 - [Observatory And Unity Consumption Classification](OBSERVATORY_UNITY_CONSUMPTION_CLASSIFICATION_v0.91.6.md)
 - [AEE, Memory/ObsMem, And ACP Bridge Accounting](AEE_MEMORY_ACP_BRIDGE_ACCOUNTING_v0.91.6.md)
 
+- [Cognitive Scheduler v1](COGNITIVE_SCHEDULER_v0.91.6.md)
+
 ## Guardrails
 
 - Do not claim runtime feature completion from this index.
