@@ -12,6 +12,13 @@ pub struct ContinuousVerificationCadenceContract {
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
+pub struct ContinuousVerificationRuntimeIntegrationContract {
+    pub shared_runtime_surfaces: Vec<String>,
+    pub cadence_requirements: Vec<String>,
+    pub bounded_execution_guards: Vec<String>,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
 pub struct VerificationSurfaceSelectionContract {
     pub eligible_surface_types: Vec<String>,
     pub selection_requirements: Vec<String>,
@@ -69,6 +76,7 @@ pub struct ContinuousVerificationSelfAttackContract {
     pub runtime_condition: String,
     pub upstream_contracts: Vec<String>,
     pub cadence: ContinuousVerificationCadenceContract,
+    pub runtime_integration: ContinuousVerificationRuntimeIntegrationContract,
     pub surface_selection: VerificationSurfaceSelectionContract,
     pub lifecycle: Vec<ContinuousVerificationStageContract>,
     pub self_attack_layers: Vec<SelfAttackLayerContract>,
@@ -127,6 +135,23 @@ impl ContinuousVerificationSelfAttackContract {
                     "hypothesis generation must be prioritized by posture, target criticality, and prior evidence",
                     "duplicate findings link to prior exploit knowledge instead of creating uncorrelated churn",
                     "low-confidence speculation remains a hypothesis artifact rather than proof",
+                ]),
+            },
+            runtime_integration: ContinuousVerificationRuntimeIntegrationContract {
+                shared_runtime_surfaces: strings(&[
+                    "Tokio shared runtime substrate",
+                    "long-lived agent cadence and supervision loop",
+                    "ordinary ADL runtime control plane",
+                ]),
+                cadence_requirements: strings(&[
+                    "future scheduled and continuous_bounded verification cadence must run on the shared Tokio runtime rather than a parallel security daemon",
+                    "future continuous verification cadence must reuse runtime stop, lease, and status boundaries before the next bounded iteration proceeds",
+                    "bounded verification tasks remain review-visible and artifact-linked inside the ordinary runtime control plane",
+                ]),
+                bounded_execution_guards: strings(&[
+                    "shared cadence never grants additional target, mutation, or scheduling authority",
+                    "this contract does not claim always-on autonomous red/blue runtime execution",
+                    "CAV cadence consumes the same shared runtime substrate as ACIP-facing runtime work while preserving separate issue-owned execution logic",
                 ]),
             },
             surface_selection: VerificationSurfaceSelectionContract {
@@ -527,6 +552,16 @@ mod tests {
                 "continuous_bounded"
             ]
         );
+        assert!(contract
+            .runtime_integration
+            .shared_runtime_surfaces
+            .iter()
+            .any(|surface| surface == "Tokio shared runtime substrate"));
+        assert!(contract
+            .runtime_integration
+            .cadence_requirements
+            .iter()
+            .any(|rule| rule.contains("shared Tokio runtime")));
         assert_eq!(
             contract
                 .lifecycle
@@ -609,6 +644,12 @@ mod tests {
             .downstream_boundaries
             .iter()
             .any(|boundary| boundary.contains("WP-07")));
+        assert!(contract
+            .runtime_integration
+            .bounded_execution_guards
+            .iter()
+            .any(|guard| guard
+                .contains("does not claim always-on autonomous red/blue runtime execution")));
         assert!(contract
             .scope_boundary
             .contains("future executable tooling"));
