@@ -1,0 +1,39 @@
+{
+  "schema_version": "provider_communication.v1",
+  "route": {
+    "provider_kind": "hosted",
+    "provider": "gemini",
+    "runtime_surface": "hosted_api",
+    "provider_model_id": "gemini-2.5-flash",
+    "credential_ref": "env:GEMINI_API_KEY",
+    "source_registry": "v0.91.6.agent.suitability"
+  },
+  "model_identity": {
+    "provider_kind": "hosted",
+    "provider": "gemini",
+    "model_ref": "gemini-2.5-flash",
+    "provider_model_id": "gemini-2.5-flash",
+    "runtime_surface": "hosted_api",
+    "identity_strength": "provider_asserted",
+    "observed_at": "unix:1",
+    "source_registry": "v0.91.6.agent.suitability"
+  },
+  "attempts": [
+    {
+      "attempt_index": 1,
+      "started_at": "unix:1781839074",
+      "duration_ms": 4888,
+      "status": "ok",
+      "retryable": false,
+      "http_status": 200,
+      "raw_response_excerpt": "[redacted response len=625 sha256=0b741fbef4be]"
+    }
+  ],
+  "final_status": "ok",
+  "duration_ms": 4888,
+  "request_id": "gemini:gemini-2.5-flash__review_findings_v1",
+  "output_text_excerpt": "[redacted response len=625 sha256=0b741fbef4be]",
+  "artifact_ref": "<tmp>/result.json@9842575c07e03b23",
+  "output_text_chars": 625,
+  "output_text_digest": "sha256:0b741fbef4be"
+}
