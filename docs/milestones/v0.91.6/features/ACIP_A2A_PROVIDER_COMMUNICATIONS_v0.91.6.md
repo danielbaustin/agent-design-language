@@ -171,12 +171,13 @@ or model catalog changes later.
 These classes must remain distinguishable in tracked docs and later runtime
 artifacts. `v0.92` must not flatten them into one “best provider” field.
 
-## Security Handoff To WP-07
+## Security Handoff To The Security Bridge Lane
 
 This issue defines the delegation/provider boundary, but it does not close the
 access-control or message-security questions.
 
-WP-07 must consume this contract for the following security decisions:
+The security bridge and CAV lane in `v0.91.6` must consume this contract for
+the following security decisions:
 
 - which delegation or A2A messages require access checks before route
   resolution;
@@ -191,6 +192,78 @@ WP-07 must consume this contract for the following security decisions:
 Until WP-07 resolves those questions, `v0.92` may use capability-first
 delegation vocabulary but may not assume final access or message-security
 closure.
+
+## ACIP/A2A Access-Rule Table
+
+`v0.91.6` defines the first explicit access posture for ACIP/A2A message
+families.
+
+| Message family | Default access posture | Required check before acceptance | Not allowed to decide alone |
+| --- | --- | --- | --- |
+| ACIP envelope metadata | metadata-only, not self-authorizing | schema family, version, sender class, and route class must be valid | sender authority, citizen identity, provider trust, or institutional authority |
+| Capability delegation request | deny by default until route class is known | caller class must be allowed to request the named capability and constraints | provider selection, citizen impersonation, or institution-wide authority |
+| Capability delegation result | deny by default for cross-boundary replay or upgrade | result must match an allowed originating request or tracked route | creation of new authority, identity assertion, or provider trust elevation |
+| A2A route request | deny by default across agent or polis boundaries | route target, sender class, and allowed boundary crossing must be explicit | provider execution authority or institutional authorization |
+| A2A route response | accept only as a response to an allowed route | response must remain inside the approved route and result class | minting new access or identity privileges |
+| Provider execution request | internal low-level substrate message only | selected provider/model route must already be authorized by higher layers | user-facing identity, guild membership, or citizen authority |
+| Provider execution response | internal low-level substrate response only | output must be interpreted by higher-layer ACIP/A2A rules before any boundary crossing | direct policy authority or identity proof |
+
+The default rule is fail-closed: if a message family cannot prove its allowed
+route class and caller class, it is not accepted as an authoritative ACIP/A2A
+message.
+
+## Authority Boundary Table
+
+| Surface | What it may authorize | What it must never authorize by itself |
+| --- | --- | --- |
+| Schema family and message version | structural parsing and compatibility | actor trust, citizen identity, or access approval |
+| Capability request | what kind of work is being requested | provider trust, institution membership, or identity proof |
+| Role-provider policy | which provider/model families are acceptable candidates | final authority to act across identity or polis boundaries |
+| Provider profile and model selection | low-level substrate route choice after approval | citizen, guild, or institutional legitimacy |
+| Guild/citizen/member policy | whether a caller class is allowed to request or receive a route class | low-level provider execution details |
+| Institution or polis policy | broader organizational authority and boundary-crossing approval | provider execution semantics or model trust by itself |
+| Security/CAV review | whether unresolved abuse or malformed-output risk blocks activation | protocol meaning, capability semantics, or provider identity |
+
+This boundary is the key non-collapse rule for `v0.91.6`: provider
+infrastructure may satisfy a route, but it must not become the authoritative
+identity or authority layer by schema accident.
+
+## Abuse-Case And Security Notes
+
+The minimum abuse cases made explicit by this issue are:
+
+- provider impersonation of citizen or institutional identity through reused
+  schema fields;
+- capability escalation by naming a privileged provider/model route directly
+  instead of requesting an allowed capability;
+- cross-boundary replay of delegation results as if they were fresh authority;
+- A2A route injection where metadata is treated as self-authorizing;
+- malformed or hostile provider output being mistaken for a valid authority or
+  identity assertion;
+- route resolution that silently upgrades advisory role-provider policy into
+  direct security authority.
+
+The required posture for these cases is explicit deny, fail-closed, or routed
+to the security bridge lane for stronger message-security treatment. `v0.92`
+must not consume this surface as if those abuse classes were already fully
+solved.
+
+## Routed Residuals
+
+The remaining open security and authority residuals from this issue are:
+
+- final message-signing or integrity-marker decisions;
+- stronger provenance requirements for cross-boundary A2A traffic;
+- precise malformed-output classification and test coverage for authority-shaped
+  failures;
+- provider/model trust findings that should block activation rather than merely
+  warn;
+- any institutional or citizen identity surface that needs a first-class typed
+  contract beyond the bounded policy tables recorded here.
+
+These residuals route to the `v0.91.6` security bridge lane and, where
+transport or projection shape is still unsettled, to the later WP-06
+transport/closeout issues rather than being silently absorbed into `v0.92`.
 
 ## Dependencies
 
