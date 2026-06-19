@@ -160,6 +160,10 @@ is_broad_rust_surface() {
 filter_token_for_path() {
   local path="$1"
   case "$path" in
+    adl/Cargo.toml|adl/Cargo.lock)
+      printf 'manifest_support'
+      return 0
+      ;;
     adl/src/lib.rs)
       return 1
       ;;
@@ -219,6 +223,10 @@ filter_token_for_path() {
       ;;
     adl/src/cli/tests/artifact_builders/*.rs|adl/src/cli/tests/artifact_builders/*/*.rs)
       printf 'artifact_builders'
+      return 0
+      ;;
+    adl/src/cli/pr_cmd/finish_support.rs|adl/src/cli/tests/pr_cmd_inline/finish/*)
+      printf 'pr_cmd_finish'
       return 0
       ;;
     adl/src/cli/tests/run_state/*.rs)
@@ -340,10 +348,22 @@ build_filter_expression() {
   python3 - "$@" <<'PY'
 import sys
 
-tokens = [token for token in sys.argv[1:] if token]
-if not tokens:
+TOKEN_MAP = {
+    "pr_cmd": 'binary_id(adl::bin/adl) and test(/^cli::pr_cmd::/)',
+    "pr_cmd_finish": 'binary_id(adl::bin/adl-pr-finish) and test(/^cli::pr_cmd::tests::finish::arg_render::/)',
+    "pr_cmd::github": 'binary_id(adl::bin/adl) and test(/^cli::pr_cmd::github::/)',
+    "github_release_": 'binary_id(adl::bin/adl) and test(/^cli::tooling_cmd::github_release::/)',
+    "long_lived_agent": 'binary_id(adl) and test(/^long_lived_agent::/)',
+    "manifest_support": '(binary_id(adl::bin/adl) and test(/^cli::pr_cmd::github::/)) or (binary_id(adl::bin/adl) and test(/^cli::tooling_cmd::github_release::/)) or (binary_id(adl) and test(/^long_lived_agent::/))',
+}
+
+clauses = []
+for token in (token for token in sys.argv[1:] if token):
+    clauses.append(TOKEN_MAP.get(token, f"test({token})"))
+
+if not clauses:
     raise SystemExit(1)
-print(" or ".join(f"test({token})" for token in tokens))
+print(" or ".join(clauses))
 PY
 }
 
