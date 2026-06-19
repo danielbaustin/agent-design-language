@@ -62,6 +62,24 @@ finish_helper_filters="$TMP/finish-helper-filters.txt"
 bash "$SCRIPT" --changed-files "$finish_helper_changed" --print-risk-filters >"$finish_helper_filters"
 grep -Fx "finish" "$finish_helper_filters" >/dev/null
 
+process_status_changed="$TMP/process-status-changed.txt"
+printf 'A\tadl/src/cli/process_cmd.rs\n' >"$process_status_changed"
+process_status_filters="$TMP/process-status-filters.txt"
+bash "$SCRIPT" --changed-files "$process_status_changed" --print-risk-filters >"$process_status_filters"
+grep -Fx "process_status" "$process_status_filters" >/dev/null
+
+cli_usage_changed="$TMP/cli-usage-changed.txt"
+printf 'A\tadl/src/cli/usage.rs\n' >"$cli_usage_changed"
+cli_usage_filters="$TMP/cli-usage-filters.txt"
+bash "$SCRIPT" --changed-files "$cli_usage_changed" --print-risk-filters >"$cli_usage_filters"
+grep -Fx "cli_basics" "$cli_usage_filters" >/dev/null
+
+cli_mod_changed="$TMP/cli-mod-changed.txt"
+printf 'A\tadl/src/cli/mod.rs\n' >"$cli_mod_changed"
+cli_mod_filters="$TMP/cli-mod-filters.txt"
+bash "$SCRIPT" --changed-files "$cli_mod_changed" --print-risk-filters >"$cli_mod_filters"
+grep -Fx "cli_basics" "$cli_mod_filters" >/dev/null
+
 mixed_pr_cmd_helper_changed="$TMP/mixed-pr-cmd-helper-changed.txt"
 printf 'A\tadl/src/cli/pr_cmd/github.rs\n' >"$mixed_pr_cmd_helper_changed"
 mixed_pr_cmd_helper_filters="$TMP/mixed-pr-cmd-helper-filters.txt"
@@ -144,6 +162,13 @@ fi
 grep -F "candidate filter: finish" /tmp/coverage-impact-finish-helper-missing.out >/dev/null
 grep -F "generate focused summary: cd adl && CARGO_INCREMENTAL=0 cargo llvm-cov nextest --workspace --status-level all --final-status-level slow --no-report -E 'binary_id(adl::bin/adl-pr-finish) and test(/^cli::pr_cmd::tests::finish::arg_render::/)' && cargo llvm-cov report --json --summary-only --output-path target/coverage-impact-summary.json" /tmp/coverage-impact-finish-helper-missing.out >/dev/null
 
+if bash "$SCRIPT" --changed-files "$process_status_changed" --require-summary-for-risk >/tmp/coverage-impact-process-status-missing.out 2>&1; then
+  echo "expected process status helper guidance to fail without summary" >&2
+  exit 1
+fi
+grep -F "candidate filter: process_status" /tmp/coverage-impact-process-status-missing.out >/dev/null
+grep -F "generate focused summary: cd adl && CARGO_INCREMENTAL=0 cargo llvm-cov nextest --workspace --status-level all --final-status-level slow --no-report -E 'binary_id(adl::cli_smoke) and test(/^process_status::/)' && cargo llvm-cov report --json --summary-only --output-path target/coverage-impact-summary.json" /tmp/coverage-impact-process-status-missing.out >/dev/null
+
 if bash "$SCRIPT" --changed-files "$mixed_pr_cmd_helper_changed" --require-summary-for-risk >/tmp/coverage-impact-mixed-helper-missing.out 2>&1; then
   echo "expected mixed pr_cmd helper guidance to fail without summary" >&2
   exit 1
@@ -211,6 +236,49 @@ grep -F "Actionable next steps:" /tmp/coverage-impact-low.out >/dev/null
 grep -F "refresh focused summary after adding or expanding tests: cd adl && CARGO_INCREMENTAL=0 cargo llvm-cov nextest --workspace --status-level all --final-status-level slow --no-report -E 'test(new_large_surface)' && cargo llvm-cov report --json --summary-only --output-path target/coverage-impact-summary.json" /tmp/coverage-impact-low.out >/dev/null
 grep -F "Common failure modes:" /tmp/coverage-impact-low.out >/dev/null
 
+cli_dispatch_companion_changed="$TMP/cli-dispatch-companion-changed.txt"
+cat >"$cli_dispatch_companion_changed" <<'EOF'
+M	adl/src/cli/mod.rs
+M	adl/src/cli/process_cmd.rs
+EOF
+cli_dispatch_companion_summary="$TMP/cli-dispatch-companion-summary.json"
+cat >"$cli_dispatch_companion_summary" <<'EOF'
+{
+  "data": [
+    {
+      "files": [
+        {
+          "filename": "adl/src/cli/mod.rs",
+          "summary": {
+            "lines": {
+              "covered": 64,
+              "count": 363
+            }
+          }
+        },
+        {
+          "filename": "adl/src/cli/process_cmd.rs",
+          "summary": {
+            "lines": {
+              "covered": 320,
+              "count": 399
+            }
+          }
+        }
+      ]
+    }
+  ]
+}
+EOF
+bash "$SCRIPT" --changed-files "$cli_dispatch_companion_changed" --summary "$cli_dispatch_companion_summary" >/tmp/coverage-impact-cli-dispatch-companion-pass.out
+grep -F "Coverage-impact preflight passed" /tmp/coverage-impact-cli-dispatch-companion-pass.out >/dev/null
+
+if bash "$SCRIPT" --changed-files "$cli_mod_changed" --summary "$cli_dispatch_companion_summary" >/tmp/coverage-impact-cli-mod-alone-fails.out 2>&1; then
+  echo "expected cli mod dispatch surface without a companion command change to stay threshold-gated" >&2
+  exit 1
+fi
+grep -F "adl/src/cli/mod.rs (64/363, 17.63% < 80%)" /tmp/coverage-impact-cli-mod-alone-fails.out >/dev/null
+
 missing_summary="$TMP/missing-row-summary.json"
 make_summary "adl/src/runtime_v2/other.rs" 100 100 "$missing_summary"
 if bash "$SCRIPT" --changed-files "$changed" --summary "$missing_summary" >/tmp/coverage-impact-missing-row.out 2>&1; then
@@ -266,5 +334,39 @@ shared_module_summary="$TMP/shared-module-summary.json"
 make_summary "/home/runner/work/agent-design-language/agent-design-language/adl/src/bin/../pr_dispatch_support.rs" 23 24 "$shared_module_summary"
 bash "$SCRIPT" --changed-files "$shared_module_changed" --summary "$shared_module_summary" >/tmp/coverage-impact-shared-module-pass.out
 grep -F "Coverage-impact preflight passed" /tmp/coverage-impact-shared-module-pass.out >/dev/null
+
+duplicate_summary_changed="$TMP/duplicate-summary-changed.txt"
+printf 'M\tadl/src/cli/process_cmd.rs\n' >"$duplicate_summary_changed"
+duplicate_summary="$TMP/duplicate-summary.json"
+cat >"$duplicate_summary" <<'EOF'
+{
+  "data": [
+    {
+      "files": [
+        {
+          "filename": "/private/tmp/repo/adl/src/cli/process_cmd.rs",
+          "summary": {
+            "lines": {
+              "covered": 248,
+              "count": 281
+            }
+          }
+        },
+        {
+          "filename": "/private/tmp/repo/adl/src/cli/process_cmd.rs",
+          "summary": {
+            "lines": {
+              "covered": 0,
+              "count": 281
+            }
+          }
+        }
+      ]
+    }
+  ]
+}
+EOF
+bash "$SCRIPT" --changed-files "$duplicate_summary_changed" --summary "$duplicate_summary" >/tmp/coverage-impact-duplicate-summary-pass.out
+grep -F "Coverage-impact preflight passed" /tmp/coverage-impact-duplicate-summary-pass.out >/dev/null
 
 echo "PASS test_check_coverage_impact"

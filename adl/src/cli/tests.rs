@@ -138,6 +138,38 @@ fn top_level_version_flag_is_handled_before_workflow_dispatch() {
 }
 
 #[test]
+fn top_level_dispatch_routes_process_and_public_help_paths() {
+    dispatch_args(&["--help".to_string()]).expect("top-level help should succeed");
+
+    dispatch_args(&["process".to_string(), "--help".to_string()])
+        .expect("process help should route through dispatch");
+
+    dispatch_args(&[
+        "process".to_string(),
+        "status".to_string(),
+        "--pid".to_string(),
+        std::process::id().to_string(),
+        "--json".to_string(),
+    ])
+    .expect("process status should route through top-level dispatch");
+}
+
+#[test]
+fn top_level_dispatch_routes_safe_help_branches_without_workflow_execution() {
+    for command in [
+        "provider",
+        "runtime-v2",
+        "keygen",
+        "tooling",
+        "resume",
+        "process",
+    ] {
+        dispatch_args(&[command.to_string(), "--help".to_string()])
+            .expect("top-level help branch should route without workflow execution");
+    }
+}
+
+#[test]
 fn csdlc_dispatch_exposes_help_and_version_without_runtime_dispatch() {
     dispatch_csdlc_args(&["--help".to_string()]).expect("csdlc help should succeed");
     dispatch_csdlc_args(&["-h".to_string()]).expect("csdlc short help should succeed");

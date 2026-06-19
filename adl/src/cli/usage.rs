@@ -33,6 +33,7 @@ pub fn usage() -> &'static str {
   adl identity phi [--out <path>]
   adl identity instinct [--out <path>]
   adl identity instinct-runtime [--out <path>]
+  adl process status (--pid <pid> | --pid-file <path> | --port <port> [--host <host>] | --name <label>) [--json]
   adl runtime-v2 operator-controls [--out <path>]
   adl runtime-v2 security-boundary [--out <path>]
   adl runtime-v2 foundation-demo [--out <dir>]
@@ -112,6 +113,8 @@ Examples:
   adl identity delegation-refusal-coordination --out .adl/state/delegation_refusal_coordination_v1.json
   adl identity provider-extension-packaging --out .adl/state/provider_extension_packaging_v1.json
   adl identity demo-proof-entry-points --out .adl/state/demo_proof_entry_points_v1.json
+  adl process status --pid-file .adl/runs/demo/server.pid --json
+  adl process status --port 8787 --json
   adl runtime-v2 operator-controls --out .adl/state/runtime_v2_operator_control_report.v1.json
   adl runtime-v2 security-boundary --out .adl/state/runtime_v2_security_boundary_proof.v1.json
   adl runtime-v2 foundation-demo --out artifacts/v0901/demo-l-v0901-runtime-v2-foundation

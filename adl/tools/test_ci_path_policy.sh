@@ -467,6 +467,65 @@ PY
   assert_has "$runtime_policy_surface_output" "coverage_authority=pr_policy_surface_runtime_mixed"
   assert_has "$runtime_policy_surface_output" "reason=coverage_policy_surface_change_with_runtime_surface_runs_full_coverage"
 
+  git checkout -q -b runtime-bounded-pr-fast-coverage-policy-change "$base_sha"
+  mkdir -p adl/src/cli adl/tools
+  cat > adl/src/cli/process_cmd.rs <<'EOF'
+pub fn process_status_probe() -> bool { true }
+EOF
+  python3 - <<'PY'
+from pathlib import Path
+
+workflow = Path(".github/workflows/ci.yaml")
+text = workflow.read_text()
+text = text.replace(
+    '            echo "filters=$(paste -sd\' \' adl/coverage-impact-filters.txt)" >> "$GITHUB_OUTPUT"\n',
+    '            echo "filters=$(paste -sd\' \' adl/coverage-impact-filters.txt)" >> "$GITHUB_OUTPUT"\n            echo "run_cli_smoke_process_status=true" >> "$GITHUB_OUTPUT"\n            echo "run_cli_smoke_basics=true" >> "$GITHUB_OUTPUT"\n',
+    1,
+)
+text = text.replace(
+    "          CARGO_INCREMENTAL=0 cargo llvm-cov nextest --workspace --status-level all --final-status-level slow --no-report -- ${{ steps.coverage-impact.outputs.filters }}\n          cargo llvm-cov report --json --summary-only --output-path coverage-summary.json\n",
+    "          summary_files=()\n          if [ \"${{ steps.coverage-impact.outputs.run_cli_smoke_process_status }}\" = \"true\" ]; then\n            CARGO_INCREMENTAL=0 cargo llvm-cov nextest --workspace --test cli_smoke process_status --no-report\n            cargo llvm-cov report --json --summary-only --output-path coverage-summary-process-status.json\n            summary_files+=(coverage-summary-process-status.json)\n          fi\n          if [ \"${{ steps.coverage-impact.outputs.run_cli_smoke_basics }}\" = \"true\" ]; then\n            CARGO_INCREMENTAL=0 cargo llvm-cov nextest --workspace --test cli_smoke basics --no-report\n            cargo llvm-cov report --json --summary-only --output-path coverage-summary-cli-basics.json\n            summary_files+=(coverage-summary-cli-basics.json)\n          fi\n          cp \"${summary_files[0]}\" coverage-summary.json\n",
+    1,
+)
+workflow.write_text(text)
+
+coverage = Path("adl/tools/check_coverage_impact.sh")
+coverage.parent.mkdir(parents=True, exist_ok=True)
+coverage.write_text(
+    "#!/usr/bin/env bash\n"
+    "candidate_filter_for_path() {\n"
+    "  local path=\"$1\"\n"
+    "  case \"$path\" in\n"
+    "    adl/src/cli/process_cmd.rs)\n"
+    "      printf 'process_status'\n"
+    "      ;;\n"
+    "    adl/src/cli/mod.rs|adl/src/cli/usage.rs)\n"
+    "      printf 'cli_basics'\n"
+    "      ;;\n"
+    "  esac\n"
+    "}\n"
+)
+
+coverage_test = Path("adl/tools/test_check_coverage_impact.sh")
+coverage_test.write_text("#!/usr/bin/env bash\n# process_status\n")
+
+runtime_contract = Path("adl/tools/test_ci_runtime_contracts.sh")
+runtime_contract.write_text("if 'coverage-summary.json' not in fast_summary_step:\n    pass\n")
+PY
+  git add adl/src/cli/process_cmd.rs .github/workflows/ci.yaml adl/tools/check_coverage_impact.sh adl/tools/test_check_coverage_impact.sh adl/tools/test_ci_runtime_contracts.sh
+  git commit -q -m runtime-bounded-pr-fast-coverage-policy-change
+  runtime_bounded_pr_fast_head="$(git rev-parse HEAD)"
+
+  runtime_bounded_pr_fast_output="$("$POLICY" --event-name pull_request --base "$base_sha" --head "$runtime_bounded_pr_fast_head" --ref "refs/pull/1/merge")"
+  assert_has "$runtime_bounded_pr_fast_output" "rust_required=true"
+  assert_has "$runtime_bounded_pr_fast_output" "coverage_required=true"
+  assert_has "$runtime_bounded_pr_fast_output" "full_coverage_required=false"
+  assert_has "$runtime_bounded_pr_fast_output" "demo_smoke_required=true"
+  assert_has "$runtime_bounded_pr_fast_output" "ci_contracts_required=true"
+  assert_has "$runtime_bounded_pr_fast_output" "coverage_lane=pr_fast"
+  assert_has "$runtime_bounded_pr_fast_output" "coverage_authority=pr_changed_surface"
+  assert_has "$runtime_bounded_pr_fast_output" "reason=bounded_pr_fast_coverage_policy_change_keeps_pr_fast_validation"
+
   git checkout -q -b feature-branch-before-main-advances "$base_sha"
   mkdir -p adl/tools docs/milestones/v0.91.4/review/demo_showcase
   printf '#!/usr/bin/env bash\nprintf demo\n' > adl/tools/demo_v0914_complete_issue.sh

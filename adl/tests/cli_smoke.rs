@@ -348,3 +348,5 @@ mod exports_and_remote;
 mod godel;
 #[path = "cli_smoke/instrument_and_cli.rs"]
 mod instrument_and_cli;
+#[path = "cli_smoke/process_status.rs"]
+mod process_status;

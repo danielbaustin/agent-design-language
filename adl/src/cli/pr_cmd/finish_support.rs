@@ -1052,6 +1052,20 @@ pub(super) fn select_finish_validation_plan(paths_csv: &str) -> Result<FinishVal
         }
         if paths
             .iter()
+            .any(|path| finish_path_needs_process_status_focused_validation(path))
+        {
+            mode = FinishValidationMode::LargerBinaryFocused;
+            push_finish_validation_command(
+                &mut commands,
+                "cargo fmt --manifest-path adl/Cargo.toml --all --check",
+            );
+            push_finish_validation_command(
+                &mut commands,
+                "cargo test --manifest-path adl/Cargo.toml --test cli_smoke process_status -- --nocapture",
+            );
+        }
+        if paths
+            .iter()
             .any(|path| finish_path_needs_scheduler_focused_validation(path))
         {
             mode = FinishValidationMode::LargerBinaryFocused;
@@ -1061,7 +1075,7 @@ pub(super) fn select_finish_validation_plan(paths_csv: &str) -> Result<FinishVal
             );
             push_finish_validation_command(
                 &mut commands,
-                "cargo test --manifest-path adl/Cargo.toml scheduler_economics",
+                "cargo test --manifest-path adl/Cargo.toml --lib scheduler_economics",
             );
         }
         if paths
@@ -1406,6 +1420,8 @@ fn finish_path_is_larger_binary_focused(path: &str) -> bool {
             | "adl/src/cli/pr_cmd.rs"
             | "adl/src/cli/pr_cmd_args.rs"
             | "adl/src/cli/mod.rs"
+            | "adl/src/cli/process_cmd.rs"
+            | "adl/src/cli/usage.rs"
             | "adl/src/cli/tokio_runtime.rs"
             | "adl/src/cli/github_token.rs"
             | "adl/src/lib.rs"
@@ -1423,6 +1439,8 @@ fn finish_path_is_larger_binary_focused(path: &str) -> bool {
             | "adl/src/continuous_verification_self_attack.rs"
             | "adl/src/cli/identity_cmd/tests/adversarial_contracts.rs"
             | "adl/src/cli/tests/pr_cmd_inline/basics.rs"
+            | "adl/tests/cli_smoke.rs"
+            | "adl/tests/cli_smoke/process_status.rs"
             | "adl/src/cli/tests/pr_cmd_inline/repo_helpers/metadata.rs"
             | "adl/src/cli/tests/pr_cmd_inline/support.rs"
             | "adl/src/csdlc_prompt_editor.rs"
@@ -1523,6 +1541,17 @@ fn finish_path_needs_owner_binary_rust_slice_validation(path: &str) -> bool {
         || trimmed.starts_with("adl/src/csdlc_prompt_editor/")
         || trimmed == "adl/src/cli/run_artifacts_types.rs"
         || trimmed.starts_with("adl/src/cli/run_artifacts_types/")
+}
+
+fn finish_path_needs_process_status_focused_validation(path: &str) -> bool {
+    let trimmed = path.trim().trim_matches('/');
+    matches!(
+        trimmed,
+        "adl/src/cli/process_cmd.rs"
+            | "adl/src/cli/usage.rs"
+            | "adl/tests/cli_smoke.rs"
+            | "adl/tests/cli_smoke/process_status.rs"
+    )
 }
 
 fn finish_path_needs_scheduler_focused_validation(path: &str) -> bool {
@@ -1922,13 +1951,14 @@ pub(super) fn run_finish_validation_rust(
                         &["test", "--manifest-path", path_str(&manifest)?, "remote_exec::"],
                     )?;
                 }
-                "cargo test --manifest-path adl/Cargo.toml scheduler_economics" => {
+                "cargo test --manifest-path adl/Cargo.toml --lib scheduler_economics" => {
                     run_finish_validation_status(
                         "cargo",
                         &[
                             "test",
                             "--manifest-path",
                             path_str(&manifest)?,
+                            "--lib",
                             "scheduler_economics",
                         ],
                     )?;
@@ -1963,6 +1993,21 @@ pub(super) fn run_finish_validation_rust(
                             "--manifest-path",
                             path_str(&manifest)?,
                             "identity_continuous_verification_writes_contract_json",
+                        ],
+                    )?;
+                }
+                "cargo test --manifest-path adl/Cargo.toml --test cli_smoke process_status -- --nocapture" => {
+                    run_finish_validation_status(
+                        "cargo",
+                        &[
+                            "test",
+                            "--manifest-path",
+                            path_str(&manifest)?,
+                            "--test",
+                            "cli_smoke",
+                            "process_status",
+                            "--",
+                            "--nocapture",
                         ],
                     )?;
                 }

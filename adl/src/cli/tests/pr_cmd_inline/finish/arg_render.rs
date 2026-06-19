@@ -1486,6 +1486,39 @@ fn finish_validation_profile_keeps_finish_support_changes_narrow() {
 }
 
 #[test]
+fn finish_validation_profile_classifies_process_status_helper_surfaces() {
+    let plan = select_finish_validation_plan_for_finish(
+        0,
+        ".",
+        &[
+            "adl/src/cli/process_cmd.rs".to_string(),
+            "adl/src/cli/usage.rs".to_string(),
+            "adl/tests/cli_smoke.rs".to_string(),
+            "adl/tests/cli_smoke/process_status.rs".to_string(),
+            "docs/tooling/PERMISSION_SAFE_PROCESS_STATUS.md".to_string(),
+        ],
+    )
+    .expect("process status helper plan");
+
+    assert_eq!(plan.mode, FinishValidationMode::LargerBinaryFocused);
+    assert!(plan
+        .commands
+        .contains(&"cargo fmt --manifest-path adl/Cargo.toml --all --check".to_string()));
+    assert!(plan.commands.contains(
+        &"cargo test --manifest-path adl/Cargo.toml --test cli_smoke process_status -- --nocapture"
+            .to_string()
+    ));
+    assert!(!plan
+        .commands
+        .iter()
+        .any(|command| command.contains("cargo clippy")));
+    assert!(!plan
+        .commands
+        .iter()
+        .any(|command| command.contains("cargo nextest")));
+}
+
+#[test]
 fn finish_validation_profile_classifies_lifecycle_inline_tests() {
     let plan = select_finish_validation_plan_for_finish(
         1153,
@@ -2020,7 +2053,7 @@ fn finish_scheduler_paths_run_scheduler_economics_focused_validation() {
     let cargo_calls = fs::read_to_string(&cargo_log).expect("cargo log");
     assert!(cargo_calls.contains("fmt --manifest-path"));
     assert!(cargo_calls.contains("test --manifest-path"));
-    assert!(cargo_calls.contains("scheduler_economics"));
+    assert!(cargo_calls.contains("--lib scheduler_economics"));
     assert!(!cargo_calls.contains("clippy --manifest-path"));
 }
 

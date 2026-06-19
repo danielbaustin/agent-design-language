@@ -246,6 +246,96 @@ is_reporting_only_coverage_workflow_change() {
       done
 }
 
+is_pr_fast_coverage_workflow_change() {
+  local path="$1"
+  [ "$path" = ".github/workflows/ci.yaml" ] || return 1
+  local diff_text
+  diff_text="$(git_pr_patch "$path")"
+  [ -n "$diff_text" ] || return 1
+  grep -E 'Determine PR fast coverage filters|PR fast coverage summary \(json\)|coverage-impact-filters.txt|run_cli_smoke_process_status|run_finish_bins|generic_filters|summary_files|coverage-summary-process-status.json|coverage-summary-finish.json|coverage-summary-generic.json|coverage-summary.json|process_status|adl-pr-finish|jq -s ' <<<"$diff_text" >/dev/null 2>&1 || return 1
+  if grep -E 'Coverage run and summary \(json\)|Coverage-impact changed-source gate|Enforce coverage policy gates|Coverage \(ADL Rust workspace lcov\)|Upload coverage artifact|Upload coverage to Codecov|run_authoritative_coverage_lane|full_coverage_required|coverage_authority=' <<<"$diff_text" >/dev/null 2>&1; then
+    return 1
+  fi
+  return 0
+}
+
+is_bounded_pr_fast_coverage_policy_surface() {
+  local path="$1"
+  case "$path" in
+    .github/workflows/ci.yaml|\
+    adl/tools/check_coverage_impact.sh|\
+    adl/tools/ci_path_policy.sh|\
+    adl/tools/test_check_coverage_impact.sh|\
+    adl/tools/test_ci_path_policy.sh|\
+    adl/tools/test_ci_runtime_contracts.sh)
+      return 0
+      ;;
+  esac
+  return 1
+}
+
+is_bounded_pr_fast_coverage_policy_change() {
+  local saw_bounded_marker=false
+  local saw_other=false
+  local path
+  while IFS= read -r path; do
+    [ -n "$path" ] || continue
+    if ! is_bounded_pr_fast_coverage_policy_surface "$path"; then
+      if is_full_coverage_policy_surface "$path"; then
+        saw_other=true
+      fi
+      continue
+    fi
+    case "$path" in
+      .github/workflows/ci.yaml)
+        if is_pr_fast_coverage_workflow_change "$path"; then
+          saw_bounded_marker=true
+        else
+          saw_other=true
+        fi
+        ;;
+      adl/tools/check_coverage_impact.sh)
+        if git_pr_patch "$path" | grep -F 'adl/src/cli/process_cmd.rs' >/dev/null 2>&1; then
+          saw_bounded_marker=true
+        else
+          saw_other=true
+        fi
+        ;;
+      adl/tools/ci_path_policy.sh)
+        if git_pr_patch "$path" | grep -E 'is_pr_fast_coverage_workflow_change|is_bounded_pr_fast_coverage_policy_surface|is_bounded_pr_fast_coverage_policy_change|bounded_pr_fast_coverage_policy_change_keeps_pr_fast_validation' >/dev/null 2>&1; then
+          saw_bounded_marker=true
+        else
+          saw_other=true
+        fi
+        ;;
+      adl/tools/test_check_coverage_impact.sh)
+        if git_pr_patch "$path" | grep -F 'process_status' >/dev/null 2>&1; then
+          saw_bounded_marker=true
+        else
+          saw_other=true
+        fi
+        ;;
+      adl/tools/test_ci_path_policy.sh)
+        if git_pr_patch "$path" | grep -F 'runtime-bounded-pr-fast-coverage-policy-change' >/dev/null 2>&1; then
+          saw_bounded_marker=true
+        else
+          saw_other=true
+        fi
+        ;;
+      adl/tools/test_ci_runtime_contracts.sh)
+        if git_pr_patch "$path" | grep -F 'coverage-summary.json' >/dev/null 2>&1; then
+          saw_bounded_marker=true
+        else
+          saw_other=true
+        fi
+        ;;
+    esac
+  done <<EOF
+$changed_files
+EOF
+  [ "$saw_bounded_marker" = true ] && [ "$saw_other" = false ]
+}
+
 is_pvf_slow_proof_workflow_change() {
   local path="$1"
   [ "$path" = ".github/workflows/ci.yaml" ] || return 1
@@ -610,11 +700,21 @@ else
     done <<EOF
 $changed_files
 EOF
+      bounded_pr_fast_coverage_policy_change=false
+      if [ "$coverage_required" = true ] && is_bounded_pr_fast_coverage_policy_change; then
+        bounded_pr_fast_coverage_policy_change=true
+      fi
 	    while IFS=$'\t' read -r _status path; do
 	      [ -n "$path" ] || continue
 	      if [ "$pvf_slow_proof_policy_change" = true ] && is_pvf_slow_proof_policy_surface "$path"; then
 	        continue
 	      fi
+        if [ "$bounded_pr_fast_coverage_policy_change" = true ] && is_bounded_pr_fast_coverage_policy_surface "$path"; then
+          if [ "$reason" = "runtime_or_rust_test_change_runs_pr_fast_validation" ]; then
+            reason="bounded_pr_fast_coverage_policy_change_keeps_pr_fast_validation"
+          fi
+          continue
+        fi
 	      if is_full_coverage_policy_surface "$path"; then
         if is_reporting_only_coverage_workflow_change "$path"; then
           reason="coverage_reporting_workflow_change_skips_authoritative_coverage"

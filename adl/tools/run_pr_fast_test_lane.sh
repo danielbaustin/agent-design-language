@@ -143,6 +143,10 @@ is_structural_companion_surface() {
 is_broad_rust_surface() {
   local path="$1"
   case "$path" in
+    adl/tests/cli_smoke.rs|\
+    adl/tests/cli_smoke/*.rs)
+      return 1
+      ;;
     adl/build.rs|\
     adl/src/main.rs|\
     adl/src/adl.rs|\
@@ -216,13 +220,19 @@ filter_token_for_path() {
     adl/src/cli/mod.rs)
       if [ "$saw_tokio_bootstrap_related_surface" = true ]; then
         printf 'tokio_bootstrap'
+      elif [ "$saw_process_status_related_surface" = true ]; then
+        printf 'cli_dispatch'
       else
         printf 'cli'
       fi
       return 0
       ;;
     adl/src/cli/tests.rs)
-      printf 'cli'
+      printf 'cli_dispatch'
+      return 0
+      ;;
+    adl/src/cli/process_cmd.rs)
+      printf 'process_status'
       return 0
       ;;
     adl/src/cli/tokio_runtime.rs)
@@ -251,6 +261,10 @@ filter_token_for_path() {
       ;;
     adl/src/cli/pr_cmd/finish_support.rs|adl/src/cli/tests/pr_cmd_inline/finish/*)
       printf 'pr_cmd_finish'
+      return 0
+      ;;
+    adl/src/cli/usage.rs)
+      printf 'cli_smoke_basics'
       return 0
       ;;
     adl/src/long_lived_agent.rs|adl/src/long_lived_agent/tests.rs)
@@ -287,6 +301,10 @@ filter_token_for_path() {
       ;;
     docs/default_workflow.md|docs/milestones/v0.90/milestone_compression/FINISH_VALIDATION_PROFILES_v0.90.md)
       printf 'pr_cmd'
+      return 0
+      ;;
+    adl/tests/cli_smoke.rs|adl/tests/cli_smoke/*.rs)
+      printf 'process_status'
       return 0
       ;;
     adl/src/cli/*/*/*.rs|adl/src/cli/*/*/*/*.rs)
@@ -381,6 +399,9 @@ build_filter_expression() {
 import sys
 
 TOKEN_MAP = {
+    "cli_dispatch": 'test(/^cli::tests::top_level_dispatch_routes_/)',
+    "cli_smoke_basics": 'binary_id(adl::cli_smoke) and test(/^basics::/)',
+    "process_status": 'binary_id(adl::cli_smoke) and test(/^process_status::/)',
     "tokio_bootstrap": 'test(/^cli::pr_cmd::github::/) or test(/^cli::pr_cmd::github_client::/) or test(/^cli::tooling_cmd::github_release::/)',
     "pr_cmd": 'binary_id(adl::bin/adl) and test(/^cli::pr_cmd::/)',
     "pr_cmd_finish": 'binary_id(adl::bin/adl-pr-finish) and test(/^cli::pr_cmd::tests::finish::arg_render::/)',
@@ -434,6 +455,7 @@ all_paths_have_family_token=true
 classification_locked=false
 saw_slow_proof_contract_surface=false
 saw_tokio_bootstrap_related_surface=false
+saw_process_status_related_surface=false
 
 declare -a tokens=()
 declare -a family_tokens=()
@@ -452,6 +474,13 @@ while IFS= read -r path; do
     adl/src/cli/pr_cmd/github.rs|\
     adl/src/cli/tooling_cmd/github_release.rs)
       saw_tokio_bootstrap_related_surface=true
+      ;;
+    adl/src/cli/process_cmd.rs|\
+    adl/src/cli/tests.rs|\
+    adl/src/cli/usage.rs|\
+    adl/tests/cli_smoke.rs|\
+    adl/tests/cli_smoke/*.rs)
+      saw_process_status_related_surface=true
       ;;
   esac
 done <<EOF
