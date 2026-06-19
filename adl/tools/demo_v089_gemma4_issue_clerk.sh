@@ -26,7 +26,45 @@ normalize_ollama_host_url() {
   printf '%s\n' "${normalized%/}"
 }
 
+durable_ollama_host_ref() {
+  python3 - "$1" <<'PY'
+from __future__ import annotations
+
+import ipaddress
+import sys
+from urllib.parse import urlparse
+
+raw = sys.argv[1].strip().rstrip("/")
+parsed = urlparse(raw if "://" in raw else f"http://{raw}")
+host = parsed.hostname or ""
+
+if host in {"127.0.0.1", "localhost", "::1"}:
+    print(raw)
+    raise SystemExit(0)
+
+if host in {"remote_ollama_private_lan", "remote-ollama-private-lan"}:
+    print("remote_ollama_private_lan")
+    raise SystemExit(0)
+
+try:
+    addr = ipaddress.ip_address(host)
+except ValueError:
+    print(raw)
+    raise SystemExit(0)
+
+if addr.is_private and not addr.is_loopback:
+    print("remote_ollama_private_lan")
+else:
+    print(raw)
+PY
+}
+
 OLLAMA_HOST_URL="$(normalize_ollama_host_url "$RAW_OLLAMA_HOST_INPUT")"
+DURABLE_OLLAMA_HOST_REF="$(durable_ollama_host_ref "$OLLAMA_HOST_URL")"
+OLLAMA_HOST_ARTIFACT_POLICY="literal_runtime_url"
+if [[ "$DURABLE_OLLAMA_HOST_REF" != "$OLLAMA_HOST_URL" ]]; then
+  OLLAMA_HOST_ARTIFACT_POLICY="private_lan_redacted"
+fi
 
 usage() {
   cat <<'EOF'
@@ -42,7 +80,7 @@ Purpose:
 Notes:
   - Default model: gemma4:latest
   - Default Ollama API: http://127.0.0.1:11434
-  - Set OLLAMA_HOST or OLLAMA_HOST_URL to target a remote Ollama host.
+  - Set OLLAMA_HOST=<private-lan-ollama-host> or OLLAMA_HOST_URL=http://<private-lan-ollama-host>:11434 to target a remote Ollama host.
   - Set ADL_GEMMA4_RESPONSE_FILE to replay a fixture instead of calling Ollama.
   - --dry-run prepares packet, prompt, and manifest without invoking a model.
 EOF
@@ -331,7 +369,7 @@ PY
 
 write_manifest() {
   local disposition="$1"
-  python3 - "$ROOT_DIR" "$MANIFEST_FILE" "$disposition" "$MODEL" "$OLLAMA_HOST_URL" "$DRY_RUN" "$PACKET_FILE" "$PROMPT_FILE" "$RAW_RESPONSE_FILE" "$VALIDATED_PROPOSAL_FILE" "$ISSUE_BODY_FILE" "$REJECTION_REASON_FILE" <<'PY'
+  python3 - "$ROOT_DIR" "$MANIFEST_FILE" "$disposition" "$MODEL" "$DURABLE_OLLAMA_HOST_REF" "$OLLAMA_HOST_ARTIFACT_POLICY" "$DRY_RUN" "$PACKET_FILE" "$PROMPT_FILE" "$RAW_RESPONSE_FILE" "$VALIDATED_PROPOSAL_FILE" "$ISSUE_BODY_FILE" "$REJECTION_REASON_FILE" <<'PY'
 import json
 import sys
 from pathlib import Path
@@ -341,7 +379,8 @@ from pathlib import Path
     manifest_path,
     disposition,
     model,
-    host,
+    host_ref,
+    host_policy,
     dry_run,
     packet_path,
     prompt_path,
@@ -366,7 +405,8 @@ manifest = {
     "demo": "gemma4_issue_clerk",
     "schema": "adl.demo_manifest.v1",
     "model": model,
-    "ollama_host_url": host,
+    "ollama_host_ref": host_ref,
+    "ollama_host_runtime_input_policy": host_policy,
     "dry_run": dry_run == "1",
     "disposition": disposition,
     "artifacts": {
@@ -408,7 +448,8 @@ write_summary() {
 
 - disposition: ${disposition}
 - model: ${MODEL}
-- ollama_host_url: ${OLLAMA_HOST_URL}
+- ollama_host_ref: ${DURABLE_OLLAMA_HOST_REF}
+- ollama_host_runtime_input_policy: ${OLLAMA_HOST_ARTIFACT_POLICY}
 - packet: ${packet_display}
 - prompt: ${prompt_display}
 - validated_proposal: ${validated_display}

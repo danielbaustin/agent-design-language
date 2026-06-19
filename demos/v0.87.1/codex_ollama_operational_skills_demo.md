@@ -62,14 +62,18 @@ If your Ollama API is not on the default host, set `OLLAMA_HOST` or
 Examples:
 
 ```bash
-OLLAMA_HOST=192.168.68.73 \
+OLLAMA_HOST=remote_ollama_private_lan \
 bash adl/tools/demo_codex_ollama_operational_skills.sh --dry-run
 ```
 
 ```bash
-OLLAMA_HOST_URL=http://192.168.68.73:11434 \
+OLLAMA_HOST_URL=http://remote_ollama_private_lan:11434 \
 bash adl/tools/demo_codex_ollama_operational_skills.sh
 ```
+
+When a private LAN Ollama host is configured, the durable demo manifest records
+the sanitized host reference `remote_ollama_private_lan` rather than publishing
+the runtime LAN coordinates.
 
 This support is intentionally bounded to the demo wrapper. It does **not**
 claim that the full ADL runtime `ollama` / `local_ollama` provider surfaces

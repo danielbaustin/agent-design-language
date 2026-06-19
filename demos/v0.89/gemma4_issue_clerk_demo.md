@@ -56,10 +56,14 @@ If your Ollama API is not on the default host, set `OLLAMA_HOST` or
 Example:
 
 ```bash
-OLLAMA_HOST=192.168.68.73 \
+OLLAMA_HOST=remote_ollama_private_lan \
 GEMMA4_OLLAMA_MODEL=gemma4:latest \
 bash adl/tools/demo_v089_gemma4_issue_clerk.sh
 ```
+
+When a private LAN Ollama host is configured, the durable demo manifest records
+the sanitized host reference `remote_ollama_private_lan` rather than the
+runtime LAN coordinates.
 
 If you want to replay a known response instead of calling a live model:
 

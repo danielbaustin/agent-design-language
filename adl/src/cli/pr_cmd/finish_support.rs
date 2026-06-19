@@ -1108,6 +1108,24 @@ pub(super) fn select_finish_validation_plan(paths_csv: &str) -> Result<FinishVal
         }
         if paths
             .iter()
+            .any(|path| finish_path_needs_private_endpoint_fixture_sanitation_validation(path))
+        {
+            mode = FinishValidationMode::LargerBinaryFocused;
+            commands
+                .push("bash adl/tools/test_demo_codex_ollama_operational_skills.sh".to_string());
+            commands.push("bash adl/tools/test_demo_codex_ollama_semantic_fallback.sh".to_string());
+            commands.push("bash adl/tools/test_demo_v089_gemma4_issue_clerk.sh".to_string());
+            push_finish_validation_command(
+                &mut commands,
+                "cargo test --manifest-path adl/Cargo.toml --lib provider_substrate_uses_http_transport_for_ollama_with_endpoint",
+            );
+            commands.push(
+                "python3 adl/tools/validate_v0915_remote_gemma_watcher_probe.py docs/milestones/v0.91.5/review/remote_gemma_watcher"
+                    .to_string(),
+            );
+        }
+        if paths
+            .iter()
             .any(|path| finish_path_needs_csdlc_owner_lane_validation(path))
         {
             mode = FinishValidationMode::LargerBinaryFocused;
@@ -1303,6 +1321,15 @@ fn finish_path_is_larger_binary_focused(path: &str) -> bool {
             | "adl/src/cli/tooling_cmd/github_release.rs"
             | "adl/src/cli/tooling_cmd/public_prompt_packet.rs"
             | "adl/src/cli/tooling_cmd/tests/public_prompt_packet.rs"
+            | "adl/tools/demo_codex_ollama_operational_skills.sh"
+            | "adl/tools/demo_v089_gemma4_issue_clerk.sh"
+            | "adl/tools/test_demo_codex_ollama_operational_skills.sh"
+            | "adl/tools/test_demo_codex_ollama_semantic_fallback.sh"
+            | "adl/tools/test_demo_v089_gemma4_issue_clerk.sh"
+            | "adl/src/provider_substrate.rs"
+            | "adl/tools/validate_v0915_remote_gemma_watcher_probe.py"
+            | "demos/v0.87.1/codex_ollama_operational_skills_demo.md"
+            | "demos/v0.89/gemma4_issue_clerk_demo.md"
     ) || trimmed.starts_with("adl/src/cli/pr_cmd/")
         || trimmed.starts_with("adl/src/cli/pr_cmd_cards/")
         || trimmed.starts_with("adl/src/csdlc_prompt_editor/")
@@ -1403,6 +1430,22 @@ fn finish_path_needs_repo_quality_staleness_validation(path: &str) -> bool {
         trimmed,
         "adl/tools/check_repo_quality_staleness.py"
             | "adl/tools/test_check_repo_quality_staleness.sh"
+    )
+}
+
+fn finish_path_needs_private_endpoint_fixture_sanitation_validation(path: &str) -> bool {
+    let trimmed = path.trim().trim_matches('/');
+    matches!(
+        trimmed,
+        "adl/tools/demo_codex_ollama_operational_skills.sh"
+            | "adl/tools/demo_v089_gemma4_issue_clerk.sh"
+            | "adl/tools/test_demo_codex_ollama_operational_skills.sh"
+            | "adl/tools/test_demo_codex_ollama_semantic_fallback.sh"
+            | "adl/tools/test_demo_v089_gemma4_issue_clerk.sh"
+            | "adl/src/provider_substrate.rs"
+            | "adl/tools/validate_v0915_remote_gemma_watcher_probe.py"
+            | "demos/v0.87.1/codex_ollama_operational_skills_demo.md"
+            | "demos/v0.89/gemma4_issue_clerk_demo.md"
     )
 }
 
@@ -1617,6 +1660,40 @@ pub(super) fn run_finish_validation_rust(
                 "bash adl/tools/test_check_repo_quality_staleness.sh" => {
                     let script = repo_root.join("adl/tools/test_check_repo_quality_staleness.sh");
                     run_finish_validation_status("bash", &[path_str(&script)?])?;
+                }
+                "bash adl/tools/test_demo_codex_ollama_operational_skills.sh" => {
+                    let script = repo_root.join("adl/tools/test_demo_codex_ollama_operational_skills.sh");
+                    run_finish_validation_status("bash", &[path_str(&script)?])?;
+                }
+                "bash adl/tools/test_demo_codex_ollama_semantic_fallback.sh" => {
+                    let script = repo_root.join("adl/tools/test_demo_codex_ollama_semantic_fallback.sh");
+                    run_finish_validation_status("bash", &[path_str(&script)?])?;
+                }
+                "bash adl/tools/test_demo_v089_gemma4_issue_clerk.sh" => {
+                    let script = repo_root.join("adl/tools/test_demo_v089_gemma4_issue_clerk.sh");
+                    run_finish_validation_status("bash", &[path_str(&script)?])?;
+                }
+                "cargo test --manifest-path adl/Cargo.toml --lib provider_substrate_uses_http_transport_for_ollama_with_endpoint" => {
+                    run_finish_validation_status(
+                        "cargo",
+                        &[
+                            "test",
+                            "--manifest-path",
+                            path_str(&manifest)?,
+                            "--lib",
+                            "provider_substrate_uses_http_transport_for_ollama_with_endpoint",
+                        ],
+                    )?;
+                }
+                "python3 adl/tools/validate_v0915_remote_gemma_watcher_probe.py docs/milestones/v0.91.5/review/remote_gemma_watcher" => {
+                    let script =
+                        repo_root.join("adl/tools/validate_v0915_remote_gemma_watcher_probe.py");
+                    let review_root =
+                        repo_root.join("docs/milestones/v0.91.5/review/remote_gemma_watcher");
+                    run_finish_validation_status(
+                        "python3",
+                        &[path_str(&script)?, path_str(&review_root)?],
+                    )?;
                 }
                 "bash adl/tools/run_owner_validation_lane.sh csdlc" => {
                     let script = repo_root.join("adl/tools/run_owner_validation_lane.sh");
