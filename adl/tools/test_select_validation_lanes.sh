@@ -76,6 +76,19 @@ assert_has "$TMP/release.out" "aggregate_status=release_gate_required"
 assert_has "$TMP/release.out" "release_gate_review status=release_gate_required"
 assert_has "$TMP/release.out" "ci_path_policy_contracts status=selected"
 
+bash "$SCRIPT" --changed-files "$docs_only" --json >"$TMP/docs.json"
+python3 - <<'PY' "$TMP/docs.json"
+import json
+import sys
+
+plan = json.load(open(sys.argv[1]))
+docs_lane = plan["lanes"]["docs_diff_check"]
+assert docs_lane["owner"] == "docs"
+assert docs_lane["default_surface"] == "docs"
+assert docs_lane["resource_class"] == "tiny"
+assert docs_lane["proof_role"] == "diff_hygiene"
+PY
+
 bash "$SCRIPT" --changed-files "$focused_rust" --json >"$TMP/focused.json"
 python3 - <<'PY' "$TMP/focused.json"
 import json
@@ -84,7 +97,25 @@ import sys
 plan = json.load(open(sys.argv[1]))
 assert plan["schema_version"] == "adl.validation_lane_plan.v1"
 assert plan["lanes"]["rust_pr_fast"]["mode"] == "focused"
+assert plan["lanes"]["rust_pr_fast"]["owner"] == "shared"
+assert plan["lanes"]["rust_pr_fast"]["resource_class"] == "medium"
+assert plan["lanes"]["rust_pr_fast"]["escalation_rule"] == "delegate_or_escalate"
 assert plan["pr_publication_sufficient"] is True
+PY
+
+bash "$SCRIPT" --changed-files "$release_gate" --json >"$TMP/release.json"
+python3 - <<'PY' "$TMP/release.json"
+import json
+import sys
+
+plan = json.load(open(sys.argv[1]))
+release_gate_lane = plan["lanes"]["release_gate_review"]
+ci_policy_lane = plan["lanes"]["ci_path_policy_contracts"]
+assert release_gate_lane["proof_role"] == "release_gate"
+assert release_gate_lane["resource_class"] == "high"
+assert release_gate_lane["escalation_rule"] == "require_release_gate_disposition"
+assert ci_policy_lane["proof_role"] == "ci_contract"
+assert ci_policy_lane["default_surface"] == "ci_policy"
 PY
 
 report="$TMP/report.json"
@@ -118,5 +149,172 @@ plan = json.load(open(sys.argv[1]))
 assert plan["run_status"] == "passed"
 assert plan["lanes"]["docs_diff_check"]["run_status"] == "passed"
 PY
+
+invalid_manifest="$TMP/invalid-manifest.json"
+cat >"$invalid_manifest" <<'EOF'
+{
+  "schema_version": "adl.validation_lane_selector.v1",
+  "surface_defaults": {
+    "docs": {
+      "owner": "docs",
+      "resource_class": "tiny",
+      "determinism_posture": "deterministic",
+      "proof_role": "diff_hygiene",
+      "risk_class": "low",
+      "escalation_rule": "none"
+    }
+  },
+  "lanes": [
+    {
+      "id": "broken_lane",
+      "lane_class": "docs",
+      "default_surface": "missing_surface",
+      "path_selectors": [
+        "docs/**"
+      ],
+      "command": "git diff --check",
+      "reason": "broken"
+    }
+  ],
+  "release_gate_hints": [],
+  "rust_path_hints": []
+}
+EOF
+if bash "$SCRIPT" --manifest "$invalid_manifest" --changed-files "$docs_only" >"$TMP/invalid.out" 2>"$TMP/invalid.err"; then
+  echo "expected invalid manifest to fail" >&2
+  exit 1
+fi
+assert_has "$TMP/invalid.err" "references unknown default_surface: missing_surface"
+
+special_surface_manifest="$TMP/special-surface-manifest.json"
+cat >"$special_surface_manifest" <<'EOF'
+{
+  "schema_version": "adl.validation_lane_selector.v1",
+  "surface_defaults": {
+    "docs": {
+      "owner": "docs",
+      "resource_class": "tiny",
+      "determinism_posture": "deterministic",
+      "proof_role": "diff_hygiene",
+      "risk_class": "low",
+      "escalation_rule": "none"
+    },
+    "shared_rust": {
+      "owner": "shared",
+      "resource_class": "medium",
+      "determinism_posture": "deterministic",
+      "proof_role": "regression",
+      "risk_class": "medium",
+      "escalation_rule": "delegate_or_escalate"
+    },
+    "release_gate": {
+      "owner": "tools",
+      "resource_class": "high",
+      "determinism_posture": "evidence_bound",
+      "proof_role": "release_gate",
+      "risk_class": "high",
+      "escalation_rule": "require_release_gate_disposition"
+    }
+  },
+  "lanes": [
+    {
+      "id": "docs_diff_check",
+      "lane_class": "docs",
+      "default_surface": "docs",
+      "path_selectors": [
+        "docs/**"
+      ],
+      "command": "git diff --check",
+      "run_command": "git diff --check",
+      "reason": "docs_only_surface_requires_diff_hygiene"
+    }
+  ],
+  "special_surfaces": {
+    "release_gate_review": {
+      "id": "release_gate_review",
+      "lane_class": "release_gate",
+      "default_surface": "release_gate",
+      "path_selectors": [
+        "special/release/**"
+      ],
+      "command": "record release-gate disposition; do not treat focused PR validation as release proof",
+      "run_command": "",
+      "reason": "special_release_gate_surface"
+    },
+    "rust_pr_fast": {
+      "id": "rust_pr_fast",
+      "lane_class": "fast_unit",
+      "escalated_lane_class": "release_gate",
+      "default_surface": "shared_rust",
+      "path_selectors": [
+        "special/rust/**"
+      ],
+      "command": "bash adl/tools/run_pr_fast_test_lane.sh",
+      "run_command": "bash adl/tools/run_pr_fast_test_lane.sh",
+      "reason": "special_rust_surface"
+    }
+  },
+  "release_gate_hints": [],
+  "rust_path_hints": []
+}
+EOF
+special_release="$TMP/special-release.txt"
+printf 'M\tspecial/release/packet.md\n' >"$special_release"
+bash "$SCRIPT" --manifest "$special_surface_manifest" --changed-files "$special_release" --json >"$TMP/special-release.json"
+python3 - <<'PY' "$TMP/special-release.json"
+import json
+import sys
+
+plan = json.load(open(sys.argv[1]))
+assert plan["aggregate_status"] == "release_gate_required"
+assert plan["lanes"]["release_gate_review"]["matched_paths"] == ["special/release/packet.md"]
+PY
+
+special_rust="$TMP/special-rust.txt"
+printf 'M\tspecial/rust/module.rs\n' >"$special_rust"
+bash "$SCRIPT" --manifest "$special_surface_manifest" --changed-files "$special_rust" --json >"$TMP/special-rust.json"
+python3 - <<'PY' "$TMP/special-rust.json"
+import json
+import sys
+
+plan = json.load(open(sys.argv[1]))
+assert plan["lanes"]["rust_pr_fast"]["matched_paths"] == ["special/rust/module.rs"]
+PY
+
+missing_metadata_manifest="$TMP/missing-metadata-manifest.json"
+cat >"$missing_metadata_manifest" <<'EOF'
+{
+  "schema_version": "adl.validation_lane_selector.v1",
+  "surface_defaults": {
+    "docs": {
+      "owner": "docs",
+      "resource_class": "tiny",
+      "determinism_posture": "deterministic",
+      "risk_class": "low",
+      "escalation_rule": "none"
+    }
+  },
+  "lanes": [
+    {
+      "id": "docs_diff_check",
+      "lane_class": "docs",
+      "default_surface": "docs",
+      "path_selectors": [
+        "docs/**"
+      ],
+      "command": "git diff --check",
+      "run_command": "git diff --check",
+      "reason": "docs_only_surface_requires_diff_hygiene"
+    }
+  ],
+  "release_gate_hints": [],
+  "rust_path_hints": []
+}
+EOF
+if bash "$SCRIPT" --manifest "$missing_metadata_manifest" --changed-files "$docs_only" >"$TMP/missing-metadata.out" 2>"$TMP/missing-metadata.err"; then
+  echo "expected missing surface metadata to fail" >&2
+  exit 1
+fi
+assert_has "$TMP/missing-metadata.err" "missing required surface metadata: proof_role"
 
 echo "PASS test_select_validation_lanes"

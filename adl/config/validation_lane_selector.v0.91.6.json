@@ -1,9 +1,96 @@
 {
   "schema_version": "adl.validation_lane_selector.v1",
+  "surface_defaults": {
+    "docs": {
+      "owner": "docs",
+      "resource_class": "tiny",
+      "determinism_posture": "deterministic",
+      "proof_role": "diff_hygiene",
+      "risk_class": "low",
+      "escalation_rule": "none"
+    },
+    "tooling": {
+      "owner": "tools",
+      "resource_class": "small",
+      "determinism_posture": "deterministic",
+      "proof_role": "regression",
+      "risk_class": "medium",
+      "escalation_rule": "none"
+    },
+    "runtime": {
+      "owner": "runtime",
+      "resource_class": "medium",
+      "determinism_posture": "deterministic",
+      "proof_role": "regression",
+      "risk_class": "medium",
+      "escalation_rule": "delegate_or_escalate"
+    },
+    "provider": {
+      "owner": "provider",
+      "resource_class": "high",
+      "determinism_posture": "credential_or_network_bound",
+      "proof_role": "provider_regression",
+      "risk_class": "high",
+      "escalation_rule": "manual_provider_gate"
+    },
+    "security": {
+      "owner": "security",
+      "resource_class": "high",
+      "determinism_posture": "deterministic",
+      "proof_role": "security_regression",
+      "risk_class": "high",
+      "escalation_rule": "manual_security_gate"
+    },
+    "ci_policy": {
+      "owner": "tools",
+      "resource_class": "small",
+      "determinism_posture": "deterministic",
+      "proof_role": "ci_contract",
+      "risk_class": "high",
+      "escalation_rule": "require_release_gate_disposition"
+    },
+    "slow_proof": {
+      "owner": "runtime",
+      "resource_class": "high",
+      "determinism_posture": "evidence_bound",
+      "proof_role": "slow_proof",
+      "risk_class": "high",
+      "escalation_rule": "manual_slow_proof_gate"
+    },
+    "release_gate": {
+      "owner": "tools",
+      "resource_class": "high",
+      "determinism_posture": "evidence_bound",
+      "proof_role": "release_gate",
+      "risk_class": "high",
+      "escalation_rule": "require_release_gate_disposition"
+    },
+    "shared_rust": {
+      "owner": "shared",
+      "resource_class": "medium",
+      "determinism_posture": "deterministic",
+      "proof_role": "regression",
+      "risk_class": "medium",
+      "escalation_rule": "delegate_or_escalate"
+    }
+  },
   "lanes": [
     {
       "id": "prompt_template_contracts",
       "lane_class": "cli_workflow",
+      "default_surface": "tooling",
+      "owner": "csdlc",
+      "proof_role": "prompt_template_contract",
+      "requirement_ids": [
+        "prompt_template_contracts"
+      ],
+      "path_selectors": [
+        "docs/templates/prompts/**",
+        "adl/src/bin/adl_prompt_template.rs",
+        "adl/src/bin/adl_validate_structured_prompt.rs",
+        "adl/src/csdlc_prompt_editor/**",
+        "adl/src/csdlc_prompt_editor.rs"
+      ],
       "path_hints": [
         "docs/templates/prompts/**",
         "adl/src/bin/adl_prompt_template.rs",
@@ -18,6 +105,19 @@
     {
       "id": "pvf_contracts",
       "lane_class": "cli_workflow",
+      "default_surface": "tooling",
+      "owner": "tools",
+      "proof_role": "pvf_contract",
+      "requirement_ids": [
+        "pvf_contracts"
+      ],
+      "path_selectors": [
+        "adl/tools/run_pvf_validation_lane.sh",
+        "adl/tools/validate_pvf_manifest.py",
+        "adl/tools/test_run_pvf_validation_lane.sh",
+        "adl/tools/test_pvf_ci_release_policy.sh",
+        "adl/tools/run_pvf_ci_release_policy_fixture.sh"
+      ],
       "path_hints": [
         "adl/tools/run_pvf_validation_lane.sh",
         "adl/tools/validate_pvf_manifest.py",
@@ -32,6 +132,16 @@
     {
       "id": "ci_path_policy_contracts",
       "lane_class": "cli_workflow",
+      "default_surface": "ci_policy",
+      "owner": "tools",
+      "requirement_ids": [
+        "ci_path_policy_contracts"
+      ],
+      "path_selectors": [
+        "adl/tools/ci_path_policy.sh",
+        "adl/tools/test_ci_path_policy.sh",
+        ".github/workflows/**"
+      ],
       "path_hints": [
         "adl/tools/ci_path_policy.sh",
         "adl/tools/test_ci_path_policy.sh",
@@ -44,6 +154,16 @@
     {
       "id": "coverage_impact_contracts",
       "lane_class": "cli_workflow",
+      "default_surface": "tooling",
+      "owner": "tools",
+      "proof_role": "coverage_contract",
+      "requirement_ids": [
+        "coverage_impact_contracts"
+      ],
+      "path_selectors": [
+        "adl/tools/check_coverage_impact.sh",
+        "adl/tools/test_check_coverage_impact.sh"
+      ],
       "path_hints": [
         "adl/tools/check_coverage_impact.sh",
         "adl/tools/test_check_coverage_impact.sh"
@@ -55,6 +175,20 @@
     {
       "id": "csdlc_owner_lane",
       "lane_class": "cli_workflow",
+      "default_surface": "tooling",
+      "owner": "csdlc",
+      "proof_role": "owner_lane",
+      "requirement_ids": [
+        "csdlc_owner_lane"
+      ],
+      "path_selectors": [
+        "adl/src/cli/pr_cmd.rs",
+        "adl/src/cli/pr_cmd/**",
+        "adl/src/cli/pr_cmd_cards.rs",
+        "adl/src/cli/pr_cmd_cards/**",
+        "adl/tools/pr.sh",
+        "adl/tools/run_owner_validation_lane.sh"
+      ],
       "path_hints": [
         "adl/src/cli/pr_cmd.rs",
         "adl/src/cli/pr_cmd/**",
@@ -70,6 +204,16 @@
     {
       "id": "runtime_owner_lane",
       "lane_class": "cli_workflow",
+      "default_surface": "runtime",
+      "owner": "runtime",
+      "proof_role": "owner_lane",
+      "requirement_ids": [
+        "runtime_owner_lane"
+      ],
+      "path_selectors": [
+        "adl/src/bin/adl_runtime.rs",
+        "adl/tools/test_adl_runtime_compatibility.sh"
+      ],
       "path_hints": [
         "adl/src/bin/adl_runtime.rs",
         "adl/tools/test_adl_runtime_compatibility.sh"
@@ -81,6 +225,17 @@
     {
       "id": "review_owner_lane",
       "lane_class": "cli_workflow",
+      "default_surface": "tooling",
+      "owner": "review",
+      "proof_role": "owner_lane",
+      "requirement_ids": [
+        "review_owner_lane"
+      ],
+      "path_selectors": [
+        "adl/src/bin/adl_review.rs",
+        "adl/src/review*.rs",
+        "adl/tools/test_adl_review_compatibility.sh"
+      ],
       "path_hints": [
         "adl/src/bin/adl_review.rs",
         "adl/src/review*.rs",
@@ -93,6 +248,15 @@
     {
       "id": "docs_diff_check",
       "lane_class": "docs",
+      "default_surface": "docs",
+      "owner": "docs",
+      "requirement_ids": [
+        "docs_diff_check"
+      ],
+      "path_selectors": [
+        "docs/**",
+        "*.md"
+      ],
       "path_hints": [
         "docs/**",
         "*.md"
@@ -102,6 +266,57 @@
       "reason": "docs_only_surface_requires_diff_hygiene"
     }
   ],
+  "special_surfaces": {
+    "release_gate_review": {
+      "id": "release_gate_review",
+      "lane_class": "release_gate",
+      "default_surface": "release_gate",
+      "owner": "tools",
+      "path_selectors": [
+        ".github/workflows/**",
+        "docs/milestones/**/release/**",
+        "docs/milestones/**/RELEASE_PLAN*.md",
+        "docs/milestones/**/MILESTONE_CHECKLIST*.md"
+      ],
+      "path_hints": [
+        ".github/workflows/**",
+        "docs/milestones/**/release/**",
+        "docs/milestones/**/RELEASE_PLAN*.md",
+        "docs/milestones/**/MILESTONE_CHECKLIST*.md"
+      ],
+      "command": "record release-gate disposition; do not treat focused PR validation as release proof",
+      "run_command": "",
+      "reason": "changed_surface_requires_release_or_ci_policy_review",
+      "requirement_ids": [
+        "release_gate_disposition_required"
+      ],
+      "broad_lane_reason": "release and CI-policy surfaces remain distinct from ordinary PR proof"
+    },
+    "rust_pr_fast": {
+      "id": "rust_pr_fast",
+      "lane_class": "fast_unit",
+      "escalated_lane_class": "release_gate",
+      "default_surface": "shared_rust",
+      "owner": "shared",
+      "path_selectors": [
+        "adl/build.rs",
+        "adl/src/**",
+        "adl/tests/**"
+      ],
+      "path_hints": [
+        "adl/build.rs",
+        "adl/src/**",
+        "adl/tests/**"
+      ],
+      "command": "bash adl/tools/run_pr_fast_test_lane.sh",
+      "run_command": "bash adl/tools/run_pr_fast_test_lane.sh",
+      "reason": "delegate_rust_changed_surface_to_pr_fast_lane_selector",
+      "requirement_ids": [
+        "rust_changed_surface"
+      ],
+      "broad_lane_reason": "shared Rust changes escalate when PR-fast cannot prove a bounded slice"
+    }
+  },
   "release_gate_hints": [
     ".github/workflows/**",
     "docs/milestones/**/release/**",
