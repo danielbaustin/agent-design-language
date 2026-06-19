@@ -4,7 +4,7 @@
 
 - Feature Name: AEE, Memory/ObsMem, And ACP Bridge Accounting
 - Milestone Target: `v0.91.6`
-- Status: planned_with_aee_routing_state_explicit
+- Status: planned_with_aee_and_obsmem_routing_state_explicit
 - Owner: ADL maintainers
 - Doc Role: primary
 - Feature Types: architecture, policy
@@ -55,7 +55,7 @@ consumes it.
 | Surface | Current `v0.91.6` owner | What counts as complete in this ledger | Current ledger state |
 | --- | --- | --- | --- |
 | AEE completion and readiness | `#4037` | AEE is classified as complete, blocked, or explicitly routed with proof limits and `v0.92` status | routed with named `v0.92` proof owners |
-| Memory/ObsMem handoff | `#4038` | Memory/ObsMem boundary is distinct, evidence-backed, and privacy-constrained | planned child issue |
+| Memory/ObsMem handoff | `#4038` | Memory/ObsMem boundary is distinct, evidence-backed, and privacy-constrained | routed with explicit handoff boundary and `v0.92` consumption limits |
 | Memory Palace long-context bridge | `#4039` | Long-context solution path is explicit with proof or explicitly accepted residual routing | planned child issue |
 | ACP/cognitive profile scope and privacy boundary | `#4040` | ACP and cognitive-profile boundaries stay distinct from provider/capability/identity surfaces and preserve privacy/security rules | planned child issue |
 | WP-10 feature closeout matrix | `#4041` | All child surfaces have terminal status and the final closeout packet preserves residual truth | planned closeout issue |
@@ -135,6 +135,70 @@ Current non-claims:
 - distributed execution, queue/wake/handoff, or trace/replay proof is already
   done;
 - later milestones may treat AEE as settled without further evidence.
+
+## Memory / ObsMem Handoff Status
+
+Current truthful classification:
+
+- `routed_with_explicit_handoff_boundary_and_memory_non_claims`
+
+The Memory/ObsMem boundary is real enough to route `v0.92` consumption, but
+this issue does not prove a completed memory runtime or Memory Palace
+implementation.
+
+Evidence consumed for this status:
+
+- `docs/architecture/adr/0034-c-sdlc-evidence-convergence-signed-trace-and-obsmem-handoff.md`
+- `docs/adr/0007-obsmem-external-boundary.md`
+- `docs/milestones/v0.92/V092_ACTIVATION_BRIDGE_LEDGER_v0.92.md`
+- `docs/milestones/v0.91.6/review/security/PUBLIC_RECORD_MEMORY_PROFILE_SECURITY_REVIEW_4022.md`
+- this `v0.91.6` bridge ledger
+
+What is already evidence-backed enough to consume:
+
+| Handoff surface | Current evidence-backed truth | Why it is not full memory completion |
+| --- | --- | --- |
+| ObsMem architectural boundary | ObsMem remains a distinct boundary and external subsystem contract, not an unbounded in-runtime memory blur | Contract existence is not full memory-runtime proof |
+| Durable evidence handoff rule | C-SDLC evidence convergence and signed-trace-backed durable records are the expected feed into ObsMem-style memory inputs | Durable evidence handoff does not prove every downstream memory behavior |
+| Activation routing | `v0.92` already requires the handoff to stay distinct from memory grounding, working set, context cache, and Memory Palace planning | Routing keeps the distinction visible but leaves implementation/proof work open |
+| Privacy/publication floor | WP-07 `#4022` keeps memory/profile publication and privacy as explicit open security boundaries | Security-floor consumption is not publication-safe completion |
+
+Current handoff boundary:
+
+| Surface | Current handoff rule | Non-claim preserved here |
+| --- | --- | --- |
+| Tracked evidence and signed trace | Durable tracked evidence is the allowed feed surface into ObsMem-style memory inputs | Local-only lore or untracked session state is not valid durable memory authority |
+| ObsMem handoff | ObsMem is a distinct ingestion/query boundary for evidence-derived memory surfaces | ObsMem is not the whole Memory Palace solution |
+| Memory grounding | `v0.92` birthday work may consume handoff evidence for grounding only through redaction-safe references | Grounding is not implied complete in `v0.91.6` |
+| Working set | Must remain distinct from ObsMem handoff and palace topology | This issue does not prove working-set runtime behavior |
+| Context cache | Must remain distinct from ObsMem handoff and palace topology | This issue does not prove context-cache runtime behavior |
+| Memory Palace | Planned long-context topology remains its own future bridge/implementation lane | This issue does not prove Memory Palace completion |
+
+Current privacy and security constraints:
+
+- Memory/ObsMem handoff must consume tracked evidence rather than local-only
+  memory lore.
+- Private memory, cognitive-profile, or identity-adjacent material is not
+  publication-safe merely because a bridge or planning doc exists.
+- The handoff boundary must remain explicit enough that `v0.92` can distinguish
+  memory grounding, working set, context cache, and Memory Palace planning.
+
+## v0.92 Memory / ObsMem Consumption Rule
+
+`v0.92` may consume this issue as proof that:
+
+- Memory/ObsMem handoff is a named, distinct bridge surface;
+- the allowed durable input posture is tracked evidence plus explicit handoff
+  boundaries;
+- activation must keep ObsMem handoff, memory grounding, working set, context
+  cache, and Memory Palace planning separate.
+
+`v0.92` may not consume this issue as proof that:
+
+- memory grounding is fully implemented;
+- working set or context cache runtime behavior is complete;
+- Memory Palace is complete;
+- memory/profile publication or privacy closure is already finished.
 
 ## Dependency And Proof Expectations
 
