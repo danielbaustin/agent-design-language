@@ -4,7 +4,7 @@
 
 - Feature Name: ACIP, A2A, And Provider Communications
 - Milestone Target: `v0.91.6`
-- Status: in_review
+- Status: complete
 - Owner: ADL maintainers
 - Doc Role: primary
 - Feature Types: architecture, policy, schema
@@ -565,9 +565,7 @@ or routed before activation.
 
 ## WP-06 Protocol Decision Closeout Package
 
-This section assembles the WP-06 closeout package for review and umbrella
-closeout. It is the proposed completion surface for `#3971`, not a claim that
-the umbrella is already closed.
+This section records the final WP-06 closeout package for umbrella `#3971`.
 
 The completed child surfaces for this mini-sprint are:
 
@@ -639,11 +637,11 @@ threads plus their issue-local review/output records:
 WP-06 consumes those child records rather than inventing a second umbrella-only
 validation transcript.
 
-The current `#4018` proof surface for this closeout step is:
+The final `#4018` proof surface used to complete this closeout was:
 
 - issue thread: `https://github.com/danielbaustin/agent-design-language/issues/4018`
-- review transcript in progress: `.adl/v0.91.6/tasks/issue-4018__v0-91-6-wp-06-acip-c-05-complete-protocol-decision-closeout-proof/srp.md`
-- output/validation transcript in progress: `.adl/v0.91.6/tasks/issue-4018__v0-91-6-wp-06-acip-c-05-complete-protocol-decision-closeout-proof/sor.md`
+- review transcript: `.adl/v0.91.6/tasks/issue-4018__v0-91-6-wp-06-acip-c-05-complete-protocol-decision-closeout-proof/srp.md`
+- output/validation transcript: `.adl/v0.91.6/tasks/issue-4018__v0-91-6-wp-06-acip-c-05-complete-protocol-decision-closeout-proof/sor.md`
 
 ## Residuals And Owners
 
@@ -659,8 +657,8 @@ The remaining protocol residuals after WP-06 are:
 
 ## `v0.92` Consumption Gate
 
-Once `#3971` closeout lands, `v0.92` may consume WP-06 as a complete
-communication-semantics and boundary package.
+`v0.92` may consume WP-06 as a complete communication-semantics and boundary
+package.
 
 `v0.92` must not consume WP-06 as proof that:
 
