@@ -129,14 +129,16 @@ fn helper_attach_commands_cover_disabled_success_failure_and_fallback_paths() {
     write_executable(
         &tools_dir.join("attach_pr_janitor.sh"),
         &format!(
-            "#!/usr/bin/env bash\nset -euo pipefail\nprintf '%s\\n' \"$*\" >> '{}'\n",
+            "#!/usr/bin/env bash\nset -euo pipefail\nprintf '%s\\n' \"$*\" >> '{}'\nprintf 'ctx ADL_GITHUB_CLIENT=%s GH_TOKEN_PRESENT=%s\\n' \"${{ADL_GITHUB_CLIENT:-missing}}\" \"${{GH_TOKEN:+present}}\" >> '{}'\n",
+            janitor_success.display(),
             janitor_success.display()
         ),
     );
     write_executable(
         &tools_dir.join("attach_post_merge_closeout.sh"),
         &format!(
-            "#!/usr/bin/env bash\nset -euo pipefail\nprintf '%s\\n' \"$*\" >> '{}'\n",
+            "#!/usr/bin/env bash\nset -euo pipefail\nprintf '%s\\n' \"$*\" >> '{}'\nprintf 'ctx ADL_GITHUB_CLIENT=%s GH_TOKEN_PRESENT=%s\\n' \"${{ADL_GITHUB_CLIENT:-missing}}\" \"${{GH_TOKEN:+present}}\" >> '{}'\n",
+            closeout_success.display(),
             closeout_success.display()
         ),
     );
@@ -150,8 +152,12 @@ fn helper_attach_commands_cover_disabled_success_failure_and_fallback_paths() {
     let old_janitor_cmd = std::env::var("ADL_PR_JANITOR_CMD").ok();
     let old_closeout_disable = std::env::var("ADL_POST_MERGE_CLOSEOUT_DISABLE").ok();
     let old_closeout_cmd = std::env::var("ADL_POST_MERGE_CLOSEOUT_CMD").ok();
+    let old_github_client = std::env::var("ADL_GITHUB_CLIENT").ok();
+    let old_gh_token = std::env::var("GH_TOKEN").ok();
 
     unsafe {
+        std::env::set_var("ADL_GITHUB_CLIENT", "octocrab");
+        std::env::set_var("GH_TOKEN", "gh-token-from-parent");
         std::env::set_var("ADL_PR_JANITOR_DISABLE", "1");
         std::env::remove_var("ADL_PR_JANITOR_CMD");
     }
@@ -274,9 +280,82 @@ fn helper_attach_commands_cover_disabled_success_failure_and_fallback_paths() {
     let janitor_calls = fs::read_to_string(&janitor_success).expect("janitor success log");
     assert!(janitor_calls.contains("--expected-pr-state draft"));
     assert!(janitor_calls.contains("--expected-pr-state ready"));
-    assert!(fs::read_to_string(&closeout_success)
-        .expect("closeout success log")
-        .contains("--pr-url https://github.com/owner/repo/pull/1159"));
+    assert!(janitor_calls.contains("ctx ADL_GITHUB_CLIENT=octocrab GH_TOKEN_PRESENT=present"));
+    let closeout_calls = fs::read_to_string(&closeout_success).expect("closeout success log");
+    assert!(closeout_calls.contains("--pr-url https://github.com/owner/repo/pull/1159"));
+    assert!(closeout_calls.contains("ctx ADL_GITHUB_CLIENT=octocrab GH_TOKEN_PRESENT=present"));
+
+    restore_env("ADL_GITHUB_CLIENT", old_github_client);
+    restore_env("GH_TOKEN", old_gh_token);
+}
+
+#[test]
+fn helper_attach_failures_redact_token_like_output() {
+    let _guard = env_lock();
+    let policy_env = clear_github_policy_env();
+    let temp = unique_temp_dir("adl-github-helper-redaction");
+    let failing = temp.join("failing-helper.sh");
+    write_executable(
+            &failing,
+            "#!/usr/bin/env bash\nset -euo pipefail\necho 'stdout ghp_stdout_secret {\"token\":\"ghp_json_secret\"}'\necho 'stderr token=ghp_stderr_secret github_pat_secret \"github_pat_quoted_secret\"' >&2\nexit 9\n",
+        );
+
+    let old_janitor_disable = std::env::var("ADL_PR_JANITOR_DISABLE").ok();
+    let old_janitor_cmd = std::env::var("ADL_PR_JANITOR_CMD").ok();
+    let old_closeout_disable = std::env::var("ADL_POST_MERGE_CLOSEOUT_DISABLE").ok();
+    let old_closeout_cmd = std::env::var("ADL_POST_MERGE_CLOSEOUT_CMD").ok();
+    let old_gh_token = std::env::var("GH_TOKEN").ok();
+
+    unsafe {
+        std::env::set_var("GH_TOKEN", "ghp_parent_secret");
+        std::env::set_var("ADL_PR_JANITOR_CMD", &failing);
+        std::env::set_var("ADL_PR_JANITOR_DISABLE", "0");
+    }
+    let err = attach_pr_janitor(
+        temp.as_path(),
+        "owner/repo",
+        1153,
+        "codex/1153-branch",
+        "https://github.com/owner/repo/pull/1159",
+        "draft",
+    )
+    .expect_err("failing janitor should bubble");
+    let err = err.to_string();
+    assert!(err.contains("<redacted>"));
+    assert!(!err.contains("ghp_stdout_secret"));
+    assert!(!err.contains("ghp_stderr_secret"));
+    assert!(!err.contains("ghp_json_secret"));
+    assert!(!err.contains("github_pat_secret"));
+    assert!(!err.contains("github_pat_quoted_secret"));
+    assert!(!err.contains("ghp_parent_secret"));
+
+    unsafe {
+        std::env::set_var("ADL_POST_MERGE_CLOSEOUT_CMD", &failing);
+        std::env::set_var("ADL_POST_MERGE_CLOSEOUT_DISABLE", "0");
+    }
+    let err = attach_post_merge_closeout(
+        temp.as_path(),
+        "owner/repo",
+        1153,
+        "codex/1153-branch",
+        "https://github.com/owner/repo/pull/1159",
+    )
+    .expect_err("failing closeout should bubble");
+    let err = err.to_string();
+    assert!(err.contains("<redacted>"));
+    assert!(!err.contains("ghp_stdout_secret"));
+    assert!(!err.contains("ghp_stderr_secret"));
+    assert!(!err.contains("ghp_json_secret"));
+    assert!(!err.contains("github_pat_secret"));
+    assert!(!err.contains("github_pat_quoted_secret"));
+    assert!(!err.contains("ghp_parent_secret"));
+
+    restore_env("ADL_PR_JANITOR_DISABLE", old_janitor_disable);
+    restore_env("ADL_PR_JANITOR_CMD", old_janitor_cmd);
+    restore_env("ADL_POST_MERGE_CLOSEOUT_DISABLE", old_closeout_disable);
+    restore_env("ADL_POST_MERGE_CLOSEOUT_CMD", old_closeout_cmd);
+    restore_env("GH_TOKEN", old_gh_token);
+    restore_github_policy_env(policy_env);
 }
 
 #[test]

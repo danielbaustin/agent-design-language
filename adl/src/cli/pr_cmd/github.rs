@@ -5,8 +5,8 @@ use crate::cli::pr_cmd::github_client::GithubClientMode;
 use crate::cli::pr_cmd::github_client::{
     body_contains_closing_linkage, issue_labels_from_csv, issue_labels_from_csv_in_order,
     issue_metadata_drift, linked_issue_numbers_from_lines, linked_issue_numbers_include,
-    plan_issue_metadata_parity, pr_matches_main_version_wave, AdlGithubClient, GithubClientBackend,
-    IssueMetadataSnapshot, PullRequestMetadataSnapshot,
+    plan_issue_metadata_parity, pr_matches_main_version_wave, redact_for_diagnostics,
+    AdlGithubClient, GithubClientBackend, IssueMetadataSnapshot, PullRequestMetadataSnapshot,
 };
 use crate::cli::pr_cmd_args::IssueStateFilter;
 use crate::cli::pr_cmd_prompt::infer_workflow_queue;
@@ -889,7 +889,8 @@ pub(super) fn attach_pr_janitor(
         .ok()
         .filter(|value| !value.trim().is_empty())
         .unwrap_or_else(|| helper_command_path(repo_root, "adl/tools/attach_pr_janitor.sh"));
-    let output = Command::new(&command_path)
+    let mut command = helper_command_with_github_context(&command_path);
+    let output = command
         .arg("--repo-root")
         .arg(repo_root)
         .arg("--repo")
@@ -905,8 +906,8 @@ pub(super) fn attach_pr_janitor(
         .output()
         .with_context(|| format!("finish: failed to spawn PR janitor command '{command_path}'"))?;
     if !output.status.success() {
-        let stderr = String::from_utf8_lossy(&output.stderr);
-        let stdout = String::from_utf8_lossy(&output.stdout);
+        let stderr = redact_for_diagnostics(&String::from_utf8_lossy(&output.stderr));
+        let stdout = redact_for_diagnostics(&String::from_utf8_lossy(&output.stdout));
         bail!(
             "finish: PR janitor auto-attach failed for issue #{} and PR '{}': {}{}",
             issue,
@@ -952,7 +953,8 @@ pub(super) fn attach_post_merge_closeout(
         );
         return Ok(());
     };
-    let output = Command::new(&command_path)
+    let mut command = helper_command_with_github_context(&command_path);
+    let output = command
         .arg("--repo-root")
         .arg(repo_root)
         .arg("--repo")
@@ -968,8 +970,8 @@ pub(super) fn attach_post_merge_closeout(
             format!("finish: failed to spawn post-merge closeout command '{command_path}'")
         })?;
     if !output.status.success() {
-        let stderr = String::from_utf8_lossy(&output.stderr);
-        let stdout = String::from_utf8_lossy(&output.stdout);
+        let stderr = redact_for_diagnostics(&String::from_utf8_lossy(&output.stderr));
+        let stdout = redact_for_diagnostics(&String::from_utf8_lossy(&output.stdout));
         bail!(
             "finish: post-merge closeout auto-attach failed for issue #{} and PR '{}': {}{}",
             issue,
@@ -983,6 +985,30 @@ pub(super) fn attach_post_merge_closeout(
         );
     }
     Ok(())
+}
+
+const GITHUB_CONTEXT_ENVS: &[&str] = &[
+    "ADL_GITHUB_CLIENT",
+    "ADL_GITHUB_DISABLE_GH_FALLBACK",
+    "ADL_GITHUB_OCTOCRAB_BASE_URI",
+    "ADL_GITHUB_OCTOCRAB_MAX_ATTEMPTS",
+    "GITHUB_TOKEN",
+    "GH_TOKEN",
+    "ADL_GITHUB_TOKEN_FILE",
+    "ADL_GITHUB_TOKEN_KEYCHAIN_SERVICE",
+    "ADL_GITHUB_TOKEN_KEYCHAIN_ACCOUNT",
+];
+
+fn helper_command_with_github_context(command_path: &str) -> Command {
+    let mut command = Command::new(command_path);
+    for key in GITHUB_CONTEXT_ENVS {
+        if let Some(value) = std::env::var_os(key) {
+            command.env(key, value);
+        } else {
+            command.env_remove(key);
+        }
+    }
+    command
 }
 
 fn helper_command_path(repo_root: &Path, relative: &str) -> String {
