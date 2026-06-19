@@ -872,11 +872,30 @@ fn parse_repair_issue_body_args_accepts_body_and_force_flags() {
 }
 
 #[test]
-fn parse_repair_issue_body_args_requires_body_source() {
-    let err = parse_repair_issue_body_args(&["3779".to_string()]).expect_err("missing body");
+fn parse_repair_issue_body_args_accepts_metadata_only_repairs() {
+    let parsed = parse_repair_issue_body_args(&[
+        "3779".to_string(),
+        "--title".to_string(),
+        "[v0.91.6][tools] Retitle only".to_string(),
+        "--labels".to_string(),
+        "area:tools,type:task".to_string(),
+    ])
+    .expect("metadata-only repair args");
+    assert_eq!(
+        parsed.title_arg.as_deref(),
+        Some("[v0.91.6][tools] Retitle only")
+    );
+    assert_eq!(parsed.labels.as_deref(), Some("area:tools,type:task"));
+    assert!(parsed.body.is_none());
+    assert!(parsed.body_file.is_none());
+}
+
+#[test]
+fn parse_repair_issue_body_args_requires_some_repair_input() {
+    let err = parse_repair_issue_body_args(&["3779".to_string()]).expect_err("missing input");
     assert!(err
         .to_string()
-        .contains("repair-issue-body: --body or --body-file is required"));
+        .contains("repair-issue-body: pass at least one of --body, --body-file, --title, --labels, --slug, or --version"));
 
     let err = parse_repair_issue_body_args(&[
         "3779".to_string(),
@@ -962,9 +981,75 @@ fn real_pr_repair_issue_body_updates_github_source_prompt_and_bundle() {
 }
 
 #[test]
-fn real_pr_repair_issue_body_blocks_duplicate_identity_before_github_edit() {
+fn real_pr_repair_issue_body_repairs_title_and_labels_without_body_mutation() {
     let _guard = env_lock();
-    let repo = unique_temp_dir("adl-pr-repair-duplicate-identity");
+    let repo = unique_temp_dir("adl-pr-repair-issue-metadata");
+    init_git_repo(&repo);
+    copy_bootstrap_support_files(&repo);
+
+    let fixture = repo.join(".adl/test-fixtures/gh");
+    fs::create_dir_all(fixture.parent().expect("fixture parent")).expect("fixture dir");
+    let gh_log = repo.join("gh.log");
+    let issue_body_log = repo.join("issue_body.log");
+    write_executable(
+        &fixture,
+        &format!(
+            "#!/usr/bin/env bash\nset -euo pipefail\nprintf '%s\\n' \"$*\" >> '{}'\nif [[ \"$1 $2\" == \"issue view\" ]]; then\n  if printf '%s\\n' \"$*\" | grep -q -- '--json title'; then\n    printf '[v0.91.5][tools] Repair body\\n'\n    exit 0\n  fi\n  if printf '%s\\n' \"$*\" | grep -q -- '--json labels'; then\n    printf 'track:backlog\\ntype:docs\\narea:docs\\nversion:v0.91.5\\n'\n    exit 0\n  fi\n  if printf '%s\\n' \"$*\" | grep -q -- '--json body'; then\n    cat <<'EOF'\n{}\nEOF\n    exit 0\n  fi\nfi\nif [[ \"$1 $2\" == \"issue edit\" ]]; then\n  i=1\n  while [[ $i -le $# ]]; do\n    arg=\"${{@:$i:1}}\"\n    if [[ \"$arg\" == \"--body\" ]]; then\n      next=$((i+1))\n      printf '%s' \"${{@:$next:1}}\" > '{}'\n      break\n    fi\n    i=$((i+1))\n  done\n  exit 0\nfi\nexit 1\n",
+            gh_log.display(),
+            authored_repair_body(),
+            issue_body_log.display()
+        ),
+    );
+    let _fixture_guard = GithubCliFixtureGuard::set(&fixture);
+
+    let prev_dir = env::current_dir().expect("cwd");
+    env::set_current_dir(&repo).expect("chdir");
+
+    let result = real_pr(&[
+        "repair-issue-body".to_string(),
+        "1303".to_string(),
+        "--slug".to_string(),
+        "repair-body".to_string(),
+        "--title".to_string(),
+        "[v0.91.6][tools] Repair metadata".to_string(),
+        "--labels".to_string(),
+        "track:roadmap,type:task,area:tools".to_string(),
+        "--version".to_string(),
+        "v0.91.6".to_string(),
+    ]);
+
+    env::set_current_dir(prev_dir).expect("restore cwd");
+    result.expect("repair issue metadata");
+
+    let gh_calls = fs::read_to_string(&gh_log).expect("gh log");
+    assert!(gh_calls.contains("issue view 1303"));
+    assert!(gh_calls.contains("--title [v0.91.6][tools] Repair metadata"));
+    assert!(gh_calls.contains("--add-label track:roadmap,type:task,area:tools,version:v0.91.6"));
+    assert!(
+        !gh_calls.contains("--body "),
+        "metadata-only repair should not mutate the live GitHub issue body"
+    );
+    assert!(
+        fs::read_to_string(&issue_body_log)
+            .unwrap_or_default()
+            .is_empty(),
+        "metadata-only repair should not emit a body edit payload"
+    );
+
+    let source = repo.join(".adl/v0.91.6/bodies/issue-1303-repair-body.md");
+    let prompt = fs::read_to_string(&source).expect("read source prompt");
+    assert!(prompt.contains("title: \"[v0.91.6][tools] Repair metadata\""));
+    assert!(prompt.contains("  - \"track:roadmap\""));
+    assert!(prompt.contains("  - \"type:task\""));
+    assert!(prompt.contains("  - \"area:tools\""));
+    assert!(prompt.contains("  - \"version:v0.91.6\""));
+    assert!(prompt.contains("## Required Outcome"));
+}
+
+#[test]
+fn real_pr_repair_issue_body_blocks_metadata_only_overwrite_of_authored_prompt_without_force() {
+    let _guard = env_lock();
+    let repo = unique_temp_dir("adl-pr-repair-metadata-overwrite-blocked");
     init_git_repo(&repo);
     copy_bootstrap_support_files(&repo);
 
@@ -974,38 +1059,145 @@ fn real_pr_repair_issue_body_blocks_duplicate_identity_before_github_edit() {
     write_executable(
         &fixture,
         &format!(
-            "#!/usr/bin/env bash\nset -euo pipefail\nprintf '%s\\n' \"$*\" >> '{}'\nif [[ \"$1 $2\" == \"issue view\" ]]; then\n  if printf '%s\\n' \"$*\" | grep -q -- '--json title'; then\n    printf '[v0.91.5][tools] Repair body\\n'\n    exit 0\n  fi\n  if printf '%s\\n' \"$*\" | grep -q -- '--json labels'; then\n    printf 'track:backlog\\ntype:docs\\narea:docs\\nversion:v0.91.5\\n'\n    exit 0\n  fi\nfi\nif [[ \"$1 $2\" == \"issue edit\" ]]; then\n  exit 0\nfi\nexit 1\n",
-            gh_log.display()
+            "#!/usr/bin/env bash\nset -euo pipefail\nprintf '%s\\n' \"$*\" >> '{}'\nif [[ \"$1 $2\" == \"issue view\" ]]; then\n  if printf '%s\\n' \"$*\" | grep -q -- '--json title'; then\n    printf '[v0.91.5][tools] Repair body\\n'\n    exit 0\n  fi\n  if printf '%s\\n' \"$*\" | grep -q -- '--json labels'; then\n    printf 'track:backlog\\ntype:docs\\narea:docs\\nversion:v0.91.5\\n'\n    exit 0\n  fi\n  if printf '%s\\n' \"$*\" | grep -q -- '--json body'; then\n    cat <<'EOF'\n{}\nEOF\n    exit 0\n  fi\nfi\nif [[ \"$1 $2\" == \"issue edit\" ]]; then\n  exit 0\nfi\nexit 1\n",
+            gh_log.display(),
+            authored_repair_body()
         ),
     );
     let _fixture_guard = GithubCliFixtureGuard::set(&fixture);
 
-    fs::create_dir_all(repo.join(".adl/v0.91.5/tasks/issue-1302__old-slug")).expect("old bundle");
-    let body_path = repo.join("repair-body.md");
-    fs::write(&body_path, authored_repair_body()).expect("write body");
+    let source = repo.join(".adl/v0.91.5/bodies/issue-1305-repair-body.md");
+    fs::create_dir_all(source.parent().expect("source parent")).expect("source dir");
+    fs::write(&source, authored_repair_body()).expect("write authored source");
+
     let prev_dir = env::current_dir().expect("cwd");
     env::set_current_dir(&repo).expect("chdir");
 
     let err = real_pr(&[
         "repair-issue-body".to_string(),
-        "1302".to_string(),
+        "1305".to_string(),
         "--slug".to_string(),
-        "new-slug".to_string(),
-        "--body-file".to_string(),
-        body_path.display().to_string(),
+        "repair-body".to_string(),
+        "--title".to_string(),
+        "[v0.91.6][tools] Repair metadata".to_string(),
+        "--labels".to_string(),
+        "track:roadmap,type:task,area:tools".to_string(),
         "--version".to_string(),
         "v0.91.5".to_string(),
     ])
-    .expect_err("duplicate identity should block repair");
+    .expect_err("authored prompt overwrite should require force");
 
     env::set_current_dir(prev_dir).expect("restore cwd");
     assert!(err
         .to_string()
-        .contains("duplicate local issue identities detected"));
-    let gh_calls = fs::read_to_string(&gh_log).expect("gh log");
+        .contains("refusing to overwrite authored source prompt without --force"));
+    let gh_calls = fs::read_to_string(&gh_log).unwrap_or_default();
     assert!(
         !gh_calls.contains("issue edit"),
-        "duplicate guard should run before GitHub mutation"
+        "authored prompt overwrite guard should block before GitHub mutation"
+    );
+}
+
+#[test]
+fn real_pr_repair_issue_body_blocks_slug_change_for_existing_local_identity() {
+    let _guard = env_lock();
+    let repo = unique_temp_dir("adl-pr-repair-slug-change-blocked");
+    init_git_repo(&repo);
+    copy_bootstrap_support_files(&repo);
+
+    let fixture = repo.join(".adl/test-fixtures/gh");
+    fs::create_dir_all(fixture.parent().expect("fixture parent")).expect("fixture dir");
+    let gh_log = repo.join("gh.log");
+    write_executable(
+        &fixture,
+        &format!(
+            "#!/usr/bin/env bash\nset -euo pipefail\nprintf '%s\\n' \"$*\" >> '{}'\nif [[ \"$1 $2\" == \"issue view\" ]]; then\n  if printf '%s\\n' \"$*\" | grep -q -- '--json title'; then\n    printf '[v0.91.5][tools] Repair body\\n'\n    exit 0\n  fi\n  if printf '%s\\n' \"$*\" | grep -q -- '--json labels'; then\n    printf 'track:backlog\\ntype:docs\\narea:docs\\nversion:v0.91.5\\n'\n    exit 0\n  fi\n  if printf '%s\\n' \"$*\" | grep -q -- '--json body'; then\n    cat <<'EOF'\n{}\nEOF\n    exit 0\n  fi\nfi\nif [[ \"$1 $2\" == \"issue edit\" ]]; then\n  exit 0\nfi\nexit 1\n",
+            gh_log.display(),
+            authored_repair_body()
+        ),
+    );
+    let _fixture_guard = GithubCliFixtureGuard::set(&fixture);
+
+    fs::create_dir_all(repo.join(".adl/v0.91.5/tasks/issue-1304__old-slug")).expect("old bundle");
+    let source_path = repo.join(".adl/v0.91.5/bodies/issue-1304-old-slug.md");
+    fs::create_dir_all(source_path.parent().expect("source parent")).expect("source dir");
+    fs::write(&source_path, "placeholder").expect("write source placeholder");
+    let prev_dir = env::current_dir().expect("cwd");
+    env::set_current_dir(&repo).expect("chdir");
+
+    let err = real_pr(&[
+        "repair-issue-body".to_string(),
+        "1304".to_string(),
+        "--slug".to_string(),
+        "new-slug".to_string(),
+        "--title".to_string(),
+        "[v0.91.5][tools] Repair body".to_string(),
+    ])
+    .expect_err("slug change should block repair");
+
+    env::set_current_dir(prev_dir).expect("restore cwd");
+    assert!(err
+        .to_string()
+        .contains("slug/local identity change is not supported"));
+    assert!(err
+        .to_string()
+        .contains("current canonical local identity is v0.91.5:old-slug"));
+    let gh_calls = fs::read_to_string(&gh_log).unwrap_or_default();
+    assert!(
+        !gh_calls.contains("issue edit"),
+        "slug-change guard should block before GitHub mutation"
+    );
+}
+
+#[test]
+fn real_pr_repair_issue_body_blocks_version_change_for_existing_local_identity() {
+    let _guard = env_lock();
+    let repo = unique_temp_dir("adl-pr-repair-version-change-blocked");
+    init_git_repo(&repo);
+    copy_bootstrap_support_files(&repo);
+
+    let fixture = repo.join(".adl/test-fixtures/gh");
+    fs::create_dir_all(fixture.parent().expect("fixture parent")).expect("fixture dir");
+    let gh_log = repo.join("gh.log");
+    write_executable(
+        &fixture,
+        &format!(
+            "#!/usr/bin/env bash\nset -euo pipefail\nprintf '%s\\n' \"$*\" >> '{}'\nif [[ \"$1 $2\" == \"issue view\" ]]; then\n  if printf '%s\\n' \"$*\" | grep -q -- '--json title'; then\n    printf '[v0.91.5][tools] Repair body\\n'\n    exit 0\n  fi\n  if printf '%s\\n' \"$*\" | grep -q -- '--json labels'; then\n    printf 'track:backlog\\ntype:docs\\narea:docs\\nversion:v0.91.5\\n'\n    exit 0\n  fi\n  if printf '%s\\n' \"$*\" | grep -q -- '--json body'; then\n    cat <<'EOF'\n{}\nEOF\n    exit 0\n  fi\nfi\nif [[ \"$1 $2\" == \"issue edit\" ]]; then\n  exit 0\nfi\nexit 1\n",
+            gh_log.display(),
+            authored_repair_body()
+        ),
+    );
+    let _fixture_guard = GithubCliFixtureGuard::set(&fixture);
+
+    fs::create_dir_all(repo.join(".adl/v0.91.5/tasks/issue-1306__repair-body")).expect("bundle");
+    let source_path = repo.join(".adl/v0.91.5/bodies/issue-1306-repair-body.md");
+    fs::create_dir_all(source_path.parent().expect("source parent")).expect("source dir");
+    fs::write(&source_path, "placeholder").expect("write source placeholder");
+
+    let prev_dir = env::current_dir().expect("cwd");
+    env::set_current_dir(&repo).expect("chdir");
+
+    let err = real_pr(&[
+        "repair-issue-body".to_string(),
+        "1306".to_string(),
+        "--version".to_string(),
+        "v0.91.6".to_string(),
+        "--title".to_string(),
+        "[v0.91.6][tools] Repair body".to_string(),
+    ])
+    .expect_err("version change should block");
+
+    env::set_current_dir(prev_dir).expect("restore cwd");
+    assert!(err
+        .to_string()
+        .contains("version/local identity change is not supported"));
+    assert!(err
+        .to_string()
+        .contains("current canonical local identity is v0.91.5:repair-body"));
+    let gh_calls = fs::read_to_string(&gh_log).unwrap_or_default();
+    assert!(
+        !gh_calls.contains("issue edit"),
+        "version-change guard should block before GitHub mutation"
     );
 }
 

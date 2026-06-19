@@ -346,8 +346,16 @@ pub(crate) fn parse_repair_issue_body_args(args: &[String]) -> Result<RepairIssu
     if parsed.body.is_some() && parsed.body_file.is_some() {
         bail!("repair-issue-body: pass only one of --body or --body-file");
     }
-    if parsed.body.is_none() && parsed.body_file.is_none() {
-        bail!("repair-issue-body: --body or --body-file is required");
+    if parsed.body.is_none()
+        && parsed.body_file.is_none()
+        && parsed.title_arg.is_none()
+        && parsed.labels.is_none()
+        && parsed.slug.is_none()
+        && parsed.version.is_none()
+    {
+        bail!(
+            "repair-issue-body: pass at least one of --body, --body-file, --title, --labels, --slug, or --version"
+        );
     }
 
     Ok(parsed)

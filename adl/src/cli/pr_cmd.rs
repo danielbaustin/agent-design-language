@@ -1,5 +1,6 @@
 use anyhow::{anyhow, bail, Context, Result};
 use serde::Serialize;
+use std::collections::BTreeSet;
 use std::fs;
 use std::path::{Path, PathBuf};
 #[cfg(test)]
@@ -436,6 +437,31 @@ fn real_pr_repair_issue_body(args: &[String]) -> Result<()> {
     let repo_root = repo_root()?;
     let repo = default_repo(&repo_root)?;
     let local_identity = resolve_local_issue_identity(&repo_root, parsed.issue)?;
+    if let Some((local_version, local_slug)) = local_identity.as_ref() {
+        if let Some(requested_slug) = parsed.slug.as_deref() {
+            let requested_slug = sanitize_slug(requested_slug);
+            if !requested_slug.is_empty() && requested_slug != *local_slug {
+                bail!(
+                    "repair-issue-body: slug/local identity change is not supported for issue #{}; current canonical local identity is {}:{} and requested slug is '{}'. Keep the canonical slug or migrate the local prompt/task bundle manually before rerunning.",
+                    parsed.issue,
+                    local_version,
+                    local_slug,
+                    requested_slug
+                );
+            }
+        }
+        if let Some(requested_version) = parsed.version.as_deref() {
+            if requested_version != local_version {
+                bail!(
+                    "repair-issue-body: version/local identity change is not supported for issue #{}; current canonical local identity is {}:{} and requested version is '{}'. Keep the canonical version or migrate the local prompt/task bundle manually before rerunning.",
+                    parsed.issue,
+                    local_version,
+                    local_slug,
+                    requested_version
+                );
+            }
+        }
+    }
     let raw_title = if let Some(title) = parsed.title_arg.clone() {
         title
     } else {
@@ -479,7 +505,16 @@ fn real_pr_repair_issue_body(args: &[String]) -> Result<()> {
         }
     });
     let normalized_labels = normalize_labels_csv(label_source, &version);
-    let body = resolve_issue_body(parsed.body.clone(), parsed.body_file.as_deref())?;
+    let body_requested = parsed.body.is_some() || parsed.body_file.is_some();
+    let body = if body_requested {
+        resolve_issue_body(parsed.body.clone(), parsed.body_file.as_deref())?
+    } else {
+        gh_issue_body(parsed.issue, &repo)?.ok_or_else(|| {
+            anyhow!(
+                "repair-issue-body: metadata-only repair requires the current GitHub issue body; pass --body or --body-file if the issue body is empty or cannot be fetched"
+            )
+        })?
+    };
     validate_issue_body_for_create(&repo_root, &title, &normalized_labels, &slug, &body)?;
 
     let issue_ref = IssueRef::new(parsed.issue, version.clone(), slug.clone())?;
@@ -497,7 +532,33 @@ fn real_pr_repair_issue_body(args: &[String]) -> Result<()> {
     }
 
     let issue_url = format!("https://github.com/{repo}/issues/{}", parsed.issue);
-    gh_issue_edit_body(&repo, parsed.issue, &body)?;
+    let current_title = gh_issue_title(parsed.issue, &repo)?.unwrap_or_default();
+    if title != current_title {
+        gh_issue_edit_title(&repo, parsed.issue, &title)?;
+    }
+    let current_labels = gh_issue_label_names(parsed.issue, &repo)?
+        .into_iter()
+        .map(|label| label.trim().to_string())
+        .filter(|label| !label.is_empty())
+        .collect::<BTreeSet<_>>();
+    let expected_labels = normalized_labels
+        .split(',')
+        .map(str::trim)
+        .filter(|label| !label.is_empty())
+        .map(str::to_string)
+        .collect::<BTreeSet<_>>();
+    if current_labels != expected_labels {
+        let ordered_labels = normalized_labels
+            .split(',')
+            .map(str::trim)
+            .filter(|label| !label.is_empty())
+            .map(str::to_string)
+            .collect::<Vec<_>>();
+        gh_issue_set_labels(&repo, parsed.issue, &ordered_labels)?;
+    }
+    if body_requested {
+        gh_issue_edit_body(&repo, parsed.issue, &body)?;
+    }
     let source_path = write_source_issue_prompt(
         &repo_root,
         &issue_ref,
@@ -521,7 +582,7 @@ fn real_pr_repair_issue_body(args: &[String]) -> Result<()> {
     let (stp_path, bundle_input, bundle_output, bundle_dir) =
         bootstrap_root_task_bundle(&repo_root, &issue_ref, &title, &source_path)?;
 
-    println!("• Repaired issue body/source prompt:");
+    println!("• Repaired issue metadata/source prompt:");
     println!("  ISSUE     #{}", parsed.issue);
     println!("  VERSION   {version}");
     println!("  SLUG      {slug}");
