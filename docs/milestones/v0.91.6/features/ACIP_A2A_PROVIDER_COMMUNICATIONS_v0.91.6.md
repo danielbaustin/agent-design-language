@@ -325,6 +325,74 @@ decision is intentionally a bounded “JSON-shaped baseline now, protobuf and
 WebSocket deferred, downstream ownership preserved” record rather than a final
 transport architecture claim.
 
+## External-Agent / Citizen / Guild Routing Posture
+
+`v0.91.6` records the routing posture for external agents, citizens, guilds,
+providers, and capability-market concepts without claiming the full social or
+economic runtime already exists.
+
+| Surface | `v0.91.6` posture | Must remain distinct from |
+| --- | --- | --- |
+| External agent | a potential participant class that may later originate or receive allowed ACIP/A2A routes | provider profile, model identity, or institutional authority |
+| Citizen | a higher-layer identity/governance record that may later constrain what routes are legitimate | provider substrate, capability record, or guild policy by itself |
+| Guild | an MVP-scope policy/grouping input that may influence route classes, capability discovery, and membership-based restrictions | transport substrate, provider identity, or direct runtime execution authority |
+| Capability market | a planned routing/economic concept above capability and role-provider policy | current `v0.91.6` runtime behavior or low-level provider transport |
+| Provider communication | infrastructure-level invocation and substrate response path | citizen identity, guild membership, or capability-market semantics |
+
+## MVP Versus Post-MVP Boundary
+
+The MVP boundary for this lane is:
+
+- guilds may be represented as an input to capability/routing policy;
+- citizens and institutions remain distinct higher-layer identity surfaces;
+- capability-market concepts may be planned and named;
+- provider communication remains low-level substrate infrastructure;
+- no claim is made that market negotiation, citizen governance, or guild-state
+  runtime exists yet.
+
+Post-MVP or later-lane work includes:
+
+- first-class capability-market runtime behavior;
+- citizen/institution/guild persistent state and governance flows;
+- external-agent onboarding or trust protocols;
+- economic selection or bidding logic above capability routing;
+- autonomous multi-party route negotiation.
+
+## Routing Layer Dependencies
+
+The routing dependency order after this issue is:
+
+1. capability semantics remain primary
+2. access and authority boundaries remain fail-closed
+3. guild or citizen policy may narrow the route class
+4. role-provider policy may narrow acceptable provider/model families
+5. provider substrate selection happens only after the higher-layer checks pass
+
+This preserves the non-collapse rule: neither provider infrastructure nor
+market-style planning should become a disguised identity or authority layer.
+
+## Capability-Market Non-Claims
+
+- `v0.91.6` does not implement a live capability market.
+- `v0.91.6` does not claim pricing, bidding, auction, or settlement semantics.
+- `v0.91.6` does not claim guild membership is already a runtime-enforced
+  first-class object.
+- `v0.91.6` does not claim external agents are trusted by default.
+
+## `v0.91.7` / `v0.92` Handoff Notes
+
+- `v0.91.7` may refine residual routing boundaries where protobuf, WebSocket,
+  or security ownership affects external-agent posture.
+- `v0.92` may consume this posture as a planning and activation-bridge input,
+  but must not treat capability-market or citizen/guild runtime as already
+  implemented.
+- Any future identity/capability selector work must preserve the separation
+  between:
+  - citizen/institution identity;
+  - guild or role policy;
+  - capability need;
+  - provider/model substrate choice.
+
 ## Dependencies
 
 - Security bridge and CAV feature doc.
