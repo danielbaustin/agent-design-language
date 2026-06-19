@@ -1046,6 +1046,20 @@ pub(super) fn select_finish_validation_plan(paths_csv: &str) -> Result<FinishVal
         }
         if paths
             .iter()
+            .any(|path| finish_path_needs_process_status_focused_validation(path))
+        {
+            mode = FinishValidationMode::LargerBinaryFocused;
+            push_finish_validation_command(
+                &mut commands,
+                "cargo fmt --manifest-path adl/Cargo.toml --all --check",
+            );
+            push_finish_validation_command(
+                &mut commands,
+                "cargo test --manifest-path adl/Cargo.toml process_status -- --nocapture",
+            );
+        }
+        if paths
+            .iter()
             .any(|path| finish_path_needs_scheduler_focused_validation(path))
         {
             mode = FinishValidationMode::LargerBinaryFocused;
@@ -1297,6 +1311,8 @@ fn finish_path_is_larger_binary_focused(path: &str) -> bool {
             | "adl/src/cli/pr_cmd.rs"
             | "adl/src/cli/pr_cmd_args.rs"
             | "adl/src/cli/mod.rs"
+            | "adl/src/cli/process_cmd.rs"
+            | "adl/src/cli/usage.rs"
             | "adl/src/cli/github_token.rs"
             | "adl/src/lib.rs"
             | "adl/src/scheduler.rs"
@@ -1304,6 +1320,8 @@ fn finish_path_is_larger_binary_focused(path: &str) -> bool {
             | "adl/src/provider_communication.rs"
             | "adl/src/resilience.rs"
             | "adl/src/cli/tests/pr_cmd_inline/basics.rs"
+            | "adl/tests/cli_smoke.rs"
+            | "adl/tests/cli_smoke/process_status.rs"
             | "adl/src/cli/tests/pr_cmd_inline/repo_helpers/metadata.rs"
             | "adl/src/cli/tests/pr_cmd_inline/support.rs"
             | "adl/src/csdlc_prompt_editor.rs"
@@ -1390,6 +1408,17 @@ fn finish_path_needs_owner_binary_rust_slice_validation(path: &str) -> bool {
         || trimmed.starts_with("adl/src/csdlc_prompt_editor/")
         || trimmed == "adl/src/cli/run_artifacts_types.rs"
         || trimmed.starts_with("adl/src/cli/run_artifacts_types/")
+}
+
+fn finish_path_needs_process_status_focused_validation(path: &str) -> bool {
+    let trimmed = path.trim().trim_matches('/');
+    matches!(
+        trimmed,
+        "adl/src/cli/process_cmd.rs"
+            | "adl/src/cli/usage.rs"
+            | "adl/tests/cli_smoke.rs"
+            | "adl/tests/cli_smoke/process_status.rs"
+    )
 }
 
 fn finish_path_needs_scheduler_focused_validation(path: &str) -> bool {
@@ -1633,6 +1662,19 @@ pub(super) fn run_finish_validation_rust(
                             "--manifest-path",
                             path_str(&manifest)?,
                             "scheduler_economics",
+                        ],
+                    )?;
+                }
+                "cargo test --manifest-path adl/Cargo.toml process_status -- --nocapture" => {
+                    run_finish_validation_status(
+                        "cargo",
+                        &[
+                            "test",
+                            "--manifest-path",
+                            path_str(&manifest)?,
+                            "process_status",
+                            "--",
+                            "--nocapture",
                         ],
                     )?;
                 }
