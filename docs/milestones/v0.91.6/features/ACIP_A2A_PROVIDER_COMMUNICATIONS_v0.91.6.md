@@ -265,6 +265,66 @@ These residuals route to the `v0.91.6` security bridge lane and, where
 transport or projection shape is still unsettled, to the later WP-06
 transport/closeout issues rather than being silently absorbed into `v0.92`.
 
+## JSON / Protobuf / WebSocket Decision Table
+
+`v0.91.6` records the first projection/transport posture and the required
+downstream ownership as follows:
+
+| Surface | `v0.91.6` decision | Status | Owner / next lane | Rationale |
+| --- | --- | --- | --- | --- |
+| Deterministic JSON projection | current documented baseline for message shape; final downstream consumption stays explicitly owned later | documented_baseline_only | `v0.91.7` residual clarification and `v0.92` projection/carrier work | JSON is the only projection this milestone can describe without inventing unproven transport, signing, fixture, or runtime claims, but downstream implementation/proof ownership remains tracked later. |
+| Protobuf wire format | not required for `v0.91.6`; explicit residual for later decision | deferred | `v0.91.7` ACIP/A2A protobuf residuals | Protobuf must not ship without schema-version, compatibility, and security ownership that this milestone does not yet prove. |
+| WebSocket transport | not part of the reviewed `v0.91.6` activation baseline | deferred | `v0.91.7` residual clarification and `v0.92` transport work | WebSocket remains transport productization until access, integrity, carrier, and projection rules are explicit enough to consume safely. |
+| Mock or internal carrier posture | may exist only as bounded internal/testing carriage; not a settled protocol decision here | documented_non_claim | `v0.92` carrier/fixture work | Internal carriage may exist, but `v0.91.6` does not claim that mock or loopback transport has already been accepted as the protocol route. |
+| Cross-boundary external-agent transport | blocked from implied approval in `v0.91.6` | rejected_for_now | later ACIP/A2A residual and security lanes | Activation cannot infer external-agent trust or transport closure from schema-only decisions. |
+
+## Projection Boundary Decision Notes
+
+- Deterministic JSON is the only projection this milestone can describe as the
+  current documented message-shape baseline.
+- That baseline does not take away later tracked ownership for projection,
+  carrier, fixture, or runtime proof work in `v0.91.7` and `v0.92`.
+- Protobuf is neither silently approved nor vaguely “future”; it is explicitly
+  routed to the tracked `v0.91.7` residual surface.
+- WebSocket is not rejected forever, but it is outside the `v0.91.6` reviewed
+  communication baseline and must remain a residual until transport and
+  security ownership are stronger.
+
+## Versioning And Compatibility Posture
+
+- Every projection must preserve the schema family, message kind, and version
+  identifier already required by the earlier schema-catalog decision.
+- JSON projection is required to remain deterministic for identical message
+  content and ordering assumptions.
+- Protobuf cannot be accepted until field numbering, compatibility posture, and
+  downgrade/upgrade rules are explicitly tracked.
+- WebSocket cannot be accepted until it is clear whether it carries JSON,
+  protobuf, or another bounded framed payload, and what integrity/access rules
+  apply at that boundary.
+
+## Validation And Projection Expectations
+
+- `v0.91.6` may claim schema/documentation truth for the current JSON-shaped
+  message baseline only.
+- No claim in this milestone should imply that protobuf serialization,
+  WebSocket carriage, or external-agent interop has already been runtime-proven.
+- No claim in this milestone should imply that later tracked `v0.91.7` or
+  `v0.92` ownership for projection/carrier proof has been silently collapsed
+  into `v0.91.6`.
+- Any later acceptance of protobuf or WebSocket must also consume the access
+  and authority boundaries from `#4015` and the security-bridge residuals
+  already routed above.
+
+## ADR Candidate Routing
+
+No transport ADR is accepted in `v0.91.6` from this issue alone.
+
+If a later tranche accepts protobuf, WebSocket, or a concrete carrier contract,
+that acceptance should be captured as an ADR candidate then. The current
+decision is intentionally a bounded “JSON-shaped baseline now, protobuf and
+WebSocket deferred, downstream ownership preserved” record rather than a final
+transport architecture claim.
+
 ## Dependencies
 
 - Security bridge and CAV feature doc.
