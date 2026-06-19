@@ -80,11 +80,11 @@ fn restore_github_policy_env(saved: Vec<(&'static str, Option<String>)>) {
     }
 }
 
-fn reserve_local_port() -> u16 {
-    let listener = std::net::TcpListener::bind("127.0.0.1:0").expect("bind local port");
-    let port = listener.local_addr().expect("local addr").port();
-    drop(listener);
-    port
+fn bind_test_http_server(context: &str) -> (String, Server) {
+    let listener = std::net::TcpListener::bind("127.0.0.1:0").expect(context);
+    let addr = listener.local_addr().expect("local addr");
+    let server = Server::from_listener(listener, None).expect("construct tiny_http server");
+    (format!("http://{addr}"), server)
 }
 
 fn json_response(body: impl Into<String>) -> Response<std::io::Cursor<Vec<u8>>> {
@@ -232,9 +232,7 @@ fn issue_comment_fixture(issue: u32, body: &str) -> String {
 fn spawn_octocrab_test_server(
     expected_requests: usize,
 ) -> (String, thread::JoinHandle<Vec<String>>) {
-    let port = reserve_local_port();
-    let bind_addr = format!("127.0.0.1:{port}");
-    let server = Server::http(&bind_addr).expect("bind octocrab test server");
+    let (base_uri, server) = bind_test_http_server("bind octocrab test server");
     let handle = thread::spawn(move || {
         let mut seen = Vec::new();
         for _ in 0..expected_requests {
@@ -411,13 +409,11 @@ fn spawn_octocrab_test_server(
         }
         seen
     });
-    (format!("http://{bind_addr}"), handle)
+    (base_uri, handle)
 }
 
 fn spawn_transient_octocrab_test_server() -> (String, thread::JoinHandle<Vec<String>>) {
-    let port = reserve_local_port();
-    let bind_addr = format!("127.0.0.1:{port}");
-    let server = Server::http(&bind_addr).expect("bind transient octocrab test server");
+    let (base_uri, server) = bind_test_http_server("bind transient octocrab test server");
     let handle = thread::spawn(move || {
         let mut seen = Vec::new();
         for attempt in 1..=2 {
@@ -446,7 +442,7 @@ fn spawn_transient_octocrab_test_server() -> (String, thread::JoinHandle<Vec<Str
         }
         seen
     });
-    (format!("http://{bind_addr}"), handle)
+    (base_uri, handle)
 }
 
 fn pr_validation_graphql_response(
@@ -502,9 +498,7 @@ fn pr_validation_graphql_response_page(
 }
 
 fn spawn_validation_status_paginated_server() -> (String, thread::JoinHandle<Vec<String>>) {
-    let port = reserve_local_port();
-    let bind_addr = format!("127.0.0.1:{port}");
-    let server = Server::http(&bind_addr).expect("bind validation status pagination server");
+    let (base_uri, server) = bind_test_http_server("bind validation status pagination server");
     let handle = thread::spawn(move || {
         let mut seen = Vec::new();
         for page in 1..=2 {
@@ -540,7 +534,7 @@ fn spawn_validation_status_paginated_server() -> (String, thread::JoinHandle<Vec
         }
         seen
     });
-    (format!("http://{bind_addr}"), handle)
+    (base_uri, handle)
 }
 
 fn spawn_validation_status_once_server(
@@ -548,9 +542,7 @@ fn spawn_validation_status_once_server(
     conclusion: Option<&'static str>,
     check_name: &'static str,
 ) -> (String, thread::JoinHandle<Vec<String>>) {
-    let port = reserve_local_port();
-    let bind_addr = format!("127.0.0.1:{port}");
-    let server = Server::http(&bind_addr).expect("bind validation status single server");
+    let (base_uri, server) = bind_test_http_server("bind validation status single server");
     let handle = thread::spawn(move || {
         let mut seen = Vec::new();
         let Some(mut request) = server
@@ -569,13 +561,11 @@ fn spawn_validation_status_once_server(
         )));
         seen
     });
-    (format!("http://{bind_addr}"), handle)
+    (base_uri, handle)
 }
 
 fn spawn_validation_status_transient_server() -> (String, thread::JoinHandle<Vec<String>>) {
-    let port = reserve_local_port();
-    let bind_addr = format!("127.0.0.1:{port}");
-    let server = Server::http(&bind_addr).expect("bind validation status server");
+    let (base_uri, server) = bind_test_http_server("bind validation status server");
     let handle = thread::spawn(move || {
         let mut seen = Vec::new();
         for attempt in 1..=2 {
@@ -605,7 +595,7 @@ fn spawn_validation_status_transient_server() -> (String, thread::JoinHandle<Vec
         }
         seen
     });
-    (format!("http://{bind_addr}"), handle)
+    (base_uri, handle)
 }
 
 mod helpers;

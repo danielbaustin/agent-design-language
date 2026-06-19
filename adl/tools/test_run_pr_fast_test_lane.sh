@@ -24,6 +24,16 @@ assert_has "$focused_runtime_output" "mode=focused"
 assert_has "$focused_runtime_output" "reason=bounded_rust_surface_runs_focused_nextest"
 assert_has "$focused_runtime_output" "filter_tokens=contract_schema"
 assert_has "$focused_runtime_output" "filter_expression=test(contract_schema)"
+bash "$SCRIPT" --changed-files "$focused_runtime" --print-plan --json >"$TMP/focused-runtime.json"
+python3 - <<'PY' "$TMP/focused-runtime.json"
+import json
+import sys
+
+plan = json.load(open(sys.argv[1]))
+assert plan["schema_version"] == "adl.pr_fast_lane_plan.v1"
+assert plan["mode"] == "focused"
+assert plan["filter_expression"] == "test(contract_schema)"
+PY
 
 focused_control_plane="$TMP/focused_control_plane.txt"
 printf 'M\tdocs/default_workflow.md\n' >"$focused_control_plane"
@@ -36,7 +46,7 @@ printf 'M\tadl/src/cli/pr_cmd_cards/cards.rs\n' >"$split_control_plane"
 split_control_plane_output="$(bash "$SCRIPT" --changed-files "$split_control_plane" --print-plan)"
 assert_has "$split_control_plane_output" "mode=focused"
 assert_has "$split_control_plane_output" "filter_tokens=pr_cmd"
-assert_has "$split_control_plane_output" "filter_expression=test(pr_cmd)"
+assert_has "$split_control_plane_output" "filter_expression=binary_id(adl::bin/adl) and test(/^cli::pr_cmd::/)"
 
 split_runtime="$TMP/split_runtime.txt"
 printf 'M\tadl/src/runtime_v2/cultivating_intelligence_parts/builder.rs\n' >"$split_runtime"
@@ -105,6 +115,19 @@ cli_family_output="$(bash "$SCRIPT" --changed-files "$cli_family" --print-plan)"
 assert_has "$cli_family_output" "mode=focused"
 assert_has "$cli_family_output" "filter_tokens=cli"
 assert_has "$cli_family_output" "filter_expression=test(cli)"
+
+tokio_bootstrap_wave="$TMP/tokio_bootstrap_wave.txt"
+cat >"$tokio_bootstrap_wave" <<'EOF'
+M	adl/src/cli/mod.rs
+M	adl/src/cli/pr_cmd/github.rs
+M	adl/src/cli/tokio_runtime.rs
+M	adl/src/cli/tooling_cmd/github_release.rs
+EOF
+tokio_bootstrap_wave_output="$(bash "$SCRIPT" --changed-files "$tokio_bootstrap_wave" --print-plan)"
+assert_has "$tokio_bootstrap_wave_output" "mode=focused"
+assert_has "$tokio_bootstrap_wave_output" "reason=bounded_rust_surface_runs_focused_nextest"
+assert_has "$tokio_bootstrap_wave_output" "filter_tokens=tokio_bootstrap,pr_cmd::github,github_release_"
+assert_has "$tokio_bootstrap_wave_output" "filter_expression=test(/^cli::pr_cmd::github::/) or test(/^cli::pr_cmd::github_client::/) or test(/^cli::tooling_cmd::github_release::/) or test(/^cli::pr_cmd::github::/) or test(/^cli::pr_cmd::github_client::/) or test(/^cli::tooling_cmd::github_release::/)"
 
 direct_tooling_binaries="$TMP/direct_tooling_binaries.txt"
 cat >"$direct_tooling_binaries" <<'EOF'
@@ -222,6 +245,59 @@ assert_has "$mixed_family_output" "mode=family"
 assert_has "$mixed_family_output" "reason=bounded_family_surface_runs_family_nextest"
 assert_has "$mixed_family_output" "filter_tokens=runtime_v2,cli"
 assert_has "$mixed_family_output" "filter_expression=test(runtime_v2) or test(cli)"
+
+manifest_plus_finish="$TMP/manifest_plus_finish.txt"
+cat >"$manifest_plus_finish" <<'EOF'
+M	adl/Cargo.toml
+M	adl/Cargo.lock
+M	adl/src/cli/pr_cmd/finish_support.rs
+M	adl/src/cli/tests/pr_cmd_inline/finish/arg_render.rs
+EOF
+manifest_plus_finish_output="$(bash "$SCRIPT" --changed-files "$manifest_plus_finish" --print-plan)"
+assert_has "$manifest_plus_finish_output" "mode=focused"
+assert_has "$manifest_plus_finish_output" "reason=bounded_rust_surface_runs_focused_nextest"
+assert_has "$manifest_plus_finish_output" "filter_tokens=manifest_support,pr_cmd_finish"
+assert_has "$manifest_plus_finish_output" "filter_expression=test(/^cli::pr_cmd::github::/) or test(/^cli::pr_cmd::github_client::/) or test(/^cli::tooling_cmd::github_release::/) or test(/^long_lived_agent::/) or binary_id(adl::bin/adl-pr-finish) and test(/^cli::pr_cmd::tests::finish::arg_render::/)"
+
+manifest_only_pair="$TMP/manifest_only_pair.txt"
+cat >"$manifest_only_pair" <<'EOF'
+M	adl/Cargo.toml
+M	adl/Cargo.lock
+EOF
+manifest_only_pair_output="$(bash "$SCRIPT" --changed-files "$manifest_only_pair" --print-plan)"
+assert_has "$manifest_only_pair_output" "mode=focused"
+assert_has "$manifest_only_pair_output" "reason=manifest_only_rust_wave_runs_focused_nextest"
+assert_has "$manifest_only_pair_output" "filter_tokens=pr_cmd::github,github_release_,long_lived_agent"
+assert_has "$manifest_only_pair_output" "filter_expression=test(/^cli::pr_cmd::github::/) or test(/^cli::pr_cmd::github_client::/) or test(/^cli::tooling_cmd::github_release::/) or test(/^long_lived_agent::/)"
+
+manifest_only_single="$TMP/manifest_only_single.txt"
+printf 'M\tadl/Cargo.toml\n' >"$manifest_only_single"
+manifest_only_single_output="$(bash "$SCRIPT" --changed-files "$manifest_only_single" --print-plan)"
+assert_has "$manifest_only_single_output" "mode=focused"
+assert_has "$manifest_only_single_output" "reason=manifest_only_rust_wave_runs_focused_nextest"
+assert_has "$manifest_only_single_output" "filter_tokens=pr_cmd::github,github_release_,long_lived_agent"
+
+finish_only="$TMP/finish_only.txt"
+cat >"$finish_only" <<'EOF'
+M	adl/src/cli/pr_cmd/finish_support.rs
+M	adl/src/cli/tests/pr_cmd_inline/finish/arg_render.rs
+EOF
+finish_only_output="$(bash "$SCRIPT" --changed-files "$finish_only" --print-plan)"
+assert_has "$finish_only_output" "mode=focused"
+assert_has "$finish_only_output" "reason=bounded_rust_surface_runs_focused_nextest"
+assert_has "$finish_only_output" "filter_tokens=pr_cmd_finish"
+assert_has "$finish_only_output" "filter_expression=binary_id(adl::bin/adl-pr-finish) and test(/^cli::pr_cmd::tests::finish::arg_render::/)"
+
+long_lived_agent_only="$TMP/long_lived_agent_only.txt"
+cat >"$long_lived_agent_only" <<'EOF'
+M	adl/src/long_lived_agent.rs
+M	adl/src/long_lived_agent/tests.rs
+EOF
+long_lived_agent_only_output="$(bash "$SCRIPT" --changed-files "$long_lived_agent_only" --print-plan)"
+assert_has "$long_lived_agent_only_output" "mode=focused"
+assert_has "$long_lived_agent_only_output" "reason=bounded_rust_surface_runs_focused_nextest"
+assert_has "$long_lived_agent_only_output" "filter_tokens=long_lived_agent"
+assert_has "$long_lived_agent_only_output" "filter_expression=test(/^long_lived_agent::/)"
 
 too_many_families="$TMP/too_many_families.txt"
 cat >"$too_many_families" <<'EOF'

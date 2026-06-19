@@ -23,6 +23,7 @@ mod run_artifacts_types;
 mod runtime_v2_cmd;
 #[cfg(test)]
 mod tests;
+mod tokio_runtime;
 mod tooling_cmd;
 mod usage;
 

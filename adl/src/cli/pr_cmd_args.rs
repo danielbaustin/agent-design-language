@@ -601,6 +601,7 @@ pub(crate) fn parse_finish_args(args: &[String]) -> Result<FinishArgs> {
             }
             "--merge" | "--auto-merge" => {
                 parsed.merge_mode = true;
+                parsed.ready = true;
                 i += 1;
             }
             "--idempotent" => {

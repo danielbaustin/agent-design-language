@@ -7,6 +7,7 @@ HEAD_SHA=""
 CHANGED_FILES_FILE=""
 GITHUB_OUTPUT_PATH=""
 PRINT_PLAN=false
+JSON_OUTPUT=false
 
 usage() {
   cat <<'USAGE'
@@ -20,6 +21,7 @@ Options:
                                "path" or "STATUS<TAB>path".
   --github-output <path>       Emit key=value outputs for GitHub Actions.
   --print-plan                 Print the computed plan and exit.
+  --json                       Emit the computed plan as JSON and exit.
   -h, --help                   Show this help.
 
 This script selects the ordinary PR-fast non-coverage Rust test lane.
@@ -52,6 +54,10 @@ while [ "$#" -gt 0 ]; do
       PRINT_PLAN=true
       shift
       ;;
+    --json)
+      JSON_OUTPUT=true
+      shift
+      ;;
     -h|--help)
       usage
       exit 0
@@ -67,7 +73,9 @@ done
 emit() {
   local key="$1"
   local value="$2"
-  printf '%s=%s\n' "$key" "$value"
+  if [ "$JSON_OUTPUT" != true ]; then
+    printf '%s=%s\n' "$key" "$value"
+  fi
   if [ -n "$GITHUB_OUTPUT_PATH" ]; then
     printf '%s=%s\n' "$key" "$value" >> "$GITHUB_OUTPUT_PATH"
   fi
@@ -98,7 +106,7 @@ changed_rows() {
 is_relevant_fast_lane_surface() {
   local path="$1"
   case "$path" in
-    adl/src/*.rs|adl/tests/*.rs|adl/build.rs|\
+    adl/src/*.rs|adl/tests/*.rs|adl/build.rs|adl/Cargo.toml|adl/Cargo.lock|\
     docs/default_workflow.md|\
     docs/milestones/v0.90/milestone_compression/FINISH_VALIDATION_PROFILES_v0.90.md)
       return 0
@@ -160,6 +168,10 @@ is_broad_rust_surface() {
 filter_token_for_path() {
   local path="$1"
   case "$path" in
+    adl/Cargo.toml|adl/Cargo.lock)
+      printf 'manifest_support'
+      return 0
+      ;;
     adl/src/lib.rs)
       return 1
       ;;
@@ -201,8 +213,20 @@ filter_token_for_path() {
       basename "$path" .rs
       return 0
       ;;
-    adl/src/cli/mod.rs|adl/src/cli/tests.rs)
+    adl/src/cli/mod.rs)
+      if [ "$saw_tokio_bootstrap_related_surface" = true ]; then
+        printf 'tokio_bootstrap'
+      else
+        printf 'cli'
+      fi
+      return 0
+      ;;
+    adl/src/cli/tests.rs)
       printf 'cli'
+      return 0
+      ;;
+    adl/src/cli/tokio_runtime.rs)
+      printf 'tokio_bootstrap'
       return 0
       ;;
     adl/src/csdlc_prompt_editor.rs|adl/src/csdlc_prompt_editor/*.rs)
@@ -221,6 +245,18 @@ filter_token_for_path() {
       printf 'artifact_builders'
       return 0
       ;;
+    adl/src/cli/pr_cmd/github.rs|adl/src/cli/pr_cmd/github/*.rs)
+      printf 'pr_cmd::github'
+      return 0
+      ;;
+    adl/src/cli/pr_cmd/finish_support.rs|adl/src/cli/tests/pr_cmd_inline/finish/*)
+      printf 'pr_cmd_finish'
+      return 0
+      ;;
+    adl/src/long_lived_agent.rs|adl/src/long_lived_agent/tests.rs)
+      printf 'long_lived_agent'
+      return 0
+      ;;
     adl/src/cli/tests/run_state/*.rs)
       printf 'run_state'
       return 0
@@ -235,6 +271,10 @@ filter_token_for_path() {
       ;;
     adl/src/cli/pr_cmd_cards.rs|adl/src/cli/pr_cmd_cards/*.rs)
       printf 'pr_cmd'
+      return 0
+      ;;
+    adl/src/cli/tooling_cmd/github_release.rs)
+      printf 'github_release_'
       return 0
       ;;
     adl/src/cli/tests/tooling_cmd*|adl/src/cli/tooling_cmd*|adl/src/cli/tests/tooling_cmd/*)
@@ -310,14 +350,53 @@ family_token_for_path() {
   return 1
 }
 
+is_manifest_only_rust_wave() {
+  local saw_manifest=false
+  local saw_lock=false
+  local path=""
+  while IFS= read -r path; do
+    [ -n "$path" ] || continue
+    case "$path" in
+      adl/Cargo.toml)
+        saw_manifest=true
+        ;;
+      adl/Cargo.lock)
+        saw_lock=true
+        ;;
+      *)
+        return 1
+        ;;
+    esac
+  done <<EOF
+$(changed_rows \
+  | normalize_changed_rows \
+  | awk -F '\t' 'NF >= 2 { print $2 }')
+EOF
+
+  [ "$saw_manifest" = true ] || [ "$saw_lock" = true ]
+}
+
 build_filter_expression() {
   python3 - "$@" <<'PY'
 import sys
 
-tokens = [token for token in sys.argv[1:] if token]
-if not tokens:
+TOKEN_MAP = {
+    "tokio_bootstrap": 'test(/^cli::pr_cmd::github::/) or test(/^cli::pr_cmd::github_client::/) or test(/^cli::tooling_cmd::github_release::/)',
+    "pr_cmd": 'binary_id(adl::bin/adl) and test(/^cli::pr_cmd::/)',
+    "pr_cmd_finish": 'binary_id(adl::bin/adl-pr-finish) and test(/^cli::pr_cmd::tests::finish::arg_render::/)',
+    "pr_cmd::github": 'test(/^cli::pr_cmd::github::/) or test(/^cli::pr_cmd::github_client::/)',
+    "github_release_": 'test(/^cli::tooling_cmd::github_release::/)',
+    "long_lived_agent": 'test(/^long_lived_agent::/)',
+    "manifest_support": 'test(/^cli::pr_cmd::github::/) or test(/^cli::pr_cmd::github_client::/) or test(/^cli::tooling_cmd::github_release::/) or test(/^long_lived_agent::/)',
+}
+
+clauses = []
+for token in (token for token in sys.argv[1:] if token):
+    clauses.append(TOKEN_MAP.get(token, f"test({token})"))
+
+if not clauses:
     raise SystemExit(1)
-print(" or ".join(f"test({token})" for token in tokens))
+print(" or ".join(clauses))
 PY
 }
 
@@ -354,6 +433,7 @@ all_paths_have_precise_token=true
 all_paths_have_family_token=true
 classification_locked=false
 saw_slow_proof_contract_surface=false
+saw_tokio_bootstrap_related_surface=false
 
 declare -a tokens=()
 declare -a family_tokens=()
@@ -367,6 +447,11 @@ while IFS= read -r path; do
     docs/milestones/v0.91.4/features/PVF_INITIAL_LANE_INVENTORY_v0.91.4.md|\
     docs/milestones/v0.91.4/features/PVF_CI_RELEASE_POLICY_v0.91.4.md)
       saw_slow_proof_contract_surface=true
+      ;;
+    adl/src/cli/tokio_runtime.rs|\
+    adl/src/cli/pr_cmd/github.rs|\
+    adl/src/cli/tooling_cmd/github_release.rs)
+      saw_tokio_bootstrap_related_surface=true
       ;;
   esac
 done <<EOF
@@ -419,6 +504,11 @@ EOF
 
 if [ "$classification_locked" = true ]; then
   :
+elif is_manifest_only_rust_wave; then
+  mode="focused"
+  reason="manifest_only_rust_wave_runs_focused_nextest"
+  filter_expression="$(build_filter_expression "pr_cmd::github" "github_release_" "long_lived_agent")"
+  filter_tokens="pr_cmd::github,github_release_,long_lived_agent"
 elif [ "$slow_proof_inventory_surface_count" -gt 0 ] && [ "$rust_surface_count" -eq "$slow_proof_inventory_surface_count" ]; then
   mode="contract_only"
   reason="slow_proof_inventory_change_covered_by_contract_check"
@@ -462,6 +552,46 @@ emit "structural_surface_count" "$structural_surface_count"
 emit "slow_proof_inventory_surface_count" "$slow_proof_inventory_surface_count"
 emit "filter_tokens" "$filter_tokens"
 emit "filter_expression" "$filter_expression"
+
+if [ "$JSON_OUTPUT" = true ]; then
+  python3 - <<'PY' \
+    "$mode" \
+    "$reason" \
+    "$rust_surface_count" \
+    "$structural_surface_count" \
+    "$slow_proof_inventory_surface_count" \
+    "$filter_tokens" \
+    "$filter_expression"
+import json
+import sys
+
+(
+    mode,
+    reason,
+    rust_surface_count,
+    structural_surface_count,
+    slow_proof_inventory_surface_count,
+    filter_tokens,
+    filter_expression,
+) = sys.argv[1:]
+
+print(json.dumps(
+    {
+        "schema_version": "adl.pr_fast_lane_plan.v1",
+        "mode": mode,
+        "reason": reason,
+        "rust_surface_count": int(rust_surface_count),
+        "structural_surface_count": int(structural_surface_count),
+        "slow_proof_inventory_surface_count": int(slow_proof_inventory_surface_count),
+        "filter_tokens": filter_tokens,
+        "filter_expression": filter_expression,
+    },
+    indent=2,
+    sort_keys=True,
+))
+PY
+  exit 0
+fi
 
 if [ "$PRINT_PLAN" = true ]; then
   exit 0

@@ -368,48 +368,13 @@ jobs:
           bash adl/tools/check_coverage_impact.sh \
             --base "${{ github.event.pull_request.base.sha }}" \
             --head "${{ github.event.pull_request.head.sha }}" \
-            --print-risk-filters > adl/coverage-impact-filters.txt
-          if test -s adl/coverage-impact-filters.txt; then
-            mapfile -t coverage_filters < adl/coverage-impact-filters.txt
-            run_cli_smoke_process_status=false
-            run_cli_smoke_basics=false
-            run_finish_bins=false
-            for filter in "${coverage_filters[@]}"; do
-              case "$filter" in
-                process_status)
-                  run_cli_smoke_process_status=true
-                  ;;
-                cli_basics)
-                  run_cli_smoke_basics=true
-                  ;;
-                finish)
-                  run_finish_bins=true
-                  ;;
-              esac
-            done
-            generic_filters=()
-            for filter in "${coverage_filters[@]}"; do
-              case "$filter" in
-                process_status|cli_basics|finish)
-                  ;;
-                *)
-                  generic_filters+=("$filter")
-                  ;;
-              esac
-            done
+            --print-risk-nextest-expression > adl/coverage-impact-filter-expression.txt
+          if test -s adl/coverage-impact-filter-expression.txt; then
             echo "needs_fast_summary=true" >> "$GITHUB_OUTPUT"
-            echo "filters=$(paste -sd' ' adl/coverage-impact-filters.txt)" >> "$GITHUB_OUTPUT"
-            echo "run_cli_smoke_process_status=$run_cli_smoke_process_status" >> "$GITHUB_OUTPUT"
-            echo "run_cli_smoke_basics=$run_cli_smoke_basics" >> "$GITHUB_OUTPUT"
-            echo "run_finish_bins=$run_finish_bins" >> "$GITHUB_OUTPUT"
-            echo "generic_filters=${generic_filters[*]}" >> "$GITHUB_OUTPUT"
+            echo "filter_expression=$(cat adl/coverage-impact-filter-expression.txt)" >> "$GITHUB_OUTPUT"
           else
             echo "needs_fast_summary=false" >> "$GITHUB_OUTPUT"
-            echo "filters=" >> "$GITHUB_OUTPUT"
-            echo "run_cli_smoke_process_status=false" >> "$GITHUB_OUTPUT"
-            echo "run_cli_smoke_basics=false" >> "$GITHUB_OUTPUT"
-            echo "run_finish_bins=false" >> "$GITHUB_OUTPUT"
-            echo "generic_filters=" >> "$GITHUB_OUTPUT"
+            echo "filter_expression=" >> "$GITHUB_OUTPUT"
           fi
         working-directory: .
 
@@ -479,61 +444,8 @@ jobs:
       - name: PR fast coverage summary (json)
         if: github.event_name == 'pull_request' && steps.path-policy.outputs.coverage_required == 'true' && steps.path-policy.outputs.full_coverage_required != 'true' && steps.coverage-impact.outputs.needs_fast_summary == 'true'
         run: |
-          summary_files=()
-          if [ "${{ steps.coverage-impact.outputs.run_cli_smoke_process_status }}" = "true" ]; then
-            CARGO_INCREMENTAL=0 cargo llvm-cov nextest --workspace --test cli_smoke process_status --no-report
-            cargo llvm-cov report --json --summary-only --output-path coverage-summary-process-status.json
-            summary_files+=(coverage-summary-process-status.json)
-          fi
-          if [ "${{ steps.coverage-impact.outputs.run_cli_smoke_basics }}" = "true" ]; then
-            CARGO_INCREMENTAL=0 cargo llvm-cov nextest --workspace --test cli_smoke basics --no-report
-            cargo llvm-cov report --json --summary-only --output-path coverage-summary-cli-basics.json
-            summary_files+=(coverage-summary-cli-basics.json)
-          fi
-          if [ "${{ steps.coverage-impact.outputs.run_finish_bins }}" = "true" ]; then
-            CARGO_INCREMENTAL=0 cargo llvm-cov nextest --workspace --bin adl-pr-finish finish --no-report
-            cargo llvm-cov report --json --summary-only --output-path coverage-summary-finish.json
-            summary_files+=(coverage-summary-finish.json)
-          fi
-          if [ -n "${{ steps.coverage-impact.outputs.generic_filters }}" ]; then
-            CARGO_INCREMENTAL=0 cargo llvm-cov nextest --workspace --status-level all --final-status-level slow --no-report -- ${{ steps.coverage-impact.outputs.generic_filters }}
-            cargo llvm-cov report --json --summary-only --output-path coverage-summary-generic.json
-            summary_files+=(coverage-summary-generic.json)
-          fi
-          if [ "${#summary_files[@]}" -eq 1 ]; then
-            cp "${summary_files[0]}" coverage-summary.json
-          else
-            jq -s '
-              {
-                cargo_llvm_cov: (.[0].cargo_llvm_cov),
-                type: (.[0].type),
-                version: (.[0].version),
-                data: [
-                  {
-                    files: (
-                      map(.data[]?.files // [])
-                      | add
-                      | map(
-                          .normalized_filename = (
-                            .filename
-                            | gsub("\\\\"; "/")
-                            | sub("^/home/runner/work/[^/]+/[^/]+/"; "")
-                            | sub("^/__w/[^/]+/[^/]+/"; "")
-                            | sub("^[A-Za-z]:/a/[^/]+/[^/]+/"; "")
-                            | gsub("/\\./"; "/")
-                            | gsub("/[^/]+/\\.\\./"; "/")
-                          )
-                        )
-                      | sort_by(.normalized_filename)
-                      | group_by(.normalized_filename)
-                      | map(max_by(.summary.lines.percent // 0) | del(.normalized_filename))
-                    ),
-                    totals: (.[0].data[0].totals)
-                  }
-                ]
-              }
-            ' "${summary_files[@]}" > coverage-summary.json
-          fi
+          CARGO_INCREMENTAL=0 cargo llvm-cov nextest --workspace --status-level all --final-status-level slow --no-report -E "${{ steps.coverage-impact.outputs.filter_expression }}"
+          cargo llvm-cov report --json --summary-only --output-path coverage-summary.json
 
       - name: Coverage-impact changed-source gate
         if: github.event_name == 'pull_request' && steps.path-policy.outputs.full_coverage_required == 'true'

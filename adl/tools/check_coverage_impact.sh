@@ -12,6 +12,7 @@ LARGE_FILE_LINES="${COVERAGE_IMPACT_LARGE_FILE_LINES:-200}"
 LARGE_FILE_DELTA="${COVERAGE_IMPACT_LARGE_FILE_DELTA:-80}"
 REQUIRE_SUMMARY_FOR_RISK=false
 PRINT_RISK_FILTERS=false
+PRINT_RISK_NEXTEST_EXPRESSION=false
 
 usage() {
   cat <<'USAGE'
@@ -29,6 +30,8 @@ Options:
   --require-summary-for-risk      Fail when risky changed Rust files lack summary evidence.
   --print-risk-filters            Print one candidate test filter per changed Rust file that
                                   may need summary evidence and exit.
+  --print-risk-nextest-expression Print one combined nextest filter expression for risky
+                                  changed Rust files and exit.
   -h, --help                      Show this help.
 
 This is a fast authoring-time guard. It does not replace the full GitHub
@@ -69,6 +72,10 @@ while [ "$#" -gt 0 ]; do
       ;;
     --print-risk-filters)
       PRINT_RISK_FILTERS=true
+      shift
+      ;;
+    --print-risk-nextest-expression)
+      PRINT_RISK_NEXTEST_EXPRESSION=true
       shift
       ;;
     -h|--help)
@@ -122,12 +129,26 @@ changed_source_rows="$(
 )"
 
 if [ -z "$changed_source_rows" ]; then
-  if [ "$PRINT_RISK_FILTERS" = true ]; then
+  if [ "$PRINT_RISK_FILTERS" = true ] || [ "$PRINT_RISK_NEXTEST_EXPRESSION" = true ]; then
     exit 0
   fi
   echo "Coverage-impact preflight: no changed production adl/src Rust files."
   exit 0
 fi
+
+saw_tokio_bootstrap_related_surface=false
+while IFS=$'\t' read -r _status path; do
+  [ -n "$path" ] || continue
+  case "$path" in
+    adl/src/cli/tokio_runtime.rs|\
+    adl/src/cli/pr_cmd/github.rs|\
+    adl/src/cli/tooling_cmd/github_release.rs)
+      saw_tokio_bootstrap_related_surface=true
+      ;;
+  esac
+done <<EOF
+$changed_source_rows
+EOF
 
 line_count_for_path() {
   local path="$1"
@@ -163,9 +184,6 @@ candidate_filter_for_path() {
     adl/src/cli/process_cmd.rs)
       printf 'process_status'
       ;;
-    adl/src/cli/mod.rs|adl/src/cli/tests.rs|adl/src/cli/usage.rs)
-      printf 'cli_basics'
-      ;;
     adl/src/cli/pr_cmd/finish_support.rs)
       printf 'finish'
       ;;
@@ -175,8 +193,27 @@ candidate_filter_for_path() {
     adl/src/acc.rs|adl/src/acc/*.rs)
       printf 'acc'
       ;;
+    adl/src/cli/mod.rs)
+      if [ "$saw_tokio_bootstrap_related_surface" = true ]; then
+        printf 'tokio_bootstrap'
+      else
+        printf 'cli_basics'
+      fi
+      ;;
+    adl/src/cli/tests.rs|adl/src/cli/usage.rs)
+      printf 'cli_basics'
+      ;;
+    adl/src/cli/tokio_runtime.rs)
+      printf 'tokio_bootstrap'
+      ;;
+    adl/src/cli/pr_cmd/github.rs)
+      printf 'pr_cmd'
+      ;;
     adl/src/cli/pr_cmd*|adl/src/cli/tests/pr_cmd*|adl/src/cli/pr_cmd/*|adl/src/cli/pr_cmd_cards.rs|adl/src/cli/pr_cmd_cards/*.rs|docs/default_workflow.md)
       printf 'pr_cmd'
+      ;;
+    adl/src/cli/tooling_cmd/github_release.rs)
+      printf 'github_release_'
       ;;
     adl/src/runtime_v2/cultivating_intelligence.rs|adl/src/runtime_v2/cultivating_intelligence_parts/*.rs)
       printf 'cultivating_intelligence'
@@ -205,6 +242,56 @@ candidate_filter_for_path() {
   esac
 }
 
+nextest_expression_for_filter() {
+  local filter="$1"
+  case "$filter" in
+    process_status)
+      printf 'binary_id(adl::cli_smoke) and test(/^process_status::/)'
+      ;;
+    cli_basics)
+      printf 'binary_id(adl::cli_smoke) and test(/^basics::/)'
+      ;;
+    tokio_bootstrap)
+      printf 'test(/^cli::pr_cmd::github::/) or test(/^cli::pr_cmd::github_client::/) or test(/^cli::tooling_cmd::github_release::/)'
+      ;;
+    pr_cmd)
+      printf 'binary_id(adl::bin/adl) and test(/^cli::pr_cmd::/)'
+      ;;
+    pr_cmd::github)
+      printf 'test(/^cli::pr_cmd::github::/) or test(/^cli::pr_cmd::github_client::/)'
+      ;;
+    github_release_)
+      printf 'test(/^cli::tooling_cmd::github_release::/)'
+      ;;
+    finish)
+      printf 'binary_id(adl::bin/adl-pr-finish) and test(/^cli::pr_cmd::tests::finish::arg_render::/)'
+      ;;
+    tooling_cmd)
+      printf 'binary_id(adl::bin/adl) and test(/^cli::tooling_cmd::/)'
+      ;;
+    cli)
+      printf 'test(cli)'
+      ;;
+    *)
+      printf 'test(%s)' "$filter"
+      ;;
+  esac
+}
+
+combined_nextest_expression_from_filters() {
+  local token expr joined=""
+  while IFS= read -r token; do
+    [ -n "$token" ] || continue
+    expr="$(nextest_expression_for_filter "$token")"
+    if [ -n "$joined" ]; then
+      joined="${joined} or "
+    fi
+    joined="${joined}${expr}"
+  done
+  [ -n "$joined" ] || return 1
+  printf '%s' "$joined"
+}
+
 extra_guidance_for_path() {
   local path="$1"
   case "$path" in
@@ -217,9 +304,17 @@ EOF
   esac
 }
 
+file_is_tokio_bootstrap_companion_surface() {
+  local path="$1"
+  [ "$saw_tokio_bootstrap_related_surface" = true ] || return 1
+  [ "$path" = "adl/src/cli/mod.rs" ]
+}
+
 focused_summary_command_for_filter() {
   local filter="$1"
-  printf 'cd adl && CARGO_INCREMENTAL=0 cargo llvm-cov --workspace --all-features --json --summary-only --output-path target/coverage-impact-summary.json -- %s' "$filter"
+  local expression
+  expression="$(nextest_expression_for_filter "$filter")"
+  printf "cd adl && CARGO_INCREMENTAL=0 cargo llvm-cov nextest --workspace --status-level all --final-status-level slow --no-report -E '%s' && cargo llvm-cov report --json --summary-only --output-path target/coverage-impact-summary.json" "$expression"
 }
 
 rerun_preflight_command() {
@@ -281,6 +376,9 @@ path_has_companion_cli_dispatch_change() {
 risk_rows=""
 while IFS=$'\t' read -r status path; do
   [ -n "$path" ] || continue
+  if file_is_tokio_bootstrap_companion_surface "$path"; then
+    continue
+  fi
   lines="$(line_count_for_path "$path")"
   delta="$(changed_line_delta_for_path "$path")"
   reason=""
@@ -307,6 +405,9 @@ if [ -n "$SUMMARY" ] && [ -s "$SUMMARY" ]; then
   guidance=""
   while IFS=$'\t' read -r _status path; do
     [ -n "$path" ] || continue
+    if file_is_tokio_bootstrap_companion_surface "$path"; then
+      continue
+    fi
     row="$(jq -r --arg path "$path" '
       [
         .data[].files[]
@@ -336,7 +437,7 @@ if [ -n "$SUMMARY" ] && [ -s "$SUMMARY" ]; then
         end
     ' "$SUMMARY")"
     if [ -z "$row" ]; then
-      if file_is_structural_module_barrel "$path" || file_has_no_executable_surface "$path"; then
+      if file_is_structural_module_barrel "$path" || file_has_no_executable_surface "$path" || file_is_tokio_bootstrap_companion_surface "$path"; then
         continue
       fi
       missing="${missing}  - ${path} (no coverage row in ${SUMMARY})"$'\n'
@@ -381,13 +482,31 @@ if [ "$PRINT_RISK_FILTERS" = true ]; then
   printf '%s\n' "$changed_source_rows" \
     | while IFS=$'\t' read -r _status path; do
         [ -n "$path" ] || continue
-        if file_is_structural_module_barrel "$path" || file_has_no_executable_surface "$path"; then
+        if file_is_structural_module_barrel "$path" || file_has_no_executable_surface "$path" || file_is_tokio_bootstrap_companion_surface "$path"; then
           continue
         fi
         candidate_filter_for_path "$path"
         printf '\n'
       done \
     | awk 'NF && !seen[$0]++'
+  exit 0
+fi
+
+if [ "$PRINT_RISK_NEXTEST_EXPRESSION" = true ]; then
+  if ! printf '%s\n' "$changed_source_rows" \
+    | while IFS=$'\t' read -r _status path; do
+        [ -n "$path" ] || continue
+        if file_is_structural_module_barrel "$path" || file_has_no_executable_surface "$path" || file_is_tokio_bootstrap_companion_surface "$path"; then
+          continue
+        fi
+        candidate_filter_for_path "$path"
+        printf '\n'
+      done \
+    | awk 'NF && !seen[$0]++' \
+    | combined_nextest_expression_from_filters; then
+    exit 0
+  fi
+  printf '\n'
   exit 0
 fi
 

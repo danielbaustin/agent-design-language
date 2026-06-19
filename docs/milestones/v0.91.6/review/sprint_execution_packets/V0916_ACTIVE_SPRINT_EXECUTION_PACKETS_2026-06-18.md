@@ -139,11 +139,11 @@ Shared watcher policy for active sprint umbrellas:
 
 | Issue | Role | Status | Notes |
 |---|---|---|---|
-| `#4025` | `I-00` identity/capability/citizen/profile boundaries | pending | First serial input. |
-| `#4026` | `I-01` capability evidence consumption boundary | pending | Can run after I-00 if terms stay aligned. |
-| `#4027` | `I-02` identity continuity positive/negative cases | pending | Can run after I-00 if terms stay aligned. |
-| `#4028` | `I-03` selector bridge integration | pending | Consumes I-01, I-02, and WP-06 delegation outputs. |
-| `#4029` | `I-04` closeout proof | pending | Final serial closeout. |
+| `#4025` | `I-00` identity/capability/citizen/profile boundaries | merged | Completed via PR `#4194`; established the serial boundary baseline. |
+| `#4026` | `I-01` capability evidence consumption boundary | merged | Completed via PR `#4195`; capability evidence intake truth landed. |
+| `#4027` | `I-02` identity continuity positive/negative cases | merged | Completed via PR `#4197`; continuity guardrails and dependency links landed. |
+| `#4028` | `I-03` selector bridge integration | merged | Completed via PR `#4198`; capability-first selector bridge contract landed. |
+| `#4029` | `I-04` closeout proof | in_progress | Final serial closeout branch is active; this issue records the WP-08 terminal bridge truth. |
 
 ### Recommended Execution Order
 

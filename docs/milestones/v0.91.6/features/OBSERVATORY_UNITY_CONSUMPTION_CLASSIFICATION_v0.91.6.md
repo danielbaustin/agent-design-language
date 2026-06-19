@@ -4,7 +4,7 @@
 
 - Feature Name: Observatory And Unity Consumption Classification
 - Milestone Target: `v0.91.6`
-- Status: planned
+- Status: closeout_proof_authored_with_open_wp09_residuals
 - Owner: ADL maintainers
 - Doc Role: primary
 - Feature Types: policy, artifact
@@ -73,3 +73,39 @@ surface marked rehearsal or substrate cannot prove activation by itself.
   ingestion security, and working Unity closeout remain open dependencies until
   the WP-09 issue set lands its own reviewed proof, and identity-safe
   inhabitant display also remains dependent on open WP-08 issue `#3973`.
+
+## Current WP-09 Closeout Posture
+
+WP-09 closeout proof is now authored, but WP-09 is not closeout-clean.
+
+Current live issue truth on the closeout date:
+
+| Surface | Owner | Current state | Closeout implication |
+| --- | --- | --- | --- |
+| Unity Observatory baseline definition | `#4030` | open | Working-baseline truth is still issue-owned rather than terminally closed |
+| Launchable Unity Observatory baseline | `#4031` | open | Governed launch surface is not yet closed |
+| Observatory evidence data contract | `#4032` | open | Ingestion contract remains an active dependency |
+| Inhabitant-readiness surfaces | `#4033` | open | Inhabitant-facing display/input remains open |
+| Logging/OTel/security consumption proof | `#4034` | open | Security/OTel consumption closure remains open |
+| Working Unity Observatory closeout proof | `#4035` | open | This issue records the closeout posture and residual truth rather than forcing false completion |
+| WP-09 umbrella | `#3974` | open | The sprint must remain open until the child issue set lands reviewed closure truth |
+
+The authoritative closeout packet for this posture is:
+
+- `docs/milestones/v0.91.6/review/observatory/WP09_WORKING_UNITY_OBSERVATORY_CLOSEOUT_4035.md`
+
+## v0.92 Consumption Rule
+
+`v0.92` may consume this feature surface only as:
+
+- a classification and routing contract for Observatory/Unity proof posture;
+- a reference to bounded security-consumption inputs from WP-07;
+- a non-claim that WP-09 remains open until `#4030` through `#4035` reach
+  terminal reviewed truth.
+
+`v0.92` may not consume this feature surface as proof that:
+
+- the Unity Observatory is fully working and launch-ready;
+- inhabitant-facing display or input is security-cleared;
+- Observatory ingestion and logging/OTel consumption is fully closed;
+- WP-09 is ready for umbrella closure.

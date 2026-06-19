@@ -1203,6 +1203,14 @@ pub(super) fn select_finish_validation_plan(paths_csv: &str) -> Result<FinishVal
         {
             mode = FinishValidationMode::LargerBinaryFocused;
             commands.push("bash adl/tools/test_ci_path_policy.sh".to_string());
+            commands.push("bash adl/tools/test_run_pr_fast_test_lane.sh".to_string());
+        }
+        if paths
+            .iter()
+            .any(|path| finish_path_needs_validation_selector_focused_validation(path))
+        {
+            mode = FinishValidationMode::LargerBinaryFocused;
+            commands.push("bash adl/tools/test_select_validation_lanes.sh".to_string());
         }
         if paths
             .iter()
@@ -1451,6 +1459,12 @@ fn finish_path_is_larger_binary_focused(path: &str) -> bool {
             | "adl/tools/test_check_coverage_impact.sh"
             | "adl/tools/ci_path_policy.sh"
             | "adl/tools/test_ci_path_policy.sh"
+            | "adl/tools/run_pr_fast_test_lane.sh"
+            | "adl/tools/test_run_pr_fast_test_lane.sh"
+            | "adl/config/validation_lane_selector.v0.91.6.json"
+            | "adl/tools/select_validation_lanes.py"
+            | "adl/tools/select_validation_lanes.sh"
+            | "adl/tools/test_select_validation_lanes.sh"
             | "adl/tools/run_owner_validation_lane.sh"
             | "adl/tools/test_owner_validation_lane.sh"
             | "adl/tools/test_cli_wrapper_migration_contract.sh"
@@ -1650,6 +1664,19 @@ fn finish_path_needs_ci_policy_focused_validation(path: &str) -> bool {
         ".github/workflows/ci.yaml"
             | "adl/tools/ci_path_policy.sh"
             | "adl/tools/test_ci_path_policy.sh"
+            | "adl/tools/run_pr_fast_test_lane.sh"
+            | "adl/tools/test_run_pr_fast_test_lane.sh"
+    )
+}
+
+fn finish_path_needs_validation_selector_focused_validation(path: &str) -> bool {
+    let trimmed = path.trim().trim_matches('/');
+    matches!(
+        trimmed,
+        "adl/config/validation_lane_selector.v0.91.6.json"
+            | "adl/tools/select_validation_lanes.py"
+            | "adl/tools/select_validation_lanes.sh"
+            | "adl/tools/test_select_validation_lanes.sh"
     )
 }
 
@@ -2029,6 +2056,14 @@ pub(super) fn run_finish_validation_rust(
                 }
                 "bash adl/tools/test_ci_path_policy.sh" => {
                     let script = repo_root.join("adl/tools/test_ci_path_policy.sh");
+                    run_finish_validation_status("bash", &[path_str(&script)?])?;
+                }
+                "bash adl/tools/test_run_pr_fast_test_lane.sh" => {
+                    let script = repo_root.join("adl/tools/test_run_pr_fast_test_lane.sh");
+                    run_finish_validation_status("bash", &[path_str(&script)?])?;
+                }
+                "bash adl/tools/test_select_validation_lanes.sh" => {
+                    let script = repo_root.join("adl/tools/test_select_validation_lanes.sh");
                     run_finish_validation_status("bash", &[path_str(&script)?])?;
                 }
                 "bash adl/tools/test_pr_small_binary_delegation.sh" => {

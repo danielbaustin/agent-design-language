@@ -1,6 +1,7 @@
 //! Integration tests for long-lived agent execution and artifact invariants.
 use super::*;
 use std::sync::atomic::{AtomicU64, Ordering};
+use std::time::Instant;
 
 static TEMP_SEQ: AtomicU64 = AtomicU64::new(0);
 
@@ -268,6 +269,34 @@ fn run_max_cycles_no_sleep_writes_exactly_three_cycles_and_completed_status() {
     )
     .expect("parse manifest");
     assert_eq!(manifest["previous_cycle_id"], "cycle-000001");
+}
+
+#[test]
+fn run_with_interval_sleep_preserves_cycle_count_and_waits_between_cycles() {
+    let root = temp_dir("run-with-sleep");
+    let spec = write_spec(&root);
+    let started = Instant::now();
+
+    let status = run(
+        &spec,
+        RunOptions {
+            max_cycles: 2,
+            interval_secs: Some(1),
+            no_sleep: false,
+            recover_stale_lease: false,
+        },
+    )
+    .expect("run");
+
+    assert_eq!(status.state, AgentStatusState::Completed);
+    assert_eq!(status.completed_cycle_count, 2);
+    assert!(
+        started.elapsed() >= Duration::from_secs(1),
+        "expected Tokio-backed cadence wait between cycles"
+    );
+    let ledger =
+        fs::read_to_string(root.join("state/cycle_ledger.jsonl")).expect("read cycle ledger");
+    assert_eq!(ledger.lines().count(), 2);
 }
 
 #[test]

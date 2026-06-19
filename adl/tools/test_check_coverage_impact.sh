@@ -152,7 +152,7 @@ fi
 grep -F "Coverage-impact preflight needs coverage evidence" /tmp/coverage-impact-missing.out >/dev/null
 grep -F "new_large_surface" /tmp/coverage-impact-missing.out >/dev/null
 grep -F "candidate filter: new_large_surface" /tmp/coverage-impact-missing.out >/dev/null
-grep -F "generate focused summary: cd adl && CARGO_INCREMENTAL=0 cargo llvm-cov --workspace --all-features --json --summary-only --output-path target/coverage-impact-summary.json -- new_large_surface" /tmp/coverage-impact-missing.out >/dev/null
+grep -F "generate focused summary: cd adl && CARGO_INCREMENTAL=0 cargo llvm-cov nextest --workspace --status-level all --final-status-level slow --no-report -E 'test(new_large_surface)' && cargo llvm-cov report --json --summary-only --output-path target/coverage-impact-summary.json" /tmp/coverage-impact-missing.out >/dev/null
 grep -F "Then rerun: bash adl/tools/check_coverage_impact.sh --base origin/main --changed-files $changed --summary adl/target/coverage-impact-summary.json --require-summary-for-risk" /tmp/coverage-impact-missing.out >/dev/null
 
 if bash "$SCRIPT" --changed-files "$finish_helper_changed" --require-summary-for-risk >/tmp/coverage-impact-finish-helper-missing.out 2>&1; then
@@ -160,14 +160,14 @@ if bash "$SCRIPT" --changed-files "$finish_helper_changed" --require-summary-for
   exit 1
 fi
 grep -F "candidate filter: finish" /tmp/coverage-impact-finish-helper-missing.out >/dev/null
-grep -F "generate focused summary: cd adl && CARGO_INCREMENTAL=0 cargo llvm-cov --workspace --all-features --json --summary-only --output-path target/coverage-impact-summary.json -- finish" /tmp/coverage-impact-finish-helper-missing.out >/dev/null
+grep -F "generate focused summary: cd adl && CARGO_INCREMENTAL=0 cargo llvm-cov nextest --workspace --status-level all --final-status-level slow --no-report -E 'binary_id(adl::bin/adl-pr-finish) and test(/^cli::pr_cmd::tests::finish::arg_render::/)' && cargo llvm-cov report --json --summary-only --output-path target/coverage-impact-summary.json" /tmp/coverage-impact-finish-helper-missing.out >/dev/null
 
 if bash "$SCRIPT" --changed-files "$process_status_changed" --require-summary-for-risk >/tmp/coverage-impact-process-status-missing.out 2>&1; then
   echo "expected process status helper guidance to fail without summary" >&2
   exit 1
 fi
 grep -F "candidate filter: process_status" /tmp/coverage-impact-process-status-missing.out >/dev/null
-grep -F "generate focused summary: cd adl && CARGO_INCREMENTAL=0 cargo llvm-cov --workspace --all-features --json --summary-only --output-path target/coverage-impact-summary.json -- process_status" /tmp/coverage-impact-process-status-missing.out >/dev/null
+grep -F "generate focused summary: cd adl && CARGO_INCREMENTAL=0 cargo llvm-cov nextest --workspace --status-level all --final-status-level slow --no-report -E 'binary_id(adl::cli_smoke) and test(/^process_status::/)' && cargo llvm-cov report --json --summary-only --output-path target/coverage-impact-summary.json" /tmp/coverage-impact-process-status-missing.out >/dev/null
 
 if bash "$SCRIPT" --changed-files "$mixed_pr_cmd_helper_changed" --require-summary-for-risk >/tmp/coverage-impact-mixed-helper-missing.out 2>&1; then
   echo "expected mixed pr_cmd helper guidance to fail without summary" >&2
@@ -200,6 +200,31 @@ grep -Fx "pr_cmd" "$mixed_fast_lane_filters" >/dev/null
 grep -Fx "structured_prompt" "$mixed_fast_lane_filters" >/dev/null
 grep -Fx "markdown" "$mixed_fast_lane_filters" >/dev/null
 
+tokio_bootstrap_wave="$TMP/tokio-bootstrap-wave.txt"
+cat >"$tokio_bootstrap_wave" <<'EOF'
+M	adl/src/cli/mod.rs
+M	adl/src/cli/pr_cmd/github.rs
+M	adl/src/cli/tokio_runtime.rs
+M	adl/src/cli/tooling_cmd/github_release.rs
+EOF
+tokio_bootstrap_filters="$TMP/tokio-bootstrap-filters.txt"
+bash "$SCRIPT" --changed-files "$tokio_bootstrap_wave" --print-risk-filters >"$tokio_bootstrap_filters"
+grep -Fx "tokio_bootstrap" "$tokio_bootstrap_filters" >/dev/null
+grep -Fx "pr_cmd" "$tokio_bootstrap_filters" >/dev/null
+grep -Fx "github_release_" "$tokio_bootstrap_filters" >/dev/null
+if grep -Fx "cli" "$tokio_bootstrap_filters" >/dev/null; then
+  echo "did not expect broad cli filter for tokio bootstrap wave" >&2
+  exit 1
+fi
+tokio_bootstrap_expression="$(bash "$SCRIPT" --changed-files "$tokio_bootstrap_wave" --print-risk-nextest-expression)"
+grep -F "test(/^cli::pr_cmd::github::/)" <<<"$tokio_bootstrap_expression" >/dev/null
+grep -F "test(/^cli::pr_cmd::github_client::/)" <<<"$tokio_bootstrap_expression" >/dev/null
+grep -F "test(/^cli::tooling_cmd::github_release::/)" <<<"$tokio_bootstrap_expression" >/dev/null
+if grep -F "test(cli)" <<<"$tokio_bootstrap_expression" >/dev/null; then
+  echo "did not expect broad cli nextest expression for tokio bootstrap wave" >&2
+  exit 1
+fi
+
 low_summary="$TMP/low-summary.json"
 make_summary "adl/src/runtime_v2/new_large_surface.rs" 77 100 "$low_summary"
 if bash "$SCRIPT" --changed-files "$changed" --summary "$low_summary" >/tmp/coverage-impact-low.out 2>&1; then
@@ -208,7 +233,7 @@ if bash "$SCRIPT" --changed-files "$changed" --summary "$low_summary" >/tmp/cove
 fi
 grep -F "77.00% < 80%" /tmp/coverage-impact-low.out >/dev/null
 grep -F "Actionable next steps:" /tmp/coverage-impact-low.out >/dev/null
-grep -F "refresh focused summary after adding or expanding tests: cd adl && CARGO_INCREMENTAL=0 cargo llvm-cov --workspace --all-features --json --summary-only --output-path target/coverage-impact-summary.json -- new_large_surface" /tmp/coverage-impact-low.out >/dev/null
+grep -F "refresh focused summary after adding or expanding tests: cd adl && CARGO_INCREMENTAL=0 cargo llvm-cov nextest --workspace --status-level all --final-status-level slow --no-report -E 'test(new_large_surface)' && cargo llvm-cov report --json --summary-only --output-path target/coverage-impact-summary.json" /tmp/coverage-impact-low.out >/dev/null
 grep -F "Common failure modes:" /tmp/coverage-impact-low.out >/dev/null
 
 cli_dispatch_companion_changed="$TMP/cli-dispatch-companion-changed.txt"
@@ -261,7 +286,7 @@ if bash "$SCRIPT" --changed-files "$changed" --summary "$missing_summary" >/tmp/
   exit 1
 fi
 grep -F "no coverage row" /tmp/coverage-impact-missing-row.out >/dev/null
-grep -F "generate focused summary: cd adl && CARGO_INCREMENTAL=0 cargo llvm-cov --workspace --all-features --json --summary-only --output-path target/coverage-impact-summary.json -- new_large_surface" /tmp/coverage-impact-missing-row.out >/dev/null
+grep -F "generate focused summary: cd adl && CARGO_INCREMENTAL=0 cargo llvm-cov nextest --workspace --status-level all --final-status-level slow --no-report -E 'test(new_large_surface)' && cargo llvm-cov report --json --summary-only --output-path target/coverage-impact-summary.json" /tmp/coverage-impact-missing-row.out >/dev/null
 
 mkdir -p "$BARREL_DIR"
 cat >"$BARREL_DIR/mod.rs" <<'EOF'
