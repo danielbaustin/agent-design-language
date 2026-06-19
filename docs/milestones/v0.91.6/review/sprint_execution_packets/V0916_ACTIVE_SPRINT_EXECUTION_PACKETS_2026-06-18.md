@@ -2,21 +2,24 @@
 
 Status: `draft_for_sprint_umbrellas`
 Date: 2026-06-18
-Source issues: `#4066`, `#4126`
+Source issues: `#4066`, `#4126`, `#4129`
 
-This packet records SEP-style execution notes for the active `v0.91.6` sprint
-umbrellas. It is tracked so future sessions do not need to reconstruct sprint
-order, parallelism, watcher expectations, or PVF assumptions from chat.
+This packet records SEP-style execution notes for the active open `v0.91.6`
+sprint umbrellas. It is tracked so future sessions do not need to reconstruct
+sprint order, parallelism, watcher expectations, or PVF assumptions from chat.
 
-Durable GitHub issue comments:
+Durable GitHub issue comments for active open sprint umbrellas:
 
-- Resilience sprint `#3967`: <https://github.com/danielbaustin/agent-design-language/issues/3967#issuecomment-4747488901>
-- Provider sprint `#3970`: <https://github.com/danielbaustin/agent-design-language/issues/3970#issuecomment-4744068495>
 - ACIP sprint `#3971`: <https://github.com/danielbaustin/agent-design-language/issues/3971#issuecomment-4744069116>
 - Security sprint `#3972`: <https://github.com/danielbaustin/agent-design-language/issues/3972#issuecomment-4744069644>
 - Identity sprint `#3973`: <https://github.com/danielbaustin/agent-design-language/issues/3973#issuecomment-4747488885>
 - Observatory sprint `#3974`: <https://github.com/danielbaustin/agent-design-language/issues/3974#issuecomment-4747488889>
 - Memory/ACP sprint `#3975`: <https://github.com/danielbaustin/agent-design-language/issues/3975#issuecomment-4747488897>
+
+Recently closed sprint umbrellas intentionally excluded from the active set:
+
+- Resilience sprint `#3967` is closed and no longer active.
+- Provider sprint `#3970` is closed and no longer active.
 
 Closeout-tail standard:
 
@@ -30,99 +33,7 @@ Shared watcher policy for active sprint umbrellas:
 - Assign a watcher immediately for checks, review, mergeability, or upstream dependency wait states.
 - While actively blocked, watcher polling should be no slower than every 30 seconds.
 - Healthy waiting states stay issue-local lifecycle states; they are not a reason to abandon the sprint.
-
-## Resilience Sprint SEP
-
-- Sprint umbrella: `#3967`
-- Title: `[v0.91.6][WP-02][resilience] Resilience layer mini-sprint umbrella`
-- Execution mode: `hybrid`
-
-### Child Issue Wave
-
-| Issue | Role | Status | Notes |
-|---|---|---|---|
-| `#3986` | `R-00` schemas and substrate foundation | pending | First serial input. Establishes source resilience vocabulary and reusable substrate shape. |
-| `#3987` | `R-01` retry pattern | pending | Can run after R-00 if touched modules stay isolated. |
-| `#3988` | `R-02` timeout pattern | pending | Can run after R-00 if touched modules stay isolated. |
-| `#3989` | `R-03` circuit-breaker pattern | pending | Can run after R-00 if touched modules stay isolated. |
-| `#3990` | `R-04` rate-limiter pattern | pending | Can run after R-00 if touched modules stay isolated. |
-| `#3991` | `R-05` bulkhead pattern | pending | Can run after R-00 if touched modules stay isolated. |
-| `#3992` | `R-06` fallback/degraded execution pattern | pending | Can run after R-00 if touched modules stay isolated. |
-| `#3993` | `R-07` integration and proof | pending | Final serial integration and proof gate. |
-
-### Recommended Execution Order
-
-1. Run `#3986` first.
-2. Run `#3987` through `#3992` in parallel only after the schemas/substrate truth is stable and write sets are confirmed disjoint.
-3. Run `#3993` last.
-4. Close `#3967` only after R-07 review and sprint closeout truth are complete.
-
-### Safe Parallel Lanes
-
-| Lane | Issues | Why parallel-safe | Required coordination |
-|---|---|---|---|
-| resilience pattern lanes | `#3987`, `#3988`, `#3989`, `#3990`, `#3991`, `#3992` | Retry/timeout/circuit-breaker/rate-limiter/bulkhead/fallback can progress independently once the shared substrate contract exists. | Re-check touched paths and shared substrate assumptions before PR publication. |
-
-### Serial Gates
-
-| Gate | Blocks | Exit condition |
-|---|---|---|
-| schemas/substrate gate | all pattern lanes | `#3986` establishes the source resilience vocabulary and reusable substrate. |
-| integration gate | `#3993` | The six pattern issues are merged, explicitly blocked, or explicitly deferred with owner truth. |
-| closeout gate | `#3967` closure | `#3993` records integration proof and residual-risk truth. |
-
-### PVF Notes
-
-- Each child issue should use focused behavior proof rather than broad runtime theater.
-- Aggregate sprint proof must not hide blocked, skipped, deferred, or failed pattern lanes.
-- Integration proof should make bypass exceptions explicit if any covered surface still escapes the resilience layer.
-
-## Provider Sprint SEP
-
-- Sprint umbrella: `#3970`
-- Title: `[v0.91.6][WP-05][provider] Provider/model reliability and profiles v2 mini-sprint umbrella`
-- Execution mode: `hybrid`
-
-### Child Issue Wave
-
-| Issue | Role | Status | Notes |
-|---|---|---|---|
-| `#4007` | `M-00` provider/capability profile catalog | pending | First serial input. Establishes catalog truth. |
-| `#4008` | `M-01` provider/model role suitability matrix | pending | Depends on catalog shape. |
-| `#4009` | `M-02` Gemma/OpenRouter reliability proof | pending | Can run after catalog/matrix are stable. |
-| `#4010` | `M-03` provider failure-mode/resilience integration | pending | Can run in parallel with reliability proof if write sets are disjoint. |
-| `#4011` | `M-04` private endpoint fixture sanitation | pending | Can run in parallel with reliability proof if fixture paths are isolated. |
-| `#4053` | `M-06` C-SDLC role-provider profiles | pending | Consumes catalog/matrix and should run after `#4007`/`#4008`. |
-| `#4012` | `M-05` closeout matrix | pending | Final serial closeout. |
-
-### Recommended Execution Order
-
-1. Run `#4007` first.
-2. Run `#4008` after `#4007`.
-3. Run `#4009`, `#4010`, and `#4011` in parallel only after catalog/matrix truth is stable and write sets are confirmed disjoint.
-4. Run `#4053` after the catalog and matrix can support role-provider profile decisions.
-5. Run `#4012` last.
-6. Close `#3970` only after the child closeout matrix is truthful.
-
-### Safe Parallel Lanes
-
-| Lane | Issues | Why parallel-safe | Required coordination |
-|---|---|---|---|
-| provider proof lanes | `#4009`, `#4010`, `#4011` | Separate proof/resilience/sanitation surfaces if write sets stay isolated. | Re-check touched paths before PR publication. |
-
-### Serial Gates
-
-| Gate | Blocks | Exit condition |
-|---|---|---|
-| catalog gate | `#4008`, `#4053` | `#4007` merged or explicitly accepted as source truth. |
-| role-profile gate | `#4012` | `#4053` completed or explicitly deferred. |
-| closeout gate | `#3970` closure | All child states and residual risks recorded. |
-
-### PVF Notes
-
-- Issue-local focused proof is sufficient for each child issue.
-- Aggregate sprint proof must not hide failed, skipped, blocked, or pending provider lanes.
-- Provider/reliability proofs should record model/provider identity, failure class, and observability notes when applicable.
+- When an older umbrella note and a newer SEP backfill note both exist, treat the newest explicitly linked SEP backfill note as canonical.
 
 ## ACIP Sprint SEP
 
@@ -220,8 +131,9 @@ Shared watcher policy for active sprint umbrellas:
 ## Identity Sprint SEP
 
 - Sprint umbrella: `#3973`
-- Title: `[v0.91.6][WP-08][identity] Identity continuity and capability selector mini-sprint umbrella`
+- Title: `[v0.91.6][WP-08][identity] Complete identity continuity and capability-selector bridge`
 - Execution mode: `hybrid`
+- Canonical durable note: <https://github.com/danielbaustin/agent-design-language/issues/3973#issuecomment-4747488885>
 
 ### Child Issue Wave
 
@@ -264,8 +176,9 @@ Shared watcher policy for active sprint umbrellas:
 ## Observatory Sprint SEP
 
 - Sprint umbrella: `#3974`
-- Title: `[v0.91.6][WP-09][observatory] Working Unity Observatory mini-sprint umbrella`
+- Title: `[v0.91.6][WP-09][observatory] Classify Observatory and Unity consumption readiness`
 - Execution mode: `hybrid`
+- Canonical durable note: <https://github.com/danielbaustin/agent-design-language/issues/3974#issuecomment-4747488889>
 
 ### Child Issue Wave
 
@@ -310,8 +223,9 @@ Shared watcher policy for active sprint umbrellas:
 ## Memory / ACP Sprint SEP
 
 - Sprint umbrella: `#3975`
-- Title: `[v0.91.6][WP-10][memory] AEE, ObsMem, Memory Palace, and ACP mini-sprint umbrella`
+- Title: `[v0.91.6][WP-10][memory] Account for AEE, Memory/ObsMem, Memory Palace, and ACP`
 - Execution mode: `hybrid`
+- Canonical durable note: <https://github.com/danielbaustin/agent-design-language/issues/3975#issuecomment-4747488897>
 
 ### Child Issue Wave
 
