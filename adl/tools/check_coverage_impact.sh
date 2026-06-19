@@ -160,6 +160,9 @@ changed_line_delta_for_path() {
 candidate_filter_for_path() {
   local path="$1"
   case "$path" in
+    adl/src/cli/process_cmd.rs)
+      printf 'process_status'
+      ;;
     adl/src/cli/pr_cmd/finish_support.rs)
       printf 'finish'
       ;;

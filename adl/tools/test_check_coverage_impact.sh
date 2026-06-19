@@ -62,6 +62,12 @@ finish_helper_filters="$TMP/finish-helper-filters.txt"
 bash "$SCRIPT" --changed-files "$finish_helper_changed" --print-risk-filters >"$finish_helper_filters"
 grep -Fx "finish" "$finish_helper_filters" >/dev/null
 
+process_status_changed="$TMP/process-status-changed.txt"
+printf 'A\tadl/src/cli/process_cmd.rs\n' >"$process_status_changed"
+process_status_filters="$TMP/process-status-filters.txt"
+bash "$SCRIPT" --changed-files "$process_status_changed" --print-risk-filters >"$process_status_filters"
+grep -Fx "process_status" "$process_status_filters" >/dev/null
+
 mixed_pr_cmd_helper_changed="$TMP/mixed-pr-cmd-helper-changed.txt"
 printf 'A\tadl/src/cli/pr_cmd/github.rs\n' >"$mixed_pr_cmd_helper_changed"
 mixed_pr_cmd_helper_filters="$TMP/mixed-pr-cmd-helper-filters.txt"
@@ -143,6 +149,13 @@ if bash "$SCRIPT" --changed-files "$finish_helper_changed" --require-summary-for
 fi
 grep -F "candidate filter: finish" /tmp/coverage-impact-finish-helper-missing.out >/dev/null
 grep -F "generate focused summary: cd adl && CARGO_INCREMENTAL=0 cargo llvm-cov --workspace --all-features --json --summary-only --output-path target/coverage-impact-summary.json -- finish" /tmp/coverage-impact-finish-helper-missing.out >/dev/null
+
+if bash "$SCRIPT" --changed-files "$process_status_changed" --require-summary-for-risk >/tmp/coverage-impact-process-status-missing.out 2>&1; then
+  echo "expected process status helper guidance to fail without summary" >&2
+  exit 1
+fi
+grep -F "candidate filter: process_status" /tmp/coverage-impact-process-status-missing.out >/dev/null
+grep -F "generate focused summary: cd adl && CARGO_INCREMENTAL=0 cargo llvm-cov --workspace --all-features --json --summary-only --output-path target/coverage-impact-summary.json -- process_status" /tmp/coverage-impact-process-status-missing.out >/dev/null
 
 if bash "$SCRIPT" --changed-files "$mixed_pr_cmd_helper_changed" --require-summary-for-risk >/tmp/coverage-impact-mixed-helper-missing.out 2>&1; then
   echo "expected mixed pr_cmd helper guidance to fail without summary" >&2
