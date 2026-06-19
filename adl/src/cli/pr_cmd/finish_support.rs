@@ -1,4 +1,5 @@
 use anyhow::{bail, Context, Result};
+use serde::Deserialize;
 use std::collections::BTreeSet;
 use std::fs;
 use std::path::{Path, PathBuf};
@@ -126,6 +127,14 @@ pub(super) fn real_pr_finish(args: &[String]) -> Result<()> {
         &parsed.paths,
         &validation_changed_paths,
     )?;
+    let finish_validation_profile = if parsed.no_checks {
+        None
+    } else {
+        Some(load_finish_validation_profile(
+            &repo_root,
+            &validation_changed_paths,
+        )?)
+    };
     if !parsed.no_checks {
         run_finish_validation_rust(&repo_root, &finish_validation_plan)?;
         record_docs_only_validation_evidence_for_finish(&output_path, &finish_validation_plan)?;
@@ -167,7 +176,10 @@ pub(super) fn real_pr_finish(args: &[String]) -> Result<()> {
     let default_validation = if parsed.no_checks {
         None
     } else {
-        Some(render_default_finish_validation(&finish_validation_plan))
+        Some(render_default_finish_validation(
+            &finish_validation_plan,
+            finish_validation_profile.as_ref(),
+        ))
     };
     let fingerprint = finish_inputs_fingerprint(
         &parsed.title,
@@ -934,6 +946,47 @@ pub(super) struct FinishValidationPlan {
     pub commands: Vec<String>,
 }
 
+#[derive(Debug, Deserialize)]
+pub(super) struct FinishValidationProfile {
+    pub selected_profile: String,
+    pub status: String,
+    pub pr_publication_sufficient: bool,
+    #[serde(default)]
+    pub run: Vec<FinishValidationProfileRunItem>,
+    #[serde(default)]
+    pub not_run: Vec<FinishValidationProfileSurfaceItem>,
+    #[serde(default)]
+    pub deferred: Vec<FinishValidationProfileSurfaceItem>,
+    pub escalation: FinishValidationProfileEscalation,
+}
+
+#[derive(Debug, Deserialize)]
+pub(super) struct FinishValidationProfileRunItem {
+    pub lane_id: String,
+    pub command: String,
+    pub reason: String,
+}
+
+#[derive(Debug, Deserialize)]
+pub(super) struct FinishValidationProfileSurfaceItem {
+    pub surface: String,
+    pub reason: String,
+}
+
+#[derive(Debug, Deserialize)]
+pub(super) struct FinishValidationProfileEscalation {
+    pub required: bool,
+    #[serde(default)]
+    pub reasons: Vec<FinishValidationProfileEscalationReason>,
+}
+
+#[derive(Debug, Deserialize)]
+pub(super) struct FinishValidationProfileEscalationReason {
+    pub lane_id: String,
+    pub status: String,
+    pub reason: String,
+}
+
 fn finish_validation_guard(repo_root: &Path) -> Result<()> {
     let tracked_residue_guard =
         repo_root.join("adl/tools/check_no_tracked_adl_issue_record_residue.sh");
@@ -1346,6 +1399,33 @@ fn push_finish_validation_command(commands: &mut Vec<String>, command: &str) {
     if !commands.iter().any(|existing| existing == command) {
         commands.push(command.to_string());
     }
+}
+
+fn load_finish_validation_profile(
+    repo_root: &Path,
+    changed_paths: &[String],
+) -> Result<FinishValidationProfile> {
+    let changed_file_body = changed_paths
+        .iter()
+        .map(|path| format!("M\t{path}"))
+        .collect::<Vec<_>>()
+        .join("\n");
+    let changed_file_path =
+        write_temp_text("finish-validation-profile", "txt", &changed_file_body)?;
+    let manager = repo_root.join("adl/tools/validation_manager.py");
+    let output = run_capture(
+        "python3",
+        &[
+            path_str(&manager)?,
+            "--changed-files",
+            path_str(&changed_file_path)?,
+            "--json",
+        ],
+    );
+    let _ = fs::remove_file(&changed_file_path);
+    let output = output.context("finish: failed to load validation manager profile")?;
+    serde_json::from_str::<FinishValidationProfile>(&output)
+        .context("finish: validation manager returned invalid profile JSON")
 }
 
 pub(super) fn select_finish_validation_plan_for_finish(
@@ -2391,12 +2471,61 @@ fn ensure_existing_pr_base_matches(repo: &str, pr_url: &str, expected_base: &str
     Ok(())
 }
 
-pub(super) fn render_default_finish_validation(plan: &FinishValidationPlan) -> String {
+pub(super) fn render_default_finish_validation(
+    plan: &FinishValidationPlan,
+    profile: Option<&FinishValidationProfile>,
+) -> String {
     let mut lines = plan
         .commands
         .iter()
         .map(|command| format!("- {command}"))
         .collect::<Vec<_>>();
+    if let Some(profile) = profile {
+        lines.push(format!(
+            "- Selected validation profile: `{}` (`status={}`, `pr_publication_sufficient={}`)",
+            profile.selected_profile, profile.status, profile.pr_publication_sufficient
+        ));
+        if profile.run.is_empty() {
+            lines.push("- Profile-selected run lanes: none".to_string());
+        } else {
+            lines.push("- Profile-selected run lanes:".to_string());
+            for item in &profile.run {
+                lines.push(format!(
+                    "  - `{}` via `{}`",
+                    item.lane_id,
+                    sanitize_validation_profile_command(&item.command)
+                ));
+                lines.push(format!("    reason: {}", item.reason));
+            }
+        }
+        if profile.not_run.is_empty() {
+            lines.push("- Profile-skipped proof surfaces: none".to_string());
+        } else {
+            lines.push("- Profile-skipped proof surfaces:".to_string());
+            for item in &profile.not_run {
+                lines.push(format!("  - `{}`: {}", item.surface, item.reason));
+            }
+        }
+        if profile.deferred.is_empty() {
+            lines.push("- Deferred proof: none".to_string());
+        } else {
+            lines.push("- Deferred proof:".to_string());
+            for item in &profile.deferred {
+                lines.push(format!("  - `{}`: {}", item.surface, item.reason));
+            }
+        }
+        if profile.escalation.required {
+            lines.push("- Escalation: required".to_string());
+            for item in &profile.escalation.reasons {
+                lines.push(format!(
+                    "  - `{}` (`{}`): {}",
+                    item.lane_id, item.status, item.reason
+                ));
+            }
+        } else {
+            lines.push("- Escalation: not required".to_string());
+        }
+    }
     match plan.mode {
         FinishValidationMode::DocsOnly => {
             lines.push(
@@ -2426,6 +2555,29 @@ pub(super) fn render_default_finish_validation(plan: &FinishValidationPlan) -> S
         }
     }
     lines.join("\n")
+}
+
+fn sanitize_validation_profile_command(command: &str) -> String {
+    let mut sanitized = Vec::new();
+    let mut replace_next_changed_files = false;
+    for token in command.split_whitespace() {
+        if replace_next_changed_files {
+            sanitized.push("<changed-files>".to_string());
+            replace_next_changed_files = false;
+            continue;
+        }
+        if token == "--changed-files" {
+            sanitized.push(token.to_string());
+            replace_next_changed_files = true;
+            continue;
+        }
+        if token.starts_with('/') {
+            sanitized.push("<path>".to_string());
+        } else {
+            sanitized.push(token.to_string());
+        }
+    }
+    sanitized.join(" ")
 }
 
 pub(super) fn ensure_issue_surfaces_are_local_only(
@@ -2778,12 +2930,16 @@ pub(super) fn finish_inputs_fingerprint(
 }
 
 pub(super) fn write_temp_markdown(prefix: &str, body: &str) -> Result<PathBuf> {
+    write_temp_text(prefix, "md", body)
+}
+
+fn write_temp_text(prefix: &str, extension: &str, body: &str) -> Result<PathBuf> {
     let mut path = std::env::temp_dir();
     let nanos = std::time::SystemTime::now()
         .duration_since(std::time::UNIX_EPOCH)
         .expect("time")
         .as_nanos();
-    path.push(format!("{prefix}-{nanos}.md"));
+    path.push(format!("{prefix}-{nanos}.{extension}"));
     fs::write(&path, body)?;
     Ok(path)
 }
