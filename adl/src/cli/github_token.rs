@@ -215,24 +215,47 @@ impl TokenReader for RealTokenReader {
 pub(crate) fn redact_for_github_token_diagnostics(input: &str) -> String {
     input
         .split_whitespace()
-        .map(|token| {
-            let lower = token.to_ascii_lowercase();
-            if lower.contains("token=")
-                || lower.contains("authorization:")
-                || lower.starts_with("ghp_")
-                || lower.starts_with("gho_")
-                || lower.starts_with("ghu_")
-                || lower.starts_with("ghs_")
-                || lower.starts_with("ghr_")
-                || lower.starts_with("github_pat_")
-            {
-                "<redacted>"
-            } else {
-                token
-            }
-        })
+        .map(redact_diagnostic_token)
         .collect::<Vec<_>>()
         .join(" ")
+}
+
+fn redact_diagnostic_token(token: &str) -> String {
+    let lower = token.to_ascii_lowercase();
+    if lower.contains("authorization:") || lower.contains("token=") {
+        return "<redacted>".to_string();
+    }
+    let mut output = String::with_capacity(token.len());
+    let mut cursor = 0usize;
+    while cursor < token.len() {
+        let rest = &token[cursor..];
+        if let Some(prefix) = github_secret_prefix_at(rest) {
+            let secret_len = rest[prefix.len()..]
+                .char_indices()
+                .find_map(|(idx, ch)| (!is_github_secret_char(ch)).then_some(idx))
+                .unwrap_or(rest[prefix.len()..].len());
+            output.push_str("<redacted>");
+            cursor += prefix.len() + secret_len;
+        } else {
+            let ch = rest
+                .chars()
+                .next()
+                .expect("cursor remains on a char boundary");
+            output.push(ch);
+            cursor += ch.len_utf8();
+        }
+    }
+    output
+}
+
+fn github_secret_prefix_at(value: &str) -> Option<&'static str> {
+    ["github_pat_", "ghp_", "gho_", "ghu_", "ghs_", "ghr_"]
+        .into_iter()
+        .find(|prefix| value.starts_with(prefix))
+}
+
+fn is_github_secret_char(ch: char) -> bool {
+    ch.is_ascii_alphanumeric() || ch == '_'
 }
 
 #[cfg(test)]
@@ -374,11 +397,15 @@ mod tests {
     #[test]
     fn resolver_redacts_github_token_prefixes_in_diagnostics() {
         let text = redact_for_github_token_diagnostics(
-            "Authorization: token=ghp_secret ghp_secret github_pat_secret ghs_secret ordinary",
+            "Authorization: token=ghp_secret ghp_secret github_pat_secret ghs_secret {\"token\":\"ghp_json_secret\"} \"github_pat_quoted_secret\" ordinary",
         );
         assert!(!text.contains("ghp_secret"));
         assert!(!text.contains("github_pat_secret"));
         assert!(!text.contains("ghs_secret"));
+        assert!(!text.contains("ghp_json_secret"));
+        assert!(!text.contains("github_pat_quoted_secret"));
         assert!(text.contains("ordinary"));
+        assert!(text.contains("{\"token\":\"<redacted>\"}"));
+        assert!(text.contains("\"<redacted>\""));
     }
 }
