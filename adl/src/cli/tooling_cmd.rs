@@ -2,6 +2,8 @@ use anyhow::{anyhow, Result};
 
 #[path = "tooling_cmd/card_prompt.rs"]
 mod card_prompt;
+#[path = "tooling_cmd/ci_log_archive.rs"]
+mod ci_log_archive;
 #[path = "tooling_cmd/code_review.rs"]
 mod code_review;
 #[path = "tooling_cmd/common.rs"]
@@ -30,6 +32,7 @@ mod structured_prompt;
 mod wp_issue_wave;
 
 use card_prompt::real_card_prompt;
+use ci_log_archive::real_ci_log_archive;
 use code_review::real_code_review;
 use csdlc_prompt_editor::real_csdlc_prompt_editor;
 use github_release::real_github_release;
@@ -66,12 +69,13 @@ use structured_prompt::{
 pub(crate) fn real_tooling(args: &[String]) -> Result<()> {
     let Some(subcommand) = args.first().map(|arg| arg.as_str()) else {
         return Err(anyhow!(
-            "tooling requires a subcommand: card-prompt | code-review | csdlc-prompt-editor | github-release | lint-prompt-spec | prompt-template | public-prompt-packet | validate-structured-prompt | review-card-surface | review-runtime-surface | verify-review-output-provenance | verify-repo-review-contract | generate-wp-issue-wave"
+            "tooling requires a subcommand: card-prompt | ci-log-archive | code-review | csdlc-prompt-editor | github-release | lint-prompt-spec | prompt-template | public-prompt-packet | validate-structured-prompt | review-card-surface | review-runtime-surface | verify-review-output-provenance | verify-repo-review-contract | generate-wp-issue-wave"
         ));
     };
 
     match subcommand {
         "card-prompt" => real_card_prompt(&args[1..]),
+        "ci-log-archive" => real_ci_log_archive(&args[1..]),
         "code-review" => real_code_review(&args[1..]),
         "csdlc-prompt-editor" => real_csdlc_prompt_editor(&args[1..]),
         "generate-wp-issue-wave" => real_generate_wp_issue_wave(&args[1..]),
@@ -91,7 +95,7 @@ pub(crate) fn real_tooling(args: &[String]) -> Result<()> {
             Ok(())
         }
         _ => Err(anyhow!(
-            "unknown tooling subcommand '{subcommand}' (expected card-prompt | code-review | csdlc-prompt-editor | generate-wp-issue-wave | github-release | lint-prompt-spec | portable-project-doctor | prompt-template | public-prompt-packet | validate-structured-prompt | review-card-surface | review-runtime-surface | verify-review-output-provenance | verify-repo-review-contract)"
+            "unknown tooling subcommand '{subcommand}' (expected card-prompt | ci-log-archive | code-review | csdlc-prompt-editor | generate-wp-issue-wave | github-release | lint-prompt-spec | portable-project-doctor | prompt-template | public-prompt-packet | validate-structured-prompt | review-card-surface | review-runtime-surface | verify-review-output-provenance | verify-repo-review-contract)"
         )),
     }
 }
@@ -99,6 +103,7 @@ pub(crate) fn real_tooling(args: &[String]) -> Result<()> {
 fn tooling_usage() -> &'static str {
     "adl tooling card-prompt --issue <number> [--out <path>]\n\
 adl tooling card-prompt --input <path> [--out <path>]\n\
+adl tooling ci-log-archive summarize --logs-dir <dir> --out <manifest.json> --s3-prefix s3://bucket/prefix [--repo owner/repo] [--pr <n>] [--run-id <id>] [--commit <sha>] [--raw-zip <logs.zip>] [--upload] [--threshold-seconds 60] [--redaction-status <status>]\n\
 adl tooling code-review --out <dir> [--backend fixture|ollama] [--visibility packet-only|read-only-repo] [--base <ref>] [--head <ref>] [--issue <number>] [--writer-session <id>] [--reviewer-session <id>] [--model <name>] [--allow-live-ollama] [--ollama-url <url>] [--timeout-secs <n>] [--include-working-tree] [--file <path> ...] [--fixture-case clean|blocked]\n\
 adl tooling csdlc-prompt-editor [--repo-root <path>] [--emit-model-js <path>] [--render-samples <dir>]\n\
 adl tooling generate-wp-issue-wave --version <version> [--wbs <path>] [--sprint <path>] [--out <path>]\n\

@@ -1094,6 +1094,24 @@ pub(super) fn select_finish_validation_plan(paths_csv: &str) -> Result<FinishVal
         }
         if paths
             .iter()
+            .any(|path| finish_path_needs_ci_log_archive_focused_validation(path))
+        {
+            mode = FinishValidationMode::LargerBinaryFocused;
+            push_finish_validation_command(
+                &mut commands,
+                "cargo fmt --manifest-path adl/Cargo.toml --all --check",
+            );
+            push_finish_validation_command(
+                &mut commands,
+                "cargo test --manifest-path adl/Cargo.toml ci_log_archive -- --nocapture",
+            );
+            push_finish_validation_command(
+                &mut commands,
+                "cargo test --manifest-path adl/Cargo.toml tooling_cmd_dispatch_and_help_paths_cover_public_entrypoint -- --nocapture",
+            );
+        }
+        if paths
+            .iter()
             .any(|path| finish_path_needs_long_lived_agent_tokio_validation(path))
         {
             mode = FinishValidationMode::LargerBinaryFocused;
@@ -1483,6 +1501,9 @@ fn finish_path_is_larger_binary_focused(path: &str) -> bool {
             | "adl/tools/suitability_specs/deepseek_csdlc_panel_4096.json"
             | "docs/milestones/v0.91.5/VALIDATION_LANE_SPLIT_3610.md"
             | "docs/milestones/v0.91.5/LOCAL_VS_CI_VALIDATION_POLICY_3607.md"
+            | "adl/src/cli/tooling_cmd.rs"
+            | "adl/src/cli/tooling_cmd/ci_log_archive.rs"
+            | "adl/src/cli/tooling_cmd/tests/tooling_dispatch.rs"
             | "adl/src/cli/tooling_cmd/github_release.rs"
             | "adl/src/cli/tooling_cmd/public_prompt_packet.rs"
             | "adl/src/cli/tooling_cmd/tests/public_prompt_packet.rs"
@@ -1562,6 +1583,16 @@ fn finish_path_needs_scheduler_focused_validation(path: &str) -> bool {
 fn finish_path_needs_github_release_focused_validation(path: &str) -> bool {
     let trimmed = path.trim().trim_matches('/');
     trimmed == "adl/src/cli/tooling_cmd/github_release.rs"
+}
+
+fn finish_path_needs_ci_log_archive_focused_validation(path: &str) -> bool {
+    let trimmed = path.trim().trim_matches('/');
+    matches!(
+        trimmed,
+        "adl/src/cli/tooling_cmd.rs"
+            | "adl/src/cli/tooling_cmd/ci_log_archive.rs"
+            | "adl/src/cli/tooling_cmd/tests/tooling_dispatch.rs"
+    )
 }
 
 fn finish_path_needs_long_lived_agent_tokio_validation(path: &str) -> bool {
@@ -1845,6 +1876,32 @@ pub(super) fn run_finish_validation_rust(
                             "--bin",
                             "adl",
                             "github_release_",
+                        ],
+                    )?;
+                }
+                "cargo test --manifest-path adl/Cargo.toml ci_log_archive -- --nocapture" => {
+                    run_finish_validation_status(
+                        "cargo",
+                        &[
+                            "test",
+                            "--manifest-path",
+                            path_str(&manifest)?,
+                            "ci_log_archive",
+                            "--",
+                            "--nocapture",
+                        ],
+                    )?;
+                }
+                "cargo test --manifest-path adl/Cargo.toml tooling_cmd_dispatch_and_help_paths_cover_public_entrypoint -- --nocapture" => {
+                    run_finish_validation_status(
+                        "cargo",
+                        &[
+                            "test",
+                            "--manifest-path",
+                            path_str(&manifest)?,
+                            "tooling_cmd_dispatch_and_help_paths_cover_public_entrypoint",
+                            "--",
+                            "--nocapture",
                         ],
                     )?;
                 }
