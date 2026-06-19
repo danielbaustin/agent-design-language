@@ -77,7 +77,7 @@ This issue does not widen those claims.
 | `#4001` | GitHub/token/release/projection observability for the tooling proof loop | `v0.91.6` WP-03 |
 | `#3922` | This scheduling and claim-boundary record | `v0.91.6` runtime-observability planning |
 | `#4034` | Routed out of this wave; Observatory logging and OTEL/security consumption proof belongs with the Observatory sprint rather than this `v0.91.6` logging completion pass | observatory sprint route |
-| `#4048` | WP-03 tooling proof-loop closeout and final claim normalization | `v0.91.6` WP-03 closeout |
+| `#4048` | WP-03 tooling proof-loop closeout and final claim normalization, including live issue-graph truth for `#3963`, `#3965`, and the separately completed routed `#3985` follow-on | `v0.91.6` WP-03 closeout |
 
 ## Proof Surface Map
 

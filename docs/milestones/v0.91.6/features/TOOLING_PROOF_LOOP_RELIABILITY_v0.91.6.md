@@ -4,7 +4,7 @@
 
 - Feature Name: Tooling Proof-Loop Reliability
 - Milestone Target: `v0.91.6`
-- Status: WP-03 logging and GitHub/tooling observability baseline completed for `#3995`-`#4001`
+- Status: WP-03 logging and GitHub/tooling observability baseline completed for `#3995`-`#4001`, with closeout truth normalized by `#4048`
 - Owner: ADL maintainers
 - Doc Role: primary
 - Feature Types: policy, architecture, artifact
@@ -69,10 +69,20 @@ The logging/tooling mini-sprint execution packet for `#3995`-`#4001` is:
 - [`OTEL_OBSERVATORY_CONSUMPTION_PROOF_3999.md`](../review/logging_observability/OTEL_OBSERVATORY_CONSUMPTION_PROOF_3999.md)
 - [`LOGGING_VALIDATION_REDACTION_PROOF_4000.md`](../review/logging_observability/LOGGING_VALIDATION_REDACTION_PROOF_4000.md)
 - [`GITHUB_TOKEN_RELEASE_PROJECTION_PROOF_4001.md`](../review/logging_observability/GITHUB_TOKEN_RELEASE_PROJECTION_PROOF_4001.md)
+- [`WP03_TOOLING_PROOF_LOOP_CLOSEOUT_4048.md`](../review/logging_observability/WP03_TOOLING_PROOF_LOOP_CLOSEOUT_4048.md)
 
 This packet now includes the bounded `#4001` GitHub/token/release/projection
 lane while preserving explicit non-claims for broader credential-manager and
 existing-issue metadata-repair work.
+
+The closeout note records the final live issue-graph truth for the adjacent
+historical inputs:
+
+- `#3963` was partially consumed by the WP-03 lane and later closed
+  independently through PR `#4042`
+- `#3965` was consumed by the WP-03 lane and is now closed
+- `#3985` remained routed adjacent tooling work rather than being consumed by
+  WP-03 and later closed independently through PR `#4117`
 
 Runtime observability completion is also scheduled explicitly in
 [`RUNTIME_OBSERVABILITY_COMPLETION_SCHEDULE_v0.91.6.md`](../RUNTIME_OBSERVABILITY_COMPLETION_SCHEDULE_v0.91.6.md)
