@@ -42,12 +42,15 @@ Out of scope:
 - Existing Observatory readiness docs.
 - Provider/model reliability feature doc.
 - Security and public-record boundaries where demos expose artifacts.
+- Identity continuity boundaries for inhabitant-facing display.
 
 ## Validation And Review
 
 - Review every demo surface for proof role.
 - Require artifact paths or explicit blocked/deferred status.
 - Do not let rehearsal evidence prove runtime readiness.
+- Consume WP-07 `#4023` for bounded inhabitant-readiness security review
+  without converting that review into false WP-09 implementation closure.
 
 ## v0.92 Consumption
 
@@ -59,3 +62,14 @@ surface marked rehearsal or substrate cannot prove activation by itself.
 - No demo execution in this doc.
 - No Unity readiness claim without proof.
 - No Observatory product readiness claim.
+
+## Current Security Consumption
+
+- WP-07 packet
+  `docs/milestones/v0.91.6/review/security/UNITY_OBSERVATORY_INHABITANT_READINESS_SECURITY_REVIEW_4023.md`
+  may be consumed as the current bounded security review for Unity Observatory
+  inhabitant-facing and Observatory-consumption posture.
+- That packet does not close WP-09. It records that inhabitant surfaces,
+  ingestion security, and working Unity closeout remain open dependencies until
+  the WP-09 issue set lands its own reviewed proof, and identity-safe
+  inhabitant display also remains dependent on open WP-08 issue `#3973`.

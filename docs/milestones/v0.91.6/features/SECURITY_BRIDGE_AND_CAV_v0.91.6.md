@@ -4,7 +4,7 @@
 
 - Feature Name: Security Bridge And CAV
 - Milestone Target: `v0.91.6`
-- Status: in_progress
+- Status: closeout_ready_with_explicit_residual_routes
 - Owner: ADL maintainers
 - Doc Role: primary
 - Feature Types: policy, architecture
@@ -54,18 +54,25 @@ or vague "security reviewed" language. Each required surface must remain tied
 to a concrete owning issue state, named proof or review packet, and an explicit
 residual route when the surface is still open.
 
+WP-07 closure means the security bridge review tranche is complete with
+explicit residual routing. It does not mean every downstream implementation
+wave named here is finished.
+
 ### Completion accounting rules
 
 - `closed` issue state plus named proof or review surfaces may count as
   completed for this ledger.
-- `open` issue state means the surface remains active even if a bridge doc or
-  planning packet already exists.
+- `open` issue state means the owning surface remains active even if a bridge
+  doc or planning packet already exists.
 - Cross-surface security claims must name the downstream issue that owns the
   remaining work instead of collapsing that residual into WP-07 narrative text.
 - A residual is acceptable only when it names both an owner and a target
   milestone or routed guard.
 - WP-07 closeout must consume this ledger row by row rather than re-inferring
   milestone security status from chat or memory.
+- Open downstream implementation owners do not block WP-07 by themselves when
+  the relevant WP-07 review lane is complete and the residual route is
+  explicit.
 
 ### Surface inventory and dependency table
 
@@ -74,15 +81,19 @@ residual route when the surface is still open.
 | WP-03 logging, redaction, and projection observability dependency | `#3968` closed; `#3995`-`#4001` closed | Are logging, projection, token, and path-redaction boundaries strong enough for later security-consuming lanes? | WP-03 closeout and proof surfaces, especially logging validation/redaction and GitHub/projection observability packets from `#4000` and `#4001` | prerequisite complete and consumable | WP-07 consuming lanes `#4022` and `#4023` must use this proof; no new WP-03 implementation is required unless a later review finds a gap |
 | WP-04 public prompt records export and publication safety | `#3969` closed; security handoff `#4005` closed | Are public prompt records export, redaction, validation, and publication safety complete enough to be consumed without treating local authoring state as public truth? | `docs/milestones/v0.91.6/review/public_prompt_records/PUBLIC_PROMPT_RECORDS_SECURITY_CAV_HANDOFF_4005.md`, the WP-04 closeout packet set, and the WP-07 packet `docs/milestones/v0.91.6/review/security/PUBLIC_RECORD_MEMORY_PROFILE_SECURITY_REVIEW_4022.md` | completed with security handoff; cross-memory/publication privacy consumption now reviewed with explicit residual routes | WP-07 `#4022` consumes WP-04 as a prerequisite; broader adversarial/security residuals stay visible under WP-07 and the `v0.91.7` residual guard |
 | WP-05 provider/model reliability and private endpoint sanitation | `#3970` closed; `#4010`-`#4012` closed | Which provider/model reliability claims are safe, and what provider/private-endpoint behavior remains security-sensitive? | WP-05 closeout plus `#4010`, `#4011`, `#4012`, and the WP-07 review packet `docs/milestones/v0.91.6/review/security/PROVIDER_MODEL_CAV_TRUST_BOUNDARY_REVIEW_4020.md` | implementation tranche complete; trust-boundary review packet added with explicit residual routing | WP-07 `#4020` owns provider/model/CAV trust-boundary review in `v0.91.6`; unresolved prompt-injection/CAV taxonomy work remains routed to `#4064` |
-| WP-06 ACIP, A2A, and provider communications | `#3971` open; `#4013` closed; `#4014`-`#4018` open | Which access rules, delegation boundaries, and transport decisions are safe enough for activation-path consumption? | WP-06 bridge doc, the WP-07 review packet `docs/milestones/v0.91.6/review/security/ACIP_A2A_ACCESS_RULE_SECURITY_REVIEW_4021.md`, plus the eventual closeout proof for `#4016`-`#4018` | active and blocking WP-07 closeout; access-rule security review packet added with explicit protocol residual routing | WP-07 `#4021` owns the security review lane; unresolved protocol closure remains owned by open WP-06 issues in `v0.91.6` and, if still unresolved, the `v0.91.7` residual guard |
-| WP-07 security bridge, provider trust, CAV, and malformed-output posture | `#3972` open; `#4019`, `#4020`, `#4021`, `#4022`, `#4023`, `#4064`, and final closeout `#4024` are the active security tranche | Does the milestone have one activation-path security accounting surface instead of scattered, implicit trust claims? | This ledger plus the child security review packets and final WP-07 closeout packet | active by definition until child lanes and closeout finish | Current sprint owners are the open WP-07 child issues in `v0.91.6`; unresolved enterprise/security-governance residuals route to `v0.93` planning |
+| WP-06 ACIP, A2A, and provider communications | `#3971` closed; WP-06 child truth consumed by the security review lane | Which access rules, delegation boundaries, and transport decisions are safe enough for activation-path consumption? | WP-06 bridge doc, the WP-07 review packet `docs/milestones/v0.91.6/review/security/ACIP_A2A_ACCESS_RULE_SECURITY_REVIEW_4021.md`, and the explicit WP-06 closeout proof surface in `docs/milestones/v0.91.6/features/ACIP_A2A_PROVIDER_COMMUNICATIONS_v0.91.6.md` under "WP-06 Protocol Decision Closeout Package" and "The final #4018 proof surface used to complete this closeout was" | reviewed with explicit protocol residual routing; no longer a live blocker for WP-07 closeout | WP-07 `#4021` consumed the review lane; unresolved protocol/provenance residuals route through the `v0.91.7` residual guard if later work still leaves them open |
+| WP-07 security bridge, provider trust, CAV, and malformed-output posture | `#3972` open during `#4024` branch execution; `#4019`, `#4020`, `#4021`, `#4022`, `#4023`, and `#4064` closed; `#4024` is the final open closeout issue | Does the milestone have one activation-path security accounting surface instead of scattered, implicit trust claims? | This ledger, the child security review packets, `docs/milestones/v0.91.6/review/security/CAV_THREAT_TAXONOMY_AND_CORPUS_ROUTE_4064.md`, and `docs/milestones/v0.91.6/review/security/WP07_SECURITY_BRIDGE_CLOSEOUT_4024.md` | closeout-ready review tranche with explicit residual routes; closes when `#4024` merges | `#4024` carries stale legacy `.adl/docs/TBD/security/*` source-path remediation and unresolved integrated-runtime CAV residuals into `docs/milestones/v0.91.7/features/SECURITY_RESIDUAL_READINESS_v0.91.7.md`; enterprise/security-governance residuals route to `v0.93` planning |
 | WP-08 identity continuity and capability-selector bridge | `#3973` open | Which identity, continuity, and capability-evidence boundaries matter for security-sensitive activation claims? | WP-08 bridge outputs and later negative-case or continuity review surfaces | dependency active | WP-08 remains the owner for identity/continuity delivery; WP-07 consuming lanes `#4022` and `#4023` must not overclaim identity-safe publication or inhabitant-safe display before WP-08 closes |
-| WP-09 Observatory and Unity consumption readiness | `#3974` open; `#4030`-`#4034` open | Can Unity Observatory consume ADL evidence without leaking private paths, logs, memory, credentials, or unreviewed identity/profile data? | WP-09 implementation and consumption proof surfaces, especially `#4034` | dependency active | WP-07 `#4023` owns the security review lane; WP-09 remains the implementation owner in `v0.91.6` |
+| WP-09 Observatory and Unity consumption readiness | `#3974` open; `#4030`-`#4034` open | Can Unity Observatory consume ADL evidence without leaking private paths, logs, memory, credentials, or unreviewed identity/profile data? | WP-09 implementation and consumption proof surfaces, especially `#4034`, plus the WP-07 packet `docs/milestones/v0.91.6/review/security/UNITY_OBSERVATORY_INHABITANT_READINESS_SECURITY_REVIEW_4023.md` | dependency active; Unity/Observatory security review now records that inhabitant, ingestion, and closeout owners remain open | WP-07 `#4023` owns the security review lane; WP-09 remains the implementation owner in `v0.91.6` |
 | WP-10 AEE, Memory/ObsMem, Memory Palace, and ACP/cognitive-profile privacy | `#3975` open; `#4036`-`#4041` open | Which memory, profile, and publication/privacy boundaries are safe enough to expose or consume before `v0.92`? | WP-10 ledger/closeout set, the bridge doc `docs/milestones/v0.91.6/features/AEE_MEMORY_ACP_BRIDGE_ACCOUNTING_v0.91.6.md`, and the WP-07 packet `docs/milestones/v0.91.6/review/security/PUBLIC_RECORD_MEMORY_PROFILE_SECURITY_REVIEW_4022.md` | dependency active; publication/privacy review now records that WP-10 closure is still open | WP-07 `#4022` owns the publication/privacy security review lane; WP-10 remains the implementation owner in `v0.91.6` |
 
 ### Residual routing rules
 
-- If a surface row is `active` or `dependency active`, WP-07 must remain open.
+- If a WP-07 child review lane remains open, WP-07 must remain open.
+- If a downstream implementation dependency remains open after its WP-07 review
+  lane is complete, WP-07 may still close only when the residual route is
+  explicit and no packet silently upgrades that dependency into completed
+  security closure.
 - If a surface claims `completed with security handoff`, later WP-07 lanes may
   consume it, but they must not erase the named routed residuals.
 - If a later review finds a new security gap in a closed upstream lane, that
@@ -93,6 +104,29 @@ residual route when the surface is still open.
   than passing the gate.
 - Residuals that are not owned by an active `v0.91.6` issue must route through
   the `v0.91.7` residual guard in [FEATURE_DOCS_v0.91.6.md](../FEATURE_DOCS_v0.91.6.md).
+
+### CAV baseline truth
+
+`#4064` is the CAV-specific guard against overclaim. It must keep three facts
+separate:
+
+- bounded CAV proof hooks already work in the repo today:
+  `adl identity adversarial-runtime`, `red-blue-architecture`,
+  `adversarial-runner`, `exploit-replay`, and `continuous-verification` all
+  emit reviewer-facing contract artifacts;
+- the flagship local adversarial demo already proves one bounded
+  exploit -> replay -> mitigation -> promotion loop under local/no-network
+  constraints;
+- the stronger capability of autonomous red/blue teams continuously finding
+  bugs does **not** yet exist as a general live runtime surface inside the main
+  ADL runtime and must remain routed future work rather than a hidden WP-07
+  claim.
+
+The implementation route for closing that gap is now explicit in
+`docs/milestones/v0.91.6/review/security/CAV_THREAT_TAXONOMY_AND_CORPUS_ROUTE_4064.md`:
+the future loop must be integrated into the ordinary `adl agent` /
+runtime-control / Freedom Gate surfaces, not split into a separate security
+runtime.
 
 ## Validation And Review
 

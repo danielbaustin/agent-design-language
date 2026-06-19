@@ -157,7 +157,7 @@ pub(super) fn real_pr_finish(args: &[String]) -> Result<()> {
     }
 
     let close_line = if parsed.no_close {
-        None
+        Some(non_closing_lifecycle_line(parsed.issue))
     } else {
         Some(format!("Closes #{}", parsed.issue))
     };
@@ -183,7 +183,10 @@ pub(super) fn real_pr_finish(args: &[String]) -> Result<()> {
     )?;
     let pr_body_file = write_temp_markdown("pr_body", &pr_body)?;
 
-    let commit_msg = if let Some(close) = &close_line {
+    let commit_msg = if !parsed.no_close {
+        let close = close_line
+            .as_ref()
+            .expect("closing finish should have a close line");
         format!("{} ({close})", parsed.title)
     } else {
         parsed.title.clone()
@@ -1136,6 +1139,13 @@ pub(super) fn select_finish_validation_plan(paths_csv: &str) -> Result<FinishVal
         }
         if paths
             .iter()
+            .any(|path| finish_path_needs_deepseek_suitability_validation(path))
+        {
+            mode = FinishValidationMode::LargerBinaryFocused;
+            commands.push("bash adl/tools/test_v0916_deepseek_suitability.sh".to_string());
+        }
+        if paths
+            .iter()
             .any(|path| finish_path_needs_private_endpoint_fixture_sanitation_validation(path))
         {
             mode = FinishValidationMode::LargerBinaryFocused;
@@ -1350,6 +1360,12 @@ fn finish_path_is_larger_binary_focused(path: &str) -> bool {
             | "adl/tools/test_adl_review_compatibility.sh"
             | "adl/tools/check_repo_quality_staleness.py"
             | "adl/tools/test_check_repo_quality_staleness.sh"
+            | "adl/tools/run_v0916_agent_suitability_panel.py"
+            | "adl/tools/run_v0916_deepseek_suitability.py"
+            | "adl/tools/validate_v0916_agent_suitability_panel.py"
+            | "adl/tools/validate_v0916_deepseek_suitability.py"
+            | "adl/tools/test_v0916_deepseek_suitability.sh"
+            | "adl/tools/suitability_specs/deepseek_csdlc_panel_4096.json"
             | "docs/milestones/v0.91.5/VALIDATION_LANE_SPLIT_3610.md"
             | "docs/milestones/v0.91.5/LOCAL_VS_CI_VALIDATION_POLICY_3607.md"
             | "adl/src/cli/tooling_cmd/github_release.rs"
@@ -1366,6 +1382,7 @@ fn finish_path_is_larger_binary_focused(path: &str) -> bool {
             | "demos/v0.89/gemma4_issue_clerk_demo.md"
     ) || trimmed.starts_with("adl/src/cli/pr_cmd/")
         || trimmed.starts_with("adl/src/cli/pr_cmd_cards/")
+        || trimmed.starts_with("adl/src/cli/tests/pr_cmd_inline/lifecycle/")
         || trimmed.starts_with("adl/src/csdlc_prompt_editor/")
         || trimmed.starts_with("adl/src/cli/run_artifacts_types/")
         || trimmed.starts_with("adl/tests/fixtures/scheduler/")
@@ -1386,6 +1403,7 @@ fn finish_path_needs_pr_cmd_lifecycle_focused_validation(path: &str) -> bool {
         || trimmed == "adl/src/cli/tests/pr_cmd_inline/basics.rs"
         || trimmed == "adl/src/cli/tests/pr_cmd_inline/repo_helpers/metadata.rs"
         || trimmed == "adl/src/cli/tests/pr_cmd_inline/support.rs"
+        || trimmed.starts_with("adl/src/cli/tests/pr_cmd_inline/lifecycle/")
         || trimmed.starts_with("adl/src/cli/pr_cmd_cards/")
         || (trimmed.starts_with("adl/src/cli/pr_cmd/")
             && trimmed != "adl/src/cli/pr_cmd/finish_support.rs")
@@ -1482,6 +1500,19 @@ fn finish_path_needs_repo_quality_staleness_validation(path: &str) -> bool {
         trimmed,
         "adl/tools/check_repo_quality_staleness.py"
             | "adl/tools/test_check_repo_quality_staleness.sh"
+    )
+}
+
+fn finish_path_needs_deepseek_suitability_validation(path: &str) -> bool {
+    let trimmed = path.trim().trim_matches('/');
+    matches!(
+        trimmed,
+        "adl/tools/run_v0916_agent_suitability_panel.py"
+            | "adl/tools/run_v0916_deepseek_suitability.py"
+            | "adl/tools/validate_v0916_agent_suitability_panel.py"
+            | "adl/tools/validate_v0916_deepseek_suitability.py"
+            | "adl/tools/test_v0916_deepseek_suitability.sh"
+            | "adl/tools/suitability_specs/deepseek_csdlc_panel_4096.json"
     )
 }
 
@@ -1735,6 +1766,10 @@ pub(super) fn run_finish_validation_rust(
                 }
                 "bash adl/tools/test_check_repo_quality_staleness.sh" => {
                     let script = repo_root.join("adl/tools/test_check_repo_quality_staleness.sh");
+                    run_finish_validation_status("bash", &[path_str(&script)?])?;
+                }
+                "bash adl/tools/test_v0916_deepseek_suitability.sh" => {
+                    let script = repo_root.join("adl/tools/test_v0916_deepseek_suitability.sh");
                     run_finish_validation_status("bash", &[path_str(&script)?])?;
                 }
                 "bash adl/tools/test_demo_codex_ollama_operational_skills.sh" => {
@@ -2074,6 +2109,7 @@ pub(super) fn stage_selected_paths_rust(repo_root: &Path, csv: &str) -> Result<(
     if paths.is_empty() {
         bail!("finish: --paths resolved to empty");
     }
+    reject_local_issue_bundle_paths_in_finish_paths(repo_root, &paths)?;
     let mut stageable = Vec::new();
     for path in paths {
         if path.starts_with(".adl/") {
@@ -2101,6 +2137,47 @@ pub(super) fn stage_selected_paths_rust(repo_root: &Path, csv: &str) -> Result<(
     args.extend(stageable);
     run_status("git", &args)?;
     Ok(())
+}
+
+fn reject_local_issue_bundle_paths_in_finish_paths(repo_root: &Path, paths: &[&str]) -> Result<()> {
+    let mut local_issue_surfaces = paths
+        .iter()
+        .filter_map(|path| finish_local_issue_bundle_card_display(repo_root, path))
+        .collect::<Vec<_>>();
+    if local_issue_surfaces.is_empty() {
+        return Ok(());
+    }
+
+    local_issue_surfaces.sort_unstable();
+    local_issue_surfaces.dedup();
+    bail!(
+        "finish: --paths includes local-only .adl task-bundle card paths: {}. Do not pass SIP/STP/SPP/SRP/SOR task-bundle files via --paths; use --output-card for the SOR truth surface and pass only tracked repo publication inputs such as docs/... or adl/src/.... Canonical .adl bundles are validated and synchronized separately and must remain local-only.",
+        local_issue_surfaces.join(", ")
+    )
+}
+
+fn finish_local_issue_bundle_card_display(repo_root: &Path, path: &str) -> Option<String> {
+    let path_value = Path::new(path);
+    let relpath = if path_value.is_absolute() {
+        path_value.strip_prefix(repo_root).ok()?.to_path_buf()
+    } else {
+        path_value
+            .components()
+            .filter(|component| !matches!(component, std::path::Component::CurDir))
+            .collect::<PathBuf>()
+    };
+    let relpath = relpath.to_string_lossy().replace('\\', "/");
+    if !relpath.starts_with(".adl/") {
+        return None;
+    }
+    issue_bundle_issue_number_from_repo_relative(&relpath)?;
+    match Path::new(&relpath)
+        .file_name()
+        .and_then(|name| name.to_str())
+    {
+        Some("sip.md" | "stp.md" | "spp.md" | "srp.md" | "sor.md") => Some(relpath),
+        _ => None,
+    }
 }
 
 pub(super) fn ensure_no_staged_issue_bundle_mutations(
@@ -2228,6 +2305,10 @@ pub(super) fn extra_pr_body_looks_like_issue_template(body: &str) -> bool {
         || lowered.contains("## goal")
         || lowered.contains("## deliverables")
         || lowered.contains("\n---\n")
+}
+
+pub(super) fn non_closing_lifecycle_line(issue: u32) -> String {
+    format!("Non-closing lifecycle PR: issue #{issue} remains open.")
 }
 
 pub(super) fn render_pr_body(

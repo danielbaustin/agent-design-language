@@ -394,9 +394,13 @@ fn real_pr_finish_fails_when_pr_janitor_auto_attach_fails() {
     let gh_path = bin_dir.join("gh");
     let janitor_path = bin_dir.join("janitor");
     let closeout_path = bin_dir.join("closeout");
+    let pr_body_capture = temp.join("pr-body.md");
     write_executable(
         &gh_path,
-        "#!/usr/bin/env bash\nset -euo pipefail\nif [ \"$1 $2 $3\" = 'repo view --json' ]; then\n  printf 'danielbaustin/agent-design-language\\n'\n  exit 0\nfi\nif [ \"$1 $2\" = 'pr list' ]; then\n  exit 0\nfi\nif [ \"$1 $2\" = 'pr create' ]; then\n  printf 'https://github.com/danielbaustin/agent-design-language/pull/1160\\n'\n  exit 0\nfi\nif [ \"$1 $2\" = 'pr view' ]; then\n  if printf '%s ' \"$@\" | grep -q 'closingIssuesReferences'; then\n    printf '1154\\n'\n  else\n    printf 'Closes #1154\\n'\n  fi\n  exit 0\nfi\nexit 1\n",
+        &format!(
+            "#!/usr/bin/env bash\nset -euo pipefail\nif [ \"$1 $2 $3\" = 'repo view --json' ]; then\n  printf 'danielbaustin/agent-design-language\\n'\n  exit 0\nfi\nif [ \"$1 $2\" = 'pr list' ]; then\n  exit 0\nfi\nif [ \"$1 $2\" = 'pr create' ]; then\n  while [ \"$#\" -gt 0 ]; do\n    if [ \"$1\" = '--body-file' ]; then\n      cp \"$2\" '{}'\n      break\n    fi\n    shift\n  done\n  printf 'https://github.com/danielbaustin/agent-design-language/pull/1160\\n'\n  exit 0\nfi\nif [ \"$1 $2\" = 'pr view' ]; then\n  if printf '%s ' \"$@\" | grep -q 'closingIssuesReferences'; then\n    printf '1154\\n'\n  else\n    printf 'Closes #1154\\n'\n  fi\n  exit 0\nfi\nexit 1\n",
+            pr_body_capture.display()
+        ),
     );
     write_executable(
         &janitor_path,
@@ -465,6 +469,10 @@ fn real_pr_finish_fails_when_pr_janitor_auto_attach_fails() {
     assert!(err
         .to_string()
         .contains("finish: PR janitor auto-attach failed"));
+    let captured_body = fs::read_to_string(&pr_body_capture).expect("captured PR body");
+    assert!(captured_body.contains("Non-closing lifecycle PR"));
+    assert!(captured_body.contains("issue #1154 remains open"));
+    assert!(!captured_body.contains("Closes #1154"));
 }
 
 #[test]

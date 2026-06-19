@@ -1,0 +1,39 @@
+{
+  "schema_version": "provider_communication.v1",
+  "route": {
+    "provider_kind": "local",
+    "provider": "ollama",
+    "runtime_surface": "ollama_http",
+    "provider_model_id": "deepseek-r1:32b",
+    "source_registry": "v0.91.6.deepseek.suitability"
+  },
+  "model_identity": {
+    "provider_kind": "local",
+    "provider": "ollama",
+    "model_ref": "deepseek-r1:32b",
+    "provider_model_id": "deepseek-r1:32b",
+    "runtime_surface": "ollama_http",
+    "identity_strength": "pinned",
+    "observed_at": "unix:1781833310",
+    "resolved_digest": "sha256:edba8017331d15236e57480eb45406c0d721db77a4cdcf234df500fc2ad3960c",
+    "source_registry": "v0.91.6.deepseek.suitability"
+  },
+  "attempts": [
+    {
+      "attempt_index": 1,
+      "started_at": "unix:1781833310",
+      "duration_ms": 12865,
+      "status": "ok",
+      "retryable": false,
+      "http_status": 200,
+      "raw_response_excerpt": "[redacted response len=454 sha256=2ff4ccd062e1]"
+    }
+  ],
+  "final_status": "ok",
+  "duration_ms": 12865,
+  "request_id": "ollama:deepseek-r1:32b__review_findings_v1",
+  "output_text_excerpt": "[redacted response len=454 sha256=2ff4ccd062e1]",
+  "artifact_ref": "<tmp>/result.json@a89fa961614c6a3d",
+  "output_text_chars": 454,
+  "output_text_digest": "sha256:2ff4ccd062e1"
+}

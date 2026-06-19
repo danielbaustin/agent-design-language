@@ -501,8 +501,9 @@ fn ensure_closed_completed_issue_bundle_truth_rejects_stale_fields() {
     assert!(rendered
         .contains("SOR Integration state expected 'merged' or 'closed_no_pr' but found 'pr_open'"));
     assert!(rendered.contains("SOR Verification scope expected 'main_repo' but found 'worktree'"));
-    assert!(rendered
-        .contains("SOR Worktree-only paths remaining expected 'none' but found 'adl/src/foo.rs'"));
+    assert!(rendered.contains(
+        "SOR Worktree-only paths remaining expected 'none' or retained issue worktree but found 'adl/src/foo.rs'"
+    ));
     assert!(rendered.contains("STP status expected '\"complete\"' but found '\"draft\"'"));
     assert!(rendered.contains("SIP Branch expected 'codex/1410-canonical-slug'"));
     assert!(rendered.contains("SIP still contains pre-run lifecycle wording"));
@@ -997,7 +998,7 @@ fn closeout_recovers_missing_primary_cards_from_bound_worktree_bundle() {
 }
 
 #[test]
-fn closeout_records_blocked_dirty_worktree_and_refuses_prune() {
+fn closeout_retains_dirty_stale_worktree_when_canonical_truth_is_complete() {
     let _guard = env_lock();
     let _manifest_guard = set_tooling_manifest_root_to_workspace();
     let temp = temp_dir("adl-pr-lifecycle-closeout-dirty-worktree");
@@ -1060,14 +1061,108 @@ fn closeout_records_blocked_dirty_worktree_and_refuses_prune() {
         .success());
     fs::write(worktree.join("DIRTY.txt"), "dirty\n").expect("dirty marker");
 
-    let err = closeout_closed_completed_issue_bundle(&repo, &repo, &issue_ref, &output)
-        .expect_err("dirty worktree should block pruning");
+    closeout_closed_completed_issue_bundle(&repo, &repo, &issue_ref, &output)
+        .expect("dirty stale worktree should be retained when root closeout truth is complete");
 
-    assert!(err.to_string().contains("refusing to prune dirty worktree"));
     assert!(worktree.is_dir(), "dirty worktree should be retained");
     let text = fs::read_to_string(&output).expect("read sor");
-    assert!(text.contains("- Worktree prune result: blocked_dirty: retained adl-wp-1410"));
+    assert!(text.contains(
+        "- Worktree prune result: retained_with_reason: dirty stale worktree retained: adl-wp-1410"
+    ));
     assert!(text.contains("- Worktree-only paths remaining: issue worktree retained: adl-wp-1410"));
+    ensure_closed_completed_issue_bundle_truth(&repo, &issue_ref, &output)
+        .expect("canonical truth accepts retained stale worktree");
+}
+
+#[test]
+fn closeout_refuses_dirty_worktree_when_canonical_truth_needs_recovery() {
+    let _guard = env_lock();
+    let _manifest_guard = set_tooling_manifest_root_to_workspace();
+    let temp = temp_dir("adl-pr-lifecycle-closeout-dirty-worktree-only-source");
+    let repo = temp.join("repo");
+    let origin = temp.join("origin.git");
+    init_repo_with_origin(&repo, &origin);
+    copy_prompt_templates(&repo);
+    fs::write(repo.join(".gitignore"), ".adl/\n").expect("write gitignore");
+    assert!(Command::new("git")
+        .args([
+            "-C",
+            path_str(&repo).expect("repo path"),
+            "add",
+            ".gitignore"
+        ])
+        .status()
+        .expect("git add gitignore")
+        .success());
+    assert!(Command::new("git")
+        .args([
+            "-C",
+            path_str(&repo).expect("repo path"),
+            "commit",
+            "-q",
+            "-m",
+            "ignore local adl state",
+        ])
+        .status()
+        .expect("git commit gitignore")
+        .success());
+
+    let issue_ref = IssueRef::new(1410, "v0.87", "canonical-slug").expect("issue ref");
+    let title = "PR Command Dirty Recovery Closeout";
+    let source_path = issue_ref.issue_prompt_path(&repo);
+    fs::create_dir_all(source_path.parent().expect("source parent")).expect("source parent");
+    fs::write(
+        &source_path,
+        "## Summary\n\nDirty worktree recovery fixture.\n\n## Goal\n\nDo not recover closeout truth from a dirty worktree.\n\n## Required Outcome\n\n- closeout fails when dirty worktree cards are the only recovery source\n\n## Deliverables\n\n- focused lifecycle regression test\n\n## Acceptance Criteria\n\n- dirty worktree is retained\n- root cards are not recovered from dirty worktree residue\n\n## Repo Inputs\n\n- `adl/src/cli/pr_cmd/lifecycle/reconciliation.rs`\n\n## Dependencies\n\n- none\n\n## Demo Expectations\n\n- none\n\n## Non-goals\n\n- no broader closeout redesign\n\n## Issue-Graph Notes\n\n- regression fixture\n\n## Notes\n\n- local `.adl` state is ignored\n\n## Tooling Notes\n\n- focused lifecycle test\n",
+    )
+    .expect("write source");
+    ensure_task_bundle_stp(&repo, &issue_ref, &source_path).expect("stp");
+    ensure_pre_run_bootstrap_cards(&repo, &issue_ref, title, &source_path).expect("cards");
+    let canonical_dir = issue_ref.task_bundle_dir_path(&repo);
+    let output = issue_ref.task_bundle_output_path(&repo);
+    fs::write(&output, issue_ref_sync_completed_output_content()).expect("write completed sor");
+
+    let worktree = issue_ref.default_worktree_path(&repo, None);
+    assert!(Command::new("git")
+        .args([
+            "-C",
+            path_str(&repo).expect("repo path"),
+            "worktree",
+            "add",
+            path_str(&worktree).expect("worktree path"),
+            "-b",
+            "codex/1410-canonical-slug",
+            "main",
+        ])
+        .status()
+        .expect("git worktree add")
+        .success());
+    let worktree_bundle = issue_ref.task_bundle_dir_path(&worktree);
+    fs::create_dir_all(&worktree_bundle).expect("worktree bundle");
+    for relative in ["stp.md", "sip.md", "spp.md", "srp.md", "sor.md"] {
+        fs::copy(canonical_dir.join(relative), worktree_bundle.join(relative))
+            .expect("copy card to dirty worktree");
+    }
+    for relative in ["stp.md", "sip.md", "spp.md", "srp.md"] {
+        fs::remove_file(canonical_dir.join(relative)).expect("remove root card");
+    }
+    fs::write(worktree.join("DIRTY.txt"), "dirty\n").expect("dirty marker");
+
+    let err = closeout_closed_completed_issue_bundle(&repo, &repo, &issue_ref, &output)
+        .expect_err("dirty worktree should not be used as a recovery source");
+
+    assert!(
+        err.to_string().contains("dirty worktree")
+            || err.to_string().contains("failed to create")
+            || err.to_string().contains("missing canonical")
+            || err.to_string().contains("failed closed"),
+        "unexpected closeout error: {err}"
+    );
+    assert!(worktree.is_dir(), "dirty worktree should be retained");
+    assert!(
+        !canonical_dir.join("stp.md").exists(),
+        "root cards should not be recovered from dirty worktree residue"
+    );
 }
 
 #[test]

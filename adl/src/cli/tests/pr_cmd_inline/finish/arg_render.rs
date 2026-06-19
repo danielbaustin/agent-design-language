@@ -1,9 +1,10 @@
 use super::*;
 use crate::cli::pr_cmd::finish_support::{
     ensure_finish_branch_not_behind_origin_main, ensure_finish_task_bundle_surfaces,
-    finish_declared_paths_for_validation, normalize_docs_only_sor_text, open_pr_url_nonblocking,
-    open_pr_url_nonblocking_with_timeout, real_pr_finish, resolve_finish_issue_scope_and_slug,
-    select_finish_validation_plan_for_finish, FinishValidationMode, FinishValidationPlan,
+    finish_declared_paths_for_validation, non_closing_lifecycle_line, normalize_docs_only_sor_text,
+    open_pr_url_nonblocking, open_pr_url_nonblocking_with_timeout, real_pr_finish,
+    resolve_finish_issue_scope_and_slug, select_finish_validation_plan_for_finish,
+    FinishValidationMode, FinishValidationPlan,
 };
 use crate::cli::pr_cmd::git_support::commits_behind_origin_main;
 
@@ -164,6 +165,35 @@ fn render_pr_body_uses_output_sections_and_rejects_issue_template_text() {
     )
     .expect_err("issue template text should be rejected");
     assert!(err.to_string().contains("issue-template/prompt text"));
+}
+
+#[test]
+fn render_pr_body_can_declare_non_closing_lifecycle_pr() {
+    let temp = unique_temp_dir("adl-pr-render-body-no-close");
+    fs::create_dir_all(&temp).expect("temp dir");
+    let input = temp.join("input.md");
+    let output = temp.join("output.md");
+    fs::write(&input, "# input\n").expect("write input");
+    fs::write(
+        &output,
+        "# no-close\n\n## Summary\nsummary text\n\n## Artifacts produced\n- docs/example.md\n",
+    )
+    .expect("write output");
+
+    let body = render_pr_body(
+        Some(&non_closing_lifecycle_line(1153)),
+        &input,
+        &output,
+        None,
+        None,
+        "fp-123",
+        &temp,
+    )
+    .expect("render no-close body");
+
+    assert!(body.contains("Non-closing lifecycle PR"));
+    assert!(body.contains("issue #1153 remains open"));
+    assert!(!body.contains("Closes #1153"));
 }
 
 #[test]
@@ -403,6 +433,36 @@ fn finish_helper_paths_cover_nonempty_and_staged_checks() {
     .expect("cached names");
     assert!(!staged_name_only.contains(".adl/v0.86/tasks/issue-1153__rust-finish-test/sor.md"));
     assert!(staged_name_only.contains("tracked.txt"));
+
+    let err = stage_selected_paths_rust(
+        &repo,
+        "tracked.txt,.adl/v0.86/tasks/issue-1153__rust-finish-test/sor.md",
+    )
+    .expect_err("task-bundle SOR in --paths should fail before staging");
+    let err_text = err.to_string();
+    assert!(err_text.contains("--paths includes local-only .adl task-bundle card paths"));
+    assert!(err_text.contains("issue-1153__rust-finish-test/sor.md"));
+    assert!(err_text.contains("use --output-card for the SOR truth surface"));
+    assert!(err_text.contains("tracked repo publication inputs"));
+
+    let dot_relative_err = stage_selected_paths_rust(
+        &repo,
+        "tracked.txt,./.adl/v0.86/tasks/issue-1153__rust-finish-test/srp.md",
+    )
+    .expect_err("dot-relative task-bundle SRP in --paths should fail");
+    assert!(dot_relative_err
+        .to_string()
+        .contains(".adl/v0.86/tasks/issue-1153__rust-finish-test/srp.md"));
+
+    let absolute_sor = repo
+        .join(".adl/v0.86/tasks/issue-1153__rust-finish-test/sor.md")
+        .display()
+        .to_string();
+    let absolute_err = stage_selected_paths_rust(&repo, &format!("tracked.txt,{absolute_sor}"))
+        .expect_err("absolute task-bundle SOR in --paths should fail");
+    assert!(absolute_err
+        .to_string()
+        .contains(".adl/v0.86/tasks/issue-1153__rust-finish-test/sor.md"));
 }
 
 #[test]
@@ -851,6 +911,27 @@ fn finish_validation_plan_classifies_repo_quality_staleness_tooling() {
 }
 
 #[test]
+fn finish_validation_plan_classifies_deepseek_suitability_tooling() {
+    let plan = select_finish_validation_plan(
+        "adl/tools/run_v0916_agent_suitability_panel.py,adl/tools/run_v0916_deepseek_suitability.py,adl/tools/validate_v0916_agent_suitability_panel.py,adl/tools/validate_v0916_deepseek_suitability.py,adl/tools/test_v0916_deepseek_suitability.sh,adl/tools/suitability_specs/deepseek_csdlc_panel_4096.json,docs/milestones/v0.91.6/review/provider/deepseek_suitability/DEEPSEEK_C_SDLC_SUITABILITY_PROOF_2026-06-18.md",
+    )
+    .expect("deepseek suitability tooling plan");
+
+    assert_eq!(plan.mode, FinishValidationMode::LargerBinaryFocused);
+    assert!(plan
+        .commands
+        .contains(&"bash adl/tools/test_v0916_deepseek_suitability.sh".to_string()));
+    assert!(plan
+        .commands
+        .contains(&"bash adl/tools/check_no_tracked_adl_issue_record_residue.sh".to_string()));
+    assert!(plan.commands.contains(&"git diff --check".to_string()));
+    assert!(!plan
+        .commands
+        .iter()
+        .any(|command| command.contains("cargo clippy")));
+}
+
+#[test]
 fn finish_validation_plan_classifies_private_endpoint_fixture_sanitation_slice() {
     let plan = select_finish_validation_plan(
         "adl/tools/demo_codex_ollama_operational_skills.sh,adl/tools/demo_v089_gemma4_issue_clerk.sh,adl/tools/test_demo_codex_ollama_operational_skills.sh,adl/tools/test_demo_codex_ollama_semantic_fallback.sh,adl/tools/test_demo_v089_gemma4_issue_clerk.sh,adl/src/provider_substrate.rs,adl/tools/validate_v0915_remote_gemma_watcher_probe.py,demos/v0.87.1/codex_ollama_operational_skills_demo.md,demos/v0.89/gemma4_issue_clerk_demo.md",
@@ -1249,6 +1330,23 @@ fn finish_validation_profile_classifies_process_status_helper_surfaces() {
         .commands
         .iter()
         .any(|command| command.contains("cargo nextest")));
+}
+
+#[test]
+fn finish_validation_profile_classifies_lifecycle_inline_tests() {
+    let plan = select_finish_validation_plan_for_finish(
+        ".",
+        &["adl/src/cli/tests/pr_cmd_inline/lifecycle/start_ready.rs".to_string()],
+    )
+    .expect("lifecycle inline test plan");
+
+    assert_eq!(plan.mode, FinishValidationMode::LargerBinaryFocused);
+    assert!(plan
+        .commands
+        .contains(&"cargo fmt --manifest-path adl/Cargo.toml --all --check".to_string()));
+    assert!(plan
+        .commands
+        .contains(&"cargo test --manifest-path adl/Cargo.toml --bin adl cli::pr_cmd".to_string()));
 }
 
 #[test]

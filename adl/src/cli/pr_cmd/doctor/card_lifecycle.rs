@@ -485,12 +485,17 @@ fn classify_sor_stage(repo_root: &Path, path: &Path) -> DoctorCardStageJson {
     let result = line_value_after_prefix(&text, "- Result:").unwrap_or_default();
     let worktree_only =
         line_value_after_prefix(&text, "- Worktree-only paths remaining:").unwrap_or_default();
+    let worktree_prune_result =
+        line_value_after_prefix(&text, "- Worktree prune result:").unwrap_or_default();
+    let terminal_worktree_truth = worktree_only == "none"
+        || (worktree_only.starts_with("issue worktree retained: ")
+            && worktree_prune_result.starts_with("retained_with_reason: "));
     let terminal_closeout = ["merged", "closed_no_pr"].contains(&integration_state.as_str())
         && matches!(
             (status.as_str(), result.as_str()),
             ("DONE", "PASS") | ("FAILED", "FAIL")
         )
-        && worktree_only == "none"
+        && terminal_worktree_truth
         && text.contains("## Validation");
     if card_status_value(&text).as_deref() == Some("completed") && !terminal_closeout {
         return card_stage(

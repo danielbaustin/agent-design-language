@@ -4,7 +4,7 @@
 
 - Feature Name: ACIP, A2A, And Provider Communications
 - Milestone Target: `v0.91.6`
-- Status: in_progress
+- Status: complete
 - Owner: ADL maintainers
 - Doc Role: primary
 - Feature Types: architecture, policy, schema
@@ -562,3 +562,107 @@ or routed before activation.
 - No protocol completion claim.
 - No implicit external-agent trust.
 - No unreviewed provider-message exposure.
+
+## WP-06 Protocol Decision Closeout Package
+
+This section records the final WP-06 closeout package for umbrella `#3971`.
+
+The completed child surfaces for this mini-sprint are:
+
+| Issue | Scope closed in `v0.91.6` | Final status |
+| --- | --- | --- |
+| `#4013` | schema catalog and profile/layer boundaries | closed |
+| `#4014` | capability-first delegation and provider-message boundary | closed |
+| `#4015` | access rules and authority boundaries | closed |
+| `#4016` | JSON/protobuf/WebSocket projection posture | closed |
+| `#4017` | external-agent, citizen, guild, and capability-market routing posture | closed |
+| `#4055` | Agent Comms 1.0 message substrate boundary | closed |
+
+## Final `v0.91.6` Decision Summary
+
+The first-tranche ACIP/A2A/provider communication decisions accepted by
+`v0.91.6` are:
+
+- communication is message-first; invocation is a specialized message pattern;
+- capability semantics remain above provider/model substrate selection;
+- provider, capability, role-policy, and civil identity layers remain distinct;
+- access and authority posture is fail-closed until allowed route and caller
+  class are explicit;
+- deterministic JSON is the only documented message-shape baseline this
+  milestone accepts for downstream consumption;
+- Agent Comms 1.0 is accepted as the first-tranche substrate boundary for
+  messages, payload refs, invocation vocabulary, and specialization posture.
+
+## What `v0.91.6` Does Not Claim
+
+This closeout must remain explicit about the non-claims preserved by the child
+issues:
+
+- agents are not yet proven to communicate over a live production protocol;
+- no end-to-end inter-agent runtime or transport stack is claimed here;
+- protobuf is not accepted in this milestone;
+- WebSocket is not accepted in this milestone;
+- cross-boundary external-agent transport is not approved in this milestone;
+- identity/governance runtime is not implemented by these communication docs.
+
+## ADR Candidate Routing
+
+No ADR is accepted directly by WP-06 in `v0.91.6`.
+
+The current decisions are sufficient as a reviewed boundary package, but later
+acceptance of:
+
+- protobuf wire format,
+- WebSocket carriage,
+- concrete carrier contracts,
+- live cross-agent runtime transport,
+
+should be captured as later ADR candidates when those choices are actually
+implemented and proved.
+
+## Validation And Review Transcript Links
+
+The closeout evidence for this mini-sprint is carried by the child issue
+threads plus their issue-local review/output records:
+
+| Issue | GitHub issue thread | Review transcript | Output / validation transcript |
+| --- | --- | --- | --- |
+| `#4013` | `https://github.com/danielbaustin/agent-design-language/issues/4013` | `.adl/v0.91.6/tasks/issue-4013__v0-91-6-wp-06-acip-c-00-define-communication-schema-catalog-and-profile-boundaries/srp.md` | `.adl/v0.91.6/tasks/issue-4013__v0-91-6-wp-06-acip-c-00-define-communication-schema-catalog-and-profile-boundaries/sor.md` |
+| `#4014` | `https://github.com/danielbaustin/agent-design-language/issues/4014` | `.adl/v0.91.6/tasks/issue-4014__v0-91-6-wp-06-acip-c-01-define-capability-based-delegation-and-provider-message-boundary/srp.md` | `.adl/v0.91.6/tasks/issue-4014__v0-91-6-wp-06-acip-c-01-define-capability-based-delegation-and-provider-message-boundary/sor.md` |
+| `#4015` | `https://github.com/danielbaustin/agent-design-language/issues/4015` | `.adl/v0.91.6/tasks/issue-4015__v0-91-6-wp-06-acip-c-02-define-acip-a2a-access-rules-and-authority-boundaries/srp.md` | `.adl/v0.91.6/tasks/issue-4015__v0-91-6-wp-06-acip-c-02-define-acip-a2a-access-rules-and-authority-boundaries/sor.md` |
+| `#4016` | `https://github.com/danielbaustin/agent-design-language/issues/4016` | `.adl/v0.91.6/tasks/issue-4016__v0-91-6-wp-06-acip-c-03-decide-json-protobuf-and-websocket-projection-boundaries/srp.md` | `.adl/v0.91.6/tasks/issue-4016__v0-91-6-wp-06-acip-c-03-decide-json-protobuf-and-websocket-projection-boundaries/sor.md` |
+| `#4017` | `https://github.com/danielbaustin/agent-design-language/issues/4017` | `.adl/v0.91.6/tasks/issue-4017__v0-91-6-wp-06-acip-c-04-define-external-agent-citizen-guild-and-capability-market-routing/srp.md` | `.adl/v0.91.6/tasks/issue-4017__v0-91-6-wp-06-acip-c-04-define-external-agent-citizen-guild-and-capability-market-routing/sor.md` |
+| `#4055` | `https://github.com/danielbaustin/agent-design-language/issues/4055` | `.adl/v0.91.6/tasks/issue-4055__wp06-agent-comms-1-0-message-substrate/srp.md` | `.adl/v0.91.6/tasks/issue-4055__wp06-agent-comms-1-0-message-substrate/sor.md` |
+
+WP-06 consumes those child records rather than inventing a second umbrella-only
+validation transcript.
+
+The final `#4018` proof surface used to complete this closeout was:
+
+- issue thread: `https://github.com/danielbaustin/agent-design-language/issues/4018`
+- review transcript: `.adl/v0.91.6/tasks/issue-4018__v0-91-6-wp-06-acip-c-05-complete-protocol-decision-closeout-proof/srp.md`
+- output/validation transcript: `.adl/v0.91.6/tasks/issue-4018__v0-91-6-wp-06-acip-c-05-complete-protocol-decision-closeout-proof/sor.md`
+
+## Residuals And Owners
+
+The remaining protocol residuals after WP-06 are:
+
+| Residual | Owner |
+| --- | --- |
+| protobuf schema/version/security acceptance | `v0.91.7` ACIP/A2A residual lane |
+| WebSocket carriage and integrity/access closure | `v0.91.7` residual clarification and `v0.92` transport work |
+| stronger message integrity/provenance and malformed-output security closure | `v0.91.6` security bridge lane and later activation proof |
+| live agent-to-agent runtime transport proof | later `v0.92` implementation/proof work |
+| external-agent trust/onboarding/runtime posture | later ACIP/A2A residual and security lanes |
+
+## `v0.92` Consumption Gate
+
+`v0.92` may consume WP-06 as a complete communication-semantics and boundary
+package.
+
+`v0.92` must not consume WP-06 as proof that:
+
+- live inter-agent transport is already working;
+- protobuf or WebSocket is accepted;
+- external agents are trusted by default;
+- authority can be inferred from messages alone.

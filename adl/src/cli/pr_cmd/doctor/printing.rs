@@ -13,6 +13,8 @@ pub(super) fn print_doctor_preflight_text(preflight: &DoctorPreflightResult) {
         );
     }
     println!("PREFLIGHT={}", preflight.status);
+    println!("PREFLIGHT_BLOCK_KIND={}", preflight.block_kind);
+    println!("PREFLIGHT_GUIDANCE={}", preflight.guidance);
 }
 
 pub(super) fn print_doctor_ready_text(ready: &DoctorReadyResult) {

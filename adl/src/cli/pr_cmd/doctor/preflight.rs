@@ -24,13 +24,17 @@ pub(super) fn run_doctor_preflight(
         })
         .collect::<Vec<_>>();
     let card_run_readiness = preflight_card_run_readiness(repo_root, issue_ref);
+    let (status, block_kind, guidance) =
+        doctor_preflight_status(open_prs.is_empty(), card_run_readiness);
     if open_prs.is_empty() && card_run_readiness != Some("blocked") {
         Ok(DoctorPreflightResult {
             target_queue: target_queue.queue,
             target_queue_source: target_queue.source,
             open_pr_count: 0,
             open_prs,
-            status: "PASS",
+            status,
+            block_kind,
+            guidance,
         })
     } else {
         Ok(DoctorPreflightResult {
@@ -38,8 +42,39 @@ pub(super) fn run_doctor_preflight(
             target_queue_source: target_queue.source,
             open_pr_count: open_prs.len(),
             open_prs,
-            status: "BLOCK",
+            status,
+            block_kind,
+            guidance,
         })
+    }
+}
+
+pub(super) fn doctor_preflight_status(
+    open_pr_wave_empty: bool,
+    card_run_readiness: Option<&'static str>,
+) -> (&'static str, &'static str, &'static str) {
+    let card_blocked = card_run_readiness == Some("blocked");
+    match (open_pr_wave_empty, card_blocked) {
+        (true, false) => (
+            "PASS",
+            "none",
+            "No preflight queue or card-readiness blockers detected.",
+        ),
+        (false, false) => (
+            "BLOCK",
+            "open_pr_wave",
+            "Issue-local readiness may proceed only under an explicit queue override such as --allow-open-pr-wave after recording why the open PR wave is unrelated or intentionally sequenced.",
+        ),
+        (true, true) => (
+            "BLOCK",
+            "card_run_readiness",
+            "Repair issue-local SIP/STP/SPP/SRP/SOR readiness before execution; do not override this as queue pressure.",
+        ),
+        (false, true) => (
+            "BLOCK",
+            "open_pr_wave_and_card_run_readiness",
+            "Repair issue-local card readiness before execution; open PR queue pressure remains a separate scheduling gate.",
+        ),
     }
 }
 

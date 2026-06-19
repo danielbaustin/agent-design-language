@@ -1,4 +1,4 @@
-use super::preflight::preflight_card_run_readiness;
+use super::preflight::{doctor_preflight_status, preflight_card_run_readiness};
 use super::*;
 use crate::cli::pr_cmd_cards::StructuredBundlePaths;
 use std::time::{SystemTime, UNIX_EPOCH};
@@ -22,6 +22,45 @@ fn doctor_issue_prompt_resolution_falls_back_to_bound_worktree_prompt() {
         resolve_doctor_issue_prompt_path(&repo, &issue_ref).expect("doctor source prompt");
 
     assert_eq!(resolved, source_path);
+}
+
+#[test]
+fn doctor_full_warns_when_only_open_wave_blocks_ready_issue() {
+    let (preflight_status, block_kind, guidance) = doctor_preflight_status(false, Some("ready"));
+
+    assert_eq!(preflight_status, "BLOCK");
+    assert_eq!(block_kind, "open_pr_wave");
+    assert!(guidance.contains("--allow-open-pr-wave"));
+    assert_eq!(
+        doctor_full_status(preflight_status, block_kind, Some("PASS")),
+        "WARN"
+    );
+}
+
+#[test]
+fn doctor_full_stays_blocked_for_issue_local_card_readiness() {
+    let (preflight_status, block_kind, guidance) = doctor_preflight_status(true, Some("blocked"));
+
+    assert_eq!(preflight_status, "BLOCK");
+    assert_eq!(block_kind, "card_run_readiness");
+    assert!(guidance.contains("SIP/STP/SPP/SRP/SOR"));
+    assert_eq!(
+        doctor_full_status(preflight_status, block_kind, Some("PASS")),
+        "BLOCK"
+    );
+}
+
+#[test]
+fn doctor_full_stays_blocked_for_combined_open_wave_and_card_readiness() {
+    let (preflight_status, block_kind, guidance) = doctor_preflight_status(false, Some("blocked"));
+
+    assert_eq!(preflight_status, "BLOCK");
+    assert_eq!(block_kind, "open_pr_wave_and_card_run_readiness");
+    assert!(guidance.contains("card readiness"));
+    assert_eq!(
+        doctor_full_status(preflight_status, block_kind, Some("PASS")),
+        "BLOCK"
+    );
 }
 
 #[test]
@@ -610,6 +649,30 @@ fn card_lifecycle_reports_final_review_and_output_truth() {
     assert_eq!(lifecycle.next_required_stage, None);
     assert_eq!(lifecycle.pr_finish_readiness, "ready");
     assert_stage(&lifecycle, "SRP", "final", true, true);
+    assert_stage(&lifecycle, "SOR", "final", true, true);
+}
+
+#[test]
+fn card_lifecycle_accepts_terminal_sor_with_retained_dirty_worktree_truth() {
+    let repo = lifecycle_temp_repo("retained-dirty-worktree-final-sor");
+    let paths = write_lifecycle_fixture(
+            &repo,
+            LifecycleFixture {
+                sip: "Branch: codex/3065-test\n",
+                stp: complete_stp_fixture(),
+                spp: "---\nbranch: \"codex/3065-test\"\nstatus: \"approved\"\n---\n",
+                srp: "---\nartifact_type: \"structured_review_policy\"\nbranch: \"codex/3065-test\"\nstatus: \"approved\"\nreview_results:\n  findings_status: \"no_findings\"\n  recommended_outcome: \"pass\"\n---\n\n# Structured Review Prompt\n\n## Review Results\n\n### Recommended Outcome\n\n- pass\n",
+                sor: "# output\n\nBranch: codex/3065-test\nStatus: DONE\n\n## Main Repo Integration (REQUIRED)\n- Worktree-only paths remaining: issue worktree retained: adl-wp-3065\n- Worktree prune result: retained_with_reason: dirty stale worktree retained: adl-wp-3065\n- Integration state: merged\n- Result: PASS\n\n## Validation\n- focused validation passed\n",
+            },
+        );
+
+    let lifecycle = build_doctor_card_lifecycle(
+        &repo, &paths.sip, &paths.stp, &paths.spp, &paths.srp, &paths.sor,
+    );
+
+    assert_eq!(lifecycle.active_stage, "SOR");
+    assert_eq!(lifecycle.next_required_stage, None);
+    assert_eq!(lifecycle.pr_finish_readiness, "ready");
     assert_stage(&lifecycle, "SOR", "final", true, true);
 }
 

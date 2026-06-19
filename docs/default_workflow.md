@@ -270,7 +270,7 @@ Write a per-issue report under:
 - Dirty repo-local execution clone:
   - Commit/stash first, then re-run the relevant command from `.worktrees/adl-wp-<issue_num>`.
 - Wrong paths at `finish`:
-  - Ensure `--paths` only includes intended repo paths; do not include local `.adl` artifacts.
+  - Ensure `--paths` only includes intended tracked repo paths; do not include local `.adl` SIP/STP/SPP/SRP/SOR task-bundle artifacts. Use `--output-card` for the SOR truth surface.
 - Missing canonical STP:
   - Re-run `pr.sh init <issue_num> --slug <slug> --version <milestone_version>`.
 - Stale GitHub issue body:

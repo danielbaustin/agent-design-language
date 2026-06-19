@@ -1,0 +1,39 @@
+{
+  "schema_version": "provider_communication.v1",
+  "route": {
+    "provider_kind": "local",
+    "provider": "ollama",
+    "runtime_surface": "ollama_http",
+    "provider_model_id": "deepseek-r1:8b",
+    "source_registry": "v0.91.6.deepseek.suitability"
+  },
+  "model_identity": {
+    "provider_kind": "local",
+    "provider": "ollama",
+    "model_ref": "deepseek-r1:8b",
+    "provider_model_id": "deepseek-r1:8b",
+    "runtime_surface": "ollama_http",
+    "identity_strength": "pinned",
+    "observed_at": "unix:1781833211",
+    "resolved_digest": "sha256:6995872bfe4c521a67b32da386cd21d5c6e819b6e0d62f79f64ec83be99f5763",
+    "source_registry": "v0.91.6.deepseek.suitability"
+  },
+  "attempts": [
+    {
+      "attempt_index": 1,
+      "started_at": "unix:1781833210",
+      "duration_ms": 33928,
+      "status": "ok",
+      "retryable": false,
+      "http_status": 200,
+      "raw_response_excerpt": "[redacted response len=419 sha256=8ee15491cd8a]"
+    }
+  ],
+  "final_status": "ok",
+  "duration_ms": 33928,
+  "request_id": "ollama:deepseek-r1:8b__watcher_state_v1",
+  "output_text_excerpt": "[redacted response len=419 sha256=8ee15491cd8a]",
+  "artifact_ref": "<tmp>/result.json@01159ac1d0054188",
+  "output_text_chars": 419,
+  "output_text_digest": "sha256:8ee15491cd8a"
+}
