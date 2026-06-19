@@ -15,6 +15,7 @@ model reliability, training readiness, or autonomous workflow authority.
 - `docs/milestones/v0.91.5/review/multi_agent_matrix/PROVIDER_MODEL_ROLE_MATRIX_2026-06-05.md`
 - `docs/milestones/v0.91.5/review/openrouter_matrix/OPENROUTER_MATRIX_PROOF_2026-06-14.md`
 - `docs/milestones/v0.91.5/review/remote_gemma_watcher/REMOTE_GEMMA_WATCHER_PROOF_2026-06-15.md`
+- `docs/milestones/v0.91.6/review/provider/deepseek_suitability/DEEPSEEK_C_SDLC_SUITABILITY_PROOF_2026-06-18.md`
 
 ## What this issue establishes
 
@@ -41,6 +42,10 @@ It records:
    The v0.91.5 baseline cited here recorded direct hosted OpenAI, Anthropic,
    DeepSeek, and Gemini-native proof as credential-blocked in that run, so this
    issue does not silently upgrade them to reliable defaults.
+4. DeepSeek now has a bounded direct-provider follow-on.
+   The `#4096` panel shows hosted native DeepSeek as `useful_with_limits`, while
+   local `deepseek-r1:8b` and `deepseek-r1:32b` remain candidate-only because
+   closeout truth drift persisted in the local bounded panel.
 
 ## Strongest role recommendations from current evidence
 

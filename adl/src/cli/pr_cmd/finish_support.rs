@@ -1122,6 +1122,13 @@ pub(super) fn select_finish_validation_plan(paths_csv: &str) -> Result<FinishVal
         }
         if paths
             .iter()
+            .any(|path| finish_path_needs_deepseek_suitability_validation(path))
+        {
+            mode = FinishValidationMode::LargerBinaryFocused;
+            commands.push("bash adl/tools/test_v0916_deepseek_suitability.sh".to_string());
+        }
+        if paths
+            .iter()
             .any(|path| finish_path_needs_private_endpoint_fixture_sanitation_validation(path))
         {
             mode = FinishValidationMode::LargerBinaryFocused;
@@ -1332,6 +1339,12 @@ fn finish_path_is_larger_binary_focused(path: &str) -> bool {
             | "adl/tools/test_adl_review_compatibility.sh"
             | "adl/tools/check_repo_quality_staleness.py"
             | "adl/tools/test_check_repo_quality_staleness.sh"
+            | "adl/tools/run_v0916_agent_suitability_panel.py"
+            | "adl/tools/run_v0916_deepseek_suitability.py"
+            | "adl/tools/validate_v0916_agent_suitability_panel.py"
+            | "adl/tools/validate_v0916_deepseek_suitability.py"
+            | "adl/tools/test_v0916_deepseek_suitability.sh"
+            | "adl/tools/suitability_specs/deepseek_csdlc_panel_4096.json"
             | "docs/milestones/v0.91.5/VALIDATION_LANE_SPLIT_3610.md"
             | "docs/milestones/v0.91.5/LOCAL_VS_CI_VALIDATION_POLICY_3607.md"
             | "adl/src/cli/tooling_cmd/github_release.rs"
@@ -1453,6 +1466,19 @@ fn finish_path_needs_repo_quality_staleness_validation(path: &str) -> bool {
         trimmed,
         "adl/tools/check_repo_quality_staleness.py"
             | "adl/tools/test_check_repo_quality_staleness.sh"
+    )
+}
+
+fn finish_path_needs_deepseek_suitability_validation(path: &str) -> bool {
+    let trimmed = path.trim().trim_matches('/');
+    matches!(
+        trimmed,
+        "adl/tools/run_v0916_agent_suitability_panel.py"
+            | "adl/tools/run_v0916_deepseek_suitability.py"
+            | "adl/tools/validate_v0916_agent_suitability_panel.py"
+            | "adl/tools/validate_v0916_deepseek_suitability.py"
+            | "adl/tools/test_v0916_deepseek_suitability.sh"
+            | "adl/tools/suitability_specs/deepseek_csdlc_panel_4096.json"
     )
 }
 
@@ -1693,6 +1719,10 @@ pub(super) fn run_finish_validation_rust(
                 }
                 "bash adl/tools/test_check_repo_quality_staleness.sh" => {
                     let script = repo_root.join("adl/tools/test_check_repo_quality_staleness.sh");
+                    run_finish_validation_status("bash", &[path_str(&script)?])?;
+                }
+                "bash adl/tools/test_v0916_deepseek_suitability.sh" => {
+                    let script = repo_root.join("adl/tools/test_v0916_deepseek_suitability.sh");
                     run_finish_validation_status("bash", &[path_str(&script)?])?;
                 }
                 "bash adl/tools/test_demo_codex_ollama_operational_skills.sh" => {
