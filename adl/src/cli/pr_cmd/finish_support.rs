@@ -1205,10 +1205,16 @@ fn finish_path_is_docs_only(path: &str) -> bool {
     if trimmed.starts_with("adl/tools/skills/docs/") {
         return finish_path_has_docs_artifact_extension(trimmed);
     }
+    if trimmed.starts_with("adl/tools/skills/") && trimmed.contains("/docs/") {
+        return finish_path_has_docs_artifact_extension(trimmed);
+    }
     if trimmed.starts_with("adl/tools/skills/")
         && (trimmed.ends_with("/SKILL.md") || trimmed.contains("/references/"))
     {
         return finish_path_has_docs_artifact_extension(trimmed);
+    }
+    if trimmed.starts_with("adl/tools/skills/") && trimmed.ends_with("/agents/openai.yaml") {
+        return true;
     }
     if trimmed.starts_with("adl/tools/skills/")
         && (trimmed.ends_with("/adl-skill.yaml") || trimmed.contains("/scripts/"))

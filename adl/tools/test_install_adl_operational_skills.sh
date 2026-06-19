@@ -8,7 +8,7 @@ trap 'rm -rf "${tmpdir}"' EXIT
 assert_skill_bundle() {
   local root="$1"
 
-  for skill in workflow-conductor issue-watcher pr-init pr-ready pr-run pr-finish pr-janitor pr-closeout repo-code-review repo-packet-builder redaction-and-evidence-auditor repo-architecture-review repo-dependency-review repo-diagram-planner architecture-diagram-reviewer review-to-test-planner adr-curator architecture-fitness-function-author finding-to-issue-planner test-generator demo-operator release-evidence review-readiness-cleanup portable-contract-normalizer medium-article-writer arxiv-paper-writer diagram-author spp-editor srp-editor sprint-conductor stp-editor sip-editor sor-editor; do
+  for skill in workflow-conductor issue-watcher pr-init pr-ready pr-run pr-finish pr-janitor pr-closeout repo-code-review repo-packet-builder redaction-and-evidence-auditor repo-architecture-review repo-dependency-review repo-diagram-planner architecture-diagram-reviewer review-to-test-planner adr-curator architecture-fitness-function-author finding-to-issue-planner test-generator demo-operator release-evidence review-readiness-cleanup portable-contract-normalizer medium-article-writer arxiv-paper-writer diagram-author spp-editor srp-editor sprint-conductor sprint-review stp-editor sip-editor sor-editor; do
     [[ -d "${root}/skills/${skill}" ]]
   done
 
@@ -63,6 +63,11 @@ assert_skill_bundle() {
   [[ -f "${root}/skills/sprint-conductor/SKILL.md" ]]
   [[ -f "${root}/skills/sprint-conductor/adl-skill.yaml" ]]
   [[ -f "${root}/skills/sprint-conductor/references/output-contract.md" ]]
+  [[ -f "${root}/skills/sprint-review/SKILL.md" ]]
+  [[ -f "${root}/skills/sprint-review/adl-skill.yaml" ]]
+  [[ -f "${root}/skills/sprint-review/docs/SPRINT_REVIEW_SKILL_INPUT_SCHEMA.md" ]]
+  [[ -f "${root}/skills/sprint-review/agents/openai.yaml" ]]
+  [[ -f "${root}/skills/sprint-review/references/output-contract.md" ]]
   [[ -x "${root}/skills/sprint-conductor/scripts/create_missing_sprint_issue.py" ]]
   [[ -x "${root}/skills/sprint-conductor/scripts/check_sprint_readiness.py" ]]
   [[ -x "${root}/skills/sprint-conductor/scripts/check_installed_skill_parity.py" ]]
@@ -108,6 +113,7 @@ assert_skill_bundle() {
   grep -Fq "planning artifact rather than an execution log" "${root}/skills/spp-editor/SKILL.md"
   grep -Fq "Structured Review Prompt" "${root}/skills/srp-editor/SKILL.md"
   grep -Fq "one issue at a time, fully closed out before the next" "${root}/skills/sprint-conductor/SKILL.md"
+  grep -Fq "findings-first review orchestrator" "${root}/skills/sprint-review/SKILL.md"
   grep -Fq "bounded editing of \`stp.md\`" "${root}/skills/stp-editor/SKILL.md"
   grep -Fq "truthful lifecycle state" "${root}/skills/sip-editor/SKILL.md"
   grep -Fq "truthful execution and integration state" "${root}/skills/sor-editor/SKILL.md"
@@ -143,6 +149,7 @@ assert_skill_bundle() {
     "${root}/skills/spp-editor/SKILL.md" \
     "${root}/skills/srp-editor/SKILL.md" \
     "${root}/skills/sprint-conductor/SKILL.md" \
+    "${root}/skills/sprint-review/SKILL.md" \
     "${root}/skills/stp-editor/SKILL.md" \
     "${root}/skills/sip-editor/SKILL.md" \
     "${root}/skills/sor-editor/SKILL.md"
@@ -166,6 +173,7 @@ assert_skill_bundle "${CODEX_HOME}"
 [[ -L "${CODEX_HOME}/skills/repo-diagram-planner" ]]
 [[ -L "${CODEX_HOME}/skills/architecture-diagram-reviewer" ]]
 [[ -L "${CODEX_HOME}/skills/review-to-test-planner" ]]
+[[ -L "${CODEX_HOME}/skills/sprint-review" ]]
 [[ -L "${CODEX_HOME}/skills/adr-curator" ]]
 [[ -L "${CODEX_HOME}/skills/architecture-fitness-function-author" ]]
 [[ -L "${CODEX_HOME}/skills/finding-to-issue-planner" ]]
