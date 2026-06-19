@@ -1727,6 +1727,69 @@ fn finish_helper_paths_run_pr_fast_lane_validation() {
 }
 
 #[test]
+fn finish_helper_paths_run_validation_selector_validation() {
+    let _guard = env_lock();
+    let temp = unique_temp_dir("adl-pr-finish-validation-selector-validation");
+    let repo = temp.join("repo");
+    fs::create_dir_all(repo.join("adl/tools")).expect("adl tools dir");
+    fs::write(
+        repo.join("adl/Cargo.toml"),
+        "[package]\nname='adl'\nversion='0.1.0'\n",
+    )
+    .expect("cargo toml");
+    write_executable(
+        &repo.join("adl/tools/check_no_tracked_adl_issue_record_residue.sh"),
+        "#!/usr/bin/env bash\nset -euo pipefail\nexit 0\n",
+    );
+    write_executable(
+        &repo.join("adl/tools/test_select_validation_lanes.sh"),
+        "#!/usr/bin/env bash\nset -euo pipefail\nprintf '%s\\n' selector >> \"$FOCUSED_LOG\"\n",
+    );
+    init_git_repo(&repo);
+
+    let bin_dir = temp.join("bin");
+    fs::create_dir_all(&bin_dir).expect("bin dir");
+    let cargo_log = temp.join("cargo.log");
+    let focused_log = temp.join("focused.log");
+    write_executable(
+        &bin_dir.join("cargo"),
+        &format!(
+            "#!/usr/bin/env bash\nset -euo pipefail\nprintf '%s\\n' \"$*\" >> '{}'\nexit 0\n",
+            cargo_log.display()
+        ),
+    );
+    let old_path = env::var("PATH").unwrap_or_default();
+    let old_focused_log = env::var("FOCUSED_LOG").ok();
+    unsafe {
+        env::set_var("PATH", format!("{}:{}", bin_dir.display(), old_path));
+        env::set_var("FOCUSED_LOG", &focused_log);
+    }
+
+    let plan = select_finish_validation_plan(
+        "adl/config/validation_lane_selector.v0.91.6.json,adl/tools/select_validation_lanes.py,adl/tools/select_validation_lanes.sh,adl/tools/test_select_validation_lanes.sh",
+    )
+    .expect("validation selector plan");
+    assert_eq!(plan.mode, FinishValidationMode::LargerBinaryFocused);
+    run_finish_validation_rust(&repo, &plan).expect("validation selector validation");
+
+    unsafe {
+        env::set_var("PATH", old_path);
+    }
+    match old_focused_log {
+        Some(value) => unsafe { env::set_var("FOCUSED_LOG", value) },
+        None => unsafe { env::remove_var("FOCUSED_LOG") },
+    }
+
+    assert!(
+        !cargo_log.exists(),
+        "validation selector focused validation should not invoke cargo"
+    );
+
+    let focused_calls = fs::read_to_string(&focused_log).expect("focused log");
+    assert!(focused_calls.contains("selector"));
+}
+
+#[test]
 fn finish_helper_paths_run_narrow_finish_focused_validation() {
     let _guard = env_lock();
     let temp = unique_temp_dir("adl-pr-finish-narrow-focused-validation");
