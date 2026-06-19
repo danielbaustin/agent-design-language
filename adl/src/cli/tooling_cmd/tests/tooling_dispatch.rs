@@ -25,11 +25,46 @@ fn tooling_cmd_dispatch_and_help_paths_cover_public_entrypoint() {
 
     assert!(real_tooling(&[]).is_err());
     real_tooling(&["help".to_string()]).expect("help should succeed");
-    assert!(real_tooling(&["unknown".to_string()]).is_err());
+    let unknown_err = real_tooling(&["unknown".to_string()]).expect_err("unknown command");
+    assert!(unknown_err.to_string().contains("ci-log-archive"));
     real_tooling(&["code-review".to_string(), "--help".to_string()])
         .expect("code-review help should succeed without --out");
     real_tooling(&["portable-project-doctor".to_string(), "--help".to_string()])
         .expect("portable-project-doctor help should succeed");
+
+    let ci_logs = repo.path().join("ci-logs");
+    fs::create_dir_all(&ci_logs).expect("ci log dir");
+    fs::write(
+        ci_logs.join("step.txt"),
+        "2026-06-19T18:00:00.0000000Z start\n2026-06-19T18:01:10.0000000Z end\n",
+    )
+    .expect("ci log");
+    let ci_manifest = repo.path().join("ci-log-manifest.json");
+    real_tooling(&[
+        "ci-log-archive".to_string(),
+        "summarize".to_string(),
+        "--logs-dir".to_string(),
+        ci_logs.to_string_lossy().to_string(),
+        "--out".to_string(),
+        ci_manifest.to_string_lossy().to_string(),
+        "--s3-prefix".to_string(),
+        "s3://adl-ci-logs/v0.91.6".to_string(),
+        "--repo".to_string(),
+        "danielbaustin/agent-design-language".to_string(),
+        "--pr".to_string(),
+        "4152".to_string(),
+        "--run-id".to_string(),
+        "27840922589".to_string(),
+    ])
+    .expect("ci-log-archive dispatch should succeed");
+    let ci_manifest_json: serde_json::Value =
+        serde_json::from_str(&fs::read_to_string(&ci_manifest).expect("ci log archive manifest"))
+            .expect("ci manifest json");
+    assert_eq!(
+        ci_manifest_json["schema_version"],
+        "adl.ci_log_archive_manifest.v1"
+    );
+    assert_eq!(ci_manifest_json["timing_summary"]["b_large_count"], 1);
 
     real_tooling(&[
         "card-prompt".to_string(),
