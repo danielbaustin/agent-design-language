@@ -36,7 +36,7 @@ printf 'M\tadl/src/cli/pr_cmd_cards/cards.rs\n' >"$split_control_plane"
 split_control_plane_output="$(bash "$SCRIPT" --changed-files "$split_control_plane" --print-plan)"
 assert_has "$split_control_plane_output" "mode=focused"
 assert_has "$split_control_plane_output" "filter_tokens=pr_cmd"
-assert_has "$split_control_plane_output" "filter_expression=test(pr_cmd)"
+assert_has "$split_control_plane_output" "filter_expression=binary_id(adl::bin/adl) and test(/^cli::pr_cmd::/)"
 
 split_runtime="$TMP/split_runtime.txt"
 printf 'M\tadl/src/runtime_v2/cultivating_intelligence_parts/builder.rs\n' >"$split_runtime"
@@ -222,6 +222,48 @@ assert_has "$mixed_family_output" "mode=family"
 assert_has "$mixed_family_output" "reason=bounded_family_surface_runs_family_nextest"
 assert_has "$mixed_family_output" "filter_tokens=runtime_v2,cli"
 assert_has "$mixed_family_output" "filter_expression=test(runtime_v2) or test(cli)"
+
+manifest_plus_finish="$TMP/manifest_plus_finish.txt"
+cat >"$manifest_plus_finish" <<'EOF'
+M	adl/Cargo.toml
+M	adl/Cargo.lock
+M	adl/src/cli/pr_cmd/finish_support.rs
+M	adl/src/cli/tests/pr_cmd_inline/finish/arg_render.rs
+EOF
+manifest_plus_finish_output="$(bash "$SCRIPT" --changed-files "$manifest_plus_finish" --print-plan)"
+assert_has "$manifest_plus_finish_output" "mode=focused"
+assert_has "$manifest_plus_finish_output" "reason=bounded_rust_surface_runs_focused_nextest"
+assert_has "$manifest_plus_finish_output" "filter_tokens=manifest_support,pr_cmd_finish"
+assert_has "$manifest_plus_finish_output" "filter_expression=(binary_id(adl::bin/adl) and test(/^cli::pr_cmd::github::/)) or (binary_id(adl::bin/adl) and test(/^cli::tooling_cmd::github_release::/)) or (binary_id(adl) and test(/^long_lived_agent::/)) or binary_id(adl::bin/adl-pr-finish) and test(/^cli::pr_cmd::tests::finish::arg_render::/)"
+
+manifest_only_pair="$TMP/manifest_only_pair.txt"
+cat >"$manifest_only_pair" <<'EOF'
+M	adl/Cargo.toml
+M	adl/Cargo.lock
+EOF
+manifest_only_pair_output="$(bash "$SCRIPT" --changed-files "$manifest_only_pair" --print-plan)"
+assert_has "$manifest_only_pair_output" "mode=focused"
+assert_has "$manifest_only_pair_output" "reason=manifest_only_rust_wave_runs_focused_nextest"
+assert_has "$manifest_only_pair_output" "filter_tokens=pr_cmd::github,github_release_,long_lived_agent"
+assert_has "$manifest_only_pair_output" "filter_expression=binary_id(adl::bin/adl) and test(/^cli::pr_cmd::github::/) or binary_id(adl::bin/adl) and test(/^cli::tooling_cmd::github_release::/) or binary_id(adl) and test(/^long_lived_agent::/)"
+
+manifest_only_single="$TMP/manifest_only_single.txt"
+printf 'M\tadl/Cargo.toml\n' >"$manifest_only_single"
+manifest_only_single_output="$(bash "$SCRIPT" --changed-files "$manifest_only_single" --print-plan)"
+assert_has "$manifest_only_single_output" "mode=focused"
+assert_has "$manifest_only_single_output" "reason=manifest_only_rust_wave_runs_focused_nextest"
+assert_has "$manifest_only_single_output" "filter_tokens=pr_cmd::github,github_release_,long_lived_agent"
+
+finish_only="$TMP/finish_only.txt"
+cat >"$finish_only" <<'EOF'
+M	adl/src/cli/pr_cmd/finish_support.rs
+M	adl/src/cli/tests/pr_cmd_inline/finish/arg_render.rs
+EOF
+finish_only_output="$(bash "$SCRIPT" --changed-files "$finish_only" --print-plan)"
+assert_has "$finish_only_output" "mode=focused"
+assert_has "$finish_only_output" "reason=bounded_rust_surface_runs_focused_nextest"
+assert_has "$finish_only_output" "filter_tokens=pr_cmd_finish"
+assert_has "$finish_only_output" "filter_expression=binary_id(adl::bin/adl-pr-finish) and test(/^cli::pr_cmd::tests::finish::arg_render::/)"
 
 too_many_families="$TMP/too_many_families.txt"
 cat >"$too_many_families" <<'EOF'

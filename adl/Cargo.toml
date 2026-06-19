@@ -131,7 +131,9 @@ octocrab = { version = "0.53", default-features = false, features = [
   "rustls",
   "rustls-ring",
 ] }
-tokio = { version = "1", features = ["rt"] }
+# Shared async runtime floor for long-lived cadence, ACIP runtime work, and
+# later bounded recurring verification on the existing ADL runtime.
+tokio = { version = "1", features = ["macros", "net", "rt", "rt-multi-thread", "sync", "time"] }
 
 # JSON Schema (Option A)
 schemars = "0.8"
