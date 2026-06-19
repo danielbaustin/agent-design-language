@@ -116,6 +116,19 @@ assert_has "$cli_family_output" "mode=focused"
 assert_has "$cli_family_output" "filter_tokens=cli"
 assert_has "$cli_family_output" "filter_expression=test(cli)"
 
+tokio_bootstrap_wave="$TMP/tokio_bootstrap_wave.txt"
+cat >"$tokio_bootstrap_wave" <<'EOF'
+M	adl/src/cli/mod.rs
+M	adl/src/cli/pr_cmd/github.rs
+M	adl/src/cli/tokio_runtime.rs
+M	adl/src/cli/tooling_cmd/github_release.rs
+EOF
+tokio_bootstrap_wave_output="$(bash "$SCRIPT" --changed-files "$tokio_bootstrap_wave" --print-plan)"
+assert_has "$tokio_bootstrap_wave_output" "mode=focused"
+assert_has "$tokio_bootstrap_wave_output" "reason=bounded_rust_surface_runs_focused_nextest"
+assert_has "$tokio_bootstrap_wave_output" "filter_tokens=tokio_bootstrap,pr_cmd::github,github_release_"
+assert_has "$tokio_bootstrap_wave_output" "filter_expression=test(/^cli::pr_cmd::github::/) or test(/^cli::pr_cmd::github_client::/) or test(/^cli::tooling_cmd::github_release::/) or test(/^cli::pr_cmd::github::/) or test(/^cli::pr_cmd::github_client::/) or test(/^cli::tooling_cmd::github_release::/)"
+
 direct_tooling_binaries="$TMP/direct_tooling_binaries.txt"
 cat >"$direct_tooling_binaries" <<'EOF'
 M	adl/src/bin/adl_lint_prompt_spec.rs
@@ -244,7 +257,7 @@ manifest_plus_finish_output="$(bash "$SCRIPT" --changed-files "$manifest_plus_fi
 assert_has "$manifest_plus_finish_output" "mode=focused"
 assert_has "$manifest_plus_finish_output" "reason=bounded_rust_surface_runs_focused_nextest"
 assert_has "$manifest_plus_finish_output" "filter_tokens=manifest_support,pr_cmd_finish"
-assert_has "$manifest_plus_finish_output" "filter_expression=(binary_id(adl::bin/adl) and test(/^cli::pr_cmd::github::/)) or (binary_id(adl::bin/adl) and test(/^cli::tooling_cmd::github_release::/)) or (binary_id(adl) and test(/^long_lived_agent::/)) or binary_id(adl::bin/adl-pr-finish) and test(/^cli::pr_cmd::tests::finish::arg_render::/)"
+assert_has "$manifest_plus_finish_output" "filter_expression=test(/^cli::pr_cmd::github::/) or test(/^cli::pr_cmd::github_client::/) or test(/^cli::tooling_cmd::github_release::/) or test(/^long_lived_agent::/) or binary_id(adl::bin/adl-pr-finish) and test(/^cli::pr_cmd::tests::finish::arg_render::/)"
 
 manifest_only_pair="$TMP/manifest_only_pair.txt"
 cat >"$manifest_only_pair" <<'EOF'
@@ -255,7 +268,7 @@ manifest_only_pair_output="$(bash "$SCRIPT" --changed-files "$manifest_only_pair
 assert_has "$manifest_only_pair_output" "mode=focused"
 assert_has "$manifest_only_pair_output" "reason=manifest_only_rust_wave_runs_focused_nextest"
 assert_has "$manifest_only_pair_output" "filter_tokens=pr_cmd::github,github_release_,long_lived_agent"
-assert_has "$manifest_only_pair_output" "filter_expression=binary_id(adl::bin/adl) and test(/^cli::pr_cmd::github::/) or binary_id(adl::bin/adl) and test(/^cli::tooling_cmd::github_release::/) or binary_id(adl) and test(/^long_lived_agent::/)"
+assert_has "$manifest_only_pair_output" "filter_expression=test(/^cli::pr_cmd::github::/) or test(/^cli::pr_cmd::github_client::/) or test(/^cli::tooling_cmd::github_release::/) or test(/^long_lived_agent::/)"
 
 manifest_only_single="$TMP/manifest_only_single.txt"
 printf 'M\tadl/Cargo.toml\n' >"$manifest_only_single"
@@ -284,7 +297,7 @@ long_lived_agent_only_output="$(bash "$SCRIPT" --changed-files "$long_lived_agen
 assert_has "$long_lived_agent_only_output" "mode=focused"
 assert_has "$long_lived_agent_only_output" "reason=bounded_rust_surface_runs_focused_nextest"
 assert_has "$long_lived_agent_only_output" "filter_tokens=long_lived_agent"
-assert_has "$long_lived_agent_only_output" "filter_expression=binary_id(adl) and test(/^long_lived_agent::/)"
+assert_has "$long_lived_agent_only_output" "filter_expression=test(/^long_lived_agent::/)"
 
 too_many_families="$TMP/too_many_families.txt"
 cat >"$too_many_families" <<'EOF'

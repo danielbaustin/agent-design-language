@@ -213,8 +213,20 @@ filter_token_for_path() {
       basename "$path" .rs
       return 0
       ;;
-    adl/src/cli/mod.rs|adl/src/cli/tests.rs)
+    adl/src/cli/mod.rs)
+      if [ "$saw_tokio_bootstrap_related_surface" = true ]; then
+        printf 'tokio_bootstrap'
+      else
+        printf 'cli'
+      fi
+      return 0
+      ;;
+    adl/src/cli/tests.rs)
       printf 'cli'
+      return 0
+      ;;
+    adl/src/cli/tokio_runtime.rs)
+      printf 'tokio_bootstrap'
       return 0
       ;;
     adl/src/csdlc_prompt_editor.rs|adl/src/csdlc_prompt_editor/*.rs)
@@ -231,6 +243,10 @@ filter_token_for_path() {
       ;;
     adl/src/cli/tests/artifact_builders/*.rs|adl/src/cli/tests/artifact_builders/*/*.rs)
       printf 'artifact_builders'
+      return 0
+      ;;
+    adl/src/cli/pr_cmd/github.rs|adl/src/cli/pr_cmd/github/*.rs)
+      printf 'pr_cmd::github'
       return 0
       ;;
     adl/src/cli/pr_cmd/finish_support.rs|adl/src/cli/tests/pr_cmd_inline/finish/*)
@@ -255,6 +271,10 @@ filter_token_for_path() {
       ;;
     adl/src/cli/pr_cmd_cards.rs|adl/src/cli/pr_cmd_cards/*.rs)
       printf 'pr_cmd'
+      return 0
+      ;;
+    adl/src/cli/tooling_cmd/github_release.rs)
+      printf 'github_release_'
       return 0
       ;;
     adl/src/cli/tests/tooling_cmd*|adl/src/cli/tooling_cmd*|adl/src/cli/tests/tooling_cmd/*)
@@ -361,12 +381,13 @@ build_filter_expression() {
 import sys
 
 TOKEN_MAP = {
+    "tokio_bootstrap": 'test(/^cli::pr_cmd::github::/) or test(/^cli::pr_cmd::github_client::/) or test(/^cli::tooling_cmd::github_release::/)',
     "pr_cmd": 'binary_id(adl::bin/adl) and test(/^cli::pr_cmd::/)',
     "pr_cmd_finish": 'binary_id(adl::bin/adl-pr-finish) and test(/^cli::pr_cmd::tests::finish::arg_render::/)',
-    "pr_cmd::github": 'binary_id(adl::bin/adl) and test(/^cli::pr_cmd::github::/)',
-    "github_release_": 'binary_id(adl::bin/adl) and test(/^cli::tooling_cmd::github_release::/)',
-    "long_lived_agent": 'binary_id(adl) and test(/^long_lived_agent::/)',
-    "manifest_support": '(binary_id(adl::bin/adl) and test(/^cli::pr_cmd::github::/)) or (binary_id(adl::bin/adl) and test(/^cli::tooling_cmd::github_release::/)) or (binary_id(adl) and test(/^long_lived_agent::/))',
+    "pr_cmd::github": 'test(/^cli::pr_cmd::github::/) or test(/^cli::pr_cmd::github_client::/)',
+    "github_release_": 'test(/^cli::tooling_cmd::github_release::/)',
+    "long_lived_agent": 'test(/^long_lived_agent::/)',
+    "manifest_support": 'test(/^cli::pr_cmd::github::/) or test(/^cli::pr_cmd::github_client::/) or test(/^cli::tooling_cmd::github_release::/) or test(/^long_lived_agent::/)',
 }
 
 clauses = []
@@ -412,6 +433,7 @@ all_paths_have_precise_token=true
 all_paths_have_family_token=true
 classification_locked=false
 saw_slow_proof_contract_surface=false
+saw_tokio_bootstrap_related_surface=false
 
 declare -a tokens=()
 declare -a family_tokens=()
@@ -425,6 +447,11 @@ while IFS= read -r path; do
     docs/milestones/v0.91.4/features/PVF_INITIAL_LANE_INVENTORY_v0.91.4.md|\
     docs/milestones/v0.91.4/features/PVF_CI_RELEASE_POLICY_v0.91.4.md)
       saw_slow_proof_contract_surface=true
+      ;;
+    adl/src/cli/tokio_runtime.rs|\
+    adl/src/cli/pr_cmd/github.rs|\
+    adl/src/cli/tooling_cmd/github_release.rs)
+      saw_tokio_bootstrap_related_surface=true
       ;;
   esac
 done <<EOF
