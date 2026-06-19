@@ -1,12 +1,27 @@
 # v0.91.6 SEP Local-Agent Acceleration Mini-Sprint
 
-Status: `active_setup`
+Status: `closeout_in_progress`
 Date: 2026-06-18
 Sprint umbrella: `#4069`
 
-This packet makes the `#4069` mini-sprint explicit and schedulable. It does not
-replace issue-local `SIP -> STP -> SPP -> SRP -> SOR` truth, and it does not
-claim local models are authoritative implementers or reviewers.
+This packet records the umbrella closeout refresh for the `#4069` mini-sprint
+after the child wave completed. It does not replace issue-local
+`SIP -> STP -> SPP -> SRP -> SOR` truth, and it does not claim local models are
+authoritative implementers or reviewers.
+
+## Final Outcome
+
+The SEP local-agent acceleration mini-sprint has completed its child wave, and
+this packet refresh is the final umbrella closeout step before the sprint
+itself can close:
+
+- `#4076` landed deterministic sprint readiness sweep support.
+- `#4077` landed deterministic sprint closeout support.
+- `#3927` landed the reusable sprint-review skill.
+- `#4074` landed the bounded agent-per-task simulation proof.
+- `#4069` established the umbrella packet, watcher rule, local-model inventory,
+  role-fit matrix, and bounded local-model proof posture that the child wave
+  consumed.
 
 ## Sprint Goal
 
@@ -23,21 +38,21 @@ implementation issues.
 | Issue | Role | Status | Notes |
 |---|---|---|---|
 | `#4078` | typed GitHub mutation transport | closed | Enabling dependency already landed; sprint setup no longer needs direct `gh` for covered issue mutation paths. |
-| `#4069` | umbrella setup, local-model inventory, role-fit matrix, proof packet | active | Owns the mini-sprint packet and local-model proof posture. |
-| `#4076` | readiness sweep | pending | Must make watcher, card, SEP, and pre-execution readiness deterministic before worker launch. |
-| `#4077` | deterministic sprint closeout | pending | Must keep sprint umbrellas open until child truth, review, activity logs, and closeout artifacts are complete. |
-| `#3927` | sprint-review skill | pending | Must standardize sprint/mini-sprint review lanes and findings-first output. |
-| `#4074` | agent-per-task simulation proof | pending | Must consume the setup packet and role contracts without granting local mutation authority. |
+| `#4069` | umbrella setup, local-model inventory, role-fit matrix, proof packet | closeout_in_progress | Owns the mini-sprint packet and final umbrella closeout truth refresh. |
+| `#4076` | readiness sweep | closed | Landed deterministic watcher/card/SEP pre-execution readiness support. |
+| `#4077` | deterministic sprint closeout | closed | Landed sprint closeout gating and deterministic closeout support. |
+| `#3927` | sprint-review skill | closed | Landed reusable sprint/mini-sprint review skill coverage. |
+| `#4074` | agent-per-task simulation proof | closed | Landed the bounded proof showing delegated watcher/reviewer roles can be useful with main-conductor verification. |
 
 ## Recommended Execution Order
 
-1. Treat `#4078` as completed enabling substrate.
-2. Finish `#4069` first so the local-model inventory, role-fit matrix, watcher policy, and sprint packet are durable.
-3. Run `#4076` next to make readiness deterministic before future sprint execution.
-4. Run `#4077` after or alongside `#4076` where the touched surfaces remain disjoint.
-5. Run `#3927` once the sprint-review input/closeout expectations from `#4069`/`#4077` are stable enough to encode.
-6. Run `#4074` after the setup packet and role limitations are durable so the simulation consumes real contracts rather than chat assumptions.
-7. Close `#4069` only after the child-wave routing is durable and any newly discovered sprint-process gaps are tracked explicitly.
+1. Treated `#4078` as the completed enabling substrate.
+2. Landed `#4069` first so the local-model inventory, role-fit matrix, watcher policy, and sprint packet were durable.
+3. Landed `#4076` to make readiness deterministic before future sprint execution.
+4. Landed `#4077` to codify deterministic sprint closeout.
+5. Landed `#3927` once the sprint-review input/closeout expectations were stable enough to encode.
+6. Landed `#4074` after the setup packet and role limitations were durable so the simulation consumed real contracts rather than chat assumptions.
+7. Close `#4069` only after the child-wave routing is durable and this final umbrella truth refresh lands.
 
 ## Safe Parallel Lanes
 
@@ -124,6 +139,25 @@ Assessment:
 - `#4077`: deterministic sprint closeout
 - `#3927`: sprint-review skill
 - `#4074`: simulation proof that consumes the above contracts
+
+## Sprint-Level Review
+
+- The biggest sprint win was operational visibility: active child issues were
+  treated as watcher-owned states rather than silent waiting states.
+- The most useful bounded local-model result was still advisory-only. `gemma:2b`
+  proved a tiny local watcher-style output can be produced quickly, but the
+  output still required main-conductor verification.
+- The larger local models remained too slow or unstable for the tiny fast-loop
+  watcher proof window used here, so the sprint did not prove reliable
+  larger-model watcher loops.
+- The durable sprint-process outcome is stronger than the local-model proof
+  itself: readiness sweep, deterministic closeout, sprint-review skill, and the
+  bounded simulation proof all landed as tracked repo truth.
+
+## Closeout Recommendation
+
+Close the sprint umbrella after this packet refresh lands. No additional child
+implementation remains in scope for the original `#4069` mini-sprint.
 
 ## Non-Claims
 
