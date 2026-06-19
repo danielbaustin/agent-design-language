@@ -24,6 +24,16 @@ assert_has "$focused_runtime_output" "mode=focused"
 assert_has "$focused_runtime_output" "reason=bounded_rust_surface_runs_focused_nextest"
 assert_has "$focused_runtime_output" "filter_tokens=contract_schema"
 assert_has "$focused_runtime_output" "filter_expression=test(contract_schema)"
+bash "$SCRIPT" --changed-files "$focused_runtime" --print-plan --json >"$TMP/focused-runtime.json"
+python3 - <<'PY' "$TMP/focused-runtime.json"
+import json
+import sys
+
+plan = json.load(open(sys.argv[1]))
+assert plan["schema_version"] == "adl.pr_fast_lane_plan.v1"
+assert plan["mode"] == "focused"
+assert plan["filter_expression"] == "test(contract_schema)"
+PY
 
 focused_control_plane="$TMP/focused_control_plane.txt"
 printf 'M\tdocs/default_workflow.md\n' >"$focused_control_plane"

@@ -7,6 +7,7 @@ HEAD_SHA=""
 CHANGED_FILES_FILE=""
 GITHUB_OUTPUT_PATH=""
 PRINT_PLAN=false
+JSON_OUTPUT=false
 
 usage() {
   cat <<'USAGE'
@@ -20,6 +21,7 @@ Options:
                                "path" or "STATUS<TAB>path".
   --github-output <path>       Emit key=value outputs for GitHub Actions.
   --print-plan                 Print the computed plan and exit.
+  --json                       Emit the computed plan as JSON and exit.
   -h, --help                   Show this help.
 
 This script selects the ordinary PR-fast non-coverage Rust test lane.
@@ -52,6 +54,10 @@ while [ "$#" -gt 0 ]; do
       PRINT_PLAN=true
       shift
       ;;
+    --json)
+      JSON_OUTPUT=true
+      shift
+      ;;
     -h|--help)
       usage
       exit 0
@@ -67,7 +73,9 @@ done
 emit() {
   local key="$1"
   local value="$2"
-  printf '%s=%s\n' "$key" "$value"
+  if [ "$JSON_OUTPUT" != true ]; then
+    printf '%s=%s\n' "$key" "$value"
+  fi
   if [ -n "$GITHUB_OUTPUT_PATH" ]; then
     printf '%s=%s\n' "$key" "$value" >> "$GITHUB_OUTPUT_PATH"
   fi
@@ -513,6 +521,46 @@ emit "structural_surface_count" "$structural_surface_count"
 emit "slow_proof_inventory_surface_count" "$slow_proof_inventory_surface_count"
 emit "filter_tokens" "$filter_tokens"
 emit "filter_expression" "$filter_expression"
+
+if [ "$JSON_OUTPUT" = true ]; then
+  python3 - <<'PY' \
+    "$mode" \
+    "$reason" \
+    "$rust_surface_count" \
+    "$structural_surface_count" \
+    "$slow_proof_inventory_surface_count" \
+    "$filter_tokens" \
+    "$filter_expression"
+import json
+import sys
+
+(
+    mode,
+    reason,
+    rust_surface_count,
+    structural_surface_count,
+    slow_proof_inventory_surface_count,
+    filter_tokens,
+    filter_expression,
+) = sys.argv[1:]
+
+print(json.dumps(
+    {
+        "schema_version": "adl.pr_fast_lane_plan.v1",
+        "mode": mode,
+        "reason": reason,
+        "rust_surface_count": int(rust_surface_count),
+        "structural_surface_count": int(structural_surface_count),
+        "slow_proof_inventory_surface_count": int(slow_proof_inventory_surface_count),
+        "filter_tokens": filter_tokens,
+        "filter_expression": filter_expression,
+    },
+    indent=2,
+    sort_keys=True,
+))
+PY
+  exit 0
+fi
 
 if [ "$PRINT_PLAN" = true ]; then
   exit 0

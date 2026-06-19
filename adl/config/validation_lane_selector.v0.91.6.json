@@ -1,0 +1,116 @@
+{
+  "schema_version": "adl.validation_lane_selector.v1",
+  "lanes": [
+    {
+      "id": "prompt_template_contracts",
+      "lane_class": "cli_workflow",
+      "path_hints": [
+        "docs/templates/prompts/**",
+        "adl/src/bin/adl_prompt_template.rs",
+        "adl/src/bin/adl_validate_structured_prompt.rs",
+        "adl/src/csdlc_prompt_editor/**",
+        "adl/src/csdlc_prompt_editor.rs"
+      ],
+      "command": "bash adl/tools/test_prompt_template_workflow_integration.sh",
+      "run_command": "bash adl/tools/test_prompt_template_workflow_integration.sh",
+      "reason": "prompt_template_or_editor_surface_requires_template_contract_checks"
+    },
+    {
+      "id": "pvf_contracts",
+      "lane_class": "cli_workflow",
+      "path_hints": [
+        "adl/tools/run_pvf_validation_lane.sh",
+        "adl/tools/validate_pvf_manifest.py",
+        "adl/tools/test_run_pvf_validation_lane.sh",
+        "adl/tools/test_pvf_ci_release_policy.sh",
+        "adl/tools/run_pvf_ci_release_policy_fixture.sh"
+      ],
+      "command": "bash adl/tools/test_run_pvf_validation_lane.sh && bash adl/tools/test_pvf_ci_release_policy.sh",
+      "run_command": "bash adl/tools/test_run_pvf_validation_lane.sh && bash adl/tools/test_pvf_ci_release_policy.sh",
+      "reason": "pvf_lane_surface_requires_pvf_contract_checks"
+    },
+    {
+      "id": "ci_path_policy_contracts",
+      "lane_class": "cli_workflow",
+      "path_hints": [
+        "adl/tools/ci_path_policy.sh",
+        "adl/tools/test_ci_path_policy.sh",
+        ".github/workflows/**"
+      ],
+      "command": "bash adl/tools/test_ci_path_policy.sh",
+      "run_command": "bash adl/tools/test_ci_path_policy.sh",
+      "reason": "ci_policy_surface_requires_path_policy_contract_checks"
+    },
+    {
+      "id": "coverage_impact_contracts",
+      "lane_class": "cli_workflow",
+      "path_hints": [
+        "adl/tools/check_coverage_impact.sh",
+        "adl/tools/test_check_coverage_impact.sh"
+      ],
+      "command": "bash adl/tools/test_check_coverage_impact.sh",
+      "run_command": "bash adl/tools/test_check_coverage_impact.sh",
+      "reason": "coverage_impact_surface_requires_coverage_impact_contract_checks"
+    },
+    {
+      "id": "csdlc_owner_lane",
+      "lane_class": "cli_workflow",
+      "path_hints": [
+        "adl/src/cli/pr_cmd.rs",
+        "adl/src/cli/pr_cmd/**",
+        "adl/src/cli/pr_cmd_cards.rs",
+        "adl/src/cli/pr_cmd_cards/**",
+        "adl/tools/pr.sh",
+        "adl/tools/run_owner_validation_lane.sh"
+      ],
+      "command": "bash adl/tools/run_owner_validation_lane.sh csdlc --print-plan",
+      "run_command": "bash adl/tools/run_owner_validation_lane.sh csdlc",
+      "reason": "csdlc_owner_surface_requires_csdlc_owner_lane"
+    },
+    {
+      "id": "runtime_owner_lane",
+      "lane_class": "cli_workflow",
+      "path_hints": [
+        "adl/src/bin/adl_runtime.rs",
+        "adl/tools/test_adl_runtime_compatibility.sh"
+      ],
+      "command": "bash adl/tools/run_owner_validation_lane.sh runtime --print-plan",
+      "run_command": "bash adl/tools/run_owner_validation_lane.sh runtime",
+      "reason": "runtime_owner_surface_requires_runtime_owner_lane"
+    },
+    {
+      "id": "review_owner_lane",
+      "lane_class": "cli_workflow",
+      "path_hints": [
+        "adl/src/bin/adl_review.rs",
+        "adl/src/review*.rs",
+        "adl/tools/test_adl_review_compatibility.sh"
+      ],
+      "command": "bash adl/tools/run_owner_validation_lane.sh review --print-plan",
+      "run_command": "bash adl/tools/run_owner_validation_lane.sh review",
+      "reason": "review_owner_surface_requires_review_owner_lane"
+    },
+    {
+      "id": "docs_diff_check",
+      "lane_class": "docs",
+      "path_hints": [
+        "docs/**",
+        "*.md"
+      ],
+      "command": "git diff --check",
+      "run_command": "git diff --check",
+      "reason": "docs_only_surface_requires_diff_hygiene"
+    }
+  ],
+  "release_gate_hints": [
+    ".github/workflows/**",
+    "docs/milestones/**/release/**",
+    "docs/milestones/**/RELEASE_PLAN*.md",
+    "docs/milestones/**/MILESTONE_CHECKLIST*.md"
+  ],
+  "rust_path_hints": [
+    "adl/build.rs",
+    "adl/src/**",
+    "adl/tests/**"
+  ]
+}
