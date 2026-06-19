@@ -1,0 +1,118 @@
+version: "0.1"
+kind: "adl-skill"
+id: "sprint-review"
+codex_compat:
+  skill_file: "SKILL.md"
+  trigger_frontmatter:
+    - "name"
+    - "description"
+admission:
+  input_schema:
+    id: "sprint_review.v1"
+    reference_doc: "docs/SPRINT_REVIEW_SKILL_INPUT_SCHEMA.md"
+    required_top_level_fields:
+      - "skill_input_schema"
+      - "mode"
+      - "repo_root"
+      - "target"
+      - "policy"
+    mode_enum:
+      - "review_completed_bundle"
+      - "refresh_existing_review"
+    policy_fields:
+      - "required_lanes"
+      - "require_code_review_when_code_changed"
+      - "require_closeout_truth"
+      - "allow_review_subagent_exception"
+      - "stop_before_remediation"
+      - "stop_before_publication"
+      - "write_review_artifact"
+  intent:
+    - "sprint_review"
+    - "mini_sprint_review"
+    - "issue_wave_review"
+    - "release_tail_review"
+  required_inputs:
+    - "repo_root"
+    - "target.scope"
+    - "target.umbrella_issue"
+    - "target.child_issues"
+    - "target.pr_urls"
+    - "target.changed_paths"
+    - "target.lifecycle_cards"
+    - "target.validation_evidence"
+    - "target.closeout_artifacts"
+    - "policy"
+  optional_inputs:
+    - "target.review_docs"
+    - "target.execution_packet_path"
+    - "target.activity_log_path"
+    - "target.follow_up_issues"
+    - "output_root"
+    - "run_id"
+  stop_if_missing:
+    - "repo_root"
+    - "target.scope"
+    - "target.umbrella_issue"
+    - "target.child_issues"
+    - "target.pr_urls"
+    - "target.changed_paths"
+    - "target.lifecycle_cards"
+    - "target.validation_evidence"
+    - "target.closeout_artifacts"
+  prevalidation_rules:
+    - "repo_root_must_be_absolute"
+    - "skill_input_schema_must_equal_sprint_review.v1_when_structured_input_is_used"
+    - "mode_must_match_supported_enum"
+    - "target.scope_must_match_supported_scope_enum"
+    - "target.child_issues_must_not_be_empty"
+    - "policy.stop_before_remediation_must_be_true"
+    - "policy.stop_before_publication_must_be_true"
+execution:
+  mode: "compose_existing_review_skills"
+  allow_code_edits: false
+  allow_network: true
+  allow_subagents: true
+  preferred_read_order:
+    - "umbrella issue prompt or review brief"
+    - "execution packet"
+    - "child issue closure truth"
+    - "lifecycle cards"
+    - "validation evidence"
+    - "closeout artifacts"
+    - "review artifacts"
+  preferred_skill_stack:
+    - "repo-packet-builder"
+    - "gap-analysis"
+    - "repo-review-code"
+    - "repo-review-docs"
+    - "repo-review-tests"
+    - "redaction-and-evidence-auditor"
+    - "repo-review-synthesis"
+    - "review-quality-evaluator"
+    - "finding-to-issue-planner"
+  invocation_guidance: "prefer findings-first composition; do not collapse into a monolithic approval pass"
+boundaries:
+  must_not_run:
+    - "implementation_execution"
+    - "silent_remediation"
+    - "merge_or_close_authority"
+    - "undisclosed_issue_creation"
+  stop_on_partial_failure: true
+outputs:
+  default_format: "markdown"
+  structured_contract: "references/output-contract.md"
+  artifact_path_pattern: ".adl/reviews/<timestamp>-sprint-review.md"
+  required_sections:
+    - "findings"
+    - "scope_summary"
+    - "lane_coverage"
+    - "lifecycle_and_closeout_truth"
+    - "validation_summary"
+    - "residual_risk"
+    - "follow_up_routing"
+    - "non_claims"
+security:
+  trusted_root_required: true
+  deny_symlink_escape: true
+  no_approval_claims: true

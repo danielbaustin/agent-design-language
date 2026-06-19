@@ -1,0 +1,4 @@
+interface:
+  display_name: "Sprint Review"
+  short_description: "Review completed sprint bundles with findings first"
+  default_prompt: "Use $sprint-review to review one completed sprint, mini-sprint, issue wave, or release-tail bundle with findings first, lifecycle-card truth checks, and follow-up routing."

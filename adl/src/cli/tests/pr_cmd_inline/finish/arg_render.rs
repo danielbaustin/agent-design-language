@@ -1025,6 +1025,27 @@ fn finish_validation_profile_treats_issue_records_and_skill_docs_as_docs_only() 
 }
 
 #[test]
+fn finish_validation_profile_treats_skill_schema_and_agent_manifest_as_docs_only() {
+    let plan = select_finish_validation_plan_for_finish(
+        ".",
+        &[
+            "adl/tools/skills/sprint-review/docs/SPRINT_REVIEW_SKILL_INPUT_SCHEMA.md".to_string(),
+            "adl/tools/skills/sprint-review/agents/openai.yaml".to_string(),
+        ],
+    )
+    .expect("docs-only skill metadata plan");
+
+    assert_eq!(plan.mode, FinishValidationMode::DocsOnly);
+    assert_eq!(
+        plan.commands,
+        vec![
+            "bash adl/tools/check_no_tracked_adl_issue_record_residue.sh".to_string(),
+            "git diff --check".to_string(),
+        ]
+    );
+}
+
+#[test]
 fn finish_validation_profile_does_not_treat_behavioral_tooling_as_docs_only() {
     let plan = select_finish_validation_plan_for_finish(
         ".",

@@ -61,6 +61,7 @@ The tracked skill set is:
 - `sip-editor`
 - `sor-editor`
 - `sprint-conductor`
+- `sprint-review`
 - `stp-editor`
 - `test-generator`
 - `use-case-writer`
@@ -146,7 +147,8 @@ values-rendered card path is available.
 `sprint-conductor` is a bounded orchestration helper rather than an editor
 skill. It coordinates one sprint issue across an explicit child issue wave
 using the existing lifecycle/editor stack, then assembles sprint review and
-sprint closeout evidence. Sprint umbrellas should carry a Sprint Execution
+sprint closeout evidence.
+`sprint-review` is a bounded findings-first review composition skill for one completed sprint, mini-sprint, issue wave, or release-tail bundle. It composes existing review, gap-analysis, evidence, and synthesis skills without approving merge, approving closure, or performing remediation. Sprint umbrellas should carry a Sprint Execution
 Packet from `docs/templates/sprints/1.0.0/sprint_execution_packet.md` or equivalent
 issue-body sections that name execution mode, dependency order, safe parallel
 lanes, serial gates, PVF notes, review bar, closeout bar, and residual routing.
