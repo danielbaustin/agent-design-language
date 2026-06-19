@@ -157,7 +157,7 @@ pub(super) fn real_pr_finish(args: &[String]) -> Result<()> {
     }
 
     let close_line = if parsed.no_close {
-        None
+        Some(non_closing_lifecycle_line(parsed.issue))
     } else {
         Some(format!("Closes #{}", parsed.issue))
     };
@@ -183,7 +183,10 @@ pub(super) fn real_pr_finish(args: &[String]) -> Result<()> {
     )?;
     let pr_body_file = write_temp_markdown("pr_body", &pr_body)?;
 
-    let commit_msg = if let Some(close) = &close_line {
+    let commit_msg = if !parsed.no_close {
+        let close = close_line
+            .as_ref()
+            .expect("closing finish should have a close line");
         format!("{} ({close})", parsed.title)
     } else {
         parsed.title.clone()
@@ -2186,6 +2189,10 @@ pub(super) fn extra_pr_body_looks_like_issue_template(body: &str) -> bool {
         || lowered.contains("## goal")
         || lowered.contains("## deliverables")
         || lowered.contains("\n---\n")
+}
+
+pub(super) fn non_closing_lifecycle_line(issue: u32) -> String {
+    format!("Non-closing lifecycle PR: issue #{issue} remains open.")
 }
 
 pub(super) fn render_pr_body(

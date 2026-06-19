@@ -1,9 +1,10 @@
 use super::*;
 use crate::cli::pr_cmd::finish_support::{
     ensure_finish_branch_not_behind_origin_main, ensure_finish_task_bundle_surfaces,
-    finish_declared_paths_for_validation, normalize_docs_only_sor_text, open_pr_url_nonblocking,
-    open_pr_url_nonblocking_with_timeout, real_pr_finish, resolve_finish_issue_scope_and_slug,
-    select_finish_validation_plan_for_finish, FinishValidationMode, FinishValidationPlan,
+    finish_declared_paths_for_validation, non_closing_lifecycle_line, normalize_docs_only_sor_text,
+    open_pr_url_nonblocking, open_pr_url_nonblocking_with_timeout, real_pr_finish,
+    resolve_finish_issue_scope_and_slug, select_finish_validation_plan_for_finish,
+    FinishValidationMode, FinishValidationPlan,
 };
 use crate::cli::pr_cmd::git_support::commits_behind_origin_main;
 
@@ -164,6 +165,35 @@ fn render_pr_body_uses_output_sections_and_rejects_issue_template_text() {
     )
     .expect_err("issue template text should be rejected");
     assert!(err.to_string().contains("issue-template/prompt text"));
+}
+
+#[test]
+fn render_pr_body_can_declare_non_closing_lifecycle_pr() {
+    let temp = unique_temp_dir("adl-pr-render-body-no-close");
+    fs::create_dir_all(&temp).expect("temp dir");
+    let input = temp.join("input.md");
+    let output = temp.join("output.md");
+    fs::write(&input, "# input\n").expect("write input");
+    fs::write(
+        &output,
+        "# no-close\n\n## Summary\nsummary text\n\n## Artifacts produced\n- docs/example.md\n",
+    )
+    .expect("write output");
+
+    let body = render_pr_body(
+        Some(&non_closing_lifecycle_line(1153)),
+        &input,
+        &output,
+        None,
+        None,
+        "fp-123",
+        &temp,
+    )
+    .expect("render no-close body");
+
+    assert!(body.contains("Non-closing lifecycle PR"));
+    assert!(body.contains("issue #1153 remains open"));
+    assert!(!body.contains("Closes #1153"));
 }
 
 #[test]
