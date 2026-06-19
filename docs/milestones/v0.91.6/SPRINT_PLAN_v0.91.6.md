@@ -81,3 +81,21 @@ No runnable demo is required for this docs tranche. Review should inspect:
 - Review findings are fixed or routed.
 - `v0.91.7` residuals remain visible.
 - `v0.92` consumption truth is explicit.
+
+## Closeout-tail sprint standardization
+
+The milestone closeout tail is now treated as one ordered sprint surface rather than a set of unrelated mini-sprints. For the standard sequence, dependency gates, watcher expectations, remediation routing, and automation guidance, use [CLOSEOUT_TAIL_SPRINT_v0.91.6.md](CLOSEOUT_TAIL_SPRINT_v0.91.6.md).
+
+For `v0.91.6`, the ordered closeout-tail issue wave is:
+
+1. `#3976` demo convergence
+2. `#3977` quality gate
+3. `#3978` docs and review alignment
+4. `#3979` internal review
+5. `#3980` external review
+6. `#3981` remediation and final preflight
+7. `#3982` next milestone planning
+8. `#3983` next milestone review
+9. `#3984` release ceremony
+
+Every issue in this closeout tail should have active watcher coverage whenever it is waiting on checks, review, mergeability, or an upstream dependency, with polling no slower than every 30 seconds while blocked.

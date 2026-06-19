@@ -177,3 +177,9 @@ Expected `v0.91.7` residuals:
 - `v0.91.7` residuals remain explicit.
 - `v0.92` activation remains blocked until the bridge ledger can say each
   activation surface is complete, deferred, blocked, or routed with evidence.
+
+## Closeout-tail sprint
+
+The standard milestone closeout tail for `v0.91.6` is tracked in [CLOSEOUT_TAIL_SPRINT_v0.91.6.md](CLOSEOUT_TAIL_SPRINT_v0.91.6.md). Use that file as the canonical ordered sprint surface for demo convergence, quality gate, review, remediation/preflight, next-milestone planning, and release ceremony sequencing.
+
+Document-map addendum: [CLOSEOUT_TAIL_SPRINT_v0.91.6.md](CLOSEOUT_TAIL_SPRINT_v0.91.6.md) is part of the milestone planning and closeout packet set and should be read alongside the sprint plan, release plan, and review surfaces.

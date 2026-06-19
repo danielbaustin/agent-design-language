@@ -86,3 +86,18 @@ List focused validation commands for the planning package.
 - Sprint umbrella issues exist and have child issue lists.
 - Closeout-tail issue order is explicit.
 - New scope is routed rather than absorbed into `WP-01`.
+
+## Standard closeout-tail execution policy
+
+Use the closeout-tail section as one ordered sprint, not as a set of unrelated mini-sprints.
+
+Required operating rules:
+
+- every closeout-tail issue is its own tracked issue with the normal ADL lifecycle
+- advance through the tail in issue order only when the required upstream truth surface is available
+- assign a watcher immediately for any wait state involving checks, review, mergeability, or an upstream dependency
+- while actively blocked, watcher polling should be no slower than every 30 seconds
+- route quality-gate, internal-review, and external-review findings into the remediation/preflight issue unless they are clearly planning-only or explicitly out of scope
+- fold recurring planning and handoff work into the next-milestone planning issue instead of preserving orphan planning steps outside the standard tail
+- keep the sprint umbrella open until all ordered closeout-tail issues are merged or intentionally closed and their issue-local closeout truth is complete
+- when a closeout-tail role is marked optional or `<issue-or-not-required>` in the milestone plan, preserve its ordered slot and dependency semantics if it becomes required, but do not force-create an issue that the milestone explicitly marks not required
