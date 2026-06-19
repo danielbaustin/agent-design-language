@@ -5,10 +5,7 @@ use serde_json::{json, Value};
 use sha2::{Digest, Sha256};
 use std::fs::{self, File, OpenOptions};
 use std::io::{BufRead, BufReader, Write};
-use std::path::Path;
-#[cfg(test)]
-use std::path::PathBuf;
-use std::thread;
+use std::path::{Path, PathBuf};
 use std::time::Duration;
 
 mod inspection;
@@ -112,28 +109,32 @@ pub fn run(spec_path: &Path, options: RunOptions) -> Result<StatusRecord> {
         .or(loaded.spec.heartbeat.interval_secs)
         .unwrap_or(0);
 
-    let mut last_status = status(spec_path)?;
+    build_long_lived_runtime()?.block_on(run_with_tokio_cadence(
+        spec_path.to_path_buf(),
+        options,
+        loaded,
+        sleep_secs,
+    ))
+}
+
+async fn run_with_tokio_cadence(
+    spec_path: PathBuf,
+    options: RunOptions,
+    loaded: LoadedAgentSpec,
+    sleep_secs: u64,
+) -> Result<StatusRecord> {
+    let mut last_status = status(&spec_path)?;
     for index in 0..options.max_cycles {
         if read_stop(&loaded)?.is_some() {
-            last_status = tick(
-                spec_path,
-                TickOptions {
-                    recover_stale_lease: options.recover_stale_lease,
-                },
-            )?;
+            last_status = run_tick_blocking(spec_path.clone(), options.recover_stale_lease).await?;
             break;
         }
-        match tick(
-            spec_path,
-            TickOptions {
-                recover_stale_lease: options.recover_stale_lease,
-            },
-        ) {
+        match run_tick_blocking(spec_path.clone(), options.recover_stale_lease).await {
             Ok(status) => {
                 last_status = status;
             }
             Err(err) => {
-                last_status = status(spec_path)?;
+                last_status = status(&spec_path)?;
                 let failures = consecutive_failure_count(&loaded)?;
                 if failures >= max_consecutive_failures(&loaded) {
                     last_status = write_stop_record(
@@ -155,7 +156,7 @@ pub fn run(spec_path: &Path, options: RunOptions) -> Result<StatusRecord> {
             break;
         }
         if index + 1 < options.max_cycles && !options.no_sleep && sleep_secs > 0 {
-            thread::sleep(Duration::from_secs(sleep_secs));
+            tokio::time::sleep(Duration::from_secs(sleep_secs)).await;
         }
     }
 
@@ -165,6 +166,26 @@ pub fn run(spec_path: &Path, options: RunOptions) -> Result<StatusRecord> {
         write_status(&loaded, &last_status)?;
     }
     Ok(last_status)
+}
+
+async fn run_tick_blocking(spec_path: PathBuf, recover_stale_lease: bool) -> Result<StatusRecord> {
+    tokio::task::spawn_blocking(move || {
+        tick(
+            &spec_path,
+            TickOptions {
+                recover_stale_lease,
+            },
+        )
+    })
+    .await
+    .map_err(|err| anyhow!("long-lived agent cadence task failed to join: {err}"))?
+}
+
+fn build_long_lived_runtime() -> Result<tokio::runtime::Runtime> {
+    tokio::runtime::Builder::new_current_thread()
+        .enable_time()
+        .build()
+        .context("failed building Tokio runtime for long-lived agent cadence")
 }
 
 pub fn status(spec_path: &Path) -> Result<StatusRecord> {
