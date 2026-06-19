@@ -506,7 +506,13 @@ jobs:
                 version: (.[0].version),
                 data: [
                   {
-                    files: (map(.data[]?.files // []) | add),
+                    files: (
+                      map(.data[]?.files // [])
+                      | add
+                      | sort_by(.filename)
+                      | group_by(.filename)
+                      | map(max_by(.summary.lines.percent // 0))
+                    ),
                     totals: (.[0].data[0].totals)
                   }
                 ]
