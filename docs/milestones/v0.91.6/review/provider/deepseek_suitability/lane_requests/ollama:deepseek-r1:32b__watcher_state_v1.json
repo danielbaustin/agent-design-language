@@ -1,0 +1,31 @@
+{
+  "route": {
+    "provider_kind": "local",
+    "provider": "ollama",
+    "runtime_surface": "ollama_http",
+    "provider_model_id": "deepseek-r1:32b",
+    "source_registry": "v0.91.6.deepseek.suitability"
+  },
+  "model_identity": {
+    "provider_kind": "local",
+    "provider": "ollama",
+    "model_ref": "deepseek-r1:32b",
+    "provider_model_id": "deepseek-r1:32b",
+    "runtime_surface": "ollama_http",
+    "identity_strength": "tag_only",
+    "observed_at": "unix:1",
+    "source_registry": "v0.91.6.deepseek.suitability"
+  },
+  "prompt_contract_ref": "v0.91.6.deepseek.suitability.watcher_state_v1",
+  "lane_ref": "ollama:deepseek-r1:32b__watcher_state_v1",
+  "run_id": "ollama:deepseek-r1:32b__watcher_state_v1",
+  "request_id": "ollama:deepseek-r1:32b__watcher_state_v1",
+  "attempt_policy": {
+    "max_attempts": 1,
+    "timeout_ms": 150000,
+    "retry_backoff_ms": 1000
+  },
+  "input_text_chars": 789,
+  "input_text_digest": "sha256:df9681223b8a",
+  "input_text_excerpt": "[redacted prompt len=789 sha256=df9681223b8a]"
+}

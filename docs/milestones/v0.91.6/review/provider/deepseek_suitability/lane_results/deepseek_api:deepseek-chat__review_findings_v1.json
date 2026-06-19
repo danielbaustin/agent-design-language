@@ -1,0 +1,39 @@
+{
+  "schema_version": "provider_communication.v1",
+  "route": {
+    "provider_kind": "hosted",
+    "provider": "deepseek",
+    "runtime_surface": "hosted_api",
+    "provider_model_id": "deepseek-chat",
+    "credential_ref": "env:DEEPSEEK_API_KEY",
+    "source_registry": "v0.91.6.deepseek.suitability"
+  },
+  "model_identity": {
+    "provider_kind": "hosted",
+    "provider": "deepseek",
+    "model_ref": "deepseek-chat",
+    "provider_model_id": "deepseek-chat",
+    "runtime_surface": "hosted_api",
+    "identity_strength": "provider_asserted",
+    "observed_at": "unix:1",
+    "source_registry": "v0.91.6.deepseek.suitability"
+  },
+  "attempts": [
+    {
+      "attempt_index": 1,
+      "started_at": "unix:1781833201",
+      "duration_ms": 2667,
+      "status": "ok",
+      "retryable": false,
+      "http_status": 200,
+      "raw_response_excerpt": "[redacted response len=622 sha256=60359d1c2468]"
+    }
+  ],
+  "final_status": "ok",
+  "duration_ms": 2667,
+  "request_id": "deepseek_api:deepseek-chat__review_findings_v1",
+  "output_text_excerpt": "[redacted response len=622 sha256=60359d1c2468]",
+  "artifact_ref": "<tmp>/result.json@dd6e5cc3040d92bc",
+  "output_text_chars": 622,
+  "output_text_digest": "sha256:60359d1c2468"
+}

@@ -1,0 +1,20 @@
+version: "0.5"
+
+providers:
+  deepseek_primary:
+    type: "deepseek"
+    config:
+      auth:
+        type: bearer
+        env: DEEPSEEK_API_KEY
+      timeout_secs: 15
+      model_ref: "reasoning/default"
+      provider_model_id: "deepseek-chat"
+
+agents:
+  deepseek_agent:
+    provider: "deepseek_primary"
+    model: "reasoning/default"
+
+# Merge this provider/agent snippet into your workflow file.
+# provider_model_id may be changed to any trusted model ID supported by this provider family.

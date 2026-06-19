@@ -1,0 +1,350 @@
+{
+  "schema": "adl.deepseek_csdlc_suitability.v1",
+  "panel_id": "deepseek_csdlc_panel_4096",
+  "issue": 4096,
+  "parent_issue": 4095,
+  "date": "2026-06-18",
+  "panel_ref": "docs/milestones/v0.91.6/review/provider/C_SDLC_AGENT_SUITABILITY_PANEL_4097.md",
+  "candidates": [
+    {
+      "candidate_id": "deepseek_api:deepseek-chat",
+      "provider_lane": "hosted_api",
+      "provider_profile_ref": "unprofiled:hosted_api:deepseek-chat",
+      "provider_family": "deepseek",
+      "provider_spec_kind": "deepseek",
+      "model_ref": "deepseek-chat",
+      "runtime_surface": "hosted_api",
+      "credential_source": "$HOME/keys/deepseek.key",
+      "task_panel_version": "csdlc_agent_suitability_panel.v1",
+      "recommendation": "useful_with_limits",
+      "supported_tasks": "watcher, card_validator, reviewer, planner, closeout_checker"
+    },
+    {
+      "candidate_id": "ollama:deepseek-r1:8b",
+      "provider_lane": "local_ollama",
+      "provider_profile_ref": "unprofiled:local_ollama:deepseek-r1:8b",
+      "provider_family": "deepseek",
+      "provider_spec_kind": "ollama",
+      "model_ref": "deepseek-r1:8b",
+      "runtime_surface": "ollama_http",
+      "credential_source": null,
+      "task_panel_version": "csdlc_agent_suitability_panel.v1",
+      "recommendation": "candidate_only_truth_repair_needed",
+      "supported_tasks": "watcher, card_validator, planner"
+    },
+    {
+      "candidate_id": "ollama:deepseek-r1:32b",
+      "provider_lane": "local_ollama",
+      "provider_profile_ref": "unprofiled:local_ollama:deepseek-r1:32b",
+      "provider_family": "deepseek",
+      "provider_spec_kind": "ollama",
+      "model_ref": "deepseek-r1:32b",
+      "runtime_surface": "ollama_http",
+      "credential_source": null,
+      "task_panel_version": "csdlc_agent_suitability_panel.v1",
+      "recommendation": "candidate_only_truth_repair_needed",
+      "supported_tasks": "watcher, card_validator, reviewer, planner"
+    }
+  ],
+  "rows": [
+    {
+      "candidate_id": "deepseek_api:deepseek-chat",
+      "task_id": "watcher_state_v1",
+      "prompt_ref": "embedded:watcher_state_v1",
+      "started_at": "2026-06-19T01:39:52+00:00",
+      "elapsed_ms": 1872,
+      "raw_output_ref": "docs/milestones/v0.91.6/review/provider/deepseek_suitability/lane_outputs/deepseek_api:deepseek-chat__watcher_state_v1.md",
+      "normalized_result": {
+        "status": "pending",
+        "sections": [
+          "status",
+          "evidence",
+          "next-step"
+        ]
+      },
+      "provider_failure_class": null,
+      "score": "pass_with_limits",
+      "reviewer_judgment": "watcher output stayed bounded and cited the supplied workflow facts",
+      "safe_role_recommendation": "conductor_provider_candidate_with_limits",
+      "result_path": "docs/milestones/v0.91.6/review/provider/deepseek_suitability/lane_results/deepseek_api:deepseek-chat__watcher_state_v1.json",
+      "log_path": "docs/milestones/v0.91.6/review/provider/deepseek_suitability/lane_logs/deepseek_api:deepseek-chat__watcher_state_v1.jsonl",
+      "output_digest": "sha256:082b3af88533"
+    },
+    {
+      "candidate_id": "deepseek_api:deepseek-chat",
+      "task_id": "card_validator_v1",
+      "prompt_ref": "embedded:card_validator_v1",
+      "started_at": "2026-06-19T01:39:57+00:00",
+      "elapsed_ms": 1538,
+      "raw_output_ref": "docs/milestones/v0.91.6/review/provider/deepseek_suitability/lane_outputs/deepseek_api:deepseek-chat__card_validator_v1.md",
+      "normalized_result": {
+        "severity": "P1"
+      },
+      "provider_failure_class": null,
+      "score": "pass",
+      "reviewer_judgment": "card-validator output identified the supplied lifecycle-truth contradiction",
+      "safe_role_recommendation": "reviewer_provider_candidate_with_limits",
+      "result_path": "docs/milestones/v0.91.6/review/provider/deepseek_suitability/lane_results/deepseek_api:deepseek-chat__card_validator_v1.json",
+      "log_path": "docs/milestones/v0.91.6/review/provider/deepseek_suitability/lane_logs/deepseek_api:deepseek-chat__card_validator_v1.jsonl",
+      "output_digest": "sha256:1f0ff477f24e"
+    },
+    {
+      "candidate_id": "deepseek_api:deepseek-chat",
+      "task_id": "review_findings_v1",
+      "prompt_ref": "embedded:review_findings_v1",
+      "started_at": "2026-06-19T01:40:01+00:00",
+      "elapsed_ms": 2667,
+      "raw_output_ref": "docs/milestones/v0.91.6/review/provider/deepseek_suitability/lane_outputs/deepseek_api:deepseek-chat__review_findings_v1.md",
+      "normalized_result": {
+        "severity": "P3"
+      },
+      "provider_failure_class": null,
+      "score": "pass",
+      "reviewer_judgment": "review output identified the legacy-gh evidence drift and routed to ADL-native proof",
+      "safe_role_recommendation": "reviewer_provider_candidate",
+      "result_path": "docs/milestones/v0.91.6/review/provider/deepseek_suitability/lane_results/deepseek_api:deepseek-chat__review_findings_v1.json",
+      "log_path": "docs/milestones/v0.91.6/review/provider/deepseek_suitability/lane_logs/deepseek_api:deepseek-chat__review_findings_v1.jsonl",
+      "output_digest": "sha256:60359d1c2468"
+    },
+    {
+      "candidate_id": "deepseek_api:deepseek-chat",
+      "task_id": "bounded_planner_v1",
+      "prompt_ref": "embedded:bounded_planner_v1",
+      "started_at": "2026-06-19T01:40:04+00:00",
+      "elapsed_ms": 2521,
+      "raw_output_ref": "docs/milestones/v0.91.6/review/provider/deepseek_suitability/lane_outputs/deepseek_api:deepseek-chat__bounded_planner_v1.md",
+      "normalized_result": {
+        "plan_steps": 4
+      },
+      "provider_failure_class": null,
+      "score": "pass",
+      "reviewer_judgment": "planner output stayed bounded and covered the required lane/proof constraints",
+      "safe_role_recommendation": "architect_provider_candidate_with_limits",
+      "result_path": "docs/milestones/v0.91.6/review/provider/deepseek_suitability/lane_results/deepseek_api:deepseek-chat__bounded_planner_v1.json",
+      "log_path": "docs/milestones/v0.91.6/review/provider/deepseek_suitability/lane_logs/deepseek_api:deepseek-chat__bounded_planner_v1.jsonl",
+      "output_digest": "sha256:9e9bd54c5f9c"
+    },
+    {
+      "candidate_id": "deepseek_api:deepseek-chat",
+      "task_id": "closeout_checker_v1",
+      "prompt_ref": "embedded:closeout_checker_v1",
+      "started_at": "2026-06-19T01:40:07+00:00",
+      "elapsed_ms": 2158,
+      "raw_output_ref": "docs/milestones/v0.91.6/review/provider/deepseek_suitability/lane_outputs/deepseek_api:deepseek-chat__closeout_checker_v1.md",
+      "normalized_result": {
+        "decision": "blocked"
+      },
+      "provider_failure_class": null,
+      "score": "pass_with_limits",
+      "reviewer_judgment": "closeout output remained conservative even if it missed one specific supplied gap",
+      "safe_role_recommendation": "tester_provider_candidate_with_limits",
+      "result_path": "docs/milestones/v0.91.6/review/provider/deepseek_suitability/lane_results/deepseek_api:deepseek-chat__closeout_checker_v1.json",
+      "log_path": "docs/milestones/v0.91.6/review/provider/deepseek_suitability/lane_logs/deepseek_api:deepseek-chat__closeout_checker_v1.jsonl",
+      "output_digest": "sha256:7ac59b1c480d"
+    },
+    {
+      "candidate_id": "ollama:deepseek-r1:8b",
+      "task_id": "watcher_state_v1",
+      "prompt_ref": "embedded:watcher_state_v1",
+      "started_at": "2026-06-19T01:40:10+00:00",
+      "elapsed_ms": 33928,
+      "raw_output_ref": "docs/milestones/v0.91.6/review/provider/deepseek_suitability/lane_outputs/ollama:deepseek-r1:8b__watcher_state_v1.md",
+      "normalized_result": {
+        "status": "ready",
+        "sections": [
+          "status",
+          "evidence",
+          "next-step"
+        ]
+      },
+      "provider_failure_class": null,
+      "score": "pass",
+      "reviewer_judgment": "watcher output stayed bounded and cited the supplied workflow facts",
+      "safe_role_recommendation": "conductor_provider_candidate",
+      "result_path": "docs/milestones/v0.91.6/review/provider/deepseek_suitability/lane_results/ollama:deepseek-r1:8b__watcher_state_v1.json",
+      "log_path": "docs/milestones/v0.91.6/review/provider/deepseek_suitability/lane_logs/ollama:deepseek-r1:8b__watcher_state_v1.jsonl",
+      "output_digest": "sha256:8ee15491cd8a"
+    },
+    {
+      "candidate_id": "ollama:deepseek-r1:8b",
+      "task_id": "card_validator_v1",
+      "prompt_ref": "embedded:card_validator_v1",
+      "started_at": "2026-06-19T01:40:45+00:00",
+      "elapsed_ms": 2463,
+      "raw_output_ref": "docs/milestones/v0.91.6/review/provider/deepseek_suitability/lane_outputs/ollama:deepseek-r1:8b__card_validator_v1.md",
+      "normalized_result": {
+        "severity": "P2"
+      },
+      "provider_failure_class": null,
+      "score": "pass_with_limits",
+      "reviewer_judgment": "card-validator output identified the supplied lifecycle-truth contradiction",
+      "safe_role_recommendation": "reviewer_provider_candidate_with_limits",
+      "result_path": "docs/milestones/v0.91.6/review/provider/deepseek_suitability/lane_results/ollama:deepseek-r1:8b__card_validator_v1.json",
+      "log_path": "docs/milestones/v0.91.6/review/provider/deepseek_suitability/lane_logs/ollama:deepseek-r1:8b__card_validator_v1.jsonl",
+      "output_digest": "sha256:030f1a3a88e3"
+    },
+    {
+      "candidate_id": "ollama:deepseek-r1:8b",
+      "task_id": "review_findings_v1",
+      "prompt_ref": "embedded:review_findings_v1",
+      "started_at": "2026-06-19T01:40:50+00:00",
+      "elapsed_ms": 4161,
+      "raw_output_ref": "docs/milestones/v0.91.6/review/provider/deepseek_suitability/lane_outputs/ollama:deepseek-r1:8b__review_findings_v1.md",
+      "normalized_result": {
+        "reason": "missed_evidence_provenance_drift"
+      },
+      "provider_failure_class": null,
+      "score": "fail_truth",
+      "reviewer_judgment": "review output did not focus on the supplied evidence-provenance problem",
+      "safe_role_recommendation": "do_not_use_for_review",
+      "result_path": "docs/milestones/v0.91.6/review/provider/deepseek_suitability/lane_results/ollama:deepseek-r1:8b__review_findings_v1.json",
+      "log_path": "docs/milestones/v0.91.6/review/provider/deepseek_suitability/lane_logs/ollama:deepseek-r1:8b__review_findings_v1.jsonl",
+      "output_digest": "sha256:76613084c07c"
+    },
+    {
+      "candidate_id": "ollama:deepseek-r1:8b",
+      "task_id": "bounded_planner_v1",
+      "prompt_ref": "embedded:bounded_planner_v1",
+      "started_at": "2026-06-19T01:40:55+00:00",
+      "elapsed_ms": 6507,
+      "raw_output_ref": "docs/milestones/v0.91.6/review/provider/deepseek_suitability/lane_outputs/ollama:deepseek-r1:8b__bounded_planner_v1.md",
+      "normalized_result": {
+        "plan_steps": 4
+      },
+      "provider_failure_class": null,
+      "score": "pass_with_limits",
+      "reviewer_judgment": "planner output was usable but missed one or more requested constraints",
+      "safe_role_recommendation": "architect_provider_candidate_with_limits",
+      "result_path": "docs/milestones/v0.91.6/review/provider/deepseek_suitability/lane_results/ollama:deepseek-r1:8b__bounded_planner_v1.json",
+      "log_path": "docs/milestones/v0.91.6/review/provider/deepseek_suitability/lane_logs/ollama:deepseek-r1:8b__bounded_planner_v1.jsonl",
+      "output_digest": "sha256:9439f8dfc5c3"
+    },
+    {
+      "candidate_id": "ollama:deepseek-r1:8b",
+      "task_id": "closeout_checker_v1",
+      "prompt_ref": "embedded:closeout_checker_v1",
+      "started_at": "2026-06-19T01:41:02+00:00",
+      "elapsed_ms": 3680,
+      "raw_output_ref": "docs/milestones/v0.91.6/review/provider/deepseek_suitability/lane_outputs/ollama:deepseek-r1:8b__closeout_checker_v1.md",
+      "normalized_result": {
+        "decision": "safe_to_close"
+      },
+      "provider_failure_class": null,
+      "score": "fail_truth",
+      "reviewer_judgment": "closeout output overclaimed closure readiness against the supplied evidence",
+      "safe_role_recommendation": "do_not_use_for_closeout_checks",
+      "result_path": "docs/milestones/v0.91.6/review/provider/deepseek_suitability/lane_results/ollama:deepseek-r1:8b__closeout_checker_v1.json",
+      "log_path": "docs/milestones/v0.91.6/review/provider/deepseek_suitability/lane_logs/ollama:deepseek-r1:8b__closeout_checker_v1.jsonl",
+      "output_digest": "sha256:eb1cdc824ec7"
+    },
+    {
+      "candidate_id": "ollama:deepseek-r1:32b",
+      "task_id": "watcher_state_v1",
+      "prompt_ref": "embedded:watcher_state_v1",
+      "started_at": "2026-06-19T01:41:06+00:00",
+      "elapsed_ms": 34158,
+      "raw_output_ref": "docs/milestones/v0.91.6/review/provider/deepseek_suitability/lane_outputs/ollama:deepseek-r1:32b__watcher_state_v1.md",
+      "normalized_result": {
+        "status": "pending",
+        "sections": [
+          "status",
+          "evidence",
+          "next-step"
+        ]
+      },
+      "provider_failure_class": null,
+      "score": "pass_with_limits",
+      "reviewer_judgment": "watcher output stayed bounded and cited the supplied workflow facts",
+      "safe_role_recommendation": "conductor_provider_candidate_with_limits",
+      "result_path": "docs/milestones/v0.91.6/review/provider/deepseek_suitability/lane_results/ollama:deepseek-r1:32b__watcher_state_v1.json",
+      "log_path": "docs/milestones/v0.91.6/review/provider/deepseek_suitability/lane_logs/ollama:deepseek-r1:32b__watcher_state_v1.jsonl",
+      "output_digest": "sha256:30528124db94"
+    },
+    {
+      "candidate_id": "ollama:deepseek-r1:32b",
+      "task_id": "card_validator_v1",
+      "prompt_ref": "embedded:card_validator_v1",
+      "started_at": "2026-06-19T01:41:40+00:00",
+      "elapsed_ms": 8929,
+      "raw_output_ref": "docs/milestones/v0.91.6/review/provider/deepseek_suitability/lane_outputs/ollama:deepseek-r1:32b__card_validator_v1.md",
+      "normalized_result": {
+        "severity": "P1"
+      },
+      "provider_failure_class": null,
+      "score": "pass",
+      "reviewer_judgment": "card-validator output identified the supplied lifecycle-truth contradiction",
+      "safe_role_recommendation": "reviewer_provider_candidate_with_limits",
+      "result_path": "docs/milestones/v0.91.6/review/provider/deepseek_suitability/lane_results/ollama:deepseek-r1:32b__card_validator_v1.json",
+      "log_path": "docs/milestones/v0.91.6/review/provider/deepseek_suitability/lane_logs/ollama:deepseek-r1:32b__card_validator_v1.jsonl",
+      "output_digest": "sha256:c26f37960491"
+    },
+    {
+      "candidate_id": "ollama:deepseek-r1:32b",
+      "task_id": "review_findings_v1",
+      "prompt_ref": "embedded:review_findings_v1",
+      "started_at": "2026-06-19T01:41:49+00:00",
+      "elapsed_ms": 12865,
+      "raw_output_ref": "docs/milestones/v0.91.6/review/provider/deepseek_suitability/lane_outputs/ollama:deepseek-r1:32b__review_findings_v1.md",
+      "normalized_result": {
+        "severity": "P2"
+      },
+      "provider_failure_class": null,
+      "score": "pass",
+      "reviewer_judgment": "review output identified the legacy-gh evidence drift and routed to ADL-native proof",
+      "safe_role_recommendation": "reviewer_provider_candidate",
+      "result_path": "docs/milestones/v0.91.6/review/provider/deepseek_suitability/lane_results/ollama:deepseek-r1:32b__review_findings_v1.json",
+      "log_path": "docs/milestones/v0.91.6/review/provider/deepseek_suitability/lane_logs/ollama:deepseek-r1:32b__review_findings_v1.jsonl",
+      "output_digest": "sha256:2ff4ccd062e1"
+    },
+    {
+      "candidate_id": "ollama:deepseek-r1:32b",
+      "task_id": "bounded_planner_v1",
+      "prompt_ref": "embedded:bounded_planner_v1",
+      "started_at": "2026-06-19T01:42:02+00:00",
+      "elapsed_ms": 29194,
+      "raw_output_ref": "docs/milestones/v0.91.6/review/provider/deepseek_suitability/lane_outputs/ollama:deepseek-r1:32b__bounded_planner_v1.md",
+      "normalized_result": {
+        "plan_steps": 4
+      },
+      "provider_failure_class": null,
+      "score": "pass_with_limits",
+      "reviewer_judgment": "planner output was usable but missed one or more requested constraints",
+      "safe_role_recommendation": "architect_provider_candidate_with_limits",
+      "result_path": "docs/milestones/v0.91.6/review/provider/deepseek_suitability/lane_results/ollama:deepseek-r1:32b__bounded_planner_v1.json",
+      "log_path": "docs/milestones/v0.91.6/review/provider/deepseek_suitability/lane_logs/ollama:deepseek-r1:32b__bounded_planner_v1.jsonl",
+      "output_digest": "sha256:24d3138b5ea3"
+    },
+    {
+      "candidate_id": "ollama:deepseek-r1:32b",
+      "task_id": "closeout_checker_v1",
+      "prompt_ref": "embedded:closeout_checker_v1",
+      "started_at": "2026-06-19T01:42:32+00:00",
+      "elapsed_ms": 14345,
+      "raw_output_ref": "docs/milestones/v0.91.6/review/provider/deepseek_suitability/lane_outputs/ollama:deepseek-r1:32b__closeout_checker_v1.md",
+      "normalized_result": {
+        "decision": "safe_to_close"
+      },
+      "provider_failure_class": null,
+      "score": "fail_truth",
+      "reviewer_judgment": "closeout output overclaimed closure readiness against the supplied evidence",
+      "safe_role_recommendation": "do_not_use_for_closeout_checks",
+      "result_path": "docs/milestones/v0.91.6/review/provider/deepseek_suitability/lane_results/ollama:deepseek-r1:32b__closeout_checker_v1.json",
+      "log_path": "docs/milestones/v0.91.6/review/provider/deepseek_suitability/lane_logs/ollama:deepseek-r1:32b__closeout_checker_v1.jsonl",
+      "output_digest": "sha256:9df86237accc"
+    }
+  ],
+  "non_claims": [
+    "does_not_claim_broad_model_intelligence",
+    "does_not_grant_merge_closeout_or_repo_mutation_authority",
+    "does_not_replace_uts_or_benchmarking",
+    "does_not_promote_unrun_or_missing_lanes"
+  ],
+  "artifacts": {
+    "packet": "docs/milestones/v0.91.6/review/provider/deepseek_suitability/DEEPSEEK_C_SDLC_SUITABILITY_PROOF_2026-06-18.md",
+    "state": "docs/milestones/v0.91.6/review/provider/deepseek_suitability/deepseek_suitability_state_2026-06-18.json",
+    "requests": "docs/milestones/v0.91.6/review/provider/deepseek_suitability/lane_requests",
+    "results": "docs/milestones/v0.91.6/review/provider/deepseek_suitability/lane_results",
+    "logs": "docs/milestones/v0.91.6/review/provider/deepseek_suitability/lane_logs",
+    "outputs": "docs/milestones/v0.91.6/review/provider/deepseek_suitability/lane_outputs"
+  }
+}
