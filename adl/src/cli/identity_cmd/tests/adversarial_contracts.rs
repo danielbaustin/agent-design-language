@@ -317,6 +317,14 @@ fn identity_continuous_verification_writes_contract_json() {
         .expect("array")
         .iter()
         .any(|value| value == "continuous_bounded"));
+    assert!(json["runtime_integration"]["cadence_requirements"]
+        .as_array()
+        .expect("array")
+        .iter()
+        .any(|value| value
+            .as_str()
+            .expect("string")
+            .contains("shared Tokio runtime")));
     assert!(json["lifecycle"]
         .as_array()
         .expect("array")
