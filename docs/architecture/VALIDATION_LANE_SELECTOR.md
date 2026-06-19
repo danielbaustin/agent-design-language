@@ -28,6 +28,33 @@ of C-SDLC truth. It gives local and PR tooling a deterministic answer for which
 focused validation commands are sufficient, which release gates remain required,
 and which ambiguous Rust surfaces must escalate.
 
+The manifest is now the tracked authority for validation-surface metadata, not
+just path matching. Each lane entry carries:
+
+- owner
+- lane class
+- command and run command
+- path selectors
+- requirement IDs
+- resource class
+- determinism posture
+- proof role
+- risk class
+- escalation rule
+
+Top-level `surface_defaults` provide durable defaults for docs, tooling,
+runtime, provider, security, CI policy, slow-proof, release-gate, and shared
+Rust surfaces. Lane entries may override those defaults, but the selector
+validates the references so metadata drift fails closed instead of silently
+falling back.
+
+Compatibility note:
+
+- `path_hints` remains accepted as a compatibility alias.
+- `path_selectors` is the authoritative field for new manifest work.
+- `release_gate_hints` and `rust_path_hints` still exist for backward
+  compatibility, but their durable metadata now lives in `special_surfaces`.
+
 To write machine-readable proof:
 
 ```bash
@@ -61,7 +88,6 @@ The first slice is intentionally small:
 - release/CI-policy paths report `release_gate_required`
 - credential and live-provider lanes remain outside ordinary PR validation
 
-Future work should add a validation manager agent on top of this selector. That
-agent should create a tailored test profile whenever an issue is sent to PR,
-handling each issue case separately while consuming this selector as policy
-input. The selector itself should stay deterministic and boring.
+The selector remains the deterministic surface classifier. Validation-manager
+style profile builders should consume the selector's emitted metadata instead of
+re-inventing owner, risk, or escalation inference in a second code path.
