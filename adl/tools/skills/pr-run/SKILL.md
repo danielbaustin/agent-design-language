@@ -106,11 +106,12 @@ If there is no concrete target, stop and report `blocked`.
 3. Use compatibility readiness/preflight aliases only if the canonical doctor surface is unavailable.
 4. Bind or confirm the issue branch and worktree using repo-native `run` behavior.
 5. Verify that the worktree-local STP, SIP, and SOR execution bundle now exists.
-6. Read the source prompt, STP, SIP, and current output card.
-7. Perform only the bounded work required for the issue.
-8. Run the smallest truthful validation set.
-9. Update the output card or execution record truthfully.
-10. Stop before janitor/closeout.
+6. Create the issue-bound session goal after bind/readiness succeeds and before implementation starts.
+7. Read the source prompt, STP, SIP, and current output card.
+8. Perform only the bounded work required for the issue.
+9. Run the smallest truthful validation set.
+10. Update the output card or execution record truthfully, including goal-creation truth when relevant.
+11. Stop before janitor/closeout.
 
 ## Workflow
 
@@ -186,6 +187,13 @@ If those execution surfaces are missing after the repo-native run/bind step:
 - otherwise stop as `blocked` or `failed`
 - do not continue into implementation while pretending the execution bundle is complete
 
+After bind/readiness succeeds and before implementation starts:
+- create the issue-bound session goal for the current Codex session
+- make the goal include at minimum the issue number and the bounded session objective this run is expected to advance
+- treat goal creation as mandatory workflow state for tracked issue execution, not a nice-to-have reminder
+- if the current environment cannot create the session goal, stop and report that blocked state truthfully instead of proceeding as though the requirement was satisfied
+- reserve `update_goal status=complete` and `update_goal status=blocked` for truthful session-terminal states only
+
 ### 4. Execute The Issue
 
 Read the relevant issue surfaces:
@@ -199,6 +207,10 @@ Then perform only the work required by the issue:
 - docs changes
 - tests
 - templates or validation artifacts
+
+Execution-order rule:
+- do not begin implementation edits before the issue-bound session goal has been created for the bound run
+- if execution resumes in an already-bound worktree, confirm or create the current session goal before continuing implementation
 
 Boundaries:
 - stay within the issue's required outcome and acceptance criteria
@@ -248,6 +260,7 @@ Update the output card or execution record truthfully:
 - actions taken
 - main repo integration status
 - validation
+- whether the issue-bound session goal was created for this execution session, or why execution was blocked before implementation
 - determinism/security notes where relevant
 - follow-ups or deferred work
 

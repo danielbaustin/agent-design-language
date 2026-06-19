@@ -17,6 +17,7 @@ This step is automatable but writes real repo state.
 It may:
 - inspect and confirm readiness
 - bind or confirm branch/worktree execution context
+- create the issue-bound session goal for the bound execution session
 - edit issue-scoped code/docs/tests/artifacts
 - run bounded validation
 - update the output record
@@ -78,6 +79,13 @@ Post-bind materialization rule:
 - if any are missing, treat that as a run failure or blocked execution state rather than a soft warning
 - do not continue into implementation on root-only bundle state once the worktree has been bound
 
+Session-goal rule:
+- after bind/readiness succeeds and before implementation starts, create the issue-bound session goal
+- make the goal include at minimum the issue number and the bounded session objective for the current run
+- if the environment cannot create the goal, stop and report the blocked state truthfully instead of silently proceeding
+- treat `update_goal status=complete` and `update_goal status=blocked` as session-terminal truth only
+- do not claim shell tooling can introspect live Codex goal state unless the active tool surface actually proves that capability
+
 ## Execution Checklist
 
 Read and use:
@@ -87,6 +95,7 @@ Read and use:
 - current SOR/output card
 
 Then:
+- create or confirm the current session's issue-bound goal before editing if that has not already happened
 - perform only the work required by the issue
 - keep edits bounded to the issue's acceptance criteria
 - record follow-on discoveries instead of silently expanding scope
@@ -102,6 +111,7 @@ Always report:
 - what ran
 - what it verified
 - what was intentionally not run
+- whether the issue-bound session goal was created for the execution session, or why it was blocked
 
 ## Output Card Rules
 
@@ -118,6 +128,7 @@ For `pr_open` state:
 
 For execution binding:
 - record explicitly whether worktree-local `stp.md`, `sip.md`, and `sor.md` were present after binding
+- record whether the issue-bound session goal was created after bind and before implementation
 - if materialization was missing or had to be repaired, surface that in findings and handoff guidance
 
 ## Failure Handling
@@ -125,5 +136,6 @@ For execution binding:
 If execution fails:
 - report which target was attempted
 - report which checks were actually performed
+- report whether session-goal creation succeeded before the failure
 - record partial outputs truthfully
 - stop without widening scope
