@@ -263,6 +263,125 @@ when all three boundaries line up:
 3. privacy/publication and transport security reviews do not leave the claim in
    an unreviewed exposure path.
 
+## Capability Selector MVP Contract
+
+The `v0.91.6` selector MVP is capability-first. It does not begin from a
+provider name, model id, or identity label. It begins from a requested
+capability need plus explicit constraints and then narrows the candidate set
+through the reviewed bridge layers.
+
+### Selector input contract
+
+The minimum selector request must be expressible as:
+
+| Input field | Meaning |
+| --- | --- |
+| `requested_capability` | The named capability or capability family being sought |
+| `proof_posture` | Whether the caller needs reviewed evidence, stronger safety posture, replay sensitivity, or a refusal when proof is absent |
+| `constraints` | Latency, cost, tool-use, safety, locality, or other bounded route constraints |
+| `allowed_candidate_classes` | Which implementation-facing classes may remain eligible after policy narrowing: capability-policy, role-provider, provider-profile, or model candidates |
+| `governance_context` | Optional guild, citizen, member, workflow-role, or institutional policy posture that may narrow but not redefine the request |
+| `refusal_posture` | What to do when no safe candidate exists: refuse, escalate, or return blocked/routed status |
+
+The selector request must not require:
+
+- a provider name as the primary routing key;
+- a model identifier as the primary routing key;
+- an endpoint or credential surface;
+- a collapsed record that mixes provider substrate, capability need, and
+  identity authority into one object.
+
+### Selector output contract
+
+The selector output for `v0.91.6` is still an advisory bridge record, not a
+full runtime execution order. The minimum output should declare:
+
+| Output field | Meaning |
+| --- | --- |
+| `selected_candidate_class` | Which non-governance candidate layer satisfied the decision posture after policy narrowing |
+| `candidate_set_summary` | The narrowed candidate families still in scope after policy checks |
+| `provider_or_model_candidates` | Optional lower-layer provider/model candidates when the capability-first checks passed |
+| `continuity_posture` | Whether the route is continuity-safe, blocked, downgraded, or requires later replay/security proof |
+| `proof_refs` | Evidence packets and bridge sections supporting the decision |
+| `limit_notes` | Non-claims, refusal notes, or residual routes that must stay attached |
+| `decision_status` | `candidate`, `supported_with_limits`, `blocked`, `deferred`, or similar bounded posture |
+
+The selector output must not claim:
+
+- final autonomous execution authority;
+- personhood or durable identity continuity;
+- guild or citizen legitimacy from provider suitability alone;
+- a single universally best provider field.
+
+## Candidate Source Ordering
+
+WP-08 adopts the same capability-first discovery ordering established by the
+ACIP delegation contract:
+
+1. interpret the requested capability and explicit constraints;
+2. determine the allowed candidate classes for that request;
+3. narrow the set through guild, citizen, member, workflow-role, or
+   institutional policy only when those higher-layer inputs are explicitly
+   allowed;
+4. consult capability evidence and role-provider policy before resolving any
+   concrete provider or model candidate;
+5. resolve provider-profile and model candidates only after the higher-layer
+   capability and governance checks pass;
+6. fail closed, defer, or escalate when no candidate satisfies the requested
+   capability and security posture.
+
+This ordering preserves the non-collapse rule: provider or model selection may
+implement the route, but it is not the meaning of the request.
+
+## Provider, Citizen, And Guild Boundary In The Selector
+
+The selector MVP must preserve three distinct responsibilities:
+
+| Surface | What it may do in the selector | What it must not do |
+| --- | --- | --- |
+| Provider/model candidate | Offer a lower-layer implementation candidate after capability and policy narrowing | Define the meaning of the request, prove continuity, or authorize itself |
+| Citizen posture | Narrow or block continuity-sensitive routes when later governance or continuity constraints apply | Replace capability semantics or masquerade as provider selection |
+| Guild posture | Narrow discovery and route policy for an allowed request | Act as direct runtime authority or proof of durable continuity |
+
+Institutional or workflow-role context may also narrow routes, but the same
+rule applies: governance context may constrain a request, not replace the
+capability-first contract. Governance is therefore a narrowing or blocking
+filter, not a satisfying candidate class in the selector output.
+
+## Selector Validation And Proof Expectations
+
+A selector claim is only acceptable for `v0.91.6` bridge consumption when it
+shows all of the following:
+
+- the request can be expressed by capability need first rather than provider
+  identity first;
+- provider/model names appear as candidates or implementation options, not as
+  the only primitive;
+- guild/citizen/institution context is clearly marked as narrowing policy input
+  rather than substrate authority;
+- continuity-sensitive routes preserve the positive/negative case and
+  resilience/security gates added by `#4027`;
+- blocked, deferred, or residual states remain explicit when the bridge lacks
+  runtime proof or governance closure.
+
+## Selector MVP Acceptance Surface
+
+Issue `#4028` should only be treated as satisfied when the bridge leaves a
+reviewable acceptance surface that proves all of the following:
+
+| Acceptance item | Required proof surface in `v0.91.6` |
+| --- | --- |
+| Capability-first request shape exists | This bridge doc names the minimum selector input record and explicitly rejects provider-first or model-first routing keys |
+| Advisory selector output shape exists | This bridge doc names the minimum selector output record, including candidate summary, continuity posture, proof refs, and explicit decision status |
+| Governance is narrowing-only | This bridge doc states that guild, citizen, institutional, and workflow-role context may narrow or block routes but may not become the satisfying candidate class |
+| Candidate ordering is deterministic at the policy level | This bridge doc records the ordered discovery posture from capability interpretation through lower-layer provider/model candidate selection |
+| Blocked and deferred states stay visible | This bridge doc preserves blocked, deferred, residual, and non-claim routing rather than implying a full runtime selector exists |
+
+The proving artifact for this issue is the reviewed bridge contract itself plus
+the issue-local SRP/SOR truth that records bounded docs review and focused
+validation. `#4028` does not claim a shipped runtime selector, executable
+fixture, or end-to-end provider-routing implementation in `v0.91.6`.
+
 ## Bridge Completion And Evidence Classification
 
 This bridge is not complete merely because the vocabulary exists. `v0.92`
