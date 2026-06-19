@@ -259,6 +259,23 @@ assert_has "$manifest_plus_finish_output" "reason=bounded_rust_surface_runs_focu
 assert_has "$manifest_plus_finish_output" "filter_tokens=manifest_support,pr_cmd_finish"
 assert_has "$manifest_plus_finish_output" "filter_expression=test(/^cli::pr_cmd::github::/) or test(/^cli::pr_cmd::github_client::/) or test(/^cli::tooling_cmd::github_release::/) or test(/^long_lived_agent::/) or binary_id(adl::bin/adl-pr-finish) and test(/^cli::pr_cmd::tests::finish::arg_render::/)"
 
+process_status_wave="$TMP/process_status_wave.txt"
+cat >"$process_status_wave" <<'EOF'
+M	adl/src/cli/mod.rs
+M	adl/src/cli/process_cmd.rs
+M	adl/src/cli/tests.rs
+M	adl/src/cli/usage.rs
+M	adl/src/cli/pr_cmd/finish_support.rs
+M	adl/src/cli/tests/pr_cmd_inline/finish/arg_render.rs
+M	adl/tests/cli_smoke.rs
+M	adl/tests/cli_smoke/process_status.rs
+EOF
+process_status_wave_output="$(bash "$SCRIPT" --changed-files "$process_status_wave" --print-plan)"
+assert_has "$process_status_wave_output" "mode=focused"
+assert_has "$process_status_wave_output" "reason=bounded_rust_surface_runs_focused_nextest"
+assert_has "$process_status_wave_output" "filter_tokens=cli_dispatch,process_status,cli_smoke_basics,pr_cmd_finish"
+assert_has "$process_status_wave_output" "filter_expression=test(/^cli::tests::top_level_dispatch_routes_/) or binary_id(adl::cli_smoke) and test(/^process_status::/) or binary_id(adl::cli_smoke) and test(/^basics::/) or binary_id(adl::bin/adl-pr-finish) and test(/^cli::pr_cmd::tests::finish::arg_render::/)"
+
 manifest_only_pair="$TMP/manifest_only_pair.txt"
 cat >"$manifest_only_pair" <<'EOF'
 M	adl/Cargo.toml
