@@ -1667,7 +1667,7 @@ fn finish_validation_profile_classifies_validation_manager_slice_as_small_binary
         ],
     )
     .expect("validation manager plan");
- 
+
     assert_eq!(plan.mode, FinishValidationMode::SmallBinaryFocused);
     assert!(plan
         .commands
