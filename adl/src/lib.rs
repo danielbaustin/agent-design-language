@@ -77,6 +77,7 @@ pub mod runtime_environment;
 pub mod runtime_v2;
 pub mod rust_native_gws_adapter_boundary;
 pub mod sandbox;
+pub mod scheduler;
 pub mod schema;
 pub mod signing;
 pub mod skill_composition_model;
