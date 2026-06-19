@@ -86,9 +86,15 @@ def main() -> int:
     lines.append(f"- review packet: `{state.get('review', {}).get('packet_path') or 'not_recorded'}`")
     lines.append(f"- review findings summary: `{state.get('review', {}).get('findings_summary') or 'not_recorded'}`")
     lines.append(f"- validation state: `{validation.get('status') or 'not_recorded'}`")
-    lines.append(f"- coverage status: `{coverage.get('status') or 'not_recorded'}`")
-    lines.append(f"- rust tracker status: `{rust_tracker.get('status') or 'not_recorded'}`")
-    lines.append(f"- sprint close summary: `{state.get('sprint_issue_close_summary') or 'not_recorded'}`")
+    lines.append(f"- coverage: `source={coverage.get('source') or 'missing'}, summary={coverage.get('summary') or 'not_recorded'}`")
+    lines.append(
+        "- rust tracker: "
+        f"`source={rust_tracker.get('source') or 'missing'}, "
+        f"watch_count={rust_tracker.get('watch_count', 'not_recorded')}, "
+        f"review_count={rust_tracker.get('review_count', 'not_recorded')}, "
+        f"rationale_count={rust_tracker.get('rationale_count', 'not_recorded')}`"
+    )
+    lines.append(f"- sprint close summary: `{closeout.get('sprint_issue_close_summary') or state.get('sprint_issue_close_summary') or 'not_recorded'}`")
 
     out_path.write_text('\n'.join(lines).rstrip() + '\n', encoding='utf-8')
 

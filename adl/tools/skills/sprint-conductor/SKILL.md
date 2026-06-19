@@ -73,6 +73,7 @@ Within this bundle, the operational details live in:
 - `scripts/check_sprint_readiness.py`
 - `scripts/check_installed_skill_parity.py`
 - `scripts/check_sprint_truth.py`
+- `scripts/check_sprint_closeout_readiness.py`
 - `scripts/record_child_issue_closeout.py`
 - `scripts/update_sprint_state.py`
 - `scripts/write_sprint_closeout_artifact.py`
@@ -167,14 +168,15 @@ missing sprint-management issue first.
     gates, and issue-local closeout truth are satisfied.
 18. After the final issue closes, assemble sprint review evidence.
 19. Record sprint closeout metrics including coverage and Rust tracker counts.
-20. Write the bounded sprint closeout artifact before closing the sprint-management issue.
-21. Stop with one bounded sprint review/closeout result.
+20. Run the deterministic sprint closeout helper to classify `ready_to_close`, `needs_remediation`, or `blocked`, write/update the retained closeout artifact, and generate the final sprint close summary.
+21. Only when the closeout helper reports `ready_to_close`, close the sprint-management issue.
+22. Stop with one bounded sprint review/closeout result.
 
 ## Execution Model
 
 This skill enforces:
-- one issue at a time, fully closed out before the next in `sequential` mode
 - exactly one active child issue in this helper's local sprint state
+- one issue at a time, fully closed out before the next in `sequential` mode, unless the SEP explicitly declares a safe parallel or hybrid lane boundary
 - SEP-declared active lanes for `parallel` and `hybrid` sprints as
   coordination evidence for separate workers/sessions
 - no child issue execution before the whole sprint batch passes structured prompt review
