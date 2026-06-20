@@ -745,7 +745,7 @@ fn path_is_tracked_in_git(repo_root: &Path, relpath: &str) -> Result<bool> {
             "ls-files",
             "--error-unmatch",
             "--",
-            &relpath,
+            relpath,
         ],
     )?
     .is_some())
@@ -761,7 +761,7 @@ fn path_is_git_ignored(repo_root: &Path, relpath: &str) -> Result<bool> {
             "-q",
             "--no-index",
             "--",
-            &relpath,
+            relpath,
         ],
     )
 }
