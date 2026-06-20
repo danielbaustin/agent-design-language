@@ -507,6 +507,9 @@ generated_at: "2026-05-26T22:36:52Z"
 card_status: "ready"
 status: "approved"
 activation_state: "design_time_ready"
+initial_pvf_lane: "prompt_template"
+planned_pvf_lane: "prompt_template"
+planned_pvf_lane_source: "matched_initial_issue_lane"
 plan_revision: 2
 source_refs:
   - kind: "issue"
