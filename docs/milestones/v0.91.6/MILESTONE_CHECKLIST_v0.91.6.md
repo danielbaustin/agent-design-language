@@ -26,17 +26,17 @@ milestone work.
 ## Feature Docs
 
 - [x] Resilience, persistence, and sleep/wake feature doc completed or routed.
-- [ ] Logging/tooling proof-loop reliability feature doc completed or routed.
+- [x] Logging/tooling proof-loop reliability feature doc completed or routed.
 - [x] Public prompt records export/redaction/indexing feature doc completed or
   routed.
 - [x] Provider/model reliability and multi-agent readiness feature doc completed
   or routed.
-- [ ] ACIP/A2A/provider communications decision record completed or routed.
-- [ ] Security bridge and CAV feature doc completed or routed.
-- [ ] Identity/continuity and capability-selector bridge record completed or
+- [x] ACIP/A2A/provider communications decision record completed or routed.
+- [x] Security bridge and CAV feature doc completed or routed.
+- [x] Identity/continuity and capability-selector bridge record completed or
   routed.
 - [ ] Observatory/Unity consumption classification completed or routed.
-- [ ] AEE completion, Memory/ObsMem handoff, and ACP/cognitive profile
+- [x] AEE completion, Memory/ObsMem handoff, and ACP/cognitive profile
   accounting completed or routed.
 
 ## Tooling Reliability

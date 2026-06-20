@@ -11,18 +11,23 @@
 
 ## Status
 
-Current status: first pre-`v0.92` bridge tranche executing with WP-03 complete
-and WP-04 complete and closed through its merged umbrella.
+Current status: the first pre-`v0.92` bridge tranche now includes multiple
+completed or routed bridge waves, with WP-03 through WP-08 and WP-10 carrying
+retained closeout truth while a smaller set of downstream runtime and
+Observatory work remains open.
 
 - Planning: created by `#3800`
 - Documentation completion: `#3824`
-- Issue wave: WP-03 logging/tooling umbrella `#3968` and WP-04 public-records
-  umbrella `#3969` were opened with child lanes `#3995`-`#4001` and
-  `#4002`-`#4006`
-- Execution: WP-03 merged; WP-04 umbrella `#3969` and child lanes
-  `#4002`-`#4006` merged and closed
-- Validation: docs-readiness validation plus focused issue/PR proof for the
-  merged WP-03 and WP-04 waves
+- Issue wave: first-tranche bridge execution opened through WP-10, with
+  retained closeout truth now available for WP-03 `#3968`, WP-04 `#3969`,
+  WP-05 `#3970`, WP-06 `#3971`, WP-07 `#3972`, WP-08 `#3973`, and WP-10
+  `#3975`
+- Execution: WP-03 through WP-08, WP-10, and ACIP runtime `#4160` now have
+  bounded merged/closed bridge truth; Observatory/Unity `#3974` and Tokio
+  integrated soak `#4185` remain open downstream work rather than hidden
+  blockers
+- Validation: docs-readiness validation plus focused issue/PR and retained
+  closeout proof for the completed bridge waves
 - Release readiness: not applicable until `v0.91.6` executes
 
 This package does not implement runtime features and does not claim `v0.92`
@@ -52,6 +57,10 @@ Its job is to make the load-bearing pre-`v0.92` surfaces reviewable:
 
 `v0.91.6` should leave `v0.91.7` with explicit second-tranche work, not vague
 spillover.
+
+Closed umbrella truth in this milestone should not be read as proof that every
+runtime-integrated downstream consumer is complete. Open runtime, Observatory,
+and soak lanes remain explicit.
 
 ## Bridge Boundary
 
