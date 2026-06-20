@@ -340,6 +340,30 @@ fn identity_continuous_verification_writes_contract_json() {
         .expect("array")
         .iter()
         .any(|value| value == "self-attack without target allowlist"));
+    assert!(json["artifact_package"]["lifecycle_linkage_rules"]
+        .as_array()
+        .expect("array")
+        .iter()
+        .any(|value| value
+            .as_str()
+            .expect("string")
+            .contains("AUTO-01 first bounded autonomous proof preserves exploit -> replay -> mitigation -> validation -> promotion linkage")));
+    assert!(json["proof_fixture_hooks"]
+        .as_array()
+        .expect("array")
+        .iter()
+        .any(|value| value
+            .as_str()
+            .expect("string")
+            .contains("AUTO-01 first bounded autonomous proof packet")));
+    assert!(json["review_surface"]["required_questions"]
+        .as_array()
+        .expect("array")
+        .iter()
+        .any(|value| value
+            .as_str()
+            .expect("string")
+            .contains("truthfully blocked quarantine behavior")));
     assert!(json["upstream_contracts"]
         .as_array()
         .expect("array")
