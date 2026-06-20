@@ -2,6 +2,7 @@ use super::*;
 use crate::cli::pr_cmd_args::IssueCloseReason;
 use crate::cli::pr_cmd_args::IssueStateFilter;
 use crate::cli::pr_cmd_cards::render_issue_prompt_from_body;
+use crate::cli::pr_cmd_prompt::{infer_initial_pvf_lane, NEEDS_PLANNING_PVF_LANE};
 
 fn spawn_issue_octocrab_test_server(
     expected_requests: usize,
@@ -630,7 +631,73 @@ fn load_issue_prompt_parses_front_matter_and_body() {
     assert_eq!(doc.front_matter.title, "Example");
     assert_eq!(doc.front_matter.issue_number, 42);
     assert_eq!(doc.front_matter.labels, vec!["track:roadmap"]);
+    assert_eq!(doc.front_matter.initial_pvf_lane, None);
+    assert_eq!(doc.front_matter.initial_pvf_lane_source, None);
     assert!(doc.body.starts_with("# Heading"));
+}
+
+#[test]
+fn infer_initial_pvf_lane_covers_common_issue_types() {
+    assert_eq!(
+        infer_initial_pvf_lane(
+            "[v0.91.6][docs] Refresh README",
+            "track:roadmap,area:docs",
+            None
+        ),
+        "docs_only"
+    );
+    assert_eq!(
+        infer_initial_pvf_lane(
+            "[v0.91.6][tools] Improve workflow",
+            "track:roadmap,area:tools",
+            None
+        ),
+        "tooling"
+    );
+    assert_eq!(
+        infer_initial_pvf_lane(
+            "[v0.91.6][runtime] Tighten runtime v2",
+            "track:roadmap,area:runtime",
+            None
+        ),
+        "runtime"
+    );
+    assert_eq!(
+        infer_initial_pvf_lane(
+            "[v0.91.6][tools][prompt-template] Prompt-template polish",
+            "track:roadmap,area:tools",
+            None
+        ),
+        "prompt_template"
+    );
+    assert_eq!(
+        infer_initial_pvf_lane(
+            "[v0.91.6][tools] Generic bootstrap title",
+            "track:roadmap,area:tools",
+            Some("## Repo Inputs\n\n- docs/templates/prompts/1.0.0/spp.md")
+        ),
+        "prompt_template"
+    );
+    assert_eq!(
+        infer_initial_pvf_lane(
+            "[v0.91.6][provider] Provider substrate drift",
+            "track:roadmap,area:provider",
+            None
+        ),
+        "provider"
+    );
+    assert_eq!(
+        infer_initial_pvf_lane(
+            "[v0.91.6][tools] Owner binary lane truth",
+            "track:roadmap,area:tools",
+            Some("adl/src/bin/adl_prompt_template.rs")
+        ),
+        "owner_binary"
+    );
+    assert_eq!(
+        infer_initial_pvf_lane("General process cleanup", "track:roadmap", None),
+        NEEDS_PLANNING_PVF_LANE
+    );
 }
 
 #[test]

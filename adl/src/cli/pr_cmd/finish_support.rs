@@ -1664,6 +1664,7 @@ fn finish_path_is_larger_binary_focused(path: &str) -> bool {
             | "docs/milestones/v0.91.4/FEATURE_PROOF_COVERAGE_v0.91.4.md"
             | "adl/src/cli/pr_cmd.rs"
             | "adl/src/cli/pr_cmd_args.rs"
+            | "adl/src/cli/pr_cmd_prompt.rs"
             | "adl/src/cli/mod.rs"
             | "adl/src/cli/process_cmd.rs"
             | "adl/src/cli/usage.rs"
@@ -1685,6 +1686,7 @@ fn finish_path_is_larger_binary_focused(path: &str) -> bool {
             | "adl/src/continuous_verification_self_attack.rs"
             | "adl/src/cli/identity_cmd/tests/adversarial_contracts.rs"
             | "adl/src/cli/tests/pr_cmd_inline/basics.rs"
+            | "adl/src/cli/tests/pr_cmd_inline/versioned_bootstrap.rs"
             | "adl/tests/cli_smoke.rs"
             | "adl/tests/cli_smoke/process_status.rs"
             | "adl/src/cli/tests/pr_cmd_inline/repo_helpers/metadata.rs"
@@ -1775,7 +1777,9 @@ fn finish_path_needs_pr_cmd_lifecycle_focused_validation(path: &str) -> bool {
     let trimmed = path.trim().trim_matches('/');
     trimmed == "adl/src/cli/pr_cmd.rs"
         || trimmed == "adl/src/cli/pr_cmd_args.rs"
+        || trimmed == "adl/src/cli/pr_cmd_prompt.rs"
         || trimmed == "adl/src/cli/tests/pr_cmd_inline/basics.rs"
+        || trimmed == "adl/src/cli/tests/pr_cmd_inline/versioned_bootstrap.rs"
         || trimmed == "adl/src/cli/tests/pr_cmd_inline/repo_helpers/metadata.rs"
         || trimmed == "adl/src/cli/tests/pr_cmd_inline/support.rs"
         || trimmed.starts_with("adl/src/cli/tests/pr_cmd_inline/lifecycle/")

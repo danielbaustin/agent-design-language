@@ -123,7 +123,18 @@
     "confidence:",
     "plan_summary:",
     "execution_handoff:",
-    "notes:"
+    "notes:",
+    "initial_pvf_lane:",
+    "planned_pvf_lane:",
+    "planned_pvf_lane_source:",
+    "- Initial PVF lane from issue creation:",
+    "- Planned PVF lane for execution:",
+    "- Planning lane source:",
+    "- Revision rule:",
+    "- Initial PVF lane:",
+    "- Planned PVF lane:",
+    "- Final PVF lane:",
+    "- Lane change reason:"
   ],
   "frontmatter_keys": [],
   "headings": [
@@ -134,6 +145,10 @@
     {
       "level": 2,
       "text": "Summary"
+    },
+    {
+      "level": 2,
+      "text": "PVF Lane Truth"
     },
     {
       "level": 2,

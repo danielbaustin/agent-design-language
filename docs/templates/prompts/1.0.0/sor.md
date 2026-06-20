@@ -28,6 +28,12 @@ Execution:
 
 Pre-run output scaffold initialized during issue-wave opening. No implementation has started yet.
 
+## PVF Lane Truth
+- Initial PVF lane: `<initial_pvf_lane>`
+- Planned PVF lane: `<planned_pvf_lane>`
+- Final PVF lane: `<final_pvf_lane>`
+- Lane change reason: `<lane_change_reason>`
+
 ## Artifacts produced
 - Local ignored output-card scaffold at `<output_card>`
 - Tracked implementation artifacts: not_applicable until execution begins

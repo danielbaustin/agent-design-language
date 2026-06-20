@@ -2413,6 +2413,28 @@ fn finish_validation_profile_does_not_special_case_tokio_manifest_paths_for_othe
 }
 
 #[test]
+fn finish_validation_profile_classifies_pr_cmd_prompt_and_versioned_bootstrap_paths() {
+    let plan = select_finish_validation_plan(
+        "adl/src/cli/pr_cmd_prompt.rs,adl/src/cli/tests/pr_cmd_inline/versioned_bootstrap.rs",
+    )
+    .expect("pr cmd prompt and versioned bootstrap plan");
+
+    assert_eq!(plan.mode, FinishValidationMode::LargerBinaryFocused);
+    assert!(
+        plan.commands
+            .iter()
+            .any(|command| command.contains("cargo fmt --manifest-path")),
+        "larger-binary focused plan should require cargo fmt"
+    );
+    assert!(
+        plan.commands.iter().any(|command| {
+            command.contains("cargo test --manifest-path adl/Cargo.toml --bin adl cli::pr_cmd")
+        }),
+        "larger-binary focused plan should include pr_cmd lifecycle validation"
+    );
+}
+
+#[test]
 fn finish_scheduler_paths_run_scheduler_economics_focused_validation() {
     let _guard = env_lock();
     let temp = unique_temp_dir("adl-pr-finish-scheduler-focused-validation");

@@ -278,12 +278,7 @@ mod tests {
         ENV_LOCK
             .get_or_init(|| Mutex::new(()))
             .lock()
-            .expect("env lock poisoned")
-    }
-
-    fn reserve_local_port() -> u16 {
-        let listener = TcpListener::bind("127.0.0.1:0").expect("bind ephemeral port");
-        listener.local_addr().expect("local addr").port()
+            .unwrap_or_else(|poisoned| poisoned.into_inner())
     }
 
     fn json_response(body: String) -> Response<std::io::Cursor<Vec<u8>>> {
@@ -319,9 +314,9 @@ mod tests {
     }
 
     fn spawn_release_server() -> (String, thread::JoinHandle<Vec<String>>) {
-        let port = reserve_local_port();
-        let bind_addr = format!("127.0.0.1:{port}");
-        let server = Server::http(&bind_addr).expect("bind release test server");
+        let listener = TcpListener::bind("127.0.0.1:0").expect("bind release test listener");
+        let bind_addr = listener.local_addr().expect("release test listener addr");
+        let server = Server::from_listener(listener, None).expect("bind release test server");
         let handle = thread::spawn(move || {
             let mut seen = Vec::new();
             for _ in 0..6 {

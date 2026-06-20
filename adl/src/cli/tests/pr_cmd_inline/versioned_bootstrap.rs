@@ -104,8 +104,14 @@ fn bootstrap_cards_use_versioned_prompt_templates_when_available() {
     assert!(spp.contains("card_status: \"ready\""));
     assert!(spp.contains("status: \"ready\""));
     assert!(spp.contains("activation_state: \"ready\""));
+    assert!(spp.contains("initial_pvf_lane: \"prompt_template\""));
+    assert!(spp.contains("planned_pvf_lane: \"prompt_template\""));
+    assert!(spp.contains("## PVF Lane Plan"));
     assert!(srp.contains("artifact_type: \"structured_review_prompt\""));
     assert!(sor.contains("Status: IN_PROGRESS"));
+    assert!(sor.contains("## PVF Lane Truth"));
+    assert!(sor.contains("- Initial PVF lane: `prompt_template`"));
+    assert!(sor.contains("- Final PVF lane: `not_recorded_yet`"));
     assert!(sor.contains("Integration method used: local ignored card-bundle scaffold write under the active checkout; tracked implementation artifacts do not exist yet"));
     assert!(!sor.contains("direct write in main repo for the local ignored pre-run record"));
 }
@@ -739,6 +745,8 @@ The generated SPP should carry source-prompt facts into the plan.
     assert!(spp.contains("card_status: \"ready\""));
     assert!(spp.contains("status: \"ready\""));
     assert!(spp.contains("activation_state: \"ready\""));
+    assert!(spp.contains("initial_pvf_lane: \"prompt_template\""));
+    assert!(spp.contains("planned_pvf_lane: \"prompt_template\""));
     assert!(spp.contains(
         "Confirm dependency readiness and starting state: PR #3294 coverage gate must be green"
     ));

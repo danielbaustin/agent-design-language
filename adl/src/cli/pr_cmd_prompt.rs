@@ -13,6 +13,10 @@ pub(crate) struct IssuePromptFrontMatter {
     pub(crate) title: String,
     pub(crate) labels: Vec<String>,
     pub(crate) issue_number: u32,
+    #[serde(default)]
+    pub(crate) initial_pvf_lane: Option<String>,
+    #[serde(default)]
+    pub(crate) initial_pvf_lane_source: Option<String>,
 }
 
 #[derive(Debug, Clone, PartialEq, Eq)]
@@ -24,6 +28,8 @@ pub(crate) struct WorkflowQueueResolution {
 const VALID_WORKFLOW_QUEUES: &[&str] = &[
     "wp", "tools", "runtime", "demo", "docs", "review", "release",
 ];
+
+pub(crate) const NEEDS_PLANNING_PVF_LANE: &str = "needs_planning_lane_assignment";
 
 #[cfg(test)]
 #[derive(Debug)]
@@ -170,6 +176,9 @@ pub(crate) fn render_generated_issue_prompt(
     let wp = infer_wp_from_title(title);
     let queue = infer_workflow_queue(title, labels_csv, Some(&wp)).unwrap_or("wp");
     let outcome_type = infer_required_outcome_type(labels_csv, title);
+    let initial_pvf_lane = infer_initial_pvf_lane(title, labels_csv, None);
+    let initial_pvf_lane_source =
+        infer_initial_pvf_lane_source(title, labels_csv, None, initial_pvf_lane);
     let label_lines = labels_csv
         .split(',')
         .map(str::trim)
@@ -180,7 +189,7 @@ pub(crate) fn render_generated_issue_prompt(
     let body = render_generated_issue_body(title, outcome_type, Some(issue_url));
 
     format!(
-        "---\nissue_card_schema: adl.issue.v1\nwp: \"{wp}\"\nqueue: \"{queue}\"\nslug: \"{slug}\"\ntitle: \"{title}\"\nlabels:\n{label_lines}\nissue_number: {issue}\nstatus: \"draft\"\naction: \"edit\"\ndepends_on: []\nmilestone_sprint: \"Pending sprint assignment\"\nrequired_outcome_type:\n  - \"{outcome_type}\"\nrepo_inputs: []\ncanonical_files: []\ndemo_required: false\ndemo_names: []\nissue_graph_notes:\n  - \"Bootstrap-generated from GitHub issue metadata because no canonical local issue prompt existed yet.\"\npr_start:\n  enabled: false\n  slug: \"{slug}\"\n---\n\n{body}\n"
+        "---\nissue_card_schema: adl.issue.v1\nwp: \"{wp}\"\nqueue: \"{queue}\"\nslug: \"{slug}\"\ntitle: \"{title}\"\nlabels:\n{label_lines}\nissue_number: {issue}\nstatus: \"draft\"\naction: \"edit\"\ndepends_on: []\nmilestone_sprint: \"Pending sprint assignment\"\nrequired_outcome_type:\n  - \"{outcome_type}\"\nrepo_inputs: []\ncanonical_files: []\ndemo_required: false\ndemo_names: []\nissue_graph_notes:\n  - \"Bootstrap-generated from GitHub issue metadata because no canonical local issue prompt existed yet.\"\ninitial_pvf_lane: \"{initial_pvf_lane}\"\ninitial_pvf_lane_source: \"{initial_pvf_lane_source}\"\npr_start:\n  enabled: false\n  slug: \"{slug}\"\n---\n\n{body}\n"
     )
 }
 
@@ -287,6 +296,81 @@ pub(crate) fn infer_workflow_queue(
         return Some("runtime");
     }
     None
+}
+
+pub(crate) fn infer_initial_pvf_lane(
+    title: &str,
+    labels_csv: &str,
+    body_hint: Option<&str>,
+) -> &'static str {
+    let lowered = format!(
+        "{} {} {}",
+        title.to_lowercase(),
+        labels_csv.to_lowercase(),
+        body_hint.unwrap_or_default().to_lowercase()
+    );
+    if lowered.contains("prompt-template")
+        || lowered.contains("prompt template")
+        || lowered.contains("csdlc-prompt-editor")
+        || lowered.contains("docs/templates/prompts/")
+        || lowered.contains("adl/src/csdlc_prompt_editor/")
+        || lowered.contains("adl/src/csdlc_prompt_editor.rs")
+    {
+        return "prompt_template";
+    }
+    if lowered.contains("area:provider")
+        || lowered.contains("[provider]")
+        || lowered.contains("provider_substrate")
+        || lowered.contains("/provider")
+        || lowered.contains(" provider ")
+    {
+        return "provider";
+    }
+    if lowered.contains("owner-binary")
+        || lowered.contains("owner binary")
+        || lowered.contains("adl/src/bin/")
+        || lowered.contains("run_owner_validation_lane")
+    {
+        return "owner_binary";
+    }
+    if lowered.contains("area:runtime")
+        || lowered.contains("[runtime]")
+        || lowered.contains("runtime_v2")
+        || lowered.contains("adl/src/runtime")
+    {
+        return "runtime";
+    }
+    if lowered.contains("area:tools")
+        || lowered.contains("[tools]")
+        || lowered.contains("adl/src/cli/")
+        || lowered.contains("adl/tools/")
+    {
+        return "tooling";
+    }
+    if lowered.contains("area:docs")
+        || lowered.contains("type:docs")
+        || lowered.contains("[docs]")
+        || lowered.contains("docs/")
+    {
+        return "docs_only";
+    }
+    NEEDS_PLANNING_PVF_LANE
+}
+
+pub(crate) fn infer_initial_pvf_lane_source(
+    title: &str,
+    labels_csv: &str,
+    body_hint: Option<&str>,
+    lane: &str,
+) -> &'static str {
+    let title_labels_lane = infer_initial_pvf_lane(title, labels_csv, None);
+    if lane == NEEDS_PLANNING_PVF_LANE {
+        "title_labels_inference_needs_review"
+    } else if body_hint.is_some() && lane != title_labels_lane {
+        "title_labels_and_body_inference"
+    } else {
+        "title_labels_inference"
+    }
 }
 
 pub(crate) fn resolve_issue_prompt_workflow_queue(path: &Path) -> Result<WorkflowQueueResolution> {
