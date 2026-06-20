@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+  <key>Label</key>
+  <string>com.agentlogic.wuji-ddns</string>
+
+  <key>ProgramArguments</key>
+  <array>
+    <string>__WUJI_DDNS_SCRIPT_PATH__</string>
+  </array>
+
+  <key>EnvironmentVariables</key>
+  <dict>
+    <key>DDNS_FUNCTION_URL</key>
+    <string>__WUJI_DDNS_FUNCTION_URL__</string>
+    <key>DDNS_HOSTNAME</key>
+    <string>wuji.agent-logic.ai</string>
+    <key>DDNS_TOKEN_FILE</key>
+    <string>__WUJI_DDNS_TOKEN_FILE__</string>
+  </dict>
+
+  <key>RunAtLoad</key>
+  <true/>
+
+  <key>StartInterval</key>
+  <integer>300</integer>
+
+  <key>StandardOutPath</key>
+  <string>__WUJI_DDNS_LOG_DIR__/wuji-ddns.stdout.log</string>
+
+  <key>StandardErrorPath</key>
+  <string>__WUJI_DDNS_LOG_DIR__/wuji-ddns.stderr.log</string>
+</dict>
+</plist>
