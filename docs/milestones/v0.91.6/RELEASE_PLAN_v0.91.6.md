@@ -22,7 +22,7 @@ planning package does not publish a release by itself.
 - [ ] Public prompt record security/export status recorded.
 - [ ] Provider/model reliability status recorded.
 - [ ] Security/CAV status recorded.
-- [ ] `agent-logic.ai` AWS account/setup planning status recorded through
+- [x] `agent-logic.ai` AWS account/setup planning status recorded through
   `#3902` without exposing sensitive offer identifiers.
 - [ ] CodeFriend v1 / portable adapter v2 and guild route preservation status
   recorded without expanding first-tranche activation scope.
@@ -60,7 +60,7 @@ planning package does not publish a release by itself.
 
 - [ ] Roadmap/status updated.
 - [ ] `v0.91.7` handoff visible.
-- [ ] `#3902` account/setup route visible for later infrastructure consumers.
+- [x] `#3902` account/setup route visible for later infrastructure consumers.
 - [ ] CodeFriend and guild routes remain visible for later MVP consumers.
 - [ ] `v0.92` activation remains blocked or is explicitly opened by reviewed
   bridge truth.

@@ -56,7 +56,7 @@ and should not disturb the first-tranche bridge sequence above:
 
 | Item | Route | Required v0.91.6 disposition |
 | --- | --- | --- |
-| `agent-logic.ai` AWS account setup | `#3902` | Account setup plan, AWS credits application guidance, Terraform boundary, and hosting/security non-claims are complete, blocked, deferred, or routed before infrastructure consumers rely on the account. |
+| `agent-logic.ai` AWS account setup | `#3902` | Account setup, AWS credits application guidance, Terraform boundary, and hosting/security non-claims are recorded in `review/AGENT_LOGIC_AWS_ACCOUNT_DECISION_RECORD_3902.md`; AWS Activate review and private credit visibility remain post-close external follow-up. |
 | CodeFriend v1 / portable adapter v2 | `docs/milestones/v0.95/features/CODEFRIEND_V1_PORTABLE_ADAPTER_V2_PROOF_v0.95.md` | Route remains visible as post-v0.92 / pre-v0.95 proof work without pulling product implementation into v0.91.6. |
 | Guilds / MVP governance route | `docs/milestones/v0.93/features/GUILDS_AND_COLLECTIVE_ORGANIZATION_v0.93.md` and v0.95 MVP consumption | Route remains visible as MVP-scoped governance work without pulling governance implementation into v0.91.6 or v0.92 birthday activation. |
 
@@ -81,7 +81,9 @@ and should not disturb the first-tranche bridge sequence above:
 - AEE completion, Memory/ObsMem, and ACP/cognitive profiles must be accounted
   before `v0.92` consumes them.
 - `#3902` must remain visible as a `v0.91.6` account/setup planning item, not
-  as hidden infrastructure work inside the birthday milestone.
+  as hidden infrastructure work inside the birthday milestone. Its operational
+  setup is complete; AWS Activate review and private credit visibility remain
+  post-close external follow-up.
 - CodeFriend v1 / adapter v2 and guilds must remain visible as companion
   planning routes, not as first-tranche activation proof.
 - `v0.91.7` residuals must be named, not left as "future work."

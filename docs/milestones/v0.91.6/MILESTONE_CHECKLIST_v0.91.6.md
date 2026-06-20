@@ -48,11 +48,11 @@ milestone work.
 
 ## Companion Setup Planning
 
-- [ ] `#3902` `agent-logic.ai` AWS account setup plan completed, blocked,
+- [x] `#3902` `agent-logic.ai` AWS account setup plan completed, blocked,
   deferred, or routed.
-- [ ] AWS credits/application guidance is recorded without exposing sensitive
+- [x] AWS credits/application guidance is recorded without exposing sensitive
   offer identifiers.
-- [ ] Account-bound Terraform and hosting/security boundaries are explicit
+- [x] Account-bound Terraform and hosting/security boundaries are explicit
   before later infrastructure consumers rely on the account.
 - [ ] CodeFriend v1 / portable adapter v2 route remains visible for
   post-v0.92 / pre-v0.95 proof work.
@@ -70,7 +70,7 @@ milestone work.
 - [ ] Gemma/model reliability is addressed as part of multi-agent readiness.
 - [ ] AEE, Memory/ObsMem, and ACP/profile surfaces are visible before v0.92
   activation refresh.
-- [ ] `#3902` is visible as v0.91.6 setup planning, not v0.92 activation proof.
+- [x] `#3902` is visible as v0.91.6 setup planning, not v0.92 activation proof.
 - [ ] CodeFriend and guild route preservation is not treated as first-tranche
   runtime or activation proof.
 
