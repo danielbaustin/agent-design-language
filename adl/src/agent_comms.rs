@@ -83,6 +83,34 @@ pub enum AcipResponseChannelKindV1 {
     ArtifactReply,
 }
 
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq, PartialOrd, Ord, JsonSchema)]
+#[serde(rename_all = "snake_case")]
+pub enum AcipCallerClassV1 {
+    WorkflowAgent,
+    ExternalAgent,
+    CitizenProxy,
+    GroupRelay,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq, JsonSchema)]
+#[serde(rename_all = "snake_case")]
+pub enum AcipRouteClassV1 {
+    LocalOnly,
+    CrossBoundaryDeferred,
+}
+
+fn default_acip_caller_class_v1() -> AcipCallerClassV1 {
+    AcipCallerClassV1::WorkflowAgent
+}
+
+fn default_acip_route_class_v1() -> AcipRouteClassV1 {
+    AcipRouteClassV1::LocalOnly
+}
+
+fn default_local_allowed_caller_classes_v1() -> Vec<AcipCallerClassV1> {
+    vec![AcipCallerClassV1::WorkflowAgent]
+}
+
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq, JsonSchema)]
 #[serde(deny_unknown_fields)]
 pub struct AcipAddressV1 {
@@ -224,7 +252,11 @@ pub struct AcipInvocationContractV1 {
     pub conversation_id: String,
     pub causal_message_id: String,
     pub caller: AcipAddressV1,
+    #[serde(default = "default_acip_caller_class_v1")]
+    pub caller_class: AcipCallerClassV1,
     pub target: AcipAddressV1,
+    #[serde(default = "default_acip_route_class_v1")]
+    pub route_class: AcipRouteClassV1,
     pub intent: AcipIntentV1,
     pub purpose: String,
     pub input_refs: Vec<String>,
@@ -605,6 +637,10 @@ pub enum AcipLocalHandlerKindV1 {
 #[serde(deny_unknown_fields)]
 pub struct AcipLocalRouteV1 {
     pub agent: AcipAddressV1,
+    #[serde(default = "default_acip_route_class_v1")]
+    pub route_class: AcipRouteClassV1,
+    #[serde(default = "default_local_allowed_caller_classes_v1")]
+    pub allowed_caller_classes: Vec<AcipCallerClassV1>,
     pub supported_intents: Vec<AcipIntentV1>,
     pub handler: AcipLocalHandlerKindV1,
 }

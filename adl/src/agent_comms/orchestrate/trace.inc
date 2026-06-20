@@ -104,10 +104,12 @@ pub(crate) fn sample_invocation_contract() -> AcipInvocationContractV1 {
             kind: AcipAddressKindV1::Agent,
             id: "planner.agent".to_string(),
         },
+        caller_class: AcipCallerClassV1::WorkflowAgent,
         target: AcipAddressV1 {
             kind: AcipAddressKindV1::Agent,
             id: "reviewer.agent".to_string(),
         },
+        route_class: AcipRouteClassV1::LocalOnly,
         intent: AcipIntentV1::ReviewRequest,
         purpose: "Perform a bounded review and emit the declared report artifacts.".to_string(),
         input_refs: vec![

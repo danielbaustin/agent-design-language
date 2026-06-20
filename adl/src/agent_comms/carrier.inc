@@ -40,6 +40,27 @@ pub fn validate_acip_local_carrier_v1(carrier: &AcipLocalCarrierV1) -> Result<()
                 route.agent.id
             ));
         }
+        if route.route_class != AcipRouteClassV1::LocalOnly {
+            return Err(anyhow!(
+                "ACIP local carrier route '{}' must remain local_only in v0.91.6",
+                route.agent.id
+            ));
+        }
+        if route.allowed_caller_classes.is_empty() {
+            return Err(anyhow!(
+                "ACIP local carrier route '{}' requires allowed_caller_classes",
+                route.agent.id
+            ));
+        }
+        let mut seen_caller_classes = BTreeSet::new();
+        for caller_class in &route.allowed_caller_classes {
+            if !seen_caller_classes.insert(caller_class.clone()) {
+                return Err(anyhow!(
+                    "ACIP local carrier route '{}' contains duplicate allowed_caller_classes entries",
+                    route.agent.id
+                ));
+            }
+        }
         if route.supported_intents.is_empty() {
             return Err(anyhow!(
                 "ACIP local carrier route '{}' requires supported_intents",
@@ -217,8 +238,10 @@ pub fn execute_acip_local_invocation_round_trip(
         "local ACIP carrier",
     )?;
     let route = ensure_local_route_supports_contract(carrier, invocation_contract)?;
-
-    let invocation_event = materialize_local_invocation_event(route, invocation_contract)?;
+    let invocation_event = match authorize_local_invocation(route, invocation_contract) {
+        Ok(route) => materialize_local_invocation_event(route, invocation_contract)?,
+        Err(failure) => materialize_local_refusal_event(route, invocation_contract, &failure),
+    };
     let response_message =
         build_local_response_message(request_message, invocation_contract, &invocation_event)?;
 
@@ -243,6 +266,8 @@ pub fn sample_acip_local_carrier_v1() -> AcipLocalCarrierV1 {
                     kind: AcipAddressKindV1::Agent,
                     id: "reviewer.agent".to_string(),
                 },
+                route_class: AcipRouteClassV1::LocalOnly,
+                allowed_caller_classes: vec![AcipCallerClassV1::WorkflowAgent],
                 supported_intents: vec![AcipIntentV1::ReviewRequest],
                 handler: AcipLocalHandlerKindV1::Review,
             },
@@ -251,6 +276,8 @@ pub fn sample_acip_local_carrier_v1() -> AcipLocalCarrierV1 {
                     kind: AcipAddressKindV1::Agent,
                     id: "coding.agent".to_string(),
                 },
+                route_class: AcipRouteClassV1::LocalOnly,
+                allowed_caller_classes: vec![AcipCallerClassV1::WorkflowAgent],
                 supported_intents: vec![AcipIntentV1::CodingRequest],
                 handler: AcipLocalHandlerKindV1::Coding,
             },
@@ -353,22 +380,65 @@ fn materialize_local_invocation_event(
     ))
 }
 
+fn materialize_local_refusal_event(
+    route: &AcipLocalRouteV1,
+    contract: &AcipInvocationContractV1,
+    failure: &LocalAuthorizationFailure,
+) -> AcipInvocationEventV1 {
+    let evidence_refs = match route.handler {
+        AcipLocalHandlerKindV1::Review => {
+            vec!["runtime/comms/local_carrier/evidence/review_refusal_trace.json".to_string()]
+        }
+        AcipLocalHandlerKindV1::Coding => {
+            vec!["runtime/comms/local_carrier/evidence/coding_refusal_trace.json".to_string()]
+        }
+    };
+
+    sample_invocation_event(
+        contract,
+        AcipInvocationStatusV1::Refused,
+        Vec::new(),
+        failure.stop_reason.to_string(),
+        Some(failure.refusal_code.to_string()),
+        None,
+        evidence_refs,
+    )
+}
+
 fn build_local_response_message(
     request_message: &AcipMessageEnvelopeV1,
     contract: &AcipInvocationContractV1,
     invocation_event: &AcipInvocationEventV1,
 ) -> Result<AcipMessageEnvelopeV1> {
-    let mut response = transport::sample_message(
-        &format!("msg-{}-reply", contract.invocation_id),
-        &contract.conversation_id,
-        request_message.monotonic_order + 1,
-        AcipIntentV1::Conversation,
-        &format!(
+    let body = match invocation_event.status {
+        AcipInvocationStatusV1::Completed => format!(
             "Invocation '{}' completed locally with status '{}' and {} output artifact(s).",
             contract.invocation_id,
             invocation_event.status.as_str(),
             invocation_event.output_refs.len()
         ),
+        AcipInvocationStatusV1::Refused => format!(
+            "Invocation '{}' was refused locally with code '{}' before execution.",
+            contract.invocation_id,
+            invocation_event.refusal_code.as_deref().unwrap_or("unknown_refusal")
+        ),
+        AcipInvocationStatusV1::Failed => format!(
+            "Invocation '{}' failed locally with code '{}'.",
+            contract.invocation_id,
+            invocation_event.failure_code.as_deref().unwrap_or("unknown_failure")
+        ),
+        _ => format!(
+            "Invocation '{}' ended locally with status '{}'.",
+            contract.invocation_id,
+            invocation_event.status.as_str()
+        ),
+    };
+    let mut response = transport::sample_message(
+        &format!("msg-{}-reply", contract.invocation_id),
+        &contract.conversation_id,
+        request_message.monotonic_order + 1,
+        AcipIntentV1::Conversation,
+        &body,
     );
     response.sender = contract.target.clone();
     response.recipient = contract.caller.clone();
@@ -416,6 +486,11 @@ fn validate_request_contract_alignment(
             "{scope} requires request_message.correlation_id to match invocation_contract.invocation_id"
         ));
     }
+    if request_message.authority_scope.as_ref() != Some(&invocation_contract.authority_scope) {
+        return Err(anyhow!(
+            "{scope} requires request_message.authority_scope to match invocation_contract.authority_scope"
+        ));
+    }
 
     Ok(())
 }
@@ -436,6 +511,45 @@ fn ensure_local_route_supports_contract<'a>(
             route.agent.id,
             invocation_contract.intent.as_str()
         ));
+    }
+
+    Ok(route)
+}
+
+#[derive(Debug, Clone)]
+struct LocalAuthorizationFailure {
+    refusal_code: &'static str,
+    stop_reason: &'static str,
+}
+
+fn authorize_local_invocation<'a>(
+    route: &'a AcipLocalRouteV1,
+    invocation_contract: &AcipInvocationContractV1,
+) -> Result<&'a AcipLocalRouteV1, LocalAuthorizationFailure> {
+    if invocation_contract.route_class != AcipRouteClassV1::LocalOnly
+        || route.route_class != invocation_contract.route_class
+    {
+        return Err(LocalAuthorizationFailure {
+            refusal_code: "route_class_denied",
+            stop_reason: "route_class_not_authorized",
+        });
+    }
+
+    if !route.supported_intents.contains(&invocation_contract.intent) {
+        return Err(LocalAuthorizationFailure {
+            refusal_code: "intent_denied",
+            stop_reason: "route_intent_not_authorized",
+        });
+    }
+
+    if !route
+        .allowed_caller_classes
+        .contains(&invocation_contract.caller_class)
+    {
+        return Err(LocalAuthorizationFailure {
+            refusal_code: "caller_class_denied",
+            stop_reason: "caller_class_not_authorized",
+        });
     }
 
     Ok(route)
