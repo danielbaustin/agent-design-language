@@ -1719,6 +1719,7 @@ fn finish_validation_profile_classifies_issue_small_binary_slice() {
             "adl/src/cli/pr_cmd/finish_support.rs".to_string(),
             "adl/src/cli/tests/pr_cmd_inline/finish/arg_render.rs".to_string(),
             "adl/tools/pr.sh".to_string(),
+            "adl/tools/test_ci_path_policy.sh".to_string(),
             "adl/tools/test_pr_small_binary_delegation.sh".to_string(),
         ],
     )
@@ -2599,6 +2600,7 @@ fn finish_issue_small_binary_paths_run_issue_focused_validation() {
             "adl/src/cli/pr_cmd/finish_support.rs".to_string(),
             "adl/src/cli/tests/pr_cmd_inline/finish/arg_render.rs".to_string(),
             "adl/tools/pr.sh".to_string(),
+            "adl/tools/test_ci_path_policy.sh".to_string(),
             "adl/tools/test_pr_small_binary_delegation.sh".to_string(),
         ],
     )

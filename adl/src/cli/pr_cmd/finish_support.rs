@@ -1801,6 +1801,7 @@ fn finish_issue_needs_issue_small_binary_validation(
                     | "adl/src/cli/pr_cmd/finish_support.rs"
                     | "adl/src/cli/tests/pr_cmd_inline/finish/arg_render.rs"
                     | "adl/tools/pr.sh"
+                    | "adl/tools/test_ci_path_policy.sh"
                     | "adl/tools/test_pr_small_binary_delegation.sh"
             )
         })
