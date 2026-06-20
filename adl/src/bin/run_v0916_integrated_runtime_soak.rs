@@ -721,3 +721,140 @@ fn readme() -> String {
 fn reviewer_walkthrough() -> String {
     "# Reviewer Walkthrough\n\nRun the soak with `cargo run --manifest-path adl/Cargo.toml --bin run_v0916_integrated_runtime_soak -- --out docs/milestones/v0.91.6/review/runtime/v0916_integrated_runtime_soak_4245`.\n\nThe review question is whether the runtime now leaves one honest, durable packet showing restart, a live stop between cycles, timeout, saturation/backpressure, degraded fallback, remote-exec timeout semantics, and memory handoff under one bounded local proof surface without overclaiming ACIP, Observatory, or v0.92 readiness.\n".to_string()
 }
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    fn temp_dir(name: &str) -> PathBuf {
+        let unique = format!(
+            "{}-{}-{}",
+            name,
+            std::process::id(),
+            Utc::now().timestamp_nanos_opt().unwrap_or_default()
+        );
+        std::env::temp_dir().join(unique)
+    }
+
+    #[test]
+    fn run_v0916_integrated_runtime_soak_generates_expected_artifacts() {
+        let out_dir = temp_dir("v0916-runtime-soak");
+        run(Args {
+            out: out_dir.clone(),
+        })
+        .expect("runtime soak run should succeed");
+
+        let proof_path = out_dir.join("integrated_runtime_soak_proof.json");
+        let proof: Value = serde_json::from_str(
+            &fs::read_to_string(&proof_path).expect("read generated proof packet"),
+        )
+        .expect("parse generated proof packet");
+        assert_eq!(proof["issue"], 4245);
+        assert_eq!(
+            proof["status_summary"]["live_stop_probe_state"],
+            Value::String("stopped".to_string())
+        );
+        assert_eq!(
+            proof["status_summary"]["remote_timeout_failure_kind"],
+            Value::String("timeout".to_string())
+        );
+
+        let evidence_index_path = out_dir.join("integrated_runtime_soak_evidence_index.json");
+        let evidence_index: Value = serde_json::from_str(
+            &fs::read_to_string(&evidence_index_path).expect("read generated evidence index"),
+        )
+        .expect("parse generated evidence index");
+        let artifact_refs = evidence_index["artifact_refs"]
+            .as_array()
+            .expect("artifact refs array");
+        assert!(
+            artifact_refs.iter().any(|entry| {
+                entry == "long_lived_agent/state/status.json"
+                    || entry == "long_lived_agent\\state\\status.json"
+            }),
+            "expected long-lived-agent status artifact in evidence index"
+        );
+
+        let artifact_scan_path = out_dir.join("audit/artifact_safety_scan.json");
+        let artifact_scan: Value = serde_json::from_str(
+            &fs::read_to_string(&artifact_scan_path).expect("read generated artifact scan"),
+        )
+        .expect("parse generated artifact scan");
+        assert_eq!(artifact_scan["passed"], Value::Bool(true));
+
+        let _ = fs::remove_dir_all(&out_dir);
+    }
+
+    #[test]
+    fn run_v0916_integrated_runtime_soak_support_functions_are_reviewable() {
+        let root = temp_dir("v0916-runtime-soak-support");
+        fs::create_dir_all(&root).expect("create temp root");
+
+        let relative = absolute_from_cwd(Path::new("target"))
+            .expect("relative path should resolve against cwd");
+        assert!(relative.ends_with("target"));
+        let absolute = absolute_from_cwd(&root).expect("absolute path should remain absolute");
+        assert_eq!(absolute, root);
+
+        let spec_path = write_agent_spec_under(&root, "spec", "agent-4245")
+            .expect("agent spec should be written");
+        let spec_text = fs::read_to_string(&spec_path).expect("read agent spec");
+        assert!(spec_text.contains("agent-4245"));
+        assert!(spec_text.contains("state_root: state"));
+
+        write_file(&root.join("notes.txt"), "runtime soak notes").expect("write text file");
+        write_json(&root.join("data/info.json"), &json!({"ok": true})).expect("write json file");
+        wait_for_path(&root.join("data/info.json"), Duration::from_secs(1))
+            .expect("json artifact should appear");
+
+        let evidence_index = build_evidence_index(&root).expect("build evidence index");
+        let refs = evidence_index["artifact_refs"]
+            .as_array()
+            .expect("artifact refs array");
+        assert!(refs.iter().any(|entry| entry == "notes.txt"));
+
+        let leak_file = root.join("leak.md");
+        write_file(
+            &leak_file,
+            "secret_access_key=redacted\npath=/Users/example/private\n",
+        )
+        .expect("write leak file");
+        let scan = scan_public_artifacts(&root).expect("scan artifacts");
+        assert_eq!(scan["passed"], Value::Bool(false));
+        let findings = scan["findings"].as_array().expect("findings array");
+        assert!(findings
+            .iter()
+            .any(|finding| finding["family"] == "secret_material"));
+        assert!(findings
+            .iter()
+            .any(|finding| finding["family"] == "private_host_path"));
+
+        let readme_text = readme();
+        assert!(readme_text.contains("What This Proves"));
+        let walkthrough = reviewer_walkthrough();
+        assert!(walkthrough.contains("bounded local proof surface"));
+
+        let timeout = run_timeout_policy_probe();
+        assert_eq!(
+            timeout["final_status"],
+            Value::String("TimedOut".to_string())
+        );
+        let bulkhead = run_bulkhead_probe();
+        assert_eq!(
+            bulkhead["trace"]["final_status"],
+            Value::String("saturated".to_string())
+        );
+        let degraded = run_degraded_fallback_probe();
+        assert_eq!(degraded["trace"]["output_degraded"], Value::Bool(true));
+        let remote = run_remote_timeout_probe().expect("remote timeout probe should succeed");
+        assert_eq!(
+            remote["stable_failure_kind"],
+            Value::String("timeout".to_string())
+        );
+        let obsmem = build_obsmem_request().expect("obsmem request should build");
+        assert!(obsmem.is_object());
+        assert!(!obsmem.as_object().expect("obsmem object").is_empty());
+
+        let _ = fs::remove_dir_all(&root);
+    }
+}

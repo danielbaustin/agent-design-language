@@ -1,8 +1,9 @@
 use super::*;
 use crate::cli::pr_cmd::finish_support::{
     ensure_finish_branch_not_behind_origin_main, ensure_finish_task_bundle_surfaces,
-    finish_declared_paths_for_validation, non_closing_lifecycle_line, normalize_docs_only_sor_text,
-    open_pr_url_nonblocking, open_pr_url_nonblocking_with_timeout, real_pr_finish,
+    finish_declared_paths_for_validation, load_finish_validation_profile,
+    non_closing_lifecycle_line, normalize_docs_only_sor_text, open_pr_url_nonblocking,
+    open_pr_url_nonblocking_with_timeout, real_pr_finish,
     render_default_finish_validation, resolve_finish_issue_scope_and_slug,
     select_finish_validation_plan_for_finish, FinishValidationMode, FinishValidationPlan,
     FinishValidationProfile, FinishValidationProfileEscalation,
@@ -455,6 +456,75 @@ fn render_default_finish_validation_includes_profile_truth_and_sanitizes_changed
         .contains("`ci_integration`: deferred to GitHub checks for merge-context validation"));
     assert!(rendered.contains("Escalation: not required"));
     assert!(!rendered.contains("/private/tmp/changed-files.txt"));
+}
+
+#[test]
+fn load_finish_validation_profile_reads_manager_json_from_repo_tooling() {
+    let _guard = env_lock();
+    let repo = unique_temp_dir("adl-pr-finish-load-profile");
+    fs::create_dir_all(repo.join("adl/tools")).expect("tools dir");
+    write_executable(
+        &repo.join("adl/tools/validation_manager.py"),
+        r#"#!/usr/bin/env python3
+import json
+
+print(json.dumps({
+    "selected_profile": "runtime_owner_profile",
+    "status": "ready_to_run",
+    "pr_publication_sufficient": False,
+    "run": [
+        {
+            "lane_id": "runtime_owner_lane",
+            "command": "bash adl/tools/run_owner_validation_lane.sh runtime --build",
+            "reason": "runtime_owner_surface_requires_runtime_lane",
+        }
+    ],
+    "not_run": [
+        {
+            "surface": "release_gate",
+            "reason": "reserved for release readiness",
+        }
+    ],
+    "deferred": [
+        {
+            "surface": "ci_integration",
+            "reason": "deferred to GitHub checks",
+        }
+    ],
+    "behavior_surfaces": ["runtime"],
+    "validation_dag": [],
+    "estimated_cost": "medium",
+    "escalation": {
+        "required": True,
+        "reasons": [
+            {
+                "lane_id": "runtime_owner_lane",
+                "status": "required",
+                "reason": "runtime owner proof required",
+            }
+        ],
+    },
+    "selector_plan": [],
+}))
+"#,
+    );
+
+    let profile = load_finish_validation_profile(
+        &repo,
+        &["adl/src/bin/run_v0916_integrated_runtime_soak.rs".to_string()],
+    )
+    .expect("load finish validation profile");
+
+    assert_eq!(profile.selected_profile, "runtime_owner_profile");
+    assert_eq!(profile.status, "ready_to_run");
+    assert!(!profile.pr_publication_sufficient);
+    assert_eq!(profile.run.len(), 1);
+    assert_eq!(profile.run[0].lane_id, "runtime_owner_lane");
+    assert_eq!(profile.run[0].reason, "runtime_owner_surface_requires_runtime_lane");
+    assert_eq!(profile.not_run.len(), 1);
+    assert_eq!(profile.deferred.len(), 1);
+    assert!(profile.escalation.required);
+    assert_eq!(profile.escalation.reasons.len(), 1);
 }
 
 #[test]
@@ -1237,6 +1307,28 @@ fn finish_validation_plan_classifies_integrated_runtime_soak_runner() {
         .commands
         .iter()
         .any(|command| command.contains("cargo clippy")));
+}
+
+#[test]
+fn finish_validation_plan_integrated_runtime_soak_runner_hits_helper_classifiers() {
+    let plan = select_finish_validation_plan_for_finish(
+        4245,
+        "adl/src/bin/run_v0916_integrated_runtime_soak.rs,docs/milestones/v0.91.6/review/runtime",
+        &[
+            "adl/src/bin/run_v0916_integrated_runtime_soak.rs".to_string(),
+            "docs/milestones/v0.91.6/review/runtime/V0916_INTEGRATED_RUNTIME_SOAK_PROOF_4245.md"
+                .to_string(),
+        ],
+    )
+    .expect("integrated runtime soak finish plan");
+
+    assert_eq!(plan.mode, FinishValidationMode::LargerBinaryFocused);
+    assert!(plan
+        .commands
+        .contains(&"cargo test --manifest-path adl/Cargo.toml long_lived_agent".to_string()));
+    assert!(plan
+        .commands
+        .contains(&"bash adl/tools/run_owner_validation_lane.sh runtime --build".to_string()));
 }
 
 #[test]
@@ -3015,7 +3107,7 @@ fn real_pr_finish_happy_path_is_covered_in_default_lane() {
     fs::create_dir_all(repo.join("adl/src")).expect("adl src");
     fs::write(repo.join("adl/src/lib.rs"), "pub fn placeholder() {}\n").expect("write source");
     assert!(Command::new("git")
-        .args(["add", ".gitignore", "adl/src/lib.rs"])
+        .args(["add", "."])
         .current_dir(&repo)
         .status()
         .expect("git add")
@@ -3592,4 +3684,1063 @@ verification_summary:
     )
     .expect("head notes");
     assert!(head_notes.contains("updated notes"));
+}
+
+#[test]
+fn real_pr_finish_updates_existing_pr_marks_ready_and_keeps_non_closing_commit_title() {
+    let _guard = env_lock();
+    let temp = unique_temp_dir("adl-pr-finish-existing-pr-ready-no-close");
+    let origin = temp.join("origin.git");
+    let repo = temp.join("repo");
+    fs::create_dir_all(&repo).expect("repo dir");
+    copy_bootstrap_support_files(&repo);
+    init_git_repo(&repo);
+    assert!(Command::new("git")
+        .args(["config", "user.name", "Test User"])
+        .current_dir(&repo)
+        .status()
+        .expect("git config")
+        .success());
+    assert!(Command::new("git")
+        .args(["config", "user.email", "test@example.com"])
+        .current_dir(&repo)
+        .status()
+        .expect("git config")
+        .success());
+    fs::write(repo.join(".gitignore"), ".adl/\n").expect("seed gitignore");
+    fs::create_dir_all(repo.join("adl/src")).expect("adl src dir");
+
+    let issue_ref = IssueRef::new(
+        1174,
+        "v0.86".to_string(),
+        "existing-pr-ready-no-close".to_string(),
+    )
+    .expect("ref");
+    let bundle_dir = issue_ref.task_bundle_dir_path(&repo);
+    fs::create_dir_all(&bundle_dir).expect("bundle dir");
+    let stp = issue_ref.task_bundle_stp_path(&repo);
+    let input = issue_ref.task_bundle_input_path(&repo);
+    let output = issue_ref.task_bundle_output_path(&repo);
+    let plan = issue_ref.task_bundle_plan_path(&repo);
+    let review_policy = issue_ref.task_bundle_review_policy_path(&repo);
+    write_authored_issue_prompt(
+        &repo,
+        &issue_ref,
+        "[v0.86][tools] Existing PR ready no close",
+    );
+    fs::copy(issue_ref.issue_prompt_path(&repo), &stp).expect("seed stp");
+    write_authored_sip(
+        &input,
+        &issue_ref,
+        "[v0.86][tools] Existing PR ready no close",
+        "codex/1174-existing-pr-ready-no-close",
+        &issue_ref.issue_prompt_path(&repo),
+        &repo,
+    );
+    write_authored_spp(
+        &plan,
+        &issue_ref,
+        "[v0.86][tools] Existing PR ready no close",
+        "codex/1174-existing-pr-ready-no-close",
+        &repo,
+    );
+    write_authored_srp(
+        &review_policy,
+        &issue_ref,
+        "[v0.86][tools] Existing PR ready no close",
+        "codex/1174-existing-pr-ready-no-close",
+        &repo,
+    );
+    write_completed_sor_fixture(&output, "codex/1174-existing-pr-ready-no-close");
+    fs::write(
+        repo.join("adl/src/lib.rs"),
+        "pub fn placeholder() {}\npub fn existing_pr_ready() {}\n",
+    )
+    .expect("write change");
+
+    assert!(Command::new("git")
+        .args(["add", ".gitignore", "adl/src/lib.rs"])
+        .current_dir(&repo)
+        .status()
+        .expect("git add")
+        .success());
+    assert!(Command::new("git")
+        .args(["commit", "-q", "-m", "init"])
+        .current_dir(&repo)
+        .status()
+        .expect("git commit")
+        .success());
+    assert!(Command::new("git")
+        .args(["branch", "-M", "main"])
+        .current_dir(&repo)
+        .status()
+        .expect("git branch")
+        .success());
+    assert!(Command::new("git")
+        .args([
+            "init",
+            "--bare",
+            "-q",
+            path_str(&origin).expect("origin path"),
+        ])
+        .current_dir(&repo)
+        .status()
+        .expect("git init bare")
+        .success());
+    assert!(Command::new("git")
+        .args([
+            "remote",
+            "set-url",
+            "origin",
+            path_str(&origin).expect("origin path"),
+        ])
+        .current_dir(&repo)
+        .status()
+        .expect("git remote set-url")
+        .success());
+    assert!(Command::new("git")
+        .args(["push", "-q", "-u", "origin", "main"])
+        .current_dir(&repo)
+        .status()
+        .expect("git push")
+        .success());
+    assert!(Command::new("git")
+        .args(["checkout", "-q", "-b", "codex/1174-existing-pr-ready-no-close"])
+        .current_dir(&repo)
+        .status()
+        .expect("git checkout")
+        .success());
+
+    fs::write(
+        repo.join("adl/src/lib.rs"),
+        "pub fn placeholder() {}\npub fn existing_pr_ready() { println!(\"ready\"); }\n",
+    )
+    .expect("update change");
+
+    let bin_dir = temp.join("bin");
+    fs::create_dir_all(&bin_dir).expect("bin dir");
+    let gh_log = temp.join("gh.log");
+    let janitor_log = temp.join("janitor.log");
+    let closeout_log = temp.join("closeout.log");
+    let gh_path = bin_dir.join("gh");
+    let janitor_path = bin_dir.join("janitor");
+    let closeout_path = bin_dir.join("closeout");
+    write_executable(
+        &gh_path,
+        &format!(
+            "#!/usr/bin/env bash\nset -euo pipefail\nprintf '%s\\n' \"$*\" >> '{}'\nif [ \"$1 $2 $3\" = 'repo view --json' ]; then\n  printf 'danielbaustin/agent-design-language\\n'\n  exit 0\nfi\nif [ \"$1 $2\" = 'pr list' ]; then\n  printf 'https://github.com/danielbaustin/agent-design-language/pull/1174\\n'\n  exit 0\nfi\nif [ \"$1 $2\" = 'pr view' ]; then\n  if printf '%s ' \"$@\" | grep -q 'baseRefName'; then\n    printf 'main\\n'\n  elif printf '%s ' \"$@\" | grep -q 'closingIssuesReferences'; then\n    printf '\\n'\n  else\n    printf 'Non-closing lifecycle PR for issue #1174\\n'\n  fi\n  exit 0\nfi\nif [ \"$1 $2\" = 'pr edit' ]; then\n  exit 0\nfi\nif [ \"$1 $2\" = 'pr ready' ]; then\n  exit 0\nfi\nexit 1\n",
+            gh_log.display()
+        ),
+    );
+    write_executable(
+        &janitor_path,
+        &format!(
+            "#!/usr/bin/env bash\nset -euo pipefail\nprintf '%s\\n' \"$*\" >> '{}'\n",
+            janitor_log.display()
+        ),
+    );
+    write_executable(
+        &closeout_path,
+        &format!(
+            "#!/usr/bin/env bash\nset -euo pipefail\nprintf '%s\\n' \"$*\" >> '{}'\n",
+            closeout_log.display()
+        ),
+    );
+
+    let old_path = env::var("PATH").unwrap_or_default();
+    let old_janitor_cmd = env::var("ADL_PR_JANITOR_CMD").ok();
+    let old_janitor_disable = env::var("ADL_PR_JANITOR_DISABLE").ok();
+    let old_closeout_cmd = env::var("ADL_POST_MERGE_CLOSEOUT_CMD").ok();
+    let old_closeout_disable = env::var("ADL_POST_MERGE_CLOSEOUT_DISABLE").ok();
+    let prev_dir = env::current_dir().expect("cwd");
+    unsafe {
+        env::set_var("PATH", format!("{}:{}", bin_dir.display(), old_path));
+        env::set_var("ADL_PR_JANITOR_DISABLE", "0");
+        env::set_var("ADL_PR_JANITOR_CMD", &janitor_path);
+        env::set_var("ADL_POST_MERGE_CLOSEOUT_DISABLE", "0");
+        env::set_var("ADL_POST_MERGE_CLOSEOUT_CMD", &closeout_path);
+    }
+    env::set_current_dir(&repo).expect("chdir");
+
+    let result = real_pr_finish(&[
+        "1174".to_string(),
+        "--title".to_string(),
+        "[v0.86][tools] Existing PR ready no close".to_string(),
+        "--paths".to_string(),
+        "adl".to_string(),
+        "--input".to_string(),
+        path_relative_to_repo(&repo, &input),
+        "--output".to_string(),
+        path_relative_to_repo(&repo, &output),
+        "--no-checks".to_string(),
+        "--no-open".to_string(),
+        "--no-close".to_string(),
+        "--ready".to_string(),
+    ]);
+
+    env::set_current_dir(prev_dir).expect("restore cwd");
+    unsafe {
+        env::set_var("PATH", old_path);
+        if let Some(value) = old_janitor_cmd {
+            env::set_var("ADL_PR_JANITOR_CMD", value);
+        } else {
+            env::remove_var("ADL_PR_JANITOR_CMD");
+        }
+        if let Some(value) = old_janitor_disable {
+            env::set_var("ADL_PR_JANITOR_DISABLE", value);
+        } else {
+            env::remove_var("ADL_PR_JANITOR_DISABLE");
+        }
+        if let Some(value) = old_closeout_cmd {
+            env::set_var("ADL_POST_MERGE_CLOSEOUT_CMD", value);
+        } else {
+            env::remove_var("ADL_POST_MERGE_CLOSEOUT_CMD");
+        }
+        if let Some(value) = old_closeout_disable {
+            env::set_var("ADL_POST_MERGE_CLOSEOUT_DISABLE", value);
+        } else {
+            env::remove_var("ADL_POST_MERGE_CLOSEOUT_DISABLE");
+        }
+    }
+
+    result.expect("real_pr_finish existing PR success");
+
+    let head_subject = run_capture(
+        "git",
+        &[
+            "-C",
+            path_str(&repo).expect("repo"),
+            "log",
+            "-1",
+            "--format=%s",
+        ],
+    )
+    .expect("head subject");
+    assert_eq!(head_subject.trim(), "[v0.86][tools] Existing PR ready no close");
+
+    let gh_log = fs::read_to_string(&gh_log).expect("gh log");
+    assert!(gh_log.contains("pr list"));
+    assert!(gh_log.contains("pr edit"));
+    assert!(!gh_log.contains("pr create"));
+    assert!(gh_log.contains("pr ready"));
+
+    let janitor_log = fs::read_to_string(&janitor_log).expect("janitor log");
+    assert!(janitor_log.contains("--issue 1174"));
+    assert!(janitor_log.contains("ready"));
+
+    let closeout_log = fs::read_to_string(&closeout_log).expect("closeout log");
+    assert!(closeout_log.contains("--issue 1174"));
+}
+
+#[test]
+fn real_pr_finish_rejects_missing_output_card_before_publication() {
+    let _guard = env_lock();
+    let temp = unique_temp_dir("adl-pr-finish-missing-output");
+    let repo = temp.join("repo");
+    fs::create_dir_all(&repo).expect("repo dir");
+    copy_bootstrap_support_files(&repo);
+    init_git_repo(&repo);
+    assert!(Command::new("git")
+        .args(["config", "user.name", "Test User"])
+        .current_dir(&repo)
+        .status()
+        .expect("git config")
+        .success());
+    assert!(Command::new("git")
+        .args(["config", "user.email", "test@example.com"])
+        .current_dir(&repo)
+        .status()
+        .expect("git config")
+        .success());
+    fs::write(repo.join(".gitignore"), ".adl/\n").expect("seed gitignore");
+    fs::create_dir_all(repo.join("adl/src")).expect("adl src dir");
+    fs::write(repo.join("adl/src/lib.rs"), "pub fn placeholder() {}\n").expect("write file");
+
+    let issue_ref = IssueRef::new(1182, "v0.86".to_string(), "missing-output".to_string())
+        .expect("ref");
+    let bundle_dir = issue_ref.task_bundle_dir_path(&repo);
+    fs::create_dir_all(&bundle_dir).expect("bundle dir");
+    let stp = issue_ref.task_bundle_stp_path(&repo);
+    let input = issue_ref.task_bundle_input_path(&repo);
+    let plan = issue_ref.task_bundle_plan_path(&repo);
+    let review_policy = issue_ref.task_bundle_review_policy_path(&repo);
+    write_authored_issue_prompt(&repo, &issue_ref, "[v0.86][tools] Missing output");
+    fs::copy(issue_ref.issue_prompt_path(&repo), &stp).expect("seed stp");
+    write_authored_sip(
+        &input,
+        &issue_ref,
+        "[v0.86][tools] Missing output",
+        "codex/1182-missing-output",
+        &issue_ref.issue_prompt_path(&repo),
+        &repo,
+    );
+    write_authored_spp(
+        &plan,
+        &issue_ref,
+        "[v0.86][tools] Missing output",
+        "codex/1182-missing-output",
+        &repo,
+    );
+    write_authored_srp(
+        &review_policy,
+        &issue_ref,
+        "[v0.86][tools] Missing output",
+        "codex/1182-missing-output",
+        &repo,
+    );
+
+    assert!(Command::new("git")
+        .args(["add", ".gitignore", "adl/src/lib.rs"])
+        .current_dir(&repo)
+        .status()
+        .expect("git add")
+        .success());
+    assert!(Command::new("git")
+        .args(["commit", "-q", "-m", "init"])
+        .current_dir(&repo)
+        .status()
+        .expect("git commit")
+        .success());
+    assert!(Command::new("git")
+        .args(["checkout", "-q", "-b", "codex/1182-missing-output"])
+        .current_dir(&repo)
+        .status()
+        .expect("git checkout")
+        .success());
+
+    let prev_dir = env::current_dir().expect("cwd");
+    env::set_current_dir(&repo).expect("chdir");
+    let result = real_pr_finish(&[
+        "1182".to_string(),
+        "--title".to_string(),
+        "[v0.86][tools] Missing output".to_string(),
+        "--paths".to_string(),
+        "adl".to_string(),
+        "--input".to_string(),
+        path_relative_to_repo(&repo, &input),
+        "--output".to_string(),
+        path_relative_to_repo(&repo, &issue_ref.task_bundle_output_path(&repo)),
+        "--no-checks".to_string(),
+        "--no-open".to_string(),
+    ]);
+    env::set_current_dir(prev_dir).expect("restore cwd");
+
+    let err = result.expect_err("missing output should fail");
+    assert!(err.to_string().contains("missing output card"));
+}
+
+#[test]
+fn real_pr_finish_rejects_empty_output_card_before_publication() {
+    let _guard = env_lock();
+    let temp = unique_temp_dir("adl-pr-finish-empty-output");
+    let repo = temp.join("repo");
+    fs::create_dir_all(&repo).expect("repo dir");
+    copy_bootstrap_support_files(&repo);
+    init_git_repo(&repo);
+    assert!(Command::new("git")
+        .args(["config", "user.name", "Test User"])
+        .current_dir(&repo)
+        .status()
+        .expect("git config")
+        .success());
+    assert!(Command::new("git")
+        .args(["config", "user.email", "test@example.com"])
+        .current_dir(&repo)
+        .status()
+        .expect("git config")
+        .success());
+    fs::write(repo.join(".gitignore"), ".adl/\n").expect("seed gitignore");
+    fs::create_dir_all(repo.join("adl/src")).expect("adl src dir");
+    fs::write(repo.join("adl/src/lib.rs"), "pub fn placeholder() {}\n").expect("write file");
+
+    let issue_ref = IssueRef::new(1184, "v0.86".to_string(), "empty-output".to_string())
+        .expect("ref");
+    let bundle_dir = issue_ref.task_bundle_dir_path(&repo);
+    fs::create_dir_all(&bundle_dir).expect("bundle dir");
+    let stp = issue_ref.task_bundle_stp_path(&repo);
+    let input = issue_ref.task_bundle_input_path(&repo);
+    let output = issue_ref.task_bundle_output_path(&repo);
+    let plan = issue_ref.task_bundle_plan_path(&repo);
+    let review_policy = issue_ref.task_bundle_review_policy_path(&repo);
+    write_authored_issue_prompt(&repo, &issue_ref, "[v0.86][tools] Empty output");
+    fs::copy(issue_ref.issue_prompt_path(&repo), &stp).expect("seed stp");
+    write_authored_sip(
+        &input,
+        &issue_ref,
+        "[v0.86][tools] Empty output",
+        "codex/1184-empty-output",
+        &issue_ref.issue_prompt_path(&repo),
+        &repo,
+    );
+    write_authored_spp(
+        &plan,
+        &issue_ref,
+        "[v0.86][tools] Empty output",
+        "codex/1184-empty-output",
+        &repo,
+    );
+    write_authored_srp(
+        &review_policy,
+        &issue_ref,
+        "[v0.86][tools] Empty output",
+        "codex/1184-empty-output",
+        &repo,
+    );
+    fs::write(&output, "").expect("write empty output");
+
+    assert!(Command::new("git")
+        .args(["add", ".gitignore", "adl/src/lib.rs"])
+        .current_dir(&repo)
+        .status()
+        .expect("git add")
+        .success());
+    assert!(Command::new("git")
+        .args(["commit", "-q", "-m", "init"])
+        .current_dir(&repo)
+        .status()
+        .expect("git commit")
+        .success());
+    assert!(Command::new("git")
+        .args(["checkout", "-q", "-b", "codex/1184-empty-output"])
+        .current_dir(&repo)
+        .status()
+        .expect("git checkout")
+        .success());
+
+    let prev_dir = env::current_dir().expect("cwd");
+    env::set_current_dir(&repo).expect("chdir");
+    let result = real_pr_finish(&[
+        "1184".to_string(),
+        "--title".to_string(),
+        "[v0.86][tools] Empty output".to_string(),
+        "--paths".to_string(),
+        "adl".to_string(),
+        "--input".to_string(),
+        path_relative_to_repo(&repo, &input),
+        "--output".to_string(),
+        path_relative_to_repo(&repo, &output),
+        "--no-checks".to_string(),
+        "--no-open".to_string(),
+    ]);
+    env::set_current_dir(prev_dir).expect("restore cwd");
+
+    let err = result.expect_err("empty output should fail");
+    assert!(err.to_string().contains("output card is empty"));
+}
+
+#[test]
+fn real_pr_finish_rejects_branch_name_mismatch() {
+    let _guard = env_lock();
+    let temp = unique_temp_dir("adl-pr-finish-branch-mismatch");
+    let repo = temp.join("repo");
+    fs::create_dir_all(&repo).expect("repo dir");
+    copy_bootstrap_support_files(&repo);
+    init_git_repo(&repo);
+    assert!(Command::new("git")
+        .args(["config", "user.name", "Test User"])
+        .current_dir(&repo)
+        .status()
+        .expect("git config")
+        .success());
+    assert!(Command::new("git")
+        .args(["config", "user.email", "test@example.com"])
+        .current_dir(&repo)
+        .status()
+        .expect("git config")
+        .success());
+    fs::write(repo.join(".gitignore"), ".adl/\n").expect("seed gitignore");
+    fs::create_dir_all(repo.join("adl/src")).expect("adl src dir");
+    fs::write(repo.join("adl/src/lib.rs"), "pub fn placeholder() {}\n").expect("write file");
+
+    let issue_ref = IssueRef::new(1185, "v0.86".to_string(), "branch-mismatch".to_string())
+        .expect("ref");
+    let bundle_dir = issue_ref.task_bundle_dir_path(&repo);
+    fs::create_dir_all(&bundle_dir).expect("bundle dir");
+    let stp = issue_ref.task_bundle_stp_path(&repo);
+    let input = issue_ref.task_bundle_input_path(&repo);
+    let output = issue_ref.task_bundle_output_path(&repo);
+    let plan = issue_ref.task_bundle_plan_path(&repo);
+    let review_policy = issue_ref.task_bundle_review_policy_path(&repo);
+    write_authored_issue_prompt(&repo, &issue_ref, "[v0.86][tools] Branch mismatch");
+    fs::copy(issue_ref.issue_prompt_path(&repo), &stp).expect("seed stp");
+    write_authored_sip(
+        &input,
+        &issue_ref,
+        "[v0.86][tools] Branch mismatch",
+        "codex/1185-branch-mismatch",
+        &issue_ref.issue_prompt_path(&repo),
+        &repo,
+    );
+    write_authored_spp(
+        &plan,
+        &issue_ref,
+        "[v0.86][tools] Branch mismatch",
+        "codex/1185-branch-mismatch",
+        &repo,
+    );
+    write_authored_srp(
+        &review_policy,
+        &issue_ref,
+        "[v0.86][tools] Branch mismatch",
+        "codex/1185-branch-mismatch",
+        &repo,
+    );
+    write_completed_sor_fixture(&output, "codex/1185-branch-mismatch");
+
+    assert!(Command::new("git")
+        .args(["add", ".gitignore", "adl/src/lib.rs"])
+        .current_dir(&repo)
+        .status()
+        .expect("git add")
+        .success());
+    assert!(Command::new("git")
+        .args(["commit", "-q", "-m", "init"])
+        .current_dir(&repo)
+        .status()
+        .expect("git commit")
+        .success());
+    assert!(Command::new("git")
+        .args(["checkout", "-q", "-b", "codex/not-the-right-branch"])
+        .current_dir(&repo)
+        .status()
+        .expect("git checkout")
+        .success());
+
+    let prev_dir = env::current_dir().expect("cwd");
+    env::set_current_dir(&repo).expect("chdir");
+    let result = real_pr_finish(&[
+        "1185".to_string(),
+        "--title".to_string(),
+        "[v0.86][tools] Branch mismatch".to_string(),
+        "--paths".to_string(),
+        "adl".to_string(),
+        "--input".to_string(),
+        path_relative_to_repo(&repo, &input),
+        "--output".to_string(),
+        path_relative_to_repo(&repo, &output),
+        "--no-checks".to_string(),
+        "--no-open".to_string(),
+    ]);
+    env::set_current_dir(prev_dir).expect("restore cwd");
+
+    let err = result.expect_err("branch mismatch should fail");
+    assert!(err
+        .to_string()
+        .contains("does not look like it matches issue #1185"));
+}
+
+#[test]
+fn real_pr_finish_rejects_closed_issue_with_stale_canonical_truth() {
+    let _guard = env_lock();
+    let temp = unique_temp_dir("adl-pr-finish-closed-stale-truth");
+    let origin = temp.join("origin.git");
+    let repo = temp.join("repo");
+    fs::create_dir_all(&repo).expect("repo dir");
+    copy_bootstrap_support_files(&repo);
+    init_git_repo(&repo);
+    assert!(Command::new("git")
+        .args(["config", "user.name", "Test User"])
+        .current_dir(&repo)
+        .status()
+        .expect("git config")
+        .success());
+    assert!(Command::new("git")
+        .args(["config", "user.email", "test@example.com"])
+        .current_dir(&repo)
+        .status()
+        .expect("git config")
+        .success());
+    fs::write(repo.join(".gitignore"), ".adl/\n").expect("seed gitignore");
+    fs::create_dir_all(repo.join("docs")).expect("docs dir");
+    fs::write(repo.join("docs/notes.md"), "initial notes\n").expect("write docs");
+
+    let issue_ref = IssueRef::new(1186, "v0.86".to_string(), "closed-stale-truth".to_string())
+        .expect("ref");
+    let bundle_dir = issue_ref.task_bundle_dir_path(&repo);
+    fs::create_dir_all(&bundle_dir).expect("bundle dir");
+    let stp = issue_ref.task_bundle_stp_path(&repo);
+    let input = issue_ref.task_bundle_input_path(&repo);
+    let output = issue_ref.task_bundle_output_path(&repo);
+    let plan = issue_ref.task_bundle_plan_path(&repo);
+    let review_policy = issue_ref.task_bundle_review_policy_path(&repo);
+    write_authored_issue_prompt(&repo, &issue_ref, "[v0.86][tools] Closed stale truth");
+    fs::copy(issue_ref.issue_prompt_path(&repo), &stp).expect("seed stp");
+    write_authored_sip(
+        &input,
+        &issue_ref,
+        "[v0.86][tools] Closed stale truth",
+        "codex/1186-closed-stale-truth",
+        &issue_ref.issue_prompt_path(&repo),
+        &repo,
+    );
+    write_authored_spp(
+        &plan,
+        &issue_ref,
+        "[v0.86][tools] Closed stale truth",
+        "codex/1186-closed-stale-truth",
+        &repo,
+    );
+    write_authored_srp(
+        &review_policy,
+        &issue_ref,
+        "[v0.86][tools] Closed stale truth",
+        "codex/1186-closed-stale-truth",
+        &repo,
+    );
+    write_completed_sor_fixture(&output, "codex/1186-closed-stale-truth");
+
+    assert!(Command::new("git")
+        .args(["add", "."])
+        .current_dir(&repo)
+        .status()
+        .expect("git add")
+        .success());
+    assert!(Command::new("git")
+        .args(["commit", "-q", "-m", "init"])
+        .current_dir(&repo)
+        .status()
+        .expect("git commit")
+        .success());
+    assert!(Command::new("git")
+        .args(["branch", "-M", "main"])
+        .current_dir(&repo)
+        .status()
+        .expect("git branch")
+        .success());
+    assert!(Command::new("git")
+        .args([
+            "init",
+            "--bare",
+            "-q",
+            path_str(&origin).expect("origin path"),
+        ])
+        .current_dir(&repo)
+        .status()
+        .expect("git init bare")
+        .success());
+    assert!(Command::new("git")
+        .args([
+            "remote",
+            "set-url",
+            "origin",
+            path_str(&origin).expect("origin path"),
+        ])
+        .current_dir(&repo)
+        .status()
+        .expect("git remote set-url")
+        .success());
+    assert!(Command::new("git")
+        .args(["push", "-q", "-u", "origin", "main"])
+        .current_dir(&repo)
+        .status()
+        .expect("git push")
+        .success());
+    assert!(Command::new("git")
+        .args(["checkout", "-q", "-b", "codex/1186-closed-stale-truth"])
+        .current_dir(&repo)
+        .status()
+        .expect("git checkout")
+        .success());
+
+    fs::write(repo.join("docs/notes.md"), "updated notes\n").expect("update docs");
+
+    let bin_dir = temp.join("bin");
+    fs::create_dir_all(&bin_dir).expect("bin dir");
+    let gh_log = temp.join("gh.log");
+    let gh_path = bin_dir.join("gh");
+    write_executable(
+        &gh_path,
+        &format!(
+            "#!/usr/bin/env bash\nset -euo pipefail\nprintf '%s\\n' \"$*\" >> '{}'\nif [ \"$1 $2 $3\" = 'repo view --json' ]; then\n  printf 'danielbaustin/agent-design-language\\n'\n  exit 0\nfi\nif [ \"$1 $2\" = 'issue view' ]; then\n  printf '{{\"state\":\"CLOSED\",\"stateReason\":\"COMPLETED\"}}\\n'\n  exit 0\nfi\nexit 1\n",
+            gh_log.display()
+        ),
+    );
+
+    let old_path = env::var("PATH").unwrap_or_default();
+    let prev_dir = env::current_dir().expect("cwd");
+    unsafe {
+        env::set_var("PATH", format!("{}:{}", bin_dir.display(), old_path));
+    }
+    env::set_current_dir(&repo).expect("chdir");
+    let result = real_pr_finish(&[
+        "1186".to_string(),
+        "--title".to_string(),
+        "[v0.86][tools] Closed stale truth".to_string(),
+        "--paths".to_string(),
+        "docs/notes.md".to_string(),
+        "--input".to_string(),
+        path_relative_to_repo(&repo, &input),
+        "--output".to_string(),
+        path_relative_to_repo(&repo, &output),
+        "--no-checks".to_string(),
+        "--no-open".to_string(),
+    ]);
+    env::set_current_dir(prev_dir).expect("restore cwd");
+    unsafe {
+        env::set_var("PATH", old_path);
+    }
+
+    let err = result.expect_err("closed stale truth should fail");
+    assert!(err
+        .to_string()
+        .contains("closed issue #1186 has stale canonical sor truth"));
+}
+
+#[test]
+fn real_pr_finish_opener_failure_is_nonblocking_when_no_open_is_false() {
+    let _guard = env_lock();
+    let temp = unique_temp_dir("adl-pr-finish-open-failure");
+    let origin = temp.join("origin.git");
+    let repo = temp.join("repo");
+    fs::create_dir_all(&repo).expect("repo dir");
+    copy_bootstrap_support_files(&repo);
+    init_git_repo(&repo);
+    assert!(Command::new("git")
+        .args(["config", "user.name", "Test User"])
+        .current_dir(&repo)
+        .status()
+        .expect("git config")
+        .success());
+    assert!(Command::new("git")
+        .args(["config", "user.email", "test@example.com"])
+        .current_dir(&repo)
+        .status()
+        .expect("git config")
+        .success());
+    fs::write(repo.join(".gitignore"), ".adl/\n").expect("seed gitignore");
+    fs::create_dir_all(repo.join("adl/src")).expect("adl src dir");
+    fs::write(
+        repo.join("adl/src/lib.rs"),
+        "pub fn placeholder() {}\npub fn opener_failure_path() {}\n",
+    )
+    .expect("write change");
+
+    let issue_ref = IssueRef::new(1187, "v0.86".to_string(), "open-failure".to_string())
+        .expect("ref");
+    let bundle_dir = issue_ref.task_bundle_dir_path(&repo);
+    fs::create_dir_all(&bundle_dir).expect("bundle dir");
+    let stp = issue_ref.task_bundle_stp_path(&repo);
+    let input = issue_ref.task_bundle_input_path(&repo);
+    let output = issue_ref.task_bundle_output_path(&repo);
+    let plan = issue_ref.task_bundle_plan_path(&repo);
+    let review_policy = issue_ref.task_bundle_review_policy_path(&repo);
+    write_authored_issue_prompt(&repo, &issue_ref, "[v0.86][tools] Open failure");
+    fs::copy(issue_ref.issue_prompt_path(&repo), &stp).expect("seed stp");
+    write_authored_sip(
+        &input,
+        &issue_ref,
+        "[v0.86][tools] Open failure",
+        "codex/1187-open-failure",
+        &issue_ref.issue_prompt_path(&repo),
+        &repo,
+    );
+    write_authored_spp(
+        &plan,
+        &issue_ref,
+        "[v0.86][tools] Open failure",
+        "codex/1187-open-failure",
+        &repo,
+    );
+    write_authored_srp(
+        &review_policy,
+        &issue_ref,
+        "[v0.86][tools] Open failure",
+        "codex/1187-open-failure",
+        &repo,
+    );
+    write_completed_sor_fixture(&output, "codex/1187-open-failure");
+
+    assert!(Command::new("git")
+        .args(["add", ".gitignore", "adl/src/lib.rs"])
+        .current_dir(&repo)
+        .status()
+        .expect("git add")
+        .success());
+    assert!(Command::new("git")
+        .args(["commit", "-q", "-m", "init"])
+        .current_dir(&repo)
+        .status()
+        .expect("git commit")
+        .success());
+    assert!(Command::new("git")
+        .args(["branch", "-M", "main"])
+        .current_dir(&repo)
+        .status()
+        .expect("git branch")
+        .success());
+    assert!(Command::new("git")
+        .args([
+            "init",
+            "--bare",
+            "-q",
+            path_str(&origin).expect("origin path"),
+        ])
+        .current_dir(&repo)
+        .status()
+        .expect("git init bare")
+        .success());
+    assert!(Command::new("git")
+        .args([
+            "remote",
+            "set-url",
+            "origin",
+            path_str(&origin).expect("origin path"),
+        ])
+        .current_dir(&repo)
+        .status()
+        .expect("git remote set-url")
+        .success());
+    assert!(Command::new("git")
+        .args(["push", "-q", "-u", "origin", "main"])
+        .current_dir(&repo)
+        .status()
+        .expect("git push")
+        .success());
+    assert!(Command::new("git")
+        .args(["checkout", "-q", "-b", "codex/1187-open-failure"])
+        .current_dir(&repo)
+        .status()
+        .expect("git checkout")
+        .success());
+
+    fs::write(
+        repo.join("adl/src/lib.rs"),
+        "pub fn placeholder() {}\npub fn opener_failure_path() { println!(\"open\"); }\n",
+    )
+    .expect("update change");
+
+    let bin_dir = temp.join("bin");
+    fs::create_dir_all(&bin_dir).expect("bin dir");
+    let gh_log = temp.join("gh.log");
+    let gh_path = bin_dir.join("gh");
+    let open_path = bin_dir.join("open");
+    write_executable(
+        &gh_path,
+        &format!(
+            "#!/usr/bin/env bash\nset -euo pipefail\nprintf '%s\\n' \"$*\" >> '{}'\nif [ \"$1 $2 $3\" = 'repo view --json' ]; then\n  printf 'danielbaustin/agent-design-language\\n'\n  exit 0\nfi\nif [ \"$1 $2\" = 'pr list' ]; then\n  exit 0\nfi\nif [ \"$1 $2\" = 'pr create' ]; then\n  printf 'https://github.com/danielbaustin/agent-design-language/pull/1187\\n'\n  exit 0\nfi\nif [ \"$1 $2\" = 'pr view' ]; then\n  if printf '%s ' \"$@\" | grep -q 'closingIssuesReferences'; then\n    printf '1187\\n'\n  else\n    printf 'Closes #1187\\n'\n  fi\n  exit 0\nfi\nexit 1\n",
+            gh_log.display()
+        ),
+    );
+    write_executable(
+        &open_path,
+        "#!/usr/bin/env bash\nset -euo pipefail\necho 'synthetic open failure' >&2\nexit 42\n",
+    );
+
+    let old_path = env::var("PATH").unwrap_or_default();
+    let prev_dir = env::current_dir().expect("cwd");
+    unsafe {
+        env::set_var("PATH", format!("{}:{}", bin_dir.display(), old_path));
+    }
+    env::set_current_dir(&repo).expect("chdir");
+    let result = real_pr_finish(&[
+        "1187".to_string(),
+        "--title".to_string(),
+        "[v0.86][tools] Open failure".to_string(),
+        "--paths".to_string(),
+        "adl".to_string(),
+        "--input".to_string(),
+        path_relative_to_repo(&repo, &input),
+        "--output".to_string(),
+        path_relative_to_repo(&repo, &output),
+        "--no-checks".to_string(),
+    ]);
+    env::set_current_dir(prev_dir).expect("restore cwd");
+    unsafe {
+        env::set_var("PATH", old_path);
+    }
+
+    result.expect("open failure should stay non-blocking");
+}
+
+#[test]
+fn real_pr_finish_merge_mode_rejects_no_checks() {
+    let _guard = env_lock();
+    let temp = unique_temp_dir("adl-pr-finish-merge-mode");
+    let origin = temp.join("origin.git");
+    let repo = temp.join("repo");
+    fs::create_dir_all(&repo).expect("repo dir");
+    copy_bootstrap_support_files(&repo);
+    init_git_repo(&repo);
+    assert!(Command::new("git")
+        .args(["config", "user.name", "Test User"])
+        .current_dir(&repo)
+        .status()
+        .expect("git config")
+        .success());
+    assert!(Command::new("git")
+        .args(["config", "user.email", "test@example.com"])
+        .current_dir(&repo)
+        .status()
+        .expect("git config")
+        .success());
+    fs::write(repo.join(".gitignore"), ".adl/\n").expect("seed gitignore");
+    fs::create_dir_all(repo.join("docs")).expect("docs dir");
+    fs::create_dir_all(repo.join("adl/tools")).expect("tools dir");
+    fs::write(repo.join("docs/notes.md"), "initial notes\n").expect("write docs");
+    write_executable(
+        &repo.join("adl/tools/validation_manager.py"),
+        r#"#!/usr/bin/env python3
+import json
+
+print(json.dumps({
+    "selected_profile": "docs_diff_check_profile",
+    "status": "ready_to_run",
+    "pr_publication_sufficient": True,
+    "run": [
+        {
+            "lane_id": "docs_diff_check",
+            "command": "git diff --check",
+            "reason": "docs_only_surface_requires_diff_hygiene",
+        }
+    ],
+    "not_run": [],
+    "deferred": [
+        {
+            "surface": "ci_integration",
+            "reason": "deferred to GitHub checks for merge-context validation",
+        }
+    ],
+    "behavior_surfaces": ["docs_only"],
+    "validation_dag": [],
+    "estimated_cost": "low",
+    "escalation": {"required": False, "reasons": []},
+    "selector_plan": [],
+}))
+"#,
+    );
+
+    let issue_ref = IssueRef::new(1181, "v0.86".to_string(), "merge-mode".to_string()).expect("ref");
+    let bundle_dir = issue_ref.task_bundle_dir_path(&repo);
+    fs::create_dir_all(&bundle_dir).expect("bundle dir");
+    let stp = issue_ref.task_bundle_stp_path(&repo);
+    let input = issue_ref.task_bundle_input_path(&repo);
+    let output = issue_ref.task_bundle_output_path(&repo);
+    let plan = issue_ref.task_bundle_plan_path(&repo);
+    let review_policy = issue_ref.task_bundle_review_policy_path(&repo);
+    write_authored_issue_prompt(&repo, &issue_ref, "[v0.86][tools] Merge mode finish");
+    fs::copy(issue_ref.issue_prompt_path(&repo), &stp).expect("seed stp");
+    write_authored_sip(
+        &input,
+        &issue_ref,
+        "[v0.86][tools] Merge mode finish",
+        "codex/1181-merge-mode",
+        &issue_ref.issue_prompt_path(&repo),
+        &repo,
+    );
+    write_authored_spp(
+        &plan,
+        &issue_ref,
+        "[v0.86][tools] Merge mode finish",
+        "codex/1181-merge-mode",
+        &repo,
+    );
+    write_authored_srp(
+        &review_policy,
+        &issue_ref,
+        "[v0.86][tools] Merge mode finish",
+        "codex/1181-merge-mode",
+        &repo,
+    );
+    write_completed_sor_fixture(&output, "codex/1181-merge-mode");
+
+    assert!(Command::new("git")
+        .args(["add", ".gitignore", "docs/notes.md"])
+        .current_dir(&repo)
+        .status()
+        .expect("git add")
+        .success());
+    assert!(Command::new("git")
+        .args(["commit", "-q", "-m", "init"])
+        .current_dir(&repo)
+        .status()
+        .expect("git commit")
+        .success());
+    assert!(Command::new("git")
+        .args(["branch", "-M", "main"])
+        .current_dir(&repo)
+        .status()
+        .expect("git branch")
+        .success());
+    assert!(Command::new("git")
+        .args([
+            "init",
+            "--bare",
+            "-q",
+            path_str(&origin).expect("origin path"),
+        ])
+        .current_dir(&repo)
+        .status()
+        .expect("git init bare")
+        .success());
+    assert!(Command::new("git")
+        .args([
+            "remote",
+            "set-url",
+            "origin",
+            path_str(&origin).expect("origin path"),
+        ])
+        .current_dir(&repo)
+        .status()
+        .expect("git remote set-url")
+        .success());
+    assert!(Command::new("git")
+        .args(["push", "-q", "-u", "origin", "main"])
+        .current_dir(&repo)
+        .status()
+        .expect("git push")
+        .success());
+    assert!(Command::new("git")
+        .args(["checkout", "-q", "-b", "codex/1181-merge-mode"])
+        .current_dir(&repo)
+        .status()
+        .expect("git checkout")
+        .success());
+
+    fs::write(repo.join("docs/notes.md"), "updated merge notes\n").expect("update docs");
+
+    let bin_dir = temp.join("bin");
+    fs::create_dir_all(&bin_dir).expect("bin dir");
+    let gh_log = temp.join("gh.log");
+    let issue_state_file = temp.join("issue_state.txt");
+    fs::write(&issue_state_file, "open\n").expect("seed issue state");
+    let gh_path = bin_dir.join("gh");
+    write_executable(
+        &gh_path,
+        &format!(
+            "#!/usr/bin/env bash\nset -euo pipefail\nprintf '%s\\n' \"$*\" >> '{}'\nif [ \"$1 $2 $3\" = 'repo view --json' ]; then\n  printf 'danielbaustin/agent-design-language\\n'\n  exit 0\nfi\nif [ \"$1 $2\" = 'pr list' ]; then\n  exit 0\nfi\nif [ \"$1 $2\" = 'pr create' ]; then\n  printf 'https://github.com/danielbaustin/agent-design-language/pull/1181\\n'\n  exit 0\nfi\nif [ \"$1 $2\" = 'pr view' ]; then\n  if printf '%s ' \"$@\" | grep -q 'closingIssuesReferences'; then\n    printf '1181\\n'\n  else\n    printf 'Closes #1181\\n'\n  fi\n  exit 0\nfi\nif [ \"$1 $2\" = 'pr ready' ]; then\n  exit 0\nfi\nif [ \"$1 $2\" = 'pr merge' ]; then\n  printf 'closed\\n' > '{}'\n  exit 0\nfi\nif [ \"$1 $2\" = 'issue view' ]; then\n  if [ \"$(cat '{}')\" = 'closed' ]; then\n    printf '{{\"state\":\"CLOSED\",\"stateReason\":\"COMPLETED\"}}\\n'\n  else\n    printf '{{\"state\":\"OPEN\",\"stateReason\":null}}\\n'\n  fi\n  exit 0\nfi\nexit 1\n",
+            gh_log.display(),
+            issue_state_file.display(),
+            issue_state_file.display()
+        ),
+    );
+
+    let old_path = env::var("PATH").unwrap_or_default();
+    let prev_dir = env::current_dir().expect("cwd");
+    unsafe {
+        env::set_var("PATH", format!("{}:{}", bin_dir.display(), old_path));
+    }
+    env::set_current_dir(&repo).expect("chdir");
+
+    let result = real_pr_finish(&[
+        "1181".to_string(),
+        "--title".to_string(),
+        "[v0.86][tools] Merge mode finish".to_string(),
+        "--paths".to_string(),
+        "docs/notes.md".to_string(),
+        "--input".to_string(),
+        path_relative_to_repo(&repo, &input),
+        "--output".to_string(),
+        path_relative_to_repo(&repo, &output),
+        "--no-open".to_string(),
+        "--merge".to_string(),
+        "--no-checks".to_string(),
+    ]);
+
+    env::set_current_dir(prev_dir).expect("restore cwd");
+    unsafe {
+        env::set_var("PATH", old_path);
+    }
+
+    let err = result.expect_err("merge without checks should fail");
+    assert!(err.to_string().contains("--merge requires checks"));
 }
