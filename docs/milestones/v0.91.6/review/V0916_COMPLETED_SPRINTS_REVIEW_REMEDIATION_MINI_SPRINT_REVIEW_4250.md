@@ -11,23 +11,14 @@ follow-ons without re-executing the remediation work.
 
 ## Findings
 
-No P1 findings remain in the retained review surface.
+No P1/P2 findings remain in the retained review surface.
 
-### P2: Folded issues closed without issue-local fold comments
+### Historical note: folded issue routing is now issue-local as well as umbrella-visible
 
-Live issue state shows `#4252`, `#4254`, and `#4256` are closed. The `#4250`
-umbrella body records the fold mapping:
-
-- `#4252` folded into `#4251`;
-- `#4254` folded into `#4251`;
-- `#4256` folded into `#4255`.
-
-However, the folded issues themselves have no comments explaining the fold
-target. The titles include `[folded]`, but issue-local readers must still infer
-the replacement from the umbrella body or retained matrix.
-
-Disposition: route to the `#4303` findings-resolution plan. The lowest-risk
-fix is issue-comment-only hygiene on `#4252`, `#4254`, and `#4256`.
+The retained review originally noted that `#4252`, `#4254`, and `#4256` were
+closed as folded issues without issue-local fold comments. That hygiene gap was
+resolved in `#4305` by adding typed issue comments that point readers directly
+to `#4251` or `#4255` as the replacement owners.
 
 ### P3: The completed-sprints matrix still had stale follow-up routing after remediation closed
 
@@ -80,19 +71,18 @@ Primary tracked evidence surfaces:
 ## Validation Adequacy
 
 This retained review did not rerun the remediation child tests. The review
-uses live issue/PR closure state and retained evidence docs. The only P2
-finding is issue-local fold visibility for folded issues, which can be resolved
-without code changes.
+uses live issue/PR closure state and retained evidence docs. The earlier folded
+issue-visibility hygiene gap was resolved later by `#4305` without reopening
+implementation work.
 
 ## Closeout Position
 
 `#4250` is closed and now has a retained review packet. Its active child lanes
-are closed; folded child visibility needs issue-comment hygiene but does not
-invalidate the remediation result.
+are closed, and the later issue-local fold-comment hygiene added in `#4305`
+does not change the remediation result.
 
 ## Non-Claims
 
 - This review does not claim every historical sprint has a perfect standalone
   retained review packet.
-- This review does not claim folded issues have perfect issue-local comments.
 - This review does not reopen closed remediation child implementation work.
