@@ -14,6 +14,7 @@ from typing import Any
 ROOT = Path(__file__).resolve().parents[2]
 SELECTOR = ROOT / "adl/tools/select_validation_lanes.sh"
 SLOW_PROOF_FAMILIES = ROOT / "adl/config/slow_proof_families.v0.91.6.json"
+DEFAULT_MANIFEST = ROOT / "adl/config/validation_lane_selector.v0.91.6.json"
 
 
 def fail(message: str) -> None:
@@ -32,6 +33,8 @@ def load_slow_proof_families() -> dict[str, Any]:
 
 def selector_plan(args: argparse.Namespace) -> dict[str, Any]:
     cmd = ["bash", str(SELECTOR), "--json"]
+    if args.manifest:
+        cmd.extend(["--manifest", str(args.manifest.resolve())])
     if args.changed_files:
         cmd.extend(["--changed-files", str(args.changed_files.resolve())])
     else:
@@ -57,6 +60,51 @@ def selector_plan(args: argparse.Namespace) -> dict[str, Any]:
     return plan
 
 
+def load_manifest(path: Path) -> dict[str, Any]:
+    try:
+        manifest = json.loads(path.read_text())
+    except FileNotFoundError as exc:
+        fail(f"validation manifest not found: {exc.filename}")
+    except json.JSONDecodeError as exc:
+        fail(f"validation manifest is not valid JSON: {exc}")
+    if manifest.get("schema_version") != "adl.validation_lane_selector.v1":
+        fail("validation manifest returned unsupported schema_version")
+    return manifest
+
+
+def guardrail_int(value: Any, field: str, default: int) -> int:
+    if value is None:
+        return default
+    try:
+        return int(value)
+    except (TypeError, ValueError):
+        fail(f"manager guardrail {field} must be an integer")
+    raise AssertionError("unreachable")
+
+
+def manager_guardrails(manifest: dict[str, Any], max_selected_lanes: int) -> dict[str, Any]:
+    configured = manifest.get("manager_guardrails", {})
+    pr_fast = configured.get("pr_fast", {})
+    return {
+        "max_selected_lanes": max_selected_lanes,
+        "docs_only_forbidden_lane_ids": list(
+            configured.get("docs_only_forbidden_lane_ids", ["rust_pr_fast"])
+        ),
+        "pr_fast": {
+            "max_rust_surface_count": guardrail_int(
+                pr_fast.get("max_rust_surface_count"), "pr_fast.max_rust_surface_count", 4
+            ),
+            "max_filter_token_count": guardrail_int(
+                pr_fast.get("max_filter_token_count"), "pr_fast.max_filter_token_count", 4
+            ),
+            "max_family_token_count": guardrail_int(
+                pr_fast.get("max_family_token_count"), "pr_fast.max_family_token_count", 3
+            ),
+            "blocked_modes": list(pr_fast.get("blocked_modes", ["full", "contract_only"])),
+        },
+    }
+
+
 def profile_id(plan: dict[str, Any]) -> str:
     aggregate = plan.get("aggregate_status", "unknown")
     lanes = sorted(plan.get("lanes", {}).keys())
@@ -72,6 +120,12 @@ def lane_requirement_ids(lane: dict[str, Any]) -> list[str]:
     if not isinstance(requirement_ids, list):
         return []
     return [item for item in requirement_ids if isinstance(item, str) and item]
+
+
+def split_csv(value: Any) -> list[str]:
+    if not isinstance(value, str) or not value.strip():
+        return []
+    return [item for item in value.split(",") if item]
 
 
 def lane_behavior_id(lane_id: str, lane: dict[str, Any]) -> str:
@@ -92,8 +146,7 @@ def lane_behavior_surface(lane_id: str, lane: dict[str, Any]) -> dict[str, Any]:
     matched_paths = lane.get("matched_paths", [])
     requirement_ids = lane_requirement_ids(lane)
     if lane_id == "rust_pr_fast":
-        filter_tokens = str(lane.get("filter_tokens", ""))
-        requirement_ids.extend(token for token in filter_tokens.split("|") if token)
+        requirement_ids.extend(split_csv(lane.get("filter_tokens", "")))
     return {
         "id": lane_behavior_id(lane_id, lane),
         "source": "validation_lane_selector",
@@ -151,7 +204,69 @@ def estimate_cost(selected: list[tuple[str, dict[str, Any]]], blocked: list[tupl
     }
 
 
-def build_profile(plan: dict[str, Any], max_selected_lanes: int) -> dict[str, Any]:
+def manifest_rule_for(lane: dict[str, Any]) -> str:
+    manifest_rule = lane.get("manifest_rule")
+    if isinstance(manifest_rule, str) and manifest_rule:
+        return manifest_rule
+    return f"lane:{lane.get('lane_id', 'unknown')}"
+
+
+def add_escalation_reason(
+    escalation_reasons: list[dict[str, Any]],
+    *,
+    lane_id: str,
+    status: str,
+    reason: str,
+    matched_paths: list[str],
+    manifest_rule: str,
+    remediation_hint: str,
+    triggering_surface: str | None = None,
+) -> None:
+    item: dict[str, Any] = {
+        "lane_id": lane_id,
+        "status": status,
+        "reason": reason,
+        "matched_paths": matched_paths,
+        "manifest_rule": manifest_rule,
+        "remediation_hint": remediation_hint,
+    }
+    if triggering_surface:
+        item["triggering_surface"] = triggering_surface
+    escalation_reasons.append(item)
+
+
+def add_diagnostic(
+    diagnostics: list[dict[str, Any]],
+    *,
+    code: str,
+    lane_id: str,
+    message: str,
+    matched_paths: list[str],
+    manifest_rule: str,
+    remediation_hint: str,
+    triggering_surface: str | None = None,
+) -> None:
+    item: dict[str, Any] = {
+        "code": code,
+        "severity": "error",
+        "lane_id": lane_id,
+        "message": message,
+        "matched_paths": matched_paths,
+        "manifest_rule": manifest_rule,
+        "remediation_hint": remediation_hint,
+    }
+    if triggering_surface:
+        item["triggering_surface"] = triggering_surface
+    diagnostics.append(item)
+
+
+def docs_only_paths(paths: list[str]) -> bool:
+    if not paths:
+        return False
+    return all(path.endswith(".md") or path.startswith("docs/") for path in paths)
+
+
+def build_profile(plan: dict[str, Any], guardrails: dict[str, Any], manifest_path: Path) -> dict[str, Any]:
     slow_proof_config = load_slow_proof_families()
     slow_proof_families = slow_proof_config.get("families", [])
     lanes = plan.get("lanes", {})
@@ -176,6 +291,7 @@ def build_profile(plan: dict[str, Any], max_selected_lanes: int) -> dict[str, An
     run = []
     behavior_surfaces = []
     dag_nodes = []
+    diagnostics: list[dict[str, Any]] = []
     for lane_id, lane in selected:
         behavior = lane_behavior_surface(lane_id, lane)
         behavior_surfaces.append(behavior)
@@ -219,10 +335,16 @@ def build_profile(plan: dict[str, Any], max_selected_lanes: int) -> dict[str, An
     )
 
     unmapped_change_gap = bool(uncovered_paths)
+    selected_lane_limit = int(guardrails["max_selected_lanes"])
+    manifest_path_display = (
+        str(manifest_path.relative_to(ROOT))
+        if manifest_path.is_relative_to(ROOT)
+        else str(manifest_path)
+    )
 
     escalation_required = (
         bool(blocked)
-        or len(selected) > max_selected_lanes
+        or len(selected) > selected_lane_limit
         or unmapped_change_gap
     )
     escalation_reasons = []
@@ -230,32 +352,189 @@ def build_profile(plan: dict[str, Any], max_selected_lanes: int) -> dict[str, An
         behavior = lane_behavior_surface(lane_id, lane)
         behavior_surfaces.append(behavior)
         dag_nodes.append(validation_dag_node(lane_id, lane, behavior["id"]))
-        escalation_reasons.append(
-            {
-                "lane_id": lane_id,
-                "status": lane.get("status"),
-                "reason": lane.get("reason", "selector_requires_escalation"),
-                "matched_paths": lane.get("matched_paths", []),
-            }
+        manifest_rule = manifest_rule_for(lane)
+        matched_paths = lane.get("matched_paths", [])
+        remediation_hint = (
+            "Record a release-gate disposition before publication."
+            if lane_id == "release_gate_review"
+            else "Record a slow-proof disposition before treating the change as ordinary PR proof."
+            if lane_id == "slow_proof_review"
+            else "Split the Rust change further or route it to the appropriate broad proof lane."
+            if lane_id == "rust_pr_fast"
+            else "Adjust the validation manifest or route the work to the correct owner lane."
         )
-    if len(selected) > max_selected_lanes:
-        escalation_reasons.append(
-            {
-                "lane_id": "selected_lane_threshold",
-                "status": "escalated",
-                "reason": f"selected lane count {len(selected)} exceeds limit {max_selected_lanes}",
-                "matched_paths": plan.get("changed_paths", []),
-            }
+        add_escalation_reason(
+            escalation_reasons,
+            lane_id=lane_id,
+            status=str(lane.get("status", "escalated")),
+            reason=str(lane.get("reason", "selector_requires_escalation")),
+            matched_paths=matched_paths,
+            manifest_rule=manifest_rule,
+            remediation_hint=remediation_hint,
+            triggering_surface=matched_paths[0] if matched_paths else None,
+        )
+        add_diagnostic(
+            diagnostics,
+            code=f"{lane_id}_requires_escalation",
+            lane_id=lane_id,
+            message=f"{lane_id} requires escalation because {lane.get('reason', 'selector_requires_escalation')}",
+            matched_paths=matched_paths,
+            manifest_rule=manifest_rule,
+            remediation_hint=remediation_hint,
+            triggering_surface=matched_paths[0] if matched_paths else None,
+        )
+    if len(selected) > selected_lane_limit:
+        add_escalation_reason(
+            escalation_reasons,
+            lane_id="selected_lane_threshold",
+            status="escalated",
+            reason=f"selected lane count {len(selected)} exceeds limit {selected_lane_limit}",
+            matched_paths=plan.get("changed_paths", []),
+            manifest_rule="manager_guardrails.max_selected_lanes",
+            remediation_hint="Split the change set or raise the threshold intentionally in the validation manager guardrails.",
+        )
+        add_diagnostic(
+            diagnostics,
+            code="selected_lane_threshold_exceeded",
+            lane_id="selected_lane_threshold",
+            message=f"selected lane count {len(selected)} exceeds configured limit {selected_lane_limit}",
+            matched_paths=plan.get("changed_paths", []),
+            manifest_rule="manager_guardrails.max_selected_lanes",
+            remediation_hint="Split the change set or raise the threshold intentionally in the validation manager guardrails.",
         )
     if unmapped_change_gap:
-        escalation_reasons.append(
-            {
-                "lane_id": "unmapped_change_surface",
-                "status": "escalated",
-                "reason": "selector left changed paths without validation-lane coverage",
-                "matched_paths": uncovered_paths,
-            }
+        add_escalation_reason(
+            escalation_reasons,
+            lane_id="unmapped_change_surface",
+            status="escalated",
+            reason="selector left changed paths without validation-lane coverage",
+            matched_paths=uncovered_paths,
+            manifest_rule=manifest_path_display,
+            remediation_hint="Add or refine a path selector in the validation manifest so the changed surface maps to a proving lane.",
         )
+        add_diagnostic(
+            diagnostics,
+            code="unmapped_change_surface",
+            lane_id="unmapped_change_surface",
+            message="selector left changed paths without validation-lane coverage",
+            matched_paths=uncovered_paths,
+            manifest_rule=manifest_path_display,
+            remediation_hint="Add or refine a path selector in the validation manifest so the changed surface maps to a proving lane.",
+        )
+
+    if docs_only_paths(changed_paths):
+        forbidden_lane_ids = set(guardrails.get("docs_only_forbidden_lane_ids", []))
+        rust_docs_lanes = [lane_id for lane_id, _lane in selected + blocked if lane_id in forbidden_lane_ids]
+        if rust_docs_lanes:
+            escalation_required = True
+            add_escalation_reason(
+                escalation_reasons,
+                lane_id="docs_only_rust_guardrail",
+                status="escalated",
+                reason=f"docs-only change selected forbidden lanes: {', '.join(sorted(rust_docs_lanes))}",
+                matched_paths=changed_paths,
+                manifest_rule="manager_guardrails.docs_only_forbidden_lane_ids",
+                remediation_hint="Keep docs-only profiles mapped to docs proof only; route Rust-affecting docs through a separate non-docs issue if needed.",
+            )
+            add_diagnostic(
+                diagnostics,
+                code="docs_only_rust_guardrail",
+                lane_id="docs_only_rust_guardrail",
+                message=f"docs-only change selected forbidden lanes: {', '.join(sorted(rust_docs_lanes))}",
+                matched_paths=changed_paths,
+                manifest_rule="manager_guardrails.docs_only_forbidden_lane_ids",
+                remediation_hint="Keep docs-only profiles mapped to docs proof only; route Rust-affecting docs through a separate non-docs issue if needed.",
+            )
+
+    rust_lane = lanes.get("rust_pr_fast")
+    if isinstance(rust_lane, dict):
+        pr_fast_guardrails = guardrails["pr_fast"]
+        rust_surface_count = int(rust_lane.get("rust_surface_count", 0))
+        filter_tokens = split_csv(rust_lane.get("filter_tokens", ""))
+        mode = str(rust_lane.get("mode", "")).strip()
+        matched_paths = rust_lane.get("matched_paths", [])
+        if mode in pr_fast_guardrails["blocked_modes"]:
+            escalation_required = True
+            add_diagnostic(
+                diagnostics,
+                code=f"pr_fast_mode_{mode}",
+                lane_id="rust_pr_fast",
+                message=(
+                    "slow-proof contract-only planning cannot be run as an ordinary PR-fast profile"
+                    if mode == "contract_only"
+                    else "PR-fast planning expanded beyond the configured ordinary profile guardrails"
+                ),
+                matched_paths=matched_paths,
+                manifest_rule="manager_guardrails.pr_fast.blocked_modes",
+                remediation_hint="Use the named slow-proof or broad proof path instead of forcing ordinary PR-fast execution.",
+                triggering_surface=matched_paths[0] if matched_paths else None,
+            )
+        if mode == "focused" and len(filter_tokens) > int(pr_fast_guardrails["max_filter_token_count"]):
+            escalation_required = True
+            add_escalation_reason(
+                escalation_reasons,
+                lane_id="rust_pr_fast",
+                status="escalated",
+                reason=f"focused filter count {len(filter_tokens)} exceeds limit {pr_fast_guardrails['max_filter_token_count']}",
+                matched_paths=matched_paths,
+                manifest_rule="manager_guardrails.pr_fast.max_filter_token_count",
+                remediation_hint="Split the change or raise the focused threshold intentionally in manager guardrails.",
+                triggering_surface=matched_paths[0] if matched_paths else None,
+            )
+            add_diagnostic(
+                diagnostics,
+                code="pr_fast_filter_threshold_exceeded",
+                lane_id="rust_pr_fast",
+                message=f"focused filter count {len(filter_tokens)} exceeds configured limit {pr_fast_guardrails['max_filter_token_count']}",
+                matched_paths=matched_paths,
+                manifest_rule="manager_guardrails.pr_fast.max_filter_token_count",
+                remediation_hint="Split the change or raise the focused threshold intentionally in manager guardrails.",
+                triggering_surface=matched_paths[0] if matched_paths else None,
+            )
+        if mode == "family" and len(filter_tokens) > int(pr_fast_guardrails["max_family_token_count"]):
+            escalation_required = True
+            add_escalation_reason(
+                escalation_reasons,
+                lane_id="rust_pr_fast",
+                status="escalated",
+                reason=f"family filter count {len(filter_tokens)} exceeds limit {pr_fast_guardrails['max_family_token_count']}",
+                matched_paths=matched_paths,
+                manifest_rule="manager_guardrails.pr_fast.max_family_token_count",
+                remediation_hint="Split the change or raise the family threshold intentionally in manager guardrails.",
+                triggering_surface=matched_paths[0] if matched_paths else None,
+            )
+            add_diagnostic(
+                diagnostics,
+                code="pr_fast_family_threshold_exceeded",
+                lane_id="rust_pr_fast",
+                message=f"family filter count {len(filter_tokens)} exceeds configured limit {pr_fast_guardrails['max_family_token_count']}",
+                matched_paths=matched_paths,
+                manifest_rule="manager_guardrails.pr_fast.max_family_token_count",
+                remediation_hint="Split the change or raise the family threshold intentionally in manager guardrails.",
+                triggering_surface=matched_paths[0] if matched_paths else None,
+            )
+        if rust_surface_count > int(pr_fast_guardrails["max_rust_surface_count"]):
+            escalation_required = True
+            add_escalation_reason(
+                escalation_reasons,
+                lane_id="rust_pr_fast",
+                status="escalated",
+                reason=f"Rust surface count {rust_surface_count} exceeds limit {pr_fast_guardrails['max_rust_surface_count']}",
+                matched_paths=matched_paths,
+                manifest_rule="manager_guardrails.pr_fast.max_rust_surface_count",
+                remediation_hint="Split the change or raise the Rust-surface threshold intentionally in manager guardrails.",
+                triggering_surface=matched_paths[0] if matched_paths else None,
+            )
+            add_diagnostic(
+                diagnostics,
+                code="pr_fast_rust_surface_threshold_exceeded",
+                lane_id="rust_pr_fast",
+                message=f"Rust surface count {rust_surface_count} exceeds configured limit {pr_fast_guardrails['max_rust_surface_count']}",
+                matched_paths=matched_paths,
+                manifest_rule="manager_guardrails.pr_fast.max_rust_surface_count",
+                remediation_hint="Split the change or raise the Rust-surface threshold intentionally in manager guardrails.",
+                triggering_surface=matched_paths[0] if matched_paths else None,
+            )
 
     status = "ready_to_run"
     if not changed_paths:
@@ -265,14 +544,19 @@ def build_profile(plan: dict[str, Any], max_selected_lanes: int) -> dict[str, An
     elif plan.get("aggregate_status") != "selected":
         status = "not_runnable"
 
+    pr_publication_sufficient = (
+        bool(plan.get("pr_publication_sufficient"))
+        and not unmapped_change_gap
+        and not escalation_required
+        and status == "ready_to_run"
+    )
+
     return {
         "schema_version": "adl.validation_profile.v1",
         "selected_profile": profile_id(plan),
         "status": status,
         "selector_aggregate_status": plan.get("aggregate_status"),
-        "pr_publication_sufficient": (
-            bool(plan.get("pr_publication_sufficient")) and not unmapped_change_gap
-        ),
+        "pr_publication_sufficient": pr_publication_sufficient,
         "changed_paths": changed_paths,
         "run": run,
         "not_run": not_run,
@@ -300,6 +584,7 @@ def build_profile(plan: dict[str, Any], max_selected_lanes: int) -> dict[str, An
             "required": escalation_required,
             "reasons": escalation_reasons,
         },
+        "diagnostics": diagnostics,
         "selector_plan": plan,
     }
 
@@ -320,15 +605,26 @@ def print_text(profile: dict[str, Any]) -> None:
     if profile["escalation"]["required"]:
         print("  escalation:")
         for reason in profile["escalation"]["reasons"]:
-            print(
-                f"    - lane={reason['lane_id']} status={reason['status']} reason={reason['reason']}"
-            )
+            print(f"    - lane={reason['lane_id']} status={reason['status']} reason={reason['reason']}")
+            if reason.get("triggering_surface"):
+                print(f"      triggering_surface={reason['triggering_surface']}")
+            if reason.get("manifest_rule"):
+                print(f"      manifest_rule={reason['manifest_rule']}")
+            if reason.get("remediation_hint"):
+                print(f"      remediation_hint={reason['remediation_hint']}")
+    if profile["diagnostics"]:
+        print("  diagnostics:")
+        for item in profile["diagnostics"]:
+            print(f"    - code={item['code']} lane={item['lane_id']}")
+            print(f"      message={item['message']}")
+            if item.get("triggering_surface"):
+                print(f"      triggering_surface={item['triggering_surface']}")
+            print(f"      manifest_rule={item['manifest_rule']}")
+            print(f"      remediation_hint={item['remediation_hint']}")
     if profile["behavior_surfaces"]:
         print("  behavior_surfaces:")
         for behavior in profile["behavior_surfaces"]:
-            print(
-                f"    - id={behavior['id']} risk={behavior['risk_class']} source={behavior['source']}"
-            )
+            print(f"    - id={behavior['id']} risk={behavior['risk_class']} source={behavior['source']}")
     if profile.get("slow_proof_families"):
         print("  slow_proof_families:")
         for family in profile["slow_proof_families"]:
@@ -368,6 +664,7 @@ def parse_args(argv: list[str]) -> argparse.Namespace:
     source = parser.add_mutually_exclusive_group()
     source.add_argument("--changed-files", type=Path)
     source.add_argument("--include-working-tree", action="store_true")
+    parser.add_argument("--manifest", type=Path, default=DEFAULT_MANIFEST)
     parser.add_argument("--base", default="origin/main")
     parser.add_argument("--head", default="HEAD")
     parser.add_argument("--max-selected-lanes", type=int, default=8)
@@ -380,7 +677,9 @@ def parse_args(argv: list[str]) -> argparse.Namespace:
 def main(argv: list[str]) -> int:
     args = parse_args(argv)
     plan = selector_plan(args)
-    profile = build_profile(plan, args.max_selected_lanes)
+    manifest_path = args.manifest.resolve() if args.manifest else DEFAULT_MANIFEST
+    guardrails = manager_guardrails(load_manifest(manifest_path), args.max_selected_lanes)
+    profile = build_profile(plan, guardrails, manifest_path)
     exit_code = 0
     if args.run:
         exit_code = run_profile(profile)
