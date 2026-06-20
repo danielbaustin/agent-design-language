@@ -1,5 +1,10 @@
 # Current-Model Suitability Mini-Sprint Closeout for #4158
 
+Status: `closed_post_merge`
+Merged PR: `#4289`
+Post-merge review:
+`docs/milestones/v0.91.6/review/provider/CURRENT_MODEL_SUITABILITY_MINI_SPRINT_REVIEW_4158.md`
+
 ## Scope
 
 This closeout summarizes the current-model suitability mini-sprint tracked by
@@ -20,13 +25,13 @@ this closeout.
 
 | Issue | Role | Closeout status |
 | --- | --- | --- |
-| `#4095` | Reusable suitability umbrella | Satisfied by `#4096`, `#4097`, and the direct-hosted child wave; ready for umbrella closeout after this summary and the matrix truth updates are merged. |
+| `#4095` | Reusable suitability umbrella | Closed after this summary and the matrix truth updates merged. |
 | `#4096` | DeepSeek suitability proof | Closed. |
-| `#4154` | Direct-hosted frontier-model umbrella | Satisfied by `#4155`, `#4156`, and `#4157`; ready for umbrella closeout after this summary and the matrix truth updates are merged. |
+| `#4154` | Direct-hosted frontier-model umbrella | Closed after this summary and the matrix truth updates merged. |
 | `#4155` | Direct-hosted OpenAI/Codex proof | Closed. |
 | `#4156` | Direct-hosted Anthropic proof | Closed. |
 | `#4157` | Direct-hosted Gemini proof | Closed. |
-| `#4158` | Current-model suitability mini-sprint umbrella | Ready for closeout after this summary and matrix truth are merged. |
+| `#4158` | Current-model suitability mini-sprint umbrella | Closed by merged PR `#4289`. |
 
 ## What Was Built
 
@@ -82,15 +87,15 @@ python3 adl/tools/validate_v0916_agent_suitability_panel.py docs/milestones/v0.9
 
 Result: `PASS` for all six packet directories.
 
-## Closeout Recommendation
+## Closeout Result
 
-After this closeout summary and the provider matrix truth updates merge:
+After this closeout summary and the provider matrix truth updates merged in
+PR `#4289`:
 
-1. close `#4095` as satisfied by the reusable panel and completed child proof
+1. `#4158` closed through PR linkage;
+2. `#4095` closed as satisfied by the reusable panel and completed child proof
    wave;
-2. close `#4154` as satisfied by the direct-hosted OpenAI/Codex, Anthropic,
-   and Gemini proof packets;
-3. close `#4158` as the completed current-model suitability mini-sprint
-   umbrella.
+3. `#4154` closed as satisfied by the direct-hosted OpenAI/Codex, Anthropic,
+   and Gemini proof packets.
 
 Do not close or modify `#4034` as part of this provider closeout.
