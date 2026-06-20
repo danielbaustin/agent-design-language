@@ -140,7 +140,10 @@ pub(crate) fn ensure_task_bundle_stp(
                 ("<notes_risks>", notes_risks),
                 (
                     "<tooling_notes>",
-                    "Generated from docs/templates/prompts/1.0.0/.".to_string(),
+                    format!(
+                        "Generated from docs/templates/prompts/{}/.",
+                        active_prompt_template_set_label(root)
+                    ),
                 ),
             ],
         );
@@ -859,7 +862,7 @@ fn read_prompt_template(repo_root: &Path, kind: &str, fallbacks: &[&str]) -> Res
                 .with_context(|| format!("failed to read prompt template {}", path.display()));
         }
     }
-    bail!("missing {kind} prompt template under docs/templates/prompts/1.0.0")
+    bail!("missing {kind} prompt template under docs/templates/prompts/current.json or docs/templates/prompts/1.0.0")
 }
 
 fn active_prompt_template_path(repo_root: &Path, kind: &str) -> Result<Option<PathBuf>> {
@@ -888,6 +891,28 @@ fn active_prompt_template_path(repo_root: &Path, kind: &str) -> Result<Option<Pa
         return Ok(None);
     };
     Ok(Some(repo_root.join(path)))
+}
+
+fn active_prompt_template_set_label(repo_root: &Path) -> String {
+    let registry_path = repo_root.join("docs/templates/prompts/current.json");
+    let registry_text = match fs::read_to_string(&registry_path) {
+        Ok(text) => text,
+        Err(_) => return "1.0.0".to_string(),
+    };
+    let registry: Value = match serde_json::from_str(&registry_text) {
+        Ok(value) => value,
+        Err(_) => return "1.0.0".to_string(),
+    };
+    registry
+        .get("semver")
+        .and_then(Value::as_str)
+        .or_else(|| {
+            registry
+                .get("csdlc_prompt_template_set")
+                .and_then(Value::as_str)
+        })
+        .unwrap_or("1.0.0")
+        .to_string()
 }
 
 fn apply_template_values(text: &mut String, values: &[(&str, String)]) {
@@ -1064,6 +1089,16 @@ fn render_bootstrap_output_card(
             ("<planned_pvf_lane>", planned_pvf_lane.clone()),
             ("<final_pvf_lane>", "not_recorded_yet".to_string()),
             ("<lane_change_reason>", "not_recorded_yet".to_string()),
+            ("<estimated_elapsed_seconds>", "unknown".to_string()),
+            ("<actual_elapsed_seconds>", "unknown".to_string()),
+            ("<estimated_total_tokens>", "unknown".to_string()),
+            ("<actual_total_tokens>", "unknown".to_string()),
+            ("<estimated_validation_seconds>", "unknown".to_string()),
+            ("<actual_validation_seconds>", "unknown".to_string()),
+            ("<actual_metrics_data_source>", "unknown".to_string()),
+            ("<actual_metrics_source_ref>", "unknown".to_string()),
+            ("<actual_metrics_confidence>", "unknown".to_string()),
+            ("<estimate_error_percent>", "unknown".to_string()),
         ],
     );
     Ok(text)
@@ -1162,12 +1197,20 @@ fn render_bootstrap_plan_card(
             ("<validation_plan_inline>", validation_step),
             (
                 "<notes_risks_inline>",
-                "Generated from 1.0.0 template; update before continuing if execution diverges."
-                    .to_string(),
+                format!(
+                    "Generated from {} template; update before continuing if execution diverges.",
+                    active_prompt_template_set_label(repo_root)
+                ),
             ),
             ("<initial_pvf_lane>", initial_pvf_lane.clone()),
             ("<planned_pvf_lane>", planned_pvf_lane.clone()),
             ("<planned_pvf_lane_source>", planned_pvf_lane_source.clone()),
+            ("<estimated_elapsed_seconds>", "unknown".to_string()),
+            ("<estimated_total_tokens>", "unknown".to_string()),
+            ("<estimated_validation_seconds>", "unknown".to_string()),
+            ("<estimate_confidence>", "unknown".to_string()),
+            ("<estimate_data_source>", "unknown".to_string()),
+            ("<estimate_source_ref>", "unknown".to_string()),
         ],
     );
     Ok(text)

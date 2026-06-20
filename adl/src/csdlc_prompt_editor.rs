@@ -1,5 +1,6 @@
 use anyhow::{anyhow, bail, ensure, Context, Result};
 use serde::{Deserialize, Serialize};
+use serde_yaml::Value;
 use std::collections::{BTreeMap, BTreeSet};
 use std::fs;
 use std::path::{Path, PathBuf};
@@ -77,8 +78,21 @@ const PLACEHOLDERS: &[&str] = &[
     "initial_pvf_lane",
     "planned_pvf_lane",
     "planned_pvf_lane_source",
+    "estimated_elapsed_seconds",
+    "estimated_total_tokens",
+    "estimated_validation_seconds",
+    "estimate_confidence",
+    "estimate_data_source",
+    "estimate_source_ref",
     "final_pvf_lane",
     "lane_change_reason",
+    "actual_elapsed_seconds",
+    "actual_total_tokens",
+    "actual_validation_seconds",
+    "actual_metrics_data_source",
+    "actual_metrics_source_ref",
+    "actual_metrics_confidence",
+    "estimate_error_percent",
     "branch_action",
     "findings_status",
     "recommended_outcome",
@@ -190,19 +204,42 @@ struct RegistryTemplate {
 }
 
 pub fn load_editor_model(repo_root: &Path) -> Result<PromptEditorModel> {
+    load_editor_model_for_template_set(repo_root, None)
+}
+
+fn load_editor_model_for_template_set(
+    repo_root: &Path,
+    template_set_override: Option<&str>,
+) -> Result<PromptEditorModel> {
     let registry_path = repo_root.join(TEMPLATE_REGISTRY);
     let raw = fs::read_to_string(&registry_path)
         .with_context(|| format!("failed to read {}", registry_path.display()))?;
     let registry: Registry = serde_json::from_str(&raw)
         .with_context(|| format!("failed to parse {}", registry_path.display()))?;
+    let template_set = template_set_override.unwrap_or(&registry.csdlc_prompt_template_set);
 
     let mut cards = Vec::new();
     for kind in PromptCardKind::all() {
-        let template = registry
-            .templates
-            .get(kind.key())
-            .ok_or_else(|| anyhow!("registry missing template for {}", kind.key()))?;
-        let template_path = repo_root.join(&template.path);
+        let (template_path_str, structure_schema_path) =
+            if template_set == registry.csdlc_prompt_template_set {
+                let template = registry
+                    .templates
+                    .get(kind.key())
+                    .ok_or_else(|| anyhow!("registry missing template for {}", kind.key()))?;
+                (
+                    template.path.clone(),
+                    template
+                        .structure_schema_path
+                        .clone()
+                        .unwrap_or_else(|| default_structure_schema_path(template_set, kind)),
+                )
+            } else {
+                (
+                    format!("docs/templates/prompts/{template_set}/{}.md", kind.key()),
+                    default_structure_schema_path(template_set, kind),
+                )
+            };
+        let template_path = repo_root.join(&template_path_str);
         let template_text = fs::read_to_string(&template_path)
             .with_context(|| format!("failed to read {}", template_path.display()))?;
         cards.push(PromptCardForm {
@@ -210,10 +247,8 @@ pub fn load_editor_model(repo_root: &Path) -> Result<PromptEditorModel> {
             key: kind.key(),
             label: kind.label(),
             output_file: kind.output_file(),
-            template_path: template.path.clone(),
-            structure_schema_path: template.structure_schema_path.clone().unwrap_or_else(|| {
-                default_structure_schema_path(&registry.csdlc_prompt_template_set, kind)
-            }),
+            template_path: template_path_str,
+            structure_schema_path,
             fields: form_fields(kind),
             template: template_text,
         });
@@ -221,7 +256,7 @@ pub fn load_editor_model(repo_root: &Path) -> Result<PromptEditorModel> {
 
     Ok(PromptEditorModel {
         schema: "adl.csdlc.prompt_editor.model.v1",
-        template_set: registry.csdlc_prompt_template_set,
+        template_set: template_set.to_string(),
         registry_path: TEMPLATE_REGISTRY,
         card_status_values: CARD_STATUS_VALUES,
         cards,
@@ -352,10 +387,28 @@ pub fn import_values_from_rendered_card_file(
     let card = card_model(&model, kind)?;
     let source = fs::read_to_string(input_path)
         .with_context(|| format!("failed to read rendered card {}", input_path.display()))?;
+    let source_template_set = detect_rendered_card_template_set(&source, kind)
+        .unwrap_or_else(|| model.template_set.clone());
+    let source_model = load_editor_model_for_template_set(repo_root, Some(&source_template_set))?;
+    let source_card = card_model(&source_model, kind)?;
 
-    validate_rendered_card_structure_from_repo(repo_root, card, &source)?;
     let (doc, unrepresented_required_fields) =
-        import_values_document_from_rendered_card(card, &model.template_set, &source)?;
+        match validate_rendered_card_structure_from_repo(repo_root, source_card, &source) {
+            Ok(()) => import_values_document_from_rendered_card(
+                source_card,
+                &model.template_set,
+                &source,
+            )?,
+            Err(err) => {
+                ensure!(source_template_set != model.template_set, "{err}");
+                import_values_document_from_legacy_rendered_card(
+                    card,
+                    kind,
+                    &model.template_set,
+                    &source,
+                )?
+            }
+        };
     let values = doc.merged_values();
     validate_values(card, &values)?;
 
@@ -408,6 +461,42 @@ fn import_values_document_from_rendered_card(
     let mut extracted = extract_template_values(card, &card.template, rendered)?;
     let unrepresented_required_fields =
         populate_unrepresented_required_import_fields(card, &mut extracted)?;
+    Ok(prompt_values_document_from_extracted(
+        card,
+        template_set,
+        extracted,
+        unrepresented_required_fields,
+    ))
+}
+
+fn import_values_document_from_legacy_rendered_card(
+    active_card: &PromptCardForm,
+    kind: PromptCardKind,
+    template_set: &str,
+    rendered: &str,
+) -> Result<(PromptValuesDocument, Vec<String>)> {
+    let (extracted, unrepresented_required_fields) = match kind {
+        PromptCardKind::Spp => extract_legacy_spp_values(rendered)?,
+        PromptCardKind::Sor => extract_legacy_sor_values(rendered)?,
+        _ => bail!("legacy import is only supported for spp and sor"),
+    };
+    if kind == PromptCardKind::Sor {
+        ensure_legacy_sor_is_representable_in_active_template(&extracted)?;
+    }
+    Ok(prompt_values_document_from_extracted(
+        active_card,
+        template_set,
+        extracted,
+        unrepresented_required_fields,
+    ))
+}
+
+fn prompt_values_document_from_extracted(
+    card: &PromptCardForm,
+    template_set: &str,
+    extracted: BTreeMap<String, String>,
+    unrepresented_required_fields: Vec<String>,
+) -> (PromptValuesDocument, Vec<String>) {
     let editable_keys = card
         .fields
         .iter()
@@ -425,7 +514,7 @@ fn import_values_document_from_rendered_card(
         }
     }
 
-    Ok((
+    (
         PromptValuesDocument {
             schema: VALUES_SCHEMA.to_string(),
             template_set: template_set.to_string(),
@@ -434,7 +523,367 @@ fn import_values_document_from_rendered_card(
             values,
         },
         unrepresented_required_fields,
-    ))
+    )
+}
+
+fn extract_legacy_spp_values(rendered: &str) -> Result<(BTreeMap<String, String>, Vec<String>)> {
+    let (frontmatter, _) = split_front_matter_local(rendered)?;
+    let doc = serde_yaml::from_str::<Value>(&frontmatter)
+        .context("legacy spp import requires valid YAML front matter")?;
+    let mapping = doc
+        .as_mapping()
+        .ok_or_else(|| anyhow!("legacy spp front matter must be a mapping"))?;
+
+    let mut values = BTreeMap::new();
+    for key in [
+        "issue",
+        "task_id",
+        "run_id",
+        "version",
+        "title",
+        "branch",
+        "card_status",
+        "status",
+        "activation_state",
+        "plan_summary",
+        "name",
+        "notes",
+    ] {
+        let value = mapping_required_scalar(mapping, key)?;
+        let value = if key == "activation_state" {
+            normalize_legacy_spp_activation_state(&value)
+        } else {
+            value
+        };
+        values.insert(key.to_string(), value);
+    }
+
+    let issue = values
+        .get("issue")
+        .cloned()
+        .ok_or_else(|| anyhow!("legacy spp import requires issue"))?;
+    values.insert("issue_padded".to_string(), issue);
+    values.insert(
+        "slug".to_string(),
+        values
+            .get("name")
+            .and_then(|name| name.strip_suffix("-execution-plan"))
+            .unwrap_or("legacy-imported-spp")
+            .to_string(),
+    );
+    values.insert(
+        "issue_url".to_string(),
+        legacy_source_ref(mapping, "issue")
+            .ok_or_else(|| anyhow!("legacy spp import requires source_refs.issue"))?,
+    );
+    values.insert(
+        "source_issue_prompt".to_string(),
+        legacy_source_ref(mapping, "source_issue_prompt")
+            .ok_or_else(|| anyhow!("legacy spp import requires source_refs.source_issue_prompt"))?,
+    );
+    values.insert(
+        "stp_card".to_string(),
+        legacy_source_ref(mapping, "stp")
+            .ok_or_else(|| anyhow!("legacy spp import requires source_refs.stp"))?,
+    );
+    values.insert(
+        "sip_card".to_string(),
+        legacy_source_ref(mapping, "sip")
+            .ok_or_else(|| anyhow!("legacy spp import requires source_refs.sip"))?,
+    );
+
+    let scope = mapping
+        .get(Value::String("scope".to_string()))
+        .and_then(Value::as_mapping)
+        .ok_or_else(|| anyhow!("legacy spp import requires scope mapping"))?;
+    values.insert(
+        "target_files_surfaces_inline".to_string(),
+        yaml_sequence_summary(scope.get(Value::String("files".to_string())))
+            .unwrap_or_else(|| "not recorded in legacy rendered card".to_string()),
+    );
+    values.insert(
+        "non_goals_inline".to_string(),
+        yaml_sequence_summary(scope.get(Value::String("out_of_scope".to_string())))
+            .unwrap_or_else(|| "not recorded in legacy rendered card".to_string()),
+    );
+    values.insert(
+        "risks_inline".to_string(),
+        yaml_sequence_summary(mapping.get(Value::String("risks_and_edge_cases".to_string())))
+            .unwrap_or_else(|| "not recorded in legacy rendered card".to_string()),
+    );
+    values.insert(
+        "validation_plan_inline".to_string(),
+        yaml_sequence_summary(mapping.get(Value::String("test_strategy".to_string())))
+            .unwrap_or_else(|| "not recorded in legacy rendered card".to_string()),
+    );
+    values.insert(
+        "notes_risks_inline".to_string(),
+        values
+            .get("notes")
+            .cloned()
+            .unwrap_or_else(|| "not recorded in legacy rendered card".to_string()),
+    );
+
+    let mut defaulted = Vec::new();
+    for (key, value) in [
+        (
+            "dependencies_inline",
+            "not recorded in legacy rendered card",
+        ),
+        ("repo_inputs_inline", "not recorded in legacy rendered card"),
+        (
+            "deliverables_inline",
+            "not recorded in legacy rendered card",
+        ),
+        (
+            "acceptance_criteria_inline",
+            "not recorded in legacy rendered card",
+        ),
+        ("initial_pvf_lane", "needs_planning_lane_assignment"),
+        ("planned_pvf_lane", "needs_planning_lane_assignment"),
+        ("planned_pvf_lane_source", "legacy_import_default"),
+        ("estimated_elapsed_seconds", "unknown"),
+        ("estimated_total_tokens", "unknown"),
+        ("estimated_validation_seconds", "unknown"),
+        ("estimate_confidence", "unknown"),
+        ("estimate_data_source", "unknown"),
+        ("estimate_source_ref", "unknown"),
+        ("timestamp", "legacy_import_unknown_timestamp"),
+    ] {
+        values.insert(key.to_string(), value.to_string());
+        defaulted.push(key.to_string());
+    }
+
+    Ok((values, defaulted))
+}
+
+fn extract_legacy_sor_values(rendered: &str) -> Result<(BTreeMap<String, String>, Vec<String>)> {
+    let mut values = BTreeMap::new();
+    for (prefix, key) in [
+        ("Task ID: ", "task_id"),
+        ("Run ID: ", "run_id"),
+        ("Version: ", "version"),
+        ("Title: ", "title"),
+        ("Branch: ", "branch"),
+        ("Card Status: ", "card_status"),
+        ("Status: ", "status"),
+    ] {
+        if let Some(value) = rendered
+            .lines()
+            .find_map(|line| line.strip_prefix(prefix).map(str::trim))
+        {
+            values.insert(key.to_string(), value.to_string());
+        }
+    }
+    for key in [
+        "task_id",
+        "run_id",
+        "version",
+        "title",
+        "branch",
+        "card_status",
+        "status",
+    ] {
+        ensure!(values.contains_key(key), "legacy sor import requires {key}");
+    }
+    let slug = rendered
+        .lines()
+        .find_map(|line| line.strip_prefix("# ").map(str::trim))
+        .ok_or_else(|| anyhow!("legacy sor import requires top-level heading"))?;
+    values.insert("slug".to_string(), slug.to_string());
+    let issue = extract_issue_number(
+        values
+            .get("task_id")
+            .map(String::as_str)
+            .unwrap_or_default(),
+    )
+    .ok_or_else(|| anyhow!("legacy sor import requires issue-like task_id"))?;
+    values.insert("issue".to_string(), issue.clone());
+    values.insert("issue_padded".to_string(), issue);
+    values.insert(
+        "issue_url".to_string(),
+        format!(
+            "https://github.com/danielbaustin/agent-design-language/issues/{}",
+            values["issue"]
+        ),
+    );
+    values.insert(
+        "source_issue_prompt".to_string(),
+        "not recorded in legacy rendered card".to_string(),
+    );
+    if let Some(summary) = markdown_section_body_local(rendered, "Summary") {
+        let summary = summary.trim();
+        if !summary.is_empty() {
+            values.insert("summary".to_string(), summary.to_string());
+        }
+    }
+    values.insert(
+        "deliverables".to_string(),
+        markdown_section_body_local(rendered, "Artifacts produced")
+            .map(|body| body.trim().to_string())
+            .filter(|body| !body.is_empty())
+            .ok_or_else(|| anyhow!("legacy sor import requires Artifacts produced section"))?,
+    );
+    values.insert(
+        "validation_plan".to_string(),
+        markdown_section_body_local(rendered, "Validation")
+            .map(|body| body.trim().to_string())
+            .filter(|body| !body.is_empty())
+            .ok_or_else(|| anyhow!("legacy sor import requires Validation section"))?,
+    );
+
+    let mut defaulted = Vec::new();
+    for (key, value) in [
+        ("output_card", "not recorded in legacy rendered card"),
+        (
+            "branch_action",
+            "Legacy rendered SOR predates explicit branch_action tracking.",
+        ),
+        ("initial_pvf_lane", "needs_planning_lane_assignment"),
+        ("planned_pvf_lane", "needs_planning_lane_assignment"),
+        ("final_pvf_lane", "not_recorded_yet"),
+        (
+            "lane_change_reason",
+            "Legacy rendered SOR predates explicit PVF lane tracking.",
+        ),
+        ("estimated_elapsed_seconds", "unknown"),
+        ("actual_elapsed_seconds", "unknown"),
+        ("estimated_total_tokens", "unknown"),
+        ("actual_total_tokens", "unknown"),
+        ("estimated_validation_seconds", "unknown"),
+        ("actual_validation_seconds", "unknown"),
+        ("actual_metrics_data_source", "unknown"),
+        ("actual_metrics_source_ref", "unknown"),
+        ("actual_metrics_confidence", "unknown"),
+        ("estimate_error_percent", "unknown"),
+        ("timestamp", "legacy_import_unknown_timestamp"),
+    ] {
+        values.insert(key.to_string(), value.to_string());
+        defaulted.push(key.to_string());
+    }
+
+    Ok((values, defaulted))
+}
+
+fn ensure_legacy_sor_is_representable_in_active_template(
+    values: &BTreeMap<String, String>,
+) -> Result<()> {
+    let status = values.get("status").map(String::as_str).unwrap_or_default();
+    ensure!(
+        status == "NOT_STARTED",
+        "legacy sor import only supports bootstrap scaffolds; non-bootstrap legacy sor cards are not representable in the active template set"
+    );
+    Ok(())
+}
+
+fn scalar_to_import_string(value: &Value) -> Option<String> {
+    match value {
+        Value::String(value) => Some(value.clone()),
+        Value::Number(value) => Some(value.to_string()),
+        Value::Bool(value) => Some(value.to_string()),
+        _ => None,
+    }
+}
+
+fn normalize_legacy_spp_activation_state(value: &str) -> String {
+    match value {
+        "design_time_ready" | "ready_for_execution" => "ready".to_string(),
+        "ready_for_execution_binding" | "active" => "approved".to_string(),
+        other => other.to_string(),
+    }
+}
+
+fn mapping_required_scalar(mapping: &serde_yaml::Mapping, key: &str) -> Result<String> {
+    mapping
+        .get(Value::String(key.to_string()))
+        .and_then(scalar_to_import_string)
+        .ok_or_else(|| anyhow!("legacy import requires scalar field {key}"))
+}
+
+fn legacy_source_ref(mapping: &serde_yaml::Mapping, wanted_kind: &str) -> Option<String> {
+    mapping
+        .get(Value::String("source_refs".to_string()))
+        .and_then(Value::as_sequence)
+        .and_then(|items| {
+            items.iter().find_map(|item| {
+                let item = item.as_mapping()?;
+                let kind = item
+                    .get(Value::String("kind".to_string()))
+                    .and_then(Value::as_str)?;
+                if kind != wanted_kind {
+                    return None;
+                }
+                item.get(Value::String("ref".to_string()))
+                    .and_then(Value::as_str)
+                    .map(str::to_string)
+            })
+        })
+}
+
+fn yaml_sequence_summary(value: Option<&Value>) -> Option<String> {
+    value.and_then(Value::as_sequence).map(|items| {
+        let values = items
+            .iter()
+            .filter_map(scalar_to_import_string)
+            .collect::<Vec<_>>();
+        if values.is_empty() {
+            "not recorded in legacy rendered card".to_string()
+        } else {
+            values.join("; ")
+        }
+    })
+}
+
+fn split_front_matter_local(text: &str) -> Result<(String, String)> {
+    let first = text.lines().next().unwrap_or_default();
+    ensure!(first.trim() == "---", "missing YAML front matter opener");
+    let all = text.lines().collect::<Vec<_>>();
+    let close = all
+        .iter()
+        .enumerate()
+        .skip(1)
+        .find(|(_, line)| line.trim() == "---")
+        .map(|(idx, _)| idx)
+        .ok_or_else(|| anyhow!("missing YAML front matter closer"))?;
+    let fm = all[1..close].join("\n");
+    let body = all[close + 1..].join("\n");
+    Ok((fm, body))
+}
+
+fn markdown_section_body_local(text: &str, heading: &str) -> Option<String> {
+    let mut in_section = false;
+    let mut out = Vec::new();
+    for line in text.lines() {
+        if !in_section {
+            if line.trim_end() == format!("## {heading}") {
+                in_section = true;
+            }
+            continue;
+        }
+        if line.starts_with("## ") {
+            break;
+        }
+        out.push(line.to_string());
+    }
+    if in_section {
+        Some(out.join("\n"))
+    } else {
+        None
+    }
+}
+
+fn detect_rendered_card_template_set(rendered: &str, kind: PromptCardKind) -> Option<String> {
+    let prefix = "Canonical Template Source: `docs/templates/prompts/";
+    let suffix = format!("/{}.md`", kind.key());
+    rendered.lines().find_map(|line| {
+        let rest = line.trim().strip_prefix(prefix)?;
+        let template_set = rest.strip_suffix(&suffix)?;
+        if template_set.is_empty() {
+            None
+        } else {
+            Some(template_set.to_string())
+        }
+    })
 }
 
 fn populate_unrepresented_required_import_fields(
@@ -683,11 +1132,12 @@ pub fn render_all_sample_cards(repo_root: &Path, out_dir: &Path) -> Result<()> {
     Ok(())
 }
 
-pub fn write_all_sample_values(out_dir: &Path) -> Result<()> {
+pub fn write_all_sample_values(repo_root: &Path, out_dir: &Path) -> Result<()> {
     fs::create_dir_all(out_dir)
         .with_context(|| format!("failed to create {}", out_dir.display()))?;
+    let model = load_editor_model(repo_root)?;
     for kind in PromptCardKind::all() {
-        let text = sample_values_document(kind);
+        let text = sample_values_document(kind, &model.template_set);
         fs::write(out_dir.join(format!("{}.values.yaml", kind.key())), text)
             .with_context(|| format!("failed to write {} values", kind.key()))?;
     }
@@ -756,6 +1206,148 @@ pub fn validate_values(card: &PromptCardForm, values: &BTreeMap<String, String>)
         card.key,
         CARD_STATUS_VALUES.join(", ")
     );
+    match card.kind {
+        PromptCardKind::Spp => validate_spp_values(card, values)?,
+        PromptCardKind::Sor => validate_sor_values(card, values)?,
+        _ => {}
+    }
+    Ok(())
+}
+
+fn validate_unknown_or_positive_int_value(field: &str, actual: &str) -> Result<()> {
+    if actual == "unknown" {
+        return Ok(());
+    }
+    actual.parse::<u64>().map_err(|_| {
+        anyhow!("{field} must be `unknown` or a positive integer; actual: {actual}")
+    })?;
+    ensure!(
+        actual != "0",
+        "{field} must be greater than zero when recorded"
+    );
+    Ok(())
+}
+
+fn validate_unknown_or_nonnegative_int_value(field: &str, actual: &str) -> Result<()> {
+    if actual == "unknown" {
+        return Ok(());
+    }
+    actual.parse::<u64>().map_err(|_| {
+        anyhow!("{field} must be `unknown` or a non-negative integer; actual: {actual}")
+    })?;
+    Ok(())
+}
+
+fn validate_reference_or_unknown_value(field: &str, actual: &str) -> Result<()> {
+    if actual == "unknown" {
+        return Ok(());
+    }
+    ensure!(
+        valid_reference_value(actual),
+        "{field} must be `unknown` or a repo-relative reference/URL; actual: {actual}"
+    );
+    Ok(())
+}
+
+fn valid_reference_value(value: &str) -> bool {
+    value.starts_with("http://")
+        || value.starts_with("https://")
+        || value
+            .chars()
+            .all(|c| c.is_ascii_alphanumeric() || matches!(c, '.' | '_' | '/' | '-'))
+}
+
+fn validate_spp_values(card: &PromptCardForm, values: &BTreeMap<String, String>) -> Result<()> {
+    for key in [
+        "estimated_elapsed_seconds",
+        "estimated_total_tokens",
+        "estimated_validation_seconds",
+    ] {
+        if let Some(value) = values.get(key) {
+            validate_unknown_or_positive_int_value(&format!("{}.{}", card.key, key), value)?;
+        }
+    }
+    if let Some(value) = values.get("estimate_data_source") {
+        let source_ref = values
+            .get("estimate_source_ref")
+            .map(String::as_str)
+            .unwrap_or("unknown");
+        validate_reference_or_unknown_value("spp.estimate_source_ref", source_ref)?;
+        if value == "derived_sprint_state" {
+            ensure!(
+                source_ref != "unknown",
+                "spp.estimate_source_ref is required when spp.estimate_data_source is `derived_sprint_state`"
+            );
+        }
+        if value == "unknown" {
+            ensure!(
+                source_ref == "unknown",
+                "spp.estimate_source_ref must remain `unknown` when spp.estimate_data_source is `unknown`"
+            );
+        }
+    }
+    if let Some(value) = values.get("estimate_confidence") {
+        if value != "unknown" {
+            let source = values
+                .get("estimate_data_source")
+                .map(String::as_str)
+                .unwrap_or("unknown");
+            ensure!(
+                source != "unknown",
+                "spp.estimate_confidence cannot be set when spp.estimate_data_source is `unknown`"
+            );
+        }
+    }
+    Ok(())
+}
+
+fn validate_sor_values(card: &PromptCardForm, values: &BTreeMap<String, String>) -> Result<()> {
+    for key in [
+        "estimated_elapsed_seconds",
+        "actual_elapsed_seconds",
+        "estimated_total_tokens",
+        "actual_total_tokens",
+        "estimated_validation_seconds",
+        "actual_validation_seconds",
+    ] {
+        if let Some(value) = values.get(key) {
+            validate_unknown_or_positive_int_value(&format!("{}.{}", card.key, key), value)?;
+        }
+    }
+    if let Some(value) = values.get("estimate_error_percent") {
+        validate_unknown_or_nonnegative_int_value("sor.estimate_error_percent", value)?;
+    }
+    if let Some(value) = values.get("actual_metrics_data_source") {
+        let source_ref = values
+            .get("actual_metrics_source_ref")
+            .map(String::as_str)
+            .unwrap_or("unknown");
+        validate_reference_or_unknown_value("sor.actual_metrics_source_ref", source_ref)?;
+        if value == "codex_goal_tool" || value == "derived_sprint_state" {
+            ensure!(
+                source_ref != "unknown",
+                "sor.actual_metrics_source_ref is required when sor.actual_metrics_data_source is `{value}`"
+            );
+        }
+        if value == "unknown" {
+            ensure!(
+                source_ref == "unknown",
+                "sor.actual_metrics_source_ref must remain `unknown` when sor.actual_metrics_data_source is `unknown`"
+            );
+        }
+    }
+    if let Some(value) = values.get("actual_metrics_confidence") {
+        if value != "unknown" {
+            let source = values
+                .get("actual_metrics_data_source")
+                .map(String::as_str)
+                .unwrap_or("unknown");
+            ensure!(
+                source != "unknown",
+                "sor.actual_metrics_confidence cannot be set when sor.actual_metrics_data_source is `unknown`"
+            );
+        }
+    }
     Ok(())
 }
 
@@ -860,7 +1452,7 @@ pub fn sample_values() -> BTreeMap<String, String> {
         ),
         (
             "repo_inputs",
-            "- docs/templates/prompts/current.json\n- docs/templates/prompts/1.0.0/",
+            "- docs/templates/prompts/current.json\n- docs/templates/prompts/1.0.1/",
         ),
         ("dependencies", "- #3286 SemVer prompt templates"),
         (
@@ -903,7 +1495,7 @@ pub fn sample_values() -> BTreeMap<String, String> {
         ),
         (
             "repo_inputs_inline",
-            "docs/templates/prompts/current.json and docs/templates/prompts/1.0.0/.",
+            "docs/templates/prompts/current.json and docs/templates/prompts/1.0.1/.",
         ),
         (
             "deliverables_inline",
@@ -931,11 +1523,24 @@ pub fn sample_values() -> BTreeMap<String, String> {
         ("initial_pvf_lane", "prompt_template"),
         ("planned_pvf_lane", "prompt_template"),
         ("planned_pvf_lane_source", "matched_initial_issue_lane"),
+        ("estimated_elapsed_seconds", "unknown"),
+        ("estimated_total_tokens", "unknown"),
+        ("estimated_validation_seconds", "unknown"),
+        ("estimate_confidence", "unknown"),
+        ("estimate_data_source", "unknown"),
+        ("estimate_source_ref", "unknown"),
         ("final_pvf_lane", "not_recorded_yet"),
         (
             "lane_change_reason",
             "No lane change recorded in the generated sample.",
         ),
+        ("actual_elapsed_seconds", "unknown"),
+        ("actual_total_tokens", "unknown"),
+        ("actual_validation_seconds", "unknown"),
+        ("actual_metrics_data_source", "unknown"),
+        ("actual_metrics_source_ref", "unknown"),
+        ("actual_metrics_confidence", "unknown"),
+        ("estimate_error_percent", "unknown"),
         (
             "branch_action",
             "Preserved pre-run branch truth in generated sample content.",
@@ -1185,6 +1790,62 @@ fn form_fields(kind: PromptCardKind) -> Vec<PromptField> {
                 "SPP execution-readiness lifecycle state.",
                 CARD_STATUS_VALUES,
             ));
+            fields.push(read_only_text(
+                "initial_pvf_lane",
+                "Initial PVF Lane",
+                true,
+                "System-supplied PVF lane from issue creation/bootstrap.",
+            ));
+            fields.push(text(
+                "planned_pvf_lane",
+                "Planned PVF Lane",
+                true,
+                "Planning-confirmed or planning-revised PVF lane.",
+            ));
+            fields.push(text(
+                "planned_pvf_lane_source",
+                "Planned PVF Lane Source",
+                true,
+                "Why the planned PVF lane was kept or changed during planning.",
+            ));
+            fields.push(text(
+                "estimated_elapsed_seconds",
+                "Estimated Elapsed Seconds",
+                true,
+                "Expected issue elapsed time in seconds, or `unknown`.",
+            ));
+            fields.push(text(
+                "estimated_total_tokens",
+                "Estimated Total Tokens",
+                true,
+                "Expected token consumption, or `unknown`.",
+            ));
+            fields.push(text(
+                "estimated_validation_seconds",
+                "Estimated Validation Seconds",
+                true,
+                "Expected validation time in seconds, or `unknown`.",
+            ));
+            fields.push(select(
+                "estimate_confidence",
+                "Estimate Confidence",
+                true,
+                "Confidence in the planning estimates.",
+                &["low", "medium", "high", "unknown"],
+            ));
+            fields.push(select(
+                "estimate_data_source",
+                "Estimate Data Source",
+                true,
+                "Where the estimate truth came from.",
+                &["manual_entry", "derived_sprint_state", "unknown"],
+            ));
+            fields.push(text(
+                "estimate_source_ref",
+                "Estimate Source Ref",
+                true,
+                "Reference backing the estimate, or `unknown`.",
+            ));
             fields.push(read_only_textarea(
                 "stp_card",
                 "STP Card",
@@ -1324,6 +1985,97 @@ fn form_fields(kind: PromptCardKind) -> Vec<PromptField> {
                 "Execution status.",
                 &["NOT_STARTED", "IN_PROGRESS", "DONE", "FAILED"],
             ));
+            fields.push(read_only_text(
+                "initial_pvf_lane",
+                "Initial PVF Lane",
+                true,
+                "System-supplied PVF lane from issue creation/bootstrap.",
+            ));
+            fields.push(read_only_text(
+                "planned_pvf_lane",
+                "Planned PVF Lane",
+                true,
+                "System-supplied planned PVF lane from SPP truth.",
+            ));
+            fields.push(text(
+                "final_pvf_lane",
+                "Final PVF Lane",
+                true,
+                "Final execution PVF lane, or `not_recorded_yet` during bootstrap.",
+            ));
+            fields.push(textarea(
+                "lane_change_reason",
+                "Lane Change Reason",
+                true,
+                "Reason the final PVF lane changed or stayed the same.",
+            ));
+            fields.push(text(
+                "estimated_elapsed_seconds",
+                "Estimated Elapsed Seconds",
+                true,
+                "Estimated issue elapsed time in seconds, or `unknown`.",
+            ));
+            fields.push(text(
+                "actual_elapsed_seconds",
+                "Actual Elapsed Seconds",
+                true,
+                "Measured issue elapsed time in seconds, or `unknown`.",
+            ));
+            fields.push(text(
+                "estimated_total_tokens",
+                "Estimated Total Tokens",
+                true,
+                "Estimated token consumption, or `unknown`.",
+            ));
+            fields.push(text(
+                "actual_total_tokens",
+                "Actual Total Tokens",
+                true,
+                "Measured token consumption, or `unknown`.",
+            ));
+            fields.push(text(
+                "estimated_validation_seconds",
+                "Estimated Validation Seconds",
+                true,
+                "Estimated validation time in seconds, or `unknown`.",
+            ));
+            fields.push(text(
+                "actual_validation_seconds",
+                "Actual Validation Seconds",
+                true,
+                "Measured validation time in seconds, or `unknown`.",
+            ));
+            fields.push(select(
+                "actual_metrics_data_source",
+                "Actual Metrics Data Source",
+                true,
+                "Where the actual issue metrics came from.",
+                &[
+                    "codex_goal_tool",
+                    "manual_entry",
+                    "derived_sprint_state",
+                    "unknown",
+                ],
+            ));
+            fields.push(text(
+                "actual_metrics_source_ref",
+                "Actual Metrics Source Ref",
+                true,
+                "Reference backing the actual metrics, or `unknown`.",
+            ));
+            fields.push(select(
+                "actual_metrics_confidence",
+                "Actual Metrics Confidence",
+                true,
+                "Confidence in the actual metric values.",
+                &["low", "medium", "high", "unknown"],
+            ));
+            fields.push(text(
+                "estimate_error_percent",
+                "Estimate Error Percent",
+                true,
+                "Difference between estimated and actual elapsed time, or `unknown`.",
+            ));
             fields.push(textarea(
                 "summary",
                 "Summary",
@@ -1413,6 +2165,18 @@ fn textarea(
     }
 }
 
+fn text(key: &'static str, label: &'static str, required: bool, help: &'static str) -> PromptField {
+    PromptField {
+        key,
+        label,
+        input: "text",
+        required,
+        editable: true,
+        help,
+        enum_values: Vec::new(),
+    }
+}
+
 fn read_only_textarea(
     key: &'static str,
     label: &'static str,
@@ -1468,6 +2232,21 @@ fn read_only_select(
 
 pub fn repo_root_from_arg(path: Option<PathBuf>) -> Result<PathBuf> {
     let root = path.unwrap_or(std::env::current_dir()?);
+    if root.join("adl/Cargo.toml").is_file() {
+        return Ok(root);
+    }
+    if root.join("Cargo.toml").is_file()
+        && root
+            .file_name()
+            .and_then(|name| name.to_str())
+            .is_some_and(|name| name == "adl")
+    {
+        if let Some(parent) = root.parent() {
+            if parent.join("adl/Cargo.toml").is_file() {
+                return Ok(parent.to_path_buf());
+            }
+        }
+    }
     ensure!(
         root.join("adl/Cargo.toml").is_file(),
         "repo root must contain adl/Cargo.toml: {}",
@@ -1487,10 +2266,14 @@ mod tests {
             .to_path_buf()
     }
 
+    fn active_template_set() -> String {
+        load_editor_model(&repo_root()).expect("model").template_set
+    }
+
     #[test]
     fn editor_model_covers_all_five_cards() {
         let model = load_editor_model(&repo_root()).expect("model");
-        assert_eq!(model.template_set, "1.0.0");
+        assert_eq!(model.template_set, "1.0.1");
         assert_eq!(
             model.card_status_values,
             [
@@ -1510,7 +2293,160 @@ mod tests {
             .any(|card| card.kind == PromptCardKind::Srp));
         assert!(model.cards.iter().all(|card| card
             .template_path
-            .starts_with("docs/templates/prompts/1.0.0/")));
+            .starts_with("docs/templates/prompts/1.0.1/")));
+    }
+
+    #[test]
+    fn import_values_accepts_rendered_cards_from_prior_template_sets() {
+        let repo_root = repo_root();
+        let tmp = std::env::temp_dir().join(format!(
+            "adl-prompt-import-legacy-{}",
+            std::time::SystemTime::now()
+                .duration_since(std::time::UNIX_EPOCH)
+                .expect("clock")
+                .as_nanos()
+        ));
+        fs::create_dir_all(&tmp).expect("tmp");
+
+        for (kind, fixture_rel) in [(
+            PromptCardKind::Spp,
+            "docs/tooling/csdlc-prompt-editor/repair_examples/spp_repaired_issue_plan.md",
+        )] {
+            let legacy_rendered =
+                fs::read_to_string(repo_root.join(fixture_rel)).expect("legacy fixture");
+
+            let input = tmp.join(format!("legacy-{}.md", kind.key()));
+            let imported = tmp.join(format!("legacy-{}.values.yaml", kind.key()));
+            let normalized = tmp.join(format!("normalized-{}.md", kind.key()));
+            fs::write(&input, legacy_rendered).expect("write legacy rendered card");
+
+            let report = import_values_from_rendered_card_file(
+                &repo_root,
+                kind,
+                &input,
+                &imported,
+                Some(&normalized),
+            )
+            .expect("import should bridge legacy rendered card");
+            assert_eq!(report.comparison, PromptCardRoundTripComparison::Normalized);
+
+            let imported_text = fs::read_to_string(&imported).expect("imported values");
+            assert!(imported_text.contains("template_set: \"1.0.1\""));
+            let normalized_text = fs::read_to_string(&normalized).expect("normalized rendered");
+            assert!(normalized_text.contains(&format!(
+                "Canonical Template Source: `docs/templates/prompts/1.0.1/{}.md`",
+                kind.key()
+            )));
+        }
+    }
+
+    #[test]
+    fn import_values_rejects_unrepresentable_legacy_sor_cards() {
+        let repo_root = repo_root();
+        let tmp = std::env::temp_dir().join(format!(
+            "adl-prompt-import-legacy-sor-{}",
+            std::time::SystemTime::now()
+                .duration_since(std::time::UNIX_EPOCH)
+                .expect("clock")
+                .as_nanos()
+        ));
+        fs::create_dir_all(&tmp).expect("tmp");
+
+        let input = tmp.join("legacy-sor.md");
+        let imported = tmp.join("legacy-sor.values.yaml");
+        let legacy_rendered = fs::read_to_string(
+            repo_root
+                .join("docs/tooling/csdlc-prompt-editor/repair_examples/sor_repaired_pr_open.md"),
+        )
+        .expect("legacy sor fixture");
+        fs::write(&input, legacy_rendered).expect("write legacy sor rendered card");
+
+        let err = import_values_from_rendered_card_file(
+            &repo_root,
+            PromptCardKind::Sor,
+            &input,
+            &imported,
+            None,
+        )
+        .expect_err("non-bootstrap legacy sor should fail closed");
+        assert!(err
+            .to_string()
+            .contains("legacy sor import only supports bootstrap scaffolds"));
+    }
+
+    #[test]
+    fn import_values_rejects_spoofed_legacy_template_cards_with_missing_truth() {
+        let repo_root = repo_root();
+        let tmp = std::env::temp_dir().join(format!(
+            "adl-prompt-import-legacy-spoof-{}",
+            std::time::SystemTime::now()
+                .duration_since(std::time::UNIX_EPOCH)
+                .expect("clock")
+                .as_nanos()
+        ));
+        fs::create_dir_all(&tmp).expect("tmp");
+        let input = tmp.join("spoofed-legacy-spp.md");
+        let imported = tmp.join("spoofed-legacy-spp.values.yaml");
+        let spoofed = r#"---
+schema_version: "0.1"
+artifact_type: "structured_planning_prompt"
+name: "spoofed-legacy-execution-plan"
+issue: 4278
+task_id: "issue-4278"
+run_id: "issue-4278"
+version: "v0.91.6"
+title: "Spoofed legacy card"
+branch: "codex/4278-spoofed"
+card_status: "approved"
+status: "reviewed"
+activation_state: "ready_for_execution_binding"
+plan_summary: "Malformed legacy card."
+---
+
+Canonical Template Source: `docs/templates/prompts/1.0.0/spp.md`
+
+# Structured Plan Prompt
+
+## Plan Summary
+
+Malformed legacy card.
+"#;
+        fs::write(&input, spoofed).expect("write spoofed legacy rendered card");
+        let err = import_values_from_rendered_card_file(
+            &repo_root,
+            PromptCardKind::Spp,
+            &input,
+            &imported,
+            None,
+        )
+        .expect_err("spoofed legacy card should fail closed");
+        assert!(err
+            .to_string()
+            .contains("legacy import requires scalar field"));
+    }
+
+    #[test]
+    fn sor_actual_metrics_data_source_editor_enum_matches_validator_sources() {
+        let model = load_editor_model(&repo_root()).expect("model");
+        let sor = model
+            .cards
+            .iter()
+            .find(|card| card.kind == PromptCardKind::Sor)
+            .expect("sor model");
+        let mut values = sample_values();
+        values.insert(
+            "actual_metrics_data_source".to_string(),
+            "codex_goal_tool".to_string(),
+        );
+        values.insert(
+            "actual_metrics_source_ref".to_string(),
+            ".adl/goal-metrics/issue-4278.json".to_string(),
+        );
+        values.insert(
+            "actual_metrics_confidence".to_string(),
+            "medium".to_string(),
+        );
+        validate_values(sor, &values).expect("editor should accept codex_goal_tool");
     }
 
     #[test]
@@ -1640,7 +2576,11 @@ mod tests {
         fs::create_dir_all(&tmp).expect("tmp");
 
         let good_path = tmp.join("sip.values.yaml");
-        fs::write(&good_path, sample_values_document(PromptCardKind::Sip)).expect("good values");
+        fs::write(
+            &good_path,
+            sample_values_document(PromptCardKind::Sip, &active_template_set()),
+        )
+        .expect("good values");
         let good =
             load_values_file(sip, &good_path, &model.template_set).expect("load good values");
         assert_eq!(good.get("card_status").map(String::as_str), Some("ready"));
@@ -1654,7 +2594,7 @@ mod tests {
         fs::write(
             &bad_locked,
             r#"schema: adl.csdlc.prompt_template_values.v1
-template_set: "1.0.0"
+template_set: "1.0.1"
 card_kind: sip
 values:
   issue: "1374"
@@ -1669,7 +2609,7 @@ values:
         fs::write(
             &bad_editable,
             r#"schema: adl.csdlc.prompt_template_values.v1
-template_set: "1.0.0"
+template_set: "1.0.1"
 card_kind: sip
 system:
   goal: "Wrong section"
@@ -1734,7 +2674,8 @@ system:
         ] {
             let input = tmp.join(format!("{}.values.yaml", kind.key()));
             let output = tmp.join(format!("{}.edited.values.yaml", kind.key()));
-            fs::write(&input, sample_values_document(kind)).expect("sample values");
+            fs::write(&input, sample_values_document(kind, &active_template_set()))
+                .expect("sample values");
 
             edit_values_file(
                 &repo_root(),
@@ -1757,7 +2698,11 @@ system:
         let input = tmp.join("stp-multiline.values.yaml");
         let output = tmp.join("stp-multiline.edited.values.yaml");
         let multiline = "First line.\nSecond line.";
-        fs::write(&input, sample_values_document(PromptCardKind::Stp)).expect("sample values");
+        fs::write(
+            &input,
+            sample_values_document(PromptCardKind::Stp, &active_template_set()),
+        )
+        .expect("sample values");
         edit_values_file(
             &repo_root(),
             PromptCardKind::Stp,
@@ -1784,7 +2729,11 @@ system:
         ));
         fs::create_dir_all(&tmp).expect("tmp");
         let sip = tmp.join("sip.values.yaml");
-        fs::write(&sip, sample_values_document(PromptCardKind::Sip)).expect("sip values");
+        fs::write(
+            &sip,
+            sample_values_document(PromptCardKind::Sip, &active_template_set()),
+        )
+        .expect("sip values");
 
         let locked = edit_values_file(
             &repo_root(),
@@ -1809,7 +2758,11 @@ system:
             .contains("sip.unknown_field is not a declared prompt-template field"));
 
         let sor = tmp.join("sor.values.yaml");
-        fs::write(&sor, sample_values_document(PromptCardKind::Sor)).expect("sor values");
+        fs::write(
+            &sor,
+            sample_values_document(PromptCardKind::Sor, &active_template_set()),
+        )
+        .expect("sor values");
         let invalid_enum = edit_values_file(
             &repo_root(),
             PromptCardKind::Sor,

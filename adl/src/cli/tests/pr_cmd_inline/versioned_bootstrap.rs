@@ -87,7 +87,7 @@ fn bootstrap_cards_use_versioned_prompt_templates_when_available() {
     ] {
         assert!(
             text.contains(&format!(
-                "Canonical Template Source: `docs/templates/prompts/1.0.0/{}.md`",
+                "Canonical Template Source: `docs/templates/prompts/1.0.1/{}.md`",
                 kind.to_ascii_lowercase()
             )),
             "{kind} should identify the versioned template source"
@@ -106,12 +106,26 @@ fn bootstrap_cards_use_versioned_prompt_templates_when_available() {
     assert!(spp.contains("activation_state: \"ready\""));
     assert!(spp.contains("initial_pvf_lane: \"prompt_template\""));
     assert!(spp.contains("planned_pvf_lane: \"prompt_template\""));
+    assert!(spp.contains("estimate_elapsed_seconds: \"unknown\""));
+    assert!(spp.contains("estimate_total_tokens: \"unknown\""));
+    assert!(spp.contains("estimate_validation_seconds: \"unknown\""));
+    assert!(spp.contains("estimate_confidence: \"unknown\""));
+    assert!(spp.contains("estimate_data_source: \"unknown\""));
+    assert!(spp.contains("estimate_source_ref: \"unknown\""));
     assert!(spp.contains("## PVF Lane Plan"));
+    assert!(spp.contains("## Estimate Plan"));
+    assert!(spp.contains(
+        "- Unknown-value rule: record `unknown`, never `0`, when the estimate is unavailable or intentionally deferred."
+    ));
     assert!(srp.contains("artifact_type: \"structured_review_prompt\""));
     assert!(sor.contains("Status: IN_PROGRESS"));
     assert!(sor.contains("## PVF Lane Truth"));
+    assert!(sor.contains("## Issue Metrics Truth"));
     assert!(sor.contains("- Initial PVF lane: `prompt_template`"));
     assert!(sor.contains("- Final PVF lane: `not_recorded_yet`"));
+    assert!(sor.contains("- Goal metrics data source: `unknown`"));
+    assert!(sor.contains("- Goal metrics source ref: `unknown`"));
+    assert!(sor.contains("- Estimate error percent: `unknown`"));
     assert!(sor.contains("Integration method used: local ignored card-bundle scaffold write under the active checkout; tracked implementation artifacts do not exist yet"));
     assert!(!sor.contains("direct write in main repo for the local ignored pre-run record"));
 }
@@ -180,7 +194,7 @@ Fresh bootstrap output contains all five C-SDLC cards with no raw template place
 ## Repo Inputs
 
 - adl/src/cli/pr_cmd_cards/cards.rs
-- docs/templates/prompts/1.0.0/
+- docs/templates/prompts/1.0.1/
 
 ## Dependencies
 
@@ -245,7 +259,7 @@ Fresh bootstrap output contains all five C-SDLC cards with no raw template place
         let text = fs::read_to_string(path).expect("read refreshed card");
         assert_no_prompt_template_residue(kind, &text);
         assert!(
-            text.contains("Canonical Template Source: `docs/templates/prompts/1.0.0/"),
+            text.contains("Canonical Template Source: `docs/templates/prompts/1.0.1/"),
             "{kind} should be regenerated from the versioned template set"
         );
     }
@@ -302,7 +316,7 @@ Legacy design-time-ready SPP from the pre-template transition window.
     ensure_bootstrap_cards(&repo, &issue_ref, title, "not bound yet", &source_path)
         .expect("legacy SPP should be refreshed");
     let spp = fs::read_to_string(&spp_path).expect("read spp");
-    assert!(spp.contains("Canonical Template Source: `docs/templates/prompts/1.0.0/spp.md`"));
+    assert!(spp.contains("Canonical Template Source: `docs/templates/prompts/1.0.1/spp.md`"));
     assert!(!spp.contains("activation_state: \"design_time_ready\""));
 }
 
@@ -539,7 +553,7 @@ review_hooks:
 notes: "Reviewed card should remain stable across pre-run bootstrap."
 ---
 
-Canonical Template Source: `docs/templates/prompts/1.0.0/spp.md`
+Canonical Template Source: `docs/templates/prompts/1.0.1/spp.md`
 
 # Structured Plan Prompt
 
@@ -631,7 +645,7 @@ status: "approved"
 activation_state: "design_time_ready"
 ---
 
-Canonical Template Source: `docs/templates/prompts/1.0.0/spp.md`
+Canonical Template Source: `docs/templates/prompts/1.0.1/spp.md`
 
 # Structured Plan Prompt
 
@@ -702,7 +716,7 @@ The generated SPP should carry source-prompt facts into the plan.
 ## Repo Inputs
 
 - adl/src/cli/pr_cmd_cards/cards.rs
-- docs/templates/prompts/1.0.0/spp.md
+- docs/templates/prompts/1.0.1/spp.md
 
 ## Dependencies
 
@@ -747,6 +761,10 @@ The generated SPP should carry source-prompt facts into the plan.
     assert!(spp.contains("activation_state: \"ready\""));
     assert!(spp.contains("initial_pvf_lane: \"prompt_template\""));
     assert!(spp.contains("planned_pvf_lane: \"prompt_template\""));
+    assert!(spp.contains("estimate_elapsed_seconds: \"unknown\""));
+    assert!(spp.contains("estimate_total_tokens: \"unknown\""));
+    assert!(spp.contains("estimate_validation_seconds: \"unknown\""));
+    assert!(spp.contains("estimate_source_ref: \"unknown\""));
     assert!(spp.contains(
         "Confirm dependency readiness and starting state: PR #3294 coverage gate must be green"
     ));
@@ -814,7 +832,7 @@ All generated prompt cards pass the sprint readiness checker.
 ## Repo Inputs
 
 - adl/src/cli/pr_cmd_cards/cards.rs
-- docs/templates/prompts/1.0.0/
+- docs/templates/prompts/1.0.1/
 
 ## Dependencies
 
@@ -870,7 +888,7 @@ All generated prompt cards pass the sprint readiness checker.
         "Use dependency truth from the linked source issue prompt",
         "Review source issue prompt and scoped repo inputs",
         "Follow demo/proof requirements from the linked source issue prompt",
-        "Generated from 1.0.0 C-SDLC prompt template; refine with editor skills before execution if needed",
+        "Generated from 1.0.1 C-SDLC prompt template; refine with editor skills before execution if needed",
     ] {
         assert!(
             !stp.contains(marker),

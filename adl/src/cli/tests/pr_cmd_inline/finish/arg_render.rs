@@ -3102,6 +3102,38 @@ fn finish_validation_profile_classifies_pr_cmd_prompt_and_versioned_bootstrap_pa
 }
 
 #[test]
+fn finish_validation_profile_classifies_prompt_template_and_structured_prompt_paths() {
+    let plan = select_finish_validation_plan(
+        "adl/src/cli/tooling_cmd/prompt_template.rs,adl/src/cli/tooling_cmd/structured_prompt.rs,adl/src/cli/tooling_cmd/tests/prompt_template.rs,adl/src/cli/tooling_cmd/tests/structured_prompt.rs,adl/src/cli/tooling_cmd/tests/support.rs",
+    )
+    .expect("prompt-template focused plan");
+
+    assert_eq!(plan.mode, FinishValidationMode::LargerBinaryFocused);
+    assert!(
+        plan.commands
+            .iter()
+            .any(|command| command.contains("cargo fmt --manifest-path")),
+        "larger-binary focused plan should require cargo fmt"
+    );
+    assert!(
+        plan.commands.iter().any(|command| {
+            command.contains(
+                "cargo test --manifest-path adl/Cargo.toml --bin adl prompt_template_ -- --nocapture",
+            )
+        }),
+        "prompt-template focused plan should include prompt_template_ validation"
+    );
+    assert!(
+        plan.commands.iter().any(|command| {
+            command.contains(
+                "cargo test --manifest-path adl/Cargo.toml --bin adl structured_prompt_ -- --nocapture",
+            )
+        }),
+        "prompt-template focused plan should include structured_prompt_ validation"
+    );
+}
+
+#[test]
 fn finish_scheduler_paths_run_scheduler_economics_focused_validation() {
     let _guard = env_lock();
     let temp = unique_temp_dir("adl-pr-finish-scheduler-focused-validation");
@@ -3241,6 +3273,56 @@ fn finish_owner_binary_paths_run_owner_binary_focused_validation() {
     assert!(cargo_calls.contains("--bin adl"));
     assert!(!cargo_calls.contains("github_token"));
     assert!(!cargo_calls.contains(" cli::pr_cmd"));
+    assert!(!cargo_calls.contains("clippy --manifest-path"));
+}
+
+#[test]
+fn finish_prompt_template_paths_run_prompt_template_focused_validation() {
+    let _guard = env_lock();
+    let temp = unique_temp_dir("adl-pr-finish-prompt-template-focused-validation");
+    let repo = temp.join("repo");
+    fs::create_dir_all(repo.join("adl/tools")).expect("adl tools dir");
+    fs::write(
+        repo.join("adl/Cargo.toml"),
+        "[package]\nname='adl'\nversion='0.1.0'\n",
+    )
+    .expect("cargo toml");
+    write_executable(
+        &repo.join("adl/tools/check_no_tracked_adl_issue_record_residue.sh"),
+        "#!/usr/bin/env bash\nset -euo pipefail\nexit 0\n",
+    );
+    init_git_repo(&repo);
+
+    let bin_dir = temp.join("bin");
+    fs::create_dir_all(&bin_dir).expect("bin dir");
+    let cargo_log = temp.join("cargo.log");
+    write_executable(
+        &bin_dir.join("cargo"),
+        &format!(
+            "#!/usr/bin/env bash\nset -euo pipefail\nprintf '%s\\n' \"$*\" >> '{}'\nexit 0\n",
+            cargo_log.display()
+        ),
+    );
+    let old_path = env::var("PATH").unwrap_or_default();
+    unsafe {
+        env::set_var("PATH", format!("{}:{}", bin_dir.display(), old_path));
+    }
+
+    let plan = select_finish_validation_plan(
+        "adl/src/cli/tooling_cmd/prompt_template.rs,adl/src/cli/tooling_cmd/structured_prompt.rs,adl/src/cli/tooling_cmd/tests/prompt_template.rs,adl/src/cli/tooling_cmd/tests/structured_prompt.rs,adl/src/cli/tooling_cmd/tests/support.rs",
+    )
+    .expect("prompt template plan");
+    assert_eq!(plan.mode, FinishValidationMode::LargerBinaryFocused);
+    run_finish_validation_rust(&repo, &plan).expect("prompt template focused validation");
+
+    unsafe {
+        env::set_var("PATH", old_path);
+    }
+
+    let cargo_calls = fs::read_to_string(&cargo_log).expect("cargo log");
+    assert!(cargo_calls.contains("fmt --manifest-path"));
+    assert!(cargo_calls.contains("--bin adl prompt_template_ -- --nocapture"));
+    assert!(cargo_calls.contains("--bin adl structured_prompt_ -- --nocapture"));
     assert!(!cargo_calls.contains("clippy --manifest-path"));
 }
 

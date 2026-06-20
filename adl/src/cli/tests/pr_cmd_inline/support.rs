@@ -268,6 +268,9 @@ pub(crate) fn copy_versioned_prompt_templates(repo: &Path) {
     let source_root = workspace_root.join("docs/templates/prompts");
     let target_root = repo.join("docs/templates/prompts");
     fs::create_dir_all(target_root.join("1.0.0")).expect("create prompt template dir");
+    fs::create_dir_all(target_root.join("1.0.0/schemas")).expect("create prompt template dir");
+    fs::create_dir_all(target_root.join("1.0.1")).expect("create prompt template dir");
+    fs::create_dir_all(target_root.join("1.0.1/schemas")).expect("create prompt template dir");
     for rel in [
         "current.json",
         "1.0.0/sip.md",
@@ -275,6 +278,21 @@ pub(crate) fn copy_versioned_prompt_templates(repo: &Path) {
         "1.0.0/spp.md",
         "1.0.0/srp.md",
         "1.0.0/sor.md",
+        "1.0.0/schemas/sip.structure.json",
+        "1.0.0/schemas/stp.structure.json",
+        "1.0.0/schemas/spp.structure.json",
+        "1.0.0/schemas/srp.structure.json",
+        "1.0.0/schemas/sor.structure.json",
+        "1.0.1/sip.md",
+        "1.0.1/stp.md",
+        "1.0.1/spp.md",
+        "1.0.1/srp.md",
+        "1.0.1/sor.md",
+        "1.0.1/schemas/sip.structure.json",
+        "1.0.1/schemas/stp.structure.json",
+        "1.0.1/schemas/spp.structure.json",
+        "1.0.1/schemas/srp.structure.json",
+        "1.0.1/schemas/sor.structure.json",
     ] {
         fs::copy(source_root.join(rel), target_root.join(rel)).expect("copy prompt template");
     }

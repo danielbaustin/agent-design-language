@@ -10,6 +10,8 @@ fn prompt_template_cli_renders_and_validates_all_five_cards_from_values() {
     real_tooling(&[
         "prompt-template".to_string(),
         "write-sample-values".to_string(),
+        "--repo-root".to_string(),
+        repo_root_for_tests().to_string_lossy().to_string(),
         "--out-dir".to_string(),
         values_dir.to_string_lossy().to_string(),
     ])
@@ -91,6 +93,8 @@ fn prompt_template_cli_renders_one_card_and_rejects_locked_value_edits() {
     real_tooling(&[
         "prompt-template".to_string(),
         "write-sample-values".to_string(),
+        "--repo-root".to_string(),
+        repo_root_for_tests().to_string_lossy().to_string(),
         "--out-dir".to_string(),
         values_dir.to_string_lossy().to_string(),
     ])
@@ -118,7 +122,7 @@ fn prompt_template_cli_renders_one_card_and_rejects_locked_value_edits() {
 
     let locked = repo.write_rel(
         "locked.values.yaml",
-        "schema: adl.csdlc.prompt_template_values.v1\ntemplate_set: 1.0.0\ncard_kind: stp\nsystem: {}\nvalues:\n  issue: \"1374\"\n",
+        "schema: adl.csdlc.prompt_template_values.v1\ntemplate_set: 1.0.1\ncard_kind: stp\nsystem: {}\nvalues:\n  issue: \"1374\"\n",
     );
     let err = real_tooling(&[
         "prompt-template".to_string(),
@@ -144,6 +148,8 @@ fn prompt_template_cli_edits_declared_values_and_fails_closed() {
     real_tooling(&[
         "prompt-template".to_string(),
         "write-sample-values".to_string(),
+        "--repo-root".to_string(),
+        repo_root_for_tests().to_string_lossy().to_string(),
         "--out-dir".to_string(),
         values_dir.to_string_lossy().to_string(),
     ])
@@ -232,6 +238,8 @@ fn prompt_template_cli_edits_spp_lifecycle_status_values() {
     real_tooling(&[
         "prompt-template".to_string(),
         "write-sample-values".to_string(),
+        "--repo-root".to_string(),
+        repo_root_for_tests().to_string_lossy().to_string(),
         "--out-dir".to_string(),
         values_dir.to_string_lossy().to_string(),
     ])
@@ -389,6 +397,8 @@ fn prompt_template_cli_imports_lifecycle_updated_spp_values() {
     real_tooling(&[
         "prompt-template".to_string(),
         "write-sample-values".to_string(),
+        "--repo-root".to_string(),
+        repo_root_for_tests().to_string_lossy().to_string(),
         "--out-dir".to_string(),
         values_dir.to_string_lossy().to_string(),
     ])
@@ -475,6 +485,82 @@ fn prompt_template_cli_imports_lifecycle_updated_spp_values() {
         fs::read_to_string(rerendered).expect("rerendered SPP"),
         source
     );
+}
+
+#[test]
+fn prompt_template_validate_values_fails_closed_for_invalid_spp_estimate_coupling() {
+    let repo = TempRepo::new("prompt-template-invalid-spp-estimate");
+    let values_dir = repo.path().join("values");
+
+    real_tooling(&[
+        "prompt-template".to_string(),
+        "write-sample-values".to_string(),
+        "--repo-root".to_string(),
+        repo_root_for_tests().to_string_lossy().to_string(),
+        "--out-dir".to_string(),
+        values_dir.to_string_lossy().to_string(),
+    ])
+    .expect("write sample values");
+
+    let err = real_tooling(&[
+        "prompt-template".to_string(),
+        "edit-values".to_string(),
+        "--repo-root".to_string(),
+        repo_root_for_tests().to_string_lossy().to_string(),
+        "--kind".to_string(),
+        "spp".to_string(),
+        "--values".to_string(),
+        values_dir
+            .join("spp.values.yaml")
+            .to_string_lossy()
+            .to_string(),
+        "--set".to_string(),
+        "estimate_data_source=unknown".to_string(),
+        "--set".to_string(),
+        "estimate_confidence=high".to_string(),
+    ])
+    .expect_err("invalid spp estimate coupling should fail during edit-values");
+    assert!(err.to_string().contains(
+        "spp.estimate_confidence cannot be set when spp.estimate_data_source is `unknown`"
+    ));
+}
+
+#[test]
+fn prompt_template_validate_values_fails_closed_for_invalid_sor_metrics_coupling() {
+    let repo = TempRepo::new("prompt-template-invalid-sor-metrics");
+    let values_dir = repo.path().join("values");
+
+    real_tooling(&[
+        "prompt-template".to_string(),
+        "write-sample-values".to_string(),
+        "--repo-root".to_string(),
+        repo_root_for_tests().to_string_lossy().to_string(),
+        "--out-dir".to_string(),
+        values_dir.to_string_lossy().to_string(),
+    ])
+    .expect("write sample values");
+
+    let err = real_tooling(&[
+        "prompt-template".to_string(),
+        "edit-values".to_string(),
+        "--repo-root".to_string(),
+        repo_root_for_tests().to_string_lossy().to_string(),
+        "--kind".to_string(),
+        "sor".to_string(),
+        "--values".to_string(),
+        values_dir
+            .join("sor.values.yaml")
+            .to_string_lossy()
+            .to_string(),
+        "--set".to_string(),
+        "actual_metrics_data_source=unknown".to_string(),
+        "--set".to_string(),
+        "actual_metrics_confidence=high".to_string(),
+    ])
+    .expect_err("invalid sor metrics coupling should fail during edit-values");
+    assert!(err
+        .to_string()
+        .contains("sor.actual_metrics_confidence cannot be set when sor.actual_metrics_data_source is `unknown`"));
 }
 
 #[test]
@@ -647,7 +733,7 @@ fn prompt_template_cli_usage_and_error_paths_are_deterministic() {
     let repo = TempRepo::new("prompt-template-errors");
     let values = repo.write_rel(
         "sip.values.yaml",
-        "schema: adl.csdlc.prompt_template_values.v1\ntemplate_set: 1.0.0\ncard_kind: sip\nsystem:\n  issue: \"1374\"\n",
+        "schema: adl.csdlc.prompt_template_values.v1\ntemplate_set: 1.0.1\ncard_kind: sip\nsystem:\n  issue: \"1374\"\n",
     );
 
     real_tooling(&["prompt-template".to_string(), "help".to_string()])
@@ -661,6 +747,8 @@ fn prompt_template_cli_usage_and_error_paths_are_deterministic() {
     real_tooling(&[
         "prompt-template".to_string(),
         "write-sample-values".to_string(),
+        "--repo-root".to_string(),
+        repo_root_for_tests().to_string_lossy().to_string(),
         "--help".to_string(),
     ])
     .expect("write-sample-values help should succeed");
@@ -738,6 +826,8 @@ fn prompt_template_cli_usage_and_error_paths_are_deterministic() {
     let missing_out_dir = real_tooling(&[
         "prompt-template".to_string(),
         "write-sample-values".to_string(),
+        "--repo-root".to_string(),
+        repo_root_for_tests().to_string_lossy().to_string(),
     ])
     .expect_err("write-sample-values requires out dir");
     assert!(missing_out_dir
@@ -801,6 +891,8 @@ fn render_sample_cards_for_structure_test(
     real_tooling(&[
         "prompt-template".to_string(),
         "write-sample-values".to_string(),
+        "--repo-root".to_string(),
+        repo_root_for_tests().to_string_lossy().to_string(),
         "--out-dir".to_string(),
         values_dir.to_string_lossy().to_string(),
     ])

@@ -202,7 +202,7 @@ fn yaml_scalar(value: &str) -> String {
     format!("\"{}\"", value.replace('\\', "\\\\").replace('"', "\\\""))
 }
 
-pub(super) fn sample_values_document(kind: PromptCardKind) -> String {
+pub(super) fn sample_values_document(kind: PromptCardKind, template_set: &str) -> String {
     let mut values = sample_values();
     if kind == PromptCardKind::Spp {
         values.insert("status".to_string(), "draft".to_string());
@@ -221,7 +221,7 @@ pub(super) fn sample_values_document(kind: PromptCardKind) -> String {
 
     let mut out = String::new();
     out.push_str("schema: adl.csdlc.prompt_template_values.v1\n");
-    out.push_str("template_set: 1.0.0\n");
+    out.push_str(&format!("template_set: {template_set}\n"));
     out.push_str(&format!("card_kind: {}\n", kind.key()));
     out.push_str("system:\n");
     for key in system_keys {
