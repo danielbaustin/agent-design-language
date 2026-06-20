@@ -95,3 +95,35 @@ Deferred or folded candidates:
 - CodeFriend pre-alpha publication remains covered by ADR 0025 and current
   sidecar milestone planning unless a future product-boundary change requires a
   separate ADR.
+
+## v0.91.6 ADR Mini-Sprint Candidate Packet
+
+Issue `#4324` records the v0.91.6 release-tail ADR mini-sprint packet at
+`../../milestones/v0.91.6/ADR_MINI_SPRINT_PACKET_v0.91.6.md`.
+
+The packet is a proposed candidate catalog and routing surface. It does not
+accept new ADRs by itself.
+
+Required v0.91.6 candidates:
+
+| Candidate | Proposed status | Summary |
+| --- | --- | --- |
+| Local Polis SSM Operations Boundary | candidate_required | AWS SSM may act as an operations/observability bridge for approved local polis hosts, but not as authority for polis state, governance, memory, identity, provider selection, or model content. |
+| Validation Lane Selector / PVF Test-Cost Policy | candidate_required | Normal PR work should run deterministic focused validation lanes selected from tracked metadata, while ambiguous and release-gate surfaces escalate or fail closed. |
+| GitHub/C-SDLC Projection Ownership | candidate_required | C-SDLC cards remain authority; GitHub surfaces are managed projections, drift-checked projections, linked external state, card-local-only surfaces, or deferred. |
+| Runtime Integration Soak Boundary | candidate_required | Runtime coherence requires integrated soak evidence; Soak #1 is a walking skeleton and Soak #2 gates full feature-list readiness before v0.92. |
+| Cognitive Scheduler v1 Authority Boundary | candidate_required | Scheduler v1 produces deterministic lane-selection evidence and does not execute tasks, mutate GitHub, select live providers, or own timed automation. |
+| Workflow Lockfile Discipline | candidate_required_needs_source_packet | Lifecycle tooling must use locked dependency resolution and treat lockfile changes as explicit issue-scoped artifacts; promotion still needs a retained local source packet for the `#4306` fix. |
+| Provider/Model Suitability Boundary v2 | candidate_required | Provider availability, capability profiles, model-role suitability, reliability evidence, and role-provider advisory authority are distinct surfaces. |
+| Public Prompt Records Publication Boundary | candidate_required | `.adl` authoring records become public only through reviewed export, redaction, validation, indexing, and security/CAV handoff paths. |
+
+Existing candidate routing from the same packet:
+
+| Candidate | v0.91.6 recommendation |
+| --- | --- |
+| ADR 0029: C-SDLC Default Software-Development Lane | promote or refresh then promote |
+| ADR 0030: Software Development Polis Actor Standing And Shard Ownership | defer with active route |
+| ADR 0031: C-SDLC Multi-Agent Parallel Execution Boundary | defer with active route |
+| ADR 0032: Parallel Validation Fabric | promote or refresh then promote |
+| ADR 0033: Merge Readiness And PR Gate Truth Boundary | promote or refresh then promote |
+| ADR 0034: C-SDLC Evidence Convergence, Signed Trace, And ObsMem Handoff | defer with active route |
