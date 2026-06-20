@@ -4,7 +4,7 @@
 
 - Feature Name: Tokio Runtime Substrate
 - Milestone Target: `v0.91.6`
-- Status: closeout_in_progress_on_issue_4183
+- Status: closeout_packet_merged_with_runtime_residuals_routed
 - Owner: ADL maintainers
 - Doc Role: primary closeout packet for the Tokio prerequisite wave
 - Feature Types: runtime, architecture, closeout
@@ -66,15 +66,15 @@ June 19, 2026:
 
 | Surface | Live state at closeout authoring | Meaning for the wave |
 | --- | --- | --- |
-| `#4177` Tokio runtime prerequisite umbrella | `open` | Umbrella remains open until this closeout packet merges and the wave is intentionally closed. |
+| `#4177` Tokio runtime prerequisite umbrella | `closed` | Umbrella closeout is complete and the wave now stands as retained milestone truth. |
 | `#4178` Tokio feature baseline | `closed` | The shared Tokio feature floor landed. |
 | `#4179` long-lived cadence migration | `closed` | Long-lived cadence now uses Tokio timers/tasks instead of blocking sleep. |
 | `#4180` runtime bootstrap consolidation | `closed` | Shared runtime bootstrap helper landed and reduced duplicated current-thread runtime setup. |
 | `#4181` ACIP-facing runtime substrate | `closed` | ACIP runtime work has a clearer shared-runtime floor and explicit remote-exec ownership boundary. |
 | `#4182` bounded CAV cadence integration route | `closed` | Bounded CAV cadence now explicitly consumes the shared Tokio runtime without overclaiming always-on adversarial operation. |
-| `#4183` closeout proof | `open` on this branch | Final child issue responsible for consolidating wave truth and residual routing. |
+| `#4183` closeout proof | `closed` | Final child issue consolidated wave truth and residual routing before closure. |
 | `#4185` integrated runtime soak sprint | `open` | Later owner for runtime coherence and visible integrated soak claims. |
-| `#4160` ACIP runtime umbrella | `open` | Downstream consumer of the landed shared-runtime substrate. |
+| `#4160` ACIP runtime umbrella | `closed` | Downstream consumer completed its bounded runtime substrate lane and no longer remains a live blocker for this retained closeout packet. |
 
 ## Delivery Matrix
 
