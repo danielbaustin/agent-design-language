@@ -95,6 +95,11 @@ issue while coordinating broader sprint intent through a declared Sprint
 Execution Packet, then finishes with sprint review and closeout. SEP can record
 safe parallel lanes for separate workers or sessions; it is not itself a claim
 that the current helper scripts automate multi-active issue execution.
+When SEP routing starts or resumes a live child issue session, the sprint
+handoff should carry the same issue-bound session-goal requirement directly
+instead of relying on a separate manual reminder. For SEP-routed child work,
+the minimum goal surface is the sprint issue number when present, the child
+issue number, and the bounded session objective.
 `adl-milestone-creator` is a bounded milestone setup helper for creating full milestone packages, bridge milestones, issue-routing truth, feature/proof coverage, and downstream handoff docs without relying on session memory.
 `issue-folding` is a bounded issue-disposition helper for classifying duplicate, superseded, absorbed, already-satisfied, obsolete, or still-actionable issues before closeout.
 `issue-splitter` is a bounded issue-scope helper for deciding whether one issue should stay intact, split now, defer splitting, or stop for operator review.
@@ -115,6 +120,9 @@ issue proves that integration. A truthful `complete` update may represent a
 session handoff into normal review/wait state after PR publication when that
 handoff was the declared bounded session objective; it does not imply the whole
 issue is merged or closed.
+When the session is started through sprint orchestration, keep the same timing
+rule and make the goal content SEP-aware: include sprint issue context when
+present, the child issue number, and the bounded child-session objective.
 
 The PR lifecycle skills share the CI runtime interpretation policy in
 `adl/tools/skills/docs/CI_RUNTIME_POLICY_GUIDE.md`. Stable PR check names

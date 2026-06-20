@@ -61,20 +61,28 @@ Optional:
    - in `hybrid`, use the SEP to identify ready lane work until a named serial
      gate blocks progress
 7. Route the selected child issue or lane handoff through `workflow-conductor`.
-8. Run only the selected downstream lifecycle or editor skill.
-9. Re-check issue truth.
-10. If the issue is in a healthy PR-open waiting state, route `issue-watcher`
+8. When the route starts or resumes live child execution, attach the
+   issue-bound session-goal requirement in the same handoff:
+   - create the goal after bind/readiness succeeds and before implementation
+     starts
+   - include the sprint issue number when present, the child issue number, and
+     the bounded session objective
+   - for `parallel` or `hybrid` lanes, each separate worker/session creates its
+     own child-session goal rather than sharing one sprint-global goal
+9. Run only the selected downstream lifecycle or editor skill.
+10. Re-check issue truth.
+11. If the issue is in a healthy PR-open waiting state, route `issue-watcher`
    so the sprint remains attached to the active child without turning healthy
    waiting into a default conversational stop.
-11. If the watcher finds failed checks, conflicts, requested changes, or
+12. If the watcher finds failed checks, conflicts, requested changes, or
    ambiguous path-policy state, route `pr-janitor`.
-12. If the watcher finds that the PR merged or the issue otherwise closed,
+13. If the watcher finds that the PR merged or the issue otherwise closed,
    immediately route `pr-closeout`.
-13. If the issue is fully closed out, use the deterministic child-closeout
+14. If the issue is fully closed out, use the deterministic child-closeout
    helper to mark it complete and move to the next issue.
-14. If the issue is still active after the fresh truth check, repeat the
+15. If the issue is still active after the fresh truth check, repeat the
    routing loop for the same issue.
-15. If any true blocker is encountered, stop and report the blocker in
+16. If any true blocker is encountered, stop and report the blocker in
    sprint-state.
 
 Important: sprint-level aggregate proof must not hide failed, pending,

@@ -155,22 +155,29 @@ missing sprint-management issue first.
    single-current-issue; parallel execution is achieved by separate issue
    workers/sessions using the SEP as the coordination contract.
 9. Route the selected child issue or lane handoff through `workflow-conductor`.
-10. Re-check live issue and PR truth before acting. This is a blocking gate, not a suggestion.
-11. Run only the selected downstream lifecycle or editor skill.
-12. Re-check issue truth. Every sprint-state transition consumes the last successful truth check, so the next transition requires a fresh recheck.
-13. If the issue is healthy but waiting on review, checks, or merge, route it into the bounded watch/janitor path rather than surfacing that healthy waiting state as a default sprint stop.
-14. If the issue is merged or otherwise closed but not locally closeouted yet, immediately route `pr-closeout` and finish the child-closeout gate.
-15. If the issue is fully closed out, use the deterministic child-closeout helper path to advance sprint state.
-16. If the issue is still active after the fresh truth check, repeat the routing loop for the same issue.
-17. In `sequential` mode, only after child-closeout truth is satisfied may the
+10. When that handoff starts or resumes live child execution, attach the
+    issue-bound session-goal requirement as part of the SEP handoff rather than
+    as a separate manual reminder.
+11. For SEP-routed child execution, create the goal after bind/readiness
+    succeeds and before implementation starts. Minimum goal content:
+    sprint issue number when present, child issue number, and the bounded
+    session objective.
+12. Re-check live issue and PR truth before acting. This is a blocking gate, not a suggestion.
+13. Run only the selected downstream lifecycle or editor skill.
+14. Re-check issue truth. Every sprint-state transition consumes the last successful truth check, so the next transition requires a fresh recheck.
+15. If the issue is healthy but waiting on review, checks, or merge, route it into the bounded watch/janitor path rather than surfacing that healthy waiting state as a default sprint stop.
+16. If the issue is merged or otherwise closed but not locally closeouted yet, immediately route `pr-closeout` and finish the child-closeout gate.
+17. If the issue is fully closed out, use the deterministic child-closeout helper path to advance sprint state.
+18. If the issue is still active after the fresh truth check, repeat the routing loop for the same issue.
+19. In `sequential` mode, only after child-closeout truth is satisfied may the
     sprint advance to the next ordered issue. In `parallel` or `hybrid` mode,
     do not treat a lane as clear unless its SEP-defined dependencies, serial
     gates, and issue-local closeout truth are satisfied.
-18. After the final issue closes, assemble sprint review evidence.
-19. Record sprint closeout metrics including coverage and Rust tracker counts.
-20. Run the deterministic sprint closeout helper to classify `ready_to_close`, `needs_remediation`, or `blocked`, write/update the retained closeout artifact, and generate the final sprint close summary.
-21. Only when the closeout helper reports `ready_to_close`, close the sprint-management issue.
-22. Stop with one bounded sprint review/closeout result.
+20. After the final issue closes, assemble sprint review evidence.
+21. Record sprint closeout metrics including coverage and Rust tracker counts.
+22. Run the deterministic sprint closeout helper to classify `ready_to_close`, `needs_remediation`, or `blocked`, write/update the retained closeout artifact, and generate the final sprint close summary.
+23. Only when the closeout helper reports `ready_to_close`, close the sprint-management issue.
+24. Stop with one bounded sprint review/closeout result.
 
 ## Execution Model
 
@@ -188,6 +195,10 @@ This skill enforces:
   mode
 - no intentional parallel lane work unless the SEP names the lane, write-set
   boundary, proof lane, and required coordination
+- no live child implementation handoff without the child issue-bound session
+  goal created after bind/readiness succeeds
+- no SEP-routed child session goal that omits sprint context when a sprint
+  issue exists, the child issue number, or the bounded session objective
 - editor-skill routing when cards drift
 - prompt-template renderer/schema validation when cards need deterministic
   regeneration rather than lifecycle-truth repair
@@ -241,6 +252,9 @@ Preferred per-issue routing model:
 - card-local SOR issue -> `sor-editor`
 - structurally ready but not bound -> `pr-ready`
 - ready for execution bind -> `pr-run`
+- live child execution handoff through `pr-run` must carry the issue-bound
+  session-goal requirement directly in the sprint handoff; do not leave SEP
+  child sessions dependent on a separate manual `create_goal` reminder
 - execution complete, needs publication -> `pr-finish`
 - healthy PR open and awaiting human review, checks, or merge -> `issue-watcher`
 - PR in flight with actual blockers -> `pr-janitor`
