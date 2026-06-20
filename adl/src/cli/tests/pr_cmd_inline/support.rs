@@ -317,10 +317,7 @@ pub(crate) fn write_alternate_stp_prompt_template(repo: &Path) {
         .expect("read base stp template");
     fs::write(
         alternate_dir.join("stp.md"),
-        base.replace(
-            "Canonical Template Source: `docs/templates/prompts/1.0.2/stp.md`",
-            "Canonical Template Source: `docs/templates/prompts/1.0.2/stp.md`",
-        ) + "\n\nRegistry route proof: alternate STP template.\n",
+        base + "\n\nRegistry route proof: alternate STP template.\n",
     )
     .expect("write alternate stp template");
     fs::write(

@@ -1036,8 +1036,8 @@ pub(super) fn validate_sor_text(text: &str, phase: Option<&str>) -> Result<()> {
                 "overestimated_scope",
             ],
         )?;
-        let variance_note = markdown_metric_field(&variance_body, "Variance note")
-            .unwrap_or_else(|| "".to_string());
+        let variance_note =
+            markdown_metric_field(&variance_body, "Variance note").unwrap_or_default();
         let any_known_pair_exceeds_threshold = [
             metrics_pair_exceeds_variance_threshold(
                 estimated_elapsed.as_deref().unwrap_or("unknown"),
