@@ -8,6 +8,8 @@ use adl::control_plane::{card_input_path, resolve_cards_root, resolve_primary_ch
 
 pub(super) const REQUIRED_OUTPUT_SECTIONS: &[&str] = &[
     "Summary",
+    "PVF Lane Truth",
+    "Issue Metrics Truth",
     "Artifacts produced",
     "Actions taken",
     "Main Repo Integration (REQUIRED)",

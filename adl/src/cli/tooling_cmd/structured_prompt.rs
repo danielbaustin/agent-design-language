@@ -949,6 +949,8 @@ pub(super) fn validate_spp_text(text: &str) -> Result<()> {
         &body_text,
         &[
             "Plan Summary",
+            "PVF Lane Plan",
+            "Estimate Plan",
             "Codex Plan",
             "Assumptions",
             "Proposed Steps",

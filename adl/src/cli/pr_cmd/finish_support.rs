@@ -1101,7 +1101,11 @@ pub(super) fn select_finish_validation_plan(paths_csv: &str) -> Result<FinishVal
     if paths.is_empty() {
         bail!("finish: --paths resolved to empty");
     }
-    if paths.iter().all(|path| finish_path_is_docs_only(path)) {
+    if paths.iter().all(|path| finish_path_is_docs_only(path))
+        && !paths
+            .iter()
+            .any(|path| finish_path_needs_prompt_template_focused_validation(path))
+    {
         return Ok(FinishValidationPlan {
             mode: FinishValidationMode::DocsOnly,
             commands: vec![
@@ -1812,6 +1816,8 @@ fn finish_path_is_larger_binary_focused(path: &str) -> bool {
         || trimmed.starts_with("adl/tests/fixtures/scheduler/")
         || trimmed.starts_with("docs/milestones/v0.91.4/review/merge_readiness/")
         || trimmed.starts_with("adl/src/cli/tests/pr_cmd_inline/finish/")
+        || trimmed == "docs/templates/prompts/current.json"
+        || trimmed.starts_with("docs/templates/prompts/")
 }
 
 fn finish_path_needs_pr_finish_rust_focused_validation(path: &str) -> bool {
@@ -1894,7 +1900,8 @@ fn finish_path_needs_prompt_template_focused_validation(path: &str) -> bool {
             | "adl/src/cli/tooling_cmd/tests/prompt_template.rs"
             | "adl/src/cli/tooling_cmd/tests/structured_prompt.rs"
             | "adl/src/cli/tooling_cmd/tests/support.rs"
-    )
+            | "docs/templates/prompts/current.json"
+    ) || trimmed.starts_with("docs/templates/prompts/")
 }
 
 fn finish_path_needs_long_lived_agent_tokio_validation(path: &str) -> bool {
