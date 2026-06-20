@@ -276,6 +276,7 @@ fn real_pr_issue(args: &[String]) -> Result<()> {
                     status: "created",
                     issue: parse_issue_number_from_url(&url).ok(),
                     url: Some(url),
+                    reason: None,
                 })?;
             } else {
                 println!("{url}");
@@ -294,6 +295,7 @@ fn real_pr_issue(args: &[String]) -> Result<()> {
                     status: "commented",
                     issue: Some(issue),
                     url: None,
+                    reason: None,
                 })?;
             }
         }
@@ -329,6 +331,23 @@ fn real_pr_issue(args: &[String]) -> Result<()> {
                     status: "edited",
                     issue: Some(issue),
                     url: None,
+                    reason: None,
+                })?;
+            }
+        }
+        IssueArgs::Close(parsed) => {
+            let repo = parsed
+                .repo
+                .or_else(|| repo_from_issue_ref(&parsed.issue_ref))
+                .unwrap_or(default_repo(&repo_root)?);
+            let issue = parse_issue_ref_number("issue close", &parsed.issue_ref)?;
+            github::gh_issue_close(&repo, issue, parsed.reason)?;
+            if parsed.json {
+                print_json(&IssueMutationResult {
+                    status: "closed",
+                    issue: Some(issue),
+                    url: None,
+                    reason: Some(parsed.reason.as_str()),
                 })?;
             }
         }
@@ -341,6 +360,8 @@ struct IssueMutationResult {
     status: &'static str,
     issue: Option<u32>,
     url: Option<String>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    reason: Option<&'static str>,
 }
 
 fn parse_issue_ref_number(command: &str, issue_ref: &str) -> Result<u32> {
@@ -779,7 +800,7 @@ fn real_pr_start(args: &[String]) -> Result<()> {
     let mut slug = parsed.slug.clone().unwrap_or_default();
     let mut slug_from_local_identity = false;
     if title.is_empty() && !parsed.no_fetch_issue {
-        eprintln!("• Fetching issue title via gh…");
+        eprintln!("• Fetching issue title via ADL GitHub transport…");
         title = gh_issue_title(parsed.issue, &repo)?.unwrap_or_default();
     }
     if slug.is_empty() {
@@ -1107,7 +1128,7 @@ fn real_pr_init(args: &[String]) -> Result<()> {
     let mut slug_from_local_identity = false;
 
     if title.is_empty() && !parsed.no_fetch_issue {
-        eprintln!("• Fetching issue title via gh…");
+        eprintln!("• Fetching issue title via ADL GitHub transport…");
         title = gh_issue_title(issue, &repo)?.unwrap_or_default();
     }
     if slug.is_empty() {

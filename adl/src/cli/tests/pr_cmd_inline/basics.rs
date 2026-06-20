@@ -1,4 +1,5 @@
 use super::*;
+use crate::cli::pr_cmd_args::IssueCloseReason;
 use crate::cli::pr_cmd_args::IssueStateFilter;
 use crate::cli::pr_cmd_cards::render_issue_prompt_from_body;
 
@@ -317,6 +318,23 @@ fn parse_issue_args_accepts_list_search_and_view_modes() {
         }
         other => panic!("expected edit args, got {other:?}"),
     }
+
+    let parsed = parse_issue_args(&[
+        "close".to_string(),
+        "https://github.com/owner/repo/issues/77".to_string(),
+        "--reason".to_string(),
+        "not_planned".to_string(),
+        "--json".to_string(),
+    ])
+    .expect("parse issue close");
+    match parsed {
+        IssueArgs::Close(parsed) => {
+            assert_eq!(parsed.issue_ref, "https://github.com/owner/repo/issues/77");
+            assert_eq!(parsed.reason, IssueCloseReason::NotPlanned);
+            assert!(parsed.json);
+        }
+        other => panic!("expected close args, got {other:?}"),
+    }
 }
 
 #[test]
@@ -451,7 +469,7 @@ fn real_pr_issue_covers_list_search_view_and_mutation_against_mock_github() {
     std::fs::write(&body_path, "Created body\n").expect("write body");
     let comment_path = repo.join("comment.md");
     std::fs::write(&comment_path, "Comment body\n").expect("write comment");
-    let (base_uri, server) = spawn_issue_octocrab_test_server(8);
+    let (base_uri, server) = spawn_issue_octocrab_test_server(9);
     unsafe {
         std::env::set_var("ADL_GITHUB_CLIENT", "octocrab");
         std::env::set_var("ADL_GITHUB_OCTOCRAB_BASE_URI", &base_uri);
@@ -497,10 +515,17 @@ fn real_pr_issue_covers_list_search_view_and_mutation_against_mock_github() {
         "area:tools".to_string(),
     ])
     .expect("issue edit");
+    real_pr_issue(&[
+        "close".to_string(),
+        "77".to_string(),
+        "--reason".to_string(),
+        "not_planned".to_string(),
+    ])
+    .expect("issue close");
 
     std::env::set_current_dir(prev_dir).expect("restore cwd");
     let seen = server.join().expect("server join");
-    assert_eq!(seen.len(), 8);
+    assert_eq!(seen.len(), 9);
     assert!(seen[0].starts_with("GET /repos/owner/repo/issues?"));
     assert!(seen[1].contains("/search/issues?"));
     assert!(seen[2].starts_with("GET /repos/owner/repo/issues/77"));
@@ -512,6 +537,9 @@ fn real_pr_issue_covers_list_search_view_and_mutation_against_mock_github() {
     assert!(seen[6].starts_with("GET /repos/owner/repo/labels?"));
     assert!(seen[7].starts_with("PATCH /repos/owner/repo/issues/77 "));
     assert!(seen[7].contains("area:tools"));
+    assert!(seen[8].starts_with("PATCH /repos/owner/repo/issues/77 "));
+    assert!(seen[8].contains("\"state\":\"closed\""));
+    assert!(seen[8].contains("\"state_reason\":\"not_planned\""));
 }
 
 #[test]
