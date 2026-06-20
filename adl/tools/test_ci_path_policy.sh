@@ -46,6 +46,34 @@ EOF
 jobs:
   adl-coverage:
     steps:
+      - name: Determine PR fast coverage filters
+        id: coverage-impact
+        if: github.event_name == 'pull_request' && steps.path-policy.outputs.coverage_required == 'true' && steps.path-policy.outputs.full_coverage_required != 'true'
+        run: |
+          set -euo pipefail
+          bash adl/tools/check_coverage_impact.sh \
+            --base "${{ github.event.pull_request.base.sha }}" \
+            --head "${{ github.event.pull_request.head.sha }}" \
+            --print-risk-nextest-expression > adl/coverage-impact-filter-expression.txt
+          if test -s adl/coverage-impact-filter-expression.txt; then
+            echo "needs_fast_summary=true" >> "$GITHUB_OUTPUT"
+            echo "filter_expression=$(cat adl/coverage-impact-filter-expression.txt)" >> "$GITHUB_OUTPUT"
+          else
+            echo "needs_fast_summary=false" >> "$GITHUB_OUTPUT"
+            echo "filter_expression=" >> "$GITHUB_OUTPUT"
+          fi
+        working-directory: .
+      - name: PR fast coverage summary (json)
+        if: github.event_name == 'pull_request' && steps.path-policy.outputs.coverage_required == 'true' && steps.path-policy.outputs.full_coverage_required != 'true' && steps.coverage-impact.outputs.needs_fast_summary == 'true'
+        run: |
+          rm -rf target/debug target/llvm-cov-target
+          COVERAGE_BUILD_ROOT="${RUNNER_TEMP:-/tmp}/adl-pr-fast-coverage"
+          mkdir -p "$COVERAGE_BUILD_ROOT/target" "$COVERAGE_BUILD_ROOT/llvm-cov-target"
+          export CARGO_TARGET_DIR="$COVERAGE_BUILD_ROOT/target"
+          export CARGO_LLVM_COV_TARGET_DIR="$COVERAGE_BUILD_ROOT/llvm-cov-target"
+          CARGO_INCREMENTAL=0 cargo llvm-cov nextest --workspace --status-level all --final-status-level slow --no-report -E "${{ steps.coverage-impact.outputs.filter_expression }}"
+          cargo llvm-cov report --json --summary-only --output-path coverage-summary.json
+        working-directory: .
       - name: Coverage run and summary (json)
         run: bash tools/run_authoritative_coverage_lane.sh
       - name: Coverage summary (text)
@@ -505,17 +533,25 @@ EOF
   python3 - <<'PY'
 from pathlib import Path
 
+
+def replace_once(text: str, old: str, new: str, label: str) -> str:
+    if old not in text:
+        raise SystemExit(f"expected workflow snippet missing for {label}")
+    return text.replace(old, new, 1)
+
 workflow = Path(".github/workflows/ci.yaml")
 text = workflow.read_text()
-text = text.replace(
-    '            echo "filters=$(paste -sd\' \' adl/coverage-impact-filters.txt)" >> "$GITHUB_OUTPUT"\n',
-    '            echo "filters=$(paste -sd\' \' adl/coverage-impact-filters.txt)" >> "$GITHUB_OUTPUT"\n            echo "run_cli_smoke_process_status=true" >> "$GITHUB_OUTPUT"\n            echo "run_cli_smoke_basics=true" >> "$GITHUB_OUTPUT"\n',
-    1,
+text = replace_once(
+    text,
+    '            echo "filter_expression=$(cat adl/coverage-impact-filter-expression.txt)" >> "$GITHUB_OUTPUT"\n',
+    '            echo "filter_expression=$(cat adl/coverage-impact-filter-expression.txt)" >> "$GITHUB_OUTPUT"\n            echo "run_cli_smoke_process_status=true" >> "$GITHUB_OUTPUT"\n            echo "run_cli_smoke_basics=true" >> "$GITHUB_OUTPUT"\n',
+    "coverage-impact output augmentation",
 )
-text = text.replace(
+text = replace_once(
+    text,
     "          rm -rf target/debug target/llvm-cov-target\n          COVERAGE_BUILD_ROOT=\"${RUNNER_TEMP:-/tmp}/adl-pr-fast-coverage\"\n          mkdir -p \"$COVERAGE_BUILD_ROOT/target\" \"$COVERAGE_BUILD_ROOT/llvm-cov-target\"\n          export CARGO_TARGET_DIR=\"$COVERAGE_BUILD_ROOT/target\"\n          export CARGO_LLVM_COV_TARGET_DIR=\"$COVERAGE_BUILD_ROOT/llvm-cov-target\"\n          CARGO_INCREMENTAL=0 cargo llvm-cov nextest --workspace --status-level all --final-status-level slow --no-report -E \"${{ steps.coverage-impact.outputs.filter_expression }}\"\n          cargo llvm-cov report --json --summary-only --output-path coverage-summary.json\n",
     "          rm -rf target/debug target/llvm-cov-target\n          COVERAGE_BUILD_ROOT=\"${RUNNER_TEMP:-/tmp}/adl-pr-fast-coverage\"\n          mkdir -p \"$COVERAGE_BUILD_ROOT/target\" \"$COVERAGE_BUILD_ROOT/llvm-cov-target\"\n          export CARGO_TARGET_DIR=\"$COVERAGE_BUILD_ROOT/target\"\n          export CARGO_LLVM_COV_TARGET_DIR=\"$COVERAGE_BUILD_ROOT/llvm-cov-target\"\n          summary_files=()\n          if [ \"${{ steps.coverage-impact.outputs.run_cli_smoke_process_status }}\" = \"true\" ]; then\n            CARGO_INCREMENTAL=0 cargo llvm-cov nextest --workspace --test cli_smoke process_status --no-report\n            cargo llvm-cov report --json --summary-only --output-path coverage-summary-process-status.json\n            summary_files+=(coverage-summary-process-status.json)\n          fi\n          if [ \"${{ steps.coverage-impact.outputs.run_cli_smoke_basics }}\" = \"true\" ]; then\n            CARGO_INCREMENTAL=0 cargo llvm-cov nextest --workspace --test cli_smoke basics --no-report\n            cargo llvm-cov report --json --summary-only --output-path coverage-summary-cli-basics.json\n            summary_files+=(coverage-summary-cli-basics.json)\n          fi\n          cp \"${summary_files[0]}\" coverage-summary.json\n",
-    1,
+    "coverage summary command split",
 )
 workflow.write_text(text)
 
