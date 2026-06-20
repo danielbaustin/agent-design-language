@@ -1785,6 +1785,7 @@ fn finish_path_is_larger_binary_focused(path: &str) -> bool {
             | "docs/milestones/v0.91.5/VALIDATION_LANE_SPLIT_3610.md"
             | "docs/milestones/v0.91.5/LOCAL_VS_CI_VALIDATION_POLICY_3607.md"
             | "adl/src/cli/tooling_cmd.rs"
+            | "adl/src/cli/tooling_cmd/common.rs"
             | "adl/src/cli/tooling_cmd/ci_log_archive.rs"
             | "adl/src/cli/tooling_cmd/prompt_template.rs"
             | "adl/src/cli/tooling_cmd/structured_prompt.rs"
@@ -1895,7 +1896,8 @@ fn finish_path_needs_prompt_template_focused_validation(path: &str) -> bool {
     let trimmed = path.trim().trim_matches('/');
     matches!(
         trimmed,
-        "adl/src/cli/tooling_cmd/prompt_template.rs"
+        "adl/src/cli/tooling_cmd/common.rs"
+            | "adl/src/cli/tooling_cmd/prompt_template.rs"
             | "adl/src/cli/tooling_cmd/structured_prompt.rs"
             | "adl/src/cli/tooling_cmd/tests/prompt_template.rs"
             | "adl/src/cli/tooling_cmd/tests/structured_prompt.rs"

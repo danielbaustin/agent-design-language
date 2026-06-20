@@ -3123,7 +3123,7 @@ fn finish_validation_profile_classifies_pr_cmd_prompt_and_versioned_bootstrap_pa
 #[test]
 fn finish_validation_profile_classifies_prompt_template_and_structured_prompt_paths() {
     let plan = select_finish_validation_plan(
-        "adl/src/cli/tooling_cmd/prompt_template.rs,adl/src/cli/tooling_cmd/structured_prompt.rs,adl/src/cli/tooling_cmd/tests/prompt_template.rs,adl/src/cli/tooling_cmd/tests/structured_prompt.rs,adl/src/cli/tooling_cmd/tests/support.rs",
+        "adl/src/cli/tooling_cmd/common.rs,adl/src/cli/tooling_cmd/prompt_template.rs,adl/src/cli/tooling_cmd/structured_prompt.rs,adl/src/cli/tooling_cmd/tests/prompt_template.rs,adl/src/cli/tooling_cmd/tests/structured_prompt.rs,adl/src/cli/tooling_cmd/tests/support.rs",
     )
     .expect("prompt-template focused plan");
 
@@ -3149,6 +3149,30 @@ fn finish_validation_profile_classifies_prompt_template_and_structured_prompt_pa
             )
         }),
         "prompt-template focused plan should include structured_prompt_ validation"
+    );
+}
+
+#[test]
+fn finish_validation_profile_classifies_tooling_common_path_standalone() {
+    let plan = select_finish_validation_plan("adl/src/cli/tooling_cmd/common.rs")
+        .expect("tooling common standalone plan");
+
+    assert_eq!(plan.mode, FinishValidationMode::LargerBinaryFocused);
+    assert!(
+        plan.commands.iter().any(|command| {
+            command.contains(
+                "cargo test --manifest-path adl/Cargo.toml --bin adl prompt_template_ -- --nocapture",
+            )
+        }),
+        "tooling common standalone plan should include prompt_template_ validation"
+    );
+    assert!(
+        plan.commands.iter().any(|command| {
+            command.contains(
+                "cargo test --manifest-path adl/Cargo.toml --bin adl structured_prompt_ -- --nocapture",
+            )
+        }),
+        "tooling common standalone plan should include structured_prompt_ validation"
     );
 }
 
