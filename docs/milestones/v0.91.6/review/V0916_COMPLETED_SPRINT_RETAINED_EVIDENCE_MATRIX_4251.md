@@ -1,7 +1,9 @@
 # v0.91.6 Completed Sprint Retained Evidence Matrix
 
 Date: 2026-06-19
+Updated: 2026-06-20 by `#4292` for `#4212` retained review coverage
 Owner issue: `#4251`
+Follow-up owner: `#4292`
 Purpose: normalize reviewer-facing retained evidence for the completed
 `v0.91.6` sprint umbrellas without rewriting historical packets or inventing
 review artifacts that were never retained.
@@ -35,12 +37,13 @@ tracked review surface that answers three questions for each completed umbrella:
 | `#3970` WP-05 provider/model reliability | present | `docs/milestones/v0.91.6/review/provider/WP05_PROVIDER_MINI_SPRINT_CLOSEOUT_3970.md` | retained closeout packet present | This is the strongest existing umbrella closeout packet in the completed set. |
 | `#3971` WP-06 ACIP/A2A/provider communications | present | `docs/milestones/v0.91.6/features/ACIP_A2A_PROVIDER_COMMUNICATIONS_v0.91.6.md` under "WP-06 Protocol Decision Closeout Package" | retained closeout evidence present | Final umbrella proof is embedded in the feature doc rather than a standalone sprint review packet. |
 | `#3972` WP-07 security bridge / CAV | present | `docs/milestones/v0.91.6/review/security/WP07_SECURITY_BRIDGE_CLOSEOUT_4024.md` | retained closeout packet normalized in `#4251` | The retained WP-07 packet now reads as post-closeout evidence instead of a still-open branch-time closeout step. |
-| `#3973` WP-08 identity continuity / capability selector | present | `docs/milestones/v0.91.6/review/sprint_execution_packets/V0916_ACTIVE_SPRINT_EXECUTION_PACKETS_2026-06-18.md`; `docs/milestones/v0.91.6/review/security/UNITY_OBSERVATORY_INHABITANT_READINESS_SECURITY_REVIEW_4023.md`; `docs/milestones/v0.91.6/review/security/PUBLIC_RECORD_MEMORY_PROFILE_SECURITY_REVIEW_4022.md` | no standalone retained umbrella review packet recovered | Retained evidence exists through active-sprint and security-consuming packets, but no dedicated final umbrella review packet was recovered in this pass. |
-| `#3975` WP-10 AEE / Memory / ObsMem / ACP | present | `docs/milestones/v0.91.6/features/AEE_MEMORY_ACP_BRIDGE_ACCOUNTING_v0.91.6.md`; `docs/milestones/v0.91.6/review/sprint_execution_packets/V0916_ACTIVE_SPRINT_EXECUTION_PACKETS_2026-06-18.md`; `docs/milestones/v0.91.6/review/security/PUBLIC_RECORD_MEMORY_PROFILE_SECURITY_REVIEW_4022.md` | no standalone retained umbrella review packet recovered | Retained proof is spread across the feature closeout matrix and consuming review packets; the absence of one final umbrella review packet remains explicit. |
+| `#3973` WP-08 identity continuity / capability selector | present | `docs/milestones/v0.91.6/review/sprint_execution_packets/V0916_ACTIVE_SPRINT_EXECUTION_PACKETS_2026-06-18.md`; `docs/milestones/v0.91.6/review/security/UNITY_OBSERVATORY_INHABITANT_READINESS_SECURITY_REVIEW_4023.md`; `docs/milestones/v0.91.6/review/security/PUBLIC_RECORD_MEMORY_PROFILE_SECURITY_REVIEW_4022.md` | no standalone retained umbrella review packet recovered | Retained evidence exists through active-sprint and security-consuming packets, but no dedicated final umbrella review packet was recovered in this pass. The cited security packets include historical open-state wording and must be read as pre-closeout evidence, not current closure truth. |
+| `#3975` WP-10 AEE / Memory / ObsMem / ACP | present | `docs/milestones/v0.91.6/features/AEE_MEMORY_ACP_BRIDGE_ACCOUNTING_v0.91.6.md`; `docs/milestones/v0.91.6/review/sprint_execution_packets/V0916_ACTIVE_SPRINT_EXECUTION_PACKETS_2026-06-18.md`; `docs/milestones/v0.91.6/review/security/PUBLIC_RECORD_MEMORY_PROFILE_SECURITY_REVIEW_4022.md` | no standalone retained umbrella review packet recovered | Retained proof is spread across the feature closeout matrix and consuming review packets; the absence of one final umbrella review packet remains explicit. The cited security packet includes historical open-state wording and must be read as pre-closeout evidence, not current closure truth. |
 | `#4069` local-agent acceleration | present | `docs/milestones/v0.91.6/review/sprint_execution_packets/V0916_SEP_LOCAL_AGENT_ACCELERATION_MINI_SPRINT_4069.md` | retained umbrella packet normalized in `#4251` | The retained SEP now explicitly reads as a closed-sprint packet instead of a pending closeout step. |
 | `#4141` flagship demo mini-sprint | recovered during `#4251` | none recovered | no standalone retained umbrella review packet recovered | The missing local bundle was reconstructed during `#4251`; reviewers must rely on closed GitHub issue state plus the recovered local bundle because no tracked retained review packet was recovered in this pass. |
 | `#4149` workflow-control tools | present | `docs/milestones/v0.91.6/review/V0916_WORKFLOW_CONTROL_TOOLS_MINI_SPRINT_REVIEW_4149.md`; `docs/milestones/v0.91.6/review/sprint_execution_packets/V0916_SEP_WORKFLOW_CONTROL_TOOLS_MINI_SPRINT_4149.md`; `docs/milestones/v0.91.6/review/sprint_execution_packets/V0916_WORKFLOW_CONTROL_TOOLS_MINI_SPRINT_ACTIVITY_LOG_4149.md` | retained review packet normalized in `#4251` | The main review packet now explicitly reads as retained post-closeout evidence rather than a still-pending umbrella closeout step. |
 | `#4158` current-model suitability mini-sprint | present after PR `#4289` | `docs/milestones/v0.91.6/review/provider/CURRENT_MODEL_SUITABILITY_MINI_SPRINT_REVIEW_4158.md`; `docs/milestones/v0.91.6/review/provider/CURRENT_MODEL_SUITABILITY_MINI_SPRINT_CLOSEOUT_4158.md` | retained review packet present | Nested umbrellas `#4095` and `#4154` are closed; `#4034` remains open and explicitly out of scope. |
+| `#4212` validation manager / test-tax recovery mini-sprint | present through issue `#4292` review cleanup | `docs/milestones/v0.91.6/review/V0916_VALIDATION_MANAGER_TEST_TAX_MINI_SPRINT_REVIEW_4212.md`; `docs/milestones/v0.91.6/review/PVF_LONG_VALIDATION_LANE_INDEX_4223.md`; `docs/architecture/VALIDATION_LANE_SELECTOR.md` | retained review packet present | `#4212` is labeled `type:task` but functioned as a mini-sprint umbrella; `#4213` closure evidence is indirect because PR `#4227` closed unmerged while the inventory surface landed through later merged work. |
 | `#4177` Tokio runtime substrate | present | `docs/milestones/v0.91.6/features/TOKIO_RUNTIME_SUBSTRATE_v0.91.6.md`; `docs/milestones/v0.91.6/RUNTIME_FIRE_UP_PLAN_v0.91.6.md` | no standalone retained umbrella review packet recovered | Retained proof exists, but the current live-state snapshot in the feature/doc layer is stale and belongs to the milestone-doc truth lane in `#4253`. |
 
 ## Resolved In `#4251`
@@ -52,6 +55,15 @@ tracked review surface that answers three questions for each completed umbrella:
 - Normalized the retained packet posture for `#4069` and `#4149` so those
   tracked review surfaces no longer describe closeout as still pending after
   umbrella closure.
+
+## Added In `#4292`
+
+- Added a retained review packet for `#4212`, the validation-manager/test-tax
+  recovery mini-sprint.
+- Recorded the `#4212` label mismatch, the indirect `#4213` closure evidence,
+  and the planning-rationale source-doc accounting as explicit review findings.
+- Added caveats for `#3973` and `#3975` retained security packets whose content
+  still contains historical open-state wording.
 
 ## Still Routed Elsewhere
 
