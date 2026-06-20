@@ -1,35 +1,35 @@
 {
   "schema": "adl.csdlc.prompt_template_registry.v1",
-  "csdlc_prompt_template_set": "1.0.1",
-  "semver": "1.0.1",
+  "csdlc_prompt_template_set": "1.0.2",
+  "semver": "1.0.2",
   "status": "active",
   "object_kind": "csdlc_prompt_template_set",
   "lifecycle": ["SIP", "STP", "SPP", "SRP", "SOR"],
   "templates": {
     "sip": {
       "semantic_role": "Structured Issue Prompt",
-      "path": "docs/templates/prompts/1.0.1/sip.md",
-      "structure_schema_path": "docs/templates/prompts/1.0.1/schemas/sip.structure.json"
+      "path": "docs/templates/prompts/1.0.2/sip.md",
+      "structure_schema_path": "docs/templates/prompts/1.0.2/schemas/sip.structure.json"
     },
     "stp": {
       "semantic_role": "Structured Task Prompt",
-      "path": "docs/templates/prompts/1.0.1/stp.md",
-      "structure_schema_path": "docs/templates/prompts/1.0.1/schemas/stp.structure.json"
+      "path": "docs/templates/prompts/1.0.2/stp.md",
+      "structure_schema_path": "docs/templates/prompts/1.0.2/schemas/stp.structure.json"
     },
     "spp": {
       "semantic_role": "Structured Plan Prompt",
-      "path": "docs/templates/prompts/1.0.1/spp.md",
-      "structure_schema_path": "docs/templates/prompts/1.0.1/schemas/spp.structure.json"
+      "path": "docs/templates/prompts/1.0.2/spp.md",
+      "structure_schema_path": "docs/templates/prompts/1.0.2/schemas/spp.structure.json"
     },
     "srp": {
       "semantic_role": "Structured Review Prompt",
-      "path": "docs/templates/prompts/1.0.1/srp.md",
-      "structure_schema_path": "docs/templates/prompts/1.0.1/schemas/srp.structure.json"
+      "path": "docs/templates/prompts/1.0.2/srp.md",
+      "structure_schema_path": "docs/templates/prompts/1.0.2/schemas/srp.structure.json"
     },
     "sor": {
       "semantic_role": "Structured Outcome Record",
-      "path": "docs/templates/prompts/1.0.1/sor.md",
-      "structure_schema_path": "docs/templates/prompts/1.0.1/schemas/sor.structure.json"
+      "path": "docs/templates/prompts/1.0.2/sor.md",
+      "structure_schema_path": "docs/templates/prompts/1.0.2/schemas/sor.structure.json"
     }
   },
   "compatibility_fallbacks": {

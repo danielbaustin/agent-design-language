@@ -115,6 +115,16 @@ fn metrics_pair_known(left: &str, right: &str) -> bool {
     left != "unknown" && right != "unknown"
 }
 
+fn metrics_pair_exceeds_variance_threshold(left: &str, right: &str) -> Option<bool> {
+    if !metrics_pair_known(left, right) {
+        return None;
+    }
+    let left = left.parse::<u64>().ok()?;
+    let right = right.parse::<u64>().ok()?;
+    let diff = left.abs_diff(right);
+    Some(diff.saturating_mul(100) > left.saturating_mul(10))
+}
+
 pub(super) fn real_lint_prompt_spec(args: &[String]) -> Result<()> {
     let input = resolve_issue_or_input_arg(args)?;
     ensure_file(&input, "input card")?;
@@ -421,6 +431,40 @@ fn is_versioned_prompt_template_card(text: &str) -> bool {
         && !text.contains("Compatibility note:")
 }
 
+fn rendered_card_template_set(text: &str, kind: &str) -> Option<String> {
+    let prefix = "Canonical Template Source: `docs/templates/prompts/";
+    let suffix = format!("/{kind}.md`");
+    text.lines().find_map(|line| {
+        let rest = line.strip_prefix(prefix)?;
+        let template_set = rest.strip_suffix(&suffix)?;
+        if template_set.is_empty() {
+            None
+        } else {
+            Some(template_set.to_string())
+        }
+    })
+}
+
+fn template_set_at_least(template_set: &str, minimum: (u32, u32, u32)) -> bool {
+    let mut parts = template_set.split('.');
+    let major = parts.next().and_then(|value| value.parse::<u32>().ok());
+    let minor = parts.next().and_then(|value| value.parse::<u32>().ok());
+    let patch = parts.next().and_then(|value| value.parse::<u32>().ok());
+    if parts.next().is_some() {
+        return false;
+    }
+    match (major, minor, patch) {
+        (Some(major), Some(minor), Some(patch)) => (major, minor, patch) >= minimum,
+        _ => false,
+    }
+}
+
+fn sor_requires_variance_analysis_section(text: &str) -> bool {
+    rendered_card_template_set(text, "sor")
+        .map(|template_set| template_set_at_least(&template_set, (1, 0, 2)))
+        .unwrap_or(false)
+}
+
 fn issue_number_from_task_id(task_id: &str) -> Result<u32> {
     task_id
         .strip_prefix("issue-")
@@ -700,6 +744,12 @@ pub(super) fn validate_sip_text(text: &str, path: &Path, phase: Option<&str>) ->
 
 pub(super) fn validate_sor_text(text: &str, phase: Option<&str>) -> Result<()> {
     ensure_required_sections(text, super::common::REQUIRED_OUTPUT_SECTIONS)?;
+    if sor_requires_variance_analysis_section(text) {
+        ensure!(
+            markdown_has_heading(text, "Variance Analysis"),
+            "missing required sections: Variance Analysis"
+        );
+    }
     ensure!(
         valid_task_id(&markdown_field(text, "Task ID").unwrap_or_default()),
         "Task ID must match issue-0000"
@@ -853,14 +903,26 @@ pub(super) fn validate_sor_text(text: &str, phase: Option<&str>) -> Result<()> {
         );
     }
 
-    if let Some(metrics_body) = markdown_section_body(text, "Issue Metrics Truth") {
-        let estimated_elapsed = markdown_metric_field(&metrics_body, "Estimated elapsed seconds");
-        let actual_elapsed = markdown_metric_field(&metrics_body, "Actual elapsed seconds");
-        let estimated_tokens = markdown_metric_field(&metrics_body, "Estimated total tokens");
-        let actual_tokens = markdown_metric_field(&metrics_body, "Actual total tokens");
-        let estimated_validation =
-            markdown_metric_field(&metrics_body, "Estimated validation seconds");
-        let actual_validation = markdown_metric_field(&metrics_body, "Actual validation seconds");
+    let metrics_body = markdown_section_body(text, "Issue Metrics Truth");
+    let estimated_elapsed = metrics_body
+        .as_ref()
+        .and_then(|body| markdown_metric_field(body, "Estimated elapsed seconds"));
+    let actual_elapsed = metrics_body
+        .as_ref()
+        .and_then(|body| markdown_metric_field(body, "Actual elapsed seconds"));
+    let estimated_tokens = metrics_body
+        .as_ref()
+        .and_then(|body| markdown_metric_field(body, "Estimated total tokens"));
+    let actual_tokens = metrics_body
+        .as_ref()
+        .and_then(|body| markdown_metric_field(body, "Actual total tokens"));
+    let estimated_validation = metrics_body
+        .as_ref()
+        .and_then(|body| markdown_metric_field(body, "Estimated validation seconds"));
+    let actual_validation = metrics_body
+        .as_ref()
+        .and_then(|body| markdown_metric_field(body, "Actual validation seconds"));
+    if let Some(metrics_body) = metrics_body {
         for label in [
             "Estimated elapsed seconds",
             "Actual elapsed seconds",
@@ -933,6 +995,94 @@ pub(super) fn validate_sor_text(text: &str, phase: Option<&str>) -> Result<()> {
                     "Issue Metrics Truth.Estimate error percent requires at least one estimated/actual metric pair"
                 );
             }
+        }
+    }
+    if let Some(variance_body) = markdown_section_body(text, "Variance Analysis") {
+        ensure!(
+            variance_body.contains(
+                "Threshold policy: require variance analysis when any known estimated/actual pair for elapsed seconds, total tokens, or validation seconds differs by more than 10 percent."
+            ),
+            "Variance Analysis must preserve the 10 percent threshold policy text"
+        );
+        let required = markdown_metric_field(&variance_body, "Variance analysis required")
+            .unwrap_or_else(|| "not_applicable".to_string());
+        let completed = markdown_metric_field(&variance_body, "Variance analysis completed")
+            .unwrap_or_else(|| "not_applicable".to_string());
+        let category = markdown_metric_field(&variance_body, "Variance category")
+            .unwrap_or_else(|| "not_applicable".to_string());
+        ensure_allowed_value(
+            "Variance Analysis.Variance analysis required",
+            &required,
+            &["not_applicable", "no", "yes"],
+        )?;
+        ensure_allowed_value(
+            "Variance Analysis.Variance analysis completed",
+            &completed,
+            &["not_applicable", "no", "yes"],
+        )?;
+        ensure_allowed_value(
+            "Variance Analysis.Variance category",
+            &category,
+            &[
+                "not_applicable",
+                "validation_misclassification",
+                "pr_wait",
+                "merge_conflict",
+                "tool_failure",
+                "unclear_scope",
+                "model_drift",
+                "human_wait",
+                "external_api_latency",
+                "overestimated_scope",
+            ],
+        )?;
+        let variance_note = markdown_metric_field(&variance_body, "Variance note")
+            .unwrap_or_else(|| "".to_string());
+        let any_known_pair_exceeds_threshold = [
+            metrics_pair_exceeds_variance_threshold(
+                estimated_elapsed.as_deref().unwrap_or("unknown"),
+                actual_elapsed.as_deref().unwrap_or("unknown"),
+            ),
+            metrics_pair_exceeds_variance_threshold(
+                estimated_tokens.as_deref().unwrap_or("unknown"),
+                actual_tokens.as_deref().unwrap_or("unknown"),
+            ),
+            metrics_pair_exceeds_variance_threshold(
+                estimated_validation.as_deref().unwrap_or("unknown"),
+                actual_validation.as_deref().unwrap_or("unknown"),
+            ),
+        ]
+        .into_iter()
+        .flatten()
+        .any(|exceeds| exceeds);
+        if any_known_pair_exceeds_threshold {
+            ensure!(
+                required == "yes",
+                "Variance Analysis.Variance analysis required must be `yes` when any known estimated/actual metric pair differs by more than 10 percent"
+            );
+        }
+        if required == "yes" {
+            ensure!(
+                completed != "not_applicable",
+                "Variance Analysis.Variance analysis completed cannot be `not_applicable` when variance analysis is required"
+            );
+            ensure!(
+                category != "not_applicable",
+                "Variance Analysis.Variance category cannot be `not_applicable` when variance analysis is required"
+            );
+            ensure!(
+                !variance_note.trim().is_empty() && variance_note != "not_applicable",
+                "Variance Analysis.Variance note must be non-empty when variance analysis is required"
+            );
+        } else {
+            ensure!(
+                completed != "yes",
+                "Variance Analysis.Variance analysis completed cannot be `yes` when variance analysis is not required"
+            );
+            ensure!(
+                category == "not_applicable",
+                "Variance Analysis.Variance category must remain `not_applicable` when variance analysis is not required"
+            );
         }
     }
     Ok(())

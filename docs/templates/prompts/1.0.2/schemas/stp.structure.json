@@ -1,0 +1,217 @@
+{
+  "schema": "adl.csdlc.prompt_card_structure.v1",
+  "template_set": "1.0.2",
+  "card_kind": "stp",
+  "template_path": "docs/templates/prompts/1.0.2/stp.md",
+  "parser": "markdown-rs 1.0.0",
+  "editable_sections": [
+    "Acceptance Criteria",
+    "Actions taken",
+    "Affected Areas",
+    "Deliverables",
+    "Demo / Proof Requirements",
+    "Demo Expectations",
+    "Dependencies",
+    "Goal",
+    "Inputs",
+    "Issue-Graph Notes",
+    "Non-goals",
+    "Non-goals / Out of scope",
+    "Notes",
+    "Notes / Risks",
+    "Outputs",
+    "Plan Summary",
+    "Policy Refs",
+    "Proposed Steps",
+    "Repo Inputs",
+    "Required Outcome",
+    "Risks And Edge Cases",
+    "Scope Basis",
+    "Summary",
+    "Target Files / Surfaces",
+    "Test Strategy",
+    "Tooling Notes",
+    "Validation Plan"
+  ],
+  "scaffold_lines": [
+    "---",
+    "```yaml",
+    "```",
+    "labels:",
+    "supersedes: []",
+    "duplicates: []",
+    "depends_on: []",
+    "canonical_files: []",
+    "demo_names: []",
+    "pr_start:",
+    "enabled: true",
+    "source_refs:",
+    "scope:",
+    "files:",
+    "components:",
+    "out_of_scope:",
+    "constraints:",
+    "assumptions:",
+    "proposed_steps:",
+    "codex_plan:",
+    "affected_areas:",
+    "invariants_to_preserve:",
+    "risks_and_edge_cases:",
+    "test_strategy:",
+    "required_permissions:",
+    "stop_conditions:",
+    "alternatives_considered:",
+    "review_hooks:",
+    "review_results:"
+  ],
+  "scaffold_line_prefixes": [
+    "- kind:",
+    "kind:",
+    "ref:",
+    "- id:",
+    "description:",
+    "expected_output:",
+    "allowed_mode:",
+    "- step:",
+    "status:",
+    "- description:",
+    "reason_not_chosen:"
+  ],
+  "rendered_value_line_prefixes": [
+    "Task ID:",
+    "Run ID:",
+    "Version:",
+    "Title:",
+    "Branch:",
+    "Card Status:",
+    "Status:",
+    "Generated:",
+    "- Actor:",
+    "- Model:",
+    "- Start Time:",
+    "- End Time:",
+    "- Issue:",
+    "- PR:",
+    "- Source Issue Prompt:",
+    "- Docs:",
+    "- Other:",
+    "- Agent:",
+    "- Provider:",
+    "- Tools allowed:",
+    "- Sandbox / approvals:",
+    "- Source issue-prompt slug:",
+    "- Required outcome type:",
+    "- Demo required:",
+    "- Local ignored output-card scaffold at",
+    "- `bash adl/tools/validate_structured_prompt.sh",
+    "Source issue-prompt slug:",
+    "Required outcome type:",
+    "Demo required:",
+    "Canonical Template Source:",
+    "Generated from",
+    "name:",
+    "issue:",
+    "task_id:",
+    "run_id:",
+    "version:",
+    "title:",
+    "branch:",
+    "generated_at:",
+    "card_status:",
+    "activation_state:",
+    "plan_revision:",
+    "confidence:",
+    "plan_summary:",
+    "execution_handoff:",
+    "notes:"
+  ],
+  "frontmatter_keys": [
+    "action",
+    "canonical_files",
+    "card_status",
+    "demo_names",
+    "demo_required",
+    "depends_on",
+    "duplicates",
+    "generated_at",
+    "issue_card_schema",
+    "issue_graph_notes",
+    "issue_number",
+    "labels",
+    "milestone_sprint",
+    "pr_start",
+    "pr_start.enabled",
+    "pr_start.slug",
+    "repo_inputs",
+    "required_outcome_type",
+    "slug",
+    "status",
+    "supersedes",
+    "title",
+    "wp"
+  ],
+  "headings": [
+    {
+      "level": 1,
+      "text": "Structured Task Prompt"
+    },
+    {
+      "level": 2,
+      "text": "Summary"
+    },
+    {
+      "level": 2,
+      "text": "Goal"
+    },
+    {
+      "level": 2,
+      "text": "Required Outcome"
+    },
+    {
+      "level": 2,
+      "text": "Deliverables"
+    },
+    {
+      "level": 2,
+      "text": "Acceptance Criteria"
+    },
+    {
+      "level": 2,
+      "text": "Repo Inputs"
+    },
+    {
+      "level": 2,
+      "text": "Dependencies"
+    },
+    {
+      "level": 2,
+      "text": "Target Files / Surfaces"
+    },
+    {
+      "level": 2,
+      "text": "Validation Plan"
+    },
+    {
+      "level": 2,
+      "text": "Demo Expectations"
+    },
+    {
+      "level": 2,
+      "text": "Non-goals"
+    },
+    {
+      "level": 2,
+      "text": "Issue-Graph Notes"
+    },
+    {
+      "level": 2,
+      "text": "Notes"
+    },
+    {
+      "level": 2,
+      "text": "Tooling Notes"
+    }
+  ],
+  "fenced_blocks": [],
+  "locked_lines": []
+}

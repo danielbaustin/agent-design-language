@@ -401,6 +401,14 @@ Done.
 - Data-source confidence: `medium`
 - Estimate error percent: `unknown`
 
+## Variance Analysis
+- Threshold policy: require variance analysis when any known estimated/actual pair for elapsed seconds, total tokens, or validation seconds differs by more than 10 percent.
+- Variance analysis required: `no`
+- Variance analysis completed: `not_applicable`
+- Variance category: `not_applicable`
+- Variance note: `No material estimate miss exceeded the 10 percent threshold in this fixture.`
+- Sprint rollup guidance: count only completed variance analyses by `Variance category`; keep `not_applicable` out of category totals and never treat unknown metrics as zero variance.
+
 ## Artifacts produced
 - `docs/tooling/prompt-spec.md`
 
