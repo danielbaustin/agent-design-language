@@ -1,9 +1,10 @@
 # v0.91.6 Completed Sprint Retained Evidence Matrix
 
 Date: 2026-06-19
-Updated: 2026-06-20 by `#4292` for `#4212` retained review coverage
+Updated: 2026-06-20 by `#4292` for `#4212` retained review coverage; by
+`#4303` for `#4160`, `#4237`, and `#4250` retained review coverage
 Owner issue: `#4251`
-Follow-up owner: `#4292`
+Follow-up owners: `#4292`, `#4303`
 Purpose: normalize reviewer-facing retained evidence for the completed
 `v0.91.6` sprint umbrellas without rewriting historical packets or inventing
 review artifacts that were never retained.
@@ -43,8 +44,11 @@ tracked review surface that answers three questions for each completed umbrella:
 | `#4141` flagship demo mini-sprint | recovered during `#4251` | none recovered | no standalone retained umbrella review packet recovered | The missing local bundle was reconstructed during `#4251`; reviewers must rely on closed GitHub issue state plus the recovered local bundle because no tracked retained review packet was recovered in this pass. |
 | `#4149` workflow-control tools | present | `docs/milestones/v0.91.6/review/V0916_WORKFLOW_CONTROL_TOOLS_MINI_SPRINT_REVIEW_4149.md`; `docs/milestones/v0.91.6/review/sprint_execution_packets/V0916_SEP_WORKFLOW_CONTROL_TOOLS_MINI_SPRINT_4149.md`; `docs/milestones/v0.91.6/review/sprint_execution_packets/V0916_WORKFLOW_CONTROL_TOOLS_MINI_SPRINT_ACTIVITY_LOG_4149.md` | retained review packet normalized in `#4251` | The main review packet now explicitly reads as retained post-closeout evidence rather than a still-pending umbrella closeout step. |
 | `#4158` current-model suitability mini-sprint | present after PR `#4289` | `docs/milestones/v0.91.6/review/provider/CURRENT_MODEL_SUITABILITY_MINI_SPRINT_REVIEW_4158.md`; `docs/milestones/v0.91.6/review/provider/CURRENT_MODEL_SUITABILITY_MINI_SPRINT_CLOSEOUT_4158.md` | retained review packet present | Nested umbrellas `#4095` and `#4154` are closed; `#4034` remains open and explicitly out of scope. |
+| `#4160` ACIP runtime mini-sprint | present through `#4303` review cleanup | `docs/milestones/v0.91.6/review/V0916_ACIP_RUNTIME_MINI_SPRINT_REVIEW_4160.md`; `docs/milestones/v0.91.6/features/ACIP_A2A_PROVIDER_COMMUNICATIONS_v0.91.6.md`; `docs/milestones/v0.91.6/features/TOKIO_RUNTIME_SUBSTRATE_v0.91.6.md` | retained review packet present | `#4163` closure evidence is issue-comment-only rather than PR-merged; this remains an explicit caveat. |
 | `#4212` validation manager / test-tax recovery mini-sprint | present through issue `#4292` review cleanup | `docs/milestones/v0.91.6/review/V0916_VALIDATION_MANAGER_TEST_TAX_MINI_SPRINT_REVIEW_4212.md`; `docs/milestones/v0.91.6/review/PVF_LONG_VALIDATION_LANE_INDEX_4223.md`; `docs/architecture/VALIDATION_LANE_SELECTOR.md` | retained review packet present | `#4212` is labeled `type:task` but functioned as a mini-sprint umbrella; `#4213` closure evidence is indirect because PR `#4227` closed unmerged while the inventory surface landed through later merged work. |
-| `#4177` Tokio runtime substrate | present | `docs/milestones/v0.91.6/features/TOKIO_RUNTIME_SUBSTRATE_v0.91.6.md`; `docs/milestones/v0.91.6/RUNTIME_FIRE_UP_PLAN_v0.91.6.md` | no standalone retained umbrella review packet recovered | Retained proof exists, but the current live-state snapshot in the feature/doc layer is stale and belongs to the milestone-doc truth lane in `#4253`. |
+| `#4237` session-goal workflow hardening mini-sprint | present through `#4303` review cleanup | `docs/milestones/v0.91.6/review/V0916_SESSION_GOAL_WORKFLOW_HARDENING_MINI_SPRINT_REVIEW_4237.md`; `AGENTS.md`; `adl/tools/skills/pr-run/SKILL.md`; `adl/tools/skills/sprint-conductor/SKILL.md`; `adl/tools/skills/workflow-conductor/SKILL.md` | retained review packet present | Umbrella issue body still contains bootstrap `status: "draft"` metadata; child PR closure evidence is retained and current. |
+| `#4250` completed-sprints review remediation mini-sprint | present through `#4303` review cleanup | `docs/milestones/v0.91.6/review/V0916_COMPLETED_SPRINTS_REVIEW_REMEDIATION_MINI_SPRINT_REVIEW_4250.md`; `docs/milestones/v0.91.6/review/V0916_COMPLETED_SPRINT_RETAINED_EVIDENCE_MATRIX_4251.md`; `docs/milestones/v0.91.6/review/V0916_COMPLETED_SPRINT_REVIEW_FINDINGS_RESOLUTION_PLAN_4303.md` | retained review packet present | Folded issues `#4252`, `#4254`, and `#4256` are closed but need issue-comment hygiene for issue-local replacement visibility. |
+| `#4177` Tokio runtime substrate | present | `docs/milestones/v0.91.6/features/TOKIO_RUNTIME_SUBSTRATE_v0.91.6.md`; `docs/milestones/v0.91.6/RUNTIME_FIRE_UP_PLAN_v0.91.6.md` | no standalone retained umbrella review packet recovered | Retained proof exists, but any remaining stale live-state wording in the feature/doc layer is residual records hygiene now that the milestone-doc truth lane `#4253` is closed. |
 
 ## Resolved In `#4251`
 
@@ -65,13 +69,26 @@ tracked review surface that answers three questions for each completed umbrella:
 - Added caveats for `#3973` and `#3975` retained security packets whose content
   still contains historical open-state wording.
 
+## Added In `#4303`
+
+- Added retained review packets for `#4160`, `#4237`, and `#4250`.
+- Added a findings-resolution plan for remaining review findings.
+- Updated stale follow-up routing for `#4253` and `#4255` now that both
+  remediation lanes are closed.
+
 ## Still Routed Elsewhere
 
 - Local `.adl` lifecycle-card normalization for closed umbrellas remains local
   records hygiene, not tracked repo content by itself.
-- Milestone docs and feature-doc live-state drift, including stale `open`
-  snapshots for `#3972`, `#3973`, `#3975`, and `#4177`, belong to `#4253`.
-- Typed GitHub issue-close transport remains the code-lane follow-on in `#4255`.
+- `#4253` closed the milestone-doc truth lane; any remaining stale issue-body
+  metadata is now treated as residual records hygiene, not an open sprint
+  blocker.
+- `#4255` closed the typed GitHub issue-close transport wording lane; any
+  future GitHub convergence work should route through the later projection
+  convergence plan rather than this completed-sprints review matrix.
+- Issue-comment hygiene for folded issues `#4252`, `#4254`, and `#4256`, plus
+  the Cargo.lock lifecycle-tooling side effect, are tracked in
+  `docs/milestones/v0.91.6/review/V0916_COMPLETED_SPRINT_REVIEW_FINDINGS_RESOLUTION_PLAN_4303.md`.
 
 ## Non-Claims
 
