@@ -61,6 +61,8 @@ resource "terraform_data" "ddns_function_public_invoke_via_url" {
     statement_id  = "AllowPublicInvokeViaFunctionUrl"
   }
 
+  # Provider compatibility bridge: this apply path expects local aws CLI and jq
+  # until the provider can express invoked_via_function_url directly.
   provisioner "local-exec" {
     command = <<-EOT
       set -eu

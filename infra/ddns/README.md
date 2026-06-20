@@ -39,6 +39,11 @@ be stood up from a single apply.
 The token is still secret material and therefore lives in Terraform state. Use
 secure state custody before broad operational rollout.
 
+The current provider-compatible Function URL permission bridge also requires
+local `aws` CLI and `jq` availability at apply time because Terraform must use
+the tracked `local-exec` compatibility shim until the provider surface can own
+`invoked_via_function_url` directly.
+
 ## Required Operator Inputs
 
 Before Terraform apply, provide:
@@ -71,6 +76,9 @@ terraform -chdir=infra/ddns plan -out=tfplan
 2. Run `terraform -chdir=infra/ddns plan -out=tfplan`.
 3. Review the plan.
 4. Apply with `terraform -chdir=infra/ddns apply -auto-approve tfplan`.
+   This compatibility path currently expects `aws` and `jq` to be installed on
+   the operator machine because the apply uses a bounded `local-exec` bridge for
+   the missing Function URL invoke-via-URL permission surface.
 5. Retrieve the token for Wuji from Terraform output and write it to the local
    token file.
 6. Install the Wuji client script and filled-in plist.
