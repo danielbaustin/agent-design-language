@@ -78,7 +78,14 @@ def inspect_execution_packet(repo_root: Path, execution_mode: str, raw_path: str
     text = packet_path.read_text()
     required_sections = ['## Child Issue Wave', '## Recommended Execution Order', '## Watcher Policy']
     if execution_mode in {'parallel', 'hybrid'}:
-        required_sections.extend(['## Safe Parallel Lanes', '## Serial Gates'])
+        required_sections.extend(
+            [
+                '## Safe Parallel Lanes',
+                '## Candidate Parallel Lanes',
+                '## Serial Gates',
+                '## Parallelism Outcome Plan',
+            ]
+        )
     missing_sections = [heading for heading in required_sections if heading not in text]
     notes = [f'execution packet present: {packet_path}']
     if missing_sections:

@@ -42,9 +42,11 @@
 
 - Execution mode: `{{execution_mode}}`
 - SEP artifact or issue-body section: `{{sep_artifact_or_section}}`
+- Candidate parallel lanes: `{{candidate_parallel_lanes}}`
 - Safe parallel lanes: `{{safe_parallel_lanes}}`
 - Serial gates: `{{serial_gates}}`
 - PVF / validation-tail notes: `{{pvf_notes}}`
+- Planned vs actual parallelism: `{{planned_vs_actual_parallelism}}`
 
 ## Risks / Dependencies
 - Dependency: {{dependency_1}}

@@ -8,9 +8,10 @@ issue-level skill family.
 The default safe path is still sequential, but the sprint may declare
 `sequential`, `parallel`, or `hybrid` execution intent through a Sprint
 Execution Packet (SEP). Parallel and hybrid execution require named safe lanes,
-serial gates, and PVF notes before child work is delegated to separate issue
-workers or sessions. The current helper state remains single-current-issue and
-does not itself automate multi-active issue execution.
+candidate lane classifications, serial gates, and PVF notes before child work
+is delegated to separate issue workers or sessions. The current helper state
+remains single-current-issue and does not itself automate multi-active issue
+execution.
 
 ## Inputs
 
@@ -35,10 +36,11 @@ Optional:
 2. Resolve the Sprint Execution Packet:
    - if `execution_mode` is `sequential`, record the ordered child issue list
      and serial closeout bar
-   - if `execution_mode` is `parallel`, require safe parallel lanes, write-set
-     boundaries, proof lanes, and coordination notes
-   - if `execution_mode` is `hybrid`, require both safe parallel lanes and the
-     serial gates that control later work
+   - if `execution_mode` is `parallel`, require candidate lane
+     classifications, write-set boundaries, proof lanes, dependency gates,
+     watcher/subagent assignments, and coordination notes
+   - if `execution_mode` is `hybrid`, require both candidate parallel lanes
+     and the serial gates that control later work
    - if required SEP fields are missing, stop and repair the sprint umbrella
      before starting child issue work
 3. Before live issue execution begins, run the installed-skill parity/readiness gate when sprint policy requires it:
@@ -90,6 +92,9 @@ Optional:
    routing loop for the same issue.
 16. If any true blocker is encountered, stop and report the blocker in
    sprint-state.
+17. During sprint closeout, compare planned versus actual achieved
+    parallelism, record prediction misses, and explain why speculative or
+    blocked lanes did not start.
 
 Important: sprint-level aggregate proof must not hide failed, pending,
 deferred, blocked, skipped, or unreviewed child lanes.

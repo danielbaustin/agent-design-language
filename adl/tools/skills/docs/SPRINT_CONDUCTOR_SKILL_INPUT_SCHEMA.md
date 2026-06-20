@@ -12,6 +12,25 @@ sprint:
   execution_packet_path: /absolute/or/repo-relative/path | null
   recommended_execution_order:
     - <bounded text>
+  candidate_parallel_lanes:
+    - lane_id: <string>
+      classification: safe_parallel | serial_gate | speculative_risky | blocked_until_dependency
+      issue_numbers:
+        - <u32>
+      expected_write_sets:
+        - <bounded text>
+      expected_pvf_lanes:
+        - <bounded text>
+      validation_lanes:
+        - <bounded text>
+      dependency_gates:
+        - <bounded text>
+      collision_risks:
+        - <bounded text>
+      watcher_assignment: <bounded text>
+      subagent_assignment: <bounded text>
+      why_parallel_safe: <bounded text>
+      required_coordination: <bounded text>
   safe_parallel_lanes:
     - lane_id: <string>
       issue_numbers:
@@ -32,6 +51,15 @@ sprint:
       - <bounded text>
     proof_reuse_criteria: <bounded text>
     fail_closed_rule: <bounded text>
+  planned_vs_actual_parallelism:
+    planned_summary: <bounded text>
+    actual_summary: <bounded text>
+    prediction_misses:
+      - lane_id: <string>
+        issue_numbers:
+          - <u32>
+        why_wrong: <bounded text>
+        corrective_action: <bounded text>
   follow_up_issue_policy: post_sprint_follow_on | must_land_before_sprint_close
   goal: <string or null>
   version: <string or null>
@@ -144,8 +172,8 @@ resume_from_state_path: /absolute/or/repo-relative/path/to/sprint_state.md
 Notes:
 
 - `sequential` mode means one child issue executes at a time.
-- `parallel` mode means the SEP must name all safe lanes and serial gates
-  before child work is delegated to separate workers or sessions.
+- `parallel` mode means the SEP must name candidate lanes, safe lanes, and
+  serial gates before child work is delegated to separate workers or sessions.
 - `hybrid` mode means some child issues may execute in parallel, but named
   serial gates control later lanes.
 - Sprint-level SEP state does not replace issue-local `SIP -> STP -> SPP ->
@@ -153,6 +181,12 @@ Notes:
 - The current sprint-state helper remains single-current-issue. SEP records
   safe parallel intent and routing evidence; it does not by itself prove
   automated multi-active sprint execution.
+- `candidate_parallel_lanes` is the authoritative planning surface for safe,
+  serial, speculative, and blocked lane intent. `safe_parallel_lanes` remains
+  a summary/compatibility projection for already-admitted lanes.
+- `planned_vs_actual_parallelism` is sprint-closeout truth. It should explain
+  when predicted lanes did not execute as planned rather than implying hidden
+  scheduler success.
 - `readiness_sweep` is the aggregate pre-execution gate. It is expected to
   consume installed-skill parity, structured-prompt preflight, execution-packet
   presence, review-path declaration, and activity-log declaration before the
