@@ -54,6 +54,8 @@ milestone work.
   offer identifiers.
 - [x] Account-bound Terraform and hosting/security boundaries are explicit
   before later infrastructure consumers rely on the account.
+- [ ] Runtime integration soak plan `#4185` distinguishes Soak #1 in `v0.91.6`
+  from Soak #2/#3 full feature-list readiness in `v0.91.7`.
 - [ ] CodeFriend v1 / portable adapter v2 route remains visible for
   post-v0.92 / pre-v0.95 proof work.
 - [ ] Guilds remain visible as an MVP-scoped governance route through v0.93 and
@@ -70,6 +72,8 @@ milestone work.
 - [ ] Gemma/model reliability is addressed as part of multi-agent readiness.
 - [ ] AEE, Memory/ObsMem, and ACP/profile surfaces are visible before v0.92
   activation refresh.
+- [ ] Runtime coherence is not claimed from component completion or Soak #1
+  alone; Soak #2, or Soak #3 if needed, remains a named pre-`v0.92` gate.
 - [x] `#3902` is visible as v0.91.6 setup planning, not v0.92 activation proof.
 - [ ] CodeFriend and guild route preservation is not treated as first-tranche
   runtime or activation proof.

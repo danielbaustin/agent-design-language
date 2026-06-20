@@ -9,6 +9,7 @@ notes:
   - "Keep v0.91.7 residuals explicit."
   - "Keep #3902 visible as v0.91.6 account/setup planning, not v0.92 activation proof."
   - "Keep CodeFriend v1 / adapter v2 and guild routes visible without treating them as first-tranche activation proof."
+  - "Keep runtime Soak #1 visible as the v0.91.6 post-Tokio walking-skeleton proof, and Soak #2/#3 visible as the v0.91.7 full feature-list readiness gate before v0.92."
 work_packages:
   - wp: WP-01
     title: v0.91.6 planning promotion and issue-wave readiness
@@ -130,4 +131,9 @@ companion_planning:
     title: Preserve guilds MVP governance route
     outcome: Keep guilds visible as MVP-scoped governance work through the v0.93 feature route and v0.95 consumption without pulling governance implementation into v0.91.6 or v0.92.
     milestone_route: v0.93-to-v0.95
+    activation_surface: false
+  - issue: "#4185"
+    title: Plan integrated runtime soak sprint
+    outcome: Define Soak #1 as the v0.91.6 post-Tokio walking-skeleton proof and Soak #2 as the v0.91.7 full feature-list integration proof, with Soak #3 only if needed before v0.92.
+    milestone_route: soak-1-v0.91.6-soak-2-or-3-v0.91.7-before-v0.92
     activation_surface: false

@@ -59,6 +59,7 @@ and should not disturb the first-tranche bridge sequence above:
 | `agent-logic.ai` AWS account setup | `#3902` | Account setup, AWS credits application guidance, Terraform boundary, and hosting/security non-claims are recorded in `review/AGENT_LOGIC_AWS_ACCOUNT_DECISION_RECORD_3902.md`; AWS Activate review and private credit visibility remain post-close external follow-up. |
 | CodeFriend v1 / portable adapter v2 | `docs/milestones/v0.95/features/CODEFRIEND_V1_PORTABLE_ADAPTER_V2_PROOF_v0.95.md` | Route remains visible as post-v0.92 / pre-v0.95 proof work without pulling product implementation into v0.91.6. |
 | Guilds / MVP governance route | `docs/milestones/v0.93/features/GUILDS_AND_COLLECTIVE_ORGANIZATION_v0.93.md` and v0.95 MVP consumption | Route remains visible as MVP-scoped governance work without pulling governance implementation into v0.91.6 or v0.92 birthday activation. |
+| Runtime integration soak sprint | `#4185` and `docs/milestones/v0.91.6/RUNTIME_INTEGRATION_SOAK_SPRINT_v0.91.6.md` | Plan Soak #1 as the post-Tokio walking-skeleton proof in `v0.91.6`. Route Soak #2 as the `v0.91.7` full feature-list integration proof, with Soak #3 only if needed before `v0.92`. |
 
 ## Acceptance Mapping
 
@@ -86,6 +87,10 @@ and should not disturb the first-tranche bridge sequence above:
   post-close external follow-up.
 - CodeFriend v1 / adapter v2 and guilds must remain visible as companion
   planning routes, not as first-tranche activation proof.
+- Runtime Soak #1 must distinguish Tokio substrate completion from integrated
+  runtime proof. Runtime coherence requires Soak #2 in `v0.91.7` to close every
+  required feature-list row as working, blocked, deferred, or operator-approved
+  out of scope, with Soak #3 only if Soak #2 exposes blockers.
 - `v0.91.7` residuals must be named, not left as "future work."
 
 ## Exit Criteria
