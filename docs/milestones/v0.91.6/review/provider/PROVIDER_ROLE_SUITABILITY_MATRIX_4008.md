@@ -16,6 +16,7 @@ model reliability, training readiness, or autonomous workflow authority.
 - `docs/milestones/v0.91.5/review/openrouter_matrix/OPENROUTER_MATRIX_PROOF_2026-06-14.md`
 - `docs/milestones/v0.91.5/review/remote_gemma_watcher/REMOTE_GEMMA_WATCHER_PROOF_2026-06-15.md`
 - `docs/milestones/v0.91.6/review/provider/deepseek_suitability/DEEPSEEK_C_SDLC_SUITABILITY_PROOF_2026-06-18.md`
+- `docs/milestones/v0.91.6/review/provider/CURRENT_MODEL_SUITABILITY_MINI_SPRINT_CLOSEOUT_4158.md`
 
 ## What this issue establishes
 
@@ -26,7 +27,7 @@ It records:
 
 - which lanes are `supported_with_limits`
 - which lanes are `useful_with_limits`
-- which lanes remain `blocked_missing_credential`
+- which lanes remain blocked, runtime-unsuitable, or historical-only
 - which lanes are only inventory-known candidates
 - which historical weak results must stay visible instead of being overwritten
 
@@ -46,16 +47,20 @@ It records:
    The `#4096` panel shows hosted native DeepSeek as `useful_with_limits`, while
    local `deepseek-r1:8b` and `deepseek-r1:32b` remain candidate-only because
    closeout truth drift persisted in the local bounded panel.
+5. Direct-hosted OpenAI/Codex, Anthropic, and Gemini now have bounded current
+   model proof packets.
+   The `#4158` closeout consumes `#4155`, `#4156`, and `#4157` without giving
+   any tested lane merge, closeout, release, or file-write authority.
 
 ## Strongest role recommendations from current evidence
 
 | Role | Strongest current lane | Classification | Why |
 | --- | --- | --- | --- |
-| planning | OpenRouter `deepseek/deepseek-v4-flash` | `supported_with_limits` | Native requested-route proof exists, but broad planner usefulness remains task-shaped |
-| coding | OpenRouter `openai/gpt-4o-mini` and `qwen/qwen3.6-flash` | `supported_with_limits` | Bounded worker route proofs exist without overclaiming broad code-quality reliability |
-| review | OpenRouter `anthropic/claude-3.5-haiku` | `supported_with_limits` | Reviewer-class bounded finding surface is proven |
+| planning | Direct-hosted OpenAI/Codex, Gemini, Anthropic Sonnet/Haiku, hosted DeepSeek, and OpenRouter `deepseek/deepseek-v4-flash` | `useful_with_limits` for direct-hosted packets; `supported_with_limits` for prior OpenRouter route | Native requested-route and current-model panel proofs exist, but broad planner usefulness remains task-shaped |
+| coding | Direct-hosted OpenAI/Codex plus OpenRouter `openai/gpt-4o-mini` and `qwen/qwen3.6-flash` | `useful_with_limits` for bounded OpenAI/Codex panel packets; `supported_with_limits` for prior OpenRouter worker routes | Bounded worker route/panel proofs exist without overclaiming broad code-quality reliability |
+| review | Direct-hosted OpenAI/Codex, Gemini, Anthropic Sonnet/Haiku, hosted DeepSeek, and OpenRouter `anthropic/claude-3.5-haiku` | `useful_with_limits` for direct-hosted packets; `supported_with_limits` for prior OpenRouter route | Reviewer-class bounded finding surfaces are proven, but findings remain advisory until accepted through normal review |
 | summarization / watcher | Remote `gemma4:31b` via `adl-provider-adapter` | `useful_with_limits` | Strongest bounded watcher proof uses the real ADL provider path |
-| orchestration | advisory combination only | `limited_advisory_only` | No provider/model lane gains execution authority or closeout authority |
+| orchestration | advisory combination only | `limited_advisory_only` | No provider/model lane gains execution authority, merge authority, or closeout authority |
 
 ## Non-claims preserved
 
@@ -77,3 +82,6 @@ It records:
 - `#4053` should define durable C-SDLC role-provider profiles using this matrix
   as role evidence rather than re-deriving provider truth.
 - `#4012` should use this issue as one input to the final closeout matrix.
+- `#4158` records the later current-model suitability mini-sprint closeout and
+  should be used when deciding direct-hosted current-model routing after the
+  child proof packets have merged.
