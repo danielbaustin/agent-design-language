@@ -34,6 +34,7 @@ pub fn validate_acip_invocation_contract_v1(contract: &AcipInvocationContractV1)
     validate_id(&contract.causal_message_id, "causal_message_id")?;
     validate_address(&contract.caller, "caller")?;
     validate_address(&contract.target, "target")?;
+    validate_invocation_caller_class(contract)?;
     if contract.caller == contract.target {
         return Err(anyhow!("caller and target must not be identical"));
     }
@@ -60,6 +61,7 @@ pub fn validate_acip_invocation_contract_v1(contract: &AcipInvocationContractV1)
     }
     validate_invocation_constraints(&contract.constraints)?;
     validate_invocation_authority_alignment(contract)?;
+    validate_invocation_route_class(contract)?;
     if contract.expected_outputs.is_empty() {
         return Err(anyhow!("expected_outputs must not be empty"));
     }
@@ -344,7 +346,9 @@ pub fn acip_invocation_fixture_set_v1() -> AcipInvocationFixtureSetV1 {
                     "conversation_id": "conv-invoke-001",
                     "causal_message_id": "msg-review-0001",
                     "caller": {"kind": "agent", "id": "planner.agent"},
+                    "caller_class": "workflow_agent",
                     "target": {"kind": "agent", "id": "reviewer.agent"},
+                    "route_class": "local_only",
                     "intent": "review_request",
                     "purpose": "Perform bounded review work.",
                     "input_refs": ["runtime/comms/invocation/review_packet.json"],
@@ -390,7 +394,9 @@ pub fn acip_invocation_fixture_set_v1() -> AcipInvocationFixtureSetV1 {
                     "conversation_id": "conv-invoke-001",
                     "causal_message_id": "msg-review-0001",
                     "caller": {"kind": "agent", "id": "planner.agent"},
+                    "caller_class": "workflow_agent",
                     "target": {"kind": "agent", "id": "reviewer.agent"},
+                    "route_class": "local_only",
                     "intent": "review_request",
                     "purpose": "Perform bounded review work.",
                     "input_refs": ["runtime/comms/invocation/review_packet.json"],
@@ -438,7 +444,9 @@ pub fn acip_invocation_fixture_set_v1() -> AcipInvocationFixtureSetV1 {
                     "conversation_id": "conv-invoke-001",
                     "causal_message_id": "msg-review-0001",
                     "caller": {"kind": "agent", "id": "planner.agent"},
+                    "caller_class": "workflow_agent",
                     "target": {"kind": "agent", "id": "reviewer.agent"},
+                    "route_class": "local_only",
                     "intent": "review_request",
                     "purpose": "Perform bounded review work.",
                     "input_refs": ["/Users/daniel/private/review_packet.json"],
@@ -543,10 +551,12 @@ pub(crate) fn sample_invocation_contract() -> AcipInvocationContractV1 {
             kind: AcipAddressKindV1::Agent,
             id: "planner.agent".to_string(),
         },
+        caller_class: AcipCallerClassV1::WorkflowAgent,
         target: AcipAddressV1 {
             kind: AcipAddressKindV1::Agent,
             id: "reviewer.agent".to_string(),
         },
+        route_class: AcipRouteClassV1::LocalOnly,
         intent: AcipIntentV1::ReviewRequest,
         purpose: "Perform a bounded review and emit the declared report artifacts.".to_string(),
         input_refs: vec![
@@ -672,6 +682,54 @@ fn validate_invocation_constraints(constraints: &AcipInvocationConstraintsV1) ->
         }
     }
     Ok(())
+}
+
+fn validate_invocation_caller_class(contract: &AcipInvocationContractV1) -> Result<()> {
+    match contract.caller_class {
+        AcipCallerClassV1::WorkflowAgent
+        | AcipCallerClassV1::ExternalAgent
+        | AcipCallerClassV1::CitizenProxy => {
+            if contract.caller.kind != AcipAddressKindV1::Agent {
+                return Err(anyhow!(
+                    "caller_class '{}' requires caller.kind 'agent'",
+                    invocation_caller_class_str(&contract.caller_class)
+                ));
+            }
+        }
+        AcipCallerClassV1::GroupRelay => {
+            if contract.caller.kind != AcipAddressKindV1::Group {
+                return Err(anyhow!(
+                    "caller_class 'group_relay' requires caller.kind 'group'"
+                ));
+            }
+        }
+    }
+
+    Ok(())
+}
+
+fn validate_invocation_route_class(contract: &AcipInvocationContractV1) -> Result<()> {
+    match contract.route_class {
+        AcipRouteClassV1::LocalOnly => {}
+        AcipRouteClassV1::CrossBoundaryDeferred => {
+            if contract.response_channel.kind != AcipResponseChannelKindV1::ArtifactReply {
+                return Err(anyhow!(
+                    "cross_boundary_deferred route_class requires artifact_reply response_channel"
+                ));
+            }
+        }
+    }
+
+    Ok(())
+}
+
+fn invocation_caller_class_str(caller_class: &AcipCallerClassV1) -> &'static str {
+    match caller_class {
+        AcipCallerClassV1::WorkflowAgent => "workflow_agent",
+        AcipCallerClassV1::ExternalAgent => "external_agent",
+        AcipCallerClassV1::CitizenProxy => "citizen_proxy",
+        AcipCallerClassV1::GroupRelay => "group_relay",
+    }
 }
 
 fn validate_invocation_authority_alignment(contract: &AcipInvocationContractV1) -> Result<()> {

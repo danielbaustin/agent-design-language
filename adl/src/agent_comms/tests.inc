@@ -1383,12 +1383,65 @@
     }
 
     #[test]
+    fn acip_invocation_contract_validates_caller_and_route_class_bindings() {
+        let mut group_relay_contract = sample_invocation_contract();
+        group_relay_contract.caller_class = AcipCallerClassV1::GroupRelay;
+        let group_error = validate_acip_invocation_contract_v1(&group_relay_contract)
+            .expect_err("group relay caller class should require a group caller");
+        assert!(group_error
+            .to_string()
+            .contains("caller_class 'group_relay' requires caller.kind 'group'"));
+
+        let mut cross_boundary_contract = sample_invocation_contract();
+        cross_boundary_contract.route_class = AcipRouteClassV1::CrossBoundaryDeferred;
+        let route_error = validate_acip_invocation_contract_v1(&cross_boundary_contract)
+            .expect_err("cross boundary route class should require artifact reply");
+        assert!(route_error.to_string().contains(
+            "cross_boundary_deferred route_class requires artifact_reply response_channel"
+        ));
+    }
+
+    #[test]
     fn acip_local_carrier_schemas_are_available() {
         let carrier_schema = acip_local_carrier_v1_schema_json().expect("carrier schema");
         let exchange_schema =
             acip_local_invocation_exchange_v1_schema_json().expect("exchange schema");
         assert!(carrier_schema.contains("\"routes\""));
+        assert!(carrier_schema.contains("\"allowed_caller_classes\""));
         assert!(exchange_schema.contains("\"response_message\""));
+    }
+
+    #[test]
+    fn acip_invocation_and_local_carrier_accept_legacy_v1_payloads_with_safe_defaults() {
+        let mut contract_value =
+            serde_json::to_value(sample_invocation_contract()).expect("contract json");
+        let contract_object = contract_value
+            .as_object_mut()
+            .expect("contract should serialize as object");
+        contract_object.remove("caller_class");
+        contract_object.remove("route_class");
+        let contract = validate_acip_invocation_contract_v1_value(&contract_value)
+            .expect("legacy contract payload should still validate");
+        assert_eq!(contract.caller_class, AcipCallerClassV1::WorkflowAgent);
+        assert_eq!(contract.route_class, AcipRouteClassV1::LocalOnly);
+
+        let mut carrier_value =
+            serde_json::to_value(sample_acip_local_carrier_v1()).expect("carrier json");
+        let routes = carrier_value["routes"]
+            .as_array_mut()
+            .expect("routes should be an array");
+        for route in routes {
+            let route_object = route.as_object_mut().expect("route object");
+            route_object.remove("route_class");
+            route_object.remove("allowed_caller_classes");
+        }
+        let carrier = validate_acip_local_carrier_v1_value(&carrier_value)
+            .expect("legacy carrier payload should still validate");
+        assert_eq!(carrier.routes[0].route_class, AcipRouteClassV1::LocalOnly);
+        assert_eq!(
+            carrier.routes[0].allowed_caller_classes,
+            vec![AcipCallerClassV1::WorkflowAgent]
+        );
     }
 
     #[test]
@@ -1510,6 +1563,26 @@
     }
 
     #[test]
+    fn acip_local_carrier_rejects_request_authority_drift_as_malformed() {
+        let carrier = sample_acip_local_carrier_v1();
+        let contract = sample_invocation_contract();
+
+        let mut request = sample_local_review_request_message(&contract);
+        request.authority_scope = Some(AcipAuthorityScopeV1 {
+            allowed_actions: vec!["review".to_string(), "share_artifact".to_string()],
+            authority_basis_refs: vec![
+                "runtime/comms/authority/alternate_review_basis.json".to_string(),
+            ],
+            delegation_permitted: false,
+        });
+        let error = execute_acip_local_invocation_round_trip(&carrier, &request, &contract)
+            .expect_err("authority drift should fail validation");
+        assert!(error
+            .to_string()
+            .contains("request_message.authority_scope to match invocation_contract.authority_scope"));
+    }
+
+    #[test]
     fn acip_local_carrier_rejects_handler_intent_misconfiguration() {
         let mut carrier = sample_acip_local_carrier_v1();
         carrier.routes[0].supported_intents =
@@ -1519,6 +1592,81 @@
         assert!(error
             .to_string()
             .contains("must only support review_request"));
+    }
+
+    #[test]
+    fn acip_local_carrier_refuses_unauthorized_caller_and_route_classes() {
+        let carrier = sample_acip_local_carrier_v1();
+
+        let mut intent_denied = sample_invocation_contract();
+        intent_denied.intent = AcipIntentV1::CodingRequest;
+        intent_denied.authority_scope.allowed_actions = vec![
+            "invoke".to_string(),
+            "share_artifact".to_string(),
+        ];
+        intent_denied.authority_scope.authority_basis_refs =
+            vec!["runtime/comms/authority/invocation_basis.json".to_string()];
+        let intent_exchange = execute_acip_local_invocation_round_trip(
+            &carrier,
+            &sample_local_review_request_message(&intent_denied),
+            &intent_denied,
+        )
+        .expect("unsupported route intent should fail closed with refusal");
+        assert_eq!(intent_exchange.invocation_event.status, AcipInvocationStatusV1::Refused);
+        assert_eq!(
+            intent_exchange.invocation_event.refusal_code.as_deref(),
+            Some("intent_denied")
+        );
+        validate_acip_local_invocation_exchange_v1(&intent_exchange)
+            .expect("intent denial exchange should validate");
+
+        let mut caller_denied = sample_invocation_contract();
+        caller_denied.caller_class = AcipCallerClassV1::ExternalAgent;
+        let caller_exchange = execute_acip_local_invocation_round_trip(
+            &carrier,
+            &sample_local_review_request_message(&caller_denied),
+            &caller_denied,
+        )
+        .expect("unauthorized caller class should fail closed with refusal");
+        assert_eq!(caller_exchange.invocation_event.status, AcipInvocationStatusV1::Refused);
+        assert_eq!(
+            caller_exchange.invocation_event.refusal_code.as_deref(),
+            Some("caller_class_denied")
+        );
+        assert!(caller_exchange.invocation_event.output_refs.is_empty());
+        assert!(caller_exchange.response_message.artifact_refs.is_empty());
+        assert!(caller_exchange
+            .response_message
+            .content
+            .contains("refused locally"));
+
+        let mut route_denied = sample_invocation_contract();
+        route_denied.route_class = AcipRouteClassV1::CrossBoundaryDeferred;
+        route_denied.response_channel = AcipResponseChannelV1 {
+            kind: AcipResponseChannelKindV1::ArtifactReply,
+            channel_ref: "runtime/comms/replies/review_report.json".to_string(),
+        };
+        let route_exchange = execute_acip_local_invocation_round_trip(
+            &carrier,
+            &sample_local_review_request_message(&route_denied),
+            &route_denied,
+        )
+        .expect("unauthorized route class should fail closed with refusal");
+        assert_eq!(route_exchange.invocation_event.status, AcipInvocationStatusV1::Refused);
+        assert_eq!(
+            route_exchange.invocation_event.refusal_code.as_deref(),
+            Some("route_class_denied")
+        );
+        validate_acip_local_invocation_exchange_v1(&route_exchange)
+            .expect("refused exchange should still validate");
+
+        let mut drifted_refusal = route_exchange.clone();
+        drifted_refusal.carrier.routes[0].route_class = AcipRouteClassV1::CrossBoundaryDeferred;
+        let drifted_error = validate_acip_local_invocation_exchange_v1(&drifted_refusal)
+            .expect_err("refused exchange should still bind to the current route policy");
+        assert!(drifted_error
+            .to_string()
+            .contains("must remain local_only in v0.91.6"));
     }
 
     #[test]

@@ -144,7 +144,7 @@ if 'coverage-summary.json' not in fast_summary_step:
     )
 for required_fragment in (
     'rm -rf target/debug target/llvm-cov-target',
-    'COVERAGE_BUILD_ROOT="/mnt/adl-pr-fast-coverage"',
+    'COVERAGE_BUILD_ROOT="${RUNNER_TEMP:-/tmp}/adl-pr-fast-coverage"',
     'export CARGO_TARGET_DIR="$COVERAGE_BUILD_ROOT/target"',
     'export CARGO_LLVM_COV_TARGET_DIR="$COVERAGE_BUILD_ROOT/llvm-cov-target"',
 ):
