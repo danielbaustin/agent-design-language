@@ -99,6 +99,23 @@ notes: "Tracked public SPP proof surface for the first C-SDLC card lifecycle sli
 Active WP-03 plan: prove the canonical card lifecycle with one tracked public
 issue bundle plus focused validator and doctor expectations.
 
+## PVF Lane Plan
+
+- Initial PVF lane from issue creation: `prompt_template`
+- Planned PVF lane for execution: `prompt_template`
+- Planning lane source: `matched_initial_issue_lane`
+- Revision rule: change `planned_pvf_lane` only when planning discovers a better explicit lane; keep `needs_planning_lane_assignment` fail-closed until that happens.
+
+## Estimate Plan
+
+- Estimated elapsed seconds: `unknown`
+- Estimated total tokens: `unknown`
+- Estimated validation seconds: `unknown`
+- Estimate confidence: `unknown`
+- Estimate data source: `unknown`
+- Estimate source ref: `unknown`
+- Unknown-value rule: record `unknown`, never `0`, when the estimate is unavailable or intentionally deferred.
+
 ## Codex Plan
 
 1. [completed] Create the tracked public card bundle.

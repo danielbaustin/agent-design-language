@@ -561,6 +561,23 @@ Canonical Template Source: `docs/templates/prompts/1.0.1/spp.md`
 
 Reviewed planning surface for Sprint 1 closeout truth repair.
 
+## PVF Lane Plan
+
+- Initial PVF lane from issue creation: `docs_only`
+- Planned PVF lane for execution: `docs_only`
+- Planning lane source: `matched_initial_issue_lane`
+- Revision rule: change `planned_pvf_lane` only when planning discovers a better explicit lane; keep `needs_planning_lane_assignment` fail-closed until that happens.
+
+## Estimate Plan
+
+- Estimated elapsed seconds: `unknown`
+- Estimated total tokens: `unknown`
+- Estimated validation seconds: `unknown`
+- Estimate confidence: `unknown`
+- Estimate data source: `unknown`
+- Estimate source ref: `unknown`
+- Unknown-value rule: record `unknown`, never `0`, when the estimate is unavailable or intentionally deferred.
+
 ## Codex Plan
 
 1. [pending] Update the milestone docs to reflect closed Sprint 1 truth.

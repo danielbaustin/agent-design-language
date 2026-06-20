@@ -12,6 +12,26 @@ Status: DONE
 Completed the tracked public `WP-03` proof bundle for the canonical
 `SIP -> STP -> SPP -> SRP -> SOR` lifecycle.
 
+## PVF Lane Truth
+
+- Initial PVF lane: `prompt_template`
+- Planned PVF lane: `prompt_template`
+- Final PVF lane: `prompt_template`
+- Lane change reason: `not_applicable`
+
+## Issue Metrics Truth
+
+- Estimated elapsed seconds: `unknown`
+- Actual elapsed seconds: `480`
+- Estimated total tokens: `unknown`
+- Actual total tokens: `unknown`
+- Estimated validation seconds: `unknown`
+- Actual validation seconds: `unknown`
+- Goal metrics data source: `unknown`
+- Goal metrics source ref: `unknown`
+- Data-source confidence: `unknown`
+- Estimate error percent: `unknown`
+
 ## Artifacts produced
 
 - `docs/milestones/v0.91.3/review/evidence/csdlc/issues/issue-3201-card-lifecycle-demo/cards/sip.md`
