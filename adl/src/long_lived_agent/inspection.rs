@@ -1,7 +1,7 @@
 //! Inspection packet generation for long-lived agent cycles.
 use super::{
-    ledger_cursor, load_spec, path_artifact_ref, status, status_path, LoadedAgentSpec,
-    INSPECTION_PACKET_SCHEMA,
+    continuity_checkpoint_path, continuity_replay_manifest_path, ledger_cursor, load_spec,
+    path_artifact_ref, status, status_path, LoadedAgentSpec, INSPECTION_PACKET_SCHEMA,
 };
 use anyhow::{anyhow, Context, Result};
 use chrono::Utc;
@@ -26,6 +26,18 @@ pub fn inspect(spec_path: &Path, options: super::InspectOptions) -> Result<Value
     } else {
         "no_cycle_available"
     };
+    let checkpoint_ref = "continuity_checkpoint.json";
+    let replay_manifest_ref = "continuity_replay_manifest.json";
+    let checkpoint = if continuity_checkpoint_path(&loaded).exists() {
+        Some(read_state_json_artifact(&loaded, checkpoint_ref)?)
+    } else {
+        None
+    };
+    let replay_manifest = if continuity_replay_manifest_path(&loaded).exists() {
+        Some(read_state_json_artifact(&loaded, replay_manifest_ref)?)
+    } else {
+        None
+    };
 
     Ok(json!({
         "schema": INSPECTION_PACKET_SCHEMA,
@@ -48,6 +60,19 @@ pub fn inspect(spec_path: &Path, options: super::InspectOptions) -> Result<Value
             } else {
                 "no_cycle_selected"
             }
+        },
+        "continuity_restore": {
+            "continuity_ref": "continuity.json",
+            "checkpoint_ref": {
+                "path": checkpoint_ref,
+                "exists": checkpoint.is_some()
+            },
+            "replay_manifest_ref": {
+                "path": replay_manifest_ref,
+                "exists": replay_manifest.is_some()
+            },
+            "checkpoint": checkpoint,
+            "replay_manifest": replay_manifest
         },
         "trace_query_decision": {
             "status": "deferred_full_platform",

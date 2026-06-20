@@ -2012,6 +2012,31 @@ fn finish_validation_profile_classifies_long_lived_agent_tokio_paths() {
 }
 
 #[test]
+fn finish_validation_profile_classifies_long_lived_agent_continuity_adjacent_paths() {
+    let plan = select_finish_validation_plan_for_finish(
+        4246,
+        ".",
+        &[
+            "adl/src/demo/stock_league/model.rs".to_string(),
+            "adl/src/long_lived_agent/inspection.rs".to_string(),
+            "adl/src/long_lived_agent/schema.rs".to_string(),
+            "adl/src/long_lived_agent/storage.rs".to_string(),
+            "adl/tests/cli_smoke/agent.rs".to_string(),
+            "adl/tests/demo_tests.rs".to_string(),
+        ],
+    )
+    .expect("long-lived continuity adjacent plan");
+
+    assert_eq!(plan.mode, FinishValidationMode::LargerBinaryFocused);
+    assert!(plan
+        .commands
+        .contains(&"cargo fmt --manifest-path adl/Cargo.toml --all --check".to_string()));
+    assert!(plan
+        .commands
+        .contains(&"cargo test --manifest-path adl/Cargo.toml long_lived_agent".to_string()));
+}
+
+#[test]
 fn finish_validation_profile_classifies_tokio_bootstrap_helper_paths() {
     let plan = select_finish_validation_plan_for_finish(
         4180,

@@ -516,6 +516,8 @@ pub(super) fn integration_manifest() -> Value {
             "status": "long_lived_agent/state/status.json",
             "cycle_ledger": "long_lived_agent/state/cycle_ledger.jsonl",
             "continuity": "long_lived_agent/state/continuity.json",
+            "continuity_checkpoint": "long_lived_agent/state/continuity_checkpoint.json",
+            "continuity_replay_manifest": "long_lived_agent/state/continuity_replay_manifest.json",
             "memory_index": "long_lived_agent/state/memory_index.json",
             "provider_binding_history": "long_lived_agent/state/provider_binding_history.jsonl",
             "cycles": "long_lived_agent/state/cycles"
@@ -532,6 +534,7 @@ pub(super) fn integration_manifest() -> Value {
         "reviewer_steps": [
             "Inspect long_lived_agent/state/status.json for completed multi-cycle state.",
             "Inspect long_lived_agent/state/cycle_ledger.jsonl for append-only cycle order.",
+            "Inspect long_lived_agent/state/continuity_checkpoint.json and long_lived_agent/state/continuity_replay_manifest.json for checkpoint and restart continuity posture.",
             "Inspect continuity/continuity_proof.json for previous-cycle links and preserved first-cycle artifacts.",
             "Inspect inspection/latest.json and inspection/cycle-000001.json to compare latest and prior commitments.",
             "Inspect audit/recurring_guardrail_summary.json for per-cycle safety results."
@@ -852,6 +855,9 @@ pub(super) fn recurring_continuity_proof(out_dir: &Path) -> Result<Value> {
     let state = "long_lived_agent/state";
     let status = read_json_rel(out_dir, &format!("{state}/status.json"))?;
     let continuity = read_json_rel(out_dir, &format!("{state}/continuity.json"))?;
+    let checkpoint = read_json_rel(out_dir, &format!("{state}/continuity_checkpoint.json"))?;
+    let replay_manifest =
+        read_json_rel(out_dir, &format!("{state}/continuity_replay_manifest.json"))?;
     let memory_index = read_json_rel(out_dir, &format!("{state}/memory_index.json"))?;
     let ledger_lines = read_jsonl_rel(out_dir, &format!("{state}/cycle_ledger.jsonl"))?;
     let mut cycles = Vec::new();
@@ -905,8 +911,18 @@ pub(super) fn recurring_continuity_proof(out_dir: &Path) -> Result<Value> {
         "latest_cycle_id": continuity["latest_cycle_id"].clone(),
         "latest_cycle_status": continuity["latest_cycle_status"].clone(),
         "append_only_ledger_ref": "long_lived_agent/state/cycle_ledger.jsonl",
+        "checkpoint_ref": "long_lived_agent/state/continuity_checkpoint.json",
+        "replay_manifest_ref": "long_lived_agent/state/continuity_replay_manifest.json",
         "ledger_entry_count": ledger_lines.len(),
         "cycles": cycles,
+        "restore_readiness": {
+            "restart_resume_proof_status": "not_executed_in_fixture",
+            "checkpoint_schema": checkpoint["schema"].clone(),
+            "replay_manifest_schema": replay_manifest["schema"].clone(),
+            "checkpoint_latest_cycle_id": checkpoint["latest_cycle_id"].clone(),
+            "expected_next_cycle_id": replay_manifest["expected_resume"]["next_cycle_id"].clone()
+        },
+        "restart_resume_non_claim": "This recurring fixture proves checkpoint and replay-manifest artifact readiness plus append-only cycle continuity; it does not execute a restart/resume path itself.",
         "history_preservation": {
             "prior_commitments_preserved": first_manifest_still_present && second_links_first && third_links_second,
             "cycle_000001_manifest_still_present_after_cycle_000003": first_manifest_still_present,

@@ -45,7 +45,7 @@ pub fn tick(spec_path: &Path, options: TickOptions) -> Result<StatusRecord> {
     ensure_state_root(&loaded)?;
     if let Some(stop) = read_stop(&loaded)? {
         let status = stopped_status(&loaded, stop.reason);
-        write_status(&loaded, &status)?;
+        persist_status(&loaded, &status, "stop_observed_before_cycle")?;
         return Ok(status);
     }
 
@@ -60,7 +60,7 @@ pub fn tick(spec_path: &Path, options: TickOptions) -> Result<StatusRecord> {
         false,
         None,
     );
-    write_status(&loaded, &running)?;
+    persist_status(&loaded, &running, "cycle_running")?;
 
     let result = write_cycle_artifacts(&loaded, &cycle_id);
     remove_lease(&loaded)?;
@@ -76,7 +76,7 @@ pub fn tick(spec_path: &Path, options: TickOptions) -> Result<StatusRecord> {
                 false,
                 None,
             );
-            write_status(&loaded, &status)?;
+            persist_status(&loaded, &status, "cycle_completed")?;
             Ok(status)
         }
         Err(err) => {
@@ -93,7 +93,7 @@ pub fn tick(spec_path: &Path, options: TickOptions) -> Result<StatusRecord> {
                     message: err.to_string(),
                 }),
             );
-            write_status(&loaded, &status)?;
+            persist_status(&loaded, &status, "cycle_failed")?;
             Err(err)
         }
     }
@@ -163,7 +163,7 @@ async fn run_with_tokio_cadence(
     if last_status.state != AgentStatusState::Stopped {
         last_status.state = AgentStatusState::Completed;
         last_status.updated_at = Utc::now();
-        write_status(&loaded, &last_status)?;
+        persist_status(&loaded, &last_status, "run_completed")?;
     }
     Ok(last_status)
 }
@@ -258,7 +258,7 @@ pub fn status(spec_path: &Path) -> Result<StatusRecord> {
         None
     };
     current.updated_at = Utc::now();
-    write_status(&loaded, &current)?;
+    persist_status(&loaded, &current, "status_refreshed")?;
     Ok(current)
 }
 
@@ -334,16 +334,46 @@ fn ensure_state_root(loaded: &LoadedAgentSpec) -> Result<()> {
     ensure_continuity(loaded)?;
     ensure_memory_index(loaded)?;
     if !status_path(loaded).exists() {
-        let status = status_with_state(
-            loaded,
-            AgentStatusState::NotStarted,
-            None,
-            None,
-            None,
-            false,
-            None,
-        );
-        write_status(loaded, &status)?;
+        let (status, checkpoint_reason, restore_event) =
+            if let Some(status) = restore_status_from_checkpoint(loaded)? {
+                (
+                    status,
+                    "status_restored_from_checkpoint",
+                    Some("status_restored_from_checkpoint"),
+                )
+            } else if let Some(status) = restore_status_from_ledger(loaded)? {
+                (
+                    status,
+                    "status_restored_from_ledger",
+                    Some("status_restored_from_ledger"),
+                )
+            } else {
+                (
+                    status_with_state(
+                        loaded,
+                        AgentStatusState::NotStarted,
+                        None,
+                        None,
+                        None,
+                        false,
+                        None,
+                    ),
+                    "state_initialized",
+                    None,
+                )
+            };
+        persist_status(loaded, &status, checkpoint_reason)?;
+        if let Some(event) = restore_event {
+            append_operator_event(
+                loaded,
+                event,
+                json!({
+                    "status_ref": "status.json",
+                    "checkpoint_ref": "continuity_checkpoint.json",
+                    "replay_manifest_ref": "continuity_replay_manifest.json"
+                }),
+            )?;
+        }
     }
     Ok(())
 }
@@ -423,6 +453,78 @@ fn ensure_memory_index(loaded: &LoadedAgentSpec) -> Result<()> {
     write_json_pretty(&path, &memory_index)
 }
 
+fn restore_status_from_checkpoint(loaded: &LoadedAgentSpec) -> Result<Option<StatusRecord>> {
+    let Some(checkpoint) = read_json_optional::<Value>(&continuity_checkpoint_path(loaded))? else {
+        return Ok(None);
+    };
+    let ledger = ledger_cursor(loaded)?;
+    let checkpoint_cycle_id = checkpoint
+        .get("latest_cycle_id")
+        .and_then(Value::as_str)
+        .map(str::to_string);
+    let checkpoint_cycle_number = checkpoint_cycle_id
+        .as_deref()
+        .and_then(cycle_number)
+        .unwrap_or(0);
+    let ledger_cycle_number = ledger
+        .latest_cycle_id
+        .as_deref()
+        .and_then(cycle_number)
+        .unwrap_or(0);
+    if ledger_cycle_number > checkpoint_cycle_number {
+        return Ok(Some(status_with_state(
+            loaded,
+            AgentStatusState::Completed,
+            ledger.latest_cycle_id,
+            ledger.latest_status,
+            read_lease(loaded)?,
+            false,
+            None,
+        )));
+    }
+    let state = checkpoint
+        .get("state")
+        .cloned()
+        .map(serde_json::from_value::<AgentStatusState>)
+        .transpose()?
+        .unwrap_or(AgentStatusState::Idle);
+    let latest_cycle_id = checkpoint_cycle_id;
+    let latest_cycle_status = checkpoint
+        .get("latest_cycle_status")
+        .and_then(Value::as_str)
+        .map(str::to_string);
+    let stop_requested = checkpoint
+        .get("stop_requested")
+        .and_then(Value::as_bool)
+        .unwrap_or(false);
+    let active_lease = read_lease(loaded)?;
+    Ok(Some(status_with_state(
+        loaded,
+        state,
+        latest_cycle_id,
+        latest_cycle_status,
+        active_lease,
+        stop_requested,
+        None,
+    )))
+}
+
+fn restore_status_from_ledger(loaded: &LoadedAgentSpec) -> Result<Option<StatusRecord>> {
+    let ledger = ledger_cursor(loaded)?;
+    if ledger.latest_cycle_id.is_none() {
+        return Ok(None);
+    }
+    Ok(Some(status_with_state(
+        loaded,
+        AgentStatusState::Completed,
+        ledger.latest_cycle_id,
+        ledger.latest_status,
+        None,
+        false,
+        None,
+    )))
+}
+
 fn acquire_lease(
     loaded: &LoadedAgentSpec,
     cycle_id: &str,
@@ -443,6 +545,11 @@ fn acquire_lease(
                 .unwrap_or_else(|| "operator stop requested".to_string());
             let status = stopped_status(loaded, reason.clone());
             write_status(loaded, &status)?;
+            write_continuity_restore_artifacts(
+                loaded,
+                &status,
+                "stop_requested_during_activation",
+            )?;
             return Err(anyhow!(
                 "stop_requested: {reason}; do not start a new cycle while stop is active"
             ));
@@ -461,7 +568,7 @@ fn acquire_lease(
                     message: "another cycle already holds the agent lease".to_string(),
                 }),
             );
-            write_status(loaded, &status)?;
+            persist_status(loaded, &status, "lease_active")?;
             return Err(anyhow!(
                 "lease_active: another cycle already holds the agent lease"
             ));
@@ -493,7 +600,7 @@ fn acquire_lease(
                     message: "active lease is stale; rerun with --recover-stale-lease".to_string(),
                 }),
             );
-            write_status(loaded, &status)?;
+            persist_status(loaded, &status, "lease_stale_blocked")?;
             return Err(anyhow!(
                 "lease_stale: active lease is stale; rerun with --recover-stale-lease"
             ));
@@ -898,6 +1005,15 @@ fn status_with_state(
     }
 }
 
+fn persist_status(
+    loaded: &LoadedAgentSpec,
+    status: &StatusRecord,
+    checkpoint_reason: &str,
+) -> Result<()> {
+    write_status(loaded, status)?;
+    write_continuity_restore_artifacts(loaded, status, checkpoint_reason)
+}
+
 #[derive(Clone, Copy, Debug, PartialEq, Eq)]
 enum CoordinationLeaseState {
     Clear,
@@ -979,7 +1095,7 @@ fn write_stop_record(
         }),
     )?;
     let status = stopped_status(loaded, stop.reason);
-    write_status(loaded, &status)?;
+    persist_status(loaded, &status, "stop_recorded")?;
     Ok(status)
 }
 
@@ -1147,6 +1263,106 @@ fn update_continuity_after_cycle(
     continuity["status"] = json!("active");
     continuity["updated_at"] = json!(Utc::now());
     write_json_pretty(&path, &continuity)
+}
+
+fn write_continuity_restore_artifacts(
+    loaded: &LoadedAgentSpec,
+    status: &StatusRecord,
+    checkpoint_reason: &str,
+) -> Result<()> {
+    let continuity: Value = read_json_required(&continuity_path(loaded))?;
+    let ledger = ledger_cursor(loaded)?;
+    let status_cycle_number = status
+        .last_cycle_id
+        .as_deref()
+        .and_then(cycle_number)
+        .unwrap_or(0);
+    let ledger_cycle_number = ledger
+        .latest_cycle_id
+        .as_deref()
+        .and_then(cycle_number)
+        .unwrap_or(0);
+    let (latest_cycle_id, latest_cycle_status) = if ledger_cycle_number > status_cycle_number {
+        (ledger.latest_cycle_id.clone(), ledger.latest_status.clone())
+    } else {
+        (
+            status
+                .last_cycle_id
+                .clone()
+                .or_else(|| ledger.latest_cycle_id.clone()),
+            status
+                .last_cycle_status
+                .clone()
+                .or_else(|| ledger.latest_status.clone()),
+        )
+    };
+    let lease_state = match read_lease(loaded)?.as_ref() {
+        Some(lease) if lease_is_stale(lease) => "stale",
+        Some(_) => "active",
+        None => "clear",
+    };
+    let next_cycle_number = latest_cycle_id
+        .as_deref()
+        .and_then(cycle_number)
+        .unwrap_or(0)
+        .max(ledger.max_cycle_number)
+        + 1;
+    let checkpoint = json!({
+        "schema": CONTINUITY_CHECKPOINT_SCHEMA,
+        "agent_instance_id": loaded.spec.agent_instance_id.clone(),
+        "captured_at": Utc::now(),
+        "checkpoint_reason": checkpoint_reason,
+        "state": status.state,
+        "stop_requested": status.stop_requested,
+        "latest_cycle_id": latest_cycle_id,
+        "latest_cycle_status": latest_cycle_status,
+        "completed_cycle_count": status.completed_cycle_count,
+        "consecutive_failure_count": status.consecutive_failure_count,
+        "continuity_kind": continuity.get("continuity_kind").cloned().unwrap_or_else(|| json!("pre_v0_92_handle")),
+        "continuity_ref": "continuity.json",
+        "status_ref": "status.json",
+        "cycle_ledger_ref": "cycle_ledger.jsonl",
+        "lease_ref": if lease_state == "clear" { Value::Null } else { json!("lease.json") },
+        "lease_state": lease_state,
+        "restore_basis": {
+            "ledger_entry_count": ledger.count,
+            "max_cycle_number": ledger.max_cycle_number,
+            "expected_next_cycle_id": format!("cycle-{next_cycle_number:06}")
+        }
+    });
+    write_json_pretty(&continuity_checkpoint_path(loaded), &checkpoint)?;
+
+    let replay_manifest = json!({
+        "schema": CONTINUITY_REPLAY_MANIFEST_SCHEMA,
+        "agent_instance_id": loaded.spec.agent_instance_id.clone(),
+        "generated_at": Utc::now(),
+        "continuity_ref": "continuity.json",
+        "checkpoint_ref": "continuity_checkpoint.json",
+        "status_ref": "status.json",
+        "cycle_ledger_ref": "cycle_ledger.jsonl",
+        "expected_resume": {
+            "next_cycle_id": format!("cycle-{next_cycle_number:06}"),
+            "latest_cycle_id": checkpoint.get("latest_cycle_id").cloned().unwrap_or(Value::Null),
+            "active_lease_state": lease_state,
+            "recover_stale_lease_required": lease_state == "stale"
+        },
+        "restore_invariants": [
+            "append_only_cycle_ledger",
+            "latest_cycle_id_matches_checkpoint",
+            "lease_file_blocks_duplicate_active_cycle_without_explicit_recovery"
+        ],
+        "reviewer_steps": [
+            "Inspect continuity_checkpoint.json for the latest captured cycle state.",
+            "Inspect continuity_replay_manifest.json for the next expected cycle id and lease posture.",
+            "Inspect cycle_ledger.jsonl to confirm resume continues at the next cycle id without duplicates."
+        ],
+        "non_claims": [
+            "not_mid_step_checkpointing",
+            "not_full_runtime_persistence",
+            "not_distributed_recovery"
+        ]
+    });
+    write_json_pretty(&continuity_replay_manifest_path(loaded), &replay_manifest)
 }
 
 fn update_memory_index(loaded: &LoadedAgentSpec, cycle_id: &str) -> Result<()> {

@@ -401,10 +401,12 @@ fn status_recovers_latest_cycle_from_ledger_when_status_file_is_missing() {
     )
     .expect("run");
     fs::remove_file(root.join("state/status.json")).expect("remove status to simulate restart");
+    fs::remove_file(root.join("state/continuity_checkpoint.json"))
+        .expect("remove checkpoint to force ledger restore");
 
     let recovered = status(&spec).expect("status recovers from ledger");
 
-    assert_eq!(recovered.state, AgentStatusState::Idle);
+    assert_eq!(recovered.state, AgentStatusState::Completed);
     assert_eq!(recovered.completed_cycle_count, 2);
     assert_eq!(recovered.last_cycle_id.as_deref(), Some("cycle-000002"));
     assert_eq!(recovered.last_cycle_status.as_deref(), Some("success"));
