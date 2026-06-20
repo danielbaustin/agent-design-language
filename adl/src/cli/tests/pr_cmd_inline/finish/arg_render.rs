@@ -3931,6 +3931,7 @@ fn real_pr_finish_happy_path_is_covered_in_default_lane() {
             closeout_log.display()
         ),
     );
+    let _fixture = GithubCliFixtureGuard::set(&gh_path);
 
     let old_path = env::var("PATH").unwrap_or_default();
     let old_janitor_cmd = env::var("ADL_PR_JANITOR_CMD").ok();
@@ -5251,6 +5252,7 @@ fn real_pr_finish_opener_failure_is_nonblocking_when_no_open_is_false() {
         &open_path,
         "#!/usr/bin/env bash\nset -euo pipefail\necho 'synthetic open failure' >&2\nexit 42\n",
     );
+    let _fixture = GithubCliFixtureGuard::set(&gh_path);
 
     let old_path = env::var("PATH").unwrap_or_default();
     let prev_dir = env::current_dir().expect("cwd");
