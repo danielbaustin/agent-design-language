@@ -1,6 +1,7 @@
 //! Persistent storage helpers for long-lived agent state artifacts.
 use super::schema::OPERATOR_EVENT_SCHEMA;
 use super::types::{LeaseRecord, LoadedAgentSpec, StatusRecord, StopRecord};
+use crate::runtime_aws_signal::publish_runtime_heartbeat_signal;
 use anyhow::{Context, Result};
 use chrono::Utc;
 use serde::{Deserialize, Serialize};
@@ -67,7 +68,9 @@ pub(super) fn read_status(loaded: &LoadedAgentSpec) -> Result<Option<StatusRecor
 }
 
 pub(super) fn write_status(loaded: &LoadedAgentSpec, status: &StatusRecord) -> Result<()> {
-    write_json_pretty(&status_path(loaded), status)
+    write_json_pretty(&status_path(loaded), status)?;
+    let _ = publish_runtime_heartbeat_signal(loaded, status);
+    Ok(())
 }
 
 pub(super) fn read_lease(loaded: &LoadedAgentSpec) -> Result<Option<LeaseRecord>> {

@@ -73,6 +73,7 @@ pub mod red_blue_agent_architecture;
 pub mod remote_exec;
 pub mod resilience;
 pub mod resolve;
+pub mod runtime_aws_signal;
 pub mod runtime_environment;
 pub mod runtime_v2;
 pub mod rust_native_gws_adapter_boundary;
