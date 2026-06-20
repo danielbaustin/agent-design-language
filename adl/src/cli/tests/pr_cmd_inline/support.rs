@@ -390,6 +390,9 @@ branch: "{branch}"
 status: "reviewed"
 activation_state: "reviewed"
 plan_revision: 1
+initial_pvf_lane: "prompt_template"
+planned_pvf_lane: "prompt_template"
+planned_pvf_lane_source: "matched_initial_issue_lane"
 source_refs:
   - kind: "issue"
     ref: "https://github.com/example/repo/issues/{issue}"
@@ -445,6 +448,23 @@ notes: "test note"
 ## Plan Summary
 
 test
+
+## PVF Lane Plan
+
+- Initial PVF lane from issue creation: `prompt_template`
+- Planned PVF lane for execution: `prompt_template`
+- Planning lane source: `matched_initial_issue_lane`
+- Revision rule: change `planned_pvf_lane` only when planning discovers a better explicit lane; keep `needs_planning_lane_assignment` fail-closed until that happens.
+
+## Estimate Plan
+
+- Estimated elapsed seconds: `unknown`
+- Estimated total tokens: `unknown`
+- Estimated validation seconds: `unknown`
+- Estimate confidence: `unknown`
+- Estimate data source: `unknown`
+- Estimate source ref: `unknown`
+- Unknown-value rule: record `unknown`, never `0`, when the estimate is unavailable or intentionally deferred.
 
 ## Codex Plan
 
@@ -694,6 +714,25 @@ Execution:
 ## Summary
 
 Finish test summary.
+
+## PVF Lane Truth
+- Initial PVF lane: `prompt_template`
+- Planned PVF lane: `prompt_template`
+- Final PVF lane: `prompt_template`
+- Lane change reason: `no_lane_change`
+
+## Issue Metrics Truth
+- Estimated elapsed seconds: `unknown`
+- Actual elapsed seconds: `unknown`
+- Estimated total tokens: `unknown`
+- Actual total tokens: `unknown`
+- Estimated validation seconds: `unknown`
+- Actual validation seconds: `unknown`
+- Goal metrics data source: `unknown`
+- Goal metrics source ref: `unknown`
+- Data-source confidence: `unknown`
+- Estimate error percent: `unknown`
+- Goal-metrics substrate note: consume the `#4264` issue-goal metrics summary when available and record `unknown` instead of duplicating raw session logs here.
 
 ## Artifacts produced
 - Code:

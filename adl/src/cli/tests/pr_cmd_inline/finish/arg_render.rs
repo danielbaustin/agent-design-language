@@ -299,6 +299,25 @@ Execution:
 
 done
 
+## PVF Lane Truth
+- Initial PVF lane: `docs_only`
+- Planned PVF lane: `docs_only`
+- Final PVF lane: `docs_only`
+- Lane change reason: `no_lane_change`
+
+## Issue Metrics Truth
+- Estimated elapsed seconds: `unknown`
+- Actual elapsed seconds: `unknown`
+- Estimated total tokens: `unknown`
+- Actual total tokens: `unknown`
+- Estimated validation seconds: `unknown`
+- Actual validation seconds: `unknown`
+- Goal metrics data source: `unknown`
+- Goal metrics source ref: `unknown`
+- Data-source confidence: `unknown`
+- Estimate error percent: `unknown`
+- Goal-metrics substrate note: consume the `#4264` issue-goal metrics summary when available and record `unknown` instead of duplicating raw session logs here.
+
 ## Artifacts produced
 - docs/example.md
 
@@ -3702,6 +3721,7 @@ fn finish_misc_helpers_cover_section_parsing_fingerprint_and_create_outcomes() {
 #[test]
 fn real_pr_finish_happy_path_is_covered_in_default_lane() {
     let _guard = env_lock();
+    let _github_env = force_gh_cli_transport_env();
     let temp = unique_temp_dir("adl-pr-finish-default-lane");
     let origin = temp.join("origin.git");
     let repo = temp.join("repo");
@@ -3839,6 +3859,7 @@ fn real_pr_finish_happy_path_is_covered_in_default_lane() {
             gh_log.display()
         ),
     );
+    let _fixture = GithubCliFixtureGuard::set(&gh_path);
     write_executable(
         &janitor_path,
         &format!(
@@ -4060,6 +4081,25 @@ Execution:
 ## Summary
 
 done
+
+## PVF Lane Truth
+- Initial PVF lane: `docs_only`
+- Planned PVF lane: `docs_only`
+- Final PVF lane: `docs_only`
+- Lane change reason: `no_lane_change`
+
+## Issue Metrics Truth
+- Estimated elapsed seconds: `unknown`
+- Actual elapsed seconds: `unknown`
+- Estimated total tokens: `unknown`
+- Actual total tokens: `unknown`
+- Estimated validation seconds: `unknown`
+- Actual validation seconds: `unknown`
+- Goal metrics data source: `unknown`
+- Goal metrics source ref: `unknown`
+- Data-source confidence: `unknown`
+- Estimate error percent: `unknown`
+- Goal-metrics substrate note: consume the `#4264` issue-goal metrics summary when available and record `unknown` instead of duplicating raw session logs here.
 
 ## Artifacts produced
 - docs/notes.md
@@ -4857,6 +4897,7 @@ fn real_pr_finish_rejects_branch_name_mismatch() {
 #[test]
 fn real_pr_finish_rejects_closed_issue_with_stale_canonical_truth() {
     let _guard = env_lock();
+    let _github_env = force_gh_cli_transport_env();
     let temp = unique_temp_dir("adl-pr-finish-closed-stale-truth");
     let origin = temp.join("origin.git");
     let repo = temp.join("repo");
@@ -4980,6 +5021,7 @@ fn real_pr_finish_rejects_closed_issue_with_stale_canonical_truth() {
             gh_log.display()
         ),
     );
+    let _fixture = GithubCliFixtureGuard::set(&gh_path);
 
     let old_path = env::var("PATH").unwrap_or_default();
     let prev_dir = env::current_dir().expect("cwd");
@@ -5014,6 +5056,7 @@ fn real_pr_finish_rejects_closed_issue_with_stale_canonical_truth() {
 #[test]
 fn real_pr_finish_opener_failure_is_nonblocking_when_no_open_is_false() {
     let _guard = env_lock();
+    let _github_env = force_gh_cli_transport_env();
     let temp = unique_temp_dir("adl-pr-finish-open-failure");
     let origin = temp.join("origin.git");
     let repo = temp.join("repo");
@@ -5146,6 +5189,7 @@ fn real_pr_finish_opener_failure_is_nonblocking_when_no_open_is_false() {
             gh_log.display()
         ),
     );
+    let _fixture = GithubCliFixtureGuard::set(&gh_path);
     write_executable(
         &open_path,
         "#!/usr/bin/env bash\nset -euo pipefail\necho 'synthetic open failure' >&2\nexit 42\n",
