@@ -5,6 +5,9 @@ use serde_yaml::Value as YamlValue;
 use std::fs;
 use std::path::{Path, PathBuf};
 
+use super::super::pr_cmd_prompt::{
+    infer_initial_pvf_lane, infer_initial_pvf_lane_source, NEEDS_PLANNING_PVF_LANE,
+};
 use super::super::pr_cmd_validate::validate_authored_prompt_surface;
 use super::super::pr_cmd_validate::{bootstrap_stub_reason, PromptSurfaceKind};
 use super::shared::{
@@ -231,6 +234,8 @@ struct SourcePromptMetadata {
     repo_inputs: Vec<String>,
     canonical_files: Vec<String>,
     demo_required: Option<bool>,
+    initial_pvf_lane: Option<String>,
+    initial_pvf_lane_source: Option<String>,
 }
 
 impl SourcePromptMetadata {
@@ -269,8 +274,49 @@ impl SourcePromptMetadata {
             if out.demo_required.is_none() {
                 out.demo_required = yaml_bool_field(mapping, "demo_required");
             }
+            if out.initial_pvf_lane.is_none() {
+                out.initial_pvf_lane = yaml_string_field(mapping, "initial_pvf_lane");
+            }
+            if out.initial_pvf_lane_source.is_none() {
+                out.initial_pvf_lane_source = yaml_string_field(mapping, "initial_pvf_lane_source");
+            }
         }
         out
+    }
+}
+
+fn resolved_initial_pvf_lane(metadata: &SourcePromptMetadata, title: &str, prompt: &str) -> String {
+    metadata.initial_pvf_lane.clone().unwrap_or_else(|| {
+        infer_initial_pvf_lane(title, &metadata.labels.join(","), Some(prompt)).to_string()
+    })
+}
+
+fn resolved_initial_pvf_lane_source(
+    metadata: &SourcePromptMetadata,
+    title: &str,
+    prompt: &str,
+    initial_lane: &str,
+) -> String {
+    metadata.initial_pvf_lane_source.clone().unwrap_or_else(|| {
+        infer_initial_pvf_lane_source(
+            title,
+            &metadata.labels.join(","),
+            Some(prompt),
+            initial_lane,
+        )
+        .to_string()
+    })
+}
+
+fn resolved_planned_pvf_lane(initial_lane: &str) -> String {
+    initial_lane.to_string()
+}
+
+fn resolved_planned_pvf_lane_source(initial_lane: &str, initial_source: &str) -> String {
+    if initial_lane == NEEDS_PLANNING_PVF_LANE {
+        "planning_required_from_issue_creation".to_string()
+    } else {
+        format!("planning_confirmed_from_{initial_source}")
     }
 }
 
@@ -980,6 +1026,11 @@ fn render_bootstrap_output_card(
     } else {
         "Reserved the execution branch for later implementation."
     };
+    let source_path = issue_ref.issue_prompt_path(repo_root);
+    let prompt = fs::read_to_string(&source_path).unwrap_or_default();
+    let metadata = SourcePromptMetadata::from_prompt(&prompt);
+    let initial_pvf_lane = resolved_initial_pvf_lane(&metadata, title, &prompt);
+    let planned_pvf_lane = resolved_planned_pvf_lane(&initial_pvf_lane);
     let mut text = read_prompt_template(repo_root, "sor", &[])?;
     apply_template_values(
         &mut text,
@@ -1009,6 +1060,10 @@ fn render_bootstrap_output_card(
             ("<timestamp>", timestamp.to_string()),
             ("<output_card>", output_rel),
             ("<branch_action>", branch_action.to_string()),
+            ("<initial_pvf_lane>", initial_pvf_lane.clone()),
+            ("<planned_pvf_lane>", planned_pvf_lane.clone()),
+            ("<final_pvf_lane>", "not_recorded_yet".to_string()),
+            ("<lane_change_reason>", "not_recorded_yet".to_string()),
         ],
     );
     Ok(text)
@@ -1027,6 +1082,7 @@ fn render_bootstrap_plan_card(
     let source_rel = path_relative_to_repo(repo_root, source_path);
     let timestamp = Utc::now().format("%Y-%m-%dT%H:%M:%SZ").to_string();
     let prompt = fs::read_to_string(source_path).unwrap_or_default();
+    let metadata = SourcePromptMetadata::from_prompt(&prompt);
     let dependencies = issue_prompt_section(&prompt, "Dependencies")
         .map(|value| one_line_summary(&value))
         .unwrap_or_else(|| "Review the source issue prompt for dependency truth.".to_string());
@@ -1058,6 +1114,12 @@ fn render_bootstrap_plan_card(
     let repo_inputs_step = yaml_inline(&repo_inputs);
     let non_goals_step = yaml_inline(&non_goals);
     let validation_step = yaml_inline(&validation_strategy);
+    let initial_pvf_lane = resolved_initial_pvf_lane(&metadata, title, &prompt);
+    let initial_pvf_lane_source =
+        resolved_initial_pvf_lane_source(&metadata, title, &prompt, &initial_pvf_lane);
+    let planned_pvf_lane = resolved_planned_pvf_lane(&initial_pvf_lane);
+    let planned_pvf_lane_source =
+        resolved_planned_pvf_lane_source(&initial_pvf_lane, &initial_pvf_lane_source);
     let mut text = read_prompt_template(repo_root, "spp", &[])?;
     let issue_url = format!(
         "https://github.com/{}/issues/{}",
@@ -1103,6 +1165,9 @@ fn render_bootstrap_plan_card(
                 "Generated from 1.0.0 template; update before continuing if execution diverges."
                     .to_string(),
             ),
+            ("<initial_pvf_lane>", initial_pvf_lane.clone()),
+            ("<planned_pvf_lane>", planned_pvf_lane.clone()),
+            ("<planned_pvf_lane_source>", planned_pvf_lane_source.clone()),
         ],
     );
     Ok(text)

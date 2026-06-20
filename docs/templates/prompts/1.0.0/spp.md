@@ -13,6 +13,9 @@ card_status: "<card_status>"
 status: "<status>"
 activation_state: "<activation_state>"
 plan_revision: 1
+initial_pvf_lane: "<initial_pvf_lane>"
+planned_pvf_lane: "<planned_pvf_lane>"
+planned_pvf_lane_source: "<planned_pvf_lane_source>"
 source_refs:
   - kind: "issue"
     ref: "<issue_url>"
@@ -102,6 +105,13 @@ Canonical Template Source: `docs/templates/prompts/1.0.0/spp.md`
 Design-time operative plan for `<title>`.
 
 <plan_summary>
+
+## PVF Lane Plan
+
+- Initial PVF lane from issue creation: `<initial_pvf_lane>`
+- Planned PVF lane for execution: `<planned_pvf_lane>`
+- Planning lane source: `<planned_pvf_lane_source>`
+- Revision rule: change `planned_pvf_lane` only when planning discovers a better explicit lane; keep `needs_planning_lane_assignment` fail-closed until that happens.
 
 ## Codex Plan
 

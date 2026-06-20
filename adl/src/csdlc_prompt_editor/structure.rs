@@ -215,9 +215,9 @@ pub(super) fn build_structure_schema(
             .iter()
             .map(|line| line.to_string())
             .collect(),
-        rendered_value_line_prefixes: RENDERED_VALUE_LINE_PREFIXES
-            .iter()
-            .map(|line| line.to_string())
+        rendered_value_line_prefixes: rendered_value_line_prefixes(card.kind)
+            .into_iter()
+            .map(str::to_string)
             .collect(),
         frontmatter_keys: Vec::new(),
         headings: Vec::new(),
@@ -610,7 +610,7 @@ const TEMPLATE_SCAFFOLD_PREFIXES: &[&str] = &[
     "reason_not_chosen:",
 ];
 
-const RENDERED_VALUE_LINE_PREFIXES: &[&str] = &[
+const COMMON_RENDERED_VALUE_LINE_PREFIXES: &[&str] = &[
     "Task ID:",
     "Run ID:",
     "Version:",
@@ -658,6 +658,28 @@ const RENDERED_VALUE_LINE_PREFIXES: &[&str] = &[
     "execution_handoff:",
     "notes:",
 ];
+
+const PVF_RENDERED_VALUE_LINE_PREFIXES: &[&str] = &[
+    "initial_pvf_lane:",
+    "planned_pvf_lane:",
+    "planned_pvf_lane_source:",
+    "- Initial PVF lane from issue creation:",
+    "- Planned PVF lane for execution:",
+    "- Planning lane source:",
+    "- Revision rule:",
+    "- Initial PVF lane:",
+    "- Planned PVF lane:",
+    "- Final PVF lane:",
+    "- Lane change reason:",
+];
+
+fn rendered_value_line_prefixes(kind: PromptCardKind) -> Vec<&'static str> {
+    let mut prefixes = COMMON_RENDERED_VALUE_LINE_PREFIXES.to_vec();
+    if matches!(kind, PromptCardKind::Spp | PromptCardKind::Sor) {
+        prefixes.extend_from_slice(PVF_RENDERED_VALUE_LINE_PREFIXES);
+    }
+    prefixes
+}
 
 fn is_template_scaffold_line(trimmed: &str, schema: &PromptCardStructureSchema) -> bool {
     schema.scaffold_lines.iter().any(|line| line == trimmed)
@@ -791,5 +813,28 @@ mod tests {
                 heading_path: vec!["Actual".to_string()],
             }]
         ));
+    }
+
+    #[test]
+    fn rendered_value_prefixes_scope_pvf_lane_lines_to_spp_and_sor() {
+        let sip_schema = build_structure_schema("inline", &sample_card(PromptCardKind::Sip))
+            .expect("sip schema");
+        let spp_schema = build_structure_schema("inline", &sample_card(PromptCardKind::Spp))
+            .expect("spp schema");
+        let sor_schema = build_structure_schema("inline", &sample_card(PromptCardKind::Sor))
+            .expect("sor schema");
+
+        assert!(!sip_schema
+            .rendered_value_line_prefixes
+            .contains(&"initial_pvf_lane:".to_string()));
+        assert!(!sip_schema
+            .rendered_value_line_prefixes
+            .contains(&"- Final PVF lane:".to_string()));
+        assert!(spp_schema
+            .rendered_value_line_prefixes
+            .contains(&"initial_pvf_lane:".to_string()));
+        assert!(sor_schema
+            .rendered_value_line_prefixes
+            .contains(&"- Final PVF lane:".to_string()));
     }
 }

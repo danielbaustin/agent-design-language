@@ -123,7 +123,18 @@
     "confidence:",
     "plan_summary:",
     "execution_handoff:",
-    "notes:"
+    "notes:",
+    "initial_pvf_lane:",
+    "planned_pvf_lane:",
+    "planned_pvf_lane_source:",
+    "- Initial PVF lane from issue creation:",
+    "- Planned PVF lane for execution:",
+    "- Planning lane source:",
+    "- Revision rule:",
+    "- Initial PVF lane:",
+    "- Planned PVF lane:",
+    "- Final PVF lane:",
+    "- Lane change reason:"
   ],
   "frontmatter_keys": [
     "activation_state",
@@ -138,12 +149,15 @@
     "constraints",
     "execution_handoff",
     "generated_at",
+    "initial_pvf_lane",
     "invariants_to_preserve",
     "issue",
     "name",
     "notes",
     "plan_revision",
     "plan_summary",
+    "planned_pvf_lane",
+    "planned_pvf_lane_source",
     "proposed_steps",
     "required_permissions",
     "review_hooks",
@@ -170,6 +184,10 @@
     {
       "level": 2,
       "text": "Plan Summary"
+    },
+    {
+      "level": 2,
+      "text": "PVF Lane Plan"
     },
     {
       "level": 2,
