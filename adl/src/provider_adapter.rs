@@ -8,13 +8,16 @@ use crate::provider_communication::{
     PROVIDER_COMMUNICATION_SCHEMA_VERSION,
 };
 use crate::resilience::{
-    execute_retry_policy, ResilienceFaultClassV1, ResilienceSurfaceV1, RetryAttemptRecordV1,
+    execute_retry_policy, execute_timeout_policy, ResilienceFaultClassV1, ResilienceSurfaceV1,
+    RetryAttemptRecordV1, TimeoutBreachKindV1, TimeoutObservation,
 };
 use anyhow::{anyhow, Result};
 use reqwest::blocking::Client;
 use serde_json::{json, Value};
 use std::cell::RefCell;
+use std::collections::HashMap;
 use std::env;
+use std::sync::{Mutex, MutexGuard, OnceLock, TryLockError};
 use std::time::{Duration, Instant};
 
 const DEFAULT_OPENAI_RESPONSES_URL: &str = "https://api.openai.com/v1/responses";
@@ -24,6 +27,8 @@ const DEFAULT_OPENROUTER_CHAT_COMPLETIONS_URL: &str =
     "https://openrouter.ai/api/v1/chat/completions";
 const DEFAULT_GEMINI_BASE_URL: &str = "https://generativelanguage.googleapis.com/v1beta";
 const DEFAULT_OLLAMA_BASE_URL: &str = "http://127.0.0.1:11434";
+static OLLAMA_RUNTIME_BULKHEADS: OnceLock<Mutex<HashMap<String, &'static Mutex<()>>>> =
+    OnceLock::new();
 
 pub fn execute_provider_invocation(
     mut request: ProviderInvocationRequestV1,
@@ -67,16 +72,21 @@ pub fn execute_provider_invocation(
                     .with_lane(&lane_ref)
                     .with_attempt(attempt_index),
             );
-            match request.route.runtime_surface {
-                RuntimeSurfaceV1::HostedApi => execute_hosted(&request, &policy),
-                RuntimeSurfaceV1::OllamaHttp => execute_ollama_http(&mut request, &policy),
-                RuntimeSurfaceV1::OllamaCli
-                | RuntimeSurfaceV1::Mock
-                | RuntimeSurfaceV1::Unknown => Err(provider_failure_from_note(
-                    "unsupported provider runtime surface",
-                    None,
-                )),
-            }
+            let started = Instant::now();
+            execute_timeout_policy(
+                &resilience_policy,
+                ResilienceSurfaceV1::Provider,
+                "provider_adapter.attempt",
+                || TimeoutObservation {
+                    result: execute_runtime_surface_attempt(&mut request, &policy),
+                    elapsed_ms: started.elapsed().as_millis() as u64,
+                    cancelled: false,
+                },
+                provider_failure_classification_from_failure,
+                timeout_failure,
+                cancelled_failure,
+            )
+            .result
         },
         provider_failure_classification_from_failure,
         |delay_ms| std::thread::sleep(Duration::from_millis(delay_ms)),
@@ -138,6 +148,95 @@ pub fn execute_provider_invocation(
             failed_result(request, attempts, failure, duration_ms)
         }
     }
+}
+
+fn execute_runtime_surface_attempt(
+    request: &mut ProviderInvocationRequestV1,
+    policy: &ProviderAttemptPolicyV1,
+) -> std::result::Result<ProviderTextResponse, ProviderFailureV1> {
+    match request.route.runtime_surface {
+        RuntimeSurfaceV1::HostedApi => execute_hosted(request, policy),
+        RuntimeSurfaceV1::OllamaHttp => {
+            let _guard = acquire_ollama_runtime_slot(request)?;
+            execute_ollama_http(request, policy)
+        }
+        RuntimeSurfaceV1::OllamaCli | RuntimeSurfaceV1::Mock | RuntimeSurfaceV1::Unknown => Err(
+            provider_failure_from_note("unsupported provider runtime surface", None),
+        ),
+    }
+}
+
+fn timeout_failure(
+    breach_kind: TimeoutBreachKindV1,
+    elapsed_ms: u64,
+    breached_budget_ms: u64,
+) -> ProviderFailureV1 {
+    let breach_label = match breach_kind {
+        TimeoutBreachKindV1::Timeout => "timeout",
+        TimeoutBreachKindV1::HardDeadline => "hard_deadline",
+    };
+    provider_failure_from_note(
+        &format!(
+            "provider timeout after {elapsed_ms}ms ({breach_label} budget {breached_budget_ms}ms)"
+        ),
+        None,
+    )
+}
+
+fn cancelled_failure(elapsed_ms: u64) -> ProviderFailureV1 {
+    provider_failure_from_note(
+        &format!("provider invocation cancelled after {elapsed_ms}ms"),
+        None,
+    )
+}
+
+fn ollama_runtime_bulkheads() -> &'static Mutex<HashMap<String, &'static Mutex<()>>> {
+    OLLAMA_RUNTIME_BULKHEADS.get_or_init(|| Mutex::new(HashMap::new()))
+}
+
+fn acquire_ollama_runtime_slot(
+    request: &ProviderInvocationRequestV1,
+) -> std::result::Result<MutexGuard<'static, ()>, ProviderFailureV1> {
+    let key = ollama_runtime_bulkhead_key(request);
+    let slot = {
+        let mut registry = ollama_runtime_bulkheads()
+            .lock()
+            .unwrap_or_else(|poisoned| poisoned.into_inner());
+        *registry
+            .entry(key)
+            .or_insert_with(|| Box::leak(Box::new(Mutex::new(()))))
+    };
+    match slot.try_lock() {
+        Ok(guard) => Ok(guard),
+        Err(TryLockError::WouldBlock) => Err(provider_failure_from_note(
+            "local_runtime_busy: ollama runtime bulkhead saturated; retry later",
+            None,
+        )),
+        Err(TryLockError::Poisoned(_)) => Err(provider_failure_from_note(
+            "local_runtime_hung: ollama runtime bulkhead is poisoned; repair the local runtime before retrying",
+            None,
+        )),
+    }
+}
+
+fn ollama_runtime_bulkhead_key(request: &ProviderInvocationRequestV1) -> String {
+    format!(
+        "{}::{}",
+        ollama_runtime_base(request.route.endpoint_ref.as_deref()),
+        request.route.provider_model_id
+    )
+}
+
+fn ollama_runtime_base(endpoint_ref: Option<&str>) -> String {
+    let base = endpoint_ref
+        .filter(|endpoint| endpoint.starts_with("http://") || endpoint.starts_with("https://"))
+        .unwrap_or(DEFAULT_OLLAMA_BASE_URL)
+        .trim_end_matches('/');
+    base.trim_end_matches("/api/generate")
+        .trim_end_matches("/api/show")
+        .trim_end_matches("/api/tags")
+        .trim_end_matches('/')
+        .to_string()
 }
 
 fn failed_result(
@@ -1085,6 +1184,25 @@ mod tests {
         format!("http://{addr}")
     }
 
+    fn delayed_server(body: &'static str, status: &'static str, delay_ms: u64) -> String {
+        let listener = TcpListener::bind("127.0.0.1:0").expect("bind delayed server");
+        let addr = listener.local_addr().expect("server addr");
+        thread::spawn(move || {
+            let (mut stream, _) = listener.accept().expect("accept");
+            let mut buffer = [0_u8; 8192];
+            let _ = stream.read(&mut buffer);
+            thread::sleep(Duration::from_millis(delay_ms));
+            let response = format!(
+                "HTTP/1.1 {status}\r\nContent-Type: application/json\r\nContent-Length: {}\r\nConnection: close\r\n\r\n{body}",
+                body.len()
+            );
+            stream
+                .write_all(response.as_bytes())
+                .expect("write delayed response");
+        });
+        format!("http://{addr}")
+    }
+
     #[test]
     fn hosted_openai_adapter_returns_output_and_redacts_log() {
         env::set_var("ADL_PROVIDER_ADAPTER_HOSTED_SUCCESS_KEY", "test-key");
@@ -1346,6 +1464,107 @@ mod tests {
 
         let _ = fs::remove_file(path);
         env::remove_var("ADL_PROVIDER_ADAPTER_EXHAUST_KEY");
+    }
+
+    #[test]
+    fn hosted_openai_timeout_is_reported_through_shared_timeout_layer() {
+        env::set_var("ADL_PROVIDER_ADAPTER_TIMEOUT_DIRECT_KEY", "test-key");
+        let endpoint = delayed_server(r#"{"output_text":"too slow"}"#, "200 OK", 80);
+        let path = temp_log("timeout");
+        let mut logger = ProviderRunLoggerV1::create(&path, "run-timeout").expect("open logger");
+        let mut req = request(RuntimeSurfaceV1::HostedApi, endpoint);
+        req.route.credential_ref = Some("env:ADL_PROVIDER_ADAPTER_TIMEOUT_DIRECT_KEY".to_string());
+        req.attempt_policy.timeout_ms = 10;
+
+        let result = execute_provider_invocation(req, &mut logger);
+        drop(logger);
+
+        assert_eq!(result.final_status, ProviderInvocationFinalStatusV1::Failed);
+        assert_eq!(result.attempts.len(), 1);
+        assert_eq!(result.attempts[0].status, ProviderAttemptStatusV1::Timeout);
+        assert_eq!(
+            result.failure.as_ref().map(|failure| failure.kind.clone()),
+            Some(ProviderFailureKindV1::ProviderTimeout)
+        );
+        assert_eq!(
+            result.attempts[0]
+                .failure
+                .as_ref()
+                .map(|failure| failure.kind.clone()),
+            Some(ProviderFailureKindV1::ProviderTimeout)
+        );
+
+        let _ = fs::remove_file(path);
+        env::remove_var("ADL_PROVIDER_ADAPTER_TIMEOUT_DIRECT_KEY");
+    }
+
+    #[test]
+    fn ollama_bulkhead_saturation_is_reported_as_local_runtime_busy() {
+        let held = request(
+            RuntimeSurfaceV1::OllamaHttp,
+            "http://127.0.0.1:9".to_string(),
+        );
+        let _guard = acquire_ollama_runtime_slot(&held).expect("hold local runtime slot");
+        let path = temp_log("ollama-bulkhead");
+        let mut logger = ProviderRunLoggerV1::create(&path, "run-bulkhead").expect("open logger");
+        let mut req = request(
+            RuntimeSurfaceV1::OllamaHttp,
+            "http://127.0.0.1:9".to_string(),
+        );
+        req.attempt_policy.max_attempts = 1;
+
+        let result = execute_provider_invocation(req, &mut logger);
+        drop(logger);
+
+        assert_eq!(result.final_status, ProviderInvocationFinalStatusV1::Failed);
+        assert_eq!(result.attempts.len(), 1);
+        assert_eq!(
+            result.failure.as_ref().map(|failure| failure.kind.clone()),
+            Some(ProviderFailureKindV1::LocalRuntimeBusy)
+        );
+        assert_eq!(
+            result.attempts[0]
+                .failure
+                .as_ref()
+                .map(|failure| failure.kind.clone()),
+            Some(ProviderFailureKindV1::LocalRuntimeBusy)
+        );
+        assert!(!result.attempts[0].retryable);
+        assert_eq!(
+            result.attempts[0]
+                .failure
+                .as_ref()
+                .map(|failure| failure.retryable),
+            Some(false)
+        );
+
+        let _ = fs::remove_file(path);
+    }
+
+    #[test]
+    fn ollama_bulkhead_is_scoped_per_endpoint_and_model() {
+        let first = request(
+            RuntimeSurfaceV1::OllamaHttp,
+            "http://127.0.0.1:11434".to_string(),
+        );
+        let second = request(
+            RuntimeSurfaceV1::OllamaHttp,
+            "http://127.0.0.1:22434/api/generate".to_string(),
+        );
+        let third = {
+            let mut req = request(
+                RuntimeSurfaceV1::OllamaHttp,
+                "http://127.0.0.1:11434".to_string(),
+            );
+            req.route.provider_model_id = "different-model".to_string();
+            req
+        };
+
+        let _guard = acquire_ollama_runtime_slot(&first).expect("hold first slot");
+        let _other_endpoint =
+            acquire_ollama_runtime_slot(&second).expect("different endpoint should not block");
+        let _other_model =
+            acquire_ollama_runtime_slot(&third).expect("different model should not block");
     }
 
     #[test]
