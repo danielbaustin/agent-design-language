@@ -2308,36 +2308,34 @@ mod tests {
         ));
         fs::create_dir_all(&tmp).expect("tmp");
 
-        for (kind, fixture_rel) in [(
-            PromptCardKind::Spp,
-            "docs/tooling/csdlc-prompt-editor/repair_examples/spp_repaired_issue_plan.md",
-        )] {
-            let legacy_rendered =
-                fs::read_to_string(repo_root.join(fixture_rel)).expect("legacy fixture");
+        let kind = PromptCardKind::Spp;
+        let fixture_rel =
+            "docs/tooling/csdlc-prompt-editor/repair_examples/spp_repaired_issue_plan.md";
+        let legacy_rendered =
+            fs::read_to_string(repo_root.join(fixture_rel)).expect("legacy fixture");
 
-            let input = tmp.join(format!("legacy-{}.md", kind.key()));
-            let imported = tmp.join(format!("legacy-{}.values.yaml", kind.key()));
-            let normalized = tmp.join(format!("normalized-{}.md", kind.key()));
-            fs::write(&input, legacy_rendered).expect("write legacy rendered card");
+        let input = tmp.join(format!("legacy-{}.md", kind.key()));
+        let imported = tmp.join(format!("legacy-{}.values.yaml", kind.key()));
+        let normalized = tmp.join(format!("normalized-{}.md", kind.key()));
+        fs::write(&input, legacy_rendered).expect("write legacy rendered card");
 
-            let report = import_values_from_rendered_card_file(
-                &repo_root,
-                kind,
-                &input,
-                &imported,
-                Some(&normalized),
-            )
-            .expect("import should bridge legacy rendered card");
-            assert_eq!(report.comparison, PromptCardRoundTripComparison::Normalized);
+        let report = import_values_from_rendered_card_file(
+            &repo_root,
+            kind,
+            &input,
+            &imported,
+            Some(&normalized),
+        )
+        .expect("import should bridge legacy rendered card");
+        assert_eq!(report.comparison, PromptCardRoundTripComparison::Normalized);
 
-            let imported_text = fs::read_to_string(&imported).expect("imported values");
-            assert!(imported_text.contains("template_set: \"1.0.1\""));
-            let normalized_text = fs::read_to_string(&normalized).expect("normalized rendered");
-            assert!(normalized_text.contains(&format!(
-                "Canonical Template Source: `docs/templates/prompts/1.0.1/{}.md`",
-                kind.key()
-            )));
-        }
+        let imported_text = fs::read_to_string(&imported).expect("imported values");
+        assert!(imported_text.contains("template_set: \"1.0.1\""));
+        let normalized_text = fs::read_to_string(&normalized).expect("normalized rendered");
+        assert!(normalized_text.contains(&format!(
+            "Canonical Template Source: `docs/templates/prompts/1.0.1/{}.md`",
+            kind.key()
+        )));
     }
 
     #[test]
@@ -2591,14 +2589,17 @@ Malformed legacy card.
         );
 
         let bad_locked = tmp.join("bad-locked.values.yaml");
+        let active_set = active_template_set();
         fs::write(
             &bad_locked,
-            r#"schema: adl.csdlc.prompt_template_values.v1
-template_set: "1.0.1"
+            format!(
+                r#"schema: adl.csdlc.prompt_template_values.v1
+template_set: "{active_set}"
 card_kind: sip
 values:
   issue: "1374"
-"#,
+"#
+            ),
         )
         .expect("bad locked values");
         let err = load_values_file(sip, &bad_locked, &model.template_set)
@@ -2608,12 +2609,14 @@ values:
         let bad_editable = tmp.join("bad-editable.values.yaml");
         fs::write(
             &bad_editable,
-            r#"schema: adl.csdlc.prompt_template_values.v1
-template_set: "1.0.1"
+            format!(
+                r#"schema: adl.csdlc.prompt_template_values.v1
+template_set: "{active_set}"
 card_kind: sip
 system:
   goal: "Wrong section"
-"#,
+"#
+            ),
         )
         .expect("bad editable values");
         let err = load_values_file(sip, &bad_editable, &model.template_set)
