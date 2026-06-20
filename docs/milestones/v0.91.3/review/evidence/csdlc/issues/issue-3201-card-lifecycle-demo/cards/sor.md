@@ -14,15 +14,15 @@ Completed the tracked public `WP-03` proof bundle for the canonical
 
 ## PVF Lane Truth
 
-- Initial PVF lane: `prompt_template`
-- Planned PVF lane: `prompt_template`
-- Final PVF lane: `prompt_template`
-- Lane change reason: `not_applicable`
+- Initial PVF lane: `not_recorded_for_v0.91.3_proof_sample`
+- Planned PVF lane: `not_recorded_for_v0.91.3_proof_sample`
+- Final PVF lane: `not_recorded_for_v0.91.3_proof_sample`
+- Lane change reason: `This historical public proof sample predates the newer PVF lane recording fields and now records that truth explicitly.`
 
 ## Issue Metrics Truth
 
 - Estimated elapsed seconds: `unknown`
-- Actual elapsed seconds: `480`
+- Actual elapsed seconds: `unknown`
 - Estimated total tokens: `unknown`
 - Actual total tokens: `unknown`
 - Estimated validation seconds: `unknown`

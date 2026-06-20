@@ -2476,10 +2476,10 @@ mod tests {
         assert_eq!(report.comparison, PromptCardRoundTripComparison::Normalized);
 
         let imported_text = fs::read_to_string(&imported).expect("imported values");
-        assert!(imported_text.contains("template_set: \"1.0.1\""));
+        assert!(imported_text.contains("template_set: \"1.0.2\""));
         let normalized_text = fs::read_to_string(&normalized).expect("normalized rendered");
         assert!(normalized_text.contains(&format!(
-            "Canonical Template Source: `docs/templates/prompts/1.0.1/{}.md`",
+            "Canonical Template Source: `docs/templates/prompts/1.0.2/{}.md`",
             kind.key()
         )));
     }
