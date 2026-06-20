@@ -5,11 +5,12 @@ Use this skill only after the PR outcome is known.
 Check in this order:
 1. PR merged, intentionally closed, or not required for the final disposition
 2. issue closed
-3. supersession, duplicate, or deferral references recorded when relevant
-4. final STP/SIP/SOR truth
-5. root/worktree card reconciliation
-6. no required artifacts left only in the worktree
-7. safe worktree prune
+3. shepherding has actually settled into a terminal closeout path
+4. supersession, duplicate, or deferral references recorded when relevant
+5. final STP/SIP/SOR truth
+6. root/worktree card reconciliation
+7. no required artifacts left only in the worktree
+8. safe worktree prune
 
 Safe actions:
 - normalize final card truth

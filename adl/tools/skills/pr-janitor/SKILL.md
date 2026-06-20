@@ -12,6 +12,8 @@ Its job is to:
 - detect failed checks, merge conflicts, or blocked review state
 - distinguish actionable fixes from issues requiring human judgment
 - apply only bounded fixes when clearly justified and authorized
+- treat healthy waiting states as active shepherding work until merge or
+  explicit closure settles
 - emit a structured PR progress result
 - stop before unreviewed scope expansion or silent closeout
 
@@ -93,8 +95,11 @@ If there is no concrete PR-progress target, stop and report `blocked`.
    - `healthy`
    - `action_required`
    - `blocked`
-4. Apply only bounded fixes if policy and evidence support them.
-5. Emit a structured progress result and stop.
+4. For `healthy` waiting states, keep the PR attached to active shepherding:
+   review wait, green checks, and merge-ready state are not by themselves
+   evidence that the issue lifecycle is complete.
+5. Apply only bounded fixes if policy and evidence support them.
+6. Emit a structured progress result and stop.
 
 ## Observability Expectations
 
@@ -152,7 +157,8 @@ Distinguish among:
 - merge conflict or branch drift
 - requested review changes
 - blocked merge readiness with no obvious automated fix
-- no blocker currently present
+- no blocker currently present, but active shepherding still required until
+  merge or explicit closure is settled
 
 ### 4. Apply Only Bounded Fixes
 
@@ -186,6 +192,11 @@ Normal handoff targets include:
 - `pr-closeout` when the PR outcome is settled and only truthful local closeout remains
 - a human reviewer
 - a focused implementation/fix task
+
+Healthy waiting rule:
+- do not surface a healthy PR-open waiting state as implicit issue completion
+- when checks are green and the PR is merge-ready, the next truthful handoff is
+  merge/settlement followed by `pr-closeout`, not conversational abandonment
 
 ## Parallelism
 

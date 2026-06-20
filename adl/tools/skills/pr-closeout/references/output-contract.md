@@ -12,6 +12,7 @@ closeout_state:
   closure_references:
     - <issue_or_pr_url_or_identifier>
   issue_closed_verified: true | false
+  shepherding_settled: true | false
   cards_finalized: true | false
   root_bundle_reconciled: true | false
   required_artifacts_in_canonical_repo_path: true | false
