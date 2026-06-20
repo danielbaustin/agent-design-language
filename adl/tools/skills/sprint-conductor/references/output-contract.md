@@ -41,6 +41,32 @@ sprint:
       pr_url: <url or null>
       artifact_paths:
         - <path>
+      goal_metrics:
+        status: not_recorded | recorded
+        raw_log_path: <path or null>
+        record_count: <int>
+        phases_recorded:
+          - issue_start | pr_publication | review_handoff | merge_closeout | sprint_closeout
+        selected_stage: issue_start | pr_publication | review_handoff | merge_closeout | sprint_closeout | null
+        recorded_at: <timestamp or null>
+        data_source: codex_goal_tool | manual_entry | derived_sprint_state | unknown
+        goal_id: <string or null>
+        goal_id_availability: known | unknown | not_available
+        started_at: <timestamp or null>
+        completed_at: <timestamp or null>
+        elapsed_seconds: <int or null>
+        elapsed_availability: known | unknown | not_available
+        token_usage:
+          total_tokens: <int or null>
+          prompt_tokens: <int or null>
+          completion_tokens: <int or null>
+          availability: known | unknown | not_available
+          total_availability: known | unknown | not_available
+          prompt_availability: known | unknown | not_available
+          completion_availability: known | unknown | not_available
+        model_ref: <string or null>
+        session_ref: <string or null>
+        thread_id: <string or null>
       closeout_gate:
         issue_closed: true | false
         pr_state: merged | closed_no_merge | not_applicable | unknown
@@ -155,6 +181,16 @@ closeout:
   closeout_artifact_path: <path or null>
   sprint_issue_close_summary: <bounded text or null>
   closure_cleanliness: clean | clean_with_post_sprint_followups | residual_debt | unknown
+  goal_metrics_rollup:
+    issue_count: <int>
+    issues_with_recorded_metrics: <int>
+    issues_without_recorded_metrics: <int>
+    issues_with_known_elapsed: <int>
+    issues_with_unknown_elapsed: <int>
+    issues_with_known_total_tokens: <int>
+    issues_with_unknown_total_tokens: <int>
+    total_elapsed_seconds_known_sum: <int>
+    total_tokens_known_sum: <int>
   coverage:
     source: local_run | ci | existing_quality_gate | not_applicable | missing
     summary: <bounded text>

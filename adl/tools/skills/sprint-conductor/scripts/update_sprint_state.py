@@ -6,6 +6,8 @@ import json
 from pathlib import Path
 from typing import Any
 
+from issue_goal_metrics import default_goal_metrics_summary
+
 
 def parse_csv_ints(raw: str) -> list[int]:
     values = []
@@ -24,6 +26,7 @@ def default_issue_records(ordered: list[int]) -> list[dict[str, Any]]:
             'status': 'pending',
             'pr_url': None,
             'artifact_paths': [],
+            'goal_metrics': default_goal_metrics_summary(),
         }
         for issue in ordered
     ]
@@ -64,12 +67,14 @@ def ensure_issue_record(state: dict[str, Any], issue_number: int) -> dict[str, A
         if record.get('issue_number') == issue_number:
             record.setdefault('artifact_paths', [])
             record.setdefault('pr_url', None)
+            record.setdefault('goal_metrics', default_goal_metrics_summary())
             return record
     record = {
         'issue_number': issue_number,
         'status': 'pending',
         'pr_url': None,
         'artifact_paths': [],
+        'goal_metrics': default_goal_metrics_summary(),
     }
     state['issue_records'].append(record)
     return record

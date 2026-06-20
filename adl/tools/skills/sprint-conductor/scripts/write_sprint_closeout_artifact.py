@@ -5,6 +5,8 @@ import argparse
 import json
 from pathlib import Path
 
+from issue_goal_metrics import compute_goal_metrics_rollup, default_goal_metrics_summary
+
 
 def closure_cleanliness(state: dict) -> str:
     records = {record.get('issue_number'): record for record in state.get('issue_records', [])}
@@ -38,6 +40,7 @@ def main() -> int:
 
     records = {record.get('issue_number'): record for record in state.get('issue_records', [])}
     cleanliness = closure_cleanliness(state)
+    goal_metrics_rollup = compute_goal_metrics_rollup(state.get('issue_records', []))
 
     lines = [
         '# Sprint Closeout Artifact',
@@ -69,6 +72,18 @@ def main() -> int:
             worktree_note = closeout_gate.get('worktree_note')
             if worktree_note:
                 lines.append(f"  - worktree note: {worktree_note}")
+        goal_metrics = record.get('goal_metrics') or default_goal_metrics_summary()
+        lines.append(
+            "  - goal metrics: "
+            f"`status={goal_metrics.get('status', 'not_recorded')}, "
+            f"stage={goal_metrics.get('selected_stage') or 'not_recorded'}, "
+            f"goal_id={goal_metrics.get('goal_id') or goal_metrics.get('goal_id_availability', 'unknown')}, "
+            f"elapsed={goal_metrics.get('elapsed_seconds') if goal_metrics.get('elapsed_seconds') is not None else goal_metrics.get('elapsed_availability', 'unknown')}, "
+            f"total_tokens={goal_metrics.get('token_usage', {}).get('total_tokens') if goal_metrics.get('token_usage', {}).get('total_tokens') is not None else goal_metrics.get('token_usage', {}).get('total_availability', goal_metrics.get('token_usage', {}).get('availability', 'unknown'))}, "
+            f"source={goal_metrics.get('data_source') or 'unknown'}`"
+        )
+        if goal_metrics.get('raw_log_path'):
+            lines.append(f"  - goal metrics log: `{goal_metrics['raw_log_path']}`")
 
     lines.extend(['', '## Follow-up Issues', ''])
     follow_ups = state.get('follow_up_issues', [])
@@ -96,16 +111,31 @@ def main() -> int:
     )
     lines.append(f"- sprint close summary: `{closeout.get('sprint_issue_close_summary') or state.get('sprint_issue_close_summary') or 'not_recorded'}`")
 
+    lines.extend(['', '## Goal Metrics Rollup', ''])
+    lines.append(f"- issues with recorded metrics: `{goal_metrics_rollup['issues_with_recorded_metrics']}/{goal_metrics_rollup['issue_count']}`")
+    lines.append(
+        f"- elapsed seconds: `known_sum={goal_metrics_rollup['total_elapsed_seconds_known_sum']}, "
+        f"known_issue_count={goal_metrics_rollup['issues_with_known_elapsed']}, "
+        f"unknown_issue_count={goal_metrics_rollup['issues_with_unknown_elapsed']}`"
+    )
+    lines.append(
+        f"- total tokens: `known_sum={goal_metrics_rollup['total_tokens_known_sum']}, "
+        f"known_issue_count={goal_metrics_rollup['issues_with_known_total_tokens']}, "
+        f"unknown_issue_count={goal_metrics_rollup['issues_with_unknown_total_tokens']}`"
+    )
+
     out_path.write_text('\n'.join(lines).rstrip() + '\n', encoding='utf-8')
 
     state.setdefault('closeout', {})
     state['closeout']['closeout_artifact_path'] = str(out_path)
     state['closeout']['closure_cleanliness'] = cleanliness
+    state['closeout']['goal_metrics_rollup'] = goal_metrics_rollup
     state_path.write_text(json.dumps(state, indent=2, sort_keys=True) + '\n')
 
     result = {
         'closeout_artifact_path': str(out_path),
         'closure_cleanliness': cleanliness,
+        'goal_metrics_rollup': goal_metrics_rollup,
     }
     if args.print_json:
         print(json.dumps(result, indent=2, sort_keys=True))

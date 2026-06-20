@@ -9,6 +9,8 @@ import tempfile
 from pathlib import Path
 from typing import Any
 
+from issue_goal_metrics import default_goal_metrics_summary
+
 
 def parse_csv_ints(raw: str) -> list[int]:
     values: list[int] = []
@@ -204,6 +206,7 @@ def default_issue_records(ordered: list[int]) -> list[dict[str, Any]]:
             'status': 'pending',
             'pr_url': None,
             'artifact_paths': [],
+            'goal_metrics': default_goal_metrics_summary(),
         }
         for issue in ordered
     ]

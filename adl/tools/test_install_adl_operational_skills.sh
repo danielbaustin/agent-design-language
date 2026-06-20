@@ -75,6 +75,7 @@ assert_skill_bundle() {
   [[ -x "${root}/skills/sprint-conductor/scripts/check_sprint_closeout_readiness.py" ]]
   [[ -x "${root}/skills/sprint-conductor/scripts/close_sprint_issue.py" ]]
   [[ -x "${root}/skills/sprint-conductor/scripts/record_child_issue_closeout.py" ]]
+  [[ -x "${root}/skills/sprint-conductor/scripts/record_issue_goal_metrics.py" ]]
   [[ -x "${root}/skills/sprint-conductor/scripts/update_sprint_state.py" ]]
   [[ -x "${root}/skills/sprint-conductor/scripts/check_sprint_truth.py" ]]
   [[ -x "${root}/skills/sprint-conductor/scripts/validate_review_subagent_policy.py" ]]
@@ -117,6 +118,7 @@ assert_skill_bundle() {
   grep -Fq "Structured Review Prompt" "${root}/skills/srp-editor/SKILL.md"
   grep -Fq "one issue at a time, fully closed out before the next" "${root}/skills/sprint-conductor/SKILL.md"
   grep -Fq "attach the issue-bound session-goal requirement as part of the SEP handoff" "${root}/skills/sprint-conductor/SKILL.md"
+  grep -Fq "issue-goal metrics are available" "${root}/skills/sprint-conductor/references/conductor-playbook.md"
   grep -Fq "findings-first review orchestrator" "${root}/skills/sprint-review/SKILL.md"
   grep -Fq "bounded editing of \`stp.md\`" "${root}/skills/stp-editor/SKILL.md"
   grep -Fq "truthful lifecycle state" "${root}/skills/sip-editor/SKILL.md"

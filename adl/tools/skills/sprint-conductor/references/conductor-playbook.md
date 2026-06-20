@@ -70,6 +70,12 @@ Optional:
    - for `parallel` or `hybrid` lanes, each separate worker/session creates its
      own child-session goal rather than sharing one sprint-global goal
 9. Run only the selected downstream lifecycle or editor skill.
+9a. When issue-goal metrics are available from the active session or closeout handoff, record them in the local JSONL sink:
+   - use `record_issue_goal_metrics.py`
+   - capture stage should be one of `issue_start`, `pr_publication`,
+     `review_handoff`, `merge_closeout`, or `sprint_closeout`
+   - preserve `unknown` / `not_available` for missing elapsed or token data;
+     do not substitute zero
 10. Re-check issue truth.
 11. If the issue is in a healthy PR-open waiting state, route `issue-watcher`
    so the sprint remains attached to the active child without turning healthy
@@ -109,6 +115,9 @@ Preferred live-truth helper:
 
 Preferred child-closeout advancement helper:
 - `python3 adl/tools/skills/sprint-conductor/scripts/record_child_issue_closeout.py --state <path> --issue-number <n> --issue-closed true --pr-state <merged|closed_no_merge|not_applicable> --root-sor-status <done|failed> --worktree-status <pruned|retained_with_reason|not_applicable>`
+
+Preferred issue-goal metrics helper:
+- `python3 adl/tools/skills/sprint-conductor/scripts/record_issue_goal_metrics.py --state <path> --issue-number <n> --sink <jsonl> --capture-stage <issue_start|pr_publication|review_handoff|merge_closeout|sprint_closeout> --data-source <codex_goal_tool|manual_entry|derived_sprint_state|unknown>`
 
 ## Editor-Skill Rule
 
@@ -169,6 +178,7 @@ Record:
 - per-issue PR URLs
 - per-issue artifact links
 - sprint review result
+- issue-goal metrics rollup, when available
 - coverage snapshot
 - Rust tracker counts
 - next action
