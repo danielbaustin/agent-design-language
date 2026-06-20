@@ -1997,7 +1997,9 @@ fn finish_validation_profile_classifies_long_lived_agent_tokio_paths() {
         ".",
         &[
             "adl/src/long_lived_agent.rs".to_string(),
+            "adl/src/long_lived_agent/storage.rs".to_string(),
             "adl/src/long_lived_agent/tests.rs".to_string(),
+            "adl/src/runtime_aws_signal.rs".to_string(),
         ],
     )
     .expect("long-lived tokio plan");
