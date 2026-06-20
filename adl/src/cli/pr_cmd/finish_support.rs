@@ -33,7 +33,7 @@ use crate::cli::pr_cmd_prompt::{
 use crate::cli::pr_cmd_validate::{
     validate_authored_prompt_surface, validate_milestone_doc_drift_for_finish, PromptSurfaceKind,
 };
-use ::adl::control_plane::{sanitize_slug, IssueRef};
+use ::adl::control_plane::{resolve_cards_root, sanitize_slug, IssueRef};
 
 pub(super) fn real_pr_finish(args: &[String]) -> Result<()> {
     let parsed = parse_finish_args(args)?;
@@ -639,6 +639,8 @@ fn restage_finish_output_truth_paths(
 ) -> Result<()> {
     let worktree_bundle_dir = issue_ref.task_bundle_dir_path(repo_root);
     let primary_bundle_dir = issue_ref.task_bundle_dir_path(primary_root);
+    let worktree_cards_root = resolve_cards_root(repo_root, None);
+    let primary_cards_root = resolve_cards_root(primary_root, None);
     let mut relpaths = BTreeSet::new();
 
     for path in paths {
@@ -647,7 +649,36 @@ fn restage_finish_output_truth_paths(
         } else {
             repo_root.join(path)
         };
-        if resolved.starts_with(&worktree_bundle_dir) || resolved.starts_with(&primary_bundle_dir) {
+        let tracked_cards_relpath =
+            tracked_local_cards_relpath(repo_root, &resolved, &worktree_cards_root, repo_root)?.or(
+                tracked_local_cards_relpath(
+                    primary_root,
+                    &resolved,
+                    &primary_cards_root,
+                    primary_root,
+                )?,
+            );
+        if let Some(relpath) = tracked_cards_relpath {
+            bail!(
+                "finish: compatibility cards path '{}' is tracked under .adl/cards; keep local cards ignored-only before finish publication",
+                relpath
+            );
+        }
+        let is_local_ignored_cards_path = path_is_ignored_local_cards_path(
+            repo_root,
+            &resolved,
+            &worktree_cards_root,
+            repo_root,
+        )? || path_is_ignored_local_cards_path(
+            primary_root,
+            &resolved,
+            &primary_cards_root,
+            primary_root,
+        )?;
+        if resolved.starts_with(&worktree_bundle_dir)
+            || resolved.starts_with(&primary_bundle_dir)
+            || is_local_ignored_cards_path
+        {
             continue;
         }
         if !resolved.exists() {
@@ -665,6 +696,74 @@ fn restage_finish_output_truth_paths(
     }
 
     Ok(())
+}
+
+fn tracked_local_cards_relpath(
+    query_root: &Path,
+    resolved: &Path,
+    cards_root: &Path,
+    rel_root: &Path,
+) -> Result<Option<String>> {
+    if !resolved.starts_with(cards_root) {
+        return Ok(None);
+    }
+    let Ok(relpath) = resolved.strip_prefix(rel_root) else {
+        return Ok(None);
+    };
+    let relpath = relpath.to_string_lossy().into_owned();
+    if path_is_tracked_in_git(query_root, &relpath)? {
+        return Ok(Some(relpath));
+    }
+    Ok(None)
+}
+
+fn path_is_ignored_local_cards_path(
+    query_root: &Path,
+    resolved: &Path,
+    cards_root: &Path,
+    rel_root: &Path,
+) -> Result<bool> {
+    if !resolved.starts_with(cards_root) {
+        return Ok(false);
+    }
+    let Ok(relpath) = resolved.strip_prefix(rel_root) else {
+        return Ok(false);
+    };
+    let relpath = relpath.to_string_lossy().into_owned();
+    if path_is_tracked_in_git(query_root, &relpath)? {
+        return Ok(false);
+    }
+    path_is_git_ignored(query_root, &relpath)
+}
+
+fn path_is_tracked_in_git(repo_root: &Path, relpath: &str) -> Result<bool> {
+    Ok(run_capture_allow_failure(
+        "git",
+        &[
+            "-C",
+            path_str(repo_root)?,
+            "ls-files",
+            "--error-unmatch",
+            "--",
+            relpath,
+        ],
+    )?
+    .is_some())
+}
+
+fn path_is_git_ignored(repo_root: &Path, relpath: &str) -> Result<bool> {
+    run_status_allow_failure(
+        "git",
+        &[
+            "-C",
+            path_str(repo_root)?,
+            "check-ignore",
+            "-q",
+            "--no-index",
+            "--",
+            relpath,
+        ],
+    )
 }
 
 #[cfg(test)]
@@ -3059,11 +3158,13 @@ fn write_temp_text(prefix: &str, extension: &str, body: &str) -> Result<PathBuf>
 
 #[cfg(test)]
 mod tests {
-    use super::run_finish_validation_status;
+    use super::{restage_finish_output_truth_paths, run_finish_validation_status};
     use crate::cli::observability::test_env_lock as shared_env_lock;
+    use ::adl::control_plane::{card_output_path, resolve_cards_root, IssueRef};
     use std::fs;
     use std::os::unix::fs::PermissionsExt;
     use std::path::PathBuf;
+    use std::process::Command;
     use std::sync::atomic::{AtomicU64, Ordering};
     use std::sync::MutexGuard;
 
@@ -3160,5 +3261,210 @@ mod tests {
         assert!(contents.contains("result=failed"));
         assert!(contents.contains("reason_code=validation_subprocess_spawn_failed"));
         assert!(contents.contains("next_action_hint=check_subprocess_path_and_permissions"));
+    }
+
+    #[test]
+    fn restage_finish_output_truth_paths_skips_local_cards_root_but_stages_tracked_files() {
+        let _guard = env_lock();
+        let repo = temp_dir("restage-cards-root");
+        let issue_ref = IssueRef::new(4262, "v0.91.6".to_string(), "finish-cards-root".to_string())
+            .expect("issue ref");
+        let tracked = repo.join("README.md");
+        let cards_root = resolve_cards_root(&repo, None);
+        let output_card = card_output_path(&cards_root, issue_ref.issue_number());
+
+        fs::create_dir_all(output_card.parent().expect("output parent")).expect("cards root");
+        fs::create_dir_all(issue_ref.task_bundle_dir_path(&repo)).expect("task bundle dir");
+        fs::write(repo.join(".gitignore"), ".adl/\n").expect("gitignore");
+        fs::write(&tracked, "changed\n").expect("tracked file");
+        fs::write(&output_card, "local output truth\n").expect("output card");
+
+        assert!(Command::new("git")
+            .args(["init", "-q"])
+            .current_dir(&repo)
+            .status()
+            .expect("git init")
+            .success());
+        assert!(Command::new("git")
+            .args(["config", "user.name", "Test User"])
+            .current_dir(&repo)
+            .status()
+            .expect("git config name")
+            .success());
+        assert!(Command::new("git")
+            .args(["config", "user.email", "test@example.com"])
+            .current_dir(&repo)
+            .status()
+            .expect("git config email")
+            .success());
+        assert!(Command::new("git")
+            .args(["add", ".gitignore", "README.md"])
+            .current_dir(&repo)
+            .status()
+            .expect("git add initial")
+            .success());
+        assert!(Command::new("git")
+            .args(["commit", "-q", "-m", "init"])
+            .current_dir(&repo)
+            .status()
+            .expect("git commit")
+            .success());
+
+        fs::write(&tracked, "changed twice\n").expect("update tracked file");
+
+        restage_finish_output_truth_paths(
+            &repo,
+            &repo,
+            &issue_ref,
+            &[tracked.clone(), output_card.clone()],
+        )
+        .expect("restage should skip ignored local cards root");
+
+        let staged = Command::new("git")
+            .args(["diff", "--cached", "--name-only"])
+            .current_dir(&repo)
+            .output()
+            .expect("git diff --cached");
+        assert!(staged.status.success(), "git diff --cached should succeed");
+        let staged_text = String::from_utf8_lossy(&staged.stdout);
+        assert!(staged_text.contains("README.md"));
+        assert!(!staged_text.contains(".adl/cards/4262/output_4262.md"));
+    }
+
+    #[test]
+    fn restage_finish_output_truth_paths_rejects_tracked_cards_root_paths() {
+        let _guard = env_lock();
+        let repo = temp_dir("restage-tracked-cards-root");
+        let issue_ref = IssueRef::new(
+            4263,
+            "v0.91.6".to_string(),
+            "tracked-cards-root".to_string(),
+        )
+        .expect("issue ref");
+        let cards_root = resolve_cards_root(&repo, None);
+        let output_card = card_output_path(&cards_root, issue_ref.issue_number());
+
+        fs::create_dir_all(output_card.parent().expect("output parent")).expect("cards root");
+        fs::create_dir_all(issue_ref.task_bundle_dir_path(&repo)).expect("task bundle dir");
+        fs::write(repo.join(".gitignore"), ".adl/\n").expect("gitignore");
+        fs::write(&output_card, "tracked output truth\n").expect("output card");
+
+        assert!(Command::new("git")
+            .args(["init", "-q"])
+            .current_dir(&repo)
+            .status()
+            .expect("git init")
+            .success());
+        assert!(Command::new("git")
+            .args(["config", "user.name", "Test User"])
+            .current_dir(&repo)
+            .status()
+            .expect("git config name")
+            .success());
+        assert!(Command::new("git")
+            .args(["config", "user.email", "test@example.com"])
+            .current_dir(&repo)
+            .status()
+            .expect("git config email")
+            .success());
+        assert!(Command::new("git")
+            .args(["add", ".gitignore"])
+            .current_dir(&repo)
+            .status()
+            .expect("git add gitignore")
+            .success());
+        assert!(Command::new("git")
+            .args(["add", "-f", ".adl/cards/4263/output_4263.md"])
+            .current_dir(&repo)
+            .status()
+            .expect("git add forced output")
+            .success());
+        assert!(Command::new("git")
+            .args(["commit", "-q", "-m", "init"])
+            .current_dir(&repo)
+            .status()
+            .expect("git commit")
+            .success());
+
+        fs::write(&output_card, "tracked output truth updated\n").expect("update output card");
+
+        let err = restage_finish_output_truth_paths(
+            &repo,
+            &repo,
+            &issue_ref,
+            std::slice::from_ref(&output_card),
+        )
+        .expect_err("tracked cards-root path should fail closed");
+        assert!(err.to_string().contains("compatibility cards path"));
+        assert!(err.to_string().contains(".adl/cards/4263/output_4263.md"));
+    }
+
+    #[test]
+    fn restage_finish_output_truth_paths_rejects_tracked_primary_cards_root_paths() {
+        let _guard = env_lock();
+        let primary = temp_dir("restage-primary-tracked-cards-root-primary");
+        let worktree = temp_dir("restage-primary-tracked-cards-root-worktree");
+        let issue_ref = IssueRef::new(
+            4264,
+            "v0.91.6".to_string(),
+            "primary-tracked-cards-root".to_string(),
+        )
+        .expect("issue ref");
+        let primary_cards_root = resolve_cards_root(&primary, None);
+        let primary_output = card_output_path(&primary_cards_root, issue_ref.issue_number());
+
+        fs::create_dir_all(primary_output.parent().expect("output parent")).expect("cards root");
+        fs::write(primary.join(".gitignore"), ".adl/\n").expect("gitignore");
+        fs::write(&primary_output, "tracked output truth\n").expect("output card");
+
+        assert!(Command::new("git")
+            .args(["init", "-q"])
+            .current_dir(&primary)
+            .status()
+            .expect("git init")
+            .success());
+        assert!(Command::new("git")
+            .args(["config", "user.name", "Test User"])
+            .current_dir(&primary)
+            .status()
+            .expect("git config name")
+            .success());
+        assert!(Command::new("git")
+            .args(["config", "user.email", "test@example.com"])
+            .current_dir(&primary)
+            .status()
+            .expect("git config email")
+            .success());
+        assert!(Command::new("git")
+            .args(["add", ".gitignore"])
+            .current_dir(&primary)
+            .status()
+            .expect("git add gitignore")
+            .success());
+        assert!(Command::new("git")
+            .args(["add", "-f", ".adl/cards/4264/output_4264.md"])
+            .current_dir(&primary)
+            .status()
+            .expect("git add forced output")
+            .success());
+        assert!(Command::new("git")
+            .args(["commit", "-q", "-m", "init"])
+            .current_dir(&primary)
+            .status()
+            .expect("git commit")
+            .success());
+
+        fs::create_dir_all(worktree.join(".git")).expect("worktree git dir placeholder");
+        fs::write(&primary_output, "tracked output truth updated\n").expect("update output card");
+
+        let err = restage_finish_output_truth_paths(
+            &worktree,
+            &primary,
+            &issue_ref,
+            std::slice::from_ref(&primary_output),
+        )
+        .expect_err("tracked primary cards-root path should fail closed");
+        assert!(err.to_string().contains("compatibility cards path"));
+        assert!(err.to_string().contains(".adl/cards/4264/output_4264.md"));
     }
 }
