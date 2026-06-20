@@ -160,7 +160,7 @@ if bash "$SCRIPT" --changed-files "$finish_helper_changed" --require-summary-for
   exit 1
 fi
 grep -F "candidate filter: finish" /tmp/coverage-impact-finish-helper-missing.out >/dev/null
-grep -F "generate focused summary: cd adl && CARGO_INCREMENTAL=0 cargo llvm-cov nextest --workspace --status-level all --final-status-level slow --no-report -E 'binary_id(adl::bin/adl-pr-finish) and test(/^cli::pr_cmd::tests::finish::arg_render::/)' && cargo llvm-cov report --json --summary-only --output-path target/coverage-impact-summary.json" /tmp/coverage-impact-finish-helper-missing.out >/dev/null
+grep -F "generate focused summary: cd adl && CARGO_INCREMENTAL=0 cargo llvm-cov nextest --workspace --status-level all --final-status-level slow --no-report -E 'binary_id(adl::bin/adl-pr-finish) and test(/^cli::pr_cmd::tests::finish::arg_render::/) or binary_id(adl::bin/adl-pr-finish) and test(/^cli::pr_cmd::finish_support::tests::/)' && cargo llvm-cov report --json --summary-only --output-path target/coverage-impact-summary.json" /tmp/coverage-impact-finish-helper-missing.out >/dev/null
 
 if bash "$SCRIPT" --changed-files "$process_status_changed" --require-summary-for-risk >/tmp/coverage-impact-process-status-missing.out 2>&1; then
   echo "expected process status helper guidance to fail without summary" >&2

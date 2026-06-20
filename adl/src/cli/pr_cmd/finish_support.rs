@@ -1933,11 +1933,16 @@ fn finish_issue_needs_locked_cargo_fallback_validation(
                 "adl/Cargo.lock"
                     | "adl/config/validation_lane_selector.v0.91.6.json"
                     | "adl/src/cli/pr_cmd/finish_support.rs"
+                    | "adl/src/cli/tests/pr_cmd_inline/finish/arg_render.rs"
+                    | "adl/tools/check_coverage_impact.sh"
                     | "adl/tools/pr.sh"
+                    | "adl/tools/run_pr_fast_test_lane.sh"
                     | "adl/tools/run_owner_validation_lane.sh"
+                    | "adl/tools/test_check_coverage_impact.sh"
                     | "adl/tools/test_control_plane_observability.sh"
                     | "adl/tools/test_five_command_regression_suite.sh"
                     | "adl/tools/test_pr_run_locked_cargo_fallback_refuses_cleanly.sh"
+                    | "adl/tools/test_run_pr_fast_test_lane.sh"
             )
         })
 }

@@ -1751,6 +1751,87 @@ fn finish_validation_profile_classifies_issue_small_binary_slice() {
 }
 
 #[test]
+fn finish_validation_profile_classifies_locked_cargo_fallback_slice() {
+    let changed_paths = vec![
+        "adl/Cargo.lock".to_string(),
+        "adl/config/validation_lane_selector.v0.91.6.json".to_string(),
+        "adl/src/cli/pr_cmd/finish_support.rs".to_string(),
+        "adl/src/cli/tests/pr_cmd_inline/finish/arg_render.rs".to_string(),
+        "adl/tools/check_coverage_impact.sh".to_string(),
+        "adl/tools/pr.sh".to_string(),
+        "adl/tools/run_pr_fast_test_lane.sh".to_string(),
+        "adl/tools/run_owner_validation_lane.sh".to_string(),
+        "adl/tools/test_check_coverage_impact.sh".to_string(),
+        "adl/tools/test_control_plane_observability.sh".to_string(),
+        "adl/tools/test_five_command_regression_suite.sh".to_string(),
+        "adl/tools/test_pr_run_locked_cargo_fallback_refuses_cleanly.sh".to_string(),
+        "adl/tools/test_run_pr_fast_test_lane.sh".to_string(),
+    ];
+    let requested_paths = changed_paths.join(",");
+
+    let plan = select_finish_validation_plan_for_finish(4306, &requested_paths, &changed_paths)
+        .expect("locked Cargo fallback focused plan");
+
+    assert_eq!(plan.mode, FinishValidationMode::LargerBinaryFocused);
+    assert!(plan.commands.contains(
+        &"cargo test --manifest-path adl/Cargo.toml --bin adl-pr-finish cli::pr_cmd::tests::finish::arg_render::finish_validation"
+            .to_string()
+    ));
+    assert!(plan
+        .commands
+        .contains(&"bash adl/tools/test_ci_path_policy.sh".to_string()));
+    assert!(plan
+        .commands
+        .contains(&"bash adl/tools/run_owner_validation_lane.sh csdlc".to_string()));
+
+    let unrelated_err =
+        select_finish_validation_plan_for_finish(4305, &requested_paths, &changed_paths)
+            .expect_err("unrelated issue should not get the issue-local Cargo.lock allowance");
+    assert!(unrelated_err
+        .to_string()
+        .contains("changed paths are not classified"));
+}
+
+#[test]
+fn finish_validation_runner_executes_locked_cargo_fallback_script_command() {
+    let repo = unique_temp_dir("adl-pr-finish-locked-cargo-fallback-validation");
+    let tools = repo.join("adl/tools");
+    fs::create_dir_all(&tools).expect("tools dir");
+    write_executable(
+        &tools.join("check_no_tracked_adl_issue_record_residue.sh"),
+        "#!/usr/bin/env bash\nset -euo pipefail\n",
+    );
+    write_executable(
+        &tools.join("test_pr_run_locked_cargo_fallback_refuses_cleanly.sh"),
+        "#!/usr/bin/env bash\nset -euo pipefail\nrepo_root=\"$(cd \"$(dirname \"$0\")/../..\" && pwd)\"\necho locked-fallback-ran > \"$repo_root/locked-fallback-ran.txt\"\n",
+    );
+
+    assert!(Command::new("git")
+        .args(["init", "-q"])
+        .current_dir(&repo)
+        .status()
+        .expect("git init")
+        .success());
+
+    let plan = FinishValidationPlan {
+        mode: FinishValidationMode::LargerBinaryFocused,
+        commands: vec![
+            "bash adl/tools/check_no_tracked_adl_issue_record_residue.sh".to_string(),
+            "git diff --check".to_string(),
+            "bash adl/tools/test_pr_run_locked_cargo_fallback_refuses_cleanly.sh".to_string(),
+        ],
+    };
+
+    run_finish_validation_rust(&repo, &plan).expect("validation runner");
+    assert_eq!(
+        fs::read_to_string(repo.join("locked-fallback-ran.txt"))
+            .expect("runner marker")
+            .trim(),
+        "locked-fallback-ran"
+    );
+}
+
+#[test]
 fn finish_validation_profile_classifies_validation_manager_slice_as_small_binary_focused() {
     let plan = select_finish_validation_plan_for_finish(
         4215,

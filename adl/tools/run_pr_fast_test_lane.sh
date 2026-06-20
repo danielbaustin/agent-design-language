@@ -424,7 +424,7 @@ TOKEN_MAP = {
     "process_status": 'binary_id(adl::cli_smoke) and test(/^process_status::/)',
     "tokio_bootstrap": 'test(/^cli::pr_cmd::github::/) or test(/^cli::pr_cmd::github_client::/) or test(/^cli::tooling_cmd::github_release::/)',
     "pr_cmd": 'binary_id(adl::bin/adl) and test(/^cli::pr_cmd::/)',
-    "pr_cmd_finish": 'binary_id(adl::bin/adl-pr-finish) and test(/^cli::pr_cmd::tests::finish::arg_render::/)',
+    "pr_cmd_finish": 'binary_id(adl::bin/adl-pr-finish) and test(/^cli::pr_cmd::tests::finish::arg_render::/) or binary_id(adl::bin/adl-pr-finish) and test(/^cli::pr_cmd::finish_support::tests::/)',
     "pr_cmd::github": 'test(/^cli::pr_cmd::github::/) or test(/^cli::pr_cmd::github_client::/)',
     "github_release_": 'test(/^cli::tooling_cmd::github_release::/)',
     "long_lived_agent": 'test(/^long_lived_agent::/)',
