@@ -156,3 +156,6 @@ ed25519-dalek = "2.1"
 rand = "0.8"
 tiny_http = "0.12"
 sha2 = "0.10"
+
+[dev-dependencies]
+loom = "0.7"

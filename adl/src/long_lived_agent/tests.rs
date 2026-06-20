@@ -734,3 +734,168 @@ fn stop_prevents_next_tick_and_records_reason() {
     let events = fs::read_to_string(root.join("state/operator_events.jsonl")).expect("events");
     assert!(events.contains("\"event\":\"operator_stop_requested\""));
 }
+
+#[test]
+fn loom_duplicate_activation_allows_only_one_cycle_start() {
+    loom::model(|| {
+        use loom::sync::{Arc, Mutex};
+        use loom::thread;
+
+        struct CoordinationModel {
+            stop_requested: bool,
+            lease_state: CoordinationLeaseState,
+            visible_state: AgentStatusState,
+        }
+
+        impl CoordinationModel {
+            fn new() -> Self {
+                Self {
+                    stop_requested: false,
+                    lease_state: CoordinationLeaseState::Clear,
+                    visible_state: AgentStatusState::Idle,
+                }
+            }
+
+            fn try_start_cycle(&mut self) -> ActivationDecision {
+                let decision = activation_decision(self.stop_requested, self.lease_state, false);
+                if decision == ActivationDecision::Start {
+                    self.lease_state = CoordinationLeaseState::Active;
+                    self.visible_state = AgentStatusState::RunningCycle;
+                }
+                decision
+            }
+
+            fn snapshot(&self) -> AgentStatusState {
+                derive_visible_status_state(
+                    self.visible_state.clone(),
+                    self.stop_requested,
+                    self.lease_state,
+                )
+            }
+        }
+
+        let model = Arc::new(Mutex::new(CoordinationModel::new()));
+        let left_model = Arc::clone(&model);
+        let right_model = Arc::clone(&model);
+
+        let left = thread::spawn(move || {
+            left_model
+                .lock()
+                .expect("coordination lock")
+                .try_start_cycle()
+        });
+        let right = thread::spawn(move || {
+            right_model
+                .lock()
+                .expect("coordination lock")
+                .try_start_cycle()
+        });
+
+        let left_result = left.join().expect("left join");
+        let right_result = right.join().expect("right join");
+        let started = [left_result, right_result]
+            .into_iter()
+            .filter(|result| *result == ActivationDecision::Start)
+            .count();
+        let leased = [left_result, right_result]
+            .into_iter()
+            .filter(|result| *result == ActivationDecision::LeaseActive)
+            .count();
+
+        assert_eq!(started, 1, "duplicate activation must yield one starter");
+        assert_eq!(
+            leased, 1,
+            "duplicate activation must yield one lease denial"
+        );
+        assert_eq!(
+            model.lock().expect("coordination lock").snapshot(),
+            AgentStatusState::Leased
+        );
+    });
+}
+
+#[test]
+fn loom_stop_request_wins_over_concurrent_activation_and_follow_up_status() {
+    loom::model(|| {
+        use loom::sync::{Arc, Mutex};
+        use loom::thread;
+
+        struct CoordinationModel {
+            stop_requested: bool,
+            lease_state: CoordinationLeaseState,
+            visible_state: AgentStatusState,
+        }
+
+        impl CoordinationModel {
+            fn new() -> Self {
+                Self {
+                    stop_requested: false,
+                    lease_state: CoordinationLeaseState::Clear,
+                    visible_state: AgentStatusState::Idle,
+                }
+            }
+
+            fn try_start_cycle(&mut self) -> ActivationDecision {
+                let decision = activation_decision(self.stop_requested, self.lease_state, false);
+                if decision == ActivationDecision::Start {
+                    self.lease_state = CoordinationLeaseState::Active;
+                    self.visible_state = AgentStatusState::RunningCycle;
+                }
+                decision
+            }
+
+            fn request_stop(&mut self) {
+                self.stop_requested = true;
+            }
+
+            fn snapshot(&self) -> AgentStatusState {
+                derive_visible_status_state(
+                    self.visible_state.clone(),
+                    self.stop_requested,
+                    self.lease_state,
+                )
+            }
+        }
+
+        let model = Arc::new(Mutex::new(CoordinationModel::new()));
+        let activation_model = Arc::clone(&model);
+        let stop_model = Arc::clone(&model);
+        let observed_model = Arc::clone(&model);
+
+        let activation = thread::spawn(move || {
+            activation_model
+                .lock()
+                .expect("coordination lock")
+                .try_start_cycle()
+        });
+        let stop =
+            thread::spawn(move || stop_model.lock().expect("coordination lock").request_stop());
+        let observed =
+            thread::spawn(move || observed_model.lock().expect("coordination lock").snapshot());
+
+        let activation_result = activation.join().expect("activation join");
+        stop.join().expect("stop join");
+        let observed_state = observed.join().expect("observed join");
+        let final_state = model.lock().expect("coordination lock").snapshot();
+
+        assert!(
+            matches!(
+                observed_state,
+                AgentStatusState::Idle | AgentStatusState::Leased | AgentStatusState::Stopped
+            ),
+            "status observations may see any truthful in-flight state"
+        );
+        assert!(
+            matches!(
+                activation_result,
+                ActivationDecision::Start | ActivationDecision::StopRequested
+            ),
+            "activation must either win the race or observe the stop boundary"
+        );
+        assert_eq!(
+            final_state,
+            AgentStatusState::Stopped,
+            "once stop wins, follow-up status must settle on stopped"
+        );
+    });
+}

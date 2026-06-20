@@ -224,27 +224,39 @@ pub fn status(spec_path: &Path) -> Result<StatusRecord> {
     }
     current.completed_cycle_count = completed_cycle_count(&loaded)?;
 
-    if let Some(stop) = read_stop(&loaded)? {
-        current.state = AgentStatusState::Stopped;
-        current.stop_requested = true;
-        current.last_error = Some(StatusError {
+    let stop = read_stop(&loaded)?;
+    let lease = read_lease(&loaded)?;
+    current.state = derive_visible_status_state(
+        current.state.clone(),
+        stop.is_some(),
+        coordination_lease_state(lease.as_ref()),
+    );
+    current.stop_requested = stop.is_some();
+    current.active_lease = if matches!(
+        coordination_lease_state(lease.as_ref()),
+        CoordinationLeaseState::Active | CoordinationLeaseState::Stale
+    ) && current.state != AgentStatusState::Stopped
+    {
+        lease
+    } else {
+        None
+    };
+    current.last_error = if let Some(stop) = stop {
+        Some(StatusError {
             class: "operator_stop_requested".to_string(),
             message: stop.reason,
-        });
-    } else if let Some(lease) = read_lease(&loaded)? {
-        if lease_is_stale(&lease) {
-            current.state = AgentStatusState::Failed;
-            current.active_lease = Some(lease);
-            current.last_error = Some(StatusError {
-                class: "lease_stale".to_string(),
-                message: "active lease is stale and requires explicit recovery".to_string(),
-            });
-        } else {
-            current.state = AgentStatusState::Leased;
-            current.active_lease = Some(lease);
-            current.last_error = None;
-        }
-    }
+        })
+    } else if matches!(
+        coordination_lease_state(current.active_lease.as_ref()),
+        CoordinationLeaseState::Stale
+    ) {
+        Some(StatusError {
+            class: "lease_stale".to_string(),
+            message: "active lease is stale and requires explicit recovery".to_string(),
+        })
+    } else {
+        None
+    };
     current.updated_at = Utc::now();
     write_status(&loaded, &current)?;
     Ok(current)
@@ -417,38 +429,26 @@ fn acquire_lease(
     recover_stale_lease: bool,
 ) -> Result<LeaseRecord> {
     let path = lease_path(loaded);
-    if let Some(existing) = read_lease(loaded)? {
-        if lease_is_stale(&existing) {
-            if !recover_stale_lease {
-                let status = status_with_state(
-                    loaded,
-                    AgentStatusState::Failed,
-                    None,
-                    None,
-                    Some(existing),
-                    false,
-                    Some(StatusError {
-                        class: "lease_stale".to_string(),
-                        message: "active lease is stale; rerun with --recover-stale-lease"
-                            .to_string(),
-                    }),
-                );
-                write_status(loaded, &status)?;
-                return Err(anyhow!(
-                    "lease_stale: active lease is stale; rerun with --recover-stale-lease"
-                ));
-            }
-            append_operator_event(
-                loaded,
-                "stale_lease_recovered",
-                json!({
-                    "lease_id": existing.lease_id,
-                    "stale_cycle_id": existing.cycle_id,
-                    "recovered_for_cycle_id": cycle_id
-                }),
-            )?;
-            remove_lease(loaded)?;
-        } else {
+    let stop = read_stop(loaded)?;
+    let existing = read_lease(loaded)?;
+    match activation_decision(
+        stop.is_some(),
+        coordination_lease_state(existing.as_ref()),
+        recover_stale_lease,
+    ) {
+        ActivationDecision::Start => {}
+        ActivationDecision::StopRequested => {
+            let reason = stop
+                .map(|record| record.reason)
+                .unwrap_or_else(|| "operator stop requested".to_string());
+            let status = stopped_status(loaded, reason.clone());
+            write_status(loaded, &status)?;
+            return Err(anyhow!(
+                "stop_requested: {reason}; do not start a new cycle while stop is active"
+            ));
+        }
+        ActivationDecision::LeaseActive => {
+            let existing = existing.expect("active lease should be present");
             let status = status_with_state(
                 loaded,
                 AgentStatusState::Leased,
@@ -464,6 +464,38 @@ fn acquire_lease(
             write_status(loaded, &status)?;
             return Err(anyhow!(
                 "lease_active: another cycle already holds the agent lease"
+            ));
+        }
+        ActivationDecision::LeaseStaleRecoverable => {
+            let existing = existing.expect("stale lease should be present");
+            append_operator_event(
+                loaded,
+                "stale_lease_recovered",
+                json!({
+                    "lease_id": existing.lease_id,
+                    "stale_cycle_id": existing.cycle_id,
+                    "recovered_for_cycle_id": cycle_id
+                }),
+            )?;
+            remove_lease(loaded)?;
+        }
+        ActivationDecision::LeaseStaleBlocked => {
+            let existing = existing.expect("stale lease should be present");
+            let status = status_with_state(
+                loaded,
+                AgentStatusState::Failed,
+                None,
+                None,
+                Some(existing),
+                false,
+                Some(StatusError {
+                    class: "lease_stale".to_string(),
+                    message: "active lease is stale; rerun with --recover-stale-lease".to_string(),
+                }),
+            );
+            write_status(loaded, &status)?;
+            return Err(anyhow!(
+                "lease_stale: active lease is stale; rerun with --recover-stale-lease"
             ));
         }
     }
@@ -863,6 +895,63 @@ fn status_with_state(
         last_error,
         safety_policy: effective_safety_policy(loaded),
         updated_at: Utc::now(),
+    }
+}
+
+#[derive(Clone, Copy, Debug, PartialEq, Eq)]
+enum CoordinationLeaseState {
+    Clear,
+    Active,
+    Stale,
+}
+
+#[derive(Clone, Copy, Debug, PartialEq, Eq)]
+enum ActivationDecision {
+    Start,
+    StopRequested,
+    LeaseActive,
+    LeaseStaleRecoverable,
+    LeaseStaleBlocked,
+}
+
+fn coordination_lease_state(lease: Option<&LeaseRecord>) -> CoordinationLeaseState {
+    match lease {
+        Some(lease) if lease_is_stale(lease) => CoordinationLeaseState::Stale,
+        Some(_) => CoordinationLeaseState::Active,
+        None => CoordinationLeaseState::Clear,
+    }
+}
+
+fn activation_decision(
+    stop_requested: bool,
+    lease_state: CoordinationLeaseState,
+    recover_stale_lease: bool,
+) -> ActivationDecision {
+    if stop_requested {
+        ActivationDecision::StopRequested
+    } else {
+        match (lease_state, recover_stale_lease) {
+            (CoordinationLeaseState::Clear, _) => ActivationDecision::Start,
+            (CoordinationLeaseState::Active, _) => ActivationDecision::LeaseActive,
+            (CoordinationLeaseState::Stale, true) => ActivationDecision::LeaseStaleRecoverable,
+            (CoordinationLeaseState::Stale, false) => ActivationDecision::LeaseStaleBlocked,
+        }
+    }
+}
+
+fn derive_visible_status_state(
+    current: AgentStatusState,
+    stop_requested: bool,
+    lease_state: CoordinationLeaseState,
+) -> AgentStatusState {
+    if stop_requested {
+        AgentStatusState::Stopped
+    } else {
+        match lease_state {
+            CoordinationLeaseState::Active => AgentStatusState::Leased,
+            CoordinationLeaseState::Stale => AgentStatusState::Failed,
+            CoordinationLeaseState::Clear => current,
+        }
     }
 }
 
