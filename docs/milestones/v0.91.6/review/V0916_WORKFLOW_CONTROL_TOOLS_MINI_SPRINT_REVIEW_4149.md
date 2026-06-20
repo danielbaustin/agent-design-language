@@ -1,6 +1,6 @@
 # v0.91.6 Workflow-Control Tools Mini-Sprint Review
 
-Status: `reviewed_for_umbrella_closeout`
+Status: `retained_review_packet`
 Date: 2026-06-19
 Sprint umbrella: `#4149`
 Execution packet:
@@ -63,9 +63,15 @@ Explicitly excluded issues remain out of this review: `#4047`, `#4109`,
 
 ## Closeout Position
 
-`#4149` is ready for final umbrella publication and closeout after this review
-packet and the paired `#4149` SOR record are published. No child issue remains
-open inside the bounded mini-sprint.
+`#4149` is now closed. This review packet remains the retained sprint-review
+surface for the bounded child wave.
+
+Current reviewer-facing truth after `#4149` closure is:
+
+- no child issue remains open inside the bounded mini-sprint;
+- the child-wave closure and merge evidence in this packet remains current; and
+- any local issue-bundle drift discovered after closure is a records-hygiene
+  follow-on, not a reason to reinterpret the child-wave result.
 
 ## Non-Claims
 

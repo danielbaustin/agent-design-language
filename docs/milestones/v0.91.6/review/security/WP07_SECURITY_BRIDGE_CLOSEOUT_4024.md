@@ -5,7 +5,7 @@
 - Issue: `#4024`
 - Milestone: `v0.91.6`
 - Wave: `WP-07`
-- Date: `2026-06-18`
+- Date: `2026-06-19`
 - Scope: final closeout truth for the activation-path security bridge and CAV review tranche
 
 ## Purpose
@@ -20,12 +20,13 @@ security-sensitive implementation work in adjacent waves is complete.
 
 ## Closeout posture
 
-Current bounded posture for WP-07 as of June 18, 2026:
+Current bounded posture for WP-07 as of June 19, 2026:
 
 - every WP-07 child review lane is closed: `#4019`, `#4020`, `#4021`, `#4022`,
   `#4023`, and `#4064`
-- the shared security bridge ledger and all named review packets now exist on
-  the issue branch as a single auditable packet family
+- the shared security bridge ledger and all named review packets remain the
+  single auditable packet family for WP-07, with this retained closeout packet
+  now normalized to post-closure wording in `#4251`
 - WP-07 has enough reviewed bridge truth for `v0.92` activation-path
   consumption
 - open WP-08, WP-09, and WP-10 implementation/privacy/readiness work remains
@@ -57,13 +58,13 @@ Current bounded posture for WP-07 as of June 18, 2026:
 | `#4022` public-record and memory/profile security review | `closed` | Public projection safety is reviewed; open memory/profile and identity publication risk remains routed. |
 | `#4023` Unity Observatory inhabitant-readiness review | `closed` | Observatory/Unity consumption boundaries are reviewed; open identity and implementation readiness remains routed. |
 | `#4064` CAV taxonomy and corpus route | `closed` | The repo now has a bounded CAV baseline and an explicit integrated-runtime route instead of vague future language. |
-| `#4024` security bridge closeout proof | `open` on this branch | Final closeout issue is the only remaining open WP-07 child and is responsible for merging this packet family. |
+| `#4024` security bridge closeout proof | `closed` | Final closeout packet is retained as the authoritative WP-07 merge-and-closeout proof. |
 
 ## Completion matrix
 
 | Surface | Current bounded status | What WP-07 now proves | Limits / non-claims | Closeout classification |
 | --- | --- | --- | --- | --- |
-| Security bridge accounting ledger | `ready_on_issue_branch` | Activation-path security has one named ledger instead of scattered hidden trust claims. | The ledger is a review-and-routing surface, not runtime enforcement by itself. | included as the closeout gate |
+| Security bridge accounting ledger | `retained_closeout_truth` | Activation-path security has one named ledger instead of scattered hidden trust claims. | The ledger is a review-and-routing surface, not runtime enforcement by itself. | included as the closeout gate |
 | Provider/model/CAV trust boundary | `closed_child_truth` | Provider or model output is governed input, not authority; auth, endpoint, malformed-output, and prompt-injection boundaries remain explicit. | Does not claim universal provider trustworthiness or finished CAV operations. | included as reviewed provider trust |
 | ACIP/A2A access and transport boundary | `closed_child_truth` | Access-rule posture, provider-substrate separation, and deterministic JSON consumption are reviewed. | Does not claim final signing, provenance, protobuf, or WebSocket closure. | included as reviewed protocol boundary |
 | Public projection and memory/profile privacy boundary | `closed_child_truth` | Public packet export/redaction truth is consumable and memory/profile publication remains an explicit security boundary. | Does not claim completed WP-08 or WP-10 privacy closure. | included as reviewed publication/privacy boundary |
@@ -79,8 +80,7 @@ WP-07 closeout truth is now:
 
 That means:
 
-- the WP-07 review and bridge tranche is complete enough to close once `#4024`
-  merges
+- the WP-07 review and bridge tranche completed and merged through `#4024`
 - every WP-07 child review lane now has terminal issue state and a named packet
 - the security bridge doc can truthfully describe what `v0.92` may consume
 - unresolved work remains visible under the owning downstream wave or later
@@ -149,7 +149,7 @@ Residual work intentionally not closed by WP-07:
 
 ## Reviewer takeaway
 
-`#4024` is ready when reviewers can confirm that:
+`#4024` is retained closeout truth when reviewers can confirm that:
 
 - every WP-07 child lane is closed and consumed explicitly
 - downstream open issues are treated as routed residuals rather than hidden

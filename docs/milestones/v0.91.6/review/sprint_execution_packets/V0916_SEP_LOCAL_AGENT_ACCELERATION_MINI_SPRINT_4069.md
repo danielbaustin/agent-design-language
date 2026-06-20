@@ -1,19 +1,19 @@
 # v0.91.6 SEP Local-Agent Acceleration Mini-Sprint
 
-Status: `closeout_in_progress`
+Status: `closed_retained_packet`
 Date: 2026-06-18
 Sprint umbrella: `#4069`
 
-This packet records the umbrella closeout refresh for the `#4069` mini-sprint
-after the child wave completed. It does not replace issue-local
+This packet records the retained umbrella closeout refresh for the `#4069`
+mini-sprint after the child wave completed and the umbrella later closed. It
+does not replace issue-local
 `SIP -> STP -> SPP -> SRP -> SOR` truth, and it does not claim local models are
 authoritative implementers or reviewers.
 
 ## Final Outcome
 
-The SEP local-agent acceleration mini-sprint has completed its child wave, and
-this packet refresh is the final umbrella closeout step before the sprint
-itself can close:
+The SEP local-agent acceleration mini-sprint completed its child wave, and this
+packet is the retained umbrella closeout packet for the now-closed sprint:
 
 - `#4076` landed deterministic sprint readiness sweep support.
 - `#4077` landed deterministic sprint closeout support.
@@ -38,7 +38,7 @@ implementation issues.
 | Issue | Role | Status | Notes |
 |---|---|---|---|
 | `#4078` | typed GitHub mutation transport | closed | Enabling dependency already landed; sprint setup no longer needs direct `gh` for covered issue mutation paths. |
-| `#4069` | umbrella setup, local-model inventory, role-fit matrix, proof packet | closeout_in_progress | Owns the mini-sprint packet and final umbrella closeout truth refresh. |
+| `#4069` | umbrella setup, local-model inventory, role-fit matrix, proof packet | closed | Owns the retained mini-sprint packet and final umbrella closeout truth refresh. |
 | `#4076` | readiness sweep | closed | Landed deterministic watcher/card/SEP pre-execution readiness support. |
 | `#4077` | deterministic sprint closeout | closed | Landed sprint closeout gating and deterministic closeout support. |
 | `#3927` | sprint-review skill | closed | Landed reusable sprint/mini-sprint review skill coverage. |
@@ -52,7 +52,7 @@ implementation issues.
 4. Landed `#4077` to codify deterministic sprint closeout.
 5. Landed `#3927` once the sprint-review input/closeout expectations were stable enough to encode.
 6. Landed `#4074` after the setup packet and role limitations were durable so the simulation consumed real contracts rather than chat assumptions.
-7. Close `#4069` only after the child-wave routing is durable and this final umbrella truth refresh lands.
+7. The umbrella later closed after the child-wave routing was durable and this retained umbrella truth refresh existed.
 
 ## Safe Parallel Lanes
 
@@ -156,8 +156,10 @@ Assessment:
 
 ## Closeout Recommendation
 
-Close the sprint umbrella after this packet refresh lands. No additional child
-implementation remains in scope for the original `#4069` mini-sprint.
+The sprint umbrella is already closed. No additional child implementation
+remains in scope for the original `#4069` mini-sprint, and this packet should
+be read as retained reviewer-facing evidence rather than a still-pending
+closeout proposal.
 
 ## Non-Claims
 
