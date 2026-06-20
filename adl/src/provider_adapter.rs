@@ -15,8 +15,8 @@ use anyhow::{anyhow, Result};
 use reqwest::blocking::Client;
 use serde_json::{json, Value};
 use std::cell::RefCell;
-use std::env;
 use std::collections::HashMap;
+use std::env;
 use std::sync::{Mutex, MutexGuard, OnceLock, TryLockError};
 use std::time::{Duration, Instant};
 
@@ -1473,8 +1473,7 @@ mod tests {
         let path = temp_log("timeout");
         let mut logger = ProviderRunLoggerV1::create(&path, "run-timeout").expect("open logger");
         let mut req = request(RuntimeSurfaceV1::HostedApi, endpoint);
-        req.route.credential_ref =
-            Some("env:ADL_PROVIDER_ADAPTER_TIMEOUT_DIRECT_KEY".to_string());
+        req.route.credential_ref = Some("env:ADL_PROVIDER_ADAPTER_TIMEOUT_DIRECT_KEY".to_string());
         req.attempt_policy.timeout_ms = 10;
 
         let result = execute_provider_invocation(req, &mut logger);
@@ -1501,11 +1500,17 @@ mod tests {
 
     #[test]
     fn ollama_bulkhead_saturation_is_reported_as_local_runtime_busy() {
-        let held = request(RuntimeSurfaceV1::OllamaHttp, "http://127.0.0.1:9".to_string());
+        let held = request(
+            RuntimeSurfaceV1::OllamaHttp,
+            "http://127.0.0.1:9".to_string(),
+        );
         let _guard = acquire_ollama_runtime_slot(&held).expect("hold local runtime slot");
         let path = temp_log("ollama-bulkhead");
         let mut logger = ProviderRunLoggerV1::create(&path, "run-bulkhead").expect("open logger");
-        let mut req = request(RuntimeSurfaceV1::OllamaHttp, "http://127.0.0.1:9".to_string());
+        let mut req = request(
+            RuntimeSurfaceV1::OllamaHttp,
+            "http://127.0.0.1:9".to_string(),
+        );
         req.attempt_policy.max_attempts = 1;
 
         let result = execute_provider_invocation(req, &mut logger);
@@ -1538,12 +1543,19 @@ mod tests {
 
     #[test]
     fn ollama_bulkhead_is_scoped_per_endpoint_and_model() {
-        let first = request(RuntimeSurfaceV1::OllamaHttp, "http://127.0.0.1:11434".to_string());
-        let second =
-            request(RuntimeSurfaceV1::OllamaHttp, "http://127.0.0.1:22434/api/generate".to_string());
+        let first = request(
+            RuntimeSurfaceV1::OllamaHttp,
+            "http://127.0.0.1:11434".to_string(),
+        );
+        let second = request(
+            RuntimeSurfaceV1::OllamaHttp,
+            "http://127.0.0.1:22434/api/generate".to_string(),
+        );
         let third = {
-            let mut req =
-                request(RuntimeSurfaceV1::OllamaHttp, "http://127.0.0.1:11434".to_string());
+            let mut req = request(
+                RuntimeSurfaceV1::OllamaHttp,
+                "http://127.0.0.1:11434".to_string(),
+            );
             req.route.provider_model_id = "different-model".to_string();
             req
         };
