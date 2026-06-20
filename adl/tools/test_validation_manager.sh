@@ -42,6 +42,7 @@ assert profile["validation_dag"]["nodes"][0]["status"] == "runnable"
 assert profile["validation_dag"]["nodes"][0]["proof_role"] == "diff_hygiene"
 assert profile["estimated_cost"]["runtime_class"] == "tiny"
 assert profile["validation_dag"]["compression_note"].startswith("profile validates behavior surfaces")
+assert profile["diagnostics"] == []
 PY
 
 tooling="$TMP/tooling.txt"
@@ -90,6 +91,7 @@ assert "contract_schema" in surface["requirement_ids"]
 node = profile["validation_dag"]["nodes"][0]
 assert node["proof_role"] == "regression"
 assert node["resource_class"] == "medium"
+assert profile["diagnostics"] == []
 PY
 
 runtime_family="$TMP/runtime-family.txt"
@@ -112,6 +114,7 @@ assert "runtime_v2" in surface["requirement_ids"]
 node = profile["validation_dag"]["nodes"][0]
 assert node["proof_role"] == "regression"
 assert node["resource_class"] == "medium"
+assert profile["diagnostics"] == []
 PY
 
 release_gate="$TMP/release-gate.txt"
@@ -130,6 +133,11 @@ assert any(
     reason["lane_id"] == "release_gate_review"
     for reason in profile["escalation"]["reasons"]
 )
+assert any(
+    reason["triggering_surface"] == ".github/workflows/ci.yaml"
+    for reason in profile["escalation"]["reasons"]
+    if reason["lane_id"] == "release_gate_review"
+)
 assert any(item["lane_id"] == "ci_path_policy_contracts" for item in profile["run"])
 assert any(
     behavior["id"] == "release_gate_release_gate_review"
@@ -139,6 +147,10 @@ assert any(
     behavior["proof_role"] == "release_gate"
     and behavior["owner"] == "tools"
     for behavior in profile["behavior_surfaces"]
+)
+assert any(
+    diagnostic["code"] == "release_gate_review_requires_escalation"
+    for diagnostic in profile["diagnostics"]
 )
 assert profile["estimated_cost"]["runtime_class"] == "escalated"
 PY
@@ -163,14 +175,14 @@ assert profile["status"] == "escalation_required"
 assert profile["pr_publication_sufficient"] is False
 assert profile["run"] == []
 assert profile["escalation"]["required"] is True
-assert profile["escalation"]["reasons"] == [
-    {
-        "lane_id": "unmapped_change_surface",
-        "matched_paths": ["totally/unmapped/path.txt"],
-        "reason": "selector left changed paths without validation-lane coverage",
-        "status": "escalated",
-    }
-]
+reason = profile["escalation"]["reasons"][0]
+assert reason["lane_id"] == "unmapped_change_surface"
+assert reason["matched_paths"] == ["totally/unmapped/path.txt"]
+assert reason["reason"] == "selector left changed paths without validation-lane coverage"
+assert reason["status"] == "escalated"
+assert reason["manifest_rule"] == "adl/config/validation_lane_selector.v0.91.6.json"
+assert "path selector" in reason["remediation_hint"]
+assert profile["diagnostics"][0]["code"] == "unmapped_change_surface"
 PY
 
 if bash "$SCRIPT" --changed-files "$unmapped" --run >"$TMP/unmapped-run.out" 2>"$TMP/unmapped-run.err"; then
@@ -193,12 +205,9 @@ assert profile["pr_publication_sufficient"] is False
 assert [item["lane_id"] for item in profile["run"]] == ["docs_diff_check"]
 assert profile["escalation"]["required"] is True
 assert any(
-    reason == {
-        "lane_id": "unmapped_change_surface",
-        "matched_paths": ["totally/unmapped/path.txt"],
-        "reason": "selector left changed paths without validation-lane coverage",
-        "status": "escalated",
-    }
+    reason["lane_id"] == "unmapped_change_surface"
+    and reason["matched_paths"] == ["totally/unmapped/path.txt"]
+    and reason["manifest_rule"] == "adl/config/validation_lane_selector.v0.91.6.json"
     for reason in profile["escalation"]["reasons"]
 )
 PY
@@ -243,5 +252,105 @@ assert profile["selected_profile"] == "docs_diff_check_profile"
 assert profile["status"] == "ready_to_run"
 assert [item["lane_id"] for item in profile["run"]] == ["docs_diff_check"]
 PY
+
+slow_proof="$TMP/slow-proof.txt"
+cat >"$slow_proof" <<'EOF'
+M	adl/src/runtime_v2/tests.rs
+M	adl/tools/test_slow_proof_lane_contract.sh
+M	docs/milestones/v0.91.4/features/PVF_INITIAL_LANE_INVENTORY_v0.91.4.md
+EOF
+bash "$SCRIPT" --changed-files "$slow_proof" --json >"$TMP/slow-proof.json"
+python3 - <<'PY' "$TMP/slow-proof.json"
+import json
+import sys
+
+profile = json.load(open(sys.argv[1]))
+assert profile["schema_version"] == "adl.validation_profile.v1"
+assert profile["status"] == "escalation_required"
+assert profile["escalation"]["required"] is True
+assert any(
+    reason["lane_id"] == "slow_proof_review"
+    and reason["triggering_surface"] == "adl/tools/test_slow_proof_lane_contract.sh"
+    for reason in profile["escalation"]["reasons"]
+)
+assert any(
+    reason["lane_id"] == "rust_pr_fast"
+    and reason["reason"] == "slow_proof_inventory_change_covered_by_contract_check"
+    for reason in profile["escalation"]["reasons"]
+)
+assert any(
+    diagnostic["code"] == "pr_fast_mode_contract_only"
+    for diagnostic in profile["diagnostics"]
+)
+PY
+
+if bash "$SCRIPT" --changed-files "$slow_proof" --run >"$TMP/slow-proof-run.out" 2>"$TMP/slow-proof-run.err"; then
+  echo "expected validation manager to refuse slow-proof --run" >&2
+  exit 1
+fi
+assert_has "$TMP/slow-proof-run.err" "refusing --run for non-runnable profile"
+
+threshold_manifest="$TMP/threshold-manifest.json"
+python3 - <<'PY' "$ROOT/adl/config/validation_lane_selector.v0.91.6.json" "$threshold_manifest"
+import json
+import sys
+
+manifest = json.load(open(sys.argv[1]))
+manifest["manager_guardrails"]["pr_fast"]["max_filter_token_count"] = 0
+json.dump(manifest, open(sys.argv[2], "w"), indent=2, sort_keys=True)
+PY
+bash "$SCRIPT" --manifest "$threshold_manifest" --changed-files "$runtime" --json >"$TMP/threshold.json"
+python3 - <<'PY' "$TMP/threshold.json"
+import json
+import sys
+
+profile = json.load(open(sys.argv[1]))
+assert profile["status"] == "escalation_required"
+assert any(
+    reason["manifest_rule"] == "manager_guardrails.pr_fast.max_filter_token_count"
+    for reason in profile["escalation"]["reasons"]
+)
+assert any(
+    diagnostic["code"] == "pr_fast_filter_threshold_exceeded"
+    for diagnostic in profile["diagnostics"]
+)
+assert profile["pr_publication_sufficient"] is False
+PY
+
+custom_unmapped_manifest="$TMP/custom-unmapped-manifest.json"
+python3 - <<'PY' "$ROOT/adl/config/validation_lane_selector.v0.91.6.json" "$custom_unmapped_manifest"
+import json
+import sys
+
+manifest = json.load(open(sys.argv[1]))
+json.dump(manifest, open(sys.argv[2], "w"), indent=2, sort_keys=True)
+PY
+bash "$SCRIPT" --manifest "$custom_unmapped_manifest" --changed-files "$unmapped" --json >"$TMP/custom-unmapped.json"
+python3 - <<'PY' "$TMP/custom-unmapped.json" "$custom_unmapped_manifest"
+import json
+import sys
+from pathlib import Path
+
+profile = json.load(open(sys.argv[1]))
+expected_manifest = str(Path(sys.argv[2]).resolve())
+assert profile["status"] == "escalation_required"
+assert profile["escalation"]["reasons"][0]["manifest_rule"] == expected_manifest
+assert profile["diagnostics"][0]["manifest_rule"] == expected_manifest
+PY
+
+bad_guardrail_manifest="$TMP/bad-guardrail-manifest.json"
+python3 - <<'PY' "$ROOT/adl/config/validation_lane_selector.v0.91.6.json" "$bad_guardrail_manifest"
+import json
+import sys
+
+manifest = json.load(open(sys.argv[1]))
+manifest["manager_guardrails"]["pr_fast"]["max_filter_token_count"] = "oops"
+json.dump(manifest, open(sys.argv[2], "w"), indent=2, sort_keys=True)
+PY
+if bash "$SCRIPT" --manifest "$bad_guardrail_manifest" --changed-files "$runtime" >"$TMP/bad-guardrail.out" 2>"$TMP/bad-guardrail.err"; then
+  echo "expected validation manager to fail closed on malformed guardrail config" >&2
+  exit 1
+fi
+assert_has "$TMP/bad-guardrail.err" "validation_manager: manager guardrail pr_fast.max_filter_token_count must be an integer"
 
 echo "PASS test_validation_manager"

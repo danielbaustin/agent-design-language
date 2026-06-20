@@ -128,6 +128,7 @@ def plan_entry(
     manifest: dict[str, Any],
     entry: dict[str, Any],
     *,
+    manifest_rule: str,
     status: str,
     matched_paths: list[str],
     command: str | None = None,
@@ -137,6 +138,7 @@ def plan_entry(
 ) -> dict[str, Any]:
     normalized = merge_surface_defaults(manifest, entry, entry_id=entry["id"])
     result = {
+        "manifest_rule": manifest_rule,
         "lane_class": lane_class or normalized["lane_class"],
         "status": status,
         "reason": normalized["reason"],
@@ -266,16 +268,47 @@ def select_lanes(
             "reason": "delegate_rust_changed_surface_to_pr_fast_lane_selector",
         },
     )
+    slow_proof_entry = manifest_entry_for(
+        manifest,
+        "slow_proof_review",
+        {
+            "id": "slow_proof_review",
+            "lane_class": "slow_proof",
+            "default_surface": "slow_proof",
+            "owner": "runtime",
+            "path_selectors": [
+                "adl/tools/test_slow_proof_lane_contract.sh",
+                "adl/config/slow_proof_families.v0.91.6.json",
+                "docs/milestones/**/features/PVF_INITIAL_LANE_INVENTORY*.md",
+                "docs/milestones/**/features/PVF_CI_RELEASE_POLICY*.md",
+            ],
+            "command": "record slow-proof disposition; do not treat ordinary PR-fast proof as slow-proof coverage",
+            "run_command": "",
+            "reason": "changed_surface_requires_slow_proof_review",
+        },
+    )
 
     release_gate_paths = [
         path for path in paths if matches(path, selectors_for(release_gate_entry))
+    ]
+    slow_proof_paths = [
+        path for path in paths if matches(path, selectors_for(slow_proof_entry))
     ]
 
     for path in paths:
         for lane in manifest["lanes"]:
             if matches(path, selectors_for(lane)):
                 lane_id = lane["id"]
-                entry = selected.setdefault(lane_id, plan_entry(manifest, lane, status="selected", matched_paths=[]))
+                entry = selected.setdefault(
+                    lane_id,
+                    plan_entry(
+                        manifest,
+                        lane,
+                        manifest_rule=f"lanes.{lane_id}",
+                        status="selected",
+                        matched_paths=[],
+                    ),
+                )
                 entry["matched_paths"].append(path)
                 break
 
@@ -290,7 +323,7 @@ def select_lanes(
         fast_plan = pr_fast_plan(changed_files, base, head)
         mode = fast_plan.get("mode", "full")
         reason = fast_plan.get("reason", "missing_pr_fast_reason")
-        status = "selected" if mode in {"focused", "family", "contract_only"} else "escalated"
+        status = "selected" if mode in {"focused", "family"} else "escalated"
         command = "bash adl/tools/run_pr_fast_test_lane.sh"
         if changed_files is not None:
             command += f" --changed-files {shlex.quote(str(changed_files))}"
@@ -299,16 +332,26 @@ def select_lanes(
         selected["rust_pr_fast"] = plan_entry(
             manifest,
             rust_entry,
+            manifest_rule="special_surfaces.rust_pr_fast",
             status=status,
             matched_paths=rust_paths,
             command=command,
             run_command=command,
-            lane_class=rust_entry.get("escalated_lane_class") if status == "escalated" else rust_entry["lane_class"],
+            lane_class=(
+                rust_entry.get("contract_only_lane_class")
+                if mode == "contract_only"
+                else rust_entry.get("escalated_lane_class")
+                if status == "escalated"
+                else rust_entry["lane_class"]
+            ),
             extra={
                 "reason": reason,
                 "mode": mode,
                 "filter_tokens": fast_plan.get("filter_tokens", ""),
                 "filter_expression": fast_plan.get("filter_expression", ""),
+                "rust_surface_count": fast_plan.get("rust_surface_count", 0),
+                "structural_surface_count": fast_plan.get("structural_surface_count", 0),
+                "slow_proof_inventory_surface_count": fast_plan.get("slow_proof_inventory_surface_count", 0),
             },
         )
         selected["rust_pr_fast"]["reason"] = reason
@@ -317,8 +360,17 @@ def select_lanes(
         selected["release_gate_review"] = plan_entry(
             manifest,
             release_gate_entry,
+            manifest_rule="special_surfaces.release_gate_review",
             status="release_gate_required",
             matched_paths=release_gate_paths,
+        )
+    if slow_proof_paths:
+        selected["slow_proof_review"] = plan_entry(
+            manifest,
+            slow_proof_entry,
+            manifest_rule="special_surfaces.slow_proof_review",
+            status="escalated",
+            matched_paths=slow_proof_paths,
         )
 
     aggregate = "skipped"

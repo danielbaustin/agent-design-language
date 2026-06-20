@@ -292,10 +292,36 @@
       ],
       "broad_lane_reason": "release and CI-policy surfaces remain distinct from ordinary PR proof"
     },
+    "slow_proof_review": {
+      "id": "slow_proof_review",
+      "lane_class": "slow_proof",
+      "default_surface": "slow_proof",
+      "owner": "runtime",
+      "path_selectors": [
+        "adl/tools/test_slow_proof_lane_contract.sh",
+        "adl/config/slow_proof_families.v0.91.6.json",
+        "docs/milestones/**/features/PVF_INITIAL_LANE_INVENTORY*.md",
+        "docs/milestones/**/features/PVF_CI_RELEASE_POLICY*.md"
+      ],
+      "path_hints": [
+        "adl/tools/test_slow_proof_lane_contract.sh",
+        "adl/config/slow_proof_families.v0.91.6.json",
+        "docs/milestones/**/features/PVF_INITIAL_LANE_INVENTORY*.md",
+        "docs/milestones/**/features/PVF_CI_RELEASE_POLICY*.md"
+      ],
+      "command": "record slow-proof disposition; do not treat ordinary PR-fast proof as slow-proof coverage",
+      "run_command": "",
+      "reason": "changed_surface_requires_slow_proof_review",
+      "requirement_ids": [
+        "slow_proof_disposition_required"
+      ],
+      "broad_lane_reason": "slow-proof inventory and contract surfaces remain distinct from ordinary PR-fast proof"
+    },
     "rust_pr_fast": {
       "id": "rust_pr_fast",
       "lane_class": "fast_unit",
       "escalated_lane_class": "release_gate",
+      "contract_only_lane_class": "slow_proof",
       "default_surface": "shared_rust",
       "owner": "shared",
       "path_selectors": [
@@ -315,6 +341,20 @@
         "rust_changed_surface"
       ],
       "broad_lane_reason": "shared Rust changes escalate when PR-fast cannot prove a bounded slice"
+    }
+  },
+  "manager_guardrails": {
+    "docs_only_forbidden_lane_ids": [
+      "rust_pr_fast"
+    ],
+    "pr_fast": {
+      "max_rust_surface_count": 4,
+      "max_filter_token_count": 4,
+      "max_family_token_count": 3,
+      "blocked_modes": [
+        "full",
+        "contract_only"
+      ]
     }
   },
   "release_gate_hints": [
