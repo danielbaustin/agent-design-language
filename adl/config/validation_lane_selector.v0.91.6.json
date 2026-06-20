@@ -138,13 +138,17 @@
         "ci_path_policy_contracts"
       ],
       "path_selectors": [
+        "adl/config/validation_lane_selector.v0.91.6.json",
         "adl/tools/ci_path_policy.sh",
         "adl/tools/test_ci_path_policy.sh",
+        "adl/tools/test_validation_manager.sh",
         ".github/workflows/**"
       ],
       "path_hints": [
+        "adl/config/validation_lane_selector.v0.91.6.json",
         "adl/tools/ci_path_policy.sh",
         "adl/tools/test_ci_path_policy.sh",
+        "adl/tools/test_validation_manager.sh",
         ".github/workflows/**"
       ],
       "command": "bash adl/tools/test_ci_path_policy.sh",
@@ -286,6 +290,29 @@
       "command": "bash adl/tools/test_select_validation_lanes.sh",
       "run_command": "bash adl/tools/test_select_validation_lanes.sh",
       "reason": "validation_lane_selector_surface_requires_selector_contract_checks"
+    },
+    {
+      "id": "sprint_conductor_contracts",
+      "lane_class": "cli_workflow",
+      "default_surface": "tooling",
+      "owner": "tools",
+      "proof_role": "regression",
+      "requirement_ids": [
+        "sprint_conductor_contracts"
+      ],
+      "path_selectors": [
+        "adl/tools/skills/sprint-conductor/**",
+        "adl/tools/test_sprint_conductor_helpers.sh",
+        "adl/tools/test_install_adl_operational_skills.sh"
+      ],
+      "path_hints": [
+        "adl/tools/skills/sprint-conductor/**",
+        "adl/tools/test_sprint_conductor_helpers.sh",
+        "adl/tools/test_install_adl_operational_skills.sh"
+      ],
+      "command": "bash adl/tools/test_sprint_conductor_helpers.sh && bash adl/tools/test_install_adl_operational_skills.sh",
+      "run_command": "bash adl/tools/test_sprint_conductor_helpers.sh && bash adl/tools/test_install_adl_operational_skills.sh",
+      "reason": "sprint_conductor_surface_requires_helper_contract_checks"
     },
     {
       "id": "docs_diff_check",

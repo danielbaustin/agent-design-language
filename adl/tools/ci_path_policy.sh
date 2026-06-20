@@ -222,6 +222,19 @@ is_full_coverage_policy_surface() {
   return 1
 }
 
+is_ci_path_policy_contract_surface() {
+  local path="$1"
+  case "$path" in
+    adl/config/validation_lane_selector.v0.91.6.json|\
+    adl/tools/ci_path_policy.sh|\
+    adl/tools/test_ci_path_policy.sh|\
+    adl/tools/test_validation_manager.sh)
+      return 0
+      ;;
+  esac
+  return 1
+}
+
 is_reporting_only_coverage_workflow_change() {
   local path="$1"
   [ "$path" = ".github/workflows/ci.yaml" ] || return 1
@@ -672,18 +685,23 @@ manager_profile_is_release_gate_only_escalation() {
 
 apply_validation_manager_routing() {
   case "$validation_profile_status:$validation_profile_run_lanes:$validation_profile_escalation_required" in
+    ready_to_run:*ci_path_policy_contracts*:false)
+      ci_contracts_required=true
+      reason="${validation_profile_primary_reason:-ci_policy_surface_requires_path_policy_contract_checks}"
+      return 0
+      ;;
     ready_to_run:docs_diff_check:false)
       reason="${validation_profile_primary_reason:-docs_only_surface_requires_diff_hygiene}"
+      return 0
+      ;;
+    ready_to_run:sprint_conductor_contracts:false|\
+    ready_to_run:docs_diff_check,sprint_conductor_contracts:false)
+      reason="sprint_conductor_surface_requires_helper_contract_checks"
       return 0
       ;;
     ready_to_run:rust_pr_fast:false)
       mark_pr_fast_coverage
       reason="${validation_profile_primary_reason:-bounded_rust_surface_runs_focused_nextest}"
-      return 0
-      ;;
-    ready_to_run:ci_path_policy_contracts:false)
-      ci_contracts_required=true
-      reason="${validation_profile_primary_reason:-ci_policy_surface_requires_path_policy_contract_checks}"
       return 0
       ;;
   esac
@@ -775,7 +793,9 @@ else
         saw_pr_finish_control_plane=true
       fi
       if is_full_coverage_policy_surface "$path"; then
-        saw_full_coverage_policy_surface=true
+        if ! is_ci_path_policy_contract_surface "$path"; then
+          saw_full_coverage_policy_surface=true
+        fi
       fi
       if is_v0913_proof_surface "$path"; then
         saw_v0913_proof_surface=true
@@ -831,59 +851,59 @@ EOF
       done <<EOF
 $changed_files
 EOF
-    fi
       bounded_pr_fast_coverage_policy_change=false
       if [ "$coverage_required" = true ] && is_bounded_pr_fast_coverage_policy_change; then
         bounded_pr_fast_coverage_policy_change=true
       fi
-	    while IFS=$'\t' read -r _status path; do
-	      [ -n "$path" ] || continue
-	      if [ "$pvf_slow_proof_policy_change" = true ] && is_pvf_slow_proof_policy_surface "$path"; then
-	        continue
-	      fi
+      while IFS=$'\t' read -r _status path; do
+        [ -n "$path" ] || continue
+        if [ "$pvf_slow_proof_policy_change" = true ] && is_pvf_slow_proof_policy_surface "$path"; then
+          continue
+        fi
         if [ "$bounded_pr_fast_coverage_policy_change" = true ] && is_bounded_pr_fast_coverage_policy_surface "$path"; then
           if [ "$reason" = "runtime_or_rust_test_change_runs_pr_fast_validation" ]; then
             reason="bounded_pr_fast_coverage_policy_change_keeps_pr_fast_validation"
           fi
           continue
         fi
-	      if is_full_coverage_policy_surface "$path"; then
-        if is_reporting_only_coverage_workflow_change "$path"; then
-          reason="coverage_reporting_workflow_change_skips_authoritative_coverage"
-          continue
-        fi
-        if is_pvf_slow_proof_workflow_change "$path"; then
-          ci_contracts_required=true
-          if [ "$reason" = "path_policy_docs_or_tooling_only" ]; then
-            reason="pvf_slow_proof_workflow_change_runs_contract_validation"
+        if is_full_coverage_policy_surface "$path"; then
+          if is_reporting_only_coverage_workflow_change "$path"; then
+            reason="coverage_reporting_workflow_change_skips_authoritative_coverage"
+            continue
+          fi
+          if is_pvf_slow_proof_workflow_change "$path"; then
+            ci_contracts_required=true
+            if [ "$reason" = "path_policy_docs_or_tooling_only" ]; then
+              reason="pvf_slow_proof_workflow_change_runs_contract_validation"
+            fi
+            continue
+          fi
+          if is_csdlc_evidence_namespace_policy_update "$path"; then
+            if [ "$reason" = "path_policy_docs_or_tooling_only" ]; then
+              reason="csdlc_evidence_namespace_policy_update_skips_authoritative_coverage"
+            fi
+            continue
+          fi
+          if [ "$coverage_required" = true ]; then
+            mark_policy_surface_full_coverage \
+              "pr_policy_surface_runtime_mixed" \
+              "coverage_policy_surface_change_with_runtime_surface_runs_full_coverage"
+          else
+            mark_policy_surface_full_coverage \
+              "pr_policy_surface_tooling_only" \
+              "coverage_policy_surface_change_runs_bounded_authoritative_coverage"
           fi
           continue
         fi
-        if is_csdlc_evidence_namespace_policy_update "$path"; then
-          if [ "$reason" = "path_policy_docs_or_tooling_only" ]; then
-            reason="csdlc_evidence_namespace_policy_update_skips_authoritative_coverage"
-          fi
-          continue
-        fi
-        if [ "$coverage_required" = true ]; then
-          mark_policy_surface_full_coverage \
-            "pr_policy_surface_runtime_mixed" \
-            "coverage_policy_surface_change_with_runtime_surface_runs_full_coverage"
-        else
-          mark_policy_surface_full_coverage \
-            "pr_policy_surface_tooling_only" \
-            "coverage_policy_surface_change_runs_bounded_authoritative_coverage"
-        fi
-        continue
-      fi
-    done <<EOF
+      done <<EOF
 $changed_rows
 EOF
-    if [ "$saw_pr_finish_control_plane" = true ] \
-      && [ "$coverage_required" != true ] \
-      && [ "$full_coverage_required" != true ] \
-      && [ "$demo_smoke_required" != true ]; then
-      reason="publication_control_plane_change_runs_focused_rust_validation"
+      if [ "$saw_pr_finish_control_plane" = true ] \
+        && [ "$coverage_required" != true ] \
+        && [ "$full_coverage_required" != true ] \
+        && [ "$demo_smoke_required" != true ]; then
+        reason="publication_control_plane_change_runs_focused_rust_validation"
+      fi
     fi
   fi
 fi

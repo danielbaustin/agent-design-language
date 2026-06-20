@@ -249,6 +249,104 @@ EOF
   assert_has "$rust_test_manifest_output" "coverage_authority=pr_changed_surface"
   assert_has "$rust_test_manifest_output" "reason=bounded_rust_surface_runs_focused_nextest"
 
+  git checkout -q -b sprint-conductor-surface "$base_sha"
+  mkdir -p adl/tools/skills/sprint-conductor/scripts
+  printf '# sprint conductor skill\n' > adl/tools/skills/sprint-conductor/SKILL.md
+  printf 'print(\"goal metrics\")\n' > adl/tools/skills/sprint-conductor/scripts/issue_goal_metrics.py
+  printf '#!/usr/bin/env bash\nexit 0\n' > adl/tools/test_sprint_conductor_helpers.sh
+  printf '#!/usr/bin/env bash\nexit 0\n' > adl/tools/test_install_adl_operational_skills.sh
+  printf '\nsprint conductor note\n' >> docs/readme.md
+  git add adl/tools/skills/sprint-conductor/SKILL.md \
+    adl/tools/skills/sprint-conductor/scripts/issue_goal_metrics.py \
+    adl/tools/test_sprint_conductor_helpers.sh \
+    adl/tools/test_install_adl_operational_skills.sh \
+    docs/readme.md
+  git commit -q -m sprint-conductor-surface
+  sprint_conductor_head="$(git rev-parse HEAD)"
+
+  sprint_conductor_output="$("$POLICY" --event-name pull_request --base "$base_sha" --head "$sprint_conductor_head" --ref "refs/pull/1/merge")"
+  assert_has "$sprint_conductor_output" "rust_required=false"
+  assert_has "$sprint_conductor_output" "coverage_required=false"
+  assert_has "$sprint_conductor_output" "full_coverage_required=false"
+  assert_has "$sprint_conductor_output" "demo_smoke_required=false"
+  assert_has "$sprint_conductor_output" "v0913_proof_required=false"
+  assert_has "$sprint_conductor_output" "release_version_only=false"
+  assert_has "$sprint_conductor_output" "ci_contracts_required=false"
+  assert_has "$sprint_conductor_output" "fail_closed=false"
+  assert_has "$sprint_conductor_output" "coverage_lane=skip"
+  assert_has "$sprint_conductor_output" "coverage_authority=not_required"
+  assert_has "$sprint_conductor_output" "reason=sprint_conductor_surface_requires_helper_contract_checks"
+  assert_has "$sprint_conductor_output" "validation_profile_status=ready_to_run"
+  assert_has "$sprint_conductor_output" "validation_profile_escalation_required=false"
+  assert_has "$sprint_conductor_output" "validation_profile_run_lanes=docs_diff_check,sprint_conductor_contracts"
+
+  git checkout -q -b sprint-conductor-only "$base_sha"
+  mkdir -p adl/tools/skills/sprint-conductor/scripts
+  printf '# sprint conductor skill\n' > adl/tools/skills/sprint-conductor/SKILL.md
+  printf 'print(\"goal metrics\")\n' > adl/tools/skills/sprint-conductor/scripts/issue_goal_metrics.py
+  printf '#!/usr/bin/env bash\nexit 0\n' > adl/tools/test_sprint_conductor_helpers.sh
+  printf '#!/usr/bin/env bash\nexit 0\n' > adl/tools/test_install_adl_operational_skills.sh
+  git add adl/tools/skills/sprint-conductor/SKILL.md \
+    adl/tools/skills/sprint-conductor/scripts/issue_goal_metrics.py \
+    adl/tools/test_sprint_conductor_helpers.sh \
+    adl/tools/test_install_adl_operational_skills.sh
+  git commit -q -m sprint-conductor-only
+  sprint_conductor_only_head="$(git rev-parse HEAD)"
+
+  sprint_conductor_only_output="$("$POLICY" --event-name pull_request --base "$base_sha" --head "$sprint_conductor_only_head" --ref "refs/pull/1/merge")"
+  assert_has "$sprint_conductor_only_output" "rust_required=false"
+  assert_has "$sprint_conductor_only_output" "coverage_required=false"
+  assert_has "$sprint_conductor_only_output" "full_coverage_required=false"
+  assert_has "$sprint_conductor_only_output" "demo_smoke_required=false"
+  assert_has "$sprint_conductor_only_output" "v0913_proof_required=false"
+  assert_has "$sprint_conductor_only_output" "release_version_only=false"
+  assert_has "$sprint_conductor_only_output" "ci_contracts_required=false"
+  assert_has "$sprint_conductor_only_output" "fail_closed=false"
+  assert_has "$sprint_conductor_only_output" "coverage_lane=skip"
+  assert_has "$sprint_conductor_only_output" "coverage_authority=not_required"
+  assert_has "$sprint_conductor_only_output" "reason=sprint_conductor_surface_requires_helper_contract_checks"
+  assert_has "$sprint_conductor_only_output" "validation_profile_status=ready_to_run"
+  assert_has "$sprint_conductor_only_output" "validation_profile_escalation_required=false"
+  assert_has "$sprint_conductor_only_output" "validation_profile_run_lanes=sprint_conductor_contracts"
+
+  git checkout -q -b classifier-followup "$base_sha"
+  mkdir -p adl/tools/skills/sprint-conductor/scripts adl/config adl/tools
+  printf '# sprint conductor skill\n' > adl/tools/skills/sprint-conductor/SKILL.md
+  printf 'print(\"goal metrics\")\n' > adl/tools/skills/sprint-conductor/scripts/issue_goal_metrics.py
+  printf '#!/usr/bin/env bash\nexit 0\n' > adl/tools/test_sprint_conductor_helpers.sh
+  printf '#!/usr/bin/env bash\nexit 0\n' > adl/tools/test_install_adl_operational_skills.sh
+  printf '#!/usr/bin/env bash\nprintf ok\\n' > adl/tools/ci_path_policy.sh
+  printf '#!/usr/bin/env bash\nprintf ok\\n' > adl/tools/test_ci_path_policy.sh
+  printf '{\"schema_version\":\"adl.validation_lane_selector.v1\",\"surface_defaults\":{},\"lanes\":[],\"special_surfaces\":{},\"manager_guardrails\":{\"docs_only_forbidden_lane_ids\":[\"rust_pr_fast\"],\"pr_fast\":{\"max_rust_surface_count\":4,\"max_filter_token_count\":4,\"max_family_token_count\":3,\"blocked_modes\":[\"full\",\"contract_only\"]}},\"release_gate_hints\":[],\"rust_path_hints\":[]}\n' > adl/config/validation_lane_selector.v0.91.6.json
+  printf '#!/usr/bin/env bash\nprintf ok\\n' > adl/tools/test_validation_manager.sh
+  printf '\nclassifier followup note\n' >> docs/readme.md
+  git add adl/config/validation_lane_selector.v0.91.6.json \
+    adl/tools/ci_path_policy.sh \
+    adl/tools/test_ci_path_policy.sh \
+    adl/tools/test_validation_manager.sh \
+    adl/tools/skills/sprint-conductor/SKILL.md \
+    adl/tools/skills/sprint-conductor/scripts/issue_goal_metrics.py \
+    adl/tools/test_sprint_conductor_helpers.sh \
+    adl/tools/test_install_adl_operational_skills.sh \
+    docs/readme.md
+  git commit -q -m classifier-followup
+  classifier_followup_head="$(git rev-parse HEAD)"
+
+  classifier_followup_output="$("$POLICY" --event-name pull_request --base "$base_sha" --head "$classifier_followup_head" --ref "refs/pull/1/merge")"
+  assert_has "$classifier_followup_output" "rust_required=false"
+  assert_has "$classifier_followup_output" "coverage_required=false"
+  assert_has "$classifier_followup_output" "full_coverage_required=false"
+  assert_has "$classifier_followup_output" "demo_smoke_required=false"
+  assert_has "$classifier_followup_output" "v0913_proof_required=false"
+  assert_has "$classifier_followup_output" "release_version_only=false"
+  assert_has "$classifier_followup_output" "ci_contracts_required=true"
+  assert_has "$classifier_followup_output" "fail_closed=false"
+  assert_has "$classifier_followup_output" "coverage_lane=skip"
+  assert_has "$classifier_followup_output" "coverage_authority=not_required"
+  assert_has "$classifier_followup_output" "reason=ci_policy_surface_requires_path_policy_contract_checks"
+  assert_has "$classifier_followup_output" "validation_profile_status=ready_to_run"
+  assert_has "$classifier_followup_output" "validation_profile_escalation_required=false"
+
   git checkout -q -b new-runtime-file "$base_sha"
   printf 'pub fn contract_schema() -> bool { true }\n' > adl/src/contract_schema.rs
   git add adl/src/contract_schema.rs
