@@ -513,6 +513,11 @@ impl ContinuousVerificationSelfAttackContract {
                     "RegressionPromotionArtifact",
                     "SelfAttackReviewPacket",
                 ]),
+                replay_requirements: strings(&[
+                    "each proven exploit must produce replay requirements or a non-replayable limitation",
+                    "post-mitigation validation must cite the replay manifest when replay is available",
+                    "replay result preserves unsafe_state_reached before and after mitigation",
+                ]),
                 lifecycle_linkage_rules: strings(&[
                     "VerificationPlanArtifact -> ExploitHypothesisArtifact via target_ref and security_posture_ref",
                     "ExploitHypothesisArtifact -> ExploitEvidenceArtifact via hypothesis_ref",
@@ -520,11 +525,7 @@ impl ContinuousVerificationSelfAttackContract {
                     "ExploitEvidenceArtifact -> MitigationLinkageArtifact via evidence_ref",
                     "MitigationLinkageArtifact -> ReplayValidationArtifact via mitigation_ref and replay_id",
                     "ReplayValidationArtifact -> RegressionPromotionArtifact via validation_result_ref",
-                ]),
-                replay_requirements: strings(&[
-                    "each proven exploit must produce replay requirements or a non-replayable limitation",
-                    "post-mitigation validation must cite the replay manifest when replay is available",
-                    "replay result preserves unsafe_state_reached before and after mitigation",
+                    "AUTO-01 first bounded autonomous proof preserves exploit -> replay -> mitigation -> validation -> promotion linkage as one review-visible chain",
                 ]),
                 promotion_requirements: strings(&[
                     "promotion target names a regression test, replay suite, hardening rule, provider warning, or posture rule",
@@ -569,16 +570,19 @@ impl ContinuousVerificationSelfAttackContract {
                     "verifier-side policy violations create a quarantine artifact instead of continuing execution",
                     "quarantined verifier state preserves evidence and blocks further exploit attempts pending review",
                     "trace-integrity loss or unauthorized mutation requests may escalate the loop into quarantine",
+                    "AUTO-01 may truthfully block quarantine as future executable runner work while still requiring fail-closed packet visibility",
                 ]),
                 degrade_rules: strings(&[
                     "missing mutation authority degrades execution to audit-only mode",
                     "stale target posture or authorization may degrade execution to hypothesis generation and replay review only",
                     "degraded mode must remain review-visible in the emitted verification packet",
+                    "AUTO-01 records degrade behavior as a required operator-visible outcome rather than claiming new autonomous enforcement beyond declared posture rules",
                 ]),
                 stop_rules: strings(&[
                     "duplicate activation, stop request, or shared-runtime lease conflict stops the loop before the next exploit attempt",
                     "continuous verification respects ordinary runtime stop, lease, and status controls",
                     "safety stop emits an explicit operator-visible reason and defer/resume basis",
+                    "AUTO-01 records stop control behavior through the ordinary runtime stop, lease, and status boundaries already declared by this contract",
                 ]),
                 verifier_fault_fail_closed_rules: strings(&[
                     "queue corruption blocks execution and emits a fail-closed review artifact",
@@ -594,6 +598,8 @@ impl ContinuousVerificationSelfAttackContract {
                     "which lifecycle stages executed, blocked, or deferred",
                     "what exploit evidence, replay expectation, mitigation link, and promotion decision resulted",
                     "what residual risk remains explicit",
+                    "how AUTO-01 recorded stop, degrade, or truthfully blocked quarantine behavior",
+                    "which non-claims remained explicit in the first bounded autonomous proof packet",
                 ]),
                 required_visibility: strings(&[
                     "cadence and trigger source",
@@ -602,6 +608,7 @@ impl ContinuousVerificationSelfAttackContract {
                     "ordered lifecycle stage results",
                     "artifact linkage from hypothesis through promotion",
                     "defer, limitation, and residual-risk records",
+                    "AUTO-01 proof id, bounded limit, and operator review packet sections",
                 ]),
                 downstream_boundaries: strings(&[
                     "flagship adversarial demo wiring remains WP-07",
@@ -613,6 +620,7 @@ impl ContinuousVerificationSelfAttackContract {
             proof_fixture_hooks: strings(&[
                 "adl::continuous_verification_self_attack::ContinuousVerificationSelfAttackContract::v1",
                 "adl identity continuous-verification --out .adl/state/continuous_verification_self_attack_v1.json",
+                "AUTO-01 first bounded autonomous proof packet: mode=continuous_bounded target_ref=adl.runtime.autonomy.continuous_verification posture=validation limit=single bounded proof loop operator_review_sections=trigger,target,ledger,linkage,controls,non_claims,residual_risks",
             ]),
             proof_hook_command:
                 "adl identity continuous-verification --out .adl/state/continuous_verification_self_attack_v1.json"
@@ -709,6 +717,17 @@ mod tests {
             .promotion_requirements
             .iter()
             .any(|rule| rule.contains("regression test")));
+        assert!(contract
+            .artifact_package
+            .lifecycle_linkage_rules
+            .iter()
+            .any(|rule| rule.contains("AUTO-01 first bounded autonomous proof preserves exploit -> replay -> mitigation -> validation -> promotion linkage")));
+        assert!(contract
+            .review_surface
+            .required_visibility
+            .iter()
+            .any(|section| section
+                == "AUTO-01 proof id, bounded limit, and operator review packet sections"));
     }
 
     #[test]
@@ -771,6 +790,10 @@ mod tests {
             .any(|guard| guard
                 .contains("does not claim always-on autonomous red/blue runtime execution")));
         assert!(contract
+            .proof_fixture_hooks
+            .iter()
+            .any(|hook| hook.contains("operator_review_sections=trigger,target,ledger,linkage,controls,non_claims,residual_risks")));
+        assert!(contract
             .scope_boundary
             .contains("future executable tooling"));
     }
@@ -799,6 +822,21 @@ mod tests {
             .stop_rules
             .iter()
             .any(|rule| rule.contains("duplicate activation")));
+        assert!(contract
+            .safety_controls
+            .stop_rules
+            .iter()
+            .any(|rule| rule.contains("AUTO-01 records stop control behavior")));
+        assert!(contract
+            .safety_controls
+            .degrade_rules
+            .iter()
+            .any(|rule| rule.contains("AUTO-01 records degrade behavior")));
+        assert!(contract
+            .safety_controls
+            .quarantine_rules
+            .iter()
+            .any(|rule| rule.contains("AUTO-01 may truthfully block quarantine")));
         assert!(contract
             .safety_controls
             .verifier_fault_fail_closed_rules
