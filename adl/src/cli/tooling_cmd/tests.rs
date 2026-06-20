@@ -9,6 +9,7 @@ pub(super) use std::fs;
 pub(super) use std::path::Path;
 
 mod card_prompt;
+mod codex_usage_watch;
 mod common_helpers;
 mod markdown_ast_edit;
 mod prompt_spec;

@@ -6,6 +6,8 @@ mod card_prompt;
 mod ci_log_archive;
 #[path = "tooling_cmd/code_review.rs"]
 mod code_review;
+#[path = "tooling_cmd/codex_usage_watch.rs"]
+mod codex_usage_watch;
 #[path = "tooling_cmd/common.rs"]
 mod common;
 #[path = "tooling_cmd/csdlc_prompt_editor.rs"]
@@ -34,6 +36,7 @@ mod wp_issue_wave;
 use card_prompt::real_card_prompt;
 use ci_log_archive::real_ci_log_archive;
 use code_review::real_code_review;
+use codex_usage_watch::real_codex_usage_watch;
 use csdlc_prompt_editor::real_csdlc_prompt_editor;
 use github_release::real_github_release;
 use markdown_ast_edit::real_markdown_ast_edit;
@@ -69,7 +72,7 @@ use structured_prompt::{
 pub(crate) fn real_tooling(args: &[String]) -> Result<()> {
     let Some(subcommand) = args.first().map(|arg| arg.as_str()) else {
         return Err(anyhow!(
-            "tooling requires a subcommand: card-prompt | ci-log-archive | code-review | csdlc-prompt-editor | github-release | lint-prompt-spec | prompt-template | public-prompt-packet | validate-structured-prompt | review-card-surface | review-runtime-surface | verify-review-output-provenance | verify-repo-review-contract | generate-wp-issue-wave"
+            "tooling requires a subcommand: card-prompt | ci-log-archive | code-review | codex-usage-watch | csdlc-prompt-editor | github-release | lint-prompt-spec | prompt-template | public-prompt-packet | validate-structured-prompt | review-card-surface | review-runtime-surface | verify-review-output-provenance | verify-repo-review-contract | generate-wp-issue-wave"
         ));
     };
 
@@ -77,6 +80,7 @@ pub(crate) fn real_tooling(args: &[String]) -> Result<()> {
         "card-prompt" => real_card_prompt(&args[1..]),
         "ci-log-archive" => real_ci_log_archive(&args[1..]),
         "code-review" => real_code_review(&args[1..]),
+        "codex-usage-watch" => real_codex_usage_watch(&args[1..]),
         "csdlc-prompt-editor" => real_csdlc_prompt_editor(&args[1..]),
         "generate-wp-issue-wave" => real_generate_wp_issue_wave(&args[1..]),
         "github-release" => real_github_release(&args[1..]),
@@ -95,7 +99,7 @@ pub(crate) fn real_tooling(args: &[String]) -> Result<()> {
             Ok(())
         }
         _ => Err(anyhow!(
-            "unknown tooling subcommand '{subcommand}' (expected card-prompt | ci-log-archive | code-review | csdlc-prompt-editor | generate-wp-issue-wave | github-release | lint-prompt-spec | portable-project-doctor | prompt-template | public-prompt-packet | validate-structured-prompt | review-card-surface | review-runtime-surface | verify-review-output-provenance | verify-repo-review-contract)"
+            "unknown tooling subcommand '{subcommand}' (expected card-prompt | ci-log-archive | code-review | codex-usage-watch | csdlc-prompt-editor | generate-wp-issue-wave | github-release | lint-prompt-spec | portable-project-doctor | prompt-template | public-prompt-packet | validate-structured-prompt | review-card-surface | review-runtime-surface | verify-review-output-provenance | verify-repo-review-contract)"
         )),
     }
 }
@@ -105,6 +109,9 @@ fn tooling_usage() -> &'static str {
 adl tooling card-prompt --input <path> [--out <path>]\n\
 adl tooling ci-log-archive summarize --logs-dir <dir> --out <manifest.json> --s3-prefix s3://bucket/prefix [--repo owner/repo] [--pr <n>] [--run-id <id>] [--commit <sha>] [--raw-zip <logs.zip>] [--upload] [--threshold-seconds 60] [--redaction-status <status>]\n\
 adl tooling code-review --out <dir> [--backend fixture|ollama] [--visibility packet-only|read-only-repo] [--base <ref>] [--head <ref>] [--issue <number>] [--writer-session <id>] [--reviewer-session <id>] [--model <name>] [--allow-live-ollama] [--ollama-url <url>] [--timeout-secs <n>] [--include-working-tree] [--file <path> ...] [--fixture-case clean|blocked]\n\
+adl tooling codex-usage-watch parse --input <status.txt> [--json]\n\
+adl tooling codex-usage-watch parse --text \"Context: ...\" [--json]\n\
+adl tooling codex-usage-watch watch --input <status.txt> [--interval-seconds <n>] [--iterations <n>] [--history-root <dir>] [--json]\n\
 adl tooling csdlc-prompt-editor [--repo-root <path>] [--emit-model-js <path>] [--render-samples <dir>]\n\
 adl tooling generate-wp-issue-wave --version <version> [--wbs <path>] [--sprint <path>] [--out <path>]\n\
 adl tooling github-release ensure-absent|ensure-present|draft|publish --repo <owner/repo> --tag <tag> [--name <name>] [--notes-file <path>] [--target <branch>]\n\

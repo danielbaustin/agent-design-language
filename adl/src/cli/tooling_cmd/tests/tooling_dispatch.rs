@@ -22,13 +22,19 @@ fn tooling_cmd_dispatch_and_help_paths_cover_public_entrypoint() {
     let prompt_out = repo.path().join("prompt.txt");
     let editor_model_out = repo.path().join("editor_model.js");
     let editor_samples_out = repo.path().join("editor_samples");
+    let usage_status = repo.write_rel(
+        ".tmp/tooling_cmd_tests/usage-status.txt",
+        "Context: 37% left (161,634 used / 258K)\n5h limit: 4% left (resets 4:04 PM)\n7d limit: 3% left (resets Jun 24)\n",
+    );
 
     assert!(real_tooling(&[]).is_err());
     real_tooling(&["help".to_string()]).expect("help should succeed");
     let unknown_err = real_tooling(&["unknown".to_string()]).expect_err("unknown command");
-    assert!(unknown_err.to_string().contains("ci-log-archive"));
+    assert!(unknown_err.to_string().contains("codex-usage-watch"));
     real_tooling(&["code-review".to_string(), "--help".to_string()])
         .expect("code-review help should succeed without --out");
+    real_tooling(&["codex-usage-watch".to_string(), "--help".to_string()])
+        .expect("codex-usage-watch help should succeed");
     real_tooling(&["portable-project-doctor".to_string(), "--help".to_string()])
         .expect("portable-project-doctor help should succeed");
 
@@ -75,6 +81,15 @@ fn tooling_cmd_dispatch_and_help_paths_cover_public_entrypoint() {
     ])
     .expect("card-prompt dispatch should succeed");
     assert!(prompt_out.is_file());
+
+    real_tooling(&[
+        "codex-usage-watch".to_string(),
+        "parse".to_string(),
+        "--input".to_string(),
+        usage_status.to_string_lossy().to_string(),
+        "--json".to_string(),
+    ])
+    .expect("codex usage watcher dispatch should succeed");
 
     real_tooling(&[
         "csdlc-prompt-editor".to_string(),
