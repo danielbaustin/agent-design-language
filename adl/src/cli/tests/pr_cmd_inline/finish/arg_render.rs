@@ -1210,6 +1210,36 @@ fn finish_validation_plan_classifies_resilience_runtime_publication_paths() {
 }
 
 #[test]
+fn finish_validation_plan_classifies_integrated_runtime_soak_runner() {
+    let plan = select_finish_validation_plan(
+        "adl/src/bin/run_v0916_integrated_runtime_soak.rs,docs/milestones/v0.91.6/review/runtime/V0916_INTEGRATED_RUNTIME_SOAK_PROOF_4245.md",
+    )
+    .expect("integrated runtime soak plan");
+
+    assert_eq!(plan.mode, FinishValidationMode::LargerBinaryFocused);
+    assert!(plan
+        .commands
+        .contains(&"cargo test --manifest-path adl/Cargo.toml long_lived_agent".to_string()));
+    assert!(plan.commands.contains(
+        &"cargo test --manifest-path adl/Cargo.toml build_remote_execute_request_preserves_conversation_as_audit_metadata".to_string()
+    ));
+    assert!(plan
+        .commands
+        .contains(&"cargo test --manifest-path adl/Cargo.toml remote_exec::".to_string()));
+    assert!(plan
+        .commands
+        .contains(&"bash adl/tools/run_owner_validation_lane.sh runtime --build".to_string()));
+    assert!(plan
+        .commands
+        .contains(&"bash adl/tools/check_no_tracked_adl_issue_record_residue.sh".to_string()));
+    assert!(plan.commands.contains(&"git diff --check".to_string()));
+    assert!(!plan
+        .commands
+        .iter()
+        .any(|command| command.contains("cargo clippy")));
+}
+
+#[test]
 fn finish_validation_plan_classifies_rust_refactor_slices() {
     let lib_plan = select_finish_validation_plan("adl/src/lib.rs").expect("lib plan");
     assert_eq!(lib_plan.mode, FinishValidationMode::LargerBinaryFocused);

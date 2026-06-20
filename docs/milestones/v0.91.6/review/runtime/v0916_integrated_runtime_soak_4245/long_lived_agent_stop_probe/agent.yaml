@@ -1,0 +1,26 @@
+schema: adl.long_lived_agent_spec.v1
+agent_instance_id: v0916-runtime-stop-probe
+display_name: V0916 Runtime Soak
+state_root: state
+workflow:
+  kind: demo_adapter
+  name: v0916_runtime_soak
+  run_args:
+    provider_id: local_ollama
+    model: gemma4:latest
+heartbeat:
+  interval_secs: 1
+  max_cycles: 6
+  stale_lease_after_secs: 60
+safety:
+  allow_network: false
+  allow_broker: false
+  allow_filesystem_writes_outside_state_root: false
+  allow_real_world_side_effects: false
+  require_public_artifact_sanitization: true
+  financial_advice: false
+  max_cycle_runtime_secs: 120
+  max_consecutive_failures: 2
+memory:
+  namespace: runtime/soak/v0916
+  write_policy: append_only

@@ -1694,6 +1694,7 @@ fn finish_path_is_larger_binary_focused(path: &str) -> bool {
             | "adl/src/remote_exec.rs"
             | "adl/src/remote_exec/signing_support.rs"
             | "adl/src/remote_exec/types.rs"
+            | "adl/src/bin/run_v0916_integrated_runtime_soak.rs"
             | "adl/src/continuous_verification_self_attack.rs"
             | "adl/src/cli/identity_cmd/tests/adversarial_contracts.rs"
             | "adl/src/cli/tests/pr_cmd_inline/basics.rs"
@@ -1851,7 +1852,9 @@ fn finish_path_needs_long_lived_agent_tokio_validation(path: &str) -> bool {
     let trimmed = path.trim().trim_matches('/');
     matches!(
         trimmed,
-        "adl/src/long_lived_agent.rs" | "adl/src/long_lived_agent/tests.rs"
+        "adl/src/long_lived_agent.rs"
+            | "adl/src/long_lived_agent/tests.rs"
+            | "adl/src/bin/run_v0916_integrated_runtime_soak.rs"
     )
 }
 
@@ -1869,6 +1872,7 @@ fn finish_path_needs_remote_exec_tokio_validation(path: &str) -> bool {
             | "adl/src/remote_exec.rs"
             | "adl/src/remote_exec/signing_support.rs"
             | "adl/src/remote_exec/types.rs"
+            | "adl/src/bin/run_v0916_integrated_runtime_soak.rs"
     )
 }
 
@@ -2193,6 +2197,7 @@ fn finish_path_needs_runtime_owner_lane_validation(path: &str) -> bool {
             | "adl/src/provider_adapter.rs"
             | "adl/src/provider_communication.rs"
             | "adl/src/resilience.rs"
+            | "adl/src/bin/run_v0916_integrated_runtime_soak.rs"
     ) || trimmed.starts_with("adl/src/agent_comms/")
 }
 
