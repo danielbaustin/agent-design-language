@@ -22,6 +22,14 @@ pub(super) fn continuity_path(loaded: &LoadedAgentSpec) -> PathBuf {
     loaded.state_root.join("continuity.json")
 }
 
+pub(super) fn continuity_checkpoint_path(loaded: &LoadedAgentSpec) -> PathBuf {
+    loaded.state_root.join("continuity_checkpoint.json")
+}
+
+pub(super) fn continuity_replay_manifest_path(loaded: &LoadedAgentSpec) -> PathBuf {
+    loaded.state_root.join("continuity_replay_manifest.json")
+}
+
 pub(super) fn cycle_ledger_path(loaded: &LoadedAgentSpec) -> PathBuf {
     loaded.state_root.join("cycle_ledger.jsonl")
 }

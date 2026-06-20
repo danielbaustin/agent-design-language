@@ -1692,9 +1692,12 @@ fn finish_path_is_larger_binary_focused(path: &str) -> bool {
             | "adl/src/provider_communication.rs"
             | "adl/src/resilience.rs"
             | "adl/src/long_lived_agent.rs"
+            | "adl/src/long_lived_agent/inspection.rs"
+            | "adl/src/long_lived_agent/schema.rs"
             | "adl/src/long_lived_agent/storage.rs"
             | "adl/src/long_lived_agent/tests.rs"
             | "adl/src/runtime_aws_signal.rs"
+            | "adl/src/demo/stock_league/model.rs"
             | "adl/src/execute/runner.rs"
             | "adl/src/execute/tests.rs"
             | "adl/src/remote_exec.rs"
@@ -1706,7 +1709,9 @@ fn finish_path_is_larger_binary_focused(path: &str) -> bool {
             | "adl/src/cli/tests/pr_cmd_inline/basics.rs"
             | "adl/src/cli/tests/pr_cmd_inline/versioned_bootstrap.rs"
             | "adl/tests/cli_smoke.rs"
+            | "adl/tests/cli_smoke/agent.rs"
             | "adl/tests/cli_smoke/process_status.rs"
+            | "adl/tests/demo_tests.rs"
             | "adl/src/cli/tests/pr_cmd_inline/repo_helpers/metadata.rs"
             | "adl/src/cli/tests/pr_cmd_inline/support.rs"
             | "adl/src/csdlc_prompt_editor.rs"
@@ -1862,9 +1867,14 @@ fn finish_path_needs_long_lived_agent_tokio_validation(path: &str) -> bool {
     matches!(
         trimmed,
         "adl/src/long_lived_agent.rs"
+            | "adl/src/long_lived_agent/inspection.rs"
+            | "adl/src/long_lived_agent/schema.rs"
             | "adl/src/long_lived_agent/storage.rs"
             | "adl/src/long_lived_agent/tests.rs"
             | "adl/src/runtime_aws_signal.rs"
+            | "adl/src/demo/stock_league/model.rs"
+            | "adl/tests/cli_smoke/agent.rs"
+            | "adl/tests/demo_tests.rs"
             | "adl/src/bin/run_v0916_integrated_runtime_soak.rs"
     )
 }

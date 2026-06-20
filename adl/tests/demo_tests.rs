@@ -615,6 +615,12 @@ fn demo_j_v090_stock_league_recurring_writes_multi_cycle_proof_packet() {
     assert!(run_out
         .join("long_lived_agent/state/continuity.json")
         .is_file());
+    assert!(run_out
+        .join("long_lived_agent/state/continuity_checkpoint.json")
+        .is_file());
+    assert!(run_out
+        .join("long_lived_agent/state/continuity_replay_manifest.json")
+        .is_file());
     assert!(run_out.join("inspection/latest.json").is_file());
     assert!(run_out.join("inspection/cycle-000001.json").is_file());
     assert!(run_out.join("inspection/cycle-000003.json").is_file());
@@ -662,6 +668,22 @@ fn demo_j_v090_stock_league_recurring_writes_multi_cycle_proof_packet() {
     .unwrap();
     assert_eq!(continuity["status"], "pass");
     assert_eq!(continuity["cycle_count"], 3);
+    assert_eq!(
+        continuity["restore_readiness"]["checkpoint_latest_cycle_id"],
+        "cycle-000003"
+    );
+    assert_eq!(
+        continuity["restore_readiness"]["restart_resume_proof_status"],
+        "not_executed_in_fixture"
+    );
+    assert_eq!(
+        continuity["restore_readiness"]["expected_next_cycle_id"],
+        "cycle-000004"
+    );
+    assert_eq!(
+        continuity["restart_resume_non_claim"],
+        "This recurring fixture proves checkpoint and replay-manifest artifact readiness plus append-only cycle continuity; it does not execute a restart/resume path itself."
+    );
     assert_eq!(
         continuity["history_preservation"]["prior_commitments_preserved"],
         true

@@ -11,6 +11,10 @@ pub(crate) const RUN_REF_SCHEMA: &str = "adl.long_lived_agent_run_ref.v1";
 pub(crate) const MEMORY_WRITE_SCHEMA: &str = "adl.long_lived_agent_memory_write.v1";
 pub(crate) const GUARDRAIL_REPORT_SCHEMA: &str = "adl.long_lived_agent_guardrail_report.v1";
 pub(crate) const CONTINUITY_SCHEMA: &str = "adl.long_lived_agent_continuity.v1";
+pub(crate) const CONTINUITY_CHECKPOINT_SCHEMA: &str =
+    "adl.long_lived_agent_continuity_checkpoint.v1";
+pub(crate) const CONTINUITY_REPLAY_MANIFEST_SCHEMA: &str =
+    "adl.long_lived_agent_continuity_replay_manifest.v1";
 pub(crate) const CYCLE_LEDGER_ENTRY_SCHEMA: &str = "adl.long_lived_agent_cycle_ledger_entry.v1";
 pub(crate) const PROVIDER_BINDING_SCHEMA: &str = "adl.long_lived_agent_provider_binding.v1";
 pub(crate) const MEMORY_INDEX_SCHEMA: &str = "adl.long_lived_agent_memory_index.v1";
