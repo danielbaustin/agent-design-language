@@ -2298,6 +2298,62 @@ fn finish_validation_profile_classifies_locked_cargo_fallback_slice() {
 }
 
 #[test]
+fn finish_validation_profile_classifies_wuji_ddns_slice() {
+    let changed_paths = vec![
+        ".gitignore".to_string(),
+        "adl/src/cli/pr_cmd/finish_support.rs".to_string(),
+        "adl/src/cli/tests/pr_cmd_inline/finish/arg_render.rs".to_string(),
+        "infra/ddns/.terraform.lock.hcl".to_string(),
+        "infra/ddns/README.md".to_string(),
+        "infra/ddns/client/com.agentlogic.wuji-ddns.plist".to_string(),
+        "infra/ddns/client/wuji_ddns_update.sh".to_string(),
+        "infra/ddns/iam.tf".to_string(),
+        "infra/ddns/lambda.tf".to_string(),
+        "infra/ddns/lambda/handler.py".to_string(),
+        "infra/ddns/locals.tf".to_string(),
+        "infra/ddns/outputs.tf".to_string(),
+        "infra/ddns/providers.tf".to_string(),
+        "infra/ddns/route53.tf".to_string(),
+        "infra/ddns/ssm.tf".to_string(),
+        "infra/ddns/tests/test_handler.py".to_string(),
+        "infra/ddns/variables.tf".to_string(),
+        "infra/ddns/versions.tf".to_string(),
+    ];
+    let requested_paths = changed_paths.join(",");
+
+    let plan = select_finish_validation_plan_for_finish(4284, &requested_paths, &changed_paths)
+        .expect("wuji ddns focused plan");
+
+    assert_eq!(plan.mode, FinishValidationMode::LargerBinaryFocused);
+    assert!(plan.commands.contains(
+        &"cargo test --manifest-path adl/Cargo.toml --bin adl-pr-finish wuji_ddns_slice -- --nocapture"
+            .to_string()
+    ));
+    assert!(plan
+        .commands
+        .contains(&"python3 -m unittest infra/ddns/tests/test_handler.py".to_string()));
+    assert!(plan
+        .commands
+        .contains(&"sh -n infra/ddns/client/wuji_ddns_update.sh".to_string()));
+    assert!(plan
+        .commands
+        .contains(&"terraform -chdir=infra/ddns fmt -check".to_string()));
+    assert!(plan
+        .commands
+        .contains(&"terraform -chdir=infra/ddns init -backend=false".to_string()));
+    assert!(plan
+        .commands
+        .contains(&"terraform -chdir=infra/ddns validate".to_string()));
+
+    let unrelated_err =
+        select_finish_validation_plan_for_finish(4285, &requested_paths, &changed_paths)
+            .expect_err("unrelated issue should not inherit the wuji ddns focused allowance");
+    assert!(unrelated_err
+        .to_string()
+        .contains("changed paths are not classified"));
+}
+
+#[test]
 fn finish_validation_runner_executes_locked_cargo_fallback_script_command() {
     let repo = unique_temp_dir("adl-pr-finish-locked-cargo-fallback-validation");
     let tools = repo.join("adl/tools");

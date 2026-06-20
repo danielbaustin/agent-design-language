@@ -1590,6 +1590,9 @@ pub(super) fn select_finish_validation_plan_for_finish(
     if finish_issue_needs_issue_small_binary_validation(issue_number, changed_paths) {
         return Ok(build_issue_small_binary_validation_plan());
     }
+    if finish_issue_needs_wuji_ddns_validation(issue_number, changed_paths) {
+        return Ok(build_wuji_ddns_validation_plan());
+    }
     if finish_issue_needs_locked_cargo_fallback_validation(issue_number, changed_paths) {
         return Ok(build_locked_cargo_fallback_validation_plan());
     }
@@ -1959,6 +1962,20 @@ fn finish_issue_needs_locked_cargo_fallback_validation(
         })
 }
 
+fn finish_issue_needs_wuji_ddns_validation(issue_number: u32, changed_paths: &[String]) -> bool {
+    if issue_number != 4284 {
+        return false;
+    }
+    !changed_paths.is_empty()
+        && changed_paths.iter().all(|path| {
+            let trimmed = path.trim().trim_matches('/');
+            trimmed == ".gitignore"
+                || trimmed == "adl/src/cli/pr_cmd/finish_support.rs"
+                || trimmed == "adl/src/cli/tests/pr_cmd_inline/finish/arg_render.rs"
+                || trimmed.starts_with("infra/ddns/")
+        })
+}
+
 fn build_tokio_manifest_runtime_validation_plan() -> FinishValidationPlan {
     let mut commands = Vec::new();
     push_finish_validation_command(
@@ -2028,6 +2045,22 @@ fn build_issue_small_binary_validation_plan() -> FinishValidationPlan {
     FinishValidationPlan {
         mode: FinishValidationMode::SmallBinaryFocused,
         commands,
+    }
+}
+
+fn build_wuji_ddns_validation_plan() -> FinishValidationPlan {
+    FinishValidationPlan {
+        mode: FinishValidationMode::LargerBinaryFocused,
+        commands: vec![
+            "bash adl/tools/check_no_tracked_adl_issue_record_residue.sh".to_string(),
+            "git diff --check".to_string(),
+            "cargo test --manifest-path adl/Cargo.toml --bin adl-pr-finish wuji_ddns_slice -- --nocapture".to_string(),
+            "python3 -m unittest infra/ddns/tests/test_handler.py".to_string(),
+            "sh -n infra/ddns/client/wuji_ddns_update.sh".to_string(),
+            "terraform -chdir=infra/ddns fmt -check".to_string(),
+            "terraform -chdir=infra/ddns init -backend=false".to_string(),
+            "terraform -chdir=infra/ddns validate".to_string(),
+        ],
     }
 }
 
