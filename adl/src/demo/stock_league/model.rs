@@ -1001,3 +1001,281 @@ fn read_jsonl_rel(out_dir: &Path, rel: &str) -> Result<Vec<Value>> {
         })
         .collect()
 }
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use std::time::{SystemTime, UNIX_EPOCH};
+
+    struct TempModelDir {
+        path: PathBuf,
+    }
+
+    impl TempModelDir {
+        fn new(label: &str) -> Self {
+            let nanos = SystemTime::now()
+                .duration_since(UNIX_EPOCH)
+                .expect("time went backwards")
+                .as_nanos();
+            let path = std::env::temp_dir().join(format!("adl-stock-league-model-{label}-{nanos}"));
+            fs::create_dir_all(&path).expect("create temp model dir");
+            Self { path }
+        }
+
+        fn path(&self) -> &Path {
+            &self.path
+        }
+    }
+
+    impl Drop for TempModelDir {
+        fn drop(&mut self) {
+            let _ = fs::remove_dir_all(&self.path);
+        }
+    }
+
+    fn temp_model_dir(label: &str) -> TempModelDir {
+        TempModelDir::new(label)
+    }
+
+    fn write_json_artifact(root: &Path, rel: &str, value: &Value) {
+        let path = root.join(rel);
+        if let Some(parent) = path.parent() {
+            fs::create_dir_all(parent).expect("create parent dirs");
+        }
+        fs::write(path, serde_json::to_string_pretty(value).expect("serialize json"))
+            .expect("write json artifact");
+    }
+
+    #[test]
+    fn stock_league_model_integration_manifest_includes_restart_artifacts() {
+        let manifest = integration_manifest();
+
+        assert_eq!(
+            manifest["runtime_refs"]["continuity_checkpoint"],
+            "long_lived_agent/state/continuity_checkpoint.json"
+        );
+        assert_eq!(
+            manifest["runtime_refs"]["continuity_replay_manifest"],
+            "long_lived_agent/state/continuity_replay_manifest.json"
+        );
+        assert!(manifest["reviewer_steps"]
+            .as_array()
+            .expect("reviewer_steps array")
+            .iter()
+            .any(|step| step
+                .as_str()
+                .expect("reviewer step string")
+                .contains("continuity_checkpoint.json and long_lived_agent/state/continuity_replay_manifest.json")));
+    }
+
+    #[test]
+    fn stock_league_model_recurring_continuity_proof_reports_restore_readiness() {
+        let root = temp_model_dir("continuity");
+
+        write_json_artifact(
+            root.path(),
+            "long_lived_agent/state/status.json",
+            &json!({
+                "completed_cycle_count": 3
+            }),
+        );
+        write_json_artifact(
+            root.path(),
+            "long_lived_agent/state/continuity.json",
+            &json!({
+                "latest_cycle_id": "cycle-000003",
+                "latest_cycle_status": "success"
+            }),
+        );
+        write_json_artifact(
+            root.path(),
+            "long_lived_agent/state/continuity_checkpoint.json",
+            &json!({
+                "schema": "adl.long_lived_agent.continuity_checkpoint.v1",
+                "latest_cycle_id": "cycle-000003"
+            }),
+        );
+        write_json_artifact(
+            root.path(),
+            "long_lived_agent/state/continuity_replay_manifest.json",
+            &json!({
+                "schema": "adl.long_lived_agent.continuity_replay_manifest.v1",
+                "expected_resume": {
+                    "next_cycle_id": "cycle-000004"
+                }
+            }),
+        );
+        write_json_artifact(
+            root.path(),
+            "long_lived_agent/state/memory_index.json",
+            &json!({
+                "schema": "adl.long_lived_agent.memory_index.v1"
+            }),
+        );
+        fs::create_dir_all(root.path().join("long_lived_agent/state/cycles"))
+            .expect("create cycles dir");
+        fs::write(
+            root.path().join("long_lived_agent/state/cycle_ledger.jsonl"),
+            concat!(
+                "{\"cycle_id\":\"cycle-000001\"}\n",
+                "{\"cycle_id\":\"cycle-000002\"}\n",
+                "{\"cycle_id\":\"cycle-000003\"}\n"
+            ),
+        )
+        .expect("write cycle ledger");
+        for (cycle_id, previous_cycle_id) in [
+            ("cycle-000001", Value::Null),
+            ("cycle-000002", Value::String("cycle-000001".to_string())),
+            ("cycle-000003", Value::String("cycle-000002".to_string())),
+        ] {
+            write_json_artifact(
+                root.path(),
+                &format!("long_lived_agent/state/cycles/{cycle_id}/cycle_manifest.json"),
+                &json!({
+                    "status": "success",
+                    "previous_cycle_id": previous_cycle_id
+                }),
+            );
+            write_json_artifact(
+                root.path(),
+                &format!("long_lived_agent/state/cycles/{cycle_id}/guardrail_report.json"),
+                &json!({
+                    "status": "pass"
+                }),
+            );
+        }
+
+        let proof = recurring_continuity_proof(root.path()).expect("continuity proof");
+
+        assert_eq!(proof["status"], "pass");
+        assert_eq!(
+            proof["checkpoint_ref"],
+            "long_lived_agent/state/continuity_checkpoint.json"
+        );
+        assert_eq!(
+            proof["replay_manifest_ref"],
+            "long_lived_agent/state/continuity_replay_manifest.json"
+        );
+        assert_eq!(
+            proof["restore_readiness"]["checkpoint_schema"],
+            "adl.long_lived_agent.continuity_checkpoint.v1"
+        );
+        assert_eq!(
+            proof["restore_readiness"]["replay_manifest_schema"],
+            "adl.long_lived_agent.continuity_replay_manifest.v1"
+        );
+        assert_eq!(
+            proof["restore_readiness"]["checkpoint_latest_cycle_id"],
+            "cycle-000003"
+        );
+        assert_eq!(
+            proof["restore_readiness"]["expected_next_cycle_id"],
+            "cycle-000004"
+        );
+        assert_eq!(
+            proof["restart_resume_non_claim"],
+            "This recurring fixture proves checkpoint and replay-manifest artifact readiness plus append-only cycle continuity; it does not execute a restart/resume path itself."
+        );
+    }
+
+    #[test]
+    fn stock_league_model_builders_cover_demo_surface_contracts() {
+        let fixture_value = fixture().expect("fixture");
+        let universe = universe_manifest(&fixture_value).expect("universe manifest");
+        let data_source = data_source_report();
+        let agent = AGENTS[0];
+        let identity = agent_identity(agent);
+        let style_card = agent_style_card(agent);
+        let journal = agent_initial_journal(agent);
+        let rules = league_rules();
+        let policy = guardrail_policy();
+        let day_one = day_one_decisions();
+        let paper_ledger = paper_ledger_jsonl();
+        let standings = league_standings();
+        let guardrails = guardrail_report();
+        let season = season_manifest();
+        let proof = proof_packet();
+        let agent_spec = stock_league_agent_spec();
+        let integration = integration_manifest();
+        let continuity = json!({
+            "status": "pass",
+            "cycle_count": 3,
+            "history_preservation": {
+                "prior_commitments_preserved": true
+            }
+        });
+        let integration_proof = integration_proof_packet(&continuity, &guardrails);
+        let extension_selection_value = extension_selection();
+        let extension_claims =
+            extension_proof_claims(&integration_proof, &continuity, &guardrails);
+        let extension_scan = json!({ "passed": true });
+        let evidence_index = extension_evidence_index(&extension_scan);
+        let replay_manifest = extension_replay_manifest();
+        let deferrals = extension_deferral_register();
+        let extension_proof = extension_proof_packet(
+            &extension_selection_value,
+            &extension_claims,
+            &evidence_index,
+            &replay_manifest,
+            &deferrals,
+            &extension_scan,
+        );
+
+        assert_eq!(universe["schema_version"], "adl.stock_league.universe.v1");
+        assert_eq!(data_source["sources"][0]["source_id"], "repo-fixture-season-001");
+        assert_eq!(identity["agent_id"], agent.id);
+        assert!(style_card.contains(agent.display_name));
+        assert!(journal.contains("identity_seed"));
+        assert_eq!(rules["schema_version"], "adl.stock_league.rules.v1");
+        assert_eq!(policy["schema_version"], "adl.stock_league.guardrail_policy.v1");
+        assert_eq!(day_one["schema_version"], "adl.stock_league.decision_batch.v1");
+        assert!(paper_ledger.contains("\"schema_version\":\"adl.stock_league.paper_ledger_entry.v1\""));
+        assert_eq!(standings["schema_version"], "adl.stock_league.scoreboard.v1");
+        assert_eq!(guardrails["schema_version"], "adl.stock_league.guardrail_report.v1");
+        assert_eq!(season["schema_version"], "adl.stock_league.season_manifest.v1");
+        assert_eq!(proof["schema_version"], "adl.stock_league.proof_packet.v1");
+        assert!(agent_spec.contains("agent_instance_id: stock-league-archivist"));
+        assert!(agent_spec.contains("max_cycles: 3"));
+        assert_eq!(
+            integration["schema_version"],
+            "adl.stock_league.integration_manifest.v1"
+        );
+        assert_eq!(
+            integration_proof["schema_version"],
+            "adl.stock_league.recurring_integration_proof_packet.v1"
+        );
+        assert_eq!(
+            extension_selection_value["schema_version"],
+            "adl.stock_league.demo_extension_selection.v1"
+        );
+        assert_eq!(
+            extension_claims["schema_version"],
+            "adl.stock_league.demo_extension_claims.v1"
+        );
+        assert_eq!(
+            evidence_index["schema_version"],
+            "adl.stock_league.demo_extension_evidence_index.v1"
+        );
+        assert_eq!(
+            replay_manifest["schema_version"],
+            "adl.stock_league.demo_extension_replay_manifest.v1"
+        );
+        assert_eq!(
+            deferrals["schema_version"],
+            "adl.stock_league.demo_extension_deferrals.v1"
+        );
+        assert_eq!(
+            extension_proof["schema_version"],
+            "adl.stock_league.demo_extension_proof_packet.v1"
+        );
+        assert_eq!(extension_proof["status"], "pass");
+
+        let write_root = temp_model_dir("write-json");
+        let written = write_json(write_root.path(), "artifacts/manifest.json", &integration)
+            .expect("write integration manifest");
+        assert!(written.ends_with("artifacts/manifest.json"));
+        let round_trip =
+            read_json_rel(write_root.path(), "artifacts/manifest.json").expect("read back");
+        assert_eq!(round_trip["schema_version"], "adl.stock_league.integration_manifest.v1");
+    }
+}
