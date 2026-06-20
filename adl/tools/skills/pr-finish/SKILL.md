@@ -13,6 +13,8 @@ Its job is to:
 - stage only the intended tracked paths
 - ensure the finalized SOR is normalized on the canonical local-only `.adl` task-bundle surface without treating it as tracked publication payload
 - create or update the reviewable PR surface
+- hand off the active issue session into explicit PR shepherding rather than
+  treating draft publication as the natural stopping point for issue work
 - emit a structured finish result
 - stop before silent merge or issue closure unless explicitly directed
 
@@ -56,7 +58,10 @@ Useful additional inputs:
    - `adl/tools/pr.sh finish`
 4. Validate the declared staged paths and PR metadata.
 5. Publish or update the draft PR surface.
-6. Emit a structured finish result and stop.
+6. Record the janitor/shepherding handoff for the active issue session:
+   after publication, the issue remains active until PR outcome and closeout
+   truth settle.
+7. Emit a structured finish result and stop.
 
 ## Workflow
 
@@ -112,6 +117,8 @@ This skill may:
 - stage the intended tracked paths
 - validate finish/body linkage
 - create or update the reviewable draft PR
+- record that the next active phase is PR shepherding through `pr-janitor`
+  unless an explicit blocker changes the handoff
 
 This skill must not:
 - publish from the primary checkout or another checkout when the issue branch is bound elsewhere
@@ -136,6 +143,12 @@ The normal handoff is to:
 - `pr-closeout` after merge or intentional closure is known
 - human review
 - explicit merge/closeout direction
+
+Healthy waiting rule:
+- a green or review-waiting PR after finish is still active issue work in the
+  shepherding tail, not an abandoned or naturally complete stop state
+- when the bounded session objective includes publication plus shepherding,
+  do not treat draft creation alone as sufficient completion truth
 
 ## Output
 

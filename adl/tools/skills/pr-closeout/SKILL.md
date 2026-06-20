@@ -12,6 +12,8 @@ Its job is to:
 - verify the issue is actually closed
 - normalize final STP, SIP, and SOR truth
 - reconcile root and worktree card/artifact surfaces when they have diverged
+- settle the shepherding handoff once PR outcome truth is known and only local
+  closeout remains
 - record deferral, supersession, or duplicate links when that is why the issue closed
 - confirm no required artifacts remain only in the worktree
 - prune the local worktree safely
@@ -30,7 +32,10 @@ Current repo truth:
 5. `pr-janitor` monitors the in-flight PR until human review and merge/closure settle
 6. `pr-closeout` finalizes the local issue state after that PR outcome is known
 
-The repo control plane may now trigger the same closeout behavior automatically after merge or explicit closed/completed state when the lifecycle evidence is unambiguous.
+Automatic post-merge closeout attachment is not currently the proved default
+repo path. Use explicit `pr-closeout` once merge or explicit closed/completed
+state is known, unless a later issue re-establishes an automated watcher lane
+with proof.
 
 This skill is intentionally later than `pr-finish`.
 
@@ -64,11 +69,12 @@ Useful additional inputs:
 2. Confirm the PR is actually merged or intentionally closed.
 3. Confirm the issue closure state is consistent with that outcome.
 4. Record any supersession, duplicate, or deferral references when they explain the closure.
-5. Normalize final STP, SIP, and SOR truth.
-6. Sync final output-card truth back to the root bundle if needed.
-7. Confirm no required artifacts remain only in the worktree.
-8. Prune the worktree safely.
-9. Emit a structured closeout result and stop.
+5. Record that shepherding work has settled into terminal closeout truth.
+6. Normalize final STP, SIP, and SOR truth.
+7. Sync final output-card truth back to the root bundle if needed.
+8. Confirm no required artifacts remain only in the worktree.
+9. Prune the worktree safely.
+10. Emit a structured closeout result and stop.
 
 ## Observability Expectations
 
@@ -175,6 +181,11 @@ It must not:
 The normal handoff is to:
 - human review of the closed issue record
 - reporting/index maintenance if explicitly requested
+
+Terminal handoff rule:
+- use this phase when the PR outcome is settled and the active issue session can
+  truthfully conclude with closeout rather than remaining in janitor
+  shepherding
 
 ## Output
 

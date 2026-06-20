@@ -23,4 +23,9 @@ validation_performed:
 handoff_state:
   next_phase: pr_janitor | human_review | blocked
   ready_for_janitor: true | false
+  issue_session_continues: true | false
+  shepherding_goal:
+    active: true | false
+    target_pr_state: waiting_for_review | green_and_mergeable | merged_needs_closeout | blocked
+    closeout_required_after_settlement: true | false
 ```

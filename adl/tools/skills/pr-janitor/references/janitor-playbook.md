@@ -12,6 +12,10 @@ If the repo relocates those docs, follow the relocated canonical copies instead 
 
 Watch a PR's progress, detect blockers, and respond proportionally.
 
+Healthy waiting states remain part of active issue shepherding. Green checks,
+review wait, or merge-ready state should advance the issue toward merge and
+closeout; they are not the natural end of the issue lifecycle by themselves.
+
 This skill is not a full implementation skill and not a silent merge bot.
 
 It may:
@@ -50,7 +54,8 @@ Inspect where applicable:
 
 Use:
 - `healthy`
-  - no blocker currently requires intervention
+  - no blocker currently requires intervention, but shepherding remains active
+    until merge or explicit closure settles
 - `action_required`
   - a concrete blocker exists and either was fixed or needs a focused next step
 - `blocked`

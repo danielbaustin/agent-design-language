@@ -2,7 +2,7 @@
 
 This is the default contributor path for ADL development:
 
-`issue creation/bootstrap -> pr ready -> pr run -> codex -> run_if_required -> pr finish -> report`
+`issue creation/bootstrap -> pr ready -> pr run -> codex -> run_if_required -> pr finish -> pr janitor -> pr closeout -> report`
 
 Tracked mirror of the local skill contract:
 
@@ -158,6 +158,11 @@ Use `update_goal` only for truthful terminal state:
 ## 5) Implement
 
 Read the active issue cards, stay inside the issue edit fence, and make the tracked repo changes.
+
+After `pr finish` publishes or updates the PR, do not treat that publication as
+the natural end of issue work. The next active phase is PR shepherding through
+`pr-janitor` until review/check state settles and `pr-closeout` can run
+truthfully.
 
 ## 6) Run (when the issue requires a bounded runtime proof surface)
 

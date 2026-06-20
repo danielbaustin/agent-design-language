@@ -31,8 +31,10 @@ review_required:
   human_review_required: true | false
   reason: <short explanation>
 handoff_state:
-  next_phase: pr_janitor | pr_finish | human_review | blocked
+  next_phase: pr_janitor | pr_finish | pr_closeout | human_review | blocked
   ready_for_finish: true | false
+  shepherding_active: true | false
+  settlement_state: waiting_for_review | waiting_for_checks | green_and_mergeable | merged_needs_closeout | blocked
 follow_up_required:
   - <optional follow-up>
 ```
@@ -44,7 +46,9 @@ follow_up_required:
 - If `status: blocked`, explain whether the blocker is ambiguity, reviewer judgment, unsafe remediation scope, or unresolved conflict/check state.
 - Do not mark `human_review_required: false` when substantive review feedback still needs judgment.
 - `repair_outcome` must say explicitly whether the run only inspected, applied a bounded repair, or declined repair because it was unsafe or unsuccessful.
-- `handoff_state.next_phase` must say whether the PR should remain in janitor monitoring, move to `pr-finish`, escalate to human review, or stay blocked.
+- `handoff_state.next_phase` must say whether the PR should remain in janitor monitoring, move to `pr-finish`, hand off to `pr_closeout`, escalate to human review, or stay blocked.
+- `handoff_state.shepherding_active` must stay `true` for healthy waiting states until merge or explicit closure settles.
+- `handoff_state.settlement_state` must distinguish ordinary waiting from `merged_needs_closeout`.
 
 ## Default Artifact Location
 

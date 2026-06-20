@@ -80,6 +80,7 @@ The normal workflow is:
 6. `pr-finish`
 7. `pr-janitor`
    - the repo finish path should auto-attach the janitor hook after PR publication so in-flight monitoring starts without an extra manual step
+   - healthy waiting states stay inside active issue shepherding until merge or explicit closure settles
 8. truthful `update_goal` terminal state, then `pr-closeout` after the PR outcome or explicit non-PR closure disposition is settled
 
 `repo-code-review` is cross-cutting rather than phase-specific.
@@ -353,7 +354,9 @@ The current automation model is:
 - the canonical machine-readable diagnostic surface is doctor JSON
 - `pr-run` consumes doctor-backed readiness and performs bounded execution
 - `pr-janitor` watches a PR in flight and handles bounded blocker remediation
-- `pr-closeout` may now be triggered automatically by the repo control plane once merge or explicit closed/completed state is settled and safe
+- explicit `pr-closeout` remains the current proved default after merge or
+  explicit closed/completed state, unless a later issue re-establishes an
+  automated watcher lane with proof
 - the repo-native finish flow may attach the janitor hook automatically after PR publication
 - `pr-finish` handles truthful closeout/publication
 - `pr-closeout` handles post-merge or post-closure local finalization
@@ -1239,6 +1242,8 @@ It:
 - finalizes the issue execution record
 - performs closeout/publication checks
 - prepares the branch and artifact state for review or merge
+- records the handoff into PR shepherding rather than treating publication as
+  natural issue completion
 - records final status truthfully
 
 ### When To Use It
@@ -1278,6 +1283,7 @@ intentionally closed.
 It:
 
 - verifies the final PR/issue closure state
+- records that PR shepherding has settled and only local closeout remains
 - finalizes STP, SIP, and SOR truth
 - reconciles root/worktree card state when needed
 - confirms no required artifacts remain only in the worktree
