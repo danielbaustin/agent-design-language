@@ -1264,6 +1264,24 @@ pub(super) fn select_finish_validation_plan(paths_csv: &str) -> Result<FinishVal
         }
         if paths
             .iter()
+            .any(|path| finish_path_needs_codex_usage_watch_focused_validation(path))
+        {
+            mode = FinishValidationMode::LargerBinaryFocused;
+            push_finish_validation_command(
+                &mut commands,
+                "cargo fmt --manifest-path adl/Cargo.toml --all --check",
+            );
+            push_finish_validation_command(
+                &mut commands,
+                "cargo test --manifest-path adl/Cargo.toml cli::tooling_cmd::tests::codex_usage_watch -- --nocapture",
+            );
+            push_finish_validation_command(
+                &mut commands,
+                "cargo test --manifest-path adl/Cargo.toml tooling_cmd_dispatch_and_help_paths_cover_public_entrypoint -- --nocapture",
+            );
+        }
+        if paths
+            .iter()
             .any(|path| finish_path_needs_long_lived_agent_tokio_validation(path))
         {
             mode = FinishValidationMode::LargerBinaryFocused;
@@ -1738,7 +1756,10 @@ fn finish_path_is_larger_binary_focused(path: &str) -> bool {
             | "docs/milestones/v0.91.5/LOCAL_VS_CI_VALIDATION_POLICY_3607.md"
             | "adl/src/cli/tooling_cmd.rs"
             | "adl/src/cli/tooling_cmd/ci_log_archive.rs"
+            | "adl/src/cli/tooling_cmd/codex_usage_watch.rs"
             | "adl/src/cli/tooling_cmd/tests/tooling_dispatch.rs"
+            | "adl/src/cli/tooling_cmd/tests/codex_usage_watch.rs"
+            | "adl/src/cli/tooling_cmd/tests.rs"
             | "adl/src/cli/tooling_cmd/github_release.rs"
             | "adl/src/cli/tooling_cmd/public_prompt_packet.rs"
             | "adl/src/cli/tooling_cmd/tests/public_prompt_packet.rs"
@@ -1830,6 +1851,18 @@ fn finish_path_needs_ci_log_archive_focused_validation(path: &str) -> bool {
         trimmed,
         "adl/src/cli/tooling_cmd.rs"
             | "adl/src/cli/tooling_cmd/ci_log_archive.rs"
+            | "adl/src/cli/tooling_cmd/tests/tooling_dispatch.rs"
+    )
+}
+
+fn finish_path_needs_codex_usage_watch_focused_validation(path: &str) -> bool {
+    let trimmed = path.trim().trim_matches('/');
+    matches!(
+        trimmed,
+        "adl/src/cli/tooling_cmd.rs"
+            | "adl/src/cli/tooling_cmd/codex_usage_watch.rs"
+            | "adl/src/cli/tooling_cmd/tests.rs"
+            | "adl/src/cli/tooling_cmd/tests/codex_usage_watch.rs"
             | "adl/src/cli/tooling_cmd/tests/tooling_dispatch.rs"
     )
 }
@@ -2224,6 +2257,19 @@ pub(super) fn run_finish_validation_rust(
                             "--manifest-path",
                             path_str(&manifest)?,
                             "ci_log_archive",
+                            "--",
+                            "--nocapture",
+                        ],
+                    )?;
+                }
+                "cargo test --manifest-path adl/Cargo.toml cli::tooling_cmd::tests::codex_usage_watch -- --nocapture" => {
+                    run_finish_validation_status(
+                        "cargo",
+                        &[
+                            "test",
+                            "--manifest-path",
+                            path_str(&manifest)?,
+                            "cli::tooling_cmd::tests::codex_usage_watch",
                             "--",
                             "--nocapture",
                         ],

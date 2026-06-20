@@ -1280,6 +1280,24 @@ fn finish_validation_plan_classifies_ci_log_archive_tooling_slice() {
 }
 
 #[test]
+fn finish_validation_plan_classifies_codex_usage_watch_tooling_slice() {
+    let plan = select_finish_validation_plan(
+        "adl/src/cli/tooling_cmd.rs,adl/src/cli/tooling_cmd/codex_usage_watch.rs,adl/src/cli/tooling_cmd/tests.rs,adl/src/cli/tooling_cmd/tests/codex_usage_watch.rs,adl/src/cli/tooling_cmd/tests/tooling_dispatch.rs",
+    )
+    .expect("codex usage watch tooling plan");
+    assert_eq!(plan.mode, FinishValidationMode::LargerBinaryFocused);
+    assert!(plan
+        .commands
+        .contains(&"cargo fmt --manifest-path adl/Cargo.toml --all --check".to_string()));
+    assert!(plan.commands.contains(
+        &"cargo test --manifest-path adl/Cargo.toml cli::tooling_cmd::tests::codex_usage_watch -- --nocapture".to_string()
+    ));
+    assert!(plan.commands.contains(
+        &"cargo test --manifest-path adl/Cargo.toml tooling_cmd_dispatch_and_help_paths_cover_public_entrypoint -- --nocapture".to_string()
+    ));
+}
+
+#[test]
 fn finish_validation_profile_uses_actual_changed_paths_not_broad_stage_request() {
     let docs_plan = select_finish_validation_plan_for_finish(
         1153,
