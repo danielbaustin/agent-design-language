@@ -1,6 +1,11 @@
 //! Integration tests for long-lived agent execution and artifact invariants.
 use super::*;
+use crate::observability::test_env_lock;
+use crate::runtime_aws_signal::mock_signal_artifact_path;
+use std::env;
+use std::ffi::OsString;
 use std::sync::atomic::{AtomicU64, Ordering};
+use std::sync::MutexGuard;
 use std::time::Instant;
 
 static TEMP_SEQ: AtomicU64 = AtomicU64::new(0);
@@ -121,6 +126,38 @@ fn guardrail_check_result<'a>(guardrails: &'a Value, check_id: &str) -> &'a str 
         .unwrap_or_else(|| panic!("missing check {check_id}"))
 }
 
+struct MultiEnvGuard {
+    saved: Vec<(String, Option<OsString>)>,
+    _lock: MutexGuard<'static, ()>,
+}
+
+impl MultiEnvGuard {
+    fn set_all(values: &[(&str, &str)]) -> Self {
+        let lock = test_env_lock();
+        let mut saved = Vec::with_capacity(values.len());
+        for (key, value) in values {
+            saved.push(((*key).to_string(), env::var_os(key)));
+            unsafe {
+                env::set_var(key, value);
+            }
+        }
+        Self { saved, _lock: lock }
+    }
+}
+
+impl Drop for MultiEnvGuard {
+    fn drop(&mut self) {
+        unsafe {
+            for (key, old) in self.saved.iter().rev() {
+                match old {
+                    Some(value) => env::set_var(key, value),
+                    None => env::remove_var(key),
+                }
+            }
+        }
+    }
+}
+
 #[test]
 fn status_initializes_required_continuity_files_without_running_cycle() {
     let root = temp_dir("init");
@@ -219,6 +256,195 @@ fn tick_creates_state_status_full_cycle_bundle_and_removes_lease() {
         "cycles/cycle-000001/memory_writes.jsonl"
     );
     assert!(!root.join("state/lease.json").exists());
+}
+
+#[test]
+fn tick_mock_mode_writes_runtime_aws_heartbeat_envelopes() {
+    let root = temp_dir("aws-heartbeat-mock");
+    let spec = write_spec(&root);
+    let _env = MultiEnvGuard::set_all(&[
+        ("ADL_AWS_SIGNAL_MODE", "mock"),
+        ("ADL_AWS_REGION", "us-west-2"),
+    ]);
+
+    let status = tick(&spec, TickOptions::default()).expect("tick");
+
+    assert_eq!(status.state, AgentStatusState::Idle);
+    let loaded = load_spec(&spec).expect("load");
+    let mock_path = mock_signal_artifact_path(&loaded);
+    assert!(mock_path.exists(), "missing {}", mock_path.display());
+    let lines = fs::read_to_string(&mock_path).expect("read heartbeat mock log");
+    let events = lines
+        .lines()
+        .map(|line| serde_json::from_str::<Value>(line).expect("parse heartbeat envelope"))
+        .collect::<Vec<_>>();
+    assert!(
+        events.len() >= 3,
+        "expected initialization, running, and completed heartbeat events"
+    );
+    let last = events.last().expect("last envelope");
+    assert_eq!(last["schema_version"], "adl.runtime.aws_signal.v1");
+    assert_eq!(last["signal_kind"], "heartbeat");
+    assert_eq!(last["runtime_id"], "test-agent");
+    assert_eq!(last["cycle_id"], "cycle-000001");
+    assert_eq!(last["projection_level"], "operations_safe");
+    assert_eq!(last["transport"]["mode"], "mock");
+    assert_eq!(last["transport"]["target_kind"], "cloudwatch_logs");
+    assert_eq!(last["transport"]["region"], "us-west-2");
+    assert_eq!(last["payload"]["state"], "idle");
+    assert_eq!(
+        last["payload"]["next_cycle_hint"],
+        "sleep_until_next_heartbeat"
+    );
+    assert_eq!(last["payload"]["lease_state"], "clear");
+}
+
+#[test]
+fn repeated_mock_heartbeats_advance_sequence_and_correlation_id() {
+    let root = temp_dir("aws-heartbeat-sequence");
+    let spec = write_spec(&root);
+    let _env = MultiEnvGuard::set_all(&[
+        ("ADL_AWS_SIGNAL_MODE", "mock"),
+        ("ADL_AWS_REGION", "us-west-2"),
+    ]);
+
+    tick(&spec, TickOptions::default()).expect("tick");
+    let status_after_tick = status(&spec).expect("status");
+    assert_eq!(status_after_tick.state, AgentStatusState::Idle);
+
+    let loaded = load_spec(&spec).expect("load");
+    let lines = fs::read_to_string(mock_signal_artifact_path(&loaded)).expect("read mock log");
+    let events = lines
+        .lines()
+        .map(|line| serde_json::from_str::<Value>(line).expect("parse heartbeat envelope"))
+        .collect::<Vec<_>>();
+    let mut completed_cycle_events = events
+        .iter()
+        .filter(|value| {
+            value["cycle_id"] == "cycle-000001"
+                && value["payload"]["state"] == "idle"
+                && value["status"] == "completed"
+        })
+        .collect::<Vec<_>>();
+    completed_cycle_events.sort_by_key(|value| value["heartbeat_seq"].as_u64().unwrap_or(0));
+    assert!(
+        completed_cycle_events.len() >= 2,
+        "expected repeated completed heartbeats for the same cycle"
+    );
+    let first = completed_cycle_events[0];
+    let later = completed_cycle_events[1];
+    assert!(
+        later["heartbeat_seq"].as_u64().expect("later seq")
+            > first["heartbeat_seq"].as_u64().expect("first seq")
+    );
+    assert_ne!(later["correlation_id"], first["correlation_id"]);
+}
+
+#[test]
+fn mock_mode_rejects_unsupported_heartbeat_target() {
+    let root = temp_dir("aws-heartbeat-unsupported-target");
+    let spec = write_spec(&root);
+    let observability_log = root.join("aws-heartbeat-events.log");
+    let _env = MultiEnvGuard::set_all(&[
+        ("ADL_AWS_SIGNAL_MODE", "mock"),
+        ("ADL_AWS_REGION", "us-west-2"),
+        ("ADL_AWS_HEARTBEAT_TARGET", "sns"),
+        (
+            "ADL_OBSERVABILITY_LOG",
+            observability_log.to_str().expect("observability path utf8"),
+        ),
+        ("ADL_OBSERVABILITY_STDERR", "0"),
+    ]);
+
+    let status = tick(&spec, TickOptions::default()).expect("tick should still succeed");
+
+    assert_eq!(status.state, AgentStatusState::Idle);
+    let logged = fs::read_to_string(&observability_log).expect("read observability log");
+    assert!(logged.contains("stage=aws_runtime_heartbeat"));
+    assert!(logged.contains("result=failed"));
+    assert!(logged.contains("failure_class=aws_signal_unsupported_target"));
+
+    let loaded = load_spec(&spec).expect("load");
+    assert!(
+        !mock_signal_artifact_path(&loaded).exists(),
+        "unsupported target should not write mock heartbeat envelopes"
+    );
+}
+
+#[test]
+fn disabled_mode_skips_without_writing_mock_or_cursor_artifacts() {
+    let root = temp_dir("aws-heartbeat-disabled");
+    let spec = write_spec(&root);
+    let observability_log = root.join("aws-heartbeat-events.log");
+    let _env = MultiEnvGuard::set_all(&[
+        ("ADL_AWS_SIGNAL_MODE", "disabled"),
+        (
+            "ADL_OBSERVABILITY_LOG",
+            observability_log.to_str().expect("observability path utf8"),
+        ),
+        ("ADL_OBSERVABILITY_STDERR", "0"),
+    ]);
+
+    let status = tick(&spec, TickOptions::default()).expect("tick should still succeed");
+    assert_eq!(status.state, AgentStatusState::Idle);
+
+    let logged = fs::read_to_string(&observability_log).expect("read observability log");
+    assert!(logged.contains("stage=aws_runtime_heartbeat"));
+    assert!(logged.contains("result=skipped"));
+
+    let loaded = load_spec(&spec).expect("load");
+    assert!(
+        !mock_signal_artifact_path(&loaded).exists(),
+        "disabled mode should not write mock heartbeat envelopes"
+    );
+    assert!(
+        !loaded
+            .state_root
+            .join("aws_runtime_heartbeat_cursor.json")
+            .exists(),
+        "disabled mode should not allocate heartbeat cursor state"
+    );
+}
+
+#[test]
+fn tick_live_mode_without_approval_stays_fail_closed_and_observable() {
+    let root = temp_dir("aws-heartbeat-live-blocked");
+    let spec = write_spec(&root);
+    let observability_log = root.join("aws-heartbeat-events.log");
+    let _env = MultiEnvGuard::set_all(&[
+        ("ADL_AWS_SIGNAL_MODE", "live"),
+        ("ADL_AWS_REGION", "us-west-2"),
+        ("ADL_AWS_HEARTBEAT_TARGET", "cloudwatch_logs"),
+        (
+            "ADL_AWS_HEARTBEAT_LOG_GROUP",
+            "arn:aws:logs:us-west-2:123456789012:log-group/private",
+        ),
+        (
+            "ADL_AWS_HEARTBEAT_LOG_STREAM",
+            "arn:aws:logs:us-west-2:123456789012:log-stream/private",
+        ),
+        (
+            "ADL_OBSERVABILITY_LOG",
+            observability_log.to_str().expect("observability path utf8"),
+        ),
+        ("ADL_OBSERVABILITY_STDERR", "0"),
+    ]);
+
+    let status = tick(&spec, TickOptions::default()).expect("tick should still succeed");
+
+    assert_eq!(status.state, AgentStatusState::Idle);
+    let logged = fs::read_to_string(&observability_log).expect("read observability log");
+    assert!(logged.contains("stage=aws_runtime_heartbeat"));
+    assert!(logged.contains("result=failed"));
+    assert!(logged.contains("failure_class=aws_signal_live_not_approved"));
+    assert!(!logged.contains("123456789012"));
+    assert!(!logged.contains("arn:aws:logs"));
+
+    let loaded = load_spec(&spec).expect("load");
+    assert!(
+        !mock_signal_artifact_path(&loaded).exists(),
+        "live-blocked mode should not write mock heartbeat envelopes"
+    );
 }
 
 #[test]

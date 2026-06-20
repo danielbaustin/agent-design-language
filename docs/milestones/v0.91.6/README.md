@@ -172,6 +172,8 @@ Expected `v0.91.7` residuals:
   [review/CSDLC_GITHUB_PROJECTION_CONVERGENCE_REVIEW_3935.md](review/CSDLC_GITHUB_PROJECTION_CONVERGENCE_REVIEW_3935.md)
 - Runtime AWS signal bridge design:
   [review/runtime_aws_signal_bridge/RUNTIME_AWS_SIGNAL_BRIDGE_DESIGN_4294.md](review/runtime_aws_signal_bridge/RUNTIME_AWS_SIGNAL_BRIDGE_DESIGN_4294.md)
+- Runtime AWS heartbeat publisher proof:
+  [review/runtime_aws_signal_bridge/RUNTIME_AWS_HEARTBEAT_PUBLISHER_PROOF_4295.md](review/runtime_aws_signal_bridge/RUNTIME_AWS_HEARTBEAT_PUBLISHER_PROOF_4295.md)
 - Validation-tail A/B index:
   [review/PVF_LONG_VALIDATION_LANE_INDEX_4223.md](review/PVF_LONG_VALIDATION_LANE_INDEX_4223.md)
 
