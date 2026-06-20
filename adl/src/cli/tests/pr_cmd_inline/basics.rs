@@ -1,8 +1,13 @@
 use super::*;
 use crate::cli::pr_cmd_args::IssueCloseReason;
 use crate::cli::pr_cmd_args::IssueStateFilter;
-use crate::cli::pr_cmd_cards::render_issue_prompt_from_body;
+use crate::cli::pr_cmd_cards::{
+    ensure_source_issue_prompt, fetch_issue_body, render_issue_prompt_from_body,
+    validate_issue_body_for_create, write_source_issue_prompt,
+};
 use crate::cli::pr_cmd_prompt::{infer_initial_pvf_lane, NEEDS_PLANNING_PVF_LANE};
+use adl::control_plane::IssueRef;
+use std::env;
 
 fn spawn_issue_octocrab_test_server(
     expected_requests: usize,
@@ -94,6 +99,15 @@ fn spawn_issue_octocrab_test_server(
         seen
     });
     (format!("http://{bind_addr}"), handle)
+}
+
+fn restore_env_var(key: &str, value: Option<std::ffi::OsString>) {
+    unsafe {
+        match value {
+            Some(value) => env::set_var(key, value),
+            None => env::remove_var(key),
+        }
+    }
 }
 
 #[test]
@@ -698,6 +712,403 @@ fn infer_initial_pvf_lane_covers_common_issue_types() {
         infer_initial_pvf_lane("General process cleanup", "track:roadmap", None),
         NEEDS_PLANNING_PVF_LANE
     );
+}
+
+#[test]
+fn fetch_issue_body_respects_github_fallback_policy() {
+    let _guard = env_lock();
+    let temp = unique_temp_dir("adl-fetch-issue-body-policy");
+    let bin_dir = temp.join("bin");
+    fs::create_dir_all(&bin_dir).expect("bin dir");
+    let gh_log = temp.join("gh.log");
+    write_executable(
+        &bin_dir.join("gh"),
+        &format!(
+            "#!/usr/bin/env bash\nset -euo pipefail\nprintf '%s\\n' \"$*\" >> '{}'\nprintf 'Issue body from gh\\n'\n",
+            gh_log.display()
+        ),
+    );
+
+    let old_path = env::var_os("PATH");
+    let old_client = env::var_os("ADL_GITHUB_CLIENT");
+    let old_disable = env::var_os("ADL_GITHUB_DISABLE_GH_FALLBACK");
+    let old_github_token = env::var_os("GITHUB_TOKEN");
+    let old_gh_token = env::var_os("GH_TOKEN");
+    let old_token_file = env::var_os("ADL_GITHUB_TOKEN_FILE");
+    let old_keychain_service = env::var_os("ADL_GITHUB_TOKEN_KEYCHAIN_SERVICE");
+    let old_keychain_account = env::var_os("ADL_GITHUB_TOKEN_KEYCHAIN_ACCOUNT");
+
+    let mut path_entries = vec![bin_dir.clone()];
+    path_entries.extend(env::split_paths(old_path.as_deref().unwrap_or_default()));
+    unsafe {
+        env::set_var("PATH", env::join_paths(path_entries).expect("join PATH"));
+        env::remove_var("ADL_GITHUB_CLIENT");
+        env::remove_var("ADL_GITHUB_DISABLE_GH_FALLBACK");
+        env::remove_var("GITHUB_TOKEN");
+        env::remove_var("GH_TOKEN");
+        env::remove_var("ADL_GITHUB_TOKEN_FILE");
+        env::remove_var("ADL_GITHUB_TOKEN_KEYCHAIN_SERVICE");
+        env::remove_var("ADL_GITHUB_TOKEN_KEYCHAIN_ACCOUNT");
+    }
+
+    assert_eq!(
+        fetch_issue_body("owner/repo", 3672).expect("fetch body"),
+        Some("Issue body from gh".to_string())
+    );
+    fs::remove_file(&gh_log).expect("clear gh log");
+
+    unsafe {
+        env::set_var("ADL_GITHUB_DISABLE_GH_FALLBACK", "1");
+    }
+    let err = fetch_issue_body("owner/repo", 3672)
+        .expect_err("fallback-disabled body fetch should fail closed");
+    let err_debug = format!("{err:?}");
+    assert!(err_debug.contains("issue.view.body"));
+    assert!(err_debug.contains("github_client.fallback_disabled"));
+    assert!(
+        !gh_log.exists(),
+        "policy guard should reject before spawning gh"
+    );
+
+    restore_env_var("PATH", old_path);
+    restore_env_var("ADL_GITHUB_CLIENT", old_client);
+    restore_env_var("ADL_GITHUB_DISABLE_GH_FALLBACK", old_disable);
+    restore_env_var("GITHUB_TOKEN", old_github_token);
+    restore_env_var("GH_TOKEN", old_gh_token);
+    restore_env_var("ADL_GITHUB_TOKEN_FILE", old_token_file);
+    restore_env_var("ADL_GITHUB_TOKEN_KEYCHAIN_SERVICE", old_keychain_service);
+    restore_env_var("ADL_GITHUB_TOKEN_KEYCHAIN_ACCOUNT", old_keychain_account);
+}
+
+#[test]
+fn write_source_issue_prompt_writes_rendered_authored_body() {
+    let repo = unique_temp_dir("adl-write-source-issue-prompt");
+    let issue_ref = IssueRef::new(
+        4277,
+        "v0.91.6".to_string(),
+        "v0-91-6-process-pvf-assign-pvf-lane-during-issue-creation-and-planning".to_string(),
+    )
+    .expect("issue ref");
+
+    let source = write_source_issue_prompt(
+        &repo,
+        &issue_ref,
+        "[v0.91.6][process][pvf] Assign PVF lane during issue creation and planning",
+        "track:roadmap,area:process,type:task,version:v0.91.6",
+        "https://github.com/owner/repo/issues/4277",
+        "## Summary\n\nAuthored body.\n\n## Goal\n\nShip the authored source prompt.\n\n## Acceptance Criteria\n\n- write the authored prompt\n",
+    )
+    .expect("write source prompt");
+
+    let prompt = fs::read_to_string(source).expect("read source prompt");
+    assert!(prompt.contains("issue_number: 4277"));
+    assert!(prompt.contains("Authored body."));
+    assert!(prompt.contains("Ship the authored source prompt."));
+    assert!(prompt.contains("- write the authored prompt"));
+    assert!(prompt.contains("## Notes"));
+}
+
+#[test]
+fn ensure_source_issue_prompt_preserves_existing_authored_prompt_when_it_differs_from_generated() {
+    let _guard = env_lock();
+    let repo = unique_temp_dir("adl-ensure-source-preserve-existing");
+    let issue_ref = IssueRef::new(
+        4278,
+        "v0.91.6".to_string(),
+        "v0-91-6-process-metrics-add-spp-estimates-and-sor-actuals".to_string(),
+    )
+    .expect("issue ref");
+    let source_path = issue_ref.issue_prompt_path(&repo);
+    if let Some(parent) = source_path.parent() {
+        fs::create_dir_all(parent).expect("source parent");
+    }
+    let existing = "---\nissue_card_schema: adl.issue.v1\nwp: \"WP-01\"\nqueue: \"wp\"\nslug: \"v0-91-6-process-metrics-add-spp-estimates-and-sor-actuals\"\ntitle: \"[v0.91.6][process][metrics] Existing authored prompt\"\nlabels:\n  - \"track:roadmap\"\n  - \"area:process\"\nstatus: \"draft\"\naction: \"edit\"\ndepends_on: []\nmilestone_sprint: \"Pending sprint assignment\"\nrequired_outcome_type:\n  - \"docs\"\nrepo_inputs: []\ncanonical_files: []\ndemo_required: false\ndemo_names: []\nissue_graph_notes: []\npr_start:\n  enabled: false\n  slug: \"v0-91-6-process-metrics-add-spp-estimates-and-sor-actuals\"\n---\n\n## Summary\n\nKeep the authored local prompt.\n\n## Goal\n\nPreserve existing authored content.\n\n## Acceptance Criteria\n\n- do not overwrite the local file\n";
+    fs::write(&source_path, existing).expect("seed existing prompt");
+
+    let ensured = ensure_source_issue_prompt(
+        &repo,
+        "owner/repo",
+        &issue_ref,
+        "[v0.91.6][process][metrics] Add SPP estimates and SOR actuals",
+        Some("track:roadmap,area:process,type:task"),
+        "v0.91.6",
+        "track:roadmap,area:process,type:task",
+    )
+    .expect("ensure source prompt");
+
+    assert_eq!(ensured, source_path);
+    let prompt = fs::read_to_string(ensured).expect("read prompt");
+    assert_eq!(prompt, existing);
+}
+
+#[test]
+fn ensure_source_issue_prompt_uses_default_labels_and_generated_prompt_when_github_metadata_is_empty(
+) {
+    let _guard = env_lock();
+    let temp = unique_temp_dir("adl-ensure-source-default-labels");
+    let bin_dir = temp.join("bin");
+    fs::create_dir_all(&bin_dir).expect("bin dir");
+    write_executable(
+        &bin_dir.join("gh"),
+        "#!/usr/bin/env bash\nset -euo pipefail\nif [[ \"$*\" == *\"--json labels --jq .labels[].name\"* ]]; then\n  exit 0\nfi\nif [[ \"$*\" == *\"--json body --jq .body\"* ]]; then\n  exit 1\nfi\nexit 1\n",
+    );
+
+    let old_path = env::var_os("PATH");
+    let old_client = env::var_os("ADL_GITHUB_CLIENT");
+    let old_disable = env::var_os("ADL_GITHUB_DISABLE_GH_FALLBACK");
+    let old_fixture = env::var_os("ADL_TEST_GITHUB_CLI_FIXTURE");
+    let mut path_entries = vec![bin_dir.clone()];
+    path_entries.extend(env::split_paths(old_path.as_deref().unwrap_or_default()));
+    unsafe {
+        env::set_var("PATH", env::join_paths(path_entries).expect("join PATH"));
+        env::remove_var("ADL_GITHUB_CLIENT");
+        env::remove_var("ADL_GITHUB_DISABLE_GH_FALLBACK");
+        env::remove_var("ADL_TEST_GITHUB_CLI_FIXTURE");
+    }
+
+    let issue_ref = IssueRef::new(
+        4281,
+        "v0.91.6".to_string(),
+        "v0-91-6-process-pvf-add-opportunistic-lane-parallelization-planning".to_string(),
+    )
+    .expect("issue ref");
+    let ensured = ensure_source_issue_prompt(
+        &temp,
+        "owner/repo",
+        &issue_ref,
+        "[v0.91.6][process][pvf] Add opportunistic lane parallelization planning",
+        None,
+        "v0.91.6",
+        "track:roadmap,area:process,type:task",
+    )
+    .expect("ensure source prompt");
+
+    restore_env_var("PATH", old_path);
+    restore_env_var("ADL_GITHUB_CLIENT", old_client);
+    restore_env_var("ADL_GITHUB_DISABLE_GH_FALLBACK", old_disable);
+    restore_env_var("ADL_TEST_GITHUB_CLI_FIXTURE", old_fixture);
+
+    let prompt = fs::read_to_string(ensured).expect("read prompt");
+    assert!(prompt.contains("  - \"track:roadmap\""));
+    assert!(prompt.contains("  - \"area:process\""));
+    assert!(prompt.contains("  - \"type:task\""));
+    assert!(prompt.contains("  - \"version:v0.91.6\""));
+    assert!(prompt.contains("initial_pvf_lane: \"needs_planning_lane_assignment\""));
+    assert!(prompt
+        .contains("Bootstrap-generated issue body created from the requested title and labels"));
+}
+
+#[test]
+fn validate_issue_body_for_create_rejects_placeholder_goal_and_acceptance_stub() {
+    let repo = unique_temp_dir("adl-validate-issue-body-placeholder");
+    let err = validate_issue_body_for_create(
+        &repo,
+        "[v0.91.6][process][pvf] Placeholder body",
+        "track:roadmap,area:process,type:task,version:v0.91.6",
+        "v0-91-6-process-pvf-placeholder-body",
+        "## Summary\n\nPlaceholder body.\n\n## Goal\n-\n\n## Acceptance Criteria\n-\n",
+    )
+    .expect_err("placeholder body should fail validation");
+
+    assert!(format!("{err:#}").contains("placeholder"));
+}
+
+#[test]
+fn render_issue_prompt_from_body_appends_notes_for_generated_prompts() {
+    let body = "## Summary\n\nGenerated body.\n\n## Goal\n\nRecord generated prompt notes.\n\n## Acceptance Criteria\n\n- append notes when missing\n";
+    let rendered = render_issue_prompt_from_body(
+        4279,
+        "v0-91-6-process-metrics-add-variance-analysis-for-estimate-misses",
+        "[v0.91.6][process][metrics] Add variance analysis for estimate misses",
+        "track:roadmap,area:process,type:task,version:v0.91.6",
+        "https://github.com/example/repo/issues/4279",
+        body,
+    );
+
+    assert!(rendered.contains("## Acceptance Criteria"));
+    assert!(rendered.contains("## Notes\n\n- No additional notes."));
+}
+
+#[test]
+fn render_issue_prompt_from_body_preserves_existing_notes_section() {
+    let body = "## Summary\n\nAuthored body.\n\n## Goal\n\nKeep existing notes.\n\n## Acceptance Criteria\n\n- preserve notes\n\n## Notes\n\n- Existing note.";
+    let rendered = render_issue_prompt_from_body(
+        4280,
+        "v0-91-6-observability-telemetry-plan-issue-resource-telemetry-and-s3-archive",
+        "[v0.91.6][observability][telemetry] Plan issue resource telemetry and S3 archive",
+        "track:roadmap,area:observability,type:task,version:v0.91.6",
+        "https://github.com/example/repo/issues/4280",
+        body,
+    );
+
+    assert!(rendered.contains("## Notes\n\n- Existing note."));
+    assert!(!rendered.contains("No additional notes."));
+}
+
+#[test]
+fn render_issue_prompt_from_body_treats_non_schema_front_matter_as_plain_body() {
+    let body = "---\ntitle: \"missing schema\"\nlabels:\n  - \"track:roadmap\"\n---\n\n## Summary\n\nNo schema.\n";
+    let rendered = render_issue_prompt_from_body(
+        4277,
+        "v0-91-6-tools-example",
+        "[v0.91.6][tools] Explicit PVF lane",
+        "track:roadmap,area:tools",
+        "https://github.com/example/repo/issues/4277",
+        body,
+    );
+
+    assert!(rendered.contains("issue_number: 4277"));
+    assert!(rendered.contains("initial_pvf_lane: \"tooling\""));
+    assert!(rendered.contains("## Notes\n\n- No additional notes."));
+}
+
+#[test]
+fn render_issue_prompt_from_authored_front_matter_infers_missing_pvf_lane_fields() {
+    let body = r#"---
+issue_card_schema: adl.issue.v1
+wp: "WP-01"
+queue: "wp"
+slug: "v0-91-6-tools-example"
+title: "[v0.91.6][tools] Prompt-template lane"
+labels:
+  - "track:roadmap"
+  - "area:tools"
+status: "draft"
+action: "edit"
+depends_on: []
+milestone_sprint: "Pending sprint assignment"
+required_outcome_type:
+  - "code"
+repo_inputs:
+  - "docs/templates/prompts/1.0.0/spp.md"
+canonical_files: []
+demo_required: false
+demo_names: []
+issue_graph_notes:
+  - "Authored front matter fixture"
+pr_start:
+  enabled: false
+  slug: "v0-91-6-tools-example"
+---
+
+## Summary
+
+Authored body.
+"#;
+
+    let rendered = render_issue_prompt_from_body(
+        4277,
+        "v0-91-6-tools-example",
+        "[v0.91.6][tools] Prompt-template lane",
+        "track:roadmap,area:tools",
+        "https://github.com/example/repo/issues/4277",
+        body,
+    );
+
+    assert!(rendered.contains("issue_number: 4277"));
+    assert!(rendered.contains("initial_pvf_lane: prompt_template"));
+    assert!(rendered.contains("initial_pvf_lane_source: title_labels_inference"));
+}
+
+#[test]
+fn render_issue_prompt_from_authored_front_matter_records_body_assisted_pvf_lane_source() {
+    let body = r#"---
+issue_card_schema: adl.issue.v1
+wp: "WP-01"
+queue: "wp"
+slug: "v0-91-6-tools-example"
+title: "[v0.91.6][tools] Generic lane title"
+labels:
+  - "track:roadmap"
+  - "area:tools"
+issue_number: 1
+status: "draft"
+action: "edit"
+depends_on: []
+milestone_sprint: "Pending sprint assignment"
+required_outcome_type:
+  - "code"
+repo_inputs: []
+canonical_files: []
+demo_required: false
+demo_names: []
+issue_graph_notes:
+  - "Authored front matter fixture"
+pr_start:
+  enabled: false
+  slug: "v0-91-6-tools-example"
+---
+
+## Repo Inputs
+
+- docs/templates/prompts/1.0.0/spp.md
+
+## Summary
+
+Authored body.
+"#;
+
+    let rendered = render_issue_prompt_from_body(
+        4277,
+        "v0-91-6-tools-example",
+        "[v0.91.6][tools] Generic lane title",
+        "track:roadmap,area:tools",
+        "https://github.com/example/repo/issues/4277",
+        body,
+    );
+
+    assert!(rendered.contains("initial_pvf_lane: prompt_template"));
+    assert!(rendered.contains("initial_pvf_lane_source: title_labels_and_body_inference"));
+}
+
+#[test]
+fn render_issue_prompt_from_authored_front_matter_preserves_explicit_pvf_lane_fields() {
+    let body = r#"---
+issue_card_schema: adl.issue.v1
+wp: "WP-01"
+queue: "wp"
+slug: "v0-91-6-tools-example"
+title: "[v0.91.6][tools] Explicit PVF lane"
+labels:
+  - "track:roadmap"
+  - "area:tools"
+issue_number: 1
+initial_pvf_lane: "runtime"
+initial_pvf_lane_source: "manual_override"
+status: "draft"
+action: "edit"
+depends_on: []
+milestone_sprint: "Pending sprint assignment"
+required_outcome_type:
+  - "code"
+repo_inputs: []
+canonical_files: []
+demo_required: false
+demo_names: []
+issue_graph_notes:
+  - "Authored front matter fixture"
+pr_start:
+  enabled: false
+  slug: "v0-91-6-tools-example"
+---
+
+## Summary
+
+Authored body.
+"#;
+
+    let rendered = render_issue_prompt_from_body(
+        4277,
+        "v0-91-6-tools-example",
+        "[v0.91.6][tools] Explicit PVF lane",
+        "track:roadmap,area:tools",
+        "https://github.com/example/repo/issues/4277",
+        body,
+    );
+
+    assert!(rendered.contains("issue_number: 4277"));
+    assert!(rendered.contains("initial_pvf_lane: runtime"));
+    assert!(rendered.contains("initial_pvf_lane_source: manual_override"));
 }
 
 #[test]
