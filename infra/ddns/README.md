@@ -89,6 +89,40 @@ after apply and then move to a secure backend or other secure state custody.
 
 ## Wuji Client Install
 
+Preferred path:
+
+```sh
+infra/ddns/client/install_wuji_ddns_launchd.sh
+```
+
+This installer:
+
+- reads `lambda_function_url` and `ddns_bearer_token` from Terraform output
+- falls back to the live AWS Function URL and SSM SecureString when Terraform
+  CLI access or state custody lives elsewhere, as long as the local DDNS
+  package checkout is present
+- installs `wuji_ddns_update.sh` to `~/.local/bin/wuji_ddns_update.sh`
+- writes the token to `~/.config/wuji-ddns/token` with `0600` permissions
+- renders the launch agent into
+  `~/Library/LaunchAgents/com.agentlogic.wuji-ddns.plist`
+- loads and kickstarts the launch agent for the current user
+- runs one immediate updater proof after installation
+
+Useful options:
+
+```sh
+infra/ddns/client/install_wuji_ddns_launchd.sh --no-load
+infra/ddns/client/install_wuji_ddns_launchd.sh --terraform-dir /path/to/infra/ddns
+infra/ddns/client/install_wuji_ddns_launchd.sh --aws-region us-west-2
+```
+
+When using the AWS fallback path, the local checkout must still include
+`infra/ddns/client/wuji_ddns_update.sh` and
+`infra/ddns/client/com.agentlogic.wuji-ddns.plist` because the installer copies
+those repo-managed client artifacts onto Wuji.
+
+Manual fallback:
+
 1. Copy `client/wuji_ddns_update.sh` to a stable local path on Wuji.
 2. Write the Terraform-managed token to a local file with restrictive
    permissions, for example:
