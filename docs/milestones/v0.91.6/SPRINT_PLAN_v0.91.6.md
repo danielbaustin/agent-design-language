@@ -46,6 +46,7 @@ turns planning docs and feature docs into issue-ready work with review gates.
 | 10 | Bridge-ledger refresh and `v0.91.7` handoff | not opened | ADL maintainers | planned |
 | 11 | `agent-logic.ai` AWS account/setup planning | `#3902` | ADL maintainers | complete; AWS Activate review tracked as post-close external follow-up |
 | 12 | CodeFriend v1 / adapter v2 and guild route preservation | feature-list routes | ADL maintainers | planned |
+| 13 | Runtime integration soak sprint planning and Soak #1 route | `#4185` | ADL maintainers | planned |
 
 ## Execution Policy
 
@@ -63,6 +64,10 @@ turns planning docs and feature docs into issue-ready work with review gates.
   and private credit visibility remain post-close external follow-up.
 - Dependency: CodeFriend and guild routes must remain visible without widening
   the first-tranche bridge implementation scope.
+- Dependency: Soak #1 must wait for Tokio substrate readiness and stay scoped
+  to a walking-skeleton integration proof in `v0.91.6`. Soak #2 in `v0.91.7`
+  owns the full feature-list integration target, with Soak #3 as contingency if
+  needed before `v0.92`.
 - Risk: tooling validation friction slows docs-only work.
   - Mitigation: keep tooling problems captured in remediation issues and use
     focused docs validation.
@@ -77,6 +82,8 @@ No runnable demo is required for this docs tranche. Review should inspect:
 - bridge-ledger consumption limits;
 - absence of runtime completion claims;
 - residual routing to `v0.91.7`.
+- runtime Soak #1 placement, Soak #2/#3 handoff, and non-claims in
+  [RUNTIME_INTEGRATION_SOAK_SPRINT_v0.91.6.md](RUNTIME_INTEGRATION_SOAK_SPRINT_v0.91.6.md).
 
 ## Closeout Bar
 
