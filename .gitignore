@@ -13,6 +13,11 @@ artifacts/
 issue-*.sh
 *.profraw
 *.profdata
+infra/ddns/.terraform/
+infra/ddns/tfplan
+infra/ddns/build/
+infra/ddns/terraform.tfstate
+infra/ddns/terraform.tfstate.backup
 
 # Local worktrees (generated)
 .worktrees/
