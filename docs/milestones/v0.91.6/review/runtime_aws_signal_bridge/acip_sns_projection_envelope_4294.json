@@ -1,0 +1,31 @@
+{
+  "schema_version": "adl.runtime.aws_signal.v1",
+  "signal_kind": "acip_projection",
+  "runtime_id": "runtime-fire-up-rehearsal-001",
+  "agent_id": "temporary-agent-alpha",
+  "cycle_id": "cycle-000042",
+  "heartbeat_seq": null,
+  "status": "completed",
+  "timestamp": "2026-06-20T20:41:15Z",
+  "capabilities": [
+    "acip_projection",
+    "sns_delivery_bridge"
+  ],
+  "failure_class": null,
+  "correlation_id": "acip-msg-0007",
+  "projection_level": "delivery_metadata",
+  "transport": {
+    "mode": "mock",
+    "target_kind": "sns"
+  },
+  "payload": {
+    "message_kind": "delegation_result",
+    "route_class": "cross_boundary_deferred",
+    "sender_class": "workflow_agent",
+    "recipient_class": "approval_gated_external_subscriber",
+    "delivery_outcome": "mock_projected",
+    "message_ref": "acip/messages/msg-0007.json",
+    "summary": "capability delegation result projected as bounded metadata only under approval-gated external delivery",
+    "content_sha256": "6d6454f0f7ab4bc3476d4fd4892196967764f1518f3e3590ad886b1572937bd2"
+  }
+}

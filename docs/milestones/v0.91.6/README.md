@@ -170,6 +170,8 @@ Expected `v0.91.7` residuals:
 - Feature directory index: [features/README.md](features/README.md)
 - Review packet:
   [review/CSDLC_GITHUB_PROJECTION_CONVERGENCE_REVIEW_3935.md](review/CSDLC_GITHUB_PROJECTION_CONVERGENCE_REVIEW_3935.md)
+- Runtime AWS signal bridge design:
+  [review/runtime_aws_signal_bridge/RUNTIME_AWS_SIGNAL_BRIDGE_DESIGN_4294.md](review/runtime_aws_signal_bridge/RUNTIME_AWS_SIGNAL_BRIDGE_DESIGN_4294.md)
 - Validation-tail A/B index:
   [review/PVF_LONG_VALIDATION_LANE_INDEX_4223.md](review/PVF_LONG_VALIDATION_LANE_INDEX_4223.md)
 

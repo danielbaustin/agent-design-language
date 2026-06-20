@@ -1,0 +1,29 @@
+{
+  "schema_version": "adl.runtime.aws_signal.v1",
+  "signal_kind": "heartbeat",
+  "runtime_id": "runtime-fire-up-rehearsal-001",
+  "agent_id": "temporary-agent-alpha",
+  "cycle_id": "cycle-000042",
+  "heartbeat_seq": 7,
+  "status": "heartbeat",
+  "timestamp": "2026-06-20T20:40:00Z",
+  "capabilities": [
+    "runtime_boot",
+    "heartbeat_observability",
+    "tokio_substrate"
+  ],
+  "failure_class": null,
+  "correlation_id": "run-fire-up-001",
+  "projection_level": "operations_safe",
+  "transport": {
+    "mode": "mock",
+    "target_kind": "cloudwatch_logs"
+  },
+  "payload": {
+    "state": "running_cycle",
+    "elapsed_ms": 12250,
+    "next_cycle_hint": "sleep_until_next_heartbeat",
+    "stop_requested": false,
+    "lease_state": "active"
+  }
+}
