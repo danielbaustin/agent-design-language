@@ -225,9 +225,20 @@ cat >"${readiness_packet}" <<'EOF2'
 
 - none for this trial
 
+## Candidate Parallel Lanes
+
+- lane `serial-bootstrap` classified as `serial_gate` for `#2827`
+- lane `post-closeout` classified as `blocked_until_dependency` for `#2828`
+
 ## Serial Gates
 
 - `#2827` must close out before `#2828`
+
+## Parallelism Outcome Plan
+
+- planned summary: `Trial sprint remains serial because `#2827` blocks `#2828`.`
+- actual summary placeholder: `Fill this during closeout once actual concurrency is known.`
+- prediction-miss capture rule: `Record any lane that turned out not to be safe and why.`
 
 ## Watcher Policy
 
@@ -354,6 +365,61 @@ state = json.loads(Path(sys.argv[1]).read_text())
 readiness = state["readiness_sweep"]
 assert readiness["status"] == "blocked"
 assert readiness["execution_packet"]["status"] == "blocked"
+PY
+
+broken_packet="${tmpdir}/trial-sep-missing-candidate.md"
+cat >"${broken_packet}" <<'EOF2'
+# Trial Sprint Execution Packet
+
+## Child Issue Wave
+
+- `#2827`
+- `#2828`
+
+## Recommended Execution Order
+
+1. `#2827`
+2. `#2828`
+
+## Safe Parallel Lanes
+
+- none for this trial
+
+## Serial Gates
+
+- `#2827` must close out before `#2828`
+
+## Watcher Policy
+
+- every wait state has a watcher
+EOF2
+
+missing_candidate_state_path="${tmpdir}/sprint-state-missing-candidate.json"
+if python3 "${repo_root}/adl/tools/skills/sprint-conductor/scripts/check_sprint_readiness.py" \
+  --repo-root "${fake_repo}" \
+  --ordered-issues "2827,2828" \
+  --execution-mode hybrid \
+  --execution-packet-path "${broken_packet}" \
+  --review-path "${readiness_review}" \
+  --activity-log-path "${readiness_activity}" \
+  --tracked-skill-dir "${readiness_tracked_skill_dir}" \
+  --installed-skill-dir "${readiness_installed_skill_dir}" \
+  --state "${missing_candidate_state_path}" >/dev/null 2>&1; then
+  echo "expected check_sprint_readiness.py to fail when a hybrid sprint omits candidate lane or outcome-plan sections" >&2
+  exit 1
+fi
+
+python3 - "${missing_candidate_state_path}" <<'PY'
+import json
+import sys
+from pathlib import Path
+
+state = json.loads(Path(sys.argv[1]).read_text())
+readiness = state["readiness_sweep"]
+assert readiness["status"] == "needs_repair"
+assert readiness["execution_packet"]["status"] == "needs_repair"
+assert "## Candidate Parallel Lanes" in readiness["execution_packet"]["missing_sections"]
+assert "## Parallelism Outcome Plan" in readiness["execution_packet"]["missing_sections"]
 PY
 
 cat >"${fake_repo}/.adl/v0.91.1/tasks/issue-2828__trial-wp06/srp.md" <<'EOF2'
@@ -1274,7 +1340,20 @@ cat >"${actionable_ready_state}" <<'JSON'
   "validation": {"status": "PASS"},
   "coverage": {"source": "existing_quality_gate", "summary": "Existing quality gate reused for sprint closeout."},
   "rust_tracker": {"source": "existing_quality_gate", "watch_count": 3, "review_count": 2, "rationale_count": 1},
-  "closeout": {}
+  "closeout": {
+    "planned_vs_actual_parallelism": {
+      "planned_summary": "Expected one safe docs lane plus one serial gate.",
+      "actual_summary": "The docs lane stayed serial because both issues touched the same tracker file.",
+      "prediction_misses": [
+        {
+          "lane_id": "docs-lane",
+          "issue_numbers": [5002, 5003],
+          "why_wrong": "Both child issues mutated the same tracker path during review preparation.",
+          "corrective_action": "Keep the lane serial until tracker writes are split."
+        }
+      ]
+    }
+  }
 }
 JSON
 ready_artifact="${tmpdir}/closeout-readiness-ready.md"
@@ -1300,3 +1379,7 @@ assert state["closeout"]["sprint_issue_close_summary"] == payload["summary"]
 PY
 grep -Fq 'Follow-up routing:' "${ready_summary}"
 grep -Fq '#6001' "${ready_summary}"
+grep -Fq '## Planned Vs Actual Parallelism' "${ready_artifact}"
+grep -Fq 'planned summary: `Expected one safe docs lane plus one serial gate.`' "${ready_artifact}"
+grep -Fq 'actual summary: `The docs lane stayed serial because both issues touched the same tracker file.`' "${ready_artifact}"
+grep -Fq 'lane=`docs-lane` issues=`5002, 5003` why_wrong=Both child issues mutated the same tracker path during review preparation. corrective_action=Keep the lane serial until tracker writes are split.' "${ready_artifact}"

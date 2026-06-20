@@ -15,6 +15,25 @@ sprint:
     - <u32>
   recommended_execution_order:
     - <bounded text>
+  candidate_parallel_lanes:
+    - lane_id: <string>
+      classification: safe_parallel | serial_gate | speculative_risky | blocked_until_dependency
+      issue_numbers:
+        - <u32>
+      expected_write_sets:
+        - <bounded text>
+      expected_pvf_lanes:
+        - <bounded text>
+      validation_lanes:
+        - <bounded text>
+      dependency_gates:
+        - <bounded text>
+      collision_risks:
+        - <bounded text>
+      watcher_assignment: <bounded text>
+      subagent_assignment: <bounded text>
+      why_parallel_safe: <bounded text>
+      required_coordination: <bounded text>
   safe_parallel_lanes:
     - lane_id: <string>
       issue_numbers:
@@ -35,6 +54,15 @@ sprint:
       - <bounded text>
     proof_reuse_criteria: <bounded text>
     fail_closed_rule: <bounded text>
+  planned_vs_actual_parallelism:
+    planned_summary: <bounded text>
+    actual_summary: <bounded text>
+    prediction_misses:
+      - lane_id: <string>
+        issue_numbers:
+          - <u32>
+        why_wrong: <bounded text>
+        corrective_action: <bounded text>
   issue_records:
     - issue_number: <u32>
       status: pending | active | waiting_for_review | closed_out | blocked | deferred
@@ -180,6 +208,15 @@ closeout:
   closeout_note_path: <path or null>
   closeout_artifact_path: <path or null>
   sprint_issue_close_summary: <bounded text or null>
+  planned_vs_actual_parallelism:
+    planned_summary: <bounded text or null>
+    actual_summary: <bounded text or null>
+    prediction_misses:
+      - lane_id: <string>
+        issue_numbers:
+          - <u32>
+        why_wrong: <bounded text>
+        corrective_action: <bounded text>
   closure_cleanliness: clean | clean_with_post_sprint_followups | residual_debt | unknown
   goal_metrics_rollup:
     issue_count: <int>

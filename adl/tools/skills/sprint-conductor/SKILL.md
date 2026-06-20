@@ -119,9 +119,11 @@ Useful additional inputs:
 - `sprint.closeout_paths`
 - `sprint.issue_records`
 - `sprint.execution_packet_path`
+- `sprint.candidate_parallel_lanes`
 - `sprint.safe_parallel_lanes`
 - `sprint.serial_gates`
 - `sprint.pvf_notes`
+- `sprint.planned_vs_actual_parallelism`
 - `resume_from_state_path`
 
 If there is no concrete sprint issue or ordered issue list, stop and report
@@ -134,8 +136,9 @@ missing sprint-management issue first.
    issue is missing and policy allows creation, create it through the bundled
    helper first.
 2. Resolve the Sprint Execution Packet. If the sprint declares `parallel` or
-   `hybrid`, require safe lanes, serial gates, and PVF notes before execution
-   is routed to separate issue workers or sessions.
+   `hybrid`, require candidate lane classifications, serial gates, watcher
+   assignments, and PVF notes before execution is routed to separate issue
+   workers or sessions.
 3. Create or load the sprint-state artifact.
 4. When live execution is about to begin, run the sprint readiness sweep first.
    Use `check_sprint_readiness.py` to aggregate installed-skill parity,
@@ -198,6 +201,8 @@ This skill enforces:
   mode
 - no intentional parallel lane work unless the SEP names the lane, write-set
   boundary, proof lane, and required coordination
+- no opportunistic lane plan may omit whether the lane is safe, serial,
+  speculative, or blocked on dependencies
 - no live child implementation handoff without the child issue-bound session
   goal created after bind/readiness succeeds
 - no SEP-routed child session goal that omits sprint context when a sprint

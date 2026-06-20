@@ -111,6 +111,24 @@ def main() -> int:
     )
     lines.append(f"- sprint close summary: `{closeout.get('sprint_issue_close_summary') or state.get('sprint_issue_close_summary') or 'not_recorded'}`")
 
+    parallelism = closeout.get('planned_vs_actual_parallelism') or state.get('planned_vs_actual_parallelism') or {}
+    lines.extend(['', '## Planned Vs Actual Parallelism', ''])
+    lines.append(f"- planned summary: `{parallelism.get('planned_summary') or 'not_recorded'}`")
+    lines.append(f"- actual summary: `{parallelism.get('actual_summary') or 'not_recorded'}`")
+    prediction_misses = parallelism.get('prediction_misses') or []
+    if prediction_misses:
+        lines.append('- prediction misses:')
+        for item in prediction_misses:
+            lane_id = item.get('lane_id') or 'unknown'
+            issues = ', '.join(str(issue) for issue in item.get('issue_numbers', [])) or 'none'
+            why_wrong = item.get('why_wrong') or 'not_recorded'
+            corrective_action = item.get('corrective_action') or 'not_recorded'
+            lines.append(
+                f"  - lane=`{lane_id}` issues=`{issues}` why_wrong={why_wrong} corrective_action={corrective_action}"
+            )
+    else:
+        lines.append('- prediction misses: none recorded')
+
     lines.extend(['', '## Goal Metrics Rollup', ''])
     lines.append(f"- issues with recorded metrics: `{goal_metrics_rollup['issues_with_recorded_metrics']}/{goal_metrics_rollup['issue_count']}`")
     lines.append(

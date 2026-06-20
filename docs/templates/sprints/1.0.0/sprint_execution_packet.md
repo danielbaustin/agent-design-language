@@ -82,6 +82,20 @@ flowchart LR
 | {{lane_1}} | {{lane_1_issues}} | {{lane_1_safety}} | {{lane_1_coordination}} |
 | {{lane_2}} | {{lane_2_issues}} | {{lane_2_safety}} | {{lane_2_coordination}} |
 
+## Candidate Parallel Lanes
+
+| Lane | Classification | Issues | Expected write sets | Expected PVF lanes | Validation lanes | Dependency gates | Collision risks | Watcher | Subagent | Why safe or why not | Required coordination |
+|---|---|---|---|---|---|---|---|---|---|---|---|
+| {{candidate_lane_1}} | {{candidate_lane_1_classification}} | {{candidate_lane_1_issues}} | {{candidate_lane_1_write_sets}} | {{candidate_lane_1_pvf_lanes}} | {{candidate_lane_1_validation_lanes}} | {{candidate_lane_1_dependency_gates}} | {{candidate_lane_1_collision_risks}} | {{candidate_lane_1_watcher}} | {{candidate_lane_1_subagent}} | {{candidate_lane_1_reasoning}} | {{candidate_lane_1_coordination}} |
+| {{candidate_lane_2}} | {{candidate_lane_2_classification}} | {{candidate_lane_2_issues}} | {{candidate_lane_2_write_sets}} | {{candidate_lane_2_pvf_lanes}} | {{candidate_lane_2_validation_lanes}} | {{candidate_lane_2_dependency_gates}} | {{candidate_lane_2_collision_risks}} | {{candidate_lane_2_watcher}} | {{candidate_lane_2_subagent}} | {{candidate_lane_2_reasoning}} | {{candidate_lane_2_coordination}} |
+
+Allowed `classification` values:
+
+- `safe_parallel`
+- `serial_gate`
+- `speculative_risky`
+- `blocked_until_dependency`
+
 ## Serial Gates
 
 | Gate | Blocks | Exit condition | Owner |
@@ -96,6 +110,13 @@ flowchart LR
 - Serial validation gates: {{serial_validation_gates}}
 - Reusable proof criteria: {{proof_reuse_criteria}}
 - Fail-closed rule: {{fail_closed_rule}}
+
+## Parallelism Outcome Plan
+
+- Planned summary: {{planned_parallelism_summary}}
+- Actual summary placeholder: {{actual_parallelism_summary_placeholder}}
+- Prediction-miss capture rule: {{prediction_miss_rule}}
+- Closeout requirement: record every lane that proved safe, every lane that stayed serial, and every lane prediction that was wrong.
 
 ## Sprint Activity Log
 
