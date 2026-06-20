@@ -246,6 +246,48 @@
       "reason": "review_owner_surface_requires_review_owner_lane"
     },
     {
+      "id": "local_polis_ssm_wrapper",
+      "lane_class": "cli_workflow",
+      "default_surface": "tooling",
+      "owner": "tools",
+      "proof_role": "regression",
+      "requirement_ids": [
+        "local_polis_ssm_wrapper"
+      ],
+      "path_selectors": [
+        "adl/tools/polis_status_for_ssm.sh"
+      ],
+      "path_hints": [
+        "adl/tools/polis_status_for_ssm.sh"
+      ],
+      "command": "bash -n adl/tools/polis_status_for_ssm.sh",
+      "run_command": "bash -n adl/tools/polis_status_for_ssm.sh",
+      "reason": "bounded_ssm_status_wrapper_requires_shell_syntax_validation"
+    },
+    {
+      "id": "validation_lane_selector_contracts",
+      "lane_class": "cli_workflow",
+      "default_surface": "tooling",
+      "owner": "tools",
+      "proof_role": "regression",
+      "requirement_ids": [
+        "validation_lane_selector_contracts"
+      ],
+      "path_selectors": [
+        "adl/config/validation_lane_selector.v0.91.6.json",
+        "adl/tools/select_validation_lanes.sh",
+        "adl/tools/test_select_validation_lanes.sh"
+      ],
+      "path_hints": [
+        "adl/config/validation_lane_selector.v0.91.6.json",
+        "adl/tools/select_validation_lanes.sh",
+        "adl/tools/test_select_validation_lanes.sh"
+      ],
+      "command": "bash adl/tools/test_select_validation_lanes.sh",
+      "run_command": "bash adl/tools/test_select_validation_lanes.sh",
+      "reason": "validation_lane_selector_surface_requires_selector_contract_checks"
+    },
+    {
       "id": "docs_diff_check",
       "lane_class": "docs",
       "default_surface": "docs",
