@@ -141,6 +141,12 @@ The repository workflow currently treats this as an agent-session requirement,
 not as an ADL runtime-enforced object. `pr.sh` can remind, but it does not
 claim to introspect Codex goal state.
 
+When execution is being routed by a Sprint Execution Packet through
+`sprint-conductor`, attach this same goal step directly to the child-issue
+handoff instead of leaving it as a separate manual reminder. For SEP-routed
+child sessions, the goal should include the sprint issue number when present,
+the child issue number, and the concrete bounded session objective.
+
 Use `update_goal` only for truthful terminal state:
 
 - `complete` when the current session objective is actually achieved, including

@@ -113,6 +113,7 @@ assert_skill_bundle() {
   grep -Fq "planning artifact rather than an execution log" "${root}/skills/spp-editor/SKILL.md"
   grep -Fq "Structured Review Prompt" "${root}/skills/srp-editor/SKILL.md"
   grep -Fq "one issue at a time, fully closed out before the next" "${root}/skills/sprint-conductor/SKILL.md"
+  grep -Fq "attach the issue-bound session-goal requirement as part of the SEP handoff" "${root}/skills/sprint-conductor/SKILL.md"
   grep -Fq "findings-first review orchestrator" "${root}/skills/sprint-review/SKILL.md"
   grep -Fq "bounded editing of \`stp.md\`" "${root}/skills/stp-editor/SKILL.md"
   grep -Fq "truthful lifecycle state" "${root}/skills/sip-editor/SKILL.md"

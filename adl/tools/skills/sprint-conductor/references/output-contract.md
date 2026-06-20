@@ -170,6 +170,12 @@ next_handoff:
   target_issue_number: <u32 or null>
   target_pr_url: <url or null>
   next_skill: workflow-conductor | pr-init | pr-ready | pr-run | pr-finish | issue-watcher | pr-janitor | pr-closeout | stp-editor | sip-editor | spp-editor | srp-editor | sor-editor | repo-packet-builder | repo-review-code | repo-review-tests | repo-review-docs | repo-review-security | repo-review-synthesis | none
+  child_session_goal:
+    required: true | false
+    create_after_bind: true | false
+    sprint_issue_number: <u32 or null>
+    child_issue_number: <u32 or null>
+    bounded_objective: <bounded text or null>
   rationale: <bounded text>
 artifact:
   sprint_state_path: <path or null>
