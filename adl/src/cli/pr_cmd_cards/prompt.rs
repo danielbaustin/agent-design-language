@@ -297,6 +297,19 @@ mod tests {
         }
     }
 
+    fn prepend_path(dir: &Path) -> Option<String> {
+        let old_path = std::env::var("PATH").ok();
+        let mut path_entries = vec![dir.to_path_buf()];
+        path_entries.extend(std::env::split_paths(old_path.as_deref().unwrap_or("")));
+        unsafe {
+            std::env::set_var(
+                "PATH",
+                std::env::join_paths(path_entries).expect("join PATH"),
+            );
+        }
+        old_path
+    }
+
     #[test]
     fn fetch_issue_body_respects_github_fallback_policy() {
         let _guard = env_lock();
@@ -363,6 +376,176 @@ mod tests {
         restore_env("ADL_GITHUB_TOKEN_FILE", old_token_file);
         restore_env("ADL_GITHUB_TOKEN_KEYCHAIN_SERVICE", old_keychain_service);
         restore_env("ADL_GITHUB_TOKEN_KEYCHAIN_ACCOUNT", old_keychain_account);
+    }
+
+    #[test]
+    fn write_source_issue_prompt_writes_rendered_authored_body() {
+        let repo = unique_temp_dir("adl-write-source-issue-prompt");
+        let issue_ref = IssueRef::new(
+            4277,
+            "v0.91.6".to_string(),
+            "v0-91-6-process-pvf-assign-pvf-lane-during-issue-creation-and-planning".to_string(),
+        )
+        .expect("issue ref");
+
+        let source = write_source_issue_prompt(
+            &repo,
+            &issue_ref,
+            "[v0.91.6][process][pvf] Assign PVF lane during issue creation and planning",
+            "track:roadmap,area:process,type:task,version:v0.91.6",
+            "https://github.com/owner/repo/issues/4277",
+            "## Summary\n\nAuthored body.\n\n## Goal\n\nShip the authored source prompt.\n\n## Acceptance Criteria\n\n- write the authored prompt\n",
+        )
+        .expect("write source prompt");
+
+        let prompt = fs::read_to_string(source).expect("read source prompt");
+        assert!(prompt.contains("issue_number: 4277"));
+        assert!(prompt.contains("Authored body."));
+        assert!(prompt.contains("Ship the authored source prompt."));
+        assert!(prompt.contains("- write the authored prompt"));
+        assert!(prompt.contains("## Notes"));
+    }
+
+    #[test]
+    fn ensure_source_issue_prompt_preserves_existing_authored_prompt_when_it_differs_from_generated() {
+        let _guard = env_lock();
+        let repo = unique_temp_dir("adl-ensure-source-preserve-existing");
+        let issue_ref = IssueRef::new(
+            4278,
+            "v0.91.6".to_string(),
+            "v0-91-6-process-metrics-add-spp-estimates-and-sor-actuals".to_string(),
+        )
+        .expect("issue ref");
+        let source_path = issue_ref.issue_prompt_path(&repo);
+        if let Some(parent) = source_path.parent() {
+            fs::create_dir_all(parent).expect("source parent");
+        }
+        let existing = "---\nissue_card_schema: adl.issue.v1\nwp: \"WP-01\"\nqueue: \"wp\"\nslug: \"v0-91-6-process-metrics-add-spp-estimates-and-sor-actuals\"\ntitle: \"[v0.91.6][process][metrics] Existing authored prompt\"\nlabels:\n  - \"track:roadmap\"\n  - \"area:process\"\nstatus: \"draft\"\naction: \"edit\"\ndepends_on: []\nmilestone_sprint: \"Pending sprint assignment\"\nrequired_outcome_type:\n  - \"docs\"\nrepo_inputs: []\ncanonical_files: []\ndemo_required: false\ndemo_names: []\nissue_graph_notes: []\npr_start:\n  enabled: false\n  slug: \"v0-91-6-process-metrics-add-spp-estimates-and-sor-actuals\"\n---\n\n## Summary\n\nKeep the authored local prompt.\n\n## Goal\n\nPreserve existing authored content.\n\n## Acceptance Criteria\n\n- do not overwrite the local file\n";
+        fs::write(&source_path, existing).expect("seed existing prompt");
+
+        let ensured = ensure_source_issue_prompt(
+            &repo,
+            "owner/repo",
+            &issue_ref,
+            "[v0.91.6][process][metrics] Add SPP estimates and SOR actuals",
+            Some("track:roadmap,area:process,type:task"),
+            "v0.91.6",
+            "track:roadmap,area:process,type:task",
+        )
+        .expect("ensure source prompt");
+
+        assert_eq!(ensured, source_path);
+        let prompt = fs::read_to_string(ensured).expect("read prompt");
+        assert_eq!(prompt, existing);
+    }
+
+    #[test]
+    fn ensure_source_issue_prompt_uses_default_labels_and_generated_prompt_when_github_metadata_is_empty() {
+        let _guard = env_lock();
+        let temp = unique_temp_dir("adl-ensure-source-default-labels");
+        let bin_dir = temp.join("bin");
+        fs::create_dir_all(&bin_dir).expect("bin dir");
+        write_executable(
+            &bin_dir.join("gh"),
+            "#!/usr/bin/env bash\nset -euo pipefail\nif [[ \"$*\" == *\"--json labels --jq .labels[].name\"* ]]; then\n  exit 0\nfi\nif [[ \"$*\" == *\"--json body --jq .body\"* ]]; then\n  exit 1\nfi\nexit 1\n",
+        );
+
+        let old_path = prepend_path(&bin_dir);
+        let old_client = std::env::var("ADL_GITHUB_CLIENT").ok();
+        let old_disable = std::env::var("ADL_GITHUB_DISABLE_GH_FALLBACK").ok();
+        let old_fixture = std::env::var("ADL_TEST_GITHUB_CLI_FIXTURE").ok();
+        unsafe {
+            std::env::remove_var("ADL_GITHUB_CLIENT");
+            std::env::remove_var("ADL_GITHUB_DISABLE_GH_FALLBACK");
+            std::env::remove_var("ADL_TEST_GITHUB_CLI_FIXTURE");
+        }
+
+        let issue_ref = IssueRef::new(
+            4281,
+            "v0.91.6".to_string(),
+            "v0-91-6-process-pvf-add-opportunistic-lane-parallelization-planning".to_string(),
+        )
+        .expect("issue ref");
+        let ensured = ensure_source_issue_prompt(
+            &temp,
+            "owner/repo",
+            &issue_ref,
+            "[v0.91.6][process][pvf] Add opportunistic lane parallelization planning",
+            None,
+            "v0.91.6",
+            "track:roadmap,area:process,type:task",
+        )
+        .expect("ensure source prompt");
+
+        restore_env("PATH", old_path);
+        restore_env("ADL_GITHUB_CLIENT", old_client);
+        restore_env("ADL_GITHUB_DISABLE_GH_FALLBACK", old_disable);
+        restore_env("ADL_TEST_GITHUB_CLI_FIXTURE", old_fixture);
+
+        let prompt = fs::read_to_string(ensured).expect("read prompt");
+        assert!(prompt.contains("  - \"track:roadmap\""));
+        assert!(prompt.contains("  - \"area:process\""));
+        assert!(prompt.contains("  - \"type:task\""));
+        assert!(prompt.contains("  - \"version:v0.91.6\""));
+        assert!(prompt.contains(
+            "initial_pvf_lane: \"needs_planning_lane_assignment\""
+        ));
+        assert!(prompt.contains("Bootstrap-generated issue body created from the requested title and labels"));
+    }
+
+    #[test]
+    fn validate_issue_body_for_create_rejects_placeholder_goal_and_acceptance_stub() {
+        let repo = unique_temp_dir("adl-validate-issue-body-placeholder");
+        let err = validate_issue_body_for_create(
+            &repo,
+            "[v0.91.6][process][pvf] Placeholder body",
+            "track:roadmap,area:process,type:task,version:v0.91.6",
+            "v0-91-6-process-pvf-placeholder-body",
+            "## Summary\n\nPlaceholder body.\n\n## Goal\n-\n\n## Acceptance Criteria\n-\n",
+        )
+        .expect_err("placeholder body should fail validation");
+
+        assert!(format!("{err:#}").contains("placeholder"));
+    }
+
+    #[test]
+    fn render_issue_prompt_from_body_appends_notes_for_generated_prompts() {
+        let body = "## Summary\n\nGenerated body.\n\n## Goal\n\nRecord generated prompt notes.\n\n## Acceptance Criteria\n\n- append notes when missing\n";
+        let rendered = render_issue_prompt_from_body(
+            4279,
+            "v0-91-6-process-metrics-add-variance-analysis-for-estimate-misses",
+            "[v0.91.6][process][metrics] Add variance analysis for estimate misses",
+            "track:roadmap,area:process,type:task,version:v0.91.6",
+            "https://github.com/example/repo/issues/4279",
+            body,
+        );
+
+        assert!(rendered.contains("## Acceptance Criteria"));
+        assert!(rendered.contains("## Notes\n\n- No additional notes."));
+    }
+
+    #[test]
+    fn render_issue_prompt_from_body_preserves_existing_notes_section() {
+        let body = "## Summary\n\nAuthored body.\n\n## Goal\n\nKeep existing notes.\n\n## Acceptance Criteria\n\n- preserve notes\n\n## Notes\n\n- Existing note.";
+        let rendered = render_issue_prompt_from_body(
+            4280,
+            "v0-91-6-observability-telemetry-plan-issue-resource-telemetry-and-s3-archive",
+            "[v0.91.6][observability][telemetry] Plan issue resource telemetry and S3 archive",
+            "track:roadmap,area:observability,type:task,version:v0.91.6",
+            "https://github.com/example/repo/issues/4280",
+            body,
+        );
+
+        assert!(rendered.contains("## Notes\n\n- Existing note."));
+        assert!(!rendered.contains("No additional notes."));
+    }
+
+    #[test]
+    fn render_issue_prompt_from_authored_front_matter_returns_none_without_issue_schema() {
+        let body = "---\ntitle: \"missing schema\"\nlabels:\n  - \"track:roadmap\"\n---\n\n## Summary\n\nNo schema.\n";
+        let rendered =
+            super::render_issue_prompt_from_authored_front_matter(4277, body);
+        assert!(rendered.is_none());
     }
 
     #[test]
