@@ -1,16 +1,20 @@
 use super::*;
 use crate::cli::pr_cmd::finish_support::{
     ensure_finish_branch_not_behind_origin_main, ensure_finish_task_bundle_surfaces,
-    finish_declared_paths_for_validation, load_finish_validation_profile,
+    ensure_no_staged_issue_bundle_mutations, extra_pr_body_looks_like_issue_template,
+    extract_markdown_section, finish_declared_paths_for_validation, finish_inputs_fingerprint,
+    issue_bundle_issue_number_from_repo_relative, load_finish_validation_profile,
     non_closing_lifecycle_line, normalize_docs_only_sor_text, open_pr_url_nonblocking,
     open_pr_url_nonblocking_with_timeout, real_pr_finish,
-    render_default_finish_validation, resolve_finish_issue_scope_and_slug,
-    select_finish_validation_plan_for_finish, FinishValidationMode, FinishValidationPlan,
-    FinishValidationProfile, FinishValidationProfileEscalation,
+    reject_local_issue_bundle_paths_in_finish_paths, render_default_finish_validation,
+    resolve_finish_issue_scope_and_slug, restage_finish_output_truth_paths,
+    run_finish_validation_status, select_finish_validation_plan_for_finish, FinishValidationMode,
+    FinishValidationPlan, FinishValidationProfile, FinishValidationProfileEscalation,
     FinishValidationProfileEscalationReason, FinishValidationProfileRunItem,
     FinishValidationProfileSurfaceItem,
 };
 use crate::cli::pr_cmd::git_support::commits_behind_origin_main;
+use std::os::unix::fs::PermissionsExt;
 
 #[test]
 fn finish_declared_paths_for_validation_splits_operator_surface() {
@@ -458,6 +462,380 @@ fn render_default_finish_validation_includes_profile_truth_and_sanitizes_changed
     assert!(!rendered.contains("/private/tmp/changed-files.txt"));
 }
 
+struct FinishHelperObservabilityEnvGuard;
+
+impl FinishHelperObservabilityEnvGuard {
+    fn install(log: &Path) -> Self {
+        unsafe {
+            std::env::set_var("ADL_OBSERVABILITY_STDERR", "0");
+            std::env::set_var("ADL_OBSERVABILITY_LOG", log);
+            std::env::set_var("ADL_OBSERVABILITY_HEARTBEAT_MS", "25");
+        }
+        Self
+    }
+}
+
+impl Drop for FinishHelperObservabilityEnvGuard {
+    fn drop(&mut self) {
+        unsafe {
+            std::env::remove_var("ADL_OBSERVABILITY_STDERR");
+            std::env::remove_var("ADL_OBSERVABILITY_LOG");
+            std::env::remove_var("ADL_OBSERVABILITY_HEARTBEAT_MS");
+        }
+    }
+}
+
+fn read_finish_helper_log_until(log: &Path, needle: &str) -> String {
+    for _ in 0..10 {
+        let contents = fs::read_to_string(log).unwrap_or_default();
+        if contents.contains(needle) {
+            return contents;
+        }
+        std::thread::sleep(std::time::Duration::from_millis(10));
+    }
+    fs::read_to_string(log).unwrap_or_default()
+}
+
+#[test]
+fn finish_helper_paths_emit_subprocess_heartbeat_and_classification() {
+    let _guard = env_lock();
+    let temp = unique_temp_dir("adl-finish-helper-heartbeat");
+    let script = temp.join("slow-validation.sh");
+    let log = temp.join("observability.log");
+    fs::write(&script, "#!/bin/sh\nsleep 0.08\nexit 0\n").expect("write script");
+    let mut perms = fs::metadata(&script).expect("metadata").permissions();
+    perms.set_mode(0o755);
+    fs::set_permissions(&script, perms).expect("chmod");
+
+    let _env = FinishHelperObservabilityEnvGuard::install(&log);
+
+    run_finish_validation_status("bash", &[script.to_str().expect("script path")])
+        .expect("validation command");
+
+    let contents = read_finish_helper_log_until(&log, "result=completed");
+    assert!(contents.contains("command=finish"));
+    assert!(contents.contains("stage=validation_subprocess"));
+    assert!(contents.contains("program=bash"));
+    assert!(contents.contains("subprocess_class=shell_validation"));
+    assert!(contents.contains("result=heartbeat"));
+    assert!(contents.contains("result=completed"));
+}
+
+#[test]
+fn finish_helper_paths_emit_failed_terminal_event_on_spawn_error() {
+    let _guard = env_lock();
+    let temp = unique_temp_dir("adl-finish-helper-spawn-error");
+    let log = temp.join("observability.log");
+
+    let _env = FinishHelperObservabilityEnvGuard::install(&log);
+
+    let err =
+        run_finish_validation_status("definitely-not-a-real-finish-subprocess", &["--version"])
+            .expect_err("spawn should fail");
+    assert!(err.to_string().contains("failed to spawn"));
+
+    let contents = read_finish_helper_log_until(&log, "result=failed");
+    assert!(contents.contains("result=started"));
+    assert!(contents.contains("result=failed"));
+    assert!(contents.contains("reason_code=validation_subprocess_spawn_failed"));
+    assert!(contents.contains("next_action_hint=check_subprocess_path_and_permissions"));
+}
+
+fn init_finish_helper_git_repo(repo: &Path) {
+    assert!(Command::new("git")
+        .args(["init", "-q"])
+        .current_dir(repo)
+        .status()
+        .expect("git init")
+        .success());
+    assert!(Command::new("git")
+        .args(["config", "user.name", "Test User"])
+        .current_dir(repo)
+        .status()
+        .expect("git config name")
+        .success());
+    assert!(Command::new("git")
+        .args(["config", "user.email", "test@example.com"])
+        .current_dir(repo)
+        .status()
+        .expect("git config email")
+        .success());
+}
+
+#[test]
+fn finish_helper_paths_restage_output_truth_skips_local_cards_root_but_stages_tracked_files() {
+    let repo = unique_temp_dir("adl-finish-helper-restage-cards-root");
+    let issue_ref = IssueRef::new(4262, "v0.91.6".to_string(), "finish-cards-root".to_string())
+        .expect("issue ref");
+    let tracked = repo.join("README.md");
+    let cards_root = resolve_cards_root(&repo, None);
+    let output_card = ::adl::control_plane::card_output_path(&cards_root, issue_ref.issue_number());
+
+    fs::create_dir_all(output_card.parent().expect("output parent")).expect("cards root");
+    fs::create_dir_all(issue_ref.task_bundle_dir_path(&repo)).expect("task bundle dir");
+    fs::write(repo.join(".gitignore"), ".adl/\n").expect("gitignore");
+    fs::write(&tracked, "changed\n").expect("tracked file");
+    fs::write(&output_card, "local output truth\n").expect("output card");
+
+    init_finish_helper_git_repo(&repo);
+    assert!(Command::new("git")
+        .args(["add", ".gitignore", "README.md"])
+        .current_dir(&repo)
+        .status()
+        .expect("git add initial")
+        .success());
+    assert!(Command::new("git")
+        .args(["commit", "-q", "-m", "init"])
+        .current_dir(&repo)
+        .status()
+        .expect("git commit")
+        .success());
+
+    fs::write(&tracked, "changed twice\n").expect("update tracked file");
+
+    restage_finish_output_truth_paths(&repo, &repo, &issue_ref, &[tracked.clone(), output_card])
+        .expect("restage should skip ignored local cards root");
+
+    let staged = Command::new("git")
+        .args(["diff", "--cached", "--name-only"])
+        .current_dir(&repo)
+        .output()
+        .expect("git diff --cached");
+    assert!(staged.status.success(), "git diff --cached should succeed");
+    let staged_text = String::from_utf8_lossy(&staged.stdout);
+    assert!(staged_text.contains("README.md"));
+    assert!(!staged_text.contains(".adl/cards/4262/output_4262.md"));
+}
+
+#[test]
+fn finish_helper_paths_restage_output_truth_rejects_tracked_cards_root_paths() {
+    let repo = unique_temp_dir("adl-finish-helper-restage-tracked-cards-root");
+    let issue_ref = IssueRef::new(
+        4263,
+        "v0.91.6".to_string(),
+        "tracked-cards-root".to_string(),
+    )
+    .expect("issue ref");
+    let cards_root = resolve_cards_root(&repo, None);
+    let output_card = ::adl::control_plane::card_output_path(&cards_root, issue_ref.issue_number());
+
+    fs::create_dir_all(output_card.parent().expect("output parent")).expect("cards root");
+    fs::create_dir_all(issue_ref.task_bundle_dir_path(&repo)).expect("task bundle dir");
+    fs::write(repo.join(".gitignore"), ".adl/\n").expect("gitignore");
+    fs::write(&output_card, "tracked output truth\n").expect("output card");
+
+    init_finish_helper_git_repo(&repo);
+    assert!(Command::new("git")
+        .args(["add", ".gitignore"])
+        .current_dir(&repo)
+        .status()
+        .expect("git add gitignore")
+        .success());
+    assert!(Command::new("git")
+        .args(["add", "-f", ".adl/cards/4263/output_4263.md"])
+        .current_dir(&repo)
+        .status()
+        .expect("git add forced output")
+        .success());
+    assert!(Command::new("git")
+        .args(["commit", "-q", "-m", "init"])
+        .current_dir(&repo)
+        .status()
+        .expect("git commit")
+        .success());
+
+    fs::write(&output_card, "tracked output truth updated\n").expect("update output card");
+
+    let err = restage_finish_output_truth_paths(
+        &repo,
+        &repo,
+        &issue_ref,
+        std::slice::from_ref(&output_card),
+    )
+    .expect_err("tracked cards-root path should fail closed");
+    assert!(err.to_string().contains("compatibility cards path"));
+    assert!(err.to_string().contains(".adl/cards/4263/output_4263.md"));
+}
+
+#[test]
+fn finish_helper_paths_restage_output_truth_rejects_tracked_primary_cards_root_paths() {
+    let primary = unique_temp_dir("adl-finish-helper-restage-primary-cards-root-primary");
+    let worktree = unique_temp_dir("adl-finish-helper-restage-primary-cards-root-worktree");
+    let issue_ref = IssueRef::new(
+        4264,
+        "v0.91.6".to_string(),
+        "primary-tracked-cards-root".to_string(),
+    )
+    .expect("issue ref");
+    let primary_cards_root = resolve_cards_root(&primary, None);
+    let primary_output =
+        ::adl::control_plane::card_output_path(&primary_cards_root, issue_ref.issue_number());
+
+    fs::create_dir_all(primary_output.parent().expect("output parent")).expect("cards root");
+    fs::write(primary.join(".gitignore"), ".adl/\n").expect("gitignore");
+    fs::write(&primary_output, "tracked output truth\n").expect("output card");
+
+    init_finish_helper_git_repo(&primary);
+    assert!(Command::new("git")
+        .args(["add", ".gitignore"])
+        .current_dir(&primary)
+        .status()
+        .expect("git add gitignore")
+        .success());
+    assert!(Command::new("git")
+        .args(["add", "-f", ".adl/cards/4264/output_4264.md"])
+        .current_dir(&primary)
+        .status()
+        .expect("git add forced output")
+        .success());
+    assert!(Command::new("git")
+        .args(["commit", "-q", "-m", "init"])
+        .current_dir(&primary)
+        .status()
+        .expect("git commit")
+        .success());
+
+    fs::create_dir_all(worktree.join(".git")).expect("worktree git dir placeholder");
+    fs::write(&primary_output, "tracked output truth updated\n").expect("update output card");
+
+    let err = restage_finish_output_truth_paths(
+        &worktree,
+        &primary,
+        &issue_ref,
+        std::slice::from_ref(&primary_output),
+    )
+    .expect_err("tracked primary cards-root path should fail closed");
+    assert!(err.to_string().contains("compatibility cards path"));
+    assert!(err.to_string().contains(".adl/cards/4264/output_4264.md"));
+}
+
+#[test]
+fn finish_helper_paths_reject_local_issue_bundle_cards_in_finish_paths() {
+    let repo = unique_temp_dir("adl-finish-helper-reject-local-issue-bundle-paths");
+    let issue_ref = IssueRef::new(
+        4265,
+        "v0.91.6".to_string(),
+        "reject-local-paths".to_string(),
+    )
+    .expect("issue ref");
+    let local_sip = issue_ref.task_bundle_input_path(&repo);
+    let local_sor = issue_ref.task_bundle_output_path(&repo);
+    fs::create_dir_all(local_sip.parent().expect("sip parent")).expect("bundle dir");
+    fs::write(&local_sip, "sip\n").expect("write sip");
+    fs::write(&local_sor, "sor\n").expect("write sor");
+
+    let err = reject_local_issue_bundle_paths_in_finish_paths(
+        &repo,
+        &[
+            "docs/notes.md",
+            local_sip.to_str().expect("sip path"),
+            local_sor.to_str().expect("sor path"),
+        ],
+    )
+    .expect_err("local issue bundle paths should fail closed");
+
+    assert!(err
+        .to_string()
+        .contains("local-only .adl task-bundle card paths"));
+    assert!(err
+        .to_string()
+        .contains(".adl/v0.91.6/tasks/issue-4265__reject-local-paths/sip.md"));
+    assert!(err
+        .to_string()
+        .contains(".adl/v0.91.6/tasks/issue-4265__reject-local-paths/sor.md"));
+}
+
+#[test]
+fn finish_helper_paths_reject_foreign_staged_issue_bundle_mutations() {
+    let repo = unique_temp_dir("adl-finish-helper-reject-foreign-issue-bundle-stage");
+    let active_issue =
+        IssueRef::new(4266, "v0.91.6".to_string(), "active".to_string()).expect("active issue");
+    let foreign_issue =
+        IssueRef::new(4267, "v0.91.6".to_string(), "foreign".to_string()).expect("foreign issue");
+    let foreign_sor = foreign_issue.task_bundle_output_path(&repo);
+
+    fs::create_dir_all(foreign_sor.parent().expect("output parent")).expect("bundle dir");
+    fs::write(repo.join(".gitignore"), ".adl/\n").expect("gitignore");
+    fs::write(&foreign_sor, "foreign sor\n").expect("foreign sor");
+
+    init_finish_helper_git_repo(&repo);
+    assert!(Command::new("git")
+        .args(["add", ".gitignore"])
+        .current_dir(&repo)
+        .status()
+        .expect("git add gitignore")
+        .success());
+    assert!(Command::new("git")
+        .args(["commit", "-q", "-m", "init"])
+        .current_dir(&repo)
+        .status()
+        .expect("git commit")
+        .success());
+    assert!(Command::new("git")
+        .args(["add", "-f", foreign_sor.to_str().expect("foreign sor path")])
+        .current_dir(&repo)
+        .status()
+        .expect("git add foreign sor")
+        .success());
+
+    let err = ensure_no_staged_issue_bundle_mutations(&repo, &active_issue)
+        .expect_err("foreign staged bundle paths should fail");
+    assert!(err
+        .to_string()
+        .contains("staged .adl task-bundle changes for non-active issues detected"));
+    assert!(err
+        .to_string()
+        .contains(".adl/v0.91.6/tasks/issue-4267__foreign/sor.md"));
+}
+
+#[test]
+fn finish_helper_paths_cover_markdown_and_fingerprint_surfaces() {
+    let repo = unique_temp_dir("adl-finish-helper-surfaces");
+    let markdown = repo.join("output.md");
+    fs::write(
+        &markdown,
+        "## Summary\nsummary\n\n## Validation\n- ok\n\n## Tail\nignored\n",
+    )
+    .expect("write markdown");
+
+    assert_eq!(
+        extract_markdown_section(&markdown, "Summary").expect("summary section"),
+        "summary"
+    );
+    assert_eq!(
+        extract_markdown_section(&markdown, "Validation").expect("validation section"),
+        "- ok"
+    );
+    assert_eq!(
+        issue_bundle_issue_number_from_repo_relative(
+            ".adl/v0.91.6/tasks/issue-4268__helper/sor.md"
+        ),
+        Some(4268)
+    );
+    assert_eq!(
+        issue_bundle_issue_number_from_repo_relative("docs/milestones/v0.91.6/README.md"),
+        None
+    );
+    assert!(extra_pr_body_looks_like_issue_template(
+        "issue_card_schema: adl.issue.v1"
+    ));
+    assert!(extra_pr_body_looks_like_issue_template(
+        "## Goal\nstuff\n---\nmore"
+    ));
+    assert!(!extra_pr_body_looks_like_issue_template(
+        "regular reviewer notes"
+    ));
+    assert_eq!(
+        finish_inputs_fingerprint(
+            "[v0.91.6][tools] Example",
+            "adl/src/lib.rs,docs/notes.md",
+            ".adl/v0.91.6/tasks/issue-4268__helper/sip.md",
+            ".adl/v0.91.6/tasks/issue-4268__helper/sor.md",
+        ),
+        "v0-91-6-tools-example-adl-src-lib-rs-docs-notes-md-adl-v0-91-6-tasks-issue-4268-helper-sip-md-adl-v0-91-6-tasks-issue-4268-helper-sor-md"
+    );
+}
+
 #[test]
 fn load_finish_validation_profile_reads_manager_json_from_repo_tooling() {
     let _guard = env_lock();
@@ -520,7 +898,10 @@ print(json.dumps({
     assert!(!profile.pr_publication_sufficient);
     assert_eq!(profile.run.len(), 1);
     assert_eq!(profile.run[0].lane_id, "runtime_owner_lane");
-    assert_eq!(profile.run[0].reason, "runtime_owner_surface_requires_runtime_lane");
+    assert_eq!(
+        profile.run[0].reason,
+        "runtime_owner_surface_requires_runtime_lane"
+    );
     assert_eq!(profile.not_run.len(), 1);
     assert_eq!(profile.deferred.len(), 1);
     assert!(profile.escalation.required);
@@ -3805,7 +4186,12 @@ fn real_pr_finish_updates_existing_pr_marks_ready_and_keeps_non_closing_commit_t
         .expect("git push")
         .success());
     assert!(Command::new("git")
-        .args(["checkout", "-q", "-b", "codex/1174-existing-pr-ready-no-close"])
+        .args([
+            "checkout",
+            "-q",
+            "-b",
+            "codex/1174-existing-pr-ready-no-close"
+        ])
         .current_dir(&repo)
         .status()
         .expect("git checkout")
@@ -3916,7 +4302,10 @@ fn real_pr_finish_updates_existing_pr_marks_ready_and_keeps_non_closing_commit_t
         ],
     )
     .expect("head subject");
-    assert_eq!(head_subject.trim(), "[v0.86][tools] Existing PR ready no close");
+    assert_eq!(
+        head_subject.trim(),
+        "[v0.86][tools] Existing PR ready no close"
+    );
 
     let gh_log = fs::read_to_string(&gh_log).expect("gh log");
     assert!(gh_log.contains("pr list"));
@@ -3956,8 +4345,8 @@ fn real_pr_finish_rejects_missing_output_card_before_publication() {
     fs::create_dir_all(repo.join("adl/src")).expect("adl src dir");
     fs::write(repo.join("adl/src/lib.rs"), "pub fn placeholder() {}\n").expect("write file");
 
-    let issue_ref = IssueRef::new(1182, "v0.86".to_string(), "missing-output".to_string())
-        .expect("ref");
+    let issue_ref =
+        IssueRef::new(1182, "v0.86".to_string(), "missing-output".to_string()).expect("ref");
     let bundle_dir = issue_ref.task_bundle_dir_path(&repo);
     fs::create_dir_all(&bundle_dir).expect("bundle dir");
     let stp = issue_ref.task_bundle_stp_path(&repo);
@@ -4053,8 +4442,8 @@ fn real_pr_finish_rejects_empty_output_card_before_publication() {
     fs::create_dir_all(repo.join("adl/src")).expect("adl src dir");
     fs::write(repo.join("adl/src/lib.rs"), "pub fn placeholder() {}\n").expect("write file");
 
-    let issue_ref = IssueRef::new(1184, "v0.86".to_string(), "empty-output".to_string())
-        .expect("ref");
+    let issue_ref =
+        IssueRef::new(1184, "v0.86".to_string(), "empty-output".to_string()).expect("ref");
     let bundle_dir = issue_ref.task_bundle_dir_path(&repo);
     fs::create_dir_all(&bundle_dir).expect("bundle dir");
     let stp = issue_ref.task_bundle_stp_path(&repo);
@@ -4152,8 +4541,8 @@ fn real_pr_finish_rejects_branch_name_mismatch() {
     fs::create_dir_all(repo.join("adl/src")).expect("adl src dir");
     fs::write(repo.join("adl/src/lib.rs"), "pub fn placeholder() {}\n").expect("write file");
 
-    let issue_ref = IssueRef::new(1185, "v0.86".to_string(), "branch-mismatch".to_string())
-        .expect("ref");
+    let issue_ref =
+        IssueRef::new(1185, "v0.86".to_string(), "branch-mismatch".to_string()).expect("ref");
     let bundle_dir = issue_ref.task_bundle_dir_path(&repo);
     fs::create_dir_all(&bundle_dir).expect("bundle dir");
     let stp = issue_ref.task_bundle_stp_path(&repo);
@@ -4254,8 +4643,8 @@ fn real_pr_finish_rejects_closed_issue_with_stale_canonical_truth() {
     fs::create_dir_all(repo.join("docs")).expect("docs dir");
     fs::write(repo.join("docs/notes.md"), "initial notes\n").expect("write docs");
 
-    let issue_ref = IssueRef::new(1186, "v0.86".to_string(), "closed-stale-truth".to_string())
-        .expect("ref");
+    let issue_ref =
+        IssueRef::new(1186, "v0.86".to_string(), "closed-stale-truth".to_string()).expect("ref");
     let bundle_dir = issue_ref.task_bundle_dir_path(&repo);
     fs::create_dir_all(&bundle_dir).expect("bundle dir");
     let stp = issue_ref.task_bundle_stp_path(&repo);
@@ -4415,8 +4804,8 @@ fn real_pr_finish_opener_failure_is_nonblocking_when_no_open_is_false() {
     )
     .expect("write change");
 
-    let issue_ref = IssueRef::new(1187, "v0.86".to_string(), "open-failure".to_string())
-        .expect("ref");
+    let issue_ref =
+        IssueRef::new(1187, "v0.86".to_string(), "open-failure".to_string()).expect("ref");
     let bundle_dir = issue_ref.task_bundle_dir_path(&repo);
     fs::create_dir_all(&bundle_dir).expect("bundle dir");
     let stp = issue_ref.task_bundle_stp_path(&repo);
@@ -4609,7 +4998,8 @@ print(json.dumps({
 "#,
     );
 
-    let issue_ref = IssueRef::new(1181, "v0.86".to_string(), "merge-mode".to_string()).expect("ref");
+    let issue_ref =
+        IssueRef::new(1181, "v0.86".to_string(), "merge-mode".to_string()).expect("ref");
     let bundle_dir = issue_ref.task_bundle_dir_path(&repo);
     fs::create_dir_all(&bundle_dir).expect("bundle dir");
     let stp = issue_ref.task_bundle_stp_path(&repo);

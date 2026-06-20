@@ -631,7 +631,7 @@ fn record_docs_only_validation_evidence_for_finish(
     Ok(())
 }
 
-fn restage_finish_output_truth_paths(
+pub(super) fn restage_finish_output_truth_paths(
     repo_root: &Path,
     primary_root: &Path,
     issue_ref: &IssueRef,
@@ -2727,7 +2727,7 @@ const FINISH_VALIDATION_SANITIZED_ENVS: &[&str] = &[
     "ADL_GITHUB_TOKEN_KEYCHAIN_ACCOUNT",
 ];
 
-fn run_finish_validation_status(program: &str, args: &[&str]) -> Result<()> {
+pub(super) fn run_finish_validation_status(program: &str, args: &[&str]) -> Result<()> {
     let class = classify_finish_subprocess(program, args);
     let excerpt = format_subprocess_excerpt(program, args);
     let heartbeat = ProgressHeartbeat::start(
@@ -3061,7 +3061,10 @@ pub(super) fn stage_selected_paths_rust(repo_root: &Path, csv: &str) -> Result<(
     Ok(())
 }
 
-fn reject_local_issue_bundle_paths_in_finish_paths(repo_root: &Path, paths: &[&str]) -> Result<()> {
+pub(super) fn reject_local_issue_bundle_paths_in_finish_paths(
+    repo_root: &Path,
+    paths: &[&str],
+) -> Result<()> {
     let mut local_issue_surfaces = paths
         .iter()
         .filter_map(|path| finish_local_issue_bundle_card_display(repo_root, path))
@@ -3329,8 +3332,9 @@ mod tests {
     use super::{
         ensure_no_staged_issue_bundle_mutations, extra_pr_body_looks_like_issue_template,
         extract_markdown_section, finish_inputs_fingerprint,
-        issue_bundle_issue_number_from_repo_relative, reject_local_issue_bundle_paths_in_finish_paths,
-        restage_finish_output_truth_paths, run_finish_validation_status,
+        issue_bundle_issue_number_from_repo_relative,
+        reject_local_issue_bundle_paths_in_finish_paths, restage_finish_output_truth_paths,
+        run_finish_validation_status,
     };
     use crate::cli::observability::test_env_lock as shared_env_lock;
     use ::adl::control_plane::{card_output_path, resolve_cards_root, IssueRef};
@@ -3645,8 +3649,12 @@ mod tests {
     fn reject_local_issue_bundle_paths_in_finish_paths_flags_local_cards() {
         let _guard = env_lock();
         let repo = temp_dir("reject-local-issue-bundle-paths");
-        let issue_ref = IssueRef::new(4265, "v0.91.6".to_string(), "reject-local-paths".to_string())
-            .expect("issue ref");
+        let issue_ref = IssueRef::new(
+            4265,
+            "v0.91.6".to_string(),
+            "reject-local-paths".to_string(),
+        )
+        .expect("issue ref");
         let local_sip = issue_ref.task_bundle_input_path(&repo);
         let local_sor = issue_ref.task_bundle_output_path(&repo);
         fs::create_dir_all(local_sip.parent().expect("sip parent")).expect("bundle dir");
@@ -3666,16 +3674,20 @@ mod tests {
         assert!(err
             .to_string()
             .contains("local-only .adl task-bundle card paths"));
-        assert!(err.to_string().contains(".adl/v0.91.6/tasks/issue-4265__reject-local-paths/sip.md"));
-        assert!(err.to_string().contains(".adl/v0.91.6/tasks/issue-4265__reject-local-paths/sor.md"));
+        assert!(err
+            .to_string()
+            .contains(".adl/v0.91.6/tasks/issue-4265__reject-local-paths/sip.md"));
+        assert!(err
+            .to_string()
+            .contains(".adl/v0.91.6/tasks/issue-4265__reject-local-paths/sor.md"));
     }
 
     #[test]
     fn ensure_no_staged_issue_bundle_mutations_rejects_foreign_issue_paths() {
         let _guard = env_lock();
         let repo = temp_dir("reject-foreign-issue-bundle-stage");
-        let active_issue = IssueRef::new(4266, "v0.91.6".to_string(), "active".to_string())
-            .expect("active issue");
+        let active_issue =
+            IssueRef::new(4266, "v0.91.6".to_string(), "active".to_string()).expect("active issue");
         let foreign_issue = IssueRef::new(4267, "v0.91.6".to_string(), "foreign".to_string())
             .expect("foreign issue");
         let foreign_sor = foreign_issue.task_bundle_output_path(&repo);
@@ -3760,9 +3772,15 @@ mod tests {
             issue_bundle_issue_number_from_repo_relative("docs/milestones/v0.91.6/README.md"),
             None
         );
-        assert!(extra_pr_body_looks_like_issue_template("issue_card_schema: adl.issue.v1"));
-        assert!(extra_pr_body_looks_like_issue_template("## Goal\nstuff\n---\nmore"));
-        assert!(!extra_pr_body_looks_like_issue_template("regular reviewer notes"));
+        assert!(extra_pr_body_looks_like_issue_template(
+            "issue_card_schema: adl.issue.v1"
+        ));
+        assert!(extra_pr_body_looks_like_issue_template(
+            "## Goal\nstuff\n---\nmore"
+        ));
+        assert!(!extra_pr_body_looks_like_issue_template(
+            "regular reviewer notes"
+        ));
         assert_eq!(
             finish_inputs_fingerprint(
                 "[v0.91.6][tools] Example",
