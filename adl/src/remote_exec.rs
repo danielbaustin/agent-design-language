@@ -16,8 +16,19 @@ use tiny_http::{Header, Method, Response, Server};
 #[cfg(test)]
 use crate::adl;
 use crate::provider;
+use crate::resilience::remote_exec_health_payload;
+#[cfg(test)]
+use crate::resilience::{
+    ResilienceSurfaceV1, RuntimeCorrelationFieldsV1, RUNTIME_CORRELATION_FIELDS_SCHEMA_V1,
+    RUNTIME_HEALTH_STATUS_SCHEMA_V1,
+};
 #[cfg(test)]
 use crate::sandbox;
+#[cfg(test)]
+use crate::trace_schema_v1::{
+    TraceActorTypeV1, TraceActorV1, TraceErrorV1, TraceEventTypeV1, TraceEventV1,
+    TraceScopeLevelV1, TraceScopeV1,
+};
 
 mod errors;
 mod security;
@@ -142,7 +153,8 @@ pub fn run_server(bind_addr: &str) -> Result<()> {
             (Method::Get, "/v1/health") => {
                 let body = serde_json::to_vec(&serde_json::json!({
                     "ok": true,
-                    "protocol_version": PROTOCOL_VERSION
+                    "protocol_version": PROTOCOL_VERSION,
+                    "health": remote_exec_health_payload()
                 }))?;
                 request.respond(json_response(200, body))?;
             }
@@ -289,6 +301,108 @@ mod tests {
         assert!(
             resp.contains("413"),
             "expected 413 response for oversized payload, got:\n{resp}"
+        );
+    }
+
+    #[test]
+    fn server_health_endpoint_exposes_runtime_health_contract() {
+        let Some(port) = reserve_local_port() else {
+            return;
+        };
+        let bind_addr = format!("127.0.0.1:{port}");
+        thread::spawn({
+            let bind_addr = bind_addr.clone();
+            move || {
+                let _ = run_server(&bind_addr);
+            }
+        });
+        std::thread::sleep(std::time::Duration::from_millis(120));
+
+        let mut stream = std::net::TcpStream::connect(&bind_addr).expect("connect");
+        let req = format!("GET /v1/health HTTP/1.1\r\nHost: {bind_addr}\r\n\r\n");
+        stream.write_all(req.as_bytes()).unwrap();
+        stream.flush().unwrap();
+
+        stream
+            .set_read_timeout(Some(std::time::Duration::from_secs(2)))
+            .unwrap();
+        let mut buf = [0_u8; 4096];
+        let n = stream.read(&mut buf).expect("read response");
+        let resp = String::from_utf8_lossy(&buf[..n]);
+        assert!(resp.contains("\"protocol_version\":\"0.1\""));
+        assert!(resp.contains("\"schema_version\":\"adl.runtime.health_status.v1\""));
+        assert!(resp.contains("\"component\":\"remote_exec\""));
+        assert!(resp.contains("\"field_contract\":[\"run_id\",\"trace_id\",\"span_id\",\"parent_span_id\",\"task_id\",\"fault_code\",\"component\",\"surface\"]"));
+    }
+
+    #[test]
+    fn runtime_correlation_fields_extract_trace_runtime_keys() {
+        let event = TraceEventV1 {
+            event_id: "event-1".to_string(),
+            timestamp: "2026-06-20T00:00:00.000Z".to_string(),
+            event_type: TraceEventTypeV1::Error,
+            trace_id: "trace-1".to_string(),
+            run_id: "run-1".to_string(),
+            span_id: "step:task-1".to_string(),
+            parent_span_id: Some("run:run-1".to_string()),
+            actor: TraceActorV1 {
+                r#type: TraceActorTypeV1::System,
+                id: "runtime".to_string(),
+            },
+            scope: TraceScopeV1 {
+                level: TraceScopeLevelV1::Step,
+                name: "task-1".to_string(),
+            },
+            inputs_ref: None,
+            outputs_ref: None,
+            artifact_ref: None,
+            decision_context: None,
+            provider: None,
+            error: Some(TraceErrorV1 {
+                code: "RUNTIME_TIMEOUT".to_string(),
+                message: "task timed out".to_string(),
+                details: None,
+            }),
+            contract_validation: None,
+            governance: None,
+            redaction: None,
+        };
+        let fields = RuntimeCorrelationFieldsV1::from_trace_event(
+            &event,
+            ResilienceSurfaceV1::Runtime,
+            "tokio_runtime",
+        );
+        assert_eq!(fields.schema_version, RUNTIME_CORRELATION_FIELDS_SCHEMA_V1);
+        assert_eq!(fields.run_id.as_deref(), Some("run-1"));
+        assert_eq!(fields.trace_id.as_deref(), Some("trace-1"));
+        assert_eq!(fields.span_id.as_deref(), Some("step:task-1"));
+        assert_eq!(fields.parent_span_id.as_deref(), Some("run:run-1"));
+        assert_eq!(fields.task_id.as_deref(), Some("task-1"));
+        assert_eq!(fields.fault_code.as_deref(), Some("RUNTIME_TIMEOUT"));
+        assert_eq!(fields.component, "tokio_runtime");
+        assert_eq!(fields.surface, ResilienceSurfaceV1::Runtime);
+    }
+
+    #[test]
+    fn remote_exec_health_payload_uses_shared_runtime_schema() {
+        let payload = remote_exec_health_payload();
+        assert_eq!(
+            payload
+                .pointer("/schema_version")
+                .and_then(serde_json::Value::as_str),
+            Some(RUNTIME_HEALTH_STATUS_SCHEMA_V1)
+        );
+        assert_eq!(
+            payload
+                .pointer("/correlation/schema_version")
+                .and_then(serde_json::Value::as_str),
+            Some(RUNTIME_CORRELATION_FIELDS_SCHEMA_V1)
+        );
+        assert_eq!(
+            payload
+                .pointer("/correlation/component")
+                .and_then(serde_json::Value::as_str),
+            Some("remote_exec")
         );
     }
 
