@@ -1,16 +1,24 @@
+use crate::agent_comms::{
+    AcipAddressKindV1, AcipIntentV1, AcipMessageEnvelopeV1, AcipRouteClassV1,
+};
 use crate::long_lived_agent::{AgentStatusState, LoadedAgentSpec, StatusRecord};
 use crate::observability::emit_event;
 use anyhow::{Context, Result};
 use chrono::{DateTime, Utc};
 use serde::{Deserialize, Serialize};
+use sha2::{Digest, Sha256};
 use std::env;
 use std::fs::{self, File, OpenOptions};
 use std::io::Write;
-use std::path::PathBuf;
+use std::path::{Path, PathBuf};
 
 const AWS_SIGNAL_SCHEMA_VERSION: &str = "adl.runtime.aws_signal.v1";
 const HEARTBEAT_TARGET_KIND: &str = "cloudwatch_logs";
 const MOCK_SIGNAL_ARTIFACT: &str = "aws_runtime_heartbeat_mock.jsonl";
+#[allow(dead_code)]
+const ACIP_SNS_TARGET_KIND: &str = "sns";
+#[allow(dead_code)]
+const ACIP_SNS_MOCK_SIGNAL_ARTIFACT: &str = "aws_acip_sns_projection_mock.jsonl";
 const HEARTBEAT_CURSOR_ARTIFACT: &str = "aws_runtime_heartbeat_cursor.json";
 const HEARTBEAT_CURSOR_SCHEMA: &str = "adl.runtime.aws_signal_heartbeat_cursor.v1";
 
@@ -30,6 +38,16 @@ struct HeartbeatPublisherConfig {
     approved: bool,
     log_group_configured: bool,
     log_stream_configured: bool,
+}
+
+#[derive(Debug, Clone)]
+#[allow(dead_code)]
+struct AcipProjectionPublisherConfig {
+    mode: AwsSignalMode,
+    configured: bool,
+    region: Option<String>,
+    approved: bool,
+    topic_configured: bool,
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
@@ -84,6 +102,52 @@ pub(crate) struct RuntimeHeartbeatPayload {
     pub(crate) next_cycle_hint: String,
     pub(crate) stop_requested: bool,
     pub(crate) lease_state: String,
+}
+
+#[derive(Debug, Clone)]
+#[allow(dead_code)]
+pub(crate) struct AcipSnsProjectionRequest<'a> {
+    pub(crate) runtime_id: &'a str,
+    pub(crate) agent_id: &'a str,
+    pub(crate) cycle_id: Option<&'a str>,
+    pub(crate) message: &'a AcipMessageEnvelopeV1,
+    pub(crate) route_class: AcipRouteClassV1,
+    pub(crate) projection_level: &'a str,
+    pub(crate) message_ref: &'a str,
+    pub(crate) trace_ref: Option<&'a str>,
+}
+
+#[derive(Debug, Clone, Serialize)]
+#[allow(dead_code)]
+pub(crate) struct AcipAwsSignalEnvelope {
+    pub(crate) schema_version: String,
+    pub(crate) signal_kind: String,
+    pub(crate) runtime_id: String,
+    pub(crate) agent_id: String,
+    pub(crate) cycle_id: String,
+    pub(crate) heartbeat_seq: Option<u64>,
+    pub(crate) status: String,
+    pub(crate) timestamp: DateTime<Utc>,
+    pub(crate) capabilities: Vec<String>,
+    pub(crate) failure_class: Option<String>,
+    pub(crate) correlation_id: String,
+    pub(crate) projection_level: String,
+    pub(crate) transport: RuntimeAwsSignalTransport,
+    pub(crate) payload: AcipSnsProjectionPayload,
+}
+
+#[derive(Debug, Clone, Serialize)]
+#[allow(dead_code)]
+pub(crate) struct AcipSnsProjectionPayload {
+    pub(crate) message_kind: String,
+    pub(crate) route_class: String,
+    pub(crate) sender_class: String,
+    pub(crate) recipient_class: String,
+    pub(crate) delivery_outcome: String,
+    pub(crate) message_ref: String,
+    pub(crate) summary: Option<String>,
+    pub(crate) trace_ref: Option<String>,
+    pub(crate) content_sha256: Option<String>,
 }
 
 impl HeartbeatPublisherConfig {
@@ -158,8 +222,69 @@ impl HeartbeatPublisherConfig {
     }
 }
 
+#[allow(dead_code)]
+impl AcipProjectionPublisherConfig {
+    fn from_env() -> Self {
+        let mode_env = env::var("ADL_AWS_SIGNAL_MODE").ok();
+        let mode = match mode_env
+            .as_deref()
+            .map(str::trim)
+            .map(str::to_ascii_lowercase)
+            .as_deref()
+        {
+            Some("mock") => AwsSignalMode::Mock,
+            Some("live") => AwsSignalMode::Live,
+            _ => AwsSignalMode::Disabled,
+        };
+        let region = env::var("ADL_AWS_REGION")
+            .ok()
+            .map(|value| value.trim().to_string())
+            .filter(|value| !value.is_empty());
+        let approved = env::var("ADL_AWS_SIGNAL_APPROVED")
+            .ok()
+            .as_deref()
+            .map(str::trim)
+            .map(|value| matches!(value, "1" | "true" | "TRUE" | "yes" | "YES"))
+            .unwrap_or(false);
+        let topic_configured = env::var("ADL_AWS_SNS_TOPIC_ARN")
+            .ok()
+            .map(|value| !value.trim().is_empty())
+            .unwrap_or(false);
+        Self {
+            mode,
+            configured: mode_env.is_some(),
+            region,
+            approved,
+            topic_configured,
+        }
+    }
+
+    fn mode_label(&self) -> &'static str {
+        match self.mode {
+            AwsSignalMode::Disabled => "disabled",
+            AwsSignalMode::Mock => "mock",
+            AwsSignalMode::Live => "live",
+        }
+    }
+
+    fn live_block_reason(&self) -> &'static str {
+        if !self.approved {
+            "approval_missing"
+        } else if self.region.is_none() || !self.topic_configured {
+            "config_missing"
+        } else {
+            "publish_failed"
+        }
+    }
+}
+
 pub(crate) fn mock_signal_artifact_path(loaded: &LoadedAgentSpec) -> PathBuf {
     loaded.state_root.join(MOCK_SIGNAL_ARTIFACT)
+}
+
+#[allow(dead_code)]
+pub(crate) fn acip_mock_signal_artifact_path(root: &Path) -> PathBuf {
+    root.join(ACIP_SNS_MOCK_SIGNAL_ARTIFACT)
 }
 
 fn heartbeat_cursor_path(loaded: &LoadedAgentSpec) -> PathBuf {
@@ -294,6 +419,113 @@ pub(crate) fn publish_runtime_heartbeat_signal(
     }
 }
 
+#[allow(dead_code)]
+pub(crate) fn publish_acip_sns_projection_signal(
+    output_root: &Path,
+    request: &AcipSnsProjectionRequest<'_>,
+) -> PublishOutcome {
+    let config = AcipProjectionPublisherConfig::from_env();
+    if !config.configured {
+        return PublishOutcome {
+            disposition: PublishDisposition::Skipped,
+            failure_class: None,
+        };
+    }
+
+    let correlation_id = acip_correlation_id(request.message);
+    let projection_level = request.projection_level;
+    if request.route_class != AcipRouteClassV1::CrossBoundaryDeferred
+        || !matches!(projection_level, "delivery_metadata" | "content_summary")
+    {
+        let failure_class = "projection_denied";
+        emit_acip_publish_failure(
+            &config,
+            request.runtime_id,
+            request.cycle_id.unwrap_or("not_applicable"),
+            correlation_id.as_str(),
+            failure_class,
+        );
+        return PublishOutcome {
+            disposition: PublishDisposition::Blocked,
+            failure_class: Some(failure_class.to_string()),
+        };
+    }
+
+    if matches!(config.mode, AwsSignalMode::Disabled) {
+        emit_event(
+            "agent",
+            "aws_acip_sns_projection",
+            "skipped",
+            &[
+                ("mode", config.mode_label()),
+                ("target_kind", ACIP_SNS_TARGET_KIND),
+                ("runtime_id", request.runtime_id),
+                ("cycle_id", request.cycle_id.unwrap_or("not_applicable")),
+                ("correlation_id", correlation_id.as_str()),
+                ("projection_level", projection_level),
+            ],
+        );
+        return PublishOutcome {
+            disposition: PublishDisposition::Skipped,
+            failure_class: None,
+        };
+    }
+
+    let envelope = build_acip_sns_projection_envelope(request, &config);
+    match config.mode {
+        AwsSignalMode::Disabled => unreachable!("disabled mode returns before publish"),
+        AwsSignalMode::Mock => match append_mock_acip_signal(output_root, &envelope) {
+            Ok(()) => {
+                emit_event(
+                    "agent",
+                    "aws_acip_sns_projection",
+                    "completed",
+                    &[
+                        ("mode", config.mode_label()),
+                        ("target_kind", ACIP_SNS_TARGET_KIND),
+                        ("runtime_id", envelope.runtime_id.as_str()),
+                        ("cycle_id", envelope.cycle_id.as_str()),
+                        ("correlation_id", envelope.correlation_id.as_str()),
+                        ("projection_level", envelope.projection_level.as_str()),
+                    ],
+                );
+                PublishOutcome {
+                    disposition: PublishDisposition::PublishedMock,
+                    failure_class: None,
+                }
+            }
+            Err(_) => {
+                let failure_class = "publish_failed";
+                emit_acip_publish_failure(
+                    &config,
+                    envelope.runtime_id.as_str(),
+                    envelope.cycle_id.as_str(),
+                    envelope.correlation_id.as_str(),
+                    failure_class,
+                );
+                PublishOutcome {
+                    disposition: PublishDisposition::Blocked,
+                    failure_class: Some(failure_class.to_string()),
+                }
+            }
+        },
+        AwsSignalMode::Live => {
+            let failure_class = config.live_block_reason();
+            emit_acip_publish_failure(
+                &config,
+                envelope.runtime_id.as_str(),
+                envelope.cycle_id.as_str(),
+                envelope.correlation_id.as_str(),
+                failure_class,
+            );
+            PublishOutcome {
+                disposition: PublishDisposition::Blocked,
+                failure_class: Some(failure_class.to_string()),
+            }
+        }
+    }
+}
+
 fn emit_publish_failure(
     config: &HeartbeatPublisherConfig,
     runtime_id: &str,
@@ -313,6 +545,29 @@ fn emit_publish_failure(
             ("cycle_id", cycle_id),
             ("heartbeat_seq", heartbeat_seq),
             ("signal_status", signal_status),
+            ("failure_class", failure_class),
+        ],
+    );
+}
+
+#[allow(dead_code)]
+fn emit_acip_publish_failure(
+    config: &AcipProjectionPublisherConfig,
+    runtime_id: &str,
+    cycle_id: &str,
+    correlation_id: &str,
+    failure_class: &str,
+) {
+    emit_event(
+        "agent",
+        "aws_acip_sns_projection",
+        "failed",
+        &[
+            ("mode", config.mode_label()),
+            ("target_kind", ACIP_SNS_TARGET_KIND),
+            ("runtime_id", runtime_id),
+            ("cycle_id", cycle_id),
+            ("correlation_id", correlation_id),
             ("failure_class", failure_class),
         ],
     );
@@ -366,6 +621,57 @@ fn build_runtime_heartbeat_envelope(
     }
 }
 
+#[allow(dead_code)]
+fn build_acip_sns_projection_envelope(
+    request: &AcipSnsProjectionRequest<'_>,
+    config: &AcipProjectionPublisherConfig,
+) -> AcipAwsSignalEnvelope {
+    let cycle_id = request.cycle_id.unwrap_or("not_applicable");
+    let correlation_id = acip_correlation_id(request.message);
+    let projection_level = request.projection_level.to_string();
+    let include_content_fields = projection_level == "content_summary";
+    AcipAwsSignalEnvelope {
+        schema_version: AWS_SIGNAL_SCHEMA_VERSION.to_string(),
+        signal_kind: "acip_projection".to_string(),
+        runtime_id: request.runtime_id.to_string(),
+        agent_id: request.agent_id.to_string(),
+        cycle_id: cycle_id.to_string(),
+        heartbeat_seq: None,
+        status: "completed".to_string(),
+        timestamp: parse_acip_timestamp(request.message).unwrap_or_else(Utc::now),
+        capabilities: vec![
+            "acip_projection".to_string(),
+            "sns_delivery_bridge".to_string(),
+        ],
+        failure_class: None,
+        correlation_id,
+        projection_level: projection_level.clone(),
+        transport: RuntimeAwsSignalTransport {
+            mode: config.mode_label().to_string(),
+            target_kind: ACIP_SNS_TARGET_KIND.to_string(),
+            region: config.region.clone(),
+            approved: config.approved,
+        },
+        payload: AcipSnsProjectionPayload {
+            message_kind: acip_intent_label(&request.message.intent).to_string(),
+            route_class: acip_route_class_label(&request.route_class).to_string(),
+            sender_class: acip_address_class_label(&request.message.sender.kind).to_string(),
+            recipient_class: "approval_gated_external_subscriber".to_string(),
+            delivery_outcome: match config.mode {
+                AwsSignalMode::Mock => "mock_projected".to_string(),
+                AwsSignalMode::Live => "publish_blocked".to_string(),
+                AwsSignalMode::Disabled => "publish_skipped".to_string(),
+            },
+            message_ref: request.message_ref.to_string(),
+            summary: include_content_fields
+                .then(|| acip_projection_summary(request.message, &projection_level)),
+            trace_ref: request.trace_ref.map(str::to_string),
+            content_sha256: include_content_fields
+                .then(|| acip_projection_content_sha256(request.message)),
+        },
+    }
+}
+
 fn append_mock_signal(loaded: &LoadedAgentSpec, envelope: &RuntimeAwsSignalEnvelope) -> Result<()> {
     let path = mock_signal_artifact_path(loaded);
     if let Some(parent) = path.parent() {
@@ -382,6 +688,90 @@ fn append_mock_signal(loaded: &LoadedAgentSpec, envelope: &RuntimeAwsSignalEnvel
     file.write_all(b"\n")
         .with_context(|| format!("failed finalizing {}", path.display()))?;
     Ok(())
+}
+
+#[allow(dead_code)]
+fn append_mock_acip_signal(output_root: &Path, envelope: &AcipAwsSignalEnvelope) -> Result<()> {
+    let path = acip_mock_signal_artifact_path(output_root);
+    if let Some(parent) = path.parent() {
+        fs::create_dir_all(parent)
+            .with_context(|| format!("failed creating {}", parent.display()))?;
+    }
+    let mut file = OpenOptions::new()
+        .create(true)
+        .append(true)
+        .open(&path)
+        .with_context(|| format!("failed opening {}", path.display()))?;
+    serde_json::to_writer(&mut file, envelope)
+        .with_context(|| format!("failed writing {}", path.display()))?;
+    file.write_all(b"\n")
+        .with_context(|| format!("failed finalizing {}", path.display()))?;
+    Ok(())
+}
+
+#[allow(dead_code)]
+fn acip_correlation_id(message: &AcipMessageEnvelopeV1) -> String {
+    message
+        .correlation_id
+        .clone()
+        .unwrap_or_else(|| message.message_id.clone())
+}
+
+#[allow(dead_code)]
+fn parse_acip_timestamp(message: &AcipMessageEnvelopeV1) -> Option<DateTime<Utc>> {
+    DateTime::parse_from_rfc3339(&message.timestamp_utc)
+        .ok()
+        .map(|value| value.with_timezone(&Utc))
+}
+
+#[allow(dead_code)]
+fn acip_intent_label(intent: &AcipIntentV1) -> &'static str {
+    match intent {
+        AcipIntentV1::Conversation => "conversation",
+        AcipIntentV1::Consultation => "consultation",
+        AcipIntentV1::InvocationSetup => "invocation_setup",
+        AcipIntentV1::ReviewRequest => "review_request",
+        AcipIntentV1::CodingRequest => "coding_request",
+        AcipIntentV1::Delegation => "delegation",
+        AcipIntentV1::Negotiation => "negotiation",
+    }
+}
+
+#[allow(dead_code)]
+fn acip_route_class_label(route_class: &AcipRouteClassV1) -> &'static str {
+    match route_class {
+        AcipRouteClassV1::LocalOnly => "local_only",
+        AcipRouteClassV1::CrossBoundaryDeferred => "cross_boundary_deferred",
+    }
+}
+
+#[allow(dead_code)]
+fn acip_address_class_label(kind: &AcipAddressKindV1) -> &'static str {
+    match kind {
+        AcipAddressKindV1::Agent => "workflow_agent",
+        AcipAddressKindV1::Group => "workflow_group",
+    }
+}
+
+#[allow(dead_code)]
+fn acip_projection_summary(message: &AcipMessageEnvelopeV1, projection_level: &str) -> String {
+    format!(
+        "{} ACIP message projected as bounded {} only for approval-gated external delivery",
+        acip_intent_label(&message.intent),
+        projection_level
+    )
+}
+
+#[allow(dead_code)]
+fn acip_projection_content_sha256(message: &AcipMessageEnvelopeV1) -> String {
+    let mut hasher = Sha256::new();
+    hasher.update(message.content.as_bytes());
+    hasher.update([0xff]);
+    for payload in &message.payload_refs {
+        hasher.update(payload.content_sha256.as_bytes());
+        hasher.update([0xfe]);
+    }
+    format!("{:x}", hasher.finalize())
 }
 
 fn cycle_id_for_status(status: &StatusRecord) -> String {
@@ -518,6 +908,7 @@ mod tests {
                 "ADL_AWS_SIGNAL_APPROVED",
                 "ADL_AWS_HEARTBEAT_LOG_GROUP",
                 "ADL_AWS_HEARTBEAT_LOG_STREAM",
+                "ADL_AWS_SNS_TOPIC_ARN",
             ];
             let mut saved = Vec::with_capacity(tracked.len());
             for key in tracked {
@@ -599,6 +990,43 @@ mod tests {
             last_error: None,
             safety_policy: json!({}),
             updated_at: Utc::now(),
+        }
+    }
+
+    fn sample_acip_message() -> AcipMessageEnvelopeV1 {
+        AcipMessageEnvelopeV1 {
+            schema_version: "acip.message.v1".to_string(),
+            message_id: "msg-acip-0007".to_string(),
+            conversation_id: "conv-acip-0003".to_string(),
+            timestamp_utc: "2026-06-20T20:41:15Z".to_string(),
+            monotonic_order: 7,
+            sender: crate::agent_comms::AcipAddressV1 {
+                kind: AcipAddressKindV1::Agent,
+                id: "planner.agent".to_string(),
+            },
+            recipient: crate::agent_comms::AcipAddressV1 {
+                kind: AcipAddressKindV1::Group,
+                id: "external-subscribers".to_string(),
+            },
+            intent: AcipIntentV1::Delegation,
+            visibility: crate::agent_comms::AcipVisibilityV1::Shared,
+            trace_requirement: crate::agent_comms::AcipTraceRequirementV1::Summary,
+            content: "private delegation content should not appear in the SNS projection"
+                .to_string(),
+            payload_refs: vec![crate::agent_comms::AcipPayloadRefV1 {
+                payload_kind: "delegation_result".to_string(),
+                payload_ref: "runtime/comms/delegation/result.json".to_string(),
+                media_type: "application/json".to_string(),
+                content_sha256: "0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef"
+                    .to_string(),
+                byte_length: 128,
+                inline_summary: Some("bounded delegation summary".to_string()),
+            }],
+            artifact_refs: vec!["runtime/comms/delegation/result.json".to_string()],
+            attachments: Vec::new(),
+            authority_scope: None,
+            correlation_id: Some("acip-msg-0007".to_string()),
+            prior_message_id: Some("msg-acip-0006".to_string()),
         }
     }
 
@@ -800,5 +1228,144 @@ mod tests {
         assert_eq!(envelope.payload.state, "stopped");
         assert_eq!(envelope.payload.next_cycle_hint, "stop_requested");
         assert_eq!(envelope.payload.lease_state, "clear");
+    }
+
+    #[test]
+    fn acip_sns_projection_mock_publish_writes_metadata_only_envelope() {
+        let root = temp_dir("acip-mock");
+        let _guard = MultiEnvGuard::set_all(&[
+            ("ADL_AWS_SIGNAL_MODE", "mock"),
+            ("ADL_AWS_REGION", "us-west-2"),
+        ]);
+        let message = sample_acip_message();
+        let request = AcipSnsProjectionRequest {
+            runtime_id: "runtime-fire-up-rehearsal-001",
+            agent_id: "temporary-agent-alpha",
+            cycle_id: Some("cycle-000042"),
+            message: &message,
+            route_class: AcipRouteClassV1::CrossBoundaryDeferred,
+            projection_level: "delivery_metadata",
+            message_ref: "acip/messages/msg-0007.json",
+            trace_ref: Some("runtime/comms/trace/public_summary.json"),
+        };
+
+        let outcome = publish_acip_sns_projection_signal(&root, &request);
+        assert_eq!(outcome.disposition, PublishDisposition::PublishedMock);
+
+        let artifact = fs::read_to_string(acip_mock_signal_artifact_path(&root)).expect("artifact");
+        let envelope: serde_json::Value =
+            serde_json::from_str(artifact.lines().next().expect("jsonl line"))
+                .expect("parse envelope");
+        assert_eq!(envelope["schema_version"], AWS_SIGNAL_SCHEMA_VERSION);
+        assert_eq!(envelope["signal_kind"], "acip_projection");
+        assert_eq!(envelope["transport"]["target_kind"], ACIP_SNS_TARGET_KIND);
+        assert_eq!(envelope["transport"]["mode"], "mock");
+        assert_eq!(envelope["heartbeat_seq"], serde_json::Value::Null);
+        assert_eq!(envelope["correlation_id"], "acip-msg-0007");
+        assert_eq!(
+            envelope["payload"]["route_class"],
+            "cross_boundary_deferred"
+        );
+        assert_eq!(
+            envelope["payload"]["recipient_class"],
+            "approval_gated_external_subscriber"
+        );
+        assert_eq!(envelope["payload"]["delivery_outcome"], "mock_projected");
+        assert_eq!(envelope["payload"]["summary"], serde_json::Value::Null);
+        assert_eq!(
+            envelope["payload"]["content_sha256"],
+            serde_json::Value::Null
+        );
+    }
+
+    #[test]
+    fn acip_sns_projection_content_summary_includes_redacted_content_fields() {
+        let root = temp_dir("acip-content-summary");
+        let _guard = MultiEnvGuard::set_all(&[
+            ("ADL_AWS_SIGNAL_MODE", "mock"),
+            ("ADL_AWS_REGION", "us-west-2"),
+        ]);
+        let message = sample_acip_message();
+        let request = AcipSnsProjectionRequest {
+            runtime_id: "runtime-fire-up-rehearsal-001",
+            agent_id: "temporary-agent-alpha",
+            cycle_id: Some("cycle-000042"),
+            message: &message,
+            route_class: AcipRouteClassV1::CrossBoundaryDeferred,
+            projection_level: "content_summary",
+            message_ref: "acip/messages/msg-0007.json",
+            trace_ref: Some("runtime/comms/trace/public_summary.json"),
+        };
+
+        let outcome = publish_acip_sns_projection_signal(&root, &request);
+        assert_eq!(outcome.disposition, PublishDisposition::PublishedMock);
+
+        let artifact = fs::read_to_string(acip_mock_signal_artifact_path(&root)).expect("artifact");
+        let envelope: serde_json::Value =
+            serde_json::from_str(artifact.lines().next().expect("jsonl line"))
+                .expect("parse envelope");
+        let summary = envelope["payload"]["summary"].as_str().expect("summary");
+        assert!(summary.contains("content_summary"));
+        assert!(!summary.contains("private delegation content"));
+        assert_ne!(
+            envelope["payload"]["content_sha256"],
+            serde_json::Value::Null
+        );
+    }
+
+    #[test]
+    fn acip_sns_projection_rejects_local_only_route_class() {
+        let root = temp_dir("acip-local-only");
+        let _guard = MultiEnvGuard::set_all(&[("ADL_AWS_SIGNAL_MODE", "mock")]);
+        let message = sample_acip_message();
+        let request = AcipSnsProjectionRequest {
+            runtime_id: "runtime-acip-local",
+            agent_id: "runtime-acip-local",
+            cycle_id: None,
+            message: &message,
+            route_class: AcipRouteClassV1::LocalOnly,
+            projection_level: "delivery_metadata",
+            message_ref: "acip/messages/msg-acip-0007.json",
+            trace_ref: None,
+        };
+
+        let outcome = publish_acip_sns_projection_signal(&root, &request);
+        assert_eq!(outcome.disposition, PublishDisposition::Blocked);
+        assert_eq!(outcome.failure_class.as_deref(), Some("projection_denied"));
+        assert!(!acip_mock_signal_artifact_path(&root).exists());
+    }
+
+    #[test]
+    fn acip_sns_projection_disabled_and_live_modes_stay_fail_closed() {
+        let root = temp_dir("acip-modes");
+        let message = sample_acip_message();
+        let request = AcipSnsProjectionRequest {
+            runtime_id: "runtime-acip-modes",
+            agent_id: "runtime-acip-modes",
+            cycle_id: Some("cycle-acip"),
+            message: &message,
+            route_class: AcipRouteClassV1::CrossBoundaryDeferred,
+            projection_level: "content_summary",
+            message_ref: "acip/messages/msg-acip-0007.json",
+            trace_ref: None,
+        };
+
+        {
+            let _guard = MultiEnvGuard::set_all(&[("ADL_AWS_SIGNAL_MODE", "disabled")]);
+            let disabled = publish_acip_sns_projection_signal(&root, &request);
+            assert_eq!(disabled.disposition, PublishDisposition::Skipped);
+            assert!(!acip_mock_signal_artifact_path(&root).exists());
+        }
+
+        {
+            let _guard = MultiEnvGuard::set_all(&[
+                ("ADL_AWS_SIGNAL_MODE", "live"),
+                ("ADL_AWS_REGION", "us-west-2"),
+                ("ADL_AWS_SIGNAL_APPROVED", "1"),
+            ]);
+            let blocked = publish_acip_sns_projection_signal(&root, &request);
+            assert_eq!(blocked.disposition, PublishDisposition::Blocked);
+            assert_eq!(blocked.failure_class.as_deref(), Some("config_missing"));
+        }
     }
 }
