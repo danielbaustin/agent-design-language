@@ -6,6 +6,14 @@ use serde_json::{json, Value as JsonValue};
 use std::collections::BTreeSet;
 use std::path::{Component, Path};
 
+use crate::model_identity::stable_text_digest_v1;
+use crate::provider_communication::{
+    hosted_model_identity, ollama_model_identity, validate_provider_request,
+    validate_provider_result, ProviderAttemptPolicyV1, ProviderInvocationFinalStatusV1,
+    ProviderInvocationRequestV1, ProviderInvocationResultV1, ProviderKindV1, ProviderRouteV1,
+    RuntimeSurfaceV1,
+};
+
 const ACIP_MESSAGE_SCHEMA_VERSION: &str = "acip.message.v1";
 const ACIP_CONVERSATION_SCHEMA_VERSION: &str = "acip.conversation.v1";
 const ACIP_FIXTURE_SCHEMA_VERSION: &str = "acip.fixture.v1";
@@ -19,6 +27,7 @@ const ACIP_REVIEW_FIXTURE_SCHEMA_VERSION: &str = "acip.review.fixture.v1";
 const ACIP_CODING_INVOCATION_SCHEMA_VERSION: &str = "acip.coding.invocation.v1";
 const ACIP_CODING_OUTCOME_SCHEMA_VERSION: &str = "acip.coding.outcome.v1";
 const ACIP_CODING_FIXTURE_SCHEMA_VERSION: &str = "acip.coding.fixture.v1";
+const ACIP_CODING_PROVIDER_ADAPTER_SCHEMA_VERSION: &str = "acip.coding.provider.adapter.v1";
 const ACIP_TRACE_BUNDLE_SCHEMA_VERSION: &str = "acip.trace.bundle.v1";
 const ACIP_TRACE_FIXTURE_SCHEMA_VERSION: &str = "acip.trace.fixture.v1";
 const ACIP_PROOF_DEMO_SCHEMA_VERSION: &str = "acip.proof.demo.v1";
@@ -499,6 +508,23 @@ pub struct AcipCodingOutcomeV1 {
     pub review_handoff_ref: String,
     pub writer_session_id: String,
     pub writer_model_ref: String,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq, JsonSchema)]
+#[serde(deny_unknown_fields)]
+pub struct AcipCodingProviderBoundaryAdapterV1 {
+    pub schema_version: String,
+    pub invocation_id: String,
+    pub provider_lane: AcipCodingProviderLaneV1,
+    pub execution_mode: AcipCodingExecutionModeV1,
+    pub issue_ref: String,
+    pub task_bundle_ref: String,
+    pub governed_payload_refs: Vec<AcipPayloadRefV1>,
+    pub governed_artifact_refs: Vec<String>,
+    pub primary_output_ref: String,
+    pub validation_summary_ref: String,
+    pub review_handoff_ref: String,
+    pub provider_request: ProviderInvocationRequestV1,
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq, JsonSchema)]
@@ -1158,5 +1184,8 @@ fn validate_repo_relative_ref(value: &str, field: &str) -> Result<()> {
 #[cfg(test)]
 mod tests {
     use super::*;
+    use crate::provider_communication::{
+        ProviderAttemptStatusV1, ProviderAttemptV1, PROVIDER_COMMUNICATION_SCHEMA_VERSION,
+    };
     include!("agent_comms/tests.inc");
 }
