@@ -176,6 +176,8 @@ Expected `v0.91.7` residuals:
   [review/runtime_aws_signal_bridge/RUNTIME_AWS_HEARTBEAT_PUBLISHER_PROOF_4295.md](review/runtime_aws_signal_bridge/RUNTIME_AWS_HEARTBEAT_PUBLISHER_PROOF_4295.md)
 - Runtime ACIP-to-SNS bridge proof:
   [review/runtime_aws_signal_bridge/RUNTIME_ACIP_SNS_BRIDGE_PROOF_4296.md](review/runtime_aws_signal_bridge/RUNTIME_ACIP_SNS_BRIDGE_PROOF_4296.md)
+- Runtime AWS signal bridge mini-sprint closeout:
+  [review/runtime_aws_signal_bridge/RUNTIME_AWS_SIGNAL_BRIDGE_MINI_SPRINT_CLOSEOUT_4325.md](review/runtime_aws_signal_bridge/RUNTIME_AWS_SIGNAL_BRIDGE_MINI_SPRINT_CLOSEOUT_4325.md)
 - Validation-tail A/B index:
   [review/PVF_LONG_VALIDATION_LANE_INDEX_4223.md](review/PVF_LONG_VALIDATION_LANE_INDEX_4223.md)
 
