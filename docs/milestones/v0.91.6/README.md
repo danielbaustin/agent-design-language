@@ -99,10 +99,11 @@ complete its first-tranche `SOR` convergence slice within this milestone.
 
 `#3902` is the tracked route for creating and planning the `agent-logic.ai` AWS
 account. It is not a `v0.92` activation surface and should not expand the
-birthday milestone, but it is part of the `v0.91.6` readiness queue because the
-company AWS account, credits application, account-bound Terraform posture, and
-strategic project hosting boundaries need to be planned before later
-infrastructure work leans on them.
+birthday milestone. The account setup is operationally complete and the
+sanitized decision record is tracked at
+[review/AGENT_LOGIC_AWS_ACCOUNT_DECISION_RECORD_3902.md](review/AGENT_LOGIC_AWS_ACCOUNT_DECISION_RECORD_3902.md).
+AWS Activate review and private credit visibility remain post-close external
+follow-up rather than blockers for `#3902` closeout.
 
 CodeFriend v1 / portable adapter v2 and guilds are also companion planning
 routes for v0.91.6. They are not first-tranche activation proof, but their

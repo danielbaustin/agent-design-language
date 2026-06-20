@@ -118,7 +118,7 @@ work_packages:
 companion_planning:
   - issue: "#3902"
     title: Create agent-logic.ai AWS account
-    outcome: Record account setup, AWS credits/application guidance, account-bound Terraform posture, and hosting/security boundaries without exposing sensitive offer identifiers.
+    outcome: Record account setup, AWS credits/application guidance, account-bound Terraform posture, and hosting/security boundaries without exposing sensitive offer identifiers; setup is complete and AWS Activate review plus private credit visibility remain post-close external follow-up.
     milestone_route: v0.91.6
     activation_surface: false
   - issue: feature-list-route
