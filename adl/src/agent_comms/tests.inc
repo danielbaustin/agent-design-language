@@ -1431,6 +1431,7 @@
         let schema = acip_proof_demo_packet_v1_schema_json().expect("proof schema");
         assert!(schema.contains("AcipProofDemoPacketV1"));
         assert!(schema.contains("\"represented_modes\""));
+        assert!(schema.contains("\"local_review_exchange\""));
 
         let packet = acip_proof_demo_packet_v1();
         validate_acip_proof_demo_packet_v1(&packet).expect("proof packet should validate");
@@ -1441,6 +1442,25 @@
                 AcipIntentV1::Negotiation,
                 AcipIntentV1::CodingRequest
             ]
+        );
+        assert_eq!(
+            packet.local_review_exchange.invocation_event.status,
+            AcipInvocationStatusV1::Completed
+        );
+        assert_eq!(
+            packet.local_coding_exchange.invocation_event.status,
+            AcipInvocationStatusV1::Completed
+        );
+        assert_eq!(
+            packet.denied_route_exchange.invocation_event.status,
+            AcipInvocationStatusV1::Refused
+        );
+        assert!(
+            packet
+                .local_coding_exchange
+                .invocation_contract
+                .input_refs
+                .contains(&packet.local_review_exchange.invocation_event.output_refs[0])
         );
     }
 
@@ -1471,6 +1491,15 @@
         assert!(linkage_error.to_string().contains(
             "must bind coding invocation causal_message_id to the final coding_request message"
         ));
+
+        let mut packet = acip_proof_demo_packet_v1();
+        packet.local_coding_exchange.request_message.content =
+            "Drifted execution request body".to_string();
+        let executed_message_error = validate_acip_proof_demo_packet_v1(&packet)
+            .expect_err("executed local coding exchange must reuse the recorded coding_request");
+        assert!(executed_message_error
+            .to_string()
+            .contains("local_coding_exchange must execute the exact final coding_request message"));
 
         let mut packet = acip_proof_demo_packet_v1();
         packet.public_visible_artifact_refs =
@@ -1505,6 +1534,58 @@
         assert!(non_proving_error
             .to_string()
             .contains("must carry explicit non_proving_statements"));
+
+        let mut packet = acip_proof_demo_packet_v1();
+        let review_output_ref = packet.local_review_exchange.invocation_event.output_refs[0].clone();
+        let drifted_review_output_ref = "runtime/comms/review/alternate_review_report.json".to_string();
+        packet
+            .local_coding_exchange
+            .invocation_contract
+            .input_refs
+            .retain(|reference| reference != &review_output_ref);
+        packet
+            .local_coding_exchange
+            .invocation_contract
+            .input_refs
+            .insert(0, drifted_review_output_ref.clone());
+        packet.coding_invocation.invocation = packet.local_coding_exchange.invocation_contract.clone();
+        packet.local_coding_exchange.invocation_event.input_refs =
+            packet.local_coding_exchange.invocation_contract.input_refs.clone();
+        packet.local_coding_exchange.request_message.payload_refs[0].payload_ref =
+            drifted_review_output_ref;
+        let handoff_error = validate_acip_proof_demo_packet_v1(&packet)
+            .expect_err("coding exchange must consume review evidence");
+        assert!(handoff_error
+            .to_string()
+            .contains("local_coding_exchange must consume local_review_exchange evidence"));
+
+        let mut packet = acip_proof_demo_packet_v1();
+        let carrier = sample_acip_local_carrier_v1();
+        let mut caller_denied_contract = packet.coding_invocation.invocation.clone();
+        caller_denied_contract.route_class = AcipRouteClassV1::LocalOnly;
+        caller_denied_contract.caller_class = AcipCallerClassV1::ExternalAgent;
+        let mut caller_denied_request = sample_local_review_request_message(&caller_denied_contract);
+        caller_denied_request.authority_scope = Some(caller_denied_contract.authority_scope.clone());
+        packet.denied_route_exchange = execute_acip_local_invocation_round_trip(
+            &carrier,
+            &caller_denied_request,
+            &caller_denied_contract,
+        )
+        .expect("caller-denied exchange should remain locally valid");
+        let denial_error = validate_acip_proof_demo_packet_v1(&packet)
+            .expect_err("denied route exchange must remain cross-boundary route denial");
+        assert!(denial_error
+            .to_string()
+            .contains("denied_route_exchange must prove a cross_boundary_deferred route denial"));
+
+        let mut packet = acip_proof_demo_packet_v1();
+        packet.denied_route_exchange.request_message.content =
+            "Drifted denied request body".to_string();
+        let denied_request_error = validate_acip_proof_demo_packet_v1(&packet)
+            .expect_err("denied route exchange must reuse the governed coding request");
+        assert!(denied_request_error
+            .to_string()
+            .contains("denied_route_exchange must reuse the governed coding_request message"));
     }
 
     #[test]
