@@ -1598,6 +1598,28 @@
     fn acip_local_carrier_refuses_unauthorized_caller_and_route_classes() {
         let carrier = sample_acip_local_carrier_v1();
 
+        let mut intent_denied = sample_invocation_contract();
+        intent_denied.intent = AcipIntentV1::CodingRequest;
+        intent_denied.authority_scope.allowed_actions = vec![
+            "invoke".to_string(),
+            "share_artifact".to_string(),
+        ];
+        intent_denied.authority_scope.authority_basis_refs =
+            vec!["runtime/comms/authority/invocation_basis.json".to_string()];
+        let intent_exchange = execute_acip_local_invocation_round_trip(
+            &carrier,
+            &sample_local_review_request_message(&intent_denied),
+            &intent_denied,
+        )
+        .expect("unsupported route intent should fail closed with refusal");
+        assert_eq!(intent_exchange.invocation_event.status, AcipInvocationStatusV1::Refused);
+        assert_eq!(
+            intent_exchange.invocation_event.refusal_code.as_deref(),
+            Some("intent_denied")
+        );
+        validate_acip_local_invocation_exchange_v1(&intent_exchange)
+            .expect("intent denial exchange should validate");
+
         let mut caller_denied = sample_invocation_contract();
         caller_denied.caller_class = AcipCallerClassV1::ExternalAgent;
         let caller_exchange = execute_acip_local_invocation_round_trip(

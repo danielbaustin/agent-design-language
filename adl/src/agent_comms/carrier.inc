@@ -219,7 +219,23 @@ pub fn validate_acip_local_invocation_exchange_v1(
             "local exchange response_message.artifact_refs must match invocation_event.output_refs"
         ));
     }
-    ensure_local_route_supports_contract(&exchange.carrier, &exchange.invocation_contract)?;
+    let route =
+        ensure_local_target_route_exists(&exchange.carrier, &exchange.invocation_contract.target)?;
+    match exchange.invocation_event.status {
+        AcipInvocationStatusV1::Completed | AcipInvocationStatusV1::Partial => {
+            ensure_local_route_supports_contract(route, &exchange.invocation_contract)?;
+        }
+        AcipInvocationStatusV1::Refused => {
+            validate_local_refusal_anchor(
+                route,
+                &exchange.invocation_contract,
+                &exchange.invocation_event,
+            )?;
+        }
+        AcipInvocationStatusV1::Requested | AcipInvocationStatusV1::Failed => {
+            ensure_local_route_supports_contract(route, &exchange.invocation_contract)?;
+        }
+    }
 
     Ok(())
 }
@@ -237,7 +253,7 @@ pub fn execute_acip_local_invocation_round_trip(
         invocation_contract,
         "local ACIP carrier",
     )?;
-    let route = ensure_local_route_supports_contract(carrier, invocation_contract)?;
+    let route = ensure_local_target_route_exists(carrier, &invocation_contract.target)?;
     let invocation_event = match authorize_local_invocation(route, invocation_contract) {
         Ok(route) => materialize_local_invocation_event(route, invocation_contract)?,
         Err(failure) => materialize_local_refusal_event(route, invocation_contract, &failure),
@@ -495,15 +511,21 @@ fn validate_request_contract_alignment(
     Ok(())
 }
 
-fn ensure_local_route_supports_contract<'a>(
+fn ensure_local_target_route_exists<'a>(
     carrier: &'a AcipLocalCarrierV1,
-    invocation_contract: &AcipInvocationContractV1,
+    target: &AcipAddressV1,
 ) -> Result<&'a AcipLocalRouteV1> {
-    let route = carrier
+    carrier
         .routes
         .iter()
-        .find(|route| route.agent == invocation_contract.target)
-        .ok_or_else(|| anyhow!("local ACIP carrier has no route for '{}'", invocation_contract.target.id))?;
+        .find(|route| route.agent == *target)
+        .ok_or_else(|| anyhow!("local ACIP carrier has no route for '{}'", target.id))
+}
+
+fn ensure_local_route_supports_contract<'a>(
+    route: &'a AcipLocalRouteV1,
+    invocation_contract: &AcipInvocationContractV1,
+) -> Result<&'a AcipLocalRouteV1> {
 
     if !route.supported_intents.contains(&invocation_contract.intent) {
         return Err(anyhow!(
@@ -526,19 +548,19 @@ fn authorize_local_invocation<'a>(
     route: &'a AcipLocalRouteV1,
     invocation_contract: &AcipInvocationContractV1,
 ) -> Result<&'a AcipLocalRouteV1, LocalAuthorizationFailure> {
+    if !route.supported_intents.contains(&invocation_contract.intent) {
+        return Err(LocalAuthorizationFailure {
+            refusal_code: "intent_denied",
+            stop_reason: "route_intent_not_authorized",
+        });
+    }
+
     if invocation_contract.route_class != AcipRouteClassV1::LocalOnly
         || route.route_class != invocation_contract.route_class
     {
         return Err(LocalAuthorizationFailure {
             refusal_code: "route_class_denied",
             stop_reason: "route_class_not_authorized",
-        });
-    }
-
-    if !route.supported_intents.contains(&invocation_contract.intent) {
-        return Err(LocalAuthorizationFailure {
-            refusal_code: "intent_denied",
-            stop_reason: "route_intent_not_authorized",
         });
     }
 
@@ -553,4 +575,65 @@ fn authorize_local_invocation<'a>(
     }
 
     Ok(route)
+}
+
+fn validate_local_refusal_anchor(
+    route: &AcipLocalRouteV1,
+    invocation_contract: &AcipInvocationContractV1,
+    invocation_event: &AcipInvocationEventV1,
+) -> Result<()> {
+    match invocation_event.refusal_code.as_deref() {
+        Some("intent_denied") => {
+            if route.supported_intents.contains(&invocation_contract.intent) {
+                return Err(anyhow!(
+                    "refused local exchange with refusal_code 'intent_denied' must bind to an unsupported route intent"
+                ));
+            }
+        }
+        Some("route_class_denied") => {
+            if !route.supported_intents.contains(&invocation_contract.intent) {
+                return Err(anyhow!(
+                    "refused local exchange with refusal_code 'route_class_denied' must preserve a supported route intent"
+                ));
+            }
+            if invocation_contract.route_class == AcipRouteClassV1::LocalOnly
+                && route.route_class == invocation_contract.route_class
+            {
+                return Err(anyhow!(
+                    "refused local exchange with refusal_code 'route_class_denied' must bind to a real route-class mismatch"
+                ));
+            }
+        }
+        Some("caller_class_denied") => {
+            if !route.supported_intents.contains(&invocation_contract.intent) {
+                return Err(anyhow!(
+                    "refused local exchange with refusal_code 'caller_class_denied' must preserve a supported route intent"
+                ));
+            }
+            if invocation_contract.route_class != AcipRouteClassV1::LocalOnly
+                || route.route_class != invocation_contract.route_class
+            {
+                return Err(anyhow!(
+                    "refused local exchange with refusal_code 'caller_class_denied' must bind to a route-class-authorized path"
+                ));
+            }
+            if route
+                .allowed_caller_classes
+                .contains(&invocation_contract.caller_class)
+            {
+                return Err(anyhow!(
+                    "refused local exchange with refusal_code 'caller_class_denied' must bind to a real caller-class denial"
+                ));
+            }
+        }
+        Some(other) => {
+            return Err(anyhow!(
+                "refused local exchange uses unsupported refusal_code '{}'",
+                other
+            ));
+        }
+        None => return Err(anyhow!("refused local exchange must preserve refusal_code")),
+    }
+
+    Ok(())
 }
