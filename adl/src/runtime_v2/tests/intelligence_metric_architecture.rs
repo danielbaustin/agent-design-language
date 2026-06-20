@@ -147,7 +147,7 @@ fn runtime_v2_intelligence_metric_architecture_write_to_path_materializes_fixtur
     );
 }
 
-#[cfg(feature = "slow-proof-tests")]
+#[cfg(any(feature = "slow-proof-tests", feature = "slow-proof-runtime"))]
 #[test]
 fn runtime_v2_intelligence_metric_architecture_write_to_root_materializes_fixture() {
     let packet = runtime_v2_intelligence_metric_architecture_contract()

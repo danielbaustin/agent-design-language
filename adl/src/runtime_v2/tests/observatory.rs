@@ -1,7 +1,7 @@
-#[cfg(feature = "slow-proof-tests")]
+#[cfg(any(feature = "slow-proof-tests", feature = "slow-proof-observatory"))]
 use super::common::unique_temp_path;
 use super::*;
-#[cfg(feature = "slow-proof-tests")]
+#[cfg(any(feature = "slow-proof-tests", feature = "slow-proof-observatory"))]
 use std::fs;
 
 #[test]
@@ -56,7 +56,7 @@ fn runtime_v2_csm_observatory_contract_is_stable() {
         .contains("runtime_v2/agent_lifecycle/state_contract.json"));
 }
 
-#[cfg(feature = "slow-proof-tests")]
+#[cfg(any(feature = "slow-proof-tests", feature = "slow-proof-observatory"))]
 #[test]
 fn runtime_v2_csm_observatory_writes_without_path_leakage() {
     let temp_root = unique_temp_path("csm-observatory");

@@ -310,7 +310,7 @@ fn runtime_v2_citizen_state_substrate_write_to_path_materializes_fixture() {
     std::fs::remove_dir_all(root).expect("cleanup citizen-state substrate temp root");
 }
 
-#[cfg(feature = "slow-proof-tests")]
+#[cfg(any(feature = "slow-proof-tests", feature = "slow-proof-runtime"))]
 #[test]
 fn runtime_v2_citizen_state_substrate_write_to_root_materializes_fixture() {
     let packet =

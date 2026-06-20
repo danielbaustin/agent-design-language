@@ -21,7 +21,7 @@ fn runtime_v2_resource_stewardship_bridge_negative_matrix_rejects_drift() {
 }
 
 #[test]
-#[cfg(feature = "slow-proof-tests")]
+#[cfg(any(feature = "slow-proof-tests", feature = "slow-proof-runtime"))]
 fn runtime_v2_resource_stewardship_bridge_golden_and_materialization_proofs_are_stable() {
     resource_stewardship_bridge_matches_golden_fixture();
     resource_stewardship_bridge_write_to_root_materializes_fixture();
@@ -43,7 +43,7 @@ fn resource_stewardship_bridge_is_stable() {
     assert_eq!(artifact.bid_resource_estimates.len(), 2);
 }
 
-#[cfg(feature = "slow-proof-tests")]
+#[cfg(any(feature = "slow-proof-tests", feature = "slow-proof-runtime"))]
 fn resource_stewardship_bridge_matches_golden_fixture() {
     let artifact = resource_stewardship_bridge_artifact();
     let json = String::from_utf8(
@@ -174,7 +174,7 @@ fn resource_stewardship_bridge_rejects_policy_and_authority_drift() {
         .contains("must preserve overlapping bid resource claim"));
 }
 
-#[cfg(feature = "slow-proof-tests")]
+#[cfg(any(feature = "slow-proof-tests", feature = "slow-proof-runtime"))]
 fn resource_stewardship_bridge_write_to_root_materializes_fixture() {
     let artifact = resource_stewardship_bridge_artifact();
     let fixture_refresh_root = std::env::var("ADL_RUNTIME_V2_WRITE_ROOT").ok();

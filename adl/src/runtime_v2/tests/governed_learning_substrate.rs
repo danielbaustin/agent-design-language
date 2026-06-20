@@ -466,7 +466,7 @@ fn runtime_v2_governed_learning_substrate_write_to_path_materializes_fixture() {
     );
 }
 
-#[cfg(feature = "slow-proof-tests")]
+#[cfg(any(feature = "slow-proof-tests", feature = "slow-proof-runtime"))]
 #[test]
 fn runtime_v2_governed_learning_substrate_write_to_root_materializes_fixture() {
     let packet =

@@ -118,7 +118,7 @@ fn runtime_v2_contract_schema_requires_named_negative_case_membership() {
         .contains("must contain the required case-id set"));
 }
 
-#[cfg(feature = "slow-proof-tests")]
+#[cfg(any(feature = "slow-proof-tests", feature = "slow-proof-runtime"))]
 #[test]
 fn runtime_v2_contract_schema_write_to_root_materializes_fixtures() {
     let artifacts = runtime_v2_contract_schema_contract().expect("contract schema artifacts");

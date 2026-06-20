@@ -1292,9 +1292,26 @@ pub(super) fn select_finish_validation_plan(paths_csv: &str) -> Result<FinishVal
         }
         if paths
             .iter()
+            .any(|path| finish_path_needs_slow_proof_family_focused_validation(path))
+        {
+            mode = FinishValidationMode::LargerBinaryFocused;
+            push_finish_validation_command(
+                &mut commands,
+                "cargo fmt --manifest-path adl/Cargo.toml --all --check",
+            );
+            commands.push("bash adl/tools/test_slow_proof_lane_contract.sh".to_string());
+        }
+        if paths
+            .iter()
             .any(|path| finish_path_needs_validation_manager_focused_validation(path))
         {
             commands.push("bash adl/tools/test_validation_manager.sh".to_string());
+        }
+        if paths
+            .iter()
+            .any(|path| finish_path_needs_validation_inventory_focused_validation(path))
+        {
+            commands.push("bash adl/tools/test_validation_inventory.sh".to_string());
         }
         if paths
             .iter()
@@ -1524,6 +1541,9 @@ fn finish_path_is_small_binary_focused(path: &str) -> bool {
             | "adl/tools/validation_manager.py"
             | "adl/tools/validation_manager.sh"
             | "adl/tools/test_validation_manager.sh"
+            | "adl/tools/validation_inventory.py"
+            | "adl/tools/validation_inventory.sh"
+            | "adl/tools/test_validation_inventory.sh"
             | "adl/tools/test_install_adl_operational_skills.sh"
             | "adl/tools/test_sprint_conductor_helpers.sh"
     ) || finish_path_needs_pr_finish_rust_focused_validation(trimmed)
@@ -1601,6 +1621,9 @@ fn finish_path_is_larger_binary_focused(path: &str) -> bool {
             | "adl/tools/test_control_plane_observability.sh"
             | "adl/tools/test_adl_runtime_compatibility.sh"
             | "adl/tools/test_adl_review_compatibility.sh"
+            | "adl/tools/run_slow_proof_family.sh"
+            | "adl/tools/test_slow_proof_lane_contract.sh"
+            | "adl/config/slow_proof_families.v0.91.6.json"
             | "adl/tools/check_repo_quality_staleness.py"
             | "adl/tools/test_check_repo_quality_staleness.sh"
             | "adl/tools/run_v0916_agent_suitability_panel.py"
@@ -1626,12 +1649,15 @@ fn finish_path_is_larger_binary_focused(path: &str) -> bool {
             | "adl/tools/validate_v0915_remote_gemma_watcher_probe.py"
             | "demos/v0.87.1/codex_ollama_operational_skills_demo.md"
             | "demos/v0.89/gemma4_issue_clerk_demo.md"
+            | "adl/Cargo.toml"
     ) || trimmed.starts_with("adl/src/cli/pr_cmd/")
         || trimmed.starts_with("adl/src/cli/pr_cmd_cards/")
         || trimmed.starts_with("adl/src/cli/tests/pr_cmd_inline/lifecycle/")
         || trimmed.starts_with("adl/src/agent_comms/")
         || trimmed.starts_with("adl/src/csdlc_prompt_editor/")
         || trimmed.starts_with("adl/src/cli/run_artifacts_types/")
+        || trimmed == "adl/src/runtime_v2/tests.rs"
+        || trimmed.starts_with("adl/src/runtime_v2/tests/")
         || trimmed.starts_with("adl/tests/fixtures/scheduler/")
         || trimmed.starts_with("docs/milestones/v0.91.4/review/merge_readiness/")
         || trimmed.starts_with("adl/src/cli/tests/pr_cmd_inline/finish/")
@@ -1833,6 +1859,18 @@ fn finish_path_needs_validation_selector_focused_validation(path: &str) -> bool 
     )
 }
 
+fn finish_path_needs_slow_proof_family_focused_validation(path: &str) -> bool {
+    let trimmed = path.trim().trim_matches('/');
+    matches!(
+        trimmed,
+        "adl/Cargo.toml"
+            | "adl/config/slow_proof_families.v0.91.6.json"
+            | "adl/tools/run_slow_proof_family.sh"
+            | "adl/tools/test_slow_proof_lane_contract.sh"
+    ) || trimmed == "adl/src/runtime_v2/tests.rs"
+        || trimmed.starts_with("adl/src/runtime_v2/tests/")
+}
+
 fn finish_path_needs_validation_manager_focused_validation(path: &str) -> bool {
     let trimmed = path.trim().trim_matches('/');
     matches!(
@@ -1840,6 +1878,16 @@ fn finish_path_needs_validation_manager_focused_validation(path: &str) -> bool {
         "adl/tools/validation_manager.py"
             | "adl/tools/validation_manager.sh"
             | "adl/tools/test_validation_manager.sh"
+    )
+}
+
+fn finish_path_needs_validation_inventory_focused_validation(path: &str) -> bool {
+    let trimmed = path.trim().trim_matches('/');
+    matches!(
+        trimmed,
+        "adl/tools/validation_inventory.py"
+            | "adl/tools/validation_inventory.sh"
+            | "adl/tools/test_validation_inventory.sh"
     )
 }
 
@@ -2267,6 +2315,14 @@ pub(super) fn run_finish_validation_rust(
                 }
                 "bash adl/tools/test_validation_manager.sh" => {
                     let script = repo_root.join("adl/tools/test_validation_manager.sh");
+                    run_finish_validation_status("bash", &[path_str(&script)?])?;
+                }
+                "bash adl/tools/test_validation_inventory.sh" => {
+                    let script = repo_root.join("adl/tools/test_validation_inventory.sh");
+                    run_finish_validation_status("bash", &[path_str(&script)?])?;
+                }
+                "bash adl/tools/test_slow_proof_lane_contract.sh" => {
+                    let script = repo_root.join("adl/tools/test_slow_proof_lane_contract.sh");
                     run_finish_validation_status("bash", &[path_str(&script)?])?;
                 }
                 "bash adl/tools/test_pr_small_binary_delegation.sh" => {

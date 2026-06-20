@@ -20,7 +20,7 @@ fn runtime_v2_private_state_observatory_validation_matrix_rejects_leakage() {
     runtime_v2_private_state_observatory_rejects_public_overexposure_and_report_drift();
 }
 
-#[cfg(feature = "slow-proof-tests")]
+#[cfg(any(feature = "slow-proof-tests", feature = "slow-proof-private-state"))]
 #[test]
 fn runtime_v2_private_state_observatory_materialization_proof_is_stable() {
     runtime_v2_private_state_observatory_write_to_root_materializes_fixtures();
@@ -227,7 +227,7 @@ fn runtime_v2_private_state_observatory_rejects_public_overexposure_and_report_d
     .contains("must not claim raw private-state inspection"));
 }
 
-#[cfg(feature = "slow-proof-tests")]
+#[cfg(any(feature = "slow-proof-tests", feature = "slow-proof-private-state"))]
 fn runtime_v2_private_state_observatory_write_to_root_materializes_fixtures() {
     let artifacts = runtime_v2_private_state_observatory_contract().expect("observatory artifacts");
     let root = common::unique_temp_path("private-state-observatory-write");

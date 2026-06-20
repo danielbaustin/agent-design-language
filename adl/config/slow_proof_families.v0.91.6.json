@@ -1,0 +1,45 @@
+{
+  "schema_version": "adl.slow_proof_families.v1",
+  "umbrella_feature": "slow-proof-tests",
+  "families": [
+    {
+      "id": "runtime",
+      "feature": "slow-proof-runtime",
+      "proof_role": "slow_proof",
+      "description": "Heavy runtime and governance proof materialization surfaces.",
+      "sample_tests": [
+        "runtime_v2_csm_governed_episode_writes_without_path_leakage",
+        "runtime_v2_theory_of_mind_foundation_write_to_root_materializes_fixture"
+      ]
+    },
+    {
+      "id": "private_state",
+      "feature": "slow-proof-private-state",
+      "proof_role": "slow_proof",
+      "description": "Private-state materialization, lineage, and sealed-state proof surfaces.",
+      "sample_tests": [
+        "runtime_v2_private_state_lineage_write_to_root_materializes_fixtures",
+        "runtime_v2_private_state_observatory_materialization_proof_is_stable"
+      ]
+    },
+    {
+      "id": "observatory",
+      "feature": "slow-proof-observatory",
+      "proof_role": "slow_proof",
+      "description": "Observatory-facing visibility and reporting proof surfaces.",
+      "sample_tests": [
+        "runtime_v2_csm_observatory_writes_without_path_leakage"
+      ]
+    },
+    {
+      "id": "security",
+      "feature": "slow-proof-security",
+      "proof_role": "slow_proof",
+      "description": "Security, access control, boundary refusal, and hardening proof surfaces.",
+      "sample_tests": [
+        "runtime_v2_security_boundary_proof_writes_without_path_leakage",
+        "runtime_v2_access_control_write_to_root_materializes_fixtures"
+      ]
+    }
+  ]
+}

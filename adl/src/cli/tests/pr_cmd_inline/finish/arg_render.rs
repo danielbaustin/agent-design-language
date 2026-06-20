@@ -1724,6 +1724,68 @@ fn finish_validation_profile_classifies_validation_manager_slice_as_small_binary
 }
 
 #[test]
+fn finish_validation_profile_classifies_validation_inventory_slice_as_small_binary_focused() {
+    let plan = select_finish_validation_plan_for_finish(
+        4213,
+        ".",
+        &[
+            "adl/tools/validation_inventory.py".to_string(),
+            "adl/tools/validation_inventory.sh".to_string(),
+            "adl/tools/test_validation_inventory.sh".to_string(),
+        ],
+    )
+    .expect("validation inventory plan");
+
+    assert_eq!(plan.mode, FinishValidationMode::SmallBinaryFocused);
+    assert!(plan
+        .commands
+        .contains(&"bash adl/tools/test_validation_inventory.sh".to_string()));
+    assert!(!plan
+        .commands
+        .iter()
+        .any(|command| command.contains("cargo test --manifest-path adl/Cargo.toml --bin adl")));
+}
+
+#[test]
+fn finish_validation_profile_classifies_slow_proof_family_split_slice() {
+    let plan = select_finish_validation_plan_for_finish(
+        4219,
+        ".",
+        &[
+            "adl/Cargo.toml".to_string(),
+            "adl/config/slow_proof_families.v0.91.6.json".to_string(),
+            "adl/src/runtime_v2/tests.rs".to_string(),
+            "adl/src/runtime_v2/tests/private_state_observatory.rs".to_string(),
+            "adl/tools/run_slow_proof_family.sh".to_string(),
+            "adl/tools/test_slow_proof_lane_contract.sh".to_string(),
+            "adl/tools/validation_inventory.py".to_string(),
+            "adl/tools/test_validation_inventory.sh".to_string(),
+            "adl/tools/validation_manager.py".to_string(),
+            "adl/tools/test_validation_manager.sh".to_string(),
+            "adl/tools/ci_path_policy.sh".to_string(),
+        ],
+    )
+    .expect("slow-proof family split plan");
+
+    assert_eq!(plan.mode, FinishValidationMode::LargerBinaryFocused);
+    assert!(plan
+        .commands
+        .contains(&"cargo fmt --manifest-path adl/Cargo.toml --all --check".to_string()));
+    assert!(plan
+        .commands
+        .contains(&"bash adl/tools/test_slow_proof_lane_contract.sh".to_string()));
+    assert!(plan
+        .commands
+        .contains(&"bash adl/tools/test_validation_inventory.sh".to_string()));
+    assert!(plan
+        .commands
+        .contains(&"bash adl/tools/test_validation_manager.sh".to_string()));
+    assert!(plan
+        .commands
+        .contains(&"bash adl/tools/test_ci_path_policy.sh".to_string()));
+}
+
+#[test]
 fn finish_restores_missing_canonical_cards_from_slug_drifted_issue_bundle() {
     let repo = unique_temp_dir("adl-pr-finish-slug-drift");
     let issue_ref = IssueRef::new(
@@ -1991,6 +2053,7 @@ fn finish_helper_paths_run_validation_selector_validation() {
 fn finish_helper_paths_run_validation_manager_validation() {
     let _guard = env_lock();
     let temp = unique_temp_dir("adl-pr-finish-validation-manager-validation");
+
     let repo = temp.join("repo");
     fs::create_dir_all(repo.join("adl/tools")).expect("adl tools dir");
     fs::write(
@@ -2048,6 +2111,69 @@ fn finish_helper_paths_run_validation_manager_validation() {
 
     let focused_calls = fs::read_to_string(&focused_log).expect("focused log");
     assert!(focused_calls.contains("validation-manager"));
+}
+
+#[test]
+fn finish_helper_paths_run_validation_inventory_validation() {
+    let _guard = env_lock();
+    let temp = unique_temp_dir("adl-pr-finish-validation-inventory-validation");
+    let repo = temp.join("repo");
+    fs::create_dir_all(repo.join("adl/tools")).expect("adl tools dir");
+    fs::write(
+        repo.join("adl/Cargo.toml"),
+        "[package]\nname='adl'\nversion='0.1.0'\n",
+    )
+    .expect("cargo toml");
+    write_executable(
+        &repo.join("adl/tools/check_no_tracked_adl_issue_record_residue.sh"),
+        "#!/usr/bin/env bash\nset -euo pipefail\nexit 0\n",
+    );
+    write_executable(
+        &repo.join("adl/tools/test_validation_inventory.sh"),
+        "#!/usr/bin/env bash\nset -euo pipefail\nprintf '%s\\n' validation-inventory >> \"$FOCUSED_LOG\"\n",
+    );
+    init_git_repo(&repo);
+
+    let bin_dir = temp.join("bin");
+    fs::create_dir_all(&bin_dir).expect("bin dir");
+    let cargo_log = temp.join("cargo.log");
+    let focused_log = temp.join("focused.log");
+    write_executable(
+        &bin_dir.join("cargo"),
+        &format!(
+            "#!/usr/bin/env bash\nset -euo pipefail\nprintf '%s\\n' \"$*\" >> '{}'\nexit 0\n",
+            cargo_log.display()
+        ),
+    );
+    let old_path = env::var("PATH").unwrap_or_default();
+    let old_focused_log = env::var("FOCUSED_LOG").ok();
+    unsafe {
+        env::set_var("PATH", format!("{}:{}", bin_dir.display(), old_path));
+        env::set_var("FOCUSED_LOG", &focused_log);
+    }
+
+    let plan = select_finish_validation_plan(
+        "adl/tools/validation_inventory.py,adl/tools/validation_inventory.sh,adl/tools/test_validation_inventory.sh",
+    )
+    .expect("validation inventory plan");
+    assert_eq!(plan.mode, FinishValidationMode::SmallBinaryFocused);
+    run_finish_validation_rust(&repo, &plan).expect("validation inventory validation");
+
+    unsafe {
+        env::set_var("PATH", old_path);
+    }
+    match old_focused_log {
+        Some(value) => unsafe { env::set_var("FOCUSED_LOG", value) },
+        None => unsafe { env::remove_var("FOCUSED_LOG") },
+    }
+
+    assert!(
+        !cargo_log.exists(),
+        "validation inventory focused validation should not invoke cargo"
+    );
+
+    let focused_calls = fs::read_to_string(&focused_log).expect("focused log");
+    assert!(focused_calls.contains("validation-inventory"));
 }
 
 #[test]

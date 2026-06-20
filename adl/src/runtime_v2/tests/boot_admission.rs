@@ -1,7 +1,7 @@
-#[cfg(feature = "slow-proof-tests")]
+#[cfg(any(feature = "slow-proof-tests", feature = "slow-proof-security"))]
 use super::common::unique_temp_path;
 use super::*;
-#[cfg(feature = "slow-proof-tests")]
+#[cfg(any(feature = "slow-proof-tests", feature = "slow-proof-security"))]
 use std::fs;
 
 #[test]
@@ -84,7 +84,7 @@ fn runtime_v2_csm_boot_admission_contract_matches_golden_fixtures() {
     );
 }
 
-#[cfg(feature = "slow-proof-tests")]
+#[cfg(any(feature = "slow-proof-tests", feature = "slow-proof-security"))]
 #[test]
 fn runtime_v2_csm_boot_admission_writes_without_path_leakage() {
     let temp_root = unique_temp_path("csm-boot-admission");
