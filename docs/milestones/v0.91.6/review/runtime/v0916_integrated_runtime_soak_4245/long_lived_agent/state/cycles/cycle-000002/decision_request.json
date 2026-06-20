@@ -1,0 +1,18 @@
+{
+  "agent_context_ref": "../../agent_spec.locked.json",
+  "agent_instance_id": "v0916-runtime-soak",
+  "allowed_actions": [
+    "record_cycle",
+    "explain"
+  ],
+  "cycle_id": "cycle-000002",
+  "forbidden_actions": [
+    "execute_order",
+    "connect_broker",
+    "personalized_advice"
+  ],
+  "memory_refs": [],
+  "not_financial_advice": true,
+  "observations_ref": "observations.json",
+  "schema": "adl.long_lived_agent_decision_request.v1"
+}

@@ -62,11 +62,10 @@ static CREATE_POST_BOOTSTRAP_HOOK: OnceLock<Mutex<Option<CreatePostBootstrapHook
 use self::finish_support::write_temp_markdown;
 #[cfg(test)]
 use self::finish_support::{
-    ensure_issue_surfaces_are_local_only, ensure_output_card_is_started,
-    extra_pr_body_looks_like_issue_template, extract_markdown_section, finish_changed_paths,
-    finish_inputs_fingerprint, issue_bundle_issue_number_from_repo_relative, render_pr_body,
-    run_finish_validation_rust, select_finish_validation_plan, stage_selected_paths_rust,
-    staged_diff_is_empty, staged_gitignore_change_present, tracked_issue_surface_paths,
+    ensure_issue_surfaces_are_local_only, ensure_output_card_is_started, finish_changed_paths,
+    render_pr_body, run_finish_validation_rust, select_finish_validation_plan,
+    stage_selected_paths_rust, staged_diff_is_empty, staged_gitignore_change_present,
+    tracked_issue_surface_paths,
 };
 use self::finish_support::{ensure_nonempty_file_path, validate_completed_sor};
 #[cfg(test)]

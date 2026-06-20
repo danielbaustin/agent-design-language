@@ -1,0 +1,66 @@
+{
+  "result": "local_runtime_busy: bulkhead saturated for runtime_soak_provider with in_flight=1",
+  "state": {
+    "fault_domain": "runtime_soak_provider",
+    "in_flight": 1,
+    "policy_id": "runtime.soak.bulkhead.policy",
+    "schema_version": "adl.resilience.bulkhead_state.v1"
+  },
+  "trace": {
+    "decision_summary": "runtime.soak.bulkhead_probe: bulkhead saturated for fault domain 'runtime_soak_provider' at 1/1 in-flight",
+    "fault": {
+      "disposition": "retryable",
+      "fault_class": "local_runtime_busy",
+      "retryable": true,
+      "schema_version": "adl.resilience.fault_classification.v1",
+      "summary": "local_runtime_busy: bulkhead saturated for runtime_soak_provider with in_flight=1",
+      "surface": "provider"
+    },
+    "fault_domain": "runtime_soak_provider",
+    "final_status": "saturated",
+    "in_flight_after": 1,
+    "in_flight_before": 1,
+    "in_flight_during_execution": 1,
+    "max_concurrency": 1,
+    "max_queue_depth": 0,
+    "operation_executed": false,
+    "policy_id": "runtime.soak.bulkhead.policy",
+    "recovery_artifact": {
+      "artifact_id": "runtime.soak.bulkhead.policy:bulkhead:runtime.soak.bulkhead_probe:2",
+      "disposition": "retry_allowed",
+      "evidence_refs": [
+        "runtime.soak.bulkhead.policy",
+        "runtime_soak_provider"
+      ],
+      "next_action": "preserve isolation for fault domain 'runtime_soak_provider' and retry only after in-flight work drains or operator policy changes",
+      "schema_version": "adl.resilience.recovery_artifact.v1",
+      "surface": "provider",
+      "triggering_fault": {
+        "disposition": "retryable",
+        "fault_class": "local_runtime_busy",
+        "retryable": true,
+        "schema_version": "adl.resilience.fault_classification.v1",
+        "summary": "local_runtime_busy: bulkhead saturated for runtime_soak_provider with in_flight=1",
+        "surface": "provider"
+      }
+    },
+    "schema_version": "adl.resilience.bulkhead_execution_trace.v1",
+    "surface": "provider",
+    "telemetry_event": {
+      "decision_summary": "runtime.soak.bulkhead_probe: bulkhead saturated for fault domain 'runtime_soak_provider' at 1/1 in-flight",
+      "event_id": "runtime.soak.bulkhead.policy:bulkhead:runtime.soak.bulkhead_probe:1",
+      "event_kind": "bulkhead_decision",
+      "fault": {
+        "disposition": "retryable",
+        "fault_class": "local_runtime_busy",
+        "retryable": true,
+        "schema_version": "adl.resilience.fault_classification.v1",
+        "summary": "local_runtime_busy: bulkhead saturated for runtime_soak_provider with in_flight=1",
+        "surface": "provider"
+      },
+      "policy_ref": "runtime.soak.bulkhead.policy",
+      "schema_version": "adl.resilience.telemetry_event.v1",
+      "surface": "provider"
+    }
+  }
+}

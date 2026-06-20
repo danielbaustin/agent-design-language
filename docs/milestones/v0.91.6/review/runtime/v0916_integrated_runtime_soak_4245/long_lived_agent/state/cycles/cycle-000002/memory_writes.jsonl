@@ -1,0 +1,1 @@
+{"cycle_id":"cycle-000002","memory_id":"mem-000002","schema":"adl.long_lived_agent_memory_write.v1","source_refs":["decision_result.json","cycle_manifest.json"],"summary":"Recorded a bounded cycle artifact bundle.","tags":["agent:v0916-runtime-soak","cycle:cycle-000002","long-lived-agent","paper-only"],"write_policy":"append_only"}

@@ -1,0 +1,6 @@
+{
+  "error_code": "REMOTE_TIMEOUT",
+  "error_summary": "remote execution request timed out against a hanging local endpoint",
+  "retryability": true,
+  "stable_failure_kind": "timeout"
+}

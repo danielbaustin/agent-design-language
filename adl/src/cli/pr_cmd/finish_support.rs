@@ -631,7 +631,7 @@ fn record_docs_only_validation_evidence_for_finish(
     Ok(())
 }
 
-fn restage_finish_output_truth_paths(
+pub(super) fn restage_finish_output_truth_paths(
     repo_root: &Path,
     primary_root: &Path,
     issue_ref: &IssueRef,
@@ -1541,7 +1541,7 @@ fn push_finish_validation_command(commands: &mut Vec<String>, command: &str) {
     }
 }
 
-fn load_finish_validation_profile(
+pub(super) fn load_finish_validation_profile(
     repo_root: &Path,
     changed_paths: &[String],
 ) -> Result<FinishValidationProfile> {
@@ -1695,6 +1695,7 @@ fn finish_path_is_larger_binary_focused(path: &str) -> bool {
             | "adl/src/remote_exec.rs"
             | "adl/src/remote_exec/signing_support.rs"
             | "adl/src/remote_exec/types.rs"
+            | "adl/src/bin/run_v0916_integrated_runtime_soak.rs"
             | "adl/src/continuous_verification_self_attack.rs"
             | "adl/src/cli/identity_cmd/tests/adversarial_contracts.rs"
             | "adl/src/cli/tests/pr_cmd_inline/basics.rs"
@@ -1855,7 +1856,9 @@ fn finish_path_needs_long_lived_agent_tokio_validation(path: &str) -> bool {
     let trimmed = path.trim().trim_matches('/');
     matches!(
         trimmed,
-        "adl/src/long_lived_agent.rs" | "adl/src/long_lived_agent/tests.rs"
+        "adl/src/long_lived_agent.rs"
+            | "adl/src/long_lived_agent/tests.rs"
+            | "adl/src/bin/run_v0916_integrated_runtime_soak.rs"
     )
 }
 
@@ -1873,6 +1876,7 @@ fn finish_path_needs_remote_exec_tokio_validation(path: &str) -> bool {
             | "adl/src/remote_exec.rs"
             | "adl/src/remote_exec/signing_support.rs"
             | "adl/src/remote_exec/types.rs"
+            | "adl/src/bin/run_v0916_integrated_runtime_soak.rs"
     )
 }
 
@@ -2197,6 +2201,7 @@ fn finish_path_needs_runtime_owner_lane_validation(path: &str) -> bool {
             | "adl/src/provider_adapter.rs"
             | "adl/src/provider_communication.rs"
             | "adl/src/resilience.rs"
+            | "adl/src/bin/run_v0916_integrated_runtime_soak.rs"
     ) || trimmed.starts_with("adl/src/agent_comms/")
 }
 
@@ -2726,7 +2731,7 @@ const FINISH_VALIDATION_SANITIZED_ENVS: &[&str] = &[
     "ADL_GITHUB_TOKEN_KEYCHAIN_ACCOUNT",
 ];
 
-fn run_finish_validation_status(program: &str, args: &[&str]) -> Result<()> {
+pub(super) fn run_finish_validation_status(program: &str, args: &[&str]) -> Result<()> {
     let class = classify_finish_subprocess(program, args);
     let excerpt = format_subprocess_excerpt(program, args);
     let heartbeat = ProgressHeartbeat::start(
@@ -3060,7 +3065,10 @@ pub(super) fn stage_selected_paths_rust(repo_root: &Path, csv: &str) -> Result<(
     Ok(())
 }
 
-fn reject_local_issue_bundle_paths_in_finish_paths(repo_root: &Path, paths: &[&str]) -> Result<()> {
+pub(super) fn reject_local_issue_bundle_paths_in_finish_paths(
+    repo_root: &Path,
+    paths: &[&str],
+) -> Result<()> {
     let mut local_issue_surfaces = paths
         .iter()
         .filter_map(|path| finish_local_issue_bundle_card_display(repo_root, path))
@@ -3325,7 +3333,13 @@ fn write_temp_text(prefix: &str, extension: &str, body: &str) -> Result<PathBuf>
 
 #[cfg(test)]
 mod tests {
-    use super::{restage_finish_output_truth_paths, run_finish_validation_status};
+    use super::{
+        ensure_no_staged_issue_bundle_mutations, extra_pr_body_looks_like_issue_template,
+        extract_markdown_section, finish_inputs_fingerprint,
+        issue_bundle_issue_number_from_repo_relative,
+        reject_local_issue_bundle_paths_in_finish_paths, restage_finish_output_truth_paths,
+        run_finish_validation_status,
+    };
     use crate::cli::observability::test_env_lock as shared_env_lock;
     use ::adl::control_plane::{card_output_path, resolve_cards_root, IssueRef};
     use std::fs;
@@ -3633,5 +3647,152 @@ mod tests {
         .expect_err("tracked primary cards-root path should fail closed");
         assert!(err.to_string().contains("compatibility cards path"));
         assert!(err.to_string().contains(".adl/cards/4264/output_4264.md"));
+    }
+
+    #[test]
+    fn reject_local_issue_bundle_paths_in_finish_paths_flags_local_cards() {
+        let _guard = env_lock();
+        let repo = temp_dir("reject-local-issue-bundle-paths");
+        let issue_ref = IssueRef::new(
+            4265,
+            "v0.91.6".to_string(),
+            "reject-local-paths".to_string(),
+        )
+        .expect("issue ref");
+        let local_sip = issue_ref.task_bundle_input_path(&repo);
+        let local_sor = issue_ref.task_bundle_output_path(&repo);
+        fs::create_dir_all(local_sip.parent().expect("sip parent")).expect("bundle dir");
+        fs::write(&local_sip, "sip\n").expect("write sip");
+        fs::write(&local_sor, "sor\n").expect("write sor");
+
+        let err = reject_local_issue_bundle_paths_in_finish_paths(
+            &repo,
+            &[
+                "docs/notes.md",
+                local_sip.to_str().expect("sip path"),
+                local_sor.to_str().expect("sor path"),
+            ],
+        )
+        .expect_err("local issue bundle paths should fail closed");
+
+        assert!(err
+            .to_string()
+            .contains("local-only .adl task-bundle card paths"));
+        assert!(err
+            .to_string()
+            .contains(".adl/v0.91.6/tasks/issue-4265__reject-local-paths/sip.md"));
+        assert!(err
+            .to_string()
+            .contains(".adl/v0.91.6/tasks/issue-4265__reject-local-paths/sor.md"));
+    }
+
+    #[test]
+    fn ensure_no_staged_issue_bundle_mutations_rejects_foreign_issue_paths() {
+        let _guard = env_lock();
+        let repo = temp_dir("reject-foreign-issue-bundle-stage");
+        let active_issue =
+            IssueRef::new(4266, "v0.91.6".to_string(), "active".to_string()).expect("active issue");
+        let foreign_issue = IssueRef::new(4267, "v0.91.6".to_string(), "foreign".to_string())
+            .expect("foreign issue");
+        let foreign_sor = foreign_issue.task_bundle_output_path(&repo);
+
+        fs::create_dir_all(foreign_sor.parent().expect("output parent")).expect("bundle dir");
+        fs::write(repo.join(".gitignore"), ".adl/\n").expect("gitignore");
+        fs::write(&foreign_sor, "foreign sor\n").expect("foreign sor");
+
+        assert!(Command::new("git")
+            .args(["init", "-q"])
+            .current_dir(&repo)
+            .status()
+            .expect("git init")
+            .success());
+        assert!(Command::new("git")
+            .args(["config", "user.name", "Test User"])
+            .current_dir(&repo)
+            .status()
+            .expect("git config name")
+            .success());
+        assert!(Command::new("git")
+            .args(["config", "user.email", "test@example.com"])
+            .current_dir(&repo)
+            .status()
+            .expect("git config email")
+            .success());
+        assert!(Command::new("git")
+            .args(["add", ".gitignore"])
+            .current_dir(&repo)
+            .status()
+            .expect("git add gitignore")
+            .success());
+        assert!(Command::new("git")
+            .args(["commit", "-q", "-m", "init"])
+            .current_dir(&repo)
+            .status()
+            .expect("git commit")
+            .success());
+        assert!(Command::new("git")
+            .args(["add", "-f", foreign_sor.to_str().expect("foreign sor path")])
+            .current_dir(&repo)
+            .status()
+            .expect("git add foreign sor")
+            .success());
+
+        let err = ensure_no_staged_issue_bundle_mutations(&repo, &active_issue)
+            .expect_err("foreign staged bundle paths should fail");
+        assert!(err
+            .to_string()
+            .contains("staged .adl task-bundle changes for non-active issues detected"));
+        assert!(err
+            .to_string()
+            .contains(".adl/v0.91.6/tasks/issue-4267__foreign/sor.md"));
+    }
+
+    #[test]
+    fn finish_support_helper_functions_cover_markdown_and_fingerprint_surfaces() {
+        let _guard = env_lock();
+        let repo = temp_dir("finish-support-helper-surfaces");
+        let markdown = repo.join("output.md");
+        fs::write(
+            &markdown,
+            "## Summary\nsummary\n\n## Validation\n- ok\n\n## Tail\nignored\n",
+        )
+        .expect("write markdown");
+
+        assert_eq!(
+            extract_markdown_section(&markdown, "Summary").expect("summary section"),
+            "summary"
+        );
+        assert_eq!(
+            extract_markdown_section(&markdown, "Validation").expect("validation section"),
+            "- ok"
+        );
+        assert_eq!(
+            issue_bundle_issue_number_from_repo_relative(
+                ".adl/v0.91.6/tasks/issue-4268__helper/sor.md"
+            ),
+            Some(4268)
+        );
+        assert_eq!(
+            issue_bundle_issue_number_from_repo_relative("docs/milestones/v0.91.6/README.md"),
+            None
+        );
+        assert!(extra_pr_body_looks_like_issue_template(
+            "issue_card_schema: adl.issue.v1"
+        ));
+        assert!(extra_pr_body_looks_like_issue_template(
+            "## Goal\nstuff\n---\nmore"
+        ));
+        assert!(!extra_pr_body_looks_like_issue_template(
+            "regular reviewer notes"
+        ));
+        assert_eq!(
+            finish_inputs_fingerprint(
+                "[v0.91.6][tools] Example",
+                "adl/src/lib.rs,docs/notes.md",
+                ".adl/v0.91.6/tasks/issue-4268__helper/sip.md",
+                ".adl/v0.91.6/tasks/issue-4268__helper/sor.md",
+            ),
+            "v0-91-6-tools-example-adl-src-lib-rs-docs-notes-md-adl-v0-91-6-tasks-issue-4268-helper-sip-md-adl-v0-91-6-tasks-issue-4268-helper-sor-md"
+        );
     }
 }
