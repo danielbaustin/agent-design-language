@@ -75,6 +75,7 @@ Within this bundle, the operational details live in:
 - `scripts/check_sprint_truth.py`
 - `scripts/check_sprint_closeout_readiness.py`
 - `scripts/record_child_issue_closeout.py`
+- `scripts/record_issue_goal_metrics.py`
 - `scripts/update_sprint_state.py`
 - `scripts/write_sprint_closeout_artifact.py`
 - `scripts/validate_review_subagent_policy.py`
@@ -158,6 +159,7 @@ missing sprint-management issue first.
 10. When that handoff starts or resumes live child execution, attach the
     issue-bound session-goal requirement as part of the SEP handoff rather than
     as a separate manual reminder.
+    In other words: attach the issue-bound session-goal requirement as part of the SEP handoff.
 11. For SEP-routed child execution, create the goal after bind/readiness
     succeeds and before implementation starts. Minimum goal content:
     sprint issue number when present, child issue number, and the bounded
@@ -175,7 +177,8 @@ missing sprint-management issue first.
     gates, and issue-local closeout truth are satisfied.
 20. After the final issue closes, assemble sprint review evidence.
 21. Record sprint closeout metrics including coverage and Rust tracker counts.
-22. Run the deterministic sprint closeout helper to classify `ready_to_close`, `needs_remediation`, or `blocked`, write/update the retained closeout artifact, and generate the final sprint close summary.
+22. When issue-goal token/time metrics are available, record them in the local goal-metrics sink and refresh the issue/sprint summaries without treating unknown values as zero.
+23. Run the deterministic sprint closeout helper to classify `ready_to_close`, `needs_remediation`, or `blocked`, write/update the retained closeout artifact, and generate the final sprint close summary.
 23. Only when the closeout helper reports `ready_to_close`, close the sprint-management issue.
 24. Stop with one bounded sprint review/closeout result.
 
@@ -210,6 +213,7 @@ This skill enforces:
 - no sprint-state advancement without a fresh matched live GitHub truth check
 - no next-child advancement without explicit child-closeout gate satisfaction
 - no live sprint execution without an explicit installed-skill parity/readiness result when sprint policy requires it
+- no sprint goal-metrics rollup may treat unknown or unavailable elapsed/token values as zero
 - no child issue execution when `SIP`, `STP`, or `SPP` has a `card_status`
   other than `ready` or `approved`
 - no child closeout acceptance when `SRP` or `SOR` overclaims

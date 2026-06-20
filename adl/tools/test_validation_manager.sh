@@ -218,6 +218,88 @@ if bash "$SCRIPT" --changed-files "$mixed" --run >"$TMP/mixed-run.out" 2>"$TMP/m
 fi
 assert_has "$TMP/mixed-run.err" "refusing --run for non-runnable profile"
 
+sprint_conductor="$TMP/sprint-conductor.txt"
+cat >"$sprint_conductor" <<'EOF'
+M	adl/tools/skills/sprint-conductor/SKILL.md
+M	adl/tools/skills/sprint-conductor/scripts/issue_goal_metrics.py
+M	adl/tools/test_sprint_conductor_helpers.sh
+M	adl/tools/test_install_adl_operational_skills.sh
+EOF
+bash "$SCRIPT" --changed-files "$sprint_conductor" --json >"$TMP/sprint-conductor.json"
+python3 - <<'PY' "$TMP/sprint-conductor.json"
+import json
+import sys
+
+profile = json.load(open(sys.argv[1]))
+assert profile["schema_version"] == "adl.validation_profile.v1"
+assert profile["selected_profile"] == "sprint_conductor_contracts_profile"
+assert profile["status"] == "ready_to_run"
+assert profile["pr_publication_sufficient"] is True
+assert [item["lane_id"] for item in profile["run"]] == ["sprint_conductor_contracts"]
+surface_ids = {surface["id"] for surface in profile["behavior_surfaces"]}
+assert "regression_sprint_conductor_contracts" in surface_ids
+assert profile["diagnostics"] == []
+assert profile["escalation"]["required"] is False
+PY
+
+sprint_conductor_mixed="$TMP/sprint-conductor-mixed.txt"
+cat >"$sprint_conductor_mixed" <<'EOF'
+M	adl/tools/skills/sprint-conductor/SKILL.md
+M	adl/tools/skills/sprint-conductor/scripts/issue_goal_metrics.py
+M	adl/tools/test_sprint_conductor_helpers.sh
+M	adl/tools/test_install_adl_operational_skills.sh
+M	docs/milestones/v0.91.6/README.md
+EOF
+bash "$SCRIPT" --changed-files "$sprint_conductor_mixed" --json >"$TMP/sprint-conductor-mixed.json"
+python3 - <<'PY' "$TMP/sprint-conductor-mixed.json"
+import json
+import sys
+
+profile = json.load(open(sys.argv[1]))
+assert profile["schema_version"] == "adl.validation_profile.v1"
+assert profile["status"] == "ready_to_run"
+assert profile["pr_publication_sufficient"] is True
+assert {item["lane_id"] for item in profile["run"]} == {
+    "sprint_conductor_contracts",
+    "docs_diff_check",
+}
+surface_ids = {surface["id"] for surface in profile["behavior_surfaces"]}
+assert "regression_sprint_conductor_contracts" in surface_ids
+assert "diff_hygiene_docs_diff_check" in surface_ids
+assert profile["diagnostics"] == []
+assert profile["escalation"]["required"] is False
+PY
+
+classifier_followup="$TMP/classifier-followup.txt"
+cat >"$classifier_followup" <<'EOF'
+M	adl/config/validation_lane_selector.v0.91.6.json
+M	adl/tools/ci_path_policy.sh
+M	adl/tools/test_ci_path_policy.sh
+M	adl/tools/test_validation_manager.sh
+M	adl/tools/skills/sprint-conductor/SKILL.md
+M	adl/tools/skills/sprint-conductor/scripts/issue_goal_metrics.py
+M	adl/tools/test_sprint_conductor_helpers.sh
+M	adl/tools/test_install_adl_operational_skills.sh
+M	docs/milestones/v0.91.6/README.md
+EOF
+bash "$SCRIPT" --changed-files "$classifier_followup" --json >"$TMP/classifier-followup.json"
+python3 - <<'PY' "$TMP/classifier-followup.json"
+import json
+import sys
+
+profile = json.load(open(sys.argv[1]))
+assert profile["schema_version"] == "adl.validation_profile.v1"
+assert profile["status"] == "ready_to_run"
+assert profile["pr_publication_sufficient"] is True
+assert {item["lane_id"] for item in profile["run"]} == {
+    "ci_path_policy_contracts",
+    "sprint_conductor_contracts",
+    "docs_diff_check",
+}
+assert profile["escalation"]["required"] is False
+assert profile["diagnostics"] == []
+PY
+
 owner_mix="$TMP/owner-mix.txt"
 printf 'M\tadl/tools/pr.sh\nM\tadl/src/bin/adl_runtime.rs\n' >"$owner_mix"
 bash "$SCRIPT" --changed-files "$owner_mix" --json >"$TMP/owner-mix.json"

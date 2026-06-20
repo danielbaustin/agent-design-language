@@ -1017,6 +1017,165 @@ assert "srp.md" in problem["missing_cards"]
 assert "srp-editor" in problem["required_editor_skills"]
 PY
 
+goal_metrics_state_path="${tmpdir}/goal-metrics-state.json"
+cat >"${goal_metrics_state_path}" <<'JSON'
+{
+  "sprint_issue_number": 7001,
+  "ordered_issue_numbers": [7002, 7003],
+  "issue_records": [
+    {"issue_number": 7002, "status": "closed_out", "pr_url": null, "artifact_paths": []},
+    {"issue_number": 7003, "status": "closed_out", "pr_url": null, "artifact_paths": []}
+  ],
+  "closeout": {}
+}
+JSON
+goal_metrics_log="${tmpdir}/issue-goal-metrics.jsonl"
+
+python3 "${repo_root}/adl/tools/skills/sprint-conductor/scripts/record_issue_goal_metrics.py" \
+  --state "${goal_metrics_state_path}" \
+  --issue-number 7002 \
+  --sink "${goal_metrics_log}" \
+  --capture-stage merge_closeout \
+  --data-source codex_goal_tool \
+  --recorded-at "2026-06-20T03:00:00Z" \
+  --goal-id "goal-7002" \
+  --started-at "2026-06-20T02:30:00Z" \
+  --completed-at "2026-06-20T02:56:02Z" \
+  --elapsed-seconds 1562 \
+  --total-tokens 325020 \
+  --model-ref "gpt-5-codex" \
+  --session-ref "codex-session-7002" \
+  --thread-id "thread-7002" >/dev/null
+
+python3 "${repo_root}/adl/tools/skills/sprint-conductor/scripts/record_issue_goal_metrics.py" \
+  --state "${goal_metrics_state_path}" \
+  --issue-number 7003 \
+  --sink "${goal_metrics_log}" \
+  --capture-stage review_handoff \
+  --data-source manual_entry \
+  --recorded-at "2026-06-20T03:10:00Z" \
+  --goal-id-state not_available \
+  --elapsed-seconds not_available \
+  --total-tokens unknown \
+  --model-ref "gpt-5-codex" >/dev/null
+
+python3 - "${goal_metrics_state_path}" "${goal_metrics_log}" <<'PY'
+import json
+import sys
+from pathlib import Path
+
+state = json.loads(Path(sys.argv[1]).read_text())
+lines = [json.loads(line) for line in Path(sys.argv[2]).read_text().splitlines() if line.strip()]
+assert len(lines) == 2
+record_7002 = next(record for record in state["issue_records"] if record["issue_number"] == 7002)
+record_7003 = next(record for record in state["issue_records"] if record["issue_number"] == 7003)
+assert record_7002["goal_metrics"]["status"] == "recorded"
+assert record_7002["goal_metrics"]["elapsed_seconds"] == 1562
+assert record_7002["goal_metrics"]["elapsed_availability"] == "known"
+assert record_7002["goal_metrics"]["token_usage"]["total_tokens"] == 325020
+assert record_7002["goal_metrics"]["token_usage"]["total_availability"] == "known"
+assert record_7003["goal_metrics"]["goal_id_availability"] == "not_available"
+assert record_7003["goal_metrics"]["elapsed_availability"] == "not_available"
+assert record_7003["goal_metrics"]["token_usage"]["total_availability"] == "unknown"
+rollup = state["closeout"]["goal_metrics_rollup"]
+assert rollup["issue_count"] == 2
+assert rollup["issues_with_recorded_metrics"] == 2
+assert rollup["issues_with_known_elapsed"] == 1
+assert rollup["issues_with_unknown_elapsed"] == 1
+assert rollup["issues_with_known_total_tokens"] == 1
+assert rollup["issues_with_unknown_total_tokens"] == 1
+assert rollup["total_elapsed_seconds_known_sum"] == 1562
+assert rollup["total_tokens_known_sum"] == 325020
+PY
+
+goal_metrics_default_state_path="${tmpdir}/goal-metrics-default-state.json"
+cat >"${goal_metrics_default_state_path}" <<'JSON'
+{
+  "sprint_issue_number": 7001,
+  "ordered_issue_numbers": [7002],
+  "issue_records": [
+    {
+      "issue_number": 7002,
+      "status": "pending",
+      "pr_url": null,
+      "artifact_paths": [],
+      "goal_metrics": {
+        "status": "not_recorded",
+        "raw_log_path": null,
+        "record_count": 0,
+        "phases_recorded": [],
+        "selected_stage": null,
+        "recorded_at": null,
+        "data_source": "unknown",
+        "goal_id": null,
+        "goal_id_availability": "unknown",
+        "started_at": null,
+        "completed_at": null,
+        "elapsed_seconds": null,
+        "elapsed_availability": "unknown",
+        "token_usage": {
+          "total_tokens": null,
+          "prompt_tokens": null,
+          "completion_tokens": null,
+          "availability": "unknown",
+          "total_availability": "unknown",
+          "prompt_availability": "unknown",
+          "completion_availability": "unknown"
+        },
+        "model_ref": null,
+        "session_ref": null,
+        "thread_id": null
+      }
+    }
+  ],
+  "closeout": {}
+}
+JSON
+
+python3 - "${goal_metrics_default_state_path}" <<'PY'
+import json
+import sys
+from pathlib import Path
+
+state = json.loads(Path(sys.argv[1]).read_text())
+token_usage = state["issue_records"][0]["goal_metrics"]["token_usage"]
+assert token_usage["availability"] == "unknown"
+assert token_usage["total_availability"] == "unknown"
+assert token_usage["prompt_availability"] == "unknown"
+assert token_usage["completion_availability"] == "unknown"
+PY
+
+goal_metrics_invalid_log="${tmpdir}/issue-goal-metrics-invalid.jsonl"
+if python3 "${repo_root}/adl/tools/skills/sprint-conductor/scripts/record_issue_goal_metrics.py" \
+  --state "${goal_metrics_state_path}" \
+  --issue-number 7999 \
+  --sink "${goal_metrics_invalid_log}" \
+  --capture-stage merge_closeout \
+  --data-source codex_goal_tool >/dev/null 2>"${tmpdir}/goal-metrics-invalid.stderr"; then
+  echo "expected non-member issue metrics recording to fail" >&2
+  exit 1
+fi
+grep -Fq 'issue #7999 is not present in ordered_issue_numbers' "${tmpdir}/goal-metrics-invalid.stderr"
+python3 - "${goal_metrics_state_path}" "${goal_metrics_invalid_log}" <<'PY'
+import json
+import sys
+from pathlib import Path
+
+state = json.loads(Path(sys.argv[1]).read_text())
+assert [record["issue_number"] for record in state["issue_records"]] == [7002, 7003]
+assert not Path(sys.argv[2]).exists()
+PY
+
+goal_metrics_artifact="${tmpdir}/goal-metrics-closeout.md"
+python3 "${repo_root}/adl/tools/skills/sprint-conductor/scripts/write_sprint_closeout_artifact.py" \
+  --state "${goal_metrics_state_path}" \
+  --out "${goal_metrics_artifact}" >/dev/null
+
+grep -Fq '## Goal Metrics Rollup' "${goal_metrics_artifact}"
+grep -Fq 'issues with recorded metrics: `2/2`' "${goal_metrics_artifact}"
+grep -Fq 'elapsed seconds: `known_sum=1562, known_issue_count=1, unknown_issue_count=1`' "${goal_metrics_artifact}"
+grep -Fq 'total tokens: `known_sum=325020, known_issue_count=1, unknown_issue_count=1`' "${goal_metrics_artifact}"
+
 echo "PASS test_sprint_conductor_helpers"
 
 closeout_readiness_blocked_state="${tmpdir}/closeout-readiness-blocked-state.json"
