@@ -264,7 +264,7 @@ nextest_expression_for_filter() {
       printf 'test(/^cli::tooling_cmd::github_release::/)'
       ;;
     finish)
-      printf 'binary_id(adl::bin/adl-pr-finish) and test(/^cli::pr_cmd::tests::finish::arg_render::/)'
+      printf 'binary_id(adl::bin/adl-pr-finish) and test(/^cli::pr_cmd::tests::finish::arg_render::/) or binary_id(adl::bin/adl-pr-finish) and test(/^cli::pr_cmd::finish_support::tests::/)'
       ;;
     tooling_cmd)
       printf 'binary_id(adl::bin/adl) and test(/^cli::tooling_cmd::/)'

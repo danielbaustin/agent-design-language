@@ -1420,6 +1420,14 @@ pub(super) fn select_finish_validation_plan(paths_csv: &str) -> Result<FinishVal
         }
         if paths
             .iter()
+            .any(|path| finish_path_needs_locked_cargo_fallback_validation(path))
+        {
+            commands.push(
+                "bash adl/tools/test_pr_run_locked_cargo_fallback_refuses_cleanly.sh".to_string(),
+            );
+        }
+        if paths
+            .iter()
             .any(|path| finish_path_needs_owner_lane_contract_validation(path))
         {
             mode = FinishValidationMode::LargerBinaryFocused;
@@ -1582,6 +1590,9 @@ pub(super) fn select_finish_validation_plan_for_finish(
     if finish_issue_needs_issue_small_binary_validation(issue_number, changed_paths) {
         return Ok(build_issue_small_binary_validation_plan());
     }
+    if finish_issue_needs_locked_cargo_fallback_validation(issue_number, changed_paths) {
+        return Ok(build_locked_cargo_fallback_validation_plan());
+    }
     select_finish_validation_plan(&changed_paths.join(","))
 }
 
@@ -1640,6 +1651,7 @@ fn finish_path_is_small_binary_focused(path: &str) -> bool {
         trimmed,
         "adl/tools/pr.sh"
             | "adl/tools/test_pr_small_binary_delegation.sh"
+            | "adl/tools/test_pr_run_locked_cargo_fallback_refuses_cleanly.sh"
             | "adl/tools/validation_manager.py"
             | "adl/tools/validation_manager.sh"
             | "adl/tools/test_validation_manager.sh"
@@ -1716,11 +1728,12 @@ fn finish_path_is_larger_binary_focused(path: &str) -> bool {
             | "adl/tools/test_select_validation_lanes.sh"
             | "adl/tools/run_owner_validation_lane.sh"
             | "adl/tools/test_owner_validation_lane.sh"
+            | "adl/tools/test_control_plane_observability.sh"
+            | "adl/tools/test_five_command_regression_suite.sh"
             | "adl/tools/test_cli_wrapper_migration_contract.sh"
             | "adl/tools/test_pr_run_ambiguity_policy.sh"
             | "adl/tools/test_pr_run_issue_mode.sh"
             | "adl/tools/test_pr_small_binary_delegation.sh"
-            | "adl/tools/test_control_plane_observability.sh"
             | "adl/tools/test_adl_runtime_compatibility.sh"
             | "adl/tools/test_adl_review_compatibility.sh"
             | "adl/tools/run_slow_proof_family.sh"
@@ -1906,6 +1919,34 @@ fn finish_issue_needs_issue_small_binary_validation(
         })
 }
 
+fn finish_issue_needs_locked_cargo_fallback_validation(
+    issue_number: u32,
+    changed_paths: &[String],
+) -> bool {
+    if issue_number != 4306 {
+        return false;
+    }
+    !changed_paths.is_empty()
+        && changed_paths.iter().all(|path| {
+            matches!(
+                path.trim().trim_matches('/'),
+                "adl/Cargo.lock"
+                    | "adl/config/validation_lane_selector.v0.91.6.json"
+                    | "adl/src/cli/pr_cmd/finish_support.rs"
+                    | "adl/src/cli/tests/pr_cmd_inline/finish/arg_render.rs"
+                    | "adl/tools/check_coverage_impact.sh"
+                    | "adl/tools/pr.sh"
+                    | "adl/tools/run_pr_fast_test_lane.sh"
+                    | "adl/tools/run_owner_validation_lane.sh"
+                    | "adl/tools/test_check_coverage_impact.sh"
+                    | "adl/tools/test_control_plane_observability.sh"
+                    | "adl/tools/test_five_command_regression_suite.sh"
+                    | "adl/tools/test_pr_run_locked_cargo_fallback_refuses_cleanly.sh"
+                    | "adl/tools/test_run_pr_fast_test_lane.sh"
+            )
+        })
+}
+
 fn build_tokio_manifest_runtime_validation_plan() -> FinishValidationPlan {
     let mut commands = Vec::new();
     push_finish_validation_command(
@@ -1924,6 +1965,27 @@ fn build_tokio_manifest_runtime_validation_plan() -> FinishValidationPlan {
         &mut commands,
         "cargo test --manifest-path adl/Cargo.toml long_lived_agent",
     );
+    FinishValidationPlan {
+        mode: FinishValidationMode::LargerBinaryFocused,
+        commands,
+    }
+}
+
+fn build_locked_cargo_fallback_validation_plan() -> FinishValidationPlan {
+    let mut commands = vec![
+        "bash adl/tools/check_no_tracked_adl_issue_record_residue.sh".to_string(),
+        "git diff --check".to_string(),
+    ];
+    push_finish_validation_command(
+        &mut commands,
+        "cargo fmt --manifest-path adl/Cargo.toml --all --check",
+    );
+    push_finish_validation_command(
+        &mut commands,
+        "cargo test --manifest-path adl/Cargo.toml --bin adl-pr-finish cli::pr_cmd::tests::finish::arg_render::finish_validation",
+    );
+    commands.push("bash adl/tools/test_ci_path_policy.sh".to_string());
+    commands.push("bash adl/tools/run_owner_validation_lane.sh csdlc".to_string());
     FinishValidationPlan {
         mode: FinishValidationMode::LargerBinaryFocused,
         commands,
@@ -2047,12 +2109,24 @@ fn finish_path_needs_small_binary_delegation_validation(path: &str) -> bool {
     matches!(trimmed, "adl/tools/test_pr_small_binary_delegation.sh")
 }
 
+fn finish_path_needs_locked_cargo_fallback_validation(path: &str) -> bool {
+    let trimmed = path.trim().trim_matches('/');
+    matches!(
+        trimmed,
+        "adl/Cargo.lock"
+            | "adl/tools/pr.sh"
+            | "adl/tools/test_five_command_regression_suite.sh"
+            | "adl/tools/test_pr_run_locked_cargo_fallback_refuses_cleanly.sh"
+    )
+}
+
 fn finish_path_needs_owner_lane_contract_validation(path: &str) -> bool {
     let trimmed = path.trim().trim_matches('/');
     matches!(
         trimmed,
         "adl/tools/run_owner_validation_lane.sh"
             | "adl/tools/test_owner_validation_lane.sh"
+            | "adl/tools/test_control_plane_observability.sh"
             | "docs/milestones/v0.91.5/VALIDATION_LANE_SPLIT_3610.md"
             | "docs/milestones/v0.91.5/LOCAL_VS_CI_VALIDATION_POLICY_3607.md"
     )
@@ -2510,6 +2584,11 @@ pub(super) fn run_finish_validation_rust(
                 }
                 "bash adl/tools/test_pr_small_binary_delegation.sh" => {
                     let script = repo_root.join("adl/tools/test_pr_small_binary_delegation.sh");
+                    run_finish_validation_status("bash", &[path_str(&script)?])?;
+                }
+                "bash adl/tools/test_pr_run_locked_cargo_fallback_refuses_cleanly.sh" => {
+                    let script =
+                        repo_root.join("adl/tools/test_pr_run_locked_cargo_fallback_refuses_cleanly.sh");
                     run_finish_validation_status("bash", &[path_str(&script)?])?;
                 }
                 "bash adl/tools/test_owner_validation_lane.sh" => {

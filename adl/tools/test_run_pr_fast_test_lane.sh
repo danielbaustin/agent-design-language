@@ -277,7 +277,7 @@ manifest_plus_finish_output="$(bash "$SCRIPT" --changed-files "$manifest_plus_fi
 assert_has "$manifest_plus_finish_output" "mode=focused"
 assert_has "$manifest_plus_finish_output" "reason=bounded_rust_surface_runs_focused_nextest"
 assert_has "$manifest_plus_finish_output" "filter_tokens=manifest_support,pr_cmd_finish"
-assert_has "$manifest_plus_finish_output" "filter_expression=test(/^cli::pr_cmd::github::/) or test(/^cli::pr_cmd::github_client::/) or test(/^cli::tooling_cmd::github_release::/) or test(/^long_lived_agent::/) or binary_id(adl::bin/adl-pr-finish) and test(/^cli::pr_cmd::tests::finish::arg_render::/)"
+assert_has "$manifest_plus_finish_output" "filter_expression=test(/^cli::pr_cmd::github::/) or test(/^cli::pr_cmd::github_client::/) or test(/^cli::tooling_cmd::github_release::/) or test(/^long_lived_agent::/) or binary_id(adl::bin/adl-pr-finish) and test(/^cli::pr_cmd::tests::finish::arg_render::/) or binary_id(adl::bin/adl-pr-finish) and test(/^cli::pr_cmd::finish_support::tests::/)"
 
 process_status_wave="$TMP/process_status_wave.txt"
 cat >"$process_status_wave" <<'EOF'
@@ -294,7 +294,7 @@ process_status_wave_output="$(bash "$SCRIPT" --changed-files "$process_status_wa
 assert_has "$process_status_wave_output" "mode=focused"
 assert_has "$process_status_wave_output" "reason=bounded_rust_surface_runs_focused_nextest"
 assert_has "$process_status_wave_output" "filter_tokens=cli_dispatch,process_status,cli_smoke_basics,pr_cmd_finish"
-assert_has "$process_status_wave_output" "filter_expression=test(/^cli::tests::top_level_dispatch_routes_/) or binary_id(adl::cli_smoke) and test(/^process_status::/) or binary_id(adl::cli_smoke) and test(/^basics::/) or binary_id(adl::bin/adl-pr-finish) and test(/^cli::pr_cmd::tests::finish::arg_render::/)"
+assert_has "$process_status_wave_output" "filter_expression=test(/^cli::tests::top_level_dispatch_routes_/) or binary_id(adl::cli_smoke) and test(/^process_status::/) or binary_id(adl::cli_smoke) and test(/^basics::/) or binary_id(adl::bin/adl-pr-finish) and test(/^cli::pr_cmd::tests::finish::arg_render::/) or binary_id(adl::bin/adl-pr-finish) and test(/^cli::pr_cmd::finish_support::tests::/)"
 
 manifest_only_pair="$TMP/manifest_only_pair.txt"
 cat >"$manifest_only_pair" <<'EOF'
@@ -323,7 +323,7 @@ finish_only_output="$(bash "$SCRIPT" --changed-files "$finish_only" --print-plan
 assert_has "$finish_only_output" "mode=focused"
 assert_has "$finish_only_output" "reason=bounded_rust_surface_runs_focused_nextest"
 assert_has "$finish_only_output" "filter_tokens=pr_cmd_finish"
-assert_has "$finish_only_output" "filter_expression=binary_id(adl::bin/adl-pr-finish) and test(/^cli::pr_cmd::tests::finish::arg_render::/)"
+assert_has "$finish_only_output" "filter_expression=binary_id(adl::bin/adl-pr-finish) and test(/^cli::pr_cmd::tests::finish::arg_render::/) or binary_id(adl::bin/adl-pr-finish) and test(/^cli::pr_cmd::finish_support::tests::/)"
 
 long_lived_agent_only="$TMP/long_lived_agent_only.txt"
 cat >"$long_lived_agent_only" <<'EOF'

@@ -332,11 +332,11 @@ delegate_pr_command_to_rust() {
     exec "$cached_bin" pr "$subcommand" "$@"
   fi
   if direct_bin="$(rust_pr_subcommand_binary_name "$subcommand" || true)"; [[ -n "$direct_bin" ]]; then
-    adl_obs_event "pr.sh" "rust_delegate" "exec" "subcommand" "$subcommand" "delegate" "cargo" "manifest" "$manifest" "bin" "$direct_bin"
-    exec cargo run --quiet --manifest-path "$manifest" --bin "$direct_bin" -- "$@"
+    adl_obs_event "pr.sh" "rust_delegate" "exec" "subcommand" "$subcommand" "delegate" "cargo" "manifest" "$manifest" "bin" "$direct_bin" "lock_mode" "locked"
+    exec cargo run --quiet --locked --manifest-path "$manifest" --bin "$direct_bin" -- "$@"
   fi
-  adl_obs_event "pr.sh" "rust_delegate" "exec" "subcommand" "$subcommand" "delegate" "cargo" "manifest" "$manifest" "bin" "adl"
-  exec cargo run --quiet --manifest-path "$manifest" --bin adl -- pr "$subcommand" "$@"
+  adl_obs_event "pr.sh" "rust_delegate" "exec" "subcommand" "$subcommand" "delegate" "cargo" "manifest" "$manifest" "bin" "adl" "lock_mode" "locked"
+  exec cargo run --quiet --locked --manifest-path "$manifest" --bin adl -- pr "$subcommand" "$@"
 }
 
 require_rust_pr_delegate() {
