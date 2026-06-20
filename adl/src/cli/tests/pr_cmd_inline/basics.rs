@@ -1405,11 +1405,76 @@ fn same_checkout_root_handles_equivalent_and_missing_paths() {
 fn real_pr_dispatch_rejects_missing_and_unknown_subcommands() {
     let err = real_pr(&[]).expect_err("missing subcommand");
     assert!(err.to_string().contains(
-        "pr requires a subcommand: create | init | repair-issue-body | start | doctor | ready | preflight | finish | validation | issue | closeout"
+        "pr requires a subcommand: create | init | repair-issue-body | start | doctor | ready | preflight | finish | validation | issue | projection-map | closeout"
     ));
 
     let err = real_pr(&["bogus".to_string()]).expect_err("unknown subcommand");
     assert!(err.to_string().contains("unknown pr subcommand: bogus"));
+}
+
+#[test]
+fn projection_map_covers_required_surface_policies() {
+    let parsed = crate::cli::pr_cmd_args::parse_projection_map_args(&["--json".to_string()])
+        .expect("parse projection-map --json");
+    assert!(parsed.json);
+
+    let err = crate::cli::pr_cmd_args::parse_projection_map_args(&["--bogus".to_string()])
+        .expect_err("unknown projection-map arg");
+    assert!(err
+        .to_string()
+        .contains("projection-map: unknown arg: --bogus"));
+
+    let report = projection_map_report_v1();
+    assert_eq!(report.schema_version, "adl.github_csdlc_projection_map.v1");
+    assert_eq!(report.issue, "#4047");
+
+    let surfaces = github_csdlc_projection_surfaces_v1();
+    assert_eq!(surfaces, report.surfaces);
+    let names = surfaces
+        .iter()
+        .map(|surface| surface.surface)
+        .collect::<std::collections::BTreeSet<_>>();
+    for required in [
+        "github.issue.title",
+        "github.issue.labels",
+        "github.issue.body",
+        "github.pr.title",
+        "github.pr.body",
+        "github.pr.closing_linkage",
+        "github.pr.validation_checks",
+        "github.review_comments",
+        "github.closeout_comment",
+        "github.milestone_and_project_fields",
+        "csdlc.cards.sip_stp_spp_srp_sor",
+    ] {
+        assert!(
+            names.contains(required),
+            "missing projection surface: {required}"
+        );
+    }
+
+    let policies = surfaces
+        .iter()
+        .map(|surface| surface.projection_policy)
+        .collect::<std::collections::BTreeSet<_>>();
+    for required in [
+        "managed_projection",
+        "drift_checked_projection",
+        "linked_surface_only",
+        "card_local_only",
+        "explicitly_deferred",
+    ] {
+        assert!(
+            policies.contains(required),
+            "missing projection policy: {required}"
+        );
+    }
+
+    assert!(surfaces.iter().any(|surface| {
+        surface.surface == "github.pr.closing_linkage"
+            && surface.status == "implemented_with_legacy_ci_guard"
+            && surface.follow_on.contains("Rust/PVF")
+    }));
 }
 
 #[test]
