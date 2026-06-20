@@ -636,6 +636,331 @@
     }
 
     #[test]
+    fn acip_coding_provider_boundary_adapter_preserves_governed_refs_and_lower_route() {
+        let adapter_schema =
+            acip_coding_provider_boundary_adapter_v1_schema_json().expect("adapter schema");
+        assert!(adapter_schema.contains("\"provider_request\""));
+        assert!(adapter_schema.contains("\"governed_payload_refs\""));
+
+        let cases = vec![
+            (
+                AcipCodingProviderLaneV1::ChatgptApi,
+                AcipCodingExecutionModeV1::UnappliedPatch,
+                "openai",
+                "gpt-5-api",
+                "acip_coding_chatgpt_api",
+            ),
+            (
+                AcipCodingProviderLaneV1::ClaudeApi,
+                AcipCodingExecutionModeV1::StructuredProposal,
+                "anthropic",
+                "claude-api",
+                "acip_coding_claude_api",
+            ),
+            (
+                AcipCodingProviderLaneV1::LocalOllama,
+                AcipCodingExecutionModeV1::UnappliedPatch,
+                "ollama",
+                "gemma3-local",
+                "acip_coding_local_ollama",
+            ),
+            (
+                AcipCodingProviderLaneV1::OtherProposalOnly,
+                AcipCodingExecutionModeV1::StructuredProposal,
+                "other-provider",
+                "other-provider",
+                "acip_coding_other_proposal_only",
+            ),
+        ];
+
+        for (provider_lane, execution_mode, provider, provider_model_id, lane_ref) in cases {
+            let contract =
+                sample_coding_invocation_contract(provider_lane.clone(), execution_mode.clone());
+            let message = sample_message_with_payloads(
+                "msg-coding-0001",
+                "conv-coding-001",
+                1,
+                AcipIntentV1::CodingRequest,
+                "Please implement the bounded change without widening the issue scope.",
+                vec![payload_ref(
+                    "task_bundle",
+                    "runtime/comms/coding/task_bundle.json",
+                    "application/json",
+                    1_944,
+                    Some("Bounded coding task bundle with acceptance criteria."),
+                )],
+            );
+            let adapter = build_acip_coding_provider_boundary_adapter_v1(&contract, &message)
+                .expect("adapter should build");
+            validate_acip_coding_provider_boundary_adapter_v1(&contract, &message, &adapter)
+                .expect("adapter should validate");
+
+            assert_eq!(adapter.governed_payload_refs, message.payload_refs);
+            assert_eq!(adapter.governed_artifact_refs, message.artifact_refs);
+            assert_eq!(
+                adapter.provider_request.prompt_contract_ref,
+                contract.task_bundle_ref
+            );
+            assert_eq!(
+                adapter.provider_request.input_text.as_deref(),
+                Some(message.content.as_str())
+            );
+            assert_eq!(adapter.provider_request.route.provider, provider);
+            assert_eq!(
+                adapter.provider_request.route.provider_model_id,
+                provider_model_id
+            );
+            assert_eq!(adapter.provider_request.lane_ref, lane_ref);
+            assert_eq!(
+                adapter.provider_request.tool_surface.as_deref(),
+                Some("acip_coding_request")
+            );
+            assert_eq!(
+                adapter.provider_request.governance_surface.as_deref(),
+                Some("acip.coding.provider.adapter.v1")
+            );
+            assert_eq!(
+                adapter.provider_request.model_identity.lane_ref.as_deref(),
+                Some(lane_ref)
+            );
+            assert_eq!(
+                adapter.provider_request.model_identity.tool_surface.as_deref(),
+                Some("acip_coding_request")
+            );
+            assert_eq!(
+                adapter
+                    .provider_request
+                    .model_identity
+                    .governance_surface
+                    .as_deref(),
+                Some("acip.coding.provider.adapter.v1")
+            );
+            assert!(
+                adapter.provider_request.inference_parameter_fingerprint.is_some(),
+                "adapter should fingerprint lower-layer provider execution"
+            );
+        }
+    }
+
+    #[test]
+    fn acip_coding_provider_boundary_adapter_rejects_worktree_lane_and_ref_drift() {
+        let contract = sample_coding_invocation_contract(
+            AcipCodingProviderLaneV1::CodexIssueWorktree,
+            AcipCodingExecutionModeV1::WorktreeEdit,
+        );
+        let message = sample_message_with_payloads(
+            "msg-coding-0001",
+            "conv-coding-001",
+            1,
+            AcipIntentV1::CodingRequest,
+            "Please implement the bounded change without widening the issue scope.",
+            vec![payload_ref(
+                "task_bundle",
+                "runtime/comms/coding/task_bundle.json",
+                "application/json",
+                1_944,
+                Some("Bounded coding task bundle with acceptance criteria."),
+            )],
+        );
+        let lane_error = build_acip_coding_provider_boundary_adapter_v1(&contract, &message)
+            .expect_err("worktree lane should fail closed");
+        assert!(lane_error.to_string().contains(
+            "coding provider boundary adapter only applies to provider-lower execution lanes"
+        ));
+
+        let contract = sample_coding_invocation_contract(
+            AcipCodingProviderLaneV1::ChatgptApi,
+            AcipCodingExecutionModeV1::UnappliedPatch,
+        );
+        let mut drifted_message = sample_message_with_payloads(
+            "msg-coding-0001",
+            "conv-coding-001",
+            1,
+            AcipIntentV1::CodingRequest,
+            "Please implement the bounded change without widening the issue scope.",
+            vec![payload_ref(
+                "task_bundle",
+                "runtime/comms/coding/other_task_bundle.json",
+                "application/json",
+                1_944,
+                Some("Wrong task bundle ref."),
+            )],
+        );
+        let ref_error =
+            build_acip_coding_provider_boundary_adapter_v1(&contract, &drifted_message)
+                .expect_err("task bundle drift should fail");
+        assert!(ref_error
+            .to_string()
+            .contains("message.payload_refs to include task_bundle_ref"));
+
+        drifted_message = sample_message_with_payloads(
+            "msg-coding-0001",
+            "conv-coding-001",
+            1,
+            AcipIntentV1::CodingRequest,
+            "Please implement the bounded change without widening the issue scope.",
+            vec![payload_ref(
+                "task_bundle",
+                "runtime/comms/coding/task_bundle.json",
+                "application/json",
+                1_944,
+                Some("Bounded coding task bundle with acceptance criteria."),
+            )],
+        );
+        let mut adapter =
+            build_acip_coding_provider_boundary_adapter_v1(&contract, &drifted_message)
+                .expect("adapter");
+        adapter.governed_artifact_refs = vec!["/tmp/leak.json".to_string()];
+        let artifact_error =
+            validate_acip_coding_provider_boundary_adapter_v1(&contract, &drifted_message, &adapter)
+                .expect_err("host path leakage should fail");
+        assert!(artifact_error
+            .to_string()
+            .contains("must preserve governed artifact_refs from the request message"));
+    }
+
+    #[test]
+    fn acip_coding_provider_boundary_adapter_adapts_ok_provider_result_without_leaking_runtime_artifact() {
+        let contract = sample_coding_invocation_contract(
+            AcipCodingProviderLaneV1::ChatgptApi,
+            AcipCodingExecutionModeV1::UnappliedPatch,
+        );
+        let message = sample_message_with_payloads(
+            "msg-coding-0001",
+            "conv-coding-001",
+            1,
+            AcipIntentV1::CodingRequest,
+            "Please implement the bounded change without widening the issue scope.",
+            vec![payload_ref(
+                "task_bundle",
+                "runtime/comms/coding/task_bundle.json",
+                "application/json",
+                1_944,
+                Some("Bounded coding task bundle with acceptance criteria."),
+            )],
+        );
+        let adapter =
+            build_acip_coding_provider_boundary_adapter_v1(&contract, &message).expect("adapter");
+        let provider_result = ProviderInvocationResultV1 {
+            schema_version: PROVIDER_COMMUNICATION_SCHEMA_VERSION.to_string(),
+            route: adapter.provider_request.route.clone(),
+            model_identity: adapter.provider_request.model_identity.clone(),
+            attempts: vec![ProviderAttemptV1 {
+                attempt_index: 1,
+                started_at: "unix:1".to_string(),
+                duration_ms: 320,
+                status: ProviderAttemptStatusV1::Ok,
+                retryable: false,
+                http_status: Some(200),
+                failure: None,
+                raw_response_excerpt: Some("[redacted patch proposal]".to_string()),
+            }],
+            final_status: ProviderInvocationFinalStatusV1::Ok,
+            duration_ms: 320,
+            request_id: adapter.provider_request.request_id.clone(),
+            output_text: None,
+            output_text_excerpt: Some("[redacted patch proposal]".to_string()),
+            failure: None,
+            artifact_ref: Some("provider/runtime/raw_patch.txt".to_string()),
+            trace_ref: Some("provider/runtime/invoke_trace.json".to_string()),
+        };
+
+        let outcome = adapt_provider_result_to_acip_coding_outcome_v1(
+            &contract,
+            &message,
+            &adapter,
+            &provider_result,
+        )
+        .expect("provider result should adapt");
+        validate_acip_coding_outcome_v1(&contract, &outcome).expect("outcome should validate");
+
+        assert_eq!(outcome.primary_output_ref, adapter.primary_output_ref);
+        assert_ne!(
+            outcome.primary_output_ref,
+            provider_result.artifact_ref.expect("provider artifact"),
+            "governed coding outcome should not expose lower-layer provider artifact refs as the ACIP output"
+        );
+        assert_eq!(
+            outcome.validation_result_refs,
+            vec![adapter.validation_summary_ref.clone()]
+        );
+        assert_eq!(outcome.review_handoff_ref, adapter.review_handoff_ref);
+    }
+
+    #[test]
+    fn acip_coding_provider_boundary_adapter_rejects_unsafe_provider_result_refs() {
+        let contract = sample_coding_invocation_contract(
+            AcipCodingProviderLaneV1::ChatgptApi,
+            AcipCodingExecutionModeV1::UnappliedPatch,
+        );
+        let message = sample_message_with_payloads(
+            "msg-coding-0001",
+            "conv-coding-001",
+            1,
+            AcipIntentV1::CodingRequest,
+            "Please implement the bounded change without widening the issue scope.",
+            vec![payload_ref(
+                "task_bundle",
+                "runtime/comms/coding/task_bundle.json",
+                "application/json",
+                1_944,
+                Some("Bounded coding task bundle with acceptance criteria."),
+            )],
+        );
+        let adapter =
+            build_acip_coding_provider_boundary_adapter_v1(&contract, &message).expect("adapter");
+        let provider_result = ProviderInvocationResultV1 {
+            schema_version: PROVIDER_COMMUNICATION_SCHEMA_VERSION.to_string(),
+            route: adapter.provider_request.route.clone(),
+            model_identity: adapter.provider_request.model_identity.clone(),
+            attempts: vec![ProviderAttemptV1 {
+                attempt_index: 1,
+                started_at: "unix:1".to_string(),
+                duration_ms: 320,
+                status: ProviderAttemptStatusV1::Ok,
+                retryable: false,
+                http_status: Some(200),
+                failure: None,
+                raw_response_excerpt: Some("[redacted patch proposal]".to_string()),
+            }],
+            final_status: ProviderInvocationFinalStatusV1::Ok,
+            duration_ms: 320,
+            request_id: adapter.provider_request.request_id.clone(),
+            output_text: None,
+            output_text_excerpt: Some("[redacted patch proposal]".to_string()),
+            failure: None,
+            artifact_ref: Some("/tmp/raw_patch.txt".to_string()),
+            trace_ref: Some("provider/runtime/invoke_trace.json".to_string()),
+        };
+        let artifact_error = adapt_provider_result_to_acip_coding_outcome_v1(
+            &contract,
+            &message,
+            &adapter,
+            &provider_result,
+        )
+        .expect_err("absolute provider artifact ref should fail");
+        assert!(artifact_error
+            .to_string()
+            .contains("provider_result.artifact_ref must be a repository-relative path"));
+
+        let provider_result = ProviderInvocationResultV1 {
+            artifact_ref: Some("provider/runtime/raw_patch.txt".to_string()),
+            trace_ref: Some("/tmp/provider_trace.json".to_string()),
+            ..provider_result
+        };
+        let trace_error = adapt_provider_result_to_acip_coding_outcome_v1(
+            &contract,
+            &message,
+            &adapter,
+            &provider_result,
+        )
+        .expect_err("absolute provider trace ref should fail");
+        assert!(trace_error
+            .to_string()
+            .contains("provider_result.trace_ref must be a repository-relative path"));
+    }
+
+    #[test]
     fn acip_trace_sample_helpers_cover_review_and_coding_specialization_branches() {
         let review_contract = sample_review_invocation_contract();
         validate_acip_review_invocation_contract_v1(&review_contract)

@@ -13,6 +13,11 @@ pub fn acip_coding_fixture_set_v1_schema_json() -> Result<String> {
         .context("serialize ACIP coding fixture set v1 schema")
 }
 
+pub fn acip_coding_provider_boundary_adapter_v1_schema_json() -> Result<String> {
+    serde_json::to_string_pretty(&schema_for!(AcipCodingProviderBoundaryAdapterV1))
+        .context("serialize ACIP coding provider boundary adapter v1 schema")
+}
+
 pub fn validate_acip_coding_invocation_contract_v1_value(
     value: &JsonValue,
 ) -> Result<AcipCodingInvocationContractV1> {
@@ -28,6 +33,293 @@ pub fn validate_acip_coding_outcome_v1_value(
 ) -> Result<AcipCodingOutcomeV1> {
     let outcome: AcipCodingOutcomeV1 =
         serde_json::from_value(value.clone()).context("parse ACIP coding outcome v1")?;
+    validate_acip_coding_outcome_v1(contract, &outcome)?;
+    Ok(outcome)
+}
+
+pub fn build_acip_coding_provider_boundary_adapter_v1(
+    contract: &AcipCodingInvocationContractV1,
+    message: &AcipMessageEnvelopeV1,
+) -> Result<AcipCodingProviderBoundaryAdapterV1> {
+    validate_acip_coding_invocation_contract_v1(contract)?;
+    validate_acip_message_envelope_v1(message)?;
+    validate_coding_request_message_matches_contract(contract, message)?;
+    validate_provider_eligible_lane(&contract.provider_lane)?;
+
+    let lane_ref = provider_lane_ref_v1(&contract.provider_lane);
+    let mut model_identity = model_identity_for_provider_lane(&contract.provider_lane)?;
+    let inference_parameter_fingerprint = stable_text_digest_v1(&[
+        contract.invocation.invocation_id.as_str(),
+        contract.approval_policy.writer_model_ref.as_str(),
+        lane_ref,
+        contract.task_bundle_ref.as_str(),
+        contract.patch_format.as_str(),
+    ]);
+    model_identity.inference_parameter_fingerprint =
+        Some(inference_parameter_fingerprint.clone());
+    model_identity.tool_surface = Some("acip_coding_request".to_string());
+    model_identity.governance_surface =
+        Some(ACIP_CODING_PROVIDER_ADAPTER_SCHEMA_VERSION.to_string());
+    model_identity.lane_ref = Some(lane_ref.to_string());
+
+    let provider_request = ProviderInvocationRequestV1 {
+        route: route_for_provider_lane(&contract.provider_lane),
+        model_identity,
+        prompt_contract_ref: contract.task_bundle_ref.clone(),
+        lane_ref: lane_ref.to_string(),
+        run_id: Some(contract.invocation.conversation_id.clone()),
+        request_id: Some(contract.invocation.invocation_id.clone()),
+        attempt_policy: attempt_policy_for_provider_lane(&contract.provider_lane),
+        input_text: Some(message.content.clone()),
+        inference_parameter_fingerprint: Some(inference_parameter_fingerprint),
+        tool_surface: Some("acip_coding_request".to_string()),
+        governance_surface: Some(ACIP_CODING_PROVIDER_ADAPTER_SCHEMA_VERSION.to_string()),
+        evaluator_ref: None,
+        benchmark_ref: None,
+    };
+
+    let adapter = AcipCodingProviderBoundaryAdapterV1 {
+        schema_version: ACIP_CODING_PROVIDER_ADAPTER_SCHEMA_VERSION.to_string(),
+        invocation_id: contract.invocation.invocation_id.clone(),
+        provider_lane: contract.provider_lane.clone(),
+        execution_mode: contract.execution_mode.clone(),
+        issue_ref: contract.issue_ref.clone(),
+        task_bundle_ref: contract.task_bundle_ref.clone(),
+        governed_payload_refs: message.payload_refs.clone(),
+        governed_artifact_refs: message.artifact_refs.clone(),
+        primary_output_ref: expected_primary_output_ref(contract).to_string(),
+        validation_summary_ref: "runtime/comms/coding/validation_summary.json".to_string(),
+        review_handoff_ref: "runtime/comms/coding/review_handoff.json".to_string(),
+        provider_request,
+    };
+    validate_acip_coding_provider_boundary_adapter_v1(contract, message, &adapter)?;
+    Ok(adapter)
+}
+
+pub fn validate_acip_coding_provider_boundary_adapter_v1(
+    contract: &AcipCodingInvocationContractV1,
+    message: &AcipMessageEnvelopeV1,
+    adapter: &AcipCodingProviderBoundaryAdapterV1,
+) -> Result<()> {
+    validate_acip_coding_invocation_contract_v1(contract)?;
+    validate_acip_message_envelope_v1(message)?;
+    validate_coding_request_message_matches_contract(contract, message)?;
+    validate_provider_eligible_lane(&contract.provider_lane)?;
+
+    if adapter.schema_version != ACIP_CODING_PROVIDER_ADAPTER_SCHEMA_VERSION {
+        return Err(anyhow!(
+            "ACIP coding provider boundary adapter requires schema_version '{}'",
+            ACIP_CODING_PROVIDER_ADAPTER_SCHEMA_VERSION
+        ));
+    }
+    if adapter.invocation_id != contract.invocation.invocation_id {
+        return Err(anyhow!(
+            "coding provider boundary adapter must preserve invocation_id from the coding contract"
+        ));
+    }
+    if adapter.provider_lane != contract.provider_lane {
+        return Err(anyhow!(
+            "coding provider boundary adapter must preserve provider_lane from the coding contract"
+        ));
+    }
+    if adapter.execution_mode != contract.execution_mode {
+        return Err(anyhow!(
+            "coding provider boundary adapter must preserve execution_mode from the coding contract"
+        ));
+    }
+    if adapter.issue_ref != contract.issue_ref {
+        return Err(anyhow!(
+            "coding provider boundary adapter must preserve issue_ref from the coding contract"
+        ));
+    }
+    if adapter.task_bundle_ref != contract.task_bundle_ref {
+        return Err(anyhow!(
+            "coding provider boundary adapter must preserve task_bundle_ref from the coding contract"
+        ));
+    }
+    if adapter.governed_payload_refs != message.payload_refs {
+        return Err(anyhow!(
+            "coding provider boundary adapter must preserve governed payload_refs from the request message"
+        ));
+    }
+    if adapter.governed_artifact_refs != message.artifact_refs {
+        return Err(anyhow!(
+            "coding provider boundary adapter must preserve governed artifact_refs from the request message"
+        ));
+    }
+    if adapter.governed_payload_refs.is_empty() {
+        return Err(anyhow!(
+            "coding provider boundary adapter requires governed_payload_refs"
+        ));
+    }
+    for payload in &adapter.governed_payload_refs {
+        validate_non_empty(&payload.payload_kind, "governed_payload_refs[].payload_kind")?;
+        validate_repo_relative_ref(
+            &payload.payload_ref,
+            "governed_payload_refs[].payload_ref",
+        )?;
+        validate_non_empty(&payload.media_type, "governed_payload_refs[].media_type")?;
+        validate_sha256(
+            &payload.content_sha256,
+            "governed_payload_refs[].content_sha256",
+        )?;
+        if payload.byte_length == 0 {
+            return Err(anyhow!(
+                "governed_payload_refs[].byte_length must be greater than zero"
+            ));
+        }
+        if let Some(summary) = payload.inline_summary.as_deref() {
+            validate_non_empty(summary, "governed_payload_refs[].inline_summary")?;
+        }
+    }
+    for artifact_ref in &adapter.governed_artifact_refs {
+        validate_repo_relative_ref(artifact_ref, "governed_artifact_refs[]")?;
+    }
+    validate_repo_relative_ref(&adapter.primary_output_ref, "primary_output_ref")?;
+    if adapter.primary_output_ref != expected_primary_output_ref(contract) {
+        return Err(anyhow!(
+            "coding provider boundary adapter primary_output_ref must match the declared primary coding output"
+        ));
+    }
+    validate_repo_relative_ref(
+        &adapter.validation_summary_ref,
+        "validation_summary_ref",
+    )?;
+    if adapter.validation_summary_ref != "runtime/comms/coding/validation_summary.json" {
+        return Err(anyhow!(
+            "coding provider boundary adapter must preserve the governed validation_summary output ref"
+        ));
+    }
+    validate_repo_relative_ref(&adapter.review_handoff_ref, "review_handoff_ref")?;
+    if adapter.review_handoff_ref != "runtime/comms/coding/review_handoff.json" {
+        return Err(anyhow!(
+            "coding provider boundary adapter must preserve the governed review_handoff output ref"
+        ));
+    }
+
+    validate_provider_request(&adapter.provider_request)?;
+    if adapter.provider_request.prompt_contract_ref != contract.task_bundle_ref {
+        return Err(anyhow!(
+            "coding provider boundary adapter must map task_bundle_ref to provider_request.prompt_contract_ref"
+        ));
+    }
+    if adapter.provider_request.request_id.as_deref() != Some(adapter.invocation_id.as_str()) {
+        return Err(anyhow!(
+            "coding provider boundary adapter must map invocation_id to provider_request.request_id"
+        ));
+    }
+    if adapter.provider_request.run_id.as_deref()
+        != Some(contract.invocation.conversation_id.as_str())
+    {
+        return Err(anyhow!(
+            "coding provider boundary adapter must map conversation_id to provider_request.run_id"
+        ));
+    }
+    if adapter.provider_request.input_text.as_deref() != Some(message.content.as_str()) {
+        return Err(anyhow!(
+            "coding provider boundary adapter must preserve message content as provider_request.input_text"
+        ));
+    }
+    if adapter.provider_request.lane_ref != provider_lane_ref_v1(&contract.provider_lane) {
+        return Err(anyhow!(
+            "coding provider boundary adapter must lower provider_lane into the provider_request lane_ref"
+        ));
+    }
+    if adapter.provider_request.tool_surface.as_deref() != Some("acip_coding_request") {
+        return Err(anyhow!(
+            "coding provider boundary adapter must set provider_request.tool_surface to 'acip_coding_request'"
+        ));
+    }
+    if adapter.provider_request.governance_surface.as_deref()
+        != Some(ACIP_CODING_PROVIDER_ADAPTER_SCHEMA_VERSION)
+    {
+        return Err(anyhow!(
+            "coding provider boundary adapter must set provider_request.governance_surface to the adapter contract"
+        ));
+    }
+    validate_provider_route_for_lane(&contract.provider_lane, &adapter.provider_request.route)?;
+    validate_model_identity_for_lane(
+        &contract.provider_lane,
+        &adapter.provider_request.lane_ref,
+        &adapter.provider_request.model_identity,
+    )?;
+    if adapter.provider_request.model_identity.tool_surface.as_deref()
+        != adapter.provider_request.tool_surface.as_deref()
+    {
+        return Err(anyhow!(
+            "coding provider boundary adapter must preserve tool_surface on model_identity"
+        ));
+    }
+    if adapter.provider_request.model_identity.governance_surface.as_deref()
+        != adapter.provider_request.governance_surface.as_deref()
+    {
+        return Err(anyhow!(
+            "coding provider boundary adapter must preserve governance_surface on model_identity"
+        ));
+    }
+    if adapter.provider_request.model_identity.lane_ref.as_deref()
+        != Some(adapter.provider_request.lane_ref.as_str())
+    {
+        return Err(anyhow!(
+            "coding provider boundary adapter must preserve lane_ref on model_identity"
+        ));
+    }
+    Ok(())
+}
+
+pub fn adapt_provider_result_to_acip_coding_outcome_v1(
+    contract: &AcipCodingInvocationContractV1,
+    message: &AcipMessageEnvelopeV1,
+    adapter: &AcipCodingProviderBoundaryAdapterV1,
+    result: &ProviderInvocationResultV1,
+) -> Result<AcipCodingOutcomeV1> {
+    validate_acip_coding_provider_boundary_adapter_v1(contract, message, adapter)?;
+    validate_provider_result(result)?;
+    if result.route != adapter.provider_request.route {
+        return Err(anyhow!(
+            "provider result route must match the adapter provider_request route"
+        ));
+    }
+    if result.model_identity != adapter.provider_request.model_identity {
+        return Err(anyhow!(
+            "provider result model_identity must match the adapter provider_request model_identity"
+        ));
+    }
+    if result.request_id.as_deref() != adapter.provider_request.request_id.as_deref() {
+        return Err(anyhow!(
+            "provider result request_id must match the adapter provider_request request_id"
+        ));
+    }
+    if let Some(artifact_ref) = result.artifact_ref.as_deref() {
+        validate_repo_relative_ref(artifact_ref, "provider_result.artifact_ref")?;
+    }
+    if let Some(trace_ref) = result.trace_ref.as_deref() {
+        validate_repo_relative_ref(trace_ref, "provider_result.trace_ref")?;
+    }
+    if result.final_status != ProviderInvocationFinalStatusV1::Ok {
+        return Err(anyhow!(
+            "provider result must finish with final_status 'ok' before it can become a governed coding outcome"
+        ));
+    }
+
+    let outcome = AcipCodingOutcomeV1 {
+        schema_version: ACIP_CODING_OUTCOME_SCHEMA_VERSION.to_string(),
+        invocation_id: adapter.invocation_id.clone(),
+        provider_lane: adapter.provider_lane.clone(),
+        execution_mode: adapter.execution_mode.clone(),
+        disposition: match adapter.execution_mode {
+            AcipCodingExecutionModeV1::WorktreeEdit => AcipCodingDispositionV1::PatchReadyForReview,
+            AcipCodingExecutionModeV1::UnappliedPatch
+            | AcipCodingExecutionModeV1::StructuredProposal => {
+                AcipCodingDispositionV1::ProposalReadyForReview
+            }
+        },
+        primary_output_ref: adapter.primary_output_ref.clone(),
+        validation_result_refs: vec![adapter.validation_summary_ref.clone()],
+        review_handoff_ref: adapter.review_handoff_ref.clone(),
+        writer_session_id: contract.approval_policy.writer_session_id.clone(),
+        writer_model_ref: contract.approval_policy.writer_model_ref.clone(),
+    };
     validate_acip_coding_outcome_v1(contract, &outcome)?;
     Ok(outcome)
 }
@@ -302,6 +594,209 @@ pub fn validate_acip_coding_invocation_contract_v1(
     }
 
     Ok(())
+}
+
+fn validate_provider_eligible_lane(provider_lane: &AcipCodingProviderLaneV1) -> Result<()> {
+    if *provider_lane == AcipCodingProviderLaneV1::CodexIssueWorktree {
+        return Err(anyhow!(
+            "coding provider boundary adapter only applies to provider-lower execution lanes, not codex_issue_worktree"
+        ));
+    }
+    Ok(())
+}
+
+fn validate_coding_request_message_matches_contract(
+    contract: &AcipCodingInvocationContractV1,
+    message: &AcipMessageEnvelopeV1,
+) -> Result<()> {
+    if message.intent != AcipIntentV1::CodingRequest {
+        return Err(anyhow!(
+            "coding provider boundary adapter requires a coding_request message"
+        ));
+    }
+    if message.conversation_id != contract.invocation.conversation_id {
+        return Err(anyhow!(
+            "coding provider boundary adapter requires message.conversation_id to match invocation.conversation_id"
+        ));
+    }
+    if message.message_id != contract.invocation.causal_message_id {
+        return Err(anyhow!(
+            "coding provider boundary adapter requires message.message_id to match invocation.causal_message_id"
+        ));
+    }
+    if !message
+        .payload_refs
+        .iter()
+        .any(|payload| payload.payload_ref == contract.task_bundle_ref)
+    {
+        return Err(anyhow!(
+            "coding provider boundary adapter requires message.payload_refs to include task_bundle_ref"
+        ));
+    }
+    Ok(())
+}
+
+fn provider_lane_ref_v1(provider_lane: &AcipCodingProviderLaneV1) -> &'static str {
+    match provider_lane {
+        AcipCodingProviderLaneV1::CodexIssueWorktree => "acip_coding_codex_issue_worktree",
+        AcipCodingProviderLaneV1::ChatgptApi => "acip_coding_chatgpt_api",
+        AcipCodingProviderLaneV1::ClaudeApi => "acip_coding_claude_api",
+        AcipCodingProviderLaneV1::LocalOllama => "acip_coding_local_ollama",
+        AcipCodingProviderLaneV1::OtherProposalOnly => "acip_coding_other_proposal_only",
+    }
+}
+
+fn route_for_provider_lane(provider_lane: &AcipCodingProviderLaneV1) -> ProviderRouteV1 {
+    match provider_lane {
+        AcipCodingProviderLaneV1::ChatgptApi => ProviderRouteV1 {
+            provider_kind: ProviderKindV1::Hosted,
+            provider: "openai".to_string(),
+            runtime_surface: RuntimeSurfaceV1::HostedApi,
+            provider_model_id: "gpt-5-api".to_string(),
+            endpoint_ref: Some("openai.responses".to_string()),
+            credential_ref: Some("env:OPENAI_API_KEY".to_string()),
+            source_registry: Some("acip.coding.provider_lane".to_string()),
+        },
+        AcipCodingProviderLaneV1::ClaudeApi => ProviderRouteV1 {
+            provider_kind: ProviderKindV1::Hosted,
+            provider: "anthropic".to_string(),
+            runtime_surface: RuntimeSurfaceV1::HostedApi,
+            provider_model_id: "claude-api".to_string(),
+            endpoint_ref: Some("anthropic.messages".to_string()),
+            credential_ref: Some("env:ANTHROPIC_API_KEY".to_string()),
+            source_registry: Some("acip.coding.provider_lane".to_string()),
+        },
+        AcipCodingProviderLaneV1::LocalOllama => ProviderRouteV1 {
+            provider_kind: ProviderKindV1::Local,
+            provider: "ollama".to_string(),
+            runtime_surface: RuntimeSurfaceV1::OllamaHttp,
+            provider_model_id: "gemma3-local".to_string(),
+            endpoint_ref: Some("ollama.local".to_string()),
+            credential_ref: None,
+            source_registry: Some("acip.coding.provider_lane".to_string()),
+        },
+        AcipCodingProviderLaneV1::OtherProposalOnly => ProviderRouteV1 {
+            provider_kind: ProviderKindV1::Unknown,
+            provider: "other-provider".to_string(),
+            runtime_surface: RuntimeSurfaceV1::Unknown,
+            provider_model_id: "other-provider".to_string(),
+            endpoint_ref: None,
+            credential_ref: None,
+            source_registry: Some("acip.coding.provider_lane".to_string()),
+        },
+        AcipCodingProviderLaneV1::CodexIssueWorktree => unreachable!(),
+    }
+}
+
+fn model_identity_for_provider_lane(provider_lane: &AcipCodingProviderLaneV1) -> Result<crate::model_identity::ModelIdentityV1> {
+    Ok(match provider_lane {
+        AcipCodingProviderLaneV1::ChatgptApi => hosted_model_identity(
+            "openai",
+            "gpt-5-api",
+            "gpt-5-api",
+            Some("acip.coding.provider_lane".to_string()),
+        ),
+        AcipCodingProviderLaneV1::ClaudeApi => hosted_model_identity(
+            "anthropic",
+            "claude-api",
+            "claude-api",
+            Some("acip.coding.provider_lane".to_string()),
+        ),
+        AcipCodingProviderLaneV1::LocalOllama => ollama_model_identity(
+            "gemma3-local",
+            "gemma3-local",
+            None,
+            Some("acip.coding.provider_lane".to_string()),
+        ),
+        AcipCodingProviderLaneV1::OtherProposalOnly => {
+            let mut identity = hosted_model_identity(
+                "other-provider",
+                "other-provider",
+                "other-provider",
+                Some("acip.coding.provider_lane".to_string()),
+            );
+            identity.provider_kind = "unknown".to_string();
+            identity.runtime_surface = "unknown".to_string();
+            identity
+        }
+        AcipCodingProviderLaneV1::CodexIssueWorktree => {
+            return Err(anyhow!("codex_issue_worktree is not a provider-lower execution lane"));
+        }
+    })
+}
+
+fn attempt_policy_for_provider_lane(
+    provider_lane: &AcipCodingProviderLaneV1,
+) -> ProviderAttemptPolicyV1 {
+    match provider_lane {
+        AcipCodingProviderLaneV1::LocalOllama => ProviderAttemptPolicyV1 {
+            max_attempts: 1,
+            timeout_ms: 60_000,
+            retry_backoff_ms: None,
+        },
+        AcipCodingProviderLaneV1::ChatgptApi | AcipCodingProviderLaneV1::ClaudeApi => {
+            ProviderAttemptPolicyV1 {
+                max_attempts: 2,
+                timeout_ms: 45_000,
+                retry_backoff_ms: Some(1_000),
+            }
+        }
+        AcipCodingProviderLaneV1::OtherProposalOnly => ProviderAttemptPolicyV1 {
+            max_attempts: 1,
+            timeout_ms: 30_000,
+            retry_backoff_ms: None,
+        },
+        AcipCodingProviderLaneV1::CodexIssueWorktree => unreachable!(),
+    }
+}
+
+fn validate_provider_route_for_lane(
+    provider_lane: &AcipCodingProviderLaneV1,
+    route: &ProviderRouteV1,
+) -> Result<()> {
+    let expected = route_for_provider_lane(provider_lane);
+    if route != &expected {
+        return Err(anyhow!(
+            "coding provider boundary adapter must preserve the expected provider route for the chosen provider_lane"
+        ));
+    }
+    Ok(())
+}
+
+fn validate_model_identity_for_lane(
+    provider_lane: &AcipCodingProviderLaneV1,
+    lane_ref: &str,
+    model_identity: &crate::model_identity::ModelIdentityV1,
+) -> Result<()> {
+    let expected = model_identity_for_provider_lane(provider_lane)?;
+    if model_identity.provider != expected.provider
+        || model_identity.model_ref != expected.model_ref
+        || model_identity.provider_model_id != expected.provider_model_id
+        || model_identity.provider_kind != expected.provider_kind
+        || model_identity.runtime_surface != expected.runtime_surface
+    {
+        return Err(anyhow!(
+            "coding provider boundary adapter must preserve the expected model_identity for the chosen provider_lane"
+        ));
+    }
+    if model_identity.lane_ref.as_deref() != Some(lane_ref) {
+        return Err(anyhow!(
+            "coding provider boundary adapter must preserve the lowered lane_ref on model_identity"
+        ));
+    }
+    Ok(())
+}
+
+fn expected_primary_output_ref(contract: &AcipCodingInvocationContractV1) -> &'static str {
+    match contract.execution_mode {
+        AcipCodingExecutionModeV1::WorktreeEdit => "runtime/comms/coding/patch_manifest.json",
+        AcipCodingExecutionModeV1::UnappliedPatch => {
+            "runtime/comms/coding/proposed_changes.diff"
+        }
+        AcipCodingExecutionModeV1::StructuredProposal => {
+            "runtime/comms/coding/proposal.json"
+        }
+    }
 }
 
 pub fn validate_acip_coding_outcome_v1(
