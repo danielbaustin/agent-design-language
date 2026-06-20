@@ -182,6 +182,29 @@ pub(crate) struct IssueEditArgs {
     pub(crate) json: bool,
 }
 
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub(crate) enum IssueCloseReason {
+    Completed,
+    NotPlanned,
+}
+
+impl IssueCloseReason {
+    pub(crate) fn as_str(&self) -> &'static str {
+        match self {
+            Self::Completed => "completed",
+            Self::NotPlanned => "not_planned",
+        }
+    }
+}
+
+#[derive(Debug, Clone, PartialEq, Eq)]
+pub(crate) struct IssueCloseArgs {
+    pub(crate) issue_ref: String,
+    pub(crate) reason: IssueCloseReason,
+    pub(crate) repo: Option<String>,
+    pub(crate) json: bool,
+}
+
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub(crate) enum IssueArgs {
     List(IssueListArgs),
@@ -190,6 +213,7 @@ pub(crate) enum IssueArgs {
     Create(IssueCreateArgs),
     Comment(IssueCommentArgs),
     Edit(IssueEditArgs),
+    Close(IssueCloseArgs),
 }
 
 pub(crate) fn parse_init_args(args: &[String]) -> Result<InitArgs> {
@@ -683,7 +707,7 @@ pub(crate) fn parse_closeout_args(args: &[String]) -> Result<CloseoutArgs> {
 
 pub(crate) fn parse_issue_args(args: &[String]) -> Result<IssueArgs> {
     let Some(subcommand) = args.first().map(|value| value.as_str()) else {
-        bail!("issue: missing subcommand (list | search | view | create | comment | edit)");
+        bail!("issue: missing subcommand (list | search | view | create | comment | edit | close)");
     };
 
     match subcommand {
@@ -693,6 +717,7 @@ pub(crate) fn parse_issue_args(args: &[String]) -> Result<IssueArgs> {
         "create" => parse_issue_create_args(&args[1..]).map(IssueArgs::Create),
         "comment" => parse_issue_comment_args(&args[1..]).map(IssueArgs::Comment),
         "edit" => parse_issue_edit_args(&args[1..]).map(IssueArgs::Edit),
+        "close" => parse_issue_close_args(&args[1..]).map(IssueArgs::Close),
         other => bail!("issue: unknown subcommand: {other}"),
     }
 }
@@ -984,6 +1009,41 @@ fn parse_issue_edit_args(args: &[String]) -> Result<IssueEditArgs> {
     Ok(parsed)
 }
 
+fn parse_issue_close_args(args: &[String]) -> Result<IssueCloseArgs> {
+    let issue_ref = args
+        .first()
+        .ok_or_else(|| anyhow!("issue close: missing <issue-number-or-url>"))?
+        .clone();
+    let mut parsed = IssueCloseArgs {
+        issue_ref,
+        reason: IssueCloseReason::Completed,
+        repo: None,
+        json: false,
+    };
+    let mut i = 1;
+    while i < args.len() {
+        match args[i].as_str() {
+            "--reason" | "--state-reason" => {
+                parsed.reason = parse_issue_close_reason(&require_value(
+                    args,
+                    i,
+                    "issue close",
+                    args[i].as_str(),
+                )?)?;
+                i += 1;
+            }
+            "-R" | "--repo" => {
+                parsed.repo = Some(require_value(args, i, "issue close", args[i].as_str())?);
+                i += 1;
+            }
+            "--json" => parsed.json = true,
+            other => bail!("issue close: unknown arg: {other}"),
+        }
+        i += 1;
+    }
+    Ok(parsed)
+}
+
 fn split_labels(raw: &str) -> Vec<String> {
     raw.split(',')
         .map(str::trim)
@@ -998,6 +1058,16 @@ fn parse_issue_state_filter(cmd: &str, value: &str) -> Result<IssueStateFilter> 
         "closed" => Ok(IssueStateFilter::Closed),
         "all" => Ok(IssueStateFilter::All),
         other => bail!("{cmd}: unsupported --state value: {other}"),
+    }
+}
+
+fn parse_issue_close_reason(value: &str) -> Result<IssueCloseReason> {
+    match value {
+        "completed" => Ok(IssueCloseReason::Completed),
+        "not_planned" | "not-planned" => Ok(IssueCloseReason::NotPlanned),
+        other => {
+            bail!("issue close: unsupported --reason '{other}'; expected completed or not_planned")
+        }
     }
 }
 

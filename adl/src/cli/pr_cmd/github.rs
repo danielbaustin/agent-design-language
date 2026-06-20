@@ -8,6 +8,7 @@ use crate::cli::pr_cmd::github_client::{
     plan_issue_metadata_parity, pr_matches_main_version_wave, redact_for_diagnostics,
     AdlGithubClient, GithubClientBackend, IssueMetadataSnapshot, PullRequestMetadataSnapshot,
 };
+use crate::cli::pr_cmd_args::IssueCloseReason;
 use crate::cli::pr_cmd_args::IssueStateFilter;
 use crate::cli::pr_cmd_prompt::infer_workflow_queue;
 use crate::cli::tokio_runtime::with_current_thread_runtime;
@@ -1596,6 +1597,33 @@ pub(super) fn gh_issue_comment(repo: &str, issue: u32, body: &str) -> Result<()>
         .with_context(|| format!("issue comment: gh fixture comment failed for issue #{issue}"));
     }
     issue_comment_octocrab(repo, issue, body)
+}
+
+pub(super) fn gh_issue_close(repo: &str, issue: u32, reason: IssueCloseReason) -> Result<()> {
+    #[cfg(test)]
+    if test_gh_fixture_fallback_allowed("issue.close")? {
+        return run_gh_status_shell(
+            "issue.close",
+            &[
+                "issue",
+                "close",
+                &issue.to_string(),
+                "-R",
+                repo,
+                "--reason",
+                reason.as_str(),
+            ],
+        )
+        .with_context(|| format!("issue close: gh fixture close failed for issue #{issue}"));
+    }
+    issue_close_octocrab(repo, issue, issue_close_reason(reason))
+}
+
+fn issue_close_reason(reason: IssueCloseReason) -> octocrab::models::issues::IssueStateReason {
+    match reason {
+        IssueCloseReason::Completed => octocrab::models::issues::IssueStateReason::Completed,
+        IssueCloseReason::NotPlanned => octocrab::models::issues::IssueStateReason::NotPlanned,
+    }
 }
 
 #[cfg(test)]

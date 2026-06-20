@@ -2641,6 +2641,7 @@ Usage:
   adl/tools/pr.sh issue create --title "<title>" [--body "<markdown>" | --body-file <path>] [--label <label>]... [--labels <csv>] [-R owner/repo] [--json]
   adl/tools/pr.sh issue comment <issue-number-or-url> [--body "<markdown>" | --body-file <path>] [-R owner/repo] [--json]
   adl/tools/pr.sh issue edit <issue-number-or-url> [--title "<title>"] [--body "<markdown>" | --body-file <path>] [--label <label>]... [--labels <csv>] [-R owner/repo] [--json]
+  adl/tools/pr.sh issue close <issue-number-or-url> [--reason completed|not_planned] [-R owner/repo] [--json]
 
 Behavior:
 - delegates to the Rust-owned issue inspection and mutation surface
@@ -2652,7 +2653,7 @@ Behavior:
   command environment without echoing it; do not fall back to direct `gh`
   commands or connector issue APIs
 - defaults `-R/--repo` from the current checkout when omitted
-- infers `owner/repo` from a GitHub issue URL on `issue view` when possible
+- infers `owner/repo` from a GitHub issue URL on `issue view` or `issue close` when possible
 - keeps machine-readable JSON on stdout when `--json` is set
 EOF
 }

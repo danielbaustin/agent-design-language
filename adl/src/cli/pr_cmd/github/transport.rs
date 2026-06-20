@@ -257,17 +257,29 @@ pub(super) fn issue_close_octocrab(
     issue: u32,
     reason: octocrab::models::issues::IssueStateReason,
 ) -> Result<()> {
+    #[derive(Serialize)]
+    struct IssueClosePayload<'a> {
+        state: &'a str,
+        state_reason: &'a str,
+    }
+
     let repo_parts = parse_repo(repo)?;
     with_octocrab("issue.close", |runtime, octo| {
         let owner = repo_parts.owner.clone();
         let name = repo_parts.name.clone();
+        let route = format!("/repos/{owner}/{name}/issues/{issue}");
+        let state_reason = match reason {
+            octocrab::models::issues::IssueStateReason::Completed => "completed",
+            octocrab::models::issues::IssueStateReason::NotPlanned => "not_planned",
+            _ => "completed",
+        };
+        let payload = IssueClosePayload {
+            state: "closed",
+            state_reason,
+        };
         block_on_octocrab(runtime, "issue.close", || async {
-            octo.issues(&owner, &name)
-                .update(issue as u64)
-                .state(octocrab::models::IssueState::Closed)
-                .state_reason(reason.clone())
-                .send()
-                .await
+            let _: serde_json::Value = octo.patch(route.as_str(), Some(&payload)).await?;
+            Ok(())
         })?;
         Ok(())
     })
