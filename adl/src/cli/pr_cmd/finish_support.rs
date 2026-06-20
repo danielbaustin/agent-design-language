@@ -2583,6 +2583,48 @@ pub(super) fn run_finish_validation_rust(
                         ],
                     )?;
                 }
+                "cargo test --manifest-path adl/Cargo.toml --bin adl-pr-finish wuji_ddns_slice -- --nocapture" => {
+                    run_finish_validation_status(
+                        "cargo",
+                        &[
+                            "test",
+                            "--manifest-path",
+                            path_str(&manifest)?,
+                            "--bin",
+                            "adl-pr-finish",
+                            "wuji_ddns_slice",
+                            "--",
+                            "--nocapture",
+                        ],
+                    )?;
+                }
+                "python3 -m unittest infra/ddns/tests/test_handler.py" => {
+                    run_finish_validation_status(
+                        "python3",
+                        &["-m", "unittest", "infra/ddns/tests/test_handler.py"],
+                    )?;
+                }
+                "sh -n infra/ddns/client/wuji_ddns_update.sh" => {
+                    run_finish_validation_status("sh", &["-n", "infra/ddns/client/wuji_ddns_update.sh"])?;
+                }
+                "terraform -chdir=infra/ddns fmt -check" => {
+                    run_finish_validation_status(
+                        "terraform",
+                        &["-chdir=infra/ddns", "fmt", "-check"],
+                    )?;
+                }
+                "terraform -chdir=infra/ddns init -backend=false" => {
+                    run_finish_validation_status(
+                        "terraform",
+                        &["-chdir=infra/ddns", "init", "-backend=false"],
+                    )?;
+                }
+                "terraform -chdir=infra/ddns validate" => {
+                    run_finish_validation_status(
+                        "terraform",
+                        &["-chdir=infra/ddns", "validate"],
+                    )?;
+                }
                 "cargo test --manifest-path adl/Cargo.toml --bin adl-csdlc public_prompt_packet" => {
                     run_finish_validation_status(
                         "cargo",
