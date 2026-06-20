@@ -12,8 +12,9 @@ use std::sync::{Mutex, OnceLock};
 use super::pr_cmd_args::parse_finish_args;
 use super::pr_cmd_args::{
     parse_closeout_args, parse_create_args, parse_doctor_args, parse_init_args, parse_issue_args,
-    parse_preflight_args, parse_ready_args, parse_repair_issue_body_args, parse_start_args,
-    parse_validation_args, DoctorArgs, DoctorMode, IssueArgs,
+    parse_preflight_args, parse_projection_map_args, parse_ready_args,
+    parse_repair_issue_body_args, parse_start_args, parse_validation_args, DoctorArgs, DoctorMode,
+    IssueArgs,
 };
 use super::pr_cmd_cards::{
     branch_indicates_unbound_state, ensure_bootstrap_cards, ensure_local_issue_prompt_copy,
@@ -153,7 +154,7 @@ fn resolve_local_issue_identity(repo_root: &Path, issue: u32) -> Result<Option<(
 pub(crate) fn real_pr(args: &[String]) -> Result<()> {
     let Some(subcommand) = args.first().map(|s| s.as_str()) else {
         bail!(
-            "pr requires a subcommand: create | init | repair-issue-body | start | doctor | ready | preflight | finish | validation | issue | closeout"
+            "pr requires a subcommand: create | init | repair-issue-body | start | doctor | ready | preflight | finish | validation | issue | projection-map | closeout"
         );
     };
 
@@ -168,9 +169,182 @@ pub(crate) fn real_pr(args: &[String]) -> Result<()> {
         "finish" => finish_support::real_pr_finish(&args[1..]),
         "validation" => real_pr_validation(&args[1..]),
         "issue" => real_pr_issue(&args[1..]),
+        "projection-map" => real_pr_projection_map(&args[1..]),
         "closeout" => real_pr_closeout(&args[1..]),
         other => bail!("unknown pr subcommand: {other}"),
     }
+}
+
+#[derive(Debug, Clone, Serialize, PartialEq, Eq)]
+pub(crate) struct ProjectionSurfaceV1 {
+    pub(crate) surface: &'static str,
+    pub(crate) source_of_truth: &'static str,
+    pub(crate) projection_policy: &'static str,
+    pub(crate) primary_command: &'static str,
+    pub(crate) repair_behavior: &'static str,
+    pub(crate) fail_closed_gate: &'static str,
+    pub(crate) status: &'static str,
+    pub(crate) follow_on: &'static str,
+}
+
+#[derive(Debug, Clone, Serialize, PartialEq, Eq)]
+struct ProjectionMapReportV1 {
+    schema_version: &'static str,
+    issue: &'static str,
+    purpose: &'static str,
+    surfaces: Vec<ProjectionSurfaceV1>,
+}
+
+pub(crate) fn github_csdlc_projection_surfaces_v1() -> Vec<ProjectionSurfaceV1> {
+    vec![
+        ProjectionSurfaceV1 {
+            surface: "github.issue.title",
+            source_of_truth: "GitHub issue title plus SIP/STP issue metadata",
+            projection_policy: "managed_projection",
+            primary_command: "adl/tools/pr.sh create|init|repair-issue-body|doctor",
+            repair_behavior: "metadata parity repairs the title when issue metadata is incomplete or stale",
+            fail_closed_gate: "doctor and init fail if required version/slug metadata cannot be inferred or repaired",
+            status: "implemented",
+            follow_on: "none",
+        },
+        ProjectionSurfaceV1 {
+            surface: "github.issue.labels",
+            source_of_truth: "issue metadata, milestone version, and ADL label taxonomy",
+            projection_policy: "managed_projection",
+            primary_command: "adl/tools/pr.sh create|init|repair-issue-body|doctor",
+            repair_behavior: "required labels are created when missing and applied during metadata parity repair",
+            fail_closed_gate: "metadata repair fails before mutation when required repository labels cannot be proven",
+            status: "implemented",
+            follow_on: "none",
+        },
+        ProjectionSurfaceV1 {
+            surface: "github.issue.body",
+            source_of_truth: "source issue prompt under .adl/<version>/bodies plus authored GitHub issue body",
+            projection_policy: "drift_checked_projection",
+            primary_command: "adl/tools/pr.sh create|init|repair-issue-body",
+            repair_behavior: "repair-issue-body may refresh the local source prompt and issue body only with explicit authored input or force",
+            fail_closed_gate: "metadata-only repair refuses to overwrite authored prompt/body content without explicit force",
+            status: "implemented",
+            follow_on: "none",
+        },
+        ProjectionSurfaceV1 {
+            surface: "github.pr.title",
+            source_of_truth: "finish command title and SOR integration record",
+            projection_policy: "managed_projection",
+            primary_command: "adl/tools/pr.sh finish",
+            repair_behavior: "finish creates or updates the PR title for the issue-bound branch",
+            fail_closed_gate: "finish refuses publication when required output-card and integration inputs are invalid",
+            status: "implemented",
+            follow_on: "none",
+        },
+        ProjectionSurfaceV1 {
+            surface: "github.pr.body",
+            source_of_truth: "SOR, finish input, changed paths, validation record, and closing linkage",
+            projection_policy: "managed_projection",
+            primary_command: "adl/tools/pr.sh finish",
+            repair_behavior: "finish renders the canonical PR body and stages/publicizes the issue output truth",
+            fail_closed_gate: "finish fails when completed SOR, paths, or validation inputs are missing or contradictory",
+            status: "implemented",
+            follow_on: "none",
+        },
+        ProjectionSurfaceV1 {
+            surface: "github.pr.closing_linkage",
+            source_of_truth: "issue number and finish-rendered PR body",
+            projection_policy: "managed_projection",
+            primary_command: "adl/tools/pr.sh finish; adl/tools/check_pr_closing_linkage.sh",
+            repair_behavior: "finish body includes closing linkage; legacy CI guard checks the live PR body or event payload",
+            fail_closed_gate: "publication/CI fail when the PR body lacks closing linkage for the issue",
+            status: "implemented_with_legacy_ci_guard",
+            follow_on: "route shell guard into Rust/PVF when the validation manager owns PR linkage checks",
+        },
+        ProjectionSurfaceV1 {
+            surface: "github.pr.validation_checks",
+            source_of_truth: "GitHub Actions check runs plus local focused validation records",
+            projection_policy: "linked_surface_only",
+            primary_command: "adl/tools/pr.sh validation",
+            repair_behavior: "validation reports check state; it does not rewrite GitHub check runs",
+            fail_closed_gate: "watch mode fails when checks conclude unsuccessfully",
+            status: "implemented",
+            follow_on: "none",
+        },
+        ProjectionSurfaceV1 {
+            surface: "github.review_comments",
+            source_of_truth: "GitHub human/subagent review threads",
+            projection_policy: "linked_surface_only",
+            primary_command: "review-comment-triage skill; pr janitor workflow",
+            repair_behavior: "comments are triaged into code/doc/card changes or follow-on issues; they are not rewritten as C-SDLC state",
+            fail_closed_gate: "unresolved requested changes block merge readiness",
+            status: "implemented_by_process",
+            follow_on: "add typed review-thread inventory after octocrab review APIs are promoted",
+        },
+        ProjectionSurfaceV1 {
+            surface: "github.closeout_comment",
+            source_of_truth: "SOR closeout truth and merged/closed GitHub issue state",
+            projection_policy: "drift_checked_projection",
+            primary_command: "adl/tools/pr.sh closeout",
+            repair_behavior: "closeout verifies closed-completed state and records local truth; final comments remain bounded process output",
+            fail_closed_gate: "closeout fails when GitHub issue closure truth and local SOR truth disagree",
+            status: "partially_implemented",
+            follow_on: "promote final closeout comment creation/update into typed octocrab path when closeout automation is hardened",
+        },
+        ProjectionSurfaceV1 {
+            surface: "github.milestone_and_project_fields",
+            source_of_truth: "milestone planning docs and GitHub project/milestone metadata",
+            projection_policy: "explicitly_deferred",
+            primary_command: "none",
+            repair_behavior: "no automatic projection in this tranche",
+            fail_closed_gate: "manual review only",
+            status: "deferred",
+            follow_on: "schedule typed milestone/project projection after issue/PR convergence is stable",
+        },
+        ProjectionSurfaceV1 {
+            surface: "csdlc.cards.sip_stp_spp_srp_sor",
+            source_of_truth: "repo-local prompt-template rendered cards and editor-skill truth repairs",
+            projection_policy: "card_local_only",
+            primary_command: "adl-csdlc tooling prompt-template ...; card editor skills; pr doctor",
+            repair_behavior: "cards are rendered, validated, and repaired locally; GitHub links to their outcomes rather than owning their full content",
+            fail_closed_gate: "doctor/finish/closeout fail when required card truth is missing or stale for the lifecycle phase",
+            status: "implemented",
+            follow_on: "none",
+        },
+    ]
+}
+
+fn projection_map_report_v1() -> ProjectionMapReportV1 {
+    ProjectionMapReportV1 {
+        schema_version: "adl.github_csdlc_projection_map.v1",
+        issue: "#4047",
+        purpose: "Classify which GitHub and C-SDLC surfaces are managed projections, drift-checked projections, linked surfaces, card-local surfaces, or explicitly deferred surfaces.",
+        surfaces: github_csdlc_projection_surfaces_v1(),
+    }
+}
+
+fn real_pr_projection_map(args: &[String]) -> Result<()> {
+    let parsed = parse_projection_map_args(args)?;
+    let report = projection_map_report_v1();
+    if parsed.json {
+        println!("{}", serde_json::to_string_pretty(&report)?);
+        return Ok(());
+    }
+
+    println!(
+        "GitHub/C-SDLC projection convergence map ({})",
+        report.schema_version
+    );
+    println!("{}", report.purpose);
+    for surface in &report.surfaces {
+        println!();
+        println!("- {} [{}]", surface.surface, surface.projection_policy);
+        println!("  source: {}", surface.source_of_truth);
+        println!("  command: {}", surface.primary_command);
+        println!("  repair: {}", surface.repair_behavior);
+        println!("  gate: {}", surface.fail_closed_gate);
+        println!("  status: {}", surface.status);
+        if surface.follow_on != "none" {
+            println!("  follow_on: {}", surface.follow_on);
+        }
+    }
+    Ok(())
 }
 
 fn real_pr_validation(args: &[String]) -> Result<()> {

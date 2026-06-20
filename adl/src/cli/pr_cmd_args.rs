@@ -112,6 +112,11 @@ pub(crate) struct CloseoutArgs {
 }
 
 #[derive(Debug, Clone, PartialEq, Eq)]
+pub(crate) struct ProjectionMapArgs {
+    pub(crate) json: bool,
+}
+
+#[derive(Debug, Clone, PartialEq, Eq)]
 pub(crate) enum IssueStateFilter {
     Open,
     Closed,
@@ -720,6 +725,17 @@ pub(crate) fn parse_issue_args(args: &[String]) -> Result<IssueArgs> {
         "close" => parse_issue_close_args(&args[1..]).map(IssueArgs::Close),
         other => bail!("issue: unknown subcommand: {other}"),
     }
+}
+
+pub(crate) fn parse_projection_map_args(args: &[String]) -> Result<ProjectionMapArgs> {
+    let mut parsed = ProjectionMapArgs { json: false };
+    for arg in args {
+        match arg.as_str() {
+            "--json" => parsed.json = true,
+            other => bail!("projection-map: unknown arg: {other}"),
+        }
+    }
+    Ok(parsed)
 }
 
 fn parse_issue_list_args(args: &[String]) -> Result<IssueListArgs> {

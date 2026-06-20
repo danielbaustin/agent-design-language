@@ -2336,6 +2336,18 @@ cmd_issue() {
   delegate_pr_command_to_rust issue "$@"
 }
 
+cmd_projection_map() {
+  if [[ "${1:-}" == "-h" || "${1:-}" == "--help" || "${1:-}" == "help" ]]; then
+    note "Usage: adl/tools/pr.sh projection-map [--json]"
+    note ""
+    note "Reports the GitHub/C-SDLC projection ownership map for issue, PR, and card surfaces."
+    return 0
+  fi
+  adl_obs_event "pr.sh" "projection-map" "started"
+  require_rust_pr_delegate projection-map
+  delegate_pr_command_to_rust projection-map "$@"
+}
+
 cmd_closeout() {
   if [[ "${1:-}" == "-h" || "${1:-}" == "--help" || "${1:-}" == "help" ]]; then
     usage_closeout
@@ -2399,7 +2411,8 @@ Commands:
   doctor  <issue> [--slug <slug>] [--version <v>] [--no-fetch-issue] [--mode full|ready|preflight] [--json]
   finish  <issue> --title "<title>" ... [-f <input_card.md>] [--output-card <output_card.md>] [--no-open] [--merge]
   validation <pr-number-or-url> [-R owner/repo] [--watch] [--json]
-  issue   <list|search|view> ...
+  issue   <list|search|view|create|comment|edit|close> ...
+  projection-map [--json]
   closeout <issue> [--slug <slug>] [--version <v>] [--no-fetch-issue]
 
 Compatibility / maintenance commands:
@@ -2706,6 +2719,7 @@ main() {
     finish) cmd_finish "$@" ;;
     validation) cmd_validation "$@" ;;
     issue) cmd_issue "$@" ;;
+    projection-map) cmd_projection_map "$@" ;;
     closeout) cmd_closeout "$@" ;;
     card) cmd_card "$@" ;;
     output) cmd_output "$@" ;;
