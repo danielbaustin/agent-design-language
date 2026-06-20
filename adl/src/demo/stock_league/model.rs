@@ -1042,8 +1042,11 @@ mod tests {
         if let Some(parent) = path.parent() {
             fs::create_dir_all(parent).expect("create parent dirs");
         }
-        fs::write(path, serde_json::to_string_pretty(value).expect("serialize json"))
-            .expect("write json artifact");
+        fs::write(
+            path,
+            serde_json::to_string_pretty(value).expect("serialize json"),
+        )
+        .expect("write json artifact");
     }
 
     #[test]
@@ -1115,7 +1118,8 @@ mod tests {
         fs::create_dir_all(root.path().join("long_lived_agent/state/cycles"))
             .expect("create cycles dir");
         fs::write(
-            root.path().join("long_lived_agent/state/cycle_ledger.jsonl"),
+            root.path()
+                .join("long_lived_agent/state/cycle_ledger.jsonl"),
             concat!(
                 "{\"cycle_id\":\"cycle-000001\"}\n",
                 "{\"cycle_id\":\"cycle-000002\"}\n",
@@ -1206,8 +1210,7 @@ mod tests {
         });
         let integration_proof = integration_proof_packet(&continuity, &guardrails);
         let extension_selection_value = extension_selection();
-        let extension_claims =
-            extension_proof_claims(&integration_proof, &continuity, &guardrails);
+        let extension_claims = extension_proof_claims(&integration_proof, &continuity, &guardrails);
         let extension_scan = json!({ "passed": true });
         let evidence_index = extension_evidence_index(&extension_scan);
         let replay_manifest = extension_replay_manifest();
@@ -1222,17 +1225,37 @@ mod tests {
         );
 
         assert_eq!(universe["schema_version"], "adl.stock_league.universe.v1");
-        assert_eq!(data_source["sources"][0]["source_id"], "repo-fixture-season-001");
+        assert_eq!(
+            data_source["sources"][0]["source_id"],
+            "repo-fixture-season-001"
+        );
         assert_eq!(identity["agent_id"], agent.id);
         assert!(style_card.contains(agent.display_name));
         assert!(journal.contains("identity_seed"));
         assert_eq!(rules["schema_version"], "adl.stock_league.rules.v1");
-        assert_eq!(policy["schema_version"], "adl.stock_league.guardrail_policy.v1");
-        assert_eq!(day_one["schema_version"], "adl.stock_league.decision_batch.v1");
-        assert!(paper_ledger.contains("\"schema_version\":\"adl.stock_league.paper_ledger_entry.v1\""));
-        assert_eq!(standings["schema_version"], "adl.stock_league.scoreboard.v1");
-        assert_eq!(guardrails["schema_version"], "adl.stock_league.guardrail_report.v1");
-        assert_eq!(season["schema_version"], "adl.stock_league.season_manifest.v1");
+        assert_eq!(
+            policy["schema_version"],
+            "adl.stock_league.guardrail_policy.v1"
+        );
+        assert_eq!(
+            day_one["schema_version"],
+            "adl.stock_league.decision_batch.v1"
+        );
+        assert!(
+            paper_ledger.contains("\"schema_version\":\"adl.stock_league.paper_ledger_entry.v1\"")
+        );
+        assert_eq!(
+            standings["schema_version"],
+            "adl.stock_league.scoreboard.v1"
+        );
+        assert_eq!(
+            guardrails["schema_version"],
+            "adl.stock_league.guardrail_report.v1"
+        );
+        assert_eq!(
+            season["schema_version"],
+            "adl.stock_league.season_manifest.v1"
+        );
         assert_eq!(proof["schema_version"], "adl.stock_league.proof_packet.v1");
         assert!(agent_spec.contains("agent_instance_id: stock-league-archivist"));
         assert!(agent_spec.contains("max_cycles: 3"));
@@ -1276,6 +1299,9 @@ mod tests {
         assert!(written.ends_with("artifacts/manifest.json"));
         let round_trip =
             read_json_rel(write_root.path(), "artifacts/manifest.json").expect("read back");
-        assert_eq!(round_trip["schema_version"], "adl.stock_league.integration_manifest.v1");
+        assert_eq!(
+            round_trip["schema_version"],
+            "adl.stock_league.integration_manifest.v1"
+        );
     }
 }
