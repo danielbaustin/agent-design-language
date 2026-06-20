@@ -107,6 +107,8 @@ run_csdlc_lane() {
     bash adl/tools/test_pr_run_ambiguity_policy.sh
   run_command "C-SDLC PR small-binary delegation" \
     bash adl/tools/test_pr_small_binary_delegation.sh
+  run_command "C-SDLC PR locked Cargo fallback" \
+    bash adl/tools/test_pr_run_locked_cargo_fallback_refuses_cleanly.sh
   run_command "C-SDLC control-plane observability contract" \
     bash adl/tools/test_control_plane_observability.sh
 }
