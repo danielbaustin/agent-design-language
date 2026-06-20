@@ -485,3 +485,320 @@ fn reserve_heartbeat_seq(loaded: &LoadedAgentSpec) -> Result<u64> {
         .with_context(|| format!("failed finalizing {}", path.display()))?;
     Ok(reserved)
 }
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use crate::long_lived_agent::{
+        AgentSpec, AgentStatusState, HeartbeatSpec, LeaseRecord, StatusError, StatusRecord,
+        WorkflowSpec,
+    };
+    use crate::observability::test_env_lock;
+    use chrono::Duration as ChronoDuration;
+    use serde_json::json;
+    use std::ffi::OsString;
+    use std::path::Path;
+    use std::sync::atomic::{AtomicU64, Ordering};
+    use std::sync::MutexGuard;
+
+    static TEMP_SEQ: AtomicU64 = AtomicU64::new(0);
+
+    struct MultiEnvGuard {
+        saved: Vec<(String, Option<OsString>)>,
+        _lock: MutexGuard<'static, ()>,
+    }
+
+    impl MultiEnvGuard {
+        fn set_all(values: &[(&str, &str)]) -> Self {
+            let lock = test_env_lock();
+            let tracked = [
+                "ADL_AWS_SIGNAL_MODE",
+                "ADL_AWS_REGION",
+                "ADL_AWS_HEARTBEAT_TARGET",
+                "ADL_AWS_SIGNAL_APPROVED",
+                "ADL_AWS_HEARTBEAT_LOG_GROUP",
+                "ADL_AWS_HEARTBEAT_LOG_STREAM",
+            ];
+            let mut saved = Vec::with_capacity(tracked.len());
+            for key in tracked {
+                saved.push((key.to_string(), env::var_os(key)));
+                unsafe {
+                    env::remove_var(key);
+                }
+            }
+            for (key, value) in values {
+                unsafe {
+                    env::set_var(key, value);
+                }
+            }
+            Self { saved, _lock: lock }
+        }
+    }
+
+    impl Drop for MultiEnvGuard {
+        fn drop(&mut self) {
+            unsafe {
+                for (key, old) in self.saved.iter().rev() {
+                    match old {
+                        Some(value) => env::set_var(key, value),
+                        None => env::remove_var(key),
+                    }
+                }
+            }
+        }
+    }
+
+    fn temp_dir(prefix: &str) -> PathBuf {
+        let dir = std::env::temp_dir().join(format!(
+            "adl-runtime-aws-signal-{prefix}-{}-{}",
+            std::process::id(),
+            TEMP_SEQ.fetch_add(1, Ordering::Relaxed)
+        ));
+        fs::create_dir_all(&dir).expect("create temp dir");
+        dir
+    }
+
+    fn sample_loaded(root: &Path) -> LoadedAgentSpec {
+        let spec_path = root.join("agent.yaml");
+        LoadedAgentSpec {
+            spec: AgentSpec {
+                schema: "adl.long_lived_agent_spec.v1".to_string(),
+                agent_instance_id: "runtime-agent".to_string(),
+                display_name: "Runtime Agent".to_string(),
+                state_root: PathBuf::from("state"),
+                workflow: WorkflowSpec {
+                    kind: "demo_adapter".to_string(),
+                    name: Some("runtime-heartbeat".to_string()),
+                    path: None,
+                    run_args: json!({}),
+                },
+                heartbeat: HeartbeatSpec {
+                    interval_secs: Some(30),
+                    max_cycles: Some(5),
+                    stale_lease_after_secs: Some(60),
+                },
+                safety: json!({}),
+                memory: json!({}),
+            },
+            spec_path,
+            state_root: root.join("state"),
+        }
+    }
+
+    fn sample_status(state: AgentStatusState) -> StatusRecord {
+        StatusRecord {
+            schema: "adl.long_lived_agent_status.v1".to_string(),
+            agent_instance_id: "runtime-agent".to_string(),
+            state,
+            last_cycle_id: Some("cycle-000123".to_string()),
+            last_cycle_status: Some("success".to_string()),
+            completed_cycle_count: 3,
+            consecutive_failure_count: 0,
+            active_lease: None,
+            stop_requested: false,
+            last_error: None,
+            safety_policy: json!({}),
+            updated_at: Utc::now(),
+        }
+    }
+
+    #[test]
+    fn runtime_aws_signal_config_parses_modes_and_live_block_reasons() {
+        {
+            let _guard = MultiEnvGuard::set_all(&[
+                ("ADL_AWS_SIGNAL_MODE", "live"),
+                ("ADL_AWS_SIGNAL_APPROVED", "true"),
+                ("ADL_AWS_REGION", "us-west-2"),
+            ]);
+            let config = HeartbeatPublisherConfig::from_env();
+            assert_eq!(config.mode, AwsSignalMode::Live);
+            assert!(config.configured);
+            assert_eq!(config.mode_label(), "live");
+            assert_eq!(config.live_block_reason(), "aws_signal_log_group_missing");
+        }
+
+        {
+            let _guard = MultiEnvGuard::set_all(&[
+                ("ADL_AWS_SIGNAL_MODE", "live"),
+                ("ADL_AWS_SIGNAL_APPROVED", "true"),
+                ("ADL_AWS_REGION", "us-west-2"),
+                ("ADL_AWS_HEARTBEAT_LOG_GROUP", "group"),
+            ]);
+            let config = HeartbeatPublisherConfig::from_env();
+            assert_eq!(config.live_block_reason(), "aws_signal_log_stream_missing");
+        }
+
+        {
+            let _guard = MultiEnvGuard::set_all(&[
+                ("ADL_AWS_SIGNAL_MODE", "live"),
+                ("ADL_AWS_SIGNAL_APPROVED", "true"),
+                ("ADL_AWS_REGION", "us-west-2"),
+                ("ADL_AWS_HEARTBEAT_LOG_GROUP", "group"),
+                ("ADL_AWS_HEARTBEAT_LOG_STREAM", "stream"),
+            ]);
+            let config = HeartbeatPublisherConfig::from_env();
+            assert_eq!(
+                config.live_block_reason(),
+                "aws_signal_live_transport_not_implemented"
+            );
+        }
+    }
+
+    #[test]
+    fn runtime_aws_signal_helper_labels_cover_status_variants() {
+        let mut status = sample_status(AgentStatusState::RunningCycle);
+        let lease_started_at = status.updated_at - ChronoDuration::seconds(12);
+        status.active_lease = Some(LeaseRecord {
+            schema: "adl.long_lived_agent_lease.v1".to_string(),
+            agent_instance_id: "runtime-agent".to_string(),
+            lease_id: "lease-1".to_string(),
+            cycle_id: "cycle-lease".to_string(),
+            owner_pid: 42,
+            hostname: "local".to_string(),
+            started_at: lease_started_at,
+            expires_at: status.updated_at + ChronoDuration::seconds(60),
+            status: "active".to_string(),
+        });
+        assert_eq!(cycle_id_for_status(&status), "cycle-000123");
+        assert_eq!(runtime_signal_status(&status), "heartbeat");
+        assert_eq!(next_cycle_hint(&status), "cycle_in_progress");
+        assert_eq!(lease_state_label(&status), "active");
+        assert_eq!(agent_state_label(&status.state), "running_cycle");
+        assert!(elapsed_ms(&status) >= 12_000);
+
+        let mut failed = sample_status(AgentStatusState::Failed);
+        failed.last_cycle_id = None;
+        failed.stop_requested = true;
+        failed.active_lease = None;
+        failed.last_error = Some(StatusError {
+            class: "workflow_failed".to_string(),
+            message: "cycle failed".to_string(),
+        });
+        assert_eq!(cycle_id_for_status(&failed), "not_applicable");
+        assert_eq!(runtime_signal_status(&failed), "failed");
+        assert_eq!(
+            next_cycle_hint(&failed),
+            "inspect_status_and_cycle_artifacts"
+        );
+        assert_eq!(lease_state_label(&failed), "stop_requested");
+        assert_eq!(agent_state_label(&failed.state), "failed");
+
+        let idle = sample_status(AgentStatusState::Idle);
+        assert_eq!(runtime_signal_status(&idle), "completed");
+        assert_eq!(next_cycle_hint(&idle), "sleep_until_next_heartbeat");
+    }
+
+    #[test]
+    fn runtime_aws_signal_mock_publish_writes_envelope_and_cursor() {
+        let root = temp_dir("mock");
+        let loaded = sample_loaded(&root);
+        let _guard = MultiEnvGuard::set_all(&[
+            ("ADL_AWS_SIGNAL_MODE", "mock"),
+            ("ADL_AWS_REGION", "us-west-2"),
+        ]);
+
+        let outcome = publish_runtime_heartbeat_signal(
+            &loaded,
+            &sample_status(AgentStatusState::RunningCycle),
+        );
+        assert_eq!(outcome.disposition, PublishDisposition::PublishedMock);
+        assert_eq!(outcome.failure_class, None);
+
+        let artifact = fs::read_to_string(mock_signal_artifact_path(&loaded)).expect("artifact");
+        let envelope: serde_json::Value =
+            serde_json::from_str(artifact.lines().next().expect("jsonl line"))
+                .expect("parse envelope");
+        assert_eq!(envelope["schema_version"], AWS_SIGNAL_SCHEMA_VERSION);
+        assert_eq!(envelope["signal_kind"], "heartbeat");
+        assert_eq!(envelope["transport"]["mode"], "mock");
+        assert_eq!(envelope["transport"]["target_kind"], HEARTBEAT_TARGET_KIND);
+        assert_eq!(envelope["heartbeat_seq"], 1);
+        assert_eq!(
+            envelope["correlation_id"],
+            "heartbeat:runtime-agent:cycle-000123:1"
+        );
+        assert_eq!(envelope["payload"]["state"], "running_cycle");
+        assert_eq!(envelope["payload"]["next_cycle_hint"], "cycle_in_progress");
+
+        let cursor: HeartbeatCursor = serde_json::from_str(
+            &fs::read_to_string(heartbeat_cursor_path(&loaded)).expect("cursor"),
+        )
+        .expect("parse cursor");
+        assert_eq!(cursor.schema, HEARTBEAT_CURSOR_SCHEMA);
+        assert_eq!(cursor.next_heartbeat_seq, 2);
+    }
+
+    #[test]
+    fn runtime_aws_signal_publish_handles_disabled_unsupported_and_live_blocked_modes() {
+        let root = temp_dir("publish-modes");
+        let loaded = sample_loaded(&root);
+
+        {
+            let _guard = MultiEnvGuard::set_all(&[("ADL_AWS_SIGNAL_MODE", "disabled")]);
+            let disabled =
+                publish_runtime_heartbeat_signal(&loaded, &sample_status(AgentStatusState::Idle));
+            assert_eq!(disabled.disposition, PublishDisposition::Skipped);
+            assert!(!mock_signal_artifact_path(&loaded).exists());
+            assert!(!heartbeat_cursor_path(&loaded).exists());
+        }
+
+        {
+            let _guard = MultiEnvGuard::set_all(&[
+                ("ADL_AWS_SIGNAL_MODE", "mock"),
+                ("ADL_AWS_HEARTBEAT_TARGET", "sns"),
+            ]);
+            let unsupported =
+                publish_runtime_heartbeat_signal(&loaded, &sample_status(AgentStatusState::Idle));
+            assert_eq!(unsupported.disposition, PublishDisposition::Blocked);
+            assert_eq!(
+                unsupported.failure_class.as_deref(),
+                Some("aws_signal_unsupported_target")
+            );
+        }
+
+        {
+            let _guard = MultiEnvGuard::set_all(&[
+                ("ADL_AWS_SIGNAL_MODE", "live"),
+                ("ADL_AWS_REGION", "us-west-2"),
+            ]);
+            let blocked =
+                publish_runtime_heartbeat_signal(&loaded, &sample_status(AgentStatusState::Idle));
+            assert_eq!(blocked.disposition, PublishDisposition::Blocked);
+            assert_eq!(
+                blocked.failure_class.as_deref(),
+                Some("aws_signal_live_not_approved")
+            );
+        }
+    }
+
+    #[test]
+    fn runtime_aws_signal_sequence_and_envelope_helpers_are_stable() {
+        let root = temp_dir("sequence");
+        let loaded = sample_loaded(&root);
+        let first = reserve_heartbeat_seq(&loaded).expect("first seq");
+        let second = reserve_heartbeat_seq(&loaded).expect("second seq");
+        assert_eq!(first, 1);
+        assert_eq!(second, 2);
+
+        let config = HeartbeatPublisherConfig {
+            mode: AwsSignalMode::Mock,
+            configured: true,
+            region: Some("us-west-2".to_string()),
+            target_kind: HEARTBEAT_TARGET_KIND.to_string(),
+            approved: false,
+            log_group_configured: false,
+            log_stream_configured: false,
+        };
+        let mut stopped = sample_status(AgentStatusState::Stopped);
+        stopped.last_cycle_id = None;
+        let envelope = build_runtime_heartbeat_envelope(&loaded, &stopped, &config, second);
+        assert_eq!(envelope.agent_id, "runtime-heartbeat");
+        assert_eq!(envelope.cycle_id, "not_applicable");
+        assert_eq!(envelope.status, "completed");
+        assert_eq!(envelope.transport.region.as_deref(), Some("us-west-2"));
+        assert!(!envelope.transport.approved);
+        assert_eq!(envelope.payload.state, "stopped");
+        assert_eq!(envelope.payload.next_cycle_hint, "stop_requested");
+        assert_eq!(envelope.payload.lease_state, "clear");
+    }
+}
