@@ -60,6 +60,14 @@ printf 'validation:%s\n' "$*" >"${ADL_TEST_LOG}"
 EOF
 chmod +x "$validation_bin"
 
+closing_linkage_bin="$repo/bin/adl-pr-closing-linkage"
+cat >"$closing_linkage_bin" <<'EOF'
+#!/usr/bin/env bash
+set -euo pipefail
+printf 'closing-linkage:%s\n' "$*" >"${ADL_TEST_LOG}"
+EOF
+chmod +x "$closing_linkage_bin"
+
 issue_bin="$repo/bin/adl-issue"
 cat >"$issue_bin" <<'EOF'
 #!/usr/bin/env bash
@@ -129,6 +137,18 @@ validation_log="$tmpdir/validation.log"
 )
 grep -Fqx 'validation:3888 --json' "$validation_log" || {
   echo "assertion failed: validation should delegate directly to adl-pr-validation without broad 'pr validation' argv" >&2
+  exit 1
+}
+
+closing_linkage_log="$tmpdir/closing-linkage.log"
+(
+  cd "$repo"
+  ADL_TEST_LOG="$closing_linkage_log" \
+    ADL_PR_CLOSING_LINKAGE_BIN="$closing_linkage_bin" \
+    "$BASH_BIN" adl/tools/pr.sh closing-linkage --event-name pull_request --head-ref codex/4286-demo >/dev/null
+)
+grep -Fqx 'closing-linkage:--event-name pull_request --head-ref codex/4286-demo' "$closing_linkage_log" || {
+  echo "assertion failed: closing-linkage should delegate directly to adl-pr-closing-linkage without broad wrapper argv" >&2
   exit 1
 }
 

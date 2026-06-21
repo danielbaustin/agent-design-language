@@ -36,7 +36,7 @@ The Rust command emits schema `adl.github_csdlc_projection_map.v1`.
 | `github.issue.body` | `drift_checked_projection` | implemented | Repair refuses to overwrite authored prompt/body content without explicit force. |
 | `github.pr.title` | `managed_projection` | implemented | Owned by `pr finish`. |
 | `github.pr.body` | `managed_projection` | implemented | Owned by `pr finish` from SOR/output-card truth. |
-| `github.pr.closing_linkage` | `managed_projection` | implemented with legacy CI guard | Finish renders linkage; `check_pr_closing_linkage.sh` still guards CI until Rust/PVF owns it. |
+| `github.pr.closing_linkage` | `managed_projection` | implemented | Finish renders linkage; Rust/PVF owns the canonical live-metadata-first guard, while the shell helper remains a deterministic compatibility fallback for always-on minimal CI lanes. |
 | `github.pr.validation_checks` | `linked_surface_only` | implemented | Reported by `pr validation`; GitHub Actions remains the source. |
 | `github.review_comments` | `linked_surface_only` | implemented by process | Routed through review triage/janitor work, not rewritten as local state. |
 | `github.closeout_comment` | `drift_checked_projection` | partially implemented | Closeout verifies local/GitHub closure truth; typed final-comment automation remains follow-on work. |
@@ -49,7 +49,7 @@ The Rust command emits schema `adl.github_csdlc_projection_map.v1`.
 
 Existing metadata parity is already Rust-owned. The retired `check_issue_metadata_parity.sh` path now points operators toward `pr doctor` or future Rust/PVF validation lanes.
 
-`check_pr_closing_linkage.sh` remains a legacy CI guard. That is acceptable for this tranche because the guard is explicit, narrow, and still proves the PR closing-linkage invariant. It should be migrated into Rust/PVF when validation-manager ownership is ready.
+`adl/tools/pr.sh closing-linkage` is now the authoritative Rust/PVF guard for PR closing linkage. `check_pr_closing_linkage.sh` remains only as a deterministic compatibility helper so always-on minimal CI lanes can avoid compiling Rust; it delegates to Rust only through an explicit binary override.
 
 ## Non-Claims
 
@@ -69,4 +69,3 @@ Focused validation should prove:
 - all five projection policies are represented
 - the required GitHub and C-SDLC surfaces are represented
 - public `pr.sh projection-map` delegates to the Rust command
-
