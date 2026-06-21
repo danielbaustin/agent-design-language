@@ -2757,7 +2757,10 @@ mod tests {
             PromptCardKind::all_for_template_set(&active).len()
         );
         assert_eq!(
-            model.cards.iter().any(|card| card.kind == PromptCardKind::Vpp),
+            model
+                .cards
+                .iter()
+                .any(|card| card.kind == PromptCardKind::Vpp),
             template_set_supports_vpp(&active)
         );
         assert!(model
