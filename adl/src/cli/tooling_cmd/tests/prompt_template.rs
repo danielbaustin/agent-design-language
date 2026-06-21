@@ -591,7 +591,7 @@ fn prompt_template_validate_values_requires_variance_analysis_for_large_known_so
             .to_string_lossy()
             .to_string(),
         "--set".to_string(),
-        "estimated_elapsed_seconds=100".to_string(),
+        "estimate_elapsed_seconds=100".to_string(),
         "--set".to_string(),
         "actual_elapsed_seconds=300".to_string(),
     ])

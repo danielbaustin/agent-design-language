@@ -75,7 +75,7 @@ pub(super) fn markdown_block_field(text: &str, block: &str, key: &str) -> Option
     body.lines().find_map(|line| {
         line.trim_start()
             .strip_prefix(&format!("- {key}:"))
-            .map(|value| value.trim().to_string())
+            .map(|value| value.trim().trim_matches('`').to_string())
     })
 }
 

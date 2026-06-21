@@ -10,6 +10,7 @@ They are planning and bridge documents, not runtime implementation proof.
 - [Resilience, Persistence, And Sleep/Wake](RESILIENCE_PERSISTENCE_SLEEP_WAKE_v0.91.6.md)
 - [Tooling Proof-Loop Reliability](TOOLING_PROOF_LOOP_RELIABILITY_v0.91.6.md)
 - [Public Prompt Records Export](PUBLIC_PROMPT_RECORDS_EXPORT_v0.91.6.md)
+- [Per-Issue Execution Metrics Foundation](PER_ISSUE_EXECUTION_METRICS_FOUNDATION_v0.91.6.md)
 - [Provider And Model Reliability](PROVIDER_MODEL_RELIABILITY_v0.91.6.md)
 - [ACIP, A2A, And Provider Communications](ACIP_A2A_PROVIDER_COMMUNICATIONS_v0.91.6.md)
 - [Security Bridge And Continuous Adversarial Verification](SECURITY_BRIDGE_AND_CAV_v0.91.6.md)
