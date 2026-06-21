@@ -199,7 +199,10 @@ mod tests {
         assert!(markdown_has_heading(text, "Visible"));
         assert!(markdown_has_heading(text, "Also Visible"));
         assert!(!markdown_has_heading(text, "Hidden"));
-        assert_eq!(markdown_headings(text), vec!["Visible", "Hidden", "Also Visible"]);
+        assert_eq!(
+            markdown_headings(text),
+            vec!["Visible", "Hidden", "Also Visible"]
+        );
     }
 
     #[test]
@@ -226,8 +229,14 @@ Traces:
             Some("Line one\nLine two")
         );
         assert_eq!(markdown_section_body(text, "Missing"), None);
-        assert_eq!(markdown_field(text, "Task ID").as_deref(), Some("issue-4329"));
-        assert_eq!(markdown_field(text, "Status").as_deref(), Some("IN_PROGRESS"));
+        assert_eq!(
+            markdown_field(text, "Task ID").as_deref(),
+            Some("issue-4329")
+        );
+        assert_eq!(
+            markdown_field(text, "Status").as_deref(),
+            Some("IN_PROGRESS")
+        );
         assert_eq!(
             markdown_block_field(text, "Execution", "Actor").as_deref(),
             Some("Codex")
@@ -260,7 +269,10 @@ Traces:
         assert!(trim_blank_edges(vec!["".to_string(), " ".to_string()]).is_empty());
 
         assert_eq!(section_id_to_header("goal"), Some("Goal"));
-        assert_eq!(section_id_to_header("reviewer_checklist"), Some("Reviewer Checklist (machine-readable hints)"));
+        assert_eq!(
+            section_id_to_header("reviewer_checklist"),
+            Some("Reviewer Checklist (machine-readable hints)")
+        );
         assert_eq!(section_id_to_header("missing"), None);
 
         let root = temp_dir("display-card-ref");
