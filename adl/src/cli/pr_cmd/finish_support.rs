@@ -1752,7 +1752,7 @@ fn finish_issue_needs_unity_observatory_contract_validation(
     issue_number: u32,
     changed_paths: &[String],
 ) -> bool {
-    matches!(issue_number, 4032 | 4033 | 4034)
+    matches!(issue_number, 4032..=4034)
         && !changed_paths.is_empty()
         && changed_paths.iter().all(|path| {
             let trimmed = path.trim().trim_matches('/');
@@ -2530,7 +2530,7 @@ fn finish_path_needs_unity_observatory_baseline_validation(issue: u32, path: &st
 }
 
 fn parsed_issue_is_unity_observatory_contract_path(issue: u32, path: &str) -> bool {
-    if !matches!(issue, 4032 | 4033 | 4034) {
+    if !matches!(issue, 4032..=4034) {
         return false;
     }
     let trimmed = path.trim().trim_matches('/');
