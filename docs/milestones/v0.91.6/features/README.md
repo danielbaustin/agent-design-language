@@ -20,6 +20,7 @@ They are planning and bridge documents, not runtime implementation proof.
 - [First-Class Nested Goal Accounting](FIRST_CLASS_NESTED_GOAL_ACCOUNTING_v0.91.6.md)
 
 - [Cognitive Scheduler v1](COGNITIVE_SCHEDULER_v0.91.6.md)
+- [VPP Validation Planning And PVF Lane Registry](VPP_VALIDATION_PLANNING_AND_PVF_LANE_REGISTRY_v0.91.6.md)
 
 ## Guardrails
 

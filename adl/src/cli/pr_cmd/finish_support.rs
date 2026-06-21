@@ -1064,6 +1064,18 @@ pub(super) struct FinishValidationProfileRunItem {
     pub lane_id: String,
     pub command: String,
     pub reason: String,
+    #[serde(default)]
+    pub vpp_record: Option<FinishValidationVppRecord>,
+}
+
+#[derive(Debug, Deserialize, Clone, PartialEq, Eq)]
+pub(super) struct FinishValidationVppRecord {
+    pub contract_version: String,
+    pub artifacts: Vec<String>,
+    pub expected_runtime_class: String,
+    pub parallel_group: String,
+    pub cache_equivalence_group: String,
+    pub failure_semantics: String,
 }
 
 #[derive(Debug, Deserialize)]
@@ -1639,7 +1651,36 @@ pub(super) fn select_finish_validation_plan_for_finish(
     if finish_issue_needs_locked_cargo_fallback_validation(issue_number, changed_paths) {
         return Ok(build_locked_cargo_fallback_validation_plan());
     }
+    let finish_profile = load_finish_validation_profile(&repo_root()?, changed_paths)?;
+    if let Some(plan) = profile_backed_finish_validation_plan(&finish_profile) {
+        return Ok(plan);
+    }
     select_finish_validation_plan(&changed_paths.join(","))
+}
+
+fn profile_backed_finish_validation_plan(
+    profile: &FinishValidationProfile,
+) -> Option<FinishValidationPlan> {
+    if profile.status != "ready_to_run"
+        || !profile.pr_publication_sufficient
+        || profile.escalation.required
+    {
+        return None;
+    }
+    if profile.run.len() != 1 {
+        return None;
+    }
+    let item = &profile.run[0];
+    if item.lane_id != "docs_diff_check" {
+        return None;
+    }
+    let mut commands =
+        vec!["bash adl/tools/check_no_tracked_adl_issue_record_residue.sh".to_string()];
+    push_finish_validation_command(&mut commands, &item.command);
+    Some(FinishValidationPlan {
+        mode: FinishValidationMode::DocsOnly,
+        commands,
+    })
 }
 
 fn finish_path_is_docs_only(path: &str) -> bool {
@@ -3146,6 +3187,17 @@ pub(super) fn render_default_finish_validation(
                     sanitize_validation_profile_command(&item.command)
                 ));
                 lines.push(format!("    reason: {}", item.reason));
+                if let Some(vpp) = &item.vpp_record {
+                    lines.push(format!(
+                        "    vpp: contract={} runtime_class={} parallel_group={} cache_equivalence_group={} failure_semantics={}",
+                        vpp.contract_version,
+                        vpp.expected_runtime_class,
+                        vpp.parallel_group,
+                        vpp.cache_equivalence_group,
+                        vpp.failure_semantics
+                    ));
+                    lines.push(format!("    artifacts: {}", vpp.artifacts.join(", ")));
+                }
             }
         }
         if profile.not_run.is_empty() {

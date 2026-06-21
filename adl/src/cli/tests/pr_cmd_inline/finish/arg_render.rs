@@ -11,7 +11,7 @@ use crate::cli::pr_cmd::finish_support::{
     run_finish_validation_status, select_finish_validation_plan_for_finish, FinishValidationMode,
     FinishValidationPlan, FinishValidationProfile, FinishValidationProfileEscalation,
     FinishValidationProfileEscalationReason, FinishValidationProfileRunItem,
-    FinishValidationProfileSurfaceItem,
+    FinishValidationProfileSurfaceItem, FinishValidationVppRecord,
 };
 use crate::cli::pr_cmd::git_support::commits_behind_origin_main;
 use std::os::unix::fs::PermissionsExt;
@@ -439,11 +439,20 @@ fn render_default_finish_validation_includes_profile_truth_and_sanitizes_changed
                 lane_id: "csdlc_owner_lane".to_string(),
                 command: "bash adl/tools/run_owner_validation_lane.sh csdlc".to_string(),
                 reason: "csdlc_owner_surface_requires_csdlc_owner_lane".to_string(),
+                vpp_record: Some(FinishValidationVppRecord {
+                    contract_version: "vpp.lane.v1".to_string(),
+                    artifacts: vec!["working_tree_diff_hygiene".to_string()],
+                    expected_runtime_class: "tiny".to_string(),
+                    parallel_group: "docs_hygiene".to_string(),
+                    cache_equivalence_group: "git_diff_check".to_string(),
+                    failure_semantics: "fail_closed".to_string(),
+                }),
             },
             FinishValidationProfileRunItem {
                 lane_id: "rust_pr_fast".to_string(),
                 command: "bash adl/tools/run_pr_fast_test_lane.sh --changed-files /private/tmp/changed-files.txt".to_string(),
                 reason: "bounded_rust_surface_runs_focused_nextest".to_string(),
+                vpp_record: None,
             },
         ],
         not_run: vec![FinishValidationProfileSurfaceItem {
@@ -470,6 +479,10 @@ fn render_default_finish_validation_includes_profile_truth_and_sanitizes_changed
     assert!(rendered.contains("Profile-selected run lanes:"));
     assert!(rendered
         .contains("`csdlc_owner_lane` via `bash adl/tools/run_owner_validation_lane.sh csdlc`"));
+    assert!(rendered.contains(
+        "vpp: contract=vpp.lane.v1 runtime_class=tiny parallel_group=docs_hygiene cache_equivalence_group=git_diff_check failure_semantics=fail_closed"
+    ));
+    assert!(rendered.contains("artifacts: working_tree_diff_hygiene"));
     assert!(rendered.contains("`rust_pr_fast` via `bash adl/tools/run_pr_fast_test_lane.sh --changed-files <changed-files>`"));
     assert!(rendered.contains("Profile-skipped proof surfaces:"));
     assert!(rendered

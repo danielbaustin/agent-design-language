@@ -98,6 +98,33 @@ def selectors_for(entry: dict[str, Any]) -> list[str]:
     return selectors
 
 
+def validate_vpp_record(entry: dict[str, Any], *, entry_id: str, manifest_path: Path) -> None:
+    record = entry.get("vpp_record")
+    if record is None:
+        return
+    if not isinstance(record, dict):
+        fail(f"{manifest_path}: entry {entry_id} vpp_record must be an object")
+    for key in (
+        "contract_version",
+        "artifacts",
+        "expected_runtime_class",
+        "parallel_group",
+        "cache_equivalence_group",
+        "failure_semantics",
+    ):
+        if key not in record:
+            fail(f"{manifest_path}: entry {entry_id} vpp_record missing required key: {key}")
+    if not isinstance(record["contract_version"], str) or not record["contract_version"]:
+        fail(f"{manifest_path}: entry {entry_id} vpp_record.contract_version must be a non-empty string")
+    if not isinstance(record["artifacts"], list) or not record["artifacts"] or not all(
+        isinstance(item, str) and item for item in record["artifacts"]
+    ):
+        fail(f"{manifest_path}: entry {entry_id} vpp_record.artifacts must be a non-empty array of strings")
+    for key in ("expected_runtime_class", "parallel_group", "cache_equivalence_group", "failure_semantics"):
+        if not isinstance(record[key], str) or not record[key]:
+            fail(f"{manifest_path}: entry {entry_id} vpp_record.{key} must be a non-empty string")
+
+
 REQUIRED_SURFACE_METADATA = (
     "owner",
     "resource_class",
@@ -108,19 +135,22 @@ REQUIRED_SURFACE_METADATA = (
 )
 
 
-def merge_surface_defaults(manifest: dict[str, Any], entry: dict[str, Any], *, entry_id: str) -> dict[str, Any]:
+def merge_surface_defaults(
+    manifest: dict[str, Any], entry: dict[str, Any], *, entry_id: str, manifest_path: Path = DEFAULT_MANIFEST
+) -> dict[str, Any]:
     default_surface = entry.get("default_surface")
     if not isinstance(default_surface, str) or not default_surface:
-        fail(f"{DEFAULT_MANIFEST}: entry {entry_id} missing required key: default_surface")
+        fail(f"{manifest_path}: entry {entry_id} missing required key: default_surface")
     surface_defaults = manifest["surface_defaults"].get(default_surface)
     if not isinstance(surface_defaults, dict):
-        fail(f"{DEFAULT_MANIFEST}: entry {entry_id} references unknown default_surface: {default_surface}")
+        fail(f"{manifest_path}: entry {entry_id} references unknown default_surface: {default_surface}")
     merged = dict(surface_defaults)
     merged.update(entry)
     merged["path_selectors"] = selectors_for(entry)
     for key in REQUIRED_SURFACE_METADATA:
         if not isinstance(merged.get(key), str) or not merged[key]:
-            fail(f"{DEFAULT_MANIFEST}: entry {entry_id} missing required surface metadata: {key}")
+            fail(f"{manifest_path}: entry {entry_id} missing required surface metadata: {key}")
+    validate_vpp_record(merged, entry_id=entry_id, manifest_path=manifest_path)
     return merged
 
 
@@ -158,16 +188,20 @@ def plan_entry(
     broad_lane_reason = normalized.get("broad_lane_reason")
     if broad_lane_reason:
         result["broad_lane_reason"] = broad_lane_reason
+    if "vpp_record" in normalized:
+        result["vpp_record"] = normalized["vpp_record"]
     if extra:
         result.update(extra)
     return result
 
 
-def manifest_entry_for(manifest: dict[str, Any], surface_id: str, fallback: dict[str, Any]) -> dict[str, Any]:
+def manifest_entry_for(
+    manifest: dict[str, Any], surface_id: str, fallback: dict[str, Any], *, manifest_path: Path = DEFAULT_MANIFEST
+) -> dict[str, Any]:
     special_surfaces = manifest.get("special_surfaces", {})
     entry = special_surfaces.get(surface_id, fallback)
     if not isinstance(entry, dict):
-        fail(f"{DEFAULT_MANIFEST}: special_surfaces.{surface_id} must be an object")
+        fail(f"{manifest_path}: special_surfaces.{surface_id} must be an object")
     return entry
 
 
@@ -193,7 +227,7 @@ def load_manifest(path: Path) -> dict[str, Any]:
         selectors_for(lane)
         if "run_command" in lane and not isinstance(lane["run_command"], str):
             fail(f"{path}: lane {lane['id']} run_command must be a string")
-        merge_surface_defaults(manifest, lane, entry_id=lane["id"])
+        merge_surface_defaults(manifest, lane, entry_id=lane["id"], manifest_path=path)
     special_surfaces = manifest.get("special_surfaces", {})
     if special_surfaces:
         if not isinstance(special_surfaces, dict):
@@ -205,7 +239,7 @@ def load_manifest(path: Path) -> dict[str, Any]:
                 if key not in surface:
                     fail(f"{path}: special_surfaces.{surface_id} missing required key: {key}")
             selectors_for(surface)
-            merge_surface_defaults(manifest, surface, entry_id=surface_id)
+            merge_surface_defaults(manifest, surface, entry_id=surface_id, manifest_path=path)
     for key in ("release_gate_hints", "rust_path_hints"):
         if not isinstance(manifest[key], list):
             fail(f"{path}: {key} must be an array")
@@ -252,6 +286,7 @@ def select_lanes(
             "run_command": "",
             "reason": "changed_surface_requires_release_or_ci_policy_review",
         },
+        manifest_path=manifest_path,
     )
     rust_entry = manifest_entry_for(
         manifest,
@@ -267,6 +302,7 @@ def select_lanes(
             "run_command": "bash adl/tools/run_pr_fast_test_lane.sh",
             "reason": "delegate_rust_changed_surface_to_pr_fast_lane_selector",
         },
+        manifest_path=manifest_path,
     )
     slow_proof_entry = manifest_entry_for(
         manifest,
@@ -286,6 +322,7 @@ def select_lanes(
             "run_command": "",
             "reason": "changed_surface_requires_slow_proof_review",
         },
+        manifest_path=manifest_path,
     )
 
     release_gate_paths = [
@@ -412,6 +449,17 @@ def print_text(plan: dict[str, Any]) -> None:
         print(f"    command={lane['command']}")
         if lane.get("run_command") and lane.get("run_command") != lane.get("command"):
             print(f"    run_command={lane['run_command']}")
+        if lane.get("vpp_record"):
+            record = lane["vpp_record"]
+            print(
+                "    vpp_record="
+                f"contract={record['contract_version']} "
+                f"runtime={record['expected_runtime_class']} "
+                f"parallel={record['parallel_group']} "
+                f"cache={record['cache_equivalence_group']} "
+                f"failure={record['failure_semantics']}"
+            )
+            print(f"    artifacts={','.join(record['artifacts'])}")
         for path in lane["matched_paths"]:
             print(f"    path={path}")
 
