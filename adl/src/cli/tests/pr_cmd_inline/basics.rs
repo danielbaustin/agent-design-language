@@ -1930,7 +1930,7 @@ fn same_checkout_root_handles_equivalent_and_missing_paths() {
 fn real_pr_dispatch_rejects_missing_and_unknown_subcommands() {
     let err = real_pr(&[]).expect_err("missing subcommand");
     assert!(err.to_string().contains(
-        "pr requires a subcommand: create | init | repair-issue-body | start | doctor | ready | preflight | finish | validation | issue | projection-map | closeout"
+        "pr requires a subcommand: create | init | repair-issue-body | start | doctor | ready | preflight | finish | validation | closing-linkage | issue | projection-map | closeout"
     ));
 
     let err = real_pr(&["bogus".to_string()]).expect_err("unknown subcommand");
