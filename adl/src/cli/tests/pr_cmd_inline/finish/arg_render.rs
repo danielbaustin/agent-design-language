@@ -2398,6 +2398,39 @@ fn finish_validation_profile_classifies_wuji_ddns_slice() {
 }
 
 #[test]
+fn finish_validation_profile_classifies_wuji_ddns_installer_slice() {
+    let changed_paths = vec![
+        "adl/src/cli/pr_cmd/finish_support.rs".to_string(),
+        "adl/src/cli/tests/pr_cmd_inline/finish/arg_render.rs".to_string(),
+        "infra/ddns/README.md".to_string(),
+        "infra/ddns/client/install_wuji_ddns_launchd.sh".to_string(),
+    ];
+    let requested_paths = changed_paths.join(",");
+
+    let plan = select_finish_validation_plan_for_finish(4330, &requested_paths, &changed_paths)
+        .expect("wuji ddns installer focused plan");
+
+    assert_eq!(plan.mode, FinishValidationMode::LargerBinaryFocused);
+    assert!(plan.commands.contains(
+        &"cargo test --manifest-path adl/Cargo.toml --bin adl-pr-finish wuji_ddns_installer_slice -- --nocapture"
+            .to_string()
+    ));
+    assert!(plan
+        .commands
+        .contains(&"sh -n infra/ddns/client/install_wuji_ddns_launchd.sh".to_string()));
+    assert!(plan
+        .commands
+        .contains(&"sh -n infra/ddns/client/wuji_ddns_update.sh".to_string()));
+
+    let unrelated_err =
+        select_finish_validation_plan_for_finish(4331, &requested_paths, &changed_paths)
+            .expect_err("unrelated issue should not inherit the installer focused allowance");
+    assert!(unrelated_err
+        .to_string()
+        .contains("changed paths are not classified"));
+}
+
+#[test]
 fn finish_validation_runner_executes_locked_cargo_fallback_script_command() {
     let repo = unique_temp_dir("adl-pr-finish-locked-cargo-fallback-validation");
     let tools = repo.join("adl/tools");
