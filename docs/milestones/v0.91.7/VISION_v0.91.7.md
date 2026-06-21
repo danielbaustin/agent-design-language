@@ -5,13 +5,13 @@
 - Project: ADL
 - Milestone: `v0.91.7`
 - Version: `v0.91.7`
-- Date: `2026-06-16`
+- Date: `2026-06-21`
 - Owner: ADL maintainers
-- Related issue: `#3825`
+- Setup lineage: `#3801`, `#3825`, `#4368`
 
 ## Purpose
 
-Define the second pre-`v0.92` bridge tranche. `v0.91.7` exists so the major
+Define the final pre-`v0.92` bridge/readiness tranche. `v0.91.7` exists so the major
 remaining conceptual surfaces become tracked, reviewable, and issue-ready
 before birthday activation begins.
 
@@ -23,6 +23,13 @@ activation by itself.
 
 The milestone focuses on:
 
+- v0.91.6 closeout truth and release-tail cleanup;
+- SEP, VPP, PVF, prompt-template, watcher, closeout, and sprint execution discipline;
+- goal state, nested goals, and per-issue time/token/resource accounting;
+- cognitive scheduler, provider suitability, and local-agent acceleration;
+- build throughput, validation manager, remote/local build runners, and long-test fanout;
+- runtime fire-up, Soak #2, AWS heartbeat/ACIP signal bridge, and SSM/S3 archive routes;
+- Observatory/Unity/demo readiness;
 - Curiosity Engine / Discovery Substrate;
 - Constructability Gate;
 - reasoning graph, loop runtime, and `adl.skill.v1`;
@@ -30,7 +37,8 @@ The milestone focuses on:
 - residual ACIP/A2A/protobuf decisions;
 - affect, happiness, humor, and wellbeing non-claim boundaries;
 - Godel mechanics for experiment/hypothesis/promotion paths;
-- economics-context decisioning.
+- economics-context and guild/civilization boundary decisioning;
+- launch and v0.92 birthday handoff.
 
 ## Core Goals
 

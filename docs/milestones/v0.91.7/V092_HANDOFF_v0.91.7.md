@@ -5,9 +5,9 @@
 - Source milestone: `v0.91.7`
 - Target milestone: `v0.92`
 - Version: `v0.91.7`
-- Date: `2026-06-16`
+- Date: `2026-06-21`
 - Owner: ADL maintainers
-- Related issues: `#3825`, `#3780`
+- Related issues: `#3825`, `#4368`, `#3780`
 
 ## Purpose
 
@@ -37,6 +37,19 @@ implementation proof.
 | Affect and happiness | doc-ready | `v0.92` may consume safe-test and non-claim boundaries only; no inner-state, wellbeing, or consciousness claim is supported. | `features/AFFECT_HAPPINESS_BRIDGE_v0.91.7.md` |
 | Godel mechanics | doc-ready | `v0.92` may consume a reviewed mechanics map only; autonomous self-improvement and runtime completion are unsupported. | `features/GODEL_MECHANICS_BRIDGE_v0.91.7.md` |
 | Economics context | doc-ready | Default `v0.92` posture is context-only unless an explicit operator decision promotes a bounded test. | `features/ECONOMICS_CONTEXT_DECISION_v0.91.7.md` |
+
+## Operational Substrate Handoff
+
+`v0.92` should also consume the operational substrate dispositions from `PLANNING_SOURCE_CAPTURE_v0.91.7.md`:
+
+| Surface | Required state before v0.92 |
+| --- | --- |
+| SEP / VPP / PVF / templates | Complete, blocked, deferred, or routed with clear sprint-execution consequences. |
+| Goal and metrics accounting | Time/token/resource and nested-goal route explicit enough for v0.92 issue planning. |
+| Scheduler/provider/local agents | Routing policy and suitability path explicit enough to protect premium cognition. |
+| Build/validation throughput | Validation-cost and remote/local build routes clear enough to avoid rediscovery during birthday work. |
+| Runtime Soak #2 and AWS signal bridge | Runtime integration and operational signal blockers named before birthday claims. |
+| Observatory and demo readiness | Visible proof surfaces complete, blocked, deferred, or routed. |
 
 ## Activation Blockers To Preserve
 

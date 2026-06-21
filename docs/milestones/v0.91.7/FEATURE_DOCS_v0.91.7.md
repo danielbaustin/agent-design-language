@@ -4,13 +4,12 @@
 
 - Milestone: `v0.91.7`
 - Version: `v0.91.7`
-- Date: `2026-06-16`
-- Setup issue: `#3801`
-- Documentation completion issue: `#3825`
+- Date: `2026-06-21`
+- Setup lineage: `#3801`, `#3825`, `#4368`
 
 ## Status
 
-Feature-doc package created for the second pre-`v0.92` bridge tranche. These
+Feature-doc package created for the final pre-`v0.92` bridge/readiness tranche. These
 docs define planning, decisions, validation expectations, and `v0.92`
 consumption limits; they do not implement runtime behavior.
 
@@ -26,6 +25,19 @@ consumption limits; they do not implement runtime behavior.
 | [`AFFECT_HAPPINESS_BRIDGE_v0.91.7.md`](features/AFFECT_HAPPINESS_BRIDGE_v0.91.7.md) | Affect and happiness surfaces | What safe tests and non-claims govern affect, humor, happiness, and wellbeing evidence? | Bridge doc exists; public evidence remains bounded by non-claims. |
 | [`GODEL_MECHANICS_BRIDGE_v0.91.7.md`](features/GODEL_MECHANICS_BRIDGE_v0.91.7.md) | Godel mechanics | What experiment, hypothesis, mutation, evaluation, and promotion mechanics can birthday evidence consume? | Bridge doc exists; runtime mechanics remain future issue work. |
 | [`ECONOMICS_CONTEXT_DECISION_v0.91.7.md`](features/ECONOMICS_CONTEXT_DECISION_v0.91.7.md) | Economics context | Is economics context-only for v0.92, or does it require explicit tests? | Bridge doc exists; default posture is context-only unless promoted. |
+
+## Additional Required Planning Routes
+
+The refreshed source-capture pass also requires explicit routes for operational substrate that is not represented as one of the eight original feature docs:
+
+| Route | Source | Required disposition before v0.92 |
+| --- | --- | --- |
+| SEP / VPP / PVF / prompt-template next version | `#4308`, `#4309`, `#4332`, sprint execution packets | Complete, blocked, deferred, or routed before sprint-scale v0.92 execution relies on it. |
+| Goal state and execution metrics | `.adl/docs/TBD/ADL_GOAL_STATE.md`, `#4329`, `#4331` | Route SOR time/token/resource and nested goal accounting. |
+| Scheduler/provider/local-agent routing | scheduler/provider v0.91.6 docs and TBD scheduler/economics notes | Route cheapest-validated-outcome scheduling and local/hosted model suitability. |
+| Build and validation throughput | build-throughput reviews, validation-manager/test-tax docs, Nessus/CodeBuild candidates | Route validation-cost and remote/local build decisions. |
+| Runtime Soak #2 and AWS signal bridge | runtime fire-up, runtime AWS signal bridge, ACIP-to-SNS, heartbeat, SSM docs | Route integrated runtime proof and operational signal surfaces. |
+| Observatory and launch/birthday evidence | Observatory docs, launch plan, demo matrix | Route visible proof and public non-claim boundaries. |
 
 ## Cross-Doc Requirements
 

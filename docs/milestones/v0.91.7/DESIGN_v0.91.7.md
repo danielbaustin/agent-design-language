@@ -4,23 +4,23 @@
 
 - Milestone: `v0.91.7`
 - Version: `v0.91.7`
-- Date: `2026-06-16`
+- Date: `2026-06-21`
 - Owner: ADL maintainers
-- Related issue: `#3825`
+- Setup lineage: `#3801`, `#3825`, `#4368`
 
 ## Purpose
 
-Define how the second pre-`v0.92` bridge tranche is organized and validated.
+Define how the final pre-`v0.92` bridge/readiness tranche is organized, validated, and handed off.
 
 ## Problem Statement
 
-After `v0.91.6`, several activation-critical surfaces still need explicit
-bridge docs: Curiosity, Constructability, reasoning graphs and skill standard,
+After `v0.91.6`, both conceptual bridge surfaces and operational substrates still need explicit scheduling before `v0.92`: Curiosity, Constructability, reasoning graphs and skill standard,
 security residuals, ACIP/A2A/protobuf residuals, affect and happiness
 boundaries, Godel mechanics, and economics context.
 
 ## Goals
 
+- Capture all source-ledger inputs from `PLANNING_SOURCE_CAPTURE_v0.91.7.md`.
 - Complete the canonical planning-doc set for `v0.91.7`.
 - Complete all second-tranche feature docs.
 - Keep every surface distinct and reviewable.

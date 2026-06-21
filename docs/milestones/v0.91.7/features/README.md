@@ -2,7 +2,7 @@
 
 ## Status
 
-Feature documents listed here define the second pre-`v0.92` bridge tranche.
+Feature documents listed here define the final pre-`v0.92` bridge/readiness tranche.
 They are planning and bridge documents, not runtime implementation proof.
 
 ## Feature Docs

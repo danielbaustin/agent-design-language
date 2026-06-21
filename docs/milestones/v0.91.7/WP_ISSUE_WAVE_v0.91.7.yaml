@@ -1,112 +1,124 @@
 milestone: v0.91.7
 version: v0.91.7
-status: candidate_issue_wave
-created_by_issue: 3801
+status: candidate_issue_wave_refreshed
+created_by_issues:
+  - 3801
+  - 3825
+  - 4368
 source_bridge_ledger: docs/milestones/v0.91.5/PRE_V092_BRIDGE_FEATURE_DOC_LEDGER_v0.91.5.md
 first_tranche_input: docs/milestones/v0.91.6/
+source_capture: docs/milestones/v0.91.7/PLANNING_SOURCE_CAPTURE_v0.91.7.md
 notes:
   - "Candidate wave only; WP-01 must open concrete GitHub issues and render C-SDLC cards."
   - "Do not claim v0.92 activation readiness from this seed."
   - "Keep v0.92 birthday implementation out of this planning package."
+  - "Every source-capture input must exit complete, blocked, deferred, or routed."
 work_packages:
   - wp: WP-01
     title: v0.91.7 planning promotion and issue-wave readiness
-    outcome: Open the concrete v0.91.7 issue wave and card bundles from this candidate package.
-    depends_on:
-      - "#3778"
-      - "#3800"
-      - "#3801"
+    outcome: Promote the refreshed planning package, reconcile v0.91.6 closeout truth, classify every source-capture input, and open the concrete v0.91.7 issue wave.
+    depends_on: ["#3778", "#3800", "#3801", "#4368", "v0.91.6 closeout truth"]
     deliverables:
       - "Opened GitHub issue wave"
       - "SIP/STP/SPP/SRP/SOR cards for each opened issue"
+      - "Source-capture disposition ledger"
   - wp: WP-02
-    title: Curiosity Engine / Discovery Substrate
-    outcome: Define governed curiosity and discovery-cycle proof expectations before v0.92.
-    depends_on:
-      - "WP-01"
+    title: v0.91.6 closeout truth ADR release-tail and cleanup
+    outcome: Close, block, defer, or route open v0.91.6 closeout/release-tail, ADR release-tail, and Observatory carryover work before v0.92 consumes it.
+    depends_on: ["WP-01"]
     deliverables:
-      - "CURIOSITY_ENGINE_DISCOVERY_SUBSTRATE_v0.91.7.md"
+      - "Closeout truth ledger"
+      - "ADR release-tail route"
+      - "Carryover routing updates"
   - wp: WP-03
-    title: Constructability Gate
-    outcome: Define construction events, anchors, validators, and shared-reality boundaries.
-    depends_on:
-      - "WP-01"
-      - "WP-02"
+    title: SEP VPP PVF and template-version substrate
+    outcome: Complete sprint execution packet, validation planning prompt, externalized PVF lane registry, prompt-template next version, goal/watch/closeout rules, and AST/template routes.
+    depends_on: ["WP-01", "#4308", "#4309", "#4332"]
     deliverables:
-      - "CONSTRUCTABILITY_GATE_v0.91.7.md"
+      - "SEP/VPP/PVF/template sprint"
+      - "Template and skill update plan"
   - wp: WP-04
-    title: Reasoning graph, loop runtime, and adl.skill.v1 bridge
-    outcome: Define the bridge among prompts, skills, loops, trace, ObsMem, PVF, AEE, Runtime v2, UTS, ACC, and adl.skill.v1.
-    depends_on:
-      - "WP-01"
-      - "WP-02"
+    title: Goal state nested goals and execution metrics
+    outcome: Define goal-state consumption, issue/sprint nested goals, SOR time-token-resource accounting, and outlier analysis route.
+    depends_on: ["WP-03", "#4329", "#4331"]
     deliverables:
-      - "REASONING_GRAPH_LOOP_SKILL_STANDARD_BRIDGE_v0.91.7.md"
+      - "Goal/metrics route"
+      - "Template-field plan"
   - wp: WP-05
-    title: Residual security readiness
-    outcome: Account for security/CAV residuals after v0.91.6 and activation-path blockers.
-    depends_on:
-      - "WP-01"
-      - "v0.91.6 security output"
+    title: Cognitive scheduler and provider local-agent routing
+    outcome: Build or route scheduler v1, provider profiles, local/hosted model suitability, cheapest-validated-outcome policy, and local-agent delegation readiness.
+    depends_on: ["WP-03", "WP-04", "provider sprint outputs"]
     deliverables:
-      - "SECURITY_RESIDUAL_READINESS_v0.91.7.md"
+      - "Scheduler/provider execution route"
+      - "Role suitability matrix"
   - wp: WP-06
-    title: Residual ACIP/A2A/protobuf decisions
-    outcome: Decide remaining protobuf, JSON, WebSocket, and access-rule choices for v0.92 consumption.
-    depends_on:
-      - "WP-01"
-      - "WP-03"
-      - "WP-05"
+    title: Build throughput and validation-cost reduction
+    outcome: Route validation manager, long-test fanout, CI log archive/S3, Nessus, CodeBuild runner evaluation, sccache/linker/target-dir cleanup, and validation DAG/build graph convergence.
+    depends_on: ["WP-03", "validation sprint outputs"]
     deliverables:
-      - "ACIP_A2A_PROTOBUF_RESIDUALS_v0.91.7.md"
+      - "Build/validation throughput sprint"
+      - "Remote/local validation runner decision"
   - wp: WP-07
-    title: Affect and happiness bridge accounting
-    outcome: Define safe tests and non-claims for affect, humor, happiness, and wellbeing.
-    depends_on:
-      - "WP-01"
+    title: Runtime fire-up and Soak 2
+    outcome: Reconcile Runtime v2 minimal prototype with current substrate, run or route integrated runtime Soak #2, and preserve Soak #3 contingency.
+    depends_on: ["WP-02", "WP-05", "WP-06"]
     deliverables:
-      - "AFFECT_HAPPINESS_BRIDGE_v0.91.7.md"
+      - "Runtime fire-up/soak proof or blocker list"
   - wp: WP-08
-    title: Godel mechanics bridge accounting
-    outcome: Map experiment, hypothesis, mutation, evaluation, promotion, and proof boundaries.
-    depends_on:
-      - "WP-01"
-      - "WP-02"
-      - "WP-04"
+    title: Runtime AWS and signal bridge operations
+    outcome: Route heartbeat publisher, ACIP-to-SNS, AWS signal bridge, local polis SSM, and S3/ObsMem/community-memory archive policy.
+    depends_on: ["WP-07", "security inputs"]
     deliverables:
-      - "GODEL_MECHANICS_BRIDGE_v0.91.7.md"
+      - "Runtime AWS/local operations route"
   - wp: WP-09
-    title: Economics-context decision
-    outcome: Decide whether economics is context-only for v0.92 or requires explicit tests.
-    depends_on:
-      - "WP-01"
+    title: Observatory demos and birthday-visible proof
+    outcome: Finish or route Unity/HTML Observatory, demo matrix convergence, and birthday-visible proof surfaces.
+    depends_on: ["WP-07", "WP-08"]
     deliverables:
-      - "ECONOMICS_CONTEXT_DECISION_v0.91.7.md"
+      - "Demo/Observatory readiness packet"
   - wp: WP-10
-    title: Bridge ledger refresh and v0.92 handoff
-    outcome: Record second-tranche dispositions and hand tracked inputs to #3780.
-    depends_on:
-      - "WP-02"
-      - "WP-03"
-      - "WP-04"
-      - "WP-05"
-      - "WP-06"
-      - "WP-07"
-      - "WP-08"
-      - "WP-09"
+    title: Curiosity and Constructability bridge
+    outcome: Preserve governed discovery-cycle proof expectations and shared-reality anchor validator boundaries.
+    depends_on: ["WP-01", "WP-07"]
     deliverables:
-      - "v0.91.7 bridge disposition addendum or v0.92 handoff record"
+      - "Curiosity and Constructability issue-ready docs or proof routes"
   - wp: WP-11
-    title: Internal review
-    outcome: Review the second-tranche docs for missing surfaces, overclaims, and vague spillover.
-    depends_on:
-      - "WP-10"
+    title: Reasoning graph loops and adl.skill.v1 bridge
+    outcome: Define bridge among prompts, skills, loops, trace, ObsMem, PVF, AEE, Runtime v2, UTS, ACC, and adl.skill.v1.
+    depends_on: ["WP-03", "WP-07", "WP-10"]
     deliverables:
-      - "Review packet and finding register"
+      - "Reasoning graph / skill-standard bridge route"
   - wp: WP-12
-    title: Remediation and closeout
-    outcome: Fix or route review findings and record closeout truth.
-    depends_on:
-      - "WP-11"
+    title: Security CAV SSM and ACIP A2A protobuf residuals
+    outcome: Account for security/CAV residuals, SSM readiness, ACIP/A2A/protobuf/JSON/WebSocket/access-rule choices, and activation blockers.
+    depends_on: ["WP-08", "WP-10"]
     deliverables:
+      - "Security/protocol residual decision packet"
+  - wp: WP-13
+    title: Affect happiness Godel economics and guild boundaries
+    outcome: Define safe-test non-claim language and governance/civilization/economics boundaries; route guilds without making them a birthday implementation blocker.
+    depends_on: ["WP-05", "WP-10", "WP-11"]
+    deliverables:
+      - "Boundary decision packet"
+  - wp: WP-14
+    title: Launch and v0.92 birthday handoff
+    outcome: Align July launch planning, v0.92 activation refresh, Memory Palace/context, first birthday docs, and external-facing non-claims.
+    depends_on: ["WP-02", "WP-03", "WP-04", "WP-05", "WP-06", "WP-07", "WP-08", "WP-09", "WP-10", "WP-11", "WP-12", "WP-13"]
+    deliverables:
+      - "V092 handoff refresh"
+      - "Launch/birthday readiness map"
+  - wp: WP-15
+    title: Internal review
+    outcome: Review docs, code routes, feature routing, source capture, and every sprint/issue plan for missing surfaces, stale claims, overclaims, or unowned blockers.
+    depends_on: ["WP-14"]
+    deliverables:
+      - "Internal review packet"
+      - "Finding register"
+  - wp: WP-16
+    title: Remediation and closeout
+    outcome: Fix or route review findings, update release notes and checklists, and record what v0.92 may consume.
+    depends_on: ["WP-15"]
+    deliverables:
+      - "Remediation PRs"
+      - "Final checklist"
       - "Closeout packet"

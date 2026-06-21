@@ -4,94 +4,79 @@
 
 - Milestone: `v0.91.7`
 - Version: `v0.91.7`
-- Date: `2026-06-16`
+- Date: `2026-06-21`
 - Owner: ADL maintainers
-- Setup issue: `#3801`
+- Setup lineage: `#3801`, `#3825`, `#4368`
 - Source bridge ledger: `docs/milestones/v0.91.5/PRE_V092_BRIDGE_FEATURE_DOC_LEDGER_v0.91.5.md`
 - First-tranche input: `docs/milestones/v0.91.6/`
+- Source-capture ledger: `PLANNING_SOURCE_CAPTURE_v0.91.7.md`
 
 ## Status
 
-Current status: planning and feature-doc package for the second required
-pre-`v0.92` bridge tranche.
+Current status: planning refresh for the final pre-`v0.92` bridge and readiness tranche.
 
-- Planning: created by `#3801`
-- Documentation completion: `#3825`
-- Execution: not started beyond planning/feature docs
-- Validation: docs-readiness validation only until implementation issues run
-- Release readiness: not applicable until `v0.91.7` executes
+- Initial planning package: created by earlier v0.91.7 setup work.
+- Source-capture refresh: `#4368`.
+- Execution: not started beyond planning/feature docs.
+- Validation: docs-readiness validation only until implementation issues run.
+- Release readiness: not applicable until `v0.91.7` executes.
 
-This package does not implement runtime features and does not claim `v0.92`
-activation readiness. It exists so second-tranche bridge work is planned before
-`v0.92` opens.
+This package does not implement runtime features and does not claim `v0.92` activation readiness. It exists so every required pre-birthday surface is visible, scheduled, deferred, blocked, or routed before `v0.92` opens.
 
 ## Purpose
 
-`v0.91.7` is the second bridge/readiness tranche before `v0.92`.
+`v0.91.7` is the final bridge/readiness tranche before `v0.92`.
 
-It should turn the remaining major bridge ideas into reviewable feature docs,
-decision records, and issue routes:
+It must convert the remaining major pre-birthday surfaces into reviewable issue routes, sprint structure, feature docs, and handoff truth:
 
-- Curiosity Engine / Discovery Substrate
-- Constructability Gate
-- reasoning graph, loop runtime, and `adl.skill.v1`
-- residual security readiness
-- residual ACIP/A2A/protobuf/JSON projection decisions
-- affect/happiness, Godel mechanics, and economics-context accounting
+- v0.91.6 closeout truth, ADR release-tail decisions, and release-tail cleanup;
+- SEP, VPP, PVF lane planning, prompt-template versioning, and sprint execution discipline;
+- goal state, nested goals, per-issue time/token/resource metrics, and predictable execution baselines;
+- cognitive scheduler, cognitive economics, provider suitability, and local-agent acceleration;
+- build throughput, validation manager, remote/local build runners, and CI/test-tax reduction;
+- runtime fire-up, Soak #2, runtime heartbeat/AWS/ACIP signal bridge, and runtime minimal-prototype reconciliation;
+- Observatory/Unity/demo readiness;
+- Curiosity Engine, Constructability Gate, reasoning graph, loop runtime, and `adl.skill.v1` bridge;
+- residual security/CAV/SSM and ACIP/A2A/protobuf decisions;
+- affect/happiness, Godel mechanics, economics-context, and guild/civilization boundaries;
+- launch/birthday planning and `v0.92` handoff.
 
-`v0.91.7` is not vague spillover. It is the place where the big pre-`v0.92`
-conceptual surfaces become issue-ready without stealing the `v0.92` birthday
-implementation.
+`v0.91.7` is not vague spillover. It is the final place to make the work to reach `v0.92` explicit before the first-birthday milestone begins.
 
 ## Bridge Boundary
 
 `v0.91.7` consumes:
 
-- the `#3778` pre-`v0.92` bridge ledger
-- the `#3800` `v0.91.6` first-tranche planning package
-- residuals explicitly left by `v0.91.6`
+- the `#3778` pre-`v0.92` bridge ledger;
+- the `#3800` / `v0.91.6` first-tranche planning and evidence package;
+- residuals explicitly left by `v0.91.6` sprint reviews and closeout;
+- local TBD source material captured in `PLANNING_SOURCE_CAPTURE_v0.91.7.md`.
 
-A second-tranche surface may exit only as one of:
+Every surface must exit as one of:
 
-- `complete`: reviewed feature doc and proof/review evidence exist
-- `deferred`: explicitly not required for `v0.92`, with risk accepted
-- `blocked`: named missing evidence or operator decision prevents completion
-- `routed`: owned by a named follow-on issue/tranche with a clear exit condition
+- `complete`: reviewed doc, issue, proof, or implementation evidence exists;
+- `deferred`: explicitly not required for `v0.92`, with risk accepted;
+- `blocked`: named missing evidence or operator decision prevents completion;
+- `routed`: owned by a named follow-on issue, sprint, or milestone with a clear exit condition.
 
-## Second-Tranche Feature Docs
+## Required Work Streams
 
-| Surface | Required v0.91.7 output | v0.92 consumption rule |
-| --- | --- | --- |
-| Curiosity Engine / Discovery Substrate | Feature doc covering curiosity artifacts, detection hooks, hypotheses, experiment plans, discovery budget, governance, Freedom Gate integration, ObsMem/reasoning-graph update, and proof. | At least one governed discovery-cycle proof is required before `v0.92` consumes it; otherwise it must be blocked/deferred/routed. |
-| Constructability Gate | Feature doc covering construction-event schema, external-anchor schema, admissibility validator, shared-reality boundary, and proof path. | Must distinguish provisional cognition from authoritative shared reality. |
-| Reasoning graph, loop runtime, and `adl.skill.v1` | Feature doc defining the pre-`v0.92` bridge among prompts, skills, loops, trace, ObsMem, PVF, AEE, Runtime v2, UTS, ACC, and `adl.skill.v1`. | Deeper convergence remains later, but the pre-`v0.92` bridge must be explicit. |
-| Residual security readiness | Addendum or feature doc for any security/CAV residuals left by `v0.91.6`. | Security cannot be silently deferred out of activation. |
-| Residual ACIP/A2A/protobuf decisions | Decision record for remaining protobuf/JSON/WebSocket/access-rule issues. | `v0.92` must know whether it consumes JSON projection, protobuf, mock carrier, or a deferred route. |
-| Affect/happiness surfaces | Bridge record defining safe tests, non-claims, and public-evidence limits for affect, humor, happiness, and wellbeing. | Public birthday evidence must not imply unproved affect or wellbeing claims. |
-| Godel mechanics | Bridge record mapping experiment, hypothesis, mutation, evaluation, promotion, and proof boundaries. | `v0.92` must consume a reviewed mechanics map or mark the surface blocked/deferred. |
-| Economics context | Bridge record deciding whether economics is context-only or requires explicit activation tests. | Economics must not dominate `v0.92` without explicit proof decision. |
-
-## v0.92 Activation Gate
-
-`v0.92` remains blocked until every surface named in the `#3778` bridge ledger
-is complete, deferred, blocked, or routed with evidence.
-
-This package should make that gate easier to audit. It should not weaken the
-gate by claiming narrative readiness.
-
-## Source Map
-
-- `#3778`: pre-`v0.92` bridge ledger and issue route
-- `#3800`: `v0.91.6` first-tranche planning package
-- `#3801`: this `v0.91.7` second-tranche planning package
-- `#3780`: later `v0.92` activation and birthday refresh
-- `docs/milestones/v0.91.5/PRE_V092_BRIDGE_FEATURE_DOC_LEDGER_v0.91.5.md`
-- `docs/milestones/v0.91.6/`
-- `docs/planning/ADL_FEATURE_LIST.md`
-- `docs/planning/FEATURE_DOC_PRODUCTION_MINI_SPRINT_v0.91.5.md`
+| Work stream | Required output before v0.92 |
+| --- | --- |
+| Closeout truth | v0.91.6 release-tail and ADR issues closed or routed, with v0.91.7 not inheriting stale truth. |
+| SEP/VPP/PVF | Sprint Execution Packets, VPP, lane registry, template-version changes, and `/goal`/watcher/closeout rules scheduled. |
+| Goal and metrics | Goal state, nested goals, SOR time/token/resource fields, and outlier analysis routes scheduled. |
+| Scheduler and providers | Cognitive scheduler, provider profiles, local/hosted model suitability, and local-agent delegation routes scheduled. |
+| Build and validation throughput | Validation manager, long-test fanout, CI log archive/S3, Nessus/CodeBuild, sccache/linker/target-dir work scheduled. |
+| Runtime | Runtime Soak #2/fire-up, runtime heartbeat/AWS signal bridge, ACIP-to-SNS, and minimal prototype reconciliation routed. |
+| Observatory and demos | Unity/HTML Observatory and flagship demo readiness routed with proof expectations. |
+| Conceptual bridge docs | Curiosity, Constructability, reasoning graph/loop/skill standard, affect/happiness, Godel, economics, and guilds bounded. |
+| Security and protocol | Security/CAV/SSM and ACIP/A2A/protobuf residuals complete, blocked, deferred, or routed. |
+| Launch and birthday handoff | July launch planning and `v0.92` activation handoff aligned without absorbing birthday implementation. |
 
 ## Document Map
 
+- Source capture: [PLANNING_SOURCE_CAPTURE_v0.91.7.md](PLANNING_SOURCE_CAPTURE_v0.91.7.md)
 - Work breakdown: [WBS_v0.91.7.md](WBS_v0.91.7.md)
 - Vision: [VISION_v0.91.7.md](VISION_v0.91.7.md)
 - Design: [DESIGN_v0.91.7.md](DESIGN_v0.91.7.md)
@@ -104,23 +89,20 @@ gate by claiming narrative readiness.
 - Checklist: [MILESTONE_CHECKLIST_v0.91.7.md](MILESTONE_CHECKLIST_v0.91.7.md)
 - Release plan: [RELEASE_PLAN_v0.91.7.md](RELEASE_PLAN_v0.91.7.md)
 - Release notes: [RELEASE_NOTES_v0.91.7.md](RELEASE_NOTES_v0.91.7.md)
-- Review and validation checklist:
-  [REVIEW_AND_VALIDATION_CHECKLIST_v0.91.7.md](REVIEW_AND_VALIDATION_CHECKLIST_v0.91.7.md)
+- Review and validation checklist: [REVIEW_AND_VALIDATION_CHECKLIST_v0.91.7.md](REVIEW_AND_VALIDATION_CHECKLIST_v0.91.7.md)
 - Feature directory index: [features/README.md](features/README.md)
 
 ## Non-Goals
 
-- Do not implement runtime features in the planning package.
-- Do not claim `v0.92` activation readiness.
-- Do not replace the `v0.92` birthday milestone.
-- Do not move or delete local planning files.
-- Do not collapse Curiosity, Constructability, reasoning graphs, security, or
-  ACIP/A2A into generic follow-up language.
+- Do not implement `v0.92` birthday work in `v0.91.7`.
+- Do not claim `v0.92` activation readiness from planning docs alone.
+- Do not move every long-term ADL idea into `v0.91.7`.
+- Do not make launch, product, or governance ambition silently expand the milestone.
+- Do not move or delete ignored local TBD files in this planning package.
 
 ## Exit Criteria
 
-- Every second-tranche surface has a feature-doc route, issue-wave route, and
-  review gate.
-- Residual first-tranche dependencies from `v0.91.6` are visible.
-- `#3780` can refresh `v0.92` activation docs without reconstructing
-  second-tranche scope from chat.
+- Every required source in `PLANNING_SOURCE_CAPTURE_v0.91.7.md` is complete, blocked, deferred, or routed.
+- Every v0.91.6 carryover issue has a truthful disposition before `v0.92` opens.
+- `#3780` can refresh `v0.92` activation docs from tracked bridge truth without reconstructing scope from chat.
+- The first-birthday milestone starts with a clear runtime/demo/security/protocol/process substrate and known residual risks.

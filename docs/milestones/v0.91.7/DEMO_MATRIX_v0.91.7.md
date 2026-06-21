@@ -8,15 +8,14 @@ planned
 
 - Milestone: `v0.91.7`
 - Version: `v0.91.7`
-- Date: `2026-06-16`
+- Date: `2026-06-21`
 - Owner: ADL maintainers
-- Related issue: `#3825`
+- Setup lineage: `#3801`, `#3825`, `#4368`
 
 ## Purpose
 
-Define proof surfaces for the second pre-`v0.92` bridge tranche. `v0.91.7`
-has no required runnable demo at planning-package time; it uses reviewable docs,
-validation checks, and later issue-local proofs.
+Define proof surfaces for the final pre-`v0.92` bridge/readiness tranche. `v0.91.7`
+does not claim runnable demo completion from planning docs; it uses reviewable docs, validation checks, and later issue-local proofs to route runtime and Observatory evidence.
 
 ## Scope
 
@@ -59,6 +58,8 @@ No provider credentials or runtime services are required for this docs tranche.
 | D1 | Documentation package proof | `#3825` docs package exists and links truthfully | `find docs/milestones/v0.91.7 -maxdepth 2 -type f` | tracked docs | Expected planning and feature docs are present | deterministic filesystem check | planned |
 | D2 | Bridge overclaim scan | Docs do not claim runtime or `v0.92` readiness | text scan over `docs/milestones/v0.91.7` | review notes | claims are bounded by non-goals and consumption rules | deterministic text review | planned |
 | D3 | Residual visibility proof | Every second-tranche surface remains distinct | text scan over feature index and docs | index and feature docs | all eight surfaces are visible | deterministic text review | planned |
+| D4 | Runtime Soak #2 route | Runtime proof is scheduled, not implied | inspect sprint/WBS/source-capture docs | runtime route rows | Soak #2 has owner and blocker policy | issue-local proof later | planned |
+| D5 | Observatory/birthday-visible proof route | Visible demo surfaces are scheduled without overclaiming | inspect demo matrix and Observatory route | planning docs and later demo artifacts | Observatory/Unity/HTML evidence is complete, blocked, deferred, or routed | issue-local proof later | planned |
 
 ## Known Limits
 
