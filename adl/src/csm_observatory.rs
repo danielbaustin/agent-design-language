@@ -753,6 +753,17 @@ fn render_unity_observatory_contract(packet: &Value, packet_path: &Path) -> Resu
             "defer_count": packet.pointer("/freedom_gate/defer_count").and_then(Value::as_i64).unwrap_or_default(),
             "refuse_count": packet.pointer("/freedom_gate/refuse_count").and_then(Value::as_i64).unwrap_or_default(),
         },
+        "observability": {
+            "consumption_status": "reviewed_floor_not_live_export",
+            "otel_boundary_ref": "docs/milestones/v0.91.6/review/logging_observability/OTEL_OBSERVATORY_CONSUMPTION_PROOF_3999.md",
+            "event_stream_example_ref": "docs/milestones/v0.91.6/review/logging_observability/observatory_event_stream_example_3999.jsonl",
+            "logging_validation_ref": "docs/milestones/v0.91.6/review/logging_observability/LOGGING_VALIDATION_REDACTION_PROOF_4000.md",
+            "security_review_ref": "docs/milestones/v0.91.6/review/security/UNITY_OBSERVATORY_INHABITANT_READINESS_SECURITY_REVIEW_4023.md",
+            "proof_packet_ref": "docs/milestones/v0.91.6/review/observatory/UNITY_OBSERVATORY_LOGGING_OTEL_SECURITY_CONSUMPTION_4034.md",
+            "claim_boundary": "Observatory consumers may reuse the redacted event-stream vocabulary and operator-report surfaces, but this contract does not claim a live OpenTelemetry collector or exporter integration.",
+            "private_state_posture": "No private paths, secrets, raw logs, or identity-sensitive state are required by this Unity surface.",
+            "findings_disposition": "Accepted WP-07 security findings remain explicit, while identity-safe display and final closeout stay routed to their owning issues."
+        },
         "review": {
             "demo_classification": str_at(packet, "/review/demo_classification"),
             "operator_report_ref": first_artifact_matching(packet, "operator_report.md"),
@@ -1338,6 +1349,20 @@ mod tests {
                 .pointer("/review/operator_report_ref")
                 .and_then(Value::as_str),
             Some("runtime_v2/observatory/operator_report.md")
+        );
+        assert_eq!(
+            contract
+                .pointer("/observability/consumption_status")
+                .and_then(Value::as_str),
+            Some("reviewed_floor_not_live_export")
+        );
+        assert_eq!(
+            contract
+                .pointer("/observability/otel_boundary_ref")
+                .and_then(Value::as_str),
+            Some(
+                "docs/milestones/v0.91.6/review/logging_observability/OTEL_OBSERVATORY_CONSUMPTION_PROOF_3999.md"
+            )
         );
         assert_eq!(
             contract

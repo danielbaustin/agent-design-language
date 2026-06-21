@@ -18,12 +18,12 @@ through the same checked-in Unity-facing contract seed. The shell now presents:
 
 This issue still does not claim:
 
-- completed ADL evidence ingestion into Unity
-- completed inhabitant-facing readiness
-- completed logging/OTel/security consumption proof
+- live ADL evidence ingestion into Unity
+- identity-safe inhabitant/profile closure
 - final WP-09 closeout truth
 
-Those remain owned by `#4032`, `#4033`, `#4034`, and `#4035`.
+Those remain owned by the already-landed bounded contract/readiness issues plus
+final closeout owner `#4035`.
 
 Update for `#4032`: the scaffold now includes one deterministic Unity-facing
 contract seed at `Assets/Resources/observatory_contract.json`, derived from the
@@ -102,6 +102,19 @@ bounded world, status, checklist, and redacted inhabitant-lane surfaces while
 keeping identity/profile safety explicitly routed. Full identity-safe display
 and live runtime consumption still remain follow-on proof work.
 
+Update for `#4034`: the same contract now makes Observatory logging, OTel, and
+security-consumption posture explicit through repository-relative proof refs for:
+
+- the bounded OTel and event-stream floor from `#3999`
+- the logging-validation and redaction floor from `#4000`
+- the consumed WP-07 security review from `#4023`
+- the issue-owned reviewer packet
+  `docs/milestones/v0.91.6/review/observatory/UNITY_OBSERVATORY_LOGGING_OTEL_SECURITY_CONSUMPTION_4034.md`
+
+The current checked-in contract and Unity shell now render this as a governed
+observability/security card when that contract section is actually present, so
+reviewers can inspect the non-claim boundary without opening raw runtime logs.
+
 ### Non-authoritative boundary
 
 The Unity surface may present:
@@ -121,12 +134,11 @@ The Unity surface may not claim:
 
 ## Downstream Ownership
 
-This launch baseline intentionally leaves the following issue boundaries explicit:
+This Unity surface intentionally leaves the following issue boundaries explicit:
 
-- `#4032` owns the ADL evidence/data contract and fixture-loading path
-- `#4033` owns inhabitant-facing world, status, identity, and capability
-  surfaces
-- `#4034` owns logging/OTel/security consumption proof
+- `#4032` owns the bounded ADL evidence/data contract and fixture-loading path
+- `#4033` owns the bounded inhabitant-facing world, status, and redacted
+  capability surfaces
 - `#4035` owns final working Unity Observatory closeout truth
 
 ## Open In Unity
@@ -147,6 +159,8 @@ Current contract-backed behavior:
   Freedom Gate summary counts from the same contract
 - the shell presents inhabitant-readiness checklist items and redacted
   inhabitant-lane capability projections from the same contract
+- the shell presents observability/security consumption status, proof refs, and
+  private-state posture from the same contract
 - no live runtime mutation, snapshot, or profile inspection is performed
 
 ## Validation Entry Points
@@ -181,6 +195,13 @@ Focused contract-seed guardrail for this issue:
 bash adl/tools/test_v0916_unity_observatory_contract.sh
 ```
 
+Focused O-04 review packet inspection:
+
+```bash
+test -f docs/milestones/v0.91.6/review/observatory/UNITY_OBSERVATORY_LOGGING_OTEL_SECURITY_CONSUMPTION_4034.md
+cargo test --manifest-path adl/Cargo.toml --test cli_smoke csm_observatory_cli_writes_unity_contract_bundle_and_matches_seeded_resource -- --nocapture
+```
+
 ## Validation Truth
 
 Repository structure validation: passed by focused file/content checks during
@@ -200,6 +221,7 @@ Unity editor or build pipeline already succeeded on this machine.
 
 - No live Runtime v2 capture is claimed.
 - No live Runtime v2 ingestion is claimed.
+- No live OpenTelemetry collector or exporter integration is claimed.
 - No inhabitant-safe profile or memory display closure is claimed.
 - No Unity editor success is claimed.
 - No Unity build success is claimed.

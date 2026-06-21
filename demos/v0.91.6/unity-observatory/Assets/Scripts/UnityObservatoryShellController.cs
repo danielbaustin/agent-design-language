@@ -22,6 +22,7 @@ namespace ADL.Demos.UnityObservatory
             public StatusSection status;
             public InhabitantReadinessSection inhabitant_readiness;
             public FreedomGateSection freedom_gate;
+            public ObservabilitySection observability;
             public ReviewSection review;
             public LabelEntry[] rooms;
             public LabelEntry[] lenses;
@@ -84,6 +85,20 @@ namespace ADL.Demos.UnityObservatory
             public int allow_count;
             public int defer_count;
             public int refuse_count;
+        }
+
+        [Serializable]
+        private sealed class ObservabilitySection
+        {
+            public string consumption_status;
+            public string otel_boundary_ref;
+            public string event_stream_example_ref;
+            public string logging_validation_ref;
+            public string security_review_ref;
+            public string proof_packet_ref;
+            public string claim_boundary;
+            public string private_state_posture;
+            public string findings_disposition;
         }
 
         [Serializable]
@@ -157,6 +172,24 @@ namespace ADL.Demos.UnityObservatory
             "Identity and profile surfaces stay bounded to fixture aliases and readiness placeholders until WP-08 lands reviewed proof.";
         private string securityFloorRef =
             "docs/milestones/v0.91.6/review/security/UNITY_OBSERVATORY_INHABITANT_READINESS_SECURITY_REVIEW_4023.md";
+        private string observabilityStatus = "reviewed_floor_not_live_export";
+        private string otelBoundaryRef =
+            "docs/milestones/v0.91.6/review/logging_observability/OTEL_OBSERVATORY_CONSUMPTION_PROOF_3999.md";
+        private string eventStreamExampleRef =
+            "docs/milestones/v0.91.6/review/logging_observability/observatory_event_stream_example_3999.jsonl";
+        private string loggingValidationRef =
+            "docs/milestones/v0.91.6/review/logging_observability/LOGGING_VALIDATION_REDACTION_PROOF_4000.md";
+        private string observabilitySecurityReviewRef =
+            "docs/milestones/v0.91.6/review/security/UNITY_OBSERVATORY_INHABITANT_READINESS_SECURITY_REVIEW_4023.md";
+        private string observabilityProofPacketRef =
+            "docs/milestones/v0.91.6/review/observatory/UNITY_OBSERVATORY_LOGGING_OTEL_SECURITY_CONSUMPTION_4034.md";
+        private string observabilityClaimBoundary =
+            "Observatory consumers may reuse the redacted event-stream vocabulary and operator-report surfaces, but this contract does not claim a live OpenTelemetry collector or exporter integration.";
+        private string privateStatePosture =
+            "No private paths, secrets, raw logs, or identity-sensitive state are required by this Unity surface.";
+        private string findingsDisposition =
+            "Accepted WP-07 security findings remain explicit, while identity-safe display and final closeout stay routed to their owning issues.";
+        private bool hasObservabilityContract;
         private string[] roomLabels =
         {
             "World / Reality",
@@ -302,6 +335,19 @@ namespace ADL.Demos.UnityObservatory
                 contract.inhabitant_readiness?.security_floor_ref,
                 securityFloorRef
             );
+            hasObservabilityContract = HasObservabilitySection(contract.observability);
+            if (hasObservabilityContract)
+            {
+                observabilityStatus = contract.observability.consumption_status;
+                otelBoundaryRef = contract.observability.otel_boundary_ref;
+                eventStreamExampleRef = contract.observability.event_stream_example_ref;
+                loggingValidationRef = contract.observability.logging_validation_ref;
+                observabilitySecurityReviewRef = contract.observability.security_review_ref;
+                observabilityProofPacketRef = contract.observability.proof_packet_ref;
+                observabilityClaimBoundary = contract.observability.claim_boundary;
+                privateStatePosture = contract.observability.private_state_posture;
+                findingsDisposition = contract.observability.findings_disposition;
+            }
             caveat =
                 contract.review?.caveats != null && contract.review.caveats.Length > 0
                     ? contract.review.caveats[0]
@@ -354,6 +400,7 @@ namespace ADL.Demos.UnityObservatory
             content.Add(BuildWorldCard());
             content.Add(BuildStatusCard());
             content.Add(BuildInhabitantReadinessCard());
+            content.Add(BuildObservabilityCard());
             content.Add(BuildInhabitantsCard());
             content.Add(BuildBoundaryCard());
             content.Add(BuildPacketCard());
@@ -420,6 +467,59 @@ namespace ADL.Demos.UnityObservatory
             {
                 card.Add(new Label($"Attention: {item}") { name = "status-attention" });
             }
+            return card;
+        }
+
+        private VisualElement BuildObservabilityCard()
+        {
+            VisualElement card = new();
+            card.AddToClassList("card");
+            card.Add(new Label("Observability and security") { name = "observability-title" });
+            if (!hasObservabilityContract)
+            {
+                card.Add(
+                    new Label(
+                        "Observability/security consumption proof is not bound in this contract."
+                    ) { name = "observability-unbound" }
+                );
+                return card;
+            }
+            card.Add(
+                new Label($"Consumption status: {observabilityStatus}")
+                {
+                    name = "observability-status",
+                }
+            );
+            card.Add(new Label(observabilityClaimBoundary) { name = "observability-boundary" });
+            card.Add(new Label(privateStatePosture) { name = "observability-private-state" });
+            card.Add(new Label($"OTel boundary: {otelBoundaryRef}") { name = "observability-otel-ref" });
+            card.Add(
+                new Label($"Event stream example: {eventStreamExampleRef}")
+                {
+                    name = "observability-stream-ref",
+                }
+            );
+            card.Add(
+                new Label($"Logging validation: {loggingValidationRef}")
+                {
+                    name = "observability-logging-ref",
+                }
+            );
+            card.Add(
+                new Label($"Security review: {observabilitySecurityReviewRef}")
+                {
+                    name = "observability-security-ref",
+                }
+            );
+            card.Add(
+                new Label($"Proof packet: {observabilityProofPacketRef}")
+                {
+                    name = "observability-proof-ref",
+                }
+            );
+            card.Add(
+                new Label(findingsDisposition) { name = "observability-findings-disposition" }
+            );
             return card;
         }
 
@@ -508,13 +608,31 @@ namespace ADL.Demos.UnityObservatory
         {
             VisualElement footer = new();
             footer.AddToClassList("footer");
-            footer.Add(new Label("Deterministic Unity Observatory inhabitant-readiness projection for WP-09 O-03."));
+            footer.Add(
+                new Label(
+                    "Deterministic Unity Observatory logging, OTel, and security consumption projection for WP-09 O-04."
+                )
+            );
             return footer;
         }
 
         private static string DefaultIfBlank(string observed, string fallback)
         {
             return string.IsNullOrWhiteSpace(observed) ? fallback : observed;
+        }
+
+        private static bool HasObservabilitySection(ObservabilitySection section)
+        {
+            return section != null
+                && !string.IsNullOrWhiteSpace(section.consumption_status)
+                && !string.IsNullOrWhiteSpace(section.otel_boundary_ref)
+                && !string.IsNullOrWhiteSpace(section.event_stream_example_ref)
+                && !string.IsNullOrWhiteSpace(section.logging_validation_ref)
+                && !string.IsNullOrWhiteSpace(section.security_review_ref)
+                && !string.IsNullOrWhiteSpace(section.proof_packet_ref)
+                && !string.IsNullOrWhiteSpace(section.claim_boundary)
+                && !string.IsNullOrWhiteSpace(section.private_state_posture)
+                && !string.IsNullOrWhiteSpace(section.findings_disposition);
         }
 
         private static string[] ExtractLabels(LabelEntry[] entries, string[] fallback)
