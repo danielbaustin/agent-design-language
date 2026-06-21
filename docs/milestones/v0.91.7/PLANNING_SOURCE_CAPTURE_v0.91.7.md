@@ -75,6 +75,7 @@ Local `.adl/docs/TBD/` files are ignored planning inputs, not tracked proof. The
 | `.adl/docs/TBD/ADL_COGNITIVE_ECONOMICS.md` | Use as scheduler/economics rationale; default to context and routing unless a bounded test is promoted. |
 | `.adl/docs/TBD/ADL_BUILD_IMPROVEMENTS.md` | Use for build-throughput, remote validation, Nessus, CodeBuild, sccache/linker, and validation-DAG convergence routes. |
 | `.adl/docs/TBD/LAUNCH_PLAN_JULY_2026.md` | Route into v0.91.7/v0.92 launch-readiness planning; do not let launch work silently expand birthday scope. |
+| `.adl/docs/TBD/LOCAL_BACKLOG.md` | Use as the local backlog source for queued work that is not already represented as a public GitHub issue; promote only bounded rows with clear milestone fit. |
 | `.adl/docs/TBD/ADL_AND_GUILDS.md` | Route into v0.91.7/v0.93 governance planning; do not make guilds a v0.92 implementation blocker unless explicitly promoted. |
 | `.adl/docs/TBD/workflow_tooling/PARALLEL_EXECUTION_LANES_AND_COMPRESSION_MODEL.md` | Account in PVF/VPP/validation-lane planning. |
 | `.adl/docs/TBD/workflow_tooling/planning/SPRINT_CYCLE_TIME_REDUCTION_PLAN.md` | Account in SEP, sprint-conductor, VPP, and validation manager routes. |

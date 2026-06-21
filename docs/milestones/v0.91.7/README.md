@@ -50,6 +50,7 @@ It must convert the remaining major pre-birthday surfaces into reviewable issue 
 - the `#3778` pre-`v0.92` bridge ledger;
 - the `#3800` / `v0.91.6` first-tranche planning and evidence package;
 - residuals explicitly left by `v0.91.6` sprint reviews and closeout;
+- local backlog routing from `.adl/docs/TBD/LOCAL_BACKLOG.md`;
 - local TBD source material captured in `PLANNING_SOURCE_CAPTURE_v0.91.7.md`.
 
 Every surface must exit as one of:
