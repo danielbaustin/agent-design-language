@@ -46,9 +46,9 @@ tracked integrated soak proof.
 
 ## Findings
 
-No retained P1/P2 sprint-review truth findings remain for this closed sprint.
+No retained sprint-review findings remain.
 
-P3 residuals:
+Residual risk:
 
 - The tracked review surface is reconstructed from retained child proof packets
   and live closure truth; no ignored local `.adl` review card is promoted into

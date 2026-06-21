@@ -87,6 +87,11 @@ assert docs_lane["owner"] == "docs"
 assert docs_lane["default_surface"] == "docs"
 assert docs_lane["resource_class"] == "tiny"
 assert docs_lane["proof_role"] == "diff_hygiene"
+assert docs_lane["vpp_record"]["contract_version"] == "vpp.lane.v1"
+assert docs_lane["vpp_record"]["expected_runtime_class"] == "tiny"
+assert docs_lane["vpp_record"]["parallel_group"] == "docs_hygiene"
+assert docs_lane["vpp_record"]["cache_equivalence_group"] == "git_diff_check"
+assert docs_lane["vpp_record"]["failure_semantics"] == "fail_closed"
 PY
 
 bash "$SCRIPT" --changed-files "$focused_rust" --json >"$TMP/focused.json"
@@ -184,7 +189,96 @@ if bash "$SCRIPT" --manifest "$invalid_manifest" --changed-files "$docs_only" >"
   echo "expected invalid manifest to fail" >&2
   exit 1
 fi
+assert_has "$TMP/invalid.err" "$invalid_manifest"
 assert_has "$TMP/invalid.err" "references unknown default_surface: missing_surface"
+
+invalid_vpp_manifest="$TMP/invalid-vpp-manifest.json"
+cat >"$invalid_vpp_manifest" <<'EOF'
+{
+  "schema_version": "adl.validation_lane_selector.v1",
+  "surface_defaults": {
+    "docs": {
+      "owner": "docs",
+      "resource_class": "tiny",
+      "determinism_posture": "deterministic",
+      "proof_role": "diff_hygiene",
+      "risk_class": "low",
+      "escalation_rule": "none"
+    }
+  },
+  "lanes": [
+    {
+      "id": "docs_diff_check",
+      "lane_class": "docs",
+      "default_surface": "docs",
+      "path_selectors": [
+        "docs/**"
+      ],
+      "command": "git diff --check",
+      "run_command": "git diff --check",
+      "reason": "docs_only_surface_requires_diff_hygiene",
+      "vpp_record": {
+        "contract_version": "vpp.lane.v1",
+        "artifacts": [
+          "working_tree_diff_hygiene"
+        ],
+        "parallel_group": "docs_hygiene",
+        "cache_equivalence_group": "git_diff_check",
+        "failure_semantics": "fail_closed"
+      }
+    }
+  ],
+  "release_gate_hints": [],
+  "rust_path_hints": []
+}
+EOF
+if bash "$SCRIPT" --manifest "$invalid_vpp_manifest" --changed-files "$docs_only" >"$TMP/invalid-vpp.out" 2>"$TMP/invalid-vpp.err"; then
+  echo "expected invalid vpp manifest to fail" >&2
+  exit 1
+fi
+assert_has "$TMP/invalid-vpp.err" "$invalid_vpp_manifest"
+assert_has "$TMP/invalid-vpp.err" "vpp_record missing required key: expected_runtime_class"
+
+invalid_special_surface_manifest="$TMP/invalid-special-surface-manifest.json"
+cat >"$invalid_special_surface_manifest" <<'EOF'
+{
+  "schema_version": "adl.validation_lane_selector.v1",
+  "surface_defaults": {
+    "docs": {
+      "owner": "docs",
+      "resource_class": "tiny",
+      "determinism_posture": "deterministic",
+      "proof_role": "diff_hygiene",
+      "risk_class": "low",
+      "escalation_rule": "none"
+    }
+  },
+  "lanes": [
+    {
+      "id": "docs_diff_check",
+      "lane_class": "docs",
+      "default_surface": "docs",
+      "path_selectors": [
+        "docs/**"
+      ],
+      "command": "git diff --check",
+      "run_command": "git diff --check",
+      "reason": "docs_only_surface_requires_diff_hygiene"
+    }
+  ],
+  "special_surfaces": {
+    "release_gate_review": "broken"
+  },
+  "release_gate_hints": [],
+  "rust_path_hints": []
+}
+EOF
+if bash "$SCRIPT" --manifest "$invalid_special_surface_manifest" --changed-files "$docs_only" >"$TMP/invalid-special.out" 2>"$TMP/invalid-special.err"; then
+  echo "expected invalid special surface manifest to fail" >&2
+  exit 1
+fi
+assert_has "$TMP/invalid-special.err" "$invalid_special_surface_manifest"
+assert_has "$TMP/invalid-special.err" "special_surfaces.release_gate_review must be an object"
 
 special_surface_manifest="$TMP/special-surface-manifest.json"
 cat >"$special_surface_manifest" <<'EOF'

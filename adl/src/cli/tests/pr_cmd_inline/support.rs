@@ -198,9 +198,11 @@ pub(crate) fn copy_bootstrap_support_files(repo: &Path) {
         .to_path_buf();
     env::set_var("ADL_TOOLING_MANIFEST_ROOT", &workspace_root);
     let tools_dir = repo.join("adl/tools");
+    let config_dir = repo.join("adl/config");
     let templates_dir = repo.join("adl/templates/cards");
     let schemas_dir = repo.join("adl/schemas");
     fs::create_dir_all(&tools_dir).expect("tools dir");
+    fs::create_dir_all(&config_dir).expect("config dir");
     fs::create_dir_all(&templates_dir).expect("templates dir");
     fs::create_dir_all(&schemas_dir).expect("schemas dir");
 
@@ -216,6 +218,38 @@ pub(crate) fn copy_bootstrap_support_files(repo: &Path) {
         (
             workspace_root.join("adl/tools/lint_prompt_spec.sh"),
             tools_dir.join("lint_prompt_spec.sh"),
+        ),
+        (
+            workspace_root.join("adl/tools/validation_manager.py"),
+            tools_dir.join("validation_manager.py"),
+        ),
+        (
+            workspace_root.join("adl/tools/validation_manager.sh"),
+            tools_dir.join("validation_manager.sh"),
+        ),
+        (
+            workspace_root.join("adl/tools/test_validation_manager.sh"),
+            tools_dir.join("test_validation_manager.sh"),
+        ),
+        (
+            workspace_root.join("adl/tools/select_validation_lanes.py"),
+            tools_dir.join("select_validation_lanes.py"),
+        ),
+        (
+            workspace_root.join("adl/tools/select_validation_lanes.sh"),
+            tools_dir.join("select_validation_lanes.sh"),
+        ),
+        (
+            workspace_root.join("adl/tools/run_pr_fast_test_lane.sh"),
+            tools_dir.join("run_pr_fast_test_lane.sh"),
+        ),
+        (
+            workspace_root.join("adl/tools/run_slow_proof_family.sh"),
+            tools_dir.join("run_slow_proof_family.sh"),
+        ),
+        (
+            workspace_root.join("adl/tools/run_owner_validation_lane.sh"),
+            tools_dir.join("run_owner_validation_lane.sh"),
         ),
         (
             workspace_root.join("adl/tools/check_no_tracked_adl_issue_record_residue.sh"),
@@ -244,6 +278,14 @@ pub(crate) fn copy_bootstrap_support_files(repo: &Path) {
         (
             workspace_root.join("adl/schemas/structured_output_record.contract.yaml"),
             schemas_dir.join("structured_output_record.contract.yaml"),
+        ),
+        (
+            workspace_root.join("adl/config/validation_lane_selector.v0.91.6.json"),
+            config_dir.join("validation_lane_selector.v0.91.6.json"),
+        ),
+        (
+            workspace_root.join("adl/config/slow_proof_families.v0.91.6.json"),
+            config_dir.join("slow_proof_families.v0.91.6.json"),
         ),
     ];
 
