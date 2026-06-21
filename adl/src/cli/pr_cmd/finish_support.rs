@@ -1678,8 +1678,10 @@ fn finish_path_is_small_binary_focused(path: &str) -> bool {
     matches!(
         trimmed,
         "adl/tools/pr.sh"
+            | "adl/tools/polis_status_for_ssm_windows.ps1"
             | "adl/tools/test_pr_small_binary_delegation.sh"
             | "adl/tools/test_pr_run_locked_cargo_fallback_refuses_cleanly.sh"
+            | "adl/tools/validate_polis_status_for_ssm_windows.py"
             | "adl/tools/validation_manager.py"
             | "adl/tools/validation_manager.sh"
             | "adl/tools/test_validation_manager.sh"
