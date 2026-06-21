@@ -1889,6 +1889,28 @@ fn finish_validation_profile_treats_skill_schema_and_agent_manifest_as_docs_only
 }
 
 #[test]
+fn finish_validation_profile_treats_demo_markdown_as_docs_only() {
+    let plan = select_finish_validation_plan_for_finish(
+        4030,
+        ".",
+        &[
+            "demos/v0.91.6/unity-observatory/README.md".to_string(),
+            "docs/milestones/v0.91.6/review/observatory/UNITY_OBSERVATORY_IMPLEMENTATION_BASELINE_4030.md".to_string(),
+        ],
+    )
+    .expect("demo markdown docs-only plan");
+
+    assert_eq!(plan.mode, FinishValidationMode::DocsOnly);
+    assert_eq!(
+        plan.commands,
+        vec![
+            "bash adl/tools/check_no_tracked_adl_issue_record_residue.sh".to_string(),
+            "git diff --check".to_string(),
+        ]
+    );
+}
+
+#[test]
 fn finish_validation_profile_does_not_treat_behavioral_tooling_as_docs_only() {
     let plan = select_finish_validation_plan_for_finish(
         1153,
@@ -1901,6 +1923,26 @@ fn finish_validation_profile_does_not_treat_behavioral_tooling_as_docs_only() {
     .expect("behavioral tooling plan");
 
     assert_eq!(plan.mode, FinishValidationMode::SmallBinaryFocused);
+}
+
+#[test]
+fn finish_validation_profile_classifies_unity_observatory_guardrail_script_as_small_binary_focused()
+{
+    let plan = select_finish_validation_plan_for_finish(
+        4030,
+        ".",
+        &[
+            "adl/tools/test_v0916_unity_observatory_baseline.sh".to_string(),
+            "docs/milestones/v0.91.6/review/observatory/UNITY_OBSERVATORY_IMPLEMENTATION_BASELINE_4030.md".to_string(),
+        ],
+    )
+    .expect("unity observatory guardrail plan");
+
+    assert_eq!(plan.mode, FinishValidationMode::SmallBinaryFocused);
+    assert!(plan
+        .commands
+        .contains(&"bash adl/tools/check_no_tracked_adl_issue_record_residue.sh".to_string()));
+    assert!(plan.commands.contains(&"git diff --check".to_string()));
 }
 
 #[test]

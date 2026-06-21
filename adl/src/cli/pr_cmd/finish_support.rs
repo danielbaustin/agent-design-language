@@ -1694,6 +1694,9 @@ fn finish_path_is_docs_only(path: &str) -> bool {
     if trimmed == "docs" || trimmed.starts_with("docs/") {
         return true;
     }
+    if trimmed.starts_with("demos/") && trimmed.ends_with(".md") {
+        return true;
+    }
     if trimmed.starts_with("adl/tools/skills/docs/") {
         return finish_path_has_docs_artifact_extension(trimmed);
     }
@@ -1749,6 +1752,7 @@ fn finish_path_is_small_binary_focused(path: &str) -> bool {
             | "adl/tools/test_validation_inventory.sh"
             | "adl/tools/test_install_adl_operational_skills.sh"
             | "adl/tools/test_sprint_conductor_helpers.sh"
+            | "adl/tools/test_v0916_unity_observatory_baseline.sh"
     ) || finish_path_needs_pr_finish_rust_focused_validation(trimmed)
 }
 
