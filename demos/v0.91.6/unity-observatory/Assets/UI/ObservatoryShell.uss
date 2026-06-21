@@ -1,0 +1,41 @@
+.observatory-screen {
+  flex-grow: 1;
+  padding: 18px;
+  background-color: rgb(5, 8, 18);
+}
+
+.observatory-shell {
+  flex-grow: 1;
+  flex-direction: column;
+  background-color: rgb(11, 15, 28);
+}
+
+.header {
+  padding-bottom: 16px;
+}
+
+.body {
+  flex-grow: 1;
+  flex-direction: row;
+  gap: 18px;
+}
+
+.navigation {
+  width: 180px;
+  padding-right: 12px;
+}
+
+.content {
+  flex-grow: 1;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.card {
+  padding: 14px;
+  background-color: rgb(18, 24, 42);
+}
+
+.footer {
+  padding-top: 16px;
+}
