@@ -5,6 +5,9 @@ Updated: 2026-06-20 by `#4292` for `#4212` retained review coverage; by
 `#4303` for `#4160`, `#4237`, and `#4250` retained review coverage.
 Updated: 2026-06-20 by `#4357` to mark sprint-review truth defects that must
 not be treated as clean completion.
+Updated: 2026-06-20 by `#4357` to add retained review packets for `#4241`,
+`#4276`, and `#4325`, and to remove reopened `#4324` from completed-sprint
+consumption.
 Owner issue: `#4251`
 Follow-up owners: `#4292`, `#4303`
 Purpose: normalize reviewer-facing retained evidence for the completed
@@ -51,10 +54,9 @@ tracked review surface that answers three questions for each completed umbrella:
 | `#4237` session-goal workflow hardening mini-sprint | present through `#4303` review cleanup | `docs/milestones/v0.91.6/review/V0916_SESSION_GOAL_WORKFLOW_HARDENING_MINI_SPRINT_REVIEW_4237.md`; `AGENTS.md`; `adl/tools/skills/pr-run/SKILL.md`; `adl/tools/skills/sprint-conductor/SKILL.md`; `adl/tools/skills/workflow-conductor/SKILL.md` | retained review packet present | Umbrella issue body still contains bootstrap `status: "draft"` metadata; child PR closure evidence is retained and current. |
 | `#4250` completed-sprints review remediation mini-sprint | present through `#4303` review cleanup | `docs/milestones/v0.91.6/review/V0916_COMPLETED_SPRINTS_REVIEW_REMEDIATION_MINI_SPRINT_REVIEW_4250.md`; `docs/milestones/v0.91.6/review/V0916_COMPLETED_SPRINT_RETAINED_EVIDENCE_MATRIX_4251.md`; `docs/milestones/v0.91.6/review/V0916_COMPLETED_SPRINT_REVIEW_FINDINGS_RESOLUTION_PLAN_4303.md` | retained review packet present | Folded issues `#4252`, `#4254`, and `#4256` are closed but need issue-comment hygiene for issue-local replacement visibility. |
 | `#4177` Tokio runtime substrate | present | `docs/milestones/v0.91.6/features/TOKIO_RUNTIME_SUBSTRATE_v0.91.6.md`; `docs/milestones/v0.91.6/RUNTIME_FIRE_UP_PLAN_v0.91.6.md` | no standalone retained umbrella review packet recovered | Retained proof exists, but any remaining stale live-state wording in the feature/doc layer is residual records hygiene now that the milestone-doc truth lane `#4253` is closed. |
-| `#4241` runtime resilience follow-on sprint | present | `docs/milestones/v0.91.6/review/V0916_COMPLETED_SPRINT_REVIEW_TRUTH_REPAIR_4357.md` | issue-local review present; retained packet missing | `#4357` records that issue-local review truth was found in the ignored local task bundle, but no tracked retained review packet was found. Add a retained packet or keep this caveat visible before external review consumes the sprint. |
-| `#4276` predictable execution fabric sprint | present | `docs/milestones/v0.91.6/review/V0916_COMPLETED_SPRINT_REVIEW_TRUTH_REPAIR_4357.md` | closed; retained review record incomplete | `#4357` records that ignored local sprint/card surfaces still say review was not started, closeout readiness needed remediation, and SOR was stale. Do not consume this sprint as reviewed until a real retained sprint-review repair runs. This is a review-record defect, not an assessment of the sprint work itself. |
-| `#4324` ADR mini-sprint | present | `docs/milestones/v0.91.6/review/V0916_COMPLETED_SPRINT_REVIEW_TRUTH_REPAIR_4357.md` | closed but not consumable as completed sprint | The issue is closed, but current retained evidence is insufficient to treat it as completed ADR sprint work. Re-open/recreate execution before release-tail ADR claims depend on it. |
-| `#4325` runtime AWS signal bridge mini-sprint | present | `docs/milestones/v0.91.6/review/runtime_aws_signal_bridge/RUNTIME_AWS_SIGNAL_BRIDGE_MINI_SPRINT_CLOSEOUT_4325.md`; `docs/milestones/v0.91.6/review/V0916_COMPLETED_SPRINT_REVIEW_TRUTH_REPAIR_4357.md` | closeout present; review incomplete | The closeout packet is substantive, but no retained sprint-review packet was found and the issue-local SRP still says `not_run`. Either add a retained review packet or explicitly accept the closeout packet as the review surface. |
+| `#4241` runtime resilience follow-on sprint | present | `docs/milestones/v0.91.6/review/V0916_RUNTIME_RESILIENCE_FOLLOW_ON_SPRINT_REVIEW_4241.md`; `docs/milestones/v0.91.6/review/runtime/V0916_INTEGRATED_RUNTIME_SOAK_PROOF_4245.md` | retained review packet present | `#4357` backfilled a tracked retained sprint-review packet from child closure truth and retained runtime proof artifacts. Runtime soak #1 remains a walking-skeleton proof, not full v0.92 runtime coherence. |
+| `#4276` predictable execution fabric sprint | present | `docs/milestones/v0.91.6/review/V0916_PREDICTABLE_EXECUTION_FABRIC_SPRINT_REVIEW_4276.md`; `docs/milestones/v0.91.6/review/issue_resource_telemetry/ISSUE_RESOURCE_TELEMETRY_V1_AND_S3_ARCHIVE_PLAN_4280.md` | retained review packet present | `#4357` backfilled a tracked retained sprint-review packet from child issue/PR closure truth and tracked process/telemetry evidence. Ignored local `.adl` sprint cards remain local records only. |
+| `#4325` runtime AWS signal bridge mini-sprint | present | `docs/milestones/v0.91.6/review/V0916_RUNTIME_AWS_SIGNAL_BRIDGE_MINI_SPRINT_REVIEW_4325.md`; `docs/milestones/v0.91.6/review/runtime_aws_signal_bridge/RUNTIME_AWS_SIGNAL_BRIDGE_MINI_SPRINT_CLOSEOUT_4325.md` | retained review packet present | `#4357` added the missing retained post-closeout review surface. The sprint remains mock/local proof only and makes no live AWS mutation claim. |
 
 ## Resolved In `#4251`
 
@@ -85,26 +87,17 @@ tracked review surface that answers three questions for each completed umbrella:
 ## Added In `#4357`
 
 - Added `docs/milestones/v0.91.6/review/V0916_COMPLETED_SPRINT_REVIEW_TRUTH_REPAIR_4357.md`.
-- Marked `#4276` as closed with incomplete retained review truth, not reviewed.
-- Marked `#4324` as closed but not consumable as completed ADR sprint work.
-- Marked `#4325` as closeout-present but review-incomplete.
-- Marked `#4241` as issue-local-review-present but missing a retained review
-  packet.
+- Added retained sprint-review packets for `#4241`, `#4276`, and `#4325`.
+- Reopened `#4324`; it is no longer in the completed-sprint review set.
 - Reclassified open sprint umbrellas as ineligible for completed-sprint review:
-  `#3974`, `#3976` through `#3984`, `#4310`, `#4332`, and `#4343`.
+  `#3974`, `#3976` through `#3984`, `#4310`, `#4324`, `#4332`, and `#4343`.
 
 ## Still Routed Elsewhere
 
 - Local `.adl` lifecycle-card normalization for closed umbrellas remains local
   records hygiene, not tracked repo content by itself.
-- `#4276` must receive a real retained sprint-review repair before it is
-  consumed as reviewed.
-- `#4324` must not be consumed as completed ADR sprint work until it is
-  actually executed or recreated.
-- `#4325` needs retained review normalization unless the operator explicitly
-  accepts its closeout packet as the review surface.
-- `#4241` needs retained review packet backfill or an explicit retained matrix
-  caveat before external review consumes it.
+- `#4324` is reopened and must not be consumed as completed ADR sprint work
+  until it is executed, reviewed, and closed again.
 - `#4253` closed the milestone-doc truth lane; any remaining stale issue-body
   metadata is now treated as residual records hygiene, not an open sprint
   blocker.
