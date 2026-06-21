@@ -50,10 +50,9 @@ explicit residual caveats.
 
 ## Findings
 
-No retained P1/P2 sprint-review truth findings remain for the closed sprint
-after this repair.
+No retained sprint-review findings remain.
 
-P3 residual:
+Residual risk:
 
 - The original umbrella issue body references an ignored local `.adl` sprint
   artifact family as final closeout evidence. This packet replaces that missing
@@ -94,5 +93,5 @@ git diff --check
 ## Closeout Position
 
 `#4276` is now represented by a tracked retained sprint-review packet and can be
-consumed as a reviewed closed mini-sprint, with the P3 ignored-artifact caveat
-above.
+consumed as a reviewed closed mini-sprint, with the ignored-artifact
+residual-risk boundary above.

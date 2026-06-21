@@ -73,6 +73,11 @@ Those surfaces are useful, but they are not interchangeable.
   packet as source evidence while adding post-closeout review truth.
 - It adds a retained review packet for `#4241`, consuming retained runtime
   proof artifacts without claiming full v0.92 runtime coherence.
+- It adds retained review packets for all remaining closed sprint umbrellas
+  that previously lacked one in the matrix: `#3967`, `#3968`, `#3969`,
+  `#3970`, `#3971`, `#3972`, `#3973`, `#3975`, `#4141`, and `#4177`.
+- It adds a retained review packet for `#4069`, replacing the prior normalized
+  SEP-only posture with an explicit retained review surface.
 
 ## What This Packet Does Not Fix
 
@@ -85,7 +90,8 @@ Those surfaces are useful, but they are not interchangeable.
 ## Required Review Queue After Repair
 
 The next closed-sprint review pass no longer has unresolved retained-review
-gaps for `#4241`, `#4276`, or `#4325`.
+packet gaps for any closed sprint umbrella listed in the retained evidence
+matrix.
 
 `#4324` should not be reviewed as a completed sprint. It is reopened and must
 complete normal execution, review, and closeout before it re-enters the
