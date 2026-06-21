@@ -9,6 +9,17 @@ Current tracked candidate file:
 
 - `CANDIDATE_ADRS.md`
 
+Current v0.91.6 release-tail candidate ADR drafts:
+
+- `0035-local-polis-ssm-operations-boundary.md`
+- `0036-validation-lane-selector-pvf-test-cost-policy.md`
+- `0037-github-csdlc-projection-ownership.md`
+- `0038-runtime-integration-soak-boundary.md`
+- `0039-cognitive-scheduler-v1-authority-boundary.md`
+- `0040-workflow-lockfile-discipline.md`
+- `0041-provider-model-suitability-boundary-v2.md`
+- `0042-public-prompt-records-publication-boundary.md`
+
 Promoted v0.91.2 candidate ADR source files retained for provenance:
 
 - `0020-universal-tool-schema-portable-tool-description-standard.md`

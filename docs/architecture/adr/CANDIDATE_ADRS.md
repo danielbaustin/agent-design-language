@@ -108,14 +108,14 @@ Required v0.91.6 candidates:
 
 | Candidate | Proposed status | Summary |
 | --- | --- | --- |
-| Local Polis SSM Operations Boundary | candidate_required | AWS SSM may act as an operations/observability bridge for approved local polis hosts, but not as authority for polis state, governance, memory, identity, provider selection, or model content. |
-| Validation Lane Selector / PVF Test-Cost Policy | candidate_required | Normal PR work should run deterministic focused validation lanes selected from tracked metadata, while ambiguous and release-gate surfaces escalate or fail closed. |
-| GitHub/C-SDLC Projection Ownership | candidate_required | C-SDLC cards remain authority; GitHub surfaces are managed projections, drift-checked projections, linked external state, card-local-only surfaces, or deferred. |
-| Runtime Integration Soak Boundary | candidate_required | Runtime coherence requires integrated soak evidence; Soak #1 is a walking skeleton and Soak #2 gates full feature-list readiness before v0.92. |
-| Cognitive Scheduler v1 Authority Boundary | candidate_required | Scheduler v1 produces deterministic lane-selection evidence and does not execute tasks, mutate GitHub, select live providers, or own timed automation. |
-| Workflow Lockfile Discipline | candidate_required_needs_source_packet | Lifecycle tooling must use locked dependency resolution and treat lockfile changes as explicit issue-scoped artifacts; promotion still needs a retained local source packet for the `#4306` fix. |
-| Provider/Model Suitability Boundary v2 | candidate_required | Provider availability, capability profiles, model-role suitability, reliability evidence, and role-provider advisory authority are distinct surfaces. |
-| Public Prompt Records Publication Boundary | candidate_required | `.adl` authoring records become public only through reviewed export, redaction, validation, indexing, and security/CAV handoff paths. |
+| [ADR 0035: Local Polis SSM Operations Boundary](0035-local-polis-ssm-operations-boundary.md) | candidate_required | AWS SSM may act as an operations/observability bridge for approved local polis hosts, but not as authority for polis state, governance, memory, identity, provider selection, or model content. |
+| [ADR 0036: Validation Lane Selector / PVF Test-Cost Policy](0036-validation-lane-selector-pvf-test-cost-policy.md) | candidate_required | Normal PR work should run deterministic focused validation lanes selected from tracked metadata, while ambiguous and release-gate surfaces escalate or fail closed. |
+| [ADR 0037: GitHub/C-SDLC Projection Ownership](0037-github-csdlc-projection-ownership.md) | candidate_required | C-SDLC cards remain authority; GitHub surfaces are managed projections, drift-checked projections, linked external state, card-local-only surfaces, or deferred. |
+| [ADR 0038: Runtime Integration Soak Boundary](0038-runtime-integration-soak-boundary.md) | candidate_required | Runtime coherence requires integrated soak evidence; Soak #1 is a walking skeleton and Soak #2 gates full feature-list readiness before v0.92. |
+| [ADR 0039: Cognitive Scheduler v1 Authority Boundary](0039-cognitive-scheduler-v1-authority-boundary.md) | candidate_required | Scheduler v1 produces deterministic lane-selection evidence and does not execute tasks, mutate GitHub, select live providers, or own timed automation. |
+| [ADR 0040: Workflow Lockfile Discipline](0040-workflow-lockfile-discipline.md) | candidate_required_needs_source_packet | Lifecycle tooling must use locked dependency resolution and treat lockfile changes as explicit issue-scoped artifacts; promotion still needs a retained local source packet for the `#4306` fix. |
+| [ADR 0041: Provider/Model Suitability Boundary v2](0041-provider-model-suitability-boundary-v2.md) | candidate_required | Provider availability, capability profiles, model-role suitability, reliability evidence, and role-provider advisory authority are distinct surfaces. |
+| [ADR 0042: Public Prompt Records Publication Boundary](0042-public-prompt-records-publication-boundary.md) | candidate_required | `.adl` authoring records become public only through reviewed export, redaction, validation, indexing, and security/CAV handoff paths. |
 
 Existing candidate routing from the same packet:
 
