@@ -103,7 +103,8 @@ fn closing_linkage_guard_passes_from_live_body_when_refs_are_empty() {
                     }
                 })
                 .to_string(),
-                ("GET", "/repos/owner/repo/pulls/77") => pr_fixture(
+                ("GET", "/repos/owner/repo/pulls/77")
+                | ("GET", "/repos/danielbaustin/agent-design-language/pulls/77") => pr_fixture(
                     77,
                     "[v0.91.6][tools] Live body fallback",
                     "Closes #1414\n",
@@ -134,5 +135,8 @@ fn closing_linkage_guard_passes_from_live_body_when_refs_are_empty() {
     let seen = handle.join().expect("server join");
     assert_eq!(seen.len(), 2);
     assert!(seen[0].contains("POST /graphql"));
-    assert!(seen[1].contains("GET /repos/owner/repo/pulls/77"));
+    assert!(
+        seen[1].contains("GET /repos/owner/repo/pulls/77")
+            || seen[1].contains("GET /repos/danielbaustin/agent-design-language/pulls/77")
+    );
 }
