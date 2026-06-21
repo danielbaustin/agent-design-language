@@ -101,6 +101,9 @@ handoff should carry the same issue-bound session-goal requirement directly
 instead of relying on a separate manual reminder. For SEP-routed child work,
 the minimum goal surface is the sprint issue number when present, the child
 issue number, and the bounded session objective.
+The sprint umbrella's own goal field is descriptive coordination context, not
+the active Codex session goal during child implementation, unless a later issue
+proves explicit nested-goal support.
 `adl-milestone-creator` is a bounded milestone setup helper for creating full milestone packages, bridge milestones, issue-routing truth, feature/proof coverage, and downstream handoff docs without relying on session memory.
 `issue-folding` is a bounded issue-disposition helper for classifying duplicate, superseded, absorbed, already-satisfied, obsolete, or still-actionable issues before closeout.
 `issue-splitter` is a bounded issue-scope helper for deciding whether one issue should stay intact, split now, defer splitting, or stop for operator review.

@@ -11,6 +11,12 @@ sprint:
   execution_packet_path: <path or null>
   follow_up_issue_policy: post_sprint_follow_on | must_land_before_sprint_close
   goal: <string or null>
+  goal_policy:
+    status: descriptive_only | nested_child_goals_supported
+    sprint_goal_role: descriptive_sprint_objective | active_parent_goal
+    active_session_goal_required: child_issue_only | nested_child_goal_allowed
+    notes:
+      - <bounded text>
   ordered_issue_numbers:
     - <u32>
   recommended_execution_order:

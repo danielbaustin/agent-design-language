@@ -117,7 +117,7 @@ def fallback_bootstrap_local_bundle(
         '<required_outcome>': 'Create a concrete sprint-management issue with complete local C-SDLC cards.',
         '<deliverables>': 'Sprint issue body and five-card local task bundle.',
         '<acceptance_criteria>': 'All five local cards exist and are ready for sprint preflight review.',
-        '<repo_inputs>': 'Ordered child issue list and sprint goal.',
+        '<repo_inputs>': 'Ordered child issue list and descriptive sprint objective.',
         '<dependencies>': 'Child issue cards must exist and validate before sprint execution.',
         '<target_files_surfaces>': 'Local sprint issue body and task bundle.',
         '<validation_plan>': 'Run sprint structured-prompt readiness before execution starts.',
@@ -130,7 +130,7 @@ def fallback_bootstrap_local_bundle(
         '<non_goals_inline>': 'Do not execute child issues from this bootstrap helper.',
         '<plan_summary>': f'Design-time sprint-management plan for {title}.',
         '<dependencies_inline>': 'Child issue cards must exist and validate before execution.',
-        '<repo_inputs_inline>': 'Ordered child issue list and sprint goal.',
+        '<repo_inputs_inline>': 'Ordered child issue list and descriptive sprint objective.',
         '<deliverables_inline>': 'Sprint issue body and five-card local task bundle.',
         '<acceptance_criteria_inline>': 'All five cards exist and pass preflight readiness.',
         '<risks_inline>': 'Sprint state can drift if child closeout is skipped.',
@@ -212,6 +212,19 @@ def default_issue_records(ordered: list[int]) -> list[dict[str, Any]]:
     ]
 
 
+def default_goal_policy() -> dict[str, Any]:
+    return {
+        'status': 'descriptive_only',
+        'sprint_goal_role': 'descriptive_sprint_objective',
+        'active_session_goal_required': 'child_issue_only',
+        'notes': [
+            'Sprint state may record a descriptive sprint objective, but that objective does not satisfy the active Codex session-goal requirement for child issue execution.',
+            'Each child issue session must create its own issue-bound goal after bind/readiness succeeds and before implementation starts.',
+            'Do not keep a competing sprint-global active session goal in the same thread while a child issue implementation session is active.',
+        ],
+    }
+
+
 def build_body(goal: str, ordered: list[int], child_titles: dict[int, str], notes: str | None) -> str:
     ordered_lines = '\n'.join(
         f"{idx}. #{issue} {child_titles.get(issue, '').strip()}".rstrip()
@@ -221,7 +234,7 @@ def build_body(goal: str, ordered: list[int], child_titles: dict[int, str], note
 
 Create the concrete sprint-management issue required to run one bounded `sprint-conductor` sprint.
 
-## Goal
+## Sprint Objective
 
 {goal}
 
@@ -234,6 +247,8 @@ Create the concrete sprint-management issue required to run one bounded `sprint-
 - Declare sprint execution mode: `sequential`, `parallel`, or `hybrid`.
 - For `parallel` or `hybrid` sprints, include or link a Sprint Execution Packet with safe lanes, serial gates, PVF notes, and residual routing.
 - Current sprint helper state remains single-current-issue; use separate issue workers or sessions for intentional parallel lanes.
+- Treat the sprint objective as descriptive coordination context, not as the active session goal during child issue implementation.
+- Each child issue execution session must create its own issue-bound goal after bind/readiness succeeds and before implementation starts.
 - Do not start the next child issue until the current one is fully closed out.
 - Use the existing issue lifecycle and editor skills for child issue execution.
 - Allow the bounded review-subagent exception only during sprint review when sprint policy explicitly enables it.
@@ -308,6 +323,7 @@ def main() -> int:
             'completed_issue_numbers': [],
             'blocked_issue_number': None,
             'continuation': 'continue',
+            'goal_policy': default_goal_policy(),
             'local_bundle': local_bundle,
             'issue_records': default_issue_records(ordered),
             'structured_prompt_preflight': {

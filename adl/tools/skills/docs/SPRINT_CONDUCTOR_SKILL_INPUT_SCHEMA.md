@@ -138,6 +138,12 @@ sprint:
       status: declared | needs_repair
       paths:
         - /absolute/or/repo-relative/path
+    goal_policy:
+      status: descriptive_only | nested_child_goals_supported
+      sprint_goal_role: descriptive_sprint_objective | active_parent_goal
+      active_session_goal_required: child_issue_only | nested_child_goal_allowed
+      notes:
+        - <bounded text>
     issue_repairs:
       - issue_number: <u32>
         status: ready | needs_editor_repair | blocked
@@ -193,3 +199,6 @@ Notes:
   first child issue runs.
 - Review and activity-log paths are declaration surfaces for future sprint
   artifacts; readiness does not require those files to exist yet.
+- `sprint.goal` is descriptive sprint coordination context. It must not be
+  treated as the active Codex session goal during child implementation unless a
+  later issue proves explicit nested-goal support.
