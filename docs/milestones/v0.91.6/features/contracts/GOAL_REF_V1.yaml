@@ -1,0 +1,202 @@
+schema_version: "goal_ref.v1"
+artifact_type: "goal_ref_contract"
+name: "GoalRefV1"
+status: "proposed"
+purpose: >
+  Durable ADL-owned goal reference for milestone, sprint, issue, session,
+  watcher, subagent, and validation-lane accounting.
+
+enums:
+  goal_kind:
+    - milestone
+    - sprint
+    - mini_sprint
+    - issue
+    - session
+    - watcher
+    - subagent
+    - validation_lane
+  goal_status:
+    - planned
+    - active
+    - waiting
+    - completed
+    - blocked
+    - deferred
+    - cancelled
+  telemetry_source:
+    - codex_goal_tool
+    - manual_entry
+    - derived_sprint_state
+    - unknown
+  availability:
+    - known
+    - unknown
+    - not_collected
+    - not_available
+  variance_category:
+    - none
+    - elapsed_overrun
+    - token_overrun
+    - validation_overrun
+    - blocked_wait
+    - review_rework
+    - scope_change
+    - mixed
+    - unknown
+
+fields:
+  goal_ref:
+    type: string
+    required: true
+    description: Stable ADL goal identifier.
+    example: "goal:v0.91.6:sprint:4332:issue:4331"
+  parent_goal_ref:
+    type: [string, "null"]
+    required: true
+    description: Parent goal identifier when this goal is nested.
+  goal_kind:
+    type: enum
+    required: true
+    values_ref: enums.goal_kind
+  scope_ref:
+    type: string
+    required: true
+    description: Repository-visible scope anchor such as milestone, sprint, issue, or lane id.
+  title:
+    type: string
+    required: true
+  status:
+    type: enum
+    required: true
+    values_ref: enums.goal_status
+  owner_ref:
+    type: [string, "null"]
+    required: true
+    description: Issue number, session id, watcher id, or operator-owned scope identifier.
+  issue_number:
+    type: [integer, "null"]
+    required: true
+  validation_lane:
+    type: [string, "null"]
+    required: true
+  links:
+    type: object
+    required: true
+    properties:
+      source_issue_prompt:
+        type: [string, "null"]
+      spp_ref:
+        type: [string, "null"]
+      vpp_ref:
+        type: [string, "null"]
+      srp_ref:
+        type: [string, "null"]
+      sor_ref:
+        type: [string, "null"]
+      sprint_packet_ref:
+        type: [string, "null"]
+      pr_ref:
+        type: [string, "null"]
+  estimates:
+    type: object
+    required: true
+    properties:
+      elapsed_seconds:
+        type: [integer, "null"]
+      elapsed_availability:
+        type: enum
+        values_ref: enums.availability
+      total_tokens:
+        type: [integer, "null"]
+      total_tokens_availability:
+        type: enum
+        values_ref: enums.availability
+      validation_seconds:
+        type: [integer, "null"]
+      validation_seconds_availability:
+        type: enum
+        values_ref: enums.availability
+      confidence:
+        type: string
+      source_ref:
+        type: [string, "null"]
+  actuals:
+    type: object
+    required: true
+    properties:
+      started_at:
+        type: [string, "null"]
+      completed_at:
+        type: [string, "null"]
+      elapsed_seconds:
+        type: [integer, "null"]
+      elapsed_availability:
+        type: enum
+        values_ref: enums.availability
+      total_tokens:
+        type: [integer, "null"]
+      total_tokens_availability:
+        type: enum
+        values_ref: enums.availability
+      validation_seconds:
+        type: [integer, "null"]
+      validation_seconds_availability:
+        type: enum
+        values_ref: enums.availability
+  telemetry:
+    type: object
+    required: true
+    properties:
+      data_source:
+        type: enum
+        values_ref: enums.telemetry_source
+      goal_id:
+        type: [string, "null"]
+      goal_id_availability:
+        type: enum
+        values_ref: enums.availability
+      model_ref:
+        type: [string, "null"]
+      session_ref:
+        type: [string, "null"]
+      thread_id:
+        type: [string, "null"]
+      raw_log_ref:
+        type: [string, "null"]
+  variance:
+    type: object
+    required: true
+    properties:
+      required:
+        type: boolean
+      completed:
+        type: boolean
+      category:
+        type: enum
+        values_ref: enums.variance_category
+      note:
+        type: string
+      threshold_policy:
+        type: string
+  rollup_policy:
+    type: object
+    required: true
+    properties:
+      include_in_parent_elapsed:
+        type: boolean
+      include_in_parent_tokens:
+        type: boolean
+      include_in_parent_validation:
+        type: boolean
+      unknown_values_do_not_zero_fill:
+        type: boolean
+      aggregation_note:
+        type: string
+
+rules:
+  - "ADL owns the hierarchy even when external runtimes expose only one active session goal."
+  - "Parent-child linkage must not require every goal to be active in one thread."
+  - "Unknown or not_collected telemetry must remain explicit; never coerce to zero."
+  - "Validation-lane goals may roll into issue validation totals without replacing issue elapsed totals."
+  - "Sprint and milestone totals must preserve unknown child-count visibility."

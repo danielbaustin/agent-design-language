@@ -16,6 +16,7 @@ They are planning and bridge documents, not runtime implementation proof.
 - [Identity, Continuity, And Capability Selector Bridge](IDENTITY_CONTINUITY_CAPABILITY_SELECTOR_BRIDGE_v0.91.6.md)
 - [Observatory And Unity Consumption Classification](OBSERVATORY_UNITY_CONSUMPTION_CLASSIFICATION_v0.91.6.md)
 - [AEE, Memory/ObsMem, And ACP Bridge Accounting](AEE_MEMORY_ACP_BRIDGE_ACCOUNTING_v0.91.6.md)
+- [First-Class Nested Goal Accounting](FIRST_CLASS_NESTED_GOAL_ACCOUNTING_v0.91.6.md)
 
 - [Cognitive Scheduler v1](COGNITIVE_SCHEDULER_v0.91.6.md)
 
