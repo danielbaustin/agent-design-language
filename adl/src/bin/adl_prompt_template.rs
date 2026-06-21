@@ -11,16 +11,16 @@ mod cli_observability {
 mod tooling_cmd {
     #[allow(dead_code)]
     pub(super) fn tooling_usage() -> &'static str {
-        "adl-prompt-template render --kind <sip|stp|spp|srp|sor> --values <values.yaml> --out <card.md> [--repo-root <path>]\n\
-adl-prompt-template render-all --values-dir <dir> --out-dir <dir> [--repo-root <path>]\n\
-adl-prompt-template edit-values --kind <sip|stp|spp|srp|sor> --values <values.yaml> --set <field=value> [--set <field=value> ...] [--out <values.yaml>] [--repo-root <path>]\n\
-adl-prompt-template edit-rendered --kind <sip|stp|spp|srp|sor> --input <card.md> --set <field=value> [--set <field=value> ...] --out <card.md> [--values-out <values.yaml>] [--repo-root <path>]\n\
-adl-prompt-template import-values --kind <sip|stp|spp|srp|sor> --input <card.md> --out <values.yaml> [--normalized-out <card.md>] [--repo-root <path>]\n\
-adl-prompt-template validate-values --kind <sip|stp|spp|srp|sor> --values <values.yaml> [--repo-root <path>]\n\
-adl-prompt-template validate-structure --kind <sip|stp|spp|srp|sor> --input <card.md> [--repo-root <path>]\n\
-adl-prompt-template validate-schemas [--repo-root <path>]\n\
-adl-prompt-template write-sample-values --out-dir <dir>\n\
-adl-prompt-template write-structure-schemas --out-dir <dir> [--repo-root <path>]\n\
+        "adl-prompt-template render --kind <sip|stp|spp|vpp|srp|sor> --values <values.yaml> --out <card.md> [--repo-root <path>]\n\
+adl-prompt-template render-all --values-dir <dir> --out-dir <dir> [--repo-root <path>] [--template-set <semver>]\n\
+adl-prompt-template edit-values --kind <sip|stp|spp|vpp|srp|sor> --values <values.yaml> --set <field=value> [--set <field=value> ...] [--out <values.yaml>] [--repo-root <path>]\n\
+adl-prompt-template edit-rendered --kind <sip|stp|spp|vpp|srp|sor> --input <card.md> --set <field=value> [--set <field=value> ...] --out <card.md> [--values-out <values.yaml>] [--repo-root <path>] [--template-set <semver>]\n\
+adl-prompt-template import-values --kind <sip|stp|spp|vpp|srp|sor> --input <card.md> --out <values.yaml> [--normalized-out <card.md>] [--repo-root <path>] [--template-set <semver>]\n\
+adl-prompt-template validate-values --kind <sip|stp|spp|vpp|srp|sor> --values <values.yaml> [--repo-root <path>]\n\
+adl-prompt-template validate-structure --kind <sip|stp|spp|vpp|srp|sor> --input <card.md> [--repo-root <path>] [--template-set <semver>]\n\
+adl-prompt-template validate-schemas [--repo-root <path>] [--template-set <semver>]\n\
+adl-prompt-template write-sample-values --out-dir <dir> [--template-set <semver>]\n\
+adl-prompt-template write-structure-schemas --out-dir <dir> [--repo-root <path>] [--template-set <semver>]\n\
 \n\
 Runs prompt-template editor and renderer operations directly without routing through the broad `adl tooling` dispatch surface.\n"
     }
@@ -102,14 +102,14 @@ mod tests {
     }
 
     #[test]
-    fn help_mentions_direct_prompt_template_binary() {
+    fn prompt_template_binary_help_mentions_direct_prompt_template_binary() {
         let output = super::binary_help_probe();
         assert!(output.contains("adl-prompt-template render"));
         assert!(output.contains("without routing through the broad `adl tooling` dispatch surface"));
     }
 
     #[test]
-    fn run_validate_schemas_succeeds() {
+    fn prompt_template_binary_run_validate_schemas_succeeds() {
         run(&[
             "validate-schemas".to_string(),
             "--repo-root".to_string(),
@@ -119,7 +119,7 @@ mod tests {
     }
 
     #[test]
-    fn run_invalid_args_fail() {
+    fn prompt_template_binary_run_invalid_args_fail() {
         let err = run(&["bogus".to_string()]).expect_err("invalid args fail");
         assert!(err
             .to_string()
@@ -127,7 +127,7 @@ mod tests {
     }
 
     #[test]
-    fn print_error_chain_handles_nested_error() {
+    fn prompt_template_binary_print_error_chain_handles_nested_error() {
         let err = Err::<(), _>(anyhow::anyhow!("root cause"))
             .context("outer")
             .expect_err("error");

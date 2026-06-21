@@ -11,7 +11,7 @@ mod cli_observability {
 mod tooling_cmd {
     #[allow(dead_code)]
     pub(super) fn tooling_usage() -> &'static str {
-        "adl-validate-structured-prompt --type <sip|stp|spp|srp|sor> --input <path> [--phase <phase>]\n\
+        "adl-validate-structured-prompt --type <sip|stp|spp|vpp|srp|sor> --input <path> [--phase <phase>]\n\
 \n\
 Runs the structured-prompt validator directly without routing through the broad `adl tooling` dispatch surface.\n"
     }
@@ -108,14 +108,14 @@ mod tests {
     use anyhow::Context;
 
     #[test]
-    fn help_mentions_direct_validator_binary() {
+    fn validate_structured_prompt_binary_help_mentions_direct_validator_binary() {
         let output = super::binary_help_probe();
         assert!(output.contains("adl-validate-structured-prompt"));
         assert!(output.contains("without routing through the broad `adl tooling` dispatch surface"));
     }
 
     #[test]
-    fn run_help_with_type_succeeds() {
+    fn validate_structured_prompt_binary_run_help_with_type_succeeds() {
         run(&[
             "--type".to_string(),
             "spp".to_string(),
@@ -125,13 +125,13 @@ mod tests {
     }
 
     #[test]
-    fn run_invalid_args_fail() {
+    fn validate_structured_prompt_binary_run_invalid_args_fail() {
         let err = run(&["--bogus".to_string()]).expect_err("invalid args fail");
         assert!(err.to_string().contains("unknown arg"));
     }
 
     #[test]
-    fn print_error_chain_handles_nested_error() {
+    fn validate_structured_prompt_binary_print_error_chain_handles_nested_error() {
         let err = Err::<(), _>(anyhow::anyhow!("root cause"))
             .context("outer")
             .expect_err("error");

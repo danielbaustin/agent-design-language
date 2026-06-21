@@ -9,15 +9,25 @@ used by prompt-card structure validation.
 
 ## Current Set
 
-- Template set: `1.0.0`
+- Template set: `1.0.2`
 - Lifecycle: `SIP -> STP -> SPP -> SRP -> SOR`
-- Template root: `docs/templates/prompts/1.0.0/`
+- Template root: `docs/templates/prompts/1.0.2/`
 - Registry: `docs/templates/prompts/current.json`
-- Structure schemas: `docs/templates/prompts/1.0.0/schemas/*.structure.json`
+- Structure schemas: `docs/templates/prompts/1.0.2/schemas/*.structure.json`
 - Implementation owner: Rust tooling owns the canonical template registry,
   field model, schema extraction, and validation path. Python sprint helpers may
   load schema artifacts, fill templates, or call the Rust-backed validators, but
   they should not become a separate template authority.
+
+## Staged Next Set
+
+- Template set: `1.0.3`
+- Lifecycle: `SIP -> STP -> SPP -> VPP -> SRP -> SOR`
+- Status: staged for renderer/schema validation in `#4309`; not yet the active
+  issue-bundle lifecycle
+- Template root: `docs/templates/prompts/1.0.3/`
+- Activation boundary: downstream issue-bundle/bootstrap adoption must land
+  before `current.json` moves from `1.0.2` to `1.0.3`
 
 ## Values Renderer
 
@@ -71,22 +81,25 @@ intentionally:
 ```sh
 adl-csdlc tooling prompt-template \
   write-structure-schemas \
-  --out-dir docs/templates/prompts/1.0.0/schemas
+  --template-set 1.0.2 \
+  --out-dir docs/templates/prompts/1.0.2/schemas
 ```
 
 Then run both Rust and Python-readable schema checks:
 
 ```sh
-adl-csdlc tooling prompt-template validate-schemas
-python3 adl/tools/test_prompt_template_structure_schemas.py
+adl-csdlc tooling prompt-template validate-schemas --template-set 1.0.2
+python3 adl/tools/test_prompt_template_structure_schemas.py --template-set 1.0.2
 ```
 
 If `adl-csdlc` is not already on `PATH`, run the same owner-binary commands
 through `cargo run --manifest-path adl/Cargo.toml --bin adl-csdlc -- ...`
 from a fresh checkout.
 
-`current.json` should not move to a new active template set until all five card
-kinds have renderer fixtures, values validation, and compatibility notes.
+`current.json` should not move to a new active template set until every card
+kind in that set has renderer fixtures, values validation, and compatibility
+notes. For staged six-card sets such as `1.0.3`, that means `VPP` must be
+validated alongside the existing five cards before activation.
 
 ## Local Editor
 
@@ -102,7 +115,8 @@ cargo run --manifest-path adl/Cargo.toml --bin adl-csdlc -- tooling csdlc-prompt
 ## Versioning Policy
 
 - Template-set versions use SemVer.
-- `1.0.0/` is immutable after adoption except for obvious typo fixes.
+- `1.0.0/` through `1.0.2/` are immutable after adoption except for obvious
+  typo fixes.
 - Future semantic changes create a new SemVer directory, such as `1.1.0/` or
   `2.0.0/`, then update `current.json`.
 - Tools should resolve the active paths from `current.json` when practical, but
@@ -112,7 +126,7 @@ cargo run --manifest-path adl/Cargo.toml --bin adl-csdlc -- tooling csdlc-prompt
 
 Each prompt template is treated as a first-class C-SDLC object:
 
-- it has a semantic role (`SIP`, `STP`, `SPP`, `SRP`, or `SOR`)
+- it has a semantic role (`SIP`, `STP`, `SPP`, `VPP`, `SRP`, or `SOR`)
 - it belongs to one SemVer template set
 - it carries a deterministic `card_status`
 - it is human-readable Markdown
@@ -155,5 +169,7 @@ temporary directories, or full local artifact paths in durable cards.
 ## Compatibility
 
 Older files under `adl/templates/cards/` and legacy structured-prompt template
-docs remain compatibility surfaces. New card generation should treat
-`docs/templates/prompts/1.0.0/` as canonical.
+docs remain compatibility surfaces. New card generation should treat the active
+registry target from `current.json` as canonical, while staged future sets such
+as `docs/templates/prompts/1.0.3/` may be rendered and schema-validated
+explicitly through `--template-set` before activation.

@@ -298,13 +298,17 @@ fn dynamic_field_sections(key: &str) -> Vec<&'static str> {
         "issue_graph_notes" => vec!["Issue-Graph Notes"],
         "notes_risks" => vec!["Notes / Risks", "Notes"],
         "tooling_notes" => vec!["Tooling Notes"],
-        "plan_summary" => vec!["Plan Summary"],
+        "plan_summary" => vec!["Plan Summary", "Validation Planning Summary"],
         "dependencies_inline" => vec!["Proposed Steps"],
         "repo_inputs_inline" => vec!["Proposed Steps"],
         "deliverables_inline" => vec!["Proposed Steps"],
         "acceptance_criteria_inline" => vec!["Proposed Steps"],
         "risks_inline" => vec!["Risks And Edge Cases"],
         "validation_plan_inline" => vec!["Test Strategy"],
+        "selected_lanes_inline" => vec!["Selected Validation Lanes"],
+        "parallel_groups_inline" => vec!["Parallelization Plan"],
+        "validation_commands_inline" => vec!["Validation Commands"],
+        "failure_policy" => vec!["Failure Semantics"],
         "notes_risks_inline" => vec!["Notes"],
         "slug" => vec!["Affected Areas"],
         "stp_card" | "sip_card" | "spp_card" | "srp_card" | "sor_card" => {
@@ -702,15 +706,40 @@ const PVF_RENDERED_VALUE_LINE_PREFIXES: &[&str] = &[
     "initial_pvf_lane:",
     "planned_pvf_lane:",
     "planned_pvf_lane_source:",
+    "lane_registry_path:",
+    "lane_registry_template_set:",
+    "validation_runtime_class:",
+    "validation_resource_profile:",
+    "expected_proof_cost:",
     "expected_runtime_class:",
     "estimate_elapsed_seconds:",
     "estimate_total_tokens:",
     "estimate_validation_seconds:",
+    "planned_validation_seconds:",
+    "planned_validation_tokens:",
     "estimate_confidence:",
     "estimate_data_source:",
     "estimate_source_ref:",
+    "issue_goal_ref:",
+    "sprint_goal_ref:",
+    "goal_metrics_rollup_ref:",
+    "selected_lanes:",
+    "parallel_groups:",
+    "validation_commands:",
+    "failure_policy:",
+    "- Registry path:",
+    "- Registry template set:",
     "- Initial PVF lane from issue creation:",
     "- Planned PVF lane for execution:",
+    "- Parallel groups:",
+    "- Validation runtime class:",
+    "- Validation resource profile:",
+    "- Issue goal ref:",
+    "- Sprint goal ref:",
+    "- Goal metrics rollup ref:",
+    "- Expected proof cost:",
+    "- Planned validation seconds:",
+    "- Planned validation tokens:",
     "- Planning lane source:",
     "- Revision rule:",
     "- Expected runtime class:",
@@ -739,11 +768,15 @@ const PVF_RENDERED_VALUE_LINE_PREFIXES: &[&str] = &[
     "- Variance analysis completed:",
     "- Variance category:",
     "- Variance note:",
+    "- Validation planning prompt:",
 ];
 
 fn rendered_value_line_prefixes(kind: PromptCardKind) -> Vec<&'static str> {
     let mut prefixes = COMMON_RENDERED_VALUE_LINE_PREFIXES.to_vec();
-    if matches!(kind, PromptCardKind::Spp | PromptCardKind::Sor) {
+    if matches!(
+        kind,
+        PromptCardKind::Spp | PromptCardKind::Vpp | PromptCardKind::Sor
+    ) {
         prefixes.extend_from_slice(PVF_RENDERED_VALUE_LINE_PREFIXES);
     }
     prefixes

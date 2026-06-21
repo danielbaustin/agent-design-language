@@ -1,8 +1,8 @@
 {
   "schema": "adl.csdlc.prompt_card_structure.v1",
-  "template_set": "1.0.2",
-  "card_kind": "spp",
-  "template_path": "docs/templates/prompts/1.0.2/spp.md",
+  "template_set": "1.0.3",
+  "card_kind": "sor",
+  "template_path": "docs/templates/prompts/1.0.3/sor.md",
   "parser": "markdown-rs 1.0.0",
   "editable_sections": [
     "Acceptance Criteria",
@@ -215,203 +215,203 @@
     "- Variance note:",
     "- Validation planning prompt:"
   ],
-  "frontmatter_keys": [
-    "activation_state",
-    "affected_areas",
-    "alternatives_considered",
-    "artifact_type",
-    "assumptions",
-    "branch",
-    "card_status",
-    "codex_plan",
-    "confidence",
-    "constraints",
-    "estimate_confidence",
-    "estimate_data_source",
-    "estimate_elapsed_seconds",
-    "estimate_source_ref",
-    "estimate_total_tokens",
-    "estimate_validation_seconds",
-    "execution_handoff",
-    "expected_runtime_class",
-    "generated_at",
-    "initial_pvf_lane",
-    "invariants_to_preserve",
-    "issue",
-    "name",
-    "notes",
-    "plan_revision",
-    "plan_summary",
-    "planned_pvf_lane",
-    "planned_pvf_lane_source",
-    "proposed_steps",
-    "required_permissions",
-    "review_hooks",
-    "risks_and_edge_cases",
-    "run_id",
-    "schema_version",
-    "scope",
-    "scope.components",
-    "scope.files",
-    "scope.out_of_scope",
-    "source_refs",
-    "status",
-    "stop_conditions",
-    "task_id",
-    "test_strategy",
-    "title",
-    "version"
-  ],
+  "frontmatter_keys": [],
   "headings": [
     {
       "level": 1,
-      "text": "Structured Plan Prompt"
+      "text": null
     },
     {
       "level": 2,
-      "text": "Plan Summary"
+      "text": "Summary"
     },
     {
       "level": 2,
-      "text": "PVF Lane Plan"
+      "text": "PVF Lane Truth"
     },
     {
       "level": 2,
-      "text": "Estimate Plan"
+      "text": "Issue Metrics Truth"
     },
     {
       "level": 2,
-      "text": "Codex Plan"
+      "text": "Variance Analysis"
     },
     {
       "level": 2,
-      "text": "Assumptions"
+      "text": "Artifacts produced"
     },
     {
       "level": 2,
-      "text": "Proposed Steps"
+      "text": "Actions taken"
     },
     {
       "level": 2,
-      "text": "Affected Areas"
+      "text": "Main Repo Integration (REQUIRED)"
     },
     {
       "level": 2,
-      "text": "Invariants To Preserve"
+      "text": "Validation"
     },
     {
       "level": 2,
-      "text": "Risks And Edge Cases"
+      "text": "Verification Summary"
     },
     {
       "level": 2,
-      "text": "Test Strategy"
+      "text": "Determinism Evidence"
     },
     {
       "level": 2,
-      "text": "Execution Handoff"
+      "text": "Security / Privacy Checks"
     },
     {
       "level": 2,
-      "text": "Stop Conditions"
+      "text": "Replay Artifacts"
     },
     {
       "level": 2,
-      "text": "Notes"
+      "text": "Artifact Verification"
+    },
+    {
+      "level": 2,
+      "text": "Decisions / Deviations"
+    },
+    {
+      "level": 2,
+      "text": "Follow-ups / Deferred work"
     }
   ],
-  "fenced_blocks": [],
+  "fenced_blocks": [
+    {
+      "ordinal": 0,
+      "info": "yaml",
+      "heading_path": [
+        "<dynamic-heading>",
+        "Verification Summary"
+      ]
+    }
+  ],
   "locked_lines": [
     {
       "heading_path": [
-        "Structured Plan Prompt",
-        "Estimate Plan"
+        "<dynamic-heading>"
       ],
-      "text": "- Unknown-value rule: record `unknown`, never `0`, when the estimate is unavailable or intentionally deferred."
+      "text": "Execution Record Requirements:"
     },
     {
       "heading_path": [
-        "Structured Plan Prompt",
-        "Codex Plan"
+        "<dynamic-heading>"
       ],
-      "text": "1. [pending] Confirm dependencies and starting state from the source issue prompt."
+      "text": "- The output card is a machine-auditable execution record."
     },
     {
       "heading_path": [
-        "Structured Plan Prompt",
-        "Codex Plan"
+        "<dynamic-heading>"
       ],
-      "text": "2. [pending] Inspect repo inputs and target surfaces before editing."
+      "text": "- All sections must be fully populated. Empty sections, placeholders, or implicit claims are not allowed."
     },
     {
       "heading_path": [
-        "Structured Plan Prompt",
-        "Codex Plan"
+        "<dynamic-heading>"
       ],
-      "text": "3. [pending] Implement the bounded deliverables only."
+      "text": "- Every command listed must include both what was run and what it verified."
     },
     {
       "heading_path": [
-        "Structured Plan Prompt",
-        "Codex Plan"
+        "<dynamic-heading>"
       ],
-      "text": "4. [pending] Run focused validation and proof gates."
+      "text": "- If something is not applicable, include a one-line justification."
     },
     {
       "heading_path": [
-        "Structured Plan Prompt",
-        "Codex Plan"
+        "<dynamic-heading>"
       ],
-      "text": "5. [pending] Record issue-specific SRP findings and SOR outcome truth."
+      "text": "Execution:"
     },
     {
       "heading_path": [
-        "Structured Plan Prompt",
-        "Assumptions"
+        "<dynamic-heading>",
+        "Issue Metrics Truth"
       ],
-      "text": "- The linked source issue prompt, STP, and SIP remain the canonical design-time inputs."
+      "text": "- Goal-metrics substrate note: consume the `#4264` issue-goal metrics summary when available and record `unknown` instead of duplicating raw session logs here."
     },
     {
       "heading_path": [
-        "Structured Plan Prompt",
-        "Invariants To Preserve"
+        "<dynamic-heading>",
+        "Variance Analysis"
       ],
-      "text": "- Keep SPP issue-local; do not turn it into sprint orchestration."
+      "text": "- Threshold policy: require variance analysis when any known estimated/actual pair for elapsed seconds, total tokens, or validation seconds differs by more than 10 percent."
     },
     {
       "heading_path": [
-        "Structured Plan Prompt",
-        "Invariants To Preserve"
+        "<dynamic-heading>",
+        "Variance Analysis"
       ],
-      "text": "- Keep SRP as review-result truth and SOR as output truth."
+      "text": "- Sprint rollup guidance: count only completed variance analyses by `Variance category`; keep `not_applicable` out of category totals and never treat unknown metrics as zero variance."
     },
     {
       "heading_path": [
-        "Structured Plan Prompt",
-        "Execution Handoff"
+        "<dynamic-heading>",
+        "Main Repo Integration (REQUIRED)"
       ],
-      "text": "Use this SPP as the design-time plan-of-record, then update it at runtime whenever the actual execution sequence changes."
+      "text": "- Verification performed:"
     },
     {
       "heading_path": [
-        "Structured Plan Prompt",
-        "Stop Conditions"
+        "<dynamic-heading>",
+        "Main Repo Integration (REQUIRED)"
       ],
-      "text": "- Stop and re-plan if dependencies are unmet or materially different from this design-time plan."
+      "text": "    Verified bootstrap SOR contract compliance for the local pre-run scaffold."
     },
     {
       "heading_path": [
-        "Structured Plan Prompt",
-        "Stop Conditions"
+        "<dynamic-heading>",
+        "Main Repo Integration (REQUIRED)"
       ],
-      "text": "- Stop and update SPP if touched files, proof gates, or validation commands change materially."
+      "text": "Rules:"
     },
     {
       "heading_path": [
-        "Structured Plan Prompt",
-        "Stop Conditions"
+        "<dynamic-heading>",
+        "Main Repo Integration (REQUIRED)"
       ],
-      "text": "- Stop and route follow-on work if acceptance requires scope outside this issue."
+      "text": "- Final artifacts must exist in the main repository, not only in a worktree."
+    },
+    {
+      "heading_path": [
+        "<dynamic-heading>",
+        "Main Repo Integration (REQUIRED)"
+      ],
+      "text": "- Do not leave docs, code, or generated artifacts only under a `adl-wp-*` worktree."
+    },
+    {
+      "heading_path": [
+        "<dynamic-heading>",
+        "Main Repo Integration (REQUIRED)"
+      ],
+      "text": "- Prefer git-aware transfer into the main repo (`git checkout BRANCH -- PATH` or commit + cherry-pick)."
+    },
+    {
+      "heading_path": [
+        "<dynamic-heading>",
+        "Main Repo Integration (REQUIRED)"
+      ],
+      "text": "- If artifacts exist only in the worktree, the task is NOT complete."
+    },
+    {
+      "heading_path": [
+        "<dynamic-heading>",
+        "Main Repo Integration (REQUIRED)"
+      ],
+      "text": "- Completed output records must not leave `Status` as `NOT_STARTED`."
+    },
+    {
+      "heading_path": [
+        "<dynamic-heading>",
+        "Main Repo Integration (REQUIRED)"
+      ],
+      "text": "- By `pr finish`, `Status` should normally be `DONE` (or `FAILED` if the run failed and the record is documenting that failure)."
     }
   ]
 }

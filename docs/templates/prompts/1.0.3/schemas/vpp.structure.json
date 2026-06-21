@@ -1,8 +1,8 @@
 {
   "schema": "adl.csdlc.prompt_card_structure.v1",
-  "template_set": "1.0.2",
-  "card_kind": "spp",
-  "template_path": "docs/templates/prompts/1.0.2/spp.md",
+  "template_set": "1.0.3",
+  "card_kind": "vpp",
+  "template_path": "docs/templates/prompts/1.0.3/vpp.md",
   "parser": "markdown-rs 1.0.0",
   "editable_sections": [
     "Acceptance Criteria",
@@ -216,104 +216,77 @@
     "- Validation planning prompt:"
   ],
   "frontmatter_keys": [
-    "activation_state",
-    "affected_areas",
-    "alternatives_considered",
     "artifact_type",
-    "assumptions",
     "branch",
     "card_status",
-    "codex_plan",
-    "confidence",
-    "constraints",
-    "estimate_confidence",
-    "estimate_data_source",
-    "estimate_elapsed_seconds",
-    "estimate_source_ref",
-    "estimate_total_tokens",
-    "estimate_validation_seconds",
-    "execution_handoff",
-    "expected_runtime_class",
+    "expected_proof_cost",
+    "failure_policy",
     "generated_at",
+    "goal_metrics_rollup_ref",
     "initial_pvf_lane",
-    "invariants_to_preserve",
     "issue",
+    "issue_goal_ref",
+    "lane_registry_path",
+    "lane_registry_template_set",
     "name",
     "notes",
-    "plan_revision",
-    "plan_summary",
+    "parallel_groups",
     "planned_pvf_lane",
-    "planned_pvf_lane_source",
-    "proposed_steps",
-    "required_permissions",
-    "review_hooks",
-    "risks_and_edge_cases",
+    "planned_validation_seconds",
+    "planned_validation_tokens",
     "run_id",
     "schema_version",
-    "scope",
-    "scope.components",
-    "scope.files",
-    "scope.out_of_scope",
+    "selected_lanes",
     "source_refs",
+    "sprint_goal_ref",
     "status",
-    "stop_conditions",
     "task_id",
-    "test_strategy",
     "title",
+    "validation_commands",
+    "validation_resource_profile",
+    "validation_runtime_class",
     "version"
   ],
   "headings": [
     {
       "level": 1,
-      "text": "Structured Plan Prompt"
+      "text": "Structured Validation Planning Prompt"
     },
     {
       "level": 2,
-      "text": "Plan Summary"
+      "text": "Validation Planning Summary"
     },
     {
       "level": 2,
-      "text": "PVF Lane Plan"
+      "text": "Lane Registry Inputs"
     },
     {
       "level": 2,
-      "text": "Estimate Plan"
+      "text": "Selected Validation Lanes"
     },
     {
       "level": 2,
-      "text": "Codex Plan"
+      "text": "Parallelization Plan"
     },
     {
       "level": 2,
-      "text": "Assumptions"
+      "text": "Goal Accounting Hooks"
     },
     {
       "level": 2,
-      "text": "Proposed Steps"
+      "text": "Proof Cost / Runtime Expectations"
     },
     {
       "level": 2,
-      "text": "Affected Areas"
+      "text": "Validation Commands"
     },
     {
       "level": 2,
-      "text": "Invariants To Preserve"
+      "text": "Failure Semantics"
     },
     {
       "level": 2,
-      "text": "Risks And Edge Cases"
-    },
-    {
-      "level": 2,
-      "text": "Test Strategy"
-    },
-    {
-      "level": 2,
-      "text": "Execution Handoff"
-    },
-    {
-      "level": 2,
-      "text": "Stop Conditions"
+      "text": "Handoff"
     },
     {
       "level": 2,
@@ -324,94 +297,17 @@
   "locked_lines": [
     {
       "heading_path": [
-        "Structured Plan Prompt",
-        "Estimate Plan"
+        "Structured Validation Planning Prompt",
+        "Proof Cost / Runtime Expectations"
       ],
       "text": "- Unknown-value rule: record `unknown`, never `0`, when the estimate is unavailable or intentionally deferred."
     },
     {
       "heading_path": [
-        "Structured Plan Prompt",
-        "Codex Plan"
+        "Structured Validation Planning Prompt",
+        "Handoff"
       ],
-      "text": "1. [pending] Confirm dependencies and starting state from the source issue prompt."
-    },
-    {
-      "heading_path": [
-        "Structured Plan Prompt",
-        "Codex Plan"
-      ],
-      "text": "2. [pending] Inspect repo inputs and target surfaces before editing."
-    },
-    {
-      "heading_path": [
-        "Structured Plan Prompt",
-        "Codex Plan"
-      ],
-      "text": "3. [pending] Implement the bounded deliverables only."
-    },
-    {
-      "heading_path": [
-        "Structured Plan Prompt",
-        "Codex Plan"
-      ],
-      "text": "4. [pending] Run focused validation and proof gates."
-    },
-    {
-      "heading_path": [
-        "Structured Plan Prompt",
-        "Codex Plan"
-      ],
-      "text": "5. [pending] Record issue-specific SRP findings and SOR outcome truth."
-    },
-    {
-      "heading_path": [
-        "Structured Plan Prompt",
-        "Assumptions"
-      ],
-      "text": "- The linked source issue prompt, STP, and SIP remain the canonical design-time inputs."
-    },
-    {
-      "heading_path": [
-        "Structured Plan Prompt",
-        "Invariants To Preserve"
-      ],
-      "text": "- Keep SPP issue-local; do not turn it into sprint orchestration."
-    },
-    {
-      "heading_path": [
-        "Structured Plan Prompt",
-        "Invariants To Preserve"
-      ],
-      "text": "- Keep SRP as review-result truth and SOR as output truth."
-    },
-    {
-      "heading_path": [
-        "Structured Plan Prompt",
-        "Execution Handoff"
-      ],
-      "text": "Use this SPP as the design-time plan-of-record, then update it at runtime whenever the actual execution sequence changes."
-    },
-    {
-      "heading_path": [
-        "Structured Plan Prompt",
-        "Stop Conditions"
-      ],
-      "text": "- Stop and re-plan if dependencies are unmet or materially different from this design-time plan."
-    },
-    {
-      "heading_path": [
-        "Structured Plan Prompt",
-        "Stop Conditions"
-      ],
-      "text": "- Stop and update SPP if touched files, proof gates, or validation commands change materially."
-    },
-    {
-      "heading_path": [
-        "Structured Plan Prompt",
-        "Stop Conditions"
-      ],
-      "text": "- Stop and route follow-on work if acceptance requires scope outside this issue."
+      "text": "Use this VPP to bridge planning and execution. Keep lane assignment fail-closed, keep blocked or skipped states explicit, and update `SOR` if actual validation differs materially from this plan."
     }
   ]
 }

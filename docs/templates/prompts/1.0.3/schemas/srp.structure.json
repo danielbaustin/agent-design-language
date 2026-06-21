@@ -1,8 +1,8 @@
 {
   "schema": "adl.csdlc.prompt_card_structure.v1",
-  "template_set": "1.0.2",
+  "template_set": "1.0.3",
   "card_kind": "srp",
-  "template_path": "docs/templates/prompts/1.0.2/srp.md",
+  "template_path": "docs/templates/prompts/1.0.3/srp.md",
   "parser": "markdown-rs 1.0.0",
   "editable_sections": [
     "Acceptance Criteria",
@@ -282,7 +282,7 @@
         "Structured Review Prompt",
         "Validation Inputs"
       ],
-      "text": "- Issue-local proofs recorded in the SOR."
+      "text": "- Issue-local proofs recorded in the VPP and SOR."
     },
     {
       "heading_path": [

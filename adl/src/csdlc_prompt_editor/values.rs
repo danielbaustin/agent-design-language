@@ -207,6 +207,8 @@ pub(super) fn sample_values_document(kind: PromptCardKind, template_set: &str) -
     if kind == PromptCardKind::Spp {
         values.insert("status".to_string(), "draft".to_string());
         values.insert("activation_state".to_string(), "draft".to_string());
+    } else if kind == PromptCardKind::Vpp {
+        values.insert("status".to_string(), "draft".to_string());
     }
     let editable_keys = form_fields(kind)
         .iter()
