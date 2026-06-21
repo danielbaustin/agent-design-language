@@ -7,11 +7,11 @@ TMPDIR="$(mktemp -d)"
 trap 'rm -rf "$TMPDIR"' EXIT
 
 run_event_payload_only() {
-  env -u GH_TOKEN -u GITHUB_TOKEN -u GITHUB_REPOSITORY "$@"
+  env -u GH_TOKEN -u GITHUB_TOKEN -u GITHUB_REPOSITORY ADL_PR_CLOSING_LINKAGE_DISABLE_RUST=1 "$@"
 }
 
 run_with_fake_live_metadata() {
-  env -u GITHUB_REPOSITORY "$@"
+  env -u GITHUB_REPOSITORY ADL_PR_CLOSING_LINKAGE_DISABLE_RUST=1 "$@"
 }
 
 make_event() {
@@ -128,6 +128,21 @@ if grep -F "sensitive-looking text" "$TMPDIR/live-failed.err" >/dev/null; then
   echo "raw gh stderr leaked into fallback diagnostic" >&2
   exit 1
 fi
+
+delegated_log="$TMPDIR/delegated.log"
+delegate_bin="$TMPDIR/delegate.sh"
+cat >"$delegate_bin" <<'SH'
+#!/usr/bin/env bash
+set -euo pipefail
+printf '%s\n' "$*" >"${ADL_TEST_LOG}"
+SH
+chmod +x "$delegate_bin"
+ADL_TEST_LOG="$delegated_log" ADL_PR_CLOSING_LINKAGE_BIN="$delegate_bin" \
+  bash "$SCRIPT" --event-name pull_request --head-ref codex/1414-remediation
+grep -Fqx -- '--event-name pull_request --head-ref codex/1414-remediation' "$delegated_log" || {
+  echo "expected compatibility helper to delegate directly to configured Rust binary" >&2
+  exit 1
+}
 
 event_other="$TMPDIR/other.json"
 make_event "$event_other" "Refs #1414"

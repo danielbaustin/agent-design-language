@@ -104,6 +104,14 @@ pub(crate) struct ValidationArgs {
 }
 
 #[derive(Debug, Clone, PartialEq, Eq)]
+pub(crate) struct ClosingLinkageArgs {
+    pub(crate) event_name: Option<String>,
+    pub(crate) event_path: Option<PathBuf>,
+    pub(crate) head_ref: Option<String>,
+    pub(crate) repo: Option<String>,
+}
+
+#[derive(Debug, Clone, PartialEq, Eq)]
 pub(crate) struct CloseoutArgs {
     pub(crate) issue: u32,
     pub(crate) slug: Option<String>,
@@ -672,6 +680,45 @@ pub(crate) fn parse_validation_args(args: &[String]) -> Result<ValidationArgs> {
             "--watch" | "--wait" => parsed.watch = true,
             "--json" => parsed.json = true,
             other => bail!("validation: unknown arg: {other}"),
+        }
+        i += 1;
+    }
+    Ok(parsed)
+}
+
+pub(crate) fn parse_closing_linkage_args(args: &[String]) -> Result<ClosingLinkageArgs> {
+    let mut parsed = ClosingLinkageArgs {
+        event_name: None,
+        event_path: None,
+        head_ref: None,
+        repo: None,
+    };
+    let mut i = 0;
+    while i < args.len() {
+        match args[i].as_str() {
+            "--event-name" => {
+                parsed.event_name =
+                    Some(require_value(args, i, "closing-linkage", "--event-name")?);
+                i += 1;
+            }
+            "--event-path" => {
+                parsed.event_path = Some(PathBuf::from(require_value(
+                    args,
+                    i,
+                    "closing-linkage",
+                    "--event-path",
+                )?));
+                i += 1;
+            }
+            "--head-ref" => {
+                parsed.head_ref = Some(require_value(args, i, "closing-linkage", "--head-ref")?);
+                i += 1;
+            }
+            "-R" | "--repo" => {
+                parsed.repo = Some(require_value(args, i, "closing-linkage", args[i].as_str())?);
+                i += 1;
+            }
+            other => bail!("closing-linkage: unknown arg: {other}"),
         }
         i += 1;
     }

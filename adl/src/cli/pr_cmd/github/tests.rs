@@ -598,6 +598,7 @@ fn spawn_validation_status_transient_server() -> (String, thread::JoinHandle<Vec
     (base_uri, handle)
 }
 
+mod closing_linkage;
 mod helpers;
 mod policy;
 mod transport;

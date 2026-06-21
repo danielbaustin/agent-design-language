@@ -1648,6 +1648,9 @@ pub(super) fn select_finish_validation_plan_for_finish(
     if finish_issue_needs_issue_small_binary_validation(issue_number, changed_paths) {
         return Ok(build_issue_small_binary_validation_plan());
     }
+    if finish_issue_needs_closing_linkage_small_binary_validation(issue_number, changed_paths) {
+        return Ok(build_closing_linkage_small_binary_validation_plan());
+    }
     if finish_issue_needs_wuji_ddns_validation(issue_number, changed_paths) {
         return Ok(build_wuji_ddns_validation_plan());
     }
@@ -2135,6 +2138,39 @@ fn finish_issue_needs_issue_small_binary_validation(
         })
 }
 
+fn finish_issue_needs_closing_linkage_small_binary_validation(
+    issue_number: u32,
+    changed_paths: &[String],
+) -> bool {
+    if issue_number != 4286 {
+        return false;
+    }
+    !changed_paths.is_empty()
+        && changed_paths.iter().all(|path| {
+            matches!(
+                path.trim().trim_matches('/'),
+                "adl/Cargo.toml"
+                    | "adl/src/bin/adl_pr_closing_linkage.rs"
+                    | "adl/src/cli/pr_cmd.rs"
+                    | "adl/src/cli/pr_cmd/github.rs"
+                    | "adl/src/cli/pr_cmd/github/tests.rs"
+                    | "adl/src/cli/pr_cmd/github/tests/closing_linkage.rs"
+                    | "adl/src/cli/pr_cmd_args.rs"
+                    | "adl/tools/check_pr_closing_linkage.sh"
+                    | "adl/tools/pr.sh"
+                    | "adl/tools/run_owner_validation_lane.sh"
+                    | "adl/tools/test_pr_closing_linkage.sh"
+                    | "adl/tools/test_pr_small_binary_delegation.sh"
+                    | "docs/milestones/v0.91.6/review/github_projection/GITHUB_CSDLC_PROJECTION_MAP_4047.md"
+                    | "adl/src/cli/pr_cmd/finish_support.rs"
+                    | "adl/src/cli/tests/pr_cmd_inline/finish/arg_render.rs"
+                    | ".adl/v0.91.6/tasks/issue-4286__typed-pr-closing-linkage-rust-pvf/spp.md"
+                    | ".adl/v0.91.6/tasks/issue-4286__typed-pr-closing-linkage-rust-pvf/srp.md"
+                    | ".adl/v0.91.6/tasks/issue-4286__typed-pr-closing-linkage-rust-pvf/sor.md"
+            )
+        })
+}
+
 fn finish_issue_needs_locked_cargo_fallback_validation(
     issue_number: u32,
     changed_paths: &[String],
@@ -2258,6 +2294,34 @@ fn build_issue_small_binary_validation_plan() -> FinishValidationPlan {
         &mut commands,
         "cargo test --manifest-path adl/Cargo.toml --bin adl-pr-finish cli::pr_cmd::tests::finish::arg_render::finish_validation_profile_classifies_issue_small_binary_slice -- --exact --nocapture",
     );
+    push_finish_validation_command(
+        &mut commands,
+        "bash adl/tools/test_pr_small_binary_delegation.sh",
+    );
+    FinishValidationPlan {
+        mode: FinishValidationMode::SmallBinaryFocused,
+        commands,
+    }
+}
+
+fn build_closing_linkage_small_binary_validation_plan() -> FinishValidationPlan {
+    let mut commands = vec![
+        "bash adl/tools/check_no_tracked_adl_issue_record_residue.sh".to_string(),
+        "git diff --check".to_string(),
+    ];
+    push_finish_validation_command(
+        &mut commands,
+        "cargo fmt --manifest-path adl/Cargo.toml --all --check",
+    );
+    push_finish_validation_command(
+        &mut commands,
+        "cargo test --manifest-path adl/Cargo.toml --bin adl-pr-closing-linkage closing_linkage -- --nocapture",
+    );
+    push_finish_validation_command(
+        &mut commands,
+        "cargo test --manifest-path adl/Cargo.toml --bin adl-pr-finish cli::pr_cmd::tests::finish::arg_render::finish_validation_profile_classifies_closing_linkage_small_binary_slice -- --exact --nocapture",
+    );
+    push_finish_validation_command(&mut commands, "bash adl/tools/test_pr_closing_linkage.sh");
     push_finish_validation_command(
         &mut commands,
         "bash adl/tools/test_pr_small_binary_delegation.sh",
@@ -2861,6 +2925,37 @@ pub(super) fn run_finish_validation_rust(
                         ],
                     )?;
                 }
+                "cargo test --manifest-path adl/Cargo.toml --bin adl-pr-closing-linkage closing_linkage -- --nocapture" => {
+                    run_finish_validation_status(
+                        "cargo",
+                        &[
+                            "test",
+                            "--manifest-path",
+                            path_str(&manifest)?,
+                            "--bin",
+                            "adl-pr-closing-linkage",
+                            "closing_linkage",
+                            "--",
+                            "--nocapture",
+                        ],
+                    )?;
+                }
+                "cargo test --manifest-path adl/Cargo.toml --bin adl-pr-finish cli::pr_cmd::tests::finish::arg_render::finish_validation_profile_classifies_closing_linkage_small_binary_slice -- --exact --nocapture" => {
+                    run_finish_validation_status(
+                        "cargo",
+                        &[
+                            "test",
+                            "--manifest-path",
+                            path_str(&manifest)?,
+                            "--bin",
+                            "adl-pr-finish",
+                            "cli::pr_cmd::tests::finish::arg_render::finish_validation_profile_classifies_closing_linkage_small_binary_slice",
+                            "--",
+                            "--exact",
+                            "--nocapture",
+                        ],
+                    )?;
+                }
                 "cargo test --manifest-path adl/Cargo.toml --bin adl-pr-finish wuji_ddns_slice -- --nocapture" => {
                     run_finish_validation_status(
                         "cargo",
@@ -2975,6 +3070,10 @@ pub(super) fn run_finish_validation_rust(
                 }
                 "bash adl/tools/test_pr_small_binary_delegation.sh" => {
                     let script = repo_root.join("adl/tools/test_pr_small_binary_delegation.sh");
+                    run_finish_validation_status("bash", &[path_str(&script)?])?;
+                }
+                "bash adl/tools/test_pr_closing_linkage.sh" => {
+                    let script = repo_root.join("adl/tools/test_pr_closing_linkage.sh");
                     run_finish_validation_status("bash", &[path_str(&script)?])?;
                 }
                 "bash adl/tools/test_pr_run_locked_cargo_fallback_refuses_cleanly.sh" => {

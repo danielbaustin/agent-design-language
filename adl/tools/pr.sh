@@ -26,6 +26,7 @@
 #   adl/tools/pr.sh doctor  <issue> [--slug <slug>] [--no-fetch-issue] [--version <v0.2>] [--mode full|ready|preflight] [--json]
 #   adl/tools/pr.sh preflight <issue> [--slug <slug>] [--no-fetch-issue] [--version <v0.2>] [--json]
 #   adl/tools/pr.sh finish  <issue> --title "<title>" [-f <input_card.md>] [--output-card <output_card.md>] [--body "<extra body>"] [--paths "<p1,p2,...>"] [--no-checks] [--no-close] [--ready] [--allow-gitignore] [--no-open]
+#   adl/tools/pr.sh closing-linkage [--event-name <event>] [--event-path <path>] [--head-ref <branch>] [-R owner/repo]
 #   adl/tools/pr.sh open
 #   adl/tools/pr.sh status
 #
@@ -262,6 +263,7 @@ rust_pr_subcommand_binary_name() {
     preflight) printf 'adl-pr-preflight\n' ;;
     finish) printf 'adl-pr-finish\n' ;;
     validation) printf 'adl-pr-validation\n' ;;
+    closing-linkage) printf 'adl-pr-closing-linkage\n' ;;
     issue) printf 'adl-issue\n' ;;
     closeout) printf 'adl-pr-closeout\n' ;;
     *) return 1 ;;
@@ -279,6 +281,7 @@ rust_pr_subcommand_override_var_name() {
     preflight) printf 'ADL_PR_PREFLIGHT_BIN\n' ;;
     finish) printf 'ADL_PR_FINISH_BIN\n' ;;
     validation) printf 'ADL_PR_VALIDATION_BIN\n' ;;
+    closing-linkage) printf 'ADL_PR_CLOSING_LINKAGE_BIN\n' ;;
     issue) printf 'ADL_ISSUE_BIN\n' ;;
     closeout) printf 'ADL_PR_CLOSEOUT_BIN\n' ;;
     *) return 1 ;;
@@ -2326,6 +2329,18 @@ cmd_validation() {
   delegate_pr_command_to_rust validation "$@"
 }
 
+cmd_closing_linkage() {
+  if [[ "${1:-}" == "-h" || "${1:-}" == "--help" || "${1:-}" == "help" ]]; then
+    note "Usage: adl/tools/pr.sh closing-linkage [--event-name <event>] [--event-path <path>] [--head-ref <branch>] [-R owner/repo]"
+    note ""
+    note "Runs the Rust-owned PR closing-linkage guard against live PR metadata when token context is present, with event-payload fallback only when live metadata is unavailable."
+    return 0
+  fi
+  adl_obs_event "pr.sh" "closing_linkage" "started"
+  require_rust_pr_delegate closing-linkage
+  delegate_pr_command_to_rust closing-linkage "$@"
+}
+
 cmd_issue() {
   if [[ "${1:-}" == "-h" || "${1:-}" == "--help" || "${1:-}" == "help" ]]; then
     usage_issue
@@ -2411,6 +2426,7 @@ Commands:
   doctor  <issue> [--slug <slug>] [--version <v>] [--no-fetch-issue] [--mode full|ready|preflight] [--json]
   finish  <issue> --title "<title>" ... [-f <input_card.md>] [--output-card <output_card.md>] [--no-open] [--merge]
   validation <pr-number-or-url> [-R owner/repo] [--watch] [--json]
+  closing-linkage [--event-name <event>] [--event-path <path>] [--head-ref <branch>] [-R owner/repo]
   issue   <list|search|view|create|comment|edit|close> ...
   projection-map [--json]
   closeout <issue> [--slug <slug>] [--version <v>] [--no-fetch-issue]
@@ -2449,6 +2465,7 @@ Notes:
 - `pr run <issue> ...` is the preferred public execution-context binder for issue work.
 - `pr doctor <issue> ...` is the preferred public readiness and drift diagnostic surface.
 - `pr closeout <issue> ...` finalizes a closed issue locally and safely prunes its execution worktree when possible.
+- `pr closing-linkage ...` is the Rust-owned CI/linkage guard and prefers live PR metadata over stale event payloads when token context exists.
 - `pr start <issue> ...` remains only as a legacy alias over the same Rust binding path and is no longer part of the taught public flow.
 - `pr ready` and `pr preflight` remain only as deprecated compatibility aliases over `pr doctor`.
 - `card`, `output`, `cards`, `open`, and `status` are maintenance-oriented compatibility surfaces rather than the preferred workflow entrypoints.
@@ -2718,6 +2735,7 @@ main() {
     preflight) cmd_preflight "$@" ;;
     finish) cmd_finish "$@" ;;
     validation) cmd_validation "$@" ;;
+    closing-linkage) cmd_closing_linkage "$@" ;;
     issue) cmd_issue "$@" ;;
     projection-map) cmd_projection_map "$@" ;;
     closeout) cmd_closeout "$@" ;;

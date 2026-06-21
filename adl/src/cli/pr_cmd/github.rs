@@ -14,6 +14,7 @@ use crate::cli::pr_cmd_prompt::infer_workflow_queue;
 use crate::cli::tokio_runtime::with_current_thread_runtime;
 use ::adl::control_plane::resolve_primary_checkout_root;
 use serde::{Deserialize, Serialize};
+use std::fs;
 use std::path::Path;
 use std::process::Command;
 use std::time::Duration;
@@ -152,6 +153,216 @@ pub(super) struct PrValidationReport {
 
 pub(super) fn wait_for_pr_validation_finish(repo: &str, pr_ref: &str) -> Result<()> {
     transport::wait_for_pr_validation_finish(repo, pr_ref)
+}
+
+#[derive(Debug, Clone, PartialEq, Eq)]
+enum ClosingLinkageLiveStatus {
+    Unavailable(&'static str),
+    Failed(&'static str),
+    Closing,
+    NonClosing,
+    Missing,
+}
+
+#[derive(Debug, Clone, PartialEq, Eq, Deserialize)]
+struct ClosingLinkageEventPayload {
+    repository: Option<ClosingLinkageEventRepository>,
+    pull_request: Option<ClosingLinkageEventPullRequest>,
+}
+
+#[derive(Debug, Clone, PartialEq, Eq, Deserialize)]
+struct ClosingLinkageEventRepository {
+    full_name: Option<String>,
+}
+
+#[derive(Debug, Clone, PartialEq, Eq, Deserialize)]
+struct ClosingLinkageEventPullRequest {
+    body: Option<String>,
+    number: Option<u64>,
+}
+
+fn body_declares_non_closing_lifecycle_pr(body: &str) -> bool {
+    body.to_ascii_lowercase()
+        .contains("non-closing lifecycle pr")
+}
+
+fn issue_number_from_codex_branch(head_ref: &str) -> Option<u32> {
+    for (idx, _) in head_ref.match_indices("codex/") {
+        if idx > 0 && !head_ref[..idx].ends_with('/') {
+            continue;
+        }
+        let rest = &head_ref[idx + "codex/".len()..];
+        let digit_len = rest.chars().take_while(|ch| ch.is_ascii_digit()).count();
+        if digit_len == 0 {
+            continue;
+        }
+        if rest.as_bytes().get(digit_len) != Some(&b'-') {
+            continue;
+        }
+        if let Ok(issue) = rest[..digit_len].parse::<u32>() {
+            return Some(issue);
+        }
+    }
+    None
+}
+
+fn live_closing_linkage_status(repo: &str, pr_number: u64, issue: u32) -> ClosingLinkageLiveStatus {
+    let Ok(client) = AdlGithubClient::from_env() else {
+        return ClosingLinkageLiveStatus::Unavailable(
+            "live PR metadata was unavailable because repo, PR number, or token context was missing",
+        );
+    };
+    if client.backend() != GithubClientBackend::Octocrab {
+        return ClosingLinkageLiveStatus::Unavailable(
+            "live PR metadata was unavailable because repo, PR number, or token context was missing",
+        );
+    }
+    let pr_ref = pr_number.to_string();
+    let linked = run_gh_capture_allow_failure(
+        "pr.view.closing_issues",
+        &[
+            "pr",
+            "view",
+            "-R",
+            repo,
+            &pr_ref,
+            "--json",
+            "closingIssuesReferences",
+            "--jq",
+            ".closingIssuesReferences[]?.number",
+        ],
+    );
+    let Ok(linked) = linked else {
+        return ClosingLinkageLiveStatus::Failed("live PR metadata fetch failed");
+    };
+    let linked_issue_numbers =
+        linked_issue_numbers_from_lines(linked.as_deref().unwrap_or_default());
+    if linked_issue_numbers_include(&linked_issue_numbers, issue) {
+        return ClosingLinkageLiveStatus::Closing;
+    }
+    let body = run_gh_capture_allow_failure(
+        "pr.view.body",
+        &[
+            "pr", "view", "-R", repo, &pr_ref, "--json", "body", "--jq", ".body",
+        ],
+    );
+    let Ok(body) = body else {
+        return ClosingLinkageLiveStatus::Failed("live PR metadata fetch failed");
+    };
+    let body = body.unwrap_or_default();
+    if body_declares_non_closing_lifecycle_pr(&body) {
+        return ClosingLinkageLiveStatus::NonClosing;
+    }
+    if body_contains_closing_linkage(&body, issue) {
+        return ClosingLinkageLiveStatus::Closing;
+    }
+    ClosingLinkageLiveStatus::Missing
+}
+
+pub(super) fn check_pr_closing_linkage_guard(
+    event_name_arg: Option<&str>,
+    event_path_arg: Option<&Path>,
+    head_ref_arg: Option<&str>,
+    repo_arg: Option<&str>,
+) -> Result<()> {
+    let event_name = event_name_arg
+        .map(str::to_string)
+        .or_else(|| std::env::var("GITHUB_EVENT_NAME").ok())
+        .unwrap_or_default();
+    let head_ref = head_ref_arg
+        .map(str::to_string)
+        .or_else(|| std::env::var("GITHUB_HEAD_REF").ok())
+        .or_else(|| std::env::var("GITHUB_REF_NAME").ok())
+        .unwrap_or_default();
+
+    if event_name != "pull_request" {
+        println!("check_pr_closing_linkage: skipped for event '{event_name}'");
+        return Ok(());
+    }
+
+    let event_path = event_path_arg
+        .map(Path::to_path_buf)
+        .or_else(|| std::env::var("GITHUB_EVENT_PATH").ok().map(Into::into))
+        .ok_or_else(|| {
+            anyhow!("check_pr_closing_linkage: missing GitHub pull_request event payload")
+        })?;
+    if !event_path.is_file() {
+        bail!("check_pr_closing_linkage: missing GitHub pull_request event payload");
+    }
+
+    let issue = match issue_number_from_codex_branch(&head_ref) {
+        Some(issue) => issue,
+        None => {
+            println!("check_pr_closing_linkage: skipped for non-issue branch '{head_ref}'");
+            return Ok(());
+        }
+    };
+
+    let payload_text = fs::read_to_string(&event_path).with_context(|| {
+        format!(
+            "check_pr_closing_linkage: failed to read pull_request event payload '{}'",
+            event_path.display()
+        )
+    })?;
+    let payload: ClosingLinkageEventPayload = serde_json::from_str(&payload_text)
+        .context("check_pr_closing_linkage: invalid GitHub pull_request event payload JSON")?;
+    let repo = repo_arg
+        .map(str::to_string)
+        .or_else(|| std::env::var("GITHUB_REPOSITORY").ok())
+        .or_else(|| payload.repository.and_then(|repo| repo.full_name))
+        .unwrap_or_default();
+    let pr_number = payload.pull_request.as_ref().and_then(|pr| pr.number);
+    let event_body = payload
+        .pull_request
+        .as_ref()
+        .and_then(|pr| pr.body.clone())
+        .unwrap_or_default();
+    let live_status = match (repo.trim().is_empty(), pr_number) {
+        (false, Some(pr_number)) => live_closing_linkage_status(&repo, pr_number, issue),
+        _ => ClosingLinkageLiveStatus::Unavailable(
+            "live PR metadata was unavailable because repo, PR number, or token context was missing",
+        ),
+    };
+    let pr_number_display = pr_number
+        .map(|number| number.to_string())
+        .unwrap_or_else(|| "unknown".to_string());
+
+    match live_status {
+        ClosingLinkageLiveStatus::Closing => {
+            println!(
+                "check_pr_closing_linkage: PR #{pr_number_display} closes issue #{issue} (live PR metadata)"
+            );
+            Ok(())
+        }
+        ClosingLinkageLiveStatus::NonClosing => {
+            println!(
+                "check_pr_closing_linkage: PR #{pr_number_display} declares non-closing lifecycle work for issue #{issue} (live PR metadata)"
+            );
+            Ok(())
+        }
+        ClosingLinkageLiveStatus::Missing => {
+            bail!(
+                "check_pr_closing_linkage: live PR body for PR #{pr_number_display} is missing closing linkage to issue #{issue}; update the PR body with a closing keyword such as 'Closes #{issue}' or declare a non-closing lifecycle PR"
+            );
+        }
+        ClosingLinkageLiveStatus::Unavailable(note) | ClosingLinkageLiveStatus::Failed(note) => {
+            if body_declares_non_closing_lifecycle_pr(&event_body) {
+                println!(
+                    "check_pr_closing_linkage: PR #{pr_number_display} declares non-closing lifecycle work for issue #{issue} (event payload)"
+                );
+                return Ok(());
+            }
+            if body_contains_closing_linkage(&event_body, issue) {
+                println!(
+                    "check_pr_closing_linkage: PR #{pr_number_display} closes issue #{issue} (event payload)"
+                );
+                return Ok(());
+            }
+            bail!(
+                "check_pr_closing_linkage: PR #{pr_number_display} is missing closing linkage to issue #{issue}; include a closing keyword such as 'Closes #{issue}' or declare a non-closing lifecycle PR. {note}. If this is a rerun after a PR-body-only repair, GitHub may be reusing a stale pull_request event payload; rerun with token/repo context for live metadata validation or push a fresh commit to refresh the event payload."
+            );
+        }
+    }
 }
 
 pub(super) fn wait_for_pr_validation_report(

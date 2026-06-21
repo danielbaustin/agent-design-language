@@ -86,6 +86,7 @@ build_owner_bins() {
       --bin adl-pr-create --bin adl-pr-init --bin adl-pr-repair-issue-body \
       --bin adl-pr-run --bin adl-pr-doctor --bin adl-pr-ready \
       --bin adl-pr-preflight --bin adl-pr-finish --bin adl-pr-validation \
+      --bin adl-pr-closing-linkage \
       --bin adl-pr-closeout
   if [[ "$PRINT_PLAN" == "1" ]]; then
     return 0

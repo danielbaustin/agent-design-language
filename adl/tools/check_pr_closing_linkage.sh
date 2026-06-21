@@ -1,6 +1,17 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
+ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)"
+
+maybe_delegate_to_rust() {
+  [[ "${ADL_PR_CLOSING_LINKAGE_DISABLE_RUST:-0}" == "1" ]] && return 0
+  if [[ -n "${ADL_PR_CLOSING_LINKAGE_BIN:-}" && -x "${ADL_PR_CLOSING_LINKAGE_BIN}" ]]; then
+    exec "${ADL_PR_CLOSING_LINKAGE_BIN}" "$@"
+  fi
+}
+
+maybe_delegate_to_rust "$@"
+
 event_name="${GITHUB_EVENT_NAME:-}"
 event_path="${GITHUB_EVENT_PATH:-}"
 head_ref="${GITHUB_HEAD_REF:-${GITHUB_REF_NAME:-}}"
@@ -20,7 +31,7 @@ while [[ $# -gt 0 ]]; do
       head_ref="${2:-}"
       shift 2
       ;;
-    --repo)
+    --repo|-R)
       repo="${2:-}"
       shift 2
       ;;

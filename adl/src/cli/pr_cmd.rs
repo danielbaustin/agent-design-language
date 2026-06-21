@@ -11,10 +11,10 @@ use std::sync::{Mutex, OnceLock};
 #[cfg(test)]
 use super::pr_cmd_args::parse_finish_args;
 use super::pr_cmd_args::{
-    parse_closeout_args, parse_create_args, parse_doctor_args, parse_init_args, parse_issue_args,
-    parse_preflight_args, parse_projection_map_args, parse_ready_args,
-    parse_repair_issue_body_args, parse_start_args, parse_validation_args, DoctorArgs, DoctorMode,
-    IssueArgs,
+    parse_closeout_args, parse_closing_linkage_args, parse_create_args, parse_doctor_args,
+    parse_init_args, parse_issue_args, parse_preflight_args, parse_projection_map_args,
+    parse_ready_args, parse_repair_issue_body_args, parse_start_args, parse_validation_args,
+    DoctorArgs, DoctorMode, IssueArgs,
 };
 use super::pr_cmd_cards::{
     branch_indicates_unbound_state, ensure_bootstrap_cards, ensure_local_issue_prompt_copy,
@@ -188,7 +188,7 @@ fn resolve_start_slug(
 pub(crate) fn real_pr(args: &[String]) -> Result<()> {
     let Some(subcommand) = args.first().map(|s| s.as_str()) else {
         bail!(
-            "pr requires a subcommand: create | init | repair-issue-body | start | doctor | ready | preflight | finish | validation | issue | projection-map | closeout"
+            "pr requires a subcommand: create | init | repair-issue-body | start | doctor | ready | preflight | finish | validation | closing-linkage | issue | projection-map | closeout"
         );
     };
 
@@ -202,6 +202,7 @@ pub(crate) fn real_pr(args: &[String]) -> Result<()> {
         "preflight" => real_pr_preflight(&args[1..]),
         "finish" => finish_support::real_pr_finish(&args[1..]),
         "validation" => real_pr_validation(&args[1..]),
+        "closing-linkage" => real_pr_closing_linkage(&args[1..]),
         "issue" => real_pr_issue(&args[1..]),
         "projection-map" => real_pr_projection_map(&args[1..]),
         "closeout" => real_pr_closeout(&args[1..]),
@@ -285,11 +286,11 @@ pub(crate) fn github_csdlc_projection_surfaces_v1() -> Vec<ProjectionSurfaceV1> 
             surface: "github.pr.closing_linkage",
             source_of_truth: "issue number and finish-rendered PR body",
             projection_policy: "managed_projection",
-            primary_command: "adl/tools/pr.sh finish; adl/tools/check_pr_closing_linkage.sh",
-            repair_behavior: "finish body includes closing linkage; legacy CI guard checks the live PR body or event payload",
-            fail_closed_gate: "publication/CI fail when the PR body lacks closing linkage for the issue",
-            status: "implemented_with_legacy_ci_guard",
-            follow_on: "route shell guard into Rust/PVF when the validation manager owns PR linkage checks",
+            primary_command: "adl/tools/pr.sh finish; adl/tools/pr.sh closing-linkage; adl/tools/check_pr_closing_linkage.sh",
+            repair_behavior: "finish body includes closing linkage; the Rust/PVF guard is the canonical typed path, while the compatibility shell helper can delegate only through an explicit binary override or run a deterministic no-compile fallback for always-on CI lanes",
+            fail_closed_gate: "publication/CI fail when the PR body lacks closing linkage for the issue and no non-closing lifecycle declaration is present",
+            status: "implemented",
+            follow_on: "none",
         },
         ProjectionSurfaceV1 {
             surface: "github.pr.validation_checks",
@@ -428,6 +429,16 @@ fn real_pr_validation(args: &[String]) -> Result<()> {
         );
     }
     Ok(())
+}
+
+fn real_pr_closing_linkage(args: &[String]) -> Result<()> {
+    let parsed = parse_closing_linkage_args(args)?;
+    github::check_pr_closing_linkage_guard(
+        parsed.event_name.as_deref(),
+        parsed.event_path.as_deref(),
+        parsed.head_ref.as_deref(),
+        parsed.repo.as_deref(),
+    )
 }
 
 fn validation_disposition_blocks_shell_success(disposition: &str) -> bool {
