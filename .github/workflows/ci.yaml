@@ -38,6 +38,23 @@ jobs:
             --github-output "$GITHUB_OUTPUT"
         working-directory: .
 
+      - name: Validation profile summary (adl-ci)
+        run: |
+          {
+            echo "## ADL validation profile"
+            echo
+            echo "| Field | Value |"
+            echo "|---|---|"
+            echo "| reason | \`${{ steps.path-policy.outputs.reason }}\` |"
+            echo "| selected profile | \`${{ steps.path-policy.outputs.validation_profile_selected }}\` |"
+            echo "| profile status | \`${{ steps.path-policy.outputs.validation_profile_status }}\` |"
+            echo "| PR publication sufficient | \`${{ steps.path-policy.outputs.validation_profile_pr_publication_sufficient }}\` |"
+            echo "| profile run lanes | \`${{ steps.path-policy.outputs.validation_profile_run_lanes }}\` |"
+            echo "| escalation required | \`${{ steps.path-policy.outputs.validation_profile_escalation_required }}\` |"
+            echo "| escalation lanes | \`${{ steps.path-policy.outputs.validation_profile_escalation_lanes }}\` |"
+          } >> "$GITHUB_STEP_SUMMARY"
+        working-directory: .
+
       - name: Install Rust toolchain
         if: steps.path-policy.outputs.rust_required == 'true'
         uses: dtolnay/rust-toolchain@631a55b12751854ce901bb631d5902ceb48146f7 # stable
@@ -360,6 +377,23 @@ jobs:
             --github-output "$GITHUB_OUTPUT"
         working-directory: .
 
+      - name: Validation profile summary (adl-coverage)
+        run: |
+          {
+            echo "## ADL coverage validation profile"
+            echo
+            echo "| Field | Value |"
+            echo "|---|---|"
+            echo "| reason | \`${{ steps.path-policy.outputs.reason }}\` |"
+            echo "| selected profile | \`${{ steps.path-policy.outputs.validation_profile_selected }}\` |"
+            echo "| profile status | \`${{ steps.path-policy.outputs.validation_profile_status }}\` |"
+            echo "| coverage lane | \`${{ steps.path-policy.outputs.coverage_lane }}\` |"
+            echo "| coverage authority | \`${{ steps.path-policy.outputs.coverage_authority }}\` |"
+            echo "| profile run lanes | \`${{ steps.path-policy.outputs.validation_profile_run_lanes }}\` |"
+            echo "| escalation required | \`${{ steps.path-policy.outputs.validation_profile_escalation_required }}\` |"
+          } >> "$GITHUB_STEP_SUMMARY"
+        working-directory: .
+
       - name: Determine PR fast coverage filters
         id: coverage-impact
         if: github.event_name == 'pull_request' && steps.path-policy.outputs.coverage_required == 'true' && steps.path-policy.outputs.full_coverage_required != 'true'
@@ -463,16 +497,6 @@ jobs:
             --summary adl/coverage-summary.json \
             --threshold "$PER_FILE_LINE_THRESHOLD"
         working-directory: .
-
-      - name: Full workspace gate deferred for bounded authoritative PR
-        if: github.event_name == 'pull_request' && steps.path-policy.outputs.full_coverage_required == 'true'
-        run: |
-          echo "Workspace coverage gate and lcov artifact generation are deferred for pull requests."
-          echo "This PR ran the authoritative coverage pass plus changed-source coverage-impact validation."
-          echo "Full workspace coverage gating remains required on push-to-main, nightly ratchet, and non-PR fail-closed events."
-          echo "Policy reason: ${{ steps.path-policy.outputs.reason }}"
-          echo "Coverage lane: ${{ steps.path-policy.outputs.coverage_lane }}"
-          echo "Coverage authority: ${{ steps.path-policy.outputs.coverage_authority }}"
 
       - name: PR coverage-impact preflight
         if: github.event_name == 'pull_request' && steps.path-policy.outputs.coverage_required == 'true' && steps.path-policy.outputs.full_coverage_required != 'true'

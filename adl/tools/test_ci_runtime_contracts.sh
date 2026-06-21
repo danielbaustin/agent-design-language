@@ -50,6 +50,15 @@ def step_if(name: str) -> str:
         raise SystemExit(f"missing workflow if condition for step: {name}")
     return match.group(1).strip()
 
+def step_count(name: str) -> int:
+    return len(
+        re.findall(
+            rf"^\s*-\s+name:\s+{re.escape(name)}\s*$",
+            workflow,
+            re.MULTILINE,
+        )
+    )
+
 checkout_sha = "actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5"
 for candidate in sorted(workflow_root.glob("*.y*ml")):
     text = candidate.read_text()
@@ -60,6 +69,23 @@ for candidate in sorted(workflow_root.glob("*.y*ml")):
                 f"workflow must pin actions/checkout to the canonical SHA; "
                 f"found {stripped!r} in {candidate.name}"
             )
+
+adl_profile_summary = step_block("Validation profile summary (adl-ci)")
+for required_fragment in (
+    "ADL validation profile",
+    "steps.path-policy.outputs.validation_profile_selected",
+    "steps.path-policy.outputs.validation_profile_status",
+    "steps.path-policy.outputs.validation_profile_pr_publication_sufficient",
+    "steps.path-policy.outputs.validation_profile_run_lanes",
+    "steps.path-policy.outputs.validation_profile_escalation_required",
+    "steps.path-policy.outputs.validation_profile_escalation_lanes",
+    "GITHUB_STEP_SUMMARY",
+):
+    if required_fragment not in adl_profile_summary:
+        raise SystemExit(
+            "adl-ci must publish validation-manager profile truth to the GitHub step summary; "
+            f"missing fragment: {required_fragment}"
+        )
 
 ordinary_test = step_run("test")
 expected_ordinary_test = (
@@ -191,12 +217,39 @@ if slow_proof_exclusion not in gate_block:
         "workflow is missing the slow-proof per-file exclusion"
     )
 
+if step_count("Full workspace gate deferred for bounded authoritative PR") != 0:
+    raise SystemExit(
+        "coverage workflow must not carry the duplicate bounded-authoritative PR defer note"
+    )
+
 deferred_policy_step = step_if("Full workspace coverage gate deferred for PR")
 expected_deferred_fragment = "github.event_name == 'pull_request'"
 if expected_deferred_fragment not in deferred_policy_step:
     raise SystemExit(
         "PR defer note must be keyed to pull_request coverage runs; "
         f"found: {deferred_policy_step}"
+    )
+
+coverage_profile_summary = step_block("Validation profile summary (adl-coverage)")
+for required_fragment in (
+    "ADL coverage validation profile",
+    "steps.path-policy.outputs.coverage_lane",
+    "steps.path-policy.outputs.coverage_authority",
+    "steps.path-policy.outputs.validation_profile_status",
+    "steps.path-policy.outputs.validation_profile_run_lanes",
+    "steps.path-policy.outputs.validation_profile_escalation_required",
+    "GITHUB_STEP_SUMMARY",
+):
+    if required_fragment not in coverage_profile_summary:
+        raise SystemExit(
+            "adl-coverage must publish validation profile and coverage authority truth to the GitHub step summary; "
+            f"missing fragment: {required_fragment}"
+        )
+
+nightly = (workflow_root / "nightly-coverage-ratchet.yaml").read_text()
+if "schedule:" not in nightly or 'cron: "43 11 * * *"' not in nightly:
+    raise SystemExit(
+        "nightly-coverage-ratchet must have an actual scheduled trigger or stop calling itself nightly"
     )
 
 for step_name in (

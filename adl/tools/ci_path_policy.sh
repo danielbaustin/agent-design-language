@@ -127,6 +127,15 @@ mark_policy_surface_full_coverage() {
   reason="$reason_value"
 }
 
+mark_policy_surface_contract_validation() {
+  ci_contracts_required=true
+  coverage_required=false
+  full_coverage_required=false
+  coverage_lane="skip"
+  coverage_authority="not_required"
+  reason="coverage_policy_surface_tooling_change_runs_contract_validation"
+}
+
 mark_pvf_slow_proof_contract_validation() {
   rust_required=true
   ci_contracts_required=true
@@ -252,6 +261,13 @@ is_reporting_only_coverage_workflow_change() {
               *"Verify lcov path from repository root"*|\
               *"Upload coverage artifact"*|\
               *"Upload coverage to Codecov"*|\
+              *"Full workspace gate deferred for bounded authoritative PR"*|\
+              *"Workspace coverage gate and lcov artifact generation are deferred for pull requests."*|\
+              *"This PR ran the authoritative coverage pass plus changed-source coverage-impact validation."*|\
+              *"Full workspace coverage gating remains required on push-to-main, nightly ratchet, and non-PR fail-closed events."*|\
+              *"Policy reason: "*|\
+              *"Coverage lane: "*|\
+              *"Coverage authority: "*|\
               *"adl/lcov.info"*|\
               *"adl/coverage-summary.json"*|\
               *"adl/coverage-summary.txt"*|\
@@ -259,6 +275,138 @@ is_reporting_only_coverage_workflow_change() {
               *"coverage-summary.json"*|\
               *"files: adl/lcov.info"*|\
               *"flags: adl"*)
+                ;;
+              *)
+                return 1
+                ;;
+            esac
+            ;;
+        esac
+      done
+}
+
+is_validation_profile_summary_workflow_change() {
+  local path="$1"
+  [ "$path" = ".github/workflows/ci.yaml" ] || return 1
+  local diff_text
+  diff_text="$(git_pr_patch "$path")"
+  [ -n "$diff_text" ] || return 1
+  local saw_summary=false
+  while IFS= read -r line; do
+    case "$line" in
+      diff\ --git*|index\ *|@@*|---*|+++*)
+        continue
+        ;;
+      +*|-*)
+        local content="${line#?}"
+        case "$content" in
+          "      - name: Validation profile summary (adl-ci)"|\
+          "      - name: Validation profile summary (adl-coverage)"|\
+          "        run: |"|\
+          "          {"|\
+          "            echo \"## ADL validation profile\""|\
+          "            echo \"## ADL coverage validation profile\""|\
+          "            echo"|\
+          "            echo \"| Field | Value |\""|\
+          "            echo \"|---|---|\""|\
+          "            echo \"| reason | "*|\
+          "            echo \"| selected profile | "*|\
+          "            echo \"| profile status | "*|\
+          "            echo \"| PR publication sufficient | "*|\
+          "            echo \"| coverage lane | "*|\
+          "            echo \"| coverage authority | "*|\
+          "            echo \"| profile run lanes | "*|\
+          "            echo \"| escalation required | "*|\
+          "            echo \"| escalation lanes | "*|\
+          "          } >> \"\$GITHUB_STEP_SUMMARY\""|\
+          "        working-directory: ."|\
+          "")
+            saw_summary=true
+            ;;
+          *)
+            return 1
+            ;;
+        esac
+        ;;
+    esac
+  done <<<"$diff_text"
+  [ "$saw_summary" = true ]
+}
+
+is_validation_summary_and_reporting_workflow_change() {
+  local path="$1"
+  [ "$path" = ".github/workflows/ci.yaml" ] || return 1
+  local diff_text
+  diff_text="$(git_pr_patch "$path")"
+  [ -n "$diff_text" ] || return 1
+  local saw_summary=false
+  while IFS= read -r line; do
+    case "$line" in
+      diff\ --git*|index\ *|@@*|---*|+++*)
+        continue
+        ;;
+      +*|-*)
+        local content="${line#?}"
+        case "$content" in
+          "      - name: Validation profile summary (adl-ci)"|\
+          "      - name: Validation profile summary (adl-coverage)"|\
+          "        if: github.event_name == 'pull_request' && steps.path-policy.outputs.full_coverage_required == 'true'"|\
+          "        run: |"|\
+          "          {"|\
+          "            echo \"## ADL validation profile\""|\
+          "            echo \"## ADL coverage validation profile\""|\
+          "            echo"|\
+          "            echo \"| Field | Value |\""|\
+          "            echo \"|---|---|\""|\
+          "            echo \"| reason | "*|\
+          "            echo \"| selected profile | "*|\
+          "            echo \"| profile status | "*|\
+          "            echo \"| PR publication sufficient | "*|\
+          "            echo \"| coverage lane | "*|\
+          "            echo \"| coverage authority | "*|\
+          "            echo \"| profile run lanes | "*|\
+          "            echo \"| escalation required | "*|\
+          "            echo \"| escalation lanes | "*|\
+          "          } >> \"\$GITHUB_STEP_SUMMARY\""|\
+          "        working-directory: ."|\
+          "      - name: Full workspace gate deferred for bounded authoritative PR"|\
+          "          echo \"Workspace coverage gate and lcov artifact generation are deferred for pull requests.\""|\
+          "          echo \"This PR ran the authoritative coverage pass plus changed-source coverage-impact validation.\""|\
+          "          echo \"Full workspace coverage gating remains required on push-to-main, nightly ratchet, and non-PR fail-closed events.\""|\
+          "          echo \"Policy reason: \${{ steps.path-policy.outputs.reason }}\""|\
+          "          echo \"Coverage lane: \${{ steps.path-policy.outputs.coverage_lane }}\""|\
+          "          echo \"Coverage authority: \${{ steps.path-policy.outputs.coverage_authority }}\""|\
+          "")
+            case "$content" in
+              *"Validation profile summary"*|*"ADL validation profile"*|*"ADL coverage validation profile"*)
+                saw_summary=true
+                ;;
+            esac
+            ;;
+          *)
+            return 1
+            ;;
+        esac
+        ;;
+    esac
+  done <<<"$diff_text"
+  [ "$saw_summary" = true ]
+}
+
+is_nightly_coverage_schedule_only_change() {
+  local path="$1"
+  [ "$path" = ".github/workflows/nightly-coverage-ratchet.yaml" ] || return 1
+  git_pr_patch "$path" \
+    | while IFS= read -r line; do
+        case "$line" in
+          diff\ --git*|index\ *|@@*|---*|+++*)
+            continue
+            ;;
+          +*|-*)
+            local content="${line#?}"
+            case "$content" in
+              "  schedule:"|\
+              "    - cron: "*)
                 ;;
               *)
                 return 1
@@ -867,8 +1015,16 @@ EOF
           continue
         fi
         if is_full_coverage_policy_surface "$path"; then
+          if is_validation_profile_summary_workflow_change "$path"; then
+            reason="validation_profile_summary_workflow_change_skips_authoritative_coverage"
+            continue
+          fi
           if is_reporting_only_coverage_workflow_change "$path"; then
             reason="coverage_reporting_workflow_change_skips_authoritative_coverage"
+            continue
+          fi
+          if is_nightly_coverage_schedule_only_change "$path"; then
+            reason="nightly_coverage_schedule_only_change_skips_authoritative_coverage"
             continue
           fi
           if is_pvf_slow_proof_workflow_change "$path"; then
@@ -889,9 +1045,7 @@ EOF
               "pr_policy_surface_runtime_mixed" \
               "coverage_policy_surface_change_with_runtime_surface_runs_full_coverage"
           else
-            mark_policy_surface_full_coverage \
-              "pr_policy_surface_tooling_only" \
-              "coverage_policy_surface_change_runs_bounded_authoritative_coverage"
+            mark_policy_surface_contract_validation
           fi
           continue
         fi
