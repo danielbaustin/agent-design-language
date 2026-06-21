@@ -1080,7 +1080,9 @@ mod tests {
 
         let invalid_timestamp =
             parse_captured_at("not-a-timestamp").expect_err("invalid timestamp should fail");
-        assert!(invalid_timestamp.to_string().contains("invalid --captured-at"));
+        assert!(invalid_timestamp
+            .to_string()
+            .contains("invalid --captured-at"));
 
         let missing_process_value = require_value(&["--process".to_string()], &mut 0, "--process")
             .expect_err("missing process value should fail");
@@ -1090,7 +1092,9 @@ mod tests {
 
         let invalid_process = parse_process_spec("Validation:not-a-pid")
             .expect_err("invalid process spec should fail");
-        assert!(invalid_process.to_string().contains("process role must be snake_case"));
+        assert!(invalid_process
+            .to_string()
+            .contains("process role must be snake_case"));
 
         let invalid_pid_file = parse_pid_file_process_spec("control_plane:")
             .expect_err("empty pid file path should fail");
