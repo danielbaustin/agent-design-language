@@ -72,8 +72,16 @@ Forward checklist. Items are intentionally unchecked because `v0.91.7` execution
 
 ## Review And Closeout
 
+- [ ] Demo convergence completed or explicitly routed.
+- [ ] Quality gate completed with blockers recorded.
+- [ ] Documentation alignment completed before formal review.
 - [ ] Bounded internal review completed.
-- [ ] Findings fixed or explicitly routed.
+- [ ] External review completed or explicitly routed according to release policy.
+- [ ] Internal/external findings fixed or explicitly routed.
+- [ ] Remediation/preflight packet completed.
+- [ ] v0.92 next-milestone planning completed.
+- [ ] v0.92 next-milestone planning reviewed.
+- [ ] Release ceremony packet completed.
 - [ ] Bridge-ledger dispositions refreshed or handed off.
 - [ ] `#3780` has the tracked activation inputs it needs.
 - [ ] Closeout record states what `v0.92` may consume and what remains blocked.

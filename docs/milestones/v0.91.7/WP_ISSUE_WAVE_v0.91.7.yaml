@@ -114,17 +114,65 @@ work_packages:
       - "Launch/birthday readiness map"
       - "Capability-envelope and witness/receipt handoff entries"
   - wp: WP-15
-    title: Internal review
-    outcome: Review docs, code routes, feature routing, source capture, and every sprint/issue plan for missing surfaces, stale claims, overclaims, or unowned blockers.
+    title: Demo convergence
+    outcome: Confirm Observatory/demo matrix truth, visible proof status, demo non-claims, and any blocked/deferred demo surfaces before review.
     depends_on: ["WP-14"]
+    deliverables:
+      - "Demo convergence packet"
+      - "Demo matrix update"
+  - wp: WP-16
+    title: Quality gate
+    outcome: Run focused repo-quality, checklist, stale-doc, validation-plan, and release-readiness checks appropriate for a planning/bridge milestone.
+    depends_on: ["WP-14", "WP-15"]
+    deliverables:
+      - "Quality-gate packet"
+      - "Blocker list"
+  - wp: WP-17
+    title: Documentation alignment
+    outcome: Align README, feature docs, WBS, sprint plan, checklist, handoff, issue wave, and feature-list/roadmap truth before formal review.
+    depends_on: ["WP-16"]
+    deliverables:
+      - "Docs alignment packet"
+      - "Repaired planning surfaces"
+  - wp: WP-18
+    title: Internal review
+    outcome: Review docs, code routes, feature routing, source capture, sprint/issue plans, and release-tail packets for missing surfaces, stale claims, overclaims, or unowned blockers.
+    depends_on: ["WP-17"]
     deliverables:
       - "Internal review packet"
       - "Finding register"
-  - wp: WP-16
-    title: Remediation and closeout
-    outcome: Fix or route review findings, update release notes and checklists, and record what v0.92 may consume.
-    depends_on: ["WP-15"]
+  - wp: WP-19
+    title: External review
+    outcome: Prepare and run the external/third-party review handoff after internal review remediation is ready enough for outside scrutiny.
+    depends_on: ["WP-18"]
+    deliverables:
+      - "External review handoff"
+      - "External finding register"
+  - wp: WP-20
+    title: Remediation and preflight
+    outcome: Fix or route internal/external review findings, rerun focused checks, update checklists, and record residual risks.
+    depends_on: ["WP-19"]
     deliverables:
       - "Remediation PRs"
+      - "Preflight packet"
       - "Final checklist"
+  - wp: WP-21
+    title: Next milestone planning
+    outcome: Prepare v0.92 planning inputs from reviewed v0.91.7 bridge truth without reopening v0.91.7 scope.
+    depends_on: ["WP-20"]
+    deliverables:
+      - "v0.92 planning seed"
+      - "Source-capture handoff"
+  - wp: WP-22
+    title: Next milestone review
+    outcome: Review v0.92 planning inputs for missing activation blockers, overclaims, and stale bridge assumptions before v0.92 opens.
+    depends_on: ["WP-21"]
+    deliverables:
+      - "v0.92 planning review packet"
+  - wp: WP-23
+    title: Release ceremony
+    outcome: Finalize release evidence, closeout truth, release notes/checklist state, and ceremony packet after all review findings are complete, blocked, deferred, or routed.
+    depends_on: ["WP-22"]
+    deliverables:
+      - "Release ceremony packet"
       - "Closeout packet"

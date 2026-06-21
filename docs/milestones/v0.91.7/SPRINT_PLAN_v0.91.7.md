@@ -41,7 +41,7 @@ Complete the final bridge/readiness tranche before `v0.92` activation refresh. T
 | 7 | Conceptual bridge sprint | WP-10, WP-11, WP-13 | Curiosity, Constructability, reasoning graph, affect/Godel/economics/guilds can be split across agents with shared non-claim review. | planned |
 | 8 | Security and protocol residual sprint | WP-12 | Can overlap conceptual bridge but must feed final handoff. | planned |
 | 9 | Launch and v0.92 handoff sprint | WP-14 | Depends on all prior dispositions; planning/public-facing language must be reviewed carefully. | planned |
-| 10 | Internal review and remediation sprint | WP-15, WP-16 | Review lanes should run in parallel; remediation issues should be grouped by owner/surface. | planned |
+| 10 | Canonical closeout-tail sprint | WP-15 through WP-23 | Demo convergence, quality gate, docs alignment, internal review, external review, remediation/preflight, next milestone planning/review, and release ceremony should stay as separate issues; review and remediation lanes can parallelize after each gate is opened. | planned |
 
 ## Execution Policy
 
@@ -76,6 +76,7 @@ Required review should inspect:
 - whether runtime Soak #2 and Observatory proof are concrete enough for v0.92;
 - whether security/protocol residuals remain activation-path work;
 - whether launch/birthday docs avoid unsupported product, affect, wellbeing, or runtime claims.
+- whether the closeout tail follows the canonical pattern: demo convergence, quality gate, docs alignment, internal review, external review, remediation/preflight, next milestone planning, next milestone review, and release ceremony.
 
 ## Closeout Bar
 
@@ -83,3 +84,4 @@ Required review should inspect:
 - Every source-capture row is complete, blocked, deferred, or routed.
 - Review findings are fixed or routed.
 - `#3780` handoff truth is explicit in `V092_HANDOFF_v0.91.7.md`.
+- Closeout-tail WPs are complete, blocked, deferred, or routed in canonical order before release ceremony.

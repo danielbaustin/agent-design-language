@@ -37,8 +37,15 @@ WP-01 should consume this document, `PLANNING_SOURCE_CAPTURE_v0.91.7.md`, and [W
 | WP-12 | Security, CAV, SSM, and ACIP/A2A/protobuf residuals | Account for security/CAV residuals, SSM readiness, ACIP/A2A/protobuf/JSON/WebSocket/access-rule choices, and activation-path blockers. | Security/protocol residual decision packet. | WP-08, WP-10. |
 | WP-13 | Affect, happiness, Godel mechanics, economics, guild, CodeFriend, and publication boundaries | Define safe-test/non-claim language and governance/civilization/economics boundaries; route guilds, CodeFriend/adapter v2, and paper/publication surfaces without making them birthday implementation blockers. | Boundary decision packet and handoff rows. | WP-05, WP-10, WP-11. |
 | WP-14 | Launch and v0.92 birthday handoff | Align July launch planning, v0.92 activation refresh, Memory Palace/context, capability envelope, birth witnesses/receipt, first birthday docs, and external-facing non-claims. | `V092_HANDOFF_v0.91.7.md` refresh and launch/birthday readiness map. | WP-02 through WP-13. |
-| WP-15 | Internal review | Review docs, code routes, feature routing, source capture, and every sprint/issue plan for missing surfaces, stale claims, overclaims, or unowned blockers. | Internal review packet and finding register. | WP-14. |
-| WP-16 | Remediation and closeout | Fix or route review findings, update release notes/checklists, and record what `v0.92` may consume. | Remediation PRs, final checklist, and closeout packet. | WP-15. |
+| WP-15 | Demo convergence | Confirm Observatory/demo matrix truth, visible proof status, demo non-claims, and any blocked/deferred demo surfaces before review. | Demo convergence packet and demo matrix update. | WP-09, WP-14. |
+| WP-16 | Quality gate | Run focused repo-quality, checklist, stale-doc, validation-plan, and release-readiness checks appropriate for a planning/bridge milestone. | Quality-gate packet and blocker list. | WP-14, WP-15. |
+| WP-17 | Documentation alignment | Align README, feature docs, WBS, sprint plan, checklist, handoff, issue wave, and feature-list/roadmap truth before formal review. | Docs alignment packet and repaired planning surfaces. | WP-16. |
+| WP-18 | Internal review | Review docs, code routes, feature routing, source capture, sprint/issue plans, and release-tail packets for missing surfaces, stale claims, overclaims, or unowned blockers. | Internal review packet and finding register. | WP-17. |
+| WP-19 | External review | Prepare and run the external/third-party review handoff after internal review remediation is ready enough for outside scrutiny. | External review handoff and finding register. | WP-18. |
+| WP-20 | Remediation and preflight | Fix or route internal/external review findings, rerun focused checks, update checklists, and record residual risks. | Remediation PRs, preflight packet, final checklist updates. | WP-19. |
+| WP-21 | Next milestone planning | Prepare v0.92 planning inputs from reviewed v0.91.7 bridge truth without reopening v0.91.7 scope. | v0.92 planning seed and source-capture handoff. | WP-20. |
+| WP-22 | Next milestone review | Review v0.92 planning inputs for missing activation blockers, overclaims, and stale bridge assumptions before v0.92 opens. | v0.92 planning review packet. | WP-21. |
+| WP-23 | Release ceremony | Finalize release evidence, closeout truth, release notes/checklist state, and ceremony packet after all review findings are complete, blocked, deferred, or routed. | Release ceremony packet and final closeout record. | WP-22. |
 
 ## Acceptance Mapping
 
