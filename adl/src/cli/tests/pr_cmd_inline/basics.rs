@@ -2454,6 +2454,249 @@ fn real_pr_create_fails_when_post_bootstrap_ready_validation_fails() {
 }
 
 #[test]
+fn real_pr_create_from_disposable_worktree_bootstraps_bundle_in_primary_checkout() {
+    let _guard = env_lock();
+    let repo = unique_temp_dir("adl-pr-real-create-worktree-root");
+    init_git_repo(&repo);
+    copy_bootstrap_support_files(&repo);
+    let readme = repo.join("README.md");
+    fs::write(&readme, "seed repo for create-from-worktree test\n").expect("write readme");
+    assert!(Command::new("git")
+        .args(["add", "README.md"])
+        .current_dir(&repo)
+        .status()
+        .expect("git add")
+        .success());
+    assert!(Command::new("git")
+        .args(["commit", "-m", "seed"])
+        .current_dir(&repo)
+        .env("GIT_AUTHOR_NAME", "Test User")
+        .env("GIT_AUTHOR_EMAIL", "test@example.com")
+        .env("GIT_COMMITTER_NAME", "Test User")
+        .env("GIT_COMMITTER_EMAIL", "test@example.com")
+        .status()
+        .expect("git commit")
+        .success());
+
+    let worktrees_root = repo.join(".worktrees");
+    fs::create_dir_all(&worktrees_root).expect("worktrees root");
+    let child_branch = "codex/1199-parent-issue";
+    run_status(
+        "git",
+        &[
+            "-C",
+            repo.to_str().expect("repo utf-8"),
+            "branch",
+            child_branch,
+            "HEAD",
+        ],
+    )
+    .expect("create child branch");
+    let child_worktree = worktrees_root.join("adl-wp-1199");
+    run_status(
+        "git",
+        &[
+            "-C",
+            repo.to_str().expect("repo utf-8"),
+            "worktree",
+            "add",
+            child_worktree.to_str().expect("worktree utf-8"),
+            child_branch,
+        ],
+    )
+    .expect("create child worktree");
+
+    let bin_dir = repo.join("bin");
+    fs::create_dir_all(&bin_dir).expect("bin dir");
+    let gh_log = repo.join("gh.log");
+    let issue_body_log = repo.join("issue_body.log");
+    let gh_path = bin_dir.join("gh");
+    write_executable(
+        &gh_path,
+        &format!(
+            "#!/usr/bin/env bash\nset -euo pipefail\nprintf '%s\\n' \"$*\" >> '{}'\nif [[ \"$1 $2\" == \"label list\" ]]; then\n  printf 'track:roadmap\\ntype:task\\narea:tools\\nversion:v0.86\\n'\n  exit 0\nfi\nif [[ \"$1 $2\" == \"issue create\" ]]; then\n  i=1\n  while [[ $i -le $# ]]; do\n    arg=\"${{@:$i:1}}\"\n    if [[ \"$arg\" == \"--body\" ]]; then\n      next=$((i+1))\n      printf '%s' \"${{@:$next:1}}\" > '{}'\n      break\n    fi\n    i=$((i+1))\n  done\n  printf 'https://github.com/example/repo/issues/1206\\n'\n  exit 0\nfi\nif [[ \"$1 $2\" == \"issue view\" ]]; then\n  if printf '%s\\n' \"$*\" | grep -q -- '--json title'; then\n    printf '[v0.86][tools] Durable child bundle\\n'\n    exit 0\n  fi\n  if printf '%s\\n' \"$*\" | grep -q -- '--json labels'; then\n    printf 'track:roadmap\\ntype:task\\narea:tools\\nversion:v0.86\\n'\n    exit 0\n  fi\nfi\nif [[ \"$1 $2\" == \"issue edit\" ]]; then\n  exit 0\nfi\nexit 1\n",
+            gh_log.display(),
+            issue_body_log.display()
+        ),
+    );
+
+    let old_path = env::var("PATH").unwrap_or_default();
+    let prev_dir = env::current_dir().expect("cwd");
+    unsafe {
+        env::set_var("PATH", format!("{}:{}", bin_dir.display(), old_path));
+    }
+    env::set_current_dir(&child_worktree).expect("chdir into child worktree");
+
+    let result = real_pr(&[
+        "create".to_string(),
+        "--title".to_string(),
+        "[v0.86][tools] Durable child bundle".to_string(),
+        "--slug".to_string(),
+        "v0-86-tools-durable-child-bundle".to_string(),
+        "--body".to_string(),
+        "## Summary\n\nEnsure child issue creation remains durable when invoked from a disposable worktree.\n\n## Goal\n\nBootstrap canonical issue artifacts in the primary checkout.\n\n## Required Outcome\n\nThis issue ships tooling code and tests.\n\n## Deliverables\n\n- primary-checkout create anchoring\n\n## Acceptance Criteria\n\n- create writes the source prompt and task bundle under the primary checkout even when invoked from a disposable worktree\n\n## Repo Inputs\n\n- adl/src/cli/pr_cmd.rs\n\n## Dependencies\n\n- none\n\n## Demo Expectations\n\n- none\n\n## Non-goals\n\n- worktree start lifecycle changes\n\n## Issue-Graph Notes\n\n- regression test\n\n## Notes\n\n- authored test body\n\n## Tooling Notes\n\n- should pass source-prompt validation\n".to_string(),
+        "--labels".to_string(),
+        "track:roadmap,type:task,area:tools".to_string(),
+        "--version".to_string(),
+        "v0.86".to_string(),
+    ]);
+
+    env::set_current_dir(prev_dir).expect("restore cwd");
+    unsafe {
+        env::set_var("PATH", old_path);
+    }
+    result.expect("real_pr create from child worktree");
+
+    let root_source = repo.join(".adl/v0.86/bodies/issue-1206-v0-86-tools-durable-child-bundle.md");
+    let root_bundle = repo.join(".adl/v0.86/tasks/issue-1206__v0-86-tools-durable-child-bundle");
+    assert!(
+        root_source.is_file(),
+        "create should write the source prompt in the primary checkout"
+    );
+    assert!(
+        root_bundle.join("sip.md").is_file(),
+        "create should bootstrap the canonical bundle in the primary checkout"
+    );
+    assert!(
+        root_bundle.join("sor.md").is_file(),
+        "create should bootstrap the canonical output card in the primary checkout"
+    );
+
+    let worktree_source =
+        child_worktree.join(".adl/v0.86/bodies/issue-1206-v0-86-tools-durable-child-bundle.md");
+    let worktree_bundle =
+        child_worktree.join(".adl/v0.86/tasks/issue-1206__v0-86-tools-durable-child-bundle");
+    assert!(
+        !worktree_source.exists(),
+        "create should not strand the source prompt inside the disposable worktree"
+    );
+    assert!(
+        !worktree_bundle.exists(),
+        "create should not strand the canonical task bundle inside the disposable worktree"
+    );
+}
+
+#[test]
+fn real_pr_create_from_disposable_worktree_fails_closed_on_stale_local_duplicate() {
+    let _guard = env_lock();
+    let repo = unique_temp_dir("adl-pr-real-create-worktree-duplicate");
+    init_git_repo(&repo);
+    copy_bootstrap_support_files(&repo);
+    let readme = repo.join("README.md");
+    fs::write(
+        &readme,
+        "seed repo for create-from-worktree duplicate test\n",
+    )
+    .expect("write readme");
+    assert!(Command::new("git")
+        .args(["add", "README.md"])
+        .current_dir(&repo)
+        .status()
+        .expect("git add")
+        .success());
+    assert!(Command::new("git")
+        .args(["commit", "-m", "seed"])
+        .current_dir(&repo)
+        .env("GIT_AUTHOR_NAME", "Test User")
+        .env("GIT_AUTHOR_EMAIL", "test@example.com")
+        .env("GIT_COMMITTER_NAME", "Test User")
+        .env("GIT_COMMITTER_EMAIL", "test@example.com")
+        .status()
+        .expect("git commit")
+        .success());
+
+    let worktrees_root = repo.join(".worktrees");
+    fs::create_dir_all(&worktrees_root).expect("worktrees root");
+    let child_branch = "codex/1199-parent-issue";
+    run_status(
+        "git",
+        &[
+            "-C",
+            repo.to_str().expect("repo utf-8"),
+            "branch",
+            child_branch,
+            "HEAD",
+        ],
+    )
+    .expect("create child branch");
+    let child_worktree = worktrees_root.join("adl-wp-1199");
+    run_status(
+        "git",
+        &[
+            "-C",
+            repo.to_str().expect("repo utf-8"),
+            "worktree",
+            "add",
+            child_worktree.to_str().expect("worktree utf-8"),
+            child_branch,
+        ],
+    )
+    .expect("create child worktree");
+
+    let stranded_source =
+        child_worktree.join(".adl/v0.86/bodies/issue-1207-v0-86-tools-duplicate-child-bundle.md");
+    fs::create_dir_all(stranded_source.parent().expect("stranded source parent"))
+        .expect("stranded source dir");
+    fs::write(&stranded_source, "stale source prompt\n").expect("write stranded source");
+    let stranded_bundle =
+        child_worktree.join(".adl/v0.86/tasks/issue-1207__v0-86-tools-duplicate-child-bundle");
+    fs::create_dir_all(&stranded_bundle).expect("stranded bundle dir");
+    fs::write(stranded_bundle.join("sip.md"), "stale sip\n").expect("write stranded sip");
+
+    let bin_dir = repo.join("bin");
+    fs::create_dir_all(&bin_dir).expect("bin dir");
+    let gh_path = bin_dir.join("gh");
+    write_executable(
+        &gh_path,
+        "#!/usr/bin/env bash\nset -euo pipefail\nif [[ \"$1 $2\" == \"label list\" ]]; then\n  printf 'track:roadmap\\ntype:task\\narea:tools\\nversion:v0.86\\n'\n  exit 0\nfi\nif [[ \"$1 $2\" == \"issue create\" ]]; then\n  printf 'https://github.com/example/repo/issues/1207\\n'\n  exit 0\nfi\nif [[ \"$1 $2\" == \"issue view\" ]]; then\n  if printf '%s\\n' \"$*\" | grep -q -- '--json title'; then\n    printf '[v0.86][tools] Duplicate child bundle\\n'\n    exit 0\n  fi\n  if printf '%s\\n' \"$*\" | grep -q -- '--json labels'; then\n    printf 'track:roadmap\\ntype:task\\narea:tools\\nversion:v0.86\\n'\n    exit 0\n  fi\nfi\nif [[ \"$1 $2\" == \"issue edit\" ]]; then\n  exit 0\nfi\nexit 1\n",
+    );
+
+    let old_path = env::var("PATH").unwrap_or_default();
+    let prev_dir = env::current_dir().expect("cwd");
+    unsafe {
+        env::set_var("PATH", format!("{}:{}", bin_dir.display(), old_path));
+    }
+    env::set_current_dir(&child_worktree).expect("chdir into child worktree");
+
+    let err = real_pr(&[
+        "create".to_string(),
+        "--title".to_string(),
+        "[v0.86][tools] Duplicate child bundle".to_string(),
+        "--slug".to_string(),
+        "v0-86-tools-duplicate-child-bundle".to_string(),
+        "--body".to_string(),
+        "## Summary\n\nReject stale worktree-local duplicates before creating a canonical child bundle.\n\n## Goal\n\nFail closed when a disposable worktree already contains stranded issue artifacts.\n\n## Required Outcome\n\nThis issue ships tooling code and tests.\n\n## Deliverables\n\n- duplicate detection across primary and disposable worktree roots\n\n## Acceptance Criteria\n\n- create fails with actionable guidance when the current disposable worktree already contains a duplicate source prompt or task bundle for the same issue identity\n\n## Repo Inputs\n\n- adl/src/cli/pr_cmd.rs\n\n## Dependencies\n\n- none\n\n## Demo Expectations\n\n- none\n\n## Non-goals\n\n- automatically deleting stale worktree artifacts\n\n## Issue-Graph Notes\n\n- regression test\n\n## Notes\n\n- authored test body\n\n## Tooling Notes\n\n- should pass source-prompt validation before duplicate detection fails closed\n".to_string(),
+        "--labels".to_string(),
+        "track:roadmap,type:task,area:tools".to_string(),
+        "--version".to_string(),
+        "v0.86".to_string(),
+    ])
+    .expect_err("create should fail closed on a stranded worktree-local duplicate");
+
+    env::set_current_dir(prev_dir).expect("restore cwd");
+    unsafe {
+        env::set_var("PATH", old_path);
+    }
+
+    assert!(err
+        .to_string()
+        .contains("duplicate local issue identities detected for issue #1207"));
+    assert!(
+        err.to_string()
+            .contains(".adl/v0.86/bodies/issue-1207-v0-86-tools-duplicate-child-bundle.md")
+            || err
+                .to_string()
+                .contains(".adl/v0.86/tasks/issue-1207__v0-86-tools-duplicate-child-bundle"),
+        "error should point at the stale worktree-local duplicate"
+    );
+    assert!(
+        !repo.join(".adl/v0.86/bodies/issue-1207-v0-86-tools-duplicate-child-bundle.md")
+            .exists(),
+        "create should not write a second canonical source prompt after detecting the stale worktree-local duplicate"
+    );
+}
+
+#[test]
 fn real_pr_create_fails_before_creating_issue_when_repo_labels_are_missing() {
     let _guard = env_lock();
     let repo = unique_temp_dir("adl-pr-real-create-missing-labels");

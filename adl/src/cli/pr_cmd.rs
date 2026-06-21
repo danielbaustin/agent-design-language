@@ -27,12 +27,12 @@ use super::pr_cmd_cards::{
 #[cfg(test)]
 use super::pr_cmd_prompt::load_issue_prompt;
 use super::pr_cmd_prompt::{
-    ensure_no_duplicate_issue_identities, infer_required_outcome_type, infer_workflow_queue,
-    normalize_issue_title_for_version, normalize_labels_csv, parse_issue_number_from_url,
-    render_generated_issue_body, resolve_issue_body, resolve_issue_prompt_path,
-    resolve_issue_prompt_workflow_queue, resolve_issue_scope_and_slug_from_local_state,
-    validate_issue_prompt_exists, version_from_labels_csv, version_from_title,
-    WorkflowQueueResolution,
+    ensure_no_duplicate_issue_identities, ensure_no_duplicate_issue_identities_against_root,
+    infer_required_outcome_type, infer_workflow_queue, normalize_issue_title_for_version,
+    normalize_labels_csv, parse_issue_number_from_url, render_generated_issue_body,
+    resolve_issue_body, resolve_issue_prompt_path, resolve_issue_prompt_workflow_queue,
+    resolve_issue_scope_and_slug_from_local_state, validate_issue_prompt_exists,
+    version_from_labels_csv, version_from_title, WorkflowQueueResolution,
 };
 use super::pr_cmd_validate::{
     bootstrap_stub_reason, validate_authored_prompt_surface, PromptSurfaceKind,
@@ -856,6 +856,7 @@ fn real_pr_repair_issue_body(args: &[String]) -> Result<()> {
 fn real_pr_create(args: &[String]) -> Result<()> {
     let parsed = parse_create_args(args)?;
     let repo_root = repo_root()?;
+    let primary_root = primary_checkout_root()?;
     let repo = issue_create_repo(&repo_root)?;
 
     let raw_title = parsed.title_arg.clone().unwrap_or_default();
@@ -900,12 +901,21 @@ fn real_pr_create(args: &[String]) -> Result<()> {
     } else {
         body.clone()
     };
-    validate_issue_body_for_create(&repo_root, &title, &normalized_labels, &slug, &create_body)?;
+    validate_issue_body_for_create(
+        &primary_root,
+        &title,
+        &normalized_labels,
+        &slug,
+        &create_body,
+    )?;
     let issue_url = gh_issue_create(&repo, &title, &create_body, &normalized_labels)?;
     let issue = parse_issue_number_from_url(&issue_url)?;
     ensure_issue_metadata_parity(&repo, issue, &title, &normalized_labels)?;
     let issue_ref = IssueRef::new(issue, version.clone(), slug.clone())?;
-    ensure_no_duplicate_issue_identities(&repo_root, &issue_ref)?;
+    ensure_no_duplicate_issue_identities(&primary_root, &issue_ref)?;
+    if repo_root != primary_root {
+        ensure_no_duplicate_issue_identities_against_root(&repo_root, &primary_root, &issue_ref)?;
+    }
     let final_body = if body.trim().is_empty() {
         render_generated_issue_body(
             &title,
@@ -916,22 +926,22 @@ fn real_pr_create(args: &[String]) -> Result<()> {
         body
     };
     let source_path = write_source_issue_prompt(
-        &repo_root,
+        &primary_root,
         &issue_ref,
         &title,
         &normalized_labels,
         &issue_url,
         &final_body,
     )?;
-    validate_bootstrap_stp(&repo_root, &source_path)?;
+    validate_bootstrap_stp(&primary_root, &source_path)?;
     if create_body != final_body {
         gh_issue_edit_body(&repo, issue, &final_body)?;
     }
     let (stp_path, bundle_input, bundle_output, bundle_dir) =
-        bootstrap_root_task_bundle(&repo_root, &issue_ref, &title, &source_path)?;
-    run_create_post_bootstrap_test_hook(&repo_root, &issue_ref)?;
+        bootstrap_root_task_bundle(&primary_root, &issue_ref, &title, &source_path)?;
+    run_create_post_bootstrap_test_hook(&primary_root, &issue_ref)?;
     let ready = doctor::run_doctor_ready(
-        &repo_root,
+        &primary_root,
         &repo,
         &issue_ref,
         &issue_ref.branch_name("codex"),
@@ -950,34 +960,37 @@ fn real_pr_create(args: &[String]) -> Result<()> {
     println!("  SLUG       {slug}");
     println!(
         "  SOURCE     {}",
-        path_relative_to_repo(&repo_root, &source_path)
+        path_relative_to_repo(&primary_root, &source_path)
     );
     println!(
         "  STP        {}",
-        path_relative_to_repo(&repo_root, &stp_path)
+        path_relative_to_repo(&primary_root, &stp_path)
     );
     println!(
         "  SPP        {}",
-        path_relative_to_repo(&repo_root, &issue_ref.task_bundle_plan_path(&repo_root))
+        path_relative_to_repo(
+            &primary_root,
+            &issue_ref.task_bundle_plan_path(&primary_root)
+        )
     );
     println!(
         "  SRP        {}",
         path_relative_to_repo(
-            &repo_root,
-            &issue_ref.task_bundle_review_policy_path(&repo_root),
+            &primary_root,
+            &issue_ref.task_bundle_review_policy_path(&primary_root),
         )
     );
     println!(
         "  SIP        {}",
-        path_relative_to_repo(&repo_root, &bundle_input)
+        path_relative_to_repo(&primary_root, &bundle_input)
     );
     println!(
         "  SOR        {}",
-        path_relative_to_repo(&repo_root, &bundle_output)
+        path_relative_to_repo(&primary_root, &bundle_output)
     );
     println!(
         "  BUNDLE     {}",
-        path_relative_to_repo(&repo_root, &bundle_dir)
+        path_relative_to_repo(&primary_root, &bundle_dir)
     );
     println!(
         "  READY      {}",
