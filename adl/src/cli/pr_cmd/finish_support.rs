@@ -1593,6 +1593,9 @@ pub(super) fn select_finish_validation_plan_for_finish(
     if finish_issue_needs_wuji_ddns_validation(issue_number, changed_paths) {
         return Ok(build_wuji_ddns_validation_plan());
     }
+    if finish_issue_needs_wuji_ddns_installer_validation(issue_number, changed_paths) {
+        return Ok(build_wuji_ddns_installer_validation_plan());
+    }
     if finish_issue_needs_locked_cargo_fallback_validation(issue_number, changed_paths) {
         return Ok(build_locked_cargo_fallback_validation_plan());
     }
@@ -1986,6 +1989,25 @@ fn finish_issue_needs_wuji_ddns_validation(issue_number: u32, changed_paths: &[S
         })
 }
 
+fn finish_issue_needs_wuji_ddns_installer_validation(
+    issue_number: u32,
+    changed_paths: &[String],
+) -> bool {
+    if issue_number != 4330 {
+        return false;
+    }
+    !changed_paths.is_empty()
+        && changed_paths.iter().all(|path| {
+            matches!(
+                path.trim().trim_matches('/'),
+                "adl/src/cli/pr_cmd/finish_support.rs"
+                    | "adl/src/cli/tests/pr_cmd_inline/finish/arg_render.rs"
+                    | "infra/ddns/README.md"
+                    | "infra/ddns/client/install_wuji_ddns_launchd.sh"
+            )
+        })
+}
+
 fn build_tokio_manifest_runtime_validation_plan() -> FinishValidationPlan {
     let mut commands = Vec::new();
     push_finish_validation_command(
@@ -2070,6 +2092,19 @@ fn build_wuji_ddns_validation_plan() -> FinishValidationPlan {
             "terraform -chdir=infra/ddns fmt -check".to_string(),
             "terraform -chdir=infra/ddns init -backend=false".to_string(),
             "terraform -chdir=infra/ddns validate".to_string(),
+        ],
+    }
+}
+
+fn build_wuji_ddns_installer_validation_plan() -> FinishValidationPlan {
+    FinishValidationPlan {
+        mode: FinishValidationMode::LargerBinaryFocused,
+        commands: vec![
+            "bash adl/tools/check_no_tracked_adl_issue_record_residue.sh".to_string(),
+            "git diff --check".to_string(),
+            "cargo test --manifest-path adl/Cargo.toml --bin adl-pr-finish wuji_ddns_installer_slice -- --nocapture".to_string(),
+            "sh -n infra/ddns/client/install_wuji_ddns_launchd.sh".to_string(),
+            "sh -n infra/ddns/client/wuji_ddns_update.sh".to_string(),
         ],
     }
 }
@@ -2608,6 +2643,21 @@ pub(super) fn run_finish_validation_rust(
                         ],
                     )?;
                 }
+                "cargo test --manifest-path adl/Cargo.toml --bin adl-pr-finish wuji_ddns_installer_slice -- --nocapture" => {
+                    run_finish_validation_status(
+                        "cargo",
+                        &[
+                            "test",
+                            "--manifest-path",
+                            path_str(&manifest)?,
+                            "--bin",
+                            "adl-pr-finish",
+                            "wuji_ddns_installer_slice",
+                            "--",
+                            "--nocapture",
+                        ],
+                    )?;
+                }
                 "python3 -m unittest infra/ddns/tests/test_handler.py" => {
                     run_finish_validation_status(
                         "python3",
@@ -2616,6 +2666,12 @@ pub(super) fn run_finish_validation_rust(
                 }
                 "sh -n infra/ddns/client/wuji_ddns_update.sh" => {
                     run_finish_validation_status("sh", &["-n", "infra/ddns/client/wuji_ddns_update.sh"])?;
+                }
+                "sh -n infra/ddns/client/install_wuji_ddns_launchd.sh" => {
+                    run_finish_validation_status(
+                        "sh",
+                        &["-n", "infra/ddns/client/install_wuji_ddns_launchd.sh"],
+                    )?;
                 }
                 "terraform -chdir=infra/ddns fmt -check" => {
                     run_finish_validation_status(
