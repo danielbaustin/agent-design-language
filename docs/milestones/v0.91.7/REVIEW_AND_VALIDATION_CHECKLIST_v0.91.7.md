@@ -4,8 +4,8 @@
 
 - Milestone: `v0.91.7`
 - Version: `v0.91.7`
-- Date: `2026-06-16`
-- Setup issue: `#3801`
+- Date: `2026-06-21`
+- Setup lineage: `#3801`, `#3825`, `#4368`
 
 ## Status
 
@@ -16,6 +16,7 @@ Candidate review checklist for docs/planning and second-tranche bridge work.
 For planning-doc-only changes:
 
 - `git diff --check`
+- `PLANNING_SOURCE_CAPTURE_v0.91.7.md` exists and is linked from `README.md`
 - required-file check for `README.md`, `WBS_v0.91.7.md`,
   `FEATURE_DOCS_v0.91.7.md`, `MILESTONE_CHECKLIST_v0.91.7.md`,
   `REVIEW_AND_VALIDATION_CHECKLIST_v0.91.7.md`, and
@@ -29,6 +30,7 @@ For planning-doc-only changes:
 
 ## Review Questions
 
+- Does every source-capture row have a complete, blocked, deferred, or routed disposition path?
 - Does the change preserve the `#3778` bridge-ledger contract?
 - Does it consume the `v0.91.6` first-tranche package without duplicating it?
 - Does any doc claim `v0.92` readiness without evidence?
@@ -37,6 +39,7 @@ For planning-doc-only changes:
 - Is reasoning graph / `adl.skill.v1` scoped as a bridge rather than a full
   final standard?
 - Are security and ACIP/A2A residuals fixed or routed?
+- Are SEP/VPP/PVF, goal/metrics, scheduler/provider, build/validation, runtime Soak #2, and Observatory/demo routes explicit enough for v0.92?
 - Are affect/happiness, Godel mechanics, and economics context bounded by
   safe-test and non-claim language?
 

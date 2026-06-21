@@ -5,9 +5,9 @@
 - Source milestone: `v0.91.7`
 - Target milestone: `v0.92`
 - Version: `v0.91.7`
-- Date: `2026-06-16`
+- Date: `2026-06-21`
 - Owner: ADL maintainers
-- Related issues: `#3825`, `#3780`
+- Related issues: `#3825`, `#4368`, `#3780`
 
 ## Purpose
 
@@ -38,6 +38,23 @@ implementation proof.
 | Godel mechanics | doc-ready | `v0.92` may consume a reviewed mechanics map only; autonomous self-improvement and runtime completion are unsupported. | `features/GODEL_MECHANICS_BRIDGE_v0.91.7.md` |
 | Economics context | doc-ready | Default `v0.92` posture is context-only unless an explicit operator decision promotes a bounded test. | `features/ECONOMICS_CONTEXT_DECISION_v0.91.7.md` |
 
+## Operational Substrate Handoff
+
+`v0.92` should also consume the operational substrate dispositions from `PLANNING_SOURCE_CAPTURE_v0.91.7.md`:
+
+| Surface | Required state before v0.92 |
+| --- | --- |
+| SEP / VPP / PVF / templates | Complete, blocked, deferred, or routed with clear sprint-execution consequences. |
+| Goal and metrics accounting | Time/token/resource and nested-goal route explicit enough for v0.92 issue planning. |
+| Scheduler/provider/local agents | Routing policy and suitability path explicit enough to protect premium cognition. |
+| Capability envelope and capability testing | Memory grounding, capability envelope, birth witnesses/receipt, and Aptitude Atlas boundaries explicitly consumed, deferred, blocked, or routed before birthday evidence relies on them. |
+| Build/validation throughput | Validation-cost and remote/local build routes clear enough to avoid rediscovery during birthday work. |
+| GitHub convergence and control-plane tooling | GitHub/octocrab/tooling convergence state explicit enough that v0.92 sprint execution does not depend on ambiguous `gh` fallback or stale control-plane assumptions. |
+| Runtime integration, Soak #2, and AWS signal bridge | One minimal assembled runtime path proven or blocked; operational signal blockers named before birthday claims. |
+| Runtime architecture diet | Runtime module/seam map and keep/merge/defer/retire route explicit enough to reduce bloat without blocking the integration proof. |
+| Observatory and demo readiness | Visible proof surfaces complete, blocked, deferred, or routed. |
+| CodeFriend, adapter v2, paper/publication surfaces | Explicitly deferred or routed unless launch readiness promotes a bounded, evidence-backed slice. |
+
 ## Activation Blockers To Preserve
 
 - No `v0.92` activation claim may cite these docs as runtime proof.
@@ -46,6 +63,8 @@ implementation proof.
 - Curiosity and Constructability require proof issues before public claims.
 - Affect, happiness, and Godel mechanics require non-claim language in birthday
   evidence.
+- Capability envelope, witnesses/receipt, and publication-facing narratives must
+  not be inferred from launch language without tracked evidence.
 
 ## `#3780` Consumption Checklist
 
