@@ -1997,8 +1997,8 @@ fn projection_map_covers_required_surface_policies() {
 
     assert!(surfaces.iter().any(|surface| {
         surface.surface == "github.pr.closing_linkage"
-            && surface.status == "implemented_with_legacy_ci_guard"
-            && surface.follow_on.contains("Rust/PVF")
+            && surface.status == "implemented"
+            && surface.follow_on == "none"
     }));
 }
 
