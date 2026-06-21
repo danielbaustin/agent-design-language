@@ -90,6 +90,8 @@ fn tooling_cmd_dispatch_and_help_paths_cover_public_entrypoint() {
         "--json".to_string(),
     ])
     .expect("codex usage watcher dispatch should succeed");
+    real_tooling(&["issue-resource-telemetry".to_string(), "--help".to_string()])
+        .expect("issue resource telemetry help should succeed");
 
     real_tooling(&[
         "csdlc-prompt-editor".to_string(),
