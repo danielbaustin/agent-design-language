@@ -82,13 +82,14 @@ Current live issue truth on the closeout date:
 
 | Surface | Owner | Current state | Closeout implication |
 | --- | --- | --- | --- |
-| Unity Observatory baseline definition | `#4030` | open | Working-baseline truth is still issue-owned rather than terminally closed |
-| Launchable Unity Observatory baseline | `#4031` | open | Governed launch surface is not yet closed |
-| Observatory evidence data contract | `#4032` | open | Ingestion contract remains an active dependency |
-| Inhabitant-readiness surfaces | `#4033` | open | Inhabitant-facing display/input remains open |
-| Logging/OTel/security consumption proof | `#4034` | open | Security/OTel consumption closure remains open |
-| Working Unity Observatory closeout proof | `#4035` | open | This issue records the closeout posture and residual truth rather than forcing false completion |
-| WP-09 umbrella | `#3974` | open | The sprint must remain open until the child issue set lands reviewed closure truth |
+| Unity Observatory baseline definition | `#4030` | closed / completed | Working-baseline truth is now landed child proof rather than a live residual |
+| Launchable Unity Observatory baseline | `#4031` | closed / completed | Governed launch surface is landed and may be consumed as closed child proof |
+| Observatory evidence data contract | `#4032` | closed / completed | Bounded Observatory ingestion contract is landed |
+| Inhabitant-readiness surfaces | `#4033` | closed / completed | Inhabitant-facing bounded surfaces are landed subject to existing identity limits |
+| Logging/OTel/security consumption proof | `#4034` | closed / completed | Security/OTel consumption closure for the bounded proof slice is landed |
+| Working Unity Observatory closeout proof | `#4035` | open | This issue now carries refreshed closeout truth after O-00 through O-04 completion |
+| HTML Observatory mobile governed surface | `#4341` | open | WP-09 still has an explicit portable HTML/mobile residual lane |
+| WP-09 umbrella | `#3974` | open | The sprint must remain open until `#4035` and `#4341` land reviewed closure truth |
 
 The authoritative closeout packet for this posture is:
 
@@ -100,12 +101,13 @@ The authoritative closeout packet for this posture is:
 
 - a classification and routing contract for Observatory/Unity proof posture;
 - a reference to bounded security-consumption inputs from WP-07;
-- a non-claim that WP-09 remains open until `#4030` through `#4035` reach
-  terminal reviewed truth.
+- a non-claim that WP-09 remains open until the remaining residual lanes
+  `#4035` and `#4341` reach terminal reviewed truth.
 
 `v0.92` may not consume this feature surface as proof that:
 
 - the Unity Observatory is fully working and launch-ready;
+- the HTML Observatory mobile governed lane is fully complete;
 - inhabitant-facing display or input is security-cleared;
 - Observatory ingestion and logging/OTel consumption is fully closed;
 - WP-09 is ready for umbrella closure.
