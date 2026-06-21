@@ -32,9 +32,24 @@ def default_issue_records(ordered: list[int]) -> list[dict[str, Any]]:
     ]
 
 
+def default_goal_policy() -> dict[str, Any]:
+    return {
+        'status': 'descriptive_only',
+        'sprint_goal_role': 'descriptive_sprint_objective',
+        'active_session_goal_required': 'child_issue_only',
+        'notes': [
+            'Sprint state may record a descriptive sprint objective, but that objective does not satisfy the active Codex session-goal requirement for child issue execution.',
+            'Each child issue session must create its own issue-bound goal after bind/readiness succeeds and before implementation starts.',
+            'Do not keep a competing sprint-global active session goal in the same thread while a child issue implementation session is active.',
+        ],
+    }
+
+
 def load_state(path: Path, sprint_issue: int, ordered: list[int]) -> dict[str, Any]:
     if path.exists():
-        return json.loads(path.read_text())
+        state = json.loads(path.read_text())
+        state.setdefault('goal_policy', default_goal_policy())
+        return state
     return {
         'sprint_issue_number': sprint_issue,
         'ordered_issue_numbers': ordered,
@@ -42,6 +57,7 @@ def load_state(path: Path, sprint_issue: int, ordered: list[int]) -> dict[str, A
         'completed_issue_numbers': [],
         'blocked_issue_number': None,
         'continuation': 'continue',
+        'goal_policy': default_goal_policy(),
         'issue_records': default_issue_records(ordered),
         'structured_prompt_preflight': {
             'status': 'not_run',

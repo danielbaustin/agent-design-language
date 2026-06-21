@@ -116,7 +116,7 @@ execution:
     - "python3 adl/tools/skills/sprint-conductor/scripts/check_sprint_readiness.py --repo-root <repo> --ordered-issues <csv> --execution-mode <sequential|parallel|hybrid> --state <path>"
     - "python3 adl/tools/skills/sprint-conductor/scripts/check_installed_skill_parity.py --repo-root <repo> --state <path>"
     - "python3 adl/tools/skills/sprint-conductor/scripts/check_sprint_structured_prompt_readiness.py --repo-root <repo> --ordered-issues <csv> --state <path>"
-    - "python3 adl/tools/skills/sprint-conductor/scripts/create_missing_sprint_issue.py --repo-root <repo> --ordered-issues <csv> --title <title> --goal <goal> --state <path>"
+    - "python3 adl/tools/skills/sprint-conductor/scripts/create_missing_sprint_issue.py --repo-root <repo> --ordered-issues <csv> --title <title> --goal <descriptive-sprint-objective> --state <path>"
     - "python3 adl/tools/skills/sprint-conductor/scripts/close_sprint_issue.py --state <path> --summary <text>"
     - "python3 adl/tools/skills/sprint-conductor/scripts/check_sprint_truth.py --repo-root <repo> --state <path> --require-match"
     - "python3 adl/tools/skills/sprint-conductor/scripts/check_sprint_closeout_readiness.py --state <path> --out <path> --summary-out <path>"

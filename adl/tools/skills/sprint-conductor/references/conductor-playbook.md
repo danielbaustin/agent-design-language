@@ -20,7 +20,7 @@ Required:
 - ordered child issue list
 - declared execution mode
 - Sprint Execution Packet for parallel or hybrid modes
-- sprint goal
+- descriptive sprint objective
 - explicit policy block
 
 Optional:
@@ -71,6 +71,9 @@ Optional:
      the bounded session objective
    - for `parallel` or `hybrid` lanes, each separate worker/session creates its
      own child-session goal rather than sharing one sprint-global goal
+   - treat the sprint objective as descriptive coordination context only; it
+     must not occupy the active Codex session-goal slot during child issue
+     implementation unless nested-goal support is explicitly proven later
 9. Run only the selected downstream lifecycle or editor skill.
 9a. When issue-goal metrics are available from the active session or closeout handoff, record them in the local JSONL sink:
    - use `record_issue_goal_metrics.py`
@@ -106,7 +109,7 @@ Preferred structured-prompt preflight helper:
 - `python3 adl/tools/skills/sprint-conductor/scripts/check_sprint_structured_prompt_readiness.py --repo-root <repo> --ordered-issues <csv> --state <path>`
 
 Preferred missing-sprint-issue helper:
-- `python3 adl/tools/skills/sprint-conductor/scripts/create_missing_sprint_issue.py --repo-root <repo> --ordered-issues <csv> --title <title> --goal <goal> --state <path>`
+- `python3 adl/tools/skills/sprint-conductor/scripts/create_missing_sprint_issue.py --repo-root <repo> --ordered-issues <csv> --title <title> --goal <descriptive-sprint-objective> --state <path>`
 
 Known helper migration note:
 - the typed issue mutation command surface exists as `pr.sh issue
