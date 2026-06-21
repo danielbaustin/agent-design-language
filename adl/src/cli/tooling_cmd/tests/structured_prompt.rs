@@ -196,6 +196,94 @@ fn structured_prompt_sor_allows_safe_absolute_path_scan_pattern_description() {
 }
 
 #[test]
+fn structured_prompt_spp_optional_estimate_fields_accept_unknown_values() {
+    validate_spp_text(&valid_spp_text(1374))
+        .expect("SPP with explicit unknown estimate fields should validate");
+}
+
+#[test]
+fn structured_prompt_spp_requires_pvf_lane_and_estimate_plan_sections() {
+    let spp = valid_spp_text(1374)
+        .replace("\n## PVF Lane Plan\n", "\n## Removed PVF Lane Plan\n")
+        .replace("\n## Estimate Plan\n", "\n## Removed Estimate Plan\n");
+    let err = validate_spp_text(&spp).expect_err("missing required SPP sections should fail");
+    assert!(err.to_string().contains("missing required section"));
+}
+
+#[test]
+fn structured_prompt_spp_optional_estimate_fields_reject_zero_placeholders() {
+    let spp = valid_spp_text(1374).replace(
+        "estimate_elapsed_seconds: \"unknown\"",
+        "estimate_elapsed_seconds: \"0\"",
+    );
+    let err = validate_spp_text(&spp).expect_err("zero estimate placeholder should fail");
+    assert!(err.to_string().contains("use `unknown` instead of 0"));
+}
+
+#[test]
+fn structured_prompt_spp_requires_estimate_source_ref_for_derived_metrics() {
+    let spp = valid_spp_text(1374)
+        .replace(
+            "estimate_data_source: \"unknown\"",
+            "estimate_data_source: \"derived_sprint_state\"",
+        )
+        .replace(
+            "estimate_source_ref: \"unknown\"",
+            "estimate_source_ref: \"docs/milestones/v0.91.6/process/goal-metrics-summary.md\"",
+        );
+    validate_spp_text(&spp).expect("derived estimate metrics should carry a source ref");
+}
+
+#[test]
+fn structured_prompt_sor_requires_goal_metrics_source_ref_for_codex_goal_tool() {
+    let sor = valid_sor_text().replace(
+        "- Goal metrics data source: `manual_entry`",
+        "- Goal metrics data source: `codex_goal_tool`",
+    );
+    validate_sor_text(&sor, Some("completed"))
+        .expect("codex goal metrics source ref fixture should validate");
+}
+
+#[test]
+fn structured_prompt_sor_requires_pvf_lane_and_issue_metrics_sections() {
+    let sor = valid_sor_text()
+        .replace("\n## PVF Lane Truth\n", "\n## Removed PVF Lane Truth\n")
+        .replace(
+            "\n## Issue Metrics Truth\n",
+            "\n## Removed Issue Metrics Truth\n",
+        );
+    let err = validate_sor_text(&sor, Some("completed"))
+        .expect_err("missing required SOR sections should fail");
+    assert!(err.to_string().contains("missing required section"));
+}
+
+#[test]
+fn structured_prompt_sor_issue_metrics_truth_rejects_zero_placeholders() {
+    let sor = valid_sor_text().replace(
+        "- Estimated elapsed seconds: `unknown`",
+        "- Estimated elapsed seconds: `0`",
+    );
+    let err = validate_sor_text(&sor, Some("completed"))
+        .expect_err("zero actuals placeholder should fail");
+    assert!(err.to_string().contains("use `unknown` instead of 0"));
+}
+
+#[test]
+fn structured_prompt_sor_issue_metrics_truth_allows_zero_percent_exact_match() {
+    let sor = valid_sor_text()
+        .replace(
+            "- Estimated elapsed seconds: `unknown`",
+            "- Estimated elapsed seconds: `300`",
+        )
+        .replace(
+            "- Estimate error percent: `unknown`",
+            "- Estimate error percent: `0`",
+        );
+    validate_sor_text(&sor, Some("completed"))
+        .expect("0 percent should be allowed for an exact estimate match");
+}
+
+#[test]
 fn validate_structured_prompt_accepts_all_supported_prompt_types() {
     let repo = TempRepo::new("structured");
     let stp = repo.write_rel(".tmp/tooling_cmd_tests/stp.md", &valid_stp_text());

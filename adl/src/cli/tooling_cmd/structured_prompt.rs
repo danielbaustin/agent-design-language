@@ -47,6 +47,74 @@ fn ensure_allowed_value(field: &str, actual: &str, allowed: &[&str]) -> Result<(
     Ok(())
 }
 
+fn validate_unknown_or_positive_int(field: &str, actual: &str) -> Result<()> {
+    if actual == "unknown" {
+        return Ok(());
+    }
+    let parsed = actual.parse::<u64>().map_err(|_| {
+        anyhow!("{field} must be `unknown` or a positive integer; actual: {actual}")
+    })?;
+    ensure!(
+        parsed > 0,
+        "{field} must use `unknown` instead of 0 when unavailable"
+    );
+    Ok(())
+}
+
+fn validate_unknown_or_nonnegative_int(field: &str, actual: &str) -> Result<()> {
+    if actual == "unknown" {
+        return Ok(());
+    }
+    actual.parse::<u64>().map_err(|_| {
+        anyhow!("{field} must be `unknown` or a non-negative integer; actual: {actual}")
+    })?;
+    Ok(())
+}
+
+fn validate_optional_yaml_metric_field(fm: &serde_yaml::Mapping, field: &str) -> Result<()> {
+    if let Some(value) = mapping_string(fm, field) {
+        validate_unknown_or_positive_int(field, &value)?;
+    }
+    Ok(())
+}
+
+fn validate_unknown_or_reference(field: &str, actual: &str) -> Result<()> {
+    if actual == "unknown" {
+        return Ok(());
+    }
+    ensure!(
+        valid_reference(actual),
+        "{field} must be `unknown` or a repo-relative reference/URL; actual: {actual}"
+    );
+    Ok(())
+}
+
+fn markdown_metric_field(section: &str, label: &str) -> Option<String> {
+    let prefix = format!("- {label}: ");
+    for line in section.lines() {
+        let trimmed = line.trim();
+        if let Some(value) = trimmed.strip_prefix(&prefix) {
+            return Some(value.trim().trim_matches('`').to_string());
+        }
+    }
+    None
+}
+
+fn validate_optional_markdown_metric_field(section: &str, label: &str) -> Result<()> {
+    if let Some(value) = markdown_metric_field(section, label) {
+        if label == "Estimate error percent" {
+            validate_unknown_or_nonnegative_int(&format!("Issue Metrics Truth.{label}"), &value)?;
+        } else {
+            validate_unknown_or_positive_int(&format!("Issue Metrics Truth.{label}"), &value)?;
+        }
+    }
+    Ok(())
+}
+
+fn metrics_pair_known(left: &str, right: &str) -> bool {
+    left != "unknown" && right != "unknown"
+}
+
 pub(super) fn real_lint_prompt_spec(args: &[String]) -> Result<()> {
     let input = resolve_issue_or_input_arg(args)?;
     ensure_file(&input, "input card")?;
@@ -348,7 +416,7 @@ fn ensure_no_unresolved_prompt_placeholders(text: &str) -> Result<()> {
 }
 
 fn is_versioned_prompt_template_card(text: &str) -> bool {
-    text.contains("Canonical Template Source: `docs/templates/prompts/1.0.0/")
+    text.contains("Canonical Template Source: `docs/templates/prompts/")
         && !text.contains("Compatibility fallback:")
         && !text.contains("Compatibility note:")
 }
@@ -784,6 +852,89 @@ pub(super) fn validate_sor_text(text: &str, phase: Option<&str>) -> Result<()> {
             "completed-phase SOR requires Main Repo Integration.Result"
         );
     }
+
+    if let Some(metrics_body) = markdown_section_body(text, "Issue Metrics Truth") {
+        let estimated_elapsed = markdown_metric_field(&metrics_body, "Estimated elapsed seconds");
+        let actual_elapsed = markdown_metric_field(&metrics_body, "Actual elapsed seconds");
+        let estimated_tokens = markdown_metric_field(&metrics_body, "Estimated total tokens");
+        let actual_tokens = markdown_metric_field(&metrics_body, "Actual total tokens");
+        let estimated_validation =
+            markdown_metric_field(&metrics_body, "Estimated validation seconds");
+        let actual_validation = markdown_metric_field(&metrics_body, "Actual validation seconds");
+        for label in [
+            "Estimated elapsed seconds",
+            "Actual elapsed seconds",
+            "Estimated total tokens",
+            "Actual total tokens",
+            "Estimated validation seconds",
+            "Actual validation seconds",
+            "Estimate error percent",
+        ] {
+            validate_optional_markdown_metric_field(&metrics_body, label)?;
+        }
+        if let Some(value) = markdown_metric_field(&metrics_body, "Goal metrics data source") {
+            ensure_allowed_value(
+                "Issue Metrics Truth.Goal metrics data source",
+                &value,
+                &[
+                    "codex_goal_tool",
+                    "manual_entry",
+                    "derived_sprint_state",
+                    "unknown",
+                ],
+            )?;
+            let source_ref = markdown_metric_field(&metrics_body, "Goal metrics source ref")
+                .unwrap_or_else(|| "unknown".to_string());
+            validate_unknown_or_reference(
+                "Issue Metrics Truth.Goal metrics source ref",
+                &source_ref,
+            )?;
+            if value == "codex_goal_tool" || value == "derived_sprint_state" {
+                ensure!(
+                    source_ref != "unknown",
+                    "Issue Metrics Truth.Goal metrics source ref is required when Goal metrics data source is {value}"
+                );
+            }
+            if value == "unknown" {
+                ensure!(
+                    source_ref == "unknown",
+                    "Issue Metrics Truth.Goal metrics source ref must remain `unknown` when Goal metrics data source is `unknown`"
+                );
+            }
+        }
+        if let Some(value) = markdown_metric_field(&metrics_body, "Data-source confidence") {
+            ensure_allowed_value(
+                "Issue Metrics Truth.Data-source confidence",
+                &value,
+                &["low", "medium", "high", "unknown"],
+            )?;
+            let source = markdown_metric_field(&metrics_body, "Goal metrics data source")
+                .unwrap_or_else(|| "unknown".to_string());
+            if value != "unknown" {
+                ensure!(
+                    source != "unknown",
+                    "Issue Metrics Truth.Data-source confidence cannot be set when Goal metrics data source is `unknown`"
+                );
+            }
+        }
+        if let Some(value) = markdown_metric_field(&metrics_body, "Estimate error percent") {
+            if value != "unknown" {
+                ensure!(
+                    metrics_pair_known(
+                        estimated_elapsed.as_deref().unwrap_or("unknown"),
+                        actual_elapsed.as_deref().unwrap_or("unknown")
+                    ) || metrics_pair_known(
+                        estimated_tokens.as_deref().unwrap_or("unknown"),
+                        actual_tokens.as_deref().unwrap_or("unknown")
+                    ) || metrics_pair_known(
+                        estimated_validation.as_deref().unwrap_or("unknown"),
+                        actual_validation.as_deref().unwrap_or("unknown")
+                    ),
+                    "Issue Metrics Truth.Estimate error percent requires at least one estimated/actual metric pair"
+                );
+            }
+        }
+    }
     Ok(())
 }
 
@@ -798,6 +949,8 @@ pub(super) fn validate_spp_text(text: &str) -> Result<()> {
         &body_text,
         &[
             "Plan Summary",
+            "PVF Lane Plan",
+            "Estimate Plan",
             "Codex Plan",
             "Assumptions",
             "Proposed Steps",
@@ -881,6 +1034,48 @@ pub(super) fn validate_spp_text(text: &str) -> Result<()> {
     );
     let confidence = mapping_string(fm, "confidence").unwrap_or_default();
     ensure_allowed_value("confidence", &confidence, &["low", "medium", "high"])?;
+    validate_optional_yaml_metric_field(fm, "estimate_elapsed_seconds")?;
+    validate_optional_yaml_metric_field(fm, "estimate_total_tokens")?;
+    validate_optional_yaml_metric_field(fm, "estimate_validation_seconds")?;
+    if let Some(value) = mapping_string(fm, "estimate_confidence") {
+        ensure_allowed_value(
+            "estimate_confidence",
+            &value,
+            &["low", "medium", "high", "unknown"],
+        )?;
+    }
+    if let Some(value) = mapping_string(fm, "estimate_data_source") {
+        ensure_allowed_value(
+            "estimate_data_source",
+            &value,
+            &["manual_entry", "derived_sprint_state", "unknown"],
+        )?;
+        let source_ref =
+            mapping_string(fm, "estimate_source_ref").unwrap_or_else(|| "unknown".to_string());
+        validate_unknown_or_reference("estimate_source_ref", &source_ref)?;
+        if value == "derived_sprint_state" {
+            ensure!(
+                source_ref != "unknown",
+                "estimate_source_ref is required when estimate_data_source is `derived_sprint_state`"
+            );
+        }
+        if value == "unknown" {
+            ensure!(
+                source_ref == "unknown",
+                "estimate_source_ref must remain `unknown` when estimate_data_source is `unknown`"
+            );
+        }
+    }
+    if let Some(value) = mapping_string(fm, "estimate_confidence") {
+        if value != "unknown" {
+            let source =
+                mapping_string(fm, "estimate_data_source").unwrap_or_else(|| "unknown".to_string());
+            ensure!(
+                source != "unknown",
+                "estimate_confidence cannot be set when estimate_data_source is `unknown`"
+            );
+        }
+    }
     ensure!(
         !mapping_string(fm, "plan_summary")
             .unwrap_or_default()

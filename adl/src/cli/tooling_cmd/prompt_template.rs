@@ -389,11 +389,16 @@ fn validate_schemas(args: &[String]) -> Result<()> {
 }
 
 fn write_samples(args: &[String]) -> Result<()> {
+    let mut repo_root: Option<PathBuf> = None;
     let mut out_dir: Option<PathBuf> = None;
 
     let mut idx = 0usize;
     while idx < args.len() {
         match args[idx].as_str() {
+            "--repo-root" => {
+                idx += 1;
+                repo_root = Some(PathBuf::from(value_arg(args, idx, "--repo-root")?));
+            }
             "--out-dir" => {
                 idx += 1;
                 out_dir = Some(PathBuf::from(value_arg(args, idx, "--out-dir")?));
@@ -407,9 +412,10 @@ fn write_samples(args: &[String]) -> Result<()> {
         idx += 1;
     }
 
+    let root = repo_root_from_arg(repo_root)?;
     let out_dir =
         out_dir.ok_or_else(|| anyhow::anyhow!("write-sample-values requires --out-dir"))?;
-    write_all_sample_values(&out_dir)?;
+    write_all_sample_values(&root, &out_dir)?;
     println!("PASS: wrote sample prompt values to {}", out_dir.display());
     Ok(())
 }

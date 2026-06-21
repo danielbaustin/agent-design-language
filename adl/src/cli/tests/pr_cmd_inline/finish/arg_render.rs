@@ -299,6 +299,25 @@ Execution:
 
 done
 
+## PVF Lane Truth
+- Initial PVF lane: `docs_only`
+- Planned PVF lane: `docs_only`
+- Final PVF lane: `docs_only`
+- Lane change reason: `no_lane_change`
+
+## Issue Metrics Truth
+- Estimated elapsed seconds: `unknown`
+- Actual elapsed seconds: `unknown`
+- Estimated total tokens: `unknown`
+- Actual total tokens: `unknown`
+- Estimated validation seconds: `unknown`
+- Actual validation seconds: `unknown`
+- Goal metrics data source: `unknown`
+- Goal metrics source ref: `unknown`
+- Data-source confidence: `unknown`
+- Estimate error percent: `unknown`
+- Goal-metrics substrate note: consume the `#4264` issue-goal metrics summary when available and record `unknown` instead of duplicating raw session logs here.
+
 ## Artifacts produced
 - docs/example.md
 
@@ -3102,6 +3121,62 @@ fn finish_validation_profile_classifies_pr_cmd_prompt_and_versioned_bootstrap_pa
 }
 
 #[test]
+fn finish_validation_profile_classifies_prompt_template_and_structured_prompt_paths() {
+    let plan = select_finish_validation_plan(
+        "adl/src/cli/tooling_cmd/common.rs,adl/src/cli/tooling_cmd/prompt_template.rs,adl/src/cli/tooling_cmd/structured_prompt.rs,adl/src/cli/tooling_cmd/tests/prompt_template.rs,adl/src/cli/tooling_cmd/tests/structured_prompt.rs,adl/src/cli/tooling_cmd/tests/support.rs",
+    )
+    .expect("prompt-template focused plan");
+
+    assert_eq!(plan.mode, FinishValidationMode::LargerBinaryFocused);
+    assert!(
+        plan.commands
+            .iter()
+            .any(|command| command.contains("cargo fmt --manifest-path")),
+        "larger-binary focused plan should require cargo fmt"
+    );
+    assert!(
+        plan.commands.iter().any(|command| {
+            command.contains(
+                "cargo test --manifest-path adl/Cargo.toml --bin adl prompt_template_ -- --nocapture",
+            )
+        }),
+        "prompt-template focused plan should include prompt_template_ validation"
+    );
+    assert!(
+        plan.commands.iter().any(|command| {
+            command.contains(
+                "cargo test --manifest-path adl/Cargo.toml --bin adl structured_prompt_ -- --nocapture",
+            )
+        }),
+        "prompt-template focused plan should include structured_prompt_ validation"
+    );
+}
+
+#[test]
+fn finish_validation_profile_classifies_tooling_common_path_standalone() {
+    let plan = select_finish_validation_plan("adl/src/cli/tooling_cmd/common.rs")
+        .expect("tooling common standalone plan");
+
+    assert_eq!(plan.mode, FinishValidationMode::LargerBinaryFocused);
+    assert!(
+        plan.commands.iter().any(|command| {
+            command.contains(
+                "cargo test --manifest-path adl/Cargo.toml --bin adl prompt_template_ -- --nocapture",
+            )
+        }),
+        "tooling common standalone plan should include prompt_template_ validation"
+    );
+    assert!(
+        plan.commands.iter().any(|command| {
+            command.contains(
+                "cargo test --manifest-path adl/Cargo.toml --bin adl structured_prompt_ -- --nocapture",
+            )
+        }),
+        "tooling common standalone plan should include structured_prompt_ validation"
+    );
+}
+
+#[test]
 fn finish_scheduler_paths_run_scheduler_economics_focused_validation() {
     let _guard = env_lock();
     let temp = unique_temp_dir("adl-pr-finish-scheduler-focused-validation");
@@ -3242,6 +3317,105 @@ fn finish_owner_binary_paths_run_owner_binary_focused_validation() {
     assert!(!cargo_calls.contains("github_token"));
     assert!(!cargo_calls.contains(" cli::pr_cmd"));
     assert!(!cargo_calls.contains("clippy --manifest-path"));
+}
+
+#[test]
+fn finish_prompt_template_paths_run_prompt_template_focused_validation() {
+    let _guard = env_lock();
+    let temp = unique_temp_dir("adl-pr-finish-prompt-template-focused-validation");
+    let repo = temp.join("repo");
+    fs::create_dir_all(repo.join("adl/tools")).expect("adl tools dir");
+    fs::write(
+        repo.join("adl/Cargo.toml"),
+        "[package]\nname='adl'\nversion='0.1.0'\n",
+    )
+    .expect("cargo toml");
+    write_executable(
+        &repo.join("adl/tools/check_no_tracked_adl_issue_record_residue.sh"),
+        "#!/usr/bin/env bash\nset -euo pipefail\nexit 0\n",
+    );
+    init_git_repo(&repo);
+
+    let bin_dir = temp.join("bin");
+    fs::create_dir_all(&bin_dir).expect("bin dir");
+    let cargo_log = temp.join("cargo.log");
+    write_executable(
+        &bin_dir.join("cargo"),
+        &format!(
+            "#!/usr/bin/env bash\nset -euo pipefail\nprintf '%s\\n' \"$*\" >> '{}'\nexit 0\n",
+            cargo_log.display()
+        ),
+    );
+    let old_path = env::var("PATH").unwrap_or_default();
+    unsafe {
+        env::set_var("PATH", format!("{}:{}", bin_dir.display(), old_path));
+    }
+
+    let plan = select_finish_validation_plan(
+        "adl/src/cli/tooling_cmd/prompt_template.rs,adl/src/cli/tooling_cmd/structured_prompt.rs,adl/src/cli/tooling_cmd/tests/prompt_template.rs,adl/src/cli/tooling_cmd/tests/structured_prompt.rs,adl/src/cli/tooling_cmd/tests/support.rs",
+    )
+    .expect("prompt template plan");
+    assert_eq!(plan.mode, FinishValidationMode::LargerBinaryFocused);
+    run_finish_validation_rust(&repo, &plan).expect("prompt template focused validation");
+
+    unsafe {
+        env::set_var("PATH", old_path);
+    }
+
+    let cargo_calls = fs::read_to_string(&cargo_log).expect("cargo log");
+    assert!(cargo_calls.contains("fmt --manifest-path"));
+    assert!(cargo_calls.contains("--bin adl prompt_template_ -- --nocapture"));
+    assert!(cargo_calls.contains("--bin adl structured_prompt_ -- --nocapture"));
+    assert!(!cargo_calls.contains("clippy --manifest-path"));
+}
+
+#[test]
+fn finish_prompt_template_template_only_paths_run_prompt_template_focused_validation() {
+    let _guard = env_lock();
+    let temp = unique_temp_dir("adl-pr-finish-prompt-template-template-only-validation");
+    let repo = temp.join("repo");
+    fs::create_dir_all(repo.join("adl/tools")).expect("adl tools dir");
+    fs::write(
+        repo.join("adl/Cargo.toml"),
+        "[package]\nname='adl'\nversion='0.1.0'\n",
+    )
+    .expect("cargo toml");
+    write_executable(
+        &repo.join("adl/tools/check_no_tracked_adl_issue_record_residue.sh"),
+        "#!/usr/bin/env bash\nset -euo pipefail\nexit 0\n",
+    );
+    init_git_repo(&repo);
+
+    let bin_dir = temp.join("bin");
+    fs::create_dir_all(&bin_dir).expect("bin dir");
+    let cargo_log = temp.join("cargo.log");
+    write_executable(
+        &bin_dir.join("cargo"),
+        &format!(
+            "#!/usr/bin/env bash\nset -euo pipefail\nprintf '%s\\n' \"$*\" >> '{}'\nexit 0\n",
+            cargo_log.display()
+        ),
+    );
+    let old_path = env::var("PATH").unwrap_or_default();
+    unsafe {
+        env::set_var("PATH", format!("{}:{}", bin_dir.display(), old_path));
+    }
+
+    let plan = select_finish_validation_plan(
+        "docs/templates/prompts/current.json,docs/templates/prompts/1.0.2/spp.md,docs/templates/prompts/1.0.2/schemas/sor.structure.json",
+    )
+    .expect("prompt template template-only plan");
+    assert_eq!(plan.mode, FinishValidationMode::LargerBinaryFocused);
+    run_finish_validation_rust(&repo, &plan).expect("prompt template template-only validation");
+
+    unsafe {
+        env::set_var("PATH", old_path);
+    }
+
+    let cargo_calls = fs::read_to_string(&cargo_log).expect("cargo log");
+    assert!(cargo_calls.contains("fmt --manifest-path"));
+    assert!(cargo_calls.contains("--bin adl prompt_template_ -- --nocapture"));
+    assert!(cargo_calls.contains("--bin adl structured_prompt_ -- --nocapture"));
 }
 
 #[test]
@@ -3571,6 +3745,7 @@ fn finish_misc_helpers_cover_section_parsing_fingerprint_and_create_outcomes() {
 #[test]
 fn real_pr_finish_happy_path_is_covered_in_default_lane() {
     let _guard = env_lock();
+    let _github_env = force_gh_cli_transport_env();
     let temp = unique_temp_dir("adl-pr-finish-default-lane");
     let origin = temp.join("origin.git");
     let repo = temp.join("repo");
@@ -3708,6 +3883,7 @@ fn real_pr_finish_happy_path_is_covered_in_default_lane() {
             gh_log.display()
         ),
     );
+    let _fixture = GithubCliFixtureGuard::set(&gh_path);
     write_executable(
         &janitor_path,
         &format!(
@@ -3929,6 +4105,25 @@ Execution:
 ## Summary
 
 done
+
+## PVF Lane Truth
+- Initial PVF lane: `docs_only`
+- Planned PVF lane: `docs_only`
+- Final PVF lane: `docs_only`
+- Lane change reason: `no_lane_change`
+
+## Issue Metrics Truth
+- Estimated elapsed seconds: `unknown`
+- Actual elapsed seconds: `unknown`
+- Estimated total tokens: `unknown`
+- Actual total tokens: `unknown`
+- Estimated validation seconds: `unknown`
+- Actual validation seconds: `unknown`
+- Goal metrics data source: `unknown`
+- Goal metrics source ref: `unknown`
+- Data-source confidence: `unknown`
+- Estimate error percent: `unknown`
+- Goal-metrics substrate note: consume the `#4264` issue-goal metrics summary when available and record `unknown` instead of duplicating raw session logs here.
 
 ## Artifacts produced
 - docs/notes.md
@@ -4726,6 +4921,7 @@ fn real_pr_finish_rejects_branch_name_mismatch() {
 #[test]
 fn real_pr_finish_rejects_closed_issue_with_stale_canonical_truth() {
     let _guard = env_lock();
+    let _github_env = force_gh_cli_transport_env();
     let temp = unique_temp_dir("adl-pr-finish-closed-stale-truth");
     let origin = temp.join("origin.git");
     let repo = temp.join("repo");
@@ -4849,6 +5045,7 @@ fn real_pr_finish_rejects_closed_issue_with_stale_canonical_truth() {
             gh_log.display()
         ),
     );
+    let _fixture = GithubCliFixtureGuard::set(&gh_path);
 
     let old_path = env::var("PATH").unwrap_or_default();
     let prev_dir = env::current_dir().expect("cwd");
@@ -4883,6 +5080,7 @@ fn real_pr_finish_rejects_closed_issue_with_stale_canonical_truth() {
 #[test]
 fn real_pr_finish_opener_failure_is_nonblocking_when_no_open_is_false() {
     let _guard = env_lock();
+    let _github_env = force_gh_cli_transport_env();
     let temp = unique_temp_dir("adl-pr-finish-open-failure");
     let origin = temp.join("origin.git");
     let repo = temp.join("repo");
@@ -5015,6 +5213,7 @@ fn real_pr_finish_opener_failure_is_nonblocking_when_no_open_is_false() {
             gh_log.display()
         ),
     );
+    let _fixture = GithubCliFixtureGuard::set(&gh_path);
     write_executable(
         &open_path,
         "#!/usr/bin/env bash\nset -euo pipefail\necho 'synthetic open failure' >&2\nexit 42\n",

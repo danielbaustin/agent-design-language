@@ -383,6 +383,24 @@ Status: DONE
 ## Summary
 Done.
 
+## PVF Lane Truth
+- Initial PVF lane: `prompt_template`
+- Planned PVF lane: `prompt_template`
+- Final PVF lane: `prompt_template`
+- Lane change reason: `not_applicable`
+
+## Issue Metrics Truth
+- Estimated elapsed seconds: `unknown`
+- Actual elapsed seconds: `300`
+- Estimated total tokens: `unknown`
+- Actual total tokens: `1200`
+- Estimated validation seconds: `unknown`
+- Actual validation seconds: `45`
+- Goal metrics data source: `manual_entry`
+- Goal metrics source ref: `docs/milestones/v0.91.6/process/goal-metrics-summary.md`
+- Data-source confidence: `medium`
+- Estimate error percent: `unknown`
+
 ## Artifacts produced
 - `docs/tooling/prompt-spec.md`
 
@@ -487,6 +505,15 @@ title: "tooling test"
 branch: "not bound yet"
 status: "draft"
 plan_revision: 1
+initial_pvf_lane: "prompt_template"
+planned_pvf_lane: "prompt_template"
+planned_pvf_lane_source: "matched_initial_issue_lane"
+estimate_elapsed_seconds: "unknown"
+estimate_total_tokens: "unknown"
+estimate_validation_seconds: "unknown"
+estimate_confidence: "unknown"
+estimate_data_source: "unknown"
+estimate_source_ref: "unknown"
 source_refs:
   - kind: "issue"
     ref: "https://github.com/danielbaustin/agent-design-language/issues/{issue}"
@@ -537,6 +564,23 @@ notes: "test note"
 ## Plan Summary
 
 test
+
+## PVF Lane Plan
+
+- Initial PVF lane from issue creation: `prompt_template`
+- Planned PVF lane for execution: `prompt_template`
+- Planning lane source: `matched_initial_issue_lane`
+- Revision rule: change `planned_pvf_lane` only when planning discovers a better explicit lane; keep `needs_planning_lane_assignment` fail-closed until that happens.
+
+## Estimate Plan
+
+- Estimated elapsed seconds: `unknown`
+- Estimated total tokens: `unknown`
+- Estimated validation seconds: `unknown`
+- Estimate confidence: `unknown`
+- Estimate data source: `unknown`
+- Estimate source ref: `unknown`
+- Unknown-value rule: record `unknown`, never `0`, when the estimate is unavailable or intentionally deferred.
 
 ## Codex Plan
 

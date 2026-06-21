@@ -48,6 +48,14 @@ fn public_prompt_packet_export_writes_manifest_readme_and_cards() {
 
     let manifest: serde_json::Value =
         serde_json::from_str(&fs::read_to_string(packet.join("manifest.json")).unwrap()).unwrap();
+    let current_registry: serde_json::Value = serde_json::from_str(
+        &fs::read_to_string(repo_root_for_tests().join("docs/templates/prompts/current.json"))
+            .unwrap(),
+    )
+    .unwrap();
+    let active_template_version = current_registry["semver"]
+        .as_str()
+        .expect("active template version");
     assert_eq!(manifest["schema"], "adl.public_prompt_packet.v1");
     assert_eq!(manifest["version"], "v0.91.5");
     assert_eq!(manifest["tracker"]["provider"], "github");
@@ -55,7 +63,10 @@ fn public_prompt_packet_export_writes_manifest_readme_and_cards() {
     assert_eq!(manifest["work_item"]["id"], "issue-3472");
     assert_eq!(manifest["work_item"]["slug"], "public-card-export");
     assert_eq!(manifest["cards"].as_array().unwrap().len(), 5);
-    assert_eq!(manifest["cards"][0]["template_version"], "1.0.0");
+    assert_eq!(
+        manifest["cards"][0]["template_version"],
+        active_template_version
+    );
     assert_eq!(manifest["cards"][0]["card_status"], "ready");
     assert_eq!(manifest["redaction"]["status"], "passed");
 
