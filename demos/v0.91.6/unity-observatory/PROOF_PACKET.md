@@ -23,6 +23,14 @@ The current runtime shell is built programmatically from
 reference surfaces for the same bounded shell and are not claimed as
 live-loaded runtime assets in this issue.
 
+The Unity-facing contract seed now lives at:
+
+- `Assets/Resources/observatory_contract.json`
+
+This seed is the checked-in reference copy of the same bounded contract family
+that ADL emits as `unity_observatory_contract.json` in the Observatory CLI
+bundle.
+
 ## Launch Wiring
 
 The scene seed contains `UnityObservatoryBootstrap`. At Play time the bootstrap:
@@ -36,8 +44,9 @@ The scene seed contains `UnityObservatoryBootstrap`. At Play time the bootstrap:
   contract family
 - shows bounded counts, room/lens labels, and proposal-boundary copy
 
-The current scaffold intentionally stops before full packet parsing. It is the
-launch surface that later issues use for:
+The current scaffold now loads a deterministic Unity-facing contract seed rather
+than stopping at static summary literals. It remains the bounded launch surface
+that later issues use for:
 
 - `#4032` ADL evidence/data contract binding
 - `#4033` inhabitant-facing surface expansion
@@ -50,6 +59,10 @@ checks during issue execution.
 
 Deterministic launch-baseline proof: passed by
 `bash adl/tools/test_v0916_unity_observatory_baseline.sh`.
+
+Deterministic Unity contract proof: passed by
+`bash adl/tools/test_v0916_unity_observatory_contract.sh`
+and focused bundle/contract Rust checks.
 
 Governed Observatory contract proof: passed by
 `cargo test --manifest-path adl/Cargo.toml runtime_v2_csm_observatory -- --nocapture`
@@ -64,8 +77,8 @@ C# compiler validation outside Unity: not run.
 
 ## Known Limitations
 
-- The shell currently renders static launch-baseline values rather than parsing
-  the full governed packet in Unity.
+- The shell loads a checked-in Unity-facing contract seed rather than parsing
+  the full governed packet directly inside Unity.
 - No live Runtime v2 or ADL runtime API integration is claimed.
 - No inhabitant-safe identity/profile display is claimed.
 - No HTML/mobile Observatory completion is claimed.

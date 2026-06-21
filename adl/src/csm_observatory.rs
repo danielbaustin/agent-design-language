@@ -5,6 +5,7 @@ use std::fs;
 use std::path::{Path, PathBuf};
 
 pub const VISIBILITY_PACKET_SCHEMA: &str = "adl.csm_visibility_packet.v1";
+pub const UNITY_OBSERVATORY_CONTRACT_SCHEMA: &str = "adl.unity_observatory_contract.v1";
 
 #[derive(Debug, Clone, Copy, Eq, PartialEq)]
 pub enum ObservatoryFormat {
@@ -19,6 +20,7 @@ pub struct ObservatoryOutput {
     pub report_path: Option<PathBuf>,
     pub console_reference_path: Option<PathBuf>,
     pub manifest_path: Option<PathBuf>,
+    pub unity_contract_path: Option<PathBuf>,
 }
 
 impl ObservatoryFormat {
@@ -582,6 +584,7 @@ pub fn write_observatory_outputs(
         report_path: None,
         console_reference_path: None,
         manifest_path: None,
+        unity_contract_path: None,
     };
 
     if matches!(format, ObservatoryFormat::Bundle | ObservatoryFormat::Json) {
@@ -607,6 +610,17 @@ pub fn write_observatory_outputs(
             .with_context(|| format!("write '{}'", path.display()))?;
         output.console_reference_path = Some(path);
 
+        let unity_contract_path = out_dir.join("unity_observatory_contract.json");
+        fs::write(
+            &unity_contract_path,
+            serde_json::to_string_pretty(&render_unity_observatory_contract(
+                &packet,
+                packet_path,
+            )?)? + "\n",
+        )
+        .with_context(|| format!("write '{}'", unity_contract_path.display()))?;
+        output.unity_contract_path = Some(unity_contract_path);
+
         let manifest_path = out_dir.join("demo_manifest.json");
         fs::write(
             &manifest_path,
@@ -629,11 +643,120 @@ fn render_manifest(packet: &Value, output: &ObservatoryOutput) -> Value {
             "visibility_packet": output.packet_path.as_deref().map(display_path),
             "operator_report": output.report_path.as_deref().map(display_path),
             "console_reference": output.console_reference_path.as_deref().map(display_path),
+            "unity_observatory_contract": output.unity_contract_path.as_deref().map(display_path),
         },
         "truth_boundary": packet.pointer("/source/claim_boundary").and_then(Value::as_str).unwrap_or("not recorded"),
         "read_only": true,
         "live_runtime_capture": packet.pointer("/source/mode").and_then(Value::as_str) == Some("live_runtime"),
     })
+}
+
+fn render_unity_observatory_contract(packet: &Value, packet_path: &Path) -> Result<Value> {
+    let default_room = str_at(packet, "/observatory_ui/default_room");
+    let default_lens = str_at(packet, "/observatory_ui/default_lens");
+    let room_label = label_for_entry(
+        packet,
+        "/observatory_ui/rooms",
+        "room_id",
+        &default_room,
+        "label",
+    )
+    .unwrap_or(default_room.clone());
+    let lens_label = label_for_entry(
+        packet,
+        "/observatory_ui/lenses",
+        "lens_id",
+        &default_lens,
+        "label",
+    )
+    .unwrap_or(default_lens.clone());
+    let contract_id = format!(
+        "unity-observatory-contract-{}",
+        str_at(packet, "/packet_id").replace('/', "-")
+    );
+    Ok(json!({
+        "schema": UNITY_OBSERVATORY_CONTRACT_SCHEMA,
+        "contract_id": contract_id,
+        "packet_schema": str_at(packet, "/schema"),
+        "source_packet_ref": repo_relative_packet_ref(packet_path)?,
+        "runtime_artifact_root": str_at(packet, "/source/runtime_artifact_root"),
+        "claim_boundary": str_at(packet, "/source/claim_boundary"),
+        "evidence_level": str_at(packet, "/source/evidence_level"),
+        "manifold": {
+            "display_name": str_at(packet, "/manifold/display_name"),
+            "state": str_at(packet, "/manifold/state"),
+            "health_summary": str_at(packet, "/manifold/health/summary"),
+            "current_tick": packet.pointer("/manifold/current_tick").and_then(Value::as_i64).unwrap_or_default(),
+        },
+        "summary": {
+            "citizen_count": array_at(packet, "/citizens").len(),
+            "episode_count": array_at(packet, "/episodes").len(),
+            "default_room_label": room_label,
+            "default_lens_label": lens_label,
+            "proposal_mode_statement": str_at(packet, "/observatory_ui/proposal_mode_statement"),
+        },
+        "freedom_gate": {
+            "allow_count": packet.pointer("/freedom_gate/allow_count").and_then(Value::as_i64).unwrap_or_default(),
+            "defer_count": packet.pointer("/freedom_gate/defer_count").and_then(Value::as_i64).unwrap_or_default(),
+            "refuse_count": packet.pointer("/freedom_gate/refuse_count").and_then(Value::as_i64).unwrap_or_default(),
+        },
+        "review": {
+            "demo_classification": str_at(packet, "/review/demo_classification"),
+            "operator_report_ref": first_artifact_matching(packet, "operator_report.md"),
+            "primary_artifacts": array_at(packet, "/review/primary_artifacts"),
+            "caveats": array_at(packet, "/review/caveats"),
+        },
+        "rooms": array_at(packet, "/observatory_ui/rooms"),
+        "lenses": array_at(packet, "/observatory_ui/lenses"),
+    }))
+}
+
+fn repo_relative_packet_ref(packet_path: &Path) -> Result<String> {
+    let repo_root = Path::new(env!("CARGO_MANIFEST_DIR"))
+        .parent()
+        .context("resolve repository root for Unity Observatory contract")?;
+    if let (Ok(repo_root), Ok(packet_path)) = (repo_root.canonicalize(), packet_path.canonicalize())
+    {
+        if let Ok(stripped) = packet_path.strip_prefix(&repo_root) {
+            let text = stripped.to_string_lossy().replace('\\', "/");
+            validate_repo_relative_ref(&text, "unity_observatory.source_packet_ref")?;
+            return Ok(text);
+        }
+    }
+    let text = packet_path.to_string_lossy().replace('\\', "/");
+    validate_repo_relative_ref(&text, "unity_observatory.source_packet_ref")?;
+    Ok(text)
+}
+
+fn label_for_entry(
+    packet: &Value,
+    pointer: &str,
+    id_field: &str,
+    wanted_id: &str,
+    label_field: &str,
+) -> Option<String> {
+    array_at(packet, pointer).iter().find_map(|entry| {
+        (entry
+            .pointer(&format!("/{id_field}"))
+            .and_then(Value::as_str)
+            == Some(wanted_id))
+        .then(|| {
+            entry
+                .pointer(&format!("/{label_field}"))
+                .and_then(Value::as_str)
+                .map(ToOwned::to_owned)
+        })
+        .flatten()
+    })
+}
+
+fn first_artifact_matching(packet: &Value, suffix: &str) -> String {
+    array_at(packet, "/review/primary_artifacts")
+        .iter()
+        .filter_map(|artifact| artifact.as_str())
+        .find(|artifact| artifact.ends_with(suffix))
+        .map(ToOwned::to_owned)
+        .unwrap_or_default()
 }
 
 fn display_path(path: &Path) -> String {
@@ -1034,6 +1157,72 @@ mod tests {
             .to_string()
             .contains("active_surface"));
         fs::remove_file(packet_path).ok();
+        fs::remove_dir_all(temp_root).ok();
+    }
+
+    #[test]
+    fn unity_observatory_contract_extracts_summary_surface() {
+        let packet = serde_json::from_str::<Value>(include_str!(
+            "../../demos/fixtures/csm_observatory/proto-csm-02-governed-observatory-packet.json"
+        ))
+        .expect("proto packet");
+        let contract = render_unity_observatory_contract(
+            &packet,
+            Path::new(
+                "demos/fixtures/csm_observatory/proto-csm-02-governed-observatory-packet.json",
+            ),
+        )
+        .expect("contract");
+
+        assert_eq!(
+            contract.pointer("/schema").and_then(Value::as_str),
+            Some(UNITY_OBSERVATORY_CONTRACT_SCHEMA)
+        );
+        assert_eq!(
+            contract
+                .pointer("/summary/citizen_count")
+                .and_then(Value::as_u64),
+            Some(3)
+        );
+        assert_eq!(
+            contract
+                .pointer("/summary/default_room_label")
+                .and_then(Value::as_str),
+            Some("World / Reality")
+        );
+        assert_eq!(
+            contract
+                .pointer("/summary/default_lens_label")
+                .and_then(Value::as_str),
+            Some("Operator lens")
+        );
+        assert_eq!(
+            contract
+                .pointer("/review/operator_report_ref")
+                .and_then(Value::as_str),
+            Some("runtime_v2/observatory/operator_report.md")
+        );
+    }
+
+    #[test]
+    fn unity_observatory_contract_rejects_out_of_repo_packet_refs() {
+        let packet = serde_json::from_str::<Value>(include_str!(
+            "../../demos/fixtures/csm_observatory/proto-csm-02-governed-observatory-packet.json"
+        ))
+        .expect("proto packet");
+        let temp_root = std::env::temp_dir().join(format!(
+            "adl-unity-observatory-contract-outside-{}",
+            std::process::id()
+        ));
+        fs::create_dir_all(&temp_root).expect("temp root");
+        let external_packet = temp_root.join("packet.json");
+        fs::write(&external_packet, "{}\n").expect("external packet");
+
+        let error = render_unity_observatory_contract(&packet, &external_packet)
+            .expect_err("out-of-repo packet ref should fail closed");
+        assert!(error.to_string().contains("repository-relative"));
+
+        fs::remove_file(external_packet).ok();
         fs::remove_dir_all(temp_root).ok();
     }
 }

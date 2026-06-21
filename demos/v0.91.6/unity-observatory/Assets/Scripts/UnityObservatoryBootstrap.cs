@@ -5,6 +5,7 @@ namespace ADL.Demos.UnityObservatory
 {
     public sealed class UnityObservatoryBootstrap : MonoBehaviour
     {
+        private const string ContractResourcePath = "observatory_contract";
         [SerializeField] private int baselineCitizenCount = 3;
         [SerializeField] private int baselineEpisodeCount = 2;
         [SerializeField] private string packetSchema = "adl.csm_visibility_packet.v1";
@@ -39,14 +40,22 @@ namespace ADL.Demos.UnityObservatory
             GameObject shellObject = new("Unity Observatory Shell");
             UnityObservatoryShellController controller =
                 shellObject.AddComponent<UnityObservatoryShellController>();
-            controller.Configure(
-                packetSchema,
-                packetRef,
-                baselineCitizenCount,
-                baselineEpisodeCount,
-                defaultRoomLabel,
-                defaultLensLabel
-            );
+            TextAsset contractAsset = Resources.Load<TextAsset>(ContractResourcePath);
+            if (contractAsset != null)
+            {
+                controller.ConfigureFromContract(contractAsset.text);
+            }
+            else
+            {
+                controller.ConfigureFallback(
+                    packetSchema,
+                    packetRef,
+                    baselineCitizenCount,
+                    baselineEpisodeCount,
+                    defaultRoomLabel,
+                    defaultLensLabel
+                );
+            }
 
             UIDocument document = shellObject.AddComponent<UIDocument>();
             VisualElement root = document.rootVisualElement;

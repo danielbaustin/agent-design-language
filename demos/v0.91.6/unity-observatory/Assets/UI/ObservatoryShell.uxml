@@ -2,34 +2,45 @@
   <ui:VisualElement class="observatory-screen">
     <ui:VisualElement class="observatory-shell">
       <ui:VisualElement class="header">
-        <ui:Label name="title" text="Unity Observatory" />
-        <ui:Label name="subtitle" text="Launch-baseline governed shell" />
+        <ui:Label name="title" text="Prototype CSM 02" />
+        <ui:Label name="subtitle" text="fixture backed governed shell" />
       </ui:VisualElement>
       <ui:VisualElement class="body">
         <ui:VisualElement class="navigation">
-          <ui:Label text="Observatory" />
-          <ui:Label text="Citizens" />
-          <ui:Label text="Contracts" />
-          <ui:Label text="C-SDLC" />
-          <ui:Label text="Traces" />
-          <ui:Label text="Reviews" />
+          <ui:Label text="Rooms" />
+          <ui:Label text="World / Reality" />
+          <ui:Label text="Operator / Governance" />
+          <ui:Label text="Cognition / Internal State" />
+          <ui:Label text="Lenses" />
+          <ui:Label text="Public lens" />
+          <ui:Label text="Operator lens" />
+          <ui:Label text="Reviewer lens" />
+          <ui:Label text="Continuity lens" />
+          <ui:Label text="Quarantine lens" />
         </ui:VisualElement>
         <ui:VisualElement class="content">
           <ui:VisualElement class="card">
-            <ui:Label name="summary-title" text="Baseline summary" />
+            <ui:Label name="summary-title" text="Observed summary" />
             <ui:Label name="citizen-count" text="Citizens: 3" />
             <ui:Label name="episode-count" text="Episodes: 2" />
             <ui:Label name="default-room" text="Default room: World / Reality" />
             <ui:Label name="default-lens" text="Default lens: Operator lens" />
+            <ui:Label name="current-tick" text="Current tick: 14" />
+            <ui:Label
+              name="proposal-mode"
+              text="Every active-looking control is a governed request proposal only. No direct runtime mutation is performed from this surface." />
           </ui:VisualElement>
           <ui:VisualElement class="card">
             <ui:Label name="boundary-title" text="Governed boundary" />
             <ui:Label
               name="boundary-body"
-              text="This surface proposes reviewable observatory navigation only. No direct runtime mutation is performed here." />
+              text="Fixture-backed governed Observatory prototype. This is not a live Runtime v2 capture and it does not grant direct mutation authority." />
             <ui:Label
               name="boundary-followon"
-              text="Packet parsing, inhabitant readiness, and observability/security closure remain issue-owned follow-on work." />
+              text="Freedom Gate counts: allow 1, defer 1, refuse 1." />
+            <ui:Label
+              name="boundary-caveat"
+              text="This is not a live mutation console." />
           </ui:VisualElement>
           <ui:VisualElement class="card">
             <ui:Label name="packet-title" text="Packet contract" />
@@ -38,13 +49,19 @@
               name="packet-ref"
               text="demos/fixtures/csm_observatory/proto-csm-02-governed-observatory-packet.json" />
             <ui:Label
+              name="artifact-root"
+              text="adl/tests/fixtures/runtime_v2/observatory" />
+            <ui:Label
+              name="report-ref"
+              text="runtime_v2/observatory/operator_report.md" />
+            <ui:Label
               name="packet-note"
-              text="This launch baseline shows the bounded ingress seam that #4032 will deepen into a real Unity-facing loader." />
+              text="This shell is reading a deterministic Unity-facing contract derived from fixture_backed Observatory evidence." />
           </ui:VisualElement>
         </ui:VisualElement>
       </ui:VisualElement>
       <ui:VisualElement class="footer">
-        <ui:Label text="Deterministic launch-baseline scaffold for WP-09 O-01." />
+        <ui:Label text="Deterministic Unity Observatory contract loader for WP-09 O-02." />
       </ui:VisualElement>
     </ui:VisualElement>
   </ui:VisualElement>

@@ -52,6 +52,19 @@ require_contains() {
   }
 }
 
+require_contains_any() {
+  local path="$1"
+  shift
+  local needle
+  for needle in "$@"; do
+    if grep -Fq "${needle}" "${path}"; then
+      return 0
+    fi
+  done
+  echo "missing required content set in ${path}: $*" >&2
+  exit 1
+}
+
 for path in "${README_PATH}" "${PROOF_PATH}" "${REVIEW_PATH}"; do
   require_contains "${path}" "demos/v0.91.6/unity-observatory"
   require_contains "${path}" "demos/fixtures/csm_observatory/proto-csm-02-governed-observatory-packet.json"
@@ -94,12 +107,18 @@ require_contains "${SHELL_PATH}" "namespace ADL.Demos.UnityObservatory"
 require_contains "${SHELL_PATH}" "BuildSummaryCard"
 require_contains "${SHELL_PATH}" "BuildBoundaryCard"
 require_contains "${SHELL_PATH}" "BuildPacketCard"
-require_contains "${SHELL_PATH}" "This launch baseline shows the bounded ingress seam that #4032 will deepen into a real Unity-facing loader."
+require_contains_any \
+  "${SHELL_PATH}" \
+  "This launch baseline shows the bounded ingress seam that #4032 will deepen into a real Unity-facing loader." \
+  "This shell is reading a deterministic Unity-facing contract derived from"
 require_contains "${SHELL_META_PATH}" "guid: 40310000000000000000000000001002"
 
-require_contains "${UXML_PATH}" "Launch-baseline governed shell"
+require_contains_any "${UXML_PATH}" "Launch-baseline governed shell" "fixture backed governed shell"
 require_contains "${UXML_PATH}" "packet-ref"
-require_contains "${UXML_PATH}" "This launch baseline shows the bounded ingress seam that #4032 will deepen into a real Unity-facing loader."
+require_contains_any \
+  "${UXML_PATH}" \
+  "This launch baseline shows the bounded ingress seam that #4032 will deepen into a real Unity-facing loader." \
+  "This shell is reading a deterministic Unity-facing contract derived from fixture_backed Observatory evidence."
 require_contains "${UXML_META_PATH}" "guid: 40310000000000000000000000002001"
 
 require_contains "${USS_PATH}" ".observatory-screen"

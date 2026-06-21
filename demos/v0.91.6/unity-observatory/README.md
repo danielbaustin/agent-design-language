@@ -17,6 +17,12 @@ This issue still does not claim:
 
 Those remain owned by `#4032`, `#4033`, `#4034`, and `#4035`.
 
+Update for `#4032`: the scaffold now includes one deterministic Unity-facing
+contract seed at `Assets/Resources/observatory_contract.json`, derived from the
+same governed Observatory packet family and loaded through Unity `Resources`
+instead of private machine-local paths. The same contract is emitted by the ADL
+Observatory bundle as `unity_observatory_contract.json`.
+
 ## Purpose
 
 Provide one concrete Unity project scaffold that downstream WP-09 issues can use
@@ -31,12 +37,15 @@ instead of reconstructing the launch surface from planning prose alone.
 - Runtime controller: `Assets/Scripts/UnityObservatoryShellController.cs`
 - Reference UI asset: `Assets/UI/ObservatoryShell.uxml`
 - Reference style asset: `Assets/UI/ObservatoryShell.uss`
+- Unity contract seed: `Assets/Resources/observatory_contract.json`
 - Proof packet: `PROOF_PACKET.md`
 
 The current scene seed contains a single `UnityObservatoryBootstrap` object. At
-Play time the bootstrap creates the main camera when needed, configures one
-runtime Observatory shell, and renders a governed control-panel surface from
-static launch-baseline values while leaving packet ingestion to `#4032`.
+Play time the bootstrap creates the main camera when needed, loads the seeded
+Unity-facing contract from `Resources/observatory_contract.json`, configures
+one runtime Observatory shell, and renders a governed control-panel surface
+from that read-only contract while leaving richer inhabitant-specific expansion
+to later issues.
 
 The UXML and USS files are tracked as reference assets for the same governed
 shell structure. This issue does not claim that the runtime path already loads
@@ -67,18 +76,22 @@ introducing hidden local state:
 
 - `adl/tests/fixtures/runtime_v2/observatory/visibility_packet.json`
 
-### Current launch-baseline wiring
+### Current contract-backed wiring
 
-The current scaffold intentionally binds only static launch-baseline values:
+The current scaffold now consumes a bounded Unity-facing contract with:
 
 - governed packet reference path
 - packet schema family
-- baseline citizen and episode counts
+- runtime artifact root
+- citizen and episode counts
 - default room and lens labels
-- review/non-claim boundary copy
+- proposal-mode boundary copy
+- Freedom Gate summary counts
+- review/operator-report references
 
-Actual packet parsing and richer surface composition remain issue-owned follow-on
-work for `#4032` and `#4033`.
+The contract seed is read-only and fixture-backed. Richer inhabitant-specific
+world, status, and identity surfaces remain issue-owned follow-on work for
+`#4033`.
 
 ### Non-authoritative boundary
 
@@ -115,12 +128,14 @@ This launch baseline intentionally leaves the following issue boundaries explici
 4. Open `Assets/Scenes/UnityObservatory.unity`.
 5. Press Play.
 
-Current launch-baseline behavior:
+Current contract-backed behavior:
 
 - the bootstrap creates a calm document-panel Observatory shell
-- the shell shows governed packet/schema references and baseline summary counts
-- the shell presents room/lens navigation labels and non-authoritative proposal
-  language
+- the shell loads a deterministic Unity-facing contract from `Resources`
+- the shell shows governed packet/schema references, artifact root, and summary
+  counts sourced from that contract
+- the shell presents room/lens navigation labels, proposal-mode language, and
+  Freedom Gate summary counts from the same contract
 - no live runtime mutation, snapshot, or profile inspection is performed
 
 ## Validation Entry Points
@@ -149,6 +164,12 @@ Focused baseline-coordinate guardrail for this issue:
 bash adl/tools/test_v0916_unity_observatory_baseline.sh
 ```
 
+Focused contract-seed guardrail for this issue:
+
+```bash
+bash adl/tools/test_v0916_unity_observatory_contract.sh
+```
+
 ## Validation Truth
 
 Repository structure validation: passed by focused file/content checks during
@@ -167,7 +188,7 @@ Unity editor or build pipeline already succeeded on this machine.
 ## Non-Claims
 
 - No live Runtime v2 capture is claimed.
-- No completed ADL evidence ingestion is claimed.
+- No live Runtime v2 ingestion is claimed.
 - No inhabitant-safe display or input closure is claimed.
 - No Unity editor success is claimed.
 - No Unity build success is claimed.
