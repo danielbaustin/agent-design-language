@@ -1594,7 +1594,7 @@ mod tests {
         assert_eq!(args.action, TelemetryAction::Collect);
         assert_eq!(args.issue_number, 4298);
         assert_eq!(args.issue_slug, "collector");
-        assert_eq!(args.capture_stage, "custom_stage");
+        assert_eq!(args.capture_stage.as_deref(), Some("custom_stage"));
         assert_eq!(args.host_label, "wuji");
         assert_eq!(args.repo_root, repo_root);
         assert_eq!(args.out, Some(out));
@@ -1654,12 +1654,19 @@ mod tests {
                 action: TelemetryAction::Collect,
                 issue_number: 4298,
                 issue_slug: "collector".to_string(),
-                capture_stage: "issue_start".to_string(),
-                host_label: APPROVED_WUJI_LABEL.to_string(),
+                capture_stage: Some("issue_start".to_string()),
+                host_label: APPROVED_LOCAL_HOST_LABEL.to_string(),
                 repo_root: repo_root.clone(),
                 out: Some(output.clone()),
+                input: None,
+                manifest_out: None,
+                s3_prefix: None,
+                repo: None,
                 captured_at: Some("2026-06-20T09:30:00Z".to_string()),
                 processes: vec![],
+                upload: false,
+                upload_manifest: false,
+                redaction_status: "not_redacted_private_archive_manifest_only".to_string(),
                 json_output: false,
             },
             &FakeCommandRunner::new(HashMap::new()),
@@ -1670,12 +1677,19 @@ mod tests {
                 action: TelemetryAction::Collect,
                 issue_number: 4298,
                 issue_slug: "collector".to_string(),
-                capture_stage: "post_validation".to_string(),
-                host_label: APPROVED_WUJI_LABEL.to_string(),
+                capture_stage: Some("post_validation".to_string()),
+                host_label: APPROVED_LOCAL_HOST_LABEL.to_string(),
                 repo_root: repo_root.clone(),
                 out: Some(output.clone()),
+                input: None,
+                manifest_out: None,
+                s3_prefix: None,
+                repo: None,
                 captured_at: Some("2026-06-20T09:45:00Z".to_string()),
                 processes: vec![],
+                upload: false,
+                upload_manifest: false,
+                redaction_status: "not_redacted_private_archive_manifest_only".to_string(),
                 json_output: false,
             },
             &FakeCommandRunner::new(HashMap::new()),
