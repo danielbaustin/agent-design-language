@@ -47,9 +47,13 @@ implementation proof.
 | SEP / VPP / PVF / templates | Complete, blocked, deferred, or routed with clear sprint-execution consequences. |
 | Goal and metrics accounting | Time/token/resource and nested-goal route explicit enough for v0.92 issue planning. |
 | Scheduler/provider/local agents | Routing policy and suitability path explicit enough to protect premium cognition. |
+| Capability envelope and capability testing | Memory grounding, capability envelope, birth witnesses/receipt, and Aptitude Atlas boundaries explicitly consumed, deferred, blocked, or routed before birthday evidence relies on them. |
 | Build/validation throughput | Validation-cost and remote/local build routes clear enough to avoid rediscovery during birthday work. |
-| Runtime Soak #2 and AWS signal bridge | Runtime integration and operational signal blockers named before birthday claims. |
+| GitHub convergence and control-plane tooling | GitHub/octocrab/tooling convergence state explicit enough that v0.92 sprint execution does not depend on ambiguous `gh` fallback or stale control-plane assumptions. |
+| Runtime integration, Soak #2, and AWS signal bridge | One minimal assembled runtime path proven or blocked; operational signal blockers named before birthday claims. |
+| Runtime architecture diet | Runtime module/seam map and keep/merge/defer/retire route explicit enough to reduce bloat without blocking the integration proof. |
 | Observatory and demo readiness | Visible proof surfaces complete, blocked, deferred, or routed. |
+| CodeFriend, adapter v2, paper/publication surfaces | Explicitly deferred or routed unless launch readiness promotes a bounded, evidence-backed slice. |
 
 ## Activation Blockers To Preserve
 
@@ -59,6 +63,8 @@ implementation proof.
 - Curiosity and Constructability require proof issues before public claims.
 - Affect, happiness, and Godel mechanics require non-claim language in birthday
   evidence.
+- Capability envelope, witnesses/receipt, and publication-facing narratives must
+  not be inferred from launch language without tracked evidence.
 
 ## `#3780` Consumption Checklist
 

@@ -17,26 +17,26 @@ WP-01 should consume this document, `PLANNING_SOURCE_CAPTURE_v0.91.7.md`, and [W
 
 ## WBS Summary
 
-`v0.91.7` should make the path to `v0.92` explicit. It combines residual bridge docs with the operational substrate needed for first-birthday execution: sprint execution, validation planning, goal/metrics accounting, scheduler/provider/local-agent routing, build throughput, runtime soak, security/protocol residuals, demos, and launch handoff.
+`v0.91.7` should make the path to `v0.92` explicit. It combines residual bridge docs with the operational substrate needed for first-birthday execution: sprint execution, validation planning, goal/metrics accounting, scheduler/provider/local-agent routing, build throughput, runtime integration/soak, runtime architecture diet, security/protocol residuals, demos, and launch handoff.
 
 ## Candidate WP Sequence
 
 | WP | Work Package | Description | Primary deliverable | Dependencies |
 | --- | --- | --- | --- | --- |
-| WP-01 | Planning promotion and issue-wave readiness | Promote the refreshed planning package, reconcile v0.91.6 closeout truth, classify every source in the source-capture ledger, and open the issue wave. | Opened issue wave and C-SDLC card bundles. | `#3778`, `#3800`, `#3801`, `#4368`, v0.91.6 closeout. |
-| WP-02 | v0.91.6 closeout truth, ADR release-tail, and cleanup | Ensure open v0.91.6 closeout/release-tail WPs, Observatory carryover, and ADR release-tail issues `#4324` / `#4369`-`#4373` are closed, blocked, deferred, or routed. | Closeout truth ledger, ADR route, and carryover routing updates. | WP-01. |
+| WP-01 | Planning promotion and issue-wave readiness | Promote the refreshed planning package, reconcile v0.91.6 closeout truth, classify every source in the source-capture ledger, sync the feature-list/roadmap truth, and open the issue wave. | Opened issue wave, C-SDLC card bundles, and source/feature-list disposition ledger. | `#3778`, `#3800`, `#3801`, `#4368`, v0.91.6 closeout. |
+| WP-02 | v0.91.6 closeout truth, ADR release-tail, and cleanup | Ensure open v0.91.6 closeout/release-tail WPs, Observatory carryover, closed ADR release-tail issues `#4324` / `#4369`-`#4376`, and open tooling remediation `#4378` are consumed, closed, blocked, deferred, or routed. | Closeout truth ledger, ADR route, tooling-remediation route, and carryover routing updates. | WP-01. |
 | WP-03 | SEP, VPP, PVF, and template-version substrate | Complete Sprint Execution Packet process, VPP, external lane registry, prompt-template next version, `/goal` rules, watchers, sprint closeout, and AST/template integration routes. | Process/tooling sprint with template and skill updates. | WP-01, `#4308`, `#4309`, `#4332`. |
 | WP-04 | Goal state, nested goals, and execution metrics | Define first-class goal-state consumption, issue/sprint goal nesting, SOR time/token/resource accounting, and outlier analysis route. | Goal/metrics feature route and template-field plan. | WP-03, `#4329`, `#4331`. |
-| WP-05 | Cognitive scheduler and provider/local-agent routing | Build or route scheduler v1, provider profiles, model suitability, local/hosted agent routing, and cheapest-validated-outcome policy. | Scheduler/provider execution route and role suitability matrix. | WP-03, WP-04, provider sprint outputs. |
+| WP-05 | Cognitive scheduler and provider/local-agent routing | Build or route scheduler v1, provider profiles, model suitability, local/hosted agent routing, capability-envelope inputs, and cheapest-validated-outcome policy. | Scheduler/provider execution route, role suitability matrix, and capability-envelope routing. | WP-03, WP-04, provider sprint outputs. |
 | WP-06 | Build throughput and validation-cost reduction | Route validation manager, long-test fanout, CI log archive/S3, Nessus, CodeBuild runner evaluation, sccache/linker/target-dir cleanup, and validation DAG/build graph convergence. | Build/validation throughput sprint and proof plan. | WP-03, validation sprint outputs. |
-| WP-07 | Runtime fire-up and Soak #2 | Reconcile Runtime v2 minimal prototype with current Tokio/runtime substrate, run or route integrated runtime Soak #2, and preserve Soak #3 contingency. | Runtime fire-up/soak proof or routed blocker list. | WP-02, WP-05, WP-06. |
+| WP-07 | Runtime integration, fire-up, and Soak #2 | Assemble the runtime substrate into one minimal end-to-end path, reconcile Runtime v2 minimal prototype with current Tokio/runtime substrate, run or route integrated runtime Soak #2, identify bloat/seam pain, and preserve Soak #3 contingency. | Runtime integration proof or blocker list, runtime module map, and architecture-diet follow-on route. | WP-02, WP-05, WP-06. |
 | WP-08 | Runtime AWS and signal bridge operations | Carry heartbeat publisher, ACIP-to-SNS, AWS signal bridge, local polis SSM, and future S3/ObsMem/community-memory archive policy into one operational route. | Runtime AWS/local operations route and proof expectations. | WP-07, security inputs. |
 | WP-09 | Observatory, demos, and birthday-visible proof | Finish or route Unity/HTML Observatory, demo matrix convergence, and first-birthday-visible proof surfaces without claiming unsupported runtime completion. | Demo/Observatory readiness packet. | WP-07, WP-08. |
 | WP-10 | Curiosity and Constructability bridge | Preserve governed discovery-cycle proof expectations and shared-reality/anchor/validator boundaries. | Curiosity and Constructability issue-ready docs or proof routes. | WP-01, WP-07. |
 | WP-11 | Reasoning graph, loops, and `adl.skill.v1` bridge | Define the bridge among prompts, skills, loops, trace, ObsMem, PVF, AEE, Runtime v2, UTS, ACC, and `adl.skill.v1`. | Reasoning graph / skill-standard bridge route. | WP-03, WP-07, WP-10. |
 | WP-12 | Security, CAV, SSM, and ACIP/A2A/protobuf residuals | Account for security/CAV residuals, SSM readiness, ACIP/A2A/protobuf/JSON/WebSocket/access-rule choices, and activation-path blockers. | Security/protocol residual decision packet. | WP-08, WP-10. |
-| WP-13 | Affect, happiness, Godel mechanics, economics, and guild boundaries | Define safe-test/non-claim language and governance/civilization/economics boundaries; route guilds without making them a birthday implementation blocker. | Boundary decision packet and handoff rows. | WP-05, WP-10, WP-11. |
-| WP-14 | Launch and v0.92 birthday handoff | Align July launch planning, v0.92 activation refresh, Memory Palace/context, first birthday docs, and external-facing non-claims. | `V092_HANDOFF_v0.91.7.md` refresh and launch/birthday readiness map. | WP-02 through WP-13. |
+| WP-13 | Affect, happiness, Godel mechanics, economics, guild, CodeFriend, and publication boundaries | Define safe-test/non-claim language and governance/civilization/economics boundaries; route guilds, CodeFriend/adapter v2, and paper/publication surfaces without making them birthday implementation blockers. | Boundary decision packet and handoff rows. | WP-05, WP-10, WP-11. |
+| WP-14 | Launch and v0.92 birthday handoff | Align July launch planning, v0.92 activation refresh, Memory Palace/context, capability envelope, birth witnesses/receipt, first birthday docs, and external-facing non-claims. | `V092_HANDOFF_v0.91.7.md` refresh and launch/birthday readiness map. | WP-02 through WP-13. |
 | WP-15 | Internal review | Review docs, code routes, feature routing, source capture, and every sprint/issue plan for missing surfaces, stale claims, overclaims, or unowned blockers. | Internal review packet and finding register. | WP-14. |
 | WP-16 | Remediation and closeout | Fix or route review findings, update release notes/checklists, and record what `v0.92` may consume. | Remediation PRs, final checklist, and closeout packet. | WP-15. |
 
@@ -46,10 +46,13 @@ WP-01 should consume this document, `PLANNING_SOURCE_CAPTURE_v0.91.7.md`, and [W
 - SEP/VPP/PVF/template work must make sprint execution predictable rather than chat-memory driven.
 - Goal and metrics work must preserve issue/sprint token/time/resource accounting.
 - Scheduler/provider work must protect premium capacity and support local/hosted model routing.
+- Capability-envelope, capability-testing, and Aptitude Atlas boundaries must be explicit before v0.92 consumes memory/identity/birthday evidence.
 - Build/validation work must reduce the validation tail without weakening proof.
-- Runtime Soak #2 must prove integration or name blockers before birthday activation.
+- GitHub convergence/control-plane work must be either reliable enough for sprint execution or explicitly routed as a blocker/follow-on.
+- Runtime integration/Soak #2 must prove one assembled minimal runtime path or name blockers before birthday activation.
+- Runtime architecture diet must identify keep/merge/defer/retire boundaries without hiding speculative refactoring inside the integration sprint.
 - Security and ACIP/A2A residuals must not silently defer out of activation.
-- Curiosity, Constructability, reasoning graphs, affect/happiness, Godel mechanics, economics, and guilds must be bounded by evidence and non-claims.
+- Curiosity, Constructability, reasoning graphs, affect/happiness, Godel mechanics, economics, guilds, CodeFriend/adapter work, and publication surfaces must be bounded by evidence and non-claims.
 - Launch planning must inform v0.92 sequencing without expanding v0.92 implementation scope.
 
 ## Exit Criteria

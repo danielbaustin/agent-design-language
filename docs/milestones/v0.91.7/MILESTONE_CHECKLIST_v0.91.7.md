@@ -17,7 +17,7 @@ Forward checklist. Items are intentionally unchecked because `v0.91.7` execution
 - [ ] `#3778` bridge ledger consumed.
 - [ ] v0.91.5 pre-v0.92 bridge ledger source row consumed.
 - [ ] `v0.91.6` first-tranche package consumed.
-- [ ] ADR release-tail issues `#4324` and `#4369`-`#4373` closed, blocked, deferred, or routed.
+- [ ] Closed ADR release-tail issues `#4324` and `#4369`-`#4376` consumed, and open tooling remediation `#4378` completed, blocked, deferred, or routed.
 - [ ] `PLANNING_SOURCE_CAPTURE_v0.91.7.md` reviewed.
 - [ ] Candidate WBS reviewed and promoted or corrected.
 - [ ] Candidate issue wave opened with C-SDLC card bundles.

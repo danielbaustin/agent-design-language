@@ -16,12 +16,13 @@ notes:
 work_packages:
   - wp: WP-01
     title: v0.91.7 planning promotion and issue-wave readiness
-    outcome: Promote the refreshed planning package, reconcile v0.91.6 closeout truth, classify every source-capture input, and open the concrete v0.91.7 issue wave.
+    outcome: Promote the refreshed planning package, reconcile v0.91.6 closeout truth, classify every source-capture input, refresh or route feature-list/roadmap truth, and open the concrete v0.91.7 issue wave.
     depends_on: ["#3778", "#3800", "#3801", "#4368", "v0.91.6 closeout truth"]
     deliverables:
       - "Opened GitHub issue wave"
       - "SIP/STP/SPP/SRP/SOR cards for each opened issue"
       - "Source-capture disposition ledger"
+      - "Feature-list/roadmap disposition entry"
   - wp: WP-02
     title: v0.91.6 closeout truth ADR release-tail and cleanup
     outcome: Close, block, defer, or route open v0.91.6 closeout/release-tail, ADR release-tail, and Observatory carryover work before v0.92 consumes it.
@@ -46,11 +47,12 @@ work_packages:
       - "Template-field plan"
   - wp: WP-05
     title: Cognitive scheduler and provider local-agent routing
-    outcome: Build or route scheduler v1, provider profiles, local/hosted model suitability, cheapest-validated-outcome policy, and local-agent delegation readiness.
+    outcome: Build or route scheduler v1, provider profiles, local/hosted model suitability, capability-envelope inputs, cheapest-validated-outcome policy, and local-agent delegation readiness.
     depends_on: ["WP-03", "WP-04", "provider sprint outputs"]
     deliverables:
       - "Scheduler/provider execution route"
       - "Role suitability matrix"
+      - "Capability-envelope and capability-testing routing"
   - wp: WP-06
     title: Build throughput and validation-cost reduction
     outcome: Route validation manager, long-test fanout, CI log archive/S3, Nessus, CodeBuild runner evaluation, sccache/linker/target-dir cleanup, and validation DAG/build graph convergence.
@@ -59,11 +61,13 @@ work_packages:
       - "Build/validation throughput sprint"
       - "Remote/local validation runner decision"
   - wp: WP-07
-    title: Runtime fire-up and Soak 2
-    outcome: Reconcile Runtime v2 minimal prototype with current substrate, run or route integrated runtime Soak #2, and preserve Soak #3 contingency.
+    title: Runtime integration fire-up and Soak 2
+    outcome: Assemble one minimal end-to-end runtime path, reconcile Runtime v2 minimal prototype with current substrate, run or route integrated runtime Soak #2, identify runtime bloat/seam pain, and preserve Soak #3 contingency.
     depends_on: ["WP-02", "WP-05", "WP-06"]
     deliverables:
-      - "Runtime fire-up/soak proof or blocker list"
+      - "Runtime integration proof or blocker list"
+      - "Runtime module map"
+      - "Architecture-diet follow-on route"
   - wp: WP-08
     title: Runtime AWS and signal bridge operations
     outcome: Route heartbeat publisher, ACIP-to-SNS, AWS signal bridge, local polis SSM, and S3/ObsMem/community-memory archive policy.
@@ -95,18 +99,20 @@ work_packages:
     deliverables:
       - "Security/protocol residual decision packet"
   - wp: WP-13
-    title: Affect happiness Godel economics and guild boundaries
-    outcome: Define safe-test non-claim language and governance/civilization/economics boundaries; route guilds without making them a birthday implementation blocker.
+    title: Affect happiness Godel economics guild CodeFriend and publication boundaries
+    outcome: Define safe-test non-claim language and governance/civilization/economics boundaries; route guilds, CodeFriend/adapter v2, and paper/publication surfaces without making them birthday implementation blockers.
     depends_on: ["WP-05", "WP-10", "WP-11"]
     deliverables:
       - "Boundary decision packet"
+      - "Deferred/routed CodeFriend adapter and publication entries"
   - wp: WP-14
     title: Launch and v0.92 birthday handoff
-    outcome: Align July launch planning, v0.92 activation refresh, Memory Palace/context, first birthday docs, and external-facing non-claims.
+    outcome: Align July launch planning, v0.92 activation refresh, Memory Palace/context, capability envelope, birth witnesses/receipt, first birthday docs, and external-facing non-claims.
     depends_on: ["WP-02", "WP-03", "WP-04", "WP-05", "WP-06", "WP-07", "WP-08", "WP-09", "WP-10", "WP-11", "WP-12", "WP-13"]
     deliverables:
       - "V092 handoff refresh"
       - "Launch/birthday readiness map"
+      - "Capability-envelope and witness/receipt handoff entries"
   - wp: WP-15
     title: Internal review
     outcome: Review docs, code routes, feature routing, source capture, and every sprint/issue plan for missing surfaces, stale claims, overclaims, or unowned blockers.

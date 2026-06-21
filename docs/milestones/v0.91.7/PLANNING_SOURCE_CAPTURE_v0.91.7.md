@@ -42,6 +42,7 @@ It must answer three questions before `v0.92` opens:
 | `docs/templates/planning/` | Milestone planning template authority | Use current planning template process; do not hand-roll canonical docs. |
 | `docs/templates/sprints/` | Sprint Execution Packet template authority | Use for mini-sprint/sprint setup and closeout expectations. |
 | `docs/templates/prompts/` | SIP/STP/SPP/SRP/SOR template authority | Preserve card lifecycle and planned VPP/template-version changes. |
+| `docs/planning/ADL_FEATURE_LIST.md` | Roadmap/feature-list truth surface | Refresh, reconcile, or explicitly route stale feature-list rows before v0.92 planning consumes them. |
 
 ## Open-Issue Inputs Observed During #4368
 
@@ -58,7 +59,7 @@ These were open at the source-capture pass and should be explicitly closed, comp
 | `#4309` | Next prompt-template version with VPP, time, token, goal fields | Required template-version work before full SEP/VPP maturity. |
 | `#4317` | Nessus remote Rust validation runner | Build/validation throughput route. |
 | `#4322` | CI checks and validation cost review | Validation/test-tax route. |
-| `#4324`, `#4369`-`#4373` | ADR mini-sprint and candidate ADR reviews | Release-tail architecture decision route; owned by WP-02 release-tail cleanup and checked again before v0.92 handoff. |
+| `#4324`, `#4369`-`#4376`, `#4378` | ADR mini-sprint, candidate ADR reviews, and tooling remediation | `#4324` and `#4369`-`#4376` are closed inputs; open `#4378` must be completed, blocked, deferred, or routed by WP-02 before v0.92 handoff. |
 | `#4329` | Per-issue execution metrics foundation | Required for time/token prediction and issue baselines. |
 | `#4331` | First-class nested goal accounting | Closed input that must be consumed by goal-state and SOR metrics planning. |
 | `#4332` | VPP and PVF lane-template mini-sprint | Required validation-planning sprint; should follow template substrate as needed. |
@@ -107,13 +108,17 @@ Local `.adl/docs/TBD/` files are ignored planning inputs, not tracked proof. The
 | SEP/VPP/PVF and template-version work | Sprint execution, validation planning, and time/token accounting must be predictable. | Early process/tooling sprint. |
 | Goal state, nested goals, time/token/resource metrics | v0.92 needs continuity and issue/sprint accounting. | Early process/runtime bridge. |
 | Cognitive scheduler and local-agent acceleration | Premium cognition is now a bottleneck; local/deepseek/hosted agent suitability must route work. | Early scheduler/provider sprint. |
+| Capability envelope and capability-testing boundary | v0.92 memory/identity/birthday evidence depends on knowing what capability envelope, witnesses/receipt, and Aptitude Atlas evidence may or may not claim. | Scheduler/provider and handoff bridge. |
 | Build throughput and validation cost | C-SDLC speed is limited by build/validation tail. | Parallel validation/build sprint. |
-| Runtime Soak #2 / fire-up | v0.92 birthday needs runtime confidence, not just docs. | Runtime sprint after substrate readiness. |
+| Runtime integration / Soak #2 / fire-up | v0.92 birthday needs one assembled runtime path, not disconnected components or docs-only confidence. | Runtime sprint after substrate readiness. |
+| Runtime architecture diet | Integration will expose bloat, seams, duplicate abstractions, and premature surfaces that should be routed without blocking the first assembled runtime proof. | Runtime sprint output plus bounded follow-on route. |
 | Observatory and demo readiness | First birthday evidence needs visible runtime/workflow surfaces. | Demo/runtime visibility sprint. |
 | Curiosity and constructability | Major conceptual bridge surfaces need proof expectations before public consumption. | Bridge feature sprint. |
 | Reasoning graph / loops / `adl.skill.v1` | Skills, prompts, traces, ObsMem, and runtime loops must have a bridge map. | Bridge feature sprint. |
 | Security, CAV, SSM, ACIP/A2A/protobuf | Activation cannot hide governance, protocol, or security residuals. | Security/protocol sprint. |
 | Affect, happiness, Godel mechanics, economics, guilds | Public claims need safe boundaries and future governance routes. | Boundary/decision sprint. |
+| CodeFriend, adapter v2, papers, and publication surfaces | Launch and birthday docs must not silently inherit product or publication commitments from later roadmap rows. | Boundary/decision and launch handoff sprint. |
+| GitHub convergence/control-plane tooling | Sprint execution should know whether octocrab/tooling convergence is complete, blocked, deferred, or routed before relying on it. | Process/tooling bridge. |
 | Launch/birthday planning | July launch and v0.92 birthday must align without scope explosion. | Closeout/handoff sprint. |
 
 ## Explicit Non-Claims
