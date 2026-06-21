@@ -1984,6 +1984,29 @@ fn finish_validation_profile_keeps_unity_observatory_scaffold_lane_issue_local()
 }
 
 #[test]
+fn finish_validation_profile_classifies_unity_observatory_contract_slice_as_small_binary_focused() {
+    let plan = select_finish_validation_plan_for_finish(
+        4032,
+        ".",
+        &[
+            "demos/v0.91.6/unity-observatory/Assets/Resources/observatory_contract.json"
+                .to_string(),
+            "demos/v0.91.6/unity-observatory/Assets/Scripts/UnityObservatoryBootstrap.cs"
+                .to_string(),
+            "adl/src/csm_observatory.rs".to_string(),
+        ],
+    )
+    .expect("unity observatory contract plan");
+
+    assert_eq!(plan.mode, FinishValidationMode::SmallBinaryFocused);
+    assert!(plan
+        .commands
+        .contains(&"bash adl/tools/test_v0916_unity_observatory_contract.sh".to_string()));
+    assert!(plan.commands.iter().any(|command| command
+        .contains("csm_observatory_cli_writes_unity_contract_bundle_and_matches_seeded_resource")));
+}
+
+#[test]
 fn finish_validation_profile_classifies_sprint_shell_helper_tests_as_small_binary_focused() {
     let plan = select_finish_validation_plan_for_finish(
         1153,

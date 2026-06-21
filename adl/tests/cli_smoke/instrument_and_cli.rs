@@ -130,6 +130,42 @@ fn csm_observatory_cli_writes_fixture_backed_bundle() {
 }
 
 #[test]
+fn csm_observatory_cli_writes_unity_contract_bundle_and_matches_seeded_resource() {
+    let out_dir = unique_test_temp_dir("csm-observatory-unity-contract");
+    let packet = fixture_path(
+        "../demos/fixtures/csm_observatory/proto-csm-02-governed-observatory-packet.json",
+    );
+    let out = run_adl(&[
+        "csm",
+        "observatory",
+        "--packet",
+        packet.to_str().unwrap(),
+        "--format",
+        "bundle",
+        "--out",
+        out_dir.to_str().unwrap(),
+    ]);
+    assert!(
+        out.status.success(),
+        "stdout:\n{}\nstderr:\n{}",
+        String::from_utf8_lossy(&out.stdout),
+        String::from_utf8_lossy(&out.stderr)
+    );
+
+    let generated = fs::read_to_string(out_dir.join("unity_observatory_contract.json")).unwrap();
+    let seeded = fs::read_to_string(fixture_path(
+        "../demos/v0.91.6/unity-observatory/Assets/Resources/observatory_contract.json",
+    ))
+    .unwrap();
+    let generated_json: serde_json::Value = serde_json::from_str(&generated).unwrap();
+    let seeded_json: serde_json::Value = serde_json::from_str(&seeded).unwrap();
+    assert_eq!(generated_json, seeded_json);
+
+    let manifest = fs::read_to_string(out_dir.join("demo_manifest.json")).unwrap();
+    assert!(manifest.contains("unity_observatory_contract.json"));
+}
+
+#[test]
 fn csm_observatory_cli_fails_safely_on_missing_packet() {
     let out = run_adl(&[
         "csm",

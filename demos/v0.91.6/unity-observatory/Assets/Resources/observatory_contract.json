@@ -1,0 +1,87 @@
+{
+  "schema": "adl.unity_observatory_contract.v1",
+  "contract_id": "unity-observatory-contract-csm-observatory-fixture-proto-csm-02",
+  "packet_schema": "adl.csm_visibility_packet.v1",
+  "source_packet_ref": "demos/fixtures/csm_observatory/proto-csm-02-governed-observatory-packet.json",
+  "runtime_artifact_root": "adl/tests/fixtures/runtime_v2/observatory",
+  "claim_boundary": "Fixture-backed governed Observatory prototype. This is not a live Runtime v2 capture and it does not grant direct mutation authority.",
+  "evidence_level": "fixture_backed",
+  "manifold": {
+    "display_name": "Prototype CSM 02",
+    "state": "running",
+    "health_summary": "Bounded polis state is inspectable, trace-backed, and still explicitly governed.",
+    "current_tick": 14
+  },
+  "summary": {
+    "citizen_count": 3,
+    "episode_count": 2,
+    "default_room_label": "World / Reality",
+    "default_lens_label": "Operator lens",
+    "proposal_mode_statement": "Every active-looking control is a governed request proposal only. No direct runtime mutation is performed from this surface."
+  },
+  "freedom_gate": {
+    "allow_count": 1,
+    "defer_count": 1,
+    "refuse_count": 1
+  },
+  "review": {
+    "demo_classification": "fixture_backed",
+    "operator_report_ref": "runtime_v2/observatory/operator_report.md",
+    "primary_artifacts": [
+      "runtime_v2/observatory/visibility_packet.json",
+      "runtime_v2/observatory/operator_report.md",
+      "docs/milestones/v0.90.3/OBSERVATORY_UI_ARCHITECTURE_v0.90.3.md"
+    ],
+    "caveats": [
+      "This is not a live mutation console.",
+      "Corporate Investor mode does not change evidence, authority, or trace boundaries."
+    ]
+  },
+  "rooms": [
+    {
+      "room_id": "world",
+      "label": "World / Reality",
+      "question": "What exists, where is it, and what is moving?",
+      "note": "Default inhabited polis view."
+    },
+    {
+      "room_id": "governance",
+      "label": "Operator / Governance",
+      "question": "What decision, policy, or challenge needs judgment?",
+      "note": "Freedom Gate docket and disabled reasons live here."
+    },
+    {
+      "room_id": "cognition",
+      "label": "Cognition / Internal State",
+      "question": "What coupling or degradation is visible without overclaiming?",
+      "note": "Still bounded to implemented evidence only."
+    }
+  ],
+  "lenses": [
+    {
+      "lens_id": "public",
+      "label": "Public lens",
+      "summary": "Boardroom-safe projection with heavy redaction."
+    },
+    {
+      "lens_id": "operator",
+      "label": "Operator lens",
+      "summary": "Operational state, disabled reasons, and review links."
+    },
+    {
+      "lens_id": "reviewer",
+      "label": "Reviewer lens",
+      "summary": "Proof surfaces and caveats."
+    },
+    {
+      "lens_id": "continuity",
+      "label": "Continuity lens",
+      "summary": "Worldline, wake proof, and standing evidence."
+    },
+    {
+      "lens_id": "quarantine",
+      "label": "Quarantine lens",
+      "summary": "Challenge and protected-boundary states."
+    }
+  ]
+}

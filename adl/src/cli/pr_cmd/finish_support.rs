@@ -1665,6 +1665,11 @@ pub(super) fn select_finish_validation_plan_for_finish(
             changed_paths,
         ));
     }
+    if finish_issue_needs_unity_observatory_contract_validation(issue_number, changed_paths) {
+        return Ok(build_unity_observatory_contract_validation_plan(
+            changed_paths,
+        ));
+    }
     let finish_profile = load_finish_validation_profile(&repo_root()?, changed_paths)?;
     if let Some(plan) = profile_backed_finish_validation_plan(&finish_profile) {
         return Ok(plan);
@@ -1728,6 +1733,51 @@ fn build_unity_observatory_scaffold_validation_plan(
             &mut commands,
             "cargo fmt --manifest-path adl/Cargo.toml --all --check",
         );
+        push_finish_validation_command(
+            &mut commands,
+            "cargo test --manifest-path adl/Cargo.toml --bin adl-pr-finish cli::pr_cmd::tests::finish::arg_render::finish_validation",
+        );
+        push_finish_validation_command(
+            &mut commands,
+            "cargo test --manifest-path adl/Cargo.toml --bin adl-pr-finish cli::pr_cmd::tests::finish::arg_render::finish_helper_paths_run_focused_local_ci_gated_validation",
+        );
+    }
+    FinishValidationPlan {
+        mode: FinishValidationMode::SmallBinaryFocused,
+        commands,
+    }
+}
+
+fn finish_issue_needs_unity_observatory_contract_validation(
+    issue_number: u32,
+    changed_paths: &[String],
+) -> bool {
+    issue_number == 4032
+        && !changed_paths.is_empty()
+        && changed_paths.iter().all(|path| {
+            let trimmed = path.trim().trim_matches('/');
+            finish_path_is_docs_only(trimmed)
+                || finish_path_is_small_binary_focused(trimmed)
+                || finish_path_is_larger_binary_focused(trimmed)
+                || parsed_issue_is_4032_unity_observatory_contract_path(issue_number, trimmed)
+        })
+}
+
+fn build_unity_observatory_contract_validation_plan(
+    changed_paths: &[String],
+) -> FinishValidationPlan {
+    let mut commands = vec![
+        "bash adl/tools/check_no_tracked_adl_issue_record_residue.sh".to_string(),
+        "git diff --check".to_string(),
+        "bash adl/tools/test_v0916_unity_observatory_contract.sh".to_string(),
+        "cargo fmt --manifest-path adl/Cargo.toml --all --check".to_string(),
+        "cargo test --manifest-path adl/Cargo.toml --test cli_smoke csm_observatory_cli_writes_unity_contract_bundle_and_matches_seeded_resource -- --nocapture".to_string(),
+        "cargo test --manifest-path adl/Cargo.toml --bin adl-pr-finish cli::pr_cmd::tests::finish::arg_render::finish_validation_profile_classifies_unity_observatory_contract_slice_as_small_binary_focused -- --nocapture".to_string(),
+    ];
+    if changed_paths
+        .iter()
+        .any(|path| finish_path_needs_pr_finish_rust_focused_validation(path))
+    {
         push_finish_validation_command(
             &mut commands,
             "cargo test --manifest-path adl/Cargo.toml --bin adl-pr-finish cli::pr_cmd::tests::finish::arg_render::finish_validation",
@@ -1813,6 +1863,7 @@ fn finish_path_is_small_binary_focused(path: &str) -> bool {
             | "adl/tools/test_install_adl_operational_skills.sh"
             | "adl/tools/test_sprint_conductor_helpers.sh"
             | "adl/tools/test_v0916_unity_observatory_baseline.sh"
+            | "adl/tools/test_v0916_unity_observatory_contract.sh"
     ) || finish_path_needs_pr_finish_rust_focused_validation(trimmed)
 }
 
@@ -2478,6 +2529,28 @@ fn finish_path_needs_unity_observatory_baseline_validation(issue: u32, path: &st
         || parsed_issue_is_4031_unity_observatory_scaffold_path(issue, trimmed)
 }
 
+fn parsed_issue_is_4032_unity_observatory_contract_path(issue: u32, path: &str) -> bool {
+    if issue != 4032 {
+        return false;
+    }
+    let trimmed = path.trim().trim_matches('/');
+    matches!(
+        trimmed,
+        "demos/v0.91.6/unity-observatory/README.md"
+            | "demos/v0.91.6/unity-observatory/PROOF_PACKET.md"
+            | "demos/v0.91.6/unity-observatory/Assets/Resources.meta"
+            | "demos/v0.91.6/unity-observatory/Assets/Resources/observatory_contract.json"
+            | "demos/v0.91.6/unity-observatory/Assets/Resources/observatory_contract.json.meta"
+            | "demos/v0.91.6/unity-observatory/Assets/Scripts/UnityObservatoryBootstrap.cs"
+            | "demos/v0.91.6/unity-observatory/Assets/Scripts/UnityObservatoryShellController.cs"
+            | "demos/v0.91.6/unity-observatory/Assets/UI/ObservatoryShell.uxml"
+            | "adl/src/csm_observatory.rs"
+            | "adl/tests/cli_smoke/instrument_and_cli.rs"
+            | "adl/tools/test_v0916_unity_observatory_baseline.sh"
+            | "adl/tools/test_v0916_unity_observatory_contract.sh"
+    )
+}
+
 fn finish_path_needs_small_binary_delegation_validation(path: &str) -> bool {
     let trimmed = path.trim().trim_matches('/');
     matches!(trimmed, "adl/tools/test_pr_small_binary_delegation.sh")
@@ -2867,6 +2940,34 @@ pub(super) fn run_finish_validation_rust(
                         ],
                     )?;
                 }
+                "cargo test --manifest-path adl/Cargo.toml --test cli_smoke csm_observatory_cli_writes_unity_contract_bundle_and_matches_seeded_resource -- --nocapture" => {
+                    run_finish_validation_status(
+                        "cargo",
+                        &[
+                            "test",
+                            "--manifest-path",
+                            path_str(&manifest)?,
+                            "--test",
+                            "cli_smoke",
+                            "csm_observatory_cli_writes_unity_contract_bundle_and_matches_seeded_resource",
+                            "--",
+                            "--nocapture",
+                        ],
+                    )?;
+                }
+                "cargo test --manifest-path adl/Cargo.toml unity_observatory_contract_ -- --nocapture" => {
+                    run_finish_validation_status(
+                        "cargo",
+                        &[
+                            "test",
+                            "--manifest-path",
+                            path_str(&manifest)?,
+                            "unity_observatory_contract_",
+                            "--",
+                            "--nocapture",
+                        ],
+                    )?;
+                }
                 "cargo test --manifest-path adl/Cargo.toml --bin adl-pr-finish cli::pr_cmd::tests::finish::arg_render::finish_validation" => {
                     run_finish_validation_status(
                         "cargo",
@@ -2877,6 +2978,21 @@ pub(super) fn run_finish_validation_rust(
                             "--bin",
                             "adl-pr-finish",
                             "cli::pr_cmd::tests::finish::arg_render::finish_validation",
+                        ],
+                    )?;
+                }
+                "cargo test --manifest-path adl/Cargo.toml --bin adl-pr-finish cli::pr_cmd::tests::finish::arg_render::finish_validation_profile_classifies_unity_observatory_contract_slice_as_small_binary_focused -- --nocapture" => {
+                    run_finish_validation_status(
+                        "cargo",
+                        &[
+                            "test",
+                            "--manifest-path",
+                            path_str(&manifest)?,
+                            "--bin",
+                            "adl-pr-finish",
+                            "cli::pr_cmd::tests::finish::arg_render::finish_validation_profile_classifies_unity_observatory_contract_slice_as_small_binary_focused",
+                            "--",
+                            "--nocapture",
                         ],
                     )?;
                 }
@@ -3062,6 +3178,10 @@ pub(super) fn run_finish_validation_rust(
                 }
                 "bash adl/tools/test_v0916_unity_observatory_baseline.sh" => {
                     let script = repo_root.join("adl/tools/test_v0916_unity_observatory_baseline.sh");
+                    run_finish_validation_status("bash", &[path_str(&script)?])?;
+                }
+                "bash adl/tools/test_v0916_unity_observatory_contract.sh" => {
+                    let script = repo_root.join("adl/tools/test_v0916_unity_observatory_contract.sh");
                     run_finish_validation_status("bash", &[path_str(&script)?])?;
                 }
                 "bash adl/tools/test_slow_proof_lane_contract.sh" => {
