@@ -1466,6 +1466,12 @@ pub(super) fn select_finish_validation_plan(paths_csv: &str) -> Result<FinishVal
         }
         if paths
             .iter()
+            .any(|path| finish_path_needs_unity_observatory_baseline_validation(0, path))
+        {
+            commands.push("bash adl/tools/test_v0916_unity_observatory_baseline.sh".to_string());
+        }
+        if paths
+            .iter()
             .any(|path| finish_path_needs_small_binary_delegation_validation(path))
         {
             commands.push("bash adl/tools/test_pr_small_binary_delegation.sh".to_string());
@@ -1651,6 +1657,11 @@ pub(super) fn select_finish_validation_plan_for_finish(
     if finish_issue_needs_locked_cargo_fallback_validation(issue_number, changed_paths) {
         return Ok(build_locked_cargo_fallback_validation_plan());
     }
+    if finish_issue_needs_unity_observatory_scaffold_validation(issue_number, changed_paths) {
+        return Ok(build_unity_observatory_scaffold_validation_plan(
+            changed_paths,
+        ));
+    }
     let finish_profile = load_finish_validation_profile(&repo_root()?, changed_paths)?;
     if let Some(plan) = profile_backed_finish_validation_plan(&finish_profile) {
         return Ok(plan);
@@ -1681,6 +1692,52 @@ fn profile_backed_finish_validation_plan(
         mode: FinishValidationMode::DocsOnly,
         commands,
     })
+}
+
+fn finish_issue_needs_unity_observatory_scaffold_validation(
+    issue_number: u32,
+    changed_paths: &[String],
+) -> bool {
+    issue_number == 4031
+        && !changed_paths.is_empty()
+        && changed_paths.iter().all(|path| {
+            let trimmed = path.trim().trim_matches('/');
+            finish_path_is_docs_only(trimmed)
+                || finish_path_is_small_binary_focused(trimmed)
+                || finish_path_is_larger_binary_focused(trimmed)
+                || parsed_issue_is_4031_unity_observatory_scaffold_path(issue_number, trimmed)
+        })
+}
+
+fn build_unity_observatory_scaffold_validation_plan(
+    changed_paths: &[String],
+) -> FinishValidationPlan {
+    let mut commands = vec![
+        "bash adl/tools/check_no_tracked_adl_issue_record_residue.sh".to_string(),
+        "git diff --check".to_string(),
+        "bash adl/tools/test_v0916_unity_observatory_baseline.sh".to_string(),
+    ];
+    if changed_paths
+        .iter()
+        .any(|path| finish_path_needs_pr_finish_rust_focused_validation(path))
+    {
+        push_finish_validation_command(
+            &mut commands,
+            "cargo fmt --manifest-path adl/Cargo.toml --all --check",
+        );
+        push_finish_validation_command(
+            &mut commands,
+            "cargo test --manifest-path adl/Cargo.toml --bin adl-pr-finish cli::pr_cmd::tests::finish::arg_render::finish_validation",
+        );
+        push_finish_validation_command(
+            &mut commands,
+            "cargo test --manifest-path adl/Cargo.toml --bin adl-pr-finish cli::pr_cmd::tests::finish::arg_render::finish_helper_paths_run_focused_local_ci_gated_validation",
+        );
+    }
+    FinishValidationPlan {
+        mode: FinishValidationMode::SmallBinaryFocused,
+        commands,
+    }
 }
 
 fn finish_path_is_docs_only(path: &str) -> bool {
@@ -2325,6 +2382,38 @@ fn finish_path_needs_validation_inventory_focused_validation(path: &str) -> bool
     )
 }
 
+fn parsed_issue_is_4031_unity_observatory_scaffold_path(issue: u32, path: &str) -> bool {
+    if issue != 4031 {
+        return false;
+    }
+    let trimmed = path.trim().trim_matches('/');
+    matches!(
+        trimmed,
+        "demos/v0.91.6/unity-observatory/PROOF_PACKET.md"
+            | "demos/v0.91.6/unity-observatory/Assets/Scenes/UnityObservatory.unity"
+            | "demos/v0.91.6/unity-observatory/Assets/Scenes/UnityObservatory.unity.meta"
+            | "demos/v0.91.6/unity-observatory/Assets/Scripts/UnityObservatoryBootstrap.cs"
+            | "demos/v0.91.6/unity-observatory/Assets/Scripts/UnityObservatoryBootstrap.cs.meta"
+            | "demos/v0.91.6/unity-observatory/Assets/Scripts/UnityObservatoryShellController.cs"
+            | "demos/v0.91.6/unity-observatory/Assets/Scripts/UnityObservatoryShellController.cs.meta"
+            | "demos/v0.91.6/unity-observatory/Assets/UI/ObservatoryShell.uxml"
+            | "demos/v0.91.6/unity-observatory/Assets/UI/ObservatoryShell.uxml.meta"
+            | "demos/v0.91.6/unity-observatory/Assets/UI/ObservatoryShell.uss"
+            | "demos/v0.91.6/unity-observatory/Assets/UI/ObservatoryShell.uss.meta"
+            | "demos/v0.91.6/unity-observatory/Packages/manifest.json"
+            | "demos/v0.91.6/unity-observatory/ProjectSettings/EditorBuildSettings.asset"
+            | "demos/v0.91.6/unity-observatory/ProjectSettings/ProjectVersion.txt"
+    )
+}
+
+fn finish_path_needs_unity_observatory_baseline_validation(issue: u32, path: &str) -> bool {
+    let trimmed = path.trim().trim_matches('/');
+    trimmed == "adl/tools/test_v0916_unity_observatory_baseline.sh"
+        || trimmed == "demos/v0.91.6/unity-observatory/README.md"
+        || trimmed == "demos/v0.91.6/unity-observatory/PROOF_PACKET.md"
+        || parsed_issue_is_4031_unity_observatory_scaffold_path(issue, trimmed)
+}
+
 fn finish_path_needs_small_binary_delegation_validation(path: &str) -> bool {
     let trimmed = path.trim().trim_matches('/');
     matches!(trimmed, "adl/tools/test_pr_small_binary_delegation.sh")
@@ -2874,6 +2963,10 @@ pub(super) fn run_finish_validation_rust(
                 }
                 "bash adl/tools/test_validation_inventory.sh" => {
                     let script = repo_root.join("adl/tools/test_validation_inventory.sh");
+                    run_finish_validation_status("bash", &[path_str(&script)?])?;
+                }
+                "bash adl/tools/test_v0916_unity_observatory_baseline.sh" => {
+                    let script = repo_root.join("adl/tools/test_v0916_unity_observatory_baseline.sh");
                     run_finish_validation_status("bash", &[path_str(&script)?])?;
                 }
                 "bash adl/tools/test_slow_proof_lane_contract.sh" => {

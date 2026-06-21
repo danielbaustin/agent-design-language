@@ -1,0 +1,51 @@
+<ui:UXML xmlns:ui="UnityEngine.UIElements" xmlns:uie="UnityEditor.UIElements">
+  <ui:VisualElement class="observatory-screen">
+    <ui:VisualElement class="observatory-shell">
+      <ui:VisualElement class="header">
+        <ui:Label name="title" text="Unity Observatory" />
+        <ui:Label name="subtitle" text="Launch-baseline governed shell" />
+      </ui:VisualElement>
+      <ui:VisualElement class="body">
+        <ui:VisualElement class="navigation">
+          <ui:Label text="Observatory" />
+          <ui:Label text="Citizens" />
+          <ui:Label text="Contracts" />
+          <ui:Label text="C-SDLC" />
+          <ui:Label text="Traces" />
+          <ui:Label text="Reviews" />
+        </ui:VisualElement>
+        <ui:VisualElement class="content">
+          <ui:VisualElement class="card">
+            <ui:Label name="summary-title" text="Baseline summary" />
+            <ui:Label name="citizen-count" text="Citizens: 3" />
+            <ui:Label name="episode-count" text="Episodes: 2" />
+            <ui:Label name="default-room" text="Default room: World / Reality" />
+            <ui:Label name="default-lens" text="Default lens: Operator lens" />
+          </ui:VisualElement>
+          <ui:VisualElement class="card">
+            <ui:Label name="boundary-title" text="Governed boundary" />
+            <ui:Label
+              name="boundary-body"
+              text="This surface proposes reviewable observatory navigation only. No direct runtime mutation is performed here." />
+            <ui:Label
+              name="boundary-followon"
+              text="Packet parsing, inhabitant readiness, and observability/security closure remain issue-owned follow-on work." />
+          </ui:VisualElement>
+          <ui:VisualElement class="card">
+            <ui:Label name="packet-title" text="Packet contract" />
+            <ui:Label name="packet-schema" text="adl.csm_visibility_packet.v1" />
+            <ui:Label
+              name="packet-ref"
+              text="demos/fixtures/csm_observatory/proto-csm-02-governed-observatory-packet.json" />
+            <ui:Label
+              name="packet-note"
+              text="This launch baseline shows the bounded ingress seam that #4032 will deepen into a real Unity-facing loader." />
+          </ui:VisualElement>
+        </ui:VisualElement>
+      </ui:VisualElement>
+      <ui:VisualElement class="footer">
+        <ui:Label text="Deterministic launch-baseline scaffold for WP-09 O-01." />
+      </ui:VisualElement>
+    </ui:VisualElement>
+  </ui:VisualElement>
+</ui:UXML>

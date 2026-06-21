@@ -1946,6 +1946,44 @@ fn finish_validation_profile_classifies_unity_observatory_guardrail_script_as_sm
 }
 
 #[test]
+fn finish_validation_profile_classifies_unity_observatory_scaffold_slice_as_small_binary_focused() {
+    let plan = select_finish_validation_plan_for_finish(
+        4031,
+        ".",
+        &[
+            "demos/v0.91.6/unity-observatory/Assets/Scenes/UnityObservatory.unity".to_string(),
+            "demos/v0.91.6/unity-observatory/Assets/Scripts/UnityObservatoryBootstrap.cs"
+                .to_string(),
+            "demos/v0.91.6/unity-observatory/PROOF_PACKET.md".to_string(),
+        ],
+    )
+    .expect("unity observatory scaffold plan");
+
+    assert_eq!(plan.mode, FinishValidationMode::SmallBinaryFocused);
+    assert!(plan
+        .commands
+        .contains(&"bash adl/tools/check_no_tracked_adl_issue_record_residue.sh".to_string()));
+    assert!(plan.commands.contains(&"git diff --check".to_string()));
+    assert!(plan
+        .commands
+        .contains(&"bash adl/tools/test_v0916_unity_observatory_baseline.sh".to_string()));
+}
+
+#[test]
+fn finish_validation_profile_keeps_unity_observatory_scaffold_lane_issue_local() {
+    let err = select_finish_validation_plan_for_finish(
+        4032,
+        ".",
+        &["demos/v0.91.6/unity-observatory/Assets/Scenes/UnityObservatory.unity".to_string()],
+    )
+    .expect_err("future observatory issue should fail closed until it declares its own lane");
+
+    assert!(err
+        .to_string()
+        .contains("not classified into docs-only, small-binary focused, or larger-binary focused"));
+}
+
+#[test]
 fn finish_validation_profile_classifies_sprint_shell_helper_tests_as_small_binary_focused() {
     let plan = select_finish_validation_plan_for_finish(
         1153,
