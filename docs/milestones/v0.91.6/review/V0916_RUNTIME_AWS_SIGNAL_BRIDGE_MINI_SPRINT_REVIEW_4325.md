@@ -35,9 +35,9 @@ The sprint achieved the intended design-first split:
 
 ## Findings
 
-No retained P1/P2 findings remain for this closed sprint.
+No retained sprint-review findings remain.
 
-P3 residual:
+Residual risk:
 
 - The closeout packet was authored while the umbrella issue was still open.
   Live issue state now shows `#4325` closed. This review packet supplies the
