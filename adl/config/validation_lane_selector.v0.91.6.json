@@ -267,13 +267,17 @@
         "local_polis_ssm_wrapper"
       ],
       "path_selectors": [
-        "adl/tools/polis_status_for_ssm.sh"
+        "adl/tools/polis_status_for_ssm.sh",
+        "adl/tools/polis_status_for_ssm_qts.sh",
+        "adl/tools/validate_polis_status_for_ssm_qts.py"
       ],
       "path_hints": [
-        "adl/tools/polis_status_for_ssm.sh"
+        "adl/tools/polis_status_for_ssm.sh",
+        "adl/tools/polis_status_for_ssm_qts.sh",
+        "adl/tools/validate_polis_status_for_ssm_qts.py"
       ],
-      "command": "bash -n adl/tools/polis_status_for_ssm.sh",
-      "run_command": "bash -n adl/tools/polis_status_for_ssm.sh",
+      "command": "bash -n adl/tools/polis_status_for_ssm.sh && bash -n adl/tools/polis_status_for_ssm_qts.sh && python3 adl/tools/validate_polis_status_for_ssm_qts.py",
+      "run_command": "bash -n adl/tools/polis_status_for_ssm.sh && bash -n adl/tools/polis_status_for_ssm_qts.sh && python3 adl/tools/validate_polis_status_for_ssm_qts.py",
       "reason": "bounded_ssm_status_wrapper_requires_shell_syntax_validation"
     },
     {
