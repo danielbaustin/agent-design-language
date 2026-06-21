@@ -78,25 +78,86 @@ const PLACEHOLDERS: &[&str] = &[
     "initial_pvf_lane",
     "planned_pvf_lane",
     "planned_pvf_lane_source",
-    "estimated_elapsed_seconds",
-    "estimated_total_tokens",
-    "estimated_validation_seconds",
+    "expected_runtime_class",
+    "estimate_elapsed_seconds",
+    "estimate_total_tokens",
+    "estimate_validation_seconds",
     "estimate_confidence",
     "estimate_data_source",
     "estimate_source_ref",
     "final_pvf_lane",
     "lane_change_reason",
     "actual_elapsed_seconds",
+    "actual_active_work_seconds",
     "actual_total_tokens",
     "actual_validation_seconds",
+    "actual_pr_wait_seconds",
+    "actual_ci_wait_seconds",
     "actual_metrics_data_source",
     "actual_metrics_source_ref",
     "actual_metrics_confidence",
     "estimate_error_percent",
+    "completion_state",
     "variance_analysis_required",
     "variance_analysis_completed",
     "variance_category",
     "variance_note",
+    "execution_actor",
+    "model",
+    "provider",
+    "start_time",
+    "end_time",
+    "tracked_implementation_artifacts",
+    "additional_proof_artifacts",
+    "actions_taken_line_1",
+    "actions_taken_line_2",
+    "actions_taken_line_3",
+    "main_repo_paths_updated",
+    "worktree_only_paths_remaining",
+    "integration_state",
+    "verification_scope",
+    "integration_method_used",
+    "integration_verification_command",
+    "integration_verification_effect",
+    "integration_result",
+    "validation_command",
+    "validation_effect",
+    "validation_result",
+    "verification_validation_status",
+    "verification_check_1",
+    "verification_determinism_status",
+    "verification_replay_verified",
+    "verification_ordering_guarantees_verified",
+    "verification_security_privacy_status",
+    "verification_secrets_leakage_detected",
+    "verification_prompt_or_tool_arg_leakage_detected",
+    "verification_absolute_path_leakage_detected",
+    "verification_artifacts_status",
+    "verification_required_artifacts_present",
+    "verification_schema_changes_present",
+    "verification_schema_changes_approved",
+    "determinism_tests_executed",
+    "fixtures_or_scripts_used",
+    "replay_verification",
+    "ordering_guarantees",
+    "artifact_stability_notes",
+    "secret_leakage_scan_performed",
+    "prompt_tool_arg_redaction_verified",
+    "absolute_path_leakage_check",
+    "sandbox_policy_invariants_preserved",
+    "trace_bundle_paths",
+    "run_artifact_root",
+    "replay_command",
+    "replay_result",
+    "primary_proof_surface",
+    "required_artifacts_present",
+    "artifact_schema_checks",
+    "hash_byte_stability_checks",
+    "missing_optional_artifacts_rationale",
+    "decision_or_deviation_1",
+    "decision_or_deviation_2",
+    "follow_up_1",
+    "follow_up_2",
     "branch_action",
     "findings_status",
     "recommended_outcome",
@@ -646,9 +707,10 @@ fn extract_legacy_spp_values(rendered: &str) -> Result<(BTreeMap<String, String>
         ("initial_pvf_lane", "needs_planning_lane_assignment"),
         ("planned_pvf_lane", "needs_planning_lane_assignment"),
         ("planned_pvf_lane_source", "legacy_import_default"),
-        ("estimated_elapsed_seconds", "unknown"),
-        ("estimated_total_tokens", "unknown"),
-        ("estimated_validation_seconds", "unknown"),
+        ("expected_runtime_class", "unknown"),
+        ("estimate_elapsed_seconds", "unknown"),
+        ("estimate_total_tokens", "unknown"),
+        ("estimate_validation_seconds", "unknown"),
         ("estimate_confidence", "unknown"),
         ("estimate_data_source", "unknown"),
         ("estimate_source_ref", "unknown"),
@@ -750,16 +812,21 @@ fn extract_legacy_sor_values(rendered: &str) -> Result<(BTreeMap<String, String>
             "lane_change_reason",
             "Legacy rendered SOR predates explicit PVF lane tracking.",
         ),
-        ("estimated_elapsed_seconds", "unknown"),
+        ("expected_runtime_class", "unknown"),
+        ("estimate_elapsed_seconds", "unknown"),
         ("actual_elapsed_seconds", "unknown"),
-        ("estimated_total_tokens", "unknown"),
+        ("actual_active_work_seconds", "unknown"),
+        ("estimate_total_tokens", "unknown"),
         ("actual_total_tokens", "unknown"),
-        ("estimated_validation_seconds", "unknown"),
+        ("estimate_validation_seconds", "unknown"),
         ("actual_validation_seconds", "unknown"),
+        ("actual_pr_wait_seconds", "unknown"),
+        ("actual_ci_wait_seconds", "unknown"),
         ("actual_metrics_data_source", "unknown"),
         ("actual_metrics_source_ref", "unknown"),
         ("actual_metrics_confidence", "unknown"),
         ("estimate_error_percent", "unknown"),
+        ("completion_state", "unknown"),
         ("variance_analysis_required", "not_applicable"),
         ("variance_analysis_completed", "not_applicable"),
         ("variance_category", "not_applicable"),
@@ -1270,9 +1337,9 @@ fn valid_reference_value(value: &str) -> bool {
 
 fn validate_spp_values(card: &PromptCardForm, values: &BTreeMap<String, String>) -> Result<()> {
     for key in [
-        "estimated_elapsed_seconds",
-        "estimated_total_tokens",
-        "estimated_validation_seconds",
+        "estimate_elapsed_seconds",
+        "estimate_total_tokens",
+        "estimate_validation_seconds",
     ] {
         if let Some(value) = values.get(key) {
             validate_unknown_or_positive_int_value(&format!("{}.{}", card.key, key), value)?;
@@ -1314,12 +1381,15 @@ fn validate_spp_values(card: &PromptCardForm, values: &BTreeMap<String, String>)
 
 fn validate_sor_values(card: &PromptCardForm, values: &BTreeMap<String, String>) -> Result<()> {
     for key in [
-        "estimated_elapsed_seconds",
+        "estimate_elapsed_seconds",
         "actual_elapsed_seconds",
-        "estimated_total_tokens",
+        "actual_active_work_seconds",
+        "estimate_total_tokens",
         "actual_total_tokens",
-        "estimated_validation_seconds",
+        "estimate_validation_seconds",
         "actual_validation_seconds",
+        "actual_pr_wait_seconds",
+        "actual_ci_wait_seconds",
     ] {
         if let Some(value) = values.get(key) {
             validate_unknown_or_positive_int_value(&format!("{}.{}", card.key, key), value)?;
@@ -1378,7 +1448,7 @@ fn validate_sor_values(card: &PromptCardForm, values: &BTreeMap<String, String>)
     let any_known_pair_exceeds_threshold = [
         metric_pair_exceeds_variance_threshold(
             values
-                .get("estimated_elapsed_seconds")
+                .get("estimate_elapsed_seconds")
                 .map(String::as_str)
                 .unwrap_or("unknown"),
             values
@@ -1388,7 +1458,7 @@ fn validate_sor_values(card: &PromptCardForm, values: &BTreeMap<String, String>)
         ),
         metric_pair_exceeds_variance_threshold(
             values
-                .get("estimated_total_tokens")
+                .get("estimate_total_tokens")
                 .map(String::as_str)
                 .unwrap_or("unknown"),
             values
@@ -1398,7 +1468,7 @@ fn validate_sor_values(card: &PromptCardForm, values: &BTreeMap<String, String>)
         ),
         metric_pair_exceeds_variance_threshold(
             values
-                .get("estimated_validation_seconds")
+                .get("estimate_validation_seconds")
                 .map(String::as_str)
                 .unwrap_or("unknown"),
             values
@@ -1624,9 +1694,10 @@ pub fn sample_values() -> BTreeMap<String, String> {
         ("initial_pvf_lane", "prompt_template"),
         ("planned_pvf_lane", "prompt_template"),
         ("planned_pvf_lane_source", "matched_initial_issue_lane"),
-        ("estimated_elapsed_seconds", "unknown"),
-        ("estimated_total_tokens", "unknown"),
-        ("estimated_validation_seconds", "unknown"),
+        ("expected_runtime_class", "unknown"),
+        ("estimate_elapsed_seconds", "unknown"),
+        ("estimate_total_tokens", "unknown"),
+        ("estimate_validation_seconds", "unknown"),
         ("estimate_confidence", "unknown"),
         ("estimate_data_source", "unknown"),
         ("estimate_source_ref", "unknown"),
@@ -1636,18 +1707,165 @@ pub fn sample_values() -> BTreeMap<String, String> {
             "No lane change recorded in the generated sample.",
         ),
         ("actual_elapsed_seconds", "unknown"),
+        ("actual_active_work_seconds", "unknown"),
         ("actual_total_tokens", "unknown"),
         ("actual_validation_seconds", "unknown"),
+        ("actual_pr_wait_seconds", "unknown"),
+        ("actual_ci_wait_seconds", "unknown"),
         ("actual_metrics_data_source", "unknown"),
         ("actual_metrics_source_ref", "unknown"),
         ("actual_metrics_confidence", "unknown"),
         ("estimate_error_percent", "unknown"),
+        ("completion_state", "unknown"),
         ("variance_analysis_required", "not_applicable"),
         ("variance_analysis_completed", "not_applicable"),
         ("variance_category", "not_applicable"),
         (
             "variance_note",
             "No variance analysis is required in the generated sample.",
+        ),
+        ("execution_actor", "issue-wave bootstrap"),
+        ("model", "not_applicable"),
+        ("provider", "not_applicable"),
+        ("start_time", "2026-05-23T00:00:00Z"),
+        ("end_time", "2026-05-23T00:00:00Z"),
+        (
+            "tracked_implementation_artifacts",
+            "not_applicable until execution begins",
+        ),
+        (
+            "additional_proof_artifacts",
+            "not_applicable until execution begins",
+        ),
+        (
+            "actions_taken_line_1",
+            "Opened the local issue bundle and wrote a truthful pre-run output scaffold.",
+        ),
+        (
+            "actions_taken_line_2",
+            "Preserved pre-run branch truth in generated sample content.",
+        ),
+        (
+            "actions_taken_line_3",
+            "Deferred implementation, proof capture, and release integration to the execution lifecycle and PR publication.",
+        ),
+        ("main_repo_paths_updated", "none"),
+        (
+            "worktree_only_paths_remaining",
+            "no tracked implementation artifacts exist yet; execution-time proof surfaces will be established during implementation and PR publication",
+        ),
+        ("integration_state", "worktree_only"),
+        ("verification_scope", "main_repo"),
+        (
+            "integration_method_used",
+            "local ignored card-bundle scaffold write under the active checkout; tracked implementation artifacts do not exist yet",
+        ),
+        (
+            "integration_verification_command",
+            "`bash adl/tools/validate_structured_prompt.sh --type sor --phase bootstrap --input .adl/v0.91.3/tasks/issue-1374__csdlc-prompt-editor-sample/sor.md`",
+        ),
+        (
+            "integration_verification_effect",
+            "Verified bootstrap SOR contract compliance for the local pre-run scaffold.",
+        ),
+        ("integration_result", "PASS"),
+        (
+            "validation_command",
+            "`bash adl/tools/validate_structured_prompt.sh --type sor --phase bootstrap --input .adl/v0.91.3/tasks/issue-1374__csdlc-prompt-editor-sample/sor.md`",
+        ),
+        (
+            "validation_effect",
+            "Verified bootstrap SOR contract compliance for the local output scaffold.",
+        ),
+        ("validation_result", "PASS"),
+        ("verification_validation_status", "PASS"),
+        (
+            "verification_check_1",
+            "bash adl/tools/validate_structured_prompt.sh --type sor --phase bootstrap --input .adl/v0.91.3/tasks/issue-1374__csdlc-prompt-editor-sample/sor.md",
+        ),
+        ("verification_determinism_status", "NOT_RUN"),
+        ("verification_replay_verified", "unknown"),
+        ("verification_ordering_guarantees_verified", "unknown"),
+        ("verification_security_privacy_status", "PARTIAL"),
+        ("verification_secrets_leakage_detected", "false"),
+        (
+            "verification_prompt_or_tool_arg_leakage_detected",
+            "false",
+        ),
+        ("verification_absolute_path_leakage_detected", "false"),
+        ("verification_artifacts_status", "PASS"),
+        ("verification_required_artifacts_present", "true"),
+        ("verification_schema_changes_present", "false"),
+        ("verification_schema_changes_approved", "not_applicable"),
+        (
+            "determinism_tests_executed",
+            "not_run; bootstrap scaffold creation has not been replay-verified for this issue yet.",
+        ),
+        (
+            "fixtures_or_scripts_used",
+            "`adl/tools/pr.sh` issue-wave opening flow.",
+        ),
+        (
+            "replay_verification",
+            "not yet verified for this specific issue record.",
+        ),
+        (
+            "ordering_guarantees",
+            "not_applicable for a single-card bootstrap write.",
+        ),
+        (
+            "artifact_stability_notes",
+            "repository-relative paths only; execution-time proof artifacts are not expected yet.",
+        ),
+        (
+            "secret_leakage_scan_performed",
+            "limited content review only; no secrets were intentionally recorded in the scaffold.",
+        ),
+        (
+            "prompt_tool_arg_redaction_verified",
+            "not_applicable for bootstrap scaffold generation.",
+        ),
+        (
+            "absolute_path_leakage_check",
+            "repository-relative paths only in the scaffold.",
+        ),
+        (
+            "sandbox_policy_invariants_preserved",
+            "yes; local ignored issue-record path only.",
+        ),
+        ("trace_bundle_paths", "not_applicable until execution begins"),
+        ("run_artifact_root", "not_applicable until execution begins"),
+        ("replay_command", "not_run"),
+        ("replay_result", "NOT_RUN"),
+        (
+            "primary_proof_surface",
+            "this local pre-run SOR scaffold and its bootstrap validation result",
+        ),
+        (
+            "required_artifacts_present",
+            "local output card scaffold only; tracked implementation artifacts are not expected yet",
+        ),
+        ("artifact_schema_checks", "bootstrap SOR validator passed"),
+        ("hash_byte_stability_checks", "not_run"),
+        (
+            "missing_optional_artifacts_rationale",
+            "execution proofs, demos, and tracked outputs are intentionally absent before implementation begins",
+        ),
+        (
+            "decision_or_deviation_1",
+            "Issue-wave opening emits a truthful pre-run SOR scaffold instead of leaving raw template residue for later cleanup.",
+        ),
+        (
+            "decision_or_deviation_2",
+            "Integration state remains `worktree_only` until execution creates tracked artifacts or opens a PR.",
+        ),
+        (
+            "follow_up_1",
+            "Update this record during execution with actual actions, validations, proof surfaces, and integration truth.",
+        ),
+        (
+            "follow_up_2",
+            "Normalize this record to `pr_open`, `merged`, or `closed_no_pr` during finish/closeout as appropriate.",
         ),
         (
             "branch_action",
@@ -1917,19 +2135,25 @@ fn form_fields(kind: PromptCardKind) -> Vec<PromptField> {
                 "Why the planned PVF lane was kept or changed during planning.",
             ));
             fields.push(text(
-                "estimated_elapsed_seconds",
+                "expected_runtime_class",
+                "Expected Runtime Class",
+                true,
+                "Qualitative runtime posture for the issue, or `unknown`.",
+            ));
+            fields.push(text(
+                "estimate_elapsed_seconds",
                 "Estimated Elapsed Seconds",
                 true,
                 "Expected issue elapsed time in seconds, or `unknown`.",
             ));
             fields.push(text(
-                "estimated_total_tokens",
+                "estimate_total_tokens",
                 "Estimated Total Tokens",
                 true,
                 "Expected token consumption, or `unknown`.",
             ));
             fields.push(text(
-                "estimated_validation_seconds",
+                "estimate_validation_seconds",
                 "Estimated Validation Seconds",
                 true,
                 "Expected validation time in seconds, or `unknown`.",
@@ -2118,7 +2342,13 @@ fn form_fields(kind: PromptCardKind) -> Vec<PromptField> {
                 "Reason the final PVF lane changed or stayed the same.",
             ));
             fields.push(text(
-                "estimated_elapsed_seconds",
+                "expected_runtime_class",
+                "Expected Runtime Class",
+                true,
+                "Qualitative runtime posture planned for the issue, or `unknown`.",
+            ));
+            fields.push(text(
+                "estimate_elapsed_seconds",
                 "Estimated Elapsed Seconds",
                 true,
                 "Estimated issue elapsed time in seconds, or `unknown`.",
@@ -2130,7 +2360,13 @@ fn form_fields(kind: PromptCardKind) -> Vec<PromptField> {
                 "Measured issue elapsed time in seconds, or `unknown`.",
             ));
             fields.push(text(
-                "estimated_total_tokens",
+                "actual_active_work_seconds",
+                "Actual Active Work Seconds",
+                true,
+                "Measured active implementation time in seconds, or `unknown`.",
+            ));
+            fields.push(text(
+                "estimate_total_tokens",
                 "Estimated Total Tokens",
                 true,
                 "Estimated token consumption, or `unknown`.",
@@ -2142,7 +2378,7 @@ fn form_fields(kind: PromptCardKind) -> Vec<PromptField> {
                 "Measured token consumption, or `unknown`.",
             ));
             fields.push(text(
-                "estimated_validation_seconds",
+                "estimate_validation_seconds",
                 "Estimated Validation Seconds",
                 true,
                 "Estimated validation time in seconds, or `unknown`.",
@@ -2152,6 +2388,18 @@ fn form_fields(kind: PromptCardKind) -> Vec<PromptField> {
                 "Actual Validation Seconds",
                 true,
                 "Measured validation time in seconds, or `unknown`.",
+            ));
+            fields.push(text(
+                "actual_pr_wait_seconds",
+                "Actual PR Wait Seconds",
+                true,
+                "Measured PR wait time in seconds, or `unknown`.",
+            ));
+            fields.push(text(
+                "actual_ci_wait_seconds",
+                "Actual CI Wait Seconds",
+                true,
+                "Measured CI wait time in seconds, or `unknown`.",
             ));
             fields.push(select(
                 "actual_metrics_data_source",
@@ -2183,6 +2431,21 @@ fn form_fields(kind: PromptCardKind) -> Vec<PromptField> {
                 "Estimate Error Percent",
                 true,
                 "Difference between estimated and actual elapsed time, or `unknown`.",
+            ));
+            fields.push(select(
+                "completion_state",
+                "Completion State",
+                true,
+                "Truthful issue-local completion state.",
+                &[
+                    "completed",
+                    "completed_with_follow_on",
+                    "blocked",
+                    "failed",
+                    "deferred",
+                    "cancelled",
+                    "unknown",
+                ],
             ));
             fields.push(select(
                 "variance_analysis_required",

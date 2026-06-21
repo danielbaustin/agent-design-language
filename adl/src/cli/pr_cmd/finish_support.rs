@@ -1280,6 +1280,24 @@ pub(super) fn select_finish_validation_plan(paths_csv: &str) -> Result<FinishVal
         }
         if paths
             .iter()
+            .any(|path| finish_path_needs_issue_resource_telemetry_focused_validation(path))
+        {
+            mode = FinishValidationMode::LargerBinaryFocused;
+            push_finish_validation_command(
+                &mut commands,
+                "cargo fmt --manifest-path adl/Cargo.toml --all --check",
+            );
+            push_finish_validation_command(
+                &mut commands,
+                "cargo test --manifest-path adl/Cargo.toml issue_resource_telemetry -- --nocapture",
+            );
+            push_finish_validation_command(
+                &mut commands,
+                "cargo test --manifest-path adl/Cargo.toml tooling_cmd_dispatch_and_help_paths_cover_public_entrypoint -- --nocapture",
+            );
+        }
+        if paths
+            .iter()
             .any(|path| finish_path_needs_prompt_template_focused_validation(path))
         {
             mode = FinishValidationMode::LargerBinaryFocused;
@@ -1834,7 +1852,9 @@ fn finish_path_is_larger_binary_focused(path: &str) -> bool {
             | "docs/milestones/v0.91.5/LOCAL_VS_CI_VALIDATION_POLICY_3607.md"
             | "adl/src/cli/tooling_cmd.rs"
             | "adl/src/cli/tooling_cmd/common.rs"
+            | "adl/src/cli/tooling_cmd/markdown.rs"
             | "adl/src/cli/tooling_cmd/ci_log_archive.rs"
+            | "adl/src/cli/tooling_cmd/issue_resource_telemetry.rs"
             | "adl/src/cli/tooling_cmd/prompt_template.rs"
             | "adl/src/cli/tooling_cmd/structured_prompt.rs"
             | "adl/src/cli/tooling_cmd/tests/prompt_template.rs"
@@ -1936,6 +1956,16 @@ fn finish_path_needs_ci_log_archive_focused_validation(path: &str) -> bool {
         trimmed,
         "adl/src/cli/tooling_cmd.rs"
             | "adl/src/cli/tooling_cmd/ci_log_archive.rs"
+            | "adl/src/cli/tooling_cmd/tests/tooling_dispatch.rs"
+    )
+}
+
+fn finish_path_needs_issue_resource_telemetry_focused_validation(path: &str) -> bool {
+    let trimmed = path.trim().trim_matches('/');
+    matches!(
+        trimmed,
+        "adl/src/cli/tooling_cmd.rs"
+            | "adl/src/cli/tooling_cmd/issue_resource_telemetry.rs"
             | "adl/src/cli/tooling_cmd/tests/tooling_dispatch.rs"
     )
 }
@@ -2478,6 +2508,19 @@ pub(super) fn run_finish_validation_rust(
                             "--manifest-path",
                             path_str(&manifest)?,
                             "ci_log_archive",
+                            "--",
+                            "--nocapture",
+                        ],
+                    )?;
+                }
+                "cargo test --manifest-path adl/Cargo.toml issue_resource_telemetry -- --nocapture" => {
+                    run_finish_validation_status(
+                        "cargo",
+                        &[
+                            "test",
+                            "--manifest-path",
+                            path_str(&manifest)?,
+                            "issue_resource_telemetry",
                             "--",
                             "--nocapture",
                         ],
