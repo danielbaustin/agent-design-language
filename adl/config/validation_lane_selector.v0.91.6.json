@@ -140,6 +140,9 @@
       "path_selectors": [
         "adl/config/validation_lane_selector.v0.91.6.json",
         "adl/tools/ci_path_policy.sh",
+        "adl/tools/select_validation_lanes.py",
+        "adl/tools/test_select_validation_lanes.sh",
+        "adl/tools/validation_manager.py",
         "adl/tools/test_ci_path_policy.sh",
         "adl/tools/test_validation_manager.sh",
         ".github/workflows/**"
@@ -147,12 +150,15 @@
       "path_hints": [
         "adl/config/validation_lane_selector.v0.91.6.json",
         "adl/tools/ci_path_policy.sh",
+        "adl/tools/select_validation_lanes.py",
+        "adl/tools/test_select_validation_lanes.sh",
+        "adl/tools/validation_manager.py",
         "adl/tools/test_ci_path_policy.sh",
         "adl/tools/test_validation_manager.sh",
         ".github/workflows/**"
       ],
-      "command": "bash adl/tools/test_ci_path_policy.sh",
-      "run_command": "bash adl/tools/test_ci_path_policy.sh",
+      "command": "bash adl/tools/test_ci_path_policy.sh && bash adl/tools/test_select_validation_lanes.sh && bash adl/tools/test_validation_manager.sh",
+      "run_command": "bash adl/tools/test_ci_path_policy.sh && bash adl/tools/test_select_validation_lanes.sh && bash adl/tools/test_validation_manager.sh",
       "reason": "ci_policy_surface_requires_path_policy_contract_checks"
     },
     {
@@ -365,7 +371,17 @@
       ],
       "command": "git diff --check",
       "run_command": "git diff --check",
-      "reason": "docs_only_surface_requires_diff_hygiene"
+      "reason": "docs_only_surface_requires_diff_hygiene",
+      "vpp_record": {
+        "contract_version": "vpp.lane.v1",
+        "artifacts": [
+          "working_tree_diff_hygiene"
+        ],
+        "expected_runtime_class": "tiny",
+        "parallel_group": "docs_hygiene",
+        "cache_equivalence_group": "git_diff_check",
+        "failure_semantics": "fail_closed"
+      }
     }
   ],
   "special_surfaces": {
