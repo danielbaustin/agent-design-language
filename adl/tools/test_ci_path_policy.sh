@@ -87,6 +87,12 @@ jobs:
           files: adl/lcov.info
           flags: adl
 EOF
+  cat > .github/workflows/nightly-coverage-ratchet.yaml <<'EOF'
+name: nightly-coverage-ratchet
+
+on:
+  workflow_dispatch:
+EOF
   git add .
   git commit -q -m baseline
   base_sha="$(git rev-parse HEAD)"
@@ -401,15 +407,15 @@ EOF
   policy_surface_output="$("$POLICY" --event-name pull_request --base "$base_sha" --head "$policy_surface_head" --ref "refs/pull/1/merge")"
   assert_has "$policy_surface_output" "rust_required=false"
   assert_has "$policy_surface_output" "coverage_required=false"
-  assert_has "$policy_surface_output" "full_coverage_required=true"
+  assert_has "$policy_surface_output" "full_coverage_required=false"
   assert_has "$policy_surface_output" "demo_smoke_required=false"
   assert_has "$policy_surface_output" "v0913_proof_required=false"
   assert_has "$policy_surface_output" "release_version_only=false"
   assert_has "$policy_surface_output" "ci_contracts_required=true"
-  assert_has "$policy_surface_output" "coverage_lane=authoritative_full"
-  assert_has "$policy_surface_output" "coverage_authority=pr_policy_surface_tooling_only"
+  assert_has "$policy_surface_output" "coverage_lane=skip"
+  assert_has "$policy_surface_output" "coverage_authority=not_required"
   assert_has "$policy_surface_output" "proof_validation_scope=not_required"
-  assert_has "$policy_surface_output" "reason=coverage_policy_surface_change_runs_bounded_authoritative_coverage"
+  assert_has "$policy_surface_output" "reason=coverage_policy_surface_tooling_change_runs_contract_validation"
   assert_has "$policy_surface_output" "validation_profile_selected=validation_none"
   assert_has "$policy_surface_output" "validation_profile_status=escalation_required"
   assert_has "$policy_surface_output" "validation_profile_escalation_required=true"
@@ -429,12 +435,12 @@ EOF
   policy_surface_plus_demo_output="$("$POLICY" --event-name pull_request --base "$base_sha" --head "$policy_surface_plus_demo_head" --ref "refs/pull/1/merge")"
   assert_has "$policy_surface_plus_demo_output" "rust_required=false"
   assert_has "$policy_surface_plus_demo_output" "coverage_required=false"
-  assert_has "$policy_surface_plus_demo_output" "full_coverage_required=true"
+  assert_has "$policy_surface_plus_demo_output" "full_coverage_required=false"
   assert_has "$policy_surface_plus_demo_output" "demo_smoke_required=true"
   assert_has "$policy_surface_plus_demo_output" "ci_contracts_required=true"
-  assert_has "$policy_surface_plus_demo_output" "coverage_lane=authoritative_full"
-  assert_has "$policy_surface_plus_demo_output" "coverage_authority=pr_policy_surface_tooling_only"
-  assert_has "$policy_surface_plus_demo_output" "reason=coverage_policy_surface_change_runs_bounded_authoritative_coverage"
+  assert_has "$policy_surface_plus_demo_output" "coverage_lane=skip"
+  assert_has "$policy_surface_plus_demo_output" "coverage_authority=not_required"
+  assert_has "$policy_surface_plus_demo_output" "reason=coverage_policy_surface_tooling_change_runs_contract_validation"
 
   git checkout -q -b pvf-runner-policy-surface "$base_sha"
   mkdir -p adl/tools
@@ -540,12 +546,12 @@ PY
   workflow_policy_output="$("$POLICY" --event-name pull_request --base "$base_sha" --head "$workflow_policy_head" --ref "refs/pull/1/merge")"
   assert_has "$workflow_policy_output" "rust_required=false"
   assert_has "$workflow_policy_output" "coverage_required=false"
-  assert_has "$workflow_policy_output" "full_coverage_required=true"
+  assert_has "$workflow_policy_output" "full_coverage_required=false"
   assert_has "$workflow_policy_output" "demo_smoke_required=false"
   assert_has "$workflow_policy_output" "v0913_proof_required=false"
   assert_has "$workflow_policy_output" "ci_contracts_required=true"
-  assert_has "$workflow_policy_output" "coverage_lane=authoritative_full"
-  assert_has "$workflow_policy_output" "coverage_authority=pr_policy_surface_tooling_only"
+  assert_has "$workflow_policy_output" "coverage_lane=skip"
+  assert_has "$workflow_policy_output" "coverage_authority=not_required"
   assert_has "$workflow_policy_output" "proof_validation_scope=not_required"
 
   git checkout -q -b v0913-proof-surface "$base_sha"
@@ -564,7 +570,7 @@ PY
   assert_has "$v0913_proof_output" "ci_contracts_required=true"
   assert_has "$v0913_proof_output" "proof_validation_scope=v0_91_3"
   assert_has "$v0913_proof_output" "reason=v0913_proof_surface_change_runs_targeted_packet_validation"
-  assert_has "$workflow_policy_output" "reason=coverage_policy_surface_change_runs_bounded_authoritative_coverage"
+  assert_has "$workflow_policy_output" "reason=coverage_policy_surface_tooling_change_runs_contract_validation"
 
   git checkout -q -b v0913-feature-proof-surface "$base_sha"
   mkdir -p docs/milestones/v0.91.3/features docs/milestones/v0.91.3/review/evidence/csdlc/issues/issue-3201-card-lifecycle-demo
@@ -622,6 +628,208 @@ PY
   assert_has "$runtime_policy_surface_output" "coverage_lane=authoritative_full"
   assert_has "$runtime_policy_surface_output" "coverage_authority=pr_policy_surface_runtime_mixed"
   assert_has "$runtime_policy_surface_output" "reason=coverage_policy_surface_change_with_runtime_surface_runs_full_coverage"
+
+  git checkout -q -b workflow-summary-only-change "$base_sha"
+  python3 - <<'PY'
+from pathlib import Path
+
+workflow = Path(".github/workflows/ci.yaml")
+text = workflow.read_text()
+needle = "      - name: Determine PR fast coverage filters\n"
+if needle not in text:
+    raise SystemExit("expected coverage classifier insertion point missing")
+replacement = r"""      - name: Validation profile summary (adl-coverage)
+        run: |
+          {
+            echo "## ADL coverage validation profile"
+            echo
+            echo "| Field | Value |"
+            echo "|---|---|"
+            echo "| reason | \`${{ steps.path-policy.outputs.reason }}\` |"
+            echo "| selected profile | \`${{ steps.path-policy.outputs.validation_profile_selected }}\` |"
+            echo "| profile status | \`${{ steps.path-policy.outputs.validation_profile_status }}\` |"
+            echo "| coverage lane | \`${{ steps.path-policy.outputs.coverage_lane }}\` |"
+            echo "| coverage authority | \`${{ steps.path-policy.outputs.coverage_authority }}\` |"
+            echo "| profile run lanes | \`${{ steps.path-policy.outputs.validation_profile_run_lanes }}\` |"
+            echo "| escalation required | \`${{ steps.path-policy.outputs.validation_profile_escalation_required }}\` |"
+          } >> "$GITHUB_STEP_SUMMARY"
+        working-directory: .
+
+      - name: Determine PR fast coverage filters
+"""
+workflow.write_text(text.replace(needle, replacement, 1))
+PY
+  git add .github/workflows/ci.yaml
+  git commit -q -m workflow-summary-only-change
+  workflow_summary_only_head="$(git rev-parse HEAD)"
+
+  workflow_summary_only_output="$("$POLICY" --event-name pull_request --base "$base_sha" --head "$workflow_summary_only_head" --ref "refs/pull/1/merge")"
+  assert_has "$workflow_summary_only_output" "rust_required=false"
+  assert_has "$workflow_summary_only_output" "coverage_required=false"
+  assert_has "$workflow_summary_only_output" "full_coverage_required=false"
+  assert_has "$workflow_summary_only_output" "demo_smoke_required=false"
+  assert_has "$workflow_summary_only_output" "ci_contracts_required=true"
+  assert_has "$workflow_summary_only_output" "coverage_lane=skip"
+  assert_has "$workflow_summary_only_output" "coverage_authority=not_required"
+  assert_has "$workflow_summary_only_output" "reason=validation_profile_summary_workflow_change_skips_authoritative_coverage"
+
+  git checkout -q -b workflow-summary-plus-policy-change "$base_sha"
+  python3 - <<'PY'
+from pathlib import Path
+
+workflow = Path(".github/workflows/ci.yaml")
+text = workflow.read_text()
+needle = "      - name: Determine PR fast coverage filters\n"
+replacement = r"""      - name: Validation profile summary (adl-coverage)
+        run: |
+          {
+            echo "## ADL coverage validation profile"
+            echo
+            echo "| Field | Value |"
+            echo "|---|---|"
+            echo "| reason | \`${{ steps.path-policy.outputs.reason }}\` |"
+            echo "| selected profile | \`${{ steps.path-policy.outputs.validation_profile_selected }}\` |"
+            echo "| profile status | \`${{ steps.path-policy.outputs.validation_profile_status }}\` |"
+            echo "| coverage lane | \`${{ steps.path-policy.outputs.coverage_lane }}\` |"
+            echo "| coverage authority | \`${{ steps.path-policy.outputs.coverage_authority }}\` |"
+            echo "| profile run lanes | \`${{ steps.path-policy.outputs.validation_profile_run_lanes }}\` |"
+            echo "| escalation required | \`${{ steps.path-policy.outputs.validation_profile_escalation_required }}\` |"
+          } >> "$GITHUB_STEP_SUMMARY"
+        working-directory: .
+
+      - name: Determine PR fast coverage filters
+"""
+text = text.replace(needle, replacement, 1)
+text = text.replace("run: bash tools/run_authoritative_coverage_lane.sh", "run: bash tools/run_authoritative_coverage_lane.sh --strict", 1)
+workflow.write_text(text)
+PY
+  git add .github/workflows/ci.yaml
+  git commit -q -m workflow-summary-plus-policy-change
+  workflow_summary_plus_policy_head="$(git rev-parse HEAD)"
+
+  workflow_summary_plus_policy_output="$("$POLICY" --event-name pull_request --base "$base_sha" --head "$workflow_summary_plus_policy_head" --ref "refs/pull/1/merge")"
+  assert_has "$workflow_summary_plus_policy_output" "rust_required=false"
+  assert_has "$workflow_summary_plus_policy_output" "coverage_required=false"
+  assert_has "$workflow_summary_plus_policy_output" "full_coverage_required=false"
+  assert_has "$workflow_summary_plus_policy_output" "demo_smoke_required=false"
+  assert_has "$workflow_summary_plus_policy_output" "ci_contracts_required=true"
+  assert_has "$workflow_summary_plus_policy_output" "coverage_lane=skip"
+  assert_has "$workflow_summary_plus_policy_output" "coverage_authority=not_required"
+  assert_has "$workflow_summary_plus_policy_output" "reason=coverage_policy_surface_tooling_change_runs_contract_validation"
+
+  git checkout -q -b nightly-schedule-only-change "$base_sha"
+  python3 - <<'PY'
+from pathlib import Path
+
+nightly = Path(".github/workflows/nightly-coverage-ratchet.yaml")
+nightly.write_text(nightly.read_text() + '  schedule:\n    - cron: "43 11 * * *"\n')
+PY
+  git add .github/workflows/nightly-coverage-ratchet.yaml
+  git commit -q -m nightly-schedule-only-change
+  nightly_schedule_only_head="$(git rev-parse HEAD)"
+
+  nightly_schedule_only_output="$("$POLICY" --event-name pull_request --base "$base_sha" --head "$nightly_schedule_only_head" --ref "refs/pull/1/merge")"
+  assert_has "$nightly_schedule_only_output" "rust_required=false"
+  assert_has "$nightly_schedule_only_output" "coverage_required=false"
+  assert_has "$nightly_schedule_only_output" "full_coverage_required=false"
+  assert_has "$nightly_schedule_only_output" "demo_smoke_required=false"
+  assert_has "$nightly_schedule_only_output" "ci_contracts_required=true"
+  assert_has "$nightly_schedule_only_output" "coverage_lane=skip"
+  assert_has "$nightly_schedule_only_output" "coverage_authority=not_required"
+  assert_has "$nightly_schedule_only_output" "reason=nightly_coverage_schedule_only_change_skips_authoritative_coverage"
+
+  git checkout -q -b validation-summary-policy-bundle "$base_sha"
+  python3 - <<'PY'
+from pathlib import Path
+
+workflow = Path(".github/workflows/ci.yaml")
+text = workflow.read_text()
+needle = "      - name: Determine PR fast coverage filters\n"
+replacement = r"""      - name: Validation profile summary (adl-coverage)
+        run: |
+          {
+            echo "## ADL coverage validation profile"
+            echo
+            echo "| Field | Value |"
+            echo "|---|---|"
+            echo "| reason | \`${{ steps.path-policy.outputs.reason }}\` |"
+            echo "| selected profile | \`${{ steps.path-policy.outputs.validation_profile_selected }}\` |"
+            echo "| profile status | \`${{ steps.path-policy.outputs.validation_profile_status }}\` |"
+            echo "| coverage lane | \`${{ steps.path-policy.outputs.coverage_lane }}\` |"
+            echo "| coverage authority | \`${{ steps.path-policy.outputs.coverage_authority }}\` |"
+            echo "| profile run lanes | \`${{ steps.path-policy.outputs.validation_profile_run_lanes }}\` |"
+            echo "| escalation required | \`${{ steps.path-policy.outputs.validation_profile_escalation_required }}\` |"
+          } >> "$GITHUB_STEP_SUMMARY"
+        working-directory: .
+
+      - name: Determine PR fast coverage filters
+"""
+workflow.write_text(text.replace(needle, replacement, 1))
+workflow = Path(".github/workflows/ci.yaml")
+text = workflow.read_text()
+deferred = """      - name: Full workspace gate deferred for bounded authoritative PR
+        if: github.event_name == 'pull_request' && steps.path-policy.outputs.full_coverage_required == 'true'
+        run: |
+          echo "Workspace coverage gate and lcov artifact generation are deferred for pull requests."
+          echo "This PR ran the authoritative coverage pass plus changed-source coverage-impact validation."
+          echo "Full workspace coverage gating remains required on push-to-main, nightly ratchet, and non-PR fail-closed events."
+          echo "Policy reason: ${{ steps.path-policy.outputs.reason }}"
+          echo "Coverage lane: ${{ steps.path-policy.outputs.coverage_lane }}"
+          echo "Coverage authority: ${{ steps.path-policy.outputs.coverage_authority }}"
+
+"""
+if deferred in text:
+    text = text.replace(deferred, "", 1)
+workflow.write_text(text)
+
+nightly = Path(".github/workflows/nightly-coverage-ratchet.yaml")
+nightly.write_text(nightly.read_text() + '  schedule:\n    - cron: "43 11 * * *"\n')
+
+policy = Path("adl/tools/ci_path_policy.sh")
+policy.parent.mkdir(parents=True, exist_ok=True)
+policy.write_text(
+    "#!/usr/bin/env bash\n"
+    "is_validation_profile_summary_workflow_change() { :; }\n"
+    "is_nightly_coverage_schedule_only_change() { :; }\n"
+    "reason=validation_profile_summary_workflow_change_skips_authoritative_coverage\n"
+)
+
+Path("adl/tools/test_ci_path_policy.sh").write_text(
+    "#!/usr/bin/env bash\n"
+    "# workflow-summary-only-change\n"
+    "# workflow-summary-plus-policy-change\n"
+    "# nightly-schedule-only-change\n"
+    "# validation_profile_summary_workflow_change_skips_authoritative_coverage\n"
+    "# nightly_coverage_schedule_only_change_skips_authoritative_coverage\n"
+)
+
+Path("adl/tools/test_ci_runtime_contracts.sh").write_text(
+    "#!/usr/bin/env bash\n"
+    "# Validation profile summary (adl-ci)\n"
+    "# Validation profile summary (adl-coverage)\n"
+    "# GITHUB_STEP_SUMMARY\n"
+)
+
+Path("docs/milestones/v0.91.6/review").mkdir(parents=True, exist_ok=True)
+Path("docs/milestones/v0.91.6/review/ADL_CI_VALIDATION_COST_REVIEW_4322.md").write_text(
+    "# ADL CI Validation Cost Review\n"
+)
+PY
+  git add .github/workflows/ci.yaml .github/workflows/nightly-coverage-ratchet.yaml \
+    adl/tools/ci_path_policy.sh adl/tools/test_ci_path_policy.sh adl/tools/test_ci_runtime_contracts.sh \
+    docs/milestones/v0.91.6/review/ADL_CI_VALIDATION_COST_REVIEW_4322.md
+  git commit -q -m validation-summary-policy-bundle
+  validation_summary_policy_bundle_head="$(git rev-parse HEAD)"
+
+  validation_summary_policy_bundle_output="$("$POLICY" --event-name pull_request --base "$base_sha" --head "$validation_summary_policy_bundle_head" --ref "refs/pull/1/merge")"
+  assert_has "$validation_summary_policy_bundle_output" "rust_required=false"
+  assert_has "$validation_summary_policy_bundle_output" "coverage_required=false"
+  assert_has "$validation_summary_policy_bundle_output" "full_coverage_required=false"
+  assert_has "$validation_summary_policy_bundle_output" "demo_smoke_required=false"
+  assert_has "$validation_summary_policy_bundle_output" "ci_contracts_required=true"
+  assert_has "$validation_summary_policy_bundle_output" "coverage_lane=skip"
+  assert_has "$validation_summary_policy_bundle_output" "coverage_authority=not_required"
+  assert_has "$validation_summary_policy_bundle_output" "reason=coverage_policy_surface_tooling_change_runs_contract_validation"
 
   git checkout -q -b runtime-bounded-pr-fast-coverage-policy-change "$base_sha"
   mkdir -p adl/src/cli adl/tools

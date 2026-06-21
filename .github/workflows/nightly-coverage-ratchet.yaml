@@ -2,6 +2,8 @@ name: nightly-coverage-ratchet
 
 on:
   workflow_dispatch:
+  schedule:
+    - cron: "43 11 * * *"
 
 permissions:
   contents: read
