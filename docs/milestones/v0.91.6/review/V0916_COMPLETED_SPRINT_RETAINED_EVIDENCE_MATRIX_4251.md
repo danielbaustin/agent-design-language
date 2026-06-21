@@ -13,6 +13,8 @@ completed sprint rows: `#3967`, `#3968`, `#3969`, `#3970`, `#3971`, `#3972`,
 `#3973`, `#3975`, `#4141`, and `#4177`.
 Updated: 2026-06-20 by `#4357` to add the missing retained review packet for
 `#4069`.
+Updated: 2026-06-20 by `#4343` to add retained review coverage for the Runtime
+AWS / local operations mini-sprint after its child issue set closed.
 Owner issue: `#4251`
 Follow-up owners: `#4292`, `#4303`
 Purpose: normalize reviewer-facing retained evidence for the completed
@@ -62,6 +64,7 @@ tracked review surface that answers three questions for each completed umbrella:
 | `#4241` runtime resilience follow-on sprint | present | `docs/milestones/v0.91.6/review/V0916_RUNTIME_RESILIENCE_FOLLOW_ON_SPRINT_REVIEW_4241.md`; `docs/milestones/v0.91.6/review/runtime/V0916_INTEGRATED_RUNTIME_SOAK_PROOF_4245.md` | retained review packet present | `#4357` backfilled a tracked retained sprint-review packet from child closure truth and retained runtime proof artifacts. Runtime soak #1 remains a walking-skeleton proof, not full v0.92 runtime coherence. |
 | `#4276` predictable execution fabric sprint | present | `docs/milestones/v0.91.6/review/V0916_PREDICTABLE_EXECUTION_FABRIC_SPRINT_REVIEW_4276.md`; `docs/milestones/v0.91.6/review/issue_resource_telemetry/ISSUE_RESOURCE_TELEMETRY_V1_AND_S3_ARCHIVE_PLAN_4280.md` | retained review packet present | `#4357` backfilled a tracked retained sprint-review packet from child issue/PR closure truth and tracked process/telemetry evidence. Ignored local `.adl` sprint cards remain local records only. |
 | `#4325` runtime AWS signal bridge mini-sprint | present | `docs/milestones/v0.91.6/review/V0916_RUNTIME_AWS_SIGNAL_BRIDGE_MINI_SPRINT_REVIEW_4325.md`; `docs/milestones/v0.91.6/review/runtime_aws_signal_bridge/RUNTIME_AWS_SIGNAL_BRIDGE_MINI_SPRINT_CLOSEOUT_4325.md` | retained review packet present | `#4357` added the missing retained post-closeout review surface. The sprint remains mock/local proof only and makes no live AWS mutation claim. |
+| `#4343` runtime AWS / local operations mini-sprint | present | `docs/milestones/v0.91.6/review/V0916_RUNTIME_AWS_LOCAL_OPERATIONS_MINI_SPRINT_REVIEW_4343.md`; `docs/milestones/v0.91.6/review/security/LOCAL_POLIS_SSM_PROOF_4318.md`; `docs/milestones/v0.91.6/review/security/LOCAL_POLIS_SSM_PROOF_4319.md`; `docs/tooling/QNAP_QTS_SSM_ONBOARDING.md` | retained review packet present | `#4343` closed the child issue set for Wuji DDNS, SSM enrollment for `nessus.local` and `opticon.local`, and Codex access preparation while preserving operations-plane non-claims. |
 
 ## Resolved In `#4251`
 
@@ -99,7 +102,17 @@ tracked review surface that answers three questions for each completed umbrella:
 - Added the missing retained sprint-review packet for `#4069`.
 - Reopened `#4324`; it is no longer in the completed-sprint review set.
 - Reclassified open sprint umbrellas as ineligible for completed-sprint review:
-  `#3974`, `#3976` through `#3984`, `#4310`, `#4324`, `#4332`, and `#4343`.
+  `#3974`, `#3976` through `#3984`, `#4310`, `#4324`, and `#4332`.
+
+## Added In `#4343`
+
+- Added
+  `docs/milestones/v0.91.6/review/V0916_RUNTIME_AWS_LOCAL_OPERATIONS_MINI_SPRINT_REVIEW_4343.md`.
+- Recorded that child issues `#4284`, `#4330`, `#4318`, `#4319`, `#4320`, and
+  `#4321` are closed.
+- Preserved the boundary that DDNS and SSM are operations-plane surfaces, not
+  polis state, scheduler, provider, memory, identity, governance, or model
+  authority.
 
 ## Still Routed Elsewhere
 

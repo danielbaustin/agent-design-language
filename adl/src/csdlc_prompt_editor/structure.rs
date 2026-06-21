@@ -316,6 +316,34 @@ fn dynamic_field_sections(key: &str) -> Vec<&'static str> {
         }
         "output_card" => vec!["Outputs"],
         "branch_action" => vec!["Actions taken"],
+        "tracked_implementation_artifacts" | "additional_proof_artifacts" => {
+            vec!["Artifacts produced"]
+        }
+        "actions_taken_line_1" | "actions_taken_line_2" | "actions_taken_line_3" => {
+            vec!["Actions taken"]
+        }
+        "validation_command" | "validation_effect" | "validation_result" => vec!["Validation"],
+        "determinism_tests_executed"
+        | "fixtures_or_scripts_used"
+        | "replay_verification"
+        | "ordering_guarantees"
+        | "artifact_stability_notes" => vec!["Determinism Evidence"],
+        "secret_leakage_scan_performed"
+        | "prompt_tool_arg_redaction_verified"
+        | "absolute_path_leakage_check"
+        | "sandbox_policy_invariants_preserved" => vec!["Security / Privacy Checks"],
+        "trace_bundle_paths" | "run_artifact_root" | "replay_command" | "replay_result" => {
+            vec!["Replay Artifacts"]
+        }
+        "primary_proof_surface"
+        | "required_artifacts_present"
+        | "artifact_schema_checks"
+        | "hash_byte_stability_checks"
+        | "missing_optional_artifacts_rationale" => vec!["Artifact Verification"],
+        "decision_or_deviation_1" | "decision_or_deviation_2" => {
+            vec!["Decisions / Deviations"]
+        }
+        "follow_up_1" | "follow_up_2" => vec!["Follow-ups / Deferred work"],
         _ => Vec::new(),
     }
 }
@@ -640,6 +668,17 @@ const COMMON_RENDERED_VALUE_LINE_PREFIXES: &[&str] = &[
     "- Required outcome type:",
     "- Demo required:",
     "- Local ignored output-card scaffold at",
+    "- Main-repo paths updated:",
+    "- Worktree-only paths remaining:",
+    "- Integration state:",
+    "- Verification scope:",
+    "- Integration method used:",
+    "- Result:",
+    "- `",
+    "- ``",
+    "`Verified ",
+    "    `",
+    "    ``",
     "- `bash adl/tools/validate_structured_prompt.sh",
     "Source issue-prompt slug:",
     "Required outcome type:",
@@ -672,6 +711,7 @@ const PVF_RENDERED_VALUE_LINE_PREFIXES: &[&str] = &[
     "validation_runtime_class:",
     "validation_resource_profile:",
     "expected_proof_cost:",
+    "expected_runtime_class:",
     "estimate_elapsed_seconds:",
     "estimate_total_tokens:",
     "estimate_validation_seconds:",
@@ -702,6 +742,7 @@ const PVF_RENDERED_VALUE_LINE_PREFIXES: &[&str] = &[
     "- Planned validation tokens:",
     "- Planning lane source:",
     "- Revision rule:",
+    "- Expected runtime class:",
     "- Estimated elapsed seconds:",
     "- Estimated total tokens:",
     "- Estimated validation seconds:",
@@ -713,12 +754,16 @@ const PVF_RENDERED_VALUE_LINE_PREFIXES: &[&str] = &[
     "- Final PVF lane:",
     "- Lane change reason:",
     "- Actual elapsed seconds:",
+    "- Actual active work seconds:",
     "- Actual total tokens:",
     "- Actual validation seconds:",
+    "- Actual PR wait seconds:",
+    "- Actual CI wait seconds:",
     "- Goal metrics data source:",
     "- Goal metrics source ref:",
     "- Data-source confidence:",
     "- Estimate error percent:",
+    "- Completion state:",
     "- Variance analysis required:",
     "- Variance analysis completed:",
     "- Variance category:",

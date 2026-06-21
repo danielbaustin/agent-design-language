@@ -18,15 +18,15 @@ Status: <status>
 Generated: <timestamp>
 
 Execution:
-- Actor: issue-wave bootstrap
-- Model: not_applicable
-- Provider: not_applicable
-- Start Time: <timestamp>
-- End Time: <timestamp>
+- Actor: `<execution_actor>`
+- Model: `<model>`
+- Provider: `<provider>`
+- Start Time: `<start_time>`
+- End Time: `<end_time>`
 
 ## Summary
 
-Pre-run output scaffold initialized during issue-wave opening. No implementation has started yet.
+<summary>
 
 ## PVF Lane Truth
 - Initial PVF lane: `<initial_pvf_lane>`
@@ -35,16 +35,22 @@ Pre-run output scaffold initialized during issue-wave opening. No implementation
 - Lane change reason: `<lane_change_reason>`
 
 ## Issue Metrics Truth
-- Estimated elapsed seconds: `<estimated_elapsed_seconds>`
+- Expected runtime class: `<expected_runtime_class>`
+- Estimated elapsed seconds: `<estimate_elapsed_seconds>`
 - Actual elapsed seconds: `<actual_elapsed_seconds>`
-- Estimated total tokens: `<estimated_total_tokens>`
+- Actual active work seconds: `<actual_active_work_seconds>`
+- Estimated total tokens: `<estimate_total_tokens>`
 - Actual total tokens: `<actual_total_tokens>`
-- Estimated validation seconds: `<estimated_validation_seconds>`
+- Estimated validation seconds: `<estimate_validation_seconds>`
 - Actual validation seconds: `<actual_validation_seconds>`
+- Actual PR wait seconds: `<actual_pr_wait_seconds>`
+- Actual CI wait seconds: `<actual_ci_wait_seconds>`
 - Goal metrics data source: `<actual_metrics_data_source>`
 - Goal metrics source ref: `<actual_metrics_source_ref>`
 - Data-source confidence: `<actual_metrics_confidence>`
 - Estimate error percent: `<estimate_error_percent>`
+- Completion state: `<completion_state>`
+- Missing-telemetry rule: record `unknown` or `not_collected`; do not invent precision from chat memory or broad timestamp guesses.
 - Goal-metrics substrate note: consume the `#4264` issue-goal metrics summary when available and record `unknown` instead of duplicating raw session logs here.
 
 ## Variance Analysis
@@ -57,23 +63,24 @@ Pre-run output scaffold initialized during issue-wave opening. No implementation
 
 ## Artifacts produced
 - Local ignored output-card scaffold at `<output_card>`
-- Tracked implementation artifacts: not_applicable until execution begins
+- Tracked implementation artifacts: `<tracked_implementation_artifacts>`
+- Additional proof artifacts: `<additional_proof_artifacts>`
 
 ## Actions taken
-- Opened the local issue bundle and wrote a truthful pre-run output scaffold.
-- <branch_action>
-- Deferred implementation, proof capture, and release integration to the execution lifecycle and PR publication.
+- `<actions_taken_line_1>`
+- `<actions_taken_line_2>`
+- `<actions_taken_line_3>`
 
 ## Main Repo Integration (REQUIRED)
-- Main-repo paths updated: none
-- Worktree-only paths remaining: no tracked implementation artifacts exist yet; execution-time proof surfaces will be established during implementation and PR publication
-- Integration state: worktree_only
-- Verification scope: main_repo
-- Integration method used: local ignored card-bundle scaffold write under the active checkout; tracked implementation artifacts do not exist yet
+- Main-repo paths updated: `<main_repo_paths_updated>`
+- Worktree-only paths remaining: `<worktree_only_paths_remaining>`
+- Integration state: `<integration_state>`
+- Verification scope: `<verification_scope>`
+- Integration method used: `<integration_method_used>`
 - Verification performed:
-  - `bash adl/tools/validate_structured_prompt.sh --type sor --phase bootstrap --input <output_card>`
-    Verified bootstrap SOR contract compliance for the local pre-run scaffold.
-- Result: PASS
+  - `<integration_verification_command>`
+    `<integration_verification_effect>`
+- Result: `<integration_result>`
 
 Rules:
 - Final artifacts must exist in the main repository, not only in a worktree.
@@ -88,10 +95,10 @@ Rules:
 
 ## Validation
 - Validation commands and their purpose:
-  - `bash adl/tools/validate_structured_prompt.sh --type sor --phase bootstrap --input <output_card>`
-    Verified bootstrap SOR contract compliance for the local output scaffold.
+  - `<validation_command>`
+    `<validation_effect>`
 - Results:
-  - PASS
+  - `<validation_result>`
 
 Validation command/path rules:
 - Prefer repository-relative paths in recorded commands and artifact references.
@@ -104,56 +111,56 @@ Validation command/path rules:
 ```yaml
 verification_summary:
   validation:
-    status: PASS
+    status: <verification_validation_status>
     checks_run:
-      - "bash adl/tools/validate_structured_prompt.sh --type sor --phase bootstrap --input <output_card>"
+      - "<verification_check_1>"
   determinism:
-    status: NOT_RUN
-    replay_verified: unknown
-    ordering_guarantees_verified: unknown
+    status: <verification_determinism_status>
+    replay_verified: <verification_replay_verified>
+    ordering_guarantees_verified: <verification_ordering_guarantees_verified>
   security_privacy:
-    status: PARTIAL
-    secrets_leakage_detected: false
-    prompt_or_tool_arg_leakage_detected: false
-    absolute_path_leakage_detected: false
+    status: <verification_security_privacy_status>
+    secrets_leakage_detected: <verification_secrets_leakage_detected>
+    prompt_or_tool_arg_leakage_detected: <verification_prompt_or_tool_arg_leakage_detected>
+    absolute_path_leakage_detected: <verification_absolute_path_leakage_detected>
   artifacts:
-    status: PASS
-    required_artifacts_present: true
+    status: <verification_artifacts_status>
+    required_artifacts_present: <verification_required_artifacts_present>
     schema_changes:
-      present: false
-      approved: not_applicable
+      present: <verification_schema_changes_present>
+      approved: <verification_schema_changes_approved>
 ```
 
 ## Determinism Evidence
-- Determinism tests executed: not_run; bootstrap scaffold creation has not been replay-verified for this issue yet.
-- Fixtures or scripts used: `adl/tools/pr.sh` issue-wave opening flow.
-- Replay verification (same inputs -> same artifacts/order): not yet verified for this specific issue record.
-- Ordering guarantees (sorting / tie-break rules used): not_applicable for a single-card bootstrap write.
-- Artifact stability notes: repository-relative paths only; execution-time proof artifacts are not expected yet.
+- Determinism tests executed: `<determinism_tests_executed>`
+- Fixtures or scripts used: `<fixtures_or_scripts_used>`
+- Replay verification (same inputs -> same artifacts/order): `<replay_verification>`
+- Ordering guarantees (sorting / tie-break rules used): `<ordering_guarantees>`
+- Artifact stability notes: `<artifact_stability_notes>`
 
 ## Security / Privacy Checks
-- Secret leakage scan performed: limited content review only; no secrets were intentionally recorded in the scaffold.
-- Prompt / tool argument redaction verified: not_applicable for bootstrap scaffold generation.
-- Absolute path leakage check: repository-relative paths only in the scaffold.
-- Sandbox / policy invariants preserved: yes; local ignored issue-record path only.
+- Secret leakage scan performed: `<secret_leakage_scan_performed>`
+- Prompt / tool argument redaction verified: `<prompt_tool_arg_redaction_verified>`
+- Absolute path leakage check: `<absolute_path_leakage_check>`
+- Sandbox / policy invariants preserved: `<sandbox_policy_invariants_preserved>`
 
 ## Replay Artifacts
-- Trace bundle path(s): not_applicable until execution begins
-- Run artifact root: not_applicable until execution begins
-- Replay command used for verification: not_run
-- Replay result: NOT_RUN
+- Trace bundle path(s): `<trace_bundle_paths>`
+- Run artifact root: `<run_artifact_root>`
+- Replay command used for verification: `<replay_command>`
+- Replay result: `<replay_result>`
 
 ## Artifact Verification
-- Primary proof surface: this local pre-run SOR scaffold and its bootstrap validation result
-- Required artifacts present: local output card scaffold only; tracked implementation artifacts are not expected yet
-- Artifact schema/version checks: bootstrap SOR validator passed
-- Hash/byte-stability checks: not_run
-- Missing/optional artifacts and rationale: execution proofs, demos, and tracked outputs are intentionally absent before implementation begins
+- Primary proof surface: `<primary_proof_surface>`
+- Required artifacts present: `<required_artifacts_present>`
+- Artifact schema/version checks: `<artifact_schema_checks>`
+- Hash/byte-stability checks: `<hash_byte_stability_checks>`
+- Missing/optional artifacts and rationale: `<missing_optional_artifacts_rationale>`
 
 ## Decisions / Deviations
-- Issue-wave opening emits a truthful pre-run SOR scaffold instead of leaving raw template residue for later cleanup.
-- Integration state remains `worktree_only` until execution creates tracked artifacts or opens a PR.
+- `<decision_or_deviation_1>`
+- `<decision_or_deviation_2>`
 
 ## Follow-ups / Deferred work
-- Update this record during execution with actual actions, validations, proof surfaces, and integration truth.
-- Normalize this record to `pr_open`, `merged`, or `closed_no_pr` during finish/closeout as appropriate.
+- `<follow_up_1>`
+- `<follow_up_2>`

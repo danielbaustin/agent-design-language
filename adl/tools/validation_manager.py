@@ -304,6 +304,7 @@ def build_profile(plan: dict[str, Any], guardrails: dict[str, Any], manifest_pat
                     "command": command,
                     "reason": lane.get("reason", "selector_selected_lane"),
                     "matched_paths": lane.get("matched_paths", []),
+                    "vpp_record": lane.get("vpp_record"),
                 }
             )
 

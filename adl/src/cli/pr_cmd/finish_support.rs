@@ -1064,6 +1064,18 @@ pub(super) struct FinishValidationProfileRunItem {
     pub lane_id: String,
     pub command: String,
     pub reason: String,
+    #[serde(default)]
+    pub vpp_record: Option<FinishValidationVppRecord>,
+}
+
+#[derive(Debug, Deserialize, Clone, PartialEq, Eq)]
+pub(super) struct FinishValidationVppRecord {
+    pub contract_version: String,
+    pub artifacts: Vec<String>,
+    pub expected_runtime_class: String,
+    pub parallel_group: String,
+    pub cache_equivalence_group: String,
+    pub failure_semantics: String,
 }
 
 #[derive(Debug, Deserialize)]
@@ -1260,6 +1272,24 @@ pub(super) fn select_finish_validation_plan(paths_csv: &str) -> Result<FinishVal
             push_finish_validation_command(
                 &mut commands,
                 "cargo test --manifest-path adl/Cargo.toml ci_log_archive -- --nocapture",
+            );
+            push_finish_validation_command(
+                &mut commands,
+                "cargo test --manifest-path adl/Cargo.toml tooling_cmd_dispatch_and_help_paths_cover_public_entrypoint -- --nocapture",
+            );
+        }
+        if paths
+            .iter()
+            .any(|path| finish_path_needs_issue_resource_telemetry_focused_validation(path))
+        {
+            mode = FinishValidationMode::LargerBinaryFocused;
+            push_finish_validation_command(
+                &mut commands,
+                "cargo fmt --manifest-path adl/Cargo.toml --all --check",
+            );
+            push_finish_validation_command(
+                &mut commands,
+                "cargo test --manifest-path adl/Cargo.toml issue_resource_telemetry -- --nocapture",
             );
             push_finish_validation_command(
                 &mut commands,
@@ -1621,7 +1651,36 @@ pub(super) fn select_finish_validation_plan_for_finish(
     if finish_issue_needs_locked_cargo_fallback_validation(issue_number, changed_paths) {
         return Ok(build_locked_cargo_fallback_validation_plan());
     }
+    let finish_profile = load_finish_validation_profile(&repo_root()?, changed_paths)?;
+    if let Some(plan) = profile_backed_finish_validation_plan(&finish_profile) {
+        return Ok(plan);
+    }
     select_finish_validation_plan(&changed_paths.join(","))
+}
+
+fn profile_backed_finish_validation_plan(
+    profile: &FinishValidationProfile,
+) -> Option<FinishValidationPlan> {
+    if profile.status != "ready_to_run"
+        || !profile.pr_publication_sufficient
+        || profile.escalation.required
+    {
+        return None;
+    }
+    if profile.run.len() != 1 {
+        return None;
+    }
+    let item = &profile.run[0];
+    if item.lane_id != "docs_diff_check" {
+        return None;
+    }
+    let mut commands =
+        vec!["bash adl/tools/check_no_tracked_adl_issue_record_residue.sh".to_string()];
+    push_finish_validation_command(&mut commands, &item.command);
+    Some(FinishValidationPlan {
+        mode: FinishValidationMode::DocsOnly,
+        commands,
+    })
 }
 
 fn finish_path_is_docs_only(path: &str) -> bool {
@@ -1793,7 +1852,9 @@ fn finish_path_is_larger_binary_focused(path: &str) -> bool {
             | "docs/milestones/v0.91.5/LOCAL_VS_CI_VALIDATION_POLICY_3607.md"
             | "adl/src/cli/tooling_cmd.rs"
             | "adl/src/cli/tooling_cmd/common.rs"
+            | "adl/src/cli/tooling_cmd/markdown.rs"
             | "adl/src/cli/tooling_cmd/ci_log_archive.rs"
+            | "adl/src/cli/tooling_cmd/issue_resource_telemetry.rs"
             | "adl/src/cli/tooling_cmd/prompt_template.rs"
             | "adl/src/cli/tooling_cmd/structured_prompt.rs"
             | "adl/src/cli/tooling_cmd/tests/prompt_template.rs"
@@ -1899,6 +1960,16 @@ fn finish_path_needs_ci_log_archive_focused_validation(path: &str) -> bool {
         trimmed,
         "adl/src/cli/tooling_cmd.rs"
             | "adl/src/cli/tooling_cmd/ci_log_archive.rs"
+            | "adl/src/cli/tooling_cmd/tests/tooling_dispatch.rs"
+    )
+}
+
+fn finish_path_needs_issue_resource_telemetry_focused_validation(path: &str) -> bool {
+    let trimmed = path.trim().trim_matches('/');
+    matches!(
+        trimmed,
+        "adl/src/cli/tooling_cmd.rs"
+            | "adl/src/cli/tooling_cmd/issue_resource_telemetry.rs"
             | "adl/src/cli/tooling_cmd/tests/tooling_dispatch.rs"
     )
 }
@@ -2445,6 +2516,19 @@ pub(super) fn run_finish_validation_rust(
                             "--manifest-path",
                             path_str(&manifest)?,
                             "ci_log_archive",
+                            "--",
+                            "--nocapture",
+                        ],
+                    )?;
+                }
+                "cargo test --manifest-path adl/Cargo.toml issue_resource_telemetry -- --nocapture" => {
+                    run_finish_validation_status(
+                        "cargo",
+                        &[
+                            "test",
+                            "--manifest-path",
+                            path_str(&manifest)?,
+                            "issue_resource_telemetry",
                             "--",
                             "--nocapture",
                         ],
@@ -3111,6 +3195,17 @@ pub(super) fn render_default_finish_validation(
                     sanitize_validation_profile_command(&item.command)
                 ));
                 lines.push(format!("    reason: {}", item.reason));
+                if let Some(vpp) = &item.vpp_record {
+                    lines.push(format!(
+                        "    vpp: contract={} runtime_class={} parallel_group={} cache_equivalence_group={} failure_semantics={}",
+                        vpp.contract_version,
+                        vpp.expected_runtime_class,
+                        vpp.parallel_group,
+                        vpp.cache_equivalence_group,
+                        vpp.failure_semantics
+                    ));
+                    lines.push(format!("    artifacts: {}", vpp.artifacts.join(", ")));
+                }
             }
         }
         if profile.not_run.is_empty() {
