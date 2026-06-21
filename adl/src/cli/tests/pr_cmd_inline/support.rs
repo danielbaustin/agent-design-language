@@ -271,6 +271,8 @@ pub(crate) fn copy_versioned_prompt_templates(repo: &Path) {
     fs::create_dir_all(target_root.join("1.0.0/schemas")).expect("create prompt template dir");
     fs::create_dir_all(target_root.join("1.0.1")).expect("create prompt template dir");
     fs::create_dir_all(target_root.join("1.0.1/schemas")).expect("create prompt template dir");
+    fs::create_dir_all(target_root.join("1.0.2")).expect("create prompt template dir");
+    fs::create_dir_all(target_root.join("1.0.2/schemas")).expect("create prompt template dir");
     for rel in [
         "current.json",
         "1.0.0/sip.md",
@@ -293,37 +295,44 @@ pub(crate) fn copy_versioned_prompt_templates(repo: &Path) {
         "1.0.1/schemas/spp.structure.json",
         "1.0.1/schemas/srp.structure.json",
         "1.0.1/schemas/sor.structure.json",
+        "1.0.2/sip.md",
+        "1.0.2/stp.md",
+        "1.0.2/spp.md",
+        "1.0.2/srp.md",
+        "1.0.2/sor.md",
+        "1.0.2/schemas/sip.structure.json",
+        "1.0.2/schemas/stp.structure.json",
+        "1.0.2/schemas/spp.structure.json",
+        "1.0.2/schemas/srp.structure.json",
+        "1.0.2/schemas/sor.structure.json",
     ] {
         fs::copy(source_root.join(rel), target_root.join(rel)).expect("copy prompt template");
     }
 }
 
 pub(crate) fn write_alternate_stp_prompt_template(repo: &Path) {
-    let alternate_dir = repo.join("docs/templates/prompts/1.0.1");
+    let alternate_dir = repo.join("docs/templates/prompts/1.0.2");
     fs::create_dir_all(&alternate_dir).expect("create alternate prompt template dir");
-    let base = fs::read_to_string(repo.join("docs/templates/prompts/1.0.0/stp.md"))
+    let base = fs::read_to_string(repo.join("docs/templates/prompts/1.0.2/stp.md"))
         .expect("read base stp template");
     fs::write(
         alternate_dir.join("stp.md"),
-        base.replace(
-            "Canonical Template Source: `docs/templates/prompts/1.0.0/stp.md`",
-            "Canonical Template Source: `docs/templates/prompts/1.0.1/stp.md`",
-        ) + "\n\nRegistry route proof: alternate STP template.\n",
+        base + "\n\nRegistry route proof: alternate STP template.\n",
     )
     .expect("write alternate stp template");
     fs::write(
         repo.join("docs/templates/prompts/current.json"),
         r#"{
   "schema": "adl.csdlc.prompt_template_registry.v1",
-  "csdlc_prompt_template_set": "1.0.1",
-  "semver": "1.0.1",
+  "csdlc_prompt_template_set": "1.0.2",
+  "semver": "1.0.2",
   "status": "active",
   "object_kind": "csdlc_prompt_template_set",
   "lifecycle": ["SIP", "STP", "SPP", "SRP", "SOR"],
   "templates": {
     "stp": {
       "semantic_role": "Structured Task Prompt",
-      "path": "docs/templates/prompts/1.0.1/stp.md"
+      "path": "docs/templates/prompts/1.0.2/stp.md"
     }
   }
 }

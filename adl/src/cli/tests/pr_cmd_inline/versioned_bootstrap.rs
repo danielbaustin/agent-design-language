@@ -87,7 +87,7 @@ fn bootstrap_cards_use_versioned_prompt_templates_when_available() {
     ] {
         assert!(
             text.contains(&format!(
-                "Canonical Template Source: `docs/templates/prompts/1.0.1/{}.md`",
+                "Canonical Template Source: `docs/templates/prompts/1.0.2/{}.md`",
                 kind.to_ascii_lowercase()
             )),
             "{kind} should identify the versioned template source"
@@ -194,7 +194,7 @@ Fresh bootstrap output contains all five C-SDLC cards with no raw template place
 ## Repo Inputs
 
 - adl/src/cli/pr_cmd_cards/cards.rs
-- docs/templates/prompts/1.0.1/
+- docs/templates/prompts/1.0.2/
 
 ## Dependencies
 
@@ -259,7 +259,7 @@ Fresh bootstrap output contains all five C-SDLC cards with no raw template place
         let text = fs::read_to_string(path).expect("read refreshed card");
         assert_no_prompt_template_residue(kind, &text);
         assert!(
-            text.contains("Canonical Template Source: `docs/templates/prompts/1.0.1/"),
+            text.contains("Canonical Template Source: `docs/templates/prompts/1.0.2/"),
             "{kind} should be regenerated from the versioned template set"
         );
     }
@@ -316,7 +316,7 @@ Legacy design-time-ready SPP from the pre-template transition window.
     ensure_bootstrap_cards(&repo, &issue_ref, title, "not bound yet", &source_path)
         .expect("legacy SPP should be refreshed");
     let spp = fs::read_to_string(&spp_path).expect("read spp");
-    assert!(spp.contains("Canonical Template Source: `docs/templates/prompts/1.0.1/spp.md`"));
+    assert!(spp.contains("Canonical Template Source: `docs/templates/prompts/1.0.2/spp.md`"));
     assert!(!spp.contains("activation_state: \"design_time_ready\""));
 }
 
@@ -507,6 +507,9 @@ generated_at: "2026-05-26T22:36:52Z"
 card_status: "ready"
 status: "approved"
 activation_state: "design_time_ready"
+initial_pvf_lane: "prompt_template"
+planned_pvf_lane: "prompt_template"
+planned_pvf_lane_source: "matched_initial_issue_lane"
 plan_revision: 2
 source_refs:
   - kind: "issue"
@@ -553,7 +556,7 @@ review_hooks:
 notes: "Reviewed card should remain stable across pre-run bootstrap."
 ---
 
-Canonical Template Source: `docs/templates/prompts/1.0.1/spp.md`
+Canonical Template Source: `docs/templates/prompts/1.0.2/spp.md`
 
 # Structured Plan Prompt
 
@@ -662,7 +665,7 @@ status: "approved"
 activation_state: "design_time_ready"
 ---
 
-Canonical Template Source: `docs/templates/prompts/1.0.1/spp.md`
+Canonical Template Source: `docs/templates/prompts/1.0.2/spp.md`
 
 # Structured Plan Prompt
 
@@ -733,7 +736,7 @@ The generated SPP should carry source-prompt facts into the plan.
 ## Repo Inputs
 
 - adl/src/cli/pr_cmd_cards/cards.rs
-- docs/templates/prompts/1.0.1/spp.md
+- docs/templates/prompts/1.0.2/spp.md
 
 ## Dependencies
 
@@ -849,7 +852,7 @@ All generated prompt cards pass the sprint readiness checker.
 ## Repo Inputs
 
 - adl/src/cli/pr_cmd_cards/cards.rs
-- docs/templates/prompts/1.0.1/
+- docs/templates/prompts/1.0.2/
 
 ## Dependencies
 
@@ -905,7 +908,7 @@ All generated prompt cards pass the sprint readiness checker.
         "Use dependency truth from the linked source issue prompt",
         "Review source issue prompt and scoped repo inputs",
         "Follow demo/proof requirements from the linked source issue prompt",
-        "Generated from 1.0.1 C-SDLC prompt template; refine with editor skills before execution if needed",
+        "Generated from 1.0.2 C-SDLC prompt template; refine with editor skills before execution if needed",
     ] {
         assert!(
             !stp.contains(marker),
@@ -958,6 +961,6 @@ fn prompt_template_registry_redirects_rust_template_loading() {
         .expect("versioned STP template should render");
     let stp = fs::read_to_string(stp_path).expect("read stp");
 
-    assert!(stp.contains("Canonical Template Source: `docs/templates/prompts/1.0.1/stp.md`"));
+    assert!(stp.contains("Canonical Template Source: `docs/templates/prompts/1.0.2/stp.md`"));
     assert!(stp.contains("Registry route proof: alternate STP template."));
 }

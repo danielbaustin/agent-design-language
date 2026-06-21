@@ -284,6 +284,59 @@ fn structured_prompt_sor_issue_metrics_truth_allows_zero_percent_exact_match() {
 }
 
 #[test]
+fn structured_prompt_sor_requires_variance_analysis_for_large_known_estimate_miss() {
+    let sor = valid_sor_text().replace(
+        "- Estimated elapsed seconds: `unknown`",
+        "- Estimated elapsed seconds: `100`",
+    );
+    let err = validate_sor_text(&sor, Some("completed"))
+        .expect_err("large known estimate miss should require variance analysis");
+    assert!(err
+        .to_string()
+        .contains("Variance analysis required must be `yes`"));
+}
+
+#[test]
+fn structured_prompt_sor_accepts_completed_variance_analysis_for_large_known_estimate_miss() {
+    let sor = valid_sor_text()
+        .replace(
+            "- Estimated elapsed seconds: `unknown`",
+            "- Estimated elapsed seconds: `100`",
+        )
+        .replace("- Variance analysis required: `no`", "- Variance analysis required: `yes`")
+        .replace(
+            "- Variance analysis completed: `not_applicable`",
+            "- Variance analysis completed: `yes`",
+        )
+        .replace(
+            "- Variance category: `not_applicable`",
+            "- Variance category: `external_api_latency`",
+        )
+        .replace(
+            "- Variance note: `No material estimate miss exceeded the 10 percent threshold in this fixture.`",
+            "- Variance note: `A provider queue stall inflated elapsed time beyond the original estimate.`",
+        );
+    validate_sor_text(&sor, Some("completed"))
+        .expect("completed variance analysis should satisfy large known estimate miss");
+}
+
+#[test]
+fn structured_prompt_sor_rejects_missing_variance_analysis_section() {
+    let sor = format!(
+        "Canonical Template Source: `docs/templates/prompts/1.0.2/sor.md`\n\n{}",
+        valid_sor_text()
+    )
+    .replace(
+        "## Variance Analysis\n- Threshold policy: require variance analysis when any known estimated/actual pair for elapsed seconds, total tokens, or validation seconds differs by more than 10 percent.\n- Variance analysis required: `no`\n- Variance analysis completed: `not_applicable`\n- Variance category: `not_applicable`\n- Variance note: `No material estimate miss exceeded the 10 percent threshold in this fixture.`\n- Sprint rollup guidance: count only completed variance analyses by `Variance category`; keep `not_applicable` out of category totals and never treat unknown metrics as zero variance.\n\n",
+        "",
+    );
+    let err = validate_sor_text(&sor, Some("completed"))
+        .expect_err("missing variance analysis section should fail");
+    assert!(err.to_string().contains("missing required sections"));
+    assert!(err.to_string().contains("Variance Analysis"));
+}
+
+#[test]
 fn validate_structured_prompt_accepts_all_supported_prompt_types() {
     let repo = TempRepo::new("structured");
     let stp = repo.write_rel(".tmp/tooling_cmd_tests/stp.md", &valid_stp_text());

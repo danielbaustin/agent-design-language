@@ -690,6 +690,10 @@ const PVF_RENDERED_VALUE_LINE_PREFIXES: &[&str] = &[
     "- Goal metrics source ref:",
     "- Data-source confidence:",
     "- Estimate error percent:",
+    "- Variance analysis required:",
+    "- Variance analysis completed:",
+    "- Variance category:",
+    "- Variance note:",
 ];
 
 fn rendered_value_line_prefixes(kind: PromptCardKind) -> Vec<&'static str> {

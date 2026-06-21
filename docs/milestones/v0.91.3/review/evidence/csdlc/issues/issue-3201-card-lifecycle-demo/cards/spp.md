@@ -101,9 +101,9 @@ issue bundle plus focused validator and doctor expectations.
 
 ## PVF Lane Plan
 
-- Initial PVF lane from issue creation: `prompt_template`
-- Planned PVF lane for execution: `prompt_template`
-- Planning lane source: `matched_initial_issue_lane`
+- Initial PVF lane from issue creation: `not_recorded_for_v0.91.3_proof_sample`
+- Planned PVF lane for execution: `not_recorded_for_v0.91.3_proof_sample`
+- Planning lane source: `legacy_v0.91.3_public_proof_sample`
 - Revision rule: change `planned_pvf_lane` only when planning discovers a better explicit lane; keep `needs_planning_lane_assignment` fail-closed until that happens.
 
 ## Estimate Plan

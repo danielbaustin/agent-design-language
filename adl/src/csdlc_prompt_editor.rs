@@ -93,6 +93,10 @@ const PLACEHOLDERS: &[&str] = &[
     "actual_metrics_source_ref",
     "actual_metrics_confidence",
     "estimate_error_percent",
+    "variance_analysis_required",
+    "variance_analysis_completed",
+    "variance_category",
+    "variance_note",
     "branch_action",
     "findings_status",
     "recommended_outcome",
@@ -756,6 +760,13 @@ fn extract_legacy_sor_values(rendered: &str) -> Result<(BTreeMap<String, String>
         ("actual_metrics_source_ref", "unknown"),
         ("actual_metrics_confidence", "unknown"),
         ("estimate_error_percent", "unknown"),
+        ("variance_analysis_required", "not_applicable"),
+        ("variance_analysis_completed", "not_applicable"),
+        ("variance_category", "not_applicable"),
+        (
+            "variance_note",
+            "Legacy rendered SOR predates explicit variance-analysis tracking.",
+        ),
         ("timestamp", "legacy_import_unknown_timestamp"),
     ] {
         values.insert(key.to_string(), value.to_string());
@@ -1348,7 +1359,97 @@ fn validate_sor_values(card: &PromptCardForm, values: &BTreeMap<String, String>)
             );
         }
     }
+    let variance_required = values
+        .get("variance_analysis_required")
+        .map(String::as_str)
+        .unwrap_or("not_applicable");
+    let variance_completed = values
+        .get("variance_analysis_completed")
+        .map(String::as_str)
+        .unwrap_or("not_applicable");
+    let variance_category = values
+        .get("variance_category")
+        .map(String::as_str)
+        .unwrap_or("not_applicable");
+    let variance_note = values
+        .get("variance_note")
+        .map(String::as_str)
+        .unwrap_or("");
+    let any_known_pair_exceeds_threshold = [
+        metric_pair_exceeds_variance_threshold(
+            values
+                .get("estimated_elapsed_seconds")
+                .map(String::as_str)
+                .unwrap_or("unknown"),
+            values
+                .get("actual_elapsed_seconds")
+                .map(String::as_str)
+                .unwrap_or("unknown"),
+        ),
+        metric_pair_exceeds_variance_threshold(
+            values
+                .get("estimated_total_tokens")
+                .map(String::as_str)
+                .unwrap_or("unknown"),
+            values
+                .get("actual_total_tokens")
+                .map(String::as_str)
+                .unwrap_or("unknown"),
+        ),
+        metric_pair_exceeds_variance_threshold(
+            values
+                .get("estimated_validation_seconds")
+                .map(String::as_str)
+                .unwrap_or("unknown"),
+            values
+                .get("actual_validation_seconds")
+                .map(String::as_str)
+                .unwrap_or("unknown"),
+        ),
+    ]
+    .into_iter()
+    .flatten()
+    .any(|exceeds| exceeds);
+    if any_known_pair_exceeds_threshold {
+        ensure!(
+            variance_required == "yes",
+            "sor.variance_analysis_required must be `yes` when any estimated/actual metric pair differs by more than 10 percent"
+        );
+    }
+    if variance_required == "yes" {
+        ensure!(
+            variance_completed != "not_applicable",
+            "sor.variance_analysis_completed cannot be `not_applicable` when sor.variance_analysis_required is `yes`"
+        );
+        ensure!(
+            variance_category != "not_applicable",
+            "sor.variance_category cannot be `not_applicable` when sor.variance_analysis_required is `yes`"
+        );
+        ensure!(
+            !variance_note.trim().is_empty() && variance_note != "not_applicable",
+            "sor.variance_note must be non-empty when sor.variance_analysis_required is `yes`"
+        );
+    } else {
+        ensure!(
+            variance_completed != "yes",
+            "sor.variance_analysis_completed cannot be `yes` when sor.variance_analysis_required is not `yes`"
+        );
+        ensure!(
+            variance_category == "not_applicable",
+            "sor.variance_category must remain `not_applicable` when sor.variance_analysis_required is not `yes`"
+        );
+    }
     Ok(())
+}
+
+fn metric_pair_exceeds_variance_threshold(estimated: &str, actual: &str) -> Option<bool> {
+    if estimated == "unknown" || actual == "unknown" {
+        return None;
+    }
+    let estimated = estimated.parse::<u64>().ok()?;
+    let actual = actual.parse::<u64>().ok()?;
+    let diff = estimated.abs_diff(actual);
+    Some(diff.saturating_mul(100) > estimated.saturating_mul(10))
 }
 
 pub fn render_template(template: &str, values: &BTreeMap<String, String>) -> Result<String> {
@@ -1452,7 +1553,7 @@ pub fn sample_values() -> BTreeMap<String, String> {
         ),
         (
             "repo_inputs",
-            "- docs/templates/prompts/current.json\n- docs/templates/prompts/1.0.1/",
+            "- docs/templates/prompts/current.json\n- docs/templates/prompts/1.0.2/",
         ),
         ("dependencies", "- #3286 SemVer prompt templates"),
         (
@@ -1495,7 +1596,7 @@ pub fn sample_values() -> BTreeMap<String, String> {
         ),
         (
             "repo_inputs_inline",
-            "docs/templates/prompts/current.json and docs/templates/prompts/1.0.1/.",
+            "docs/templates/prompts/current.json and docs/templates/prompts/1.0.2/.",
         ),
         (
             "deliverables_inline",
@@ -1541,6 +1642,13 @@ pub fn sample_values() -> BTreeMap<String, String> {
         ("actual_metrics_source_ref", "unknown"),
         ("actual_metrics_confidence", "unknown"),
         ("estimate_error_percent", "unknown"),
+        ("variance_analysis_required", "not_applicable"),
+        ("variance_analysis_completed", "not_applicable"),
+        ("variance_category", "not_applicable"),
+        (
+            "variance_note",
+            "No variance analysis is required in the generated sample.",
+        ),
         (
             "branch_action",
             "Preserved pre-run branch truth in generated sample content.",
@@ -2076,6 +2184,44 @@ fn form_fields(kind: PromptCardKind) -> Vec<PromptField> {
                 true,
                 "Difference between estimated and actual elapsed time, or `unknown`.",
             ));
+            fields.push(select(
+                "variance_analysis_required",
+                "Variance Analysis Required",
+                true,
+                "Whether any known estimate/actual metric pair exceeded the 10 percent threshold.",
+                &["not_applicable", "no", "yes"],
+            ));
+            fields.push(select(
+                "variance_analysis_completed",
+                "Variance Analysis Completed",
+                true,
+                "Whether the required variance analysis was completed.",
+                &["not_applicable", "no", "yes"],
+            ));
+            fields.push(select(
+                "variance_category",
+                "Variance Category",
+                true,
+                "Primary category for a required variance analysis.",
+                &[
+                    "not_applicable",
+                    "validation_misclassification",
+                    "pr_wait",
+                    "merge_conflict",
+                    "tool_failure",
+                    "unclear_scope",
+                    "model_drift",
+                    "human_wait",
+                    "external_api_latency",
+                    "overestimated_scope",
+                ],
+            ));
+            fields.push(textarea(
+                "variance_note",
+                "Variance Note",
+                true,
+                "Short variance-analysis note when the threshold was exceeded.",
+            ));
             fields.push(textarea(
                 "summary",
                 "Summary",
@@ -2273,7 +2419,7 @@ mod tests {
     #[test]
     fn editor_model_covers_all_five_cards() {
         let model = load_editor_model(&repo_root()).expect("model");
-        assert_eq!(model.template_set, "1.0.1");
+        assert_eq!(model.template_set, "1.0.2");
         assert_eq!(
             model.card_status_values,
             [
@@ -2293,7 +2439,7 @@ mod tests {
             .any(|card| card.kind == PromptCardKind::Srp));
         assert!(model.cards.iter().all(|card| card
             .template_path
-            .starts_with("docs/templates/prompts/1.0.1/")));
+            .starts_with("docs/templates/prompts/1.0.2/")));
     }
 
     #[test]
@@ -2330,10 +2476,10 @@ mod tests {
         assert_eq!(report.comparison, PromptCardRoundTripComparison::Normalized);
 
         let imported_text = fs::read_to_string(&imported).expect("imported values");
-        assert!(imported_text.contains("template_set: \"1.0.1\""));
+        assert!(imported_text.contains("template_set: \"1.0.2\""));
         let normalized_text = fs::read_to_string(&normalized).expect("normalized rendered");
         assert!(normalized_text.contains(&format!(
-            "Canonical Template Source: `docs/templates/prompts/1.0.1/{}.md`",
+            "Canonical Template Source: `docs/templates/prompts/1.0.2/{}.md`",
             kind.key()
         )));
     }

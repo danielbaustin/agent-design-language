@@ -1099,6 +1099,14 @@ fn render_bootstrap_output_card(
             ("<actual_metrics_source_ref>", "unknown".to_string()),
             ("<actual_metrics_confidence>", "unknown".to_string()),
             ("<estimate_error_percent>", "unknown".to_string()),
+            ("<variance_analysis_required>", "not_applicable".to_string()),
+            ("<variance_analysis_completed>", "not_applicable".to_string()),
+            ("<variance_category>", "not_applicable".to_string()),
+            (
+                "<variance_note>",
+                "Bootstrap scaffold records unknown issue metrics only; variance analysis is deferred until execution produces authoritative estimates and actuals."
+                    .to_string(),
+            ),
         ],
     );
     Ok(text)

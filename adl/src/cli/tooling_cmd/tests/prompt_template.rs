@@ -122,7 +122,7 @@ fn prompt_template_cli_renders_one_card_and_rejects_locked_value_edits() {
 
     let locked = repo.write_rel(
         "locked.values.yaml",
-        "schema: adl.csdlc.prompt_template_values.v1\ntemplate_set: 1.0.1\ncard_kind: stp\nsystem: {}\nvalues:\n  issue: \"1374\"\n",
+        "schema: adl.csdlc.prompt_template_values.v1\ntemplate_set: 1.0.2\ncard_kind: stp\nsystem: {}\nvalues:\n  issue: \"1374\"\n",
     );
     let err = real_tooling(&[
         "prompt-template".to_string(),
@@ -564,6 +564,86 @@ fn prompt_template_validate_values_fails_closed_for_invalid_sor_metrics_coupling
 }
 
 #[test]
+fn prompt_template_validate_values_requires_variance_analysis_for_large_known_sor_estimate_miss() {
+    let repo = TempRepo::new("prompt-template-invalid-sor-variance");
+    let values_dir = repo.path().join("values");
+
+    real_tooling(&[
+        "prompt-template".to_string(),
+        "write-sample-values".to_string(),
+        "--repo-root".to_string(),
+        repo_root_for_tests().to_string_lossy().to_string(),
+        "--out-dir".to_string(),
+        values_dir.to_string_lossy().to_string(),
+    ])
+    .expect("write sample values");
+
+    let err = real_tooling(&[
+        "prompt-template".to_string(),
+        "edit-values".to_string(),
+        "--repo-root".to_string(),
+        repo_root_for_tests().to_string_lossy().to_string(),
+        "--kind".to_string(),
+        "sor".to_string(),
+        "--values".to_string(),
+        values_dir
+            .join("sor.values.yaml")
+            .to_string_lossy()
+            .to_string(),
+        "--set".to_string(),
+        "estimated_elapsed_seconds=100".to_string(),
+        "--set".to_string(),
+        "actual_elapsed_seconds=300".to_string(),
+    ])
+    .expect_err("large known SOR estimate miss should require variance analysis");
+    assert!(err
+        .to_string()
+        .contains("sor.variance_analysis_required must be `yes`"));
+}
+
+#[test]
+fn prompt_template_validate_values_requires_variance_note_when_analysis_is_required() {
+    let repo = TempRepo::new("prompt-template-invalid-sor-variance-note");
+    let values_dir = repo.path().join("values");
+
+    real_tooling(&[
+        "prompt-template".to_string(),
+        "write-sample-values".to_string(),
+        "--repo-root".to_string(),
+        repo_root_for_tests().to_string_lossy().to_string(),
+        "--out-dir".to_string(),
+        values_dir.to_string_lossy().to_string(),
+    ])
+    .expect("write sample values");
+
+    let err = real_tooling(&[
+        "prompt-template".to_string(),
+        "edit-values".to_string(),
+        "--repo-root".to_string(),
+        repo_root_for_tests().to_string_lossy().to_string(),
+        "--kind".to_string(),
+        "sor".to_string(),
+        "--values".to_string(),
+        values_dir
+            .join("sor.values.yaml")
+            .to_string_lossy()
+            .to_string(),
+        "--set".to_string(),
+        "variance_analysis_required=yes".to_string(),
+        "--set".to_string(),
+        "variance_analysis_completed=yes".to_string(),
+        "--set".to_string(),
+        "variance_category=tool_failure".to_string(),
+        "--set".to_string(),
+        "variance_note=not_applicable".to_string(),
+    ])
+    .expect_err("required variance analysis should need a real note");
+    assert!(err.to_string().contains(
+        "sor.variance_note must be non-empty when sor.variance_analysis_required is `yes`"
+    ));
+}
+
+#[test]
 fn prompt_template_cli_edit_rendered_card_uses_values_roundtrip_default_path() {
     let repo = TempRepo::new("prompt-template-edit-rendered");
     let values_dir = repo.path().join("values");
@@ -733,7 +813,7 @@ fn prompt_template_cli_usage_and_error_paths_are_deterministic() {
     let repo = TempRepo::new("prompt-template-errors");
     let values = repo.write_rel(
         "sip.values.yaml",
-        "schema: adl.csdlc.prompt_template_values.v1\ntemplate_set: 1.0.1\ncard_kind: sip\nsystem:\n  issue: \"1374\"\n",
+        "schema: adl.csdlc.prompt_template_values.v1\ntemplate_set: 1.0.2\ncard_kind: sip\nsystem:\n  issue: \"1374\"\n",
     );
 
     real_tooling(&["prompt-template".to_string(), "help".to_string()])
