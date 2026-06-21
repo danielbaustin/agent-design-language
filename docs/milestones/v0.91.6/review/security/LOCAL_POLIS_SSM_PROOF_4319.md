@@ -16,6 +16,9 @@ This packet does not claim fleet rollout, Session Manager shell operations,
 CloudWatch Agent rollout, storage-content export, SCR authority transfer, or
 AWS authority over local polis state.
 
+Related durable operator guide:
+- `docs/tooling/QNAP_QTS_SSM_ONBOARDING.md`
+
 ## Status
 
 Current state: `completed_for_issue_scope`
@@ -91,6 +94,9 @@ The proof preserves these boundaries:
    path with CloudWatch output enabled.
 10. Record the Systems Manager result, stdout, and CloudWatch log stream in this
     packet and the issue SOR.
+
+For reusable operator guidance outside this issue packet, see:
+- `docs/tooling/QNAP_QTS_SSM_ONBOARDING.md`
 
 ### Rollback
 
