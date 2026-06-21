@@ -26,7 +26,7 @@ Forward checklist. Items are intentionally unchecked because `v0.91.7` execution
 
 ## Process And Validation Substrate
 
-- [ ] SEP/VPP/PVF/template-version work completed or routed.
+- [ ] v0.91.6 `#4388`-`#4398` C-SDLC integration control-plane sprint completed, blocked, deferred, or routed, including SEP, VPP, PVF/template-version work, GitHub/octocrab convergence, goal metrics, logging, watcher/lifecycle automation, runtime dependency routing, tooling reliability, and FastContext evaluation.
 - [ ] Sprint `/goal`, issue goal, watcher, activity log, and closeout rules are reflected in templates/skills or routed.
 - [ ] PVF/VPP lane assignment can be made during planning or is explicitly deferred.
 - [ ] Time/token/resource accounting fields are scheduled for cards/SORs.
