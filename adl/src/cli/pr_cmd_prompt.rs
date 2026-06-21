@@ -99,19 +99,20 @@ pub(crate) fn normalize_issue_title_for_version(title: &str, version: &str) -> S
     format!("{expected_prefix}{trimmed}")
 }
 
-pub(crate) fn ensure_no_duplicate_issue_identities(
-    repo_root: &Path,
+fn collect_duplicate_issue_identity_paths(
+    search_root: &Path,
+    canonical_root: &Path,
     issue_ref: &IssueRef,
-) -> Result<()> {
-    let adl_root = repo_root.join(".adl");
+) -> Result<Vec<PathBuf>> {
+    let adl_root = search_root.join(".adl");
     if !adl_root.is_dir() {
-        return Ok(());
+        return Ok(Vec::new());
     }
 
     let body_prefix = format!("issue-{:04}-", issue_ref.issue_number());
     let task_prefix = format!("issue-{:04}__", issue_ref.issue_number());
-    let canonical_body = issue_ref.issue_prompt_path(repo_root);
-    let canonical_bundle = issue_ref.task_bundle_dir_path(repo_root);
+    let canonical_body = issue_ref.issue_prompt_path(canonical_root);
+    let canonical_bundle = issue_ref.task_bundle_dir_path(canonical_root);
     let mut duplicates = Vec::new();
 
     for scope_entry in fs::read_dir(&adl_root)? {
@@ -145,6 +146,23 @@ pub(crate) fn ensure_no_duplicate_issue_identities(
 
     duplicates.sort();
     duplicates.dedup();
+    Ok(duplicates)
+}
+
+pub(crate) fn ensure_no_duplicate_issue_identities(
+    repo_root: &Path,
+    issue_ref: &IssueRef,
+) -> Result<()> {
+    ensure_no_duplicate_issue_identities_against_root(repo_root, repo_root, issue_ref)
+}
+
+pub(crate) fn ensure_no_duplicate_issue_identities_against_root(
+    search_root: &Path,
+    canonical_root: &Path,
+    issue_ref: &IssueRef,
+) -> Result<()> {
+    let duplicates =
+        collect_duplicate_issue_identity_paths(search_root, canonical_root, issue_ref)?;
     if duplicates.is_empty() {
         return Ok(());
     }
@@ -152,7 +170,7 @@ pub(crate) fn ensure_no_duplicate_issue_identities(
     let rendered = duplicates
         .iter()
         .map(|path| {
-            path.strip_prefix(repo_root)
+            path.strip_prefix(search_root)
                 .unwrap_or(path)
                 .display()
                 .to_string()
