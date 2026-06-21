@@ -1,5 +1,5 @@
 use anyhow::{anyhow, bail, Context, Result};
-use chrono::{DateTime, Utc};
+use chrono::{DateTime, SecondsFormat, Utc};
 use serde::Serialize;
 use std::fs;
 use std::path::{Path, PathBuf};
@@ -8,13 +8,16 @@ use std::process::Command;
 use super::common::{contains_absolute_host_path_in_text, repo_relative_display};
 
 const SCHEMA_VERSION: &str = "adl.issue_resource_telemetry.v1";
+const ARCHIVE_MANIFEST_SCHEMA_VERSION: &str = "adl.issue_resource_telemetry_archive_manifest.v1";
 const DEFAULT_CAPTURE_STAGES: &[&str] = &[
     "issue_start",
     "pre_validation",
     "post_validation",
     "review_handoff",
 ];
-const APPROVED_WUJI_LABEL: &str = "wuji";
+const APPROVED_LOCAL_HOST_LABEL: &str = "wuji";
+const APPROVED_CSM_HOST_LABELS: &[&str] = &["opticon", "nessus"];
+const REDACTED_HOST_LABEL: &str = "redacted_host";
 
 #[derive(Debug, Clone, Serialize, PartialEq)]
 #[serde(untagged)]
@@ -115,9 +118,48 @@ struct ArchiveRecord {
     private_archive_ref: Option<String>,
 }
 
+#[derive(Debug, Clone, Serialize, PartialEq)]
+struct IssueResourceTelemetryArchiveManifest {
+    schema_version: String,
+    generated_at: String,
+    source: ArchiveSourceRecord,
+    host: HostRecord,
+    archive: ArchiveManifestArchiveRecord,
+    consumption_policy: ArchiveConsumptionPolicy,
+}
+
+#[derive(Debug, Clone, Serialize, PartialEq)]
+struct ArchiveSourceRecord {
+    issue_number: u32,
+    issue_slug: String,
+    captured_at: String,
+    input_ref: String,
+    repo: String,
+    row_count: usize,
+}
+
+#[derive(Debug, Clone, Serialize, PartialEq)]
+struct ArchiveManifestArchiveRecord {
+    backend: String,
+    raw_telemetry_ref: String,
+    manifest_ref: Option<String>,
+    upload_status: String,
+    manifest_upload_status: String,
+    redaction_status: String,
+    local_retention: String,
+}
+
+#[derive(Debug, Clone, Serialize, PartialEq)]
+struct ArchiveConsumptionPolicy {
+    raw_telemetry_is_private_evidence: bool,
+    review_safe_summary_is_separate: bool,
+    fail_closed_on_upload_or_redaction_error: bool,
+}
+
 #[derive(Debug, Clone, PartialEq, Eq)]
 enum TelemetryAction {
     Collect,
+    Archive,
 }
 
 #[derive(Debug, Clone, PartialEq, Eq)]
@@ -131,20 +173,40 @@ struct TelemetryArgs {
     action: TelemetryAction,
     issue_number: u32,
     issue_slug: String,
-    capture_stage: String,
+    capture_stage: Option<String>,
     host_label: String,
     repo_root: PathBuf,
     out: Option<PathBuf>,
+    input: Option<PathBuf>,
+    manifest_out: Option<PathBuf>,
+    s3_prefix: Option<String>,
+    repo: Option<String>,
     captured_at: Option<String>,
     processes: Vec<TrackedProcessSpec>,
+    upload: bool,
+    upload_manifest: bool,
+    redaction_status: String,
     json_output: bool,
+}
+
+#[derive(Debug, Clone, PartialEq, Eq)]
+struct HostPolicy {
+    label: String,
+    classification: String,
+    approval_state: String,
+    archive_host_ref: String,
 }
 
 trait CommandRunner {
     fn run(&self, program: &str, args: &[&str]) -> Result<String>;
 }
 
+trait ArchiveUploader {
+    fn upload(&self, source: &Path, dest: &str) -> Result<()>;
+}
+
 struct SystemCommandRunner;
+struct AwsCliUploader;
 
 impl CommandRunner for SystemCommandRunner {
     fn run(&self, program: &str, args: &[&str]) -> Result<String> {
@@ -169,6 +231,21 @@ impl CommandRunner for SystemCommandRunner {
     }
 }
 
+impl ArchiveUploader for AwsCliUploader {
+    fn upload(&self, source: &Path, dest: &str) -> Result<()> {
+        let status = Command::new("aws")
+            .args(["s3", "cp"])
+            .arg(source)
+            .arg(dest)
+            .status()
+            .context("failed to invoke aws s3 cp for issue-resource-telemetry upload")?;
+        if !status.success() {
+            bail!("aws s3 cp failed for issue-resource-telemetry upload");
+        }
+        Ok(())
+    }
+}
+
 pub(super) fn real_issue_resource_telemetry(args: &[String]) -> Result<()> {
     if matches!(
         args.first().map(|arg| arg.as_str()),
@@ -179,17 +256,36 @@ pub(super) fn real_issue_resource_telemetry(args: &[String]) -> Result<()> {
     }
     let args = parse_args(args)?;
     let runner = SystemCommandRunner;
-    let row = build_row(&args, &runner)?;
-    let output_path = args
-        .out
-        .clone()
-        .unwrap_or_else(|| default_output_path(&args.repo_root, args.issue_number));
-    write_row(&output_path, &row)?;
-    if args.json_output {
-        println!("{}", serde_json::to_string_pretty(&row)?);
-    } else {
-        let display = safe_output_ref(&args.repo_root, &output_path);
-        println!("issue_resource_telemetry={display}");
+    match args.action {
+        TelemetryAction::Collect => {
+            let row = build_row(&args, &runner)?;
+            let output_path = args
+                .out
+                .clone()
+                .unwrap_or_else(|| default_output_path(&args.repo_root, args.issue_number));
+            write_row(&output_path, &row)?;
+            if args.json_output {
+                println!("{}", serde_json::to_string_pretty(&row)?);
+            } else {
+                let display = safe_output_ref(&args.repo_root, &output_path);
+                println!("issue_resource_telemetry={display}");
+            }
+        }
+        TelemetryAction::Archive => {
+            let uploader = AwsCliUploader;
+            let manifest = build_archive_manifest(&args, &uploader)?;
+            let manifest_out = args
+                .manifest_out
+                .clone()
+                .unwrap_or_else(|| default_manifest_path(&args.repo_root, args.issue_number));
+            write_archive_manifest(&manifest_out, &manifest, &uploader)?;
+            if args.json_output {
+                println!("{}", serde_json::to_string_pretty(&manifest)?);
+            } else {
+                let display = safe_output_ref(&args.repo_root, &manifest_out);
+                println!("issue_resource_telemetry_manifest={display}");
+            }
+        }
     }
     Ok(())
 }
@@ -200,6 +296,7 @@ fn parse_args(args: &[String]) -> Result<TelemetryArgs> {
     };
     let action = match action {
         "collect" => TelemetryAction::Collect,
+        "archive" => TelemetryAction::Archive,
         "--help" | "-h" | "help" => {
             println!("{}", usage());
             return Err(anyhow!("help requested"));
@@ -213,11 +310,18 @@ fn parse_args(args: &[String]) -> Result<TelemetryArgs> {
     let mut issue_number = None;
     let mut issue_slug = None;
     let mut capture_stage = None;
-    let mut host_label = Some(APPROVED_WUJI_LABEL.to_string());
+    let mut host_label = Some(APPROVED_LOCAL_HOST_LABEL.to_string());
     let mut repo_root = Some(std::env::current_dir()?);
     let mut out = None;
+    let mut input = None;
+    let mut manifest_out = None;
+    let mut s3_prefix = None;
+    let mut repo = None;
     let mut captured_at = None;
     let mut processes = Vec::new();
+    let mut upload = false;
+    let mut upload_manifest = false;
+    let mut redaction_status = "not_redacted_private_archive_manifest_only".to_string();
     let mut json_output = false;
 
     let mut i = 1usize;
@@ -236,6 +340,16 @@ fn parse_args(args: &[String]) -> Result<TelemetryArgs> {
                 repo_root = Some(PathBuf::from(require_value(args, &mut i, "--repo-root")?))
             }
             "--out" => out = Some(PathBuf::from(require_value(args, &mut i, "--out")?)),
+            "--input" => input = Some(PathBuf::from(require_value(args, &mut i, "--input")?)),
+            "--manifest-out" => {
+                manifest_out = Some(PathBuf::from(require_value(
+                    args,
+                    &mut i,
+                    "--manifest-out",
+                )?))
+            }
+            "--s3-prefix" => s3_prefix = Some(require_value(args, &mut i, "--s3-prefix")?),
+            "--repo" => repo = Some(require_value(args, &mut i, "--repo")?),
             "--captured-at" => captured_at = Some(require_value(args, &mut i, "--captured-at")?),
             "--process" => processes.push(parse_process_spec(&require_value(
                 args,
@@ -247,6 +361,12 @@ fn parse_args(args: &[String]) -> Result<TelemetryArgs> {
                 &mut i,
                 "--pid-file-process",
             )?)?),
+            "--upload" => upload = true,
+            "--upload-manifest" => upload_manifest = true,
+            "--redaction-status" => {
+                redaction_status = require_value(args, &mut i, "--redaction-status")?;
+                validate_redaction_status(&redaction_status)?;
+            }
             "--json" => json_output = true,
             other => bail!("unknown issue-resource-telemetry argument '{other}'"),
         }
@@ -258,10 +378,13 @@ fn parse_args(args: &[String]) -> Result<TelemetryArgs> {
     let issue_slug = issue_slug
         .filter(|value| !value.trim().is_empty())
         .ok_or_else(|| anyhow!("issue-resource-telemetry collect requires --issue-slug"))?;
-    let capture_stage = capture_stage
-        .filter(|value| !value.trim().is_empty())
-        .ok_or_else(|| anyhow!("issue-resource-telemetry collect requires --capture-stage"))?;
-    validate_capture_stage(&capture_stage)?;
+    let capture_stage = capture_stage.filter(|value| !value.trim().is_empty());
+    if matches!(action, TelemetryAction::Collect) {
+        let value = capture_stage
+            .as_deref()
+            .ok_or_else(|| anyhow!("issue-resource-telemetry collect requires --capture-stage"))?;
+        validate_capture_stage(value)?;
+    }
     let host_label = host_label
         .filter(|value| !value.trim().is_empty())
         .ok_or_else(|| anyhow!("issue-resource-telemetry collect requires --host-label"))?;
@@ -273,6 +396,32 @@ fn parse_args(args: &[String]) -> Result<TelemetryArgs> {
     if let Some(ref value) = captured_at {
         parse_captured_at(value)?;
     }
+    if let Some(ref value) = s3_prefix {
+        if !value.starts_with("s3://") {
+            bail!("--s3-prefix must start with s3://");
+        }
+    }
+    if upload_manifest && !upload {
+        bail!("--upload-manifest requires --upload");
+    }
+    validate_redaction_status(&redaction_status)?;
+    if matches!(action, TelemetryAction::Archive) {
+        if input.is_none() {
+            bail!("issue-resource-telemetry archive requires --input");
+        }
+        if manifest_out.is_none() {
+            bail!("issue-resource-telemetry archive requires --manifest-out");
+        }
+        if s3_prefix.is_none() {
+            bail!("issue-resource-telemetry archive requires --s3-prefix s3://bucket/prefix");
+        }
+        if captured_at.is_none() {
+            bail!("issue-resource-telemetry archive requires --captured-at");
+        }
+        if !processes.is_empty() {
+            bail!("issue-resource-telemetry archive does not accept process inputs");
+        }
+    }
 
     Ok(TelemetryArgs {
         action,
@@ -282,14 +431,22 @@ fn parse_args(args: &[String]) -> Result<TelemetryArgs> {
         host_label,
         repo_root,
         out,
+        input,
+        manifest_out,
+        s3_prefix,
+        repo,
         captured_at,
         processes,
+        upload,
+        upload_manifest,
+        redaction_status,
         json_output,
     })
 }
 
 fn usage() -> &'static str {
-    "adl tooling issue-resource-telemetry collect --issue <number> --issue-slug <slug> --capture-stage <issue_start|pre_validation|post_validation|review_handoff|custom_stage> [--host-label wuji] [--process <role:pid>] [--pid-file-process <role:path>] [--captured-at <rfc3339>] [--repo-root <path>] [--out <path>] [--json]"
+    "adl tooling issue-resource-telemetry collect --issue <number> --issue-slug <slug> --capture-stage <issue_start|pre_validation|post_validation|review_handoff|custom_stage> [--host-label wuji] [--process <role:pid>] [--pid-file-process <role:path>] [--captured-at <rfc3339>] [--repo-root <path>] [--out <path>] [--json]\n\
+adl tooling issue-resource-telemetry archive --issue <number> --issue-slug <slug> --input <telemetry.jsonl> --manifest-out <manifest.json> --s3-prefix s3://bucket/prefix [--repo owner/repo] [--host-label <label>] --captured-at <rfc3339> [--redaction-status <status>] [--upload] [--upload-manifest] [--repo-root <path>] [--json]"
 }
 
 fn require_value(args: &[String], i: &mut usize, flag: &str) -> Result<String> {
@@ -320,19 +477,32 @@ fn validate_capture_stage(value: &str) -> Result<()> {
 }
 
 fn validate_host_label(value: &str) -> Result<()> {
-    if value != APPROVED_WUJI_LABEL {
-        bail!(
-            "--host-label must be the approved first-slice host label '{}' for this issue; got '{value}'",
-            APPROVED_WUJI_LABEL
-        );
+    let normalized = canonical_host_label(value)?;
+    if normalized.is_empty() {
+        bail!("--host-label cannot be empty");
     }
     Ok(())
+}
+
+fn validate_redaction_status(value: &str) -> Result<()> {
+    match value {
+        "not_redacted_private_archive_manifest_only"
+        | "redacted_private_archive"
+        | "redacted_review_safe_summary" => Ok(()),
+        other => bail!(
+            "unsupported --redaction-status '{other}' (expected not_redacted_private_archive_manifest_only | redacted_private_archive | redacted_review_safe_summary)"
+        ),
+    }
 }
 
 fn parse_captured_at(value: &str) -> Result<DateTime<Utc>> {
     Ok(DateTime::parse_from_rfc3339(value)
         .with_context(|| format!("invalid --captured-at '{value}'"))?
         .with_timezone(&Utc))
+}
+
+fn archive_capture_token(value: &DateTime<Utc>) -> String {
+    value.to_rfc3339_opts(SecondsFormat::Secs, true)
 }
 
 fn parse_process_spec(value: &str) -> Result<TrackedProcessSpec> {
@@ -385,6 +555,13 @@ fn default_output_path(repo_root: &Path, issue_number: u32) -> PathBuf {
         .join("telemetry/issue_resource_telemetry.v1.jsonl")
 }
 
+fn default_manifest_path(repo_root: &Path, issue_number: u32) -> PathBuf {
+    repo_root
+        .join(".adl/runs/issues")
+        .join(format!("issue-{issue_number}"))
+        .join("telemetry/issue_resource_telemetry_manifest.v1.json")
+}
+
 fn safe_output_ref(repo_root: &Path, output_path: &Path) -> String {
     match output_path.strip_prefix(repo_root) {
         Ok(_) => repo_relative_display(repo_root, output_path)
@@ -399,12 +576,60 @@ fn safe_output_ref(repo_root: &Path, output_path: &Path) -> String {
     }
 }
 
+fn canonical_host_label(value: &str) -> Result<String> {
+    let trimmed = value.trim().to_ascii_lowercase();
+    let normalized = trimmed
+        .strip_suffix(".agent-logic.ai")
+        .or_else(|| trimmed.strip_suffix(".local"))
+        .unwrap_or(trimmed.as_str())
+        .trim();
+    if normalized.is_empty() {
+        bail!("host label cannot be empty");
+    }
+    if !normalized
+        .chars()
+        .all(|ch| ch.is_ascii_lowercase() || ch.is_ascii_digit() || ch == '_' || ch == '-')
+    {
+        bail!("host label must use lowercase letters, digits, '-' or '_'");
+    }
+    Ok(normalized.to_string())
+}
+
+fn resolve_host_policy(label: &str) -> Result<HostPolicy> {
+    let normalized = canonical_host_label(label)?;
+    if normalized == APPROVED_LOCAL_HOST_LABEL {
+        return Ok(HostPolicy {
+            label: normalized.clone(),
+            classification: "operator_named_local_host".to_string(),
+            approval_state: "approved_label".to_string(),
+            archive_host_ref: normalized,
+        });
+    }
+    if APPROVED_CSM_HOST_LABELS.contains(&normalized.as_str()) {
+        return Ok(HostPolicy {
+            label: normalized.clone(),
+            classification: "operator_named_csm_host".to_string(),
+            approval_state: "approved_label".to_string(),
+            archive_host_ref: normalized,
+        });
+    }
+    Ok(HostPolicy {
+        label: REDACTED_HOST_LABEL.to_string(),
+        classification: "redacted_remote_host".to_string(),
+        approval_state: "redacted_label".to_string(),
+        archive_host_ref: REDACTED_HOST_LABEL.to_string(),
+    })
+}
+
 fn build_row(
     args: &TelemetryArgs,
     runner: &dyn CommandRunner,
 ) -> Result<IssueResourceTelemetryRow> {
     match args.action {
         TelemetryAction::Collect => {}
+        TelemetryAction::Archive => {
+            bail!("build_row only supports the collect action");
+        }
     }
     let captured_at = args
         .captured_at
@@ -418,16 +643,20 @@ fn build_row(
     let disk = collect_disk(runner).unwrap_or_else(|_| MetricField::not_available());
     let process_summary = collect_process_summary(runner, &args.processes)
         .unwrap_or_else(|_| MetricField::not_available());
+    let host_policy = resolve_host_policy(&args.host_label)?;
     let row = IssueResourceTelemetryRow {
         schema_version: SCHEMA_VERSION.to_string(),
         issue_number: args.issue_number,
         issue_slug: args.issue_slug.clone(),
         captured_at,
-        capture_stage: args.capture_stage.clone(),
+        capture_stage: args
+            .capture_stage
+            .clone()
+            .expect("collect validated capture_stage"),
         host: HostRecord {
-            label: args.host_label.clone(),
-            classification: "operator_named_local_host".to_string(),
-            approval_state: "approved_label".to_string(),
+            label: host_policy.label,
+            classification: host_policy.classification,
+            approval_state: host_policy.approval_state,
         },
         data_source: DataSourceRecord {
             collector: "bounded_local_sampler_v1".to_string(),
@@ -450,6 +679,232 @@ fn build_row(
         bail!("issue resource telemetry row contains an absolute host path");
     }
     Ok(row)
+}
+
+fn build_archive_manifest(
+    args: &TelemetryArgs,
+    uploader: &dyn ArchiveUploader,
+) -> Result<IssueResourceTelemetryArchiveManifest> {
+    let input = args
+        .input
+        .as_ref()
+        .expect("archive validated input")
+        .to_path_buf();
+    if !input.is_file() {
+        bail!("--input is not a file: {}", input.display());
+    }
+    let captured_at = args
+        .captured_at
+        .as_deref()
+        .expect("archive validated captured_at");
+    let captured_at = parse_captured_at(captured_at)?;
+    let archive_capture_token = archive_capture_token(&captured_at);
+    let captured_at = captured_at.to_rfc3339_opts(SecondsFormat::Secs, true);
+    let repo = resolve_repo_slug(args)?;
+    let host_policy = resolve_host_policy(&args.host_label)?;
+    let row_count = validate_telemetry_jsonl(&input)?;
+    let raw_telemetry_ref = archive_raw_telemetry_ref(
+        args.s3_prefix
+            .as_deref()
+            .expect("archive validated s3_prefix"),
+        &repo,
+        args.issue_number,
+        &host_policy.archive_host_ref,
+        &archive_capture_token,
+    );
+    let manifest_ref = if args.upload_manifest {
+        Some(archive_manifest_ref(
+            args.s3_prefix
+                .as_deref()
+                .expect("archive validated s3_prefix"),
+            &repo,
+            args.issue_number,
+            &host_policy.archive_host_ref,
+            &archive_capture_token,
+        ))
+    } else {
+        None
+    };
+    let upload_status = if args.upload {
+        uploader.upload(&input, &raw_telemetry_ref)?;
+        "uploaded".to_string()
+    } else {
+        "upload_not_run".to_string()
+    };
+    let manifest_upload_status = if args.upload_manifest {
+        "pending_manifest_write".to_string()
+    } else {
+        "upload_not_run".to_string()
+    };
+    let manifest = IssueResourceTelemetryArchiveManifest {
+        schema_version: ARCHIVE_MANIFEST_SCHEMA_VERSION.to_string(),
+        generated_at: Utc::now().to_rfc3339(),
+        source: ArchiveSourceRecord {
+            issue_number: args.issue_number,
+            issue_slug: args.issue_slug.clone(),
+            captured_at,
+            input_ref: safe_output_ref(&args.repo_root, &input),
+            repo,
+            row_count,
+        },
+        host: HostRecord {
+            label: host_policy.label,
+            classification: host_policy.classification,
+            approval_state: host_policy.approval_state,
+        },
+        archive: ArchiveManifestArchiveRecord {
+            backend: "s3".to_string(),
+            raw_telemetry_ref,
+            manifest_ref,
+            upload_status,
+            manifest_upload_status,
+            redaction_status: args.redaction_status.clone(),
+            local_retention: "local_ignored_until_private_archive".to_string(),
+        },
+        consumption_policy: ArchiveConsumptionPolicy {
+            raw_telemetry_is_private_evidence: true,
+            review_safe_summary_is_separate: true,
+            fail_closed_on_upload_or_redaction_error: true,
+        },
+    };
+    let rendered = serde_json::to_string(&manifest)?;
+    if contains_absolute_host_path_in_text(&rendered) {
+        bail!("issue resource telemetry archive manifest contains an absolute host path");
+    }
+    Ok(manifest)
+}
+
+fn write_archive_manifest(
+    path: &Path,
+    manifest: &IssueResourceTelemetryArchiveManifest,
+    uploader: &dyn ArchiveUploader,
+) -> Result<()> {
+    if let Some(parent) = path.parent() {
+        fs::create_dir_all(parent).with_context(|| {
+            format!(
+                "failed creating telemetry manifest dir '{}'",
+                parent.display()
+            )
+        })?;
+    }
+    let manifest = manifest.clone();
+    let rendered = serde_json::to_string_pretty(&manifest)? + "\n";
+    fs::write(path, &rendered).with_context(|| format!("failed writing '{}'", path.display()))?;
+    if let Some(manifest_ref) = manifest.archive.manifest_ref.clone() {
+        if manifest.archive.upload_status != "uploaded" {
+            bail!("manifest upload requires raw telemetry upload to have completed");
+        }
+        let mut uploaded_manifest = manifest;
+        uploaded_manifest.archive.manifest_upload_status = "uploaded".to_string();
+        let uploaded_rendered = serde_json::to_string_pretty(&uploaded_manifest)? + "\n";
+        let upload_path = path.with_extension("upload.json");
+        fs::write(&upload_path, &uploaded_rendered).with_context(|| {
+            format!(
+                "failed writing upload manifest staging file '{}'",
+                upload_path.display()
+            )
+        })?;
+        uploader.upload(&upload_path, &manifest_ref)?;
+        fs::write(path, uploaded_rendered)
+            .with_context(|| format!("failed writing uploaded manifest '{}'", path.display()))?;
+        let _ = fs::remove_file(&upload_path);
+    }
+    Ok(())
+}
+
+fn validate_telemetry_jsonl(path: &Path) -> Result<usize> {
+    let raw = fs::read_to_string(path)
+        .with_context(|| format!("failed reading telemetry jsonl '{}'", path.display()))?;
+    let mut row_count = 0usize;
+    for line in raw.lines() {
+        let trimmed = line.trim();
+        if trimmed.is_empty() {
+            continue;
+        }
+        let value: serde_json::Value = serde_json::from_str(trimmed)
+            .with_context(|| format!("invalid telemetry jsonl row in '{}'", path.display()))?;
+        if value.get("schema_version").and_then(|v| v.as_str()) != Some(SCHEMA_VERSION) {
+            bail!("telemetry jsonl row has unexpected schema_version");
+        }
+        if contains_absolute_host_path_in_text(trimmed) {
+            bail!("telemetry jsonl row contains an absolute host path");
+        }
+        row_count += 1;
+    }
+    if row_count == 0 {
+        bail!("telemetry jsonl input must contain at least one row");
+    }
+    Ok(row_count)
+}
+
+fn resolve_repo_slug(args: &TelemetryArgs) -> Result<String> {
+    if let Some(repo) = args.repo.as_deref() {
+        return Ok(sanitize_key_component(repo));
+    }
+    let output = Command::new("git")
+        .args(["remote", "get-url", "origin"])
+        .current_dir(&args.repo_root)
+        .output()
+        .context("failed to invoke git remote get-url origin")?;
+    if !output.status.success() {
+        bail!("git remote get-url origin failed while resolving repo slug");
+    }
+    let raw = String::from_utf8_lossy(&output.stdout).trim().to_string();
+    let without_suffix = raw.trim_end_matches(".git");
+    let repo = without_suffix
+        .rsplit_once(':')
+        .map(|(_, right)| right)
+        .or_else(|| without_suffix.rsplit_once('/').map(|(_, right)| right))
+        .unwrap_or(without_suffix);
+    if raw.contains("github.com/") {
+        let right = without_suffix.split("github.com/").nth(1).unwrap_or(repo);
+        return Ok(sanitize_key_component(right));
+    }
+    Ok(sanitize_key_component(repo))
+}
+
+fn archive_raw_telemetry_ref(
+    s3_prefix: &str,
+    repo: &str,
+    issue_number: u32,
+    host_ref: &str,
+    captured_at: &str,
+) -> String {
+    format!(
+        "{}/{}/issues/issue-{}/host-{}/capture-{}/issue_resource_telemetry.v1.jsonl",
+        s3_prefix.trim_end_matches('/'),
+        repo,
+        issue_number,
+        sanitize_key_component(host_ref),
+        sanitize_key_component(captured_at),
+    )
+}
+
+fn archive_manifest_ref(
+    s3_prefix: &str,
+    repo: &str,
+    issue_number: u32,
+    host_ref: &str,
+    captured_at: &str,
+) -> String {
+    format!(
+        "{}/{}/issues/issue-{}/host-{}/capture-{}/issue_resource_telemetry_manifest.v1.json",
+        s3_prefix.trim_end_matches('/'),
+        repo,
+        issue_number,
+        sanitize_key_component(host_ref),
+        sanitize_key_component(captured_at),
+    )
+}
+
+fn sanitize_key_component(value: &str) -> String {
+    value
+        .chars()
+        .map(|ch| match ch {
+            'a'..='z' | 'A'..='Z' | '0'..='9' | '-' | '_' | '.' => ch,
+            _ => '-',
+        })
+        .collect()
 }
 
 fn write_row(path: &Path, row: &IssueResourceTelemetryRow) -> Result<()> {
@@ -758,6 +1213,7 @@ fn round3(value: f64) -> f64 {
 mod tests {
     use super::*;
     use std::collections::HashMap;
+    use std::sync::Mutex;
     use std::time::{SystemTime, UNIX_EPOCH};
 
     fn temp_repo_root(label: &str) -> PathBuf {
@@ -778,6 +1234,18 @@ mod tests {
         outputs: HashMap<String, Result<String>>,
     }
 
+    #[derive(Debug, Clone)]
+    struct UploadRecord {
+        source: PathBuf,
+        dest: String,
+        content: String,
+    }
+
+    struct FakeArchiveUploader {
+        fail: bool,
+        uploads: Mutex<Vec<UploadRecord>>,
+    }
+
     impl FakeCommandRunner {
         fn new(outputs: HashMap<String, Result<String>>) -> Self {
             Self { outputs }
@@ -795,6 +1263,41 @@ mod tests {
                 Some(Err(err)) => Err(anyhow!(err.to_string())),
                 None => Err(anyhow!("missing fixture for {program} {:?}", args)),
             }
+        }
+    }
+
+    impl FakeArchiveUploader {
+        fn succeed() -> Self {
+            Self {
+                fail: false,
+                uploads: Mutex::new(Vec::new()),
+            }
+        }
+
+        fn fail() -> Self {
+            Self {
+                fail: true,
+                uploads: Mutex::new(Vec::new()),
+            }
+        }
+    }
+
+    impl ArchiveUploader for FakeArchiveUploader {
+        fn upload(&self, source: &Path, dest: &str) -> Result<()> {
+            if self.fail {
+                bail!("simulated upload failure");
+            }
+            let content = fs::read_to_string(source)
+                .with_context(|| format!("read '{}'", source.display()))?;
+            self.uploads
+                .lock()
+                .expect("lock uploads")
+                .push(UploadRecord {
+                    source: source.to_path_buf(),
+                    dest: dest.to_string(),
+                    content,
+                });
+            Ok(())
         }
     }
 
@@ -852,15 +1355,22 @@ mod tests {
             issue_slug:
                 "v0-91-6-observability-telemetry-implement-wuji-issue-resource-telemetry-collector"
                     .to_string(),
-            capture_stage: "issue_start".to_string(),
-            host_label: APPROVED_WUJI_LABEL.to_string(),
+            capture_stage: Some("issue_start".to_string()),
+            host_label: APPROVED_LOCAL_HOST_LABEL.to_string(),
             repo_root: repo_root.clone(),
             out: Some(output.clone()),
+            input: None,
+            manifest_out: None,
+            s3_prefix: None,
+            repo: None,
             captured_at: Some("2026-06-20T09:30:00Z".to_string()),
             processes: vec![TrackedProcessSpec::Pid {
                 role: "validation".to_string(),
                 pid: 4242,
             }],
+            upload: false,
+            upload_manifest: false,
+            redaction_status: "not_redacted_private_archive_manifest_only".to_string(),
             json_output: false,
         };
 
@@ -896,12 +1406,19 @@ mod tests {
             action: TelemetryAction::Collect,
             issue_number: 4298,
             issue_slug: "collector".to_string(),
-            capture_stage: "pre_validation".to_string(),
-            host_label: APPROVED_WUJI_LABEL.to_string(),
+            capture_stage: Some("pre_validation".to_string()),
+            host_label: APPROVED_LOCAL_HOST_LABEL.to_string(),
             repo_root: repo_root.clone(),
             out: None,
+            input: None,
+            manifest_out: None,
+            s3_prefix: None,
+            repo: None,
             captured_at: Some("2026-06-20T09:30:00Z".to_string()),
             processes: vec![],
+            upload: false,
+            upload_manifest: false,
+            redaction_status: "not_redacted_private_archive_manifest_only".to_string(),
             json_output: false,
         };
 
@@ -937,7 +1454,7 @@ mod tests {
             .expect_err("missing required args should fail");
         assert!(err.to_string().contains("--issue"));
 
-        let bad_host = parse_args(&[
+        let args = parse_args(&[
             "collect".to_string(),
             "--issue".to_string(),
             "4298".to_string(),
@@ -948,10 +1465,39 @@ mod tests {
             "--host-label".to_string(),
             "other-host".to_string(),
         ])
-        .expect_err("unapproved host should fail");
-        assert!(bad_host
-            .to_string()
-            .contains("approved first-slice host label"));
+        .expect("unknown host should redact instead of fail");
+        let row = build_row(&args, &FakeCommandRunner::new(HashMap::new())).expect("row");
+        assert_eq!(row.host.label, REDACTED_HOST_LABEL);
+        assert_eq!(row.host.approval_state, "redacted_label");
+    }
+
+    #[test]
+    fn issue_resource_telemetry_collect_supports_approved_csm_host_labels() {
+        let repo_root = temp_repo_root("issue-resource-telemetry-approved-csm");
+        let args = TelemetryArgs {
+            action: TelemetryAction::Collect,
+            issue_number: 4299,
+            issue_slug: "archive".to_string(),
+            capture_stage: Some("review_handoff".to_string()),
+            host_label: "opticon.local".to_string(),
+            repo_root: repo_root.clone(),
+            out: None,
+            input: None,
+            manifest_out: None,
+            s3_prefix: None,
+            repo: None,
+            captured_at: Some("2026-06-20T09:30:00Z".to_string()),
+            processes: vec![],
+            upload: false,
+            upload_manifest: false,
+            redaction_status: "not_redacted_private_archive_manifest_only".to_string(),
+            json_output: false,
+        };
+        let row = build_row(&args, &FakeCommandRunner::new(HashMap::new())).expect("row");
+        assert_eq!(row.host.label, "opticon");
+        assert_eq!(row.host.classification, "operator_named_csm_host");
+        assert_eq!(row.host.approval_state, "approved_label");
+        let _ = fs::remove_dir_all(repo_root);
     }
 
     #[test]
@@ -1048,7 +1594,7 @@ mod tests {
         assert_eq!(args.action, TelemetryAction::Collect);
         assert_eq!(args.issue_number, 4298);
         assert_eq!(args.issue_slug, "collector");
-        assert_eq!(args.capture_stage, "custom_stage");
+        assert_eq!(args.capture_stage.as_deref(), Some("custom_stage"));
         assert_eq!(args.host_label, "wuji");
         assert_eq!(args.repo_root, repo_root);
         assert_eq!(args.out, Some(out));
@@ -1112,12 +1658,19 @@ mod tests {
                 action: TelemetryAction::Collect,
                 issue_number: 4298,
                 issue_slug: "collector".to_string(),
-                capture_stage: "issue_start".to_string(),
-                host_label: APPROVED_WUJI_LABEL.to_string(),
+                capture_stage: Some("issue_start".to_string()),
+                host_label: APPROVED_LOCAL_HOST_LABEL.to_string(),
                 repo_root: repo_root.clone(),
                 out: Some(output.clone()),
+                input: None,
+                manifest_out: None,
+                s3_prefix: None,
+                repo: None,
                 captured_at: Some("2026-06-20T09:30:00Z".to_string()),
                 processes: vec![],
+                upload: false,
+                upload_manifest: false,
+                redaction_status: "not_redacted_private_archive_manifest_only".to_string(),
                 json_output: false,
             },
             &FakeCommandRunner::new(HashMap::new()),
@@ -1128,12 +1681,19 @@ mod tests {
                 action: TelemetryAction::Collect,
                 issue_number: 4298,
                 issue_slug: "collector".to_string(),
-                capture_stage: "post_validation".to_string(),
-                host_label: APPROVED_WUJI_LABEL.to_string(),
+                capture_stage: Some("post_validation".to_string()),
+                host_label: APPROVED_LOCAL_HOST_LABEL.to_string(),
                 repo_root: repo_root.clone(),
                 out: Some(output.clone()),
+                input: None,
+                manifest_out: None,
+                s3_prefix: None,
+                repo: None,
                 captured_at: Some("2026-06-20T09:45:00Z".to_string()),
                 processes: vec![],
+                upload: false,
+                upload_manifest: false,
+                redaction_status: "not_redacted_private_archive_manifest_only".to_string(),
                 json_output: false,
             },
             &FakeCommandRunner::new(HashMap::new()),
@@ -1185,5 +1745,178 @@ mod tests {
             MetricField::NotAvailable(_) => panic!("expected valid process summary"),
         }
         let _ = fs::remove_dir_all(repo_root);
+    }
+
+    #[test]
+    fn issue_resource_telemetry_archive_builds_manifest_and_s3_refs() {
+        let repo_root = temp_repo_root("issue-resource-telemetry-archive");
+        let input = repo_root
+            .join(".adl/runs/issues/issue-4299/telemetry/issue_resource_telemetry.v1.jsonl");
+        fs::create_dir_all(input.parent().expect("parent")).expect("create input dir");
+        fs::write(
+            &input,
+            "{\"schema_version\":\"adl.issue_resource_telemetry.v1\",\"issue_number\":4299}\n",
+        )
+        .expect("write input");
+        let args = TelemetryArgs {
+            action: TelemetryAction::Archive,
+            issue_number: 4299,
+            issue_slug: "archive".to_string(),
+            capture_stage: None,
+            host_label: "nessus.local".to_string(),
+            repo_root: repo_root.clone(),
+            out: None,
+            input: Some(input.clone()),
+            manifest_out: Some(default_manifest_path(&repo_root, 4299)),
+            s3_prefix: Some("s3://adl-issue-telemetry/v0.91.6".to_string()),
+            repo: Some("danielbaustin/agent-design-language".to_string()),
+            captured_at: Some("2026-06-20T09:30:00Z".to_string()),
+            processes: vec![],
+            upload: false,
+            upload_manifest: false,
+            redaction_status: "not_redacted_private_archive_manifest_only".to_string(),
+            json_output: false,
+        };
+
+        let manifest =
+            build_archive_manifest(&args, &FakeArchiveUploader::succeed()).expect("manifest");
+        assert_eq!(manifest.schema_version, ARCHIVE_MANIFEST_SCHEMA_VERSION);
+        assert_eq!(manifest.host.label, "nessus");
+        assert_eq!(manifest.host.classification, "operator_named_csm_host");
+        assert_eq!(manifest.archive.upload_status, "upload_not_run");
+        assert_eq!(
+            manifest.archive.raw_telemetry_ref,
+            "s3://adl-issue-telemetry/v0.91.6/danielbaustin-agent-design-language/issues/issue-4299/host-nessus/capture-2026-06-20T09-30-00Z/issue_resource_telemetry.v1.jsonl"
+        );
+        assert!(manifest
+            .source
+            .input_ref
+            .contains(".adl/runs/issues/issue-4299/telemetry/issue_resource_telemetry.v1.jsonl"));
+        let _ = fs::remove_dir_all(repo_root);
+    }
+
+    #[test]
+    fn issue_resource_telemetry_archive_upload_manifest_persists_truthful_uploaded_status() {
+        let repo_root = temp_repo_root("issue-resource-telemetry-archive-manifest-upload");
+        let input = repo_root
+            .join(".adl/runs/issues/issue-4299/telemetry/issue_resource_telemetry.v1.jsonl");
+        fs::create_dir_all(input.parent().expect("parent")).expect("create input dir");
+        fs::write(
+            &input,
+            "{\"schema_version\":\"adl.issue_resource_telemetry.v1\",\"issue_number\":4299}\n",
+        )
+        .expect("write input");
+        let manifest_out = default_manifest_path(&repo_root, 4299);
+        let args = TelemetryArgs {
+            action: TelemetryAction::Archive,
+            issue_number: 4299,
+            issue_slug: "archive".to_string(),
+            capture_stage: None,
+            host_label: "wuji".to_string(),
+            repo_root: repo_root.clone(),
+            out: None,
+            input: Some(input.clone()),
+            manifest_out: Some(manifest_out.clone()),
+            s3_prefix: Some("s3://adl-issue-telemetry/v0.91.6".to_string()),
+            repo: Some("danielbaustin/agent-design-language".to_string()),
+            captured_at: Some("2026-06-20T09:30:00Z".to_string()),
+            processes: vec![],
+            upload: true,
+            upload_manifest: true,
+            redaction_status: "not_redacted_private_archive_manifest_only".to_string(),
+            json_output: false,
+        };
+
+        let uploader = FakeArchiveUploader::succeed();
+        let manifest = build_archive_manifest(&args, &uploader).expect("manifest");
+        assert_eq!(manifest.archive.upload_status, "uploaded");
+        assert_eq!(
+            manifest.archive.manifest_upload_status,
+            "pending_manifest_write"
+        );
+
+        write_archive_manifest(&manifest_out, &manifest, &uploader).expect("write manifest");
+
+        let uploads = uploader.uploads.lock().expect("lock uploads");
+        assert_eq!(uploads.len(), 2);
+        assert_eq!(
+            uploads[0].dest,
+            "s3://adl-issue-telemetry/v0.91.6/danielbaustin-agent-design-language/issues/issue-4299/host-wuji/capture-2026-06-20T09-30-00Z/issue_resource_telemetry.v1.jsonl"
+        );
+        assert_eq!(
+            uploads[1].dest,
+            "s3://adl-issue-telemetry/v0.91.6/danielbaustin-agent-design-language/issues/issue-4299/host-wuji/capture-2026-06-20T09-30-00Z/issue_resource_telemetry_manifest.v1.json"
+        );
+        assert!(uploads[1]
+            .content
+            .contains("\"manifest_upload_status\": \"uploaded\""));
+        assert!(uploads[1].source.ends_with(Path::new(
+            "issue_resource_telemetry_manifest.v1.upload.json"
+        )));
+        drop(uploads);
+
+        let persisted = fs::read_to_string(&manifest_out).expect("persisted manifest");
+        assert!(persisted.contains("\"manifest_upload_status\": \"uploaded\""));
+        assert!(!manifest_out.with_extension("upload.json").exists());
+        let _ = fs::remove_dir_all(repo_root);
+    }
+
+    #[test]
+    fn issue_resource_telemetry_archive_fails_closed_on_upload_error() {
+        let repo_root = temp_repo_root("issue-resource-telemetry-archive-upload");
+        let input = repo_root.join("telemetry.jsonl");
+        fs::write(
+            &input,
+            "{\"schema_version\":\"adl.issue_resource_telemetry.v1\",\"issue_number\":4299}\n",
+        )
+        .expect("write input");
+        let args = TelemetryArgs {
+            action: TelemetryAction::Archive,
+            issue_number: 4299,
+            issue_slug: "archive".to_string(),
+            capture_stage: None,
+            host_label: "wuji".to_string(),
+            repo_root: repo_root.clone(),
+            out: None,
+            input: Some(input),
+            manifest_out: Some(default_manifest_path(&repo_root, 4299)),
+            s3_prefix: Some("s3://adl-issue-telemetry/v0.91.6".to_string()),
+            repo: Some("danielbaustin/agent-design-language".to_string()),
+            captured_at: Some("2026-06-20T09:30:00Z".to_string()),
+            processes: vec![],
+            upload: true,
+            upload_manifest: false,
+            redaction_status: "not_redacted_private_archive_manifest_only".to_string(),
+            json_output: false,
+        };
+        let err = build_archive_manifest(&args, &FakeArchiveUploader::fail())
+            .expect_err("upload failure must fail closed");
+        assert!(err.to_string().contains("simulated upload failure"));
+        let _ = fs::remove_dir_all(repo_root);
+    }
+
+    #[test]
+    fn issue_resource_telemetry_archive_rejects_unknown_redaction_status() {
+        let err = parse_args(&[
+            "archive".to_string(),
+            "--issue".to_string(),
+            "4299".to_string(),
+            "--issue-slug".to_string(),
+            "archive".to_string(),
+            "--input".to_string(),
+            "telemetry.jsonl".to_string(),
+            "--manifest-out".to_string(),
+            "manifest.json".to_string(),
+            "--s3-prefix".to_string(),
+            "s3://adl-issue-telemetry/v0.91.6".to_string(),
+            "--captured-at".to_string(),
+            "2026-06-20T09:30:00Z".to_string(),
+            "--redaction-status".to_string(),
+            "mystery".to_string(),
+        ])
+        .expect_err("unknown redaction status must fail");
+        assert!(err
+            .to_string()
+            .contains("unsupported --redaction-status 'mystery'"));
     }
 }
