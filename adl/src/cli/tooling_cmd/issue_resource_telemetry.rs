@@ -1564,6 +1564,143 @@ mod tests {
     }
 
     #[test]
+    fn issue_resource_telemetry_parse_args_accepts_optional_fields_and_process_specs() {
+        let repo_root = temp_repo_root("issue-resource-telemetry-parse-args");
+        let out = repo_root.join("telemetry.jsonl");
+        let args = parse_args(&[
+            "collect".to_string(),
+            "--issue".to_string(),
+            "4298".to_string(),
+            "--issue-slug".to_string(),
+            "collector".to_string(),
+            "--capture-stage".to_string(),
+            "custom_stage".to_string(),
+            "--host-label".to_string(),
+            "wuji".to_string(),
+            "--repo-root".to_string(),
+            repo_root.display().to_string(),
+            "--out".to_string(),
+            out.display().to_string(),
+            "--captured-at".to_string(),
+            "2026-06-20T09:30:00Z".to_string(),
+            "--process".to_string(),
+            "validation:4242".to_string(),
+            "--pid-file-process".to_string(),
+            "control_plane:tmp/control.pid".to_string(),
+            "--json".to_string(),
+        ])
+        .expect("args");
+
+        assert_eq!(args.action, TelemetryAction::Collect);
+        assert_eq!(args.issue_number, 4298);
+        assert_eq!(args.issue_slug, "collector");
+        assert_eq!(args.capture_stage, "custom_stage");
+        assert_eq!(args.host_label, "wuji");
+        assert_eq!(args.repo_root, repo_root);
+        assert_eq!(args.out, Some(out));
+        assert_eq!(args.captured_at.as_deref(), Some("2026-06-20T09:30:00Z"));
+        assert!(args.json_output);
+        assert_eq!(
+            args.processes,
+            vec![
+                TrackedProcessSpec::Pid {
+                    role: "validation".to_string(),
+                    pid: 4242,
+                },
+                TrackedProcessSpec::PidFile {
+                    role: "control_plane".to_string(),
+                    path: PathBuf::from("tmp/control.pid"),
+                },
+            ]
+        );
+    }
+
+    #[test]
+    fn issue_resource_telemetry_helper_validation_errors_are_reviewable() {
+        let invalid_issue = parse_issue_number("not-a-number").expect_err("invalid issue");
+        assert!(invalid_issue.to_string().contains("invalid issue number"));
+
+        let invalid_stage =
+            validate_capture_stage("Bad-Stage").expect_err("invalid capture stage should fail");
+        assert!(invalid_stage.to_string().contains("snake_case"));
+
+        let invalid_timestamp =
+            parse_captured_at("not-a-timestamp").expect_err("invalid timestamp should fail");
+        assert!(invalid_timestamp.to_string().contains("invalid --captured-at"));
+
+        let missing_process_value = require_value(&["--process".to_string()], &mut 0, "--process")
+            .expect_err("missing process value should fail");
+        assert!(missing_process_value
+            .to_string()
+            .contains("--process requires a non-empty value"));
+
+        let invalid_process = parse_process_spec("Validation:not-a-pid")
+            .expect_err("invalid process spec should fail");
+        assert!(invalid_process.to_string().contains("process role must be snake_case"));
+
+        let invalid_pid_file = parse_pid_file_process_spec("control_plane:")
+            .expect_err("empty pid file path should fail");
+        assert!(invalid_pid_file
+            .to_string()
+            .contains("--pid-file-process path cannot be empty"));
+    }
+
+    #[test]
+    fn issue_resource_telemetry_write_row_appends_existing_jsonl_content() {
+        let repo_root = temp_repo_root("issue-resource-telemetry-append");
+        let output = repo_root.join("telemetry/issue_resource_telemetry.v1.jsonl");
+        let first = build_row(
+            &TelemetryArgs {
+                action: TelemetryAction::Collect,
+                issue_number: 4298,
+                issue_slug: "collector".to_string(),
+                capture_stage: "issue_start".to_string(),
+                host_label: APPROVED_WUJI_LABEL.to_string(),
+                repo_root: repo_root.clone(),
+                out: Some(output.clone()),
+                captured_at: Some("2026-06-20T09:30:00Z".to_string()),
+                processes: vec![],
+                json_output: false,
+            },
+            &FakeCommandRunner::new(HashMap::new()),
+        )
+        .expect("first row");
+        let second = build_row(
+            &TelemetryArgs {
+                action: TelemetryAction::Collect,
+                issue_number: 4298,
+                issue_slug: "collector".to_string(),
+                capture_stage: "post_validation".to_string(),
+                host_label: APPROVED_WUJI_LABEL.to_string(),
+                repo_root: repo_root.clone(),
+                out: Some(output.clone()),
+                captured_at: Some("2026-06-20T09:45:00Z".to_string()),
+                processes: vec![],
+                json_output: false,
+            },
+            &FakeCommandRunner::new(HashMap::new()),
+        )
+        .expect("second row");
+
+        write_row(&output, &first).expect("write first row");
+        write_row(&output, &second).expect("append second row");
+
+        let lines: Vec<_> = fs::read_to_string(&output)
+            .expect("telemetry jsonl")
+            .lines()
+            .map(str::to_string)
+            .collect();
+        assert_eq!(lines.len(), 2);
+
+        let first_value: serde_json::Value =
+            serde_json::from_str(&lines[0]).expect("first json line");
+        let second_value: serde_json::Value =
+            serde_json::from_str(&lines[1]).expect("second json line");
+        assert_eq!(first_value["capture_stage"], "issue_start");
+        assert_eq!(second_value["capture_stage"], "post_validation");
+    }
+
+    #[test]
     fn issue_resource_telemetry_process_summary_keeps_valid_rows_when_one_pid_source_is_bad() {
         let repo_root = temp_repo_root("issue-resource-telemetry-process-mixed");
         let bad_pid_file = repo_root.join("bad.pid");
