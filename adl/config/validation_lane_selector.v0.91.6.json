@@ -277,6 +277,27 @@
       "reason": "bounded_ssm_status_wrapper_requires_shell_syntax_validation"
     },
     {
+      "id": "local_polis_ssm_wrapper_windows",
+      "lane_class": "cli_workflow",
+      "default_surface": "tooling",
+      "owner": "tools",
+      "proof_role": "regression",
+      "requirement_ids": [
+        "local_polis_ssm_wrapper_windows"
+      ],
+      "path_selectors": [
+        "adl/tools/polis_status_for_ssm_windows.ps1",
+        "adl/tools/validate_polis_status_for_ssm_windows.py"
+      ],
+      "path_hints": [
+        "adl/tools/polis_status_for_ssm_windows.ps1",
+        "adl/tools/validate_polis_status_for_ssm_windows.py"
+      ],
+      "command": "python3 adl/tools/validate_polis_status_for_ssm_windows.py",
+      "run_command": "python3 adl/tools/validate_polis_status_for_ssm_windows.py",
+      "reason": "bounded_windows_ssm_status_wrapper_requires_static_contract_validation"
+    },
+    {
       "id": "validation_lane_selector_contracts",
       "lane_class": "cli_workflow",
       "default_surface": "tooling",
