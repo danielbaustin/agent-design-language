@@ -1,8 +1,10 @@
 use adl::csdlc_prompt_editor::{
     edit_values_file, import_values_from_rendered_card_file, render_all_cards_from_values_dir,
-    render_card_from_values_file, repo_root_from_arg, validate_rendered_card_structure_file,
-    validate_structure_schema_files, validate_values_file, write_all_sample_values,
-    write_all_structure_schemas, PromptCardKind,
+    render_card_from_values_file, repo_root_from_arg,
+    validate_rendered_card_structure_file_for_template_set,
+    validate_structure_schema_files_for_template_set, validate_values_file,
+    write_all_sample_values_for_template_set, write_all_structure_schemas_for_template_set,
+    PromptCardKind,
 };
 use anyhow::{bail, ensure, Result};
 use std::fs;
@@ -139,6 +141,7 @@ fn edit_rendered(args: &[String]) -> Result<()> {
     let mut input: Option<PathBuf> = None;
     let mut out: Option<PathBuf> = None;
     let mut values_out: Option<PathBuf> = None;
+    let mut template_set: Option<String> = None;
     let mut updates: Vec<(String, String)> = Vec::new();
 
     let mut idx = 0usize;
@@ -164,6 +167,10 @@ fn edit_rendered(args: &[String]) -> Result<()> {
                 idx += 1;
                 values_out = Some(PathBuf::from(value_arg(args, idx, "--values-out")?));
             }
+            "--template-set" => {
+                idx += 1;
+                template_set = Some(value_arg(args, idx, "--template-set")?.to_string());
+            }
             "--set" => {
                 idx += 1;
                 updates.push(parse_set_arg(value_arg(args, idx, "--set")?)?);
@@ -187,14 +194,26 @@ fn edit_rendered(args: &[String]) -> Result<()> {
     let out = out.ok_or_else(|| anyhow::anyhow!("edit-rendered requires --out"))?;
     let values_target = values_out.unwrap_or_else(|| out.with_extension("values.yaml"));
 
-    let report = import_values_from_rendered_card_file(&root, kind, &input, &values_target, None)?;
+    let report = import_values_from_rendered_card_file(
+        &root,
+        kind,
+        &input,
+        &values_target,
+        None,
+        template_set.as_deref(),
+    )?;
     edit_values_file(&root, kind, &values_target, &updates, None)?;
     let rendered = render_card_from_values_file(&root, kind, &values_target)?;
     if let Some(parent) = out.parent() {
         fs::create_dir_all(parent)?;
     }
     fs::write(&out, rendered)?;
-    validate_rendered_card_structure_file(&root, kind, &out)?;
+    validate_rendered_card_structure_file_for_template_set(
+        &root,
+        kind,
+        &out,
+        template_set.as_deref(),
+    )?;
     println!(
         "PASS: edited rendered {} card to {} via values {} (round_trip={})",
         kind.key(),
@@ -215,6 +234,7 @@ fn import_values(args: &[String]) -> Result<()> {
     let mut input: Option<PathBuf> = None;
     let mut out: Option<PathBuf> = None;
     let mut normalized_out: Option<PathBuf> = None;
+    let mut template_set: Option<String> = None;
 
     let mut idx = 0usize;
     while idx < args.len() {
@@ -239,6 +259,10 @@ fn import_values(args: &[String]) -> Result<()> {
                 idx += 1;
                 normalized_out = Some(PathBuf::from(value_arg(args, idx, "--normalized-out")?));
             }
+            "--template-set" => {
+                idx += 1;
+                template_set = Some(value_arg(args, idx, "--template-set")?.to_string());
+            }
             "--help" | "-h" | "help" => {
                 println!("{}", tooling_usage());
                 return Ok(());
@@ -258,6 +282,7 @@ fn import_values(args: &[String]) -> Result<()> {
         &input,
         &out,
         normalized_out.as_deref(),
+        template_set.as_deref(),
     )?;
     println!(
         "PASS: imported {} card values to {} (round_trip={})",
@@ -288,6 +313,7 @@ fn validate_structure_one(args: &[String]) -> Result<()> {
     let mut repo_root: Option<PathBuf> = None;
     let mut kind: Option<PromptCardKind> = None;
     let mut input: Option<PathBuf> = None;
+    let mut template_set: Option<String> = None;
 
     let mut idx = 0usize;
     while idx < args.len() {
@@ -304,6 +330,10 @@ fn validate_structure_one(args: &[String]) -> Result<()> {
                 idx += 1;
                 input = Some(PathBuf::from(value_arg(args, idx, "--input")?));
             }
+            "--template-set" => {
+                idx += 1;
+                template_set = Some(value_arg(args, idx, "--template-set")?.to_string());
+            }
             "--help" | "-h" | "help" => {
                 println!("{}", tooling_usage());
                 return Ok(());
@@ -316,7 +346,12 @@ fn validate_structure_one(args: &[String]) -> Result<()> {
     let root = repo_root_from_arg(repo_root)?;
     let kind = kind.ok_or_else(|| anyhow::anyhow!("validate-structure requires --kind"))?;
     let input = input.ok_or_else(|| anyhow::anyhow!("validate-structure requires --input"))?;
-    validate_rendered_card_structure_file(&root, kind, &input)?;
+    validate_rendered_card_structure_file_for_template_set(
+        &root,
+        kind,
+        &input,
+        template_set.as_deref(),
+    )?;
     println!("PASS: rendered structure valid for {}", kind.key());
     Ok(())
 }
@@ -325,6 +360,7 @@ fn render_all(args: &[String]) -> Result<()> {
     let mut repo_root: Option<PathBuf> = None;
     let mut values_dir: Option<PathBuf> = None;
     let mut out_dir: Option<PathBuf> = None;
+    let mut template_set: Option<String> = None;
 
     let mut idx = 0usize;
     while idx < args.len() {
@@ -341,6 +377,10 @@ fn render_all(args: &[String]) -> Result<()> {
                 idx += 1;
                 out_dir = Some(PathBuf::from(value_arg(args, idx, "--out-dir")?));
             }
+            "--template-set" => {
+                idx += 1;
+                template_set = Some(value_arg(args, idx, "--template-set")?.to_string());
+            }
             "--help" | "-h" | "help" => {
                 println!("{}", tooling_usage());
                 return Ok(());
@@ -354,7 +394,7 @@ fn render_all(args: &[String]) -> Result<()> {
     let values_dir =
         values_dir.ok_or_else(|| anyhow::anyhow!("render-all requires --values-dir"))?;
     let out_dir = out_dir.ok_or_else(|| anyhow::anyhow!("render-all requires --out-dir"))?;
-    render_all_cards_from_values_dir(&root, &values_dir, &out_dir)?;
+    render_all_cards_from_values_dir(&root, &values_dir, &out_dir, template_set.as_deref())?;
     println!("PASS: rendered all prompt cards to {}", out_dir.display());
     Ok(())
 }
@@ -365,6 +405,7 @@ fn validate_schemas(args: &[String]) -> Result<()> {
         return Ok(());
     }
     let mut repo_root: Option<PathBuf> = None;
+    let mut template_set: Option<String> = None;
 
     let mut idx = 0usize;
     while idx < args.len() {
@@ -372,6 +413,10 @@ fn validate_schemas(args: &[String]) -> Result<()> {
             "--repo-root" => {
                 idx += 1;
                 repo_root = Some(PathBuf::from(value_arg(args, idx, "--repo-root")?));
+            }
+            "--template-set" => {
+                idx += 1;
+                template_set = Some(value_arg(args, idx, "--template-set")?.to_string());
             }
             "--help" | "-h" | "help" => {
                 println!("{}", tooling_usage());
@@ -383,7 +428,7 @@ fn validate_schemas(args: &[String]) -> Result<()> {
     }
 
     let root = repo_root_from_arg(repo_root)?;
-    validate_structure_schema_files(&root)?;
+    validate_structure_schema_files_for_template_set(&root, template_set.as_deref())?;
     println!("PASS: prompt-card structure schemas match active templates");
     Ok(())
 }
@@ -391,6 +436,7 @@ fn validate_schemas(args: &[String]) -> Result<()> {
 fn write_samples(args: &[String]) -> Result<()> {
     let mut repo_root: Option<PathBuf> = None;
     let mut out_dir: Option<PathBuf> = None;
+    let mut template_set: Option<String> = None;
 
     let mut idx = 0usize;
     while idx < args.len() {
@@ -402,6 +448,10 @@ fn write_samples(args: &[String]) -> Result<()> {
             "--out-dir" => {
                 idx += 1;
                 out_dir = Some(PathBuf::from(value_arg(args, idx, "--out-dir")?));
+            }
+            "--template-set" => {
+                idx += 1;
+                template_set = Some(value_arg(args, idx, "--template-set")?.to_string());
             }
             "--help" | "-h" | "help" => {
                 println!("{}", tooling_usage());
@@ -415,7 +465,7 @@ fn write_samples(args: &[String]) -> Result<()> {
     let root = repo_root_from_arg(repo_root)?;
     let out_dir =
         out_dir.ok_or_else(|| anyhow::anyhow!("write-sample-values requires --out-dir"))?;
-    write_all_sample_values(&root, &out_dir)?;
+    write_all_sample_values_for_template_set(&root, &out_dir, template_set.as_deref())?;
     println!("PASS: wrote sample prompt values to {}", out_dir.display());
     Ok(())
 }
@@ -423,6 +473,7 @@ fn write_samples(args: &[String]) -> Result<()> {
 fn write_structure_schemas(args: &[String]) -> Result<()> {
     let mut repo_root: Option<PathBuf> = None;
     let mut out_dir: Option<PathBuf> = None;
+    let mut template_set: Option<String> = None;
 
     let mut idx = 0usize;
     while idx < args.len() {
@@ -434,6 +485,10 @@ fn write_structure_schemas(args: &[String]) -> Result<()> {
             "--out-dir" => {
                 idx += 1;
                 out_dir = Some(PathBuf::from(value_arg(args, idx, "--out-dir")?));
+            }
+            "--template-set" => {
+                idx += 1;
+                template_set = Some(value_arg(args, idx, "--template-set")?.to_string());
             }
             "--help" | "-h" | "help" => {
                 println!("{}", tooling_usage());
@@ -449,7 +504,7 @@ fn write_structure_schemas(args: &[String]) -> Result<()> {
     let out_dir =
         out_dir.ok_or_else(|| anyhow::anyhow!("write-structure-schemas requires --out-dir"))?;
     let root = repo_root_from_arg(repo_root)?;
-    write_all_structure_schemas(&root, &out_dir)?;
+    write_all_structure_schemas_for_template_set(&root, &out_dir, template_set.as_deref())?;
     println!(
         "PASS: wrote prompt-card structure schemas to {}",
         out_dir.display()

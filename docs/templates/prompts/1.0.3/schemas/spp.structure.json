@@ -1,8 +1,8 @@
 {
   "schema": "adl.csdlc.prompt_card_structure.v1",
-  "template_set": "1.0.2",
+  "template_set": "1.0.3",
   "card_kind": "spp",
-  "template_path": "docs/templates/prompts/1.0.2/spp.md",
+  "template_path": "docs/templates/prompts/1.0.3/spp.md",
   "parser": "markdown-rs 1.0.0",
   "editable_sections": [
     "Acceptance Criteria",
@@ -209,9 +209,11 @@
     "estimate_validation_seconds",
     "execution_handoff",
     "generated_at",
+    "goal_metrics_rollup_ref",
     "initial_pvf_lane",
     "invariants_to_preserve",
     "issue",
+    "issue_goal_ref",
     "name",
     "notes",
     "plan_revision",
@@ -229,6 +231,7 @@
     "scope.files",
     "scope.out_of_scope",
     "source_refs",
+    "sprint_goal_ref",
     "status",
     "stop_conditions",
     "task_id",
@@ -252,6 +255,10 @@
     {
       "level": 2,
       "text": "Estimate Plan"
+    },
+    {
+      "level": 2,
+      "text": "Goal Accounting Plan"
     },
     {
       "level": 2,
@@ -306,6 +313,13 @@
     {
       "heading_path": [
         "Structured Plan Prompt",
+        "Goal Accounting Plan"
+      ],
+      "text": "Carry `issue_goal_ref`, `sprint_goal_ref`, and `goal_metrics_rollup_ref` in frontmatter so later tooling can roll planning and outcome metrics up without duplicating machine-local goal details in prose."
+    },
+    {
+      "heading_path": [
+        "Structured Plan Prompt",
         "Codex Plan"
       ],
       "text": "1. [pending] Confirm dependencies and starting state from the source issue prompt."
@@ -336,7 +350,7 @@
         "Structured Plan Prompt",
         "Codex Plan"
       ],
-      "text": "5. [pending] Record issue-specific SRP findings and SOR outcome truth."
+      "text": "5. [pending] Record issue-specific SRP findings and VPP/SOR outcome truth."
     },
     {
       "heading_path": [
@@ -357,14 +371,14 @@
         "Structured Plan Prompt",
         "Invariants To Preserve"
       ],
-      "text": "- Keep SRP as review-result truth and SOR as output truth."
+      "text": "- Keep VPP as validation-planning truth, SRP as review-result truth, and SOR as output truth."
     },
     {
       "heading_path": [
         "Structured Plan Prompt",
         "Execution Handoff"
       ],
-      "text": "Use this SPP as the design-time plan-of-record, then update it at runtime whenever the actual execution sequence changes."
+      "text": "Use this SPP as the design-time plan-of-record, then hand validation-planning specifics into VPP and update both cards whenever the real execution path diverges."
     },
     {
       "heading_path": [

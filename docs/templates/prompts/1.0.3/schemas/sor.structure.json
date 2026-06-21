@@ -1,8 +1,8 @@
 {
   "schema": "adl.csdlc.prompt_card_structure.v1",
-  "template_set": "1.0.2",
+  "template_set": "1.0.3",
   "card_kind": "sor",
-  "template_path": "docs/templates/prompts/1.0.2/sor.md",
+  "template_path": "docs/templates/prompts/1.0.3/sor.md",
   "parser": "markdown-rs 1.0.0",
   "editable_sections": [
     "Acceptance Criteria",

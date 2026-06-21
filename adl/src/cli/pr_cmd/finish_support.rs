@@ -1803,8 +1803,12 @@ fn finish_path_is_larger_binary_focused(path: &str) -> bool {
             | "adl/src/cli/tooling_cmd/github_release.rs"
             | "adl/src/cli/tooling_cmd/public_prompt_packet.rs"
             | "adl/src/cli/tooling_cmd/tests/public_prompt_packet.rs"
+            | "adl/src/bin/adl_prompt_template.rs"
+            | "adl/src/bin/adl_validate_structured_prompt.rs"
             | "adl/tools/demo_codex_ollama_operational_skills.sh"
             | "adl/tools/demo_v089_gemma4_issue_clerk.sh"
+            | "adl/tools/test_prompt_template_structure_schemas.py"
+            | "adl/tools/test_prompt_template_workflow_integration.sh"
             | "adl/tools/test_demo_codex_ollama_operational_skills.sh"
             | "adl/tools/test_demo_codex_ollama_semantic_fallback.sh"
             | "adl/tools/test_demo_v089_gemma4_issue_clerk.sh"
@@ -1909,6 +1913,10 @@ fn finish_path_needs_prompt_template_focused_validation(path: &str) -> bool {
             | "adl/src/cli/tooling_cmd/tests/prompt_template.rs"
             | "adl/src/cli/tooling_cmd/tests/structured_prompt.rs"
             | "adl/src/cli/tooling_cmd/tests/support.rs"
+            | "adl/src/bin/adl_prompt_template.rs"
+            | "adl/src/bin/adl_validate_structured_prompt.rs"
+            | "adl/tools/test_prompt_template_structure_schemas.py"
+            | "adl/tools/test_prompt_template_workflow_integration.sh"
             | "docs/templates/prompts/current.json"
     ) || trimmed.starts_with("docs/templates/prompts/")
 }

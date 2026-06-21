@@ -41,6 +41,7 @@ const PLACEHOLDERS: &[&str] = &[
     "stp_card",
     "sip_card",
     "spp_card",
+    "vpp_card",
     "srp_card",
     "sor_card",
     "wp",
@@ -78,6 +79,20 @@ const PLACEHOLDERS: &[&str] = &[
     "initial_pvf_lane",
     "planned_pvf_lane",
     "planned_pvf_lane_source",
+    "issue_goal_ref",
+    "sprint_goal_ref",
+    "goal_metrics_rollup_ref",
+    "lane_registry_path",
+    "lane_registry_template_set",
+    "validation_runtime_class",
+    "validation_resource_profile",
+    "expected_proof_cost",
+    "planned_validation_seconds",
+    "planned_validation_tokens",
+    "selected_lanes_inline",
+    "parallel_groups_inline",
+    "validation_commands_inline",
+    "failure_policy",
     "estimated_elapsed_seconds",
     "estimated_total_tokens",
     "estimated_validation_seconds",
@@ -108,13 +123,20 @@ pub enum PromptCardKind {
     Sip,
     Stp,
     Spp,
+    Vpp,
     Srp,
     Sor,
 }
 
 impl PromptCardKind {
-    pub fn all() -> [Self; 5] {
-        [Self::Sip, Self::Stp, Self::Spp, Self::Srp, Self::Sor]
+    pub fn all_for_template_set(template_set: &str) -> Vec<Self> {
+        let mut kinds = vec![Self::Sip, Self::Stp, Self::Spp];
+        if template_set_supports_vpp(template_set) {
+            kinds.push(Self::Vpp);
+        }
+        kinds.push(Self::Srp);
+        kinds.push(Self::Sor);
+        kinds
     }
 
     pub fn key(self) -> &'static str {
@@ -122,6 +144,7 @@ impl PromptCardKind {
             Self::Sip => "sip",
             Self::Stp => "stp",
             Self::Spp => "spp",
+            Self::Vpp => "vpp",
             Self::Srp => "srp",
             Self::Sor => "sor",
         }
@@ -132,6 +155,7 @@ impl PromptCardKind {
             Self::Sip => "Structured Issue Prompt",
             Self::Stp => "Structured Task Prompt",
             Self::Spp => "Structured Plan Prompt",
+            Self::Vpp => "Structured Validation Planning Prompt",
             Self::Srp => "Structured Review Prompt",
             Self::Sor => "Structured Outcome Record",
         }
@@ -142,6 +166,7 @@ impl PromptCardKind {
             Self::Sip => "sip.md",
             Self::Stp => "stp.md",
             Self::Spp => "spp.md",
+            Self::Vpp => "vpp.md",
             Self::Srp => "srp.md",
             Self::Sor => "sor.md",
         }
@@ -156,11 +181,26 @@ impl PromptCardKind {
             "sip" => Ok(Self::Sip),
             "stp" => Ok(Self::Stp),
             "spp" => Ok(Self::Spp),
+            "vpp" => Ok(Self::Vpp),
             "srp" => Ok(Self::Srp),
             "sor" => Ok(Self::Sor),
-            other => bail!("card kind must be one of sip, stp, spp, srp, sor: {other}"),
+            other => bail!("card kind must be one of sip, stp, spp, vpp, srp, sor: {other}"),
         }
     }
+}
+
+fn template_set_supports_vpp(template_set: &str) -> bool {
+    let mut parts = template_set.split('.');
+    let Some(major) = parts.next().and_then(|value| value.parse::<u64>().ok()) else {
+        return false;
+    };
+    let Some(minor) = parts.next().and_then(|value| value.parse::<u64>().ok()) else {
+        return false;
+    };
+    let Some(patch) = parts.next().and_then(|value| value.parse::<u64>().ok()) else {
+        return false;
+    };
+    (major, minor, patch) >= (1, 0, 3)
 }
 
 #[derive(Debug, Clone, Serialize)]
@@ -211,6 +251,30 @@ pub fn load_editor_model(repo_root: &Path) -> Result<PromptEditorModel> {
     load_editor_model_for_template_set(repo_root, None)
 }
 
+fn active_prompt_template_set(repo_root: &Path) -> Result<String> {
+    let registry_path = repo_root.join(TEMPLATE_REGISTRY);
+    let raw = fs::read_to_string(&registry_path)
+        .with_context(|| format!("failed to read {}", registry_path.display()))?;
+    let registry: Registry = serde_json::from_str(&raw)
+        .with_context(|| format!("failed to parse {}", registry_path.display()))?;
+    Ok(registry.csdlc_prompt_template_set)
+}
+
+fn template_set_from_values_file(values_path: &Path) -> Result<String> {
+    let raw = fs::read_to_string(values_path)
+        .with_context(|| format!("failed to read values file {}", values_path.display()))?;
+    let doc: Value = serde_yaml::from_str(&raw)
+        .with_context(|| format!("failed to parse values file {}", values_path.display()))?;
+    let mapping = doc
+        .as_mapping()
+        .ok_or_else(|| anyhow!("values file must be a YAML/JSON mapping"))?;
+    mapping
+        .get(Value::String("template_set".to_string()))
+        .and_then(Value::as_str)
+        .map(ToOwned::to_owned)
+        .ok_or_else(|| anyhow!("values file must declare template_set"))
+}
+
 fn load_editor_model_for_template_set(
     repo_root: &Path,
     template_set_override: Option<&str>,
@@ -223,7 +287,7 @@ fn load_editor_model_for_template_set(
     let template_set = template_set_override.unwrap_or(&registry.csdlc_prompt_template_set);
 
     let mut cards = Vec::new();
-    for kind in PromptCardKind::all() {
+    for kind in PromptCardKind::all_for_template_set(template_set) {
         let (template_path_str, structure_schema_path) =
             if template_set == registry.csdlc_prompt_template_set {
                 let template = registry
@@ -286,7 +350,8 @@ pub fn render_card_from_values_file(
     kind: PromptCardKind,
     values_path: &Path,
 ) -> Result<String> {
-    let model = load_editor_model(repo_root)?;
+    let template_set = template_set_from_values_file(values_path)?;
+    let model = load_editor_model_for_template_set(repo_root, Some(&template_set))?;
     let card = card_model(&model, kind)?;
     let values = load_values_file(card, values_path, &model.template_set)?;
     validate_values(card, &values)?;
@@ -300,7 +365,8 @@ pub fn validate_values_file(
     kind: PromptCardKind,
     values_path: &Path,
 ) -> Result<()> {
-    let model = load_editor_model(repo_root)?;
+    let template_set = template_set_from_values_file(values_path)?;
+    let model = load_editor_model_for_template_set(repo_root, Some(&template_set))?;
     let card = card_model(&model, kind)?;
     let values = load_values_file(card, values_path, &model.template_set)?;
     validate_values(card, &values)
@@ -317,7 +383,8 @@ pub fn edit_values_file(
         !updates.is_empty(),
         "edit-values requires at least one --set field=value update"
     );
-    let model = load_editor_model(repo_root)?;
+    let template_set = template_set_from_values_file(values_path)?;
+    let model = load_editor_model_for_template_set(repo_root, Some(&template_set))?;
     let card = card_model(&model, kind)?;
     let mut doc = load_values_document(card, values_path, &model.template_set)?;
 
@@ -386,8 +453,9 @@ pub fn import_values_from_rendered_card_file(
     input_path: &Path,
     out_path: &Path,
     normalized_out_path: Option<&Path>,
+    template_set_override: Option<&str>,
 ) -> Result<PromptCardImportReport> {
-    let model = load_editor_model(repo_root)?;
+    let model = load_editor_model_for_template_set(repo_root, template_set_override)?;
     let card = card_model(&model, kind)?;
     let source = fs::read_to_string(input_path)
         .with_context(|| format!("failed to read rendered card {}", input_path.display()))?;
@@ -1067,7 +1135,16 @@ pub fn validate_rendered_card_structure_file(
     kind: PromptCardKind,
     rendered_path: &Path,
 ) -> Result<()> {
-    let model = load_editor_model(repo_root)?;
+    validate_rendered_card_structure_file_for_template_set(repo_root, kind, rendered_path, None)
+}
+
+pub fn validate_rendered_card_structure_file_for_template_set(
+    repo_root: &Path,
+    kind: PromptCardKind,
+    rendered_path: &Path,
+    template_set_override: Option<&str>,
+) -> Result<()> {
+    let model = load_editor_model_for_template_set(repo_root, template_set_override)?;
     let card = card_model(&model, kind)?;
     let rendered = fs::read_to_string(rendered_path)
         .with_context(|| format!("failed to read rendered card {}", rendered_path.display()))?;
@@ -1079,7 +1156,15 @@ pub fn validate_rendered_card_structure(card: &PromptCardForm, rendered: &str) -
 }
 
 pub fn write_all_structure_schemas(repo_root: &Path, out_dir: &Path) -> Result<()> {
-    let model = load_editor_model(repo_root)?;
+    write_all_structure_schemas_for_template_set(repo_root, out_dir, None)
+}
+
+pub fn write_all_structure_schemas_for_template_set(
+    repo_root: &Path,
+    out_dir: &Path,
+    template_set_override: Option<&str>,
+) -> Result<()> {
+    let model = load_editor_model_for_template_set(repo_root, template_set_override)?;
     fs::create_dir_all(out_dir)
         .with_context(|| format!("failed to create {}", out_dir.display()))?;
     for card in &model.cards {
@@ -1095,7 +1180,14 @@ pub fn write_all_structure_schemas(repo_root: &Path, out_dir: &Path) -> Result<(
 }
 
 pub fn validate_structure_schema_files(repo_root: &Path) -> Result<()> {
-    let model = load_editor_model(repo_root)?;
+    validate_structure_schema_files_for_template_set(repo_root, None)
+}
+
+pub fn validate_structure_schema_files_for_template_set(
+    repo_root: &Path,
+    template_set_override: Option<&str>,
+) -> Result<()> {
+    let model = load_editor_model_for_template_set(repo_root, template_set_override)?;
     for card in &model.cards {
         let expected = build_structure_schema(&model.template_set, card)?;
         let actual = load_structure_schema(repo_root, card)?;
@@ -1112,11 +1204,27 @@ pub fn render_all_cards_from_values_dir(
     repo_root: &Path,
     values_dir: &Path,
     out_dir: &Path,
+    template_set_override: Option<&str>,
 ) -> Result<()> {
     fs::create_dir_all(out_dir)
         .with_context(|| format!("failed to create {}", out_dir.display()))?;
-    for kind in PromptCardKind::all() {
+    let template_set = template_set_override
+        .map(ToOwned::to_owned)
+        .unwrap_or_else(|| {
+            active_prompt_template_set(repo_root).unwrap_or_else(|_| "1.0.2".to_string())
+        });
+    for kind in PromptCardKind::all_for_template_set(&template_set) {
         let values_path = values_dir.join(format!("{}.values.yaml", kind.key()));
+        if template_set_override.is_some() {
+            let values_template_set = template_set_from_values_file(&values_path)?;
+            ensure!(
+                values_template_set == template_set,
+                "values file {} declares template_set {}; expected {}",
+                values_path.display(),
+                values_template_set,
+                template_set
+            );
+        }
         let text = render_card_from_values_file(repo_root, kind, &values_path)?;
         fs::write(out_dir.join(kind.output_file()), text)
             .with_context(|| format!("failed to write {}", kind.output_file()))?;
@@ -1135,7 +1243,8 @@ fn card_model(model: &PromptEditorModel, kind: PromptCardKind) -> Result<&Prompt
 pub fn render_all_sample_cards(repo_root: &Path, out_dir: &Path) -> Result<()> {
     fs::create_dir_all(out_dir)
         .with_context(|| format!("failed to create {}", out_dir.display()))?;
-    for kind in PromptCardKind::all() {
+    let template_set = active_prompt_template_set(repo_root)?;
+    for kind in PromptCardKind::all_for_template_set(&template_set) {
         let text = render_sample_card(repo_root, kind)?;
         fs::write(out_dir.join(kind.output_file()), text)
             .with_context(|| format!("failed to write {}", kind.output_file()))?;
@@ -1144,10 +1253,18 @@ pub fn render_all_sample_cards(repo_root: &Path, out_dir: &Path) -> Result<()> {
 }
 
 pub fn write_all_sample_values(repo_root: &Path, out_dir: &Path) -> Result<()> {
+    write_all_sample_values_for_template_set(repo_root, out_dir, None)
+}
+
+pub fn write_all_sample_values_for_template_set(
+    repo_root: &Path,
+    out_dir: &Path,
+    template_set_override: Option<&str>,
+) -> Result<()> {
     fs::create_dir_all(out_dir)
         .with_context(|| format!("failed to create {}", out_dir.display()))?;
-    let model = load_editor_model(repo_root)?;
-    for kind in PromptCardKind::all() {
+    let model = load_editor_model_for_template_set(repo_root, template_set_override)?;
+    for kind in PromptCardKind::all_for_template_set(&model.template_set) {
         let text = sample_values_document(kind, &model.template_set);
         fs::write(out_dir.join(format!("{}.values.yaml", kind.key())), text)
             .with_context(|| format!("failed to write {} values", kind.key()))?;
@@ -1516,6 +1633,10 @@ pub fn sample_values() -> BTreeMap<String, String> {
             ".adl/v0.91.3/tasks/issue-1374__csdlc-prompt-editor-sample/spp.md",
         ),
         (
+            "vpp_card",
+            ".adl/v0.91.3/tasks/issue-1374__csdlc-prompt-editor-sample/vpp.md",
+        ),
+        (
             "srp_card",
             ".adl/v0.91.3/tasks/issue-1374__csdlc-prompt-editor-sample/srp.md",
         ),
@@ -1537,7 +1658,7 @@ pub fn sample_values() -> BTreeMap<String, String> {
         ),
         (
             "required_outcome",
-            "Generate validator-clean sample cards for all five C-SDLC phases.",
+            "Generate validator-clean sample cards for the staged C-SDLC lifecycle.",
         ),
         (
             "deliverables",
@@ -1545,7 +1666,7 @@ pub fn sample_values() -> BTreeMap<String, String> {
         ),
         (
             "acceptance_criteria",
-            "- All five samples validate\n- No unresolved placeholders remain",
+            "- All generated samples validate\n- No unresolved placeholders remain",
         ),
         (
             "inputs",
@@ -1624,6 +1745,32 @@ pub fn sample_values() -> BTreeMap<String, String> {
         ("initial_pvf_lane", "prompt_template"),
         ("planned_pvf_lane", "prompt_template"),
         ("planned_pvf_lane_source", "matched_initial_issue_lane"),
+        ("issue_goal_ref", "goal://issues/1374"),
+        ("sprint_goal_ref", "goal://sprints/v0.91.3-sample"),
+        (
+            "goal_metrics_rollup_ref",
+            ".adl/reviews/sample-goal-rollup.jsonl",
+        ),
+        (
+            "lane_registry_path",
+            "adl/config/validation_lane_selector.v0.91.6.json",
+        ),
+        ("lane_registry_template_set", "v0.91.6"),
+        ("validation_runtime_class", "docs_only"),
+        ("validation_resource_profile", "small"),
+        ("expected_proof_cost", "low"),
+        ("planned_validation_seconds", "unknown"),
+        ("planned_validation_tokens", "unknown"),
+        ("selected_lanes_inline", "docs_diff_check"),
+        ("parallel_groups_inline", "docs_only"),
+        (
+            "validation_commands_inline",
+            "bash adl/tools/test_prompt_template_workflow_integration.sh 1.0.3",
+        ),
+        (
+            "failure_policy",
+            "Do not collapse blocked, skipped, failed, or pending validation states into PASS.",
+        ),
         ("estimated_elapsed_seconds", "unknown"),
         ("estimated_total_tokens", "unknown"),
         ("estimated_validation_seconds", "unknown"),
@@ -1666,6 +1813,9 @@ fn sample_values_for_kind(kind: PromptCardKind) -> BTreeMap<String, String> {
     if kind == PromptCardKind::Spp {
         values.insert("status".to_string(), "draft".to_string());
         values.insert("activation_state".to_string(), "draft".to_string());
+    }
+    if kind == PromptCardKind::Vpp {
+        values.insert("status".to_string(), "draft".to_string());
     }
     values
 }
@@ -1954,6 +2104,24 @@ fn form_fields(kind: PromptCardKind) -> Vec<PromptField> {
                 true,
                 "Reference backing the estimate, or `unknown`.",
             ));
+            fields.push(text(
+                "issue_goal_ref",
+                "Issue Goal Ref",
+                true,
+                "Issue-bound goal reference for metrics rollup.",
+            ));
+            fields.push(text(
+                "sprint_goal_ref",
+                "Sprint Goal Ref",
+                true,
+                "Sprint-bound goal reference for metrics rollup.",
+            ));
+            fields.push(text(
+                "goal_metrics_rollup_ref",
+                "Goal Metrics Rollup Ref",
+                true,
+                "Goal metrics rollup artifact or `unknown`.",
+            ));
             fields.push(read_only_textarea(
                 "stp_card",
                 "STP Card",
@@ -2027,6 +2195,148 @@ fn form_fields(kind: PromptCardKind) -> Vec<PromptField> {
                 "Issue-local notes for execution handoff.",
             ));
         }
+        PromptCardKind::Vpp => {
+            fields.push(select(
+                "card_status",
+                "Card Status",
+                true,
+                "VPP lifecycle card status.",
+                CARD_STATUS_VALUES,
+            ));
+            fields.push(select(
+                "status",
+                "Status",
+                true,
+                "VPP lifecycle status.",
+                &["draft", "ready", "reviewed", "approved"],
+            ));
+            fields.push(read_only_text(
+                "initial_pvf_lane",
+                "Initial PVF Lane",
+                true,
+                "System-supplied PVF lane from issue creation/bootstrap.",
+            ));
+            fields.push(text(
+                "planned_pvf_lane",
+                "Planned PVF Lane",
+                true,
+                "Validation-planning confirmed PVF lane.",
+            ));
+            fields.push(text(
+                "lane_registry_path",
+                "Lane Registry Path",
+                true,
+                "Registry backing the validation lane selection.",
+            ));
+            fields.push(text(
+                "lane_registry_template_set",
+                "Lane Registry Template Set",
+                true,
+                "Version label for the lane registry contract.",
+            ));
+            fields.push(text(
+                "validation_runtime_class",
+                "Validation Runtime Class",
+                true,
+                "Validation runtime class for this issue.",
+            ));
+            fields.push(text(
+                "validation_resource_profile",
+                "Validation Resource Profile",
+                true,
+                "Resource profile expected for this validation plan.",
+            ));
+            fields.push(text(
+                "expected_proof_cost",
+                "Expected Proof Cost",
+                true,
+                "Expected proof-cost classification.",
+            ));
+            fields.push(text(
+                "planned_validation_seconds",
+                "Planned Validation Seconds",
+                true,
+                "Expected validation elapsed time in seconds, or `unknown`.",
+            ));
+            fields.push(text(
+                "planned_validation_tokens",
+                "Planned Validation Tokens",
+                true,
+                "Expected validation token use, or `unknown`.",
+            ));
+            fields.push(text(
+                "issue_goal_ref",
+                "Issue Goal Ref",
+                true,
+                "Issue-bound goal reference for metrics rollup.",
+            ));
+            fields.push(text(
+                "sprint_goal_ref",
+                "Sprint Goal Ref",
+                true,
+                "Sprint-bound goal reference for rollup.",
+            ));
+            fields.push(text(
+                "goal_metrics_rollup_ref",
+                "Goal Metrics Rollup Ref",
+                true,
+                "Goal metrics rollup artifact or `unknown`.",
+            ));
+            fields.push(read_only_textarea(
+                "stp_card",
+                "STP Card",
+                true,
+                "System-supplied STP path.",
+            ));
+            fields.push(read_only_textarea(
+                "sip_card",
+                "SIP Card",
+                true,
+                "System-supplied SIP path.",
+            ));
+            fields.push(read_only_textarea(
+                "spp_card",
+                "SPP Card",
+                true,
+                "System-supplied SPP path.",
+            ));
+            fields.push(textarea(
+                "plan_summary",
+                "Validation Planning Summary",
+                true,
+                "Summary of the validation-planning intent.",
+            ));
+            fields.push(textarea(
+                "selected_lanes_inline",
+                "Selected Validation Lanes",
+                true,
+                "Selected validation lanes for this issue.",
+            ));
+            fields.push(textarea(
+                "parallel_groups_inline",
+                "Parallelization Plan",
+                true,
+                "Parallel groups or `none`.",
+            ));
+            fields.push(textarea(
+                "validation_commands_inline",
+                "Validation Commands",
+                true,
+                "Commands expected to prove the issue outcome.",
+            ));
+            fields.push(textarea(
+                "failure_policy",
+                "Failure Semantics",
+                true,
+                "How blocked, skipped, failed, and pending states must be represented.",
+            ));
+            fields.push(textarea(
+                "notes_risks_inline",
+                "Notes",
+                true,
+                "Validation-planning notes and edge cases.",
+            ));
+        }
         PromptCardKind::Srp => {
             fields.push(read_only_textarea(
                 "stp_card",
@@ -2045,6 +2355,12 @@ fn form_fields(kind: PromptCardKind) -> Vec<PromptField> {
                 "SPP Card",
                 true,
                 "System-supplied SPP path.",
+            ));
+            fields.push(read_only_textarea(
+                "vpp_card",
+                "VPP Card",
+                true,
+                "System-supplied VPP path.",
             ));
             fields.push(read_only_textarea(
                 "sor_card",
@@ -2433,6 +2749,10 @@ mod tests {
             ]
         );
         assert_eq!(model.cards.len(), 5);
+        assert!(!model
+            .cards
+            .iter()
+            .any(|card| card.kind == PromptCardKind::Vpp));
         assert!(model
             .cards
             .iter()
@@ -2440,6 +2760,17 @@ mod tests {
         assert!(model.cards.iter().all(|card| card
             .template_path
             .starts_with("docs/templates/prompts/1.0.2/")));
+    }
+
+    #[test]
+    fn staged_template_set_includes_vpp_card() {
+        let model = load_editor_model_for_template_set(&repo_root(), Some("1.0.3")).expect("model");
+        assert_eq!(model.template_set, "1.0.3");
+        assert_eq!(model.cards.len(), 6);
+        assert!(model
+            .cards
+            .iter()
+            .any(|card| card.kind == PromptCardKind::Vpp));
     }
 
     #[test]
@@ -2471,6 +2802,7 @@ mod tests {
             &input,
             &imported,
             Some(&normalized),
+            None,
         )
         .expect("import should bridge legacy rendered card");
         assert_eq!(report.comparison, PromptCardRoundTripComparison::Normalized);
@@ -2510,6 +2842,7 @@ mod tests {
             PromptCardKind::Sor,
             &input,
             &imported,
+            None,
             None,
         )
         .expect_err("non-bootstrap legacy sor should fail closed");
@@ -2562,6 +2895,7 @@ Malformed legacy card.
             &input,
             &imported,
             None,
+            None,
         )
         .expect_err("spoofed legacy card should fail closed");
         assert!(err
@@ -2609,7 +2943,8 @@ Malformed legacy card.
 
     #[test]
     fn sample_rendering_has_no_unresolved_placeholders() {
-        for kind in PromptCardKind::all() {
+        let active = active_template_set();
+        for kind in PromptCardKind::all_for_template_set(&active) {
             let text = render_sample_card(&repo_root(), kind).expect("sample render");
             assert!(
                 unresolved_placeholder_offset(&text).is_none(),
@@ -2634,7 +2969,8 @@ Malformed legacy card.
         ));
         fs::create_dir_all(&tmp).expect("tmp");
 
-        for kind in PromptCardKind::all() {
+        let active = active_template_set();
+        for kind in PromptCardKind::all_for_template_set(&active) {
             let rendered = render_sample_card(&repo_root(), kind).expect("sample render");
             let input = tmp.join(format!("{}.md", kind.key()));
             let values = tmp.join(format!("{}.imported.values.yaml", kind.key()));
@@ -2647,6 +2983,7 @@ Malformed legacy card.
                 &input,
                 &values,
                 Some(&normalized),
+                None,
             )
             .expect("rendered card should import");
             assert_eq!(report.comparison, PromptCardRoundTripComparison::Exact);
@@ -2678,7 +3015,8 @@ Malformed legacy card.
         ));
         fs::create_dir_all(&tmp).expect("tmp");
 
-        for kind in PromptCardKind::all() {
+        let active = active_template_set();
+        for kind in PromptCardKind::all_for_template_set(&active) {
             let rendered = render_sample_card(&repo_root(), kind).expect("sample render");
             let drifted = rendered.replace(
                 "Canonical Template Source:",
@@ -2688,9 +3026,15 @@ Malformed legacy card.
             let values = tmp.join(format!("{}.drift.values.yaml", kind.key()));
             fs::write(&input, drifted).expect("drifted card");
 
-            let err =
-                import_values_from_rendered_card_file(&repo_root(), kind, &input, &values, None)
-                    .expect_err("locked template drift should fail");
+            let err = import_values_from_rendered_card_file(
+                &repo_root(),
+                kind,
+                &input,
+                &values,
+                None,
+                None,
+            )
+            .expect_err("locked template drift should fail");
             assert!(
                 err.to_string().contains("locked template text drifted")
                     || err

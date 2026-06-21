@@ -186,6 +186,7 @@ pub(super) fn real_validate_structured_prompt(args: &[String]) -> Result<()> {
         "sip" => validate_sip_text(&text, &input, phase.as_deref())?,
         "sor" => validate_sor_text(&text, phase.as_deref())?,
         "spp" => validate_spp_text(&text)?,
+        "vpp" => validate_vpp_text(&text)?,
         "srp" => validate_srp_text(&text)?,
         _ => bail!("unsupported --type: {}", prompt_type),
     }
@@ -1301,6 +1302,123 @@ pub(super) fn validate_spp_text(text: &str) -> Result<()> {
         )?;
     }
 
+    Ok(())
+}
+
+pub(super) fn validate_vpp_text(text: &str) -> Result<()> {
+    let (fm_text, body_text) = split_front_matter(text)?;
+    let fm_yaml: Value = serde_yaml::from_str(&fm_text)?;
+    let fm = fm_yaml
+        .as_mapping()
+        .ok_or_else(|| anyhow!("front matter must be a YAML mapping"))?;
+
+    ensure_required_sections(
+        &body_text,
+        &[
+            "Validation Planning Summary",
+            "Lane Registry Inputs",
+            "Selected Validation Lanes",
+            "Parallelization Plan",
+            "Goal Accounting Hooks",
+            "Proof Cost / Runtime Expectations",
+            "Validation Commands",
+            "Failure Semantics",
+            "Handoff",
+            "Notes",
+        ],
+    )?;
+
+    ensure!(
+        mapping_string(fm, "schema_version").as_deref() == Some("0.1"),
+        "schema_version must be 0.1"
+    );
+    ensure!(
+        mapping_string(fm, "artifact_type").as_deref()
+            == Some("structured_validation_planning_prompt"),
+        "artifact_type must be structured_validation_planning_prompt"
+    );
+    ensure!(
+        mapping_string(fm, "issue")
+            .and_then(|v| v.parse::<u32>().ok())
+            .is_some(),
+        "issue must be an integer"
+    );
+    let issue_number = mapping_string(fm, "issue")
+        .and_then(|v| v.parse::<u32>().ok())
+        .ok_or_else(|| anyhow!("issue must be an integer"))?;
+    let task_id = mapping_string(fm, "task_id").unwrap_or_default();
+    ensure!(valid_task_id(&task_id), "task_id must match issue-0000");
+    ensure!(
+        issue_number_from_task_id(&task_id)? == issue_number,
+        "task_id must refer to the same issue number as issue"
+    );
+    let run_id = mapping_string(fm, "run_id").unwrap_or_default();
+    ensure!(valid_task_id(&run_id), "run_id must match issue-0000");
+    ensure!(
+        issue_number_from_task_id(&run_id)? == issue_number,
+        "run_id must refer to the same issue number as issue"
+    );
+    ensure!(
+        valid_version(&mapping_string(fm, "version").unwrap_or_default()),
+        "version must match milestone version format (for example v0.85 or v0.87.1)"
+    );
+    ensure!(
+        !mapping_string(fm, "title").unwrap_or_default().is_empty(),
+        "missing required field: title"
+    );
+    let branch = mapping_string(fm, "branch").unwrap_or_default();
+    ensure!(
+        valid_branch(&branch) || branch.eq_ignore_ascii_case("not bound yet"),
+        "branch must be a codex/ branch or `not bound yet`"
+    );
+    let status = mapping_string(fm, "status").unwrap_or_default();
+    ensure_allowed_value(
+        "status",
+        &status,
+        &["draft", "ready", "reviewed", "approved"],
+    )?;
+    validate_optional_front_matter_card_status(fm)?;
+    validate_reference_sequence(fm, "source_refs")?;
+    ensure!(
+        !mapping_string(fm, "lane_registry_path")
+            .unwrap_or_default()
+            .is_empty(),
+        "missing required field: lane_registry_path"
+    );
+    ensure!(
+        !mapping_string(fm, "lane_registry_template_set")
+            .unwrap_or_default()
+            .is_empty(),
+        "missing required field: lane_registry_template_set"
+    );
+    validate_optional_yaml_metric_field(fm, "planned_validation_seconds")?;
+    validate_optional_yaml_metric_field(fm, "planned_validation_tokens")?;
+    for field in [
+        "validation_runtime_class",
+        "validation_resource_profile",
+        "expected_proof_cost",
+        "issue_goal_ref",
+        "sprint_goal_ref",
+        "goal_metrics_rollup_ref",
+        "failure_policy",
+    ] {
+        ensure!(
+            !mapping_string(fm, field).unwrap_or_default().is_empty(),
+            "missing required field: {field}"
+        );
+    }
+    ensure!(
+        mapping_seq_len(fm, "selected_lanes") >= 1,
+        "selected_lanes must contain at least 1 item(s)"
+    );
+    ensure!(
+        mapping_seq_len(fm, "parallel_groups") >= 1,
+        "parallel_groups must contain at least 1 item(s)"
+    );
+    ensure!(
+        mapping_seq_len(fm, "validation_commands") >= 1,
+        "validation_commands must contain at least 1 item(s)"
+    );
     Ok(())
 }
 

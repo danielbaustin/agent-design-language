@@ -886,7 +886,7 @@ fn prompt_template_cli_usage_and_error_paths_are_deterministic() {
     .expect_err("bad kind should fail");
     assert!(bad_kind
         .to_string()
-        .contains("card kind must be one of sip, stp, spp, srp, sor"));
+        .contains("card kind must be one of sip, stp, spp, vpp, srp, sor"));
 
     let unsupported_out = real_tooling(&[
         "prompt-template".to_string(),

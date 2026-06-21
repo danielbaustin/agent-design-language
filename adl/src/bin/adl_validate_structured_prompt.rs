@@ -11,7 +11,7 @@ mod cli_observability {
 mod tooling_cmd {
     #[allow(dead_code)]
     pub(super) fn tooling_usage() -> &'static str {
-        "adl-validate-structured-prompt --type <sip|stp|spp|srp|sor> --input <path> [--phase <phase>]\n\
+        "adl-validate-structured-prompt --type <sip|stp|spp|vpp|srp|sor> --input <path> [--phase <phase>]\n\
 \n\
 Runs the structured-prompt validator directly without routing through the broad `adl tooling` dispatch surface.\n"
     }

@@ -119,18 +119,18 @@ adl tooling lint-prompt-spec --issue <number>\n\
 adl tooling lint-prompt-spec --input <path>\n\
 adl tooling markdown-ast-edit replace-section --input <path> --heading <heading> --replacement <path> --out <path> [--repair-note-out <path>]\n\
 adl tooling portable-project-doctor --project <adl_project.json> [--adl-home <path>] [--json]\n\
-adl tooling prompt-template render --kind <sip|stp|spp|srp|sor> --values <values.yaml> --out <card.md> [--repo-root <path>]\n\
-adl tooling prompt-template render-all --values-dir <dir> --out-dir <dir> [--repo-root <path>]\n\
-adl tooling prompt-template edit-values --kind <sip|stp|spp|srp|sor> --values <values.yaml> --set <field=value> [--set <field=value> ...] [--out <values.yaml>] [--repo-root <path>]\n\
-adl tooling prompt-template edit-rendered --kind <sip|stp|spp|srp|sor> --input <card.md> --set <field=value> [--set <field=value> ...] --out <card.md> [--values-out <values.yaml>] [--repo-root <path>]\n\
-adl tooling prompt-template import-values --kind <sip|stp|spp|srp|sor> --input <card.md> --out <values.yaml> [--normalized-out <card.md>] [--repo-root <path>]\n\
-adl tooling prompt-template validate-values --kind <sip|stp|spp|srp|sor> --values <values.yaml> [--repo-root <path>]\n\
-adl tooling prompt-template validate-structure --kind <sip|stp|spp|srp|sor> --input <card.md> [--repo-root <path>]\n\
-adl tooling prompt-template validate-schemas [--repo-root <path>]\n\
-adl tooling prompt-template write-sample-values --out-dir <dir>\n\
-adl tooling prompt-template write-structure-schemas --out-dir <dir> [--repo-root <path>]\n\
+adl tooling prompt-template render --kind <sip|stp|spp|vpp|srp|sor> --values <values.yaml> --out <card.md> [--repo-root <path>]\n\
+adl tooling prompt-template render-all --values-dir <dir> --out-dir <dir> [--repo-root <path>] [--template-set <semver>]\n\
+adl tooling prompt-template edit-values --kind <sip|stp|spp|vpp|srp|sor> --values <values.yaml> --set <field=value> [--set <field=value> ...] [--out <values.yaml>] [--repo-root <path>]\n\
+adl tooling prompt-template edit-rendered --kind <sip|stp|spp|vpp|srp|sor> --input <card.md> --set <field=value> [--set <field=value> ...] --out <card.md> [--values-out <values.yaml>] [--repo-root <path>] [--template-set <semver>]\n\
+adl tooling prompt-template import-values --kind <sip|stp|spp|vpp|srp|sor> --input <card.md> --out <values.yaml> [--normalized-out <card.md>] [--repo-root <path>] [--template-set <semver>]\n\
+adl tooling prompt-template validate-values --kind <sip|stp|spp|vpp|srp|sor> --values <values.yaml> [--repo-root <path>]\n\
+adl tooling prompt-template validate-structure --kind <sip|stp|spp|vpp|srp|sor> --input <card.md> [--repo-root <path>] [--template-set <semver>]\n\
+adl tooling prompt-template validate-schemas [--repo-root <path>] [--template-set <semver>]\n\
+adl tooling prompt-template write-sample-values --out-dir <dir> [--template-set <semver>]\n\
+adl tooling prompt-template write-structure-schemas --out-dir <dir> [--repo-root <path>] [--template-set <semver>]\n\
 adl tooling public-prompt-packet export --issue <number> --slug <slug> --version <version> [--source <dir>] [--out-root <dir>] [--tracker-url <url>] [--repo-root <path>]\n\
-adl tooling validate-structured-prompt --type <sip|stp|spp|srp|sor> --input <path> [--phase <phase>]\n\
+adl tooling validate-structured-prompt --type <sip|stp|spp|vpp|srp|sor> --input <path> [--phase <phase>]\n\
 adl tooling review-card-surface --input <input.md> --output <output.md>\n\
 adl tooling review-runtime-surface --review-root <dir>\n\
 adl tooling verify-review-output-provenance --review <yaml>\n\

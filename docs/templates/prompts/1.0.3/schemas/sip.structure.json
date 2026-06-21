@@ -1,8 +1,8 @@
 {
   "schema": "adl.csdlc.prompt_card_structure.v1",
-  "template_set": "1.0.2",
+  "template_set": "1.0.3",
   "card_kind": "sip",
-  "template_path": "docs/templates/prompts/1.0.2/sip.md",
+  "template_path": "docs/templates/prompts/1.0.3/sip.md",
   "parser": "markdown-rs 1.0.0",
   "editable_sections": [
     "Acceptance Criteria",
@@ -329,14 +329,14 @@
         "ADL Input Card",
         "Lifecycle Semantics"
       ],
-      "text": "- Legacy compatibility: older references may call this an input card, but new"
+      "text": "- Downstream planning path: `STP -> SPP -> VPP -> SRP -> SOR` once execution planning becomes concrete."
     },
     {
       "heading_path": [
         "ADL Input Card",
         "Lifecycle Semantics"
       ],
-      "text": "  issue work should treat it as the Structured Issue Prompt."
+      "text": "- Legacy compatibility: older references may call this an input card, but new issue work should treat it as the Structured Issue Prompt."
     },
     {
       "heading_path": [
