@@ -1174,6 +1174,53 @@ fn ensure_no_duplicate_issue_identities_rejects_duplicate_prompt_or_task_bundle(
 }
 
 #[test]
+fn resolve_start_slug_reuses_single_local_identity_over_explicit_slug_drift() {
+    let local_identity = (
+        "v0.91.6".to_string(),
+        "prompt-template-next-version-vpp-time-token-goal-fields".to_string(),
+    );
+    let (slug, from_local_identity) = resolve_start_slug(
+        Some("plan-next-prompt-template-version-with-vpp-time-token-and-goal-fields"),
+        "[v0.91.6][templates] Plan next prompt-template version with VPP time token and goal fields",
+        Some(&local_identity),
+        false,
+    )
+    .expect("single local identity should be reusable");
+
+    assert_eq!(
+        slug,
+        "prompt-template-next-version-vpp-time-token-goal-fields"
+    );
+    assert!(from_local_identity);
+}
+
+#[test]
+fn resolve_start_slug_uses_explicit_slug_without_local_identity() {
+    let (slug, from_local_identity) =
+        resolve_start_slug(Some("operator supplied slug"), "", None, true)
+            .expect("explicit slug should be usable without local identity");
+
+    assert_eq!(slug, "operator-supplied-slug");
+    assert!(!from_local_identity);
+}
+
+#[test]
+fn resolve_issue_scope_and_slug_rejects_multiple_local_identities_before_slug_selection() {
+    let repo = unique_temp_dir("adl-pr-start-duplicate-local-identity");
+    fs::create_dir_all(repo.join(".adl/v0.91.6/tasks/issue-4309__first-slug"))
+        .expect("first identity");
+    fs::create_dir_all(repo.join(".adl/v0.91.6/tasks/issue-4309__second-slug"))
+        .expect("second identity");
+
+    let err = resolve_local_issue_identity(&repo, 4309)
+        .expect_err("multiple local identities should fail closed");
+
+    assert!(err
+        .to_string()
+        .contains("duplicate local task-bundle identities detected"));
+}
+
+#[test]
 fn infer_repo_from_remote_supports_https_and_ssh() {
     assert_eq!(
         infer_repo_from_remote("https://github.com/danielbaustin/agent-design-language.git"),

@@ -150,6 +150,41 @@ fn resolve_local_issue_identity(repo_root: &Path, issue: u32) -> Result<Option<(
     resolve_issue_scope_and_slug_from_local_state(repo_root, issue)
 }
 
+fn resolve_start_slug(
+    parsed_slug: Option<&str>,
+    title: &str,
+    local_identity: Option<&(String, String)>,
+    no_fetch_issue: bool,
+) -> Result<(String, bool)> {
+    if let Some((_, local_slug)) = local_identity {
+        return Ok((local_slug.clone(), true));
+    }
+
+    if let Some(parsed_slug) = parsed_slug {
+        if !parsed_slug.trim().is_empty() {
+            let slug = sanitize_slug(parsed_slug);
+            if slug.is_empty() {
+                bail!("start: --slug produced empty slug after sanitization");
+            }
+            return Ok((slug, false));
+        }
+    }
+
+    if !title.is_empty() {
+        let slug = sanitize_slug(title);
+        if slug.is_empty() {
+            bail!("start: --title produced empty slug after sanitization");
+        }
+        return Ok((slug, false));
+    }
+
+    if no_fetch_issue {
+        bail!("start: --slug is required when --no-fetch-issue is set");
+    }
+
+    bail!("Could not fetch issue title. Pass --slug or check GitHub token/repo configuration.")
+}
+
 pub(crate) fn real_pr(args: &[String]) -> Result<()> {
     let Some(subcommand) = args.first().map(|s| s.as_str()) else {
         bail!(
@@ -970,34 +1005,16 @@ fn real_pr_start(args: &[String]) -> Result<()> {
     }
 
     let mut title = parsed.title_arg.clone().unwrap_or_default();
-    let mut slug = parsed.slug.clone().unwrap_or_default();
-    let mut slug_from_local_identity = false;
     if title.is_empty() && !parsed.no_fetch_issue {
         eprintln!("• Fetching issue title via ADL GitHub transport…");
         title = gh_issue_title(parsed.issue, &repo)?.unwrap_or_default();
     }
-    if slug.is_empty() {
-        if let Some((_, local_slug)) = local_identity.as_ref() {
-            slug = local_slug.clone();
-            slug_from_local_identity = true;
-        } else if !title.is_empty() {
-            slug = sanitize_slug(&title);
-            if slug.is_empty() {
-                bail!("start: --title produced empty slug after sanitization");
-            }
-        } else if parsed.no_fetch_issue {
-            bail!("start: --slug is required when --no-fetch-issue is set");
-        }
-        if slug.is_empty() && title.is_empty() {
-            bail!(
-                "Could not fetch issue #{} title. Pass --slug or check GitHub token/repo configuration.",
-                parsed.issue
-            );
-        }
-        if slug.is_empty() {
-            slug = sanitize_slug(&title);
-        }
-    }
+    let (mut slug, slug_from_local_identity) = resolve_start_slug(
+        parsed.slug.as_deref(),
+        &title,
+        local_identity.as_ref(),
+        parsed.no_fetch_issue,
+    )?;
     if !same_checkout_root(&repo_root, &primary_root)? {
         bail!(
             "start: issue-mode run must be invoked from the primary checkout, not from an existing issue worktree. Current checkout: '{}'. Primary checkout: '{}'. Remediation: continue working in the current issue worktree if it already matches your target issue, or rerun `adl/tools/pr.sh run {}` from the primary checkout.",
