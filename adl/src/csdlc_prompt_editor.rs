@@ -634,7 +634,7 @@ fn extract_legacy_spp_values(rendered: &str) -> Result<(BTreeMap<String, String>
         .get("issue")
         .cloned()
         .ok_or_else(|| anyhow!("legacy spp import requires issue"))?;
-    values.insert("issue_padded".to_string(), issue);
+    values.insert("issue_padded".to_string(), issue.clone());
     values.insert(
         "slug".to_string(),
         values
@@ -711,6 +711,9 @@ fn extract_legacy_spp_values(rendered: &str) -> Result<(BTreeMap<String, String>
             "acceptance_criteria_inline",
             "not recorded in legacy rendered card",
         ),
+        ("issue_goal_ref", &format!("goal://issues/{issue}")),
+        ("sprint_goal_ref", "unknown"),
+        ("goal_metrics_rollup_ref", "unknown"),
         ("initial_pvf_lane", "needs_planning_lane_assignment"),
         ("planned_pvf_lane", "needs_planning_lane_assignment"),
         ("planned_pvf_lane_source", "legacy_import_default"),
@@ -2735,7 +2738,8 @@ mod tests {
     #[test]
     fn editor_model_covers_all_five_cards() {
         let model = load_editor_model(&repo_root()).expect("model");
-        assert_eq!(model.template_set, "1.0.2");
+        let active = active_template_set();
+        assert_eq!(model.template_set, active);
         assert_eq!(
             model.card_status_values,
             [
@@ -2748,18 +2752,21 @@ mod tests {
                 "superseded"
             ]
         );
-        assert_eq!(model.cards.len(), 5);
-        assert!(!model
-            .cards
-            .iter()
-            .any(|card| card.kind == PromptCardKind::Vpp));
+        assert_eq!(
+            model.cards.len(),
+            PromptCardKind::all_for_template_set(&active).len()
+        );
+        assert_eq!(
+            model.cards.iter().any(|card| card.kind == PromptCardKind::Vpp),
+            template_set_supports_vpp(&active)
+        );
         assert!(model
             .cards
             .iter()
             .any(|card| card.kind == PromptCardKind::Srp));
         assert!(model.cards.iter().all(|card| card
             .template_path
-            .starts_with("docs/templates/prompts/1.0.2/")));
+            .starts_with(&format!("docs/templates/prompts/{active}/"))));
     }
 
     #[test]
@@ -2808,10 +2815,12 @@ mod tests {
         assert_eq!(report.comparison, PromptCardRoundTripComparison::Normalized);
 
         let imported_text = fs::read_to_string(&imported).expect("imported values");
-        assert!(imported_text.contains("template_set: \"1.0.2\""));
+        let active = active_template_set();
+        assert!(imported_text.contains(&format!("template_set: \"{active}\"")));
         let normalized_text = fs::read_to_string(&normalized).expect("normalized rendered");
         assert!(normalized_text.contains(&format!(
-            "Canonical Template Source: `docs/templates/prompts/1.0.2/{}.md`",
+            "Canonical Template Source: `docs/templates/prompts/{}/{}.md`",
+            active,
             kind.key()
         )));
     }

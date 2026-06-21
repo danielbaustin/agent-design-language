@@ -102,14 +102,14 @@ mod tests {
     }
 
     #[test]
-    fn help_mentions_direct_prompt_template_binary() {
+    fn prompt_template_binary_help_mentions_direct_prompt_template_binary() {
         let output = super::binary_help_probe();
         assert!(output.contains("adl-prompt-template render"));
         assert!(output.contains("without routing through the broad `adl tooling` dispatch surface"));
     }
 
     #[test]
-    fn run_validate_schemas_succeeds() {
+    fn prompt_template_binary_run_validate_schemas_succeeds() {
         run(&[
             "validate-schemas".to_string(),
             "--repo-root".to_string(),
@@ -119,7 +119,7 @@ mod tests {
     }
 
     #[test]
-    fn run_invalid_args_fail() {
+    fn prompt_template_binary_run_invalid_args_fail() {
         let err = run(&["bogus".to_string()]).expect_err("invalid args fail");
         assert!(err
             .to_string()
@@ -127,7 +127,7 @@ mod tests {
     }
 
     #[test]
-    fn print_error_chain_handles_nested_error() {
+    fn prompt_template_binary_print_error_chain_handles_nested_error() {
         let err = Err::<(), _>(anyhow::anyhow!("root cause"))
             .context("outer")
             .expect_err("error");

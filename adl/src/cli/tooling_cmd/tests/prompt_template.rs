@@ -2,14 +2,17 @@ use super::support::*;
 use super::*;
 
 #[test]
-fn prompt_template_cli_renders_and_validates_all_five_cards_from_values() {
+fn prompt_template_cli_renders_and_validates_staged_vpp_bundle_from_values() {
     let repo = TempRepo::new("prompt-template");
     let values_dir = repo.path().join("values");
     let rendered_dir = repo.path().join("rendered");
+    let template_set = "1.0.3";
 
     real_tooling(&[
         "prompt-template".to_string(),
         "write-sample-values".to_string(),
+        "--template-set".to_string(),
+        template_set.to_string(),
         "--repo-root".to_string(),
         repo_root_for_tests().to_string_lossy().to_string(),
         "--out-dir".to_string(),
@@ -20,6 +23,8 @@ fn prompt_template_cli_renders_and_validates_all_five_cards_from_values() {
     real_tooling(&[
         "prompt-template".to_string(),
         "render-all".to_string(),
+        "--template-set".to_string(),
+        template_set.to_string(),
         "--repo-root".to_string(),
         repo_root_for_tests().to_string_lossy().to_string(),
         "--values-dir".to_string(),
@@ -33,6 +38,7 @@ fn prompt_template_cli_renders_and_validates_all_five_cards_from_values() {
         ("sip", None),
         ("stp", None),
         ("spp", None),
+        ("vpp", None),
         ("srp", None),
         ("sor", Some("bootstrap")),
     ] {
@@ -52,6 +58,8 @@ fn prompt_template_cli_renders_and_validates_all_five_cards_from_values() {
         real_tooling(&[
             "prompt-template".to_string(),
             "validate-structure".to_string(),
+            "--template-set".to_string(),
+            template_set.to_string(),
             "--repo-root".to_string(),
             repo_root_for_tests().to_string_lossy().to_string(),
             "--kind".to_string(),
@@ -78,6 +86,8 @@ fn prompt_template_cli_renders_and_validates_all_five_cards_from_values() {
     real_tooling(&[
         "prompt-template".to_string(),
         "validate-schemas".to_string(),
+        "--template-set".to_string(),
+        template_set.to_string(),
         "--repo-root".to_string(),
         repo_root_for_tests().to_string_lossy().to_string(),
     ])
