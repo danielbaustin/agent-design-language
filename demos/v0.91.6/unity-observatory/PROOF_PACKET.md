@@ -1,8 +1,8 @@
-# Unity Observatory Launchable Baseline Proof Packet
+# Unity Observatory Bounded Proof Packet
 
 ## Status
 
-Prepared for ADL issue `#4031`.
+Current through ADL issue `#4034`.
 
 ## Project Surface
 
@@ -51,6 +51,15 @@ that later issues use for:
 - `#4032` ADL evidence/data contract binding
 - `#4033` inhabitant-facing world/status/checklist/redacted projection expansion
 - `#4034` logging/OTel/security consumption proof
+- `#4035` final working Observatory closeout truth
+
+For `#4034`, the same seed now also carries one explicit observability/security
+consumption section with:
+
+- `#3999` OTel and event-stream boundary refs
+- `#4000` logging-validation and redaction refs
+- `#4023` security-floor linkage
+- a reviewer packet ref for the issue-owned non-claim proof
 
 ## Validation Truth
 
@@ -63,6 +72,10 @@ Deterministic launch-baseline proof: passed by
 Deterministic Unity contract proof: passed by
 `bash adl/tools/test_v0916_unity_observatory_contract.sh`
 and focused bundle/contract Rust checks.
+
+Observability/security consumption proof: carried by the contract and reviewed
+in
+`docs/milestones/v0.91.6/review/observatory/UNITY_OBSERVATORY_LOGGING_OTEL_SECURITY_CONSUMPTION_4034.md`.
 
 Governed Observatory contract proof: passed by
 `cargo test --manifest-path adl/Cargo.toml runtime_v2_csm_observatory -- --nocapture`
@@ -80,6 +93,7 @@ C# compiler validation outside Unity: not run.
 - The shell loads a checked-in Unity-facing contract seed rather than parsing
   the full governed packet directly inside Unity.
 - No live Runtime v2 or ADL runtime API integration is claimed.
+- No live OpenTelemetry collector or exporter integration is claimed.
 - No inhabitant-safe identity/profile closure beyond redacted lane projections is claimed.
 - No HTML/mobile Observatory completion is claimed.
 
@@ -87,5 +101,6 @@ C# compiler validation outside Unity: not run.
 
 - This packet does not claim Unity editor success.
 - This packet does not claim Unity build success.
-- This packet does not claim completed ADL ingestion or inhabitant readiness.
+- This packet does not claim live ADL runtime ingestion.
+- This packet does not claim identity-safe inhabitant/profile closure.
 - This packet does not claim WP-09 closeout readiness.

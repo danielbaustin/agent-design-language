@@ -102,6 +102,17 @@
     "health_summary": "Bounded polis state is inspectable, trace-backed, and still explicitly governed.",
     "state": "running"
   },
+  "observability": {
+    "claim_boundary": "Observatory consumers may reuse the redacted event-stream vocabulary and operator-report surfaces, but this contract does not claim a live OpenTelemetry collector or exporter integration.",
+    "consumption_status": "reviewed_floor_not_live_export",
+    "event_stream_example_ref": "docs/milestones/v0.91.6/review/logging_observability/observatory_event_stream_example_3999.jsonl",
+    "findings_disposition": "Accepted WP-07 security findings remain explicit, while identity-safe display and final closeout stay routed to their owning issues.",
+    "logging_validation_ref": "docs/milestones/v0.91.6/review/logging_observability/LOGGING_VALIDATION_REDACTION_PROOF_4000.md",
+    "otel_boundary_ref": "docs/milestones/v0.91.6/review/logging_observability/OTEL_OBSERVATORY_CONSUMPTION_PROOF_3999.md",
+    "private_state_posture": "No private paths, secrets, raw logs, or identity-sensitive state are required by this Unity surface.",
+    "proof_packet_ref": "docs/milestones/v0.91.6/review/observatory/UNITY_OBSERVATORY_LOGGING_OTEL_SECURITY_CONSUMPTION_4034.md",
+    "security_review_ref": "docs/milestones/v0.91.6/review/security/UNITY_OBSERVATORY_INHABITANT_READINESS_SECURITY_REVIEW_4023.md"
+  },
   "packet_schema": "adl.csm_visibility_packet.v1",
   "review": {
     "caveats": [
