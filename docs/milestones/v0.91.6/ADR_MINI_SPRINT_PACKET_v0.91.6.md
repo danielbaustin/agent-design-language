@@ -29,16 +29,46 @@ public-record, or GitHub projection behavior.
 
 | Candidate | Proposed status | Why it is needed before closeout | Primary evidence |
 | --- | --- | --- | --- |
-| Local Polis SSM Operations Boundary | `candidate_required` | `#4109` and `#4113` establish AWS SSM as an operations and observability bridge, not a source of polis authority. This boundary should become durable before SSM expands to `nessus.local`, `opticon.local`, edge nodes, or non-AWS clouds. | `review/security/LOCAL_POLIS_SSM_OPERATIONS_BRIDGE_4109.md`; `review/security/LOCAL_POLIS_SSM_PROOF_4113.md` |
-| Validation Lane Selector / PVF Test-Cost Policy | `candidate_required` | v0.91.6 made focused validation selection project-critical after the test surface expanded. The architecture decision should lock the rule that normal PR work runs the smallest deterministic proving lane, while ambiguous and release-gate surfaces fail closed or escalate. | `docs/architecture/VALIDATION_LANE_SELECTOR.md`; `review/V0916_VALIDATION_MANAGER_TEST_TAX_MINI_SPRINT_REVIEW_4212.md`; `review/PVF_LONG_VALIDATION_LANE_INDEX_4223.md` |
-| GitHub/C-SDLC Projection Ownership | `candidate_required` | `#4047` classified GitHub surfaces as managed projections, drift-checked projections, linked external state, card-local truth, or deferred surfaces. That distinction is now architecture, not just a report. | `review/github_projection/GITHUB_CSDLC_PROJECTION_MAP_4047.md`; `review/CSDLC_GITHUB_PROJECTION_CONVERGENCE_REVIEW_3935.md` |
-| Runtime Integration Soak Boundary | `candidate_required` | The milestone explicitly rejects the claim that separately implemented pieces equal an integrated runtime. Soak #1 and Soak #2 need a durable decision boundary before v0.92 runtime-coherence claims. | `RUNTIME_INTEGRATION_SOAK_SPRINT_v0.91.6.md`; `RUNTIME_FIRE_UP_PLAN_v0.91.6.md`; `features/TOKIO_RUNTIME_SUBSTRATE_v0.91.6.md` |
-| Cognitive Scheduler v1 Authority Boundary | `candidate_required` | `#4107` implemented deterministic lane-selection evidence, but did not implement timed execution, GitHub mutation, provider choice authority, or autonomous sprint conduction. That non-authority boundary should be durable before later scheduler expansion. | `review/scheduler/COGNITIVE_SCHEDULER_V1_4107.md`; `review/scheduler/SCHEDULER_ECONOMICS_INPUTS_4106.md`; `features/COGNITIVE_SCHEDULER_v0.91.6.md` |
-| Workflow Lockfile Discipline | `candidate_required_needs_source_packet` | The `#4306` incident showed lifecycle tooling can create large, misleading validation cost if dependency resolution mutates `Cargo.lock` implicitly. The durable decision should require locked lifecycle fallback and explicit lockfile artifacts, but the release tail still needs a retained local source packet for the merged fix before promotion. | `review/V0916_COMPLETED_SPRINT_REVIEW_FINDINGS_RESOLUTION_PLAN_4303.md` |
-| Provider/Model Suitability Boundary v2 | `candidate_required` | WP-05 separated provider availability, capability profiles, role suitability, model reliability, and advisory role-provider authority. Existing ADR 0004 covers provider profiles, but v0.91.6 adds model-role suitability and multi-agent readiness evidence boundaries. | `review/provider/WP05_PROVIDER_MINI_SPRINT_CLOSEOUT_3970.md`; `features/PROVIDER_MODEL_RELIABILITY_v0.91.6.md`; `review/provider/PROVIDER_RELIABILITY_CLOSEOUT_MATRIX_4012.md` |
-| Public Prompt Records Publication Boundary | `candidate_required` | WP-04 established that `.adl` authoring records are not automatically public-safe. Public consumption requires export contract, redaction, validation, indexing, and security/CAV handoff rules. | `features/PUBLIC_PROMPT_RECORDS_EXPORT_v0.91.6.md`; `review/public_prompt_records/PUBLIC_PROMPT_RECORDS_DISTRIBUTION_CLOSEOUT_4006.md`; `review/public_prompt_records/PUBLIC_PROMPT_RECORDS_REDACTION_PUBLICATION_SAFETY_4003.md` |
+| [ADR 0035: Local Polis SSM Operations Boundary](../../architecture/adr/0035-local-polis-ssm-operations-boundary.md) | `candidate_required` | `#4109` and `#4113` establish AWS SSM as an operations and observability bridge, not a source of polis authority. This boundary should become durable before SSM expands to `nessus.local`, `opticon.local`, edge nodes, or non-AWS clouds. | `review/security/LOCAL_POLIS_SSM_OPERATIONS_BRIDGE_4109.md`; `review/security/LOCAL_POLIS_SSM_PROOF_4113.md` |
+| [ADR 0036: Validation Lane Selector / PVF Test-Cost Policy](../../architecture/adr/0036-validation-lane-selector-pvf-test-cost-policy.md) | `candidate_required` | v0.91.6 made focused validation selection project-critical after the test surface expanded. The architecture decision should lock the rule that normal PR work runs the smallest deterministic proving lane, while ambiguous and release-gate surfaces fail closed or escalate. | `docs/architecture/VALIDATION_LANE_SELECTOR.md`; `review/V0916_VALIDATION_MANAGER_TEST_TAX_MINI_SPRINT_REVIEW_4212.md`; `review/PVF_LONG_VALIDATION_LANE_INDEX_4223.md` |
+| [ADR 0037: GitHub/C-SDLC Projection Ownership](../../architecture/adr/0037-github-csdlc-projection-ownership.md) | `candidate_required` | `#4047` classified GitHub surfaces as managed projections, drift-checked projections, linked external state, card-local truth, or deferred surfaces. That distinction is now architecture, not just a report. | `review/github_projection/GITHUB_CSDLC_PROJECTION_MAP_4047.md`; `review/CSDLC_GITHUB_PROJECTION_CONVERGENCE_REVIEW_3935.md` |
+| [ADR 0038: Runtime Integration Soak Boundary](../../architecture/adr/0038-runtime-integration-soak-boundary.md) | `candidate_required` | The milestone explicitly rejects the claim that separately implemented pieces equal an integrated runtime. Soak #1 and Soak #2 need a durable decision boundary before v0.92 runtime-coherence claims. | `RUNTIME_INTEGRATION_SOAK_SPRINT_v0.91.6.md`; `RUNTIME_FIRE_UP_PLAN_v0.91.6.md`; `features/TOKIO_RUNTIME_SUBSTRATE_v0.91.6.md` |
+| [ADR 0039: Cognitive Scheduler v1 Authority Boundary](../../architecture/adr/0039-cognitive-scheduler-v1-authority-boundary.md) | `candidate_required` | `#4107` implemented deterministic lane-selection evidence, but did not implement timed execution, GitHub mutation, provider choice authority, or autonomous sprint conduction. That non-authority boundary should be durable before later scheduler expansion. | `review/scheduler/COGNITIVE_SCHEDULER_V1_4107.md`; `review/scheduler/SCHEDULER_ECONOMICS_INPUTS_4106.md`; `features/COGNITIVE_SCHEDULER_v0.91.6.md` |
+| [ADR 0040: Workflow Lockfile Discipline](../../architecture/adr/0040-workflow-lockfile-discipline.md) | `candidate_required_needs_source_packet` | The `#4306` incident showed lifecycle tooling can create large, misleading validation cost if dependency resolution mutates `Cargo.lock` implicitly. The durable decision should require locked lifecycle fallback and explicit lockfile artifacts, but the release tail still needs a retained local source packet for the merged fix before promotion. | `review/V0916_COMPLETED_SPRINT_REVIEW_FINDINGS_RESOLUTION_PLAN_4303.md` |
+| [ADR 0041: Provider/Model Suitability Boundary v2](../../architecture/adr/0041-provider-model-suitability-boundary-v2.md) | `candidate_required` | WP-05 separated provider availability, capability profiles, role suitability, model reliability, and advisory role-provider authority. Existing ADR 0004 covers provider profiles, but v0.91.6 adds model-role suitability and multi-agent readiness evidence boundaries. | `review/provider/WP05_PROVIDER_MINI_SPRINT_CLOSEOUT_3970.md`; `features/PROVIDER_MODEL_RELIABILITY_v0.91.6.md`; `review/provider/PROVIDER_RELIABILITY_CLOSEOUT_MATRIX_4012.md` |
+| [ADR 0042: Public Prompt Records Publication Boundary](../../architecture/adr/0042-public-prompt-records-publication-boundary.md) | `candidate_required` | WP-04 established that `.adl` authoring records are not automatically public-safe. Public consumption requires export contract, redaction, validation, indexing, and security/CAV handoff rules. | `features/PUBLIC_PROMPT_RECORDS_EXPORT_v0.91.6.md`; `review/public_prompt_records/PUBLIC_PROMPT_RECORDS_DISTRIBUTION_CLOSEOUT_4006.md`; `review/public_prompt_records/PUBLIC_PROMPT_RECORDS_REDACTION_PUBLICATION_SAFETY_4003.md` |
 
 ## Candidate Summaries
+
+The release-tail candidate ADR drafts now exist as proposed records:
+
+- `docs/architecture/adr/0035-local-polis-ssm-operations-boundary.md`
+- `docs/architecture/adr/0036-validation-lane-selector-pvf-test-cost-policy.md`
+- `docs/architecture/adr/0037-github-csdlc-projection-ownership.md`
+- `docs/architecture/adr/0038-runtime-integration-soak-boundary.md`
+- `docs/architecture/adr/0039-cognitive-scheduler-v1-authority-boundary.md`
+- `docs/architecture/adr/0040-workflow-lockfile-discipline.md`
+- `docs/architecture/adr/0041-provider-model-suitability-boundary-v2.md`
+- `docs/architecture/adr/0042-public-prompt-records-publication-boundary.md`
+
+## Child Review Issue Wave
+
+The proposed ADR drafts are tracked for review/promotion routing by this child
+issue wave:
+
+| Issue | Candidate ADR | Review purpose |
+| --- | --- | --- |
+| `#4369` | ADR 0035: Local Polis SSM Operations Boundary | Confirm SSM remains operations-plane only and does not own polis authority. |
+| `#4370` | ADR 0036: Validation Lane Selector / PVF Test-Cost Policy | Confirm deterministic focused validation and fail-closed escalation boundaries. |
+| `#4371` | ADR 0037: GitHub/C-SDLC Projection Ownership | Confirm projection ownership classes and legacy-linkage caveat. |
+| `#4372` | ADR 0038: Runtime Integration Soak Boundary | Confirm Soak #1/#2/#3 routing without v0.92 readiness overclaim. |
+| `#4373` | ADR 0039: Cognitive Scheduler v1 Authority Boundary | Confirm Scheduler v1 remains planning/evidence only. |
+| `#4374` | ADR 0040: Workflow Lockfile Discipline | Confirm the evidence-capture gap remains visible before acceptance. |
+| `#4375` | ADR 0041: Provider/Model Suitability Boundary v2 | Confirm provider availability, capability, suitability, reliability, and advisory authority remain distinct. |
+| `#4376` | ADR 0042: Public Prompt Records Publication Boundary | Confirm public prompt records are reviewed projections, not raw `.adl` publication. |
+
+These child issues are review and promotion-routing surfaces. They do not mean
+the candidate ADRs are accepted.
 
 ### Local Polis SSM Operations Boundary
 
