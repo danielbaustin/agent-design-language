@@ -8,6 +8,14 @@ This directory now contains the first Unity Observatory project scaffold for
 `v0.91.6`. It is intended to open as a Unity `2022.3 LTS` project and provide
 one launchable-equivalent shell for the richer Observatory lane.
 
+This issue now adds one bounded inhabitant-readiness projection for `#4033`
+through the same checked-in Unity-facing contract seed. The shell now presents:
+
+- inhabited world and lens framing
+- runtime/status posture
+- a reviewed inhabitant-readiness checklist
+- redacted inhabitant-lane capability projections with explicit identity limits
+
 This issue still does not claim:
 
 - completed ADL evidence ingestion into Unity
@@ -89,9 +97,10 @@ The current scaffold now consumes a bounded Unity-facing contract with:
 - Freedom Gate summary counts
 - review/operator-report references
 
-The contract seed is read-only and fixture-backed. Richer inhabitant-specific
-world, status, and identity surfaces remain issue-owned follow-on work for
-`#4033`.
+The contract seed is read-only and fixture-backed. `#4033` now expands it with
+bounded world, status, checklist, and redacted inhabitant-lane surfaces while
+keeping identity/profile safety explicitly routed. Full identity-safe display
+and live runtime consumption still remain follow-on proof work.
 
 ### Non-authoritative boundary
 
@@ -136,6 +145,8 @@ Current contract-backed behavior:
   counts sourced from that contract
 - the shell presents room/lens navigation labels, proposal-mode language, and
   Freedom Gate summary counts from the same contract
+- the shell presents inhabitant-readiness checklist items and redacted
+  inhabitant-lane capability projections from the same contract
 - no live runtime mutation, snapshot, or profile inspection is performed
 
 ## Validation Entry Points
@@ -189,7 +200,7 @@ Unity editor or build pipeline already succeeded on this machine.
 
 - No live Runtime v2 capture is claimed.
 - No live Runtime v2 ingestion is claimed.
-- No inhabitant-safe display or input closure is claimed.
+- No inhabitant-safe profile or memory display closure is claimed.
 - No Unity editor success is claimed.
 - No Unity build success is claimed.
 - No WP-09 closeout readiness is claimed.

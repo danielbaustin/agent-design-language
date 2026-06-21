@@ -49,7 +49,7 @@ than stopping at static summary literals. It remains the bounded launch surface
 that later issues use for:
 
 - `#4032` ADL evidence/data contract binding
-- `#4033` inhabitant-facing surface expansion
+- `#4033` inhabitant-facing world/status/checklist/redacted projection expansion
 - `#4034` logging/OTel/security consumption proof
 
 ## Validation Truth
@@ -80,7 +80,7 @@ C# compiler validation outside Unity: not run.
 - The shell loads a checked-in Unity-facing contract seed rather than parsing
   the full governed packet directly inside Unity.
 - No live Runtime v2 or ADL runtime API integration is claimed.
-- No inhabitant-safe identity/profile display is claimed.
+- No inhabitant-safe identity/profile closure beyond redacted lane projections is claimed.
 - No HTML/mobile Observatory completion is claimed.
 
 ## Non-Claims
