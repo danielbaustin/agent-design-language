@@ -43,7 +43,7 @@ issues are first-class lifecycle records, not optional notes.
 
 Sprint umbrella issues should record:
 
-- sprint goal and boundary;
+- descriptive sprint objective and boundary;
 - child issue list;
 - dependency order;
 - proof and validation expectations;

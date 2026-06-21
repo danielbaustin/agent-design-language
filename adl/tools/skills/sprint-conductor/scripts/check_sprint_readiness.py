@@ -178,6 +178,19 @@ def overall_status(
     return 'ready'
 
 
+def sprint_goal_policy() -> dict[str, Any]:
+    return {
+        'status': 'descriptive_only',
+        'sprint_goal_role': 'descriptive_sprint_objective',
+        'active_session_goal_required': 'child_issue_only',
+        'notes': [
+            'Sprint state may record a descriptive sprint objective, but that objective does not satisfy the active Codex session-goal requirement for child issue execution.',
+            'Each child issue session must create its own issue-bound goal after bind/readiness succeeds and before implementation starts.',
+            'Do not keep a competing sprint-global active session goal in the same thread while a child issue implementation session is active.',
+        ],
+    }
+
+
 def main() -> int:
     parser = argparse.ArgumentParser()
     parser.add_argument('--repo-root', required=True)
@@ -236,6 +249,7 @@ def main() -> int:
         'status': overall_status(parity, preflight, packet, review_paths, activity_log_paths),
         'ordered_issue_numbers': ordered_issues,
         'execution_mode': args.execution_mode,
+        'goal_policy': sprint_goal_policy(),
         'execution_packet': packet,
         'review_paths': review_paths,
         'activity_log_paths': activity_log_paths,

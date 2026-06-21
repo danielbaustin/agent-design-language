@@ -105,7 +105,7 @@ At minimum, gather:
 - `sprint.issue_number` when it already exists
 - `sprint.ordered_issue_numbers`
 - `sprint.execution_mode`
-- `sprint.goal`
+- `sprint.goal` or equivalent descriptive sprint objective text
 - one explicit policy block
 
 Useful additional inputs:
@@ -163,6 +163,8 @@ missing sprint-management issue first.
     issue-bound session-goal requirement as part of the SEP handoff rather than
     as a separate manual reminder.
     In other words: attach the issue-bound session-goal requirement as part of the SEP handoff.
+    The sprint umbrella goal or objective is descriptive coordination context,
+    not a substitute for the active child-session goal.
 11. For SEP-routed child execution, create the goal after bind/readiness
     succeeds and before implementation starts. Minimum goal content:
     sprint issue number when present, child issue number, and the bounded
@@ -205,6 +207,9 @@ This skill enforces:
   speculative, or blocked on dependencies
 - no live child implementation handoff without the child issue-bound session
   goal created after bind/readiness succeeds
+- no sprint-global active session goal may stand in for the child issue-bound
+  session goal during implementation; sprint goals are descriptive planning
+  context only unless a later issue proves explicit nested-goal support
 - no SEP-routed child session goal that omits sprint context when a sprint
   issue exists, the child issue number, or the bounded session objective
 - editor-skill routing when cards drift

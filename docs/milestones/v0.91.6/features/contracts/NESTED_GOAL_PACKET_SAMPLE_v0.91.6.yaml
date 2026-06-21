@@ -1,0 +1,342 @@
+schema_version: "nested_goal_packet.v1"
+artifact_type: "goal_hierarchy_sample"
+name: "v0.91.6-sprint-4332-nested-goal-sample"
+status: "illustrative"
+top_goal_ref: "goal:v0.91.6:sprint:4332"
+
+goals:
+  - goal_ref: "goal:v0.91.6:sprint:4332"
+    parent_goal_ref: null
+    goal_kind: sprint
+    scope_ref: "#4332"
+    title: "[v0.91.6][pvf][sprint] VPP and PVF lane-template mini-sprint"
+    status: active
+    owner_ref: "issue:4332"
+    issue_number: 4332
+    validation_lane: null
+    links:
+      source_issue_prompt: "https://github.com/danielbaustin/agent-design-language/issues/4332"
+      spp_ref: null
+      vpp_ref: null
+      srp_ref: null
+      sor_ref: null
+      sprint_packet_ref: null
+      pr_ref: null
+    estimates:
+      elapsed_seconds: null
+      elapsed_availability: unknown
+      total_tokens: null
+      total_tokens_availability: unknown
+      validation_seconds: null
+      validation_seconds_availability: unknown
+      confidence: "unknown"
+      source_ref: null
+    actuals:
+      started_at: null
+      completed_at: null
+      elapsed_seconds: null
+      elapsed_availability: unknown
+      total_tokens: null
+      total_tokens_availability: unknown
+      validation_seconds: null
+      validation_seconds_availability: unknown
+    telemetry:
+      data_source: derived_sprint_state
+      goal_id: null
+      goal_id_availability: not_available
+      model_ref: null
+      session_ref: null
+      thread_id: null
+      raw_log_ref: null
+    variance:
+      required: false
+      completed: false
+      category: unknown
+      note: "Sprint rollup remains partial until child issue actuals are recorded."
+      threshold_policy: "Do not fabricate sprint totals from unknown child issue values."
+    rollup_policy:
+      include_in_parent_elapsed: true
+      include_in_parent_tokens: true
+      include_in_parent_validation: true
+      unknown_values_do_not_zero_fill: true
+      aggregation_note: "Roll up only known child issue values."
+
+  - goal_ref: "goal:v0.91.6:sprint:4332:issue:4329"
+    parent_goal_ref: "goal:v0.91.6:sprint:4332"
+    goal_kind: issue
+    scope_ref: "#4329"
+    title: "[v0.91.6][process][metrics] Define per-issue execution metrics foundation"
+    status: completed
+    owner_ref: "issue:4329"
+    issue_number: 4329
+    validation_lane: null
+    links:
+      source_issue_prompt: "https://github.com/danielbaustin/agent-design-language/issues/4329"
+      spp_ref: null
+      vpp_ref: null
+      srp_ref: null
+      sor_ref: null
+      sprint_packet_ref: null
+      pr_ref: null
+    estimates:
+      elapsed_seconds: null
+      elapsed_availability: unknown
+      total_tokens: null
+      total_tokens_availability: unknown
+      validation_seconds: null
+      validation_seconds_availability: unknown
+      confidence: "unknown"
+      source_ref: ".adl/v0.91.6/tasks/issue-4329__define-per-issue-execution-metrics-foundation/spp.md"
+    actuals:
+      started_at: null
+      completed_at: null
+      elapsed_seconds: null
+      elapsed_availability: unknown
+      total_tokens: null
+      total_tokens_availability: unknown
+      validation_seconds: null
+      validation_seconds_availability: unknown
+    telemetry:
+      data_source: unknown
+      goal_id: null
+      goal_id_availability: not_collected
+      model_ref: null
+      session_ref: null
+      thread_id: null
+      raw_log_ref: null
+    variance:
+      required: false
+      completed: false
+      category: none
+      note: "The issue defined the contract but did not backfill historical goal telemetry."
+      threshold_policy: "Unknown actuals remain unknown."
+    rollup_policy:
+      include_in_parent_elapsed: true
+      include_in_parent_tokens: true
+      include_in_parent_validation: true
+      unknown_values_do_not_zero_fill: true
+      aggregation_note: "Counts as a completed child issue even with unknown telemetry."
+
+  - goal_ref: "goal:v0.91.6:sprint:4332:issue:4331"
+    parent_goal_ref: "goal:v0.91.6:sprint:4332"
+    goal_kind: issue
+    scope_ref: "#4331"
+    title: "[v0.91.6][csdlc][goals] Define first-class nested goal accounting"
+    status: active
+    owner_ref: "issue:4331"
+    issue_number: 4331
+    validation_lane: null
+    links:
+      source_issue_prompt: ".adl/v0.91.6/bodies/issue-4331-define-first-class-nested-goal-accounting.md"
+      spp_ref: ".adl/v0.91.6/tasks/issue-4331__define-first-class-nested-goal-accounting/spp.md"
+      vpp_ref: null
+      srp_ref: ".adl/v0.91.6/tasks/issue-4331__define-first-class-nested-goal-accounting/srp.md"
+      sor_ref: ".adl/v0.91.6/tasks/issue-4331__define-first-class-nested-goal-accounting/sor.md"
+      sprint_packet_ref: null
+      pr_ref: null
+    estimates:
+      elapsed_seconds: null
+      elapsed_availability: unknown
+      total_tokens: null
+      total_tokens_availability: unknown
+      validation_seconds: null
+      validation_seconds_availability: unknown
+      confidence: "medium"
+      source_ref: ".adl/v0.91.6/tasks/issue-4331__define-first-class-nested-goal-accounting/spp.md"
+    actuals:
+      started_at: null
+      completed_at: null
+      elapsed_seconds: null
+      elapsed_availability: not_collected
+      total_tokens: null
+      total_tokens_availability: not_collected
+      validation_seconds: null
+      validation_seconds_availability: not_collected
+    telemetry:
+      data_source: codex_goal_tool
+      goal_id: null
+      goal_id_availability: unknown
+      model_ref: null
+      session_ref: "thread_goal_active"
+      thread_id: null
+      raw_log_ref: null
+    variance:
+      required: false
+      completed: false
+      category: unknown
+      note: "Issue goal exists before full nested-goal persistence is implemented."
+      threshold_policy: "Do not classify variance until known estimate/actual pairs exist."
+    rollup_policy:
+      include_in_parent_elapsed: true
+      include_in_parent_tokens: true
+      include_in_parent_validation: true
+      unknown_values_do_not_zero_fill: true
+      aggregation_note: "Issue remains active while child session and lane goals run."
+
+  - goal_ref: "goal:v0.91.6:sprint:4332:issue:4331:session:1"
+    parent_goal_ref: "goal:v0.91.6:sprint:4332:issue:4331"
+    goal_kind: session
+    scope_ref: "codex/4331-define-first-class-nested-goal-accounting"
+    title: "Issue 4331 implementation session"
+    status: active
+    owner_ref: "branch:codex/4331-define-first-class-nested-goal-accounting"
+    issue_number: 4331
+    validation_lane: null
+    links:
+      source_issue_prompt: ".adl/v0.91.6/bodies/issue-4331-define-first-class-nested-goal-accounting.md"
+      spp_ref: ".adl/v0.91.6/tasks/issue-4331__define-first-class-nested-goal-accounting/spp.md"
+      vpp_ref: null
+      srp_ref: ".adl/v0.91.6/tasks/issue-4331__define-first-class-nested-goal-accounting/srp.md"
+      sor_ref: ".adl/v0.91.6/tasks/issue-4331__define-first-class-nested-goal-accounting/sor.md"
+      sprint_packet_ref: null
+      pr_ref: null
+    estimates:
+      elapsed_seconds: null
+      elapsed_availability: unknown
+      total_tokens: null
+      total_tokens_availability: unknown
+      validation_seconds: null
+      validation_seconds_availability: unknown
+      confidence: "unknown"
+      source_ref: null
+    actuals:
+      started_at: null
+      completed_at: null
+      elapsed_seconds: null
+      elapsed_availability: not_collected
+      total_tokens: null
+      total_tokens_availability: not_collected
+      validation_seconds: null
+      validation_seconds_availability: not_collected
+    telemetry:
+      data_source: codex_goal_tool
+      goal_id: null
+      goal_id_availability: unknown
+      model_ref: null
+      session_ref: "active-thread"
+      thread_id: null
+      raw_log_ref: null
+    variance:
+      required: false
+      completed: false
+      category: unknown
+      note: "Session telemetry is optional and may be partial."
+      threshold_policy: "Missing session telemetry stays not_collected."
+    rollup_policy:
+      include_in_parent_elapsed: true
+      include_in_parent_tokens: true
+      include_in_parent_validation: true
+      unknown_values_do_not_zero_fill: true
+      aggregation_note: "Session actuals roll into the issue when known."
+
+  - goal_ref: "goal:v0.91.6:sprint:4332:issue:4331:lane:docs_contract"
+    parent_goal_ref: "goal:v0.91.6:sprint:4332:issue:4331"
+    goal_kind: validation_lane
+    scope_ref: "docs_contract"
+    title: "Docs and contract proof lane"
+    status: planned
+    owner_ref: "pvf:docs_contract"
+    issue_number: 4331
+    validation_lane: "docs_contract"
+    links:
+      source_issue_prompt: ".adl/v0.91.6/bodies/issue-4331-define-first-class-nested-goal-accounting.md"
+      spp_ref: ".adl/v0.91.6/tasks/issue-4331__define-first-class-nested-goal-accounting/spp.md"
+      vpp_ref: null
+      srp_ref: ".adl/v0.91.6/tasks/issue-4331__define-first-class-nested-goal-accounting/srp.md"
+      sor_ref: ".adl/v0.91.6/tasks/issue-4331__define-first-class-nested-goal-accounting/sor.md"
+      sprint_packet_ref: null
+      pr_ref: null
+    estimates:
+      elapsed_seconds: null
+      elapsed_availability: unknown
+      total_tokens: null
+      total_tokens_availability: not_available
+      validation_seconds: null
+      validation_seconds_availability: unknown
+      confidence: "medium"
+      source_ref: "future_vpp"
+    actuals:
+      started_at: null
+      completed_at: null
+      elapsed_seconds: null
+      elapsed_availability: not_collected
+      total_tokens: null
+      total_tokens_availability: not_available
+      validation_seconds: null
+      validation_seconds_availability: not_collected
+    telemetry:
+      data_source: unknown
+      goal_id: null
+      goal_id_availability: not_available
+      model_ref: null
+      session_ref: null
+      thread_id: null
+      raw_log_ref: null
+    variance:
+      required: false
+      completed: false
+      category: none
+      note: "Lane planning exists before VPP becomes first-class."
+      threshold_policy: "Validation-lane overrun analysis starts when validation seconds are known."
+    rollup_policy:
+      include_in_parent_elapsed: false
+      include_in_parent_tokens: false
+      include_in_parent_validation: true
+      unknown_values_do_not_zero_fill: true
+      aggregation_note: "Lane values contribute only to issue validation totals."
+
+  - goal_ref: "goal:v0.91.6:sprint:4332:issue:4331:lane:subagent_review"
+    parent_goal_ref: "goal:v0.91.6:sprint:4332:issue:4331"
+    goal_kind: subagent
+    scope_ref: "pre_pr_review"
+    title: "Bounded subagent review"
+    status: planned
+    owner_ref: "subagent:review"
+    issue_number: 4331
+    validation_lane: null
+    links:
+      source_issue_prompt: ".adl/v0.91.6/bodies/issue-4331-define-first-class-nested-goal-accounting.md"
+      spp_ref: ".adl/v0.91.6/tasks/issue-4331__define-first-class-nested-goal-accounting/spp.md"
+      vpp_ref: null
+      srp_ref: ".adl/v0.91.6/tasks/issue-4331__define-first-class-nested-goal-accounting/srp.md"
+      sor_ref: ".adl/v0.91.6/tasks/issue-4331__define-first-class-nested-goal-accounting/sor.md"
+      sprint_packet_ref: null
+      pr_ref: null
+    estimates:
+      elapsed_seconds: null
+      elapsed_availability: unknown
+      total_tokens: null
+      total_tokens_availability: unknown
+      validation_seconds: null
+      validation_seconds_availability: unknown
+      confidence: "unknown"
+      source_ref: null
+    actuals:
+      started_at: null
+      completed_at: null
+      elapsed_seconds: null
+      elapsed_availability: not_collected
+      total_tokens: null
+      total_tokens_availability: not_collected
+      validation_seconds: null
+      validation_seconds_availability: not_collected
+    telemetry:
+      data_source: manual_entry
+      goal_id: null
+      goal_id_availability: not_available
+      model_ref: null
+      session_ref: null
+      thread_id: null
+      raw_log_ref: null
+    variance:
+      required: false
+      completed: false
+      category: unknown
+      note: "Subagent review is recorded as a child goal even if live token telemetry is absent."
+      threshold_policy: "Review rework categories belong to the parent issue variance summary."
+    rollup_policy:
+      include_in_parent_elapsed: false
+      include_in_parent_tokens: false
+      include_in_parent_validation: false
+      unknown_values_do_not_zero_fill: true
+      aggregation_note: "Keep review effort visible without distorting issue implementation totals."

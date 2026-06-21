@@ -1794,6 +1794,8 @@ fn finish_path_is_larger_binary_focused(path: &str) -> bool {
             | "adl/tools/test_pr_small_binary_delegation.sh"
             | "adl/tools/test_adl_runtime_compatibility.sh"
             | "adl/tools/test_adl_review_compatibility.sh"
+            | "adl/tools/polis_status_for_ssm_qts.sh"
+            | "adl/tools/validate_polis_status_for_ssm_qts.py"
             | "adl/tools/run_slow_proof_family.sh"
             | "adl/tools/test_slow_proof_lane_contract.sh"
             | "adl/config/slow_proof_families.v0.91.6.json"
