@@ -49,6 +49,8 @@ require_contains "${BOOTSTRAP_PATH}" "ConfigureFallback"
 require_contains "${SHELL_PATH}" "UnityObservatoryContractDocument"
 require_contains "${SHELL_PATH}" "ConfigureFromContract"
 require_contains "${SHELL_PATH}" "Observed summary"
+require_contains "${SHELL_PATH}" "Inhabitant readiness"
+require_contains "${SHELL_PATH}" "Citizen explorer"
 require_contains "${SHELL_PATH}" "Freedom Gate counts:"
 require_contains "${SHELL_PATH}" "deterministic Unity-facing contract"
 
@@ -61,9 +63,16 @@ require_contains "${CONTRACT_PATH}" "\"runtime_artifact_root\": \"adl/tests/fixt
 require_contains "${CONTRACT_PATH}" "\"default_room_label\": \"World / Reality\""
 require_contains "${CONTRACT_PATH}" "\"default_lens_label\": \"Operator lens\""
 require_contains "${CONTRACT_PATH}" "\"operator_report_ref\": \"runtime_v2/observatory/operator_report.md\""
+require_contains "${CONTRACT_PATH}" "\"identity_visibility\": \"withheld_pending_wp08\""
+require_contains "${CONTRACT_PATH}" "\"security_floor_ref\": \"docs/milestones/v0.91.6/review/security/UNITY_OBSERVATORY_INHABITANT_READINESS_SECURITY_REVIEW_4023.md\""
 
 if grep -Eq '"/|/Users/|[A-Za-z]:\\\\' "${CONTRACT_PATH}"; then
   echo "absolute-path leakage detected in ${CONTRACT_PATH}" >&2
+  exit 1
+fi
+
+if grep -Eq '"display_label"|"continuity_status"|"current_episode"' "${CONTRACT_PATH}"; then
+  echo "identity-sensitive inhabitant fields should be withheld from ${CONTRACT_PATH}" >&2
   exit 1
 fi
 

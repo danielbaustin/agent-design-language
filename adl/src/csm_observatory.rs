@@ -688,12 +688,65 @@ fn render_unity_observatory_contract(packet: &Value, packet_path: &Path) -> Resu
             "health_summary": str_at(packet, "/manifold/health/summary"),
             "current_tick": packet.pointer("/manifold/current_tick").and_then(Value::as_i64).unwrap_or_default(),
         },
+        "world": {
+            "default_room_label": room_label,
+            "default_room_question": question_for_entry(packet, "/observatory_ui/rooms", "room_id", &default_room),
+            "default_room_note": note_for_entry(packet, "/observatory_ui/rooms", "room_id", &default_room),
+            "default_lens_label": lens_label,
+            "default_lens_summary": summary_for_entry(packet, "/observatory_ui/lenses", "lens_id", &default_lens),
+            "corporate_investor_fallback_label": str_at(packet, "/observatory_ui/corporate_investor_fallback/label"),
+            "corporate_investor_boundary": str_at(packet, "/observatory_ui/corporate_investor_fallback/claim_boundary"),
+        },
         "summary": {
             "citizen_count": array_at(packet, "/citizens").len(),
             "episode_count": array_at(packet, "/episodes").len(),
             "default_room_label": room_label,
             "default_lens_label": lens_label,
             "proposal_mode_statement": str_at(packet, "/observatory_ui/proposal_mode_statement"),
+        },
+        "status": {
+            "health_summary": str_at(packet, "/manifold/health/summary"),
+            "snapshot_state": str_at(packet, "/manifold/snapshot_status/state"),
+            "snapshot_note": str_at(packet, "/manifold/snapshot_status/note"),
+            "kernel_pulse_status": str_at(packet, "/kernel/pulse/status"),
+            "resource_state": str_at(packet, "/kernel/resource_state"),
+            "attention_items": array_at(packet, "/manifold/health/attention_items"),
+        },
+        "inhabitant_readiness": {
+            "identity_boundary": "Identity and profile surfaces stay bounded to fixture aliases and readiness placeholders until WP-08 lands reviewed proof.",
+            "security_floor_ref": "docs/milestones/v0.91.6/review/security/UNITY_OBSERVATORY_INHABITANT_READINESS_SECURITY_REVIEW_4023.md",
+            "checklist": [
+                {
+                    "check_id": "world-space",
+                    "label": "World and lens surfaces are visible from governed packet evidence.",
+                    "state": "ready",
+                    "note": "Rooms, lenses, and proposal-mode boundaries come from the bounded Unity Observatory contract."
+                },
+                {
+                    "check_id": "status-surface",
+                    "label": "Status and evidence surfaces are visible without reading raw runtime files.",
+                    "state": "ready",
+                    "note": "Shell shows manifold health, snapshot posture, kernel pulse, and operator-report references."
+                },
+                {
+                    "check_id": "identity-boundary",
+                    "label": "Identity and profile display remains bounded to placeholder-safe projections.",
+                    "state": "routed",
+                    "note": "Do not treat fixture aliases or continuity labels as approved profile exposure before WP-08 proof lands."
+                },
+                {
+                    "check_id": "mutation-boundary",
+                    "label": "All inhabitant actions remain proposal-only and fail closed on direct mutation.",
+                    "state": "ready",
+                    "note": str_at(packet, "/observatory_ui/proposal_mode_statement")
+                },
+                {
+                    "check_id": "security-floor",
+                    "label": "WP-07 security floor is consumed and kept explicit.",
+                    "state": "ready",
+                    "note": "Inhabitant-facing display uses the WP-07 review packet as a floor, not as closure proof."
+                }
+            ]
         },
         "freedom_gate": {
             "allow_count": packet.pointer("/freedom_gate/allow_count").and_then(Value::as_i64).unwrap_or_default(),
@@ -708,6 +761,7 @@ fn render_unity_observatory_contract(packet: &Value, packet_path: &Path) -> Resu
         },
         "rooms": array_at(packet, "/observatory_ui/rooms"),
         "lenses": array_at(packet, "/observatory_ui/lenses"),
+        "inhabitants": render_unity_inhabitant_projections(packet),
     }))
 }
 
@@ -748,6 +802,89 @@ fn label_for_entry(
         })
         .flatten()
     })
+}
+
+fn question_for_entry(packet: &Value, pointer: &str, id_field: &str, wanted_id: &str) -> String {
+    string_field_for_entry(packet, pointer, id_field, wanted_id, "question")
+}
+
+fn note_for_entry(packet: &Value, pointer: &str, id_field: &str, wanted_id: &str) -> String {
+    string_field_for_entry(packet, pointer, id_field, wanted_id, "note")
+}
+
+fn summary_for_entry(packet: &Value, pointer: &str, id_field: &str, wanted_id: &str) -> String {
+    string_field_for_entry(packet, pointer, id_field, wanted_id, "summary")
+}
+
+fn string_field_for_entry(
+    packet: &Value,
+    pointer: &str,
+    id_field: &str,
+    wanted_id: &str,
+    text_field: &str,
+) -> String {
+    array_at(packet, pointer)
+        .iter()
+        .find(|entry| {
+            entry
+                .pointer(&format!("/{id_field}"))
+                .and_then(Value::as_str)
+                == Some(wanted_id)
+        })
+        .and_then(|entry| {
+            entry
+                .pointer(&format!("/{text_field}"))
+                .and_then(Value::as_str)
+        })
+        .map(ToOwned::to_owned)
+        .unwrap_or_default()
+}
+
+fn render_unity_inhabitant_projections(packet: &Value) -> Vec<Value> {
+    array_at(packet, "/citizens")
+        .iter()
+        .enumerate()
+        .map(|(index, citizen)| {
+            json!({
+                "projection_label": format!("Inhabitant lane {}", index + 1),
+                "activity_posture": render_activity_posture(citizen),
+                "capability_summary": render_capability_summary(citizen),
+                "alert_summary": render_alert_summary(citizen),
+                "identity_visibility": "withheld_pending_wp08",
+                "identity_note": "Citizen identity, profile, memory, and continuity-sensitive details remain withheld until WP-08 proof lands.",
+            })
+        })
+        .collect()
+}
+
+fn render_activity_posture(citizen: &Value) -> &'static str {
+    if bool_at(citizen, "/capability_envelope/can_execute_episodes") {
+        "bounded work lane"
+    } else {
+        "review-only lane"
+    }
+}
+
+fn render_capability_summary(citizen: &Value) -> String {
+    let can_execute = if bool_at(citizen, "/capability_envelope/can_execute_episodes") {
+        "episode execution allowed"
+    } else {
+        "episode execution disabled"
+    };
+    let allowed = array_at(citizen, "/capability_envelope/allowed").len();
+    let forbidden = array_at(citizen, "/capability_envelope/forbidden").len();
+    format!("{can_execute}; {allowed} allowed lanes, {forbidden} forbidden lanes.")
+}
+
+fn render_alert_summary(citizen: &Value) -> String {
+    let count = array_at(citizen, "/alerts").len();
+    if count == 0 {
+        "No routed operator alerts.".to_string()
+    } else if count == 1 {
+        "1 routed operator alert remains visible under governed review.".to_string()
+    } else {
+        format!("{count} routed operator alerts remain visible under governed review.")
+    }
 }
 
 fn first_artifact_matching(packet: &Value, suffix: &str) -> String {
@@ -1201,6 +1338,36 @@ mod tests {
                 .pointer("/review/operator_report_ref")
                 .and_then(Value::as_str),
             Some("runtime_v2/observatory/operator_report.md")
+        );
+        assert_eq!(
+            contract
+                .pointer("/world/default_room_question")
+                .and_then(Value::as_str),
+            Some("What exists, where is it, and what is moving?")
+        );
+        assert_eq!(
+            contract
+                .pointer("/status/kernel_pulse_status")
+                .and_then(Value::as_str),
+            Some("bounded_review_tick_complete")
+        );
+        assert_eq!(
+            contract
+                .pointer("/inhabitant_readiness/checklist/2/state")
+                .and_then(Value::as_str),
+            Some("routed")
+        );
+        assert_eq!(
+            contract
+                .pointer("/inhabitants/0/identity_visibility")
+                .and_then(Value::as_str),
+            Some("withheld_pending_wp08")
+        );
+        assert!(
+            contract
+                .pointer("/inhabitants/0/continuity_status")
+                .is_none(),
+            "continuity-sensitive fields should stay withheld"
         );
     }
 

@@ -1,87 +1,169 @@
 {
-  "schema": "adl.unity_observatory_contract.v1",
-  "contract_id": "unity-observatory-contract-csm-observatory-fixture-proto-csm-02",
-  "packet_schema": "adl.csm_visibility_packet.v1",
-  "source_packet_ref": "demos/fixtures/csm_observatory/proto-csm-02-governed-observatory-packet.json",
-  "runtime_artifact_root": "adl/tests/fixtures/runtime_v2/observatory",
   "claim_boundary": "Fixture-backed governed Observatory prototype. This is not a live Runtime v2 capture and it does not grant direct mutation authority.",
+  "contract_id": "unity-observatory-contract-csm-observatory-fixture-proto-csm-02",
   "evidence_level": "fixture_backed",
-  "manifold": {
-    "display_name": "Prototype CSM 02",
-    "state": "running",
-    "health_summary": "Bounded polis state is inspectable, trace-backed, and still explicitly governed.",
-    "current_tick": 14
-  },
-  "summary": {
-    "citizen_count": 3,
-    "episode_count": 2,
-    "default_room_label": "World / Reality",
-    "default_lens_label": "Operator lens",
-    "proposal_mode_statement": "Every active-looking control is a governed request proposal only. No direct runtime mutation is performed from this surface."
-  },
   "freedom_gate": {
     "allow_count": 1,
     "defer_count": 1,
     "refuse_count": 1
   },
+  "inhabitant_readiness": {
+    "checklist": [
+      {
+        "check_id": "world-space",
+        "label": "World and lens surfaces are visible from governed packet evidence.",
+        "note": "Rooms, lenses, and proposal-mode boundaries come from the bounded Unity Observatory contract.",
+        "state": "ready"
+      },
+      {
+        "check_id": "status-surface",
+        "label": "Status and evidence surfaces are visible without reading raw runtime files.",
+        "note": "Shell shows manifold health, snapshot posture, kernel pulse, and operator-report references.",
+        "state": "ready"
+      },
+      {
+        "check_id": "identity-boundary",
+        "label": "Identity and profile display remains bounded to placeholder-safe projections.",
+        "note": "Do not treat fixture aliases or continuity labels as approved profile exposure before WP-08 proof lands.",
+        "state": "routed"
+      },
+      {
+        "check_id": "mutation-boundary",
+        "label": "All inhabitant actions remain proposal-only and fail closed on direct mutation.",
+        "note": "Every active-looking control is a governed request proposal only. No direct runtime mutation is performed from this surface.",
+        "state": "ready"
+      },
+      {
+        "check_id": "security-floor",
+        "label": "WP-07 security floor is consumed and kept explicit.",
+        "note": "Inhabitant-facing display uses the WP-07 review packet as a floor, not as closure proof.",
+        "state": "ready"
+      }
+    ],
+    "identity_boundary": "Identity and profile surfaces stay bounded to fixture aliases and readiness placeholders until WP-08 lands reviewed proof.",
+    "security_floor_ref": "docs/milestones/v0.91.6/review/security/UNITY_OBSERVATORY_INHABITANT_READINESS_SECURITY_REVIEW_4023.md"
+  },
+  "inhabitants": [
+    {
+      "activity_posture": "bounded work lane",
+      "alert_summary": "1 routed operator alert remains visible under governed review.",
+      "capability_summary": "episode execution allowed; 2 allowed lanes, 3 forbidden lanes.",
+      "identity_note": "Citizen identity, profile, memory, and continuity-sensitive details remain withheld until WP-08 proof lands.",
+      "identity_visibility": "withheld_pending_wp08",
+      "projection_label": "Inhabitant lane 1"
+    },
+    {
+      "activity_posture": "review-only lane",
+      "alert_summary": "1 routed operator alert remains visible under governed review.",
+      "capability_summary": "episode execution disabled; 2 allowed lanes, 3 forbidden lanes.",
+      "identity_note": "Citizen identity, profile, memory, and continuity-sensitive details remain withheld until WP-08 proof lands.",
+      "identity_visibility": "withheld_pending_wp08",
+      "projection_label": "Inhabitant lane 2"
+    },
+    {
+      "activity_posture": "review-only lane",
+      "alert_summary": "No routed operator alerts.",
+      "capability_summary": "episode execution disabled; 2 allowed lanes, 2 forbidden lanes.",
+      "identity_note": "Citizen identity, profile, memory, and continuity-sensitive details remain withheld until WP-08 proof lands.",
+      "identity_visibility": "withheld_pending_wp08",
+      "projection_label": "Inhabitant lane 3"
+    }
+  ],
+  "lenses": [
+    {
+      "label": "Public lens",
+      "lens_id": "public",
+      "summary": "Boardroom-safe projection with heavy redaction."
+    },
+    {
+      "label": "Operator lens",
+      "lens_id": "operator",
+      "summary": "Operational state, disabled reasons, and review links."
+    },
+    {
+      "label": "Reviewer lens",
+      "lens_id": "reviewer",
+      "summary": "Proof surfaces and caveats."
+    },
+    {
+      "label": "Continuity lens",
+      "lens_id": "continuity",
+      "summary": "Worldline, wake proof, and standing evidence."
+    },
+    {
+      "label": "Quarantine lens",
+      "lens_id": "quarantine",
+      "summary": "Challenge and protected-boundary states."
+    }
+  ],
+  "manifold": {
+    "current_tick": 14,
+    "display_name": "Prototype CSM 02",
+    "health_summary": "Bounded polis state is inspectable, trace-backed, and still explicitly governed.",
+    "state": "running"
+  },
+  "packet_schema": "adl.csm_visibility_packet.v1",
   "review": {
+    "caveats": [
+      "This is not a live mutation console.",
+      "Corporate Investor mode does not change evidence, authority, or trace boundaries."
+    ],
     "demo_classification": "fixture_backed",
     "operator_report_ref": "runtime_v2/observatory/operator_report.md",
     "primary_artifacts": [
       "runtime_v2/observatory/visibility_packet.json",
       "runtime_v2/observatory/operator_report.md",
       "docs/milestones/v0.90.3/OBSERVATORY_UI_ARCHITECTURE_v0.90.3.md"
-    ],
-    "caveats": [
-      "This is not a live mutation console.",
-      "Corporate Investor mode does not change evidence, authority, or trace boundaries."
     ]
   },
   "rooms": [
     {
-      "room_id": "world",
       "label": "World / Reality",
+      "note": "Default inhabited polis view.",
       "question": "What exists, where is it, and what is moving?",
-      "note": "Default inhabited polis view."
+      "room_id": "world"
     },
     {
-      "room_id": "governance",
       "label": "Operator / Governance",
+      "note": "Freedom Gate docket and disabled reasons live here.",
       "question": "What decision, policy, or challenge needs judgment?",
-      "note": "Freedom Gate docket and disabled reasons live here."
+      "room_id": "governance"
     },
     {
-      "room_id": "cognition",
       "label": "Cognition / Internal State",
+      "note": "Still bounded to implemented evidence only.",
       "question": "What coupling or degradation is visible without overclaiming?",
-      "note": "Still bounded to implemented evidence only."
+      "room_id": "cognition"
     }
   ],
-  "lenses": [
-    {
-      "lens_id": "public",
-      "label": "Public lens",
-      "summary": "Boardroom-safe projection with heavy redaction."
-    },
-    {
-      "lens_id": "operator",
-      "label": "Operator lens",
-      "summary": "Operational state, disabled reasons, and review links."
-    },
-    {
-      "lens_id": "reviewer",
-      "label": "Reviewer lens",
-      "summary": "Proof surfaces and caveats."
-    },
-    {
-      "lens_id": "continuity",
-      "label": "Continuity lens",
-      "summary": "Worldline, wake proof, and standing evidence."
-    },
-    {
-      "lens_id": "quarantine",
-      "label": "Quarantine lens",
-      "summary": "Challenge and protected-boundary states."
-    }
-  ]
+  "runtime_artifact_root": "adl/tests/fixtures/runtime_v2/observatory",
+  "schema": "adl.unity_observatory_contract.v1",
+  "source_packet_ref": "demos/fixtures/csm_observatory/proto-csm-02-governed-observatory-packet.json",
+  "status": {
+    "attention_items": [
+      "All active-looking controls remain proposal-only.",
+      "Challenge and quarantine remain visible protection boundaries, not hidden error states."
+    ],
+    "health_summary": "Bounded polis state is inspectable, trace-backed, and still explicitly governed.",
+    "kernel_pulse_status": "bounded_review_tick_complete",
+    "resource_state": "moderate_pressure_visible",
+    "snapshot_note": "Snapshots remain reviewed evidence surfaces; this prototype only renders proposal posture.",
+    "snapshot_state": "sealed_reviewable"
+  },
+  "summary": {
+    "citizen_count": 3,
+    "default_lens_label": "Operator lens",
+    "default_room_label": "World / Reality",
+    "episode_count": 2,
+    "proposal_mode_statement": "Every active-looking control is a governed request proposal only. No direct runtime mutation is performed from this surface."
+  },
+  "world": {
+    "corporate_investor_boundary": "Presentation mode only; evidence, authority, and trace boundaries do not change.",
+    "corporate_investor_fallback_label": "Corporate Investor UI",
+    "default_lens_label": "Operator lens",
+    "default_lens_summary": "Operational state, disabled reasons, and review links.",
+    "default_room_label": "World / Reality",
+    "default_room_note": "Default inhabited polis view.",
+    "default_room_question": "What exists, where is it, and what is moving?"
+  }
 }

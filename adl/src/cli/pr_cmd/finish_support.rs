@@ -1752,14 +1752,14 @@ fn finish_issue_needs_unity_observatory_contract_validation(
     issue_number: u32,
     changed_paths: &[String],
 ) -> bool {
-    issue_number == 4032
+    matches!(issue_number, 4032 | 4033)
         && !changed_paths.is_empty()
         && changed_paths.iter().all(|path| {
             let trimmed = path.trim().trim_matches('/');
             finish_path_is_docs_only(trimmed)
                 || finish_path_is_small_binary_focused(trimmed)
                 || finish_path_is_larger_binary_focused(trimmed)
-                || parsed_issue_is_4032_unity_observatory_contract_path(issue_number, trimmed)
+                || parsed_issue_is_unity_observatory_contract_path(issue_number, trimmed)
         })
 }
 
@@ -2529,8 +2529,8 @@ fn finish_path_needs_unity_observatory_baseline_validation(issue: u32, path: &st
         || parsed_issue_is_4031_unity_observatory_scaffold_path(issue, trimmed)
 }
 
-fn parsed_issue_is_4032_unity_observatory_contract_path(issue: u32, path: &str) -> bool {
-    if issue != 4032 {
+fn parsed_issue_is_unity_observatory_contract_path(issue: u32, path: &str) -> bool {
+    if !matches!(issue, 4032 | 4033) {
         return false;
     }
     let trimmed = path.trim().trim_matches('/');
