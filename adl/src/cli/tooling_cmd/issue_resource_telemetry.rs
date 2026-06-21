@@ -972,6 +972,52 @@ mod tests {
     }
 
     #[test]
+    fn issue_resource_telemetry_extract_percent_before_uses_nearest_token() {
+        let line = "CPU usage: 11.20% user, 8.80% sys, 80.00% idle";
+        assert_eq!(extract_percent_before(line, "% user"), Some(11.20));
+        assert_eq!(extract_percent_before(line, "% sys"), Some(8.80));
+        assert_eq!(extract_percent_before(line, "% idle"), Some(80.00));
+    }
+
+    #[test]
+    fn issue_resource_telemetry_parse_top_cpu_usage_falls_back_to_idle() {
+        let line = "Processes: 100 total\nCPU usage: 80.00% idle\n";
+        assert_eq!(parse_top_cpu_usage(line).expect("cpu usage"), 20.0);
+    }
+
+    #[test]
+    fn issue_resource_telemetry_parse_vm_stat_memory_and_pressure_state() {
+        let vm_stat = "Mach Virtual Memory Statistics: (page size of 4096 bytes)\nPages free: 500000.\nPages inactive: 250000.\nPages speculative: 100000.\n";
+        let (available_bytes, used_bytes) =
+            parse_vm_stat_memory(vm_stat, 32_000_000_000).expect("vm_stat");
+        assert_eq!(available_bytes, 3_481_600_000);
+        assert_eq!(used_bytes, 28_518_400_000);
+        assert_eq!(
+            classify_pressure_state(32_000_000_000, available_bytes),
+            "warning"
+        );
+    }
+
+    #[test]
+    fn issue_resource_telemetry_parse_df_k_output_and_process_row_are_reviewable() {
+        let df = "Filesystem 1024-blocks Used Available Capacity iused ifree %iused Mounted on\n/dev/disk3s1 976490576 476490576 500000000 49% 1 1 1% /\n";
+        let disks = parse_df_k_output(df).expect("df");
+        assert_eq!(disks.len(), 1);
+        assert_eq!(disks[0].mount_label, "system");
+        assert_eq!(disks[0].filesystem_class, "system_volume");
+        assert_eq!(disks[0].total_bytes, 999_926_349_824);
+        assert_eq!(disks[0].used_bytes, 487_926_349_824);
+
+        let process = parse_process_row("validation", 4242, "18.5 716800 /usr/bin/cargo")
+            .expect("process row");
+        assert_eq!(process.role, "validation");
+        assert_eq!(process.executable_basename, "cargo");
+        assert_eq!(process.pid, 4242);
+        assert_eq!(process.cpu_pct, 18.5);
+        assert_eq!(process.rss_bytes, 734_003_200);
+    }
+
+    #[test]
     fn issue_resource_telemetry_process_summary_keeps_valid_rows_when_one_pid_source_is_bad() {
         let repo_root = temp_repo_root("issue-resource-telemetry-process-mixed");
         let bad_pid_file = repo_root.join("bad.pid");
