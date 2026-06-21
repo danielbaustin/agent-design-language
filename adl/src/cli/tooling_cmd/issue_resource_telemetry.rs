@@ -1104,8 +1104,7 @@ fn extract_percent_before(text: &str, marker: &str) -> Option<f64> {
     let prefix = &text[..index];
     let token = prefix
         .split(|ch: char| ch == ',' || ch.is_whitespace())
-        .filter(|value| !value.is_empty())
-        .next_back()?;
+        .rfind(|value| !value.is_empty())?;
     token.trim_end_matches('%').parse::<f64>().ok()
 }
 
