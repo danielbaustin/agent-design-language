@@ -8,11 +8,16 @@
     "Acceptance Criteria",
     "Actions taken",
     "Affected Areas",
+    "Artifact Verification",
+    "Artifacts produced",
+    "Decisions / Deviations",
     "Deliverables",
     "Demo / Proof Requirements",
     "Demo Expectations",
     "Dependencies",
+    "Determinism Evidence",
     "Failure Semantics",
+    "Follow-ups / Deferred work",
     "Goal",
     "Inputs",
     "Issue-Graph Notes",
@@ -25,15 +30,18 @@
     "Plan Summary",
     "Policy Refs",
     "Proposed Steps",
+    "Replay Artifacts",
     "Repo Inputs",
     "Required Outcome",
     "Risks And Edge Cases",
     "Scope Basis",
+    "Security / Privacy Checks",
     "Selected Validation Lanes",
     "Summary",
     "Target Files / Surfaces",
     "Test Strategy",
     "Tooling Notes",
+    "Validation",
     "Validation Commands",
     "Validation Plan",
     "Validation Planning Summary"
@@ -108,6 +116,17 @@
     "- Required outcome type:",
     "- Demo required:",
     "- Local ignored output-card scaffold at",
+    "- Main-repo paths updated:",
+    "- Worktree-only paths remaining:",
+    "- Integration state:",
+    "- Verification scope:",
+    "- Integration method used:",
+    "- Result:",
+    "- `",
+    "- ``",
+    "`Verified ",
+    "    `",
+    "    ``",
     "- `bash adl/tools/validate_structured_prompt.sh",
     "Source issue-prompt slug:",
     "Required outcome type:",
@@ -137,6 +156,7 @@
     "validation_runtime_class:",
     "validation_resource_profile:",
     "expected_proof_cost:",
+    "expected_runtime_class:",
     "estimate_elapsed_seconds:",
     "estimate_total_tokens:",
     "estimate_validation_seconds:",
@@ -167,6 +187,7 @@
     "- Planned validation tokens:",
     "- Planning lane source:",
     "- Revision rule:",
+    "- Expected runtime class:",
     "- Estimated elapsed seconds:",
     "- Estimated total tokens:",
     "- Estimated validation seconds:",
@@ -178,12 +199,16 @@
     "- Final PVF lane:",
     "- Lane change reason:",
     "- Actual elapsed seconds:",
+    "- Actual active work seconds:",
     "- Actual total tokens:",
     "- Actual validation seconds:",
+    "- Actual PR wait seconds:",
+    "- Actual CI wait seconds:",
     "- Goal metrics data source:",
     "- Goal metrics source ref:",
     "- Data-source confidence:",
     "- Estimate error percent:",
+    "- Completion state:",
     "- Variance analysis required:",
     "- Variance analysis completed:",
     "- Variance category:",
@@ -328,48 +353,6 @@
     {
       "heading_path": [
         "<dynamic-heading>",
-        "Artifacts produced"
-      ],
-      "text": "- Tracked implementation artifacts: not_applicable until execution begins"
-    },
-    {
-      "heading_path": [
-        "<dynamic-heading>",
-        "Main Repo Integration (REQUIRED)"
-      ],
-      "text": "- Main-repo paths updated: none"
-    },
-    {
-      "heading_path": [
-        "<dynamic-heading>",
-        "Main Repo Integration (REQUIRED)"
-      ],
-      "text": "- Worktree-only paths remaining: no tracked implementation artifacts exist yet; execution-time proof surfaces will be established during implementation and PR publication"
-    },
-    {
-      "heading_path": [
-        "<dynamic-heading>",
-        "Main Repo Integration (REQUIRED)"
-      ],
-      "text": "- Integration state: worktree_only"
-    },
-    {
-      "heading_path": [
-        "<dynamic-heading>",
-        "Main Repo Integration (REQUIRED)"
-      ],
-      "text": "- Verification scope: main_repo"
-    },
-    {
-      "heading_path": [
-        "<dynamic-heading>",
-        "Main Repo Integration (REQUIRED)"
-      ],
-      "text": "- Integration method used: local ignored card-bundle scaffold write under the active checkout; tracked implementation artifacts do not exist yet"
-    },
-    {
-      "heading_path": [
-        "<dynamic-heading>",
         "Main Repo Integration (REQUIRED)"
       ],
       "text": "- Verification performed:"
@@ -380,13 +363,6 @@
         "Main Repo Integration (REQUIRED)"
       ],
       "text": "    Verified bootstrap SOR contract compliance for the local pre-run scaffold."
-    },
-    {
-      "heading_path": [
-        "<dynamic-heading>",
-        "Main Repo Integration (REQUIRED)"
-      ],
-      "text": "- Result: PASS"
     },
     {
       "heading_path": [
@@ -428,27 +404,6 @@
         "<dynamic-heading>",
         "Main Repo Integration (REQUIRED)"
       ],
-      "text": "- `Integration state` describes lifecycle state of the integrated artifact set, not where verification happened."
-    },
-    {
-      "heading_path": [
-        "<dynamic-heading>",
-        "Main Repo Integration (REQUIRED)"
-      ],
-      "text": "- `Verification scope` describes where the verification commands were run."
-    },
-    {
-      "heading_path": [
-        "<dynamic-heading>",
-        "Main Repo Integration (REQUIRED)"
-      ],
-      "text": "- `worktree_only` means at least one required path still exists only outside the main repository path."
-    },
-    {
-      "heading_path": [
-        "<dynamic-heading>",
-        "Main Repo Integration (REQUIRED)"
-      ],
       "text": "- Completed output records must not leave `Status` as `NOT_STARTED`."
     },
     {
@@ -457,223 +412,6 @@
         "Main Repo Integration (REQUIRED)"
       ],
       "text": "- By `pr finish`, `Status` should normally be `DONE` (or `FAILED` if the run failed and the record is documenting that failure)."
-    },
-    {
-      "heading_path": [
-        "<dynamic-heading>",
-        "Validation"
-      ],
-      "text": "- Validation commands and their purpose:"
-    },
-    {
-      "heading_path": [
-        "<dynamic-heading>",
-        "Validation"
-      ],
-      "text": "    Verified bootstrap SOR contract compliance for the local output scaffold."
-    },
-    {
-      "heading_path": [
-        "<dynamic-heading>",
-        "Validation"
-      ],
-      "text": "- Results:"
-    },
-    {
-      "heading_path": [
-        "<dynamic-heading>",
-        "Validation"
-      ],
-      "text": "  - PASS"
-    },
-    {
-      "heading_path": [
-        "<dynamic-heading>",
-        "Validation"
-      ],
-      "text": "Validation command/path rules:"
-    },
-    {
-      "heading_path": [
-        "<dynamic-heading>",
-        "Validation"
-      ],
-      "text": "- Prefer repository-relative paths in recorded commands and artifact references."
-    },
-    {
-      "heading_path": [
-        "<dynamic-heading>",
-        "Validation"
-      ],
-      "text": "- Do not record absolute host paths in output records unless they are explicitly required and justified."
-    },
-    {
-      "heading_path": [
-        "<dynamic-heading>",
-        "Validation"
-      ],
-      "text": "- `absolute_path_leakage_detected: false` means the final recorded artifact does not contain unjustified absolute host paths."
-    },
-    {
-      "heading_path": [
-        "<dynamic-heading>",
-        "Validation"
-      ],
-      "text": "- Do not list commands without describing their effect."
-    },
-    {
-      "heading_path": [
-        "<dynamic-heading>",
-        "Determinism Evidence"
-      ],
-      "text": "- Determinism tests executed: not_run; bootstrap scaffold creation has not been replay-verified for this issue yet."
-    },
-    {
-      "heading_path": [
-        "<dynamic-heading>",
-        "Determinism Evidence"
-      ],
-      "text": "- Fixtures or scripts used: `adl/tools/pr.sh` issue-wave opening flow."
-    },
-    {
-      "heading_path": [
-        "<dynamic-heading>",
-        "Determinism Evidence"
-      ],
-      "text": "- Replay verification (same inputs -> same artifacts/order): not yet verified for this specific issue record."
-    },
-    {
-      "heading_path": [
-        "<dynamic-heading>",
-        "Determinism Evidence"
-      ],
-      "text": "- Ordering guarantees (sorting / tie-break rules used): not_applicable for a single-card bootstrap write."
-    },
-    {
-      "heading_path": [
-        "<dynamic-heading>",
-        "Determinism Evidence"
-      ],
-      "text": "- Artifact stability notes: repository-relative paths only; execution-time proof artifacts are not expected yet."
-    },
-    {
-      "heading_path": [
-        "<dynamic-heading>",
-        "Security / Privacy Checks"
-      ],
-      "text": "- Secret leakage scan performed: limited content review only; no secrets were intentionally recorded in the scaffold."
-    },
-    {
-      "heading_path": [
-        "<dynamic-heading>",
-        "Security / Privacy Checks"
-      ],
-      "text": "- Prompt / tool argument redaction verified: not_applicable for bootstrap scaffold generation."
-    },
-    {
-      "heading_path": [
-        "<dynamic-heading>",
-        "Security / Privacy Checks"
-      ],
-      "text": "- Absolute path leakage check: repository-relative paths only in the scaffold."
-    },
-    {
-      "heading_path": [
-        "<dynamic-heading>",
-        "Security / Privacy Checks"
-      ],
-      "text": "- Sandbox / policy invariants preserved: yes; local ignored issue-record path only."
-    },
-    {
-      "heading_path": [
-        "<dynamic-heading>",
-        "Replay Artifacts"
-      ],
-      "text": "- Trace bundle path(s): not_applicable until execution begins"
-    },
-    {
-      "heading_path": [
-        "<dynamic-heading>",
-        "Replay Artifacts"
-      ],
-      "text": "- Run artifact root: not_applicable until execution begins"
-    },
-    {
-      "heading_path": [
-        "<dynamic-heading>",
-        "Replay Artifacts"
-      ],
-      "text": "- Replay command used for verification: not_run"
-    },
-    {
-      "heading_path": [
-        "<dynamic-heading>",
-        "Replay Artifacts"
-      ],
-      "text": "- Replay result: NOT_RUN"
-    },
-    {
-      "heading_path": [
-        "<dynamic-heading>",
-        "Artifact Verification"
-      ],
-      "text": "- Primary proof surface: this local pre-run SOR scaffold and its bootstrap validation result"
-    },
-    {
-      "heading_path": [
-        "<dynamic-heading>",
-        "Artifact Verification"
-      ],
-      "text": "- Required artifacts present: local output card scaffold only; tracked implementation artifacts are not expected yet"
-    },
-    {
-      "heading_path": [
-        "<dynamic-heading>",
-        "Artifact Verification"
-      ],
-      "text": "- Artifact schema/version checks: bootstrap SOR validator passed"
-    },
-    {
-      "heading_path": [
-        "<dynamic-heading>",
-        "Artifact Verification"
-      ],
-      "text": "- Hash/byte-stability checks: not_run"
-    },
-    {
-      "heading_path": [
-        "<dynamic-heading>",
-        "Artifact Verification"
-      ],
-      "text": "- Missing/optional artifacts and rationale: execution proofs, demos, and tracked outputs are intentionally absent before implementation begins"
-    },
-    {
-      "heading_path": [
-        "<dynamic-heading>",
-        "Decisions / Deviations"
-      ],
-      "text": "- Issue-wave opening emits a truthful pre-run SOR scaffold instead of leaving raw template residue for later cleanup."
-    },
-    {
-      "heading_path": [
-        "<dynamic-heading>",
-        "Decisions / Deviations"
-      ],
-      "text": "- Integration state remains `worktree_only` until execution creates tracked artifacts or opens a PR."
-    },
-    {
-      "heading_path": [
-        "<dynamic-heading>",
-        "Follow-ups / Deferred work"
-      ],
-      "text": "- Update this record during execution with actual actions, validations, proof surfaces, and integration truth."
-    },
-    {
-      "heading_path": [
-        "<dynamic-heading>",
-        "Follow-ups / Deferred work"
-      ],
-      "text": "- Normalize this record to `pr_open`, `merged`, or `closed_no_pr` during finish/closeout as appropriate."
     }
   ]
 }
