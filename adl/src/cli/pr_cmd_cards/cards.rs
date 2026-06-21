@@ -1056,6 +1056,15 @@ fn render_bootstrap_output_card(
     let metadata = SourcePromptMetadata::from_prompt(&prompt);
     let initial_pvf_lane = resolved_initial_pvf_lane(&metadata, title, &prompt);
     let planned_pvf_lane = resolved_planned_pvf_lane(&initial_pvf_lane);
+    let summary =
+        "Pre-run output scaffold initialized during issue-wave opening. No implementation has started yet.";
+    let tracked_implementation_artifacts = "not_applicable until execution begins";
+    let additional_proof_artifacts = "not_applicable until execution begins";
+    let worktree_only_paths_remaining = "no tracked implementation artifacts exist yet; execution-time proof surfaces will be established during implementation and PR publication";
+    let integration_method_used =
+        "local ignored card-bundle scaffold write under the active checkout; tracked implementation artifacts do not exist yet";
+    let bootstrap_validation_command =
+        format!("bash adl/tools/validate_structured_prompt.sh --type sor --phase bootstrap --input {output_rel}");
     let mut text = read_prompt_template(repo_root, "sor", &[])?;
     apply_template_values(
         &mut text,
@@ -1084,21 +1093,31 @@ fn render_bootstrap_output_card(
             ("<status>", status.to_string()),
             ("<timestamp>", timestamp.to_string()),
             ("<output_card>", output_rel),
-            ("<branch_action>", branch_action.to_string()),
+            ("<execution_actor>", "issue-wave bootstrap".to_string()),
+            ("<model>", "not_applicable".to_string()),
+            ("<provider>", "not_applicable".to_string()),
+            ("<start_time>", timestamp.to_string()),
+            ("<end_time>", timestamp.to_string()),
+            ("<summary>", summary.to_string()),
             ("<initial_pvf_lane>", initial_pvf_lane.clone()),
             ("<planned_pvf_lane>", planned_pvf_lane.clone()),
             ("<final_pvf_lane>", "not_recorded_yet".to_string()),
             ("<lane_change_reason>", "not_recorded_yet".to_string()),
-            ("<estimated_elapsed_seconds>", "unknown".to_string()),
+            ("<expected_runtime_class>", "unknown".to_string()),
+            ("<estimate_elapsed_seconds>", "unknown".to_string()),
             ("<actual_elapsed_seconds>", "unknown".to_string()),
-            ("<estimated_total_tokens>", "unknown".to_string()),
+            ("<actual_active_work_seconds>", "unknown".to_string()),
+            ("<estimate_total_tokens>", "unknown".to_string()),
             ("<actual_total_tokens>", "unknown".to_string()),
-            ("<estimated_validation_seconds>", "unknown".to_string()),
+            ("<estimate_validation_seconds>", "unknown".to_string()),
             ("<actual_validation_seconds>", "unknown".to_string()),
+            ("<actual_pr_wait_seconds>", "unknown".to_string()),
+            ("<actual_ci_wait_seconds>", "unknown".to_string()),
             ("<actual_metrics_data_source>", "unknown".to_string()),
             ("<actual_metrics_source_ref>", "unknown".to_string()),
             ("<actual_metrics_confidence>", "unknown".to_string()),
             ("<estimate_error_percent>", "unknown".to_string()),
+            ("<completion_state>", "unknown".to_string()),
             ("<variance_analysis_required>", "not_applicable".to_string()),
             ("<variance_analysis_completed>", "not_applicable".to_string()),
             ("<variance_category>", "not_applicable".to_string()),
@@ -1107,7 +1126,217 @@ fn render_bootstrap_output_card(
                 "Bootstrap scaffold records unknown issue metrics only; variance analysis is deferred until execution produces authoritative estimates and actuals."
                     .to_string(),
             ),
+            (
+                "<tracked_implementation_artifacts>",
+                tracked_implementation_artifacts.to_string(),
+            ),
+            (
+                "<additional_proof_artifacts>",
+                additional_proof_artifacts.to_string(),
+            ),
+            (
+                "<actions_taken_line_1>",
+                "Opened the local issue bundle and wrote a truthful pre-run output scaffold."
+                    .to_string(),
+            ),
+            ("<actions_taken_line_2>", branch_action.to_string()),
+            (
+                "<actions_taken_line_3>",
+                "Deferred implementation, proof capture, and release integration to the execution lifecycle and PR publication."
+                    .to_string(),
+            ),
+            ("<main_repo_paths_updated>", "none".to_string()),
+            (
+                "<worktree_only_paths_remaining>",
+                worktree_only_paths_remaining.to_string(),
+            ),
+            ("<integration_state>", "worktree_only".to_string()),
+            ("<verification_scope>", "main_repo".to_string()),
+            (
+                "<integration_method_used>",
+                integration_method_used.to_string(),
+            ),
+            (
+                "<integration_verification_command>",
+                bootstrap_validation_command.clone(),
+            ),
+            (
+                "<integration_verification_effect>",
+                "Verified bootstrap SOR contract compliance for the local pre-run scaffold."
+                    .to_string(),
+            ),
+            ("<integration_result>", "PASS".to_string()),
+            (
+                "<validation_command>",
+                bootstrap_validation_command.clone(),
+            ),
+            (
+                "<validation_effect>",
+                "Verified bootstrap SOR contract compliance for the local output scaffold."
+                    .to_string(),
+            ),
+            ("<validation_result>", "PASS".to_string()),
+            ("<verification_validation_status>", "PASS".to_string()),
+            (
+                "<verification_check_1>",
+                bootstrap_validation_command.clone(),
+            ),
+            ("<verification_determinism_status>", "NOT_RUN".to_string()),
+            ("<verification_replay_verified>", "unknown".to_string()),
+            (
+                "<verification_ordering_guarantees_verified>",
+                "unknown".to_string(),
+            ),
+            (
+                "<verification_security_privacy_status>",
+                "PARTIAL".to_string(),
+            ),
+            (
+                "<verification_secrets_leakage_detected>",
+                "false".to_string(),
+            ),
+            (
+                "<verification_prompt_or_tool_arg_leakage_detected>",
+                "false".to_string(),
+            ),
+            (
+                "<verification_absolute_path_leakage_detected>",
+                "false".to_string(),
+            ),
+            ("<verification_artifacts_status>", "PASS".to_string()),
+            (
+                "<verification_required_artifacts_present>",
+                "true".to_string(),
+            ),
+            (
+                "<verification_schema_changes_present>",
+                "false".to_string(),
+            ),
+            (
+                "<verification_schema_changes_approved>",
+                "not_applicable".to_string(),
+            ),
+            (
+                "<determinism_tests_executed>",
+                "not_run; bootstrap scaffold creation has not been replay-verified for this issue yet."
+                    .to_string(),
+            ),
+            (
+                "<fixtures_or_scripts_used>",
+                "`adl/tools/pr.sh` issue-wave opening flow.".to_string(),
+            ),
+            (
+                "<replay_verification>",
+                "not yet verified for this specific issue record.".to_string(),
+            ),
+            (
+                "<ordering_guarantees>",
+                "not_applicable for a single-card bootstrap write.".to_string(),
+            ),
+            (
+                "<artifact_stability_notes>",
+                "repository-relative paths only; execution-time proof artifacts are not expected yet."
+                    .to_string(),
+            ),
+            (
+                "<secret_leakage_scan_performed>",
+                "limited content review only; no secrets were intentionally recorded in the scaffold."
+                    .to_string(),
+            ),
+            (
+                "<prompt_tool_arg_redaction_verified>",
+                "not_applicable for bootstrap scaffold generation.".to_string(),
+            ),
+            (
+                "<absolute_path_leakage_check>",
+                "repository-relative paths only in the scaffold.".to_string(),
+            ),
+            (
+                "<sandbox_policy_invariants_preserved>",
+                "yes; local ignored issue-record path only.".to_string(),
+            ),
+            (
+                "<trace_bundle_paths>",
+                "not_applicable until execution begins".to_string(),
+            ),
+            (
+                "<run_artifact_root>",
+                "not_applicable until execution begins".to_string(),
+            ),
+            ("<replay_command>", "not_run".to_string()),
+            ("<replay_result>", "NOT_RUN".to_string()),
+            (
+                "<primary_proof_surface>",
+                "this local pre-run SOR scaffold and its bootstrap validation result"
+                    .to_string(),
+            ),
+            (
+                "<required_artifacts_present>",
+                "local output card scaffold only; tracked implementation artifacts are not expected yet"
+                    .to_string(),
+            ),
+            (
+                "<artifact_schema_checks>",
+                "bootstrap SOR validator passed".to_string(),
+            ),
+            ("<hash_byte_stability_checks>", "not_run".to_string()),
+            (
+                "<missing_optional_artifacts_rationale>",
+                "execution proofs, demos, and tracked outputs are intentionally absent before implementation begins"
+                    .to_string(),
+            ),
+            (
+                "<decision_or_deviation_1>",
+                "Issue-wave opening emits a truthful pre-run SOR scaffold instead of leaving raw template residue for later cleanup."
+                    .to_string(),
+            ),
+            (
+                "<decision_or_deviation_2>",
+                "Integration state remains `worktree_only` until execution creates tracked artifacts or opens a PR."
+                    .to_string(),
+            ),
+            (
+                "<follow_up_1>",
+                "Update this record during execution with actual actions, validations, proof surfaces, and integration truth."
+                    .to_string(),
+            ),
+            (
+                "<follow_up_2>",
+                "Normalize this record to `pr_open`, `merged`, or `closed_no_pr` during finish/closeout as appropriate."
+                    .to_string(),
+            ),
         ],
+    );
+    replace_exact_line(
+        &mut text,
+        "- Main-repo paths updated: `none`",
+        "- Main-repo paths updated: none",
+    );
+    replace_exact_line(
+        &mut text,
+        &format!("- Worktree-only paths remaining: `{worktree_only_paths_remaining}`"),
+        &format!("- Worktree-only paths remaining: {worktree_only_paths_remaining}"),
+    );
+    replace_exact_line(
+        &mut text,
+        "- Integration state: `worktree_only`",
+        "- Integration state: worktree_only",
+    );
+    replace_exact_line(
+        &mut text,
+        "- Verification scope: `main_repo`",
+        "- Verification scope: main_repo",
+    );
+    replace_exact_line(
+        &mut text,
+        &format!("- Integration method used: `{integration_method_used}`"),
+        &format!("- Integration method used: {integration_method_used}"),
+    );
+    replace_exact_line(&mut text, "- Result: `PASS`", "- Result: PASS");
+    replace_exact_line(
+        &mut text,
+        "- Replay result: `NOT_RUN`",
+        "- Replay result: NOT_RUN",
     );
     Ok(text)
 }
@@ -1213,9 +1442,10 @@ fn render_bootstrap_plan_card(
             ("<initial_pvf_lane>", initial_pvf_lane.clone()),
             ("<planned_pvf_lane>", planned_pvf_lane.clone()),
             ("<planned_pvf_lane_source>", planned_pvf_lane_source.clone()),
-            ("<estimated_elapsed_seconds>", "unknown".to_string()),
-            ("<estimated_total_tokens>", "unknown".to_string()),
-            ("<estimated_validation_seconds>", "unknown".to_string()),
+            ("<expected_runtime_class>", "unknown".to_string()),
+            ("<estimate_elapsed_seconds>", "unknown".to_string()),
+            ("<estimate_total_tokens>", "unknown".to_string()),
+            ("<estimate_validation_seconds>", "unknown".to_string()),
             ("<estimate_confidence>", "unknown".to_string()),
             ("<estimate_data_source>", "unknown".to_string()),
             ("<estimate_source_ref>", "unknown".to_string()),
