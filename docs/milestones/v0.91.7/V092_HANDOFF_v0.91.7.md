@@ -44,7 +44,7 @@ implementation proof.
 
 | Surface | Required state before v0.92 |
 | --- | --- |
-| SEP / VPP / PVF / templates | Complete, blocked, deferred, or routed with clear sprint-execution consequences. |
+| C-SDLC integration control plane | v0.91.6 `#4388`-`#4398` / SEP / VPP / PVF / templates / GitHub-octocrab convergence / goal metrics / logging / watcher-lifecycle automation / FastContext complete, blocked, deferred, or routed with clear sprint-execution consequences. |
 | Goal and metrics accounting | Time/token/resource and nested-goal route explicit enough for v0.92 issue planning. |
 | Scheduler/provider/local agents | Routing policy and suitability path explicit enough to protect premium cognition. |
 | Capability envelope and capability testing | Memory grounding, capability envelope, birth witnesses/receipt, and Aptitude Atlas boundaries explicitly consumed, deferred, blocked, or routed before birthday evidence relies on them. |

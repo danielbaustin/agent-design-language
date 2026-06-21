@@ -30,7 +30,7 @@ This package does not implement runtime features and does not claim `v0.92` acti
 It must convert the remaining major pre-birthday surfaces into reviewable issue routes, sprint structure, feature docs, and handoff truth:
 
 - v0.91.6 closeout truth, ADR release-tail decisions, and release-tail cleanup;
-- SEP, VPP, PVF lane planning, prompt-template versioning, and sprint execution discipline;
+- the v0.91.6 `#4388`-`#4398` C-SDLC integration control-plane completion sprint: SEP, VPP, PVF lane planning, prompt-template versioning, GitHub/octocrab convergence, goal metrics, logging, watcher/lifecycle automation, FastContext evaluation, and sprint execution discipline;
 - goal state, nested goals, per-issue time/token/resource metrics, and predictable execution baselines;
 - cognitive scheduler, cognitive economics, provider suitability, and local-agent acceleration;
 - build throughput, validation manager, remote/local build runners, and CI/test-tax reduction;
@@ -65,7 +65,7 @@ Every surface must exit as one of:
 | Work stream | Required output before v0.92 |
 | --- | --- |
 | Closeout truth | v0.91.6 release-tail and ADR issues closed or routed, with v0.91.7 not inheriting stale truth. |
-| SEP/VPP/PVF | Sprint Execution Packets, VPP, lane registry, template-version changes, and `/goal`/watcher/closeout rules scheduled. |
+| C-SDLC integration control plane | v0.91.6 `#4388` and child issues `#4389`-`#4398` scheduled as the completion sprint for SEP, VPP, PVF lane registry, template-version changes, GitHub/octocrab convergence, goal metrics, logging, `/goal`/watcher/closeout rules, lifecycle automation, and FastContext evaluation; v0.91.7 consumes its closed/blocked/routed truth. |
 | Goal and metrics | Goal state, nested goals, SOR time/token/resource fields, and outlier analysis routes scheduled. |
 | Scheduler and providers | Cognitive scheduler, provider profiles, local/hosted model suitability, and local-agent delegation routes scheduled. |
 | Build and validation throughput | Validation manager, long-test fanout, CI log archive/S3, Nessus/CodeBuild, sccache/linker/target-dir work scheduled. |

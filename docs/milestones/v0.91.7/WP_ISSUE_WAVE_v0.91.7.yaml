@@ -24,20 +24,22 @@ work_packages:
       - "Source-capture disposition ledger"
       - "Feature-list/roadmap disposition entry"
   - wp: WP-02
-    title: v0.91.6 closeout truth ADR release-tail and cleanup
-    outcome: Close, block, defer, or route open v0.91.6 closeout/release-tail, ADR release-tail, and Observatory carryover work before v0.92 consumes it.
+    title: v0.91.6 closeout truth ADR release-tail C-SDLC control-plane sprint and cleanup
+    outcome: Close, block, defer, or route open v0.91.6 closeout/release-tail, ADR release-tail, Observatory carryover, and #4388-#4398 C-SDLC integration control-plane work before v0.92 consumes it.
     depends_on: ["WP-01"]
     deliverables:
       - "Closeout truth ledger"
       - "ADR release-tail route"
+      - "C-SDLC control-plane sprint disposition"
       - "Carryover routing updates"
   - wp: WP-03
-    title: SEP VPP PVF and template-version substrate
-    outcome: Complete sprint execution packet, validation planning prompt, externalized PVF lane registry, prompt-template next version, goal/watch/closeout rules, and AST/template routes.
-    depends_on: ["WP-01", "#4308", "#4309", "#4332"]
+    title: Consume C-SDLC integration control-plane truth
+    outcome: Consume the v0.91.6 #4388-#4398 completion sprint truth for SEP, VPP, externalized PVF lane configuration, prompt-card templates, GitHub/octocrab convergence, goal/time/token metrics, logging, watcher/lifecycle automation, runtime dependency routing, tooling reliability, and FastContext evaluation. Create v0.91.7 follow-ons only for surfaces that are incomplete, blocked, or explicitly routed by WP-02.
+    depends_on: ["WP-01", "WP-02", "#4308", "#4309", "#4332", "#4388-#4398"]
     deliverables:
-      - "SEP/VPP/PVF/template sprint"
-      - "Template and skill update plan"
+      - "C-SDLC integration control-plane truth-consumption ledger"
+      - "SEP/VPP/PVF/template completion or blocker route"
+      - "GitHub/octocrab, metrics, logging, watcher, lifecycle automation, FastContext disposition"
   - wp: WP-04
     title: Goal state nested goals and execution metrics
     outcome: Define goal-state consumption, issue/sprint nested goals, SOR time-token-resource accounting, and outlier analysis route.

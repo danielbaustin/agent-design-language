@@ -63,6 +63,7 @@ These were open at the source-capture pass and should be explicitly closed, comp
 | `#4329` | Per-issue execution metrics foundation | Required for time/token prediction and issue baselines. |
 | `#4331` | First-class nested goal accounting | Closed input that must be consumed by goal-state and SOR metrics planning. |
 | `#4332` | VPP and PVF lane-template mini-sprint | Required validation-planning sprint; should follow template substrate as needed. |
+| `#4388`-`#4398` | v0.91.6 C-SDLC integration control-plane completion sprint | Required v0.91.6 completion sprint for SEP, VPP, PVF lane configuration, prompt-card templates, GitHub/octocrab convergence, goal metrics, logging, watcher/lifecycle automation, runtime dependency routing, tooling reliability, and FastContext evaluation before v0.92 depends on sprint-scale execution. v0.91.7 should consume the closed/blocked/routed truth from this sprint rather than recreate it as new scope. |
 | `#4368` | v0.91.7 planning docs | This source-capture and planning alignment issue. |
 
 ## Local TBD Inputs To Capture Or Route
@@ -105,7 +106,7 @@ Local `.adl/docs/TBD/` files are ignored planning inputs, not tracked proof. The
 | Theme | Why it matters before v0.92 | Scheduling posture |
 | --- | --- | --- |
 | v0.91.6 closeout and release-tail truth | v0.92 cannot consume incomplete or stale bridge truth. | First gate. |
-| SEP/VPP/PVF and template-version work | Sprint execution, validation planning, and time/token accounting must be predictable. | Early process/tooling sprint. |
+| SEP/VPP/PVF and template-version work | Sprint execution, validation planning, and time/token accounting must be predictable. `#4388`-`#4398` is the v0.91.6 completion sprint and must exit complete, blocked, deferred, or routed before v0.92 relies on sprint-scale execution. | v0.91.6 closeout input consumed by v0.91.7 WP-02/WP-03. |
 | Goal state, nested goals, time/token/resource metrics | v0.92 needs continuity and issue/sprint accounting. | Early process/runtime bridge. |
 | Cognitive scheduler and local-agent acceleration | Premium cognition is now a bottleneck; local/deepseek/hosted agent suitability must route work. | Early scheduler/provider sprint. |
 | Capability envelope and capability-testing boundary | v0.92 memory/identity/birthday evidence depends on knowing what capability envelope, witnesses/receipt, and Aptitude Atlas evidence may or may not claim. | Scheduler/provider and handoff bridge. |
@@ -118,7 +119,7 @@ Local `.adl/docs/TBD/` files are ignored planning inputs, not tracked proof. The
 | Security, CAV, SSM, ACIP/A2A/protobuf | Activation cannot hide governance, protocol, or security residuals. | Security/protocol sprint. |
 | Affect, happiness, Godel mechanics, economics, guilds | Public claims need safe boundaries and future governance routes. | Boundary/decision sprint. |
 | CodeFriend, adapter v2, papers, and publication surfaces | Launch and birthday docs must not silently inherit product or publication commitments from later roadmap rows. | Boundary/decision and launch handoff sprint. |
-| GitHub convergence/control-plane tooling | Sprint execution should know whether octocrab/tooling convergence is complete, blocked, deferred, or routed before relying on it. | Process/tooling bridge. |
+| GitHub convergence/control-plane tooling | Sprint execution should know whether octocrab/tooling convergence is complete, blocked, deferred, or routed before relying on it. `#4388`-`#4398` should consume the remaining GitHub/octocrab, watcher, lifecycle automation, logging, template-edge, and FastContext evaluation defects as one v0.91.6 control-plane completion gate. | v0.91.6 process/tooling bridge consumed by v0.91.7 planning. |
 | Launch/birthday planning | July launch and v0.92 birthday must align without scope explosion. | Closeout/handoff sprint. |
 
 ## Explicit Non-Claims
