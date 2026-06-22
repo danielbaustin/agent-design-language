@@ -462,6 +462,25 @@ pub async fn find_file_in_folder<T: WorkspaceDriveTransport>(
     Ok(matches.into_iter().next())
 }
 
+async fn resolve_existing_target<T: WorkspaceDriveTransport>(
+    transport: &T,
+    request: &WorkspaceDriveFileSyncRequest,
+    target_folder_id: &str,
+) -> Result<Option<WorkspaceFileRef>> {
+    if let Some(file_id) = request.target.file_id.as_deref() {
+        let metadata = transport.read_file_metadata(file_id).await?;
+        if !metadata.parent_ids.iter().any(|id| id == target_folder_id) {
+            bail!(
+                "configured file_id '{}' is not within bounded target folder '{}'",
+                file_id,
+                target_folder_id
+            );
+        }
+        return Ok(Some(metadata));
+    }
+    find_file_in_folder(transport, target_folder_id, &request.target_file_name).await
+}
+
 pub async fn sync_drive_file_with_transport<T: WorkspaceDriveTransport>(
     live_mode: WorkspaceExecutionMode,
     write_approval_present: bool,
@@ -552,36 +571,65 @@ pub async fn sync_drive_file_with_transport<T: WorkspaceDriveTransport>(
     .await?;
     traces.append(&mut folder_traces);
 
-    let existing =
-        match find_file_in_folder(transport, &target_folder_id, &request.target_file_name).await {
-            Ok(found) => found,
-            Err(error) if error.to_string().contains("ambiguous file target") => {
-                let result = WorkspaceDriveFileSyncResult {
-                    source_file: request.source_file.clone(),
-                    target_folder_id: Some(target_folder_id),
-                    target_file_name: request.target_file_name.clone(),
-                    disposition: WorkspaceDriveFileSyncDisposition::Skipped,
-                    file_ref: None,
-                    skip_reason: Some(WorkspaceSkipReason::AmbiguousTarget),
-                    verification_ok: false,
-                    verification_message: error.to_string(),
-                };
-                traces.push(skipped_trace(
+    let existing = match resolve_existing_target(transport, &request, &target_folder_id).await {
+        Ok(found) => found,
+        Err(error) if error.to_string().contains("ambiguous file target") => {
+            let result = WorkspaceDriveFileSyncResult {
+                source_file: request.source_file.clone(),
+                target_folder_id: Some(target_folder_id),
+                target_file_name: request.target_file_name.clone(),
+                disposition: WorkspaceDriveFileSyncDisposition::Skipped,
+                file_ref: None,
+                skip_reason: Some(WorkspaceSkipReason::AmbiguousTarget),
+                verification_ok: false,
+                verification_message: error.to_string(),
+            };
+            traces.push(skipped_trace(
                 "workspace.drive.find_file",
                 "Multiple Drive files matched the bounded target name; refusing silent selection.",
                 WorkspaceSkipReason::AmbiguousTarget,
             ));
-                return Ok(build_report(
-                    live_mode,
-                    write_approval_present,
-                    request,
-                    None,
-                    traces,
-                    result,
+            return Ok(build_report(
+                live_mode,
+                write_approval_present,
+                request,
+                None,
+                traces,
+                result,
+            ));
+        }
+        Err(error)
+            if error
+                .to_string()
+                .contains("is not within bounded target folder") =>
+        {
+            let verification_message = error.to_string();
+            let result = WorkspaceDriveFileSyncResult {
+                source_file: request.source_file.clone(),
+                target_folder_id: Some(target_folder_id),
+                target_file_name: request.target_file_name.clone(),
+                disposition: WorkspaceDriveFileSyncDisposition::Skipped,
+                file_ref: None,
+                skip_reason: Some(WorkspaceSkipReason::MissingBinding),
+                verification_ok: false,
+                verification_message,
+            };
+            traces.push(skipped_trace(
+                    "workspace.drive.read_file_metadata",
+                    "Configured Drive file_id was outside the bounded target folder; refusing silent retargeting.",
+                    WorkspaceSkipReason::MissingBinding,
                 ));
-            }
-            Err(error) => return Err(error),
-        };
+            return Ok(build_report(
+                live_mode,
+                write_approval_present,
+                request,
+                None,
+                traces,
+                result,
+            ));
+        }
+        Err(error) => return Err(error),
+    };
 
     let auth_context = None;
     let (synced, disposition) = match existing {
@@ -1079,6 +1127,57 @@ mod tests {
     }
 
     #[tokio::test]
+    async fn drive_sync_file_id_binding_overrides_ambiguous_name_lookup() {
+        let transport = InMemoryDriveTransport::new();
+        let folder = transport
+            .create_folder("root", "docs")
+            .await
+            .expect("create folder");
+        let target_id = transport.insert_file(&folder.file_id, "state.md", "text/markdown", b"old");
+        transport.insert_file(&folder.file_id, "state.md", "text/markdown", b"other");
+        let source = unique_temp_path("workspace-drive-source-file-id");
+        tokio::fs::write(&source, b"new body")
+            .await
+            .expect("write source");
+
+        let report = sync_drive_file_with_transport(
+            WorkspaceExecutionMode::Execute,
+            true,
+            WorkspaceDriveFileSyncRequest {
+                source_file: source.display().to_string(),
+                target: WorkspaceScopeBinding {
+                    root_folder_id: "root".to_string(),
+                    folder_path: vec!["docs".to_string()],
+                    file_name: Some("state.md".to_string()),
+                    file_id: Some(target_id.clone()),
+                },
+                target_file_name: "state.md".to_string(),
+                mime_type: "text/markdown".to_string(),
+                policy: WorkspaceDriveSyncPolicy::CreateOrUpdate,
+            },
+            &transport,
+        )
+        .await
+        .expect("sync by file id");
+
+        assert_eq!(
+            report
+                .result
+                .file_ref
+                .as_ref()
+                .map(|file| file.file_id.as_str()),
+            Some(target_id.as_str())
+        );
+        assert_eq!(
+            report.result.disposition,
+            WorkspaceDriveFileSyncDisposition::Updated
+        );
+        tokio::fs::remove_file(&source)
+            .await
+            .expect("remove source");
+    }
+
+    #[tokio::test]
     async fn drive_sync_creates_missing_target_file() {
         let transport = InMemoryDriveTransport::new();
         let source = unique_temp_path("workspace-drive-source-create");
@@ -1321,6 +1420,222 @@ mod tests {
     }
 
     #[tokio::test]
+    async fn drive_sync_create_only_skips_when_target_exists() {
+        let transport = InMemoryDriveTransport::new();
+        let (folder_id, _) = ensure_folder_path(&transport, "root", &["docs".to_string()])
+            .await
+            .expect("ensure folder");
+        transport.insert_file(&folder_id, "state.md", "text/markdown", b"old");
+        let source = unique_temp_path("workspace-drive-source-create-only");
+        tokio::fs::write(&source, b"new body")
+            .await
+            .expect("write source");
+        let report = sync_drive_file_with_transport(
+            WorkspaceExecutionMode::Execute,
+            true,
+            WorkspaceDriveFileSyncRequest {
+                source_file: source.display().to_string(),
+                target: WorkspaceScopeBinding {
+                    root_folder_id: "root".to_string(),
+                    folder_path: vec!["docs".to_string()],
+                    file_name: Some("state.md".to_string()),
+                    file_id: None,
+                },
+                target_file_name: "state.md".to_string(),
+                mime_type: "text/markdown".to_string(),
+                policy: WorkspaceDriveSyncPolicy::CreateOnly,
+            },
+            &transport,
+        )
+        .await
+        .expect("create only report");
+        assert_eq!(
+            report.result.disposition,
+            WorkspaceDriveFileSyncDisposition::Skipped
+        );
+        assert_eq!(
+            report.result.skip_reason,
+            Some(WorkspaceSkipReason::AmbiguousTarget)
+        );
+        tokio::fs::remove_file(&source)
+            .await
+            .expect("remove source");
+    }
+
+    #[tokio::test]
+    async fn drive_sync_update_only_skips_when_target_missing() {
+        let transport = InMemoryDriveTransport::new();
+        let source = unique_temp_path("workspace-drive-source-update-only");
+        tokio::fs::write(&source, b"new body")
+            .await
+            .expect("write source");
+        let report = sync_drive_file_with_transport(
+            WorkspaceExecutionMode::Execute,
+            true,
+            WorkspaceDriveFileSyncRequest {
+                source_file: source.display().to_string(),
+                target: WorkspaceScopeBinding {
+                    root_folder_id: "root".to_string(),
+                    folder_path: vec!["docs".to_string()],
+                    file_name: Some("state.md".to_string()),
+                    file_id: None,
+                },
+                target_file_name: "state.md".to_string(),
+                mime_type: "text/markdown".to_string(),
+                policy: WorkspaceDriveSyncPolicy::UpdateOnly,
+            },
+            &transport,
+        )
+        .await
+        .expect("update only report");
+        assert_eq!(
+            report.result.disposition,
+            WorkspaceDriveFileSyncDisposition::Skipped
+        );
+        assert_eq!(
+            report.result.skip_reason,
+            Some(WorkspaceSkipReason::MissingBinding)
+        );
+        tokio::fs::remove_file(&source)
+            .await
+            .expect("remove source");
+    }
+
+    #[tokio::test]
+    async fn drive_sync_file_id_outside_bounded_folder_skips() {
+        let transport = InMemoryDriveTransport::new();
+        let sibling = transport
+            .create_folder("root", "other")
+            .await
+            .expect("create sibling folder");
+        let wrong_id = transport.insert_file(&sibling.file_id, "state.md", "text/markdown", b"old");
+        let source = unique_temp_path("workspace-drive-source-file-id-mismatch");
+        tokio::fs::write(&source, b"new body")
+            .await
+            .expect("write source");
+
+        let report = sync_drive_file_with_transport(
+            WorkspaceExecutionMode::Execute,
+            true,
+            WorkspaceDriveFileSyncRequest {
+                source_file: source.display().to_string(),
+                target: WorkspaceScopeBinding {
+                    root_folder_id: "root".to_string(),
+                    folder_path: vec!["docs".to_string()],
+                    file_name: Some("state.md".to_string()),
+                    file_id: Some(wrong_id),
+                },
+                target_file_name: "state.md".to_string(),
+                mime_type: "text/markdown".to_string(),
+                policy: WorkspaceDriveSyncPolicy::CreateOrUpdate,
+            },
+            &transport,
+        )
+        .await
+        .expect("mismatched file id report");
+
+        assert_eq!(
+            report.result.disposition,
+            WorkspaceDriveFileSyncDisposition::Skipped
+        );
+        assert_eq!(
+            report.result.skip_reason,
+            Some(WorkspaceSkipReason::MissingBinding)
+        );
+        assert!(report
+            .result
+            .verification_message
+            .contains("not within bounded target folder"));
+        tokio::fs::remove_file(&source)
+            .await
+            .expect("remove source");
+    }
+
+    #[tokio::test]
+    async fn drive_sync_reports_verification_mismatch_when_metadata_differs() {
+        #[derive(Clone, Default)]
+        struct VerificationMismatchTransport {
+            inner: InMemoryDriveTransport,
+        }
+
+        #[async_trait]
+        impl WorkspaceDriveTransport for VerificationMismatchTransport {
+            async fn list_children(&self, parent_id: &str) -> Result<Vec<WorkspaceFileRef>> {
+                self.inner.list_children(parent_id).await
+            }
+
+            async fn read_file_metadata(&self, file_id: &str) -> Result<WorkspaceFileRef> {
+                let mut file = self.inner.read_file_metadata(file_id).await?;
+                if file_id != "root" {
+                    file.parent_ids = vec!["wrong-parent".to_string()];
+                }
+                Ok(file)
+            }
+
+            async fn create_folder(&self, parent_id: &str, name: &str) -> Result<WorkspaceFileRef> {
+                self.inner.create_folder(parent_id, name).await
+            }
+
+            async fn create_file(
+                &self,
+                parent_id: &str,
+                name: &str,
+                mime_type: &str,
+                bytes: &[u8],
+            ) -> Result<WorkspaceFileRef> {
+                self.inner
+                    .create_file(parent_id, name, mime_type, bytes)
+                    .await
+            }
+
+            async fn update_file(
+                &self,
+                file_id: &str,
+                name: &str,
+                mime_type: &str,
+                bytes: &[u8],
+            ) -> Result<WorkspaceFileRef> {
+                self.inner
+                    .update_file(file_id, name, mime_type, bytes)
+                    .await
+            }
+        }
+
+        let transport = VerificationMismatchTransport::default();
+        let source = unique_temp_path("workspace-drive-source-verification");
+        tokio::fs::write(&source, b"seed body")
+            .await
+            .expect("write source");
+        let report = sync_drive_file_with_transport(
+            WorkspaceExecutionMode::Execute,
+            true,
+            WorkspaceDriveFileSyncRequest {
+                source_file: source.display().to_string(),
+                target: WorkspaceScopeBinding {
+                    root_folder_id: "root".to_string(),
+                    folder_path: vec!["docs".to_string()],
+                    file_name: Some("state.md".to_string()),
+                    file_id: None,
+                },
+                target_file_name: "state.md".to_string(),
+                mime_type: "text/markdown".to_string(),
+                policy: WorkspaceDriveSyncPolicy::CreateOrUpdate,
+            },
+            &transport,
+        )
+        .await
+        .expect("verification mismatch report");
+        assert!(!report.result.verification_ok);
+        assert_eq!(
+            report.result.skip_reason,
+            Some(WorkspaceSkipReason::VerificationMismatch)
+        );
+        tokio::fs::remove_file(&source)
+            .await
+            .expect("remove source");
+    }
+
+    #[tokio::test]
     async fn write_drive_sync_report_serializes_json() {
         let report_path = unique_temp_path("workspace-drive-report");
         let report = sync_drive_file_with_transport(
@@ -1375,5 +1690,22 @@ mod tests {
         assert_eq!(page.files.len(), 1);
         assert_eq!(page.files[0].name, "state.md");
         assert_eq!(page.next_page_token.as_deref(), Some("token-2"));
+    }
+
+    #[test]
+    fn parse_drive_file_list_rejects_missing_files_array() {
+        let error = match parse_drive_file_list_page_value(&json!({"nextPageToken":"token-2"})) {
+            Ok(_) => panic!("missing files array should fail"),
+            Err(error) => error,
+        };
+        assert!(error.to_string().contains("missing files array"));
+    }
+
+    #[test]
+    fn escape_drive_query_literal_escapes_special_characters() {
+        assert_eq!(
+            super::escape_drive_query_literal(r"drive\root'one"),
+            r"drive\\root\'one"
+        );
     }
 }

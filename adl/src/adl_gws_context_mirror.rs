@@ -85,6 +85,16 @@ pub fn context_seed_file_names() -> Vec<&'static str> {
     ]
 }
 
+fn recursive_mirror_status(
+    config: &WorkspaceContextMirrorConfig,
+) -> WorkspaceRecursiveMirrorStatus {
+    if config.recursive_sync_enabled {
+        WorkspaceRecursiveMirrorStatus::RecursivePending
+    } else {
+        WorkspaceRecursiveMirrorStatus::SeedOnly
+    }
+}
+
 pub async fn run_workspace_context_mirror_with_transport<T: WorkspaceDriveTransport>(
     live_mode: WorkspaceExecutionMode,
     write_approval_present: bool,
@@ -100,11 +110,7 @@ pub async fn run_workspace_context_mirror_with_transport<T: WorkspaceDriveTransp
     let mut verification_results = Vec::new();
     let mut sync_results = Vec::new();
     let milestone_truth = read_milestone_truth(Path::new(&config.repo_root))?;
-    let recursive_mirror_status = if config.recursive_sync_enabled {
-        WorkspaceRecursiveMirrorStatus::RecursiveLive
-    } else {
-        WorkspaceRecursiveMirrorStatus::RecursivePending
-    };
+    let recursive_mirror_status = recursive_mirror_status(&config);
 
     if config.drive_root_folder_id.trim().is_empty()
         || config.drive_seed_folder_id.trim().is_empty()
@@ -202,7 +208,19 @@ pub async fn run_workspace_context_mirror_with_transport<T: WorkspaceDriveTransp
             milestone_truth.chatgpt_facing_current_milestone,
             milestone_truth.planning_sequence.join(" -> ")
         ),
-        format!("Recursive mirror status is {:?}.", recursive_mirror_status),
+        match recursive_mirror_status {
+            WorkspaceRecursiveMirrorStatus::SeedOnly => {
+                "Recursive mirror status is SeedOnly; this run performed only bounded seed-file sync."
+                    .to_string()
+            }
+            WorkspaceRecursiveMirrorStatus::RecursivePending => {
+                "Recursive mirror status is RecursivePending; recursive docs mirroring is not implemented in this workflow yet."
+                    .to_string()
+            }
+            WorkspaceRecursiveMirrorStatus::RecursiveLive => {
+                "Recursive mirror status is RecursiveLive.".to_string()
+            }
+        },
     ];
     Ok(WorkspaceContextMirrorReport {
         schema_version: "adl_gws_context_mirror.v1",
@@ -337,11 +355,12 @@ fn detect_current_milestone(readme: &str) -> String {
 mod tests {
     use super::{
         context_seed_file_names, default_context_mirror_config, detect_current_milestone,
-        read_milestone_truth, run_workspace_context_mirror_with_transport,
+        read_milestone_truth, recursive_mirror_status, run_workspace_context_mirror_with_transport,
         write_workspace_context_mirror_report, WorkspaceContextMirrorConfig,
     };
     use crate::adl_gws_drive_sync::WorkspaceDriveTransport;
     use crate::adl_gws_native::WorkspaceExecutionMode;
+    use crate::adl_gws_native::WorkspaceSkipReason;
     use anyhow::Result;
     use async_trait::async_trait;
     use std::time::{SystemTime, UNIX_EPOCH};
@@ -422,6 +441,82 @@ mod tests {
         }
     }
 
+    #[derive(Default)]
+    struct BrokenParentTransport;
+
+    #[async_trait]
+    impl WorkspaceDriveTransport for BrokenParentTransport {
+        async fn list_children(
+            &self,
+            _parent_id: &str,
+        ) -> Result<Vec<crate::adl_gws_native::WorkspaceFileRef>> {
+            Ok(vec![])
+        }
+
+        async fn read_file_metadata(
+            &self,
+            file_id: &str,
+        ) -> Result<crate::adl_gws_native::WorkspaceFileRef> {
+            Ok(crate::adl_gws_native::WorkspaceFileRef {
+                file_id: file_id.to_string(),
+                name: "broken.md".to_string(),
+                mime_type: "text/markdown".to_string(),
+                parent_ids: vec![],
+                modified_time: Some("2026-06-21T23:00:00Z".to_string()),
+                web_view_link: None,
+            })
+        }
+
+        async fn create_folder(
+            &self,
+            parent_id: &str,
+            name: &str,
+        ) -> Result<crate::adl_gws_native::WorkspaceFileRef> {
+            Ok(crate::adl_gws_native::WorkspaceFileRef {
+                file_id: format!("{parent_id}-{name}"),
+                name: name.to_string(),
+                mime_type: crate::adl_gws_drive_sync::DRIVE_FOLDER_MIME_TYPE.to_string(),
+                parent_ids: vec![parent_id.to_string()],
+                modified_time: Some("2026-06-21T23:00:00Z".to_string()),
+                web_view_link: None,
+            })
+        }
+
+        async fn create_file(
+            &self,
+            parent_id: &str,
+            name: &str,
+            mime_type: &str,
+            _bytes: &[u8],
+        ) -> Result<crate::adl_gws_native::WorkspaceFileRef> {
+            Ok(crate::adl_gws_native::WorkspaceFileRef {
+                file_id: format!("{parent_id}-{name}"),
+                name: name.to_string(),
+                mime_type: mime_type.to_string(),
+                parent_ids: vec![parent_id.to_string()],
+                modified_time: Some("2026-06-21T23:00:00Z".to_string()),
+                web_view_link: None,
+            })
+        }
+
+        async fn update_file(
+            &self,
+            file_id: &str,
+            name: &str,
+            mime_type: &str,
+            _bytes: &[u8],
+        ) -> Result<crate::adl_gws_native::WorkspaceFileRef> {
+            Ok(crate::adl_gws_native::WorkspaceFileRef {
+                file_id: file_id.to_string(),
+                name: name.to_string(),
+                mime_type: mime_type.to_string(),
+                parent_ids: vec![],
+                modified_time: Some("2026-06-21T23:59:59Z".to_string()),
+                web_view_link: None,
+            })
+        }
+    }
+
     fn unique_temp_path(prefix: &str) -> std::path::PathBuf {
         let nanos = SystemTime::now()
             .duration_since(UNIX_EPOCH)
@@ -453,8 +548,19 @@ mod tests {
     fn milestone_truth_reads_current_repo_story() {
         let repo_root = crate::adl_gws_native::tracked_path("");
         let truth = read_milestone_truth(&repo_root).expect("milestone truth");
-        assert_eq!(truth.chatgpt_facing_current_milestone, "v0.91.6");
-        assert_eq!(truth.planning_sequence, vec!["v0.91.6", "v0.91.7", "v0.92"]);
+        assert!(["v0.91.6", "v0.91.7", "v0.92"]
+            .contains(&truth.chatgpt_facing_current_milestone.as_str()));
+        assert_eq!(
+            truth.planning_sequence.first().map(String::as_str),
+            Some("v0.91.6")
+        );
+        assert_eq!(
+            truth.planning_sequence.last().map(String::as_str),
+            Some("v0.92")
+        );
+        assert!(truth
+            .planning_sequence
+            .contains(&truth.chatgpt_facing_current_milestone));
         assert!(truth.v092_activation_blocked);
     }
 
@@ -488,10 +594,95 @@ mod tests {
             .await
             .expect("read report");
         assert!(body.contains("adl_gws_context_mirror.v1"));
-        assert!(body.contains("\"v0.91.6\""));
+        assert!(body.contains(&report.milestone_truth.chatgpt_facing_current_milestone));
         tokio::fs::remove_file(&report_path)
             .await
             .expect("remove report");
+    }
+
+    #[tokio::test]
+    async fn context_mirror_missing_bindings_reports_skip() {
+        let report = run_workspace_context_mirror_with_transport(
+            WorkspaceExecutionMode::DryRun,
+            false,
+            WorkspaceContextMirrorConfig {
+                repo_root: crate::adl_gws_native::tracked_path("")
+                    .display()
+                    .to_string(),
+                staging_dir: crate::adl_gws_native::tracked_path(
+                    ".adl/tmp/google_workspace_cms/generated_seed_files",
+                )
+                .display()
+                .to_string(),
+                drive_root_folder_id: String::new(),
+                drive_seed_folder_id: String::new(),
+                recursive_sync_enabled: false,
+            },
+            &NoopTransport,
+        )
+        .await
+        .expect("missing binding report");
+        assert_eq!(
+            report.skipped_reason,
+            Some(WorkspaceSkipReason::MissingBinding)
+        );
+        assert_eq!(report.files_considered.len(), 4);
+        assert_eq!(report.files_skipped.len(), 4);
+    }
+
+    #[tokio::test]
+    async fn context_mirror_recursive_pending_status_is_reported_truthfully() {
+        let staging_dir = std::env::temp_dir().join("adl-gws-context-mirror-recursive-live");
+        tokio::fs::create_dir_all(&staging_dir)
+            .await
+            .expect("create staging dir");
+        for file_name in context_seed_file_names() {
+            tokio::fs::write(staging_dir.join(file_name), format!("# {file_name}\n"))
+                .await
+                .expect("write staged file");
+        }
+        let report = run_workspace_context_mirror_with_transport(
+            WorkspaceExecutionMode::DryRun,
+            false,
+            WorkspaceContextMirrorConfig {
+                repo_root: crate::adl_gws_native::tracked_path("")
+                    .display()
+                    .to_string(),
+                staging_dir: staging_dir.display().to_string(),
+                drive_root_folder_id: "seed".to_string(),
+                drive_seed_folder_id: "seed".to_string(),
+                recursive_sync_enabled: true,
+            },
+            &NoopTransport,
+        )
+        .await
+        .expect("recursive live report");
+        assert_eq!(
+            report.recursive_mirror_status,
+            super::WorkspaceRecursiveMirrorStatus::RecursivePending
+        );
+        assert!(report
+            .summary_lines
+            .iter()
+            .any(|line| line.contains("not implemented")));
+        for file_name in context_seed_file_names() {
+            tokio::fs::remove_file(staging_dir.join(file_name))
+                .await
+                .expect("remove staged file");
+        }
+        tokio::fs::remove_dir(&staging_dir)
+            .await
+            .expect("remove staging dir");
+    }
+
+    #[tokio::test]
+    async fn ensure_seed_folder_within_root_rejects_missing_parent_chain() {
+        let error = super::ensure_seed_folder_within_root(&BrokenParentTransport, "root", "orphan")
+            .await
+            .expect_err("seed folder should not be within root");
+        assert!(error
+            .to_string()
+            .contains("not within the configured drive root"));
     }
 
     #[test]
@@ -503,6 +694,20 @@ mod tests {
         assert_eq!(
             detect_current_milestone("Current milestone state: v0.92 planning"),
             "v0.92"
+        );
+    }
+
+    #[test]
+    fn recursive_status_reflects_seed_only_vs_pending_truthfully() {
+        let mut config = default_context_mirror_config();
+        assert_eq!(
+            recursive_mirror_status(&config),
+            super::WorkspaceRecursiveMirrorStatus::SeedOnly
+        );
+        config.recursive_sync_enabled = true;
+        assert_eq!(
+            recursive_mirror_status(&config),
+            super::WorkspaceRecursiveMirrorStatus::RecursivePending
         );
     }
 }

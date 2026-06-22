@@ -406,13 +406,24 @@ pub fn method_map(doc: &RestDescription) -> HashMap<String, WorkspaceMethodDescr
 #[cfg(test)]
 mod tests {
     use super::{
-        default_drive_method_catalog, metadata_fields_selector, method_map, parse_rfc3339,
+        default_drive_method_catalog, drive_cache_dir, load_workspace_credential_file,
+        load_workspace_credentials, metadata_fields_selector, method_map, parse_rfc3339,
         parse_workspace_drive_method_catalog, parse_workspace_execution_mode_from_env,
-        parse_workspace_write_approval_from_env, scopes_as_refs, workspace_method_descriptor,
-        ADL_GWS_LIVE_MODE_ENV, ADL_GWS_WRITE_APPROVAL_ENV,
+        parse_workspace_write_approval_from_env, quota_project_hint, scopes_as_refs, tracked_path,
+        workspace_method_descriptor, WorkspaceCredential, ADL_GWS_CREDENTIALS_FILE_ENV,
+        ADL_GWS_LIVE_MODE_ENV, ADL_GWS_PROJECT_ID_ENV, ADL_GWS_WRITE_APPROVAL_ENV,
     };
     use crate::gws_live_test_support::{lock_gws_live_test_env, EnvVarGuard};
     use google_workspace::discovery::RestDescription;
+    use std::time::{SystemTime, UNIX_EPOCH};
+
+    fn unique_temp_path(prefix: &str) -> std::path::PathBuf {
+        let nanos = SystemTime::now()
+            .duration_since(UNIX_EPOCH)
+            .expect("valid time")
+            .as_nanos();
+        std::env::temp_dir().join(format!("{prefix}-{nanos}.json"))
+    }
 
     fn sample_drive_discovery() -> RestDescription {
         serde_json::from_str(
@@ -502,6 +513,35 @@ mod tests {
     }
 
     #[test]
+    fn workspace_method_descriptor_uses_default_scope_when_missing() {
+        let doc: RestDescription = serde_json::from_str(
+            r#"{
+              "name":"drive",
+              "version":"v3",
+              "rootUrl":"https://www.googleapis.com/",
+              "servicePath":"",
+              "resources":{
+                "files":{"methods":{"list":{"httpMethod":"GET","path":"drive/v3/files","scopes":[]}}}
+              }
+            }"#,
+        )
+        .expect("parse discovery");
+        let method = doc
+            .resources
+            .get("files")
+            .expect("files")
+            .methods
+            .get("list")
+            .expect("list");
+        let descriptor =
+            workspace_method_descriptor("drive.files.list", method).expect("descriptor");
+        assert_eq!(
+            descriptor.scopes,
+            vec![super::ADL_GWS_DEFAULT_SCOPE.to_string()]
+        );
+    }
+
+    #[test]
     fn default_drive_catalog_has_expected_method_ids() {
         let catalog = default_drive_method_catalog();
         assert_eq!(catalog.list.method_id, "drive.files.list");
@@ -533,5 +573,126 @@ mod tests {
     fn scopes_as_refs_preserves_order() {
         let scopes = vec!["one".to_string(), "two".to_string()];
         assert_eq!(scopes_as_refs(&scopes), vec!["one", "two"]);
+    }
+
+    #[test]
+    fn parse_workspace_drive_catalog_requires_files_resource() {
+        let doc: RestDescription = serde_json::from_str(
+            r#"{
+              "name":"drive",
+              "version":"v3",
+              "rootUrl":"https://www.googleapis.com/",
+              "servicePath":"",
+              "resources":{}
+            }"#,
+        )
+        .expect("parse discovery");
+        let error = parse_workspace_drive_method_catalog(&doc).expect_err("missing files resource");
+        assert!(error.to_string().contains("missing files resource"));
+    }
+
+    #[test]
+    fn drive_cache_dir_stays_under_repo_tmp() {
+        assert_eq!(
+            drive_cache_dir(),
+            tracked_path(".adl/tmp/google_workspace_cms/discovery_cache")
+        );
+    }
+
+    #[test]
+    fn quota_project_hint_prefers_explicit_env() {
+        let _lock = lock_gws_live_test_env();
+        let _project = EnvVarGuard::set(ADL_GWS_PROJECT_ID_ENV, "quota-project");
+        assert_eq!(quota_project_hint().as_deref(), Some("quota-project"));
+    }
+
+    #[test]
+    fn quota_project_hint_reads_adc_json_when_env_missing() {
+        let _lock = lock_gws_live_test_env();
+        let adc_path = unique_temp_path("workspace-adc");
+        std::fs::write(
+            &adc_path,
+            r#"{"quota_project_id":"adc-project","client_id":"id"}"#,
+        )
+        .expect("write adc file");
+        let _adc = EnvVarGuard::set(
+            "GOOGLE_APPLICATION_CREDENTIALS",
+            adc_path.display().to_string(),
+        );
+        assert_eq!(quota_project_hint().as_deref(), Some("adc-project"));
+        std::fs::remove_file(&adc_path).expect("remove adc file");
+    }
+
+    #[tokio::test]
+    async fn load_workspace_credential_file_parses_authorized_user_secret() {
+        let credential_path = unique_temp_path("workspace-authorized-user");
+        tokio::fs::write(
+            &credential_path,
+            r#"{"client_id":"client","client_secret":"secret","refresh_token":"refresh","type":"authorized_user"}"#,
+        )
+        .await
+        .expect("write credentials");
+        let credentials = load_workspace_credential_file(&credential_path)
+            .await
+            .expect("load authorized user credentials");
+        assert!(matches!(
+            credentials,
+            WorkspaceCredential::AuthorizedUser(_)
+        ));
+        tokio::fs::remove_file(&credential_path)
+            .await
+            .expect("remove credentials");
+    }
+
+    #[tokio::test]
+    async fn load_workspace_credentials_prefers_explicit_adl_env_file() {
+        let _lock = lock_gws_live_test_env();
+        let credential_path = unique_temp_path("workspace-credentials-env");
+        tokio::fs::write(
+            &credential_path,
+            r#"{"client_id":"client","client_secret":"secret","refresh_token":"refresh","type":"authorized_user"}"#,
+        )
+        .await
+        .expect("write credentials");
+        let _path = EnvVarGuard::set(
+            ADL_GWS_CREDENTIALS_FILE_ENV,
+            credential_path.display().to_string(),
+        );
+        let credentials = load_workspace_credentials()
+            .await
+            .expect("load credentials from env");
+        assert!(matches!(
+            credentials,
+            WorkspaceCredential::AuthorizedUser(_)
+        ));
+        tokio::fs::remove_file(&credential_path)
+            .await
+            .expect("remove credentials");
+    }
+
+    #[tokio::test]
+    async fn load_workspace_credentials_falls_back_to_google_application_credentials() {
+        let _lock = lock_gws_live_test_env();
+        let credential_path = unique_temp_path("workspace-adc-credentials");
+        tokio::fs::write(
+            &credential_path,
+            r#"{"client_id":"client","client_secret":"secret","refresh_token":"refresh","type":"authorized_user"}"#,
+        )
+        .await
+        .expect("write credentials");
+        let _path = EnvVarGuard::set(
+            "GOOGLE_APPLICATION_CREDENTIALS",
+            credential_path.display().to_string(),
+        );
+        let credentials = load_workspace_credentials()
+            .await
+            .expect("load credentials from adc env");
+        assert!(matches!(
+            credentials,
+            WorkspaceCredential::AuthorizedUser(_)
+        ));
+        tokio::fs::remove_file(&credential_path)
+            .await
+            .expect("remove credentials");
     }
 }
