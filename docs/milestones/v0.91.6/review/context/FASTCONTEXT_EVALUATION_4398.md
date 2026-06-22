@@ -31,7 +31,6 @@ Repo evidence:
 - `docs/tooling/CODEX_USAGE_WATCHER.md`
 - `.adl/v0.91.6/bodies/issue-4398-v0-91-6-tools-context-evaluate-fastcontext-for-c-sdlc-workflows.md`
 - `docs/milestones/v0.91.6/review/provider/C_SDLC_AGENT_SUITABILITY_PANEL_4097.md`
-- `docs/milestones/v0.91.6/review/context/artifacts/FASTCONTEXT_UTS_AD_HOC_SUMMARY_4398.json`
 
 ## Decision
 
@@ -167,14 +166,11 @@ Observed results:
    exact model tag, produced a `non_proving` result:
    - deterministic self-check passed
    - the first attempt was skipped because another Ollama model was resident
-   - after clearing residency, the regular lane recorded 8 passing task-level
-     results out of 11, but the lane still ended `provider_failed` because two
-     tasks timed out and one response was malformed
-   - the UTS-only lane recorded 1 passing task-level result out of 11, with
-     seven schema-invalid proposals, one wrong-tool proposal, and two provider
-     failures
-   - the retained issue-local summary artifact is
-     `docs/milestones/v0.91.6/review/context/artifacts/FASTCONTEXT_UTS_AD_HOC_SUMMARY_4398.json`
+   - after clearing residency, the regular lane showed some valid ordinary
+     tool-call behavior but still ended non-proving because timeout and output
+     quality failures remained
+   - the UTS-only lane remained weak and mostly non-conforming, with proposal
+     quality problems and provider failures
 5. A control model on the same Ollama endpoint, `qwen3-coder:30b`, returned
    `READY` normally and emitted a valid function tool call when tools were
    supplied.
