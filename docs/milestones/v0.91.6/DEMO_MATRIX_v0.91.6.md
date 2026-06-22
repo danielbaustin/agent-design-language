@@ -2,7 +2,7 @@
 
 ## Status
 
-partially_proven_with_wp09_residuals
+partially_proven_with_downstream_runtime_residuals
 
 ## Metadata
 
@@ -16,8 +16,8 @@ partially_proven_with_wp09_residuals
 
 Define proof surfaces for the first pre-`v0.92` bridge tranche. `v0.91.6`
 started as a docs-planning matrix, but later issue-local proofs now provide
-bounded Observatory/Unity evidence while the remaining WP-09 residual lanes
-stay explicitly open.
+bounded Observatory/Unity evidence while downstream runtime, demo-convergence,
+and release-tail lanes stay explicitly open.
 
 ## Scope
 
@@ -62,8 +62,8 @@ surfaces recorded here.
 | D1 | Documentation package proof | `#3824` docs package exists and links truthfully | `find docs/milestones/v0.91.6 -maxdepth 2 -type f` | tracked docs | Expected planning and feature docs are present | deterministic filesystem check | planned |
 | D2 | Bridge overclaim scan | Docs do not claim runtime or `v0.92` readiness | `rg "ready|complete|shipped" docs/milestones/v0.91.6` | review notes | claims are bounded by non-goals and consumption rules | deterministic text review | planned |
 | D3 | Residual routing proof | `v0.91.7` residuals remain explicit | `rg "v0.91.7|#3825|residual" docs/milestones/v0.91.6` | index and feature docs | residual routes are visible | deterministic text review | planned |
-| D4 | Unity Observatory bounded closeout proof | WP-09 closeout packet and classification surfaces are refreshed to the current bounded closeout posture without implying umbrella closure | `rg "#4030|#4031|#4032|#4033|#4034|#4035|#4341|#3974" docs/milestones/v0.91.6/review/observatory/WP09_WORKING_UNITY_OBSERVATORY_CLOSEOUT_4035.md docs/milestones/v0.91.6/features/OBSERVATORY_UNITY_CONSUMPTION_CLASSIFICATION_v0.91.6.md` | `docs/milestones/v0.91.6/review/observatory/WP09_WORKING_UNITY_OBSERVATORY_CLOSEOUT_4035.md` | closeout packet and classification surfaces preserve the closed-child/open-residual split and retain explicit WP-09 ownership boundaries | deterministic doc-truth review | proved_with_residuals |
-| D5 | Portable governed Observatory proof | portable reviewer-facing Observatory surface exists even when the richer Unity and HTML/mobile completion lanes are still incomplete | `bash adl/tools/test_demo_v0904_csm_observatory_governed_prototype.sh` | `demos/v0.90.4/csm_observatory_governed_prototype.html` | governed Observatory prototype loads and remains available as a bounded reviewer-facing surface without claiming `#4341` mobile completion | deterministic local demo smoke | proved_with_residuals |
+| D4 | Unity Observatory bounded closeout proof | WP-09 closeout packet and classification surfaces are refreshed to the current bounded closeout posture and justify umbrella closeout without overclaiming production readiness | `rg "#4030|#4031|#4032|#4033|#4034|#4035|#4341|#3974" docs/milestones/v0.91.6/review/observatory/WP09_WORKING_UNITY_OBSERVATORY_CLOSEOUT_4035.md docs/milestones/v0.91.6/features/OBSERVATORY_UNITY_CONSUMPTION_CLASSIFICATION_v0.91.6.md` | `docs/milestones/v0.91.6/review/observatory/WP09_WORKING_UNITY_OBSERVATORY_CLOSEOUT_4035.md` | closeout packet and classification surfaces preserve the closed-child/downstream-open split and retain explicit WP-09 ownership boundaries | deterministic doc-truth review | proved |
+| D5 | Portable governed Observatory proof | portable reviewer-facing Observatory surface exists as a landed bounded proof surface while richer downstream runtime/release-tail convergence remains separate | `bash adl/tools/test_demo_v0904_csm_observatory_governed_prototype.sh` | `demos/v0.90.4/csm_observatory_governed_prototype.html` | governed Observatory prototype loads and remains available as a bounded reviewer-facing surface with the mobile-capable proof lane landed in `#4341` | deterministic local demo smoke | proved |
 
 ## Coverage Rules
 
@@ -77,5 +77,5 @@ surfaces recorded here.
 - This matrix proves documentation readiness, not runtime behavior.
 - Provider/model, ACIP, and public export proofs remain future or separate issue
   work unless explicitly completed later.
-- WP-09 remains open because `#4035`, `#4341`, and umbrella `#3974` are still
-  active even though bounded Observatory/Unity child proofs now exist.
+- WP-09 child proof is closed, but this matrix still does not prove broader
+  runtime integration, demo convergence, or release-tail readiness.

@@ -22,9 +22,9 @@ Observatory work remains open.
   retained closeout truth now available for WP-03 `#3968`, WP-04 `#3969`,
   WP-05 `#3970`, WP-06 `#3971`, WP-07 `#3972`, WP-08 `#3973`, and WP-10
   `#3975`
-- Execution: WP-03 through WP-08, WP-10, and ACIP runtime `#4160` now have
-  bounded merged/closed bridge truth; Observatory/Unity `#3974` and Tokio
-  integrated soak `#4185` remain open downstream work rather than hidden
+- Execution: WP-03 through WP-10 and ACIP runtime `#4160` now have bounded
+  merged/closed bridge truth; Tokio integrated soak `#4185` and the ordered
+  closeout-tail issue wave remain explicit downstream work rather than hidden
   blockers
 - Validation: docs-readiness validation plus focused issue/PR and retained
   closeout proof for the completed bridge waves
@@ -59,8 +59,8 @@ Its job is to make the load-bearing pre-`v0.92` surfaces reviewable:
 spillover.
 
 Closed umbrella truth in this milestone should not be read as proof that every
-runtime-integrated downstream consumer is complete. Open runtime, Observatory,
-and soak lanes remain explicit.
+runtime-integrated downstream consumer is complete. Open runtime, demo-
+convergence, and soak lanes remain explicit.
 
 ## Bridge Boundary
 

@@ -7,15 +7,15 @@
 - Start date: not scheduled
 - End date: not scheduled
 - Owner: ADL maintainers
-- Status: bridge issue waves opened; WP-03 through WP-08, WP-10, and ACIP runtime now have bounded merged/closed truth; Observatory/Unity and integrated runtime soak remain open downstream lanes
+- Status: bridge issue waves opened; WP-03 through WP-10 and ACIP runtime now have bounded merged/closed truth; integrated runtime soak and closeout-tail lanes remain open downstream work
 
 ## Status
 
 The first bridge tranche is no longer just a WP-03/WP-04 opening plan. The
 milestone now has retained closeout truth for WP-03 `#3968`, WP-04 `#3969`,
-WP-05 `#3970`, WP-06 `#3971`, WP-07 `#3972`, WP-08 `#3973`, and WP-10
-`#3975`, while open downstream runtime and Observatory work remains explicitly
-routed.
+WP-05 `#3970`, WP-06 `#3971`, WP-07 `#3972`, WP-08 `#3973`, WP-09 `#3974`,
+and WP-10 `#3975`, while open downstream runtime and closeout-tail work
+remains explicitly routed.
 
 ## Sprint Overview
 
@@ -42,7 +42,7 @@ turns planning docs and feature docs into issue-ready work with review gates.
 | 6 | Provider/model reliability route | `#3970`, `#4007`-`#4012`, `#4053` merged and closed; `#4111` follow-on reconciliation | ADL maintainers | merged and closed with reconciliation follow-on |
 | 7 | ACIP/A2A/provider communications route | `#3971`, `#4013`-`#4018`, `#4055` | ADL maintainers | merged and closed |
 | 8 | Security bridge and CAV route | `#3972`, `#4019`-`#4024`, `#4064` | ADL maintainers | merged and closed with explicit downstream residual routes |
-| 9 | Identity, Observatory/Unity, AEE, Memory/ObsMem, ACP accounting | `#3973` merged and closed; `#3974` still open; `#3975` merged and closed | ADL maintainers | mixed: identity and WP-10 closed, Observatory/Unity still open |
+| 9 | Identity, Observatory/Unity, AEE, Memory/ObsMem, ACP accounting | `#3973`, `#3974`, and `#3975` merged and closed or in final umbrella closeout publication | ADL maintainers | closeout-ready: identity, Observatory/Unity, and WP-10 retained truth is bounded |
 | 10 | Bridge-ledger refresh and `v0.91.7` handoff | not opened | ADL maintainers | planned |
 | 11 | `agent-logic.ai` AWS account/setup planning | `#3902` | ADL maintainers | complete; AWS Activate review tracked as post-close external follow-up |
 | 12 | CodeFriend v1 / adapter v2 and guild route preservation | feature-list routes | ADL maintainers | planned |

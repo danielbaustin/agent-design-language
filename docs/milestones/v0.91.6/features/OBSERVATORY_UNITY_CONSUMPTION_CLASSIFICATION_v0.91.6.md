@@ -4,7 +4,7 @@
 
 - Feature Name: Observatory And Unity Consumption Classification
 - Milestone Target: `v0.91.6`
-- Status: closeout_proof_authored_with_open_wp09_residuals
+- Status: child_wave_closed_with_umbrella_closeout_ready
 - Owner: ADL maintainers
 - Doc Role: primary
 - Feature Types: policy, artifact
@@ -70,13 +70,15 @@ surface marked rehearsal or substrate cannot prove activation by itself.
   may be consumed as the current bounded security review for Unity Observatory
   inhabitant-facing and Observatory-consumption posture.
 - That packet does not close WP-09. It records that inhabitant surfaces,
-  ingestion security, and working Unity closeout remain open dependencies until
-  the WP-09 issue set lands its own reviewed proof, and identity-safe
-  inhabitant display also remains dependent on open WP-08 issue `#3973`.
+  ingestion security, and working Unity closeout were open dependencies at the
+  time of the review; those dependencies are now satisfied by the closed WP-09
+  child wave and closed WP-08 issue `#3973`, while the packet's bounded
+  security-consumption limits still apply.
 
 ## Current WP-09 Closeout Posture
 
-WP-09 closeout proof is now authored, but WP-09 is not closeout-clean.
+WP-09 implementation proof is now landed, and the remaining work is bounded to
+umbrella closeout truth and publication.
 
 Current live issue truth on the closeout date:
 
@@ -87,9 +89,9 @@ Current live issue truth on the closeout date:
 | Observatory evidence data contract | `#4032` | closed / completed | Bounded Observatory ingestion contract is landed |
 | Inhabitant-readiness surfaces | `#4033` | closed / completed | Inhabitant-facing bounded surfaces are landed subject to existing identity limits |
 | Logging/OTel/security consumption proof | `#4034` | closed / completed | Security/OTel consumption closure for the bounded proof slice is landed |
-| Working Unity Observatory closeout proof | `#4035` | open | This issue now carries refreshed closeout truth after O-00 through O-04 completion |
-| HTML Observatory mobile governed surface | `#4341` | open | WP-09 still has an explicit portable HTML/mobile residual lane |
-| WP-09 umbrella | `#3974` | open | The sprint must remain open until `#4035` and `#4341` land reviewed closure truth |
+| Working Unity Observatory closeout proof | `#4035` | closed / completed | Retained closeout packet is landed and may be consumed as closed child proof |
+| HTML Observatory mobile governed surface | `#4341` | closed / completed | Portable HTML/mobile observatory lane is landed with bounded proof |
+| WP-09 umbrella | `#3974` | open | Remaining work is narrow umbrella closeout normalization and publication rather than missing implementation |
 
 The authoritative closeout packet for this posture is:
 
@@ -101,13 +103,13 @@ The authoritative closeout packet for this posture is:
 
 - a classification and routing contract for Observatory/Unity proof posture;
 - a reference to bounded security-consumption inputs from WP-07;
-- a non-claim that WP-09 remains open until the remaining residual lanes
-  `#4035` and `#4341` reach terminal reviewed truth.
+- a record that the WP-09 child wave is closed while umbrella publication
+  truth is normalized through `#3974`.
 
 `v0.92` may not consume this feature surface as proof that:
 
 - the Unity Observatory is fully working and launch-ready;
-- the HTML Observatory mobile governed lane is fully complete;
+- the Unity Observatory is production-ready;
 - inhabitant-facing display or input is security-cleared;
 - Observatory ingestion and logging/OTel consumption is fully closed;
-- WP-09 is ready for umbrella closure.
+- broader runtime or release-tail convergence is complete.
