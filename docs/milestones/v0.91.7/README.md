@@ -30,7 +30,7 @@ This package does not implement runtime features and does not claim `v0.92` acti
 It must convert the remaining major pre-birthday surfaces into reviewable issue routes, sprint structure, feature docs, and handoff truth:
 
 - v0.91.6 closeout truth, ADR release-tail decisions, and release-tail cleanup;
-- the v0.91.6 `#4388`-`#4398` C-SDLC integration control-plane completion sprint: SEP, VPP, PVF lane planning, prompt-template versioning, GitHub/octocrab convergence, goal metrics, logging, watcher/lifecycle automation, FastContext evaluation, and sprint execution discipline;
+- the v0.91.6 C-SDLC integration/control-plane completion stream: `#4388`-`#4398`, session coordination `#4405`, session-ledger and lifecycle liveness `#4412`-`#4413`, validation-throughput/lifecycle automation and generated VPP inputs `#4417`-`#4425`, forward metric capture `#4431`, bounded v0.91.6 metric backfill `#4441`, operational adoption `#4433`-`#4438`, and v0.91.7-facing goal snapshot/lifecycle shepherd work `#4442`-`#4443`;
 - goal state, nested goals, per-issue time/token/resource metrics, and predictable execution baselines;
 - cognitive scheduler, cognitive economics, provider suitability, and local-agent acceleration;
 - build throughput, validation manager, remote/local build runners, and CI/test-tax reduction;
@@ -49,7 +49,7 @@ It must convert the remaining major pre-birthday surfaces into reviewable issue 
 
 - the `#3778` pre-`v0.92` bridge ledger;
 - the `#3800` / `v0.91.6` first-tranche planning and evidence package;
-- residuals explicitly left by `v0.91.6` sprint reviews and closeout;
+- residuals explicitly left by `v0.91.6` sprint reviews, late control-plane issues, and closeout;
 - local backlog routing from `.adl/docs/TBD/LOCAL_BACKLOG.md`;
 - local TBD source material captured in `PLANNING_SOURCE_CAPTURE_v0.91.7.md`.
 
@@ -65,10 +65,10 @@ Every surface must exit as one of:
 | Work stream | Required output before v0.92 |
 | --- | --- |
 | Closeout truth | v0.91.6 release-tail and ADR issues closed or routed, with v0.91.7 not inheriting stale truth. |
-| C-SDLC integration control plane | v0.91.6 `#4388` and child issues `#4389`-`#4398` scheduled as the completion sprint for SEP, VPP, PVF lane registry, template-version changes, GitHub/octocrab convergence, goal metrics, logging, `/goal`/watcher/closeout rules, lifecycle automation, and FastContext evaluation; v0.91.7 consumes its closed/blocked/routed truth. |
-| Goal and metrics | Goal state, nested goals, SOR time/token/resource fields, and outlier analysis routes scheduled. |
+| C-SDLC integration control plane | v0.91.6 `#4388`-`#4398` plus late `#4405`, `#4412`-`#4413`, `#4417`-`#4425`, `#4433`-`#4438`, `#4442`, and `#4443` are complete, blocked, deferred, or routed before v0.91.7 depends on them. |
+| Goal and metrics | Goal state, nested goals, SOR time/token/resource fields, forward metric capture `#4431`, bounded backfill `#4441`, and host snapshot capture `#4442` are scheduled or routed. |
 | Scheduler and providers | Cognitive scheduler, provider profiles, local/hosted model suitability, and local-agent delegation routes scheduled. |
-| Build and validation throughput | Validation manager, long-test fanout, CI log archive/S3, Nessus/CodeBuild, sccache/linker/target-dir work scheduled. |
+| Build and validation throughput | Validation manager, path ownership, SOR fact capture, VPP generation, long-test fanout, CI log archive/S3, Nessus/CodeBuild, sccache/linker/target-dir work scheduled. |
 | Runtime | Runtime Soak #2/fire-up, runtime heartbeat/AWS signal bridge, ACIP-to-SNS, and minimal prototype reconciliation routed. |
 | Observatory and demos | Unity/HTML Observatory and flagship demo readiness routed with proof expectations. |
 | Conceptual bridge docs | Curiosity, Constructability, reasoning graph/loop/skill standard, affect/happiness, Godel, economics, and guilds bounded. |
