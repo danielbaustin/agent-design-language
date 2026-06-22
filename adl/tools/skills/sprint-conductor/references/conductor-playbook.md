@@ -76,7 +76,15 @@ Optional:
      implementation unless nested-goal support is explicitly proven later
 9. Run only the selected downstream lifecycle or editor skill.
 9a. When issue-goal metrics are available from the active session or closeout handoff, record them in the local JSONL sink:
-   - use `record_issue_goal_metrics.py`
+   - for ordinary issue lifecycle captures from saved Codex goal payloads, use
+     `record_issue_goal_stage_artifacts.py`
+   - write the artifacts into the issue task bundle's
+     `artifacts/goal_metrics/` directory rather than an ad hoc temp-only path
+   - rerunning the same issue/stage should replace the prior row for that stage
+     instead of appending duplicates
+   - preserve `unknown` / `not_available` for missing elapsed or token data;
+     do not substitute zero
+   - for sprint-state rollups, use `record_issue_goal_metrics.py`
    - capture stage should be one of `issue_start`, `pr_publication`,
      `review_handoff`, `merge_closeout`, or `sprint_closeout`
    - preserve `unknown` / `not_available` for missing elapsed or token data;
@@ -127,6 +135,9 @@ Preferred child-closeout advancement helper:
 
 Preferred issue-goal metrics helper:
 - `python3 adl/tools/skills/sprint-conductor/scripts/record_issue_goal_metrics.py --state <path> --issue-number <n> --sink <jsonl> --capture-stage <issue_start|pr_publication|review_handoff|merge_closeout|sprint_closeout> --data-source <codex_goal_tool|manual_entry|derived_sprint_state|unknown>`
+
+Preferred ordinary issue artifact helper:
+- `python3 adl/tools/skills/sprint-conductor/scripts/record_issue_goal_stage_artifacts.py --goal-state <saved-get-goal.json> --issue-number <n> --artifacts-dir .adl/<version>/tasks/issue-<n>__<slug>/artifacts/goal_metrics --capture-stage <issue_start|pr_publication|review_handoff|merge_closeout|sprint_closeout> --issue-goal-ref goal:<version>:issue:<n>`
 
 ## Editor-Skill Rule
 

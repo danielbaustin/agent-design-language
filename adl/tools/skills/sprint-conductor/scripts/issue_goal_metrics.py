@@ -38,9 +38,72 @@ STAGE_PRIORITY = {
     "sprint_closeout": 5,
 }
 
+CODEX_GOAL_STATUS_TO_COMPLETION_STATE = {
+    "active": "unknown",
+    "completed": "completed",
+    "complete": "completed",
+    "blocked": "blocked",
+    "budgetlimited": "deferred",
+    "budget_limited": "deferred",
+}
+
+TERMINAL_COMPLETION_STATES = {"completed", "blocked", "failed", "cancelled", "deferred"}
+
 
 def iso_now_utc() -> str:
     return datetime.now(timezone.utc).replace(microsecond=0).isoformat().replace("+00:00", "Z")
+
+
+def epoch_seconds_to_iso(value: Any) -> str | None:
+    if value is None:
+        return None
+    if not isinstance(value, int):
+        return None
+    return datetime.fromtimestamp(value, tz=timezone.utc).replace(microsecond=0).isoformat().replace(
+        "+00:00", "Z"
+    )
+
+
+def parse_codex_goal_tool_snapshot(path: str) -> dict[str, Any]:
+    import json
+    from pathlib import Path
+
+    payload = json.loads(Path(path).read_text())
+    goal = payload.get("goal")
+    if not isinstance(goal, dict):
+        raise ValueError("goal snapshot does not contain an active goal object")
+
+    created_at_raw = goal.get("createdAt")
+    updated_at_raw = goal.get("updatedAt")
+    status_raw = str(goal.get("status") or "unknown")
+    normalized_status = status_raw.strip().lower()
+    completion_state = CODEX_GOAL_STATUS_TO_COMPLETION_STATE.get(normalized_status, "unknown")
+
+    started_at = epoch_seconds_to_iso(created_at_raw)
+    completed_at = epoch_seconds_to_iso(updated_at_raw) if completion_state in TERMINAL_COMPLETION_STATES else None
+    elapsed_seconds_raw = None
+    if (
+        isinstance(created_at_raw, int)
+        and isinstance(updated_at_raw, int)
+        and updated_at_raw >= created_at_raw
+    ):
+        elapsed_seconds_raw = str(updated_at_raw - created_at_raw)
+
+    tokens_used_raw = goal.get("tokensUsed")
+    time_used_raw = goal.get("timeUsedSeconds")
+
+    return {
+        "thread_id": goal.get("threadId"),
+        "objective": goal.get("objective"),
+        "recorded_at": epoch_seconds_to_iso(updated_at_raw) or iso_now_utc(),
+        "status": normalized_status,
+        "completion_state": completion_state,
+        "started_at": started_at,
+        "completed_at": completed_at,
+        "elapsed_seconds_raw": elapsed_seconds_raw,
+        "active_work_seconds_raw": str(time_used_raw) if isinstance(time_used_raw, int) else "unknown",
+        "total_tokens_raw": str(tokens_used_raw) if isinstance(tokens_used_raw, int) else "unknown",
+    }
 
 
 def default_goal_metrics_summary() -> dict[str, Any]:
@@ -201,6 +264,53 @@ def build_issue_goal_metrics_record(
         "session_ref": session_ref,
         "thread_id": thread_id,
     }
+
+
+def build_issue_goal_metrics_record_from_codex_goal_snapshot(
+    *,
+    issue_number: int,
+    capture_stage: str,
+    goal_state_path: str,
+    raw_log_path: str,
+    issue_goal_ref: str | None,
+    sprint_goal_ref: str | None,
+    goal_metrics_rollup_ref: str | None,
+    metrics_confidence: str,
+    completion_state_override: str | None,
+    model_ref: str | None,
+    session_ref: str | None,
+) -> dict[str, Any]:
+    snapshot = parse_codex_goal_tool_snapshot(goal_state_path)
+    completion_state = completion_state_override or snapshot["completion_state"]
+    thread_id = snapshot.get("thread_id")
+    return build_issue_goal_metrics_record(
+        sprint_issue_number=None,
+        issue_number=issue_number,
+        capture_stage=capture_stage,
+        data_source="codex_goal_tool",
+        raw_log_path=raw_log_path,
+        recorded_at=snapshot.get("recorded_at"),
+        issue_goal_ref=issue_goal_ref,
+        sprint_goal_ref=sprint_goal_ref,
+        goal_metrics_rollup_ref=goal_metrics_rollup_ref,
+        goal_id=None,
+        goal_id_state="not_available",
+        started_at=snapshot.get("started_at"),
+        completed_at=snapshot.get("completed_at"),
+        elapsed_seconds_raw=snapshot.get("elapsed_seconds_raw"),
+        active_work_seconds_raw=snapshot.get("active_work_seconds_raw"),
+        validation_seconds_raw="unknown",
+        pr_wait_seconds_raw="unknown",
+        ci_wait_seconds_raw="unknown",
+        total_tokens_raw=snapshot.get("total_tokens_raw"),
+        prompt_tokens_raw="unknown",
+        completion_tokens_raw="unknown",
+        metrics_confidence=metrics_confidence,
+        completion_state=completion_state,
+        model_ref=model_ref,
+        session_ref=session_ref or (f"codex-thread:{thread_id}" if isinstance(thread_id, str) else None),
+        thread_id=thread_id if isinstance(thread_id, str) else None,
+    )
 
 
 def summarize_issue_goal_metrics(records: list[dict[str, Any]], raw_log_path: str | None) -> dict[str, Any]:

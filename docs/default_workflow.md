@@ -155,6 +155,41 @@ Use `update_goal` only for truthful terminal state:
 - `blocked` only when the repeated blocking threshold is met and meaningful
   progress cannot continue without user input or an external state change
 
+When issue-local time/token accounting matters, preserve a durable local goal
+snapshot before the live goal disappears:
+
+1. save the `get_goal` tool payload to a temporary local path
+2. normalize it into the issue task bundle's canonical goal-metrics artifact
+   set immediately after the lifecycle event you are recording:
+
+```bash
+python3 adl/tools/skills/sprint-conductor/scripts/record_issue_goal_stage_artifacts.py \
+  --goal-state /tmp/issue-<n>-goal-state.json \
+  --issue-number <n> \
+  --artifacts-dir .adl/<version>/tasks/issue-<n>__<slug>/artifacts/goal_metrics \
+  --capture-stage issue_start \
+  --issue-goal-ref "goal:<version>:issue:<n>"
+```
+
+Record the same artifact set again at later lifecycle checkpoints such as
+`pr_publication`:
+
+```bash
+python3 adl/tools/skills/sprint-conductor/scripts/record_issue_goal_stage_artifacts.py \
+  --goal-state /tmp/issue-<n>-goal-state-pr-publication.json \
+  --issue-number <n> \
+  --artifacts-dir .adl/<version>/tasks/issue-<n>__<slug>/artifacts/goal_metrics \
+  --capture-stage pr_publication \
+  --issue-goal-ref "goal:<version>:issue:<n>"
+```
+
+This helper uses canonical stage-specific snapshot filenames under the task
+bundle, rewrites the summary in place, and replaces any older row for the same
+issue/stage instead of appending duplicates. Use the resulting summary artifact
+as the preferred `SOR` source ref when `Goal metrics data source` is
+`codex_goal_tool`. If no authoritative snapshot exists, keep the metrics fields
+`unknown` rather than fabricating values.
+
 ## 5) Implement
 
 Read the active issue cards, stay inside the issue edit fence, and make the tracked repo changes.
