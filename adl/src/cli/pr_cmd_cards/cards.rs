@@ -21,7 +21,7 @@ use super::validation::{
 };
 use ::adl::control_plane::{
     card_input_path, card_output_path, card_plan_path, card_review_policy_path, card_stp_path,
-    resolve_cards_root, IssueRef,
+    card_validation_plan_path, resolve_cards_root, IssueRef,
 };
 
 pub(crate) fn ensure_task_bundle_stp(
@@ -490,6 +490,10 @@ pub(crate) fn sync_root_task_bundle_into_worktree(
             issue_ref.worktree_task_bundle_plan_path(worktree_root),
         ),
         (
+            issue_ref.task_bundle_validation_plan_path(primary_checkout_root),
+            issue_ref.worktree_task_bundle_validation_plan_path(worktree_root),
+        ),
+        (
             issue_ref.task_bundle_review_policy_path(primary_checkout_root),
             issue_ref.worktree_task_bundle_review_policy_path(worktree_root),
         ),
@@ -530,6 +534,7 @@ pub(crate) fn ensure_worktree_task_bundle_materialized(
         issue_ref.worktree_task_bundle_input_path(worktree_root),
         issue_ref.worktree_task_bundle_output_path(worktree_root),
         issue_ref.worktree_task_bundle_plan_path(worktree_root),
+        issue_ref.worktree_task_bundle_validation_plan_path(worktree_root),
         issue_ref.worktree_task_bundle_review_policy_path(worktree_root),
     ];
     let missing: Vec<String> = expected
@@ -589,6 +594,7 @@ fn ensure_bootstrap_cards_with_mode(
     let bundle_input = issue_ref.task_bundle_input_path(root);
     let bundle_output = issue_ref.task_bundle_output_path(root);
     let bundle_plan = issue_ref.task_bundle_plan_path(root);
+    let bundle_validation_plan = issue_ref.task_bundle_validation_plan_path(root);
     let bundle_review_policy = issue_ref.task_bundle_review_policy_path(root);
     let bundle_stp_created = !bundle_stp.is_file();
     if let Some(parent) = bundle_input.parent() {
@@ -626,6 +632,20 @@ fn ensure_bootstrap_cards_with_mode(
     } else if bind_existing_cards && field_line_value(&bundle_plan, "branch")?.trim() != branch {
         replace_field_line_in_file(&bundle_plan, "branch", &format!("\"{branch}\""))?;
     }
+    if prompt_surface_needs_template_refresh(&bundle_validation_plan)? {
+        write_validation_plan_card(
+            root,
+            &bundle_validation_plan,
+            issue_ref,
+            title,
+            branch,
+            source_path,
+        )?;
+    } else if bind_existing_cards
+        && field_line_value(&bundle_validation_plan, "branch")?.trim() != format!("\"{branch}\"")
+    {
+        replace_field_line_in_file(&bundle_validation_plan, "branch", &format!("\"{branch}\""))?;
+    }
     if prompt_surface_needs_template_refresh(&bundle_review_policy)? {
         write_review_policy_card(root, &bundle_review_policy, issue_ref, title, branch)?;
     } else if bind_existing_cards
@@ -639,15 +659,18 @@ fn ensure_bootstrap_cards_with_mode(
     let compat_input = card_input_path(&cards_root, issue_ref.issue_number());
     let compat_output = card_output_path(&cards_root, issue_ref.issue_number());
     let compat_plan = card_plan_path(&cards_root, issue_ref.issue_number());
+    let compat_validation_plan = card_validation_plan_path(&cards_root, issue_ref.issue_number());
     let compat_review_policy = card_review_policy_path(&cards_root, issue_ref.issue_number());
     ensure_symlink(&compat_stp, &bundle_stp)?;
     ensure_symlink(&compat_input, &bundle_input)?;
     ensure_symlink(&compat_output, &bundle_output)?;
     ensure_symlink(&compat_plan, &bundle_plan)?;
+    ensure_symlink(&compat_validation_plan, &bundle_validation_plan)?;
     ensure_symlink(&compat_review_policy, &bundle_review_policy)?;
 
     let structured_paths = StructuredBundlePaths {
         plan_path: &bundle_plan,
+        validation_plan_path: &bundle_validation_plan,
         review_policy_path: &bundle_review_policy,
     };
     if bind_existing_cards {
@@ -695,6 +718,20 @@ pub(crate) fn write_plan_card(
     source_path: &Path,
 ) -> Result<()> {
     let text = render_bootstrap_plan_card(repo_root, issue_ref, title, branch, source_path)?;
+    fs::write(path, text)?;
+    Ok(())
+}
+
+pub(crate) fn write_validation_plan_card(
+    repo_root: &Path,
+    path: &Path,
+    issue_ref: &IssueRef,
+    title: &str,
+    branch: &str,
+    source_path: &Path,
+) -> Result<()> {
+    let text =
+        render_bootstrap_validation_plan_card(repo_root, issue_ref, title, branch, source_path)?;
     fs::write(path, text)?;
     Ok(())
 }
@@ -1039,6 +1076,10 @@ fn render_bootstrap_output_card(
 ) -> Result<String> {
     let output_rel =
         path_relative_to_repo(repo_root, &issue_ref.task_bundle_output_path(repo_root));
+    let vpp_rel = path_relative_to_repo(
+        repo_root,
+        &issue_ref.task_bundle_validation_plan_path(repo_root),
+    );
     let timestamp = Utc::now().format("%Y-%m-%dT%H:%M:%SZ");
     let pre_run_unbound = branch_indicates_unbound_state(branch);
     let status = if pre_run_unbound {
@@ -1105,11 +1146,14 @@ fn render_bootstrap_output_card(
             ("<lane_change_reason>", "not_recorded_yet".to_string()),
             ("<expected_runtime_class>", "unknown".to_string()),
             ("<estimate_elapsed_seconds>", "unknown".to_string()),
+            ("<estimated_elapsed_seconds>", "unknown".to_string()),
             ("<actual_elapsed_seconds>", "unknown".to_string()),
             ("<actual_active_work_seconds>", "unknown".to_string()),
             ("<estimate_total_tokens>", "unknown".to_string()),
+            ("<estimated_total_tokens>", "unknown".to_string()),
             ("<actual_total_tokens>", "unknown".to_string()),
             ("<estimate_validation_seconds>", "unknown".to_string()),
+            ("<estimated_validation_seconds>", "unknown".to_string()),
             ("<actual_validation_seconds>", "unknown".to_string()),
             ("<actual_pr_wait_seconds>", "unknown".to_string()),
             ("<actual_ci_wait_seconds>", "unknown".to_string()),
@@ -1118,6 +1162,10 @@ fn render_bootstrap_output_card(
             ("<actual_metrics_confidence>", "unknown".to_string()),
             ("<estimate_error_percent>", "unknown".to_string()),
             ("<completion_state>", "unknown".to_string()),
+            ("<issue_goal_ref>", format!("issue-{}", issue_ref.issue_number())),
+            ("<sprint_goal_ref>", "unknown".to_string()),
+            ("<goal_metrics_rollup_ref>", "unknown".to_string()),
+            ("<vpp_card>", vpp_rel),
             ("<variance_analysis_required>", "not_applicable".to_string()),
             ("<variance_analysis_completed>", "not_applicable".to_string()),
             ("<variance_category>", "not_applicable".to_string()),
@@ -1139,6 +1187,7 @@ fn render_bootstrap_output_card(
                 "Opened the local issue bundle and wrote a truthful pre-run output scaffold."
                     .to_string(),
             ),
+            ("<branch_action>", branch_action.to_string()),
             ("<actions_taken_line_2>", branch_action.to_string()),
             (
                 "<actions_taken_line_3>",
@@ -1351,6 +1400,10 @@ fn render_bootstrap_plan_card(
     let stp_rel = path_relative_to_repo(repo_root, &issue_ref.task_bundle_stp_path(repo_root));
     let sip_rel = path_relative_to_repo(repo_root, &issue_ref.task_bundle_input_path(repo_root));
     let spp_rel = path_relative_to_repo(repo_root, &issue_ref.task_bundle_plan_path(repo_root));
+    let vpp_rel = path_relative_to_repo(
+        repo_root,
+        &issue_ref.task_bundle_validation_plan_path(repo_root),
+    );
     let source_rel = path_relative_to_repo(repo_root, source_path);
     let timestamp = Utc::now().format("%Y-%m-%dT%H:%M:%SZ").to_string();
     let prompt = fs::read_to_string(source_path).unwrap_or_default();
@@ -1419,6 +1472,7 @@ fn render_bootstrap_plan_card(
             ("<stp_card>", stp_rel),
             ("<sip_card>", sip_rel),
             ("<spp_card>", spp_rel),
+            ("<vpp_card>", vpp_rel),
             ("<target_files_surfaces_inline>", repo_inputs_step.clone()),
             ("<non_goals_inline>", non_goals_step),
             ("<plan_summary>", format!("Issue-local execution plan for {title}.")),
@@ -1444,11 +1498,111 @@ fn render_bootstrap_plan_card(
             ("<planned_pvf_lane_source>", planned_pvf_lane_source.clone()),
             ("<expected_runtime_class>", "unknown".to_string()),
             ("<estimate_elapsed_seconds>", "unknown".to_string()),
+            ("<estimated_elapsed_seconds>", "unknown".to_string()),
             ("<estimate_total_tokens>", "unknown".to_string()),
+            ("<estimated_total_tokens>", "unknown".to_string()),
             ("<estimate_validation_seconds>", "unknown".to_string()),
+            ("<estimated_validation_seconds>", "unknown".to_string()),
             ("<estimate_confidence>", "unknown".to_string()),
             ("<estimate_data_source>", "unknown".to_string()),
             ("<estimate_source_ref>", "unknown".to_string()),
+            ("<issue_goal_ref>", format!("issue-{}", issue_ref.issue_number())),
+            ("<sprint_goal_ref>", "unknown".to_string()),
+            ("<goal_metrics_rollup_ref>", "unknown".to_string()),
+        ],
+    );
+    Ok(text)
+}
+
+fn render_bootstrap_validation_plan_card(
+    repo_root: &Path,
+    issue_ref: &IssueRef,
+    title: &str,
+    branch: &str,
+    source_path: &Path,
+) -> Result<String> {
+    let stp_rel = path_relative_to_repo(repo_root, &issue_ref.task_bundle_stp_path(repo_root));
+    let sip_rel = path_relative_to_repo(repo_root, &issue_ref.task_bundle_input_path(repo_root));
+    let spp_rel = path_relative_to_repo(repo_root, &issue_ref.task_bundle_plan_path(repo_root));
+    let source_rel = path_relative_to_repo(repo_root, source_path);
+    let timestamp = Utc::now().format("%Y-%m-%dT%H:%M:%SZ").to_string();
+    let prompt = fs::read_to_string(source_path).unwrap_or_default();
+    let metadata = SourcePromptMetadata::from_prompt(&prompt);
+    let initial_pvf_lane = resolved_initial_pvf_lane(&metadata, title, &prompt);
+    let initial_pvf_lane_source =
+        resolved_initial_pvf_lane_source(&metadata, title, &prompt, &initial_pvf_lane);
+    let planned_pvf_lane = resolved_planned_pvf_lane(&initial_pvf_lane);
+    let planned_pvf_lane_source =
+        resolved_planned_pvf_lane_source(&initial_pvf_lane, &initial_pvf_lane_source);
+    let failure_policy = if planned_pvf_lane == NEEDS_PLANNING_PVF_LANE {
+        "fail_closed_until_validation_lane_is_selected"
+    } else {
+        "fail_closed"
+    };
+    let validation_strategy = issue_prompt_section(&prompt, "Validation Plan")
+        .or_else(|| issue_prompt_section(&prompt, "Tooling Notes"))
+        .map(|value| one_line_summary(&value))
+        .unwrap_or_else(|| {
+            "Select the smallest proving validation lane before execution proceeds.".to_string()
+        });
+    let validation_command = yaml_inline(&validation_strategy);
+    let mut text = read_prompt_template(repo_root, "vpp", &[])?;
+    let issue_url = format!(
+        "https://github.com/{}/issues/{}",
+        default_repo(repo_root)
+            .unwrap_or_else(|_| "danielbaustin/agent-design-language".to_string()),
+        issue_ref.issue_number()
+    );
+    apply_template_values(
+        &mut text,
+        &[
+            ("<issue>", issue_ref.issue_number().to_string()),
+            ("<issue_padded>", issue_ref.padded_issue_number().to_string()),
+            ("<task_id>", format!("issue-{}", issue_ref.padded_issue_number())),
+            ("<run_id>", format!("issue-{}", issue_ref.padded_issue_number())),
+            ("<version>", issue_ref.scope().to_string()),
+            ("<slug>", issue_ref.slug().to_string()),
+            ("<title>", title.to_string()),
+            ("<branch>", branch.to_string()),
+            ("<timestamp>", timestamp),
+            ("<card_status>", "ready".to_string()),
+            ("<status>", "ready".to_string()),
+            ("<issue_url>", issue_url),
+            ("<stp_card>", stp_rel),
+            ("<sip_card>", sip_rel),
+            ("<spp_card>", spp_rel),
+            ("<initial_pvf_lane>", initial_pvf_lane),
+            ("<planned_pvf_lane>", planned_pvf_lane.clone()),
+            (
+                "<lane_registry_path>",
+                "docs/validation/pvf_lanes.json".to_string(),
+            ),
+            ("<lane_registry_template_set>", "vpp.lane.v1".to_string()),
+            ("<validation_runtime_class>", "unknown".to_string()),
+            ("<validation_resource_profile>", "unknown".to_string()),
+            ("<expected_proof_cost>", "unknown".to_string()),
+            ("<planned_validation_seconds>", "unknown".to_string()),
+            ("<planned_validation_tokens>", "unknown".to_string()),
+            ("<issue_goal_ref>", format!("issue-{}", issue_ref.issue_number())),
+            ("<sprint_goal_ref>", "unknown".to_string()),
+            ("<goal_metrics_rollup_ref>", "unknown".to_string()),
+            ("<selected_lanes_inline>", planned_pvf_lane),
+            ("<parallel_groups_inline>", "unknown".to_string()),
+            ("<validation_commands_inline>", validation_command),
+            ("<failure_policy>", failure_policy.to_string()),
+            (
+                "<notes_risks_inline>",
+                format!(
+                    "Generated from {} template; confirm lane selection before relying on this plan. Lane source: {planned_pvf_lane_source}.",
+                    active_prompt_template_set_label(repo_root)
+                ),
+            ),
+            (
+                "<plan_summary>",
+                format!(
+                    "Validation planning prompt for {title}; source issue prompt: {source_rel}."
+                ),
+            ),
         ],
     );
     Ok(text)
@@ -1536,6 +1690,10 @@ fn render_bootstrap_review_policy_card(
     let stp_rel = path_relative_to_repo(repo_root, &issue_ref.task_bundle_stp_path(repo_root));
     let sip_rel = path_relative_to_repo(repo_root, &issue_ref.task_bundle_input_path(repo_root));
     let spp_rel = path_relative_to_repo(repo_root, &issue_ref.task_bundle_plan_path(repo_root));
+    let vpp_rel = path_relative_to_repo(
+        repo_root,
+        &issue_ref.task_bundle_validation_plan_path(repo_root),
+    );
     let srp_rel = path_relative_to_repo(
         repo_root,
         &issue_ref.task_bundle_review_policy_path(repo_root),
@@ -1571,6 +1729,7 @@ fn render_bootstrap_review_policy_card(
             ("<stp_card>", stp_rel),
             ("<sip_card>", sip_rel),
             ("<spp_card>", spp_rel),
+            ("<vpp_card>", vpp_rel),
             ("<srp_card>", srp_rel),
             ("<sor_card>", sor_rel),
             ("<findings_status>", "not_run".to_string()),

@@ -16,9 +16,9 @@ plan_revision: 1
 initial_pvf_lane: "<initial_pvf_lane>"
 planned_pvf_lane: "<planned_pvf_lane>"
 planned_pvf_lane_source: "<planned_pvf_lane_source>"
-estimate_elapsed_seconds: "<estimated_elapsed_seconds>"
-estimate_total_tokens: "<estimated_total_tokens>"
-estimate_validation_seconds: "<estimated_validation_seconds>"
+estimate_elapsed_seconds: "<estimate_elapsed_seconds>"
+estimate_total_tokens: "<estimate_total_tokens>"
+estimate_validation_seconds: "<estimate_validation_seconds>"
 estimate_confidence: "<estimate_confidence>"
 estimate_data_source: "<estimate_data_source>"
 estimate_source_ref: "<estimate_source_ref>"
@@ -124,9 +124,9 @@ Design-time operative plan for `<title>`.
 
 ## Estimate Plan
 
-- Estimated elapsed seconds: `<estimated_elapsed_seconds>`
-- Estimated total tokens: `<estimated_total_tokens>`
-- Estimated validation seconds: `<estimated_validation_seconds>`
+- Estimated elapsed seconds: `<estimate_elapsed_seconds>`
+- Estimated total tokens: `<estimate_total_tokens>`
+- Estimated validation seconds: `<estimate_validation_seconds>`
 - Estimate confidence: `<estimate_confidence>`
 - Estimate data source: `<estimate_data_source>`
 - Estimate source ref: `<estimate_source_ref>`

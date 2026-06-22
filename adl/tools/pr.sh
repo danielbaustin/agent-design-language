@@ -791,6 +791,7 @@ PROMPT_TEMPLATE_ROOT="docs/templates/prompts/1.0.0"
 INPUT_TEMPLATE="$PROMPT_TEMPLATE_ROOT/sip.md"
 STP_TEMPLATE="$PROMPT_TEMPLATE_ROOT/stp.md"
 SPP_TEMPLATE="$PROMPT_TEMPLATE_ROOT/spp.md"
+VPP_TEMPLATE="$PROMPT_TEMPLATE_ROOT/vpp.md"
 SRP_TEMPLATE="$PROMPT_TEMPLATE_ROOT/srp.md"
 OUTPUT_TEMPLATE="$PROMPT_TEMPLATE_ROOT/sor.md"
 COMPAT_INPUT_TEMPLATE="adl/templates/cards/input_card_template.md"
@@ -805,6 +806,7 @@ resolve_prompt_template() {
     sip) primary="$INPUT_TEMPLATE"; compat="$COMPAT_INPUT_TEMPLATE"; legacy="$LEGACY_INPUT_TEMPLATE" ;;
     stp) primary="$STP_TEMPLATE" ;;
     spp) primary="$SPP_TEMPLATE" ;;
+    vpp) primary="$VPP_TEMPLATE" ;;
     srp) primary="$SRP_TEMPLATE" ;;
     sor) primary="$OUTPUT_TEMPLATE"; compat="$COMPAT_OUTPUT_TEMPLATE"; legacy="$LEGACY_OUTPUT_TEMPLATE" ;;
     *) die "unknown prompt template kind: $kind" ;;
@@ -1074,6 +1076,8 @@ seed_input_card() {
     "<slug>" "$source_slug" \
     "<title>" "$title" \
     "<branch>" "$branch" \
+    "<card_status>" "ready" \
+    "<timestamp>" "$(date -u +"%Y-%m-%dT%H:%M:%SZ")" \
     "<issue_url>" "$issue_url" \
     "<source_issue_prompt>" "$(path_relative_to_repo "$source_path")" \
     "<docs_context>" "$docs_value" \
@@ -1155,10 +1159,33 @@ seed_output_card() {
     "<slug>" "$issue_slug" \
     "<title>" "$title" \
     "<branch>" "$branch" \
+    "<card_status>" "draft" \
     "<status>" "$status" \
     "<timestamp>" "$timestamp" \
     "<output_card>" "$output_rel" \
-    "<branch_action>" "$branch_action"
+    "<branch_action>" "$branch_action" \
+    "<initial_pvf_lane>" "needs_planning_lane_assignment" \
+    "<planned_pvf_lane>" "needs_planning_lane_assignment" \
+    "<final_pvf_lane>" "not_recorded_yet" \
+    "<lane_change_reason>" "not_recorded_yet" \
+    "<estimated_elapsed_seconds>" "unknown" \
+    "<actual_elapsed_seconds>" "unknown" \
+    "<estimated_total_tokens>" "unknown" \
+    "<actual_total_tokens>" "unknown" \
+    "<estimated_validation_seconds>" "unknown" \
+    "<actual_validation_seconds>" "unknown" \
+    "<actual_metrics_data_source>" "unavailable_before_issue_execution" \
+    "<actual_metrics_source_ref>" "not_recorded_yet" \
+    "<actual_metrics_confidence>" "unknown" \
+    "<estimate_error_percent>" "not_recorded_yet" \
+    "<issue_goal_ref>" "issue-${issue}" \
+    "<sprint_goal_ref>" "unknown" \
+    "<goal_metrics_rollup_ref>" "unknown" \
+    "<vpp_card>" "$(path_relative_to_repo "$(task_bundle_dir_path "$issue" "$ver" "$issue_slug")/vpp.md")" \
+    "<variance_analysis_required>" "not_recorded_yet" \
+    "<variance_analysis_completed>" "not_recorded_yet" \
+    "<variance_category>" "not_recorded_yet" \
+    "<variance_note>" "No issue execution metrics have been recorded yet."
 
   set_field_line "$tmp" "Task ID" "$task_id"
   set_field_line "$tmp" "Run ID" "$run_id"
@@ -1252,7 +1279,8 @@ source_section_one_line() {
 
 seed_prompt_template_card() {
   local kind="$1" path="$2" issue="$3" title="$4" branch="$5" ver="$6" source_path="$7" slug="$8"
-  local tpl tmp repo issue_url bundle_dir stp_rel sip_rel spp_rel srp_rel sor_rel source_rel target_inline
+  local tpl tmp repo issue_url bundle_dir stp_rel sip_rel spp_rel vpp_rel srp_rel sor_rel source_rel target_inline
+  local timestamp template_source_note
   local source_summary source_goal source_required_outcome source_deliverables source_acceptance source_repo_inputs
   local source_dependencies source_validation source_demo source_non_goals source_issue_graph source_notes
   tpl="$(resolve_prompt_template "$kind")"
@@ -1261,11 +1289,13 @@ seed_prompt_template_card() {
 
   repo="$(default_repo)"
   issue_url="https://github.com/${repo}/issues/${issue}"
+  timestamp="$(date -u +"%Y-%m-%dT%H:%M:%SZ")"
   bundle_dir="$(task_bundle_dir_path "$issue" "$ver" "$slug")"
   source_rel="$(path_relative_to_repo "$source_path")"
   stp_rel="$(path_relative_to_repo "$bundle_dir/stp.md")"
   sip_rel="$(path_relative_to_repo "$bundle_dir/sip.md")"
   spp_rel="$(path_relative_to_repo "$bundle_dir/spp.md")"
+  vpp_rel="$(path_relative_to_repo "$bundle_dir/vpp.md")"
   srp_rel="$(path_relative_to_repo "$bundle_dir/srp.md")"
   sor_rel="$(path_relative_to_repo "$bundle_dir/sor.md")"
   source_summary="$(source_section_one_line "$source_path" "Summary" "Issue-local task surface for $title.")"
@@ -1500,6 +1530,7 @@ EOF
     die "missing $kind prompt template: $tpl"
   fi
   ensure_nonempty_file "$tmp" || die "rendered $kind card is empty: $tmp"
+  template_source_note="Generated from $(path_relative_to_repo "$tpl")."
 
   apply_prompt_template_values "$tmp" \
     "<issue>" "$issue" \
@@ -1510,11 +1541,16 @@ EOF
     "<slug>" "$slug" \
     "<title>" "$title" \
     "<branch>" "$branch" \
+    "<timestamp>" "$timestamp" \
+    "<card_status>" "ready" \
+    "<status>" "ready" \
+    "<activation_state>" "ready" \
     "<issue_url>" "$issue_url" \
     "<source_issue_prompt>" "$source_rel" \
     "<stp_card>" "$stp_rel" \
     "<sip_card>" "$sip_rel" \
     "<spp_card>" "$spp_rel" \
+    "<vpp_card>" "$vpp_rel" \
     "<srp_card>" "$srp_rel" \
     "<sor_card>" "$sor_rel" \
     "<output_card>" "$sor_rel" \
@@ -1535,7 +1571,7 @@ EOF
     "<non_goals>" "$source_non_goals" \
     "<issue_graph_notes>" "$source_issue_graph" \
     "<notes_risks>" "$source_notes" \
-    "<tooling_notes>" "Generated from docs/templates/prompts/1.0.0/." \
+    "<tooling_notes>" "$template_source_note" \
     "<target_files_surfaces_inline>" "$target_inline" \
     "<non_goals_inline>" "$source_non_goals" \
     "<plan_summary>" "Issue-local execution plan for $title." \
@@ -1545,7 +1581,43 @@ EOF
     "<acceptance_criteria_inline>" "$source_acceptance" \
     "<risks_inline>" "Generated card may need editor tightening if the source issue prompt is underspecified." \
     "<validation_plan_inline>" "$source_validation" \
-    "<notes_risks_inline>" "Generated from 1.0.0 template; update before continuing if execution diverges."
+    "<notes_risks_inline>" "$template_source_note Update before continuing if execution diverges." \
+    "<initial_pvf_lane>" "needs_planning_lane_assignment" \
+    "<planned_pvf_lane>" "needs_planning_lane_assignment" \
+    "<planned_pvf_lane_source>" "bootstrap_default_fail_closed" \
+    "<estimated_elapsed_seconds>" "unknown" \
+    "<estimated_total_tokens>" "unknown" \
+    "<estimated_validation_seconds>" "unknown" \
+    "<estimate_confidence>" "unknown" \
+    "<estimate_data_source>" "unknown" \
+    "<estimate_source_ref>" "not_recorded_yet" \
+    "<issue_goal_ref>" "issue-${issue}" \
+    "<sprint_goal_ref>" "unknown" \
+    "<goal_metrics_rollup_ref>" "unknown" \
+    "<findings_status>" "not_run" \
+    "<recommended_outcome>" "not_applicable"
+
+  if [[ "$kind" == "vpp" ]]; then
+    apply_prompt_template_values "$tmp" \
+      "<card_status>" "ready" \
+      "<status>" "ready" \
+      "<initial_pvf_lane>" "needs_planning_lane_assignment" \
+      "<planned_pvf_lane>" "needs_planning_lane_assignment" \
+      "<lane_registry_path>" "docs/validation/pvf_lanes.json" \
+      "<lane_registry_template_set>" "vpp.lane.v1" \
+      "<validation_runtime_class>" "unknown" \
+      "<validation_resource_profile>" "unknown" \
+      "<expected_proof_cost>" "unknown" \
+      "<planned_validation_seconds>" "unknown" \
+      "<planned_validation_tokens>" "unknown" \
+      "<issue_goal_ref>" "issue-${issue}" \
+      "<sprint_goal_ref>" "unknown" \
+      "<goal_metrics_rollup_ref>" "unknown" \
+      "<selected_lanes_inline>" "needs_planning_lane_assignment" \
+      "<parallel_groups_inline>" "unknown" \
+      "<validation_commands_inline>" "needs_planning_lane_assignment" \
+      "<failure_policy>" "fail_closed_until_validation_lane_is_selected"
+  fi
 
   mv "$tmp" "$path"
 }
@@ -1575,8 +1647,9 @@ seed_bootstrap_surfaces() {
 
   in_path="$(input_card_path "$issue" "$version" "$slug")"
   out_path="$(output_card_path "$issue" "$version" "$slug")"
-  local spp_path srp_path
+  local spp_path vpp_path srp_path
   spp_path="$bundle_dir/spp.md"
+  vpp_path="$bundle_dir/vpp.md"
   srp_path="$bundle_dir/srp.md"
   ensure_adl_dirs
   if ! ensure_nonempty_file "$in_path" || input_card_is_bootstrap_stub "$in_path"; then
@@ -1597,6 +1670,12 @@ seed_bootstrap_surfaces() {
   else
     note "SPP card exists: $spp_path" >&2
   fi
+  if ! ensure_nonempty_file "$vpp_path"; then
+    note "Creating VPP card: $vpp_path" >&2
+    seed_prompt_template_card vpp "$vpp_path" "$issue" "$title" "$branch" "$version" "$source_path" "$slug"
+  else
+    note "VPP card exists: $vpp_path" >&2
+  fi
   if ! ensure_nonempty_file "$srp_path"; then
     note "Creating SRP card: $srp_path" >&2
     seed_prompt_template_card srp "$srp_path" "$issue" "$title" "$branch" "$version" "$source_path" "$slug"
@@ -1606,9 +1685,10 @@ seed_bootstrap_surfaces() {
   sync_legacy_links_for_issue "$issue" "$version" "$slug"
   validate_bootstrap_stp "$stp_path"
   validate_structured_card spp "$spp_path"
+  validate_structured_card vpp "$vpp_path"
   validate_structured_card srp "$srp_path"
   validate_bootstrap_cards "$issue" "$slug" "$branch" "$in_path" "$out_path"
-  printf '%s\n%s\n%s\n%s\n%s\n' "$stp_path" "$in_path" "$out_path" "$spp_path" "$srp_path"
+  printf '%s\n%s\n%s\n%s\n%s\n%s\n' "$stp_path" "$in_path" "$out_path" "$spp_path" "$vpp_path" "$srp_path"
 }
 
 

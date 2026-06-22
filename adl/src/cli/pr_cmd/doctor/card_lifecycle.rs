@@ -9,6 +9,7 @@ pub(super) fn build_doctor_card_lifecycle(
     sip_path: &Path,
     stp_path: &Path,
     spp_path: &Path,
+    vpp_path: &Path,
     srp_path: &Path,
     sor_path: &Path,
 ) -> DoctorCardLifecycleJson {
@@ -16,6 +17,7 @@ pub(super) fn build_doctor_card_lifecycle(
         classify_sip_stage(repo_root, sip_path),
         classify_stp_stage(repo_root, stp_path),
         classify_spp_stage(repo_root, spp_path),
+        classify_vpp_stage(repo_root, vpp_path),
         classify_srp_stage(repo_root, srp_path),
         classify_sor_stage(repo_root, sor_path),
     ];
@@ -26,7 +28,7 @@ pub(super) fn build_doctor_card_lifecycle(
     let active_stage = next_required_stage.unwrap_or("SOR");
     let pr_run_readiness = if stages
         .iter()
-        .filter(|stage| ["SIP", "STP", "SPP", "SRP"].contains(&stage.stage))
+        .filter(|stage| ["SIP", "STP", "SPP", "VPP", "SRP"].contains(&stage.stage))
         .all(|stage| stage.design_time_complete)
     {
         "ready"
@@ -45,13 +47,74 @@ pub(super) fn build_doctor_card_lifecycle(
     };
 
     DoctorCardLifecycleJson {
-        order: vec!["SIP", "STP", "SPP", "SRP", "SOR"],
+        order: vec!["SIP", "STP", "SPP", "VPP", "SRP", "SOR"],
         active_stage,
         next_required_stage,
         pr_run_readiness,
         pr_finish_readiness,
         stages,
     }
+}
+
+fn classify_vpp_stage(repo_root: &Path, path: &Path) -> DoctorCardStageJson {
+    let Some(text) = read_card_text(path) else {
+        return missing_stage(repo_root, "VPP", path, "vpp-editor");
+    };
+    let status = line_value_after_prefix(&text, "status:").unwrap_or_default();
+    if !design_time_card_status_allows_execution(&text) {
+        return card_stage(
+            repo_root,
+            "VPP",
+            path,
+            stage_truth(
+                "active",
+                false,
+                false,
+                Some("vpp-editor"),
+                "VPP card_status must be ready or approved before execution binding.",
+            ),
+        );
+    }
+    if has_generic_vpp_design_time_scaffold(&text) {
+        return card_stage(
+            repo_root,
+            "VPP",
+            path,
+            stage_truth(
+                "scaffold",
+                false,
+                false,
+                Some("vpp-editor"),
+                "VPP is still generic validation-planning text and needs lane truth.",
+            ),
+        );
+    }
+    if ["ready", "reviewed", "approved"].contains(&status.trim_matches('"')) {
+        return card_stage(
+            repo_root,
+            "VPP",
+            path,
+            stage_truth(
+                "complete",
+                true,
+                false,
+                None,
+                "VPP has ready, reviewed, or approved validation planning state.",
+            ),
+        );
+    }
+    card_stage(
+        repo_root,
+        "VPP",
+        path,
+        stage_truth(
+            "active",
+            false,
+            false,
+            Some("vpp-editor"),
+            "VPP is present but not yet marked ready, reviewed, or approved.",
+        ),
+    )
 }
 
 pub(super) fn doctor_ready_status_for(lifecycle: &DoctorCardLifecycleJson) -> &'static str {
@@ -278,6 +341,27 @@ fn has_generic_spp_design_time_scaffold(text: &str) -> bool {
     MARKERS.iter().any(|marker| text.contains(marker)) || has_truncation_sentinel_line(text)
 }
 
+fn has_generic_vpp_design_time_scaffold(text: &str) -> bool {
+    let unresolved_planned_lane = line_value_after_prefix(text, "planned_pvf_lane:")
+        .as_deref()
+        .map(|value| value == "needs_planning_lane_assignment")
+        .unwrap_or_else(|| {
+            text.contains("Planned PVF lane for execution: `needs_planning_lane_assignment`")
+        });
+    let unresolved_selected_lane = text.contains("- \"needs_planning_lane_assignment\"")
+        || text.contains("- needs_planning_lane_assignment");
+    let unresolved_failure_policy = line_value_after_prefix(text, "failure_policy:")
+        .as_deref()
+        .map(|value| value == "fail_closed_until_validation_lane_is_selected")
+        .unwrap_or_else(|| text.contains("fail_closed_until_validation_lane_is_selected"));
+    const MARKERS: &[&str] = &["selected_lanes_inline: needs_planning_lane_assignment"];
+    unresolved_planned_lane
+        || unresolved_selected_lane
+        || unresolved_failure_policy
+        || MARKERS.iter().any(|marker| text.contains(marker))
+        || has_truncation_sentinel_line(text)
+}
+
 fn has_truncation_sentinel_line(text: &str) -> bool {
     text.lines()
         .map(str::trim)
@@ -404,6 +488,7 @@ pub(super) fn validate_closed_completed_ready_bundle(
         || !ensure_nonempty_file_path(root_bundle_input)?
         || !ensure_nonempty_file_path(root_bundle_output)?
         || !ensure_nonempty_file_path(bundle_paths.plan_path)?
+        || !ensure_nonempty_file_path(bundle_paths.validation_plan_path)?
         || !ensure_nonempty_file_path(bundle_paths.review_policy_path)?;
     if canonical_bundle_missing {
         bail!(
@@ -622,7 +707,8 @@ fn card_stage(
         path: path_relative_to_repo(repo_root, path),
         state: truth.state,
         complete: truth.complete,
-        design_time_complete: matches!(stage, "SIP" | "STP" | "SPP" | "SRP") && truth.complete,
+        design_time_complete: matches!(stage, "SIP" | "STP" | "SPP" | "VPP" | "SRP")
+            && truth.complete,
         final_ready: truth.final_ready,
         next_editor: truth.next_editor,
         detail: truth.detail.to_string(),

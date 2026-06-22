@@ -74,6 +74,8 @@ fn bootstrap_cards_use_versioned_prompt_templates_when_available() {
     let stp = fs::read_to_string(&bundle_stp).expect("read stp");
     let sip = fs::read_to_string(&bundle_input).expect("read sip");
     let spp = fs::read_to_string(issue_ref.task_bundle_plan_path(&repo)).expect("read spp");
+    let vpp =
+        fs::read_to_string(issue_ref.task_bundle_validation_plan_path(&repo)).expect("read vpp");
     let srp =
         fs::read_to_string(issue_ref.task_bundle_review_policy_path(&repo)).expect("read srp");
     let sor = fs::read_to_string(&bundle_output).expect("read sor");
@@ -82,12 +84,13 @@ fn bootstrap_cards_use_versioned_prompt_templates_when_available() {
         ("STP", &stp),
         ("SIP", &sip),
         ("SPP", &spp),
+        ("VPP", &vpp),
         ("SRP", &srp),
         ("SOR", &sor),
     ] {
         assert!(
             text.contains(&format!(
-                "Canonical Template Source: `docs/templates/prompts/1.0.2/{}.md`",
+                "Canonical Template Source: `docs/templates/prompts/1.0.3/{}.md`",
                 kind.to_ascii_lowercase()
             )),
             "{kind} should identify the versioned template source"
@@ -117,7 +120,14 @@ fn bootstrap_cards_use_versioned_prompt_templates_when_available() {
     assert!(spp.contains(
         "- Unknown-value rule: record `unknown`, never `0`, when the estimate is unavailable or intentionally deferred."
     ));
+    assert!(vpp.contains("artifact_type: \"structured_validation_planning_prompt\""));
+    assert!(vpp.contains("status: \"ready\""));
+    assert!(vpp.contains("initial_pvf_lane: \"prompt_template\""));
+    assert!(vpp.contains("planned_pvf_lane: \"prompt_template\""));
+    assert!(vpp.contains("## Validation Planning Summary"));
+    assert!(vpp.contains("## Selected Validation Lanes"));
     assert!(srp.contains("artifact_type: \"structured_review_prompt\""));
+    assert!(srp.contains("vpp.md"));
     assert!(sor.contains("Status: IN_PROGRESS"));
     assert!(sor.contains("## PVF Lane Truth"));
     assert!(sor.contains("## Issue Metrics Truth"));
@@ -126,6 +136,7 @@ fn bootstrap_cards_use_versioned_prompt_templates_when_available() {
     assert!(sor.contains("- Goal metrics data source: `unknown`"));
     assert!(sor.contains("- Goal metrics source ref: `unknown`"));
     assert!(sor.contains("- Estimate error percent: `unknown`"));
+    assert!(sor.contains("- Validation planning prompt: `.adl/v0.91.3/tasks/issue-3286__tools-versioned-csdlc-prompt-templates/vpp.md`"));
     assert!(sor.contains("Integration method used: local ignored card-bundle scaffold write under the active checkout; tracked implementation artifacts do not exist yet"));
     assert!(!sor.contains("direct write in main repo for the local ignored pre-run record"));
 }
@@ -194,7 +205,7 @@ Fresh bootstrap output contains all five C-SDLC cards with no raw template place
 ## Repo Inputs
 
 - adl/src/cli/pr_cmd_cards/cards.rs
-- docs/templates/prompts/1.0.2/
+- docs/templates/prompts/1.0.3/
 
 ## Dependencies
 
@@ -259,7 +270,7 @@ Fresh bootstrap output contains all five C-SDLC cards with no raw template place
         let text = fs::read_to_string(path).expect("read refreshed card");
         assert_no_prompt_template_residue(kind, &text);
         assert!(
-            text.contains("Canonical Template Source: `docs/templates/prompts/1.0.2/"),
+            text.contains("Canonical Template Source: `docs/templates/prompts/1.0.3/"),
             "{kind} should be regenerated from the versioned template set"
         );
     }
@@ -316,7 +327,7 @@ Legacy design-time-ready SPP from the pre-template transition window.
     ensure_bootstrap_cards(&repo, &issue_ref, title, "not bound yet", &source_path)
         .expect("legacy SPP should be refreshed");
     let spp = fs::read_to_string(&spp_path).expect("read spp");
-    assert!(spp.contains("Canonical Template Source: `docs/templates/prompts/1.0.2/spp.md`"));
+    assert!(spp.contains("Canonical Template Source: `docs/templates/prompts/1.0.3/spp.md`"));
     assert!(!spp.contains("activation_state: \"design_time_ready\""));
 }
 
@@ -556,7 +567,7 @@ review_hooks:
 notes: "Reviewed card should remain stable across pre-run bootstrap."
 ---
 
-Canonical Template Source: `docs/templates/prompts/1.0.2/spp.md`
+Canonical Template Source: `docs/templates/prompts/1.0.3/spp.md`
 
 # Structured Plan Prompt
 
@@ -665,7 +676,7 @@ status: "approved"
 activation_state: "design_time_ready"
 ---
 
-Canonical Template Source: `docs/templates/prompts/1.0.2/spp.md`
+Canonical Template Source: `docs/templates/prompts/1.0.3/spp.md`
 
 # Structured Plan Prompt
 
@@ -736,7 +747,7 @@ The generated SPP should carry source-prompt facts into the plan.
 ## Repo Inputs
 
 - adl/src/cli/pr_cmd_cards/cards.rs
-- docs/templates/prompts/1.0.2/spp.md
+- docs/templates/prompts/1.0.3/spp.md
 
 ## Dependencies
 
@@ -852,7 +863,7 @@ All generated prompt cards pass the sprint readiness checker.
 ## Repo Inputs
 
 - adl/src/cli/pr_cmd_cards/cards.rs
-- docs/templates/prompts/1.0.2/
+- docs/templates/prompts/1.0.3/
 
 ## Dependencies
 
@@ -908,7 +919,7 @@ All generated prompt cards pass the sprint readiness checker.
         "Use dependency truth from the linked source issue prompt",
         "Review source issue prompt and scoped repo inputs",
         "Follow demo/proof requirements from the linked source issue prompt",
-        "Generated from 1.0.2 C-SDLC prompt template; refine with editor skills before execution if needed",
+        "Generated from 1.0.3 C-SDLC prompt template; refine with editor skills before execution if needed",
     ] {
         assert!(
             !stp.contains(marker),

@@ -32,10 +32,12 @@ pub(super) fn run_doctor_ready(
     let root_bundle_input = issue_ref.task_bundle_input_path(repo_root);
     let root_bundle_output = issue_ref.task_bundle_output_path(repo_root);
     let root_bundle_plan = issue_ref.task_bundle_plan_path(repo_root);
+    let root_bundle_validation_plan = issue_ref.task_bundle_validation_plan_path(repo_root);
     let root_bundle_review_policy = issue_ref.task_bundle_review_policy_path(repo_root);
     let wt_bundle_input = issue_ref.task_bundle_input_path(&worktree_path);
     let wt_bundle_output = issue_ref.task_bundle_output_path(&worktree_path);
     let wt_bundle_plan = issue_ref.task_bundle_plan_path(&worktree_path);
+    let wt_bundle_validation_plan = issue_ref.task_bundle_validation_plan_path(&worktree_path);
     let wt_bundle_review_policy = issue_ref.task_bundle_review_policy_path(&worktree_path);
     let closed_completed = crate::cli::pr_cmd::lifecycle::issue_is_closed_and_completed(
         issue_ref.issue_number(),
@@ -53,6 +55,7 @@ pub(super) fn run_doctor_ready(
             &root_bundle_output,
             StructuredBundlePaths {
                 plan_path: &root_bundle_plan,
+                validation_plan_path: &root_bundle_validation_plan,
                 review_policy_path: &root_bundle_review_policy,
             },
         )?;
@@ -71,6 +74,7 @@ pub(super) fn run_doctor_ready(
                 &root_bundle_input,
                 &root_stp,
                 &root_bundle_plan,
+                &root_bundle_validation_plan,
                 &root_bundle_review_policy,
                 &root_bundle_output,
             ),
@@ -82,6 +86,7 @@ pub(super) fn run_doctor_ready(
         &root_bundle_input,
         &root_bundle_output,
         &root_bundle_plan,
+        &root_bundle_validation_plan,
         &root_bundle_review_policy,
     ]
     .iter()
@@ -91,6 +96,7 @@ pub(super) fn run_doctor_ready(
         &wt_bundle_input,
         &wt_bundle_output,
         &wt_bundle_plan,
+        &wt_bundle_validation_plan,
         &wt_bundle_review_policy,
     ]
     .iter()
@@ -123,6 +129,7 @@ pub(super) fn run_doctor_ready(
             &wt_bundle_output,
             StructuredBundlePaths {
                 plan_path: &wt_bundle_plan,
+                validation_plan_path: &wt_bundle_validation_plan,
                 review_policy_path: &wt_bundle_review_policy,
             },
         )?;
@@ -131,6 +138,7 @@ pub(super) fn run_doctor_ready(
             &wt_bundle_input,
             &wt_stp,
             &wt_bundle_plan,
+            &wt_bundle_validation_plan,
             &wt_bundle_review_policy,
             &wt_bundle_output,
         );
@@ -162,6 +170,7 @@ pub(super) fn run_doctor_ready(
         repo_root,
         StructuredBundlePaths {
             plan_path: &root_bundle_plan,
+            validation_plan_path: &root_bundle_validation_plan,
             review_policy_path: &root_bundle_review_policy,
         },
     )?;
@@ -194,6 +203,7 @@ pub(super) fn run_doctor_ready(
                 &root_bundle_input,
                 &root_stp,
                 &root_bundle_plan,
+                &root_bundle_validation_plan,
                 &root_bundle_review_policy,
                 &root_bundle_output,
             );
@@ -222,6 +232,7 @@ pub(super) fn run_doctor_ready(
             &root_bundle_input,
             &root_stp,
             &root_bundle_plan,
+            &root_bundle_validation_plan,
             &root_bundle_review_policy,
             &root_bundle_output,
         );
@@ -270,6 +281,7 @@ pub(super) fn run_doctor_ready(
         &root_bundle_output,
         StructuredBundlePaths {
             plan_path: &root_bundle_plan,
+            validation_plan_path: &root_bundle_validation_plan,
             review_policy_path: &root_bundle_review_policy,
         },
     )?;
@@ -282,6 +294,7 @@ pub(super) fn run_doctor_ready(
         &wt_bundle_output,
         StructuredBundlePaths {
             plan_path: &wt_bundle_plan,
+            validation_plan_path: &wt_bundle_validation_plan,
             review_policy_path: &wt_bundle_review_policy,
         },
     )?;
@@ -291,6 +304,7 @@ pub(super) fn run_doctor_ready(
         &wt_bundle_input,
         &wt_stp,
         &wt_bundle_plan,
+        &wt_bundle_validation_plan,
         &wt_bundle_review_policy,
         &wt_bundle_output,
     );
@@ -320,6 +334,7 @@ pub(super) fn ensure_pr_run_design_time_ready(
     let root_bundle_input = issue_ref.task_bundle_input_path(repo_root);
     let root_bundle_output = issue_ref.task_bundle_output_path(repo_root);
     let root_bundle_plan = issue_ref.task_bundle_plan_path(repo_root);
+    let root_bundle_validation_plan = issue_ref.task_bundle_validation_plan_path(repo_root);
     let root_bundle_review_policy = issue_ref.task_bundle_review_policy_path(repo_root);
     validate_initialized_cards(
         issue_ref.issue_number(),
@@ -329,6 +344,7 @@ pub(super) fn ensure_pr_run_design_time_ready(
         repo_root,
         StructuredBundlePaths {
             plan_path: &root_bundle_plan,
+            validation_plan_path: &root_bundle_validation_plan,
             review_policy_path: &root_bundle_review_policy,
         },
     )?;
@@ -337,6 +353,7 @@ pub(super) fn ensure_pr_run_design_time_ready(
         &root_bundle_input,
         &root_stp,
         &root_bundle_plan,
+        &root_bundle_validation_plan,
         &root_bundle_review_policy,
         &root_bundle_output,
     );
@@ -347,7 +364,7 @@ pub(super) fn ensure_pr_run_design_time_ready(
     let blockers = lifecycle
         .stages
         .iter()
-        .filter(|stage| ["SIP", "STP", "SPP", "SRP"].contains(&stage.stage))
+        .filter(|stage| ["SIP", "STP", "SPP", "VPP", "SRP"].contains(&stage.stage))
         .filter(|stage| !stage.design_time_complete)
         .map(|stage| {
             format!(
