@@ -205,7 +205,15 @@ rust_pr_delegate_available() {
   if [[ -n "$cached_bin" && -x "$cached_bin" ]]; then
     return 0
   fi
+  cached_bin="$(rust_pr_subcommand_primary_cached_bin "${1:-}" || true)"
+  if [[ -n "$cached_bin" && -x "$cached_bin" ]]; then
+    return 0
+  fi
   cached_bin="$(rust_pr_delegate_cached_bin || true)"
+  if [[ -n "$cached_bin" && -x "$cached_bin" ]]; then
+    return 0
+  fi
+  cached_bin="$(rust_pr_delegate_primary_cached_bin || true)"
   if [[ -n "$cached_bin" && -x "$cached_bin" ]]; then
     return 0
   fi
@@ -225,12 +233,55 @@ rust_pr_delegate_root() {
   repo_root
 }
 
+rust_pr_delegate_primary_root() {
+  local root
+  root="$(rust_pr_delegate_root)"
+  if [[ -n "${ADL_PRIMARY_CHECKOUT_ROOT:-}" && -f "${ADL_PRIMARY_CHECKOUT_ROOT}/adl/Cargo.toml" ]]; then
+    printf '%s\n' "${ADL_PRIMARY_CHECKOUT_ROOT}"
+    return 0
+  fi
+  case "$root" in
+    */.worktrees/*)
+      printf '%s\n' "${root%%/.worktrees/*}"
+      ;;
+    *)
+      printf '%s\n' "$root"
+      ;;
+  esac
+}
+
+rust_pr_worktree_inputs_are_newer_than_bin() {
+  local root="$1" candidate="$2"
+  [[ -f "$root/adl/Cargo.toml" && "$root/adl/Cargo.toml" -nt "$candidate" ]] && return 0
+  [[ -f "$root/adl/Cargo.lock" && "$root/adl/Cargo.lock" -nt "$candidate" ]] && return 0
+  [[ -f "$root/adl/build.rs" && "$root/adl/build.rs" -nt "$candidate" ]] && return 0
+  if [[ -d "$root/adl/src" ]] && find "$root/adl/src" -type f -newer "$candidate" -print -quit | grep -q .; then
+    return 0
+  fi
+  return 1
+}
+
 rust_pr_delegate_cached_bin() {
-  local root candidate
+  local root primary_root candidate
   root="$(rust_pr_delegate_root)"
   candidate="$root/adl/target/debug/adl"
   [[ -x "$candidate" ]] || return 1
   rust_pr_delegate_bin_is_fresh "$root" "$candidate" || return 1
+  printf '%s\n' "$candidate"
+  return 0
+}
+
+rust_pr_delegate_primary_cached_bin() {
+  local root primary_root candidate
+  root="$(rust_pr_delegate_root)"
+  primary_root="$(rust_pr_delegate_primary_root)"
+  [[ "$primary_root" != "$root" ]] || return 1
+  candidate="$primary_root/adl/target/debug/adl"
+  [[ -x "$candidate" ]] || return 1
+  rust_pr_delegate_bin_is_fresh "$primary_root" "$candidate" || return 1
+  if rust_pr_worktree_inputs_are_newer_than_bin "$root" "$candidate"; then
+    return 1
+  fi
   printf '%s\n' "$candidate"
 }
 
@@ -306,9 +357,152 @@ rust_pr_subcommand_cached_bin() {
   printf '%s\n' "$candidate"
 }
 
+rust_pr_subcommand_primary_cached_bin() {
+  local subcommand="$1"
+  local root primary_root binary_name candidate
+  root="$(rust_pr_delegate_root)"
+  primary_root="$(rust_pr_delegate_primary_root)"
+  [[ "$primary_root" != "$root" ]] || return 1
+  binary_name="$(rust_pr_subcommand_binary_name "$subcommand" || true)"
+  [[ -n "$binary_name" ]] || return 1
+  candidate="$primary_root/adl/target/debug/$binary_name"
+  [[ -x "$candidate" ]] || return 1
+  rust_pr_delegate_bin_is_fresh "$primary_root" "$candidate" || return 1
+  if rust_pr_worktree_inputs_are_newer_than_bin "$root" "$candidate"; then
+    return 1
+  fi
+  printf '%s\n' "$candidate"
+}
+
+rust_pr_cargo_delegate_timeout_secs() {
+  local value
+  value="${ADL_PR_CARGO_DELEGATE_TIMEOUT_SECS:-180}"
+  if [[ "$value" =~ ^[0-9]+$ ]]; then
+    printf '%s\n' "$value"
+  else
+    printf '180\n'
+  fi
+}
+
+rust_pr_cargo_delegate_build_lock_timeout_secs() {
+  local value
+  value="${ADL_PR_CARGO_DELEGATE_BUILD_LOCK_TIMEOUT_SECS:-15}"
+  if [[ "$value" =~ ^[0-9]+$ ]]; then
+    printf '%s\n' "$value"
+  else
+    printf '15\n'
+  fi
+}
+
+terminate_rust_pr_delegate_pid() {
+  local pid="$1"
+  kill "$pid" 2>/dev/null || true
+  adl_obs_sleep_ms 200
+  if kill -0 "$pid" 2>/dev/null; then
+    kill -KILL "$pid" 2>/dev/null || true
+  fi
+}
+
+acquire_rust_pr_delegate_build_lock() {
+  local lock_dir="$1" subcommand="$2" delegate_bin="$3"
+  local timeout_secs start now last_heartbeat heartbeat_interval_ms
+  timeout_secs="$(rust_pr_cargo_delegate_build_lock_timeout_secs)"
+  heartbeat_interval_ms="$(adl_obs_heartbeat_interval_ms)"
+  start="$(date +%s)"
+  last_heartbeat="$start"
+  while ! mkdir "$lock_dir" 2>/dev/null; do
+    now="$(date +%s)"
+    if (( timeout_secs >= 0 && now - start >= timeout_secs )); then
+      adl_obs_event "pr.sh" "rust_delegate_wait" "timeout" \
+        "subcommand" "$subcommand" \
+        "delegate" "cargo" \
+        "bin" "$delegate_bin" \
+        "reason_code" "build_lock_timeout" \
+        "lock_dir" "$lock_dir" \
+        "timeout_secs" "$timeout_secs"
+      cat >&2 <<EOF
+ERROR: Rust PR delegate cargo fallback is already busy for too long.
+subcommand=$subcommand
+delegate_bin=$delegate_bin
+lock_dir=$lock_dir
+timeout_seconds=$timeout_secs
+hint=build the direct adl-pr-* binaries first or wait for the active cargo delegate to finish
+EOF
+      return 75
+    fi
+    if (( now > last_heartbeat )); then
+      adl_obs_event "pr.sh" "rust_delegate_wait" "heartbeat" \
+        "subcommand" "$subcommand" \
+        "delegate" "cargo" \
+        "bin" "$delegate_bin" \
+        "lock_dir" "$lock_dir" \
+        "elapsed_ms" "$(( (now - start) * 1000 ))"
+      last_heartbeat="$now"
+    fi
+    adl_obs_sleep_ms "$heartbeat_interval_ms"
+  done
+  ADL_PR_RUST_DELEGATE_BUILD_LOCK_HELD="$lock_dir"
+  return 0
+}
+
+run_rust_pr_delegate_with_liveness() {
+  local subcommand="$1" manifest="$2" delegate_bin="$3"
+  shift 3 || true
+  local timeout_secs heartbeat_interval_ms elapsed_ms status pid
+  timeout_secs="$(rust_pr_cargo_delegate_timeout_secs)"
+  heartbeat_interval_ms="$(adl_obs_heartbeat_interval_ms)"
+  set +e
+  cargo run --quiet --locked --manifest-path "$manifest" --bin "$delegate_bin" -- "$@" &
+  pid="$!"
+  set -e
+  trap 'terminate_rust_pr_delegate_pid "$pid"' INT TERM
+  elapsed_ms=0
+  while kill -0 "$pid" 2>/dev/null; do
+    adl_obs_sleep_ms "$heartbeat_interval_ms"
+    elapsed_ms=$((elapsed_ms + heartbeat_interval_ms))
+    if ! kill -0 "$pid" 2>/dev/null; then
+      break
+    fi
+    if (( timeout_secs > 0 && elapsed_ms >= timeout_secs * 1000 )); then
+      terminate_rust_pr_delegate_pid "$pid"
+      wait "$pid" 2>/dev/null || true
+      trap - INT TERM
+      adl_obs_event "pr.sh" "rust_delegate" "timeout" \
+        "subcommand" "$subcommand" \
+        "delegate" "cargo" \
+        "bin" "$delegate_bin" \
+        "manifest" "$manifest" \
+        "timeout_secs" "$timeout_secs" \
+        "elapsed_ms" "$elapsed_ms" \
+        "reason_code" "cargo_delegate_timeout"
+      cat >&2 <<EOF
+ERROR: Rust PR delegate cargo fallback timed out.
+subcommand=$subcommand
+delegate_bin=$delegate_bin
+manifest=$manifest
+timeout_seconds=$timeout_secs
+hint=build the direct adl-pr-* binaries first or increase ADL_PR_CARGO_DELEGATE_TIMEOUT_SECS for an intentionally long compile
+EOF
+      return 124
+    fi
+    adl_obs_event "pr.sh" "rust_delegate" "heartbeat" \
+      "subcommand" "$subcommand" \
+      "delegate" "cargo" \
+      "bin" "$delegate_bin" \
+      "manifest" "$manifest" \
+      "elapsed_ms" "$elapsed_ms"
+  done
+  set +e
+  wait "$pid"
+  status="$?"
+  set -e
+  trap - INT TERM
+  return "$status"
+}
+
 delegate_pr_command_to_rust() {
   local subcommand="$1"; shift || true
-  local root manifest cached_bin override_bin direct_bin
+  local root manifest cached_bin override_bin direct_bin build_lock_dir
   root="$(rust_pr_delegate_root)"
   manifest="$root/adl/Cargo.toml"
   # These Rust-owned delegated paths intentionally install no shell-level
@@ -329,17 +523,48 @@ delegate_pr_command_to_rust() {
     adl_obs_event "pr.sh" "rust_delegate" "exec" "subcommand" "$subcommand" "delegate" "$direct_bin"
     exec "$direct_bin" "$@"
   fi
+  direct_bin="$(rust_pr_subcommand_primary_cached_bin "$subcommand" || true)"
+  if [[ -n "$direct_bin" ]]; then
+    adl_obs_event "pr.sh" "rust_delegate" "exec" "subcommand" "$subcommand" "delegate" "$direct_bin"
+    exec "$direct_bin" "$@"
+  fi
   cached_bin="$(rust_pr_delegate_cached_bin || true)"
   if [[ -n "$cached_bin" ]]; then
     adl_obs_event "pr.sh" "rust_delegate" "exec" "subcommand" "$subcommand" "delegate" "$cached_bin"
     exec "$cached_bin" pr "$subcommand" "$@"
   fi
+  cached_bin="$(rust_pr_delegate_primary_cached_bin || true)"
+  if [[ -n "$cached_bin" ]]; then
+    adl_obs_event "pr.sh" "rust_delegate" "exec" "subcommand" "$subcommand" "delegate" "$cached_bin"
+    exec "$cached_bin" pr "$subcommand" "$@"
+  fi
+  build_lock_dir="${ADL_PR_CARGO_DELEGATE_BUILD_LOCK_DIR:-$root/adl/target/.adl-pr-rust-delegate-build.lock}"
+  mkdir -p "$(dirname "$build_lock_dir")"
+  ADL_PR_RUST_DELEGATE_BUILD_LOCK_HELD=""
   if direct_bin="$(rust_pr_subcommand_binary_name "$subcommand" || true)"; [[ -n "$direct_bin" ]]; then
     adl_obs_event "pr.sh" "rust_delegate" "exec" "subcommand" "$subcommand" "delegate" "cargo" "manifest" "$manifest" "bin" "$direct_bin" "lock_mode" "locked"
-    exec cargo run --quiet --locked --manifest-path "$manifest" --bin "$direct_bin" -- "$@"
+    acquire_rust_pr_delegate_build_lock "$build_lock_dir" "$subcommand" "$direct_bin" || exit "$?"
+    trap 'if [[ -n "${ADL_PR_RUST_DELEGATE_BUILD_LOCK_HELD:-}" ]]; then rmdir "$ADL_PR_RUST_DELEGATE_BUILD_LOCK_HELD" 2>/dev/null || true; fi' EXIT
+    set +e
+    run_rust_pr_delegate_with_liveness "$subcommand" "$manifest" "$direct_bin" "$@"
+    local status="$?"
+    set -e
+    rmdir "$build_lock_dir" 2>/dev/null || true
+    ADL_PR_RUST_DELEGATE_BUILD_LOCK_HELD=""
+    trap - EXIT
+    exit "$status"
   fi
   adl_obs_event "pr.sh" "rust_delegate" "exec" "subcommand" "$subcommand" "delegate" "cargo" "manifest" "$manifest" "bin" "adl" "lock_mode" "locked"
-  exec cargo run --quiet --locked --manifest-path "$manifest" --bin adl -- pr "$subcommand" "$@"
+  acquire_rust_pr_delegate_build_lock "$build_lock_dir" "$subcommand" "adl" || exit "$?"
+  trap 'if [[ -n "${ADL_PR_RUST_DELEGATE_BUILD_LOCK_HELD:-}" ]]; then rmdir "$ADL_PR_RUST_DELEGATE_BUILD_LOCK_HELD" 2>/dev/null || true; fi' EXIT
+  set +e
+  run_rust_pr_delegate_with_liveness "$subcommand" "$manifest" "adl" pr "$subcommand" "$@"
+  local status="$?"
+  set -e
+  rmdir "$build_lock_dir" 2>/dev/null || true
+  ADL_PR_RUST_DELEGATE_BUILD_LOCK_HELD=""
+  trap - EXIT
+  exit "$status"
 }
 
 require_rust_pr_delegate() {

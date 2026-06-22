@@ -2522,6 +2522,34 @@ fn finish_validation_profile_classifies_issue_small_binary_slice() {
 }
 
 #[test]
+fn finish_validation_profile_classifies_delegate_liveness_small_binary_slice() {
+    let plan = select_finish_validation_plan_for_finish(
+        4413,
+        ".",
+        &[
+            "adl/tools/observability.sh".to_string(),
+            "adl/tools/pr.sh".to_string(),
+            "adl/tools/test_pr_delegate_cargo_fallback_liveness.sh".to_string(),
+            "adl/tools/test_pr_delegate_prefers_primary_checkout_binary.sh".to_string(),
+        ],
+    )
+    .expect("delegate liveness small binary focused plan");
+
+    assert_eq!(plan.mode, FinishValidationMode::SmallBinaryFocused);
+    assert!(plan
+        .commands
+        .contains(&"bash adl/tools/test_pr_small_binary_delegation.sh".to_string()));
+    assert!(!plan
+        .commands
+        .iter()
+        .any(|command| command.contains("cargo clippy")));
+    assert!(!plan
+        .commands
+        .iter()
+        .any(|command| command.contains("cargo nextest")));
+}
+
+#[test]
 fn finish_validation_profile_classifies_closing_linkage_small_binary_slice() {
     let plan = select_finish_validation_plan_for_finish(
         4286,

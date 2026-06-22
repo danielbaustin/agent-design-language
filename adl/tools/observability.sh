@@ -89,3 +89,24 @@ adl_obs_stage_done() {
   elapsed=$((now - started_ms))
   adl_obs_event "$command" "$stage" "$result" "elapsed_ms" "$elapsed" "$@"
 }
+
+adl_obs_heartbeat_interval_ms() {
+  local value
+  value="${ADL_OBSERVABILITY_HEARTBEAT_MS:-5000}"
+  if [[ "$value" =~ ^[0-9]+$ ]] && (( value > 0 )); then
+    printf '%s\n' "$value"
+  else
+    printf '5000\n'
+  fi
+}
+
+adl_obs_sleep_ms() {
+  local millis="$1"
+  python3 - "$millis" <<'PY'
+import sys
+import time
+
+millis = int(sys.argv[1])
+time.sleep(max(millis, 0) / 1000.0)
+PY
+}
