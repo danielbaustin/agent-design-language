@@ -1603,3 +1603,106 @@ assert snapshot["completion_state"] == "deferred"
 assert snapshot["completed_at"] == "2026-06-22T18:40:25Z"
 assert snapshot["elapsed_seconds_raw"] == "91"
 PY
+
+goal_stage_artifacts_dir="${tmpdir}/issue-4431-artifacts/goal_metrics"
+goal_stage_issue_start_a="${tmpdir}/issue-4431-stage-issue-start-a.json"
+cat >"${goal_stage_issue_start_a}" <<'JSON'
+{
+  "goal": {
+    "threadId": "thread-4431-stage",
+    "objective": "Issue #4431 stage helper",
+    "status": "active",
+    "tokensUsed": 1000,
+    "timeUsedSeconds": 10,
+    "createdAt": 1782153534,
+    "updatedAt": 1782153544
+  }
+}
+JSON
+python3 "${repo_root}/adl/tools/skills/sprint-conductor/scripts/record_issue_goal_stage_artifacts.py" \
+  --goal-state "${goal_stage_issue_start_a}" \
+  --issue-number 4431 \
+  --artifacts-dir "${goal_stage_artifacts_dir}" \
+  --capture-stage issue_start \
+  --issue-goal-ref "goal:v0.91.6:issue:4431" \
+  --metrics-confidence high \
+  --model-ref "gpt-5-codex" >/dev/null
+
+goal_stage_issue_start_b="${tmpdir}/issue-4431-stage-issue-start-b.json"
+cat >"${goal_stage_issue_start_b}" <<'JSON'
+{
+  "goal": {
+    "threadId": "thread-4431-stage",
+    "objective": "Issue #4431 stage helper",
+    "status": "active",
+    "tokensUsed": 2000,
+    "timeUsedSeconds": 20,
+    "createdAt": 1782153534,
+    "updatedAt": 1782153554
+  }
+}
+JSON
+python3 "${repo_root}/adl/tools/skills/sprint-conductor/scripts/record_issue_goal_stage_artifacts.py" \
+  --goal-state "${goal_stage_issue_start_b}" \
+  --issue-number 4431 \
+  --artifacts-dir "${goal_stage_artifacts_dir}" \
+  --capture-stage issue_start \
+  --issue-goal-ref "goal:v0.91.6:issue:4431" \
+  --metrics-confidence high \
+  --model-ref "gpt-5-codex" >/dev/null
+
+goal_stage_pr_publication="${tmpdir}/issue-4431-stage-pr-publication.json"
+cat >"${goal_stage_pr_publication}" <<'JSON'
+{
+  "goal": {
+    "threadId": "thread-4431-stage",
+    "objective": "Issue #4431 stage helper",
+    "status": "complete",
+    "tokensUsed": 3000,
+    "timeUsedSeconds": 30,
+    "createdAt": 1782153534,
+    "updatedAt": 1782153564
+  }
+}
+JSON
+python3 "${repo_root}/adl/tools/skills/sprint-conductor/scripts/record_issue_goal_stage_artifacts.py" \
+  --goal-state "${goal_stage_pr_publication}" \
+  --issue-number 4431 \
+  --artifacts-dir "${goal_stage_artifacts_dir}" \
+  --capture-stage pr_publication \
+  --issue-goal-ref "goal:v0.91.6:issue:4431" \
+  --metrics-confidence high \
+  --model-ref "gpt-5-codex" >/dev/null
+
+python3 - "${goal_stage_artifacts_dir}" <<'PY'
+import json
+import sys
+from pathlib import Path
+
+artifacts_dir = Path(sys.argv[1])
+issue_start_snapshot = artifacts_dir / "issue-4431-goal-state.json"
+pr_publication_snapshot = artifacts_dir / "issue-4431-goal-state-pr-publication.json"
+assert issue_start_snapshot.exists()
+assert pr_publication_snapshot.exists()
+
+rows = [
+    json.loads(line)
+    for line in (artifacts_dir / "issue-4431-goal-metrics.jsonl").read_text().splitlines()
+    if line.strip()
+]
+assert len(rows) == 2
+issue_start_rows = [row for row in rows if row["capture_stage"] == "issue_start"]
+assert len(issue_start_rows) == 1
+assert issue_start_rows[0]["token_usage"]["total_tokens"] == 2000
+assert issue_start_rows[0]["elapsed_seconds"] == 20
+pr_rows = [row for row in rows if row["capture_stage"] == "pr_publication"]
+assert len(pr_rows) == 1
+assert pr_rows[0]["token_usage"]["total_tokens"] == 3000
+summary = json.loads((artifacts_dir / "issue-4431-goal-metrics-summary.json").read_text())
+assert summary["record_count"] == 2
+assert summary["phases_recorded"] == ["issue_start", "pr_publication"]
+assert summary["selected_stage"] == "pr_publication"
+assert summary["token_usage"]["total_tokens"] == 3000
+assert summary["elapsed_seconds"] == 30
+assert summary["completion_state"] == "completed"
+PY
