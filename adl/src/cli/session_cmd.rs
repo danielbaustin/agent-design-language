@@ -1,8 +1,10 @@
 use std::path::{Path, PathBuf};
+use std::process::Command;
 
 use anyhow::{anyhow, Context, Result};
 use chrono::Utc;
 
+use adl::control_plane::resolve_primary_checkout_root;
 use adl::session_ledger::{
     acquire_ledger_lock, default_ledger_path, load_ledger, parse_mode, parse_resource, save_ledger,
     ClaimInput, GithubRef, DEFAULT_TTL_SECS,
@@ -387,10 +389,39 @@ fn parse_release(args: &[String]) -> Result<ReleaseArgs> {
 
 fn default_current_ledger_path() -> PathBuf {
     let current_dir = std::env::current_dir().unwrap_or_else(|_| PathBuf::from("."));
-    default_ledger_path(&discover_repo_root(&current_dir))
+    default_ledger_path(&discover_shared_ledger_root(&current_dir))
 }
 
-fn discover_repo_root(start: &Path) -> PathBuf {
+fn discover_shared_ledger_root(start: &Path) -> PathBuf {
+    if let Some(root) = discover_primary_checkout_root_from_git() {
+        return root;
+    }
+    discover_repo_root_fallback(start)
+}
+
+fn discover_primary_checkout_root_from_git() -> Option<PathBuf> {
+    let current_top = git_rev_parse_path(&["rev-parse", "--show-toplevel"])?;
+    let common_dir = git_rev_parse_path(&["rev-parse", "--git-common-dir"]);
+    Some(resolve_primary_checkout_root(
+        &current_top,
+        common_dir.as_deref(),
+    ))
+}
+
+fn git_rev_parse_path(args: &[&str]) -> Option<PathBuf> {
+    let output = Command::new("git").args(args).output().ok()?;
+    if !output.status.success() {
+        return None;
+    }
+    let stdout = String::from_utf8(output.stdout).ok()?;
+    let trimmed = stdout.trim();
+    if trimmed.is_empty() {
+        return None;
+    }
+    Some(PathBuf::from(trimmed))
+}
+
+fn discover_repo_root_fallback(start: &Path) -> PathBuf {
     for candidate in start.ancestors() {
         if candidate.join(".git").exists()
             || (candidate.join("AGENTS.md").exists()
@@ -724,8 +755,8 @@ mod tests {
         fs::write(repo.join("AGENTS.md"), "# test\n").expect("write agents");
         fs::write(repo.join("adl").join("Cargo.toml"), "[package]\n").expect("write cargo");
 
-        assert_eq!(discover_repo_root(&subdir), repo);
-        let _ = fs::remove_dir_all(discover_repo_root(&subdir));
+        assert_eq!(discover_repo_root_fallback(&subdir), repo);
+        let _ = fs::remove_dir_all(discover_repo_root_fallback(&subdir));
     }
 
     #[test]
@@ -735,7 +766,21 @@ mod tests {
             std::process::id()
         ));
         fs::create_dir_all(&dir).expect("create fallback dir");
-        assert_eq!(discover_repo_root(&dir), dir);
+        assert_eq!(discover_repo_root_fallback(&dir), dir);
         let _ = fs::remove_dir_all(&dir);
+    }
+
+    #[test]
+    fn shared_ledger_root_uses_primary_checkout_for_linked_worktrees() {
+        let worktree = Path::new("/repo/.worktrees/adl-wp-4412");
+        let common = Path::new("/repo/.git");
+        assert_eq!(
+            resolve_primary_checkout_root(worktree, Some(common)),
+            PathBuf::from("/repo")
+        );
+        assert_eq!(
+            default_ledger_path(&resolve_primary_checkout_root(worktree, Some(common))),
+            PathBuf::from("/repo/.adl/session-ledger/ledger.json")
+        );
     }
 }

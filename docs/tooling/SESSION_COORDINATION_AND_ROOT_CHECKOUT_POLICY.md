@@ -113,6 +113,12 @@ Default local ledger path:
 .adl/session-ledger/ledger.json
 ```
 
+The default path is rooted at the primary checkout, not the current linked
+worktree. Sessions launched from `.worktrees/adl-wp-*` and sessions launched
+from the root checkout must therefore converge on the same shared
+`.adl/session-ledger/ledger.json` file unless an explicit `--ledger` override
+is supplied.
+
 The ledger records:
 
 - `session_id` or thread identifier when known

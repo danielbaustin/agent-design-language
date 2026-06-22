@@ -270,7 +270,6 @@ impl SessionLedger {
             | ClaimClassification::Watching
             | ClaimClassification::Paused => {}
         }
-        claim.mode = ClaimMode::Active;
         claim.heartbeat_at = now;
         claim.expires_at = now + Duration::seconds(ttl_secs);
         claim.released_at = None;
@@ -588,6 +587,26 @@ mod tests {
             .expect("heartbeat");
         assert_eq!(renewed.heartbeat_at, later);
         assert_eq!(renewed.expires_at, later + Duration::seconds(30));
+    }
+
+    #[test]
+    fn heartbeat_preserves_non_active_claim_modes() {
+        let mut ledger = SessionLedger::empty(now());
+        let mut watching = input(4412);
+        watching.mode = ClaimMode::Watching;
+        let claim = ledger.claim(watching, now()).expect("watching claim");
+        let renewed = ledger
+            .heartbeat(&claim.claim_id, 30, now() + Duration::seconds(10))
+            .expect("watching heartbeat");
+        assert_eq!(renewed.mode, ClaimMode::Watching);
+
+        let mut paused = input(4413);
+        paused.mode = ClaimMode::Paused;
+        let paused_claim = ledger.claim(paused, now()).expect("paused claim");
+        let paused_renewed = ledger
+            .heartbeat(&paused_claim.claim_id, 45, now() + Duration::seconds(20))
+            .expect("paused heartbeat");
+        assert_eq!(paused_renewed.mode, ClaimMode::Paused);
     }
 
     #[test]
