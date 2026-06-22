@@ -2724,6 +2724,45 @@ fn finish_validation_runner_executes_locked_cargo_fallback_script_command() {
 }
 
 #[test]
+fn finish_validation_runner_executes_html_observatory_demo_script_command() {
+    let repo = unique_temp_dir("adl-pr-finish-html-observatory-validation");
+    let tools = repo.join("adl/tools");
+    fs::create_dir_all(&tools).expect("tools dir");
+    write_executable(
+        &tools.join("check_no_tracked_adl_issue_record_residue.sh"),
+        "#!/usr/bin/env bash\nset -euo pipefail\n",
+    );
+    write_executable(
+        &tools.join("test_demo_v0904_csm_observatory_governed_prototype.sh"),
+        "#!/usr/bin/env bash\nset -euo pipefail\nrepo_root=\"$(cd \"$(dirname \"$0\")/../..\" && pwd)\"\necho html-observatory-ran > \"$repo_root/html-observatory-ran.txt\"\n",
+    );
+
+    assert!(Command::new("git")
+        .args(["init", "-q"])
+        .current_dir(&repo)
+        .status()
+        .expect("git init")
+        .success());
+
+    let plan = FinishValidationPlan {
+        mode: FinishValidationMode::SmallBinaryFocused,
+        commands: vec![
+            "bash adl/tools/check_no_tracked_adl_issue_record_residue.sh".to_string(),
+            "git diff --check".to_string(),
+            "bash adl/tools/test_demo_v0904_csm_observatory_governed_prototype.sh".to_string(),
+        ],
+    };
+
+    run_finish_validation_rust(&repo, &plan).expect("validation runner");
+    assert_eq!(
+        fs::read_to_string(repo.join("html-observatory-ran.txt"))
+            .expect("runner marker")
+            .trim(),
+        "html-observatory-ran"
+    );
+}
+
+#[test]
 fn finish_validation_profile_classifies_validation_manager_slice_as_small_binary_focused() {
     let plan = select_finish_validation_plan_for_finish(
         4215,
