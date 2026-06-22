@@ -1,3 +1,4 @@
+using System.Collections;
 using UnityEngine;
 using UnityEngine.UIElements;
 
@@ -17,7 +18,7 @@ namespace ADL.Demos.UnityObservatory
         private void Awake()
         {
             EnsureCamera();
-            CreateObservatoryShell();
+            StartCoroutine(CreateObservatoryShell());
         }
 
         private static void EnsureCamera()
@@ -35,7 +36,7 @@ namespace ADL.Demos.UnityObservatory
             camera.backgroundColor = new Color(0.015f, 0.025f, 0.055f, 1f);
         }
 
-        private void CreateObservatoryShell()
+        private IEnumerator CreateObservatoryShell()
         {
             GameObject shellObject = new("Unity Observatory Shell");
             UnityObservatoryShellController controller =
@@ -58,8 +59,32 @@ namespace ADL.Demos.UnityObservatory
             }
 
             UIDocument document = shellObject.AddComponent<UIDocument>();
+            document.panelSettings = CreatePanelSettings();
+            document.sortingOrder = 10;
+            yield return null;
+
             VisualElement root = document.rootVisualElement;
+            if (root == null)
+            {
+                Debug.LogError(
+                    "Unity Observatory could not create a UI Toolkit root visual element."
+                );
+                yield break;
+            }
+
             controller.Build(root);
+        }
+
+        private static PanelSettings CreatePanelSettings()
+        {
+            PanelSettings settings = ScriptableObject.CreateInstance<PanelSettings>();
+            settings.name = "Unity Observatory Runtime Panel Settings";
+            settings.scaleMode = PanelScaleMode.ScaleWithScreenSize;
+            settings.referenceResolution = new Vector2Int(1440, 900);
+            settings.screenMatchMode = PanelScreenMatchMode.MatchWidthOrHeight;
+            settings.match = 0.5f;
+            settings.sortingOrder = 10;
+            return settings;
         }
     }
 }

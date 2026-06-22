@@ -14,6 +14,11 @@ The entries below remain proposed ADR candidates until they are reviewed and
 promoted into `docs/adr/`. This packet must not be read as silently accepting
 new architecture decisions.
 
+`#4416` adds a retained content-review packet for this candidate set at
+`docs/milestones/v0.91.6/review/V0916_ADR_CANDIDATE_CONTENT_REVIEW_4416.md`.
+That review repairs current-state sprint truth and records promotion gates, but
+it still does not accept any ADR.
+
 ## Scope
 
 This mini-sprint covers two tasks:

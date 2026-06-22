@@ -4,7 +4,7 @@
 
 - Feature Name: Observatory And Unity Consumption Classification
 - Milestone Target: `v0.91.6`
-- Status: child_wave_closed_with_umbrella_closeout_ready
+- Status: child_wave_closed_and_umbrella_closed
 - Owner: ADL maintainers
 - Doc Role: primary
 - Feature Types: policy, artifact
@@ -77,8 +77,9 @@ surface marked rehearsal or substrate cannot prove activation by itself.
 
 ## Current WP-09 Closeout Posture
 
-WP-09 implementation proof is now landed, and the remaining work is bounded to
-umbrella closeout truth and publication.
+WP-09 implementation proof is landed, and umbrella `#3974` is now closed. The
+remaining Observatory-related work is downstream demo/runtime convergence, not
+missing WP-09 implementation or umbrella closeout.
 
 Current live issue truth on the closeout date:
 
@@ -91,7 +92,7 @@ Current live issue truth on the closeout date:
 | Logging/OTel/security consumption proof | `#4034` | closed / completed | Security/OTel consumption closure for the bounded proof slice is landed |
 | Working Unity Observatory closeout proof | `#4035` | closed / completed | Retained closeout packet is landed and may be consumed as closed child proof |
 | HTML Observatory mobile governed surface | `#4341` | closed / completed | Portable HTML/mobile observatory lane is landed with bounded proof |
-| WP-09 umbrella | `#3974` | open | Remaining work is narrow umbrella closeout normalization and publication rather than missing implementation |
+| WP-09 umbrella | `#3974` | closed / completed | Umbrella closeout publication is complete; downstream work remains separately routed |
 
 The authoritative closeout packet for this posture is:
 
@@ -103,8 +104,8 @@ The authoritative closeout packet for this posture is:
 
 - a classification and routing contract for Observatory/Unity proof posture;
 - a reference to bounded security-consumption inputs from WP-07;
-- a record that the WP-09 child wave is closed while umbrella publication
-  truth is normalized through `#3974`.
+- a record that the WP-09 child wave and umbrella closeout are closed while
+  downstream demo/runtime convergence remains separately routed.
 
 `v0.92` may not consume this feature surface as proof that:
 
