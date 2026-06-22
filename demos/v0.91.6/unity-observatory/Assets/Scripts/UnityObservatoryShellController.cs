@@ -261,13 +261,26 @@ namespace ADL.Demos.UnityObservatory
         {
             if (string.IsNullOrWhiteSpace(rawContractJson))
             {
+                Debug.LogWarning("Unity Observatory contract resource is empty; using fallback state.");
                 return;
             }
 
-            UnityObservatoryContractDocument contract =
-                JsonUtility.FromJson<UnityObservatoryContractDocument>(rawContractJson);
+            UnityObservatoryContractDocument contract;
+            try
+            {
+                contract = JsonUtility.FromJson<UnityObservatoryContractDocument>(rawContractJson);
+            }
+            catch (ArgumentException error)
+            {
+                Debug.LogWarning(
+                    $"Unity Observatory contract resource could not be parsed; using fallback state. {error.Message}"
+                );
+                return;
+            }
+
             if (contract == null)
             {
+                Debug.LogWarning("Unity Observatory contract parsed to null; using fallback state.");
                 return;
             }
 
@@ -338,15 +351,42 @@ namespace ADL.Demos.UnityObservatory
             hasObservabilityContract = HasObservabilitySection(contract.observability);
             if (hasObservabilityContract)
             {
-                observabilityStatus = contract.observability.consumption_status;
-                otelBoundaryRef = contract.observability.otel_boundary_ref;
-                eventStreamExampleRef = contract.observability.event_stream_example_ref;
-                loggingValidationRef = contract.observability.logging_validation_ref;
-                observabilitySecurityReviewRef = contract.observability.security_review_ref;
-                observabilityProofPacketRef = contract.observability.proof_packet_ref;
-                observabilityClaimBoundary = contract.observability.claim_boundary;
-                privateStatePosture = contract.observability.private_state_posture;
-                findingsDisposition = contract.observability.findings_disposition;
+                observabilityStatus = DefaultIfBlank(
+                    contract.observability.consumption_status,
+                    observabilityStatus
+                );
+                otelBoundaryRef = DefaultIfBlank(
+                    contract.observability.otel_boundary_ref,
+                    otelBoundaryRef
+                );
+                eventStreamExampleRef = DefaultIfBlank(
+                    contract.observability.event_stream_example_ref,
+                    eventStreamExampleRef
+                );
+                loggingValidationRef = DefaultIfBlank(
+                    contract.observability.logging_validation_ref,
+                    loggingValidationRef
+                );
+                observabilitySecurityReviewRef = DefaultIfBlank(
+                    contract.observability.security_review_ref,
+                    observabilitySecurityReviewRef
+                );
+                observabilityProofPacketRef = DefaultIfBlank(
+                    contract.observability.proof_packet_ref,
+                    observabilityProofPacketRef
+                );
+                observabilityClaimBoundary = DefaultIfBlank(
+                    contract.observability.claim_boundary,
+                    observabilityClaimBoundary
+                );
+                privateStatePosture = DefaultIfBlank(
+                    contract.observability.private_state_posture,
+                    privateStatePosture
+                );
+                findingsDisposition = DefaultIfBlank(
+                    contract.observability.findings_disposition,
+                    findingsDisposition
+                );
             }
             caveat =
                 contract.review?.caveats != null && contract.review.caveats.Length > 0
@@ -365,6 +405,12 @@ namespace ADL.Demos.UnityObservatory
 
         public void Build(VisualElement root)
         {
+            if (root == null)
+            {
+                Debug.LogError("Unity Observatory cannot build without a root visual element.");
+                return;
+            }
+
             root.Clear();
             root.AddToClassList("observatory-screen");
 
@@ -416,12 +462,12 @@ namespace ADL.Demos.UnityObservatory
             nav.Add(new Label("Rooms"));
             foreach (string label in roomLabels)
             {
-                nav.Add(new Label(label));
+                nav.Add(new Label(DefaultIfBlank(label, "Unnamed room")));
             }
             nav.Add(new Label("Lenses"));
             foreach (string label in lensLabels)
             {
-                nav.Add(new Label(label));
+                nav.Add(new Label(DefaultIfBlank(label, "Unnamed lens")));
             }
             return nav;
         }
@@ -465,7 +511,12 @@ namespace ADL.Demos.UnityObservatory
             card.Add(new Label(snapshotNote) { name = "status-snapshot-note" });
             foreach (string item in attentionItems)
             {
-                card.Add(new Label($"Attention: {item}") { name = "status-attention" });
+                card.Add(
+                    new Label($"Attention: {DefaultIfBlank(item, "Review bounded state.")}")
+                    {
+                        name = "status-attention",
+                    }
+                );
             }
             return card;
         }
@@ -532,10 +583,22 @@ namespace ADL.Demos.UnityObservatory
             card.Add(new Label($"Security floor: {securityFloorRef}") { name = "readiness-security-floor" });
             foreach (ReadinessCheck check in readinessChecks)
             {
+                if (check == null)
+                {
+                    continue;
+                }
+
                 card.Add(
-                    new Label($"{check.state}: {check.label}") { name = "readiness-check" }
+                    new Label(
+                        $"{DefaultIfBlank(check.state, "unknown")}: {DefaultIfBlank(check.label, "Readiness check")}"
+                    ) { name = "readiness-check" }
                 );
-                card.Add(new Label(check.note) { name = "readiness-note" });
+                card.Add(
+                    new Label(DefaultIfBlank(check.note, "No readiness note supplied."))
+                    {
+                        name = "readiness-note",
+                    }
+                );
             }
             return card;
         }
@@ -547,25 +610,36 @@ namespace ADL.Demos.UnityObservatory
             card.Add(new Label("Citizen explorer") { name = "inhabitants-title" });
             foreach (InhabitantProjection inhabitant in inhabitants)
             {
+                if (inhabitant == null)
+                {
+                    continue;
+                }
+
                 card.Add(
                     new Label(
-                        inhabitant.projection_label
+                        DefaultIfBlank(inhabitant.projection_label, "Inhabitant lane")
                     ) { name = "inhabitant-label" }
                 );
                 card.Add(
                     new Label(
-                        inhabitant.activity_posture
+                        DefaultIfBlank(inhabitant.activity_posture, "bounded")
                     ) { name = "inhabitant-state" }
                 );
                 card.Add(
-                    new Label(inhabitant.capability_summary) { name = "inhabitant-capability" }
+                    new Label(DefaultIfBlank(inhabitant.capability_summary, "No capability summary supplied."))
+                    {
+                        name = "inhabitant-capability",
+                    }
                 );
                 card.Add(
-                    new Label(inhabitant.alert_summary) { name = "inhabitant-alert-summary" }
+                    new Label(DefaultIfBlank(inhabitant.alert_summary, "No alert summary supplied."))
+                    {
+                        name = "inhabitant-alert-summary",
+                    }
                 );
                 card.Add(
                     new Label(
-                        $"{inhabitant.identity_visibility}: {inhabitant.identity_note}"
+                        $"{DefaultIfBlank(inhabitant.identity_visibility, "identity_bounded")}: {DefaultIfBlank(inhabitant.identity_note, "Identity details remain bounded.")}"
                     ) { name = "inhabitant-identity-boundary" }
                 );
             }
@@ -645,8 +719,11 @@ namespace ADL.Demos.UnityObservatory
             string[] labels = new string[entries.Length];
             for (int index = 0; index < entries.Length; index++)
             {
-                labels[index] = string.IsNullOrWhiteSpace(entries[index]?.label)
+                string fallbackLabel = fallback != null && fallback.Length > 0
                     ? fallback[Mathf.Min(index, fallback.Length - 1)]
+                    : "Unnamed";
+                labels[index] = string.IsNullOrWhiteSpace(entries[index]?.label)
+                    ? fallbackLabel
                     : entries[index].label;
             }
             return labels;

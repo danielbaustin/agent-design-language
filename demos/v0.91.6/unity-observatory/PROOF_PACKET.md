@@ -2,7 +2,7 @@
 
 ## Status
 
-Current through ADL issue `#4034`.
+Current through ADL issue `#4416`.
 
 ## Project Surface
 
@@ -36,6 +36,7 @@ bundle.
 The scene seed contains `UnityObservatoryBootstrap`. At Play time the bootstrap:
 
 - creates a main camera when needed
+- creates explicit runtime UI Toolkit panel settings
 - creates a runtime `UnityObservatoryShellController`
 - populates a calm document-panel Observatory shell
 - surfaces the governed packet reference
@@ -43,6 +44,8 @@ The scene seed contains `UnityObservatoryBootstrap`. At Play time the bootstrap:
 - keeps the launch seam inside the bounded `adl.csm_visibility_packet.v1`
   contract family
 - shows bounded counts, room/lens labels, and proposal-boundary copy
+- falls back to deterministic bounded state if the checked-in contract resource
+  is missing, empty, or malformed
 
 The current scaffold now loads a deterministic Unity-facing contract seed rather
 than stopping at static summary literals. It remains the bounded launch surface
@@ -95,7 +98,7 @@ C# compiler validation outside Unity: not run.
 - No live Runtime v2 or ADL runtime API integration is claimed.
 - No live OpenTelemetry collector or exporter integration is claimed.
 - No inhabitant-safe identity/profile closure beyond redacted lane projections is claimed.
-- No HTML/mobile Observatory completion is claimed.
+- No production Observatory readiness is claimed.
 
 ## Non-Claims
 
@@ -103,4 +106,4 @@ C# compiler validation outside Unity: not run.
 - This packet does not claim Unity build success.
 - This packet does not claim live ADL runtime ingestion.
 - This packet does not claim identity-safe inhabitant/profile closure.
-- This packet does not claim WP-09 closeout readiness.
+- This packet does not claim production Observatory readiness.

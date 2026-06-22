@@ -15,6 +15,8 @@ Updated: 2026-06-20 by `#4357` to add the missing retained review packet for
 `#4069`.
 Updated: 2026-06-20 by `#4343` to add retained review coverage for the Runtime
 AWS / local operations mini-sprint after its child issue set closed.
+Updated: 2026-06-22 by `#4416` to restore current retained-evidence rows for
+closed WP-09 umbrella `#3974` and closed ADR mini-sprint `#4324`.
 Owner issue: `#4251`
 Follow-up owners: `#4292`, `#4303`
 Purpose: normalize reviewer-facing retained evidence for the completed
@@ -51,6 +53,7 @@ tracked review surface that answers three questions for each completed umbrella:
 | `#3971` WP-06 ACIP/A2A/provider communications | present | `docs/milestones/v0.91.6/review/V0916_WP06_ACIP_PROVIDER_COMMUNICATIONS_SPRINT_REVIEW_3971.md`; `docs/milestones/v0.91.6/features/ACIP_A2A_PROVIDER_COMMUNICATIONS_v0.91.6.md` under "WP-06 Protocol Decision Closeout Package" | retained review packet present | `#4357` added the missing retained umbrella review packet. |
 | `#3972` WP-07 security bridge / CAV | present | `docs/milestones/v0.91.6/review/V0916_WP07_SECURITY_BRIDGE_CAV_SPRINT_REVIEW_3972.md`; `docs/milestones/v0.91.6/review/security/WP07_SECURITY_BRIDGE_CLOSEOUT_4024.md` | retained review packet present | `#4357` added the missing retained umbrella review packet. |
 | `#3973` WP-08 identity continuity / capability selector | present | `docs/milestones/v0.91.6/review/V0916_WP08_IDENTITY_CONTINUITY_CAPABILITY_SELECTOR_SPRINT_REVIEW_3973.md`; `docs/milestones/v0.91.6/review/sprint_execution_packets/V0916_ACTIVE_SPRINT_EXECUTION_PACKETS_2026-06-18.md`; `docs/milestones/v0.91.6/review/security/UNITY_OBSERVATORY_INHABITANT_READINESS_SECURITY_REVIEW_4023.md`; `docs/milestones/v0.91.6/review/security/PUBLIC_RECORD_MEMORY_PROFILE_SECURITY_REVIEW_4022.md` | retained review packet present | `#4357` added the missing retained umbrella review packet and preserved the historical-open-state caveat for consuming security packets. |
+| `#3974` WP-09 Observatory / Unity | present after `#4416` review repair | `docs/milestones/v0.91.6/review/V0916_WP09_OBSERVATORY_UNITY_SPRINT_REVIEW_3974.md`; `docs/milestones/v0.91.6/review/observatory/WP09_WORKING_UNITY_OBSERVATORY_CLOSEOUT_4035.md`; `docs/milestones/v0.91.6/features/OBSERVATORY_UNITY_CONSUMPTION_CLASSIFICATION_v0.91.6.md`; `docs/milestones/v0.91.6/DEMO_MATRIX_v0.91.6.md` | retained review packet present after repair | `#4416` repairs stale wording that still treated `#3974` as open after umbrella closure. Unity editor/build proof remains explicitly not run. |
 | `#3975` WP-10 AEE / Memory / ObsMem / ACP | present | `docs/milestones/v0.91.6/review/V0916_WP10_AEE_MEMORY_OBSMEM_ACP_SPRINT_REVIEW_3975.md`; `docs/milestones/v0.91.6/features/AEE_MEMORY_ACP_BRIDGE_ACCOUNTING_v0.91.6.md`; `docs/milestones/v0.91.6/review/security/PUBLIC_RECORD_MEMORY_PROFILE_SECURITY_REVIEW_4022.md` | retained review packet present | `#4357` added the missing retained umbrella review packet while preserving the feature/security/runtime consuming-evidence boundary. |
 | `#4069` local-agent acceleration | present | `docs/milestones/v0.91.6/review/V0916_LOCAL_AGENT_ACCELERATION_MINI_SPRINT_REVIEW_4069.md`; `docs/milestones/v0.91.6/review/sprint_execution_packets/V0916_SEP_LOCAL_AGENT_ACCELERATION_MINI_SPRINT_4069.md` | retained review packet present | `#4357` added the missing retained review packet while preserving the normalized SEP as source evidence. |
 | `#4141` flagship demo mini-sprint | recovered during `#4251` | `docs/milestones/v0.91.6/review/V0916_FLAGSHIP_DEMO_MINI_SPRINT_REVIEW_4141.md`; `docs/milestones/v0.91.6/DEMO_MATRIX_v0.91.6.md` | retained review packet present with limited evidence | `#4357` added the missing retained umbrella review packet. The packet is intentionally limited and must not be used as strong flagship demo proof without specific retained demo artifacts. |
@@ -64,6 +67,7 @@ tracked review surface that answers three questions for each completed umbrella:
 | `#4241` runtime resilience follow-on sprint | present | `docs/milestones/v0.91.6/review/V0916_RUNTIME_RESILIENCE_FOLLOW_ON_SPRINT_REVIEW_4241.md`; `docs/milestones/v0.91.6/review/runtime/V0916_INTEGRATED_RUNTIME_SOAK_PROOF_4245.md` | retained review packet present | `#4357` backfilled a tracked retained sprint-review packet from child closure truth and retained runtime proof artifacts. Runtime soak #1 remains a walking-skeleton proof, not full v0.92 runtime coherence. |
 | `#4276` predictable execution fabric sprint | present | `docs/milestones/v0.91.6/review/V0916_PREDICTABLE_EXECUTION_FABRIC_SPRINT_REVIEW_4276.md`; `docs/milestones/v0.91.6/review/issue_resource_telemetry/ISSUE_RESOURCE_TELEMETRY_V1_AND_S3_ARCHIVE_PLAN_4280.md` | retained review packet present | `#4357` backfilled a tracked retained sprint-review packet from child issue/PR closure truth and tracked process/telemetry evidence. Ignored local `.adl` sprint cards remain local records only. |
 | `#4325` runtime AWS signal bridge mini-sprint | present | `docs/milestones/v0.91.6/review/V0916_RUNTIME_AWS_SIGNAL_BRIDGE_MINI_SPRINT_REVIEW_4325.md`; `docs/milestones/v0.91.6/review/runtime_aws_signal_bridge/RUNTIME_AWS_SIGNAL_BRIDGE_MINI_SPRINT_CLOSEOUT_4325.md` | retained review packet present | `#4357` added the missing retained post-closeout review surface. The sprint remains mock/local proof only and makes no live AWS mutation claim. |
+| `#4324` ADR release-tail mini-sprint | present after `#4416` review repair | `docs/milestones/v0.91.6/review/V0916_ADR_RELEASE_TAIL_MINI_SPRINT_REVIEW_4324.md`; `docs/milestones/v0.91.6/ADR_MINI_SPRINT_PACKET_v0.91.6.md`; `docs/architecture/adr/CANDIDATE_ADRS.md` | retained review packet present after repair | `#4416` records current closure truth after the earlier `#4357` matrix intentionally removed reopened `#4324`. Candidate ADRs remain proposed, not accepted. |
 | `#4343` runtime AWS / local operations mini-sprint | present | `docs/milestones/v0.91.6/review/V0916_RUNTIME_AWS_LOCAL_OPERATIONS_MINI_SPRINT_REVIEW_4343.md`; `docs/milestones/v0.91.6/review/security/LOCAL_POLIS_SSM_PROOF_4318.md`; `docs/milestones/v0.91.6/review/security/LOCAL_POLIS_SSM_PROOF_4319.md`; `docs/tooling/QNAP_QTS_SSM_ONBOARDING.md` | retained review packet present | `#4343` closed the child issue set for Wuji DDNS, SSM enrollment for `nessus.local` and `opticon.local`, and Codex access preparation while preserving operations-plane non-claims. |
 
 ## Resolved In `#4251`
@@ -114,12 +118,22 @@ tracked review surface that answers three questions for each completed umbrella:
   polis state, scheduler, provider, memory, identity, governance, or model
   authority.
 
+## Added In `#4416`
+
+- Added retained current-state review packets for closed umbrellas `#3974` and
+  `#4324`.
+- Repaired stale matrix language that still described `#3974` and `#4324` as
+  ineligible/open after their closeout work completed.
+- Preserved the boundary that WP-09 remains bounded demo/closeout proof and the
+  ADR mini-sprint remains candidate-routing proof, not accepted-ADR promotion.
+
 ## Still Routed Elsewhere
 
 - Local `.adl` lifecycle-card normalization for closed umbrellas remains local
   records hygiene, not tracked repo content by itself.
-- `#4324` is reopened and must not be consumed as completed ADR sprint work
-  until it is executed, reviewed, and closed again.
+- Historical `#4324` reopened-state notes before `#4416` should not be consumed
+  as current truth; the current retained row above records the post-closeout
+  ADR mini-sprint review surface.
 - `#4253` closed the milestone-doc truth lane; any remaining stale issue-body
   metadata is now treated as residual records hygiene, not an open sprint
   blocker.

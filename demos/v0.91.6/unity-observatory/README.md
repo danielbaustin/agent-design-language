@@ -16,14 +16,14 @@ through the same checked-in Unity-facing contract seed. The shell now presents:
 - a reviewed inhabitant-readiness checklist
 - redacted inhabitant-lane capability projections with explicit identity limits
 
-This issue still does not claim:
+This bounded scaffold still does not claim:
 
 - live ADL evidence ingestion into Unity
 - identity-safe inhabitant/profile closure
-- final WP-09 closeout truth
+- production Observatory readiness
 
-Those remain owned by the already-landed bounded contract/readiness issues plus
-final closeout owner `#4035`.
+Those remain owned by downstream runtime/demo integration work. WP-09 closeout
+truth itself is now complete through `#3974`.
 
 Update for `#4032`: the scaffold now includes one deterministic Unity-facing
 contract seed at `Assets/Resources/observatory_contract.json`, derived from the
@@ -49,11 +49,13 @@ instead of reconstructing the launch surface from planning prose alone.
 - Proof packet: `PROOF_PACKET.md`
 
 The current scene seed contains a single `UnityObservatoryBootstrap` object. At
-Play time the bootstrap creates the main camera when needed, loads the seeded
-Unity-facing contract from `Resources/observatory_contract.json`, configures
-one runtime Observatory shell, and renders a governed control-panel surface
-from that read-only contract while leaving richer inhabitant-specific expansion
-to later issues.
+Play time the bootstrap creates the main camera when needed, creates explicit
+runtime UI Toolkit panel settings, loads the seeded Unity-facing contract from
+`Resources/observatory_contract.json`, configures one runtime Observatory shell,
+and renders a governed control-panel surface from that read-only contract while
+leaving richer inhabitant-specific expansion to later issues. If the contract
+resource is missing, empty, or malformed, the shell falls back to bounded
+deterministic defaults rather than mutating runtime state.
 
 The UXML and USS files are tracked as reference assets for the same governed
 shell structure. This issue does not claim that the runtime path already loads
@@ -139,7 +141,8 @@ This Unity surface intentionally leaves the following issue boundaries explicit:
 - `#4032` owns the bounded ADL evidence/data contract and fixture-loading path
 - `#4033` owns the bounded inhabitant-facing world, status, and redacted
   capability surfaces
-- `#4035` owns final working Unity Observatory closeout truth
+- `#4035` owns the retained working Unity Observatory child closeout proof
+- `#3974` owns the now-closed WP-09 umbrella closeout truth
 
 ## Open In Unity
 
@@ -152,7 +155,9 @@ This Unity surface intentionally leaves the following issue boundaries explicit:
 Current contract-backed behavior:
 
 - the bootstrap creates a calm document-panel Observatory shell
+- the bootstrap creates explicit runtime UI Toolkit panel settings for the shell
 - the shell loads a deterministic Unity-facing contract from `Resources`
+- missing or malformed contract data falls back to deterministic bounded state
 - the shell shows governed packet/schema references, artifact root, and summary
   counts sourced from that contract
 - the shell presents room/lens navigation labels, proposal-mode language, and
@@ -225,4 +230,4 @@ Unity editor or build pipeline already succeeded on this machine.
 - No inhabitant-safe profile or memory display closure is claimed.
 - No Unity editor success is claimed.
 - No Unity build success is claimed.
-- No WP-09 closeout readiness is claimed.
+- No production Observatory readiness is claimed.
