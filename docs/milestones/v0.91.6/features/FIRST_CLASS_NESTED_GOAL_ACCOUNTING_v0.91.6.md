@@ -239,6 +239,35 @@ The next bounded implementation slice should be:
 4. add sprint closeout reporting for nested-goal rollups and bottleneck
    categories
 
+## Landed substrate in `#4392`
+
+`#4392` does not complete every future nested-goal runtime ambition, but it
+does land the first repo-native execution substrate that this design required:
+
+- issue goal-metrics capture now persists:
+  - `issue_goal_ref`
+  - `sprint_goal_ref`
+  - `goal_metrics_rollup_ref`
+  - active-work / validation / PR-wait / CI-wait timing buckets
+  - completion-state truth
+  - metrics-confidence truth
+- sprint closeout rollup now preserves:
+  - known vs unknown issue counts per timing bucket
+  - source counts
+  - goal-id availability counts
+  - completion-state counts
+- unknown values remain explicit and are not zero-filled during aggregation
+
+This is the important truth boundary:
+
+- ADL now has a durable issue/sprint accounting substrate that can represent
+  nested goal references and partial telemetry truthfully
+- ADL still does not claim that Codex itself supports simultaneous live sprint
+  goal plus child issue goal activation inside one thread
+- until that runtime constraint changes, ADL treats the single active Codex
+  goal surface as session telemetry only and keeps the broader hierarchy
+  ADL-owned
+
 Deliberately deferred from this slice:
 
 - automatic multi-goal runtime support inside Codex

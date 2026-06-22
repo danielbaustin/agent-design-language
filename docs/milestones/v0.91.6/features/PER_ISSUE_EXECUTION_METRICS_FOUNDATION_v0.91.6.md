@@ -4,7 +4,7 @@
 
 - Feature Name: Per-Issue Execution Metrics Foundation
 - Milestone Target: `v0.91.6`
-- Status: contract defined for the next prompt-template surface; activation and VPP expansion remain routed to `#4309`
+- Status: active template and sprint-rollup substrate aligned in `v0.91.6`; VPP expansion remains routed to `#4309`
 - Owner: ADL maintainers
 - Doc Role: primary
 - Feature Types: policy, architecture, artifact
@@ -144,16 +144,56 @@ Handoff rules for `#4279`:
 
 ## Prompt-Template Boundary
 
-This issue does not activate the next template set by itself.
+This issue does not require a brand-new template set by itself.
 
 Current boundary:
 
 - `docs/templates/prompts/current.json` remains the active template registry
   surface;
-- dormant `1.0.2` template surfaces carry the per-issue metrics foundation
-  updates prepared for later activation;
-- `#4309` owns template-version activation, VPP insertion, and any additional
-  goal-specific card fields beyond this issue-local metrics contract.
+- active `1.0.3` `SPP`/`SOR` surfaces now carry issue-goal refs, sprint-goal
+  refs, goal-rollup refs, and the issue-local timing bucket fields defined by
+  this contract;
+- sprint-conductor goal-metrics capture and sprint closeout rollup now record
+  the same issue/sprint refs and the same timing-bucket truth instead of only
+  raw elapsed/token totals;
+- `#4309` still owns any future template-version activation beyond the current
+  active set, plus broader VPP expansion.
+
+## Implemented in `#4392`
+
+This contract is no longer only a future-facing field list.
+
+The `v0.91.6` implementation now records:
+
+- issue-local goal refs:
+  - `issue_goal_ref`
+  - `sprint_goal_ref`
+  - `goal_metrics_rollup_ref`
+- issue-local actual timing buckets:
+  - `actual_active_work_seconds`
+  - `actual_validation_seconds`
+  - `actual_pr_wait_seconds`
+  - `actual_ci_wait_seconds`
+- issue-local completion truth:
+  - `completion_state`
+  - metrics confidence posture
+- sprint closeout rollups for:
+  - known vs unknown elapsed totals
+  - known vs unknown active-work totals
+  - known vs unknown validation totals
+  - known vs unknown PR-wait totals
+  - known vs unknown CI-wait totals
+  - completion-state counts
+  - data-source counts
+  - goal-id availability counts
+
+Important constraint:
+
+- the active Codex thread goal slot is still a single live-session telemetry
+  surface
+- ADL therefore records issue/sprint goal accounting as ADL-owned truth and
+  treats missing session-goal telemetry as `unknown` / `not_collected` rather
+  than pretending nested live goals are already universally available
 
 ## Validation And Review
 

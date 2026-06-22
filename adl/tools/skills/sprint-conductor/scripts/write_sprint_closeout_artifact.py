@@ -82,6 +82,24 @@ def main() -> int:
             f"total_tokens={goal_metrics.get('token_usage', {}).get('total_tokens') if goal_metrics.get('token_usage', {}).get('total_tokens') is not None else goal_metrics.get('token_usage', {}).get('total_availability', goal_metrics.get('token_usage', {}).get('availability', 'unknown'))}, "
             f"source={goal_metrics.get('data_source') or 'unknown'}`"
         )
+        lines.append(
+            "  - goal refs: "
+            f"`issue={goal_metrics.get('issue_goal_ref') or 'unknown'}, "
+            f"sprint={goal_metrics.get('sprint_goal_ref') or 'unknown'}, "
+            f"rollup={goal_metrics.get('goal_metrics_rollup_ref') or 'unknown'}`"
+        )
+        lines.append(
+            "  - goal timing buckets: "
+            f"`active_work={goal_metrics.get('active_work_seconds') if goal_metrics.get('active_work_seconds') is not None else goal_metrics.get('active_work_availability', 'unknown')}, "
+            f"validation={goal_metrics.get('validation_seconds') if goal_metrics.get('validation_seconds') is not None else goal_metrics.get('validation_availability', 'unknown')}, "
+            f"pr_wait={goal_metrics.get('pr_wait_seconds') if goal_metrics.get('pr_wait_seconds') is not None else goal_metrics.get('pr_wait_availability', 'unknown')}, "
+            f"ci_wait={goal_metrics.get('ci_wait_seconds') if goal_metrics.get('ci_wait_seconds') is not None else goal_metrics.get('ci_wait_availability', 'unknown')}`"
+        )
+        lines.append(
+            "  - goal completion truth: "
+            f"`completion_state={goal_metrics.get('completion_state') or 'unknown'}, "
+            f"metrics_confidence={goal_metrics.get('metrics_confidence') or 'unknown'}`"
+        )
         if goal_metrics.get('raw_log_path'):
             lines.append(f"  - goal metrics log: `{goal_metrics['raw_log_path']}`")
 
@@ -131,15 +149,44 @@ def main() -> int:
 
     lines.extend(['', '## Goal Metrics Rollup', ''])
     lines.append(f"- issues with recorded metrics: `{goal_metrics_rollup['issues_with_recorded_metrics']}/{goal_metrics_rollup['issue_count']}`")
+    lines.append(f"- data sources: `{goal_metrics_rollup['data_source_counts']}`")
+    lines.append(f"- goal-id availability: `{goal_metrics_rollup['goal_id_availability_counts']}`")
+    lines.append(f"- completion states: `{goal_metrics_rollup['completion_state_counts']}`")
     lines.append(
         f"- elapsed seconds: `known_sum={goal_metrics_rollup['total_elapsed_seconds_known_sum']}, "
         f"known_issue_count={goal_metrics_rollup['issues_with_known_elapsed']}, "
-        f"unknown_issue_count={goal_metrics_rollup['issues_with_unknown_elapsed']}`"
+        f"unknown_issue_count={goal_metrics_rollup['issues_with_unknown_elapsed']}, "
+        f"availability_counts={goal_metrics_rollup['elapsed_availability_counts']}`"
+    )
+    lines.append(
+        f"- active work seconds: `known_sum={goal_metrics_rollup['total_active_work_seconds_known_sum']}, "
+        f"known_issue_count={goal_metrics_rollup['issues_with_known_active_work']}, "
+        f"unknown_issue_count={goal_metrics_rollup['issues_with_unknown_active_work']}, "
+        f"availability_counts={goal_metrics_rollup['active_work_availability_counts']}`"
+    )
+    lines.append(
+        f"- validation seconds: `known_sum={goal_metrics_rollup['total_validation_seconds_known_sum']}, "
+        f"known_issue_count={goal_metrics_rollup['issues_with_known_validation_seconds']}, "
+        f"unknown_issue_count={goal_metrics_rollup['issues_with_unknown_validation_seconds']}, "
+        f"availability_counts={goal_metrics_rollup['validation_availability_counts']}`"
+    )
+    lines.append(
+        f"- pr wait seconds: `known_sum={goal_metrics_rollup['total_pr_wait_seconds_known_sum']}, "
+        f"known_issue_count={goal_metrics_rollup['issues_with_known_pr_wait']}, "
+        f"unknown_issue_count={goal_metrics_rollup['issues_with_unknown_pr_wait']}, "
+        f"availability_counts={goal_metrics_rollup['pr_wait_availability_counts']}`"
+    )
+    lines.append(
+        f"- ci wait seconds: `known_sum={goal_metrics_rollup['total_ci_wait_seconds_known_sum']}, "
+        f"known_issue_count={goal_metrics_rollup['issues_with_known_ci_wait']}, "
+        f"unknown_issue_count={goal_metrics_rollup['issues_with_unknown_ci_wait']}, "
+        f"availability_counts={goal_metrics_rollup['ci_wait_availability_counts']}`"
     )
     lines.append(
         f"- total tokens: `known_sum={goal_metrics_rollup['total_tokens_known_sum']}, "
         f"known_issue_count={goal_metrics_rollup['issues_with_known_total_tokens']}, "
-        f"unknown_issue_count={goal_metrics_rollup['issues_with_unknown_total_tokens']}`"
+        f"unknown_issue_count={goal_metrics_rollup['issues_with_unknown_total_tokens']}, "
+        f"availability_counts={goal_metrics_rollup['total_token_availability_counts']}`"
     )
 
     out_path.write_text('\n'.join(lines).rstrip() + '\n', encoding='utf-8')
