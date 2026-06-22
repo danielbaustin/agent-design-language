@@ -185,5 +185,8 @@ fn issue_watch_routes_failed_local_readiness_without_pr_to_blocked() {
     let report = build_issue_watch_report(&open_issue(4397), false, readiness_failed(), None);
     assert_eq!(report.classification, "blocked");
     assert_eq!(report.next_skill, "pr-ready");
-    assert_eq!(report.local_readiness.reason, "doctor: sor failed validation");
+    assert_eq!(
+        report.local_readiness.reason,
+        "doctor: sor failed validation"
+    );
 }

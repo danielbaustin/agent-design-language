@@ -478,11 +478,8 @@ fn real_pr_watch(args: &[String]) -> Result<()> {
         .or_else(|| local_identity.as_ref().map(|(_, slug)| slug.clone()))
         .unwrap_or_else(|| sanitize_slug(&issue_record.title));
     let issue_ref = IssueRef::new(issue, version, slug)?;
-    let linked_prs = github::linked_prs_for_issue(
-        &repo,
-        issue,
-        Some(issue_ref.branch_name("codex").as_str()),
-    )?;
+    let linked_prs =
+        github::linked_prs_for_issue(&repo, issue, Some(issue_ref.branch_name("codex").as_str()))?;
     let linked_pr = match linked_prs.len() {
         0 => None,
         1 => {
