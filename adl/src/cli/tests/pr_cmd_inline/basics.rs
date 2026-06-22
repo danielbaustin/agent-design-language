@@ -337,12 +337,8 @@ fn real_pr_validation_reports_failed_checks_and_returns_error() {
     let _guard = env_lock();
     let repo = unique_temp_dir("adl-pr-validation-failure");
     init_git_repo(&repo);
-    let (base_uri, server) = spawn_pr_validation_status_once_server(
-        "COMPLETED",
-        Some("FAILURE"),
-        "adl-coverage",
-        false,
-    );
+    let (base_uri, server) =
+        spawn_pr_validation_status_once_server("COMPLETED", Some("FAILURE"), "adl-coverage", false);
     let previous_dir = env::current_dir().expect("cwd");
     let old_client = env::var_os("ADL_GITHUB_CLIENT");
     let old_token = env::var_os("GITHUB_TOKEN");
@@ -401,8 +397,7 @@ fn parse_watch_args_accepts_repo_slug_version_and_json_flags() {
 
 #[test]
 fn parse_projection_map_args_accepts_json_and_rejects_unknown_args() {
-    let parsed =
-        parse_projection_map_args(&["--json".to_string()]).expect("parse projection-map");
+    let parsed = parse_projection_map_args(&["--json".to_string()]).expect("parse projection-map");
     assert!(parsed.json);
 
     let err = parse_projection_map_args(&["--bogus".to_string()])
@@ -422,13 +417,11 @@ fn projection_map_report_lists_expected_github_and_csdlc_surfaces() {
         .any(|surface| surface.surface == "github.pr.validation_checks"
             && surface.primary_command == "adl/tools/pr.sh validation"
             && surface.projection_policy == "linked_surface_only"));
-    assert!(report
-        .surfaces
-        .iter()
-        .any(|surface| surface.surface == "csdlc.cards.sip_stp_spp_srp_sor"
-            && surface.primary_command
-                == "adl-csdlc tooling prompt-template ...; card editor skills; pr doctor"
-            && surface.projection_policy == "card_local_only"));
+    assert!(report.surfaces.iter().any(|surface| surface.surface
+        == "csdlc.cards.sip_stp_spp_srp_sor"
+        && surface.primary_command
+            == "adl-csdlc tooling prompt-template ...; card editor skills; pr doctor"
+        && surface.projection_policy == "card_local_only"));
 }
 
 #[test]
