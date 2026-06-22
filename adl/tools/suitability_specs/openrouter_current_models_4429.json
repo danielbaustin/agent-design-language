@@ -1,0 +1,148 @@
+{
+  "panel_id": "openrouter_current_models_4429",
+  "issue": 4429,
+  "panel_ref": "docs/milestones/v0.91.6/review/provider/C_SDLC_AGENT_SUITABILITY_PANEL_4097.md",
+  "packet_title": "OpenRouter Current-Model Suitability Proof",
+  "packet_filename_prefix": "OPENROUTER_CURRENT_MODEL_SUITABILITY_PROOF",
+  "state_filename_prefix": "openrouter_current_model_suitability_state",
+  "readme_title": "OpenRouter Current-Model Suitability Artifacts",
+  "provider_setup_family": "openrouter",
+  "source_registry": "v0.91.6.openrouter.suitability",
+  "prompt_contract_prefix": "v0.91.6.openrouter.suitability",
+  "scope_summary": "This packet instantiates the reusable C-SDLC suitability panel for five current OpenRouter routes selected from the live catalog on 2026-06-22.",
+  "source_evidence": [
+    "docs/milestones/v0.91.6/review/provider/C_SDLC_AGENT_SUITABILITY_PANEL_4097.md",
+    "docs/milestones/v0.91.6/features/PROVIDER_MODEL_RELIABILITY_v0.91.6.md",
+    "docs/milestones/v0.91.6/review/provider/ROLE_PROVIDER_PROFILES_4053.md",
+    "docs/milestones/v0.91.5/review/openrouter_matrix/OPENROUTER_MATRIX_PROOF_2026-06-14.md"
+  ],
+  "credential_loaders": [
+    {
+      "env_name": "OPENROUTER_API_KEY",
+      "key_file": "~/keys/openrouter.key"
+    }
+  ],
+  "non_claims": [
+    "does_not_claim_native_provider_equivalence",
+    "does_not_grant_merge_closeout_or_repo_mutation_authority",
+    "does_not_replace_uts_or_benchmarking",
+    "does_not_promote_unrun_or_missing_lanes"
+  ],
+  "packet_non_claim_lines": [
+    "This packet does not prove native OpenAI, Anthropic, Gemini, Moonshot, or Z.ai suitability outside the OpenRouter route.",
+    "This packet does not prove broad model superiority or general intelligence.",
+    "This packet does not grant any tested OpenRouter lane merge, closeout, release, or repo-mutation authority."
+  ],
+  "tasks": [
+    {
+      "task_id": "watcher_state_v1",
+      "required_evidence_tokens": ["#4429", "#4097", "adl-wp-4429"],
+      "prompt": "You are evaluating a bounded ADL workflow state. Use only the supplied facts.\nReturn markdown only with exactly these headings:\n# Status\n# Evidence\n# Next-Step\n\nRequirements:\n- # Status body must be exactly one of: ready, pending, blocked, action_required\n- Mention #4429 and #4097 in # Evidence\n- Mention adl-wp-4429 exactly once\n- Under # Next-Step mention the five-task suitability panel\n- Do not claim merge, closeout, or file-write authority\n- Keep the response under 110 words\n\nFacts:\n- Issue #4429 is open and bound to worktree adl-wp-4429.\n- The reusable suitability panel is defined in #4097.\n- OpenRouter route proof must stay distinct from direct-hosted provider proof.\n- The target packet is for five current OpenRouter routes.\n- No final proof packet has been written yet in the supplied issue context."
+    },
+    {
+      "task_id": "card_validator_v1",
+      "prompt": "Review the following supplied SOR excerpt only. Do not infer unseen repo state.\nReturn markdown only with exactly these headings:\n# Findings\n# Severity\n# Non-Claims\n\nRequirements:\n- Identify the contradiction in the excerpt\n- The # Severity body must be exactly P1 or P2\n- Under # Non-Claims say that only the supplied excerpt was reviewed\n- Do not invent files, commits, or PR state beyond the excerpt\n- Keep the response under 130 words\n\nExcerpt:\n- Integration state: merged\n- This OpenRouter proof remains route-specific and no PR has been published yet\n- Finish evidence: absent\n- Next action: merge the issue immediately because the models look promising"
+    },
+    {
+      "task_id": "review_findings_v1",
+      "required_review_all_tokens": ["openrouter"],
+      "required_review_any_tokens": ["adl-native", "octocrab"],
+      "prompt": "Review the following supplied document excerpt only.\nReturn markdown only with exactly these headings:\n# Findings\n# Severity\n# Routing\n# Residual Risk\n\nRequirements:\n- Focus on proof-boundary drift, not code correctness\n- Mention that OpenRouter route evidence must stay distinct from native provider proof\n- Mention ADL-native or Octocrab proof exactly once\n- The # Severity body must be exactly P2 or P3\n- Under # Residual Risk include the exact phrase: no code-correctness claim\n- Keep the response under 150 words\n\nExcerpt:\nValidation evidence:\n- OpenRouter route packet for anthropic/claude-fable-5 and openai/gpt-5.4\n- Draft note says the route proof proves Anthropic and OpenAI direct-hosted suitability too\n- manual GitHub snapshots used as current publication proof"
+    },
+    {
+      "task_id": "bounded_planner_v1",
+      "required_plan_bits": [
+        "anthropic/claude-fable-5",
+        "openai/gpt-5.4",
+        "z-ai/glm-5.2",
+        "moonshotai/kimi-k2.7-code",
+        "google/gemini-3.5-flash",
+        "five-task suitability panel",
+        "blocked",
+        "malformed",
+        "no repo-mutation authority"
+      ],
+      "prompt": "Produce a bounded execution plan for issue #4429 only.\nReturn markdown only with exactly these headings:\n# Plan\n# Blockers\n# Assumptions\n# Non-Claims\n\nRequirements:\n- # Plan must contain exactly four numbered steps\n- Mention anthropic/claude-fable-5, openai/gpt-5.4, z-ai/glm-5.2, moonshotai/kimi-k2.7-code, and google/gemini-3.5-flash\n- Mention one shared five-task suitability panel\n- Mention that blocked or malformed lanes must be recorded explicitly\n- Under # Non-Claims say no repo-mutation authority\n- Keep the response under 170 words"
+    },
+    {
+      "task_id": "closeout_checker_v1",
+      "prompt": "Decide whether the supplied evidence is safe to close.\nReturn markdown only with exactly these headings:\n# Decision\n# Reasons\n# Missing Evidence\n\nRequirements:\n- # Decision body must be exactly one of: safe_to_close, needs_remediation, blocked\n- Mention that no PR or merge evidence is supplied\n- Mention that no final proof packet is supplied\n- Do not claim unseen CI or review state\n- Keep the response under 120 words\n\nSupplied evidence:\n- Issue #4429 is open.\n- Worktree is bound and candidate routes are selected.\n- No PR has been published in the supplied evidence.\n- No final suitability packet has been supplied."
+    },
+    {
+      "task_id": "worker_contract_v1",
+      "prompt": "Return JSON only, no markdown.\nCreate one bounded advisory worker task contract for issue #4429.\n\nRequirements:\n- JSON object with keys: issue, paths, task, limit\n- issue must be exactly \"#4429\"\n- paths must be a JSON array and include at least one of: \"adl/tools\", \"docs/milestones/v0.91.6/review/provider\"\n- task must mention OpenRouter route evidence or suitability matrix work\n- limit must include both \"bounded_to_issue_4429\" and \"advisory_only\"\n- Do not claim file-write, merge, or closeout authority"
+    }
+  ],
+  "candidates": [
+    {
+      "candidate_id": "openrouter:claude-fable-5",
+      "provider_lane": "openrouter",
+      "provider_profile_ref": "unprofiled:openrouter:anthropic/claude-fable-5",
+      "provider_family": "openrouter",
+      "provider_spec_kind": "openrouter",
+      "provider": "openrouter",
+      "model_ref": "anthropic/claude-fable-5",
+      "provider_model_id": "anthropic/claude-fable-5",
+      "runtime_surface": "hosted_api",
+      "credential_source": "$HOME/keys/openrouter.key",
+      "credential_ref": "env:OPENROUTER_API_KEY",
+      "timeout_ms": 90000
+    },
+    {
+      "candidate_id": "openrouter:gpt-5.4",
+      "provider_lane": "openrouter",
+      "provider_profile_ref": "unprofiled:openrouter:openai/gpt-5.4",
+      "provider_family": "openrouter",
+      "provider_spec_kind": "openrouter",
+      "provider": "openrouter",
+      "model_ref": "openai/gpt-5.4",
+      "provider_model_id": "openai/gpt-5.4",
+      "runtime_surface": "hosted_api",
+      "credential_source": "$HOME/keys/openrouter.key",
+      "credential_ref": "env:OPENROUTER_API_KEY",
+      "timeout_ms": 90000
+    },
+    {
+      "candidate_id": "openrouter:glm-5.2",
+      "provider_lane": "openrouter",
+      "provider_profile_ref": "unprofiled:openrouter:z-ai/glm-5.2",
+      "provider_family": "openrouter",
+      "provider_spec_kind": "openrouter",
+      "provider": "openrouter",
+      "model_ref": "z-ai/glm-5.2",
+      "provider_model_id": "z-ai/glm-5.2",
+      "runtime_surface": "hosted_api",
+      "credential_source": "$HOME/keys/openrouter.key",
+      "credential_ref": "env:OPENROUTER_API_KEY",
+      "timeout_ms": 90000
+    },
+    {
+      "candidate_id": "openrouter:kimi-k2.7-code",
+      "provider_lane": "openrouter",
+      "provider_profile_ref": "unprofiled:openrouter:moonshotai/kimi-k2.7-code",
+      "provider_family": "openrouter",
+      "provider_spec_kind": "openrouter",
+      "provider": "openrouter",
+      "model_ref": "moonshotai/kimi-k2.7-code",
+      "provider_model_id": "moonshotai/kimi-k2.7-code",
+      "runtime_surface": "hosted_api",
+      "credential_source": "$HOME/keys/openrouter.key",
+      "credential_ref": "env:OPENROUTER_API_KEY",
+      "timeout_ms": 90000
+    },
+    {
+      "candidate_id": "openrouter:gemini-3.5-flash",
+      "provider_lane": "openrouter",
+      "provider_profile_ref": "unprofiled:openrouter:google/gemini-3.5-flash",
+      "provider_family": "openrouter",
+      "provider_spec_kind": "openrouter",
+      "provider": "openrouter",
+      "model_ref": "google/gemini-3.5-flash",
+      "provider_model_id": "google/gemini-3.5-flash",
+      "runtime_surface": "hosted_api",
+      "credential_source": "$HOME/keys/openrouter.key",
+      "credential_ref": "env:OPENROUTER_API_KEY",
+      "timeout_ms": 90000
+    }
+  ]
+}

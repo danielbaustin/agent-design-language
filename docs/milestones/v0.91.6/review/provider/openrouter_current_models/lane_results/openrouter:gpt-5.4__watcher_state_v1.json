@@ -1,0 +1,39 @@
+{
+  "schema_version": "provider_communication.v1",
+  "route": {
+    "provider_kind": "hosted",
+    "provider": "openrouter",
+    "runtime_surface": "hosted_api",
+    "provider_model_id": "openai/gpt-5.4",
+    "credential_ref": "env:OPENROUTER_API_KEY",
+    "source_registry": "v0.91.6.openrouter.suitability"
+  },
+  "model_identity": {
+    "provider_kind": "hosted",
+    "provider": "openrouter",
+    "model_ref": "openai/gpt-5.4",
+    "provider_model_id": "openai/gpt-5.4-20260305",
+    "runtime_surface": "hosted_api",
+    "identity_strength": "provider_asserted",
+    "observed_at": "unix:1",
+    "source_registry": "v0.91.6.openrouter.suitability"
+  },
+  "attempts": [
+    {
+      "attempt_index": 1,
+      "started_at": "unix:1782153964",
+      "duration_ms": 2705,
+      "status": "ok",
+      "retryable": false,
+      "http_status": 200,
+      "raw_response_excerpt": "[redacted response len=590 sha256=ae12555d4e90]"
+    }
+  ],
+  "final_status": "ok",
+  "duration_ms": 2705,
+  "request_id": "openrouter:gpt-5.4__watcher_state_v1",
+  "output_text_excerpt": "[redacted response len=590 sha256=ae12555d4e90]",
+  "artifact_ref": "<tmp>/result.json@26c0b9fd3cbd9176",
+  "output_text_chars": 590,
+  "output_text_digest": "sha256:ae12555d4e90"
+}

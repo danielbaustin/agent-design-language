@@ -2078,6 +2078,8 @@ fn finish_path_is_larger_binary_focused(path: &str) -> bool {
         || trimmed.starts_with("adl/src/cli/tests/pr_cmd_inline/finish/")
         || trimmed == "docs/templates/prompts/current.json"
         || trimmed.starts_with("docs/templates/prompts/")
+        || trimmed.starts_with("adl/tools/suitability_specs/")
+        || trimmed.starts_with("docs/milestones/v0.91.6/review/provider/openrouter_current_models/")
 }
 
 fn finish_path_needs_pr_finish_rust_focused_validation(path: &str) -> bool {
@@ -2694,7 +2696,8 @@ fn finish_path_needs_deepseek_suitability_validation(path: &str) -> bool {
             | "adl/tools/validate_v0916_deepseek_suitability.py"
             | "adl/tools/test_v0916_deepseek_suitability.sh"
             | "adl/tools/suitability_specs/deepseek_csdlc_panel_4096.json"
-    )
+    ) || trimmed.starts_with("adl/tools/suitability_specs/")
+        || trimmed.starts_with("docs/milestones/v0.91.6/review/provider/openrouter_current_models/")
 }
 
 fn finish_path_needs_private_endpoint_fixture_sanitation_validation(path: &str) -> bool {
