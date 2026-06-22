@@ -494,6 +494,16 @@ The ADL workflow uses one primary checkout and issue-scoped worktrees.
 - `pr-finish` must publish from the bound issue worktree when the issue branch is checked out there.
 - `pr-janitor` repairs the existing PR branch/worktree; it must not recreate work from primary main.
 
+Before a session starts or resumes tracked issue work, it should check
+`git status --short --branch` and `git worktree list --porcelain` from the
+primary checkout. If root is on a feature branch or has tracked changes, route
+that as `unsafe_root_checkout_execution`: use `workflow-conductor` and
+repo-native worktree evidence when available, use only the narrowest manual
+fallback needed to preserve work in an issue worktree, restore the primary
+checkout to clean `main`, and leave a short broadcast note in the relevant
+issue, PR, sprint packet, or closeout record. The durable policy is
+`docs/tooling/SESSION_COORDINATION_AND_ROOT_CHECKOUT_POLICY.md`.
+
 Canonical blocker names:
 - `unsafe_root_checkout_execution`
 - `mismatched_publication_surface`

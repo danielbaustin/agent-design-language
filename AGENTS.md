@@ -71,6 +71,18 @@ These rules are mandatory for ADL issue work.
 3. Always work in a bound worktree on a specific branch.
    - Never do tracked issue work on `main`.
    - Use the repo-native issue-mode `pr run` flow to bind execution context.
+   - Keep the primary checkout clean on `main` for inspection, bootstrap,
+     doctor/readiness, and issue-mode binding only. After binding, tracked
+     implementation, janitor, finish, and repair edits happen in the issue
+     worktree.
+   - Before issue work, check root `git status --short --branch` and
+     `git worktree list --porcelain`. If the primary checkout is on a feature
+     branch or has tracked changes, stop and route the recovery through
+     `workflow-conductor` / repo-native `pr run` or `pr doctor` evidence when
+     available. Use only the narrowest manual fallback needed to preserve work
+     into an issue worktree and restore the primary checkout to clean `main`.
+   - See `docs/tooling/SESSION_COORDINATION_AND_ROOT_CHECKOUT_POLICY.md` for
+     the cross-session coordination and broadcast-note contract.
 4. Always create an issue-bound session goal before implementation work starts.
    - For tracked issue sessions, call `create_goal` after the issue is ready and
      before bounded implementation begins in the issue worktree.
@@ -148,18 +160,20 @@ For a normal tracked issue:
 
 1. read the source issue prompt and current task bundle
 2. route through `workflow-conductor`
-3. confirm all five C-SDLC cards exist and came from the active prompt-template
+3. confirm the primary checkout is clean on `main`, inspect active worktrees,
+   and preserve any session handoff or collision evidence before binding work
+4. confirm all five C-SDLC cards exist and came from the active prompt-template
    registry
-4. make sure `SIP`, `STP`, and `SPP` are issue-specific and design-time ready
-5. follow the conductor-selected lifecycle step
-6. if the issue is ready for execution binding, use `adl/tools/pr.sh run <issue>`
-7. call `create_goal` for the bound tracked issue session before implementation
+5. make sure `SIP`, `STP`, and `SPP` are issue-specific and design-time ready
+6. follow the conductor-selected lifecycle step
+7. if the issue is ready for execution binding, use `adl/tools/pr.sh run <issue>`
+8. call `create_goal` for the bound tracked issue session before implementation
    starts
-8. make the bounded change in the issue worktree, never on `main`
-9. run the smallest meaningful validation for the touched surface
-10. run a pre-PR subagent review and fix findings
-11. verify PR base/stack topology, then publish through the normal PR workflow
-12. use `update_goal` for truthful terminal session state, then perform closeout
+9. make the bounded change in the issue worktree, never on `main`
+10. run the smallest meaningful validation for the touched surface
+11. run a pre-PR subagent review and fix findings
+12. verify PR base/stack topology, then publish through the normal PR workflow
+13. use `update_goal` for truthful terminal session state, then perform closeout
    after merge/closure
 
 ## Validation Expectations
