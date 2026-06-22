@@ -64,11 +64,57 @@ exit 1
 GH_EOF
 chmod +x "${fakebin}/gh"
 
+cat >"${fakebin}/adl-issue" <<'ADL_ISSUE_EOF'
+#!/usr/bin/env bash
+set -euo pipefail
+
+subcommand="$1"
+shift
+
+case "${subcommand}" in
+  view)
+    issue_number="$1"
+    if [[ "${issue_number}" == "2827" ]]; then
+      state="$(cat "${FAKE_ISSUE_2827_STATE}")"
+      printf '{"number":2827,"title":"[v0.91.1][WP-05][runtime] Citizen standing model","state":"%s","url":"https://github.com/danielbaustin/agent-design-language/issues/2827"}\n' "${state}"
+      exit 0
+    fi
+    if [[ "${issue_number}" == "2828" ]]; then
+      state="$(cat "${FAKE_ISSUE_2828_STATE}")"
+      printf '{"number":2828,"title":"[v0.91.1][WP-06][runtime] Citizen state substrate","state":"%s","url":"https://github.com/danielbaustin/agent-design-language/issues/2828"}\n' "${state}"
+      exit 0
+    fi
+    if [[ "${issue_number}" == "3001" ]]; then
+      echo '{"number":3001,"title":"[v0.91.1][sprint-1][management] Trial sprint","state":"OPEN","url":"https://github.com/danielbaustin/agent-design-language/issues/3001"}'
+      exit 0
+    fi
+    echo "unexpected adl-issue view ${issue_number}" >&2
+    exit 1
+    ;;
+  create)
+    echo '{"number":3001,"url":"https://github.com/danielbaustin/agent-design-language/issues/3001"}'
+    exit 0
+    ;;
+  *)
+    echo "unexpected adl-issue invocation: ${subcommand} $*" >&2
+    exit 1
+    ;;
+esac
+ADL_ISSUE_EOF
+chmod +x "${fakebin}/adl-issue"
+
+fake_tool_repo="${tmpdir}/fake-tool-repo"
+mkdir -p "${fake_tool_repo}/adl/target/debug"
+cp "${fakebin}/adl-issue" "${fake_tool_repo}/adl/target/debug/adl-issue"
+chmod +x "${fake_tool_repo}/adl/target/debug/adl-issue"
+
 export PATH="${fakebin}:${PATH}"
 export FAKE_GH_LOG="${log_path}"
 export FAKE_ISSUE_2827_STATE="${issue_2827_state_file}"
 export FAKE_ISSUE_2828_STATE="${issue_2828_state_file}"
 export FAKE_PR_4001_STATE="${pr_4001_state_file}"
+export ADL_SPRINT_ISSUE_VIEW_CMD="${fakebin}/adl-issue view"
+export ADL_SPRINT_ISSUE_CREATE_CMD="${fakebin}/adl-issue create"
 
 state_path="${tmpdir}/sprint-state.json"
 fake_repo="${tmpdir}/fake-repo"
@@ -257,10 +303,36 @@ printf 'alpha\n' > "${readiness_installed_skill_dir}/SKILL.md"
 python3 "${repo_root}/adl/tools/skills/sprint-conductor/scripts/create_missing_sprint_issue.py" \
   --repo-root "${fake_repo}" \
   --ordered-issues "2827,2828" \
+  --execution-mode hybrid \
   --title "[v0.91.1][sprint-1][management] Trial sprint" \
   --goal "Run the narrow sprint-conductor trial" \
   --state "${state_path}" \
   >/dev/null
+
+python3 - "${repo_root}/adl/tools/skills/sprint-conductor/scripts/create_missing_sprint_issue.py" "${fake_tool_repo}" <<'PY'
+import importlib.util
+import os
+import sys
+from pathlib import Path
+
+script_path = Path(sys.argv[1])
+fake_tool_repo = Path(sys.argv[2])
+fake_issue_binary = fake_tool_repo / "adl" / "target" / "debug" / "adl-issue"
+sys.path.insert(0, str(script_path.parent))
+spec = importlib.util.spec_from_file_location("create_missing_sprint_issue", script_path)
+module = importlib.util.module_from_spec(spec)
+assert spec.loader is not None
+spec.loader.exec_module(module)
+module.SCRIPT_REPO_ROOT = fake_tool_repo
+os.environ.pop("ADL_SPRINT_ISSUE_VIEW_CMD", None)
+os.environ.pop("ADL_SPRINT_ISSUE_CREATE_CMD", None)
+assert module.default_issue_command("view") == [str(fake_issue_binary), "view"]
+assert module.default_issue_command("create") == [str(fake_issue_binary), "create"]
+assert module.issue_view(2827)["title"] == "[v0.91.1][WP-05][runtime] Citizen standing model"
+created = module.issue_create("Trial sprint", Path("/tmp/unused.md"))
+assert created["number"] == 3001
+assert created["url"].endswith("/issues/3001")
+PY
 
 python3 - "${state_path}" <<'PY'
 import json
@@ -271,8 +343,15 @@ state = json.loads(Path(sys.argv[1]).read_text())
 assert state["sprint_issue_number"] == 3001
 assert state["sprint_issue_created_by_skill"] is True
 assert state["current_issue_number"] == 2827
+assert state["execution_mode"] == "hybrid"
+assert state["execution_packet_path"].endswith("issue-3001__sprint-1-management-trial-sprint/SPRINT_EXECUTION_PACKET.md")
 assert len(state["issue_records"]) == 2
 assert state["structured_prompt_preflight"]["required_card_types"] == ["stp.md", "sip.md", "sor.md", "spp.md", "srp.md"]
+assert state["readiness_sweep"]["execution_packet"]["status"] == "present"
+assert state["readiness_sweep"]["review_paths"]["status"] == "declared"
+assert state["readiness_sweep"]["activity_log_paths"]["status"] == "declared"
+assert state["review"]["status"] == "not_started"
+assert state["closeout"]["status"] == "not_started"
 assert state["truth_check"]["status"] == "not_run"
 assert state["truth_check"]["gate_passed"] is False
 bundle = state["local_bundle"]
@@ -283,9 +362,16 @@ test -f "${fake_repo}/.adl/v0.91.1/bodies/issue-3001-sprint-1-management-trial-s
 test -f "${fake_repo}/.adl/v0.91.1/tasks/issue-3001__sprint-1-management-trial-sprint/stp.md"
 test -f "${fake_repo}/.adl/v0.91.1/tasks/issue-3001__sprint-1-management-trial-sprint/sip.md"
 test -f "${fake_repo}/.adl/v0.91.1/tasks/issue-3001__sprint-1-management-trial-sprint/sor.md"
+test -f "${fake_repo}/.adl/v0.91.1/sprints/issue-3001__sprint-1-management-trial-sprint/SPRINT_EXECUTION_PACKET.md"
 grep -q "Run the narrow sprint-conductor trial" "${fake_repo}/.adl/v0.91.1/bodies/issue-3001-sprint-1-management-trial-sprint.md"
 grep -q "Run the narrow sprint-conductor trial" "${fake_repo}/.adl/v0.91.1/tasks/issue-3001__sprint-1-management-trial-sprint/stp.md"
 grep -q "# Structured Task Prompt" "${fake_repo}/.adl/v0.91.1/tasks/issue-3001__sprint-1-management-trial-sprint/stp.md"
+grep -q "## Watcher Policy" "${fake_repo}/.adl/v0.91.1/sprints/issue-3001__sprint-1-management-trial-sprint/SPRINT_EXECUTION_PACKET.md"
+grep -q "## Sprint Activity Log" "${fake_repo}/.adl/v0.91.1/sprints/issue-3001__sprint-1-management-trial-sprint/SPRINT_EXECUTION_PACKET.md"
+grep -q "## Sprint-Level Review" "${fake_repo}/.adl/v0.91.1/sprints/issue-3001__sprint-1-management-trial-sprint/SPRINT_EXECUTION_PACKET.md"
+grep -q 'Execution mode: `hybrid`' "${fake_repo}/.adl/v0.91.1/sprints/issue-3001__sprint-1-management-trial-sprint/SPRINT_EXECUTION_PACKET.md"
+grep -q '^  N1\["#2827"\]$' "${fake_repo}/.adl/v0.91.1/sprints/issue-3001__sprint-1-management-trial-sprint/SPRINT_EXECUTION_PACKET.md"
+grep -q '^  N1 --> N2$' "${fake_repo}/.adl/v0.91.1/sprints/issue-3001__sprint-1-management-trial-sprint/SPRINT_EXECUTION_PACKET.md"
 if grep -q "generic pr init" "${fake_repo}/.adl/v0.91.1/bodies/issue-3001-sprint-1-management-trial-sprint.md"; then
   echo "expected preferred-path bootstrap to replace generic local source prompt" >&2
   exit 1
@@ -318,7 +404,7 @@ python3 "${repo_root}/adl/tools/skills/sprint-conductor/scripts/check_sprint_rea
   --repo-root "${fake_repo}" \
   --ordered-issues "2827,2828" \
   --execution-mode hybrid \
-  --execution-packet-path "${readiness_packet}" \
+  --execution-packet-path "${fake_repo}/.adl/v0.91.1/sprints/issue-3001__sprint-1-management-trial-sprint/SPRINT_EXECUTION_PACKET.md" \
   --review-path "${readiness_review}" \
   --activity-log-path "${readiness_activity}" \
   --tracked-skill-dir "${readiness_tracked_skill_dir}" \
@@ -1015,7 +1101,10 @@ assert state["sprint_issue_close_summary"] == "Sprint completed cleanly."
 assert state["closeout"]["closure_cleanliness"] == "clean_with_post_sprint_followups"
 PY
 
-grep -Fq "issue create" "${log_path}"
+if grep -Fq "issue create" "${log_path}"; then
+  echo "expected sprint helper bootstrap to avoid raw gh issue create in the default fixture path" >&2
+  exit 1
+fi
 grep -Fq "issue close 3001 --comment Sprint completed cleanly." "${log_path}"
 grep -Fq "pr view https://github.com/danielbaustin/agent-design-language/pull/4001 --json state,isDraft,url" "${log_path}"
 
