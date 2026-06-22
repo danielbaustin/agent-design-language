@@ -264,7 +264,11 @@ pub(super) fn run_doctor_ready(
         ],
     )?;
     if wt_branch.trim() != branch {
-        if stale_worktree_branch_mismatch_preserves_pre_run(root_indicates_pre_run, branch, wt_branch.trim()) {
+        if stale_worktree_branch_mismatch_preserves_pre_run(
+            root_indicates_pre_run,
+            branch,
+            wt_branch.trim(),
+        ) {
             let card_lifecycle = build_doctor_card_lifecycle(
                 repo_root,
                 &root_bundle_input,
