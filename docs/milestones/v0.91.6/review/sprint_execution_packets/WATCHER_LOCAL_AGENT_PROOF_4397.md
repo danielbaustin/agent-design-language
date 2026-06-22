@@ -47,7 +47,8 @@ Prompt contract used:
 - consume only the supplied watcher packet
 - return one classification from:
   `ready_for_run`, `pr_open`, `checks_running`, `checks_failed`,
-  `checks_green`, `closeout_needed`, `blocked`, `closed`, `unknown`
+  `checks_green`, `merged_pending_closeout`, `closeout_needed`, `blocked`,
+  `closed`, `unknown`
 - return `unknown` when evidence is insufficient
 - state explicitly that ADL remains authoritative
 
@@ -92,5 +93,5 @@ becomes the source of truth.
 - Route all lifecycle action off ADL fields such as `classification`,
   `next_skill`, and `continuation`, not off the model's prose.
 - Expand local-model coverage later to `checks_running`, `checks_failed`,
-  `checks_green`, and `closeout_needed` packets before depending on it for
-  broader sprint execution assistance.
+  `checks_green`, `merged_pending_closeout`, and `closeout_needed` packets
+  before depending on it for broader sprint execution assistance.

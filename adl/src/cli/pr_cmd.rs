@@ -464,21 +464,6 @@ fn real_pr_watch(args: &[String]) -> Result<()> {
     let issue = parse_issue_ref_number("watch", &parsed.issue_ref)?;
     let issue_record = github::gh_issue_view(&repo, issue)?;
     let closed_completed = github::gh_issue_is_closed_completed(issue, &repo)?;
-    let linked_prs = github::open_prs_linked_to_issue(&repo, issue)?;
-    let linked_pr = match linked_prs.len() {
-        0 => None,
-        1 => {
-            let pr = linked_prs
-                .into_iter()
-                .next()
-                .expect("single linked PR should exist");
-            let validation = github::pr_validation_report(&repo, &pr.number.to_string())?;
-            Some((pr, validation))
-        }
-        count => bail!(
-            "watch: issue #{issue} has {count} linked open PRs; watcher requires a single unambiguous lifecycle target"
-        ),
-    };
     let version = resolve_version_for_existing_issue(
         &repo_root,
         &repo,
@@ -493,16 +478,45 @@ fn real_pr_watch(args: &[String]) -> Result<()> {
         .or_else(|| local_identity.as_ref().map(|(_, slug)| slug.clone()))
         .unwrap_or_else(|| sanitize_slug(&issue_record.title));
     let issue_ref = IssueRef::new(issue, version, slug)?;
-    let ready = doctor::run_doctor_ready(
+    let linked_prs = github::linked_prs_for_issue(
+        &repo,
+        issue,
+        Some(issue_ref.branch_name("codex").as_str()),
+    )?;
+    let linked_pr = match linked_prs.len() {
+        0 => None,
+        1 => {
+            let pr = linked_prs
+                .into_iter()
+                .next()
+                .expect("single linked PR should exist");
+            let validation = github::pr_validation_report(&repo, &pr.number.to_string())?;
+            Some((pr, validation))
+        }
+        count => bail!(
+            "watch: issue #{issue} has {count} linked PRs; watcher requires a single unambiguous lifecycle target"
+        ),
+    };
+    let local_readiness = doctor::run_doctor_ready(
         &repo_root,
         &repo,
         &issue_ref,
         &issue_ref.branch_name("codex"),
-    )?;
+    )
+    .map(|ready| github::IssueWatchLocalReadinessReport {
+        status: "ready".to_string(),
+        pr_run_readiness: ready.card_lifecycle.pr_run_readiness.to_string(),
+        reason: "doctor_ready_pass".to_string(),
+    })
+    .unwrap_or_else(|err| github::IssueWatchLocalReadinessReport {
+        status: "failed".to_string(),
+        pr_run_readiness: "unknown".to_string(),
+        reason: err.to_string(),
+    });
     let report = github::build_issue_watch_report(
         &issue_record,
         closed_completed,
-        ready.card_lifecycle.pr_run_readiness,
+        local_readiness,
         linked_pr,
     );
     if parsed.json {
@@ -749,10 +763,16 @@ fn print_issue_watch_report(report: &github::IssueWatchReport) {
     );
     println!("state: {}", report.issue_state);
     println!("continuation: {}", report.continuation);
+    println!(
+        "local_readiness: status={} pr_run_readiness={} reason={}",
+        report.local_readiness.status,
+        report.local_readiness.pr_run_readiness,
+        report.local_readiness.reason
+    );
     if let Some(pr) = &report.linked_pr {
         println!(
-            "linked_pr: #{} draft={} disposition={}",
-            pr.number, pr.is_draft, pr.validation.disposition
+            "linked_pr: #{} state={} draft={} disposition={}",
+            pr.number, pr.state, pr.is_draft, pr.validation.disposition
         );
         println!("linked_pr_url: {}", pr.url);
         if !pr.validation.failed_checks.is_empty() {

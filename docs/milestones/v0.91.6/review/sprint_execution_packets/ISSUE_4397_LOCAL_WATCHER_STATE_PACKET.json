@@ -4,9 +4,50 @@
   "issue_state": "OPEN",
   "authoritative_classifier": "adl",
   "advisory_agent_mode": "local_agent_advisory_only",
-  "classification": "ready_for_run",
-  "next_skill": "pr-run",
+  "classification": "pr_open",
+  "next_skill": "issue-watcher",
   "continuation": "continue",
-  "reason": "issue_ready_without_linked_pr",
-  "linked_pr": null
+  "reason": "linked_pr_draft",
+  "local_readiness": {
+    "status": "failed",
+    "pr_run_readiness": "unknown",
+    "reason": "doctor: sor failed validation: /Users/daniel/git/agent-design-language/.adl/v0.91.6/tasks/issue-4397__v0-91-6-tools-watcher-prove-or-implement-repo-native-sprint-watcher/sor.md: bash failed with status Some(1)"
+  },
+  "linked_pr": {
+    "number": 4427,
+    "url": "https://github.com/danielbaustin/agent-design-language/pull/4427",
+    "head_ref_name": "codex/4397-v0-91-6-tools-watcher-prove-or-implement-repo-native-sprint-watcher",
+    "base_ref_name": "main",
+    "is_draft": true,
+    "state": "OPEN",
+    "validation": {
+      "pr_number": 4427,
+      "commit_sha": "176c0198197c221893537d105985481704b99ffe",
+      "pr_state": "OPEN",
+      "is_draft": true,
+      "disposition": "pending",
+      "checks": [
+        {
+          "name": "adl-ci",
+          "status": "COMPLETED",
+          "conclusion": "SUCCESS",
+          "job_run_id": "27978473405"
+        },
+        {
+          "name": "adl-slow-proof",
+          "status": "COMPLETED",
+          "conclusion": "SKIPPED",
+          "job_run_id": "27978473405"
+        },
+        {
+          "name": "adl-coverage",
+          "status": "COMPLETED",
+          "conclusion": "SUCCESS",
+          "job_run_id": "27978473405"
+        }
+      ],
+      "failed_checks": [],
+      "pending_checks": []
+    }
+  }
 }

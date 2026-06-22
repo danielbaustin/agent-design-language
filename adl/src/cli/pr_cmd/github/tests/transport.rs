@@ -457,7 +457,7 @@ fn pr_validation_status_query_paginates_status_rollup_contexts() {
 }
 
 #[test]
-fn list_open_prs_octocrab_paginates_rest_results() {
+fn list_prs_octocrab_paginates_rest_results() {
     let _guard = env_lock();
     let policy_env = clear_github_policy_env();
     let (base_uri, server) = spawn_open_prs_paginated_server();
@@ -467,7 +467,7 @@ fn list_open_prs_octocrab_paginates_rest_results() {
         std::env::set_var("ADL_GITHUB_OCTOCRAB_BASE_URI", &base_uri);
     }
 
-    let prs = list_open_prs_octocrab("owner/repo").expect("paginated open PRs");
+    let prs = list_prs_octocrab("owner/repo").expect("paginated PRs");
     assert_eq!(prs.len(), 2);
     assert_eq!(prs[0].number, 2101);
     assert_eq!(prs[1].number, 2102);
