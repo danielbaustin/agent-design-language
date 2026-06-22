@@ -1,4 +1,5 @@
 use super::*;
+use crate::cli::pr_cmd_cards::StructuredBundlePaths;
 
 #[test]
 fn write_output_card_emits_truthful_pre_run_scaffold() {
@@ -139,6 +140,85 @@ fn bootstrap_cards_use_versioned_prompt_templates_when_available() {
     assert!(sor.contains("- Validation planning prompt: `.adl/v0.91.3/tasks/issue-3286__tools-versioned-csdlc-prompt-templates/vpp.md`"));
     assert!(sor.contains("Integration method used: local ignored card-bundle scaffold write under the active checkout; tracked implementation artifacts do not exist yet"));
     assert!(!sor.contains("direct write in main repo for the local ignored pre-run record"));
+}
+
+#[test]
+fn versioned_bootstrap_bundle_from_issue_prompt_includes_valid_six_cards_without_template_residue()
+{
+    let _guard = env_lock();
+    let repo = unique_temp_dir("adl-pr-versioned-six-card-bundle");
+    init_git_repo(&repo);
+    copy_bootstrap_support_files(&repo);
+    copy_versioned_prompt_templates(&repo);
+
+    let issue_ref = IssueRef::new(
+        4394,
+        "v0.91.6".to_string(),
+        "tools-templates-repair-prompt-card-template-edge-cases".to_string(),
+    )
+    .expect("issue ref");
+    let title = "[v0.91.6][tools][templates] Repair prompt-card template edge cases";
+    write_authored_issue_prompt(&repo, &issue_ref, title);
+    let source_path = issue_ref.issue_prompt_path(&repo);
+
+    let bundle_stp = ensure_task_bundle_stp(&repo, &issue_ref, &source_path).expect("stp");
+    let (_bundle_stp, bundle_input, bundle_output) =
+        ensure_pre_run_bootstrap_cards(&repo, &issue_ref, title, &source_path)
+            .expect("pre-run bootstrap cards");
+
+    validate_bootstrap_stp(&repo, &bundle_stp).expect("generated stp should validate");
+    validate_bootstrap_output_card(
+        &repo,
+        issue_ref.issue_number(),
+        issue_ref.slug(),
+        "not bound yet",
+        &bundle_output,
+    )
+    .expect("generated sor should validate in bootstrap phase");
+
+    let structured_paths = StructuredBundlePaths {
+        plan_path: &issue_ref.task_bundle_plan_path(&repo),
+        validation_plan_path: &issue_ref.task_bundle_validation_plan_path(&repo),
+        review_policy_path: &issue_ref.task_bundle_review_policy_path(&repo),
+    };
+    validate_initialized_cards(
+        issue_ref.issue_number(),
+        issue_ref.slug(),
+        &bundle_input,
+        &bundle_output,
+        &repo,
+        structured_paths,
+    )
+    .expect("generated post-init/pre-run bundle should validate in doctor-ready state");
+
+    for (kind, path) in [
+        ("STP", issue_ref.task_bundle_stp_path(&repo)),
+        ("SIP", bundle_input.clone()),
+        ("SPP", issue_ref.task_bundle_plan_path(&repo)),
+        ("VPP", issue_ref.task_bundle_validation_plan_path(&repo)),
+        ("SRP", issue_ref.task_bundle_review_policy_path(&repo)),
+        ("SOR", bundle_output.clone()),
+    ] {
+        assert!(
+            path.is_file(),
+            "{kind} should be present in the generated six-card bundle"
+        );
+        let text = fs::read_to_string(path).expect("read generated card");
+        assert_no_prompt_template_residue(kind, &text);
+    }
+
+    let vpp = fs::read_to_string(issue_ref.task_bundle_validation_plan_path(&repo))
+        .expect("read generated vpp");
+    assert!(vpp.contains("artifact_type: \"structured_validation_planning_prompt\""));
+    assert!(vpp.contains("status: \"ready\""));
+    assert!(vpp.contains("## Validation Planning Summary"));
+
+    let sor = fs::read_to_string(bundle_output).expect("read generated sor");
+    assert!(sor.contains("Status: NOT_STARTED"));
+    assert!(sor.contains("Branch: not bound yet"));
+    assert!(sor.contains("## Issue Metrics Truth"));
+    assert!(!sor.contains("- Start Time: `"));
+    assert!(!sor.contains("- End Time: `"));
 }
 
 #[test]
