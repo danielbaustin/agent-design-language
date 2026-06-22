@@ -75,34 +75,70 @@ If a broad process check is needed, use the permission-safe process helper from
 `docs/tooling/PERMISSION_SAFE_PROCESS_STATUS.md`; do not use broad `ps`,
 `pgrep`, or `lsof` scans as workflow control.
 
-## Active Session Registry
+## Polis Occupancy Ledger
 
-ADL needs a first-class local session registry. Until the registry command
-exists, sessions should treat the following fields as the required coordination
-shape for handoff notes and future registry records:
+ADL needs a first-class local occupancy ledger. The immediate C-SDLC use case is
+session coordination across issues, branches, PRs, and worktrees, but the
+underlying concept is broader: agents and sessions claim bounded authority over
+shared polis resources.
+
+The general shape is:
+
+```text
+agent/session/role
+claims authority over
+resource/surface/task
+for a bounded purpose
+under a policy
+with heartbeat, expiry, handoff, and audit trail
+```
+
+For the software guild, resources are usually C-SDLC issues, PRs, branches, and
+worktrees. Future guilds may use the same claim model for research threads,
+publication drafts, model evaluations, memory-palace rooms, governance
+proposals, compute budgets, local machines, or Observatory surfaces.
+
+The first implemented ledger surface is:
+
+```bash
+adl session status [--ledger <path>] [--json]
+adl session claim --session-id <id> --owner <name> --resource <kind:id> --purpose <text> [--issue <n>] [--pr <n>] [--branch <name>] [--worktree <path>] [--policy-ref <path>] [--lifecycle-phase <phase>] [--mode active|watching|paused] [--ttl-secs <n>] [--do-not-touch <path>]... [--blocker <text>]... [--ledger <path>] [--json]
+adl session heartbeat --claim-id <id> [--ttl-secs <n>] [--ledger <path>] [--json]
+adl session release --claim-id <id> [--reason <text>] [--ledger <path>] [--json]
+```
+
+Default local ledger path:
+
+```text
+.adl/session-ledger/ledger.json
+```
+
+The ledger records:
 
 - `session_id` or thread identifier when known
-- issue number or sprint umbrella
+- owner/account/agent label
+- generic `resource.kind` and `resource.id`
+- purpose
+- claim mode: `active`, `watching`, `paused`, `stale`, or `released`
+- issue number or sprint umbrella when the resource is C-SDLC work
 - branch
 - worktree path
 - current lifecycle stage
 - PR number or URL when known
 - do-not-touch paths
 - watcher or janitor owner when one exists
-- last meaningful update time
+- heartbeat, expiry, and release timestamps
 - known blockers
 
-Future tooling should expose this through commands such as:
+The ledger is coordination infrastructure, not final authority. GitHub issue/PR
+state, tracked cards, and closeout records remain authoritative for lifecycle
+truth. A stale ledger claim must block blind writes; it does not authorize
+destructive cleanup by itself.
 
-```text
-adl session status
-adl session claim
-adl session heartbeat
-adl session release
-```
-
-That implementation is intentionally follow-on work. This policy issue only
-establishes the documented contract.
+Mutating commands acquire a short-lived sibling lock file next to the selected
+ledger path, such as `.adl/session-ledger/ledger.json.lock`, before loading and
+rewriting the ledger. A leftover lock file means a previous process may have
+stopped mid-mutation and should be inspected before removal.
 
 ## Broadcast Notes
 
@@ -150,8 +186,8 @@ workflow.
 
 This policy does not:
 
-- implement the future session registry commands
 - replace `workflow-conductor`
 - replace issue cards or closeout truth
 - permit tracked work on `main`
 - make chat memory authoritative
+- solve all future polis governance or non-software guild occupancy rules

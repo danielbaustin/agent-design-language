@@ -34,6 +34,10 @@ pub fn usage() -> &'static str {
   adl identity instinct [--out <path>]
   adl identity instinct-runtime [--out <path>]
   adl process status (--pid <pid> | --pid-file <path> | --port <port> [--host <host>] | --name <label>) [--json]
+  adl session status [--ledger <path>] [--json]
+  adl session claim --session-id <id> --owner <name> --resource <kind:id> --purpose <text> [--issue <n>] [--pr <n>] [--branch <name>] [--worktree <path>] [--policy-ref <path>] [--lifecycle-phase <phase>] [--mode active|watching|paused] [--ttl-secs <n>] [--do-not-touch <path>]... [--blocker <text>]... [--ledger <path>] [--json]
+  adl session heartbeat --claim-id <id> [--ttl-secs <n>] [--ledger <path>] [--json]
+  adl session release --claim-id <id> [--reason <text>] [--ledger <path>] [--json]
   adl runtime-v2 operator-controls [--out <path>]
   adl runtime-v2 security-boundary [--out <path>]
   adl runtime-v2 foundation-demo [--out <dir>]
@@ -114,6 +118,8 @@ Examples:
   adl identity demo-proof-entry-points --out .adl/state/demo_proof_entry_points_v1.json
   adl process status --pid-file .adl/runs/demo/server.pid --json
   adl process status --port 8787 --json
+  adl session claim --session-id thread-4412 --owner codex --resource csdlc_issue:4412 --purpose \"implement session ledger\" --issue 4412 --branch codex/4412 --worktree .worktrees/adl-wp-4412 --json
+  adl session status --json
   adl runtime-v2 operator-controls --out .adl/state/runtime_v2_operator_control_report.v1.json
   adl runtime-v2 security-boundary --out .adl/state/runtime_v2_security_boundary_proof.v1.json
   adl runtime-v2 foundation-demo --out artifacts/v0901/demo-l-v0901-runtime-v2-foundation

@@ -21,6 +21,7 @@ mod run;
 pub(crate) mod run_artifacts;
 mod run_artifacts_types;
 mod runtime_v2_cmd;
+mod session_cmd;
 #[cfg(test)]
 mod tests;
 mod tokio_runtime;
@@ -39,6 +40,7 @@ use process_cmd::real_process;
 use provider_cmd::real_provider;
 use run::{real_resume, run_workflow};
 use runtime_v2_cmd::real_runtime_v2;
+use session_cmd::real_session;
 use tooling_cmd::real_tooling;
 
 fn usage() -> &'static str {
@@ -152,6 +154,7 @@ fn dispatch_args(args: &[String]) -> Result<()> {
         Some("process") => real_process(&args[1..]),
         Some("provider") => real_provider(&args[1..]),
         Some("runtime-v2") => real_runtime_v2(&args[1..]),
+        Some("session") => real_session(&args[1..]),
         Some("pr") => real_pr(&args[1..]),
         Some("keygen") => real_keygen(&args[1..]),
         Some("sign") => real_sign(&args[1..]),
@@ -224,6 +227,9 @@ fn dispatch_runtime_args(args: &[String]) -> Result<()> {
         Some("learn") => real_learn(&args[1..]),
         Some("provider") => real_provider(&args[1..]),
         Some("runtime-v2") => real_runtime_v2(&args[1..]),
+        Some("session") => Err(anyhow::anyhow!(
+            "adl-runtime does not own polis/session coordination commands. Use adl session <status|claim|heartbeat|release>."
+        )),
         Some("keygen") => real_keygen(&args[1..]),
         Some("sign") => real_sign(&args[1..]),
         Some("verify") => real_verify(&args[1..]),

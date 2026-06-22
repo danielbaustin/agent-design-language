@@ -80,6 +80,7 @@ pub mod rust_native_gws_adapter_boundary;
 pub mod sandbox;
 pub mod scheduler;
 pub mod schema;
+pub mod session_ledger;
 pub mod signing;
 pub mod skill_composition_model;
 pub mod speculative_decoding_prototype;

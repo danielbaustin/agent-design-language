@@ -152,6 +152,16 @@ fn top_level_dispatch_routes_process_and_public_help_paths() {
         "--json".to_string(),
     ])
     .expect("process status should route through top-level dispatch");
+
+    let ledger = unique_temp_dir("session-ledger-dispatch").join("ledger.json");
+    dispatch_args(&[
+        "session".to_string(),
+        "status".to_string(),
+        "--ledger".to_string(),
+        ledger.display().to_string(),
+        "--json".to_string(),
+    ])
+    .expect("session status should route through top-level dispatch");
 }
 
 #[test]
@@ -163,6 +173,7 @@ fn top_level_dispatch_routes_safe_help_branches_without_workflow_execution() {
         "tooling",
         "resume",
         "process",
+        "session",
     ] {
         dispatch_args(&[command.to_string(), "--help".to_string()])
             .expect("top-level help branch should route without workflow execution");
