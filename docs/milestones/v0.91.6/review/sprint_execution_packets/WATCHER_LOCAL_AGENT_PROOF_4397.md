@@ -84,6 +84,9 @@ becomes the source of truth.
 ## Recommended near-term usage
 
 - Keep `adl pr watch --json` as the single authoritative state packet.
+- Plan the first production watcher-agent integration around a local agent that
+  reads that packet after ADL emits it, rather than polling GitHub or
+  classifying lifecycle state on its own.
 - Allow a local watcher agent to summarize or restate the packet only after ADL
   emits it.
 - Route all lifecycle action off ADL fields such as `classification`,
