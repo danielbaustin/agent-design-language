@@ -6,7 +6,8 @@ use std::fs;
 use std::path::{Path, PathBuf};
 
 use super::super::pr_cmd_prompt::{
-    infer_initial_pvf_lane, infer_initial_pvf_lane_source, NEEDS_PLANNING_PVF_LANE,
+    infer_initial_pvf_lane, infer_initial_pvf_lane_source, infer_planned_pvf_lane,
+    infer_planned_pvf_lane_source, NEEDS_PLANNING_PVF_LANE,
 };
 use super::super::pr_cmd_validate::validate_authored_prompt_surface;
 use super::super::pr_cmd_validate::{bootstrap_stub_reason, PromptSurfaceKind};
@@ -289,9 +290,10 @@ impl SourcePromptMetadata {
 }
 
 fn resolved_initial_pvf_lane(metadata: &SourcePromptMetadata, title: &str, prompt: &str) -> String {
-    metadata.initial_pvf_lane.clone().unwrap_or_else(|| {
-        infer_initial_pvf_lane(title, &metadata.labels.join(","), Some(prompt)).to_string()
-    })
+    metadata
+        .initial_pvf_lane
+        .clone()
+        .unwrap_or_else(|| infer_initial_pvf_lane(title, &metadata.labels.join(","), Some(prompt)))
 }
 
 fn resolved_initial_pvf_lane_source(
@@ -307,20 +309,15 @@ fn resolved_initial_pvf_lane_source(
             Some(prompt),
             initial_lane,
         )
-        .to_string()
     })
 }
 
 fn resolved_planned_pvf_lane(initial_lane: &str) -> String {
-    initial_lane.to_string()
+    infer_planned_pvf_lane(initial_lane)
 }
 
 fn resolved_planned_pvf_lane_source(initial_lane: &str, initial_source: &str) -> String {
-    if initial_lane == NEEDS_PLANNING_PVF_LANE {
-        "planning_required_from_issue_creation".to_string()
-    } else {
-        format!("planning_confirmed_from_{initial_source}")
-    }
+    infer_planned_pvf_lane_source(initial_lane, initial_source)
 }
 
 fn apply_stp_metadata_values(text: &mut String, metadata: &SourcePromptMetadata, source_rel: &str) {

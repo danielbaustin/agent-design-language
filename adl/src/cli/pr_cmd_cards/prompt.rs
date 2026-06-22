@@ -160,7 +160,7 @@ pub(crate) fn render_issue_prompt_from_body(
     let outcome_type = infer_required_outcome_type(labels_csv, title);
     let initial_pvf_lane = infer_initial_pvf_lane(title, labels_csv, Some(body));
     let initial_pvf_lane_source =
-        infer_initial_pvf_lane_source(title, labels_csv, Some(body), initial_pvf_lane);
+        infer_initial_pvf_lane_source(title, labels_csv, Some(body), &initial_pvf_lane);
     let label_lines = labels_csv
         .split(',')
         .map(str::trim)
