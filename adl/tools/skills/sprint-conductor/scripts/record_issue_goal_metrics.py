@@ -60,14 +60,35 @@ def main() -> int:
     parser.add_argument("--capture-stage", required=True, choices=sorted(CAPTURE_STAGES))
     parser.add_argument("--data-source", required=True, choices=sorted(DATA_SOURCE_VALUES))
     parser.add_argument("--recorded-at")
+    parser.add_argument("--issue-goal-ref")
+    parser.add_argument("--sprint-goal-ref")
+    parser.add_argument("--goal-metrics-rollup-ref")
     parser.add_argument("--goal-id")
-    parser.add_argument("--goal-id-state", choices=["known", "unknown", "not_available"])
+    parser.add_argument("--goal-id-state", choices=["known", "unknown", "not_collected", "not_applicable", "not_available"])
     parser.add_argument("--started-at")
     parser.add_argument("--completed-at")
     parser.add_argument("--elapsed-seconds")
+    parser.add_argument("--active-work-seconds")
+    parser.add_argument("--validation-seconds")
+    parser.add_argument("--pr-wait-seconds")
+    parser.add_argument("--ci-wait-seconds")
     parser.add_argument("--total-tokens")
     parser.add_argument("--prompt-tokens")
     parser.add_argument("--completion-tokens")
+    parser.add_argument("--metrics-confidence", default="unknown", choices=["low", "medium", "high", "unknown"])
+    parser.add_argument(
+        "--completion-state",
+        default="unknown",
+        choices=[
+            "completed",
+            "completed_with_follow_on",
+            "blocked",
+            "failed",
+            "deferred",
+            "cancelled",
+            "unknown",
+        ],
+    )
     parser.add_argument("--model-ref")
     parser.add_argument("--session-ref")
     parser.add_argument("--thread-id")
@@ -88,14 +109,23 @@ def main() -> int:
         data_source=args.data_source,
         raw_log_path=str(sink_path),
         recorded_at=args.recorded_at,
+        issue_goal_ref=args.issue_goal_ref,
+        sprint_goal_ref=args.sprint_goal_ref,
+        goal_metrics_rollup_ref=args.goal_metrics_rollup_ref,
         goal_id=args.goal_id,
         goal_id_state=args.goal_id_state,
         started_at=args.started_at,
         completed_at=args.completed_at,
         elapsed_seconds_raw=args.elapsed_seconds,
+        active_work_seconds_raw=args.active_work_seconds,
+        validation_seconds_raw=args.validation_seconds,
+        pr_wait_seconds_raw=args.pr_wait_seconds,
+        ci_wait_seconds_raw=args.ci_wait_seconds,
         total_tokens_raw=args.total_tokens,
         prompt_tokens_raw=args.prompt_tokens,
         completion_tokens_raw=args.completion_tokens,
+        metrics_confidence=args.metrics_confidence,
+        completion_state=args.completion_state,
         model_ref=args.model_ref,
         session_ref=args.session_ref,
         thread_id=args.thread_id,

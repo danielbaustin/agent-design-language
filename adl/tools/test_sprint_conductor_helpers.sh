@@ -1104,11 +1104,20 @@ python3 "${repo_root}/adl/tools/skills/sprint-conductor/scripts/record_issue_goa
   --capture-stage merge_closeout \
   --data-source codex_goal_tool \
   --recorded-at "2026-06-20T03:00:00Z" \
+  --issue-goal-ref "goal:v0.91.6:sprint:7001:issue:7002" \
+  --sprint-goal-ref "goal:v0.91.6:sprint:7001" \
+  --goal-metrics-rollup-ref ".adl/v0.91.6/sprints/issue-7001__sample/goal-metrics.jsonl" \
   --goal-id "goal-7002" \
   --started-at "2026-06-20T02:30:00Z" \
   --completed-at "2026-06-20T02:56:02Z" \
   --elapsed-seconds 1562 \
+  --active-work-seconds 1220 \
+  --validation-seconds 200 \
+  --pr-wait-seconds 142 \
+  --ci-wait-seconds not_applicable \
   --total-tokens 325020 \
+  --metrics-confidence high \
+  --completion-state completed \
   --model-ref "gpt-5-codex" \
   --session-ref "codex-session-7002" \
   --thread-id "thread-7002" >/dev/null
@@ -1121,7 +1130,7 @@ python3 "${repo_root}/adl/tools/skills/sprint-conductor/scripts/record_issue_goa
   --data-source manual_entry \
   --recorded-at "2026-06-20T03:10:00Z" \
   --goal-id-state not_available \
-  --elapsed-seconds not_available \
+  --elapsed-seconds not_collected \
   --total-tokens unknown \
   --model-ref "gpt-5-codex" >/dev/null
 
@@ -1136,22 +1145,52 @@ assert len(lines) == 2
 record_7002 = next(record for record in state["issue_records"] if record["issue_number"] == 7002)
 record_7003 = next(record for record in state["issue_records"] if record["issue_number"] == 7003)
 assert record_7002["goal_metrics"]["status"] == "recorded"
+assert record_7002["goal_metrics"]["issue_goal_ref"] == "goal:v0.91.6:sprint:7001:issue:7002"
+assert record_7002["goal_metrics"]["sprint_goal_ref"] == "goal:v0.91.6:sprint:7001"
+assert record_7002["goal_metrics"]["goal_metrics_rollup_ref"] == ".adl/v0.91.6/sprints/issue-7001__sample/goal-metrics.jsonl"
 assert record_7002["goal_metrics"]["elapsed_seconds"] == 1562
 assert record_7002["goal_metrics"]["elapsed_availability"] == "known"
+assert record_7002["goal_metrics"]["active_work_seconds"] == 1220
+assert record_7002["goal_metrics"]["active_work_availability"] == "known"
+assert record_7002["goal_metrics"]["validation_seconds"] == 200
+assert record_7002["goal_metrics"]["validation_availability"] == "known"
+assert record_7002["goal_metrics"]["pr_wait_seconds"] == 142
+assert record_7002["goal_metrics"]["pr_wait_availability"] == "known"
+assert record_7002["goal_metrics"]["ci_wait_availability"] == "not_applicable"
+assert record_7002["goal_metrics"]["completion_state"] == "completed"
+assert record_7002["goal_metrics"]["metrics_confidence"] == "high"
 assert record_7002["goal_metrics"]["token_usage"]["total_tokens"] == 325020
 assert record_7002["goal_metrics"]["token_usage"]["total_availability"] == "known"
 assert record_7003["goal_metrics"]["goal_id_availability"] == "not_available"
-assert record_7003["goal_metrics"]["elapsed_availability"] == "not_available"
+assert record_7003["goal_metrics"]["elapsed_availability"] == "not_collected"
 assert record_7003["goal_metrics"]["token_usage"]["total_availability"] == "unknown"
 rollup = state["closeout"]["goal_metrics_rollup"]
 assert rollup["issue_count"] == 2
 assert rollup["issues_with_recorded_metrics"] == 2
 assert rollup["issues_with_known_elapsed"] == 1
-assert rollup["issues_with_unknown_elapsed"] == 1
+assert rollup["issues_with_unknown_elapsed"] == 0
+assert rollup["issues_with_known_active_work"] == 1
+assert rollup["issues_with_unknown_active_work"] == 1
+assert rollup["issues_with_known_validation_seconds"] == 1
+assert rollup["issues_with_unknown_validation_seconds"] == 1
+assert rollup["issues_with_known_pr_wait"] == 1
+assert rollup["issues_with_unknown_pr_wait"] == 1
+assert rollup["issues_with_known_ci_wait"] == 0
+assert rollup["issues_with_unknown_ci_wait"] == 1
 assert rollup["issues_with_known_total_tokens"] == 1
 assert rollup["issues_with_unknown_total_tokens"] == 1
 assert rollup["total_elapsed_seconds_known_sum"] == 1562
+assert rollup["total_active_work_seconds_known_sum"] == 1220
+assert rollup["total_validation_seconds_known_sum"] == 200
+assert rollup["total_pr_wait_seconds_known_sum"] == 142
+assert rollup["total_ci_wait_seconds_known_sum"] == 0
 assert rollup["total_tokens_known_sum"] == 325020
+assert rollup["data_source_counts"]["codex_goal_tool"] == 1
+assert rollup["data_source_counts"]["manual_entry"] == 1
+assert rollup["elapsed_availability_counts"]["not_collected"] == 1
+assert rollup["ci_wait_availability_counts"]["not_applicable"] == 1
+assert rollup["completion_state_counts"]["completed"] == 1
+assert rollup["completion_state_counts"]["unknown"] == 1
 PY
 
 goal_metrics_default_state_path="${tmpdir}/goal-metrics-default-state.json"
@@ -1239,8 +1278,17 @@ python3 "${repo_root}/adl/tools/skills/sprint-conductor/scripts/write_sprint_clo
 
 grep -Fq '## Goal Metrics Rollup' "${goal_metrics_artifact}"
 grep -Fq 'issues with recorded metrics: `2/2`' "${goal_metrics_artifact}"
-grep -Fq 'elapsed seconds: `known_sum=1562, known_issue_count=1, unknown_issue_count=1`' "${goal_metrics_artifact}"
-grep -Fq 'total tokens: `known_sum=325020, known_issue_count=1, unknown_issue_count=1`' "${goal_metrics_artifact}"
+grep -Fq "goal refs: \`issue=goal:v0.91.6:sprint:7001:issue:7002, sprint=goal:v0.91.6:sprint:7001, rollup=.adl/v0.91.6/sprints/issue-7001__sample/goal-metrics.jsonl\`" "${goal_metrics_artifact}"
+grep -Fq 'goal timing buckets: `active_work=1220, validation=200, pr_wait=142, ci_wait=not_applicable`' "${goal_metrics_artifact}"
+grep -Fq "data sources: \`{'codex_goal_tool': 1, 'derived_sprint_state': 0, 'manual_entry': 1, 'unknown': 0}\`" "${goal_metrics_artifact}"
+grep -Fq "goal-id availability: \`{'known': 1, 'not_applicable': 0, 'not_available': 1, 'not_collected': 0, 'unknown': 0}\`" "${goal_metrics_artifact}"
+grep -Fq "completion states: \`{'blocked': 0, 'cancelled': 0, 'completed': 1, 'completed_with_follow_on': 0, 'deferred': 0, 'failed': 0, 'unknown': 1}\`" "${goal_metrics_artifact}"
+grep -Fq "elapsed seconds: \`known_sum=1562, known_issue_count=1, unknown_issue_count=0, availability_counts={'known': 1, 'not_applicable': 0, 'not_available': 0, 'not_collected': 1, 'unknown': 0}\`" "${goal_metrics_artifact}"
+grep -Fq "active work seconds: \`known_sum=1220, known_issue_count=1, unknown_issue_count=1, availability_counts={'known': 1, 'not_applicable': 0, 'not_available': 0, 'not_collected': 0, 'unknown': 1}\`" "${goal_metrics_artifact}"
+grep -Fq "validation seconds: \`known_sum=200, known_issue_count=1, unknown_issue_count=1, availability_counts={'known': 1, 'not_applicable': 0, 'not_available': 0, 'not_collected': 0, 'unknown': 1}\`" "${goal_metrics_artifact}"
+grep -Fq "pr wait seconds: \`known_sum=142, known_issue_count=1, unknown_issue_count=1, availability_counts={'known': 1, 'not_applicable': 0, 'not_available': 0, 'not_collected': 0, 'unknown': 1}\`" "${goal_metrics_artifact}"
+grep -Fq "ci wait seconds: \`known_sum=0, known_issue_count=0, unknown_issue_count=1, availability_counts={'known': 0, 'not_applicable': 1, 'not_available': 0, 'not_collected': 0, 'unknown': 1}\`" "${goal_metrics_artifact}"
+grep -Fq "total tokens: \`known_sum=325020, known_issue_count=1, unknown_issue_count=1, availability_counts={'known': 1, 'not_applicable': 0, 'not_available': 0, 'not_collected': 0, 'unknown': 1}\`" "${goal_metrics_artifact}"
 
 echo "PASS test_sprint_conductor_helpers"
 
