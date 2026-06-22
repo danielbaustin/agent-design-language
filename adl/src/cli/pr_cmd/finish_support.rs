@@ -1466,6 +1466,13 @@ pub(super) fn select_finish_validation_plan(paths_csv: &str) -> Result<FinishVal
         }
         if paths
             .iter()
+            .any(|path| finish_path_needs_sprint_conductor_helper_validation(path))
+        {
+            mode = FinishValidationMode::LargerBinaryFocused;
+            commands.push("bash adl/tools/test_sprint_conductor_helpers.sh".to_string());
+        }
+        if paths
+            .iter()
             .any(|path| finish_path_needs_unity_observatory_baseline_validation(0, path))
         {
             commands.push("bash adl/tools/test_v0916_unity_observatory_baseline.sh".to_string());
@@ -2063,6 +2070,7 @@ fn finish_path_is_larger_binary_focused(path: &str) -> bool {
         || trimmed.starts_with("adl/src/agent_comms/")
         || trimmed.starts_with("adl/src/csdlc_prompt_editor/")
         || trimmed.starts_with("adl/src/cli/run_artifacts_types/")
+        || trimmed.starts_with("adl/tools/skills/sprint-conductor/scripts/")
         || trimmed == "adl/src/runtime_v2/tests.rs"
         || trimmed.starts_with("adl/src/runtime_v2/tests/")
         || trimmed.starts_with("adl/tests/fixtures/scheduler/")
@@ -2560,6 +2568,11 @@ fn finish_path_needs_validation_inventory_focused_validation(path: &str) -> bool
             | "adl/tools/validation_inventory.sh"
             | "adl/tools/test_validation_inventory.sh"
     )
+}
+
+fn finish_path_needs_sprint_conductor_helper_validation(path: &str) -> bool {
+    let trimmed = path.trim().trim_matches('/');
+    trimmed.starts_with("adl/tools/skills/sprint-conductor/scripts/")
 }
 
 fn parsed_issue_is_4031_unity_observatory_scaffold_path(issue: u32, path: &str) -> bool {
@@ -3445,6 +3458,10 @@ pub(super) fn run_finish_validation_rust(
                 "bash adl/tools/run_owner_validation_lane.sh all --build" => {
                     let script = repo_root.join("adl/tools/run_owner_validation_lane.sh");
                     run_finish_validation_status("bash", &[path_str(&script)?, "all", "--build"])?;
+                }
+                "bash adl/tools/test_sprint_conductor_helpers.sh" => {
+                    let script = repo_root.join("adl/tools/test_sprint_conductor_helpers.sh");
+                    run_finish_validation_status("bash", &[path_str(&script)?])?;
                 }
                 other => bail!("finish: unsupported focused validation command '{other}'"),
             }

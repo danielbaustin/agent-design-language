@@ -2834,6 +2834,56 @@ fn finish_validation_profile_classifies_validation_inventory_slice_as_small_bina
 }
 
 #[test]
+fn finish_validation_profile_runs_sprint_conductor_helper_validation_for_metrics_scripts() {
+    let plan = select_finish_validation_plan(
+        "adl/tools/skills/sprint-conductor/scripts/issue_goal_metrics.py,adl/tools/skills/sprint-conductor/scripts/record_codex_goal_tool_snapshot.py,adl/tools/test_sprint_conductor_helpers.sh,docs/default_workflow.md",
+    )
+    .expect("sprint conductor helper metrics plan");
+
+    assert_eq!(plan.mode, FinishValidationMode::LargerBinaryFocused);
+    assert!(plan
+        .commands
+        .contains(&"bash adl/tools/test_sprint_conductor_helpers.sh".to_string()));
+}
+
+#[test]
+fn finish_helper_paths_run_sprint_conductor_helper_validation() {
+    let repo = unique_temp_dir("adl-pr-finish-sprint-conductor-helper-validation");
+    let tools = repo.join("adl/tools");
+    fs::create_dir_all(&tools).expect("tools dir");
+    write_executable(
+        &tools.join("check_no_tracked_adl_issue_record_residue.sh"),
+        "#!/usr/bin/env bash\nset -euo pipefail\n",
+    );
+    write_executable(
+        &tools.join("test_sprint_conductor_helpers.sh"),
+        "#!/usr/bin/env bash\nset -euo pipefail\nrepo_root=\"$(cd \"$(dirname \"$0\")/../..\" && pwd)\"\necho sprint-conductor-ran > \"$repo_root/sprint-conductor-ran.txt\"\n",
+    );
+    assert!(Command::new("git")
+        .args(["init", "-q"])
+        .current_dir(&repo)
+        .status()
+        .expect("git init")
+        .success());
+
+    let plan = FinishValidationPlan {
+        mode: FinishValidationMode::LargerBinaryFocused,
+        commands: vec![
+            "bash adl/tools/check_no_tracked_adl_issue_record_residue.sh".to_string(),
+            "git diff --check".to_string(),
+            "bash adl/tools/test_sprint_conductor_helpers.sh".to_string(),
+        ],
+    };
+    run_finish_validation_rust(&repo, &plan).expect("sprint conductor helper validation");
+    assert_eq!(
+        fs::read_to_string(repo.join("sprint-conductor-ran.txt"))
+            .expect("runner marker")
+            .trim(),
+        "sprint-conductor-ran"
+    );
+}
+
+#[test]
 fn finish_validation_profile_classifies_slow_proof_family_split_slice() {
     let plan = select_finish_validation_plan_for_finish(
         4219,

@@ -1520,3 +1520,86 @@ grep -Fq '## Planned Vs Actual Parallelism' "${ready_artifact}"
 grep -Fq 'planned summary: `Expected one safe docs lane plus one serial gate.`' "${ready_artifact}"
 grep -Fq 'actual summary: `The docs lane stayed serial because both issues touched the same tracker file.`' "${ready_artifact}"
 grep -Fq 'lane=`docs-lane` issues=`5002, 5003` why_wrong=Both child issues mutated the same tracker path during review preparation. corrective_action=Keep the lane serial until tracker writes are split.' "${ready_artifact}"
+
+codex_goal_snapshot="${tmpdir}/codex-goal-state.json"
+cat >"${codex_goal_snapshot}" <<'JSON'
+{
+  "goal": {
+    "threadId": "thread-4431",
+    "objective": "Issue #4431: restore authoritative workflow time and token accounting",
+    "status": "active",
+    "tokensUsed": 39238,
+    "timeUsedSeconds": 55,
+    "createdAt": 1782153534,
+    "updatedAt": 1782153590
+  },
+  "remainingTokens": null,
+  "completionBudgetReport": null
+}
+JSON
+codex_goal_sink="${tmpdir}/issue-4431-goal-metrics.jsonl"
+codex_goal_summary="${tmpdir}/issue-4431-goal-metrics-summary.json"
+python3 "${repo_root}/adl/tools/skills/sprint-conductor/scripts/record_codex_goal_tool_snapshot.py" \
+  --goal-state "${codex_goal_snapshot}" \
+  --issue-number 4431 \
+  --sink "${codex_goal_sink}" \
+  --summary-out "${codex_goal_summary}" \
+  --capture-stage issue_start \
+  --issue-goal-ref "goal:v0.91.6:issue:4431" \
+  --metrics-confidence high \
+  --model-ref "gpt-5-codex" >/dev/null
+python3 - "${codex_goal_sink}" "${codex_goal_summary}" <<'PY'
+import json
+import sys
+from pathlib import Path
+
+rows = [json.loads(line) for line in Path(sys.argv[1]).read_text().splitlines() if line.strip()]
+assert len(rows) == 1
+record = rows[0]
+assert record["data_source"] == "codex_goal_tool"
+assert record["issue_goal_ref"] == "goal:v0.91.6:issue:4431"
+assert record["thread_id"] == "thread-4431"
+assert record["active_work_seconds"] == 55
+assert record["active_work_availability"] == "known"
+assert record["elapsed_seconds"] == 56
+assert record["elapsed_availability"] == "known"
+assert record["token_usage"]["total_tokens"] == 39238
+assert record["token_usage"]["total_availability"] == "known"
+assert record["goal_id_availability"] == "not_available"
+summary = json.loads(Path(sys.argv[2]).read_text())
+assert summary["status"] == "recorded"
+assert summary["selected_stage"] == "issue_start"
+assert summary["thread_id"] == "thread-4431"
+assert summary["active_work_seconds"] == 55
+assert summary["token_usage"]["total_tokens"] == 39238
+assert summary["elapsed_seconds"] == 56
+assert summary["elapsed_availability"] == "known"
+assert summary["metrics_confidence"] == "high"
+PY
+
+codex_budgetlimited_snapshot="${tmpdir}/codex-goal-budgetlimited-state.json"
+cat >"${codex_budgetlimited_snapshot}" <<'JSON'
+{
+  "goal": {
+    "threadId": "thread-4431-budgetlimited",
+    "objective": "Issue #4431: budget limited session",
+    "status": "budgetLimited",
+    "tokensUsed": 41000,
+    "timeUsedSeconds": 91,
+    "createdAt": 1782153534,
+    "updatedAt": 1782153625
+  }
+}
+JSON
+python3 - "${repo_root}" "${codex_budgetlimited_snapshot}" <<'PY'
+import sys
+
+sys.path.insert(0, sys.argv[1] + "/adl/tools/skills/sprint-conductor/scripts")
+from issue_goal_metrics import parse_codex_goal_tool_snapshot
+
+snapshot = parse_codex_goal_tool_snapshot(sys.argv[2])
+assert snapshot["status"] == "budgetlimited"
+assert snapshot["completion_state"] == "deferred"
+assert snapshot["completed_at"] == "2026-06-22T18:40:25Z"
+assert snapshot["elapsed_seconds_raw"] == "91"
+PY

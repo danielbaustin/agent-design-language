@@ -155,6 +155,27 @@ Use `update_goal` only for truthful terminal state:
 - `blocked` only when the repeated blocking threshold is met and meaningful
   progress cannot continue without user input or an external state change
 
+When issue-local time/token accounting matters, preserve a durable local goal
+snapshot before the live goal disappears:
+
+1. save the `get_goal` tool payload to an issue-local path such as
+   `.adl/tmp/goals/issue-<n>-goal-state.json`
+2. normalize it into durable issue metrics artifacts:
+
+```bash
+python3 adl/tools/skills/sprint-conductor/scripts/record_codex_goal_tool_snapshot.py \
+  --goal-state .adl/tmp/goals/issue-<n>-goal-state.json \
+  --issue-number <n> \
+  --sink .adl/tmp/goals/issue-<n>-goal-metrics.jsonl \
+  --summary-out .adl/tmp/goals/issue-<n>-goal-metrics-summary.json \
+  --capture-stage issue_start \
+  --issue-goal-ref "goal:<version>:issue:<n>"
+```
+
+Use the resulting summary artifact as the preferred `SOR` source ref when
+`Goal metrics data source` is `codex_goal_tool`. If no authoritative snapshot
+exists, keep the metrics fields `unknown` rather than fabricating values.
+
 ## 5) Implement
 
 Read the active issue cards, stay inside the issue edit fence, and make the tracked repo changes.
