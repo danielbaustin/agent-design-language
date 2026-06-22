@@ -11,6 +11,9 @@ use crate::cli::pr_cmd_prompt::{
 };
 use adl::control_plane::IssueRef;
 use std::env;
+use std::thread;
+use std::time::Duration;
+use tiny_http::{Header, Response, Server};
 
 fn spawn_issue_octocrab_test_server(
     expected_requests: usize,
@@ -113,6 +116,92 @@ fn restore_env_var(key: &str, value: Option<std::ffi::OsString>) {
     }
 }
 
+fn bind_pr_validation_test_server(context: &str) -> (String, Server) {
+    let listener = std::net::TcpListener::bind("127.0.0.1:0").expect(context);
+    let addr = listener.local_addr().expect("local addr");
+    let server = Server::from_listener(listener, None).expect("construct validation server");
+    (format!("http://{addr}"), server)
+}
+
+fn pr_validation_json_response(body: impl Into<String>) -> Response<std::io::Cursor<Vec<u8>>> {
+    let mut response = Response::from_string(body.into()).with_status_code(200);
+    if let Ok(header) = Header::from_bytes("Content-Type", "application/json") {
+        response = response.with_header(header);
+    }
+    response
+}
+
+fn pr_validation_graphql_response(
+    status: &str,
+    conclusion: Option<&str>,
+    check_name: &str,
+    is_draft: bool,
+) -> String {
+    serde_json::json!({
+        "data": {
+            "repository": {
+                "pullRequest": {
+                    "number": 1159,
+                    "headRefOid": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+                    "state": "OPEN",
+                    "isDraft": is_draft,
+                    "statusCheckRollup": {
+                        "contexts": {
+                            "nodes": [
+                                {
+                                    "__typename": "CheckRun",
+                                    "name": check_name,
+                                    "status": status,
+                                    "conclusion": conclusion,
+                                    "databaseId": 991,
+                                    "checkSuite": {
+                                        "workflowRun": {
+                                            "databaseId": 8801
+                                        }
+                                    }
+                                }
+                            ],
+                            "pageInfo": {
+                                "hasNextPage": false,
+                                "endCursor": null
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    })
+    .to_string()
+}
+
+fn spawn_pr_validation_status_once_server(
+    status: &'static str,
+    conclusion: Option<&'static str>,
+    check_name: &'static str,
+    is_draft: bool,
+) -> (String, thread::JoinHandle<Vec<String>>) {
+    let (base_uri, server) = bind_pr_validation_test_server("bind validation status server");
+    let handle = thread::spawn(move || {
+        let mut seen = Vec::new();
+        let Some(mut request) = server
+            .recv_timeout(Duration::from_secs(5))
+            .expect("validation status server receive")
+        else {
+            return seen;
+        };
+        let method = request.method().as_str().to_string();
+        let url = request.url().to_string();
+        let mut body = String::new();
+        let _ = request.as_reader().read_to_string(&mut body);
+        seen.push(format!("{method} {url} {body}"));
+        let _ = request.respond(pr_validation_json_response(pr_validation_graphql_response(
+            status, conclusion, check_name, is_draft,
+        )));
+        seen
+    });
+    (base_uri, handle)
+}
+
 #[test]
 fn render_generated_issue_prompt_preserves_bootstrap_contract() {
     let content = render_generated_issue_prompt(
@@ -204,6 +293,142 @@ fn parse_validation_args_accepts_repo_watch_and_json_flags() {
     let err = parse_validation_args(&["3849".to_string(), "--bogus".to_string()])
         .expect_err("unknown validation arg");
     assert!(err.to_string().contains("validation: unknown arg"));
+}
+
+#[test]
+fn real_pr_validation_supports_watch_json_success_path() {
+    let _guard = env_lock();
+    let repo = unique_temp_dir("adl-pr-validation-watch-json");
+    init_git_repo(&repo);
+    let (base_uri, server) =
+        spawn_pr_validation_status_once_server("COMPLETED", Some("SUCCESS"), "adl-ci", false);
+    let previous_dir = env::current_dir().expect("cwd");
+    let old_client = env::var_os("ADL_GITHUB_CLIENT");
+    let old_token = env::var_os("GITHUB_TOKEN");
+    let old_base_uri = env::var_os("ADL_GITHUB_OCTOCRAB_BASE_URI");
+    unsafe {
+        env::set_var("ADL_GITHUB_CLIENT", "octocrab");
+        env::set_var("GITHUB_TOKEN", "test-token");
+        env::set_var("ADL_GITHUB_OCTOCRAB_BASE_URI", &base_uri);
+    }
+    env::set_current_dir(&repo).expect("enter repo");
+
+    real_pr_validation(&[
+        "1159".to_string(),
+        "-R".to_string(),
+        "owner/repo".to_string(),
+        "--watch".to_string(),
+        "--json".to_string(),
+    ])
+    .expect("validation watch json");
+
+    env::set_current_dir(previous_dir).expect("restore cwd");
+    restore_env_var("ADL_GITHUB_CLIENT", old_client);
+    restore_env_var("GITHUB_TOKEN", old_token);
+    restore_env_var("ADL_GITHUB_OCTOCRAB_BASE_URI", old_base_uri);
+
+    let seen = server.join().expect("server join");
+    assert_eq!(seen.len(), 1);
+    assert!(seen[0].starts_with("POST /graphql "));
+}
+
+#[test]
+fn real_pr_validation_reports_failed_checks_and_returns_error() {
+    let _guard = env_lock();
+    let repo = unique_temp_dir("adl-pr-validation-failure");
+    init_git_repo(&repo);
+    let (base_uri, server) = spawn_pr_validation_status_once_server(
+        "COMPLETED",
+        Some("FAILURE"),
+        "adl-coverage",
+        false,
+    );
+    let previous_dir = env::current_dir().expect("cwd");
+    let old_client = env::var_os("ADL_GITHUB_CLIENT");
+    let old_token = env::var_os("GITHUB_TOKEN");
+    let old_base_uri = env::var_os("ADL_GITHUB_OCTOCRAB_BASE_URI");
+    unsafe {
+        env::set_var("ADL_GITHUB_CLIENT", "octocrab");
+        env::set_var("GITHUB_TOKEN", "test-token");
+        env::set_var("ADL_GITHUB_OCTOCRAB_BASE_URI", &base_uri);
+    }
+    env::set_current_dir(&repo).expect("enter repo");
+
+    let err = real_pr_validation(&[
+        "1159".to_string(),
+        "-R".to_string(),
+        "owner/repo".to_string(),
+    ])
+    .expect_err("failed validation should return error");
+
+    env::set_current_dir(previous_dir).expect("restore cwd");
+    restore_env_var("ADL_GITHUB_CLIENT", old_client);
+    restore_env_var("GITHUB_TOKEN", old_token);
+    restore_env_var("ADL_GITHUB_OCTOCRAB_BASE_URI", old_base_uri);
+
+    assert!(err.to_string().contains("validation: PR #1159 is failed"));
+    let seen = server.join().expect("server join");
+    assert_eq!(seen.len(), 1);
+    assert!(seen[0].starts_with("POST /graphql "));
+}
+
+#[test]
+fn parse_watch_args_accepts_repo_slug_version_and_json_flags() {
+    let parsed = parse_watch_args(&[
+        "https://github.com/example/repo/issues/4397".to_string(),
+        "-R".to_string(),
+        "example/repo".to_string(),
+        "--slug".to_string(),
+        "watch-target".to_string(),
+        "--version".to_string(),
+        "v0.91.6".to_string(),
+        "--json".to_string(),
+    ])
+    .expect("parse watch");
+    assert_eq!(
+        parsed.issue_ref,
+        "https://github.com/example/repo/issues/4397"
+    );
+    assert_eq!(parsed.repo.as_deref(), Some("example/repo"));
+    assert_eq!(parsed.slug.as_deref(), Some("watch-target"));
+    assert_eq!(parsed.version.as_deref(), Some("v0.91.6"));
+    assert!(parsed.json);
+
+    let err = parse_watch_args(&["4397".to_string(), "--bogus".to_string()])
+        .expect_err("unknown watch arg");
+    assert!(err.to_string().contains("watch: unknown arg"));
+}
+
+#[test]
+fn parse_projection_map_args_accepts_json_and_rejects_unknown_args() {
+    let parsed =
+        parse_projection_map_args(&["--json".to_string()]).expect("parse projection-map");
+    assert!(parsed.json);
+
+    let err = parse_projection_map_args(&["--bogus".to_string()])
+        .expect_err("unknown projection-map arg");
+    assert!(err.to_string().contains("projection-map: unknown arg"));
+}
+
+#[test]
+fn projection_map_report_lists_expected_github_and_csdlc_surfaces() {
+    let report = projection_map_report_v1();
+    assert_eq!(report.schema_version, "adl.github_csdlc_projection_map.v1");
+    assert_eq!(report.issue, "#4047");
+    assert!(report.surfaces.len() >= 10);
+    assert!(report
+        .surfaces
+        .iter()
+        .any(|surface| surface.surface == "github.pr.validation_checks"
+            && surface.primary_command == "adl/tools/pr.sh validation"
+            && surface.projection_policy == "linked_surface_only"));
+    assert!(report
+        .surfaces
+        .iter()
+        .any(|surface| surface.surface == "csdlc.cards.sip_stp_spp_srp_sor"
+            && surface.primary_command
+                == "adl-csdlc tooling prompt-template ...; card editor skills; pr doctor"
+            && surface.projection_policy == "card_local_only"));
 }
 
 #[test]
