@@ -457,6 +457,33 @@ fn pr_validation_status_query_paginates_status_rollup_contexts() {
 }
 
 #[test]
+fn list_open_prs_octocrab_paginates_rest_results() {
+    let _guard = env_lock();
+    let policy_env = clear_github_policy_env();
+    let (base_uri, server) = spawn_open_prs_paginated_server();
+    unsafe {
+        std::env::set_var("ADL_GITHUB_CLIENT", "octocrab");
+        std::env::set_var("GITHUB_TOKEN", "test-token");
+        std::env::set_var("ADL_GITHUB_OCTOCRAB_BASE_URI", &base_uri);
+    }
+
+    let prs = list_open_prs_octocrab("owner/repo").expect("paginated open PRs");
+    assert_eq!(prs.len(), 2);
+    assert_eq!(prs[0].number, 2101);
+    assert_eq!(prs[1].number, 2102);
+
+    let seen = server.join().expect("server join");
+    assert_eq!(seen.len(), 2, "unexpected pagination calls: {seen:#?}");
+    assert!(seen[0].contains("/repos/owner/repo/pulls?"));
+    assert!(seen[1].contains("/repos/owner/repo/pulls?page=2"));
+
+    unsafe {
+        std::env::remove_var("ADL_GITHUB_OCTOCRAB_BASE_URI");
+    }
+    restore_github_policy_env(policy_env);
+}
+
+#[test]
 fn pr_validation_watch_returns_failed_report_without_second_fetch() {
     let _guard = env_lock();
     let policy_env = clear_github_policy_env();

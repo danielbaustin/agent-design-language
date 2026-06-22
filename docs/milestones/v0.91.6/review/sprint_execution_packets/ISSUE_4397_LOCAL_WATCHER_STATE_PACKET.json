@@ -1,0 +1,12 @@
+{
+  "schema": "adl.pr.watch.v1",
+  "issue": 4397,
+  "issue_state": "OPEN",
+  "authoritative_classifier": "adl",
+  "advisory_agent_mode": "local_agent_advisory_only",
+  "classification": "ready_for_run",
+  "next_skill": "pr-run",
+  "continuation": "continue",
+  "reason": "issue_ready_without_linked_pr",
+  "linked_pr": null
+}

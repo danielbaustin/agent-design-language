@@ -187,7 +187,7 @@ pub(super) fn list_open_prs_octocrab(repo: &str) -> Result<Vec<OpenPullRequest>>
     with_octocrab("pr.list.open_wave", |runtime, octo| {
         let owner = repo_parts.owner.clone();
         let name = repo_parts.name.clone();
-        let page = block_on_octocrab(runtime, "pr.list.open_wave", || async {
+        let mut page = block_on_octocrab(runtime, "pr.list.open_wave", || async {
             octo.pulls(&owner, &name)
                 .list()
                 .state(octocrab::params::State::Open)
@@ -195,27 +195,37 @@ pub(super) fn list_open_prs_octocrab(repo: &str) -> Result<Vec<OpenPullRequest>>
                 .send()
                 .await
         })?;
-        Ok(page
-            .items
-            .into_iter()
-            .map(|pr| OpenPullRequest {
-                number: pr.number.unwrap_or_default() as u32,
-                title: pr.title.unwrap_or_default(),
-                url: pr.html_url.map(|url| url.to_string()).unwrap_or_default(),
-                head_ref_name: pr
-                    .head
-                    .as_ref()
-                    .map(|head| head.ref_field.clone())
-                    .unwrap_or_default(),
-                base_ref_name: pr
-                    .base
-                    .as_ref()
-                    .map(|base| base.ref_field.clone())
-                    .unwrap_or_default(),
-                is_draft: pr.draft.unwrap_or(false),
-                queue: None,
-            })
-            .collect())
+        let mut open_prs = Vec::new();
+        loop {
+            open_prs.extend(page.items.into_iter().map(|pr| {
+                OpenPullRequest {
+                    number: pr.number.unwrap_or_default() as u32,
+                    title: pr.title.unwrap_or_default(),
+                    url: pr.html_url.map(|url| url.to_string()).unwrap_or_default(),
+                    head_ref_name: pr
+                        .head
+                        .as_ref()
+                        .map(|head| head.ref_field.clone())
+                        .unwrap_or_default(),
+                    base_ref_name: pr
+                        .base
+                        .as_ref()
+                        .map(|base| base.ref_field.clone())
+                        .unwrap_or_default(),
+                    is_draft: pr.draft.unwrap_or(false),
+                    queue: None,
+                }
+            }));
+            let Some(next) = page.next.clone() else {
+                break;
+            };
+            page = block_on_octocrab(runtime, "pr.list.open_wave", || async {
+                octo.get_page::<octocrab::models::pulls::PullRequest>(&Some(next.clone()))
+                    .await
+            })?
+            .ok_or_else(|| anyhow!("GitHub advertised a next PR page but did not return it"))?;
+        }
+        Ok(open_prs)
     })
 }
 
