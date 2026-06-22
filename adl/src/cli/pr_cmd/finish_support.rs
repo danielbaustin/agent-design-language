@@ -1660,6 +1660,9 @@ pub(super) fn select_finish_validation_plan_for_finish(
     if finish_issue_needs_locked_cargo_fallback_validation(issue_number, changed_paths) {
         return Ok(build_locked_cargo_fallback_validation_plan());
     }
+    if finish_issue_needs_native_gws_runtime_validation(issue_number, changed_paths) {
+        return Ok(build_native_gws_runtime_validation_plan());
+    }
     if finish_issue_needs_unity_observatory_scaffold_validation(issue_number, changed_paths) {
         return Ok(build_unity_observatory_scaffold_validation_plan(
             changed_paths,
@@ -2315,6 +2318,31 @@ fn finish_issue_needs_locked_cargo_fallback_validation(
         })
 }
 
+fn finish_issue_needs_native_gws_runtime_validation(
+    issue_number: u32,
+    changed_paths: &[String],
+) -> bool {
+    if issue_number != 4406 {
+        return false;
+    }
+    !changed_paths.is_empty()
+        && changed_paths.iter().all(|path| {
+            matches!(
+                path.trim().trim_matches('/'),
+                "adl/Cargo.toml"
+                    | "adl/Cargo.lock"
+                    | "adl/src/lib.rs"
+                    | "adl/src/adl_gws_native.rs"
+                    | "adl/src/adl_gws_drive_sync.rs"
+                    | "adl/src/adl_gws_context_mirror.rs"
+                    | "adl/src/bin/demo_adl_gws_native_drive_sync.rs"
+                    | "adl/src/bin/demo_adl_gws_context_mirror.rs"
+                    | "adl/src/cli/pr_cmd/finish_support.rs"
+                    | "adl/src/cli/tests/pr_cmd_inline/finish/arg_render.rs"
+            )
+        })
+}
+
 fn finish_issue_needs_wuji_ddns_validation(issue_number: u32, changed_paths: &[String]) -> bool {
     if issue_number != 4284 {
         return false;
@@ -2387,6 +2415,30 @@ fn build_locked_cargo_fallback_validation_plan() -> FinishValidationPlan {
     );
     commands.push("bash adl/tools/test_ci_path_policy.sh".to_string());
     commands.push("bash adl/tools/run_owner_validation_lane.sh csdlc".to_string());
+    FinishValidationPlan {
+        mode: FinishValidationMode::LargerBinaryFocused,
+        commands,
+    }
+}
+
+fn build_native_gws_runtime_validation_plan() -> FinishValidationPlan {
+    let mut commands = vec![
+        "bash adl/tools/check_no_tracked_adl_issue_record_residue.sh".to_string(),
+        "git diff --check".to_string(),
+    ];
+    push_finish_validation_command(
+        &mut commands,
+        "cargo fmt --manifest-path adl/Cargo.toml --all --check",
+    );
+    push_finish_validation_command(
+        &mut commands,
+        "cargo test --manifest-path adl/Cargo.toml adl_gws -- --nocapture",
+    );
+    push_finish_validation_command(
+        &mut commands,
+        "cargo test --manifest-path adl/Cargo.toml --bin adl-pr-finish cli::pr_cmd::tests::finish::arg_render::finish_validation_profile_classifies_native_gws_runtime_slice -- --exact --nocapture",
+    );
+    commands.push("bash adl/tools/run_owner_validation_lane.sh runtime --build".to_string());
     FinishValidationPlan {
         mode: FinishValidationMode::LargerBinaryFocused,
         commands,

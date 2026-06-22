@@ -3450,6 +3450,43 @@ fn finish_validation_profile_does_not_special_case_tokio_manifest_paths_for_othe
 }
 
 #[test]
+fn finish_validation_profile_classifies_native_gws_runtime_slice() {
+    let plan = select_finish_validation_plan_for_finish(
+        4406,
+        ".",
+        &[
+            "adl/Cargo.toml".to_string(),
+            "adl/Cargo.lock".to_string(),
+            "adl/src/lib.rs".to_string(),
+            "adl/src/adl_gws_native.rs".to_string(),
+            "adl/src/adl_gws_drive_sync.rs".to_string(),
+            "adl/src/adl_gws_context_mirror.rs".to_string(),
+            "adl/src/bin/demo_adl_gws_native_drive_sync.rs".to_string(),
+            "adl/src/bin/demo_adl_gws_context_mirror.rs".to_string(),
+        ],
+    )
+    .expect("native gws runtime plan");
+
+    assert_eq!(plan.mode, FinishValidationMode::LargerBinaryFocused);
+    assert!(plan
+        .commands
+        .contains(&"bash adl/tools/check_no_tracked_adl_issue_record_residue.sh".to_string()));
+    assert!(plan.commands.contains(&"git diff --check".to_string()));
+    assert!(plan
+        .commands
+        .contains(&"cargo fmt --manifest-path adl/Cargo.toml --all --check".to_string()));
+    assert!(plan
+        .commands
+        .contains(&"cargo test --manifest-path adl/Cargo.toml adl_gws -- --nocapture".to_string()));
+    assert!(plan.commands.contains(
+        &"cargo test --manifest-path adl/Cargo.toml --bin adl-pr-finish cli::pr_cmd::tests::finish::arg_render::finish_validation_profile_classifies_native_gws_runtime_slice -- --exact --nocapture".to_string()
+    ));
+    assert!(plan
+        .commands
+        .contains(&"bash adl/tools/run_owner_validation_lane.sh runtime --build".to_string()));
+}
+
+#[test]
 fn finish_validation_profile_classifies_pr_cmd_prompt_and_versioned_bootstrap_paths() {
     let plan = select_finish_validation_plan(
         "adl/src/cli/pr_cmd_prompt.rs,adl/src/cli/tests/pr_cmd_inline/versioned_bootstrap.rs",
