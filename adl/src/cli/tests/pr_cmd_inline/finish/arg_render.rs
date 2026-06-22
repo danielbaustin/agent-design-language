@@ -2053,6 +2053,41 @@ fn finish_validation_profile_classifies_observability_consumption_slice_as_small
 }
 
 #[test]
+fn finish_validation_profile_classifies_html_mobile_observatory_slice_as_small_binary_focused() {
+    let plan = select_finish_validation_plan_for_finish(
+        4341,
+        ".",
+        &[
+            "adl/src/cli/pr_cmd/finish_support.rs".to_string(),
+            "adl/tools/test_demo_v0904_csm_observatory_governed_prototype.sh".to_string(),
+            "adl/tools/validate_csm_governed_observatory.py".to_string(),
+            "demos/fixtures/csm_observatory/proto-csm-02-governed-observatory-packet.json"
+                .to_string(),
+            "demos/v0.90.4/csm_observatory_governed_prototype.html".to_string(),
+            "demos/v0.90.4/csm_observatory_governed_prototype.css".to_string(),
+            "demos/v0.90.4/csm_observatory_governed_prototype.js".to_string(),
+            "demos/v0.90.4/csm_observatory_governed_prototype.md".to_string(),
+            "docs/milestones/v0.91.6/review/observatory/HTML_MOBILE_GOVERNED_OBSERVATORY_PROOF_4341.md".to_string(),
+        ],
+    )
+    .expect("html observatory plan");
+
+    assert_eq!(plan.mode, FinishValidationMode::SmallBinaryFocused);
+    assert!(plan.commands.contains(
+        &"bash adl/tools/test_demo_v0904_csm_observatory_governed_prototype.sh".to_string()
+    ));
+    assert!(plan.commands.contains(
+        &"cargo test --manifest-path adl/Cargo.toml --bin adl-pr-finish cli::pr_cmd::tests::finish::arg_render::finish_validation".to_string()
+    ));
+    assert!(plan.commands.contains(
+        &"cargo test --manifest-path adl/Cargo.toml --bin adl-pr-finish cli::pr_cmd::tests::finish::arg_render::finish_helper_paths_run_focused_local_ci_gated_validation".to_string()
+    ));
+    assert!(plan.commands.contains(
+        &"cargo test --manifest-path adl/Cargo.toml --bin adl-pr-finish cli::pr_cmd::tests::finish::arg_render::finish_validation_profile_classifies_html_mobile_observatory_slice_as_small_binary_focused -- --nocapture".to_string()
+    ));
+}
+
+#[test]
 fn finish_validation_profile_classifies_sprint_shell_helper_tests_as_small_binary_focused() {
     let plan = select_finish_validation_plan_for_finish(
         1153,
