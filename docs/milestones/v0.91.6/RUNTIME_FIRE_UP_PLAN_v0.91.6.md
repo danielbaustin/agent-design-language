@@ -9,6 +9,10 @@ v0.91.6 Tokio runtime substrate work. It is a rehearsal plan, not a claim that
 Runtime v2 is complete, production-ready, or fully integrated with Polis,
 Observatory, memory, governance, or provider execution.
 
+It is also not the full Soak `#1` closeout contract for `#4185`. This document
+governs the bounded fire-up sub-phase that should happen before the later
+standard or extended soak acceptance target.
+
 ## Source Inputs
 
 - `docs/milestones/v0.91.6/features/TOKIO_RUNTIME_SUBSTRATE_v0.91.6.md`
@@ -17,6 +21,9 @@ Observatory, memory, governance, or provider execution.
 - `docs/milestones/v0.91.6/features/OBSERVATORY_UNITY_CONSUMPTION_CLASSIFICATION_v0.91.6.md`
 - current runtime/Tokio issue wave: `#4177` through `#4183`
 - integrated runtime soak owner: `#4185`
+- C-SDLC integration control-plane sprint: `#4388` and children `#4389`
+  through `#4396`, especially VPP/PVF, SEP, goal metrics, GitHub convergence,
+  template bootstrap repair, and tooling reliability routing
 
 ## Goal
 
@@ -61,31 +68,42 @@ The first fire-up succeeds if it can demonstrate all of the following:
    - If any required runtime substrate issue is still open, record the fire-up
      as blocked or rehearsal-only.
 
-2. Select the smallest runtime entry point.
+2. Confirm the C-SDLC control-plane dependency route.
+   - Required check: the `#4388` child surfaces used by the fire-up issue are
+     merged, truthfully consumable, or explicitly classified as temporary
+     manual fallbacks.
+   - At minimum, confirm the fire-up issue can rely on: VPP presence, PVF lane
+     assignment truth, issue goal/time/token accounting, native GitHub
+     publication, and prompt-card bootstrap without hand-authored repair.
+   - If those control-plane surfaces are still unstable, classify the fire-up
+     as `rehearsal-only` or `blocked`; do not let a successful runtime process
+     run silently stand in for missing workflow truth.
+
+3. Select the smallest runtime entry point.
    - Prefer a current tracked binary/helper that already uses the shared Tokio
      runtime substrate.
    - Do not invent a new runtime entry point unless the fire-up issue explicitly
      owns that implementation.
 
-3. Run local preflight checks.
+4. Run local preflight checks.
    - Verify no required secrets are read for the first fire-up.
    - Verify the process-status helper can inspect the bounded runtime process if
      a PID or port is involved.
    - Verify log output preserves stdout/stderr and redaction expectations.
 
-4. Start the runtime rehearsal.
+5. Start the runtime rehearsal.
    - Capture command, start time, end time, exit status, and log path.
    - Prefer a short bounded run that proves lifecycle and observability over a
      long daemon run.
 
-5. Inspect the run evidence.
+6. Inspect the run evidence.
    - Confirm startup event.
    - Confirm heartbeat or progress event if supported.
    - Confirm shutdown/cancellation/timeout event.
    - Confirm no credential material or absolute host path leakage beyond
      explicitly approved operator-local paths.
 
-6. Record the result.
+7. Record the result.
    - `passed_rehearsal`: all first fire-up criteria met.
    - `blocked`: required substrate or environment missing.
    - `failed`: runtime starts but violates a criterion.
@@ -102,6 +120,8 @@ The fire-up issue should produce a review packet with:
 - process status / PID / port evidence when applicable;
 - redacted log excerpt or log artifact reference;
 - observability event summary;
+- control-plane dependency classification for the `#4388` surfaces the fire-up
+  relied on;
 - skipped/blocked capabilities;
 - follow-on issues for missing runtime capabilities;
 - explicit non-claims.
@@ -112,6 +132,14 @@ The first fire-up should produce evidence that the Observatory can consume later
 but it must not claim the Unity Observatory is live. Observatory readiness
 remains owned by WP-09 and issues `#3974`, `#4030`, `#4031`, `#4032`, `#4033`,
 `#4034`, and `#4035`.
+
+For `#4185`, that means:
+
+- the bounded fire-up sub-phase may stop at redacted metadata, status events,
+  and retained runtime evidence that a later Observatory-backed soak can
+  consume;
+- the later Soak `#1` acceptance slice may still require live
+  Observatory/Unity consumption if the integrated soak plan keeps that bar.
 
 ## Relationship To Runtime V2 Prototype
 
@@ -125,7 +153,15 @@ substrate that later makes those requirements realistic.
 
 ## Runtime Fire-Up Owner
 
-Use existing issue `#4185` as the owner for the bounded first fire-up / integrated runtime soak path. Do not create a duplicate runtime fire-up issue unless `#4185` is explicitly split or superseded.
+Use existing issue `#4185` as the owner for the bounded first fire-up /
+integrated runtime soak path. Do not create a duplicate runtime fire-up issue
+unless `#4185` is explicitly split or superseded.
+
+Within that owner issue, treat this document as the bounded fire-up entry slice,
+not as the full Soak `#1` closeout contract. `#4185` is only closeout-complete
+when the broader soak acceptance bar from
+`RUNTIME_INTEGRATION_SOAK_SPRINT_v0.91.6.md` is also satisfied or truthfully
+deferred/blocked.
 
 Acceptance criteria for the `#4185` fire-up slice:
 
