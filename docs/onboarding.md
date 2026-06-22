@@ -27,6 +27,15 @@ Canonical local STPs live under `.adl/<version>/tasks/<task-id>__<slug>/`, compa
 GitHub issue state is the source of truth for whether a card is active or complete. Active/current cards stay flat under `.adl/cards/<issue>/` while milestone work is in flight; completed cards may be archived later under `.adl/cards/completed/<milestone>/<issue>/`.
 The browser/editor adapter remains narrower than the full control plane; execution work should follow the `pr ready` -> `pr run` path rather than the older `pr start` model.
 
+The primary checkout should stay clean on `main`. Before starting issue work,
+check `git status --short --branch` and `git worktree list --porcelain`; if a
+feature branch or tracked changes are sitting in the primary checkout, route
+the recovery through `workflow-conductor` / repo-native `pr run` or `pr doctor`
+evidence when available. Use only the narrowest manual fallback needed to
+preserve work in an issue worktree and restore root to clean `main`. See
+`docs/tooling/SESSION_COORDINATION_AND_ROOT_CHECKOUT_POLICY.md` for the
+cross-session handoff and broadcast-note rules.
+
 Compression-safe finish validation is allowed only when the issue is low-risk
 docs/static-tooling work and the SOR truthfully records focused local validation
 instead of full local validation. CI remains required before merge.

@@ -9,6 +9,8 @@ The goal of this directory is to make ADL’s tooling surfaces understandable an
 - Prompt-spec and structured prompt surfaces: `prompt-spec.md`
 - Canonical issue-card lifecycle: `card-lifecycle.md`
 - Structured prompt contracts: `structured-prompt-contracts.md`
+- Session coordination and root checkout policy:
+  `SESSION_COORDINATION_AND_ROOT_CHECKOUT_POLICY.md`
 - Default contributor workflow: `../default_workflow.md`
 - Editor and authoring proof surfaces: `editor/README.md`
 - Root project overview: `../README.md`
@@ -67,6 +69,7 @@ These docs describe the bounded editor and authoring surfaces used in the v0.85 
 These docs describe worktree governance, large-module tracking, and related maintenance guidance.
 
 - [Worktree Governance](worktree_governance.md)
+- [Session Coordination And Root Checkout Policy](SESSION_COORDINATION_AND_ROOT_CHECKOUT_POLICY.md)
 - Rust module size reports are local operational artifacts under `.adl/reports/manual/`; regenerate them with `./adl/tools/report_large_rust_modules.sh`
 - [WP Issue-Wave Generation](WP_ISSUE_WAVE_GENERATION.md)
 - [Historical Public Task Records](../records/README.md)
