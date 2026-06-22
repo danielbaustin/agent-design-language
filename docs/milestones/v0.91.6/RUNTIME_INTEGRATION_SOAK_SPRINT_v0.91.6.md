@@ -27,9 +27,11 @@ that cannot be honestly closed in one pass.
   proof where every required runtime feature works together.
 - Soak #3 route: execute in `v0.91.7` only if Soak #2 finds real blockers that
   need a second integration pass.
-- `v0.92` remains blocked from claiming runtime coherence until Soak #2 is
-  complete, or Soak #3 is complete when needed, or unresolved surfaces are
-  explicitly blocked/deferred with operator approval.
+- `v0.92` runtime-coherence claims should stay blocked through the milestone and
+  release authority surfaces until Soak #2 is complete, or Soak #3 is complete
+  when needed, or unresolved surfaces are explicitly blocked/deferred with
+  operator approval. This planning doc records that expectation; it is not by
+  itself the final release-gate authority.
 
 ## Dependency Gate
 
@@ -39,6 +41,42 @@ The soak sprint may start only after the Tokio integration can:
 - own task spawning, cancellation, timeout, and shutdown boundaries;
 - expose enough runtime status for heartbeat/watchdog observation;
 - run the focused Tokio substrate validation required by its own issue.
+
+The soak sprint also depends on the C-SDLC control-plane completion route from
+`#4388` being in a usable state for long-running runtime proof:
+
+- `#4389` VPP default validation-planning surface should be merged or
+  explicitly classified as safe to consume for the soak issue.
+- `#4390` externalized PVF lane selection/configuration should be merged or the
+  soak issue must record the temporary lane-assignment fallback explicitly.
+- `#4391` SEP automation should be available enough to produce truthful sprint
+  execution and activity-log evidence for the soak wave.
+- `#4392` goal/time/token accounting should be available enough that the soak
+  issue can record runtime-duration and review/closeout metrics without
+  inventing them from chat memory.
+- `#4393` Octocrab/native GitHub convergence should be merged or any remaining
+  publication gap must be recorded before claiming the runtime issue is
+  execution-ready.
+- `#4394` prompt-card bootstrap/template repair should be merged or the soak
+  issue must not rely on missing-card repair by hand.
+- `#4396` tooling reliability rough-edge cleanup should be merged, blocked, or
+  explicitly accepted as residual risk before the soak is treated as the
+  milestone runtime proof lane.
+
+If any of those control-plane dependencies remain open, the soak owner should
+classify the start posture as one of:
+
+- `ready_to_execute`: required control-plane dependencies are merged or safely
+  consumable as-is;
+- `rehearsal_only`: the runtime run can happen, but publication/review/metrics
+  truth is still relying on temporary manual handling that must be called out;
+- `blocked`: the control plane is not honest enough yet for the soak issue to
+  serve as milestone-level runtime proof.
+
+Within `#4185`, the bounded fire-up plan is only the first sub-phase of Soak
+`#1`. A successful fire-up rehearsal may prove the runtime entry point,
+observability contract, and control-plane readiness for a later soak, but it
+does not by itself satisfy the full Soak `#1` acceptance target below.
 
 ## Soak Sequence
 
@@ -64,8 +102,9 @@ Soak #1 must run these surfaces together:
 - Provider/model action logging and runtime action logging on the active
   stdout/stderr contract.
 - Heartbeat, watchdog, progress, and timeout diagnostics.
-- Observatory/Unity consumption of live runtime state rather than only canned
-  demo data.
+- Observatory/Unity live consumption for the full Soak `#1` acceptance slice;
+  the bounded fire-up sub-phase may stop earlier and produce upstream evidence
+  for that later live-consumption proof without claiming it is already live.
 - Memory/ObsMem checkpoint or handoff record for long-running context.
 
 Soak #1 does not need every feature-list surface to be feature-complete. It
@@ -139,6 +178,8 @@ Soak #1 must produce a reviewable packet containing:
 - logging channel proof for machine stdout and human observability stderr;
 - Observatory/Unity consumption record;
 - Memory/ObsMem handoff or checkpoint record;
+- control-plane dependency posture for the `#4388` child surfaces consumed by
+  the soak issue, including any temporary fallback or residual gap;
 - closeout classification of completed, blocked, deferred, and residual
   runtime surfaces.
 
