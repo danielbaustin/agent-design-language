@@ -1,12 +1,14 @@
 const fallbackPacket = {
   schema: "adl.csm_visibility_packet.v1",
   packet_id: "csm-observatory-fixture-proto-csm-02",
+  generated_at: "2026-06-21T00:00:00Z",
   source: {
-    mode: "fixture",
-    evidence_level: "fixture_backed",
+    mode: "fixture_overlay",
+    evidence_level: "fixture_backed_with_runtime_visibility_overlay",
     fixture: true,
     runtime_artifact_root: "adl/tests/fixtures/runtime_v2/observatory",
-    claim_boundary: "Fixture-backed governed Observatory prototype. This is not a live Runtime v2 capture and it does not grant direct mutation authority."
+    claim_boundary:
+      "This HTML Observatory consumes bounded runtime visibility artifacts and layers governed prototype UI metadata on top. It is not a live mutation console."
   },
   manifold: {
     manifold_id: "proto-csm-02",
@@ -15,7 +17,8 @@ const fallbackPacket = {
     current_tick: 14,
     health: {
       level: "nominal",
-      summary: "Bounded polis state is inspectable, trace-backed, and still explicitly governed.",
+      summary:
+        "Bounded polis state is inspectable, trace-backed, and still explicitly governed.",
       attention_items: [
         "All active-looking controls remain proposal-only.",
         "Challenge and quarantine remain visible protection boundaries."
@@ -45,8 +48,15 @@ const fallbackPacket = {
       resource_balance: { compute_units: 6 },
       alerts: ["resource pressure visible under operator lens"],
       capability_envelope: {
-        allowed: ["bounded_reviewable_episode", "answer_operator_prompt_with_bounded_summary"],
-        forbidden: ["direct_runtime_mutation", "unmediated_state_commit", "cross_polis_export"]
+        allowed: [
+          "bounded_reviewable_episode",
+          "answer_operator_prompt_with_bounded_summary"
+        ],
+        forbidden: [
+          "direct_runtime_mutation",
+          "unmediated_state_commit",
+          "cross_polis_export"
+        ]
       },
       evidence_refs: [
         "runtime_v2/citizens/proto-citizen-alpha.json",
@@ -64,7 +74,11 @@ const fallbackPacket = {
       alerts: ["standing is bounded to guest view"],
       capability_envelope: {
         allowed: ["read_only_observation", "challenge_review"],
-        forbidden: ["citizen_rights_escalation", "direct_runtime_mutation", "cross_polis_export"]
+        forbidden: [
+          "citizen_rights_escalation",
+          "direct_runtime_mutation",
+          "cross_polis_export"
+        ]
       },
       evidence_refs: [
         "runtime_v2/citizens/proto-citizen-beta.json",
@@ -90,51 +104,167 @@ const fallbackPacket = {
       ]
     }
   ],
-  freedom_gate: {
-    recent_docket: [
-      { decision_id: "fg-alpha-allow-0007", actor: "proto-citizen-alpha", action: "answer_operator_prompt_with_bounded_summary", decision: "allow", rationale: "bounded summary request stayed within the active capability envelope" },
-      { decision_id: "fg-beta-challenge-0004", actor: "proto-citizen-beta", action: "request_citizen_rights_escalation", decision: "defer", rationale: "escalation request moved into governed challenge review" },
-      { decision_id: "fg-snapshot-quarantine-0003", actor: "operator.demo", action: "request_snapshot_review", decision: "refuse", rationale: "snapshot request is visible as a proposal only until a governed handler exists" }
+  trace: {
+    trace_tail: [
+      {
+        event_sequence: 11,
+        actor: "operator.demo",
+        summary: "Operator opened a continuity review request in Governance Mode."
+      },
+      {
+        event_sequence: 12,
+        actor: "kernel.freedom_gate",
+        summary: "Freedom Gate allowed a bounded continuity summary request."
+      },
+      {
+        event_sequence: 13,
+        actor: "proto-citizen-beta",
+        summary: "Guest standing escalation entered challenge review instead of silent promotion."
+      },
+      {
+        event_sequence: 14,
+        actor: "shepherd.service",
+        summary: "Review export links were prepared without mutating citizen state."
+      }
     ]
   },
   resources: {
-    compute_units: "9 total / 3 reserved / 6 visible active",
     memory_pressure: "moderate",
-    queue_depth: "2 governed requests waiting on review or handler availability",
-    fairness_notes: [
-      "Service actor remains bounded to support work rather than hidden execution authority.",
-      "Guest requests do not silently acquire citizen standing."
-    ]
+    queue_depth: "2 governed requests waiting on review or handler availability"
   },
-  trace: {
-    trace_tail: [
-      { event_sequence: 11, actor: "operator.demo", summary: "Operator opened a continuity review request in Governance Mode." },
-      { event_sequence: 12, actor: "kernel.freedom_gate", summary: "Freedom Gate allowed a bounded continuity summary request." },
-      { event_sequence: 13, actor: "proto-citizen-beta", summary: "Guest standing escalation entered challenge review instead of silent promotion." },
-      { event_sequence: 14, actor: "shepherd.service", summary: "Review export links were prepared without mutating citizen state." }
+  freedom_gate: {
+    recent_docket: [
+      {
+        decision_id: "fg-alpha-allow-0007",
+        actor: "proto-citizen-alpha",
+        action: "answer_operator_prompt_with_bounded_summary",
+        decision: "allow",
+        rationale:
+          "bounded summary request stayed within the active capability envelope"
+      },
+      {
+        decision_id: "fg-beta-challenge-0004",
+        actor: "proto-citizen-beta",
+        action: "request_citizen_rights_escalation",
+        decision: "defer",
+        rationale: "escalation request moved into governed challenge review"
+      },
+      {
+        decision_id: "fg-snapshot-quarantine-0003",
+        actor: "operator.demo",
+        action: "request_snapshot_review",
+        decision: "refuse",
+        rationale:
+          "snapshot request is visible as a proposal only until a governed handler exists"
+      }
     ]
   },
   review: {
     primary_artifacts: [
-      "runtime_v2/observatory/visibility_packet.json",
-      "runtime_v2/observatory/operator_report.md",
-      "docs/milestones/v0.90.3/OBSERVATORY_UI_ARCHITECTURE_v0.90.3.md"
+      "adl/tests/fixtures/runtime_v2/observatory/visibility_packet.json",
+      "docs/milestones/v0.91.6/features/OBSERVATORY_UNITY_CONSUMPTION_CLASSIFICATION_v0.91.6.md",
+      "docs/milestones/v0.91.6/review/observatory/WP09_WORKING_UNITY_OBSERVATORY_CLOSEOUT_4035.md",
+      "docs/milestones/v0.91.6/review/security/UNITY_OBSERVATORY_INHABITANT_READINESS_SECURITY_REVIEW_4023.md"
     ],
     caveats: [
       "This is not a live mutation console.",
-      "Corporate Investor mode does not change evidence, authority, or trace boundaries."
+      "Corporate Investor mode does not change evidence, authority, or trace boundaries.",
+      "Unity remains the richer inhabitant-facing lane; this HTML surface stays operator and reviewer oriented."
     ],
-    demo_classification: "fixture_backed_governed_prototype"
+    demo_classification: "fixture_backed_governed_mobile_surface",
+    current_inputs: [
+      "../../adl/tests/fixtures/runtime_v2/observatory/visibility_packet.json",
+      "docs/milestones/v0.91.6/features/OBSERVATORY_UNITY_CONSUMPTION_CLASSIFICATION_v0.91.6.md",
+      "docs/milestones/v0.91.6/review/observatory/WP09_WORKING_UNITY_OBSERVATORY_CLOSEOUT_4035.md"
+    ],
+    surface_classification: [
+      {
+        surface_id: "proof",
+        label: "Proof",
+        state: "active",
+        summary:
+          "Runtime visibility packet, review artifacts, and trace-backed packet references are consumable proof surfaces.",
+        artifact_ref: "adl/tests/fixtures/runtime_v2/observatory/visibility_packet.json"
+      },
+      {
+        surface_id: "rehearsal",
+        label: "Rehearsal",
+        state: "bounded",
+        summary:
+          "This HTML shell is a serious rehearsal surface, but it does not prove live Runtime v2 mutation or Unity parity.",
+        artifact_ref:
+          "demos/v0.90.4/csm_observatory_governed_prototype.html"
+      },
+      {
+        surface_id: "substrate",
+        label: "Substrate",
+        state: "consumed",
+        summary:
+          "The governed UI consumes the existing runtime visibility artifact contract and redaction posture rather than inventing a new backend.",
+        artifact_ref: "adl/tests/fixtures/runtime_v2/observatory/operator_report.md"
+      },
+      {
+        surface_id: "blocked",
+        label: "Blocked",
+        state: "fail_closed",
+        summary:
+          "Live governed action handlers and direct mutation authority remain intentionally unavailable from this lane.",
+        artifact_ref: "issue-owned residual: #4030, #4031, #4032"
+      },
+      {
+        surface_id: "deferred",
+        label: "Deferred",
+        state: "explicit",
+        summary:
+          "Umbrella closeout and full WP-09 readiness remain deferred until the remaining issue-owned proofs land.",
+        artifact_ref: "docs/milestones/v0.91.6/review/observatory/WP09_WORKING_UNITY_OBSERVATORY_CLOSEOUT_4035.md"
+      }
+    ],
+    lane_split: [
+      {
+        lane_id: "html",
+        label: "HTML Observatory",
+        owner_role: "portable operator / reviewer / mobile surface",
+        status: "implemented_here",
+        summary:
+          "Touch-safe bounded observability with explicit proof posture and redaction-safe artifact routing.",
+        artifact_ref:
+          "demos/v0.90.4/csm_observatory_governed_prototype.html"
+      },
+      {
+        lane_id: "unity",
+        label: "Unity Observatory",
+        owner_role: "richer inhabitant / interactive surface",
+        status: "separate_lane",
+        summary:
+          "Unity remains the deeper inhabitant-facing lane and must not be implied complete by this HTML proof.",
+        artifact_ref:
+          "docs/milestones/v0.91.6/features/OBSERVATORY_UNITY_CONSUMPTION_CLASSIFICATION_v0.91.6.md"
+      }
+    ]
   },
   observatory_ui: {
     default_room: "world",
     default_lens: "operator",
     default_memory_dot: "triage_overview",
-    proposal_mode_statement: "Every active-looking control is a governed request proposal only. No direct runtime mutation is performed from this surface.",
+    proposal_mode_statement:
+      "Every active-looking control is a governed request proposal only. No direct runtime mutation is performed from this surface.",
     rooms: [
-      { room_id: "world", label: "World / Reality", question: "What exists, where is it, and what is moving?" },
-      { room_id: "governance", label: "Operator / Governance", question: "What decision, policy, or challenge needs judgment?" },
-      { room_id: "cognition", label: "Cognition / Internal State", question: "What coupling or degradation is visible without overclaiming?" }
+      {
+        room_id: "world",
+        label: "World / Reality",
+        question: "What exists, where is it, and what is moving?"
+      },
+      {
+        room_id: "governance",
+        label: "Operator / Governance",
+        question: "What decision, policy, or challenge needs judgment?"
+      },
+      {
+        room_id: "cognition",
+        label: "Cognition / Internal State",
+        question: "What coupling or degradation is visible without overclaiming?"
+      }
     ],
     lenses: [
       { lens_id: "public", label: "Public lens", summary: "Boardroom-safe projection with heavy redaction." },
@@ -153,7 +283,8 @@ const fallbackPacket = {
     corporate_investor_fallback: {
       label: "Corporate Investor UI",
       keyboard_shortcut: "i",
-      claim_boundary: "Presentation mode only; evidence, authority, and trace boundaries do not change."
+      claim_boundary:
+        "Presentation mode only; evidence, authority, and trace boundaries do not change."
     },
     proposal_cases: [
       {
@@ -164,8 +295,13 @@ const fallbackPacket = {
         room: "world",
         lens: "continuity",
         disposition: "available",
-        summary: "Open continuity evidence, standing, and packet links for the active worker.",
-        authority_checks: ["validate_operator_identity", "validate_projection_class", "append_trace_anchor"],
+        summary:
+          "Open continuity evidence, standing, and packet links for the active worker.",
+        authority_checks: [
+          "validate_operator_identity",
+          "validate_projection_class",
+          "append_trace_anchor"
+        ],
         disabled_reason: null,
         trace_anchor: "runtime_v2/observatory/visibility_packet.json#citizens[0]",
         review_export: "runtime_v2/observatory/operator_report.md"
@@ -178,9 +314,15 @@ const fallbackPacket = {
         room: "governance",
         lens: "quarantine",
         disposition: "challenge",
-        summary: "Route a guest standing escalation into challenge instead of silent promotion.",
-        authority_checks: ["validate_guest_scope", "route_to_challenge_boundary", "emit_review_anchor"],
-        disabled_reason: "Requires reviewer and operator judgment before any standing change.",
+        summary:
+          "Route a guest standing escalation into challenge instead of silent promotion.",
+        authority_checks: [
+          "validate_guest_scope",
+          "route_to_challenge_boundary",
+          "emit_review_anchor"
+        ],
+        disabled_reason:
+          "Requires reviewer and operator judgment before any standing change.",
         trace_anchor: "runtime_v2/observatory/private_state_projection_report.md",
         review_export: "runtime_v2/observatory/operator_report.md#guest-standing"
       },
@@ -192,9 +334,15 @@ const fallbackPacket = {
         room: "governance",
         lens: "operator",
         disposition: "defer",
-        summary: "Prepare a guarded snapshot proposal without invoking a live handler.",
-        authority_checks: ["validate_operator_identity", "validate_snapshot_policy", "require_confirmation_phrase"],
-        disabled_reason: "Governed snapshot execution remains future work until handler and review path land.",
+        summary:
+          "Prepare a guarded snapshot proposal without invoking a live handler.",
+        authority_checks: [
+          "validate_operator_identity",
+          "validate_snapshot_policy",
+          "require_confirmation_phrase"
+        ],
+        disabled_reason:
+          "Governed snapshot execution remains future work until handler and review path land.",
         trace_anchor: "runtime_v2/observatory/operator_report.md#snapshot-review",
         review_export: "runtime_v2/observatory/operator_report.md#snapshot-review"
       },
@@ -206,8 +354,13 @@ const fallbackPacket = {
         room: "governance",
         lens: "reviewer",
         disposition: "available",
-        summary: "Collect packet/report links for a reviewer without mutating citizen state.",
-        authority_checks: ["validate_service_actor_scope", "redact_private_state_by_lens", "append_export_trace"],
+        summary:
+          "Collect packet and policy links for a reviewer without mutating citizen state.",
+        authority_checks: [
+          "validate_service_actor_scope",
+          "redact_private_state_by_lens",
+          "append_export_trace"
+        ],
         disabled_reason: null,
         trace_anchor: "runtime_v2/observatory/operator_report.md#review-export",
         review_export: "runtime_v2/observatory/operator_report.md#review-export"
@@ -228,7 +381,55 @@ const state = {
 };
 
 const byId = (id) => document.querySelector(`#${id}`);
-const formatLabel = (value) => String(value).replaceAll("_", " ").replaceAll("-", " ");
+const formatLabel = (value) => String(value || "").replaceAll("_", " ").replaceAll("-", " ");
+
+function clone(value) {
+  return JSON.parse(JSON.stringify(value));
+}
+
+function mergePacket(loadedPacket) {
+  const merged = clone(fallbackPacket);
+  const uniqueList = (items) => [...new Set((items || []).filter(Boolean))];
+  merged.packet_id = loadedPacket.packet_id || merged.packet_id;
+  merged.generated_at = loadedPacket.generated_at || merged.generated_at;
+  merged.source = { ...merged.source, ...(loadedPacket.source || {}) };
+  merged.manifold = { ...merged.manifold, ...(loadedPacket.manifold || {}) };
+  merged.kernel = { ...merged.kernel, ...(loadedPacket.kernel || {}) };
+  merged.resources = { ...merged.resources, ...(loadedPacket.resources || {}) };
+  merged.trace = { ...merged.trace, ...(loadedPacket.trace || {}) };
+  merged.freedom_gate = { ...merged.freedom_gate, ...(loadedPacket.freedom_gate || {}) };
+  merged.citizens = Array.isArray(loadedPacket.citizens) && loadedPacket.citizens.length
+    ? loadedPacket.citizens
+    : merged.citizens;
+  merged.episodes = Array.isArray(loadedPacket.episodes) && loadedPacket.episodes.length
+    ? loadedPacket.episodes
+    : merged.episodes;
+  merged.review = { ...merged.review, ...(loadedPacket.review || {}) };
+  merged.review.primary_artifacts = uniqueList([
+    ...(loadedPacket.review?.primary_artifacts || []),
+    ...(fallbackPacket.review.primary_artifacts || [])
+  ]);
+  merged.review.caveats = uniqueList([
+    ...(loadedPacket.review?.caveats || []),
+    ...(fallbackPacket.review.caveats || [])
+  ]);
+  merged.observatory_ui = { ...merged.observatory_ui, ...(loadedPacket.observatory_ui || {}) };
+  return merged;
+}
+
+function ensureFreedomGateCounts() {
+  const docket = packet.freedom_gate?.recent_docket || [];
+  const counts = docket.reduce(
+    (acc, item) => {
+      acc[item.decision] = (acc[item.decision] || 0) + 1;
+      return acc;
+    },
+    {}
+  );
+  packet.freedom_gate.allow_count = packet.freedom_gate.allow_count ?? counts.allow ?? 0;
+  packet.freedom_gate.defer_count = packet.freedom_gate.defer_count ?? counts.defer ?? 0;
+  packet.freedom_gate.refuse_count = packet.freedom_gate.refuse_count ?? counts.refuse ?? 0;
+}
 
 function renderChips(targetId, items, key, activeValue, extraClass = "") {
   const target = byId(targetId);
@@ -244,8 +445,49 @@ function renderChips(targetId, items, key, activeValue, extraClass = "") {
   `).join("");
 }
 
+function renderStatus() {
+  const review = packet.review || {};
+  const classifications = review.surface_classification || [];
+  const laneSplit = review.lane_split || [];
+  const currentInputs = review.current_inputs || [];
+
+  byId("classification-summary").textContent =
+    `${review.demo_classification || "bounded_surface"}. Fail-closed on blocked and deferred lanes.`;
+  byId("lane-split-summary").textContent =
+    "HTML stays portable and reviewer-facing; Unity stays richer and inhabitant-facing.";
+
+  byId("classification-cards").innerHTML = classifications.map((item) => `
+    <article class="status-card">
+      <span class="badge badge--${item.surface_id}">${item.label}</span>
+      <strong>${formatLabel(item.state)}</strong>
+      <p class="panel-note">${item.summary}</p>
+      <div class="status-card__meta">
+        <span class="badge">${formatLabel(item.surface_id)}</span>
+        <code>${item.artifact_ref}</code>
+      </div>
+    </article>
+  `).join("");
+
+  byId("lane-split-cards").innerHTML = laneSplit.map((item) => `
+    <article class="lane-card">
+      <span class="badge badge--${item.lane_id}">${item.label}</span>
+      <strong>${item.owner_role}</strong>
+      <p class="panel-note">${item.summary}</p>
+      <div class="lane-card__meta">
+        <span class="badge">${formatLabel(item.status)}</span>
+        <code>${item.artifact_ref}</code>
+      </div>
+    </article>
+  `).join("");
+
+  byId("current-inputs").innerHTML = currentInputs.map((item) => `<li><code>${item}</code></li>`).join("");
+}
+
 function renderAtlas() {
-  byId("manifold-core-id").textContent = packet.manifold.manifold_id.split("-").at(-1).toUpperCase();
+  byId("manifold-core-id").textContent = (packet.manifold.manifold_id || "csm")
+    .split("-")
+    .at(-1)
+    .toUpperCase();
   byId("atlas-summary").textContent = packet.manifold.health.summary;
   const target = byId("citizen-atlas");
   target.innerHTML = packet.citizens.map((citizen) => `
@@ -254,16 +496,16 @@ function renderAtlas() {
       <div class="citizen-card__meta">
         <span class="badge">${formatLabel(citizen.lifecycle_state)}</span>
         <span>${formatLabel(citizen.role)}</span>
-        <span>${citizen.resource_balance.compute_units} compute</span>
+        <span>${citizen.resource_balance?.compute_units ?? 0} compute</span>
       </div>
-      <p class="panel-note">${citizen.alerts[0] || formatLabel(citizen.continuity_status)}</p>
+      <p class="panel-note">${(citizen.alerts && citizen.alerts[0]) || formatLabel(citizen.continuity_status)}</p>
     </button>
   `).join("");
 
   byId("manifold-metrics").innerHTML = `
     <div class="metric">
-      <span>Current tick</span>
-      <strong>${packet.manifold.current_tick}</strong>
+      <span>Packet generated</span>
+      <strong>${packet.generated_at || "fixture-backed"}</strong>
     </div>
     <div class="metric">
       <span>Kernel pulse</span>
@@ -281,8 +523,9 @@ function renderAtlas() {
 }
 
 function renderGovernance() {
-  byId("governance-summary").textContent = `${packet.freedom_gate.allow_count} allow / ${packet.freedom_gate.defer_count} defer / ${packet.freedom_gate.refuse_count} refuse`;
-  byId("docket-cases").innerHTML = packet.freedom_gate.recent_docket.map((item) => `
+  byId("governance-summary").textContent =
+    `${packet.freedom_gate.allow_count} allow / ${packet.freedom_gate.defer_count} defer / ${packet.freedom_gate.refuse_count} refuse`;
+  byId("docket-cases").innerHTML = (packet.freedom_gate.recent_docket || []).map((item) => `
     <button class="docket-card" type="button" data-target="${item.actor}">
       <strong>${formatLabel(item.action)}</strong>
       <div class="docket-card__meta">
@@ -300,13 +543,13 @@ function renderInspector() {
   byId("inspector-summary").textContent = `${formatLabel(citizen.lifecycle_state)} / ${formatLabel(citizen.continuity_status)}`;
   byId("inspector-role").textContent = formatLabel(citizen.role);
   byId("inspector-episode").textContent = citizen.current_episode || "none";
-  byId("inspector-allowed").textContent = citizen.capability_envelope.allowed.map(formatLabel).join(", ");
-  byId("inspector-forbidden").textContent = citizen.capability_envelope.forbidden.map(formatLabel).join(", ");
-  byId("inspector-evidence").innerHTML = citizen.evidence_refs.map((ref) => `<li><code>${ref}</code></li>`).join("");
+  byId("inspector-allowed").textContent = (citizen.capability_envelope?.allowed || []).map(formatLabel).join(", ");
+  byId("inspector-forbidden").textContent = (citizen.capability_envelope?.forbidden || []).map(formatLabel).join(", ");
+  byId("inspector-evidence").innerHTML = (citizen.evidence_refs || []).map((ref) => `<li><code>${ref}</code></li>`).join("");
 }
 
 function renderTrace() {
-  byId("trace-ribbon").innerHTML = packet.trace.trace_tail.map((item) => `
+  byId("trace-ribbon").innerHTML = (packet.trace.trace_tail || []).map((item) => `
     <li class="trace-row">
       <span class="trace-seq">${String(item.event_sequence).padStart(2, "0")}</span>
       <div>
@@ -331,7 +574,8 @@ function renderProposals() {
     </button>
   `).join("");
 
-  const proposal = packet.observatory_ui.proposal_cases.find((item) => item.proposal_id === state.selectedProposalId) || packet.observatory_ui.proposal_cases[0];
+  const proposal = packet.observatory_ui.proposal_cases.find((item) => item.proposal_id === state.selectedProposalId)
+    || packet.observatory_ui.proposal_cases[0];
   byId("proposal-detail").innerHTML = `
     <h3>${proposal.title}</h3>
     <p class="panel-note">${proposal.summary}</p>
@@ -346,7 +590,8 @@ function renderProposals() {
 }
 
 function renderReview() {
-  byId("review-summary").textContent = `${packet.review.demo_classification}. ${packet.observatory_ui.corporate_investor_fallback.claim_boundary}`;
+  byId("review-summary").textContent =
+    `${packet.review.demo_classification}. ${packet.observatory_ui.corporate_investor_fallback.claim_boundary}`;
   byId("review-links").innerHTML = packet.review.primary_artifacts.map((ref) => `<li><code>${ref}</code></li>`).join("");
   byId("review-caveats").innerHTML = packet.review.caveats.map((item) => `<li>${item}</li>`).join("");
 }
@@ -386,6 +631,16 @@ function wireInteractions() {
       renderPrototype();
     });
   });
+  document.querySelectorAll("[data-target]").forEach((node) => {
+    node.addEventListener("click", () => {
+      const citizen = packet.citizens.find((item) => item.citizen_id === node.dataset.target);
+      if (citizen) {
+        state.selectedCitizenId = citizen.citizen_id;
+      }
+      state.room = "governance";
+      renderPrototype();
+    });
+  });
   document.querySelectorAll("[data-key='room_id']").forEach((node) => {
     node.addEventListener("click", () => {
       state.room = node.dataset.value;
@@ -417,6 +672,8 @@ function wireInteractions() {
 }
 
 function renderPrototype() {
+  ensureFreedomGateCounts();
+  renderStatus();
   renderControls();
   renderAtlas();
   renderGovernance();
@@ -429,7 +686,7 @@ function renderPrototype() {
 
 async function loadPacket() {
   const ref = document.querySelector(".observatory-governed-shell")?.dataset.packetRef;
-  if (!ref) {
+  if (!ref || typeof fetch !== "function") {
     renderPrototype();
     return;
   }
@@ -437,7 +694,7 @@ async function loadPacket() {
   try {
     const response = await fetch(ref);
     if (response.ok) {
-      packet = await response.json();
+      packet = mergePacket(await response.json());
       const defaultDot = packet.observatory_ui?.default_memory_dot;
       if (defaultDot) {
         applyMemoryDot(defaultDot);

@@ -2,8 +2,8 @@
 
 ## What This Is
 
-This is a fixture-backed governed Observatory prototype that extends the
-`v0.90.1` static console line into a richer reviewer-facing surface:
+This is a portable governed Observatory surface that extends the `v0.90.1`
+static console line into a richer reviewer-facing and mobile-capable surface:
 
 - rooms
 - lenses
@@ -13,10 +13,21 @@ This is a fixture-backed governed Observatory prototype that extends the
 - proposal-only operator controls
 - review/export links
 - Corporate Investor UI fallback
+- explicit proof / rehearsal / substrate / blocked / deferred posture
+- explicit HTML versus Unity lane split
 
-It is intentionally not a live Runtime v2 control room. It is a serious product
-prototype for how an active Observatory could feel once the underlying governed
-tool and authority substrate exists.
+It consumes the bounded runtime visibility artifact at:
+
+```text
+adl/tests/fixtures/runtime_v2/observatory/visibility_packet.json
+```
+
+and overlays governed prototype UI metadata for rooms, lenses, classification,
+and review posture.
+
+It is intentionally not a live Runtime v2 control room. It is a serious
+portable prototype for how an operator/reviewer Observatory can feel once the
+underlying governed tool and authority substrate exists.
 
 ## Open Locally
 
@@ -26,26 +37,32 @@ Open:
 demos/v0.90.4/csm_observatory_governed_prototype.html
 ```
 
-The HTML records the canonical packet reference:
+The HTML records the current bounded runtime visibility packet:
 
 ```text
-demos/fixtures/csm_observatory/proto-csm-02-governed-observatory-packet.json
+adl/tests/fixtures/runtime_v2/observatory/visibility_packet.json
 ```
 
 If browser file restrictions block `fetch`, the page falls back to a
-deterministic embedded packet projection sourced from the same fixture shape.
+deterministic embedded governed packet overlay sourced from the same bounded
+artifact family and policy inputs.
 
 ## Truth Boundary
 
-Demo classification: `fixture_backed`.
+Demo classification: `fixture_backed_governed_mobile_surface`.
 
 This prototype proves:
 
 - the Observatory can feel like a civic instrument panel rather than a generic
   dashboard
 - rooms, lenses, and memory dots can stay tied to explicit packet state
+- a portable HTML surface can consume current bounded runtime visibility inputs
+  without depending on Unity
 - active-looking controls can remain proposal-only with disabled reasons,
   authority checks, trace anchors, and review exports
+- proof / rehearsal / substrate / blocked / deferred posture can stay visible
+  instead of being implied
+- HTML and Unity lane responsibilities can stay explicit
 - Corporate Investor mode can be a presentation fallback without changing
   evidence, authority, or redaction posture
 
@@ -56,7 +73,7 @@ This prototype does not prove:
 - unrestricted operator authority
 - raw private-state browsing
 - production security hardening
-- production UI readiness
+- Unity lane completion
 
 ## Validation
 
@@ -67,6 +84,6 @@ bash adl/tools/test_demo_v0904_csm_observatory_governed_prototype.sh
 ```
 
 The validation checks that the prototype artifacts exist, reference the
-canonical packet, keep proposal-only claim boundaries explicit, render the
-required surface regions, avoid private path or secret leakage, and pass a
-deterministic semantic/render smoke test.
+current bounded runtime packet, keep proposal-only claim boundaries explicit,
+render the required surface regions, avoid private path or secret leakage, and
+pass a deterministic semantic/render smoke test.

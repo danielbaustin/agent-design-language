@@ -2053,6 +2053,41 @@ fn finish_validation_profile_classifies_observability_consumption_slice_as_small
 }
 
 #[test]
+fn finish_validation_profile_classifies_html_mobile_observatory_slice_as_small_binary_focused() {
+    let plan = select_finish_validation_plan_for_finish(
+        4341,
+        ".",
+        &[
+            "adl/src/cli/pr_cmd/finish_support.rs".to_string(),
+            "adl/tools/test_demo_v0904_csm_observatory_governed_prototype.sh".to_string(),
+            "adl/tools/validate_csm_governed_observatory.py".to_string(),
+            "demos/fixtures/csm_observatory/proto-csm-02-governed-observatory-packet.json"
+                .to_string(),
+            "demos/v0.90.4/csm_observatory_governed_prototype.html".to_string(),
+            "demos/v0.90.4/csm_observatory_governed_prototype.css".to_string(),
+            "demos/v0.90.4/csm_observatory_governed_prototype.js".to_string(),
+            "demos/v0.90.4/csm_observatory_governed_prototype.md".to_string(),
+            "docs/milestones/v0.91.6/review/observatory/HTML_MOBILE_GOVERNED_OBSERVATORY_PROOF_4341.md".to_string(),
+        ],
+    )
+    .expect("html observatory plan");
+
+    assert_eq!(plan.mode, FinishValidationMode::SmallBinaryFocused);
+    assert!(plan.commands.contains(
+        &"bash adl/tools/test_demo_v0904_csm_observatory_governed_prototype.sh".to_string()
+    ));
+    assert!(plan.commands.contains(
+        &"cargo test --manifest-path adl/Cargo.toml --bin adl-pr-finish cli::pr_cmd::tests::finish::arg_render::finish_validation".to_string()
+    ));
+    assert!(plan.commands.contains(
+        &"cargo test --manifest-path adl/Cargo.toml --bin adl-pr-finish cli::pr_cmd::tests::finish::arg_render::finish_helper_paths_run_focused_local_ci_gated_validation".to_string()
+    ));
+    assert!(plan.commands.contains(
+        &"cargo test --manifest-path adl/Cargo.toml --bin adl-pr-finish cli::pr_cmd::tests::finish::arg_render::finish_validation_profile_classifies_html_mobile_observatory_slice_as_small_binary_focused -- --nocapture".to_string()
+    ));
+}
+
+#[test]
 fn finish_validation_profile_classifies_sprint_shell_helper_tests_as_small_binary_focused() {
     let plan = select_finish_validation_plan_for_finish(
         1153,
@@ -2685,6 +2720,45 @@ fn finish_validation_runner_executes_locked_cargo_fallback_script_command() {
             .expect("runner marker")
             .trim(),
         "locked-fallback-ran"
+    );
+}
+
+#[test]
+fn finish_validation_runner_executes_html_observatory_demo_script_command() {
+    let repo = unique_temp_dir("adl-pr-finish-html-observatory-validation");
+    let tools = repo.join("adl/tools");
+    fs::create_dir_all(&tools).expect("tools dir");
+    write_executable(
+        &tools.join("check_no_tracked_adl_issue_record_residue.sh"),
+        "#!/usr/bin/env bash\nset -euo pipefail\n",
+    );
+    write_executable(
+        &tools.join("test_demo_v0904_csm_observatory_governed_prototype.sh"),
+        "#!/usr/bin/env bash\nset -euo pipefail\nrepo_root=\"$(cd \"$(dirname \"$0\")/../..\" && pwd)\"\necho html-observatory-ran > \"$repo_root/html-observatory-ran.txt\"\n",
+    );
+
+    assert!(Command::new("git")
+        .args(["init", "-q"])
+        .current_dir(&repo)
+        .status()
+        .expect("git init")
+        .success());
+
+    let plan = FinishValidationPlan {
+        mode: FinishValidationMode::SmallBinaryFocused,
+        commands: vec![
+            "bash adl/tools/check_no_tracked_adl_issue_record_residue.sh".to_string(),
+            "git diff --check".to_string(),
+            "bash adl/tools/test_demo_v0904_csm_observatory_governed_prototype.sh".to_string(),
+        ],
+    };
+
+    run_finish_validation_rust(&repo, &plan).expect("validation runner");
+    assert_eq!(
+        fs::read_to_string(repo.join("html-observatory-ran.txt"))
+            .expect("runner marker")
+            .trim(),
+        "html-observatory-ran"
     );
 }
 

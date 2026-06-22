@@ -9,7 +9,7 @@
   <body>
     <main
       class="observatory-governed-shell"
-      data-packet-ref="../fixtures/csm_observatory/proto-csm-02-governed-observatory-packet.json"
+      data-packet-ref="../../adl/tests/fixtures/runtime_v2/observatory/visibility_packet.json"
     >
       <section class="hero" aria-labelledby="prototype-title">
         <div class="hero__backdrop" aria-hidden="true"></div>
@@ -18,7 +18,7 @@
             <p class="eyebrow">CSM Observatory / governed prototype</p>
             <h1 id="prototype-title">Prototype CSM 02</h1>
             <p class="hero__lede" id="hero-lede">
-              Fixture-backed Observatory prototype with rooms, lenses, memory dots, and proposal-only controls.
+              Portable governed Observatory consuming bounded runtime visibility artifacts with rooms, lenses, memory dots, and proposal-only controls.
             </p>
           </div>
           <div class="truth-strip" aria-label="Truth boundary">
@@ -28,6 +28,27 @@
             <span id="investor-mode-tag">Atlas mode</span>
           </div>
         </header>
+
+        <section class="status-band" aria-label="WP-09 surface status">
+          <article class="status-panel panel" aria-labelledby="classification-heading">
+            <p class="eyebrow">Surface Classification</p>
+            <div class="panel__header">
+              <h2 id="classification-heading">Proof posture at a glance</h2>
+              <p id="classification-summary" class="panel-note"></p>
+            </div>
+            <div id="classification-cards" class="status-card-grid"></div>
+          </article>
+
+          <article class="status-panel panel" aria-labelledby="lane-split-heading">
+            <p class="eyebrow">Lane Split</p>
+            <div class="panel__header">
+              <h2 id="lane-split-heading">HTML and Unity stay separate</h2>
+              <p id="lane-split-summary" class="panel-note"></p>
+            </div>
+            <div id="lane-split-cards" class="status-card-grid"></div>
+            <ul id="current-inputs" class="review-links"></ul>
+          </article>
+        </section>
 
         <section class="control-strip" aria-label="Observatory navigation">
           <div class="control-strip__group">

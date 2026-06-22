@@ -1670,6 +1670,9 @@ pub(super) fn select_finish_validation_plan_for_finish(
             changed_paths,
         ));
     }
+    if finish_issue_needs_html_observatory_validation(issue_number, changed_paths) {
+        return Ok(build_html_observatory_validation_plan(changed_paths));
+    }
     let finish_profile = load_finish_validation_profile(&repo_root()?, changed_paths)?;
     if let Some(plan) = profile_backed_finish_validation_plan(&finish_profile) {
         return Ok(plan);
@@ -1785,6 +1788,66 @@ fn build_unity_observatory_contract_validation_plan(
         push_finish_validation_command(
             &mut commands,
             "cargo test --manifest-path adl/Cargo.toml --bin adl-pr-finish cli::pr_cmd::tests::finish::arg_render::finish_helper_paths_run_focused_local_ci_gated_validation",
+        );
+    }
+    FinishValidationPlan {
+        mode: FinishValidationMode::SmallBinaryFocused,
+        commands,
+    }
+}
+
+fn finish_issue_needs_html_observatory_validation(
+    issue_number: u32,
+    changed_paths: &[String],
+) -> bool {
+    issue_number == 4341
+        && !changed_paths.is_empty()
+        && changed_paths.iter().all(|path| {
+            let trimmed = path.trim().trim_matches('/');
+            finish_path_is_docs_only(trimmed)
+                || finish_path_is_small_binary_focused(trimmed)
+                || finish_path_is_larger_binary_focused(trimmed)
+                || parsed_issue_is_html_observatory_path(issue_number, trimmed)
+        })
+}
+
+fn build_html_observatory_validation_plan(changed_paths: &[String]) -> FinishValidationPlan {
+    let mut commands = vec![
+        "bash adl/tools/check_no_tracked_adl_issue_record_residue.sh".to_string(),
+        "git diff --check".to_string(),
+        "bash adl/tools/test_demo_v0904_csm_observatory_governed_prototype.sh".to_string(),
+    ];
+    if changed_paths.iter().any(|path| {
+        matches!(
+            path.trim().trim_matches('/'),
+            "adl/config/validation_lane_selector.v0.91.6.json"
+                | "adl/tools/test_select_validation_lanes.sh"
+        )
+    }) {
+        push_finish_validation_command(
+            &mut commands,
+            "bash adl/tools/test_select_validation_lanes.sh",
+        );
+    }
+    if changed_paths
+        .iter()
+        .any(|path| finish_path_needs_pr_finish_rust_focused_validation(path))
+    {
+        push_finish_validation_command(
+            &mut commands,
+            "cargo fmt --manifest-path adl/Cargo.toml --all --check",
+        );
+        push_finish_validation_command(
+            &mut commands,
+            "cargo test --manifest-path adl/Cargo.toml --bin adl-pr-finish cli::pr_cmd::tests::finish::arg_render::finish_validation",
+        );
+        push_finish_validation_command(
+            &mut commands,
+            "cargo test --manifest-path adl/Cargo.toml --bin adl-pr-finish cli::pr_cmd::tests::finish::arg_render::finish_helper_paths_run_focused_local_ci_gated_validation",
+        );
+        push_finish_validation_command(
+            &mut commands,
+            "cargo test --manifest-path adl/Cargo.toml --bin adl-pr-finish cli::pr_cmd::tests::finish::arg_render::finish_validation_profile_classifies_html_mobile_observatory_slice_as_small_binary_focused -- --nocapture",
         );
     }
     FinishValidationPlan {
@@ -2551,6 +2614,24 @@ fn parsed_issue_is_unity_observatory_contract_path(issue: u32, path: &str) -> bo
     )
 }
 
+fn parsed_issue_is_html_observatory_path(issue: u32, path: &str) -> bool {
+    if issue != 4341 {
+        return false;
+    }
+    let trimmed = path.trim().trim_matches('/');
+    matches!(
+        trimmed,
+        "adl/tools/test_demo_v0904_csm_observatory_governed_prototype.sh"
+            | "adl/tools/validate_csm_governed_observatory.py"
+            | "demos/fixtures/csm_observatory/proto-csm-02-governed-observatory-packet.json"
+            | "demos/v0.90.4/csm_observatory_governed_prototype.html"
+            | "demos/v0.90.4/csm_observatory_governed_prototype.css"
+            | "demos/v0.90.4/csm_observatory_governed_prototype.js"
+            | "demos/v0.90.4/csm_observatory_governed_prototype.md"
+            | "docs/milestones/v0.91.6/review/observatory/HTML_MOBILE_GOVERNED_OBSERVATORY_PROOF_4341.md"
+    )
+}
+
 fn finish_path_needs_small_binary_delegation_validation(path: &str) -> bool {
     let trimmed = path.trim().trim_matches('/');
     matches!(trimmed, "adl/tools/test_pr_small_binary_delegation.sh")
@@ -2996,6 +3077,21 @@ pub(super) fn run_finish_validation_rust(
                         ],
                     )?;
                 }
+                "cargo test --manifest-path adl/Cargo.toml --bin adl-pr-finish cli::pr_cmd::tests::finish::arg_render::finish_validation_profile_classifies_html_mobile_observatory_slice_as_small_binary_focused -- --nocapture" => {
+                    run_finish_validation_status(
+                        "cargo",
+                        &[
+                            "test",
+                            "--manifest-path",
+                            path_str(&manifest)?,
+                            "--bin",
+                            "adl-pr-finish",
+                            "cli::pr_cmd::tests::finish::arg_render::finish_validation_profile_classifies_html_mobile_observatory_slice_as_small_binary_focused",
+                            "--",
+                            "--nocapture",
+                        ],
+                    )?;
+                }
                 "cargo test --manifest-path adl/Cargo.toml --bin adl-pr-finish cli::pr_cmd::tests::finish::arg_render::finish_helper_paths_run_focused_local_ci_gated_validation" => {
                     run_finish_validation_status(
                         "cargo",
@@ -3166,6 +3262,11 @@ pub(super) fn run_finish_validation_rust(
                 }
                 "bash adl/tools/test_select_validation_lanes.sh" => {
                     let script = repo_root.join("adl/tools/test_select_validation_lanes.sh");
+                    run_finish_validation_status("bash", &[path_str(&script)?])?;
+                }
+                "bash adl/tools/test_demo_v0904_csm_observatory_governed_prototype.sh" => {
+                    let script =
+                        repo_root.join("adl/tools/test_demo_v0904_csm_observatory_governed_prototype.sh");
                     run_finish_validation_status("bash", &[path_str(&script)?])?;
                 }
                 "bash adl/tools/test_validation_manager.sh" => {

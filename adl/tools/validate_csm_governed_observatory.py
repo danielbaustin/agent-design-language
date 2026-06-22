@@ -33,24 +33,40 @@ def assert_contains(label: str, observed: str | None, expected: str) -> None:
         fail(f"{label} did not contain {expected!r}")
 
 
-def run_render_smoke(js_path: Path) -> dict[str, Any]:
+def run_render_smoke(js_path: Path, packet_path: Path) -> dict[str, Any]:
     appended_js = """
-packet = fallbackPacket;
+packet = mergePacket(JSON.parse(fs.readFileSync(packetPath, "utf8")));
+const defaultDot = packet.observatory_ui?.default_memory_dot;
+if (defaultDot) {
+  applyMemoryDot(defaultDot);
+}
 renderPrototype();
+const docketNodes = nodeLists.get("[data-target]") || [];
+if (docketNodes[0]) {
+  docketNodes[0].click();
+}
 globalThis.__governedSmoke = {
   fallbackPacket,
+  loadedPacketId: packet.packet_id,
+  classificationSummary: elements.get("#classification-summary")?.textContent,
+  laneSplitSummary: elements.get("#lane-split-summary")?.textContent,
   atlasSummary: elements.get("#atlas-summary")?.textContent,
   governanceSummary: elements.get("#governance-summary")?.textContent,
   inspectorHeading: elements.get("#inspector-heading")?.textContent,
   inspectorAllowed: elements.get("#inspector-allowed")?.textContent,
   proposalModeStatement: elements.get("#proposal-mode-statement")?.textContent,
+  classificationCards: elements.get("#classification-cards")?.innerHTML,
+  laneSplitCards: elements.get("#lane-split-cards")?.innerHTML,
+  currentInputs: elements.get("#current-inputs")?.innerHTML,
   proposalCards: elements.get("#proposal-cards")?.innerHTML,
   proposalDetail: elements.get("#proposal-detail")?.innerHTML,
   reviewLinks: elements.get("#review-links")?.innerHTML,
   traceRibbon: elements.get("#trace-ribbon")?.innerHTML,
   roomTabs: elements.get("#room-tabs")?.innerHTML,
   lensTabs: elements.get("#lens-tabs")?.innerHTML,
-  memoryDots: elements.get("#memory-dots")?.innerHTML
+  memoryDots: elements.get("#memory-dots")?.innerHTML,
+  postDocketRoom: state.room,
+  postDocketCitizen: state.selectedCitizenId
 };
 """
     node_program = textwrap.dedent(
@@ -59,6 +75,7 @@ globalThis.__governedSmoke = {
         const vm = require("vm");
 
         const elements = new Map();
+        const nodeLists = new Map();
         function element(selector, extra = {{}}) {{
           if (!elements.has(selector)) {{
             elements.set(selector, {{
@@ -74,6 +91,54 @@ globalThis.__governedSmoke = {
           return elements.get(selector);
         }}
 
+        function createNode(dataset) {{
+          const listeners = new Map();
+          return {{
+            dataset,
+            addEventListener(type, handler) {{
+              listeners.set(type, handler);
+            }},
+            click() {{
+              const handler = listeners.get("click");
+              if (handler) {{
+                handler({{ currentTarget: this, target: this }});
+              }}
+            }}
+          }};
+        }}
+
+        function parseNodes(selector) {{
+          const nodes = [];
+          const patterns = {{
+            "[data-citizen]": /data-citizen="([^"]+)"/g,
+            "[data-proposal]": /data-proposal="([^"]+)"/g,
+            "[data-target]": /data-target="([^"]+)"/g,
+            "[data-key='room_id']": /data-key="room_id"\\s+data-value="([^"]+)"/g,
+            "[data-key='lens_id']": /data-key="lens_id"\\s+data-value="([^"]+)"/g,
+            "[data-key='dot_id']": /data-key="dot_id"\\s+data-value="([^"]+)"/g
+          }};
+          const pattern = patterns[selector];
+          if (!pattern) {{
+            return nodes;
+          }}
+          for (const value of elements.values()) {{
+            pattern.lastIndex = 0;
+            let match;
+            while ((match = pattern.exec(value.innerHTML)) !== null) {{
+              if (selector === "[data-citizen]") {{
+                nodes.push(createNode({{ citizen: match[1] }}));
+              }} else if (selector === "[data-proposal]") {{
+                nodes.push(createNode({{ proposal: match[1] }}));
+              }} else if (selector === "[data-target]") {{
+                nodes.push(createNode({{ target: match[1] }}));
+              }} else {{
+                nodes.push(createNode({{ value: match[1] }}));
+              }}
+            }}
+          }}
+          return nodes;
+        }}
+
         const document = {{
           body: element("body", {{ classList: {{ toggle() {{}} }} }}),
           querySelector(selector) {{
@@ -82,14 +147,24 @@ globalThis.__governedSmoke = {
             }}
             return element(selector);
           }},
-          querySelectorAll() {{
-            return [];
+          querySelectorAll(selector) {{
+            const nodes = parseNodes(selector);
+            nodeLists.set(selector, nodes);
+            return nodes;
           }},
           addEventListener() {{}}
         }};
 
         const source = fs.readFileSync({json.dumps(str(js_path))}, "utf8") + {json.dumps(appended_js)};
-        const context = {{ document, fetch: undefined, console, elements }};
+        const context = {{
+          document,
+          fetch: undefined,
+          console,
+          elements,
+          nodeLists,
+          fs,
+          packetPath: {json.dumps(str(packet_path))}
+        }};
         vm.runInNewContext(source, context);
         process.stdout.write(JSON.stringify(context.__governedSmoke));
         """
@@ -117,26 +192,35 @@ def main() -> int:
     args = parser.parse_args()
 
     html = args.html.read_text(encoding="utf-8")
+    js_source = args.js.read_text(encoding="utf-8")
     packet = load_json(args.packet)
-    ui = packet.get("observatory_ui", {})
-    smoke = run_render_smoke(args.js)
+    smoke = run_render_smoke(args.js, args.packet)
     fallback = smoke["fallbackPacket"]
 
     assert_contains(
         "HTML packet reference",
         html,
-        "data-packet-ref=\"../fixtures/csm_observatory/proto-csm-02-governed-observatory-packet.json\"",
+        "data-packet-ref=\"../../adl/tests/fixtures/runtime_v2/observatory/visibility_packet.json\"",
     )
     assert_equal("packet schema", packet["schema"], "adl.csm_visibility_packet.v1")
     assert_equal("fallback schema", fallback["schema"], packet["schema"])
-    assert_equal("fallback packet_id", fallback["packet_id"], packet["packet_id"])
-    assert_equal("default room", fallback["observatory_ui"]["default_room"], ui["default_room"])
-    assert_equal("default lens", fallback["observatory_ui"]["default_lens"], ui["default_lens"])
-    assert_equal(
-        "proposal ids",
-        [item["proposal_id"] for item in fallback["observatory_ui"]["proposal_cases"]],
-        [item["proposal_id"] for item in ui["proposal_cases"]],
+    assert_equal("loaded packet id", smoke["loadedPacketId"], packet["packet_id"])
+    assert_contains(
+        "fallback current input ref",
+        smoke["currentInputs"],
+        "adl/tests/fixtures/runtime_v2/observatory/visibility_packet.json",
     )
+    assert_equal("default room", fallback["observatory_ui"]["default_room"], "world")
+    assert_equal("default lens", fallback["observatory_ui"]["default_lens"], "operator")
+    assert_contains("classification summary", smoke["classificationSummary"], "Fail-closed")
+    assert_contains("lane split summary", smoke["laneSplitSummary"], "HTML stays portable")
+    assert_contains("classification cards", smoke["classificationCards"], "Proof")
+    assert_contains("classification cards", smoke["classificationCards"], "Deferred")
+    assert_contains("lane split cards", smoke["laneSplitCards"], "HTML Observatory")
+    assert_contains("lane split cards", smoke["laneSplitCards"], "Unity Observatory")
+    assert_contains("docket target handler", js_source, "[data-target]")
+    assert_equal("docket click room", smoke["postDocketRoom"], "governance")
+    assert_equal("docket click citizen", smoke["postDocketCitizen"], packet["citizens"][0]["citizen_id"])
     assert_contains("atlas summary", smoke["atlasSummary"], packet["manifold"]["health"]["summary"])
     assert_contains("governance summary", smoke["governanceSummary"], "allow")
     assert_equal("inspector heading", smoke["inspectorHeading"], packet["citizens"][0]["display_name"])
@@ -144,8 +228,16 @@ def main() -> int:
     assert_contains("proposal mode statement", smoke["proposalModeStatement"], "proposal")
     assert_contains("proposal cards", smoke["proposalCards"], "Inspect Alpha continuity packet")
     assert_contains("proposal detail", smoke["proposalDetail"], "validate operator identity")
-    assert_contains("review links", smoke["reviewLinks"], "runtime_v2/observatory/operator_report.md")
-    assert_contains("trace ribbon", smoke["traceRibbon"], "Operator opened a continuity review request")
+    assert_contains(
+        "review links",
+        smoke["reviewLinks"],
+        "docs/milestones/v0.91.6/features/OBSERVATORY_UNITY_CONSUMPTION_CLASSIFICATION_v0.91.6.md",
+    )
+    assert_contains(
+        "trace ribbon",
+        smoke["traceRibbon"],
+        packet["trace"]["trace_tail"][0]["summary"],
+    )
     assert_contains("room tabs", smoke["roomTabs"], "World / Reality")
     assert_contains("lens tabs", smoke["lensTabs"], "Operator lens")
     assert_contains("memory dots", smoke["memoryDots"], "Corporate Investor")

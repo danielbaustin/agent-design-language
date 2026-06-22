@@ -183,6 +183,39 @@
       "reason": "coverage_impact_surface_requires_coverage_impact_contract_checks"
     },
     {
+      "id": "html_observatory_governed_surface",
+      "lane_class": "cli_workflow",
+      "default_surface": "tooling",
+      "owner": "review",
+      "proof_role": "demo_contract",
+      "requirement_ids": [
+        "html_observatory_governed_surface"
+      ],
+      "path_selectors": [
+        "adl/tools/test_demo_v0904_csm_observatory_governed_prototype.sh",
+        "adl/tools/validate_csm_governed_observatory.py",
+        "demos/fixtures/csm_observatory/proto-csm-02-governed-observatory-packet.json",
+        "demos/v0.90.4/csm_observatory_governed_prototype.html",
+        "demos/v0.90.4/csm_observatory_governed_prototype.css",
+        "demos/v0.90.4/csm_observatory_governed_prototype.js",
+        "demos/v0.90.4/csm_observatory_governed_prototype.md",
+        "docs/milestones/v0.91.6/review/observatory/HTML_MOBILE_GOVERNED_OBSERVATORY_PROOF_4341.md"
+      ],
+      "path_hints": [
+        "adl/tools/test_demo_v0904_csm_observatory_governed_prototype.sh",
+        "adl/tools/validate_csm_governed_observatory.py",
+        "demos/fixtures/csm_observatory/proto-csm-02-governed-observatory-packet.json",
+        "demos/v0.90.4/csm_observatory_governed_prototype.html",
+        "demos/v0.90.4/csm_observatory_governed_prototype.css",
+        "demos/v0.90.4/csm_observatory_governed_prototype.js",
+        "demos/v0.90.4/csm_observatory_governed_prototype.md",
+        "docs/milestones/v0.91.6/review/observatory/HTML_MOBILE_GOVERNED_OBSERVATORY_PROOF_4341.md"
+      ],
+      "command": "bash adl/tools/test_demo_v0904_csm_observatory_governed_prototype.sh",
+      "run_command": "bash adl/tools/test_demo_v0904_csm_observatory_governed_prototype.sh",
+      "reason": "portable_html_observatory_surface_requires_governed_demo_smoke"
+    },
+    {
       "id": "csdlc_owner_lane",
       "lane_class": "cli_workflow",
       "default_surface": "tooling",

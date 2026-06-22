@@ -411,4 +411,31 @@ if bash "$SCRIPT" --manifest "$missing_metadata_manifest" --changed-files "$docs
 fi
 assert_has "$TMP/missing-metadata.err" "missing required surface metadata: proof_role"
 
+html_observatory="$TMP/html-observatory.txt"
+cat >"$html_observatory" <<'EOF'
+M	adl/tools/test_demo_v0904_csm_observatory_governed_prototype.sh
+M	adl/tools/validate_csm_governed_observatory.py
+M	demos/fixtures/csm_observatory/proto-csm-02-governed-observatory-packet.json
+M	demos/v0.90.4/csm_observatory_governed_prototype.html
+M	demos/v0.90.4/csm_observatory_governed_prototype.css
+M	demos/v0.90.4/csm_observatory_governed_prototype.js
+M	demos/v0.90.4/csm_observatory_governed_prototype.md
+M	docs/milestones/v0.91.6/review/observatory/HTML_MOBILE_GOVERNED_OBSERVATORY_PROOF_4341.md
+EOF
+bash "$SCRIPT" --changed-files "$html_observatory" --json >"$TMP/html-observatory.json"
+python3 - <<'PY' "$TMP/html-observatory.json"
+import json
+import sys
+
+profile = json.load(open(sys.argv[1]))
+assert profile["schema_version"] == "adl.validation_lane_plan.v1"
+assert profile["aggregate_status"] == "selected"
+assert profile["pr_publication_sufficient"] is True
+assert set(profile["lanes"].keys()) == {"html_observatory_governed_surface"}
+lane = profile["lanes"]["html_observatory_governed_surface"]
+assert lane["status"] == "selected"
+assert lane["proof_role"] == "demo_contract"
+assert lane["owner"] == "review"
+PY
+
 echo "PASS test_select_validation_lanes"
