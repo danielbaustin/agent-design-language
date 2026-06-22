@@ -90,7 +90,7 @@ h1,
 h2 {
   margin: 0;
   font-family: var(--font-display);
-  letter-spacing: -0.03em;
+  letter-spacing: 0;
 }
 
 h1 {
@@ -131,6 +131,50 @@ h2 {
   text-transform: uppercase;
 }
 
+.status-band {
+  display: grid;
+  grid-template-columns: 1.1fr 1fr;
+  gap: 1rem;
+  margin-bottom: 1rem;
+}
+
+.status-panel {
+  padding: 1rem;
+}
+
+.status-card-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0.75rem;
+}
+
+.status-card {
+  min-height: 8.5rem;
+  border: 1px solid var(--line);
+  border-radius: 0.95rem;
+  background: rgba(255, 255, 255, 0.03);
+  padding: 0.9rem;
+}
+
+.status-card strong,
+.lane-card strong {
+  display: block;
+  margin-bottom: 0.35rem;
+}
+
+.status-card p,
+.lane-card p {
+  margin: 0.45rem 0 0;
+}
+
+.status-card__meta,
+.lane-card__meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.45rem;
+  margin-top: 0.5rem;
+}
+
 .control-strip {
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr)) auto;
@@ -159,6 +203,8 @@ h2 {
   background: rgba(255, 255, 255, 0.04);
   padding: 0.48rem 0.72rem;
   cursor: pointer;
+  min-height: 2.75rem;
+  touch-action: manipulation;
   transition: transform 120ms ease, border-color 120ms ease, background 120ms ease;
 }
 
@@ -185,6 +231,8 @@ h2 {
   background: rgba(255, 191, 104, 0.08);
   cursor: pointer;
   min-height: 100%;
+  min-width: 11rem;
+  touch-action: manipulation;
 }
 
 .observatory-grid {
@@ -283,7 +331,8 @@ h2 {
 
 .citizen-card,
 .docket-card,
-.proposal-card {
+.proposal-card,
+.lane-card {
   width: 100%;
   text-align: left;
   border: 1px solid var(--line);
@@ -433,6 +482,19 @@ h2 {
   color: var(--cyan);
   font-family: var(--font-mono);
   font-size: 0.86rem;
+  overflow-wrap: anywhere;
+  word-break: break-word;
+}
+
+.status-card code,
+#current-inputs code {
+  display: block;
+  margin-top: 0.35rem;
+  color: var(--cyan);
+  font-family: var(--font-mono);
+  font-size: 0.82rem;
+  overflow-wrap: anywhere;
+  word-break: break-word;
 }
 
 .observatory-governed-shell.is-investor-mode {
@@ -454,6 +516,7 @@ h2 {
 }
 
 @media (max-width: 1100px) {
+  .status-band,
   .control-strip,
   .observatory-grid {
     grid-template-columns: 1fr;
@@ -466,6 +529,55 @@ h2 {
   .manifold-metrics,
   .inspector-grid {
     grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 720px) {
+  .hero {
+    padding: 0.85rem;
+  }
+
+  .hero__mast,
+  .panel__header {
+    flex-direction: column;
+  }
+
+  .truth-strip {
+    justify-content: start;
+    max-width: none;
+  }
+
+  .control-strip__group,
+  .panel,
+  .status-panel {
+    padding: 0.85rem;
+  }
+
+  .chip-row {
+    flex-wrap: nowrap;
+    overflow-x: auto;
+    padding-bottom: 0.2rem;
+    scrollbar-width: thin;
+  }
+
+  .chip-row .chip {
+    flex: 0 0 auto;
+  }
+
+  .status-card-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .atlas-orb {
+    min-height: 11rem;
+  }
+
+  h1 {
+    font-size: clamp(2.35rem, 12vw, 3.4rem);
+  }
+
+  h2 {
+    font-size: 1.35rem;
   }
 }
 
