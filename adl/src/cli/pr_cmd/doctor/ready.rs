@@ -101,6 +101,8 @@ pub(super) fn run_doctor_ready(
     ]
     .iter()
     .all(|path| path.is_file());
+    let validation_repo_root =
+        ready_validation_repo_root(repo_root, &worktree_path, wt_bundle_complete);
     if !root_bundle_complete && worktree_path.is_dir() && wt_bundle_complete {
         let wt_branch = run_capture(
             "git",
@@ -167,7 +169,7 @@ pub(super) fn run_doctor_ready(
         issue_ref.slug(),
         &root_bundle_input,
         &root_bundle_output,
-        repo_root,
+        validation_repo_root,
         StructuredBundlePaths {
             plan_path: &root_bundle_plan,
             validation_plan_path: &root_bundle_validation_plan,
@@ -262,6 +264,31 @@ pub(super) fn run_doctor_ready(
         ],
     )?;
     if wt_branch.trim() != branch {
+        if stale_worktree_branch_mismatch_preserves_pre_run(root_indicates_pre_run, branch, wt_branch.trim()) {
+            let card_lifecycle = build_doctor_card_lifecycle(
+                repo_root,
+                &root_bundle_input,
+                &root_stp,
+                &root_bundle_plan,
+                &root_bundle_validation_plan,
+                &root_bundle_review_policy,
+                &root_bundle_output,
+            );
+            let status = doctor_ready_status_for(&card_lifecycle);
+            return Ok(DoctorReadyResult {
+                lifecycle_state: "pre_run",
+                worktree: None,
+                source: path_relative_to_repo(repo_root, &source_path),
+                root_stp: path_relative_to_repo(repo_root, &root_stp),
+                root_input: path_relative_to_repo(repo_root, &root_bundle_input),
+                root_output: path_relative_to_repo(repo_root, &root_bundle_output),
+                wt_stp: None,
+                wt_input: None,
+                wt_output: None,
+                card_lifecycle,
+                status,
+            });
+        }
         bail!(
             "doctor: worktree branch mismatch for {}",
             worktree_path.display()
@@ -273,7 +300,7 @@ pub(super) fn run_doctor_ready(
     validate_bootstrap_stp(&worktree_path, &wt_stp)?;
     validate_authored_prompt_surface("doctor", &wt_stp, PromptSurfaceKind::Stp)?;
     validate_ready_cards(
-        repo_root,
+        validation_repo_root,
         issue_ref.issue_number(),
         issue_ref.slug(),
         wt_branch.trim(),
@@ -383,4 +410,24 @@ pub(super) fn ensure_pr_run_design_time_ready(
         issue_ref.issue_number(),
         blockers.join("\n")
     )
+}
+
+pub(super) fn ready_validation_repo_root<'a>(
+    repo_root: &'a Path,
+    worktree_path: &'a Path,
+    wt_bundle_complete: bool,
+) -> &'a Path {
+    if worktree_path != repo_root && wt_bundle_complete {
+        worktree_path
+    } else {
+        repo_root
+    }
+}
+
+pub(super) fn stale_worktree_branch_mismatch_preserves_pre_run(
+    root_indicates_pre_run: bool,
+    expected_branch: &str,
+    observed_branch: &str,
+) -> bool {
+    root_indicates_pre_run && observed_branch.trim() != expected_branch
 }

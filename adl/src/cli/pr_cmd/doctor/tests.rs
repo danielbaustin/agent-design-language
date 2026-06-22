@@ -1,5 +1,8 @@
 use super::preflight::{doctor_preflight_status, preflight_card_run_readiness};
 use super::*;
+use crate::cli::pr_cmd::doctor::ready::{
+    ready_validation_repo_root, stale_worktree_branch_mismatch_preserves_pre_run,
+};
 use crate::cli::pr_cmd_cards::StructuredBundlePaths;
 use std::time::{SystemTime, UNIX_EPOCH};
 
@@ -22,6 +25,44 @@ fn doctor_issue_prompt_resolution_falls_back_to_bound_worktree_prompt() {
         resolve_doctor_issue_prompt_path(&repo, &issue_ref).expect("doctor source prompt");
 
     assert_eq!(resolved, source_path);
+}
+
+#[test]
+fn doctor_ready_uses_bound_worktree_root_for_validation_once_bundle_exists() {
+    let repo = lifecycle_temp_repo("doctor-ready-validation-root");
+    let worktree = repo.join(".worktrees/adl-wp-3065");
+
+    let selected = ready_validation_repo_root(&repo, &worktree, true);
+
+    assert_eq!(selected, worktree.as_path());
+}
+
+#[test]
+fn doctor_ready_keeps_primary_repo_root_when_no_bound_bundle_exists() {
+    let repo = lifecycle_temp_repo("doctor-ready-primary-root");
+    let worktree = repo.join(".worktrees/adl-wp-3065");
+
+    let selected = ready_validation_repo_root(&repo, &worktree, false);
+
+    assert_eq!(selected, repo.as_path());
+}
+
+#[test]
+fn doctor_ready_preserves_pre_run_truth_for_stale_worktree_branch_mismatch() {
+    assert!(stale_worktree_branch_mismatch_preserves_pre_run(
+        true,
+        "codex/4389-expected",
+        "codex/stale-branch"
+    ));
+}
+
+#[test]
+fn doctor_ready_blocks_branch_mismatch_once_issue_is_run_bound() {
+    assert!(!stale_worktree_branch_mismatch_preserves_pre_run(
+        false,
+        "codex/4389-expected",
+        "codex/stale-branch"
+    ));
 }
 
 #[test]
