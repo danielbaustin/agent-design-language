@@ -48,7 +48,6 @@ pub fn usage() -> &'static str {
   adl pr init <issue> [--slug <slug>] [--title <title>] [--no-fetch-issue] [--version <v>]
   adl pr repair-issue-body <issue> [--slug <slug>] [--title <title>] [--body <text> | --body-file <path>] [--labels <csv>] [--version <v>] [--force]
   adl pr run <issue> [--prefix <prefix>] [--slug <slug>] [--title <title>] [--no-fetch-issue] [--version <v>] [--allow-open-pr-wave]
-  adl pr run <adl.yaml> [--trace] [--signature-key <public_key_path>] [--allow-embedded-signature-key] [--allow-unsigned] [--runs-root <dir>] [--out <dir>]
   adl pr doctor <issue> [--slug <slug>] [--version <v>] [--no-fetch-issue] [--mode full|ready|preflight] [--json]
   adl pr finish <issue> --title <title> [--body <text>] [--paths <csv>] [-f|--input <path>] [--output-card <path>] [--no-checks] [--no-close] [--ready] [--merge] [--no-open]
   adl pr closeout <issue> [--slug <slug>] [--version <v>] [--no-fetch-issue]

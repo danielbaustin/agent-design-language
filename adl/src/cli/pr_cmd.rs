@@ -185,10 +185,31 @@ fn resolve_start_slug(
     bail!("Could not fetch issue title. Pass --slug or check GitHub token/repo configuration.")
 }
 
+fn looks_like_adl_workflow_path(value: &str) -> bool {
+    value.ends_with(".adl.yaml") || value.ends_with(".adl.yml")
+}
+
+fn reject_runtime_yaml_through_pr_run(args: &[String]) -> Result<()> {
+    let Some(operand) = args.iter().find(|arg| looks_like_adl_workflow_path(arg)) else {
+        return Ok(());
+    };
+    if looks_like_adl_workflow_path(operand) {
+        bail!(
+            "adl pr run cannot execute ADL workflow YAML '{operand}'. Use `adl <adl.yaml> ...` (or `adl-runtime run <adl.yaml>` where that compatibility binary is available) for runtime workflows."
+        );
+    }
+    Ok(())
+}
+
+fn real_pr_run(args: &[String]) -> Result<()> {
+    reject_runtime_yaml_through_pr_run(args)?;
+    real_pr_start(args)
+}
+
 pub(crate) fn real_pr(args: &[String]) -> Result<()> {
     let Some(subcommand) = args.first().map(|s| s.as_str()) else {
         bail!(
-            "pr requires a subcommand: create | init | repair-issue-body | start | doctor | ready | preflight | finish | validation | closing-linkage | issue | projection-map | closeout"
+            "pr requires a subcommand: create | init | repair-issue-body | start | run | doctor | ready | preflight | finish | validation | closing-linkage | issue | projection-map | closeout"
         );
     };
 
@@ -197,6 +218,7 @@ pub(crate) fn real_pr(args: &[String]) -> Result<()> {
         "init" => real_pr_init(&args[1..]),
         "repair-issue-body" => real_pr_repair_issue_body(&args[1..]),
         "start" => real_pr_start(&args[1..]),
+        "run" => real_pr_run(&args[1..]),
         "doctor" => real_pr_doctor(&args[1..]),
         "ready" => real_pr_ready(&args[1..]),
         "preflight" => real_pr_preflight(&args[1..]),

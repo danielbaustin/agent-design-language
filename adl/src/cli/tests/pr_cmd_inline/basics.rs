@@ -1930,11 +1930,33 @@ fn same_checkout_root_handles_equivalent_and_missing_paths() {
 fn real_pr_dispatch_rejects_missing_and_unknown_subcommands() {
     let err = real_pr(&[]).expect_err("missing subcommand");
     assert!(err.to_string().contains(
-        "pr requires a subcommand: create | init | repair-issue-body | start | doctor | ready | preflight | finish | validation | closing-linkage | issue | projection-map | closeout"
+        "pr requires a subcommand: create | init | repair-issue-body | start | run | doctor | ready | preflight | finish | validation | closing-linkage | issue | projection-map | closeout"
     ));
 
     let err = real_pr(&["bogus".to_string()]).expect_err("unknown subcommand");
     assert!(err.to_string().contains("unknown pr subcommand: bogus"));
+}
+
+#[test]
+fn real_pr_run_rejects_runtime_workflow_yaml_operand() {
+    let err = real_pr(&["run".to_string(), "workflow.adl.yaml".to_string()])
+        .expect_err("runtime workflow YAML must fail closed for adl pr run");
+    assert!(err.to_string().contains(
+        "adl pr run cannot execute ADL workflow YAML 'workflow.adl.yaml'. Use `adl <adl.yaml> ...` (or `adl-runtime run <adl.yaml>` where that compatibility binary is available) for runtime workflows."
+    ));
+}
+
+#[test]
+fn real_pr_run_rejects_runtime_workflow_yaml_operand_after_flags() {
+    let err = real_pr(&[
+        "run".to_string(),
+        "--trace".to_string(),
+        "workflow.adl.yaml".to_string(),
+    ])
+    .expect_err("runtime workflow YAML must fail closed even when flags precede it");
+    assert!(err.to_string().contains(
+        "adl pr run cannot execute ADL workflow YAML 'workflow.adl.yaml'. Use `adl <adl.yaml> ...` (or `adl-runtime run <adl.yaml>` where that compatibility binary is available) for runtime workflows."
+    ));
 }
 
 #[test]
