@@ -1,9 +1,10 @@
 use anyhow::{anyhow, Context};
 use anyhow::{bail, Result};
-#[cfg(test)]
 use serde::Deserialize;
 use std::fs;
 use std::path::{Path, PathBuf};
+#[cfg(test)]
+use std::sync::{Mutex, OnceLock};
 
 use ::adl::control_plane::IssueRef;
 
@@ -30,6 +31,44 @@ const VALID_WORKFLOW_QUEUES: &[&str] = &[
 ];
 
 pub(crate) const NEEDS_PLANNING_PVF_LANE: &str = "needs_planning_lane_assignment";
+
+const PVF_LANE_POLICY_ENV: &str = "ADL_PVF_LANE_POLICY_PATH";
+const PVF_LANE_POLICY_SCHEMA: &str = "adl.pvf_lane_policy.v1";
+
+#[derive(Debug, Deserialize)]
+struct PvfLanePolicy {
+    schema: String,
+    default_initial_lane: String,
+    initial_lane_rules: Vec<PvfInitialLaneRule>,
+    planned_lane_default: PvfPlannedLaneDefault,
+    #[serde(default)]
+    planned_lane_rules: Vec<PvfPlannedLaneRule>,
+}
+
+#[derive(Debug, Deserialize)]
+struct PvfInitialLaneRule {
+    lane: String,
+    match_any: Vec<String>,
+}
+
+#[derive(Debug, Deserialize)]
+struct PvfPlannedLaneDefault {
+    mode: String,
+    source_prefix: String,
+}
+
+#[derive(Debug, Deserialize)]
+struct PvfPlannedLaneRule {
+    initial_lane: String,
+    planned_lane: String,
+    planned_lane_source: String,
+}
+
+#[derive(Debug)]
+enum PvfLanePolicyLoad {
+    Loaded(PvfLanePolicy),
+    Unavailable,
+}
 
 #[cfg(test)]
 #[derive(Debug)]
@@ -196,7 +235,7 @@ pub(crate) fn render_generated_issue_prompt(
     let outcome_type = infer_required_outcome_type(labels_csv, title);
     let initial_pvf_lane = infer_initial_pvf_lane(title, labels_csv, None);
     let initial_pvf_lane_source =
-        infer_initial_pvf_lane_source(title, labels_csv, None, initial_pvf_lane);
+        infer_initial_pvf_lane_source(title, labels_csv, None, &initial_pvf_lane);
     let label_lines = labels_csv
         .split(',')
         .map(str::trim)
@@ -320,13 +359,16 @@ pub(crate) fn infer_initial_pvf_lane(
     title: &str,
     labels_csv: &str,
     body_hint: Option<&str>,
-) -> &'static str {
+) -> String {
     let lowered = format!(
         "{} {} {}",
         title.to_lowercase(),
         labels_csv.to_lowercase(),
         body_hint.unwrap_or_default().to_lowercase()
     );
+    if let Some(resolution) = infer_initial_pvf_lane_from_policy(&lowered) {
+        return resolution.lane().to_string();
+    }
     if lowered.contains("prompt-template")
         || lowered.contains("prompt template")
         || lowered.contains("csdlc-prompt-editor")
@@ -334,7 +376,7 @@ pub(crate) fn infer_initial_pvf_lane(
         || lowered.contains("adl/src/csdlc_prompt_editor/")
         || lowered.contains("adl/src/csdlc_prompt_editor.rs")
     {
-        return "prompt_template";
+        return "prompt_template".to_string();
     }
     if lowered.contains("area:provider")
         || lowered.contains("[provider]")
@@ -342,37 +384,53 @@ pub(crate) fn infer_initial_pvf_lane(
         || lowered.contains("/provider")
         || lowered.contains(" provider ")
     {
-        return "provider";
+        return "provider".to_string();
     }
     if lowered.contains("owner-binary")
         || lowered.contains("owner binary")
         || lowered.contains("adl/src/bin/")
         || lowered.contains("run_owner_validation_lane")
     {
-        return "owner_binary";
+        return "owner_binary".to_string();
     }
     if lowered.contains("area:runtime")
         || lowered.contains("[runtime]")
         || lowered.contains("runtime_v2")
         || lowered.contains("adl/src/runtime")
     {
-        return "runtime";
+        return "runtime".to_string();
     }
     if lowered.contains("area:tools")
         || lowered.contains("[tools]")
         || lowered.contains("adl/src/cli/")
         || lowered.contains("adl/tools/")
     {
-        return "tooling";
+        return "tooling".to_string();
     }
     if lowered.contains("area:docs")
         || lowered.contains("type:docs")
         || lowered.contains("[docs]")
         || lowered.contains("docs/")
     {
-        return "docs_only";
+        return "docs_only".to_string();
     }
-    NEEDS_PLANNING_PVF_LANE
+    NEEDS_PLANNING_PVF_LANE.to_string()
+}
+
+pub(crate) fn infer_planned_pvf_lane(initial_lane: &str) -> String {
+    if let PvfLanePolicyLoad::Loaded(policy) = load_pvf_lane_policy() {
+        if let Some(rule) = policy
+            .planned_lane_rules
+            .iter()
+            .find(|rule| rule.initial_lane == initial_lane)
+        {
+            return rule.planned_lane.clone();
+        }
+        if policy.planned_lane_default.mode == "same_as_initial" {
+            return initial_lane.to_string();
+        }
+    }
+    initial_lane.to_string()
 }
 
 pub(crate) fn infer_initial_pvf_lane_source(
@@ -380,15 +438,232 @@ pub(crate) fn infer_initial_pvf_lane_source(
     labels_csv: &str,
     body_hint: Option<&str>,
     lane: &str,
-) -> &'static str {
+) -> String {
+    let lowered = format!(
+        "{} {} {}",
+        title.to_lowercase(),
+        labels_csv.to_lowercase(),
+        body_hint.unwrap_or_default().to_lowercase()
+    );
+    if let Some(policy_resolution) = infer_initial_pvf_lane_from_policy(&lowered) {
+        if lane == policy_resolution.lane() {
+            return match policy_resolution {
+                InitialPvfLanePolicyResolution::Matched(_) => {
+                    let title_labels_lane = infer_initial_pvf_lane(title, labels_csv, None);
+                    if body_hint.is_some() && lane != title_labels_lane {
+                        "configured_policy_from_title_labels_and_body_inference".to_string()
+                    } else {
+                        "configured_policy_from_title_labels_inference".to_string()
+                    }
+                }
+                InitialPvfLanePolicyResolution::Default(_) => {
+                    "configured_policy_default".to_string()
+                }
+            };
+        }
+    }
     let title_labels_lane = infer_initial_pvf_lane(title, labels_csv, None);
     if lane == NEEDS_PLANNING_PVF_LANE {
-        "title_labels_inference_needs_review"
+        "title_labels_inference_needs_review".to_string()
     } else if body_hint.is_some() && lane != title_labels_lane {
-        "title_labels_and_body_inference"
+        "title_labels_and_body_inference".to_string()
     } else {
-        "title_labels_inference"
+        "title_labels_inference".to_string()
     }
+}
+
+pub(crate) fn infer_planned_pvf_lane_source(initial_lane: &str, initial_source: &str) -> String {
+    if let PvfLanePolicyLoad::Loaded(policy) = load_pvf_lane_policy() {
+        if let Some(rule) = policy
+            .planned_lane_rules
+            .iter()
+            .find(|rule| rule.initial_lane == initial_lane)
+        {
+            return rule.planned_lane_source.clone();
+        }
+        if policy.planned_lane_default.mode == "same_as_initial" {
+            return format!(
+                "{}{}",
+                policy.planned_lane_default.source_prefix, initial_source
+            );
+        }
+    }
+    if initial_lane == NEEDS_PLANNING_PVF_LANE {
+        "planning_required_from_issue_creation".to_string()
+    } else {
+        format!("planning_confirmed_from_{initial_source}")
+    }
+}
+
+fn load_pvf_lane_policy() -> PvfLanePolicyLoad {
+    let Some(path) = resolve_pvf_lane_policy_path() else {
+        return PvfLanePolicyLoad::Unavailable;
+    };
+    let text = match fs::read_to_string(&path) {
+        Ok(text) => text,
+        Err(err) => {
+            warn_pvf_lane_policy(format!(
+                "PVF lane policy fallback: failed to read {}: {}",
+                path.display(),
+                err
+            ));
+            return PvfLanePolicyLoad::Unavailable;
+        }
+    };
+    let policy: PvfLanePolicy = match serde_json::from_str(&text) {
+        Ok(policy) => policy,
+        Err(err) => {
+            warn_pvf_lane_policy(format!(
+                "PVF lane policy fallback: failed to parse {}: {}",
+                path.display(),
+                err
+            ));
+            return PvfLanePolicyLoad::Unavailable;
+        }
+    };
+    if policy.schema != PVF_LANE_POLICY_SCHEMA {
+        warn_pvf_lane_policy(format!(
+            "PVF lane policy fallback: {} declared schema '{}' instead of '{}'",
+            path.display(),
+            policy.schema,
+            PVF_LANE_POLICY_SCHEMA
+        ));
+        return PvfLanePolicyLoad::Unavailable;
+    }
+    PvfLanePolicyLoad::Loaded(policy)
+}
+
+enum InitialPvfLanePolicyResolution {
+    Matched(String),
+    Default(String),
+}
+
+impl InitialPvfLanePolicyResolution {
+    fn lane(&self) -> &str {
+        match self {
+            Self::Matched(lane) | Self::Default(lane) => lane,
+        }
+    }
+}
+
+fn infer_initial_pvf_lane_from_policy(lowered: &str) -> Option<InitialPvfLanePolicyResolution> {
+    let PvfLanePolicyLoad::Loaded(policy) = load_pvf_lane_policy() else {
+        return None;
+    };
+    if let Some(rule) = policy
+        .initial_lane_rules
+        .iter()
+        .find(|rule| rule.match_any.iter().any(|needle| lowered.contains(needle)))
+    {
+        return Some(InitialPvfLanePolicyResolution::Matched(rule.lane.clone()));
+    }
+    Some(InitialPvfLanePolicyResolution::Default(
+        policy.default_initial_lane,
+    ))
+}
+
+fn resolve_pvf_lane_policy_path() -> Option<PathBuf> {
+    if let Some(override_path) = std::env::var_os(PVF_LANE_POLICY_ENV) {
+        let path = PathBuf::from(override_path);
+        if path.is_file() {
+            return Some(path);
+        }
+    }
+
+    for root in pvf_lane_policy_repo_roots() {
+        let current = root.join("docs/templates/prompts/current.json");
+        let text = match fs::read_to_string(&current) {
+            Ok(text) => text,
+            Err(_) => continue,
+        };
+        let value: serde_json::Value = match serde_json::from_str(&text) {
+            Ok(value) => value,
+            Err(err) => {
+                warn_pvf_lane_policy(format!(
+                    "PVF lane policy fallback: failed to parse {}: {}",
+                    current.display(),
+                    err
+                ));
+                continue;
+            }
+        };
+        let semver = match value.get("semver").and_then(|value| value.as_str()) {
+            Some(semver) => semver,
+            None => {
+                warn_pvf_lane_policy(format!(
+                    "PVF lane policy fallback: {} is missing semver",
+                    current.display()
+                ));
+                continue;
+            }
+        };
+        let policy = root.join(format!(
+            "docs/templates/prompts/{semver}/pvf_lane_policy.json"
+        ));
+        if policy.is_file() {
+            return Some(policy);
+        }
+        warn_pvf_lane_policy(format!(
+            "PVF lane policy fallback: expected policy file not found at {}",
+            policy.display()
+        ));
+    }
+    None
+}
+
+fn pvf_lane_policy_repo_roots() -> Vec<PathBuf> {
+    let mut roots = Vec::new();
+    if let Ok(cwd) = std::env::current_dir() {
+        for path in path_with_ancestors(cwd) {
+            if !roots.contains(&path) {
+                roots.push(path);
+            }
+        }
+    }
+    let manifest_root = Path::new(env!("CARGO_MANIFEST_DIR"));
+    if let Some(parent) = manifest_root.parent() {
+        for path in path_with_ancestors(parent.to_path_buf()) {
+            if !roots.contains(&path) {
+                roots.push(path);
+            }
+        }
+    }
+    roots
+}
+
+fn path_with_ancestors(path: PathBuf) -> Vec<PathBuf> {
+    let mut roots = Vec::new();
+    let mut current = Some(path.as_path());
+    while let Some(path) = current {
+        roots.push(path.to_path_buf());
+        current = path.parent();
+    }
+    roots
+}
+
+fn warn_pvf_lane_policy(message: String) {
+    #[cfg(test)]
+    {
+        last_pvf_lane_policy_warning()
+            .lock()
+            .expect("pvf lane warning mutex")
+            .replace(message.clone());
+    }
+    eprintln!("{message}");
+}
+
+#[cfg(test)]
+fn last_pvf_lane_policy_warning() -> &'static Mutex<Option<String>> {
+    static LAST_WARNING: OnceLock<Mutex<Option<String>>> = OnceLock::new();
+    LAST_WARNING.get_or_init(|| Mutex::new(None))
+}
+
+#[cfg(test)]
+pub(crate) fn take_last_pvf_lane_policy_warning() -> Option<String> {
+    last_pvf_lane_policy_warning()
+        .lock()
+        .expect("pvf lane warning mutex")
+        .take()
 }
 
 pub(crate) fn resolve_issue_prompt_workflow_queue(path: &Path) -> Result<WorkflowQueueResolution> {

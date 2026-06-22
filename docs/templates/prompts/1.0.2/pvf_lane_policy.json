@@ -1,0 +1,74 @@
+{
+  "schema": "adl.pvf_lane_policy.v1",
+  "default_initial_lane": "needs_planning_lane_assignment",
+  "initial_lane_rules": [
+    {
+      "lane": "prompt_template",
+      "match_any": [
+        "prompt-template",
+        "prompt template",
+        "csdlc-prompt-editor",
+        "docs/templates/prompts/",
+        "adl/src/csdlc_prompt_editor/",
+        "adl/src/csdlc_prompt_editor.rs"
+      ]
+    },
+    {
+      "lane": "provider",
+      "match_any": [
+        "area:provider",
+        "[provider]",
+        "provider_substrate",
+        "/provider",
+        " provider "
+      ]
+    },
+    {
+      "lane": "owner_binary",
+      "match_any": [
+        "owner-binary",
+        "owner binary",
+        "adl/src/bin/",
+        "run_owner_validation_lane"
+      ]
+    },
+    {
+      "lane": "runtime",
+      "match_any": [
+        "area:runtime",
+        "[runtime]",
+        "runtime_v2",
+        "adl/src/runtime"
+      ]
+    },
+    {
+      "lane": "tooling",
+      "match_any": [
+        "area:tools",
+        "[tools]",
+        "adl/src/cli/",
+        "adl/tools/"
+      ]
+    },
+    {
+      "lane": "docs_only",
+      "match_any": [
+        "area:docs",
+        "type:docs",
+        "[docs]",
+        "docs/"
+      ]
+    }
+  ],
+  "planned_lane_default": {
+    "mode": "same_as_initial",
+    "source_prefix": "planning_confirmed_from_"
+  },
+  "planned_lane_rules": [
+    {
+      "initial_lane": "needs_planning_lane_assignment",
+      "planned_lane": "needs_planning_lane_assignment",
+      "planned_lane_source": "planning_required_from_issue_creation"
+    }
+  ]
+}

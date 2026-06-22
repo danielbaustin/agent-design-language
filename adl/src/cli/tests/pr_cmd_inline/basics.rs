@@ -5,7 +5,10 @@ use crate::cli::pr_cmd_cards::{
     ensure_source_issue_prompt, fetch_issue_body, render_issue_prompt_from_body,
     validate_issue_body_for_create, write_source_issue_prompt,
 };
-use crate::cli::pr_cmd_prompt::{infer_initial_pvf_lane, NEEDS_PLANNING_PVF_LANE};
+use crate::cli::pr_cmd_prompt::{
+    infer_initial_pvf_lane, infer_initial_pvf_lane_source, infer_planned_pvf_lane,
+    infer_planned_pvf_lane_source, take_last_pvf_lane_policy_warning, NEEDS_PLANNING_PVF_LANE,
+};
 use adl::control_plane::IssueRef;
 use std::env;
 
@@ -652,6 +655,7 @@ fn load_issue_prompt_parses_front_matter_and_body() {
 
 #[test]
 fn infer_initial_pvf_lane_covers_common_issue_types() {
+    let _guard = env_lock();
     assert_eq!(
         infer_initial_pvf_lane(
             "[v0.91.6][docs] Refresh README",
@@ -712,6 +716,166 @@ fn infer_initial_pvf_lane_covers_common_issue_types() {
         infer_initial_pvf_lane("General process cleanup", "track:roadmap", None),
         NEEDS_PLANNING_PVF_LANE
     );
+}
+
+#[test]
+fn pvf_lane_policy_override_can_drive_initial_and_planned_lane_behavior() {
+    let _guard = env_lock();
+    let temp = unique_temp_dir("adl-pvf-lane-policy-override");
+    let policy_path = temp.join("pvf_lane_policy.json");
+    fs::write(
+        &policy_path,
+        r#"{
+  "schema": "adl.pvf_lane_policy.v1",
+  "default_initial_lane": "needs_planning_lane_assignment",
+  "initial_lane_rules": [
+    {
+      "lane": "custom_docs_lane",
+      "match_any": ["area:docs", "[docs]"]
+    }
+  ],
+  "planned_lane_default": {
+    "mode": "same_as_initial",
+    "source_prefix": "configured_from_"
+  },
+  "planned_lane_rules": [
+    {
+      "initial_lane": "custom_docs_lane",
+      "planned_lane": "custom_release_gate",
+      "planned_lane_source": "policy_override"
+    }
+  ]
+}"#,
+    )
+    .expect("write pvf lane policy");
+
+    let old_override = env::var_os("ADL_PVF_LANE_POLICY_PATH");
+    unsafe {
+        env::set_var("ADL_PVF_LANE_POLICY_PATH", &policy_path);
+    }
+
+    assert_eq!(
+        infer_initial_pvf_lane(
+            "[v0.91.6][docs] Refresh README",
+            "track:roadmap,area:docs",
+            None
+        ),
+        "custom_docs_lane"
+    );
+    assert_eq!(
+        infer_initial_pvf_lane_source(
+            "[v0.91.6][docs] Refresh README",
+            "track:roadmap,area:docs",
+            None,
+            "custom_docs_lane"
+        ),
+        "configured_policy_from_title_labels_inference"
+    );
+    assert_eq!(
+        infer_planned_pvf_lane("custom_docs_lane"),
+        "custom_release_gate"
+    );
+    assert_eq!(
+        infer_planned_pvf_lane_source("custom_docs_lane", "title_labels_inference"),
+        "policy_override"
+    );
+
+    restore_env_var("ADL_PVF_LANE_POLICY_PATH", old_override);
+}
+
+#[test]
+fn pvf_lane_policy_is_discovered_from_ancestor_repo_root() {
+    let _guard = env_lock();
+    let temp = unique_temp_dir("adl-pvf-lane-policy-ancestor");
+    let prompts_dir = temp.join("docs/templates/prompts/9.9.9");
+    fs::create_dir_all(&prompts_dir).expect("prompts dir");
+    fs::write(
+        temp.join("docs/templates/prompts/current.json"),
+        r#"{"semver":"9.9.9"}"#,
+    )
+    .expect("write current");
+    fs::write(
+        prompts_dir.join("pvf_lane_policy.json"),
+        r#"{
+  "schema": "adl.pvf_lane_policy.v1",
+  "default_initial_lane": "ancestor_policy_lane",
+  "initial_lane_rules": [],
+  "planned_lane_default": {
+    "mode": "same_as_initial",
+    "source_prefix": "ancestor_configured_from_"
+  },
+  "planned_lane_rules": []
+}"#,
+    )
+    .expect("write policy");
+    let nested = temp.join("nested/worktree/dir");
+    fs::create_dir_all(&nested).expect("nested dir");
+
+    let old_cwd = env::current_dir().expect("cwd");
+    let old_override = env::var_os("ADL_PVF_LANE_POLICY_PATH");
+    unsafe {
+        env::remove_var("ADL_PVF_LANE_POLICY_PATH");
+    }
+    env::set_current_dir(&nested).expect("set cwd");
+
+    let lane = infer_initial_pvf_lane("General process cleanup", "track:roadmap", None);
+    let source = infer_initial_pvf_lane_source(
+        "General process cleanup",
+        "track:roadmap",
+        None,
+        "ancestor_policy_lane",
+    );
+    let planned = infer_planned_pvf_lane("ancestor_policy_lane");
+    let planned_source =
+        infer_planned_pvf_lane_source("ancestor_policy_lane", "title_labels_inference");
+
+    env::set_current_dir(old_cwd).expect("restore cwd");
+    restore_env_var("ADL_PVF_LANE_POLICY_PATH", old_override);
+
+    assert_eq!(lane, "ancestor_policy_lane");
+    assert_eq!(source, "configured_policy_default");
+    assert_eq!(planned, "ancestor_policy_lane");
+    assert_eq!(
+        planned_source,
+        "ancestor_configured_from_title_labels_inference"
+    );
+}
+
+#[test]
+fn malformed_checked_in_pvf_policy_records_warning_before_fallback() {
+    let _guard = env_lock();
+    let temp = unique_temp_dir("adl-pvf-lane-policy-malformed");
+    let prompts_dir = temp.join("docs/templates/prompts/9.9.9");
+    fs::create_dir_all(&prompts_dir).expect("prompts dir");
+    fs::write(
+        temp.join("docs/templates/prompts/current.json"),
+        r#"{"semver":"9.9.9"}"#,
+    )
+    .expect("write current");
+    fs::write(prompts_dir.join("pvf_lane_policy.json"), "{ not valid json").expect("write bad");
+
+    let old_cwd = env::current_dir().expect("cwd");
+    let old_override = env::var_os("ADL_PVF_LANE_POLICY_PATH");
+    unsafe {
+        env::remove_var("ADL_PVF_LANE_POLICY_PATH");
+    }
+    env::set_current_dir(&temp).expect("set cwd");
+    let _ = take_last_pvf_lane_policy_warning();
+
+    let lane = infer_initial_pvf_lane(
+        "[v0.91.6][docs] Refresh README",
+        "track:roadmap,area:docs",
+        None,
+    );
+    let warning = take_last_pvf_lane_policy_warning();
+
+    env::set_current_dir(old_cwd).expect("restore cwd");
+    restore_env_var("ADL_PVF_LANE_POLICY_PATH", old_override);
+
+    assert_eq!(lane, "docs_only");
+    let warning = warning.expect("expected warning");
+    assert!(warning.contains("failed to parse"));
+    assert!(warning.contains("pvf_lane_policy.json"));
 }
 
 #[test]
@@ -964,6 +1128,7 @@ fn render_issue_prompt_from_body_treats_non_schema_front_matter_as_plain_body() 
 
 #[test]
 fn render_issue_prompt_from_authored_front_matter_infers_missing_pvf_lane_fields() {
+    let _guard = env_lock();
     let body = r#"---
 issue_card_schema: adl.issue.v1
 wp: "WP-01"
@@ -1007,11 +1172,14 @@ Authored body.
 
     assert!(rendered.contains("issue_number: 4277"));
     assert!(rendered.contains("initial_pvf_lane: prompt_template"));
-    assert!(rendered.contains("initial_pvf_lane_source: title_labels_inference"));
+    assert!(
+        rendered.contains("initial_pvf_lane_source: configured_policy_from_title_labels_inference")
+    );
 }
 
 #[test]
 fn render_issue_prompt_from_authored_front_matter_records_body_assisted_pvf_lane_source() {
+    let _guard = env_lock();
     let body = r#"---
 issue_card_schema: adl.issue.v1
 wp: "WP-01"
@@ -1058,7 +1226,9 @@ Authored body.
     );
 
     assert!(rendered.contains("initial_pvf_lane: prompt_template"));
-    assert!(rendered.contains("initial_pvf_lane_source: title_labels_and_body_inference"));
+    assert!(rendered.contains(
+        "initial_pvf_lane_source: configured_policy_from_title_labels_and_body_inference"
+    ));
 }
 
 #[test]
