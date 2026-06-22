@@ -30,7 +30,7 @@ This package does not implement runtime features and does not claim `v0.92` acti
 It must convert the remaining major pre-birthday surfaces into reviewable issue routes, sprint structure, feature docs, and handoff truth:
 
 - v0.91.6 closeout truth, ADR release-tail decisions, and release-tail cleanup;
-- the v0.91.6 C-SDLC integration/control-plane completion stream: `#4388`-`#4398`, session coordination `#4405`, session-ledger and lifecycle liveness `#4412`-`#4413`, validation-throughput/lifecycle automation and generated VPP inputs `#4417`-`#4425`, forward metric capture `#4431`, bounded v0.91.6 metric backfill `#4441`, operational adoption `#4433`-`#4438`, and v0.91.7-facing goal snapshot/lifecycle shepherd work `#4442`-`#4443`;
+- the v0.91.6 C-SDLC integration/control-plane completion stream: `#4388`-`#4398`, session coordination `#4405`, session-ledger and lifecycle liveness `#4412`-`#4413`, validation-throughput/lifecycle automation and generated VPP inputs `#4417`-`#4421` plus `#4425`, forward metric capture `#4431`, bounded v0.91.6 metric backfill `#4441`, operational adoption `#4433`-`#4438`, and v0.91.7-facing goal snapshot/lifecycle shepherd work `#4442`-`#4443`;
 - goal state, nested goals, per-issue time/token/resource metrics, and predictable execution baselines;
 - cognitive scheduler, cognitive economics, provider suitability, and local-agent acceleration;
 - build throughput, validation manager, remote/local build runners, and CI/test-tax reduction;
@@ -65,7 +65,7 @@ Every surface must exit as one of:
 | Work stream | Required output before v0.92 |
 | --- | --- |
 | Closeout truth | v0.91.6 release-tail and ADR issues closed or routed, with v0.91.7 not inheriting stale truth. |
-| C-SDLC integration control plane | v0.91.6 `#4388`-`#4398` plus late `#4405`, `#4412`-`#4413`, `#4417`-`#4425`, `#4433`-`#4438`, `#4442`, and `#4443` are complete, blocked, deferred, or routed before v0.91.7 depends on them. |
+| C-SDLC integration control plane | v0.91.6 `#4388`-`#4398` plus late `#4405`, `#4412`-`#4413`, `#4417`-`#4421` plus `#4425`, `#4433`-`#4438`, `#4442`, and `#4443` are complete, blocked, deferred, or routed before v0.91.7 depends on them. |
 | Goal and metrics | Goal state, nested goals, SOR time/token/resource fields, forward metric capture `#4431`, bounded backfill `#4441`, and host snapshot capture `#4442` are scheduled or routed. |
 | Scheduler and providers | Cognitive scheduler, provider profiles, local/hosted model suitability, and local-agent delegation routes scheduled. |
 | Build and validation throughput | Validation manager, path ownership, SOR fact capture, VPP generation, long-test fanout, CI log archive/S3, Nessus/CodeBuild, sccache/linker/target-dir work scheduled. |

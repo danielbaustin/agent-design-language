@@ -32,7 +32,7 @@ The refreshed source-capture pass also requires explicit routes for operational 
 
 | Route | Source | Required disposition before v0.92 |
 | --- | --- | --- |
-| SEP / VPP / PVF / prompt-template next version | `#4308`, `#4309`, `#4332`, `#4388`-`#4398`, `#4417`-`#4425`, sprint execution packets | Complete, blocked, deferred, or routed before sprint-scale v0.92 execution relies on it; generated VPPs must not remain chat-memory policy. |
+| SEP / VPP / PVF / prompt-template next version | `#4308`, `#4309`, `#4332`, `#4388`-`#4398`, `#4417`-`#4421` plus `#4425`, sprint execution packets | Complete, blocked, deferred, or routed before sprint-scale v0.92 execution relies on it; generated VPPs must not remain chat-memory policy. |
 | Goal state and execution metrics | `.adl/docs/TBD/ADL_GOAL_STATE.md`, `#4329`, `#4331`, `#4431`, `#4441`, `#4442` | Route SOR time/token/resource, nested goal accounting, forward metric capture, bounded v0.91.6 backfill, and host goal snapshots. |
 | Scheduler/provider/local-agent routing | scheduler/provider v0.91.6 docs and TBD scheduler/economics notes | Route cheapest-validated-outcome scheduling and local/hosted model suitability. |
 | Build and validation throughput | build-throughput reviews, validation-manager/test-tax docs, `#4417`-`#4421`, Nessus/CodeBuild candidates | Route validation-cost, path ownership, SOR fact capture, validation manager, and remote/local build decisions. |

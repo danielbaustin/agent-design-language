@@ -33,7 +33,7 @@ Complete the final bridge/readiness tranche before `v0.92` activation refresh. T
 | Order | Sprint / workstream | Primary WPs | Parallelism notes | Status |
 | --- | --- | --- | --- | --- |
 | 1 | Planning promotion, closeout-truth, and ADR release-tail gate | WP-01, WP-02 | Must start first; can run issue-list/source-capture checks and ADR route checks in parallel. | planned |
-| 2 | v0.91.6 C-SDLC integration control-plane truth gate | WP-02, WP-03, WP-04 | Consume v0.91.6 `#4388`-`#4398` plus late `#4405`, `#4412`-`#4413`, `#4417`-`#4425`, `#4431`, `#4441`, `#4433`-`#4438`, and `#4442`-`#4443`: VPP defaults, externalized PVF lanes, SEP automation, session ledger, forward metric capture, bounded v0.91.6 metric backfill, GitHub/octocrab convergence, prompt-card/template edge repair, runtime dependency routing, logging/reliability rough edges, watcher/lifecycle automation, operational adoption, lifecycle shepherding, and FastContext evaluation. Only create v0.91.7 follow-ons for incomplete or explicitly blocked surfaces. | planned |
+| 2 | v0.91.6 C-SDLC integration control-plane truth gate | WP-02, WP-03, WP-04 | Consume v0.91.6 `#4388`-`#4398` plus late `#4405`, `#4412`-`#4413`, `#4417`-`#4421` plus `#4425`, `#4431`, `#4441`, `#4433`-`#4438`, and `#4442`-`#4443`: VPP defaults, externalized PVF lanes, SEP automation, session ledger, forward metric capture, bounded v0.91.6 metric backfill, GitHub/octocrab convergence, prompt-card/template edge repair, runtime dependency routing, logging/reliability rough edges, watcher/lifecycle automation, operational adoption, lifecycle shepherding, and FastContext evaluation. Only create v0.91.7 follow-ons for incomplete or explicitly blocked surfaces. | planned |
 | 3 | Scheduler/provider/local-agent sprint | WP-05 | Can run alongside build-throughput work after WP-03 boundaries are stable. | planned |
 | 4 | Build throughput and validation-cost sprint | WP-06 | Can run in parallel with scheduler/provider work; isolate CI/workflow changes carefully. | planned |
 | 5 | Runtime fire-up / Soak #2 sprint | WP-07, WP-08 | Starts after enough scheduler/build/runtime substrate is ready; AWS/SSM/SNS work can parallelize with local soak proof. | planned |
@@ -72,7 +72,7 @@ Required review should inspect:
 - source-capture completeness;
 - v0.91.6 closeout truth;
 - whether every open issue/carryover has a disposition;
-- whether v0.91.6 `#4388`-`#4398`, `#4405`, `#4412`-`#4413`, `#4417`-`#4425`, `#4431`, `#4441`, `#4433`-`#4438`, and `#4442`-`#4443` work is complete, blocked, deferred, or routed before sprint execution depends on it;
+- whether v0.91.6 `#4388`-`#4398`, `#4405`, `#4412`-`#4413`, `#4417`-`#4421` plus `#4425`, `#4431`, `#4441`, `#4433`-`#4438`, and `#4442`-`#4443` work is complete, blocked, deferred, or routed before sprint execution depends on it;
 - whether runtime Soak #2 and Observatory proof are concrete enough for v0.92;
 - whether security/protocol residuals remain activation-path work;
 - whether launch/birthday docs avoid unsupported product, affect, wellbeing, or runtime claims.
