@@ -519,6 +519,194 @@ mod tests {
     }
 
     #[test]
+    fn parse_common_accepts_json_and_custom_ledger() {
+        let parsed = parse_common(&[
+            "--ledger".to_string(),
+            "tmp/session-ledger.json".to_string(),
+            "--json".to_string(),
+        ])
+        .expect("parse common");
+        assert_eq!(parsed.ledger_path, PathBuf::from("tmp/session-ledger.json"));
+        assert!(parsed.json);
+    }
+
+    #[test]
+    fn parse_common_rejects_unknown_options() {
+        let err = parse_common(&["--bogus".to_string()]).unwrap_err();
+        assert!(err.to_string().contains("unknown session status option"));
+    }
+
+    #[test]
+    fn claim_parser_accepts_extended_optional_metadata() {
+        let parsed = parse_claim(&[
+            "--ledger".to_string(),
+            "tmp/session-ledger.json".to_string(),
+            "--json".to_string(),
+            "--session-id".to_string(),
+            "thread-b".to_string(),
+            "--owner".to_string(),
+            "watcher".to_string(),
+            "--resource".to_string(),
+            "worktree:adl-wp-4412".to_string(),
+            "--purpose".to_string(),
+            "watch checks".to_string(),
+            "--mode".to_string(),
+            "watching".to_string(),
+            "--lifecycle-phase".to_string(),
+            "pr_janitor".to_string(),
+            "--policy-ref".to_string(),
+            "docs/tooling/SESSION_COORDINATION_AND_ROOT_CHECKOUT_POLICY.md".to_string(),
+            "--pr".to_string(),
+            "4415".to_string(),
+            "--repository".to_string(),
+            "danielbaustin/agent-design-language".to_string(),
+            "--last-state".to_string(),
+            "waiting_for_checks".to_string(),
+            "--ttl-secs".to_string(),
+            "120".to_string(),
+            "--blocker".to_string(),
+            "adl-ci failing".to_string(),
+            "--blocker".to_string(),
+            "coverage below threshold".to_string(),
+        ])
+        .expect("parse extended claim");
+
+        assert!(parsed.common.json);
+        assert_eq!(parsed.common.ledger_path, PathBuf::from("tmp/session-ledger.json"));
+        assert_eq!(parsed.input.mode, adl::session_ledger::ClaimMode::Watching);
+        assert_eq!(parsed.input.lifecycle_phase.as_deref(), Some("pr_janitor"));
+        assert_eq!(
+            parsed.input.policy_ref.as_deref(),
+            Some("docs/tooling/SESSION_COORDINATION_AND_ROOT_CHECKOUT_POLICY.md")
+        );
+        assert_eq!(parsed.input.github.pull_request, Some(4415));
+        assert_eq!(
+            parsed.input.github.repository.as_deref(),
+            Some("danielbaustin/agent-design-language")
+        );
+        assert_eq!(
+            parsed.input.github.last_state.as_deref(),
+            Some("waiting_for_checks")
+        );
+        assert_eq!(parsed.input.ttl_secs, 120);
+        assert_eq!(
+            parsed.input.blockers,
+            vec![
+                "adl-ci failing".to_string(),
+                "coverage below threshold".to_string()
+            ]
+        );
+    }
+
+    #[test]
+    fn claim_parser_requires_required_fields() {
+        let err = parse_claim(&[
+            "--owner".to_string(),
+            "codex".to_string(),
+            "--resource".to_string(),
+            "csdlc_issue:4412".to_string(),
+            "--purpose".to_string(),
+            "implement ledger".to_string(),
+        ])
+        .unwrap_err();
+        assert!(err.to_string().contains("--session-id is required"));
+    }
+
+    #[test]
+    fn claim_id_parser_accepts_json_ledger_and_ttl() {
+        let parsed = parse_claim_id_command(&[
+            "--ledger".to_string(),
+            "tmp/session-ledger.json".to_string(),
+            "--json".to_string(),
+            "--claim-id".to_string(),
+            "claim-123".to_string(),
+            "--ttl-secs".to_string(),
+            "45".to_string(),
+        ])
+        .expect("parse claim-id args");
+
+        assert!(parsed.common.json);
+        assert_eq!(parsed.common.ledger_path, PathBuf::from("tmp/session-ledger.json"));
+        assert_eq!(parsed.claim_id, "claim-123");
+        assert_eq!(parsed.ttl_secs, 45);
+    }
+
+    #[test]
+    fn claim_id_parser_rejects_unknown_options() {
+        let err = parse_claim_id_command(&[
+            "--claim-id".to_string(),
+            "claim-123".to_string(),
+            "--bogus".to_string(),
+        ])
+        .unwrap_err();
+        assert!(err.to_string().contains("unknown session heartbeat option"));
+    }
+
+    #[test]
+    fn release_parser_accepts_reason_json_and_ledger() {
+        let parsed = parse_release(&[
+            "--ledger".to_string(),
+            "tmp/session-ledger.json".to_string(),
+            "--json".to_string(),
+            "--claim-id".to_string(),
+            "claim-123".to_string(),
+            "--reason".to_string(),
+            "checks passed".to_string(),
+        ])
+        .expect("parse release");
+
+        assert!(parsed.common.json);
+        assert_eq!(parsed.common.ledger_path, PathBuf::from("tmp/session-ledger.json"));
+        assert_eq!(parsed.claim_id, "claim-123");
+        assert_eq!(parsed.reason.as_deref(), Some("checks passed"));
+    }
+
+    #[test]
+    fn release_parser_rejects_unknown_options() {
+        let err = parse_release(&[
+            "--claim-id".to_string(),
+            "claim-123".to_string(),
+            "--bogus".to_string(),
+        ])
+        .unwrap_err();
+        assert!(err.to_string().contains("unknown session release option"));
+    }
+
+    #[test]
+    fn parser_helpers_and_dispatch_reject_invalid_inputs() {
+        assert!(help_requested(&["--help".to_string()]));
+        assert!(help_requested(&["help".to_string()]));
+        assert!(!help_requested(&["status".to_string()]));
+
+        let missing = ["--ledger".to_string()];
+        assert!(take_value(&missing, 0, "--ledger")
+            .unwrap_err()
+            .to_string()
+            .contains("--ledger requires a value"));
+
+        assert!(parse_u64("abc", "--issue")
+            .unwrap_err()
+            .to_string()
+            .contains("invalid --issue value"));
+        assert!(parse_i64("abc", "--ttl-secs")
+            .unwrap_err()
+            .to_string()
+            .contains("invalid --ttl-secs value"));
+        assert_eq!(
+            parse_claim_mode("paused").expect("paused mode"),
+            adl::session_ledger::ClaimMode::Paused
+        );
+        assert!(parse_claim_mode("released")
+            .unwrap_err()
+            .to_string()
+            .contains("cannot be set directly"));
+        assert!(real_session(&["bogus".to_string()])
+            .unwrap_err()
+            .to_string()
+            .contains("unknown session command"));
+    }
+
+    #[test]
     fn repo_root_discovery_keeps_subdir_commands_on_shared_ledger() {
         let repo =
             std::env::temp_dir().join(format!("adl-session-repo-root-test-{}", std::process::id()));
@@ -529,5 +717,16 @@ mod tests {
 
         assert_eq!(discover_repo_root(&subdir), repo);
         let _ = fs::remove_dir_all(discover_repo_root(&subdir));
+    }
+
+    #[test]
+    fn repo_root_discovery_falls_back_to_start_path_without_repo_markers() {
+        let dir = std::env::temp_dir().join(format!(
+            "adl-session-repo-root-fallback-{}",
+            std::process::id()
+        ));
+        fs::create_dir_all(&dir).expect("create fallback dir");
+        assert_eq!(discover_repo_root(&dir), dir);
+        let _ = fs::remove_dir_all(&dir);
     }
 }
