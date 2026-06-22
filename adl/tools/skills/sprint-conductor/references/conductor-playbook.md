@@ -111,12 +111,13 @@ Preferred structured-prompt preflight helper:
 Preferred missing-sprint-issue helper:
 - `python3 adl/tools/skills/sprint-conductor/scripts/create_missing_sprint_issue.py --repo-root <repo> --ordered-issues <csv> --title <title> --goal <descriptive-sprint-objective> --state <path>`
 
-Known helper migration note:
-- the typed issue mutation command surface exists as `pr.sh issue
-  create/comment/edit`
-- if the missing-sprint-issue helper still shells through direct `gh issue
-  create`, route that helper as migration debt and prefer the typed command
-  surface for new sprint setup automation
+Issue command policy note:
+- the missing-sprint-issue helper should use the repo-native typed issue
+  surface by default for child-title lookup and sprint-issue creation
+- test harnesses or controlled bootstrap fixtures may override the helper's
+  issue-view or issue-create command through explicit environment variables,
+  but that override is a bounded fixture hook rather than the normal
+  operational backend
 
 Preferred live-truth helper:
 - `python3 adl/tools/skills/sprint-conductor/scripts/check_sprint_truth.py --repo-root <repo> --state <path> --require-match`
