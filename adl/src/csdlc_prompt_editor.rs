@@ -1130,9 +1130,9 @@ fn unrepresented_import_value(key: &str, issue: &str) -> String {
         | "estimate_error_percent"
         | "expected_runtime_class"
         | "completion_state" => "unknown".to_string(),
-        "variance_analysis_required"
-        | "variance_analysis_completed"
-        | "variance_category" => "not_applicable".to_string(),
+        "variance_analysis_required" | "variance_analysis_completed" | "variance_category" => {
+            "not_applicable".to_string()
+        }
         _ => "UNREPRESENTED_IN_RENDERED_CARD".to_string(),
     }
 }

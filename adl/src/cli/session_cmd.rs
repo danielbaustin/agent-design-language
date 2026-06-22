@@ -572,7 +572,10 @@ mod tests {
         .expect("parse extended claim");
 
         assert!(parsed.common.json);
-        assert_eq!(parsed.common.ledger_path, PathBuf::from("tmp/session-ledger.json"));
+        assert_eq!(
+            parsed.common.ledger_path,
+            PathBuf::from("tmp/session-ledger.json")
+        );
         assert_eq!(parsed.input.mode, adl::session_ledger::ClaimMode::Watching);
         assert_eq!(parsed.input.lifecycle_phase.as_deref(), Some("pr_janitor"));
         assert_eq!(
@@ -626,7 +629,10 @@ mod tests {
         .expect("parse claim-id args");
 
         assert!(parsed.common.json);
-        assert_eq!(parsed.common.ledger_path, PathBuf::from("tmp/session-ledger.json"));
+        assert_eq!(
+            parsed.common.ledger_path,
+            PathBuf::from("tmp/session-ledger.json")
+        );
         assert_eq!(parsed.claim_id, "claim-123");
         assert_eq!(parsed.ttl_secs, 45);
     }
@@ -656,7 +662,10 @@ mod tests {
         .expect("parse release");
 
         assert!(parsed.common.json);
-        assert_eq!(parsed.common.ledger_path, PathBuf::from("tmp/session-ledger.json"));
+        assert_eq!(
+            parsed.common.ledger_path,
+            PathBuf::from("tmp/session-ledger.json")
+        );
         assert_eq!(parsed.claim_id, "claim-123");
         assert_eq!(parsed.reason.as_deref(), Some("checks passed"));
     }
