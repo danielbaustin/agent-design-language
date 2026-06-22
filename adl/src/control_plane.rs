@@ -118,6 +118,11 @@ impl IssueRef {
             .join("spp.md")
     }
 
+    pub fn task_bundle_validation_plan_path(&self, primary_checkout_root: &Path) -> PathBuf {
+        self.task_bundle_dir_path(primary_checkout_root)
+            .join("vpp.md")
+    }
+
     pub fn task_bundle_review_policy_path(&self, primary_checkout_root: &Path) -> PathBuf {
         self.task_bundle_dir_path(primary_checkout_root)
             .join("srp.md")
@@ -165,6 +170,11 @@ impl IssueRef {
     pub fn worktree_task_bundle_plan_path(&self, worktree_root: &Path) -> PathBuf {
         self.worktree_task_bundle_dir_path(worktree_root)
             .join("spp.md")
+    }
+
+    pub fn worktree_task_bundle_validation_plan_path(&self, worktree_root: &Path) -> PathBuf {
+        self.worktree_task_bundle_dir_path(worktree_root)
+            .join("vpp.md")
     }
 
     pub fn worktree_task_bundle_review_policy_path(&self, worktree_root: &Path) -> PathBuf {
@@ -266,6 +276,10 @@ pub fn card_output_path(cards_root: &Path, issue_number: u32) -> PathBuf {
 
 pub fn card_plan_path(cards_root: &Path, issue_number: u32) -> PathBuf {
     card_dir_path(cards_root, issue_number).join(format!("plan_{issue_number}.md"))
+}
+
+pub fn card_validation_plan_path(cards_root: &Path, issue_number: u32) -> PathBuf {
+    card_dir_path(cards_root, issue_number).join(format!("vpp_{issue_number}.md"))
 }
 
 pub fn card_review_policy_path(cards_root: &Path, issue_number: u32) -> PathBuf {

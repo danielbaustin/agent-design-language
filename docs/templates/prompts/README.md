@@ -9,25 +9,22 @@ used by prompt-card structure validation.
 
 ## Current Set
 
-- Template set: `1.0.2`
-- Lifecycle: `SIP -> STP -> SPP -> SRP -> SOR`
-- Template root: `docs/templates/prompts/1.0.2/`
+- Template set: `1.0.3`
+- Lifecycle: `SIP -> STP -> SPP -> VPP -> SRP -> SOR`
+- Template root: `docs/templates/prompts/1.0.3/`
 - Registry: `docs/templates/prompts/current.json`
-- Structure schemas: `docs/templates/prompts/1.0.2/schemas/*.structure.json`
+- Structure schemas: `docs/templates/prompts/1.0.3/schemas/*.structure.json`
 - Implementation owner: Rust tooling owns the canonical template registry,
   field model, schema extraction, and validation path. Python sprint helpers may
   load schema artifacts, fill templates, or call the Rust-backed validators, but
   they should not become a separate template authority.
 
-## Staged Next Set
+## Previous Set
 
-- Template set: `1.0.3`
+- Template set: `1.0.2`
 - Lifecycle: `SIP -> STP -> SPP -> VPP -> SRP -> SOR`
-- Status: staged for renderer/schema validation in `#4309`; not yet the active
-  issue-bundle lifecycle
-- Template root: `docs/templates/prompts/1.0.3/`
-- Activation boundary: downstream issue-bundle/bootstrap adoption must land
-  before `current.json` moves from `1.0.2` to `1.0.3`
+- Status: superseded by `1.0.3` for new issue-bundle generation.
+- Template root: `docs/templates/prompts/1.0.2/`
 
 ## Values Renderer
 
@@ -81,15 +78,15 @@ intentionally:
 ```sh
 adl-csdlc tooling prompt-template \
   write-structure-schemas \
-  --template-set 1.0.2 \
-  --out-dir docs/templates/prompts/1.0.2/schemas
+  --template-set 1.0.3 \
+  --out-dir docs/templates/prompts/1.0.3/schemas
 ```
 
 Then run both Rust and Python-readable schema checks:
 
 ```sh
-adl-csdlc tooling prompt-template validate-schemas --template-set 1.0.2
-python3 adl/tools/test_prompt_template_structure_schemas.py --template-set 1.0.2
+adl-csdlc tooling prompt-template validate-schemas --template-set 1.0.3
+python3 adl/tools/test_prompt_template_structure_schemas.py --template-set 1.0.3
 ```
 
 If `adl-csdlc` is not already on `PATH`, run the same owner-binary commands
@@ -98,8 +95,8 @@ from a fresh checkout.
 
 `current.json` should not move to a new active template set until every card
 kind in that set has renderer fixtures, values validation, and compatibility
-notes. For staged six-card sets such as `1.0.3`, that means `VPP` must be
-validated alongside the existing five cards before activation.
+notes. `1.0.3` is the first active six-card set, so new issue bundles include
+`VPP` as validation-planning truth between `SPP` and `SRP`.
 
 ## Local Editor
 

@@ -3447,6 +3447,26 @@ fn finish_validation_profile_classifies_pr_cmd_prompt_and_versioned_bootstrap_pa
 }
 
 #[test]
+fn finish_validation_profile_classifies_control_plane_path() {
+    let plan = select_finish_validation_plan("adl/src/control_plane.rs")
+        .expect("control_plane larger-binary plan");
+
+    assert_eq!(plan.mode, FinishValidationMode::LargerBinaryFocused);
+    assert!(
+        plan.commands
+            .iter()
+            .any(|command| command.contains("cargo fmt --manifest-path")),
+        "control-plane larger-binary plan should require cargo fmt"
+    );
+    assert!(
+        plan.commands
+            .iter()
+            .any(|command| command.contains("cargo test --manifest-path adl/Cargo.toml --bin adl")),
+        "control-plane larger-binary plan should include owner-binary validation"
+    );
+}
+
+#[test]
 fn finish_validation_profile_classifies_prompt_template_and_structured_prompt_paths() {
     let plan = select_finish_validation_plan(
         "adl/src/cli/tooling_cmd/common.rs,adl/src/cli/tooling_cmd/prompt_template.rs,adl/src/cli/tooling_cmd/structured_prompt.rs,adl/src/cli/tooling_cmd/tests/prompt_template.rs,adl/src/cli/tooling_cmd/tests/structured_prompt.rs,adl/src/cli/tooling_cmd/tests/support.rs",

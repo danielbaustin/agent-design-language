@@ -1,5 +1,8 @@
 use super::preflight::{doctor_preflight_status, preflight_card_run_readiness};
 use super::*;
+use crate::cli::pr_cmd::doctor::ready::{
+    ready_validation_repo_root, stale_worktree_branch_mismatch_preserves_pre_run,
+};
 use crate::cli::pr_cmd_cards::StructuredBundlePaths;
 use std::time::{SystemTime, UNIX_EPOCH};
 
@@ -25,6 +28,44 @@ fn doctor_issue_prompt_resolution_falls_back_to_bound_worktree_prompt() {
 }
 
 #[test]
+fn doctor_ready_uses_bound_worktree_root_for_validation_once_bundle_exists() {
+    let repo = lifecycle_temp_repo("doctor-ready-validation-root");
+    let worktree = repo.join(".worktrees/adl-wp-3065");
+
+    let selected = ready_validation_repo_root(&repo, &worktree, true);
+
+    assert_eq!(selected, worktree.as_path());
+}
+
+#[test]
+fn doctor_ready_keeps_primary_repo_root_when_no_bound_bundle_exists() {
+    let repo = lifecycle_temp_repo("doctor-ready-primary-root");
+    let worktree = repo.join(".worktrees/adl-wp-3065");
+
+    let selected = ready_validation_repo_root(&repo, &worktree, false);
+
+    assert_eq!(selected, repo.as_path());
+}
+
+#[test]
+fn doctor_ready_preserves_pre_run_truth_for_stale_worktree_branch_mismatch() {
+    assert!(stale_worktree_branch_mismatch_preserves_pre_run(
+        true,
+        "codex/4389-expected",
+        "codex/stale-branch"
+    ));
+}
+
+#[test]
+fn doctor_ready_blocks_branch_mismatch_once_issue_is_run_bound() {
+    assert!(!stale_worktree_branch_mismatch_preserves_pre_run(
+        false,
+        "codex/4389-expected",
+        "codex/stale-branch"
+    ));
+}
+
+#[test]
 fn doctor_full_warns_when_only_open_wave_blocks_ready_issue() {
     let (preflight_status, block_kind, guidance) = doctor_preflight_status(false, Some("ready"));
 
@@ -43,7 +84,7 @@ fn doctor_full_stays_blocked_for_issue_local_card_readiness() {
 
     assert_eq!(preflight_status, "BLOCK");
     assert_eq!(block_kind, "card_run_readiness");
-    assert!(guidance.contains("SIP/STP/SPP/SRP/SOR"));
+    assert!(guidance.contains("SIP/STP/SPP/VPP/SRP/SOR"));
     assert_eq!(
         doctor_full_status(preflight_status, block_kind, Some("PASS")),
         "BLOCK"
@@ -78,7 +119,7 @@ fn card_lifecycle_marks_legacy_srp_policy_as_not_finish_ready() {
         );
 
     let lifecycle = build_doctor_card_lifecycle(
-        &repo, &paths.sip, &paths.stp, &paths.spp, &paths.srp, &paths.sor,
+        &repo, &paths.sip, &paths.stp, &paths.spp, &paths.vpp, &paths.srp, &paths.sor,
     );
 
     assert_eq!(lifecycle.active_stage, "SRP");
@@ -104,7 +145,7 @@ fn card_lifecycle_does_not_treat_placeholder_srp_results_as_final() {
         );
 
     let lifecycle = build_doctor_card_lifecycle(
-        &repo, &paths.sip, &paths.stp, &paths.spp, &paths.srp, &paths.sor,
+        &repo, &paths.sip, &paths.stp, &paths.spp, &paths.vpp, &paths.srp, &paths.sor,
     );
 
     assert_eq!(lifecycle.active_stage, "SRP");
@@ -128,7 +169,7 @@ fn card_lifecycle_does_not_treat_unknown_srp_result_values_as_final() {
         );
 
     let lifecycle = build_doctor_card_lifecycle(
-        &repo, &paths.sip, &paths.stp, &paths.spp, &paths.srp, &paths.sor,
+        &repo, &paths.sip, &paths.stp, &paths.spp, &paths.vpp, &paths.srp, &paths.sor,
     );
 
     assert_eq!(lifecycle.active_stage, "SRP");
@@ -151,7 +192,7 @@ fn card_lifecycle_allows_explicit_srp_policy_exception() {
         );
 
     let lifecycle = build_doctor_card_lifecycle(
-        &repo, &paths.sip, &paths.stp, &paths.spp, &paths.srp, &paths.sor,
+        &repo, &paths.sip, &paths.stp, &paths.spp, &paths.vpp, &paths.srp, &paths.sor,
     );
 
     assert_stage(&lifecycle, "SRP", "final", true, true);
@@ -173,7 +214,7 @@ fn card_lifecycle_accepts_pre_review_srp_prompt_without_final_results() {
         );
 
     let lifecycle = build_doctor_card_lifecycle(
-        &repo, &paths.sip, &paths.stp, &paths.spp, &paths.srp, &paths.sor,
+        &repo, &paths.sip, &paths.stp, &paths.spp, &paths.vpp, &paths.srp, &paths.sor,
     );
 
     assert_eq!(lifecycle.pr_run_readiness, "ready");
@@ -203,7 +244,7 @@ fn card_lifecycle_does_not_treat_pre_execution_srp_absence_as_final_exception() 
         );
 
     let lifecycle = build_doctor_card_lifecycle(
-        &repo, &paths.sip, &paths.stp, &paths.spp, &paths.srp, &paths.sor,
+        &repo, &paths.sip, &paths.stp, &paths.spp, &paths.vpp, &paths.srp, &paths.sor,
     );
 
     assert_eq!(lifecycle.pr_run_readiness, "ready");
@@ -226,7 +267,7 @@ fn card_lifecycle_accepts_terminal_structured_review_prompt_exception() {
         );
 
     let lifecycle = build_doctor_card_lifecycle(
-        &repo, &paths.sip, &paths.stp, &paths.spp, &paths.srp, &paths.sor,
+        &repo, &paths.sip, &paths.stp, &paths.spp, &paths.vpp, &paths.srp, &paths.sor,
     );
 
     assert_eq!(lifecycle.pr_finish_readiness, "ready");
@@ -243,6 +284,7 @@ fn closed_ready_validation_is_read_only_and_reports_truth_drift() {
     let sip = bundle.join("sip.md");
     let stp = bundle.join("stp.md");
     let spp = bundle.join("spp.md");
+    let vpp = bundle.join("vpp.md");
     let srp = bundle.join("srp.md");
     let sor = bundle.join("sor.md");
 
@@ -268,9 +310,15 @@ fn closed_ready_validation_is_read_only_and_reports_truth_drift() {
             task_id = issue_ref.task_issue_id(),
             bundle = issue_ref.task_bundle_dir_name(),
         );
+    let vpp_text = format!(
+        "---\nschema_version: \"0.1\"\nartifact_type: \"structured_validation_planning_prompt\"\nname: \"fixture-validation-plan\"\nissue: {issue}\ntask_id: \"{task_id}\"\nrun_id: \"{task_id}\"\nversion: \"v0.91.2\"\ntitle: \"Fixture\"\nbranch: \"codex/1410-fixture\"\ncard_status: \"ready\"\nstatus: \"reviewed\"\ninitial_pvf_lane: \"tooling\"\nplanned_pvf_lane: \"tooling\"\nlane_registry_path: \"docs/validation/pvf_lanes.json\"\nlane_registry_template_set: \"vpp.lane.v1\"\nvalidation_runtime_class: \"tiny\"\nvalidation_resource_profile: \"local\"\nexpected_proof_cost: \"small\"\nplanned_validation_seconds: \"unknown\"\nplanned_validation_tokens: \"unknown\"\nissue_goal_ref: \"issue-{issue}\"\nsprint_goal_ref: \"unknown\"\ngoal_metrics_rollup_ref: \"unknown\"\nsource_refs:\n  - kind: \"issue\"\n    ref: \"https://github.com/example/repo/issues/{issue}\"\nselected_lanes:\n  - \"tooling\"\nparallel_groups:\n  - \"local\"\nvalidation_commands:\n  - \"cargo test --manifest-path adl/Cargo.toml closed_ready_validation_is_read_only_and_reports_truth_drift -- --nocapture\"\nfailure_policy: \"fail_closed\"\nnotes: \"fixture\"\n---\n\n# Validation Planning Prompt\n\n## Validation Planning Summary\n\nFixture validation plan.\n\n## Lane Registry Inputs\n\n- Registry path: `docs/validation/pvf_lanes.json`\n- Registry template set: `vpp.lane.v1`\n- Initial PVF lane from issue creation: `tooling`\n- Planned PVF lane for execution: `tooling`\n\n## Selected Validation Lanes\n\n- tooling\n\n## Parallelization Plan\n\n- Parallel groups: local\n- Validation runtime class: `tiny`\n- Validation resource profile: `local`\n\n## Goal Accounting Hooks\n\n- Issue goal ref: `issue-{issue}`\n- Sprint goal ref: `unknown`\n- Goal metrics rollup ref: `unknown`\n\n## Proof Cost / Runtime Expectations\n\n- Expected proof cost: `small`\n- Planned validation seconds: `unknown`\n- Planned validation tokens: `unknown`\n\n## Validation Commands\n\n- cargo test --manifest-path adl/Cargo.toml closed_ready_validation_is_read_only_and_reports_truth_drift -- --nocapture\n\n## Failure Semantics\n\n- fail_closed\n\n## Handoff\n\nUse this fixture VPP as the validation plan.\n\n## Notes\n\nfixture\n",
+        issue = issue_ref.issue_number(),
+        task_id = issue_ref.task_issue_id(),
+    );
     fs::write(&sip, sip_text).expect("write sip");
     fs::write(&stp, stp_text).expect("write stp");
     fs::write(&spp, spp_text).expect("write spp");
+    fs::write(&vpp, vpp_text).expect("write vpp");
     fs::write(&srp, srp_text).expect("write srp");
     let stale_sor = "# issue-1410-fixture\n\nTask ID: issue-1410\nRun ID: issue-1410\nVersion: v0.91.2\nTitle: Fixture\nBranch: codex/1410-fixture\nStatus: IN_PROGRESS\n\n## Main Repo Integration (REQUIRED)\n- Worktree-only paths remaining: adl/src/foo.rs\n- Integration state: pr_open\n- Verification scope: worktree\n- Result: PASS\n";
     fs::write(&sor, stale_sor).expect("write stale sor");
@@ -282,6 +330,7 @@ fn closed_ready_validation_is_read_only_and_reports_truth_drift() {
         &sor,
         StructuredBundlePaths {
             plan_path: &spp,
+            validation_plan_path: &vpp,
             review_policy_path: &srp,
         },
     )
@@ -306,7 +355,7 @@ fn card_lifecycle_allows_ellipsis_in_reviewed_spp_prose() {
         );
 
     let lifecycle = build_doctor_card_lifecycle(
-        &repo, &paths.sip, &paths.stp, &paths.spp, &paths.srp, &paths.sor,
+        &repo, &paths.sip, &paths.stp, &paths.spp, &paths.vpp, &paths.srp, &paths.sor,
     );
 
     assert_eq!(lifecycle.pr_run_readiness, "ready");
@@ -328,7 +377,7 @@ fn card_lifecycle_blocks_generic_pre_run_spp_before_execution() {
         );
 
     let lifecycle = build_doctor_card_lifecycle(
-        &repo, &paths.sip, &paths.stp, &paths.spp, &paths.srp, &paths.sor,
+        &repo, &paths.sip, &paths.stp, &paths.spp, &paths.vpp, &paths.srp, &paths.sor,
     );
 
     assert_eq!(lifecycle.pr_run_readiness, "blocked");
@@ -367,7 +416,7 @@ fn card_lifecycle_blocks_approved_generic_spp_before_execution() {
         );
 
     let lifecycle = build_doctor_card_lifecycle(
-        &repo, &paths.sip, &paths.stp, &paths.spp, &paths.srp, &paths.sor,
+        &repo, &paths.sip, &paths.stp, &paths.spp, &paths.vpp, &paths.srp, &paths.sor,
     );
 
     assert_eq!(lifecycle.pr_run_readiness, "blocked");
@@ -397,7 +446,7 @@ fn card_lifecycle_blocks_generic_sip_before_execution() {
         );
 
     let lifecycle = build_doctor_card_lifecycle(
-        &repo, &paths.sip, &paths.stp, &paths.spp, &paths.srp, &paths.sor,
+        &repo, &paths.sip, &paths.stp, &paths.spp, &paths.vpp, &paths.srp, &paths.sor,
     );
 
     assert_eq!(lifecycle.pr_run_readiness, "blocked");
@@ -427,7 +476,7 @@ fn card_lifecycle_blocks_draft_design_time_card_status_before_execution() {
         );
 
     let lifecycle = build_doctor_card_lifecycle(
-        &repo, &paths.sip, &paths.stp, &paths.spp, &paths.srp, &paths.sor,
+        &repo, &paths.sip, &paths.stp, &paths.spp, &paths.vpp, &paths.srp, &paths.sor,
     );
 
     assert_eq!(lifecycle.pr_run_readiness, "blocked");
@@ -458,7 +507,7 @@ fn card_lifecycle_blocks_completed_srp_without_review_results() {
         );
 
     let lifecycle = build_doctor_card_lifecycle(
-        &repo, &paths.sip, &paths.stp, &paths.spp, &paths.srp, &paths.sor,
+        &repo, &paths.sip, &paths.stp, &paths.spp, &paths.vpp, &paths.srp, &paths.sor,
     );
 
     assert_eq!(lifecycle.pr_finish_readiness, "blocked");
@@ -480,7 +529,7 @@ fn card_lifecycle_blocks_completed_sor_before_terminal_closeout() {
         );
 
     let lifecycle = build_doctor_card_lifecycle(
-        &repo, &paths.sip, &paths.stp, &paths.spp, &paths.srp, &paths.sor,
+        &repo, &paths.sip, &paths.stp, &paths.spp, &paths.vpp, &paths.srp, &paths.sor,
     );
 
     assert_eq!(lifecycle.pr_finish_readiness, "blocked");
@@ -514,6 +563,11 @@ fn preflight_card_readiness_reports_blocked_for_draft_design_time_card() {
     )
     .expect("write spp");
     fs::write(
+        issue_ref.task_bundle_validation_plan_path(&repo),
+        "---\nartifact_type: \"structured_validation_planning_prompt\"\nbranch: \"not bound yet\"\ncard_status: \"ready\"\nstatus: \"ready\"\ninitial_pvf_lane: \"tooling\"\nplanned_pvf_lane: \"tooling\"\n---\n\n# Validation Planning Prompt\n\n## Validation Planning Summary\n\nFixture validation plan.\n",
+    )
+    .expect("write vpp");
+    fs::write(
             issue_ref.task_bundle_review_policy_path(&repo),
             "---\nartifact_type: \"structured_review_prompt\"\nbranch: \"not bound yet\"\ncard_status: \"ready\"\nstatus: \"draft\"\nreview_results_exception: \"explicit policy exception: pre-execution review results are absent\"\n---\n\n# Structured Review Prompt\n",
         )
@@ -531,6 +585,77 @@ fn preflight_card_readiness_reports_blocked_for_draft_design_time_card() {
 }
 
 #[test]
+fn preflight_card_readiness_reports_blocked_when_vpp_is_missing() {
+    let repo = lifecycle_temp_repo("preflight-missing-vpp");
+    let issue_ref = IssueRef::new(
+        3297,
+        "v0.91.3".to_string(),
+        "v0-91-3-tools-enforce-c-sdlc-card-status-transitions-in-skills".to_string(),
+    )
+    .expect("issue ref");
+    let bundle = issue_ref.task_bundle_dir_path(&repo);
+    fs::create_dir_all(&bundle).expect("create bundle");
+    fs::write(
+        issue_ref.task_bundle_input_path(&repo),
+        "Card Status: ready\nBranch: not bound yet\n",
+    )
+    .expect("write sip");
+    fs::write(
+        issue_ref.task_bundle_stp_path(&repo),
+        "---\ncard_status: \"ready\"\n---\n\n## Summary\n\nfixture summary\n\n## Goal\n\nfixture goal\n\n## Required Outcome\n\nready\n\n## Deliverables\n\n- fixture deliverable\n\n## Acceptance Criteria\n\n- pass\n\n## Repo Inputs\n\n- fixture\n\n## Dependencies\n\n- none\n\n## Demo Expectations\n\n- none\n\n## Non-goals\n\n- none\n\n## Issue-Graph Notes\n\n- fixture note\n\n## Notes\n\nfixture notes\n\n## Tooling Notes\n\n- fixture tooling note\n",
+    )
+    .expect("write stp");
+    fs::write(
+        issue_ref.task_bundle_plan_path(&repo),
+        "---\nbranch: \"not bound yet\"\ncard_status: \"ready\"\nstatus: \"reviewed\"\n---\n",
+    )
+    .expect("write spp");
+    fs::write(
+        issue_ref.task_bundle_review_policy_path(&repo),
+        "---\nartifact_type: \"structured_review_prompt\"\nbranch: \"not bound yet\"\ncard_status: \"ready\"\nstatus: \"draft\"\nreview_results_exception: \"explicit policy exception: pre-execution review results are absent\"\n---\n\n# Structured Review Prompt\n",
+    )
+    .expect("write srp");
+    fs::write(
+        issue_ref.task_bundle_output_path(&repo),
+        "Branch: not bound yet\nCard Status: draft\nStatus: NOT_STARTED\n\n## Summary\n\nNo implementation has started yet.\n",
+    )
+    .expect("write sor");
+
+    assert_eq!(
+        preflight_card_run_readiness(&repo, &issue_ref),
+        Some("blocked")
+    );
+}
+
+#[test]
+fn card_lifecycle_treats_ready_vpp_as_design_time_complete() {
+    let repo = lifecycle_temp_repo("ready-vpp-design-time-complete");
+    let paths = write_lifecycle_fixture(
+        &repo,
+        LifecycleFixture {
+            sip: "Card Status: ready\nBranch: codex/3065-test\n",
+            stp: complete_stp_fixture(),
+            spp: "---\nbranch: \"codex/3065-test\"\ncard_status: \"ready\"\nstatus: \"approved\"\n---\n",
+            srp: "---\nartifact_type: \"structured_review_prompt\"\nbranch: \"codex/3065-test\"\ncard_status: \"ready\"\nstatus: \"draft\"\nreview_results_exception: \"explicit policy exception: pre-execution review results are absent\"\n---\n\n# Structured Review Prompt\n",
+            sor: "Branch: codex/3065-test\nCard Status: draft\nStatus: NOT_STARTED\n\n## Summary\n\nNo implementation has started yet.\n",
+        },
+    );
+
+    let lifecycle = build_doctor_card_lifecycle(
+        &repo, &paths.sip, &paths.stp, &paths.spp, &paths.vpp, &paths.srp, &paths.sor,
+    );
+
+    assert_eq!(lifecycle.pr_run_readiness, "ready");
+    let vpp = lifecycle
+        .stages
+        .iter()
+        .find(|stage| stage.stage == "VPP")
+        .expect("vpp stage exists");
+    assert!(vpp.complete);
+    assert!(vpp.design_time_complete);
+}
+
+#[test]
 fn card_lifecycle_distinguishes_active_plan_from_scaffold_output() {
     let repo = lifecycle_temp_repo("active-spp-scaffold-sor");
     let paths = write_lifecycle_fixture(
@@ -545,7 +670,7 @@ fn card_lifecycle_distinguishes_active_plan_from_scaffold_output() {
         );
 
     let lifecycle = build_doctor_card_lifecycle(
-        &repo, &paths.sip, &paths.stp, &paths.spp, &paths.srp, &paths.sor,
+        &repo, &paths.sip, &paths.stp, &paths.spp, &paths.vpp, &paths.srp, &paths.sor,
     );
 
     assert_eq!(lifecycle.active_stage, "SPP");
@@ -570,7 +695,7 @@ fn card_lifecycle_blocks_run_readiness_for_incomplete_active_stp() {
         );
 
     let lifecycle = build_doctor_card_lifecycle(
-        &repo, &paths.sip, &paths.stp, &paths.spp, &paths.srp, &paths.sor,
+        &repo, &paths.sip, &paths.stp, &paths.spp, &paths.vpp, &paths.srp, &paths.sor,
     );
 
     assert_eq!(lifecycle.active_stage, "STP");
@@ -594,7 +719,7 @@ fn card_lifecycle_blocks_sparse_stp_before_execution() {
         );
 
     let lifecycle = build_doctor_card_lifecycle(
-        &repo, &paths.sip, &paths.stp, &paths.spp, &paths.srp, &paths.sor,
+        &repo, &paths.sip, &paths.stp, &paths.spp, &paths.vpp, &paths.srp, &paths.sor,
     );
 
     assert_eq!(lifecycle.active_stage, "STP");
@@ -618,7 +743,7 @@ fn card_lifecycle_does_not_treat_embedded_heading_text_as_complete_stp() {
         );
 
     let lifecycle = build_doctor_card_lifecycle(
-        &repo, &paths.sip, &paths.stp, &paths.spp, &paths.srp, &paths.sor,
+        &repo, &paths.sip, &paths.stp, &paths.spp, &paths.vpp, &paths.srp, &paths.sor,
     );
 
     assert_eq!(lifecycle.active_stage, "STP");
@@ -642,7 +767,7 @@ fn card_lifecycle_reports_final_review_and_output_truth() {
         );
 
     let lifecycle = build_doctor_card_lifecycle(
-        &repo, &paths.sip, &paths.stp, &paths.spp, &paths.srp, &paths.sor,
+        &repo, &paths.sip, &paths.stp, &paths.spp, &paths.vpp, &paths.srp, &paths.sor,
     );
 
     assert_eq!(lifecycle.active_stage, "SOR");
@@ -667,7 +792,7 @@ fn card_lifecycle_accepts_terminal_sor_with_retained_dirty_worktree_truth() {
         );
 
     let lifecycle = build_doctor_card_lifecycle(
-        &repo, &paths.sip, &paths.stp, &paths.spp, &paths.srp, &paths.sor,
+        &repo, &paths.sip, &paths.stp, &paths.spp, &paths.vpp, &paths.srp, &paths.sor,
     );
 
     assert_eq!(lifecycle.active_stage, "SOR");
@@ -691,7 +816,7 @@ fn card_lifecycle_blocks_final_sor_with_contradictory_status_and_result() {
         );
 
     let lifecycle = build_doctor_card_lifecycle(
-        &repo, &paths.sip, &paths.stp, &paths.spp, &paths.srp, &paths.sor,
+        &repo, &paths.sip, &paths.stp, &paths.spp, &paths.vpp, &paths.srp, &paths.sor,
     );
 
     assert_eq!(lifecycle.pr_finish_readiness, "blocked");
@@ -712,6 +837,7 @@ fn card_lifecycle_accepts_tracked_csdlc_bundle() {
         &bundle.join("sip.md"),
         &bundle.join("stp.md"),
         &bundle.join("spp.md"),
+        &bundle.join("vpp.md"),
         &bundle.join("srp.md"),
         &bundle.join("sor.md"),
     );
@@ -739,6 +865,7 @@ struct LifecycleFixturePaths {
     sip: PathBuf,
     stp: PathBuf,
     spp: PathBuf,
+    vpp: PathBuf,
     srp: PathBuf,
     sor: PathBuf,
 }
@@ -763,12 +890,18 @@ fn write_lifecycle_fixture(repo: &Path, fixture: LifecycleFixture<'_>) -> Lifecy
         sip: bundle.join("sip.md"),
         stp: bundle.join("stp.md"),
         spp: bundle.join("spp.md"),
+        vpp: bundle.join("vpp.md"),
         srp: bundle.join("srp.md"),
         sor: bundle.join("sor.md"),
     };
     fs::write(&paths.sip, fixture.sip).expect("write sip");
     fs::write(&paths.stp, fixture.stp).expect("write stp");
     fs::write(&paths.spp, fixture.spp).expect("write spp");
+    fs::write(
+        &paths.vpp,
+        "---\nartifact_type: \"structured_validation_planning_prompt\"\nbranch: \"codex/3065-test\"\ncard_status: \"ready\"\nstatus: \"ready\"\ninitial_pvf_lane: \"needs_planning_lane_assignment\"\nplanned_pvf_lane: \"tooling\"\nlane_registry_path: \"docs/validation/pvf_lanes.json\"\nlane_registry_template_set: \"vpp.lane.v1\"\nvalidation_runtime_class: \"tiny\"\nvalidation_resource_profile: \"local\"\nexpected_proof_cost: \"small\"\nplanned_validation_seconds: \"unknown\"\nplanned_validation_tokens: \"unknown\"\nissue_goal_ref: \"issue-3065\"\nsprint_goal_ref: \"unknown\"\ngoal_metrics_rollup_ref: \"unknown\"\nselected_lanes:\n  - \"tooling\"\nparallel_groups:\n  - \"local\"\nvalidation_commands:\n  - \"cargo test --manifest-path adl/Cargo.toml closed_ready_validation_is_read_only_and_reports_truth_drift -- --nocapture\"\nfailure_policy: \"fail_closed\"\nnotes: \"Generated from docs/templates/prompts/1.0.3/vpp.md template; confirm lane selection before relying on this plan. Lane source: initial_pvf_lane.\"\n---\n\n# Validation Planning Prompt\n\n## Validation Planning Summary\n\nFixture validation plan.\n",
+    )
+    .expect("write vpp");
     fs::write(&paths.srp, fixture.srp).expect("write srp");
     fs::write(&paths.sor, fixture.sor).expect("write sor");
     paths

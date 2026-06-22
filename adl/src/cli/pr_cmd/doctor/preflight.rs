@@ -68,7 +68,7 @@ pub(super) fn doctor_preflight_status(
         (true, true) => (
             "BLOCK",
             "card_run_readiness",
-            "Repair issue-local SIP/STP/SPP/SRP/SOR readiness before execution; do not override this as queue pressure.",
+            "Repair issue-local SIP/STP/SPP/VPP/SRP/SOR readiness before execution; do not override this as queue pressure.",
         ),
         (false, true) => (
             "BLOCK",
@@ -85,13 +85,16 @@ pub(super) fn preflight_card_run_readiness(
     let sip = issue_ref.task_bundle_input_path(repo_root);
     let stp = issue_ref.task_bundle_stp_path(repo_root);
     let spp = issue_ref.task_bundle_plan_path(repo_root);
+    let vpp = issue_ref.task_bundle_validation_plan_path(repo_root);
     let srp = issue_ref.task_bundle_review_policy_path(repo_root);
     let sor = issue_ref.task_bundle_output_path(repo_root);
-    if [&sip, &stp, &spp, &srp, &sor]
+    if [&sip, &stp, &spp, &vpp, &srp, &sor]
         .iter()
         .any(|path| !path.is_file())
     {
-        return None;
+        return Some("blocked");
     }
-    Some(build_doctor_card_lifecycle(repo_root, &sip, &stp, &spp, &srp, &sor).pr_run_readiness)
+    Some(
+        build_doctor_card_lifecycle(repo_root, &sip, &stp, &spp, &vpp, &srp, &sor).pr_run_readiness,
+    )
 }

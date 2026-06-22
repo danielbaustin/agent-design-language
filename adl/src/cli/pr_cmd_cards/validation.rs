@@ -7,6 +7,7 @@ use std::path::Path;
 
 pub(crate) struct StructuredBundlePaths<'a> {
     pub(crate) plan_path: &'a Path,
+    pub(crate) validation_plan_path: &'a Path,
     pub(crate) review_policy_path: &'a Path,
 }
 
@@ -82,6 +83,13 @@ pub(crate) fn validate_ready_cards(
     validate_started_structured_artifact(
         repo_root,
         "ready",
+        structured_paths.validation_plan_path,
+        "vpp",
+        actual_branch,
+    )?;
+    validate_started_structured_artifact(
+        repo_root,
+        "ready",
         structured_paths.review_policy_path,
         "srp",
         actual_branch,
@@ -119,6 +127,12 @@ pub(crate) fn validate_initialized_cards(
         bail!("doctor: output card title mismatch");
     }
     validate_structured_artifact(repo_root, "doctor", structured_paths.plan_path, "spp")?;
+    validate_structured_artifact(
+        repo_root,
+        "doctor",
+        structured_paths.validation_plan_path,
+        "vpp",
+    )?;
     validate_structured_artifact(
         repo_root,
         "doctor",
@@ -185,6 +199,12 @@ pub(crate) fn validate_bootstrap_cards(
         bail!("start: output card title mismatch");
     }
     validate_structured_artifact(repo_root, "start", structured_paths.plan_path, "spp")?;
+    validate_structured_artifact(
+        repo_root,
+        "start",
+        structured_paths.validation_plan_path,
+        "vpp",
+    )?;
     validate_structured_artifact(
         repo_root,
         "start",

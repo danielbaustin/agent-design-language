@@ -1949,6 +1949,7 @@ fn finish_path_is_larger_binary_focused(path: &str) -> bool {
             | "adl/src/cli/usage.rs"
             | "adl/src/cli/tokio_runtime.rs"
             | "adl/src/cli/github_token.rs"
+            | "adl/src/control_plane.rs"
             | "adl/src/lib.rs"
             | "adl/src/scheduler.rs"
             | "adl/src/agent_comms.rs"
@@ -2104,7 +2105,8 @@ fn finish_path_needs_github_token_focused_validation(path: &str) -> bool {
 
 fn finish_path_needs_owner_binary_rust_slice_validation(path: &str) -> bool {
     let trimmed = path.trim().trim_matches('/');
-    trimmed == "adl/src/lib.rs"
+    trimmed == "adl/src/control_plane.rs"
+        || trimmed == "adl/src/lib.rs"
         || trimmed == "adl/src/csdlc_prompt_editor.rs"
         || trimmed.starts_with("adl/src/csdlc_prompt_editor/")
         || trimmed == "adl/src/cli/run_artifacts_types.rs"
