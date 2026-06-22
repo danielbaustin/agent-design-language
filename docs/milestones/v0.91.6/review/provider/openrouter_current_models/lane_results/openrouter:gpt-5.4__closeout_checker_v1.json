@@ -21,19 +21,19 @@
   "attempts": [
     {
       "attempt_index": 1,
-      "started_at": "unix:1782153975",
-      "duration_ms": 1538,
+      "started_at": "unix:1782158644",
+      "duration_ms": 1937,
       "status": "ok",
       "retryable": false,
       "http_status": 200,
-      "raw_response_excerpt": "[redacted response len=504 sha256=f7e69e4e86e9]"
+      "raw_response_excerpt": "[redacted response len=536 sha256=aa1906e3093d]"
     }
   ],
   "final_status": "ok",
-  "duration_ms": 1538,
+  "duration_ms": 1937,
   "request_id": "openrouter:gpt-5.4__closeout_checker_v1",
-  "output_text_excerpt": "[redacted response len=504 sha256=f7e69e4e86e9]",
-  "artifact_ref": "<tmp>/result.json@4f29887a5d3eae40",
-  "output_text_chars": 504,
-  "output_text_digest": "sha256:f7e69e4e86e9"
+  "output_text_excerpt": "[redacted response len=536 sha256=aa1906e3093d]",
+  "artifact_ref": "<tmp>/result.json@fb29eb3da999e226",
+  "output_text_chars": 536,
+  "output_text_digest": "sha256:aa1906e3093d"
 }

@@ -12,4 +12,12 @@ Model: `z-ai/glm-5.2`
     "adl/tools",
     "docs/milestones/v0.91.6/review/provider"
   ],
-  "task": "Review and document OpenRouter route evidence
+  "task": "Review OpenRouter route evidence and assist in suitability matrix work for provider integration. Provide advisory recommendations and analysis only.",
+  "limit": [
+    "bounded_to_issue_4429",
+    "advisory_only",
+    "no_file_write_authority",
+    "no_merge_authority",
+    "no_closeout_authority"
+  ]
+}

@@ -26,7 +26,7 @@
     "timeout_ms": 90000,
     "retry_backoff_ms": 1000
   },
-  "input_text_chars": 542,
-  "input_text_digest": "sha256:c48d8720a7e1",
-  "input_text_excerpt": "[redacted prompt len=542 sha256=c48d8720a7e1]"
+  "input_text_chars": 543,
+  "input_text_digest": "sha256:362b87ee17f1",
+  "input_text_excerpt": "[redacted prompt len=543 sha256=362b87ee17f1]"
 }

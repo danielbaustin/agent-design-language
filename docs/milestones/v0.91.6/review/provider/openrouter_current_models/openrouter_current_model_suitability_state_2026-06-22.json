@@ -15,17 +15,17 @@
   ],
   "candidates": [
     {
-      "candidate_id": "openrouter:claude-fable-5",
+      "candidate_id": "openrouter:claude-opus-4.8",
       "provider_lane": "openrouter",
-      "provider_profile_ref": "unprofiled:openrouter:anthropic/claude-fable-5",
+      "provider_profile_ref": "unprofiled:openrouter:anthropic/claude-opus-4.8",
       "provider_family": "openrouter",
       "provider_spec_kind": "openrouter",
-      "model_ref": "anthropic/claude-fable-5",
+      "model_ref": "anthropic/claude-opus-4.8",
       "runtime_surface": "hosted_api",
       "credential_source": "$HOME/keys/openrouter.key",
       "task_panel_version": "csdlc_agent_suitability_panel.v1",
-      "recommendation": "runtime_unsuitable_for_this_panel",
-      "supported_tasks": "none"
+      "recommendation": "useful_with_limits",
+      "supported_tasks": "watcher, card_validator, reviewer, planner, closeout_checker, worker"
     },
     {
       "candidate_id": "openrouter:gpt-5.4",
@@ -37,8 +37,8 @@
       "runtime_surface": "hosted_api",
       "credential_source": "$HOME/keys/openrouter.key",
       "task_panel_version": "csdlc_agent_suitability_panel.v1",
-      "recommendation": "candidate_only_format_repair_needed",
-      "supported_tasks": "watcher, card_validator, reviewer, closeout_checker, worker"
+      "recommendation": "useful_with_limits",
+      "supported_tasks": "watcher, card_validator, reviewer, planner, closeout_checker, worker"
     },
     {
       "candidate_id": "openrouter:glm-5.2",
@@ -50,8 +50,8 @@
       "runtime_surface": "hosted_api",
       "credential_source": "$HOME/keys/openrouter.key",
       "task_panel_version": "csdlc_agent_suitability_panel.v1",
-      "recommendation": "candidate_only_format_repair_needed",
-      "supported_tasks": "card_validator, planner"
+      "recommendation": "useful_with_limits",
+      "supported_tasks": "watcher, card_validator, reviewer, planner, closeout_checker, worker"
     },
     {
       "candidate_id": "openrouter:kimi-k2.7-code",
@@ -63,8 +63,8 @@
       "runtime_surface": "hosted_api",
       "credential_source": "$HOME/keys/openrouter.key",
       "task_panel_version": "csdlc_agent_suitability_panel.v1",
-      "recommendation": "runtime_unsuitable_for_this_panel",
-      "supported_tasks": "worker"
+      "recommendation": "candidate_only_format_repair_needed",
+      "supported_tasks": "watcher, card_validator, closeout_checker, worker"
     },
     {
       "candidate_id": "openrouter:gemini-3.5-flash",
@@ -76,125 +76,140 @@
       "runtime_surface": "hosted_api",
       "credential_source": "$HOME/keys/openrouter.key",
       "task_panel_version": "csdlc_agent_suitability_panel.v1",
-      "recommendation": "candidate_only_truth_repair_needed",
-      "supported_tasks": "none"
+      "recommendation": "useful_with_limits",
+      "supported_tasks": "watcher, card_validator, reviewer, planner, closeout_checker, worker"
     }
   ],
   "rows": [
     {
-      "candidate_id": "openrouter:claude-fable-5",
+      "candidate_id": "openrouter:claude-opus-4.8",
       "task_id": "watcher_state_v1",
       "prompt_ref": "embedded:watcher_state_v1",
-      "started_at": "2026-06-22T18:45:53+00:00",
-      "elapsed_ms": 2388,
-      "raw_output_ref": "docs/milestones/v0.91.6/review/provider/openrouter_current_models/lane_outputs/openrouter:claude-fable-5__watcher_state_v1.md",
+      "started_at": "2026-06-22T20:03:19+00:00",
+      "elapsed_ms": 3726,
+      "raw_output_ref": "docs/milestones/v0.91.6/review/provider/openrouter_current_models/lane_outputs/openrouter:claude-opus-4.8__watcher_state_v1.md",
       "normalized_result": {
-        "reason": "empty_output"
+        "status": "action_required",
+        "sections": [
+          "status",
+          "evidence",
+          "next-step"
+        ],
+        "runner_attempts_used": 1
       },
-      "provider_failure_class": "provider_error",
-      "score": "timeout_or_empty",
-      "reviewer_judgment": "provider returned empty output",
-      "safe_role_recommendation": "do_not_promote",
-      "result_path": "docs/milestones/v0.91.6/review/provider/openrouter_current_models/lane_results/openrouter:claude-fable-5__watcher_state_v1.json",
-      "log_path": "docs/milestones/v0.91.6/review/provider/openrouter_current_models/lane_logs/openrouter:claude-fable-5__watcher_state_v1.jsonl",
-      "output_digest": null
+      "provider_failure_class": null,
+      "score": "pass_with_limits",
+      "reviewer_judgment": "watcher output stayed bounded and cited the supplied workflow facts",
+      "safe_role_recommendation": "conductor_provider_candidate_with_limits",
+      "result_path": "docs/milestones/v0.91.6/review/provider/openrouter_current_models/lane_results/openrouter:claude-opus-4.8__watcher_state_v1.json",
+      "log_path": "docs/milestones/v0.91.6/review/provider/openrouter_current_models/lane_logs/openrouter:claude-opus-4.8__watcher_state_v1.jsonl",
+      "output_digest": "sha256:abc4a1a0ad10"
     },
     {
-      "candidate_id": "openrouter:claude-fable-5",
+      "candidate_id": "openrouter:claude-opus-4.8",
       "task_id": "card_validator_v1",
       "prompt_ref": "embedded:card_validator_v1",
-      "started_at": "2026-06-22T18:45:55+00:00",
-      "elapsed_ms": 2190,
-      "raw_output_ref": "docs/milestones/v0.91.6/review/provider/openrouter_current_models/lane_outputs/openrouter:claude-fable-5__card_validator_v1.md",
+      "started_at": "2026-06-22T20:03:23+00:00",
+      "elapsed_ms": 4415,
+      "raw_output_ref": "docs/milestones/v0.91.6/review/provider/openrouter_current_models/lane_outputs/openrouter:claude-opus-4.8__card_validator_v1.md",
       "normalized_result": {
-        "reason": "empty_output"
+        "severity": "P1",
+        "runner_attempts_used": 1
       },
-      "provider_failure_class": "provider_error",
-      "score": "timeout_or_empty",
-      "reviewer_judgment": "provider returned empty output",
-      "safe_role_recommendation": "do_not_promote",
-      "result_path": "docs/milestones/v0.91.6/review/provider/openrouter_current_models/lane_results/openrouter:claude-fable-5__card_validator_v1.json",
-      "log_path": "docs/milestones/v0.91.6/review/provider/openrouter_current_models/lane_logs/openrouter:claude-fable-5__card_validator_v1.jsonl",
-      "output_digest": null
+      "provider_failure_class": null,
+      "score": "pass",
+      "reviewer_judgment": "card-validator output identified the supplied lifecycle-truth contradiction",
+      "safe_role_recommendation": "reviewer_provider_candidate_with_limits",
+      "result_path": "docs/milestones/v0.91.6/review/provider/openrouter_current_models/lane_results/openrouter:claude-opus-4.8__card_validator_v1.json",
+      "log_path": "docs/milestones/v0.91.6/review/provider/openrouter_current_models/lane_logs/openrouter:claude-opus-4.8__card_validator_v1.jsonl",
+      "output_digest": "sha256:59ec0dc3853b"
     },
     {
-      "candidate_id": "openrouter:claude-fable-5",
+      "candidate_id": "openrouter:claude-opus-4.8",
       "task_id": "review_findings_v1",
       "prompt_ref": "embedded:review_findings_v1",
-      "started_at": "2026-06-22T18:45:57+00:00",
-      "elapsed_ms": 1804,
-      "raw_output_ref": "docs/milestones/v0.91.6/review/provider/openrouter_current_models/lane_outputs/openrouter:claude-fable-5__review_findings_v1.md",
+      "started_at": "2026-06-22T20:03:27+00:00",
+      "elapsed_ms": 8324,
+      "raw_output_ref": "docs/milestones/v0.91.6/review/provider/openrouter_current_models/lane_outputs/openrouter:claude-opus-4.8__review_findings_v1.md",
       "normalized_result": {
-        "reason": "empty_output"
+        "severity": "P2",
+        "runner_attempts_used": 1
       },
-      "provider_failure_class": "provider_error",
-      "score": "timeout_or_empty",
-      "reviewer_judgment": "provider returned empty output",
-      "safe_role_recommendation": "do_not_promote",
-      "result_path": "docs/milestones/v0.91.6/review/provider/openrouter_current_models/lane_results/openrouter:claude-fable-5__review_findings_v1.json",
-      "log_path": "docs/milestones/v0.91.6/review/provider/openrouter_current_models/lane_logs/openrouter:claude-fable-5__review_findings_v1.jsonl",
-      "output_digest": null
+      "provider_failure_class": null,
+      "score": "pass",
+      "reviewer_judgment": "review output identified the legacy-gh evidence drift and routed to ADL-native proof",
+      "safe_role_recommendation": "reviewer_provider_candidate",
+      "result_path": "docs/milestones/v0.91.6/review/provider/openrouter_current_models/lane_results/openrouter:claude-opus-4.8__review_findings_v1.json",
+      "log_path": "docs/milestones/v0.91.6/review/provider/openrouter_current_models/lane_logs/openrouter:claude-opus-4.8__review_findings_v1.jsonl",
+      "output_digest": "sha256:a097cde35dfa"
     },
     {
-      "candidate_id": "openrouter:claude-fable-5",
+      "candidate_id": "openrouter:claude-opus-4.8",
       "task_id": "bounded_planner_v1",
       "prompt_ref": "embedded:bounded_planner_v1",
-      "started_at": "2026-06-22T18:45:59+00:00",
-      "elapsed_ms": 1415,
-      "raw_output_ref": "docs/milestones/v0.91.6/review/provider/openrouter_current_models/lane_outputs/openrouter:claude-fable-5__bounded_planner_v1.md",
+      "started_at": "2026-06-22T20:03:36+00:00",
+      "elapsed_ms": 7972,
+      "raw_output_ref": "docs/milestones/v0.91.6/review/provider/openrouter_current_models/lane_outputs/openrouter:claude-opus-4.8__bounded_planner_v1.md",
       "normalized_result": {
-        "reason": "empty_output"
+        "plan_steps": 4,
+        "runner_attempts_used": 1
       },
-      "provider_failure_class": "provider_error",
-      "score": "timeout_or_empty",
-      "reviewer_judgment": "provider returned empty output",
-      "safe_role_recommendation": "do_not_promote",
-      "result_path": "docs/milestones/v0.91.6/review/provider/openrouter_current_models/lane_results/openrouter:claude-fable-5__bounded_planner_v1.json",
-      "log_path": "docs/milestones/v0.91.6/review/provider/openrouter_current_models/lane_logs/openrouter:claude-fable-5__bounded_planner_v1.jsonl",
-      "output_digest": null
+      "provider_failure_class": null,
+      "score": "pass",
+      "reviewer_judgment": "planner output stayed bounded and covered the required lane/proof constraints",
+      "safe_role_recommendation": "architect_provider_candidate_with_limits",
+      "result_path": "docs/milestones/v0.91.6/review/provider/openrouter_current_models/lane_results/openrouter:claude-opus-4.8__bounded_planner_v1.json",
+      "log_path": "docs/milestones/v0.91.6/review/provider/openrouter_current_models/lane_logs/openrouter:claude-opus-4.8__bounded_planner_v1.jsonl",
+      "output_digest": "sha256:9b537b5b912b"
     },
     {
-      "candidate_id": "openrouter:claude-fable-5",
+      "candidate_id": "openrouter:claude-opus-4.8",
       "task_id": "closeout_checker_v1",
       "prompt_ref": "embedded:closeout_checker_v1",
-      "started_at": "2026-06-22T18:46:01+00:00",
-      "elapsed_ms": 1843,
-      "raw_output_ref": "docs/milestones/v0.91.6/review/provider/openrouter_current_models/lane_outputs/openrouter:claude-fable-5__closeout_checker_v1.md",
+      "started_at": "2026-06-22T20:03:44+00:00",
+      "elapsed_ms": 5489,
+      "raw_output_ref": "docs/milestones/v0.91.6/review/provider/openrouter_current_models/lane_outputs/openrouter:claude-opus-4.8__closeout_checker_v1.md",
       "normalized_result": {
-        "reason": "empty_output"
+        "decision": "needs_remediation",
+        "runner_attempts_used": 1
       },
-      "provider_failure_class": "provider_error",
-      "score": "timeout_or_empty",
-      "reviewer_judgment": "provider returned empty output",
-      "safe_role_recommendation": "do_not_promote",
-      "result_path": "docs/milestones/v0.91.6/review/provider/openrouter_current_models/lane_results/openrouter:claude-fable-5__closeout_checker_v1.json",
-      "log_path": "docs/milestones/v0.91.6/review/provider/openrouter_current_models/lane_logs/openrouter:claude-fable-5__closeout_checker_v1.jsonl",
-      "output_digest": null
+      "provider_failure_class": null,
+      "score": "pass_with_limits",
+      "reviewer_judgment": "closeout output remained conservative even if it missed one specific supplied gap",
+      "safe_role_recommendation": "tester_provider_candidate_with_limits",
+      "result_path": "docs/milestones/v0.91.6/review/provider/openrouter_current_models/lane_results/openrouter:claude-opus-4.8__closeout_checker_v1.json",
+      "log_path": "docs/milestones/v0.91.6/review/provider/openrouter_current_models/lane_logs/openrouter:claude-opus-4.8__closeout_checker_v1.jsonl",
+      "output_digest": "sha256:46ce88f816ed"
     },
     {
-      "candidate_id": "openrouter:claude-fable-5",
+      "candidate_id": "openrouter:claude-opus-4.8",
       "task_id": "worker_contract_v1",
       "prompt_ref": "embedded:worker_contract_v1",
-      "started_at": "2026-06-22T18:46:02+00:00",
-      "elapsed_ms": 1516,
-      "raw_output_ref": "docs/milestones/v0.91.6/review/provider/openrouter_current_models/lane_outputs/openrouter:claude-fable-5__worker_contract_v1.md",
+      "started_at": "2026-06-22T20:03:49+00:00",
+      "elapsed_ms": 4220,
+      "raw_output_ref": "docs/milestones/v0.91.6/review/provider/openrouter_current_models/lane_outputs/openrouter:claude-opus-4.8__worker_contract_v1.md",
       "normalized_result": {
-        "reason": "empty_output"
+        "paths": [
+          "adl/tools",
+          "docs/milestones/v0.91.6/review/provider"
+        ],
+        "issue": "#4429",
+        "runner_attempts_used": 1
       },
-      "provider_failure_class": "provider_error",
-      "score": "timeout_or_empty",
-      "reviewer_judgment": "provider returned empty output",
-      "safe_role_recommendation": "do_not_promote",
-      "result_path": "docs/milestones/v0.91.6/review/provider/openrouter_current_models/lane_results/openrouter:claude-fable-5__worker_contract_v1.json",
-      "log_path": "docs/milestones/v0.91.6/review/provider/openrouter_current_models/lane_logs/openrouter:claude-fable-5__worker_contract_v1.jsonl",
-      "output_digest": null
+      "provider_failure_class": null,
+      "score": "pass",
+      "reviewer_judgment": "worker output returned a bounded structured task contract",
+      "safe_role_recommendation": "worker_provider_candidate_with_limits",
+      "result_path": "docs/milestones/v0.91.6/review/provider/openrouter_current_models/lane_results/openrouter:claude-opus-4.8__worker_contract_v1.json",
+      "log_path": "docs/milestones/v0.91.6/review/provider/openrouter_current_models/lane_logs/openrouter:claude-opus-4.8__worker_contract_v1.jsonl",
+      "output_digest": "sha256:5d77709798a0"
     },
     {
       "candidate_id": "openrouter:gpt-5.4",
       "task_id": "watcher_state_v1",
       "prompt_ref": "embedded:watcher_state_v1",
-      "started_at": "2026-06-22T18:46:04+00:00",
-      "elapsed_ms": 2705,
+      "started_at": "2026-06-22T20:03:53+00:00",
+      "elapsed_ms": 2063,
       "raw_output_ref": "docs/milestones/v0.91.6/review/provider/openrouter_current_models/lane_outputs/openrouter:gpt-5.4__watcher_state_v1.md",
       "normalized_result": {
         "status": "pending",
@@ -202,7 +217,8 @@
           "status",
           "evidence",
           "next-step"
-        ]
+        ],
+        "runner_attempts_used": 1
       },
       "provider_failure_class": null,
       "score": "pass_with_limits",
@@ -210,17 +226,18 @@
       "safe_role_recommendation": "conductor_provider_candidate_with_limits",
       "result_path": "docs/milestones/v0.91.6/review/provider/openrouter_current_models/lane_results/openrouter:gpt-5.4__watcher_state_v1.json",
       "log_path": "docs/milestones/v0.91.6/review/provider/openrouter_current_models/lane_logs/openrouter:gpt-5.4__watcher_state_v1.jsonl",
-      "output_digest": "sha256:ae12555d4e90"
+      "output_digest": "sha256:6e1fe1d56373"
     },
     {
       "candidate_id": "openrouter:gpt-5.4",
       "task_id": "card_validator_v1",
       "prompt_ref": "embedded:card_validator_v1",
-      "started_at": "2026-06-22T18:46:07+00:00",
-      "elapsed_ms": 1924,
+      "started_at": "2026-06-22T20:03:55+00:00",
+      "elapsed_ms": 2162,
       "raw_output_ref": "docs/milestones/v0.91.6/review/provider/openrouter_current_models/lane_outputs/openrouter:gpt-5.4__card_validator_v1.md",
       "normalized_result": {
-        "severity": "P1"
+        "severity": "P1",
+        "runner_attempts_used": 1
       },
       "provider_failure_class": null,
       "score": "pass",
@@ -228,17 +245,18 @@
       "safe_role_recommendation": "reviewer_provider_candidate_with_limits",
       "result_path": "docs/milestones/v0.91.6/review/provider/openrouter_current_models/lane_results/openrouter:gpt-5.4__card_validator_v1.json",
       "log_path": "docs/milestones/v0.91.6/review/provider/openrouter_current_models/lane_logs/openrouter:gpt-5.4__card_validator_v1.jsonl",
-      "output_digest": "sha256:c314ec47a092"
+      "output_digest": "sha256:a7d65cf9b15a"
     },
     {
       "candidate_id": "openrouter:gpt-5.4",
       "task_id": "review_findings_v1",
       "prompt_ref": "embedded:review_findings_v1",
-      "started_at": "2026-06-22T18:46:09+00:00",
-      "elapsed_ms": 2700,
+      "started_at": "2026-06-22T20:03:58+00:00",
+      "elapsed_ms": 2888,
       "raw_output_ref": "docs/milestones/v0.91.6/review/provider/openrouter_current_models/lane_outputs/openrouter:gpt-5.4__review_findings_v1.md",
       "normalized_result": {
-        "severity": "P2"
+        "severity": "P2",
+        "runner_attempts_used": 1
       },
       "provider_failure_class": null,
       "score": "pass",
@@ -246,61 +264,59 @@
       "safe_role_recommendation": "reviewer_provider_candidate",
       "result_path": "docs/milestones/v0.91.6/review/provider/openrouter_current_models/lane_results/openrouter:gpt-5.4__review_findings_v1.json",
       "log_path": "docs/milestones/v0.91.6/review/provider/openrouter_current_models/lane_logs/openrouter:gpt-5.4__review_findings_v1.jsonl",
-      "output_digest": "sha256:2500904d08d1"
+      "output_digest": "sha256:45b7e8de9fd6"
     },
     {
       "candidate_id": "openrouter:gpt-5.4",
       "task_id": "bounded_planner_v1",
       "prompt_ref": "embedded:bounded_planner_v1",
-      "started_at": "2026-06-22T18:46:11+00:00",
-      "elapsed_ms": 3945,
+      "started_at": "2026-06-22T20:04:00+00:00",
+      "elapsed_ms": 3191,
       "raw_output_ref": "docs/milestones/v0.91.6/review/provider/openrouter_current_models/lane_outputs/openrouter:gpt-5.4__bounded_planner_v1.md",
       "normalized_result": {
-        "reason": "missing_headings",
-        "sections": [
-          "plan",
-          "blockers",
-          "assumptions"
-        ]
+        "plan_steps": 4,
+        "runner_attempts_used": 1
       },
       "provider_failure_class": null,
-      "score": "fail_format",
-      "reviewer_judgment": "planner output missed the required headings",
-      "safe_role_recommendation": "do_not_use_for_planning",
+      "score": "pass",
+      "reviewer_judgment": "planner output stayed bounded and covered the required lane/proof constraints",
+      "safe_role_recommendation": "architect_provider_candidate_with_limits",
       "result_path": "docs/milestones/v0.91.6/review/provider/openrouter_current_models/lane_results/openrouter:gpt-5.4__bounded_planner_v1.json",
       "log_path": "docs/milestones/v0.91.6/review/provider/openrouter_current_models/lane_logs/openrouter:gpt-5.4__bounded_planner_v1.jsonl",
-      "output_digest": "sha256:2f5cd873aa7e"
+      "output_digest": "sha256:f3e1f81579ef"
     },
     {
       "candidate_id": "openrouter:gpt-5.4",
       "task_id": "closeout_checker_v1",
       "prompt_ref": "embedded:closeout_checker_v1",
-      "started_at": "2026-06-22T18:46:15+00:00",
-      "elapsed_ms": 1538,
+      "started_at": "2026-06-22T20:04:04+00:00",
+      "elapsed_ms": 1937,
       "raw_output_ref": "docs/milestones/v0.91.6/review/provider/openrouter_current_models/lane_outputs/openrouter:gpt-5.4__closeout_checker_v1.md",
       "normalized_result": {
-        "decision": "needs_remediation"
+        "decision": "blocked",
+        "runner_attempts_used": 1
       },
       "provider_failure_class": null,
-      "score": "pass",
-      "reviewer_judgment": "closeout output correctly withheld closure until merge/proof evidence exists",
+      "score": "pass_with_limits",
+      "reviewer_judgment": "closeout output remained conservative even if it missed one specific supplied gap",
       "safe_role_recommendation": "tester_provider_candidate_with_limits",
       "result_path": "docs/milestones/v0.91.6/review/provider/openrouter_current_models/lane_results/openrouter:gpt-5.4__closeout_checker_v1.json",
       "log_path": "docs/milestones/v0.91.6/review/provider/openrouter_current_models/lane_logs/openrouter:gpt-5.4__closeout_checker_v1.jsonl",
-      "output_digest": "sha256:f7e69e4e86e9"
+      "output_digest": "sha256:aa1906e3093d"
     },
     {
       "candidate_id": "openrouter:gpt-5.4",
       "task_id": "worker_contract_v1",
       "prompt_ref": "embedded:worker_contract_v1",
-      "started_at": "2026-06-22T18:46:17+00:00",
-      "elapsed_ms": 1612,
+      "started_at": "2026-06-22T20:04:06+00:00",
+      "elapsed_ms": 1434,
       "raw_output_ref": "docs/milestones/v0.91.6/review/provider/openrouter_current_models/lane_outputs/openrouter:gpt-5.4__worker_contract_v1.md",
       "normalized_result": {
         "paths": [
           "docs/milestones/v0.91.6/review/provider"
         ],
-        "issue": "#4429"
+        "issue": "#4429",
+        "runner_attempts_used": 1
       },
       "provider_failure_class": null,
       "score": "pass",
@@ -308,36 +324,42 @@
       "safe_role_recommendation": "worker_provider_candidate_with_limits",
       "result_path": "docs/milestones/v0.91.6/review/provider/openrouter_current_models/lane_results/openrouter:gpt-5.4__worker_contract_v1.json",
       "log_path": "docs/milestones/v0.91.6/review/provider/openrouter_current_models/lane_logs/openrouter:gpt-5.4__worker_contract_v1.jsonl",
-      "output_digest": "sha256:6d653dd4bad0"
+      "output_digest": "sha256:3728bb71c27e"
     },
     {
       "candidate_id": "openrouter:glm-5.2",
       "task_id": "watcher_state_v1",
       "prompt_ref": "embedded:watcher_state_v1",
-      "started_at": "2026-06-22T18:46:18+00:00",
-      "elapsed_ms": 3326,
+      "started_at": "2026-06-22T20:04:07+00:00",
+      "elapsed_ms": 32584,
       "raw_output_ref": "docs/milestones/v0.91.6/review/provider/openrouter_current_models/lane_outputs/openrouter:glm-5.2__watcher_state_v1.md",
       "normalized_result": {
-        "reason": "invalid_status",
-        "status": ""
+        "status": "action_required",
+        "sections": [
+          "status",
+          "evidence",
+          "next-step"
+        ],
+        "runner_attempts_used": 1
       },
       "provider_failure_class": null,
-      "score": "fail_format",
-      "reviewer_judgment": "watcher output missed the bounded status contract",
-      "safe_role_recommendation": "do_not_use_for_conductor_routing",
+      "score": "pass_with_limits",
+      "reviewer_judgment": "watcher output stayed bounded and cited the supplied workflow facts",
+      "safe_role_recommendation": "conductor_provider_candidate_with_limits",
       "result_path": "docs/milestones/v0.91.6/review/provider/openrouter_current_models/lane_results/openrouter:glm-5.2__watcher_state_v1.json",
       "log_path": "docs/milestones/v0.91.6/review/provider/openrouter_current_models/lane_logs/openrouter:glm-5.2__watcher_state_v1.jsonl",
-      "output_digest": "sha256:b0d6a5c735a0"
+      "output_digest": "sha256:125116b7d9c3"
     },
     {
       "candidate_id": "openrouter:glm-5.2",
       "task_id": "card_validator_v1",
       "prompt_ref": "embedded:card_validator_v1",
-      "started_at": "2026-06-22T18:46:22+00:00",
-      "elapsed_ms": 8292,
+      "started_at": "2026-06-22T20:04:40+00:00",
+      "elapsed_ms": 26317,
       "raw_output_ref": "docs/milestones/v0.91.6/review/provider/openrouter_current_models/lane_outputs/openrouter:glm-5.2__card_validator_v1.md",
       "normalized_result": {
-        "severity": "P1"
+        "severity": "P1",
+        "runner_attempts_used": 1
       },
       "provider_failure_class": null,
       "score": "pass",
@@ -345,35 +367,37 @@
       "safe_role_recommendation": "reviewer_provider_candidate_with_limits",
       "result_path": "docs/milestones/v0.91.6/review/provider/openrouter_current_models/lane_results/openrouter:glm-5.2__card_validator_v1.json",
       "log_path": "docs/milestones/v0.91.6/review/provider/openrouter_current_models/lane_logs/openrouter:glm-5.2__card_validator_v1.jsonl",
-      "output_digest": "sha256:e9815b3b7577"
+      "output_digest": "sha256:4192eb21fcb5"
     },
     {
       "candidate_id": "openrouter:glm-5.2",
       "task_id": "review_findings_v1",
       "prompt_ref": "embedded:review_findings_v1",
-      "started_at": "2026-06-22T18:46:30+00:00",
-      "elapsed_ms": 5407,
+      "started_at": "2026-06-22T20:05:06+00:00",
+      "elapsed_ms": 10540,
       "raw_output_ref": "docs/milestones/v0.91.6/review/provider/openrouter_current_models/lane_outputs/openrouter:glm-5.2__review_findings_v1.md",
       "normalized_result": {
-        "reason": "empty_output"
+        "severity": "P3",
+        "runner_attempts_used": 1
       },
-      "provider_failure_class": "provider_empty_text_output",
-      "score": "timeout_or_empty",
-      "reviewer_judgment": "provider returned empty output",
-      "safe_role_recommendation": "do_not_promote",
+      "provider_failure_class": null,
+      "score": "pass",
+      "reviewer_judgment": "review output identified the legacy-gh evidence drift and routed to ADL-native proof",
+      "safe_role_recommendation": "reviewer_provider_candidate",
       "result_path": "docs/milestones/v0.91.6/review/provider/openrouter_current_models/lane_results/openrouter:glm-5.2__review_findings_v1.json",
       "log_path": "docs/milestones/v0.91.6/review/provider/openrouter_current_models/lane_logs/openrouter:glm-5.2__review_findings_v1.jsonl",
-      "output_digest": null
+      "output_digest": "sha256:50a2a0fd99b7"
     },
     {
       "candidate_id": "openrouter:glm-5.2",
       "task_id": "bounded_planner_v1",
       "prompt_ref": "embedded:bounded_planner_v1",
-      "started_at": "2026-06-22T18:46:35+00:00",
-      "elapsed_ms": 19895,
+      "started_at": "2026-06-22T20:05:17+00:00",
+      "elapsed_ms": 11295,
       "raw_output_ref": "docs/milestones/v0.91.6/review/provider/openrouter_current_models/lane_outputs/openrouter:glm-5.2__bounded_planner_v1.md",
       "normalized_result": {
-        "plan_steps": 4
+        "plan_steps": 4,
+        "runner_attempts_used": 1
       },
       "provider_failure_class": null,
       "score": "pass",
@@ -381,147 +405,174 @@
       "safe_role_recommendation": "architect_provider_candidate_with_limits",
       "result_path": "docs/milestones/v0.91.6/review/provider/openrouter_current_models/lane_results/openrouter:glm-5.2__bounded_planner_v1.json",
       "log_path": "docs/milestones/v0.91.6/review/provider/openrouter_current_models/lane_logs/openrouter:glm-5.2__bounded_planner_v1.jsonl",
-      "output_digest": "sha256:473e0d6904fc"
+      "output_digest": "sha256:100332996b20"
     },
     {
       "candidate_id": "openrouter:glm-5.2",
       "task_id": "closeout_checker_v1",
       "prompt_ref": "embedded:closeout_checker_v1",
-      "started_at": "2026-06-22T18:46:55+00:00",
-      "elapsed_ms": 5229,
+      "started_at": "2026-06-22T20:05:28+00:00",
+      "elapsed_ms": 6336,
       "raw_output_ref": "docs/milestones/v0.91.6/review/provider/openrouter_current_models/lane_outputs/openrouter:glm-5.2__closeout_checker_v1.md",
       "normalized_result": {
-        "reason": "empty_output"
+        "decision": "blocked",
+        "runner_attempts_used": 1
       },
-      "provider_failure_class": "provider_empty_text_output",
-      "score": "timeout_or_empty",
-      "reviewer_judgment": "provider returned empty output",
-      "safe_role_recommendation": "do_not_promote",
+      "provider_failure_class": null,
+      "score": "pass_with_limits",
+      "reviewer_judgment": "closeout output remained conservative even if it missed one specific supplied gap",
+      "safe_role_recommendation": "tester_provider_candidate_with_limits",
       "result_path": "docs/milestones/v0.91.6/review/provider/openrouter_current_models/lane_results/openrouter:glm-5.2__closeout_checker_v1.json",
       "log_path": "docs/milestones/v0.91.6/review/provider/openrouter_current_models/lane_logs/openrouter:glm-5.2__closeout_checker_v1.jsonl",
-      "output_digest": null
+      "output_digest": "sha256:e9fad7dda060"
     },
     {
       "candidate_id": "openrouter:glm-5.2",
       "task_id": "worker_contract_v1",
       "prompt_ref": "embedded:worker_contract_v1",
-      "started_at": "2026-06-22T18:47:01+00:00",
-      "elapsed_ms": 8330,
+      "started_at": "2026-06-22T20:05:34+00:00",
+      "elapsed_ms": 10036,
       "raw_output_ref": "docs/milestones/v0.91.6/review/provider/openrouter_current_models/lane_outputs/openrouter:glm-5.2__worker_contract_v1.md",
       "normalized_result": {
-        "reason": "invalid_json"
+        "paths": [
+          "adl/tools",
+          "docs/milestones/v0.91.6/review/provider"
+        ],
+        "issue": "#4429",
+        "runner_attempts_used": 1
       },
       "provider_failure_class": null,
-      "score": "fail_format",
-      "reviewer_judgment": "worker output did not return parseable JSON",
-      "safe_role_recommendation": "do_not_use_for_worker_support",
+      "score": "pass",
+      "reviewer_judgment": "worker output returned a bounded structured task contract",
+      "safe_role_recommendation": "worker_provider_candidate_with_limits",
       "result_path": "docs/milestones/v0.91.6/review/provider/openrouter_current_models/lane_results/openrouter:glm-5.2__worker_contract_v1.json",
       "log_path": "docs/milestones/v0.91.6/review/provider/openrouter_current_models/lane_logs/openrouter:glm-5.2__worker_contract_v1.jsonl",
-      "output_digest": "sha256:ffbd2a1e95eb"
+      "output_digest": "sha256:8a6be3630370"
     },
     {
       "candidate_id": "openrouter:kimi-k2.7-code",
       "task_id": "watcher_state_v1",
       "prompt_ref": "embedded:watcher_state_v1",
-      "started_at": "2026-06-22T18:47:09+00:00",
-      "elapsed_ms": 6179,
+      "started_at": "2026-06-22T20:05:44+00:00",
+      "elapsed_ms": 20390,
       "raw_output_ref": "docs/milestones/v0.91.6/review/provider/openrouter_current_models/lane_outputs/openrouter:kimi-k2.7-code__watcher_state_v1.md",
       "normalized_result": {
-        "reason": "empty_output"
+        "status": "action_required",
+        "sections": [
+          "status",
+          "evidence",
+          "next-step"
+        ],
+        "runner_attempts_used": 1
       },
-      "provider_failure_class": "provider_empty_text_output",
-      "score": "timeout_or_empty",
-      "reviewer_judgment": "provider returned empty output",
-      "safe_role_recommendation": "do_not_promote",
+      "provider_failure_class": null,
+      "score": "pass_with_limits",
+      "reviewer_judgment": "watcher output stayed bounded and cited the supplied workflow facts",
+      "safe_role_recommendation": "conductor_provider_candidate_with_limits",
       "result_path": "docs/milestones/v0.91.6/review/provider/openrouter_current_models/lane_results/openrouter:kimi-k2.7-code__watcher_state_v1.json",
       "log_path": "docs/milestones/v0.91.6/review/provider/openrouter_current_models/lane_logs/openrouter:kimi-k2.7-code__watcher_state_v1.jsonl",
-      "output_digest": null
+      "output_digest": "sha256:1483fca86114"
     },
     {
       "candidate_id": "openrouter:kimi-k2.7-code",
       "task_id": "card_validator_v1",
       "prompt_ref": "embedded:card_validator_v1",
-      "started_at": "2026-06-22T18:47:15+00:00",
-      "elapsed_ms": 2886,
+      "started_at": "2026-06-22T20:06:05+00:00",
+      "elapsed_ms": 9776,
       "raw_output_ref": "docs/milestones/v0.91.6/review/provider/openrouter_current_models/lane_outputs/openrouter:kimi-k2.7-code__card_validator_v1.md",
       "normalized_result": {
-        "reason": "empty_output"
+        "severity": "P1",
+        "runner_attempts_used": 1
       },
-      "provider_failure_class": "provider_empty_text_output",
-      "score": "timeout_or_empty",
-      "reviewer_judgment": "provider returned empty output",
-      "safe_role_recommendation": "do_not_promote",
+      "provider_failure_class": null,
+      "score": "pass",
+      "reviewer_judgment": "card-validator output identified the supplied lifecycle-truth contradiction",
+      "safe_role_recommendation": "reviewer_provider_candidate_with_limits",
       "result_path": "docs/milestones/v0.91.6/review/provider/openrouter_current_models/lane_results/openrouter:kimi-k2.7-code__card_validator_v1.json",
       "log_path": "docs/milestones/v0.91.6/review/provider/openrouter_current_models/lane_logs/openrouter:kimi-k2.7-code__card_validator_v1.jsonl",
-      "output_digest": null
+      "output_digest": "sha256:3bdb6ca1b89f"
     },
     {
       "candidate_id": "openrouter:kimi-k2.7-code",
       "task_id": "review_findings_v1",
       "prompt_ref": "embedded:review_findings_v1",
-      "started_at": "2026-06-22T18:47:18+00:00",
-      "elapsed_ms": 9459,
+      "started_at": "2026-06-22T20:06:14+00:00",
+      "elapsed_ms": 40614,
       "raw_output_ref": "docs/milestones/v0.91.6/review/provider/openrouter_current_models/lane_outputs/openrouter:kimi-k2.7-code__review_findings_v1.md",
       "normalized_result": {
-        "reason": "empty_output"
+        "reason": "missing_headings",
+        "sections": [
+          "severity",
+          "routing",
+          "residual risk"
+        ],
+        "runner_attempts_used": 1
       },
-      "provider_failure_class": "provider_empty_text_output",
-      "score": "timeout_or_empty",
-      "reviewer_judgment": "provider returned empty output",
-      "safe_role_recommendation": "do_not_promote",
+      "provider_failure_class": null,
+      "score": "fail_format",
+      "reviewer_judgment": "review output missed the required headings",
+      "safe_role_recommendation": "do_not_use_for_review",
       "result_path": "docs/milestones/v0.91.6/review/provider/openrouter_current_models/lane_results/openrouter:kimi-k2.7-code__review_findings_v1.json",
       "log_path": "docs/milestones/v0.91.6/review/provider/openrouter_current_models/lane_logs/openrouter:kimi-k2.7-code__review_findings_v1.jsonl",
-      "output_digest": null
+      "output_digest": "sha256:2d75ab0f4895"
     },
     {
       "candidate_id": "openrouter:kimi-k2.7-code",
       "task_id": "bounded_planner_v1",
       "prompt_ref": "embedded:bounded_planner_v1",
-      "started_at": "2026-06-22T18:47:27+00:00",
-      "elapsed_ms": 4857,
+      "started_at": "2026-06-22T20:06:55+00:00",
+      "elapsed_ms": 14564,
       "raw_output_ref": "docs/milestones/v0.91.6/review/provider/openrouter_current_models/lane_outputs/openrouter:kimi-k2.7-code__bounded_planner_v1.md",
       "normalized_result": {
-        "reason": "empty_output"
+        "reason": "missing_headings",
+        "sections": [
+          "blockers",
+          "assumptions",
+          "non-claims"
+        ],
+        "runner_attempts_used": 1
       },
-      "provider_failure_class": "provider_empty_text_output",
-      "score": "timeout_or_empty",
-      "reviewer_judgment": "provider returned empty output",
-      "safe_role_recommendation": "do_not_promote",
+      "provider_failure_class": null,
+      "score": "fail_format",
+      "reviewer_judgment": "planner output missed the required headings",
+      "safe_role_recommendation": "do_not_use_for_planning",
       "result_path": "docs/milestones/v0.91.6/review/provider/openrouter_current_models/lane_results/openrouter:kimi-k2.7-code__bounded_planner_v1.json",
       "log_path": "docs/milestones/v0.91.6/review/provider/openrouter_current_models/lane_logs/openrouter:kimi-k2.7-code__bounded_planner_v1.jsonl",
-      "output_digest": null
+      "output_digest": "sha256:25a9d7897430"
     },
     {
       "candidate_id": "openrouter:kimi-k2.7-code",
       "task_id": "closeout_checker_v1",
       "prompt_ref": "embedded:closeout_checker_v1",
-      "started_at": "2026-06-22T18:47:32+00:00",
-      "elapsed_ms": 11736,
+      "started_at": "2026-06-22T20:07:10+00:00",
+      "elapsed_ms": 3754,
       "raw_output_ref": "docs/milestones/v0.91.6/review/provider/openrouter_current_models/lane_outputs/openrouter:kimi-k2.7-code__closeout_checker_v1.md",
       "normalized_result": {
-        "reason": "empty_output"
+        "decision": "blocked",
+        "runner_attempts_used": 1
       },
-      "provider_failure_class": "provider_empty_text_output",
-      "score": "timeout_or_empty",
-      "reviewer_judgment": "provider returned empty output",
-      "safe_role_recommendation": "do_not_promote",
+      "provider_failure_class": null,
+      "score": "pass_with_limits",
+      "reviewer_judgment": "closeout output remained conservative even if it missed one specific supplied gap",
+      "safe_role_recommendation": "tester_provider_candidate_with_limits",
       "result_path": "docs/milestones/v0.91.6/review/provider/openrouter_current_models/lane_results/openrouter:kimi-k2.7-code__closeout_checker_v1.json",
       "log_path": "docs/milestones/v0.91.6/review/provider/openrouter_current_models/lane_logs/openrouter:kimi-k2.7-code__closeout_checker_v1.jsonl",
-      "output_digest": null
+      "output_digest": "sha256:29016ef266fb"
     },
     {
       "candidate_id": "openrouter:kimi-k2.7-code",
       "task_id": "worker_contract_v1",
       "prompt_ref": "embedded:worker_contract_v1",
-      "started_at": "2026-06-22T18:47:44+00:00",
-      "elapsed_ms": 3894,
+      "started_at": "2026-06-22T20:07:13+00:00",
+      "elapsed_ms": 1942,
       "raw_output_ref": "docs/milestones/v0.91.6/review/provider/openrouter_current_models/lane_outputs/openrouter:kimi-k2.7-code__worker_contract_v1.md",
       "normalized_result": {
         "paths": [
           "adl/tools",
           "docs/milestones/v0.91.6/review/provider"
         ],
-        "issue": "#4429"
+        "issue": "#4429",
+        "runner_attempts_used": 1
       },
       "provider_failure_class": null,
       "score": "pass",
@@ -529,125 +580,130 @@
       "safe_role_recommendation": "worker_provider_candidate_with_limits",
       "result_path": "docs/milestones/v0.91.6/review/provider/openrouter_current_models/lane_results/openrouter:kimi-k2.7-code__worker_contract_v1.json",
       "log_path": "docs/milestones/v0.91.6/review/provider/openrouter_current_models/lane_logs/openrouter:kimi-k2.7-code__worker_contract_v1.jsonl",
-      "output_digest": "sha256:dfda0cec13dd"
+      "output_digest": "sha256:d1a97532b3dc"
     },
     {
       "candidate_id": "openrouter:gemini-3.5-flash",
       "task_id": "watcher_state_v1",
       "prompt_ref": "embedded:watcher_state_v1",
-      "started_at": "2026-06-22T18:47:48+00:00",
-      "elapsed_ms": 1977,
+      "started_at": "2026-06-22T20:07:15+00:00",
+      "elapsed_ms": 8284,
       "raw_output_ref": "docs/milestones/v0.91.6/review/provider/openrouter_current_models/lane_outputs/openrouter:gemini-3.5-flash__watcher_state_v1.md",
       "normalized_result": {
-        "reason": "missing_supplied_evidence_refs"
+        "status": "pending",
+        "sections": [
+          "status",
+          "evidence",
+          "next-step"
+        ],
+        "runner_attempts_used": 1
       },
       "provider_failure_class": null,
-      "score": "fail_truth",
-      "reviewer_judgment": "watcher output did not anchor itself in the supplied issue/worktree facts",
-      "safe_role_recommendation": "do_not_use_for_conductor_routing",
+      "score": "pass_with_limits",
+      "reviewer_judgment": "watcher output stayed bounded and cited the supplied workflow facts",
+      "safe_role_recommendation": "conductor_provider_candidate_with_limits",
       "result_path": "docs/milestones/v0.91.6/review/provider/openrouter_current_models/lane_results/openrouter:gemini-3.5-flash__watcher_state_v1.json",
       "log_path": "docs/milestones/v0.91.6/review/provider/openrouter_current_models/lane_logs/openrouter:gemini-3.5-flash__watcher_state_v1.jsonl",
-      "output_digest": "sha256:30d457b2871d"
+      "output_digest": "sha256:134284b681b2"
     },
     {
       "candidate_id": "openrouter:gemini-3.5-flash",
       "task_id": "card_validator_v1",
       "prompt_ref": "embedded:card_validator_v1",
-      "started_at": "2026-06-22T18:47:50+00:00",
-      "elapsed_ms": 2645,
+      "started_at": "2026-06-22T20:07:24+00:00",
+      "elapsed_ms": 5217,
       "raw_output_ref": "docs/milestones/v0.91.6/review/provider/openrouter_current_models/lane_outputs/openrouter:gemini-3.5-flash__card_validator_v1.md",
       "normalized_result": {
-        "reason": "missing_headings",
-        "sections": []
+        "severity": "P2",
+        "runner_attempts_used": 1
       },
       "provider_failure_class": null,
-      "score": "fail_format",
-      "reviewer_judgment": "card-validator output missed the required findings structure",
-      "safe_role_recommendation": "do_not_use_for_card_validation",
+      "score": "pass_with_limits",
+      "reviewer_judgment": "card-validator output identified the supplied lifecycle-truth contradiction",
+      "safe_role_recommendation": "reviewer_provider_candidate_with_limits",
       "result_path": "docs/milestones/v0.91.6/review/provider/openrouter_current_models/lane_results/openrouter:gemini-3.5-flash__card_validator_v1.json",
       "log_path": "docs/milestones/v0.91.6/review/provider/openrouter_current_models/lane_logs/openrouter:gemini-3.5-flash__card_validator_v1.jsonl",
-      "output_digest": "sha256:814c81d45bd8"
+      "output_digest": "sha256:10cca69de87f"
     },
     {
       "candidate_id": "openrouter:gemini-3.5-flash",
       "task_id": "review_findings_v1",
       "prompt_ref": "embedded:review_findings_v1",
-      "started_at": "2026-06-22T18:47:53+00:00",
-      "elapsed_ms": 2123,
+      "started_at": "2026-06-22T20:07:29+00:00",
+      "elapsed_ms": 9079,
       "raw_output_ref": "docs/milestones/v0.91.6/review/provider/openrouter_current_models/lane_outputs/openrouter:gemini-3.5-flash__review_findings_v1.md",
       "normalized_result": {
-        "reason": "missing_headings",
-        "sections": [
-          "findings"
-        ]
+        "severity": "P3",
+        "runner_attempts_used": 1
       },
       "provider_failure_class": null,
-      "score": "fail_format",
-      "reviewer_judgment": "review output missed the required headings",
-      "safe_role_recommendation": "do_not_use_for_review",
+      "score": "pass",
+      "reviewer_judgment": "review output identified the legacy-gh evidence drift and routed to ADL-native proof",
+      "safe_role_recommendation": "reviewer_provider_candidate",
       "result_path": "docs/milestones/v0.91.6/review/provider/openrouter_current_models/lane_results/openrouter:gemini-3.5-flash__review_findings_v1.json",
       "log_path": "docs/milestones/v0.91.6/review/provider/openrouter_current_models/lane_logs/openrouter:gemini-3.5-flash__review_findings_v1.jsonl",
-      "output_digest": "sha256:9dc652d3ee87"
+      "output_digest": "sha256:04925057856a"
     },
     {
       "candidate_id": "openrouter:gemini-3.5-flash",
       "task_id": "bounded_planner_v1",
       "prompt_ref": "embedded:bounded_planner_v1",
-      "started_at": "2026-06-22T18:47:55+00:00",
-      "elapsed_ms": 2148,
+      "started_at": "2026-06-22T20:07:38+00:00",
+      "elapsed_ms": 8338,
       "raw_output_ref": "docs/milestones/v0.91.6/review/provider/openrouter_current_models/lane_outputs/openrouter:gemini-3.5-flash__bounded_planner_v1.md",
       "normalized_result": {
-        "reason": "missing_headings",
-        "sections": [
-          "plan"
-        ]
+        "plan_steps": 4,
+        "runner_attempts_used": 1
       },
       "provider_failure_class": null,
-      "score": "fail_format",
-      "reviewer_judgment": "planner output missed the required headings",
-      "safe_role_recommendation": "do_not_use_for_planning",
+      "score": "pass",
+      "reviewer_judgment": "planner output stayed bounded and covered the required lane/proof constraints",
+      "safe_role_recommendation": "architect_provider_candidate_with_limits",
       "result_path": "docs/milestones/v0.91.6/review/provider/openrouter_current_models/lane_results/openrouter:gemini-3.5-flash__bounded_planner_v1.json",
       "log_path": "docs/milestones/v0.91.6/review/provider/openrouter_current_models/lane_logs/openrouter:gemini-3.5-flash__bounded_planner_v1.jsonl",
-      "output_digest": "sha256:6eacac05b511"
+      "output_digest": "sha256:1129c93c5b28"
     },
     {
       "candidate_id": "openrouter:gemini-3.5-flash",
       "task_id": "closeout_checker_v1",
       "prompt_ref": "embedded:closeout_checker_v1",
-      "started_at": "2026-06-22T18:47:57+00:00",
-      "elapsed_ms": 2187,
+      "started_at": "2026-06-22T20:07:46+00:00",
+      "elapsed_ms": 4699,
       "raw_output_ref": "docs/milestones/v0.91.6/review/provider/openrouter_current_models/lane_outputs/openrouter:gemini-3.5-flash__closeout_checker_v1.md",
       "normalized_result": {
-        "reason": "missing_headings",
-        "sections": [
-          "decision"
-        ]
+        "decision": "blocked",
+        "runner_attempts_used": 1
       },
       "provider_failure_class": null,
-      "score": "fail_format",
-      "reviewer_judgment": "closeout output missed the required headings",
-      "safe_role_recommendation": "do_not_use_for_closeout_checks",
+      "score": "pass_with_limits",
+      "reviewer_judgment": "closeout output remained conservative even if it missed one specific supplied gap",
+      "safe_role_recommendation": "tester_provider_candidate_with_limits",
       "result_path": "docs/milestones/v0.91.6/review/provider/openrouter_current_models/lane_results/openrouter:gemini-3.5-flash__closeout_checker_v1.json",
       "log_path": "docs/milestones/v0.91.6/review/provider/openrouter_current_models/lane_logs/openrouter:gemini-3.5-flash__closeout_checker_v1.jsonl",
-      "output_digest": "sha256:d8cf5ca22235"
+      "output_digest": "sha256:23bde011166a"
     },
     {
       "candidate_id": "openrouter:gemini-3.5-flash",
       "task_id": "worker_contract_v1",
       "prompt_ref": "embedded:worker_contract_v1",
-      "started_at": "2026-06-22T18:47:59+00:00",
-      "elapsed_ms": 2265,
+      "started_at": "2026-06-22T20:07:51+00:00",
+      "elapsed_ms": 6108,
       "raw_output_ref": "docs/milestones/v0.91.6/review/provider/openrouter_current_models/lane_outputs/openrouter:gemini-3.5-flash__worker_contract_v1.md",
       "normalized_result": {
-        "reason": "invalid_json"
+        "paths": [
+          "docs/milestones/v0.91.6/review/provider",
+          "adl/tools"
+        ],
+        "issue": "#4429",
+        "runner_attempts_used": 1
       },
       "provider_failure_class": null,
-      "score": "fail_format",
-      "reviewer_judgment": "worker output did not return parseable JSON",
-      "safe_role_recommendation": "do_not_use_for_worker_support",
+      "score": "pass",
+      "reviewer_judgment": "worker output returned a bounded structured task contract",
+      "safe_role_recommendation": "worker_provider_candidate_with_limits",
       "result_path": "docs/milestones/v0.91.6/review/provider/openrouter_current_models/lane_results/openrouter:gemini-3.5-flash__worker_contract_v1.json",
       "log_path": "docs/milestones/v0.91.6/review/provider/openrouter_current_models/lane_logs/openrouter:gemini-3.5-flash__worker_contract_v1.jsonl",
-      "output_digest": "sha256:0c7dd9c5a942"
+      "output_digest": "sha256:695d0b963516"
     }
   ],
   "non_claims": [

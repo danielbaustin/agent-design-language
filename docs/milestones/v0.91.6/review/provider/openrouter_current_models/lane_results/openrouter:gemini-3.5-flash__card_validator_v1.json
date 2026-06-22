@@ -21,19 +21,19 @@
   "attempts": [
     {
       "attempt_index": 1,
-      "started_at": "unix:1782154070",
-      "duration_ms": 2645,
+      "started_at": "unix:1782158844",
+      "duration_ms": 5215,
       "status": "ok",
       "retryable": false,
       "http_status": 200,
-      "raw_response_excerpt": "[redacted response len=47 sha256=814c81d45bd8]"
+      "raw_response_excerpt": "[redacted response len=415 sha256=10cca69de87f]"
     }
   ],
   "final_status": "ok",
-  "duration_ms": 2645,
+  "duration_ms": 5217,
   "request_id": "openrouter:gemini-3.5-flash__card_validator_v1",
-  "output_text_excerpt": "[redacted response len=47 sha256=814c81d45bd8]",
-  "artifact_ref": "<tmp>/result.json@384ebd699f1d59e2",
-  "output_text_chars": 47,
-  "output_text_digest": "sha256:814c81d45bd8"
+  "output_text_excerpt": "[redacted response len=415 sha256=10cca69de87f]",
+  "artifact_ref": "<tmp>/result.json@6aa574695e06d4ce",
+  "output_text_chars": 415,
+  "output_text_digest": "sha256:10cca69de87f"
 }

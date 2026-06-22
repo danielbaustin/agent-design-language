@@ -6,4 +6,11 @@ Model: `z-ai/glm-5.2`
 
 ## Output
 
-[Wafer: response was truncated before the model finished its internal reasoning. Increase max_tokens, or disable thinking on this model (e.g. chat_template_kwargs.enable_thinking=false), then retry.]
+# Status
+action_required
+
+# Evidence
+Issue #4429 is open and bound to worktree adl-wp-4429. The reusable suitability panel is defined in #4097. No final proof packet has been written yet in the supplied issue context.
+
+# Next-Step
+Execute the five-task suitability panel for the five current OpenRouter routes, ensuring route proof stays distinct from direct-hosted provider proof.

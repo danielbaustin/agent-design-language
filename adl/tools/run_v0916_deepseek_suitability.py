@@ -691,7 +691,31 @@ def candidate_role_summary(rows: list[dict]) -> str:
     return ", ".join(supported) if supported else "none"
 
 
-def run_task(
+def score_priority(score: str) -> int:
+    return {
+        "pass": 5,
+        "pass_with_limits": 4,
+        "fail_truth": 3,
+        "fail_format": 2,
+        "timeout_or_empty": 1,
+        "skipped_blocked": 0,
+    }.get(score, -1)
+
+
+def should_replay_lane(spec: dict, row: dict) -> bool:
+    allowed_failure_kinds = set(
+        spec.get(
+            "runner_replay_failure_kinds",
+            ["provider_empty_text_output", "provider_timeout"],
+        )
+    )
+    return (
+        row["score"] == "timeout_or_empty"
+        and row.get("provider_failure_class") in allowed_failure_kinds
+    )
+
+
+def run_task_once(
     adapter_bin: Path,
     root: Path,
     spec: dict,
@@ -701,18 +725,15 @@ def run_task(
     result_dir: Path,
     log_dir: Path,
     output_dir: Path,
+    raw_request: dict,
+    started_at: str,
 ) -> dict:
     current_task_spec = task_spec(spec, task_id)
-    prompt = textwrap.dedent(current_task_spec["prompt"]).strip()
     lane_id = f"{candidate.candidate_id}__{task_id}"
-    request_path = request_dir / f"{lane_id}.json"
     result_path = result_dir / f"{lane_id}.json"
     log_path = log_dir / f"{lane_id}.jsonl"
     output_path = output_dir / f"{lane_id}.md"
-    raw_request = request_payload(spec, candidate, task_id, prompt)
-    write_json(request_path, sanitized_request_payload(raw_request))
     env = dict(os.environ)
-    started_at = now_iso()
     with tempfile.TemporaryDirectory(prefix=f"{lane_id}_") as temp_dir:
         temp_root = Path(temp_dir)
         raw_request_path = temp_root / "request.json"
@@ -819,6 +840,49 @@ def run_task(
         "log_path": rel(root, log_path),
         "output_digest": f"sha256:{short_sha256(output_text)}" if output_text else None,
     }
+
+
+def run_task(
+    adapter_bin: Path,
+    root: Path,
+    spec: dict,
+    candidate: Candidate,
+    task_id: str,
+    request_dir: Path,
+    result_dir: Path,
+    log_dir: Path,
+    output_dir: Path,
+) -> dict:
+    prompt = textwrap.dedent(task_spec(spec, task_id)["prompt"]).strip()
+    lane_id = f"{candidate.candidate_id}__{task_id}"
+    request_path = request_dir / f"{lane_id}.json"
+    raw_request = request_payload(spec, candidate, task_id, prompt)
+    write_json(request_path, sanitized_request_payload(raw_request))
+    started_at = now_iso()
+    replay_attempts = max(1, int(spec.get("runner_replay_attempts", 2)))
+    best_row = None
+    for attempt_index in range(replay_attempts):
+        row = run_task_once(
+            adapter_bin=adapter_bin,
+            root=root,
+            spec=spec,
+            candidate=candidate,
+            task_id=task_id,
+            request_dir=request_dir,
+            result_dir=result_dir,
+            log_dir=log_dir,
+            output_dir=output_dir,
+            raw_request=raw_request,
+            started_at=started_at,
+        )
+        replay_note = dict(row["normalized_result"])
+        replay_note["runner_attempts_used"] = attempt_index + 1
+        row["normalized_result"] = replay_note
+        if best_row is None or score_priority(row["score"]) >= score_priority(best_row["score"]):
+            best_row = row
+        if not should_replay_lane(spec, row):
+            return best_row
+    return best_row
 
 
 def candidate_rows(candidates: list[Candidate], task_rows: list[dict]) -> list[dict]:

@@ -21,19 +21,19 @@
   "attempts": [
     {
       "attempt_index": 1,
-      "started_at": "unix:1782154079",
-      "duration_ms": 2265,
+      "started_at": "unix:1782158871",
+      "duration_ms": 6108,
       "status": "ok",
       "retryable": false,
       "http_status": 200,
-      "raw_response_excerpt": "[redacted response len=20 sha256=0c7dd9c5a942]"
+      "raw_response_excerpt": "[redacted response len=394 sha256=695d0b963516]"
     }
   ],
   "final_status": "ok",
-  "duration_ms": 2265,
+  "duration_ms": 6108,
   "request_id": "openrouter:gemini-3.5-flash__worker_contract_v1",
-  "output_text_excerpt": "[redacted response len=20 sha256=0c7dd9c5a942]",
-  "artifact_ref": "<tmp>/result.json@5df6f521e6fa7d3f",
-  "output_text_chars": 20,
-  "output_text_digest": "sha256:0c7dd9c5a942"
+  "output_text_excerpt": "[redacted response len=394 sha256=695d0b963516]",
+  "artifact_ref": "<tmp>/result.json@3e8334cf6fca17d6",
+  "output_text_chars": 394,
+  "output_text_digest": "sha256:695d0b963516"
 }

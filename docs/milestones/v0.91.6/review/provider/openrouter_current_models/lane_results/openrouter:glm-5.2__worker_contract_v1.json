@@ -21,19 +21,19 @@
   "attempts": [
     {
       "attempt_index": 1,
-      "started_at": "unix:1782154021",
-      "duration_ms": 8330,
+      "started_at": "unix:1782158734",
+      "duration_ms": 10036,
       "status": "ok",
       "retryable": false,
       "http_status": 200,
-      "raw_response_excerpt": "[redacted response len=159 sha256=ffbd2a1e95eb]"
+      "raw_response_excerpt": "[redacted response len=418 sha256=8a6be3630370]"
     }
   ],
   "final_status": "ok",
-  "duration_ms": 8330,
+  "duration_ms": 10036,
   "request_id": "openrouter:glm-5.2__worker_contract_v1",
-  "output_text_excerpt": "[redacted response len=159 sha256=ffbd2a1e95eb]",
-  "artifact_ref": "<tmp>/result.json@ce4df32480408b08",
-  "output_text_chars": 159,
-  "output_text_digest": "sha256:ffbd2a1e95eb"
+  "output_text_excerpt": "[redacted response len=418 sha256=8a6be3630370]",
+  "artifact_ref": "<tmp>/result.json@2422aadd54e8306a",
+  "output_text_chars": 418,
+  "output_text_digest": "sha256:8a6be3630370"
 }

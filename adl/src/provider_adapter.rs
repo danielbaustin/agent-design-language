@@ -25,6 +25,7 @@ const DEFAULT_ANTHROPIC_MESSAGES_URL: &str = "https://api.anthropic.com/v1/messa
 const DEFAULT_DEEPSEEK_CHAT_COMPLETIONS_URL: &str = "https://api.deepseek.com/chat/completions";
 const DEFAULT_OPENROUTER_CHAT_COMPLETIONS_URL: &str =
     "https://openrouter.ai/api/v1/chat/completions";
+const DEFAULT_OPENROUTER_MAX_TOKENS: u64 = 2048;
 const DEFAULT_GEMINI_BASE_URL: &str = "https://generativelanguage.googleapis.com/v1beta";
 const DEFAULT_OLLAMA_BASE_URL: &str = "http://127.0.0.1:11434";
 static OLLAMA_RUNTIME_BULKHEADS: OnceLock<Mutex<HashMap<String, &'static Mutex<()>>>> =
@@ -564,7 +565,7 @@ fn execute_hosted_openrouter(
                 "role": "user",
                 "content": request.input_text.as_deref().unwrap_or_default(),
             }],
-            "max_tokens": 256,
+            "max_tokens": DEFAULT_OPENROUTER_MAX_TOKENS,
             "stream": false,
         }))
         .send()
@@ -656,16 +657,47 @@ fn decode_text_response(
             Some(status.as_u16()),
         )
     })?;
+    if let Some(failure) = provider_error_from_json_envelope(&json, status.as_u16()) {
+        return Err(failure);
+    }
     let output_text = extractor(&json)
         .filter(|text| !text.trim().is_empty())
-        .ok_or_else(|| {
-            provider_failure_from_note("empty provider output", Some(status.as_u16()))
-        })?;
+        .ok_or_else(|| provider_output_failure_from_json(&json, status.as_u16()))?;
     Ok(ProviderTextResponse {
         output_text,
         http_status: status.as_u16(),
         observed_provider_model_id: model_extractor(&json),
     })
+}
+
+fn provider_error_from_json_envelope(json: &Value, http_status: u16) -> Option<ProviderFailureV1> {
+    let error = json.get("error")?;
+    let message = if let Some(message) = error.get("message").and_then(Value::as_str) {
+        message.trim()
+    } else if let Some(message) = error.as_str() {
+        message.trim()
+    } else {
+        ""
+    };
+    if message.is_empty() {
+        return None;
+    }
+    Some(provider_failure_from_note(message, Some(http_status)))
+}
+
+fn provider_output_failure_from_json(json: &Value, http_status: u16) -> ProviderFailureV1 {
+    if chat_completion_reasoning_only(json) {
+        return ProviderFailureV1 {
+            kind: ProviderFailureKindV1::ProviderError,
+            retryable: false,
+            message: "provider returned reasoning-only output without final content".to_string(),
+            provider_error_excerpt: Some(
+                "provider returned reasoning-only output without final content".to_string(),
+            ),
+            http_status: Some(http_status),
+        };
+    }
+    provider_failure_from_note("empty provider output", Some(http_status))
 }
 
 fn client(policy: &ProviderAttemptPolicyV1) -> std::result::Result<Client, ProviderFailureV1> {
@@ -908,14 +940,26 @@ fn extract_deepseek_output_text(json: &Value) -> Option<String> {
 }
 
 fn extract_chat_completion_output_text(json: &Value) -> Option<String> {
-    json.get("choices")
+    let content = json
+        .get("choices")
         .and_then(Value::as_array)
         .and_then(|choices| choices.first())
         .and_then(|choice| choice.get("message"))
-        .and_then(|message| message.get("content"))
-        .and_then(Value::as_str)
-        .filter(|text| !text.trim().is_empty())
-        .map(str::to_string)
+        .and_then(|message| message.get("content"))?;
+    if let Some(text) = content.as_str().filter(|text| !text.trim().is_empty()) {
+        return Some(text.to_string());
+    }
+    let mut chunks = Vec::new();
+    if let Some(parts) = content.as_array() {
+        for part in parts {
+            if let Some(text) = part.get("text").and_then(Value::as_str) {
+                if !text.trim().is_empty() {
+                    chunks.push(text.to_string());
+                }
+            }
+        }
+    }
+    (!chunks.is_empty()).then(|| chunks.join("\n"))
 }
 
 fn extract_chat_completion_model_id(json: &Value) -> Option<String> {
@@ -924,6 +968,21 @@ fn extract_chat_completion_model_id(json: &Value) -> Option<String> {
         .map(str::trim)
         .filter(|text| !text.is_empty())
         .map(str::to_string)
+}
+
+fn chat_completion_reasoning_only(json: &Value) -> bool {
+    json.get("choices")
+        .and_then(Value::as_array)
+        .and_then(|choices| choices.first())
+        .and_then(|choice| choice.get("message"))
+        .map(|message| {
+            message.get("content").is_some_and(Value::is_null)
+                && message
+                    .get("reasoning")
+                    .and_then(Value::as_str)
+                    .is_some_and(|text| !text.trim().is_empty())
+        })
+        .unwrap_or(false)
 }
 
 fn extract_gemini_output_text(json: &Value) -> Option<String> {
@@ -1692,6 +1751,117 @@ mod tests {
         assert!(!log.contains("openrouter success"));
         let _ = fs::remove_file(path);
         env::remove_var("ADL_PROVIDER_ADAPTER_OPENROUTER_SUCCESS_KEY");
+    }
+
+    #[test]
+    fn openrouter_hosted_adapter_supports_array_content_shape() {
+        env::set_var("ADL_PROVIDER_ADAPTER_OPENROUTER_ARRAY_KEY", "test-key");
+        let endpoint = one_shot_server(
+            r#"{"model":"moonshotai/kimi-k2.7-code","choices":[{"message":{"content":[{"type":"text","text":"array success"}]}}]}"#,
+            "200 OK",
+        );
+        let path = temp_log("openrouter-array");
+        let mut logger = ProviderRunLoggerV1::create(&path, "run-test").expect("open logger");
+        let mut req = request(RuntimeSurfaceV1::HostedApi, endpoint);
+        req.route.provider = "openrouter".to_string();
+        req.route.provider_model_id = "moonshotai/kimi-k2.7-code".to_string();
+        req.route.credential_ref =
+            Some("env:ADL_PROVIDER_ADAPTER_OPENROUTER_ARRAY_KEY".to_string());
+        req.model_identity = hosted_model_identity(
+            "openrouter",
+            "moonshotai/kimi-k2.7-code",
+            "reviewer/fast",
+            Some("test".to_string()),
+        );
+        let result = execute_provider_invocation(req, &mut logger);
+        drop(logger);
+
+        assert_eq!(result.final_status, ProviderInvocationFinalStatusV1::Ok);
+        assert_eq!(result.output_text.as_deref(), Some("array success"));
+        assert_eq!(
+            result.model_identity.provider_model_id,
+            "moonshotai/kimi-k2.7-code"
+        );
+
+        let _ = fs::remove_file(path);
+        env::remove_var("ADL_PROVIDER_ADAPTER_OPENROUTER_ARRAY_KEY");
+    }
+
+    #[test]
+    fn openrouter_hosted_adapter_surfaces_error_envelope_on_success_status() {
+        env::set_var("ADL_PROVIDER_ADAPTER_OPENROUTER_ERROR_KEY", "test-key");
+        let endpoint = one_shot_server(
+            r#"{"error":{"message":"Claude Fable 5 is not available","code":404}}"#,
+            "200 OK",
+        );
+        let path = temp_log("openrouter-error-envelope");
+        let mut logger = ProviderRunLoggerV1::create(&path, "run-test").expect("open logger");
+        let mut req = request(RuntimeSurfaceV1::HostedApi, endpoint);
+        req.route.provider = "openrouter".to_string();
+        req.route.provider_model_id = "anthropic/claude-fable-5".to_string();
+        req.route.credential_ref =
+            Some("env:ADL_PROVIDER_ADAPTER_OPENROUTER_ERROR_KEY".to_string());
+        req.model_identity = hosted_model_identity(
+            "openrouter",
+            "anthropic/claude-fable-5",
+            "reviewer/fast",
+            Some("test".to_string()),
+        );
+
+        let result = execute_provider_invocation(req, &mut logger);
+        drop(logger);
+
+        assert_eq!(result.final_status, ProviderInvocationFinalStatusV1::Failed);
+        assert_eq!(
+            result.failure.as_ref().map(|failure| failure.kind.clone()),
+            Some(ProviderFailureKindV1::ProviderError)
+        );
+        assert!(result
+            .failure
+            .as_ref()
+            .is_some_and(|failure| failure.message.contains("not available")));
+
+        let _ = fs::remove_file(path);
+        env::remove_var("ADL_PROVIDER_ADAPTER_OPENROUTER_ERROR_KEY");
+    }
+
+    #[test]
+    fn openrouter_hosted_adapter_classifies_reasoning_only_output() {
+        env::set_var("ADL_PROVIDER_ADAPTER_OPENROUTER_REASONING_KEY", "test-key");
+        let endpoint = one_shot_server(
+            r#"{"model":"moonshotai/kimi-k2.7-code","choices":[{"message":{"content":null,"reasoning":"spent all budget thinking"}}]}"#,
+            "200 OK",
+        );
+        let path = temp_log("openrouter-reasoning-only");
+        let mut logger = ProviderRunLoggerV1::create(&path, "run-test").expect("open logger");
+        let mut req = request(RuntimeSurfaceV1::HostedApi, endpoint);
+        req.route.provider = "openrouter".to_string();
+        req.route.provider_model_id = "moonshotai/kimi-k2.7-code".to_string();
+        req.route.credential_ref =
+            Some("env:ADL_PROVIDER_ADAPTER_OPENROUTER_REASONING_KEY".to_string());
+        req.model_identity = hosted_model_identity(
+            "openrouter",
+            "moonshotai/kimi-k2.7-code",
+            "reviewer/fast",
+            Some("test".to_string()),
+        );
+
+        let result = execute_provider_invocation(req, &mut logger);
+        drop(logger);
+
+        assert_eq!(result.final_status, ProviderInvocationFinalStatusV1::Failed);
+        assert_eq!(
+            result.failure.as_ref().map(|failure| failure.kind.clone()),
+            Some(ProviderFailureKindV1::ProviderError)
+        );
+        assert!(result.failure.as_ref().is_some_and(|failure| {
+            failure
+                .message
+                .contains("reasoning-only output without final content")
+        }));
+
+        let _ = fs::remove_file(path);
+        env::remove_var("ADL_PROVIDER_ADAPTER_OPENROUTER_REASONING_KEY");
     }
 
     #[test]

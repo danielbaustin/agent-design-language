@@ -7,10 +7,10 @@ Model: `z-ai/glm-5.2`
 ## Output
 
 # Findings
-The excerpt contains a direct contradiction: it states the "Integration state: merged" while simultaneously claiming "no PR has been published yet." Additionally, it suggests to "merge the issue immediately" despite the integration already supposedly being merged and finish evidence being absent. 
+The excerpt contradicts itself by stating the integration state is "merged" while simultaneously stating "no PR has been published yet" and listing a next action to "merge the issue immediately."
 
 # Severity
 P1
 
 # Non-Claims
-Only the supplied excerpt was reviewed. No unseen repository state, files, commits, or PR history beyond the provided text were inferred or evaluated.
+Only the supplied excerpt was reviewed.

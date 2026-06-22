@@ -22,6 +22,11 @@
       "key_file": "~/keys/openrouter.key"
     }
   ],
+  "runner_replay_attempts": 2,
+  "runner_replay_failure_kinds": [
+    "provider_empty_text_output",
+    "provider_timeout"
+  ],
   "non_claims": [
     "does_not_claim_native_provider_equivalence",
     "does_not_grant_merge_closeout_or_repo_mutation_authority",
@@ -47,12 +52,12 @@
       "task_id": "review_findings_v1",
       "required_review_all_tokens": ["openrouter"],
       "required_review_any_tokens": ["adl-native", "octocrab"],
-      "prompt": "Review the following supplied document excerpt only.\nReturn markdown only with exactly these headings:\n# Findings\n# Severity\n# Routing\n# Residual Risk\n\nRequirements:\n- Focus on proof-boundary drift, not code correctness\n- Mention that OpenRouter route evidence must stay distinct from native provider proof\n- Mention ADL-native or Octocrab proof exactly once\n- The # Severity body must be exactly P2 or P3\n- Under # Residual Risk include the exact phrase: no code-correctness claim\n- Keep the response under 150 words\n\nExcerpt:\nValidation evidence:\n- OpenRouter route packet for anthropic/claude-fable-5 and openai/gpt-5.4\n- Draft note says the route proof proves Anthropic and OpenAI direct-hosted suitability too\n- manual GitHub snapshots used as current publication proof"
+      "prompt": "Review the following supplied document excerpt only.\nReturn markdown only with exactly these headings:\n# Findings\n# Severity\n# Routing\n# Residual Risk\n\nRequirements:\n- Focus on proof-boundary drift, not code correctness\n- Mention that OpenRouter route evidence must stay distinct from native provider proof\n- Mention ADL-native or Octocrab proof exactly once\n- The # Severity body must be exactly P2 or P3\n- Under # Residual Risk include the exact phrase: no code-correctness claim\n- Keep the response under 150 words\n\nExcerpt:\nValidation evidence:\n- OpenRouter route packet for anthropic/claude-opus-4.8 and openai/gpt-5.4\n- Draft note says the route proof proves Anthropic and OpenAI direct-hosted suitability too\n- manual GitHub snapshots used as current publication proof"
     },
     {
       "task_id": "bounded_planner_v1",
       "required_plan_bits": [
-        "anthropic/claude-fable-5",
+        "anthropic/claude-opus-4.8",
         "openai/gpt-5.4",
         "z-ai/glm-5.2",
         "moonshotai/kimi-k2.7-code",
@@ -62,7 +67,7 @@
         "malformed",
         "no repo-mutation authority"
       ],
-      "prompt": "Produce a bounded execution plan for issue #4429 only.\nReturn markdown only with exactly these headings:\n# Plan\n# Blockers\n# Assumptions\n# Non-Claims\n\nRequirements:\n- # Plan must contain exactly four numbered steps\n- Mention anthropic/claude-fable-5, openai/gpt-5.4, z-ai/glm-5.2, moonshotai/kimi-k2.7-code, and google/gemini-3.5-flash\n- Mention one shared five-task suitability panel\n- Mention that blocked or malformed lanes must be recorded explicitly\n- Under # Non-Claims say no repo-mutation authority\n- Keep the response under 170 words"
+      "prompt": "Produce a bounded execution plan for issue #4429 only.\nReturn markdown only with exactly these headings:\n# Plan\n# Blockers\n# Assumptions\n# Non-Claims\n\nRequirements:\n- # Plan must contain exactly four numbered steps\n- Mention anthropic/claude-opus-4.8, openai/gpt-5.4, z-ai/glm-5.2, moonshotai/kimi-k2.7-code, and google/gemini-3.5-flash\n- Mention one shared five-task suitability panel\n- Mention that blocked or malformed lanes must be recorded explicitly\n- Under # Non-Claims say no repo-mutation authority\n- Keep the response under 170 words"
     },
     {
       "task_id": "closeout_checker_v1",
@@ -75,14 +80,14 @@
   ],
   "candidates": [
     {
-      "candidate_id": "openrouter:claude-fable-5",
+      "candidate_id": "openrouter:claude-opus-4.8",
       "provider_lane": "openrouter",
-      "provider_profile_ref": "unprofiled:openrouter:anthropic/claude-fable-5",
+      "provider_profile_ref": "unprofiled:openrouter:anthropic/claude-opus-4.8",
       "provider_family": "openrouter",
       "provider_spec_kind": "openrouter",
       "provider": "openrouter",
-      "model_ref": "anthropic/claude-fable-5",
-      "provider_model_id": "anthropic/claude-fable-5",
+      "model_ref": "anthropic/claude-opus-4.8",
+      "provider_model_id": "anthropic/claude-opus-4.8",
       "runtime_surface": "hosted_api",
       "credential_source": "$HOME/keys/openrouter.key",
       "credential_ref": "env:OPENROUTER_API_KEY",

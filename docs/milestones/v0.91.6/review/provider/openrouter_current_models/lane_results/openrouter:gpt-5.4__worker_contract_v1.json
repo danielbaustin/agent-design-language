@@ -21,19 +21,19 @@
   "attempts": [
     {
       "attempt_index": 1,
-      "started_at": "unix:1782153977",
-      "duration_ms": 1612,
+      "started_at": "unix:1782158646",
+      "duration_ms": 1433,
       "status": "ok",
       "retryable": false,
       "http_status": 200,
-      "raw_response_excerpt": "[redacted response len=380 sha256=6d653dd4bad0]"
+      "raw_response_excerpt": "[redacted response len=384 sha256=3728bb71c27e]"
     }
   ],
   "final_status": "ok",
-  "duration_ms": 1612,
+  "duration_ms": 1434,
   "request_id": "openrouter:gpt-5.4__worker_contract_v1",
-  "output_text_excerpt": "[redacted response len=380 sha256=6d653dd4bad0]",
-  "artifact_ref": "<tmp>/result.json@6983dd323772d3d7",
-  "output_text_chars": 380,
-  "output_text_digest": "sha256:6d653dd4bad0"
+  "output_text_excerpt": "[redacted response len=384 sha256=3728bb71c27e]",
+  "artifact_ref": "<tmp>/result.json@423d752211669e6d",
+  "output_text_chars": 384,
+  "output_text_digest": "sha256:3728bb71c27e"
 }

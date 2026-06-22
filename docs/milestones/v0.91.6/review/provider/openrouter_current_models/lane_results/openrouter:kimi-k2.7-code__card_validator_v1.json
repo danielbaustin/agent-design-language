@@ -12,7 +12,7 @@
     "provider_kind": "hosted",
     "provider": "openrouter",
     "model_ref": "moonshotai/kimi-k2.7-code",
-    "provider_model_id": "moonshotai/kimi-k2.7-code",
+    "provider_model_id": "moonshotai/kimi-k2.7-code-20260612",
     "runtime_surface": "hosted_api",
     "identity_strength": "provider_asserted",
     "observed_at": "unix:1",
@@ -21,29 +21,19 @@
   "attempts": [
     {
       "attempt_index": 1,
-      "started_at": "unix:1782154035",
-      "duration_ms": 2886,
-      "status": "error",
+      "started_at": "unix:1782158765",
+      "duration_ms": 9775,
+      "status": "ok",
       "retryable": false,
       "http_status": 200,
-      "failure": {
-        "kind": "provider_empty_text_output",
-        "retryable": false,
-        "message": "empty provider output",
-        "provider_error_excerpt": "empty provider output",
-        "http_status": 200
-      }
+      "raw_response_excerpt": "[redacted response len=445 sha256=3bdb6ca1b89f]"
     }
   ],
-  "final_status": "failed",
-  "duration_ms": 2886,
+  "final_status": "ok",
+  "duration_ms": 9776,
   "request_id": "openrouter:kimi-k2.7-code__card_validator_v1",
-  "failure": {
-    "kind": "provider_empty_text_output",
-    "retryable": false,
-    "message": "empty provider output",
-    "provider_error_excerpt": "empty provider output",
-    "http_status": 200
-  },
-  "artifact_ref": "<tmp>/result.json@2893c8819b5fdd27"
+  "output_text_excerpt": "[redacted response len=445 sha256=3bdb6ca1b89f]",
+  "artifact_ref": "<tmp>/result.json@3c19208e78d2d1ed",
+  "output_text_chars": 445,
+  "output_text_digest": "sha256:3bdb6ca1b89f"
 }

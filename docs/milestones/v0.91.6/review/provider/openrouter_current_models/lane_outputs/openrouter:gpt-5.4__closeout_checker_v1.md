@@ -7,10 +7,10 @@ Model: `openai/gpt-5.4`
 ## Output
 
 # Decision
-needs_remediation
+blocked
 
 # Reasons
-Issue #4429 is still open, so closure is not yet supported by the supplied evidence. The evidence only shows a bound worktree and selected candidate routes, which are preparatory rather than completion proof. No PR or merge evidence is supplied, and no final proof packet is supplied. Based on the provided evidence alone, it is not safe to close.
+Issue #4429 is still open, so closure is not yet supported by the supplied evidence. The evidence only shows setup/status information (worktree bound, candidate routes selected). No PR or merge evidence is supplied, so there is no documented implementation or integration path to assess. No final proof packet is supplied, so there is no completion evidence to validate readiness to close.
 
 # Missing Evidence
 - PR or merge evidence
