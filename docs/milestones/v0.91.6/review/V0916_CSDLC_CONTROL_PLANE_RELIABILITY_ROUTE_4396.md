@@ -57,10 +57,14 @@ The routing above is already reflected in tracked planning truth:
 - `docs/milestones/v0.91.7/FEATURE_DOCS_v0.91.7.md`
 - `docs/milestones/v0.91.7/MILESTONE_CHECKLIST_v0.91.7.md`
 
-Those planning surfaces already treat `#4388` plus the late input wave
-`#4405`, `#4412`-`#4413`, `#4417`-`#4421`, `#4425`, `#4431`, `#4441`,
-`#4433`-`#4438`, and `#4442`-`#4443` as the required truth-consumption stream
-for reliable sprint-scale execution.
+Those planning surfaces already consume the broader v0.91.6 control-plane
+completion stream headed by `#4388`-`#4398`, plus the late control-plane input
+wave that must be completed, blocked, deferred, or routed before v0.91.7 and
+v0.92 rely on sprint-scale execution. This packet infers that the enumerated
+owner set above is the current bounded routing home for the unresolved
+reliability surface; the planning docs are evidence of that broader
+truth-consumption stream, not a one-for-one endorsement of each routed owner
+row in this packet.
 
 ## Findings
 
