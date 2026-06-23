@@ -130,6 +130,19 @@ if [ "$(wc -l <"$direct_tooling_binaries_filters" | tr -d ' ')" -ne 1 ]; then
   exit 1
 fi
 
+native_gws_demo_bins_changed="$TMP/native-gws-demo-bins-changed.txt"
+cat >"$native_gws_demo_bins_changed" <<'EOF'
+M	adl/src/bin/demo_adl_gws_context_mirror.rs
+M	adl/src/bin/demo_adl_gws_native_drive_sync.rs
+EOF
+native_gws_demo_bins_filters="$TMP/native-gws-demo-bins-filters.txt"
+bash "$SCRIPT" --changed-files "$native_gws_demo_bins_changed" --print-risk-filters >"$native_gws_demo_bins_filters"
+grep -Fx "demo_adl_gws_context_mirror" "$native_gws_demo_bins_filters" >/dev/null
+grep -Fx "demo_adl_gws_native_drive_sync" "$native_gws_demo_bins_filters" >/dev/null
+native_gws_demo_bins_expression="$(bash "$SCRIPT" --changed-files "$native_gws_demo_bins_changed" --print-risk-nextest-expression)"
+grep -F "binary_id(adl::bin/demo-adl-gws-context-mirror) and test(/^tests::/)" <<<"$native_gws_demo_bins_expression" >/dev/null
+grep -F "binary_id(adl::bin/demo-adl-gws-native-drive-sync) and test(/^tests::/)" <<<"$native_gws_demo_bins_expression" >/dev/null
+
 gws_live_changed="$TMP/gws-live-changed.txt"
 cat >"$gws_live_changed" <<'EOF'
 A	adl/src/gws_live_capability_execution_surface.rs

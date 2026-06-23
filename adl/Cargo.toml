@@ -94,6 +94,14 @@ path = "src/bin/adl_remote.rs"
 name = "adl-provider-adapter"
 path = "tools/adl_provider_adapter.rs"
 
+[[bin]]
+name = "demo-adl-gws-native-drive-sync"
+path = "src/bin/demo_adl_gws_native_drive_sync.rs"
+
+[[bin]]
+name = "demo-adl-gws-context-mirror"
+path = "src/bin/demo_adl_gws_context_mirror.rs"
+
 [features]
 # Heavy runtime_v2 proof-materialization and CLI proof-smoke tests stay out of
 # ordinary `cargo test` but remain covered by authoritative `--all-features`
@@ -142,6 +150,11 @@ reqwest = { version = "0.12", default-features = false, features = [
   "blocking",
   "rustls-tls",
 ] }
+google-workspace = "0.22.5"
+yup-oauth2 = "12"
+async-trait = "0.1"
+dirs = "5"
+mime_guess2 = "2.3.1"
 octocrab = { version = "0.53", default-features = false, features = [
   "default-client",
   "jwt-rust-crypto",
@@ -150,7 +163,7 @@ octocrab = { version = "0.53", default-features = false, features = [
 ] }
 # Shared async runtime floor for long-lived cadence, ACIP runtime work, and
 # later bounded recurring verification on the existing ADL runtime.
-tokio = { version = "1", features = ["macros", "net", "rt", "rt-multi-thread", "sync", "time"] }
+tokio = { version = "1", features = ["fs", "macros", "net", "rt", "rt-multi-thread", "sync", "time"] }
 
 # JSON Schema (Option A)
 schemars = "0.8"

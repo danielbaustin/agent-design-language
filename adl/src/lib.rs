@@ -13,6 +13,9 @@
 
 pub mod acc;
 pub mod adl;
+pub mod adl_gws_context_mirror;
+pub mod adl_gws_drive_sync;
+pub mod adl_gws_native;
 pub mod adversarial_execution_runner;
 pub mod adversarial_runtime;
 pub mod agent_comms;
