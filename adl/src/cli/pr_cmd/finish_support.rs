@@ -1,5 +1,6 @@
 use anyhow::{bail, Context, Result};
-use serde::Deserialize;
+use serde::{Deserialize, Serialize};
+use serde_yaml::{Mapping, Value};
 use std::collections::BTreeSet;
 use std::fs;
 use std::path::{Path, PathBuf};
@@ -139,6 +140,16 @@ pub(super) fn real_pr_finish(args: &[String]) -> Result<()> {
         run_finish_validation_rust(&repo_root, &finish_validation_plan)?;
         record_docs_only_validation_evidence_for_finish(&output_path, &finish_validation_plan)?;
     }
+    record_sor_emitted_facts_for_finish(
+        &output_path,
+        &review_policy_path,
+        &changed_paths,
+        &finish_validation_plan,
+        if parsed.no_checks { "NOT_RUN" } else { "PASS" },
+        None,
+        "worktree_only",
+        false,
+    )?;
     validate_completed_sor(&repo_root, &output_path)?;
 
     let canonical_output = lifecycle::sync_completed_output_surfaces(
@@ -239,6 +250,30 @@ pub(super) fn real_pr_finish(args: &[String]) -> Result<()> {
         parsed.no_close,
         &pr_body_file,
     )?;
+    record_sor_emitted_facts_for_finish(
+        &output_path,
+        &review_policy_path,
+        &changed_paths,
+        &finish_validation_plan,
+        if parsed.no_checks { "NOT_RUN" } else { "PASS" },
+        Some(pr_url.as_str()),
+        "pr_open",
+        _closing_linkage_repaired,
+    )?;
+    validate_completed_sor(&repo_root, &output_path)?;
+    let canonical_output = lifecycle::sync_completed_output_surfaces(
+        &repo_root,
+        &primary_root,
+        &issue_ref,
+        &output_path,
+    )?;
+    restage_finish_output_truth_paths(
+        &repo_root,
+        &primary_root,
+        &issue_ref,
+        &[output_path.clone(), canonical_output.clone()],
+    )?;
+    ensure_no_staged_issue_bundle_mutations(&repo_root, &issue_ref)?;
 
     if parsed.merge_mode {
         if parsed.ready {
@@ -629,6 +664,318 @@ fn record_docs_only_validation_evidence_for_finish(
         })?;
     }
     Ok(())
+}
+
+#[derive(Debug, Clone, PartialEq, Eq, Serialize)]
+struct SorFacts {
+    schema_version: &'static str,
+    changed_paths: Vec<String>,
+    validation: SorFactValidation,
+    review: SorFactReview,
+    finish: SorFactFinish,
+    integration: SorFactIntegration,
+}
+
+#[derive(Debug, Clone, PartialEq, Eq, Serialize)]
+struct SorFactValidation {
+    status: String,
+    commands: Vec<String>,
+}
+
+#[derive(Debug, Clone, PartialEq, Eq, Serialize)]
+struct SorFactReview {
+    findings_status: String,
+    recommended_outcome: String,
+    findings: Vec<String>,
+    fixes: Vec<String>,
+}
+
+#[derive(Debug, Clone, PartialEq, Eq, Serialize)]
+struct SorFactFinish {
+    pr_url: Option<String>,
+    blocking_notes: Vec<String>,
+    fix_notes: Vec<String>,
+}
+
+#[derive(Debug, Clone, PartialEq, Eq, Serialize)]
+struct SorFactIntegration {
+    state: String,
+    main_repo_paths: Vec<String>,
+}
+
+#[derive(Debug, Clone, PartialEq, Eq)]
+struct SorReviewEvidence {
+    findings_status: String,
+    recommended_outcome: String,
+    findings: Vec<String>,
+    fixes: Vec<String>,
+}
+
+fn record_sor_emitted_facts_for_finish(
+    output_path: &Path,
+    review_policy_path: &Path,
+    changed_paths: &[String],
+    plan: &FinishValidationPlan,
+    validation_status: &str,
+    pr_url: Option<&str>,
+    integration_state: &str,
+    closing_linkage_repaired: bool,
+) -> Result<()> {
+    let original = fs::read_to_string(output_path).with_context(|| {
+        format!(
+            "finish: failed to read output card {}",
+            output_path.display()
+        )
+    })?;
+    let review = read_sor_review_evidence(review_policy_path)?;
+    let normalized = normalize_sor_emitted_facts_text(
+        &original,
+        &build_sor_facts(
+            changed_paths,
+            plan,
+            validation_status,
+            &review,
+            pr_url,
+            integration_state,
+            closing_linkage_repaired,
+        ),
+    )?;
+    if normalized != original {
+        fs::write(output_path, normalized).with_context(|| {
+            format!(
+                "finish: failed to write emitted SOR facts into output card {}",
+                output_path.display()
+            )
+        })?;
+    }
+    Ok(())
+}
+
+fn build_sor_facts(
+    changed_paths: &[String],
+    plan: &FinishValidationPlan,
+    validation_status: &str,
+    review: &SorReviewEvidence,
+    pr_url: Option<&str>,
+    integration_state: &str,
+    closing_linkage_repaired: bool,
+) -> SorFacts {
+    let fix_notes = if closing_linkage_repaired {
+        vec!["repaired missing PR closing linkage".to_string()]
+    } else {
+        vec!["none".to_string()]
+    };
+    SorFacts {
+        schema_version: "adl.sor_facts.v1",
+        changed_paths: changed_paths.to_vec(),
+        validation: SorFactValidation {
+            status: validation_status.to_string(),
+            commands: plan.commands.clone(),
+        },
+        review: SorFactReview {
+            findings_status: review.findings_status.clone(),
+            recommended_outcome: review.recommended_outcome.clone(),
+            findings: review.findings.clone(),
+            fixes: review.fixes.clone(),
+        },
+        finish: SorFactFinish {
+            pr_url: pr_url.map(str::to_string),
+            blocking_notes: vec!["none".to_string()],
+            fix_notes,
+        },
+        integration: SorFactIntegration {
+            state: integration_state.to_string(),
+            main_repo_paths: changed_paths.to_vec(),
+        },
+    }
+}
+
+fn read_sor_review_evidence(review_policy_path: &Path) -> Result<SorReviewEvidence> {
+    let text = fs::read_to_string(review_policy_path).with_context(|| {
+        format!(
+            "finish: failed to read review policy card {}",
+            review_policy_path.display()
+        )
+    })?;
+    Ok(parse_sor_review_evidence(&text))
+}
+
+fn parse_sor_review_evidence(text: &str) -> SorReviewEvidence {
+    let (findings_status, recommended_outcome) = review_results_from_front_matter(text)
+        .unwrap_or_else(|| ("not_run".to_string(), "not_run".to_string()));
+    let findings = bullet_lines_from_markdown_section(text, "Findings");
+    let fixes = bullet_lines_from_markdown_section(text, "Dispositions");
+    SorReviewEvidence {
+        findings_status,
+        recommended_outcome,
+        findings: if findings.is_empty() {
+            vec!["not_recorded".to_string()]
+        } else {
+            findings
+        },
+        fixes: if fixes.is_empty() {
+            vec!["not_recorded".to_string()]
+        } else {
+            fixes
+        },
+    }
+}
+
+fn review_results_from_front_matter(text: &str) -> Option<(String, String)> {
+    let front_matter = extract_yaml_front_matter(text)?;
+    let yaml: Value = serde_yaml::from_str(front_matter).ok()?;
+    let mapping = yaml.as_mapping()?;
+    let review_results = mapping.get(Value::String("review_results".to_string()))?;
+    let review_mapping = review_results.as_mapping()?;
+    let findings_status = yaml_mapping_string(review_mapping, "findings_status")
+        .unwrap_or_else(|| "not_run".to_string());
+    let recommended_outcome = yaml_mapping_string(review_mapping, "recommended_outcome")
+        .unwrap_or_else(|| "not_run".to_string());
+    Some((findings_status, recommended_outcome))
+}
+
+fn extract_yaml_front_matter(text: &str) -> Option<&str> {
+    let mut cursor = 0usize;
+    let mut lines = text.split_inclusive('\n');
+    let first = lines.next()?;
+    if first.trim_end_matches(['\r', '\n']).trim() != "---" {
+        return None;
+    }
+    let content_start = first.len();
+    cursor += first.len();
+    for line in lines {
+        let trimmed = line.trim_end_matches(['\r', '\n']).trim();
+        if trimmed == "---" {
+            return text.get(content_start..cursor);
+        }
+        cursor += line.len();
+    }
+    None
+}
+
+fn yaml_mapping_string(mapping: &Mapping, key: &str) -> Option<String> {
+    mapping
+        .get(Value::String(key.to_string()))
+        .and_then(Value::as_str)
+        .map(str::to_string)
+}
+
+fn bullet_lines_from_markdown_section(text: &str, heading: &str) -> Vec<String> {
+    markdown_section_body_local(text, heading)
+        .map(|body| {
+            body.lines()
+                .map(str::trim)
+                .filter_map(|line| line.strip_prefix("- "))
+                .map(str::trim)
+                .filter(|line| !line.is_empty())
+                .map(str::to_string)
+                .collect::<Vec<_>>()
+        })
+        .unwrap_or_default()
+}
+
+fn normalize_sor_emitted_facts_text(text: &str, facts: &SorFacts) -> Result<String> {
+    let Some(summary_body) = markdown_section_body_local(text, "Verification Summary") else {
+        return Ok(text.to_string());
+    };
+    let updated_summary = update_verification_summary_yaml(&summary_body, facts)?;
+    Ok(
+        replace_markdown_section_body(text, "Verification Summary", &updated_summary)
+            .unwrap_or_else(|_| text.to_string()),
+    )
+}
+
+fn update_verification_summary_yaml(body: &str, facts: &SorFacts) -> Result<String> {
+    let facts_value = serde_yaml::to_value(facts)
+        .context("finish: failed to serialize emitted SOR facts into YAML")?;
+    let Some(yaml) = extract_fenced_yaml_block(body) else {
+        return append_standalone_sor_facts_block(body, facts_value);
+    };
+    let mut value: Value = match serde_yaml::from_str(&yaml) {
+        Ok(value) => value,
+        Err(_) => return append_standalone_sor_facts_block(body, facts_value),
+    };
+    let Some(mapping) = value.as_mapping_mut() else {
+        return append_standalone_sor_facts_block(body, facts_value);
+    };
+    mapping.insert(Value::String("sor_facts".to_string()), facts_value);
+    render_yaml_fence(&value)
+}
+
+fn extract_fenced_yaml_block(body: &str) -> Option<String> {
+    let mut lines = body.lines();
+    let first = lines.next()?.trim();
+    if !first.starts_with("```") {
+        return None;
+    }
+    let mut yaml_lines = Vec::new();
+    for line in lines {
+        if line.trim() == "```" {
+            return Some(yaml_lines.join("\n"));
+        }
+        yaml_lines.push(line.to_string());
+    }
+    None
+}
+
+fn append_standalone_sor_facts_block(body: &str, facts_value: Value) -> Result<String> {
+    let mut sor_facts = Mapping::new();
+    sor_facts.insert(Value::String("sor_facts".to_string()), facts_value);
+    let fenced = render_yaml_fence(&Value::Mapping(sor_facts))?;
+    let mut out = strip_existing_standalone_sor_facts_block(body)
+        .trim_end()
+        .to_string();
+    if !out.is_empty() {
+        out.push_str("\n\n");
+    }
+    out.push_str("Machine-readable SOR facts:\n\n");
+    out.push_str(&fenced);
+    Ok(out)
+}
+
+fn strip_existing_standalone_sor_facts_block(body: &str) -> &str {
+    if let Some(idx) = body.find("Machine-readable SOR facts:\n") {
+        &body[..idx]
+    } else {
+        body
+    }
+}
+
+fn render_yaml_fence(value: &Value) -> Result<String> {
+    let mut rendered = serde_yaml::to_string(value)
+        .context("finish: failed to render Verification Summary YAML with emitted SOR facts")?;
+    if let Some(stripped) = rendered.strip_prefix("---\n") {
+        rendered = stripped.to_string();
+    }
+    Ok(format!("```yaml\n{rendered}```"))
+}
+
+#[cfg(test)]
+pub(super) fn normalize_sor_emitted_facts_fixture(
+    text: &str,
+    changed_paths: &[String],
+    commands: &[String],
+    review_text: &str,
+    validation_status: &str,
+    pr_url: Option<&str>,
+    integration_state: &str,
+    closing_linkage_repaired: bool,
+) -> Result<String> {
+    let plan = FinishValidationPlan {
+        mode: FinishValidationMode::LargerBinaryFocused,
+        commands: commands.to_vec(),
+    };
+    let review = parse_sor_review_evidence(review_text);
+    let facts = build_sor_facts(
+        changed_paths,
+        &plan,
+        validation_status,
+        &review,
+        pr_url,
+        integration_state,
+        closing_linkage_repaired,
+    );
+    normalize_sor_emitted_facts_text(text, &facts)
 }
 
 pub(super) fn restage_finish_output_truth_paths(

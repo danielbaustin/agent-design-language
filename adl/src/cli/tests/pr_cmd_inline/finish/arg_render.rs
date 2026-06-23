@@ -4,8 +4,8 @@ use crate::cli::pr_cmd::finish_support::{
     ensure_no_staged_issue_bundle_mutations, extra_pr_body_looks_like_issue_template,
     extract_markdown_section, finish_declared_paths_for_validation, finish_inputs_fingerprint,
     issue_bundle_issue_number_from_repo_relative, load_finish_validation_profile,
-    non_closing_lifecycle_line, normalize_docs_only_sor_text, open_pr_url_nonblocking,
-    open_pr_url_nonblocking_with_timeout, real_pr_finish,
+    non_closing_lifecycle_line, normalize_docs_only_sor_text, normalize_sor_emitted_facts_fixture,
+    open_pr_url_nonblocking, open_pr_url_nonblocking_with_timeout, real_pr_finish,
     reject_local_issue_bundle_paths_in_finish_paths, render_default_finish_validation,
     resolve_finish_issue_scope_and_slug, restage_finish_output_truth_paths,
     run_finish_validation_status, select_finish_validation_plan_for_finish, FinishValidationMode,
@@ -418,6 +418,350 @@ verification_summary:
     let commands = vec!["git diff --check".to_string()];
     let normalized = normalize_docs_only_sor_text(input, &commands);
     assert_eq!(normalized.matches("git diff --check").count(), 2);
+}
+
+#[test]
+fn sor_emitted_facts_merge_review_validation_and_pr_publication_truth() {
+    let output = r#"## Verification Summary
+
+```yaml
+verification_summary:
+  validation:
+    status: PASS
+    checks_run:
+      - "git diff --check"
+  determinism:
+    status: NOT_RUN
+```
+"#;
+    let review = r#"---
+review_results:
+  findings_status: "findings_present"
+  recommended_outcome: "needs_followup"
+---
+
+# Structured Review Prompt
+
+## Findings
+
+- Missing focused regression test for fact merge.
+
+## Dispositions
+
+- Added focused SOR fact merge test coverage.
+"#;
+
+    let normalized = normalize_sor_emitted_facts_fixture(
+        output,
+        &[
+            "adl/src/cli/pr_cmd/finish_support.rs".to_string(),
+            "adl/src/cli/tests/pr_cmd_inline/finish/arg_render.rs".to_string(),
+        ],
+        &[
+            "git diff --check".to_string(),
+            "cargo test --manifest-path adl/Cargo.toml sor_emitted_facts_merge_review_validation_and_pr_publication_truth".to_string(),
+        ],
+        review,
+        "PASS",
+        Some("https://github.com/danielbaustin/agent-design-language/pull/9999"),
+        "pr_open",
+        true,
+    )
+    .expect("normalize sor emitted facts");
+
+    assert!(normalized.contains("sor_facts:"));
+    assert!(normalized.contains("schema_version: adl.sor_facts.v1"));
+    assert!(normalized.contains("findings_status: findings_present"));
+    assert!(normalized.contains("recommended_outcome: needs_followup"));
+    assert!(normalized.contains("Missing focused regression test for fact merge."));
+    assert!(normalized.contains("Added focused SOR fact merge test coverage."));
+    assert!(normalized
+        .contains("pr_url: https://github.com/danielbaustin/agent-design-language/pull/9999"));
+    assert!(normalized.contains("state: pr_open"));
+    assert!(normalized.contains("repaired missing PR closing linkage"));
+}
+
+#[test]
+fn sor_emitted_facts_merge_is_idempotent() {
+    let output = r#"## Verification Summary
+
+```yaml
+verification_summary:
+  validation:
+    status: PASS
+    checks_run:
+      - "git diff --check"
+  determinism:
+    status: NOT_RUN
+```
+"#;
+    let review = r#"---
+review_results:
+  findings_status: "no_findings"
+  recommended_outcome: "pass"
+---
+
+# Structured Review Prompt
+
+## Findings
+
+- No material findings.
+
+## Dispositions
+
+- No fixes required.
+"#;
+    let changed_paths = vec!["docs/example.md".to_string()];
+    let commands = vec!["git diff --check".to_string()];
+
+    let first = normalize_sor_emitted_facts_fixture(
+        output,
+        &changed_paths,
+        &commands,
+        review,
+        "PASS",
+        Some("https://example.test/pr/1"),
+        "pr_open",
+        false,
+    )
+    .expect("first normalize");
+    let second = normalize_sor_emitted_facts_fixture(
+        &first,
+        &changed_paths,
+        &commands,
+        review,
+        "PASS",
+        Some("https://example.test/pr/1"),
+        "pr_open",
+        false,
+    )
+    .expect("second normalize");
+
+    assert_eq!(first, second);
+}
+
+#[test]
+fn sor_emitted_facts_record_not_run_validation_truth_when_checks_are_skipped() {
+    let output = r#"## Verification Summary
+
+```yaml
+verification_summary:
+  validation:
+    status: NOT_RUN
+```
+"#;
+    let review = r#"---
+review_results:
+  findings_status: "not_run"
+  recommended_outcome: "not_run"
+---
+
+# Structured Review Prompt
+"#;
+
+    let normalized = normalize_sor_emitted_facts_fixture(
+        output,
+        &["docs/example.md".to_string()],
+        &["git diff --check".to_string()],
+        review,
+        "NOT_RUN",
+        None,
+        "worktree_only",
+        false,
+    )
+    .expect("normalize no-checks sor emitted facts");
+
+    assert!(normalized.contains("status: NOT_RUN"));
+    assert!(normalized.contains("pr_url: null"));
+}
+
+#[test]
+fn sor_emitted_facts_fallback_preserves_non_yaml_summary_and_appends_machine_readable_block() {
+    let output = r#"## Verification Summary
+
+plain-text verification summary that should not become a finish-time parse failure
+"#;
+    let review = r#"---
+review_results:
+  findings_status: "no_findings"
+  recommended_outcome: "pass"
+---
+
+# Structured Review Prompt
+
+## Findings
+
+- No material findings.
+
+## Dispositions
+
+- No fixes required.
+"#;
+
+    let normalized = normalize_sor_emitted_facts_fixture(
+        output,
+        &["docs/example.md".to_string()],
+        &["git diff --check".to_string()],
+        review,
+        "PASS",
+        Some("https://example.test/pr/2"),
+        "pr_open",
+        false,
+    )
+    .expect("normalize with fallback");
+
+    assert!(normalized.contains("plain-text verification summary"));
+    assert!(normalized.contains("Machine-readable SOR facts:"));
+    assert!(normalized.contains("sor_facts:"));
+}
+
+#[test]
+fn sor_emitted_facts_fallback_replaces_existing_machine_readable_block_instead_of_appending() {
+    let output = r#"## Verification Summary
+
+plain-text verification summary that should not become a finish-time parse failure
+"#;
+    let review = r#"---
+review_results:
+  findings_status: "no_findings"
+  recommended_outcome: "pass"
+---
+
+# Structured Review Prompt
+
+## Findings
+
+- No material findings.
+
+## Dispositions
+
+- No fixes required.
+"#;
+
+    let first = normalize_sor_emitted_facts_fixture(
+        output,
+        &["docs/example.md".to_string()],
+        &["git diff --check".to_string()],
+        review,
+        "PASS",
+        Some("https://example.test/pr/2"),
+        "worktree_only",
+        false,
+    )
+    .expect("first fallback normalize");
+    let second = normalize_sor_emitted_facts_fixture(
+        &first,
+        &["docs/example.md".to_string()],
+        &["git diff --check".to_string()],
+        review,
+        "PASS",
+        Some("https://example.test/pr/2"),
+        "pr_open",
+        false,
+    )
+    .expect("second fallback normalize");
+
+    assert_eq!(second.matches("Machine-readable SOR facts:").count(), 1);
+    assert!(second.contains("state: pr_open"));
+    assert!(!second.contains("state: worktree_only\n\nMachine-readable SOR facts:"));
+}
+
+#[test]
+fn sor_emitted_facts_fallback_is_idempotent_for_initially_empty_summary_body() {
+    let output = "## Verification Summary\n";
+    let review = r#"---
+review_results:
+  findings_status: "no_findings"
+  recommended_outcome: "pass"
+---
+
+# Structured Review Prompt
+
+## Findings
+
+- No material findings.
+"#;
+
+    let first = normalize_sor_emitted_facts_fixture(
+        output,
+        &["docs/example.md".to_string()],
+        &["git diff --check".to_string()],
+        review,
+        "PASS",
+        Some("https://example.test/pr/3"),
+        "worktree_only",
+        false,
+    )
+    .expect("first empty-body fallback normalize");
+    let second = normalize_sor_emitted_facts_fixture(
+        &first,
+        &["docs/example.md".to_string()],
+        &["git diff --check".to_string()],
+        review,
+        "PASS",
+        Some("https://example.test/pr/3"),
+        "pr_open",
+        false,
+    )
+    .expect("second empty-body fallback normalize");
+
+    assert_eq!(second.matches("Machine-readable SOR facts:").count(), 1);
+    assert!(second.contains("state: pr_open"));
+}
+
+#[test]
+fn sor_emitted_facts_default_review_truth_when_srp_front_matter_is_absent() {
+    let output = r#"## Verification Summary
+
+```yaml
+verification_summary:
+  validation:
+    status: PASS
+```
+"#;
+    let review = r#"# Structured Review Prompt
+
+## Findings
+
+- Review packet not finalized yet.
+"#;
+
+    let normalized = normalize_sor_emitted_facts_fixture(
+        output,
+        &["docs/example.md".to_string()],
+        &["git diff --check".to_string()],
+        review,
+        "PASS",
+        None,
+        "worktree_only",
+        false,
+    )
+    .expect("normalize without srp front matter");
+
+    assert!(normalized.contains("findings_status: not_run"));
+    assert!(normalized.contains("recommended_outcome: not_run"));
+    assert!(normalized.contains("Review packet not finalized yet."));
+}
+
+#[test]
+fn sor_emitted_facts_parse_review_truth_from_crlf_front_matter() {
+    let output = "## Verification Summary\n\n```yaml\nverification_summary:\n  validation:\n    status: PASS\n```\n";
+    let review = "---\r\nreview_results:\r\n  findings_status: \"no_findings\"\r\n  recommended_outcome: \"pass\"\r\n---\r\n\r\n# Structured Review Prompt\r\n\r\n## Findings\r\n\r\n- No material findings.\r\n";
+
+    let normalized = normalize_sor_emitted_facts_fixture(
+        output,
+        &["docs/example.md".to_string()],
+        &["git diff --check".to_string()],
+        review,
+        "PASS",
+        None,
+        "worktree_only",
+        false,
+    )
+    .expect("normalize crlf srp front matter");
+
+    assert!(normalized.contains("findings_status: no_findings"));
+    assert!(normalized.contains("recommended_outcome: pass"));
 }
 
 #[test]
