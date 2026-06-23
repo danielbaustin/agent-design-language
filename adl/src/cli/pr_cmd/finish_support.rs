@@ -1065,6 +1065,8 @@ pub(super) struct FinishValidationProfileRunItem {
     pub command: String,
     pub reason: String,
     #[serde(default)]
+    pub matched_paths: Vec<String>,
+    #[serde(default)]
     pub vpp_record: Option<FinishValidationVppRecord>,
 }
 
@@ -1096,6 +1098,12 @@ pub(super) struct FinishValidationProfileEscalationReason {
     pub lane_id: String,
     pub status: String,
     pub reason: String,
+    #[serde(default)]
+    pub matched_paths: Vec<String>,
+    #[serde(default)]
+    pub manifest_rule: Option<String>,
+    #[serde(default)]
+    pub remediation_hint: Option<String>,
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
@@ -1720,6 +1728,21 @@ pub(super) fn load_finish_validation_profile(
     repo_root: &Path,
     changed_paths: &[String],
 ) -> Result<FinishValidationProfile> {
+    load_finish_validation_profile_with_retention(repo_root, changed_paths, false)
+}
+
+fn load_finish_validation_profile_for_execution(
+    repo_root: &Path,
+    changed_paths: &[String],
+) -> Result<FinishValidationProfile> {
+    load_finish_validation_profile_with_retention(repo_root, changed_paths, true)
+}
+
+fn load_finish_validation_profile_with_retention(
+    repo_root: &Path,
+    changed_paths: &[String],
+    retain_changed_file_for_execution: bool,
+) -> Result<FinishValidationProfile> {
     let changed_file_body = changed_paths
         .iter()
         .map(|path| format!("M\t{path}"))
@@ -1727,6 +1750,7 @@ pub(super) fn load_finish_validation_profile(
         .join("\n");
     let changed_file_path =
         write_temp_text("finish-validation-profile", "txt", &changed_file_body)?;
+    let changed_file_path_str = path_str(&changed_file_path)?.to_string();
     let manager = repo_root.join("adl/tools/validation_manager.py");
     let output = run_capture(
         "python3",
@@ -1737,10 +1761,28 @@ pub(super) fn load_finish_validation_profile(
             "--json",
         ],
     );
-    let _ = fs::remove_file(&changed_file_path);
-    let output = output.context("finish: failed to load validation manager profile")?;
-    serde_json::from_str::<FinishValidationProfile>(&output)
-        .context("finish: validation manager returned invalid profile JSON")
+    let output = match output {
+        Ok(output) => output,
+        Err(err) => {
+            let _ = fs::remove_file(&changed_file_path);
+            return Err(err).context("finish: failed to load validation manager profile");
+        }
+    };
+    let profile = match serde_json::from_str::<FinishValidationProfile>(&output) {
+        Ok(profile) => profile,
+        Err(err) => {
+            let _ = fs::remove_file(&changed_file_path);
+            return Err(err).context("finish: validation manager returned invalid profile JSON");
+        }
+    };
+    let profile_needs_changed_file = profile
+        .run
+        .iter()
+        .any(|item| item.command.contains(&changed_file_path_str));
+    if !retain_changed_file_for_execution || !profile_needs_changed_file {
+        let _ = fs::remove_file(&changed_file_path);
+    }
+    Ok(profile)
 }
 
 pub(super) fn select_finish_validation_plan_for_finish(
@@ -1796,11 +1838,18 @@ pub(super) fn select_finish_validation_plan_for_finish(
     if finish_issue_needs_html_observatory_validation(issue_number, changed_paths) {
         return Ok(build_html_observatory_validation_plan(changed_paths));
     }
-    let finish_profile = load_finish_validation_profile(&repo_root()?, changed_paths)?;
+    let finish_profile =
+        load_finish_validation_profile_for_execution(&repo_root()?, changed_paths)?;
     if let Some(plan) = profile_backed_finish_validation_plan(&finish_profile) {
         return Ok(plan);
     }
-    select_finish_validation_plan(&changed_paths.join(","))
+    match select_finish_validation_plan(&changed_paths.join(",")) {
+        Ok(plan) => Ok(plan),
+        Err(legacy_err) => {
+            ensure_finish_validation_profile_is_runnable(&finish_profile, changed_paths)?;
+            Err(legacy_err)
+        }
+    }
 }
 
 fn profile_backed_finish_validation_plan(
@@ -1812,20 +1861,84 @@ fn profile_backed_finish_validation_plan(
     {
         return None;
     }
-    if profile.run.len() != 1 {
-        return None;
+    let mut commands = vec![
+        "bash adl/tools/check_no_tracked_adl_issue_record_residue.sh".to_string(),
+        "git diff --check".to_string(),
+    ];
+    for item in &profile.run {
+        push_finish_validation_command(&mut commands, &item.command);
     }
-    let item = &profile.run[0];
-    if item.lane_id != "docs_diff_check" {
-        return None;
+    let mode = profile_backed_finish_validation_mode(profile);
+    Some(FinishValidationPlan { mode, commands })
+}
+
+fn profile_backed_finish_validation_mode(
+    profile: &FinishValidationProfile,
+) -> FinishValidationMode {
+    if profile.run.len() == 1 && profile.run[0].lane_id == "docs_diff_check" {
+        return FinishValidationMode::DocsOnly;
     }
-    let mut commands =
-        vec!["bash adl/tools/check_no_tracked_adl_issue_record_residue.sh".to_string()];
-    push_finish_validation_command(&mut commands, &item.command);
-    Some(FinishValidationPlan {
-        mode: FinishValidationMode::DocsOnly,
-        commands,
-    })
+    if profile.run.iter().any(|item| {
+        item.lane_id == "rust_pr_fast"
+            || item.lane_id.contains("owner_lane")
+            || item.command.contains("run_owner_validation_lane.sh")
+            || item.command.contains("run_pr_fast_test_lane.sh")
+            || item
+                .command
+                .contains("cargo test --manifest-path adl/Cargo.toml")
+    }) {
+        return FinishValidationMode::LargerBinaryFocused;
+    }
+    FinishValidationMode::SmallBinaryFocused
+}
+
+fn ensure_finish_validation_profile_is_runnable(
+    profile: &FinishValidationProfile,
+    changed_paths: &[String],
+) -> Result<()> {
+    if profile.status == "ready_to_run"
+        && profile.pr_publication_sufficient
+        && !profile.escalation.required
+    {
+        return Ok(());
+    }
+    let changed = if changed_paths.is_empty() {
+        "<none>".to_string()
+    } else {
+        changed_paths.join(", ")
+    };
+    let mut details = vec![format!(
+        "finish: validation manager reported a non-runnable profile for changed paths: {}",
+        changed
+    )];
+    details.push(format!(
+        "profile={} status={} pr_publication_sufficient={}",
+        profile.selected_profile, profile.status, profile.pr_publication_sufficient
+    ));
+    if profile.escalation.required {
+        for reason in &profile.escalation.reasons {
+            let mut line = format!(
+                "lane={} status={} reason={}",
+                reason.lane_id, reason.status, reason.reason
+            );
+            if !reason.matched_paths.is_empty() {
+                line.push_str(&format!(
+                    " matched_paths={}",
+                    reason.matched_paths.join(",")
+                ));
+            }
+            if let Some(rule) = &reason.manifest_rule {
+                line.push_str(&format!(" manifest_rule={rule}"));
+            }
+            if let Some(hint) = &reason.remediation_hint {
+                line.push_str(&format!(" remediation_hint={hint}"));
+            }
+            details.push(line);
+        }
+    } else if profile.run.is_empty() {
+        details.push("validation manager selected no runnable lanes".to_string());
+    }
+    bail!("{}", details.join("; "))
 }
 
 fn finish_paths_are_version_metadata_update(changed_paths: &[String]) -> bool {
@@ -3590,6 +3703,22 @@ pub(super) fn run_finish_validation_rust(
                     let script = repo_root.join("adl/tools/run_owner_validation_lane.sh");
                     run_finish_validation_status("bash", &[path_str(&script)?, "runtime", "--build"])?;
                 }
+                other if other.starts_with(
+                    "bash adl/tools/run_pr_fast_test_lane.sh --changed-files ",
+                ) => {
+                    let Some(changed_files) =
+                        manager_backed_pr_fast_changed_files_arg(other)
+                    else {
+                        bail!("finish: unsupported focused validation command '{other}'");
+                    };
+                    let script = repo_root.join("adl/tools/run_pr_fast_test_lane.sh");
+                    let result = run_finish_validation_status(
+                        "bash",
+                        &[path_str(&script)?, "--changed-files", &changed_files],
+                    );
+                    let _ = fs::remove_file(&changed_files);
+                    result?;
+                }
                 "cargo test --manifest-path adl/Cargo.toml agent_comms --lib -- --nocapture" => {
                     run_finish_validation_status(
                         "cargo",
@@ -3688,6 +3817,16 @@ pub(super) fn run_finish_validation_rust(
         return Ok(());
     }
     bail!("finish: unsupported validation mode")
+}
+
+fn manager_backed_pr_fast_changed_files_arg(command: &str) -> Option<String> {
+    let changed_files = command
+        .strip_prefix("bash adl/tools/run_pr_fast_test_lane.sh --changed-files ")?
+        .trim();
+    if changed_files.is_empty() {
+        return None;
+    }
+    Some(changed_files.trim_matches('\'').to_string())
 }
 
 const FINISH_VALIDATION_SANITIZED_ENVS: &[&str] = &[
