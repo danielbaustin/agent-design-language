@@ -291,11 +291,10 @@ production markets.
 ## Project Status
 
 - Active milestone: v0.91.6
-- Current crate version: 0.91.5
-- Most recently completed milestone: v0.91.4
+- Current crate version: 0.91.6
+- Most recently completed milestone: v0.91.5
 - Current milestone state: v0.91.6 is executing as the first pre-v0.92 bridge
-  tranche, with WP-03 and WP-04 merged and later bridge/reliability lanes still
-  active.
+  tranche, with bridge/reliability lanes still active.
 - Previous completed milestone before v0.91.2: v0.91.1
 - Primary implementation language: Rust
 
