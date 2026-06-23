@@ -3929,6 +3929,41 @@ fn finish_owner_binary_paths_run_owner_binary_focused_validation() {
 }
 
 #[test]
+fn finish_path_ownership_registry_classifies_owner_binary_slice() {
+    let plan = select_finish_validation_plan("adl/src/session_ledger.rs")
+        .expect("owner binary registry plan");
+    assert_eq!(plan.mode, FinishValidationMode::LargerBinaryFocused);
+    assert!(plan.commands.iter().any(|cmd| cmd.contains("--bin adl")));
+}
+
+#[test]
+fn finish_path_ownership_registry_classifies_csdlc_owner_lane_contract() {
+    let plan = select_finish_validation_plan("adl/tools/test_pr_run_ambiguity_policy.sh")
+        .expect("csdlc owner lane registry plan");
+    assert_eq!(plan.mode, FinishValidationMode::LargerBinaryFocused);
+    assert!(plan
+        .commands
+        .iter()
+        .any(|cmd| cmd == "bash adl/tools/run_owner_validation_lane.sh csdlc"));
+}
+
+#[test]
+fn finish_path_ownership_registry_preserves_shared_owner_lane_overlap() {
+    let plan = select_finish_validation_plan("adl/tools/run_owner_validation_lane.sh")
+        .expect("shared owner lane registry plan");
+    assert_eq!(plan.mode, FinishValidationMode::LargerBinaryFocused);
+    assert!(plan
+        .commands
+        .contains(&"bash adl/tools/test_owner_validation_lane.sh".to_string()));
+    assert!(plan
+        .commands
+        .contains(&"bash adl/tools/run_owner_validation_lane.sh csdlc".to_string()));
+    assert!(plan
+        .commands
+        .contains(&"bash adl/tools/run_owner_validation_lane.sh all --build".to_string()));
+}
+
+#[test]
 fn finish_prompt_template_paths_run_prompt_template_focused_validation() {
     let _guard = env_lock();
     let temp = unique_temp_dir("adl-pr-finish-prompt-template-focused-validation");

@@ -1098,6 +1098,116 @@ pub(super) struct FinishValidationProfileEscalationReason {
     pub reason: String,
 }
 
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+enum FinishPathOwnerBinary {
+    Adl,
+    Csdlc,
+    OwnerValidationLane,
+}
+
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+enum FinishPathProofRole {
+    OwnerBinaryRustSlice,
+    OwnerLaneContract,
+    CsdlcOwnerLane,
+}
+
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+struct FinishPathOwnershipRule {
+    owner_binary: FinishPathOwnerBinary,
+    validation_lane: FinishValidationMode,
+    proof_role: FinishPathProofRole,
+    publication_sufficient: bool,
+    exact_paths: &'static [&'static str],
+    prefix_paths: &'static [&'static str],
+}
+
+const FINISH_PATH_OWNERSHIP_RULES: &[FinishPathOwnershipRule] = &[
+    FinishPathOwnershipRule {
+        owner_binary: FinishPathOwnerBinary::Adl,
+        validation_lane: FinishValidationMode::LargerBinaryFocused,
+        proof_role: FinishPathProofRole::OwnerBinaryRustSlice,
+        publication_sufficient: true,
+        exact_paths: &[
+            "adl/src/control_plane.rs",
+            "adl/src/lib.rs",
+            "adl/src/session_ledger.rs",
+            "adl/src/cli/session_cmd.rs",
+            "adl/src/cli/tests.rs",
+            "adl/src/csdlc_prompt_editor.rs",
+            "adl/src/cli/run_artifacts_types.rs",
+        ],
+        prefix_paths: &[
+            "adl/src/csdlc_prompt_editor/",
+            "adl/src/cli/run_artifacts_types/",
+        ],
+    },
+    FinishPathOwnershipRule {
+        owner_binary: FinishPathOwnerBinary::OwnerValidationLane,
+        validation_lane: FinishValidationMode::LargerBinaryFocused,
+        proof_role: FinishPathProofRole::OwnerLaneContract,
+        publication_sufficient: true,
+        exact_paths: &[
+            "adl/tools/run_owner_validation_lane.sh",
+            "adl/tools/test_owner_validation_lane.sh",
+            "adl/tools/test_control_plane_observability.sh",
+            "docs/milestones/v0.91.5/VALIDATION_LANE_SPLIT_3610.md",
+            "docs/milestones/v0.91.5/LOCAL_VS_CI_VALIDATION_POLICY_3607.md",
+        ],
+        prefix_paths: &[],
+    },
+    FinishPathOwnershipRule {
+        owner_binary: FinishPathOwnerBinary::Csdlc,
+        validation_lane: FinishValidationMode::LargerBinaryFocused,
+        proof_role: FinishPathProofRole::CsdlcOwnerLane,
+        publication_sufficient: true,
+        exact_paths: &[
+            "adl/tools/run_owner_validation_lane.sh",
+            "adl/tools/test_owner_validation_lane.sh",
+            "adl/tools/test_cli_wrapper_migration_contract.sh",
+            "adl/tools/test_pr_run_ambiguity_policy.sh",
+            "adl/tools/test_control_plane_observability.sh",
+            "docs/milestones/v0.91.5/VALIDATION_LANE_SPLIT_3610.md",
+            "docs/milestones/v0.91.5/LOCAL_VS_CI_VALIDATION_POLICY_3607.md",
+        ],
+        prefix_paths: &[],
+    },
+];
+
+fn finish_path_matches_ownership_rule(path: &str, rule: &FinishPathOwnershipRule) -> bool {
+    let trimmed = path.trim().trim_matches('/');
+    !trimmed.is_empty()
+        && (rule.exact_paths.contains(&trimmed)
+            || rule
+                .prefix_paths
+                .iter()
+                .any(|prefix| trimmed.starts_with(prefix)))
+}
+
+fn finish_path_matches_registry_proof_role(path: &str, role: FinishPathProofRole) -> bool {
+    FINISH_PATH_OWNERSHIP_RULES.iter().any(|rule| {
+        finish_path_matches_ownership_rule(path, rule)
+            && rule.proof_role == role
+            && rule.publication_sufficient
+    })
+}
+
+fn finish_path_matches_registry_lane(path: &str, lane: FinishValidationMode) -> bool {
+    FINISH_PATH_OWNERSHIP_RULES.iter().any(|rule| {
+        finish_path_matches_ownership_rule(path, rule)
+            && rule.validation_lane == lane
+            && rule.publication_sufficient
+    })
+}
+
+fn finish_path_matches_registry_owner(path: &str, owner: FinishPathOwnerBinary) -> bool {
+    FINISH_PATH_OWNERSHIP_RULES.iter().any(|rule| {
+        finish_path_matches_ownership_rule(path, rule)
+            && rule.owner_binary == owner
+            && rule.publication_sufficient
+    })
+}
+
 fn finish_validation_guard(repo_root: &Path) -> Result<()> {
     let tracked_residue_guard =
         repo_root.join("adl/tools/check_no_tracked_adl_issue_record_residue.sh");
@@ -1952,6 +2062,9 @@ fn finish_path_has_docs_artifact_extension(path: &str) -> bool {
 
 fn finish_path_is_small_binary_focused(path: &str) -> bool {
     let trimmed = path.trim().trim_matches('/');
+    if finish_path_matches_registry_lane(trimmed, FinishValidationMode::SmallBinaryFocused) {
+        return true;
+    }
     matches!(
         trimmed,
         "adl/tools/pr.sh"
@@ -1977,6 +2090,9 @@ fn finish_path_is_small_binary_focused(path: &str) -> bool {
 
 fn finish_path_is_larger_binary_focused(path: &str) -> bool {
     let trimmed = path.trim().trim_matches('/');
+    if finish_path_matches_registry_lane(trimmed, FinishValidationMode::LargerBinaryFocused) {
+        return true;
+    }
     matches!(
         trimmed,
         ".github/workflows/ci.yaml"
@@ -2155,16 +2271,7 @@ fn finish_path_needs_github_token_focused_validation(path: &str) -> bool {
 }
 
 fn finish_path_needs_owner_binary_rust_slice_validation(path: &str) -> bool {
-    let trimmed = path.trim().trim_matches('/');
-    trimmed == "adl/src/control_plane.rs"
-        || trimmed == "adl/src/lib.rs"
-        || trimmed == "adl/src/session_ledger.rs"
-        || trimmed == "adl/src/cli/session_cmd.rs"
-        || trimmed == "adl/src/cli/tests.rs"
-        || trimmed == "adl/src/csdlc_prompt_editor.rs"
-        || trimmed.starts_with("adl/src/csdlc_prompt_editor/")
-        || trimmed == "adl/src/cli/run_artifacts_types.rs"
-        || trimmed.starts_with("adl/src/cli/run_artifacts_types/")
+    finish_path_matches_registry_proof_role(path, FinishPathProofRole::OwnerBinaryRustSlice)
 }
 
 fn finish_path_needs_process_status_focused_validation(path: &str) -> bool {
@@ -2765,15 +2872,7 @@ fn finish_path_needs_locked_cargo_fallback_validation(path: &str) -> bool {
 }
 
 fn finish_path_needs_owner_lane_contract_validation(path: &str) -> bool {
-    let trimmed = path.trim().trim_matches('/');
-    matches!(
-        trimmed,
-        "adl/tools/run_owner_validation_lane.sh"
-            | "adl/tools/test_owner_validation_lane.sh"
-            | "adl/tools/test_control_plane_observability.sh"
-            | "docs/milestones/v0.91.5/VALIDATION_LANE_SPLIT_3610.md"
-            | "docs/milestones/v0.91.5/LOCAL_VS_CI_VALIDATION_POLICY_3607.md"
-    )
+    finish_path_matches_registry_proof_role(path, FinishPathProofRole::OwnerLaneContract)
 }
 
 fn finish_path_needs_repo_quality_staleness_validation(path: &str) -> bool {
@@ -2816,17 +2915,8 @@ fn finish_path_needs_private_endpoint_fixture_sanitation_validation(path: &str) 
 }
 
 fn finish_path_needs_csdlc_owner_lane_validation(path: &str) -> bool {
-    let trimmed = path.trim().trim_matches('/');
-    matches!(
-        trimmed,
-        "adl/tools/run_owner_validation_lane.sh"
-            | "adl/tools/test_owner_validation_lane.sh"
-            | "adl/tools/test_cli_wrapper_migration_contract.sh"
-            | "adl/tools/test_pr_run_ambiguity_policy.sh"
-            | "adl/tools/test_control_plane_observability.sh"
-            | "docs/milestones/v0.91.5/VALIDATION_LANE_SPLIT_3610.md"
-            | "docs/milestones/v0.91.5/LOCAL_VS_CI_VALIDATION_POLICY_3607.md"
-    )
+    finish_path_matches_registry_proof_role(path, FinishPathProofRole::CsdlcOwnerLane)
+        || finish_path_matches_registry_owner(path, FinishPathOwnerBinary::Csdlc)
 }
 
 fn finish_path_needs_runtime_owner_lane_validation(path: &str) -> bool {
