@@ -266,6 +266,12 @@ nextest_expression_for_filter() {
     finish)
       printf 'binary_id(adl::bin/adl-pr-finish) and test(/^cli::pr_cmd::tests::finish::arg_render::/) or binary_id(adl::bin/adl-pr-finish) and test(/^cli::pr_cmd::finish_support::tests::/)'
       ;;
+    demo_adl_gws_context_mirror)
+      printf 'binary_id(adl::bin/demo-adl-gws-context-mirror) and test(/^tests::/)'
+      ;;
+    demo_adl_gws_native_drive_sync)
+      printf 'binary_id(adl::bin/demo-adl-gws-native-drive-sync) and test(/^tests::/)'
+      ;;
     tooling_cmd)
       printf 'binary_id(adl::bin/adl) and test(/^cli::tooling_cmd::/)'
       ;;
