@@ -6,20 +6,25 @@ Scope: closed `version:v0.91.6` issues only; excludes closed sprint umbrellas an
 
 ## Findings
 
-### P2: Closed `#4388` child issues are now classifiable but still lack retained sprint-review consumption
-Closed issues `#4389` through `#4395`, plus `#4398`, all route to umbrella `#4388`, but `#4388` does not yet have a retained sprint-review packet. That means these closed child lanes are deliverable and reviewable, but they are not yet consumed by the same retained umbrella evidence path used for the older v0.91.6 sprint set. This matrix is therefore the current authoritative routing surface for those closed children rather than a completed sprint packet.
+### No new open evidence-topology findings remain after retained review normalization
+The initial draft identified two topology problems:
+
+- `#4388` lacked a retained sprint-review packet even though its closed child
+  lanes were already reviewable; and
+- `#3966`, `#4095`, `#4105`, and `#4154` still needed explicit consumption as
+  `mis_labeled_sprint_work` instead of being read as true singleton
+  deliveries.
+
+Both problems are now normalized in tracked evidence. `#4388` has a retained
+sprint-review packet plus an explicit `#4396` routed reliability packet, and
+the task-shaped sprint-management lanes remain classified as
+`mis_labeled_sprint_work` rather than open singleton-review defects.
 
 Evidence:
-- repo-native closed-issue list captured for `#4432`, whose issue bodies explicitly mark `#4389` through `#4395` as children of `#4388`
-- retained packet `docs/milestones/v0.91.6/review/context/FASTCONTEXT_EVALUATION_4398.md`, which records `Sprint umbrella: #4388`
-
-### P3: A few closed issues behaved as sprint-management lanes despite singleton/task labeling
-`#3966`, `#4095`, `#4105`, and `#4154` closed as task-shaped issues, but their bodies and retained downstream evidence show them functioning as umbrella or nested-wave management lanes. They should be consumed as mis-labeled sprint work, not treated as independent singleton deliveries in later release review.
-
-Evidence:
-- `#3966` issue body schedules the entire v0.91.6 issue wave
-- `#4095` and `#4154` are consumed by `docs/milestones/v0.91.6/review/provider/CURRENT_MODEL_SUITABILITY_MINI_SPRINT_REVIEW_4158.md`
-- `#4105` feature ownership lives in `docs/milestones/v0.91.6/features/COGNITIVE_SCHEDULER_v0.91.6.md` with `#4106` and `#4107` as execution children
+- `docs/milestones/v0.91.6/review/V0916_CSDLC_INTEGRATION_CONTROL_PLANE_SPRINT_REVIEW_4388.md`
+- `docs/milestones/v0.91.6/review/V0916_CSDLC_CONTROL_PLANE_RELIABILITY_ROUTE_4396.md`
+- `docs/milestones/v0.91.6/review/provider/CURRENT_MODEL_SUITABILITY_MINI_SPRINT_REVIEW_4158.md`
+- `docs/milestones/v0.91.6/features/COGNITIVE_SCHEDULER_v0.91.6.md`
 
 ### No new code-level correctness findings were identified in sampled high-risk singleton work products
 Focused code/docs/tests review over the high-risk singleton set did not uncover new correctness regressions beyond the routing findings above. The main residual risk is evidence topology, not a newly discovered runtime or tooling defect in the sampled surfaces.
@@ -30,7 +35,10 @@ Sampled high-risk singleton work products: `#4047`, `#4049`, `#4106`, `#4107`, `
 
 - Started from the authoritative closed issue list returned by `adl/tools/pr.sh issue list --state closed --limit 500 --json` and filtered to issues carrying `version:v0.91.6`.
 - Excluded 26 closed sprint umbrellas / mini-sprint umbrellas or umbrella-equivalent management issues already covered by `docs/milestones/v0.91.6/review/V0916_COMPLETED_SPRINT_RETAINED_EVIDENCE_MATRIX_4251.md`.
-- Used retained review packets first for routing evidence. When a still-unreviewed child lane was only provable from the closed issue body itself, this matrix treats the repo-native issue-list snapshot collected for `#4432` as the routing source and avoids over-claiming retained sprint ownership beyond that evidence.
+- Used retained review packets first for routing evidence. For the `#4388`
+  child set, this matrix now consumes the retained sprint-review packet and the
+  retained `#4396` route packet instead of treating the singleton-review matrix
+  as the only reviewer-facing evidence surface.
 - Classified the remaining 216 closed non-umbrella issues into `true_singleton`, `sprint_child`, `mis_labeled_sprint_work`, `folded_duplicate`, or `already_covered`.
 - Read retained review packets, feature docs, and code/test surfaces for the sampled high-risk singleton group rather than re-executing broad milestone validation.
 
