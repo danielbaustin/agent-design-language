@@ -1,0 +1,931 @@
+{
+  "schema": "adl.agent_suitability_panel.v1",
+  "panel_id": "openrouter_next_tranche_4448",
+  "issue": 4448,
+  "parent_issue": null,
+  "date": "2026-06-22",
+  "panel_ref": "docs/milestones/v0.91.6/review/provider/C_SDLC_AGENT_SUITABILITY_PANEL_4097.md",
+  "task_ids": [
+    "watcher_state_v1",
+    "card_validator_v1",
+    "review_findings_v1",
+    "bounded_planner_v1",
+    "closeout_checker_v1"
+  ],
+  "candidates": [
+    {
+      "candidate_id": "openrouter:qwen/qwen3-coder-next",
+      "provider_lane": "openrouter",
+      "provider_profile_ref": "unprofiled:openrouter:qwen/qwen3-coder-next",
+      "provider_family": "qwen",
+      "provider_spec_kind": "openrouter",
+      "model_ref": "qwen/qwen3-coder-next",
+      "runtime_surface": "hosted_api",
+      "credential_source": "$HOME/keys/openrouter.key",
+      "task_panel_version": "csdlc_agent_suitability_panel.v1",
+      "recommendation": "candidate_only_truth_repair_needed",
+      "supported_tasks": "watcher, card_validator, planner, closeout_checker",
+      "failing_tasks": "reviewer",
+      "raw_usefulness": "semantically_useful",
+      "contract_discipline": "evidence_anchoring_repair_needed",
+      "temperament_traits": [
+        "bounded_role_only",
+        "needs_tighter_evidence_anchoring"
+      ],
+      "tuning_guidance": [
+        "tighten fact-bound prompts and require cited supplied evidence",
+        "keep in advisory-only roles with human verification"
+      ],
+      "local_follow_up_model": "qwen3:30b",
+      "local_follow_up_priority": "high",
+      "local_follow_up_rationale": "best direct path to a local coder/planner family with a practical footprint"
+    },
+    {
+      "candidate_id": "openrouter:mistralai/devstral-2512",
+      "provider_lane": "openrouter",
+      "provider_profile_ref": "unprofiled:openrouter:mistralai/devstral-2512",
+      "provider_family": "mistral",
+      "provider_spec_kind": "openrouter",
+      "model_ref": "mistralai/devstral-2512",
+      "runtime_surface": "hosted_api",
+      "credential_source": "$HOME/keys/openrouter.key",
+      "task_panel_version": "csdlc_agent_suitability_panel.v1",
+      "recommendation": "candidate_only_truth_repair_needed",
+      "supported_tasks": "watcher, card_validator, planner, closeout_checker",
+      "failing_tasks": "reviewer",
+      "raw_usefulness": "semantically_useful",
+      "contract_discipline": "evidence_anchoring_repair_needed",
+      "temperament_traits": [
+        "bounded_role_only",
+        "needs_tighter_evidence_anchoring"
+      ],
+      "tuning_guidance": [
+        "tighten fact-bound prompts and require cited supplied evidence",
+        "keep in advisory-only roles with human verification"
+      ],
+      "local_follow_up_model": "devstral:24b",
+      "local_follow_up_priority": "high",
+      "local_follow_up_rationale": "purpose-built coding-agent family with an explicit local Ollama route"
+    },
+    {
+      "candidate_id": "openrouter:deepseek/deepseek-v3.2",
+      "provider_lane": "openrouter",
+      "provider_profile_ref": "unprofiled:openrouter:deepseek/deepseek-v3.2",
+      "provider_family": "deepseek",
+      "provider_spec_kind": "openrouter",
+      "model_ref": "deepseek/deepseek-v3.2",
+      "runtime_surface": "hosted_api",
+      "credential_source": "$HOME/keys/openrouter.key",
+      "task_panel_version": "csdlc_agent_suitability_panel.v1",
+      "recommendation": "candidate_only_truth_repair_needed",
+      "supported_tasks": "watcher, card_validator, planner, closeout_checker",
+      "failing_tasks": "reviewer",
+      "raw_usefulness": "semantically_useful",
+      "contract_discipline": "evidence_anchoring_repair_needed",
+      "temperament_traits": [
+        "bounded_role_only",
+        "needs_tighter_evidence_anchoring"
+      ],
+      "tuning_guidance": [
+        "tighten fact-bound prompts and require cited supplied evidence",
+        "keep in advisory-only roles with human verification"
+      ],
+      "local_follow_up_model": "deepseek-r1:14b",
+      "local_follow_up_priority": "medium",
+      "local_follow_up_rationale": "closest practical local family for bounded review and critique work"
+    },
+    {
+      "candidate_id": "openrouter:google/gemma-4-31b-it",
+      "provider_lane": "openrouter",
+      "provider_profile_ref": "unprofiled:openrouter:google/gemma-4-31b-it",
+      "provider_family": "gemma",
+      "provider_spec_kind": "openrouter",
+      "model_ref": "google/gemma-4-31b-it",
+      "runtime_surface": "hosted_api",
+      "credential_source": "$HOME/keys/openrouter.key",
+      "task_panel_version": "csdlc_agent_suitability_panel.v1",
+      "recommendation": "candidate_only_truth_repair_needed",
+      "supported_tasks": "watcher, card_validator, planner, closeout_checker",
+      "failing_tasks": "reviewer",
+      "raw_usefulness": "semantically_useful",
+      "contract_discipline": "evidence_anchoring_repair_needed",
+      "temperament_traits": [
+        "bounded_role_only",
+        "needs_tighter_evidence_anchoring"
+      ],
+      "tuning_guidance": [
+        "tighten fact-bound prompts and require cited supplied evidence",
+        "keep in advisory-only roles with human verification"
+      ],
+      "local_follow_up_model": "gemma4:26b",
+      "local_follow_up_priority": "medium",
+      "local_follow_up_rationale": "reasonable bounded-review candidate with an already referenced local family"
+    },
+    {
+      "candidate_id": "openrouter:meta-llama/llama-3.3-70b-instruct",
+      "provider_lane": "openrouter",
+      "provider_profile_ref": "unprofiled:openrouter:meta-llama/llama-3.3-70b-instruct",
+      "provider_family": "llama",
+      "provider_spec_kind": "openrouter",
+      "model_ref": "meta-llama/llama-3.3-70b-instruct",
+      "runtime_surface": "hosted_api",
+      "credential_source": "$HOME/keys/openrouter.key",
+      "task_panel_version": "csdlc_agent_suitability_panel.v1",
+      "recommendation": "candidate_only_truth_repair_needed",
+      "supported_tasks": "watcher, card_validator, planner, closeout_checker",
+      "failing_tasks": "reviewer",
+      "raw_usefulness": "semantically_useful",
+      "contract_discipline": "evidence_anchoring_repair_needed",
+      "temperament_traits": [
+        "bounded_role_only",
+        "needs_tighter_evidence_anchoring"
+      ],
+      "tuning_guidance": [
+        "tighten fact-bound prompts and require cited supplied evidence",
+        "keep in advisory-only roles with human verification"
+      ],
+      "local_follow_up_model": "llama3.3:70b",
+      "local_follow_up_priority": "low",
+      "local_follow_up_rationale": "useful open baseline, but local follow-up is expensive and may stay optional"
+    }
+  ],
+  "rows": [
+    {
+      "candidate_id": "openrouter:qwen/qwen3-coder-next",
+      "task_id": "watcher_state_v1",
+      "prompt_ref": "embedded:watcher_state_v1",
+      "started_at": "2026-06-23T03:00:34+00:00",
+      "elapsed_ms": 1495,
+      "raw_output_ref": "docs/milestones/v0.91.6/review/provider/openrouter_next_tranche_4448/lane_outputs/openrouter_qwen_qwen3-coder-next__watcher_state_v1.md",
+      "normalized_result": {
+        "status": "pending",
+        "sections": [
+          "status",
+          "evidence",
+          "next-step"
+        ],
+        "required_terms": [
+          "#4448",
+          "#4429",
+          "adl-wp-4448",
+          "local shortlist"
+        ]
+      },
+      "provider_failure_class": null,
+      "score": "pass_with_limits",
+      "reviewer_judgment": "watcher output stayed bounded and cited the supplied workflow facts",
+      "safe_role_recommendation": "conductor_provider_candidate_with_limits",
+      "result_path": "docs/milestones/v0.91.6/review/provider/openrouter_next_tranche_4448/lane_results/openrouter_qwen_qwen3-coder-next__watcher_state_v1.json",
+      "log_path": "docs/milestones/v0.91.6/review/provider/openrouter_next_tranche_4448/lane_logs/openrouter_qwen_qwen3-coder-next__watcher_state_v1.jsonl",
+      "output_digest": "sha256:e83fe4f59eb9"
+    },
+    {
+      "candidate_id": "openrouter:qwen/qwen3-coder-next",
+      "task_id": "card_validator_v1",
+      "prompt_ref": "embedded:card_validator_v1",
+      "started_at": "2026-06-23T03:00:36+00:00",
+      "elapsed_ms": 1080,
+      "raw_output_ref": "docs/milestones/v0.91.6/review/provider/openrouter_next_tranche_4448/lane_outputs/openrouter_qwen_qwen3-coder-next__card_validator_v1.md",
+      "normalized_result": {
+        "severity": "P1",
+        "required_terms": [
+          "contrad"
+        ]
+      },
+      "provider_failure_class": null,
+      "score": "pass",
+      "reviewer_judgment": "card-validator output identified the supplied lifecycle-truth contradiction",
+      "safe_role_recommendation": "reviewer_provider_candidate_with_limits",
+      "result_path": "docs/milestones/v0.91.6/review/provider/openrouter_next_tranche_4448/lane_results/openrouter_qwen_qwen3-coder-next__card_validator_v1.json",
+      "log_path": "docs/milestones/v0.91.6/review/provider/openrouter_next_tranche_4448/lane_logs/openrouter_qwen_qwen3-coder-next__card_validator_v1.jsonl",
+      "output_digest": "sha256:1d957bd249a1"
+    },
+    {
+      "candidate_id": "openrouter:qwen/qwen3-coder-next",
+      "task_id": "review_findings_v1",
+      "prompt_ref": "embedded:review_findings_v1",
+      "started_at": "2026-06-23T03:00:37+00:00",
+      "elapsed_ms": 1343,
+      "raw_output_ref": "docs/milestones/v0.91.6/review/provider/openrouter_next_tranche_4448/lane_outputs/openrouter_qwen_qwen3-coder-next__review_findings_v1.md",
+      "normalized_result": {
+        "reason": "accepted_broad_equivalence_claim",
+        "overclaim_terms": [
+          "validated as equivalent",
+          "provenance alignment with local model family",
+          "route-specific evidence matches local family",
+          "local follow-up deemed unnecessary",
+          "evidence shows route equivalence",
+          "is validated as equivalent",
+          "equivalent proxy for local-model suitability",
+          "provenance drift is absent",
+          "no separate local follow-up is needed",
+          "openrouter runs prove local-model suitability",
+          "maps directly to the local family without deviation",
+          "route behaves as an equivalent proxy",
+          "scope alignment",
+          "scope drift is mitigated",
+          "functionally interchangeable",
+          "local follow-up unnecessary",
+          "not needed separately",
+          "supports local-model suitability",
+          "can be treated as equivalent",
+          "proves suitability equivalent",
+          "equivalent to local-model suitability",
+          "equivalent to local family",
+          "no separate routing adjustments required",
+          "local follow-up is integrated and not needed separately"
+        ]
+      },
+      "provider_failure_class": null,
+      "score": "fail_truth",
+      "reviewer_judgment": "review output accepted the supplied broad-equivalence claim instead of challenging it",
+      "safe_role_recommendation": "do_not_use_for_review",
+      "result_path": "docs/milestones/v0.91.6/review/provider/openrouter_next_tranche_4448/lane_results/openrouter_qwen_qwen3-coder-next__review_findings_v1.json",
+      "log_path": "docs/milestones/v0.91.6/review/provider/openrouter_next_tranche_4448/lane_logs/openrouter_qwen_qwen3-coder-next__review_findings_v1.jsonl",
+      "output_digest": "sha256:d6f72ef5bdd6"
+    },
+    {
+      "candidate_id": "openrouter:qwen/qwen3-coder-next",
+      "task_id": "bounded_planner_v1",
+      "prompt_ref": "embedded:bounded_planner_v1",
+      "started_at": "2026-06-23T03:00:38+00:00",
+      "elapsed_ms": 2132,
+      "raw_output_ref": "docs/milestones/v0.91.6/review/provider/openrouter_next_tranche_4448/lane_outputs/openrouter_qwen_qwen3-coder-next__bounded_planner_v1.md",
+      "normalized_result": {
+        "plan_steps": 4,
+        "required_terms": [
+          "qwen",
+          "devstral",
+          "deepseek",
+          "gemma",
+          "llama",
+          "blocked",
+          "local shortlist",
+          "no repo-mutation authority"
+        ]
+      },
+      "provider_failure_class": null,
+      "score": "pass",
+      "reviewer_judgment": "planner output stayed bounded and covered the required lane/proof constraints",
+      "safe_role_recommendation": "architect_provider_candidate_with_limits",
+      "result_path": "docs/milestones/v0.91.6/review/provider/openrouter_next_tranche_4448/lane_results/openrouter_qwen_qwen3-coder-next__bounded_planner_v1.json",
+      "log_path": "docs/milestones/v0.91.6/review/provider/openrouter_next_tranche_4448/lane_logs/openrouter_qwen_qwen3-coder-next__bounded_planner_v1.jsonl",
+      "output_digest": "sha256:8df6da86c22f"
+    },
+    {
+      "candidate_id": "openrouter:qwen/qwen3-coder-next",
+      "task_id": "closeout_checker_v1",
+      "prompt_ref": "embedded:closeout_checker_v1",
+      "started_at": "2026-06-23T03:00:40+00:00",
+      "elapsed_ms": 1985,
+      "raw_output_ref": "docs/milestones/v0.91.6/review/provider/openrouter_next_tranche_4448/lane_outputs/openrouter_qwen_qwen3-coder-next__closeout_checker_v1.md",
+      "normalized_result": {
+        "decision": "needs_remediation"
+      },
+      "provider_failure_class": null,
+      "score": "pass_with_limits",
+      "reviewer_judgment": "closeout output remained conservative even if it missed one specific supplied gap",
+      "safe_role_recommendation": "tester_provider_candidate_with_limits",
+      "result_path": "docs/milestones/v0.91.6/review/provider/openrouter_next_tranche_4448/lane_results/openrouter_qwen_qwen3-coder-next__closeout_checker_v1.json",
+      "log_path": "docs/milestones/v0.91.6/review/provider/openrouter_next_tranche_4448/lane_logs/openrouter_qwen_qwen3-coder-next__closeout_checker_v1.jsonl",
+      "output_digest": "sha256:dab3a9e039da"
+    },
+    {
+      "candidate_id": "openrouter:mistralai/devstral-2512",
+      "task_id": "watcher_state_v1",
+      "prompt_ref": "embedded:watcher_state_v1",
+      "started_at": "2026-06-23T03:00:42+00:00",
+      "elapsed_ms": 1040,
+      "raw_output_ref": "docs/milestones/v0.91.6/review/provider/openrouter_next_tranche_4448/lane_outputs/openrouter_mistralai_devstral-2512__watcher_state_v1.md",
+      "normalized_result": {
+        "status": "pending",
+        "sections": [
+          "status",
+          "evidence",
+          "next-step"
+        ],
+        "required_terms": [
+          "#4448",
+          "#4429",
+          "adl-wp-4448",
+          "local shortlist"
+        ]
+      },
+      "provider_failure_class": null,
+      "score": "pass_with_limits",
+      "reviewer_judgment": "watcher output stayed bounded and cited the supplied workflow facts",
+      "safe_role_recommendation": "conductor_provider_candidate_with_limits",
+      "result_path": "docs/milestones/v0.91.6/review/provider/openrouter_next_tranche_4448/lane_results/openrouter_mistralai_devstral-2512__watcher_state_v1.json",
+      "log_path": "docs/milestones/v0.91.6/review/provider/openrouter_next_tranche_4448/lane_logs/openrouter_mistralai_devstral-2512__watcher_state_v1.jsonl",
+      "output_digest": "sha256:baa32d3043f4"
+    },
+    {
+      "candidate_id": "openrouter:mistralai/devstral-2512",
+      "task_id": "card_validator_v1",
+      "prompt_ref": "embedded:card_validator_v1",
+      "started_at": "2026-06-23T03:00:43+00:00",
+      "elapsed_ms": 2057,
+      "raw_output_ref": "docs/milestones/v0.91.6/review/provider/openrouter_next_tranche_4448/lane_outputs/openrouter_mistralai_devstral-2512__card_validator_v1.md",
+      "normalized_result": {
+        "severity": "P1",
+        "required_terms": [
+          "contrad"
+        ]
+      },
+      "provider_failure_class": null,
+      "score": "pass",
+      "reviewer_judgment": "card-validator output identified the supplied lifecycle-truth contradiction",
+      "safe_role_recommendation": "reviewer_provider_candidate_with_limits",
+      "result_path": "docs/milestones/v0.91.6/review/provider/openrouter_next_tranche_4448/lane_results/openrouter_mistralai_devstral-2512__card_validator_v1.json",
+      "log_path": "docs/milestones/v0.91.6/review/provider/openrouter_next_tranche_4448/lane_logs/openrouter_mistralai_devstral-2512__card_validator_v1.jsonl",
+      "output_digest": "sha256:0ebb05b21066"
+    },
+    {
+      "candidate_id": "openrouter:mistralai/devstral-2512",
+      "task_id": "review_findings_v1",
+      "prompt_ref": "embedded:review_findings_v1",
+      "started_at": "2026-06-23T03:00:45+00:00",
+      "elapsed_ms": 1839,
+      "raw_output_ref": "docs/milestones/v0.91.6/review/provider/openrouter_next_tranche_4448/lane_outputs/openrouter_mistralai_devstral-2512__review_findings_v1.md",
+      "normalized_result": {
+        "reason": "accepted_broad_equivalence_claim",
+        "overclaim_terms": [
+          "validated as equivalent",
+          "provenance alignment with local model family",
+          "route-specific evidence matches local family",
+          "local follow-up deemed unnecessary",
+          "evidence shows route equivalence",
+          "is validated as equivalent",
+          "equivalent proxy for local-model suitability",
+          "provenance drift is absent",
+          "no separate local follow-up is needed",
+          "openrouter runs prove local-model suitability",
+          "maps directly to the local family without deviation",
+          "route behaves as an equivalent proxy",
+          "scope alignment",
+          "scope drift is mitigated",
+          "functionally interchangeable",
+          "local follow-up unnecessary",
+          "not needed separately",
+          "supports local-model suitability",
+          "can be treated as equivalent",
+          "proves suitability equivalent",
+          "equivalent to local-model suitability",
+          "equivalent to local family",
+          "no separate routing adjustments required",
+          "local follow-up is integrated and not needed separately"
+        ]
+      },
+      "provider_failure_class": null,
+      "score": "fail_truth",
+      "reviewer_judgment": "review output accepted the supplied broad-equivalence claim instead of challenging it",
+      "safe_role_recommendation": "do_not_use_for_review",
+      "result_path": "docs/milestones/v0.91.6/review/provider/openrouter_next_tranche_4448/lane_results/openrouter_mistralai_devstral-2512__review_findings_v1.json",
+      "log_path": "docs/milestones/v0.91.6/review/provider/openrouter_next_tranche_4448/lane_logs/openrouter_mistralai_devstral-2512__review_findings_v1.jsonl",
+      "output_digest": "sha256:1302a031ad83"
+    },
+    {
+      "candidate_id": "openrouter:mistralai/devstral-2512",
+      "task_id": "bounded_planner_v1",
+      "prompt_ref": "embedded:bounded_planner_v1",
+      "started_at": "2026-06-23T03:00:47+00:00",
+      "elapsed_ms": 2466,
+      "raw_output_ref": "docs/milestones/v0.91.6/review/provider/openrouter_next_tranche_4448/lane_outputs/openrouter_mistralai_devstral-2512__bounded_planner_v1.md",
+      "normalized_result": {
+        "plan_steps": 4,
+        "required_terms": [
+          "qwen",
+          "devstral",
+          "deepseek",
+          "gemma",
+          "llama",
+          "blocked",
+          "local shortlist",
+          "no repo-mutation authority"
+        ]
+      },
+      "provider_failure_class": null,
+      "score": "pass",
+      "reviewer_judgment": "planner output stayed bounded and covered the required lane/proof constraints",
+      "safe_role_recommendation": "architect_provider_candidate_with_limits",
+      "result_path": "docs/milestones/v0.91.6/review/provider/openrouter_next_tranche_4448/lane_results/openrouter_mistralai_devstral-2512__bounded_planner_v1.json",
+      "log_path": "docs/milestones/v0.91.6/review/provider/openrouter_next_tranche_4448/lane_logs/openrouter_mistralai_devstral-2512__bounded_planner_v1.jsonl",
+      "output_digest": "sha256:4ffd0b4aa7db"
+    },
+    {
+      "candidate_id": "openrouter:mistralai/devstral-2512",
+      "task_id": "closeout_checker_v1",
+      "prompt_ref": "embedded:closeout_checker_v1",
+      "started_at": "2026-06-23T03:00:50+00:00",
+      "elapsed_ms": 2655,
+      "raw_output_ref": "docs/milestones/v0.91.6/review/provider/openrouter_next_tranche_4448/lane_outputs/openrouter_mistralai_devstral-2512__closeout_checker_v1.md",
+      "normalized_result": {
+        "decision": "needs_remediation",
+        "pass_terms": [
+          "no pr or merge evidence",
+          "no final proof packet"
+        ]
+      },
+      "provider_failure_class": null,
+      "score": "pass",
+      "reviewer_judgment": "closeout output correctly withheld closure until merge/proof evidence exists",
+      "safe_role_recommendation": "tester_provider_candidate_with_limits",
+      "result_path": "docs/milestones/v0.91.6/review/provider/openrouter_next_tranche_4448/lane_results/openrouter_mistralai_devstral-2512__closeout_checker_v1.json",
+      "log_path": "docs/milestones/v0.91.6/review/provider/openrouter_next_tranche_4448/lane_logs/openrouter_mistralai_devstral-2512__closeout_checker_v1.jsonl",
+      "output_digest": "sha256:68432ecd1f20"
+    },
+    {
+      "candidate_id": "openrouter:deepseek/deepseek-v3.2",
+      "task_id": "watcher_state_v1",
+      "prompt_ref": "embedded:watcher_state_v1",
+      "started_at": "2026-06-23T03:00:52+00:00",
+      "elapsed_ms": 2993,
+      "raw_output_ref": "docs/milestones/v0.91.6/review/provider/openrouter_next_tranche_4448/lane_outputs/openrouter_deepseek_deepseek-v3.2__watcher_state_v1.md",
+      "normalized_result": {
+        "status": "pending",
+        "sections": [
+          "status",
+          "evidence",
+          "next-step"
+        ],
+        "required_terms": [
+          "#4448",
+          "#4429",
+          "adl-wp-4448",
+          "local shortlist"
+        ]
+      },
+      "provider_failure_class": null,
+      "score": "pass_with_limits",
+      "reviewer_judgment": "watcher output stayed bounded and cited the supplied workflow facts",
+      "safe_role_recommendation": "conductor_provider_candidate_with_limits",
+      "result_path": "docs/milestones/v0.91.6/review/provider/openrouter_next_tranche_4448/lane_results/openrouter_deepseek_deepseek-v3.2__watcher_state_v1.json",
+      "log_path": "docs/milestones/v0.91.6/review/provider/openrouter_next_tranche_4448/lane_logs/openrouter_deepseek_deepseek-v3.2__watcher_state_v1.jsonl",
+      "output_digest": "sha256:34573849ce16"
+    },
+    {
+      "candidate_id": "openrouter:deepseek/deepseek-v3.2",
+      "task_id": "card_validator_v1",
+      "prompt_ref": "embedded:card_validator_v1",
+      "started_at": "2026-06-23T03:00:55+00:00",
+      "elapsed_ms": 2366,
+      "raw_output_ref": "docs/milestones/v0.91.6/review/provider/openrouter_next_tranche_4448/lane_outputs/openrouter_deepseek_deepseek-v3.2__card_validator_v1.md",
+      "normalized_result": {
+        "severity": "P2",
+        "required_terms": [
+          "contrad"
+        ]
+      },
+      "provider_failure_class": null,
+      "score": "pass_with_limits",
+      "reviewer_judgment": "card-validator output identified the supplied lifecycle-truth contradiction",
+      "safe_role_recommendation": "reviewer_provider_candidate_with_limits",
+      "result_path": "docs/milestones/v0.91.6/review/provider/openrouter_next_tranche_4448/lane_results/openrouter_deepseek_deepseek-v3.2__card_validator_v1.json",
+      "log_path": "docs/milestones/v0.91.6/review/provider/openrouter_next_tranche_4448/lane_logs/openrouter_deepseek_deepseek-v3.2__card_validator_v1.jsonl",
+      "output_digest": "sha256:ae652e31da14"
+    },
+    {
+      "candidate_id": "openrouter:deepseek/deepseek-v3.2",
+      "task_id": "review_findings_v1",
+      "prompt_ref": "embedded:review_findings_v1",
+      "started_at": "2026-06-23T03:00:58+00:00",
+      "elapsed_ms": 3252,
+      "raw_output_ref": "docs/milestones/v0.91.6/review/provider/openrouter_next_tranche_4448/lane_outputs/openrouter_deepseek_deepseek-v3.2__review_findings_v1.md",
+      "normalized_result": {
+        "reason": "accepted_broad_equivalence_claim",
+        "overclaim_terms": [
+          "validated as equivalent",
+          "provenance alignment with local model family",
+          "route-specific evidence matches local family",
+          "local follow-up deemed unnecessary",
+          "evidence shows route equivalence",
+          "is validated as equivalent",
+          "equivalent proxy for local-model suitability",
+          "provenance drift is absent",
+          "no separate local follow-up is needed",
+          "openrouter runs prove local-model suitability",
+          "maps directly to the local family without deviation",
+          "route behaves as an equivalent proxy",
+          "scope alignment",
+          "scope drift is mitigated",
+          "functionally interchangeable",
+          "local follow-up unnecessary",
+          "not needed separately",
+          "supports local-model suitability",
+          "can be treated as equivalent",
+          "proves suitability equivalent",
+          "equivalent to local-model suitability",
+          "equivalent to local family",
+          "no separate routing adjustments required",
+          "local follow-up is integrated and not needed separately"
+        ]
+      },
+      "provider_failure_class": null,
+      "score": "fail_truth",
+      "reviewer_judgment": "review output accepted the supplied broad-equivalence claim instead of challenging it",
+      "safe_role_recommendation": "do_not_use_for_review",
+      "result_path": "docs/milestones/v0.91.6/review/provider/openrouter_next_tranche_4448/lane_results/openrouter_deepseek_deepseek-v3.2__review_findings_v1.json",
+      "log_path": "docs/milestones/v0.91.6/review/provider/openrouter_next_tranche_4448/lane_logs/openrouter_deepseek_deepseek-v3.2__review_findings_v1.jsonl",
+      "output_digest": "sha256:c6847930e17b"
+    },
+    {
+      "candidate_id": "openrouter:deepseek/deepseek-v3.2",
+      "task_id": "bounded_planner_v1",
+      "prompt_ref": "embedded:bounded_planner_v1",
+      "started_at": "2026-06-23T03:01:01+00:00",
+      "elapsed_ms": 11182,
+      "raw_output_ref": "docs/milestones/v0.91.6/review/provider/openrouter_next_tranche_4448/lane_outputs/openrouter_deepseek_deepseek-v3.2__bounded_planner_v1.md",
+      "normalized_result": {
+        "plan_steps": 4,
+        "required_terms": [
+          "qwen",
+          "devstral",
+          "deepseek",
+          "gemma",
+          "llama",
+          "blocked",
+          "local shortlist",
+          "no repo-mutation authority"
+        ]
+      },
+      "provider_failure_class": null,
+      "score": "pass",
+      "reviewer_judgment": "planner output stayed bounded and covered the required lane/proof constraints",
+      "safe_role_recommendation": "architect_provider_candidate_with_limits",
+      "result_path": "docs/milestones/v0.91.6/review/provider/openrouter_next_tranche_4448/lane_results/openrouter_deepseek_deepseek-v3.2__bounded_planner_v1.json",
+      "log_path": "docs/milestones/v0.91.6/review/provider/openrouter_next_tranche_4448/lane_logs/openrouter_deepseek_deepseek-v3.2__bounded_planner_v1.jsonl",
+      "output_digest": "sha256:ec72911b885a"
+    },
+    {
+      "candidate_id": "openrouter:deepseek/deepseek-v3.2",
+      "task_id": "closeout_checker_v1",
+      "prompt_ref": "embedded:closeout_checker_v1",
+      "started_at": "2026-06-23T03:01:12+00:00",
+      "elapsed_ms": 2297,
+      "raw_output_ref": "docs/milestones/v0.91.6/review/provider/openrouter_next_tranche_4448/lane_outputs/openrouter_deepseek_deepseek-v3.2__closeout_checker_v1.md",
+      "normalized_result": {
+        "decision": "needs_remediation",
+        "pass_terms": [
+          "no pr or merge evidence",
+          "no final proof packet"
+        ]
+      },
+      "provider_failure_class": null,
+      "score": "pass",
+      "reviewer_judgment": "closeout output correctly withheld closure until merge/proof evidence exists",
+      "safe_role_recommendation": "tester_provider_candidate_with_limits",
+      "result_path": "docs/milestones/v0.91.6/review/provider/openrouter_next_tranche_4448/lane_results/openrouter_deepseek_deepseek-v3.2__closeout_checker_v1.json",
+      "log_path": "docs/milestones/v0.91.6/review/provider/openrouter_next_tranche_4448/lane_logs/openrouter_deepseek_deepseek-v3.2__closeout_checker_v1.jsonl",
+      "output_digest": "sha256:71af62b4b734"
+    },
+    {
+      "candidate_id": "openrouter:google/gemma-4-31b-it",
+      "task_id": "watcher_state_v1",
+      "prompt_ref": "embedded:watcher_state_v1",
+      "started_at": "2026-06-23T03:01:15+00:00",
+      "elapsed_ms": 2468,
+      "raw_output_ref": "docs/milestones/v0.91.6/review/provider/openrouter_next_tranche_4448/lane_outputs/openrouter_google_gemma-4-31b-it__watcher_state_v1.md",
+      "normalized_result": {
+        "status": "action_required",
+        "sections": [
+          "status",
+          "evidence",
+          "next-step"
+        ],
+        "required_terms": [
+          "#4448",
+          "#4429",
+          "adl-wp-4448",
+          "local shortlist"
+        ]
+      },
+      "provider_failure_class": null,
+      "score": "pass_with_limits",
+      "reviewer_judgment": "watcher output stayed bounded and cited the supplied workflow facts",
+      "safe_role_recommendation": "conductor_provider_candidate_with_limits",
+      "result_path": "docs/milestones/v0.91.6/review/provider/openrouter_next_tranche_4448/lane_results/openrouter_google_gemma-4-31b-it__watcher_state_v1.json",
+      "log_path": "docs/milestones/v0.91.6/review/provider/openrouter_next_tranche_4448/lane_logs/openrouter_google_gemma-4-31b-it__watcher_state_v1.jsonl",
+      "output_digest": "sha256:160c83863e54"
+    },
+    {
+      "candidate_id": "openrouter:google/gemma-4-31b-it",
+      "task_id": "card_validator_v1",
+      "prompt_ref": "embedded:card_validator_v1",
+      "started_at": "2026-06-23T03:01:17+00:00",
+      "elapsed_ms": 1203,
+      "raw_output_ref": "docs/milestones/v0.91.6/review/provider/openrouter_next_tranche_4448/lane_outputs/openrouter_google_gemma-4-31b-it__card_validator_v1.md",
+      "normalized_result": {
+        "severity": "P2",
+        "required_terms": [
+          "contrad"
+        ]
+      },
+      "provider_failure_class": null,
+      "score": "pass_with_limits",
+      "reviewer_judgment": "card-validator output identified the supplied lifecycle-truth contradiction",
+      "safe_role_recommendation": "reviewer_provider_candidate_with_limits",
+      "result_path": "docs/milestones/v0.91.6/review/provider/openrouter_next_tranche_4448/lane_results/openrouter_google_gemma-4-31b-it__card_validator_v1.json",
+      "log_path": "docs/milestones/v0.91.6/review/provider/openrouter_next_tranche_4448/lane_logs/openrouter_google_gemma-4-31b-it__card_validator_v1.jsonl",
+      "output_digest": "sha256:69bfcb34f6cc"
+    },
+    {
+      "candidate_id": "openrouter:google/gemma-4-31b-it",
+      "task_id": "review_findings_v1",
+      "prompt_ref": "embedded:review_findings_v1",
+      "started_at": "2026-06-23T03:01:18+00:00",
+      "elapsed_ms": 1686,
+      "raw_output_ref": "docs/milestones/v0.91.6/review/provider/openrouter_next_tranche_4448/lane_outputs/openrouter_google_gemma-4-31b-it__review_findings_v1.md",
+      "normalized_result": {
+        "reason": "accepted_broad_equivalence_claim",
+        "overclaim_terms": [
+          "validated as equivalent",
+          "provenance alignment with local model family",
+          "route-specific evidence matches local family",
+          "local follow-up deemed unnecessary",
+          "evidence shows route equivalence",
+          "is validated as equivalent",
+          "equivalent proxy for local-model suitability",
+          "provenance drift is absent",
+          "no separate local follow-up is needed",
+          "openrouter runs prove local-model suitability",
+          "maps directly to the local family without deviation",
+          "route behaves as an equivalent proxy",
+          "scope alignment",
+          "scope drift is mitigated",
+          "functionally interchangeable",
+          "local follow-up unnecessary",
+          "not needed separately",
+          "supports local-model suitability",
+          "can be treated as equivalent",
+          "proves suitability equivalent",
+          "equivalent to local-model suitability",
+          "equivalent to local family",
+          "no separate routing adjustments required",
+          "local follow-up is integrated and not needed separately"
+        ]
+      },
+      "provider_failure_class": null,
+      "score": "fail_truth",
+      "reviewer_judgment": "review output accepted the supplied broad-equivalence claim instead of challenging it",
+      "safe_role_recommendation": "do_not_use_for_review",
+      "result_path": "docs/milestones/v0.91.6/review/provider/openrouter_next_tranche_4448/lane_results/openrouter_google_gemma-4-31b-it__review_findings_v1.json",
+      "log_path": "docs/milestones/v0.91.6/review/provider/openrouter_next_tranche_4448/lane_logs/openrouter_google_gemma-4-31b-it__review_findings_v1.jsonl",
+      "output_digest": "sha256:2b08c8cf7343"
+    },
+    {
+      "candidate_id": "openrouter:google/gemma-4-31b-it",
+      "task_id": "bounded_planner_v1",
+      "prompt_ref": "embedded:bounded_planner_v1",
+      "started_at": "2026-06-23T03:01:20+00:00",
+      "elapsed_ms": 5133,
+      "raw_output_ref": "docs/milestones/v0.91.6/review/provider/openrouter_next_tranche_4448/lane_outputs/openrouter_google_gemma-4-31b-it__bounded_planner_v1.md",
+      "normalized_result": {
+        "plan_steps": 4,
+        "required_terms": [
+          "qwen",
+          "devstral",
+          "deepseek",
+          "gemma",
+          "llama",
+          "blocked",
+          "local shortlist",
+          "no repo-mutation authority"
+        ]
+      },
+      "provider_failure_class": null,
+      "score": "pass",
+      "reviewer_judgment": "planner output stayed bounded and covered the required lane/proof constraints",
+      "safe_role_recommendation": "architect_provider_candidate_with_limits",
+      "result_path": "docs/milestones/v0.91.6/review/provider/openrouter_next_tranche_4448/lane_results/openrouter_google_gemma-4-31b-it__bounded_planner_v1.json",
+      "log_path": "docs/milestones/v0.91.6/review/provider/openrouter_next_tranche_4448/lane_logs/openrouter_google_gemma-4-31b-it__bounded_planner_v1.jsonl",
+      "output_digest": "sha256:2ef3df76f1cc"
+    },
+    {
+      "candidate_id": "openrouter:google/gemma-4-31b-it",
+      "task_id": "closeout_checker_v1",
+      "prompt_ref": "embedded:closeout_checker_v1",
+      "started_at": "2026-06-23T03:01:25+00:00",
+      "elapsed_ms": 9004,
+      "raw_output_ref": "docs/milestones/v0.91.6/review/provider/openrouter_next_tranche_4448/lane_outputs/openrouter_google_gemma-4-31b-it__closeout_checker_v1.md",
+      "normalized_result": {
+        "decision": "needs_remediation",
+        "pass_terms": [
+          "no pr or merge evidence",
+          "no final proof packet"
+        ]
+      },
+      "provider_failure_class": null,
+      "score": "pass",
+      "reviewer_judgment": "closeout output correctly withheld closure until merge/proof evidence exists",
+      "safe_role_recommendation": "tester_provider_candidate_with_limits",
+      "result_path": "docs/milestones/v0.91.6/review/provider/openrouter_next_tranche_4448/lane_results/openrouter_google_gemma-4-31b-it__closeout_checker_v1.json",
+      "log_path": "docs/milestones/v0.91.6/review/provider/openrouter_next_tranche_4448/lane_logs/openrouter_google_gemma-4-31b-it__closeout_checker_v1.jsonl",
+      "output_digest": "sha256:452e3cf8da0a"
+    },
+    {
+      "candidate_id": "openrouter:meta-llama/llama-3.3-70b-instruct",
+      "task_id": "watcher_state_v1",
+      "prompt_ref": "embedded:watcher_state_v1",
+      "started_at": "2026-06-23T03:01:34+00:00",
+      "elapsed_ms": 2347,
+      "raw_output_ref": "docs/milestones/v0.91.6/review/provider/openrouter_next_tranche_4448/lane_outputs/openrouter_meta-llama_llama-3.3-70b-instruct__watcher_state_v1.md",
+      "normalized_result": {
+        "status": "pending",
+        "sections": [
+          "status",
+          "evidence",
+          "next-step"
+        ],
+        "required_terms": [
+          "#4448",
+          "#4429",
+          "adl-wp-4448",
+          "local shortlist"
+        ]
+      },
+      "provider_failure_class": null,
+      "score": "pass_with_limits",
+      "reviewer_judgment": "watcher output stayed bounded and cited the supplied workflow facts",
+      "safe_role_recommendation": "conductor_provider_candidate_with_limits",
+      "result_path": "docs/milestones/v0.91.6/review/provider/openrouter_next_tranche_4448/lane_results/openrouter_meta-llama_llama-3.3-70b-instruct__watcher_state_v1.json",
+      "log_path": "docs/milestones/v0.91.6/review/provider/openrouter_next_tranche_4448/lane_logs/openrouter_meta-llama_llama-3.3-70b-instruct__watcher_state_v1.jsonl",
+      "output_digest": "sha256:084cd0e6fb22"
+    },
+    {
+      "candidate_id": "openrouter:meta-llama/llama-3.3-70b-instruct",
+      "task_id": "card_validator_v1",
+      "prompt_ref": "embedded:card_validator_v1",
+      "started_at": "2026-06-23T03:01:36+00:00",
+      "elapsed_ms": 5502,
+      "raw_output_ref": "docs/milestones/v0.91.6/review/provider/openrouter_next_tranche_4448/lane_outputs/openrouter_meta-llama_llama-3.3-70b-instruct__card_validator_v1.md",
+      "normalized_result": {
+        "severity": "P1",
+        "required_terms": [
+          "contrad"
+        ]
+      },
+      "provider_failure_class": null,
+      "score": "pass",
+      "reviewer_judgment": "card-validator output identified the supplied lifecycle-truth contradiction",
+      "safe_role_recommendation": "reviewer_provider_candidate_with_limits",
+      "result_path": "docs/milestones/v0.91.6/review/provider/openrouter_next_tranche_4448/lane_results/openrouter_meta-llama_llama-3.3-70b-instruct__card_validator_v1.json",
+      "log_path": "docs/milestones/v0.91.6/review/provider/openrouter_next_tranche_4448/lane_logs/openrouter_meta-llama_llama-3.3-70b-instruct__card_validator_v1.jsonl",
+      "output_digest": "sha256:31224c80cb01"
+    },
+    {
+      "candidate_id": "openrouter:meta-llama/llama-3.3-70b-instruct",
+      "task_id": "review_findings_v1",
+      "prompt_ref": "embedded:review_findings_v1",
+      "started_at": "2026-06-23T03:01:42+00:00",
+      "elapsed_ms": 2153,
+      "raw_output_ref": "docs/milestones/v0.91.6/review/provider/openrouter_next_tranche_4448/lane_outputs/openrouter_meta-llama_llama-3.3-70b-instruct__review_findings_v1.md",
+      "normalized_result": {
+        "reason": "accepted_broad_equivalence_claim",
+        "overclaim_terms": [
+          "validated as equivalent",
+          "provenance alignment with local model family",
+          "route-specific evidence matches local family",
+          "local follow-up deemed unnecessary",
+          "evidence shows route equivalence",
+          "is validated as equivalent",
+          "equivalent proxy for local-model suitability",
+          "provenance drift is absent",
+          "no separate local follow-up is needed",
+          "openrouter runs prove local-model suitability",
+          "maps directly to the local family without deviation",
+          "route behaves as an equivalent proxy",
+          "scope alignment",
+          "scope drift is mitigated",
+          "functionally interchangeable",
+          "local follow-up unnecessary",
+          "not needed separately",
+          "supports local-model suitability",
+          "can be treated as equivalent",
+          "proves suitability equivalent",
+          "equivalent to local-model suitability",
+          "equivalent to local family",
+          "no separate routing adjustments required",
+          "local follow-up is integrated and not needed separately"
+        ]
+      },
+      "provider_failure_class": null,
+      "score": "fail_truth",
+      "reviewer_judgment": "review output accepted the supplied broad-equivalence claim instead of challenging it",
+      "safe_role_recommendation": "do_not_use_for_review",
+      "result_path": "docs/milestones/v0.91.6/review/provider/openrouter_next_tranche_4448/lane_results/openrouter_meta-llama_llama-3.3-70b-instruct__review_findings_v1.json",
+      "log_path": "docs/milestones/v0.91.6/review/provider/openrouter_next_tranche_4448/lane_logs/openrouter_meta-llama_llama-3.3-70b-instruct__review_findings_v1.jsonl",
+      "output_digest": "sha256:34ed3e7e7856"
+    },
+    {
+      "candidate_id": "openrouter:meta-llama/llama-3.3-70b-instruct",
+      "task_id": "bounded_planner_v1",
+      "prompt_ref": "embedded:bounded_planner_v1",
+      "started_at": "2026-06-23T03:01:44+00:00",
+      "elapsed_ms": 2138,
+      "raw_output_ref": "docs/milestones/v0.91.6/review/provider/openrouter_next_tranche_4448/lane_outputs/openrouter_meta-llama_llama-3.3-70b-instruct__bounded_planner_v1.md",
+      "normalized_result": {
+        "plan_steps": 4,
+        "required_terms": [
+          "qwen",
+          "devstral",
+          "deepseek",
+          "gemma",
+          "llama",
+          "blocked",
+          "local shortlist",
+          "no repo-mutation authority"
+        ]
+      },
+      "provider_failure_class": null,
+      "score": "pass",
+      "reviewer_judgment": "planner output stayed bounded and covered the required lane/proof constraints",
+      "safe_role_recommendation": "architect_provider_candidate_with_limits",
+      "result_path": "docs/milestones/v0.91.6/review/provider/openrouter_next_tranche_4448/lane_results/openrouter_meta-llama_llama-3.3-70b-instruct__bounded_planner_v1.json",
+      "log_path": "docs/milestones/v0.91.6/review/provider/openrouter_next_tranche_4448/lane_logs/openrouter_meta-llama_llama-3.3-70b-instruct__bounded_planner_v1.jsonl",
+      "output_digest": "sha256:e59b32cfb715"
+    },
+    {
+      "candidate_id": "openrouter:meta-llama/llama-3.3-70b-instruct",
+      "task_id": "closeout_checker_v1",
+      "prompt_ref": "embedded:closeout_checker_v1",
+      "started_at": "2026-06-23T03:01:46+00:00",
+      "elapsed_ms": 2089,
+      "raw_output_ref": "docs/milestones/v0.91.6/review/provider/openrouter_next_tranche_4448/lane_outputs/openrouter_meta-llama_llama-3.3-70b-instruct__closeout_checker_v1.md",
+      "normalized_result": {
+        "decision": "needs_remediation",
+        "pass_terms": [
+          "no pr or merge evidence",
+          "no final proof packet"
+        ]
+      },
+      "provider_failure_class": null,
+      "score": "pass",
+      "reviewer_judgment": "closeout output correctly withheld closure until merge/proof evidence exists",
+      "safe_role_recommendation": "tester_provider_candidate_with_limits",
+      "result_path": "docs/milestones/v0.91.6/review/provider/openrouter_next_tranche_4448/lane_results/openrouter_meta-llama_llama-3.3-70b-instruct__closeout_checker_v1.json",
+      "log_path": "docs/milestones/v0.91.6/review/provider/openrouter_next_tranche_4448/lane_logs/openrouter_meta-llama_llama-3.3-70b-instruct__closeout_checker_v1.jsonl",
+      "output_digest": "sha256:921fbacf9768"
+    }
+  ],
+  "candidate_selection": {
+    "screened_candidates": [
+      "openrouter:qwen/qwen3-coder-next",
+      "openrouter:mistralai/devstral-2512",
+      "openrouter:deepseek/deepseek-v3.2",
+      "openrouter:google/gemma-4-31b-it",
+      "openrouter:meta-llama/llama-3.3-70b-instruct"
+    ],
+    "local_follow_up_shortlist": [],
+    "local_follow_up_watchlist": [
+      {
+        "candidate_id": "openrouter:qwen/qwen3-coder-next",
+        "recommendation": "candidate_only_truth_repair_needed",
+        "local_follow_up_model": "qwen3:30b",
+        "priority": "high",
+        "rationale": "best direct path to a local coder/planner family with a practical footprint"
+      },
+      {
+        "candidate_id": "openrouter:mistralai/devstral-2512",
+        "recommendation": "candidate_only_truth_repair_needed",
+        "local_follow_up_model": "devstral:24b",
+        "priority": "high",
+        "rationale": "purpose-built coding-agent family with an explicit local Ollama route"
+      },
+      {
+        "candidate_id": "openrouter:deepseek/deepseek-v3.2",
+        "recommendation": "candidate_only_truth_repair_needed",
+        "local_follow_up_model": "deepseek-r1:14b",
+        "priority": "medium",
+        "rationale": "closest practical local family for bounded review and critique work"
+      },
+      {
+        "candidate_id": "openrouter:google/gemma-4-31b-it",
+        "recommendation": "candidate_only_truth_repair_needed",
+        "local_follow_up_model": "gemma4:26b",
+        "priority": "medium",
+        "rationale": "reasonable bounded-review candidate with an already referenced local family"
+      },
+      {
+        "candidate_id": "openrouter:meta-llama/llama-3.3-70b-instruct",
+        "recommendation": "candidate_only_truth_repair_needed",
+        "local_follow_up_model": "llama3.3:70b",
+        "priority": "low",
+        "rationale": "useful open baseline, but local follow-up is expensive and may stay optional"
+      }
+    ]
+  },
+  "non_claims": [
+    "does_not_claim_broad_model_intelligence",
+    "does_not_grant_merge_closeout_or_repo_mutation_authority",
+    "does_not_prove_native_provider_or_local_ollama_parity_from_openrouter_results",
+    "does_not_replace_local_follow_up_proof"
+  ],
+  "artifacts": {
+    "packet": "docs/milestones/v0.91.6/review/provider/openrouter_next_tranche_4448/OPENROUTER_NEXT_TRANCHE_SUITABILITY_PROOF_2026-06-22.md",
+    "state": "docs/milestones/v0.91.6/review/provider/openrouter_next_tranche_4448/openrouter_next_tranche_suitability_state_2026-06-22.json",
+    "requests": "docs/milestones/v0.91.6/review/provider/openrouter_next_tranche_4448/lane_requests",
+    "results": "docs/milestones/v0.91.6/review/provider/openrouter_next_tranche_4448/lane_results",
+    "logs": "docs/milestones/v0.91.6/review/provider/openrouter_next_tranche_4448/lane_logs",
+    "outputs": "docs/milestones/v0.91.6/review/provider/openrouter_next_tranche_4448/lane_outputs"
+  }
+}
