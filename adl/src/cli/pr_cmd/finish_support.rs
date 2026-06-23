@@ -1920,7 +1920,10 @@ fn finish_path_is_small_binary_focused(path: &str) -> bool {
     matches!(
         trimmed,
         "adl/tools/pr.sh"
+            | "adl/tools/observability.sh"
             | "adl/tools/polis_status_for_ssm_windows.ps1"
+            | "adl/tools/test_pr_delegate_cargo_fallback_liveness.sh"
+            | "adl/tools/test_pr_delegate_prefers_primary_checkout_binary.sh"
             | "adl/tools/test_pr_small_binary_delegation.sh"
             | "adl/tools/test_pr_run_locked_cargo_fallback_refuses_cleanly.sh"
             | "adl/tools/validate_polis_status_for_ssm_windows.py"
@@ -2649,7 +2652,13 @@ fn parsed_issue_is_html_observatory_path(issue: u32, path: &str) -> bool {
 
 fn finish_path_needs_small_binary_delegation_validation(path: &str) -> bool {
     let trimmed = path.trim().trim_matches('/');
-    matches!(trimmed, "adl/tools/test_pr_small_binary_delegation.sh")
+    matches!(
+        trimmed,
+        "adl/tools/observability.sh"
+            | "adl/tools/test_pr_delegate_cargo_fallback_liveness.sh"
+            | "adl/tools/test_pr_delegate_prefers_primary_checkout_binary.sh"
+            | "adl/tools/test_pr_small_binary_delegation.sh"
+    )
 }
 
 fn finish_path_needs_locked_cargo_fallback_validation(path: &str) -> bool {
