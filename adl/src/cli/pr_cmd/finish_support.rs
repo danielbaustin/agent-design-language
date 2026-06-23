@@ -1649,6 +1649,9 @@ pub(super) fn select_finish_validation_plan_for_finish(
     if changed_paths.is_empty() {
         bail!("finish: no changed tracked paths available for validation profile selection");
     }
+    if finish_paths_are_version_metadata_update(changed_paths) {
+        return Ok(build_version_metadata_validation_plan());
+    }
     if finish_issue_needs_tokio_manifest_runtime_validation(issue_number, changed_paths) {
         return Ok(build_tokio_manifest_runtime_validation_plan());
     }
@@ -1713,6 +1716,35 @@ fn profile_backed_finish_validation_plan(
         mode: FinishValidationMode::DocsOnly,
         commands,
     })
+}
+
+fn finish_paths_are_version_metadata_update(changed_paths: &[String]) -> bool {
+    let mut has_manifest = false;
+    let mut has_lockfile = false;
+    let mut has_current_docs = false;
+    for path in changed_paths {
+        match path.trim().trim_matches('/') {
+            "README.md" => has_current_docs = true,
+            "adl/Cargo.toml" => has_manifest = true,
+            "adl/Cargo.lock" => has_lockfile = true,
+            _ => return false,
+        }
+    }
+    has_manifest && has_lockfile && has_current_docs
+}
+
+fn build_version_metadata_validation_plan() -> FinishValidationPlan {
+    FinishValidationPlan {
+        mode: FinishValidationMode::SmallBinaryFocused,
+        commands: vec![
+            "bash adl/tools/check_no_tracked_adl_issue_record_residue.sh".to_string(),
+            "git diff --check".to_string(),
+            "cargo metadata --manifest-path adl/Cargo.toml --no-deps --format-version 1"
+                .to_string(),
+            "cargo metadata --manifest-path adl/Cargo.toml --locked --no-deps --format-version 1"
+                .to_string(),
+        ],
+    }
 }
 
 fn finish_issue_needs_unity_observatory_scaffold_validation(
@@ -3187,6 +3219,33 @@ pub(super) fn run_finish_validation_rust(
                             "--bin",
                             "adl-pr-finish",
                             "cli::pr_cmd::tests::finish::arg_render::finish_helper_paths_run_focused_local_ci_gated_validation",
+                        ],
+                    )?;
+                }
+                "cargo metadata --manifest-path adl/Cargo.toml --no-deps --format-version 1" => {
+                    run_finish_validation_status(
+                        "cargo",
+                        &[
+                            "metadata",
+                            "--manifest-path",
+                            path_str(&manifest)?,
+                            "--no-deps",
+                            "--format-version",
+                            "1",
+                        ],
+                    )?;
+                }
+                "cargo metadata --manifest-path adl/Cargo.toml --locked --no-deps --format-version 1" => {
+                    run_finish_validation_status(
+                        "cargo",
+                        &[
+                            "metadata",
+                            "--manifest-path",
+                            path_str(&manifest)?,
+                            "--locked",
+                            "--no-deps",
+                            "--format-version",
+                            "1",
                         ],
                     )?;
                 }
