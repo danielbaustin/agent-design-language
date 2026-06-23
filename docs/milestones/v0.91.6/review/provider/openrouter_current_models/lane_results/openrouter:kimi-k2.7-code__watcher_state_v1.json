@@ -1,0 +1,39 @@
+{
+  "schema_version": "provider_communication.v1",
+  "route": {
+    "provider_kind": "hosted",
+    "provider": "openrouter",
+    "runtime_surface": "hosted_api",
+    "provider_model_id": "moonshotai/kimi-k2.7-code",
+    "credential_ref": "env:OPENROUTER_API_KEY",
+    "source_registry": "v0.91.6.openrouter.suitability"
+  },
+  "model_identity": {
+    "provider_kind": "hosted",
+    "provider": "openrouter",
+    "model_ref": "moonshotai/kimi-k2.7-code",
+    "provider_model_id": "moonshotai/kimi-k2.7-code-20260612",
+    "runtime_surface": "hosted_api",
+    "identity_strength": "provider_asserted",
+    "observed_at": "unix:1",
+    "source_registry": "v0.91.6.openrouter.suitability"
+  },
+  "attempts": [
+    {
+      "attempt_index": 1,
+      "started_at": "unix:1782158744",
+      "duration_ms": 20390,
+      "status": "ok",
+      "retryable": false,
+      "http_status": 200,
+      "raw_response_excerpt": "[redacted response len=555 sha256=1483fca86114]"
+    }
+  ],
+  "final_status": "ok",
+  "duration_ms": 20390,
+  "request_id": "openrouter:kimi-k2.7-code__watcher_state_v1",
+  "output_text_excerpt": "[redacted response len=555 sha256=1483fca86114]",
+  "artifact_ref": "<tmp>/result.json@b0a366e184fd1130",
+  "output_text_chars": 555,
+  "output_text_digest": "sha256:1483fca86114"
+}

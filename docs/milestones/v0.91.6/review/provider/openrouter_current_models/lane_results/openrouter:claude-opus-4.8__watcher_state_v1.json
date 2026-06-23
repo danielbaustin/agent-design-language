@@ -1,0 +1,39 @@
+{
+  "schema_version": "provider_communication.v1",
+  "route": {
+    "provider_kind": "hosted",
+    "provider": "openrouter",
+    "runtime_surface": "hosted_api",
+    "provider_model_id": "anthropic/claude-opus-4.8",
+    "credential_ref": "env:OPENROUTER_API_KEY",
+    "source_registry": "v0.91.6.openrouter.suitability"
+  },
+  "model_identity": {
+    "provider_kind": "hosted",
+    "provider": "openrouter",
+    "model_ref": "anthropic/claude-opus-4.8",
+    "provider_model_id": "anthropic/claude-4.8-opus-20260528",
+    "runtime_surface": "hosted_api",
+    "identity_strength": "provider_asserted",
+    "observed_at": "unix:1",
+    "source_registry": "v0.91.6.openrouter.suitability"
+  },
+  "attempts": [
+    {
+      "attempt_index": 1,
+      "started_at": "unix:1782158599",
+      "duration_ms": 3725,
+      "status": "ok",
+      "retryable": false,
+      "http_status": 200,
+      "raw_response_excerpt": "[redacted response len=530 sha256=abc4a1a0ad10]"
+    }
+  ],
+  "final_status": "ok",
+  "duration_ms": 3726,
+  "request_id": "openrouter:claude-opus-4.8__watcher_state_v1",
+  "output_text_excerpt": "[redacted response len=530 sha256=abc4a1a0ad10]",
+  "artifact_ref": "<tmp>/result.json@683cfe501ab67103",
+  "output_text_chars": 530,
+  "output_text_digest": "sha256:abc4a1a0ad10"
+}

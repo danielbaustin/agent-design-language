@@ -1,0 +1,32 @@
+{
+  "route": {
+    "provider_kind": "hosted",
+    "provider": "openrouter",
+    "runtime_surface": "hosted_api",
+    "provider_model_id": "google/gemini-3.5-flash",
+    "source_registry": "v0.91.6.openrouter.suitability",
+    "credential_ref": "env:OPENROUTER_API_KEY"
+  },
+  "model_identity": {
+    "provider_kind": "hosted",
+    "provider": "openrouter",
+    "model_ref": "google/gemini-3.5-flash",
+    "provider_model_id": "google/gemini-3.5-flash",
+    "runtime_surface": "hosted_api",
+    "identity_strength": "provider_asserted",
+    "observed_at": "unix:1",
+    "source_registry": "v0.91.6.openrouter.suitability"
+  },
+  "prompt_contract_ref": "v0.91.6.openrouter.suitability.closeout_checker_v1",
+  "lane_ref": "openrouter:gemini-3.5-flash__closeout_checker_v1",
+  "run_id": "openrouter:gemini-3.5-flash__closeout_checker_v1",
+  "request_id": "openrouter:gemini-3.5-flash__closeout_checker_v1",
+  "attempt_policy": {
+    "max_attempts": 1,
+    "timeout_ms": 90000,
+    "retry_backoff_ms": 1000
+  },
+  "input_text_chars": 620,
+  "input_text_digest": "sha256:93f98920e9ca",
+  "input_text_excerpt": "[redacted prompt len=620 sha256=93f98920e9ca]"
+}

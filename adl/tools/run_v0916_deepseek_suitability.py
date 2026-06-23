@@ -28,35 +28,45 @@ def repo_root() -> Path:
 
 def parse_args() -> argparse.Namespace:
     root = repo_root()
+    entrypoint_name = Path(sys.argv[0]).name
+    generic_entrypoint = entrypoint_name == "run_v0916_agent_suitability_panel.py"
     parser = argparse.ArgumentParser(
         description="Run a bounded v0.91.6 agent suitability panel from a spec file"
     )
     parser.add_argument(
         "--out",
         type=Path,
-        default=root
-        / "docs"
-        / "milestones"
-        / "v0.91.6"
-        / "review"
-        / "provider"
-        / "deepseek_suitability",
+        default=(
+            None
+            if generic_entrypoint
+            else root
+            / "docs"
+            / "milestones"
+            / "v0.91.6"
+            / "review"
+            / "provider"
+            / "deepseek_suitability"
+        ),
     )
     parser.add_argument("--date", default=str(date.today()))
     parser.add_argument(
         "--key-file",
         type=Path,
-        default=Path.home() / "keys" / "deepseek.key",
+        default=None if generic_entrypoint else Path.home() / "keys" / "deepseek.key",
         help="Override the hosted credential key-file path when the spec requests one",
     )
     parser.add_argument(
         "--spec",
         type=Path,
-        default=root
-        / "adl"
-        / "tools"
-        / "suitability_specs"
-        / "deepseek_csdlc_panel_4096.json",
+        default=(
+            None
+            if generic_entrypoint
+            else root
+            / "adl"
+            / "tools"
+            / "suitability_specs"
+            / "deepseek_csdlc_panel_4096.json"
+        ),
     )
     parser.add_argument(
         "--skip-hosted",
@@ -68,11 +78,20 @@ def parse_args() -> argparse.Namespace:
         action="store_true",
         help="Skip local Ollama lanes even when models are present",
     )
-    return parser.parse_args()
+    args = parser.parse_args()
+    if generic_entrypoint:
+        if args.spec is None:
+            fail("--spec is required when using the generic agent suitability runner")
+        if args.out is None:
+            fail("--out is required when using the generic agent suitability runner")
+    return args
 
 
 def run(
-    cmd: list[str], cwd: Path, env: dict[str, str] | None = None
+    cmd: list[str],
+    cwd: Path,
+    env: dict[str, str] | None = None,
+    timeout: float | None = None,
 ) -> subprocess.CompletedProcess:
     return subprocess.run(
         cmd,
@@ -81,6 +100,7 @@ def run(
         check=True,
         text=True,
         capture_output=True,
+        timeout=timeout,
     )
 
 
@@ -166,10 +186,15 @@ def load_key_into_env(env_name: str, key_file: Path) -> str:
     fail(f"could not read a usable {env_name} value from {key_file}")
 
 
-def ensure_spec_credentials(spec: dict, key_file_override: Path) -> None:
+def ensure_spec_credentials(spec: dict, key_file_override: Path | None) -> None:
     for loader in spec.get("credential_loaders", []):
         env_name = loader["env_name"]
-        key_path = Path(loader.get("key_file", str(key_file_override))).expanduser()
+        if loader.get("key_file"):
+            key_path = Path(loader["key_file"]).expanduser()
+        elif key_file_override is not None:
+            key_path = key_file_override.expanduser()
+        else:
+            fail(f"credential loader for {env_name} requires key_file or --key-file")
         load_key_into_env(env_name, key_path)
 
 
@@ -249,7 +274,22 @@ def task_prompt(spec: dict, task_id: str) -> str:
     fail(f"no task prompt for {task_id}")
 
 
-def request_payload(candidate: Candidate, task_id: str, prompt: str) -> dict:
+def task_spec(spec: dict, task_id: str) -> dict:
+    for task in spec["tasks"]:
+        if task["task_id"] == task_id:
+            return task
+    fail(f"no task spec for {task_id}")
+
+
+def source_registry(spec: dict) -> str:
+    return spec.get("source_registry", "v0.91.6.deepseek.suitability")
+
+
+def prompt_contract_prefix(spec: dict) -> str:
+    return spec.get("prompt_contract_prefix", source_registry(spec))
+
+
+def request_payload(spec: dict, candidate: Candidate, task_id: str, prompt: str) -> dict:
     route = {
         "provider_kind": "hosted"
         if candidate.runtime_surface == "hosted_api"
@@ -257,7 +297,7 @@ def request_payload(candidate: Candidate, task_id: str, prompt: str) -> dict:
         "provider": candidate.provider,
         "runtime_surface": candidate.runtime_surface,
         "provider_model_id": candidate.provider_model_id,
-        "source_registry": "v0.91.6.deepseek.suitability",
+        "source_registry": source_registry(spec),
     }
     if candidate.credential_ref:
         route["credential_ref"] = candidate.credential_ref
@@ -276,9 +316,9 @@ def request_payload(candidate: Candidate, task_id: str, prompt: str) -> dict:
             "runtime_surface": candidate.runtime_surface,
             "identity_strength": identity_strength,
             "observed_at": "unix:1",
-            "source_registry": "v0.91.6.deepseek.suitability",
+            "source_registry": source_registry(spec),
         },
-        "prompt_contract_ref": f"v0.91.6.deepseek.suitability.{task_id}",
+        "prompt_contract_ref": f"{prompt_contract_prefix(spec)}.{task_id}",
         "lane_ref": f"{candidate.candidate_id}__{task_id}",
         "run_id": f"{candidate.candidate_id}__{task_id}",
         "request_id": f"{candidate.candidate_id}__{task_id}",
@@ -357,7 +397,12 @@ def contains_authority_overclaim(text: str) -> bool:
     return any(token in lowered for token in forbidden)
 
 
-def classify_task(task_id: str, output_text: str) -> tuple[str, dict, str, str]:
+def classify_task(
+    task_id: str,
+    output_text: str,
+    issue_number: int | None = None,
+    task_cfg: dict | None = None,
+) -> tuple[str, dict, str, str]:
     if not output_text.strip():
         return (
             "timeout_or_empty",
@@ -384,7 +429,10 @@ def classify_task(task_id: str, output_text: str) -> tuple[str, dict, str, str]:
                 "watcher output missed the bounded status contract",
                 "do_not_use_for_conductor_routing",
             )
-        if "#4096" in output_text and "#4095" in output_text and "adl-wp-4096" in output_text:
+        required_refs = (
+            task_cfg or {}
+        ).get("required_evidence_tokens", ["#4096", "#4095", "adl-wp-4096"])
+        if all(token in output_text for token in required_refs):
             score = "pass" if status == "ready" else "pass_with_limits"
             return (
                 score,
@@ -450,8 +498,14 @@ def classify_task(task_id: str, output_text: str) -> tuple[str, dict, str, str]:
                 "review output did not keep the bounded severity contract",
                 "do_not_use_for_review",
             )
-        if "gh" in text_lower and (
-            "adl-native" in text_lower or "octocrab" in text_lower
+        required_all_tokens = (
+            task_cfg or {}
+        ).get("required_review_all_tokens", ["gh"])
+        required_any_tokens = (
+            task_cfg or {}
+        ).get("required_review_any_tokens", ["adl-native", "octocrab"])
+        if all(token in text_lower for token in required_all_tokens) and any(
+            token in text_lower for token in required_any_tokens
         ):
             return (
                 "pass",
@@ -475,15 +529,20 @@ def classify_task(task_id: str, output_text: str) -> tuple[str, dict, str, str]:
                 "do_not_use_for_planning",
             )
         numbered_steps = re.findall(r"(?m)^\d+\.\s", sections.get("plan", ""))
-        required_bits = [
-            "hosted deepseek api",
-            "deepseek-r1:8b",
-            "deepseek-r1:32b",
-            "five-task suitability panel",
-            "skipped",
-            "blocked",
-            "no repo-mutation authority",
-        ]
+        required_bits = (
+            task_cfg or {}
+        ).get(
+            "required_plan_bits",
+            [
+                "hosted deepseek api",
+                "deepseek-r1:8b",
+                "deepseek-r1:32b",
+                "five-task suitability panel",
+                "skipped",
+                "blocked",
+                "no repo-mutation authority",
+            ],
+        )
         if len(numbered_steps) == 4 and all(bit in text_lower for bit in required_bits):
             return (
                 "pass",
@@ -552,17 +611,31 @@ def classify_task(task_id: str, output_text: str) -> tuple[str, dict, str, str]:
             )
         paths = payload.get("paths")
         task_text = payload.get("task", "")
-        limit_text = payload.get("limit", "")
+        limit_value = payload.get("limit", "")
+        if isinstance(limit_value, list):
+            limit_text = " ".join(str(item) for item in limit_value)
+        else:
+            limit_text = str(limit_value)
+        expected_issue = f"#{issue_number}" if issue_number is not None else None
+        valid_issue = payload.get("issue") == expected_issue if expected_issue else False
         ok = (
-            payload.get("issue") == "#4095"
+            valid_issue
             and isinstance(paths, list)
             and bool(paths)
-            and any(path in {"adl/tools", "docs/milestones/v0.91.6/review/provider"} for path in paths)
+            and any(
+                path in {"adl/tools", "docs/milestones/v0.91.6/review/provider"}
+                for path in paths
+            )
             and isinstance(task_text, str)
-            and "local model" in task_text.lower()
-            and "matrix" in task_text.lower()
+            and any(
+                token in task_text.lower()
+                for token in ("openrouter", "route", "matrix", "suitability")
+            )
             and isinstance(limit_text, str)
-            and "bounded_to_issue_4095" in limit_text
+            and (
+                expected_issue is not None
+                and f"bounded_to_issue_{issue_number}" in limit_text
+            )
             and "advisory_only" in limit_text
         )
         return (
@@ -618,7 +691,31 @@ def candidate_role_summary(rows: list[dict]) -> str:
     return ", ".join(supported) if supported else "none"
 
 
-def run_task(
+def score_priority(score: str) -> int:
+    return {
+        "pass": 5,
+        "pass_with_limits": 4,
+        "fail_truth": 3,
+        "fail_format": 2,
+        "timeout_or_empty": 1,
+        "skipped_blocked": 0,
+    }.get(score, -1)
+
+
+def should_replay_lane(spec: dict, row: dict) -> bool:
+    allowed_failure_kinds = set(
+        spec.get(
+            "runner_replay_failure_kinds",
+            ["provider_empty_text_output", "provider_timeout"],
+        )
+    )
+    return (
+        row["score"] == "timeout_or_empty"
+        and row.get("provider_failure_class") in allowed_failure_kinds
+    )
+
+
+def run_task_once(
     adapter_bin: Path,
     root: Path,
     spec: dict,
@@ -628,17 +725,15 @@ def run_task(
     result_dir: Path,
     log_dir: Path,
     output_dir: Path,
+    raw_request: dict,
+    started_at: str,
 ) -> dict:
-    prompt = task_prompt(spec, task_id)
+    current_task_spec = task_spec(spec, task_id)
     lane_id = f"{candidate.candidate_id}__{task_id}"
-    request_path = request_dir / f"{lane_id}.json"
     result_path = result_dir / f"{lane_id}.json"
     log_path = log_dir / f"{lane_id}.jsonl"
     output_path = output_dir / f"{lane_id}.md"
-    raw_request = request_payload(candidate, task_id, prompt)
-    write_json(request_path, sanitized_request_payload(raw_request))
     env = dict(os.environ)
-    started_at = now_iso()
     with tempfile.TemporaryDirectory(prefix=f"{lane_id}_") as temp_dir:
         temp_root = Path(temp_dir)
         raw_request_path = temp_root / "request.json"
@@ -657,8 +752,40 @@ def run_task(
                 ],
                 cwd=root,
                 env=env,
+                timeout=(candidate.timeout_ms / 1000.0) + 15.0,
             )
             result = json.loads(raw_result_path.read_text())
+        except subprocess.TimeoutExpired as error:
+            timeout_text = (
+                f"panel adapter subprocess timed out after "
+                f"{(candidate.timeout_ms / 1000.0) + 15.0:.0f}s"
+            )
+            write_text(output_path, timeout_text + "\n")
+            synthetic = {
+                "runner_error": True,
+                "timeout_expired": True,
+                "stderr_excerpt": str(error.stderr or "")[:1000],
+            }
+            write_json(result_path, synthetic)
+            return {
+                "candidate_id": candidate.candidate_id,
+                "task_id": task_id,
+                "prompt_ref": f"embedded:{task_id}",
+                "started_at": started_at,
+                "elapsed_ms": candidate.timeout_ms + 15000,
+                "raw_output_ref": rel(root, output_path),
+                "normalized_result": {
+                    "reason": "runner_subprocess_timeout",
+                    "stderr_excerpt": str(error.stderr or "")[:240],
+                },
+                "provider_failure_class": "provider_timeout",
+                "score": "timeout_or_empty",
+                "reviewer_judgment": "panel runner timed out the adapter subprocess and continued instead of stalling the full panel",
+                "safe_role_recommendation": "do_not_promote_until_timeout_is_understood",
+                "result_path": rel(root, result_path),
+                "log_path": rel(root, log_path),
+                "output_digest": f"sha256:{short_sha256(timeout_text)}",
+            }
         except subprocess.CalledProcessError as error:
             error_text = (error.stderr or error.stdout or str(error)).strip()
             write_text(output_path, error_text + "\n")
@@ -691,7 +818,10 @@ def run_task(
     output_text = str(result.get("output_text") or "")
     write_output_markdown(output_path, candidate, task_id, output_text)
     score, normalized_result, reviewer_judgment, safe_role_recommendation = classify_task(
-        task_id, output_text
+        task_id,
+        output_text,
+        spec.get("issue"),
+        current_task_spec,
     )
     failure = result.get("failure") or {}
     return {
@@ -710,6 +840,49 @@ def run_task(
         "log_path": rel(root, log_path),
         "output_digest": f"sha256:{short_sha256(output_text)}" if output_text else None,
     }
+
+
+def run_task(
+    adapter_bin: Path,
+    root: Path,
+    spec: dict,
+    candidate: Candidate,
+    task_id: str,
+    request_dir: Path,
+    result_dir: Path,
+    log_dir: Path,
+    output_dir: Path,
+) -> dict:
+    prompt = textwrap.dedent(task_spec(spec, task_id)["prompt"]).strip()
+    lane_id = f"{candidate.candidate_id}__{task_id}"
+    request_path = request_dir / f"{lane_id}.json"
+    raw_request = request_payload(spec, candidate, task_id, prompt)
+    write_json(request_path, sanitized_request_payload(raw_request))
+    started_at = now_iso()
+    replay_attempts = max(1, int(spec.get("runner_replay_attempts", 2)))
+    best_row = None
+    for attempt_index in range(replay_attempts):
+        row = run_task_once(
+            adapter_bin=adapter_bin,
+            root=root,
+            spec=spec,
+            candidate=candidate,
+            task_id=task_id,
+            request_dir=request_dir,
+            result_dir=result_dir,
+            log_dir=log_dir,
+            output_dir=output_dir,
+            raw_request=raw_request,
+            started_at=started_at,
+        )
+        replay_note = dict(row["normalized_result"])
+        replay_note["runner_attempts_used"] = attempt_index + 1
+        row["normalized_result"] = replay_note
+        if best_row is None or score_priority(row["score"]) >= score_priority(best_row["score"]):
+            best_row = row
+        if not should_replay_lane(spec, row):
+            return best_row
+    return best_row
 
 
 def candidate_rows(candidates: list[Candidate], task_rows: list[dict]) -> list[dict]:
