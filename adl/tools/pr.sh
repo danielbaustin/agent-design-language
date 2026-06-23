@@ -2634,6 +2634,16 @@ cmd_validation() {
   delegate_pr_command_to_rust validation "$@"
 }
 
+cmd_watch() {
+  if [[ "${1:-}" == "-h" || "${1:-}" == "--help" || "${1:-}" == "help" ]]; then
+    usage_watch
+    return 0
+  fi
+  adl_obs_event "pr.sh" "watch" "started" "issue" "${1:-}"
+  require_rust_pr_delegate watch
+  delegate_pr_command_to_rust watch "$@"
+}
+
 cmd_closing_linkage() {
   if [[ "${1:-}" == "-h" || "${1:-}" == "--help" || "${1:-}" == "help" ]]; then
     note "Usage: adl/tools/pr.sh closing-linkage [--event-name <event>] [--event-path <path>] [--head-ref <branch>] [-R owner/repo]"
@@ -2731,6 +2741,7 @@ Commands:
   doctor  <issue> [--slug <slug>] [--version <v>] [--no-fetch-issue] [--mode full|ready|preflight] [--json]
   finish  <issue> --title "<title>" ... [-f <input_card.md>] [--output-card <output_card.md>] [--no-open] [--merge]
   validation <pr-number-or-url> [-R owner/repo] [--watch] [--json]
+  watch   <issue-number-or-url> [--slug <slug>] [--version <v>] [-R owner/repo] [--json]
   closing-linkage [--event-name <event>] [--event-path <path>] [--head-ref <branch>] [-R owner/repo]
   issue   <list|search|view|create|comment|edit|close> ...
   projection-map [--json]
@@ -2769,6 +2780,7 @@ Notes:
 - `pr init <issue> ...` bootstraps the same local root bundle for an issue that already exists.
 - `pr run <issue> ...` is the preferred public execution-context binder for issue work.
 - `pr doctor <issue> ...` is the preferred public readiness and drift diagnostic surface.
+- `pr watch <issue> ...` is the typed tracked-issue lifecycle watcher for issue/PR wait states.
 - `pr closeout <issue> ...` finalizes a closed issue locally and safely prunes its execution worktree when possible.
 - `pr closing-linkage ...` is the Rust-owned CI/linkage guard and prefers live PR metadata over stale event payloads when token context exists.
 - `pr start <issue> ...` remains only as a legacy alias over the same Rust binding path and is no longer part of the taught public flow.
@@ -2967,6 +2979,21 @@ Behavior:
 EOF
 }
 
+usage_watch() {
+  cat <<'EOF'
+Usage:
+  adl/tools/pr.sh watch <issue-number-or-url> [--slug <slug>] [--version <v>] [-R owner/repo] [--json]
+
+Behavior:
+- delegates to the Rust-owned tracked-issue lifecycle watcher
+- classifies one tracked issue into ready-for-run, PR-open, checks-running, checks-failed, checks-green, closeout-needed, or blocked-adjacent states
+- uses typed GitHub transport plus local doctor readiness; does not fall back to raw `gh`
+- keeps the JSON report compact enough to feed a future local watcher agent while ADL remains the authoritative classifier
+- emits explicit authority metadata so local watcher agents stay advisory-only
+- emits a JSON watcher report when --json is set
+EOF
+}
+
 usage_issue() {
   cat <<'EOF'
 Usage:
@@ -3040,6 +3067,7 @@ main() {
     preflight) cmd_preflight "$@" ;;
     finish) cmd_finish "$@" ;;
     validation) cmd_validation "$@" ;;
+    watch) cmd_watch "$@" ;;
     closing-linkage) cmd_closing_linkage "$@" ;;
     issue) cmd_issue "$@" ;;
     projection-map) cmd_projection_map "$@" ;;

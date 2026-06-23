@@ -182,16 +182,72 @@ pub(super) fn current_pr_url_octocrab(repo: &str, branch: &str) -> Result<Option
     })
 }
 
-pub(super) fn list_open_prs_octocrab(repo: &str) -> Result<Vec<OpenPullRequest>> {
+pub(super) fn list_prs_octocrab(repo: &str) -> Result<Vec<OpenPullRequest>> {
     let repo_parts = parse_repo(repo)?;
-    with_octocrab("pr.list.open_wave", |runtime, octo| {
+    with_octocrab("pr.list.wave", |runtime, octo| {
         let owner = repo_parts.owner.clone();
         let name = repo_parts.name.clone();
-        let page = block_on_octocrab(runtime, "pr.list.open_wave", || async {
+        let mut page = block_on_octocrab(runtime, "pr.list.wave", || async {
             octo.pulls(&owner, &name)
                 .list()
-                .state(octocrab::params::State::Open)
+                .state(octocrab::params::State::All)
                 .per_page(100)
+                .send()
+                .await
+        })?;
+        let mut prs = Vec::new();
+        loop {
+            prs.extend(page.items.into_iter().map(|pr| {
+                OpenPullRequest {
+                    number: pr.number.unwrap_or_default() as u32,
+                    title: pr.title.unwrap_or_default(),
+                    url: pr.html_url.map(|url| url.to_string()).unwrap_or_default(),
+                    head_ref_name: pr
+                        .head
+                        .as_ref()
+                        .map(|head| head.ref_field.clone())
+                        .unwrap_or_default(),
+                    base_ref_name: pr
+                        .base
+                        .as_ref()
+                        .map(|base| base.ref_field.clone())
+                        .unwrap_or_default(),
+                    is_draft: pr.draft.unwrap_or(false),
+                    state: pr
+                        .state
+                        .map(|state| format!("{state:?}").to_uppercase())
+                        .unwrap_or_else(|| "OPEN".to_string()),
+                    queue: None,
+                }
+            }));
+            let Some(next) = page.next.clone() else {
+                break;
+            };
+            page = block_on_octocrab(runtime, "pr.list.wave", || async {
+                octo.get_page::<octocrab::models::pulls::PullRequest>(&Some(next.clone()))
+                    .await
+            })?
+            .ok_or_else(|| anyhow!("GitHub advertised a next PR page but did not return it"))?;
+        }
+        Ok(prs)
+    })
+}
+
+pub(super) fn list_prs_by_head_ref_octocrab(
+    repo: &str,
+    head_ref_name: &str,
+) -> Result<Vec<OpenPullRequest>> {
+    let repo_parts = parse_repo(repo)?;
+    let head = format!("{}:{head_ref_name}", repo_parts.owner);
+    with_octocrab("pr.list.head_ref", |runtime, octo| {
+        let owner = repo_parts.owner.clone();
+        let name = repo_parts.name.clone();
+        let page = block_on_octocrab(runtime, "pr.list.head_ref", || async {
+            octo.pulls(&owner, &name)
+                .list()
+                .state(octocrab::params::State::All)
+                .head(head.clone())
+                .per_page(20)
                 .send()
                 .await
         })?;
@@ -213,6 +269,10 @@ pub(super) fn list_open_prs_octocrab(repo: &str) -> Result<Vec<OpenPullRequest>>
                     .map(|base| base.ref_field.clone())
                     .unwrap_or_default(),
                 is_draft: pr.draft.unwrap_or(false),
+                state: pr
+                    .state
+                    .map(|state| format!("{state:?}").to_uppercase())
+                    .unwrap_or_else(|| "OPEN".to_string()),
                 queue: None,
             })
             .collect())

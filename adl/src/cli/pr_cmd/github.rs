@@ -36,9 +36,9 @@ use self::transport::{
 };
 use self::transport::{
     create_pr_octocrab, current_pr_url_octocrab, issue_close_octocrab, issue_comment_octocrab,
-    list_open_prs_octocrab, mark_pr_ready_octocrab, merge_pr_octocrab, pr_base_ref_octocrab,
-    pr_body_octocrab, pr_closing_issue_numbers_octocrab, update_pr_body_octocrab,
-    update_pr_title_body_octocrab,
+    list_prs_by_head_ref_octocrab, list_prs_octocrab, mark_pr_ready_octocrab, merge_pr_octocrab,
+    pr_base_ref_octocrab, pr_body_octocrab, pr_closing_issue_numbers_octocrab,
+    update_pr_body_octocrab, update_pr_title_body_octocrab,
 };
 
 #[derive(Debug, Clone, PartialEq, Eq)]
@@ -58,8 +58,14 @@ pub(super) struct OpenPullRequest {
     pub(super) base_ref_name: String,
     #[serde(rename = "isDraft")]
     pub(super) is_draft: bool,
+    #[serde(default = "default_open_pr_state")]
+    pub(super) state: String,
     #[serde(skip)]
     pub(super) queue: Option<String>,
+}
+
+fn default_open_pr_state() -> String {
+    "OPEN".to_string()
 }
 
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
@@ -149,6 +155,39 @@ pub(super) struct PrValidationReport {
     pub(super) checks: Vec<PrValidationCheckReport>,
     pub(super) failed_checks: Vec<PrValidationCheckReport>,
     pub(super) pending_checks: Vec<PrValidationCheckReport>,
+}
+
+#[derive(Debug, Clone, PartialEq, Eq, Serialize)]
+pub(crate) struct IssueWatchLinkedPrReport {
+    pub(crate) number: u32,
+    pub(crate) url: String,
+    pub(crate) head_ref_name: String,
+    pub(crate) base_ref_name: String,
+    pub(crate) is_draft: bool,
+    pub(crate) state: String,
+    pub(crate) validation: PrValidationReport,
+}
+
+#[derive(Debug, Clone, PartialEq, Eq, Serialize)]
+pub(crate) struct IssueWatchLocalReadinessReport {
+    pub(crate) status: String,
+    pub(crate) pr_run_readiness: String,
+    pub(crate) reason: String,
+}
+
+#[derive(Debug, Clone, PartialEq, Eq, Serialize)]
+pub(crate) struct IssueWatchReport {
+    pub(crate) schema: &'static str,
+    pub(crate) issue: u32,
+    pub(crate) issue_state: String,
+    pub(crate) authoritative_classifier: &'static str,
+    pub(crate) advisory_agent_mode: &'static str,
+    pub(crate) classification: String,
+    pub(crate) next_skill: String,
+    pub(crate) continuation: String,
+    pub(crate) reason: String,
+    pub(crate) local_readiness: IssueWatchLocalReadinessReport,
+    pub(crate) linked_pr: Option<IssueWatchLinkedPrReport>,
 }
 
 pub(super) fn wait_for_pr_validation_finish(repo: &str, pr_ref: &str) -> Result<()> {
@@ -374,6 +413,194 @@ pub(super) fn wait_for_pr_validation_report(
 
 pub(super) fn pr_validation_report(repo: &str, pr_ref: &str) -> Result<PrValidationReport> {
     transport::pr_validation_report(repo, pr_ref)
+}
+
+pub(crate) fn linked_prs_for_issue(
+    repo: &str,
+    issue: u32,
+    branch_hint: Option<&str>,
+) -> Result<Vec<OpenPullRequest>> {
+    let mut linked = Vec::new();
+    let prs = if let Some(branch_hint) = branch_hint {
+        let prs = list_prs_by_head_ref_octocrab(repo, branch_hint)?;
+        if prs.is_empty() {
+            list_prs_octocrab(repo)?
+        } else {
+            prs
+        }
+    } else {
+        list_prs_octocrab(repo)?
+    };
+    for pr in prs {
+        let pr_ref = pr.number.to_string();
+        let linked_issues =
+            pr_closing_issue_numbers_octocrab(repo, &pr_ref).with_context(|| {
+                format!(
+                    "watch: failed to inspect closing issues for PR #{}",
+                    pr.number
+                )
+            })?;
+        if linked_issues.contains(&issue)
+            || issue_number_from_codex_branch(&pr.head_ref_name) == Some(issue)
+        {
+            linked.push(pr);
+        }
+    }
+    Ok(linked)
+}
+
+pub(crate) fn build_issue_watch_report(
+    issue: &IssueRecord,
+    closed_completed: bool,
+    local_readiness: IssueWatchLocalReadinessReport,
+    linked_pr: Option<(OpenPullRequest, PrValidationReport)>,
+) -> IssueWatchReport {
+    if closed_completed {
+        return IssueWatchReport {
+            schema: "adl.pr.watch.v1",
+            issue: issue.number,
+            issue_state: issue.state.to_uppercase(),
+            authoritative_classifier: "adl",
+            advisory_agent_mode: "local_agent_advisory_only",
+            classification: "closeout_needed".to_string(),
+            next_skill: "pr-closeout".to_string(),
+            continuation: "action_required".to_string(),
+            reason: "issue_closed_completed".to_string(),
+            local_readiness,
+            linked_pr: linked_pr.map(|(pr, validation)| IssueWatchLinkedPrReport {
+                number: pr.number,
+                url: pr.url,
+                head_ref_name: pr.head_ref_name,
+                base_ref_name: pr.base_ref_name,
+                is_draft: pr.is_draft,
+                state: pr.state,
+                validation,
+            }),
+        };
+    }
+
+    if !issue.state.eq_ignore_ascii_case("open") {
+        return IssueWatchReport {
+            schema: "adl.pr.watch.v1",
+            issue: issue.number,
+            issue_state: issue.state.to_uppercase(),
+            authoritative_classifier: "adl",
+            advisory_agent_mode: "local_agent_advisory_only",
+            classification: "closed".to_string(),
+            next_skill: "human_review".to_string(),
+            continuation: "ask_operator".to_string(),
+            reason: "issue_closed_without_completed_reason".to_string(),
+            local_readiness,
+            linked_pr: linked_pr.map(|(pr, validation)| IssueWatchLinkedPrReport {
+                number: pr.number,
+                url: pr.url,
+                head_ref_name: pr.head_ref_name,
+                base_ref_name: pr.base_ref_name,
+                is_draft: pr.is_draft,
+                state: pr.state,
+                validation,
+            }),
+        };
+    }
+
+    let Some((pr, validation)) = linked_pr else {
+        let (classification, next_skill, continuation, reason) =
+            if local_readiness.pr_run_readiness == "ready" {
+                (
+                    "ready_for_run",
+                    "pr-run",
+                    "continue",
+                    "issue_ready_without_linked_pr",
+                )
+            } else if local_readiness.status == "failed" {
+                (
+                    "blocked",
+                    "pr-ready",
+                    "action_required",
+                    "issue_local_readiness_failed",
+                )
+            } else {
+                (
+                    "unknown",
+                    "issue-watcher",
+                    "ask_operator",
+                    "issue_local_readiness_unknown",
+                )
+            };
+        return IssueWatchReport {
+            schema: "adl.pr.watch.v1",
+            issue: issue.number,
+            issue_state: issue.state.to_uppercase(),
+            authoritative_classifier: "adl",
+            advisory_agent_mode: "local_agent_advisory_only",
+            classification: classification.to_string(),
+            next_skill: next_skill.to_string(),
+            continuation: continuation.to_string(),
+            reason: reason.to_string(),
+            local_readiness,
+            linked_pr: None,
+        };
+    };
+
+    let (classification, next_skill, continuation, reason) = if validation.pr_state == "MERGED" {
+        (
+            "merged_pending_closeout",
+            "pr-closeout",
+            "action_required",
+            "linked_pr_merged_closeout_pending",
+        )
+    } else if validation.is_draft {
+        ("pr_open", "issue-watcher", "continue", "linked_pr_draft")
+    } else {
+        match validation.disposition.as_str() {
+            "pending" => (
+                "checks_running",
+                "issue-watcher",
+                "continue",
+                "linked_pr_checks_pending",
+            ),
+            "failed" | "cancelled" | "timed_out" => (
+                "checks_failed",
+                "pr-janitor",
+                "action_required",
+                "linked_pr_checks_failed",
+            ),
+            "success" | "skipped" => (
+                "checks_green",
+                "human_review",
+                "ask_operator",
+                "linked_pr_checks_green",
+            ),
+            _ => (
+                "blocked",
+                "issue-watcher",
+                "ask_operator",
+                "linked_pr_validation_ambiguous",
+            ),
+        }
+    };
+
+    IssueWatchReport {
+        schema: "adl.pr.watch.v1",
+        issue: issue.number,
+        issue_state: issue.state.to_uppercase(),
+        authoritative_classifier: "adl",
+        advisory_agent_mode: "local_agent_advisory_only",
+        classification: classification.to_string(),
+        next_skill: next_skill.to_string(),
+        continuation: continuation.to_string(),
+        reason: reason.to_string(),
+        local_readiness,
+        linked_pr: Some(IssueWatchLinkedPrReport {
+            number: pr.number,
+            url: pr.url,
+            head_ref_name: pr.head_ref_name,
+            base_ref_name: pr.base_ref_name,
+            is_draft: pr.is_draft,
+            state: pr.state,
+            validation,
+        }),
+    }
 }
 
 fn github_client(operation: &str) -> Result<AdlGithubClient> {
@@ -752,9 +979,9 @@ fn run_octocrab_capture(operation: &str, args: &[&str]) -> Result<String> {
             let branch = arg_after(args, "--head")?;
             current_pr_url_octocrab(repo, branch).map(|url| url.unwrap_or_default())
         }
-        "pr.list.open_wave" => {
+        "pr.list.open_wave" | "pr.list.wave" => {
             let repo = arg_after(args, "-R")?;
-            let prs = list_open_prs_octocrab(repo)?;
+            let prs = list_prs_octocrab(repo)?;
             serde_json::to_string(&prs).context("failed to serialize octocrab PR list")
         }
         "pr.view.body" => {

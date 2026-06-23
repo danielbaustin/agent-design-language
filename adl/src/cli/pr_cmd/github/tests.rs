@@ -7,6 +7,8 @@ use std::thread;
 use std::time::{Duration, Instant};
 use tiny_http::{Header, Response, Server};
 
+mod watch;
+
 fn env_lock() -> std::sync::MutexGuard<'static, ()> {
     cli_env_lock()
 }
@@ -531,6 +533,58 @@ fn spawn_validation_status_paginated_server() -> (String, thread::JoinHandle<Vec
                 )
             };
             let _ = request.respond(json_response(response));
+        }
+        seen
+    });
+    (base_uri, handle)
+}
+
+fn spawn_open_prs_paginated_server() -> (String, thread::JoinHandle<Vec<String>>) {
+    let (base_uri, server) = bind_test_http_server("bind open PR pagination server");
+    let next_url = format!("{base_uri}/repos/owner/repo/pulls?page=2");
+    let handle = thread::spawn(move || {
+        let mut seen = Vec::new();
+        for page in 1..=2 {
+            let Some(request) = server
+                .recv_timeout(Duration::from_secs(5))
+                .expect("open PR pagination server receive")
+            else {
+                break;
+            };
+            let method = request.method().as_str().to_string();
+            let url = request.url().to_string();
+            seen.push(format!("{method} {url}"));
+            let response_body = if page == 1 {
+                format!(
+                    "[{}]",
+                    pr_fixture(
+                        2101,
+                        "[v0.91.6][tools] First page PR",
+                        "Closes #4301",
+                        "codex/4301-first-page",
+                        "main"
+                    )
+                )
+            } else {
+                format!(
+                    "[{}]",
+                    pr_fixture(
+                        2102,
+                        "[v0.91.6][tools] Second page PR",
+                        "Closes #4302",
+                        "codex/4302-second-page",
+                        "main"
+                    )
+                )
+            };
+            let mut response = json_response(response_body);
+            if page == 1 {
+                let link = format!(r#"<{next_url}>; rel="next""#);
+                if let Ok(header) = Header::from_bytes("Link", link) {
+                    response = response.with_header(header);
+                }
+            }
+            let _ = request.respond(response);
         }
         seen
     });

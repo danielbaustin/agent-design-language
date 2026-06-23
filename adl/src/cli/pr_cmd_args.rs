@@ -104,6 +104,15 @@ pub(crate) struct ValidationArgs {
 }
 
 #[derive(Debug, Clone, PartialEq, Eq)]
+pub(crate) struct WatchArgs {
+    pub(crate) issue_ref: String,
+    pub(crate) repo: Option<String>,
+    pub(crate) slug: Option<String>,
+    pub(crate) version: Option<String>,
+    pub(crate) json: bool,
+}
+
+#[derive(Debug, Clone, PartialEq, Eq)]
 pub(crate) struct ClosingLinkageArgs {
     pub(crate) event_name: Option<String>,
     pub(crate) event_path: Option<PathBuf>,
@@ -682,6 +691,43 @@ pub(crate) fn parse_validation_args(args: &[String]) -> Result<ValidationArgs> {
             other => bail!("validation: unknown arg: {other}"),
         }
         i += 1;
+    }
+    Ok(parsed)
+}
+
+pub(crate) fn parse_watch_args(args: &[String]) -> Result<WatchArgs> {
+    let issue_ref = args
+        .first()
+        .ok_or_else(|| anyhow!("watch: missing <issue-number-or-url>"))?
+        .to_string();
+    let mut parsed = WatchArgs {
+        issue_ref,
+        repo: None,
+        slug: None,
+        version: None,
+        json: false,
+    };
+    let mut i = 1usize;
+    while i < args.len() {
+        match args[i].as_str() {
+            "-R" | "--repo" => {
+                parsed.repo = Some(require_value(args, i, "watch", args[i].as_str())?);
+                i += 2;
+            }
+            "--slug" => {
+                parsed.slug = Some(require_value(args, i, "watch", "--slug")?);
+                i += 2;
+            }
+            "--version" => {
+                parsed.version = Some(require_value(args, i, "watch", "--version")?);
+                i += 2;
+            }
+            "--json" => {
+                parsed.json = true;
+                i += 1;
+            }
+            other => bail!("watch: unknown arg: {other}"),
+        }
     }
     Ok(parsed)
 }
