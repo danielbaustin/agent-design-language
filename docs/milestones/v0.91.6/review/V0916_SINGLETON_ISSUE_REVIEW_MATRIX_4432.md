@@ -1,6 +1,6 @@
 # v0.91.6 Singleton Issue Review Matrix
 
-Date: 2026-06-22
+Date: 2026-06-23
 Issue: `#4432`
 Scope: closed `version:v0.91.6` issues only; excludes closed sprint umbrellas and mini-sprint umbrellas already handled by the retained sprint-evidence matrix.
 
@@ -27,7 +27,7 @@ Evidence:
 - `docs/milestones/v0.91.6/features/COGNITIVE_SCHEDULER_v0.91.6.md`
 
 ### No new code-level correctness findings were identified in sampled high-risk singleton work products
-Focused code/docs/tests review over the high-risk singleton set did not uncover new correctness regressions beyond the routing findings above. The main residual risk is evidence topology, not a newly discovered runtime or tooling defect in the sampled surfaces.
+Focused code/docs/tests review over the high-risk singleton set did not uncover new correctness regressions. The main residual risk is evidence topology, not a newly discovered runtime or tooling defect in the sampled surfaces.
 
 Sampled high-risk singleton work products: `#4047`, `#4049`, `#4106`, `#4107`, `#4111`, `#4190`, `#4262`, `#4286`, `#4306`, `#4322`, `#4356`, `#4378`, `#4405`, and `#4431`, plus the closed `#4388` child `#4398`.
 

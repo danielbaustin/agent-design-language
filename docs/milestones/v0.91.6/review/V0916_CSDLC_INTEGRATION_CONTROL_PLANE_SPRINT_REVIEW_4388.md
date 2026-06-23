@@ -80,7 +80,8 @@ Primary retained evidence for the sprint is now:
 - `docs/milestones/v0.91.6/review/context/FASTCONTEXT_EVALUATION_4398.md`
 - the closed child issue set `#4389`-`#4395`, `#4397`, and `#4398`
 - tracked v0.91.7 planning truth that consumes the late reliability/adoption
-  stream needed for `#4396`
+  stream needed for `#4396`, at the broader control-plane-wave level rather
+  than as a one-for-one endorsement of every routed owner issue
 
 Issue `#4388` also has local sprint-state scaffolding under:
 
