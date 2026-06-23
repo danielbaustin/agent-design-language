@@ -422,6 +422,8 @@ TOKEN_MAP = {
     "cli_dispatch": 'test(/^cli::tests::top_level_dispatch_routes_/)',
     "cli_smoke_basics": 'binary_id(adl::cli_smoke) and test(/^basics::/)',
     "process_status": 'binary_id(adl::cli_smoke) and test(/^process_status::/)',
+    "demo_adl_gws_context_mirror": 'binary_id(adl::bin/demo-adl-gws-context-mirror) and test(/^tests::/)',
+    "demo_adl_gws_native_drive_sync": 'binary_id(adl::bin/demo-adl-gws-native-drive-sync) and test(/^tests::/)',
     "tokio_bootstrap": 'test(/^cli::pr_cmd::github::/) or test(/^cli::pr_cmd::github_client::/) or test(/^cli::tooling_cmd::github_release::/)',
     "pr_cmd": 'binary_id(adl::bin/adl) and test(/^cli::pr_cmd::/)',
     "pr_cmd_finish": 'binary_id(adl::bin/adl-pr-finish) and test(/^cli::pr_cmd::tests::finish::arg_render::/) or binary_id(adl::bin/adl-pr-finish) and test(/^cli::pr_cmd::finish_support::tests::/)',

@@ -644,6 +644,7 @@ mod tests {
             .expect("remove credentials");
     }
 
+    #[allow(clippy::await_holding_lock)]
     #[tokio::test]
     async fn load_workspace_credentials_prefers_explicit_adl_env_file() {
         let _lock = lock_gws_live_test_env();
@@ -670,6 +671,7 @@ mod tests {
             .expect("remove credentials");
     }
 
+    #[allow(clippy::await_holding_lock)]
     #[tokio::test]
     async fn load_workspace_credentials_falls_back_to_google_application_credentials() {
         let _lock = lock_gws_live_test_env();
