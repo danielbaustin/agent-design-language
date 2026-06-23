@@ -28,6 +28,13 @@ printf '%s\n' "$*" >"${TMP_ADL_ARGS}"
 EOF_ADL
 chmod +x "$repo/adl/target/debug/adl-pr-doctor"
 
+cat >"$repo/adl/target/debug/adl" <<'EOF_BROAD'
+#!/usr/bin/env bash
+set -euo pipefail
+printf '%s\n' "$*" >"${TMP_BROAD_ARGS}"
+EOF_BROAD
+chmod +x "$repo/adl/target/debug/adl"
+
 cat >"$mockbin/cargo" <<'EOF_CARGO'
 #!/usr/bin/env bash
 set -euo pipefail
@@ -49,15 +56,27 @@ chmod +x "$mockbin/cargo"
 
 TMP_ADL_ARGS="$tmpdir/adl_args.txt"
 TMP_CARGO_ARGS="$tmpdir/cargo_args.txt"
+TMP_BROAD_ARGS="$tmpdir/broad_args.txt"
 export TMP_ADL_ARGS
 export TMP_CARGO_ARGS
+export TMP_BROAD_ARGS
 export PATH="$mockbin:$PATH"
 
-(
-  cd "$worktree"
-  ADL_PRIMARY_CHECKOUT_ROOT="$repo" \
-    "$BASH_BIN" adl/tools/pr.sh doctor 4413 --slug rust-start --no-fetch-issue --version v0.91.6 --mode full >/dev/null
-)
+run_doctor_from_worktree() {
+  (
+    cd "$worktree"
+    ADL_PRIMARY_CHECKOUT_ROOT="$repo" \
+      "$BASH_BIN" adl/tools/pr.sh doctor 4413 --slug rust-start --no-fetch-issue --version v0.91.6 --mode full >/dev/null
+  )
+}
+
+reset_delegate_logs() {
+  : >"$TMP_ADL_ARGS"
+  : >"$TMP_CARGO_ARGS"
+  : >"$TMP_BROAD_ARGS"
+}
+
+run_doctor_from_worktree
 
 args="$(cat "$TMP_ADL_ARGS")"
 [[ "$args" == *"4413 --slug rust-start --no-fetch-issue --version v0.91.6 --mode full"* ]] || {
@@ -73,14 +92,8 @@ args="$(cat "$TMP_ADL_ARGS")"
 
 sleep 1
 touch "$worktree/adl/Cargo.toml"
-: >"$TMP_ADL_ARGS"
-: >"$TMP_CARGO_ARGS"
-
-(
-  cd "$worktree"
-  ADL_PRIMARY_CHECKOUT_ROOT="$repo" \
-    "$BASH_BIN" adl/tools/pr.sh doctor 4413 --slug rust-start --no-fetch-issue --version v0.91.6 --mode full >/dev/null
-)
+reset_delegate_logs
+run_doctor_from_worktree
 
 [[ ! -s "$TMP_ADL_ARGS" ]] || {
   echo "assertion failed: stale worktree Cargo.toml should block reuse of the primary checkout direct binary" >&2
@@ -89,6 +102,74 @@ touch "$worktree/adl/Cargo.toml"
 }
 grep -F -- "--bin adl-pr-doctor -- 4413 --slug rust-start --no-fetch-issue --version v0.91.6 --mode full" "$TMP_CARGO_ARGS" >/dev/null || {
   echo "assertion failed: stale worktree Cargo.toml should force cargo fallback" >&2
+  cat "$TMP_CARGO_ARGS" >&2
+  exit 1
+}
+
+git -C "$worktree" checkout -- adl/Cargo.toml
+sleep 1
+touch "$worktree/adl/Cargo.lock"
+reset_delegate_logs
+run_doctor_from_worktree
+
+[[ ! -s "$TMP_ADL_ARGS" ]] || {
+  echo "assertion failed: stale worktree Cargo.lock should block reuse of the primary checkout direct binary" >&2
+  cat "$TMP_ADL_ARGS" >&2
+  exit 1
+}
+grep -F -- "--bin adl-pr-doctor -- 4413 --slug rust-start --no-fetch-issue --version v0.91.6 --mode full" "$TMP_CARGO_ARGS" >/dev/null || {
+  echo "assertion failed: stale worktree Cargo.lock should force cargo fallback" >&2
+  cat "$TMP_CARGO_ARGS" >&2
+  exit 1
+}
+
+rm -f "$worktree/adl/Cargo.lock"
+sleep 1
+touch "$worktree/adl/build.rs"
+reset_delegate_logs
+run_doctor_from_worktree
+
+[[ ! -s "$TMP_ADL_ARGS" ]] || {
+  echo "assertion failed: stale worktree build.rs should block reuse of the primary checkout direct binary" >&2
+  cat "$TMP_ADL_ARGS" >&2
+  exit 1
+}
+grep -F -- "--bin adl-pr-doctor -- 4413 --slug rust-start --no-fetch-issue --version v0.91.6 --mode full" "$TMP_CARGO_ARGS" >/dev/null || {
+  echo "assertion failed: stale worktree build.rs should force cargo fallback" >&2
+  cat "$TMP_CARGO_ARGS" >&2
+  exit 1
+}
+
+rm -f "$repo/adl/target/debug/adl-pr-doctor"
+rm -f "$worktree/adl/build.rs"
+sleep 1
+touch "$repo/adl/target/debug/adl"
+reset_delegate_logs
+run_doctor_from_worktree
+
+[[ ! -s "$TMP_CARGO_ARGS" ]] || {
+  echo "assertion failed: broad adl binary should be reused when no worktree Rust inputs are newer" >&2
+  cat "$TMP_CARGO_ARGS" >&2
+  exit 1
+}
+grep -F -- "pr doctor 4413 --slug rust-start --no-fetch-issue --version v0.91.6 --mode full" "$TMP_BROAD_ARGS" >/dev/null || {
+  echo "assertion failed: expected worktree doctor delegation through the primary checkout broad adl binary" >&2
+  cat "$TMP_BROAD_ARGS" >&2
+  exit 1
+}
+
+sleep 1
+touch "$worktree/adl/build.rs"
+reset_delegate_logs
+run_doctor_from_worktree
+
+[[ ! -s "$TMP_BROAD_ARGS" ]] || {
+  echo "assertion failed: stale worktree build.rs should block reuse of the broad primary checkout adl binary" >&2
+  cat "$TMP_BROAD_ARGS" >&2
+  exit 1
+}
+grep -F -- "--bin adl-pr-doctor -- 4413 --slug rust-start --no-fetch-issue --version v0.91.6 --mode full" "$TMP_CARGO_ARGS" >/dev/null || {
+  echo "assertion failed: stale worktree build.rs should force cargo fallback instead of the broad adl binary" >&2
   cat "$TMP_CARGO_ARGS" >&2
   exit 1
 }
