@@ -3533,15 +3533,99 @@ fn finish_tokio_wave_paths_run_new_focused_validation_commands() {
 }
 
 #[test]
-fn finish_validation_profile_does_not_special_case_tokio_manifest_paths_for_other_issues() {
+fn finish_validation_profile_classifies_version_metadata_paths_without_issue_special_case() {
+    let changed_paths = vec![
+        "README.md".to_string(),
+        "adl/Cargo.toml".to_string(),
+        "adl/Cargo.lock".to_string(),
+    ];
+    let requested_paths = changed_paths.join(",");
+
+    let plan = select_finish_validation_plan_for_finish(5000, &requested_paths, &changed_paths)
+        .expect("version metadata profile plan");
+
+    assert_eq!(plan.mode, FinishValidationMode::SmallBinaryFocused);
+    assert!(plan
+        .commands
+        .contains(&"bash adl/tools/check_no_tracked_adl_issue_record_residue.sh".to_string()));
+    assert!(plan.commands.contains(&"git diff --check".to_string()));
+    assert!(plan.commands.contains(
+        &"cargo metadata --manifest-path adl/Cargo.toml --no-deps --format-version 1".to_string()
+    ));
+    assert!(plan.commands.contains(
+        &"cargo metadata --manifest-path adl/Cargo.toml --locked --no-deps --format-version 1"
+            .to_string()
+    ));
+    assert!(!plan
+        .commands
+        .iter()
+        .any(|command| command.contains("cargo clippy")));
+    assert!(!plan
+        .commands
+        .iter()
+        .any(|command| command.contains("cargo nextest")));
+
     let err = select_finish_validation_plan_for_finish(
         5000,
         ".",
         &["adl/Cargo.toml".to_string(), "adl/Cargo.lock".to_string()],
     )
-    .expect_err("non-Tokio manifest-only issues should stay unclassified");
-
+    .expect_err("manifest-only issues should stay unclassified");
     assert!(err.to_string().contains("changed paths are not classified"));
+}
+
+#[test]
+fn finish_validation_runner_executes_version_metadata_commands() {
+    let _guard = env_lock();
+    let temp = unique_temp_dir("adl-pr-finish-version-metadata-validation");
+    let repo = temp.join("repo");
+    fs::create_dir_all(repo.join("adl/tools")).expect("adl tools dir");
+    fs::write(
+        repo.join("adl/Cargo.toml"),
+        "[package]\nname='adl'\nversion='0.91.6'\n",
+    )
+    .expect("cargo toml");
+    write_executable(
+        &repo.join("adl/tools/check_no_tracked_adl_issue_record_residue.sh"),
+        "#!/usr/bin/env bash\nset -euo pipefail\nexit 0\n",
+    );
+    init_git_repo(&repo);
+
+    let bin_dir = temp.join("bin");
+    fs::create_dir_all(&bin_dir).expect("bin dir");
+    let cargo_log = temp.join("cargo.log");
+    write_executable(
+        &bin_dir.join("cargo"),
+        &format!(
+            "#!/usr/bin/env bash\nset -euo pipefail\nprintf '%s\\n' \"$*\" >> '{}'\nexit 0\n",
+            cargo_log.display()
+        ),
+    );
+    let old_path = env::var("PATH").unwrap_or_default();
+    unsafe {
+        env::set_var("PATH", format!("{}:{}", bin_dir.display(), old_path));
+    }
+
+    let changed_paths = vec![
+        "README.md".to_string(),
+        "adl/Cargo.toml".to_string(),
+        "adl/Cargo.lock".to_string(),
+    ];
+    let requested_paths = changed_paths.join(",");
+    let plan = select_finish_validation_plan_for_finish(5000, &requested_paths, &changed_paths)
+        .expect("version metadata profile plan");
+    run_finish_validation_rust(&repo, &plan).expect("version metadata validation");
+
+    unsafe {
+        env::set_var("PATH", old_path);
+    }
+
+    let cargo_calls = fs::read_to_string(&cargo_log).expect("cargo log");
+    assert!(cargo_calls.contains("metadata --manifest-path"));
+    assert!(cargo_calls.contains("--no-deps --format-version 1"));
+    assert!(cargo_calls.contains("--locked --no-deps --format-version 1"));
+    assert!(!cargo_calls.contains("test --manifest-path"));
+    assert!(!cargo_calls.contains("clippy --manifest-path"));
 }
 
 #[test]
