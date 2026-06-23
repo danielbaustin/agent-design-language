@@ -1954,11 +1954,13 @@ fn finish_validation_plan_integrated_runtime_soak_runner_hits_helper_classifiers
     .expect("integrated runtime soak finish plan");
 
     assert_eq!(plan.mode, FinishValidationMode::LargerBinaryFocused);
-    assert!(plan
-        .commands
-        .contains(&"git diff --check".to_string()));
-    assert!(plan.commands.iter().any(|command| command
-        .contains("bash adl/tools/run_pr_fast_test_lane.sh --changed-files")));
+    assert!(plan.commands.contains(&"git diff --check".to_string()));
+    assert!(
+        plan.commands
+            .iter()
+            .any(|command| command
+                .contains("bash adl/tools/run_pr_fast_test_lane.sh --changed-files"))
+    );
 }
 
 #[test]
@@ -2367,8 +2369,12 @@ fn finish_validation_profile_keeps_public_prompt_packet_changes_focused() {
 
     assert_eq!(plan.mode, FinishValidationMode::LargerBinaryFocused);
     assert!(plan.commands.contains(&"git diff --check".to_string()));
-    assert!(plan.commands.iter().any(|command| command
-        .contains("bash adl/tools/run_pr_fast_test_lane.sh --changed-files")));
+    assert!(
+        plan.commands
+            .iter()
+            .any(|command| command
+                .contains("bash adl/tools/run_pr_fast_test_lane.sh --changed-files"))
+    );
     assert!(!plan
         .commands
         .iter()
@@ -2505,11 +2511,13 @@ fn finish_validation_profile_classifies_tokio_bootstrap_helper_paths() {
     .expect("tokio bootstrap helper plan");
 
     assert_eq!(plan.mode, FinishValidationMode::LargerBinaryFocused);
-    assert!(plan
-        .commands
-        .contains(&"git diff --check".to_string()));
-    assert!(plan.commands.iter().any(|command| command
-        .contains("bash adl/tools/run_pr_fast_test_lane.sh --changed-files")));
+    assert!(plan.commands.contains(&"git diff --check".to_string()));
+    assert!(
+        plan.commands
+            .iter()
+            .any(|command| command
+                .contains("bash adl/tools/run_pr_fast_test_lane.sh --changed-files"))
+    );
 }
 
 #[test]
@@ -2558,8 +2566,12 @@ fn finish_validation_profile_classifies_bounded_cav_tokio_paths() {
     .expect("bounded cav tokio plan");
 
     assert_eq!(plan.mode, FinishValidationMode::LargerBinaryFocused);
-    assert!(plan.commands.iter().any(|command| command
-        .contains("bash adl/tools/run_pr_fast_test_lane.sh --changed-files")));
+    assert!(
+        plan.commands
+            .iter()
+            .any(|command| command
+                .contains("bash adl/tools/run_pr_fast_test_lane.sh --changed-files"))
+    );
 }
 
 #[test]
@@ -2577,8 +2589,12 @@ fn finish_validation_profile_keeps_finish_support_changes_narrow() {
 
     assert_eq!(plan.mode, FinishValidationMode::LargerBinaryFocused);
     assert!(plan.commands.contains(&"git diff --check".to_string()));
-    assert!(plan.commands.iter().any(|command| command
-        .contains("bash adl/tools/run_pr_fast_test_lane.sh --changed-files")));
+    assert!(
+        plan.commands
+            .iter()
+            .any(|command| command
+                .contains("bash adl/tools/run_pr_fast_test_lane.sh --changed-files"))
+    );
     assert!(!plan
         .commands
         .contains(&"cargo test --manifest-path adl/Cargo.toml --bin adl cli::pr_cmd".to_string()));
@@ -2608,11 +2624,13 @@ fn finish_validation_profile_classifies_process_status_helper_surfaces() {
     .expect("process status helper plan");
 
     assert_eq!(plan.mode, FinishValidationMode::LargerBinaryFocused);
-    assert!(plan
-        .commands
-        .contains(&"git diff --check".to_string()));
-    assert!(plan.commands.iter().any(|command| command
-        .contains("bash adl/tools/run_pr_fast_test_lane.sh --changed-files")));
+    assert!(plan.commands.contains(&"git diff --check".to_string()));
+    assert!(
+        plan.commands
+            .iter()
+            .any(|command| command
+                .contains("bash adl/tools/run_pr_fast_test_lane.sh --changed-files"))
+    );
     assert!(!plan
         .commands
         .iter()
@@ -2633,8 +2651,12 @@ fn finish_validation_profile_classifies_lifecycle_inline_tests() {
     .expect("lifecycle inline test plan");
 
     assert_eq!(plan.mode, FinishValidationMode::LargerBinaryFocused);
-    assert!(plan.commands.iter().any(|command| command
-        .contains("bash adl/tools/run_pr_fast_test_lane.sh --changed-files")));
+    assert!(
+        plan.commands
+            .iter()
+            .any(|command| command
+                .contains("bash adl/tools/run_pr_fast_test_lane.sh --changed-files"))
+    );
 }
 
 #[test]
