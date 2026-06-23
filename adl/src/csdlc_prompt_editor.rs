@@ -1103,14 +1103,6 @@ fn unrepresented_import_value(key: &str, issue: &str) -> String {
         "issue_url" => {
             format!("https://github.com/danielbaustin/agent-design-language/issues/{issue}")
         }
-        "expected_runtime_class" => "unknown".to_string(),
-        "estimate_elapsed_seconds" => "unknown".to_string(),
-        "estimate_total_tokens" => "unknown".to_string(),
-        "estimate_validation_seconds" => "unknown".to_string(),
-        "actual_active_work_seconds" => "unknown".to_string(),
-        "actual_pr_wait_seconds" => "unknown".to_string(),
-        "actual_ci_wait_seconds" => "unknown".to_string(),
-        "completion_state" => "unknown".to_string(),
         "source_issue_prompt" => {
             format!(".adl/imported/issue-{issue}-source-issue-prompt.md")
         }
