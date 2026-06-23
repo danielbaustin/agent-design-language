@@ -3570,6 +3570,28 @@ fn finish_validation_profile_classifies_control_plane_path() {
 }
 
 #[test]
+fn finish_validation_profile_classifies_session_ledger_paths() {
+    let plan = select_finish_validation_plan(
+        "adl/src/session_ledger.rs,adl/src/cli/session_cmd.rs,adl/src/cli/tests.rs",
+    )
+    .expect("session ledger larger-binary plan");
+
+    assert_eq!(plan.mode, FinishValidationMode::LargerBinaryFocused);
+    assert!(
+        plan.commands
+            .iter()
+            .any(|command| command.contains("cargo fmt --manifest-path")),
+        "session ledger plan should require cargo fmt"
+    );
+    assert!(
+        plan.commands
+            .iter()
+            .any(|command| command.contains("cargo test --manifest-path adl/Cargo.toml --bin adl")),
+        "session ledger plan should include owner-binary validation"
+    );
+}
+
+#[test]
 fn finish_validation_profile_classifies_prompt_template_and_structured_prompt_paths() {
     let plan = select_finish_validation_plan(
         "adl/src/cli/tooling_cmd/common.rs,adl/src/cli/tooling_cmd/prompt_template.rs,adl/src/cli/tooling_cmd/structured_prompt.rs,adl/src/cli/tooling_cmd/tests/prompt_template.rs,adl/src/cli/tooling_cmd/tests/structured_prompt.rs,adl/src/cli/tooling_cmd/tests/support.rs",
