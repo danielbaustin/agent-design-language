@@ -64,6 +64,16 @@ These were open at the source-capture pass and should be explicitly closed, comp
 | `#4331` | First-class nested goal accounting | Closed input that must be consumed by goal-state and SOR metrics planning. |
 | `#4332` | VPP and PVF lane-template mini-sprint | Required validation-planning sprint; should follow template substrate as needed. |
 | `#4388`-`#4398` | v0.91.6 C-SDLC integration control-plane completion sprint | Required v0.91.6 completion sprint for SEP, VPP, PVF lane configuration, prompt-card templates, GitHub/octocrab convergence, goal metrics, logging, watcher/lifecycle automation, runtime dependency routing, tooling reliability, and FastContext evaluation before v0.92 depends on sprint-scale execution. v0.91.7 should consume the closed/blocked/routed truth from this sprint rather than recreate it as new scope. |
+| `#4405` | Session coordination and root checkout policy | Closed input for multi-session root-checkout safety; WP-02/WP-03 must consume it before v0.91.7 parallel execution starts. |
+| `#4412` | Session ledger and cross-session coordination commands | Required input for multi-account/multi-agent continuity; must be complete, blocked, deferred, or routed before v0.92 relies on parallel session handoff. |
+| `#4413` | PR lifecycle delegate stalls and command liveness | Required tooling-reliability input for long-running lifecycle commands. |
+| `#4417`-`#4421` | Validation throughput and lifecycle automation mini-sprint | Required input for path ownership, `pr ready` / `pr run` session-ledger integration, SOR fact emission, and validation-manager path-profile selection. |
+| `#4425` | VPP generation from ownership and validation profile facts | Required input so VPPs become generated planning artifacts rather than chat-memory expectations. |
+| `#4431` | Forward authoritative workflow time/token accounting | Required forward-capture fix; must not be conflated with historical backfill. |
+| `#4441` | v0.91.6 workflow metric backfill evidence | Bounded archaeology/backfill input for v0.91.6 only; token values must remain explicit or `not_collected`, never inferred. |
+| `#4433`-`#4438` | Operationalize adopted C-SDLC practices after PVF2 | Required adoption sprint so watchers, VPPs, shepherding, card readiness, SOR fact capture, and full-path proof become operational defaults. |
+| `#4442` | Native host-integrated goal snapshot capture | v0.91.7-facing input for host/session goal accounting; route through WP-04 unless completed before v0.91.7 starts. |
+| `#4443` | Full issue-lifecycle shepherd | v0.91.7-facing lifecycle input above watcher/janitor/closeout; route through WP-03 unless completed before v0.91.7 starts. |
 | `#4368` | v0.91.7 planning docs | This source-capture and planning alignment issue. |
 
 ## Local TBD Inputs To Capture Or Route
@@ -106,8 +116,8 @@ Local `.adl/docs/TBD/` files are ignored planning inputs, not tracked proof. The
 | Theme | Why it matters before v0.92 | Scheduling posture |
 | --- | --- | --- |
 | v0.91.6 closeout and release-tail truth | v0.92 cannot consume incomplete or stale bridge truth. | First gate. |
-| SEP/VPP/PVF and template-version work | Sprint execution, validation planning, and time/token accounting must be predictable. `#4388`-`#4398` is the v0.91.6 completion sprint and must exit complete, blocked, deferred, or routed before v0.92 relies on sprint-scale execution. | v0.91.6 closeout input consumed by v0.91.7 WP-02/WP-03. |
-| Goal state, nested goals, time/token/resource metrics | v0.92 needs continuity and issue/sprint accounting. | Early process/runtime bridge. |
+| SEP/VPP/PVF, session-ledger, lifecycle automation, and template-version work | Sprint execution, validation planning, and time/token accounting must be predictable. `#4388`-`#4398`, `#4405`, `#4412`-`#4413`, `#4417`-`#4421` plus `#4425`, and `#4433`-`#4438` must exit complete, blocked, deferred, or routed before v0.92 relies on sprint-scale execution. | v0.91.6 closeout input consumed by v0.91.7 WP-02/WP-03. |
+| Goal state, nested goals, time/token/resource metrics | v0.92 needs continuity and issue/sprint accounting. `#4431` owns forward capture; `#4441` owns bounded v0.91.6 backfill; `#4442` owns host-integrated goal snapshots. | Early process/runtime bridge. |
 | Cognitive scheduler and local-agent acceleration | Premium cognition is now a bottleneck; local/deepseek/hosted agent suitability must route work. | Early scheduler/provider sprint. |
 | Capability envelope and capability-testing boundary | v0.92 memory/identity/birthday evidence depends on knowing what capability envelope, witnesses/receipt, and Aptitude Atlas evidence may or may not claim. | Scheduler/provider and handoff bridge. |
 | Build throughput and validation cost | C-SDLC speed is limited by build/validation tail. | Parallel validation/build sprint. |
@@ -119,7 +129,7 @@ Local `.adl/docs/TBD/` files are ignored planning inputs, not tracked proof. The
 | Security, CAV, SSM, ACIP/A2A/protobuf | Activation cannot hide governance, protocol, or security residuals. | Security/protocol sprint. |
 | Affect, happiness, Godel mechanics, economics, guilds | Public claims need safe boundaries and future governance routes. | Boundary/decision sprint. |
 | CodeFriend, adapter v2, papers, and publication surfaces | Launch and birthday docs must not silently inherit product or publication commitments from later roadmap rows. | Boundary/decision and launch handoff sprint. |
-| GitHub convergence/control-plane tooling | Sprint execution should know whether octocrab/tooling convergence is complete, blocked, deferred, or routed before relying on it. `#4388`-`#4398` should consume the remaining GitHub/octocrab, watcher, lifecycle automation, logging, template-edge, and FastContext evaluation defects as one v0.91.6 control-plane completion gate. | v0.91.6 process/tooling bridge consumed by v0.91.7 planning. |
+| GitHub convergence/control-plane tooling | Sprint execution should know whether octocrab/tooling convergence is complete, blocked, deferred, or routed before relying on it. The v0.91.6 control-plane stream should consume GitHub/octocrab, watcher, lifecycle automation, logging, template-edge, FastContext, session-ledger, and operational-adoption defects; `#4443` is the v0.91.7-facing shepherd route if lifecycle orchestration remains incomplete. | v0.91.6 process/tooling bridge consumed by v0.91.7 planning. |
 | Launch/birthday planning | July launch and v0.92 birthday must align without scope explosion. | Closeout/handoff sprint. |
 
 ## Explicit Non-Claims

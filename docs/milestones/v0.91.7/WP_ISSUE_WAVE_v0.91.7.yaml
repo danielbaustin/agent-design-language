@@ -25,25 +25,41 @@ work_packages:
       - "Feature-list/roadmap disposition entry"
   - wp: WP-02
     title: v0.91.6 closeout truth ADR release-tail C-SDLC control-plane sprint and cleanup
-    outcome: Close, block, defer, or route open v0.91.6 closeout/release-tail, ADR release-tail, Observatory carryover, and #4388-#4398 C-SDLC integration control-plane work before v0.92 consumes it.
+    outcome: >-
+      Close, block, defer, or route open v0.91.6 closeout/release-tail,
+      ADR release-tail, Observatory carryover, #4388-#4398 C-SDLC
+      integration control-plane work, and late control-plane inputs #4405,
+      #4412-#4413, #4417-#4421, #4425, #4431, #4441, #4433-#4438, and
+      #4442-#4443 before v0.92 consumes them.
     depends_on: ["WP-01"]
     deliverables:
       - "Closeout truth ledger"
       - "ADR release-tail route"
-      - "C-SDLC control-plane sprint disposition"
+      - "C-SDLC control-plane and late-input disposition"
       - "Carryover routing updates"
   - wp: WP-03
     title: Consume C-SDLC integration control-plane truth
-    outcome: Consume the v0.91.6 #4388-#4398 completion sprint truth for SEP, VPP, externalized PVF lane configuration, prompt-card templates, GitHub/octocrab convergence, goal/time/token metrics, logging, watcher/lifecycle automation, runtime dependency routing, tooling reliability, and FastContext evaluation. Create v0.91.7 follow-ons only for surfaces that are incomplete, blocked, or explicitly routed by WP-02.
-    depends_on: ["WP-01", "WP-02", "#4308", "#4309", "#4332", "#4388-#4398"]
+    outcome: >-
+      Consume the v0.91.6 control-plane completion truth for SEP, VPP,
+      externalized PVF lane configuration, prompt-card templates,
+      GitHub/octocrab convergence, session ledger, goal/time/token metrics,
+      metric backfill, logging, watcher/lifecycle automation,
+      validation-manager/SOR fact routing, operational adoption, runtime
+      dependency routing, tooling reliability, lifecycle shepherding, and
+      FastContext evaluation. Create v0.91.7 follow-ons only for surfaces that
+      are incomplete, blocked, or explicitly routed by WP-02.
+    depends_on: ["WP-01", "WP-02", "#4308", "#4309", "#4332", "#4388-#4398", "#4405", "#4412-#4413", "#4417-#4421", "#4425", "#4431", "#4441", "#4433-#4438", "#4442-#4443"]
     deliverables:
       - "C-SDLC integration control-plane truth-consumption ledger"
       - "SEP/VPP/PVF/template completion or blocker route"
-      - "GitHub/octocrab, metrics, logging, watcher, lifecycle automation, FastContext disposition"
+      - "GitHub/octocrab, session ledger, metrics, backfill, logging, watcher, lifecycle automation, operational adoption, shepherd, FastContext disposition"
   - wp: WP-04
     title: Goal state nested goals and execution metrics
-    outcome: Define goal-state consumption, issue/sprint nested goals, SOR time-token-resource accounting, and outlier analysis route.
-    depends_on: ["WP-03", "#4329", "#4331"]
+    outcome: >-
+      Define goal-state consumption, issue/sprint nested goals, SOR
+      time-token-resource accounting, forward capture, bounded v0.91.6
+      backfill, host goal snapshots, and outlier analysis route.
+    depends_on: ["WP-03", "#4329", "#4331", "#4431", "#4441", "#4442"]
     deliverables:
       - "Goal/metrics route"
       - "Template-field plan"

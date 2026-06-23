@@ -32,16 +32,16 @@ The refreshed source-capture pass also requires explicit routes for operational 
 
 | Route | Source | Required disposition before v0.92 |
 | --- | --- | --- |
-| SEP / VPP / PVF / prompt-template next version | `#4308`, `#4309`, `#4332`, sprint execution packets | Complete, blocked, deferred, or routed before sprint-scale v0.92 execution relies on it. |
-| Goal state and execution metrics | `.adl/docs/TBD/ADL_GOAL_STATE.md`, `#4329`, `#4331` | Route SOR time/token/resource and nested goal accounting. |
+| SEP / VPP / PVF / prompt-template next version | `#4308`, `#4309`, `#4332`, `#4388`-`#4398`, `#4417`-`#4421` plus `#4425`, sprint execution packets | Complete, blocked, deferred, or routed before sprint-scale v0.92 execution relies on it; generated VPPs must not remain chat-memory policy. |
+| Goal state and execution metrics | `.adl/docs/TBD/ADL_GOAL_STATE.md`, `#4329`, `#4331`, `#4431`, `#4441`, `#4442` | Route SOR time/token/resource, nested goal accounting, forward metric capture, bounded v0.91.6 backfill, and host goal snapshots. |
 | Scheduler/provider/local-agent routing | scheduler/provider v0.91.6 docs and TBD scheduler/economics notes | Route cheapest-validated-outcome scheduling and local/hosted model suitability. |
-| Build and validation throughput | build-throughput reviews, validation-manager/test-tax docs, Nessus/CodeBuild candidates | Route validation-cost and remote/local build decisions. |
+| Build and validation throughput | build-throughput reviews, validation-manager/test-tax docs, `#4417`-`#4421`, Nessus/CodeBuild candidates | Route validation-cost, path ownership, SOR fact capture, validation manager, and remote/local build decisions. |
 | Runtime integration, Soak #2, and AWS signal bridge | runtime fire-up, runtime AWS signal bridge, ACIP-to-SNS, heartbeat, SSM docs | Route one minimal assembled runtime proof, operational signal surfaces, and architecture-diet follow-on boundaries. |
 | Observatory and launch/birthday evidence | Observatory docs, launch plan, demo matrix | Route visible proof and public non-claim boundaries. |
 | Feature-list and roadmap truth | `docs/planning/ADL_FEATURE_LIST.md`, `issue-feature-list-roadmap-sync.md` | Refresh or explicitly route stale feature-list/roadmap claims before v0.92 planning consumes them. |
 | Capability envelope and Aptitude Atlas boundary | feature-list rows for ACP, capability testing, capability envelope, memory grounding, birth witnesses/receipt | Route capability envelope and capability-testing evidence into the v0.92 handoff without turning Aptitude Atlas productization into a v0.92 blocker. |
 | CodeFriend v1 and portable adapter v2 | `issue-codefriend-v1-proof-and-adapter-v2-acceptance.md`, feature-list CodeFriend/adapter rows | Preserve as post-v0.92/pre-v0.95 proof-planning work unless launch readiness explicitly promotes a bounded slice. |
-| GitHub convergence and octocrab/tooling control plane | v0.91.6 tooling/octocrab convergence work, feature-list control-plane Rust migration rows | Ensure sprint/process execution knows whether GitHub convergence is complete, blocked, deferred, or routed before relying on it. |
+| GitHub convergence and octocrab/tooling control plane | v0.91.6 tooling/octocrab convergence work, `#4405`, `#4412`-`#4413`, `#4433`-`#4438`, `#4443`, feature-list control-plane Rust migration rows | Ensure sprint/process execution knows whether GitHub convergence, session coordination, lifecycle liveness, operational adoption, and shepherding are complete, blocked, deferred, or routed before relying on them. |
 | Paper and publication surfaces | feature-list publication/paper rows, launch planning | Explicitly defer or route paper/publication work so first-birthday launch evidence does not silently inherit publication claims. |
 
 ## Cross-Doc Requirements

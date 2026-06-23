@@ -27,9 +27,10 @@ Forward checklist. Items are intentionally unchecked because `v0.91.7` execution
 ## Process And Validation Substrate
 
 - [ ] v0.91.6 `#4388`-`#4398` C-SDLC integration control-plane sprint completed, blocked, deferred, or routed, including SEP, VPP, PVF/template-version work, GitHub/octocrab convergence, goal metrics, logging, watcher/lifecycle automation, runtime dependency routing, tooling reliability, and FastContext evaluation.
-- [ ] Sprint `/goal`, issue goal, watcher, activity log, and closeout rules are reflected in templates/skills or routed.
-- [ ] PVF/VPP lane assignment can be made during planning or is explicitly deferred.
-- [ ] Time/token/resource accounting fields are scheduled for cards/SORs.
+- [ ] Late control-plane inputs `#4405`, `#4412`-`#4413`, `#4417`-`#4421` plus `#4425`, `#4431`, `#4441`, `#4433`-`#4438`, and `#4442`-`#4443` are complete, blocked, deferred, or routed before v0.91.7 execution relies on them.
+- [ ] Sprint `/goal`, issue goal, session ledger, watcher, activity log, shepherd, and closeout rules are reflected in templates/skills/tools or routed.
+- [ ] PVF/VPP lane assignment and generated VPP creation can be made during planning or are explicitly deferred.
+- [ ] Forward time/token/resource accounting, v0.91.6-only backfill, and host goal snapshots are scheduled for cards/SORs or routed.
 - [ ] Closed dependency `#4331` is consumed by goal-state and nested-goal planning.
 - [ ] Validation-manager/test-tax/build-throughput routes are complete, blocked, deferred, or routed.
 
