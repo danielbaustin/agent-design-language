@@ -214,6 +214,65 @@ fn real_pr_init_requires_explicit_or_inferable_version_for_issue() {
 }
 
 #[test]
+fn real_pr_init_fails_closed_on_conflicting_issue_version_metadata_before_remote_mutation() {
+    let _guard = env_lock();
+    let repo = unique_temp_dir("adl-pr-init-conflicting-version-metadata");
+    copy_bootstrap_support_files(&repo);
+    init_git_repo(&repo);
+    assert!(Command::new("git")
+        .args([
+            "remote",
+            "set-url",
+            "origin",
+            "https://github.com/owner/repo.git",
+        ])
+        .current_dir(&repo)
+        .status()
+        .expect("git remote set-url")
+        .success());
+
+    let bin_dir = repo.join("bin");
+    fs::create_dir_all(&bin_dir).expect("bin dir");
+    let gh_log = repo.join("gh.log");
+    write_executable(
+        &bin_dir.join("gh"),
+        &format!(
+            "#!/usr/bin/env bash\nset -euo pipefail\nprintf '%s\\n' \"$*\" >> '{}'\nif [[ \"$*\" == *\"issue view 1153 -R owner/repo --json title --jq .title\"* ]]; then\n  printf '[v0.91.6][runtime] Metadata conflict gate\\n'\n  exit 0\nfi\nif [[ \"$*\" == *\"issue view 1153 -R owner/repo --json labels --jq .labels[].name\"* ]]; then\n  printf 'track:roadmap\\ntype:task\\narea:runtime\\nversion:v0.91.6\\n'\n  exit 0\nfi\nif [[ \"$*\" == *\"issue view 1153 -R owner/repo --json body --jq .body\"* ]]; then\n  cat <<'EOF'\n## Summary\n\nConflicting issue metadata regression fixture.\n\nVersion: v0.91.7\nEOF\n  exit 0\nfi\nif [[ \"$*\" == *\"issue edit 1153 -R owner/repo\"* || \"$*\" == *\"issue create -R owner/repo\"* ]]; then\n  exit 97\nfi\nexit 1\n",
+            gh_log.display(),
+        ),
+    );
+
+    let old_path = env::var("PATH").unwrap_or_default();
+    let prev_dir = env::current_dir().expect("cwd");
+    unsafe {
+        env::set_var("PATH", format!("{}:{}", bin_dir.display(), old_path));
+    }
+    env::set_current_dir(&repo).expect("chdir");
+
+    let err = real_pr(&[
+        "init".to_string(),
+        "1153".to_string(),
+        "--slug".to_string(),
+        "runtime-conflicting-version-metadata".to_string(),
+    ])
+    .expect_err("conflicting version metadata should fail init before mutation");
+
+    env::set_current_dir(prev_dir).expect("restore cwd");
+    unsafe {
+        env::set_var("PATH", old_path);
+    }
+
+    let err_text = err.to_string();
+    assert!(err_text.contains("conflicting version evidence for issue #1153"));
+    let gh_log = fs::read_to_string(&gh_log).expect("gh log");
+    assert!(gh_log.contains("issue view 1153 -R owner/repo --json title --jq .title"));
+    assert!(gh_log.contains("issue view 1153 -R owner/repo --json labels --jq .labels[].name"));
+    assert!(gh_log.contains("issue view 1153 -R owner/repo --json body --jq .body"));
+    assert!(!gh_log.contains("issue edit 1153 -R owner/repo"));
+    assert!(!gh_log.contains("issue create -R owner/repo"));
+}
+
+#[test]
 fn current_pr_url_filters_empty_and_null_results() {
     let _guard = env_lock();
     let temp = unique_temp_dir("adl-pr-current-url");

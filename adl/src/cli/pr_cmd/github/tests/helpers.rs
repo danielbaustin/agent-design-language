@@ -447,6 +447,98 @@ fn github_helpers_cover_fallback_and_spawn_failure_paths() {
 }
 
 #[test]
+fn issue_version_prefers_consistent_label_title_and_body_evidence_and_fails_closed_on_conflict() {
+    let _guard = env_lock();
+    let policy_env = clear_github_policy_env();
+    let temp = unique_temp_dir("adl-github-issue-version-evidence");
+    let bin_dir = temp.join("bin");
+    fs::create_dir_all(&bin_dir).expect("bin dir");
+    let title_file = temp.join("title.txt");
+    let labels_file = temp.join("labels.txt");
+    let body_file = temp.join("body.md");
+    let github_cli_fixture = bin_dir.join("github-cli-fixture");
+
+    write_executable(
+        &github_cli_fixture,
+        &format!(
+            r#"#!/usr/bin/env python3
+import pathlib
+import sys
+
+title = pathlib.Path({title:?})
+labels = pathlib.Path({labels:?})
+body = pathlib.Path({body:?})
+args = sys.argv[1:]
+
+if args[:2] == ["issue", "view"]:
+    if "labels" in args:
+        print(labels.read_text(encoding="utf-8"), end="")
+        sys.exit(0)
+    if "title" in args:
+        print(title.read_text(encoding="utf-8"), end="")
+        sys.exit(0)
+    if "body" in args:
+        print(body.read_text(encoding="utf-8"), end="")
+        sys.exit(0)
+sys.exit(9)
+"#,
+            title = title_file.display().to_string(),
+            labels = labels_file.display().to_string(),
+            body = body_file.display().to_string(),
+        ),
+    );
+
+    let old_path = std::env::var("PATH").ok();
+    let mut path_entries = vec![bin_dir.clone()];
+    path_entries.extend(std::env::split_paths(old_path.as_deref().unwrap_or("")));
+    unsafe {
+        std::env::set_var("ADL_TEST_GITHUB_CLI_FIXTURE", &github_cli_fixture);
+        std::env::set_var(
+            "PATH",
+            std::env::join_paths(path_entries).expect("join PATH"),
+        );
+    }
+
+    fs::write(&labels_file, "track:roadmap\nversion:v0.91.6\n").expect("labels");
+    fs::write(&title_file, "[v0.91.6][adr] Create and route v0.91.6 ADR candidates\n")
+        .expect("title");
+    fs::write(
+        &body_file,
+        "## Summary\nObserved repair failure: `pr init 4383` inferred `v0.91.7` for a `v0.91.6` issue.\n\nVersion: v0.91.6\n",
+    )
+    .expect("body");
+
+    assert_eq!(
+        issue_version(4383, "owner/repo").expect("consistent inferred version"),
+        Some("v0.91.6".to_string())
+    );
+
+    fs::write(
+        &body_file,
+        "## Summary\nObserved repair failure: `pr init 4383` inferred `v0.91.7` for a `v0.91.6` issue.\n\nVersion: v0.91.7\n",
+    )
+    .expect("conflicting body");
+
+    let err = issue_version(4383, "owner/repo").expect_err("conflicting metadata should fail");
+    assert!(err
+        .to_string()
+        .contains("conflicting version evidence for issue #4383"));
+
+    fs::write(
+        &body_file,
+        "## Summary\nObserved repair failure cites [v0.91.7][tools] but the issue remains in the v0.91.6 wave.\n",
+    )
+    .expect("non-authoritative body");
+    assert_eq!(
+        issue_version(4383, "owner/repo").expect("non-authoritative body should not conflict"),
+        Some("v0.91.6".to_string())
+    );
+
+    restore_env("PATH", old_path);
+    restore_github_policy_env(policy_env);
+}
+
+#[test]
 fn issue_metadata_helpers_preserve_create_body_title_and_label_parity() {
     let _guard = env_lock();
     let policy_env = clear_github_policy_env();

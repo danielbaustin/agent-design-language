@@ -14,6 +14,7 @@ use crate::cli::pr_cmd_prompt::infer_workflow_queue;
 use crate::cli::tokio_runtime::with_current_thread_runtime;
 use ::adl::control_plane::resolve_primary_checkout_root;
 use serde::{Deserialize, Serialize};
+use std::collections::BTreeMap;
 use std::fs;
 use std::path::Path;
 use std::process::Command;
@@ -1500,14 +1501,76 @@ fn helper_command_path(repo_root: &Path, relative: &str) -> String {
 }
 
 pub(super) fn issue_version(issue: u32, repo: &str) -> Result<Option<String>> {
-    for label in gh_issue_label_names(issue, repo)? {
-        if let Some(version) = label.strip_prefix("version:") {
-            return Ok(Some(version.trim().to_string()));
-        }
+    let label_versions = gh_issue_label_names(issue, repo)?
+        .into_iter()
+        .filter_map(|label| {
+            label
+                .strip_prefix("version:")
+                .map(|version| version.trim().to_string())
+                .filter(|version| !version.is_empty())
+        })
+        .collect::<BTreeSet<_>>();
+    if label_versions.len() > 1 {
+        bail!(
+            "issue_version: conflicting version labels for issue #{}: {}",
+            issue,
+            label_versions.into_iter().collect::<Vec<_>>().join(", ")
+        );
     }
 
-    let title = gh_issue_title(issue, repo)?;
-    Ok(title.and_then(|title| version_from_title(&title)))
+    let title_version = gh_issue_title(issue, repo)?.and_then(|title| version_from_title(&title));
+    let body_version = match gh_issue_body(issue, repo)? {
+        Some(body) => explicit_issue_body_version(&body)?,
+        None => None,
+    };
+
+    let mut evidence = BTreeMap::new();
+    if let Some(version) = label_versions.iter().next().cloned() {
+        evidence.insert("label", version);
+    }
+    if let Some(version) = title_version {
+        evidence.insert("title", version);
+    }
+    if let Some(version) = body_version {
+        evidence.insert("body", version);
+    }
+
+    let unique_versions = evidence.values().cloned().collect::<BTreeSet<_>>();
+    if unique_versions.len() > 1 {
+        let sources = evidence
+            .into_iter()
+            .map(|(source, version)| format!("{source}={version}"))
+            .collect::<Vec<_>>()
+            .join(", ");
+        bail!(
+            "issue_version: conflicting version evidence for issue #{}: {}",
+            issue,
+            sources
+        );
+    }
+
+    Ok(unique_versions.into_iter().next())
+}
+
+fn explicit_issue_body_version(body: &str) -> Result<Option<String>> {
+    let mut versions = std::collections::BTreeSet::new();
+    for line in body.lines() {
+        let trimmed = line.trim();
+        let value = trimmed
+            .strip_prefix("Version:")
+            .or_else(|| trimmed.strip_prefix("version:"))
+            .map(str::trim);
+        if let Some(version) = value.filter(|value| !value.is_empty()) {
+            versions.insert(version.to_string());
+        }
+    }
+    if versions.len() > 1 {
+        bail!(
+            "issue_version: conflicting explicit body version evidence: {}",
+            versions.into_iter().collect::<Vec<_>>().join(", ")
+        );
+    }
+    Ok(versions.into_iter().next())
 }
 
 pub(super) fn gh_issue_create(
