@@ -635,6 +635,18 @@ pub(crate) fn build_issue_watch_report(
             "action_required",
             "linked_pr_checks_green_but_draft",
         )
+    } else if matches!(
+        validation.disposition.as_str(),
+        "failed" | "cancelled" | "timed_out"
+    ) {
+        (
+            "checks_failed",
+            "pr-janitor",
+            "janitor_owned_checks_failed",
+            "pr-janitor",
+            "action_required",
+            "linked_pr_checks_failed",
+        )
     } else if validation.is_draft {
         (
             "pr_open",
@@ -654,13 +666,8 @@ pub(crate) fn build_issue_watch_report(
                 "continue",
                 "linked_pr_checks_pending",
             ),
-            "failed" | "cancelled" | "timed_out" => (
-                "checks_failed",
-                "pr-janitor",
-                "janitor_owned_checks_failed",
-                "pr-janitor",
-                "action_required",
-                "linked_pr_checks_failed",
+            "failed" | "cancelled" | "timed_out" => unreachable!(
+                "failed draft and ready PR checks are classified before the non-draft disposition match"
             ),
             "success" | "skipped" => (
                 "checks_green",
@@ -1500,6 +1507,178 @@ pub(super) fn attach_pr_janitor(
             }
         );
     }
+    Ok(())
+}
+
+pub(super) fn attach_issue_watcher(
+    repo_root: &Path,
+    repo: &str,
+    issue: u32,
+    branch: &str,
+    pr_url: &str,
+    expected_pr_state: &str,
+    classification: &str,
+    tail_owner: &str,
+    shepherd_state: &str,
+) -> Result<()> {
+    if std::env::var("ADL_ISSUE_WATCHER_DISABLE")
+        .ok()
+        .as_deref()
+        == Some("1")
+    {
+        return Ok(());
+    }
+
+    if let Some(command_path) = std::env::var("ADL_ISSUE_WATCHER_CMD")
+        .ok()
+        .filter(|value| !value.trim().is_empty())
+    {
+        let mut command = helper_command_with_github_context(&command_path);
+        let output = command
+            .arg("--repo-root")
+            .arg(repo_root)
+            .arg("--repo")
+            .arg(repo)
+            .arg("--issue")
+            .arg(issue.to_string())
+            .arg("--branch")
+            .arg(branch)
+            .arg("--pr-url")
+            .arg(pr_url)
+            .arg("--expected-pr-state")
+            .arg(expected_pr_state)
+            .arg("--classification")
+            .arg(classification)
+            .arg("--tail-owner")
+            .arg(tail_owner)
+            .arg("--shepherd-state")
+            .arg(shepherd_state)
+            .output()
+            .with_context(|| {
+                format!("finish: failed to spawn issue watcher command '{command_path}'")
+            })?;
+        if !output.status.success() {
+            let stderr = redact_for_diagnostics(&String::from_utf8_lossy(&output.stderr));
+            let stdout = redact_for_diagnostics(&String::from_utf8_lossy(&output.stdout));
+            bail!(
+                "finish: issue watcher auto-attach failed for issue #{} and PR '{}': {}{}",
+                issue,
+                pr_url,
+                stderr.trim(),
+                if stdout.trim().is_empty() {
+                    String::new()
+                } else {
+                    format!(" (stdout: {})", stdout.trim())
+                }
+            );
+        }
+        return Ok(());
+    }
+
+    let install_script = repo_root.join("adl/tools/install_adl_operational_skills.sh");
+    let install_output = helper_command_with_github_context("bash")
+        .arg(&install_script)
+        .output()
+        .with_context(|| {
+            format!(
+                "finish: failed to run watcher skill installer '{}'",
+                install_script.display()
+            )
+        })?;
+    if !install_output.status.success() {
+        let stderr = redact_for_diagnostics(&String::from_utf8_lossy(&install_output.stderr));
+        let stdout = redact_for_diagnostics(&String::from_utf8_lossy(&install_output.stdout));
+        bail!(
+            "finish: issue watcher skill install failed for issue #{}: {}{}",
+            issue,
+            stderr.trim(),
+            if stdout.trim().is_empty() {
+                String::new()
+            } else {
+                format!(" (stdout: {})", stdout.trim())
+            }
+        );
+    }
+
+    let artifact_root = repo_root
+        .join(".adl")
+        .join("logs")
+        .join("issue-watcher")
+        .join(format!("issue-{issue}"));
+    fs::create_dir_all(&artifact_root).with_context(|| {
+        format!(
+            "finish: failed to create issue watcher artifact root '{}'",
+            artifact_root.display()
+        )
+    })?;
+    let input_file = artifact_root.join("input.yaml");
+    let prompt_file = artifact_root.join("prompt.md");
+    let run_log = artifact_root.join("codex.log");
+    let last_message_file = artifact_root.join("last_message.md");
+    let pid_file = artifact_root.join("pid");
+
+    fs::write(
+        &input_file,
+        format!(
+            "skill_input_schema: issue_watcher.v1\nmode: watch_issue_pr_tail\nrepo_root: {}\ntarget:\n  issue_number: {}\n  pr_url: {}\n  branch: {}\n  expected_state: {}\n  expected_pr_state: {}\n  expected_tail_owner: {}\n  expected_shepherd_state: {}\n  expected_checks:\n    - adl-ci\n    - adl-coverage\npolicy:\n  allow_pr_inference: false\n  monitor_checks: true\n  monitor_merge_state: true\n  monitor_closure_state: true\n",
+            repo_root.display(),
+            issue,
+            pr_url,
+            branch,
+            classification,
+            expected_pr_state,
+            tail_owner,
+            shepherd_state,
+        ),
+    )
+    .with_context(|| {
+        format!(
+            "finish: failed to write issue watcher input '{}'",
+            input_file.display()
+        )
+    })?;
+    let prompt = format!(
+        "Use $issue-watcher at {repo_root}/adl/tools/skills/issue-watcher/SKILL.md with this validated input:\n\n```yaml\n{input}\n```\n\nRun one bounded watcher pass for this newly published issue-bound PR tail. Treat the repo-native watcher classifier as authoritative, preserve the initial expected watcher/shepherd/tail-owner state as publication context, route failed-check/conflict/review blockers to $pr-janitor if observed, and stop after writing a concise watcher status summary.\n",
+        repo_root = repo_root.display(),
+        input = fs::read_to_string(&input_file).unwrap_or_default(),
+    );
+    fs::write(&prompt_file, &prompt).with_context(|| {
+        format!(
+            "finish: failed to write issue watcher prompt '{}'",
+            prompt_file.display()
+        )
+    })?;
+
+    let run_log_file = fs::File::create(&run_log)
+        .with_context(|| format!("finish: failed to create watcher log '{}'", run_log.display()))?;
+    let run_log_err = run_log_file
+        .try_clone()
+        .with_context(|| format!("finish: failed to clone watcher log '{}'", run_log.display()))?;
+    let mut command = helper_command_with_github_context("codex");
+    let child = command
+        .arg("exec")
+        .arg("--full-auto")
+        .arg("--sandbox")
+        .arg("workspace-write")
+        .arg("--cd")
+        .arg(repo_root)
+        .arg("--skip-git-repo-check")
+        .arg("--add-dir")
+        .arg(repo_root)
+        .arg("--output-last-message")
+        .arg(&last_message_file)
+        .arg(&prompt)
+        .stdin(std::process::Stdio::null())
+        .stdout(std::process::Stdio::from(run_log_file))
+        .stderr(std::process::Stdio::from(run_log_err))
+        .spawn()
+        .context("finish: failed to launch issue watcher codex exec")?;
+    fs::write(&pid_file, format!("{}\n", child.id())).with_context(|| {
+        format!(
+            "finish: failed to record issue watcher pid '{}'",
+            pid_file.display()
+        )
+    })?;
     Ok(())
 }
 

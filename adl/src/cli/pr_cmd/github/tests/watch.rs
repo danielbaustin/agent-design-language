@@ -192,6 +192,23 @@ fn issue_watch_routes_failed_checks_to_pr_janitor() {
 }
 
 #[test]
+fn issue_watch_routes_failed_draft_checks_to_pr_janitor() {
+    let pr = linked_pr(77, true);
+    let report = build_issue_watch_report(
+        &open_issue(4397),
+        false,
+        readiness_ready(),
+        Some((pr, validation_report("failed", true))),
+    );
+    assert_eq!(report.classification, "checks_failed");
+    assert_eq!(report.tail_owner, "pr-janitor");
+    assert_eq!(report.shepherd_state, "janitor_owned_checks_failed");
+    assert_eq!(report.next_skill, "pr-janitor");
+    assert_eq!(report.continuation, "action_required");
+    assert_eq!(report.reason, "linked_pr_checks_failed");
+}
+
+#[test]
 fn issue_watch_routes_pending_checks_to_issue_watcher() {
     let pr = linked_pr(77, false);
     let report = build_issue_watch_report(
