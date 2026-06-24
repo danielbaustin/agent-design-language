@@ -385,7 +385,11 @@ mod tests {
 
     fn temp_home_dir() -> PathBuf {
         let unique = TEMP_HOME_COUNTER.fetch_add(1, Ordering::Relaxed);
-        let path = std::env::temp_dir().join(format!("adl-github-token-test-{}-{}", std::process::id(), unique));
+        let path = std::env::temp_dir().join(format!(
+            "adl-github-token-test-{}-{}",
+            std::process::id(),
+            unique
+        ));
         let _ = std::fs::remove_dir_all(&path);
         std::fs::create_dir_all(&path).expect("temp home dir");
         path
