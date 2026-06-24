@@ -475,6 +475,10 @@ fn list_prs_octocrab_paginates_rest_results() {
     let seen = server.join().expect("server join");
     assert_eq!(seen.len(), 2, "unexpected pagination calls: {seen:#?}");
     assert!(seen[0].contains("/repos/owner/repo/pulls?"));
+    assert!(
+        seen[0].contains("state=open"),
+        "first PR-wave list must request only open PRs: {seen:#?}"
+    );
     assert!(seen[1].contains("/repos/owner/repo/pulls?page=2"));
 
     unsafe {
@@ -501,6 +505,10 @@ fn list_prs_octocrab_fails_closed_on_repeated_next_page_urls() {
     let seen = server.join().expect("server join");
     assert_eq!(seen.len(), 2, "unexpected pagination calls: {seen:#?}");
     assert!(seen[0].contains("/repos/owner/repo/pulls?"));
+    assert!(
+        seen[0].contains("state=open"),
+        "repeated-page PR-wave list must request only open PRs: {seen:#?}"
+    );
     assert!(seen[1].contains("/repos/owner/repo/pulls?page=2"));
 
     unsafe {
@@ -528,6 +536,10 @@ fn list_prs_octocrab_times_out_promptly_when_github_stalls() {
 
     let seen = server.join().expect("server join");
     assert_eq!(seen.len(), 1, "unexpected slow-server calls: {seen:#?}");
+    assert!(
+        seen[0].contains("state=open"),
+        "slow PR-wave list must request only open PRs: {seen:#?}"
+    );
 
     unsafe {
         std::env::remove_var("ADL_GITHUB_OCTOCRAB_BASE_URI");

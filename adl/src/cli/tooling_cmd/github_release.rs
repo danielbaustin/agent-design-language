@@ -266,19 +266,14 @@ fn build_octocrab() -> Result<octocrab::Octocrab> {
 #[cfg(test)]
 mod tests {
     use super::*;
+    use crate::cli::tests as cli_tests;
     use std::net::TcpListener;
-    use std::sync::{Mutex, OnceLock};
     use std::thread;
     use std::time::{Duration, SystemTime, UNIX_EPOCH};
     use tiny_http::{Header, Response, Server};
 
-    static ENV_LOCK: OnceLock<Mutex<()>> = OnceLock::new();
-
     fn env_lock() -> std::sync::MutexGuard<'static, ()> {
-        ENV_LOCK
-            .get_or_init(|| Mutex::new(()))
-            .lock()
-            .unwrap_or_else(|poisoned| poisoned.into_inner())
+        cli_tests::env_lock()
     }
 
     fn json_response(body: String) -> Response<std::io::Cursor<Vec<u8>>> {

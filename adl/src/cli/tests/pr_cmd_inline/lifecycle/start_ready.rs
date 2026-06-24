@@ -1768,9 +1768,23 @@ fn real_pr_start_blocks_when_open_milestone_pr_wave_exists() {
         );
 
     let old_path = env::var("PATH").unwrap_or_default();
+    let old_github_client = env::var_os("ADL_GITHUB_CLIENT");
+    let old_github_token = env::var_os("GITHUB_TOKEN");
+    let old_gh_token = env::var_os("GH_TOKEN");
+    let old_token_file = env::var_os("ADL_GITHUB_TOKEN_FILE");
+    let old_keychain_service = env::var_os("ADL_GITHUB_TOKEN_KEYCHAIN_SERVICE");
+    let old_keychain_account = env::var_os("ADL_GITHUB_TOKEN_KEYCHAIN_ACCOUNT");
+    let old_disable_default_token_file = env::var_os("ADL_TEST_DISABLE_DEFAULT_GITHUB_TOKEN_FILE");
     let prev_dir = env::current_dir().expect("cwd");
     unsafe {
         env::set_var("PATH", format!("{}:{}", bin_dir.display(), old_path));
+        env::remove_var("ADL_GITHUB_CLIENT");
+        env::set_var("ADL_TEST_DISABLE_DEFAULT_GITHUB_TOKEN_FILE", "1");
+        env::remove_var("GITHUB_TOKEN");
+        env::remove_var("GH_TOKEN");
+        env::remove_var("ADL_GITHUB_TOKEN_FILE");
+        env::remove_var("ADL_GITHUB_TOKEN_KEYCHAIN_SERVICE");
+        env::remove_var("ADL_GITHUB_TOKEN_KEYCHAIN_ACCOUNT");
     }
     env::set_current_dir(&repo).expect("chdir");
 
@@ -1790,11 +1804,173 @@ fn real_pr_start_blocks_when_open_milestone_pr_wave_exists() {
     env::set_current_dir(prev_dir).expect("restore cwd");
     unsafe {
         env::set_var("PATH", old_path);
+        match old_github_client {
+            Some(value) => env::set_var("ADL_GITHUB_CLIENT", value),
+            None => env::remove_var("ADL_GITHUB_CLIENT"),
+        }
+        match old_github_token {
+            Some(value) => env::set_var("GITHUB_TOKEN", value),
+            None => env::remove_var("GITHUB_TOKEN"),
+        }
+        match old_gh_token {
+            Some(value) => env::set_var("GH_TOKEN", value),
+            None => env::remove_var("GH_TOKEN"),
+        }
+        match old_token_file {
+            Some(value) => env::set_var("ADL_GITHUB_TOKEN_FILE", value),
+            None => env::remove_var("ADL_GITHUB_TOKEN_FILE"),
+        }
+        match old_keychain_service {
+            Some(value) => env::set_var("ADL_GITHUB_TOKEN_KEYCHAIN_SERVICE", value),
+            None => env::remove_var("ADL_GITHUB_TOKEN_KEYCHAIN_SERVICE"),
+        }
+        match old_keychain_account {
+            Some(value) => env::set_var("ADL_GITHUB_TOKEN_KEYCHAIN_ACCOUNT", value),
+            None => env::remove_var("ADL_GITHUB_TOKEN_KEYCHAIN_ACCOUNT"),
+        }
+        match old_disable_default_token_file {
+            Some(value) => env::set_var("ADL_TEST_DISABLE_DEFAULT_GITHUB_TOKEN_FILE", value),
+            None => env::remove_var("ADL_TEST_DISABLE_DEFAULT_GITHUB_TOKEN_FILE"),
+        }
     }
     assert!(err
         .to_string()
         .contains("start: unresolved open PR queue detected for v0.86 [tools:inferred]"));
     assert!(err.to_string().contains("#1169 [draft]"));
+}
+
+#[test]
+fn real_pr_start_allow_open_pr_wave_skips_wave_scan_before_binding() {
+    let _guard = env_lock();
+    let temp = unique_temp_dir("adl-pr-start-open-wave-override-skips-scan");
+    let origin = temp.join("origin.git");
+    let repo = temp.join("repo");
+    fs::create_dir_all(&repo).expect("repo dir");
+    copy_bootstrap_support_files(&repo);
+    init_git_repo(&repo);
+    assert!(Command::new("git")
+        .args(["config", "user.name", "Test User"])
+        .current_dir(&repo)
+        .status()
+        .expect("git config")
+        .success());
+    assert!(Command::new("git")
+        .args(["config", "user.email", "test@example.com"])
+        .current_dir(&repo)
+        .status()
+        .expect("git config")
+        .success());
+    fs::write(repo.join("README.md"), "override branch placeholder\n").expect("write readme");
+    assert!(Command::new("git")
+        .args(["add", "-A"])
+        .current_dir(&repo)
+        .status()
+        .expect("git add")
+        .success());
+    assert!(Command::new("git")
+        .args(["commit", "-q", "-m", "init"])
+        .current_dir(&repo)
+        .status()
+        .expect("git commit")
+        .success());
+    assert!(Command::new("git")
+        .args(["branch", "-M", "main"])
+        .current_dir(&repo)
+        .status()
+        .expect("git branch")
+        .success());
+    assert!(Command::new("git")
+        .args([
+            "init",
+            "--bare",
+            "-q",
+            path_str(&origin).expect("origin path")
+        ])
+        .current_dir(&repo)
+        .status()
+        .expect("git init bare")
+        .success());
+    assert!(Command::new("git")
+        .args([
+            "remote",
+            "set-url",
+            "origin",
+            path_str(&origin).expect("origin path"),
+        ])
+        .current_dir(&repo)
+        .status()
+        .expect("git remote set-url")
+        .success());
+    assert!(Command::new("git")
+        .args(["push", "-q", "-u", "origin", "main"])
+        .current_dir(&repo)
+        .status()
+        .expect("git push")
+        .success());
+    assert!(Command::new("git")
+        .args(["fetch", "-q", "origin", "main"])
+        .current_dir(&repo)
+        .status()
+        .expect("git fetch")
+        .success());
+    let issue_ref = IssueRef::new(
+        1174,
+        "v0.86".to_string(),
+        "v0-86-tools-preflight-override".to_string(),
+    )
+    .expect("issue ref");
+    write_authored_issue_prompt(&repo, &issue_ref, "[v0.86][tools] Preflight override");
+
+    let bin_dir = repo.join("bin");
+    fs::create_dir_all(&bin_dir).expect("bin dir");
+    let gh_path = bin_dir.join("gh");
+    let pr_list_marker = repo.join("pr-list-called.marker");
+    write_executable(
+        &gh_path,
+        &format!(
+            "#!/usr/bin/env bash\nset -euo pipefail\nif [[ \"$1 $2\" == \"pr list\" ]]; then\n  printf called > '{}'\n  printf 'pr list must not be called when --allow-open-pr-wave is explicit\\n' >&2\n  exit 42\nfi\nexit 0\n",
+            pr_list_marker.display()
+        ),
+    );
+
+    let old_path = env::var("PATH").unwrap_or_default();
+    let old_disable_default_token_file = env::var_os("ADL_TEST_DISABLE_DEFAULT_GITHUB_TOKEN_FILE");
+    let prev_dir = env::current_dir().expect("cwd");
+    unsafe {
+        env::set_var("PATH", format!("{}:{}", bin_dir.display(), old_path));
+        env::set_var("ADL_TEST_DISABLE_DEFAULT_GITHUB_TOKEN_FILE", "1");
+    }
+    env::set_current_dir(&repo).expect("chdir");
+
+    let err = real_pr(&[
+        "start".to_string(),
+        "1174".to_string(),
+        "--slug".to_string(),
+        "v0-86-tools-preflight-override".to_string(),
+        "--title".to_string(),
+        "[v0.86][tools] Preflight override".to_string(),
+        "--version".to_string(),
+        "v0.86".to_string(),
+        "--no-fetch-issue".to_string(),
+        "--allow-open-pr-wave".to_string(),
+    ])
+    .expect_err("fixture cards may still block after the wave override is honored");
+
+    env::set_current_dir(prev_dir).expect("restore cwd");
+    unsafe {
+        env::set_var("PATH", old_path);
+        match old_disable_default_token_file {
+            Some(value) => env::set_var("ADL_TEST_DISABLE_DEFAULT_GITHUB_TOKEN_FILE", value),
+            None => env::remove_var("ADL_TEST_DISABLE_DEFAULT_GITHUB_TOKEN_FILE"),
+        }
+    }
+    assert!(err
+        .to_string()
+        .contains("design-time card completion gate failed"));
+    assert!(
+        !pr_list_marker.exists(),
+        "explicit --allow-open-pr-wave must skip pr list before binding/card gates"
+    );
 }
 
 #[test]

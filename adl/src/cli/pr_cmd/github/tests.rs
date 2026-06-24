@@ -58,6 +58,7 @@ fn clear_github_policy_env() -> Vec<(&'static str, Option<String>)> {
         "ADL_GITHUB_DISABLE_GH_FALLBACK",
         "ADL_GITHUB_OCTOCRAB_BASE_URI",
         "ADL_TEST_GITHUB_CLI_FIXTURE",
+        "ADL_TEST_DISABLE_DEFAULT_GITHUB_TOKEN_FILE",
         "GITHUB_TOKEN",
         "GH_TOKEN",
         "ADL_GITHUB_TOKEN_FILE",

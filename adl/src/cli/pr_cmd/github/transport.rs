@@ -191,7 +191,7 @@ pub(super) fn list_prs_octocrab(repo: &str) -> Result<Vec<OpenPullRequest>> {
         let mut page = block_on_octocrab(runtime, "pr.list.wave", || async {
             octo.pulls(&owner, &name)
                 .list()
-                .state(octocrab::params::State::All)
+                .state(octocrab::params::State::Open)
                 .per_page(100)
                 .send()
                 .await

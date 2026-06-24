@@ -11,6 +11,9 @@ pub(crate) const ADL_GITHUB_TOKEN_FILE_ENV: &str = "ADL_GITHUB_TOKEN_FILE";
 pub(crate) const ADL_GITHUB_TOKEN_KEYCHAIN_SERVICE_ENV: &str = "ADL_GITHUB_TOKEN_KEYCHAIN_SERVICE";
 pub(crate) const ADL_GITHUB_TOKEN_KEYCHAIN_ACCOUNT_ENV: &str = "ADL_GITHUB_TOKEN_KEYCHAIN_ACCOUNT";
 pub(crate) const DEFAULT_GITHUB_TOKEN_FILE_RELATIVE_PATH: &str = "keys/github.token";
+#[cfg(test)]
+pub(crate) const ADL_TEST_DISABLE_DEFAULT_GITHUB_TOKEN_FILE_ENV: &str =
+    "ADL_TEST_DISABLE_DEFAULT_GITHUB_TOKEN_FILE";
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub(crate) enum GithubTokenSource {
@@ -78,6 +81,7 @@ struct TokenResolutionKey {
     token_file: Option<String>,
     keychain_service: Option<String>,
     keychain_account: Option<String>,
+    default_token_file_disabled_for_test: bool,
     implicit_default_token_file: Option<String>,
 }
 
@@ -140,19 +144,22 @@ impl TokenResolutionKey {
             .ok()
             .map(|value| value.trim().to_string())
             .filter(|value| !value.is_empty());
+        let default_token_file_disabled_for_test = default_github_token_file_disabled_for_test();
         Self {
             github_token,
             gh_token,
             token_file,
             keychain_service,
             keychain_account,
+            default_token_file_disabled_for_test,
             implicit_default_token_file: default_github_token_file_path()
                 .filter(|_| {
-                    std::env::var(GITHUB_TOKEN_ENV)
-                        .ok()
-                        .map(|value| value.trim().to_string())
-                        .filter(|value| !value.is_empty())
-                        .is_none()
+                    !default_token_file_disabled_for_test
+                        && std::env::var(GITHUB_TOKEN_ENV)
+                            .ok()
+                            .map(|value| value.trim().to_string())
+                            .filter(|value| !value.is_empty())
+                            .is_none()
                         && std::env::var(GH_TOKEN_ENV)
                             .ok()
                             .map(|value| value.trim().to_string())
@@ -172,6 +179,19 @@ impl TokenResolutionKey {
                 .map(|path| path.display().to_string()),
         }
     }
+}
+
+#[cfg(test)]
+fn default_github_token_file_disabled_for_test() -> bool {
+    std::env::var(ADL_TEST_DISABLE_DEFAULT_GITHUB_TOKEN_FILE_ENV)
+        .ok()
+        .map(|value| matches!(value.trim(), "1" | "true" | "TRUE" | "yes" | "YES"))
+        .unwrap_or(false)
+}
+
+#[cfg(not(test))]
+fn default_github_token_file_disabled_for_test() -> bool {
+    false
 }
 
 fn default_github_token_file_path() -> Option<PathBuf> {
@@ -379,6 +399,7 @@ mod tests {
             std::env::remove_var(ADL_GITHUB_TOKEN_FILE_ENV);
             std::env::remove_var(ADL_GITHUB_TOKEN_KEYCHAIN_SERVICE_ENV);
             std::env::remove_var(ADL_GITHUB_TOKEN_KEYCHAIN_ACCOUNT_ENV);
+            std::env::remove_var(ADL_TEST_DISABLE_DEFAULT_GITHUB_TOKEN_FILE_ENV);
         }
         *TOKEN_CACHE.get_or_init(|| Mutex::new(None)).lock().unwrap() = None;
     }

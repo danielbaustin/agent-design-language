@@ -5,7 +5,6 @@ fn live_gh_policy_guard_blocks_disabled_fallback_before_spawn() {
     let _guard = env_lock();
     let policy_env = clear_github_policy_env();
     let temp = unique_temp_dir("adl-github-disabled-fallback");
-    let old_home = std::env::var("HOME").ok();
     let bin_dir = temp.join("bin");
     fs::create_dir_all(&bin_dir).expect("bin dir");
     let gh_log = temp.join("gh.log");
@@ -24,7 +23,7 @@ fn live_gh_policy_guard_blocks_disabled_fallback_before_spawn() {
             "PATH",
             std::env::join_paths(path_entries).expect("join PATH"),
         );
-        std::env::set_var("HOME", &temp);
+        std::env::set_var("ADL_TEST_DISABLE_DEFAULT_GITHUB_TOKEN_FILE", "1");
         std::env::set_var("ADL_GITHUB_DISABLE_GH_FALLBACK", "1");
     }
 
@@ -44,7 +43,6 @@ fn live_gh_policy_guard_blocks_disabled_fallback_before_spawn() {
     );
 
     restore_env("PATH", old_path);
-    restore_env("HOME", old_home);
     restore_github_policy_env(policy_env);
 }
 
@@ -102,10 +100,8 @@ fn live_github_policy_blocks_explicit_gh_fallback_before_spawn() {
 fn live_github_policy_explains_missing_token_before_spawn() {
     let _guard = env_lock();
     let policy_env = clear_github_policy_env();
-    let temp = unique_temp_dir("adl-github-missing-token");
-    let old_home = std::env::var("HOME").ok();
     unsafe {
-        std::env::set_var("HOME", &temp);
+        std::env::set_var("ADL_TEST_DISABLE_DEFAULT_GITHUB_TOKEN_FILE", "1");
         std::env::set_var("ADL_GITHUB_CLIENT", "gh");
     }
 
@@ -122,6 +118,5 @@ fn live_github_policy_explains_missing_token_before_spawn() {
     assert!(err_debug.contains("do not fall back to direct gh commands"));
     assert!(err_debug.contains("credential values are never printed"));
 
-    restore_env("HOME", old_home);
     restore_github_policy_env(policy_env);
 }

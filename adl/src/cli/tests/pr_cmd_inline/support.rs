@@ -24,6 +24,7 @@ pub(crate) fn env_lock() -> std::sync::MutexGuard<'static, ()> {
 
 pub(crate) struct GithubCliFixtureGuard {
     old_fixture: Option<std::ffi::OsString>,
+    old_disable_default_token_file: Option<std::ffi::OsString>,
 }
 
 impl Drop for GithubCliFixtureGuard {
@@ -33,6 +34,10 @@ impl Drop for GithubCliFixtureGuard {
                 Some(value) => env::set_var("ADL_TEST_GITHUB_CLI_FIXTURE", value),
                 None => env::remove_var("ADL_TEST_GITHUB_CLI_FIXTURE"),
             }
+            match &self.old_disable_default_token_file {
+                Some(value) => env::set_var("ADL_TEST_DISABLE_DEFAULT_GITHUB_TOKEN_FILE", value),
+                None => env::remove_var("ADL_TEST_DISABLE_DEFAULT_GITHUB_TOKEN_FILE"),
+            }
         }
     }
 }
@@ -40,10 +45,16 @@ impl Drop for GithubCliFixtureGuard {
 impl GithubCliFixtureGuard {
     pub(crate) fn set(path: &Path) -> Self {
         let old_fixture = env::var_os("ADL_TEST_GITHUB_CLI_FIXTURE");
+        let old_disable_default_token_file =
+            env::var_os("ADL_TEST_DISABLE_DEFAULT_GITHUB_TOKEN_FILE");
         unsafe {
             env::set_var("ADL_TEST_GITHUB_CLI_FIXTURE", path);
+            env::set_var("ADL_TEST_DISABLE_DEFAULT_GITHUB_TOKEN_FILE", "1");
         }
-        Self { old_fixture }
+        Self {
+            old_fixture,
+            old_disable_default_token_file,
+        }
     }
 }
 
@@ -70,6 +81,7 @@ pub(crate) fn force_gh_cli_transport_env() -> GithubTransportEnvGuard {
         "ADL_GITHUB_DISABLE_GH_FALLBACK",
         "ADL_GITHUB_OCTOCRAB_BASE_URI",
         "ADL_TEST_GITHUB_CLI_FIXTURE",
+        "ADL_TEST_DISABLE_DEFAULT_GITHUB_TOKEN_FILE",
         "GITHUB_TOKEN",
         "GH_TOKEN",
         "ADL_GITHUB_TOKEN_FILE",
@@ -84,6 +96,7 @@ pub(crate) fn force_gh_cli_transport_env() -> GithubTransportEnvGuard {
         for key in keys {
             env::remove_var(key);
         }
+        env::set_var("ADL_TEST_DISABLE_DEFAULT_GITHUB_TOKEN_FILE", "1");
     }
     GithubTransportEnvGuard { old_values }
 }
