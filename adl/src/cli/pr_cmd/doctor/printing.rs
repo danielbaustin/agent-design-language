@@ -15,6 +15,45 @@ pub(super) fn print_doctor_preflight_text(preflight: &DoctorPreflightResult) {
     println!("PREFLIGHT={}", preflight.status);
     println!("PREFLIGHT_BLOCK_KIND={}", preflight.block_kind);
     println!("PREFLIGHT_GUIDANCE={}", preflight.guidance);
+    println!("SESSION_LEDGER={}", preflight.session_ledger.status);
+    println!(
+        "SESSION_LEDGER_BLOCK_KIND={}",
+        preflight.session_ledger.block_kind
+    );
+    println!(
+        "SESSION_LEDGER_GUIDANCE={}",
+        preflight.session_ledger.guidance
+    );
+    println!(
+        "SESSION_LEDGER_PATH={}",
+        preflight.session_ledger.ledger_path
+    );
+    println!(
+        "SESSION_LEDGER_CURRENT_SESSION={}",
+        preflight
+            .session_ledger
+            .current_session_id
+            .as_deref()
+            .unwrap_or("none")
+    );
+    println!(
+        "SESSION_LEDGER_RELEVANT_CLAIM_COUNT={}",
+        preflight.session_ledger.relevant_claim_count
+    );
+    for claim in &preflight.session_ledger.relevant_claims {
+        println!(
+            "SESSION_LEDGER_CLAIM={}|{}|{}|self={}|issue={}|branch={}|worktree={}|resource={}:{}",
+            claim.claim_id,
+            claim.classification,
+            claim.mode,
+            claim.self_claim,
+            claim.matches_issue,
+            claim.matches_branch,
+            claim.matches_worktree,
+            claim.resource_kind,
+            claim.resource_id
+        );
+    }
 }
 
 pub(super) fn print_doctor_ready_text(ready: &DoctorReadyResult) {

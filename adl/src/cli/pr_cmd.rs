@@ -40,6 +40,7 @@ use super::pr_cmd_validate::{
 use ::adl::control_plane::{
     card_output_path, resolve_cards_root, resolve_primary_checkout_root, sanitize_slug, IssueRef,
 };
+use ::adl::session_ledger::load_target_claim_assessment;
 
 mod doctor;
 mod finish_support;
@@ -1266,6 +1267,23 @@ fn real_pr_start(args: &[String]) -> Result<()> {
     }
     let managed_root = std::env::var_os("ADL_WORKTREE_ROOT").map(PathBuf::from);
     let worktree_path = issue_ref.default_worktree_path(&repo_root, managed_root.as_deref());
+    let session_assessment = load_target_claim_assessment(
+        &repo_root,
+        issue_ref.issue_number().into(),
+        &branch,
+        &worktree_path,
+        std::env::var("CODEX_SESSION_ID").ok().as_deref(),
+        chrono::Utc::now(),
+    )?;
+    emit_start_session_ledger_notes(&session_assessment);
+    if session_assessment.status == "BLOCK" {
+        bail!(
+            "start: session ledger active conflict for issue #{} before worktree binding. {}\n{}",
+            parsed.issue,
+            session_assessment.guidance,
+            format_session_claims_for_error(&session_assessment.relevant_claims)
+        );
+    }
 
     eprintln!("• Target branch: {branch}");
     eprintln!("• Target worktree: {}", worktree_path.display());
@@ -1375,6 +1393,44 @@ fn same_checkout_root(left: &Path, right: &Path) -> Result<bool> {
     let right = fs::canonicalize(right)
         .with_context(|| format!("failed to canonicalize checkout path '{}'", right.display()))?;
     Ok(left == right)
+}
+
+fn emit_start_session_ledger_notes(assessment: &adl::session_ledger::TargetClaimAssessment) {
+    match assessment.status {
+        "PASS" => {
+            if !assessment.relevant_claims.is_empty() {
+                eprintln!("• Session ledger: {}", assessment.guidance);
+            }
+        }
+        "WARN" => {
+            eprintln!("• Session ledger warning: {}", assessment.guidance);
+        }
+        "BLOCK" => {
+            eprintln!("• Session ledger conflict: {}", assessment.guidance);
+        }
+        _ => {}
+    }
+}
+
+fn format_session_claims_for_error(claims: &[adl::session_ledger::TargetClaimMatch]) -> String {
+    if claims.is_empty() {
+        return "No relevant claims were found.".to_string();
+    }
+    claims
+        .iter()
+        .map(|claim| {
+            format!(
+                "- claim_id={} classification={:?} session={} owner={} branch={} worktree={}",
+                claim.claim_id,
+                claim.classification,
+                claim.session_id,
+                claim.owner,
+                claim.branch.as_deref().unwrap_or("none"),
+                claim.worktree_path.as_deref().unwrap_or("none")
+            )
+        })
+        .collect::<Vec<_>>()
+        .join("\n")
 }
 
 fn real_pr_ready(args: &[String]) -> Result<()> {

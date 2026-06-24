@@ -1500,9 +1500,18 @@ print(json.dumps({
     assert!(profile.run[0]
         .command
         .contains("run_pr_fast_test_lane.sh --changed-files"));
+    let retained_manifests = fs::read_dir(&tmpdir)
+        .expect("read temp dir")
+        .filter_map(|entry| entry.ok())
+        .filter(|entry| {
+            entry
+                .file_name()
+                .to_string_lossy()
+                .starts_with("finish-validation-profile-")
+        })
+        .count();
     assert_eq!(
-        fs::read_dir(&tmpdir).expect("read temp dir").count(),
-        0,
+        retained_manifests, 0,
         "render-time profile loads should not retain temp changed-file manifests"
     );
 }
@@ -3093,6 +3102,55 @@ fn finish_validation_profile_classifies_issue_small_binary_slice() {
         .commands
         .iter()
         .any(|command| command.contains("cargo nextest")));
+}
+
+#[test]
+fn finish_validation_profile_classifies_session_ledger_issue_4419_slice() {
+    let plan = select_finish_validation_plan_for_finish(
+        4419,
+        ".",
+        &[
+            "adl/src/cli/pr_cmd.rs".to_string(),
+            "adl/src/cli/pr_cmd/doctor.rs".to_string(),
+            "adl/src/cli/pr_cmd/doctor/preflight.rs".to_string(),
+            "adl/src/cli/pr_cmd/doctor/printing.rs".to_string(),
+            "adl/src/cli/pr_cmd/doctor/tests.rs".to_string(),
+            "adl/src/cli/pr_cmd/doctor/types.rs".to_string(),
+            "adl/src/cli/pr_cmd/finish_support.rs".to_string(),
+            "adl/src/cli/tests/pr_cmd_inline/finish/arg_render.rs".to_string(),
+            "adl/src/cli/tests/pr_cmd_inline/lifecycle/start_ready.rs".to_string(),
+            "adl/src/session_ledger.rs".to_string(),
+        ],
+    )
+    .expect("session-ledger issue focused plan");
+
+    assert_eq!(plan.mode, FinishValidationMode::LargerBinaryFocused);
+    assert!(plan
+        .commands
+        .contains(&"cargo fmt --manifest-path adl/Cargo.toml --all --check".to_string()));
+    assert!(plan.commands.contains(
+        &"cargo test --manifest-path adl/Cargo.toml target_claim_assessment_ -- --nocapture"
+            .to_string()
+    ));
+    assert!(plan.commands.contains(
+        &"cargo test --manifest-path adl/Cargo.toml doctor_preflight_ -- --nocapture".to_string()
+    ));
+    assert!(plan.commands.contains(
+        &"cargo test --manifest-path adl/Cargo.toml real_pr_start_blocks_when_another_session_claims_the_issue -- --exact --nocapture"
+            .to_string()
+    ));
+    assert!(plan.commands.contains(
+        &"cargo test --manifest-path adl/Cargo.toml real_pr_start_allows_current_session_claim_and_stale_claim_history -- --exact --nocapture"
+            .to_string()
+    ));
+    assert!(plan.commands.contains(
+        &"cargo test --manifest-path adl/Cargo.toml --bin adl-pr-finish cli::pr_cmd::tests::finish::arg_render::load_finish_validation_profile_cleans_tempfile_when_profile_only_needs_rendering -- --exact --nocapture"
+            .to_string()
+    ));
+    assert!(plan.commands.contains(
+        &"cargo test --manifest-path adl/Cargo.toml --bin adl-pr-finish cli::pr_cmd::tests::finish::arg_render::render_default_finish_validation_includes_profile_truth_and_sanitizes_changed_files -- --exact --nocapture"
+            .to_string()
+    ));
 }
 
 #[test]

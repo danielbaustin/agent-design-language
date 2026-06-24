@@ -67,7 +67,8 @@ fn doctor_ready_blocks_branch_mismatch_once_issue_is_run_bound() {
 
 #[test]
 fn doctor_full_warns_when_only_open_wave_blocks_ready_issue() {
-    let (preflight_status, block_kind, guidance) = doctor_preflight_status(false, Some("ready"));
+    let (preflight_status, block_kind, guidance) =
+        doctor_preflight_status(false, Some("ready"), "PASS");
 
     assert_eq!(preflight_status, "BLOCK");
     assert_eq!(block_kind, "open_pr_wave");
@@ -80,7 +81,8 @@ fn doctor_full_warns_when_only_open_wave_blocks_ready_issue() {
 
 #[test]
 fn doctor_full_stays_blocked_for_issue_local_card_readiness() {
-    let (preflight_status, block_kind, guidance) = doctor_preflight_status(true, Some("blocked"));
+    let (preflight_status, block_kind, guidance) =
+        doctor_preflight_status(true, Some("blocked"), "PASS");
 
     assert_eq!(preflight_status, "BLOCK");
     assert_eq!(block_kind, "card_run_readiness");
@@ -93,7 +95,8 @@ fn doctor_full_stays_blocked_for_issue_local_card_readiness() {
 
 #[test]
 fn doctor_full_stays_blocked_for_combined_open_wave_and_card_readiness() {
-    let (preflight_status, block_kind, guidance) = doctor_preflight_status(false, Some("blocked"));
+    let (preflight_status, block_kind, guidance) =
+        doctor_preflight_status(false, Some("blocked"), "PASS");
 
     assert_eq!(preflight_status, "BLOCK");
     assert_eq!(block_kind, "open_pr_wave_and_card_run_readiness");
@@ -102,6 +105,26 @@ fn doctor_full_stays_blocked_for_combined_open_wave_and_card_readiness() {
         doctor_full_status(preflight_status, block_kind, Some("PASS")),
         "BLOCK"
     );
+}
+
+#[test]
+fn doctor_preflight_blocks_on_active_session_conflict() {
+    let (preflight_status, block_kind, guidance) =
+        doctor_preflight_status(true, Some("ready"), "BLOCK");
+
+    assert_eq!(preflight_status, "BLOCK");
+    assert_eq!(block_kind, "session_active_conflict");
+    assert!(guidance.contains("Resolve the claim"));
+}
+
+#[test]
+fn doctor_preflight_warns_on_stale_session_history() {
+    let (preflight_status, block_kind, guidance) =
+        doctor_preflight_status(true, Some("ready"), "WARN");
+
+    assert_eq!(preflight_status, "WARN");
+    assert_eq!(block_kind, "session_manual_inspection");
+    assert!(guidance.contains("manual inspection"));
 }
 
 #[test]

@@ -21,7 +21,8 @@ use printing::{
 use ready::run_doctor_ready as internal_run_doctor_ready;
 use types::{
     DoctorCardLifecycleJson, DoctorCardStageJson, DoctorJsonOutput, DoctorPreflightJsonPullRequest,
-    DoctorPreflightResult, DoctorReadyResult,
+    DoctorPreflightResult, DoctorReadyResult, DoctorSessionLedgerClaimJson,
+    DoctorSessionLedgerJson,
 };
 
 pub(super) fn run_doctor_ready(
@@ -115,6 +116,7 @@ pub(super) fn run_doctor(parsed: DoctorArgs, label: &str) -> Result<()> {
             preflight_guidance: preflight.guidance,
             open_pr_count: preflight.open_pr_count,
             open_prs: preflight.open_prs,
+            session_ledger: preflight.session_ledger,
             lifecycle_state: ready.as_ref().map(|x| x.lifecycle_state),
             ready_status,
             worktree: ready.as_ref().and_then(|x| x.worktree.clone()),
