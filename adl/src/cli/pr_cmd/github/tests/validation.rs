@@ -78,6 +78,56 @@ fn pr_validation_wait_classifies_pending_failed_successful_and_skipped_states() 
 }
 
 #[test]
+fn pr_validation_report_exposes_projection_status_for_pr_lifecycle_states() {
+    let snapshot = |is_draft: bool, checks: Vec<PrValidationCheckSnapshot>| PrValidationSnapshot {
+        pr_number: 1159,
+        commit_sha: "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa".to_string(),
+        state: "OPEN".to_string(),
+        is_draft,
+        checks,
+    };
+    let completed = |conclusion: &str| PrValidationCheckSnapshot {
+        name: "adl-ci".to_string(),
+        status: "COMPLETED".to_string(),
+        conclusion: conclusion.to_string(),
+        job_run_id: "8801".to_string(),
+    };
+
+    let pending = pr_validation_report_from_snapshot_with_disposition(
+        &snapshot(
+            false,
+            vec![PrValidationCheckSnapshot {
+                name: "adl-ci".to_string(),
+                status: "IN_PROGRESS".to_string(),
+                conclusion: "UNKNOWN".to_string(),
+                job_run_id: "8801".to_string(),
+            }],
+        ),
+        PrValidationDisposition::Pending,
+    );
+    assert_eq!(pending.disposition, "pending");
+    assert_eq!(pending.projection_status, "checks_pending");
+
+    let failed = pr_validation_report_from_snapshot_with_disposition(
+        &snapshot(false, vec![completed("FAILURE")]),
+        PrValidationDisposition::Failed,
+    );
+    assert_eq!(failed.projection_status, "checks_failed");
+
+    let green_draft = pr_validation_report_from_snapshot_with_disposition(
+        &snapshot(true, vec![completed("SUCCESS")]),
+        PrValidationDisposition::Success,
+    );
+    assert_eq!(green_draft.projection_status, "checks_green_but_draft");
+
+    let green_ready = pr_validation_report_from_snapshot_with_disposition(
+        &snapshot(false, vec![completed("SUCCESS")]),
+        PrValidationDisposition::Success,
+    );
+    assert_eq!(green_ready.projection_status, "ready_to_merge_or_review");
+}
+
+#[test]
 fn pr_validation_classification_uses_latest_logical_check_state() {
     let snapshot = |checks: Vec<PrValidationCheckSnapshot>| PrValidationSnapshot {
         pr_number: 3933,

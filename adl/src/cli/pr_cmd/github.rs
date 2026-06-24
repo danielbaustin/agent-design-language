@@ -153,6 +153,7 @@ pub(super) struct PrValidationReport {
     pub(super) pr_state: String,
     pub(super) is_draft: bool,
     pub(super) disposition: String,
+    pub(super) projection_status: String,
     pub(super) checks: Vec<PrValidationCheckReport>,
     pub(super) failed_checks: Vec<PrValidationCheckReport>,
     pub(super) pending_checks: Vec<PrValidationCheckReport>,
@@ -416,6 +417,60 @@ pub(super) fn pr_validation_report(repo: &str, pr_ref: &str) -> Result<PrValidat
     transport::pr_validation_report(repo, pr_ref)
 }
 
+pub(super) fn pr_validation_projection_status(
+    pr_state: &str,
+    is_draft: bool,
+    disposition: &str,
+) -> &'static str {
+    if pr_state.eq_ignore_ascii_case("MERGED") {
+        return "merged";
+    }
+    match disposition {
+        "pending" => "checks_pending",
+        "failed" | "cancelled" | "timed_out" => "checks_failed",
+        "success" | "skipped" if is_draft => "checks_green_but_draft",
+        "success" | "skipped" => "ready_to_merge_or_review",
+        _ if is_draft => "checks_pending",
+        _ => "unknown",
+    }
+}
+
+pub(crate) fn pr_metadata_for_watch(repo: &str, pr_ref: &str) -> Result<OpenPullRequest> {
+    transport::pr_metadata_octocrab(repo, pr_ref)
+}
+
+pub(crate) fn issue_number_for_pr_watch(repo: &str, pr: &OpenPullRequest) -> Result<u32> {
+    let linked = pr_closing_issue_numbers_octocrab(repo, &pr.number.to_string())?;
+    issue_number_from_pr_metadata_for_watch(pr, &linked)
+}
+
+pub(crate) fn issue_number_from_pr_metadata_for_watch(
+    pr: &OpenPullRequest,
+    linked: &[u32],
+) -> Result<u32> {
+    if linked.len() == 1 {
+        return Ok(linked[0]);
+    }
+    if linked.len() > 1 {
+        bail!(
+            "watch: PR #{} closes multiple issues {}; pass the issue number explicitly",
+            pr.number,
+            linked
+                .iter()
+                .map(u32::to_string)
+                .collect::<Vec<_>>()
+                .join(", ")
+        );
+    }
+    issue_number_from_codex_branch(&pr.head_ref_name).ok_or_else(|| {
+        anyhow!(
+            "watch: PR #{} has no closing issue metadata and head branch '{}' does not start with a codex issue number",
+            pr.number,
+            pr.head_ref_name
+        )
+    })
+}
+
 pub(crate) fn linked_prs_for_issue(
     repo: &str,
     issue: u32,
@@ -549,6 +604,13 @@ pub(crate) fn build_issue_watch_report(
             "pr-closeout",
             "action_required",
             "linked_pr_merged_closeout_pending",
+        )
+    } else if validation.projection_status == "checks_green_but_draft" {
+        (
+            "checks_green_but_draft",
+            "pr-janitor",
+            "action_required",
+            "linked_pr_checks_green_but_draft",
         )
     } else if validation.is_draft {
         ("pr_open", "issue-watcher", "continue", "linked_pr_draft")

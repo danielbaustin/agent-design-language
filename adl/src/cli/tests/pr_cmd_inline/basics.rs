@@ -295,6 +295,108 @@ fn spawn_pr_watch_once_server(linked_pr: bool) -> (String, thread::JoinHandle<Ve
     (base_uri, handle)
 }
 
+fn spawn_pr_watch_pr_ref_server() -> (String, thread::JoinHandle<Vec<String>>) {
+    let (base_uri, server) = bind_pr_validation_test_server("bind PR-ref watch server");
+    let handle = thread::spawn(move || {
+        let mut seen = Vec::new();
+        for _ in 0..5 {
+            let Some(mut request) = server
+                .recv_timeout(Duration::from_secs(5))
+                .expect("PR-ref watch server receive")
+            else {
+                break;
+            };
+            let method = request.method().as_str().to_string();
+            let url = request.url().to_string();
+            let mut body = String::new();
+            let _ = request.as_reader().read_to_string(&mut body);
+            seen.push(format!("{method} {url} {body}"));
+            let path = url.split('?').next().unwrap_or(url.as_str());
+            let response = match (method.as_str(), path) {
+                ("GET", "/repos/owner/repo/issues/4427") => pr_validation_json_response(
+                    serde_json::json!({
+                        "number": 4427,
+                        "title": "[v0.91.6][tools] PR-like issue",
+                        "state": "open",
+                        "state_reason": serde_json::Value::Null,
+                        "html_url": "https://github.com/owner/repo/pull/4427",
+                        "closed_at": serde_json::Value::Null,
+                        "body": "Pull request issue endpoint payload",
+                        "labels": [],
+                        "milestone": serde_json::Value::Null,
+                        "pull_request": {
+                            "url": "https://api.github.test/repos/owner/repo/pulls/4427"
+                        }
+                    })
+                    .to_string(),
+                ),
+                ("GET", "/repos/owner/repo/pulls/4427") => pr_validation_json_response(
+                    serde_json::json!({
+                        "number": 4427,
+                        "title": "[v0.91.6][tools] Prove repo-native sprint watcher",
+                        "html_url": "https://github.com/owner/repo/pull/4427",
+                        "head": {"ref": "codex/4397-v0-91-6-watch-target", "sha": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"},
+                        "base": {"ref": "main", "sha": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb"},
+                        "draft": false,
+                        "state": "open"
+                    })
+                    .to_string(),
+                ),
+                ("POST", "/graphql") if body.contains("closingIssuesReferences") => {
+                    pr_validation_json_response(
+                        serde_json::json!({
+                            "data": {
+                                "repository": {
+                                    "pullRequest": {
+                                        "closingIssuesReferences": {
+                                            "nodes": [{"number": 4397}]
+                                        }
+                                    }
+                                }
+                            }
+                        })
+                        .to_string(),
+                    )
+                }
+                ("GET", "/repos/owner/repo/issues/4397") => pr_validation_json_response(
+                    serde_json::json!({
+                        "number": 4397,
+                        "title": "[v0.91.6][tools] Repo-native sprint watcher",
+                        "state": "open",
+                        "state_reason": serde_json::Value::Null,
+                        "html_url": "https://github.com/owner/repo/issues/4397",
+                        "closed_at": serde_json::Value::Null,
+                        "body": "Watcher issue body",
+                        "labels": [{
+                            "id": 1,
+                            "node_id": "MDU6TGFiZWwx",
+                            "url": "https://api.github.com/repos/owner/repo/labels/area:tools",
+                            "name": "area:tools",
+                            "color": "ededed",
+                            "default": false,
+                            "description": serde_json::Value::Null
+                        }],
+                        "milestone": serde_json::Value::Null
+                    })
+                    .to_string(),
+                ),
+                ("POST", "/graphql") if body.contains("statusCheckRollup") => {
+                    pr_validation_json_response(pr_validation_graphql_response(
+                        "COMPLETED",
+                        Some("SUCCESS"),
+                        "adl-ci",
+                        false,
+                    ))
+                }
+                _ => panic!("unexpected PR-ref watch request: {method} {url} {body}"),
+            };
+            request.respond(response).expect("respond");
+        }
+        seen
+    });
+    (base_uri, handle)
+}
+
 fn write_watch_state_fixture(bin_dir: &std::path::Path) {
     write_executable(
         &bin_dir.join("gh"),
@@ -483,6 +585,65 @@ fn real_pr_watch_reports_json_for_linked_green_pr() {
     assert!(seen
         .iter()
         .any(|request| request.contains("closingIssuesReferences")));
+    assert!(seen
+        .iter()
+        .any(|request| request.contains("statusCheckRollup")));
+}
+
+#[test]
+fn real_pr_watch_accepts_direct_pr_ref_and_resolves_backing_issue() {
+    let _guard = env_lock();
+    let repo = unique_temp_dir("adl-pr-watch-direct-pr-ref");
+    init_git_repo(&repo);
+    let bin_dir = repo.join("bin");
+    fs::create_dir_all(&bin_dir).expect("create bin dir");
+    write_watch_state_fixture(&bin_dir);
+    let (base_uri, server) = spawn_pr_watch_pr_ref_server();
+    let previous_dir = env::current_dir().expect("cwd");
+    let old_path = env::var_os("PATH");
+    let old_client = env::var_os("ADL_GITHUB_CLIENT");
+    let old_token = env::var_os("GITHUB_TOKEN");
+    let old_base_uri = env::var_os("ADL_GITHUB_OCTOCRAB_BASE_URI");
+    let mut path_entries = vec![bin_dir.clone()];
+    path_entries.extend(env::split_paths(old_path.as_deref().unwrap_or_default()));
+    unsafe {
+        env::set_var("PATH", env::join_paths(path_entries).expect("join PATH"));
+        env::set_var("ADL_GITHUB_CLIENT", "auto");
+        env::set_var("GITHUB_TOKEN", "test-token");
+        env::set_var("ADL_GITHUB_OCTOCRAB_BASE_URI", &base_uri);
+    }
+    env::set_current_dir(&repo).expect("enter repo");
+
+    real_pr_watch(&[
+        "https://github.com/owner/repo/pull/4427".to_string(),
+        "--version".to_string(),
+        "v0.91.6".to_string(),
+        "--slug".to_string(),
+        "watch-target".to_string(),
+        "--json".to_string(),
+    ])
+    .expect("watch direct PR ref");
+
+    env::set_current_dir(previous_dir).expect("restore cwd");
+    restore_env_var("PATH", old_path);
+    restore_env_var("ADL_GITHUB_CLIENT", old_client);
+    restore_env_var("GITHUB_TOKEN", old_token);
+    restore_env_var("ADL_GITHUB_OCTOCRAB_BASE_URI", old_base_uri);
+
+    let seen = server.join().expect("server join");
+    assert!(
+        seen[0].starts_with("GET /repos/owner/repo/issues/4427 "),
+        "first request should probe issue endpoint and hit PR-like issue response: {seen:#?}"
+    );
+    assert!(seen
+        .iter()
+        .any(|request| request.starts_with("GET /repos/owner/repo/pulls/4427 ")));
+    assert!(seen
+        .iter()
+        .any(|request| request.contains("closingIssuesReferences")));
+    assert!(seen
+        .iter()
+        .any(|request| request.starts_with("GET /repos/owner/repo/issues/4397 ")));
     assert!(seen
         .iter()
         .any(|request| request.contains("statusCheckRollup")));
@@ -1028,6 +1189,15 @@ fn validation_disposition_blocks_pending_and_terminal_failures() {
     assert!(validation_disposition_blocks_shell_success("failed"));
     assert!(validation_disposition_blocks_shell_success("cancelled"));
     assert!(validation_disposition_blocks_shell_success("timed_out"));
+
+    assert!(!validation_report_blocks_shell_success(
+        "success",
+        "ready_to_merge_or_review"
+    ));
+    assert!(validation_report_blocks_shell_success(
+        "success",
+        "checks_green_but_draft"
+    ));
 }
 
 #[test]

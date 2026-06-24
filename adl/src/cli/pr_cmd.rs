@@ -445,11 +445,12 @@ fn real_pr_validation(args: &[String]) -> Result<()> {
             );
         }
     }
-    if validation_disposition_blocks_shell_success(&report.disposition) {
+    if validation_report_blocks_shell_success(&report.disposition, &report.projection_status) {
         bail!(
-            "validation: PR #{} is {}",
+            "validation: PR #{} is {} ({})",
             report.pr_number,
-            report.disposition
+            report.disposition,
+            report.projection_status
         );
     }
     Ok(())
@@ -461,9 +462,23 @@ fn real_pr_watch(args: &[String]) -> Result<()> {
     let repo = parsed
         .repo
         .or_else(|| repo_from_issue_ref(&parsed.issue_ref))
+        .or_else(|| repo_from_pr_ref(&parsed.issue_ref))
         .unwrap_or(default_repo(&repo_root)?);
-    let issue = parse_issue_ref_number("watch", &parsed.issue_ref)?;
-    let issue_record = github::gh_issue_view(&repo, issue)?;
+    let requested_number = parse_issue_ref_number("watch", &parsed.issue_ref)?;
+    let (issue, issue_record, direct_pr) = match github::gh_issue_view(&repo, requested_number) {
+        Ok(issue_record) => (requested_number, issue_record, None),
+        Err(err)
+            if err
+                .to_string()
+                .contains("GitHub returned a pull request instead of an issue") =>
+        {
+            let pr = github::pr_metadata_for_watch(&repo, &parsed.issue_ref)?;
+            let issue = github::issue_number_for_pr_watch(&repo, &pr)?;
+            let issue_record = github::gh_issue_view(&repo, issue)?;
+            (issue, issue_record, Some(pr))
+        }
+        Err(err) => return Err(err),
+    };
     let closed_completed = github::gh_issue_is_closed_completed(issue, &repo)?;
     let version = resolve_version_for_existing_issue(
         &repo_root,
@@ -479,21 +494,29 @@ fn real_pr_watch(args: &[String]) -> Result<()> {
         .or_else(|| local_identity.as_ref().map(|(_, slug)| slug.clone()))
         .unwrap_or_else(|| sanitize_slug(&issue_record.title));
     let issue_ref = IssueRef::new(issue, version, slug)?;
-    let linked_prs =
-        github::linked_prs_for_issue(&repo, issue, Some(issue_ref.branch_name("codex").as_str()))?;
-    let linked_pr = match linked_prs.len() {
-        0 => None,
-        1 => {
-            let pr = linked_prs
-                .into_iter()
-                .next()
-                .expect("single linked PR should exist");
-            let validation = github::pr_validation_report(&repo, &pr.number.to_string())?;
-            Some((pr, validation))
+    let linked_pr = if let Some(pr) = direct_pr {
+        let validation = github::pr_validation_report(&repo, &pr.number.to_string())?;
+        Some((pr, validation))
+    } else {
+        let linked_prs = github::linked_prs_for_issue(
+            &repo,
+            issue,
+            Some(issue_ref.branch_name("codex").as_str()),
+        )?;
+        match linked_prs.len() {
+            0 => None,
+            1 => {
+                let pr = linked_prs
+                    .into_iter()
+                    .next()
+                    .expect("single linked PR should exist");
+                let validation = github::pr_validation_report(&repo, &pr.number.to_string())?;
+                Some((pr, validation))
+            }
+            count => bail!(
+                "watch: issue #{issue} has {count} linked PRs; watcher requires a single unambiguous lifecycle target"
+            ),
         }
-        count => bail!(
-            "watch: issue #{issue} has {count} linked PRs; watcher requires a single unambiguous lifecycle target"
-        ),
     };
     let local_readiness = doctor::run_doctor_ready(
         &repo_root,
@@ -540,6 +563,11 @@ fn validation_disposition_blocks_shell_success(disposition: &str) -> bool {
         disposition,
         "pending" | "failed" | "cancelled" | "timed_out"
     )
+}
+
+fn validation_report_blocks_shell_success(disposition: &str, projection_status: &str) -> bool {
+    validation_disposition_blocks_shell_success(disposition)
+        || projection_status == "checks_green_but_draft"
 }
 
 fn real_pr_issue(args: &[String]) -> Result<()> {

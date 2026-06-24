@@ -1,6 +1,6 @@
 use super::{
-    block_on_octocrab, parse_pr_number, parse_repo, with_octocrab, OpenPullRequest,
-    PrValidationCheckReport, PrValidationReport,
+    block_on_octocrab, parse_pr_number, parse_repo, pr_validation_projection_status, with_octocrab,
+    OpenPullRequest, PrValidationCheckReport, PrValidationReport,
 };
 #[cfg(test)]
 use super::{run_gh_status_shell, test_gh_fixture_fallback_allowed};
@@ -295,6 +295,39 @@ pub(super) fn list_prs_by_head_ref_octocrab(
                 queue: None,
             })
             .collect())
+    })
+}
+
+pub(super) fn pr_metadata_octocrab(repo: &str, pr_ref: &str) -> Result<OpenPullRequest> {
+    let repo_parts = parse_repo(repo)?;
+    let number = parse_pr_number(pr_ref)? as u64;
+    with_octocrab("pr.view.metadata", |runtime, octo| {
+        let owner = repo_parts.owner.clone();
+        let name = repo_parts.name.clone();
+        let pr = block_on_octocrab(runtime, "pr.view.metadata", || async {
+            octo.pulls(&owner, &name).get(number).await
+        })?;
+        Ok(OpenPullRequest {
+            number: pr.number.unwrap_or(number) as u32,
+            title: pr.title.unwrap_or_default(),
+            url: pr.html_url.map(|url| url.to_string()).unwrap_or_default(),
+            head_ref_name: pr
+                .head
+                .as_ref()
+                .map(|head| head.ref_field.clone())
+                .unwrap_or_default(),
+            base_ref_name: pr
+                .base
+                .as_ref()
+                .map(|base| base.ref_field.clone())
+                .unwrap_or_default(),
+            is_draft: pr.draft.unwrap_or(false),
+            state: pr
+                .state
+                .map(|state| format!("{state:?}").to_uppercase())
+                .unwrap_or_else(|| "OPEN".to_string()),
+            queue: None,
+        })
     })
 }
 
@@ -922,6 +955,12 @@ pub(super) fn pr_validation_report_from_snapshot_with_disposition(
         pr_state: snapshot.state.clone(),
         is_draft: snapshot.is_draft,
         disposition: disposition.as_event_result().to_string(),
+        projection_status: pr_validation_projection_status(
+            &snapshot.state,
+            snapshot.is_draft,
+            disposition.as_event_result(),
+        )
+        .to_string(),
         checks,
         failed_checks,
         pending_checks,
