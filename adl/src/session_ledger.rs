@@ -139,6 +139,16 @@ pub struct TargetClaimAssessment {
     pub relevant_claims: Vec<TargetClaimMatch>,
 }
 
+#[derive(Debug, Clone)]
+pub struct TargetClaimQuery<'a> {
+    pub repo_root: &'a Path,
+    pub issue_number: u64,
+    pub branch: &'a str,
+    pub worktree_path: &'a Path,
+    pub current_session_id: Option<&'a str>,
+    pub now: DateTime<Utc>,
+}
+
 #[derive(Debug, Clone, Copy, Serialize, Deserialize, PartialEq, Eq)]
 #[serde(rename_all = "snake_case")]
 pub enum ClaimClassification {
@@ -478,27 +488,23 @@ pub fn classify_claim(claim: &OccupancyClaim, now: DateTime<Utc>) -> ClaimClassi
 pub fn assess_target_claims(
     ledger: &SessionLedger,
     ledger_path: &Path,
-    repo_root: &Path,
-    issue_number: u64,
-    branch: &str,
-    worktree_path: &Path,
-    current_session_id: Option<&str>,
-    now: DateTime<Utc>,
+    query: &TargetClaimQuery<'_>,
 ) -> TargetClaimAssessment {
-    let normalized_target_worktree = normalize_path(worktree_path);
-    let issue_id = issue_number.to_string();
+    let normalized_target_worktree = normalize_path(query.worktree_path);
+    let issue_id = query.issue_number.to_string();
     let mut relevant_claims = ledger
         .claims
         .iter()
         .filter_map(|claim| {
-            let matches_issue = claim.github.issue == Some(issue_number)
+            let matches_issue = claim.github.issue == Some(query.issue_number)
                 || resource_matches_issue(&claim.resource, &issue_id);
-            let matches_branch = claim.branch.as_deref() == Some(branch);
+            let matches_branch = claim.branch.as_deref() == Some(query.branch);
             let matches_worktree = claim
                 .worktree_path
                 .as_deref()
                 .map(|raw| {
-                    normalize_claim_worktree_path(repo_root, raw) == normalized_target_worktree
+                    normalize_claim_worktree_path(query.repo_root, raw)
+                        == normalized_target_worktree
                 })
                 .unwrap_or(false);
             if !(matches_issue || matches_branch || matches_worktree) {
@@ -510,7 +516,7 @@ pub fn assess_target_claims(
                 owner: claim.owner.clone(),
                 resource: claim.resource.clone(),
                 mode: claim.mode,
-                classification: classify_claim(claim, now),
+                classification: classify_claim(claim, query.now),
                 issue: claim.github.issue,
                 branch: claim.branch.clone(),
                 worktree_path: claim.worktree_path.clone(),
@@ -520,7 +526,8 @@ pub fn assess_target_claims(
                 matches_issue,
                 matches_branch,
                 matches_worktree,
-                self_claim: current_session_id
+                self_claim: query
+                    .current_session_id
                     .map(|session_id| claim.session_id == session_id)
                     .unwrap_or(false),
             })
@@ -589,7 +596,7 @@ pub fn assess_target_claims(
         status,
         block_kind,
         guidance,
-        current_session_id: current_session_id.map(|value| value.to_string()),
+        current_session_id: query.current_session_id.map(|value| value.to_string()),
         relevant_claims,
     }
 }
@@ -604,16 +611,15 @@ pub fn load_target_claim_assessment(
 ) -> Result<TargetClaimAssessment> {
     let ledger_path = default_ledger_path(repo_root);
     let ledger = load_ledger(&ledger_path, now)?;
-    Ok(assess_target_claims(
-        &ledger,
-        &ledger_path,
+    let query = TargetClaimQuery {
         repo_root,
         issue_number,
         branch,
         worktree_path,
         current_session_id,
         now,
-    ))
+    };
+    Ok(assess_target_claims(&ledger, &ledger_path, &query))
 }
 
 fn claim_status(claim: &OccupancyClaim, now: DateTime<Utc>) -> ClaimStatus {
@@ -853,17 +859,16 @@ mod tests {
     fn target_claim_assessment_reports_no_claims() {
         let repo_root = PathBuf::from("/repo");
         let ledger = SessionLedger::empty(now());
+        let query = TargetClaimQuery {
+            repo_root: &repo_root,
+            issue_number: 4419,
+            branch: "codex/4419-test",
+            worktree_path: &repo_root.join(".worktrees/adl-wp-4419"),
+            current_session_id: Some("thread-1"),
+            now: now(),
+        };
 
-        let assessment = assess_target_claims(
-            &ledger,
-            &default_ledger_path(&repo_root),
-            &repo_root,
-            4419,
-            "codex/4419-test",
-            &repo_root.join(".worktrees/adl-wp-4419"),
-            Some("thread-1"),
-            now(),
-        );
+        let assessment = assess_target_claims(&ledger, &default_ledger_path(&repo_root), &query);
 
         assert_eq!(assessment.status, "PASS");
         assert_eq!(assessment.block_kind, "none");
@@ -879,17 +884,16 @@ mod tests {
         other.branch = Some("codex/4419-test".to_string());
         other.worktree_path = Some(".worktrees/adl-wp-4419".to_string());
         ledger.claim(other, now()).expect("claim");
+        let query = TargetClaimQuery {
+            repo_root: &repo_root,
+            issue_number: 4419,
+            branch: "codex/4419-test",
+            worktree_path: &repo_root.join(".worktrees/adl-wp-4419"),
+            current_session_id: Some("thread-1"),
+            now: now(),
+        };
 
-        let assessment = assess_target_claims(
-            &ledger,
-            &default_ledger_path(&repo_root),
-            &repo_root,
-            4419,
-            "codex/4419-test",
-            &repo_root.join(".worktrees/adl-wp-4419"),
-            Some("thread-1"),
-            now(),
-        );
+        let assessment = assess_target_claims(&ledger, &default_ledger_path(&repo_root), &query);
 
         assert_eq!(assessment.status, "BLOCK");
         assert_eq!(assessment.block_kind, "session_active_conflict");
@@ -907,17 +911,16 @@ mod tests {
         stale.worktree_path = Some(".worktrees/adl-wp-4419".to_string());
         let claim = ledger.claim(stale, now()).expect("claim");
         let stale_time = claim.expires_at + Duration::seconds(1);
+        let query = TargetClaimQuery {
+            repo_root: &repo_root,
+            issue_number: 4419,
+            branch: "codex/4419-test",
+            worktree_path: &repo_root.join(".worktrees/adl-wp-4419"),
+            current_session_id: Some("thread-1"),
+            now: stale_time,
+        };
 
-        let assessment = assess_target_claims(
-            &ledger,
-            &default_ledger_path(&repo_root),
-            &repo_root,
-            4419,
-            "codex/4419-test",
-            &repo_root.join(".worktrees/adl-wp-4419"),
-            Some("thread-1"),
-            stale_time,
-        );
+        let assessment = assess_target_claims(&ledger, &default_ledger_path(&repo_root), &query);
 
         assert_eq!(assessment.status, "WARN");
         assert_eq!(
@@ -938,17 +941,16 @@ mod tests {
         mine.branch = Some("codex/4419-test".to_string());
         mine.worktree_path = Some(".worktrees/adl-wp-4419".to_string());
         ledger.claim(mine, now()).expect("claim");
+        let query = TargetClaimQuery {
+            repo_root: &repo_root,
+            issue_number: 4419,
+            branch: "codex/4419-test",
+            worktree_path: &repo_root.join(".worktrees/adl-wp-4419"),
+            current_session_id: Some("thread-1"),
+            now: now(),
+        };
 
-        let assessment = assess_target_claims(
-            &ledger,
-            &default_ledger_path(&repo_root),
-            &repo_root,
-            4419,
-            "codex/4419-test",
-            &repo_root.join(".worktrees/adl-wp-4419"),
-            Some("thread-1"),
-            now(),
-        );
+        let assessment = assess_target_claims(&ledger, &default_ledger_path(&repo_root), &query);
 
         assert_eq!(assessment.status, "PASS");
         assert_eq!(assessment.block_kind, "session_self_claim");
