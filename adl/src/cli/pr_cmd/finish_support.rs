@@ -2195,6 +2195,9 @@ pub(super) fn select_finish_validation_plan_for_finish(
     if finish_issue_needs_native_gws_runtime_validation(issue_number, changed_paths) {
         return Ok(build_native_gws_runtime_validation_plan());
     }
+    if finish_paths_need_github_projection_watch_validation(changed_paths) {
+        return Ok(build_github_projection_watch_validation_plan());
+    }
     if finish_issue_needs_unity_observatory_scaffold_validation(issue_number, changed_paths) {
         return Ok(build_unity_observatory_scaffold_validation_plan(
             changed_paths,
@@ -2336,6 +2339,43 @@ fn build_version_metadata_validation_plan() -> FinishValidationPlan {
                 .to_string(),
             "cargo metadata --manifest-path adl/Cargo.toml --locked --no-deps --format-version 1"
                 .to_string(),
+        ],
+    }
+}
+
+fn finish_paths_need_github_projection_watch_validation(changed_paths: &[String]) -> bool {
+    let mut has_github_projection_surface = false;
+    !changed_paths.is_empty()
+        && changed_paths.iter().all(|path| {
+            let trimmed = path.trim().trim_matches('/');
+            if matches!(
+                trimmed,
+                "adl/src/cli/pr_cmd/github.rs"
+                    | "adl/src/cli/pr_cmd/github/transport.rs"
+                    | "adl/src/cli/pr_cmd/github/tests/watch.rs"
+                    | "adl/src/cli/pr_cmd/github/tests/validation.rs"
+            ) || trimmed.starts_with("adl/src/cli/pr_cmd/github/")
+            {
+                has_github_projection_surface = true;
+                return true;
+            }
+            matches!(
+                trimmed,
+                "adl/src/cli/pr_cmd.rs" | "adl/src/cli/tests/pr_cmd_inline/basics.rs"
+            ) || finish_path_is_docs_only(trimmed)
+        })
+        && has_github_projection_surface
+}
+
+fn build_github_projection_watch_validation_plan() -> FinishValidationPlan {
+    FinishValidationPlan {
+        mode: FinishValidationMode::LargerBinaryFocused,
+        commands: vec![
+            "bash adl/tools/check_no_tracked_adl_issue_record_residue.sh".to_string(),
+            "git diff --check".to_string(),
+            "cargo fmt --manifest-path adl/Cargo.toml --all --check".to_string(),
+            "cargo test --manifest-path adl/Cargo.toml --bin adl cli::pr_cmd::github::tests -- --nocapture".to_string(),
+            "cargo test --manifest-path adl/Cargo.toml --bin adl validation_disposition_blocks_pending_and_terminal_failures -- --nocapture".to_string(),
         ],
     }
 }
@@ -3556,6 +3596,36 @@ pub(super) fn run_finish_validation_rust(
                             "--bin",
                             "adl",
                             "cli::pr_cmd",
+                        ],
+                    )?;
+                }
+                "cargo test --manifest-path adl/Cargo.toml --bin adl cli::pr_cmd::github::tests -- --nocapture" => {
+                    run_finish_validation_status(
+                        "cargo",
+                        &[
+                            "test",
+                            "--manifest-path",
+                            path_str(&manifest)?,
+                            "--bin",
+                            "adl",
+                            "cli::pr_cmd::github::tests",
+                            "--",
+                            "--nocapture",
+                        ],
+                    )?;
+                }
+                "cargo test --manifest-path adl/Cargo.toml --bin adl validation_disposition_blocks_pending_and_terminal_failures -- --nocapture" => {
+                    run_finish_validation_status(
+                        "cargo",
+                        &[
+                            "test",
+                            "--manifest-path",
+                            path_str(&manifest)?,
+                            "--bin",
+                            "adl",
+                            "validation_disposition_blocks_pending_and_terminal_failures",
+                            "--",
+                            "--nocapture",
                         ],
                     )?;
                 }

@@ -3040,6 +3040,42 @@ fn finish_validation_profile_keeps_finish_support_changes_narrow() {
 }
 
 #[test]
+fn finish_validation_profile_keeps_github_projection_watch_slice_focused() {
+    let plan = select_finish_validation_plan_for_finish(
+        4488,
+        ".",
+        &[
+            "adl/src/cli/pr_cmd.rs".to_string(),
+            "adl/src/cli/pr_cmd/github.rs".to_string(),
+            "adl/src/cli/pr_cmd/github/transport.rs".to_string(),
+            "adl/src/cli/pr_cmd/github/tests/watch.rs".to_string(),
+            "adl/src/cli/pr_cmd/github/tests/validation.rs".to_string(),
+            "adl/src/cli/tests/pr_cmd_inline/basics.rs".to_string(),
+        ],
+    )
+    .expect("github projection/watch focused plan");
+
+    assert_eq!(plan.mode, FinishValidationMode::LargerBinaryFocused);
+    assert!(plan
+        .commands
+        .contains(&"cargo fmt --manifest-path adl/Cargo.toml --all --check".to_string()));
+    assert!(plan.commands.contains(
+        &"cargo test --manifest-path adl/Cargo.toml --bin adl cli::pr_cmd::github::tests -- --nocapture"
+            .to_string()
+    ));
+    assert!(plan.commands.contains(
+        &"cargo test --manifest-path adl/Cargo.toml --bin adl validation_disposition_blocks_pending_and_terminal_failures -- --nocapture"
+            .to_string()
+    ));
+    assert!(
+        !plan.commands.contains(
+            &"cargo test --manifest-path adl/Cargo.toml --bin adl cli::pr_cmd".to_string()
+        ),
+        "github projection/watch slices should not fall back to the full pr_cmd lane"
+    );
+}
+
+#[test]
 fn finish_validation_profile_classifies_process_status_helper_surfaces() {
     let plan = select_finish_validation_plan_for_finish(
         0,
