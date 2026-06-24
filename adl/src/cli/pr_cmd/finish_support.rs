@@ -1064,6 +1064,7 @@ pub(super) struct FinishValidationProfileRunItem {
     pub lane_id: String,
     pub command: String,
     pub reason: String,
+    #[allow(dead_code)]
     #[serde(default)]
     pub matched_paths: Vec<String>,
     #[serde(default)]
