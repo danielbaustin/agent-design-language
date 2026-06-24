@@ -1821,7 +1821,7 @@ fn generated_vpp_plan_from_profile_json(profile: &Value) -> GeneratedVppPlan {
     let mut command_items = run_items
         .iter()
         .filter_map(|item| item.get("command").and_then(Value::as_str))
-        .map(ToOwned::to_owned)
+        .map(sanitize_vpp_validation_command)
         .collect::<Vec<_>>();
     if command_items.is_empty() {
         command_items.push(format!(
@@ -2031,6 +2031,29 @@ fn yaml_inline(text: &str) -> String {
     text.replace('\\', "\\\\").replace('"', "'")
 }
 
+fn sanitize_vpp_validation_command(command: &str) -> String {
+    let mut sanitized = Vec::new();
+    let mut replace_next_changed_files = false;
+    for token in command.split_whitespace() {
+        if replace_next_changed_files {
+            sanitized.push("<changed-files>".to_string());
+            replace_next_changed_files = false;
+            continue;
+        }
+        if token == "--changed-files" {
+            sanitized.push(token.to_string());
+            replace_next_changed_files = true;
+            continue;
+        }
+        if token.starts_with('/') {
+            sanitized.push("<path>".to_string());
+        } else {
+            sanitized.push(token.to_string());
+        }
+    }
+    sanitized.join(" ")
+}
+
 fn render_bootstrap_review_policy_card(
     repo_root: &Path,
     issue_ref: &IssueRef,
@@ -2127,7 +2150,7 @@ mod tests {
     #[test]
     fn generated_vpp_plan_from_profile_json_carries_run_and_skip_rationale() {
         let profile = json!({
-            "selected_profile": "selected_2_lane_profile",
+            "selected_profile": "selected_3_lane_profile",
             "status": "ready_to_run",
             "pr_publication_sufficient": true,
             "estimated_cost": {
@@ -2145,6 +2168,10 @@ mod tests {
                 {
                     "lane_id": "csdlc_owner_lane",
                     "command": "bash adl/tools/run_owner_validation_lane.sh csdlc"
+                },
+                {
+                    "lane_id": "rust_pr_fast",
+                    "command": "bash adl/tools/run_pr_fast_test_lane.sh --changed-files /private/tmp/changed-files.txt"
                 }
             ],
             "not_run": [
@@ -2161,15 +2188,21 @@ mod tests {
         let plan = generated_vpp_plan_from_profile_json(&profile);
         assert_eq!(
             plan.selected_lanes_inline,
-            "docs_diff_check, csdlc_owner_lane"
+            "docs_diff_check, csdlc_owner_lane, rust_pr_fast"
         );
         assert_eq!(plan.parallel_groups_inline, "docs_hygiene");
         assert_eq!(plan.validation_runtime_class, "normal");
         assert_eq!(plan.validation_resource_profile, "local");
-        assert_eq!(plan.validation_family, "selected_2_lane_profile");
+        assert_eq!(plan.validation_family, "selected_3_lane_profile");
         assert_eq!(plan.validation_size_split, "mixed");
         assert_eq!(plan.expected_proof_cost, "medium");
         assert!(plan.validation_commands_inline.contains("git diff --check"));
+        assert!(plan
+            .validation_commands_inline
+            .contains("bash adl/tools/run_pr_fast_test_lane.sh --changed-files <changed-files>"));
+        assert!(!plan
+            .validation_commands_inline
+            .contains("/private/tmp/changed-files.txt"));
         assert!(plan
             .validation_commands_inline
             .contains("deferred full_workspace_nextest: not selected by validation profile"));

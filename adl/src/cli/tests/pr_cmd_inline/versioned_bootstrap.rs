@@ -228,6 +228,14 @@ fn versioned_bootstrap_vpp_derives_fact_backed_validation_profile_fields() {
     init_git_repo(&repo);
     copy_bootstrap_support_files(&repo);
     copy_versioned_prompt_templates(&repo);
+    let workspace_root = std::path::PathBuf::from(env!("CARGO_MANIFEST_DIR"))
+        .parent()
+        .expect("workspace root")
+        .to_path_buf();
+    let cards_src = workspace_root.join("adl/src/cli/pr_cmd_cards/cards.rs");
+    let cards_dst = repo.join("adl/src/cli/pr_cmd_cards/cards.rs");
+    fs::create_dir_all(cards_dst.parent().expect("cards parent")).expect("mkdir cards");
+    fs::copy(cards_src, cards_dst).expect("copy cards source");
 
     let issue_ref = IssueRef::new(
         4425,

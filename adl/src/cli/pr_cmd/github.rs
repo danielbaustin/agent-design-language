@@ -1015,6 +1015,7 @@ fn with_octocrab<T>(
 }
 
 fn run_octocrab_capture(operation: &str, args: &[&str]) -> Result<String> {
+    let _client = github_client(operation)?;
     match operation {
         "pr.list.current_branch" => {
             let repo = arg_after(args, "-R")?;
@@ -1062,6 +1063,7 @@ fn run_octocrab_capture(operation: &str, args: &[&str]) -> Result<String> {
 }
 
 fn run_octocrab_status(operation: &str, args: &[&str]) -> Result<()> {
+    let _client = github_client(operation)?;
     match operation {
         "pr.edit.body_file" => {
             let repo = arg_after(args, "-R")?;
