@@ -2867,6 +2867,54 @@ Review the issue bundle and tighten the planned execution sequence.
 }
 
 #[test]
+fn real_pr_init_rejects_duplicate_local_identity_before_github_metadata_mutation() {
+    let _guard = env_lock();
+    let _transport_env = force_gh_cli_transport_env();
+    let repo = unique_temp_dir("adl-pr-real-init-duplicate-before-edit");
+    init_git_repo(&repo);
+    copy_bootstrap_support_files(&repo);
+
+    let duplicate_body =
+        repo.join(".adl/v0.86/bodies/issue-1151-v0-86-tools-init-duplicate-legacy.md");
+    fs::create_dir_all(duplicate_body.parent().expect("duplicate body parent"))
+        .expect("duplicate body dir");
+    fs::write(
+        &duplicate_body,
+        "---\ntitle: \"legacy\"\nlabels:\n  - \"version:v0.86\"\nissue_number: 1151\n---\n\n# legacy\n",
+    )
+    .expect("write duplicate body");
+
+    let fixture = repo.join(".adl/test-fixtures/gh");
+    fs::create_dir_all(fixture.parent().expect("fixture parent")).expect("fixture dir");
+    let gh_log = repo.join("gh.log");
+    write_executable(
+        &fixture,
+        &format!(
+            "#!/usr/bin/env bash\nset -euo pipefail\nprintf '%s\\n' \"$*\" >> '{}'\nif [[ \"$1 $2\" == \"issue view\" ]]; then\n  if printf '%s\\n' \"$*\" | grep -q -- '--json title'; then\n    printf '[v0.86][tools] Init duplicate before edit\\n'\n    exit 0\n  fi\n  if printf '%s\\n' \"$*\" | grep -q -- '--json labels'; then\n    printf 'track:roadmap\\ntype:task\\narea:tools\\nversion:v0.86\\n'\n    exit 0\n  fi\nfi\nif [[ \"$1 $2\" == \"issue edit\" ]]; then\n  exit 0\nfi\nexit 1\n",
+            gh_log.display()
+        ),
+    );
+    let _fixture_guard = GithubCliFixtureGuard::set(&fixture);
+
+    let prev_dir = env::current_dir().expect("cwd");
+    env::set_current_dir(&repo).expect("chdir");
+    let err = real_pr(&["init".to_string(), "1151".to_string()])
+        .expect_err("init should fail closed on duplicate local identity before metadata edit");
+    env::set_current_dir(prev_dir).expect("restore cwd");
+
+    assert!(
+        err.to_string()
+            .contains("duplicate local issue identities detected"),
+        "duplicate failure should surface actionable identity guidance: {err:#}"
+    );
+    let gh_calls = fs::read_to_string(&gh_log).unwrap_or_default();
+    assert!(
+        !gh_calls.contains("issue edit"),
+        "init should reject duplicate local identities before attempting GitHub metadata mutation"
+    );
+}
+
+#[test]
 fn real_pr_create_creates_issue_and_bootstraps_root_bundle() {
     let _guard = env_lock();
     let repo = unique_temp_dir("adl-pr-real-create");
