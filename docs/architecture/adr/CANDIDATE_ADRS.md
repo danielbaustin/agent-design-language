@@ -6,6 +6,9 @@ The unpromoted entries in this file are proposed decisions from the source
 packets named in each section. They are not accepted ADRs until reviewed and
 promoted into `docs/adr/`.
 
+Accepted ADRs live in `docs/adr/`. This directory, `docs/architecture/adr/`,
+holds candidate draft copies and the candidate catalog.
+
 ## Candidate 0001: Trace And Artifacts As Runtime Truth
 
 - Proposed status: candidate
@@ -117,13 +120,30 @@ Required v0.91.6 candidates:
 | [ADR 0041: Provider/Model Suitability Boundary v2](0041-provider-model-suitability-boundary-v2.md) | candidate_required | Provider availability, capability profiles, model-role suitability, reliability evidence, and role-provider advisory authority are distinct surfaces. |
 | [ADR 0042: Public Prompt Records Publication Boundary](0042-public-prompt-records-publication-boundary.md) | candidate_required | `.adl` authoring records become public only through reviewed export, redaction, validation, indexing, and security/CAV handoff paths. |
 
-Existing candidate routing from the same packet:
+Existing candidate routing from the same packet, with the concrete owner route
+added by `#4383`:
 
-| Candidate | v0.91.6 recommendation |
-| --- | --- |
-| ADR 0029: C-SDLC Default Software-Development Lane | promote or refresh then promote |
-| ADR 0030: Software Development Polis Actor Standing And Shard Ownership | defer with active route |
-| ADR 0031: C-SDLC Multi-Agent Parallel Execution Boundary | defer with active route |
-| ADR 0032: Parallel Validation Fabric | promote or refresh then promote |
-| ADR 0033: Merge Readiness And PR Gate Truth Boundary | promote or refresh then promote |
-| ADR 0034: C-SDLC Evidence Convergence, Signed Trace, And ObsMem Handoff | defer with active route |
+| Candidate | v0.91.6 recommendation | Owner issue | Target route |
+| --- | --- | --- | --- |
+| ADR 0029: C-SDLC Default Software-Development Lane | promote or refresh then promote | `#4476` | `v0.91.6` release tail |
+| ADR 0030: Software Development Polis Actor Standing And Shard Ownership | defer with active route | `#4476` | `v0.91.7`/`v0.93` governance |
+| ADR 0031: C-SDLC Multi-Agent Parallel Execution Boundary | defer with active route | `#4476` | `v0.91.7` C-SDLC hardening |
+| ADR 0032: Parallel Validation Fabric | promote or refresh then promote | `#4476` | `v0.91.6` release tail |
+| ADR 0033: Merge Readiness And PR Gate Truth Boundary | promote or refresh then promote | `#4476` | `v0.91.6` release tail |
+| ADR 0034: C-SDLC Evidence Convergence, Signed Trace, And ObsMem Handoff | defer with active route | `#4476` | `v0.91.7`/`v0.92` bridge |
+
+Post-review disposition route from `#4383`:
+
+| Candidate | Current disposition | Owner issue | Evidence gate |
+| --- | --- | --- | --- |
+| ADR 0035 | ready for acceptance review | `#4476` | SSM operations-plane-only evidence from `#4109`, `#4113`, `#4318`, `#4319`, and `#4343`. |
+| ADR 0036 | ready for acceptance review | `#4476` | Validation selector, PVF lane index, and retained review evidence agree on deterministic/fail-closed policy. |
+| ADR 0037 | refresh then acceptance review | `#4476` | Current typed closing-linkage and GitHub convergence truth is consumed, including `#4286` disposition or visible deferral. |
+| ADR 0038 | ready for acceptance review | `#4476` | Soak #1 and Soak #2 boundaries remain explicit and do not overclaim v0.92 runtime readiness. |
+| ADR 0039 | ready for acceptance review | `#4476` | Scheduler v1 remains planning/evidence only, without timed execution, GitHub mutation, or provider-selection authority. |
+| ADR 0040 | defer until evidence | `#4476` | Lockfile-discipline fix has a durable source packet or exact tracked files and validation proof cited before promotion. |
+| ADR 0041 | ready for acceptance review | `#4476` | Provider availability, capability, role suitability, reliability, failure modes, and advisory authority remain distinct. |
+| ADR 0042 | ready for acceptance review | `#4476` | Public prompt records remain governed projections after export, redaction, validation, indexing, and security/CAV handoff. |
+
+This route does not accept the candidates. It makes the next ADR acceptance or
+deferral step explicit and reviewable.
