@@ -36,11 +36,11 @@ Out of scope:
 
 ## Child Issue Wave
 
-| Issue | Role | Status | Primary surface | Notes |
-|---|---|---|---|---|
-| {{issue_1}} | {{role_1}} | {{status_1}} | {{surface_1}} | {{notes_1}} |
-| {{issue_2}} | {{role_2}} | {{status_2}} | {{surface_2}} | {{notes_2}} |
-| {{issue_3}} | {{role_3}} | {{status_3}} | {{surface_3}} | {{notes_3}} |
+| Issue | Role | Status | Primary surface | Estimated seconds | Token budget | Watcher | Notes |
+|---|---|---|---|---|---|---|---|
+| {{issue_1}} | {{role_1}} | {{status_1}} | {{surface_1}} | {{estimate_seconds_1}} | {{token_budget_1}} | {{watcher_1}} | {{notes_1}} |
+| {{issue_2}} | {{role_2}} | {{status_2}} | {{surface_2}} | {{estimate_seconds_2}} | {{token_budget_2}} | {{watcher_2}} | {{notes_2}} |
+| {{issue_3}} | {{role_3}} | {{status_3}} | {{surface_3}} | {{estimate_seconds_3}} | {{token_budget_3}} | {{watcher_3}} | {{notes_3}} |
 
 ## Dependency Graph
 
@@ -74,6 +74,22 @@ flowchart LR
   merge, closeout, and worktree pruning.
 - Watchers must report `complete`, `failed`, `blocked`, or `waiting_with_next_check`.
 - Wait states without a watcher are not valid sprint state.
+
+## Budget And Goal Accounting
+
+- Aggregate sprint token budget: `{{aggregate_sprint_token_budget}}`
+- Aggregate sprint elapsed-seconds estimate: `{{aggregate_sprint_elapsed_seconds}}`
+- Sprint goal ref: `{{sprint_goal_ref}}`
+- Goal metrics rollup ref: `{{goal_metrics_rollup_ref}}`
+- Budget-source rule: `{{budget_source_rule}}`
+
+## Watcher Plan
+
+| Issue | Watcher | Current focus | Next terminal state |
+|---|---|---|---|
+| {{watcher_issue_1}} | {{watcher_name_1}} | {{watcher_focus_1}} | {{watcher_terminal_1}} |
+| {{watcher_issue_2}} | {{watcher_name_2}} | {{watcher_focus_2}} | {{watcher_terminal_2}} |
+| {{watcher_issue_3}} | {{watcher_name_3}} | {{watcher_focus_3}} | {{watcher_terminal_3}} |
 
 ## Safe Parallel Lanes
 
@@ -180,6 +196,13 @@ Allowed `classification` values:
 - Sprint closeout artifact records child issue status, PR URLs, proof surfaces,
   validation state, and follow-up routing.
 - Worktrees are pruned or retained with an explicit reason.
+
+## Sprint Closeout Rollup Expectations
+
+- Child status rollup: `{{child_status_rollup_expectation}}`
+- Budget variance rollup: `{{budget_variance_rollup_expectation}}`
+- Watcher outcome rollup: `{{watcher_outcome_rollup_expectation}}`
+- Parallelism assumption review: `{{parallelism_assumption_review_expectation}}`
 
 ## Residual Routing Policy
 

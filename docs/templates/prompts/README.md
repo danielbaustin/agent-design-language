@@ -55,6 +55,11 @@ structure edits:
 5. run `validate-schemas` and the Python schema smoke check when schema
    artifacts are touched.
 
+When a template family exposes budgeting, readiness, PVF, watcher, estimate,
+actual, or variance fields, treat those as values-first inputs. Edit the values
+object, then re-render and re-validate; do not hand-patch the rendered
+Markdown to sneak those fields in after the fact.
+
 Editor skills still own lifecycle-truth repairs. The renderer owns deterministic
 template filling and shape preservation; it does not invent execution, review,
 PR, merge, or closeout truth.

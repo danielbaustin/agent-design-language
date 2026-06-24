@@ -86,6 +86,8 @@ const PLACEHOLDERS: &[&str] = &[
     "lane_registry_template_set",
     "validation_runtime_class",
     "validation_resource_profile",
+    "validation_family",
+    "validation_size_split",
     "expected_proof_cost",
     "planned_validation_seconds",
     "planned_validation_tokens",
@@ -100,6 +102,8 @@ const PLACEHOLDERS: &[&str] = &[
     "estimate_elapsed_seconds",
     "estimate_total_tokens",
     "estimate_validation_seconds",
+    "issue_goal_token_budget",
+    "variance_threshold_percent",
     "estimate_confidence",
     "estimate_data_source",
     "estimate_source_ref",
@@ -109,6 +113,7 @@ const PLACEHOLDERS: &[&str] = &[
     "actual_active_work_seconds",
     "actual_total_tokens",
     "actual_validation_seconds",
+    "budget_source",
     "actual_pr_wait_seconds",
     "actual_ci_wait_seconds",
     "actual_metrics_data_source",
@@ -785,6 +790,8 @@ fn extract_legacy_spp_values(rendered: &str) -> Result<(BTreeMap<String, String>
         ("estimate_elapsed_seconds", "unknown"),
         ("estimate_total_tokens", "unknown"),
         ("estimate_validation_seconds", "unknown"),
+        ("issue_goal_token_budget", "unknown"),
+        ("variance_threshold_percent", "10"),
         ("estimate_confidence", "unknown"),
         ("estimate_data_source", "unknown"),
         ("estimate_source_ref", "unknown"),
@@ -894,6 +901,7 @@ fn extract_legacy_sor_values(rendered: &str) -> Result<(BTreeMap<String, String>
         ("actual_total_tokens", "unknown"),
         ("estimate_validation_seconds", "unknown"),
         ("actual_validation_seconds", "unknown"),
+        ("budget_source", "unknown"),
         ("actual_pr_wait_seconds", "unknown"),
         ("actual_ci_wait_seconds", "unknown"),
         ("actual_metrics_data_source", "unknown"),
@@ -1427,6 +1435,7 @@ pub fn validate_values(card: &PromptCardForm, values: &BTreeMap<String, String>)
     );
     match card.kind {
         PromptCardKind::Spp => validate_spp_values(card, values)?,
+        PromptCardKind::Vpp => validate_vpp_values(card, values)?,
         PromptCardKind::Sor => validate_sor_values(card, values)?,
         _ => {}
     }
@@ -1481,6 +1490,8 @@ fn validate_spp_values(card: &PromptCardForm, values: &BTreeMap<String, String>)
         "estimate_elapsed_seconds",
         "estimate_total_tokens",
         "estimate_validation_seconds",
+        "issue_goal_token_budget",
+        "variance_threshold_percent",
     ] {
         if let Some(value) = values.get(key) {
             validate_unknown_or_positive_int_value(&format!("{}.{}", card.key, key), value)?;
@@ -1515,6 +1526,15 @@ fn validate_spp_values(card: &PromptCardForm, values: &BTreeMap<String, String>)
                 source != "unknown",
                 "spp.estimate_confidence cannot be set when spp.estimate_data_source is `unknown`"
             );
+        }
+    }
+    Ok(())
+}
+
+fn validate_vpp_values(card: &PromptCardForm, values: &BTreeMap<String, String>) -> Result<()> {
+    for key in ["planned_validation_seconds", "planned_validation_tokens"] {
+        if let Some(value) = values.get(key) {
+            validate_unknown_or_positive_int_value(&format!("{}.{}", card.key, key), value)?;
         }
     }
     Ok(())
@@ -1852,6 +1872,8 @@ pub fn sample_values() -> BTreeMap<String, String> {
         ("lane_registry_template_set", "v0.91.6"),
         ("validation_runtime_class", "docs_only"),
         ("validation_resource_profile", "small"),
+        ("validation_family", "prompt_template"),
+        ("validation_size_split", "not_applicable"),
         ("expected_proof_cost", "low"),
         ("planned_validation_seconds", "unknown"),
         ("planned_validation_tokens", "unknown"),
@@ -1872,6 +1894,8 @@ pub fn sample_values() -> BTreeMap<String, String> {
         ("estimate_elapsed_seconds", "unknown"),
         ("estimate_total_tokens", "unknown"),
         ("estimate_validation_seconds", "unknown"),
+        ("issue_goal_token_budget", "unknown"),
+        ("variance_threshold_percent", "10"),
         ("estimate_confidence", "unknown"),
         ("estimate_data_source", "unknown"),
         ("estimate_source_ref", "unknown"),
@@ -1884,6 +1908,7 @@ pub fn sample_values() -> BTreeMap<String, String> {
         ("actual_active_work_seconds", "unknown"),
         ("actual_total_tokens", "unknown"),
         ("actual_validation_seconds", "unknown"),
+        ("budget_source", "unknown"),
         ("actual_pr_wait_seconds", "unknown"),
         ("actual_ci_wait_seconds", "unknown"),
         ("actual_metrics_data_source", "unknown"),
@@ -2335,6 +2360,18 @@ fn form_fields(kind: PromptCardKind) -> Vec<PromptField> {
                 true,
                 "Expected validation time in seconds, or `unknown`.",
             ));
+            fields.push(text(
+                "issue_goal_token_budget",
+                "Issue Goal Token Budget",
+                true,
+                "Bounded issue-goal token budget, or `unknown`.",
+            ));
+            fields.push(text(
+                "variance_threshold_percent",
+                "Variance Threshold Percent",
+                true,
+                "Percent threshold that requires variance analysis.",
+            ));
             fields.push(select(
                 "estimate_confidence",
                 "Estimate Confidence",
@@ -2496,6 +2533,25 @@ fn form_fields(kind: PromptCardKind) -> Vec<PromptField> {
                 "Validation Resource Profile",
                 true,
                 "Resource profile expected for this validation plan.",
+            ));
+            fields.push(text(
+                "validation_family",
+                "Validation Family",
+                true,
+                "Primary validation family for this issue, or `unknown`.",
+            ));
+            fields.push(select(
+                "validation_size_split",
+                "Validation Size Split",
+                true,
+                "Whether the plan expects small, large, mixed, or no validation split.",
+                &[
+                    "small_only",
+                    "large_only",
+                    "mixed",
+                    "not_applicable",
+                    "unknown",
+                ],
             ));
             fields.push(text(
                 "expected_proof_cost",
@@ -2731,6 +2787,19 @@ fn form_fields(kind: PromptCardKind) -> Vec<PromptField> {
                 "Actual Validation Seconds",
                 true,
                 "Measured validation time in seconds, or `unknown`.",
+            ));
+            fields.push(select(
+                "budget_source",
+                "Budget Source",
+                true,
+                "Where the execution-time budget truth came from.",
+                &[
+                    "issue_goal_budget",
+                    "sprint_rollup",
+                    "manual_entry",
+                    "not_applicable",
+                    "unknown",
+                ],
             ));
             fields.push(text(
                 "actual_pr_wait_seconds",
