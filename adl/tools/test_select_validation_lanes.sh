@@ -69,6 +69,13 @@ bash "$SCRIPT" --changed-files "$shared_rust" >"$TMP/shared.out"
 assert_has "$TMP/shared.out" "aggregate_status=escalated"
 assert_has "$TMP/shared.out" "rust_pr_fast status=escalated"
 
+metric_backfill_tool="$TMP/metric-backfill-tool.txt"
+printf 'M\tadl/tools/build_v0916_workflow_metric_backfill_inventory.py\n' >"$metric_backfill_tool"
+bash "$SCRIPT" --changed-files "$metric_backfill_tool" >"$TMP/metric-backfill-tool.out"
+assert_has "$TMP/metric-backfill-tool.out" "aggregate_status=selected"
+assert_has "$TMP/metric-backfill-tool.out" "csdlc_owner_lane status=selected"
+assert_not_has "$TMP/metric-backfill-tool.out" "unmapped_change_surface"
+
 release_gate="$TMP/release-gate.txt"
 printf 'M\t.github/workflows/ci.yaml\n' >"$release_gate"
 bash "$SCRIPT" --changed-files "$release_gate" >"$TMP/release.out"

@@ -3671,6 +3671,71 @@ fn finish_validation_profile_fails_closed_for_mixed_surface_with_unmapped_gap() 
 }
 
 #[test]
+fn finish_validation_profile_accepts_workflow_metrics_backfill_slice() {
+    let plan = select_finish_validation_plan_for_finish(
+        4441,
+        ".",
+        &[
+            "adl/src/cli/pr_cmd.rs".to_string(),
+            "adl/src/cli/pr_cmd/github.rs".to_string(),
+            "adl/src/cli/pr_cmd/github/tests/transport.rs".to_string(),
+            "adl/src/cli/pr_cmd/github/tests/watch.rs".to_string(),
+            "adl/src/cli/tests/pr_cmd_inline/basics.rs".to_string(),
+            "adl/tools/build_v0916_workflow_metric_backfill_inventory.py".to_string(),
+            "docs/milestones/v0.91.6/review/V0916_WORKFLOW_METRIC_BACKFILL_4441.json"
+                .to_string(),
+        ],
+    )
+    .expect("workflow metrics backfill plan");
+
+    assert_eq!(plan.mode, FinishValidationMode::LargerBinaryFocused);
+    assert!(plan
+        .commands
+        .contains(&"bash adl/tools/run_owner_validation_lane.sh csdlc".to_string()));
+    assert!(plan.commands.iter().any(|command| {
+        command.starts_with("bash adl/tools/run_pr_fast_test_lane.sh --changed-files ")
+    }));
+    assert!(plan.commands.contains(&"git diff --check".to_string()));
+}
+
+#[test]
+fn finish_validation_profile_accepts_workflow_metrics_backfill_publication_slice() {
+    let plan = select_finish_validation_plan_for_finish(
+        4441,
+        ".",
+        &[
+            "adl/config/validation_lane_selector.v0.91.6.json".to_string(),
+            "adl/src/cli/pr_cmd.rs".to_string(),
+            "adl/src/cli/pr_cmd/github.rs".to_string(),
+            "adl/src/cli/pr_cmd/github/tests/transport.rs".to_string(),
+            "adl/src/cli/pr_cmd/github/tests/watch.rs".to_string(),
+            "adl/src/cli/tests/pr_cmd_inline/basics.rs".to_string(),
+            "adl/src/cli/tests/pr_cmd_inline/finish/arg_render.rs".to_string(),
+            "adl/tools/build_v0916_workflow_metric_backfill_inventory.py".to_string(),
+            "adl/tools/test_select_validation_lanes.sh".to_string(),
+            "adl/tools/test_validation_manager.sh".to_string(),
+            "docs/milestones/v0.91.6/review/V0916_WORKFLOW_METRIC_BACKFILL_4441.json"
+                .to_string(),
+        ],
+    )
+    .expect("workflow metrics backfill publication plan");
+
+    assert_eq!(plan.mode, FinishValidationMode::LargerBinaryFocused);
+    assert!(plan
+        .commands
+        .contains(&"bash adl/tools/run_owner_validation_lane.sh csdlc".to_string()));
+    assert!(plan.commands.iter().any(|command| {
+        command.contains("bash adl/tools/test_ci_path_policy.sh")
+            && command.contains("bash adl/tools/test_select_validation_lanes.sh")
+            && command.contains("bash adl/tools/test_validation_manager.sh")
+    }));
+    assert!(plan.commands.iter().any(|command| {
+        command.starts_with("bash adl/tools/run_pr_fast_test_lane.sh --changed-files ")
+    }));
+    assert!(plan.commands.contains(&"git diff --check".to_string()));
+}
+
+#[test]
 fn finish_validation_profile_classifies_validation_inventory_slice_as_small_binary_focused() {
     let plan = select_finish_validation_plan_for_finish(
         4213,

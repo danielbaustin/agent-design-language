@@ -218,6 +218,38 @@ if bash "$SCRIPT" --changed-files "$mixed" --run >"$TMP/mixed-run.out" 2>"$TMP/m
 fi
 assert_has "$TMP/mixed-run.err" "refusing --run for non-runnable profile"
 
+workflow_metrics_backfill="$TMP/workflow-metrics-backfill.txt"
+cat >"$workflow_metrics_backfill" <<'EOF'
+M	adl/config/validation_lane_selector.v0.91.6.json
+M	adl/src/cli/pr_cmd.rs
+M	adl/src/cli/pr_cmd/github.rs
+M	adl/src/cli/pr_cmd/github/tests/transport.rs
+M	adl/src/cli/pr_cmd/github/tests/watch.rs
+M	adl/src/cli/tests/pr_cmd_inline/basics.rs
+M	adl/src/cli/tests/pr_cmd_inline/finish/arg_render.rs
+M	adl/tools/build_v0916_workflow_metric_backfill_inventory.py
+M	adl/tools/test_select_validation_lanes.sh
+M	adl/tools/test_validation_manager.sh
+M	docs/milestones/v0.91.6/review/V0916_WORKFLOW_METRIC_BACKFILL_4441.json
+EOF
+bash "$SCRIPT" --changed-files "$workflow_metrics_backfill" --json >"$TMP/workflow-metrics-backfill.json"
+python3 - <<'PY' "$TMP/workflow-metrics-backfill.json"
+import json
+import sys
+
+profile = json.load(open(sys.argv[1]))
+assert profile["schema_version"] == "adl.validation_profile.v1"
+assert profile["selected_profile"] == "selected_4_lane_profile"
+assert profile["status"] == "ready_to_run"
+assert profile["pr_publication_sufficient"] is True
+assert [item["lane_id"] for item in profile["run"]] == [
+    "ci_path_policy_contracts",
+    "csdlc_owner_lane",
+    "docs_diff_check",
+    "rust_pr_fast",
+]
+PY
+
 sprint_conductor="$TMP/sprint-conductor.txt"
 cat >"$sprint_conductor" <<'EOF'
 M	adl/tools/skills/sprint-conductor/SKILL.md

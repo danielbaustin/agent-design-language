@@ -832,6 +832,9 @@ fn format_issue_view(issue: &IssueRecord) -> String {
         format!("state: {}", issue.state),
         format!("url: {}", issue.url),
     ];
+    if let Some(created_at) = issue.created_at.as_deref() {
+        lines.push(format!("created_at: {created_at}"));
+    }
     if let Some(closed_at) = issue.closed_at.as_deref() {
         lines.push(format!("closed_at: {closed_at}"));
     }

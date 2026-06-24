@@ -75,6 +75,8 @@ pub(crate) struct IssueRecord {
     pub(crate) title: String,
     pub(crate) state: String,
     pub(crate) url: String,
+    #[serde(rename = "createdAt")]
+    pub(crate) created_at: Option<String>,
     #[serde(rename = "closedAt")]
     pub(crate) closed_at: Option<String>,
     pub(crate) body: Option<String>,
@@ -103,6 +105,7 @@ struct RestIssueRecord {
     title: Option<String>,
     state: Option<String>,
     html_url: Option<String>,
+    created_at: Option<String>,
     closed_at: Option<String>,
     body: Option<String>,
     labels: Option<Vec<RestIssueLabel>>,
@@ -125,6 +128,7 @@ impl RestIssueRecord {
             title: self.title?,
             state: self.state?,
             url: self.html_url?,
+            created_at: self.created_at,
             closed_at: self.closed_at,
             body: self.body,
             labels: self
