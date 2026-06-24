@@ -478,6 +478,8 @@ scope:
 constraints:
   - "read_only_until_execution_is_approved"
 confidence: "medium"
+estimate_elapsed_seconds: "30"
+estimate_total_tokens: "800"
 plan_summary: "Authored planning surface for finish-path tests."
 assumptions:
   - "The linked STP and SIP remain canonical."
@@ -525,12 +527,12 @@ test
 
 ## Estimate Plan
 
-- Estimated elapsed seconds: `unknown`
-- Estimated total tokens: `unknown`
-- Estimated validation seconds: `unknown`
-- Estimate confidence: `unknown`
-- Estimate data source: `unknown`
-- Estimate source ref: `unknown`
+- Estimated elapsed seconds: `30`
+- Estimated total tokens: `800`
+- Estimated validation seconds: `30`
+- Estimate confidence: `medium`
+- Estimate data source: `fixture`
+- Estimate source ref: `inline-authored-spp`
 - Unknown-value rule: record `unknown`, never `0`, when the estimate is unavailable or intentionally deferred.
 
 ## Codex Plan
@@ -583,6 +585,119 @@ test
         spp_rel = spp_rel,
     );
     fs::write(path, content).expect("write authored spp");
+}
+
+pub(crate) fn write_authored_vpp(
+    path: &Path,
+    issue_ref: &IssueRef,
+    title: &str,
+    branch: &str,
+    repo_root: &Path,
+) {
+    let stp_rel = path_relative_to_repo(repo_root, &issue_ref.task_bundle_stp_path(repo_root));
+    let sip_rel = path_relative_to_repo(repo_root, &issue_ref.task_bundle_input_path(repo_root));
+    let content = format!(
+        r#"---
+schema_version: "0.1"
+artifact_type: "structured_validation_planning_prompt"
+name: "{slug}-validation-plan"
+issue: {issue}
+task_id: "{task_id}"
+run_id: "{task_id}"
+version: v0.86
+title: "{title}"
+branch: "{branch}"
+card_status: "ready"
+status: "reviewed"
+initial_pvf_lane: "tooling"
+planned_pvf_lane: "tooling"
+lane_registry_path: "docs/validation/pvf_lanes.json"
+lane_registry_template_set: "vpp.lane.v1"
+validation_runtime_class: "tiny"
+validation_resource_profile: "local"
+expected_proof_cost: "small"
+planned_validation_seconds: "30"
+planned_validation_tokens: "800"
+issue_goal_ref: "issue-{issue}"
+sprint_goal_ref: "unknown"
+goal_metrics_rollup_ref: "unknown"
+source_refs:
+  - kind: "issue"
+    ref: "https://github.com/example/repo/issues/{issue}"
+  - kind: "stp"
+    ref: "{stp_rel}"
+  - kind: "sip"
+    ref: "{sip_rel}"
+selected_lanes:
+  - "tooling"
+parallel_groups:
+  - "local"
+validation_commands:
+  - "cargo test --manifest-path adl/Cargo.toml --bin adl cli::pr_cmd::tests::lifecycle -- --nocapture"
+failure_policy: "fail_closed"
+notes: "test note"
+---
+
+# Validation Planning Prompt
+
+## Validation Planning Summary
+
+Issue-specific validation plan for lifecycle fixture execution.
+
+## Lane Registry Inputs
+
+- Registry path: `docs/validation/pvf_lanes.json`
+- Registry template set: `vpp.lane.v1`
+- Initial PVF lane from issue creation: `tooling`
+- Planned PVF lane for execution: `tooling`
+
+## Selected Validation Lanes
+
+- tooling
+
+## Parallelization Plan
+
+- Parallel groups: local
+- Validation runtime class: `tiny`
+- Validation resource profile: `local`
+
+## Goal Accounting Hooks
+
+- Issue goal ref: `issue-{issue}`
+- Sprint goal ref: `unknown`
+- Goal metrics rollup ref: `unknown`
+
+## Proof Cost / Runtime Expectations
+
+- Expected proof cost: `small`
+- Planned validation seconds: `30`
+- Planned validation tokens: `800`
+
+## Validation Commands
+
+- cargo test --manifest-path adl/Cargo.toml --bin adl cli::pr_cmd::tests::lifecycle -- --nocapture
+
+## Failure Semantics
+
+- fail_closed
+
+## Handoff
+
+Use this authored VPP as the validation plan-of-record for lifecycle fixtures.
+
+## Notes
+
+test
+"#,
+        slug = issue_ref.slug(),
+        issue = issue_ref.issue_number(),
+        task_id = issue_ref.task_issue_id(),
+        title = title,
+        branch = branch,
+        stp_rel = stp_rel,
+        sip_rel = sip_rel,
+    );
+    fs::write(path, content).expect("write authored vpp");
 }
 
 pub(crate) fn write_authored_srp(
@@ -737,6 +852,13 @@ pub(crate) fn write_design_time_ready_cards(
     );
     write_authored_spp(
         &issue_ref.task_bundle_plan_path(repo),
+        issue_ref,
+        title,
+        branch,
+        repo,
+    );
+    write_authored_vpp(
+        &issue_ref.task_bundle_validation_plan_path(repo),
         issue_ref,
         title,
         branch,
