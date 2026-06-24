@@ -213,6 +213,14 @@ fn init_doctor_and_start_record_readiness_prep_goal_metric_stages() {
     ])
     .expect("real_pr doctor ready");
 
+    write_session_claim(
+        &repo,
+        1154,
+        "thread-self",
+        "codex/1154-readiness-prep-metrics",
+        &issue_ref.default_worktree_path(&repo, None),
+    );
+
     real_pr(&[
         "start".to_string(),
         "1154".to_string(),
