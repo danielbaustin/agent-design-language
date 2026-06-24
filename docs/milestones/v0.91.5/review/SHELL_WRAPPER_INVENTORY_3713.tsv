@@ -132,7 +132,11 @@ adl/tools/mock_ollama_v0_4.sh	local_only_utility	Default local shell utility cla
 adl/tools/normalize_adl_cards.sh	local_only_utility	Local operator/proof helper; status recorded to prevent accidental promotion into control-plane authority.
 adl/tools/observability.sh	local_only_utility	Local operator/proof helper; status recorded to prevent accidental promotion into control-plane authority.
 adl/tools/open_artifact.sh	local_only_utility	Local operator/proof helper; status recorded to prevent accidental promotion into control-plane authority.
+adl/tools/polis_status_for_ssm.sh	local_only_utility	Local operations status helper for SSM/polis host inspection; not workflow authority.
+adl/tools/polis_status_for_ssm_qts.sh	local_only_utility	Local operations status helper for QTS/SSM host inspection; not workflow authority.
 adl/tools/pr.sh	delegated_to_adl_csdlc	Compatibility wrapper over Rust/C-SDLC or validator-owned command path; keep until callers migrate.
+adl/tools/pr_delegate.sh	delegated_to_adl_csdlc	pr.sh helper for stable delegation and Rust/small-binary routing; sourced by the compatibility wrapper.
+adl/tools/pr_usage.sh	delegated_to_adl_csdlc	pr.sh helper for usage text and compatibility command documentation; sourced by the compatibility wrapper.
 adl/tools/preflight_review.sh	local_only_utility	Local operator/proof helper; status recorded to prevent accidental promotion into control-plane authority.
 adl/tools/provider_demo_common.sh	local_only_utility	Demo entrypoint/helper; preserves reproducible demo behavior, not workflow authority.
 adl/tools/release_ceremony.sh	local_only_utility	Release ceremony wrapper with local git tag support and fail-closed GitHub Release gaps routed by #3712/#3718.
@@ -145,9 +149,11 @@ adl/tools/run_owner_validation_lane.sh	local_only_utility	Validation or benchmar
 adl/tools/run_pr_fast_test_lane.sh	local_only_utility	Validation or benchmark lane launcher; local execution utility with explicit proof role.
 adl/tools/run_pvf_ci_release_policy_fixture.sh	local_only_utility	Validation or benchmark lane launcher; local execution utility with explicit proof role.
 adl/tools/run_pvf_validation_lane.sh	local_only_utility	Validation or benchmark lane launcher; local execution utility with explicit proof role.
+adl/tools/run_slow_proof_family.sh	local_only_utility	Validation or benchmark lane launcher; local execution utility with explicit proof role.
 adl/tools/run_uts_benchmark.sh	local_only_utility	Validation or benchmark lane launcher; local execution utility with explicit proof role.
 adl/tools/run_v0913_proof_validation_lane.sh	local_only_utility	Validation or benchmark lane launcher; local execution utility with explicit proof role.
 adl/tools/run_v0914_multi_agent_workcell_proof.sh	local_only_utility	Validation or benchmark lane launcher; local execution utility with explicit proof role.
+adl/tools/select_validation_lanes.sh	local_only_utility	Validation lane selector helper; local proof routing utility, not workflow authority.
 adl/tools/sync_task_bundle_prompts.sh	local_only_utility	Local operator/proof helper; status recorded to prevent accidental promotion into control-plane authority.
 adl/tools/test_adl_milestone_creator_skill_contracts.sh	local_only_utility	Focused shell validation fixture; not an operator control-plane source of truth.
 adl/tools/test_adl_review_compatibility.sh	local_only_utility	Focused shell validation fixture; not an operator control-plane source of truth.
@@ -168,6 +174,7 @@ adl/tools/test_card_reviewer_fixture.sh	local_only_utility	Focused shell validat
 adl/tools/test_ccc_v0_instrumentation.sh	local_only_utility	Focused shell validation fixture; not an operator control-plane source of truth.
 adl/tools/test_check_coverage_impact.sh	local_only_utility	Focused shell validation fixture; not an operator control-plane source of truth.
 adl/tools/test_check_issue_metadata_parity.sh	local_only_utility	Focused shell validation fixture; not an operator control-plane source of truth.
+adl/tools/test_check_repo_quality_staleness.sh	local_only_utility	Focused shell validation fixture; not an operator control-plane source of truth.
 adl/tools/test_check_milestone_closed_issue_sor_truth.sh	local_only_utility	Focused shell validation fixture; not an operator control-plane source of truth.
 adl/tools/test_check_no_tracked_adl_issue_record_residue.sh	local_only_utility	Focused shell validation fixture; not an operator control-plane source of truth.
 adl/tools/test_check_v090_milestone_state.sh	local_only_utility	Focused shell validation fixture; not an operator control-plane source of truth.
@@ -252,12 +259,16 @@ adl/tools/test_five_minute_html_game_packet.sh	local_only_utility	Focused shell 
 adl/tools/test_five_minute_sprint_console_packet.sh	local_only_utility	Focused shell validation fixture; not an operator control-plane source of truth.
 adl/tools/test_fix_git_main_sync_preserves_local_adl_cards.sh	local_only_utility	Focused shell validation fixture; not an operator control-plane source of truth.
 adl/tools/test_gap_analysis_skill_contracts.sh	local_only_utility	Focused shell validation fixture; not an operator control-plane source of truth.
+adl/tools/test_generate_active_command_reference_scan.sh	local_only_utility	Focused shell validation fixture; not an operator control-plane source of truth.
+adl/tools/test_generate_tool_surface_registry.sh	local_only_utility	Focused shell validation fixture; not an operator control-plane source of truth.
 adl/tools/test_hosted_benchmark_hardening.sh	local_only_utility	Focused shell validation fixture; not an operator control-plane source of truth.
 adl/tools/test_install_adl_operational_skills.sh	local_only_utility	Focused shell validation fixture; not an operator control-plane source of truth.
 adl/tools/test_install_adl_pr_cycle_skill.sh	local_only_utility	Focused shell validation fixture; not an operator control-plane source of truth.
 adl/tools/test_issue_folding_skill_contracts.sh	local_only_utility	Focused shell validation fixture; not an operator control-plane source of truth.
+adl/tools/test_issue_goal_terminal_state_truth.sh	local_only_utility	Focused shell validation fixture; not an operator control-plane source of truth.
 adl/tools/test_issue_splitter_skill_contracts.sh	local_only_utility	Focused shell validation fixture; not an operator control-plane source of truth.
 adl/tools/test_issue_watcher_skill_contracts.sh	local_only_utility	Focused shell validation fixture; not an operator control-plane source of truth.
+adl/tools/test_issue_lifecycle_shepherd_contract.sh	local_only_utility	Focused shell validation fixture; not an operator control-plane source of truth.
 adl/tools/test_medium_article_writer_skill_contracts.sh	local_only_utility	Focused shell validation fixture; not an operator control-plane source of truth.
 adl/tools/test_merge_readiness_packet.sh	local_only_utility	Focused shell validation fixture; not an operator control-plane source of truth.
 adl/tools/test_milestone_dashboard.sh	local_only_utility	Focused shell validation fixture; not an operator control-plane source of truth.
@@ -277,7 +288,9 @@ adl/tools/test_pr_cards_primary_root.sh	local_only_utility	Focused shell validat
 adl/tools/test_pr_closeout_skill_contracts.sh	local_only_utility	Focused shell validation fixture; not an operator control-plane source of truth.
 adl/tools/test_pr_closing_linkage.sh	local_only_utility	Focused shell validation fixture; not an operator control-plane source of truth.
 adl/tools/test_pr_create.sh	local_only_utility	Focused shell validation fixture; not an operator control-plane source of truth.
+adl/tools/test_pr_delegate_cargo_fallback_liveness.sh	local_only_utility	Focused shell validation fixture; not an operator control-plane source of truth.
 adl/tools/test_pr_delegate_exit_status.sh	local_only_utility	Focused shell validation fixture; not an operator control-plane source of truth.
+adl/tools/test_pr_delegate_prefers_primary_checkout_binary.sh	local_only_utility	Focused shell validation fixture; not an operator control-plane source of truth.
 adl/tools/test_pr_doctor_prefers_built_binary.sh	local_only_utility	Focused shell validation fixture; not an operator control-plane source of truth.
 adl/tools/test_pr_finish_default_stage_root.sh	local_only_utility	Focused shell validation fixture; not an operator control-plane source of truth.
 adl/tools/test_pr_finish_delegates_to_rust.sh	local_only_utility	Focused shell validation fixture; not an operator control-plane source of truth.
@@ -286,19 +299,23 @@ adl/tools/test_pr_help_and_card_open.sh	local_only_utility	Focused shell validat
 adl/tools/test_pr_init.sh	local_only_utility	Focused shell validation fixture; not an operator control-plane source of truth.
 adl/tools/test_pr_init_skill_contracts.sh	local_only_utility	Focused shell validation fixture; not an operator control-plane source of truth.
 adl/tools/test_pr_issue_version_inference.sh	local_only_utility	Focused shell validation fixture; not an operator control-plane source of truth.
+adl/tools/test_pr_json_observability.sh	local_only_utility	Focused shell validation fixture; not an operator control-plane source of truth.
 adl/tools/test_pr_locking.sh	local_only_utility	Focused shell validation fixture; not an operator control-plane source of truth.
 adl/tools/test_pr_no_fetch_offline.sh	local_only_utility	Focused shell validation fixture; not an operator control-plane source of truth.
 adl/tools/test_pr_ready_prefers_built_binary.sh	local_only_utility	Focused shell validation fixture; not an operator control-plane source of truth.
 adl/tools/test_pr_run.sh	local_only_utility	Focused shell validation fixture; not an operator control-plane source of truth.
 adl/tools/test_pr_run_ambiguity_policy.sh	local_only_utility	Focused shell validation fixture; not an operator control-plane source of truth.
 adl/tools/test_pr_run_issue_mode.sh	local_only_utility	Focused shell validation fixture; not an operator control-plane source of truth.
+adl/tools/test_pr_run_locked_cargo_fallback_refuses_cleanly.sh	local_only_utility	Focused shell validation fixture; not an operator control-plane source of truth.
 adl/tools/test_pr_run_materializes_worktree_cards.sh	local_only_utility	Focused shell validation fixture; not an operator control-plane source of truth.
+adl/tools/test_pr_small_binary_delegation.sh	local_only_utility	Focused shell validation fixture; not an operator control-plane source of truth.
 adl/tools/test_pr_stack_manager_skill_contracts.sh	local_only_utility	Focused shell validation fixture; not an operator control-plane source of truth.
 adl/tools/test_pr_start_template_validation.sh	local_only_utility	Focused shell validation fixture; not an operator control-plane source of truth.
 adl/tools/test_pr_start_worktree_safe.sh	local_only_utility	Focused shell validation fixture; not an operator control-plane source of truth.
 adl/tools/test_process_drift_regressions.sh	local_only_utility	Focused shell validation fixture; not an operator control-plane source of truth.
 adl/tools/test_product_report_writer_skill_contracts.sh	local_only_utility	Focused shell validation fixture; not an operator control-plane source of truth.
 adl/tools/test_prompt_spec_lint.sh	local_only_utility	Focused shell validation fixture; not an operator control-plane source of truth.
+adl/tools/test_prompt_template_workflow_integration.sh	local_only_utility	Focused shell validation fixture; not an operator control-plane source of truth.
 adl/tools/test_prompt_templates_1_0_0.sh	local_only_utility	Focused shell validation fixture; not an operator control-plane source of truth.
 adl/tools/test_provider_demo_common.sh	local_only_utility	Focused shell validation fixture; not an operator control-plane source of truth.
 adl/tools/test_pvf_ci_release_policy.sh	local_only_utility	Focused shell validation fixture; not an operator control-plane source of truth.
@@ -324,6 +341,7 @@ adl/tools/test_run_local_authoritative_coverage_gate.sh	local_only_utility	Focus
 adl/tools/test_run_pr_fast_test_lane.sh	local_only_utility	Focused shell validation fixture; not an operator control-plane source of truth.
 adl/tools/test_run_pvf_validation_lane.sh	local_only_utility	Focused shell validation fixture; not an operator control-plane source of truth.
 adl/tools/test_run_v0913_proof_validation_lane.sh	local_only_utility	Focused shell validation fixture; not an operator control-plane source of truth.
+adl/tools/test_select_validation_lanes.sh	local_only_utility	Focused shell validation fixture; not an operator control-plane source of truth.
 adl/tools/test_shell_wrapper_inventory.sh	local_only_utility	Focused validation helper for the shell wrapper inventory; proves inventory freshness and schema only.
 adl/tools/test_skill_documentation_completeness.sh	local_only_utility	Focused shell validation fixture; not an operator control-plane source of truth.
 adl/tools/test_slow_proof_lane_contract.sh	local_only_utility	Focused shell validation fixture; not an operator control-plane source of truth.
@@ -345,6 +363,15 @@ adl/tools/test_v0904_contract_market_summary.sh	local_only_utility	Focused shell
 adl/tools/test_v0914_csdlc_evidence_bundle.sh	local_only_utility	Focused shell validation fixture; not an operator control-plane source of truth.
 adl/tools/test_v0914_merge_readiness_gate.sh	local_only_utility	Focused shell validation fixture; not an operator control-plane source of truth.
 adl/tools/test_v0914_obsmem_transition_memory.sh	local_only_utility	Focused shell validation fixture; not an operator control-plane source of truth.
+adl/tools/test_v0915_multi_agent_quality_comparison.sh	local_only_utility	Focused shell validation fixture; not an operator control-plane source of truth.
+adl/tools/test_v0915_openrouter_matrix.sh	local_only_utility	Focused shell validation fixture; not an operator control-plane source of truth.
+adl/tools/test_v0915_remote_gemma_watcher_probe.sh	local_only_utility	Focused shell validation fixture; not an operator control-plane source of truth.
+adl/tools/test_v0916_deepseek_suitability.sh	local_only_utility	Focused shell validation fixture; not an operator control-plane source of truth.
+adl/tools/test_v0916_unity_observatory_baseline.sh	local_only_utility	Focused shell validation fixture; not an operator control-plane source of truth.
+adl/tools/test_v0916_unity_observatory_contract.sh	local_only_utility	Focused shell validation fixture; not an operator control-plane source of truth.
+adl/tools/test_validate_structured_prompt_parallel.sh	local_only_utility	Focused shell validation fixture; not an operator control-plane source of truth.
+adl/tools/test_validation_inventory.sh	local_only_utility	Focused shell validation fixture; not an operator control-plane source of truth.
+adl/tools/test_validation_manager.sh	local_only_utility	Focused shell validation fixture; not an operator control-plane source of truth.
 adl/tools/test_validate_multi_agent_workcell_state.sh	local_only_utility	Focused shell validation fixture; not an operator control-plane source of truth.
 adl/tools/test_workflow_conductor_skill_contracts.sh	local_only_utility	Focused shell validation fixture; not an operator control-plane source of truth.
 adl/tools/test_workflow_guardrails.sh	local_only_utility	Focused shell validation fixture; not an operator control-plane source of truth.
@@ -357,6 +384,8 @@ adl/tools/v0871_demo_common.sh	local_only_utility	Demo entrypoint/helper; preser
 adl/tools/validate_skill_frontmatter.sh	local_only_utility	Check/validation helper; local proof utility, not a replacement control plane.
 adl/tools/validate_structured_prompt.sh	local_only_utility	Check/validation helper; local proof utility, not a replacement control plane.
 adl/tools/validate_v086_control_path.sh	local_only_utility	Check/validation helper; local proof utility, not a replacement control plane.
+adl/tools/validation_inventory.sh	local_only_utility	Check/validation helper; local proof utility, not a replacement control plane.
+adl/tools/validation_manager.sh	local_only_utility	Check/validation helper; local proof utility, not a replacement control plane.
 adl/tools/verify_repo_review_contract.sh	local_only_utility	Check/validation helper; local proof utility, not a replacement control plane.
 adl/tools/verify_review_output_provenance.sh	local_only_utility	Check/validation helper; local proof utility, not a replacement control plane.
 adl/tools/workflow_guardrails.sh	local_only_utility	Local operator/proof helper; status recorded to prevent accidental promotion into control-plane authority.

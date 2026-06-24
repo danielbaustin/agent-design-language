@@ -3,6 +3,8 @@ set -euo pipefail
 
 ROOT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)"
 PR_SH_SRC="$ROOT_DIR/adl/tools/pr.sh"
+PR_DELEGATE_SRC="$ROOT_DIR/adl/tools/pr_delegate.sh"
+PR_USAGE_SRC="$ROOT_DIR/adl/tools/pr_usage.sh"
 CARD_PATHS_SRC="$ROOT_DIR/adl/tools/card_paths.sh"
 OBS_SRC="$ROOT_DIR/adl/tools/observability.sh"
 BASH_BIN="$(command -v bash)"
@@ -13,6 +15,8 @@ trap 'rm -rf "$tmpdir"' EXIT
 repo="$tmpdir/repo"
 mkdir -p "$repo/adl/tools" "$repo/adl" "$repo/bin"
 cp "$PR_SH_SRC" "$repo/adl/tools/pr.sh"
+cp "$PR_DELEGATE_SRC" "$repo/adl/tools/pr_delegate.sh"
+cp "$PR_USAGE_SRC" "$repo/adl/tools/pr_usage.sh"
 cp "$CARD_PATHS_SRC" "$repo/adl/tools/card_paths.sh"
 cp "$OBS_SRC" "$repo/adl/tools/observability.sh"
 chmod +x "$repo/adl/tools/pr.sh"
@@ -188,5 +192,34 @@ grep -Fqx 'broad:pr doctor 3838 --slug demo --no-fetch-issue --version v0.91.5 -
   echo "assertion failed: ADL_PR_RUST_BIN must retain precedence over direct small-binary overrides" >&2
   exit 1
 }
+
+missing_helper_log="$tmpdir/missing-helper.stderr"
+rm "$repo/adl/tools/pr_delegate.sh"
+set +e
+(
+  cd "$repo"
+  "$BASH_BIN" adl/tools/pr.sh help >/dev/null 2>"$missing_helper_log"
+)
+status=$?
+set -e
+[[ "$status" -ne 0 ]] || {
+  echo "assertion failed: missing pr.sh helper should fail closed" >&2
+  exit 1
+}
+grep -Fq 'stage=source-helper result=missing helper=pr_delegate.sh' "$missing_helper_log" || {
+  echo "assertion failed: missing helper failure should emit observable helper name" >&2
+  cat "$missing_helper_log" >&2
+  exit 1
+}
+grep -Fq "missing pr.sh helper: pr_delegate.sh" "$missing_helper_log" || {
+  echo "assertion failed: missing helper failure should include actionable helper name" >&2
+  cat "$missing_helper_log" >&2
+  exit 1
+}
+if grep -Fq "$repo" "$missing_helper_log"; then
+  echo "assertion failed: missing helper failure should not leak host fixture path" >&2
+  cat "$missing_helper_log" >&2
+  exit 1
+fi
 
 echo "pr.sh small-binary delegation: ok"

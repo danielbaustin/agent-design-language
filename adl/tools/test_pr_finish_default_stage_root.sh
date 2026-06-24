@@ -4,6 +4,8 @@ set -euo pipefail
 ROOT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)"
 export ADL_TOOLING_MANIFEST_ROOT="$ROOT_DIR"
 PR_SH_SRC="$ROOT_DIR/adl/tools/pr.sh"
+PR_DELEGATE_SRC="$ROOT_DIR/adl/tools/pr_delegate.sh"
+PR_USAGE_SRC="$ROOT_DIR/adl/tools/pr_usage.sh"
 CARD_PATHS_SRC="$ROOT_DIR/adl/tools/card_paths.sh"
 PROMPT_LINT_SRC="$ROOT_DIR/adl/tools/lint_prompt_spec.sh"
 PROMPT_VALIDATOR_SRC="$ROOT_DIR/adl/tools/validate_structured_prompt.sh"
@@ -27,6 +29,8 @@ repo="$tmpdir/repo"
 mockbin="$tmpdir/mockbin"
 mkdir -p "$repo/adl/tools" "$repo/adl/templates/cards" "$repo/adl/schemas" "$repo/docs/tooling" "$mockbin"
 cp "$PR_SH_SRC" "$repo/adl/tools/pr.sh"
+cp "$PR_DELEGATE_SRC" "$repo/adl/tools/pr_delegate.sh"
+cp "$PR_USAGE_SRC" "$repo/adl/tools/pr_usage.sh"
 cp "$CARD_PATHS_SRC" "$repo/adl/tools/card_paths.sh"
 cp "$PROMPT_LINT_SRC" "$repo/adl/tools/lint_prompt_spec.sh"
 cp "$PROMPT_VALIDATOR_SRC" "$repo/adl/tools/validate_structured_prompt.sh"
@@ -221,7 +225,7 @@ This test issue ships code only.
 - authored fixture, not bootstrap fallback
 EOF_PROMPT
 
-  "$BASH_BIN" adl/tools/pr.sh start 1021 --slug finish-default-root --no-fetch-issue >/dev/null
+  "$BASH_BIN" adl/tools/pr.sh start 1021 --slug finish-default-root --no-fetch-issue --version v0.86 --allow-open-pr-wave >/dev/null
   "$BASH_BIN" adl/tools/pr.sh cards 1021 --no-fetch-issue >/dev/null
   worktree="$repo/.worktrees/adl-wp-1021"
   git -C "$worktree" config user.name "Test User"

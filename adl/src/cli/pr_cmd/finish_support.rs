@@ -4265,6 +4265,16 @@ pub(super) fn run_finish_validation_rust(
                     let script = repo_root.join("adl/tools/test_validation_manager.sh");
                     run_finish_validation_status("bash", &[path_str(&script)?])?;
                 }
+                "bash adl/tools/test_ci_path_policy.sh && bash adl/tools/test_select_validation_lanes.sh && bash adl/tools/test_validation_manager.sh" => {
+                    let ci_path_policy = repo_root.join("adl/tools/test_ci_path_policy.sh");
+                    run_finish_validation_status("bash", &[path_str(&ci_path_policy)?])?;
+                    let select_validation_lanes =
+                        repo_root.join("adl/tools/test_select_validation_lanes.sh");
+                    run_finish_validation_status("bash", &[path_str(&select_validation_lanes)?])?;
+                    let validation_manager =
+                        repo_root.join("adl/tools/test_validation_manager.sh");
+                    run_finish_validation_status("bash", &[path_str(&validation_manager)?])?;
+                }
                 "bash adl/tools/test_validation_inventory.sh" => {
                     let script = repo_root.join("adl/tools/test_validation_inventory.sh");
                     run_finish_validation_status("bash", &[path_str(&script)?])?;

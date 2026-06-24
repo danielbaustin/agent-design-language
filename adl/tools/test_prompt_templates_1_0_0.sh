@@ -102,6 +102,8 @@ fi
 registry_repo="$tmpdir/registry-repo"
 mkdir -p "$registry_repo/adl/tools" "$registry_repo/docs/templates/prompts/1.0.0" "$registry_repo/docs/templates/prompts/1.0.1"
 cp "$ROOT_DIR/adl/tools/pr.sh" "$registry_repo/adl/tools/pr.sh"
+cp "$ROOT_DIR/adl/tools/pr_delegate.sh" "$registry_repo/adl/tools/pr_delegate.sh"
+cp "$ROOT_DIR/adl/tools/pr_usage.sh" "$registry_repo/adl/tools/pr_usage.sh"
 cp "$ROOT_DIR/adl/tools/card_paths.sh" "$registry_repo/adl/tools/card_paths.sh"
 cp "$ROOT_DIR/docs/templates/prompts/1.0.0/stp.md" "$registry_repo/docs/templates/prompts/1.0.0/stp.md"
 sed 's#docs/templates/prompts/1.0.0/stp.md#docs/templates/prompts/1.0.1/stp.md#' \
