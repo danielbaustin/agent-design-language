@@ -7,7 +7,16 @@ pub(super) fn print_doctor_preflight_text(preflight: &DoctorPreflightResult) {
 }
 
 pub(super) fn doctor_preflight_lines(preflight: &DoctorPreflightResult) -> Vec<String> {
-    let mut lines = vec![format!("OPEN_PR_COUNT={}", preflight.open_pr_count)];
+    let mut lines = vec![
+        format!("OPEN_PR_SCAN_STATUS={}", preflight.open_pr_scan_status),
+        format!(
+            "OPEN_PR_COUNT={}",
+            preflight
+                .open_pr_count
+                .map(|count| count.to_string())
+                .unwrap_or_else(|| "unknown".to_string())
+        ),
+    ];
     for pr in &preflight.open_prs {
         lines.push(format!(
             "OPEN_PR=#{}|{}|{}|{}|{}",

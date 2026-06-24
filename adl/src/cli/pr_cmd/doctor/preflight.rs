@@ -9,11 +9,15 @@ pub(super) fn run_doctor_preflight(
     version: &str,
     issue_ref: &IssueRef,
     branch: &str,
+    allow_open_pr_wave: bool,
 ) -> Result<DoctorPreflightResult> {
     let source_path = resolve_doctor_issue_prompt_path(repo_root, issue_ref)?;
     let target_queue = resolve_issue_prompt_workflow_queue(&source_path)?;
-    let unresolved =
-        unresolved_milestone_pr_wave(repo, version, &target_queue.queue, Some(branch))?;
+    let unresolved = if allow_open_pr_wave {
+        Vec::new()
+    } else {
+        unresolved_milestone_pr_wave(repo, version, &target_queue.queue, Some(branch))?
+    };
     let open_prs = unresolved
         .iter()
         .map(|pr| DoctorPreflightJsonPullRequest {
@@ -70,12 +74,18 @@ pub(super) fn run_doctor_preflight(
         open_prs.is_empty(),
         card_run_readiness,
         session_ledger.status,
+        allow_open_pr_wave,
     );
     if open_prs.is_empty() && card_run_readiness != Some("blocked") {
         Ok(DoctorPreflightResult {
             target_queue: target_queue.queue,
             target_queue_source: target_queue.source,
-            open_pr_count: 0,
+            open_pr_scan_status: if allow_open_pr_wave {
+                "skipped_by_override"
+            } else {
+                "checked"
+            },
+            open_pr_count: if allow_open_pr_wave { None } else { Some(0) },
             open_prs,
             status,
             block_kind,
@@ -86,7 +96,16 @@ pub(super) fn run_doctor_preflight(
         Ok(DoctorPreflightResult {
             target_queue: target_queue.queue,
             target_queue_source: target_queue.source,
-            open_pr_count: open_prs.len(),
+            open_pr_scan_status: if allow_open_pr_wave {
+                "skipped_by_override"
+            } else {
+                "checked"
+            },
+            open_pr_count: if allow_open_pr_wave {
+                None
+            } else {
+                Some(open_prs.len())
+            },
             open_prs,
             status,
             block_kind,
@@ -100,35 +119,46 @@ pub(super) fn doctor_preflight_status(
     open_pr_wave_empty: bool,
     card_run_readiness: Option<&'static str>,
     session_status: &'static str,
+    open_pr_wave_skipped: bool,
 ) -> (&'static str, &'static str, &'static str) {
     let card_blocked = card_run_readiness == Some("blocked");
-    match (open_pr_wave_empty, card_blocked, session_status) {
-        (true, false, "BLOCK") => (
+    match (
+        open_pr_wave_empty,
+        card_blocked,
+        session_status,
+        open_pr_wave_skipped,
+    ) {
+        (true, false, "BLOCK", _) => (
             "BLOCK",
             "session_active_conflict",
             "Session-ledger ownership is actively claimed by another session. Resolve the claim before execution binding.",
         ),
-        (true, false, "WARN") => (
+        (true, false, "WARN", _) => (
             "WARN",
             "session_manual_inspection",
             "Session-ledger history needs manual inspection before execution, but there is no active ownership conflict.",
         ),
-        (true, false, _) => (
+        (true, false, _, true) => (
+            "WARN",
+            "open_pr_wave_override",
+            "Open PR wave scan was explicitly skipped by --allow-open-pr-wave; record why the queue override is unrelated or intentionally sequenced.",
+        ),
+        (true, false, _, false) => (
             "PASS",
             "none",
             "No preflight queue or card-readiness blockers detected.",
         ),
-        (false, false, _) => (
+        (false, false, _, _) => (
             "BLOCK",
             "open_pr_wave",
             "Issue-local readiness may proceed only under an explicit queue override such as --allow-open-pr-wave after recording why the open PR wave is unrelated or intentionally sequenced.",
         ),
-        (true, true, _) => (
+        (true, true, _, _) => (
             "BLOCK",
             "card_run_readiness",
             "Repair issue-local SIP/STP/SPP/VPP/SRP/SOR readiness before execution; do not override this as queue pressure.",
         ),
-        (false, true, _) => (
+        (false, true, _, _) => (
             "BLOCK",
             "open_pr_wave_and_card_run_readiness",
             "Repair issue-local card readiness before execution; open PR queue pressure remains a separate scheduling gate.",

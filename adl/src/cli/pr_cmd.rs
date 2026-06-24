@@ -1454,6 +1454,7 @@ fn real_pr_ready(args: &[String]) -> Result<()> {
             no_fetch_issue: parsed.no_fetch_issue,
             mode: DoctorMode::Ready,
             json: parsed.json,
+            allow_open_pr_wave: false,
         },
         "ready",
     )
@@ -1475,6 +1476,7 @@ fn real_pr_preflight(args: &[String]) -> Result<()> {
             no_fetch_issue: parsed.no_fetch_issue,
             mode: DoctorMode::Preflight,
             json: parsed.json,
+            allow_open_pr_wave: parsed.allow_open_pr_wave,
         },
         "preflight",
     )

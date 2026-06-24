@@ -2640,6 +2640,7 @@ fn parse_doctor_args_accepts_modes_and_rejects_unknown_arg() {
         "v0.87".to_string(),
         "--mode".to_string(),
         "full".to_string(),
+        "--allow-open-pr-wave".to_string(),
         "--json".to_string(),
         "--no-fetch-issue".to_string(),
     ])
@@ -2649,6 +2650,7 @@ fn parse_doctor_args_accepts_modes_and_rejects_unknown_arg() {
     assert_eq!(parsed.version.as_deref(), Some("v0.87"));
     assert!(parsed.json);
     assert!(parsed.no_fetch_issue);
+    assert!(parsed.allow_open_pr_wave);
     assert_eq!(parsed.mode, DoctorMode::Full);
 
     let err = parse_doctor_args(&[
@@ -2690,6 +2692,7 @@ fn parse_preflight_args_accepts_flags_and_rejects_unknown_arg() {
         "preflight-test".to_string(),
         "--version".to_string(),
         "v0.86".to_string(),
+        "--allow-open-pr-wave".to_string(),
         "--json".to_string(),
         "--no-fetch-issue".to_string(),
     ])
@@ -2699,6 +2702,7 @@ fn parse_preflight_args_accepts_flags_and_rejects_unknown_arg() {
     assert_eq!(parsed.version.as_deref(), Some("v0.86"));
     assert!(parsed.json);
     assert!(parsed.no_fetch_issue);
+    assert!(parsed.allow_open_pr_wave);
 
     let err = parse_preflight_args(&["1173".to_string(), "--bogus".to_string()]).expect_err("err");
     assert!(err.to_string().contains("preflight: unknown arg"));

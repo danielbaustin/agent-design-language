@@ -1974,6 +1974,131 @@ fn real_pr_start_allow_open_pr_wave_skips_wave_scan_before_binding() {
 }
 
 #[test]
+fn real_pr_doctor_allow_open_pr_wave_skips_preflight_wave_scan() {
+    let _guard = env_lock();
+    let temp = unique_temp_dir("adl-pr-doctor-open-wave-override-skips-scan");
+    let origin = temp.join("origin.git");
+    let repo = temp.join("repo");
+    fs::create_dir_all(&repo).expect("repo dir");
+    copy_bootstrap_support_files(&repo);
+    init_git_repo(&repo);
+    assert!(Command::new("git")
+        .args(["config", "user.name", "Test User"])
+        .current_dir(&repo)
+        .status()
+        .expect("git config")
+        .success());
+    assert!(Command::new("git")
+        .args(["config", "user.email", "test@example.com"])
+        .current_dir(&repo)
+        .status()
+        .expect("git config")
+        .success());
+    fs::write(repo.join("README.md"), "doctor override placeholder\n").expect("write readme");
+    assert!(Command::new("git")
+        .args(["add", "-A"])
+        .current_dir(&repo)
+        .status()
+        .expect("git add")
+        .success());
+    assert!(Command::new("git")
+        .args(["commit", "-q", "-m", "init"])
+        .current_dir(&repo)
+        .status()
+        .expect("git commit")
+        .success());
+    assert!(Command::new("git")
+        .args(["branch", "-M", "main"])
+        .current_dir(&repo)
+        .status()
+        .expect("git branch")
+        .success());
+    assert!(Command::new("git")
+        .args([
+            "init",
+            "--bare",
+            "-q",
+            path_str(&origin).expect("origin path")
+        ])
+        .current_dir(&repo)
+        .status()
+        .expect("git init bare")
+        .success());
+    assert!(Command::new("git")
+        .args([
+            "remote",
+            "set-url",
+            "origin",
+            path_str(&origin).expect("origin path"),
+        ])
+        .current_dir(&repo)
+        .status()
+        .expect("git remote set-url")
+        .success());
+    assert!(Command::new("git")
+        .args(["push", "-q", "-u", "origin", "main"])
+        .current_dir(&repo)
+        .status()
+        .expect("git push")
+        .success());
+    let issue_ref = IssueRef::new(
+        1175,
+        "v0.86".to_string(),
+        "v0-86-tools-doctor-override".to_string(),
+    )
+    .expect("issue ref");
+    write_authored_issue_prompt(&repo, &issue_ref, "[v0.86][tools] Doctor override");
+
+    let bin_dir = repo.join("bin");
+    fs::create_dir_all(&bin_dir).expect("bin dir");
+    let gh_path = bin_dir.join("gh");
+    let pr_list_marker = repo.join("doctor-pr-list-called.marker");
+    write_executable(
+        &gh_path,
+        &format!(
+            "#!/usr/bin/env bash\nset -euo pipefail\nif [[ \"$1 $2\" == \"pr list\" ]]; then\n  printf called > '{}'\n  printf 'doctor preflight must not call pr list when --allow-open-pr-wave is explicit\\n' >&2\n  exit 42\nfi\nexit 0\n",
+            pr_list_marker.display()
+        ),
+    );
+
+    let old_path = env::var("PATH").unwrap_or_default();
+    let old_disable_default_token_file = env::var_os("ADL_TEST_DISABLE_DEFAULT_GITHUB_TOKEN_FILE");
+    let prev_dir = env::current_dir().expect("cwd");
+    unsafe {
+        env::set_var("PATH", format!("{}:{}", bin_dir.display(), old_path));
+        env::set_var("ADL_TEST_DISABLE_DEFAULT_GITHUB_TOKEN_FILE", "1");
+    }
+    env::set_current_dir(&repo).expect("chdir");
+
+    real_pr(&[
+        "doctor".to_string(),
+        "1175".to_string(),
+        "--slug".to_string(),
+        "v0-86-tools-doctor-override".to_string(),
+        "--version".to_string(),
+        "v0.86".to_string(),
+        "--mode".to_string(),
+        "preflight".to_string(),
+        "--allow-open-pr-wave".to_string(),
+        "--json".to_string(),
+    ])
+    .expect("doctor preflight should honor explicit wave override");
+
+    env::set_current_dir(prev_dir).expect("restore cwd");
+    unsafe {
+        env::set_var("PATH", old_path);
+        match old_disable_default_token_file {
+            Some(value) => env::set_var("ADL_TEST_DISABLE_DEFAULT_GITHUB_TOKEN_FILE", value),
+            None => env::remove_var("ADL_TEST_DISABLE_DEFAULT_GITHUB_TOKEN_FILE"),
+        }
+    }
+    assert!(
+        !pr_list_marker.exists(),
+        "explicit doctor --allow-open-pr-wave must skip pr list during preflight"
+    );
+}
+
+#[test]
 fn real_pr_ready_requires_slug_when_local_state_missing() {
     let _guard = env_lock();
     let repo = unique_temp_dir("adl-pr-ready-missing-slug");

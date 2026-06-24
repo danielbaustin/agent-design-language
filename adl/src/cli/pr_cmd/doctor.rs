@@ -84,7 +84,14 @@ pub(super) fn run_doctor(parsed: DoctorArgs, label: &str) -> Result<()> {
     let issue_ref = IssueRef::new(parsed.issue, version.clone(), slug.clone())?;
     let branch = issue_ref.branch_name("codex");
 
-    let preflight = run_doctor_preflight(&repo_root, &repo, &version, &issue_ref, &branch)?;
+    let preflight = run_doctor_preflight(
+        &repo_root,
+        &repo,
+        &version,
+        &issue_ref,
+        &branch,
+        parsed.allow_open_pr_wave,
+    )?;
     let ready = match parsed.mode {
         DoctorMode::Preflight => None,
         DoctorMode::Ready | DoctorMode::Full => {
@@ -114,6 +121,7 @@ pub(super) fn run_doctor(parsed: DoctorArgs, label: &str) -> Result<()> {
             preflight_status: preflight.status,
             preflight_block_kind: preflight.block_kind,
             preflight_guidance: preflight.guidance,
+            open_pr_scan_status: preflight.open_pr_scan_status,
             open_pr_count: preflight.open_pr_count,
             open_prs: preflight.open_prs,
             session_ledger: preflight.session_ledger,
@@ -156,6 +164,7 @@ fn doctor_full_status(
     match (preflight_status, preflight_block_kind, ready_status) {
         ("PASS", _, Some("PASS")) => "PASS",
         ("BLOCK", "open_pr_wave", Some("PASS")) => "WARN",
+        ("WARN", _, Some("PASS")) => "WARN",
         _ => "BLOCK",
     }
 }
