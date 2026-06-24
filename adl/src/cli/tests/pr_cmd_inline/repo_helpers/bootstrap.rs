@@ -1,5 +1,54 @@
 use super::*;
 use crate::cli::pr_cmd::github::current_pr_url;
+use adl::session_ledger::{
+    default_ledger_path, save_ledger, ClaimInput, ClaimMode, GithubRef, ResourceRef, SessionLedger,
+    DEFAULT_TTL_SECS,
+};
+
+fn write_session_claim(
+    repo: &std::path::Path,
+    issue: u64,
+    session_id: &str,
+    branch: &str,
+    worktree_path: &std::path::Path,
+) {
+    let mut ledger = SessionLedger::empty(chrono::Utc::now());
+    ledger
+        .claim(
+            ClaimInput {
+                session_id: session_id.to_string(),
+                owner: "codex".to_string(),
+                resource: ResourceRef {
+                    kind: "csdlc_issue".to_string(),
+                    id: issue.to_string(),
+                },
+                purpose: "test ownership".to_string(),
+                mode: ClaimMode::Active,
+                lifecycle_phase: Some("pr_run".to_string()),
+                policy_ref: Some("AGENTS.md".to_string()),
+                github: GithubRef {
+                    issue: Some(issue),
+                    pull_request: None,
+                    repository: Some("owner/repo".to_string()),
+                    last_state: Some("open".to_string()),
+                },
+                branch: Some(branch.to_string()),
+                worktree_path: Some(
+                    worktree_path
+                        .strip_prefix(repo)
+                        .unwrap_or(worktree_path)
+                        .display()
+                        .to_string(),
+                ),
+                do_not_touch_paths: Vec::new(),
+                blockers: Vec::new(),
+                ttl_secs: DEFAULT_TTL_SECS,
+            },
+            chrono::Utc::now(),
+        )
+        .expect("claim");
+    save_ledger(&default_ledger_path(repo), &ledger).expect("save ledger");
+}
 
 #[test]
 fn real_pr_start_requires_explicit_version_when_no_fetch_issue_has_no_local_bundle() {
@@ -118,8 +167,19 @@ fn real_pr_start_blocks_before_worktree_when_design_time_cards_are_not_ready() {
         .status()
         .expect("git remote set-url")
         .success());
+    write_session_claim(
+        &repo,
+        1154,
+        "thread-self",
+        "codex/1154-v0-86-tools-design-time-card-gate",
+        &issue_ref.default_worktree_path(&repo, None),
+    );
 
     let prev_dir = env::current_dir().expect("cwd");
+    let old_session = env::var_os("CODEX_SESSION_ID");
+    unsafe {
+        env::set_var("CODEX_SESSION_ID", "thread-self");
+    }
     env::set_current_dir(&repo).expect("chdir");
 
     let err = real_pr(&[
@@ -136,6 +196,10 @@ fn real_pr_start_blocks_before_worktree_when_design_time_cards_are_not_ready() {
     .expect_err("start should block before worktree binding when root SPP is not ready");
 
     env::set_current_dir(prev_dir).expect("restore cwd");
+    match old_session {
+        Some(value) => unsafe { env::set_var("CODEX_SESSION_ID", value) },
+        None => unsafe { env::remove_var("CODEX_SESSION_ID") },
+    }
 
     let err_text = err.to_string();
     assert!(

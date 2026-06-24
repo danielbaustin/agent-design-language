@@ -70,10 +70,11 @@ pub(super) fn run_doctor_preflight(
             })
             .collect(),
     };
-    let (status, block_kind, guidance) = doctor_preflight_status(
+    let (status, block_kind, guidance) = doctor_preflight_status_with_session_block(
         open_prs.is_empty(),
         card_run_readiness,
         session_ledger.status,
+        session_ledger.block_kind,
         allow_open_pr_wave,
     );
     if open_prs.is_empty() && card_run_readiness != Some("blocked") {
@@ -121,47 +122,79 @@ pub(super) fn doctor_preflight_status(
     session_status: &'static str,
     open_pr_wave_skipped: bool,
 ) -> (&'static str, &'static str, &'static str) {
+    doctor_preflight_status_with_session_block(
+        open_pr_wave_empty,
+        card_run_readiness,
+        session_status,
+        session_status,
+        open_pr_wave_skipped,
+    )
+}
+
+fn doctor_preflight_status_with_session_block(
+    open_pr_wave_empty: bool,
+    card_run_readiness: Option<&'static str>,
+    session_status: &'static str,
+    session_block_kind: &'static str,
+    open_pr_wave_skipped: bool,
+) -> (&'static str, &'static str, &'static str) {
     let card_blocked = card_run_readiness == Some("blocked");
     match (
         open_pr_wave_empty,
         card_blocked,
         session_status,
+        session_block_kind,
         open_pr_wave_skipped,
     ) {
-        (true, false, "BLOCK", _) => (
+        (true, false, "BLOCK", "session_active_conflict", _) => (
             "BLOCK",
             "session_active_conflict",
             "Session-ledger ownership is actively claimed by another session. Resolve the claim before execution binding.",
         ),
-        (true, false, "WARN", _) => (
-            "WARN",
-            "session_manual_inspection",
-            "Session-ledger history needs manual inspection before execution, but there is no active ownership conflict.",
-        ),
-        (true, false, _, true) => (
+        (true, false, _, "session_self_claim", true) => (
             "WARN",
             "open_pr_wave_override",
             "Open PR wave scan was explicitly skipped by --allow-open-pr-wave; record why the queue override is unrelated or intentionally sequenced.",
         ),
-        (true, false, _, false) => (
+        (true, false, _, "session_self_claim", false) => (
             "PASS",
             "none",
             "No preflight queue or card-readiness blockers detected.",
         ),
-        (false, false, _, _) => (
+        (true, false, _, "none" | "session_released_history", _) => (
             "BLOCK",
-            "open_pr_wave",
-            "Issue-local readiness may proceed only under an explicit queue override such as --allow-open-pr-wave after recording why the open PR wave is unrelated or intentionally sequenced.",
+            "session_claim_required",
+            "Create an active session claim with `adl session claim` before execution binding so issue ownership is explicit.",
         ),
-        (true, true, _, _) => (
+        (true, false, _, "session_stale_claim_manual_inspection", _) => (
+            "BLOCK",
+            "session_stale_claim_manual_inspection",
+            "Stale session claims exist for this issue/worktree. Inspect `adl session status`, then create, heartbeat, or release a claim deliberately before execution.",
+        ),
+        (true, false, _, "session_nonblocking_live_claim", _) => (
+            "BLOCK",
+            "session_nonblocking_live_claim",
+            "A relevant watching or paused session claim exists. Inspect `adl session status` and make active ownership explicit before execution binding.",
+        ),
+        (true, true, _, _, _) => (
             "BLOCK",
             "card_run_readiness",
             "Repair issue-local SIP/STP/SPP/VPP/SRP/SOR readiness before execution; do not override this as queue pressure.",
         ),
-        (false, true, _, _) => (
+        (false, true, _, _, _) => (
             "BLOCK",
             "open_pr_wave_and_card_run_readiness",
             "Repair issue-local card readiness before execution; open PR queue pressure remains a separate scheduling gate.",
+        ),
+        (true, false, _, _, _) => (
+            "BLOCK",
+            "session_claim_manual_inspection",
+            "Session-ledger state is not execution-ready. Inspect `adl session status` and make active ownership explicit before execution binding.",
+        ),
+        (false, false, _, _, _) => (
+            "BLOCK",
+            "open_pr_wave",
+            "Issue-local readiness may proceed only under an explicit queue override such as --allow-open-pr-wave after recording why the open PR wave is unrelated or intentionally sequenced.",
         ),
     }
 }
