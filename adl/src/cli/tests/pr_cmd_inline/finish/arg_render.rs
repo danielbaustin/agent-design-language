@@ -728,6 +728,41 @@ review_results:
 }
 
 #[test]
+fn sor_emitted_facts_sanitize_manager_backed_changed_files_path() {
+    let output = "## Verification Summary\n";
+    let review = r#"---
+review_results:
+  findings_status: "no_findings"
+  recommended_outcome: "pass"
+---
+
+# Structured Review Prompt
+
+## Findings
+
+- No material findings.
+"#;
+
+    let normalized = normalize_sor_emitted_facts_fixture(
+        output,
+        &["adl/src/cli/pr_cmd/github.rs".to_string()],
+        &["bash adl/tools/run_pr_fast_test_lane.sh --changed-files /private/tmp/finish-validation-profile-123.txt".to_string()],
+        review,
+        SorFactEmissionContext {
+            validation_status: "PASS",
+            pr_url: None,
+            integration_state: "worktree_only",
+            closing_linkage_repaired: false,
+        },
+    )
+    .expect("normalize with sanitized changed-files command");
+
+    assert!(normalized
+        .contains("bash adl/tools/run_pr_fast_test_lane.sh --changed-files <changed-files>"));
+    assert!(!normalized.contains("/private/tmp/finish-validation-profile-123.txt"));
+}
+
+#[test]
 fn sor_emitted_facts_default_review_truth_when_srp_front_matter_is_absent() {
     let output = r#"## Verification Summary
 

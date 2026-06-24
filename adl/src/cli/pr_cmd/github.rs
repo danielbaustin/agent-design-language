@@ -832,7 +832,35 @@ where
     let mut attempt = 1usize;
     let max_attempts = octocrab_max_attempts();
     let result = loop {
-        match runtime.block_on(make_future()) {
+        let call_result = if let Some(request_timeout) = octocrab_request_timeout(operation) {
+            match runtime.block_on(tokio::time::timeout(request_timeout, make_future())) {
+                Ok(result) => result,
+                Err(_elapsed) => {
+                    let attempts_text = attempt.to_string();
+                    let timeout_secs_text = request_timeout.as_secs().to_string();
+                    observability::emit_event(
+                        "adl",
+                        "github_octocrab",
+                        "failed",
+                        &[
+                            ("operation", operation),
+                            ("attempts", attempts_text.as_str()),
+                            ("reason", "timeout"),
+                            ("timeout_secs", timeout_secs_text.as_str()),
+                        ],
+                    );
+                    return Err(anyhow!(
+                        "github_client.timeout: operation '{}' exceeded the {}s per-attempt timeout after {} attempt(s)",
+                        operation,
+                        request_timeout.as_secs(),
+                        attempt
+                    ));
+                }
+            }
+        } else {
+            runtime.block_on(make_future())
+        };
+        match call_result {
             Ok(value) => break value,
             Err(err)
                 if attempt < max_attempts
@@ -905,6 +933,19 @@ fn octocrab_max_attempts() -> usize {
         .and_then(|value| value.parse::<usize>().ok())
         .filter(|attempts| (1..=10).contains(attempts))
         .unwrap_or(3)
+}
+
+fn octocrab_request_timeout(operation: &str) -> Option<Duration> {
+    if operation != "pr.list.wave" {
+        return None;
+    }
+    Some(Duration::from_secs(
+        std::env::var("ADL_GITHUB_OCTOCRAB_TIMEOUT_SECS")
+            .ok()
+            .and_then(|value| value.parse::<u64>().ok())
+            .filter(|secs| (1..=120).contains(secs))
+            .unwrap_or(10),
+    ))
 }
 
 fn octocrab_retry_delay(attempt: usize) -> Duration {

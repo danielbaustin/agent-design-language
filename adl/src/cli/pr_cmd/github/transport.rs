@@ -7,6 +7,7 @@ use super::{run_gh_status_shell, test_gh_fixture_fallback_allowed};
 use crate::cli::observability;
 use anyhow::{anyhow, bail, Context, Result};
 use serde::{Deserialize, Serialize};
+use std::collections::HashSet;
 use std::time::{Duration, Instant};
 
 #[derive(Debug, Clone, Deserialize)]
@@ -196,6 +197,7 @@ pub(super) fn list_prs_octocrab(repo: &str) -> Result<Vec<OpenPullRequest>> {
                 .await
         })?;
         let mut prs = Vec::new();
+        let mut seen_next_pages = HashSet::new();
         loop {
             prs.extend(page.items.into_iter().map(|pr| {
                 OpenPullRequest {
@@ -223,6 +225,23 @@ pub(super) fn list_prs_octocrab(repo: &str) -> Result<Vec<OpenPullRequest>> {
             let Some(next) = page.next.clone() else {
                 break;
             };
+            let next_url = next.to_string();
+            if !seen_next_pages.insert(next_url.clone()) {
+                observability::emit_event(
+                    "adl",
+                    "github_octocrab",
+                    "failed",
+                    &[
+                        ("operation", "pr.list.wave"),
+                        ("reason", "pagination_repeated_next"),
+                    ],
+                );
+                return Err(anyhow!(
+                    "github_client.pagination_loop: operation 'pr.list.wave' received repeated next-page URL '{}' after page {}",
+                    next_url,
+                    seen_next_pages.len() + 1
+                ));
+            }
             page = block_on_octocrab(runtime, "pr.list.wave", || async {
                 octo.get_page::<octocrab::models::pulls::PullRequest>(&Some(next.clone()))
                     .await

@@ -591,6 +591,73 @@ fn spawn_open_prs_paginated_server() -> (String, thread::JoinHandle<Vec<String>>
     (base_uri, handle)
 }
 
+fn spawn_open_prs_repeated_next_server() -> (String, thread::JoinHandle<Vec<String>>) {
+    let (base_uri, server) = bind_test_http_server("bind open PR repeated-next server");
+    let repeated_next_url = format!("{base_uri}/repos/owner/repo/pulls?page=2");
+    let handle = thread::spawn(move || {
+        let mut seen = Vec::new();
+        for _ in 0..2 {
+            let Some(request) = server
+                .recv_timeout(Duration::from_secs(5))
+                .expect("open PR repeated-next server receive")
+            else {
+                break;
+            };
+            let method = request.method().as_str().to_string();
+            let url = request.url().to_string();
+            seen.push(format!("{method} {url}"));
+            let response_body = format!(
+                "[{}]",
+                pr_fixture(
+                    2101,
+                    "[v0.91.6][tools] Repeated page PR",
+                    "Closes #4301",
+                    "codex/4301-repeated-page",
+                    "main"
+                )
+            );
+            let mut response = json_response(response_body);
+            let link = format!(r#"<{repeated_next_url}>; rel="next""#);
+            if let Ok(header) = Header::from_bytes("Link", link) {
+                response = response.with_header(header);
+            }
+            let _ = request.respond(response);
+        }
+        seen
+    });
+    (base_uri, handle)
+}
+
+fn spawn_open_prs_slow_server(delay: Duration) -> (String, thread::JoinHandle<Vec<String>>) {
+    let (base_uri, server) = bind_test_http_server("bind open PR slow server");
+    let handle = thread::spawn(move || {
+        let mut seen = Vec::new();
+        let Some(request) = server
+            .recv_timeout(Duration::from_secs(5))
+            .expect("open PR slow server receive")
+        else {
+            return seen;
+        };
+        let method = request.method().as_str().to_string();
+        let url = request.url().to_string();
+        seen.push(format!("{method} {url}"));
+        std::thread::sleep(delay);
+        let response_body = format!(
+            "[{}]",
+            pr_fixture(
+                2103,
+                "[v0.91.6][tools] Slow page PR",
+                "Closes #4303",
+                "codex/4303-slow-page",
+                "main"
+            )
+        );
+        let _ = request.respond(json_response(response_body));
+        seen
+    });
+    (base_uri, handle)
+}
+
 fn spawn_validation_status_once_server(
     status: &'static str,
     conclusion: Option<&'static str>,

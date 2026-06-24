@@ -772,7 +772,10 @@ fn build_sor_facts(
     let validation_commands = if validation_status == "NOT_RUN" {
         Vec::new()
     } else {
-        plan.commands.clone()
+        plan.commands
+            .iter()
+            .map(|command| sanitize_validation_profile_command(command))
+            .collect()
     };
     let fix_notes = if closing_linkage_repaired {
         vec!["repaired missing PR closing linkage".to_string()]
