@@ -1430,20 +1430,18 @@ fn real_pr_closeout(args: &[String]) -> Result<()> {
     let repo_root = repo_root()?;
     let primary_root = primary_checkout_root()?;
     let repo = default_repo(&primary_root)?;
-    let inferred = resolve_issue_scope_and_slug_from_available_local_state(
-        &primary_root,
-        parsed.issue,
-    )?
-        .unwrap_or((
-            parsed
-                .version
-                .clone()
-                .unwrap_or_else(|| DEFAULT_VERSION.to_string()),
-            parsed
-                .slug
-                .clone()
-                .unwrap_or_else(|| format!("issue-{}", parsed.issue)),
-        ));
+    let inferred =
+        resolve_issue_scope_and_slug_from_available_local_state(&primary_root, parsed.issue)?
+            .unwrap_or((
+                parsed
+                    .version
+                    .clone()
+                    .unwrap_or_else(|| DEFAULT_VERSION.to_string()),
+                parsed
+                    .slug
+                    .clone()
+                    .unwrap_or_else(|| format!("issue-{}", parsed.issue)),
+            ));
     let issue_ref = IssueRef::new(parsed.issue, inferred.0, inferred.1)?;
     let output_path = issue_ref.task_bundle_output_path(&primary_root);
     lifecycle::ensure_issue_closed_completed_for_closeout(parsed.issue, &repo)?;

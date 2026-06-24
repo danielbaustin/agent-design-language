@@ -4,8 +4,8 @@ use crate::cli::pr_cmd::doctor::ready::{
     ready_validation_repo_root, stale_worktree_branch_mismatch_preserves_pre_run,
 };
 use crate::cli::pr_cmd_cards::mirror_scope_sprints_into_worktree;
-use crate::cli::pr_cmd_prompt::resolve_issue_scope_and_slug_from_available_local_state;
 use crate::cli::pr_cmd_cards::StructuredBundlePaths;
+use crate::cli::pr_cmd_prompt::resolve_issue_scope_and_slug_from_available_local_state;
 use crate::cli::tests::env_lock;
 use std::time::{SystemTime, UNIX_EPOCH};
 
@@ -34,8 +34,12 @@ fn doctor_issue_prompt_resolution_falls_back_to_bound_worktree_prompt() {
 fn local_issue_identity_resolution_falls_back_to_bound_worktree_bundle_from_nested_path() {
     let _guard = env_lock();
     let repo = lifecycle_temp_repo("doctor-identity-worktree-fallback");
-    let issue_ref = IssueRef::new(4455, "v0.91.6".to_string(), "worktree-safe-truth".to_string())
-        .expect("issue ref");
+    let issue_ref = IssueRef::new(
+        4455,
+        "v0.91.6".to_string(),
+        "worktree-safe-truth".to_string(),
+    )
+    .expect("issue ref");
     let worktree = issue_ref.default_worktree_path(&repo, None);
     let bundle = issue_ref.task_bundle_dir_path(&worktree);
     fs::create_dir_all(&bundle).expect("create worktree bundle");
@@ -60,14 +64,17 @@ fn local_issue_identity_resolution_falls_back_to_bound_worktree_bundle_from_nest
 fn local_issue_identity_resolution_blocks_when_primary_and_worktree_disagree() {
     let _guard = env_lock();
     let repo = lifecycle_temp_repo("doctor-identity-worktree-mismatch");
-    let issue_ref = IssueRef::new(4455, "v0.91.6".to_string(), "worktree-safe-truth".to_string())
-        .expect("issue ref");
+    let issue_ref = IssueRef::new(
+        4455,
+        "v0.91.6".to_string(),
+        "worktree-safe-truth".to_string(),
+    )
+    .expect("issue ref");
     let primary_bundle = issue_ref.task_bundle_dir_path(&repo);
     fs::create_dir_all(&primary_bundle).expect("create primary bundle");
 
     let worktree = issue_ref.default_worktree_path(&repo, None);
-    let worktree_bundle = worktree
-        .join(".adl/v0.91.7/tasks/issue-4455__worktree-safe-truth");
+    let worktree_bundle = worktree.join(".adl/v0.91.7/tasks/issue-4455__worktree-safe-truth");
     fs::create_dir_all(&worktree_bundle).expect("create mismatched worktree bundle");
     fs::create_dir_all(&worktree).expect("create worktree root");
     fs::write(worktree.join(".git"), "gitdir: /tmp/fake-worktree\n").expect("seed git marker");
@@ -89,8 +96,12 @@ fn local_issue_identity_resolution_blocks_when_primary_and_worktree_disagree() {
 #[test]
 fn sprint_packets_are_materialized_into_bound_worktree_without_root_writes() {
     let repo = lifecycle_temp_repo("doctor-sprint-worktree-materialization");
-    let issue_ref = IssueRef::new(4455, "v0.91.6".to_string(), "worktree-safe-truth".to_string())
-        .expect("issue ref");
+    let issue_ref = IssueRef::new(
+        4455,
+        "v0.91.6".to_string(),
+        "worktree-safe-truth".to_string(),
+    )
+    .expect("issue ref");
     let worktree = issue_ref.default_worktree_path(&repo, None);
     let sprint_log = repo
         .join(".adl/v0.91.6/sprints/issue-4417__v0-91-6-tools-mini-sprint-validation-throughput-and-lifecycle-automation/SPRINT_ACTIVITY_LOG.md");

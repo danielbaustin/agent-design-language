@@ -565,11 +565,17 @@ pub(crate) fn mirror_scope_sprints_into_worktree(
     worktree_root: &Path,
     issue_ref: &IssueRef,
 ) -> Result<()> {
-    let source_sprints = repo_root.join(".adl").join(issue_ref.scope()).join("sprints");
+    let source_sprints = repo_root
+        .join(".adl")
+        .join(issue_ref.scope())
+        .join("sprints");
     if !source_sprints.is_dir() {
         return Ok(());
     }
-    let target_sprints = worktree_root.join(".adl").join(issue_ref.scope()).join("sprints");
+    let target_sprints = worktree_root
+        .join(".adl")
+        .join(issue_ref.scope())
+        .join("sprints");
     crate::cli::pr_cmd_cards::copy_directory_contents_if_missing(&source_sprints, &target_sprints)
 }
 
