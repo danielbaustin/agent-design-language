@@ -4315,6 +4315,70 @@ fn finish_runner_executes_combined_ci_policy_selector_command() {
 }
 
 #[test]
+fn finish_runner_executes_prompt_template_workflow_integration_command() {
+    let _guard = env_lock();
+    let temp = unique_temp_dir("adl-pr-finish-prompt-template-workflow-integration-command");
+
+    let repo = temp.join("repo");
+    fs::create_dir_all(repo.join("adl/tools")).expect("adl tools dir");
+    fs::write(
+        repo.join("adl/Cargo.toml"),
+        "[package]\nname='adl'\nversion='0.1.0'\n",
+    )
+    .expect("cargo toml");
+    write_executable(
+        &repo.join("adl/tools/check_no_tracked_adl_issue_record_residue.sh"),
+        "#!/usr/bin/env bash\nset -euo pipefail\nexit 0\n",
+    );
+    write_executable(
+        &repo.join("adl/tools/test_prompt_template_workflow_integration.sh"),
+        "#!/usr/bin/env bash\nset -euo pipefail\nprintf '%s\\n' prompt-template-workflow >> \"$FOCUSED_LOG\"\n",
+    );
+    init_git_repo(&repo);
+
+    let bin_dir = temp.join("bin");
+    fs::create_dir_all(&bin_dir).expect("bin dir");
+    let cargo_log = temp.join("cargo.log");
+    let focused_log = temp.join("focused.log");
+    write_executable(
+        &bin_dir.join("cargo"),
+        &format!(
+            "#!/usr/bin/env bash\nset -euo pipefail\nprintf '%s\\n' \"$*\" >> '{}'\nexit 0\n",
+            cargo_log.display()
+        ),
+    );
+    let old_path = env::var("PATH").unwrap_or_default();
+    let old_focused_log = env::var("FOCUSED_LOG").ok();
+    unsafe {
+        env::set_var("PATH", format!("{}:{}", bin_dir.display(), old_path));
+        env::set_var("FOCUSED_LOG", &focused_log);
+    }
+
+    let plan = FinishValidationPlan {
+        mode: FinishValidationMode::SmallBinaryFocused,
+        commands: vec!["bash adl/tools/test_prompt_template_workflow_integration.sh".to_string()],
+    };
+    run_finish_validation_rust(&repo, &plan)
+        .expect("prompt-template workflow integration validation");
+
+    unsafe {
+        env::set_var("PATH", old_path);
+    }
+    match old_focused_log {
+        Some(value) => unsafe { env::set_var("FOCUSED_LOG", value) },
+        None => unsafe { env::remove_var("FOCUSED_LOG") },
+    }
+
+    assert!(
+        !cargo_log.exists(),
+        "prompt-template workflow command should not invoke cargo"
+    );
+
+    let focused_calls = fs::read_to_string(&focused_log).expect("focused log");
+    assert!(focused_calls.contains("prompt-template-workflow"));
+}
+
+#[test]
 fn finish_helper_paths_run_validation_inventory_validation() {
     let _guard = env_lock();
     let temp = unique_temp_dir("adl-pr-finish-validation-inventory-validation");
