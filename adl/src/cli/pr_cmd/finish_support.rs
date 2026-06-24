@@ -4256,6 +4256,11 @@ pub(super) fn run_finish_validation_rust(
                     let script = repo_root.join("adl/tools/test_select_validation_lanes.sh");
                     run_finish_validation_status("bash", &[path_str(&script)?])?;
                 }
+                "bash adl/tools/test_prompt_template_workflow_integration.sh" => {
+                    let script =
+                        repo_root.join("adl/tools/test_prompt_template_workflow_integration.sh");
+                    run_finish_validation_status("bash", &[path_str(&script)?])?;
+                }
                 "bash adl/tools/test_demo_v0904_csm_observatory_governed_prototype.sh" => {
                     let script =
                         repo_root.join("adl/tools/test_demo_v0904_csm_observatory_governed_prototype.sh");

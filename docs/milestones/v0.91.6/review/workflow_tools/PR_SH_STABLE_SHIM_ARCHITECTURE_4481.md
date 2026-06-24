@@ -135,6 +135,13 @@ combined CI-policy command while the runner only knew the component commands.
 This issue fixes that specific gap by decomposing the combined command into
 the already-supported component checks.
 
+The rebased publication path exposed a second runner parity gap for the
+prompt-template workflow integration command. That command was already a
+declared focused validation surface, but `pr finish` did not yet execute it
+directly. This issue also adds that exact runner mapping and regression
+coverage so the tailored prompt-template lane can complete through the normal
+finish path.
+
 ## Failure Modes To Design Out
 
 The target design should remove these recurring failure classes from shell
