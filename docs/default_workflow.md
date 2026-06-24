@@ -196,8 +196,17 @@ Read the active issue cards, stay inside the issue edit fence, and make the trac
 
 After `pr finish` publishes or updates the PR, do not treat that publication as
 the natural end of issue work. The next active phase is PR shepherding through
-`pr-janitor` until review/check state settles and `pr-closeout` can run
-truthfully.
+`issue-watcher` for healthy waiting states and through `pr-janitor` only when
+concrete blockers need remediation, until settlement allows `pr-closeout` to
+run truthfully.
+
+The canonical cross-phase ownership model for that handoff is:
+
+- `docs/tooling/ISSUE_LIFECYCLE_SHEPHERD_CONTRACT.md`
+
+That contract defines the shared issue-lifecycle shepherd states above
+`workflow-conductor`, `pr-run`, `pr-finish`, `issue-watcher`, `pr-janitor`,
+and `pr-closeout`.
 
 ## 6) Run (when the issue requires a bounded runtime proof surface)
 

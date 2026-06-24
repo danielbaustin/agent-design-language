@@ -22,6 +22,7 @@ grep -Fq "closeout_pr" "${skills_root}/docs/PR_CLOSEOUT_SKILL_INPUT_SCHEMA.md"
 grep -Fq "requires \`target.issue_number\`" "${skills_root}/docs/PR_CLOSEOUT_SKILL_INPUT_SCHEMA.md"
 grep -Fq "pr-closeout" "${skills_root}/docs/OPERATIONAL_SKILLS_GUIDE.md"
 grep -Fq "pr-closeout" "${skills_root}/pr-finish/SKILL.md"
+grep -Fq "lifecycle_shepherd" "${skills_root}/pr-closeout/references/output-contract.md"
 grep -Fq "after the PR outcome or explicit non-PR closure disposition is settled" "${skills_root}/docs/OPERATIONAL_SKILLS_GUIDE.md"
 
 echo "PASS test_pr_closeout_skill_contracts"

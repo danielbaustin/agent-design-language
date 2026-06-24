@@ -35,6 +35,16 @@ handoff_state:
   ready_for_finish: true | false
   shepherding_active: true | false
   settlement_state: waiting_for_review | waiting_for_checks | green_and_mergeable | merged_needs_closeout | blocked
+lifecycle_shepherd:
+  active: true | false
+  state: pre_run | execution_bound | publication_ready | pr_waiting | janitor_active | merged_needs_closeout | closed_no_pr | settled | blocked
+  owner_skill: workflow-conductor | pr-ready | pr-run | pr-finish | issue-watcher | pr-janitor | pr-closeout | human_review | none
+  next_skill: pr-init | pr-ready | pr-run | pr-finish | issue-watcher | pr-janitor | pr-closeout | stp-editor | sip-editor | spp-editor | srp-editor | sor-editor | human_review | none
+  closeout_required: true | false
+  authority_boundary:
+    merge_authority_human_only: true | false
+    issue_close_authority_human_only: true | false
+    review_authority_human_only: true | false
 follow_up_required:
   - <optional follow-up>
 ```
@@ -49,6 +59,7 @@ follow_up_required:
 - `handoff_state.next_phase` must say whether the PR should remain in janitor monitoring, move to `pr-finish`, hand off to `pr_closeout`, escalate to human review, or stay blocked.
 - `handoff_state.shepherding_active` must stay `true` for healthy waiting states until merge or explicit closure settles.
 - `handoff_state.settlement_state` must distinguish ordinary waiting from `merged_needs_closeout`.
+- `lifecycle_shepherd.state` should normally be `janitor_active` while bounded blocker remediation is in progress.
 
 ## Default Artifact Location
 
@@ -57,3 +68,6 @@ When writing the janitor result to disk by default, use:
 ```text
 .adl/reviews/<timestamp>-pr-janitor.md
 ```
+
+See `docs/tooling/ISSUE_LIFECYCLE_SHEPHERD_CONTRACT.md` for the canonical
+shared state meanings.
