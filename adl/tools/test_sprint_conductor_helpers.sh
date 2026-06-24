@@ -150,6 +150,14 @@ Status: NOT_STARTED
 EOF2
 cat >".adl/v0.91.1/tasks/issue-${issue_number}__sprint-1-management-trial-sprint/spp.md" <<'EOF2'
 issue: 3001
+estimate_elapsed_seconds: "120"
+estimate_total_tokens: "4000"
+EOF2
+cat >".adl/v0.91.1/tasks/issue-${issue_number}__sprint-1-management-trial-sprint/vpp.md" <<'EOF2'
+issue: 3001
+planned_pvf_lane: "tooling"
+planned_validation_seconds: "30"
+planned_validation_tokens: "800"
 EOF2
 cat >".adl/v0.91.1/tasks/issue-${issue_number}__sprint-1-management-trial-sprint/srp.md" <<'EOF2'
 issue: 3001
@@ -184,6 +192,8 @@ cat >"${fake_repo}/.adl/v0.91.1/tasks/issue-2827__trial-wp05/spp.md" <<'EOF2'
 ---
 issue: 2827
 status: approved
+estimate_elapsed_seconds: "120"
+estimate_total_tokens: "4000"
 ---
 
 # Structured Plan Prompt
@@ -191,6 +201,23 @@ status: approved
 ## Codex Plan
 
 1. [pending] Execute the bounded WP-05 task.
+EOF2
+cat >"${fake_repo}/.adl/v0.91.1/tasks/issue-2827__trial-wp05/vpp.md" <<'EOF2'
+---
+artifact_type: "structured_validation_planning_prompt"
+issue: 2827
+status: approved
+card_status: ready
+planned_pvf_lane: "tooling"
+planned_validation_seconds: "30"
+planned_validation_tokens: "800"
+---
+
+# Validation Planning Prompt
+
+## Validation Commands
+
+- cargo test --manifest-path adl/Cargo.toml doctor_full_warns_when_only_open_wave_blocks_ready_issue -- --nocapture
 EOF2
 cat >"${fake_repo}/.adl/v0.91.1/tasks/issue-2827__trial-wp05/srp.md" <<'EOF2'
 ---
@@ -231,6 +258,8 @@ cat >"${fake_repo}/.adl/v0.91.1/tasks/issue-2828__trial-wp06/spp.md" <<'EOF2'
 ---
 issue: 2828
 status: approved
+estimate_elapsed_seconds: "120"
+estimate_total_tokens: "4000"
 ---
 
 # Structured Plan Prompt
@@ -239,6 +268,23 @@ status: approved
 
 1. [pending] Execute the bounded WP-06 task.
 2. [pending] Inspect provider output such as `downloading... done` without treating prose ellipsis as truncation.
+EOF2
+cat >"${fake_repo}/.adl/v0.91.1/tasks/issue-2828__trial-wp06/vpp.md" <<'EOF2'
+---
+artifact_type: "structured_validation_planning_prompt"
+issue: 2828
+status: approved
+card_status: ready
+planned_pvf_lane: "tooling"
+planned_validation_seconds: "30"
+planned_validation_tokens: "800"
+---
+
+# Validation Planning Prompt
+
+## Validation Commands
+
+- cargo test --manifest-path adl/Cargo.toml card_lifecycle_accepts_pre_review_srp_prompt_without_final_results -- --nocapture
 EOF2
 cat >"${fake_repo}/.adl/v0.91.1/tasks/issue-2828__trial-wp06/srp.md" <<'EOF2'
 ---
@@ -346,7 +392,8 @@ assert state["current_issue_number"] == 2827
 assert state["execution_mode"] == "hybrid"
 assert state["execution_packet_path"].endswith("issue-3001__sprint-1-management-trial-sprint/SPRINT_EXECUTION_PACKET.md")
 assert len(state["issue_records"]) == 2
-assert state["structured_prompt_preflight"]["required_card_types"] == ["stp.md", "sip.md", "sor.md", "spp.md", "srp.md"]
+assert set(state["structured_prompt_preflight"]["required_card_types"]) == {"stp.md", "sip.md", "sor.md", "spp.md", "vpp.md", "srp.md"}
+assert any("SPP, VPP, and SRP" in note for note in state["structured_prompt_preflight"]["notes"])
 assert state["readiness_sweep"]["execution_packet"]["status"] == "present"
 assert state["readiness_sweep"]["review_paths"]["status"] == "declared"
 assert state["readiness_sweep"]["activity_log_paths"]["status"] == "declared"
@@ -394,7 +441,7 @@ from pathlib import Path
 state = json.loads(Path(sys.argv[1]).read_text())
 preflight = state["structured_prompt_preflight"]
 assert preflight["status"] == "ready"
-assert preflight["required_card_types"] == ["stp.md", "sip.md", "sor.md", "spp.md", "srp.md"]
+assert set(preflight["required_card_types"]) == {"stp.md", "sip.md", "sor.md", "spp.md", "vpp.md", "srp.md"}
 assert len(preflight["issue_results"]) == 2
 assert all(result["status"] == "ready" for result in preflight["issue_results"])
 assert all(result["canonical_slug"] for result in preflight["issue_results"])
@@ -583,6 +630,8 @@ cat >"${fake_repo}/.adl/v0.91.1/tasks/issue-2828__trial-wp06/spp.md" <<'EOF2'
 ---
 issue: 2828
 status: draft
+estimate_elapsed_seconds: "120"
+estimate_total_tokens: "4000"
 ---
 
 Design-time generated SPP; review before execution.
@@ -610,6 +659,8 @@ cat >"${fake_repo}/.adl/v0.91.1/tasks/issue-2828__trial-wp06/spp.md" <<'EOF2'
 ---
 issue: 2828
 status: approved
+estimate_elapsed_seconds: "120"
+estimate_total_tokens: "4000"
 ---
 
 # Structured Plan Prompt
@@ -623,6 +674,8 @@ cat >"${fake_repo}/.adl/v0.91.1/tasks/issue-2828__trial-wp06/spp.md" <<'EOF2'
 ---
 issue: 2828
 status: approved
+estimate_elapsed_seconds: "120"
+estimate_total_tokens: "4000"
 ---
 
 # Structured Plan Prompt
@@ -662,6 +715,8 @@ cat >"${fake_repo}/.adl/v0.91.1/tasks/issue-2828__trial-wp06/spp.md" <<'EOF2'
 ---
 issue: 2828
 status: approved
+estimate_elapsed_seconds: "120"
+estimate_total_tokens: "4000"
 ---
 
 # Structured Plan Prompt

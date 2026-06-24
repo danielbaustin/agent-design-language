@@ -89,6 +89,34 @@ fn classify_vpp_stage(repo_root: &Path, path: &Path) -> DoctorCardStageJson {
             ),
         );
     }
+    if !has_explicit_vpp_validation_budget(&text) {
+        return card_stage(
+            repo_root,
+            "VPP",
+            path,
+            stage_truth(
+                "active",
+                false,
+                false,
+                Some("vpp-editor"),
+                "VPP must record explicit validation seconds and token budgets before execution binding.",
+            ),
+        );
+    }
+    if !has_issue_specific_vpp_validation_plan(&text) {
+        return card_stage(
+            repo_root,
+            "VPP",
+            path,
+            stage_truth(
+                "scaffold",
+                false,
+                false,
+                Some("vpp-editor"),
+                "VPP validation commands are still generic planning guidance and must be issue-specific before execution binding.",
+            ),
+        );
+    }
     if ["ready", "reviewed", "approved"].contains(&status.trim_matches('"')) {
         return card_stage(
             repo_root,
@@ -285,6 +313,20 @@ fn classify_spp_stage(repo_root: &Path, path: &Path) -> DoctorCardStageJson {
             ),
         );
     }
+    if !has_explicit_spp_execution_budget(&text) {
+        return card_stage(
+            repo_root,
+            "SPP",
+            path,
+            stage_truth(
+                "active",
+                false,
+                false,
+                Some("spp-editor"),
+                "SPP must record explicit elapsed-seconds and total-token estimates before execution binding.",
+            ),
+        );
+    }
     if ["ready", "reviewed", "approved"].contains(&status.trim_matches('"')) {
         return card_stage(
             repo_root,
@@ -360,6 +402,53 @@ fn has_generic_vpp_design_time_scaffold(text: &str) -> bool {
         || unresolved_failure_policy
         || MARKERS.iter().any(|marker| text.contains(marker))
         || has_truncation_sentinel_line(text)
+}
+
+fn has_explicit_spp_execution_budget(text: &str) -> bool {
+    has_known_metric_field(text, "estimate_elapsed_seconds:")
+        && has_known_metric_field(text, "estimate_total_tokens:")
+}
+
+fn has_explicit_vpp_validation_budget(text: &str) -> bool {
+    has_known_metric_field(text, "planned_validation_seconds:")
+        && has_known_metric_field(text, "planned_validation_tokens:")
+}
+
+fn has_issue_specific_vpp_validation_plan(text: &str) -> bool {
+    let validation_commands =
+        markdown_section_body(text, "Validation Commands").unwrap_or_default();
+    if validation_commands.trim().is_empty() {
+        return false;
+    }
+    let generic_markers = [
+        "Use `workflow-conductor` and the active prompt-template renderer/schema path.",
+        "Use the session ledger before execution and avoid active claimed worktrees.",
+        "Use focused validation, not broad test reflexes, unless touched code requires broader proof.",
+    ];
+    !generic_markers
+        .iter()
+        .any(|marker| validation_commands.contains(marker))
+}
+
+fn has_known_metric_field(text: &str, prefix: &str) -> bool {
+    line_value_after_prefix(text, prefix)
+        .map(|value| {
+            let normalized = value.trim().trim_matches('"');
+            !normalized.is_empty()
+                && !matches!(
+                    normalized,
+                    "unknown" | "not_recorded_yet" | "not_applicable" | "none"
+                )
+        })
+        .unwrap_or(false)
+}
+
+fn markdown_section_body<'a>(text: &'a str, heading: &str) -> Option<&'a str> {
+    let marker = format!("## {heading}");
+    let start = text.find(&marker)?;
+    let rest = &text[start + marker.len()..];
+    let next_heading = rest.find("\n## ").unwrap_or(rest.len());
+    Some(rest[..next_heading].trim())
 }
 
 fn has_truncation_sentinel_line(text: &str) -> bool {

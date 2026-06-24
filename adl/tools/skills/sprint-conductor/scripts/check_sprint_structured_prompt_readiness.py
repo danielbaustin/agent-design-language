@@ -108,9 +108,37 @@ def design_time_card_status_defect(card_name: str, text: str) -> str | None:
     status = card_status_value(text)
     if not status:
         return None
-    if card_name in {'sip.md', 'stp.md', 'spp.md'} and status not in {'ready', 'approved'}:
+    if card_name in {'sip.md', 'stp.md', 'spp.md', 'vpp.md'} and status not in {'ready', 'approved'}:
         return f'{card_name} card_status must be ready or approved before execution binding'
     return None
+
+
+def has_known_metric(text: str, prefix: str) -> bool:
+    value = line_value_after_prefix(text, prefix)
+    return bool(value) and value not in {'unknown', 'not_recorded_yet', 'not_applicable', 'none'}
+
+
+def has_generic_vpp_design_time_scaffold(text: str) -> bool:
+    unresolved_planned_lane = line_value_after_prefix(text, 'planned_pvf_lane:') == 'needs_planning_lane_assignment'
+    unresolved_selected_lane = '- "needs_planning_lane_assignment"' in text or '- needs_planning_lane_assignment' in text
+    unresolved_failure_policy = (
+        line_value_after_prefix(text, 'failure_policy:') == 'fail_closed_until_validation_lane_is_selected'
+        or 'fail_closed_until_validation_lane_is_selected' in text
+    )
+    return (
+        unresolved_planned_lane
+        or unresolved_selected_lane
+        or unresolved_failure_policy
+        or 'selected_lanes_inline: needs_planning_lane_assignment' in text
+        or has_truncation_sentinel_line(text)
+    )
+
+
+def markdown_section_body(text: str, heading: str) -> str:
+    marker = f'## {heading}'
+    if marker not in text:
+        return ''
+    return text.split(marker, 1)[1].split('\n## ', 1)[0].strip()
 
 
 def completed_srp_without_review_results(text: str) -> bool:
@@ -163,8 +191,27 @@ def design_time_defect(card_name: str, text: str) -> str | None:
         status = line_value_after_prefix(text, 'status:')
         if contains_any(text, GENERIC_SPP_MARKERS) or has_truncation_sentinel_line(text):
             return 'generic or truncated design-time SPP scaffold'
+        if not has_known_metric(text, 'estimate_elapsed_seconds:') or not has_known_metric(text, 'estimate_total_tokens:'):
+            return 'SPP missing explicit elapsed-seconds or total-token estimate budget'
         if status not in {'reviewed', 'approved'}:
             return 'SPP is not reviewed or approved for design-time execution'
+    if card_name == 'vpp.md':
+        status = line_value_after_prefix(text, 'status:')
+        if has_generic_vpp_design_time_scaffold(text):
+            return 'generic or incomplete design-time VPP scaffold'
+        if not has_known_metric(text, 'planned_validation_seconds:') or not has_known_metric(text, 'planned_validation_tokens:'):
+            return 'VPP missing explicit validation-seconds or validation-token budget'
+        validation_commands = markdown_section_body(text, 'Validation Commands')
+        if not validation_commands:
+            return 'VPP missing validation commands section content'
+        if contains_any(validation_commands, [
+            'Use `workflow-conductor` and the active prompt-template renderer/schema path.',
+            'Use the session ledger before execution and avoid active claimed worktrees.',
+            'Use focused validation, not broad test reflexes, unless touched code requires broader proof.',
+        ]):
+            return 'VPP validation commands are still generic planning guidance'
+        if status not in {'ready', 'reviewed', 'approved'}:
+            return 'VPP is not ready, reviewed, or approved for design-time execution'
     if card_name == 'srp.md':
         if '# Structured Review Policy' in text or 'artifact_type: "structured_review_policy"' in text:
             return 'legacy SRP policy scaffold'
@@ -182,6 +229,7 @@ def inspect_issue(
     repo_root: Path,
     issue_number: int,
     require_spp: bool,
+    require_vpp: bool,
     require_srp: bool,
 ) -> dict:
     bundle_dir, notes = find_bundle_dir(repo_root, issue_number)
@@ -204,6 +252,8 @@ def inspect_issue(
     }
     if require_spp:
         required_cards['spp.md'] = 'spp-editor'
+    if require_vpp:
+        required_cards['vpp.md'] = 'vpp-editor'
     if require_srp:
         required_cards['srp.md'] = 'srp-editor'
 
@@ -263,6 +313,8 @@ def main() -> int:
     parser.add_argument('--state')
     parser.add_argument('--require-spp', dest='require_spp', action='store_true', default=True)
     parser.add_argument('--skip-spp', dest='require_spp', action='store_false')
+    parser.add_argument('--require-vpp', dest='require_vpp', action='store_true', default=True)
+    parser.add_argument('--skip-vpp', dest='require_vpp', action='store_false')
     parser.add_argument('--require-srp', dest='require_srp', action='store_true', default=True)
     parser.add_argument('--skip-srp', dest='require_srp', action='store_false')
     parser.add_argument('--print-json', action='store_true')
@@ -271,7 +323,7 @@ def main() -> int:
     repo_root = Path(args.repo_root)
     ordered = parse_csv_ints(args.ordered_issues)
     issue_results = [
-        inspect_issue(repo_root, issue, args.require_spp, args.require_srp)
+        inspect_issue(repo_root, issue, args.require_spp, args.require_vpp, args.require_srp)
         for issue in ordered
     ]
 
@@ -285,6 +337,7 @@ def main() -> int:
         'status': overall_status,
         'required_card_types': ['stp.md', 'sip.md', 'sor.md'] +
         (['spp.md'] if args.require_spp else []) +
+        (['vpp.md'] if args.require_vpp else []) +
         (['srp.md'] if args.require_srp else []),
         'issue_results': issue_results,
         'notes': [

@@ -679,10 +679,10 @@ def main() -> int:
             'follow_up_issues': [],
             'structured_prompt_preflight': {
                 'status': 'not_run',
-                'required_card_types': ['stp.md', 'sip.md', 'sor.md', 'spp.md', 'srp.md'],
+                'required_card_types': ['stp.md', 'sip.md', 'sor.md', 'spp.md', 'vpp.md', 'srp.md'],
                 'issue_results': [],
                 'notes': [
-                    'Run sprint-wide structured prompt preflight before starting issue execution, including SPP and SRP design-time readiness.',
+                    'Run sprint-wide structured prompt preflight before starting issue execution, including SPP, VPP, and SRP design-time readiness.',
                 ],
             },
             'readiness_sweep': {
