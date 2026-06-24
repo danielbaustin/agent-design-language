@@ -404,6 +404,72 @@ rust_pr_cargo_delegate_build_lock_timeout_secs() {
   fi
 }
 
+rust_pr_delegate_pid_alive() {
+  local pid="${1:-}"
+  [[ "$pid" =~ ^[0-9]+$ ]] || return 1
+  kill -0 "$pid" 2>/dev/null
+}
+
+rust_pr_delegate_build_lock_age_secs() {
+  local lock_dir="$1" created_at now
+  created_at="$(cat "$lock_dir/created_at_epoch" 2>/dev/null || true)"
+  if [[ "$created_at" =~ ^[0-9]+$ ]]; then
+    now="$(date +%s)"
+    printf '%s\n' "$(( now - created_at ))"
+  else
+    printf 'unknown\n'
+  fi
+}
+
+rust_pr_delegate_build_lock_cleanup() {
+  local lock_dir="$1"
+  rm -f \
+    "$lock_dir/owner_pid" \
+    "$lock_dir/created_at_epoch" \
+    "$lock_dir/subcommand" \
+    "$lock_dir/delegate_bin" \
+    "$lock_dir/cwd" 2>/dev/null || true
+  rmdir "$lock_dir" 2>/dev/null || true
+}
+
+rust_pr_delegate_write_build_lock_metadata() {
+  local lock_dir="$1" subcommand="$2" delegate_bin="$3"
+  printf '%s\n' "$$" >"$lock_dir/owner_pid" || return 1
+  date +%s >"$lock_dir/created_at_epoch" || return 1
+  printf '%s\n' "$subcommand" >"$lock_dir/subcommand" || return 1
+  printf '%s\n' "$delegate_bin" >"$lock_dir/delegate_bin" || return 1
+  pwd >"$lock_dir/cwd" || return 1
+}
+
+rust_pr_delegate_recover_stale_build_lock() {
+  local lock_dir="$1" subcommand="$2" delegate_bin="$3"
+  local owner_pid lock_subcommand lock_delegate_bin lock_age_secs
+  [[ -d "$lock_dir" ]] || return 1
+  owner_pid="$(cat "$lock_dir/owner_pid" 2>/dev/null || true)"
+  [[ -n "$owner_pid" ]] || return 1
+  if rust_pr_delegate_pid_alive "$owner_pid"; then
+    return 1
+  fi
+  lock_subcommand="$(cat "$lock_dir/subcommand" 2>/dev/null || true)"
+  lock_delegate_bin="$(cat "$lock_dir/delegate_bin" 2>/dev/null || true)"
+  lock_age_secs="$(rust_pr_delegate_build_lock_age_secs "$lock_dir")"
+  rust_pr_delegate_build_lock_cleanup "$lock_dir"
+  if [[ -d "$lock_dir" ]]; then
+    return 1
+  fi
+  adl_obs_event "pr.sh" "rust_delegate_wait" "recovered" \
+    "subcommand" "$subcommand" \
+    "delegate" "cargo" \
+    "bin" "$delegate_bin" \
+    "reason_code" "stale_build_lock_recovered" \
+    "lock_dir" "$lock_dir" \
+    "lock_owner_pid" "$owner_pid" \
+    "lock_subcommand" "${lock_subcommand:-unknown}" \
+    "lock_delegate_bin" "${lock_delegate_bin:-unknown}" \
+    "lock_age_secs" "$lock_age_secs"
+  return 0
+}
+
 terminate_rust_pr_delegate_pid() {
   local pid="$1"
   kill "$pid" 2>/dev/null || true
@@ -422,21 +488,32 @@ acquire_rust_pr_delegate_build_lock() {
   last_heartbeat="$start"
   while ! mkdir "$lock_dir" 2>/dev/null; do
     now="$(date +%s)"
+    if rust_pr_delegate_recover_stale_build_lock "$lock_dir" "$subcommand" "$delegate_bin"; then
+      continue
+    fi
     if (( timeout_secs >= 0 && now - start >= timeout_secs )); then
+      local owner_pid lock_age_secs
+      owner_pid="$(cat "$lock_dir/owner_pid" 2>/dev/null || true)"
+      lock_age_secs="$(rust_pr_delegate_build_lock_age_secs "$lock_dir")"
       adl_obs_event "pr.sh" "rust_delegate_wait" "timeout" \
         "subcommand" "$subcommand" \
         "delegate" "cargo" \
         "bin" "$delegate_bin" \
         "reason_code" "build_lock_timeout" \
         "lock_dir" "$lock_dir" \
+        "lock_owner_pid" "${owner_pid:-unknown}" \
+        "lock_age_secs" "$lock_age_secs" \
+        "recovery_hint" "run_adl/tools/run_owner_validation_lane.sh_csdlc_--build" \
         "timeout_secs" "$timeout_secs"
       cat >&2 <<EOF
 ERROR: Rust PR delegate cargo fallback is already busy for too long.
 subcommand=$subcommand
 delegate_bin=$delegate_bin
 lock_dir=$lock_dir
+lock_owner_pid=${owner_pid:-unknown}
+lock_age_seconds=$lock_age_secs
 timeout_seconds=$timeout_secs
-hint=build the direct adl-pr-* binaries first or wait for the active cargo delegate to finish
+hint=run bash adl/tools/run_owner_validation_lane.sh csdlc --build, or wait for the active cargo delegate to finish
 EOF
       return 75
     fi
@@ -451,6 +528,16 @@ EOF
     fi
     adl_obs_sleep_ms "$heartbeat_interval_ms"
   done
+  if ! rust_pr_delegate_write_build_lock_metadata "$lock_dir" "$subcommand" "$delegate_bin"; then
+    rust_pr_delegate_build_lock_cleanup "$lock_dir"
+    adl_obs_event "pr.sh" "rust_delegate_wait" "failed" \
+      "subcommand" "$subcommand" \
+      "delegate" "cargo" \
+      "bin" "$delegate_bin" \
+      "reason_code" "build_lock_metadata_write_failed" \
+      "lock_dir" "$lock_dir"
+    return 75
+  fi
   ADL_PR_RUST_DELEGATE_BUILD_LOCK_HELD="$lock_dir"
   return 0
 }
@@ -484,14 +571,15 @@ run_rust_pr_delegate_with_liveness() {
         "manifest" "$manifest" \
         "timeout_secs" "$timeout_secs" \
         "elapsed_ms" "$elapsed_ms" \
-        "reason_code" "cargo_delegate_timeout"
+        "reason_code" "cargo_delegate_timeout" \
+        "recovery_hint" "run_adl/tools/run_owner_validation_lane.sh_csdlc_--build"
       cat >&2 <<EOF
 ERROR: Rust PR delegate cargo fallback timed out.
 subcommand=$subcommand
 delegate_bin=$delegate_bin
 manifest=$manifest
 timeout_seconds=$timeout_secs
-hint=build the direct adl-pr-* binaries first or increase ADL_PR_CARGO_DELEGATE_TIMEOUT_SECS for an intentionally long compile
+hint=run bash adl/tools/run_owner_validation_lane.sh csdlc --build, or increase ADL_PR_CARGO_DELEGATE_TIMEOUT_SECS for an intentionally long compile
 EOF
       return 124
     fi
@@ -554,24 +642,24 @@ delegate_pr_command_to_rust() {
   if direct_bin="$(rust_pr_subcommand_binary_name "$subcommand" || true)"; [[ -n "$direct_bin" ]]; then
     adl_obs_event "pr.sh" "rust_delegate" "exec" "subcommand" "$subcommand" "delegate" "cargo" "manifest" "$manifest" "bin" "$direct_bin" "lock_mode" "locked"
     acquire_rust_pr_delegate_build_lock "$build_lock_dir" "$subcommand" "$direct_bin" || exit "$?"
-    trap 'if [[ -n "${ADL_PR_RUST_DELEGATE_BUILD_LOCK_HELD:-}" ]]; then rmdir "$ADL_PR_RUST_DELEGATE_BUILD_LOCK_HELD" 2>/dev/null || true; fi' EXIT
+    trap 'if [[ -n "${ADL_PR_RUST_DELEGATE_BUILD_LOCK_HELD:-}" ]]; then rust_pr_delegate_build_lock_cleanup "$ADL_PR_RUST_DELEGATE_BUILD_LOCK_HELD"; fi' EXIT
     set +e
     run_rust_pr_delegate_with_liveness "$subcommand" "$manifest" "$direct_bin" "$@"
     local status="$?"
     set -e
-    rmdir "$build_lock_dir" 2>/dev/null || true
+    rust_pr_delegate_build_lock_cleanup "$build_lock_dir"
     ADL_PR_RUST_DELEGATE_BUILD_LOCK_HELD=""
     trap - EXIT
     exit "$status"
   fi
   adl_obs_event "pr.sh" "rust_delegate" "exec" "subcommand" "$subcommand" "delegate" "cargo" "manifest" "$manifest" "bin" "adl" "lock_mode" "locked"
   acquire_rust_pr_delegate_build_lock "$build_lock_dir" "$subcommand" "adl" || exit "$?"
-  trap 'if [[ -n "${ADL_PR_RUST_DELEGATE_BUILD_LOCK_HELD:-}" ]]; then rmdir "$ADL_PR_RUST_DELEGATE_BUILD_LOCK_HELD" 2>/dev/null || true; fi' EXIT
+  trap 'if [[ -n "${ADL_PR_RUST_DELEGATE_BUILD_LOCK_HELD:-}" ]]; then rust_pr_delegate_build_lock_cleanup "$ADL_PR_RUST_DELEGATE_BUILD_LOCK_HELD"; fi' EXIT
   set +e
   run_rust_pr_delegate_with_liveness "$subcommand" "$manifest" "adl" pr "$subcommand" "$@"
   local status="$?"
   set -e
-  rmdir "$build_lock_dir" 2>/dev/null || true
+  rust_pr_delegate_build_lock_cleanup "$build_lock_dir"
   ADL_PR_RUST_DELEGATE_BUILD_LOCK_HELD=""
   trap - EXIT
   exit "$status"
