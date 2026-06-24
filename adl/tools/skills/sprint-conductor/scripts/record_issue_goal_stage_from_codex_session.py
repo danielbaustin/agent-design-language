@@ -13,6 +13,7 @@ from issue_goal_metrics import (
     find_codex_session_transcript,
     load_codex_goal_payload_from_session_transcript,
     summarize_issue_goal_metrics,
+    validate_terminal_completion_allowed,
 )
 
 
@@ -30,6 +31,17 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--completion-state-override")
     parser.add_argument("--model-ref")
     parser.add_argument("--session-ref")
+    parser.add_argument("--goal-kind")
+    parser.add_argument("--goal-boundary")
+    parser.add_argument("--issue-state")
+    parser.add_argument("--pr-state")
+    parser.add_argument("--checks-state")
+    parser.add_argument("--review-truth")
+    parser.add_argument("--closeout-truth")
+    parser.add_argument("--watch-target-status")
+    parser.add_argument("--sprint-rollup-status")
+    parser.add_argument("--merge-conflicts", action="store_true")
+    parser.add_argument("--no-merge-conflicts", action="store_true")
     parser.add_argument("--thread-id", default=os.environ.get("CODEX_THREAD_ID"))
     parser.add_argument("--session-root", default=os.path.expanduser("~/.codex/sessions"))
     parser.add_argument("--transcript-path")
@@ -90,6 +102,16 @@ def main() -> int:
                 completion_state_override=args.completion_state_override,
                 model_ref=args.model_ref,
                 session_ref=args.session_ref,
+                goal_kind=args.goal_kind,
+                goal_boundary=args.goal_boundary,
+                issue_state=args.issue_state,
+                pr_state=args.pr_state,
+                checks_state=args.checks_state,
+                review_truth=args.review_truth,
+                closeout_truth=args.closeout_truth,
+                merge_conflicts=True if args.merge_conflicts else False if args.no_merge_conflicts else None,
+                watch_target_status=args.watch_target_status,
+                sprint_rollup_status=args.sprint_rollup_status,
             )
         finally:
             os.unlink(temp_snapshot_path)
@@ -106,7 +128,18 @@ def main() -> int:
             model_ref=args.model_ref,
             session_ref=args.session_ref,
             thread_id=args.thread_id,
+            goal_kind=args.goal_kind,
+            goal_boundary=args.goal_boundary,
+            issue_state=args.issue_state,
+            pr_state=args.pr_state,
+            checks_state=args.checks_state,
+            review_truth=args.review_truth,
+            closeout_truth=args.closeout_truth,
+            merge_conflicts=True if args.merge_conflicts else False if args.no_merge_conflicts else None,
+            watch_target_status=args.watch_target_status,
+            sprint_rollup_status=args.sprint_rollup_status,
         )
+    validate_terminal_completion_allowed(record)
 
     jsonl_path = artifacts_dir / f"issue-{args.issue_number}-goal-metrics.jsonl"
     records = [

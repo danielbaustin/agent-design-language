@@ -99,6 +99,7 @@ Then:
 - perform only the work required by the issue
 - keep edits bounded to the issue's acceptance criteria
 - record follow-on discoveries instead of silently expanding scope
+- evaluate goal terminal-state truth before `update_goal status=complete` when PR or issue lifecycle state is involved
 
 ## Validation Checklist
 

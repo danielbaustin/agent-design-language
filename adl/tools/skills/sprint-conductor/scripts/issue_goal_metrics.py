@@ -51,6 +51,42 @@ CODEX_GOAL_STATUS_TO_COMPLETION_STATE = {
 }
 
 TERMINAL_COMPLETION_STATES = {"completed", "blocked", "failed", "cancelled", "deferred"}
+GOAL_KIND_VALUES = {
+    "tracked_issue",
+    "setup_only",
+    "implementation",
+    "watcher",
+    "janitor",
+    "review_only",
+    "sprint_child",
+    "sprint_umbrella",
+}
+GOAL_BOUNDARY_VALUES = {
+    "handoff_only",
+    "pr_green",
+    "merged",
+    "closed_no_pr",
+    "closed_out",
+    "watch_target_reached",
+    "sprint_rollup_settled",
+}
+ISSUE_STATE_VALUES = {"open", "closed", "unknown", "not_applicable"}
+PR_STATE_VALUES = {"not_opened", "open", "draft", "merged", "closed", "unknown", "not_applicable"}
+CHECKS_STATE_VALUES = {"green", "pending", "red", "missing", "skipped", "unknown", "not_applicable"}
+RECORD_TRUTH_VALUES = {"current", "missing", "stale", "unknown", "not_applicable"}
+TARGET_STATE_VALUES = {"reached", "not_reached", "blocked", "unknown", "not_applicable"}
+TERMINAL_TRUTH_STATUS_VALUES = {"satisfied", "not_satisfied", "unknown"}
+
+DEFAULT_BOUNDARY_BY_GOAL_KIND = {
+    "tracked_issue": "pr_green",
+    "setup_only": "handoff_only",
+    "implementation": "pr_green",
+    "watcher": "watch_target_reached",
+    "janitor": "watch_target_reached",
+    "review_only": "handoff_only",
+    "sprint_child": "closed_out",
+    "sprint_umbrella": "sprint_rollup_settled",
+}
 
 
 def iso_now_utc() -> str:
@@ -275,7 +311,239 @@ def default_goal_metrics_summary() -> dict[str, Any]:
         "model_ref": None,
         "session_ref": None,
         "thread_id": None,
+        "goal_terminal_state": default_goal_terminal_state_summary(),
     }
+
+
+def default_goal_terminal_state_summary() -> dict[str, Any]:
+    return {
+        "goal_kind": "tracked_issue",
+        "declared_boundary": "pr_green",
+        "boundary_source": "default_from_goal_kind",
+        "issue_state": "unknown",
+        "pr_state": "unknown",
+        "checks_state": "unknown",
+        "review_truth": "unknown",
+        "closeout_truth": "unknown",
+        "merge_conflicts": "unknown",
+        "watch_target_status": "unknown",
+        "sprint_rollup_status": "unknown",
+        "completion_allowed": False,
+        "truth_status": "unknown",
+        "reason": "goal terminal-state truth was not evaluated",
+    }
+
+
+def normalize_choice(
+    value: str | None,
+    *,
+    default: str,
+    allowed: set[str],
+    field_name: str,
+) -> str:
+    if value is None:
+        return default
+    lowered = value.strip().lower()
+    if lowered not in allowed:
+        raise ValueError(f"invalid {field_name}: {value}")
+    return lowered
+
+
+def default_boundary_for_goal_kind(goal_kind: str) -> str:
+    return DEFAULT_BOUNDARY_BY_GOAL_KIND.get(goal_kind, "pr_green")
+
+
+def evaluate_goal_terminal_state(
+    *,
+    goal_kind: str | None,
+    declared_boundary: str | None,
+    issue_state: str | None,
+    pr_state: str | None,
+    checks_state: str | None,
+    review_truth: str | None,
+    closeout_truth: str | None,
+    merge_conflicts: bool | None,
+    watch_target_status: str | None,
+    sprint_rollup_status: str | None,
+) -> dict[str, Any]:
+    normalized_goal_kind = normalize_choice(
+        goal_kind,
+        default="tracked_issue",
+        allowed=GOAL_KIND_VALUES,
+        field_name="goal kind",
+    )
+    if declared_boundary is None:
+        normalized_boundary = default_boundary_for_goal_kind(normalized_goal_kind)
+        boundary_source = "default_from_goal_kind"
+    else:
+        normalized_boundary = normalize_choice(
+            declared_boundary,
+            default="pr_green",
+            allowed=GOAL_BOUNDARY_VALUES,
+            field_name="goal boundary",
+        )
+        boundary_source = "explicit"
+
+    normalized_issue_state = normalize_choice(
+        issue_state,
+        default="unknown",
+        allowed=ISSUE_STATE_VALUES,
+        field_name="issue state",
+    )
+    normalized_pr_state = normalize_choice(
+        pr_state,
+        default="unknown",
+        allowed=PR_STATE_VALUES,
+        field_name="PR state",
+    )
+    normalized_checks_state = normalize_choice(
+        checks_state,
+        default="unknown",
+        allowed=CHECKS_STATE_VALUES,
+        field_name="checks state",
+    )
+    normalized_review_truth = normalize_choice(
+        review_truth,
+        default="unknown",
+        allowed=RECORD_TRUTH_VALUES,
+        field_name="review truth",
+    )
+    normalized_closeout_truth = normalize_choice(
+        closeout_truth,
+        default="unknown",
+        allowed=RECORD_TRUTH_VALUES,
+        field_name="closeout truth",
+    )
+    normalized_watch_target_status = normalize_choice(
+        watch_target_status,
+        default="unknown",
+        allowed=TARGET_STATE_VALUES,
+        field_name="watch target status",
+    )
+    normalized_sprint_rollup_status = normalize_choice(
+        sprint_rollup_status,
+        default="unknown",
+        allowed=TARGET_STATE_VALUES,
+        field_name="sprint rollup status",
+    )
+    merge_conflicts_value = "unknown" if merge_conflicts is None else str(bool(merge_conflicts)).lower()
+
+    result = {
+        "goal_kind": normalized_goal_kind,
+        "declared_boundary": normalized_boundary,
+        "boundary_source": boundary_source,
+        "issue_state": normalized_issue_state,
+        "pr_state": normalized_pr_state,
+        "checks_state": normalized_checks_state,
+        "review_truth": normalized_review_truth,
+        "closeout_truth": normalized_closeout_truth,
+        "merge_conflicts": merge_conflicts_value,
+        "watch_target_status": normalized_watch_target_status,
+        "sprint_rollup_status": normalized_sprint_rollup_status,
+        "completion_allowed": False,
+        "truth_status": "unknown",
+        "reason": "",
+    }
+
+    def satisfied(reason: str) -> dict[str, Any]:
+        result["completion_allowed"] = True
+        result["truth_status"] = "satisfied"
+        result["reason"] = reason
+        return result
+
+    def not_satisfied(reason: str) -> dict[str, Any]:
+        result["completion_allowed"] = False
+        result["truth_status"] = "not_satisfied"
+        result["reason"] = reason
+        return result
+
+    def unknown(reason: str) -> dict[str, Any]:
+        result["completion_allowed"] = False
+        result["truth_status"] = "unknown"
+        result["reason"] = reason
+        return result
+
+    if normalized_boundary == "handoff_only":
+        return satisfied(
+            "goal explicitly declares handoff-only completion; terminal completion may be recorded at the documented handoff boundary"
+        )
+
+    if normalized_boundary == "watch_target_reached":
+        if normalized_watch_target_status == "reached":
+            return satisfied("watch/janitor target state is reached")
+        if normalized_watch_target_status in {"not_reached", "blocked"}:
+            return not_satisfied("watch/janitor target state has not reached its declared terminal condition")
+        return unknown("watch/janitor target state is not yet known")
+
+    if normalized_boundary == "sprint_rollup_settled":
+        if normalized_sprint_rollup_status == "reached":
+            return satisfied("sprint child-issue rollup is settled")
+        if normalized_sprint_rollup_status in {"not_reached", "blocked"}:
+            return not_satisfied("sprint child-issue rollup is not settled")
+        return unknown("sprint child-issue rollup state is not yet known")
+
+    if merge_conflicts is True:
+        return not_satisfied("merge conflicts are still present")
+    if normalized_pr_state == "draft":
+        return not_satisfied("PR is still draft")
+    if normalized_pr_state == "open" and normalized_checks_state == "pending":
+        return not_satisfied("required checks are still pending")
+    if normalized_pr_state == "open" and normalized_checks_state == "red":
+        return not_satisfied("required checks are failing")
+    if normalized_pr_state == "open" and normalized_checks_state == "missing":
+        return not_satisfied("required checks are missing")
+    if normalized_review_truth in {"missing", "stale"}:
+        return not_satisfied("SRP/SOR review truth is not current")
+
+    if normalized_boundary == "pr_green":
+        if normalized_pr_state != "open":
+            return not_satisfied("PR must be open and reviewable for the default tracked-issue terminal boundary")
+        if normalized_checks_state in {"green", "skipped"}:
+            return satisfied("PR checks are green or explicitly skipped and review truth is current")
+        if normalized_checks_state == "unknown":
+            return unknown("PR checks state is not known")
+        return not_satisfied("PR has not reached a green-or-skipped checks state")
+
+    if normalized_boundary == "merged":
+        if normalized_pr_state == "merged":
+            return satisfied("PR is merged")
+        if normalized_pr_state in {"open", "draft"}:
+            return not_satisfied("PR is not merged yet")
+        if normalized_pr_state == "unknown":
+            return unknown("PR merge state is not known")
+        return not_satisfied("PR is not in a merged state")
+
+    if normalized_boundary == "closed_no_pr":
+        if normalized_issue_state == "closed" and normalized_pr_state in {"not_applicable", "not_opened", "closed"}:
+            return satisfied("issue is closed without an active PR requirement")
+        if normalized_issue_state == "unknown":
+            return unknown("issue closure state is not known")
+        return not_satisfied("issue is not closed in a no-PR terminal state")
+
+    if normalized_boundary == "closed_out":
+        if normalized_closeout_truth in {"missing", "stale"}:
+            return not_satisfied("closeout truth is not current")
+        if normalized_issue_state == "closed" and normalized_closeout_truth == "current":
+            return satisfied("issue is closed and closeout truth is current")
+        if normalized_issue_state == "unknown" or normalized_closeout_truth == "unknown":
+            return unknown("closed-out terminal state cannot be confirmed yet")
+        return not_satisfied("issue is not yet closed out")
+
+    return unknown("goal terminal-state boundary could not be evaluated")
+
+
+def validate_terminal_completion_allowed(record: dict[str, Any]) -> None:
+    completion_state = str(record.get("completion_state") or "unknown").strip().lower()
+    if completion_state not in {"completed", "completed_with_follow_on"}:
+        return
+    terminal_truth = record.get("goal_terminal_state") or {}
+    if terminal_truth.get("completion_allowed") is True:
+        return
+    reason = terminal_truth.get("reason") or "goal terminal-state truth is not satisfied"
+    raise ValueError(
+        "issue goal cannot be recorded as completed before the declared terminal state is satisfied: "
+        f"{reason}"
+    )
 
 
 def parse_availability_int(raw: str | None) -> tuple[str, int | None]:
@@ -326,6 +594,16 @@ def build_issue_goal_metrics_record(
     model_ref: str | None,
     session_ref: str | None,
     thread_id: str | None,
+    goal_kind: str | None = None,
+    goal_boundary: str | None = None,
+    issue_state: str | None = None,
+    pr_state: str | None = None,
+    checks_state: str | None = None,
+    review_truth: str | None = None,
+    closeout_truth: str | None = None,
+    merge_conflicts: bool | None = None,
+    watch_target_status: str | None = None,
+    sprint_rollup_status: str | None = None,
 ) -> dict[str, Any]:
     if capture_stage not in CAPTURE_STAGES:
         raise ValueError(f"invalid capture stage: {capture_stage}")
@@ -351,6 +629,18 @@ def build_issue_goal_metrics_record(
         else "not_available"
         if all(value == "not_available" for value in (total_availability, prompt_availability, completion_availability))
         else "unknown"
+    )
+    goal_terminal_state = evaluate_goal_terminal_state(
+        goal_kind=goal_kind,
+        declared_boundary=goal_boundary,
+        issue_state=issue_state,
+        pr_state=pr_state,
+        checks_state=checks_state,
+        review_truth=review_truth,
+        closeout_truth=closeout_truth,
+        merge_conflicts=merge_conflicts,
+        watch_target_status=watch_target_status,
+        sprint_rollup_status=sprint_rollup_status,
     )
 
     return {
@@ -392,6 +682,7 @@ def build_issue_goal_metrics_record(
         "model_ref": model_ref,
         "session_ref": session_ref,
         "thread_id": thread_id,
+        "goal_terminal_state": goal_terminal_state,
     }
 
 
@@ -408,6 +699,16 @@ def build_issue_goal_metrics_record_from_codex_goal_snapshot(
     completion_state_override: str | None,
     model_ref: str | None,
     session_ref: str | None,
+    goal_kind: str | None = None,
+    goal_boundary: str | None = None,
+    issue_state: str | None = None,
+    pr_state: str | None = None,
+    checks_state: str | None = None,
+    review_truth: str | None = None,
+    closeout_truth: str | None = None,
+    merge_conflicts: bool | None = None,
+    watch_target_status: str | None = None,
+    sprint_rollup_status: str | None = None,
 ) -> dict[str, Any]:
     snapshot = parse_codex_goal_tool_snapshot(goal_state_path)
     completion_state = completion_state_override or snapshot["completion_state"]
@@ -439,6 +740,16 @@ def build_issue_goal_metrics_record_from_codex_goal_snapshot(
         model_ref=model_ref,
         session_ref=session_ref or (f"codex-thread:{thread_id}" if isinstance(thread_id, str) else None),
         thread_id=thread_id if isinstance(thread_id, str) else None,
+        goal_kind=goal_kind,
+        goal_boundary=goal_boundary,
+        issue_state=issue_state,
+        pr_state=pr_state,
+        checks_state=checks_state,
+        review_truth=review_truth,
+        closeout_truth=closeout_truth,
+        merge_conflicts=merge_conflicts,
+        watch_target_status=watch_target_status,
+        sprint_rollup_status=sprint_rollup_status,
     )
 
 
@@ -455,6 +766,16 @@ def build_unknown_issue_goal_metrics_record(
     model_ref: str | None,
     session_ref: str | None,
     thread_id: str | None,
+    goal_kind: str | None = None,
+    goal_boundary: str | None = None,
+    issue_state: str | None = None,
+    pr_state: str | None = None,
+    checks_state: str | None = None,
+    review_truth: str | None = None,
+    closeout_truth: str | None = None,
+    merge_conflicts: bool | None = None,
+    watch_target_status: str | None = None,
+    sprint_rollup_status: str | None = None,
 ) -> dict[str, Any]:
     return build_issue_goal_metrics_record(
         sprint_issue_number=None,
@@ -483,6 +804,16 @@ def build_unknown_issue_goal_metrics_record(
         model_ref=model_ref,
         session_ref=session_ref,
         thread_id=thread_id,
+        goal_kind=goal_kind,
+        goal_boundary=goal_boundary,
+        issue_state=issue_state,
+        pr_state=pr_state,
+        checks_state=checks_state,
+        review_truth=review_truth,
+        closeout_truth=closeout_truth,
+        merge_conflicts=merge_conflicts,
+        watch_target_status=watch_target_status,
+        sprint_rollup_status=sprint_rollup_status,
     )
 
 
@@ -532,6 +863,9 @@ def summarize_issue_goal_metrics(records: list[dict[str, Any]], raw_log_path: st
     summary["model_ref"] = selected.get("model_ref")
     summary["session_ref"] = selected.get("session_ref")
     summary["thread_id"] = selected.get("thread_id")
+    summary["goal_terminal_state"] = deepcopy(
+        selected.get("goal_terminal_state") or default_goal_terminal_state_summary()
+    )
     return summary
 
 
@@ -562,6 +896,7 @@ def compute_goal_metrics_rollup(issue_records: list[dict[str, Any]]) -> dict[str
         "data_source_counts": {source: 0 for source in sorted(DATA_SOURCE_VALUES)},
         "goal_id_availability_counts": {availability: 0 for availability in sorted(AVAILABILITY_VALUES)},
         "completion_state_counts": {state: 0 for state in sorted(COMPLETION_STATE_VALUES)},
+        "terminal_truth_status_counts": {state: 0 for state in sorted(TERMINAL_TRUTH_STATUS_VALUES)},
         "elapsed_availability_counts": availability_counts(),
         "active_work_availability_counts": availability_counts(),
         "validation_availability_counts": availability_counts(),
@@ -591,6 +926,12 @@ def compute_goal_metrics_rollup(issue_records: list[dict[str, Any]]) -> dict[str
         if completion_state not in rollup["completion_state_counts"]:
             rollup["completion_state_counts"][completion_state] = 0
         rollup["completion_state_counts"][completion_state] += 1
+
+        terminal_truth = summary.get("goal_terminal_state") or default_goal_terminal_state_summary()
+        truth_status = terminal_truth.get("truth_status") or "unknown"
+        if truth_status not in rollup["terminal_truth_status_counts"]:
+            rollup["terminal_truth_status_counts"][truth_status] = 0
+        rollup["terminal_truth_status_counts"][truth_status] += 1
 
         elapsed_availability = summary.get("elapsed_availability") or "unknown"
         if elapsed_availability not in rollup["elapsed_availability_counts"]:

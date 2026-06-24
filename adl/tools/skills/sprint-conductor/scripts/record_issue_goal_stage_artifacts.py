@@ -11,6 +11,7 @@ from issue_goal_metrics import (
     METRICS_CONFIDENCE_VALUES,
     build_issue_goal_metrics_record_from_codex_goal_snapshot,
     summarize_issue_goal_metrics,
+    validate_terminal_completion_allowed,
 )
 
 
@@ -63,6 +64,17 @@ def main() -> int:
     parser.add_argument("--model-ref")
     parser.add_argument("--session-ref")
     parser.add_argument("--completion-state")
+    parser.add_argument("--goal-kind")
+    parser.add_argument("--goal-boundary")
+    parser.add_argument("--issue-state")
+    parser.add_argument("--pr-state")
+    parser.add_argument("--checks-state")
+    parser.add_argument("--review-truth")
+    parser.add_argument("--closeout-truth")
+    parser.add_argument("--watch-target-status")
+    parser.add_argument("--sprint-rollup-status")
+    parser.add_argument("--merge-conflicts", action="store_true")
+    parser.add_argument("--no-merge-conflicts", action="store_true")
     parser.add_argument("--print-json", action="store_true")
     args = parser.parse_args()
 
@@ -87,7 +99,18 @@ def main() -> int:
         completion_state_override=args.completion_state,
         model_ref=args.model_ref,
         session_ref=args.session_ref,
+        goal_kind=args.goal_kind,
+        goal_boundary=args.goal_boundary,
+        issue_state=args.issue_state,
+        pr_state=args.pr_state,
+        checks_state=args.checks_state,
+        review_truth=args.review_truth,
+        closeout_truth=args.closeout_truth,
+        merge_conflicts=True if args.merge_conflicts else False if args.no_merge_conflicts else None,
+        watch_target_status=args.watch_target_status,
+        sprint_rollup_status=args.sprint_rollup_status,
     )
+    validate_terminal_completion_allowed(record)
 
     rows = [
         row
