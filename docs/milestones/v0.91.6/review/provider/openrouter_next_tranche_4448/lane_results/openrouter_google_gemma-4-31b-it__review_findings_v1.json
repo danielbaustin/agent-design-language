@@ -1,0 +1,39 @@
+{
+  "schema_version": "provider_communication.v1",
+  "route": {
+    "provider_kind": "hosted",
+    "provider": "openrouter",
+    "runtime_surface": "hosted_api",
+    "provider_model_id": "google/gemma-4-31b-it",
+    "credential_ref": "env:OPENROUTER_API_KEY",
+    "source_registry": "v0.91.6.deepseek.suitability"
+  },
+  "model_identity": {
+    "provider_kind": "hosted",
+    "provider": "openrouter",
+    "model_ref": "google/gemma-4-31b-it",
+    "provider_model_id": "google/gemma-4-31b-it-20260402",
+    "runtime_surface": "hosted_api",
+    "identity_strength": "provider_asserted",
+    "observed_at": "unix:1",
+    "source_registry": "v0.91.6.deepseek.suitability"
+  },
+  "attempts": [
+    {
+      "attempt_index": 1,
+      "started_at": "unix:1782183678",
+      "duration_ms": 1686,
+      "status": "ok",
+      "retryable": false,
+      "http_status": 200,
+      "raw_response_excerpt": "[redacted response len=456 sha256=2b08c8cf7343]"
+    }
+  ],
+  "final_status": "ok",
+  "duration_ms": 1686,
+  "request_id": "openrouter:google/gemma-4-31b-it__review_findings_v1",
+  "output_text_excerpt": "[redacted response len=456 sha256=2b08c8cf7343]",
+  "artifact_ref": "<tmp>/result.json@846c8410a6b32712",
+  "output_text_chars": 456,
+  "output_text_digest": "sha256:2b08c8cf7343"
+}

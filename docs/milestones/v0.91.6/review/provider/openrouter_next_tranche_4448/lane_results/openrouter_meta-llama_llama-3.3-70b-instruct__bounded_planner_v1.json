@@ -1,0 +1,39 @@
+{
+  "schema_version": "provider_communication.v1",
+  "route": {
+    "provider_kind": "hosted",
+    "provider": "openrouter",
+    "runtime_surface": "hosted_api",
+    "provider_model_id": "meta-llama/llama-3.3-70b-instruct",
+    "credential_ref": "env:OPENROUTER_API_KEY",
+    "source_registry": "v0.91.6.deepseek.suitability"
+  },
+  "model_identity": {
+    "provider_kind": "hosted",
+    "provider": "openrouter",
+    "model_ref": "meta-llama/llama-3.3-70b-instruct",
+    "provider_model_id": "meta-llama/llama-3.3-70b-instruct",
+    "runtime_surface": "hosted_api",
+    "identity_strength": "provider_asserted",
+    "observed_at": "unix:1",
+    "source_registry": "v0.91.6.deepseek.suitability"
+  },
+  "attempts": [
+    {
+      "attempt_index": 1,
+      "started_at": "unix:1782183704",
+      "duration_ms": 2138,
+      "status": "ok",
+      "retryable": false,
+      "http_status": 200,
+      "raw_response_excerpt": "[redacted response len=307 sha256=e59b32cfb715]"
+    }
+  ],
+  "final_status": "ok",
+  "duration_ms": 2138,
+  "request_id": "openrouter:meta-llama/llama-3.3-70b-instruct__bounded_planner_v1",
+  "output_text_excerpt": "[redacted response len=307 sha256=e59b32cfb715]",
+  "artifact_ref": "<tmp>/result.json@a2c7fef648f6448d",
+  "output_text_chars": 307,
+  "output_text_digest": "sha256:e59b32cfb715"
+}

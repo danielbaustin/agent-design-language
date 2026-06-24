@@ -1,0 +1,39 @@
+{
+  "schema_version": "provider_communication.v1",
+  "route": {
+    "provider_kind": "hosted",
+    "provider": "openrouter",
+    "runtime_surface": "hosted_api",
+    "provider_model_id": "mistralai/devstral-2512",
+    "credential_ref": "env:OPENROUTER_API_KEY",
+    "source_registry": "v0.91.6.deepseek.suitability"
+  },
+  "model_identity": {
+    "provider_kind": "hosted",
+    "provider": "openrouter",
+    "model_ref": "mistralai/devstral-2512",
+    "provider_model_id": "mistralai/devstral-2512",
+    "runtime_surface": "hosted_api",
+    "identity_strength": "provider_asserted",
+    "observed_at": "unix:1",
+    "source_registry": "v0.91.6.deepseek.suitability"
+  },
+  "attempts": [
+    {
+      "attempt_index": 1,
+      "started_at": "unix:1782183643",
+      "duration_ms": 2057,
+      "status": "ok",
+      "retryable": false,
+      "http_status": 200,
+      "raw_response_excerpt": "[redacted response len=483 sha256=0ebb05b21066]"
+    }
+  ],
+  "final_status": "ok",
+  "duration_ms": 2057,
+  "request_id": "openrouter:mistralai/devstral-2512__card_validator_v1",
+  "output_text_excerpt": "[redacted response len=483 sha256=0ebb05b21066]",
+  "artifact_ref": "<tmp>/result.json@8a5d906a125be207",
+  "output_text_chars": 483,
+  "output_text_digest": "sha256:0ebb05b21066"
+}

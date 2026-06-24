@@ -2126,6 +2126,27 @@ fn finish_validation_plan_classifies_openrouter_suitability_tooling() {
 }
 
 #[test]
+fn finish_validation_plan_classifies_openrouter_next_tranche_suitability_tooling() {
+    let plan = select_finish_validation_plan(
+        "adl/tools/suitability_specs/openrouter_next_tranche_4448.json,docs/milestones/v0.91.6/review/provider/openrouter_next_tranche_4448/OPENROUTER_NEXT_TRANCHE_SUITABILITY_PROOF_2026-06-22.md",
+    )
+    .expect("openrouter next tranche suitability tooling plan");
+
+    assert_eq!(plan.mode, FinishValidationMode::LargerBinaryFocused);
+    assert!(plan
+        .commands
+        .contains(&"bash adl/tools/test_v0916_deepseek_suitability.sh".to_string()));
+    assert!(plan
+        .commands
+        .contains(&"bash adl/tools/check_no_tracked_adl_issue_record_residue.sh".to_string()));
+    assert!(plan.commands.contains(&"git diff --check".to_string()));
+    assert!(!plan
+        .commands
+        .iter()
+        .any(|command| command.contains("cargo clippy")));
+}
+
+#[test]
 fn finish_validation_plan_classifies_private_endpoint_fixture_sanitation_slice() {
     let plan = select_finish_validation_plan(
         "adl/tools/demo_codex_ollama_operational_skills.sh,adl/tools/demo_v089_gemma4_issue_clerk.sh,adl/tools/test_demo_codex_ollama_operational_skills.sh,adl/tools/test_demo_codex_ollama_semantic_fallback.sh,adl/tools/test_demo_v089_gemma4_issue_clerk.sh,adl/src/provider_substrate.rs,adl/tools/validate_v0915_remote_gemma_watcher_probe.py,demos/v0.87.1/codex_ollama_operational_skills_demo.md,demos/v0.89/gemma4_issue_clerk_demo.md",

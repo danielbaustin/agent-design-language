@@ -1,0 +1,32 @@
+{
+  "route": {
+    "provider_kind": "hosted",
+    "provider": "openrouter",
+    "runtime_surface": "hosted_api",
+    "provider_model_id": "google/gemma-4-31b-it",
+    "source_registry": "v0.91.6.deepseek.suitability",
+    "credential_ref": "env:OPENROUTER_API_KEY"
+  },
+  "model_identity": {
+    "provider_kind": "hosted",
+    "provider": "openrouter",
+    "model_ref": "google/gemma-4-31b-it",
+    "provider_model_id": "google/gemma-4-31b-it",
+    "runtime_surface": "hosted_api",
+    "identity_strength": "provider_asserted",
+    "observed_at": "unix:1",
+    "source_registry": "v0.91.6.deepseek.suitability"
+  },
+  "prompt_contract_ref": "v0.91.6.deepseek.suitability.bounded_planner_v1",
+  "lane_ref": "openrouter:google/gemma-4-31b-it__bounded_planner_v1",
+  "run_id": "openrouter:google/gemma-4-31b-it__bounded_planner_v1",
+  "request_id": "openrouter:google/gemma-4-31b-it__bounded_planner_v1",
+  "attempt_policy": {
+    "max_attempts": 1,
+    "timeout_ms": 90000,
+    "retry_backoff_ms": 1000
+  },
+  "input_text_chars": 486,
+  "input_text_digest": "sha256:8097930e01ae",
+  "input_text_excerpt": "[redacted prompt len=486 sha256=8097930e01ae]"
+}
