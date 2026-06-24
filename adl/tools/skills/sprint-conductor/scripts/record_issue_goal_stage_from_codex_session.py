@@ -51,7 +51,7 @@ def parse_args() -> argparse.Namespace:
 def snapshot_filename(issue_number: int, capture_stage: str) -> str:
     if capture_stage == "issue_start":
         return f"issue-{issue_number}-goal-state.json"
-    return f"issue-{issue_number}-goal-state-{capture_stage}.json"
+    return f"issue-{issue_number}-goal-state-{capture_stage.replace('_', '-')}.json"
 
 
 def load_existing_records(path: Path) -> list[dict]:

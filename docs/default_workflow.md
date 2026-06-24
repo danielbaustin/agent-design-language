@@ -175,7 +175,10 @@ python3 adl/tools/check_issue_goal_terminal_state.py \
 When issue-local time/token accounting matters, preserve a durable local goal
 snapshot from the host Codex session transcript before the live goal disappears.
 Use the transcript-backed collector immediately after the lifecycle event you
-are recording:
+are recording. Pre-bind readiness-prep checkpoints such as `issue_init`,
+`doctor_readiness`, `card_repair`, and `execution_ready` now share the same
+canonical issue task-bundle sink as later `issue_start` and `pr_publication`
+captures:
 
 ```bash
 python3 adl/tools/skills/sprint-conductor/scripts/record_issue_goal_stage_from_codex_session.py \

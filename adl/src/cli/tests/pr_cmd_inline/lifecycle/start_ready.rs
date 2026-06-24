@@ -65,6 +65,398 @@ fn write_session_claim(
 }
 
 #[test]
+fn init_doctor_and_start_record_readiness_prep_goal_metric_stages() {
+    let _guard = env_lock();
+    let temp = unique_temp_dir("adl-pr-start-readiness-prep-metrics");
+    let origin = temp.join("origin.git");
+    let repo = temp.join("repo");
+    let home = temp.join("home");
+    fs::create_dir_all(&repo).expect("repo dir");
+    fs::create_dir_all(&home).expect("home dir");
+    copy_bootstrap_support_files(&repo);
+    init_git_repo(&repo);
+    assert!(Command::new("git")
+        .args(["config", "user.name", "Test User"])
+        .current_dir(&repo)
+        .status()
+        .expect("git config")
+        .success());
+    assert!(Command::new("git")
+        .args(["config", "user.email", "test@example.com"])
+        .current_dir(&repo)
+        .status()
+        .expect("git config")
+        .success());
+    fs::write(repo.join(".gitignore"), ".adl/\n").expect("gitignore");
+    fs::write(repo.join("README.md"), "readiness prep metrics\n").expect("readme");
+    assert!(Command::new("git")
+        .args(["add", "-A"])
+        .current_dir(&repo)
+        .status()
+        .expect("git add")
+        .success());
+    assert!(Command::new("git")
+        .args(["commit", "-q", "-m", "init"])
+        .current_dir(&repo)
+        .status()
+        .expect("git commit")
+        .success());
+    assert!(Command::new("git")
+        .args(["branch", "-M", "main"])
+        .current_dir(&repo)
+        .status()
+        .expect("git branch")
+        .success());
+    assert!(Command::new("git")
+        .args([
+            "init",
+            "--bare",
+            "-q",
+            path_str(&origin).expect("origin path"),
+        ])
+        .current_dir(&repo)
+        .status()
+        .expect("git init bare")
+        .success());
+    assert!(Command::new("git")
+        .args([
+            "remote",
+            "set-url",
+            "origin",
+            path_str(&origin).expect("origin path"),
+        ])
+        .current_dir(&repo)
+        .status()
+        .expect("git remote set-url")
+        .success());
+    assert!(Command::new("git")
+        .args(["push", "-q", "-u", "origin", "main"])
+        .current_dir(&repo)
+        .status()
+        .expect("git push")
+        .success());
+    assert!(Command::new("git")
+        .args(["fetch", "-q", "origin", "main"])
+        .current_dir(&repo)
+        .status()
+        .expect("git fetch")
+        .success());
+
+    seed_codex_goal_transcript(
+        &home,
+        1154,
+        "thread-1154-prep",
+        4442,
+        88,
+        1782230400,
+        1782230488,
+    );
+    let old_home = env::var_os("HOME");
+    let old_thread_id = env::var_os("CODEX_THREAD_ID");
+    unsafe {
+        env::set_var("HOME", &home);
+        env::set_var("CODEX_THREAD_ID", "thread-1154-prep");
+    }
+
+    let issue_ref = IssueRef::new(1154, "v0.86", "readiness-prep-metrics").expect("issue ref");
+    write_authored_issue_prompt(&repo, &issue_ref, "[v0.86][tools] Readiness prep metrics");
+
+    let prev_dir = env::current_dir().expect("cwd");
+    env::set_current_dir(&repo).expect("chdir");
+    real_pr(&[
+        "init".to_string(),
+        "1154".to_string(),
+        "--slug".to_string(),
+        "readiness-prep-metrics".to_string(),
+        "--title".to_string(),
+        "[v0.86][tools] Readiness prep metrics".to_string(),
+        "--no-fetch-issue".to_string(),
+        "--version".to_string(),
+        "v0.86".to_string(),
+    ])
+    .expect("real_pr init");
+
+    let doctor_block = real_pr(&[
+        "doctor".to_string(),
+        "1154".to_string(),
+        "--slug".to_string(),
+        "readiness-prep-metrics".to_string(),
+        "--no-fetch-issue".to_string(),
+        "--version".to_string(),
+        "v0.86".to_string(),
+        "--mode".to_string(),
+        "ready".to_string(),
+    ]);
+    doctor_block.expect("doctor should report BLOCK without failing the command");
+
+    write_design_time_ready_cards(
+        &repo,
+        &issue_ref,
+        "[v0.86][tools] Readiness prep metrics",
+        "not bound yet",
+    );
+
+    real_pr(&[
+        "doctor".to_string(),
+        "1154".to_string(),
+        "--slug".to_string(),
+        "readiness-prep-metrics".to_string(),
+        "--no-fetch-issue".to_string(),
+        "--version".to_string(),
+        "v0.86".to_string(),
+        "--mode".to_string(),
+        "ready".to_string(),
+    ])
+    .expect("real_pr doctor ready");
+
+    real_pr(&[
+        "start".to_string(),
+        "1154".to_string(),
+        "--slug".to_string(),
+        "readiness-prep-metrics".to_string(),
+        "--title".to_string(),
+        "[v0.86][tools] Readiness prep metrics".to_string(),
+        "--no-fetch-issue".to_string(),
+        "--version".to_string(),
+        "v0.86".to_string(),
+    ])
+    .expect("real_pr start");
+    env::set_current_dir(prev_dir).expect("restore cwd");
+    unsafe {
+        match old_home {
+            Some(value) => env::set_var("HOME", value),
+            None => env::remove_var("HOME"),
+        }
+        match old_thread_id {
+            Some(value) => env::set_var("CODEX_THREAD_ID", value),
+            None => env::remove_var("CODEX_THREAD_ID"),
+        }
+    }
+
+    let summary_path = issue_ref
+        .task_bundle_dir_path(&repo)
+        .join("artifacts/goal_metrics/issue-1154-goal-metrics-summary.json");
+    let summary: serde_json::Value =
+        serde_json::from_str(&fs::read_to_string(summary_path).expect("read goal summary"))
+            .expect("parse goal summary");
+    assert_eq!(
+        summary["phases_recorded"],
+        serde_json::json!([
+            "card_repair",
+            "doctor_readiness",
+            "execution_ready",
+            "issue_init"
+        ])
+    );
+    assert_eq!(
+        summary["segments_recorded"],
+        serde_json::json!(["readiness_prep"])
+    );
+    assert_eq!(summary["selected_stage"], "execution_ready");
+    assert_eq!(summary["selected_segment"], "readiness_prep");
+}
+
+#[test]
+fn real_pr_start_failure_leaves_doctor_readiness_as_selected_prep_stage() {
+    let _guard = env_lock();
+    let temp = unique_temp_dir("adl-pr-start-readiness-prep-failure");
+    let origin = temp.join("origin.git");
+    let repo = temp.join("repo");
+    let home = temp.join("home");
+    fs::create_dir_all(&repo).expect("repo dir");
+    fs::create_dir_all(&home).expect("home dir");
+    copy_bootstrap_support_files(&repo);
+    init_git_repo(&repo);
+    assert!(Command::new("git")
+        .args(["config", "user.name", "Test User"])
+        .current_dir(&repo)
+        .status()
+        .expect("git config")
+        .success());
+    assert!(Command::new("git")
+        .args(["config", "user.email", "test@example.com"])
+        .current_dir(&repo)
+        .status()
+        .expect("git config")
+        .success());
+    fs::write(repo.join(".gitignore"), ".adl/\n").expect("gitignore");
+    fs::write(repo.join("README.md"), "readiness prep metrics failure\n").expect("readme");
+    assert!(Command::new("git")
+        .args(["add", "-A"])
+        .current_dir(&repo)
+        .status()
+        .expect("git add")
+        .success());
+    assert!(Command::new("git")
+        .args(["commit", "-q", "-m", "init"])
+        .current_dir(&repo)
+        .status()
+        .expect("git commit")
+        .success());
+    assert!(Command::new("git")
+        .args(["branch", "-M", "main"])
+        .current_dir(&repo)
+        .status()
+        .expect("git branch")
+        .success());
+    assert!(Command::new("git")
+        .args([
+            "init",
+            "--bare",
+            "-q",
+            path_str(&origin).expect("origin path"),
+        ])
+        .current_dir(&repo)
+        .status()
+        .expect("git init bare")
+        .success());
+    assert!(Command::new("git")
+        .args([
+            "remote",
+            "set-url",
+            "origin",
+            path_str(&origin).expect("origin path"),
+        ])
+        .current_dir(&repo)
+        .status()
+        .expect("git remote set-url")
+        .success());
+    assert!(Command::new("git")
+        .args(["push", "-q", "-u", "origin", "main"])
+        .current_dir(&repo)
+        .status()
+        .expect("git push")
+        .success());
+    assert!(Command::new("git")
+        .args(["fetch", "-q", "origin", "main"])
+        .current_dir(&repo)
+        .status()
+        .expect("git fetch")
+        .success());
+
+    seed_codex_goal_transcript(
+        &home,
+        1155,
+        "thread-1155-prep",
+        5555,
+        77,
+        1782230400,
+        1782230477,
+    );
+    let old_home = env::var_os("HOME");
+    let old_thread_id = env::var_os("CODEX_THREAD_ID");
+    unsafe {
+        env::set_var("HOME", &home);
+        env::set_var("CODEX_THREAD_ID", "thread-1155-prep");
+    }
+
+    let issue_ref =
+        IssueRef::new(1155, "v0.86", "readiness-prep-start-failure").expect("issue ref");
+    write_authored_issue_prompt(
+        &repo,
+        &issue_ref,
+        "[v0.86][tools] Readiness prep start failure",
+    );
+
+    let prev_dir = env::current_dir().expect("cwd");
+    env::set_current_dir(&repo).expect("chdir");
+    real_pr(&[
+        "init".to_string(),
+        "1155".to_string(),
+        "--slug".to_string(),
+        "readiness-prep-start-failure".to_string(),
+        "--title".to_string(),
+        "[v0.86][tools] Readiness prep start failure".to_string(),
+        "--no-fetch-issue".to_string(),
+        "--version".to_string(),
+        "v0.86".to_string(),
+    ])
+    .expect("real_pr init");
+
+    write_design_time_ready_cards(
+        &repo,
+        &issue_ref,
+        "[v0.86][tools] Readiness prep start failure",
+        "not bound yet",
+    );
+
+    real_pr(&[
+        "doctor".to_string(),
+        "1155".to_string(),
+        "--slug".to_string(),
+        "readiness-prep-start-failure".to_string(),
+        "--no-fetch-issue".to_string(),
+        "--version".to_string(),
+        "v0.86".to_string(),
+        "--mode".to_string(),
+        "ready".to_string(),
+    ])
+    .expect("real_pr doctor ready");
+
+    let conflicting_branch = "codex/1155-readiness-prep-start-failure";
+    assert!(Command::new("git")
+        .args(["branch", conflicting_branch, "origin/main"])
+        .current_dir(&repo)
+        .status()
+        .expect("git branch")
+        .success());
+    let conflicting_worktree = repo.join(".worktrees/conflicting-start");
+    assert!(Command::new("git")
+        .args([
+            "worktree",
+            "add",
+            path_str(&conflicting_worktree).expect("conflicting worktree path"),
+            conflicting_branch,
+        ])
+        .current_dir(&repo)
+        .status()
+        .expect("git worktree add")
+        .success());
+
+    let err = real_pr(&[
+        "start".to_string(),
+        "1155".to_string(),
+        "--slug".to_string(),
+        "readiness-prep-start-failure".to_string(),
+        "--title".to_string(),
+        "[v0.86][tools] Readiness prep start failure".to_string(),
+        "--no-fetch-issue".to_string(),
+        "--version".to_string(),
+        "v0.86".to_string(),
+    ])
+    .expect_err("real_pr start should fail when the issue branch is already checked out elsewhere");
+    env::set_current_dir(prev_dir).expect("restore cwd");
+    unsafe {
+        match old_home {
+            Some(value) => env::set_var("HOME", value),
+            None => env::remove_var("HOME"),
+        }
+        match old_thread_id {
+            Some(value) => env::set_var("CODEX_THREAD_ID", value),
+            None => env::remove_var("CODEX_THREAD_ID"),
+        }
+    }
+    assert!(err.to_string().contains("already checked out in worktree"));
+
+    let summary_path = issue_ref
+        .task_bundle_dir_path(&repo)
+        .join("artifacts/goal_metrics/issue-1155-goal-metrics-summary.json");
+    let summary: serde_json::Value =
+        serde_json::from_str(&fs::read_to_string(summary_path).expect("read goal summary"))
+            .expect("parse goal summary");
+    assert_eq!(
+        summary["phases_recorded"],
+        serde_json::json!(["doctor_readiness", "issue_init"])
+    );
+    assert_eq!(
+        summary["segments_recorded"],
+        serde_json::json!(["readiness_prep"])
+    );
+    assert_eq!(summary["selected_stage"], "doctor_readiness");
+    assert_eq!(summary["selected_segment"], "readiness_prep");
+}
+
+#[test]
 fn real_pr_start_rejects_tracked_dirty_primary_main_before_binding_worktree() {
     let _guard = env_lock();
     let temp = unique_temp_dir("adl-pr-start-dirty-main-guard");

@@ -80,8 +80,11 @@ sprint:
         raw_log_path: <path or null>
         record_count: <int>
         phases_recorded:
-          - issue_start | pr_publication | review_handoff | merge_closeout | sprint_closeout
-        selected_stage: issue_start | pr_publication | review_handoff | merge_closeout | sprint_closeout | null
+          - issue_init | doctor_readiness | card_repair | execution_ready | issue_start | pr_publication | review_handoff | merge_closeout | sprint_closeout
+        segments_recorded:
+          - readiness_prep | bound_execution | sprint_rollup
+        selected_stage: issue_init | doctor_readiness | card_repair | execution_ready | issue_start | pr_publication | review_handoff | merge_closeout | sprint_closeout | null
+        selected_segment: readiness_prep | bound_execution | sprint_rollup | null
         recorded_at: <timestamp or null>
         data_source: codex_goal_tool | manual_entry | derived_sprint_state | unknown
         goal_id: <string or null>

@@ -1344,6 +1344,7 @@ fn real_pr_start(args: &[String]) -> Result<()> {
     fetch_origin_main_with_fallback()?;
     ensure_local_branch_exists(&branch)?;
     ensure_worktree_for_branch(&worktree_path, &branch)?;
+    record_readiness_prep_goal_metrics_stage(&repo_root, &issue_ref, "execution_ready")?;
 
     let worktree_source = ensure_local_issue_prompt_copy(&worktree_path, &issue_ref, &source_path)?;
     mirror_docs_templates_into_worktree(&repo_root, &worktree_path)?;
@@ -1426,6 +1427,48 @@ fn same_checkout_root(left: &Path, right: &Path) -> Result<bool> {
     let right = fs::canonicalize(right)
         .with_context(|| format!("failed to canonicalize checkout path '{}'", right.display()))?;
     Ok(left == right)
+}
+
+pub(super) fn record_readiness_prep_goal_metrics_stage(
+    repo_root: &Path,
+    issue_ref: &IssueRef,
+    capture_stage: &str,
+) -> Result<()> {
+    let script_path = repo_root.join(
+        "adl/tools/skills/sprint-conductor/scripts/record_issue_goal_stage_from_codex_session.py",
+    );
+    if !script_path.is_file() {
+        bail!(
+            "missing canonical readiness-prep metrics helper: {}",
+            script_path.display()
+        );
+    }
+    let artifacts_dir = issue_ref
+        .task_bundle_dir_path(repo_root)
+        .join("artifacts/goal_metrics");
+    let issue_number = issue_ref.issue_number().to_string();
+    let issue_goal_ref = format!(
+        "goal:{}:issue:{}",
+        issue_ref.scope(),
+        issue_ref.issue_number()
+    );
+    let args = [
+        path_str(&script_path)?,
+        "--issue-number",
+        issue_number.as_str(),
+        "--artifacts-dir",
+        path_str(&artifacts_dir)?,
+        "--capture-stage",
+        capture_stage,
+        "--issue-goal-ref",
+        issue_goal_ref.as_str(),
+        "--metrics-confidence",
+        "high",
+    ];
+    run_capture("python3", &args).with_context(|| {
+        format!("failed to record readiness-prep metrics stage '{capture_stage}'")
+    })?;
+    Ok(())
 }
 
 fn emit_start_session_ledger_notes(assessment: &adl::session_ledger::TargetClaimAssessment) {
@@ -1651,6 +1694,7 @@ fn real_pr_init(args: &[String]) -> Result<()> {
     validate_issue_prompt_exists(&source_path)?;
     let (stp_path, bundle_input, bundle_output, bundle_dir) =
         bootstrap_root_task_bundle(&repo_root, &issue_ref, &title, &source_path)?;
+    record_readiness_prep_goal_metrics_stage(&repo_root, &issue_ref, "issue_init")?;
 
     println!("• Initialized:");
     println!(

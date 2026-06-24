@@ -1671,6 +1671,29 @@ assert snapshot["elapsed_seconds_raw"] == "91"
 PY
 
 goal_stage_artifacts_dir="${tmpdir}/issue-4431-artifacts/goal_metrics"
+goal_stage_issue_init="${tmpdir}/issue-4431-stage-issue-init.json"
+cat >"${goal_stage_issue_init}" <<'JSON'
+{
+  "goal": {
+    "threadId": "thread-4431-stage",
+    "objective": "Issue #4431 stage helper",
+    "status": "active",
+    "tokensUsed": 500,
+    "timeUsedSeconds": 5,
+    "createdAt": 1782153534,
+    "updatedAt": 1782153539
+  }
+}
+JSON
+python3 "${repo_root}/adl/tools/skills/sprint-conductor/scripts/record_issue_goal_stage_artifacts.py" \
+  --goal-state "${goal_stage_issue_init}" \
+  --issue-number 4431 \
+  --artifacts-dir "${goal_stage_artifacts_dir}" \
+  --capture-stage issue_init \
+  --issue-goal-ref "goal:v0.91.6:issue:4431" \
+  --metrics-confidence high \
+  --model-ref "gpt-5-codex" >/dev/null
+
 goal_stage_issue_start_a="${tmpdir}/issue-4431-stage-issue-start-a.json"
 cat >"${goal_stage_issue_start_a}" <<'JSON'
 {
@@ -1752,24 +1775,33 @@ issue_start_snapshot = artifacts_dir / "issue-4431-goal-state.json"
 pr_publication_snapshot = artifacts_dir / "issue-4431-goal-state-pr-publication.json"
 assert issue_start_snapshot.exists()
 assert pr_publication_snapshot.exists()
+assert (artifacts_dir / "issue-4431-goal-state-issue-init.json").exists()
 
 rows = [
     json.loads(line)
     for line in (artifacts_dir / "issue-4431-goal-metrics.jsonl").read_text().splitlines()
     if line.strip()
 ]
-assert len(rows) == 2
+assert len(rows) == 3
+issue_init_rows = [row for row in rows if row["capture_stage"] == "issue_init"]
+assert len(issue_init_rows) == 1
+assert issue_init_rows[0]["metrics_segment"] == "readiness_prep"
+assert issue_init_rows[0]["token_usage"]["total_tokens"] == 500
 issue_start_rows = [row for row in rows if row["capture_stage"] == "issue_start"]
 assert len(issue_start_rows) == 1
+assert issue_start_rows[0]["metrics_segment"] == "bound_execution"
 assert issue_start_rows[0]["token_usage"]["total_tokens"] == 2000
 assert issue_start_rows[0]["elapsed_seconds"] == 20
 pr_rows = [row for row in rows if row["capture_stage"] == "pr_publication"]
 assert len(pr_rows) == 1
+assert pr_rows[0]["metrics_segment"] == "bound_execution"
 assert pr_rows[0]["token_usage"]["total_tokens"] == 3000
 summary = json.loads((artifacts_dir / "issue-4431-goal-metrics-summary.json").read_text())
-assert summary["record_count"] == 2
-assert summary["phases_recorded"] == ["issue_start", "pr_publication"]
+assert summary["record_count"] == 3
+assert summary["phases_recorded"] == ["issue_init", "issue_start", "pr_publication"]
+assert summary["segments_recorded"] == ["bound_execution", "readiness_prep"]
 assert summary["selected_stage"] == "pr_publication"
+assert summary["selected_segment"] == "bound_execution"
 assert summary["token_usage"]["total_tokens"] == 3000
 assert summary["elapsed_seconds"] == 30
 assert summary["completion_state"] == "completed"
@@ -1788,7 +1820,7 @@ codex_session_artifacts_dir="${tmpdir}/issue-4442-artifacts/goal_metrics"
 codex_session_result="$(env -u CODEX_THREAD_ID python3 "${repo_root}/adl/tools/skills/sprint-conductor/scripts/record_issue_goal_stage_from_codex_session.py" \
   --issue-number 4442 \
   --artifacts-dir "${codex_session_artifacts_dir}" \
-  --capture-stage issue_start \
+  --capture-stage execution_ready \
   --issue-goal-ref "goal:v0.91.6:issue:4442" \
   --metrics-confidence high \
   --model-ref "gpt-5-codex" \
@@ -1802,7 +1834,7 @@ result = json.loads(sys.argv[1])
 assert result["status"] == "recorded"
 assert result["data_source"] == "codex_goal_tool"
 artifacts_dir = Path(sys.argv[2])
-snapshot = json.loads((artifacts_dir / "issue-4442-goal-state.json").read_text())
+snapshot = json.loads((artifacts_dir / "issue-4442-goal-state-execution-ready.json").read_text())
 assert snapshot["goal"]["threadId"] == "thread-4442"
 rows = [
     json.loads(line)
@@ -1811,13 +1843,15 @@ rows = [
 ]
 assert len(rows) == 1
 record = rows[0]
-assert record["capture_stage"] == "issue_start"
+assert record["capture_stage"] == "execution_ready"
 assert record["data_source"] == "codex_goal_tool"
+assert record["metrics_segment"] == "readiness_prep"
 assert record["thread_id"] == "thread-4442"
 assert record["active_work_seconds"] == 67
 assert record["token_usage"]["total_tokens"] == 12345
 summary = json.loads((artifacts_dir / "issue-4442-goal-metrics-summary.json").read_text())
-assert summary["selected_stage"] == "issue_start"
+assert summary["selected_stage"] == "execution_ready"
+assert summary["selected_segment"] == "readiness_prep"
 assert summary["data_source"] == "codex_goal_tool"
 assert summary["thread_id"] == "thread-4442"
 assert summary["active_work_seconds"] == 67
@@ -1937,4 +1971,20 @@ assert summary["data_source"] == "unknown"
 assert summary["thread_id"] == "thread-missing"
 assert summary["active_work_availability"] == "unknown"
 assert summary["token_usage"]["total_availability"] == "unknown"
+PY
+
+python3 - "${repo_root}" <<'PY'
+import sys
+from pathlib import Path
+
+sys.path.insert(0, str(Path(sys.argv[1]) / "adl/tools/skills/sprint-conductor/scripts"))
+import issue_goal_metrics
+
+records = [
+    {"capture_stage": "card_repair", "recorded_at": "2026-06-24T00:00:01Z", "metrics_segment": "readiness_prep"},
+    {"capture_stage": "doctor_readiness", "recorded_at": "2026-06-24T00:00:02Z", "metrics_segment": "readiness_prep"},
+]
+summary = issue_goal_metrics.summarize_issue_goal_metrics(records, None)
+assert summary["selected_stage"] == "doctor_readiness"
+assert summary["selected_segment"] == "readiness_prep"
 PY
