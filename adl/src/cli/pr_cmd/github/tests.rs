@@ -720,6 +720,52 @@ fn spawn_validation_status_transient_server() -> (String, thread::JoinHandle<Vec
     (base_uri, handle)
 }
 
+fn spawn_validation_status_pending_then_success_server() -> (String, thread::JoinHandle<Vec<String>>)
+{
+    let (base_uri, server) = bind_test_http_server("bind validation status pending/success server");
+    let handle = thread::spawn(move || {
+        let mut seen = Vec::new();
+        let mut validation_calls = 0usize;
+        for _ in 0..6 {
+            let Some(mut request) = server
+                .recv_timeout(Duration::from_secs(5))
+                .expect("validation pending/success server receive")
+            else {
+                break;
+            };
+            let method = request.method().as_str().to_string();
+            let url = request.url().to_string();
+            let mut body = String::new();
+            let _ = request.as_reader().read_to_string(&mut body);
+            seen.push(format!("{method} {url} {body}"));
+            let response = if body.contains("closingIssuesReferences") {
+                serde_json::json!({
+                    "data": {
+                        "repository": {
+                            "pullRequest": {
+                                "closingIssuesReferences": {
+                                    "nodes": [{"number": 4493}]
+                                }
+                            }
+                        }
+                    }
+                })
+                .to_string()
+            } else {
+                validation_calls += 1;
+                if validation_calls == 1 {
+                    pr_validation_graphql_response("IN_PROGRESS", Some("UNKNOWN"), "adl-ci")
+                } else {
+                    pr_validation_graphql_response("COMPLETED", Some("SUCCESS"), "adl-ci")
+                }
+            };
+            let _ = request.respond(json_response(response));
+        }
+        seen
+    });
+    (base_uri, handle)
+}
+
 mod closing_linkage;
 mod helpers;
 mod policy;

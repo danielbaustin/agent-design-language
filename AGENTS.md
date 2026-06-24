@@ -151,6 +151,9 @@ These rules are mandatory for ADL issue work.
   change touches workflow control-plane paths, runtime/provider execution,
   watchdog behavior, or machine-readable command output, record the relevant
   logging policy and proof in the issue artifacts.
+- When ADL lifecycle tooling exposes a real tooling bug, suspicious stuck
+  state, or repeatable control-plane anomaly, capture a durable local bug
+  packet or follow-on issue instead of silently retrying around it.
 - Preserve the current logging channel contract unless the issue explicitly
   changes it:
   - machine-readable payloads belong on stdout
