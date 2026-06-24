@@ -168,7 +168,7 @@ fn doctor_ready_blocks_branch_mismatch_once_issue_is_run_bound() {
 #[test]
 fn doctor_full_warns_when_only_open_wave_blocks_ready_issue() {
     let (preflight_status, block_kind, guidance) =
-        doctor_preflight_status(false, Some("ready"), "PASS");
+        doctor_preflight_status(false, Some("ready"), "PASS", false);
 
     assert_eq!(preflight_status, "BLOCK");
     assert_eq!(block_kind, "open_pr_wave");
@@ -180,9 +180,99 @@ fn doctor_full_warns_when_only_open_wave_blocks_ready_issue() {
 }
 
 #[test]
+fn doctor_full_warns_when_open_wave_scan_is_explicitly_skipped() {
+    let (preflight_status, block_kind, guidance) =
+        doctor_preflight_status(true, Some("ready"), "PASS", true);
+
+    assert_eq!(preflight_status, "WARN");
+    assert_eq!(block_kind, "open_pr_wave_override");
+    assert!(guidance.contains("explicitly skipped"));
+    assert_eq!(
+        doctor_full_status(preflight_status, block_kind, Some("PASS")),
+        "WARN"
+    );
+}
+
+#[test]
+fn doctor_preflight_lines_report_skipped_scan_as_unknown_count() {
+    let lines = doctor_preflight_lines(&DoctorPreflightResult {
+        target_queue: "queue-a".to_string(),
+        target_queue_source: "source",
+        open_pr_scan_status: "skipped_by_override",
+        open_pr_count: None,
+        open_prs: vec![],
+        status: "WARN",
+        block_kind: "open_pr_wave_override",
+        guidance: "scan skipped",
+        session_ledger: DoctorSessionLedgerJson {
+            status: "PASS",
+            block_kind: "none",
+            guidance: "clear",
+            ledger_path: ".adl/session-ledger.json".to_string(),
+            current_session_id: None,
+            relevant_claim_count: 0,
+            relevant_claims: vec![],
+        },
+    });
+
+    assert!(lines.contains(&"OPEN_PR_SCAN_STATUS=skipped_by_override".to_string()));
+    assert!(lines.contains(&"OPEN_PR_COUNT=unknown".to_string()));
+    assert!(lines.contains(&"PREFLIGHT=WARN".to_string()));
+    assert!(lines.contains(&"PREFLIGHT_BLOCK_KIND=open_pr_wave_override".to_string()));
+}
+
+#[test]
+fn doctor_json_reports_skipped_scan_as_null_count() {
+    let output = DoctorJsonOutput {
+        schema: "adl.pr.doctor.v1",
+        issue: 4479,
+        version: "v0.91.6".to_string(),
+        slug: "issue-4479".to_string(),
+        branch: "codex/4479-issue-4479".to_string(),
+        mode: "preflight",
+        target_queue: "tools".to_string(),
+        target_queue_source: "explicit",
+        preflight_status: "WARN",
+        preflight_block_kind: "open_pr_wave_override",
+        preflight_guidance: "scan skipped",
+        open_pr_scan_status: "skipped_by_override",
+        open_pr_count: None,
+        open_prs: vec![],
+        session_ledger: DoctorSessionLedgerJson {
+            status: "PASS",
+            block_kind: "none",
+            guidance: "clear",
+            ledger_path: ".adl/session-ledger.json".to_string(),
+            current_session_id: None,
+            relevant_claim_count: 0,
+            relevant_claims: vec![],
+        },
+        lifecycle_state: None,
+        ready_status: None,
+        worktree: None,
+        source: None,
+        root_stp: None,
+        root_input: None,
+        root_output: None,
+        wt_stp: None,
+        wt_input: None,
+        wt_output: None,
+        card_lifecycle: None,
+        doctor_status: "WARN",
+    };
+
+    let json = serde_json::to_value(&output).expect("serialize doctor output");
+
+    assert_eq!(json["open_pr_scan_status"], "skipped_by_override");
+    assert!(json["open_pr_count"].is_null());
+    assert_eq!(json["preflight_status"], "WARN");
+    assert_eq!(json["preflight_block_kind"], "open_pr_wave_override");
+}
+
+#[test]
 fn doctor_full_stays_blocked_for_issue_local_card_readiness() {
     let (preflight_status, block_kind, guidance) =
-        doctor_preflight_status(true, Some("blocked"), "PASS");
+        doctor_preflight_status(true, Some("blocked"), "PASS", false);
 
     assert_eq!(preflight_status, "BLOCK");
     assert_eq!(block_kind, "card_run_readiness");
@@ -196,7 +286,7 @@ fn doctor_full_stays_blocked_for_issue_local_card_readiness() {
 #[test]
 fn doctor_full_stays_blocked_for_combined_open_wave_and_card_readiness() {
     let (preflight_status, block_kind, guidance) =
-        doctor_preflight_status(false, Some("blocked"), "PASS");
+        doctor_preflight_status(false, Some("blocked"), "PASS", false);
 
     assert_eq!(preflight_status, "BLOCK");
     assert_eq!(block_kind, "open_pr_wave_and_card_run_readiness");
@@ -210,7 +300,7 @@ fn doctor_full_stays_blocked_for_combined_open_wave_and_card_readiness() {
 #[test]
 fn doctor_preflight_blocks_on_active_session_conflict() {
     let (preflight_status, block_kind, guidance) =
-        doctor_preflight_status(true, Some("ready"), "BLOCK");
+        doctor_preflight_status(true, Some("ready"), "BLOCK", true);
 
     assert_eq!(preflight_status, "BLOCK");
     assert_eq!(block_kind, "session_active_conflict");
@@ -220,7 +310,7 @@ fn doctor_preflight_blocks_on_active_session_conflict() {
 #[test]
 fn doctor_preflight_warns_on_stale_session_history() {
     let (preflight_status, block_kind, guidance) =
-        doctor_preflight_status(true, Some("ready"), "WARN");
+        doctor_preflight_status(true, Some("ready"), "WARN", true);
 
     assert_eq!(preflight_status, "WARN");
     assert_eq!(block_kind, "session_manual_inspection");
@@ -265,7 +355,8 @@ fn doctor_preflight_lines_include_unknown_queue_and_claim_summary() {
     let lines = doctor_preflight_lines(&DoctorPreflightResult {
         target_queue: "queue-a".to_string(),
         target_queue_source: "source",
-        open_pr_count: 1,
+        open_pr_scan_status: "checked",
+        open_pr_count: Some(1),
         open_prs: vec![DoctorPreflightJsonPullRequest {
             number: 4473,
             head_ref_name:
@@ -304,6 +395,7 @@ fn doctor_preflight_lines_include_unknown_queue_and_claim_summary() {
         },
     });
 
+    assert!(lines.contains(&"OPEN_PR_SCAN_STATUS=checked".to_string()));
     assert!(lines.contains(&"OPEN_PR_COUNT=1".to_string()));
     assert!(lines.contains(
         &"OPEN_PR=#4473|codex/4419-v0-91-6-tools-sessions-wire-session-ledger-into-pr-ready-and-pr-run|draft|unknown|https://example.invalid/pr/4473".to_string()

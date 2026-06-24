@@ -58,6 +58,7 @@ pub(crate) struct PreflightArgs {
     pub(crate) version: Option<String>,
     pub(crate) slug: Option<String>,
     pub(crate) no_fetch_issue: bool,
+    pub(crate) allow_open_pr_wave: bool,
     pub(crate) json: bool,
 }
 
@@ -74,6 +75,7 @@ pub(crate) struct DoctorArgs {
     pub(crate) version: Option<String>,
     pub(crate) slug: Option<String>,
     pub(crate) no_fetch_issue: bool,
+    pub(crate) allow_open_pr_wave: bool,
     pub(crate) mode: DoctorMode,
     pub(crate) json: bool,
 }
@@ -463,6 +465,7 @@ pub(crate) fn parse_preflight_args(args: &[String]) -> Result<PreflightArgs> {
         version: None,
         slug: None,
         no_fetch_issue: false,
+        allow_open_pr_wave: false,
         json: false,
     };
     let mut i = 1;
@@ -477,6 +480,7 @@ pub(crate) fn parse_preflight_args(args: &[String]) -> Result<PreflightArgs> {
                 i += 1;
             }
             "--no-fetch-issue" => parsed.no_fetch_issue = true,
+            "--allow-open-pr-wave" => parsed.allow_open_pr_wave = true,
             "--json" => parsed.json = true,
             other => bail!("preflight: unknown arg: {other}"),
         }
@@ -497,6 +501,7 @@ pub(crate) fn parse_doctor_args(args: &[String]) -> Result<DoctorArgs> {
         version: None,
         slug: None,
         no_fetch_issue: false,
+        allow_open_pr_wave: false,
         mode: DoctorMode::Full,
         json: false,
     };
@@ -522,6 +527,7 @@ pub(crate) fn parse_doctor_args(args: &[String]) -> Result<DoctorArgs> {
                 i += 1;
             }
             "--no-fetch-issue" => parsed.no_fetch_issue = true,
+            "--allow-open-pr-wave" => parsed.allow_open_pr_wave = true,
             "--json" => parsed.json = true,
             other => bail!("doctor: unknown arg: {other}"),
         }

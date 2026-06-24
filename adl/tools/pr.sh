@@ -23,8 +23,8 @@
 #   adl/tools/pr.sh run     <adl.yaml> [--trace] [--print-plan] [--print-prompts] [--resume <run.json>] [--steer <steering.json>] [--overlay <overlay.json>] [--out <dir>] [--runs-root <dir>] [--quiet] [--open] [--allow-unsigned]
 #   adl/tools/pr.sh card    <issue> [input|output] [--slug <slug>] [--no-fetch-issue] [-f <input_card.md>] [--version <v0.2>]
 #   adl/tools/pr.sh output  <issue> [input|output] [--slug <slug>] [--no-fetch-issue] [-f <output_card.md>] [--version <v0.2>]
-#   adl/tools/pr.sh doctor  <issue> [--slug <slug>] [--no-fetch-issue] [--version <v0.2>] [--mode full|ready|preflight] [--json]
-#   adl/tools/pr.sh preflight <issue> [--slug <slug>] [--no-fetch-issue] [--version <v0.2>] [--json]
+#   adl/tools/pr.sh doctor  <issue> [--slug <slug>] [--no-fetch-issue] [--version <v0.2>] [--mode full|ready|preflight] [--allow-open-pr-wave] [--json]
+#   adl/tools/pr.sh preflight <issue> [--slug <slug>] [--no-fetch-issue] [--version <v0.2>] [--allow-open-pr-wave] [--json]
 #   adl/tools/pr.sh finish  <issue> --title "<title>" [-f <input_card.md>] [--output-card <output_card.md>] [--body "<extra body>"] [--paths "<p1,p2,...>"] [--no-checks] [--no-close] [--ready] [--allow-gitignore] [--no-open]
 #   adl/tools/pr.sh closing-linkage [--event-name <event>] [--event-path <path>] [--head-ref <branch>] [-R owner/repo]
 #   adl/tools/pr.sh open
@@ -2836,7 +2836,7 @@ Commands:
   init    <issue> [--slug <slug>] [--title "<title>"] [--no-fetch-issue] [--version <v>]
   run     <issue> [--slug <slug>] [--title "<title>"] [--prefix <pfx>] [--no-fetch-issue] [--version <v>] [--allow-open-pr-wave]
   run     <adl.yaml> [--trace] [--print-plan] [--print-prompts] [--resume <run.json>] [--steer <steering.json>] [--overlay <overlay.json>] [--out <dir>] [--runs-root <dir>] [--quiet] [--open] [--allow-unsigned]
-  doctor  <issue> [--slug <slug>] [--version <v>] [--no-fetch-issue] [--mode full|ready|preflight] [--json]
+  doctor  <issue> [--slug <slug>] [--version <v>] [--no-fetch-issue] [--mode full|ready|preflight] [--allow-open-pr-wave] [--json]
   finish  <issue> --title "<title>" ... [-f <input_card.md>] [--output-card <output_card.md>] [--no-open] [--merge]
   validation <pr-number-or-url> [-R owner/repo] [--watch] [--json]
   watch   <issue-number-or-url> [--slug <slug>] [--version <v>] [-R owner/repo] [--json]
@@ -2850,7 +2850,7 @@ Compatibility / maintenance commands:
   output  <issue> [input|output] ... [--version <v0.2>] [-f <output_card.md>]
   cards   <issue> [--version <v0.2>] [--no-fetch-issue]
   ready   <issue> [--slug <slug>] [--version <v>] [--no-fetch-issue] [--json]
-  preflight <issue> [--slug <slug>] [--version <v>] [--no-fetch-issue] [--json]
+  preflight <issue> [--slug <slug>] [--version <v>] [--no-fetch-issue] [--allow-open-pr-wave] [--json]
   open
   status
 
@@ -2859,6 +2859,7 @@ Flags:
   (init)    --version <v0.85|v0.87.1>         Override detected version (otherwise inferred from issue labels or title version:vX.Y[.Z...])
   (init)    --no-fetch-issue                  Do not fetch issue title/labels; requires --slug.
   (run issue-mode) --slug <slug> --title "<title>" --prefix <pfx> --no-fetch-issue --version <v> --allow-open-pr-wave
+  (doctor/preflight) --allow-open-pr-wave     Skip the same-queue open milestone PR scan and report an explicit override warning.
   (run adl-mode) --runs-root <dir>            Override canonical run artifact root (default: <repo>/.adl/runs or ADL_RUNS_ROOT).
   (card)    -f, --file <input_card.md>         Output path for the generated input card (default: <cards_root>/<issue>/input_<issue>.md)
   (output)  -f, --file <output_card.md>        Output path for the generated output card (default: <cards_root>/<issue>/output_<issue>.md)
@@ -3025,12 +3026,12 @@ EOF
 usage_preflight() {
   cat <<'EOF'
 Usage:
-  adl/tools/pr.sh preflight <issue> [--slug <slug>] [--version <v>] [--no-fetch-issue] [--json]
+  adl/tools/pr.sh preflight <issue> [--slug <slug>] [--version <v>] [--no-fetch-issue] [--allow-open-pr-wave] [--json]
 
 Notes:
 - Deprecated compatibility alias over `doctor --mode preflight`.
 - Reports whether unresolved open PRs already exist for the same milestone/version band.
-- Prints PREFLIGHT=PASS or PREFLIGHT=BLOCK.
+- Prints PREFLIGHT=PASS, PREFLIGHT=WARN, or PREFLIGHT=BLOCK.
 - `--json` emits the stable `adl.pr.doctor.v1` machine-readable result.
 EOF
 }
@@ -3038,7 +3039,7 @@ EOF
 usage_doctor() {
   cat <<'EOF'
 Usage:
-  adl/tools/pr.sh doctor <issue> [--slug <slug>] [--version <v>] [--no-fetch-issue] [--mode full|ready|preflight] [--json]
+  adl/tools/pr.sh doctor <issue> [--slug <slug>] [--version <v>] [--no-fetch-issue] [--mode full|ready|preflight] [--allow-open-pr-wave] [--json]
 
 Notes:
 - Canonical readiness and drift diagnostic surface.

@@ -52,7 +52,7 @@ pub fn usage() -> &'static str {
   adl pr init <issue> [--slug <slug>] [--title <title>] [--no-fetch-issue] [--version <v>]
   adl pr repair-issue-body <issue> [--slug <slug>] [--title <title>] [--body <text> | --body-file <path>] [--labels <csv>] [--version <v>] [--force]
   adl pr run <issue> [--prefix <prefix>] [--slug <slug>] [--title <title>] [--no-fetch-issue] [--version <v>] [--allow-open-pr-wave]
-  adl pr doctor <issue> [--slug <slug>] [--version <v>] [--no-fetch-issue] [--mode full|ready|preflight] [--json]
+  adl pr doctor <issue> [--slug <slug>] [--version <v>] [--no-fetch-issue] [--mode full|ready|preflight] [--allow-open-pr-wave] [--json]
   adl pr finish <issue> --title <title> [--body <text>] [--paths <csv>] [-f|--input <path>] [--output-card <path>] [--no-checks] [--no-close] [--ready] [--merge] [--no-open]
   adl pr closeout <issue> [--slug <slug>] [--version <v>] [--no-fetch-issue]
   adl godel run --run-id <id> --workflow-id <id> --failure-code <code> --failure-summary <text> [--evidence-ref <path> ...] [--runs-dir <dir>]
