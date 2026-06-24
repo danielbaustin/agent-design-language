@@ -36,3 +36,13 @@ v0.91.2 ADR planning pass and accepted during the v0.91.3 review tail.
 - `0026-repo-visibility-manifest-linkage-layer.md`
 - `0027-governed-code-modernization-moderne-openrewrite-lst.md`
 - `0028-c-sdlc-tracked-workflow-state-and-signed-trace.md`
+- `0029-c-sdlc-default-software-development-lane.md`
+- `0032-parallel-validation-fabric.md`
+- `0033-merge-readiness-and-pr-gate-truth-boundary.md`
+- `0035-local-polis-ssm-operations-boundary.md`
+- `0036-validation-lane-selector-pvf-test-cost-policy.md`
+- `0037-github-csdlc-projection-ownership.md`
+- `0038-runtime-integration-soak-boundary.md`
+- `0039-cognitive-scheduler-v1-authority-boundary.md`
+- `0041-provider-model-suitability-boundary-v2.md`
+- `0042-public-prompt-records-publication-boundary.md`
