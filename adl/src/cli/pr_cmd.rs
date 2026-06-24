@@ -788,6 +788,8 @@ fn print_issue_watch_report(report: &github::IssueWatchReport) {
         report.issue, report.classification, report.next_skill, report.reason
     );
     println!("state: {}", report.issue_state);
+    println!("tail_owner: {}", report.tail_owner);
+    println!("shepherd_state: {}", report.shepherd_state);
     println!("continuation: {}", report.continuation);
     println!(
         "local_readiness: status={} pr_run_readiness={} reason={}",

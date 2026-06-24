@@ -189,6 +189,8 @@ pub(crate) struct IssueWatchReport {
     pub(crate) authoritative_classifier: &'static str,
     pub(crate) advisory_agent_mode: &'static str,
     pub(crate) classification: String,
+    pub(crate) tail_owner: String,
+    pub(crate) shepherd_state: String,
     pub(crate) next_skill: String,
     pub(crate) continuation: String,
     pub(crate) reason: String,
@@ -523,6 +525,8 @@ pub(crate) fn build_issue_watch_report(
             authoritative_classifier: "adl",
             advisory_agent_mode: "local_agent_advisory_only",
             classification: "closeout_needed".to_string(),
+            tail_owner: "pr-closeout".to_string(),
+            shepherd_state: "closeout_required".to_string(),
             next_skill: "pr-closeout".to_string(),
             continuation: "action_required".to_string(),
             reason: "issue_closed_completed".to_string(),
@@ -547,6 +551,8 @@ pub(crate) fn build_issue_watch_report(
             authoritative_classifier: "adl",
             advisory_agent_mode: "local_agent_advisory_only",
             classification: "closed".to_string(),
+            tail_owner: "human_review".to_string(),
+            shepherd_state: "closed_without_completed_reason".to_string(),
             next_skill: "human_review".to_string(),
             continuation: "ask_operator".to_string(),
             reason: "issue_closed_without_completed_reason".to_string(),
@@ -564,10 +570,12 @@ pub(crate) fn build_issue_watch_report(
     }
 
     let Some((pr, validation)) = linked_pr else {
-        let (classification, next_skill, continuation, reason) =
+        let (classification, tail_owner, shepherd_state, next_skill, continuation, reason) =
             if local_readiness.pr_run_readiness == "ready" {
                 (
                     "ready_for_run",
+                    "pr-run",
+                    "ready_without_pr",
                     "pr-run",
                     "continue",
                     "issue_ready_without_linked_pr",
@@ -576,12 +584,16 @@ pub(crate) fn build_issue_watch_report(
                 (
                     "blocked",
                     "pr-ready",
+                    "local_readiness_failed",
+                    "pr-ready",
                     "action_required",
                     "issue_local_readiness_failed",
                 )
             } else {
                 (
                     "unknown",
+                    "issue-watcher",
+                    "local_readiness_unknown",
                     "issue-watcher",
                     "ask_operator",
                     "issue_local_readiness_unknown",
@@ -594,6 +606,8 @@ pub(crate) fn build_issue_watch_report(
             authoritative_classifier: "adl",
             advisory_agent_mode: "local_agent_advisory_only",
             classification: classification.to_string(),
+            tail_owner: tail_owner.to_string(),
+            shepherd_state: shepherd_state.to_string(),
             next_skill: next_skill.to_string(),
             continuation: continuation.to_string(),
             reason: reason.to_string(),
@@ -602,8 +616,11 @@ pub(crate) fn build_issue_watch_report(
         };
     };
 
-    let (classification, next_skill, continuation, reason) = if validation.pr_state == "MERGED" {
+    let (classification, tail_owner, shepherd_state, next_skill, continuation, reason) =
+        if validation.pr_state == "MERGED" {
         (
+            "merged_pending_closeout",
+            "pr-closeout",
             "merged_pending_closeout",
             "pr-closeout",
             "action_required",
@@ -613,15 +630,26 @@ pub(crate) fn build_issue_watch_report(
         (
             "checks_green_but_draft",
             "pr-janitor",
+            "green_draft_requires_publication_action",
+            "pr-janitor",
             "action_required",
             "linked_pr_checks_green_but_draft",
         )
     } else if validation.is_draft {
-        ("pr_open", "issue-watcher", "continue", "linked_pr_draft")
+        (
+            "pr_open",
+            "issue-watcher",
+            "watcher_owned_pr_open",
+            "issue-watcher",
+            "continue",
+            "linked_pr_draft",
+        )
     } else {
         match validation.disposition.as_str() {
             "pending" => (
                 "checks_running",
+                "issue-watcher",
+                "watcher_owned_checks_running",
                 "issue-watcher",
                 "continue",
                 "linked_pr_checks_pending",
@@ -629,17 +657,23 @@ pub(crate) fn build_issue_watch_report(
             "failed" | "cancelled" | "timed_out" => (
                 "checks_failed",
                 "pr-janitor",
+                "janitor_owned_checks_failed",
+                "pr-janitor",
                 "action_required",
                 "linked_pr_checks_failed",
             ),
             "success" | "skipped" => (
                 "checks_green",
+                "issue-watcher",
+                "watcher_owned_waiting_for_review",
                 "human_review",
                 "ask_operator",
-                "linked_pr_checks_green",
+                "linked_pr_checks_green_waiting_review",
             ),
             _ => (
                 "blocked",
+                "issue-watcher",
+                "watcher_state_ambiguous",
                 "issue-watcher",
                 "ask_operator",
                 "linked_pr_validation_ambiguous",
@@ -654,6 +688,8 @@ pub(crate) fn build_issue_watch_report(
         authoritative_classifier: "adl",
         advisory_agent_mode: "local_agent_advisory_only",
         classification: classification.to_string(),
+        tail_owner: tail_owner.to_string(),
+        shepherd_state: shepherd_state.to_string(),
         next_skill: next_skill.to_string(),
         continuation: continuation.to_string(),
         reason: reason.to_string(),
