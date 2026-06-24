@@ -57,6 +57,16 @@ else
   # Some compatibility tests copy pr.sh into a minimal fake repo. Observability
   # must never make those compatibility surfaces fail before their assertions.
   adl_obs_event() { :; }
+  adl_obs_heartbeat_interval_ms() { printf '5000\n'; }
+  adl_obs_sleep_ms() {
+    python3 - "${1:-0}" <<'PY'
+import sys
+import time
+
+millis = int(sys.argv[1])
+time.sleep(max(millis, 0) / 1000.0)
+PY
+  }
 fi
 
 DEFAULT_VERSION="v0.86"

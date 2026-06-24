@@ -83,7 +83,7 @@ validate_cmd=(
   tooling validate-structured-prompt
   --type sor
   --phase bootstrap
-  --input "$ROOT_DIR/docs/milestones/v0.91.5/review/evidence/csdlc/issues/issue-3472-v0-91-5-wp-04-tools-add-public-c-sdlc-prompt-packet-exporter/cards/sor.md"
+  --input "$ROOT_DIR/docs/milestones/v0.91.3/review/evidence/csdlc/issues/issue-3201-card-lifecycle-demo/cards/sor.md"
 )
 if [[ -n "$TOOLING_BIN" ]]; then
   ADL_OBSERVABILITY_STDERR=0 ADL_OBSERVABILITY_LOG="$bad_sink" \

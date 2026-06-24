@@ -439,6 +439,7 @@ fn render_default_finish_validation_includes_profile_truth_and_sanitizes_changed
                 lane_id: "csdlc_owner_lane".to_string(),
                 command: "bash adl/tools/run_owner_validation_lane.sh csdlc".to_string(),
                 reason: "csdlc_owner_surface_requires_csdlc_owner_lane".to_string(),
+                matched_paths: vec!["adl/src/cli/pr_cmd/doctor.rs".to_string()],
                 vpp_record: Some(FinishValidationVppRecord {
                     contract_version: "vpp.lane.v1".to_string(),
                     artifacts: vec!["working_tree_diff_hygiene".to_string()],
@@ -452,6 +453,7 @@ fn render_default_finish_validation_includes_profile_truth_and_sanitizes_changed
                 lane_id: "rust_pr_fast".to_string(),
                 command: "bash adl/tools/run_pr_fast_test_lane.sh --changed-files /private/tmp/changed-files.txt".to_string(),
                 reason: "bounded_rust_surface_runs_focused_nextest".to_string(),
+                matched_paths: vec!["adl/src/cli/pr_cmd/doctor.rs".to_string()],
                 vpp_record: None,
             },
         ],
@@ -469,6 +471,9 @@ fn render_default_finish_validation_includes_profile_truth_and_sanitizes_changed
                 lane_id: "none".to_string(),
                 status: "not_applicable".to_string(),
                 reason: "not used".to_string(),
+                matched_paths: vec![],
+                manifest_rule: None,
+                remediation_hint: None,
             }],
         },
     };
@@ -938,6 +943,202 @@ print(json.dumps({
     assert_eq!(profile.deferred.len(), 1);
     assert!(profile.escalation.required);
     assert_eq!(profile.escalation.reasons.len(), 1);
+}
+
+#[test]
+fn manager_backed_profile_retains_changed_file_for_pr_fast_execution() {
+    let _guard = env_lock();
+    let repo = unique_temp_dir("adl-pr-finish-manager-backed-pr-fast-profile");
+    fs::create_dir_all(repo.join("adl/tools")).expect("tools dir");
+    fs::write(
+        repo.join("adl/Cargo.toml"),
+        "[package]\nname='adl'\nversion='0.1.0'\n",
+    )
+    .expect("cargo toml");
+    write_executable(
+        &repo.join("adl/tools/check_no_tracked_adl_issue_record_residue.sh"),
+        "#!/usr/bin/env bash\nset -euo pipefail\nexit 0\n",
+    );
+    write_executable(
+        &repo.join("adl/tools/run_owner_validation_lane.sh"),
+        "#!/usr/bin/env bash\nset -euo pipefail\nprintf 'owner:%s\\n' \"$1\" >> \"$FOCUSED_LOG\"\n",
+    );
+    write_executable(
+        &repo.join("adl/tools/run_pr_fast_test_lane.sh"),
+        "#!/usr/bin/env bash\nset -euo pipefail\n[ -f \"$2\" ]\nprintf 'pr-fast:%s\\n' \"$2\" >> \"$FOCUSED_LOG\"\n",
+    );
+    write_executable(
+        &repo.join("adl/tools/validation_manager.py"),
+        r#"#!/usr/bin/env python3
+import json
+import sys
+
+changed_files = sys.argv[2]
+print(json.dumps({
+    "selected_profile": "selected_2_lane_profile",
+    "status": "ready_to_run",
+    "pr_publication_sufficient": True,
+    "run": [
+        {
+            "lane_id": "csdlc_owner_lane",
+            "command": "bash adl/tools/run_owner_validation_lane.sh csdlc",
+            "reason": "csdlc_owner_surface_requires_csdlc_owner_lane",
+        },
+        {
+            "lane_id": "rust_pr_fast",
+            "command": f"bash adl/tools/run_pr_fast_test_lane.sh --changed-files {changed_files}",
+            "reason": "bounded_rust_surface_runs_focused_nextest",
+        },
+    ],
+    "not_run": [],
+    "deferred": [],
+    "escalation": {"required": False, "reasons": []},
+}))
+"#,
+    );
+    init_git_repo(&repo);
+
+    let bin_dir = repo.join("bin");
+    fs::create_dir_all(&bin_dir).expect("bin dir");
+    let focused_log = repo.join("focused.log");
+    let old_path = env::var("PATH").unwrap_or_default();
+    let old_focused_log = env::var("FOCUSED_LOG").ok();
+    let old_cwd = env::current_dir().expect("cwd");
+    unsafe {
+        env::set_var("PATH", format!("{}:{}", bin_dir.display(), old_path));
+        env::set_var("FOCUSED_LOG", &focused_log);
+        env::set_current_dir(&repo).expect("set cwd");
+    }
+
+    let plan = select_finish_validation_plan_for_finish(
+        4421,
+        ".",
+        &["adl/src/cli/pr_cmd/doctor.rs".to_string()],
+    )
+    .expect("manager-backed finish plan");
+    let retained_changed_file = plan
+        .commands
+        .iter()
+        .find_map(|command| {
+            command
+                .strip_prefix("bash adl/tools/run_pr_fast_test_lane.sh --changed-files ")
+                .map(PathBuf::from)
+        })
+        .expect("retained changed-file manifest path");
+    assert!(plan
+        .commands
+        .iter()
+        .any(|command| command.contains("run_pr_fast_test_lane.sh --changed-files")));
+    run_finish_validation_rust(&repo, &plan).expect("manager-backed profile execution");
+
+    unsafe {
+        env::set_var("PATH", old_path);
+        env::set_current_dir(old_cwd).expect("restore cwd");
+    }
+    match old_focused_log {
+        Some(value) => unsafe { env::set_var("FOCUSED_LOG", value) },
+        None => unsafe { env::remove_var("FOCUSED_LOG") },
+    }
+
+    let focused_calls = fs::read_to_string(&focused_log).expect("focused log");
+    assert!(focused_calls.contains("owner:csdlc"));
+    assert!(focused_calls.contains("pr-fast:"));
+    assert!(
+        !retained_changed_file.exists(),
+        "manager-backed execution should clean up the retained changed-file manifest after running"
+    );
+}
+
+#[test]
+fn load_finish_validation_profile_cleans_tempfile_on_invalid_manager_json() {
+    let _guard = env_lock();
+    let repo = unique_temp_dir("adl-pr-finish-load-profile-invalid-json");
+    let tmpdir = repo.join("tmp");
+    fs::create_dir_all(repo.join("adl/tools")).expect("tools dir");
+    fs::create_dir_all(&tmpdir).expect("tmp dir");
+    write_executable(
+        &repo.join("adl/tools/validation_manager.py"),
+        "#!/usr/bin/env python3\nprint('{invalid json')\n",
+    );
+
+    let old_tmpdir = env::var("TMPDIR").ok();
+    unsafe {
+        env::set_var("TMPDIR", &tmpdir);
+    }
+
+    let err = load_finish_validation_profile(&repo, &["adl/src/cli/pr_cmd/doctor.rs".to_string()])
+        .expect_err("invalid manager json should fail");
+
+    match old_tmpdir {
+        Some(value) => unsafe { env::set_var("TMPDIR", value) },
+        None => unsafe { env::remove_var("TMPDIR") },
+    }
+
+    assert!(err
+        .to_string()
+        .contains("validation manager returned invalid profile JSON"));
+    assert_eq!(
+        fs::read_dir(&tmpdir).expect("read temp dir").count(),
+        0,
+        "temporary changed-file manifests should be cleaned up on parse failure"
+    );
+}
+
+#[test]
+fn load_finish_validation_profile_cleans_tempfile_when_profile_only_needs_rendering() {
+    let _guard = env_lock();
+    let repo = unique_temp_dir("adl-pr-finish-load-profile-render-cleanup");
+    let tmpdir = repo.join("tmp");
+    fs::create_dir_all(repo.join("adl/tools")).expect("tools dir");
+    fs::create_dir_all(&tmpdir).expect("tmp dir");
+    write_executable(
+        &repo.join("adl/tools/validation_manager.py"),
+        r#"#!/usr/bin/env python3
+import json
+import sys
+
+changed_files = sys.argv[2]
+print(json.dumps({
+    "selected_profile": "selected_1_lane_profile",
+    "status": "ready_to_run",
+    "pr_publication_sufficient": True,
+    "run": [
+        {
+            "lane_id": "rust_pr_fast",
+            "command": f"bash adl/tools/run_pr_fast_test_lane.sh --changed-files {changed_files}",
+            "reason": "bounded_rust_surface_runs_focused_nextest",
+        }
+    ],
+    "not_run": [],
+    "deferred": [],
+    "escalation": {"required": False, "reasons": []},
+}))
+"#,
+    );
+
+    let old_tmpdir = env::var("TMPDIR").ok();
+    unsafe {
+        env::set_var("TMPDIR", &tmpdir);
+    }
+
+    let profile =
+        load_finish_validation_profile(&repo, &["adl/src/cli/pr_cmd/doctor.rs".to_string()])
+            .expect("render-time manager profile");
+
+    match old_tmpdir {
+        Some(value) => unsafe { env::set_var("TMPDIR", value) },
+        None => unsafe { env::remove_var("TMPDIR") },
+    }
+
+    assert_eq!(profile.run.len(), 1);
+    assert!(profile.run[0]
+        .command
+        .contains("run_pr_fast_test_lane.sh --changed-files"));
+    assert_eq!(
+        fs::read_dir(&tmpdir).expect("read temp dir").count(),
+        0,
+        "render-time profile loads should not retain temp changed-file manifests"
+    );
 }
 
 #[test]
@@ -1753,12 +1954,13 @@ fn finish_validation_plan_integrated_runtime_soak_runner_hits_helper_classifiers
     .expect("integrated runtime soak finish plan");
 
     assert_eq!(plan.mode, FinishValidationMode::LargerBinaryFocused);
-    assert!(plan
-        .commands
-        .contains(&"cargo test --manifest-path adl/Cargo.toml long_lived_agent".to_string()));
-    assert!(plan
-        .commands
-        .contains(&"bash adl/tools/run_owner_validation_lane.sh runtime --build".to_string()));
+    assert!(plan.commands.contains(&"git diff --check".to_string()));
+    assert!(
+        plan.commands
+            .iter()
+            .any(|command| command
+                .contains("bash adl/tools/run_pr_fast_test_lane.sh --changed-files"))
+    );
 }
 
 #[test]
@@ -1854,11 +2056,11 @@ fn finish_validation_profile_uses_actual_changed_paths_not_broad_stage_request()
     assert_eq!(focused_plan.mode, FinishValidationMode::LargerBinaryFocused);
     assert!(focused_plan
         .commands
-        .contains(&"cargo test --manifest-path adl/Cargo.toml --bin adl cli::pr_cmd".to_string()));
-    assert!(!focused_plan
-        .commands
-        .iter()
-        .any(|command: &String| command.contains("cargo clippy")));
+        .contains(&"bash adl/tools/run_owner_validation_lane.sh csdlc".to_string()));
+    assert!(focused_plan.commands.iter().any(|command: &String| command
+        .contains("bash adl/tools/run_pr_fast_test_lane.sh --changed-files")));
+    assert!(!focused_plan.commands.iter().any(|command: &String| command
+        .contains("cargo test --manifest-path adl/Cargo.toml --bin adl cli::pr_cmd")));
 }
 
 #[test]
@@ -1939,7 +2141,7 @@ fn finish_validation_profile_does_not_treat_behavioral_tooling_as_docs_only() {
     )
     .expect("behavioral tooling plan");
 
-    assert_eq!(plan.mode, FinishValidationMode::SmallBinaryFocused);
+    assert_eq!(plan.mode, FinishValidationMode::LargerBinaryFocused);
 }
 
 #[test]
@@ -1997,7 +2199,7 @@ fn finish_validation_profile_keeps_unity_observatory_scaffold_lane_issue_local()
 
     assert!(err
         .to_string()
-        .contains("not classified into docs-only, small-binary focused, or larger-binary focused"));
+        .contains("selector left changed paths without validation-lane coverage"));
 }
 
 #[test]
@@ -2142,14 +2344,14 @@ fn finish_validation_profile_classifies_sprint_shell_helper_tests_as_small_binar
     )
     .expect("sprint shell helper plan");
 
-    assert_eq!(plan.mode, FinishValidationMode::SmallBinaryFocused);
-    assert_eq!(
-        plan.commands,
-        vec![
-            "bash adl/tools/check_no_tracked_adl_issue_record_residue.sh".to_string(),
-            "git diff --check".to_string(),
-        ]
-    );
+    assert_eq!(plan.mode, FinishValidationMode::LargerBinaryFocused);
+    assert!(plan
+        .commands
+        .contains(&"bash adl/tools/run_owner_validation_lane.sh csdlc".to_string()));
+    assert!(plan.commands.contains(
+        &"bash adl/tools/test_sprint_conductor_helpers.sh && bash adl/tools/test_install_adl_operational_skills.sh"
+            .to_string()
+    ));
 }
 
 #[test]
@@ -2166,13 +2368,13 @@ fn finish_validation_profile_keeps_public_prompt_packet_changes_focused() {
     .expect("public prompt packet plan");
 
     assert_eq!(plan.mode, FinishValidationMode::LargerBinaryFocused);
-    assert!(plan
-        .commands
-        .contains(&"cargo fmt --manifest-path adl/Cargo.toml --all --check".to_string()));
-    assert!(plan.commands.contains(
-        &"cargo test --manifest-path adl/Cargo.toml --bin adl-csdlc public_prompt_packet"
-            .to_string()
-    ));
+    assert!(plan.commands.contains(&"git diff --check".to_string()));
+    assert!(
+        plan.commands
+            .iter()
+            .any(|command| command
+                .contains("bash adl/tools/run_pr_fast_test_lane.sh --changed-files"))
+    );
     assert!(!plan
         .commands
         .iter()
@@ -2309,15 +2511,13 @@ fn finish_validation_profile_classifies_tokio_bootstrap_helper_paths() {
     .expect("tokio bootstrap helper plan");
 
     assert_eq!(plan.mode, FinishValidationMode::LargerBinaryFocused);
-    assert!(plan
-        .commands
-        .contains(&"cargo test --manifest-path adl/Cargo.toml pr_cmd::github".to_string()));
-    assert!(plan.commands.contains(
-        &"cargo test --manifest-path adl/Cargo.toml --bin adl github_release_".to_string()
-    ));
-    assert!(plan.commands.contains(
-        &"cargo test --manifest-path adl/Cargo.toml --bin adl octocrab_transport_".to_string()
-    ));
+    assert!(plan.commands.contains(&"git diff --check".to_string()));
+    assert!(
+        plan.commands
+            .iter()
+            .any(|command| command
+                .contains("bash adl/tools/run_pr_fast_test_lane.sh --changed-files"))
+    );
 }
 
 #[test]
@@ -2366,18 +2566,12 @@ fn finish_validation_profile_classifies_bounded_cav_tokio_paths() {
     .expect("bounded cav tokio plan");
 
     assert_eq!(plan.mode, FinishValidationMode::LargerBinaryFocused);
-    assert!(plan.commands.contains(
-        &"cargo test --manifest-path adl/Cargo.toml continuous_verification_contract_covers_cadence_lifecycle_and_artifacts"
-            .to_string()
-    ));
-    assert!(plan.commands.contains(
-        &"cargo test --manifest-path adl/Cargo.toml self_attack_contract_is_policy_bounded_and_reviewable"
-            .to_string()
-    ));
-    assert!(plan.commands.contains(
-        &"cargo test --manifest-path adl/Cargo.toml identity_continuous_verification_writes_contract_json"
-            .to_string()
-    ));
+    assert!(
+        plan.commands
+            .iter()
+            .any(|command| command
+                .contains("bash adl/tools/run_pr_fast_test_lane.sh --changed-files"))
+    );
 }
 
 #[test]
@@ -2393,18 +2587,14 @@ fn finish_validation_profile_keeps_finish_support_changes_narrow() {
     )
     .expect("finish support plan");
 
-    assert_eq!(plan.mode, FinishValidationMode::SmallBinaryFocused);
-    assert!(plan
-        .commands
-        .contains(&"cargo fmt --manifest-path adl/Cargo.toml --all --check".to_string()));
-    assert!(plan.commands.contains(
-        &"cargo test --manifest-path adl/Cargo.toml --bin adl-pr-finish cli::pr_cmd::tests::finish::arg_render::finish_validation"
-            .to_string()
-    ));
-    assert!(plan.commands.contains(
-        &"cargo test --manifest-path adl/Cargo.toml --bin adl-pr-finish cli::pr_cmd::tests::finish::arg_render::finish_helper_paths_run_focused_local_ci_gated_validation"
-            .to_string()
-    ));
+    assert_eq!(plan.mode, FinishValidationMode::LargerBinaryFocused);
+    assert!(plan.commands.contains(&"git diff --check".to_string()));
+    assert!(
+        plan.commands
+            .iter()
+            .any(|command| command
+                .contains("bash adl/tools/run_pr_fast_test_lane.sh --changed-files"))
+    );
     assert!(!plan
         .commands
         .contains(&"cargo test --manifest-path adl/Cargo.toml --bin adl cli::pr_cmd".to_string()));
@@ -2434,13 +2624,13 @@ fn finish_validation_profile_classifies_process_status_helper_surfaces() {
     .expect("process status helper plan");
 
     assert_eq!(plan.mode, FinishValidationMode::LargerBinaryFocused);
-    assert!(plan
-        .commands
-        .contains(&"cargo fmt --manifest-path adl/Cargo.toml --all --check".to_string()));
-    assert!(plan.commands.contains(
-        &"cargo test --manifest-path adl/Cargo.toml --test cli_smoke process_status -- --nocapture"
-            .to_string()
-    ));
+    assert!(plan.commands.contains(&"git diff --check".to_string()));
+    assert!(
+        plan.commands
+            .iter()
+            .any(|command| command
+                .contains("bash adl/tools/run_pr_fast_test_lane.sh --changed-files"))
+    );
     assert!(!plan
         .commands
         .iter()
@@ -2461,12 +2651,12 @@ fn finish_validation_profile_classifies_lifecycle_inline_tests() {
     .expect("lifecycle inline test plan");
 
     assert_eq!(plan.mode, FinishValidationMode::LargerBinaryFocused);
-    assert!(plan
-        .commands
-        .contains(&"cargo fmt --manifest-path adl/Cargo.toml --all --check".to_string()));
-    assert!(plan
-        .commands
-        .contains(&"cargo test --manifest-path adl/Cargo.toml --bin adl cli::pr_cmd".to_string()));
+    assert!(
+        plan.commands
+            .iter()
+            .any(|command| command
+                .contains("bash adl/tools/run_pr_fast_test_lane.sh --changed-files"))
+    );
 }
 
 #[test]
@@ -2482,10 +2672,11 @@ fn finish_validation_profile_keeps_small_binary_delegation_proof_focused() {
     )
     .expect("small-binary delegation proof plan");
 
-    assert_eq!(plan.mode, FinishValidationMode::SmallBinaryFocused);
+    assert_eq!(plan.mode, FinishValidationMode::LargerBinaryFocused);
     assert!(plan
         .commands
-        .contains(&"bash adl/tools/test_pr_small_binary_delegation.sh".to_string()));
+        .contains(&"bash adl/tools/run_owner_validation_lane.sh csdlc".to_string()));
+    assert!(plan.commands.contains(&"git diff --check".to_string()));
     assert!(!plan
         .commands
         .iter()
@@ -2662,7 +2853,7 @@ fn finish_validation_profile_classifies_locked_cargo_fallback_slice() {
             .expect_err("unrelated issue should not get the issue-local Cargo.lock allowance");
     assert!(unrelated_err
         .to_string()
-        .contains("changed paths are not classified"));
+        .contains("selector left changed paths without validation-lane coverage"));
 }
 
 #[test]
@@ -2718,7 +2909,7 @@ fn finish_validation_profile_classifies_wuji_ddns_slice() {
             .expect_err("unrelated issue should not inherit the wuji ddns focused allowance");
     assert!(unrelated_err
         .to_string()
-        .contains("changed paths are not classified"));
+        .contains("selector left changed paths without validation-lane coverage"));
 }
 
 #[test]
@@ -2751,7 +2942,7 @@ fn finish_validation_profile_classifies_wuji_ddns_installer_slice() {
             .expect_err("unrelated issue should not inherit the installer focused allowance");
     assert!(unrelated_err
         .to_string()
-        .contains("changed paths are not classified"));
+        .contains("selector left changed paths without validation-lane coverage"));
 }
 
 #[test]
@@ -2853,6 +3044,44 @@ fn finish_validation_profile_classifies_validation_manager_slice_as_small_binary
         .commands
         .iter()
         .any(|command| command.contains("cargo test --manifest-path adl/Cargo.toml --bin adl")));
+}
+
+#[test]
+fn finish_validation_profile_fails_closed_with_manager_guidance_for_unmapped_paths() {
+    let err = select_finish_validation_plan_for_finish(
+        4421,
+        ".",
+        &["totally/unmapped/path.txt".to_string()],
+    )
+    .expect_err("unmapped paths should fail closed");
+
+    let message = err.to_string();
+    assert!(message.contains("validation manager reported a non-runnable profile"));
+    assert!(message.contains("profile="));
+    assert!(message.contains("lane=unmapped_change_surface"));
+    assert!(message.contains("matched_paths=totally/unmapped/path.txt"));
+    assert!(message.contains("manifest_rule=adl/config/validation_lane_selector.v0.91.6.json"));
+    assert!(message.contains("remediation_hint=Add or refine a path selector"));
+}
+
+#[test]
+fn finish_validation_profile_fails_closed_for_mixed_surface_with_unmapped_gap() {
+    let err = select_finish_validation_plan_for_finish(
+        4421,
+        ".",
+        &[
+            "docs/milestones/v0.91.6/README.md".to_string(),
+            "totally/unmapped/path.txt".to_string(),
+        ],
+    )
+    .expect_err("mixed mapped and unmapped paths should fail closed");
+
+    let message = err.to_string();
+    assert!(message.contains("profile=docs_diff_check_profile"));
+    assert!(message.contains("status=escalation_required"));
+    assert!(message.contains("pr_publication_sufficient=false"));
+    assert!(message.contains("lane=unmapped_change_surface"));
+    assert!(message.contains("matched_paths=totally/unmapped/path.txt"));
 }
 
 #[test]
@@ -3232,6 +3461,87 @@ fn finish_helper_paths_run_validation_selector_validation() {
 }
 
 #[test]
+fn finish_helper_paths_run_manager_backed_owner_and_pr_fast_validation() {
+    let _guard = env_lock();
+    let temp = unique_temp_dir("adl-pr-finish-manager-backed-validation");
+    let repo = temp.join("repo");
+    fs::create_dir_all(repo.join("adl/tools")).expect("adl tools dir");
+    fs::write(
+        repo.join("adl/Cargo.toml"),
+        "[package]\nname='adl'\nversion='0.1.0'\n",
+    )
+    .expect("cargo toml");
+    write_executable(
+        &repo.join("adl/tools/check_no_tracked_adl_issue_record_residue.sh"),
+        "#!/usr/bin/env bash\nset -euo pipefail\nexit 0\n",
+    );
+    write_executable(
+        &repo.join("adl/tools/run_owner_validation_lane.sh"),
+        "#!/usr/bin/env bash\nset -euo pipefail\nprintf 'owner:%s\\n' \"$1\" >> \"$FOCUSED_LOG\"\n",
+    );
+    write_executable(
+        &repo.join("adl/tools/run_pr_fast_test_lane.sh"),
+        "#!/usr/bin/env bash\nset -euo pipefail\nprintf 'pr-fast:%s\\n' \"$2\" >> \"$FOCUSED_LOG\"\n",
+    );
+    init_git_repo(&repo);
+
+    let bin_dir = temp.join("bin");
+    fs::create_dir_all(&bin_dir).expect("bin dir");
+    let cargo_log = temp.join("cargo.log");
+    let focused_log = temp.join("focused.log");
+    let changed_files = temp.join("changed-files.txt");
+    fs::write(&changed_files, "M\tadl/src/cli/pr_cmd/doctor.rs\n").expect("changed files");
+    write_executable(
+        &bin_dir.join("cargo"),
+        &format!(
+            "#!/usr/bin/env bash\nset -euo pipefail\nprintf '%s\\n' \"$*\" >> '{}'\nexit 0\n",
+            cargo_log.display()
+        ),
+    );
+    let old_path = env::var("PATH").unwrap_or_default();
+    let old_focused_log = env::var("FOCUSED_LOG").ok();
+    unsafe {
+        env::set_var("PATH", format!("{}:{}", bin_dir.display(), old_path));
+        env::set_var("FOCUSED_LOG", &focused_log);
+    }
+
+    let plan = FinishValidationPlan {
+        mode: FinishValidationMode::LargerBinaryFocused,
+        commands: vec![
+            "bash adl/tools/check_no_tracked_adl_issue_record_residue.sh".to_string(),
+            "git diff --check".to_string(),
+            "bash adl/tools/run_owner_validation_lane.sh csdlc".to_string(),
+            format!(
+                "bash adl/tools/run_pr_fast_test_lane.sh --changed-files {}",
+                changed_files.display()
+            ),
+        ],
+    };
+    run_finish_validation_rust(&repo, &plan).expect("manager-backed owner and pr-fast validation");
+
+    unsafe {
+        env::set_var("PATH", old_path);
+    }
+    match old_focused_log {
+        Some(value) => unsafe { env::set_var("FOCUSED_LOG", value) },
+        None => unsafe { env::remove_var("FOCUSED_LOG") },
+    }
+
+    assert!(
+        !cargo_log.exists(),
+        "manager-backed focused validation should not invoke cargo"
+    );
+
+    let focused_calls = fs::read_to_string(&focused_log).expect("focused log");
+    assert!(focused_calls.contains("owner:csdlc"));
+    assert!(focused_calls.contains(&format!("pr-fast:{}", changed_files.display())));
+    assert!(
+        !changed_files.exists(),
+        "manager-backed pr-fast helper execution should clean up the changed-file manifest"
+    );
+}
+
+#[test]
 fn finish_helper_paths_run_validation_manager_validation() {
     let _guard = env_lock();
     let temp = unique_temp_dir("adl-pr-finish-validation-manager-validation");
@@ -3570,8 +3880,11 @@ fn finish_validation_profile_classifies_version_metadata_paths_without_issue_spe
         ".",
         &["adl/Cargo.toml".to_string(), "adl/Cargo.lock".to_string()],
     )
-    .expect_err("manifest-only issues should stay unclassified");
-    assert!(err.to_string().contains("changed paths are not classified"));
+    .expect_err("non-Tokio manifest-only issues should stay unclassified");
+
+    assert!(err
+        .to_string()
+        .contains("selector left changed paths without validation-lane coverage"));
 }
 
 #[test]
