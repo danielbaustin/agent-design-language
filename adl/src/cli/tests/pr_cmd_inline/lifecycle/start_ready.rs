@@ -1,4 +1,8 @@
 use super::*;
+use adl::session_ledger::{
+    default_ledger_path, save_ledger, ClaimInput, ClaimMode, GithubRef, ResourceRef, SessionLedger,
+    DEFAULT_TTL_SECS,
+};
 
 fn assert_nonempty_materialized_file(path: impl AsRef<std::path::Path>) {
     let path = path.as_ref();
@@ -13,6 +17,51 @@ fn assert_nonempty_materialized_file(path: impl AsRef<std::path::Path>) {
         "expected materialized nonempty file at {}",
         path.display()
     );
+}
+
+fn write_session_claim(
+    repo: &std::path::Path,
+    issue: u64,
+    session_id: &str,
+    branch: &str,
+    worktree_path: &std::path::Path,
+) {
+    let mut ledger = SessionLedger::empty(chrono::Utc::now());
+    ledger
+        .claim(
+            ClaimInput {
+                session_id: session_id.to_string(),
+                owner: "codex".to_string(),
+                resource: ResourceRef {
+                    kind: "csdlc_issue".to_string(),
+                    id: issue.to_string(),
+                },
+                purpose: "test ownership".to_string(),
+                mode: ClaimMode::Active,
+                lifecycle_phase: Some("pr_run".to_string()),
+                policy_ref: Some("AGENTS.md".to_string()),
+                github: GithubRef {
+                    issue: Some(issue),
+                    pull_request: None,
+                    repository: Some("owner/repo".to_string()),
+                    last_state: Some("open".to_string()),
+                },
+                branch: Some(branch.to_string()),
+                worktree_path: Some(
+                    worktree_path
+                        .strip_prefix(repo)
+                        .unwrap_or(worktree_path)
+                        .display()
+                        .to_string(),
+                ),
+                do_not_touch_paths: Vec::new(),
+                blockers: Vec::new(),
+                ttl_secs: DEFAULT_TTL_SECS,
+            },
+            chrono::Utc::now(),
+        )
+        .expect("claim");
+    save_ledger(&default_ledger_path(repo), &ledger).expect("save ledger");
 }
 
 #[test]
@@ -277,6 +326,264 @@ fn real_pr_start_bootstraps_worktree_and_ready_passes() {
     assert!(card_review_policy_path(&root_cards, 1152)
         .symlink_metadata()
         .is_ok());
+}
+
+#[test]
+fn real_pr_start_blocks_when_another_session_claims_the_issue() {
+    let _guard = env_lock();
+    let temp = unique_temp_dir("adl-pr-start-session-ledger-conflict");
+    let origin = temp.join("origin.git");
+    let repo = temp.join("repo");
+    fs::create_dir_all(&repo).expect("repo dir");
+    copy_bootstrap_support_files(&repo);
+    init_git_repo(&repo);
+    assert!(Command::new("git")
+        .args(["config", "user.name", "Test User"])
+        .current_dir(&repo)
+        .status()
+        .expect("git config")
+        .success());
+    assert!(Command::new("git")
+        .args(["config", "user.email", "test@example.com"])
+        .current_dir(&repo)
+        .status()
+        .expect("git config")
+        .success());
+    fs::write(repo.join("README.md"), "session ledger conflict\n").expect("write readme");
+    assert!(Command::new("git")
+        .args(["add", "-A"])
+        .current_dir(&repo)
+        .status()
+        .expect("git add")
+        .success());
+    assert!(Command::new("git")
+        .args(["commit", "-q", "-m", "init"])
+        .current_dir(&repo)
+        .status()
+        .expect("git commit")
+        .success());
+    assert!(Command::new("git")
+        .args(["branch", "-M", "main"])
+        .current_dir(&repo)
+        .status()
+        .expect("git branch")
+        .success());
+    assert!(Command::new("git")
+        .args([
+            "init",
+            "--bare",
+            "-q",
+            path_str(&origin).expect("origin path")
+        ])
+        .current_dir(&repo)
+        .status()
+        .expect("git init bare")
+        .success());
+    assert!(Command::new("git")
+        .args([
+            "remote",
+            "set-url",
+            "origin",
+            path_str(&origin).expect("origin path"),
+        ])
+        .current_dir(&repo)
+        .status()
+        .expect("git remote set-url")
+        .success());
+    assert!(Command::new("git")
+        .args(["push", "-q", "-u", "origin", "main"])
+        .current_dir(&repo)
+        .status()
+        .expect("git push")
+        .success());
+    assert!(Command::new("git")
+        .args(["fetch", "-q", "origin", "main"])
+        .current_dir(&repo)
+        .status()
+        .expect("git fetch")
+        .success());
+
+    let issue_ref = IssueRef::new(
+        1155,
+        "v0.86".to_string(),
+        "session-ledger-conflict".to_string(),
+    )
+    .expect("issue ref");
+    let branch = "codex/1155-session-ledger-conflict";
+    write_authored_issue_prompt(&repo, &issue_ref, "[v0.86][tools] Session ledger conflict");
+    write_design_time_ready_cards(
+        &repo,
+        &issue_ref,
+        "[v0.86][tools] Session ledger conflict",
+        branch,
+    );
+    write_session_claim(
+        &repo,
+        1155,
+        "thread-other",
+        branch,
+        &issue_ref.default_worktree_path(&repo, None),
+    );
+
+    let prev_dir = env::current_dir().expect("cwd");
+    let old_session = env::var("CODEX_SESSION_ID").ok();
+    unsafe {
+        env::set_var("CODEX_SESSION_ID", "thread-self");
+    }
+    env::set_current_dir(&repo).expect("chdir");
+    let err = real_pr(&[
+        "start".to_string(),
+        "1155".to_string(),
+        "--slug".to_string(),
+        "session-ledger-conflict".to_string(),
+        "--title".to_string(),
+        "[v0.86][tools] Session ledger conflict".to_string(),
+        "--no-fetch-issue".to_string(),
+        "--version".to_string(),
+        "v0.86".to_string(),
+    ])
+    .expect_err("active claim should block run binding");
+    env::set_current_dir(prev_dir).expect("restore cwd");
+    match old_session {
+        Some(value) => unsafe { env::set_var("CODEX_SESSION_ID", value) },
+        None => unsafe { env::remove_var("CODEX_SESSION_ID") },
+    }
+
+    let err_text = err.to_string();
+    assert!(err_text.contains("session ledger active conflict"));
+    assert!(err_text.contains("thread-other"));
+    assert!(
+        !issue_ref.default_worktree_path(&repo, None).exists(),
+        "conflict should block before worktree creation"
+    );
+}
+
+#[test]
+fn real_pr_start_allows_current_session_claim_and_stale_claim_history() {
+    let _guard = env_lock();
+    let temp = unique_temp_dir("adl-pr-start-session-ledger-self-claim");
+    let origin = temp.join("origin.git");
+    let repo = temp.join("repo");
+    fs::create_dir_all(&repo).expect("repo dir");
+    copy_bootstrap_support_files(&repo);
+    init_git_repo(&repo);
+    assert!(Command::new("git")
+        .args(["config", "user.name", "Test User"])
+        .current_dir(&repo)
+        .status()
+        .expect("git config")
+        .success());
+    assert!(Command::new("git")
+        .args(["config", "user.email", "test@example.com"])
+        .current_dir(&repo)
+        .status()
+        .expect("git config")
+        .success());
+    fs::write(repo.join("README.md"), "session ledger self claim\n").expect("write readme");
+    assert!(Command::new("git")
+        .args(["add", "-A"])
+        .current_dir(&repo)
+        .status()
+        .expect("git add")
+        .success());
+    assert!(Command::new("git")
+        .args(["commit", "-q", "-m", "init"])
+        .current_dir(&repo)
+        .status()
+        .expect("git commit")
+        .success());
+    assert!(Command::new("git")
+        .args(["branch", "-M", "main"])
+        .current_dir(&repo)
+        .status()
+        .expect("git branch")
+        .success());
+    assert!(Command::new("git")
+        .args([
+            "init",
+            "--bare",
+            "-q",
+            path_str(&origin).expect("origin path")
+        ])
+        .current_dir(&repo)
+        .status()
+        .expect("git init bare")
+        .success());
+    assert!(Command::new("git")
+        .args([
+            "remote",
+            "set-url",
+            "origin",
+            path_str(&origin).expect("origin path"),
+        ])
+        .current_dir(&repo)
+        .status()
+        .expect("git remote set-url")
+        .success());
+    assert!(Command::new("git")
+        .args(["push", "-q", "-u", "origin", "main"])
+        .current_dir(&repo)
+        .status()
+        .expect("git push")
+        .success());
+    assert!(Command::new("git")
+        .args(["fetch", "-q", "origin", "main"])
+        .current_dir(&repo)
+        .status()
+        .expect("git fetch")
+        .success());
+
+    let issue_ref = IssueRef::new(
+        1156,
+        "v0.86".to_string(),
+        "session-ledger-self-claim".to_string(),
+    )
+    .expect("issue ref");
+    let branch = "codex/1156-session-ledger-self-claim";
+    write_authored_issue_prompt(
+        &repo,
+        &issue_ref,
+        "[v0.86][tools] Session ledger self claim",
+    );
+    write_design_time_ready_cards(
+        &repo,
+        &issue_ref,
+        "[v0.86][tools] Session ledger self claim",
+        branch,
+    );
+    write_session_claim(
+        &repo,
+        1156,
+        "thread-self",
+        branch,
+        &issue_ref.default_worktree_path(&repo, None),
+    );
+
+    let prev_dir = env::current_dir().expect("cwd");
+    let old_session = env::var("CODEX_SESSION_ID").ok();
+    unsafe {
+        env::set_var("CODEX_SESSION_ID", "thread-self");
+    }
+    env::set_current_dir(&repo).expect("chdir");
+    real_pr(&[
+        "start".to_string(),
+        "1156".to_string(),
+        "--slug".to_string(),
+        "session-ledger-self-claim".to_string(),
+        "--title".to_string(),
+        "[v0.86][tools] Session ledger self claim".to_string(),
+        "--no-fetch-issue".to_string(),
+        "--version".to_string(),
+        "v0.86".to_string(),
+    ])
+    .expect("self claim should allow run binding");
+    env::set_current_dir(prev_dir).expect("restore cwd");
+    match old_session {
+        Some(value) => unsafe { env::set_var("CODEX_SESSION_ID", value) },
+        None => unsafe { env::remove_var("CODEX_SESSION_ID") },
+    }
+
+    assert!(issue_ref.default_worktree_path(&repo, None).is_dir());
 }
 
 #[test]

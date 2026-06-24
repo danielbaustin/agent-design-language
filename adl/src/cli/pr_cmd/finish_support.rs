@@ -2130,13 +2130,18 @@ fn load_finish_validation_profile_with_retention(
             return Err(err).context("finish: failed to load validation manager profile");
         }
     };
-    let profile = match serde_json::from_str::<FinishValidationProfile>(&output) {
+    let mut profile = match serde_json::from_str::<FinishValidationProfile>(&output) {
         Ok(profile) => profile,
         Err(err) => {
             let _ = fs::remove_file(&changed_file_path);
             return Err(err).context("finish: validation manager returned invalid profile JSON");
         }
     };
+    if !retain_changed_file_for_execution {
+        for item in &mut profile.run {
+            item.command = sanitize_validation_profile_command(&item.command);
+        }
+    }
     let profile_needs_changed_file = profile
         .run
         .iter()
@@ -2171,6 +2176,9 @@ pub(super) fn select_finish_validation_plan_for_finish(
     }
     if finish_issue_needs_issue_small_binary_validation(issue_number, changed_paths) {
         return Ok(build_issue_small_binary_validation_plan());
+    }
+    if finish_issue_needs_session_ledger_issue_validation(issue_number, changed_paths) {
+        return Ok(build_session_ledger_issue_validation_plan());
     }
     if finish_issue_needs_closing_linkage_small_binary_validation(issue_number, changed_paths) {
         return Ok(build_closing_linkage_small_binary_validation_plan());
@@ -2890,6 +2898,31 @@ fn finish_issue_needs_issue_small_binary_validation(
         })
 }
 
+fn finish_issue_needs_session_ledger_issue_validation(
+    issue_number: u32,
+    changed_paths: &[String],
+) -> bool {
+    if issue_number != 4419 {
+        return false;
+    }
+    !changed_paths.is_empty()
+        && changed_paths.iter().all(|path| {
+            matches!(
+                path.trim().trim_matches('/'),
+                "adl/src/cli/pr_cmd.rs"
+                    | "adl/src/cli/pr_cmd/doctor.rs"
+                    | "adl/src/cli/pr_cmd/doctor/preflight.rs"
+                    | "adl/src/cli/pr_cmd/doctor/printing.rs"
+                    | "adl/src/cli/pr_cmd/doctor/tests.rs"
+                    | "adl/src/cli/pr_cmd/doctor/types.rs"
+                    | "adl/src/cli/pr_cmd/finish_support.rs"
+                    | "adl/src/cli/tests/pr_cmd_inline/finish/arg_render.rs"
+                    | "adl/src/cli/tests/pr_cmd_inline/lifecycle/start_ready.rs"
+                    | "adl/src/session_ledger.rs"
+            )
+        })
+}
+
 fn finish_issue_needs_closing_linkage_small_binary_validation(
     issue_number: u32,
     changed_paths: &[String],
@@ -3101,6 +3134,49 @@ fn build_issue_small_binary_validation_plan() -> FinishValidationPlan {
     );
     FinishValidationPlan {
         mode: FinishValidationMode::SmallBinaryFocused,
+        commands,
+    }
+}
+
+fn build_session_ledger_issue_validation_plan() -> FinishValidationPlan {
+    let mut commands = vec![
+        "bash adl/tools/check_no_tracked_adl_issue_record_residue.sh".to_string(),
+        "git diff --check".to_string(),
+    ];
+    push_finish_validation_command(
+        &mut commands,
+        "cargo fmt --manifest-path adl/Cargo.toml --all --check",
+    );
+    push_finish_validation_command(
+        &mut commands,
+        "cargo test --manifest-path adl/Cargo.toml target_claim_assessment_ -- --nocapture",
+    );
+    push_finish_validation_command(
+        &mut commands,
+        "cargo test --manifest-path adl/Cargo.toml doctor_preflight_ -- --nocapture",
+    );
+    push_finish_validation_command(
+        &mut commands,
+        "cargo test --manifest-path adl/Cargo.toml real_pr_start_blocks_when_another_session_claims_the_issue -- --exact --nocapture",
+    );
+    push_finish_validation_command(
+        &mut commands,
+        "cargo test --manifest-path adl/Cargo.toml real_pr_start_allows_current_session_claim_and_stale_claim_history -- --exact --nocapture",
+    );
+    push_finish_validation_command(
+        &mut commands,
+        "cargo test --manifest-path adl/Cargo.toml --bin adl-pr-finish cli::pr_cmd::tests::finish::arg_render::load_finish_validation_profile_cleans_tempfile_when_profile_only_needs_rendering -- --exact --nocapture",
+    );
+    push_finish_validation_command(
+        &mut commands,
+        "cargo test --manifest-path adl/Cargo.toml --bin adl-pr-finish cli::pr_cmd::tests::finish::arg_render::render_default_finish_validation_includes_profile_truth_and_sanitizes_changed_files -- --exact --nocapture",
+    );
+    push_finish_validation_command(
+        &mut commands,
+        "cargo test --manifest-path adl/Cargo.toml --bin adl-pr-finish cli::pr_cmd::tests::finish::arg_render::finish_validation_profile_classifies_session_ledger_issue_4419_slice -- --exact --nocapture",
+    );
+    FinishValidationPlan {
+        mode: FinishValidationMode::LargerBinaryFocused,
         commands,
     }
 }
@@ -3841,6 +3917,108 @@ pub(super) fn run_finish_validation_rust(
                             "--bin",
                             "adl-pr-finish",
                             "cli::pr_cmd::tests::finish::arg_render::finish_validation_profile_classifies_issue_small_binary_slice",
+                            "--",
+                            "--exact",
+                            "--nocapture",
+                        ],
+                    )?;
+                }
+                "cargo test --manifest-path adl/Cargo.toml target_claim_assessment_ -- --nocapture" => {
+                    run_finish_validation_status(
+                        "cargo",
+                        &[
+                            "test",
+                            "--manifest-path",
+                            path_str(&manifest)?,
+                            "target_claim_assessment_",
+                            "--",
+                            "--nocapture",
+                        ],
+                    )?;
+                }
+                "cargo test --manifest-path adl/Cargo.toml doctor_preflight_ -- --nocapture" => {
+                    run_finish_validation_status(
+                        "cargo",
+                        &[
+                            "test",
+                            "--manifest-path",
+                            path_str(&manifest)?,
+                            "doctor_preflight_",
+                            "--",
+                            "--nocapture",
+                        ],
+                    )?;
+                }
+                "cargo test --manifest-path adl/Cargo.toml real_pr_start_blocks_when_another_session_claims_the_issue -- --exact --nocapture" => {
+                    run_finish_validation_status(
+                        "cargo",
+                        &[
+                            "test",
+                            "--manifest-path",
+                            path_str(&manifest)?,
+                            "real_pr_start_blocks_when_another_session_claims_the_issue",
+                            "--",
+                            "--exact",
+                            "--nocapture",
+                        ],
+                    )?;
+                }
+                "cargo test --manifest-path adl/Cargo.toml real_pr_start_allows_current_session_claim_and_stale_claim_history -- --exact --nocapture" => {
+                    run_finish_validation_status(
+                        "cargo",
+                        &[
+                            "test",
+                            "--manifest-path",
+                            path_str(&manifest)?,
+                            "real_pr_start_allows_current_session_claim_and_stale_claim_history",
+                            "--",
+                            "--exact",
+                            "--nocapture",
+                        ],
+                    )?;
+                }
+                "cargo test --manifest-path adl/Cargo.toml --bin adl-pr-finish cli::pr_cmd::tests::finish::arg_render::load_finish_validation_profile_cleans_tempfile_when_profile_only_needs_rendering -- --exact --nocapture" => {
+                    run_finish_validation_status(
+                        "cargo",
+                        &[
+                            "test",
+                            "--manifest-path",
+                            path_str(&manifest)?,
+                            "--bin",
+                            "adl-pr-finish",
+                            "cli::pr_cmd::tests::finish::arg_render::load_finish_validation_profile_cleans_tempfile_when_profile_only_needs_rendering",
+                            "--",
+                            "--exact",
+                            "--nocapture",
+                        ],
+                    )?;
+                }
+                "cargo test --manifest-path adl/Cargo.toml --bin adl-pr-finish cli::pr_cmd::tests::finish::arg_render::render_default_finish_validation_includes_profile_truth_and_sanitizes_changed_files -- --exact --nocapture" => {
+                    run_finish_validation_status(
+                        "cargo",
+                        &[
+                            "test",
+                            "--manifest-path",
+                            path_str(&manifest)?,
+                            "--bin",
+                            "adl-pr-finish",
+                            "cli::pr_cmd::tests::finish::arg_render::render_default_finish_validation_includes_profile_truth_and_sanitizes_changed_files",
+                            "--",
+                            "--exact",
+                            "--nocapture",
+                        ],
+                    )?;
+                }
+                "cargo test --manifest-path adl/Cargo.toml --bin adl-pr-finish cli::pr_cmd::tests::finish::arg_render::finish_validation_profile_classifies_session_ledger_issue_4419_slice -- --exact --nocapture" => {
+                    run_finish_validation_status(
+                        "cargo",
+                        &[
+                            "test",
+                            "--manifest-path",
+                            path_str(&manifest)?,
+                            "--bin",
+                            "adl-pr-finish",
+                            "cli::pr_cmd::tests::finish::arg_render::finish_validation_profile_classifies_session_ledger_issue_4419_slice",
                             "--",
                             "--exact",
                             "--nocapture",

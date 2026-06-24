@@ -109,6 +109,46 @@ pub struct ClaimStatus {
     pub released_at: Option<DateTime<Utc>>,
 }
 
+#[derive(Debug, Clone, PartialEq, Eq)]
+pub struct TargetClaimMatch {
+    pub claim_id: String,
+    pub session_id: String,
+    pub owner: String,
+    pub resource: ResourceRef,
+    pub mode: ClaimMode,
+    pub classification: ClaimClassification,
+    pub issue: Option<u64>,
+    pub branch: Option<String>,
+    pub worktree_path: Option<String>,
+    pub heartbeat_at: DateTime<Utc>,
+    pub expires_at: DateTime<Utc>,
+    pub released_at: Option<DateTime<Utc>>,
+    pub matches_issue: bool,
+    pub matches_branch: bool,
+    pub matches_worktree: bool,
+    pub self_claim: bool,
+}
+
+#[derive(Debug, Clone, PartialEq, Eq)]
+pub struct TargetClaimAssessment {
+    pub ledger_path: String,
+    pub status: &'static str,
+    pub block_kind: &'static str,
+    pub guidance: &'static str,
+    pub current_session_id: Option<String>,
+    pub relevant_claims: Vec<TargetClaimMatch>,
+}
+
+#[derive(Debug, Clone)]
+pub struct TargetClaimQuery<'a> {
+    pub repo_root: &'a Path,
+    pub issue_number: u64,
+    pub branch: &'a str,
+    pub worktree_path: &'a Path,
+    pub current_session_id: Option<&'a str>,
+    pub now: DateTime<Utc>,
+}
+
 #[derive(Debug, Clone, Copy, Serialize, Deserialize, PartialEq, Eq)]
 #[serde(rename_all = "snake_case")]
 pub enum ClaimClassification {
@@ -445,6 +485,143 @@ pub fn classify_claim(claim: &OccupancyClaim, now: DateTime<Utc>) -> ClaimClassi
     }
 }
 
+pub fn assess_target_claims(
+    ledger: &SessionLedger,
+    ledger_path: &Path,
+    query: &TargetClaimQuery<'_>,
+) -> TargetClaimAssessment {
+    let normalized_target_worktree = normalize_path(query.worktree_path);
+    let issue_id = query.issue_number.to_string();
+    let mut relevant_claims = ledger
+        .claims
+        .iter()
+        .filter_map(|claim| {
+            let matches_issue = claim.github.issue == Some(query.issue_number)
+                || resource_matches_issue(&claim.resource, &issue_id);
+            let matches_branch = claim.branch.as_deref() == Some(query.branch);
+            let matches_worktree = claim
+                .worktree_path
+                .as_deref()
+                .map(|raw| {
+                    normalize_claim_worktree_path(query.repo_root, raw)
+                        == normalized_target_worktree
+                })
+                .unwrap_or(false);
+            if !(matches_issue || matches_branch || matches_worktree) {
+                return None;
+            }
+            Some(TargetClaimMatch {
+                claim_id: claim.claim_id.clone(),
+                session_id: claim.session_id.clone(),
+                owner: claim.owner.clone(),
+                resource: claim.resource.clone(),
+                mode: claim.mode,
+                classification: classify_claim(claim, query.now),
+                issue: claim.github.issue,
+                branch: claim.branch.clone(),
+                worktree_path: claim.worktree_path.clone(),
+                heartbeat_at: claim.heartbeat_at,
+                expires_at: claim.expires_at,
+                released_at: claim.released_at,
+                matches_issue,
+                matches_branch,
+                matches_worktree,
+                self_claim: query
+                    .current_session_id
+                    .map(|session_id| claim.session_id == session_id)
+                    .unwrap_or(false),
+            })
+        })
+        .collect::<Vec<_>>();
+    relevant_claims.sort_by(|left, right| left.claim_id.cmp(&right.claim_id));
+
+    let has_active_conflict = relevant_claims
+        .iter()
+        .any(|claim| claim.classification == ClaimClassification::Active && !claim.self_claim);
+    let has_stale = relevant_claims
+        .iter()
+        .any(|claim| claim.classification == ClaimClassification::Stale);
+    let has_nonblocking_live_claim = relevant_claims.iter().any(|claim| {
+        !claim.self_claim
+            && matches!(
+                claim.classification,
+                ClaimClassification::Watching | ClaimClassification::Paused
+            )
+    });
+    let has_self_claim = relevant_claims.iter().any(|claim| claim.self_claim);
+    let has_released = relevant_claims
+        .iter()
+        .any(|claim| claim.classification == ClaimClassification::Released);
+
+    let (status, block_kind, guidance) = if has_active_conflict {
+        (
+            "BLOCK",
+            "session_active_conflict",
+            "Another live session claim already owns this issue/worktree. Do not bind or resume blindly; inspect `adl session status`, coordinate the handoff, then use `adl session heartbeat` or `adl session release` as appropriate.",
+        )
+    } else if has_stale {
+        (
+            "WARN",
+            "session_stale_claim_manual_inspection",
+            "Stale session claims exist for this issue/worktree. Treat them as manual-inspection evidence only; do not auto-clean them up. Inspect with `adl session status`, then create, heartbeat, or release a claim deliberately.",
+        )
+    } else if has_nonblocking_live_claim {
+        (
+            "WARN",
+            "session_nonblocking_live_claim",
+            "A relevant watching or paused session claim exists. Inspect `adl session status` before rebinding so ownership and handoff remain explicit.",
+        )
+    } else if has_self_claim {
+        (
+            "PASS",
+            "session_self_claim",
+            "The current session already owns the relevant claim. Keep it fresh with `adl session heartbeat` and release it with `adl session release` when handing off.",
+        )
+    } else if has_released {
+        (
+            "PASS",
+            "session_released_history",
+            "Only released claims were found for this issue/worktree. You may proceed and create a fresh claim if you need active ownership.",
+        )
+    } else {
+        (
+            "PASS",
+            "none",
+            "No relevant session-ledger claims were found for this issue/worktree.",
+        )
+    };
+
+    TargetClaimAssessment {
+        ledger_path: ledger_path.display().to_string(),
+        status,
+        block_kind,
+        guidance,
+        current_session_id: query.current_session_id.map(|value| value.to_string()),
+        relevant_claims,
+    }
+}
+
+pub fn load_target_claim_assessment(
+    repo_root: &Path,
+    issue_number: u64,
+    branch: &str,
+    worktree_path: &Path,
+    current_session_id: Option<&str>,
+    now: DateTime<Utc>,
+) -> Result<TargetClaimAssessment> {
+    let ledger_path = default_ledger_path(repo_root);
+    let ledger = load_ledger(&ledger_path, now)?;
+    let query = TargetClaimQuery {
+        repo_root,
+        issue_number,
+        branch,
+        worktree_path,
+        current_session_id,
+        now,
+    };
+    Ok(assess_target_claims(&ledger, &ledger_path, &query))
+}
+
 fn claim_status(claim: &OccupancyClaim, now: DateTime<Utc>) -> ClaimStatus {
     ClaimStatus {
         claim_id: claim.claim_id.clone(),
@@ -470,6 +647,27 @@ fn validate_non_empty(label: &str, value: &str) -> Result<()> {
     } else {
         Ok(())
     }
+}
+
+fn resource_matches_issue(resource: &ResourceRef, issue_id: &str) -> bool {
+    resource.id == issue_id
+        && matches!(
+            resource.kind.as_str(),
+            "issue" | "github_issue" | "csdlc_issue" | "workflow_issue"
+        )
+}
+
+fn normalize_claim_worktree_path(repo_root: &Path, raw: &str) -> PathBuf {
+    let path = PathBuf::from(raw);
+    if path.is_absolute() {
+        normalize_path(&path)
+    } else {
+        normalize_path(&repo_root.join(path))
+    }
+}
+
+fn normalize_path(path: &Path) -> PathBuf {
+    path.components().collect()
 }
 
 fn next_claim_id(claims: &[OccupancyClaim], input: &ClaimInput, now: DateTime<Utc>) -> String {
@@ -655,5 +853,107 @@ mod tests {
             .expect("third lock attempt")
             .expect("lock released");
         let _ = fs::remove_dir_all(path.parent().expect("temp parent"));
+    }
+
+    #[test]
+    fn target_claim_assessment_reports_no_claims() {
+        let repo_root = PathBuf::from("/repo");
+        let ledger = SessionLedger::empty(now());
+        let query = TargetClaimQuery {
+            repo_root: &repo_root,
+            issue_number: 4419,
+            branch: "codex/4419-test",
+            worktree_path: &repo_root.join(".worktrees/adl-wp-4419"),
+            current_session_id: Some("thread-1"),
+            now: now(),
+        };
+
+        let assessment = assess_target_claims(&ledger, &default_ledger_path(&repo_root), &query);
+
+        assert_eq!(assessment.status, "PASS");
+        assert_eq!(assessment.block_kind, "none");
+        assert!(assessment.relevant_claims.is_empty());
+    }
+
+    #[test]
+    fn target_claim_assessment_blocks_other_active_claims() {
+        let repo_root = PathBuf::from("/repo");
+        let mut ledger = SessionLedger::empty(now());
+        let mut other = input(4419);
+        other.session_id = "thread-2".to_string();
+        other.branch = Some("codex/4419-test".to_string());
+        other.worktree_path = Some(".worktrees/adl-wp-4419".to_string());
+        ledger.claim(other, now()).expect("claim");
+        let query = TargetClaimQuery {
+            repo_root: &repo_root,
+            issue_number: 4419,
+            branch: "codex/4419-test",
+            worktree_path: &repo_root.join(".worktrees/adl-wp-4419"),
+            current_session_id: Some("thread-1"),
+            now: now(),
+        };
+
+        let assessment = assess_target_claims(&ledger, &default_ledger_path(&repo_root), &query);
+
+        assert_eq!(assessment.status, "BLOCK");
+        assert_eq!(assessment.block_kind, "session_active_conflict");
+        assert_eq!(assessment.relevant_claims.len(), 1);
+        assert!(!assessment.relevant_claims[0].self_claim);
+    }
+
+    #[test]
+    fn target_claim_assessment_warns_for_stale_claims() {
+        let repo_root = PathBuf::from("/repo");
+        let mut ledger = SessionLedger::empty(now());
+        let mut stale = input(4419);
+        stale.session_id = "thread-2".to_string();
+        stale.branch = Some("codex/4419-test".to_string());
+        stale.worktree_path = Some(".worktrees/adl-wp-4419".to_string());
+        let claim = ledger.claim(stale, now()).expect("claim");
+        let stale_time = claim.expires_at + Duration::seconds(1);
+        let query = TargetClaimQuery {
+            repo_root: &repo_root,
+            issue_number: 4419,
+            branch: "codex/4419-test",
+            worktree_path: &repo_root.join(".worktrees/adl-wp-4419"),
+            current_session_id: Some("thread-1"),
+            now: stale_time,
+        };
+
+        let assessment = assess_target_claims(&ledger, &default_ledger_path(&repo_root), &query);
+
+        assert_eq!(assessment.status, "WARN");
+        assert_eq!(
+            assessment.block_kind,
+            "session_stale_claim_manual_inspection"
+        );
+        assert_eq!(
+            assessment.relevant_claims[0].classification,
+            ClaimClassification::Stale
+        );
+    }
+
+    #[test]
+    fn target_claim_assessment_allows_self_claims() {
+        let repo_root = PathBuf::from("/repo");
+        let mut ledger = SessionLedger::empty(now());
+        let mut mine = input(4419);
+        mine.branch = Some("codex/4419-test".to_string());
+        mine.worktree_path = Some(".worktrees/adl-wp-4419".to_string());
+        ledger.claim(mine, now()).expect("claim");
+        let query = TargetClaimQuery {
+            repo_root: &repo_root,
+            issue_number: 4419,
+            branch: "codex/4419-test",
+            worktree_path: &repo_root.join(".worktrees/adl-wp-4419"),
+            current_session_id: Some("thread-1"),
+            now: now(),
+        };
+
+        let assessment = assess_target_claims(&ledger, &default_ledger_path(&repo_root), &query);
+
+        assert_eq!(assessment.status, "PASS");
+        assert_eq!(assessment.block_kind, "session_self_claim");
+        assert!(assessment.relevant_claims[0].self_claim);
     }
 }

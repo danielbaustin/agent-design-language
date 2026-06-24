@@ -18,6 +18,36 @@ pub(crate) struct DoctorPreflightResult {
     pub(crate) status: &'static str,
     pub(crate) block_kind: &'static str,
     pub(crate) guidance: &'static str,
+    pub(crate) session_ledger: DoctorSessionLedgerJson,
+}
+
+#[derive(Debug, Clone, PartialEq, Eq, Serialize)]
+pub(crate) struct DoctorSessionLedgerClaimJson {
+    pub(crate) claim_id: String,
+    pub(crate) session_id: String,
+    pub(crate) owner: String,
+    pub(crate) resource_kind: String,
+    pub(crate) resource_id: String,
+    pub(crate) mode: &'static str,
+    pub(crate) classification: &'static str,
+    pub(crate) issue: Option<u64>,
+    pub(crate) branch: Option<String>,
+    pub(crate) worktree_path: Option<String>,
+    pub(crate) matches_issue: bool,
+    pub(crate) matches_branch: bool,
+    pub(crate) matches_worktree: bool,
+    pub(crate) self_claim: bool,
+}
+
+#[derive(Debug, Clone, PartialEq, Eq, Serialize)]
+pub(crate) struct DoctorSessionLedgerJson {
+    pub(crate) status: &'static str,
+    pub(crate) block_kind: &'static str,
+    pub(crate) guidance: &'static str,
+    pub(crate) ledger_path: String,
+    pub(crate) current_session_id: Option<String>,
+    pub(crate) relevant_claim_count: usize,
+    pub(crate) relevant_claims: Vec<DoctorSessionLedgerClaimJson>,
 }
 
 #[derive(Debug, Clone, PartialEq, Eq)]
@@ -72,6 +102,7 @@ pub(crate) struct DoctorJsonOutput {
     pub(crate) preflight_guidance: &'static str,
     pub(crate) open_pr_count: usize,
     pub(crate) open_prs: Vec<DoctorPreflightJsonPullRequest>,
+    pub(crate) session_ledger: DoctorSessionLedgerJson,
     pub(crate) lifecycle_state: Option<&'static str>,
     pub(crate) ready_status: Option<&'static str>,
     pub(crate) worktree: Option<String>,
