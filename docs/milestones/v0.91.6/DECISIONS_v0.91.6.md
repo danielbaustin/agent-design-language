@@ -22,7 +22,7 @@ Capture significant first-tranche bridge decisions and open questions.
 | D-05 | Provider/model reliability must include Gemma and multi-agent suitability limits. | accepted | Multi-agent reliability depends on role-appropriate model behavior, not only provider availability. | Reliability proof remains separate from product/training claims. | `features/PROVIDER_MODEL_RELIABILITY_v0.91.6.md` |
 | D-06 | ACIP/A2A protobuf can be a decision point rather than forced implementation in `v0.91.6`. | accepted | Schema/access/security posture must come first. | Residual wire-format work may route to `v0.91.7`. | `features/ACIP_A2A_PROVIDER_COMMUNICATIONS_v0.91.6.md` |
 | D-07 | C-SDLC cards should remain authoritative while owned GitHub issue/PR surfaces converge into deterministic managed projections. | proposed | Partial projection without explicit ownership allows PR/issue drift to become workflow truth by accident. | `#3935` should define which surfaces are managed projections, drift-checked mirrors, linked surfaces, or card-local only. | `review/CSDLC_GITHUB_PROJECTION_CONVERGENCE_REVIEW_3935.md` |
-| D-08 | v0.91.6 release-tail architecture decisions should be captured as proposed ADR candidates before closeout. | routed | The milestone established durable boundaries for SSM, validation selection, GitHub projection ownership, runtime soak, scheduler authority, lockfile discipline, provider/model suitability, and public prompt records. The candidate packet and retained reviews are complete; acceptance/defer decisions are routed to `#4476`. | Creates a reviewable ADR packet and candidate draft set without silently accepting new ADRs. `#4476` owns the explicit promote, refresh-then-promote, defer, or evidence-gate disposition pass. | `ADR_MINI_SPRINT_PACKET_v0.91.6.md`; `review/V0916_ADR_DOCS_REVIEW_4383.md`; `../../architecture/adr/CANDIDATE_ADRS.md` |
+| D-08 | v0.91.6 release-tail architecture decisions should be captured as proposed ADR candidates before closeout. | accepted_with_deferrals | The milestone established durable boundaries for SSM, validation selection, GitHub projection ownership, runtime soak, scheduler authority, lockfile discipline, provider/model suitability, and public prompt records. `#4476` accepted ADR 0029, ADR 0032, ADR 0033, ADR 0035, ADR 0036, ADR 0037, ADR 0038, ADR 0039, ADR 0041, and ADR 0042; ADR 0030, ADR 0031, ADR 0034, and ADR 0040 remain deferred with active routes/evidence gates. | Architecture decisions are explicit without silently accepting evidence-incomplete candidates. | `ADR_MINI_SPRINT_PACKET_v0.91.6.md`; `review/V0916_ADR_DOCS_REVIEW_4383.md`; `../../architecture/adr/CANDIDATE_ADRS.md`; `../../adr/0029-c-sdlc-default-software-development-lane.md`; `../../adr/0042-public-prompt-records-publication-boundary.md` |
 
 ## Open Questions
 
@@ -35,9 +35,10 @@ Capture significant first-tranche bridge decisions and open questions.
 - Which public prompt-record export checks must run locally versus in CI?
 - Which Observatory/Unity surfaces count as proof versus rehearsal?
 - Which v0.91.6 ADR candidates should be promoted immediately versus carried
-  as explicitly deferred v0.91.7/v0.92 architecture work? Routed to `#4476`
-  with a candidate-by-candidate disposition table in
-  `ADR_MINI_SPRINT_PACKET_v0.91.6.md` and `../../architecture/adr/CANDIDATE_ADRS.md`.
+  as explicitly deferred v0.91.7/v0.92 architecture work? Resolved by `#4476`.
+  Acceptance-ready records were promoted into `docs/adr/`; ADR 0030, ADR
+  0031, ADR 0034, and ADR 0040 remain deferred with active routes/evidence
+  gates.
 
 ## Exit Criteria
 
