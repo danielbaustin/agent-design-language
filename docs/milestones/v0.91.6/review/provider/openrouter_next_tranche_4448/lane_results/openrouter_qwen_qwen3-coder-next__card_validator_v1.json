@@ -1,0 +1,39 @@
+{
+  "schema_version": "provider_communication.v1",
+  "route": {
+    "provider_kind": "hosted",
+    "provider": "openrouter",
+    "runtime_surface": "hosted_api",
+    "provider_model_id": "qwen/qwen3-coder-next",
+    "credential_ref": "env:OPENROUTER_API_KEY",
+    "source_registry": "v0.91.6.deepseek.suitability"
+  },
+  "model_identity": {
+    "provider_kind": "hosted",
+    "provider": "openrouter",
+    "model_ref": "qwen/qwen3-coder-next",
+    "provider_model_id": "qwen/qwen3-coder-next-2025-02-03",
+    "runtime_surface": "hosted_api",
+    "identity_strength": "provider_asserted",
+    "observed_at": "unix:1",
+    "source_registry": "v0.91.6.deepseek.suitability"
+  },
+  "attempts": [
+    {
+      "attempt_index": 1,
+      "started_at": "unix:1782183636",
+      "duration_ms": 1080,
+      "status": "ok",
+      "retryable": false,
+      "http_status": 200,
+      "raw_response_excerpt": "[redacted response len=313 sha256=1d957bd249a1]"
+    }
+  ],
+  "final_status": "ok",
+  "duration_ms": 1080,
+  "request_id": "openrouter:qwen/qwen3-coder-next__card_validator_v1",
+  "output_text_excerpt": "[redacted response len=313 sha256=1d957bd249a1]",
+  "artifact_ref": "<tmp>/result.json@dc13df83de897137",
+  "output_text_chars": 313,
+  "output_text_digest": "sha256:1d957bd249a1"
+}

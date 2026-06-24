@@ -1,0 +1,187 @@
+{
+  "panel_id": "openrouter_next_tranche_4448",
+  "issue": 4448,
+  "panel_ref": "docs/milestones/v0.91.6/review/provider/C_SDLC_AGENT_SUITABILITY_PANEL_4097.md",
+  "packet_title": "OpenRouter Next Tranche Suitability Proof",
+  "packet_filename_prefix": "OPENROUTER_NEXT_TRANCHE_SUITABILITY_PROOF",
+  "state_filename_prefix": "openrouter_next_tranche_suitability_state",
+  "scope_summary": "This packet screens one bounded next-tranche OpenRouter model set to decide which families deserve local Ollama follow-up for advisory C-SDLC roles.",
+  "source_evidence": [
+    "docs/milestones/v0.91.6/review/provider/C_SDLC_AGENT_SUITABILITY_PANEL_4097.md",
+    "docs/milestones/v0.91.6/features/PROVIDER_MODEL_RELIABILITY_v0.91.6.md",
+    "docs/milestones/v0.91.6/review/provider/CURRENT_MODEL_SUITABILITY_MINI_SPRINT_CLOSEOUT_4158.md",
+    "docs/milestones/v0.91.6/review/sprint_execution_packets/V0916_SEP_LOCAL_AGENT_ACCELERATION_MINI_SPRINT_4069.md"
+  ],
+  "non_claims": [
+    "does_not_claim_broad_model_intelligence",
+    "does_not_grant_merge_closeout_or_repo_mutation_authority",
+    "does_not_prove_native_provider_or_local_ollama_parity_from_openrouter_results",
+    "does_not_replace_local_follow_up_proof"
+  ],
+  "packet_non_claim_lines": [
+    "This packet does not prove broad model superiority or benchmark rank.",
+    "This packet does not generalize an OpenRouter route into native-provider or local-Ollama equivalence.",
+    "This packet records advisory-role suitability only and grants no workflow authority."
+  ],
+  "credential_loaders": [
+    {
+      "env_name": "OPENROUTER_API_KEY",
+      "key_file": "$HOME/keys/openrouter.key"
+    }
+  ],
+  "tasks": [
+    {
+      "task_id": "watcher_state_v1",
+      "required_headings": ["Status", "Evidence", "Next-Step"],
+      "allowed_statuses": ["ready", "pending", "blocked", "action_required"],
+      "preferred_status": "ready",
+      "required_terms": ["#4448", "#4429", "adl-wp-4448", "local shortlist"],
+      "prompt": "You are evaluating a bounded ADL workflow state. Use only the supplied facts.\nReturn markdown only with exactly these headings:\n# Status\n# Evidence\n# Next-Step\n\nRequirements:\n- # Status body must be exactly one of: ready, pending, blocked, action_required\n- Mention #4448 and #4429 in # Evidence\n- Mention adl-wp-4448 exactly once\n- Under # Next-Step mention the local shortlist\n- Do not claim merge, closeout, or file-write authority\n- Keep the response under 110 words\n\nFacts:\n- Issue #4448 is open and bound to worktree adl-wp-4448.\n- Issue #4429 established the prior OpenRouter current-model proof.\n- This tranche must record temperament, contract discipline, and a local shortlist.\n- No proof packet has been written yet."
+    },
+    {
+      "task_id": "card_validator_v1",
+      "required_headings": ["Findings", "Severity", "Non-Claims"],
+      "allowed_severities": ["P1", "P2"],
+      "preferred_severity": "P1",
+      "required_terms": ["contrad"],
+      "prompt": "Review the following supplied SOR excerpt only. Do not infer unseen repo state.\nReturn markdown only with exactly these headings:\n# Findings\n# Severity\n# Non-Claims\n\nRequirements:\n- Identify the contradiction in the excerpt\n- The # Severity body must be exactly P1 or P2\n- Under # Non-Claims say that only the supplied excerpt was reviewed\n- Do not invent files, commits, or PR state beyond the excerpt\n- Keep the response under 130 words\n\nExcerpt:\n- OpenRouter route output is useful only as route-specific evidence.\n- Local Ollama suitability is fully proven by this same route-specific packet.\n- Follow-up local proof has not been run yet.\n- Next action: create a local shortlist rather than claim parity."
+    },
+    {
+      "task_id": "review_findings_v1",
+      "required_headings": ["Findings", "Severity", "Routing", "Residual Risk"],
+      "allowed_severities": ["P2", "P3"],
+      "required_terms": ["openrouter"],
+      "critique_terms": ["scope drift", "provenance drift", "without empirical validation", "local follow-up is required", "route-specific boundaries"],
+      "overclaim_terms": [
+        "validated as equivalent",
+        "provenance alignment with local model family",
+        "route-specific evidence matches local family",
+        "local follow-up deemed unnecessary",
+        "evidence shows route equivalence",
+        "is validated as equivalent",
+        "equivalent proxy for local-model suitability",
+        "provenance drift is absent",
+        "no separate local follow-up is needed",
+        "openrouter runs prove local-model suitability",
+        "maps directly to the local family without deviation",
+        "route behaves as an equivalent proxy",
+        "scope alignment",
+        "scope drift is mitigated",
+        "functionally interchangeable",
+        "local follow-up unnecessary",
+        "not needed separately",
+        "supports local-model suitability",
+        "can be treated as equivalent",
+        "proves suitability equivalent",
+        "equivalent to local-model suitability",
+        "equivalent to local family",
+        "no separate routing adjustments required",
+        "local follow-up is integrated and not needed separately"
+      ],
+      "prompt": "Review the following supplied document excerpt only.\nReturn markdown only with exactly these headings:\n# Findings\n# Severity\n# Routing\n# Residual Risk\n\nRequirements:\n- Focus on scope/provenance drift, not coding quality\n- Mention OpenRouter route-specific evidence\n- Mention local follow-up exactly once\n- The # Severity body must be exactly P2 or P3\n- Under # Residual Risk include the exact phrase: no code-correctness claim\n- Keep the response under 140 words\n\nExcerpt:\nProof note:\n- These OpenRouter runs prove the same local-model suitability we would get from Ollama.\n- The route can be treated as equivalent to any matching local family.\n- No separate local follow-up packet is needed."
+    },
+    {
+      "task_id": "bounded_planner_v1",
+      "required_headings": ["Plan", "Blockers", "Assumptions", "Non-Claims"],
+      "expected_plan_steps": 4,
+      "required_terms": ["qwen", "devstral", "deepseek", "gemma", "llama", "blocked", "local shortlist", "no repo-mutation authority"],
+      "prompt": "Produce a bounded execution plan for issue #4448 only.\nReturn markdown only with exactly these headings:\n# Plan\n# Blockers\n# Assumptions\n# Non-Claims\n\nRequirements:\n- # Plan must contain exactly four numbered steps\n- Mention Qwen, Devstral, DeepSeek, Gemma, and Llama\n- Mention one bounded OpenRouter screening pass and one local shortlist\n- Mention that blocked outputs must be recorded explicitly\n- Under # Non-Claims say no repo-mutation authority\n- Keep the response under 150 words"
+    },
+    {
+      "task_id": "closeout_checker_v1",
+      "required_headings": ["Decision", "Reasons", "Missing Evidence"],
+      "allowed_decisions": ["safe_to_close", "needs_remediation", "blocked"],
+      "pass_decision": "needs_remediation",
+      "pass_terms": ["no pr or merge evidence", "no final proof packet"],
+      "conservative_decisions": ["blocked", "needs_remediation"],
+      "prompt": "Decide whether the supplied evidence is safe to close.\nReturn markdown only with exactly these headings:\n# Decision\n# Reasons\n# Missing Evidence\n\nRequirements:\n- # Decision body must be exactly one of: safe_to_close, needs_remediation, blocked\n- Mention that no PR or merge evidence is supplied\n- Mention that no final proof packet is supplied\n- Do not claim unseen CI or review state\n- Keep the response under 120 words\n\nSupplied evidence:\n- Issue #4448 is open.\n- The worktree is bound.\n- No PR has been published in the supplied evidence.\n- No final next-tranche proof packet has been supplied."
+    }
+  ],
+  "candidates": [
+    {
+      "candidate_id": "openrouter:qwen/qwen3-coder-next",
+      "provider_lane": "openrouter",
+      "provider_profile_ref": "unprofiled:openrouter:qwen/qwen3-coder-next",
+      "provider_family": "qwen",
+      "provider_spec_kind": "openrouter",
+      "provider": "openrouter",
+      "model_ref": "qwen/qwen3-coder-next",
+      "provider_model_id": "qwen/qwen3-coder-next",
+      "runtime_surface": "hosted_api",
+      "credential_source": "$HOME/keys/openrouter.key",
+      "credential_ref": "env:OPENROUTER_API_KEY",
+      "timeout_ms": 90000,
+      "local_follow_up_model": "qwen3:30b",
+      "local_follow_up_priority": "high",
+      "local_follow_up_rationale": "best direct path to a local coder/planner family with a practical footprint"
+    },
+    {
+      "candidate_id": "openrouter:mistralai/devstral-2512",
+      "provider_lane": "openrouter",
+      "provider_profile_ref": "unprofiled:openrouter:mistralai/devstral-2512",
+      "provider_family": "mistral",
+      "provider_spec_kind": "openrouter",
+      "provider": "openrouter",
+      "model_ref": "mistralai/devstral-2512",
+      "provider_model_id": "mistralai/devstral-2512",
+      "runtime_surface": "hosted_api",
+      "credential_source": "$HOME/keys/openrouter.key",
+      "credential_ref": "env:OPENROUTER_API_KEY",
+      "timeout_ms": 90000,
+      "local_follow_up_model": "devstral:24b",
+      "local_follow_up_priority": "high",
+      "local_follow_up_rationale": "purpose-built coding-agent family with an explicit local Ollama route"
+    },
+    {
+      "candidate_id": "openrouter:deepseek/deepseek-v3.2",
+      "provider_lane": "openrouter",
+      "provider_profile_ref": "unprofiled:openrouter:deepseek/deepseek-v3.2",
+      "provider_family": "deepseek",
+      "provider_spec_kind": "openrouter",
+      "provider": "openrouter",
+      "model_ref": "deepseek/deepseek-v3.2",
+      "provider_model_id": "deepseek/deepseek-v3.2",
+      "runtime_surface": "hosted_api",
+      "credential_source": "$HOME/keys/openrouter.key",
+      "credential_ref": "env:OPENROUTER_API_KEY",
+      "timeout_ms": 90000,
+      "local_follow_up_model": "deepseek-r1:14b",
+      "local_follow_up_priority": "medium",
+      "local_follow_up_rationale": "closest practical local family for bounded review and critique work"
+    },
+    {
+      "candidate_id": "openrouter:google/gemma-4-31b-it",
+      "provider_lane": "openrouter",
+      "provider_profile_ref": "unprofiled:openrouter:google/gemma-4-31b-it",
+      "provider_family": "gemma",
+      "provider_spec_kind": "openrouter",
+      "provider": "openrouter",
+      "model_ref": "google/gemma-4-31b-it",
+      "provider_model_id": "google/gemma-4-31b-it",
+      "runtime_surface": "hosted_api",
+      "credential_source": "$HOME/keys/openrouter.key",
+      "credential_ref": "env:OPENROUTER_API_KEY",
+      "timeout_ms": 90000,
+      "local_follow_up_model": "gemma4:26b",
+      "local_follow_up_priority": "medium",
+      "local_follow_up_rationale": "reasonable bounded-review candidate with an already referenced local family"
+    },
+    {
+      "candidate_id": "openrouter:meta-llama/llama-3.3-70b-instruct",
+      "provider_lane": "openrouter",
+      "provider_profile_ref": "unprofiled:openrouter:meta-llama/llama-3.3-70b-instruct",
+      "provider_family": "llama",
+      "provider_spec_kind": "openrouter",
+      "provider": "openrouter",
+      "model_ref": "meta-llama/llama-3.3-70b-instruct",
+      "provider_model_id": "meta-llama/llama-3.3-70b-instruct",
+      "runtime_surface": "hosted_api",
+      "credential_source": "$HOME/keys/openrouter.key",
+      "credential_ref": "env:OPENROUTER_API_KEY",
+      "timeout_ms": 90000,
+      "local_follow_up_model": "llama3.3:70b",
+      "local_follow_up_priority": "low",
+      "local_follow_up_rationale": "useful open baseline, but local follow-up is expensive and may stay optional"
+    }
+  ]
+}

@@ -64,7 +64,10 @@ Minimum init contract:
 ## 2) Confirm GitHub Issue Exists And Inspect Live Issue Truth
 
 Live GitHub issue operations use the ADL typed GitHub transport. Configure one
-shared token source for the ADL command environment without printing the token:
+shared token source for the ADL command environment without printing the token.
+When no explicit environment override is present, the resolver also accepts the
+operator-approved default token file at `$HOME/keys/github.token`. Explicit
+environment sources remain higher-precedence. Supported explicit sources:
 `GITHUB_TOKEN`, `GH_TOKEN`, `ADL_GITHUB_TOKEN_FILE`, or
 `ADL_GITHUB_TOKEN_KEYCHAIN_SERVICE`. The keychain source uses the macOS
 `security find-generic-password` command; when using it, optionally set
@@ -149,11 +152,25 @@ the child issue number, and the concrete bounded session objective.
 
 Use `update_goal` only for truthful terminal state:
 
-- `complete` when the current session objective is actually achieved, including
-  publication-to-review handoff when opening or updating the PR was the bounded
-  session objective
+- `complete` when the current session objective's declared terminal boundary is
+  actually satisfied
+- handoff-only completion is allowed only when the goal explicitly declares a
+  setup-only, review-only, or similar handoff boundary
+- default tracked implementation goals stay active while the PR is red,
+  pending, conflicted, draft, missing required checks, or missing current
+  SRP/SOR truth
 - `blocked` only when the repeated blocking threshold is met and meaningful
   progress cannot continue without user input or an external state change
+
+When the completion boundary matters, evaluate and record it explicitly with:
+
+```bash
+python3 adl/tools/check_issue_goal_terminal_state.py \
+  --goal-kind implementation \
+  --pr-state open \
+  --checks-state green \
+  --review-truth current
+```
 
 When issue-local time/token accounting matters, preserve a durable local goal
 snapshot from the host Codex session transcript before the live goal disappears.

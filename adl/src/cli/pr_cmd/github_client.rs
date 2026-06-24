@@ -231,7 +231,7 @@ fn parse_disable_gh_fallback(raw: Option<&str>) -> Result<bool, AdlGithubClientE
 }
 
 fn missing_token_message() -> &'static str {
-    "octocrab GitHub transport requires GITHUB_TOKEN, GH_TOKEN, ADL_GITHUB_TOKEN_FILE, or ADL_GITHUB_TOKEN_KEYCHAIN_SERVICE"
+    "octocrab GitHub transport requires GITHUB_TOKEN, GH_TOKEN, ADL_GITHUB_TOKEN_FILE, ADL_GITHUB_TOKEN_KEYCHAIN_SERVICE, or an approved default token file at $HOME/keys/github.token"
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]

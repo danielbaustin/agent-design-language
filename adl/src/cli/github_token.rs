@@ -10,6 +10,7 @@ pub(crate) const GH_TOKEN_ENV: &str = "GH_TOKEN";
 pub(crate) const ADL_GITHUB_TOKEN_FILE_ENV: &str = "ADL_GITHUB_TOKEN_FILE";
 pub(crate) const ADL_GITHUB_TOKEN_KEYCHAIN_SERVICE_ENV: &str = "ADL_GITHUB_TOKEN_KEYCHAIN_SERVICE";
 pub(crate) const ADL_GITHUB_TOKEN_KEYCHAIN_ACCOUNT_ENV: &str = "ADL_GITHUB_TOKEN_KEYCHAIN_ACCOUNT";
+pub(crate) const DEFAULT_GITHUB_TOKEN_FILE_RELATIVE_PATH: &str = "keys/github.token";
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub(crate) enum GithubTokenSource {
@@ -17,6 +18,7 @@ pub(crate) enum GithubTokenSource {
     GhToken,
     TokenFile,
     Keychain,
+    DefaultTokenFile,
 }
 
 impl GithubTokenSource {
@@ -26,6 +28,7 @@ impl GithubTokenSource {
             Self::GhToken => GH_TOKEN_ENV,
             Self::TokenFile => ADL_GITHUB_TOKEN_FILE_ENV,
             Self::Keychain => ADL_GITHUB_TOKEN_KEYCHAIN_SERVICE_ENV,
+            Self::DefaultTokenFile => "$HOME/keys/github.token",
         }
     }
 
@@ -75,6 +78,7 @@ struct TokenResolutionKey {
     token_file: Option<String>,
     keychain_service: Option<String>,
     keychain_account: Option<String>,
+    implicit_default_token_file: Option<String>,
 }
 
 #[derive(Clone)]
@@ -116,14 +120,64 @@ fn resolve_github_token_from_env(reader: &dyn TokenReader) -> Result<Option<Reso
 
 impl TokenResolutionKey {
     fn from_env() -> Self {
+        let github_token = std::env::var(GITHUB_TOKEN_ENV)
+            .ok()
+            .map(|value| value.trim().to_string())
+            .filter(|value| !value.is_empty());
+        let gh_token = std::env::var(GH_TOKEN_ENV)
+            .ok()
+            .map(|value| value.trim().to_string())
+            .filter(|value| !value.is_empty());
+        let token_file = std::env::var(ADL_GITHUB_TOKEN_FILE_ENV)
+            .ok()
+            .map(|value| value.trim().to_string())
+            .filter(|value| !value.is_empty());
+        let keychain_service = std::env::var(ADL_GITHUB_TOKEN_KEYCHAIN_SERVICE_ENV)
+            .ok()
+            .map(|value| value.trim().to_string())
+            .filter(|value| !value.is_empty());
+        let keychain_account = std::env::var(ADL_GITHUB_TOKEN_KEYCHAIN_ACCOUNT_ENV)
+            .ok()
+            .map(|value| value.trim().to_string())
+            .filter(|value| !value.is_empty());
         Self {
-            github_token: std::env::var(GITHUB_TOKEN_ENV).ok(),
-            gh_token: std::env::var(GH_TOKEN_ENV).ok(),
-            token_file: std::env::var(ADL_GITHUB_TOKEN_FILE_ENV).ok(),
-            keychain_service: std::env::var(ADL_GITHUB_TOKEN_KEYCHAIN_SERVICE_ENV).ok(),
-            keychain_account: std::env::var(ADL_GITHUB_TOKEN_KEYCHAIN_ACCOUNT_ENV).ok(),
+            github_token,
+            gh_token,
+            token_file,
+            keychain_service,
+            keychain_account,
+            implicit_default_token_file: default_github_token_file_path()
+                .filter(|_| {
+                    std::env::var(GITHUB_TOKEN_ENV)
+                        .ok()
+                        .map(|value| value.trim().to_string())
+                        .filter(|value| !value.is_empty())
+                        .is_none()
+                        && std::env::var(GH_TOKEN_ENV)
+                            .ok()
+                            .map(|value| value.trim().to_string())
+                            .filter(|value| !value.is_empty())
+                            .is_none()
+                        && std::env::var(ADL_GITHUB_TOKEN_FILE_ENV)
+                            .ok()
+                            .map(|value| value.trim().to_string())
+                            .filter(|value| !value.is_empty())
+                            .is_none()
+                        && std::env::var(ADL_GITHUB_TOKEN_KEYCHAIN_SERVICE_ENV)
+                            .ok()
+                            .map(|value| value.trim().to_string())
+                            .filter(|value| !value.is_empty())
+                            .is_none()
+                })
+                .map(|path| path.display().to_string()),
         }
     }
+}
+
+fn default_github_token_file_path() -> Option<PathBuf> {
+    let home = std::env::var_os("HOME")?;
+    let path = PathBuf::from(home).join(DEFAULT_GITHUB_TOKEN_FILE_RELATIVE_PATH);
+    path.is_file().then_some(path)
 }
 
 fn resolve_uncached(
@@ -170,6 +224,18 @@ fn resolve_uncached(
                 .filter(|v| !v.is_empty()),
         )?;
         return Ok(ResolvedGithubToken::new(value, GithubTokenSource::Keychain));
+    }
+    if let Some(path) = key
+        .implicit_default_token_file
+        .as_deref()
+        .map(str::trim)
+        .filter(|v| !v.is_empty())
+    {
+        let value = reader.read_token_file(&PathBuf::from(path))?;
+        return Ok(ResolvedGithubToken::new(
+            value,
+            GithubTokenSource::DefaultTokenFile,
+        ));
     }
     Ok(None)
 }
@@ -264,6 +330,9 @@ mod tests {
     use crate::cli::tests::env_lock as cli_env_lock;
     use std::cell::Cell;
     use std::cell::RefCell;
+    use std::sync::atomic::{AtomicUsize, Ordering};
+
+    static TEMP_HOME_COUNTER: AtomicUsize = AtomicUsize::new(0);
 
     struct StubReader {
         file_value: &'static str,
@@ -312,6 +381,18 @@ mod tests {
             std::env::remove_var(ADL_GITHUB_TOKEN_KEYCHAIN_ACCOUNT_ENV);
         }
         *TOKEN_CACHE.get_or_init(|| Mutex::new(None)).lock().unwrap() = None;
+    }
+
+    fn temp_home_dir() -> PathBuf {
+        let unique = TEMP_HOME_COUNTER.fetch_add(1, Ordering::Relaxed);
+        let path = std::env::temp_dir().join(format!(
+            "adl-github-token-test-{}-{}",
+            std::process::id(),
+            unique
+        ));
+        let _ = std::fs::remove_dir_all(&path);
+        std::fs::create_dir_all(&path).expect("temp home dir");
+        path
     }
 
     #[test]
@@ -407,5 +488,98 @@ mod tests {
         assert!(text.contains("ordinary"));
         assert!(text.contains("{\"token\":\"<redacted>\"}"));
         assert!(text.contains("\"<redacted>\""));
+    }
+
+    #[test]
+    fn resolver_uses_default_token_file_when_no_explicit_source_is_configured() {
+        let _guard = env_lock();
+        clear_env();
+        let temp_home = temp_home_dir();
+        let original_home = std::env::var_os("HOME");
+        let keys_dir = temp_home.join("keys");
+        std::fs::create_dir_all(&keys_dir).expect("keys dir");
+        let token_path = keys_dir.join("github.token");
+        std::fs::write(&token_path, "default-token\n").expect("token file");
+        let reader = StubReader::new("default-file-token", "keychain-token");
+        unsafe {
+            std::env::set_var("HOME", &temp_home);
+        }
+
+        let token = resolve_github_token_from_env(&reader).unwrap().unwrap();
+        assert_eq!(token.value(), "default-file-token");
+        assert_eq!(token.source(), GithubTokenSource::DefaultTokenFile);
+        assert_eq!(reader.file_reads.get(), 1);
+        assert_eq!(reader.keychain_reads.get(), 0);
+        clear_env();
+        unsafe {
+            match original_home {
+                Some(ref value) => std::env::set_var("HOME", value),
+                None => std::env::remove_var("HOME"),
+            }
+        }
+        let _ = std::fs::remove_dir_all(temp_home);
+    }
+
+    #[test]
+    fn resolver_prefers_explicit_keychain_over_implicit_default_file() {
+        let _guard = env_lock();
+        clear_env();
+        let temp_home = temp_home_dir();
+        let original_home = std::env::var_os("HOME");
+        let keys_dir = temp_home.join("keys");
+        std::fs::create_dir_all(&keys_dir).expect("keys dir");
+        std::fs::write(keys_dir.join("github.token"), "default-token\n").expect("token file");
+        let reader = StubReader::new("default-file-token", "keychain-token");
+        unsafe {
+            std::env::set_var("HOME", &temp_home);
+            std::env::set_var(ADL_GITHUB_TOKEN_KEYCHAIN_SERVICE_ENV, "adl-github-token");
+        }
+
+        let token = resolve_github_token_from_env(&reader).unwrap().unwrap();
+        assert_eq!(token.value(), "keychain-token");
+        assert_eq!(token.source(), GithubTokenSource::Keychain);
+        assert_eq!(reader.file_reads.get(), 0);
+        assert_eq!(reader.keychain_reads.get(), 1);
+        clear_env();
+        unsafe {
+            match original_home {
+                Some(ref value) => std::env::set_var("HOME", value),
+                None => std::env::remove_var("HOME"),
+            }
+        }
+        let _ = std::fs::remove_dir_all(temp_home);
+    }
+
+    #[test]
+    fn resolver_treats_blank_explicit_values_as_absent_and_falls_back_to_default_file() {
+        let _guard = env_lock();
+        clear_env();
+        let temp_home = temp_home_dir();
+        let original_home = std::env::var_os("HOME");
+        let keys_dir = temp_home.join("keys");
+        std::fs::create_dir_all(&keys_dir).expect("keys dir");
+        std::fs::write(keys_dir.join("github.token"), "default-token\n").expect("token file");
+        let reader = StubReader::new("default-file-token", "keychain-token");
+        unsafe {
+            std::env::set_var("HOME", &temp_home);
+            std::env::set_var(GITHUB_TOKEN_ENV, "   ");
+            std::env::set_var(GH_TOKEN_ENV, "");
+            std::env::set_var(ADL_GITHUB_TOKEN_FILE_ENV, " ");
+            std::env::set_var(ADL_GITHUB_TOKEN_KEYCHAIN_SERVICE_ENV, "");
+        }
+
+        let token = resolve_github_token_from_env(&reader).unwrap().unwrap();
+        assert_eq!(token.value(), "default-file-token");
+        assert_eq!(token.source(), GithubTokenSource::DefaultTokenFile);
+        assert_eq!(reader.file_reads.get(), 1);
+        assert_eq!(reader.keychain_reads.get(), 0);
+        clear_env();
+        unsafe {
+            match original_home {
+                Some(ref value) => std::env::set_var("HOME", value),
+                None => std::env::remove_var("HOME"),
+            }
+        }
+        let _ = std::fs::remove_dir_all(temp_home);
     }
 }

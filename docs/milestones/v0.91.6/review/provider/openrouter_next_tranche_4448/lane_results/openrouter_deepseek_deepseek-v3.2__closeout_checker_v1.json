@@ -1,0 +1,39 @@
+{
+  "schema_version": "provider_communication.v1",
+  "route": {
+    "provider_kind": "hosted",
+    "provider": "openrouter",
+    "runtime_surface": "hosted_api",
+    "provider_model_id": "deepseek/deepseek-v3.2",
+    "credential_ref": "env:OPENROUTER_API_KEY",
+    "source_registry": "v0.91.6.deepseek.suitability"
+  },
+  "model_identity": {
+    "provider_kind": "hosted",
+    "provider": "openrouter",
+    "model_ref": "deepseek/deepseek-v3.2",
+    "provider_model_id": "deepseek/deepseek-v3.2-20251201",
+    "runtime_surface": "hosted_api",
+    "identity_strength": "provider_asserted",
+    "observed_at": "unix:1",
+    "source_registry": "v0.91.6.deepseek.suitability"
+  },
+  "attempts": [
+    {
+      "attempt_index": 1,
+      "started_at": "unix:1782183672",
+      "duration_ms": 2297,
+      "status": "ok",
+      "retryable": false,
+      "http_status": 200,
+      "raw_response_excerpt": "[redacted response len=250 sha256=71af62b4b734]"
+    }
+  ],
+  "final_status": "ok",
+  "duration_ms": 2297,
+  "request_id": "openrouter:deepseek/deepseek-v3.2__closeout_checker_v1",
+  "output_text_excerpt": "[redacted response len=250 sha256=71af62b4b734]",
+  "artifact_ref": "<tmp>/result.json@03be19f2b9d8ac24",
+  "output_text_chars": 250,
+  "output_text_digest": "sha256:71af62b4b734"
+}

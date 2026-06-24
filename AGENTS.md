@@ -34,7 +34,10 @@ These rules are mandatory for ADL issue work.
    - GitHub operations should use the shared token resolver. When an explicit
      token-file source is needed, use
      `ADL_GITHUB_TOKEN_FILE=$HOME/keys/github.token`. Never print, copy,
-     commit, or expose the token contents.
+     commit, or expose the token contents. When no explicit override is set,
+     repo-native GitHub commands may also discover the operator-approved
+     default token file at `$HOME/keys/github.token`; explicit environment
+     sources still take precedence.
    - Provider credentials, when available, may also be sourced from
      operator-approved files outside the repo under `$HOME/keys/`. Do not scan,
      print, copy, commit, or expose that directory or file contents. Map the
@@ -90,10 +93,13 @@ These rules are mandatory for ADL issue work.
      objective so token accounting, completion, and blocked-state reporting stay
      tied to the tracked issue.
    - Use `update_goal` only for truthful terminal state changes:
-     `complete` when the current session's bounded objective is actually
-     achieved, including a truthful handoff into review/wait state after
-     publication when that was the session goal, or `blocked` only when the
-     repeated blocking threshold is met and meaningful progress cannot continue.
+     `complete` when the current session's declared terminal boundary is
+     actually satisfied. Handoff-only completion is allowed only when the goal
+     explicitly declares a handoff boundary such as setup-only or review-only
+     publication. Default tracked implementation goals stay active while the PR
+     is red, pending, conflicted, draft, missing required checks, or missing
+     current SRP/SOR truth. Use `blocked` only when the repeated blocking
+     threshold is met and meaningful progress cannot continue.
 5. Always review work with a subagent before opening the PR.
    - Run a bounded review subagent over the changed work product.
    - Fix all actionable findings immediately before publication.

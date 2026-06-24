@@ -1,23 +1,27 @@
 # v0.91.6 ADR Mini-Sprint Packet
 
-Issue: `#4324`
-Status: `proposed_adr_packet`
+Issue: `#4324`, dispositioned by `#4476`
+Status: `candidate_packet_dispositioned`
 Milestone: `v0.91.6`
 
 ## Purpose
 
 This packet records the architecture decision work needed before the v0.91.6
-release tail closes. It is a curation and review surface, not an acceptance
-surface.
+release tail closes. It began as a curation and review surface. Issue `#4476`
+then dispositioned the candidate set and promoted the acceptance-ready records
+into `docs/adr/`.
 
-The entries below remain proposed ADR candidates until they are reviewed and
-promoted into `docs/adr/`. This packet must not be read as silently accepting
-new architecture decisions.
+The entries below are not silently accepted by this packet. Accepted records
+are explicitly listed in `docs/adr/`; deferred candidates remain visible with
+their active routes.
+
+Accepted ADRs live in `docs/adr/`. Candidate draft copies and candidate
+catalogs live in `docs/architecture/adr/`.
 
 `#4416` adds a retained content-review packet for this candidate set at
 `docs/milestones/v0.91.6/review/V0916_ADR_CANDIDATE_CONTENT_REVIEW_4416.md`.
-That review repairs current-state sprint truth and records promotion gates, but
-it still does not accept any ADR.
+That review repairs current-state sprint truth and records promotion gates.
+Issue `#4476` records the final v0.91.6 disposition.
 
 ## Scope
 
@@ -32,16 +36,16 @@ public-record, or GitHub projection behavior.
 
 ## Required v0.91.6 ADR Candidates
 
-| Candidate | Proposed status | Why it is needed before closeout | Primary evidence |
+| Candidate | Disposition | Why it is needed before closeout | Primary evidence |
 | --- | --- | --- | --- |
-| [ADR 0035: Local Polis SSM Operations Boundary](../../architecture/adr/0035-local-polis-ssm-operations-boundary.md) | `candidate_required` | `#4109` and `#4113` establish AWS SSM as an operations and observability bridge, not a source of polis authority. This boundary should become durable before SSM expands to `nessus.local`, `opticon.local`, edge nodes, or non-AWS clouds. | `review/security/LOCAL_POLIS_SSM_OPERATIONS_BRIDGE_4109.md`; `review/security/LOCAL_POLIS_SSM_PROOF_4113.md` |
-| [ADR 0036: Validation Lane Selector / PVF Test-Cost Policy](../../architecture/adr/0036-validation-lane-selector-pvf-test-cost-policy.md) | `candidate_required` | v0.91.6 made focused validation selection project-critical after the test surface expanded. The architecture decision should lock the rule that normal PR work runs the smallest deterministic proving lane, while ambiguous and release-gate surfaces fail closed or escalate. | `docs/architecture/VALIDATION_LANE_SELECTOR.md`; `review/V0916_VALIDATION_MANAGER_TEST_TAX_MINI_SPRINT_REVIEW_4212.md`; `review/PVF_LONG_VALIDATION_LANE_INDEX_4223.md` |
-| [ADR 0037: GitHub/C-SDLC Projection Ownership](../../architecture/adr/0037-github-csdlc-projection-ownership.md) | `candidate_required` | `#4047` classified GitHub surfaces as managed projections, drift-checked projections, linked external state, card-local truth, or deferred surfaces. That distinction is now architecture, not just a report. | `review/github_projection/GITHUB_CSDLC_PROJECTION_MAP_4047.md`; `review/CSDLC_GITHUB_PROJECTION_CONVERGENCE_REVIEW_3935.md` |
-| [ADR 0038: Runtime Integration Soak Boundary](../../architecture/adr/0038-runtime-integration-soak-boundary.md) | `candidate_required` | The milestone explicitly rejects the claim that separately implemented pieces equal an integrated runtime. Soak #1 and Soak #2 need a durable decision boundary before v0.92 runtime-coherence claims. | `RUNTIME_INTEGRATION_SOAK_SPRINT_v0.91.6.md`; `RUNTIME_FIRE_UP_PLAN_v0.91.6.md`; `features/TOKIO_RUNTIME_SUBSTRATE_v0.91.6.md` |
-| [ADR 0039: Cognitive Scheduler v1 Authority Boundary](../../architecture/adr/0039-cognitive-scheduler-v1-authority-boundary.md) | `candidate_required` | `#4107` implemented deterministic lane-selection evidence, but did not implement timed execution, GitHub mutation, provider choice authority, or autonomous sprint conduction. That non-authority boundary should be durable before later scheduler expansion. | `review/scheduler/COGNITIVE_SCHEDULER_V1_4107.md`; `review/scheduler/SCHEDULER_ECONOMICS_INPUTS_4106.md`; `features/COGNITIVE_SCHEDULER_v0.91.6.md` |
-| [ADR 0040: Workflow Lockfile Discipline](../../architecture/adr/0040-workflow-lockfile-discipline.md) | `candidate_required_needs_source_packet` | The `#4306` incident showed lifecycle tooling can create large, misleading validation cost if dependency resolution mutates `Cargo.lock` implicitly. The durable decision should require locked lifecycle fallback and explicit lockfile artifacts, but the release tail still needs a retained local source packet for the merged fix before promotion. | `review/V0916_COMPLETED_SPRINT_REVIEW_FINDINGS_RESOLUTION_PLAN_4303.md` |
-| [ADR 0041: Provider/Model Suitability Boundary v2](../../architecture/adr/0041-provider-model-suitability-boundary-v2.md) | `candidate_required` | WP-05 separated provider availability, capability profiles, role suitability, model reliability, and advisory role-provider authority. Existing ADR 0004 covers provider profiles, but v0.91.6 adds model-role suitability and multi-agent readiness evidence boundaries. | `review/provider/WP05_PROVIDER_MINI_SPRINT_CLOSEOUT_3970.md`; `features/PROVIDER_MODEL_RELIABILITY_v0.91.6.md`; `review/provider/PROVIDER_RELIABILITY_CLOSEOUT_MATRIX_4012.md` |
-| [ADR 0042: Public Prompt Records Publication Boundary](../../architecture/adr/0042-public-prompt-records-publication-boundary.md) | `candidate_required` | WP-04 established that `.adl` authoring records are not automatically public-safe. Public consumption requires export contract, redaction, validation, indexing, and security/CAV handoff rules. | `features/PUBLIC_PROMPT_RECORDS_EXPORT_v0.91.6.md`; `review/public_prompt_records/PUBLIC_PROMPT_RECORDS_DISTRIBUTION_CLOSEOUT_4006.md`; `review/public_prompt_records/PUBLIC_PROMPT_RECORDS_REDACTION_PUBLICATION_SAFETY_4003.md` |
+| [ADR 0035: Local Polis SSM Operations Boundary](../../architecture/adr/0035-local-polis-ssm-operations-boundary.md) | accepted as `docs/adr/0035-local-polis-ssm-operations-boundary.md` | `#4109` and `#4113` establish AWS SSM as an operations and observability bridge, not a source of polis authority. This boundary should become durable before SSM expands to `nessus.local`, `opticon.local`, edge nodes, or non-AWS clouds. | `review/security/LOCAL_POLIS_SSM_OPERATIONS_BRIDGE_4109.md`; `review/security/LOCAL_POLIS_SSM_PROOF_4113.md` |
+| [ADR 0036: Validation Lane Selector / PVF Test-Cost Policy](../../architecture/adr/0036-validation-lane-selector-pvf-test-cost-policy.md) | accepted as `docs/adr/0036-validation-lane-selector-pvf-test-cost-policy.md` | v0.91.6 made focused validation selection project-critical after the test surface expanded. The architecture decision should lock the rule that normal PR work runs the smallest deterministic proving lane, while ambiguous and release-gate surfaces fail closed or escalate. | `docs/architecture/VALIDATION_LANE_SELECTOR.md`; `review/V0916_VALIDATION_MANAGER_TEST_TAX_MINI_SPRINT_REVIEW_4212.md`; `review/PVF_LONG_VALIDATION_LANE_INDEX_4223.md` |
+| [ADR 0037: GitHub/C-SDLC Projection Ownership](../../architecture/adr/0037-github-csdlc-projection-ownership.md) | accepted as `docs/adr/0037-github-csdlc-projection-ownership.md` | `#4047` classified GitHub surfaces as managed projections, drift-checked projections, linked external state, card-local truth, or deferred surfaces. That distinction is now architecture, not just a report. | `review/github_projection/GITHUB_CSDLC_PROJECTION_MAP_4047.md`; `review/CSDLC_GITHUB_PROJECTION_CONVERGENCE_REVIEW_3935.md` |
+| [ADR 0038: Runtime Integration Soak Boundary](../../architecture/adr/0038-runtime-integration-soak-boundary.md) | accepted as `docs/adr/0038-runtime-integration-soak-boundary.md` | The milestone explicitly rejects the claim that separately implemented pieces equal an integrated runtime. Soak #1 and Soak #2 need a durable decision boundary before v0.92 runtime-coherence claims. | `RUNTIME_INTEGRATION_SOAK_SPRINT_v0.91.6.md`; `RUNTIME_FIRE_UP_PLAN_v0.91.6.md`; `features/TOKIO_RUNTIME_SUBSTRATE_v0.91.6.md` |
+| [ADR 0039: Cognitive Scheduler v1 Authority Boundary](../../architecture/adr/0039-cognitive-scheduler-v1-authority-boundary.md) | accepted as `docs/adr/0039-cognitive-scheduler-v1-authority-boundary.md` | `#4107` implemented deterministic lane-selection evidence, but did not implement timed execution, GitHub mutation, provider choice authority, or autonomous sprint conduction. That non-authority boundary should be durable before later scheduler expansion. | `review/scheduler/COGNITIVE_SCHEDULER_V1_4107.md`; `review/scheduler/SCHEDULER_ECONOMICS_INPUTS_4106.md`; `features/COGNITIVE_SCHEDULER_v0.91.6.md` |
+| [ADR 0040: Workflow Lockfile Discipline](../../architecture/adr/0040-workflow-lockfile-discipline.md) | deferred until evidence packet exists | The `#4306` incident showed lifecycle tooling can create large, misleading validation cost if dependency resolution mutates `Cargo.lock` implicitly. The durable decision should require locked lifecycle fallback and explicit lockfile artifacts, but the release tail still needs a retained local source packet for the merged fix before promotion. | `review/V0916_COMPLETED_SPRINT_REVIEW_FINDINGS_RESOLUTION_PLAN_4303.md` |
+| [ADR 0041: Provider/Model Suitability Boundary v2](../../architecture/adr/0041-provider-model-suitability-boundary-v2.md) | accepted as `docs/adr/0041-provider-model-suitability-boundary-v2.md` | WP-05 separated provider availability, capability profiles, role suitability, model reliability, and advisory role-provider authority. Existing ADR 0004 covers provider profiles, but v0.91.6 adds model-role suitability and multi-agent readiness evidence boundaries. | `review/provider/WP05_PROVIDER_MINI_SPRINT_CLOSEOUT_3970.md`; `features/PROVIDER_MODEL_RELIABILITY_v0.91.6.md`; `review/provider/PROVIDER_RELIABILITY_CLOSEOUT_MATRIX_4012.md` |
+| [ADR 0042: Public Prompt Records Publication Boundary](../../architecture/adr/0042-public-prompt-records-publication-boundary.md) | accepted as `docs/adr/0042-public-prompt-records-publication-boundary.md` | WP-04 established that `.adl` authoring records are not automatically public-safe. Public consumption requires export contract, redaction, validation, indexing, and security/CAV handoff rules. | `features/PUBLIC_PROMPT_RECORDS_EXPORT_v0.91.6.md`; `review/public_prompt_records/PUBLIC_PROMPT_RECORDS_DISTRIBUTION_CLOSEOUT_4006.md`; `review/public_prompt_records/PUBLIC_PROMPT_RECORDS_REDACTION_PUBLICATION_SAFETY_4003.md` |
 
 ## Candidate Summaries
 
@@ -58,7 +62,7 @@ The release-tail candidate ADR drafts now exist as proposed records:
 
 ## Child Review Issue Wave
 
-The proposed ADR drafts are tracked for review/promotion routing by this child
+The proposed ADR drafts were tracked for review/promotion routing by this child
 issue wave:
 
 | Issue | Candidate ADR | Review purpose |
@@ -72,8 +76,29 @@ issue wave:
 | `#4375` | ADR 0041: Provider/Model Suitability Boundary v2 | Confirm provider availability, capability, suitability, reliability, and advisory authority remain distinct. |
 | `#4376` | ADR 0042: Public Prompt Records Publication Boundary | Confirm public prompt records are reviewed projections, not raw `.adl` publication. |
 
-These child issues are review and promotion-routing surfaces. They do not mean
-the candidate ADRs are accepted.
+These child issues were review and promotion-routing surfaces. Final
+acceptance/defer truth is recorded by `#4476`.
+
+## Post-Review Candidate Disposition Route
+
+Issue `#4383` repaired the release-tail ADR routing truth after the retained
+candidate review packets landed. Issue `#4476` completed the
+acceptance/defer disposition pass.
+
+| Candidate | Final disposition | Target route or accepted record | Evidence note |
+| --- | --- | --- | --- |
+| ADR 0035: Local Polis SSM Operations Boundary | accepted | `docs/adr/0035-local-polis-ssm-operations-boundary.md` | SSM remains operations-plane authority only. |
+| ADR 0036: Validation Lane Selector / PVF Test-Cost Policy | accepted | `docs/adr/0036-validation-lane-selector-pvf-test-cost-policy.md` | Validation selector/PVF evidence supports deterministic focused validation and fail-closed escalation. |
+| ADR 0037: GitHub/C-SDLC Projection Ownership | accepted | `docs/adr/0037-github-csdlc-projection-ownership.md` | Current GitHub projection/convergence truth supports the ownership classes while leaving deferred automation visible. |
+| ADR 0038: Runtime Integration Soak Boundary | accepted | `docs/adr/0038-runtime-integration-soak-boundary.md` | Soak #1/#2 boundaries are accepted without claiming v0.92 runtime readiness. |
+| ADR 0039: Cognitive Scheduler v1 Authority Boundary | accepted | `docs/adr/0039-cognitive-scheduler-v1-authority-boundary.md` | Scheduler v1 remains planning/evidence only. |
+| ADR 0040: Workflow Lockfile Discipline | deferred until evidence | `v0.91.7` evidence packet route | Requires durable lockfile-discipline source packet or exact tracked files and validation proof before acceptance. |
+| ADR 0041: Provider/Model Suitability Boundary v2 | accepted | `docs/adr/0041-provider-model-suitability-boundary-v2.md` | Provider availability, capability, role suitability, reliability, failure modes, and advisory authority remain distinct. |
+| ADR 0042: Public Prompt Records Publication Boundary | accepted | `docs/adr/0042-public-prompt-records-publication-boundary.md` | Public prompt records remain reviewed/redacted/indexed projections, not raw `.adl` publication. |
+
+`#4476` is the ADR disposition issue. It accepted ADR 0035, ADR 0036, ADR
+0037, ADR 0038, ADR 0039, ADR 0041, and ADR 0042. It deferred ADR 0040 until
+the lockfile-discipline evidence packet is captured.
 
 ### Local Polis SSM Operations Boundary
 
@@ -167,14 +192,17 @@ of every historical `.adl` bundle.
 
 ## Existing Candidate ADR 0029-0034 Routing
 
-| Candidate | Current state | v0.91.6 recommendation | Rationale |
+These older C-SDLC candidates are dispositioned by `#4476` alongside the
+v0.91.6 release-tail candidates.
+
+| Candidate | Final disposition | Target route or accepted record | Rationale |
 | --- | --- | --- | --- |
-| ADR 0029: C-SDLC Default Software-Development Lane | proposed in `docs/architecture/adr/` | `promote_or_refresh_then_promote` | Root `AGENTS.md`, workflow-conductor usage, and v0.91.6 issue execution show this has become active architecture policy. Refresh with current v0.91.6 lifecycle/tooling evidence before acceptance. |
-| ADR 0030: Software Development Polis Actor Standing And Shard Ownership | proposed in `docs/architecture/adr/` | `defer_with_active_route` | Still important, but actor standing and shard ownership are not fully enforced enough to accept without a focused review. Keep as v0.91.7/v0.93 governance route. |
-| ADR 0031: C-SDLC Multi-Agent Parallel Execution Boundary | proposed in `docs/architecture/adr/` | `defer_with_active_route` | v0.91.6 used parallel sessions operationally, but durable multi-agent shard enforcement and integration review need more explicit evidence before acceptance. |
-| ADR 0032: Parallel Validation Fabric | proposed in `docs/architecture/adr/` | `promote_or_refresh_then_promote` | v0.91.6 validation-manager/test-tax work made PVF-style lane selection active project architecture. Refresh with `VALIDATION_LANE_SELECTOR.md` and `#4212` evidence before acceptance. |
-| ADR 0033: Merge Readiness And PR Gate Truth Boundary | proposed in `docs/architecture/adr/` | `promote_or_refresh_then_promote` | v0.91.6 closeout, review, projection, and lockfile incidents reinforce this as active architecture policy. Refresh with current issue lifecycle and validation-manager evidence. |
-| ADR 0034: C-SDLC Evidence Convergence, Signed Trace, And ObsMem Handoff | proposed in `docs/architecture/adr/` | `defer_with_active_route` | Evidence convergence is real, but signed trace and ObsMem handoff are not yet complete enough for acceptance. Keep routed to v0.91.7/v0.92 bridge work. |
+| ADR 0029: C-SDLC Default Software-Development Lane | accepted | `docs/adr/0029-c-sdlc-default-software-development-lane.md` | Root `AGENTS.md`, workflow-conductor usage, and v0.91.6 issue execution show this has become active architecture policy. |
+| ADR 0030: Software Development Polis Actor Standing And Shard Ownership | deferred | `v0.91.7`/`v0.93` governance | Actor standing and shard ownership are not fully enforced enough to accept yet. |
+| ADR 0031: C-SDLC Multi-Agent Parallel Execution Boundary | deferred | `v0.91.7` C-SDLC hardening | Durable multi-agent shard enforcement and integration review need stronger evidence before acceptance. |
+| ADR 0032: Parallel Validation Fabric | accepted | `docs/adr/0032-parallel-validation-fabric.md` | v0.91.6 validation-manager/test-tax work made PVF-style lane selection active project architecture. |
+| ADR 0033: Merge Readiness And PR Gate Truth Boundary | accepted | `docs/adr/0033-merge-readiness-and-pr-gate-truth-boundary.md` | v0.91.6 closeout, review, projection, and lockfile incidents reinforce this as active architecture policy. |
+| ADR 0034: C-SDLC Evidence Convergence, Signed Trace, And ObsMem Handoff | deferred | `v0.91.7`/`v0.92` bridge | Evidence convergence is real, but signed trace and ObsMem handoff are not complete enough for acceptance. |
 
 ## Deferred ADR Candidates
 
@@ -190,17 +218,16 @@ operator explicitly widens scope:
 
 ## Review Checklist
 
-- Proposed entries are not labeled as accepted.
+- Accepted entries are explicitly promoted into `docs/adr/`; deferred entries remain visible.
 - Every candidate cites tracked evidence.
 - No ADR claims v0.92 activation readiness.
 - No runtime, provider, SSM, GitHub, scheduler, or validation implementation is
   implied by this docs packet.
-- Existing accepted ADRs are not rewritten by this issue.
-- Candidate ADRs 0029-0034 are either promoted through a later explicit ADR
-  issue or left with visible deferred routing.
+- Existing accepted ADRs before ADR 0029 are not rewritten by this issue.
+- Candidate ADRs 0029-0034 are dispositioned by `#4476`.
 
 ## Closeout Position
 
-This packet is sufficient for `#4324` when it is linked from the v0.91.6
-decision log and from the candidate ADR catalog, and when focused docs
-validation plus bounded review confirm the packet is evidence-bound.
+This packet is dispositioned for `#4324`/`#4476`. Acceptance-ready ADRs are in
+`docs/adr/`; deferred candidates remain in `docs/architecture/adr/` with active
+routes.

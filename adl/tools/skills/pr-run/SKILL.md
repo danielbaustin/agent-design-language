@@ -193,6 +193,8 @@ After bind/readiness succeeds and before implementation starts:
 - treat goal creation as mandatory workflow state for tracked issue execution, not a nice-to-have reminder
 - if the current environment cannot create the session goal, stop and report that blocked state truthfully instead of proceeding as though the requirement was satisfied
 - reserve `update_goal status=complete` and `update_goal status=blocked` for truthful session-terminal states only
+- keep default tracked implementation goals active while the PR is red, pending, conflicted, draft, missing required checks, or missing current SRP/SOR truth
+- allow early completion only when the goal explicitly declares a handoff-only terminal boundary such as setup-only or review-only publication
 
 ### 4. Execute The Issue
 

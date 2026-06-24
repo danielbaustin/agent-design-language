@@ -772,7 +772,10 @@ fn build_sor_facts(
     let validation_commands = if validation_status == "NOT_RUN" {
         Vec::new()
     } else {
-        plan.commands.clone()
+        plan.commands
+            .iter()
+            .map(|command| sanitize_validation_profile_command(command))
+            .collect()
     };
     let fix_notes = if closing_linkage_repaired {
         vec!["repaired missing PR closing linkage".to_string()]
@@ -3444,6 +3447,7 @@ fn finish_path_needs_deepseek_suitability_validation(path: &str) -> bool {
             | "adl/tools/suitability_specs/deepseek_csdlc_panel_4096.json"
     ) || trimmed.starts_with("adl/tools/suitability_specs/")
         || trimmed.starts_with("docs/milestones/v0.91.6/review/provider/openrouter_current_models/")
+        || trimmed.starts_with("docs/milestones/v0.91.6/review/provider/openrouter_next_tranche_")
 }
 
 fn finish_path_needs_private_endpoint_fixture_sanitation_validation(path: &str) -> bool {

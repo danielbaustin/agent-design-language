@@ -190,7 +190,7 @@ def ensure_spec_credentials(spec: dict, key_file_override: Path | None) -> None:
     for loader in spec.get("credential_loaders", []):
         env_name = loader["env_name"]
         if loader.get("key_file"):
-            key_path = Path(loader["key_file"]).expanduser()
+            key_path = Path(os.path.expandvars(loader["key_file"])).expanduser()
         elif key_file_override is not None:
             key_path = key_file_override.expanduser()
         else:
@@ -229,6 +229,9 @@ class Candidate:
     credential_source: str | None
     credential_ref: str | None
     timeout_ms: int
+    local_follow_up_model: str | None
+    local_follow_up_priority: str | None
+    local_follow_up_rationale: str | None
 
 
 def load_spec(path: Path) -> dict:
@@ -397,6 +400,102 @@ def contains_authority_overclaim(text: str) -> bool:
     return any(token in lowered for token in forbidden)
 
 
+def require_heading_set(
+    sections: dict[str, str], required: list[str], failure_judgment: str, recommendation: str
+) -> tuple[str, dict, str, str] | None:
+    missing = {heading.lower() for heading in required} - sections.keys()
+    if missing:
+        return (
+            "fail_format",
+            {"reason": "missing_headings", "sections": list(sections), "missing": sorted(missing)},
+            failure_judgment,
+            recommendation,
+        )
+    return None
+
+
+def find_missing_terms(text_lower: str, terms: list[str]) -> list[str]:
+    return [term for term in terms if term.lower() not in text_lower]
+
+
+def review_equivalence_overclaim(text_lower: str) -> bool:
+    local_terms = ["local family", "local-model", "local model", "ollama"]
+    equivalence_terms = [
+        "equivalent",
+        "equivalence",
+        "interchangeable",
+        "equivalent proxy",
+        "matches local family",
+    ]
+    if "local follow-up" in text_lower and any(
+        marker in text_lower for marker in ["not required", "unnecessary", "not needed"]
+    ):
+        return True
+    if any(term in text_lower for term in equivalence_terms) and any(
+        term in text_lower for term in local_terms
+    ):
+        return True
+    return False
+
+
+def candidate_raw_usefulness(rows: list[dict]) -> str:
+    scores = [row["score"] for row in rows]
+    if any(score in {"pass", "pass_with_limits"} for score in scores):
+        return "semantically_useful"
+    if all(score in {"timeout_or_empty", "skipped_blocked"} for score in scores):
+        return "not_observed_due_to_runtime_or_block"
+    if any(score in {"fail_format", "fail_truth"} for score in scores):
+        return "potentially_useful_but_not_operationally_reliable"
+    return "not_useful_in_this_panel"
+
+
+def candidate_contract_discipline(rows: list[dict]) -> str:
+    scores = [row["score"] for row in rows]
+    if any(score == "fail_authority" for score in scores):
+        return "authority_boundary_risk"
+    if any(score == "fail_truth" for score in scores):
+        return "evidence_anchoring_repair_needed"
+    if any(score == "fail_format" for score in scores):
+        return "format_or_contract_repair_needed"
+    if all(score in {"pass", "pass_with_limits"} for score in scores):
+        return "contract_compliant_with_limits"
+    if any(score == "timeout_or_empty" for score in scores):
+        return "runtime_or_budget_tuning_needed"
+    return "mixed"
+
+
+def candidate_temperament_traits(rows: list[dict]) -> list[str]:
+    scores = [row["score"] for row in rows]
+    traits: list[str] = []
+    if any(score == "pass_with_limits" for score in scores):
+        traits.append("bounded_role_only")
+    if any(score == "fail_format" for score in scores):
+        traits.append("needs_explicit_shape_scaffolds")
+    if any(score == "fail_truth" for score in scores):
+        traits.append("needs_tighter_evidence_anchoring")
+    if any(score == "timeout_or_empty" for score in scores):
+        traits.append("needs_replay_or_budget_tuning")
+    if any(score in {"pass", "pass_with_limits"} for score in scores) and any(
+        score == "fail_format" for score in scores
+    ):
+        traits.append("stronger_semantics_than_first_pass_formatting")
+    return traits or ["no_special_traits_observed"]
+
+
+def candidate_tuning_guidance(rows: list[dict]) -> list[str]:
+    scores = [row["score"] for row in rows]
+    guidance: list[str] = []
+    if any(score == "fail_format" for score in scores):
+        guidance.append("add explicit required headings and output-shape reminders")
+    if any(score == "fail_truth" for score in scores):
+        guidance.append("tighten fact-bound prompts and require cited supplied evidence")
+    if any(score == "timeout_or_empty" for score in scores):
+        guidance.append("allow bounded replay on empty output or raise timeout budget")
+    if any(score == "pass_with_limits" for score in scores):
+        guidance.append("keep in advisory-only roles with human verification")
+    return guidance or ["no additional tuning guidance recorded"]
+
+
 def classify_task(
     task_id: str,
     output_text: str,
@@ -421,22 +520,44 @@ def classify_task(
     text_lower = output_text.lower()
 
     if task_id == "watcher_state_v1":
+        heading_failure = require_heading_set(
+            sections,
+            (task_cfg or {}).get("required_headings", ["Status", "Evidence", "Next-Step"]),
+            "watcher output missed the bounded status contract",
+            "do_not_use_for_conductor_routing",
+        )
+        if heading_failure:
+            return heading_failure
         status = sections.get("status", "").strip()
-        if status not in {"ready", "pending", "blocked", "action_required"}:
+        allowed_statuses = set(
+            (task_cfg or {}).get(
+                "allowed_statuses", ["ready", "pending", "blocked", "action_required"]
+            )
+        )
+        if status not in allowed_statuses:
             return (
                 "fail_format",
                 {"reason": "invalid_status", "status": status},
                 "watcher output missed the bounded status contract",
                 "do_not_use_for_conductor_routing",
             )
-        required_refs = (
-            task_cfg or {}
-        ).get("required_evidence_tokens", ["#4096", "#4095", "adl-wp-4096"])
-        if all(token in output_text for token in required_refs):
-            score = "pass" if status == "ready" else "pass_with_limits"
+        required_terms = (task_cfg or {}).get("required_terms", [])
+        missing_terms = find_missing_terms(text_lower, required_terms)
+        preferred_status = (task_cfg or {}).get("preferred_status", "ready")
+        if not missing_terms or all(
+            token in output_text
+            for token in (task_cfg or {}).get(
+                "required_evidence_tokens", ["#4096", "#4095", "adl-wp-4096"]
+            )
+        ):
+            score = "pass" if status == preferred_status else "pass_with_limits"
             return (
                 score,
-                {"status": status, "sections": list(sections)},
+                {
+                    "status": status,
+                    "sections": list(sections),
+                    "required_terms": required_terms,
+                },
                 "watcher output stayed bounded and cited the supplied workflow facts",
                 "conductor_provider_candidate"
                 if score == "pass"
@@ -444,115 +565,165 @@ def classify_task(
             )
         return (
             "fail_truth",
-            {"reason": "missing_supplied_evidence_refs"},
+            {
+                "reason": "missing_supplied_evidence_refs",
+                "missing_terms": missing_terms,
+            },
             "watcher output did not anchor itself in the supplied issue/worktree facts",
             "do_not_use_for_conductor_routing",
         )
 
     if task_id == "card_validator_v1":
-        if {"findings", "severity", "non-claims"} - sections.keys():
-            return (
-                "fail_format",
-                {"reason": "missing_headings", "sections": list(sections)},
-                "card-validator output missed the required findings structure",
-                "do_not_use_for_card_validation",
-            )
+        heading_failure = require_heading_set(
+            sections,
+            (task_cfg or {}).get("required_headings", ["Findings", "Severity", "Non-Claims"]),
+            "card-validator output missed the required findings structure",
+            "do_not_use_for_card_validation",
+        )
+        if heading_failure:
+            return heading_failure
         severity = sections.get("severity", "").strip()
-        if severity not in {"P1", "P2"}:
+        allowed_severities = set((task_cfg or {}).get("allowed_severities", ["P1", "P2"]))
+        if severity not in allowed_severities:
             return (
                 "fail_format",
                 {"reason": "invalid_severity", "severity": severity},
                 "card-validator output did not return a bounded severity line",
                 "do_not_use_for_card_validation",
             )
-        if "contrad" in text_lower or (
+        required_terms = (task_cfg or {}).get("required_terms", ["contrad"])
+        missing_terms = find_missing_terms(text_lower, required_terms)
+        if not missing_terms or (
+            "contrad" in text_lower or (
             "merged" in text_lower and "not happened yet" in text_lower
+            )
         ):
             score = "pass" if severity == "P1" else "pass_with_limits"
             return (
                 score,
-                {"severity": severity},
+                {"severity": severity, "required_terms": required_terms},
                 "card-validator output identified the supplied lifecycle-truth contradiction",
                 "reviewer_provider_candidate_with_limits",
             )
         return (
             "fail_truth",
-            {"reason": "missed_contradiction"},
+            {"reason": "missed_contradiction", "missing_terms": missing_terms},
             "card-validator output missed the explicit contradiction in the supplied excerpt",
             "do_not_use_for_card_validation",
         )
 
     if task_id == "review_findings_v1":
-        if {"findings", "severity", "routing", "residual risk"} - sections.keys():
-            return (
-                "fail_format",
-                {"reason": "missing_headings", "sections": list(sections)},
-                "review output missed the required headings",
-                "do_not_use_for_review",
-            )
+        heading_failure = require_heading_set(
+            sections,
+            (task_cfg or {}).get(
+                "required_headings", ["Findings", "Severity", "Routing", "Residual Risk"]
+            ),
+            "review output missed the required headings",
+            "do_not_use_for_review",
+        )
+        if heading_failure:
+            return heading_failure
         severity = sections.get("severity", "").strip()
-        if severity not in {"P2", "P3"}:
+        allowed_severities = set((task_cfg or {}).get("allowed_severities", ["P2", "P3"]))
+        if severity not in allowed_severities:
             return (
                 "fail_format",
                 {"reason": "invalid_severity", "severity": severity},
                 "review output did not keep the bounded severity contract",
                 "do_not_use_for_review",
             )
-        required_all_tokens = (
-            task_cfg or {}
-        ).get("required_review_all_tokens", ["gh"])
-        required_any_tokens = (
-            task_cfg or {}
-        ).get("required_review_any_tokens", ["adl-native", "octocrab"])
-        if all(token in text_lower for token in required_all_tokens) and any(
-            token in text_lower for token in required_any_tokens
+        required_terms = (task_cfg or {}).get("required_terms", ["gh", "adl-native"])
+        critique_terms = (task_cfg or {}).get("critique_terms", [])
+        overclaim_terms = (task_cfg or {}).get("overclaim_terms", [])
+        has_critique = (
+            any(term.lower() in text_lower for term in critique_terms)
+            if critique_terms
+            else False
+        )
+        has_overclaim = (
+            any(term.lower() in text_lower for term in overclaim_terms)
+            if overclaim_terms
+            else False
+        ) or review_equivalence_overclaim(text_lower)
+        missing_terms = find_missing_terms(text_lower, required_terms)
+        if has_overclaim:
+            return (
+                "fail_truth",
+                {
+                    "reason": "accepted_broad_equivalence_claim",
+                    "overclaim_terms": overclaim_terms,
+                },
+                "review output accepted the supplied broad-equivalence claim instead of challenging it",
+                "do_not_use_for_review",
+            )
+        if has_critique:
+            score = "pass" if not missing_terms else "pass_with_limits"
+            return (
+                score,
+                {
+                    "severity": severity,
+                    "required_terms": required_terms,
+                    "critique_terms": critique_terms,
+                },
+                "review output identified the supplied evidence-provenance problem",
+                "reviewer_provider_candidate",
+            )
+        required_all_tokens = (task_cfg or {}).get("required_review_all_tokens", ["gh"])
+        required_any_tokens = (task_cfg or {}).get(
+            "required_review_any_tokens", ["adl-native", "octocrab"]
+        )
+        if (
+            not missing_terms
+            or all(token in text_lower for token in required_all_tokens)
+            and any(token in text_lower for token in required_any_tokens)
         ):
             return (
                 "pass",
-                {"severity": severity},
+                {"severity": severity, "required_terms": required_terms},
                 "review output identified the legacy-gh evidence drift and routed to ADL-native proof",
                 "reviewer_provider_candidate",
             )
         return (
             "fail_truth",
-            {"reason": "missed_evidence_provenance_drift"},
+            {
+                "reason": "missed_evidence_provenance_drift",
+                "missing_terms": missing_terms,
+            },
             "review output did not focus on the supplied evidence-provenance problem",
             "do_not_use_for_review",
         )
 
     if task_id == "bounded_planner_v1":
-        if {"plan", "blockers", "assumptions", "non-claims"} - sections.keys():
-            return (
-                "fail_format",
-                {"reason": "missing_headings", "sections": list(sections)},
-                "planner output missed the required headings",
-                "do_not_use_for_planning",
-            )
+        heading_failure = require_heading_set(
+            sections,
+            (task_cfg or {}).get(
+                "required_headings", ["Plan", "Blockers", "Assumptions", "Non-Claims"]
+            ),
+            "planner output missed the required headings",
+            "do_not_use_for_planning",
+        )
+        if heading_failure:
+            return heading_failure
         numbered_steps = re.findall(r"(?m)^\d+\.\s", sections.get("plan", ""))
+        required_steps = int((task_cfg or {}).get("expected_plan_steps", 4))
         required_bits = (
             task_cfg or {}
-        ).get(
-            "required_plan_bits",
-            [
-                "hosted deepseek api",
-                "deepseek-r1:8b",
-                "deepseek-r1:32b",
-                "five-task suitability panel",
-                "skipped",
-                "blocked",
-                "no repo-mutation authority",
-            ],
-        )
-        if len(numbered_steps) == 4 and all(bit in text_lower for bit in required_bits):
+        ).get("required_terms", (task_cfg or {}).get("required_plan_bits", []))
+        missing_terms = find_missing_terms(text_lower, required_bits)
+        if len(numbered_steps) == required_steps and not missing_terms:
             return (
                 "pass",
-                {"plan_steps": 4},
+                {"plan_steps": required_steps, "required_terms": required_bits},
                 "planner output stayed bounded and covered the required lane/proof constraints",
                 "architect_provider_candidate_with_limits",
             )
         return (
             "pass_with_limits",
-            {"plan_steps": len(numbered_steps)},
+            {
+                "plan_steps": len(numbered_steps),
+                "expected_plan_steps": required_steps,
+                "missing_terms": missing_terms,
+            },
             "planner output was usable but missed one or more requested constraints",
             "architect_provider_candidate_with_limits",
         )
@@ -616,27 +787,36 @@ def classify_task(
             limit_text = " ".join(str(item) for item in limit_value)
         else:
             limit_text = str(limit_value)
-        expected_issue = f"#{issue_number}" if issue_number is not None else None
+        expected_issue = (
+            (task_cfg or {}).get("expected_issue_ref")
+            or (f"#{issue_number}" if issue_number is not None else None)
+        )
         valid_issue = payload.get("issue") == expected_issue if expected_issue else False
+        allowed_paths = set(
+            (task_cfg or {}).get(
+                "allowed_paths", ["adl/tools", "docs/milestones/v0.91.6/review/provider"]
+            )
+        )
+        required_task_terms = (task_cfg or {}).get(
+            "required_task_terms", ["openrouter", "route", "matrix", "suitability"]
+        )
+        required_limit_terms = (task_cfg or {}).get(
+            "required_limit_terms",
+            (
+                [f"bounded_to_issue_{issue_number}", "advisory_only"]
+                if issue_number is not None
+                else ["advisory_only"]
+            ),
+        )
         ok = (
             valid_issue
             and isinstance(paths, list)
             and bool(paths)
-            and any(
-                path in {"adl/tools", "docs/milestones/v0.91.6/review/provider"}
-                for path in paths
-            )
+            and any(path in allowed_paths for path in paths)
             and isinstance(task_text, str)
-            and any(
-                token in task_text.lower()
-                for token in ("openrouter", "route", "matrix", "suitability")
-            )
+            and all(token in task_text.lower() for token in required_task_terms)
             and isinstance(limit_text, str)
-            and (
-                expected_issue is not None
-                and f"bounded_to_issue_{issue_number}" in limit_text
-            )
-            and "advisory_only" in limit_text
+            and all(term in limit_text for term in required_limit_terms)
         )
         return (
             ("pass" if ok else "fail_truth"),
@@ -691,6 +871,23 @@ def candidate_role_summary(rows: list[dict]) -> str:
     return ", ".join(supported) if supported else "none"
 
 
+def candidate_failing_tasks(rows: list[dict]) -> str:
+    labels = {
+        "watcher_state_v1": "watcher",
+        "card_validator_v1": "card_validator",
+        "review_findings_v1": "reviewer",
+        "bounded_planner_v1": "planner",
+        "closeout_checker_v1": "closeout_checker",
+        "worker_contract_v1": "worker",
+    }
+    failing = [
+        labels[row["task_id"]]
+        for row in rows
+        if row["score"] not in {"pass", "pass_with_limits"}
+    ]
+    return ", ".join(failing) if failing else "none"
+
+
 def score_priority(score: str) -> int:
     return {
         "pass": 5,
@@ -730,11 +927,12 @@ def run_task_once(
 ) -> dict:
     current_task_spec = task_spec(spec, task_id)
     lane_id = f"{candidate.candidate_id}__{task_id}"
-    result_path = result_dir / f"{lane_id}.json"
-    log_path = log_dir / f"{lane_id}.jsonl"
-    output_path = output_dir / f"{lane_id}.md"
+    lane_stem = safe_path_stem(lane_id)
+    result_path = result_dir / f"{lane_stem}.json"
+    log_path = log_dir / f"{lane_stem}.jsonl"
+    output_path = output_dir / f"{lane_stem}.md"
     env = dict(os.environ)
-    with tempfile.TemporaryDirectory(prefix=f"{lane_id}_") as temp_dir:
+    with tempfile.TemporaryDirectory(prefix=f"{lane_stem}_") as temp_dir:
         temp_root = Path(temp_dir)
         raw_request_path = temp_root / "request.json"
         raw_result_path = temp_root / "result.json"
@@ -855,7 +1053,8 @@ def run_task(
 ) -> dict:
     prompt = textwrap.dedent(task_spec(spec, task_id)["prompt"]).strip()
     lane_id = f"{candidate.candidate_id}__{task_id}"
-    request_path = request_dir / f"{lane_id}.json"
+    lane_stem = safe_path_stem(lane_id)
+    request_path = request_dir / f"{lane_stem}.json"
     raw_request = request_payload(spec, candidate, task_id, prompt)
     write_json(request_path, sanitized_request_payload(raw_request))
     started_at = now_iso()
@@ -888,6 +1087,7 @@ def run_task(
 def candidate_rows(candidates: list[Candidate], task_rows: list[dict]) -> list[dict]:
     rows = []
     for candidate in candidates:
+        current_rows = [row for row in task_rows if row["candidate_id"] == candidate.candidate_id]
         rows.append(
             {
                 "candidate_id": candidate.candidate_id,
@@ -899,15 +1099,37 @@ def candidate_rows(candidates: list[Candidate], task_rows: list[dict]) -> list[d
                 "runtime_surface": candidate.runtime_surface,
                 "credential_source": candidate.credential_source,
                 "task_panel_version": "csdlc_agent_suitability_panel.v1",
-                "recommendation": candidate_recommendation(
-                    [row for row in task_rows if row["candidate_id"] == candidate.candidate_id]
-                ),
-                "supported_tasks": candidate_role_summary(
-                    [row for row in task_rows if row["candidate_id"] == candidate.candidate_id]
-                ),
+                "recommendation": candidate_recommendation(current_rows),
+                "supported_tasks": candidate_role_summary(current_rows),
+                "failing_tasks": candidate_failing_tasks(current_rows),
+                "raw_usefulness": candidate_raw_usefulness(current_rows),
+                "contract_discipline": candidate_contract_discipline(current_rows),
+                "temperament_traits": candidate_temperament_traits(current_rows),
+                "tuning_guidance": candidate_tuning_guidance(current_rows),
+                "local_follow_up_model": candidate.local_follow_up_model,
+                "local_follow_up_priority": candidate.local_follow_up_priority,
+                "local_follow_up_rationale": candidate.local_follow_up_rationale,
             }
         )
     return rows
+
+
+def local_follow_up_lists(candidate_payload: list[dict]) -> tuple[list[dict], list[dict]]:
+    shortlist: list[dict] = []
+    watchlist: list[dict] = []
+    for candidate in candidate_payload:
+        if not candidate.get("local_follow_up_model") or not candidate.get(
+            "local_follow_up_priority"
+        ):
+            continue
+        if (
+            candidate["recommendation"] in {"supported_with_limits", "useful_with_limits"}
+            and candidate["local_follow_up_priority"] in {"high", "medium"}
+        ):
+            shortlist.append(candidate)
+        elif candidate["raw_usefulness"] == "semantically_useful":
+            watchlist.append(candidate)
+    return shortlist, watchlist
 
 
 def write_packet_files(
@@ -933,6 +1155,9 @@ def write_packet_files(
         "task_ids": task_ids,
         "candidates": candidate_payload,
         "rows": task_rows,
+        "candidate_selection": {
+            "screened_candidates": [candidate["candidate_id"] for candidate in candidate_payload]
+        },
         "non_claims": spec["non_claims"],
         "artifacts": {
             "packet": rel(root, packet_path),
@@ -943,6 +1168,28 @@ def write_packet_files(
             "outputs": rel(root, out_dir / "lane_outputs"),
         },
     }
+    write_json(state_path, state)
+    shortlist, watchlist = local_follow_up_lists(candidate_payload)
+    state["candidate_selection"]["local_follow_up_shortlist"] = [
+        {
+            "candidate_id": candidate["candidate_id"],
+            "recommendation": candidate["recommendation"],
+            "local_follow_up_model": candidate["local_follow_up_model"],
+            "priority": candidate["local_follow_up_priority"],
+            "rationale": candidate["local_follow_up_rationale"],
+        }
+        for candidate in shortlist
+    ]
+    state["candidate_selection"]["local_follow_up_watchlist"] = [
+        {
+            "candidate_id": candidate["candidate_id"],
+            "recommendation": candidate["recommendation"],
+            "local_follow_up_model": candidate["local_follow_up_model"],
+            "priority": candidate["local_follow_up_priority"],
+            "rationale": candidate["local_follow_up_rationale"],
+        }
+        for candidate in watchlist
+    ]
     write_json(state_path, state)
 
     task_labels = {
@@ -1028,7 +1275,18 @@ def write_packet_files(
                 f"- Runtime surface: `{candidate['runtime_surface']}`",
                 f"- Credential source: `{candidate['credential_source'] or 'none'}`",
                 f"- Supported tasks: {candidate['supported_tasks']}",
+                f"- Failing tasks: {candidate['failing_tasks']}",
+                f"- Raw usefulness: `{candidate['raw_usefulness']}`",
+                f"- Contract discipline: `{candidate['contract_discipline']}`",
                 f"- Recommendation: `{candidate['recommendation']}`",
+                f"- Temperament traits: {', '.join(candidate['temperament_traits'])}",
+                f"- Tuning guidance: {'; '.join(candidate['tuning_guidance'])}",
+                f"- Local follow-up: `{candidate['local_follow_up_model'] or 'none'}`"
+                + (
+                    f" ({candidate['local_follow_up_priority']}; {candidate['local_follow_up_rationale']})"
+                    if candidate['local_follow_up_model'] and candidate['local_follow_up_priority']
+                    else ""
+                ),
                 "",
             ]
         )
@@ -1065,9 +1323,36 @@ def write_packet_files(
         ]
     )
     for candidate in candidate_payload:
-        packet_lines.append(
-            f"- `{candidate['candidate_id']}` is `{candidate['recommendation']}` for the bounded panel, based on task scores `{candidate['supported_tasks']}`."
+        line = (
+            f"- `{candidate['candidate_id']}` is `{candidate['recommendation']}` for the bounded panel; "
+            f"supported tasks: `{candidate['supported_tasks']}`."
         )
+        if candidate["failing_tasks"] != "none":
+            line += f" Failing tasks: `{candidate['failing_tasks']}`."
+        packet_lines.append(line)
+    packet_lines.extend(
+        [
+            "",
+            "## Local follow-up shortlist",
+            "",
+        ]
+    )
+    if shortlist:
+        for candidate in shortlist:
+            packet_lines.append(
+                f"- `{candidate['candidate_id']}` -> local follow-up `{candidate['local_follow_up_model']}` "
+                f"(`{candidate['local_follow_up_priority']}`): {candidate['local_follow_up_rationale']}"
+            )
+    else:
+        packet_lines.append("- No local follow-up shortlist was declared for this packet.")
+    if watchlist:
+        packet_lines.extend(["", "Deferred local watchlist", ""])
+        for candidate in watchlist:
+            packet_lines.append(
+                f"- `{candidate['candidate_id']}` remains a watchlist candidate for `{candidate['local_follow_up_model']}` "
+                f"(`{candidate['local_follow_up_priority']}`) because it was semantically useful but finished as "
+                f"`{candidate['recommendation']}`: {candidate['local_follow_up_rationale']}"
+            )
     packet_lines.extend(
         [
             "",
@@ -1118,9 +1403,13 @@ def main() -> None:
     spec = load_spec(args.spec)
     adl_bin, adapter_bin = build_binaries(root)
 
+    has_hosted_candidates = any(
+        item.get("runtime_surface") == "hosted_api" for item in spec.get("candidates", [])
+    )
+    if has_hosted_candidates and not args.skip_hosted:
+        ensure_spec_credentials(spec, args.key_file)
     provider_setup_family = spec.get("provider_setup_family")
     if provider_setup_family and not args.skip_hosted:
-        ensure_spec_credentials(spec, args.key_file)
         provider_setup(adl_bin, root, out_dir / "provider_setup" / provider_setup_family, provider_setup_family)
 
     installed_models = local_ollama_models()
@@ -1148,6 +1437,9 @@ def main() -> None:
                 credential_source=item.get("credential_source"),
                 credential_ref=item.get("credential_ref"),
                 timeout_ms=item["timeout_ms"],
+                local_follow_up_model=item.get("local_follow_up_model"),
+                local_follow_up_priority=item.get("local_follow_up_priority"),
+                local_follow_up_rationale=item.get("local_follow_up_rationale"),
             )
         )
     if not candidates:

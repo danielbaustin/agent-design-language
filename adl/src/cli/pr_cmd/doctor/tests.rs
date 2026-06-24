@@ -7,8 +7,11 @@ use super::*;
 use crate::cli::pr_cmd::doctor::ready::{
     ready_validation_repo_root, stale_worktree_branch_mismatch_preserves_pre_run,
 };
+use crate::cli::pr_cmd_cards::mirror_scope_sprints_into_worktree;
 use crate::cli::pr_cmd_cards::StructuredBundlePaths;
 use adl::session_ledger::{ClaimClassification, ClaimMode};
+use crate::cli::pr_cmd_prompt::resolve_issue_scope_and_slug_from_available_local_state;
+use crate::cli::tests::env_lock;
 use std::time::{SystemTime, UNIX_EPOCH};
 
 #[test]
@@ -30,6 +33,98 @@ fn doctor_issue_prompt_resolution_falls_back_to_bound_worktree_prompt() {
         resolve_doctor_issue_prompt_path(&repo, &issue_ref).expect("doctor source prompt");
 
     assert_eq!(resolved, source_path);
+}
+
+#[test]
+fn local_issue_identity_resolution_falls_back_to_bound_worktree_bundle_from_nested_path() {
+    let _guard = env_lock();
+    let repo = lifecycle_temp_repo("doctor-identity-worktree-fallback");
+    let issue_ref = IssueRef::new(
+        4455,
+        "v0.91.6".to_string(),
+        "worktree-safe-truth".to_string(),
+    )
+    .expect("issue ref");
+    let worktree = issue_ref.default_worktree_path(&repo, None);
+    let bundle = issue_ref.task_bundle_dir_path(&worktree);
+    fs::create_dir_all(&bundle).expect("create worktree bundle");
+    fs::create_dir_all(&worktree).expect("create worktree root");
+    fs::write(worktree.join(".git"), "gitdir: /tmp/fake-worktree\n").expect("seed git marker");
+    let nested = worktree.join("adl/src");
+    fs::create_dir_all(&nested).expect("create nested worktree path");
+
+    let previous = std::env::current_dir().expect("cwd");
+    std::env::set_current_dir(&nested).expect("chdir nested worktree path");
+    let resolved = resolve_issue_scope_and_slug_from_available_local_state(&repo, 4455)
+        .expect("resolve local identity");
+    std::env::set_current_dir(previous).expect("restore cwd");
+
+    assert_eq!(
+        resolved,
+        Some(("v0.91.6".to_string(), "worktree-safe-truth".to_string()))
+    );
+}
+
+#[test]
+fn local_issue_identity_resolution_blocks_when_primary_and_worktree_disagree() {
+    let _guard = env_lock();
+    let repo = lifecycle_temp_repo("doctor-identity-worktree-mismatch");
+    let issue_ref = IssueRef::new(
+        4455,
+        "v0.91.6".to_string(),
+        "worktree-safe-truth".to_string(),
+    )
+    .expect("issue ref");
+    let primary_bundle = issue_ref.task_bundle_dir_path(&repo);
+    fs::create_dir_all(&primary_bundle).expect("create primary bundle");
+
+    let worktree = issue_ref.default_worktree_path(&repo, None);
+    let worktree_bundle = worktree.join(".adl/v0.91.7/tasks/issue-4455__worktree-safe-truth");
+    fs::create_dir_all(&worktree_bundle).expect("create mismatched worktree bundle");
+    fs::create_dir_all(&worktree).expect("create worktree root");
+    fs::write(worktree.join(".git"), "gitdir: /tmp/fake-worktree\n").expect("seed git marker");
+    let nested = worktree.join("adl/src");
+    fs::create_dir_all(&nested).expect("create nested worktree path");
+
+    let previous = std::env::current_dir().expect("cwd");
+    std::env::set_current_dir(&nested).expect("chdir nested worktree path");
+    let err = resolve_issue_scope_and_slug_from_available_local_state(&repo, 4455)
+        .expect_err("mismatched issue identity should block");
+    std::env::set_current_dir(previous).expect("restore cwd");
+
+    assert!(
+        format!("{err:#}").contains("local issue identity mismatch"),
+        "unexpected error: {err:#}"
+    );
+}
+
+#[test]
+fn sprint_packets_are_materialized_into_bound_worktree_without_root_writes() {
+    let repo = lifecycle_temp_repo("doctor-sprint-worktree-materialization");
+    let issue_ref = IssueRef::new(
+        4455,
+        "v0.91.6".to_string(),
+        "worktree-safe-truth".to_string(),
+    )
+    .expect("issue ref");
+    let worktree = issue_ref.default_worktree_path(&repo, None);
+    let sprint_log = repo
+        .join(".adl/v0.91.6/sprints/issue-4417__v0-91-6-tools-mini-sprint-validation-throughput-and-lifecycle-automation/SPRINT_ACTIVITY_LOG.md");
+    fs::create_dir_all(sprint_log.parent().expect("sprint parent")).expect("create sprint parent");
+    fs::write(
+        &sprint_log,
+        "# Sprint activity fixture\n\n- should be copied into the worktree once bound.\n",
+    )
+    .expect("write sprint log");
+
+    mirror_scope_sprints_into_worktree(&repo, &worktree, &issue_ref).expect("mirror sprint state");
+
+    let mirrored = worktree
+        .join(".adl/v0.91.6/sprints/issue-4417__v0-91-6-tools-mini-sprint-validation-throughput-and-lifecycle-automation/SPRINT_ACTIVITY_LOG.md");
+    assert_eq!(
+        fs::read_to_string(mirrored).expect("read mirrored sprint log"),
+        "# Sprint activity fixture\n\n- should be copied into the worktree once bound.\n"
+    );
 }
 
 #[test]
@@ -288,7 +383,7 @@ fn card_lifecycle_marks_legacy_srp_policy_as_not_finish_ready() {
             LifecycleFixture {
                 sip: "Branch: codex/3065-test\n",
                 stp: complete_stp_fixture(),
-                spp: "---\nbranch: \"codex/3065-test\"\nstatus: \"reviewed\"\n---\n",
+                spp: reviewed_spp_frontmatter(),
                 srp: "---\nartifact_type: \"structured_review_policy\"\nbranch: \"codex/3065-test\"\nstatus: \"draft\"\n---\n\n# Structured Review Policy\n\n## Review Summary\n\npolicy only\n",
                 sor: "# output\n\nBranch: codex/3065-test\nStatus: DONE\n\n## Main Repo Integration (REQUIRED)\n- Worktree-only paths remaining: tracked change still on PR branch\n- Integration state: pr_open\n- Result: PASS\n\n## Validation\n- focused validation passed\n",
             },
@@ -314,7 +409,7 @@ fn card_lifecycle_does_not_treat_placeholder_srp_results_as_final() {
             LifecycleFixture {
                 sip: "Branch: codex/3065-test\n",
                 stp: complete_stp_fixture(),
-                spp: "---\nbranch: \"codex/3065-test\"\nstatus: \"reviewed\"\n---\n",
+                spp: reviewed_spp_frontmatter(),
                 srp: "---\nartifact_type: \"structured_review_policy\"\nbranch: \"codex/3065-test\"\nstatus: \"draft\"\nreview_results:\n  findings_status: \"not_run | findings_present | no_findings\"\n  recommended_outcome: \"pass | block | needs_followup | not_run\"\n---\n\n# Structured Review Prompt\n\n## Review Results\n\n### Recommended Outcome\n\n- <pass, block, needs_followup, or not_run>\n",
                 sor: "# output\n\nBranch: codex/3065-test\nStatus: DONE\n\n## Main Repo Integration (REQUIRED)\n- Worktree-only paths remaining: tracked change still on PR branch\n- Integration state: pr_open\n- Result: PASS\n\n## Validation\n- focused validation passed\n",
             },
@@ -338,7 +433,7 @@ fn card_lifecycle_does_not_treat_unknown_srp_result_values_as_final() {
             LifecycleFixture {
                 sip: "Branch: codex/3065-test\n",
                 stp: complete_stp_fixture(),
-                spp: "---\nbranch: \"codex/3065-test\"\nstatus: \"reviewed\"\n---\n",
+                spp: reviewed_spp_frontmatter(),
                 srp: "---\nartifact_type: \"structured_review_policy\"\nbranch: \"codex/3065-test\"\nstatus: \"approved\"\nreview_results:\n  findings_status: \"todo\"\n  recommended_outcome: \"ship_it\"\n---\n\n# Structured Review Prompt\n\n## Review Results\n\n### Recommended Outcome\n\n- ship_it\n",
                 sor: "# output\n\nBranch: codex/3065-test\nStatus: DONE\n\n## Main Repo Integration (REQUIRED)\n- Worktree-only paths remaining: tracked change still on PR branch\n- Integration state: pr_open\n- Result: PASS\n\n## Validation\n- focused validation passed\n",
             },
@@ -361,7 +456,7 @@ fn card_lifecycle_allows_explicit_srp_policy_exception() {
             LifecycleFixture {
                 sip: "Branch: codex/3065-test\n",
                 stp: complete_stp_fixture(),
-                spp: "---\nbranch: \"codex/3065-test\"\nstatus: \"reviewed\"\n---\n",
+                spp: reviewed_spp_frontmatter(),
                 srp: "---\nartifact_type: \"structured_review_policy\"\nbranch: \"codex/3065-test\"\nstatus: \"approved\"\nreview_results_exception: \"explicit policy exception: docs-only no-op review\"\n---\n\n# Structured Review Prompt\n\n## Review Results\n\nexplicit policy exception recorded\n",
                 sor: "# output\n\nBranch: codex/3065-test\nStatus: DONE\n\n## Main Repo Integration (REQUIRED)\n- Worktree-only paths remaining: tracked change still on PR branch\n- Integration state: pr_open\n- Result: PASS\n\n## Validation\n- focused validation passed\n",
             },
@@ -383,7 +478,7 @@ fn card_lifecycle_accepts_pre_review_srp_prompt_without_final_results() {
             LifecycleFixture {
                 sip: "Branch: codex/3065-test\n",
                 stp: complete_stp_fixture(),
-                spp: "---\nbranch: \"codex/3065-test\"\nstatus: \"reviewed\"\n---\n",
+                spp: reviewed_spp_frontmatter(),
                 srp: "---\nartifact_type: \"structured_review_prompt\"\nbranch: \"codex/3065-test\"\nstatus: \"draft\"\n---\n\n# Structured Review Prompt\n\n## Review Instructions\n\nRun the bounded issue review after implementation.\n",
                 sor: "Branch: not bound yet\nStatus: NOT_STARTED\n\n## Summary\n\nNo implementation has started yet.\n",
             },
@@ -413,7 +508,7 @@ fn card_lifecycle_does_not_treat_pre_execution_srp_absence_as_final_exception() 
             LifecycleFixture {
                 sip: "Branch: codex/3065-test\n",
                 stp: complete_stp_fixture(),
-                spp: "---\nbranch: \"codex/3065-test\"\nstatus: \"reviewed\"\n---\n",
+                spp: reviewed_spp_frontmatter(),
                 srp: "---\nartifact_type: \"structured_review_prompt\"\nbranch: \"codex/3065-test\"\nstatus: \"draft\"\nreview_results_exception: \"explicit policy exception: pre-execution review results are absent until implementation exists\"\n---\n\n# Structured Review Prompt\n\n## Review Instructions\n\nRun the bounded issue review after implementation.\n",
                 sor: "# output\n\nBranch: codex/3065-test\nStatus: DONE\n\n## Main Repo Integration (REQUIRED)\n- Worktree-only paths remaining: tracked change still on PR branch\n- Integration state: pr_open\n- Result: PASS\n\n## Validation\n- focused validation passed\n",
             },
@@ -436,7 +531,7 @@ fn card_lifecycle_accepts_terminal_structured_review_prompt_exception() {
             LifecycleFixture {
                 sip: "Branch: codex/3065-test\n",
                 stp: complete_stp_fixture(),
-                spp: "---\nbranch: \"codex/3065-test\"\nstatus: \"reviewed\"\n---\n",
+                spp: reviewed_spp_frontmatter(),
                 srp: "---\nartifact_type: \"structured_review_prompt\"\nbranch: \"codex/3065-test\"\nstatus: \"approved\"\nreview_results_exception: \"explicit policy exception: docs-only no-op review\"\n---\n\n# Structured Review Prompt\n\n## Review Results\n\nexplicit policy exception recorded\n",
                 sor: "# output\n\nBranch: codex/3065-test\nStatus: DONE\n\n## Main Repo Integration (REQUIRED)\n- Worktree-only paths remaining: tracked change still on PR branch\n- Integration state: pr_open\n- Result: PASS\n\n## Validation\n- focused validation passed\n",
             },
@@ -475,7 +570,7 @@ fn closed_ready_validation_is_read_only_and_reports_truth_drift() {
             "- stale closeout truth causes a blocking validation error\n- no bundle files are mutated on failure",
         );
     let spp_text = format!(
-            "---\nschema_version: \"0.1\"\nartifact_type: \"structured_planning_prompt\"\nname: \"fixture-plan\"\nissue: {issue}\ntask_id: \"{task_id}\"\nrun_id: \"{task_id}\"\nversion: v0.91.2\ntitle: \"Fixture\"\nbranch: \"codex/1410-fixture\"\nstatus: \"reviewed\"\nactivation_state: \"reviewed\"\nplan_revision: 1\nsource_refs:\n  - kind: \"issue\"\n    ref: \"https://github.com/example/repo/issues/{issue}\"\nscope:\n  files:\n    - \".adl/v0.91.2/tasks/{bundle}/sip.md\"\nconstraints:\n  - \"read_only_until_execution_is_approved\"\nconfidence: \"medium\"\nplan_summary: \"Fixture plan for closed-ready validation.\"\nassumptions:\n  - \"The canonical bundle already exists.\"\nproposed_steps:\n  - id: \"step-1\"\n    description: \"Validate closed-ready truth without mutation.\"\n    expected_output: \".adl/v0.91.2/tasks/{bundle}/spp.md\"\n    allowed_mode: \"execution_after_approval\"\ncodex_plan:\n  - step: \"Validate closed-ready truth without mutation.\"\n    status: \"pending\"\naffected_areas:\n  - \"doctor\"\ninvariants_to_preserve:\n  - \"Do not mutate stale closeout truth during validation.\"\nrisks_and_edge_cases:\n  - \"Closed issue bundles can still drift.\"\ntest_strategy:\n  - \"Run the focused doctor regression test.\"\nexecution_handoff: \"Use this artifact as the durable plan-of-record before execution.\"\nrequired_permissions:\n  - \"workspace-write after execution approval\"\nstop_conditions:\n  - \"Stop if validation would mutate the stale bundle.\"\nalternatives_considered:\n  - description: \"Use transient planning only.\"\n    reason_not_chosen: \"That would not leave durable reviewable plan truth.\"\nreview_hooks:\n  - \"Check read-only behavior.\"\nnotes: \"fixture\"\n---\n\n# Structured Plan Prompt\n\n## Plan Summary\n\nFixture plan.\n\n## Codex Plan\n\n1. [pending] Validate closed-ready truth without mutation.\n",
+            "---\nschema_version: \"0.1\"\nartifact_type: \"structured_planning_prompt\"\nname: \"fixture-plan\"\nissue: {issue}\ntask_id: \"{task_id}\"\nrun_id: \"{task_id}\"\nversion: v0.91.2\ntitle: \"Fixture\"\nbranch: \"codex/1410-fixture\"\nstatus: \"reviewed\"\nactivation_state: \"reviewed\"\nplan_revision: 1\nestimate_elapsed_seconds: \"60\"\nestimate_total_tokens: \"1200\"\nsource_refs:\n  - kind: \"issue\"\n    ref: \"https://github.com/example/repo/issues/{issue}\"\nscope:\n  files:\n    - \".adl/v0.91.2/tasks/{bundle}/sip.md\"\nconstraints:\n  - \"read_only_until_execution_is_approved\"\nconfidence: \"medium\"\nplan_summary: \"Fixture plan for closed-ready validation.\"\nassumptions:\n  - \"The canonical bundle already exists.\"\nproposed_steps:\n  - id: \"step-1\"\n    description: \"Validate closed-ready truth without mutation.\"\n    expected_output: \".adl/v0.91.2/tasks/{bundle}/spp.md\"\n    allowed_mode: \"execution_after_approval\"\ncodex_plan:\n  - step: \"Validate closed-ready truth without mutation.\"\n    status: \"pending\"\naffected_areas:\n  - \"doctor\"\ninvariants_to_preserve:\n  - \"Do not mutate stale closeout truth during validation.\"\nrisks_and_edge_cases:\n  - \"Closed issue bundles can still drift.\"\ntest_strategy:\n  - \"Run the focused doctor regression test.\"\nexecution_handoff: \"Use this artifact as the durable plan-of-record before execution.\"\nrequired_permissions:\n  - \"workspace-write after execution approval\"\nstop_conditions:\n  - \"Stop if validation would mutate the stale bundle.\"\nalternatives_considered:\n  - description: \"Use transient planning only.\"\n    reason_not_chosen: \"That would not leave durable reviewable plan truth.\"\nreview_hooks:\n  - \"Check read-only behavior.\"\nnotes: \"fixture\"\n---\n\n# Structured Plan Prompt\n\n## Plan Summary\n\nFixture plan.\n\n## Codex Plan\n\n1. [pending] Validate closed-ready truth without mutation.\n",
             issue = issue_ref.issue_number(),
             task_id = issue_ref.task_issue_id(),
             bundle = issue_ref.task_bundle_dir_name(),
@@ -487,7 +582,7 @@ fn closed_ready_validation_is_read_only_and_reports_truth_drift() {
             bundle = issue_ref.task_bundle_dir_name(),
         );
     let vpp_text = format!(
-        "---\nschema_version: \"0.1\"\nartifact_type: \"structured_validation_planning_prompt\"\nname: \"fixture-validation-plan\"\nissue: {issue}\ntask_id: \"{task_id}\"\nrun_id: \"{task_id}\"\nversion: \"v0.91.2\"\ntitle: \"Fixture\"\nbranch: \"codex/1410-fixture\"\ncard_status: \"ready\"\nstatus: \"reviewed\"\ninitial_pvf_lane: \"tooling\"\nplanned_pvf_lane: \"tooling\"\nlane_registry_path: \"docs/validation/pvf_lanes.json\"\nlane_registry_template_set: \"vpp.lane.v1\"\nvalidation_runtime_class: \"tiny\"\nvalidation_resource_profile: \"local\"\nexpected_proof_cost: \"small\"\nplanned_validation_seconds: \"unknown\"\nplanned_validation_tokens: \"unknown\"\nissue_goal_ref: \"issue-{issue}\"\nsprint_goal_ref: \"unknown\"\ngoal_metrics_rollup_ref: \"unknown\"\nsource_refs:\n  - kind: \"issue\"\n    ref: \"https://github.com/example/repo/issues/{issue}\"\nselected_lanes:\n  - \"tooling\"\nparallel_groups:\n  - \"local\"\nvalidation_commands:\n  - \"cargo test --manifest-path adl/Cargo.toml closed_ready_validation_is_read_only_and_reports_truth_drift -- --nocapture\"\nfailure_policy: \"fail_closed\"\nnotes: \"fixture\"\n---\n\n# Validation Planning Prompt\n\n## Validation Planning Summary\n\nFixture validation plan.\n\n## Lane Registry Inputs\n\n- Registry path: `docs/validation/pvf_lanes.json`\n- Registry template set: `vpp.lane.v1`\n- Initial PVF lane from issue creation: `tooling`\n- Planned PVF lane for execution: `tooling`\n\n## Selected Validation Lanes\n\n- tooling\n\n## Parallelization Plan\n\n- Parallel groups: local\n- Validation runtime class: `tiny`\n- Validation resource profile: `local`\n\n## Goal Accounting Hooks\n\n- Issue goal ref: `issue-{issue}`\n- Sprint goal ref: `unknown`\n- Goal metrics rollup ref: `unknown`\n\n## Proof Cost / Runtime Expectations\n\n- Expected proof cost: `small`\n- Planned validation seconds: `unknown`\n- Planned validation tokens: `unknown`\n\n## Validation Commands\n\n- cargo test --manifest-path adl/Cargo.toml closed_ready_validation_is_read_only_and_reports_truth_drift -- --nocapture\n\n## Failure Semantics\n\n- fail_closed\n\n## Handoff\n\nUse this fixture VPP as the validation plan.\n\n## Notes\n\nfixture\n",
+        "---\nschema_version: \"0.1\"\nartifact_type: \"structured_validation_planning_prompt\"\nname: \"fixture-validation-plan\"\nissue: {issue}\ntask_id: \"{task_id}\"\nrun_id: \"{task_id}\"\nversion: \"v0.91.2\"\ntitle: \"Fixture\"\nbranch: \"codex/1410-fixture\"\ncard_status: \"ready\"\nstatus: \"reviewed\"\ninitial_pvf_lane: \"tooling\"\nplanned_pvf_lane: \"tooling\"\nlane_registry_path: \"docs/validation/pvf_lanes.json\"\nlane_registry_template_set: \"vpp.lane.v1\"\nvalidation_runtime_class: \"tiny\"\nvalidation_resource_profile: \"local\"\nexpected_proof_cost: \"small\"\nplanned_validation_seconds: \"30\"\nplanned_validation_tokens: \"800\"\nissue_goal_ref: \"issue-{issue}\"\nsprint_goal_ref: \"unknown\"\ngoal_metrics_rollup_ref: \"unknown\"\nsource_refs:\n  - kind: \"issue\"\n    ref: \"https://github.com/example/repo/issues/{issue}\"\nselected_lanes:\n  - \"tooling\"\nparallel_groups:\n  - \"local\"\nvalidation_commands:\n  - \"cargo test --manifest-path adl/Cargo.toml closed_ready_validation_is_read_only_and_reports_truth_drift -- --nocapture\"\nfailure_policy: \"fail_closed\"\nnotes: \"fixture\"\n---\n\n# Validation Planning Prompt\n\n## Validation Planning Summary\n\nFixture validation plan.\n\n## Lane Registry Inputs\n\n- Registry path: `docs/validation/pvf_lanes.json`\n- Registry template set: `vpp.lane.v1`\n- Initial PVF lane from issue creation: `tooling`\n- Planned PVF lane for execution: `tooling`\n\n## Selected Validation Lanes\n\n- tooling\n\n## Parallelization Plan\n\n- Parallel groups: local\n- Validation runtime class: `tiny`\n- Validation resource profile: `local`\n\n## Goal Accounting Hooks\n\n- Issue goal ref: `issue-{issue}`\n- Sprint goal ref: `unknown`\n- Goal metrics rollup ref: `unknown`\n\n## Proof Cost / Runtime Expectations\n\n- Expected proof cost: `small`\n- Planned validation seconds: `30`\n- Planned validation tokens: `800`\n\n## Validation Commands\n\n- cargo test --manifest-path adl/Cargo.toml closed_ready_validation_is_read_only_and_reports_truth_drift -- --nocapture\n\n## Failure Semantics\n\n- fail_closed\n\n## Handoff\n\nUse this fixture VPP as the validation plan.\n\n## Notes\n\nfixture\n",
         issue = issue_ref.issue_number(),
         task_id = issue_ref.task_issue_id(),
     );
@@ -524,7 +619,7 @@ fn card_lifecycle_allows_ellipsis_in_reviewed_spp_prose() {
             LifecycleFixture {
                 sip: "Branch: codex/3065-test\n",
                 stp: complete_stp_fixture(),
-                spp: "---\nbranch: \"codex/3065-test\"\nstatus: \"reviewed\"\n---\n\n# Structured Plan Prompt\n\n## Validation\n\nInspect provider output like `downloading... done` without treating it as truncation.\n",
+                spp: Box::leak(format!("{}{}", reviewed_spp_frontmatter(), "\n# Structured Plan Prompt\n\n## Validation\n\nInspect provider output like `downloading... done` without treating it as truncation.\n").into_boxed_str()),
                 srp: "---\nartifact_type: \"structured_review_prompt\"\nbranch: \"codex/3065-test\"\nstatus: \"draft\"\n---\n\n# Structured Review Prompt\n",
                 sor: "Branch: not bound yet\nStatus: NOT_STARTED\n\n## Summary\n\nNo implementation has started yet.\n",
             },
@@ -536,6 +631,55 @@ fn card_lifecycle_allows_ellipsis_in_reviewed_spp_prose() {
 
     assert_eq!(lifecycle.pr_run_readiness, "ready");
     assert_stage(&lifecycle, "SPP", "complete", true, false);
+}
+
+#[test]
+fn card_lifecycle_blocks_spp_without_explicit_execution_budget() {
+    let repo = lifecycle_temp_repo("spp-missing-explicit-budget");
+    let paths = write_lifecycle_fixture(
+        &repo,
+        LifecycleFixture {
+            sip: "Branch: codex/3065-test\n",
+            stp: complete_stp_fixture(),
+            spp: "---\nbranch: \"codex/3065-test\"\nstatus: \"reviewed\"\nestimate_elapsed_seconds: \"unknown\"\nestimate_total_tokens: \"unknown\"\n---\n",
+            srp: "---\nartifact_type: \"structured_review_prompt\"\nbranch: \"codex/3065-test\"\nstatus: \"draft\"\n---\n\n# Structured Review Prompt\n",
+            sor: "Branch: not bound yet\nStatus: NOT_STARTED\n\n## Summary\n\nNo implementation has started yet.\n",
+        },
+    );
+
+    let lifecycle = build_doctor_card_lifecycle(
+        &repo, &paths.sip, &paths.stp, &paths.spp, &paths.vpp, &paths.srp, &paths.sor,
+    );
+
+    assert_eq!(lifecycle.pr_run_readiness, "blocked");
+    assert_stage(&lifecycle, "SPP", "active", false, false);
+}
+
+#[test]
+fn card_lifecycle_blocks_vpp_without_explicit_validation_budget() {
+    let repo = lifecycle_temp_repo("vpp-missing-explicit-budget");
+    let paths = write_lifecycle_fixture(
+        &repo,
+        LifecycleFixture {
+            sip: "Branch: codex/3065-test\n",
+            stp: complete_stp_fixture(),
+            spp: reviewed_spp_frontmatter(),
+            srp: "---\nartifact_type: \"structured_review_prompt\"\nbranch: \"codex/3065-test\"\nstatus: \"draft\"\n---\n\n# Structured Review Prompt\n",
+            sor: "Branch: not bound yet\nStatus: NOT_STARTED\n\n## Summary\n\nNo implementation has started yet.\n",
+        },
+    );
+    fs::write(
+        &paths.vpp,
+        "---\nartifact_type: \"structured_validation_planning_prompt\"\nbranch: \"codex/3065-test\"\ncard_status: \"ready\"\nstatus: \"reviewed\"\ninitial_pvf_lane: \"tooling\"\nplanned_pvf_lane: \"tooling\"\nplanned_validation_seconds: \"unknown\"\nplanned_validation_tokens: \"unknown\"\nvalidation_commands:\n  - \"cargo test --manifest-path adl/Cargo.toml card_lifecycle_blocks_vpp_without_explicit_validation_budget -- --nocapture\"\n---\n\n# Validation Planning Prompt\n\n## Validation Planning Summary\n\nFixture validation plan.\n\n## Validation Commands\n\n- cargo test --manifest-path adl/Cargo.toml card_lifecycle_blocks_vpp_without_explicit_validation_budget -- --nocapture\n",
+    )
+    .expect("overwrite vpp");
+
+    let lifecycle = build_doctor_card_lifecycle(
+        &repo, &paths.sip, &paths.stp, &paths.spp, &paths.vpp, &paths.srp, &paths.sor,
+    );
+
+    assert_eq!(lifecycle.pr_run_readiness, "blocked");
+    assert_stage(&lifecycle, "VPP", "active", false, false);
 }
 
 #[test]
@@ -645,7 +789,7 @@ fn card_lifecycle_blocks_draft_design_time_card_status_before_execution() {
             LifecycleFixture {
                 sip: "Card Status: draft\nBranch: not bound yet\n",
                 stp: "---\ncard_status: \"ready\"\n---\n\n## Summary\n\nfixture summary\n\n## Goal\n\nfixture goal\n\n## Required Outcome\n\nready\n\n## Deliverables\n\n- fixture deliverable\n\n## Acceptance Criteria\n\n- pass\n\n## Repo Inputs\n\n- fixture\n\n## Dependencies\n\n- none\n\n## Demo Expectations\n\n- none\n\n## Non-goals\n\n- none\n\n## Issue-Graph Notes\n\n- fixture note\n\n## Notes\n\nfixture notes\n\n## Tooling Notes\n\n- fixture tooling note\n",
-                spp: "---\nbranch: \"not bound yet\"\ncard_status: \"ready\"\nstatus: \"reviewed\"\n---\n\n# Structured Plan Prompt\n",
+                spp: Box::leak(format!("{}{}", reviewed_ready_spp_frontmatter("not bound yet"), "\n# Structured Plan Prompt\n").into_boxed_str()),
                 srp: "---\nartifact_type: \"structured_review_prompt\"\nbranch: \"not bound yet\"\ncard_status: \"ready\"\nstatus: \"draft\"\nreview_results_exception: \"explicit policy exception: pre-execution review results are absent\"\n---\n\n# Structured Review Prompt\n",
                 sor: "Branch: not bound yet\nCard Status: draft\nStatus: NOT_STARTED\n\n## Summary\n\nNo implementation has started yet.\n",
             },
@@ -676,7 +820,7 @@ fn card_lifecycle_blocks_completed_srp_without_review_results() {
             LifecycleFixture {
                 sip: "Card Status: ready\nBranch: codex/3065-test\n",
                 stp: "---\ncard_status: \"ready\"\n---\n\n## Summary\n\nfixture summary\n\n## Goal\n\nfixture goal\n\n## Required Outcome\n\nready\n\n## Deliverables\n\n- fixture deliverable\n\n## Acceptance Criteria\n\n- pass\n\n## Repo Inputs\n\n- fixture\n\n## Dependencies\n\n- none\n\n## Demo Expectations\n\n- none\n\n## Non-goals\n\n- none\n\n## Issue-Graph Notes\n\n- fixture note\n\n## Notes\n\nfixture notes\n\n## Tooling Notes\n\n- fixture tooling note\n",
-                spp: "---\nbranch: \"codex/3065-test\"\ncard_status: \"ready\"\nstatus: \"reviewed\"\n---\n",
+                spp: reviewed_ready_spp_frontmatter("codex/3065-test"),
                 srp: "---\nartifact_type: \"structured_review_prompt\"\nbranch: \"codex/3065-test\"\ncard_status: \"completed\"\nstatus: \"approved\"\n---\n\n# Structured Review Prompt\n\n## Review Results\n\n- Not run yet.\n",
                 sor: "# output\n\nBranch: codex/3065-test\nCard Status: ready\nStatus: DONE\n\n## Main Repo Integration (REQUIRED)\n- Worktree-only paths remaining: tracked change still on PR branch\n- Integration state: pr_open\n- Result: PASS\n\n## Validation\n- focused validation passed\n",
             },
@@ -698,7 +842,7 @@ fn card_lifecycle_blocks_completed_sor_before_terminal_closeout() {
             LifecycleFixture {
                 sip: "Card Status: ready\nBranch: codex/3065-test\n",
                 stp: "---\ncard_status: \"ready\"\n---\n\n## Summary\n\nfixture summary\n\n## Goal\n\nfixture goal\n\n## Required Outcome\n\nready\n\n## Deliverables\n\n- fixture deliverable\n\n## Acceptance Criteria\n\n- pass\n\n## Repo Inputs\n\n- fixture\n\n## Dependencies\n\n- none\n\n## Demo Expectations\n\n- none\n\n## Non-goals\n\n- none\n\n## Issue-Graph Notes\n\n- fixture note\n\n## Notes\n\nfixture notes\n\n## Tooling Notes\n\n- fixture tooling note\n",
-                spp: "---\nbranch: \"codex/3065-test\"\ncard_status: \"ready\"\nstatus: \"approved\"\n---\n",
+                spp: approved_ready_spp_frontmatter("codex/3065-test"),
                 srp: "---\nartifact_type: \"structured_review_prompt\"\nbranch: \"codex/3065-test\"\ncard_status: \"completed\"\nstatus: \"approved\"\nreview_results:\n  findings_status: \"no_findings\"\n  recommended_outcome: \"pass\"\n---\n\n# Structured Review Prompt\n\n## Review Results\n\n- pass\n",
                 sor: "# output\n\nBranch: codex/3065-test\nCard Status: completed\nStatus: DONE\n\n## Main Repo Integration (REQUIRED)\n- Worktree-only paths remaining: tracked change still on PR branch\n- Integration state: pr_open\n- Result: PASS\n\n## Validation\n- focused validation passed\n",
             },
@@ -735,12 +879,12 @@ fn preflight_card_readiness_reports_blocked_for_draft_design_time_card() {
         .expect("write stp");
     fs::write(
         issue_ref.task_bundle_plan_path(&repo),
-        "---\nbranch: \"not bound yet\"\ncard_status: \"ready\"\nstatus: \"reviewed\"\n---\n",
+        reviewed_ready_spp_frontmatter("not bound yet"),
     )
     .expect("write spp");
     fs::write(
         issue_ref.task_bundle_validation_plan_path(&repo),
-        "---\nartifact_type: \"structured_validation_planning_prompt\"\nbranch: \"not bound yet\"\ncard_status: \"ready\"\nstatus: \"ready\"\ninitial_pvf_lane: \"tooling\"\nplanned_pvf_lane: \"tooling\"\n---\n\n# Validation Planning Prompt\n\n## Validation Planning Summary\n\nFixture validation plan.\n",
+        "---\nartifact_type: \"structured_validation_planning_prompt\"\nbranch: \"not bound yet\"\ncard_status: \"ready\"\nstatus: \"reviewed\"\ninitial_pvf_lane: \"tooling\"\nplanned_pvf_lane: \"tooling\"\nplanned_validation_seconds: \"30\"\nplanned_validation_tokens: \"800\"\nvalidation_commands:\n  - \"cargo test --manifest-path adl/Cargo.toml preflight_card_readiness_reports_blocked_for_draft_design_time_card -- --nocapture\"\n---\n\n# Validation Planning Prompt\n\n## Validation Planning Summary\n\nFixture validation plan.\n\n## Validation Commands\n\n- cargo test --manifest-path adl/Cargo.toml preflight_card_readiness_reports_blocked_for_draft_design_time_card -- --nocapture\n",
     )
     .expect("write vpp");
     fs::write(
@@ -783,7 +927,7 @@ fn preflight_card_readiness_reports_blocked_when_vpp_is_missing() {
     .expect("write stp");
     fs::write(
         issue_ref.task_bundle_plan_path(&repo),
-        "---\nbranch: \"not bound yet\"\ncard_status: \"ready\"\nstatus: \"reviewed\"\n---\n",
+        reviewed_ready_spp_frontmatter("not bound yet"),
     )
     .expect("write spp");
     fs::write(
@@ -811,7 +955,7 @@ fn card_lifecycle_treats_ready_vpp_as_design_time_complete() {
         LifecycleFixture {
             sip: "Card Status: ready\nBranch: codex/3065-test\n",
             stp: complete_stp_fixture(),
-            spp: "---\nbranch: \"codex/3065-test\"\ncard_status: \"ready\"\nstatus: \"approved\"\n---\n",
+            spp: approved_ready_spp_frontmatter("codex/3065-test"),
             srp: "---\nartifact_type: \"structured_review_prompt\"\nbranch: \"codex/3065-test\"\ncard_status: \"ready\"\nstatus: \"draft\"\nreview_results_exception: \"explicit policy exception: pre-execution review results are absent\"\n---\n\n# Structured Review Prompt\n",
             sor: "Branch: codex/3065-test\nCard Status: draft\nStatus: NOT_STARTED\n\n## Summary\n\nNo implementation has started yet.\n",
         },
@@ -864,7 +1008,7 @@ fn card_lifecycle_blocks_run_readiness_for_incomplete_active_stp() {
             LifecycleFixture {
                 sip: "Branch: codex/3065-test\n",
                 stp: "## Required Outcome\n\nready\n",
-                spp: "---\nbranch: \"codex/3065-test\"\nstatus: \"reviewed\"\n---\n",
+                spp: reviewed_spp_frontmatter(),
                 srp: "---\nartifact_type: \"structured_review_policy\"\nbranch: \"codex/3065-test\"\nstatus: \"draft\"\n---\n\n# Structured Review Policy\n",
                 sor: "Branch: codex/3065-test\nStatus: NOT_STARTED\n\n## Summary\n\nNo implementation has started yet.\n",
             },
@@ -888,7 +1032,7 @@ fn card_lifecycle_blocks_sparse_stp_before_execution() {
             LifecycleFixture {
                 sip: "Branch: codex/3065-test\n",
                 stp: "## Required Outcome\n\nready\n\n## Acceptance Criteria\n\n- pass\n",
-                spp: "---\nbranch: \"codex/3065-test\"\nstatus: \"reviewed\"\n---\n",
+                spp: reviewed_spp_frontmatter(),
                 srp: "---\nartifact_type: \"structured_review_policy\"\nbranch: \"codex/3065-test\"\nstatus: \"draft\"\n---\n\n# Structured Review Policy\n",
                 sor: "Branch: codex/3065-test\nStatus: NOT_STARTED\n\n## Summary\n\nNo implementation has started yet.\n",
             },
@@ -912,7 +1056,7 @@ fn card_lifecycle_does_not_treat_embedded_heading_text_as_complete_stp() {
             LifecycleFixture {
                 sip: "Branch: codex/3065-test\n",
                 stp: "## Summary\n\nfixture summary\n\n## Goal\n\nfixture goal\n\n## Required Outcome\n\nready\n\n## Deliverables\n\n- fixture deliverable\n\n## Acceptance Criteria\n\n- pass\n\n## Repo Inputs\n\n- fixture\n\n## Dependencies\n\n- none\n\n## Demo Expectations\n\n- none\n\n## Non-goals\n\n- none\n\n## Issue-Graph Notes\n\n- fixture note\n\n## Notes\n\n```md\n## Tooling Notes\n```\n",
-                spp: "---\nbranch: \"codex/3065-test\"\nstatus: \"reviewed\"\n---\n",
+                spp: reviewed_spp_frontmatter(),
                 srp: "---\nartifact_type: \"structured_review_policy\"\nbranch: \"codex/3065-test\"\nstatus: \"draft\"\n---\n\n# Structured Review Policy\n",
                 sor: "Branch: codex/3065-test\nStatus: NOT_STARTED\n\n## Summary\n\nNo implementation has started yet.\n",
             },
@@ -936,7 +1080,7 @@ fn card_lifecycle_reports_final_review_and_output_truth() {
             LifecycleFixture {
                 sip: "Branch: codex/3065-test\n",
                 stp: complete_stp_fixture(),
-                spp: "---\nbranch: \"codex/3065-test\"\nstatus: \"approved\"\n---\n",
+                spp: approved_spp_frontmatter(),
                 srp: "---\nartifact_type: \"structured_review_policy\"\nbranch: \"codex/3065-test\"\nstatus: \"approved\"\nreview_results:\n  findings_status: \"no_findings\"\n  recommended_outcome: \"pass\"\n---\n\n# Structured Review Prompt\n\n## Review Results\n\n### Recommended Outcome\n\n- pass\n",
                 sor: "# output\n\nBranch: codex/3065-test\nStatus: DONE\n\n## Main Repo Integration (REQUIRED)\n- Worktree-only paths remaining: none\n- Integration state: merged\n- Result: PASS\n\n## Validation\n- focused validation passed\n",
             },
@@ -961,7 +1105,7 @@ fn card_lifecycle_accepts_terminal_sor_with_retained_dirty_worktree_truth() {
             LifecycleFixture {
                 sip: "Branch: codex/3065-test\n",
                 stp: complete_stp_fixture(),
-                spp: "---\nbranch: \"codex/3065-test\"\nstatus: \"approved\"\n---\n",
+                spp: approved_spp_frontmatter(),
                 srp: "---\nartifact_type: \"structured_review_policy\"\nbranch: \"codex/3065-test\"\nstatus: \"approved\"\nreview_results:\n  findings_status: \"no_findings\"\n  recommended_outcome: \"pass\"\n---\n\n# Structured Review Prompt\n\n## Review Results\n\n### Recommended Outcome\n\n- pass\n",
                 sor: "# output\n\nBranch: codex/3065-test\nStatus: DONE\n\n## Main Repo Integration (REQUIRED)\n- Worktree-only paths remaining: issue worktree retained: adl-wp-3065\n- Worktree prune result: retained_with_reason: dirty stale worktree retained: adl-wp-3065\n- Integration state: merged\n- Result: PASS\n\n## Validation\n- focused validation passed\n",
             },
@@ -985,7 +1129,7 @@ fn card_lifecycle_blocks_final_sor_with_contradictory_status_and_result() {
             LifecycleFixture {
                 sip: "Branch: codex/3065-test\n",
                 stp: complete_stp_fixture(),
-                spp: "---\nbranch: \"codex/3065-test\"\nstatus: \"approved\"\n---\n",
+                spp: approved_spp_frontmatter(),
                 srp: "---\nartifact_type: \"structured_review_policy\"\nbranch: \"codex/3065-test\"\nstatus: \"approved\"\nreview_results:\n  findings_status: \"no_findings\"\n  recommended_outcome: \"pass\"\n---\n\n# Structured Review Prompt\n\n## Review Results\n\n### Recommended Outcome\n\n- pass\n",
                 sor: "# output\n\nBranch: codex/3065-test\nStatus: DONE\n\n## Main Repo Integration (REQUIRED)\n- Worktree-only paths remaining: none\n- Integration state: merged\n- Result: FAIL\n\n## Validation\n- focused validation failed\n",
             },
@@ -1018,13 +1162,13 @@ fn card_lifecycle_accepts_tracked_csdlc_bundle() {
         &bundle.join("sor.md"),
     );
 
-    assert_eq!(lifecycle.active_stage, "SOR");
-    assert_eq!(lifecycle.next_required_stage, None);
-    assert_eq!(lifecycle.pr_run_readiness, "ready");
+    assert_eq!(lifecycle.active_stage, "SPP");
+    assert_eq!(lifecycle.next_required_stage, Some("SPP"));
+    assert_eq!(lifecycle.pr_run_readiness, "blocked");
     assert_eq!(lifecycle.pr_finish_readiness, "ready");
     assert_stage(&lifecycle, "SIP", "complete", true, false);
     assert_stage(&lifecycle, "STP", "complete", true, false);
-    assert_stage(&lifecycle, "SPP", "complete", true, false);
+    assert_stage(&lifecycle, "SPP", "active", false, false);
     assert_stage(&lifecycle, "SRP", "final", true, true);
     assert_stage(&lifecycle, "SOR", "final", true, true);
 }
@@ -1075,7 +1219,7 @@ fn write_lifecycle_fixture(repo: &Path, fixture: LifecycleFixture<'_>) -> Lifecy
     fs::write(&paths.spp, fixture.spp).expect("write spp");
     fs::write(
         &paths.vpp,
-        "---\nartifact_type: \"structured_validation_planning_prompt\"\nbranch: \"codex/3065-test\"\ncard_status: \"ready\"\nstatus: \"ready\"\ninitial_pvf_lane: \"needs_planning_lane_assignment\"\nplanned_pvf_lane: \"tooling\"\nlane_registry_path: \"docs/validation/pvf_lanes.json\"\nlane_registry_template_set: \"vpp.lane.v1\"\nvalidation_runtime_class: \"tiny\"\nvalidation_resource_profile: \"local\"\nexpected_proof_cost: \"small\"\nplanned_validation_seconds: \"unknown\"\nplanned_validation_tokens: \"unknown\"\nissue_goal_ref: \"issue-3065\"\nsprint_goal_ref: \"unknown\"\ngoal_metrics_rollup_ref: \"unknown\"\nselected_lanes:\n  - \"tooling\"\nparallel_groups:\n  - \"local\"\nvalidation_commands:\n  - \"cargo test --manifest-path adl/Cargo.toml closed_ready_validation_is_read_only_and_reports_truth_drift -- --nocapture\"\nfailure_policy: \"fail_closed\"\nnotes: \"Generated from docs/templates/prompts/1.0.3/vpp.md template; confirm lane selection before relying on this plan. Lane source: initial_pvf_lane.\"\n---\n\n# Validation Planning Prompt\n\n## Validation Planning Summary\n\nFixture validation plan.\n",
+        "---\nartifact_type: \"structured_validation_planning_prompt\"\nbranch: \"codex/3065-test\"\ncard_status: \"ready\"\nstatus: \"reviewed\"\ninitial_pvf_lane: \"tooling\"\nplanned_pvf_lane: \"tooling\"\nlane_registry_path: \"docs/validation/pvf_lanes.json\"\nlane_registry_template_set: \"vpp.lane.v1\"\nvalidation_runtime_class: \"tiny\"\nvalidation_resource_profile: \"local\"\nexpected_proof_cost: \"small\"\nplanned_validation_seconds: \"45\"\nplanned_validation_tokens: \"900\"\nissue_goal_ref: \"issue-3065\"\nsprint_goal_ref: \"unknown\"\ngoal_metrics_rollup_ref: \"unknown\"\nselected_lanes:\n  - \"tooling\"\nparallel_groups:\n  - \"local\"\nvalidation_commands:\n  - \"cargo test --manifest-path adl/Cargo.toml doctor_ready_uses_bound_worktree_root_for_validation_once_bundle_exists -- --nocapture\"\nfailure_policy: \"fail_closed\"\nnotes: \"Fixture validation plan with explicit lane and budget truth.\"\n---\n\n# Validation Planning Prompt\n\n## Validation Planning Summary\n\nFixture validation plan.\n\n## Validation Commands\n\n- cargo test --manifest-path adl/Cargo.toml doctor_ready_uses_bound_worktree_root_for_validation_once_bundle_exists -- --nocapture\n",
     )
     .expect("write vpp");
     fs::write(&paths.srp, fixture.srp).expect("write srp");
@@ -1098,6 +1242,32 @@ fn complete_stp_fixture_with(required_outcome: &str, acceptance_criteria: &str) 
             )
             .into_boxed_str(),
         )
+}
+
+fn reviewed_spp_frontmatter() -> &'static str {
+    "---\nbranch: \"codex/3065-test\"\nstatus: \"reviewed\"\nestimate_elapsed_seconds: \"120\"\nestimate_total_tokens: \"4000\"\n---\n"
+}
+
+fn approved_spp_frontmatter() -> &'static str {
+    "---\nbranch: \"codex/3065-test\"\nstatus: \"approved\"\nestimate_elapsed_seconds: \"120\"\nestimate_total_tokens: \"4000\"\n---\n"
+}
+
+fn reviewed_ready_spp_frontmatter(branch: &str) -> &'static str {
+    Box::leak(
+        format!(
+            "---\nbranch: \"{branch}\"\ncard_status: \"ready\"\nstatus: \"reviewed\"\nestimate_elapsed_seconds: \"120\"\nestimate_total_tokens: \"4000\"\n---\n"
+        )
+        .into_boxed_str(),
+    )
+}
+
+fn approved_ready_spp_frontmatter(branch: &str) -> &'static str {
+    Box::leak(
+        format!(
+            "---\nbranch: \"{branch}\"\ncard_status: \"ready\"\nstatus: \"approved\"\nestimate_elapsed_seconds: \"120\"\nestimate_total_tokens: \"4000\"\n---\n"
+        )
+        .into_boxed_str(),
+    )
 }
 
 fn assert_stage(

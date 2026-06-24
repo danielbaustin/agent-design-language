@@ -84,6 +84,8 @@ The normal workflow is:
    - actionable PR blockers route here for bounded remediation
    - the repo finish path may auto-attach the janitor hook after PR publication when blocker monitoring is needed
 9. truthful `update_goal` terminal state, then `pr-closeout` after the PR outcome or explicit non-PR closure disposition is settled
+   - default tracked implementation goals stay active until their declared terminal boundary is satisfied
+   - handoff-only completion is reserved for goals that explicitly declare that narrower boundary
 
 The first-class issue-lifecycle shepherd contract above those phases lives at:
 

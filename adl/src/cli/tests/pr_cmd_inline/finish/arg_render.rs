@@ -728,6 +728,41 @@ review_results:
 }
 
 #[test]
+fn sor_emitted_facts_sanitize_manager_backed_changed_files_path() {
+    let output = "## Verification Summary\n";
+    let review = r#"---
+review_results:
+  findings_status: "no_findings"
+  recommended_outcome: "pass"
+---
+
+# Structured Review Prompt
+
+## Findings
+
+- No material findings.
+"#;
+
+    let normalized = normalize_sor_emitted_facts_fixture(
+        output,
+        &["adl/src/cli/pr_cmd/github.rs".to_string()],
+        &["bash adl/tools/run_pr_fast_test_lane.sh --changed-files /private/tmp/finish-validation-profile-123.txt".to_string()],
+        review,
+        SorFactEmissionContext {
+            validation_status: "PASS",
+            pr_url: None,
+            integration_state: "worktree_only",
+            closing_linkage_repaired: false,
+        },
+    )
+    .expect("normalize with sanitized changed-files command");
+
+    assert!(normalized
+        .contains("bash adl/tools/run_pr_fast_test_lane.sh --changed-files <changed-files>"));
+    assert!(!normalized.contains("/private/tmp/finish-validation-profile-123.txt"));
+}
+
+#[test]
 fn sor_emitted_facts_default_review_truth_when_srp_front_matter_is_absent() {
     let output = r#"## Verification Summary
 
@@ -2132,6 +2167,27 @@ fn finish_validation_plan_classifies_openrouter_suitability_tooling() {
         .commands
         .contains(&"bash adl/tools/check_no_tracked_adl_issue_record_residue.sh".to_string()));
     assert!(plan.commands.contains(&"git diff --check".to_string()));
+}
+
+#[test]
+fn finish_validation_plan_classifies_openrouter_next_tranche_suitability_tooling() {
+    let plan = select_finish_validation_plan(
+        "adl/tools/suitability_specs/openrouter_next_tranche_4448.json,docs/milestones/v0.91.6/review/provider/openrouter_next_tranche_4448/OPENROUTER_NEXT_TRANCHE_SUITABILITY_PROOF_2026-06-22.md",
+    )
+    .expect("openrouter next tranche suitability tooling plan");
+
+    assert_eq!(plan.mode, FinishValidationMode::LargerBinaryFocused);
+    assert!(plan
+        .commands
+        .contains(&"bash adl/tools/test_v0916_deepseek_suitability.sh".to_string()));
+    assert!(plan
+        .commands
+        .contains(&"bash adl/tools/check_no_tracked_adl_issue_record_residue.sh".to_string()));
+    assert!(plan.commands.contains(&"git diff --check".to_string()));
+    assert!(!plan
+        .commands
+        .iter()
+        .any(|command| command.contains("cargo clippy")));
 }
 
 #[test]
