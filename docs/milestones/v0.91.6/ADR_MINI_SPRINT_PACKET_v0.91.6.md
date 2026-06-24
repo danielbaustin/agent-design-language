@@ -14,6 +14,9 @@ The entries below remain proposed ADR candidates until they are reviewed and
 promoted into `docs/adr/`. This packet must not be read as silently accepting
 new architecture decisions.
 
+Accepted ADRs live in `docs/adr/`. Candidate draft copies and candidate
+catalogs live in `docs/architecture/adr/`.
+
 `#4416` adds a retained content-review packet for this candidate set at
 `docs/milestones/v0.91.6/review/V0916_ADR_CANDIDATE_CONTENT_REVIEW_4416.md`.
 That review repairs current-state sprint truth and records promotion gates, but
@@ -74,6 +77,28 @@ issue wave:
 
 These child issues are review and promotion-routing surfaces. They do not mean
 the candidate ADRs are accepted.
+
+## Post-Review Candidate Disposition Route
+
+Issue `#4383` repaired the release-tail ADR routing truth after the retained
+candidate review packets landed. The follow-on acceptance/disposition owner is
+`#4476`. That issue must either promote, refresh-then-promote, defer, or
+evidence-gate each candidate through the normal ADR acceptance path.
+
+| Candidate | Current disposition | Owner issue | Target milestone | Required evidence before acceptance |
+| --- | --- | --- | --- | --- |
+| ADR 0035: Local Polis SSM Operations Boundary | `ready_for_acceptance_review` | `#4476` | `v0.91.6` release tail | Confirm `#4109`, `#4113`, `#4318`, `#4319`, and `#4343` preserve SSM as operations-plane authority only. |
+| ADR 0036: Validation Lane Selector / PVF Test-Cost Policy | `ready_for_acceptance_review` | `#4476` | `v0.91.6` release tail | Confirm validation selector docs, PVF lane index, and retained review evidence agree on deterministic lane selection and fail-closed escalation. |
+| ADR 0037: GitHub/C-SDLC Projection Ownership | `refresh_then_acceptance_review` | `#4476` | `v0.91.6` release tail | Refresh against current typed closing-linkage and GitHub convergence truth, including `#4286` disposition or an explicit deferred implementation note. |
+| ADR 0038: Runtime Integration Soak Boundary | `ready_for_acceptance_review` | `#4476` | `v0.91.6` release tail | Confirm Soak #1 remains the v0.91.6 walking-skeleton proof and Soak #2 remains the v0.91.7 feature-integration gate before v0.92. |
+| ADR 0039: Cognitive Scheduler v1 Authority Boundary | `ready_for_acceptance_review` | `#4476` | `v0.91.6` release tail | Confirm scheduler v1 evidence remains planning/evidence only and does not grant timed execution, GitHub mutation, or provider-selection authority. |
+| ADR 0040: Workflow Lockfile Discipline | `defer_until_evidence` | `#4476` | `v0.91.6` release tail if evidence is captured; otherwise `v0.91.7` | Capture or cite the durable source packet for the lockfile-discipline fix, including exact tracked files and validation proof, before promotion. |
+| ADR 0041: Provider/Model Suitability Boundary v2 | `ready_for_acceptance_review` | `#4476` | `v0.91.6` release tail | Confirm WP-05/provider suitability evidence distinguishes provider availability, capability, role suitability, reliability, failure modes, and advisory authority. |
+| ADR 0042: Public Prompt Records Publication Boundary | `ready_for_acceptance_review` | `#4476` | `v0.91.6` release tail | Confirm public prompt records remain reviewed/redacted/indexed projections and do not claim raw `.adl` publication or unrestricted historical export. |
+
+`#4476` is an ADR disposition issue, not an implementation issue. It may accept
+only the candidates whose evidence gates are satisfied and must leave deferred
+candidate routes visible.
 
 ### Local Polis SSM Operations Boundary
 
@@ -167,14 +192,18 @@ of every historical `.adl` bundle.
 
 ## Existing Candidate ADR 0029-0034 Routing
 
-| Candidate | Current state | v0.91.6 recommendation | Rationale |
-| --- | --- | --- | --- |
-| ADR 0029: C-SDLC Default Software-Development Lane | proposed in `docs/architecture/adr/` | `promote_or_refresh_then_promote` | Root `AGENTS.md`, workflow-conductor usage, and v0.91.6 issue execution show this has become active architecture policy. Refresh with current v0.91.6 lifecycle/tooling evidence before acceptance. |
-| ADR 0030: Software Development Polis Actor Standing And Shard Ownership | proposed in `docs/architecture/adr/` | `defer_with_active_route` | Still important, but actor standing and shard ownership are not fully enforced enough to accept without a focused review. Keep as v0.91.7/v0.93 governance route. |
-| ADR 0031: C-SDLC Multi-Agent Parallel Execution Boundary | proposed in `docs/architecture/adr/` | `defer_with_active_route` | v0.91.6 used parallel sessions operationally, but durable multi-agent shard enforcement and integration review need more explicit evidence before acceptance. |
-| ADR 0032: Parallel Validation Fabric | proposed in `docs/architecture/adr/` | `promote_or_refresh_then_promote` | v0.91.6 validation-manager/test-tax work made PVF-style lane selection active project architecture. Refresh with `VALIDATION_LANE_SELECTOR.md` and `#4212` evidence before acceptance. |
-| ADR 0033: Merge Readiness And PR Gate Truth Boundary | proposed in `docs/architecture/adr/` | `promote_or_refresh_then_promote` | v0.91.6 closeout, review, projection, and lockfile incidents reinforce this as active architecture policy. Refresh with current issue lifecycle and validation-manager evidence. |
-| ADR 0034: C-SDLC Evidence Convergence, Signed Trace, And ObsMem Handoff | proposed in `docs/architecture/adr/` | `defer_with_active_route` | Evidence convergence is real, but signed trace and ObsMem handoff are not yet complete enough for acceptance. Keep routed to v0.91.7/v0.92 bridge work. |
+These older C-SDLC candidates are routed to the same explicit
+acceptance/disposition owner as the v0.91.6 release-tail candidates so #4383
+does not leave its original scope as recommendation-only prose.
+
+| Candidate | Current state | v0.91.6 recommendation | Owner issue | Target route | Rationale |
+| --- | --- | --- | --- | --- | --- |
+| ADR 0029: C-SDLC Default Software-Development Lane | proposed in `docs/architecture/adr/` | `promote_or_refresh_then_promote` | `#4476` | `v0.91.6` release tail | Root `AGENTS.md`, workflow-conductor usage, and v0.91.6 issue execution show this has become active architecture policy. Refresh with current v0.91.6 lifecycle/tooling evidence before acceptance. |
+| ADR 0030: Software Development Polis Actor Standing And Shard Ownership | proposed in `docs/architecture/adr/` | `defer_with_active_route` | `#4476` | `v0.91.7`/`v0.93` governance | Still important, but actor standing and shard ownership are not fully enforced enough to accept without a focused review. Keep as v0.91.7/v0.93 governance route. |
+| ADR 0031: C-SDLC Multi-Agent Parallel Execution Boundary | proposed in `docs/architecture/adr/` | `defer_with_active_route` | `#4476` | `v0.91.7` C-SDLC hardening | v0.91.6 used parallel sessions operationally, but durable multi-agent shard enforcement and integration review need more explicit evidence before acceptance. |
+| ADR 0032: Parallel Validation Fabric | proposed in `docs/architecture/adr/` | `promote_or_refresh_then_promote` | `#4476` | `v0.91.6` release tail | v0.91.6 validation-manager/test-tax work made PVF-style lane selection active project architecture. Refresh with `VALIDATION_LANE_SELECTOR.md` and `#4212` evidence before acceptance. |
+| ADR 0033: Merge Readiness And PR Gate Truth Boundary | proposed in `docs/architecture/adr/` | `promote_or_refresh_then_promote` | `#4476` | `v0.91.6` release tail | v0.91.6 closeout, review, projection, and lockfile incidents reinforce this as active architecture policy. Refresh with current issue lifecycle and validation-manager evidence. |
+| ADR 0034: C-SDLC Evidence Convergence, Signed Trace, And ObsMem Handoff | proposed in `docs/architecture/adr/` | `defer_with_active_route` | `#4476` | `v0.91.7`/`v0.92` bridge | Evidence convergence is real, but signed trace and ObsMem handoff are not yet complete enough for acceptance. Keep routed to v0.91.7/v0.92 bridge work. |
 
 ## Deferred ADR Candidates
 
