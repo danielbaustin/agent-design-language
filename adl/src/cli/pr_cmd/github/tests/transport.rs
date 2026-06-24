@@ -484,6 +484,62 @@ fn list_prs_octocrab_paginates_rest_results() {
 }
 
 #[test]
+fn list_prs_octocrab_fails_closed_on_repeated_next_page_urls() {
+    let _guard = env_lock();
+    let policy_env = clear_github_policy_env();
+    let (base_uri, server) = spawn_open_prs_repeated_next_server();
+    unsafe {
+        std::env::set_var("ADL_GITHUB_CLIENT", "octocrab");
+        std::env::set_var("GITHUB_TOKEN", "test-token");
+        std::env::set_var("ADL_GITHUB_OCTOCRAB_BASE_URI", &base_uri);
+    }
+
+    let err = list_prs_octocrab("owner/repo").expect_err("repeated next URL should fail closed");
+    assert!(err
+        .to_string()
+        .contains("github_client.pagination_loop"));
+    assert!(err.to_string().contains("pr.list.wave"));
+
+    let seen = server.join().expect("server join");
+    assert_eq!(seen.len(), 2, "unexpected pagination calls: {seen:#?}");
+    assert!(seen[0].contains("/repos/owner/repo/pulls?"));
+    assert!(seen[1].contains("/repos/owner/repo/pulls?page=2"));
+
+    unsafe {
+        std::env::remove_var("ADL_GITHUB_OCTOCRAB_BASE_URI");
+    }
+    restore_github_policy_env(policy_env);
+}
+
+#[test]
+fn list_prs_octocrab_times_out_promptly_when_github_stalls() {
+    let _guard = env_lock();
+    let policy_env = clear_github_policy_env();
+    let (base_uri, server) = spawn_open_prs_slow_server(Duration::from_secs(2));
+    unsafe {
+        std::env::set_var("ADL_GITHUB_CLIENT", "octocrab");
+        std::env::set_var("GITHUB_TOKEN", "test-token");
+        std::env::set_var("ADL_GITHUB_OCTOCRAB_BASE_URI", &base_uri);
+        std::env::set_var("ADL_GITHUB_OCTOCRAB_TIMEOUT_SECS", "1");
+        std::env::set_var("ADL_GITHUB_OCTOCRAB_MAX_ATTEMPTS", "1");
+    }
+
+    let err = list_prs_octocrab("owner/repo").expect_err("slow GitHub should time out");
+    assert!(err.to_string().contains("github_client.timeout"));
+    assert!(err.to_string().contains("pr.list.wave"));
+
+    let seen = server.join().expect("server join");
+    assert_eq!(seen.len(), 1, "unexpected slow-server calls: {seen:#?}");
+
+    unsafe {
+        std::env::remove_var("ADL_GITHUB_OCTOCRAB_BASE_URI");
+        std::env::remove_var("ADL_GITHUB_OCTOCRAB_TIMEOUT_SECS");
+        std::env::remove_var("ADL_GITHUB_OCTOCRAB_MAX_ATTEMPTS");
+    }
+    restore_github_policy_env(policy_env);
+}
+
+#[test]
 fn pr_validation_watch_returns_failed_report_without_second_fetch() {
     let _guard = env_lock();
     let policy_env = clear_github_policy_env();
@@ -521,6 +577,7 @@ fn octocrab_retry_policy_blocks_non_idempotent_mutations() {
     assert!(octocrab_operation_allows_retry("pr.validation.status"));
     assert!(octocrab_operation_allows_retry("issue.view.title"));
     assert!(octocrab_operation_allows_retry("issue.close"));
+    assert!(!octocrab_operation_allows_retry("pr.list.wave"));
     assert!(!octocrab_operation_allows_retry("issue.comment"));
     assert!(!octocrab_operation_allows_retry("issue.create"));
     assert!(!octocrab_operation_allows_retry("pr.create.finish"));

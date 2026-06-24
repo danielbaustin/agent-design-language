@@ -831,10 +831,51 @@ where
     let _runtime_guard = runtime.enter();
     let mut attempt = 1usize;
     let max_attempts = octocrab_max_attempts();
+    let request_timeout = octocrab_request_timeout();
     let result = loop {
-        match runtime.block_on(make_future()) {
-            Ok(value) => break value,
-            Err(err)
+        match runtime.block_on(tokio::time::timeout(request_timeout, make_future())) {
+            Ok(Ok(value)) => break value,
+            Err(_elapsed) if attempt < max_attempts && octocrab_operation_allows_retry(operation) => {
+                let attempt_text = attempt.to_string();
+                let max_attempts_text = max_attempts.to_string();
+                let timeout_secs_text = request_timeout.as_secs().to_string();
+                observability::emit_event(
+                    "adl",
+                    "github_octocrab",
+                    "retry",
+                    &[
+                        ("operation", operation),
+                        ("attempt", attempt_text.as_str()),
+                        ("max_attempts", max_attempts_text.as_str()),
+                        ("reason", "timeout"),
+                        ("timeout_secs", timeout_secs_text.as_str()),
+                    ],
+                );
+                std::thread::sleep(octocrab_retry_delay(attempt));
+                attempt += 1;
+            }
+            Err(_elapsed) => {
+                let attempts_text = attempt.to_string();
+                let timeout_secs_text = request_timeout.as_secs().to_string();
+                observability::emit_event(
+                    "adl",
+                    "github_octocrab",
+                    "failed",
+                    &[
+                        ("operation", operation),
+                        ("attempts", attempts_text.as_str()),
+                        ("reason", "timeout"),
+                        ("timeout_secs", timeout_secs_text.as_str()),
+                    ],
+                );
+                return Err(anyhow!(
+                    "github_client.timeout: operation '{}' exceeded the {}s per-attempt timeout after {} attempt(s)",
+                    operation,
+                    request_timeout.as_secs(),
+                    attempt
+                ));
+            }
+            Ok(Err(err))
                 if attempt < max_attempts
                     && octocrab_operation_allows_retry(operation)
                     && octocrab_error_is_retryable(&err) =>
@@ -854,7 +895,7 @@ where
                 std::thread::sleep(octocrab_retry_delay(attempt));
                 attempt += 1;
             }
-            Err(err) => {
+            Ok(Err(err)) => {
                 let attempts_text = attempt.to_string();
                 observability::emit_event(
                     "adl",
@@ -905,6 +946,16 @@ fn octocrab_max_attempts() -> usize {
         .and_then(|value| value.parse::<usize>().ok())
         .filter(|attempts| (1..=10).contains(attempts))
         .unwrap_or(3)
+}
+
+fn octocrab_request_timeout() -> Duration {
+    Duration::from_secs(
+        std::env::var("ADL_GITHUB_OCTOCRAB_TIMEOUT_SECS")
+            .ok()
+            .and_then(|value| value.parse::<u64>().ok())
+            .filter(|secs| (1..=120).contains(secs))
+            .unwrap_or(10),
+    )
 }
 
 fn octocrab_retry_delay(attempt: usize) -> Duration {
