@@ -198,7 +198,6 @@ pub(super) fn list_prs_octocrab(repo: &str) -> Result<Vec<OpenPullRequest>> {
         })?;
         let mut prs = Vec::new();
         let mut seen_next_pages = HashSet::new();
-        let mut page_index = 1usize;
         loop {
             prs.extend(page.items.into_iter().map(|pr| {
                 OpenPullRequest {
@@ -240,22 +239,7 @@ pub(super) fn list_prs_octocrab(repo: &str) -> Result<Vec<OpenPullRequest>> {
                 return Err(anyhow!(
                     "github_client.pagination_loop: operation 'pr.list.wave' received repeated next-page URL '{}' after page {}",
                     next_url,
-                    page_index
-                ));
-            }
-            page_index += 1;
-            if page_index > 50 {
-                observability::emit_event(
-                    "adl",
-                    "github_octocrab",
-                    "failed",
-                    &[
-                        ("operation", "pr.list.wave"),
-                        ("reason", "pagination_page_limit"),
-                    ],
-                );
-                return Err(anyhow!(
-                    "github_client.pagination_limit: operation 'pr.list.wave' exceeded the 50-page safety limit while listing pull requests"
+                    seen_next_pages.len() + 1
                 ));
             }
             page = block_on_octocrab(runtime, "pr.list.wave", || async {
