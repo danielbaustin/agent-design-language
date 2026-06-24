@@ -495,9 +495,7 @@ fn list_prs_octocrab_fails_closed_on_repeated_next_page_urls() {
     }
 
     let err = list_prs_octocrab("owner/repo").expect_err("repeated next URL should fail closed");
-    assert!(err
-        .to_string()
-        .contains("github_client.pagination_loop"));
+    assert!(err.to_string().contains("github_client.pagination_loop"));
     assert!(err.to_string().contains("pr.list.wave"));
 
     let seen = server.join().expect("server join");

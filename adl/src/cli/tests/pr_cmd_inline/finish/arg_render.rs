@@ -757,9 +757,8 @@ review_results:
     )
     .expect("normalize with sanitized changed-files command");
 
-    assert!(normalized.contains(
-        "bash adl/tools/run_pr_fast_test_lane.sh --changed-files <changed-files>"
-    ));
+    assert!(normalized
+        .contains("bash adl/tools/run_pr_fast_test_lane.sh --changed-files <changed-files>"));
     assert!(!normalized.contains("/private/tmp/finish-validation-profile-123.txt"));
 }
 
