@@ -116,6 +116,7 @@ pub(super) fn run_doctor_preflight(
     }
 }
 
+#[cfg(test)]
 pub(super) fn doctor_preflight_status(
     open_pr_wave_empty: bool,
     card_run_readiness: Option<&'static str>,
