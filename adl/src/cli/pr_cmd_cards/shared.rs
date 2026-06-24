@@ -62,6 +62,25 @@ pub(crate) fn copy_directory_contents(source: &Path, target: &Path) -> Result<()
     Ok(())
 }
 
+pub(crate) fn copy_directory_contents_if_missing(source: &Path, target: &Path) -> Result<()> {
+    fs::create_dir_all(target)?;
+    for entry in fs::read_dir(source)? {
+        let entry = entry?;
+        let source_path = entry.path();
+        let target_path = target.join(entry.file_name());
+        let file_type = entry.file_type()?;
+        if file_type.is_dir() {
+            copy_directory_contents_if_missing(&source_path, &target_path)?;
+        } else if file_type.is_file() && !target_path.exists() {
+            if let Some(parent) = target_path.parent() {
+                fs::create_dir_all(parent)?;
+            }
+            fs::copy(&source_path, &target_path)?;
+        }
+    }
+    Ok(())
+}
+
 pub(crate) fn ensure_symlink(link_path: &Path, target: &Path) -> Result<()> {
     if let Some(parent) = link_path.parent() {
         fs::create_dir_all(parent)?;

@@ -166,7 +166,7 @@ fn resolve_doctor_scope_and_slug(
     if let (Some(version), Some(slug)) = (parsed.version.clone(), parsed.slug.clone()) {
         return Ok((version, slug));
     }
-    let inferred = resolve_issue_scope_and_slug_from_local_state(repo_root, parsed.issue)?;
+    let inferred = resolve_issue_scope_and_slug_from_available_local_state(repo_root, parsed.issue)?;
     let version = parsed
         .version
         .clone()

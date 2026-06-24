@@ -121,6 +121,52 @@ pub(crate) fn resolve_issue_scope_and_slug_from_local_state(
     Ok(matches.into_iter().next())
 }
 
+pub(crate) fn resolve_issue_scope_and_slug_from_available_local_state(
+    primary_root: &Path,
+    issue: u32,
+) -> Result<Option<(String, String)>> {
+    let checkout_identity = if let Some(cwd_root) = current_checkout_root() {
+        if cwd_root != primary_root {
+            resolve_issue_scope_and_slug_from_local_state(&cwd_root, issue)?
+        } else {
+            None
+        }
+    } else {
+        None
+    };
+    let primary_identity = resolve_issue_scope_and_slug_from_local_state(primary_root, issue)?;
+    match (checkout_identity, primary_identity) {
+        (Some(checkout), Some(primary)) => {
+            if checkout != primary {
+                bail!(
+                    "local issue identity mismatch for issue #{}: active checkout resolved {}:{} but primary checkout resolved {}:{}",
+                    issue,
+                    checkout.0,
+                    checkout.1,
+                    primary.0,
+                    primary.1
+                );
+            }
+            Ok(Some(checkout))
+        }
+        (Some(checkout), None) => Ok(Some(checkout)),
+        (None, Some(primary)) => Ok(Some(primary)),
+        (None, None) => Ok(None),
+    }
+}
+
+fn current_checkout_root() -> Option<PathBuf> {
+    let mut cursor = std::env::current_dir().ok()?;
+    loop {
+        if cursor.join(".git").exists() {
+            return Some(cursor);
+        }
+        if !cursor.pop() {
+            return None;
+        }
+    }
+}
+
 pub(crate) fn normalize_issue_title_for_version(title: &str, version: &str) -> String {
     let trimmed = title.trim();
     if trimmed.is_empty() {

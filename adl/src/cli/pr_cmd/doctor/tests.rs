@@ -3,7 +3,10 @@ use super::*;
 use crate::cli::pr_cmd::doctor::ready::{
     ready_validation_repo_root, stale_worktree_branch_mismatch_preserves_pre_run,
 };
+use crate::cli::pr_cmd_cards::mirror_scope_sprints_into_worktree;
+use crate::cli::pr_cmd_prompt::resolve_issue_scope_and_slug_from_available_local_state;
 use crate::cli::pr_cmd_cards::StructuredBundlePaths;
+use crate::cli::tests::env_lock;
 use std::time::{SystemTime, UNIX_EPOCH};
 
 #[test]
@@ -25,6 +28,87 @@ fn doctor_issue_prompt_resolution_falls_back_to_bound_worktree_prompt() {
         resolve_doctor_issue_prompt_path(&repo, &issue_ref).expect("doctor source prompt");
 
     assert_eq!(resolved, source_path);
+}
+
+#[test]
+fn local_issue_identity_resolution_falls_back_to_bound_worktree_bundle_from_nested_path() {
+    let _guard = env_lock();
+    let repo = lifecycle_temp_repo("doctor-identity-worktree-fallback");
+    let issue_ref = IssueRef::new(4455, "v0.91.6".to_string(), "worktree-safe-truth".to_string())
+        .expect("issue ref");
+    let worktree = issue_ref.default_worktree_path(&repo, None);
+    let bundle = issue_ref.task_bundle_dir_path(&worktree);
+    fs::create_dir_all(&bundle).expect("create worktree bundle");
+    fs::create_dir_all(&worktree).expect("create worktree root");
+    fs::write(worktree.join(".git"), "gitdir: /tmp/fake-worktree\n").expect("seed git marker");
+    let nested = worktree.join("adl/src");
+    fs::create_dir_all(&nested).expect("create nested worktree path");
+
+    let previous = std::env::current_dir().expect("cwd");
+    std::env::set_current_dir(&nested).expect("chdir nested worktree path");
+    let resolved = resolve_issue_scope_and_slug_from_available_local_state(&repo, 4455)
+        .expect("resolve local identity");
+    std::env::set_current_dir(previous).expect("restore cwd");
+
+    assert_eq!(
+        resolved,
+        Some(("v0.91.6".to_string(), "worktree-safe-truth".to_string()))
+    );
+}
+
+#[test]
+fn local_issue_identity_resolution_blocks_when_primary_and_worktree_disagree() {
+    let _guard = env_lock();
+    let repo = lifecycle_temp_repo("doctor-identity-worktree-mismatch");
+    let issue_ref = IssueRef::new(4455, "v0.91.6".to_string(), "worktree-safe-truth".to_string())
+        .expect("issue ref");
+    let primary_bundle = issue_ref.task_bundle_dir_path(&repo);
+    fs::create_dir_all(&primary_bundle).expect("create primary bundle");
+
+    let worktree = issue_ref.default_worktree_path(&repo, None);
+    let worktree_bundle = worktree
+        .join(".adl/v0.91.7/tasks/issue-4455__worktree-safe-truth");
+    fs::create_dir_all(&worktree_bundle).expect("create mismatched worktree bundle");
+    fs::create_dir_all(&worktree).expect("create worktree root");
+    fs::write(worktree.join(".git"), "gitdir: /tmp/fake-worktree\n").expect("seed git marker");
+    let nested = worktree.join("adl/src");
+    fs::create_dir_all(&nested).expect("create nested worktree path");
+
+    let previous = std::env::current_dir().expect("cwd");
+    std::env::set_current_dir(&nested).expect("chdir nested worktree path");
+    let err = resolve_issue_scope_and_slug_from_available_local_state(&repo, 4455)
+        .expect_err("mismatched issue identity should block");
+    std::env::set_current_dir(previous).expect("restore cwd");
+
+    assert!(
+        format!("{err:#}").contains("local issue identity mismatch"),
+        "unexpected error: {err:#}"
+    );
+}
+
+#[test]
+fn sprint_packets_are_materialized_into_bound_worktree_without_root_writes() {
+    let repo = lifecycle_temp_repo("doctor-sprint-worktree-materialization");
+    let issue_ref = IssueRef::new(4455, "v0.91.6".to_string(), "worktree-safe-truth".to_string())
+        .expect("issue ref");
+    let worktree = issue_ref.default_worktree_path(&repo, None);
+    let sprint_log = repo
+        .join(".adl/v0.91.6/sprints/issue-4417__v0-91-6-tools-mini-sprint-validation-throughput-and-lifecycle-automation/SPRINT_ACTIVITY_LOG.md");
+    fs::create_dir_all(sprint_log.parent().expect("sprint parent")).expect("create sprint parent");
+    fs::write(
+        &sprint_log,
+        "# Sprint activity fixture\n\n- should be copied into the worktree once bound.\n",
+    )
+    .expect("write sprint log");
+
+    mirror_scope_sprints_into_worktree(&repo, &worktree, &issue_ref).expect("mirror sprint state");
+
+    let mirrored = worktree
+        .join(".adl/v0.91.6/sprints/issue-4417__v0-91-6-tools-mini-sprint-validation-throughput-and-lifecycle-automation/SPRINT_ACTIVITY_LOG.md");
+    assert_eq!(
+        fs::read_to_string(mirrored).expect("read mirrored sprint log"),
+        "# Sprint activity fixture\n\n- should be copied into the worktree once bound.\n"
+    );
 }
 
 #[test]
