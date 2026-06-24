@@ -98,6 +98,16 @@ pub(super) fn run_doctor(parsed: DoctorArgs, label: &str) -> Result<()> {
             Some(run_doctor_ready(&repo_root, &repo, &issue_ref, &branch)?)
         }
     };
+    if let Some(ready) = ready.as_ref() {
+        if ready.lifecycle_state == "pre_run" {
+            let capture_stage = if ready.status == "PASS" {
+                "doctor_readiness"
+            } else {
+                "card_repair"
+            };
+            record_readiness_prep_goal_metrics_stage(&repo_root, &issue_ref, capture_stage)?;
+        }
+    }
     let mode = doctor_mode_name(&parsed.mode);
     let ready_status = ready.as_ref().map(|x| x.status);
     let doctor_status = match parsed.mode {

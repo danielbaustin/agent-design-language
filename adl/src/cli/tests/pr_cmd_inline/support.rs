@@ -183,6 +183,29 @@ pub(crate) fn write_executable(path: &Path, content: &str) {
     }
 }
 
+pub(crate) fn seed_codex_goal_transcript(
+    home: &Path,
+    issue_number: u32,
+    thread_id: &str,
+    tokens_used: u32,
+    time_used_seconds: u32,
+    created_at: i64,
+    updated_at: i64,
+) -> PathBuf {
+    let transcript_dir = home.join(".codex/sessions/2026/06/24");
+    fs::create_dir_all(&transcript_dir).expect("transcript dir");
+    let transcript_path =
+        transcript_dir.join(format!("rollout-2026-06-24T00-00-00-{thread_id}.jsonl"));
+    fs::write(
+        &transcript_path,
+        format!(
+            "{{\"type\":\"response_item\",\"payload\":{{\"item\":{{\"type\":\"function_call\",\"name\":\"get_goal\",\"call_id\":\"call_goal_{issue_number}\"}}}}}}\n{{\"type\":\"response_item\",\"payload\":{{\"item\":{{\"type\":\"function_call_output\",\"call_id\":\"call_goal_{issue_number}\",\"output\":\"{{\\\"goal\\\":{{\\\"threadId\\\":\\\"{thread_id}\\\",\\\"objective\\\":\\\"Issue #{issue_number} session\\\",\\\"status\\\":\\\"active\\\",\\\"tokensUsed\\\":{tokens_used},\\\"timeUsedSeconds\\\":{time_used_seconds},\\\"createdAt\\\":{created_at},\\\"updatedAt\\\":{updated_at}}}}}\"}}}}\n"
+        ),
+    )
+    .expect("write codex transcript");
+    transcript_path
+}
+
 pub(crate) fn init_git_repo(dir: &Path) {
     assert!(Command::new("git")
         .arg("init")
@@ -211,10 +234,12 @@ pub(crate) fn copy_bootstrap_support_files(repo: &Path) {
         .to_path_buf();
     env::set_var("ADL_TOOLING_MANIFEST_ROOT", &workspace_root);
     let tools_dir = repo.join("adl/tools");
+    let sprint_conductor_scripts_dir = repo.join("adl/tools/skills/sprint-conductor/scripts");
     let config_dir = repo.join("adl/config");
     let templates_dir = repo.join("adl/templates/cards");
     let schemas_dir = repo.join("adl/schemas");
     fs::create_dir_all(&tools_dir).expect("tools dir");
+    fs::create_dir_all(&sprint_conductor_scripts_dir).expect("sprint-conductor scripts dir");
     fs::create_dir_all(&config_dir).expect("config dir");
     fs::create_dir_all(&templates_dir).expect("templates dir");
     fs::create_dir_all(&schemas_dir).expect("schemas dir");
@@ -271,6 +296,18 @@ pub(crate) fn copy_bootstrap_support_files(repo: &Path) {
         (
             workspace_root.join("adl/tools/attach_post_merge_closeout.sh"),
             tools_dir.join("attach_post_merge_closeout.sh"),
+        ),
+        (
+            workspace_root.join(
+                "adl/tools/skills/sprint-conductor/scripts/issue_goal_metrics.py",
+            ),
+            sprint_conductor_scripts_dir.join("issue_goal_metrics.py"),
+        ),
+        (
+            workspace_root.join(
+                "adl/tools/skills/sprint-conductor/scripts/record_issue_goal_stage_from_codex_session.py",
+            ),
+            sprint_conductor_scripts_dir.join("record_issue_goal_stage_from_codex_session.py"),
         ),
         (
             workspace_root.join("adl/templates/cards/input_card_template.md"),

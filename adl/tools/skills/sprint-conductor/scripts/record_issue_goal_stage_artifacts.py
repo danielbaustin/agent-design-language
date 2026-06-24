@@ -16,6 +16,10 @@ from issue_goal_metrics import (
 
 
 STAGE_SNAPSHOT_SUFFIX = {
+    "issue_init": "-issue-init",
+    "doctor_readiness": "-doctor-readiness",
+    "card_repair": "-card-repair",
+    "execution_ready": "-execution-ready",
     "issue_start": "",
     "pr_publication": "-pr-publication",
     "review_handoff": "-review-handoff",

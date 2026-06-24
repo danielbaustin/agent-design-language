@@ -11,11 +11,26 @@ from typing import Any
 
 AVAILABILITY_VALUES = {"known", "unknown", "not_collected", "not_applicable", "not_available"}
 CAPTURE_STAGES = {
+    "issue_init",
+    "doctor_readiness",
+    "card_repair",
+    "execution_ready",
     "issue_start",
     "pr_publication",
     "review_handoff",
     "merge_closeout",
     "sprint_closeout",
+}
+CAPTURE_SEGMENT_BY_STAGE = {
+    "issue_init": "readiness_prep",
+    "doctor_readiness": "readiness_prep",
+    "card_repair": "readiness_prep",
+    "execution_ready": "readiness_prep",
+    "issue_start": "bound_execution",
+    "pr_publication": "bound_execution",
+    "review_handoff": "bound_execution",
+    "merge_closeout": "bound_execution",
+    "sprint_closeout": "sprint_rollup",
 }
 DATA_SOURCE_VALUES = {
     "codex_goal_tool",
@@ -34,11 +49,15 @@ COMPLETION_STATE_VALUES = {
     "unknown",
 }
 STAGE_PRIORITY = {
-    "issue_start": 1,
-    "pr_publication": 2,
-    "review_handoff": 3,
-    "merge_closeout": 4,
-    "sprint_closeout": 5,
+    "issue_init": 1,
+    "card_repair": 2,
+    "doctor_readiness": 3,
+    "execution_ready": 4,
+    "issue_start": 5,
+    "pr_publication": 6,
+    "review_handoff": 7,
+    "merge_closeout": 8,
+    "sprint_closeout": 9,
 }
 
 CODEX_GOAL_STATUS_TO_COMPLETION_STATE = {
@@ -277,7 +296,9 @@ def default_goal_metrics_summary() -> dict[str, Any]:
         "raw_log_path": None,
         "record_count": 0,
         "phases_recorded": [],
+        "segments_recorded": [],
         "selected_stage": None,
+        "selected_segment": None,
         "recorded_at": None,
         "data_source": "unknown",
         "metrics_confidence": "unknown",
@@ -649,6 +670,7 @@ def build_issue_goal_metrics_record(
         "sprint_issue_number": sprint_issue_number,
         "issue_number": issue_number,
         "capture_stage": capture_stage,
+        "metrics_segment": CAPTURE_SEGMENT_BY_STAGE[capture_stage],
         "data_source": data_source,
         "metrics_confidence": metrics_confidence,
         "raw_log_path": raw_log_path,
@@ -837,7 +859,11 @@ def summarize_issue_goal_metrics(records: list[dict[str, Any]], raw_log_path: st
     summary["phases_recorded"] = sorted(
         {record.get("capture_stage") for record in records if record.get("capture_stage")}
     )
+    summary["segments_recorded"] = sorted(
+        {record.get("metrics_segment") for record in records if record.get("metrics_segment")}
+    )
     summary["selected_stage"] = selected.get("capture_stage")
+    summary["selected_segment"] = selected.get("metrics_segment")
     summary["recorded_at"] = selected.get("recorded_at")
     summary["data_source"] = selected.get("data_source") or "unknown"
     summary["metrics_confidence"] = selected.get("metrics_confidence") or "unknown"

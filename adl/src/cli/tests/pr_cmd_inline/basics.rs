@@ -2951,6 +2951,76 @@ fn real_pr_init_seeds_stp_from_generated_source_prompt() {
 }
 
 #[test]
+fn real_pr_init_records_issue_init_goal_metrics_stage() {
+    let _guard = env_lock();
+    let repo = unique_temp_dir("adl-pr-real-init-goal-metrics");
+    let home = unique_temp_dir("adl-pr-real-init-goal-metrics-home");
+    init_git_repo(&repo);
+    copy_bootstrap_support_files(&repo);
+    let _github_fixture = install_issue_label_fixture(&repo);
+    seed_codex_goal_transcript(
+        &home,
+        1151,
+        "thread-1151-init",
+        1234,
+        56,
+        1782230400,
+        1782230456,
+    );
+    let old_home = env::var_os("HOME");
+    let old_thread_id = env::var_os("CODEX_THREAD_ID");
+    unsafe {
+        env::set_var("HOME", &home);
+        env::set_var("CODEX_THREAD_ID", "thread-1151-init");
+    }
+
+    let prev_dir = env::current_dir().expect("cwd");
+    env::set_current_dir(&repo).expect("chdir");
+    let result = real_pr(&[
+        "init".to_string(),
+        "1151".to_string(),
+        "--slug".to_string(),
+        "v0-86-tools-init-test".to_string(),
+        "--title".to_string(),
+        "[v0.86][tools] Init test".to_string(),
+        "--no-fetch-issue".to_string(),
+        "--version".to_string(),
+        "v0.86".to_string(),
+    ]);
+    env::set_current_dir(prev_dir).expect("restore cwd");
+    unsafe {
+        match old_home {
+            Some(value) => env::set_var("HOME", value),
+            None => env::remove_var("HOME"),
+        }
+        match old_thread_id {
+            Some(value) => env::set_var("CODEX_THREAD_ID", value),
+            None => env::remove_var("CODEX_THREAD_ID"),
+        }
+    }
+    result.expect("real_pr init");
+
+    let issue_ref = IssueRef::new(
+        1151,
+        "v0.86".to_string(),
+        "v0-86-tools-init-test".to_string(),
+    )
+    .expect("issue ref");
+    let summary_path = issue_ref
+        .task_bundle_dir_path(&repo)
+        .join("artifacts/goal_metrics/issue-1151-goal-metrics-summary.json");
+    let summary: serde_json::Value =
+        serde_json::from_str(&fs::read_to_string(summary_path).expect("read goal summary"))
+            .expect("parse goal summary");
+    assert_eq!(
+        summary["phases_recorded"],
+        serde_json::json!(["issue_init"])
+    );
+    assert_eq!(summary["selected_stage"], "issue_init");
+    assert_eq!(summary["selected_segment"], "readiness_prep");
+}
+
+#[test]
 fn real_pr_init_refreshes_invalid_existing_stp() {
     let _guard = env_lock();
     let repo = unique_temp_dir("adl-pr-real-init-invalid-existing");
