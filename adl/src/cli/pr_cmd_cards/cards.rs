@@ -2,8 +2,10 @@ use anyhow::{bail, Context, Result};
 use chrono::Utc;
 use serde_json::Value;
 use serde_yaml::Value as YamlValue;
+use std::collections::BTreeSet;
 use std::fs;
 use std::path::{Path, PathBuf};
+use std::process::Command;
 
 use super::super::pr_cmd_prompt::{
     infer_initial_pvf_lane, infer_initial_pvf_lane_source, infer_planned_pvf_lane,
@@ -1553,18 +1555,39 @@ fn render_bootstrap_validation_plan_card(
     let planned_pvf_lane = resolved_planned_pvf_lane(&initial_pvf_lane);
     let planned_pvf_lane_source =
         resolved_planned_pvf_lane_source(&initial_pvf_lane, &initial_pvf_lane_source);
-    let failure_policy = if planned_pvf_lane == NEEDS_PLANNING_PVF_LANE {
-        "fail_closed_until_validation_lane_is_selected"
+    let fallback_failure_policy = if planned_pvf_lane == NEEDS_PLANNING_PVF_LANE {
+        "fail_closed_until_validation_lane_is_selected".to_string()
     } else {
-        "fail_closed"
+        "fail_closed".to_string()
     };
-    let validation_strategy = issue_prompt_section(&prompt, "Validation Plan")
+    let fallback_validation_strategy = issue_prompt_section(&prompt, "Validation Plan")
         .or_else(|| issue_prompt_section(&prompt, "Tooling Notes"))
         .map(|value| one_line_summary(&value))
         .unwrap_or_else(|| {
             "Select the smallest proving validation lane before execution proceeds.".to_string()
         });
-    let validation_command = yaml_inline(&validation_strategy);
+    let fallback_validation_command = yaml_inline(&fallback_validation_strategy);
+    let generated_vpp =
+        generate_vpp_plan_from_prompt(repo_root, &prompt, &planned_pvf_lane).unwrap_or_else(
+            |err| GeneratedVppPlan {
+                selected_lanes_inline: planned_pvf_lane.clone(),
+                parallel_groups_inline: "unknown".to_string(),
+                validation_runtime_class: "unknown".to_string(),
+                validation_resource_profile: "unknown".to_string(),
+                validation_family: "unknown".to_string(),
+                validation_size_split: "unknown".to_string(),
+                expected_proof_cost: "unknown".to_string(),
+                planned_validation_seconds: "unknown".to_string(),
+                planned_validation_tokens: "unknown".to_string(),
+                validation_commands_inline: fallback_validation_command.clone(),
+                failure_policy: fallback_failure_policy.clone(),
+                notes_risks_inline: format!(
+                    "Generated from {} template; lane source: {planned_pvf_lane_source}. Validation-profile derivation fallback used: {}",
+                    active_prompt_template_set_label(repo_root),
+                    one_line_summary(&err.to_string())
+                ),
+            },
+        );
     let mut text = read_prompt_template(repo_root, "vpp", &[])?;
     let issue_url = format!(
         "https://github.com/{}/issues/{}",
@@ -1576,9 +1599,18 @@ fn render_bootstrap_validation_plan_card(
         &mut text,
         &[
             ("<issue>", issue_ref.issue_number().to_string()),
-            ("<issue_padded>", issue_ref.padded_issue_number().to_string()),
-            ("<task_id>", format!("issue-{}", issue_ref.padded_issue_number())),
-            ("<run_id>", format!("issue-{}", issue_ref.padded_issue_number())),
+            (
+                "<issue_padded>",
+                issue_ref.padded_issue_number().to_string(),
+            ),
+            (
+                "<task_id>",
+                format!("issue-{}", issue_ref.padded_issue_number()),
+            ),
+            (
+                "<run_id>",
+                format!("issue-{}", issue_ref.padded_issue_number()),
+            ),
             ("<version>", issue_ref.scope().to_string()),
             ("<slug>", issue_ref.slug().to_string()),
             ("<title>", title.to_string()),
@@ -1597,27 +1629,48 @@ fn render_bootstrap_validation_plan_card(
                 "docs/validation/pvf_lanes.json".to_string(),
             ),
             ("<lane_registry_template_set>", "vpp.lane.v1".to_string()),
-            ("<validation_runtime_class>", "unknown".to_string()),
-            ("<validation_resource_profile>", "unknown".to_string()),
-            ("<validation_family>", "unknown".to_string()),
-            ("<validation_size_split>", "unknown".to_string()),
-            ("<expected_proof_cost>", "unknown".to_string()),
-            ("<planned_validation_seconds>", "unknown".to_string()),
-            ("<planned_validation_tokens>", "unknown".to_string()),
-            ("<issue_goal_ref>", format!("issue-{}", issue_ref.issue_number())),
+            (
+                "<validation_runtime_class>",
+                generated_vpp.validation_runtime_class,
+            ),
+            (
+                "<validation_resource_profile>",
+                generated_vpp.validation_resource_profile,
+            ),
+            ("<validation_family>", generated_vpp.validation_family),
+            (
+                "<validation_size_split>",
+                generated_vpp.validation_size_split,
+            ),
+            ("<expected_proof_cost>", generated_vpp.expected_proof_cost),
+            (
+                "<planned_validation_seconds>",
+                generated_vpp.planned_validation_seconds,
+            ),
+            (
+                "<planned_validation_tokens>",
+                generated_vpp.planned_validation_tokens,
+            ),
+            (
+                "<issue_goal_ref>",
+                format!("issue-{}", issue_ref.issue_number()),
+            ),
             ("<sprint_goal_ref>", "unknown".to_string()),
             ("<goal_metrics_rollup_ref>", "unknown".to_string()),
-            ("<selected_lanes_inline>", planned_pvf_lane),
-            ("<parallel_groups_inline>", "unknown".to_string()),
-            ("<validation_commands_inline>", validation_command),
-            ("<failure_policy>", failure_policy.to_string()),
             (
-                "<notes_risks_inline>",
-                format!(
-                    "Generated from {} template; confirm lane selection before relying on this plan. Lane source: {planned_pvf_lane_source}.",
-                    active_prompt_template_set_label(repo_root)
-                ),
+                "<selected_lanes_inline>",
+                generated_vpp.selected_lanes_inline,
             ),
+            (
+                "<parallel_groups_inline>",
+                generated_vpp.parallel_groups_inline,
+            ),
+            (
+                "<validation_commands_inline>",
+                generated_vpp.validation_commands_inline,
+            ),
+            ("<failure_policy>", generated_vpp.failure_policy),
+            ("<notes_risks_inline>", generated_vpp.notes_risks_inline),
             (
                 "<plan_summary>",
                 format!(
@@ -1627,6 +1680,282 @@ fn render_bootstrap_validation_plan_card(
         ],
     );
     Ok(text)
+}
+
+#[derive(Debug, Clone, PartialEq, Eq)]
+struct GeneratedVppPlan {
+    selected_lanes_inline: String,
+    parallel_groups_inline: String,
+    validation_runtime_class: String,
+    validation_resource_profile: String,
+    validation_family: String,
+    validation_size_split: String,
+    expected_proof_cost: String,
+    planned_validation_seconds: String,
+    planned_validation_tokens: String,
+    validation_commands_inline: String,
+    failure_policy: String,
+    notes_risks_inline: String,
+}
+
+fn generate_vpp_plan_from_prompt(
+    repo_root: &Path,
+    prompt: &str,
+    planned_pvf_lane: &str,
+) -> Result<GeneratedVppPlan> {
+    let declared_paths = extract_declared_repo_paths(repo_root, prompt);
+    if declared_paths.is_empty() {
+        return Ok(GeneratedVppPlan {
+            selected_lanes_inline: planned_pvf_lane.to_string(),
+            parallel_groups_inline: "unknown".to_string(),
+            validation_runtime_class: "unknown".to_string(),
+            validation_resource_profile: "unknown".to_string(),
+            validation_family: "unknown".to_string(),
+            validation_size_split: "unknown".to_string(),
+            expected_proof_cost: "unknown".to_string(),
+            planned_validation_seconds: "unknown".to_string(),
+            planned_validation_tokens: "unknown".to_string(),
+            validation_commands_inline: yaml_inline(
+                "Select the smallest proving validation lane before execution proceeds.",
+            ),
+            failure_policy: "fail_closed".to_string(),
+            notes_risks_inline: "Generated from prompt metadata only; declare repo-relative target surfaces to derive a fact-backed VPP.".to_string(),
+        });
+    }
+
+    let temp_file = std::env::temp_dir().join(format!(
+        "adl-vpp-paths-{}-{}.txt",
+        std::process::id(),
+        Utc::now().timestamp_nanos_opt().unwrap_or_default()
+    ));
+    fs::write(&temp_file, declared_paths.join("\n") + "\n").with_context(|| {
+        format!(
+            "failed to write temporary changed-files list at {}",
+            temp_file.display()
+        )
+    })?;
+    let output = Command::new("python3")
+        .arg(repo_root.join("adl/tools/validation_manager.py"))
+        .arg("--changed-files")
+        .arg(&temp_file)
+        .arg("--json")
+        .current_dir(repo_root)
+        .output()
+        .with_context(|| {
+            format!(
+                "failed to invoke validation_manager.py for {}",
+                temp_file.display()
+            )
+        });
+    let _ = fs::remove_file(&temp_file);
+    let output = output?;
+    if !output.status.success() {
+        bail!(
+            "validation manager returned non-zero status: {}",
+            String::from_utf8_lossy(&output.stderr).trim()
+        );
+    }
+    let profile: Value = serde_json::from_slice(&output.stdout)
+        .context("validation manager returned invalid JSON for VPP generation")?;
+    Ok(generated_vpp_plan_from_profile_json(&profile))
+}
+
+fn generated_vpp_plan_from_profile_json(profile: &Value) -> GeneratedVppPlan {
+    let selected_profile = profile
+        .get("selected_profile")
+        .and_then(Value::as_str)
+        .unwrap_or("unknown_profile");
+    let status = profile
+        .get("status")
+        .and_then(Value::as_str)
+        .unwrap_or("unknown");
+    let publication_sufficient = profile
+        .get("pr_publication_sufficient")
+        .and_then(Value::as_bool)
+        .unwrap_or(false);
+
+    let run_items = profile
+        .get("run")
+        .and_then(Value::as_array)
+        .cloned()
+        .unwrap_or_default();
+    let not_run_items = profile
+        .get("not_run")
+        .and_then(Value::as_array)
+        .cloned()
+        .unwrap_or_default();
+    let escalation_reasons = profile
+        .get("escalation")
+        .and_then(|value| value.get("reasons"))
+        .and_then(Value::as_array)
+        .cloned()
+        .unwrap_or_default();
+
+    let selected_lanes = run_items
+        .iter()
+        .filter_map(|item| item.get("lane_id").and_then(Value::as_str))
+        .map(ToOwned::to_owned)
+        .collect::<Vec<_>>();
+    let selected_lanes_inline = if selected_lanes.is_empty() {
+        "none_selected".to_string()
+    } else {
+        selected_lanes.join(", ")
+    };
+
+    let mut parallel_groups = BTreeSet::new();
+    for item in &run_items {
+        if let Some(group) = item
+            .get("vpp_record")
+            .and_then(|value| value.get("parallel_group"))
+            .and_then(Value::as_str)
+        {
+            if !group.trim().is_empty() {
+                parallel_groups.insert(group.trim().to_string());
+            }
+        }
+    }
+    if parallel_groups.is_empty() {
+        parallel_groups.insert("local".to_string());
+    }
+
+    let mut command_items = run_items
+        .iter()
+        .filter_map(|item| item.get("command").and_then(Value::as_str))
+        .map(sanitize_vpp_validation_command)
+        .collect::<Vec<_>>();
+    if command_items.is_empty() {
+        command_items.push(format!(
+            "validation profile `{selected_profile}` is not runnable; review escalation before execution"
+        ));
+    }
+    command_items.extend(not_run_items.iter().take(4).filter_map(|item| {
+        let surface = item.get("surface").and_then(Value::as_str)?;
+        let reason = item.get("reason").and_then(Value::as_str)?;
+        Some(format!("deferred {surface}: {reason}"))
+    }));
+    command_items.extend(escalation_reasons.iter().filter_map(|item| {
+        let lane_id = item.get("lane_id").and_then(Value::as_str)?;
+        let reason = item.get("reason").and_then(Value::as_str)?;
+        Some(format!("escalation {lane_id}: {reason}"))
+    }));
+
+    let selected_count = run_items.len();
+    let size_split = match selected_count {
+        0 => "not_applicable",
+        1 => "small_only",
+        _ => "mixed",
+    };
+    let runtime_class = profile
+        .get("estimated_cost")
+        .and_then(|value| value.get("runtime_class"))
+        .and_then(Value::as_str)
+        .unwrap_or("unknown");
+    let proof_cost = profile
+        .get("estimated_cost")
+        .and_then(|value| value.get("token_review_cost"))
+        .and_then(Value::as_str)
+        .unwrap_or("unknown");
+    let notes = if escalation_reasons.is_empty() {
+        format!(
+            "Generated from validation profile {selected_profile} (status={status}, pr_publication_sufficient={publication_sufficient})."
+        )
+    } else {
+        format!(
+            "Generated from validation profile {selected_profile} (status={status}, pr_publication_sufficient={publication_sufficient}); escalation remains explicit in this VPP."
+        )
+    };
+
+    GeneratedVppPlan {
+        selected_lanes_inline,
+        parallel_groups_inline: parallel_groups.into_iter().collect::<Vec<_>>().join(", "),
+        validation_runtime_class: runtime_class.to_string(),
+        validation_resource_profile: "local".to_string(),
+        validation_family: selected_profile.to_string(),
+        validation_size_split: size_split.to_string(),
+        expected_proof_cost: proof_cost.to_string(),
+        planned_validation_seconds: "unknown".to_string(),
+        planned_validation_tokens: "unknown".to_string(),
+        validation_commands_inline: yaml_inline(&command_items.join("; ")),
+        failure_policy: "fail_closed".to_string(),
+        notes_risks_inline: notes,
+    }
+}
+
+fn extract_declared_repo_paths(repo_root: &Path, prompt: &str) -> Vec<String> {
+    let mut paths = BTreeSet::new();
+    for heading in ["Repo Inputs", "Target Files / Surfaces"] {
+        let Some(section) = issue_prompt_section(prompt, heading) else {
+            continue;
+        };
+        for candidate in extract_paths_from_section(repo_root, &section) {
+            paths.insert(candidate);
+        }
+    }
+    paths.into_iter().collect()
+}
+
+fn extract_paths_from_section(repo_root: &Path, section: &str) -> Vec<String> {
+    let mut paths = BTreeSet::new();
+    for line in section.lines() {
+        let trimmed = line.trim().trim_start_matches("- ").trim();
+        for candidate in extract_backtick_paths(trimmed) {
+            if let Some(path) = normalize_declared_repo_path(repo_root, &candidate) {
+                paths.insert(path);
+            }
+        }
+        for token in trimmed
+            .split(|ch: char| ch.is_whitespace() || matches!(ch, ';' | ',' | '(' | ')' | '[' | ']'))
+        {
+            if let Some(path) = normalize_declared_repo_path(repo_root, token) {
+                paths.insert(path);
+            }
+        }
+    }
+    paths.into_iter().collect()
+}
+
+fn extract_backtick_paths(text: &str) -> Vec<String> {
+    let mut out = Vec::new();
+    let mut remainder = text;
+    while let Some(start) = remainder.find('`') {
+        let after_start = &remainder[start + 1..];
+        let Some(end) = after_start.find('`') else {
+            break;
+        };
+        out.push(after_start[..end].to_string());
+        remainder = &after_start[end + 1..];
+    }
+    out
+}
+
+fn normalize_declared_repo_path(repo_root: &Path, raw: &str) -> Option<String> {
+    let candidate = raw
+        .trim()
+        .trim_matches(|ch: char| matches!(ch, '`' | '"' | '\'' | ':'));
+    if candidate.is_empty()
+        || candidate.starts_with("http://")
+        || candidate.starts_with("https://")
+        || candidate.starts_with('#')
+        || candidate.starts_with(".adl/")
+    {
+        return None;
+    }
+    let supported_root_file = matches!(
+        candidate,
+        "AGENTS.md" | "README.md" | "Cargo.toml" | "Cargo.lock"
+    );
+    let supported_prefix = candidate.starts_with("adl/")
+        || candidate.starts_with("docs/")
+        || candidate.starts_with(".github/");
+    if !(supported_root_file || supported_prefix) {
+        return None;
+    }
+    let path = repo_root.join(candidate);
+    if path.exists() {
+        Some(candidate.to_string())
+    } else {
+        None
+    }
 }
 
 fn issue_prompt_section(text: &str, heading: &str) -> Option<String> {
@@ -1702,6 +2031,29 @@ fn yaml_inline(text: &str) -> String {
     text.replace('\\', "\\\\").replace('"', "'")
 }
 
+fn sanitize_vpp_validation_command(command: &str) -> String {
+    let mut sanitized = Vec::new();
+    let mut replace_next_changed_files = false;
+    for token in command.split_whitespace() {
+        if replace_next_changed_files {
+            sanitized.push("<changed-files>".to_string());
+            replace_next_changed_files = false;
+            continue;
+        }
+        if token == "--changed-files" {
+            sanitized.push(token.to_string());
+            replace_next_changed_files = true;
+            continue;
+        }
+        if token.starts_with('/') {
+            sanitized.push("<path>".to_string());
+        } else {
+            sanitized.push(token.to_string());
+        }
+    }
+    sanitized.join(" ")
+}
+
 fn render_bootstrap_review_policy_card(
     repo_root: &Path,
     issue_ref: &IssueRef,
@@ -1758,4 +2110,138 @@ fn render_bootstrap_review_policy_card(
         ],
     );
     Ok(text)
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use serde_json::json;
+
+    #[test]
+    fn extract_declared_repo_paths_ignores_local_adl_and_urls() {
+        let repo_root = Path::new(env!("CARGO_MANIFEST_DIR"))
+            .parent()
+            .expect("adl crate should live under the repo root");
+        let prompt = r#"
+## Repo Inputs
+
+- https://github.com/example/repo/issues/4425
+- `.adl/v0.91.6/tasks/issue-4425__/`
+- `adl/src/cli/pr_cmd_cards/cards.rs`
+- `docs/tooling/FINISH_VALIDATION_PATH_OWNERSHIP_REGISTRY.md`
+- `.github/workflows/ci.yaml`
+
+## Target Files / Surfaces
+
+- `AGENTS.md`
+- adl/tools/validation_manager.py
+- not/a/real/path.txt
+"#;
+
+        let paths = extract_declared_repo_paths(repo_root, prompt);
+        assert!(paths.contains(&"AGENTS.md".to_string()));
+        assert!(paths.contains(&"adl/src/cli/pr_cmd_cards/cards.rs".to_string()));
+        assert!(paths.contains(&"adl/tools/validation_manager.py".to_string()));
+        assert!(paths.contains(&".github/workflows/ci.yaml".to_string()));
+        assert!(paths
+            .contains(&"docs/tooling/FINISH_VALIDATION_PATH_OWNERSHIP_REGISTRY.md".to_string()));
+        assert!(!paths.iter().any(|path| path.starts_with(".adl/")));
+        assert!(!paths.iter().any(|path| path.starts_with("http")));
+    }
+
+    #[test]
+    fn generated_vpp_plan_from_profile_json_carries_run_and_skip_rationale() {
+        let profile = json!({
+            "selected_profile": "selected_3_lane_profile",
+            "status": "ready_to_run",
+            "pr_publication_sufficient": true,
+            "estimated_cost": {
+                "runtime_class": "normal",
+                "token_review_cost": "medium"
+            },
+            "run": [
+                {
+                    "lane_id": "docs_diff_check",
+                    "command": "git diff --check",
+                    "vpp_record": {
+                        "parallel_group": "docs_hygiene"
+                    }
+                },
+                {
+                    "lane_id": "csdlc_owner_lane",
+                    "command": "bash adl/tools/run_owner_validation_lane.sh csdlc"
+                },
+                {
+                    "lane_id": "rust_pr_fast",
+                    "command": "bash adl/tools/run_pr_fast_test_lane.sh --changed-files /private/tmp/changed-files.txt"
+                }
+            ],
+            "not_run": [
+                {
+                    "surface": "full_workspace_nextest",
+                    "reason": "not selected by validation profile"
+                }
+            ],
+            "escalation": {
+                "reasons": []
+            }
+        });
+
+        let plan = generated_vpp_plan_from_profile_json(&profile);
+        assert_eq!(
+            plan.selected_lanes_inline,
+            "docs_diff_check, csdlc_owner_lane, rust_pr_fast"
+        );
+        assert_eq!(plan.parallel_groups_inline, "docs_hygiene");
+        assert_eq!(plan.validation_runtime_class, "normal");
+        assert_eq!(plan.validation_resource_profile, "local");
+        assert_eq!(plan.validation_family, "selected_3_lane_profile");
+        assert_eq!(plan.validation_size_split, "mixed");
+        assert_eq!(plan.expected_proof_cost, "medium");
+        assert!(plan.validation_commands_inline.contains("git diff --check"));
+        assert!(plan
+            .validation_commands_inline
+            .contains("bash adl/tools/run_pr_fast_test_lane.sh --changed-files <changed-files>"));
+        assert!(!plan
+            .validation_commands_inline
+            .contains("/private/tmp/changed-files.txt"));
+        assert!(plan
+            .validation_commands_inline
+            .contains("deferred full_workspace_nextest: not selected by validation profile"));
+    }
+
+    #[test]
+    fn generated_vpp_plan_from_profile_json_records_escalation_when_not_runnable() {
+        let profile = json!({
+            "selected_profile": "escalated_profile",
+            "status": "not_runnable",
+            "pr_publication_sufficient": false,
+            "estimated_cost": {
+                "runtime_class": "escalated",
+                "token_review_cost": "high"
+            },
+            "run": [],
+            "not_run": [],
+            "escalation": {
+                "reasons": [
+                    {
+                        "lane_id": "release_gate_review",
+                        "reason": "release-gate disposition required"
+                    }
+                ]
+            }
+        });
+
+        let plan = generated_vpp_plan_from_profile_json(&profile);
+        assert_eq!(plan.selected_lanes_inline, "none_selected");
+        assert!(plan
+            .validation_commands_inline
+            .contains("validation profile `escalated_profile` is not runnable"));
+        assert!(plan
+            .validation_commands_inline
+            .contains("escalation release_gate_review: release-gate disposition required"));
+        assert!(plan
+            .notes_risks_inline
+            .contains("escalation remains explicit"));
+    }
 }

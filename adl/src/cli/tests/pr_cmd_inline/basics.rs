@@ -1325,6 +1325,7 @@ fn fetch_issue_body_respects_github_fallback_policy() {
     let old_token_file = env::var_os("ADL_GITHUB_TOKEN_FILE");
     let old_keychain_service = env::var_os("ADL_GITHUB_TOKEN_KEYCHAIN_SERVICE");
     let old_keychain_account = env::var_os("ADL_GITHUB_TOKEN_KEYCHAIN_ACCOUNT");
+    let old_home = env::var_os("HOME");
 
     let mut path_entries = vec![bin_dir.clone()];
     path_entries.extend(env::split_paths(old_path.as_deref().unwrap_or_default()));
@@ -1337,6 +1338,7 @@ fn fetch_issue_body_respects_github_fallback_policy() {
         env::remove_var("ADL_GITHUB_TOKEN_FILE");
         env::remove_var("ADL_GITHUB_TOKEN_KEYCHAIN_SERVICE");
         env::remove_var("ADL_GITHUB_TOKEN_KEYCHAIN_ACCOUNT");
+        env::set_var("HOME", &temp);
     }
 
     assert_eq!(
@@ -1363,6 +1365,7 @@ fn fetch_issue_body_respects_github_fallback_policy() {
     restore_env_var("ADL_GITHUB_DISABLE_GH_FALLBACK", old_disable);
     restore_env_var("GITHUB_TOKEN", old_github_token);
     restore_env_var("GH_TOKEN", old_gh_token);
+    restore_env_var("HOME", old_home);
     restore_env_var("ADL_GITHUB_TOKEN_FILE", old_token_file);
     restore_env_var("ADL_GITHUB_TOKEN_KEYCHAIN_SERVICE", old_keychain_service);
     restore_env_var("ADL_GITHUB_TOKEN_KEYCHAIN_ACCOUNT", old_keychain_account);
