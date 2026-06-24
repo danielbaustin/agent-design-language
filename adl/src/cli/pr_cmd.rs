@@ -1543,10 +1543,10 @@ fn real_pr_init(args: &[String]) -> Result<()> {
         &version,
     );
     let issue_ref = IssueRef::new(issue, version.clone(), slug.clone())?;
+    ensure_no_duplicate_issue_identities(&repo_root, &issue_ref)?;
     if !parsed.no_fetch_issue {
         ensure_issue_metadata_parity(&repo, issue, &title, &normalized_labels)?;
     }
-    ensure_no_duplicate_issue_identities(&repo_root, &issue_ref)?;
     let source_path = ensure_source_issue_prompt(
         &repo_root,
         &repo,
