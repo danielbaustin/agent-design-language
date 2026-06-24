@@ -2119,7 +2119,9 @@ mod tests {
 
     #[test]
     fn extract_declared_repo_paths_ignores_local_adl_and_urls() {
-        let repo_root = Path::new("/Users/daniel/git/agent-design-language");
+        let repo_root = Path::new(env!("CARGO_MANIFEST_DIR"))
+            .parent()
+            .expect("adl crate should live under the repo root");
         let prompt = r#"
 ## Repo Inputs
 
@@ -2127,7 +2129,7 @@ mod tests {
 - `.adl/v0.91.6/tasks/issue-4425__/`
 - `adl/src/cli/pr_cmd_cards/cards.rs`
 - `docs/tooling/FINISH_VALIDATION_PATH_OWNERSHIP_REGISTRY.md`
-- `.github/workflows/adl-ci.yml`
+- `.github/workflows/ci.yaml`
 
 ## Target Files / Surfaces
 
@@ -2140,7 +2142,7 @@ mod tests {
         assert!(paths.contains(&"AGENTS.md".to_string()));
         assert!(paths.contains(&"adl/src/cli/pr_cmd_cards/cards.rs".to_string()));
         assert!(paths.contains(&"adl/tools/validation_manager.py".to_string()));
-        assert!(paths.contains(&".github/workflows/adl-ci.yml".to_string()));
+        assert!(paths.contains(&".github/workflows/ci.yaml".to_string()));
         assert!(paths
             .contains(&"docs/tooling/FINISH_VALIDATION_PATH_OWNERSHIP_REGISTRY.md".to_string()));
         assert!(!paths.iter().any(|path| path.starts_with(".adl/")));
