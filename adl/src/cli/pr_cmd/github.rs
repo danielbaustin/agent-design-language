@@ -138,7 +138,7 @@ impl RestIssueRecord {
     }
 }
 
-#[derive(Debug, Clone, PartialEq, Eq, Serialize)]
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
 pub(super) struct PrValidationCheckReport {
     pub(super) name: String,
     pub(super) status: String,

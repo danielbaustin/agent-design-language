@@ -5,9 +5,12 @@ use super::{
 #[cfg(test)]
 use super::{run_gh_status_shell, test_gh_fixture_fallback_allowed};
 use crate::cli::observability;
+use ::adl::control_plane::sanitize_slug;
 use anyhow::{anyhow, bail, Context, Result};
 use serde::{Deserialize, Serialize};
 use std::collections::HashSet;
+use std::fs;
+use std::path::{Path, PathBuf};
 use std::time::{Duration, Instant};
 
 #[derive(Debug, Clone, Deserialize)]
@@ -159,6 +162,34 @@ pub(super) enum PrValidationDisposition {
     Cancelled,
     Skipped,
     TimedOut,
+}
+
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
+struct ToolingAnomalyPacket {
+    schema: String,
+    anomaly_type: String,
+    command_class: String,
+    repo: String,
+    pr_number: u64,
+    linked_issue_numbers: Vec<u32>,
+    commit_sha: String,
+    pr_state: String,
+    is_draft: bool,
+    disposition: String,
+    wait_reason: String,
+    elapsed_ms: u128,
+    poll_count: usize,
+    observation_count: usize,
+    observed_check_names: Vec<String>,
+    pending_checks: Vec<PrValidationCheckReport>,
+    failed_checks: Vec<PrValidationCheckReport>,
+    checks: Vec<PrValidationCheckReport>,
+    report_relpath: String,
+    issue_body_relpath: String,
+    suggested_issue_title: String,
+    remediation_route: String,
+    first_observed_at_epoch_ms: u128,
+    last_observed_at_epoch_ms: u128,
 }
 
 pub(super) fn current_pr_url_octocrab(repo: &str, branch: &str) -> Result<Option<String>> {
@@ -643,6 +674,13 @@ pub(super) fn wait_for_pr_validation_report(
             Duration::ZERO
         };
         emit_pr_validation_wait_snapshot(&snapshot, disposition, started, poll_count, next_delay);
+        capture_pr_validation_wait_anomaly_best_effort(
+            repo,
+            &snapshot,
+            disposition,
+            started,
+            poll_count,
+        );
 
         match disposition {
             PrValidationDisposition::Success
@@ -658,6 +696,13 @@ pub(super) fn wait_for_pr_validation_report(
             PrValidationDisposition::Pending => {
                 if started.elapsed() >= timeout {
                     emit_pr_validation_wait_timeout(&snapshot, started, poll_count, Duration::ZERO);
+                    capture_pr_validation_wait_anomaly_best_effort(
+                        repo,
+                        &snapshot,
+                        PrValidationDisposition::TimedOut,
+                        started,
+                        poll_count,
+                    );
                     return Ok(pr_validation_report_from_snapshot_with_disposition(
                         &snapshot,
                         PrValidationDisposition::TimedOut,
@@ -791,6 +836,324 @@ fn duration_env_ms(key: &str, default_ms: u64) -> Duration {
             .ok()
             .and_then(|value| value.parse::<u64>().ok())
             .unwrap_or(default_ms),
+    )
+}
+
+fn capture_pr_validation_wait_anomaly(
+    repo: &str,
+    snapshot: &PrValidationSnapshot,
+    disposition: PrValidationDisposition,
+    started: Instant,
+    poll_count: usize,
+) -> Result<()> {
+    if !tooling_anomaly_reporting_enabled() {
+        return Ok(());
+    }
+
+    let elapsed = started.elapsed();
+    let threshold = pr_validation_anomaly_threshold();
+    let anomaly_type = match disposition {
+        PrValidationDisposition::TimedOut => Some("pr_validation_timeout"),
+        PrValidationDisposition::Pending if !snapshot.is_draft && elapsed >= threshold => {
+            Some("pr_validation_slow")
+        }
+        PrValidationDisposition::Success
+        | PrValidationDisposition::Failed
+        | PrValidationDisposition::Cancelled
+        | PrValidationDisposition::Skipped
+            if elapsed >= threshold =>
+        {
+            Some("pr_validation_slow")
+        }
+        _ => None,
+    };
+    let Some(anomaly_type) = anomaly_type else {
+        return Ok(());
+    };
+
+    let report = pr_validation_report_from_snapshot_with_disposition(snapshot, disposition);
+    let wait_reason = pr_validation_wait_reason(snapshot, disposition, "aggregate").to_string();
+    let linked_issue_numbers =
+        pr_closing_issue_numbers_octocrab(repo, &snapshot.pr_number.to_string())
+            .unwrap_or_default();
+    let repo_root = tooling_anomaly_checkout_root()?;
+    let report_dir = tooling_anomaly_report_dir(&repo_root)?;
+    fs::create_dir_all(&report_dir)
+        .with_context(|| format!("create tooling anomaly report dir {}", report_dir.display()))?;
+
+    let fingerprint = pr_validation_anomaly_fingerprint(
+        anomaly_type,
+        repo,
+        snapshot,
+        &report.checks,
+        &wait_reason,
+    );
+    let report_path = report_dir.join(format!("{fingerprint}.json"));
+    let issue_body_path = report_dir.join(format!("{fingerprint}.md"));
+    let now_ms = unix_time_ms();
+    let report_relpath = repo_relative_display(&repo_root, &report_path);
+    let issue_body_relpath = repo_relative_display(&repo_root, &issue_body_path);
+
+    let mut packet = read_existing_tooling_anomaly_packet(&report_path)?.unwrap_or_else(|| {
+        ToolingAnomalyPacket {
+            schema: "adl.tooling_anomaly.v1".to_string(),
+            anomaly_type: anomaly_type.to_string(),
+            command_class: "pr.validation.wait".to_string(),
+            repo: repo.to_string(),
+            pr_number: snapshot.pr_number,
+            linked_issue_numbers: linked_issue_numbers.clone(),
+            commit_sha: snapshot.commit_sha.clone(),
+            pr_state: snapshot.state.clone(),
+            is_draft: snapshot.is_draft,
+            disposition: disposition.as_event_result().to_string(),
+            wait_reason: wait_reason.clone(),
+            elapsed_ms: elapsed.as_millis(),
+            poll_count,
+            observation_count: 0,
+            observed_check_names: Vec::new(),
+            pending_checks: Vec::new(),
+            failed_checks: Vec::new(),
+            checks: Vec::new(),
+            report_relpath: report_relpath.clone(),
+            issue_body_relpath: issue_body_relpath.clone(),
+            suggested_issue_title: format!(
+                "[tools][observed-bug] {} on PR #{}",
+                anomaly_type.replace('_', "-"),
+                snapshot.pr_number
+            ),
+            remediation_route: format!(
+                "Review {report_relpath} and create or update a follow-on with a safe body file, for example: adl pr issue create --title '<title>' --body-file {issue_body_relpath}"
+            ),
+            first_observed_at_epoch_ms: now_ms,
+            last_observed_at_epoch_ms: now_ms,
+        }
+    });
+
+    packet.linked_issue_numbers = linked_issue_numbers;
+    packet.commit_sha = snapshot.commit_sha.clone();
+    packet.pr_state = snapshot.state.clone();
+    packet.is_draft = snapshot.is_draft;
+    packet.disposition = disposition.as_event_result().to_string();
+    packet.wait_reason = wait_reason;
+    packet.elapsed_ms = elapsed.as_millis();
+    packet.poll_count = poll_count;
+    packet.observation_count += 1;
+    packet.pending_checks = report.pending_checks.clone();
+    packet.failed_checks = report.failed_checks.clone();
+    packet.checks = report.checks.clone();
+    packet.observed_check_names = packet
+        .checks
+        .iter()
+        .map(|check| check.name.clone())
+        .collect();
+    packet.last_observed_at_epoch_ms = now_ms;
+
+    let issue_body = render_pr_validation_anomaly_issue_body(&packet);
+    fs::write(&issue_body_path, issue_body).with_context(|| {
+        format!(
+            "write tooling anomaly issue body {}",
+            issue_body_path.display()
+        )
+    })?;
+    fs::write(&report_path, serde_json::to_string_pretty(&packet)?)
+        .with_context(|| format!("write tooling anomaly packet {}", report_path.display()))?;
+    Ok(())
+}
+
+fn capture_pr_validation_wait_anomaly_best_effort(
+    repo: &str,
+    snapshot: &PrValidationSnapshot,
+    disposition: PrValidationDisposition,
+    started: Instant,
+    poll_count: usize,
+) {
+    if let Err(err) =
+        capture_pr_validation_wait_anomaly(repo, snapshot, disposition, started, poll_count)
+    {
+        emit_pr_validation_wait_anomaly_capture_failure(repo, snapshot, disposition, &err);
+    }
+}
+
+fn emit_pr_validation_wait_anomaly_capture_failure(
+    repo: &str,
+    snapshot: &PrValidationSnapshot,
+    disposition: PrValidationDisposition,
+    err: &anyhow::Error,
+) {
+    let pr_number = snapshot.pr_number.to_string();
+    let is_draft = snapshot.is_draft.to_string();
+    let mut fields = vec![
+        ("repo".to_string(), repo.to_string()),
+        ("pr_number".to_string(), pr_number),
+        ("commit_sha".to_string(), snapshot.commit_sha.clone()),
+        ("pr_state".to_string(), snapshot.state.clone()),
+        ("is_draft".to_string(), is_draft),
+        (
+            "disposition".to_string(),
+            disposition.as_event_result().to_string(),
+        ),
+        ("detail".to_string(), err.to_string()),
+    ];
+    if let Some(path) = std::env::var_os("ADL_TOOLING_ANOMALY_REPORT_DIR") {
+        fields.push((
+            "report_dir".to_string(),
+            PathBuf::from(path).display().to_string(),
+        ));
+    }
+    let borrowed = fields
+        .iter()
+        .map(|(key, value)| (key.as_str(), value.as_str()))
+        .collect::<Vec<_>>();
+    observability::emit_event(
+        "adl",
+        "pr.validation.wait.anomaly_capture",
+        "failed",
+        &borrowed,
+    );
+}
+
+fn tooling_anomaly_reporting_enabled() -> bool {
+    matches!(
+        std::env::var("ADL_REPORT_TOOLING_ANOMALIES")
+            .ok()
+            .as_deref(),
+        Some("1" | "true" | "TRUE" | "yes" | "on")
+    )
+}
+
+fn pr_validation_anomaly_threshold() -> Duration {
+    duration_env_ms("ADL_PR_VALIDATION_ANOMALY_THRESHOLD_MS", 60 * 1000)
+}
+
+fn tooling_anomaly_checkout_root() -> Result<PathBuf> {
+    let mut cursor = std::env::current_dir().context("read current dir for anomaly reporting")?;
+    loop {
+        if cursor.join(".git").exists() {
+            return Ok(cursor);
+        }
+        if !cursor.pop() {
+            bail!("could not locate checkout root for tooling anomaly reporting");
+        }
+    }
+}
+
+fn tooling_anomaly_report_dir(repo_root: &Path) -> Result<PathBuf> {
+    if let Some(explicit) = std::env::var_os("ADL_TOOLING_ANOMALY_REPORT_DIR") {
+        let explicit = PathBuf::from(explicit);
+        return Ok(if explicit.is_absolute() {
+            explicit
+        } else {
+            repo_root.join(explicit)
+        });
+    }
+    Ok(repo_root
+        .join(".adl")
+        .join("reports")
+        .join("tooling-anomalies")
+        .join("pr-validation"))
+}
+
+fn pr_validation_anomaly_fingerprint(
+    anomaly_type: &str,
+    repo: &str,
+    snapshot: &PrValidationSnapshot,
+    checks: &[PrValidationCheckReport],
+    wait_reason: &str,
+) -> String {
+    let mut raw = format!(
+        "{anomaly_type}|{repo}|{}|{}|{}",
+        snapshot.pr_number, snapshot.commit_sha, wait_reason
+    );
+    for check in checks {
+        raw.push('|');
+        raw.push_str(&check.name);
+    }
+    let digest = fnv1a64(raw.as_bytes());
+    let prefix = sanitize_slug(format!(
+        "{anomaly_type}-pr-{}-{}",
+        snapshot.pr_number,
+        &snapshot.commit_sha[..snapshot.commit_sha.len().min(12)]
+    ));
+    format!("{prefix}-{digest:016x}")
+}
+
+fn fnv1a64(bytes: &[u8]) -> u64 {
+    let mut hash = 0xcbf29ce484222325u64;
+    for byte in bytes {
+        hash ^= u64::from(*byte);
+        hash = hash.wrapping_mul(0x100000001b3);
+    }
+    hash
+}
+
+fn unix_time_ms() -> u128 {
+    std::time::SystemTime::now()
+        .duration_since(std::time::UNIX_EPOCH)
+        .expect("system time")
+        .as_millis()
+}
+
+fn repo_relative_display(repo_root: &Path, path: &Path) -> String {
+    path.strip_prefix(repo_root)
+        .unwrap_or(path)
+        .display()
+        .to_string()
+}
+
+fn read_existing_tooling_anomaly_packet(path: &Path) -> Result<Option<ToolingAnomalyPacket>> {
+    if !path.exists() {
+        return Ok(None);
+    }
+    let contents = fs::read_to_string(path)
+        .with_context(|| format!("read tooling anomaly packet {}", path.display()))?;
+    Ok(Some(serde_json::from_str(&contents).with_context(
+        || format!("parse tooling anomaly packet {}", path.display()),
+    )?))
+}
+
+fn render_pr_validation_anomaly_issue_body(packet: &ToolingAnomalyPacket) -> String {
+    let linked_issues = if packet.linked_issue_numbers.is_empty() {
+        "none inferred".to_string()
+    } else {
+        packet
+            .linked_issue_numbers
+            .iter()
+            .map(|issue| format!("#{issue}"))
+            .collect::<Vec<_>>()
+            .join(", ")
+    };
+    let checks = if packet.checks.is_empty() {
+        "- no checks were reported yet".to_string()
+    } else {
+        packet
+            .checks
+            .iter()
+            .map(|check| {
+                format!(
+                    "- `{}`: status=`{}` conclusion=`{}` job_run_id=`{}`",
+                    check.name, check.status, check.conclusion, check.job_run_id
+                )
+            })
+            .collect::<Vec<_>>()
+            .join("\n")
+    };
+    format!(
+        "## Summary\n\nObserved `{}` while waiting on repo-native PR validation.\n\n## Evidence\n\n- Repo: `{}`\n- PR: `#{}`\n- Linked issues: {}\n- Commit: `{}`\n- PR state: `{}`\n- Draft: `{}`\n- Disposition: `{}`\n- Wait reason: `{}`\n- Elapsed: `{}` ms\n- Poll count: `{}`\n- Observation count: `{}`\n- Machine-readable packet: `{}`\n\n## Checks\n\n{}\n\n## Remediation\n\n- Reproduce with repo-native `adl/tools/pr.sh validation <pr>` or the owning lifecycle command.\n- Create or update a bounded follow-on using a safe body file rather than inline shell body text.\n- Example publication path: `adl pr issue create --title \"<title>\" --body-file {}`\n- Keep the generated packet and body file together so duplicate observations fold into the same artifact.\n",
+        packet.anomaly_type,
+        packet.repo,
+        packet.pr_number,
+        linked_issues,
+        packet.commit_sha,
+        packet.pr_state,
+        packet.is_draft,
+        packet.disposition,
+        packet.wait_reason,
+        packet.elapsed_ms,
+        packet.poll_count,
+        packet.observation_count,
+        packet.report_relpath,
+        checks,
+        packet.issue_body_relpath
     )
 }
 

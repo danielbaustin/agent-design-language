@@ -389,3 +389,126 @@ fn pr_validation_status_query_retries_transient_transport_and_returns_success_sn
     }
     restore_github_policy_env(policy_env);
 }
+
+#[test]
+fn pr_validation_wait_reports_folded_slow_anomaly_packets_with_safe_body_files() {
+    let _guard = env_lock();
+    let policy_env = clear_github_policy_env();
+    let temp = unique_temp_dir("adl-pr-validation-anomaly-report");
+    let reports_dir = temp.join("reports");
+    let (base_uri, server) = spawn_validation_status_pending_then_success_server();
+    unsafe {
+        std::env::set_var("ADL_GITHUB_CLIENT", "octocrab");
+        std::env::set_var("GITHUB_TOKEN", "test-token");
+        std::env::set_var("ADL_GITHUB_OCTOCRAB_BASE_URI", &base_uri);
+        std::env::set_var("ADL_REPORT_TOOLING_ANOMALIES", "1");
+        std::env::set_var("ADL_PR_VALIDATION_WAIT_POLL_MS", "1");
+        std::env::set_var("ADL_PR_VALIDATION_ANOMALY_THRESHOLD_MS", "0");
+        std::env::set_var("ADL_TOOLING_ANOMALY_REPORT_DIR", &reports_dir);
+    }
+
+    let report =
+        wait_for_pr_validation_report("owner/repo", "1159").expect("validation wait report");
+    assert_eq!(report.disposition, "success");
+
+    let mut packets = fs::read_dir(&reports_dir)
+        .expect("read reports dir")
+        .map(|entry| entry.expect("entry").path())
+        .filter(|path| path.extension().and_then(|value| value.to_str()) == Some("json"))
+        .collect::<Vec<_>>();
+    packets.sort();
+    assert_eq!(packets.len(), 1, "expected one folded anomaly packet");
+
+    let packet: serde_json::Value =
+        serde_json::from_str(&fs::read_to_string(&packets[0]).expect("read anomaly packet"))
+            .expect("parse anomaly packet");
+    assert_eq!(packet["schema"], "adl.tooling_anomaly.v1");
+    assert_eq!(packet["anomaly_type"], "pr_validation_slow");
+    assert_eq!(packet["pr_number"], 1159);
+    assert_eq!(packet["disposition"], "success");
+    assert_eq!(packet["observation_count"], 2);
+    assert_eq!(packet["linked_issue_numbers"][0], 4493);
+
+    let issue_body_relpath = packet["issue_body_relpath"]
+        .as_str()
+        .expect("issue body relpath");
+    let issue_body_path = reports_dir.join(
+        PathBuf::from(issue_body_relpath)
+            .file_name()
+            .expect("issue body filename"),
+    );
+    let issue_body = fs::read_to_string(&issue_body_path).expect("read issue body");
+    assert!(issue_body.contains("--body-file"));
+    assert!(issue_body.contains("Machine-readable packet"));
+    assert!(issue_body.contains("`adl-ci`"));
+
+    let seen = server.join().expect("server join");
+    assert!(
+        seen.iter()
+            .any(|call| call.contains("closingIssuesReferences")),
+        "anomaly reporting should resolve linked issues: {seen:#?}"
+    );
+
+    unsafe {
+        std::env::remove_var("ADL_GITHUB_OCTOCRAB_BASE_URI");
+        std::env::remove_var("ADL_REPORT_TOOLING_ANOMALIES");
+        std::env::remove_var("ADL_PR_VALIDATION_WAIT_POLL_MS");
+        std::env::remove_var("ADL_PR_VALIDATION_ANOMALY_THRESHOLD_MS");
+        std::env::remove_var("ADL_TOOLING_ANOMALY_REPORT_DIR");
+    }
+    restore_github_policy_env(policy_env);
+}
+
+#[test]
+fn pr_validation_wait_keeps_validation_result_when_anomaly_capture_fails() {
+    let _guard = env_lock();
+    let policy_env = clear_github_policy_env();
+    let temp = unique_temp_dir("adl-pr-validation-anomaly-failure");
+    let blocker = temp.join("not-a-directory");
+    let log_path = temp.join("events.log");
+    fs::write(&blocker, "occupied").expect("write blocking file");
+    let report_dir = blocker.join("reports");
+    let (base_uri, server) =
+        spawn_validation_status_once_server("COMPLETED", Some("SUCCESS"), "adl-ci");
+    unsafe {
+        std::env::set_var("ADL_GITHUB_CLIENT", "octocrab");
+        std::env::set_var("GITHUB_TOKEN", "test-token");
+        std::env::set_var("ADL_GITHUB_OCTOCRAB_BASE_URI", &base_uri);
+        std::env::set_var("ADL_REPORT_TOOLING_ANOMALIES", "1");
+        std::env::set_var("ADL_PR_VALIDATION_ANOMALY_THRESHOLD_MS", "0");
+        std::env::set_var("ADL_TOOLING_ANOMALY_REPORT_DIR", &report_dir);
+        std::env::set_var("ADL_OBSERVABILITY_STDERR", "0");
+        std::env::set_var("ADL_OBSERVABILITY_LOG", &log_path);
+    }
+
+    let report =
+        wait_for_pr_validation_report("owner/repo", "1159").expect("validation result should win");
+    assert_eq!(report.disposition, "success");
+    assert!(
+        !report_dir.exists(),
+        "broken anomaly sink should not materialize report dir"
+    );
+
+    let log = fs::read_to_string(&log_path).expect("read observability log");
+    assert!(log.contains("stage=pr.validation.wait.anomaly_capture"));
+    assert!(log.contains("result=failed"));
+    assert!(log.contains("detail=create tooling anomaly report dir"));
+    assert!(log.contains("stage=pr.validation.wait"));
+
+    let seen = server.join().expect("server join");
+    assert_eq!(
+        seen.len(),
+        1,
+        "unexpected validation-status calls: {seen:#?}"
+    );
+
+    unsafe {
+        std::env::remove_var("ADL_GITHUB_OCTOCRAB_BASE_URI");
+        std::env::remove_var("ADL_REPORT_TOOLING_ANOMALIES");
+        std::env::remove_var("ADL_PR_VALIDATION_ANOMALY_THRESHOLD_MS");
+        std::env::remove_var("ADL_TOOLING_ANOMALY_REPORT_DIR");
+        std::env::remove_var("ADL_OBSERVABILITY_STDERR");
+        std::env::remove_var("ADL_OBSERVABILITY_LOG");
+    }
+    restore_github_policy_env(policy_env);
+}
