@@ -190,6 +190,10 @@ pub(super) fn preflight_card_run_readiness(
     repo_root: &Path,
     issue_ref: &IssueRef,
 ) -> Option<&'static str> {
+    let source = match resolve_doctor_issue_prompt_path(repo_root, issue_ref) {
+        Ok(path) => path,
+        Err(_) => return Some("blocked"),
+    };
     let sip = issue_ref.task_bundle_input_path(repo_root);
     let stp = issue_ref.task_bundle_stp_path(repo_root);
     let spp = issue_ref.task_bundle_plan_path(repo_root);
@@ -199,6 +203,12 @@ pub(super) fn preflight_card_run_readiness(
     if [&sip, &stp, &spp, &vpp, &srp, &sor]
         .iter()
         .any(|path| !path.is_file())
+    {
+        return Some("blocked");
+    }
+    if validate_authored_prompt_surface("preflight", &source, PromptSurfaceKind::IssuePrompt)
+        .is_err()
+        || validate_authored_prompt_surface("preflight", &stp, PromptSurfaceKind::Stp).is_err()
     {
         return Some("blocked");
     }

@@ -217,6 +217,20 @@ fn classify_stp_stage(repo_root: &Path, path: &Path) -> DoctorCardStageJson {
             ),
         );
     }
+    if bootstrap_stub_reason(&text, PromptSurfaceKind::Stp).is_some() {
+        return card_stage(
+            repo_root,
+            "STP",
+            path,
+            stage_truth(
+                "scaffold",
+                false,
+                false,
+                Some("stp-editor"),
+                "STP is still bootstrap-generated task text and needs issue-specific task truth.",
+            ),
+        );
+    }
     if has_complete_stp_design_time_surface(&text) {
         return card_stage(
             repo_root,
