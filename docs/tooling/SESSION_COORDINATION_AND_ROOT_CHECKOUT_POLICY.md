@@ -48,6 +48,15 @@ Disallowed primary-checkout uses:
 - parking untracked issue artifacts in root when a bound worktree exists
 
 After an issue is bound, tracked edits happen in the bound issue worktree.
+The bound worktree's local `.adl/<version>/tasks/...` bundle is the active
+issue-local execution surface for normal issue work. Materialized
+`.adl/<version>/sprints/...` packet copies in the worktree are convenience
+mirrors for local context, not silent replacements for the primary checkout's
+canonical sprint record. If the worktree-local issue identity disagrees with
+the primary checkout for the same issue, stop and repair the mismatch instead
+of guessing which copy is right. Root-only `.adl` state remains bootstrap,
+coordination, and sprint-truth context rather than a hidden per-issue live
+authority during execution.
 
 ## Required Startup Check
 

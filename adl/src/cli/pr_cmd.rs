@@ -20,7 +20,7 @@ use super::pr_cmd_cards::{
     branch_indicates_unbound_state, ensure_bootstrap_cards, ensure_local_issue_prompt_copy,
     ensure_pre_run_bootstrap_cards, ensure_source_issue_prompt, ensure_symlink,
     ensure_task_bundle_stp, ensure_worktree_task_bundle_materialized, field_line_value,
-    mirror_docs_templates_into_worktree, path_relative_to_repo,
+    mirror_docs_templates_into_worktree, mirror_scope_sprints_into_worktree, path_relative_to_repo,
     sync_root_task_bundle_into_worktree, validate_bootstrap_stp, validate_initialized_cards,
     validate_issue_body_for_create, validate_ready_cards, write_source_issue_prompt,
 };
@@ -31,7 +31,7 @@ use super::pr_cmd_prompt::{
     infer_required_outcome_type, infer_workflow_queue, normalize_issue_title_for_version,
     normalize_labels_csv, parse_issue_number_from_url, render_generated_issue_body,
     resolve_issue_body, resolve_issue_prompt_path, resolve_issue_prompt_workflow_queue,
-    resolve_issue_scope_and_slug_from_local_state, validate_issue_prompt_exists,
+    resolve_issue_scope_and_slug_from_available_local_state, validate_issue_prompt_exists,
     version_from_labels_csv, version_from_title, WorkflowQueueResolution,
 };
 use super::pr_cmd_validate::{
@@ -130,7 +130,7 @@ fn resolve_version_for_existing_issue(
 
     if no_fetch_issue {
         if let Some((version, _slug)) =
-            resolve_issue_scope_and_slug_from_local_state(repo_root, issue)?
+            resolve_issue_scope_and_slug_from_available_local_state(repo_root, issue)?
         {
             return Ok(version);
         }
@@ -147,7 +147,7 @@ fn resolve_version_for_existing_issue(
 }
 
 fn resolve_local_issue_identity(repo_root: &Path, issue: u32) -> Result<Option<(String, String)>> {
-    resolve_issue_scope_and_slug_from_local_state(repo_root, issue)
+    resolve_issue_scope_and_slug_from_available_local_state(repo_root, issue)
 }
 
 fn resolve_start_slug(
@@ -1297,6 +1297,7 @@ fn real_pr_start(args: &[String]) -> Result<()> {
 
     let worktree_source = ensure_local_issue_prompt_copy(&worktree_path, &issue_ref, &source_path)?;
     mirror_docs_templates_into_worktree(&repo_root, &worktree_path)?;
+    mirror_scope_sprints_into_worktree(&repo_root, &worktree_path, &issue_ref)?;
     let worktree_stp = ensure_task_bundle_stp(&worktree_path, &issue_ref, &worktree_source)?;
     validate_authored_prompt_surface("start", &worktree_stp, PromptSurfaceKind::Stp)?;
 
@@ -1429,17 +1430,18 @@ fn real_pr_closeout(args: &[String]) -> Result<()> {
     let repo_root = repo_root()?;
     let primary_root = primary_checkout_root()?;
     let repo = default_repo(&primary_root)?;
-    let inferred = resolve_issue_scope_and_slug_from_local_state(&primary_root, parsed.issue)?
-        .unwrap_or((
-            parsed
-                .version
-                .clone()
-                .unwrap_or_else(|| DEFAULT_VERSION.to_string()),
-            parsed
-                .slug
-                .clone()
-                .unwrap_or_else(|| format!("issue-{}", parsed.issue)),
-        ));
+    let inferred =
+        resolve_issue_scope_and_slug_from_available_local_state(&primary_root, parsed.issue)?
+            .unwrap_or((
+                parsed
+                    .version
+                    .clone()
+                    .unwrap_or_else(|| DEFAULT_VERSION.to_string()),
+                parsed
+                    .slug
+                    .clone()
+                    .unwrap_or_else(|| format!("issue-{}", parsed.issue)),
+            ));
     let issue_ref = IssueRef::new(parsed.issue, inferred.0, inferred.1)?;
     let output_path = issue_ref.task_bundle_output_path(&primary_root);
     lifecycle::ensure_issue_closed_completed_for_closeout(parsed.issue, &repo)?;
