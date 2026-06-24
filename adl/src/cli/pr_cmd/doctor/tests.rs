@@ -1,5 +1,10 @@
-use super::preflight::{doctor_preflight_status, preflight_card_run_readiness};
+use super::preflight::{
+    claim_classification_name, claim_mode_name, doctor_preflight_status,
+    preflight_card_run_readiness,
+};
+use super::printing::{doctor_card_lifecycle_lines, doctor_preflight_lines, doctor_ready_lines};
 use super::*;
+use adl::session_ledger::{ClaimClassification, ClaimMode};
 use crate::cli::pr_cmd::doctor::ready::{
     ready_validation_repo_root, stale_worktree_branch_mismatch_preserves_pre_run,
 };
@@ -125,6 +130,142 @@ fn doctor_preflight_warns_on_stale_session_history() {
     assert_eq!(preflight_status, "WARN");
     assert_eq!(block_kind, "session_manual_inspection");
     assert!(guidance.contains("manual inspection"));
+}
+
+#[test]
+fn doctor_claim_mode_name_covers_all_session_claim_modes() {
+    assert_eq!(claim_mode_name(ClaimMode::Active), "active");
+    assert_eq!(claim_mode_name(ClaimMode::Watching), "watching");
+    assert_eq!(claim_mode_name(ClaimMode::Paused), "paused");
+    assert_eq!(claim_mode_name(ClaimMode::Stale), "stale");
+    assert_eq!(claim_mode_name(ClaimMode::Released), "released");
+}
+
+#[test]
+fn doctor_claim_classification_name_covers_all_session_claim_classifications() {
+    assert_eq!(claim_classification_name(ClaimClassification::Active), "active");
+    assert_eq!(
+        claim_classification_name(ClaimClassification::Watching),
+        "watching"
+    );
+    assert_eq!(claim_classification_name(ClaimClassification::Paused), "paused");
+    assert_eq!(claim_classification_name(ClaimClassification::Stale), "stale");
+    assert_eq!(
+        claim_classification_name(ClaimClassification::Released),
+        "released"
+    );
+}
+
+#[test]
+fn doctor_preflight_lines_include_unknown_queue_and_claim_summary() {
+    let lines = doctor_preflight_lines(&DoctorPreflightResult {
+        target_queue: "queue-a".to_string(),
+        target_queue_source: "source",
+        open_pr_count: 1,
+        open_prs: vec![DoctorPreflightJsonPullRequest {
+            number: 4473,
+            head_ref_name:
+                "codex/4419-v0-91-6-tools-sessions-wire-session-ledger-into-pr-ready-and-pr-run"
+                    .to_string(),
+            state: "draft",
+            queue: None,
+            url: "https://example.invalid/pr/4473".to_string(),
+        }],
+        status: "WARN",
+        block_kind: "open_pr_wave",
+        guidance: "queue override required",
+        session_ledger: DoctorSessionLedgerJson {
+            status: "WARN",
+            block_kind: "session_manual_inspection",
+            guidance: "inspect stale history",
+            ledger_path: ".adl/session-ledger.json".to_string(),
+            current_session_id: None,
+            relevant_claim_count: 1,
+            relevant_claims: vec![DoctorSessionLedgerClaimJson {
+                claim_id: "claim-1".to_string(),
+                session_id: "session-abc".to_string(),
+                owner: "codex".to_string(),
+                resource_kind: "issue".to_string(),
+                resource_id: "4419".to_string(),
+                mode: "watching",
+                classification: "stale",
+                issue: Some(4419),
+                branch: Some("codex/4419".to_string()),
+                worktree_path: Some("/tmp/adl-wp-4419".to_string()),
+                matches_issue: true,
+                matches_branch: false,
+                matches_worktree: true,
+                self_claim: false,
+            }],
+        },
+    });
+
+    assert!(lines.contains(&"OPEN_PR_COUNT=1".to_string()));
+    assert!(lines.contains(
+        &"OPEN_PR=#4473|codex/4419-v0-91-6-tools-sessions-wire-session-ledger-into-pr-ready-and-pr-run|draft|unknown|https://example.invalid/pr/4473".to_string()
+    ));
+    assert!(lines.contains(&"SESSION_LEDGER_CURRENT_SESSION=none".to_string()));
+    assert!(lines.contains(
+        &"SESSION_LEDGER_CLAIM=claim-1|stale|watching|self=false|issue=true|branch=false|worktree=true|resource=issue:4419".to_string()
+    ));
+}
+
+#[test]
+fn doctor_ready_lines_include_optional_worktree_paths() {
+    let lines = doctor_ready_lines(&DoctorReadyResult {
+        lifecycle_state: "bound",
+        worktree: Some("/repo/.worktrees/adl-wp-4419".to_string()),
+        source: ".adl/v0.91.6/bodies/issue-4419-test.md".to_string(),
+        root_stp: ".adl/v0.91.6/tasks/issue-4419/stp.md".to_string(),
+        root_input: ".adl/v0.91.6/tasks/issue-4419/sip.md".to_string(),
+        root_output: ".adl/v0.91.6/tasks/issue-4419/sor.md".to_string(),
+        wt_stp: Some(".worktrees/adl-wp-4419/.adl/v0.91.6/tasks/issue-4419/stp.md".to_string()),
+        wt_input: Some(".worktrees/adl-wp-4419/.adl/v0.91.6/tasks/issue-4419/sip.md".to_string()),
+        wt_output: Some(".worktrees/adl-wp-4419/.adl/v0.91.6/tasks/issue-4419/sor.md".to_string()),
+        card_lifecycle: DoctorCardLifecycleJson {
+            order: vec!["SIP", "STP", "SPP", "VPP", "SRP", "SOR"],
+            active_stage: "SOR",
+            next_required_stage: None,
+            pr_run_readiness: "ready",
+            pr_finish_readiness: "ready",
+            stages: vec![],
+        },
+        status: "PASS",
+    });
+
+    assert_eq!(lines.first().map(String::as_str), Some("LIFECYCLE_STATE=bound"));
+    assert!(lines.contains(&"WORKTREE=/repo/.worktrees/adl-wp-4419".to_string()));
+    assert!(lines.contains(
+        &"WT_STP=.worktrees/adl-wp-4419/.adl/v0.91.6/tasks/issue-4419/stp.md".to_string()
+    ));
+    assert!(lines.contains(&"READY=PASS".to_string()));
+}
+
+#[test]
+fn doctor_card_lifecycle_lines_render_stage_editor_and_none_next_stage() {
+    let lines = doctor_card_lifecycle_lines(&DoctorCardLifecycleJson {
+        order: vec!["SIP", "STP", "SPP", "VPP", "SRP", "SOR"],
+        active_stage: "SPP",
+        next_required_stage: None,
+        pr_run_readiness: "blocked",
+        pr_finish_readiness: "blocked",
+        stages: vec![DoctorCardStageJson {
+            stage: "SPP",
+            path: ".adl/v0.91.6/tasks/issue-4419/spp.md".to_string(),
+            state: "active",
+            complete: false,
+            design_time_complete: false,
+            final_ready: false,
+            next_editor: Some("spp-editor"),
+            detail: "fixture".to_string(),
+        }],
+    });
+
+    assert!(lines.contains(&"CARD_LIFECYCLE_ORDER=SIP->STP->SPP->VPP->SRP->SOR".to_string()));
+    assert!(lines.contains(&"CARD_LIFECYCLE_NEXT_REQUIRED_STAGE=none".to_string()));
+    assert!(lines.contains(
+        &"CARD_STAGE=SPP|active|complete=false|design_time=false|final=false|editor=spp-editor|.adl/v0.91.6/tasks/issue-4419/spp.md".to_string()
+    ));
 }
 
 #[test]

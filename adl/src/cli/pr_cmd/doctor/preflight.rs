@@ -136,7 +136,7 @@ pub(super) fn doctor_preflight_status(
     }
 }
 
-fn claim_mode_name(mode: ClaimMode) -> &'static str {
+pub(super) fn claim_mode_name(mode: ClaimMode) -> &'static str {
     match mode {
         ClaimMode::Active => "active",
         ClaimMode::Watching => "watching",
@@ -146,7 +146,7 @@ fn claim_mode_name(mode: ClaimMode) -> &'static str {
     }
 }
 
-fn claim_classification_name(classification: ClaimClassification) -> &'static str {
+pub(super) fn claim_classification_name(classification: ClaimClassification) -> &'static str {
     match classification {
         ClaimClassification::Active => "active",
         ClaimClassification::Watching => "watching",
