@@ -135,6 +135,7 @@ adl/tools/open_artifact.sh	local_only_utility	Local operator/proof helper; statu
 adl/tools/polis_status_for_ssm.sh	local_only_utility	Local operations status helper for SSM/polis host inspection; not workflow authority.
 adl/tools/polis_status_for_ssm_qts.sh	local_only_utility	Local operations status helper for QTS/SSM host inspection; not workflow authority.
 adl/tools/pr.sh	delegated_to_adl_csdlc	Compatibility wrapper over Rust/C-SDLC or validator-owned command path; keep until callers migrate.
+adl/tools/pr_cards.sh	delegated_to_adl_csdlc	pr.sh helper for legacy card/output/cards compatibility commands; sourced lazily by the compatibility wrapper.
 adl/tools/pr_delegate.sh	delegated_to_adl_csdlc	pr.sh helper for stable delegation and Rust/small-binary routing; sourced by the compatibility wrapper.
 adl/tools/pr_usage.sh	delegated_to_adl_csdlc	pr.sh helper for usage text and compatibility command documentation; sourced by the compatibility wrapper.
 adl/tools/preflight_review.sh	local_only_utility	Local operator/proof helper; status recorded to prevent accidental promotion into control-plane authority.

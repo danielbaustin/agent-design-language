@@ -5,6 +5,7 @@ ROOT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)"
 PR_SH_SRC="$ROOT_DIR/adl/tools/pr.sh"
 PR_DELEGATE_SRC="$ROOT_DIR/adl/tools/pr_delegate.sh"
 PR_USAGE_SRC="$ROOT_DIR/adl/tools/pr_usage.sh"
+PR_CARDS_SRC="$ROOT_DIR/adl/tools/pr_cards.sh"
 CARD_PATHS_SRC="$ROOT_DIR/adl/tools/card_paths.sh"
 INPUT_TPL_SRC="$ROOT_DIR/adl/templates/cards/input_card_template.md"
 OUTPUT_TPL_SRC="$ROOT_DIR/adl/templates/cards/output_card_template.md"
@@ -18,6 +19,7 @@ mkdir -p "$repo/adl/tools" "$repo/adl/templates/cards"
 cp "$PR_SH_SRC" "$repo/adl/tools/pr.sh"
 cp "$PR_DELEGATE_SRC" "$repo/adl/tools/pr_delegate.sh"
 cp "$PR_USAGE_SRC" "$repo/adl/tools/pr_usage.sh"
+cp "$PR_CARDS_SRC" "$repo/adl/tools/pr_cards.sh"
 cp "$CARD_PATHS_SRC" "$repo/adl/tools/card_paths.sh"
 cp "$INPUT_TPL_SRC" "$repo/adl/templates/cards/input_card_template.md"
 cp "$OUTPUT_TPL_SRC" "$repo/adl/templates/cards/output_card_template.md"
@@ -34,7 +36,7 @@ chmod +x "$repo/adl/tools/pr.sh"
 
 no_gh_bin="$tmpdir/no-gh-bin"
 mkdir -p "$no_gh_bin"
-for cmd in awk basename cat cp cut dirname git grep head ln mkdir mktemp mv pwd readlink rm sed touch tr; do
+for cmd in awk basename cat cp cut date dirname git grep head ln mkdir mktemp mv pwd python3 readlink rm sed touch tr; do
   cmd_path="$(command -v "$cmd")"
   ln -s "$cmd_path" "$no_gh_bin/$cmd"
 done
@@ -57,19 +59,19 @@ assert_has() {
   PATH="$no_gh_bin" "$BASH_BIN" adl/tools/pr.sh output 87 --no-fetch-issue --slug offline-title >/dev/null
   PATH="$no_gh_bin" "$BASH_BIN" adl/tools/pr.sh cards 88 --no-fetch-issue >/dev/null
 
-  assert_file ".adl/v0.3/tasks/issue-0087__offline-title/sip.md"
-  assert_file ".adl/v0.3/tasks/issue-0087__offline-title/sor.md"
-  assert_file ".adl/v0.3/tasks/issue-0088__issue-88/sip.md"
-  assert_file ".adl/v0.3/tasks/issue-0088__issue-88/sor.md"
+  assert_file ".adl/v0.86/tasks/issue-0087__offline-title/sip.md"
+  assert_file ".adl/v0.86/tasks/issue-0087__offline-title/sor.md"
+  assert_file ".adl/v0.86/tasks/issue-0088__issue-88/sip.md"
+  assert_file ".adl/v0.86/tasks/issue-0088__issue-88/sor.md"
   [[ -L ".adl/cards/87/input_87.md" ]] || { echo "assertion failed: expected input compatibility link for 87" >&2; exit 1; }
   [[ -L ".adl/cards/87/output_87.md" ]] || { echo "assertion failed: expected output compatibility link for 87" >&2; exit 1; }
   [[ -L ".adl/cards/88/input_88.md" ]] || { echo "assertion failed: expected input compatibility link for 88" >&2; exit 1; }
   [[ -L ".adl/cards/88/output_88.md" ]] || { echo "assertion failed: expected output compatibility link for 88" >&2; exit 1; }
 
-  assert_has "Title: offline-title" ".adl/v0.3/tasks/issue-0087__offline-title/sip.md"
-  assert_has "Title: offline-title" ".adl/v0.3/tasks/issue-0087__offline-title/sor.md"
-  assert_has "Title: issue-88" ".adl/v0.3/tasks/issue-0088__issue-88/sip.md"
-  assert_has "Title: issue-88" ".adl/v0.3/tasks/issue-0088__issue-88/sor.md"
+  assert_has "Title: offline-title" ".adl/v0.86/tasks/issue-0087__offline-title/sip.md"
+  assert_has "Title: offline-title" ".adl/v0.86/tasks/issue-0087__offline-title/sor.md"
+  assert_has "Title: issue-88" ".adl/v0.86/tasks/issue-0088__issue-88/sip.md"
+  assert_has "Title: issue-88" ".adl/v0.86/tasks/issue-0088__issue-88/sor.md"
 )
 
 echo "offline no-fetch pr.sh card generation: ok"

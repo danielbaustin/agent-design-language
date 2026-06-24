@@ -112,6 +112,7 @@ This issue makes `pr.sh` smaller without changing its public command contract:
 | `adl/tools/pr.sh` | Stable compatibility entrypoint, legacy shell commands not yet migrated, sourced helper loading, and main dispatch |
 | `adl/tools/pr_delegate.sh` | Rust/typed delegate discovery, freshness checks, direct small-binary selection, cargo fallback liveness, and delegate execution |
 | `adl/tools/pr_usage.sh` | Usage text and compatibility command help |
+| `adl/tools/pr_cards.sh` | Legacy `card`, `output`, `output-card`, and `cards` compatibility command implementations |
 
 The split removes the delegate and usage sections from `pr.sh` while preserving
 the existing command entrypoint. `pr.sh` now fails closed if a required helper
@@ -134,6 +135,14 @@ Publication exposed a narrow finish-runner parity gap: the selector can emit a
 combined CI-policy command while the runner only knew the component commands.
 This issue fixes that specific gap by decomposing the combined command into
 the already-supported component checks.
+
+Follow-on issue `#4509` continues this architecture with a second
+behavior-preserving implementation slice: the legacy card command
+implementations move out of the main shim into `adl/tools/pr_cards.sh`.
+`pr.sh` sources that helper lazily only for legacy card commands, preserving
+normal help and typed lifecycle delegation while keeping missing-helper
+behavior fail-closed and observable through the same `source-helper` event
+contract.
 
 The rebased publication path exposed a second runner parity gap for the
 prompt-template workflow integration command. That command was already a
