@@ -130,6 +130,11 @@ existing C-SDLC owner lane and the prompt-template shell test maps to the
 existing prompt-template contract lane. This keeps `pr finish` fail-closed
 without treating the new helper names as unmapped surfaces.
 
+Publication exposed a narrow finish-runner parity gap: the selector can emit a
+combined CI-policy command while the runner only knew the component commands.
+This issue fixes that specific gap by decomposing the combined command into
+the already-supported component checks.
+
 ## Failure Modes To Design Out
 
 The target design should remove these recurring failure classes from shell
@@ -298,6 +303,7 @@ Validation run for this implementation slice:
 - `bash adl/tools/test_shell_wrapper_inventory.sh`
 - `bash adl/tools/test_select_validation_lanes.sh`
 - `bash adl/tools/test_validation_manager.sh`
+- `cargo test --manifest-path adl/Cargo.toml --bin adl-pr-finish finish_runner_executes_combined_ci_policy_selector_command`
 - `git diff --check`
 
 ## Proposed Follow-On Work
