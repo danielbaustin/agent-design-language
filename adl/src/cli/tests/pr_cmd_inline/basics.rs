@@ -1325,7 +1325,7 @@ fn fetch_issue_body_respects_github_fallback_policy() {
     let old_token_file = env::var_os("ADL_GITHUB_TOKEN_FILE");
     let old_keychain_service = env::var_os("ADL_GITHUB_TOKEN_KEYCHAIN_SERVICE");
     let old_keychain_account = env::var_os("ADL_GITHUB_TOKEN_KEYCHAIN_ACCOUNT");
-    let old_home = env::var_os("HOME");
+    let old_disable_default_token_file = env::var_os("ADL_TEST_DISABLE_DEFAULT_GITHUB_TOKEN_FILE");
 
     let mut path_entries = vec![bin_dir.clone()];
     path_entries.extend(env::split_paths(old_path.as_deref().unwrap_or_default()));
@@ -1333,12 +1333,12 @@ fn fetch_issue_body_respects_github_fallback_policy() {
         env::set_var("PATH", env::join_paths(path_entries).expect("join PATH"));
         env::remove_var("ADL_GITHUB_CLIENT");
         env::remove_var("ADL_GITHUB_DISABLE_GH_FALLBACK");
+        env::set_var("ADL_TEST_DISABLE_DEFAULT_GITHUB_TOKEN_FILE", "1");
         env::remove_var("GITHUB_TOKEN");
         env::remove_var("GH_TOKEN");
         env::remove_var("ADL_GITHUB_TOKEN_FILE");
         env::remove_var("ADL_GITHUB_TOKEN_KEYCHAIN_SERVICE");
         env::remove_var("ADL_GITHUB_TOKEN_KEYCHAIN_ACCOUNT");
-        env::set_var("HOME", &temp);
     }
 
     assert_eq!(
@@ -1365,10 +1365,13 @@ fn fetch_issue_body_respects_github_fallback_policy() {
     restore_env_var("ADL_GITHUB_DISABLE_GH_FALLBACK", old_disable);
     restore_env_var("GITHUB_TOKEN", old_github_token);
     restore_env_var("GH_TOKEN", old_gh_token);
-    restore_env_var("HOME", old_home);
     restore_env_var("ADL_GITHUB_TOKEN_FILE", old_token_file);
     restore_env_var("ADL_GITHUB_TOKEN_KEYCHAIN_SERVICE", old_keychain_service);
     restore_env_var("ADL_GITHUB_TOKEN_KEYCHAIN_ACCOUNT", old_keychain_account);
+    restore_env_var(
+        "ADL_TEST_DISABLE_DEFAULT_GITHUB_TOKEN_FILE",
+        old_disable_default_token_file,
+    );
 }
 
 #[test]
@@ -1448,6 +1451,7 @@ fn ensure_source_issue_prompt_uses_default_labels_and_generated_prompt_when_gith
     let old_client = env::var_os("ADL_GITHUB_CLIENT");
     let old_disable = env::var_os("ADL_GITHUB_DISABLE_GH_FALLBACK");
     let old_fixture = env::var_os("ADL_TEST_GITHUB_CLI_FIXTURE");
+    let old_disable_default_token_file = env::var_os("ADL_TEST_DISABLE_DEFAULT_GITHUB_TOKEN_FILE");
     let mut path_entries = vec![bin_dir.clone()];
     path_entries.extend(env::split_paths(old_path.as_deref().unwrap_or_default()));
     unsafe {
@@ -1455,6 +1459,7 @@ fn ensure_source_issue_prompt_uses_default_labels_and_generated_prompt_when_gith
         env::remove_var("ADL_GITHUB_CLIENT");
         env::remove_var("ADL_GITHUB_DISABLE_GH_FALLBACK");
         env::remove_var("ADL_TEST_GITHUB_CLI_FIXTURE");
+        env::set_var("ADL_TEST_DISABLE_DEFAULT_GITHUB_TOKEN_FILE", "1");
     }
 
     let issue_ref = IssueRef::new(
@@ -1478,6 +1483,10 @@ fn ensure_source_issue_prompt_uses_default_labels_and_generated_prompt_when_gith
     restore_env_var("ADL_GITHUB_CLIENT", old_client);
     restore_env_var("ADL_GITHUB_DISABLE_GH_FALLBACK", old_disable);
     restore_env_var("ADL_TEST_GITHUB_CLI_FIXTURE", old_fixture);
+    restore_env_var(
+        "ADL_TEST_DISABLE_DEFAULT_GITHUB_TOKEN_FILE",
+        old_disable_default_token_file,
+    );
 
     let prompt = fs::read_to_string(ensured).expect("read prompt");
     assert!(prompt.contains("  - \"track:roadmap\""));
