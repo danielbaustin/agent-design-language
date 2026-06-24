@@ -222,6 +222,119 @@ fn versioned_bootstrap_bundle_from_issue_prompt_includes_valid_six_cards_without
 }
 
 #[test]
+fn versioned_bootstrap_vpp_derives_fact_backed_validation_profile_fields() {
+    let _guard = env_lock();
+    let repo = unique_temp_dir("adl-pr-versioned-vpp-derived-facts");
+    init_git_repo(&repo);
+    copy_bootstrap_support_files(&repo);
+    copy_versioned_prompt_templates(&repo);
+
+    let issue_ref = IssueRef::new(
+        4425,
+        "v0.91.6".to_string(),
+        "tools-vpp-generate-and-validate-vpps-from-ownership-and-validation-profile-facts"
+            .to_string(),
+    )
+    .expect("issue ref");
+    let source_path = issue_ref.issue_prompt_path(&repo);
+    fs::create_dir_all(source_path.parent().expect("source parent")).expect("mkdir");
+    fs::write(
+        &source_path,
+        r#"---
+title: "[v0.91.6][tools][vpp] Generate and validate VPPs from ownership and validation profile facts"
+labels:
+  - "track:roadmap"
+  - "area:tools"
+  - "type:task"
+  - "version:v0.91.6"
+issue_number: 4425
+---
+
+# [v0.91.6][tools][vpp] Generate and validate VPPs from ownership and validation profile facts
+
+## Summary
+
+Use fact sources that already exist in the repo to derive a concrete VPP.
+
+## Goal
+
+Generate reviewable validation-planning truth from the validation manager output.
+
+## Required Outcome
+
+Bootstrap VPP generation should name selected lanes, commands, and deferred rationale.
+
+## Deliverables
+
+- generated validation-planning truth
+
+## Acceptance Criteria
+
+- VPP names selected lanes and commands from the validation manager profile
+- VPP records deferred proof surfaces explicitly
+
+## Repo Inputs
+
+- `adl/src/cli/pr_cmd_cards/cards.rs`
+- `adl/tools/validation_manager.py`
+
+## Dependencies
+
+- none
+
+## Demo Expectations
+
+- none
+
+## Non-goals
+
+- broad prompt-template redesign
+
+## Issue-Graph Notes
+
+- test fixture
+
+## Notes
+
+- generated inside unit tests
+
+## Tooling Notes
+
+- run focused bootstrap coverage only
+"#,
+    )
+    .expect("write source");
+    let title =
+        "[v0.91.6][tools][vpp] Generate and validate VPPs from ownership and validation profile facts";
+    ensure_task_bundle_stp(&repo, &issue_ref, &source_path).expect("stp");
+    ensure_bootstrap_cards(
+        &repo,
+        &issue_ref,
+        title,
+        "codex/4425-vpp-derived-facts",
+        &source_path,
+    )
+    .expect("bootstrap cards");
+
+    let vpp = fs::read_to_string(issue_ref.task_bundle_validation_plan_path(&repo))
+        .expect("read generated vpp");
+    assert!(vpp.contains("selected_3_lane_profile"));
+    assert!(vpp.contains("ci_path_policy_contracts, csdlc_owner_lane, rust_pr_fast"));
+    assert!(vpp.contains("Validation runtime class: `normal`"));
+    assert!(vpp.contains("Validation resource profile: `local`"));
+    assert!(vpp.contains("Validation family: `selected_3_lane_profile`"));
+    assert!(vpp.contains("Validation size split: `mixed`"));
+    assert!(vpp.contains("Expected proof cost: `medium`"));
+    assert!(vpp.contains("bash adl/tools/test_ci_path_policy.sh && bash adl/tools/test_select_validation_lanes.sh && bash adl/tools/test_validation_manager.sh"));
+    assert!(vpp.contains("bash adl/tools/run_owner_validation_lane.sh csdlc"));
+    assert!(vpp.contains("bash adl/tools/run_pr_fast_test_lane.sh --changed-files"));
+    assert!(vpp.contains("deferred full_workspace_nextest: not selected by validation profile"));
+    assert!(vpp.contains(
+        "Generated from validation profile selected_3_lane_profile (status=ready_to_run, pr_publication_sufficient=true)."
+    ));
+}
+
+#[test]
 fn versioned_bootstrap_refreshes_existing_template_placeholder_cards() {
     let _guard = env_lock();
     let repo = unique_temp_dir("adl-pr-versioned-refresh-placeholder-cards");
