@@ -22,6 +22,7 @@ fn open_issue(number: u32) -> IssueRecord {
         title: format!("Issue {number}"),
         state: "open".to_string(),
         url: format!("https://github.com/owner/repo/issues/{number}"),
+        created_at: None,
         closed_at: None,
         body: None,
         labels: vec![],

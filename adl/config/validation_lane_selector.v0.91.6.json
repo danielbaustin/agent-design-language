@@ -238,6 +238,7 @@
         "adl/tools/pr_cards.sh",
         "adl/tools/pr_delegate.sh",
         "adl/tools/pr_usage.sh",
+        "adl/tools/build_v0916_workflow_metric_backfill_inventory.py",
         "adl/tools/run_owner_validation_lane.sh",
         "adl/tools/test_control_plane_observability.sh",
         "adl/tools/test_five_command_regression_suite.sh",
@@ -253,6 +254,7 @@
         "adl/tools/pr_cards.sh",
         "adl/tools/pr_delegate.sh",
         "adl/tools/pr_usage.sh",
+        "adl/tools/build_v0916_workflow_metric_backfill_inventory.py",
         "adl/tools/run_owner_validation_lane.sh",
         "adl/tools/test_control_plane_observability.sh",
         "adl/tools/test_five_command_regression_suite.sh",
@@ -509,7 +511,7 @@
       "rust_pr_fast"
     ],
     "pr_fast": {
-      "max_rust_surface_count": 4,
+      "max_rust_surface_count": 6,
       "max_filter_token_count": 4,
       "max_family_token_count": 3,
       "blocked_modes": [

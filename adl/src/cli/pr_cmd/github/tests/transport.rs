@@ -178,6 +178,7 @@ fn octocrab_transport_covers_pr_and_issue_operations_against_mock_github() {
     let viewed = gh_issue_view("owner/repo", 77).expect("issue view");
     assert_eq!(viewed.number, 77);
     assert_eq!(viewed.state, "closed");
+    assert_eq!(viewed.created_at.as_deref(), Some("2026-06-14T00:00:00Z"));
     assert_eq!(viewed.body.as_deref(), Some("issue body"));
     assert!(viewed.labels.iter().any(|label| label == "area:tools"));
     let pr_like = gh_issue_view("owner/repo", 92).expect_err("pr-like issue view should fail");

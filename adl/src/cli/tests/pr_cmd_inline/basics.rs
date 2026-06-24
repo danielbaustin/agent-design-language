@@ -981,6 +981,7 @@ fn format_issue_rows_renders_state_milestone_and_url() {
             title: "[v0.91.5][tools] Replace gh issue inspection".to_string(),
             state: "open".to_string(),
             url: "https://github.com/example/repo/issues/3874".to_string(),
+            created_at: Some("2026-06-10T00:00:00Z".to_string()),
             closed_at: None,
             body: None,
             labels: vec!["area:tools".to_string()],
@@ -991,6 +992,7 @@ fn format_issue_rows_renders_state_milestone_and_url() {
             title: "Follow-up".to_string(),
             state: "closed".to_string(),
             url: "https://github.com/example/repo/issues/3875".to_string(),
+            created_at: Some("2026-06-11T00:00:00Z".to_string()),
             closed_at: Some("2026-06-16T00:00:00Z".to_string()),
             body: None,
             labels: vec![],
@@ -1011,6 +1013,7 @@ fn format_issue_view_renders_optional_fields_and_body() {
         title: "[v0.91.5][tools] Replace gh issue inspection".to_string(),
         state: "open".to_string(),
         url: "https://github.com/example/repo/issues/3874".to_string(),
+        created_at: Some("2026-06-10T00:00:00Z".to_string()),
         closed_at: Some("2026-06-16T00:00:00Z".to_string()),
         body: Some("## Summary\n\nDirect ADL-owned issue inspection.".to_string()),
         labels: vec!["area:tools".to_string(), "version:v0.91.5".to_string()],
@@ -1019,7 +1022,7 @@ fn format_issue_view_renders_optional_fields_and_body() {
 
     assert_eq!(
         rendered,
-        "#3874 [v0.91.5][tools] Replace gh issue inspection\nstate: open\nurl: https://github.com/example/repo/issues/3874\nclosed_at: 2026-06-16T00:00:00Z\nmilestone: v0.91.5\nlabels: area:tools, version:v0.91.5\n\n## Summary\n\nDirect ADL-owned issue inspection."
+        "#3874 [v0.91.5][tools] Replace gh issue inspection\nstate: open\nurl: https://github.com/example/repo/issues/3874\ncreated_at: 2026-06-10T00:00:00Z\nclosed_at: 2026-06-16T00:00:00Z\nmilestone: v0.91.5\nlabels: area:tools, version:v0.91.5\n\n## Summary\n\nDirect ADL-owned issue inspection."
     );
 }
 
@@ -1030,6 +1033,7 @@ fn format_issue_view_renders_empty_labels_without_optional_fields() {
         title: "Follow-up".to_string(),
         state: "closed".to_string(),
         url: "https://github.com/example/repo/issues/3875".to_string(),
+        created_at: None,
         closed_at: None,
         body: None,
         labels: vec![],
