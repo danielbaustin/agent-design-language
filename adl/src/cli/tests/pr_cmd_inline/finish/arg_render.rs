@@ -4,8 +4,9 @@ use crate::cli::pr_cmd::finish_support::{
     ensure_no_staged_issue_bundle_mutations, extra_pr_body_looks_like_issue_template,
     extract_markdown_section, finish_declared_paths_for_validation, finish_inputs_fingerprint,
     issue_bundle_issue_number_from_repo_relative, load_finish_validation_profile,
-    non_closing_lifecycle_line, normalize_docs_only_sor_text, normalize_sor_emitted_facts_fixture,
-    open_pr_url_nonblocking, open_pr_url_nonblocking_with_timeout, real_pr_finish,
+    load_finish_validation_profile_for_execution, non_closing_lifecycle_line,
+    normalize_docs_only_sor_text, normalize_sor_emitted_facts_fixture, open_pr_url_nonblocking,
+    open_pr_url_nonblocking_with_timeout, real_pr_finish,
     reject_local_issue_bundle_paths_in_finish_paths, render_default_finish_validation,
     resolve_finish_issue_scope_and_slug, restage_finish_output_truth_paths,
     run_finish_validation_status, select_finish_validation_plan_for_finish, FinishValidationMode,
@@ -1482,6 +1483,75 @@ fn load_finish_validation_profile_cleans_tempfile_on_invalid_manager_json() {
         fs::read_dir(&tmpdir).expect("read temp dir").count(),
         0,
         "temporary changed-file manifests should be cleaned up on parse failure"
+    );
+}
+
+#[test]
+fn load_finish_validation_profile_rejects_retained_changed_file_substitution() {
+    let _guard = env_lock();
+    let repo = unique_temp_dir("adl-pr-finish-load-profile-substituted-retained-file");
+    let tmpdir = repo.join("tmp");
+    let wrong_dir = repo.join("wrong");
+    fs::create_dir_all(repo.join("adl/tools")).expect("tools dir");
+    fs::create_dir_all(&tmpdir).expect("tmp dir");
+    fs::create_dir_all(&wrong_dir).expect("wrong dir");
+    let substituted = wrong_dir.join("finish-validation-profile-substituted.txt");
+    write_executable(
+        &repo.join("adl/tools/validation_manager.py"),
+        &format!(
+            r#"#!/usr/bin/env python3
+import json
+
+print(json.dumps({{
+    "selected_profile": "csdlc_owner_profile",
+    "status": "ready_to_run",
+    "pr_publication_sufficient": False,
+    "run": [
+        {{
+            "lane_id": "pr_fast",
+            "command": "bash adl/tools/run_pr_fast_test_lane.sh --changed-files {substituted}",
+            "reason": "substituted changed-files path",
+        }}
+    ],
+    "not_run": [],
+    "deferred": [],
+    "behavior_surfaces": ["csdlc"],
+    "validation_dag": [],
+    "estimated_cost": "small",
+    "escalation": {{
+        "required": False,
+        "reasons": [],
+    }},
+    "selector_plan": [],
+}}))
+"#,
+            substituted = substituted.display()
+        ),
+    );
+
+    let old_tmpdir = env::var("TMPDIR").ok();
+    unsafe {
+        env::set_var("TMPDIR", &tmpdir);
+    }
+
+    let err = load_finish_validation_profile_for_execution(
+        &repo,
+        &["adl/src/cli/pr_cmd/doctor.rs".to_string()],
+    )
+    .expect_err("manager-backed profile must reject substituted retained changed-file path");
+
+    match old_tmpdir {
+        Some(value) => unsafe { env::set_var("TMPDIR", value) },
+        None => unsafe { env::remove_var("TMPDIR") },
+    }
+
+    assert!(err
+        .to_string()
+        .contains("expected ADL-created retained manifest"));
+    assert_eq!(
+        fs::read_dir(&tmpdir).expect("read temp dir").count(),
+        0,
+        "real retained tempfile should be cleaned when manager substitutes the changed-file path"
     );
 }
 
@@ -4005,7 +4075,7 @@ fn finish_helper_paths_run_manager_backed_owner_and_pr_fast_validation() {
     fs::create_dir_all(&bin_dir).expect("bin dir");
     let cargo_log = temp.join("cargo.log");
     let focused_log = temp.join("focused.log");
-    let changed_files = temp.join("changed-files.txt");
+    let changed_files = temp.join("finish-validation-profile-safe.txt");
     fs::write(&changed_files, "M\tadl/src/cli/pr_cmd/doctor.rs\n").expect("changed files");
     write_executable(
         &bin_dir.join("cargo"),
@@ -4054,6 +4124,54 @@ fn finish_helper_paths_run_manager_backed_owner_and_pr_fast_validation() {
     assert!(
         !changed_files.exists(),
         "manager-backed pr-fast helper execution should clean up the changed-file manifest"
+    );
+}
+
+#[test]
+fn finish_helper_rejects_manager_backed_pr_fast_changed_files_substitution() {
+    let _guard = env_lock();
+    let temp = unique_temp_dir("adl-pr-finish-manager-rejects-substituted-changed-files");
+
+    let repo = temp.join("repo");
+    fs::create_dir_all(repo.join("adl/tools")).expect("adl tools dir");
+    fs::write(
+        repo.join("adl/Cargo.toml"),
+        "[package]\nname='adl'\nversion='0.1.0'\n",
+    )
+    .expect("manifest");
+    write_executable(
+        &repo.join("adl/tools/check_no_tracked_adl_issue_record_residue.sh"),
+        "#!/usr/bin/env bash\nset -euo pipefail\nexit 0\n",
+    );
+    write_executable(
+        &repo.join("adl/tools/run_pr_fast_test_lane.sh"),
+        "#!/usr/bin/env bash\nset -euo pipefail\nexit 0\n",
+    );
+    init_git_repo(&repo);
+
+    let substituted = temp.join("not-adl-created.txt");
+    fs::write(&substituted, "M\tadl/src/cli/pr_cmd/doctor.rs\n")
+        .expect("substituted changed files");
+    let plan = FinishValidationPlan {
+        mode: FinishValidationMode::LargerBinaryFocused,
+        commands: vec![
+            "bash adl/tools/check_no_tracked_adl_issue_record_residue.sh".to_string(),
+            "git diff --check".to_string(),
+            format!(
+                "bash adl/tools/run_pr_fast_test_lane.sh --changed-files {}",
+                substituted.display()
+            ),
+        ],
+    };
+
+    let err = run_finish_validation_rust(&repo, &plan)
+        .expect_err("substituted changed-files manifest should be refused");
+    assert!(err
+        .to_string()
+        .contains("expected ADL-created finish-validation-profile-*.txt"));
+    assert!(
+        substituted.exists(),
+        "refused substituted manifest must not be deleted"
     );
 }
 
