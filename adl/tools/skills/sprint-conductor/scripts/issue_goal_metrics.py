@@ -3,6 +3,9 @@ from __future__ import annotations
 
 from copy import deepcopy
 from datetime import datetime, timezone
+import json
+from pathlib import Path
+import re
 from typing import Any
 
 
@@ -65,9 +68,6 @@ def epoch_seconds_to_iso(value: Any) -> str | None:
 
 
 def parse_codex_goal_tool_snapshot(path: str) -> dict[str, Any]:
-    import json
-    from pathlib import Path
-
     payload = json.loads(Path(path).read_text())
     goal = payload.get("goal")
     if not isinstance(goal, dict):
@@ -104,6 +104,135 @@ def parse_codex_goal_tool_snapshot(path: str) -> dict[str, Any]:
         "active_work_seconds_raw": str(time_used_raw) if isinstance(time_used_raw, int) else "unknown",
         "total_tokens_raw": str(tokens_used_raw) if isinstance(tokens_used_raw, int) else "unknown",
     }
+
+
+def extract_first_json_object(raw: str) -> dict[str, Any] | None:
+    text = raw.strip()
+    if not text:
+        return None
+    decoder = json.JSONDecoder()
+    for index, char in enumerate(text):
+        if char != "{":
+            continue
+        try:
+            value, _ = decoder.raw_decode(text[index:])
+        except json.JSONDecodeError:
+            continue
+        if isinstance(value, dict):
+            return value
+    return None
+
+
+def extract_issue_numbers_from_text(raw: str | None) -> set[int]:
+    if not isinstance(raw, str):
+        return set()
+    return {
+        int(match.group(1))
+        for match in re.finditer(r"(?<!\w)(?:issue\s*)?#(\d+)\b", raw, flags=re.IGNORECASE)
+    }
+
+
+def codex_goal_payload_matches_issue_number(payload: dict[str, Any], issue_number: int | None) -> bool:
+    if issue_number is None:
+        return True
+    goal = payload.get("goal")
+    if not isinstance(goal, dict):
+        return False
+    objective_issue_numbers = extract_issue_numbers_from_text(goal.get("objective"))
+    return issue_number in objective_issue_numbers
+
+
+def find_codex_session_transcript(
+    thread_id: str | None,
+    session_root: str,
+    *,
+    issue_number: int | None = None,
+) -> str | None:
+    root = Path(session_root).expanduser()
+    if not root.exists():
+        return None
+    if thread_id:
+        candidates = sorted(root.rglob(f"*{thread_id}*.jsonl"), key=lambda path: path.stat().st_mtime, reverse=True)
+    else:
+        candidates = sorted(root.rglob("*.jsonl"), key=lambda path: path.stat().st_mtime, reverse=True)
+    for candidate in candidates:
+        payload = load_codex_goal_payload_from_session_transcript(
+            str(candidate),
+            thread_id=thread_id,
+            issue_number=issue_number,
+        )
+        if payload is not None:
+            return str(candidate)
+    return None
+
+
+def load_codex_goal_payload_from_session_transcript(
+    transcript_path: str,
+    *,
+    thread_id: str | None = None,
+    issue_number: int | None = None,
+) -> dict[str, Any] | None:
+    transcript = Path(transcript_path)
+    if not transcript.exists():
+        return None
+
+    goal_call_ids: set[str] = set()
+    latest_payload: dict[str, Any] | None = None
+    for raw_line in transcript.read_text().splitlines():
+        if not raw_line.strip():
+            continue
+        try:
+            line = json.loads(raw_line)
+        except json.JSONDecodeError:
+            continue
+        payload = line.get("payload")
+        if not isinstance(payload, dict):
+            continue
+        item = payload.get("item")
+        if isinstance(item, dict):
+            item_type = item.get("type")
+            if item_type == "function_call" and item.get("name") == "get_goal":
+                call_id = item.get("call_id")
+                if isinstance(call_id, str):
+                    goal_call_ids.add(call_id)
+                continue
+            if item_type == "function_call_output":
+                call_id = item.get("call_id")
+                if goal_call_ids and call_id not in goal_call_ids:
+                    continue
+                output_text = item.get("output")
+                if not isinstance(output_text, str):
+                    output_text = payload.get("output")
+                if not isinstance(output_text, str):
+                    continue
+                candidate = extract_first_json_object(output_text)
+                if not isinstance(candidate, dict):
+                    continue
+                goal = candidate.get("goal")
+                if not isinstance(goal, dict):
+                    continue
+                if thread_id is not None and goal.get("threadId") not in {thread_id, None}:
+                    continue
+                if not codex_goal_payload_matches_issue_number(candidate, issue_number):
+                    continue
+                latest_payload = candidate
+                continue
+
+        output_text = payload.get("output")
+        if not isinstance(output_text, str):
+            continue
+        candidate = extract_first_json_object(output_text)
+        if not isinstance(candidate, dict):
+            continue
+        goal = candidate.get("goal")
+        if not isinstance(goal, dict):
+            continue
+        if thread_id is not None and goal.get("threadId") not in {thread_id, None}:
+            continue
+        if not codex_goal_payload_matches_issue_number(candidate, issue_number):
+            continue
+        latest_payload = candidate
+    return latest_payload
 
 
 def default_goal_metrics_summary() -> dict[str, Any]:
@@ -310,6 +439,50 @@ def build_issue_goal_metrics_record_from_codex_goal_snapshot(
         model_ref=model_ref,
         session_ref=session_ref or (f"codex-thread:{thread_id}" if isinstance(thread_id, str) else None),
         thread_id=thread_id if isinstance(thread_id, str) else None,
+    )
+
+
+def build_unknown_issue_goal_metrics_record(
+    *,
+    issue_number: int,
+    capture_stage: str,
+    raw_log_path: str,
+    issue_goal_ref: str | None,
+    sprint_goal_ref: str | None,
+    goal_metrics_rollup_ref: str | None,
+    metrics_confidence: str,
+    completion_state: str,
+    model_ref: str | None,
+    session_ref: str | None,
+    thread_id: str | None,
+) -> dict[str, Any]:
+    return build_issue_goal_metrics_record(
+        sprint_issue_number=None,
+        issue_number=issue_number,
+        capture_stage=capture_stage,
+        data_source="unknown",
+        raw_log_path=raw_log_path,
+        recorded_at=iso_now_utc(),
+        issue_goal_ref=issue_goal_ref,
+        sprint_goal_ref=sprint_goal_ref,
+        goal_metrics_rollup_ref=goal_metrics_rollup_ref,
+        goal_id=None,
+        goal_id_state="not_available",
+        started_at=None,
+        completed_at=None,
+        elapsed_seconds_raw="unknown",
+        active_work_seconds_raw="unknown",
+        validation_seconds_raw="unknown",
+        pr_wait_seconds_raw="unknown",
+        ci_wait_seconds_raw="unknown",
+        total_tokens_raw="unknown",
+        prompt_tokens_raw="unknown",
+        completion_tokens_raw="unknown",
+        metrics_confidence=metrics_confidence,
+        completion_state=completion_state,
+        model_ref=model_ref,
+        session_ref=session_ref,
+        thread_id=thread_id,
     )
 
 

@@ -1706,3 +1706,166 @@ assert summary["token_usage"]["total_tokens"] == 3000
 assert summary["elapsed_seconds"] == 30
 assert summary["completion_state"] == "completed"
 PY
+
+codex_session_root="${tmpdir}/codex-sessions"
+mkdir -p "${codex_session_root}/2026/06/23"
+codex_session_transcript="${codex_session_root}/2026/06/23/rollout-2026-06-23T00-00-00-thread-4442.jsonl"
+cat >"${codex_session_transcript}" <<'JSONL'
+{"type":"response_item","payload":{"item":{"type":"function_call","name":"get_goal","call_id":"call_goal_4442"}}}
+{"type":"response_item","payload":{"item":{"type":"function_call_output","call_id":"call_goal_4442","output":"{\"goal\":{\"threadId\":\"thread-4442\",\"objective\":\"Issue #4442 session\",\"status\":\"active\",\"tokensUsed\":12345,\"timeUsedSeconds\":67,\"createdAt\":1782230400,\"updatedAt\":1782230468}}"}}}
+JSONL
+
+codex_session_artifacts_dir="${tmpdir}/issue-4442-artifacts/goal_metrics"
+codex_session_result="$(env -u CODEX_THREAD_ID python3 "${repo_root}/adl/tools/skills/sprint-conductor/scripts/record_issue_goal_stage_from_codex_session.py" \
+  --issue-number 4442 \
+  --artifacts-dir "${codex_session_artifacts_dir}" \
+  --capture-stage issue_start \
+  --issue-goal-ref "goal:v0.91.6:issue:4442" \
+  --metrics-confidence high \
+  --model-ref "gpt-5-codex" \
+  --session-root "${codex_session_root}")"
+python3 - "${codex_session_result}" "${codex_session_artifacts_dir}" <<'PY'
+import json
+import sys
+from pathlib import Path
+
+result = json.loads(sys.argv[1])
+assert result["status"] == "recorded"
+assert result["data_source"] == "codex_goal_tool"
+artifacts_dir = Path(sys.argv[2])
+snapshot = json.loads((artifacts_dir / "issue-4442-goal-state.json").read_text())
+assert snapshot["goal"]["threadId"] == "thread-4442"
+rows = [
+    json.loads(line)
+    for line in (artifacts_dir / "issue-4442-goal-metrics.jsonl").read_text().splitlines()
+    if line.strip()
+]
+assert len(rows) == 1
+record = rows[0]
+assert record["capture_stage"] == "issue_start"
+assert record["data_source"] == "codex_goal_tool"
+assert record["thread_id"] == "thread-4442"
+assert record["active_work_seconds"] == 67
+assert record["token_usage"]["total_tokens"] == 12345
+summary = json.loads((artifacts_dir / "issue-4442-goal-metrics-summary.json").read_text())
+assert summary["selected_stage"] == "issue_start"
+assert summary["data_source"] == "codex_goal_tool"
+assert summary["thread_id"] == "thread-4442"
+assert summary["active_work_seconds"] == 67
+assert summary["token_usage"]["total_tokens"] == 12345
+PY
+
+codex_mismatch_root="${tmpdir}/codex-sessions-mismatch"
+mkdir -p "${codex_mismatch_root}/2026/06/23"
+codex_mismatch_transcript="${codex_mismatch_root}/2026/06/23/rollout-2026-06-23T00-00-00-thread-4442-mismatch.jsonl"
+cat >"${codex_mismatch_transcript}" <<'JSONL'
+{"type":"response_item","payload":{"item":{"type":"function_call","name":"get_goal","call_id":"call_goal_4442_mismatch"}}}
+{"type":"response_item","payload":{"item":{"type":"function_call_output","call_id":"call_goal_4442_mismatch","output":"{\"goal\":{\"threadId\":\"thread-4442\",\"objective\":\"Issue #9999 session\",\"status\":\"active\",\"tokensUsed\":12345,\"timeUsedSeconds\":67,\"createdAt\":1782230400,\"updatedAt\":1782230468}}"}}}
+JSONL
+
+codex_mismatch_artifacts_dir="${tmpdir}/issue-4442-mismatch-artifacts/goal_metrics"
+codex_mismatch_result="$(python3 "${repo_root}/adl/tools/skills/sprint-conductor/scripts/record_issue_goal_stage_from_codex_session.py" \
+  --issue-number 4442 \
+  --artifacts-dir "${codex_mismatch_artifacts_dir}" \
+  --capture-stage pr_publication \
+  --issue-goal-ref "goal:v0.91.6:issue:4442" \
+  --metrics-confidence high \
+  --thread-id "thread-4442" \
+  --session-root "${codex_mismatch_root}")"
+python3 - "${codex_mismatch_result}" "${codex_mismatch_artifacts_dir}" <<'PY'
+import json
+import sys
+from pathlib import Path
+
+result = json.loads(sys.argv[1])
+assert result["status"] == "recorded"
+assert result["data_source"] == "unknown"
+artifacts_dir = Path(sys.argv[2])
+rows = [
+    json.loads(line)
+    for line in (artifacts_dir / "issue-4442-goal-metrics.jsonl").read_text().splitlines()
+    if line.strip()
+]
+assert len(rows) == 1
+record = rows[0]
+assert record["capture_stage"] == "pr_publication"
+assert record["data_source"] == "unknown"
+assert record["thread_id"] == "thread-4442"
+PY
+
+codex_sep_root="${tmpdir}/codex-sessions-sep"
+mkdir -p "${codex_sep_root}/2026/06/23"
+codex_sep_transcript="${codex_sep_root}/2026/06/23/rollout-2026-06-23T00-00-00-thread-4442-sep.jsonl"
+cat >"${codex_sep_transcript}" <<'JSONL'
+{"type":"response_item","payload":{"item":{"type":"function_call","name":"get_goal","call_id":"call_goal_4442_sep"}}}
+{"type":"response_item","payload":{"item":{"type":"function_call_output","call_id":"call_goal_4442_sep","output":"{\"goal\":{\"threadId\":\"thread-4442-sep\",\"objective\":\"#3001 #4442 child session objective\",\"status\":\"active\",\"tokensUsed\":4442,\"timeUsedSeconds\":44,\"createdAt\":1782230400,\"updatedAt\":1782230444}}"}}}
+JSONL
+
+codex_sep_artifacts_dir="${tmpdir}/issue-4442-sep-artifacts/goal_metrics"
+codex_sep_result="$(env -u CODEX_THREAD_ID python3 "${repo_root}/adl/tools/skills/sprint-conductor/scripts/record_issue_goal_stage_from_codex_session.py" \
+  --issue-number 4442 \
+  --artifacts-dir "${codex_sep_artifacts_dir}" \
+  --capture-stage review_handoff \
+  --issue-goal-ref "goal:v0.91.6:issue:4442" \
+  --metrics-confidence high \
+  --session-root "${codex_sep_root}")"
+python3 - "${codex_sep_result}" "${codex_sep_artifacts_dir}" <<'PY'
+import json
+import sys
+from pathlib import Path
+
+result = json.loads(sys.argv[1])
+assert result["status"] == "recorded"
+assert result["data_source"] == "codex_goal_tool"
+artifacts_dir = Path(sys.argv[2])
+rows = [
+    json.loads(line)
+    for line in (artifacts_dir / "issue-4442-goal-metrics.jsonl").read_text().splitlines()
+    if line.strip()
+]
+assert len(rows) == 1
+record = rows[0]
+assert record["capture_stage"] == "review_handoff"
+assert record["data_source"] == "codex_goal_tool"
+assert record["thread_id"] == "thread-4442-sep"
+assert record["active_work_seconds"] == 44
+assert record["token_usage"]["total_tokens"] == 4442
+PY
+
+codex_unknown_artifacts_dir="${tmpdir}/issue-4443-artifacts/goal_metrics"
+codex_unknown_result="$(python3 "${repo_root}/adl/tools/skills/sprint-conductor/scripts/record_issue_goal_stage_from_codex_session.py" \
+  --issue-number 4443 \
+  --artifacts-dir "${codex_unknown_artifacts_dir}" \
+  --capture-stage pr_publication \
+  --issue-goal-ref "goal:v0.91.6:issue:4443" \
+  --metrics-confidence unknown \
+  --thread-id "thread-missing" \
+  --session-root "${tmpdir}/missing-codex-sessions")"
+python3 - "${codex_unknown_result}" "${codex_unknown_artifacts_dir}" <<'PY'
+import json
+import sys
+from pathlib import Path
+
+result = json.loads(sys.argv[1])
+assert result["status"] == "recorded"
+assert result["data_source"] == "unknown"
+artifacts_dir = Path(sys.argv[2])
+rows = [
+    json.loads(line)
+    for line in (artifacts_dir / "issue-4443-goal-metrics.jsonl").read_text().splitlines()
+    if line.strip()
+]
+assert len(rows) == 1
+record = rows[0]
+assert record["capture_stage"] == "pr_publication"
+assert record["data_source"] == "unknown"
+assert record["elapsed_availability"] == "unknown"
+assert record["active_work_availability"] == "unknown"
+assert record["token_usage"]["total_availability"] == "unknown"
+summary = json.loads((artifacts_dir / "issue-4443-goal-metrics-summary.json").read_text())
+assert summary["selected_stage"] == "pr_publication"
+assert summary["data_source"] == "unknown"
+assert summary["thread_id"] == "thread-missing"
+assert summary["active_work_availability"] == "unknown"
+assert summary["token_usage"]["total_availability"] == "unknown"
+PY
