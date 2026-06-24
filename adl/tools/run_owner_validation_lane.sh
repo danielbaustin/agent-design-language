@@ -87,6 +87,7 @@ build_owner_bins() {
       --bin adl-pr-run --bin adl-pr-doctor --bin adl-pr-ready \
       --bin adl-pr-preflight --bin adl-pr-finish --bin adl-pr-validation \
       --bin adl-pr-closing-linkage \
+      --bin adl-issue \
       --bin adl-pr-closeout
   if [[ "$PRINT_PLAN" == "1" ]]; then
     return 0
@@ -108,6 +109,8 @@ run_csdlc_lane() {
     bash adl/tools/test_pr_run_ambiguity_policy.sh
   run_command "C-SDLC PR small-binary delegation" \
     bash adl/tools/test_pr_small_binary_delegation.sh
+  run_command "C-SDLC PR delegate cargo fallback liveness" \
+    bash adl/tools/test_pr_delegate_cargo_fallback_liveness.sh
   run_command "C-SDLC PR locked Cargo fallback" \
     bash adl/tools/test_pr_run_locked_cargo_fallback_refuses_cleanly.sh
   run_command "C-SDLC control-plane observability contract" \

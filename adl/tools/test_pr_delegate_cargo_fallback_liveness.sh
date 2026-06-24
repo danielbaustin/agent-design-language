@@ -121,6 +121,10 @@ grep -F "reason_code=cargo_delegate_timeout" "$timeout_log" >/dev/null || {
 lock_log="$tmpdir/lock.log"
 lock_dir="$repo/adl/target/.adl-pr-rust-delegate-build.lock"
 mkdir -p "$lock_dir"
+printf '%s\n' "$$" >"$lock_dir/owner_pid"
+date +%s >"$lock_dir/created_at_epoch"
+printf '%s\n' "doctor" >"$lock_dir/subcommand"
+printf '%s\n' "adl-pr-doctor" >"$lock_dir/delegate_bin"
 set +e
 run_from_repo \
   env \
@@ -132,6 +136,7 @@ run_from_repo \
     "$BASH_BIN" adl/tools/pr.sh doctor 4413 --slug demo --no-fetch-issue --version v0.91.6 --mode full >/dev/null
 lock_status="$?"
 set -e
+rm -f "$lock_dir/owner_pid" "$lock_dir/created_at_epoch" "$lock_dir/subcommand" "$lock_dir/delegate_bin"
 rmdir "$lock_dir"
 [[ "$lock_status" == "75" ]] || {
   echo "assertion failed: build-lock timeout should exit 75, got $lock_status" >&2
@@ -143,6 +148,47 @@ grep -F "stage=rust_delegate_wait result=timeout" "$lock_log" >/dev/null || {
 }
 grep -F "reason_code=build_lock_timeout" "$lock_log" >/dev/null || {
   echo "assertion failed: build-lock timeout should classify lock timeout reason" >&2
+  exit 1
+}
+grep -F "recovery_hint=run_adl/tools/run_owner_validation_lane.sh_csdlc_--build" "$lock_log" >/dev/null || {
+  echo "assertion failed: build-lock timeout should point to the delegate binary build helper" >&2
+  exit 1
+}
+grep -F "lock_owner_pid=$$" "$lock_log" >/dev/null || {
+  echo "assertion failed: build-lock timeout should report active owner pid" >&2
+  exit 1
+}
+
+stale_log="$tmpdir/stale.log"
+stale_args="$tmpdir/stale.args"
+mkdir -p "$lock_dir"
+printf '%s\n' "999999" >"$lock_dir/owner_pid"
+date +%s >"$lock_dir/created_at_epoch"
+printf '%s\n' "finish" >"$lock_dir/subcommand"
+printf '%s\n' "adl-pr-finish" >"$lock_dir/delegate_bin"
+run_from_repo \
+  env \
+    ADL_OBSERVABILITY_LOG="$stale_log" \
+    ADL_OBSERVABILITY_STDERR=0 \
+    ADL_OBSERVABILITY_HEARTBEAT_MS=25 \
+    ADL_PR_CARGO_DELEGATE_BUILD_LOCK_TIMEOUT_SECS=0 \
+    ADL_TEST_CARGO_MODE=heartbeat \
+    ADL_TEST_CARGO_ARGS="$stale_args" \
+    "$BASH_BIN" adl/tools/pr.sh doctor 4413 --slug demo --no-fetch-issue --version v0.91.6 --mode full >/dev/null
+grep -F "reason_code=stale_build_lock_recovered" "$stale_log" >/dev/null || {
+  echo "assertion failed: stale build lock should be recovered before cargo fallback" >&2
+  exit 1
+}
+grep -F "lock_owner_pid=999999" "$stale_log" >/dev/null || {
+  echo "assertion failed: stale build-lock recovery should report dead owner pid" >&2
+  exit 1
+}
+grep -F -- "--bin adl-pr-doctor -- 4413 --slug demo --no-fetch-issue --version v0.91.6 --mode full" "$stale_args" >/dev/null || {
+  echo "assertion failed: stale build-lock recovery should continue into cargo fallback" >&2
+  exit 1
+}
+[[ ! -d "$lock_dir" ]] || {
+  echo "assertion failed: recovered cargo fallback should remove the build lock" >&2
   exit 1
 }
 
