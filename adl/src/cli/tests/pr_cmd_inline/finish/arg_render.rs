@@ -11,7 +11,7 @@ use crate::cli::pr_cmd::finish_support::{
     run_finish_validation_status, select_finish_validation_plan_for_finish, FinishValidationMode,
     FinishValidationPlan, FinishValidationProfile, FinishValidationProfileEscalation,
     FinishValidationProfileEscalationReason, FinishValidationProfileRunItem,
-    FinishValidationProfileSurfaceItem, FinishValidationVppRecord,
+    FinishValidationProfileSurfaceItem, FinishValidationVppRecord, SorFactEmissionContext,
 };
 use crate::cli::pr_cmd::git_support::commits_behind_origin_main;
 use std::os::unix::fs::PermissionsExt;
@@ -462,10 +462,12 @@ review_results:
             "cargo test --manifest-path adl/Cargo.toml sor_emitted_facts_merge_review_validation_and_pr_publication_truth".to_string(),
         ],
         review,
-        "PASS",
-        Some("https://github.com/danielbaustin/agent-design-language/pull/9999"),
-        "pr_open",
-        true,
+        SorFactEmissionContext {
+            validation_status: "PASS",
+            pr_url: Some("https://github.com/danielbaustin/agent-design-language/pull/9999"),
+            integration_state: "pr_open",
+            closing_linkage_repaired: true,
+        },
     )
     .expect("normalize sor emitted facts");
 
@@ -519,10 +521,12 @@ review_results:
         &changed_paths,
         &commands,
         review,
-        "PASS",
-        Some("https://example.test/pr/1"),
-        "pr_open",
-        false,
+        SorFactEmissionContext {
+            validation_status: "PASS",
+            pr_url: Some("https://example.test/pr/1"),
+            integration_state: "pr_open",
+            closing_linkage_repaired: false,
+        },
     )
     .expect("first normalize");
     let second = normalize_sor_emitted_facts_fixture(
@@ -530,10 +534,12 @@ review_results:
         &changed_paths,
         &commands,
         review,
-        "PASS",
-        Some("https://example.test/pr/1"),
-        "pr_open",
-        false,
+        SorFactEmissionContext {
+            validation_status: "PASS",
+            pr_url: Some("https://example.test/pr/1"),
+            integration_state: "pr_open",
+            closing_linkage_repaired: false,
+        },
     )
     .expect("second normalize");
 
@@ -564,10 +570,12 @@ review_results:
         &["docs/example.md".to_string()],
         &["git diff --check".to_string()],
         review,
-        "NOT_RUN",
-        None,
-        "worktree_only",
-        false,
+        SorFactEmissionContext {
+            validation_status: "NOT_RUN",
+            pr_url: None,
+            integration_state: "worktree_only",
+            closing_linkage_repaired: false,
+        },
     )
     .expect("normalize no-checks sor emitted facts");
 
@@ -603,10 +611,12 @@ review_results:
         &["docs/example.md".to_string()],
         &["git diff --check".to_string()],
         review,
-        "PASS",
-        Some("https://example.test/pr/2"),
-        "pr_open",
-        false,
+        SorFactEmissionContext {
+            validation_status: "PASS",
+            pr_url: Some("https://example.test/pr/2"),
+            integration_state: "pr_open",
+            closing_linkage_repaired: false,
+        },
     )
     .expect("normalize with fallback");
 
@@ -643,10 +653,12 @@ review_results:
         &["docs/example.md".to_string()],
         &["git diff --check".to_string()],
         review,
-        "PASS",
-        Some("https://example.test/pr/2"),
-        "worktree_only",
-        false,
+        SorFactEmissionContext {
+            validation_status: "PASS",
+            pr_url: Some("https://example.test/pr/2"),
+            integration_state: "worktree_only",
+            closing_linkage_repaired: false,
+        },
     )
     .expect("first fallback normalize");
     let second = normalize_sor_emitted_facts_fixture(
@@ -654,10 +666,12 @@ review_results:
         &["docs/example.md".to_string()],
         &["git diff --check".to_string()],
         review,
-        "PASS",
-        Some("https://example.test/pr/2"),
-        "pr_open",
-        false,
+        SorFactEmissionContext {
+            validation_status: "PASS",
+            pr_url: Some("https://example.test/pr/2"),
+            integration_state: "pr_open",
+            closing_linkage_repaired: false,
+        },
     )
     .expect("second fallback normalize");
 
@@ -687,10 +701,12 @@ review_results:
         &["docs/example.md".to_string()],
         &["git diff --check".to_string()],
         review,
-        "PASS",
-        Some("https://example.test/pr/3"),
-        "worktree_only",
-        false,
+        SorFactEmissionContext {
+            validation_status: "PASS",
+            pr_url: Some("https://example.test/pr/3"),
+            integration_state: "worktree_only",
+            closing_linkage_repaired: false,
+        },
     )
     .expect("first empty-body fallback normalize");
     let second = normalize_sor_emitted_facts_fixture(
@@ -698,10 +714,12 @@ review_results:
         &["docs/example.md".to_string()],
         &["git diff --check".to_string()],
         review,
-        "PASS",
-        Some("https://example.test/pr/3"),
-        "pr_open",
-        false,
+        SorFactEmissionContext {
+            validation_status: "PASS",
+            pr_url: Some("https://example.test/pr/3"),
+            integration_state: "pr_open",
+            closing_linkage_repaired: false,
+        },
     )
     .expect("second empty-body fallback normalize");
 
@@ -731,10 +749,12 @@ verification_summary:
         &["docs/example.md".to_string()],
         &["git diff --check".to_string()],
         review,
-        "PASS",
-        None,
-        "worktree_only",
-        false,
+        SorFactEmissionContext {
+            validation_status: "PASS",
+            pr_url: None,
+            integration_state: "worktree_only",
+            closing_linkage_repaired: false,
+        },
     )
     .expect("normalize without srp front matter");
 
@@ -753,10 +773,12 @@ fn sor_emitted_facts_parse_review_truth_from_crlf_front_matter() {
         &["docs/example.md".to_string()],
         &["git diff --check".to_string()],
         review,
-        "PASS",
-        None,
-        "worktree_only",
-        false,
+        SorFactEmissionContext {
+            validation_status: "PASS",
+            pr_url: None,
+            integration_state: "worktree_only",
+            closing_linkage_repaired: false,
+        },
     )
     .expect("normalize crlf srp front matter");
 

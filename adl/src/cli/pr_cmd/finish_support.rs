@@ -145,10 +145,12 @@ pub(super) fn real_pr_finish(args: &[String]) -> Result<()> {
         &review_policy_path,
         &changed_paths,
         &finish_validation_plan,
-        if parsed.no_checks { "NOT_RUN" } else { "PASS" },
-        None,
-        "worktree_only",
-        false,
+        SorFactEmissionContext {
+            validation_status: if parsed.no_checks { "NOT_RUN" } else { "PASS" },
+            pr_url: None,
+            integration_state: "worktree_only",
+            closing_linkage_repaired: false,
+        },
     )?;
     validate_completed_sor(&repo_root, &output_path)?;
 
@@ -255,10 +257,12 @@ pub(super) fn real_pr_finish(args: &[String]) -> Result<()> {
         &review_policy_path,
         &changed_paths,
         &finish_validation_plan,
-        if parsed.no_checks { "NOT_RUN" } else { "PASS" },
-        Some(pr_url.as_str()),
-        "pr_open",
-        _closing_linkage_repaired,
+        SorFactEmissionContext {
+            validation_status: if parsed.no_checks { "NOT_RUN" } else { "PASS" },
+            pr_url: Some(pr_url.as_str()),
+            integration_state: "pr_open",
+            closing_linkage_repaired: _closing_linkage_repaired,
+        },
     )?;
     validate_completed_sor(&repo_root, &output_path)?;
     let canonical_output = lifecycle::sync_completed_output_surfaces(
@@ -711,15 +715,20 @@ struct SorReviewEvidence {
     fixes: Vec<String>,
 }
 
+#[derive(Debug, Clone, Copy)]
+pub(super) struct SorFactEmissionContext<'a> {
+    pub validation_status: &'a str,
+    pub pr_url: Option<&'a str>,
+    pub integration_state: &'a str,
+    pub closing_linkage_repaired: bool,
+}
+
 fn record_sor_emitted_facts_for_finish(
     output_path: &Path,
     review_policy_path: &Path,
     changed_paths: &[String],
     plan: &FinishValidationPlan,
-    validation_status: &str,
-    pr_url: Option<&str>,
-    integration_state: &str,
-    closing_linkage_repaired: bool,
+    context: SorFactEmissionContext<'_>,
 ) -> Result<()> {
     let original = fs::read_to_string(output_path).with_context(|| {
         format!(
@@ -733,11 +742,11 @@ fn record_sor_emitted_facts_for_finish(
         &build_sor_facts(
             changed_paths,
             plan,
-            validation_status,
+            context.validation_status,
             &review,
-            pr_url,
-            integration_state,
-            closing_linkage_repaired,
+            context.pr_url,
+            context.integration_state,
+            context.closing_linkage_repaired,
         ),
     )?;
     if normalized != original {
@@ -956,10 +965,7 @@ pub(super) fn normalize_sor_emitted_facts_fixture(
     changed_paths: &[String],
     commands: &[String],
     review_text: &str,
-    validation_status: &str,
-    pr_url: Option<&str>,
-    integration_state: &str,
-    closing_linkage_repaired: bool,
+    context: SorFactEmissionContext<'_>,
 ) -> Result<String> {
     let plan = FinishValidationPlan {
         mode: FinishValidationMode::LargerBinaryFocused,
@@ -969,11 +975,11 @@ pub(super) fn normalize_sor_emitted_facts_fixture(
     let facts = build_sor_facts(
         changed_paths,
         &plan,
-        validation_status,
+        context.validation_status,
         &review,
-        pr_url,
-        integration_state,
-        closing_linkage_repaired,
+        context.pr_url,
+        context.integration_state,
+        context.closing_linkage_repaired,
     );
     normalize_sor_emitted_facts_text(text, &facts)
 }
