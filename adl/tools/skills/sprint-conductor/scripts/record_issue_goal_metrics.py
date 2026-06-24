@@ -13,6 +13,7 @@ from issue_goal_metrics import (
     compute_goal_metrics_rollup,
     default_goal_metrics_summary,
     summarize_issue_goal_metrics,
+    validate_terminal_completion_allowed,
 )
 
 
@@ -92,6 +93,17 @@ def main() -> int:
     parser.add_argument("--model-ref")
     parser.add_argument("--session-ref")
     parser.add_argument("--thread-id")
+    parser.add_argument("--goal-kind")
+    parser.add_argument("--goal-boundary")
+    parser.add_argument("--issue-state")
+    parser.add_argument("--pr-state")
+    parser.add_argument("--checks-state")
+    parser.add_argument("--review-truth")
+    parser.add_argument("--closeout-truth")
+    parser.add_argument("--watch-target-status")
+    parser.add_argument("--sprint-rollup-status")
+    parser.add_argument("--merge-conflicts", action="store_true")
+    parser.add_argument("--no-merge-conflicts", action="store_true")
     parser.add_argument("--print-json", action="store_true")
     args = parser.parse_args()
 
@@ -129,7 +141,18 @@ def main() -> int:
         model_ref=args.model_ref,
         session_ref=args.session_ref,
         thread_id=args.thread_id,
+        goal_kind=args.goal_kind,
+        goal_boundary=args.goal_boundary,
+        issue_state=args.issue_state,
+        pr_state=args.pr_state,
+        checks_state=args.checks_state,
+        review_truth=args.review_truth,
+        closeout_truth=args.closeout_truth,
+        merge_conflicts=True if args.merge_conflicts else False if args.no_merge_conflicts else None,
+        watch_target_status=args.watch_target_status,
+        sprint_rollup_status=args.sprint_rollup_status,
     )
+    validate_terminal_completion_allowed(record)
     append_jsonl(sink_path, record)
 
     all_rows = read_jsonl(sink_path)

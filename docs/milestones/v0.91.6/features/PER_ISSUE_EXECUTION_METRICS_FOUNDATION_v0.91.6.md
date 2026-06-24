@@ -99,6 +99,7 @@ Each issue-local `SOR` should carry the following execution-facing fields:
 | `actual_metrics_confidence` | Confidence in the actual metrics payload. |
 | `estimate_error_percent` | Rolled-up estimate/actual error when computable. |
 | `completion_state` | Truthful issue-local outcome such as `completed`, `completed_with_follow_on`, `blocked`, `failed`, `deferred`, `cancelled`, or `unknown`. |
+| `goal_terminal_state` | Terminal-boundary truth for the selected goal record, including goal kind, declared boundary, issue/PR evidence, whether completion was allowed, and the reason. |
 
 Actual-value rules:
 

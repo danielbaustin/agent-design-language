@@ -90,10 +90,13 @@ These rules are mandatory for ADL issue work.
      objective so token accounting, completion, and blocked-state reporting stay
      tied to the tracked issue.
    - Use `update_goal` only for truthful terminal state changes:
-     `complete` when the current session's bounded objective is actually
-     achieved, including a truthful handoff into review/wait state after
-     publication when that was the session goal, or `blocked` only when the
-     repeated blocking threshold is met and meaningful progress cannot continue.
+     `complete` when the current session's declared terminal boundary is
+     actually satisfied. Handoff-only completion is allowed only when the goal
+     explicitly declares a handoff boundary such as setup-only or review-only
+     publication. Default tracked implementation goals stay active while the PR
+     is red, pending, conflicted, draft, missing required checks, or missing
+     current SRP/SOR truth. Use `blocked` only when the repeated blocking
+     threshold is met and meaningful progress cannot continue.
 5. Always review work with a subagent before opening the PR.
    - Run a bounded review subagent over the changed work product.
    - Fix all actionable findings immediately before publication.

@@ -100,6 +100,14 @@ def main() -> int:
             f"`completion_state={goal_metrics.get('completion_state') or 'unknown'}, "
             f"metrics_confidence={goal_metrics.get('metrics_confidence') or 'unknown'}`"
         )
+        terminal_truth = goal_metrics.get('goal_terminal_state') or {}
+        lines.append(
+            "  - goal terminal boundary: "
+            f"`kind={terminal_truth.get('goal_kind') or 'unknown'}, "
+            f"boundary={terminal_truth.get('declared_boundary') or 'unknown'}, "
+            f"allowed={terminal_truth.get('completion_allowed')}, "
+            f"truth_status={terminal_truth.get('truth_status') or 'unknown'}`"
+        )
         if goal_metrics.get('raw_log_path'):
             lines.append(f"  - goal metrics log: `{goal_metrics['raw_log_path']}`")
 
@@ -152,6 +160,7 @@ def main() -> int:
     lines.append(f"- data sources: `{goal_metrics_rollup['data_source_counts']}`")
     lines.append(f"- goal-id availability: `{goal_metrics_rollup['goal_id_availability_counts']}`")
     lines.append(f"- completion states: `{goal_metrics_rollup['completion_state_counts']}`")
+    lines.append(f"- terminal truth states: `{goal_metrics_rollup['terminal_truth_status_counts']}`")
     lines.append(
         f"- elapsed seconds: `known_sum={goal_metrics_rollup['total_elapsed_seconds_known_sum']}, "
         f"known_issue_count={goal_metrics_rollup['issues_with_known_elapsed']}, "

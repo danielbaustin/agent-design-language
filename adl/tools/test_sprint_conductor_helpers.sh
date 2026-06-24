@@ -1207,6 +1207,11 @@ python3 "${repo_root}/adl/tools/skills/sprint-conductor/scripts/record_issue_goa
   --total-tokens 325020 \
   --metrics-confidence high \
   --completion-state completed \
+  --goal-kind sprint_child \
+  --goal-boundary closed_out \
+  --issue-state closed \
+  --closeout-truth current \
+  --pr-state not_applicable \
   --model-ref "gpt-5-codex" \
   --session-ref "codex-session-7002" \
   --thread-id "thread-7002" >/dev/null
@@ -1247,6 +1252,8 @@ assert record_7002["goal_metrics"]["pr_wait_seconds"] == 142
 assert record_7002["goal_metrics"]["pr_wait_availability"] == "known"
 assert record_7002["goal_metrics"]["ci_wait_availability"] == "not_applicable"
 assert record_7002["goal_metrics"]["completion_state"] == "completed"
+assert record_7002["goal_metrics"]["goal_terminal_state"]["completion_allowed"] is True
+assert record_7002["goal_metrics"]["goal_terminal_state"]["declared_boundary"] == "closed_out"
 assert record_7002["goal_metrics"]["metrics_confidence"] == "high"
 assert record_7002["goal_metrics"]["token_usage"]["total_tokens"] == 325020
 assert record_7002["goal_metrics"]["token_usage"]["total_availability"] == "known"
@@ -1280,6 +1287,8 @@ assert rollup["elapsed_availability_counts"]["not_collected"] == 1
 assert rollup["ci_wait_availability_counts"]["not_applicable"] == 1
 assert rollup["completion_state_counts"]["completed"] == 1
 assert rollup["completion_state_counts"]["unknown"] == 1
+assert rollup["terminal_truth_status_counts"]["satisfied"] == 1
+assert rollup["terminal_truth_status_counts"]["not_satisfied"] == 1
 PY
 
 goal_metrics_default_state_path="${tmpdir}/goal-metrics-default-state.json"
@@ -1369,9 +1378,11 @@ grep -Fq '## Goal Metrics Rollup' "${goal_metrics_artifact}"
 grep -Fq 'issues with recorded metrics: `2/2`' "${goal_metrics_artifact}"
 grep -Fq "goal refs: \`issue=goal:v0.91.6:sprint:7001:issue:7002, sprint=goal:v0.91.6:sprint:7001, rollup=.adl/v0.91.6/sprints/issue-7001__sample/goal-metrics.jsonl\`" "${goal_metrics_artifact}"
 grep -Fq 'goal timing buckets: `active_work=1220, validation=200, pr_wait=142, ci_wait=not_applicable`' "${goal_metrics_artifact}"
+grep -Fq 'goal terminal boundary: `kind=sprint_child, boundary=closed_out, allowed=True, truth_status=satisfied`' "${goal_metrics_artifact}"
 grep -Fq "data sources: \`{'codex_goal_tool': 1, 'derived_sprint_state': 0, 'manual_entry': 1, 'unknown': 0}\`" "${goal_metrics_artifact}"
 grep -Fq "goal-id availability: \`{'known': 1, 'not_applicable': 0, 'not_available': 1, 'not_collected': 0, 'unknown': 0}\`" "${goal_metrics_artifact}"
 grep -Fq "completion states: \`{'blocked': 0, 'cancelled': 0, 'completed': 1, 'completed_with_follow_on': 0, 'deferred': 0, 'failed': 0, 'unknown': 1}\`" "${goal_metrics_artifact}"
+grep -Fq "terminal truth states: \`{'not_satisfied': 1, 'satisfied': 1, 'unknown': 0}\`" "${goal_metrics_artifact}"
 grep -Fq "elapsed seconds: \`known_sum=1562, known_issue_count=1, unknown_issue_count=0, availability_counts={'known': 1, 'not_applicable': 0, 'not_available': 0, 'not_collected': 1, 'unknown': 0}\`" "${goal_metrics_artifact}"
 grep -Fq "active work seconds: \`known_sum=1220, known_issue_count=1, unknown_issue_count=1, availability_counts={'known': 1, 'not_applicable': 0, 'not_available': 0, 'not_collected': 0, 'unknown': 1}\`" "${goal_metrics_artifact}"
 grep -Fq "validation seconds: \`known_sum=200, known_issue_count=1, unknown_issue_count=1, availability_counts={'known': 1, 'not_applicable': 0, 'not_available': 0, 'not_collected': 0, 'unknown': 1}\`" "${goal_metrics_artifact}"
@@ -1671,6 +1682,8 @@ python3 "${repo_root}/adl/tools/skills/sprint-conductor/scripts/record_issue_goa
   --artifacts-dir "${goal_stage_artifacts_dir}" \
   --capture-stage pr_publication \
   --issue-goal-ref "goal:v0.91.6:issue:4431" \
+  --goal-kind review_only \
+  --goal-boundary handoff_only \
   --metrics-confidence high \
   --model-ref "gpt-5-codex" >/dev/null
 
@@ -1705,6 +1718,7 @@ assert summary["selected_stage"] == "pr_publication"
 assert summary["token_usage"]["total_tokens"] == 3000
 assert summary["elapsed_seconds"] == 30
 assert summary["completion_state"] == "completed"
+assert summary["goal_terminal_state"]["declared_boundary"] == "handoff_only"
 PY
 
 codex_session_root="${tmpdir}/codex-sessions"
