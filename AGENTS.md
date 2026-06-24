@@ -34,7 +34,10 @@ These rules are mandatory for ADL issue work.
    - GitHub operations should use the shared token resolver. When an explicit
      token-file source is needed, use
      `ADL_GITHUB_TOKEN_FILE=$HOME/keys/github.token`. Never print, copy,
-     commit, or expose the token contents.
+     commit, or expose the token contents. When no explicit override is set,
+     repo-native GitHub commands may also discover the operator-approved
+     default token file at `$HOME/keys/github.token`; explicit environment
+     sources still take precedence.
    - Provider credentials, when available, may also be sourced from
      operator-approved files outside the repo under `$HOME/keys/`. Do not scan,
      print, copy, commit, or expose that directory or file contents. Map the

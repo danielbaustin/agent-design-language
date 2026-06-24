@@ -64,7 +64,10 @@ Minimum init contract:
 ## 2) Confirm GitHub Issue Exists And Inspect Live Issue Truth
 
 Live GitHub issue operations use the ADL typed GitHub transport. Configure one
-shared token source for the ADL command environment without printing the token:
+shared token source for the ADL command environment without printing the token.
+When no explicit environment override is present, the resolver also accepts the
+operator-approved default token file at `$HOME/keys/github.token`. Explicit
+environment sources remain higher-precedence. Supported explicit sources:
 `GITHUB_TOKEN`, `GH_TOKEN`, `ADL_GITHUB_TOKEN_FILE`, or
 `ADL_GITHUB_TOKEN_KEYCHAIN_SERVICE`. The keychain source uses the macOS
 `security find-generic-password` command; when using it, optionally set

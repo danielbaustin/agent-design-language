@@ -621,7 +621,7 @@ fn github_credential_preflight_hint(
     config: &crate::cli::pr_cmd::github_client::AdlGithubClientConfig,
 ) -> String {
     match config.token_source {
-        None => "credential_status=missing_token; configure GITHUB_TOKEN, GH_TOKEN, ADL_GITHUB_TOKEN_FILE, or ADL_GITHUB_TOKEN_KEYCHAIN_SERVICE before live C-SDLC GitHub operations; load the token from an operator-approved secret source and pass it only to the ADL command environment without echoing it; do not fall back to direct gh commands".to_string(),
+        None => "credential_status=missing_token; configure GITHUB_TOKEN, GH_TOKEN, ADL_GITHUB_TOKEN_FILE, or ADL_GITHUB_TOKEN_KEYCHAIN_SERVICE before live C-SDLC GitHub operations, or provide the approved default token file at $HOME/keys/github.token; load the token from an operator-approved secret source and pass it only to the ADL command environment without echoing it; do not fall back to direct gh commands".to_string(),
         Some(source) => format!(
             "credential_status=token_present source={}; ADL_GITHUB_CLIENT=gh is not a supported read or mutation fallback for covered operations; use ADL_GITHUB_CLIENT=auto or ADL_GITHUB_CLIENT=octocrab",
             source.env_name()
