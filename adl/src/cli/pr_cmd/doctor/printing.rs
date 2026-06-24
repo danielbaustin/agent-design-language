@@ -31,7 +31,10 @@ pub(super) fn doctor_preflight_lines(preflight: &DoctorPreflightResult) -> Vec<S
             "SESSION_LEDGER_GUIDANCE={}",
             preflight.session_ledger.guidance
         ),
-        format!("SESSION_LEDGER_PATH={}", preflight.session_ledger.ledger_path),
+        format!(
+            "SESSION_LEDGER_PATH={}",
+            preflight.session_ledger.ledger_path
+        ),
         format!(
             "SESSION_LEDGER_CURRENT_SESSION={}",
             preflight
@@ -98,9 +101,7 @@ pub(super) fn print_doctor_card_lifecycle_text(card_lifecycle: &DoctorCardLifecy
     }
 }
 
-pub(super) fn doctor_card_lifecycle_lines(
-    card_lifecycle: &DoctorCardLifecycleJson,
-) -> Vec<String> {
+pub(super) fn doctor_card_lifecycle_lines(card_lifecycle: &DoctorCardLifecycleJson) -> Vec<String> {
     let mut lines = vec![
         format!("CARD_LIFECYCLE_ORDER={}", card_lifecycle.order.join("->")),
         format!(

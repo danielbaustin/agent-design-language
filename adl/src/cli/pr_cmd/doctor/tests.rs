@@ -4,11 +4,11 @@ use super::preflight::{
 };
 use super::printing::{doctor_card_lifecycle_lines, doctor_preflight_lines, doctor_ready_lines};
 use super::*;
-use adl::session_ledger::{ClaimClassification, ClaimMode};
 use crate::cli::pr_cmd::doctor::ready::{
     ready_validation_repo_root, stale_worktree_branch_mismatch_preserves_pre_run,
 };
 use crate::cli::pr_cmd_cards::StructuredBundlePaths;
+use adl::session_ledger::{ClaimClassification, ClaimMode};
 use std::time::{SystemTime, UNIX_EPOCH};
 
 #[test]
@@ -143,13 +143,22 @@ fn doctor_claim_mode_name_covers_all_session_claim_modes() {
 
 #[test]
 fn doctor_claim_classification_name_covers_all_session_claim_classifications() {
-    assert_eq!(claim_classification_name(ClaimClassification::Active), "active");
+    assert_eq!(
+        claim_classification_name(ClaimClassification::Active),
+        "active"
+    );
     assert_eq!(
         claim_classification_name(ClaimClassification::Watching),
         "watching"
     );
-    assert_eq!(claim_classification_name(ClaimClassification::Paused), "paused");
-    assert_eq!(claim_classification_name(ClaimClassification::Stale), "stale");
+    assert_eq!(
+        claim_classification_name(ClaimClassification::Paused),
+        "paused"
+    );
+    assert_eq!(
+        claim_classification_name(ClaimClassification::Stale),
+        "stale"
+    );
     assert_eq!(
         claim_classification_name(ClaimClassification::Released),
         "released"
@@ -233,7 +242,10 @@ fn doctor_ready_lines_include_optional_worktree_paths() {
         status: "PASS",
     });
 
-    assert_eq!(lines.first().map(String::as_str), Some("LIFECYCLE_STATE=bound"));
+    assert_eq!(
+        lines.first().map(String::as_str),
+        Some("LIFECYCLE_STATE=bound")
+    );
     assert!(lines.contains(&"WORKTREE=/repo/.worktrees/adl-wp-4419".to_string()));
     assert!(lines.contains(
         &"WT_STP=.worktrees/adl-wp-4419/.adl/v0.91.6/tasks/issue-4419/stp.md".to_string()
