@@ -515,7 +515,10 @@ mod tests {
             workspace_method_descriptor("drive.files.create", method).expect("descriptor");
         assert_eq!(descriptor.http_method, "POST");
         assert_eq!(descriptor.scopes.len(), 1);
-        assert_eq!(descriptor.scopes, vec![ADL_GWS_SCOPE_DRIVE_FILE.to_string()]);
+        assert_eq!(
+            descriptor.scopes,
+            vec![ADL_GWS_SCOPE_DRIVE_FILE.to_string()]
+        );
         assert_eq!(
             descriptor.upload_path.as_deref(),
             Some("/upload/drive/v3/files")
@@ -582,8 +585,14 @@ mod tests {
             catalog.get.scopes,
             vec![ADL_GWS_SCOPE_DRIVE_METADATA_READONLY.to_string()]
         );
-        assert_eq!(catalog.create.scopes, vec![ADL_GWS_SCOPE_DRIVE_FILE.to_string()]);
-        assert_eq!(catalog.update.scopes, vec![ADL_GWS_SCOPE_DRIVE_FILE.to_string()]);
+        assert_eq!(
+            catalog.create.scopes,
+            vec![ADL_GWS_SCOPE_DRIVE_FILE.to_string()]
+        );
+        assert_eq!(
+            catalog.update.scopes,
+            vec![ADL_GWS_SCOPE_DRIVE_FILE.to_string()]
+        );
     }
 
     #[test]
