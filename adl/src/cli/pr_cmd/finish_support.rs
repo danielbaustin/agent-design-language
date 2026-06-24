@@ -769,6 +769,11 @@ fn build_sor_facts(
     integration_state: &str,
     closing_linkage_repaired: bool,
 ) -> SorFacts {
+    let validation_commands = if validation_status == "NOT_RUN" {
+        Vec::new()
+    } else {
+        plan.commands.clone()
+    };
     let fix_notes = if closing_linkage_repaired {
         vec!["repaired missing PR closing linkage".to_string()]
     } else {
@@ -779,7 +784,7 @@ fn build_sor_facts(
         changed_paths: changed_paths.to_vec(),
         validation: SorFactValidation {
             status: validation_status.to_string(),
-            commands: plan.commands.clone(),
+            commands: validation_commands,
         },
         review: SorFactReview {
             findings_status: review.findings_status.clone(),
