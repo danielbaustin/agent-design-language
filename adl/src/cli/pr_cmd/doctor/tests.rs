@@ -9,9 +9,9 @@ use crate::cli::pr_cmd::doctor::ready::{
 };
 use crate::cli::pr_cmd_cards::mirror_scope_sprints_into_worktree;
 use crate::cli::pr_cmd_cards::StructuredBundlePaths;
-use adl::session_ledger::{ClaimClassification, ClaimMode};
 use crate::cli::pr_cmd_prompt::resolve_issue_scope_and_slug_from_available_local_state;
 use crate::cli::tests::env_lock;
+use adl::session_ledger::{ClaimClassification, ClaimMode};
 use std::time::{SystemTime, UNIX_EPOCH};
 
 #[test]
