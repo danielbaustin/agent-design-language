@@ -24,6 +24,7 @@ run_check adl/tools/test_install_adl_operational_skills.sh
 run_check adl/tools/test_pr_init_skill_contracts.sh
 run_check adl/tools/test_card_editor_skill_contracts.sh
 run_check adl/tools/test_pr_closeout_skill_contracts.sh
+run_check adl/tools/test_issue_lifecycle_shepherd_contract.sh
 run_check adl/tools/test_cli_wrapper_migration_contract.sh
 run_check adl/tools/test_owner_validation_lane.sh
 run_check adl/tools/test_adl_runtime_compatibility.sh

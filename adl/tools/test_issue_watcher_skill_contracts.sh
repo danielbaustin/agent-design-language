@@ -21,6 +21,7 @@ grep -Fq 'Schema id: `issue_watcher.v1`' "${skills_root}/docs/ISSUE_WATCHER_SKIL
 grep -Fq "watch_issue | watch_pr | watch_pr_url | watch_branch | watch_dependency_gate" "${skills_root}/docs/ISSUE_WATCHER_SKILL_INPUT_SCHEMA.md"
 grep -Fq "route_blockers: true" "${skills_root}/docs/ISSUE_WATCHER_SKILL_INPUT_SCHEMA.md"
 grep -Fq "handoff.next_skill" "${skills_root}/issue-watcher/references/output-contract.md"
+grep -Fq "lifecycle_shepherd" "${skills_root}/issue-watcher/references/output-contract.md"
 grep -Fq "If PR checks, conflicts, or requested changes are the blocker" "${skills_root}/issue-watcher/references/output-contract.md"
 grep -Fq "issue_watcher.v1" "${skills_root}/docs/OPERATIONAL_SKILLS_GUIDE.md"
 

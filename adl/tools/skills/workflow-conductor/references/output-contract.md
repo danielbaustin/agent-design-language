@@ -34,6 +34,16 @@ handoff_state:
   next_phase: pr-init | pr-ready | pr-run | pr-finish | pr-janitor | pr-closeout | stp-editor | sip-editor | spp-editor | srp-editor | sor-editor | human_review | blocked
   continuation: continue | ask_operator | stop
   escalation_reason: none | operator_override_required | ambiguous_live_state | healthy_pr_waiting | manual_review_required | policy_block | child_issue_wave_satisfied | related_issue_ref_satisfied | sibling_issue_artifact_satisfied | child_issue_wave_active | related_issue_ref_active | repo_policy_residue | unsafe_root_checkout_execution | mismatched_publication_surface | rebind_to_issue_worktree_required
+lifecycle_shepherd:
+  active: true | false
+  state: pre_run | execution_bound | publication_ready | pr_waiting | janitor_active | merged_needs_closeout | closed_no_pr | settled | blocked
+  owner_skill: workflow-conductor | pr-ready | pr-run | pr-finish | issue-watcher | pr-janitor | pr-closeout | human_review | none
+  next_skill: pr-init | pr-ready | pr-run | pr-finish | issue-watcher | pr-janitor | pr-closeout | stp-editor | sip-editor | spp-editor | srp-editor | sor-editor | human_review | none
+  closeout_required: true | false
+  authority_boundary:
+    merge_authority_human_only: true | false
+    issue_close_authority_human_only: true | false
+    review_authority_human_only: true | false
 dispatch:
   mode: route_only | plan_subtask | invoke_subtask
   selected_skill: pr-init | pr-ready | pr-run | pr-finish | pr-janitor | pr-closeout | stp-editor | sip-editor | spp-editor | srp-editor | sor-editor | none
@@ -48,3 +58,6 @@ dispatch:
 artifact:
   path: <path or null>
 ```
+
+See `docs/tooling/ISSUE_LIFECYCLE_SHEPHERD_CONTRACT.md` for the canonical
+shared state meanings.

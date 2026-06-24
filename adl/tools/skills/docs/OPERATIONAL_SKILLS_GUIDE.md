@@ -78,10 +78,16 @@ The normal workflow is:
 4. `pr-run`
 5. create the issue-bound session goal for the tracked session before implementation begins
 6. `pr-finish`
-7. `pr-janitor`
-   - the repo finish path should auto-attach the janitor hook after PR publication so in-flight monitoring starts without an extra manual step
-   - healthy waiting states stay inside active issue shepherding until merge or explicit closure settles
-8. truthful `update_goal` terminal state, then `pr-closeout` after the PR outcome or explicit non-PR closure disposition is settled
+7. `issue-watcher`
+   - healthy PR waiting states remain active shepherding work and stay owned in watch state until merge, blocker emergence, or explicit closure settles
+8. `pr-janitor`
+   - actionable PR blockers route here for bounded remediation
+   - the repo finish path may auto-attach the janitor hook after PR publication when blocker monitoring is needed
+9. truthful `update_goal` terminal state, then `pr-closeout` after the PR outcome or explicit non-PR closure disposition is settled
+
+The first-class issue-lifecycle shepherd contract above those phases lives at:
+
+- `docs/tooling/ISSUE_LIFECYCLE_SHEPHERD_CONTRACT.md`
 
 `repo-code-review` is cross-cutting rather than phase-specific.
 `test-generator` is a bounded helper skill for focused tests for a concrete issue, diff, file, or worktree.
@@ -108,6 +114,10 @@ proves explicit nested-goal support.
 `issue-folding` is a bounded issue-disposition helper for classifying duplicate, superseded, absorbed, already-satisfied, obsolete, or still-actionable issues before closeout.
 `issue-splitter` is a bounded issue-scope helper for deciding whether one issue should stay intact, split now, defer splitting, or stop for operator review.
 `issue-watcher` is a bounded wait-window helper for watching one issue, PR, branch, or dependency gate and routing blockers without mutating state.
+The issue-lifecycle shepherd contract defines the shared ownership model above
+`workflow-conductor`, `pr-run`, `pr-finish`, `issue-watcher`, `pr-janitor`,
+and `pr-closeout` so healthy waiting states and merged-needs-closeout states do
+not disappear into session memory.
 `pr-stack-manager` is a bounded stack-topology helper for ancestry, base alignment, and dependency-order analysis.
 `review-comment-triage` is a bounded review-feedback helper for classifying PR comments before implementation.
 `review-readiness-cleanup` is a bounded review-cycle preflight helper for classifying safe cleanup, blockers, skipped surfaces, and follow-on needs before formal review starts.
@@ -365,6 +375,9 @@ The current automation model is:
 - `pr-closeout` handles post-merge or post-closure local finalization
 - `pr-closeout` also covers truthful no-PR closure dispositions like superseded, duplicate, or docs-only-closed issues
 - editor skills may be called by lifecycle skills when the blocker is card-local rather than lifecycle-orchestration state
+- `docs/tooling/ISSUE_LIFECYCLE_SHEPHERD_CONTRACT.md` defines the shared
+  cross-phase shepherd states, transition rules, and non-authority boundary
+  above the bounded lifecycle skills
 
 The conductor should be especially useful when:
 - initial workflow steps are only partially complete
