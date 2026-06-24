@@ -42,6 +42,13 @@ fn linked_pr(number: u32, is_draft: bool) -> OpenPullRequest {
     }
 }
 
+fn linked_pr_with_head(number: u32, head_ref_name: &str) -> OpenPullRequest {
+    OpenPullRequest {
+        head_ref_name: head_ref_name.to_string(),
+        ..linked_pr(number, false)
+    }
+}
+
 fn validation_report(disposition: &str, is_draft: bool) -> PrValidationReport {
     let failed_checks = if disposition == "failed" {
         vec![PrValidationCheckReport {
@@ -69,6 +76,8 @@ fn validation_report(disposition: &str, is_draft: bool) -> PrValidationReport {
         pr_state: "OPEN".to_string(),
         is_draft,
         disposition: disposition.to_string(),
+        projection_status: pr_validation_projection_status("OPEN", is_draft, disposition)
+            .to_string(),
         checks: failed_checks
             .iter()
             .chain(pending_checks.iter())
@@ -86,6 +95,7 @@ fn merged_validation_report() -> PrValidationReport {
         pr_state: "MERGED".to_string(),
         is_draft: false,
         disposition: "success".to_string(),
+        projection_status: "merged".to_string(),
         checks: vec![],
         failed_checks: vec![],
         pending_checks: vec![],
@@ -113,6 +123,50 @@ fn issue_watch_routes_draft_pr_to_issue_watcher() {
     );
     assert_eq!(report.classification, "pr_open");
     assert_eq!(report.next_skill, "issue-watcher");
+}
+
+#[test]
+fn issue_watch_routes_all_green_draft_pr_to_janitor() {
+    let pr = linked_pr(77, true);
+    let report = build_issue_watch_report(
+        &open_issue(4397),
+        false,
+        readiness_ready(),
+        Some((pr, validation_report("success", true))),
+    );
+    assert_eq!(report.classification, "checks_green_but_draft");
+    assert_eq!(report.next_skill, "pr-janitor");
+    assert_eq!(report.continuation, "action_required");
+    assert_eq!(report.reason, "linked_pr_checks_green_but_draft");
+    assert_eq!(
+        report
+            .linked_pr
+            .as_ref()
+            .expect("linked PR")
+            .validation
+            .projection_status,
+        "checks_green_but_draft"
+    );
+}
+
+#[test]
+fn issue_watch_pr_number_resolution_routes_missing_closing_linkage_by_codex_branch() {
+    let pr = linked_pr_with_head(4495, "codex/4487-worktree-safe-truth");
+    assert_eq!(
+        issue_number_from_pr_metadata_for_watch(&pr, &[]).expect("codex branch issue fallback"),
+        4487
+    );
+
+    let missing = linked_pr_with_head(4496, "feature/no-issue-prefix");
+    let err = issue_number_from_pr_metadata_for_watch(&missing, &[])
+        .expect_err("missing closing refs and non-codex branch should fail");
+    assert!(err.to_string().contains("has no closing issue metadata"));
+
+    let ambiguous = issue_number_from_pr_metadata_for_watch(&pr, &[4487, 4488])
+        .expect_err("multiple closing issues should require explicit issue");
+    assert!(ambiguous
+        .to_string()
+        .contains("closes multiple issues 4487, 4488"));
 }
 
 #[test]
