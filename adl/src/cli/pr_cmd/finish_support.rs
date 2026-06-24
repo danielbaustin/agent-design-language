@@ -2093,7 +2093,7 @@ pub(super) fn load_finish_validation_profile(
     load_finish_validation_profile_with_retention(repo_root, changed_paths, false)
 }
 
-fn load_finish_validation_profile_for_execution(
+pub(super) fn load_finish_validation_profile_for_execution(
     repo_root: &Path,
     changed_paths: &[String],
 ) -> Result<FinishValidationProfile> {
@@ -2137,6 +2137,14 @@ fn load_finish_validation_profile_with_retention(
             return Err(err).context("finish: validation manager returned invalid profile JSON");
         }
     };
+    if retain_changed_file_for_execution {
+        if let Err(err) =
+            validate_manager_backed_retained_changed_file(&profile, &changed_file_path_str)
+        {
+            let _ = fs::remove_file(&changed_file_path);
+            return Err(err);
+        }
+    }
     if !retain_changed_file_for_execution {
         for item in &mut profile.run {
             item.command = sanitize_validation_profile_command(&item.command);
@@ -2150,6 +2158,32 @@ fn load_finish_validation_profile_with_retention(
         let _ = fs::remove_file(&changed_file_path);
     }
     Ok(profile)
+}
+
+fn validate_manager_backed_retained_changed_file(
+    profile: &FinishValidationProfile,
+    expected_changed_file: &str,
+) -> Result<()> {
+    for item in &profile.run {
+        if item
+            .command
+            .starts_with("bash adl/tools/run_pr_fast_test_lane.sh --changed-files ")
+        {
+            let changed_file = manager_backed_pr_fast_changed_files_arg(&item.command)?;
+            let changed_file_cmp =
+                fs::canonicalize(&changed_file).unwrap_or_else(|_| PathBuf::from(&changed_file));
+            let expected_changed_file_cmp = fs::canonicalize(expected_changed_file)
+                .unwrap_or_else(|_| PathBuf::from(expected_changed_file));
+            if changed_file_cmp != expected_changed_file_cmp {
+                bail!(
+                    "finish: validation manager returned unsupported changed-files manifest '{}'; expected ADL-created retained manifest '{}'",
+                    changed_file,
+                    expected_changed_file
+                );
+            }
+        }
+    }
+    Ok(())
 }
 
 pub(super) fn select_finish_validation_plan_for_finish(
@@ -4317,11 +4351,7 @@ pub(super) fn run_finish_validation_rust(
                 other if other.starts_with(
                     "bash adl/tools/run_pr_fast_test_lane.sh --changed-files ",
                 ) => {
-                    let Some(changed_files) =
-                        manager_backed_pr_fast_changed_files_arg(other)
-                    else {
-                        bail!("finish: unsupported focused validation command '{other}'");
-                    };
+                    let changed_files = manager_backed_pr_fast_changed_files_arg(other)?;
                     let script = repo_root.join("adl/tools/run_pr_fast_test_lane.sh");
                     let result = run_finish_validation_status(
                         "bash",
@@ -4430,14 +4460,28 @@ pub(super) fn run_finish_validation_rust(
     bail!("finish: unsupported validation mode")
 }
 
-fn manager_backed_pr_fast_changed_files_arg(command: &str) -> Option<String> {
-    let changed_files = command
-        .strip_prefix("bash adl/tools/run_pr_fast_test_lane.sh --changed-files ")?
-        .trim();
+fn manager_backed_pr_fast_changed_files_arg(command: &str) -> Result<String> {
+    let Some(changed_files) =
+        command.strip_prefix("bash adl/tools/run_pr_fast_test_lane.sh --changed-files ")
+    else {
+        bail!("finish: unsupported focused validation command '{command}'");
+    };
+    let changed_files = changed_files.trim();
     if changed_files.is_empty() {
-        return None;
+        bail!("finish: unsupported focused validation command '{command}'");
     }
-    Some(changed_files.trim_matches('\'').to_string())
+    let changed_files = changed_files.trim_matches('\'');
+    let file_name = Path::new(changed_files)
+        .file_name()
+        .and_then(|name| name.to_str())
+        .unwrap_or_default();
+    if !file_name.starts_with("finish-validation-profile-") || !file_name.ends_with(".txt") {
+        bail!(
+            "finish: validation manager returned unsupported changed-files manifest '{}'; expected ADL-created finish-validation-profile-*.txt",
+            changed_files
+        );
+    }
+    Ok(changed_files.to_string())
 }
 
 const FINISH_VALIDATION_SANITIZED_ENVS: &[&str] = &[
