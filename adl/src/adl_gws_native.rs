@@ -12,8 +12,10 @@ pub const ADL_GWS_WRITE_APPROVAL_ENV: &str = "ADL_GWS_WRITE_APPROVAL";
 pub const ADL_GWS_CREDENTIALS_FILE_ENV: &str = "ADL_GWS_CREDENTIALS_FILE";
 pub const ADL_GWS_TOKEN_ENV: &str = "ADL_GWS_TOKEN";
 pub const ADL_GWS_PROJECT_ID_ENV: &str = "ADL_GWS_PROJECT_ID";
-pub const ADL_GWS_DEFAULT_SCOPE: &str = "https://www.googleapis.com/auth/drive";
+pub const ADL_GWS_DEFAULT_SCOPE: &str = "https://www.googleapis.com/auth/drive.file";
 pub const ADL_GWS_SCOPE_DRIVE_FILE: &str = "https://www.googleapis.com/auth/drive.file";
+pub const ADL_GWS_SCOPE_DRIVE_METADATA_READONLY: &str =
+    "https://www.googleapis.com/auth/drive.metadata.readonly";
 pub const ADL_GWS_SCOPE_DOCS: &str = "https://www.googleapis.com/auth/documents";
 pub const ADL_GWS_SCOPE_SHEETS: &str = "https://www.googleapis.com/auth/spreadsheets";
 
@@ -214,28 +216,28 @@ pub fn default_drive_method_catalog() -> WorkspaceDriveMethodCatalog {
             http_method: "GET".to_string(),
             path: "drive/v3/files".to_string(),
             upload_path: None,
-            scopes: vec![ADL_GWS_DEFAULT_SCOPE.to_string()],
+            scopes: vec![ADL_GWS_SCOPE_DRIVE_METADATA_READONLY.to_string()],
         },
         get: WorkspaceMethodDescriptor {
             method_id: "drive.files.get".to_string(),
             http_method: "GET".to_string(),
             path: "drive/v3/files/{fileId}".to_string(),
             upload_path: None,
-            scopes: vec![ADL_GWS_DEFAULT_SCOPE.to_string()],
+            scopes: vec![ADL_GWS_SCOPE_DRIVE_METADATA_READONLY.to_string()],
         },
         create: WorkspaceMethodDescriptor {
             method_id: "drive.files.create".to_string(),
             http_method: "POST".to_string(),
             path: "drive/v3/files".to_string(),
             upload_path: Some("/upload/drive/v3/files".to_string()),
-            scopes: vec![ADL_GWS_DEFAULT_SCOPE.to_string()],
+            scopes: vec![ADL_GWS_SCOPE_DRIVE_FILE.to_string()],
         },
         update: WorkspaceMethodDescriptor {
             method_id: "drive.files.update".to_string(),
             http_method: "PATCH".to_string(),
             path: "drive/v3/files/{fileId}".to_string(),
             upload_path: Some("/upload/drive/v3/files/{fileId}".to_string()),
-            scopes: vec![ADL_GWS_DEFAULT_SCOPE.to_string()],
+            scopes: vec![ADL_GWS_SCOPE_DRIVE_FILE.to_string()],
         },
     }
 }
@@ -256,12 +258,18 @@ pub fn workspace_method_descriptor(
         http_method: method.http_method.clone(),
         path: method.path.clone(),
         upload_path,
-        scopes: if method.scopes.is_empty() {
-            vec![ADL_GWS_DEFAULT_SCOPE.to_string()]
-        } else {
-            method.scopes.clone()
-        },
+        scopes: preferred_drive_method_scopes(method_id, &method.scopes),
     })
+}
+
+fn preferred_drive_method_scopes(method_id: &str, discovered_scopes: &[String]) -> Vec<String> {
+    match method_id {
+        "drive.files.list" => vec![ADL_GWS_SCOPE_DRIVE_METADATA_READONLY.to_string()],
+        "drive.files.get" => vec![ADL_GWS_SCOPE_DRIVE_METADATA_READONLY.to_string()],
+        "drive.files.create" | "drive.files.update" => vec![ADL_GWS_SCOPE_DRIVE_FILE.to_string()],
+        _ if discovered_scopes.is_empty() => vec![ADL_GWS_DEFAULT_SCOPE.to_string()],
+        _ => discovered_scopes.to_vec(),
+    }
 }
 
 fn quota_project_hint() -> Option<String> {
@@ -411,7 +419,8 @@ mod tests {
         parse_workspace_drive_method_catalog, parse_workspace_execution_mode_from_env,
         parse_workspace_write_approval_from_env, quota_project_hint, scopes_as_refs, tracked_path,
         workspace_method_descriptor, WorkspaceCredential, ADL_GWS_CREDENTIALS_FILE_ENV,
-        ADL_GWS_LIVE_MODE_ENV, ADL_GWS_PROJECT_ID_ENV, ADL_GWS_WRITE_APPROVAL_ENV,
+        ADL_GWS_LIVE_MODE_ENV, ADL_GWS_PROJECT_ID_ENV, ADL_GWS_SCOPE_DRIVE_FILE,
+        ADL_GWS_SCOPE_DRIVE_METADATA_READONLY, ADL_GWS_WRITE_APPROVAL_ENV,
     };
     use crate::gws_live_test_support::{lock_gws_live_test_env, EnvVarGuard};
     use google_workspace::discovery::RestDescription;
@@ -493,7 +502,7 @@ mod tests {
     }
 
     #[test]
-    fn workspace_method_descriptor_keeps_scope_and_upload_shape() {
+    fn workspace_method_descriptor_prefers_bounded_drive_scope_and_upload_shape() {
         let doc = sample_drive_discovery();
         let method = doc
             .resources
@@ -507,13 +516,17 @@ mod tests {
         assert_eq!(descriptor.http_method, "POST");
         assert_eq!(descriptor.scopes.len(), 1);
         assert_eq!(
+            descriptor.scopes,
+            vec![ADL_GWS_SCOPE_DRIVE_FILE.to_string()]
+        );
+        assert_eq!(
             descriptor.upload_path.as_deref(),
             Some("/upload/drive/v3/files")
         );
     }
 
     #[test]
-    fn workspace_method_descriptor_uses_default_scope_when_missing() {
+    fn workspace_method_descriptor_prefers_bounded_metadata_scope_for_list_when_missing() {
         let doc: RestDescription = serde_json::from_str(
             r#"{
               "name":"drive",
@@ -537,7 +550,25 @@ mod tests {
             workspace_method_descriptor("drive.files.list", method).expect("descriptor");
         assert_eq!(
             descriptor.scopes,
-            vec![super::ADL_GWS_DEFAULT_SCOPE.to_string()]
+            vec![ADL_GWS_SCOPE_DRIVE_METADATA_READONLY.to_string()]
+        );
+    }
+
+    #[test]
+    fn workspace_method_descriptor_prefers_bounded_metadata_scope_for_list() {
+        let doc = sample_drive_discovery();
+        let method = doc
+            .resources
+            .get("files")
+            .expect("files")
+            .methods
+            .get("list")
+            .expect("list");
+        let descriptor =
+            workspace_method_descriptor("drive.files.list", method).expect("descriptor");
+        assert_eq!(
+            descriptor.scopes,
+            vec![ADL_GWS_SCOPE_DRIVE_METADATA_READONLY.to_string()]
         );
     }
 
@@ -546,6 +577,51 @@ mod tests {
         let catalog = default_drive_method_catalog();
         assert_eq!(catalog.list.method_id, "drive.files.list");
         assert_eq!(catalog.update.method_id, "drive.files.update");
+        assert_eq!(
+            catalog.list.scopes,
+            vec![ADL_GWS_SCOPE_DRIVE_METADATA_READONLY.to_string()]
+        );
+        assert_eq!(
+            catalog.get.scopes,
+            vec![ADL_GWS_SCOPE_DRIVE_METADATA_READONLY.to_string()]
+        );
+        assert_eq!(
+            catalog.create.scopes,
+            vec![ADL_GWS_SCOPE_DRIVE_FILE.to_string()]
+        );
+        assert_eq!(
+            catalog.update.scopes,
+            vec![ADL_GWS_SCOPE_DRIVE_FILE.to_string()]
+        );
+    }
+
+    #[test]
+    fn workspace_method_descriptor_uses_default_scope_for_unknown_method_when_missing() {
+        let doc: RestDescription = serde_json::from_str(
+            r#"{
+              "name":"drive",
+              "version":"v3",
+              "rootUrl":"https://www.googleapis.com/",
+              "servicePath":"",
+              "resources":{
+                "files":{"methods":{"watch":{"httpMethod":"POST","path":"drive/v3/files/watch","scopes":[]}}}
+              }
+            }"#,
+        )
+        .expect("parse discovery");
+        let method = doc
+            .resources
+            .get("files")
+            .expect("files")
+            .methods
+            .get("watch")
+            .expect("watch");
+        let descriptor =
+            workspace_method_descriptor("drive.files.watch", method).expect("descriptor");
+        assert_eq!(
+            descriptor.scopes,
+            vec![super::ADL_GWS_DEFAULT_SCOPE.to_string()]
+        );
     }
 
     #[test]
