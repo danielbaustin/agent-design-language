@@ -321,7 +321,7 @@ def render_execution_packet(
     activity_log = sprint_activity_log_path(repo_root, version, sprint_issue_number)
     review_path = sprint_review_path(repo_root, version, sprint_issue_number)
     ordered_issue_lines = '\n'.join(
-        f"| #{issue} | child_issue | pending | issue-specific implementation surface | {child_titles.get(issue, '').strip() or 'title not yet resolved'} |"
+        f"| #{issue} | child_issue | pending | issue-specific implementation surface | unknown | unknown | not_recorded_yet | {child_titles.get(issue, '').strip() or 'title not yet resolved'} |"
         for issue in ordered
     )
     execution_order = '\n'.join(
@@ -379,9 +379,9 @@ def render_execution_packet(
         '',
         '## Child Issue Wave',
         '',
-        '| Issue | Role | Status | Primary surface | Notes |',
-        '|---|---|---|---|---|',
-        ordered_issue_lines or '| none | none | pending | not_applicable | no child issues declared |',
+        '| Issue | Role | Status | Primary surface | Estimated seconds | Token budget | Watcher | Notes |',
+        '|---|---|---|---|---|---|---|---|',
+        ordered_issue_lines or '| none | none | pending | not_applicable | unknown | unknown | not_recorded_yet | no child issues declared |',
         '',
         '## Dependency Graph',
         '',
@@ -416,6 +416,20 @@ def render_execution_packet(
             '- Every active child issue must have a watcher or equivalent lifecycle monitor for readiness, implementation, PR checks, review, merge, closeout, and worktree pruning.',
             '- Watchers must classify `complete`, `failed`, `blocked`, or `waiting_with_next_check`.',
             '- Wait states without a watcher are not valid sprint state.',
+            '',
+            '## Budget And Goal Accounting',
+            '',
+            '- Aggregate sprint token budget: `unknown`',
+            '- Aggregate sprint elapsed-seconds estimate: `unknown`',
+            '- Sprint goal ref: `unknown`',
+            '- Goal metrics rollup ref: `unknown`',
+            '- Budget-source rule: `derive child budgets from issue-local planning truth before execution starts.`',
+            '',
+            '## Watcher Plan',
+            '',
+            '| Issue | Watcher | Current focus | Next terminal state |',
+            '|---|---|---|---|',
+            '| not_recorded_yet | not_recorded_yet | establish readiness or implementation state | closed_after_merge_or_routed_closeout |',
             '',
             '## Safe Parallel Lanes',
             '',
@@ -503,6 +517,13 @@ def render_execution_packet(
             '- Sprint review findings are either fixed, routed, or recorded as residual risk.',
             '- Sprint closeout artifact records child issue status, PR URLs, proof surfaces, validation state, and follow-up routing.',
             '- Worktrees are pruned or retained with an explicit reason.',
+            '',
+            '## Sprint Closeout Rollup Expectations',
+            '',
+            '- Child status rollup: `record every child issue terminal state with linked PR or explicit no-PR route.`',
+            '- Budget variance rollup: `record estimated versus actual sprint totals when known, and classify unknowns explicitly.`',
+            '- Watcher outcome rollup: `record whether each watcher reached complete, failed, blocked, or waiting_with_next_check before sprint closeout.`',
+            '- Parallelism assumption review: `record which predicted lanes stayed serial, proved parallel-safe, or were misclassified.`',
             '',
             '## Residual Routing Policy',
             '',

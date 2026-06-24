@@ -76,7 +76,14 @@ def inspect_execution_packet(repo_root: Path, execution_mode: str, raw_path: str
         }
 
     text = packet_path.read_text()
-    required_sections = ['## Child Issue Wave', '## Recommended Execution Order', '## Watcher Policy']
+    required_sections = [
+        '## Child Issue Wave',
+        '## Recommended Execution Order',
+        '## Watcher Policy',
+        '## Budget And Goal Accounting',
+        '## Watcher Plan',
+        '## Sprint Closeout Rollup Expectations',
+    ]
     if execution_mode in {'parallel', 'hybrid'}:
         required_sections.extend(
             [

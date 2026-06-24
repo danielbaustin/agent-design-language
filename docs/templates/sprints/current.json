@@ -16,9 +16,13 @@
         "Recommended Execution Order",
         "Issue Lifecycle Policy",
         "Watcher Policy",
+        "Budget And Goal Accounting",
+        "Watcher Plan",
         "Safe Parallel Lanes",
+        "Candidate Parallel Lanes",
         "Serial Gates",
         "PVF / Validation-Tail Notes",
+        "Parallelism Outcome Plan",
         "Sprint Activity Log",
         "Sprint-Level Review",
         "Subagent / Local Model Policy",
@@ -27,6 +31,7 @@
         "Cross-Sprint Dependencies",
         "Review Bar",
         "Closeout Bar",
+        "Sprint Closeout Rollup Expectations",
         "Residual Routing Policy",
         "Non-Claims"
       ]

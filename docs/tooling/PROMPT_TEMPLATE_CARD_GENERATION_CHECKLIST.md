@@ -74,6 +74,8 @@ python3 adl/tools/test_prompt_template_structure_schemas.py
 - Did editable issue-local prose stay under `values` rather than `system`?
 - If only declared field values changed, did the edit use `edit-values` rather
   than direct Markdown patching?
+- If the issue touched budget, readiness, PVF, watcher, estimate, actual, or
+  variance fields, were those changes made in values YAML and then re-rendered?
 - Did locked lifecycle, routing, branch, issue, path, enum, or derived template
   fields stay under `system`?
 - Did `validate-values` pass before rendering?

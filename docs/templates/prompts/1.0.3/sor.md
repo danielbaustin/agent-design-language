@@ -41,6 +41,7 @@ Pre-run output scaffold initialized during issue-wave opening. No implementation
 - Actual total tokens: `<actual_total_tokens>`
 - Estimated validation seconds: `<estimated_validation_seconds>`
 - Actual validation seconds: `<actual_validation_seconds>`
+- Budget source: `<budget_source>`
 - Goal metrics data source: `<actual_metrics_data_source>`
 - Goal metrics source ref: `<actual_metrics_source_ref>`
 - Data-source confidence: `<actual_metrics_confidence>`

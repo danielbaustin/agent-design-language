@@ -17,6 +17,8 @@ lane_registry_path: "<lane_registry_path>"
 lane_registry_template_set: "<lane_registry_template_set>"
 validation_runtime_class: "<validation_runtime_class>"
 validation_resource_profile: "<validation_resource_profile>"
+validation_family: "<validation_family>"
+validation_size_split: "<validation_size_split>"
 expected_proof_cost: "<expected_proof_cost>"
 planned_validation_seconds: "<planned_validation_seconds>"
 planned_validation_tokens: "<planned_validation_tokens>"
@@ -66,6 +68,8 @@ Canonical Template Source: `docs/templates/prompts/1.0.3/vpp.md`
 - Parallel groups: <parallel_groups_inline>
 - Validation runtime class: `<validation_runtime_class>`
 - Validation resource profile: `<validation_resource_profile>`
+- Validation family: `<validation_family>`
+- Validation size split: `<validation_size_split>`
 
 ## Goal Accounting Hooks
 
@@ -77,7 +81,7 @@ Canonical Template Source: `docs/templates/prompts/1.0.3/vpp.md`
 
 - Expected proof cost: `<expected_proof_cost>`
 - Planned validation seconds: `<planned_validation_seconds>`
-- Planned validation tokens: `<planned_validation_tokens>`
+- Planned validation token budget: `<planned_validation_tokens>`
 - Unknown-value rule: record `unknown`, never `0`, when the estimate is unavailable or intentionally deferred.
 
 ## Validation Commands
