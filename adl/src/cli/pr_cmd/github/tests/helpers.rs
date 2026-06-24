@@ -500,8 +500,11 @@ sys.exit(9)
     }
 
     fs::write(&labels_file, "track:roadmap\nversion:v0.91.6\n").expect("labels");
-    fs::write(&title_file, "[v0.91.6][adr] Create and route v0.91.6 ADR candidates\n")
-        .expect("title");
+    fs::write(
+        &title_file,
+        "[v0.91.6][adr] Create and route v0.91.6 ADR candidates\n",
+    )
+    .expect("title");
     fs::write(
         &body_file,
         "## Summary\nObserved repair failure: `pr init 4383` inferred `v0.91.7` for a `v0.91.6` issue.\n\nVersion: v0.91.6\n",
