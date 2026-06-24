@@ -3,6 +3,8 @@ set -euo pipefail
 
 ROOT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)"
 PR_SH_SRC="$ROOT_DIR/adl/tools/pr.sh"
+PR_DELEGATE_SRC="$ROOT_DIR/adl/tools/pr_delegate.sh"
+PR_USAGE_SRC="$ROOT_DIR/adl/tools/pr_usage.sh"
 CARD_PATHS_SRC="$ROOT_DIR/adl/tools/card_paths.sh"
 INPUT_TPL_SRC="$ROOT_DIR/adl/templates/cards/input_card_template.md"
 OUTPUT_TPL_SRC="$ROOT_DIR/adl/templates/cards/output_card_template.md"
@@ -14,6 +16,8 @@ trap 'rm -rf "$tmpdir"' EXIT
 repo="$tmpdir/repo"
 mkdir -p "$repo/adl/tools" "$repo/adl/templates/cards" "$repo/.adl/issues/v0.85/bodies"
 cp "$PR_SH_SRC" "$repo/adl/tools/pr.sh"
+cp "$PR_DELEGATE_SRC" "$repo/adl/tools/pr_delegate.sh"
+cp "$PR_USAGE_SRC" "$repo/adl/tools/pr_usage.sh"
 cp "$CARD_PATHS_SRC" "$repo/adl/tools/card_paths.sh"
 cp "$INPUT_TPL_SRC" "$repo/adl/templates/cards/input_card_template.md"
 cp "$OUTPUT_TPL_SRC" "$repo/adl/templates/cards/output_card_template.md"
@@ -91,7 +95,7 @@ EOF
 
 no_gh_bin="$tmpdir/no-gh-bin"
 mkdir -p "$no_gh_bin"
-for cmd in awk basename cat cp cut dirname git grep head ln mkdir mktemp mv pwd readlink rm sed touch tr python3; do
+for cmd in awk basename cat cp cut date dirname git grep head ln mkdir mktemp mv pwd readlink rm sed touch tr python3; do
   cmd_path="$(command -v "$cmd")"
   ln -s "$cmd_path" "$no_gh_bin/$cmd"
 done

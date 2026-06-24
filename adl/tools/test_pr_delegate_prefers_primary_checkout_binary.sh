@@ -3,6 +3,8 @@ set -euo pipefail
 
 ROOT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)"
 PR_SH_SRC="$ROOT_DIR/adl/tools/pr.sh"
+PR_DELEGATE_SRC="$ROOT_DIR/adl/tools/pr_delegate.sh"
+PR_USAGE_SRC="$ROOT_DIR/adl/tools/pr_usage.sh"
 CARD_PATHS_SRC="$ROOT_DIR/adl/tools/card_paths.sh"
 OBS_SRC="$ROOT_DIR/adl/tools/observability.sh"
 BASH_BIN="$(command -v bash)"
@@ -15,6 +17,8 @@ worktree="$repo/.worktrees/issue-4413"
 mockbin="$tmpdir/mockbin"
 mkdir -p "$repo/adl/tools" "$repo/adl/target/debug" "$mockbin"
 cp "$PR_SH_SRC" "$repo/adl/tools/pr.sh"
+cp "$PR_DELEGATE_SRC" "$repo/adl/tools/pr_delegate.sh"
+cp "$PR_USAGE_SRC" "$repo/adl/tools/pr_usage.sh"
 cp "$CARD_PATHS_SRC" "$repo/adl/tools/card_paths.sh"
 cp "$OBS_SRC" "$repo/adl/tools/observability.sh"
 chmod +x "$repo/adl/tools/pr.sh"
@@ -42,10 +46,13 @@ chmod +x "$mockbin/cargo"
   git config user.name "Test User"
   git config user.email "test@example.com"
   echo "seed" > README.md
-  git add README.md adl/tools/pr.sh adl/tools/card_paths.sh adl/tools/observability.sh adl/Cargo.toml
+  git add README.md adl/tools/pr.sh adl/tools/pr_delegate.sh adl/tools/pr_usage.sh adl/tools/card_paths.sh adl/tools/observability.sh adl/Cargo.toml
   git commit -q -m "init"
   git worktree add -q -b codex/4413 "$worktree" HEAD
 )
+
+sleep 1
+touch "$repo/adl/target/debug/adl-pr-doctor"
 
 TMP_ADL_ARGS="$tmpdir/adl_args.txt"
 TMP_CARGO_ARGS="$tmpdir/cargo_args.txt"

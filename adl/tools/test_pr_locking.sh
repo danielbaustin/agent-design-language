@@ -4,6 +4,8 @@ set -euo pipefail
 ROOT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)"
 export ADL_TOOLING_MANIFEST_ROOT="$ROOT_DIR"
 PR_SH_SRC="$ROOT_DIR/adl/tools/pr.sh"
+PR_DELEGATE_SRC="$ROOT_DIR/adl/tools/pr_delegate.sh"
+PR_USAGE_SRC="$ROOT_DIR/adl/tools/pr_usage.sh"
 CARD_PATHS_SRC="$ROOT_DIR/adl/tools/card_paths.sh"
 PROMPT_LINT_SRC="$ROOT_DIR/adl/tools/lint_prompt_spec.sh"
 PROMPT_VALIDATOR_SRC="$ROOT_DIR/adl/tools/validate_structured_prompt.sh"
@@ -26,6 +28,8 @@ origin="$tmpdir/origin.git"
 repo="$tmpdir/repo"
 mkdir -p "$repo/adl/tools" "$repo/adl/templates/cards" "$repo/adl/schemas"
 cp "$PR_SH_SRC" "$repo/adl/tools/pr.sh"
+cp "$PR_DELEGATE_SRC" "$repo/adl/tools/pr_delegate.sh"
+cp "$PR_USAGE_SRC" "$repo/adl/tools/pr_usage.sh"
 cp "$CARD_PATHS_SRC" "$repo/adl/tools/card_paths.sh"
 cp "$PROMPT_LINT_SRC" "$repo/adl/tools/lint_prompt_spec.sh"
 cp "$PROMPT_VALIDATOR_SRC" "$repo/adl/tools/validate_structured_prompt.sh"
@@ -49,7 +53,7 @@ chmod +x "$repo/adl/tools/pr.sh" "$repo/adl/tools/lint_prompt_spec.sh" "$repo/ad
   git push -q -u origin main
   git fetch -q origin main
 
-  start_out="$("$BASH_BIN" adl/tools/pr.sh start 980 --slug lock-smoke --no-fetch-issue)"
+  start_out="$("$BASH_BIN" adl/tools/pr.sh start 980 --slug lock-smoke --no-fetch-issue --version v0.86)"
   [[ "$start_out" == *"STATE  FULLY_STARTED"* ]] || {
     echo "assertion failed: expected legacy start to complete" >&2
     echo "$start_out" >&2

@@ -3,6 +3,8 @@ set -euo pipefail
 
 ROOT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)"
 PR_SH_SRC="$ROOT_DIR/adl/tools/pr.sh"
+PR_DELEGATE_SRC="$ROOT_DIR/adl/tools/pr_delegate.sh"
+PR_USAGE_SRC="$ROOT_DIR/adl/tools/pr_usage.sh"
 CARD_PATHS_SRC="$ROOT_DIR/adl/tools/card_paths.sh"
 BASH_BIN="$(command -v bash)"
 
@@ -12,6 +14,8 @@ trap 'rm -rf "$tmpdir"' EXIT
 repo="$tmpdir/repo"
 mkdir -p "$repo/adl/tools" "$repo/adl"
 cp "$PR_SH_SRC" "$repo/adl/tools/pr.sh"
+cp "$PR_DELEGATE_SRC" "$repo/adl/tools/pr_delegate.sh"
+cp "$PR_USAGE_SRC" "$repo/adl/tools/pr_usage.sh"
 cp "$CARD_PATHS_SRC" "$repo/adl/tools/card_paths.sh"
 chmod +x "$repo/adl/tools/pr.sh"
 touch "$repo/adl/Cargo.toml"

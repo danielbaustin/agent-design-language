@@ -27,6 +27,8 @@ assert_status_nonzero() {
 repo="$TMP_DIR/repo"
 mkdir -p "$repo/adl/tools"
 cp "$ROOT_DIR/adl/tools/pr.sh" "$repo/adl/tools/pr.sh"
+cp "$ROOT_DIR/adl/tools/pr_delegate.sh" "$repo/adl/tools/pr_delegate.sh"
+cp "$ROOT_DIR/adl/tools/pr_usage.sh" "$repo/adl/tools/pr_usage.sh"
 cp "$ROOT_DIR/adl/tools/card_paths.sh" "$repo/adl/tools/card_paths.sh"
 chmod +x "$repo/adl/tools/pr.sh"
 

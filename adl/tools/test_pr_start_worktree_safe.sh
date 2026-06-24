@@ -4,6 +4,8 @@ set -euo pipefail
 ROOT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)"
 export ADL_TOOLING_MANIFEST_ROOT="$ROOT_DIR"
 PR_SH_SRC="$ROOT_DIR/adl/tools/pr.sh"
+PR_DELEGATE_SRC="$ROOT_DIR/adl/tools/pr_delegate.sh"
+PR_USAGE_SRC="$ROOT_DIR/adl/tools/pr_usage.sh"
 CARD_PATHS_SRC="$ROOT_DIR/adl/tools/card_paths.sh"
 PROMPT_LINT_SRC="$ROOT_DIR/adl/tools/lint_prompt_spec.sh"
 PROMPT_VALIDATOR_SRC="$ROOT_DIR/adl/tools/validate_structured_prompt.sh"
@@ -26,6 +28,8 @@ origin="$tmpdir/origin.git"
 repo="$tmpdir/repo"
 mkdir -p "$repo/adl/tools" "$repo/adl/templates/cards" "$repo/adl/schemas"
 cp "$PR_SH_SRC" "$repo/adl/tools/pr.sh"
+cp "$PR_DELEGATE_SRC" "$repo/adl/tools/pr_delegate.sh"
+cp "$PR_USAGE_SRC" "$repo/adl/tools/pr_usage.sh"
 cp "$CARD_PATHS_SRC" "$repo/adl/tools/card_paths.sh"
 cp "$PROMPT_LINT_SRC" "$repo/adl/tools/lint_prompt_spec.sh"
 cp "$PROMPT_VALIDATOR_SRC" "$repo/adl/tools/validate_structured_prompt.sh"
@@ -154,7 +158,7 @@ EOF
   export ADL_PR_RUST_BIN="$REAL_ADL_BIN"
 
   seed_issue_prompt 999 test-smoke
-  out1="$("$BASH_BIN" adl/tools/pr.sh start 999 --slug test-smoke --no-fetch-issue)"
+  out1="$("$BASH_BIN" adl/tools/pr.sh start 999 --slug test-smoke --no-fetch-issue --version v0.86)"
   assert_contains "WORKTREE" "$out1" "start prints worktree"
   assert_contains "BRANCH codex/999-test-smoke" "$out1" "start prints branch"
   [[ "$(git rev-parse --abbrev-ref HEAD)" == "main" ]] || {
@@ -218,7 +222,7 @@ EOF
   assert_contains "ROOT_INPUT=.adl/v0.86/tasks/issue-0999__test-smoke/sip.md" "$ready_out" "ready prints root input"
   assert_contains "WT_INPUT=.worktrees/adl-wp-999/.adl/v0.86/tasks/issue-0999__test-smoke/sip.md" "$ready_out" "ready prints worktree input"
 
-  out2="$("$BASH_BIN" adl/tools/pr.sh start 999 --slug test-smoke --no-fetch-issue)"
+  out2="$("$BASH_BIN" adl/tools/pr.sh start 999 --slug test-smoke --no-fetch-issue --version v0.86)"
   assert_contains "WORKTREE $wt_path" "$out2" "start idempotent worktree reuse"
   assert_contains "STATE  FULLY_STARTED" "$out2" "start idempotent state"
   [[ "$(git rev-parse --abbrev-ref HEAD)" == "main" ]] || {
@@ -227,14 +231,14 @@ EOF
   }
 
   git branch --unset-upstream codex/999-test-smoke
-  out3="$("$BASH_BIN" adl/tools/pr.sh start 999 --slug test-smoke --no-fetch-issue)"
+  out3="$("$BASH_BIN" adl/tools/pr.sh start 999 --slug test-smoke --no-fetch-issue --version v0.86)"
   assert_contains "WORKTREE $wt_path" "$out3" "upstream-less rerun still reuses worktree"
   assert_contains "STATE  FULLY_STARTED" "$out3" "upstream-less rerun state"
 
   custom_root="$tmpdir/custom-managed"
   mkdir -p "$custom_root"
   seed_issue_prompt 995 root-override
-  out4="$(ADL_WORKTREE_ROOT="$custom_root" "$BASH_BIN" adl/tools/pr.sh start 995 --slug root-override --no-fetch-issue)"
+  out4="$(ADL_WORKTREE_ROOT="$custom_root" "$BASH_BIN" adl/tools/pr.sh start 995 --slug root-override --no-fetch-issue --version v0.86)"
   assert_contains "WORKTREE $custom_root/adl-wp-995" "$out4" "custom managed root"
   [[ -d "$custom_root/adl-wp-995" ]] || {
     echo "assertion failed: expected custom-root worktree" >&2
@@ -253,7 +257,7 @@ exec "$(command -v git)" "\$@"
 EOF
   chmod +x "$fakebin/git"
   seed_issue_prompt 994 fetch-fallback
-  out_fetch_fallback="$(PATH="$fakebin:$PATH" "$BASH_BIN" adl/tools/pr.sh start 994 --slug fetch-fallback --no-fetch-issue)"
+  out_fetch_fallback="$(PATH="$fakebin:$PATH" "$BASH_BIN" adl/tools/pr.sh start 994 --slug fetch-fallback --no-fetch-issue --version v0.86)"
   fetch_wt="$repo/.worktrees/adl-wp-994"
   fetch_wt="$(cd "$fetch_wt" && pwd -P)"
   assert_contains "WORKTREE $fetch_wt" "$out_fetch_fallback" "fetch fallback still creates worktree"
@@ -270,7 +274,7 @@ exit 1
 EOF
   chmod +x "$fakecargo/cargo"
   seed_issue_prompt 989 rust-delegate-fallback
-  out_rust_fallback="$(PATH="$fakecargo:$PATH" "$BASH_BIN" adl/tools/pr.sh start 989 --slug rust-delegate-fallback --no-fetch-issue)"
+  out_rust_fallback="$(PATH="$fakecargo:$PATH" "$BASH_BIN" adl/tools/pr.sh start 989 --slug rust-delegate-fallback --no-fetch-issue --version v0.86)"
   rust_fallback_wt="$(cd "$repo/.worktrees/adl-wp-989" && pwd -P)"
   assert_contains "WORKTREE $rust_fallback_wt" "$out_rust_fallback" "rust fallback still creates worktree"
   [[ -d "$rust_fallback_wt" ]] || {
@@ -281,7 +285,7 @@ EOF
   git branch codex/998-collision origin/main
   git worktree add -q "$tmpdir/other-path" codex/998-collision
   set +e
-  bad="$("$BASH_BIN" adl/tools/pr.sh start 998 --slug collision --no-fetch-issue 2>&1)"
+  bad="$("$BASH_BIN" adl/tools/pr.sh start 998 --slug collision --no-fetch-issue --version v0.86 2>&1)"
   status=$?
   set -e
   [[ "$status" -ne 0 ]] || {
@@ -295,7 +299,7 @@ EOF
   git switch -q -c codex/996-dirty origin/main
   echo "keep-me" > untracked.txt
   seed_issue_prompt 997 guardrail
-  out_dirty="$("$BASH_BIN" adl/tools/pr.sh start 997 --slug guardrail --no-fetch-issue)"
+  out_dirty="$("$BASH_BIN" adl/tools/pr.sh start 997 --slug guardrail --no-fetch-issue --version v0.86)"
   dirty_wt="$(cd "$repo/.worktrees/adl-wp-997" && pwd -P)"
   assert_contains "WORKTREE $dirty_wt" "$out_dirty" "dirty primary checkout still starts issue worktree"
   [[ "$(git rev-parse --abbrev-ref HEAD)" == "codex/996-dirty" ]] || {
@@ -312,7 +316,7 @@ EOF
   mkdir -p "$repo/.adl/locks/pr-bootstrap.lock"
   echo "999999" > "$repo/.adl/locks/pr-bootstrap.lock/pid"
   seed_issue_prompt 993 stale-lock-recovery
-  stale_lock_out="$("$BASH_BIN" adl/tools/pr.sh start 993 --slug stale-lock-recovery --no-fetch-issue)"
+  stale_lock_out="$("$BASH_BIN" adl/tools/pr.sh start 993 --slug stale-lock-recovery --no-fetch-issue --version v0.86)"
   stale_wt="$(cd "$repo/.worktrees/adl-wp-993" && pwd -P)"
   assert_contains "WORKTREE $stale_wt" "$stale_lock_out" "stale lock recovery still starts"
 
@@ -386,7 +390,7 @@ EOF
 
   chmod 555 "$repo/.git" "$repo/.git/refs" "$repo/.git/refs/heads"
   set +e
-  metadata_blocked="$("$BASH_BIN" adl/tools/pr.sh start 988 --slug metadata-blocked --no-fetch-issue 2>&1)"
+  metadata_blocked="$("$BASH_BIN" adl/tools/pr.sh start 988 --slug metadata-blocked --no-fetch-issue --version v0.86 2>&1)"
   status=$?
   set -e
   chmod 755 "$repo/.git" "$repo/.git/refs" "$repo/.git/refs/heads"

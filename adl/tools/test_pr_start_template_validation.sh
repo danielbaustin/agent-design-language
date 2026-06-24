@@ -4,6 +4,8 @@ set -euo pipefail
 ROOT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)"
 export ADL_TOOLING_MANIFEST_ROOT="$ROOT_DIR"
 PR_SH_SRC="$ROOT_DIR/adl/tools/pr.sh"
+PR_DELEGATE_SRC="$ROOT_DIR/adl/tools/pr_delegate.sh"
+PR_USAGE_SRC="$ROOT_DIR/adl/tools/pr_usage.sh"
 CARD_PATHS_SRC="$ROOT_DIR/adl/tools/card_paths.sh"
 PROMPT_LINT_SRC="$ROOT_DIR/adl/tools/lint_prompt_spec.sh"
 PROMPT_VALIDATOR_SRC="$ROOT_DIR/adl/tools/validate_structured_prompt.sh"
@@ -26,6 +28,8 @@ origin="$tmpdir/origin.git"
 repo="$tmpdir/repo"
 mkdir -p "$repo/adl/tools" "$repo/adl/templates/cards" "$repo/adl/schemas"
 cp "$PR_SH_SRC" "$repo/adl/tools/pr.sh"
+cp "$PR_DELEGATE_SRC" "$repo/adl/tools/pr_delegate.sh"
+cp "$PR_USAGE_SRC" "$repo/adl/tools/pr_usage.sh"
 cp "$CARD_PATHS_SRC" "$repo/adl/tools/card_paths.sh"
 cp "$PROMPT_LINT_SRC" "$repo/adl/tools/lint_prompt_spec.sh"
 cp "$PROMPT_VALIDATOR_SRC" "$repo/adl/tools/validate_structured_prompt.sh"
@@ -62,9 +66,9 @@ assert_contains() {
 (
   cd "$repo"
   export ADL_PR_RUST_BIN="$REAL_ADL_BIN"
-  "$BASH_BIN" adl/tools/pr.sh start 910 --slug validation-pass --no-fetch-issue >/dev/null
+  "$BASH_BIN" adl/tools/pr.sh start 910 --slug validation-pass --no-fetch-issue --version v0.86 >/dev/null
   rm -f ".worktrees/adl-wp-910/.adl/v0.86/tasks/issue-0910__validation-pass/sor.md"
-  "$BASH_BIN" adl/tools/pr.sh start 910 --slug validation-pass --no-fetch-issue >/dev/null
+  "$BASH_BIN" adl/tools/pr.sh start 910 --slug validation-pass --no-fetch-issue --version v0.86 >/dev/null
   [[ -f ".worktrees/adl-wp-910/.adl/v0.86/tasks/issue-0910__validation-pass/sor.md" ]] || {
     echo "assertion failed: expected rerun start to recreate missing sor.md" >&2
     exit 1

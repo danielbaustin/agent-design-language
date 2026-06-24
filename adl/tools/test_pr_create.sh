@@ -10,6 +10,8 @@ trap 'rm -rf "$tmpdir"' EXIT
 repo="$tmpdir/repo"
 mkdir -p "$repo/adl/tools"
 cp "$ROOT_DIR/adl/tools/pr.sh" "$repo/adl/tools/pr.sh"
+cp "$ROOT_DIR/adl/tools/pr_delegate.sh" "$repo/adl/tools/pr_delegate.sh"
+cp "$ROOT_DIR/adl/tools/pr_usage.sh" "$repo/adl/tools/pr_usage.sh"
 cp "$ROOT_DIR/adl/tools/card_paths.sh" "$repo/adl/tools/card_paths.sh"
 chmod +x "$repo/adl/tools/pr.sh"
 
@@ -39,7 +41,7 @@ help_out="$(
 )"
 
 assert_contains 'adl/tools/pr.sh create --title "<title>"' "$help_out" "create help usage"
-assert_contains 'Creates the GitHub issue and bootstraps the local root STP/SIP/SOR bundle.' "$help_out" "create help semantics"
+assert_contains 'Creates the GitHub issue and bootstraps the local root STP/SIP/SPP/SRP/SOR bundle.' "$help_out" "create help semantics"
 assert_contains 'Does not create the branch or worktree execution context.' "$help_out" "create help no worktree"
 
 echo "pr.sh create help: ok"
