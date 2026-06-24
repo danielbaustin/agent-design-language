@@ -3682,8 +3682,7 @@ fn finish_validation_profile_accepts_workflow_metrics_backfill_slice() {
             "adl/src/cli/pr_cmd/github/tests/watch.rs".to_string(),
             "adl/src/cli/tests/pr_cmd_inline/basics.rs".to_string(),
             "adl/tools/build_v0916_workflow_metric_backfill_inventory.py".to_string(),
-            "docs/milestones/v0.91.6/review/V0916_WORKFLOW_METRIC_BACKFILL_4441.json"
-                .to_string(),
+            "docs/milestones/v0.91.6/review/V0916_WORKFLOW_METRIC_BACKFILL_4441.json".to_string(),
         ],
     )
     .expect("workflow metrics backfill plan");
@@ -3714,8 +3713,7 @@ fn finish_validation_profile_accepts_workflow_metrics_backfill_publication_slice
             "adl/tools/build_v0916_workflow_metric_backfill_inventory.py".to_string(),
             "adl/tools/test_select_validation_lanes.sh".to_string(),
             "adl/tools/test_validation_manager.sh".to_string(),
-            "docs/milestones/v0.91.6/review/V0916_WORKFLOW_METRIC_BACKFILL_4441.json"
-                .to_string(),
+            "docs/milestones/v0.91.6/review/V0916_WORKFLOW_METRIC_BACKFILL_4441.json".to_string(),
         ],
     )
     .expect("workflow metrics backfill publication plan");
