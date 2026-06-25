@@ -123,11 +123,17 @@ pub(super) fn doctor_preflight_status(
     session_status: &'static str,
     open_pr_wave_skipped: bool,
 ) -> (&'static str, &'static str, &'static str) {
+    let session_block_kind = match session_status {
+        "PASS" => "session_self_claim",
+        "WARN" => "session_manual_inspection",
+        "BLOCK" => "session_active_conflict",
+        _ => session_status,
+    };
     doctor_preflight_status_with_session_block(
         open_pr_wave_empty,
         card_run_readiness,
         session_status,
-        session_status,
+        session_block_kind,
         open_pr_wave_skipped,
     )
 }
