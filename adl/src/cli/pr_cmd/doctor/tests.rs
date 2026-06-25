@@ -308,13 +308,13 @@ fn doctor_preflight_blocks_on_active_session_conflict() {
 }
 
 #[test]
-fn doctor_preflight_warns_on_stale_session_history() {
+fn doctor_preflight_blocks_on_stale_session_history() {
     let (preflight_status, block_kind, guidance) =
         doctor_preflight_status(true, Some("ready"), "WARN", true);
 
-    assert_eq!(preflight_status, "WARN");
-    assert_eq!(block_kind, "session_manual_inspection");
-    assert!(guidance.contains("manual inspection"));
+    assert_eq!(preflight_status, "BLOCK");
+    assert_eq!(block_kind, "session_claim_manual_inspection");
+    assert!(guidance.contains("make active ownership explicit"));
 }
 
 #[test]

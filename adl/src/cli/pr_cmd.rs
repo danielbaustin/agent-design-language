@@ -1313,14 +1313,13 @@ fn real_pr_start(args: &[String]) -> Result<()> {
         chrono::Utc::now(),
     )?;
     emit_start_session_ledger_notes(&session_assessment);
-    if session_assessment.status == "BLOCK" {
-        bail!(
-            "start: session ledger active conflict for issue #{} before worktree binding. {}\n{}",
-            parsed.issue,
-            session_assessment.guidance,
-            format_session_claims_for_error(&session_assessment.relevant_claims)
-        );
-    }
+    ensure_start_session_claim_ready(
+        &repo_root,
+        parsed.issue,
+        &branch,
+        &worktree_path,
+        &session_assessment,
+    )?;
 
     eprintln!("• Target branch: {branch}");
     eprintln!("• Target worktree: {}", worktree_path.display());
@@ -1491,6 +1490,66 @@ fn emit_start_session_ledger_notes(assessment: &adl::session_ledger::TargetClaim
         }
         _ => {}
     }
+}
+
+fn ensure_start_session_claim_ready(
+    repo_root: &Path,
+    issue_number: u32,
+    branch: &str,
+    worktree_path: &Path,
+    assessment: &adl::session_ledger::TargetClaimAssessment,
+) -> Result<()> {
+    if assessment.block_kind == "session_self_claim" {
+        return Ok(());
+    }
+    let route = suggested_session_claim_command(repo_root, issue_number, branch, worktree_path);
+    match assessment.block_kind {
+        "session_active_conflict" => bail!(
+            "start: session ledger active conflict for issue #{} before worktree binding. {}\n{}\nSuggested next step:\n  {}",
+            issue_number,
+            assessment.guidance,
+            format_session_claims_for_error(&assessment.relevant_claims),
+            route
+        ),
+        "session_stale_claim_manual_inspection" | "session_nonblocking_live_claim" => bail!(
+            "start: session claim gate blocked for issue #{} before worktree binding. {}\n{}\nAfter inspection, create or refresh the active claim explicitly:\n  {}",
+            issue_number,
+            assessment.guidance,
+            format_session_claims_for_error(&assessment.relevant_claims),
+            route
+        ),
+        _ => bail!(
+            "start: missing active self-claim for issue #{} before worktree binding. {}\nCreate the claim explicitly, then rerun `pr run`:\n  {}",
+            issue_number,
+            assessment.guidance,
+            route
+        ),
+    }
+}
+
+fn suggested_session_claim_command(
+    repo_root: &Path,
+    issue_number: u32,
+    branch: &str,
+    worktree_path: &Path,
+) -> String {
+    let session_id = std::env::var("CODEX_SESSION_ID")
+        .ok()
+        .filter(|value| !value.trim().is_empty())
+        .unwrap_or_else(|| "<session-id>".to_string());
+    let worktree_ref = if worktree_path.is_absolute() {
+        worktree_path
+            .strip_prefix(repo_root)
+            .ok()
+            .map(|path| path.display().to_string())
+            .unwrap_or_else(|| worktree_path.display().to_string())
+    } else {
+        worktree_path.display().to_string()
+    };
+    format!(
+        "adl session claim --session-id {} --owner codex --resource csdlc_issue:{} --purpose \"issue-mode execution ownership\" --issue {} --branch {} --worktree {} --policy-ref AGENTS.md --lifecycle-phase pr_run --mode active --json",
+        session_id, issue_number, issue_number, branch, worktree_ref
+    )
 }
 
 fn format_session_claims_for_error(claims: &[adl::session_ledger::TargetClaimMatch]) -> String {

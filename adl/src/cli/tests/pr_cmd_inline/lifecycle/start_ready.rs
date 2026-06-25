@@ -152,6 +152,7 @@ fn init_doctor_and_start_record_readiness_prep_goal_metric_stages() {
         1782230488,
     );
     let old_home = env::var_os("HOME");
+    let old_env_session = env::var_os("CODEX_SESSION_ID");
     let old_thread_id = env::var_os("CODEX_THREAD_ID");
     unsafe {
         env::set_var("HOME", &home);
@@ -209,6 +210,17 @@ fn init_doctor_and_start_record_readiness_prep_goal_metric_stages() {
     ])
     .expect("real_pr doctor ready");
 
+    write_session_claim(
+        &repo,
+        1154,
+        "thread-1154-prep",
+        "codex/1154-readiness-prep-metrics",
+        &issue_ref.default_worktree_path(&repo, None),
+    );
+    unsafe {
+        env::set_var("CODEX_SESSION_ID", "thread-1154-prep");
+    }
+
     real_pr(&[
         "start".to_string(),
         "1154".to_string(),
@@ -226,6 +238,10 @@ fn init_doctor_and_start_record_readiness_prep_goal_metric_stages() {
         match old_home {
             Some(value) => env::set_var("HOME", value),
             None => env::remove_var("HOME"),
+        }
+        match old_env_session {
+            Some(value) => env::set_var("CODEX_SESSION_ID", value),
+            None => env::remove_var("CODEX_SESSION_ID"),
         }
         match old_thread_id {
             Some(value) => env::set_var("CODEX_THREAD_ID", value),
@@ -344,9 +360,11 @@ fn real_pr_start_failure_leaves_doctor_readiness_as_selected_prep_stage() {
         1782230477,
     );
     let old_home = env::var_os("HOME");
+    let old_env_session = env::var_os("CODEX_SESSION_ID");
     let old_thread_id = env::var_os("CODEX_THREAD_ID");
     unsafe {
         env::set_var("HOME", &home);
+        env::set_var("CODEX_SESSION_ID", "thread-1155-prep");
         env::set_var("CODEX_THREAD_ID", "thread-1155-prep");
     }
 
@@ -359,6 +377,9 @@ fn real_pr_start_failure_leaves_doctor_readiness_as_selected_prep_stage() {
     );
 
     let prev_dir = env::current_dir().expect("cwd");
+    unsafe {
+        env::set_var("CODEX_SESSION_ID", "thread-self");
+    }
     env::set_current_dir(&repo).expect("chdir");
     real_pr(&[
         "init".to_string(),
@@ -378,6 +399,13 @@ fn real_pr_start_failure_leaves_doctor_readiness_as_selected_prep_stage() {
         &issue_ref,
         "[v0.86][tools] Readiness prep start failure",
         "not bound yet",
+    );
+    write_session_claim(
+        &repo,
+        1155,
+        "thread-self",
+        "codex/1155-readiness-prep-start-failure",
+        &issue_ref.default_worktree_path(&repo, None),
     );
 
     real_pr(&[
@@ -430,6 +458,10 @@ fn real_pr_start_failure_leaves_doctor_readiness_as_selected_prep_stage() {
         match old_home {
             Some(value) => env::set_var("HOME", value),
             None => env::remove_var("HOME"),
+        }
+        match old_env_session {
+            Some(value) => env::set_var("CODEX_SESSION_ID", value),
+            None => env::remove_var("CODEX_SESSION_ID"),
         }
         match old_thread_id {
             Some(value) => env::set_var("CODEX_THREAD_ID", value),
@@ -599,6 +631,10 @@ fn real_pr_start_bootstraps_worktree_and_ready_passes() {
         .success());
 
     let prev_dir = env::current_dir().expect("cwd");
+    let old_session = env::var_os("CODEX_SESSION_ID");
+    unsafe {
+        env::set_var("CODEX_SESSION_ID", "thread-self");
+    }
     env::set_current_dir(&repo).expect("chdir");
     let issue_ref = IssueRef::new(1152, "v0.86", "rust-start-ready-test").expect("issue ref");
     write_authored_issue_prompt(&repo, &issue_ref, "[v0.86][tools] Rust start ready test");
@@ -607,6 +643,13 @@ fn real_pr_start_bootstraps_worktree_and_ready_passes() {
         &issue_ref,
         "[v0.86][tools] Rust start ready test",
         "codex/1152-rust-start-ready-test",
+    );
+    write_session_claim(
+        &repo,
+        1152,
+        "thread-self",
+        "codex/1152-rust-start-ready-test",
+        &issue_ref.default_worktree_path(&repo, None),
     );
     let local_templates = repo.join("docs/templates");
     fs::create_dir_all(local_templates.join("nested")).expect("create local templates");
@@ -667,6 +710,10 @@ fn real_pr_start_bootstraps_worktree_and_ready_passes() {
     ]);
 
     env::set_current_dir(prev_dir).expect("restore cwd");
+    match old_session {
+        Some(value) => unsafe { env::set_var("CODEX_SESSION_ID", value) },
+        None => unsafe { env::remove_var("CODEX_SESSION_ID") },
+    }
     ready.expect("real_pr ready");
 
     assert!(worktree.is_dir());
@@ -718,6 +765,121 @@ fn real_pr_start_bootstraps_worktree_and_ready_passes() {
     assert!(card_review_policy_path(&root_cards, 1152)
         .symlink_metadata()
         .is_ok());
+}
+
+#[test]
+fn real_pr_start_requires_an_active_self_claim_before_binding_worktree() {
+    let _guard = env_lock();
+    let temp = unique_temp_dir("adl-pr-start-requires-self-claim");
+    let origin = temp.join("origin.git");
+    let repo = temp.join("repo");
+    fs::create_dir_all(&repo).expect("repo dir");
+    copy_bootstrap_support_files(&repo);
+    init_git_repo(&repo);
+    assert!(Command::new("git")
+        .args(["config", "user.name", "Test User"])
+        .current_dir(&repo)
+        .status()
+        .expect("git config")
+        .success());
+    assert!(Command::new("git")
+        .args(["config", "user.email", "test@example.com"])
+        .current_dir(&repo)
+        .status()
+        .expect("git config")
+        .success());
+    fs::write(repo.join("README.md"), "missing self claim\n").expect("write readme");
+    assert!(Command::new("git")
+        .args(["add", "-A"])
+        .current_dir(&repo)
+        .status()
+        .expect("git add")
+        .success());
+    assert!(Command::new("git")
+        .args(["commit", "-q", "-m", "init"])
+        .current_dir(&repo)
+        .status()
+        .expect("git commit")
+        .success());
+    assert!(Command::new("git")
+        .args(["branch", "-M", "main"])
+        .current_dir(&repo)
+        .status()
+        .expect("git branch")
+        .success());
+    assert!(Command::new("git")
+        .args([
+            "init",
+            "--bare",
+            "-q",
+            path_str(&origin).expect("origin path")
+        ])
+        .current_dir(&repo)
+        .status()
+        .expect("git init bare")
+        .success());
+    assert!(Command::new("git")
+        .args([
+            "remote",
+            "set-url",
+            "origin",
+            path_str(&origin).expect("origin path"),
+        ])
+        .current_dir(&repo)
+        .status()
+        .expect("git remote set-url")
+        .success());
+    assert!(Command::new("git")
+        .args(["push", "-q", "-u", "origin", "main"])
+        .current_dir(&repo)
+        .status()
+        .expect("git push")
+        .success());
+    assert!(Command::new("git")
+        .args(["fetch", "-q", "origin", "main"])
+        .current_dir(&repo)
+        .status()
+        .expect("git fetch")
+        .success());
+
+    let issue_ref = IssueRef::new(1157, "v0.86", "requires-self-claim").expect("issue ref");
+    let branch = "codex/1157-requires-self-claim";
+    write_authored_issue_prompt(&repo, &issue_ref, "[v0.86][tools] Requires self claim");
+    write_design_time_ready_cards(
+        &repo,
+        &issue_ref,
+        "[v0.86][tools] Requires self claim",
+        branch,
+    );
+
+    let prev_dir = env::current_dir().expect("cwd");
+    let old_session = env::var("CODEX_SESSION_ID").ok();
+    unsafe {
+        env::set_var("CODEX_SESSION_ID", "thread-self");
+    }
+    env::set_current_dir(&repo).expect("chdir");
+    let err = real_pr(&[
+        "start".to_string(),
+        "1157".to_string(),
+        "--slug".to_string(),
+        "requires-self-claim".to_string(),
+        "--title".to_string(),
+        "[v0.86][tools] Requires self claim".to_string(),
+        "--no-fetch-issue".to_string(),
+        "--version".to_string(),
+        "v0.86".to_string(),
+    ])
+    .expect_err("missing self claim should block run binding");
+    env::set_current_dir(prev_dir).expect("restore cwd");
+    match old_session {
+        Some(value) => unsafe { env::set_var("CODEX_SESSION_ID", value) },
+        None => unsafe { env::remove_var("CODEX_SESSION_ID") },
+    }
+
+    let err_text = err.to_string();
+    assert!(err_text.contains("missing active self-claim"));
+    assert!(err_text.contains("adl session claim"));
+    assert!(!issue_ref.default_worktree_path(&repo, None).exists());
 }
 
 #[test]
@@ -1054,15 +1216,27 @@ fn real_pr_start_rejects_invocation_from_existing_issue_worktree() {
         .success());
 
     let issue_ref = IssueRef::new(3819, "v0.91.5", "nested-worktree-guard").expect("issue ref");
+    let branch = "codex/3819-v0-91-5-tools-nested-worktree-guard";
     write_authored_issue_prompt(&repo, &issue_ref, "[v0.91.5][tools] Nested worktree guard");
     write_design_time_ready_cards(
         &repo,
         &issue_ref,
         "[v0.91.5][tools] Nested worktree guard",
-        "codex/3819-v0-91-5-tools-nested-worktree-guard",
+        branch,
+    );
+    write_session_claim(
+        &repo,
+        3819,
+        "thread-self",
+        branch,
+        &issue_ref.default_worktree_path(&repo, None),
     );
 
     let prev_dir = env::current_dir().expect("cwd");
+    let old_session = env::var_os("CODEX_SESSION_ID");
+    unsafe {
+        env::set_var("CODEX_SESSION_ID", "thread-self");
+    }
     env::set_current_dir(&repo).expect("chdir repo");
     real_pr(&[
         "start".to_string(),
@@ -1092,6 +1266,10 @@ fn real_pr_start_rejects_invocation_from_existing_issue_worktree() {
     ])
     .expect_err("issue worktree invocation should fail clearly");
     env::set_current_dir(prev_dir).expect("restore cwd");
+    match old_session {
+        Some(value) => unsafe { env::set_var("CODEX_SESSION_ID", value) },
+        None => unsafe { env::remove_var("CODEX_SESSION_ID") },
+    }
 
     let err = err.to_string();
     assert!(err.contains("must be invoked from the primary checkout"));
@@ -1179,6 +1357,10 @@ fn real_pr_start_repairs_preexisting_worktree_missing_task_bundle() {
         .success());
 
     let prev_dir = env::current_dir().expect("cwd");
+    let old_session = env::var_os("CODEX_SESSION_ID");
+    unsafe {
+        env::set_var("CODEX_SESSION_ID", "thread-self");
+    }
     env::set_current_dir(&repo).expect("chdir");
     let issue_ref = IssueRef::new(1153, "v0.86", "repair-worktree-bundle").expect("issue ref");
     write_authored_issue_prompt(&repo, &issue_ref, "[v0.86][tools] Repair worktree bundle");
@@ -1189,6 +1371,13 @@ fn real_pr_start_repairs_preexisting_worktree_missing_task_bundle() {
         "codex/1153-repair-worktree-bundle",
     );
     let branch = "codex/1153-repair-worktree-bundle";
+    write_session_claim(
+        &repo,
+        1153,
+        "thread-self",
+        branch,
+        &issue_ref.default_worktree_path(&repo, None),
+    );
     let worktree = issue_ref.default_worktree_path(&repo, None);
     assert!(Command::new("git")
         .args([
@@ -1219,6 +1408,10 @@ fn real_pr_start_repairs_preexisting_worktree_missing_task_bundle() {
     .expect("real_pr start");
 
     env::set_current_dir(prev_dir).expect("restore cwd");
+    match old_session {
+        Some(value) => unsafe { env::set_var("CODEX_SESSION_ID", value) },
+        None => unsafe { env::remove_var("CODEX_SESSION_ID") },
+    }
 
     assert_nonempty_materialized_file(issue_ref.issue_prompt_path(&worktree));
     assert_nonempty_materialized_file(issue_ref.worktree_task_bundle_stp_path(&worktree));
@@ -1308,6 +1501,10 @@ fn real_pr_start_updates_existing_root_spp_and_srp_branch() {
         .success());
 
     let prev_dir = env::current_dir().expect("cwd");
+    let old_session = env::var_os("CODEX_SESSION_ID");
+    unsafe {
+        env::set_var("CODEX_SESSION_ID", "thread-self");
+    }
     env::set_current_dir(&repo).expect("chdir");
     let issue_ref =
         IssueRef::new(1154, "v0.86", "update-root-plan-review-branch").expect("issue ref");
@@ -1344,6 +1541,20 @@ fn real_pr_start_updates_existing_root_spp_and_srp_branch() {
         &issue_ref,
         "[v0.86][tools] Update root plan and review branch",
         "not bound yet",
+    );
+    write_session_claim(
+        &repo,
+        1154,
+        "thread-self",
+        branch,
+        &issue_ref.default_worktree_path(&repo, None),
+    );
+    write_session_claim(
+        &repo,
+        1154,
+        "thread-self",
+        branch,
+        &issue_ref.default_worktree_path(&repo, None),
     );
 
     real_pr(&[
@@ -1391,6 +1602,10 @@ fn real_pr_start_updates_existing_root_spp_and_srp_branch() {
     ]);
 
     env::set_current_dir(prev_dir).expect("restore cwd");
+    match old_session {
+        Some(value) => unsafe { env::set_var("CODEX_SESSION_ID", value) },
+        None => unsafe { env::remove_var("CODEX_SESSION_ID") },
+    }
 
     ready.expect("real_pr ready");
     assert!(fs::read_to_string(issue_ref.task_bundle_plan_path(&repo))
@@ -1489,6 +1704,10 @@ fn real_pr_ready_blocks_invalid_worktree_srp() {
         .success());
 
     let prev_dir = env::current_dir().expect("cwd");
+    let old_session = env::var_os("CODEX_SESSION_ID");
+    unsafe {
+        env::set_var("CODEX_SESSION_ID", "thread-self");
+    }
     env::set_current_dir(&repo).expect("chdir");
     let issue_ref = IssueRef::new(1917, "v0.86", "ready-invalid-worktree-srp").expect("issue ref");
     write_authored_issue_prompt(
@@ -1501,6 +1720,13 @@ fn real_pr_ready_blocks_invalid_worktree_srp() {
         &issue_ref,
         "[v0.86][tools] Ready invalid worktree srp",
         "codex/1917-ready-invalid-worktree-srp",
+    );
+    write_session_claim(
+        &repo,
+        1917,
+        "thread-self",
+        "codex/1917-ready-invalid-worktree-srp",
+        &issue_ref.default_worktree_path(&repo, None),
     );
 
     real_pr(&[
@@ -1556,6 +1782,10 @@ fn real_pr_ready_blocks_invalid_worktree_srp() {
     .expect_err("ready should reject invalid worktree srp");
 
     env::set_current_dir(prev_dir).expect("restore cwd");
+    match old_session {
+        Some(value) => unsafe { env::set_var("CODEX_SESSION_ID", value) },
+        None => unsafe { env::remove_var("CODEX_SESSION_ID") },
+    }
     let err = err.to_string();
     assert!(err.contains("ready: srp failed validation"));
     assert!(err.contains("status must be one of: draft, ready, approved"));
@@ -1637,6 +1867,10 @@ fn real_pr_start_rewrites_unbound_root_input_card_branch() {
         .success());
 
     let prev_dir = env::current_dir().expect("cwd");
+    let old_session = env::var_os("CODEX_SESSION_ID");
+    unsafe {
+        env::set_var("CODEX_SESSION_ID", "thread-self");
+    }
     env::set_current_dir(&repo).expect("chdir");
     let issue_ref = IssueRef::new(1199, "v0.86", "start-rewrites-unbound").expect("issue ref");
     write_authored_issue_prompt(&repo, &issue_ref, "[v0.86][tools] Start rewrites unbound");
@@ -1658,6 +1892,13 @@ fn real_pr_start_rewrites_unbound_root_input_card_branch() {
         "[v0.86][tools] Start rewrites unbound",
         "not bound yet",
     );
+    write_session_claim(
+        &repo,
+        1199,
+        "thread-self",
+        "codex/1199-start-rewrites-unbound",
+        &issue_ref.default_worktree_path(&repo, None),
+    );
 
     let root_sip = issue_ref.task_bundle_input_path(&repo);
     assert_eq!(
@@ -1678,6 +1919,10 @@ fn real_pr_start_rewrites_unbound_root_input_card_branch() {
     ]);
 
     env::set_current_dir(prev_dir).expect("restore cwd");
+    match old_session {
+        Some(value) => unsafe { env::set_var("CODEX_SESSION_ID", value) },
+        None => unsafe { env::remove_var("CODEX_SESSION_ID") },
+    }
     start.expect("real_pr start after unbound root card");
     assert_eq!(
         field_line_value(&root_sip, "Branch").expect("root branch"),
@@ -1790,7 +2035,18 @@ fn real_pr_start_uses_canonical_local_slug_when_title_slug_drift_exists() {
         "[v0.86][tools] Canonical bind slug issue",
         "not bound yet",
     );
+    write_session_claim(
+        &repo,
+        1288,
+        "thread-self",
+        "codex/1288-canonical-bind-slug",
+        &issue_ref.default_worktree_path(&repo, None),
+    );
 
+    let old_session = env::var_os("CODEX_SESSION_ID");
+    unsafe {
+        env::set_var("CODEX_SESSION_ID", "thread-self");
+    }
     real_pr(&[
         "start".to_string(),
         "1288".to_string(),
@@ -1803,6 +2059,10 @@ fn real_pr_start_uses_canonical_local_slug_when_title_slug_drift_exists() {
     .expect("start should honor canonical local slug");
 
     env::set_current_dir(prev_dir).expect("restore cwd");
+    match old_session {
+        Some(value) => unsafe { env::set_var("CODEX_SESSION_ID", value) },
+        None => unsafe { env::remove_var("CODEX_SESSION_ID") },
+    }
 
     let worktree = issue_ref.default_worktree_path(&repo, None);
     assert!(worktree.is_dir());
@@ -1901,6 +2161,10 @@ fn real_pr_start_still_fails_closed_when_real_duplicate_bundle_exists() {
         .success());
 
     let prev_dir = env::current_dir().expect("cwd");
+    let old_session = env::var_os("CODEX_SESSION_ID");
+    unsafe {
+        env::set_var("CODEX_SESSION_ID", "thread-self");
+    }
     env::set_current_dir(&repo).expect("chdir");
     let issue_ref = IssueRef::new(1289, "v0.86", "canonical-duplicate-bind").expect("issue ref");
     write_authored_issue_prompt(&repo, &issue_ref, "[v0.86][tools] Canonical duplicate bind");
@@ -1931,6 +2195,10 @@ fn real_pr_start_still_fails_closed_when_real_duplicate_bundle_exists() {
     .expect_err("real duplicate should still fail closed");
 
     env::set_current_dir(prev_dir).expect("restore cwd");
+    match old_session {
+        Some(value) => unsafe { env::set_var("CODEX_SESSION_ID", value) },
+        None => unsafe { env::remove_var("CODEX_SESSION_ID") },
+    }
 
     let text = err.to_string();
     assert!(text.contains("duplicate local task-bundle identities detected"));
@@ -2013,6 +2281,10 @@ fn real_pr_ready_succeeds_when_invoked_from_started_worktree() {
         .success());
 
     let prev_dir = env::current_dir().expect("cwd");
+    let old_session = env::var_os("CODEX_SESSION_ID");
+    unsafe {
+        env::set_var("CODEX_SESSION_ID", "thread-self");
+    }
     env::set_current_dir(&repo).expect("chdir");
     let issue_ref = IssueRef::new(1198, "v0.86", "ready-worktree-cwd").expect("issue ref");
     write_authored_issue_prompt(&repo, &issue_ref, "[v0.86][tools] Ready worktree cwd");
@@ -2021,6 +2293,13 @@ fn real_pr_ready_succeeds_when_invoked_from_started_worktree() {
         &issue_ref,
         "[v0.86][tools] Ready worktree cwd",
         "codex/1198-ready-worktree-cwd",
+    );
+    write_session_claim(
+        &repo,
+        1198,
+        "thread-self",
+        "codex/1198-ready-worktree-cwd",
+        &issue_ref.default_worktree_path(&repo, None),
     );
     real_pr(&[
         "start".to_string(),
@@ -2066,6 +2345,10 @@ fn real_pr_ready_succeeds_when_invoked_from_started_worktree() {
     ]);
 
     env::set_current_dir(prev_dir).expect("restore cwd");
+    match old_session {
+        Some(value) => unsafe { env::set_var("CODEX_SESSION_ID", value) },
+        None => unsafe { env::remove_var("CODEX_SESSION_ID") },
+    }
     ready.expect("ready from worktree");
 }
 
@@ -2312,6 +2595,13 @@ fn real_pr_start_allow_open_pr_wave_skips_wave_scan_before_binding() {
     )
     .expect("issue ref");
     write_authored_issue_prompt(&repo, &issue_ref, "[v0.86][tools] Preflight override");
+    write_session_claim(
+        &repo,
+        1174,
+        "thread-self",
+        "codex/1174-v0-86-tools-preflight-override",
+        &issue_ref.default_worktree_path(&repo, None),
+    );
 
     let bin_dir = repo.join("bin");
     fs::create_dir_all(&bin_dir).expect("bin dir");
@@ -2326,9 +2616,11 @@ fn real_pr_start_allow_open_pr_wave_skips_wave_scan_before_binding() {
     );
 
     let old_path = env::var("PATH").unwrap_or_default();
+    let old_session = env::var_os("CODEX_SESSION_ID");
     let old_disable_default_token_file = env::var_os("ADL_TEST_DISABLE_DEFAULT_GITHUB_TOKEN_FILE");
     let prev_dir = env::current_dir().expect("cwd");
     unsafe {
+        env::set_var("CODEX_SESSION_ID", "thread-self");
         env::set_var("PATH", format!("{}:{}", bin_dir.display(), old_path));
         env::set_var("ADL_TEST_DISABLE_DEFAULT_GITHUB_TOKEN_FILE", "1");
     }
@@ -2350,6 +2642,10 @@ fn real_pr_start_allow_open_pr_wave_skips_wave_scan_before_binding() {
 
     env::set_current_dir(prev_dir).expect("restore cwd");
     unsafe {
+        match old_session {
+            Some(value) => env::set_var("CODEX_SESSION_ID", value),
+            None => env::remove_var("CODEX_SESSION_ID"),
+        }
         env::set_var("PATH", old_path);
         match old_disable_default_token_file {
             Some(value) => env::set_var("ADL_TEST_DISABLE_DEFAULT_GITHUB_TOKEN_FILE", value),
