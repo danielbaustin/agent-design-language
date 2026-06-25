@@ -152,6 +152,7 @@ fn init_doctor_and_start_record_readiness_prep_goal_metric_stages() {
         1782230488,
     );
     let old_home = env::var_os("HOME");
+    let old_env_session = env::var_os("CODEX_SESSION_ID");
     let old_thread_id = env::var_os("CODEX_THREAD_ID");
     unsafe {
         env::set_var("HOME", &home);
@@ -212,10 +213,13 @@ fn init_doctor_and_start_record_readiness_prep_goal_metric_stages() {
     write_session_claim(
         &repo,
         1154,
-        "thread-self",
+        "thread-1154-prep",
         "codex/1154-readiness-prep-metrics",
         &issue_ref.default_worktree_path(&repo, None),
     );
+    unsafe {
+        env::set_var("CODEX_SESSION_ID", "thread-1154-prep");
+    }
 
     real_pr(&[
         "start".to_string(),
@@ -234,6 +238,10 @@ fn init_doctor_and_start_record_readiness_prep_goal_metric_stages() {
         match old_home {
             Some(value) => env::set_var("HOME", value),
             None => env::remove_var("HOME"),
+        }
+        match old_env_session {
+            Some(value) => env::set_var("CODEX_SESSION_ID", value),
+            None => env::remove_var("CODEX_SESSION_ID"),
         }
         match old_thread_id {
             Some(value) => env::set_var("CODEX_THREAD_ID", value),
@@ -2001,10 +2009,6 @@ fn real_pr_start_uses_canonical_local_slug_when_title_slug_drift_exists() {
         .success());
 
     let prev_dir = env::current_dir().expect("cwd");
-    let old_session = env::var_os("CODEX_SESSION_ID");
-    unsafe {
-        env::set_var("CODEX_SESSION_ID", "thread-self");
-    }
     env::set_current_dir(&repo).expect("chdir");
     let issue_ref =
         IssueRef::new(1288, "v0.86", "canonical-bind-slug").expect("canonical issue ref");
@@ -2191,6 +2195,10 @@ fn real_pr_start_still_fails_closed_when_real_duplicate_bundle_exists() {
     .expect_err("real duplicate should still fail closed");
 
     env::set_current_dir(prev_dir).expect("restore cwd");
+    match old_session {
+        Some(value) => unsafe { env::set_var("CODEX_SESSION_ID", value) },
+        None => unsafe { env::remove_var("CODEX_SESSION_ID") },
+    }
 
     let text = err.to_string();
     assert!(text.contains("duplicate local task-bundle identities detected"));
