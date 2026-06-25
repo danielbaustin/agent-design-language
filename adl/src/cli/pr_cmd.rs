@@ -1304,12 +1304,13 @@ fn real_pr_start(args: &[String]) -> Result<()> {
     }
     let managed_root = std::env::var_os("ADL_WORKTREE_ROOT").map(PathBuf::from);
     let worktree_path = issue_ref.default_worktree_path(&repo_root, managed_root.as_deref());
+    let current_session_ids = adl::session_ledger::current_codex_session_ids();
     let session_assessment = load_target_claim_assessment(
         &repo_root,
         issue_ref.issue_number().into(),
         &branch,
         &worktree_path,
-        std::env::var("CODEX_SESSION_ID").ok().as_deref(),
+        &current_session_ids,
         chrono::Utc::now(),
     )?;
     emit_start_session_ledger_notes(&session_assessment);
@@ -1532,9 +1533,7 @@ fn suggested_session_claim_command(
     branch: &str,
     worktree_path: &Path,
 ) -> String {
-    let session_id = std::env::var("CODEX_SESSION_ID")
-        .ok()
-        .filter(|value| !value.trim().is_empty())
+    let session_id = adl::session_ledger::current_codex_session_id()
         .unwrap_or_else(|| "<session-id>".to_string());
     let worktree_ref = if worktree_path.is_absolute() {
         worktree_path
