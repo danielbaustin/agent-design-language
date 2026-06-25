@@ -207,20 +207,36 @@ test -f docs/milestones/v0.91.6/review/observatory/UNITY_OBSERVATORY_LOGGING_OTE
 cargo test --manifest-path adl/Cargo.toml --test cli_smoke csm_observatory_cli_writes_unity_contract_bundle_and_matches_seeded_resource -- --nocapture
 ```
 
+Focused Unity compatibility-canvas proof for `#4524`:
+
+```bash
+/Applications/Unity/Hub/Editor/2022.3.62f3/Unity.app/Contents/MacOS/Unity -batchmode -nographics -quit -projectPath demos/v0.91.6/unity-observatory -executeMethod ADL.Demos.UnityObservatory.Editor.UnityObservatoryCompatibilityVerifier.Run -logFile /tmp/unity_observatory_compatibility.log
+```
+
+If the project is already open in the Unity editor, run the same proof through
+the editor menu instead of batch mode:
+
+- `ADL -> Observatory -> Verify Compatibility Canvas`
+
 ## Validation Truth
 
 Repository structure validation: passed by focused file/content checks during
 issue execution.
 
-Unity editor validation: not run.
+Unity editor validation: passed through the in-editor menu verifier
+`ADL -> Observatory -> Verify Compatibility Canvas`, driven by
+`Assets/Editor/UnityObservatoryCompatibilityVerifier.cs`. The observed proof
+result on Unity `2022.3.62f3` asserted the expected compatibility path
+(`shouldUseCompatibilityCanvas=True`), a non-empty compatibility payload, and
+`sortingOrder=10`.
 
 Unity build validation: not run.
 
 C# compiler validation outside Unity: not run.
 
-This means `#4031` records a deterministic launchable-equivalent scaffold with
-setup/run instructions and tracked proof surfaces, not a false claim that the
-Unity editor or build pipeline already succeeded on this machine.
+This means `#4031` now records a deterministic launchable-equivalent scaffold
+with a proved Unity editor compatibility path on this machine, while Unity
+build-pipeline success remains unclaimed.
 
 ## Non-Claims
 
@@ -228,6 +244,5 @@ Unity editor or build pipeline already succeeded on this machine.
 - No live Runtime v2 ingestion is claimed.
 - No live OpenTelemetry collector or exporter integration is claimed.
 - No inhabitant-safe profile or memory display closure is claimed.
-- No Unity editor success is claimed.
 - No Unity build success is claimed.
 - No production Observatory readiness is claimed.

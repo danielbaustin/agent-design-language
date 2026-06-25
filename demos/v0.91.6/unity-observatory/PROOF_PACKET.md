@@ -2,7 +2,7 @@
 
 ## Status
 
-Current through ADL issue `#4416`.
+Current through ADL issue `#4524`.
 
 ## Project Surface
 
@@ -46,6 +46,11 @@ The scene seed contains `UnityObservatoryBootstrap`. At Play time the bootstrap:
 - shows bounded counts, room/lens labels, and proposal-boundary copy
 - falls back to deterministic bounded state if the checked-in contract resource
   is missing, empty, or malformed
+- routes Unity `2022.3.x` through a compatibility canvas path instead of
+  depending on runtime UI Toolkit theme availability
+- carries a focused editor verifier at
+  `Assets/Editor/UnityObservatoryCompatibilityVerifier.cs` for the
+  compatibility canvas path
 
 The current scaffold now loads a deterministic Unity-facing contract seed rather
 than stopping at static summary literals. It remains the bounded launch surface
@@ -85,7 +90,11 @@ Governed Observatory contract proof: passed by
 and
 `cargo test --manifest-path adl/Cargo.toml csm_observatory_cli_writes_fixture_backed_bundle -- --nocapture`.
 
-Unity editor validation: not run.
+Unity editor validation: passed through the in-editor menu verifier
+`ADL -> Observatory -> Verify Compatibility Canvas`, which asserted the
+expected Unity `2022.3.62f3` compatibility path
+(`shouldUseCompatibilityCanvas=True`), a non-empty compatibility payload, and
+`sortingOrder=10`.
 
 Unity build validation: not run.
 
@@ -102,7 +111,6 @@ C# compiler validation outside Unity: not run.
 
 ## Non-Claims
 
-- This packet does not claim Unity editor success.
 - This packet does not claim Unity build success.
 - This packet does not claim live ADL runtime ingestion.
 - This packet does not claim identity-safe inhabitant/profile closure.
