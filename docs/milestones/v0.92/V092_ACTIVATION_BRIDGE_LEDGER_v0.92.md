@@ -34,6 +34,18 @@ Tracked sources:
 - `docs/planning/ADL_FEATURE_LIST.md`
 - `docs/planning/FEATURE_DOC_PRODUCTION_MINI_SPRINT_v0.91.5.md`
 
+When this ledger consumes `v0.91.6` bridge state, the current issue-truth
+surfaces are:
+
+- `docs/milestones/v0.91.6/review/V0916_COMPLETED_SPRINT_RETAINED_EVIDENCE_MATRIX_4251.md`
+  for closed bridge umbrellas and retained evidence posture
+- `docs/milestones/v0.91.6/CLOSEOUT_TAIL_SPRINT_v0.91.6.md` for the ordered
+  open release-tail issue wave
+
+Use `docs/milestones/v0.91.6/review/V0916_RELEASE_AND_BRIDGE_DOC_TRUTH_CONSUMPTION_REVIEW_4522.md`
+as the bounded audit of this consumption rule and its remaining manual
+boundary, not as a third current-state ledger.
+
 ## Consumption States
 
 - `complete`: reviewed feature doc and proof/review evidence are present.
@@ -134,6 +146,10 @@ behavior:
 - identity/continuity and capability-selector bridge accounting
 - AEE completion, Memory/ObsMem handoff, ACP/cognitive profile accounting
 - Observatory/Unity consumption classification
+
+`v0.92` should consume current `v0.91.6` bridge closure truth from the retained
+evidence matrix and current open release-tail truth from the closeout-tail
+sprint surface rather than reconstructing state from individual issue histories.
 
 `v0.91.7` must resolve or route:
 

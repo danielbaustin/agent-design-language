@@ -17,6 +17,16 @@ WP-05 `#3970`, WP-06 `#3971`, WP-07 `#3972`, WP-08 `#3973`, WP-09 `#3974`,
 and WP-10 `#3975`, while open downstream runtime and closeout-tail work
 remains explicitly routed.
 
+Current issue truth for this sprint should be consumed from:
+
+- [review/V0916_COMPLETED_SPRINT_RETAINED_EVIDENCE_MATRIX_4251.md](review/V0916_COMPLETED_SPRINT_RETAINED_EVIDENCE_MATRIX_4251.md)
+  for closed bridge umbrellas and their retained evidence posture
+- [CLOSEOUT_TAIL_SPRINT_v0.91.6.md](CLOSEOUT_TAIL_SPRINT_v0.91.6.md)
+  for the ordered open release-tail issue wave
+
+This sprint plan may summarize those surfaces, but it is not the canonical
+per-issue current-state ledger.
+
 ## Sprint Overview
 
 Complete the first bridge tranche before `v0.92` activation refresh. The sprint
@@ -96,16 +106,6 @@ No runnable demo is required for this docs tranche. Review should inspect:
 
 The milestone closeout tail is now treated as one ordered sprint surface rather than a set of unrelated mini-sprints. For the standard sequence, dependency gates, watcher expectations, remediation routing, and automation guidance, use [CLOSEOUT_TAIL_SPRINT_v0.91.6.md](CLOSEOUT_TAIL_SPRINT_v0.91.6.md).
 
-For `v0.91.6`, the ordered closeout-tail issue wave is:
-
-1. `#3976` demo convergence
-2. `#3977` quality gate
-3. `#3978` docs and review alignment
-4. `#3979` internal review
-5. `#3980` external review
-6. `#3981` remediation and final preflight
-7. `#3982` next milestone planning
-8. `#3983` next milestone review
-9. `#3984` release ceremony
-
-Every issue in this closeout tail should have active watcher coverage whenever it is waiting on checks, review, mergeability, or an upstream dependency, with polling no slower than every 30 seconds while blocked.
+For current release-tail issue truth, read the canonical ordered issue wave in
+[CLOSEOUT_TAIL_SPRINT_v0.91.6.md](CLOSEOUT_TAIL_SPRINT_v0.91.6.md) rather than
+maintaining a second hand-updated list here.

@@ -12,9 +12,25 @@
 Use this as the release-tail checklist once `v0.91.6` execution begins. This
 planning package does not publish a release by itself.
 
+Current issue truth for release consumption must be read from:
+
+- [review/V0916_COMPLETED_SPRINT_RETAINED_EVIDENCE_MATRIX_4251.md](review/V0916_COMPLETED_SPRINT_RETAINED_EVIDENCE_MATRIX_4251.md)
+  for closed bridge umbrellas and retained evidence posture
+- [CLOSEOUT_TAIL_SPRINT_v0.91.6.md](CLOSEOUT_TAIL_SPRINT_v0.91.6.md)
+  for the ordered open release-tail issue wave
+
+Use [review/V0916_RELEASE_AND_BRIDGE_DOC_TRUTH_CONSUMPTION_REVIEW_4522.md](review/V0916_RELEASE_AND_BRIDGE_DOC_TRUTH_CONSUMPTION_REVIEW_4522.md)
+as the bounded audit of this rule and the remaining manual boundary, not as a
+third current-state ledger.
+
+This release plan is a checklist surface, not the canonical per-issue status
+ledger.
+
 ## 0. Release-Tail Convergence
 
-- [ ] Bridge ledger refreshed from first-tranche outcomes.
+- [ ] Bridge ledger refreshed from first-tranche outcomes, consuming the
+  retained-evidence matrix for closed bridge umbrellas and the closeout-tail
+  sprint surface for open ordered release-tail work.
 - [ ] Feature docs reviewed and updated for final truth.
 - [ ] Open residuals routed to `v0.91.7`, `v0.92`, or later milestones.
 - [ ] Tooling reliability issues have complete, blocked, deferred, or routed
