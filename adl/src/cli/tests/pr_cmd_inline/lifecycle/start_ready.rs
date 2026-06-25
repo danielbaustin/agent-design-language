@@ -162,10 +162,6 @@ fn init_doctor_and_start_record_readiness_prep_goal_metric_stages() {
     write_authored_issue_prompt(&repo, &issue_ref, "[v0.86][tools] Readiness prep metrics");
 
     let prev_dir = env::current_dir().expect("cwd");
-    let old_session = env::var_os("CODEX_SESSION_ID");
-    unsafe {
-        env::set_var("CODEX_SESSION_ID", "thread-self");
-    }
     env::set_current_dir(&repo).expect("chdir");
     real_pr(&[
         "init".to_string(),
@@ -235,10 +231,6 @@ fn init_doctor_and_start_record_readiness_prep_goal_metric_stages() {
     .expect("real_pr start");
     env::set_current_dir(prev_dir).expect("restore cwd");
     unsafe {
-        match old_session {
-            Some(value) => env::set_var("CODEX_SESSION_ID", value),
-            None => env::remove_var("CODEX_SESSION_ID"),
-        }
         match old_home {
             Some(value) => env::set_var("HOME", value),
             None => env::remove_var("HOME"),
@@ -534,10 +526,6 @@ fn real_pr_start_rejects_tracked_dirty_primary_main_before_binding_worktree() {
     fs::write(repo.join("README.md"), "tracked drift on main\n").expect("dirty readme");
 
     let prev_dir = env::current_dir().expect("cwd");
-    let old_session = env::var_os("CODEX_SESSION_ID");
-    unsafe {
-        env::set_var("CODEX_SESSION_ID", "thread-self");
-    }
     env::set_current_dir(&repo).expect("chdir");
     let err = real_pr(&[
         "start".to_string(),
@@ -552,10 +540,6 @@ fn real_pr_start_rejects_tracked_dirty_primary_main_before_binding_worktree() {
     ])
     .expect_err("tracked dirty primary main should block issue-mode run");
     env::set_current_dir(prev_dir).expect("restore cwd");
-    match old_session {
-        Some(value) => unsafe { env::set_var("CODEX_SESSION_ID", value) },
-        None => unsafe { env::remove_var("CODEX_SESSION_ID") },
-    }
 
     let err = err.to_string();
     assert!(err.contains("unsafe_root_checkout_execution"));
@@ -1729,6 +1713,13 @@ fn real_pr_ready_blocks_invalid_worktree_srp() {
         "[v0.86][tools] Ready invalid worktree srp",
         "codex/1917-ready-invalid-worktree-srp",
     );
+    write_session_claim(
+        &repo,
+        1917,
+        "thread-self",
+        "codex/1917-ready-invalid-worktree-srp",
+        &issue_ref.default_worktree_path(&repo, None),
+    );
 
     real_pr(&[
         "start".to_string(),
@@ -2010,6 +2001,10 @@ fn real_pr_start_uses_canonical_local_slug_when_title_slug_drift_exists() {
         .success());
 
     let prev_dir = env::current_dir().expect("cwd");
+    let old_session = env::var_os("CODEX_SESSION_ID");
+    unsafe {
+        env::set_var("CODEX_SESSION_ID", "thread-self");
+    }
     env::set_current_dir(&repo).expect("chdir");
     let issue_ref =
         IssueRef::new(1288, "v0.86", "canonical-bind-slug").expect("canonical issue ref");
@@ -2162,6 +2157,10 @@ fn real_pr_start_still_fails_closed_when_real_duplicate_bundle_exists() {
         .success());
 
     let prev_dir = env::current_dir().expect("cwd");
+    let old_session = env::var_os("CODEX_SESSION_ID");
+    unsafe {
+        env::set_var("CODEX_SESSION_ID", "thread-self");
+    }
     env::set_current_dir(&repo).expect("chdir");
     let issue_ref = IssueRef::new(1289, "v0.86", "canonical-duplicate-bind").expect("issue ref");
     write_authored_issue_prompt(&repo, &issue_ref, "[v0.86][tools] Canonical duplicate bind");
@@ -2274,6 +2273,10 @@ fn real_pr_ready_succeeds_when_invoked_from_started_worktree() {
         .success());
 
     let prev_dir = env::current_dir().expect("cwd");
+    let old_session = env::var_os("CODEX_SESSION_ID");
+    unsafe {
+        env::set_var("CODEX_SESSION_ID", "thread-self");
+    }
     env::set_current_dir(&repo).expect("chdir");
     let issue_ref = IssueRef::new(1198, "v0.86", "ready-worktree-cwd").expect("issue ref");
     write_authored_issue_prompt(&repo, &issue_ref, "[v0.86][tools] Ready worktree cwd");
@@ -2282,6 +2285,13 @@ fn real_pr_ready_succeeds_when_invoked_from_started_worktree() {
         &issue_ref,
         "[v0.86][tools] Ready worktree cwd",
         "codex/1198-ready-worktree-cwd",
+    );
+    write_session_claim(
+        &repo,
+        1198,
+        "thread-self",
+        "codex/1198-ready-worktree-cwd",
+        &issue_ref.default_worktree_path(&repo, None),
     );
     real_pr(&[
         "start".to_string(),
@@ -2327,6 +2337,10 @@ fn real_pr_ready_succeeds_when_invoked_from_started_worktree() {
     ]);
 
     env::set_current_dir(prev_dir).expect("restore cwd");
+    match old_session {
+        Some(value) => unsafe { env::set_var("CODEX_SESSION_ID", value) },
+        None => unsafe { env::remove_var("CODEX_SESSION_ID") },
+    }
     ready.expect("ready from worktree");
 }
 
