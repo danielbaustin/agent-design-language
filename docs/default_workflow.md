@@ -211,6 +211,29 @@ The helper validates that the discovered goal objective matches the target
 issue number and falls back to `unknown` instead of attaching a snapshot from a
 different issue or sprint thread.
 
+## 4.5) Prep-Scout Lane During Closeout Waits
+
+When the active issue is waiting on PR checks, review, janitor work, or
+closeout, a separate prep-scout lane may prepare the next issue without
+starting implementation early.
+
+Use the prep-scout lane only from clean root `main` and keep it preparation-only:
+
+- allowed: `workflow-conductor`, repo-native issue list/view/search, session
+  collision inspection, and `pr.sh doctor --mode ready --json` for already
+  bootstrapped candidate issues
+- prohibited: `pr run`, implementation binding, tracked product/tooling/docs
+  edits for the candidate issue, PR publication, or raw `gh`
+
+Current repo-native tooling supports read-only scouting and truthful handoff
+classification. It does not yet provide a first-class prep-only mutation/bind
+surface, so prep-time card or metadata mutation should be routed as
+`needs_operator` rather than normalized through manual fallback.
+
+Reference:
+
+- `docs/tooling/PREP_SCOUT_NEXT_ISSUE_READINESS_LANE.md`
+
 ## 5) Implement
 
 Read the active issue cards, stay inside the issue edit fence, and make the tracked repo changes.
