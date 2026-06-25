@@ -29,8 +29,8 @@ It must answer three questions before `v0.92` opens:
 | Source | Planning use | Required v0.91.7 handling |
 | --- | --- | --- |
 | `docs/milestones/v0.91.5/PRE_V092_BRIDGE_FEATURE_DOC_LEDGER_v0.91.5.md` | Pre-`v0.92` bridge ledger / `#3778` source | Consume as upstream bridge authority; do not let v0.91.7 contradict the ledger without an explicit decision. |
-| `docs/milestones/v0.91.6/` | First bridge tranche, runtime/tooling/provider/security/observability evidence | Consume closeout truth; do not duplicate completed work. |
-| `docs/milestones/v0.91.6/review/` | Sprint reviews, remediation, proof packets, and retained evidence | Convert residual findings into explicit v0.91.7 routes or deferrals. |
+| `docs/milestones/v0.91.6/` | First bridge tranche, runtime/tooling/provider/security/observability evidence | Consume closeout truth from the milestone's canonical issue-truth surfaces; do not duplicate completed work. |
+| `docs/milestones/v0.91.6/review/` | Sprint reviews, remediation, proof packets, and retained evidence | Read current closed-umbrella truth from `V0916_COMPLETED_SPRINT_RETAINED_EVIDENCE_MATRIX_4251.md`, then convert residual findings into explicit v0.91.7 routes or deferrals. |
 | `docs/milestones/v0.91.6/RUNTIME_FIRE_UP_PLAN_v0.91.6.md` | Runtime fire-up and soak continuity | Carry into runtime Soak #2 / integrated runtime proof. |
 | `docs/milestones/v0.91.6/features/COGNITIVE_SCHEDULER_v0.91.6.md` | Scheduler v1 bridge | Preserve as scheduler/economics input, not just docs residue. |
 | `docs/milestones/v0.91.6/review/scheduler/` | Scheduler proof and economics inputs | Feed v0.91.7 scheduler execution or closeout route. |
@@ -139,3 +139,7 @@ Local `.adl/docs/TBD/` files are ignored planning inputs, not tracked proof. The
 - This ledger does not approve v0.92 activation.
 - This ledger does not require every cited future idea to become v0.91.7 implementation.
 - This ledger does require every cited pre-v0.92 input to be complete, blocked, deferred, or routed before `v0.92` starts.
+
+Current `v0.91.6` closeout and release-tail issue truth should be consumed from
+the retained-evidence matrix and the closeout-tail sprint surface, not
+reconstructed manually from scattered historical packets.

@@ -75,6 +75,26 @@ only as one of:
 The milestone is successful only if `v0.92` can consume first-tranche bridge
 truth without rediscovering the plan.
 
+## Canonical Issue-Truth Sources
+
+Release-facing and bridge-facing docs in this milestone should not reconstruct
+issue state by re-reading scattered issue threads or historical packets.
+
+Use these tracked sources as the current issue-truth surfaces:
+
+- Closed bridge umbrellas and retained review/closeout evidence:
+  [review/V0916_COMPLETED_SPRINT_RETAINED_EVIDENCE_MATRIX_4251.md](review/V0916_COMPLETED_SPRINT_RETAINED_EVIDENCE_MATRIX_4251.md)
+- Ordered open release-tail sequencing and wait-state policy:
+  [CLOSEOUT_TAIL_SPRINT_v0.91.6.md](CLOSEOUT_TAIL_SPRINT_v0.91.6.md)
+
+Use [review/V0916_RELEASE_AND_BRIDGE_DOC_TRUTH_CONSUMPTION_REVIEW_4522.md](review/V0916_RELEASE_AND_BRIDGE_DOC_TRUTH_CONSUMPTION_REVIEW_4522.md)
+as the bounded audit of this consumption rule and the remaining manual
+boundary, not as a third current-state ledger.
+
+Historical feature docs, sprint packets, and closeout packets remain source
+evidence, but they are not the default current-state ledger for release or
+bridge consumption.
+
 ## First-Tranche Feature Docs
 
 | Surface | Required v0.91.6 output | v0.92 consumption rule |
