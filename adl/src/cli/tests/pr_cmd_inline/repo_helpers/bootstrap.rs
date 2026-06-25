@@ -808,6 +808,17 @@ fn real_pr_ready_accepts_started_issue_when_output_branch_is_bootstrap_placehold
         "[v0.86][tools] Ready branch placeholder",
         "codex/1198-ready-branch-placeholder",
     );
+    write_session_claim(
+        &repo,
+        1198,
+        "thread-self",
+        "codex/1198-ready-branch-placeholder",
+        &issue_ref.default_worktree_path(&repo, None),
+    );
+    let old_session = env::var_os("CODEX_SESSION_ID");
+    unsafe {
+        env::set_var("CODEX_SESSION_ID", "thread-self");
+    }
 
     real_pr(&[
         "start".to_string(),
@@ -866,6 +877,10 @@ fn real_pr_ready_accepts_started_issue_when_output_branch_is_bootstrap_placehold
     ]);
 
     env::set_current_dir(prev_dir).expect("restore cwd");
+    match old_session {
+        Some(value) => unsafe { env::set_var("CODEX_SESSION_ID", value) },
+        None => unsafe { env::remove_var("CODEX_SESSION_ID") },
+    }
     ready.expect("ready should accept placeholder output branch");
 }
 
