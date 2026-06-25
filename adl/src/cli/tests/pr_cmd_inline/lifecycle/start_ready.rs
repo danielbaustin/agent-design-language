@@ -768,6 +768,137 @@ fn real_pr_start_bootstraps_worktree_and_ready_passes() {
 }
 
 #[test]
+fn real_pr_start_fails_closed_before_binding_when_required_cards_are_missing() {
+    let _guard = env_lock();
+    let temp = unique_temp_dir("adl-pr-start-fail-closed-missing-cards");
+    let origin = temp.join("origin.git");
+    let repo = temp.join("repo");
+    fs::create_dir_all(&repo).expect("repo dir");
+    copy_bootstrap_support_files(&repo);
+    init_git_repo(&repo);
+    assert!(Command::new("git")
+        .args(["config", "user.name", "Test User"])
+        .current_dir(&repo)
+        .status()
+        .expect("git config")
+        .success());
+    assert!(Command::new("git")
+        .args(["config", "user.email", "test@example.com"])
+        .current_dir(&repo)
+        .status()
+        .expect("git config")
+        .success());
+    fs::write(repo.join("README.md"), "missing cards gate\n").expect("write readme");
+    assert!(Command::new("git")
+        .args(["add", "-A"])
+        .current_dir(&repo)
+        .status()
+        .expect("git add")
+        .success());
+    assert!(Command::new("git")
+        .args(["commit", "-q", "-m", "init"])
+        .current_dir(&repo)
+        .status()
+        .expect("git commit")
+        .success());
+    assert!(Command::new("git")
+        .args(["branch", "-M", "main"])
+        .current_dir(&repo)
+        .status()
+        .expect("git branch")
+        .success());
+    assert!(Command::new("git")
+        .args([
+            "init",
+            "--bare",
+            "-q",
+            path_str(&origin).expect("origin path")
+        ])
+        .current_dir(&repo)
+        .status()
+        .expect("git init bare")
+        .success());
+    assert!(Command::new("git")
+        .args([
+            "remote",
+            "set-url",
+            "origin",
+            path_str(&origin).expect("origin path"),
+        ])
+        .current_dir(&repo)
+        .status()
+        .expect("git remote set-url")
+        .success());
+    assert!(Command::new("git")
+        .args(["push", "-q", "-u", "origin", "main"])
+        .current_dir(&repo)
+        .status()
+        .expect("git push")
+        .success());
+    assert!(Command::new("git")
+        .args(["fetch", "-q", "origin", "main"])
+        .current_dir(&repo)
+        .status()
+        .expect("git fetch")
+        .success());
+
+    let prev_dir = env::current_dir().expect("cwd");
+    let old_session = env::var_os("CODEX_SESSION_ID");
+    unsafe {
+        env::set_var("CODEX_SESSION_ID", "thread-self");
+    }
+    env::set_current_dir(&repo).expect("chdir");
+    let issue_ref = IssueRef::new(1452, "v0.86", "fail-closed-missing-cards").expect("issue ref");
+    write_authored_issue_prompt(
+        &repo,
+        &issue_ref,
+        "[v0.86][tools] Fail closed when required cards are missing",
+    );
+    ensure_task_bundle_stp(&repo, &issue_ref, &issue_ref.issue_prompt_path(&repo)).expect("stp");
+    write_session_claim(
+        &repo,
+        1452,
+        "thread-self",
+        "codex/1452-fail-closed-missing-cards",
+        &issue_ref.default_worktree_path(&repo, None),
+    );
+
+    let err = real_pr(&[
+        "start".to_string(),
+        "1452".to_string(),
+        "--slug".to_string(),
+        "fail-closed-missing-cards".to_string(),
+        "--title".to_string(),
+        "[v0.86][tools] Fail closed when required cards are missing".to_string(),
+        "--no-fetch-issue".to_string(),
+        "--version".to_string(),
+        "v0.86".to_string(),
+    ])
+    .expect_err("start should refuse to generate missing cards during execution binding");
+
+    env::set_current_dir(prev_dir).expect("restore cwd");
+    match old_session {
+        Some(value) => unsafe { env::set_var("CODEX_SESSION_ID", value) },
+        None => unsafe { env::remove_var("CODEX_SESSION_ID") },
+    }
+
+    let err = err.to_string();
+    assert!(err.contains("design-time card completion gate failed"));
+    assert!(
+        !issue_ref.task_bundle_input_path(&repo).exists(),
+        "start should not backfill SIP during execution binding"
+    );
+    assert!(
+        !issue_ref.task_bundle_output_path(&repo).exists(),
+        "start should not backfill SOR during execution binding"
+    );
+    assert!(
+        !issue_ref.default_worktree_path(&repo, None).exists(),
+        "worktree binding should not begin when design-time cards are missing"
+    );
+}
+
+#[test]
 fn real_pr_start_requires_an_active_self_claim_before_binding_worktree() {
     let _guard = env_lock();
     let temp = unique_temp_dir("adl-pr-start-requires-self-claim");

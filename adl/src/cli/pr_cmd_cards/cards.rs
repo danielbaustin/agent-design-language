@@ -591,6 +591,7 @@ pub(crate) fn ensure_bootstrap_cards(
     ensure_bootstrap_cards_with_mode(root, issue_ref, title, branch, source_path, true)
 }
 
+#[allow(dead_code)]
 pub(crate) fn ensure_pre_run_bootstrap_cards(
     root: &Path,
     issue_ref: &IssueRef,

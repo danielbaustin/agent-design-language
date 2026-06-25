@@ -367,18 +367,6 @@ pub(super) fn ensure_pr_run_design_time_ready(
     let root_bundle_plan = issue_ref.task_bundle_plan_path(repo_root);
     let root_bundle_validation_plan = issue_ref.task_bundle_validation_plan_path(repo_root);
     let root_bundle_review_policy = issue_ref.task_bundle_review_policy_path(repo_root);
-    validate_initialized_cards(
-        issue_ref.issue_number(),
-        issue_ref.slug(),
-        &root_bundle_input,
-        &root_bundle_output,
-        repo_root,
-        StructuredBundlePaths {
-            plan_path: &root_bundle_plan,
-            validation_plan_path: &root_bundle_validation_plan,
-            review_policy_path: &root_bundle_review_policy,
-        },
-    )?;
     let lifecycle = build_doctor_card_lifecycle(
         repo_root,
         &root_bundle_input,
@@ -389,6 +377,18 @@ pub(super) fn ensure_pr_run_design_time_ready(
         &root_bundle_output,
     );
     if lifecycle.pr_run_readiness == "ready" {
+        validate_initialized_cards(
+            issue_ref.issue_number(),
+            issue_ref.slug(),
+            &root_bundle_input,
+            &root_bundle_output,
+            repo_root,
+            StructuredBundlePaths {
+                plan_path: &root_bundle_plan,
+                validation_plan_path: &root_bundle_validation_plan,
+                review_policy_path: &root_bundle_review_policy,
+            },
+        )?;
         return Ok(());
     }
 

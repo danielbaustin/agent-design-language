@@ -18,8 +18,8 @@ use super::pr_cmd_args::{
 };
 use super::pr_cmd_cards::{
     branch_indicates_unbound_state, ensure_bootstrap_cards, ensure_local_issue_prompt_copy,
-    ensure_pre_run_bootstrap_cards, ensure_source_issue_prompt, ensure_symlink,
-    ensure_task_bundle_stp, ensure_worktree_task_bundle_materialized, field_line_value,
+    ensure_source_issue_prompt, ensure_symlink, ensure_task_bundle_stp,
+    ensure_worktree_task_bundle_materialized, field_line_value,
     mirror_docs_templates_into_worktree, mirror_scope_sprints_into_worktree, path_relative_to_repo,
     sync_root_task_bundle_into_worktree, validate_bootstrap_stp, validate_initialized_cards,
     validate_issue_body_for_create, validate_ready_cards, write_source_issue_prompt,
@@ -1340,7 +1340,6 @@ fn real_pr_start(args: &[String]) -> Result<()> {
     let root_stp = ensure_task_bundle_stp(&repo_root, &issue_ref, &source_path)?;
     validate_authored_prompt_surface("start", &root_stp, PromptSurfaceKind::Stp)?;
 
-    ensure_pre_run_bootstrap_cards(&repo_root, &issue_ref, &title, &source_path)?;
     doctor::ensure_pr_run_design_time_ready(&repo_root, &issue_ref, &branch)?;
     let root_paths = ensure_bootstrap_cards(&repo_root, &issue_ref, &title, &branch, &source_path)?;
 

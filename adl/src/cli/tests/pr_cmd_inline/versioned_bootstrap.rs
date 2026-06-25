@@ -1,4 +1,5 @@
 use super::*;
+use crate::cli::pr_cmd_cards::ensure_pre_run_bootstrap_cards;
 use crate::cli::pr_cmd_cards::StructuredBundlePaths;
 
 #[test]
