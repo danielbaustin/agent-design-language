@@ -112,6 +112,18 @@ Allowed `classification` values:
 - `speculative_risky`
 - `blocked_until_dependency`
 
+## Prep-Scout / Next-Issue Readiness
+
+- Candidate issue queue: `{{prep_scout_candidate_queue}}`
+- Current wait-state owner: `{{prep_scout_current_wait_owner}}`
+- Scout owner or watcher: `{{prep_scout_owner}}`
+- Lane posture: `{{prep_scout_lane_posture}}`
+- Promotion rule: `{{prep_scout_promotion_rule}}`
+- Current tooling boundary: `{{prep_scout_tooling_boundary}}`
+- Handoff contract: prep scouting must end in `ready`, `blocked`, `collision`,
+  or `needs_operator`, and must include the exact next lifecycle command when
+  the candidate is `ready`.
+
 ## Serial Gates
 
 | Gate | Blocks | Exit condition | Owner |

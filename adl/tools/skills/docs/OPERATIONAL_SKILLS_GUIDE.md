@@ -87,6 +87,24 @@ The normal workflow is:
    - default tracked implementation goals stay active until their declared terminal boundary is satisfied
    - handoff-only completion is reserved for goals that explicitly declare that narrower boundary
 
+Closeout-wait prep lane:
+
+- while one issue is in `pr_waiting`, `janitor_active`, or
+  `merged_needs_closeout`, a separate prep-scout lane may inspect and classify
+  the next issue from clean root `main`
+- this is a preparation-only lane routed through `workflow-conductor`, not a
+  second execution lane
+- the lane may use repo-native issue inspection and readiness commands, but it
+  must stop before `pr run`, implementation binding, or PR publication
+- if preparation would require mutation and no first-class prep-only repo-native
+  surface exists, record `needs_operator` or a tooling gap instead of
+  normalizing a manual fallback
+
+See:
+
+- `docs/tooling/PREP_SCOUT_NEXT_ISSUE_READINESS_LANE.md`
+- `docs/tooling/SESSION_COORDINATION_AND_ROOT_CHECKOUT_POLICY.md`
+
 The first-class issue-lifecycle shepherd contract above those phases lives at:
 
 - `docs/tooling/ISSUE_LIFECYCLE_SHEPHERD_CONTRACT.md`

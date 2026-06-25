@@ -35,6 +35,8 @@ Allowed primary-checkout uses:
 - read-only inspection
 - issue creation/bootstrap
 - `pr ready` / `pr doctor`
+- prep-scout issue inspection/readiness checks for a separate next-issue lane
+  while the current issue is in a truthful wait state
 - issue-mode `pr run` binding when `main` is clean
 - fast-forwarding `main`
 - checking root/worktree state before routing
@@ -57,6 +59,16 @@ the primary checkout for the same issue, stop and repair the mismatch instead
 of guessing which copy is right. Root-only `.adl` state remains bootstrap,
 coordination, and sprint-truth context rather than a hidden per-issue live
 authority during execution.
+
+Prep-scout exception:
+
+- a prep scout may use the root checkout for read-only next-issue inspection
+  and readiness classification while another issue is waiting
+- the prep scout must not convert that root-checkout preparation pass into
+  tracked implementation or hidden candidate-issue mutation on `main`
+- if a candidate would require mutation before it can be called ready and there
+  is no proven prep-only repo-native bind surface, stop as `needs_operator` and
+  record the tooling gap instead of improvising a manual fallback
 
 ## Required Startup Check
 
@@ -183,6 +195,12 @@ When another session appears to own an issue or worktree:
    repo-native worktree evidence first. Use manual preservation only as a
    bounded fallback to move the work into an issue worktree before restoring
    root to clean `main`.
+
+Prep-scout-specific collision rule:
+
+- if the candidate issue already has an active session claim, open PR, or bound
+  worktree owned by another session, classify the handoff as `collision`
+  instead of beginning duplicate preparation
 
 ## Tooling Failure Handling
 
