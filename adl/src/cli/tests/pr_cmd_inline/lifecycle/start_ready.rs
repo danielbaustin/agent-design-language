@@ -853,7 +853,12 @@ fn real_pr_start_requires_an_active_self_claim_before_binding_worktree() {
     let issue_ref = IssueRef::new(1157, "v0.86", "requires-self-claim").expect("issue ref");
     let branch = "codex/1157-requires-self-claim";
     write_authored_issue_prompt(&repo, &issue_ref, "[v0.86][tools] Requires self claim");
-    write_design_time_ready_cards(&repo, &issue_ref, "[v0.86][tools] Requires self claim", branch);
+    write_design_time_ready_cards(
+        &repo,
+        &issue_ref,
+        "[v0.86][tools] Requires self claim",
+        branch,
+    );
 
     let prev_dir = env::current_dir().expect("cwd");
     let old_session = env::var("CODEX_SESSION_ID").ok();
