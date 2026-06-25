@@ -37,6 +37,30 @@ case "$mode" in
     printf 'adl_event schema=adl.observability.event.v1 command=adl stage=%s result=started\n' "$mode" >&2
     printf '{\n  "schema": "adl.pr.doctor.v1",\n  "mode": "%s"\n}\n' "$mode"
     ;;
+  validation)
+    printf 'adl_event schema=adl.observability.event.v1 command=adl stage=validation result=started\n' >&2
+    printf '{\n  "pr_number": 1152,\n  "disposition": "success",\n  "projection_status": "ready_to_merge_or_review",\n  "pending_checks": []\n}\n'
+    ;;
+  issue)
+    printf 'adl_event schema=adl.observability.event.v1 command=adl stage=issue result=started\n' >&2
+    submode="${3:-}"
+    case "$submode" in
+      search)
+        printf '[\n  {"number": 1152, "title": "validation manager", "state": "OPEN"}\n]\n'
+        ;;
+      view)
+        printf '{\n  "number": 1152,\n  "title": "validation manager",\n  "state": "OPEN"\n}\n'
+        ;;
+      *)
+        echo "unexpected issue mode: $*" >&2
+        exit 1
+        ;;
+    esac
+    ;;
+  projection-map)
+    printf 'adl_event schema=adl.observability.event.v1 command=adl stage=projection-map result=started\n' >&2
+    printf '{\n  "schema": "adl.pr.projection_map.v1",\n  "issue_projection_owner": "github",\n  "pr_projection_owner": "github"\n}\n'
+    ;;
   *)
     echo "unexpected mode: $mode" >&2
     exit 1
@@ -91,6 +115,10 @@ PY
 run_json_command ready ready 1152 --slug rust-start --no-fetch-issue --version v0.86 --json
 run_json_command preflight preflight 1152 --slug rust-start --no-fetch-issue --version v0.86 --json
 run_json_command doctor doctor 1152 --slug rust-start --no-fetch-issue --version v0.86 --mode full --json
+run_json_command validation validation 1152 --json
+run_json_command issue-search issue search --query "validation manager" --state open --json
+run_json_command issue-view issue view 1152 --json
+run_json_command projection-map projection-map --json
 
 args="$(cat "$TMP_DELEGATE_ARGS")"
 [[ "$args" == *"pr ready 1152 --slug rust-start --no-fetch-issue --version v0.86 --json"* ]] || {
@@ -105,6 +133,26 @@ args="$(cat "$TMP_DELEGATE_ARGS")"
 }
 [[ "$args" == *"pr doctor 1152 --slug rust-start --no-fetch-issue --version v0.86 --mode full --json"* ]] || {
   echo "expected doctor delegation args" >&2
+  echo "$args" >&2
+  exit 1
+}
+[[ "$args" == *"pr validation 1152 --json"* ]] || {
+  echo "expected validation delegation args" >&2
+  echo "$args" >&2
+  exit 1
+}
+[[ "$args" == *"pr issue search --query validation manager --state open --json"* ]] || {
+  echo "expected issue search delegation args" >&2
+  echo "$args" >&2
+  exit 1
+}
+[[ "$args" == *"pr issue view 1152 --json"* ]] || {
+  echo "expected issue view delegation args" >&2
+  echo "$args" >&2
+  exit 1
+}
+[[ "$args" == *"pr projection-map --json"* ]] || {
+  echo "expected projection-map delegation args" >&2
   echo "$args" >&2
   exit 1
 }
