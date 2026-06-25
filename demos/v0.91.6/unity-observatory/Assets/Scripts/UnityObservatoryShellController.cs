@@ -413,9 +413,18 @@ namespace ADL.Demos.UnityObservatory
 
             root.Clear();
             root.AddToClassList("observatory-screen");
+            root.style.flexGrow = 1f;
+            root.style.paddingLeft = 18f;
+            root.style.paddingRight = 18f;
+            root.style.paddingTop = 18f;
+            root.style.paddingBottom = 18f;
+            root.style.backgroundColor = new Color(0.02f, 0.03f, 0.07f, 1f);
 
             VisualElement shell = new();
             shell.AddToClassList("observatory-shell");
+            shell.style.flexGrow = 1f;
+            shell.style.flexDirection = FlexDirection.Column;
+            shell.style.backgroundColor = new Color(0.05f, 0.07f, 0.14f, 0.96f);
 
             shell.Add(BuildHeader());
             shell.Add(BuildBody());
@@ -424,12 +433,36 @@ namespace ADL.Demos.UnityObservatory
             root.Add(shell);
         }
 
+        public string BuildCompatibilityFallbackText()
+        {
+            string rooms = roomLabels == null || roomLabels.Length == 0
+                ? "World / Reality"
+                : string.Join(", ", roomLabels);
+            string lenses = lensLabels == null || lensLabels.Length == 0
+                ? "Operator lens"
+                : string.Join(", ", lensLabels);
+
+            return string.Join(
+                "\n\n",
+                $"{title}\n{subtitle}",
+                $"Citizens: {citizenCount}\nEpisodes: {episodeCount}\nCurrent tick: {currentTick}",
+                $"Default room: {defaultRoomLabel}\nDefault lens: {defaultLensLabel}",
+                $"Rooms: {rooms}\nLenses: {lenses}",
+                $"Runtime status: {healthSummary}\nKernel pulse: {kernelPulseStatus}\nResources: {resourceState}\nSnapshot: {snapshotState}",
+                $"Governed boundary: {claimBoundary}",
+                $"Packet: {packetSchema}\nRef: {packetRef}",
+                $"Observability: {(hasObservabilityContract ? observabilityStatus : "contract section not bound")}",
+                "Compatibility fallback active: rendering through uGUI for the governed Unity 2022.3.x compatibility path in this editor/runtime profile."
+            );
+        }
+
         private VisualElement BuildHeader()
         {
             VisualElement header = new();
             header.AddToClassList("header");
-            header.Add(new Label(title) { name = "title" });
-            header.Add(new Label(subtitle) { name = "subtitle" });
+            header.style.paddingBottom = 16f;
+            header.Add(CreateLabel(title, "title", 26, FontStyle.Bold));
+            header.Add(CreateLabel(subtitle, "subtitle", 14));
             return header;
         }
 
@@ -437,11 +470,15 @@ namespace ADL.Demos.UnityObservatory
         {
             VisualElement body = new();
             body.AddToClassList("body");
+            body.style.flexGrow = 1f;
+            body.style.flexDirection = FlexDirection.Row;
 
             body.Add(BuildNavigation());
 
             VisualElement content = new();
             content.AddToClassList("content");
+            content.style.flexGrow = 1f;
+            content.style.flexDirection = FlexDirection.Column;
             content.Add(BuildSummaryCard());
             content.Add(BuildWorldCard());
             content.Add(BuildStatusCard());
@@ -459,128 +496,89 @@ namespace ADL.Demos.UnityObservatory
         {
             VisualElement nav = new();
             nav.AddToClassList("navigation");
-            nav.Add(new Label("Rooms"));
+            nav.style.width = 220f;
+            nav.style.paddingRight = 12f;
+            nav.Add(CreateLabel("Rooms", null, 16, FontStyle.Bold));
             foreach (string label in roomLabels)
             {
-                nav.Add(new Label(DefaultIfBlank(label, "Unnamed room")));
+                nav.Add(CreateLabel(DefaultIfBlank(label, "Unnamed room")));
             }
-            nav.Add(new Label("Lenses"));
+            nav.Add(CreateLabel("Lenses", null, 16, FontStyle.Bold));
             foreach (string label in lensLabels)
             {
-                nav.Add(new Label(DefaultIfBlank(label, "Unnamed lens")));
+                nav.Add(CreateLabel(DefaultIfBlank(label, "Unnamed lens")));
             }
             return nav;
         }
 
         private VisualElement BuildSummaryCard()
         {
-            VisualElement card = new();
-            card.AddToClassList("card");
-            card.Add(new Label("Observed summary") { name = "summary-title" });
-            card.Add(new Label($"Citizens: {citizenCount}") { name = "citizen-count" });
-            card.Add(new Label($"Episodes: {episodeCount}") { name = "episode-count" });
-            card.Add(new Label($"Default room: {defaultRoomLabel}") { name = "default-room" });
-            card.Add(new Label($"Default lens: {defaultLensLabel}") { name = "default-lens" });
-            card.Add(new Label($"Current tick: {currentTick}") { name = "current-tick" });
-            card.Add(new Label(proposalModeStatement) { name = "proposal-mode" });
+            VisualElement card = CreateCard();
+            card.Add(CreateLabel("Observed summary", "summary-title", 18, FontStyle.Bold));
+            card.Add(CreateLabel($"Citizens: {citizenCount}", "citizen-count"));
+            card.Add(CreateLabel($"Episodes: {episodeCount}", "episode-count"));
+            card.Add(CreateLabel($"Default room: {defaultRoomLabel}", "default-room"));
+            card.Add(CreateLabel($"Default lens: {defaultLensLabel}", "default-lens"));
+            card.Add(CreateLabel($"Current tick: {currentTick}", "current-tick"));
+            card.Add(CreateLabel(proposalModeStatement, "proposal-mode"));
             return card;
         }
 
         private VisualElement BuildWorldCard()
         {
-            VisualElement card = new();
-            card.AddToClassList("card");
-            card.Add(new Label("Inhabited world") { name = "world-title" });
-            card.Add(new Label(worldQuestion) { name = "world-question" });
-            card.Add(new Label(worldNote) { name = "world-note" });
-            card.Add(new Label($"Default lens: {defaultLensLabel}") { name = "world-lens" });
-            card.Add(new Label(lensSummary) { name = "world-lens-summary" });
-            card.Add(new Label($"{corporateInvestorLabel}: {corporateInvestorBoundary}") { name = "world-investor-boundary" });
+            VisualElement card = CreateCard();
+            card.Add(CreateLabel("Inhabited world", "world-title", 18, FontStyle.Bold));
+            card.Add(CreateLabel(worldQuestion, "world-question"));
+            card.Add(CreateLabel(worldNote, "world-note"));
+            card.Add(CreateLabel($"Default lens: {defaultLensLabel}", "world-lens"));
+            card.Add(CreateLabel(lensSummary, "world-lens-summary"));
+            card.Add(CreateLabel($"{corporateInvestorLabel}: {corporateInvestorBoundary}", "world-investor-boundary"));
             return card;
         }
 
         private VisualElement BuildStatusCard()
         {
-            VisualElement card = new();
-            card.AddToClassList("card");
-            card.Add(new Label("Runtime status") { name = "status-title" });
-            card.Add(new Label(healthSummary) { name = "status-health" });
-            card.Add(new Label($"Kernel pulse: {kernelPulseStatus}") { name = "status-pulse" });
-            card.Add(new Label($"Resources: {resourceState}") { name = "status-resources" });
-            card.Add(new Label($"Snapshot: {snapshotState}") { name = "status-snapshot" });
-            card.Add(new Label(snapshotNote) { name = "status-snapshot-note" });
+            VisualElement card = CreateCard();
+            card.Add(CreateLabel("Runtime status", "status-title", 18, FontStyle.Bold));
+            card.Add(CreateLabel(healthSummary, "status-health"));
+            card.Add(CreateLabel($"Kernel pulse: {kernelPulseStatus}", "status-pulse"));
+            card.Add(CreateLabel($"Resources: {resourceState}", "status-resources"));
+            card.Add(CreateLabel($"Snapshot: {snapshotState}", "status-snapshot"));
+            card.Add(CreateLabel(snapshotNote, "status-snapshot-note"));
             foreach (string item in attentionItems)
             {
-                card.Add(
-                    new Label($"Attention: {DefaultIfBlank(item, "Review bounded state.")}")
-                    {
-                        name = "status-attention",
-                    }
-                );
+                card.Add(CreateLabel($"Attention: {DefaultIfBlank(item, "Review bounded state.")}", "status-attention"));
             }
             return card;
         }
 
         private VisualElement BuildObservabilityCard()
         {
-            VisualElement card = new();
-            card.AddToClassList("card");
-            card.Add(new Label("Observability and security") { name = "observability-title" });
+            VisualElement card = CreateCard();
+            card.Add(CreateLabel("Observability and security", "observability-title", 18, FontStyle.Bold));
             if (!hasObservabilityContract)
             {
-                card.Add(
-                    new Label(
-                        "Observability/security consumption proof is not bound in this contract."
-                    ) { name = "observability-unbound" }
-                );
+                card.Add(CreateLabel("Observability/security consumption proof is not bound in this contract.", "observability-unbound"));
                 return card;
             }
-            card.Add(
-                new Label($"Consumption status: {observabilityStatus}")
-                {
-                    name = "observability-status",
-                }
-            );
-            card.Add(new Label(observabilityClaimBoundary) { name = "observability-boundary" });
-            card.Add(new Label(privateStatePosture) { name = "observability-private-state" });
-            card.Add(new Label($"OTel boundary: {otelBoundaryRef}") { name = "observability-otel-ref" });
-            card.Add(
-                new Label($"Event stream example: {eventStreamExampleRef}")
-                {
-                    name = "observability-stream-ref",
-                }
-            );
-            card.Add(
-                new Label($"Logging validation: {loggingValidationRef}")
-                {
-                    name = "observability-logging-ref",
-                }
-            );
-            card.Add(
-                new Label($"Security review: {observabilitySecurityReviewRef}")
-                {
-                    name = "observability-security-ref",
-                }
-            );
-            card.Add(
-                new Label($"Proof packet: {observabilityProofPacketRef}")
-                {
-                    name = "observability-proof-ref",
-                }
-            );
-            card.Add(
-                new Label(findingsDisposition) { name = "observability-findings-disposition" }
-            );
+            card.Add(CreateLabel($"Consumption status: {observabilityStatus}", "observability-status"));
+            card.Add(CreateLabel(observabilityClaimBoundary, "observability-boundary"));
+            card.Add(CreateLabel(privateStatePosture, "observability-private-state"));
+            card.Add(CreateLabel($"OTel boundary: {otelBoundaryRef}", "observability-otel-ref"));
+            card.Add(CreateLabel($"Event stream example: {eventStreamExampleRef}", "observability-stream-ref"));
+            card.Add(CreateLabel($"Logging validation: {loggingValidationRef}", "observability-logging-ref"));
+            card.Add(CreateLabel($"Security review: {observabilitySecurityReviewRef}", "observability-security-ref"));
+            card.Add(CreateLabel($"Proof packet: {observabilityProofPacketRef}", "observability-proof-ref"));
+            card.Add(CreateLabel(findingsDisposition, "observability-findings-disposition"));
             return card;
         }
 
         private VisualElement BuildInhabitantReadinessCard()
         {
-            VisualElement card = new();
-            card.AddToClassList("card");
-            card.Add(new Label("Inhabitant readiness") { name = "readiness-title" });
-            card.Add(new Label(identityBoundary) { name = "readiness-boundary" });
-            card.Add(new Label($"Security floor: {securityFloorRef}") { name = "readiness-security-floor" });
+            VisualElement card = CreateCard();
+            card.Add(CreateLabel("Inhabitant readiness", "readiness-title", 18, FontStyle.Bold));
+            card.Add(CreateLabel(identityBoundary, "readiness-boundary"));
+            card.Add(CreateLabel($"Security floor: {securityFloorRef}", "readiness-security-floor"));
             foreach (ReadinessCheck check in readinessChecks)
             {
                 if (check == null)
@@ -588,26 +586,16 @@ namespace ADL.Demos.UnityObservatory
                     continue;
                 }
 
-                card.Add(
-                    new Label(
-                        $"{DefaultIfBlank(check.state, "unknown")}: {DefaultIfBlank(check.label, "Readiness check")}"
-                    ) { name = "readiness-check" }
-                );
-                card.Add(
-                    new Label(DefaultIfBlank(check.note, "No readiness note supplied."))
-                    {
-                        name = "readiness-note",
-                    }
-                );
+                card.Add(CreateLabel($"{DefaultIfBlank(check.state, "unknown")}: {DefaultIfBlank(check.label, "Readiness check")}", "readiness-check"));
+                card.Add(CreateLabel(DefaultIfBlank(check.note, "No readiness note supplied."), "readiness-note"));
             }
             return card;
         }
 
         private VisualElement BuildInhabitantsCard()
         {
-            VisualElement card = new();
-            card.AddToClassList("card");
-            card.Add(new Label("Citizen explorer") { name = "inhabitants-title" });
+            VisualElement card = CreateCard();
+            card.Add(CreateLabel("Citizen explorer", "inhabitants-title", 18, FontStyle.Bold));
             foreach (InhabitantProjection inhabitant in inhabitants)
             {
                 if (inhabitant == null)
@@ -615,66 +603,34 @@ namespace ADL.Demos.UnityObservatory
                     continue;
                 }
 
-                card.Add(
-                    new Label(
-                        DefaultIfBlank(inhabitant.projection_label, "Inhabitant lane")
-                    ) { name = "inhabitant-label" }
-                );
-                card.Add(
-                    new Label(
-                        DefaultIfBlank(inhabitant.activity_posture, "bounded")
-                    ) { name = "inhabitant-state" }
-                );
-                card.Add(
-                    new Label(DefaultIfBlank(inhabitant.capability_summary, "No capability summary supplied."))
-                    {
-                        name = "inhabitant-capability",
-                    }
-                );
-                card.Add(
-                    new Label(DefaultIfBlank(inhabitant.alert_summary, "No alert summary supplied."))
-                    {
-                        name = "inhabitant-alert-summary",
-                    }
-                );
-                card.Add(
-                    new Label(
-                        $"{DefaultIfBlank(inhabitant.identity_visibility, "identity_bounded")}: {DefaultIfBlank(inhabitant.identity_note, "Identity details remain bounded.")}"
-                    ) { name = "inhabitant-identity-boundary" }
-                );
+                card.Add(CreateLabel(DefaultIfBlank(inhabitant.projection_label, "Inhabitant lane"), "inhabitant-label", 15, FontStyle.Bold));
+                card.Add(CreateLabel(DefaultIfBlank(inhabitant.activity_posture, "bounded"), "inhabitant-state"));
+                card.Add(CreateLabel(DefaultIfBlank(inhabitant.capability_summary, "No capability summary supplied."), "inhabitant-capability"));
+                card.Add(CreateLabel(DefaultIfBlank(inhabitant.alert_summary, "No alert summary supplied."), "inhabitant-alert-summary"));
+                card.Add(CreateLabel($"{DefaultIfBlank(inhabitant.identity_visibility, "identity_bounded")}: {DefaultIfBlank(inhabitant.identity_note, "Identity details remain bounded.")}", "inhabitant-identity-boundary"));
             }
             return card;
         }
 
         private VisualElement BuildBoundaryCard()
         {
-            VisualElement card = new();
-            card.AddToClassList("card");
-            card.Add(new Label("Governed boundary") { name = "boundary-title" });
-            card.Add(new Label(claimBoundary) { name = "boundary-body" });
-            card.Add(
-                new Label(
-                    $"Freedom Gate counts: allow {allowCount}, defer {deferCount}, refuse {refuseCount}."
-                ) { name = "boundary-followon" }
-            );
-            card.Add(new Label(caveat) { name = "boundary-caveat" });
+            VisualElement card = CreateCard();
+            card.Add(CreateLabel("Governed boundary", "boundary-title", 18, FontStyle.Bold));
+            card.Add(CreateLabel(claimBoundary, "boundary-body"));
+            card.Add(CreateLabel($"Freedom Gate counts: allow {allowCount}, defer {deferCount}, refuse {refuseCount}.", "boundary-followon"));
+            card.Add(CreateLabel(caveat, "boundary-caveat"));
             return card;
         }
 
         private VisualElement BuildPacketCard()
         {
-            VisualElement card = new();
-            card.AddToClassList("card");
-            card.Add(new Label("Packet contract") { name = "packet-title" });
-            card.Add(new Label(packetSchema) { name = "packet-schema" });
-            card.Add(new Label(packetRef) { name = "packet-ref" });
-            card.Add(new Label(runtimeArtifactRoot) { name = "artifact-root" });
-            card.Add(new Label(operatorReportRef) { name = "report-ref" });
-            card.Add(
-                new Label(
-                    $"This shell is reading a deterministic Unity-facing contract derived from {evidenceLevel} Observatory evidence."
-                ) { name = "packet-note" }
-            );
+            VisualElement card = CreateCard();
+            card.Add(CreateLabel("Packet contract", "packet-title", 18, FontStyle.Bold));
+            card.Add(CreateLabel(packetSchema, "packet-schema"));
+            card.Add(CreateLabel(packetRef, "packet-ref"));
+            card.Add(CreateLabel(runtimeArtifactRoot, "artifact-root"));
+            card.Add(CreateLabel(operatorReportRef, "report-ref"));
+            card.Add(CreateLabel($"This shell is reading a deterministic Unity-facing contract derived from {evidenceLevel} Observatory evidence.", "packet-note"));
             return card;
         }
 
@@ -682,12 +638,60 @@ namespace ADL.Demos.UnityObservatory
         {
             VisualElement footer = new();
             footer.AddToClassList("footer");
-            footer.Add(
-                new Label(
-                    "Deterministic Unity Observatory logging, OTel, and security consumption projection for WP-09 O-04."
-                )
-            );
+            footer.style.paddingTop = 16f;
+            footer.Add(CreateLabel("Deterministic Unity Observatory logging, OTel, and security consumption projection for WP-09 O-04.", null, 13));
             return footer;
+        }
+
+        private static VisualElement CreateCard()
+        {
+            VisualElement card = new();
+            card.AddToClassList("card");
+            card.style.paddingLeft = 14f;
+            card.style.paddingRight = 14f;
+            card.style.paddingTop = 14f;
+            card.style.paddingBottom = 14f;
+            card.style.backgroundColor = new Color(0.09f, 0.12f, 0.21f, 0.96f);
+            card.style.marginBottom = 6f;
+            return card;
+        }
+
+        private static Label CreateLabel(
+            string text,
+            string name = null,
+            int fontSize = 13,
+            FontStyle fontStyle = FontStyle.Normal
+        )
+        {
+            Label label = new(text);
+            if (!string.IsNullOrWhiteSpace(name))
+            {
+                label.name = name;
+            }
+
+            Font runtimeFont = ResolveRuntimeFont();
+            if (runtimeFont != null)
+            {
+                label.style.unityFont = runtimeFont;
+            }
+
+            label.style.color = new Color(0.92f, 0.95f, 0.99f, 1f);
+            label.style.fontSize = fontSize;
+            label.style.unityFontStyleAndWeight = fontStyle;
+            label.style.whiteSpace = WhiteSpace.Normal;
+            label.style.marginBottom = 6f;
+            return label;
+        }
+
+        private static Font ResolveRuntimeFont()
+        {
+            Font runtimeFont = Resources.GetBuiltinResource<Font>("LegacyRuntime.ttf");
+            if (runtimeFont != null)
+            {
+                return runtimeFont;
+            }
+
+            return Resources.GetBuiltinResource<Font>("Arial.ttf");
         }
 
         private static string DefaultIfBlank(string observed, string fallback)
