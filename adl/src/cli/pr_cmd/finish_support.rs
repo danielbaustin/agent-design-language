@@ -310,7 +310,11 @@ pub(super) fn real_pr_finish(args: &[String]) -> Result<()> {
     )?;
     attach_post_merge_closeout(&repo_root, &repo, parsed.issue, &branch, &pr_url)?;
     let initial_watcher_state = if parsed.ready {
-        ("checks_running", "issue-watcher", "watcher_owned_checks_running")
+        (
+            "checks_running",
+            "issue-watcher",
+            "watcher_owned_checks_running",
+        )
     } else {
         ("pr_open", "issue-watcher", "watcher_owned_pr_open")
     };

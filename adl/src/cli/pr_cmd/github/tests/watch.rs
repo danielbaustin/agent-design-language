@@ -141,7 +141,10 @@ fn issue_watch_routes_all_green_draft_pr_to_janitor() {
     );
     assert_eq!(report.classification, "checks_green_but_draft");
     assert_eq!(report.tail_owner, "pr-janitor");
-    assert_eq!(report.shepherd_state, "green_draft_requires_publication_action");
+    assert_eq!(
+        report.shepherd_state,
+        "green_draft_requires_publication_action"
+    );
     assert_eq!(report.next_skill, "pr-janitor");
     assert_eq!(report.continuation, "action_required");
     assert_eq!(report.reason, "linked_pr_checks_green_but_draft");

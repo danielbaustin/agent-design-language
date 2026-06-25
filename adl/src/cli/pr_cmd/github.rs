@@ -618,46 +618,46 @@ pub(crate) fn build_issue_watch_report(
 
     let (classification, tail_owner, shepherd_state, next_skill, continuation, reason) =
         if validation.pr_state == "MERGED" {
-        (
-            "merged_pending_closeout",
-            "pr-closeout",
-            "merged_pending_closeout",
-            "pr-closeout",
-            "action_required",
-            "linked_pr_merged_closeout_pending",
-        )
-    } else if validation.projection_status == "checks_green_but_draft" {
-        (
-            "checks_green_but_draft",
-            "pr-janitor",
-            "green_draft_requires_publication_action",
-            "pr-janitor",
-            "action_required",
-            "linked_pr_checks_green_but_draft",
-        )
-    } else if matches!(
-        validation.disposition.as_str(),
-        "failed" | "cancelled" | "timed_out"
-    ) {
-        (
-            "checks_failed",
-            "pr-janitor",
-            "janitor_owned_checks_failed",
-            "pr-janitor",
-            "action_required",
-            "linked_pr_checks_failed",
-        )
-    } else if validation.is_draft {
-        (
-            "pr_open",
-            "issue-watcher",
-            "watcher_owned_pr_open",
-            "issue-watcher",
-            "continue",
-            "linked_pr_draft",
-        )
-    } else {
-        match validation.disposition.as_str() {
+            (
+                "merged_pending_closeout",
+                "pr-closeout",
+                "merged_pending_closeout",
+                "pr-closeout",
+                "action_required",
+                "linked_pr_merged_closeout_pending",
+            )
+        } else if validation.projection_status == "checks_green_but_draft" {
+            (
+                "checks_green_but_draft",
+                "pr-janitor",
+                "green_draft_requires_publication_action",
+                "pr-janitor",
+                "action_required",
+                "linked_pr_checks_green_but_draft",
+            )
+        } else if matches!(
+            validation.disposition.as_str(),
+            "failed" | "cancelled" | "timed_out"
+        ) {
+            (
+                "checks_failed",
+                "pr-janitor",
+                "janitor_owned_checks_failed",
+                "pr-janitor",
+                "action_required",
+                "linked_pr_checks_failed",
+            )
+        } else if validation.is_draft {
+            (
+                "pr_open",
+                "issue-watcher",
+                "watcher_owned_pr_open",
+                "issue-watcher",
+                "continue",
+                "linked_pr_draft",
+            )
+        } else {
+            match validation.disposition.as_str() {
             "pending" => (
                 "checks_running",
                 "issue-watcher",
@@ -686,7 +686,7 @@ pub(crate) fn build_issue_watch_report(
                 "linked_pr_validation_ambiguous",
             ),
         }
-    };
+        };
 
     IssueWatchReport {
         schema: "adl.pr.watch.v1",
@@ -1521,11 +1521,7 @@ pub(super) fn attach_issue_watcher(
     tail_owner: &str,
     shepherd_state: &str,
 ) -> Result<()> {
-    if std::env::var("ADL_ISSUE_WATCHER_DISABLE")
-        .ok()
-        .as_deref()
-        == Some("1")
-    {
+    if std::env::var("ADL_ISSUE_WATCHER_DISABLE").ok().as_deref() == Some("1") {
         return Ok(());
     }
 
@@ -1649,11 +1645,18 @@ pub(super) fn attach_issue_watcher(
         )
     })?;
 
-    let run_log_file = fs::File::create(&run_log)
-        .with_context(|| format!("finish: failed to create watcher log '{}'", run_log.display()))?;
-    let run_log_err = run_log_file
-        .try_clone()
-        .with_context(|| format!("finish: failed to clone watcher log '{}'", run_log.display()))?;
+    let run_log_file = fs::File::create(&run_log).with_context(|| {
+        format!(
+            "finish: failed to create watcher log '{}'",
+            run_log.display()
+        )
+    })?;
+    let run_log_err = run_log_file.try_clone().with_context(|| {
+        format!(
+            "finish: failed to clone watcher log '{}'",
+            run_log.display()
+        )
+    })?;
     let mut command = helper_command_with_github_context("codex");
     let child = command
         .arg("exec")
