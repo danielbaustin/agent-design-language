@@ -1014,6 +1014,142 @@ fn real_pr_start_requires_an_active_self_claim_before_binding_worktree() {
 }
 
 #[test]
+fn real_pr_start_accepts_codex_thread_id_as_self_claim_identity() {
+    let _guard = env_lock();
+    let temp = unique_temp_dir("adl-pr-start-codex-thread-id-self-claim");
+    let origin = temp.join("origin.git");
+    let repo = temp.join("repo");
+    let home = temp.join("home");
+    fs::create_dir_all(&repo).expect("repo dir");
+    fs::create_dir_all(&home).expect("home dir");
+    copy_bootstrap_support_files(&repo);
+    init_git_repo(&repo);
+    assert!(Command::new("git")
+        .args(["config", "user.name", "Test User"])
+        .current_dir(&repo)
+        .status()
+        .expect("git config")
+        .success());
+    assert!(Command::new("git")
+        .args(["config", "user.email", "test@example.com"])
+        .current_dir(&repo)
+        .status()
+        .expect("git config")
+        .success());
+    fs::write(repo.join(".gitignore"), ".adl/\n").expect("gitignore");
+    fs::write(repo.join("README.md"), "thread-id self claim\n").expect("write readme");
+    assert!(Command::new("git")
+        .args(["add", "-A"])
+        .current_dir(&repo)
+        .status()
+        .expect("git add")
+        .success());
+    assert!(Command::new("git")
+        .args(["commit", "-q", "-m", "init"])
+        .current_dir(&repo)
+        .status()
+        .expect("git commit")
+        .success());
+    assert!(Command::new("git")
+        .args(["branch", "-M", "main"])
+        .current_dir(&repo)
+        .status()
+        .expect("git branch")
+        .success());
+    assert!(Command::new("git")
+        .args([
+            "init",
+            "--bare",
+            "-q",
+            path_str(&origin).expect("origin path")
+        ])
+        .current_dir(&repo)
+        .status()
+        .expect("git init bare")
+        .success());
+    assert!(Command::new("git")
+        .args([
+            "remote",
+            "set-url",
+            "origin",
+            path_str(&origin).expect("origin path"),
+        ])
+        .current_dir(&repo)
+        .status()
+        .expect("git remote set-url")
+        .success());
+    assert!(Command::new("git")
+        .args(["push", "-q", "-u", "origin", "main"])
+        .current_dir(&repo)
+        .status()
+        .expect("git push")
+        .success());
+    assert!(Command::new("git")
+        .args(["fetch", "-q", "origin", "main"])
+        .current_dir(&repo)
+        .status()
+        .expect("git fetch")
+        .success());
+
+    seed_codex_goal_transcript(&home, 1158, "thread-self", 5558, 44, 1782230400, 1782230444);
+    let old_home = env::var_os("HOME");
+    let old_session = env::var_os("CODEX_SESSION_ID");
+    let old_thread_id = env::var_os("CODEX_THREAD_ID");
+    unsafe {
+        env::set_var("HOME", &home);
+        env::remove_var("CODEX_SESSION_ID");
+        env::set_var("CODEX_THREAD_ID", "thread-self");
+    }
+
+    let issue_ref = IssueRef::new(1158, "v0.86", "thread-id-self-claim").expect("issue ref");
+    let branch = "codex/1158-thread-id-self-claim";
+    write_authored_issue_prompt(&repo, &issue_ref, "[v0.86][tools] Thread id self claim");
+    write_design_time_ready_cards(
+        &repo,
+        &issue_ref,
+        "[v0.86][tools] Thread id self claim",
+        branch,
+    );
+    write_session_claim(
+        &repo,
+        1158,
+        "thread-self",
+        branch,
+        &issue_ref.default_worktree_path(&repo, None),
+    );
+
+    let prev_dir = env::current_dir().expect("cwd");
+    env::set_current_dir(&repo).expect("chdir");
+    real_pr(&[
+        "start".to_string(),
+        "1158".to_string(),
+        "--slug".to_string(),
+        "thread-id-self-claim".to_string(),
+        "--title".to_string(),
+        "[v0.86][tools] Thread id self claim".to_string(),
+        "--no-fetch-issue".to_string(),
+        "--version".to_string(),
+        "v0.86".to_string(),
+    ])
+    .expect("real_pr start with CODEX_THREAD_ID fallback");
+    env::set_current_dir(prev_dir).expect("restore cwd");
+    match old_home {
+        Some(value) => unsafe { env::set_var("HOME", value) },
+        None => unsafe { env::remove_var("HOME") },
+    }
+    match old_session {
+        Some(value) => unsafe { env::set_var("CODEX_SESSION_ID", value) },
+        None => unsafe { env::remove_var("CODEX_SESSION_ID") },
+    }
+    match old_thread_id {
+        Some(value) => unsafe { env::set_var("CODEX_THREAD_ID", value) },
+        None => unsafe { env::remove_var("CODEX_THREAD_ID") },
+    }
+
+    assert!(issue_ref.default_worktree_path(&repo, None).exists());
+}
+
+#[test]
 fn real_pr_start_blocks_when_another_session_claims_the_issue() {
     let _guard = env_lock();
     let temp = unique_temp_dir("adl-pr-start-session-ledger-conflict");

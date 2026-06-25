@@ -146,6 +146,7 @@ pub struct TargetClaimQuery<'a> {
     pub branch: &'a str,
     pub worktree_path: &'a Path,
     pub current_session_id: Option<&'a str>,
+    pub current_session_aliases: Vec<&'a str>,
     pub now: DateTime<Utc>,
 }
 
@@ -527,9 +528,9 @@ pub fn assess_target_claims(
                 matches_branch,
                 matches_worktree,
                 self_claim: query
-                    .current_session_id
-                    .map(|session_id| claim.session_id == session_id)
-                    .unwrap_or(false),
+                    .current_session_aliases
+                    .iter()
+                    .any(|session_id| claim.session_id == *session_id),
             })
         })
         .collect::<Vec<_>>();
@@ -606,7 +607,7 @@ pub fn load_target_claim_assessment(
     issue_number: u64,
     branch: &str,
     worktree_path: &Path,
-    current_session_id: Option<&str>,
+    current_session_ids: &[String],
     now: DateTime<Utc>,
 ) -> Result<TargetClaimAssessment> {
     let ledger_path = default_ledger_path(repo_root);
@@ -616,10 +617,33 @@ pub fn load_target_claim_assessment(
         issue_number,
         branch,
         worktree_path,
-        current_session_id,
+        current_session_id: current_session_ids.first().map(|value| value.as_str()),
+        current_session_aliases: current_session_ids
+            .iter()
+            .map(|value| value.as_str())
+            .collect(),
         now,
     };
     Ok(assess_target_claims(&ledger, &ledger_path, &query))
+}
+
+pub fn current_codex_session_ids() -> Vec<String> {
+    let mut ids = Vec::new();
+    if let Ok(value) = std::env::var("CODEX_SESSION_ID") {
+        if !value.trim().is_empty() {
+            ids.push(value);
+        }
+    }
+    if let Ok(value) = std::env::var("CODEX_THREAD_ID") {
+        if !value.trim().is_empty() && !ids.iter().any(|existing| existing == &value) {
+            ids.push(value);
+        }
+    }
+    ids
+}
+
+pub fn current_codex_session_id() -> Option<String> {
+    current_codex_session_ids().into_iter().next()
 }
 
 fn claim_status(claim: &OccupancyClaim, now: DateTime<Utc>) -> ClaimStatus {
@@ -865,6 +889,7 @@ mod tests {
             branch: "codex/4419-test",
             worktree_path: &repo_root.join(".worktrees/adl-wp-4419"),
             current_session_id: Some("thread-1"),
+            current_session_aliases: vec!["thread-1"],
             now: now(),
         };
 
@@ -890,6 +915,7 @@ mod tests {
             branch: "codex/4419-test",
             worktree_path: &repo_root.join(".worktrees/adl-wp-4419"),
             current_session_id: Some("thread-1"),
+            current_session_aliases: vec!["thread-1"],
             now: now(),
         };
 
@@ -917,6 +943,7 @@ mod tests {
             branch: "codex/4419-test",
             worktree_path: &repo_root.join(".worktrees/adl-wp-4419"),
             current_session_id: Some("thread-1"),
+            current_session_aliases: vec!["thread-1"],
             now: stale_time,
         };
 
@@ -947,6 +974,33 @@ mod tests {
             branch: "codex/4419-test",
             worktree_path: &repo_root.join(".worktrees/adl-wp-4419"),
             current_session_id: Some("thread-1"),
+            current_session_aliases: vec!["thread-1"],
+            now: now(),
+        };
+
+        let assessment = assess_target_claims(&ledger, &default_ledger_path(&repo_root), &query);
+
+        assert_eq!(assessment.status, "PASS");
+        assert_eq!(assessment.block_kind, "session_self_claim");
+        assert!(assessment.relevant_claims[0].self_claim);
+    }
+
+    #[test]
+    fn target_claim_assessment_treats_thread_and_session_ids_as_same_current_owner() {
+        let repo_root = PathBuf::from("/repo");
+        let mut ledger = SessionLedger::empty(now());
+        let mut mine = input(4419);
+        mine.session_id = "thread-1".to_string();
+        mine.branch = Some("codex/4419-test".to_string());
+        mine.worktree_path = Some(".worktrees/adl-wp-4419".to_string());
+        ledger.claim(mine, now()).expect("claim");
+        let query = TargetClaimQuery {
+            repo_root: &repo_root,
+            issue_number: 4419,
+            branch: "codex/4419-test",
+            worktree_path: &repo_root.join(".worktrees/adl-wp-4419"),
+            current_session_id: Some("session-1"),
+            current_session_aliases: vec!["session-1", "thread-1"],
             now: now(),
         };
 

@@ -1,7 +1,9 @@
 use std::path::Path;
 
 use super::*;
-use adl::session_ledger::{load_target_claim_assessment, ClaimClassification, ClaimMode};
+use adl::session_ledger::{
+    current_codex_session_ids, load_target_claim_assessment, ClaimClassification, ClaimMode,
+};
 
 pub(super) fn run_doctor_preflight(
     repo_root: &Path,
@@ -29,6 +31,7 @@ pub(super) fn run_doctor_preflight(
         })
         .collect::<Vec<_>>();
     let card_run_readiness = preflight_card_run_readiness(repo_root, issue_ref);
+    let current_session_ids = current_codex_session_ids();
     let session_assessment = load_target_claim_assessment(
         repo_root,
         issue_ref.issue_number().into(),
@@ -39,7 +42,7 @@ pub(super) fn run_doctor_preflight(
                 .map(std::path::PathBuf::from)
                 .as_deref(),
         ),
-        std::env::var("CODEX_SESSION_ID").ok().as_deref(),
+        &current_session_ids,
         chrono::Utc::now(),
     )?;
     let session_ledger = DoctorSessionLedgerJson {
