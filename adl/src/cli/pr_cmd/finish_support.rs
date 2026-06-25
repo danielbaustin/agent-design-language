@@ -15,10 +15,10 @@ use super::git_support::{
     run_status_allow_failure,
 };
 use super::github::{
-    attach_post_merge_closeout, attach_pr_janitor, current_pr_url,
+    attach_issue_watcher, attach_post_merge_closeout, attach_pr_janitor, current_pr_url,
     ensure_or_repair_pr_closing_linkage, pr_create_finish, pr_edit_finish_existing,
     pr_merge_finish, pr_ready_finish_allow_failure, pr_ready_finish_merge_allow_failure,
-    pr_view_base_ref_finish_existing, wait_for_pr_validation_finish,
+    pr_view_base_ref_finish_existing, wait_for_pr_validation_finish, IssueWatcherAttachRequest,
 };
 use super::lifecycle;
 use super::DEFAULT_VERSION;
@@ -309,6 +309,30 @@ pub(super) fn real_pr_finish(args: &[String]) -> Result<()> {
         if parsed.ready { "ready" } else { "draft" },
     )?;
     attach_post_merge_closeout(&repo_root, &repo, parsed.issue, &branch, &pr_url)?;
+    let initial_watcher_state = if parsed.ready {
+        (
+            "checks_running",
+            "issue-watcher",
+            "watcher_owned_checks_running",
+        )
+    } else {
+        ("pr_open", "issue-watcher", "watcher_owned_pr_open")
+    };
+    if let Err(err) = attach_issue_watcher(IssueWatcherAttachRequest {
+        repo_root: &repo_root,
+        repo: &repo,
+        issue: parsed.issue,
+        branch: &branch,
+        pr_url: &pr_url,
+        expected_pr_state: if parsed.ready { "ready" } else { "draft" },
+        classification: initial_watcher_state.0,
+        tail_owner: initial_watcher_state.1,
+        shepherd_state: initial_watcher_state.2,
+    }) {
+        eprintln!(
+            "warning: issue watcher auto-attach failed after PR publication; PR remains published and other tail attachments succeeded. Resolve watcher setup separately: {err}"
+        );
+    }
 
     println!("{pr_url}");
     if !parsed.no_open {

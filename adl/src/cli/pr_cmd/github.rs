@@ -189,6 +189,8 @@ pub(crate) struct IssueWatchReport {
     pub(crate) authoritative_classifier: &'static str,
     pub(crate) advisory_agent_mode: &'static str,
     pub(crate) classification: String,
+    pub(crate) tail_owner: String,
+    pub(crate) shepherd_state: String,
     pub(crate) next_skill: String,
     pub(crate) continuation: String,
     pub(crate) reason: String,
@@ -523,6 +525,8 @@ pub(crate) fn build_issue_watch_report(
             authoritative_classifier: "adl",
             advisory_agent_mode: "local_agent_advisory_only",
             classification: "closeout_needed".to_string(),
+            tail_owner: "pr-closeout".to_string(),
+            shepherd_state: "closeout_required".to_string(),
             next_skill: "pr-closeout".to_string(),
             continuation: "action_required".to_string(),
             reason: "issue_closed_completed".to_string(),
@@ -547,6 +551,8 @@ pub(crate) fn build_issue_watch_report(
             authoritative_classifier: "adl",
             advisory_agent_mode: "local_agent_advisory_only",
             classification: "closed".to_string(),
+            tail_owner: "human_review".to_string(),
+            shepherd_state: "closed_without_completed_reason".to_string(),
             next_skill: "human_review".to_string(),
             continuation: "ask_operator".to_string(),
             reason: "issue_closed_without_completed_reason".to_string(),
@@ -564,10 +570,12 @@ pub(crate) fn build_issue_watch_report(
     }
 
     let Some((pr, validation)) = linked_pr else {
-        let (classification, next_skill, continuation, reason) =
+        let (classification, tail_owner, shepherd_state, next_skill, continuation, reason) =
             if local_readiness.pr_run_readiness == "ready" {
                 (
                     "ready_for_run",
+                    "pr-run",
+                    "ready_without_pr",
                     "pr-run",
                     "continue",
                     "issue_ready_without_linked_pr",
@@ -576,12 +584,16 @@ pub(crate) fn build_issue_watch_report(
                 (
                     "blocked",
                     "pr-ready",
+                    "local_readiness_failed",
+                    "pr-ready",
                     "action_required",
                     "issue_local_readiness_failed",
                 )
             } else {
                 (
                     "unknown",
+                    "issue-watcher",
+                    "local_readiness_unknown",
                     "issue-watcher",
                     "ask_operator",
                     "issue_local_readiness_unknown",
@@ -594,6 +606,8 @@ pub(crate) fn build_issue_watch_report(
             authoritative_classifier: "adl",
             advisory_agent_mode: "local_agent_advisory_only",
             classification: classification.to_string(),
+            tail_owner: tail_owner.to_string(),
+            shepherd_state: shepherd_state.to_string(),
             next_skill: next_skill.to_string(),
             continuation: continuation.to_string(),
             reason: reason.to_string(),
@@ -602,50 +616,77 @@ pub(crate) fn build_issue_watch_report(
         };
     };
 
-    let (classification, next_skill, continuation, reason) = if validation.pr_state == "MERGED" {
-        (
-            "merged_pending_closeout",
-            "pr-closeout",
-            "action_required",
-            "linked_pr_merged_closeout_pending",
-        )
-    } else if validation.projection_status == "checks_green_but_draft" {
-        (
-            "checks_green_but_draft",
-            "pr-janitor",
-            "action_required",
-            "linked_pr_checks_green_but_draft",
-        )
-    } else if validation.is_draft {
-        ("pr_open", "issue-watcher", "continue", "linked_pr_draft")
-    } else {
-        match validation.disposition.as_str() {
+    let (classification, tail_owner, shepherd_state, next_skill, continuation, reason) =
+        if validation.pr_state == "MERGED" {
+            (
+                "merged_pending_closeout",
+                "pr-closeout",
+                "merged_pending_closeout",
+                "pr-closeout",
+                "action_required",
+                "linked_pr_merged_closeout_pending",
+            )
+        } else if validation.projection_status == "checks_green_but_draft" {
+            (
+                "checks_green_but_draft",
+                "pr-janitor",
+                "green_draft_requires_publication_action",
+                "pr-janitor",
+                "action_required",
+                "linked_pr_checks_green_but_draft",
+            )
+        } else if matches!(
+            validation.disposition.as_str(),
+            "failed" | "cancelled" | "timed_out"
+        ) {
+            (
+                "checks_failed",
+                "pr-janitor",
+                "janitor_owned_checks_failed",
+                "pr-janitor",
+                "action_required",
+                "linked_pr_checks_failed",
+            )
+        } else if validation.is_draft {
+            (
+                "pr_open",
+                "issue-watcher",
+                "watcher_owned_pr_open",
+                "issue-watcher",
+                "continue",
+                "linked_pr_draft",
+            )
+        } else {
+            match validation.disposition.as_str() {
             "pending" => (
                 "checks_running",
+                "issue-watcher",
+                "watcher_owned_checks_running",
                 "issue-watcher",
                 "continue",
                 "linked_pr_checks_pending",
             ),
-            "failed" | "cancelled" | "timed_out" => (
-                "checks_failed",
-                "pr-janitor",
-                "action_required",
-                "linked_pr_checks_failed",
+            "failed" | "cancelled" | "timed_out" => unreachable!(
+                "failed draft and ready PR checks are classified before the non-draft disposition match"
             ),
             "success" | "skipped" => (
                 "checks_green",
+                "issue-watcher",
+                "watcher_owned_waiting_for_review",
                 "human_review",
                 "ask_operator",
-                "linked_pr_checks_green",
+                "linked_pr_checks_green_waiting_review",
             ),
             _ => (
                 "blocked",
+                "issue-watcher",
+                "watcher_state_ambiguous",
                 "issue-watcher",
                 "ask_operator",
                 "linked_pr_validation_ambiguous",
             ),
         }
-    };
+        };
 
     IssueWatchReport {
         schema: "adl.pr.watch.v1",
@@ -654,6 +695,8 @@ pub(crate) fn build_issue_watch_report(
         authoritative_classifier: "adl",
         advisory_agent_mode: "local_agent_advisory_only",
         classification: classification.to_string(),
+        tail_owner: tail_owner.to_string(),
+        shepherd_state: shepherd_state.to_string(),
         next_skill: next_skill.to_string(),
         continuation: continuation.to_string(),
         reason: reason.to_string(),
@@ -1464,6 +1507,186 @@ pub(super) fn attach_pr_janitor(
             }
         );
     }
+    Ok(())
+}
+
+pub(super) struct IssueWatcherAttachRequest<'a> {
+    pub repo_root: &'a Path,
+    pub repo: &'a str,
+    pub issue: u32,
+    pub branch: &'a str,
+    pub pr_url: &'a str,
+    pub expected_pr_state: &'a str,
+    pub classification: &'a str,
+    pub tail_owner: &'a str,
+    pub shepherd_state: &'a str,
+}
+
+pub(super) fn attach_issue_watcher(request: IssueWatcherAttachRequest<'_>) -> Result<()> {
+    if std::env::var("ADL_ISSUE_WATCHER_DISABLE").ok().as_deref() == Some("1") {
+        return Ok(());
+    }
+
+    if let Some(command_path) = std::env::var("ADL_ISSUE_WATCHER_CMD")
+        .ok()
+        .filter(|value| !value.trim().is_empty())
+    {
+        let mut command = helper_command_with_github_context(&command_path);
+        let output = command
+            .arg("--repo-root")
+            .arg(request.repo_root)
+            .arg("--repo")
+            .arg(request.repo)
+            .arg("--issue")
+            .arg(request.issue.to_string())
+            .arg("--branch")
+            .arg(request.branch)
+            .arg("--pr-url")
+            .arg(request.pr_url)
+            .arg("--expected-pr-state")
+            .arg(request.expected_pr_state)
+            .arg("--classification")
+            .arg(request.classification)
+            .arg("--tail-owner")
+            .arg(request.tail_owner)
+            .arg("--shepherd-state")
+            .arg(request.shepherd_state)
+            .output()
+            .with_context(|| {
+                format!("finish: failed to spawn issue watcher command '{command_path}'")
+            })?;
+        if !output.status.success() {
+            let stderr = redact_for_diagnostics(&String::from_utf8_lossy(&output.stderr));
+            let stdout = redact_for_diagnostics(&String::from_utf8_lossy(&output.stdout));
+            bail!(
+                "finish: issue watcher auto-attach failed for issue #{} and PR '{}': {}{}",
+                request.issue,
+                request.pr_url,
+                stderr.trim(),
+                if stdout.trim().is_empty() {
+                    String::new()
+                } else {
+                    format!(" (stdout: {})", stdout.trim())
+                }
+            );
+        }
+        return Ok(());
+    }
+
+    let install_script = request
+        .repo_root
+        .join("adl/tools/install_adl_operational_skills.sh");
+    let install_output = helper_command_with_github_context("bash")
+        .arg(&install_script)
+        .output()
+        .with_context(|| {
+            format!(
+                "finish: failed to run watcher skill installer '{}'",
+                install_script.display()
+            )
+        })?;
+    if !install_output.status.success() {
+        let stderr = redact_for_diagnostics(&String::from_utf8_lossy(&install_output.stderr));
+        let stdout = redact_for_diagnostics(&String::from_utf8_lossy(&install_output.stdout));
+        bail!(
+            "finish: issue watcher skill install failed for issue #{}: {}{}",
+            request.issue,
+            stderr.trim(),
+            if stdout.trim().is_empty() {
+                String::new()
+            } else {
+                format!(" (stdout: {})", stdout.trim())
+            }
+        );
+    }
+
+    let artifact_root = request
+        .repo_root
+        .join(".adl")
+        .join("logs")
+        .join("issue-watcher")
+        .join(format!("issue-{}", request.issue));
+    fs::create_dir_all(&artifact_root).with_context(|| {
+        format!(
+            "finish: failed to create issue watcher artifact root '{}'",
+            artifact_root.display()
+        )
+    })?;
+    let input_file = artifact_root.join("input.yaml");
+    let prompt_file = artifact_root.join("prompt.md");
+    let run_log = artifact_root.join("codex.log");
+    let last_message_file = artifact_root.join("last_message.md");
+    let pid_file = artifact_root.join("pid");
+
+    fs::write(
+        &input_file,
+        format!(
+            "skill_input_schema: issue_watcher.v1\nmode: watch_issue_pr_tail\nrepo_root: {}\ntarget:\n  issue_number: {}\n  pr_url: {}\n  branch: {}\n  expected_state: {}\n  expected_pr_state: {}\n  expected_tail_owner: {}\n  expected_shepherd_state: {}\n  expected_checks:\n    - adl-ci\n    - adl-coverage\npolicy:\n  allow_pr_inference: false\n  monitor_checks: true\n  monitor_merge_state: true\n  monitor_closure_state: true\n",
+            request.repo_root.display(),
+            request.issue,
+            request.pr_url,
+            request.branch,
+            request.classification,
+            request.expected_pr_state,
+            request.tail_owner,
+            request.shepherd_state,
+        ),
+    )
+    .with_context(|| {
+        format!(
+            "finish: failed to write issue watcher input '{}'",
+            input_file.display()
+        )
+    })?;
+    let prompt = format!(
+        "Use $issue-watcher at {repo_root}/adl/tools/skills/issue-watcher/SKILL.md with this validated input:\n\n```yaml\n{input}\n```\n\nRun one bounded watcher pass for this newly published issue-bound PR tail. Treat the repo-native watcher classifier as authoritative, preserve the initial expected watcher/shepherd/tail-owner state as publication context, route failed-check/conflict/review blockers to $pr-janitor if observed, and stop after writing a concise watcher status summary.\n",
+        repo_root = request.repo_root.display(),
+        input = fs::read_to_string(&input_file).unwrap_or_default(),
+    );
+    fs::write(&prompt_file, &prompt).with_context(|| {
+        format!(
+            "finish: failed to write issue watcher prompt '{}'",
+            prompt_file.display()
+        )
+    })?;
+
+    let run_log_file = fs::File::create(&run_log).with_context(|| {
+        format!(
+            "finish: failed to create watcher log '{}'",
+            run_log.display()
+        )
+    })?;
+    let run_log_err = run_log_file.try_clone().with_context(|| {
+        format!(
+            "finish: failed to clone watcher log '{}'",
+            run_log.display()
+        )
+    })?;
+    let mut command = helper_command_with_github_context("codex");
+    let child = command
+        .arg("exec")
+        .arg("--full-auto")
+        .arg("--sandbox")
+        .arg("workspace-write")
+        .arg("--cd")
+        .arg(request.repo_root)
+        .arg("--skip-git-repo-check")
+        .arg("--add-dir")
+        .arg(request.repo_root)
+        .arg("--output-last-message")
+        .arg(&last_message_file)
+        .arg(&prompt)
+        .stdin(std::process::Stdio::null())
+        .stdout(std::process::Stdio::from(run_log_file))
+        .stderr(std::process::Stdio::from(run_log_err))
+        .spawn()
+        .context("finish: failed to launch issue watcher codex exec")?;
+    fs::write(&pid_file, format!("{}\n", child.id())).with_context(|| {
+        format!(
+            "finish: failed to record issue watcher pid '{}'",
+            pid_file.display()
+        )
+    })?;
     Ok(())
 }
 

@@ -109,6 +109,8 @@ fn issue_watch_routes_ready_issue_without_pr_to_pr_run() {
     assert_eq!(report.authoritative_classifier, "adl");
     assert_eq!(report.advisory_agent_mode, "local_agent_advisory_only");
     assert_eq!(report.classification, "ready_for_run");
+    assert_eq!(report.tail_owner, "pr-run");
+    assert_eq!(report.shepherd_state, "ready_without_pr");
     assert_eq!(report.next_skill, "pr-run");
     assert_eq!(report.continuation, "continue");
 }
@@ -123,6 +125,8 @@ fn issue_watch_routes_draft_pr_to_issue_watcher() {
         Some((pr, validation_report("pending", true))),
     );
     assert_eq!(report.classification, "pr_open");
+    assert_eq!(report.tail_owner, "issue-watcher");
+    assert_eq!(report.shepherd_state, "watcher_owned_pr_open");
     assert_eq!(report.next_skill, "issue-watcher");
 }
 
@@ -136,6 +140,11 @@ fn issue_watch_routes_all_green_draft_pr_to_janitor() {
         Some((pr, validation_report("success", true))),
     );
     assert_eq!(report.classification, "checks_green_but_draft");
+    assert_eq!(report.tail_owner, "pr-janitor");
+    assert_eq!(
+        report.shepherd_state,
+        "green_draft_requires_publication_action"
+    );
     assert_eq!(report.next_skill, "pr-janitor");
     assert_eq!(report.continuation, "action_required");
     assert_eq!(report.reason, "linked_pr_checks_green_but_draft");
@@ -180,7 +189,26 @@ fn issue_watch_routes_failed_checks_to_pr_janitor() {
         Some((pr, validation_report("failed", false))),
     );
     assert_eq!(report.classification, "checks_failed");
+    assert_eq!(report.tail_owner, "pr-janitor");
+    assert_eq!(report.shepherd_state, "janitor_owned_checks_failed");
     assert_eq!(report.next_skill, "pr-janitor");
+}
+
+#[test]
+fn issue_watch_routes_failed_draft_checks_to_pr_janitor() {
+    let pr = linked_pr(77, true);
+    let report = build_issue_watch_report(
+        &open_issue(4397),
+        false,
+        readiness_ready(),
+        Some((pr, validation_report("failed", true))),
+    );
+    assert_eq!(report.classification, "checks_failed");
+    assert_eq!(report.tail_owner, "pr-janitor");
+    assert_eq!(report.shepherd_state, "janitor_owned_checks_failed");
+    assert_eq!(report.next_skill, "pr-janitor");
+    assert_eq!(report.continuation, "action_required");
+    assert_eq!(report.reason, "linked_pr_checks_failed");
 }
 
 #[test]
@@ -193,12 +221,14 @@ fn issue_watch_routes_pending_checks_to_issue_watcher() {
         Some((pr, validation_report("pending", false))),
     );
     assert_eq!(report.classification, "checks_running");
+    assert_eq!(report.tail_owner, "issue-watcher");
+    assert_eq!(report.shepherd_state, "watcher_owned_checks_running");
     assert_eq!(report.next_skill, "issue-watcher");
     assert_eq!(report.continuation, "continue");
 }
 
 #[test]
-fn issue_watch_routes_green_checks_to_human_review() {
+fn issue_watch_routes_green_checks_to_issue_watcher() {
     let pr = linked_pr(77, false);
     let report = build_issue_watch_report(
         &open_issue(4397),
@@ -207,7 +237,28 @@ fn issue_watch_routes_green_checks_to_human_review() {
         Some((pr, validation_report("success", false))),
     );
     assert_eq!(report.classification, "checks_green");
+    assert_eq!(report.tail_owner, "issue-watcher");
+    assert_eq!(report.shepherd_state, "watcher_owned_waiting_for_review");
     assert_eq!(report.next_skill, "human_review");
+    assert_eq!(report.continuation, "ask_operator");
+    assert_eq!(report.reason, "linked_pr_checks_green_waiting_review");
+}
+
+#[test]
+fn issue_watch_routes_skipped_checks_to_issue_watcher_owned_review_handoff() {
+    let pr = linked_pr(77, false);
+    let report = build_issue_watch_report(
+        &open_issue(4397),
+        false,
+        readiness_ready(),
+        Some((pr, validation_report("skipped", false))),
+    );
+    assert_eq!(report.classification, "checks_green");
+    assert_eq!(report.tail_owner, "issue-watcher");
+    assert_eq!(report.shepherd_state, "watcher_owned_waiting_for_review");
+    assert_eq!(report.next_skill, "human_review");
+    assert_eq!(report.continuation, "ask_operator");
+    assert_eq!(report.reason, "linked_pr_checks_green_waiting_review");
 }
 
 #[test]
@@ -217,6 +268,8 @@ fn issue_watch_routes_closed_completed_issue_to_closeout() {
     issue.closed_at = Some("2026-06-22T00:00:00Z".to_string());
     let report = build_issue_watch_report(&issue, true, readiness_ready(), None);
     assert_eq!(report.classification, "closeout_needed");
+    assert_eq!(report.tail_owner, "pr-closeout");
+    assert_eq!(report.shepherd_state, "closeout_required");
     assert_eq!(report.next_skill, "pr-closeout");
 }
 
@@ -231,6 +284,8 @@ fn issue_watch_routes_merged_pr_to_merged_pending_closeout() {
         Some((pr, merged_validation_report())),
     );
     assert_eq!(report.classification, "merged_pending_closeout");
+    assert_eq!(report.tail_owner, "pr-closeout");
+    assert_eq!(report.shepherd_state, "merged_pending_closeout");
     assert_eq!(report.next_skill, "pr-closeout");
     assert_eq!(report.continuation, "action_required");
 }
@@ -239,6 +294,8 @@ fn issue_watch_routes_merged_pr_to_merged_pending_closeout() {
 fn issue_watch_routes_failed_local_readiness_without_pr_to_blocked() {
     let report = build_issue_watch_report(&open_issue(4397), false, readiness_failed(), None);
     assert_eq!(report.classification, "blocked");
+    assert_eq!(report.tail_owner, "pr-ready");
+    assert_eq!(report.shepherd_state, "local_readiness_failed");
     assert_eq!(report.next_skill, "pr-ready");
     assert_eq!(
         report.local_readiness.reason,
