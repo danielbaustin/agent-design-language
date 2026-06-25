@@ -618,7 +618,10 @@ pub fn load_target_claim_assessment(
         branch,
         worktree_path,
         current_session_id: current_session_ids.first().map(|value| value.as_str()),
-        current_session_aliases: current_session_ids.iter().map(|value| value.as_str()).collect(),
+        current_session_aliases: current_session_ids
+            .iter()
+            .map(|value| value.as_str())
+            .collect(),
         now,
     };
     Ok(assess_target_claims(&ledger, &ledger_path, &query))
