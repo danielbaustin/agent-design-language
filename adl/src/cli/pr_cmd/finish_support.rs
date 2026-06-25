@@ -892,19 +892,27 @@ fn bullet_lines_from_markdown_section(text: &str, heading: &str) -> Vec<String> 
 }
 
 fn normalize_sor_emitted_facts_text(text: &str, facts: &SorFacts) -> Result<String> {
+    let facts_value = serde_yaml::to_value(facts)
+        .context("finish: failed to serialize emitted SOR facts into YAML")?;
     let Some(summary_body) = markdown_section_body_local(text, "Verification Summary") else {
-        return Ok(text.to_string());
+        let summary_body = append_standalone_sor_facts_block("", facts_value)?;
+        let mut updated = text.trim_end().to_string();
+        if !updated.is_empty() {
+            updated.push_str("\n\n");
+        }
+        updated.push_str("## Verification Summary\n\n");
+        updated.push_str(summary_body.trim_end());
+        updated.push('\n');
+        return Ok(updated);
     };
-    let updated_summary = update_verification_summary_yaml(&summary_body, facts)?;
+    let updated_summary = update_verification_summary_yaml(&summary_body, facts_value)?;
     Ok(
         replace_markdown_section_body(text, "Verification Summary", &updated_summary)
             .unwrap_or_else(|_| text.to_string()),
     )
 }
 
-fn update_verification_summary_yaml(body: &str, facts: &SorFacts) -> Result<String> {
-    let facts_value = serde_yaml::to_value(facts)
-        .context("finish: failed to serialize emitted SOR facts into YAML")?;
+fn update_verification_summary_yaml(body: &str, facts_value: Value) -> Result<String> {
     let Some(yaml) = extract_fenced_yaml_block(body) else {
         return append_standalone_sor_facts_block(body, facts_value);
     };

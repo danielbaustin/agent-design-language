@@ -627,6 +627,49 @@ review_results:
 }
 
 #[test]
+fn sor_emitted_facts_creates_verification_summary_when_missing() {
+    let output = r#"## Summary
+
+Execution summary without a verification section yet.
+"#;
+    let review = r#"---
+review_results:
+  findings_status: "no_findings"
+  recommended_outcome: "pass"
+---
+
+# Structured Review Prompt
+
+## Findings
+
+- No material findings.
+
+## Dispositions
+
+- No fixes required.
+"#;
+
+    let normalized = normalize_sor_emitted_facts_fixture(
+        output,
+        &["docs/example.md".to_string()],
+        &["git diff --check".to_string()],
+        review,
+        SorFactEmissionContext {
+            validation_status: "PASS",
+            pr_url: Some("https://example.test/pr/2"),
+            integration_state: "pr_open",
+            closing_linkage_repaired: false,
+        },
+    )
+    .expect("normalize with missing verification summary");
+
+    assert!(normalized.contains("## Summary"));
+    assert!(normalized.contains("## Verification Summary"));
+    assert!(normalized.contains("Machine-readable SOR facts:"));
+    assert!(normalized.contains("schema_version: adl.sor_facts.v1"));
+}
+
+#[test]
 fn sor_emitted_facts_fallback_replaces_existing_machine_readable_block_instead_of_appending() {
     let output = r#"## Verification Summary
 
