@@ -1,5 +1,7 @@
 use super::*;
-use crate::cli::pr_cmd::github::{attach_issue_watcher, attach_pr_janitor};
+use crate::cli::pr_cmd::github::{
+    attach_issue_watcher, attach_pr_janitor, IssueWatcherAttachRequest,
+};
 
 #[test]
 fn attach_pr_janitor_reports_failure_output() {
@@ -208,17 +210,17 @@ fn attach_issue_watcher_reports_failure_output() {
         env::set_var("ADL_ISSUE_WATCHER_CMD", &watcher_path);
     }
 
-    let err = attach_issue_watcher(
-        &repo,
-        "owner/repo",
-        1153,
-        "codex/1153-rust-finish-test",
-        "https://github.com/owner/repo/pull/1159",
-        "draft",
-        "pr_open",
-        "issue-watcher",
-        "watcher_owned_pr_open",
-    )
+    let err = attach_issue_watcher(IssueWatcherAttachRequest {
+        repo_root: &repo,
+        repo: "owner/repo",
+        issue: 1153,
+        branch: "codex/1153-rust-finish-test",
+        pr_url: "https://github.com/owner/repo/pull/1159",
+        expected_pr_state: "draft",
+        classification: "pr_open",
+        tail_owner: "issue-watcher",
+        shepherd_state: "watcher_owned_pr_open",
+    })
     .expect_err("failing watcher helper should bubble up");
 
     unsafe {
@@ -253,17 +255,17 @@ fn attach_issue_watcher_returns_early_when_disabled() {
         env::remove_var("ADL_ISSUE_WATCHER_CMD");
     }
 
-    attach_issue_watcher(
-        &repo,
-        "owner/repo",
-        1153,
-        "codex/1153-rust-finish-test",
-        "https://github.com/owner/repo/pull/1159",
-        "draft",
-        "pr_open",
-        "issue-watcher",
-        "watcher_owned_pr_open",
-    )
+    attach_issue_watcher(IssueWatcherAttachRequest {
+        repo_root: &repo,
+        repo: "owner/repo",
+        issue: 1153,
+        branch: "codex/1153-rust-finish-test",
+        pr_url: "https://github.com/owner/repo/pull/1159",
+        expected_pr_state: "draft",
+        classification: "pr_open",
+        tail_owner: "issue-watcher",
+        shepherd_state: "watcher_owned_pr_open",
+    })
     .expect("disabled watcher helper should be skipped");
 
     unsafe {
@@ -302,17 +304,17 @@ fn attach_issue_watcher_invokes_helper_successfully() {
         env::set_var("ADL_ISSUE_WATCHER_CMD", &watcher_path);
     }
 
-    attach_issue_watcher(
-        &repo,
-        "owner/repo",
-        1153,
-        "codex/1153-rust-finish-test",
-        "https://github.com/owner/repo/pull/1159",
-        "draft",
-        "pr_open",
-        "issue-watcher",
-        "watcher_owned_pr_open",
-    )
+    attach_issue_watcher(IssueWatcherAttachRequest {
+        repo_root: &repo,
+        repo: "owner/repo",
+        issue: 1153,
+        branch: "codex/1153-rust-finish-test",
+        pr_url: "https://github.com/owner/repo/pull/1159",
+        expected_pr_state: "draft",
+        classification: "pr_open",
+        tail_owner: "issue-watcher",
+        shepherd_state: "watcher_owned_pr_open",
+    })
     .expect("watcher helper should succeed");
 
     unsafe {

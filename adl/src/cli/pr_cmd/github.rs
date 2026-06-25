@@ -1510,17 +1510,19 @@ pub(super) fn attach_pr_janitor(
     Ok(())
 }
 
-pub(super) fn attach_issue_watcher(
-    repo_root: &Path,
-    repo: &str,
-    issue: u32,
-    branch: &str,
-    pr_url: &str,
-    expected_pr_state: &str,
-    classification: &str,
-    tail_owner: &str,
-    shepherd_state: &str,
-) -> Result<()> {
+pub(super) struct IssueWatcherAttachRequest<'a> {
+    pub repo_root: &'a Path,
+    pub repo: &'a str,
+    pub issue: u32,
+    pub branch: &'a str,
+    pub pr_url: &'a str,
+    pub expected_pr_state: &'a str,
+    pub classification: &'a str,
+    pub tail_owner: &'a str,
+    pub shepherd_state: &'a str,
+}
+
+pub(super) fn attach_issue_watcher(request: IssueWatcherAttachRequest<'_>) -> Result<()> {
     if std::env::var("ADL_ISSUE_WATCHER_DISABLE").ok().as_deref() == Some("1") {
         return Ok(());
     }
@@ -1532,23 +1534,23 @@ pub(super) fn attach_issue_watcher(
         let mut command = helper_command_with_github_context(&command_path);
         let output = command
             .arg("--repo-root")
-            .arg(repo_root)
+            .arg(request.repo_root)
             .arg("--repo")
-            .arg(repo)
+            .arg(request.repo)
             .arg("--issue")
-            .arg(issue.to_string())
+            .arg(request.issue.to_string())
             .arg("--branch")
-            .arg(branch)
+            .arg(request.branch)
             .arg("--pr-url")
-            .arg(pr_url)
+            .arg(request.pr_url)
             .arg("--expected-pr-state")
-            .arg(expected_pr_state)
+            .arg(request.expected_pr_state)
             .arg("--classification")
-            .arg(classification)
+            .arg(request.classification)
             .arg("--tail-owner")
-            .arg(tail_owner)
+            .arg(request.tail_owner)
             .arg("--shepherd-state")
-            .arg(shepherd_state)
+            .arg(request.shepherd_state)
             .output()
             .with_context(|| {
                 format!("finish: failed to spawn issue watcher command '{command_path}'")
@@ -1558,8 +1560,8 @@ pub(super) fn attach_issue_watcher(
             let stdout = redact_for_diagnostics(&String::from_utf8_lossy(&output.stdout));
             bail!(
                 "finish: issue watcher auto-attach failed for issue #{} and PR '{}': {}{}",
-                issue,
-                pr_url,
+                request.issue,
+                request.pr_url,
                 stderr.trim(),
                 if stdout.trim().is_empty() {
                     String::new()
@@ -1571,7 +1573,9 @@ pub(super) fn attach_issue_watcher(
         return Ok(());
     }
 
-    let install_script = repo_root.join("adl/tools/install_adl_operational_skills.sh");
+    let install_script = request
+        .repo_root
+        .join("adl/tools/install_adl_operational_skills.sh");
     let install_output = helper_command_with_github_context("bash")
         .arg(&install_script)
         .output()
@@ -1586,7 +1590,7 @@ pub(super) fn attach_issue_watcher(
         let stdout = redact_for_diagnostics(&String::from_utf8_lossy(&install_output.stdout));
         bail!(
             "finish: issue watcher skill install failed for issue #{}: {}{}",
-            issue,
+            request.issue,
             stderr.trim(),
             if stdout.trim().is_empty() {
                 String::new()
@@ -1596,11 +1600,12 @@ pub(super) fn attach_issue_watcher(
         );
     }
 
-    let artifact_root = repo_root
+    let artifact_root = request
+        .repo_root
         .join(".adl")
         .join("logs")
         .join("issue-watcher")
-        .join(format!("issue-{issue}"));
+        .join(format!("issue-{}", request.issue));
     fs::create_dir_all(&artifact_root).with_context(|| {
         format!(
             "finish: failed to create issue watcher artifact root '{}'",
@@ -1617,14 +1622,14 @@ pub(super) fn attach_issue_watcher(
         &input_file,
         format!(
             "skill_input_schema: issue_watcher.v1\nmode: watch_issue_pr_tail\nrepo_root: {}\ntarget:\n  issue_number: {}\n  pr_url: {}\n  branch: {}\n  expected_state: {}\n  expected_pr_state: {}\n  expected_tail_owner: {}\n  expected_shepherd_state: {}\n  expected_checks:\n    - adl-ci\n    - adl-coverage\npolicy:\n  allow_pr_inference: false\n  monitor_checks: true\n  monitor_merge_state: true\n  monitor_closure_state: true\n",
-            repo_root.display(),
-            issue,
-            pr_url,
-            branch,
-            classification,
-            expected_pr_state,
-            tail_owner,
-            shepherd_state,
+            request.repo_root.display(),
+            request.issue,
+            request.pr_url,
+            request.branch,
+            request.classification,
+            request.expected_pr_state,
+            request.tail_owner,
+            request.shepherd_state,
         ),
     )
     .with_context(|| {
@@ -1635,7 +1640,7 @@ pub(super) fn attach_issue_watcher(
     })?;
     let prompt = format!(
         "Use $issue-watcher at {repo_root}/adl/tools/skills/issue-watcher/SKILL.md with this validated input:\n\n```yaml\n{input}\n```\n\nRun one bounded watcher pass for this newly published issue-bound PR tail. Treat the repo-native watcher classifier as authoritative, preserve the initial expected watcher/shepherd/tail-owner state as publication context, route failed-check/conflict/review blockers to $pr-janitor if observed, and stop after writing a concise watcher status summary.\n",
-        repo_root = repo_root.display(),
+        repo_root = request.repo_root.display(),
         input = fs::read_to_string(&input_file).unwrap_or_default(),
     );
     fs::write(&prompt_file, &prompt).with_context(|| {
@@ -1664,10 +1669,10 @@ pub(super) fn attach_issue_watcher(
         .arg("--sandbox")
         .arg("workspace-write")
         .arg("--cd")
-        .arg(repo_root)
+        .arg(request.repo_root)
         .arg("--skip-git-repo-check")
         .arg("--add-dir")
-        .arg(repo_root)
+        .arg(request.repo_root)
         .arg("--output-last-message")
         .arg(&last_message_file)
         .arg(&prompt)
