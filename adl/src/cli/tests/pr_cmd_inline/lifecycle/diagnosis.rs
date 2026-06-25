@@ -1,4 +1,53 @@
 use super::*;
+use adl::session_ledger::{
+    default_ledger_path, save_ledger, ClaimInput, ClaimMode, GithubRef, ResourceRef, SessionLedger,
+    DEFAULT_TTL_SECS,
+};
+
+fn write_session_claim(
+    repo: &std::path::Path,
+    issue: u64,
+    session_id: &str,
+    branch: &str,
+    worktree_path: &std::path::Path,
+) {
+    let mut ledger = SessionLedger::empty(chrono::Utc::now());
+    ledger
+        .claim(
+            ClaimInput {
+                session_id: session_id.to_string(),
+                owner: "codex".to_string(),
+                resource: ResourceRef {
+                    kind: "csdlc_issue".to_string(),
+                    id: issue.to_string(),
+                },
+                purpose: "test ownership".to_string(),
+                mode: ClaimMode::Active,
+                lifecycle_phase: Some("pr_run".to_string()),
+                policy_ref: Some("AGENTS.md".to_string()),
+                github: GithubRef {
+                    issue: Some(issue),
+                    pull_request: None,
+                    repository: Some("owner/repo".to_string()),
+                    last_state: Some("open".to_string()),
+                },
+                branch: Some(branch.to_string()),
+                worktree_path: Some(
+                    worktree_path
+                        .strip_prefix(repo)
+                        .unwrap_or(worktree_path)
+                        .display()
+                        .to_string(),
+                ),
+                do_not_touch_paths: Vec::new(),
+                blockers: Vec::new(),
+                ttl_secs: DEFAULT_TTL_SECS,
+            },
+            chrono::Utc::now(),
+        )
+        .expect("claim");
+    save_ledger(&default_ledger_path(repo), &ledger).expect("save ledger");
+}
 
 #[test]
 fn real_pr_doctor_full_reports_pre_run_ready_without_worktree() {
@@ -597,15 +646,28 @@ fn real_pr_doctor_full_succeeds_when_invoked_from_started_worktree() {
         .success());
 
     let prev_dir = env::current_dir().expect("cwd");
+    let old_session = env::var_os("CODEX_SESSION_ID");
     env::set_current_dir(&repo).expect("chdir");
     let issue_ref = IssueRef::new(1197, "v0.86", "doctor-worktree-cwd").expect("issue ref");
+    let branch = "codex/1197-doctor-worktree-cwd";
+    let session_id = "thread-self";
     write_authored_issue_prompt(&repo, &issue_ref, "[v0.86][tools] Doctor worktree cwd");
     write_design_time_ready_cards(
         &repo,
         &issue_ref,
         "[v0.86][tools] Doctor worktree cwd",
-        "codex/1197-doctor-worktree-cwd",
+        branch,
     );
+    write_session_claim(
+        &repo,
+        1197,
+        session_id,
+        branch,
+        &issue_ref.default_worktree_path(&repo, None),
+    );
+    unsafe {
+        env::set_var("CODEX_SESSION_ID", session_id);
+    }
     real_pr(&[
         "start".to_string(),
         "1197".to_string(),
@@ -652,6 +714,10 @@ fn real_pr_doctor_full_succeeds_when_invoked_from_started_worktree() {
     ]);
 
     env::set_current_dir(prev_dir).expect("restore cwd");
+    match old_session {
+        Some(value) => unsafe { env::set_var("CODEX_SESSION_ID", value) },
+        None => unsafe { env::remove_var("CODEX_SESSION_ID") },
+    }
     doctor.expect("doctor from worktree");
 }
 
@@ -731,12 +797,24 @@ fn real_pr_doctor_full_succeeds_with_worktree_only_card_bundle() {
         .success());
 
     let prev_dir = env::current_dir().expect("cwd");
+    let old_session = env::var_os("CODEX_SESSION_ID");
     env::set_current_dir(&repo).expect("chdir");
     let issue_ref = IssueRef::new(1198, "v0.86", "doctor-worktree-only-cards").expect("issue ref");
     let title = "[v0.86][tools] Doctor worktree-only cards";
     let branch = "codex/1198-doctor-worktree-only-cards";
+    let session_id = "thread-self";
     write_authored_issue_prompt(&repo, &issue_ref, title);
     write_design_time_ready_cards(&repo, &issue_ref, title, branch);
+    write_session_claim(
+        &repo,
+        1198,
+        session_id,
+        branch,
+        &issue_ref.default_worktree_path(&repo, None),
+    );
+    unsafe {
+        env::set_var("CODEX_SESSION_ID", session_id);
+    }
     real_pr(&[
         "start".to_string(),
         "1198".to_string(),
@@ -787,6 +865,10 @@ fn real_pr_doctor_full_succeeds_with_worktree_only_card_bundle() {
     ]);
 
     env::set_current_dir(prev_dir).expect("restore cwd");
+    match old_session {
+        Some(value) => unsafe { env::set_var("CODEX_SESSION_ID", value) },
+        None => unsafe { env::remove_var("CODEX_SESSION_ID") },
+    }
     doctor.expect("doctor with worktree-only card bundle");
 }
 
