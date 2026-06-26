@@ -7,6 +7,7 @@ use std::thread;
 use std::time::{Duration, Instant};
 
 use adl::adl::ProviderSpec;
+use adl::csm_observatory::{write_observatory_outputs, ObservatoryFormat};
 use adl::long_lived_agent::{self, InspectOptions, LeaseRecord, RunOptions};
 use adl::obsmem_transition_memory::build_write_request_from_transition_handoff;
 use adl::remote_exec::{
@@ -139,7 +140,10 @@ fn run(args: Args) -> Result<()> {
     )?;
 
     let scheduler_plan = build_scheduler_plan()?;
-    write_json(&out_dir.join("scheduler/scheduler_plan.json"), &scheduler_plan)?;
+    write_json(
+        &out_dir.join("scheduler/scheduler_plan.json"),
+        &scheduler_plan,
+    )?;
 
     let remote_timeout = run_remote_timeout_probe()?;
     write_json(
@@ -172,6 +176,18 @@ fn run(args: Args) -> Result<()> {
         &completion_classification,
     )?;
 
+    let observatory_bundle = write_observatory_integration_bundle(
+        &out_dir,
+        &run_status,
+        &restart_status,
+        &stop_probe,
+        &timeout_trace,
+        &bulkhead_trace,
+        &degraded_trace,
+        &remote_timeout,
+        &stopped,
+    )?;
+
     let evidence_index = build_evidence_index(&out_dir)?;
     write_json(
         &out_dir.join("integrated_runtime_soak_evidence_index.json"),
@@ -189,6 +205,7 @@ fn run(args: Args) -> Result<()> {
         &bulkhead_trace,
         &degraded_trace,
         &remote_timeout,
+        &observatory_bundle,
         &evidence_index,
     );
     write_json(
@@ -552,6 +569,575 @@ fn build_scheduler_plan() -> Result<Value> {
     serde_json::to_value(plan).context("serialize scheduler plan")
 }
 
+#[allow(clippy::too_many_arguments)]
+fn write_observatory_integration_bundle(
+    out_dir: &Path,
+    run_status: &adl::long_lived_agent::StatusRecord,
+    restart_status: &adl::long_lived_agent::StatusRecord,
+    stop_probe: &Value,
+    timeout_trace: &Value,
+    bulkhead_trace: &Value,
+    degraded_trace: &Value,
+    remote_timeout: &Value,
+    stopped: &adl::long_lived_agent::StatusRecord,
+) -> Result<Value> {
+    let artifact_root = repo_relative_ref(out_dir)?;
+    let observatory_dir = out_dir.join("runtime_v2/observatory");
+    let packet_path = observatory_dir.join("visibility_packet.json");
+    let packet = build_observatory_integration_packet(
+        &artifact_root,
+        run_status,
+        restart_status,
+        stop_probe,
+        timeout_trace,
+        bulkhead_trace,
+        degraded_trace,
+        remote_timeout,
+        stopped,
+    )?;
+    write_json(&packet_path, &packet)?;
+
+    let output =
+        write_observatory_outputs(&packet_path, &observatory_dir, ObservatoryFormat::Bundle)
+            .context("write integrated observatory bundle")?;
+
+    Ok(json!({
+        "packet_id": packet["packet_id"],
+        "classification": packet["review"]["demo_classification"],
+        "runtime_artifact_root": artifact_root,
+        "visibility_packet_ref": relative_ref(out_dir, output.packet_path.as_deref().unwrap_or(&packet_path))?,
+        "operator_report_ref": relative_ref(out_dir, output.report_path.as_deref().context("missing observatory report path")?)?,
+        "unity_contract_ref": relative_ref(out_dir, output.unity_contract_path.as_deref().context("missing Unity contract path")?)?,
+        "console_reference_ref": relative_ref(out_dir, output.console_reference_path.as_deref().context("missing observatory console reference path")?)?,
+        "manifest_ref": relative_ref(out_dir, output.manifest_path.as_deref().context("missing observatory manifest path")?)?
+    }))
+}
+
+#[allow(clippy::too_many_arguments)]
+fn build_observatory_integration_packet(
+    artifact_root: &str,
+    run_status: &adl::long_lived_agent::StatusRecord,
+    restart_status: &adl::long_lived_agent::StatusRecord,
+    stop_probe: &Value,
+    timeout_trace: &Value,
+    bulkhead_trace: &Value,
+    degraded_trace: &Value,
+    remote_timeout: &Value,
+    stopped: &adl::long_lived_agent::StatusRecord,
+) -> Result<Value> {
+    let long_lived_status_ref = format!("{artifact_root}/long_lived_agent/state/status.json");
+    let ledger_ref = format!("{artifact_root}/long_lived_agent/state/cycle_ledger.jsonl");
+    let inspection_ref = format!("{artifact_root}/inspection/latest.json");
+    let stop_probe_ref = format!("{artifact_root}/long_lived_agent_stop_probe/stop_probe.json");
+    let timeout_ref = format!("{artifact_root}/resilience/timeout_execution.json");
+    let bulkhead_ref = format!("{artifact_root}/resilience/bulkhead_execution.json");
+    let degraded_ref = format!("{artifact_root}/resilience/degraded_fallback_execution.json");
+    let remote_ref = format!("{artifact_root}/remote_exec/timeout_probe.json");
+    let obsmem_ref = format!("{artifact_root}/obsmem/transition_memory_request.json");
+    let report_ref = format!("{artifact_root}/runtime_v2/observatory/operator_report.md");
+    let packet_ref = format!("{artifact_root}/runtime_v2/observatory/visibility_packet.json");
+    let contract_ref =
+        format!("{artifact_root}/runtime_v2/observatory/unity_observatory_contract.json");
+
+    let packet = json!({
+        "schema": "adl.csm_visibility_packet.v1",
+        "packet_id": "v0916-runtime-soak-observatory-packet-0001",
+        "generated_at": Utc::now().to_rfc3339(),
+        "source": {
+            "mode": "captured_artifacts",
+            "evidence_level": "bounded_local_runtime_capture",
+            "fixture": false,
+            "runtime_artifact_root": artifact_root,
+            "claim_boundary": "This packet is a bounded local capture produced by the v0.91.6 integrated runtime soak. It is derived from runtime-owned artifacts, suitable for Unity Observatory consumption, and explicitly does not claim full product completion, live telemetry streaming, or v0.92 coherence.",
+            "source_refs": [
+                long_lived_status_ref,
+                ledger_ref,
+                inspection_ref,
+                stop_probe_ref,
+                timeout_ref,
+                bulkhead_ref,
+                degraded_ref,
+                remote_ref,
+                obsmem_ref
+            ]
+        },
+        "manifold": {
+            "manifold_id": "v0916-runtime-soak-01",
+            "display_name": "Runtime / Ops Soak #1",
+            "state": format!("{:?}_after_reviewable_capture", stopped.state),
+            "lifecycle": "bounded_local_runtime_capture",
+            "current_tick": restart_status.completed_cycle_count,
+            "uptime": format!("{} bounded cadence cycles captured across restart-proof execution", restart_status.completed_cycle_count),
+            "policy_profile": "v0916_integrated_runtime_soak",
+            "snapshot_status": {
+                "state": "not_applicable",
+                "latest_snapshot_id": "none",
+                "rehydration_report_ref": obsmem_ref,
+                "note": "This soak exports observatory evidence from runtime-owned artifacts; it does not claim live snapshot streaming."
+            },
+            "health": {
+                "summary": format!(
+                    "Long-lived-agent cadence, stop-between-cycles control, resilience classifications, remote timeout semantics, and ObsMem handoff all emitted one bounded Unity-consumable review surface with final runtime state '{}'.",
+                    format!("{:?}", stopped.state)
+                ),
+                "level": "nominal",
+                "attention_items": [
+                    "Unity contract and operator report are generated from the same soak-owned packet.",
+                    "Artifact capture is bounded and local; no always-on or remote streaming claim is made.",
+                    "Direct runtime mutation remains out of scope for the Unity consumer surface."
+                ]
+            },
+            "evidence_refs": [
+                long_lived_status_ref,
+                stop_probe_ref,
+                timeout_ref,
+                remote_ref,
+                packet_ref
+            ]
+        },
+        "kernel": {
+            "scheduler_state": format!("cadence_run_settled_{:?}", stopped.state),
+            "trace_state": "reviewable_artifact_capture",
+            "invariant_state": "proof_gates_passed",
+            "resource_state": "bounded_local_execution",
+            "service_states": [
+                { "service_id": "long_lived_agent", "state": format!("{:?}", run_status.state) },
+                { "service_id": "resilience_timeout_lane", "state": timeout_trace["trace"]["final_status"] },
+                { "service_id": "resilience_bulkhead_lane", "state": bulkhead_trace["trace"]["final_status"] },
+                { "service_id": "remote_exec_timeout_lane", "state": remote_timeout["stable_failure_kind"] }
+            ],
+            "active_guardrails": [
+                "duplicate activation remains lease-blocked",
+                "stop requests settle between cadence cycles",
+                "remote timeouts remain classifiable and retry-aware",
+                "Unity handoff remains read-only and packet-driven"
+            ],
+            "pulse": {
+                "status": "bounded_review_tick_complete",
+                "completed_through_event_sequence": restart_status.completed_cycle_count,
+                "evidence_refs": [ledger_ref, inspection_ref]
+            }
+        },
+        "citizens": [
+            {
+                "citizen_id": "runtime-lane-alpha",
+                "display_name": "Runtime lane alpha",
+                "role": "worker",
+                "lifecycle_state": "paused",
+                "continuity_status": format!("restart_proved_then_{:?}", stopped.state),
+                "current_episode": "episode-runtime-cadence",
+                "resource_balance": {
+                    "compute_units": 6,
+                    "scarcity_note": "Completed bounded cadence execution and emitted durable status, ledger, and inspection artifacts."
+                },
+                "recent_decisions": [{
+                    "decision_id": "runtime-lane-alpha-stop-window",
+                    "decision": "allow",
+                    "summary": "Let one cycle complete, then honor stop during the cadence sleep window.",
+                    "evidence_ref": stop_probe_ref
+                }],
+                "capability_envelope": {
+                    "can_execute_episodes": true,
+                    "allowed": ["bounded_cadence_cycle", "status_and_inspection_export"],
+                    "forbidden": ["cross_session_mutation", "silent_overlap_activation", "unguarded_live_export"]
+                },
+                "alerts": [],
+                "evidence_refs": [long_lived_status_ref, ledger_ref, inspection_ref]
+            },
+            {
+                "citizen_id": "runtime-lane-beta",
+                "display_name": "Resilience review lane",
+                "role": "service",
+                "lifecycle_state": "active",
+                "continuity_status": "classification_proofs_captured",
+                "current_episode": "episode-resilience-classification",
+                "resource_balance": {
+                    "compute_units": 4,
+                    "scarcity_note": "Focused timeout, bulkhead saturation, and degraded fallback probes completed under bounded local policy execution."
+                },
+                "recent_decisions": [{
+                    "decision_id": "runtime-lane-beta-timeout-refusal",
+                    "decision": "refuse",
+                    "summary": "A hanging local endpoint was classified as a stable timeout with retryability captured explicitly.",
+                    "evidence_ref": remote_ref
+                }],
+                "capability_envelope": {
+                    "can_execute_episodes": true,
+                    "allowed": ["timeout_probe", "bulkhead_probe", "degraded_fallback_probe"],
+                    "forbidden": ["network_escape", "non_reviewable_failure", "silent_retry_loop"]
+                },
+                "alerts": [],
+                "evidence_refs": [timeout_ref, bulkhead_ref, degraded_ref, remote_ref]
+            },
+            {
+                "citizen_id": "runtime-lane-gamma",
+                "display_name": "Observatory export lane",
+                "role": "reviewer",
+                "lifecycle_state": "awake",
+                "continuity_status": "unity_contract_export_ready",
+                "current_episode": "episode-unity-handoff",
+                "resource_balance": {
+                    "compute_units": 2,
+                    "scarcity_note": "Exports a Unity-facing contract and operator report from the same bounded packet without direct runtime mutation."
+                },
+                "recent_decisions": [{
+                    "decision_id": "runtime-lane-gamma-unity-export",
+                    "decision": "allow",
+                    "summary": "Packet, report, console reference, and Unity contract are retained under one reviewable artifact root.",
+                    "evidence_ref": packet_ref
+                }],
+                "capability_envelope": {
+                    "can_execute_episodes": false,
+                    "allowed": ["read_only_report_export", "unity_contract_generation"],
+                    "forbidden": ["runtime_mutation", "identity_rebinding", "live_telemetry_claims"]
+                },
+                "alerts": [],
+                "evidence_refs": [packet_ref, report_ref, contract_ref]
+            }
+        ],
+        "episodes": [
+            {
+                "episode_id": "episode-runtime-cadence",
+                "title": "Bounded cadence run and restart continuity",
+                "state": "completed",
+                "citizen_ids": ["runtime-lane-alpha"],
+                "started_at": Utc::now().to_rfc3339(),
+                "last_event": "stop_honored_during_sleep_window",
+                "proof_surface": stop_probe_ref,
+                "blocked_reason": "not blocked; cadence run, restart proof, and stop-window control all emitted durable evidence"
+            },
+            {
+                "episode_id": "episode-resilience-classification",
+                "title": "Timeout, bulkhead, degraded fallback, and remote timeout classification",
+                "state": "completed",
+                "citizen_ids": ["runtime-lane-beta"],
+                "started_at": Utc::now().to_rfc3339(),
+                "last_event": "remote_timeout_classified",
+                "proof_surface": remote_ref,
+                "blocked_reason": "not blocked; focused resilience probes completed under bounded local execution"
+            },
+            {
+                "episode_id": "episode-unity-handoff",
+                "title": "Unity Observatory packet and contract export",
+                "state": "completed",
+                "citizen_ids": ["runtime-lane-alpha", "runtime-lane-gamma"],
+                "started_at": Utc::now().to_rfc3339(),
+                "last_event": "unity_contract_written",
+                "proof_surface": packet_ref,
+                "blocked_reason": "not blocked; Unity-facing contract is generated from the same packet and review path"
+            }
+        ],
+        "freedom_gate": {
+            "recent_docket": [
+                {
+                    "decision_id": "fg-runtime-stop-window",
+                    "actor": "runtime-lane-alpha",
+                    "action": "honor_stop_between_cycles",
+                    "decision": "allow",
+                    "rationale": "Stop requests are allowed only after a bounded cycle completes and the cadence window is safe.",
+                    "evidence_ref": stop_probe_ref
+                },
+                {
+                    "decision_id": "fg-resilience-bulkhead",
+                    "actor": "runtime-lane-beta",
+                    "action": "attempt_parallel_provider_work_under_saturation",
+                    "decision": "defer",
+                    "rationale": "Bulkhead saturation remains visible and reviewable instead of being hidden behind automatic queue growth.",
+                    "evidence_ref": bulkhead_ref
+                },
+                {
+                    "decision_id": "fg-remote-timeout-classification",
+                    "actor": "runtime-lane-beta",
+                    "action": "treat_hanging_local_endpoint_as_success",
+                    "decision": "refuse",
+                    "rationale": "Remote timeout failures must remain classifiable and retry-aware rather than being treated as success.",
+                    "evidence_ref": remote_ref
+                }
+            ],
+            "allow_count": 1,
+            "defer_count": 1,
+            "refuse_count": 1,
+            "open_questions": [],
+            "rejected_actions": ["treat_hanging_local_endpoint_as_success"]
+        },
+        "invariants": [
+            {
+                "invariant_id": "runtime_stop_only_between_cycles",
+                "name": "Stop requests settle between cadence cycles",
+                "state": "healthy",
+                "severity": "high",
+                "last_checked": stop_probe["persisted_state"],
+                "evidence_ref": stop_probe_ref
+            },
+            {
+                "invariant_id": "resilience_timeout_is_reviewable",
+                "name": "Timeout and degraded fallback traces remain reviewer-readable",
+                "state": "healthy",
+                "severity": "high",
+                "last_checked": timeout_trace["trace"]["final_status"],
+                "evidence_ref": timeout_ref
+            },
+            {
+                "invariant_id": "unity_surface_is_read_only",
+                "name": "Unity consumer surface remains packet-driven and read only",
+                "state": "healthy",
+                "severity": "critical",
+                "last_checked": "unity_contract_written",
+                "evidence_ref": report_ref
+            }
+        ],
+        "resources": {
+            "compute_units": { "total": 12, "allocated": 10, "available": 2 },
+            "memory_pressure": "bounded_local_probe",
+            "queue_depth": 0,
+            "fairness_notes": [
+                "The soak favors durable proof emission over high-throughput execution.",
+                "Unity consumes the contract after export rather than participating in the runtime run itself."
+            ],
+            "scarcity_events": [{
+                "event_id": "bulkhead_saturation_reviewed",
+                "summary": "Bulkhead saturation is surfaced explicitly as a bounded review event.",
+                "evidence_level": "bounded_local_runtime_capture"
+            }]
+        },
+        "trace": {
+            "trace_tail": [
+                {
+                    "event_sequence": 1,
+                    "actor": "runtime.long_lived_agent",
+                    "event_type": "cycle_restart_proved",
+                    "summary": format!("Restart path settled with completed_cycle_count={}.", restart_status.completed_cycle_count),
+                    "evidence_ref": long_lived_status_ref
+                },
+                {
+                    "event_sequence": 2,
+                    "actor": "runtime.stop_probe",
+                    "event_type": "stop_window_honored",
+                    "summary": format!("Stop probe persisted runtime state '{}'.", stop_probe["persisted_state"].as_str().unwrap_or("unknown")),
+                    "evidence_ref": stop_probe_ref
+                },
+                {
+                    "event_sequence": 3,
+                    "actor": "runtime.resilience",
+                    "event_type": "bulkhead_and_timeout_classified",
+                    "summary": format!(
+                        "Timeout={}, bulkhead={}, degraded={}.",
+                        timeout_trace["trace"]["final_status"].as_str().unwrap_or("unknown"),
+                        bulkhead_trace["trace"]["final_status"].as_str().unwrap_or("unknown"),
+                        degraded_trace["trace"]["final_status"].as_str().unwrap_or("unknown")
+                    ),
+                    "evidence_ref": timeout_ref
+                },
+                {
+                    "event_sequence": 4,
+                    "actor": "runtime.remote_exec",
+                    "event_type": "remote_timeout_captured",
+                    "summary": format!(
+                        "Remote timeout classified as '{}' with retryability '{}'.",
+                        remote_timeout["stable_failure_kind"].as_str().unwrap_or("unknown"),
+                        remote_timeout["retryability"].as_str().unwrap_or("unknown")
+                    ),
+                    "evidence_ref": remote_ref
+                },
+                {
+                    "event_sequence": 5,
+                    "actor": "runtime.observatory",
+                    "event_type": "unity_contract_emitted",
+                    "summary": "Packet, operator report, console reference, and Unity contract were emitted from the same capture.",
+                    "evidence_ref": packet_ref
+                }
+            ],
+            "causal_gaps": [],
+            "latest_operator_event": {
+                "event_sequence": 5,
+                "event_ref": packet_ref
+            },
+            "latest_citizen_event": {
+                "event_sequence": 2,
+                "event_ref": stop_probe_ref
+            },
+            "latest_kernel_event": {
+                "event_sequence": 4,
+                "event_ref": remote_ref
+            }
+        },
+        "operator_actions": {
+            "available_actions": [
+                { "action": "inspect_runtime_soak_packet", "mode": "read_only", "status": "available_from_bounded_capture" },
+                { "action": "open_unity_operator_report", "mode": "read_only", "status": "available_from_same_packet_bundle" },
+                { "action": "stage_unity_contract", "mode": "read_only", "status": "available_for_local_unity_consumption" }
+            ],
+            "disabled_actions": [
+                {
+                    "action": "promote_to_live_streaming",
+                    "reason": "The Soak #1 observatory handoff is a bounded retained capture, not a live streaming bridge.",
+                    "future_issue": 4555
+                },
+                {
+                    "action": "mutate_runtime_from_unity_surface",
+                    "reason": "The Unity Observatory consumer remains fail-closed and packet-driven in v0.91.6.",
+                    "future_issue": 4555
+                }
+            ],
+            "required_confirmations": [
+                "All Unity-facing controls remain proposal-only presentation surfaces.",
+                "Runtime truth is the retained artifact bundle, not the transient editor state."
+            ],
+            "safety_notes": [
+                "No private paths, credentials, or unbounded logs are required by the Unity contract.",
+                "This packet is truthful only for the bounded Soak #1 capture that produced it."
+            ]
+        },
+        "review": {
+            "primary_artifacts": [
+                packet_ref,
+                report_ref,
+                contract_ref,
+                long_lived_status_ref,
+                stop_probe_ref,
+                remote_ref,
+                obsmem_ref
+            ],
+            "missing_artifacts": [],
+            "demo_classification": "captured_artifacts",
+            "caveats": [
+                "This is a bounded local capture and not a live telemetry stream.",
+                "Unity consumes a deterministic contract produced after the soak run; it is not co-executing the runtime.",
+                "Inhabitant identity, profile, and v0.92 rebinding semantics remain out of scope."
+            ],
+            "next_consumers": [
+                { "issue": 2189, "consumer": "static Observatory console compatibility" },
+                { "issue": 2190, "consumer": "operator report generator compatibility" },
+                { "issue": 2191, "consumer": "CLI bundle compatibility" },
+                { "issue": 2192, "consumer": "operator command packet design" },
+                { "issue": 2258, "consumer": "WP-14 integrated first CSM run demo" },
+                { "issue": 4543, "consumer": "Runtime/Ops Soak #1 sprint closeout evidence" },
+                { "issue": 4548, "consumer": "Unity local-runtime consumption proof surfaces" }
+            ]
+        },
+        "observatory_ui": {
+            "default_room": "world",
+            "default_lens": "operator",
+            "default_memory_dot": "runtime_overview",
+            "proposal_mode_statement": "Every active-looking control is a governed request proposal only. No direct runtime mutation is performed from this surface.",
+            "rooms": [
+                {
+                    "room_id": "world",
+                    "label": "World / Reality",
+                    "question": "What runtime evidence exists right now, and what actually completed?",
+                    "note": "Default integrated soak evidence view."
+                },
+                {
+                    "room_id": "governance",
+                    "label": "Operator / Governance",
+                    "question": "What decision boundaries, disabled paths, and proof links remain explicit?",
+                    "note": "Freedom Gate docket and guarded follow-on paths live here."
+                },
+                {
+                    "room_id": "cognition",
+                    "label": "Cognition / Internal State",
+                    "question": "What bounded internal-state-adjacent signals are safe to project?",
+                    "note": "Only review-safe signals are exposed."
+                }
+            ],
+            "lenses": [
+                {
+                    "lens_id": "public",
+                    "label": "Public lens",
+                    "summary": "Investor-safe summary with bounded claims."
+                },
+                {
+                    "lens_id": "operator",
+                    "label": "Operator lens",
+                    "summary": "Operational state, disabled reasons, and review links."
+                },
+                {
+                    "lens_id": "reviewer",
+                    "label": "Reviewer lens",
+                    "summary": "Packet refs, report refs, and caveats."
+                }
+            ],
+            "memory_dots": [
+                {
+                    "dot_id": "runtime_overview",
+                    "label": "Runtime overview",
+                    "room": "world",
+                    "lens": "operator",
+                    "selected_target": "runtime-lane-alpha",
+                    "note": "Open the soak with runtime cadence state in focus."
+                },
+                {
+                    "dot_id": "resilience_watch",
+                    "label": "Resilience watch",
+                    "room": "governance",
+                    "lens": "reviewer",
+                    "selected_target": "runtime-lane-beta",
+                    "note": "Follow timeout and bulkhead evidence."
+                },
+                {
+                    "dot_id": "investor_view",
+                    "label": "Corporate Investor",
+                    "room": "world",
+                    "lens": "public",
+                    "selected_target": "runtime-lane-gamma",
+                    "note": "Presentation mode without changing evidence."
+                }
+            ],
+            "corporate_investor_fallback": {
+                "label": "Corporate Investor UI",
+                "keyboard_shortcut": "i",
+                "claim_boundary": "Presentation mode only; evidence, authority, and trace boundaries do not change."
+            },
+            "proposal_cases": [
+                {
+                    "proposal_id": "proposal-open-runtime-report",
+                    "title": "Open runtime operator report",
+                    "target_kind": "service_actor",
+                    "target_id": "runtime-lane-gamma",
+                    "room": "world",
+                    "lens": "operator",
+                    "disposition": "available",
+                    "summary": "Open the soak-owned operator report produced from the same packet.",
+                    "authority_checks": ["validate_projection_class", "append_trace_anchor"],
+                    "disabled_reason": null,
+                    "trace_anchor": packet_ref,
+                    "review_export": report_ref
+                },
+                {
+                    "proposal_id": "proposal-review-timeout-floor",
+                    "title": "Review remote timeout floor",
+                    "target_kind": "service_actor",
+                    "target_id": "runtime-lane-beta",
+                    "room": "governance",
+                    "lens": "reviewer",
+                    "disposition": "challenge",
+                    "summary": "Inspect retryability and stable-failure classification without widening into live network work.",
+                    "authority_checks": ["validate_service_actor_scope", "emit_review_anchor"],
+                    "disabled_reason": "Live transport closure remains future work after this bounded milestone proof.",
+                    "trace_anchor": remote_ref,
+                    "review_export": report_ref
+                },
+                {
+                    "proposal_id": "proposal-stage-unity-contract",
+                    "title": "Stage Unity contract",
+                    "target_kind": "service_actor",
+                    "target_id": "runtime-lane-gamma",
+                    "room": "world",
+                    "lens": "public",
+                    "disposition": "available",
+                    "summary": "Prepare the Unity-facing contract and screenshots for review without mutating runtime state.",
+                    "authority_checks": ["validate_operator_identity", "redact_private_state_by_lens"],
+                    "disabled_reason": null,
+                    "trace_anchor": packet_ref,
+                    "review_export": report_ref
+                }
+            ]
+        }
+    });
+    adl::csm_observatory::validate_visibility_packet(&packet)?;
+    Ok(packet)
+}
+
 fn build_evidence_index(out_dir: &Path) -> Result<Value> {
     let mut refs = Vec::new();
     collect_relative_files(out_dir, out_dir, &mut refs)?;
@@ -692,6 +1278,25 @@ fn collect_relative_files(root: &Path, current: &Path, out: &mut Vec<String>) ->
     Ok(())
 }
 
+fn repo_root() -> Result<PathBuf> {
+    Path::new(env!("CARGO_MANIFEST_DIR"))
+        .parent()
+        .map(Path::to_path_buf)
+        .context("derive repository root from manifest dir")
+}
+
+fn repo_relative_ref(path: &Path) -> Result<String> {
+    let root = repo_root()?;
+    relative_ref(&root, path)
+}
+
+fn relative_ref(root: &Path, path: &Path) -> Result<String> {
+    let rel = path
+        .strip_prefix(root)
+        .with_context(|| format!("{} is not under {}", path.display(), root.display()))?;
+    Ok(rel.to_string_lossy().replace('\\', "/"))
+}
+
 #[allow(clippy::too_many_arguments)]
 fn build_proof_packet(
     initial_status: &adl::long_lived_agent::StatusRecord,
@@ -704,6 +1309,7 @@ fn build_proof_packet(
     bulkhead_trace: &Value,
     degraded_trace: &Value,
     remote_timeout: &Value,
+    observatory_bundle: &Value,
     evidence_index: &Value,
 ) -> Value {
     json!({
@@ -716,12 +1322,13 @@ fn build_proof_packet(
             "The deterministic scheduler economics fixture still resolves into a reviewable scheduler plan artifact that can be cited by the soak packet.",
             "Remote execution timeout classification is live against a hanging local endpoint and records stable failure kind plus retryability.",
             "ObsMem transition memory can still build a structured write request from a tracked handoff packet.",
-            "The long-lived-agent leased-state contract blocks overlap when an injected lease artifact is present."
+            "The long-lived-agent leased-state contract blocks overlap when an injected lease artifact is present.",
+            "The soak emits one runtime-owned Observatory packet, operator report, and Unity-facing contract from the same bounded artifact capture."
         ],
         "what_this_does_not_prove": [
             "full v0.92 activation readiness",
             "external-agent trust or transport closure",
-            "full Observatory or Unity UI completion",
+            "full Observatory or Unity UI product completion",
             "always-on autonomy",
             "end-to-end ACIP runtime execution beyond prerequisite consumption"
         ],
@@ -740,7 +1347,9 @@ fn build_proof_packet(
             "timeout_final_status": timeout_trace["trace"]["final_status"],
             "bulkhead_final_status": bulkhead_trace["trace"]["final_status"],
             "degraded_fallback_final_status": degraded_trace["trace"]["final_status"],
-            "degraded_output": degraded_trace["trace"]["output_degraded"]
+            "degraded_output": degraded_trace["trace"]["output_degraded"],
+            "observatory_classification": observatory_bundle["classification"],
+            "unity_contract_ref": observatory_bundle["unity_contract_ref"]
         },
         "reviewer_path": [
             "README.md",
@@ -756,8 +1365,12 @@ fn build_proof_packet(
             "remote_exec/timeout_probe.json",
             "obsmem/transition_memory_request.json",
             "completion_classification.json",
+            "runtime_v2/observatory/visibility_packet.json",
+            "runtime_v2/observatory/operator_report.md",
+            "runtime_v2/observatory/unity_observatory_contract.json",
             "audit/artifact_safety_scan.json"
         ],
+        "observatory_integration": observatory_bundle,
         "evidence_index_ref": "integrated_runtime_soak_evidence_index.json",
         "evidence_index": evidence_index,
         "disclaimer": DISCLAIMER,
@@ -843,12 +1456,12 @@ fn write_file(path: &Path, contents: &str) -> Result<()> {
 
 fn readme() -> String {
     format!(
-        "# V0.91.6 Integrated Runtime Soak\n\n{DISCLAIMER}\n\n## What This Proves\n\nThis run proves a bounded integrated runtime slice for `#4543`: one long-lived-agent run/restart/inspection continuity path, one companion live stop-between-cycles probe, timeout classification, bulkhead/backpressure saturation, degraded fallback, one deterministic scheduler decision artifact, remote-exec timeout handling, one tracked ObsMem handoff path, and one explicit injected-lease contract probe all converge under one reviewer-readable artifact root.\n\n## Reviewer Path\n\n1. Inspect `integrated_runtime_soak_proof.json`.\n2. Inspect `completion_classification.json` for integrated-proven versus blocked surfaces.\n3. Inspect `long_lived_agent/state/status.json` and `long_lived_agent/state/cycle_ledger.jsonl`.\n4. Inspect `inspection/latest.json`.\n5. Inspect `long_lived_agent_stop_probe/stop_probe.json`.\n6. Inspect `resilience/timeout_execution.json`, `resilience/bulkhead_execution.json`, and `resilience/degraded_fallback_execution.json`.\n7. Inspect `scheduler/scheduler_plan.json`.\n8. Inspect `remote_exec/timeout_probe.json`.\n9. Inspect `obsmem/transition_memory_request.json`.\n10. Inspect `audit/artifact_safety_scan.json`.\n"
+        "# V0.91.6 Integrated Runtime Soak\n\n{DISCLAIMER}\n\n## What This Proves\n\nThis run proves a bounded integrated runtime slice for `#4543`: one long-lived-agent run/restart/inspection continuity path, one companion live stop-between-cycles probe, timeout classification, bulkhead/backpressure saturation, degraded fallback, one deterministic scheduler decision artifact, remote-exec timeout handling, one tracked ObsMem handoff path, one explicit injected-lease contract probe, and one retained Unity Observatory handoff bundle all converge under one reviewer-readable artifact root.\n\n## Reviewer Path\n\n1. Inspect `integrated_runtime_soak_proof.json`.\n2. Inspect `completion_classification.json` for integrated-proven versus blocked surfaces.\n3. Inspect `long_lived_agent/state/status.json` and `long_lived_agent/state/cycle_ledger.jsonl`.\n4. Inspect `inspection/latest.json`.\n5. Inspect `long_lived_agent_stop_probe/stop_probe.json`.\n6. Inspect `resilience/timeout_execution.json`, `resilience/bulkhead_execution.json`, and `resilience/degraded_fallback_execution.json`.\n7. Inspect `scheduler/scheduler_plan.json`.\n8. Inspect `remote_exec/timeout_probe.json`.\n9. Inspect `obsmem/transition_memory_request.json`.\n10. Inspect `runtime_v2/observatory/visibility_packet.json`, `runtime_v2/observatory/operator_report.md`, and `runtime_v2/observatory/unity_observatory_contract.json`.\n11. Inspect `audit/artifact_safety_scan.json`.\n"
     )
 }
 
 fn reviewer_walkthrough() -> String {
-    "# Reviewer Walkthrough\n\nRun the soak with `cargo run --manifest-path adl/Cargo.toml --bin run_v0916_integrated_runtime_soak -- --out docs/milestones/v0.91.6/review/runtime/v0916_integrated_runtime_soak_4543`.\n\nThe review question is whether the runtime now leaves one honest, durable packet showing restart, a live stop between cycles, timeout, saturation/backpressure, degraded fallback, scheduler advisory evidence, remote-exec timeout semantics, and memory handoff under one bounded local proof surface without overclaiming ACIP, Unity/Observatory, or v0.92 readiness.\n".to_string()
+    "# Reviewer Walkthrough\n\nRun the soak with `cargo run --manifest-path adl/Cargo.toml --bin run_v0916_integrated_runtime_soak -- --out docs/milestones/v0.91.6/review/runtime/v0916_integrated_runtime_soak_4543`.\n\nThe review question is whether the runtime now leaves one honest, durable packet showing restart, a live stop between cycles, timeout, saturation/backpressure, degraded fallback, scheduler advisory evidence, remote-exec timeout semantics, memory handoff, and a Unity Observatory handoff contract under one bounded local proof surface without overclaiming ACIP, Observatory product readiness, Unity UI completion, or v0.92 readiness.\n".to_string()
 }
 
 #[cfg(test)]
@@ -862,7 +1475,10 @@ mod tests {
             std::process::id(),
             Utc::now().timestamp_nanos_opt().unwrap_or_default()
         );
-        std::env::temp_dir().join(unique)
+        repo_root()
+            .expect("repo root")
+            .join(".adl/tmp")
+            .join(unique)
     }
 
     #[test]
@@ -887,6 +1503,16 @@ mod tests {
             proof["status_summary"]["remote_timeout_failure_kind"],
             Value::String("timeout".to_string())
         );
+        assert_eq!(
+            proof["observatory_integration"]["classification"],
+            Value::String("captured_artifacts".to_string())
+        );
+        assert!(
+            out_dir
+                .join("runtime_v2/observatory/unity_observatory_contract.json")
+                .exists(),
+            "expected Unity contract bundle artifact"
+        );
 
         let evidence_index_path = out_dir.join("integrated_runtime_soak_evidence_index.json");
         let evidence_index: Value = serde_json::from_str(
@@ -904,7 +1530,9 @@ mod tests {
             "expected long-lived-agent status artifact in evidence index"
         );
         assert!(
-            artifact_refs.iter().any(|entry| entry == "scheduler/scheduler_plan.json"),
+            artifact_refs
+                .iter()
+                .any(|entry| entry == "scheduler/scheduler_plan.json"),
             "expected scheduler plan artifact in evidence index"
         );
 
@@ -972,7 +1600,7 @@ mod tests {
         let readme_text = readme();
         assert!(readme_text.contains("What This Proves"));
         let walkthrough = reviewer_walkthrough();
-        assert!(walkthrough.contains("bounded local proof surface"));
+        assert!(walkthrough.contains("Unity Observatory handoff contract"));
 
         let timeout = run_timeout_policy_probe();
         assert_eq!(

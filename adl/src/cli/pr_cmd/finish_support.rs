@@ -4340,6 +4340,33 @@ pub(super) fn run_finish_validation_rust(
                     let script = repo_root.join("adl/tools/test_v0916_unity_observatory_contract.sh");
                     run_finish_validation_status("bash", &[path_str(&script)?])?;
                 }
+                "bash -n adl/tools/test_v0916_unity_observatory_unity65_smoke.sh && bash adl/tools/test_v0916_unity_observatory_baseline.sh && bash adl/tools/test_v0916_unity_observatory_contract.sh && bash adl/tools/test_v0916_unity_observatory_soak_integration.sh && cargo test --manifest-path adl/Cargo.toml --test cli_smoke csm_observatory_cli_writes_unity_contract_bundle_and_matches_seeded_resource -- --nocapture" => {
+                    let unity65_smoke =
+                        repo_root.join("adl/tools/test_v0916_unity_observatory_unity65_smoke.sh");
+                    run_finish_validation_status("bash", &["-n", path_str(&unity65_smoke)?])?;
+                    let baseline =
+                        repo_root.join("adl/tools/test_v0916_unity_observatory_baseline.sh");
+                    run_finish_validation_status("bash", &[path_str(&baseline)?])?;
+                    let contract =
+                        repo_root.join("adl/tools/test_v0916_unity_observatory_contract.sh");
+                    run_finish_validation_status("bash", &[path_str(&contract)?])?;
+                    let soak_integration = repo_root
+                        .join("adl/tools/test_v0916_unity_observatory_soak_integration.sh");
+                    run_finish_validation_status("bash", &[path_str(&soak_integration)?])?;
+                    run_finish_validation_status(
+                        "cargo",
+                        &[
+                            "test",
+                            "--manifest-path",
+                            path_str(&manifest)?,
+                            "--test",
+                            "cli_smoke",
+                            "csm_observatory_cli_writes_unity_contract_bundle_and_matches_seeded_resource",
+                            "--",
+                            "--nocapture",
+                        ],
+                    )?;
+                }
                 "bash adl/tools/test_slow_proof_lane_contract.sh" => {
                     let script = repo_root.join("adl/tools/test_slow_proof_lane_contract.sh");
                     run_finish_validation_status("bash", &[path_str(&script)?])?;

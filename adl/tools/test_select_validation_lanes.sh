@@ -455,6 +455,7 @@ PY
 unity_observatory="$TMP/unity-observatory.txt"
 cat >"$unity_observatory" <<'EOF'
 M	adl/tools/test_v0916_unity_observatory_contract.sh
+M	adl/tools/test_v0916_unity_observatory_soak_integration.sh
 M	adl/tools/test_v0916_unity_observatory_unity65_smoke.sh
 M	demos/v0.91.6/unity-observatory/Assets/Resources/observatory_contract.json
 M	demos/v0.91.6/unity-observatory/Assets/Scripts/UnityObservatoryBootstrap.cs
@@ -476,6 +477,7 @@ assert lane["owner"] == "review"
 assert "bash -n adl/tools/test_v0916_unity_observatory_unity65_smoke.sh" in lane["command"]
 assert "test_v0916_unity_observatory_baseline.sh" in lane["command"]
 assert "test_v0916_unity_observatory_contract.sh" in lane["command"]
+assert "test_v0916_unity_observatory_soak_integration.sh" in lane["command"]
 assert "csm_observatory_cli_writes_unity_contract_bundle" in lane["command"]
 PY
 

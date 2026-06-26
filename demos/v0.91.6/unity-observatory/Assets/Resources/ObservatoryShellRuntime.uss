@@ -1,39 +1,154 @@
 .observatory-screen {
   flex-grow: 1;
-  padding: 18px;
-  background-color: rgb(5, 8, 18);
+  padding-left: 24px;
+  padding-right: 24px;
+  padding-top: 24px;
+  padding-bottom: 24px;
+  background-color: rgb(6, 10, 22);
   color: rgb(232, 238, 255);
 }
 
 .observatory-shell {
   flex-grow: 1;
   flex-direction: column;
-  background-color: rgb(11, 15, 28);
+  border-top-left-radius: 18px;
+  border-top-right-radius: 18px;
+  border-bottom-left-radius: 18px;
+  border-bottom-right-radius: 18px;
+  border-left-width: 1px;
+  border-right-width: 1px;
+  border-top-width: 1px;
+  border-bottom-width: 1px;
+  border-left-color: rgba(118, 160, 255, 0.22);
+  border-right-color: rgba(118, 160, 255, 0.22);
+  border-top-color: rgba(118, 160, 255, 0.22);
+  border-bottom-color: rgba(118, 160, 255, 0.22);
+  background-color: rgba(10, 16, 34, 0.96);
 }
 
 .header {
-  padding-bottom: 16px;
+  padding-left: 24px;
+  padding-right: 24px;
+  padding-top: 24px;
+  padding-bottom: 18px;
+  border-bottom-width: 1px;
+  border-bottom-color: rgba(118, 160, 255, 0.18);
+}
+
+#eyebrow {
+  color: rgb(119, 168, 255);
+  font-size: 11px;
+  -unity-font-style: bold;
+  margin-bottom: 6px;
 }
 
 #title {
-  color: rgb(245, 248, 255);
-  font-size: 24px;
+  color: rgb(247, 249, 255);
+  font-size: 30px;
+  margin-bottom: 4px;
 }
 
 #subtitle {
+  color: rgb(178, 194, 236);
+  font-size: 14px;
+  margin-bottom: 10px;
+}
+
+#headline-summary {
+  color: rgb(214, 223, 247);
+  font-size: 15px;
+  margin-bottom: 18px;
+}
+
+.metric-rail {
+  flex-direction: row;
+  flex-wrap: wrap;
+  margin-left: -5px;
+  margin-right: -5px;
+}
+
+.metric-tile {
+  min-width: 150px;
+  flex-grow: 1;
+  margin-left: 5px;
+  margin-right: 5px;
+  margin-bottom: 10px;
+  padding-left: 14px;
+  padding-right: 14px;
+  padding-top: 12px;
+  padding-bottom: 12px;
+  border-top-left-radius: 12px;
+  border-top-right-radius: 12px;
+  border-bottom-left-radius: 12px;
+  border-bottom-right-radius: 12px;
+  border-left-width: 1px;
+  border-right-width: 1px;
+  border-top-width: 1px;
+  border-bottom-width: 1px;
+  border-left-color: rgba(118, 160, 255, 0.16);
+  border-right-color: rgba(118, 160, 255, 0.16);
+  border-top-color: rgba(118, 160, 255, 0.16);
+  border-bottom-color: rgba(118, 160, 255, 0.16);
+  background-color: rgba(18, 27, 51, 0.9);
+}
+
+.metric-label {
+  color: rgb(141, 161, 214);
+  font-size: 11px;
+  margin-bottom: 4px;
+}
+
+.metric-value {
+  color: rgb(247, 249, 255);
+  font-size: 22px;
+  margin-bottom: 4px;
+}
+
+.metric-note {
   color: rgb(171, 186, 224);
-  font-size: 13px;
+  font-size: 11px;
 }
 
 .body {
   flex-grow: 1;
   flex-direction: row;
+  padding-left: 24px;
+  padding-right: 24px;
+  padding-top: 22px;
+  padding-bottom: 16px;
 }
 
 .navigation {
-  width: 180px;
-  padding-right: 12px;
-  color: rgb(171, 186, 224);
+  width: 220px;
+  min-width: 220px;
+  margin-right: 18px;
+  padding-left: 14px;
+  padding-right: 14px;
+  padding-top: 14px;
+  padding-bottom: 14px;
+  border-top-left-radius: 14px;
+  border-top-right-radius: 14px;
+  border-bottom-left-radius: 14px;
+  border-bottom-right-radius: 14px;
+  background-color: rgba(14, 20, 39, 0.88);
+}
+
+#nav-title {
+  color: rgb(240, 245, 255);
+  margin-bottom: 12px;
+}
+
+#nav-section {
+  color: rgb(112, 164, 255);
+  margin-top: 8px;
+  margin-bottom: 6px;
+}
+
+.room,
+.lens {
+  color: rgb(194, 205, 233);
+  margin-left: 4px;
+  margin-bottom: 4px;
 }
 
 .content {
@@ -42,13 +157,154 @@
 }
 
 .card {
-  padding: 14px;
-  margin-bottom: 14px;
-  background-color: rgb(18, 24, 42);
+  padding-left: 16px;
+  padding-right: 16px;
+  padding-top: 16px;
+  padding-bottom: 16px;
+  margin-bottom: 12px;
+  border-top-left-radius: 14px;
+  border-top-right-radius: 14px;
+  border-bottom-left-radius: 14px;
+  border-bottom-right-radius: 14px;
+  border-left-width: 1px;
+  border-right-width: 1px;
+  border-top-width: 1px;
+  border-bottom-width: 1px;
+  border-left-color: rgba(121, 163, 255, 0.13);
+  border-right-color: rgba(121, 163, 255, 0.13);
+  border-top-color: rgba(121, 163, 255, 0.13);
+  border-bottom-color: rgba(121, 163, 255, 0.13);
+  background-color: rgba(18, 25, 46, 0.94);
   color: rgb(232, 238, 255);
 }
 
+.section-title {
+  color: rgb(244, 247, 255);
+  font-size: 18px;
+  margin-bottom: 10px;
+}
+
+.stat-row {
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 6px;
+  padding-bottom: 4px;
+  border-bottom-width: 1px;
+  border-bottom-color: rgba(255, 255, 255, 0.04);
+}
+
+.stat-label {
+  color: rgb(151, 171, 221);
+  font-size: 12px;
+}
+
+.stat-value {
+  color: rgb(232, 238, 255);
+  font-size: 12px;
+  max-width: 66%;
+  -unity-text-align: middle-right;
+}
+
+.status-pill,
+.observability-pill,
+.readiness-pill,
+.inhabitant-pill,
+.boundary-pill,
+.contract-pill,
+.investor-pill,
+.attention-pill {
+  align-self: flex-start;
+  padding-left: 10px;
+  padding-right: 10px;
+  padding-top: 4px;
+  padding-bottom: 4px;
+  margin-bottom: 8px;
+  border-top-left-radius: 999px;
+  border-top-right-radius: 999px;
+  border-bottom-left-radius: 999px;
+  border-bottom-right-radius: 999px;
+  background-color: rgba(101, 145, 244, 0.18);
+  color: rgb(209, 225, 255);
+  font-size: 11px;
+}
+
+.status-pill {
+  background-color: rgba(72, 196, 140, 0.18);
+  color: rgb(177, 244, 207);
+}
+
+.observability-pill,
+.contract-pill {
+  background-color: rgba(79, 164, 255, 0.18);
+}
+
+.readiness-pill {
+  background-color: rgba(208, 159, 54, 0.2);
+  color: rgb(251, 223, 163);
+}
+
+.inhabitant-pill {
+  background-color: rgba(142, 109, 255, 0.2);
+  color: rgb(225, 212, 255);
+}
+
+.boundary-pill,
+.attention-pill {
+  background-color: rgba(255, 120, 120, 0.16);
+  color: rgb(255, 207, 207);
+}
+
+.investor-pill {
+  background-color: rgba(113, 196, 255, 0.17);
+}
+
+.attention-row {
+  flex-direction: row;
+  align-items: flex-start;
+  margin-bottom: 8px;
+}
+
+.attention-text {
+  flex-grow: 1;
+  color: rgb(222, 229, 247);
+  margin-left: 8px;
+}
+
+#world-question,
+#readiness-check,
+#inhabitant-label {
+  color: rgb(240, 245, 255);
+}
+
+#world-note,
+#world-lens-summary,
+#status-snapshot-note,
+#observability-boundary,
+#observability-private-state,
+#readiness-boundary,
+#readiness-note,
+#inhabitant-capability,
+#inhabitant-alert-summary,
+#inhabitant-identity-boundary,
+#boundary-body,
+#boundary-caveat,
+#packet-note,
+#proposal-mode,
+#observability-findings-disposition {
+  color: rgb(207, 217, 241);
+}
+
 .footer {
-  padding-top: 16px;
-  color: rgb(171, 186, 224);
+  padding-left: 24px;
+  padding-right: 24px;
+  padding-top: 14px;
+  padding-bottom: 18px;
+  border-top-width: 1px;
+  border-top-color: rgba(118, 160, 255, 0.14);
+}
+
+#footer-line {
+  color: rgb(164, 180, 221);
+  font-size: 13px;
 }
