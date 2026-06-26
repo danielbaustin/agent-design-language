@@ -23,14 +23,22 @@ This bounded scaffold still does not claim:
 - identity-safe inhabitant/profile closure
 - production Observatory readiness
 
-Those remain owned by downstream runtime/demo integration work. WP-09 closeout
-truth itself is now complete through `#3974`.
+Direct live runtime/network ingestion remains owned by downstream runtime/demo
+integration work. WP-09 closeout truth itself is now complete through `#3974`.
 
 Update for `#4032`: the scaffold now includes one deterministic Unity-facing
 contract seed at `Assets/Resources/observatory_contract.json`, derived from the
 same governed Observatory packet family and loaded through Unity `Resources`
 instead of private machine-local paths. The same contract is emitted by the ADL
 Observatory bundle as `unity_observatory_contract.json`.
+
+Update for `#4548`: the Unity 6.5 proof lane now also verifies one explicitly
+local runtime-derived contract path by generating a fresh
+`unity_observatory_contract.json` from
+`adl/tests/fixtures/runtime_v2/observatory/visibility_packet.json`, staging it
+into a disposable Unity project copy, and proving the runtime shell renders the
+runtime-derived title, packet ref, artifact root, report ref, and evidence
+level instead of the older canned seeded contract.
 
 ## Purpose
 
@@ -116,9 +124,11 @@ security-consumption posture explicit through repository-relative proof refs for
 - the issue-owned reviewer packet
   `docs/milestones/v0.91.6/review/observatory/UNITY_OBSERVATORY_LOGGING_OTEL_SECURITY_CONSUMPTION_4034.md`
 
-The current checked-in contract and Unity shell now render this as a governed
+The checked-in contract and Unity shell now render this as a governed
 observability/security card when that contract section is actually present, so
 reviewers can inspect the non-claim boundary without opening raw runtime logs.
+The `#4548` local-runtime proof keeps that same shell path intact while swapping
+in the runtime-derived local contract only inside the disposable staged project.
 
 ### Non-authoritative boundary
 
@@ -172,6 +182,21 @@ Current contract-backed behavior:
   private-state posture from the same contract
 - no live runtime mutation, snapshot, or profile inspection is performed
 
+Current local-runtime proof behavior for `#4548`:
+
+- ADL generates a fresh Unity Observatory contract bundle from
+  `adl/tests/fixtures/runtime_v2/observatory/visibility_packet.json`
+- the Unity smoke lane stages that generated contract into a disposable Unity
+  project copy
+- the batch validator proves the runtime shell rendered:
+  - title `Prototype CSM 01`
+  - packet ref `adl/tests/fixtures/runtime_v2/observatory/visibility_packet.json`
+  - artifact root `runtime_v2`
+  - operator report ref `runtime_v2/observatory/operator_report.md`
+  - evidence-level note `artifact_backed_fixture`
+- the checked-in project seed remains unchanged; only the staged proof copy is
+  replaced for this validation lane
+
 ## Validation Entry Points
 
 Focused proof that already exists for the bounded Observatory packet contract:
@@ -208,6 +233,12 @@ Focused Unity 6.5 working-scene smoke proof for this issue:
 
 ```bash
 bash adl/tools/test_v0916_unity_observatory_unity65_smoke.sh
+```
+
+Focused Unity 6.5 local-runtime consumption proof for `#4548`:
+
+```bash
+bash adl/tools/test_v0916_unity_observatory_local_runtime_consumption.sh
 ```
 
 Focused O-04 review packet inspection:
@@ -258,6 +289,11 @@ This means the checked-in Unity Observatory demo now retains a proved
 Unity `2022.3.x` compatibility fallback while also carrying a focused
 Unity `6000.5.1f1` working-scene migration proof. It still does not claim a
 player build or broader production readiness.
+
+With `#4548`, the bounded Unity 6.5 proof now also shows the runtime shell can
+consume an explicitly local runtime-derived Observatory contract rather than
+only the older canned seed, while still stopping short of live runtime/network
+ingestion claims.
 
 ## Non-Claims
 

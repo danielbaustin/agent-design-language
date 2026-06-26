@@ -2,7 +2,7 @@
 
 ## Status
 
-Current through ADL issue `#4529`.
+Current through ADL issue `#4548`.
 
 ## Project Surface
 
@@ -34,6 +34,11 @@ The Unity-facing contract seed now lives at:
 This seed is the checked-in reference copy of the same bounded contract family
 that ADL emits as `unity_observatory_contract.json` in the Observatory CLI
 bundle.
+
+For `#4548`, the proof lane now also stages one explicitly local runtime-derived
+bundle into a disposable Unity project copy before batch validation. The
+checked-in seed remains the normal project baseline; the runtime-derived swap is
+proof-only.
 
 ## Launch Wiring
 
@@ -93,6 +98,26 @@ checked-in Unity contract resource, and executes
 `UnityObservatoryBootstrap` and that the Observatory shell builds the expected
 title, packet-contract, and observability surfaces.
 
+Deterministic Unity 6.5 local-runtime consumption proof: passed by
+`bash adl/tools/test_v0916_unity_observatory_local_runtime_consumption.sh`,
+which:
+
+- generates a fresh Observatory bundle from
+  `adl/tests/fixtures/runtime_v2/observatory/visibility_packet.json`
+- stages `unity_observatory_contract.json` into a disposable Unity project copy
+- runs the Unity batch validator against that staged project
+- asserts the runtime shell renders:
+  - title `Prototype CSM 01`
+  - packet ref
+    `adl/tests/fixtures/runtime_v2/observatory/visibility_packet.json`
+  - artifact root `runtime_v2`
+  - report ref `runtime_v2/observatory/operator_report.md`
+  - evidence-level note `artifact_backed_fixture`
+
+This proof shows the Unity shell consumes an explicitly local runtime-derived
+contract instead of only the older canned checked-in seed, while still stopping
+short of live runtime/network ingestion claims.
+
 Observability/security consumption proof: carried by the contract and reviewed
 in
 `docs/milestones/v0.91.6/review/observatory/UNITY_OBSERVATORY_LOGGING_OTEL_SECURITY_CONSUMPTION_4034.md`.
@@ -121,9 +146,11 @@ C# compiler validation outside Unity: not run.
 
 ## Known Limitations
 
-- The shell loads a checked-in Unity-facing contract seed rather than parsing
-  the full governed packet directly inside Unity.
-- No live Runtime v2 or ADL runtime API integration is claimed.
+- The shell still loads a Unity-facing contract bundle rather than parsing the
+  full governed packet directly inside Unity.
+- The `#4548` proof swaps in a freshly generated local runtime-derived contract
+  only inside a disposable staged project; it does not claim direct live
+  Runtime v2 or ADL runtime API integration inside the checked-in scene.
 - No live OpenTelemetry collector or exporter integration is claimed.
 - No inhabitant-safe identity/profile closure beyond redacted lane projections is claimed.
 - The working-scene proof is limited to the checked-in scene and shell surface;
