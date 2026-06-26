@@ -2264,6 +2264,20 @@ pub(super) fn select_finish_validation_plan_for_finish(
     if finish_paths_need_github_projection_watch_validation(changed_paths) {
         return Ok(build_github_projection_watch_validation_plan());
     }
+
+    let changed_paths_need_finish_rust_validation = changed_paths
+        .iter()
+        .any(|path| finish_path_needs_pr_finish_rust_focused_validation(path));
+    let finish_profile_result =
+        load_finish_validation_profile_for_execution(&repo_root()?, changed_paths);
+    if !changed_paths_need_finish_rust_validation {
+        if let Ok(finish_profile) = &finish_profile_result {
+            if let Some(plan) = profile_backed_finish_validation_plan(finish_profile) {
+                return Ok(plan);
+            }
+        }
+    }
+
     if finish_issue_needs_unity_observatory_scaffold_validation(issue_number, changed_paths) {
         return Ok(build_unity_observatory_scaffold_validation_plan(
             changed_paths,
@@ -2277,8 +2291,7 @@ pub(super) fn select_finish_validation_plan_for_finish(
     if finish_issue_needs_html_observatory_validation(issue_number, changed_paths) {
         return Ok(build_html_observatory_validation_plan(changed_paths));
     }
-    let finish_profile =
-        load_finish_validation_profile_for_execution(&repo_root()?, changed_paths)?;
+    let finish_profile = finish_profile_result?;
     if let Some(plan) = profile_backed_finish_validation_plan(&finish_profile) {
         return Ok(plan);
     }
