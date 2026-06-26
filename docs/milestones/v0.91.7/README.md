@@ -83,6 +83,7 @@ Every surface must exit as one of:
 - Design: [DESIGN_v0.91.7.md](DESIGN_v0.91.7.md)
 - Decisions: [DECISIONS_v0.91.7.md](DECISIONS_v0.91.7.md)
 - Sprint plan: [SPRINT_PLAN_v0.91.7.md](SPRINT_PLAN_v0.91.7.md)
+- Runtime Soak #2 packet: [RUNTIME_SOAK_2_EXECUTION_PACKET_v0.91.7.md](RUNTIME_SOAK_2_EXECUTION_PACKET_v0.91.7.md)
 - Demo matrix: [DEMO_MATRIX_v0.91.7.md](DEMO_MATRIX_v0.91.7.md)
 - Feature-doc index: [FEATURE_DOCS_v0.91.7.md](FEATURE_DOCS_v0.91.7.md)
 - v0.92 handoff: [V092_HANDOFF_v0.91.7.md](V092_HANDOFF_v0.91.7.md)
