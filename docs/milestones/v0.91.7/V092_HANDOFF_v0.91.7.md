@@ -56,7 +56,7 @@ and only `integrated_proven` counts as operational completion.
 | Capability envelope and capability testing | Memory grounding, capability envelope, birth witnesses/receipt, and Aptitude Atlas boundaries explicitly consumed, deferred, blocked, or routed before birthday evidence relies on them. |
 | Build/validation throughput | Validation-cost, path ownership, SOR fact capture, validation manager, VPP generation, and remote/local build routes clear enough to avoid rediscovery during birthday work. |
 | GitHub convergence and control-plane tooling | GitHub/octocrab/tooling convergence, session coordination, lifecycle liveness, and shepherd state explicit enough that v0.92 sprint execution does not depend on ambiguous `gh` fallback, stale control-plane assumptions, or chat-only session memory. |
-| Runtime integration, Soak #2, and AWS signal bridge | One minimal assembled runtime path proven or blocked; operational signal blockers named before birthday claims. |
+| Runtime integration, Soak #2, and AWS signal bridge | `RUNTIME_SOAK_2_EXECUTION_PACKET_v0.91.7.md` is the planning gate. `v0.92` remains blocked until that packet's rows exit as `integrated_proven`, `blocked`, `deferred`, or `routed_to_soak_3`; operational signal blockers must be named before birthday claims. |
 | Runtime architecture diet | Runtime module/seam map and keep/merge/defer/retire route explicit enough to reduce bloat without blocking the integration proof. |
 | Observatory and demo readiness | Visible proof surfaces complete, blocked, deferred, or routed. |
 | CodeFriend, adapter v2, paper/publication surfaces | Explicitly deferred or routed unless launch readiness promotes a bounded, evidence-backed slice. |

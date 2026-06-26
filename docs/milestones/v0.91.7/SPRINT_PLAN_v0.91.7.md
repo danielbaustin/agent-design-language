@@ -36,7 +36,7 @@ Complete the final bridge/readiness tranche before `v0.92` activation refresh. T
 | 2 | v0.91.6 C-SDLC integration control-plane truth gate | WP-02, WP-03, WP-04 | Consume v0.91.6 `#4388`-`#4398` plus late `#4405`, `#4412`-`#4413`, `#4417`-`#4421` plus `#4425`, `#4431`, `#4441`, `#4433`-`#4438`, and `#4442`-`#4443`: VPP defaults, externalized PVF lanes, SEP automation, session ledger, forward metric capture, bounded v0.91.6 metric backfill, GitHub/octocrab convergence, prompt-card/template edge repair, runtime dependency routing, logging/reliability rough edges, watcher/lifecycle automation, operational adoption, lifecycle shepherding, and FastContext evaluation. Only create v0.91.7 follow-ons for incomplete or explicitly blocked surfaces. | planned |
 | 3 | Scheduler/provider/local-agent sprint | WP-05 | Can run alongside build-throughput work after WP-03 boundaries are stable. | planned |
 | 4 | Build throughput and validation-cost sprint | WP-06 | Can run in parallel with scheduler/provider work; isolate CI/workflow changes carefully. | planned |
-| 5 | Runtime fire-up / Soak #2 sprint | WP-07, WP-08 | Starts after enough scheduler/build/runtime substrate is ready; AWS/SSM/SNS work can parallelize with local soak proof. | planned |
+| 5 | Runtime fire-up / Soak #2 sprint | WP-07, WP-08 | Starts after enough scheduler/build/runtime substrate is ready; AWS/SSM/SNS work can parallelize with local soak proof. Execution packet: `RUNTIME_SOAK_2_EXECUTION_PACKET_v0.91.7.md`. | planned |
 | 6 | Observatory and birthday-visible demo sprint | WP-09 | Can overlap late runtime work if data contracts are stable. | planned |
 | 7 | Conceptual bridge sprint | WP-10, WP-11, WP-13 | Curiosity, Constructability, reasoning graph, affect/Godel/economics/guilds can be split across agents with shared non-claim review. | planned |
 | 8 | Security and protocol residual sprint | WP-12 | Can overlap conceptual bridge but must feed final handoff. | planned |
@@ -61,7 +61,7 @@ Complete the final bridge/readiness tranche before `v0.92` activation refresh. T
 - Risk: the milestone becomes too broad.
   - Mitigation: every source item is either implemented, explicitly routed, blocked, or deferred; no narrative-only expansion.
 - Risk: runtime proof arrives too late.
-  - Mitigation: start runtime Soak #2 immediately after process/build/scheduler prerequisites are stable.
+  - Mitigation: start runtime Soak #2 immediately after process/build/scheduler prerequisites are stable and use `RUNTIME_SOAK_2_EXECUTION_PACKET_v0.91.7.md` as the pre-run gate packet instead of rediscovering scope from chat.
 - Risk: launch planning expands v0.92.
   - Mitigation: launch/birthday handoff states consumption limits and non-claims.
 

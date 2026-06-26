@@ -66,10 +66,10 @@ boundaries, Godel mechanics, and economics context.
 
 ## Proposed Design
 
-`v0.91.7` is a documentation/control-plane tranche. It consumes `v0.91.6`
-bridge truth and produces residual bridge docs for `#3780` / `v0.92`
-activation refresh. Each feature doc is a boundary and decision surface, not a
-runtime completion claim.
+`v0.91.7` is a bridge/readiness/control-plane tranche. It consumes `v0.91.6`
+bridge truth, prepares the Soak #2 runtime-coherence gate, and produces
+residual bridge docs for `#3780` / `v0.92` activation refresh. Each feature doc
+is a boundary and decision surface, not a runtime completion claim.
 
 ## Risks And Mitigations
 

@@ -39,7 +39,8 @@ Forward checklist. Items are intentionally unchecked because `v0.91.7` execution
 - [ ] Goal-state and nested-goal continuity inputs are routed.
 - [ ] Cognitive scheduler and economics inputs are routed.
 - [ ] Provider/local-agent suitability and model-routing routes are current.
-- [ ] Runtime fire-up / Soak #2 route is concrete.
+- [x] Runtime fire-up / Soak #2 route is concrete.
+  - Tracked execution packet: `RUNTIME_SOAK_2_EXECUTION_PACKET_v0.91.7.md`
 - [ ] Runtime AWS/heartbeat/ACIP-SNS/SSM/S3 archive routes are concrete.
 - [ ] Nessus/CodeBuild/remote validation and local build-throughput decisions are routed.
 

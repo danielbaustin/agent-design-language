@@ -17,7 +17,8 @@ Current status: planning refresh for the final pre-`v0.92` bridge and readiness 
 
 - Initial planning package: created by earlier v0.91.7 setup work.
 - Source-capture refresh: `#4368`.
-- Execution: not started beyond planning/feature docs.
+- Execution: not started beyond planning/feature docs and `#4549` Soak #2
+  execution-packet setup; no Soak #2 runtime execution has run.
 - Validation: docs-readiness validation only until implementation issues run.
 - Release readiness: not applicable until `v0.91.7` executes.
 
@@ -83,6 +84,7 @@ Every surface must exit as one of:
 - Design: [DESIGN_v0.91.7.md](DESIGN_v0.91.7.md)
 - Decisions: [DECISIONS_v0.91.7.md](DECISIONS_v0.91.7.md)
 - Sprint plan: [SPRINT_PLAN_v0.91.7.md](SPRINT_PLAN_v0.91.7.md)
+- Runtime Soak #2 packet: [RUNTIME_SOAK_2_EXECUTION_PACKET_v0.91.7.md](RUNTIME_SOAK_2_EXECUTION_PACKET_v0.91.7.md)
 - Demo matrix: [DEMO_MATRIX_v0.91.7.md](DEMO_MATRIX_v0.91.7.md)
 - Feature-doc index: [FEATURE_DOCS_v0.91.7.md](FEATURE_DOCS_v0.91.7.md)
 - v0.92 handoff: [V092_HANDOFF_v0.91.7.md](V092_HANDOFF_v0.91.7.md)
