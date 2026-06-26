@@ -362,7 +362,7 @@ Usage:\n\
   adl-csdlc pr <create|init|start|doctor|ready|preflight|finish|closeout> ...\n\
   adl-csdlc issue <create|init|run|doctor|finish|closeout> ...\n\
   adl-csdlc issue run <issue> [--slug <slug>] [--version <v>]\n\
-  adl-csdlc tooling <card-prompt|csdlc-prompt-editor|generate-wp-issue-wave|lint-prompt-spec|prompt-template|validate-structured-prompt|...> ...\n\
+  adl-csdlc tooling <card-prompt|csdlc-prompt-editor|generate-wp-issue-wave|lint-prompt-spec|prompt-template|srp-sor-update|validate-structured-prompt|...> ...\n\
   adl-csdlc --help\n\
   adl-csdlc --version\n\n\
 Notes:\n\
