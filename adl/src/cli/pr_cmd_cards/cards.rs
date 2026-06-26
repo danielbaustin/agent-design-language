@@ -2367,7 +2367,7 @@ mod tests {
         assert!(plan.validation_commands_inline.contains("git diff --check"));
         assert!(plan
             .validation_commands_inline
-            .contains("bash adl/tools/run_pr_fast_test_lane.sh --changed-files <changed-files>"));
+            .contains("bash adl/tools/run_pr_fast_test_lane.sh --changed-files .adl/generated-vpp-changed-files.txt"));
         assert!(!plan
             .validation_commands_inline
             .contains("/private/tmp/changed-files.txt"));
