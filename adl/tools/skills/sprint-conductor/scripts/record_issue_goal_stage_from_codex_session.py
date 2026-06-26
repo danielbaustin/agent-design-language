@@ -8,9 +8,11 @@ from pathlib import Path
 from tempfile import NamedTemporaryFile
 
 from issue_goal_metrics import (
+    build_issue_goal_metrics_record,
     build_issue_goal_metrics_record_from_codex_goal_snapshot,
     build_unknown_issue_goal_metrics_record,
     find_codex_session_transcript,
+    iso_now_utc,
     load_codex_goal_payload_from_session_transcript,
     summarize_issue_goal_metrics,
     validate_terminal_completion_allowed,
@@ -45,6 +47,7 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--thread-id", default=os.environ.get("CODEX_THREAD_ID"))
     parser.add_argument("--session-root", default=os.path.expanduser("~/.codex/sessions"))
     parser.add_argument("--transcript-path")
+    parser.add_argument("--fallback-data-source", choices=["unknown", "derived_sprint_state"])
     return parser.parse_args()
 
 
@@ -65,21 +68,28 @@ def main() -> int:
     artifacts_dir = Path(args.artifacts_dir)
     artifacts_dir.mkdir(parents=True, exist_ok=True)
 
-    transcript_path = args.transcript_path
-    if transcript_path is None:
-        transcript_path = find_codex_session_transcript(
-            args.thread_id,
-            args.session_root,
-            issue_number=args.issue_number,
-        )
+    use_derived_issue_start = (
+        args.capture_stage == "issue_start"
+        and args.fallback_data_source == "derived_sprint_state"
+    )
 
+    transcript_path = None
     goal_payload = None
-    if transcript_path is not None:
-        goal_payload = load_codex_goal_payload_from_session_transcript(
-            transcript_path,
-            thread_id=args.thread_id,
-            issue_number=args.issue_number,
-        )
+    if not use_derived_issue_start:
+        transcript_path = args.transcript_path
+        if transcript_path is None:
+            transcript_path = find_codex_session_transcript(
+                args.thread_id,
+                args.session_root,
+                issue_number=args.issue_number,
+            )
+
+        if transcript_path is not None:
+            goal_payload = load_codex_goal_payload_from_session_transcript(
+                transcript_path,
+                thread_id=args.thread_id,
+                issue_number=args.issue_number,
+            )
 
     raw_log_path = transcript_path or args.session_root
     if goal_payload is not None:
@@ -116,29 +126,73 @@ def main() -> int:
         finally:
             os.unlink(temp_snapshot_path)
     else:
-        record = build_unknown_issue_goal_metrics_record(
-            issue_number=args.issue_number,
-            capture_stage=args.capture_stage,
-            raw_log_path=raw_log_path,
-            issue_goal_ref=args.issue_goal_ref,
-            sprint_goal_ref=args.sprint_goal_ref,
-            goal_metrics_rollup_ref=args.goal_metrics_rollup_ref,
-            metrics_confidence=args.metrics_confidence,
-            completion_state=args.completion_state_override or "unknown",
-            model_ref=args.model_ref,
-            session_ref=args.session_ref,
-            thread_id=args.thread_id,
-            goal_kind=args.goal_kind,
-            goal_boundary=args.goal_boundary,
-            issue_state=args.issue_state,
-            pr_state=args.pr_state,
-            checks_state=args.checks_state,
-            review_truth=args.review_truth,
-            closeout_truth=args.closeout_truth,
-            merge_conflicts=True if args.merge_conflicts else False if args.no_merge_conflicts else None,
-            watch_target_status=args.watch_target_status,
-            sprint_rollup_status=args.sprint_rollup_status,
-        )
+        if args.fallback_data_source == "derived_sprint_state":
+            recorded_at = iso_now_utc()
+            session_ref = args.session_ref
+            if session_ref is None and args.thread_id:
+                session_ref = f"codex-thread:{args.thread_id}"
+            record = build_issue_goal_metrics_record(
+                sprint_issue_number=None,
+                issue_number=args.issue_number,
+                capture_stage=args.capture_stage,
+                data_source="derived_sprint_state",
+                raw_log_path=raw_log_path,
+                recorded_at=recorded_at,
+                issue_goal_ref=args.issue_goal_ref,
+                sprint_goal_ref=args.sprint_goal_ref,
+                goal_metrics_rollup_ref=args.goal_metrics_rollup_ref,
+                goal_id=None,
+                goal_id_state="not_available",
+                started_at=recorded_at if args.capture_stage == "issue_start" else None,
+                completed_at=None,
+                elapsed_seconds_raw="unknown",
+                active_work_seconds_raw="unknown",
+                validation_seconds_raw="unknown",
+                pr_wait_seconds_raw="unknown",
+                ci_wait_seconds_raw="unknown",
+                total_tokens_raw="unknown",
+                prompt_tokens_raw="unknown",
+                completion_tokens_raw="unknown",
+                metrics_confidence=args.metrics_confidence,
+                completion_state=args.completion_state_override or "unknown",
+                model_ref=args.model_ref,
+                session_ref=session_ref,
+                thread_id=args.thread_id,
+                goal_kind=args.goal_kind,
+                goal_boundary=args.goal_boundary,
+                issue_state=args.issue_state,
+                pr_state=args.pr_state,
+                checks_state=args.checks_state,
+                review_truth=args.review_truth,
+                closeout_truth=args.closeout_truth,
+                merge_conflicts=True if args.merge_conflicts else False if args.no_merge_conflicts else None,
+                watch_target_status=args.watch_target_status,
+                sprint_rollup_status=args.sprint_rollup_status,
+            )
+        else:
+            record = build_unknown_issue_goal_metrics_record(
+                issue_number=args.issue_number,
+                capture_stage=args.capture_stage,
+                raw_log_path=raw_log_path,
+                issue_goal_ref=args.issue_goal_ref,
+                sprint_goal_ref=args.sprint_goal_ref,
+                goal_metrics_rollup_ref=args.goal_metrics_rollup_ref,
+                metrics_confidence=args.metrics_confidence,
+                completion_state=args.completion_state_override or "unknown",
+                model_ref=args.model_ref,
+                session_ref=args.session_ref,
+                thread_id=args.thread_id,
+                goal_kind=args.goal_kind,
+                goal_boundary=args.goal_boundary,
+                issue_state=args.issue_state,
+                pr_state=args.pr_state,
+                checks_state=args.checks_state,
+                review_truth=args.review_truth,
+                closeout_truth=args.closeout_truth,
+                merge_conflicts=True if args.merge_conflicts else False if args.no_merge_conflicts else None,
+                watch_target_status=args.watch_target_status,
+                sprint_rollup_status=args.sprint_rollup_status,
+            )
     validate_terminal_completion_allowed(record)
 
     jsonl_path = artifacts_dir / f"issue-{args.issue_number}-goal-metrics.jsonl"

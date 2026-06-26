@@ -1365,6 +1365,7 @@ fn real_pr_start(args: &[String]) -> Result<()> {
         &worktree_source,
     )?;
     ensure_worktree_task_bundle_materialized(&worktree_path, &issue_ref)?;
+    record_bound_execution_goal_metrics_stage(&repo_root, &issue_ref, "issue_start")?;
 
     println!("• Agent:");
     println!("  STP    {}", worktree_stp.display());
@@ -1438,6 +1439,25 @@ pub(super) fn record_readiness_prep_goal_metrics_stage(
     issue_ref: &IssueRef,
     capture_stage: &str,
 ) -> Result<()> {
+    record_issue_goal_metrics_stage(repo_root, issue_ref, capture_stage)
+        .with_context(|| format!("failed to record readiness-prep metrics stage '{capture_stage}'"))
+}
+
+pub(super) fn record_bound_execution_goal_metrics_stage(
+    repo_root: &Path,
+    issue_ref: &IssueRef,
+    capture_stage: &str,
+) -> Result<()> {
+    record_issue_goal_metrics_stage(repo_root, issue_ref, capture_stage).with_context(|| {
+        format!("failed to record bound-execution metrics stage '{capture_stage}'")
+    })
+}
+
+fn record_issue_goal_metrics_stage(
+    repo_root: &Path,
+    issue_ref: &IssueRef,
+    capture_stage: &str,
+) -> Result<()> {
     let script_path = repo_root.join(
         "adl/tools/skills/sprint-conductor/scripts/record_issue_goal_stage_from_codex_session.py",
     );
@@ -1468,10 +1488,10 @@ pub(super) fn record_readiness_prep_goal_metrics_stage(
         issue_goal_ref.as_str(),
         "--metrics-confidence",
         "high",
+        "--fallback-data-source",
+        "derived_sprint_state",
     ];
-    run_capture("python3", &args).with_context(|| {
-        format!("failed to record readiness-prep metrics stage '{capture_stage}'")
-    })?;
+    run_capture("python3", &args)?;
     Ok(())
 }
 

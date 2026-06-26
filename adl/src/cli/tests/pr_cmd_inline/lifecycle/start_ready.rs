@@ -261,15 +261,22 @@ fn init_doctor_and_start_record_readiness_prep_goal_metric_stages() {
             "card_repair",
             "doctor_readiness",
             "execution_ready",
-            "issue_init"
+            "issue_init",
+            "issue_start"
         ])
     );
     assert_eq!(
         summary["segments_recorded"],
-        serde_json::json!(["readiness_prep"])
+        serde_json::json!(["bound_execution", "readiness_prep"])
     );
-    assert_eq!(summary["selected_stage"], "execution_ready");
-    assert_eq!(summary["selected_segment"], "readiness_prep");
+    assert_eq!(summary["selected_stage"], "issue_start");
+    assert_eq!(summary["selected_segment"], "bound_execution");
+    assert_eq!(summary["data_source"], "derived_sprint_state");
+    assert_eq!(summary["elapsed_availability"], "unknown");
+    assert_eq!(summary["active_work_availability"], "unknown");
+    assert_eq!(summary["token_usage"]["total_availability"], "unknown");
+    assert_eq!(summary["thread_id"], "thread-1154-prep");
+    assert_eq!(summary["session_ref"], "codex-thread:thread-1154-prep");
 }
 
 #[test]
@@ -486,6 +493,188 @@ fn real_pr_start_failure_leaves_doctor_readiness_as_selected_prep_stage() {
     );
     assert_eq!(summary["selected_stage"], "doctor_readiness");
     assert_eq!(summary["selected_segment"], "readiness_prep");
+}
+
+#[test]
+fn real_pr_start_uses_derived_issue_start_when_thread_goal_targets_other_issue() {
+    let _guard = env_lock();
+    let temp = unique_temp_dir("adl-pr-start-derived-issue-start");
+    let origin = temp.join("origin.git");
+    let repo = temp.join("repo");
+    let home = temp.join("home");
+    fs::create_dir_all(&repo).expect("repo dir");
+    fs::create_dir_all(&home).expect("home dir");
+    copy_bootstrap_support_files(&repo);
+    init_git_repo(&repo);
+    assert!(Command::new("git")
+        .args(["config", "user.name", "Test User"])
+        .current_dir(&repo)
+        .status()
+        .expect("git config")
+        .success());
+    assert!(Command::new("git")
+        .args(["config", "user.email", "test@example.com"])
+        .current_dir(&repo)
+        .status()
+        .expect("git config")
+        .success());
+    fs::write(repo.join(".gitignore"), ".adl/\n").expect("gitignore");
+    fs::write(repo.join("README.md"), "derived issue start\n").expect("readme");
+    assert!(Command::new("git")
+        .args(["add", "-A"])
+        .current_dir(&repo)
+        .status()
+        .expect("git add")
+        .success());
+    assert!(Command::new("git")
+        .args(["commit", "-q", "-m", "init"])
+        .current_dir(&repo)
+        .status()
+        .expect("git commit")
+        .success());
+    assert!(Command::new("git")
+        .args(["branch", "-M", "main"])
+        .current_dir(&repo)
+        .status()
+        .expect("git branch")
+        .success());
+    assert!(Command::new("git")
+        .args([
+            "init",
+            "--bare",
+            "-q",
+            path_str(&origin).expect("origin path"),
+        ])
+        .current_dir(&repo)
+        .status()
+        .expect("git init bare")
+        .success());
+    assert!(Command::new("git")
+        .args([
+            "remote",
+            "set-url",
+            "origin",
+            path_str(&origin).expect("origin path"),
+        ])
+        .current_dir(&repo)
+        .status()
+        .expect("git remote set-url")
+        .success());
+    assert!(Command::new("git")
+        .args(["push", "-q", "-u", "origin", "main"])
+        .current_dir(&repo)
+        .status()
+        .expect("git push")
+        .success());
+    assert!(Command::new("git")
+        .args(["fetch", "-q", "origin", "main"])
+        .current_dir(&repo)
+        .status()
+        .expect("git fetch")
+        .success());
+
+    seed_codex_goal_transcript(
+        &home,
+        9999,
+        "thread-1156-derived",
+        7777,
+        99,
+        1782230400,
+        1782230499,
+    );
+    let old_home = env::var_os("HOME");
+    let old_env_session = env::var_os("CODEX_SESSION_ID");
+    let old_thread_id = env::var_os("CODEX_THREAD_ID");
+    unsafe {
+        env::set_var("HOME", &home);
+        env::set_var("CODEX_THREAD_ID", "thread-1156-derived");
+    }
+
+    let issue_ref = IssueRef::new(1156, "v0.86", "derived-issue-start").expect("issue ref");
+    write_authored_issue_prompt(&repo, &issue_ref, "[v0.86][tools] Derived issue start");
+
+    let prev_dir = env::current_dir().expect("cwd");
+    env::set_current_dir(&repo).expect("chdir");
+    real_pr(&[
+        "init".to_string(),
+        "1156".to_string(),
+        "--slug".to_string(),
+        "derived-issue-start".to_string(),
+        "--title".to_string(),
+        "[v0.86][tools] Derived issue start".to_string(),
+        "--no-fetch-issue".to_string(),
+        "--version".to_string(),
+        "v0.86".to_string(),
+    ])
+    .expect("real_pr init");
+
+    write_design_time_ready_cards(
+        &repo,
+        &issue_ref,
+        "[v0.86][tools] Derived issue start",
+        "not bound yet",
+    );
+    write_session_claim(
+        &repo,
+        1156,
+        "thread-1156-derived",
+        "codex/1156-derived-issue-start",
+        &issue_ref.default_worktree_path(&repo, None),
+    );
+    unsafe {
+        env::set_var("CODEX_SESSION_ID", "thread-1156-derived");
+    }
+
+    real_pr(&[
+        "start".to_string(),
+        "1156".to_string(),
+        "--slug".to_string(),
+        "derived-issue-start".to_string(),
+        "--title".to_string(),
+        "[v0.86][tools] Derived issue start".to_string(),
+        "--no-fetch-issue".to_string(),
+        "--version".to_string(),
+        "v0.86".to_string(),
+    ])
+    .expect("real_pr start");
+    env::set_current_dir(prev_dir).expect("restore cwd");
+    unsafe {
+        match old_home {
+            Some(value) => env::set_var("HOME", value),
+            None => env::remove_var("HOME"),
+        }
+        match old_env_session {
+            Some(value) => env::set_var("CODEX_SESSION_ID", value),
+            None => env::remove_var("CODEX_SESSION_ID"),
+        }
+        match old_thread_id {
+            Some(value) => env::set_var("CODEX_THREAD_ID", value),
+            None => env::remove_var("CODEX_THREAD_ID"),
+        }
+    }
+
+    let summary_path = issue_ref
+        .task_bundle_dir_path(&repo)
+        .join("artifacts/goal_metrics/issue-1156-goal-metrics-summary.json");
+    let summary: serde_json::Value =
+        serde_json::from_str(&fs::read_to_string(summary_path).expect("read goal summary"))
+            .expect("parse goal summary");
+    assert_eq!(
+        summary["phases_recorded"],
+        serde_json::json!(["execution_ready", "issue_init", "issue_start"])
+    );
+    assert_eq!(
+        summary["segments_recorded"],
+        serde_json::json!(["bound_execution", "readiness_prep"])
+    );
+    assert_eq!(summary["selected_stage"], "issue_start");
+    assert_eq!(summary["selected_segment"], "bound_execution");
+    assert_eq!(summary["data_source"], "derived_sprint_state");
+    assert_eq!(summary["elapsed_availability"], "unknown");
+    assert_eq!(summary["active_work_availability"], "unknown");
+    assert_eq!(summary["token_usage"]["total_availability"], "unknown");
+    assert_eq!(summary["thread_id"], "thread-1156-derived");
+    assert_eq!(summary["session_ref"], "codex-thread:thread-1156-derived");
 }
 
 #[test]
