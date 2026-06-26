@@ -1260,4 +1260,126 @@ mod tests {
         let _ = fs::remove_file(repo_root.join("tmp/trace_key.b64"));
         let _ = fs::remove_dir_all(out_dir);
     }
+
+    #[test]
+    fn runtime_acip_aee_memory_run_replaces_existing_output_directory() {
+        let out_dir = temp_dir("runtime-4546-existing-out");
+        fs::create_dir_all(&out_dir).expect("create out dir");
+        fs::write(out_dir.join("stale.txt"), "stale").expect("write stale marker");
+
+        run(Args {
+            out: out_dir.clone(),
+        })
+        .expect("runtime proof run should replace existing out dir");
+
+        assert!(
+            !out_dir.join("stale.txt").exists(),
+            "existing output directory should be replaced before regeneration"
+        );
+        assert!(
+            out_dir.join("runtime_acip_aee_memory_proof.json").is_file(),
+            "proof packet should exist after regeneration"
+        );
+        assert!(
+            out_dir.join("runtime/temporary_agent_execution_summary.json").is_file(),
+            "runtime summary should exist after regeneration"
+        );
+
+        let _ = fs::remove_dir_all(out_dir);
+    }
+
+    #[test]
+    fn runtime_acip_aee_memory_support_helpers_cover_builder_edges() {
+        let out_dir = temp_dir("runtime-4546-support-helpers");
+        fs::create_dir_all(out_dir.join("nested/deeper")).expect("create nested dir");
+        fs::write(out_dir.join("nested/deeper/file.txt"), "ok").expect("write nested file");
+
+        let mut rels = Vec::new();
+        collect_relative_files(&out_dir, &out_dir, &mut rels).expect("collect relative files");
+        assert_eq!(rels, vec!["nested/deeper/file.txt"]);
+
+        assert_eq!(
+            artifact_ref("runtime-4546", "runtime/comms/coding/structured_proposal.json"),
+            "artifacts/runtime-4546/runtime/comms/coding/structured_proposal.json"
+        );
+        assert_eq!(
+            acip_status_name(&AcipInvocationStatusV1::Requested),
+            "requested"
+        );
+        assert_eq!(
+            acip_status_name(&AcipInvocationStatusV1::Completed),
+            "completed"
+        );
+        assert_eq!(
+            acip_status_name(&AcipInvocationStatusV1::Refused),
+            "refused"
+        );
+        assert_eq!(
+            acip_status_name(&AcipInvocationStatusV1::Failed),
+            "failed"
+        );
+        assert_eq!(
+            acip_status_name(&AcipInvocationStatusV1::Partial),
+            "partial"
+        );
+
+        let runtime_packet = RuntimePacket {
+            run_id: "runtime-4546-acip-aee-memory".to_string(),
+            run_dir_ref: "artifacts/runtime-4546-acip-aee-memory".to_string(),
+            temp_agent_summary: json!({
+                "delegation_sequence": ["requested", "approved", "completed"],
+                "authorization_decision": "approved",
+                "control_path_validation": "passed"
+            }),
+        };
+        let acip_packet = json!({
+            "positive_case": { "status": "delivered" },
+            "denied_case": {
+                "status": "refused",
+                "refusal_code": "route_class_denied"
+            },
+            "malformed_case": {
+                "artifact_ref": "acip/acip_malformed_case.json"
+            },
+            "failed_delivery_case": {
+                "status": "failed_delivery",
+                "failure_code": "carrier_timeout"
+            }
+        });
+        let obsmem_request = json!({
+            "summary": "ACIP local message flow was handed off into memory.",
+            "tags": ["acip", "aee", "memory"],
+            "citations": ["runtime/temporary_agent_execution_summary.json"],
+            "review_findings": []
+        });
+        let evidence_index = json!({
+            "evidence": [
+                { "kind": "proof", "ref": "runtime_acip_aee_memory_proof.json" }
+            ]
+        });
+
+        let proof =
+            build_proof_packet(&runtime_packet, &acip_packet, &obsmem_request, &evidence_index);
+        assert_eq!(proof["issue"], 4546);
+        assert_eq!(proof["status_summary"]["acip_positive_status"], "delivered");
+        assert_eq!(proof["status_summary"]["acip_denied_status"], "refused");
+        assert_eq!(
+            proof["status_summary"]["acip_failed_delivery_status"],
+            "failed_delivery"
+        );
+        assert_eq!(proof["status_summary"]["obsmem_tag_count"], 3);
+        assert_eq!(proof["status_summary"]["obsmem_citation_count"], 1);
+
+        let review_summary = build_review_summary(&runtime_packet, &acip_packet, &obsmem_request);
+        assert!(review_summary.contains("temporary-agent execution path"));
+        assert!(review_summary.contains("failed-delivery cases"));
+
+        let cwd_abs = absolute_from_cwd(Path::new("target")).expect("resolve relative target");
+        assert!(cwd_abs.ends_with("target"));
+        let already_abs =
+            absolute_from_cwd(&out_dir).expect("absolute paths should pass through unchanged");
+        assert_eq!(already_abs, out_dir);
+
+        let _ = fs::remove_dir_all(out_dir);
+    }
 }
