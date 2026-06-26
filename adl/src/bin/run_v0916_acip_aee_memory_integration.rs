@@ -45,9 +45,7 @@ struct Args {
 #[derive(Debug)]
 struct RuntimePacket {
     run_id: String,
-    run_dir: PathBuf,
     run_dir_ref: String,
-    temp_agent_action: String,
     temp_agent_summary: Value,
 }
 
@@ -240,9 +238,7 @@ fn build_runtime_packet(out_dir: &Path) -> Result<RuntimePacket> {
 
     Ok(RuntimePacket {
         run_id,
-        run_dir,
         run_dir_ref,
-        temp_agent_action,
         temp_agent_summary,
     })
 }
@@ -722,7 +718,7 @@ fn runtime_trace(
 }
 
 fn artifact_ref(run_id: &str, rel: &str) -> String {
-    format!("artifacts/{run_id}/{rel}")
+    ["artifacts", run_id, rel].join("/")
 }
 
 fn runtime_control_state(temp_agent_action: &str) -> RuntimeControlState {
@@ -968,9 +964,7 @@ fn write_issue_bound_signed_trace(
     let unsigned_path = repo_root.join(unsigned_trace_rel);
     write_file(
         &unsigned_path,
-        &format!(
-            "version: \"0.5\"\n\nproviders:\n  local:\n    type: \"ollama\"\n    config:\n      model: \"phi4-mini\"\n\nagents:\n  trace_recorder:\n    provider: \"local\"\n    model: \"phi4-mini\"\n\ntasks:\n  transition_summary:\n    prompt:\n      user: \"Transition {{issue}} concluded via {{proof_surface}}.\"\n\nrun:\n  name: \"runtime-4546-transition-trace\"\n  workflow:\n    kind: \"sequential\"\n    steps:\n      - id: \"record.transition\"\n        agent: \"trace_recorder\"\n        task: \"transition_summary\"\n        inputs:\n          issue: \"4546\"\n          proof_surface: \"runtime_acip_aee_memory_4546\"\n"
-        ),
+        "version: \"0.5\"\n\nproviders:\n  local:\n    type: \"ollama\"\n    config:\n      model: \"phi4-mini\"\n\nagents:\n  trace_recorder:\n    provider: \"local\"\n    model: \"phi4-mini\"\n\ntasks:\n  transition_summary:\n    prompt:\n      user: \"Transition {{issue}} concluded via {{proof_surface}}.\"\n\nrun:\n  name: \"runtime-4546-transition-trace\"\n  workflow:\n    kind: \"sequential\"\n    steps:\n      - id: \"record.transition\"\n        agent: \"trace_recorder\"\n        task: \"transition_summary\"\n        inputs:\n          issue: \"4546\"\n          proof_surface: \"runtime_acip_aee_memory_4546\"\n",
     )?;
     let key_dir = repo_root.join("target/runtime-4546-trace-signing");
     let (private_key_path, public_key_path) = signing::keygen(&key_dir)?;
@@ -1122,9 +1116,7 @@ fn readme() -> String {
 }
 
 fn reviewer_walkthrough() -> String {
-    format!(
-        "# Reviewer Walkthrough\n\nRun the proof with `cargo run --manifest-path adl/Cargo.toml --bin run_v0916_acip_aee_memory_integration -- --out docs/milestones/v0.91.6/review/runtime/v0916_acip_aee_memory_4546`.\n\nThe review question is whether issue `#4546` now has one bounded packet that shows:\n\n1. ACIP successful, denied, malformed, and failed-delivery cases.\n2. One temporary-agent path going through the AEE/control-path artifact writer.\n3. One redaction-bounded ObsMem handoff request derived from the retained packet.\n\nThis packet intentionally stops short of scheduler integration, Unity/Observatory proof, and v0.92 readiness.\n"
-    )
+    "# Reviewer Walkthrough\n\nRun the proof with `cargo run --manifest-path adl/Cargo.toml --bin run_v0916_acip_aee_memory_integration -- --out docs/milestones/v0.91.6/review/runtime/v0916_acip_aee_memory_4546`.\n\nThe review question is whether issue `#4546` now has one bounded packet that shows:\n\n1. ACIP successful, denied, malformed, and failed-delivery cases.\n2. One temporary-agent path going through the AEE/control-path artifact writer.\n3. One redaction-bounded ObsMem handoff request derived from the retained packet.\n\nThis packet intentionally stops short of scheduler integration, Unity/Observatory proof, and v0.92 readiness.\n".to_string()
 }
 
 #[cfg(test)]
