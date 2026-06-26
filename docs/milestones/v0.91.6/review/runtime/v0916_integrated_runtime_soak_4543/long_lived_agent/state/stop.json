@@ -1,0 +1,8 @@
+{
+  "schema": "adl.long_lived_agent_stop.v1",
+  "agent_instance_id": "v0916-runtime-soak",
+  "reason": "bounded integrated runtime soak stop after proof capture",
+  "requested_by": "operator",
+  "mode": "stop_before_next_cycle",
+  "requested_at": "2026-06-26T19:01:01.293168Z"
+}

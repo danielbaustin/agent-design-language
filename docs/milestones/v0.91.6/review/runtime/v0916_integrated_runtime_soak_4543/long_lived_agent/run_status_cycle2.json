@@ -1,0 +1,23 @@
+{
+  "schema": "adl.long_lived_agent_status.v1",
+  "agent_instance_id": "v0916-runtime-soak",
+  "state": "completed",
+  "last_cycle_id": "cycle-000002",
+  "last_cycle_status": "success",
+  "completed_cycle_count": 2,
+  "consecutive_failure_count": 0,
+  "active_lease": null,
+  "stop_requested": false,
+  "last_error": null,
+  "safety_policy": {
+    "allow_broker": false,
+    "allow_filesystem_writes_outside_state_root": false,
+    "allow_network": false,
+    "allow_real_world_side_effects": false,
+    "financial_advice": false,
+    "max_consecutive_failures": 2,
+    "max_cycle_runtime_secs": 120,
+    "require_public_artifact_sanitization": true
+  },
+  "updated_at": "2026-06-26T19:00:59.813622Z"
+}

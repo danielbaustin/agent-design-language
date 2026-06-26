@@ -1,0 +1,37 @@
+{
+  "completed_cycle_count": 1,
+  "last_error": {
+    "class": "operator_stop_requested",
+    "message": "operator stop during bounded cadence sleep window"
+  },
+  "note": "This probe lets one cycle complete, issues stop during the cadence sleep window, and verifies that later cycles do not start.",
+  "persisted_state": "stopped",
+  "probe_kind": "live_stop_between_cycles",
+  "run_returned_state": "stopped",
+  "stop_status": {
+    "active_lease": null,
+    "agent_instance_id": "v0916-runtime-stop-probe",
+    "completed_cycle_count": 1,
+    "consecutive_failure_count": 0,
+    "last_cycle_id": "cycle-000001",
+    "last_cycle_status": "success",
+    "last_error": {
+      "class": "operator_stop_requested",
+      "message": "operator stop during bounded cadence sleep window"
+    },
+    "safety_policy": {
+      "allow_broker": false,
+      "allow_filesystem_writes_outside_state_root": false,
+      "allow_network": false,
+      "allow_real_world_side_effects": false,
+      "financial_advice": false,
+      "max_consecutive_failures": 2,
+      "max_cycle_runtime_secs": 120,
+      "require_public_artifact_sanitization": true
+    },
+    "schema": "adl.long_lived_agent_status.v1",
+    "state": "stopped",
+    "stop_requested": true,
+    "updated_at": "2026-06-26T19:00:59.997884Z"
+  }
+}

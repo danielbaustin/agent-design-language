@@ -131,4 +131,5 @@ fn code_review_filter_covers_global_usage_entry() {
     assert!(text.contains("adl pr finish <issue> --title <title>"));
     assert!(text.contains("adl pr repair-issue-body <issue>"));
     assert!(text.contains("adl runtime-v2 contract-market-demo"));
+    assert!(text.contains("adl scheduler plan --input <bundle.json> [--out <path>] [--json]"));
 }

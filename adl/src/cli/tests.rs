@@ -205,6 +205,7 @@ fn runtime_dispatch_exposes_help_and_version_without_csdlc_dispatch() {
 
     let usage = runtime_usage();
     assert!(usage.contains("adl-runtime run <adl.yaml>"));
+    assert!(usage.contains("adl-runtime scheduler plan --input <bundle.json> [--out <path>] [--json]"));
     assert!(usage.contains("adl <adl.yaml> remains available as a compatibility shortcut"));
     assert!(usage.contains("C-SDLC issue work belongs to adl/tools/pr.sh run <issue>"));
 }
