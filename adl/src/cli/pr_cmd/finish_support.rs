@@ -2274,9 +2274,7 @@ pub(super) fn select_finish_validation_plan_for_finish(
     if finish_paths_need_github_projection_watch_validation(changed_paths) {
         return Ok(build_github_projection_watch_validation_plan());
     }
-    if requested_paths.iter().any(|path| *path == ".")
-        && finish_paths_are_manifest_only(changed_paths)
-    {
+    if requested_paths.contains(&".") && finish_paths_are_manifest_only(changed_paths) {
         bail!(
             "finish: selector left changed paths without validation-lane coverage: {}",
             changed_paths.join(", ")
