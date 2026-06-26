@@ -1,0 +1,20 @@
+{
+  "correlation": {
+    "component": "remote_exec",
+    "schema_version": "adl.runtime.correlation_fields.v1",
+    "surface": "runtime"
+  },
+  "field_contract": [
+    "run_id",
+    "trace_id",
+    "span_id",
+    "parent_span_id",
+    "task_id",
+    "fault_code",
+    "component",
+    "surface"
+  ],
+  "schema_version": "adl.runtime.health_status.v1",
+  "state": "healthy",
+  "summary": "remote execution server ready for bounded request handling"
+}

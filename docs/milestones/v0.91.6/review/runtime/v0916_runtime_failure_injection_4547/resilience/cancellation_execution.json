@@ -1,0 +1,65 @@
+{
+  "final_status": "Cancelled",
+  "result": {
+    "disposition": "retryable",
+    "fault_class": "unknown",
+    "retryable": true,
+    "schema_version": "adl.resilience.fault_classification.v1",
+    "summary": "cancelled at 15",
+    "surface": "provider"
+  },
+  "trace": {
+    "decision_summary": "runtime.failure_injection.cancellation_probe: operation cancelled after 15ms",
+    "elapsed_ms": 15,
+    "fault": {
+      "component_ref": "runtime.failure_injection.cancellation_probe",
+      "disposition": "terminal",
+      "fault_class": "runtime_failure",
+      "retryable": false,
+      "schema_version": "adl.resilience.fault_classification.v1",
+      "summary": "runtime.failure_injection.cancellation_probe cancelled before completion",
+      "surface": "workflow"
+    },
+    "final_status": "cancelled",
+    "policy_id": "runtime.failure_injection.cancellation.policy",
+    "recovery_artifact": {
+      "artifact_id": "runtime.failure_injection.cancellation.policy:timeout:runtime.failure_injection.cancellation_probe:4",
+      "disposition": "resume_allowed",
+      "evidence_refs": [
+        "runtime.failure_injection.cancellation.policy"
+      ],
+      "next_action": "handle explicit cancellation before retrying or rescheduling",
+      "schema_version": "adl.resilience.recovery_artifact.v1",
+      "surface": "workflow",
+      "triggering_fault": {
+        "component_ref": "runtime.failure_injection.cancellation_probe",
+        "disposition": "terminal",
+        "fault_class": "runtime_failure",
+        "retryable": false,
+        "schema_version": "adl.resilience.fault_classification.v1",
+        "summary": "runtime.failure_injection.cancellation_probe cancelled before completion",
+        "surface": "workflow"
+      }
+    },
+    "schema_version": "adl.resilience.timeout_execution_trace.v1",
+    "surface": "workflow",
+    "telemetry_event": {
+      "decision_summary": "runtime.failure_injection.cancellation_probe: operation cancelled after 15ms",
+      "event_id": "runtime.failure_injection.cancellation.policy:timeout:runtime.failure_injection.cancellation_probe:3",
+      "event_kind": "timeout_decision",
+      "fault": {
+        "component_ref": "runtime.failure_injection.cancellation_probe",
+        "disposition": "terminal",
+        "fault_class": "runtime_failure",
+        "retryable": false,
+        "schema_version": "adl.resilience.fault_classification.v1",
+        "summary": "runtime.failure_injection.cancellation_probe cancelled before completion",
+        "surface": "workflow"
+      },
+      "policy_ref": "runtime.failure_injection.cancellation.policy",
+      "schema_version": "adl.resilience.telemetry_event.v1",
+      "surface": "workflow"
+    },
+    "timeout_ms": 100
+  }
+}

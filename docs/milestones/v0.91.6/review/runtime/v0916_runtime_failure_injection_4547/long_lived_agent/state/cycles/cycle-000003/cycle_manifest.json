@@ -1,0 +1,24 @@
+{
+  "agent_instance_id": "v0916-runtime-failure-injection",
+  "artifacts": {
+    "cycle_summary": "cycle_summary.md",
+    "decision_request": "decision_request.json",
+    "decision_result": "decision_result.json",
+    "guardrail_report": "guardrail_report.json",
+    "memory_writes": "memory_writes.jsonl",
+    "observations": "observations.json",
+    "run_ref": "run_ref.json"
+  },
+  "completed_at": "2026-06-26T17:21:42.614091Z",
+  "cycle_id": "cycle-000003",
+  "input_hash": "sha256:3dd717697eef74c2fc690199915019a59431e319ab19a05c6bf8e0e51dba9b4c",
+  "next_cycle_hint": "sleep_until_next_heartbeat",
+  "not_financial_advice": true,
+  "output_hash": "sha256:53888ecff31ce41156a372149747c87d31e2de76b31260b2a20a7135af158b91",
+  "previous_cycle_id": "cycle-000002",
+  "schema": "adl.long_lived_agent_cycle_manifest.v1",
+  "started_at": "2026-06-26T17:21:42.611515Z",
+  "status": "success",
+  "workflow_kind": "demo_adapter",
+  "workflow_ref": "v0916_runtime_failure_injection"
+}

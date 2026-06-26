@@ -1,0 +1,21 @@
+{
+  "agent_instance_id": "v0916-runtime-failure-injection",
+  "continuity_kind": "pre_v0_92_handle",
+  "created_at": "2026-06-26T17:21:42.585058Z",
+  "created_by": "operator",
+  "cycle_ledger_ref": "cycle_ledger.jsonl",
+  "display_name": "V0916 Runtime Failure Injection",
+  "future_identity_ref": null,
+  "latest_cycle_id": "cycle-000003",
+  "latest_cycle_status": "success",
+  "memory_namespace": "v0916-runtime-failure-injection",
+  "non_claims": [
+    "not_v0_92_identity_tuple",
+    "not_capability_governance",
+    "not_autonomous_legal_personhood"
+  ],
+  "schema": "adl.long_lived_agent_continuity.v1",
+  "state_root": "state",
+  "status": "active",
+  "updated_at": "2026-06-26T17:21:42.614779Z"
+}

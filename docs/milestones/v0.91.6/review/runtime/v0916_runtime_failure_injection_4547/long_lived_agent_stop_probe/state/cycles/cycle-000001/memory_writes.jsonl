@@ -1,0 +1,1 @@
+{"cycle_id":"cycle-000001","memory_id":"mem-000001","schema":"adl.long_lived_agent_memory_write.v1","source_refs":["decision_result.json","cycle_manifest.json"],"summary":"Recorded a bounded cycle artifact bundle.","tags":["agent:v0916-runtime-failure-stop-probe","cycle:cycle-000001","long-lived-agent","paper-only"],"write_policy":"append_only"}

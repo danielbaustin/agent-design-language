@@ -1,0 +1,24 @@
+{
+  "agent_instance_id": "v0916-runtime-failure-stop-probe",
+  "artifacts": {
+    "cycle_summary": "cycle_summary.md",
+    "decision_request": "decision_request.json",
+    "decision_result": "decision_result.json",
+    "guardrail_report": "guardrail_report.json",
+    "memory_writes": "memory_writes.jsonl",
+    "observations": "observations.json",
+    "run_ref": "run_ref.json"
+  },
+  "completed_at": "2026-06-26T17:21:42.627583Z",
+  "cycle_id": "cycle-000001",
+  "input_hash": "sha256:f35a4556ee43b211b2e483264e04fae78b4f4e9bd6409b59a855f3a8c790d07b",
+  "next_cycle_hint": "sleep_until_next_heartbeat",
+  "not_financial_advice": true,
+  "output_hash": "sha256:53888ecff31ce41156a372149747c87d31e2de76b31260b2a20a7135af158b91",
+  "previous_cycle_id": null,
+  "schema": "adl.long_lived_agent_cycle_manifest.v1",
+  "started_at": "2026-06-26T17:21:42.624902Z",
+  "status": "success",
+  "workflow_kind": "demo_adapter",
+  "workflow_ref": "v0916_runtime_failure_injection"
+}

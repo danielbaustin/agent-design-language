@@ -1,0 +1,8 @@
+{
+  "schema": "adl.long_lived_agent_stop.v1",
+  "agent_instance_id": "v0916-runtime-failure-stop-probe",
+  "reason": "operator stop after the first persisted cycle and before a second persisted cycle",
+  "requested_by": "operator",
+  "mode": "stop_before_next_cycle",
+  "requested_at": "2026-06-26T17:21:42.675991Z"
+}
