@@ -242,6 +242,21 @@ struct SourcePromptMetadata {
     demo_required: Option<bool>,
     initial_pvf_lane: Option<String>,
     initial_pvf_lane_source: Option<String>,
+    estimate_elapsed_seconds: Option<String>,
+    estimate_total_tokens: Option<String>,
+    estimate_validation_seconds: Option<String>,
+    issue_goal_token_budget: Option<String>,
+    estimate_confidence: Option<String>,
+    estimate_data_source: Option<String>,
+    estimate_source_ref: Option<String>,
+    goal_metrics_rollup_ref: Option<String>,
+    validation_runtime_class: Option<String>,
+    validation_resource_profile: Option<String>,
+    validation_family: Option<String>,
+    validation_size_split: Option<String>,
+    expected_proof_cost: Option<String>,
+    planned_validation_seconds: Option<String>,
+    planned_validation_tokens: Option<String>,
 }
 
 impl SourcePromptMetadata {
@@ -286,9 +301,64 @@ impl SourcePromptMetadata {
             if out.initial_pvf_lane_source.is_none() {
                 out.initial_pvf_lane_source = yaml_string_field(mapping, "initial_pvf_lane_source");
             }
+            if out.estimate_elapsed_seconds.is_none() {
+                out.estimate_elapsed_seconds =
+                    yaml_string_field(mapping, "estimate_elapsed_seconds");
+            }
+            if out.estimate_total_tokens.is_none() {
+                out.estimate_total_tokens = yaml_string_field(mapping, "estimate_total_tokens");
+            }
+            if out.estimate_validation_seconds.is_none() {
+                out.estimate_validation_seconds =
+                    yaml_string_field(mapping, "estimate_validation_seconds");
+            }
+            if out.issue_goal_token_budget.is_none() {
+                out.issue_goal_token_budget = yaml_string_field(mapping, "issue_goal_token_budget");
+            }
+            if out.estimate_confidence.is_none() {
+                out.estimate_confidence = yaml_string_field(mapping, "estimate_confidence");
+            }
+            if out.estimate_data_source.is_none() {
+                out.estimate_data_source = yaml_string_field(mapping, "estimate_data_source");
+            }
+            if out.estimate_source_ref.is_none() {
+                out.estimate_source_ref = yaml_string_field(mapping, "estimate_source_ref");
+            }
+            if out.goal_metrics_rollup_ref.is_none() {
+                out.goal_metrics_rollup_ref = yaml_string_field(mapping, "goal_metrics_rollup_ref");
+            }
+            if out.validation_runtime_class.is_none() {
+                out.validation_runtime_class =
+                    yaml_string_field(mapping, "validation_runtime_class");
+            }
+            if out.validation_resource_profile.is_none() {
+                out.validation_resource_profile =
+                    yaml_string_field(mapping, "validation_resource_profile");
+            }
+            if out.validation_family.is_none() {
+                out.validation_family = yaml_string_field(mapping, "validation_family");
+            }
+            if out.validation_size_split.is_none() {
+                out.validation_size_split = yaml_string_field(mapping, "validation_size_split");
+            }
+            if out.expected_proof_cost.is_none() {
+                out.expected_proof_cost = yaml_string_field(mapping, "expected_proof_cost");
+            }
+            if out.planned_validation_seconds.is_none() {
+                out.planned_validation_seconds =
+                    yaml_string_field(mapping, "planned_validation_seconds");
+            }
+            if out.planned_validation_tokens.is_none() {
+                out.planned_validation_tokens =
+                    yaml_string_field(mapping, "planned_validation_tokens");
+            }
         }
         out
     }
+}
+
+fn metadata_value_or_unknown(value: &Option<String>) -> String {
+    value.clone().unwrap_or_else(|| "unknown".to_string())
 }
 
 fn resolved_initial_pvf_lane(metadata: &SourcePromptMetadata, title: &str, prompt: &str) -> String {
@@ -384,8 +454,16 @@ fn yaml_front_matter_documents(text: &str) -> Vec<YamlValue> {
 fn yaml_string_field(mapping: &serde_yaml::Mapping, key: &str) -> Option<String> {
     mapping
         .get(YamlValue::String(key.to_string()))
-        .and_then(YamlValue::as_str)
-        .map(ToString::to_string)
+        .and_then(yaml_scalar_to_string)
+}
+
+fn yaml_scalar_to_string(value: &YamlValue) -> Option<String> {
+    match value {
+        YamlValue::String(value) => Some(value.clone()),
+        YamlValue::Number(value) => Some(value.to_string()),
+        YamlValue::Bool(value) => Some(value.to_string()),
+        _ => None,
+    }
 }
 
 fn yaml_bool_field(mapping: &serde_yaml::Mapping, key: &str) -> Option<bool> {
@@ -402,22 +480,6 @@ fn yaml_string_sequence_field(mapping: &serde_yaml::Mapping, key: &str) -> Vec<S
         return sequence.iter().filter_map(yaml_scalar_to_string).collect();
     }
     yaml_scalar_to_string(value).into_iter().collect()
-}
-
-fn yaml_scalar_to_string(value: &YamlValue) -> Option<String> {
-    if let Some(value) = value.as_str() {
-        return Some(value.to_string());
-    }
-    if let Some(value) = value.as_i64() {
-        return Some(value.to_string());
-    }
-    if let Some(value) = value.as_u64() {
-        return Some(value.to_string());
-    }
-    if let Some(value) = value.as_bool() {
-        return Some(value.to_string());
-    }
-    None
 }
 
 fn merge_strings(target: &mut Vec<String>, values: Vec<String>) {
@@ -1163,28 +1225,64 @@ fn render_bootstrap_output_card(
             ("<planned_pvf_lane>", planned_pvf_lane.clone()),
             ("<final_pvf_lane>", "not_recorded_yet".to_string()),
             ("<lane_change_reason>", "not_recorded_yet".to_string()),
-            ("<expected_runtime_class>", "unknown".to_string()),
-            ("<estimate_elapsed_seconds>", "unknown".to_string()),
-            ("<estimated_elapsed_seconds>", "unknown".to_string()),
+            (
+                "<expected_runtime_class>",
+                metadata_value_or_unknown(&metadata.validation_runtime_class),
+            ),
+            (
+                "<estimate_elapsed_seconds>",
+                metadata_value_or_unknown(&metadata.estimate_elapsed_seconds),
+            ),
+            (
+                "<estimated_elapsed_seconds>",
+                metadata_value_or_unknown(&metadata.estimate_elapsed_seconds),
+            ),
             ("<actual_elapsed_seconds>", "unknown".to_string()),
             ("<actual_active_work_seconds>", "unknown".to_string()),
-            ("<estimate_total_tokens>", "unknown".to_string()),
-            ("<estimated_total_tokens>", "unknown".to_string()),
+            (
+                "<estimate_total_tokens>",
+                metadata_value_or_unknown(&metadata.estimate_total_tokens),
+            ),
+            (
+                "<estimated_total_tokens>",
+                metadata_value_or_unknown(&metadata.estimate_total_tokens),
+            ),
             ("<actual_total_tokens>", "unknown".to_string()),
-            ("<estimate_validation_seconds>", "unknown".to_string()),
-            ("<estimated_validation_seconds>", "unknown".to_string()),
+            (
+                "<estimate_validation_seconds>",
+                metadata_value_or_unknown(&metadata.estimate_validation_seconds),
+            ),
+            (
+                "<estimated_validation_seconds>",
+                metadata_value_or_unknown(&metadata.estimate_validation_seconds),
+            ),
             ("<actual_validation_seconds>", "unknown".to_string()),
-            ("<budget_source>", "unknown".to_string()),
+            (
+                "<budget_source>",
+                metadata_value_or_unknown(&metadata.estimate_data_source),
+            ),
             ("<actual_pr_wait_seconds>", "unknown".to_string()),
             ("<actual_ci_wait_seconds>", "unknown".to_string()),
-            ("<actual_metrics_data_source>", "unknown".to_string()),
-            ("<actual_metrics_source_ref>", "unknown".to_string()),
-            ("<actual_metrics_confidence>", "unknown".to_string()),
+            (
+                "<actual_metrics_data_source>",
+                metadata_value_or_unknown(&metadata.estimate_data_source),
+            ),
+            (
+                "<actual_metrics_source_ref>",
+                metadata_value_or_unknown(&metadata.estimate_source_ref),
+            ),
+            (
+                "<actual_metrics_confidence>",
+                metadata_value_or_unknown(&metadata.estimate_confidence),
+            ),
             ("<estimate_error_percent>", "unknown".to_string()),
             ("<completion_state>", "unknown".to_string()),
             ("<issue_goal_ref>", format!("issue-{}", issue_ref.issue_number())),
             ("<sprint_goal_ref>", "unknown".to_string()),
-            ("<goal_metrics_rollup_ref>", "unknown".to_string()),
+            (
+                "<goal_metrics_rollup_ref>",
+                metadata_value_or_unknown(&metadata.goal_metrics_rollup_ref),
+            ),
             ("<vpp_card>", vpp_rel),
             ("<variance_analysis_required>", "not_applicable".to_string()),
             ("<variance_analysis_completed>", "not_applicable".to_string()),
@@ -1517,20 +1615,53 @@ fn render_bootstrap_plan_card(
             ("<planned_pvf_lane>", planned_pvf_lane.clone()),
             ("<planned_pvf_lane_source>", planned_pvf_lane_source.clone()),
             ("<expected_runtime_class>", "unknown".to_string()),
-            ("<estimate_elapsed_seconds>", "unknown".to_string()),
-            ("<estimated_elapsed_seconds>", "unknown".to_string()),
-            ("<estimate_total_tokens>", "unknown".to_string()),
-            ("<estimated_total_tokens>", "unknown".to_string()),
-            ("<estimate_validation_seconds>", "unknown".to_string()),
-            ("<estimated_validation_seconds>", "unknown".to_string()),
-            ("<issue_goal_token_budget>", "unknown".to_string()),
+            (
+                "<estimate_elapsed_seconds>",
+                metadata_value_or_unknown(&metadata.estimate_elapsed_seconds),
+            ),
+            (
+                "<estimated_elapsed_seconds>",
+                metadata_value_or_unknown(&metadata.estimate_elapsed_seconds),
+            ),
+            (
+                "<estimate_total_tokens>",
+                metadata_value_or_unknown(&metadata.estimate_total_tokens),
+            ),
+            (
+                "<estimated_total_tokens>",
+                metadata_value_or_unknown(&metadata.estimate_total_tokens),
+            ),
+            (
+                "<estimate_validation_seconds>",
+                metadata_value_or_unknown(&metadata.estimate_validation_seconds),
+            ),
+            (
+                "<estimated_validation_seconds>",
+                metadata_value_or_unknown(&metadata.estimate_validation_seconds),
+            ),
+            (
+                "<issue_goal_token_budget>",
+                metadata_value_or_unknown(&metadata.issue_goal_token_budget),
+            ),
             ("<variance_threshold_percent>", "10".to_string()),
-            ("<estimate_confidence>", "unknown".to_string()),
-            ("<estimate_data_source>", "unknown".to_string()),
-            ("<estimate_source_ref>", "unknown".to_string()),
+            (
+                "<estimate_confidence>",
+                metadata_value_or_unknown(&metadata.estimate_confidence),
+            ),
+            (
+                "<estimate_data_source>",
+                metadata_value_or_unknown(&metadata.estimate_data_source),
+            ),
+            (
+                "<estimate_source_ref>",
+                metadata_value_or_unknown(&metadata.estimate_source_ref),
+            ),
             ("<issue_goal_ref>", format!("issue-{}", issue_ref.issue_number())),
             ("<sprint_goal_ref>", "unknown".to_string()),
-            ("<goal_metrics_rollup_ref>", "unknown".to_string()),
+            (
+                "<goal_metrics_rollup_ref>",
+                metadata_value_or_unknown(&metadata.goal_metrics_rollup_ref),
+            ),
         ],
     );
     Ok(text)
@@ -1589,6 +1720,37 @@ fn render_bootstrap_validation_plan_card(
                 ),
             },
         );
+    let generated_vpp = GeneratedVppPlan {
+        validation_runtime_class: metadata
+            .validation_runtime_class
+            .clone()
+            .unwrap_or(generated_vpp.validation_runtime_class),
+        validation_resource_profile: metadata
+            .validation_resource_profile
+            .clone()
+            .unwrap_or(generated_vpp.validation_resource_profile),
+        validation_family: metadata
+            .validation_family
+            .clone()
+            .unwrap_or(generated_vpp.validation_family),
+        validation_size_split: metadata
+            .validation_size_split
+            .clone()
+            .unwrap_or(generated_vpp.validation_size_split),
+        expected_proof_cost: metadata
+            .expected_proof_cost
+            .clone()
+            .unwrap_or(generated_vpp.expected_proof_cost),
+        planned_validation_seconds: metadata
+            .planned_validation_seconds
+            .clone()
+            .unwrap_or(generated_vpp.planned_validation_seconds),
+        planned_validation_tokens: metadata
+            .planned_validation_tokens
+            .clone()
+            .unwrap_or(generated_vpp.planned_validation_tokens),
+        ..generated_vpp
+    };
     let mut text = read_prompt_template(repo_root, "vpp", &[])?;
     let issue_url = format!(
         "https://github.com/{}/issues/{}",
@@ -1657,7 +1819,10 @@ fn render_bootstrap_validation_plan_card(
                 format!("issue-{}", issue_ref.issue_number()),
             ),
             ("<sprint_goal_ref>", "unknown".to_string()),
-            ("<goal_metrics_rollup_ref>", "unknown".to_string()),
+            (
+                "<goal_metrics_rollup_ref>",
+                metadata_value_or_unknown(&metadata.goal_metrics_rollup_ref),
+            ),
             (
                 "<selected_lanes_inline>",
                 generated_vpp.selected_lanes_inline,
@@ -2037,7 +2202,7 @@ fn sanitize_vpp_validation_command(command: &str) -> String {
     let mut replace_next_changed_files = false;
     for token in command.split_whitespace() {
         if replace_next_changed_files {
-            sanitized.push("<changed-files>".to_string());
+            sanitized.push(".adl/generated-vpp-changed-files.txt".to_string());
             replace_next_changed_files = false;
             continue;
         }
