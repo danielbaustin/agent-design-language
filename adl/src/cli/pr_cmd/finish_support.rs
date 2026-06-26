@@ -2537,6 +2537,7 @@ fn registered_validation_atom_supported(command: &str) -> bool {
                 | "adl/tools/test_demo_v0904_csm_observatory_governed_prototype.sh"
                 | "adl/tools/test_v0916_unity_observatory_baseline.sh"
                 | "adl/tools/test_v0916_unity_observatory_contract.sh"
+                | "adl/tools/test_v0916_unity_observatory_soak_integration.sh"
                 | "adl/tools/test_sprint_conductor_helpers.sh"
                 | "adl/tools/test_install_adl_operational_skills.sh"
         ),
