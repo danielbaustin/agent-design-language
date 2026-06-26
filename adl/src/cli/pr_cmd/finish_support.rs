@@ -2244,6 +2244,11 @@ pub(super) fn select_finish_validation_plan_for_finish(
     if changed_paths.is_empty() {
         bail!("finish: no changed tracked paths available for validation profile selection");
     }
+    if finish_paths_are_version_metadata_only(changed_paths)
+        && !finish_issue_needs_tokio_manifest_runtime_validation(issue_number, changed_paths)
+    {
+        bail!("finish: selector left changed paths without validation-lane coverage");
+    }
     if finish_paths_are_version_metadata_update(changed_paths) {
         return Ok(build_version_metadata_validation_plan());
     }
@@ -2672,6 +2677,19 @@ fn finish_paths_are_version_metadata_update(changed_paths: &[String]) -> bool {
         }
     }
     has_manifest && has_lockfile && has_current_docs
+}
+
+fn finish_paths_are_version_metadata_only(changed_paths: &[String]) -> bool {
+    let mut has_manifest = false;
+    let mut has_lockfile = false;
+    for path in changed_paths {
+        match path.trim().trim_matches('/') {
+            "adl/Cargo.toml" => has_manifest = true,
+            "adl/Cargo.lock" => has_lockfile = true,
+            _ => return false,
+        }
+    }
+    has_manifest && has_lockfile
 }
 
 fn build_version_metadata_validation_plan() -> FinishValidationPlan {
