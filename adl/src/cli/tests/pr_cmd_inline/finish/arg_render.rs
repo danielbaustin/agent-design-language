@@ -3504,12 +3504,27 @@ fn finish_validation_profile_classifies_locked_cargo_fallback_slice() {
         .commands
         .contains(&"bash adl/tools/run_owner_validation_lane.sh csdlc".to_string()));
 
-    let unrelated_err =
+    let unrelated_plan =
         select_finish_validation_plan_for_finish(4305, &requested_paths, &changed_paths)
-            .expect_err("unrelated issue should not get the issue-local Cargo.lock allowance");
-    assert!(unrelated_err
-        .to_string()
-        .contains("selector left changed paths without validation-lane coverage"));
+            .expect("unrelated issue should fall back to the generic larger-binary plan");
+    assert_eq!(
+        unrelated_plan.mode,
+        FinishValidationMode::LargerBinaryFocused
+    );
+    assert!(unrelated_plan
+        .commands
+        .contains(&"bash adl/tools/test_ci_path_policy.sh && bash adl/tools/test_select_validation_lanes.sh && bash adl/tools/test_validation_manager.sh && bash adl/tools/test_run_nessus_remote_validation.sh".to_string()));
+    assert!(unrelated_plan
+        .commands
+        .contains(&"bash adl/tools/test_check_coverage_impact.sh".to_string()));
+    assert!(unrelated_plan
+        .commands
+        .contains(&"bash adl/tools/run_owner_validation_lane.sh csdlc".to_string()));
+    assert!(unrelated_plan
+        .commands
+        .iter()
+        .any(|command| command
+            .starts_with("bash adl/tools/run_pr_fast_test_lane.sh --changed-files ")));
 }
 
 #[test]
