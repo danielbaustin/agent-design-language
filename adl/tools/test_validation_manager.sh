@@ -497,4 +497,156 @@ if bash "$SCRIPT" --manifest "$bad_guardrail_manifest" --changed-files "$runtime
 fi
 assert_has "$TMP/bad-guardrail.err" "validation_manager: manager guardrail pr_fast.max_filter_token_count must be an integer"
 
+remote_origin_src="$TMP/remote-origin-src"
+remote_origin_bare="$TMP/remote-origin.git"
+mkdir -p "$remote_origin_src"
+git -C "$remote_origin_src" init -q
+git -C "$remote_origin_src" branch -M main
+cat >"$remote_origin_src/README.md" <<'EOF'
+# validation manager remote fixture
+EOF
+git -C "$remote_origin_src" add README.md
+git -C "$remote_origin_src" -c user.name=Codex -c user.email=codex@example.com commit -q -m "fixture"
+git clone -q --bare "$remote_origin_src" "$remote_origin_bare"
+
+remote_fake_bin="$TMP/remote-fake-bin"
+mkdir -p "$remote_fake_bin"
+cat >"$remote_fake_bin/rustc" <<'EOF'
+#!/usr/bin/env bash
+set -euo pipefail
+if [[ "${1:-}" == "--version" ]]; then
+  echo "rustc 1.96.0 (fixture)"
+  exit 0
+fi
+echo "unexpected rustc invocation: $*" >&2
+exit 1
+EOF
+cat >"$remote_fake_bin/cargo" <<'EOF'
+#!/usr/bin/env bash
+set -euo pipefail
+if [[ "${1:-}" == "--version" ]]; then
+  echo "cargo 1.96.0 (fixture)"
+  exit 0
+fi
+echo "unexpected cargo invocation: $*" >&2
+exit 1
+EOF
+cat >"$remote_fake_bin/sccache" <<'EOF'
+#!/usr/bin/env bash
+set -euo pipefail
+case "${1:-}" in
+  --version)
+    echo "sccache 0.16.0"
+    ;;
+  --zero-stats)
+    exit 0
+    ;;
+  --show-stats)
+    cat <<'STATS'
+Compile requests                      5
+Compile requests executed             2
+Cache hits                            3
+Cache misses                          2
+STATS
+    ;;
+  *)
+    echo "unexpected sccache invocation: $*" >&2
+    exit 1
+    ;;
+esac
+EOF
+cat >"$remote_fake_bin/apt-get" <<'EOF'
+#!/usr/bin/env bash
+set -euo pipefail
+echo "apt-get update fixture ok"
+EOF
+chmod +x "$remote_fake_bin/"*
+
+remote_sources="$TMP/remote-sources.list"
+remote_kubernetes="$TMP/remote-kubernetes.list"
+cat >"$remote_sources" <<'EOF'
+deb https://apt.releases.hashicorp.com focal main
+EOF
+cat >"$remote_kubernetes" <<'EOF'
+deb https://apt.kubernetes.io/ kubernetes-xenial main
+EOF
+
+remote_profile_changed="$TMP/remote-profile.txt"
+printf 'M\tadl/src/provider_communication.rs\n' >"$remote_profile_changed"
+ADL_NESSUS_REMOTE_EXECUTOR=local \
+ADL_NESSUS_REMOTE_ROOT="$TMP/validation-manager-remote-root" \
+ADL_NESSUS_REMOTE_REPO_URL="$remote_origin_bare" \
+ADL_NESSUS_REMOTE_GIT_REF=origin/main \
+ADL_NESSUS_APT_SOURCES_LIST="$remote_sources" \
+ADL_NESSUS_APT_KUBERNETES_LIST="$remote_kubernetes" \
+PATH="$remote_fake_bin:$PATH" \
+bash "$SCRIPT" \
+  --changed-files "$remote_profile_changed" \
+  --remote-runner nessus \
+  --remote-command "printf remote-manager-ok" \
+  --remote-artifact-dir "$TMP/remote-manager-artifacts" \
+  --json >"$TMP/remote-manager.json"
+python3 - <<'PY' "$TMP/remote-manager.json"
+import json
+import sys
+
+profile = json.load(open(sys.argv[1]))
+assert profile["remote_runner"]["requested"] == "nessus"
+assert profile["remote_runner"]["decision"] == "selected"
+assert "run_nessus_remote_validation.sh" in profile["remote_runner"]["command"]
+assert profile["run"][0]["lane_id"] == "nessus_remote_validation"
+assert profile["status"] == "ready_to_run"
+PY
+
+ADL_NESSUS_REMOTE_EXECUTOR=local \
+ADL_NESSUS_REMOTE_ROOT="$TMP/validation-manager-remote-root-run" \
+ADL_NESSUS_REMOTE_REPO_URL="$remote_origin_bare" \
+ADL_NESSUS_REMOTE_GIT_REF=origin/main \
+ADL_NESSUS_APT_SOURCES_LIST="$remote_sources" \
+ADL_NESSUS_APT_KUBERNETES_LIST="$remote_kubernetes" \
+PATH="$remote_fake_bin:$PATH" \
+bash "$SCRIPT" \
+  --changed-files "$remote_profile_changed" \
+  --remote-runner nessus \
+  --remote-command "printf remote-manager-ok" \
+  --remote-artifact-dir "$TMP/remote-manager-artifacts-run" \
+  --run \
+  --report-out "$TMP/remote-manager-run-report.json" >/dev/null
+python3 - <<'PY' "$TMP/remote-manager-run-report.json" "$TMP/remote-manager-artifacts-run/summary.json"
+import json
+import sys
+
+profile = json.load(open(sys.argv[1]))
+summary = json.load(open(sys.argv[2]))
+assert profile["run_status"] == "passed"
+assert profile["remote_runner"]["decision"] == "selected"
+assert summary["status"] == "passed"
+assert summary["command"] == "printf remote-manager-ok"
+PY
+
+bash "$SCRIPT" \
+  --changed-files "$docs_only" \
+  --remote-runner nessus \
+  --remote-command "printf no-remote-docs" \
+  --json >"$TMP/remote-docs.json"
+python3 - <<'PY' "$TMP/remote-docs.json"
+import json
+import sys
+
+profile = json.load(open(sys.argv[1]))
+assert profile["remote_runner"]["decision"] == "rejected"
+assert "runtime_class tiny" in profile["remote_runner"]["reason"]
+assert profile["status"] == "ready_to_run"
+PY
+
+if bash "$SCRIPT" \
+  --changed-files "$docs_only" \
+  --remote-runner nessus \
+  --remote-command "printf no-remote-docs" \
+  --run >"$TMP/remote-docs-run.out" 2>"$TMP/remote-docs-run.err"; then
+  echo "expected docs-only remote-runner request to be rejected" >&2
+  exit 1
+fi
+assert_has "$TMP/remote-docs-run.err" "requested remote runner is not eligible"
+
 echo "PASS test_validation_manager"
