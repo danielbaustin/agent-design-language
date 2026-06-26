@@ -17,7 +17,8 @@ Current status: planning refresh for the final pre-`v0.92` bridge and readiness 
 
 - Initial planning package: created by earlier v0.91.7 setup work.
 - Source-capture refresh: `#4368`.
-- Execution: not started beyond planning/feature docs.
+- Execution: not started beyond planning/feature docs and `#4549` Soak #2
+  execution-packet setup; no Soak #2 runtime execution has run.
 - Validation: docs-readiness validation only until implementation issues run.
 - Release readiness: not applicable until `v0.91.7` executes.
 
