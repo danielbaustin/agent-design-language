@@ -30,6 +30,8 @@ mod public_prompt_packet;
 mod review_contract;
 #[path = "tooling_cmd/review_surface.rs"]
 mod review_surface;
+#[path = "tooling_cmd/srp_sor_update.rs"]
+mod srp_sor_update;
 #[path = "tooling_cmd/structured_prompt.rs"]
 mod structured_prompt;
 #[path = "tooling_cmd/wp_issue_wave.rs"]
@@ -48,6 +50,7 @@ use prompt_template::real_prompt_template;
 use public_prompt_packet::real_public_prompt_packet;
 use review_contract::{real_verify_repo_review_contract, real_verify_review_output_provenance};
 use review_surface::{real_review_card_surface, real_review_runtime_surface};
+use srp_sor_update::real_srp_sor_update;
 use structured_prompt::{real_lint_prompt_spec, real_validate_structured_prompt};
 use wp_issue_wave::real_generate_wp_issue_wave;
 
@@ -75,7 +78,7 @@ use structured_prompt::{
 pub(crate) fn real_tooling(args: &[String]) -> Result<()> {
     let Some(subcommand) = args.first().map(|arg| arg.as_str()) else {
         return Err(anyhow!(
-            "tooling requires a subcommand: card-prompt | ci-log-archive | code-review | codex-usage-watch | csdlc-prompt-editor | generate-wp-issue-wave | github-release | issue-resource-telemetry | lint-prompt-spec | prompt-template | public-prompt-packet | validate-structured-prompt | review-card-surface | review-runtime-surface | verify-review-output-provenance | verify-repo-review-contract"
+            "tooling requires a subcommand: card-prompt | ci-log-archive | code-review | codex-usage-watch | csdlc-prompt-editor | generate-wp-issue-wave | github-release | issue-resource-telemetry | lint-prompt-spec | prompt-template | public-prompt-packet | srp-sor-update | validate-structured-prompt | review-card-surface | review-runtime-surface | verify-review-output-provenance | verify-repo-review-contract"
         ));
     };
 
@@ -93,6 +96,7 @@ pub(crate) fn real_tooling(args: &[String]) -> Result<()> {
         "portable-project-doctor" => real_portable_project_doctor(&args[1..]),
         "prompt-template" => real_prompt_template(&args[1..]),
         "public-prompt-packet" => real_public_prompt_packet(&args[1..]),
+        "srp-sor-update" => real_srp_sor_update(&args[1..]),
         "validate-structured-prompt" => real_validate_structured_prompt(&args[1..]),
         "review-card-surface" => real_review_card_surface(&args[1..]),
         "review-runtime-surface" => real_review_runtime_surface(&args[1..]),
@@ -103,7 +107,7 @@ pub(crate) fn real_tooling(args: &[String]) -> Result<()> {
             Ok(())
         }
         _ => Err(anyhow!(
-            "unknown tooling subcommand '{subcommand}' (expected card-prompt | ci-log-archive | code-review | codex-usage-watch | csdlc-prompt-editor | generate-wp-issue-wave | github-release | issue-resource-telemetry | lint-prompt-spec | portable-project-doctor | prompt-template | public-prompt-packet | validate-structured-prompt | review-card-surface | review-runtime-surface | verify-review-output-provenance | verify-repo-review-contract)"
+            "unknown tooling subcommand '{subcommand}' (expected card-prompt | ci-log-archive | code-review | codex-usage-watch | csdlc-prompt-editor | generate-wp-issue-wave | github-release | issue-resource-telemetry | lint-prompt-spec | portable-project-doctor | prompt-template | public-prompt-packet | srp-sor-update | validate-structured-prompt | review-card-surface | review-runtime-surface | verify-review-output-provenance | verify-repo-review-contract)"
         )),
     }
 }
@@ -135,6 +139,7 @@ adl tooling prompt-template validate-schemas [--repo-root <path>] [--template-se
 adl tooling prompt-template write-sample-values --out-dir <dir> [--template-set <semver>]\n\
 adl tooling prompt-template write-structure-schemas --out-dir <dir> [--repo-root <path>] [--template-set <semver>]\n\
 adl tooling public-prompt-packet export --issue <number> --slug <slug> --version <version> [--source <dir>] [--out-root <dir>] [--tracker-url <url>] [--repo-root <path>]\n\
+adl tooling srp-sor-update --facts <facts.yaml> --srp <srp.md> --sor <sor.md> [--out-srp <srp.md>] [--out-sor <sor.md>]\n\
 adl tooling validate-structured-prompt --type <sip|stp|spp|vpp|srp|sor> --input <path> [--phase <phase>]\n\
 adl tooling review-card-surface --input <input.md> --output <output.md>\n\
 adl tooling review-runtime-surface --review-root <dir>\n\

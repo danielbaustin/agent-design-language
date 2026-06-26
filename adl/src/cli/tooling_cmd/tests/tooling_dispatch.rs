@@ -14,6 +14,25 @@ fn tooling_cmd_dispatch_and_help_paths_cover_public_entrypoint() {
         ".tmp/tooling_cmd_tests/review-output.yaml",
         &valid_review_output_yaml(repo.path()),
     );
+    let srp = repo.write_rel(".tmp/tooling_cmd_tests/srp.md", &valid_srp_text(4559));
+    let sor = repo.write_rel(".tmp/tooling_cmd_tests/sor.md", &valid_sor_text());
+    let srp_sor_facts = repo.write_rel(
+        ".tmp/tooling_cmd_tests/srp-sor-facts.yaml",
+        r#"review:
+  findings_status: resolved
+  recommended_outcome: PASS
+validation:
+  status: PASS
+  commands:
+    - command: "git diff --check"
+      purpose: "whitespace proof"
+      result: PASS
+integration:
+  integration_state: pr_open
+  verification_scope: worktree
+  result: PASS
+"#,
+    );
     let stp = repo.write_rel(".tmp/tooling_cmd_tests/stp.md", &valid_stp_text());
     let sip = repo.write_rel(
         ".tmp/tooling_cmd_tests/sip.md",
@@ -37,6 +56,8 @@ fn tooling_cmd_dispatch_and_help_paths_cover_public_entrypoint() {
         .expect("codex-usage-watch help should succeed");
     real_tooling(&["portable-project-doctor".to_string(), "--help".to_string()])
         .expect("portable-project-doctor help should succeed");
+    real_tooling(&["srp-sor-update".to_string(), "--help".to_string()])
+        .expect("srp-sor-update help should succeed");
 
     let ci_logs = repo.path().join("ci-logs");
     fs::create_dir_all(&ci_logs).expect("ci log dir");
@@ -178,6 +199,16 @@ fn tooling_cmd_dispatch_and_help_paths_cover_public_entrypoint() {
     ])
     .expect("sip dispatch should succeed");
     real_tooling(&[
+        "srp-sor-update".to_string(),
+        "--facts".to_string(),
+        srp_sor_facts.to_string_lossy().to_string(),
+        "--srp".to_string(),
+        srp.to_string_lossy().to_string(),
+        "--sor".to_string(),
+        sor.to_string_lossy().to_string(),
+    ])
+    .expect("srp-sor-update dispatch should succeed");
+    real_tooling(&[
         "review-card-surface".to_string(),
         "--input".to_string(),
         input.to_string_lossy().to_string(),
@@ -237,6 +268,127 @@ fn code_review_fixture_backend_writes_blocking_gate_artifacts() {
     assert_eq!(result["repo_access"]["read_only"], false);
     assert_eq!(result["repo_access"]["write_allowed"], false);
     assert_eq!(result["repo_access"]["tool_execution_allowed"], false);
+}
+
+#[test]
+fn srp_sor_update_populates_review_validation_integration_and_metrics() {
+    let repo = TempRepo::new("srp-sor-update");
+    let facts = repo.write_rel(
+        "facts.yaml",
+        r#"review:
+  findings_status: resolved
+  recommended_outcome: PASS
+  notes: "bounded review completed; no open findings"
+validation:
+  status: PASS
+  commands:
+    - command: "cargo test --manifest-path adl/Cargo.toml srp_sor_update"
+      purpose: "exercise SRP/SOR fact updater"
+      result: PASS
+integration:
+  main_repo_paths_updated:
+    - "adl/src/cli/tooling_cmd.rs"
+    - "adl/src/cli/tooling_cmd/srp_sor_update.rs"
+  worktree_only_paths_remaining: none
+  integration_state: pr_open
+  verification_scope: worktree
+  integration_method: draft PR publication
+  verification_performed:
+    - "git diff --check"
+    - "cargo test --manifest-path adl/Cargo.toml srp_sor_update"
+  result: PASS
+metrics:
+  actual_elapsed_seconds: "900"
+  actual_total_tokens: "45000"
+  actual_validation_seconds: "12"
+  goal_metrics_data_source: "codex_goal_tool"
+  goal_metrics_source_ref: ".adl/v0.91.6/tasks/issue-4559__srp-sor-update/sor.md"
+  data_source_confidence: high
+"#,
+    );
+    let srp = repo.write_rel("srp.md", &valid_srp_text(4559));
+    let sor = repo.write_rel("sor.md", &valid_sor_text());
+
+    real_srp_sor_update(&[
+        "--facts".into(),
+        facts.display().to_string(),
+        "--srp".into(),
+        srp.display().to_string(),
+        "--sor".into(),
+        sor.display().to_string(),
+    ])
+    .expect("update SRP/SOR");
+
+    let srp_text = fs::read_to_string(&srp).expect("read srp");
+    let sor_text = fs::read_to_string(&sor).expect("read sor");
+
+    assert!(srp_text.contains("review_results:"));
+    assert!(srp_text.contains("findings_status: no_findings"));
+    assert!(srp_text.contains("recommended_outcome: pass"));
+    assert!(!srp_text.contains("review_results_exception"));
+    assert!(sor_text.contains("- Actual elapsed seconds: `900`"));
+    assert!(sor_text.contains("- Integration state: pr_open"));
+    assert!(sor_text.contains("  - `adl/src/cli/tooling_cmd/srp_sor_update.rs`"));
+    assert!(sor_text.contains("- `cargo test --manifest-path adl/Cargo.toml srp_sor_update` - exercise SRP/SOR fact updater"));
+    assert!(sor_text.contains("    status: PASS"));
+
+    validate_srp_text(&srp_text).expect("srp validates");
+    validate_sor_text(&sor_text, None).expect("sor validates");
+}
+
+#[test]
+fn srp_sor_update_is_idempotent_when_facts_already_applied() {
+    let repo = TempRepo::new("srp-sor-update-idempotent");
+    let facts = repo.write_rel(
+        "facts.yaml",
+        r#"review:
+  findings_status: resolved
+  recommended_outcome: PASS
+validation:
+  status: PASS
+"#,
+    );
+    let srp = repo.write_rel("srp.md", &valid_srp_text(4559));
+    let sor = repo.write_rel("sor.md", &valid_sor_text());
+
+    let args = vec![
+        "--facts".to_string(),
+        facts.display().to_string(),
+        "--srp".to_string(),
+        srp.display().to_string(),
+        "--sor".to_string(),
+        sor.display().to_string(),
+    ];
+
+    real_srp_sor_update(&args).expect("first update");
+    let srp_once = fs::read_to_string(&srp).expect("read srp once");
+    let sor_once = fs::read_to_string(&sor).expect("read sor once");
+    real_srp_sor_update(&args).expect("second update");
+
+    assert_eq!(srp_once, fs::read_to_string(&srp).expect("read srp twice"));
+    assert_eq!(sor_once, fs::read_to_string(&sor).expect("read sor twice"));
+}
+
+#[test]
+fn srp_sor_update_fails_closed_for_empty_fact_packet() {
+    let repo = TempRepo::new("srp-sor-update-empty");
+    let facts = repo.write_rel("facts.yaml", "{}\n");
+    let srp = repo.write_rel("srp.md", &valid_srp_text(4559));
+    let sor = repo.write_rel("sor.md", &valid_sor_text());
+
+    let err = real_srp_sor_update(&[
+        "--facts".into(),
+        facts.display().to_string(),
+        "--srp".into(),
+        srp.display().to_string(),
+        "--sor".into(),
+        sor.display().to_string(),
+    ])
+    .expect_err("empty facts fail");
+
+    assert!(err
+        .to_string()
+        .contains("facts file contains no SRP/SOR updates"));
 }
 
 #[test]
@@ -353,7 +505,7 @@ fn prompt_template_tooling_dispatch_and_usage_are_covered() {
     let rendered_dir = repo.path().join("rendered");
 
     assert!(super::super::tooling_usage().contains("adl tooling prompt-template render"));
-    assert!(crate::cli::usage::usage().contains("adl tooling <card-prompt|code-review|csdlc-prompt-editor|generate-wp-issue-wave|lint-prompt-spec|prompt-template|validate-structured-prompt"));
+    assert!(crate::cli::usage::usage().contains("adl tooling <card-prompt|code-review|csdlc-prompt-editor|generate-wp-issue-wave|lint-prompt-spec|prompt-template|srp-sor-update|validate-structured-prompt"));
 
     real_tooling(&[
         "prompt-template".to_string(),

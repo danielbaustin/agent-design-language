@@ -124,6 +124,7 @@ fn code_review_filter_covers_global_usage_entry() {
             "adl tooling <card-prompt|code-review|csdlc-prompt-editor|generate-wp-issue-wave|lint-prompt-spec|prompt-template"
         )
     );
+    assert!(text.contains("srp-sor-update"));
     assert!(text.contains(
         "adl tooling code-review --out artifacts/reviews/pr-review --backend fixture --visibility packet-only"
     ));
