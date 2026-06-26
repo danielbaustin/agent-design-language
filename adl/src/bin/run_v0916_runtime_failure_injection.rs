@@ -12,10 +12,10 @@ use adl::remote_exec::{
     ExecuteStepPayload, PROTOCOL_VERSION,
 };
 use adl::resilience::{
-    bulkhead_initial_state, execute_bulkhead_policy, execute_fallback_policy,
-    execute_retry_policy, execute_timeout_policy, remote_exec_health_payload, BulkheadPolicyV1,
-    FallbackPolicyV1, RateLimitPolicyV1, ResilienceFaultClassificationV1, ResiliencePolicyV1,
-    ResilienceSurfaceV1, RetryPolicyV1, TimeoutObservation, TimeoutPolicyV1,
+    bulkhead_initial_state, execute_bulkhead_policy, execute_fallback_policy, execute_retry_policy,
+    execute_timeout_policy, remote_exec_health_payload, BulkheadPolicyV1, FallbackPolicyV1,
+    RateLimitPolicyV1, ResilienceFaultClassificationV1, ResiliencePolicyV1, ResilienceSurfaceV1,
+    RetryPolicyV1, TimeoutObservation, TimeoutPolicyV1,
 };
 use anyhow::{anyhow, Context, Result};
 use chrono::Utc;
@@ -244,7 +244,9 @@ fn run(args: Args) -> Result<()> {
     println!("out={}", out_dir.display());
     println!(
         "proof={}",
-        out_dir.join("runtime_failure_injection_proof.json").display()
+        out_dir
+            .join("runtime_failure_injection_proof.json")
+            .display()
     );
     Ok(())
 }
@@ -317,7 +319,9 @@ fn run_retry_policy_probe() -> Value {
             backoff_ms: Some(5),
             jitter_ms: Some(0),
             max_elapsed_ms: Some(100),
-            retryable_fault_classes: vec![adl::resilience::ResilienceFaultClassV1::ProviderTransientHttp],
+            retryable_fault_classes: vec![
+                adl::resilience::ResilienceFaultClassV1::ProviderTransientHttp,
+            ],
         }),
         timeout: None,
         circuit_breaker: None,
@@ -415,14 +419,18 @@ fn run_cancellation_policy_probe() -> Value {
             cancelled: true,
         },
         |fault| fault.clone(),
-        |breach, elapsed_ms, budget_ms| ResilienceFaultClassificationV1::provider(
-            &format!("timeout {:?} elapsed={} budget={}", breach, elapsed_ms, budget_ms),
-            None,
-        ),
-        |elapsed_ms| ResilienceFaultClassificationV1::provider(
-            &format!("cancelled at {elapsed_ms}"),
-            None,
-        ),
+        |breach, elapsed_ms, budget_ms| {
+            ResilienceFaultClassificationV1::provider(
+                &format!(
+                    "timeout {:?} elapsed={} budget={}",
+                    breach, elapsed_ms, budget_ms
+                ),
+                None,
+            )
+        },
+        |elapsed_ms| {
+            ResilienceFaultClassificationV1::provider(&format!("cancelled at {elapsed_ms}"), None)
+        },
     );
     json!({
         "final_status": format!("{:?}", execution.trace.final_status),
@@ -963,10 +971,9 @@ mod tests {
         );
 
         let safety_scan_path = out_dir.join("audit/artifact_safety_scan.json");
-        let safety_scan: Value = serde_json::from_str(
-            &fs::read_to_string(&safety_scan_path).expect("read safety scan"),
-        )
-        .expect("parse safety scan");
+        let safety_scan: Value =
+            serde_json::from_str(&fs::read_to_string(&safety_scan_path).expect("read safety scan"))
+                .expect("parse safety scan");
         assert_eq!(safety_scan["passed"], Value::Bool(true));
     }
 
@@ -1001,6 +1008,9 @@ mod tests {
         assert_eq!(degraded["trace"]["output_degraded"], Value::Bool(true));
 
         let remote = run_remote_timeout_probe().expect("remote timeout probe should succeed");
-        assert_eq!(remote["stable_failure_kind"], Value::String("timeout".to_string()));
+        assert_eq!(
+            remote["stable_failure_kind"],
+            Value::String("timeout".to_string())
+        );
     }
 }
