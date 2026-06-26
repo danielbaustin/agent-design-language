@@ -1,0 +1,24 @@
+{
+  "agent_instance_id": "v0916-runtime-stop-probe",
+  "artifacts": {
+    "cycle_summary": "cycle_summary.md",
+    "decision_request": "decision_request.json",
+    "decision_result": "decision_result.json",
+    "guardrail_report": "guardrail_report.json",
+    "memory_writes": "memory_writes.jsonl",
+    "observations": "observations.json",
+    "run_ref": "run_ref.json"
+  },
+  "completed_at": "2026-06-26T19:00:59.849459Z",
+  "cycle_id": "cycle-000001",
+  "input_hash": "sha256:c8665422393bbacb20ac3ed0b401b08c23ade9ae7f7f8212b0593fb5045b567c",
+  "next_cycle_hint": "sleep_until_next_heartbeat",
+  "not_financial_advice": true,
+  "output_hash": "sha256:53888ecff31ce41156a372149747c87d31e2de76b31260b2a20a7135af158b91",
+  "previous_cycle_id": null,
+  "schema": "adl.long_lived_agent_cycle_manifest.v1",
+  "started_at": "2026-06-26T19:00:59.846442Z",
+  "status": "success",
+  "workflow_kind": "demo_adapter",
+  "workflow_ref": "v0916_runtime_soak"
+}

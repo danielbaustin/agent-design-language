@@ -1,0 +1,8 @@
+{
+  "schema": "adl.long_lived_agent_stop.v1",
+  "agent_instance_id": "v0916-runtime-stop-probe",
+  "reason": "operator stop during bounded cadence sleep window",
+  "requested_by": "operator",
+  "mode": "stop_before_next_cycle",
+  "requested_at": "2026-06-26T19:00:59.997304Z"
+}

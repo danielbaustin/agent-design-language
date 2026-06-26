@@ -1,0 +1,60 @@
+{
+  "final_status": "TimedOut",
+  "result": "timeout_probe Timeout elapsed=80 budget=50",
+  "trace": {
+    "breach_kind": "timeout",
+    "decision_summary": "runtime.soak.timeout_probe: timeout budget exceeded after 80ms (budget 50ms)",
+    "elapsed_ms": 80,
+    "fault": {
+      "component_ref": "runtime.soak.timeout_probe",
+      "disposition": "retryable",
+      "fault_class": "runtime_failure",
+      "retryable": true,
+      "schema_version": "adl.resilience.fault_classification.v1",
+      "summary": "runtime.soak.timeout_probe exceeded timeout budget after 80ms (budget 50ms)",
+      "surface": "runtime"
+    },
+    "final_status": "timed_out",
+    "hard_deadline_ms": 75,
+    "policy_id": "runtime.soak.timeout.policy",
+    "recovery_artifact": {
+      "artifact_id": "runtime.soak.timeout.policy:timeout:runtime.soak.timeout_probe:2",
+      "disposition": "retry_allowed",
+      "evidence_refs": [
+        "runtime.soak.timeout.policy"
+      ],
+      "next_action": "operation exceeded deadline; retry only through the caller's bounded policy",
+      "schema_version": "adl.resilience.recovery_artifact.v1",
+      "surface": "runtime",
+      "triggering_fault": {
+        "component_ref": "runtime.soak.timeout_probe",
+        "disposition": "retryable",
+        "fault_class": "runtime_failure",
+        "retryable": true,
+        "schema_version": "adl.resilience.fault_classification.v1",
+        "summary": "runtime.soak.timeout_probe exceeded timeout budget after 80ms (budget 50ms)",
+        "surface": "runtime"
+      }
+    },
+    "schema_version": "adl.resilience.timeout_execution_trace.v1",
+    "surface": "runtime",
+    "telemetry_event": {
+      "decision_summary": "runtime.soak.timeout_probe: timeout budget exceeded after 80ms (budget 50ms)",
+      "event_id": "runtime.soak.timeout.policy:timeout:runtime.soak.timeout_probe:1",
+      "event_kind": "timeout_decision",
+      "fault": {
+        "component_ref": "runtime.soak.timeout_probe",
+        "disposition": "retryable",
+        "fault_class": "runtime_failure",
+        "retryable": true,
+        "schema_version": "adl.resilience.fault_classification.v1",
+        "summary": "runtime.soak.timeout_probe exceeded timeout budget after 80ms (budget 50ms)",
+        "surface": "runtime"
+      },
+      "policy_ref": "runtime.soak.timeout.policy",
+      "schema_version": "adl.resilience.telemetry_event.v1",
+      "surface": "runtime"
+    },
+    "timeout_ms": 50
+  }
+}

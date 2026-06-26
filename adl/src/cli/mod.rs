@@ -21,6 +21,7 @@ mod run;
 pub(crate) mod run_artifacts;
 mod run_artifacts_types;
 mod runtime_v2_cmd;
+mod scheduler_cmd;
 mod session_cmd;
 #[cfg(test)]
 mod tests;
@@ -40,6 +41,7 @@ use process_cmd::real_process;
 use provider_cmd::real_provider;
 use run::{real_resume, run_workflow};
 use runtime_v2_cmd::real_runtime_v2;
+use scheduler_cmd::real_scheduler;
 use session_cmd::real_session;
 use tooling_cmd::real_tooling;
 
@@ -154,6 +156,7 @@ fn dispatch_args(args: &[String]) -> Result<()> {
         Some("process") => real_process(&args[1..]),
         Some("provider") => real_provider(&args[1..]),
         Some("runtime-v2") => real_runtime_v2(&args[1..]),
+        Some("scheduler") => real_scheduler(&args[1..]),
         Some("session") => real_session(&args[1..]),
         Some("pr") => real_pr(&args[1..]),
         Some("keygen") => real_keygen(&args[1..]),
@@ -174,6 +177,7 @@ Usage:\n\
   adl-runtime run <adl.yaml> [--print-plan] [--print-prompts] [--trace] [--run] [--resume <run.json>] [--steer <steering.json>] [--overlay <overlay.json>] [--out <dir>] [--quiet] [--open]\n\
   adl-runtime resume <run_id> --adl <path> [--steer <steering.json>]\n\
   adl-runtime agent <tick|run|status|inspect|stop> ...\n\
+  adl-runtime scheduler plan --input <bundle.json> [--out <path>] [--json]\n\
   adl-runtime artifact validate-control-path --root <dir>\n\
   adl-runtime csm observatory --packet <visibility-packet.json> ...\n\
   adl-runtime demo <name> ...\n\
@@ -219,6 +223,7 @@ fn dispatch_runtime_args(args: &[String]) -> Result<()> {
         Some("resume") => real_resume(&args[1..]),
         Some("artifact") => real_artifact(&args[1..]),
         Some("agent") => real_agent(&args[1..]),
+        Some("scheduler") => real_scheduler(&args[1..]),
         Some("csm") => real_csm(&args[1..]),
         Some("demo") => real_demo(&args[1..]),
         Some("godel") => real_godel(&args[1..]),
@@ -237,7 +242,7 @@ fn dispatch_runtime_args(args: &[String]) -> Result<()> {
             "adl-runtime does not own C-SDLC workflow commands. Use adl/tools/pr.sh run <issue> for issue work or adl-csdlc for C-SDLC compatibility surfaces."
         )),
         Some(other) => Err(anyhow::anyhow!(
-            "unknown adl-runtime command '{other}'. Expected run, resume, agent, artifact, csm, demo, godel, identity, instrument, learn, provider, runtime-v2, keygen, sign, verify, help, or --version."
+            "unknown adl-runtime command '{other}'. Expected run, resume, agent, artifact, scheduler, csm, demo, godel, identity, instrument, learn, provider, runtime-v2, keygen, sign, verify, help, or --version."
         )),
         None => Err(anyhow::anyhow!(
             "adl-runtime requires a command. Run `adl-runtime --help` for usage."

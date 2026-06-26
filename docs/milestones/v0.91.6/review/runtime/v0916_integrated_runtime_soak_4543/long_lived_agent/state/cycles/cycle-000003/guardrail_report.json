@@ -1,0 +1,85 @@
+{
+  "agent_instance_id": "v0916-runtime-soak",
+  "checks": [
+    {
+      "check_id": "spec_policy_loaded",
+      "policy": {
+        "allow_broker": false,
+        "allow_filesystem_writes_outside_state_root": false,
+        "allow_network": false,
+        "allow_real_world_side_effects": false,
+        "financial_advice": false,
+        "max_consecutive_failures": 2,
+        "max_cycle_runtime_secs": 120,
+        "require_public_artifact_sanitization": true
+      },
+      "result": "pass"
+    },
+    {
+      "check_id": "lease_valid",
+      "result": "pass"
+    },
+    {
+      "check_id": "stop_not_requested",
+      "result": "pass"
+    },
+    {
+      "check_id": "workflow_kind_supported",
+      "details": "demo_adapter",
+      "result": "pass"
+    },
+    {
+      "check_id": "no_forbidden_action",
+      "rejected_actions": [],
+      "result": "pass"
+    },
+    {
+      "check_id": "artifact_sanitization",
+      "findings": [],
+      "result": "pass"
+    },
+    {
+      "check_id": "max_runtime_not_exceeded",
+      "max_cycle_runtime_secs": 120,
+      "result": "pass"
+    },
+    {
+      "check_id": "no_real_trading",
+      "result": "pass"
+    },
+    {
+      "check_id": "no_broker_integration",
+      "result": "pass"
+    },
+    {
+      "check_id": "not_financial_advice",
+      "result": "pass"
+    },
+    {
+      "check_id": "no_real_world_side_effects",
+      "result": "pass"
+    },
+    {
+      "check_id": "writes_within_allowed_roots",
+      "result": "pass"
+    },
+    {
+      "check_id": "paper_only_ledger",
+      "result": "pass"
+    }
+  ],
+  "cycle_id": "cycle-000003",
+  "policy_defaults": {
+    "allow_broker": false,
+    "allow_filesystem_writes_outside_state_root": false,
+    "allow_network": false,
+    "allow_real_world_side_effects": false,
+    "financial_advice": false,
+    "max_consecutive_failures": 2,
+    "max_cycle_runtime_secs": 120,
+    "require_public_artifact_sanitization": true
+  },
+  "rejected_actions": [],
+  "schema": "adl.long_lived_agent_guardrail_report.v1",
+  "status": "pass"
+}

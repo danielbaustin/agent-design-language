@@ -1,0 +1,109 @@
+{
+  "activation_log_rel_path": "docs/milestones/v0.91.4/review/obsmem_transition_memory/ct_demo_001_transition_outcome_truth.json",
+  "citations": [
+    {
+      "hash": "det64:3c7f7ebf6de8412f",
+      "path": "docs/milestones/v0.91.4/features/SHARD_OWNERSHIP_AND_INTERFACE_FREEZE.md"
+    },
+    {
+      "hash": "det64:3a2cf6de728b3c30",
+      "path": "docs/milestones/v0.91.4/features/SOFTWARE_DEVELOPMENT_POLIS_AND_ACTOR_STANDING.md"
+    },
+    {
+      "hash": "det64:94e5841523066dd3",
+      "path": "docs/milestones/v0.91.4/review/evidence/csdlc/ct_demo_001_review_synthesis.json"
+    },
+    {
+      "hash": "det64:40bfeffc94edeed6",
+      "path": "docs/milestones/v0.91.4/review/evidence/csdlc/ct_demo_001_transition_evidence_bundle.json"
+    },
+    {
+      "hash": "det64:c1db56c2d5a50d53",
+      "path": "docs/milestones/v0.91.4/review/evidence/csdlc/fixtures/minimal_transition_trace_public_key.b64"
+    },
+    {
+      "hash": "det64:b449ef595a8d3c89",
+      "path": "docs/milestones/v0.91.4/review/evidence/csdlc/fixtures/minimal_transition_trace_signed.adl.yaml"
+    },
+    {
+      "hash": "det64:7a48a80103f7c482",
+      "path": "docs/milestones/v0.91.4/review/obsmem_transition_memory/ct_demo_001_transition_outcome_truth.json"
+    },
+    {
+      "hash": "det64:e21ad4ba71ecb43a",
+      "path": "docs/milestones/v0.91.4/review/software_development_polis/SOFTWARE_DEVELOPMENT_POLIS_PROOF_PACKET_v0.91.4.md"
+    },
+    {
+      "hash": "det64:6c142732d35f4a4f",
+      "path": "docs/milestones/v0.91.4/review/software_development_polis/ct_demo_001_actor_authority_boundary_report.md"
+    },
+    {
+      "hash": "det64:7d7996abf52f0b5a",
+      "path": "docs/milestones/v0.91.4/review/software_development_polis/ct_demo_002_shard_conflict_report.md"
+    }
+  ],
+  "contract_version": 1,
+  "failure_code": null,
+  "follow_on_refs": [
+    {
+      "issue_number": 3355,
+      "status": "merged",
+      "title": "Merge-readiness and PR gate hardening"
+    },
+    {
+      "issue_number": 3356,
+      "status": "merged",
+      "title": "ObsMem transition memory integration"
+    }
+  ],
+  "residual_risks": [
+    "Release approval still depends on later merge-readiness, memory, and release-evidence work.",
+    "The signed trace fixture proves durable verification of a minimal ADL document, not full release ceremony scope."
+  ],
+  "review_findings": [
+    {
+      "disposition": "fixed",
+      "id": "wp05-review-001",
+      "severity": "P2",
+      "summary": "Allowed actor-standing fixture originally omitted a legitimate closeout authority holder."
+    },
+    {
+      "disposition": "fixed",
+      "id": "wp05-review-002",
+      "severity": "P2",
+      "summary": "Shard/barrier prose overclaimed stronger guarantees than the validator enforced."
+    },
+    {
+      "disposition": "fixed",
+      "id": "wp05-review-003",
+      "severity": "P3",
+      "summary": "Negative tests were initially too weak to guarantee failure on the intended invariant branch."
+    },
+    {
+      "disposition": "fixed",
+      "id": "wp05-review-004",
+      "severity": "P3",
+      "summary": "Actor-authority wording drifted between merge readiness and merge approval terminology."
+    }
+  ],
+  "run_id": "ct_demo_001_obsmem_transition_memory_handoff",
+  "summary": "transition_issue=#3354 pr=#3388 lifecycle_state=merged | WP-06 converged tracked evidence, bounded review synthesis, and signed trace proof into a durable C-SDLC transition packet. | WP-06 converged the WP-05 proof packet, preserved bounded review findings and residual risks, and published a durable tracked evidence bundle with signed-trace support. | The evidence bundle is tracked under docs/milestones/v0.91.4/review/evidence/csdlc/. | The review synthesis preserves findings, dispositions, and residual risks in tracked JSON. | The signed trace fixture verifies with the tracked public key rather than local-only scratch state.",
+  "tags": [
+    "evidence_bundle:ct_demo_001_transition_evidence_bundle",
+    "issue:3354",
+    "lifecycle:merged",
+    "memory:csdlc-transition",
+    "pr:3388",
+    "review_synthesis:ct_demo_001_review_synthesis"
+  ],
+  "trace_bundle_rel_path": "docs/milestones/v0.91.4/review/evidence/csdlc/fixtures/minimal_transition_trace_signed.adl.yaml",
+  "trace_event_refs": [
+    {
+      "delegation_id": null,
+      "event_kind": "signed_trace_verified",
+      "event_sequence": 0,
+      "step_id": "csdlc_transition_memory"
+    }
+  ],
+  "workflow_id": "v0914_csdlc_transition_memory"
+}

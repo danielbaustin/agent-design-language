@@ -1,0 +1,17 @@
+{
+  "agent_instance_id": "v0916-runtime-stop-probe",
+  "cycle_id": "cycle-000001",
+  "decision": {
+    "action": "record_cycle",
+    "paper_only": true,
+    "summary": "Bounded long-lived agent cycle completed under the v0.90 artifact contract.",
+    "workflow_ref": "v0916_runtime_soak"
+  },
+  "not_financial_advice": true,
+  "provider": {
+    "model": "gemma4:latest",
+    "source": "local_ollama"
+  },
+  "schema": "adl.long_lived_agent_decision_result.v1",
+  "status": "accepted"
+}

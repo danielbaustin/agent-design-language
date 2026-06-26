@@ -19,6 +19,7 @@ use adl::resilience::{
     RateLimitPolicyV1, ResilienceFaultClassificationV1, ResiliencePolicyV1, ResilienceSurfaceV1,
     RetryPolicyV1, TimeoutObservation, TimeoutPolicyV1,
 };
+use adl::scheduler::{schedule_economics_bundle, SchedulerEconomicsInputBundleV1};
 use anyhow::{anyhow, Context, Result};
 use chrono::{Duration as ChronoDuration, Utc};
 use clap::Parser;
@@ -26,6 +27,7 @@ use serde::Serialize;
 use serde_json::{json, Value};
 
 const DISCLAIMER: &str = "This integrated runtime soak is a bounded local proof surface. It does not claim autonomous v0.92 readiness, external-agent transport closure, or full Observatory/Unity product completion.";
+const RUNTIME_SOAK_ISSUE: u32 = 4543;
 
 #[derive(Debug, Parser)]
 #[command(name = "run_v0916_integrated_runtime_soak")]
@@ -136,6 +138,9 @@ fn run(args: Args) -> Result<()> {
         &degraded_trace,
     )?;
 
+    let scheduler_plan = build_scheduler_plan()?;
+    write_json(&out_dir.join("scheduler/scheduler_plan.json"), &scheduler_plan)?;
+
     let remote_timeout = run_remote_timeout_probe()?;
     write_json(
         &out_dir.join("remote_exec/timeout_probe.json"),
@@ -159,6 +164,12 @@ fn run(args: Args) -> Result<()> {
     write_json(
         &out_dir.join("long_lived_agent/status_after_stop.json"),
         &stopped,
+    )?;
+
+    let completion_classification = build_completion_classification(&out_dir);
+    write_json(
+        &out_dir.join("completion_classification.json"),
+        &completion_classification,
     )?;
 
     let evidence_index = build_evidence_index(&out_dir)?;
@@ -532,13 +543,22 @@ fn build_obsmem_request() -> Result<Value> {
     serde_json::to_value(request).context("serialize obsmem transition memory request")
 }
 
+fn build_scheduler_plan() -> Result<Value> {
+    let bundle: SchedulerEconomicsInputBundleV1 = serde_json::from_str(include_str!(
+        "../../tests/fixtures/scheduler/economics_inputs_v1.json"
+    ))
+    .context("parse scheduler economics input fixture")?;
+    let plan = schedule_economics_bundle(&bundle).context("build scheduler plan")?;
+    serde_json::to_value(plan).context("serialize scheduler plan")
+}
+
 fn build_evidence_index(out_dir: &Path) -> Result<Value> {
     let mut refs = Vec::new();
     collect_relative_files(out_dir, out_dir, &mut refs)?;
     refs.sort();
     Ok(json!({
         "schema_version": "adl.integrated_runtime_soak_evidence_index.v1",
-        "issue": 4245,
+        "issue": RUNTIME_SOAK_ISSUE,
         "generated_at": Utc::now().to_rfc3339(),
         "artifact_refs": refs,
         "prerequisite_refs": [
@@ -548,6 +568,112 @@ fn build_evidence_index(out_dir: &Path) -> Result<Value> {
             "docs/milestones/v0.91.6/features/OBSERVATORY_UNITY_CONSUMPTION_CLASSIFICATION_v0.91.6.md"
         ]
     }))
+}
+
+fn build_completion_classification(out_dir: &Path) -> Value {
+    let heartbeat_mock_ref = "long_lived_agent/state/aws_runtime_heartbeat_mock.jsonl";
+    let heartbeat_mock_exists = out_dir.join(heartbeat_mock_ref).exists();
+    let scheduler_evidence_refs = vec!["scheduler/scheduler_plan.json"];
+    let scheduler_notes = vec![
+        "This run proves the deterministic scheduler decision artifact, not a retained operator-facing scheduler CLI artifact."
+    ];
+    json!({
+        "schema_version": "adl.runtime.soak.completion_classification.v1",
+        "issue": RUNTIME_SOAK_ISSUE,
+        "generated_at": Utc::now().to_rfc3339(),
+        "classifications": [
+            {
+                "surface": "runtime_boot_shutdown",
+                "status": "integrated_proven",
+                "evidence_refs": [
+                    "long_lived_agent/run_status_cycle2.json",
+                    "long_lived_agent/restart_status_cycle3.json",
+                    "long_lived_agent/status_after_stop.json",
+                    "inspection/latest.json"
+                ]
+            },
+            {
+                "surface": "resilience_negative_cases",
+                "status": "integrated_proven",
+                "evidence_refs": [
+                    "resilience/timeout_execution.json",
+                    "resilience/bulkhead_execution.json",
+                    "resilience/degraded_fallback_execution.json",
+                    "remote_exec/timeout_probe.json"
+                ]
+            },
+            {
+                "surface": "scheduler_advisory_decision_packet",
+                "status": "integrated_proven",
+                "evidence_refs": scheduler_evidence_refs,
+                "notes": scheduler_notes
+            },
+            {
+                "surface": "memory_handoff",
+                "status": "integrated_proven",
+                "evidence_refs": [
+                    "obsmem/transition_memory_request.json"
+                ]
+            },
+            {
+                "surface": "aws_runtime_heartbeat",
+                "status": if heartbeat_mock_exists { "local_only_accepted" } else { "blocked" },
+                "evidence_refs": if heartbeat_mock_exists {
+                    vec![heartbeat_mock_ref]
+                } else {
+                    Vec::<&str>::new()
+                },
+                "notes": if heartbeat_mock_exists {
+                    vec![
+                        "Mock-mode runtime heartbeat publication was captured for bounded local proof without claiming live CloudWatch transport."
+                    ]
+                } else {
+                    vec![
+                        "No runtime heartbeat artifact was captured in this run. Re-run with ADL_AWS_SIGNAL_MODE=mock to record the local-only signal path."
+                    ]
+                }
+            },
+            {
+                "surface": "aws_local_ops_ssm_nodes",
+                "status": "blocked",
+                "owner_issue": 4545,
+                "notes": [
+                    "This runner does not re-verify the live AWS profile, CloudWatch account posture, or current SSM node health for wuji, nessus.local, and opticon.local.",
+                    "Retained prior proof exists under the v0.91.6 AWS/local-operations review packet and SSM proof docs, but current live revalidation is still required."
+                ],
+                "evidence_refs": [
+                    "docs/milestones/v0.91.6/review/V0916_RUNTIME_AWS_LOCAL_OPERATIONS_MINI_SPRINT_REVIEW_4343.md",
+                    "docs/milestones/v0.91.6/review/security/LOCAL_POLIS_SSM_PROOF_4113.md",
+                    "docs/milestones/v0.91.6/review/security/LOCAL_POLIS_SSM_PROOF_4318.md",
+                    "docs/milestones/v0.91.6/review/security/LOCAL_POLIS_SSM_PROOF_4319.md"
+                ]
+            },
+            {
+                "surface": "acip_aee_memory_runtime_path",
+                "status": "blocked",
+                "owner_issue": 4546,
+                "notes": [
+                    "This runner preserves the ObsMem handoff slice but does not yet execute one integrated ACIP plus AEE temporary-agent path."
+                ]
+            },
+            {
+                "surface": "logging_stdout_stderr_contract",
+                "status": "blocked",
+                "owner_issue": 4543,
+                "notes": [
+                    "A dedicated machine-stdout versus human-stderr proof artifact is not emitted by this runner yet."
+                ]
+            },
+            {
+                "surface": "observatory_unity_consumption",
+                "status": "blocked",
+                "owner_issue": 4548,
+                "notes": [
+                    "Unity/Observatory proof remains outside this runtime-only session and must be handled in the separate Unity lane."
+                ]
+            }
+        ]
+    })
 }
 
 fn collect_relative_files(root: &Path, current: &Path, out: &mut Vec<String>) -> Result<()> {
@@ -582,11 +708,12 @@ fn build_proof_packet(
 ) -> Value {
     json!({
         "schema_version": "adl.integrated_runtime_soak_proof.v1",
-        "issue": 4245,
+        "issue": RUNTIME_SOAK_ISSUE,
         "generated_at": Utc::now().to_rfc3339(),
         "what_this_proves": [
             "The v0.91.6 runtime proves initialization, run/restart/inspection continuity, and a companion live stop-between-cycles behavior across bounded long-lived-agent probes with durable cycle evidence.",
             "The resilience substrate emits reviewer-readable timeout, bulkhead saturation/backpressure, and degraded fallback traces using the real library entrypoints.",
+            "The deterministic scheduler economics fixture still resolves into a reviewable scheduler plan artifact that can be cited by the soak packet.",
             "Remote execution timeout classification is live against a hanging local endpoint and records stable failure kind plus retryability.",
             "ObsMem transition memory can still build a structured write request from a tracked handoff packet.",
             "The long-lived-agent leased-state contract blocks overlap when an injected lease artifact is present."
@@ -625,8 +752,10 @@ fn build_proof_packet(
             "resilience/timeout_execution.json",
             "resilience/bulkhead_execution.json",
             "resilience/degraded_fallback_execution.json",
+            "scheduler/scheduler_plan.json",
             "remote_exec/timeout_probe.json",
             "obsmem/transition_memory_request.json",
+            "completion_classification.json",
             "audit/artifact_safety_scan.json"
         ],
         "evidence_index_ref": "integrated_runtime_soak_evidence_index.json",
@@ -676,7 +805,7 @@ fn scan_public_artifacts(out_dir: &Path) -> Result<Value> {
 
     Ok(json!({
         "schema_version": "adl.integrated_runtime_soak_artifact_safety_scan.v1",
-        "issue": 4245,
+        "issue": RUNTIME_SOAK_ISSUE,
         "scanned_at": Utc::now().to_rfc3339(),
         "passed": findings.is_empty(),
         "scanned_artifacts": files,
@@ -714,12 +843,12 @@ fn write_file(path: &Path, contents: &str) -> Result<()> {
 
 fn readme() -> String {
     format!(
-        "# V0.91.6 Integrated Runtime Soak\n\n{DISCLAIMER}\n\n## What This Proves\n\nThis run proves a bounded integrated runtime slice for `#4245`: one long-lived-agent run/restart/inspection continuity path, one companion live stop-between-cycles probe, timeout classification, bulkhead/backpressure saturation, degraded fallback, remote-exec timeout handling, one tracked ObsMem handoff path, and one explicit injected-lease contract probe all converge under one reviewer-readable artifact root.\n\n## Reviewer Path\n\n1. Inspect `integrated_runtime_soak_proof.json`.\n2. Inspect `long_lived_agent/state/status.json` and `long_lived_agent/state/cycle_ledger.jsonl`.\n3. Inspect `inspection/latest.json`.\n4. Inspect `long_lived_agent_stop_probe/stop_probe.json`.\n5. Inspect `resilience/timeout_execution.json`, `resilience/bulkhead_execution.json`, and `resilience/degraded_fallback_execution.json`.\n6. Inspect `remote_exec/timeout_probe.json`.\n7. Inspect `obsmem/transition_memory_request.json`.\n8. Inspect `audit/artifact_safety_scan.json`.\n"
+        "# V0.91.6 Integrated Runtime Soak\n\n{DISCLAIMER}\n\n## What This Proves\n\nThis run proves a bounded integrated runtime slice for `#4543`: one long-lived-agent run/restart/inspection continuity path, one companion live stop-between-cycles probe, timeout classification, bulkhead/backpressure saturation, degraded fallback, one deterministic scheduler decision artifact, remote-exec timeout handling, one tracked ObsMem handoff path, and one explicit injected-lease contract probe all converge under one reviewer-readable artifact root.\n\n## Reviewer Path\n\n1. Inspect `integrated_runtime_soak_proof.json`.\n2. Inspect `completion_classification.json` for integrated-proven versus blocked surfaces.\n3. Inspect `long_lived_agent/state/status.json` and `long_lived_agent/state/cycle_ledger.jsonl`.\n4. Inspect `inspection/latest.json`.\n5. Inspect `long_lived_agent_stop_probe/stop_probe.json`.\n6. Inspect `resilience/timeout_execution.json`, `resilience/bulkhead_execution.json`, and `resilience/degraded_fallback_execution.json`.\n7. Inspect `scheduler/scheduler_plan.json`.\n8. Inspect `remote_exec/timeout_probe.json`.\n9. Inspect `obsmem/transition_memory_request.json`.\n10. Inspect `audit/artifact_safety_scan.json`.\n"
     )
 }
 
 fn reviewer_walkthrough() -> String {
-    "# Reviewer Walkthrough\n\nRun the soak with `cargo run --manifest-path adl/Cargo.toml --bin run_v0916_integrated_runtime_soak -- --out docs/milestones/v0.91.6/review/runtime/v0916_integrated_runtime_soak_4245`.\n\nThe review question is whether the runtime now leaves one honest, durable packet showing restart, a live stop between cycles, timeout, saturation/backpressure, degraded fallback, remote-exec timeout semantics, and memory handoff under one bounded local proof surface without overclaiming ACIP, Observatory, or v0.92 readiness.\n".to_string()
+    "# Reviewer Walkthrough\n\nRun the soak with `cargo run --manifest-path adl/Cargo.toml --bin run_v0916_integrated_runtime_soak -- --out docs/milestones/v0.91.6/review/runtime/v0916_integrated_runtime_soak_4543`.\n\nThe review question is whether the runtime now leaves one honest, durable packet showing restart, a live stop between cycles, timeout, saturation/backpressure, degraded fallback, scheduler advisory evidence, remote-exec timeout semantics, and memory handoff under one bounded local proof surface without overclaiming ACIP, Unity/Observatory, or v0.92 readiness.\n".to_string()
 }
 
 #[cfg(test)]
@@ -749,7 +878,7 @@ mod tests {
             &fs::read_to_string(&proof_path).expect("read generated proof packet"),
         )
         .expect("parse generated proof packet");
-        assert_eq!(proof["issue"], 4245);
+        assert_eq!(proof["issue"], RUNTIME_SOAK_ISSUE);
         assert_eq!(
             proof["status_summary"]["live_stop_probe_state"],
             Value::String("stopped".to_string())
@@ -774,6 +903,10 @@ mod tests {
             }),
             "expected long-lived-agent status artifact in evidence index"
         );
+        assert!(
+            artifact_refs.iter().any(|entry| entry == "scheduler/scheduler_plan.json"),
+            "expected scheduler plan artifact in evidence index"
+        );
 
         let artifact_scan_path = out_dir.join("audit/artifact_safety_scan.json");
         let artifact_scan: Value = serde_json::from_str(
@@ -781,6 +914,13 @@ mod tests {
         )
         .expect("parse generated artifact scan");
         assert_eq!(artifact_scan["passed"], Value::Bool(true));
+
+        let completion_path = out_dir.join("completion_classification.json");
+        let completion: Value = serde_json::from_str(
+            &fs::read_to_string(&completion_path).expect("read completion classification"),
+        )
+        .expect("parse completion classification");
+        assert_eq!(completion["issue"], Value::from(RUNTIME_SOAK_ISSUE));
 
         let _ = fs::remove_dir_all(&out_dir);
     }
@@ -796,10 +936,10 @@ mod tests {
         let absolute = absolute_from_cwd(&root).expect("absolute path should remain absolute");
         assert_eq!(absolute, root);
 
-        let spec_path = write_agent_spec_under(&root, "spec", "agent-4245")
+        let spec_path = write_agent_spec_under(&root, "spec", "agent-4543")
             .expect("agent spec should be written");
         let spec_text = fs::read_to_string(&spec_path).expect("read agent spec");
-        assert!(spec_text.contains("agent-4245"));
+        assert!(spec_text.contains("agent-4543"));
         assert!(spec_text.contains("state_root: state"));
 
         write_file(&root.join("notes.txt"), "runtime soak notes").expect("write text file");
@@ -854,6 +994,13 @@ mod tests {
         let obsmem = build_obsmem_request().expect("obsmem request should build");
         assert!(obsmem.is_object());
         assert!(!obsmem.as_object().expect("obsmem object").is_empty());
+        let scheduler = build_scheduler_plan().expect("scheduler plan should build");
+        assert_eq!(
+            scheduler["schema_version"],
+            Value::String("adl.scheduler.plan.v1".to_string())
+        );
+        let completion = build_completion_classification(&root);
+        assert_eq!(completion["issue"], Value::from(RUNTIME_SOAK_ISSUE));
 
         let _ = fs::remove_dir_all(&root);
     }

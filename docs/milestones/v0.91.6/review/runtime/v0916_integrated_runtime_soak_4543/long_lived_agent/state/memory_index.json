@@ -1,0 +1,11 @@
+{
+  "append_only": true,
+  "local_memory_refs": [
+    "cycles/cycle-000001/memory_writes.jsonl",
+    "cycles/cycle-000002/memory_writes.jsonl",
+    "cycles/cycle-000003/memory_writes.jsonl"
+  ],
+  "memory_namespace": "runtime/soak/v0916",
+  "obsmem_export_status": "not_exported",
+  "schema": "adl.long_lived_agent_memory_index.v1"
+}

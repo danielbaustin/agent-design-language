@@ -1,0 +1,345 @@
+{
+  "decisions": [
+    {
+      "alternatives_considered": [
+        {
+          "disposition": "rejected",
+          "lane": "LOCAL",
+          "reason": "local lane rejected when risk, validation, coordination, or urgency exceeds routine local work"
+        },
+        {
+          "disposition": "rejected",
+          "lane": "CHEAP_REMOTE",
+          "reason": "cheap remote rejected because the selected lane better matches authority, risk, or cost posture"
+        },
+        {
+          "disposition": "rejected",
+          "lane": "PREMIUM",
+          "reason": "premium lane rejected unless high-risk implementation, security/refactor work, or critical value justifies scarce capacity"
+        },
+        {
+          "disposition": "rejected",
+          "lane": "DELAYED",
+          "reason": "delayed lane rejected because the task is schedulable now"
+        }
+      ],
+      "confidence": "high",
+      "dependency_status": "clear",
+      "manual_override": {
+        "present": false
+      },
+      "reason": "routed to governor because human authority, release/architecture scope, critical risk, or manual override is present",
+      "scheduling_rank_key": "blocked=0;dependency=00;gate=00;risk=95;urgency=95;value=95;validation=02;premium_pressure=01;coordination=03;parallelism=98;confidence=96;task=release-authority",
+      "schema_version": "adl.scheduler.decision.v1",
+      "score_breakdown": {
+        "attention_pressure_score": 8,
+        "confidence_score": 3,
+        "coordination_cost": "high",
+        "dependency_posture_score": 0,
+        "expected_value": "critical",
+        "lifecycle_cost_score": 10,
+        "parallelism_score": 1,
+        "risk": "critical",
+        "urgency": "immediate",
+        "validation_cost": "medium",
+        "value_score": 8
+      },
+      "selected_lane": "GOVERNOR",
+      "task_id": "release-authority"
+    },
+    {
+      "alternatives_considered": [
+        {
+          "disposition": "rejected",
+          "lane": "LOCAL",
+          "reason": "local lane rejected when risk, validation, coordination, or urgency exceeds routine local work"
+        },
+        {
+          "disposition": "rejected",
+          "lane": "CHEAP_REMOTE",
+          "reason": "cheap remote rejected because the selected lane better matches authority, risk, or cost posture"
+        },
+        {
+          "disposition": "rejected",
+          "lane": "PREMIUM",
+          "reason": "premium lane rejected unless high-risk implementation, security/refactor work, or critical value justifies scarce capacity"
+        },
+        {
+          "disposition": "rejected",
+          "lane": "GOVERNOR",
+          "reason": "governor lane rejected unless human authority, critical risk, release/architecture scope, or manual override is required"
+        }
+      ],
+      "confidence": "medium",
+      "dependency_status": "clear",
+      "manual_override": {
+        "present": true,
+        "reason": "delay_if_premium_capacity_is_constrained"
+      },
+      "reason": "delayed because urgency is low while premium capacity is constrained",
+      "scheduling_rank_key": "blocked=0;dependency=00;gate=00;risk=98;urgency=98;value=97;validation=02;premium_pressure=04;coordination=01;parallelism=97;confidence=97;task=low-urgency-cleanup",
+      "schema_version": "adl.scheduler.decision.v1",
+      "score_breakdown": {
+        "attention_pressure_score": 7,
+        "confidence_score": 2,
+        "coordination_cost": "low",
+        "dependency_posture_score": 0,
+        "expected_value": "medium",
+        "lifecycle_cost_score": 6,
+        "parallelism_score": 2,
+        "risk": "low",
+        "urgency": "low",
+        "validation_cost": "medium",
+        "value_score": 3
+      },
+      "selected_lane": "DELAYED",
+      "task_id": "low-urgency-cleanup"
+    },
+    {
+      "alternatives_considered": [
+        {
+          "disposition": "rejected",
+          "lane": "LOCAL",
+          "reason": "local lane rejected when risk, validation, coordination, or urgency exceeds routine local work"
+        },
+        {
+          "disposition": "rejected",
+          "lane": "CHEAP_REMOTE",
+          "reason": "cheap remote rejected because the selected lane better matches authority, risk, or cost posture"
+        },
+        {
+          "disposition": "rejected",
+          "lane": "GOVERNOR",
+          "reason": "governor lane rejected unless human authority, critical risk, release/architecture scope, or manual override is required"
+        },
+        {
+          "disposition": "rejected",
+          "lane": "DELAYED",
+          "reason": "delayed lane rejected because the task is schedulable now"
+        }
+      ],
+      "confidence": "medium",
+      "dependency_status": "clear",
+      "manual_override": {
+        "present": false
+      },
+      "reason": "routed to premium cognition because the work is high risk, implementation/security/refactor shaped, or critical value",
+      "scheduling_rank_key": "blocked=0;dependency=00;gate=01;risk=96;urgency=96;value=95;validation=03;premium_pressure=02;coordination=02;parallelism=98;confidence=97;task=premium-code-repair",
+      "schema_version": "adl.scheduler.decision.v1",
+      "score_breakdown": {
+        "attention_pressure_score": 4,
+        "confidence_score": 2,
+        "coordination_cost": "medium",
+        "dependency_posture_score": 0,
+        "expected_value": "critical",
+        "lifecycle_cost_score": 11,
+        "parallelism_score": 1,
+        "risk": "high",
+        "urgency": "high",
+        "validation_cost": "high",
+        "value_score": 7
+      },
+      "selected_lane": "PREMIUM",
+      "task_id": "premium-code-repair"
+    },
+    {
+      "alternatives_considered": [
+        {
+          "disposition": "rejected",
+          "lane": "LOCAL",
+          "reason": "local lane rejected when risk, validation, coordination, or urgency exceeds routine local work"
+        },
+        {
+          "disposition": "rejected",
+          "lane": "PREMIUM",
+          "reason": "premium lane rejected unless high-risk implementation, security/refactor work, or critical value justifies scarce capacity"
+        },
+        {
+          "disposition": "rejected",
+          "lane": "GOVERNOR",
+          "reason": "governor lane rejected unless human authority, critical risk, release/architecture scope, or manual override is required"
+        },
+        {
+          "disposition": "rejected",
+          "lane": "DELAYED",
+          "reason": "delayed lane rejected because the task is schedulable now"
+        }
+      ],
+      "confidence": "medium",
+      "dependency_status": "clear",
+      "manual_override": {
+        "present": false
+      },
+      "reason": "routed to cheap remote cognition because review/test generation or non-low validation and coordination burden can be parallelized",
+      "scheduling_rank_key": "blocked=0;dependency=00;gate=02;risk=97;urgency=97;value=96;validation=01;premium_pressure=03;coordination=02;parallelism=96;confidence=97;task=first-pass-review",
+      "schema_version": "adl.scheduler.decision.v1",
+      "score_breakdown": {
+        "attention_pressure_score": 5,
+        "confidence_score": 2,
+        "coordination_cost": "medium",
+        "dependency_posture_score": 0,
+        "expected_value": "high",
+        "lifecycle_cost_score": 7,
+        "parallelism_score": 3,
+        "risk": "medium",
+        "urgency": "normal",
+        "validation_cost": "low",
+        "value_score": 5
+      },
+      "selected_lane": "CHEAP_REMOTE",
+      "task_id": "first-pass-review"
+    },
+    {
+      "alternatives_considered": [
+        {
+          "disposition": "rejected",
+          "lane": "CHEAP_REMOTE",
+          "reason": "cheap remote rejected because the selected lane better matches authority, risk, or cost posture"
+        },
+        {
+          "disposition": "rejected",
+          "lane": "PREMIUM",
+          "reason": "premium lane rejected unless high-risk implementation, security/refactor work, or critical value justifies scarce capacity"
+        },
+        {
+          "disposition": "rejected",
+          "lane": "GOVERNOR",
+          "reason": "governor lane rejected unless human authority, critical risk, release/architecture scope, or manual override is required"
+        },
+        {
+          "disposition": "rejected",
+          "lane": "DELAYED",
+          "reason": "delayed lane rejected because the task is schedulable now"
+        }
+      ],
+      "confidence": "high",
+      "dependency_status": "clear",
+      "manual_override": {
+        "present": false
+      },
+      "reason": "routed local because docs-status-check is low-risk, low-cost, dependency-clear work",
+      "scheduling_rank_key": "blocked=0;dependency=00;gate=02;risk=98;urgency=97;value=97;validation=01;premium_pressure=03;coordination=01;parallelism=97;confidence=96;task=docs-status-check",
+      "schema_version": "adl.scheduler.decision.v1",
+      "score_breakdown": {
+        "attention_pressure_score": 4,
+        "confidence_score": 3,
+        "coordination_cost": "low",
+        "dependency_posture_score": 0,
+        "expected_value": "medium",
+        "lifecycle_cost_score": 4,
+        "parallelism_score": 2,
+        "risk": "low",
+        "urgency": "normal",
+        "validation_cost": "low",
+        "value_score": 4
+      },
+      "selected_lane": "LOCAL",
+      "task_id": "docs-status-check"
+    },
+    {
+      "alternatives_considered": [
+        {
+          "disposition": "rejected",
+          "lane": "LOCAL",
+          "reason": "local lane rejected when risk, validation, coordination, or urgency exceeds routine local work"
+        },
+        {
+          "disposition": "rejected",
+          "lane": "PREMIUM",
+          "reason": "premium lane rejected unless high-risk implementation, security/refactor work, or critical value justifies scarce capacity"
+        },
+        {
+          "disposition": "rejected",
+          "lane": "GOVERNOR",
+          "reason": "governor lane rejected unless human authority, critical risk, release/architecture scope, or manual override is required"
+        },
+        {
+          "disposition": "fallback",
+          "lane": "DELAYED",
+          "reason": "delayed lane remains a fallback if partial dependency evidence does not land"
+        }
+      ],
+      "confidence": "medium",
+      "dependency_status": "partial",
+      "manual_override": {
+        "present": false
+      },
+      "reason": "routed to cheap remote cognition because review/test generation or non-low validation and coordination burden can be parallelized",
+      "scheduling_rank_key": "blocked=0;dependency=01;gate=02;risk=97;urgency=96;value=96;validation=02;premium_pressure=02;coordination=02;parallelism=97;confidence=97;task=partial-dependency-review",
+      "schema_version": "adl.scheduler.decision.v1",
+      "score_breakdown": {
+        "attention_pressure_score": 4,
+        "confidence_score": 2,
+        "coordination_cost": "medium",
+        "dependency_posture_score": 1,
+        "expected_value": "high",
+        "lifecycle_cost_score": 8,
+        "parallelism_score": 2,
+        "risk": "medium",
+        "urgency": "high",
+        "validation_cost": "medium",
+        "value_score": 6
+      },
+      "selected_lane": "CHEAP_REMOTE",
+      "task_id": "partial-dependency-review"
+    },
+    {
+      "alternatives_considered": [
+        {
+          "disposition": "rejected",
+          "lane": "LOCAL",
+          "reason": "local lane rejected when risk, validation, coordination, or urgency exceeds routine local work"
+        },
+        {
+          "disposition": "rejected",
+          "lane": "CHEAP_REMOTE",
+          "reason": "cheap remote rejected because the selected lane better matches authority, risk, or cost posture"
+        },
+        {
+          "disposition": "rejected",
+          "lane": "PREMIUM",
+          "reason": "premium lane rejected unless high-risk implementation, security/refactor work, or critical value justifies scarce capacity"
+        },
+        {
+          "disposition": "rejected",
+          "lane": "GOVERNOR",
+          "reason": "governor lane rejected unless human authority, critical risk, release/architecture scope, or manual override is required"
+        }
+      ],
+      "confidence": "high",
+      "dependency_status": "blocked",
+      "manual_override": {
+        "present": false
+      },
+      "reason": "delayed because dependency or parallelism posture is blocked",
+      "scheduling_rank_key": "blocked=1;dependency=02;gate=02;risk=97;urgency=97;value=96;validation=03;premium_pressure=02;coordination=02;parallelism=99;confidence=96;task=blocked-proof",
+      "schema_version": "adl.scheduler.decision.v1",
+      "score_breakdown": {
+        "attention_pressure_score": 4,
+        "confidence_score": 3,
+        "coordination_cost": "medium",
+        "dependency_posture_score": 2,
+        "expected_value": "high",
+        "lifecycle_cost_score": 8,
+        "parallelism_score": 0,
+        "risk": "medium",
+        "urgency": "normal",
+        "validation_cost": "high",
+        "value_score": 5
+      },
+      "selected_lane": "DELAYED",
+      "task_id": "blocked-proof"
+    }
+  ],
+  "recommended_order": [
+    "release-authority",
+    "low-urgency-cleanup",
+    "premium-code-repair",
+    "first-pass-review",
+    "docs-status-check",
+    "partial-dependency-review",
+    "blocked-proof"
+  ],
+  "schema_version": "adl.scheduler.plan.v1",
+  "source_schema_version": "adl.scheduler.economics_input_bundle.v1"
+}

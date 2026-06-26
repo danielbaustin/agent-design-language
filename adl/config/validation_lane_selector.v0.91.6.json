@@ -144,7 +144,9 @@
       "path_selectors": [
         "adl/config/validation_lane_selector.v0.91.6.json",
         "adl/tools/ci_path_policy.sh",
+        "adl/tools/run_pr_fast_test_lane.sh",
         "adl/tools/select_validation_lanes.py",
+        "adl/tools/test_run_pr_fast_test_lane.sh",
         "adl/tools/test_select_validation_lanes.sh",
         "adl/tools/validation_manager.py",
         "adl/tools/test_ci_path_policy.sh",
@@ -154,7 +156,9 @@
       "path_hints": [
         "adl/config/validation_lane_selector.v0.91.6.json",
         "adl/tools/ci_path_policy.sh",
+        "adl/tools/run_pr_fast_test_lane.sh",
         "adl/tools/select_validation_lanes.py",
+        "adl/tools/test_run_pr_fast_test_lane.sh",
         "adl/tools/test_select_validation_lanes.sh",
         "adl/tools/validation_manager.py",
         "adl/tools/test_ci_path_policy.sh",

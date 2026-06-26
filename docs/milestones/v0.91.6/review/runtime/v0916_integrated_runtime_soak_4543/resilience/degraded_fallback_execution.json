@@ -1,0 +1,60 @@
+{
+  "outcome_kind": "Degraded",
+  "result": {
+    "Ok": "degraded-fallback-result"
+  },
+  "trace": {
+    "decision_summary": "runtime.soak.degraded_probe: primary path failed; degraded fallback 'runtime.soak.degraded' executed",
+    "fallback_executed": true,
+    "fallback_ref": "runtime.soak.degraded",
+    "fault": {
+      "disposition": "retryable",
+      "fault_class": "provider_timeout",
+      "retryable": true,
+      "schema_version": "adl.resilience.fault_classification.v1",
+      "summary": "provider timeout",
+      "surface": "provider"
+    },
+    "final_status": "degraded_success",
+    "outcome_kind": "degraded",
+    "output_degraded": true,
+    "policy_id": "runtime.soak.fallback.policy",
+    "recovery_artifact": {
+      "artifact_id": "runtime.soak.fallback.policy:fallback:runtime.soak.degraded_probe:2",
+      "disposition": "fallback_allowed",
+      "evidence_refs": [
+        "runtime.soak.fallback.policy",
+        "runtime.soak.degraded"
+      ],
+      "next_action": "surface degraded output explicitly for fallback 'runtime.soak.degraded' and preserve the original primary failure for downstream handling",
+      "schema_version": "adl.resilience.recovery_artifact.v1",
+      "surface": "workflow",
+      "triggering_fault": {
+        "disposition": "retryable",
+        "fault_class": "provider_timeout",
+        "retryable": true,
+        "schema_version": "adl.resilience.fault_classification.v1",
+        "summary": "provider timeout",
+        "surface": "provider"
+      }
+    },
+    "schema_version": "adl.resilience.fallback_execution_trace.v1",
+    "surface": "workflow",
+    "telemetry_event": {
+      "decision_summary": "runtime.soak.degraded_probe: primary path failed; degraded fallback 'runtime.soak.degraded' executed",
+      "event_id": "runtime.soak.fallback.policy:fallback:runtime.soak.degraded_probe:1",
+      "event_kind": "fallback_decision",
+      "fault": {
+        "disposition": "retryable",
+        "fault_class": "provider_timeout",
+        "retryable": true,
+        "schema_version": "adl.resilience.fault_classification.v1",
+        "summary": "provider timeout",
+        "surface": "provider"
+      },
+      "policy_ref": "runtime.soak.fallback.policy",
+      "schema_version": "adl.resilience.telemetry_event.v1",
+      "surface": "workflow"
+    }
+  }
+}

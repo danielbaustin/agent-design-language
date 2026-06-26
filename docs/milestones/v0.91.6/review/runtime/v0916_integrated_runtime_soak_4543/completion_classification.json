@@ -1,0 +1,93 @@
+{
+  "classifications": [
+    {
+      "evidence_refs": [
+        "long_lived_agent/run_status_cycle2.json",
+        "long_lived_agent/restart_status_cycle3.json",
+        "long_lived_agent/status_after_stop.json",
+        "inspection/latest.json"
+      ],
+      "status": "integrated_proven",
+      "surface": "runtime_boot_shutdown"
+    },
+    {
+      "evidence_refs": [
+        "resilience/timeout_execution.json",
+        "resilience/bulkhead_execution.json",
+        "resilience/degraded_fallback_execution.json",
+        "remote_exec/timeout_probe.json"
+      ],
+      "status": "integrated_proven",
+      "surface": "resilience_negative_cases"
+    },
+    {
+      "evidence_refs": [
+        "scheduler/scheduler_plan.json"
+      ],
+      "notes": [
+        "This run proves the deterministic scheduler decision artifact, not a retained operator-facing scheduler CLI artifact."
+      ],
+      "status": "integrated_proven",
+      "surface": "scheduler_advisory_decision_packet"
+    },
+    {
+      "evidence_refs": [
+        "obsmem/transition_memory_request.json"
+      ],
+      "status": "integrated_proven",
+      "surface": "memory_handoff"
+    },
+    {
+      "evidence_refs": [
+        "long_lived_agent/state/aws_runtime_heartbeat_mock.jsonl"
+      ],
+      "notes": [
+        "Mock-mode runtime heartbeat publication was captured for bounded local proof without claiming live CloudWatch transport."
+      ],
+      "status": "local_only_accepted",
+      "surface": "aws_runtime_heartbeat"
+    },
+    {
+      "evidence_refs": [
+        "docs/milestones/v0.91.6/review/V0916_RUNTIME_AWS_LOCAL_OPERATIONS_MINI_SPRINT_REVIEW_4343.md",
+        "docs/milestones/v0.91.6/review/security/LOCAL_POLIS_SSM_PROOF_4113.md",
+        "docs/milestones/v0.91.6/review/security/LOCAL_POLIS_SSM_PROOF_4318.md",
+        "docs/milestones/v0.91.6/review/security/LOCAL_POLIS_SSM_PROOF_4319.md"
+      ],
+      "notes": [
+        "This runner does not re-verify the live AWS profile, CloudWatch account posture, or current SSM node health for wuji, nessus.local, and opticon.local.",
+        "Retained prior proof exists under the v0.91.6 AWS/local-operations review packet and SSM proof docs, but current live revalidation is still required."
+      ],
+      "owner_issue": 4545,
+      "status": "blocked",
+      "surface": "aws_local_ops_ssm_nodes"
+    },
+    {
+      "notes": [
+        "This runner preserves the ObsMem handoff slice but does not yet execute one integrated ACIP plus AEE temporary-agent path."
+      ],
+      "owner_issue": 4546,
+      "status": "blocked",
+      "surface": "acip_aee_memory_runtime_path"
+    },
+    {
+      "notes": [
+        "A dedicated machine-stdout versus human-stderr proof artifact is not emitted by this runner yet."
+      ],
+      "owner_issue": 4543,
+      "status": "blocked",
+      "surface": "logging_stdout_stderr_contract"
+    },
+    {
+      "notes": [
+        "Unity/Observatory proof remains outside this runtime-only session and must be handled in the separate Unity lane."
+      ],
+      "owner_issue": 4548,
+      "status": "blocked",
+      "surface": "observatory_unity_consumption"
+    }
+  ],
+  "generated_at": "2026-06-26T19:01:01.295967+00:00",
+  "issue": 4543,
+  "schema_version": "adl.runtime.soak.completion_classification.v1"
+}

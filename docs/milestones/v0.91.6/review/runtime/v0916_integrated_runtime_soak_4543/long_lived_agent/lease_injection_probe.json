@@ -1,0 +1,6 @@
+{
+  "note": "This probe injects a lease artifact to verify leased-state and overlap-blocking behavior. It does not claim a concurrently running live lease owner.",
+  "probe_kind": "injected_lease_contract_probe",
+  "status_state": "leased",
+  "tick_error": "lease_active: another cycle already holds the agent lease"
+}
