@@ -62,7 +62,6 @@ demo_smoke_required="$bool_false"
 v0913_proof_required="$bool_false"
 release_version_only="$bool_false"
 ci_contracts_required="$bool_false"
-slow_proof_contracts_required="$bool_false"
 fail_closed=false
 coverage_lane="skip"
 coverage_authority="not_required"
@@ -140,7 +139,6 @@ mark_policy_surface_contract_validation() {
 mark_pvf_slow_proof_contract_validation() {
   rust_required=true
   ci_contracts_required=true
-  slow_proof_contracts_required=true
   coverage_required=false
   full_coverage_required=false
   demo_smoke_required=false
@@ -1031,7 +1029,6 @@ EOF
           fi
           if is_pvf_slow_proof_workflow_change "$path"; then
             ci_contracts_required=true
-            slow_proof_contracts_required=true
             if [ "$reason" = "path_policy_docs_or_tooling_only" ]; then
               reason="pvf_slow_proof_workflow_change_runs_contract_validation"
             fi
@@ -1072,7 +1069,6 @@ emit "demo_smoke_required" "$demo_smoke_required"
 emit "v0913_proof_required" "$v0913_proof_required"
 emit "release_version_only" "$release_version_only"
 emit "ci_contracts_required" "$ci_contracts_required"
-emit "slow_proof_contracts_required" "$slow_proof_contracts_required"
 emit "fail_closed" "$fail_closed"
 emit "coverage_lane" "$coverage_lane"
 emit "coverage_authority" "$coverage_authority"

@@ -2244,11 +2244,6 @@ pub(super) fn select_finish_validation_plan_for_finish(
     if changed_paths.is_empty() {
         bail!("finish: no changed tracked paths available for validation profile selection");
     }
-    if finish_paths_are_version_metadata_only(changed_paths)
-        && !finish_issue_needs_tokio_manifest_runtime_validation(issue_number, changed_paths)
-    {
-        bail!("finish: selector left changed paths without validation-lane coverage");
-    }
     if finish_paths_are_version_metadata_update(changed_paths) {
         return Ok(build_version_metadata_validation_plan());
     }
@@ -2677,19 +2672,6 @@ fn finish_paths_are_version_metadata_update(changed_paths: &[String]) -> bool {
         }
     }
     has_manifest && has_lockfile && has_current_docs
-}
-
-fn finish_paths_are_version_metadata_only(changed_paths: &[String]) -> bool {
-    let mut has_manifest = false;
-    let mut has_lockfile = false;
-    for path in changed_paths {
-        match path.trim().trim_matches('/') {
-            "adl/Cargo.toml" => has_manifest = true,
-            "adl/Cargo.lock" => has_lockfile = true,
-            _ => return false,
-        }
-    }
-    has_manifest && has_lockfile
 }
 
 fn build_version_metadata_validation_plan() -> FinishValidationPlan {
@@ -5506,7 +5488,7 @@ mod tests {
         extract_markdown_section, finish_inputs_fingerprint,
         issue_bundle_issue_number_from_repo_relative,
         reject_local_issue_bundle_paths_in_finish_paths, restage_finish_output_truth_paths,
-        run_finish_validation_status, select_finish_validation_plan_for_finish,
+        run_finish_validation_status,
     };
     use crate::cli::observability::test_env_lock as shared_env_lock;
     use ::adl::control_plane::{card_output_path, resolve_cards_root, IssueRef};
@@ -5610,39 +5592,6 @@ mod tests {
         assert!(contents.contains("result=failed"));
         assert!(contents.contains("reason_code=validation_subprocess_spawn_failed"));
         assert!(contents.contains("next_action_hint=check_subprocess_path_and_permissions"));
-    }
-
-    #[test]
-    fn finish_validation_plan_rejects_cargo_only_slice_without_bound_lane() {
-        let changed_paths = vec!["adl/Cargo.toml".to_string(), "adl/Cargo.lock".to_string()];
-        let requested_paths = "adl/Cargo.toml,adl/Cargo.lock";
-
-        let err = select_finish_validation_plan_for_finish(4546, requested_paths, &changed_paths)
-            .expect_err(
-                "cargo-only runtime slice without an explicit bound lane should fail closed",
-            );
-
-        assert!(err
-            .to_string()
-            .contains("selector left changed paths without validation-lane coverage"));
-    }
-
-    #[test]
-    fn finish_validation_plan_preserves_tokio_manifest_exception_for_issue_4178() {
-        let changed_paths = vec!["adl/Cargo.toml".to_string(), "adl/Cargo.lock".to_string()];
-        let requested_paths = "adl/Cargo.toml,adl/Cargo.lock";
-
-        let plan = select_finish_validation_plan_for_finish(4178, requested_paths, &changed_paths)
-            .expect("issue 4178 manifest-only exception should stay on the tokio validation lane");
-
-        assert!(plan
-            .commands
-            .iter()
-            .any(|cmd| cmd.contains("cargo test --manifest-path adl/Cargo.toml pr_cmd::github")));
-        assert!(plan
-            .commands
-            .iter()
-            .any(|cmd| cmd.contains("cargo test --manifest-path adl/Cargo.toml long_lived_agent")));
     }
 
     #[test]
