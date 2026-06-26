@@ -668,10 +668,11 @@ pub(super) fn wait_for_pr_validation_report(
         poll_count += 1;
         let snapshot = pr_validation_status_octocrab(repo, pr_ref)?;
         let disposition = classify_pr_validation_snapshot(&snapshot);
-        let next_delay = if disposition == PrValidationDisposition::Pending {
-            poll_delay
-        } else {
+        let wait_terminal = pr_validation_wait_disposition_is_terminal(&snapshot, disposition);
+        let next_delay = if wait_terminal {
             Duration::ZERO
+        } else {
+            poll_delay
         };
         emit_pr_validation_wait_snapshot(&snapshot, disposition, started, poll_count, next_delay);
         capture_pr_validation_wait_anomaly_best_effort(
@@ -682,35 +683,28 @@ pub(super) fn wait_for_pr_validation_report(
             poll_count,
         );
 
-        match disposition {
-            PrValidationDisposition::Success
-            | PrValidationDisposition::Skipped
-            | PrValidationDisposition::Failed
-            | PrValidationDisposition::Cancelled
-            | PrValidationDisposition::TimedOut => {
-                return Ok(pr_validation_report_from_snapshot_with_disposition(
-                    &snapshot,
-                    disposition,
-                ))
-            }
-            PrValidationDisposition::Pending => {
-                if started.elapsed() >= timeout {
-                    emit_pr_validation_wait_timeout(&snapshot, started, poll_count, Duration::ZERO);
-                    capture_pr_validation_wait_anomaly_best_effort(
-                        repo,
-                        &snapshot,
-                        PrValidationDisposition::TimedOut,
-                        started,
-                        poll_count,
-                    );
-                    return Ok(pr_validation_report_from_snapshot_with_disposition(
-                        &snapshot,
-                        PrValidationDisposition::TimedOut,
-                    ));
-                }
-                std::thread::sleep(poll_delay);
-            }
+        if wait_terminal {
+            return Ok(pr_validation_report_from_snapshot_with_disposition(
+                &snapshot,
+                disposition,
+            ));
         }
+
+        if started.elapsed() >= timeout {
+            emit_pr_validation_wait_timeout(&snapshot, started, poll_count, Duration::ZERO);
+            capture_pr_validation_wait_anomaly_best_effort(
+                repo,
+                &snapshot,
+                PrValidationDisposition::TimedOut,
+                started,
+                poll_count,
+            );
+            return Ok(pr_validation_report_from_snapshot_with_disposition(
+                &snapshot,
+                PrValidationDisposition::TimedOut,
+            ));
+        }
+        std::thread::sleep(poll_delay);
     }
 }
 
@@ -1221,9 +1215,6 @@ pub(super) fn classify_pr_validation_snapshot(
     if snapshot.state == "CLOSED" {
         return PrValidationDisposition::Cancelled;
     }
-    if snapshot.is_draft {
-        return PrValidationDisposition::Pending;
-    }
     if snapshot.checks.is_empty() {
         return PrValidationDisposition::Pending;
     }
@@ -1253,6 +1244,19 @@ pub(super) fn classify_pr_validation_snapshot(
         return PrValidationDisposition::Skipped;
     }
     PrValidationDisposition::Success
+}
+
+pub(super) fn pr_validation_wait_disposition_is_terminal(
+    snapshot: &PrValidationSnapshot,
+    disposition: PrValidationDisposition,
+) -> bool {
+    match disposition {
+        PrValidationDisposition::Pending => false,
+        PrValidationDisposition::Success | PrValidationDisposition::Skipped => !snapshot.is_draft,
+        PrValidationDisposition::Failed
+        | PrValidationDisposition::Cancelled
+        | PrValidationDisposition::TimedOut => true,
+    }
 }
 
 fn effective_pr_validation_checks(
