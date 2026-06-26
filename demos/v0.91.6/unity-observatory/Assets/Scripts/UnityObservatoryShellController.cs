@@ -469,10 +469,29 @@ namespace ADL.Demos.UnityObservatory
         {
             VisualElement header = new();
             header.AddToClassList("header");
-            header.style.paddingBottom = 16f;
-            header.Add(CreateLabel(title, "title", 26, FontStyle.Bold));
+            header.Add(CreateLabel("Milestone proof demo", "eyebrow", 12, FontStyle.Bold));
+            header.Add(CreateLabel(title, "title", 30, FontStyle.Bold));
             header.Add(CreateLabel(subtitle, "subtitle", 14));
+            header.Add(CreateLabel(healthSummary, "headline-summary", 15));
+            header.Add(BuildMetricRail());
             return header;
+        }
+
+        private VisualElement BuildMetricRail()
+        {
+            VisualElement rail = new();
+            rail.AddToClassList("metric-rail");
+            rail.Add(CreateMetricTile("Citizens", citizenCount.ToString(), "Metric"));
+            rail.Add(CreateMetricTile("Episodes", episodeCount.ToString(), "Completed"));
+            rail.Add(CreateMetricTile("Current tick", currentTick.ToString(), kernelPulseStatus));
+            rail.Add(
+                CreateMetricTile(
+                    "Freedom Gate",
+                    $"{allowCount}/{deferCount}/{refuseCount}",
+                    "allow/defer/refuse"
+                )
+            );
+            return rail;
         }
 
         private VisualElement BuildBody()
@@ -505,17 +524,16 @@ namespace ADL.Demos.UnityObservatory
         {
             VisualElement nav = new();
             nav.AddToClassList("navigation");
-            nav.style.width = 220f;
-            nav.style.paddingRight = 12f;
-            nav.Add(CreateLabel("Rooms", null, 16, FontStyle.Bold));
+            nav.Add(CreateLabel("Observatory map", "nav-title", 16, FontStyle.Bold));
+            nav.Add(CreateLabel("Rooms", "nav-section", 12, FontStyle.Bold));
             foreach (string label in roomLabels)
             {
-                nav.Add(CreateLabel(DefaultIfBlank(label, "Unnamed room")));
+                nav.Add(CreateNavItem(DefaultIfBlank(label, "Unnamed room"), "room"));
             }
-            nav.Add(CreateLabel("Lenses", null, 16, FontStyle.Bold));
+            nav.Add(CreateLabel("Lenses", "nav-section", 12, FontStyle.Bold));
             foreach (string label in lensLabels)
             {
-                nav.Add(CreateLabel(DefaultIfBlank(label, "Unnamed lens")));
+                nav.Add(CreateNavItem(DefaultIfBlank(label, "Unnamed lens"), "lens"));
             }
             return nav;
         }
@@ -523,12 +541,19 @@ namespace ADL.Demos.UnityObservatory
         private VisualElement BuildSummaryCard()
         {
             VisualElement card = CreateCard();
-            card.Add(CreateLabel("Observed summary", "summary-title", 18, FontStyle.Bold));
-            card.Add(CreateLabel($"Citizens: {citizenCount}", "citizen-count"));
-            card.Add(CreateLabel($"Episodes: {episodeCount}", "episode-count"));
-            card.Add(CreateLabel($"Default room: {defaultRoomLabel}", "default-room"));
-            card.Add(CreateLabel($"Default lens: {defaultLensLabel}", "default-lens"));
-            card.Add(CreateLabel($"Current tick: {currentTick}", "current-tick"));
+            card.Add(CreateSectionTitle("Observed summary"));
+            card.Add(CreateStatRow("Citizens", citizenCount.ToString(), "citizen-count"));
+            card.Add(CreateStatRow("Episodes", episodeCount.ToString(), "episode-count"));
+            card.Add(CreateStatRow("Default room", defaultRoomLabel, "default-room"));
+            card.Add(CreateStatRow("Default lens", defaultLensLabel, "default-lens"));
+            card.Add(CreateStatRow("Current tick", currentTick.ToString(), "current-tick"));
+            card.Add(
+                CreateStatRow(
+                    "Freedom Gate counts:",
+                    $"{allowCount} allow / {deferCount} defer / {refuseCount} refuse",
+                    "freedom-gate-counts"
+                )
+            );
             card.Add(CreateLabel(proposalModeStatement, "proposal-mode"));
             return card;
         }
@@ -536,27 +561,33 @@ namespace ADL.Demos.UnityObservatory
         private VisualElement BuildWorldCard()
         {
             VisualElement card = CreateCard();
-            card.Add(CreateLabel("Inhabited world", "world-title", 18, FontStyle.Bold));
-            card.Add(CreateLabel(worldQuestion, "world-question"));
+            card.Add(CreateSectionTitle("Inhabited world"));
+            card.Add(CreateLabel(worldQuestion, "world-question", 16, FontStyle.Bold));
             card.Add(CreateLabel(worldNote, "world-note"));
-            card.Add(CreateLabel($"Default lens: {defaultLensLabel}", "world-lens"));
+            card.Add(CreateStatRow("Default lens", defaultLensLabel, "world-lens"));
             card.Add(CreateLabel(lensSummary, "world-lens-summary"));
-            card.Add(CreateLabel($"{corporateInvestorLabel}: {corporateInvestorBoundary}", "world-investor-boundary"));
+            card.Add(CreatePill(corporateInvestorLabel, "investor-pill"));
+            card.Add(CreateLabel(corporateInvestorBoundary, "world-investor-boundary"));
             return card;
         }
 
         private VisualElement BuildStatusCard()
         {
             VisualElement card = CreateCard();
-            card.Add(CreateLabel("Runtime status", "status-title", 18, FontStyle.Bold));
+            card.Add(CreateSectionTitle("Runtime status"));
+            card.Add(CreatePill(kernelPulseStatus, "status-pill"));
             card.Add(CreateLabel(healthSummary, "status-health"));
-            card.Add(CreateLabel($"Kernel pulse: {kernelPulseStatus}", "status-pulse"));
-            card.Add(CreateLabel($"Resources: {resourceState}", "status-resources"));
-            card.Add(CreateLabel($"Snapshot: {snapshotState}", "status-snapshot"));
+            card.Add(CreateStatRow("Resources", resourceState, "status-resources"));
+            card.Add(CreateStatRow("Snapshot", snapshotState, "status-snapshot"));
             card.Add(CreateLabel(snapshotNote, "status-snapshot-note"));
             foreach (string item in attentionItems)
             {
-                card.Add(CreateLabel($"Attention: {DefaultIfBlank(item, "Review bounded state.")}", "status-attention"));
+                card.Add(
+                    CreateAttentionRow(
+                        DefaultIfBlank(item, "Review bounded state."),
+                        "status-attention"
+                    )
+                );
             }
             return card;
         }
@@ -564,20 +595,20 @@ namespace ADL.Demos.UnityObservatory
         private VisualElement BuildObservabilityCard()
         {
             VisualElement card = CreateCard();
-            card.Add(CreateLabel("Observability and security", "observability-title", 18, FontStyle.Bold));
+            card.Add(CreateSectionTitle("Observability and security", "observability-title"));
             if (!hasObservabilityContract)
             {
                 card.Add(CreateLabel("Observability/security consumption proof is not bound in this contract.", "observability-unbound"));
                 return card;
             }
-            card.Add(CreateLabel($"Consumption status: {observabilityStatus}", "observability-status"));
+            card.Add(CreatePill(observabilityStatus, "observability-pill"));
             card.Add(CreateLabel(observabilityClaimBoundary, "observability-boundary"));
             card.Add(CreateLabel(privateStatePosture, "observability-private-state"));
-            card.Add(CreateLabel($"OTel boundary: {otelBoundaryRef}", "observability-otel-ref"));
-            card.Add(CreateLabel($"Event stream example: {eventStreamExampleRef}", "observability-stream-ref"));
-            card.Add(CreateLabel($"Logging validation: {loggingValidationRef}", "observability-logging-ref"));
-            card.Add(CreateLabel($"Security review: {observabilitySecurityReviewRef}", "observability-security-ref"));
-            card.Add(CreateLabel($"Proof packet: {observabilityProofPacketRef}", "observability-proof-ref"));
+            card.Add(CreateStatRow("OTel boundary", otelBoundaryRef, "observability-otel-ref"));
+            card.Add(CreateStatRow("Event stream", eventStreamExampleRef, "observability-stream-ref"));
+            card.Add(CreateStatRow("Logging validation", loggingValidationRef, "observability-logging-ref"));
+            card.Add(CreateStatRow("Security review", observabilitySecurityReviewRef, "observability-security-ref"));
+            card.Add(CreateStatRow("Proof packet", observabilityProofPacketRef, "observability-proof-ref"));
             card.Add(CreateLabel(findingsDisposition, "observability-findings-disposition"));
             return card;
         }
@@ -585,9 +616,9 @@ namespace ADL.Demos.UnityObservatory
         private VisualElement BuildInhabitantReadinessCard()
         {
             VisualElement card = CreateCard();
-            card.Add(CreateLabel("Inhabitant readiness", "readiness-title", 18, FontStyle.Bold));
+            card.Add(CreateSectionTitle("Inhabitant readiness"));
             card.Add(CreateLabel(identityBoundary, "readiness-boundary"));
-            card.Add(CreateLabel($"Security floor: {securityFloorRef}", "readiness-security-floor"));
+            card.Add(CreateStatRow("Security floor", securityFloorRef, "readiness-security-floor"));
             foreach (ReadinessCheck check in readinessChecks)
             {
                 if (check == null)
@@ -595,7 +626,8 @@ namespace ADL.Demos.UnityObservatory
                     continue;
                 }
 
-                card.Add(CreateLabel($"{DefaultIfBlank(check.state, "unknown")}: {DefaultIfBlank(check.label, "Readiness check")}", "readiness-check"));
+                card.Add(CreatePill(DefaultIfBlank(check.state, "unknown"), "readiness-pill"));
+                card.Add(CreateLabel(DefaultIfBlank(check.label, "Readiness check"), "readiness-check", 15, FontStyle.Bold));
                 card.Add(CreateLabel(DefaultIfBlank(check.note, "No readiness note supplied."), "readiness-note"));
             }
             return card;
@@ -604,7 +636,7 @@ namespace ADL.Demos.UnityObservatory
         private VisualElement BuildInhabitantsCard()
         {
             VisualElement card = CreateCard();
-            card.Add(CreateLabel("Citizen explorer", "inhabitants-title", 18, FontStyle.Bold));
+            card.Add(CreateSectionTitle("Citizen explorer"));
             foreach (InhabitantProjection inhabitant in inhabitants)
             {
                 if (inhabitant == null)
@@ -612,8 +644,8 @@ namespace ADL.Demos.UnityObservatory
                     continue;
                 }
 
+                card.Add(CreatePill(DefaultIfBlank(inhabitant.activity_posture, "bounded"), "inhabitant-pill"));
                 card.Add(CreateLabel(DefaultIfBlank(inhabitant.projection_label, "Inhabitant lane"), "inhabitant-label", 15, FontStyle.Bold));
-                card.Add(CreateLabel(DefaultIfBlank(inhabitant.activity_posture, "bounded"), "inhabitant-state"));
                 card.Add(CreateLabel(DefaultIfBlank(inhabitant.capability_summary, "No capability summary supplied."), "inhabitant-capability"));
                 card.Add(CreateLabel(DefaultIfBlank(inhabitant.alert_summary, "No alert summary supplied."), "inhabitant-alert-summary"));
                 card.Add(CreateLabel($"{DefaultIfBlank(inhabitant.identity_visibility, "identity_bounded")}: {DefaultIfBlank(inhabitant.identity_note, "Identity details remain bounded.")}", "inhabitant-identity-boundary"));
@@ -624,9 +656,9 @@ namespace ADL.Demos.UnityObservatory
         private VisualElement BuildBoundaryCard()
         {
             VisualElement card = CreateCard();
-            card.Add(CreateLabel("Governed boundary", "boundary-title", 18, FontStyle.Bold));
+            card.Add(CreateSectionTitle("Governed boundary"));
             card.Add(CreateLabel(claimBoundary, "boundary-body"));
-            card.Add(CreateLabel($"Freedom Gate counts: allow {allowCount}, defer {deferCount}, refuse {refuseCount}.", "boundary-followon"));
+            card.Add(CreatePill($"allow {allowCount} / defer {deferCount} / refuse {refuseCount}", "boundary-pill"));
             card.Add(CreateLabel(caveat, "boundary-caveat"));
             return card;
         }
@@ -634,11 +666,12 @@ namespace ADL.Demos.UnityObservatory
         private VisualElement BuildPacketCard()
         {
             VisualElement card = CreateCard();
-            card.Add(CreateLabel("Packet contract", "packet-title", 18, FontStyle.Bold));
-            card.Add(CreateLabel(packetSchema, "packet-schema"));
-            card.Add(CreateLabel(packetRef, "packet-ref"));
-            card.Add(CreateLabel(runtimeArtifactRoot, "artifact-root"));
-            card.Add(CreateLabel(operatorReportRef, "report-ref"));
+            card.Add(CreateSectionTitle("Packet contract"));
+            card.Add(CreatePill(evidenceLevel.Replace("_", " "), "contract-pill"));
+            card.Add(CreateStatRow("Schema", packetSchema, "packet-schema"));
+            card.Add(CreateStatRow("Packet ref", packetRef, "packet-ref"));
+            card.Add(CreateStatRow("Artifact root", runtimeArtifactRoot, "artifact-root"));
+            card.Add(CreateStatRow("Report ref", operatorReportRef, "report-ref"));
             card.Add(CreateLabel($"This shell is reading a deterministic Unity-facing contract derived from {evidenceLevel} Observatory evidence.", "packet-note"));
             return card;
         }
@@ -647,8 +680,7 @@ namespace ADL.Demos.UnityObservatory
         {
             VisualElement footer = new();
             footer.AddToClassList("footer");
-            footer.style.paddingTop = 16f;
-            footer.Add(CreateLabel("Deterministic Unity Observatory logging, OTel, and security consumption projection for WP-09 O-04.", null, 13));
+            footer.Add(CreateLabel("Deterministic Unity Observatory logging, OTel, and security consumption projection for WP-09 O-04.", "footer-line", 13));
             return footer;
         }
 
@@ -665,17 +697,65 @@ namespace ADL.Demos.UnityObservatory
             return card;
         }
 
+        private static Label CreateSectionTitle(string text, string name = null)
+        {
+            return CreateLabel(text, name, 18, FontStyle.Bold, "section-title");
+        }
+
+        private static Label CreatePill(string text, string className)
+        {
+            return CreateLabel(text, null, 11, FontStyle.Bold, className);
+        }
+
+        private static Label CreateNavItem(string text, string className)
+        {
+            return CreateLabel(text, null, 13, FontStyle.Normal, className);
+        }
+
+        private static VisualElement CreateMetricTile(string label, string value, string note)
+        {
+            VisualElement tile = new();
+            tile.AddToClassList("metric-tile");
+            tile.Add(CreateLabel(label, null, 11, FontStyle.Bold, "metric-label"));
+            tile.Add(CreateLabel(value, null, 22, FontStyle.Bold, "metric-value"));
+            tile.Add(CreateLabel(note, null, 11, FontStyle.Normal, "metric-note"));
+            return tile;
+        }
+
+        private static VisualElement CreateStatRow(string label, string value, string valueName)
+        {
+            VisualElement row = new();
+            row.AddToClassList("stat-row");
+            row.Add(CreateLabel(label, null, 12, FontStyle.Bold, "stat-label"));
+            row.Add(CreateLabel(value, valueName, 12, FontStyle.Normal, "stat-value"));
+            return row;
+        }
+
+        private static VisualElement CreateAttentionRow(string text, string labelName)
+        {
+            VisualElement row = new();
+            row.AddToClassList("attention-row");
+            row.Add(CreateLabel("Attention", null, 11, FontStyle.Bold, "attention-pill"));
+            row.Add(CreateLabel(text, labelName, 12, FontStyle.Normal, "attention-text"));
+            return row;
+        }
+
         private static Label CreateLabel(
             string text,
             string name = null,
             int fontSize = 13,
-            FontStyle fontStyle = FontStyle.Normal
+            FontStyle fontStyle = FontStyle.Normal,
+            string className = null
         )
         {
             Label label = new(text);
             if (!string.IsNullOrWhiteSpace(name))
             {
                 label.name = name;
+            }
+            if (!string.IsNullOrWhiteSpace(className))
+            {
+                label.AddToClassList(className);
             }
 
             Font runtimeFont = ResolveRuntimeFont();

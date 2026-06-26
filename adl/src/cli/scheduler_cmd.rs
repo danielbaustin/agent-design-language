@@ -50,8 +50,12 @@ fn real_scheduler_plan(args: &[String]) -> Result<()> {
     let input = input.ok_or_else(|| anyhow!("scheduler plan requires --input <bundle.json>"))?;
     let raw = fs::read_to_string(&input)
         .with_context(|| format!("failed to read scheduler input {}", input.display()))?;
-    let bundle = parse_economics_bundle_json(&raw)
-        .with_context(|| format!("failed to parse scheduler economics bundle {}", input.display()))?;
+    let bundle = parse_economics_bundle_json(&raw).with_context(|| {
+        format!(
+            "failed to parse scheduler economics bundle {}",
+            input.display()
+        )
+    })?;
     let plan = schedule_economics_bundle(&bundle)
         .context("failed to build scheduler plan from economics bundle")?;
     let rendered = if compact {

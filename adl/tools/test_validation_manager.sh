@@ -68,6 +68,7 @@ unity_observatory="$TMP/unity-observatory.txt"
 cat >"$unity_observatory" <<'EOF'
 M	demos/v0.91.6/unity-observatory/Assets/Resources/observatory_contract.json
 M	demos/v0.91.6/unity-observatory/Assets/Scripts/UnityObservatoryBootstrap.cs
+M	adl/tools/test_v0916_unity_observatory_soak_integration.sh
 M	adl/tools/test_v0916_unity_observatory_unity65_smoke.sh
 EOF
 bash "$SCRIPT" --changed-files "$unity_observatory" --json >"$TMP/unity-observatory.json"
@@ -89,6 +90,7 @@ assert surface["resource_class"] == "small"
 assert "bash -n adl/tools/test_v0916_unity_observatory_unity65_smoke.sh" in profile["run"][0]["command"]
 assert "test_v0916_unity_observatory_baseline.sh" in profile["run"][0]["command"]
 assert "test_v0916_unity_observatory_contract.sh" in profile["run"][0]["command"]
+assert "test_v0916_unity_observatory_soak_integration.sh" in profile["run"][0]["command"]
 assert "csm_observatory_cli_writes_unity_contract_bundle" in profile["run"][0]["command"]
 assert profile["diagnostics"] == []
 assert profile["escalation"]["required"] is False
