@@ -3272,6 +3272,7 @@ fn finish_validation_profile_classifies_lifecycle_inline_tests() {
 
 #[test]
 fn finish_validation_profile_keeps_small_binary_delegation_proof_focused() {
+    let _guard = env_lock();
     let plan = select_finish_validation_plan_for_finish(
         1153,
         ".",
