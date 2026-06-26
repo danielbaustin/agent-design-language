@@ -1,0 +1,57 @@
+{
+  "schema_version": "adl.runtime.aws.ssm_health.v1",
+  "issue": 4545,
+  "version": "v0.91.6",
+  "checked_at_utc": "2026-06-26T16:08:00Z",
+  "aws_profile_truth": {
+    "intended_profile": "agent-logic-admin",
+    "wrong_profile_observed": "default",
+    "classification": "agent_logic_account_required"
+  },
+  "signal_path": {
+    "cloudwatch": "live_proven",
+    "sns": "not_claimed",
+    "log_groups": [
+      "/adl/local-polis-ssm/4113",
+      "/adl/local-polis-ssm/4318",
+      "/adl/local-polis-ssm/4319"
+    ]
+  },
+  "hosts": [
+    {
+      "name": "wuji",
+      "platform": "macOS",
+      "ssm_ping": "Online",
+      "command_status": "Success",
+      "cloudwatch_stream_observed": true,
+      "classification": "healthy_after_wrapper_fix"
+    },
+    {
+      "name": "nessus",
+      "platform": "Windows",
+      "ssm_ping": "Online",
+      "command_status": "Success",
+      "cloudwatch_stream_observed": true,
+      "classification": "healthy"
+    },
+    {
+      "name": "opticon",
+      "platform": "QTS",
+      "ssm_ping": "Online",
+      "command_status": "Success",
+      "cloudwatch_stream_observed": true,
+      "classification": "healthy"
+    }
+  ],
+  "residuals": [
+    "default AWS profile points at the wrong account for this fleet proof surface"
+  ],
+  "non_claims": [
+    "no scheduler authority claim",
+    "no provider execution claim through SSM",
+    "no CloudWatch Agent rollout claim"
+  ],
+  "cleanup_completed": [
+    "stale duplicate opticon managed-node registration removed under agent-logic-admin"
+  ]
+}
