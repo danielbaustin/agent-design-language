@@ -16,7 +16,7 @@ use ::adl::agent_comms::{
     AcipInvocationStatusV1,
 };
 use ::adl::execute::{
-    self, ExecutionBoundary, RuntimeLifecyclePhase, RuntimeControlState, SelectedPath,
+    self, ExecutionBoundary, RuntimeControlState, RuntimeLifecyclePhase, SelectedPath,
 };
 use ::adl::obsmem_transition_memory::build_write_request_from_transition_handoff;
 use ::adl::resolve;
@@ -91,10 +91,7 @@ fn run(args: Args) -> Result<()> {
         &obsmem_request,
         &evidence_index,
     );
-    write_json(
-        &out_dir.join("runtime_acip_aee_memory_proof.json"),
-        &proof,
-    )?;
+    write_json(&out_dir.join("runtime_acip_aee_memory_proof.json"), &proof)?;
 
     let review_summary = build_review_summary(&runtime_packet, &acip_packet, &obsmem_request);
     write_file(&out_dir.join("review_summary.md"), &review_summary)?;
@@ -207,11 +204,11 @@ fn build_runtime_packet(out_dir: &Path) -> Result<RuntimePacket> {
 
     tr.run_finished(true);
 
-    let reasoning_graph: Value = read_json_value(&run_dir.join("learning/reasoning_graph.v1.json"))?;
+    let reasoning_graph: Value =
+        read_json_value(&run_dir.join("learning/reasoning_graph.v1.json"))?;
     let skill_protocol: Value =
         read_json_value(&run_dir.join("control_path/skill_execution_protocol.json"))?;
-    let final_result: Value =
-        read_json_value(&run_dir.join("control_path/final_result.json"))?;
+    let final_result: Value = read_json_value(&run_dir.join("control_path/final_result.json"))?;
 
     let run_dir_ref = run_dir
         .strip_prefix(out_dir)
@@ -253,10 +250,7 @@ fn build_runtime_packet(out_dir: &Path) -> Result<RuntimePacket> {
 fn build_acip_packet(out_dir: &Path) -> Result<Value> {
     let positive = acip_proof_demo_packet_v1();
     validate_acip_proof_demo_packet_v1(&positive)?;
-    write_json(
-        &out_dir.join("acip/acip_positive_packet.json"),
-        &positive,
-    )?;
+    write_json(&out_dir.join("acip/acip_positive_packet.json"), &positive)?;
 
     validate_acip_local_invocation_exchange_v1(&positive.local_coding_exchange)?;
     validate_acip_local_invocation_exchange_v1(&positive.denied_route_exchange)?;
@@ -275,7 +269,10 @@ fn build_acip_packet(out_dir: &Path) -> Result<Value> {
         "expected_classification": "malformed",
         "error": malformed_error.to_string()
     });
-    write_json(&out_dir.join("acip/acip_malformed_case.json"), &malformed_case)?;
+    write_json(
+        &out_dir.join("acip/acip_malformed_case.json"),
+        &malformed_case,
+    )?;
 
     let mut failed_exchange = positive.local_coding_exchange.clone();
     failed_exchange.invocation_event.status = AcipInvocationStatusV1::Failed;
@@ -323,14 +320,30 @@ fn build_obsmem_request(out_dir: &Path, runtime_packet: &RuntimePacket) -> Resul
         .strip_prefix(repo_root)
         .with_context(|| format!("{} must be inside repo root", out_dir.display()))?;
 
-    let review_synthesis_rel =
-        docs_root.join("obsmem/review_synthesis.json").display().to_string();
-    let evidence_bundle_rel = docs_root.join("obsmem/evidence_bundle.json").display().to_string();
-    let outcome_truth_rel = docs_root.join("obsmem/outcome_truth.json").display().to_string();
-    let handoff_rel = docs_root.join("obsmem/transition_handoff.json").display().to_string();
-    let signed_trace_rel = docs_root.join("obsmem/trace_signed.adl.yaml").display().to_string();
-    let unsigned_trace_rel =
-        docs_root.join("obsmem/trace_unsigned.adl.yaml").display().to_string();
+    let review_synthesis_rel = docs_root
+        .join("obsmem/review_synthesis.json")
+        .display()
+        .to_string();
+    let evidence_bundle_rel = docs_root
+        .join("obsmem/evidence_bundle.json")
+        .display()
+        .to_string();
+    let outcome_truth_rel = docs_root
+        .join("obsmem/outcome_truth.json")
+        .display()
+        .to_string();
+    let handoff_rel = docs_root
+        .join("obsmem/transition_handoff.json")
+        .display()
+        .to_string();
+    let signed_trace_rel = docs_root
+        .join("obsmem/trace_signed.adl.yaml")
+        .display()
+        .to_string();
+    let unsigned_trace_rel = docs_root
+        .join("obsmem/trace_unsigned.adl.yaml")
+        .display()
+        .to_string();
     let trace_key_rel = docs_root.join("obsmem/trace_key.b64").display().to_string();
 
     write_issue_bound_signed_trace(
@@ -589,14 +602,23 @@ fn runtime_trace(
     delegation: &DelegationSpec,
     _temp_agent_action: &str,
 ) -> trace::Trace {
-    let proposal_args_ref = artifact_ref(&resolved.run_id, "governed/proposal_arguments.redacted.json");
-    let normalized_proposal_ref =
-        artifact_ref(&resolved.run_id, "runtime/control/normalized_temporary_agent_proposal.json");
+    let proposal_args_ref = artifact_ref(
+        &resolved.run_id,
+        "governed/proposal_arguments.redacted.json",
+    );
+    let normalized_proposal_ref = artifact_ref(
+        &resolved.run_id,
+        "runtime/control/normalized_temporary_agent_proposal.json",
+    );
     let policy_basis_ref = artifact_ref(&resolved.run_id, "runtime/control/policy_basis.json");
-    let structured_proposal_ref =
-        artifact_ref(&resolved.run_id, "runtime/comms/coding/structured_proposal.json");
-    let review_handoff_ref = artifact_ref(&resolved.run_id, "runtime/comms/coding/review_handoff.json");
-    let temp_agent_result_ref = artifact_ref(&resolved.run_id, "outputs/temporary_agent_result.json");
+    let structured_proposal_ref = artifact_ref(
+        &resolved.run_id,
+        "runtime/comms/coding/structured_proposal.json",
+    );
+    let review_handoff_ref =
+        artifact_ref(&resolved.run_id, "runtime/comms/coding/review_handoff.json");
+    let temp_agent_result_ref =
+        artifact_ref(&resolved.run_id, "outputs/temporary_agent_result.json");
     let mut tr = trace::Trace::new(
         resolved.run_id.clone(),
         resolved.workflow_id.clone(),
@@ -668,10 +690,7 @@ fn runtime_trace(
         "action.temporary-agent-alpha",
         "skill.temporary_agent_execution",
         "adapter.aee.temporary_agent",
-        vec![
-            policy_basis_ref.clone(),
-            review_handoff_ref.clone(),
-        ],
+        vec![policy_basis_ref.clone(), review_handoff_ref.clone()],
     );
     tr.delegation_dispatched(
         "temporary-agent-step",
@@ -684,18 +703,12 @@ fn runtime_trace(
         "action.temporary-agent-alpha",
         "adapter.aee.temporary_agent",
         &temp_agent_result_ref,
-        vec![
-            structured_proposal_ref.clone(),
-            review_handoff_ref.clone(),
-        ],
+        vec![structured_proposal_ref.clone(), review_handoff_ref.clone()],
     );
     tr.governed_redaction_decision(
         "proposal.temporary-agent-alpha",
         "reviewer",
-        vec![
-            temp_agent_result_ref,
-            structured_proposal_ref,
-        ],
+        vec![temp_agent_result_ref, structured_proposal_ref],
         "redacted",
         Some("temporary agent output remains bounded and public-summary safe"),
     );
@@ -907,7 +920,9 @@ fn delegation_sequence(events: &[trace::TraceEvent]) -> Vec<&'static str> {
     for event in events {
         match event {
             trace::TraceEvent::DelegationRequested { .. } => sequence.push("requested"),
-            trace::TraceEvent::DelegationPolicyEvaluated { .. } => sequence.push("policy_evaluated"),
+            trace::TraceEvent::DelegationPolicyEvaluated { .. } => {
+                sequence.push("policy_evaluated")
+            }
             trace::TraceEvent::DelegationApproved { .. } => sequence.push("approved"),
             trace::TraceEvent::DelegationDispatched { .. } => sequence.push("dispatched"),
             trace::TraceEvent::DelegationResultReceived { .. } => sequence.push("result_received"),
@@ -930,7 +945,8 @@ fn acip_status_name(status: &AcipInvocationStatusV1) -> &'static str {
 
 fn evidence_input(repo_root: &Path, rel: &str) -> Result<Value> {
     let path = repo_root.join(rel);
-    let bytes = fs::read(&path).with_context(|| format!("read evidence input {}", path.display()))?;
+    let bytes =
+        fs::read(&path).with_context(|| format!("read evidence input {}", path.display()))?;
     Ok(json!({
         "kind": "proof_packet",
         "path": rel,
@@ -946,8 +962,7 @@ fn write_issue_bound_signed_trace(
 ) -> Result<()> {
     for rel in [signed_trace_rel, unsigned_trace_rel, trace_key_rel] {
         if let Some(parent) = repo_root.join(rel).parent() {
-            fs::create_dir_all(parent)
-                .with_context(|| format!("create parent dir for {}", rel))?;
+            fs::create_dir_all(parent).with_context(|| format!("create parent dir for {}", rel))?;
         }
     }
     let unsigned_path = repo_root.join(unsigned_trace_rel);
@@ -1062,8 +1077,10 @@ fn scan_public_artifacts(out_dir: &Path) -> Result<Value> {
 }
 
 fn read_json_value(path: &Path) -> Result<Value> {
-    serde_json::from_str(&fs::read_to_string(path).with_context(|| format!("read {}", path.display()))?)
-        .with_context(|| format!("parse {}", path.display()))
+    serde_json::from_str(
+        &fs::read_to_string(path).with_context(|| format!("read {}", path.display()))?,
+    )
+    .with_context(|| format!("parse {}", path.display()))
 }
 
 fn absolute_from_cwd(path: &Path) -> Result<PathBuf> {
@@ -1187,7 +1204,9 @@ mod tests {
         assert!(abs.ends_with("target"));
 
         let digest = evidence_input(
-            Path::new(env!("CARGO_MANIFEST_DIR")).parent().expect("repo root"),
+            Path::new(env!("CARGO_MANIFEST_DIR"))
+                .parent()
+                .expect("repo root"),
             "docs/milestones/v0.91.6/RUNTIME_INTEGRATION_SOAK_SPRINT_v0.91.6.md",
         )
         .expect("build evidence input");
@@ -1228,7 +1247,9 @@ mod tests {
         let scan = scan_public_artifacts(&out_dir).expect("scan artifacts");
         assert_eq!(scan["passed"], Value::Bool(false));
 
-        let repo_root = Path::new(env!("CARGO_MANIFEST_DIR")).parent().expect("repo root");
+        let repo_root = Path::new(env!("CARGO_MANIFEST_DIR"))
+            .parent()
+            .expect("repo root");
         write_issue_bound_signed_trace(
             repo_root,
             "tmp/trace_signed.adl.yaml",

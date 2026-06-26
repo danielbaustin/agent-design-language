@@ -539,13 +539,17 @@
       "default_surface": "shared_rust",
       "owner": "shared",
       "path_selectors": [
+        "adl/Cargo.toml",
         "adl/build.rs",
         "adl/src/**",
+        "adl/tools/run_pr_fast_test_lane.sh",
         "adl/tests/**"
       ],
       "path_hints": [
+        "adl/Cargo.toml",
         "adl/build.rs",
         "adl/src/**",
+        "adl/tools/run_pr_fast_test_lane.sh",
         "adl/tests/**"
       ],
       "command": "bash adl/tools/run_pr_fast_test_lane.sh",

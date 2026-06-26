@@ -369,6 +369,10 @@ filter_token_for_path() {
       printf 'tooling_cmd'
       return 0
       ;;
+    adl/src/bin/run_v0916_acip_aee_memory_integration.rs)
+      printf 'run_v0916_acip_aee_memory_integration'
+      return 0
+      ;;
     adl/src/bin/[^/]*.rs)
       basename "$path" .rs
       return 0
@@ -453,6 +457,7 @@ TOKEN_MAP = {
     "pr_cmd_finish": 'binary_id(adl::bin/adl-pr-finish) and test(/^cli::pr_cmd::tests::finish::arg_render::/) or binary_id(adl::bin/adl-pr-finish) and test(/^cli::pr_cmd::finish_support::tests::/)',
     "pr_cmd::github": 'test(/^cli::pr_cmd::github::/) or test(/^cli::pr_cmd::github_client::/)',
     "github_release_": 'test(/^cli::tooling_cmd::github_release::/)',
+    "run_v0916_acip_aee_memory_integration": 'binary_id(adl::bin/run_v0916_acip_aee_memory_integration) and test(/^tests::runtime_acip_aee_memory_/)',
     "long_lived_agent": 'test(/^long_lived_agent::/)',
     "manifest_support": 'test(/^cli::pr_cmd::github::/) or test(/^cli::pr_cmd::github_client::/) or test(/^cli::tooling_cmd::github_release::/) or test(/^long_lived_agent::/)',
 }
