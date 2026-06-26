@@ -41,7 +41,7 @@ fn reconcile_closed_completed_issue_bundle_with_recovery_sources(
 
     for relative in ["stp.md", "sip.md", "spp.md", "srp.md", "sor.md"] {
         let canonical_path = bundle_dir.join(relative);
-        if ensure_nonempty_file_path(&canonical_path)? {
+        if !canonical_bundle_path_needs_recovery(&canonical_path, relative)? {
             continue;
         }
         for duplicate in &duplicates {
@@ -49,7 +49,7 @@ fn reconcile_closed_completed_issue_bundle_with_recovery_sources(
                 continue;
             }
             let candidate = duplicate.join(relative);
-            if ensure_nonempty_file_path(&candidate)? {
+            if recovery_candidate_is_usable(&candidate, relative)? {
                 fs::copy(&candidate, &canonical_path).with_context(|| {
                     format!(
                         "doctor: failed to restore canonical bundle file '{}' from duplicate '{}'",
@@ -330,6 +330,16 @@ pub(crate) fn ensure_closed_completed_issue_bundle_truth(
         }
     }
 
+    let srp_path = issue_ref.task_bundle_review_policy_path(repo_root);
+    if !ensure_nonempty_file_path(&srp_path)? {
+        mismatches.push("missing canonical srp.md".to_string());
+    } else if !srp_has_final_review_results_text(&fs::read_to_string(&srp_path)?)? {
+        mismatches.push(
+            "SRP review_results must record final findings_status/recommended_outcome truth for closed issues"
+                .to_string(),
+        );
+    }
+
     if !mismatches.is_empty() {
         bail!(
             "canonical closed-issue sor truth drift at {}: {}",
@@ -338,6 +348,90 @@ pub(crate) fn ensure_closed_completed_issue_bundle_truth(
         );
     }
     Ok(())
+}
+
+fn canonical_bundle_path_needs_recovery(path: &Path, relative: &str) -> Result<bool> {
+    if !ensure_nonempty_file_path(path)? {
+        return Ok(true);
+    }
+    match relative {
+        "srp.md" => Ok(!srp_has_final_review_results_text(&fs::read_to_string(path)?)?),
+        "sor.md" => Ok(!sor_has_terminal_closeout_truth_text(&fs::read_to_string(path)?)),
+        _ => Ok(false),
+    }
+}
+
+fn recovery_candidate_is_usable(path: &Path, relative: &str) -> Result<bool> {
+    if !ensure_nonempty_file_path(path)? {
+        return Ok(false);
+    }
+    match relative {
+        "srp.md" => srp_has_final_review_results_text(&fs::read_to_string(path)?),
+        "sor.md" => Ok(sor_has_terminal_closeout_truth_text(&fs::read_to_string(path)?)),
+        _ => Ok(true),
+    }
+}
+
+fn srp_has_final_review_results_text(text: &str) -> Result<bool> {
+    let Some(front_matter) = markdown_front_matter_local(text) else {
+        return Ok(false);
+    };
+    let yaml: serde_yaml::Value = match serde_yaml::from_str(front_matter) {
+        Ok(value) => value,
+        Err(_) => return Ok(false),
+    };
+    let Some(mapping) = yaml.as_mapping() else {
+        return Ok(false);
+    };
+    let Some(review_results) = mapping
+        .get(serde_yaml::Value::String("review_results".to_string()))
+        .and_then(serde_yaml::Value::as_mapping)
+    else {
+        return Ok(false);
+    };
+    let findings_status = yaml_mapping_string_local(review_results, "findings_status");
+    let recommended_outcome = yaml_mapping_string_local(review_results, "recommended_outcome");
+    Ok(matches!(
+        findings_status.as_deref(),
+        Some("no_findings" | "findings_present")
+    ) && matches!(
+        recommended_outcome.as_deref(),
+        Some("pass" | "block" | "needs_followup")
+    ))
+}
+
+fn markdown_front_matter_local(text: &str) -> Option<&str> {
+    let rest = text.strip_prefix("---\n")?;
+    let end = rest.find("\n---")?;
+    Some(&rest[..end])
+}
+
+fn yaml_mapping_string_local(mapping: &serde_yaml::Mapping, key: &str) -> Option<String> {
+    mapping
+        .get(serde_yaml::Value::String(key.to_string()))
+        .and_then(serde_yaml::Value::as_str)
+        .map(|value| value.trim().trim_matches('"').trim_matches('\'').to_ascii_lowercase())
+}
+
+fn sor_has_terminal_closeout_truth_text(text: &str) -> bool {
+    let status = line_value_after_prefix(text, "Status:").unwrap_or_default();
+    let integration_state =
+        line_value_after_prefix(text, "- Integration state:").unwrap_or_default();
+    let result = line_value_after_prefix(text, "- Result:").unwrap_or_default();
+    let worktree_only =
+        line_value_after_prefix(text, "- Worktree-only paths remaining:").unwrap_or_default();
+    let worktree_prune_result =
+        line_value_after_prefix(text, "- Worktree prune result:").unwrap_or_default();
+    let terminal_worktree_truth = worktree_only == "none"
+        || (worktree_only.starts_with("issue worktree retained: ")
+            && worktree_prune_result.starts_with("retained_with_reason: "));
+    ["merged", "closed_no_pr"].contains(&integration_state.as_str())
+        && matches!(
+            (status.as_str(), result.as_str()),
+            ("DONE", "PASS") | ("FAILED", "FAIL")
+        )
+        && terminal_worktree_truth
+        && text.contains("## Validation")
 }
 
 fn check_required_field(
