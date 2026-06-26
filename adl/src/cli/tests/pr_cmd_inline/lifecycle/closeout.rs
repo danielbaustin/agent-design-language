@@ -113,6 +113,13 @@ fn real_pr_closeout_reconciles_closed_completed_issue_bundle() {
         &issue_ref.issue_prompt_path(&repo),
         &repo,
     );
+    write_completed_srp_fixture(
+        &issue_ref.task_bundle_review_policy_path(&repo),
+        &issue_ref,
+        "[v0.87.1][tools] Make closeout automatic after merge/closure",
+        "codex/1596-v0-87-1-tools-make-closeout-automatic-after-merge-closure",
+        &repo,
+    );
     let sor_path = issue_ref.task_bundle_output_path(&repo);
     write_completed_sor_fixture(
         &sor_path,
@@ -270,6 +277,13 @@ fn real_pr_closeout_reconciles_closed_no_pr_issue_bundle() {
         "[v0.87.1][tools] Closeout no-pr truth",
         "codex/1597-v0-87-1-tools-closeout-no-pr-truth",
         &issue_ref.issue_prompt_path(&repo),
+        &repo,
+    );
+    write_completed_srp_fixture(
+        &issue_ref.task_bundle_review_policy_path(&repo),
+        &issue_ref,
+        "[v0.87.1][tools] Closeout no-pr truth",
+        "retrospective-no-branch",
         &repo,
     );
     let sor_path = issue_ref.task_bundle_output_path(&repo);
@@ -458,4 +472,140 @@ fn real_pr_closeout_refuses_issue_that_is_not_completed() {
 
     let err = closeout.expect_err("closeout should refuse unfinished issue");
     assert!(err.to_string().contains("refusing automatic closeout"));
+}
+
+fn write_completed_srp_fixture(
+    path: &Path,
+    issue_ref: &IssueRef,
+    title: &str,
+    branch: &str,
+    repo_root: &Path,
+) {
+    let stp_rel = path_relative_to_repo(repo_root, &issue_ref.task_bundle_stp_path(repo_root));
+    let sip_rel = path_relative_to_repo(repo_root, &issue_ref.task_bundle_input_path(repo_root));
+    let sor_rel = path_relative_to_repo(repo_root, &issue_ref.task_bundle_output_path(repo_root));
+    let content = format!(
+        r#"---
+schema_version: "0.1"
+artifact_type: "structured_review_prompt"
+name: "{slug}-review-prompt"
+issue: {issue}
+task_id: "{task_id}"
+version: v0.87.1
+title: "{title}"
+branch: "{branch}"
+status: "approved"
+source_refs:
+  - kind: "issue"
+    ref: "https://github.com/example/repo/issues/{issue}"
+  - kind: "stp"
+    ref: "{stp_rel}"
+  - kind: "sip"
+    ref: "{sip_rel}"
+  - kind: "sor"
+    ref: "{sor_rel}"
+review_mode: "pre_pr_independent_review"
+timing: "before_pr_open"
+scope_basis:
+  - "{stp_rel}"
+  - "{sip_rel}"
+in_scope_surfaces:
+  - "tracked changes for this issue branch"
+evidence_policy:
+  - "Use repository evidence and issue-local validation only."
+validation_inputs:
+  - "Issue-local proofs recorded in the SOR."
+allowed_dispositions:
+  - "PASS"
+  - "BLOCK"
+  - "NEEDS_FOLLOWUP"
+reviewer_constraints:
+  - "Do not widen issue scope."
+refusal_policy:
+  - "Refuse claims that are unsupported by repository evidence."
+follow_up_routing:
+  - "Route actionable findings back to the issue branch."
+non_claims:
+  - "This prompt does not guarantee review quality by itself."
+policy_refs:
+  - "{stp_rel}"
+review_results:
+  findings_status: "no_findings"
+  recommended_outcome: "pass"
+notes: "fixture review completed"
+---
+
+# Structured Review Prompt
+
+## Review Summary
+
+fixture review completed
+
+## Scope Basis
+
+- {stp_rel}
+- {sip_rel}
+
+## In-Scope Surfaces
+
+- tracked changes for this issue branch
+
+## Evidence Rules
+
+- Use repository evidence and issue-local validation only.
+
+## Validation Inputs
+
+- Issue-local proofs recorded in the SOR.
+
+## Allowed Dispositions
+
+- PASS
+- BLOCK
+- NEEDS_FOLLOWUP
+
+## Reviewer Constraints
+
+- Do not widen issue scope.
+
+## Refusal Policy
+
+- Refuse claims that are unsupported by repository evidence.
+
+## Follow-up Routing
+
+- Route actionable findings back to the issue branch.
+
+## Non-Claims
+
+- This prompt does not guarantee review quality by itself.
+
+## Review Results
+
+### Findings
+
+- No findings.
+
+### Dispositions
+
+- None.
+
+### Recommended Outcome
+
+- PASS
+
+## Notes
+
+fixture review completed
+"#,
+        slug = issue_ref.slug(),
+        issue = issue_ref.issue_number(),
+        task_id = issue_ref.task_issue_id(),
+        title = title,
+        branch = branch,
+        stp_rel = stp_rel,
+        sip_rel = sip_rel,
+        sor_rel = sor_rel,
+    );
+    fs::write(path, content).expect("write completed srp");
 }

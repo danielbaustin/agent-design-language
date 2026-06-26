@@ -492,6 +492,11 @@ fn ensure_closed_completed_issue_bundle_truth_rejects_stale_fields() {
             "Status: IN_PROGRESS\n- Integration state: pr_open\n- Verification scope: worktree\n- Worktree-only paths remaining: adl/src/foo.rs\n",
         )
         .expect("write stale output");
+    fs::write(
+        canonical_dir.join("srp.md"),
+        "---\nschema_version: \"0.1\"\nartifact_type: \"structured_review_prompt\"\nname: \"fixture-review\"\nissue: 1410\ntask_id: \"issue-1410\"\nversion: v0.87\ntitle: \"Fixture\"\nbranch: \"codex/1410-canonical-slug\"\nstatus: \"draft\"\nreview_results:\n  findings_status: \"not_run\"\n  recommended_outcome: \"not_run\"\n---\n\n# Structured Review Prompt\n\n## Review Summary\n\nPre-review scaffold.\n\n## Scope Basis\n\n- fixture\n\n## In-Scope Surfaces\n\n- tracked changes\n\n## Evidence Rules\n\n- repo only\n\n## Validation Inputs\n\n- issue local\n\n## Allowed Dispositions\n\n- PASS\n- BLOCK\n\n## Reviewer Constraints\n\n- keep scope narrow\n\n## Refusal Policy\n\n- refuse unsupported claims\n\n## Follow-up Routing\n\n- route back to issue\n\n## Non-Claims\n\n- not final review\n\n## Notes\n\nPre-review scaffold.\n",
+    )
+    .expect("write stale srp");
 
     let err = ensure_closed_completed_issue_bundle_truth(&temp, &issue_ref, &output)
         .expect_err("stale truth should fail");
@@ -507,6 +512,9 @@ fn ensure_closed_completed_issue_bundle_truth_rejects_stale_fields() {
     assert!(rendered.contains("STP status expected '\"complete\"' but found '\"draft\"'"));
     assert!(rendered.contains("SIP Branch expected 'codex/1410-canonical-slug'"));
     assert!(rendered.contains("SIP still contains pre-run lifecycle wording"));
+    assert!(rendered.contains(
+        "SRP review_results must record final findings_status/recommended_outcome truth for closed issues"
+    ));
 }
 
 #[test]
@@ -557,6 +565,11 @@ fn ensure_closed_completed_issue_bundle_truth_accepts_normalized_bundle() {
             "# ADL Input Card\n\nBranch: codex/1410-canonical-slug\n\n## Goal\n\nPreserve the closed/completed issue prompt and local card truth after closeout.\n",
         )
         .expect("write normalized sip");
+    fs::write(
+        canonical_dir.join("srp.md"),
+        issue_ref_completed_srp_content(),
+    )
+    .expect("write normalized srp");
     let output = canonical_dir.join("sor.md");
     fs::write(
             &output,
@@ -584,6 +597,11 @@ fn ensure_closed_completed_issue_bundle_truth_accepts_retrospective_no_branch_cl
             "# ADL Input Card\n\nBranch: retrospective-no-branch\n\n## Goal\n\nPreserve the closed/completed issue prompt and local card truth after closeout.\n",
         )
         .expect("write normalized sip");
+    fs::write(
+        canonical_dir.join("srp.md"),
+        issue_ref_completed_srp_content(),
+    )
+    .expect("write normalized srp");
     let output = canonical_dir.join("sor.md");
     fs::write(
             &output,
@@ -618,6 +636,8 @@ fn ensure_closed_completed_issue_bundle_truth_accepts_normalized_bundle_with_dup
                 "# ADL Input Card\n\nBranch: codex/1410-canonical-slug\n\n## Goal\n\nPreserve the closed/completed issue prompt and local card truth after closeout.\n",
             )
             .expect("write normalized sip");
+        fs::write(dir.join("srp.md"), issue_ref_completed_srp_content())
+            .expect("write normalized srp");
     }
     let output = canonical_dir.join("sor.md");
     fs::write(
@@ -875,6 +895,11 @@ fn closeout_closed_completed_issue_bundle_records_prune_result_on_canonical_outp
     fs::create_dir_all(&canonical_dir).expect("canonical dir");
     fs::write(canonical_dir.join("stp.md"), stp_text).expect("write stp");
     fs::write(canonical_dir.join("sip.md"), sip_text).expect("write sip");
+    fs::write(
+        canonical_dir.join("srp.md"),
+        issue_ref_completed_srp_content(),
+    )
+    .expect("write srp");
     let output = canonical_dir.join("sor.md");
     fs::write(&output, issue_ref_sync_completed_output_content()).expect("write sor");
 
@@ -933,6 +958,11 @@ fn closeout_recovers_missing_primary_cards_from_bound_worktree_bundle() {
     ensure_task_bundle_stp(&repo, &issue_ref, &source_path).expect("stp");
     ensure_pre_run_bootstrap_cards(&repo, &issue_ref, title, &source_path).expect("cards");
     let canonical_dir = issue_ref.task_bundle_dir_path(&repo);
+    fs::write(
+        canonical_dir.join("srp.md"),
+        issue_ref_completed_srp_content(),
+    )
+    .expect("write completed srp");
     let output = issue_ref.task_bundle_output_path(&repo);
     fs::write(&output, issue_ref_sync_completed_output_content()).expect("write completed sor");
 
@@ -998,6 +1028,206 @@ fn closeout_recovers_missing_primary_cards_from_bound_worktree_bundle() {
 }
 
 #[test]
+fn closeout_recovers_stale_root_srp_and_sor_from_bound_worktree_bundle() {
+    let _guard = env_lock();
+    let _manifest_guard = set_tooling_manifest_root_to_workspace();
+    let temp = temp_dir("adl-pr-lifecycle-closeout-recovers-stale-root-review-output");
+    let repo = temp.join("repo");
+    let origin = temp.join("origin.git");
+    init_repo_with_origin(&repo, &origin);
+    copy_prompt_templates(&repo);
+    fs::write(repo.join(".gitignore"), ".adl/\n").expect("write gitignore");
+    assert!(Command::new("git")
+        .args([
+            "-C",
+            path_str(&repo).expect("repo path"),
+            "add",
+            ".gitignore"
+        ])
+        .status()
+        .expect("git add gitignore")
+        .success());
+    assert!(Command::new("git")
+        .args([
+            "-C",
+            path_str(&repo).expect("repo path"),
+            "commit",
+            "-q",
+            "-m",
+            "ignore local adl state",
+        ])
+        .status()
+        .expect("git commit gitignore")
+        .success());
+
+    let issue_ref = IssueRef::new(1410, "v0.87", "canonical-slug").expect("issue ref");
+    let title = "PR Command Sync Coverage";
+    let source_path = issue_ref.issue_prompt_path(&repo);
+    fs::create_dir_all(source_path.parent().expect("source parent")).expect("source parent");
+    fs::write(
+        &source_path,
+        "## Summary\n\nCloseout stale-root recovery fixture.\n\n## Goal\n\nRecover stale root SRP and SOR truth from the bound worktree before prune.\n\n## Required Outcome\n\n- closeout replaces stale root review/output truth with the final worktree truth\n\n## Deliverables\n\n- focused lifecycle regression test\n\n## Acceptance Criteria\n\n- canonical SRP and SOR are refreshed from the worktree\n- clean worktree is pruned\n\n## Repo Inputs\n\n- `adl/src/cli/pr_cmd/lifecycle/reconciliation.rs`\n\n## Dependencies\n\n- none\n\n## Demo Expectations\n\n- none\n\n## Non-goals\n\n- no broader closeout redesign\n\n## Issue-Graph Notes\n\n- regression fixture\n\n## Notes\n\n- local `.adl` state is ignored\n\n## Tooling Notes\n\n- focused lifecycle test\n",
+    )
+    .expect("write source");
+    ensure_task_bundle_stp(&repo, &issue_ref, &source_path).expect("stp");
+    ensure_pre_run_bootstrap_cards(&repo, &issue_ref, title, &source_path).expect("cards");
+    let canonical_dir = issue_ref.task_bundle_dir_path(&repo);
+    let output = issue_ref.task_bundle_output_path(&repo);
+    fs::write(
+        &output,
+        "Status: NOT_STARTED\n- Integration state: worktree_only\n- Verification scope: worktree\n- Worktree-only paths remaining: issue bundle still local\n",
+    )
+    .expect("write stale root sor");
+    fs::write(
+        canonical_dir.join("srp.md"),
+        "---\nschema_version: \"0.1\"\nartifact_type: \"structured_review_prompt\"\nname: \"fixture-review\"\nissue: 1410\ntask_id: \"issue-1410\"\nversion: v0.87\ntitle: \"Fixture\"\nbranch: \"codex/1410-canonical-slug\"\nstatus: \"draft\"\nreview_results:\n  findings_status: \"not_run\"\n  recommended_outcome: \"not_run\"\n---\n\n# Structured Review Prompt\n\n## Review Summary\n\nStale root review scaffold.\n\n## Scope Basis\n\n- fixture\n\n## In-Scope Surfaces\n\n- tracked changes\n\n## Evidence Rules\n\n- repo only\n\n## Validation Inputs\n\n- issue local\n\n## Allowed Dispositions\n\n- PASS\n- BLOCK\n\n## Reviewer Constraints\n\n- keep scope narrow\n\n## Refusal Policy\n\n- refuse unsupported claims\n\n## Follow-up Routing\n\n- route back to issue\n\n## Non-Claims\n\n- stale scaffold\n\n## Notes\n\nStale root review scaffold.\n",
+    )
+    .expect("write stale root srp");
+
+    let worktree = issue_ref.default_worktree_path(&repo, None);
+    assert!(Command::new("git")
+        .args([
+            "-C",
+            path_str(&repo).expect("repo path"),
+            "worktree",
+            "add",
+            path_str(&worktree).expect("worktree path"),
+            "-b",
+            "codex/1410-canonical-slug",
+            "main",
+        ])
+        .status()
+        .expect("git worktree add")
+        .success());
+    let worktree_bundle = issue_ref.task_bundle_dir_path(&worktree);
+    fs::create_dir_all(&worktree_bundle).expect("worktree bundle");
+    fs::copy(canonical_dir.join("stp.md"), worktree_bundle.join("stp.md")).expect("copy stp");
+    fs::copy(canonical_dir.join("sip.md"), worktree_bundle.join("sip.md")).expect("copy sip");
+    fs::copy(canonical_dir.join("spp.md"), worktree_bundle.join("spp.md")).expect("copy spp");
+    fs::write(
+        worktree_bundle.join("srp.md"),
+        issue_ref_completed_srp_content(),
+    )
+    .expect("write final worktree srp");
+    fs::write(
+        worktree_bundle.join("sor.md"),
+        issue_ref_sync_completed_output_content(),
+    )
+    .expect("write final worktree sor");
+
+    closeout_closed_completed_issue_bundle(&repo, &repo, &issue_ref, &output)
+        .expect("closeout should recover stale root review/output truth from worktree");
+
+    let root_srp_text =
+        fs::read_to_string(canonical_dir.join("srp.md")).expect("read recovered root srp");
+    assert!(root_srp_text.contains("findings_status: \"no_findings\""));
+    assert!(root_srp_text.contains("recommended_outcome: \"pass\""));
+    let root_sor_text = fs::read_to_string(&output).expect("read recovered root sor");
+    assert!(root_sor_text.contains("Status: DONE"));
+    assert!(root_sor_text.contains("- Integration state: merged"));
+    assert!(!worktree.exists(), "worktree should be pruned");
+    ensure_closed_completed_issue_bundle_truth(&repo, &issue_ref, &output)
+        .expect("canonical truth remains valid after stale-root recovery");
+}
+
+#[test]
+fn closeout_recovers_malformed_root_srp_from_bound_worktree_bundle() {
+    let _guard = env_lock();
+    let _manifest_guard = set_tooling_manifest_root_to_workspace();
+    let temp = temp_dir("adl-pr-lifecycle-closeout-recovers-malformed-root-srp");
+    let repo = temp.join("repo");
+    let origin = temp.join("origin.git");
+    init_repo_with_origin(&repo, &origin);
+    copy_prompt_templates(&repo);
+    fs::write(repo.join(".gitignore"), ".adl/\n").expect("write gitignore");
+    assert!(Command::new("git")
+        .args([
+            "-C",
+            path_str(&repo).expect("repo path"),
+            "add",
+            ".gitignore"
+        ])
+        .status()
+        .expect("git add gitignore")
+        .success());
+    assert!(Command::new("git")
+        .args([
+            "-C",
+            path_str(&repo).expect("repo path"),
+            "commit",
+            "-q",
+            "-m",
+            "ignore local adl state",
+        ])
+        .status()
+        .expect("git commit gitignore")
+        .success());
+
+    let issue_ref = IssueRef::new(1410, "v0.87", "canonical-slug").expect("issue ref");
+    let title = "PR Command Sync Coverage";
+    let source_path = issue_ref.issue_prompt_path(&repo);
+    fs::create_dir_all(source_path.parent().expect("source parent")).expect("source parent");
+    fs::write(
+        &source_path,
+        "## Summary\n\nCloseout malformed-root recovery fixture.\n\n## Goal\n\nRecover malformed root SRP truth from the bound worktree before prune.\n\n## Required Outcome\n\n- closeout treats malformed root SRP as recoverable drift and restores final worktree truth\n\n## Deliverables\n\n- focused lifecycle regression test\n\n## Acceptance Criteria\n\n- malformed canonical SRP does not abort closeout recovery\n- canonical SRP is refreshed from the worktree\n- clean worktree is pruned\n\n## Repo Inputs\n\n- `adl/src/cli/pr_cmd/lifecycle/reconciliation.rs`\n\n## Dependencies\n\n- none\n\n## Demo Expectations\n\n- none\n\n## Non-goals\n\n- no broader closeout redesign\n\n## Issue-Graph Notes\n\n- regression fixture\n\n## Notes\n\n- local `.adl` state is ignored\n\n## Tooling Notes\n\n- focused lifecycle test\n",
+    )
+    .expect("write source");
+    ensure_task_bundle_stp(&repo, &issue_ref, &source_path).expect("stp");
+    ensure_pre_run_bootstrap_cards(&repo, &issue_ref, title, &source_path).expect("cards");
+    let canonical_dir = issue_ref.task_bundle_dir_path(&repo);
+    let output = issue_ref.task_bundle_output_path(&repo);
+    fs::write(&output, issue_ref_sync_completed_output_content()).expect("write completed sor");
+    fs::write(
+        canonical_dir.join("srp.md"),
+        "---\nreview_results: [this is not valid yaml\n",
+    )
+    .expect("write malformed root srp");
+
+    let worktree = issue_ref.default_worktree_path(&repo, None);
+    assert!(Command::new("git")
+        .args([
+            "-C",
+            path_str(&repo).expect("repo path"),
+            "worktree",
+            "add",
+            path_str(&worktree).expect("worktree path"),
+            "-b",
+            "codex/1410-canonical-slug",
+            "main",
+        ])
+        .status()
+        .expect("git worktree add")
+        .success());
+    let worktree_bundle = issue_ref.task_bundle_dir_path(&worktree);
+    fs::create_dir_all(&worktree_bundle).expect("worktree bundle");
+    for relative in ["stp.md", "sip.md", "spp.md"] {
+        fs::copy(canonical_dir.join(relative), worktree_bundle.join(relative))
+            .expect("copy card to worktree");
+    }
+    fs::write(
+        worktree_bundle.join("srp.md"),
+        issue_ref_completed_srp_content(),
+    )
+    .expect("write final worktree srp");
+    fs::write(
+        worktree_bundle.join("sor.md"),
+        issue_ref_sync_completed_output_content(),
+    )
+    .expect("write final worktree sor");
+
+    closeout_closed_completed_issue_bundle(&repo, &repo, &issue_ref, &output)
+        .expect("closeout should recover malformed root srp from worktree");
+
+    let root_srp_text =
+        fs::read_to_string(canonical_dir.join("srp.md")).expect("read recovered root srp");
+    assert!(root_srp_text.contains("findings_status: \"no_findings\""));
+    assert!(root_srp_text.contains("recommended_outcome: \"pass\""));
+    assert!(!worktree.exists(), "worktree should be pruned");
+    ensure_closed_completed_issue_bundle_truth(&repo, &issue_ref, &output)
+        .expect("canonical truth remains valid after malformed-root recovery");
+}
+
+#[test]
 fn closeout_retains_dirty_stale_worktree_when_canonical_truth_is_complete() {
     let _guard = env_lock();
     let _manifest_guard = set_tooling_manifest_root_to_workspace();
@@ -1041,6 +1271,12 @@ fn closeout_retains_dirty_stale_worktree_when_canonical_truth_is_complete() {
     .expect("write source");
     ensure_task_bundle_stp(&repo, &issue_ref, &source_path).expect("stp");
     ensure_pre_run_bootstrap_cards(&repo, &issue_ref, title, &source_path).expect("cards");
+    let canonical_dir = issue_ref.task_bundle_dir_path(&repo);
+    fs::write(
+        canonical_dir.join("srp.md"),
+        issue_ref_completed_srp_content(),
+    )
+    .expect("write completed srp");
     let output = issue_ref.task_bundle_output_path(&repo);
     fs::write(&output, issue_ref_sync_completed_output_content()).expect("write completed sor");
 
@@ -1296,6 +1532,75 @@ fn issue_ref_sync_completed_output_content() -> String {
         "",
         "## Follow-ups / Deferred work",
         "- None.",
+        "",
+    ]
+    .join("\n")
+}
+
+fn issue_ref_completed_srp_content() -> String {
+    [
+        "---",
+        "schema_version: \"0.1\"",
+        "artifact_type: \"structured_review_prompt\"",
+        "name: \"fixture-review\"",
+        "issue: 1410",
+        "task_id: \"issue-1410\"",
+        "version: v0.87",
+        "title: \"PR Command Sync Coverage\"",
+        "branch: \"codex/1410-canonical-slug\"",
+        "status: \"approved\"",
+        "review_results:",
+        "  findings_status: \"no_findings\"",
+        "  recommended_outcome: \"pass\"",
+        "---",
+        "",
+        "# Structured Review Prompt",
+        "",
+        "## Review Summary",
+        "",
+        "Completed pre-PR review recorded.",
+        "",
+        "## Scope Basis",
+        "",
+        "- fixture",
+        "",
+        "## In-Scope Surfaces",
+        "",
+        "- tracked changes",
+        "",
+        "## Evidence Rules",
+        "",
+        "- repo only",
+        "",
+        "## Validation Inputs",
+        "",
+        "- issue local",
+        "",
+        "## Allowed Dispositions",
+        "",
+        "- PASS",
+        "- BLOCK",
+        "- NEEDS_FOLLOWUP",
+        "",
+        "## Reviewer Constraints",
+        "",
+        "- keep scope narrow",
+        "",
+        "## Refusal Policy",
+        "",
+        "- refuse unsupported claims",
+        "",
+        "## Follow-up Routing",
+        "",
+        "- route back to issue",
+        "",
+        "## Non-Claims",
+        "",
+        "- no non-claims beyond the fixture boundary",
+        "",
+        "## Notes",
+        "",
+        "Final review truth is recorded for closeout recovery.",
         "",
     ]
     .join("\n")
