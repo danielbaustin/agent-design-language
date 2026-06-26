@@ -586,6 +586,7 @@ fn run_remote_timeout_probe() -> Result<Value> {
     }))
 }
 
+#[allow(clippy::too_many_arguments)]
 fn build_failure_register(
     resume_status: &adl::long_lived_agent::StatusRecord,
     stop_probe: &Value,
