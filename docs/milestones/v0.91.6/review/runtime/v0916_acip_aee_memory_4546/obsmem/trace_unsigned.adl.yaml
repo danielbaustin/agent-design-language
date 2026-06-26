@@ -1,0 +1,29 @@
+version: "0.5"
+
+providers:
+  local:
+    type: "ollama"
+    config:
+      model: "phi4-mini"
+
+agents:
+  trace_recorder:
+    provider: "local"
+    model: "phi4-mini"
+
+tasks:
+  transition_summary:
+    prompt:
+      user: "Transition {issue} concluded via {proof_surface}."
+
+run:
+  name: "runtime-4546-transition-trace"
+  workflow:
+    kind: "sequential"
+    steps:
+      - id: "record.transition"
+        agent: "trace_recorder"
+        task: "transition_summary"
+        inputs:
+          issue: "4546"
+          proof_surface: "runtime_acip_aee_memory_4546"

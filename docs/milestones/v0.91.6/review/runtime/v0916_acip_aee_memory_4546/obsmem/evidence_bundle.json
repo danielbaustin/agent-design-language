@@ -1,0 +1,28 @@
+{
+  "bundle_id": "runtime-4546-evidence-bundle",
+  "evidence_inputs": [
+    {
+      "kind": "proof_packet",
+      "path": "docs/milestones/v0.91.6/review/runtime/v0916_acip_aee_memory_4546/runtime/temporary_agent_execution_summary.json",
+      "sha256": "bd01b24a4f20b53856457882743465cbc7d46853b9064addfcd2c7acf47e52a6"
+    },
+    {
+      "kind": "proof_packet",
+      "path": "docs/milestones/v0.91.6/review/runtime/v0916_acip_aee_memory_4546/artifacts/runtime-4546-acip-aee-memory/outputs/temporary_agent_result.json",
+      "sha256": "c09bc9e02ee7bebeb5a98f701f415b6c2ca3fddd78a2634d0868d53ed04cab77"
+    },
+    {
+      "kind": "proof_packet",
+      "path": "docs/milestones/v0.91.6/review/runtime/v0916_acip_aee_memory_4546/acip/acip_integration_matrix.json",
+      "sha256": "bf8ba66e24a52ad1a693d76ab9828ad9939f0e065514f4ee19346f999bc7b23a"
+    }
+  ],
+  "issue_number": 4546,
+  "signed_trace": {
+    "public_key_path": "docs/milestones/v0.91.6/review/runtime/v0916_acip_aee_memory_4546/obsmem/trace_key.b64",
+    "signed_path": "docs/milestones/v0.91.6/review/runtime/v0916_acip_aee_memory_4546/obsmem/trace_signed.adl.yaml",
+    "unsigned_path": "docs/milestones/v0.91.6/review/runtime/v0916_acip_aee_memory_4546/obsmem/trace_unsigned.adl.yaml",
+    "verification_mode": "explicit_key"
+  },
+  "version": "v0.91.6"
+}
