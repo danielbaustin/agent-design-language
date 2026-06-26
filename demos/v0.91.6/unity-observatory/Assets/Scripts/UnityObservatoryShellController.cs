@@ -6,6 +6,8 @@ namespace ADL.Demos.UnityObservatory
 {
     public sealed class UnityObservatoryShellController : MonoBehaviour
     {
+        private const string RuntimeStyleSheetResourcePath = "ObservatoryShellRuntime";
+
         [Serializable]
         private sealed class UnityObservatoryContractDocument
         {
@@ -412,6 +414,13 @@ namespace ADL.Demos.UnityObservatory
             }
 
             root.Clear();
+            StyleSheet runtimeStyleSheet = Resources.Load<StyleSheet>(
+                RuntimeStyleSheetResourcePath
+            );
+            if (runtimeStyleSheet != null && !root.styleSheets.Contains(runtimeStyleSheet))
+            {
+                root.styleSheets.Add(runtimeStyleSheet);
+            }
             root.AddToClassList("observatory-screen");
             root.style.flexGrow = 1f;
             root.style.paddingLeft = 18f;
