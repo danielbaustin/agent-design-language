@@ -1,15 +1,15 @@
 use super::*;
 use crate::cli::pr_cmd::finish_support::{
     ensure_finish_branch_not_behind_origin_main, ensure_finish_task_bundle_surfaces,
-    ensure_no_staged_issue_bundle_mutations, extra_pr_body_looks_like_issue_template,
-    extract_markdown_section, finish_declared_paths_for_validation, finish_inputs_fingerprint,
+    ensure_finish_validation_profile_is_runnable, ensure_no_staged_issue_bundle_mutations,
+    extra_pr_body_looks_like_issue_template, extract_markdown_section,
+    finish_declared_paths_for_validation, finish_inputs_fingerprint,
     issue_bundle_issue_number_from_repo_relative, load_finish_validation_profile,
     load_finish_validation_profile_for_execution, non_closing_lifecycle_line,
     normalize_docs_only_sor_text, normalize_sor_emitted_facts_fixture, open_pr_url_nonblocking,
     open_pr_url_nonblocking_with_timeout, real_pr_finish,
     reject_local_issue_bundle_paths_in_finish_paths, render_default_finish_validation,
     resolve_finish_issue_scope_and_slug, restage_finish_output_truth_paths,
-    ensure_finish_validation_profile_is_runnable,
     run_finish_validation_status, select_finish_validation_plan_for_finish, FinishValidationMode,
     FinishValidationPlan, FinishValidationProfile, FinishValidationProfileEscalation,
     FinishValidationProfileEscalationReason, FinishValidationProfileRunItem,
@@ -2710,8 +2710,8 @@ fn finish_validation_profile_does_not_treat_behavioral_tooling_as_docs_only() {
 }
 
 #[test]
-fn finish_validation_profile_classifies_unity_observatory_guardrail_script_as_larger_binary_focused()
-{
+fn finish_validation_profile_classifies_unity_observatory_guardrail_script_as_larger_binary_focused(
+) {
     let plan = select_finish_validation_plan_for_finish(
         4030,
         ".",
@@ -3075,7 +3075,9 @@ fn finish_validation_profile_classifies_long_lived_agent_continuity_adjacent_pat
             "adl/tests/demo_tests.rs".to_string(),
         ],
     )
-    .expect_err("long-lived continuity adjacent slice should fail closed when manager requires escalation");
+    .expect_err(
+        "long-lived continuity adjacent slice should fail closed when manager requires escalation",
+    );
 
     let message = err.to_string();
     assert!(message.contains("validation manager reported a non-runnable profile"));
@@ -3909,7 +3911,9 @@ fn finish_validation_profile_classifies_slow_proof_family_split_slice() {
             "adl/tools/ci_path_policy.sh".to_string(),
         ],
     )
-    .expect_err("slow-proof family split slice should fail closed when manager requires escalation");
+    .expect_err(
+        "slow-proof family split slice should fail closed when manager requires escalation",
+    );
 
     let message = err.to_string();
     assert!(message.contains("validation manager reported a non-runnable profile"));
@@ -4576,7 +4580,9 @@ fn finish_helper_paths_run_registered_polis_wrapper_command() {
     }
 
     assert_eq!(
-        fs::read_to_string(&focused_log).expect("focused log").trim(),
+        fs::read_to_string(&focused_log)
+            .expect("focused log")
+            .trim(),
         "validated"
     );
 }
@@ -4622,8 +4628,8 @@ fn finish_validation_profile_fails_closed_when_ready_profile_command_is_not_publ
 }
 
 #[test]
-fn finish_validation_profile_accepts_ready_profile_with_registered_nessus_remote_validation_command()
-{
+fn finish_validation_profile_accepts_ready_profile_with_registered_nessus_remote_validation_command(
+) {
     let temp = unique_temp_dir("adl-pr-finish-publishable-nessus-remote-validation-command");
     let repo = temp.join("repo");
     fs::create_dir_all(repo.join("adl/config")).expect("adl config dir");

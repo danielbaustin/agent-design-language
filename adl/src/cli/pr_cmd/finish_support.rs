@@ -36,7 +36,8 @@ use crate::cli::pr_cmd_validate::{
 };
 use ::adl::control_plane::{resolve_cards_root, sanitize_slug, IssueRef};
 
-const FINISH_VALIDATION_SELECTOR_MANIFEST: &str = "adl/config/validation_lane_selector.v0.91.6.json";
+const FINISH_VALIDATION_SELECTOR_MANIFEST: &str =
+    "adl/config/validation_lane_selector.v0.91.6.json";
 
 pub(super) fn real_pr_finish(args: &[String]) -> Result<()> {
     let parsed = parse_finish_args(args)?;
@@ -2333,7 +2334,9 @@ fn finish_validation_profile_allows_legacy_fallback(
 ) -> bool {
     profile.escalation.required
         && !changed_paths.is_empty()
-        && changed_paths.iter().all(|path| finish_path_is_docs_only(path))
+        && changed_paths
+            .iter()
+            .all(|path| finish_path_is_docs_only(path))
         && profile
             .escalation
             .reasons
@@ -2485,7 +2488,9 @@ fn ensure_finish_validation_command_supported(repo_root: &Path, command: &str) -
         manager_backed_pr_fast_changed_files_arg(command)?;
         return Ok(());
     }
-    if !repo_root.join(FINISH_VALIDATION_SELECTOR_MANIFEST).is_file()
+    if !repo_root
+        .join(FINISH_VALIDATION_SELECTOR_MANIFEST)
+        .is_file()
         && registered_validation_command_supported(command)
     {
         return Ok(());
@@ -2560,24 +2565,18 @@ fn registered_validation_atom_supported(command: &str) -> bool {
             "adl/tools/validate_polis_status_for_ssm_qts.py"
                 | "adl/tools/validate_polis_status_for_ssm_windows.py"
         ),
-        [
-            "cargo",
-            "test",
-            "--manifest-path",
-            "adl/Cargo.toml",
-            "--test",
-            "cli_smoke",
-            "csm_observatory_cli_writes_unity_contract_bundle_and_matches_seeded_resource",
-            "--",
-            "--nocapture",
-        ] => true,
+        ["cargo", "test", "--manifest-path", "adl/Cargo.toml", "--test", "cli_smoke", "csm_observatory_cli_writes_unity_contract_bundle_and_matches_seeded_resource", "--", "--nocapture"] => {
+            true
+        }
         _ => false,
     }
 }
 
 fn execute_registered_validation_command(repo_root: &Path, command: &str) -> Result<bool> {
     if command == "git diff --check"
-        || !repo_root.join(FINISH_VALIDATION_SELECTOR_MANIFEST).is_file()
+        || !repo_root
+            .join(FINISH_VALIDATION_SELECTOR_MANIFEST)
+            .is_file()
         || !command_is_registered_validation_run_command(repo_root, command)?
     {
         return Ok(false);
@@ -2635,13 +2634,9 @@ fn execute_registered_validation_atom(repo_root: &Path, command: &str) -> Result
             let refs = owned.iter().map(String::as_str).collect::<Vec<_>>();
             run_finish_validation_status("python3", &refs)
         }
-        [
-            "cargo",
-            "test",
-            manifest_flag,
-            manifest_path,
-            args @ ..,
-        ] if *manifest_flag == "--manifest-path" => {
+        ["cargo", "test", manifest_flag, manifest_path, args @ ..]
+            if *manifest_flag == "--manifest-path" =>
+        {
             let mut owned = vec![
                 "test".to_string(),
                 (*manifest_flag).to_string(),
