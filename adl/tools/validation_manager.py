@@ -5,6 +5,7 @@ from __future__ import annotations
 
 import argparse
 import json
+import shlex
 import subprocess
 import sys
 from pathlib import Path
@@ -15,6 +16,7 @@ ROOT = Path(__file__).resolve().parents[2]
 SELECTOR = ROOT / "adl/tools/select_validation_lanes.sh"
 SLOW_PROOF_FAMILIES = ROOT / "adl/config/slow_proof_families.v0.91.6.json"
 DEFAULT_MANIFEST = ROOT / "adl/config/validation_lane_selector.v0.91.6.json"
+NESSUS_REMOTE_RUNNER = "bash adl/tools/run_nessus_remote_validation.sh"
 
 
 def fail(message: str) -> None:
@@ -590,6 +592,71 @@ def build_profile(plan: dict[str, Any], guardrails: dict[str, Any], manifest_pat
     }
 
 
+def shell_quote(value: str) -> str:
+    return shlex.quote(value)
+
+
+def remote_runner_decision(profile: dict[str, Any], args: argparse.Namespace) -> dict[str, Any] | None:
+    if not args.remote_runner and not args.remote_command:
+        return None
+    if bool(args.remote_runner) != bool(args.remote_command):
+        fail("remote runner selection requires both --remote-runner and --remote-command")
+    if args.remote_runner != "nessus":
+        fail(f"unsupported remote runner: {args.remote_runner}")
+
+    selected_lane_count = int(profile["estimated_cost"]["selected_lane_count"])
+    runtime_class = str(profile["estimated_cost"]["runtime_class"])
+    behavior_surfaces = profile.get("behavior_surfaces", [])
+    allowed_determinism = {"deterministic", "evidence_bound"}
+    unsupported_determinism = [
+        surface.get("determinism_posture", "unknown")
+        for surface in behavior_surfaces
+        if surface.get("determinism_posture", "unknown") not in allowed_determinism
+    ]
+
+    if profile["status"] != "ready_to_run":
+        return {
+            "requested": "nessus",
+            "decision": "rejected",
+            "reason": f"validation profile status {profile['status']} is not remote-runnable",
+        }
+    if profile["escalation"]["required"]:
+        return {
+            "requested": "nessus",
+            "decision": "rejected",
+            "reason": "validation profile already requires escalation",
+        }
+    if selected_lane_count != 1:
+        return {
+            "requested": "nessus",
+            "decision": "rejected",
+            "reason": f"remote runner requires exactly 1 selected lane, observed {selected_lane_count}",
+        }
+    if runtime_class in {"none", "tiny", "escalated"}:
+        return {
+            "requested": "nessus",
+            "decision": "rejected",
+            "reason": f"runtime_class {runtime_class} is not eligible for Nessus remote execution",
+        }
+    if unsupported_determinism:
+        return {
+            "requested": "nessus",
+            "decision": "rejected",
+            "reason": "remote runner supports deterministic or evidence-bound lanes only",
+            "unsupported_determinism": unsupported_determinism,
+        }
+
+    remote_command = f"{NESSUS_REMOTE_RUNNER} --command {shell_quote(args.remote_command)}"
+    if args.remote_artifact_dir:
+        remote_command += f" --local-artifact-dir {shell_quote(str(args.remote_artifact_dir.resolve()))}"
+    return {
+        "requested": "nessus",
+        "decision": "selected",
+        "reason": "single-lane non-tiny deterministic profile is eligible for Nessus remote execution",
+        "command": remote_command,
+    }
+
+
 def print_text(profile: dict[str, Any]) -> None:
     print("Validation profile")
     print(f"  selected_profile={profile['selected_profile']}")
@@ -603,6 +670,14 @@ def print_text(profile: dict[str, Any]) -> None:
             print(f"      command={item['command']}")
     else:
         print("  run: []")
+    if profile.get("remote_runner"):
+        remote = profile["remote_runner"]
+        print("  remote_runner:")
+        print(f"    requested={remote['requested']}")
+        print(f"    decision={remote['decision']}")
+        print(f"    reason={remote['reason']}")
+        if remote.get("command"):
+            print(f"    command={remote['command']}")
     if profile["escalation"]["required"]:
         print("  escalation:")
         for reason in profile["escalation"]["reasons"]:
@@ -645,6 +720,11 @@ def write_report(path: Path, profile: dict[str, Any]) -> None:
 
 
 def run_profile(profile: dict[str, Any]) -> int:
+    remote_runner = profile.get("remote_runner")
+    if remote_runner and remote_runner.get("decision") != "selected":
+        print_text(profile)
+        print("validation_manager: refusing --run because the requested remote runner is not eligible", file=sys.stderr)
+        return 1
     if profile["status"] not in {"ready_to_run", "no_validation_needed"}:
         print_text(profile)
         print("validation_manager: refusing --run for non-runnable profile", file=sys.stderr)
@@ -672,6 +752,9 @@ def parse_args(argv: list[str]) -> argparse.Namespace:
     parser.add_argument("--json", action="store_true")
     parser.add_argument("--report-out", type=Path)
     parser.add_argument("--run", action="store_true")
+    parser.add_argument("--remote-runner", choices=["nessus"])
+    parser.add_argument("--remote-command")
+    parser.add_argument("--remote-artifact-dir", type=Path)
     return parser.parse_args(argv)
 
 
@@ -681,6 +764,20 @@ def main(argv: list[str]) -> int:
     manifest_path = args.manifest.resolve() if args.manifest else DEFAULT_MANIFEST
     guardrails = manager_guardrails(load_manifest(manifest_path), args.max_selected_lanes)
     profile = build_profile(plan, guardrails, manifest_path)
+    remote = remote_runner_decision(profile, args)
+    if remote:
+        profile["remote_runner"] = remote
+        if remote["decision"] == "selected":
+            profile["run"] = [
+                {
+                    "lane_id": "nessus_remote_validation",
+                    "command": remote["command"],
+                    "reason": remote["reason"],
+                    "matched_paths": profile["changed_paths"],
+                    "vpp_record": None,
+                    "local_run": profile["run"],
+                }
+            ]
     exit_code = 0
     if args.run:
         exit_code = run_profile(profile)
