@@ -1,7 +1,7 @@
 # V0.91.6 Runtime / Ops Soak #1 Status for `#4543`
 
-Issue: `#4543`  
-Date: 2026-06-26  
+Issue: `#4543`
+Date: 2026-06-26
 Status: retained execution-status packet
 
 ## Summary
