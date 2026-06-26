@@ -18,6 +18,8 @@ Current issue truth for release consumption must be read from:
   for closed bridge umbrellas and retained evidence posture
 - [CLOSEOUT_TAIL_SPRINT_v0.91.6.md](CLOSEOUT_TAIL_SPRINT_v0.91.6.md)
   for the ordered open release-tail issue wave
+- [OPERATIONAL_COMPLETION_GATE_v0.91.6.md](OPERATIONAL_COMPLETION_GATE_v0.91.6.md)
+  for the required completion-class boundary on product/runtime claims
 
 Use [review/V0916_RELEASE_AND_BRIDGE_DOC_TRUTH_CONSUMPTION_REVIEW_4522.md](review/V0916_RELEASE_AND_BRIDGE_DOC_TRUTH_CONSUMPTION_REVIEW_4522.md)
 as the bounded audit of this rule and the remaining manual boundary, not as a
@@ -31,6 +33,10 @@ ledger.
 - [ ] Bridge ledger refreshed from first-tranche outcomes, consuming the
   retained-evidence matrix for closed bridge umbrellas and the closeout-tail
   sprint surface for open ordered release-tail work.
+- [ ] Every touched product/runtime surface is classified with the operational
+  completion gate before release truth calls it complete.
+- [ ] The operational completion gate is the required truth boundary for
+  product/runtime completion claims in this release tail.
 - [ ] Feature docs reviewed and updated for final truth.
 - [ ] Open residuals routed to `v0.91.7`, `v0.92`, or later milestones.
 - [ ] Tooling reliability issues have complete, blocked, deferred, or routed
@@ -85,4 +91,6 @@ ledger.
 
 - No hidden implementation or unresolved truth-maintenance work remains in the
   ceremony phase.
+- No product/runtime surface is described as complete from prerequisite-only
+  proof.
 - Every activation-relevant surface is complete, blocked, deferred, or routed.

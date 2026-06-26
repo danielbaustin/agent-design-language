@@ -13,6 +13,10 @@ Forward checklist. `v0.91.6` execution is now in progress, so checked rows
 represent surfaces already completed or routed while unchecked rows remain open
 milestone work.
 
+Use [`OPERATIONAL_COMPLETION_GATE_v0.91.6.md`](OPERATIONAL_COMPLETION_GATE_v0.91.6.md)
+when a checklist row could otherwise mistake prerequisite proof for integrated
+runtime or product completion.
+
 ## Planning
 
 - [ ] `#3778` bridge ledger consumed.
@@ -63,7 +67,12 @@ milestone work.
 
 ## Scope Integrity
 
+- [ ] Every product/runtime surface consumed by closeout is classified with the
+  operational completion gate.
 - [ ] No runtime feature is claimed by planning docs alone.
+- [ ] No runtime/product surface is treated as `done` from `docs_ready`,
+  `seam_ready`, `mock_proven`, `component_proven`, `local_slice_proven`, or
+  `demo_scaffold` evidence alone.
 - [ ] No `v0.92` activation readiness claim appears without bridge evidence.
 - [ ] Security remains on the activation path.
 - [ ] ACIP/A2A decisions include protobuf/JSON/WebSocket/access-rule posture.
@@ -83,6 +92,8 @@ milestone work.
 - [ ] Bounded internal review completed.
 - [ ] Findings fixed or explicitly routed.
 - [ ] Bridge-ledger dispositions refreshed or handed off.
+- [ ] Runtime/product closeout rows preserve explicit completion class, evidence,
+  and blocker or defer routes when not `integrated_proven`.
 - [ ] `v0.91.7` planning issue `#3801` has the residuals it needs.
 - [ ] Closeout record states what `v0.92` may consume and what remains blocked.
 
