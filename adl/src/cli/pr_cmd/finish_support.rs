@@ -4328,6 +4328,15 @@ pub(super) fn run_finish_validation_rust(
                         repo_root.join("adl/tools/test_run_nessus_remote_validation.sh");
                     run_finish_validation_status("bash", &[path_str(&nessus_remote_runner)?])?;
                 }
+                "bash -n adl/tools/polis_status_for_ssm.sh && bash -n adl/tools/polis_status_for_ssm_qts.sh && python3 adl/tools/validate_polis_status_for_ssm_qts.py" => {
+                    let polis_status = repo_root.join("adl/tools/polis_status_for_ssm.sh");
+                    run_finish_validation_status("bash", &["-n", path_str(&polis_status)?])?;
+                    let polis_status_qts = repo_root.join("adl/tools/polis_status_for_ssm_qts.sh");
+                    run_finish_validation_status("bash", &["-n", path_str(&polis_status_qts)?])?;
+                    let validate_qts =
+                        repo_root.join("adl/tools/validate_polis_status_for_ssm_qts.py");
+                    run_finish_validation_status("python3", &[path_str(&validate_qts)?])?;
+                }
                 "bash adl/tools/test_validation_inventory.sh" => {
                     let script = repo_root.join("adl/tools/test_validation_inventory.sh");
                     run_finish_validation_status("bash", &[path_str(&script)?])?;

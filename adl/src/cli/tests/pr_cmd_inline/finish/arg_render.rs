@@ -3505,12 +3505,17 @@ fn finish_validation_profile_classifies_locked_cargo_fallback_slice() {
         .contains(&"bash adl/tools/run_owner_validation_lane.sh csdlc".to_string()));
 
     let unrelated_plan =
-        select_finish_validation_plan_for_finish(4305, &requested_paths, &changed_paths)
-            .expect("unrelated issue should fall back to the generic larger-binary plan");
+        select_finish_validation_plan_for_finish(4305, &requested_paths, &changed_paths).expect(
+            "unrelated issue should now resolve through the general unified validation contract",
+        );
     assert_eq!(
         unrelated_plan.mode,
         FinishValidationMode::LargerBinaryFocused
     );
+    assert!(!unrelated_plan.commands.contains(
+        &"cargo test --manifest-path adl/Cargo.toml --bin adl-pr-finish cli::pr_cmd::tests::finish::arg_render::finish_validation"
+            .to_string()
+    ));
     assert!(unrelated_plan
         .commands
         .contains(&"bash adl/tools/test_ci_path_policy.sh && bash adl/tools/test_select_validation_lanes.sh && bash adl/tools/test_validation_manager.sh && bash adl/tools/test_run_nessus_remote_validation.sh".to_string()));
@@ -3520,6 +3525,10 @@ fn finish_validation_profile_classifies_locked_cargo_fallback_slice() {
     assert!(unrelated_plan
         .commands
         .contains(&"bash adl/tools/run_owner_validation_lane.sh csdlc".to_string()));
+    assert!(unrelated_plan
+        .commands
+        .iter()
+        .any(|command| command.contains("test_run_nessus_remote_validation.sh")));
     assert!(unrelated_plan
         .commands
         .iter()
@@ -4550,6 +4559,123 @@ fn finish_runner_executes_combined_ci_policy_selector_command() {
     assert!(focused_calls.contains("select-validation-lanes"));
     assert!(focused_calls.contains("validation-manager"));
     assert!(focused_calls.contains("nessus-remote-runner"));
+}
+
+#[test]
+fn finish_runner_executes_chained_local_polis_selector_command() {
+    let _guard = env_lock();
+    let temp = unique_temp_dir("adl-pr-finish-chained-local-polis-selector-command");
+
+    let repo = temp.join("repo");
+    fs::create_dir_all(repo.join("adl/tools")).expect("adl tools dir");
+    fs::write(
+        repo.join("adl/Cargo.toml"),
+        "[package]\nname='adl'\nversion='0.1.0'\n",
+    )
+    .expect("cargo toml");
+    write_executable(
+        &repo.join("adl/tools/check_no_tracked_adl_issue_record_residue.sh"),
+        "#!/usr/bin/env bash\nset -euo pipefail\nexit 0\n",
+    );
+    write_executable(
+        &repo.join("adl/tools/polis_status_for_ssm.sh"),
+        "#!/usr/bin/env bash\nset -euo pipefail\nprintf '%s\\n' polis-status-ssm >> \"$FOCUSED_LOG\"\n",
+    );
+    write_executable(
+        &repo.join("adl/tools/polis_status_for_ssm_qts.sh"),
+        "#!/usr/bin/env bash\nset -euo pipefail\nprintf '%s\\n' polis-status-ssm-qts >> \"$FOCUSED_LOG\"\n",
+    );
+    fs::write(
+        repo.join("adl/tools/validate_polis_status_for_ssm_qts.py"),
+        "#!/usr/bin/env python3\nimport os\nfrom pathlib import Path\nPath(os.environ['FOCUSED_LOG']).write_text(Path(os.environ['FOCUSED_LOG']).read_text() + 'validate-polis-ssm-qts\\n' if Path(os.environ['FOCUSED_LOG']).exists() else 'validate-polis-ssm-qts\\n')\n",
+    )
+    .expect("write validate polis qts");
+    init_git_repo(&repo);
+
+    let bin_dir = temp.join("bin");
+    fs::create_dir_all(&bin_dir).expect("bin dir");
+    let cargo_log = temp.join("cargo.log");
+    let focused_log = temp.join("focused.log");
+    write_executable(
+        &bin_dir.join("cargo"),
+        &format!(
+            "#!/usr/bin/env bash\nset -euo pipefail\nprintf '%s\\n' \"$*\" >> '{}'\nexit 0\n",
+            cargo_log.display()
+        ),
+    );
+    let old_path = env::var("PATH").unwrap_or_default();
+    let old_focused_log = env::var("FOCUSED_LOG").ok();
+    unsafe {
+        env::set_var("PATH", format!("{}:{}", bin_dir.display(), old_path));
+        env::set_var("FOCUSED_LOG", &focused_log);
+    }
+
+    let plan = FinishValidationPlan {
+        mode: FinishValidationMode::SmallBinaryFocused,
+        commands: vec![
+            "bash -n adl/tools/polis_status_for_ssm.sh && bash -n adl/tools/polis_status_for_ssm_qts.sh && python3 adl/tools/validate_polis_status_for_ssm_qts.py".to_string(),
+        ],
+    };
+    run_finish_validation_rust(&repo, &plan).expect("chained local polis selector validation");
+
+    unsafe {
+        env::set_var("PATH", old_path);
+    }
+    match old_focused_log {
+        Some(value) => unsafe { env::set_var("FOCUSED_LOG", value) },
+        None => unsafe { env::remove_var("FOCUSED_LOG") },
+    }
+
+    assert!(
+        !cargo_log.exists(),
+        "chained local polis selector command should not invoke cargo"
+    );
+
+    let focused_calls = fs::read_to_string(&focused_log).expect("focused log");
+    assert_eq!(focused_calls.trim(), "validate-polis-ssm-qts");
+}
+
+#[test]
+fn finish_runner_rejects_chained_local_polis_selector_command_when_shell_syntax_is_invalid() {
+    let _guard = env_lock();
+    let temp = unique_temp_dir("adl-pr-finish-chained-local-polis-selector-command-invalid-shell");
+
+    let repo = temp.join("repo");
+    fs::create_dir_all(repo.join("adl/tools")).expect("adl tools dir");
+    fs::write(
+        repo.join("adl/Cargo.toml"),
+        "[package]\nname='adl'\nversion='0.1.0'\n",
+    )
+    .expect("cargo toml");
+    write_executable(
+        &repo.join("adl/tools/check_no_tracked_adl_issue_record_residue.sh"),
+        "#!/usr/bin/env bash\nset -euo pipefail\nexit 0\n",
+    );
+    fs::write(
+        repo.join("adl/tools/polis_status_for_ssm.sh"),
+        "#!/usr/bin/env bash\nif then\n",
+    )
+    .expect("write invalid polis ssm shell");
+    write_executable(
+        &repo.join("adl/tools/polis_status_for_ssm_qts.sh"),
+        "#!/usr/bin/env bash\nset -euo pipefail\nexit 0\n",
+    );
+    fs::write(
+        repo.join("adl/tools/validate_polis_status_for_ssm_qts.py"),
+        "#!/usr/bin/env python3\nprint('should-not-run')\n",
+    )
+    .expect("write validate polis qts");
+    init_git_repo(&repo);
+
+    let plan = FinishValidationPlan {
+        mode: FinishValidationMode::SmallBinaryFocused,
+        commands: vec![
+            "bash -n adl/tools/polis_status_for_ssm.sh && bash -n adl/tools/polis_status_for_ssm_qts.sh && python3 adl/tools/validate_polis_status_for_ssm_qts.py".to_string(),
+        ],
+    };
+    let err = run_finish_validation_rust(&repo, &plan)
+        .expect_err("invalid polis shell syntax should fail the chained selector command");
+    assert!(err.to_string().contains("bash failed with status"));
 }
 
 #[test]
