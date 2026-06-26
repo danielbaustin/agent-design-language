@@ -32,6 +32,6 @@
     "schema": "adl.long_lived_agent_status.v1",
     "state": "stopped",
     "stop_requested": true,
-    "updated_at": "2026-06-26T19:00:59.997884Z"
+    "updated_at": "2026-06-26T20:17:09.686040Z"
   }
 }

@@ -82,6 +82,6 @@
     "reviewer_walkthrough.md",
     "scheduler/scheduler_plan.json"
   ],
-  "scanned_at": "2026-06-26T19:01:01.301129+00:00",
+  "scanned_at": "2026-06-26T20:17:11.069589+00:00",
   "schema_version": "adl.integrated_runtime_soak_artifact_safety_scan.v1"
 }

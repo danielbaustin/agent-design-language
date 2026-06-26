@@ -87,7 +87,7 @@
       "surface": "observatory_unity_consumption"
     }
   ],
-  "generated_at": "2026-06-26T19:01:01.295967+00:00",
+  "generated_at": "2026-06-26T20:17:11.047292+00:00",
   "issue": 4543,
   "schema_version": "adl.runtime.soak.completion_classification.v1"
 }

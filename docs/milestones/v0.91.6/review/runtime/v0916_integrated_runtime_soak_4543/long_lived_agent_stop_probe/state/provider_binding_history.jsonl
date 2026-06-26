@@ -1,1 +1,1 @@
-{"agent_instance_id":"v0916-runtime-stop-probe","binding_status":"available","bound_at":"2026-06-26T19:00:59.846442Z","cycle_id":"cycle-000001","model":"gemma4:latest","provider_id":"local_ollama","schema":"adl.long_lived_agent_provider_binding.v1","source":"workflow_run_args"}
+{"agent_instance_id":"v0916-runtime-stop-probe","binding_status":"available","bound_at":"2026-06-26T20:17:09.533593Z","cycle_id":"cycle-000001","model":"gemma4:latest","provider_id":"local_ollama","schema":"adl.long_lived_agent_provider_binding.v1","source":"workflow_run_args"}
