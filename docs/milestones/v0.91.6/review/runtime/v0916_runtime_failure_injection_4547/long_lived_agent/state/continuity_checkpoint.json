@@ -1,0 +1,23 @@
+{
+  "agent_instance_id": "v0916-runtime-failure-injection",
+  "captured_at": "2026-06-26T17:21:44.017929Z",
+  "checkpoint_reason": "stop_recorded",
+  "completed_cycle_count": 3,
+  "consecutive_failure_count": 0,
+  "continuity_kind": "pre_v0_92_handle",
+  "continuity_ref": "continuity.json",
+  "cycle_ledger_ref": "cycle_ledger.jsonl",
+  "latest_cycle_id": "cycle-000003",
+  "latest_cycle_status": "success",
+  "lease_ref": null,
+  "lease_state": "clear",
+  "restore_basis": {
+    "expected_next_cycle_id": "cycle-000004",
+    "ledger_entry_count": 3,
+    "max_cycle_number": 3
+  },
+  "schema": "adl.long_lived_agent_continuity_checkpoint.v1",
+  "state": "stopped",
+  "status_ref": "status.json",
+  "stop_requested": true
+}

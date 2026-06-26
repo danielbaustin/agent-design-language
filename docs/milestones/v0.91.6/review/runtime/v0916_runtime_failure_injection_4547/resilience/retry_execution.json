@@ -1,0 +1,152 @@
+{
+  "attempt_count_observed": 3,
+  "attempts_observed": [
+    {
+      "attempt_index": 1,
+      "decision_summary": "attempt 1 classified ProviderTransientHttp; retry scheduled after 5ms",
+      "duration_ms": 0,
+      "fault": {
+        "disposition": "retryable",
+        "fault_class": "provider_transient_http",
+        "http_status": 503,
+        "retryable": true,
+        "schema_version": "adl.resilience.fault_classification.v1",
+        "summary": "provider transient 503",
+        "surface": "provider"
+      },
+      "retry_allowed": true,
+      "scheduled_backoff_ms": 5,
+      "schema_version": "adl.resilience.retry_attempt.v1",
+      "started_at": "unix:1782494503"
+    },
+    {
+      "attempt_index": 2,
+      "decision_summary": "attempt 2 classified ProviderTransientHttp; retry scheduled after 10ms",
+      "duration_ms": 0,
+      "fault": {
+        "disposition": "retryable",
+        "fault_class": "provider_transient_http",
+        "http_status": 503,
+        "retryable": true,
+        "schema_version": "adl.resilience.fault_classification.v1",
+        "summary": "provider transient 503",
+        "surface": "provider"
+      },
+      "retry_allowed": true,
+      "scheduled_backoff_ms": 10,
+      "schema_version": "adl.resilience.retry_attempt.v1",
+      "started_at": "unix:1782494503"
+    },
+    {
+      "attempt_index": 3,
+      "decision_summary": "attempt 3 succeeded",
+      "duration_ms": 0,
+      "retry_allowed": false,
+      "scheduled_backoff_ms": 0,
+      "schema_version": "adl.resilience.retry_attempt.v1",
+      "started_at": "unix:1782494503",
+      "terminal_reason": "succeeded"
+    }
+  ],
+  "final_status": "Succeeded",
+  "result": "recovered-after-retry",
+  "trace": {
+    "attempts": [
+      {
+        "attempt_index": 1,
+        "decision_summary": "attempt 1 classified ProviderTransientHttp; retry scheduled after 5ms",
+        "duration_ms": 0,
+        "fault": {
+          "disposition": "retryable",
+          "fault_class": "provider_transient_http",
+          "http_status": 503,
+          "retryable": true,
+          "schema_version": "adl.resilience.fault_classification.v1",
+          "summary": "provider transient 503",
+          "surface": "provider"
+        },
+        "retry_allowed": true,
+        "scheduled_backoff_ms": 5,
+        "schema_version": "adl.resilience.retry_attempt.v1",
+        "started_at": "unix:1782494503"
+      },
+      {
+        "attempt_index": 2,
+        "decision_summary": "attempt 2 classified ProviderTransientHttp; retry scheduled after 10ms",
+        "duration_ms": 0,
+        "fault": {
+          "disposition": "retryable",
+          "fault_class": "provider_transient_http",
+          "http_status": 503,
+          "retryable": true,
+          "schema_version": "adl.resilience.fault_classification.v1",
+          "summary": "provider transient 503",
+          "surface": "provider"
+        },
+        "retry_allowed": true,
+        "scheduled_backoff_ms": 10,
+        "schema_version": "adl.resilience.retry_attempt.v1",
+        "started_at": "unix:1782494503"
+      },
+      {
+        "attempt_index": 3,
+        "decision_summary": "attempt 3 succeeded",
+        "duration_ms": 0,
+        "retry_allowed": false,
+        "scheduled_backoff_ms": 0,
+        "schema_version": "adl.resilience.retry_attempt.v1",
+        "started_at": "unix:1782494503",
+        "terminal_reason": "succeeded"
+      }
+    ],
+    "final_status": "succeeded",
+    "policy_id": "runtime.failure_injection.retry.policy",
+    "schema_version": "adl.resilience.retry_execution_trace.v1",
+    "surface": "runtime",
+    "telemetry_events": [
+      {
+        "decision_summary": "runtime.failure_injection.retry_probe: attempt 1 classified ProviderTransientHttp; retry scheduled after 5ms",
+        "event_id": "runtime.failure_injection.retry.policy:retry:1",
+        "event_kind": "retry_decision",
+        "fault": {
+          "disposition": "retryable",
+          "fault_class": "provider_transient_http",
+          "http_status": 503,
+          "retryable": true,
+          "schema_version": "adl.resilience.fault_classification.v1",
+          "summary": "provider transient 503",
+          "surface": "provider"
+        },
+        "policy_ref": "runtime.failure_injection.retry.policy",
+        "schema_version": "adl.resilience.telemetry_event.v1",
+        "surface": "runtime"
+      },
+      {
+        "decision_summary": "runtime.failure_injection.retry_probe: attempt 2 classified ProviderTransientHttp; retry scheduled after 10ms",
+        "event_id": "runtime.failure_injection.retry.policy:retry:2",
+        "event_kind": "retry_decision",
+        "fault": {
+          "disposition": "retryable",
+          "fault_class": "provider_transient_http",
+          "http_status": 503,
+          "retryable": true,
+          "schema_version": "adl.resilience.fault_classification.v1",
+          "summary": "provider transient 503",
+          "surface": "provider"
+        },
+        "policy_ref": "runtime.failure_injection.retry.policy",
+        "schema_version": "adl.resilience.telemetry_event.v1",
+        "surface": "runtime"
+      },
+      {
+        "decision_summary": "runtime.failure_injection.retry_probe: attempt 3 succeeded",
+        "event_id": "runtime.failure_injection.retry.policy:retry:3",
+        "event_kind": "retry_decision",
+        "policy_ref": "runtime.failure_injection.retry.policy",
+        "schema_version": "adl.resilience.telemetry_event.v1",
+        "surface": "runtime"
+      }
+    ],
+    "total_duration_ms": 0
+  }
+}

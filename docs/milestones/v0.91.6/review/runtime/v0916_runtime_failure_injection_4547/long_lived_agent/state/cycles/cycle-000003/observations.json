@@ -1,0 +1,26 @@
+{
+  "agent_instance_id": "v0916-runtime-failure-injection",
+  "cycle_id": "cycle-000003",
+  "facts": [
+    {
+      "as_of": "cycle-000003",
+      "key": "workflow.kind",
+      "value": "demo_adapter"
+    },
+    {
+      "as_of": "cycle-000003",
+      "key": "workflow.ref",
+      "value": "v0916_runtime_failure_injection"
+    }
+  ],
+  "observed_at": "2026-06-26T17:21:42.611515Z",
+  "schema": "adl.long_lived_agent_observations.v1",
+  "sources": [
+    {
+      "artifact_ref": "../../agent_spec.locked.json",
+      "kind": "locked_supervisor_spec",
+      "source_id": "agent_spec",
+      "trust_level": "operator_configured"
+    }
+  ]
+}

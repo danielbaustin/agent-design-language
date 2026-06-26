@@ -1,0 +1,2 @@
+{"agent_instance_id":"v0916-runtime-failure-injection","at":"2026-06-26T17:21:42.584285Z","details":{"continuity_kind":"pre_v0_92_handle","locked_spec_ref":"agent_spec.locked.json"},"event":"created","operator":"local","schema":"adl.long_lived_agent_operator_event.v1"}
+{"agent_instance_id":"v0916-runtime-failure-injection","at":"2026-06-26T17:21:44.017015Z","details":{"mode":"stop_before_next_cycle","reason":"bounded runtime failure-injection stop after proof capture"},"event":"operator_stop_requested","operator":"local","schema":"adl.long_lived_agent_operator_event.v1"}

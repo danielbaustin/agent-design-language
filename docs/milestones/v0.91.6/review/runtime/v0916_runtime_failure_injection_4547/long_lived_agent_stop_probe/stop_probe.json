@@ -1,0 +1,38 @@
+{
+  "completed_cycle_count": 1,
+  "last_error": {
+    "class": "operator_stop_requested",
+    "message": "operator stop after the first persisted cycle and before a second persisted cycle"
+  },
+  "note": "This probe waits for one persisted completed cycle, issues stop before a second persisted cycle appears, and verifies the bounded non-continuity truth explicitly.",
+  "persisted_state": "stopped",
+  "probe_kind": "live_stop_after_first_persisted_cycle",
+  "run_returned_state": "stopped",
+  "second_cycle_manifest_present": false,
+  "stop_status": {
+    "active_lease": null,
+    "agent_instance_id": "v0916-runtime-failure-stop-probe",
+    "completed_cycle_count": 1,
+    "consecutive_failure_count": 0,
+    "last_cycle_id": "cycle-000001",
+    "last_cycle_status": "success",
+    "last_error": {
+      "class": "operator_stop_requested",
+      "message": "operator stop after the first persisted cycle and before a second persisted cycle"
+    },
+    "safety_policy": {
+      "allow_broker": false,
+      "allow_filesystem_writes_outside_state_root": false,
+      "allow_network": false,
+      "allow_real_world_side_effects": false,
+      "financial_advice": false,
+      "max_consecutive_failures": 2,
+      "max_cycle_runtime_secs": 120,
+      "require_public_artifact_sanitization": true
+    },
+    "schema": "adl.long_lived_agent_status.v1",
+    "state": "stopped",
+    "stop_requested": true,
+    "updated_at": "2026-06-26T17:21:42.676412Z"
+  }
+}

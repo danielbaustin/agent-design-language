@@ -1,0 +1,24 @@
+{
+  "schema": "adl.long_lived_agent_spec.v1",
+  "agent_instance_id": "v0916-runtime-failure-stop-probe",
+  "display_name": "V0916 Runtime Failure Injection",
+  "state_root": "state",
+  "workflow": {
+    "kind": "demo_adapter",
+    "name": "v0916_runtime_failure_injection",
+    "path": null,
+    "run_args": {
+      "model": "gemma4:latest",
+      "provider_id": "local_ollama"
+    }
+  },
+  "heartbeat": {
+    "interval_secs": 1,
+    "max_cycles": 6,
+    "stale_lease_after_secs": 60
+  },
+  "safety": {
+    "allow_network": false
+  },
+  "memory": null
+}

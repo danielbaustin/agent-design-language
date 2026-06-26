@@ -1,0 +1,6 @@
+{
+  "adapter": "v0916_runtime_failure_injection",
+  "adapter_artifact_ref": "decision_result.json",
+  "schema": "adl.long_lived_agent_run_ref.v1",
+  "workflow_kind": "demo_adapter"
+}

@@ -1,0 +1,71 @@
+{
+  "entries": [
+    {
+      "continuity_classification": "bounded_resume_continuation_proved",
+      "evidence_ref": "long_lived_agent/resume_status_cycle3.json",
+      "expected_behavior": "A bounded repeated run may resume the integrated runtime path from prior state without claiming interrupted restart recovery or broader durable continuity.",
+      "failure_mode": "resume_continuation_across_reinvocation",
+      "observed_behavior": "resume_state=Completed completed_cycle_count=3",
+      "status": "proved"
+    },
+    {
+      "continuity_classification": "bounded_non_continuity_after_stop_proved",
+      "evidence_ref": "long_lived_agent_stop_probe/stop_probe.json",
+      "expected_behavior": "Stop issued after the first persisted cycle should leave the runtime stopped without a second persisted cycle manifest.",
+      "failure_mode": "stop_after_first_persisted_cycle",
+      "observed_behavior": "persisted_state=\"stopped\" completed_cycle_count=1 second_cycle_manifest_present=false",
+      "status": "proved"
+    },
+    {
+      "continuity_classification": "bounded_retry_recovery_without_durable_continuity_claim",
+      "evidence_ref": "resilience/retry_execution.json",
+      "expected_behavior": "Retry policy should retry transient HTTP failures and eventually recover within budget.",
+      "failure_mode": "retry_backoff_after_transient_provider_failure",
+      "observed_behavior": "final_status=\"Succeeded\" attempt_count=3",
+      "status": "proved"
+    },
+    {
+      "continuity_classification": "no_continuity_claim_after_timeout",
+      "evidence_ref": "resilience/timeout_execution.json",
+      "expected_behavior": "Late completion beyond the timeout budget should classify as timeout rather than success.",
+      "failure_mode": "timeout",
+      "observed_behavior": "final_status=\"TimedOut\"",
+      "status": "proved"
+    },
+    {
+      "continuity_classification": "resume_allowed_but_not_claimed_automatic",
+      "evidence_ref": "resilience/cancellation_execution.json",
+      "expected_behavior": "Explicit cancellation should classify as cancelled and leave follow-on handling explicit.",
+      "failure_mode": "cancellation",
+      "observed_behavior": "final_status=\"Cancelled\"",
+      "status": "proved"
+    },
+    {
+      "continuity_classification": "partial_failure_classified_not_hidden",
+      "evidence_ref": "resilience/bulkhead_execution.json",
+      "expected_behavior": "A saturated local bulkhead should reject work locally while preserving the broader runtime path truthfully.",
+      "failure_mode": "partial_failure_via_bulkhead_saturation",
+      "observed_behavior": "final_status=\"saturated\"",
+      "status": "proved"
+    },
+    {
+      "continuity_classification": "degraded_service_only",
+      "evidence_ref": "resilience/degraded_fallback_execution.json",
+      "expected_behavior": "Provider failure should degrade explicitly through fallback instead of overclaiming a clean success path.",
+      "failure_mode": "degraded_fallback",
+      "observed_behavior": "outcome_kind=\"Degraded\" output_degraded=true",
+      "status": "proved"
+    },
+    {
+      "continuity_classification": "no_continuity_claim_after_remote_timeout",
+      "evidence_ref": "remote_exec/timeout_probe.json",
+      "expected_behavior": "A hanging endpoint should resolve as a stable timeout failure kind with retryability truth.",
+      "failure_mode": "remote_execution_timeout",
+      "observed_behavior": "stable_failure_kind=\"timeout\" retryability=true",
+      "status": "proved"
+    }
+  ],
+  "generated_at": "2026-06-26T17:21:44.018659+00:00",
+  "issue": 4547,
+  "schema_version": "adl.runtime_failure_register.v1"
+}

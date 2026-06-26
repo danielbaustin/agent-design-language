@@ -1,0 +1,1 @@
+{"agent_instance_id":"v0916-runtime-failure-stop-probe","binding_status":"available","bound_at":"2026-06-26T17:21:42.624902Z","cycle_id":"cycle-000001","model":"gemma4:latest","provider_id":"local_ollama","schema":"adl.long_lived_agent_provider_binding.v1","source":"workflow_run_args"}
