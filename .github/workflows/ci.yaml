@@ -163,7 +163,7 @@ jobs:
         working-directory: .
 
       - name: slow-proof lane contract
-        if: steps.path-policy.outputs.ci_contracts_required == 'true'
+        if: steps.path-policy.outputs.slow_proof_contracts_required == 'true'
         run: bash adl/tools/test_slow_proof_lane_contract.sh
         working-directory: .
 

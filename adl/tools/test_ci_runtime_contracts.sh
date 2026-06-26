@@ -112,6 +112,14 @@ if authoritative_contract != "bash adl/tools/test_run_authoritative_coverage_lan
         f"found: {authoritative_contract}"
     )
 
+slow_proof_contract_if = step_if("slow-proof lane contract")
+expected_slow_proof_if = "steps.path-policy.outputs.slow_proof_contracts_required == 'true'"
+if slow_proof_contract_if != expected_slow_proof_if:
+    raise SystemExit(
+        "slow-proof lane contract must be gated by the dedicated slow-proof path-policy output; "
+        f"found: {slow_proof_contract_if}"
+    )
+
 release_version_truth = step_run("release version truth check")
 if release_version_truth != "bash adl/tools/check_release_version_surfaces.sh":
     raise SystemExit(

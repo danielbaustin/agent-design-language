@@ -110,6 +110,7 @@ EOF
   assert_has "$docs_output" "v0913_proof_required=false"
   assert_has "$docs_output" "release_version_only=false"
   assert_has "$docs_output" "ci_contracts_required=false"
+  assert_has "$docs_output" "slow_proof_contracts_required=false"
   assert_has "$docs_output" "coverage_lane=skip"
   assert_has "$docs_output" "coverage_authority=not_required"
   assert_has "$docs_output" "proof_validation_scope=not_required"
@@ -200,6 +201,7 @@ EOF
   assert_has "$cargo_structural_output" "v0913_proof_required=false"
   assert_has "$cargo_structural_output" "release_version_only=false"
   assert_has "$cargo_structural_output" "ci_contracts_required=true"
+  assert_has "$cargo_structural_output" "slow_proof_contracts_required=false"
   assert_has "$cargo_structural_output" "fail_closed=false"
   assert_has "$cargo_structural_output" "coverage_lane=pr_fast"
   assert_has "$cargo_structural_output" "coverage_authority=pr_changed_surface"
@@ -395,6 +397,7 @@ EOF
   assert_has "$finish_control_plane_output" "v0913_proof_required=false"
   assert_has "$finish_control_plane_output" "release_version_only=false"
   assert_has "$finish_control_plane_output" "ci_contracts_required=true"
+  assert_has "$finish_control_plane_output" "slow_proof_contracts_required=false"
   assert_has "$finish_control_plane_output" "reason=publication_control_plane_change_runs_focused_rust_validation"
 
   git checkout -q -b policy-surface-change "$base_sha"
@@ -412,6 +415,7 @@ EOF
   assert_has "$policy_surface_output" "v0913_proof_required=false"
   assert_has "$policy_surface_output" "release_version_only=false"
   assert_has "$policy_surface_output" "ci_contracts_required=true"
+  assert_has "$policy_surface_output" "slow_proof_contracts_required=false"
   assert_has "$policy_surface_output" "coverage_lane=skip"
   assert_has "$policy_surface_output" "coverage_authority=not_required"
   assert_has "$policy_surface_output" "proof_validation_scope=not_required"
@@ -489,7 +493,7 @@ text = text.replace(
 )
 text = text.replace(
     "      - name: Coverage run and summary (json)\n        run: bash tools/run_authoritative_coverage_lane.sh\n",
-    "      - name: slow-proof lane contract\n        if: steps.path-policy.outputs.ci_contracts_required == 'true'\n        run: bash adl/tools/test_slow_proof_lane_contract.sh\n      - name: Coverage run and summary (json)\n        run: bash tools/run_authoritative_coverage_lane.sh\n",
+    "      - name: slow-proof lane contract\n        if: steps.path-policy.outputs.slow_proof_contracts_required == 'true'\n        run: bash adl/tools/test_slow_proof_lane_contract.sh\n      - name: Coverage run and summary (json)\n        run: bash tools/run_authoritative_coverage_lane.sh\n",
     1,
 )
 text += """
@@ -528,6 +532,7 @@ PY
   assert_has "$workflow_pvf_slow_proof_output" "demo_smoke_required=false"
   assert_has "$workflow_pvf_slow_proof_output" "v0913_proof_required=false"
   assert_has "$workflow_pvf_slow_proof_output" "ci_contracts_required=true"
+  assert_has "$workflow_pvf_slow_proof_output" "slow_proof_contracts_required=true"
   assert_has "$workflow_pvf_slow_proof_output" "coverage_lane=skip"
   assert_has "$workflow_pvf_slow_proof_output" "coverage_authority=not_required"
   assert_has "$workflow_pvf_slow_proof_output" "reason=pvf_slow_proof_change_runs_contract_validation"
@@ -625,6 +630,7 @@ PY
   assert_has "$runtime_policy_surface_output" "full_coverage_required=true"
   assert_has "$runtime_policy_surface_output" "demo_smoke_required=true"
   assert_has "$runtime_policy_surface_output" "ci_contracts_required=true"
+  assert_has "$runtime_policy_surface_output" "slow_proof_contracts_required=false"
   assert_has "$runtime_policy_surface_output" "coverage_lane=authoritative_full"
   assert_has "$runtime_policy_surface_output" "coverage_authority=pr_policy_surface_runtime_mixed"
   assert_has "$runtime_policy_surface_output" "reason=coverage_policy_surface_change_with_runtime_surface_runs_full_coverage"
