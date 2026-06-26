@@ -3504,9 +3504,14 @@ fn finish_validation_profile_classifies_locked_cargo_fallback_slice() {
         .commands
         .contains(&"bash adl/tools/run_owner_validation_lane.sh csdlc".to_string()));
 
-    let unrelated_plan = select_finish_validation_plan_for_finish(4305, &requested_paths, &changed_paths)
-        .expect("unrelated issue should now resolve through the general unified validation contract");
-    assert_eq!(unrelated_plan.mode, FinishValidationMode::LargerBinaryFocused);
+    let unrelated_plan =
+        select_finish_validation_plan_for_finish(4305, &requested_paths, &changed_paths).expect(
+            "unrelated issue should now resolve through the general unified validation contract",
+        );
+    assert_eq!(
+        unrelated_plan.mode,
+        FinishValidationMode::LargerBinaryFocused
+    );
     assert!(!unrelated_plan.commands.contains(
         &"cargo test --manifest-path adl/Cargo.toml --bin adl-pr-finish cli::pr_cmd::tests::finish::arg_render::finish_validation"
             .to_string()
@@ -4611,8 +4616,7 @@ fn finish_runner_executes_chained_local_polis_selector_command() {
             "bash -n adl/tools/polis_status_for_ssm.sh && bash -n adl/tools/polis_status_for_ssm_qts.sh && python3 adl/tools/validate_polis_status_for_ssm_qts.py".to_string(),
         ],
     };
-    run_finish_validation_rust(&repo, &plan)
-        .expect("chained local polis selector validation");
+    run_finish_validation_rust(&repo, &plan).expect("chained local polis selector validation");
 
     unsafe {
         env::set_var("PATH", old_path);
