@@ -708,6 +708,7 @@ fn prompt_template_cli_edit_rendered_card_uses_values_roundtrip_default_path() {
     .expect("edit-rendered output should remain structure-valid");
 }
 
+
 #[test]
 fn prompt_template_cli_import_values_fails_closed_for_structure_drift() {
     let repo = TempRepo::new("prompt-template-import-values-drift");
