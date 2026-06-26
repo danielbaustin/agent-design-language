@@ -1,7 +1,13 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-repo_root="${ADL_REPO_ROOT:-$HOME/git/agent-design-language}"
+script_dir="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+derived_repo_root="$(cd "$script_dir/../.." && pwd)"
+fallback_home="${HOME:-/var/root}"
+repo_root="${ADL_REPO_ROOT:-$derived_repo_root}"
+if [ ! -e "$repo_root/.git" ] && [ -d "$fallback_home/git/agent-design-language" ]; then
+  repo_root="$fallback_home/git/agent-design-language"
+fi
 repo_name="$(basename "$repo_root")"
 branch="unknown"
 commit="unknown"
