@@ -355,8 +355,12 @@ fn canonical_bundle_path_needs_recovery(path: &Path, relative: &str) -> Result<b
         return Ok(true);
     }
     match relative {
-        "srp.md" => Ok(!srp_has_final_review_results_text(&fs::read_to_string(path)?)?),
-        "sor.md" => Ok(!sor_has_terminal_closeout_truth_text(&fs::read_to_string(path)?)),
+        "srp.md" => Ok(!srp_has_final_review_results_text(&fs::read_to_string(
+            path,
+        )?)?),
+        "sor.md" => Ok(!sor_has_terminal_closeout_truth_text(&fs::read_to_string(
+            path,
+        )?)),
         _ => Ok(false),
     }
 }
@@ -367,7 +371,9 @@ fn recovery_candidate_is_usable(path: &Path, relative: &str) -> Result<bool> {
     }
     match relative {
         "srp.md" => srp_has_final_review_results_text(&fs::read_to_string(path)?),
-        "sor.md" => Ok(sor_has_terminal_closeout_truth_text(&fs::read_to_string(path)?)),
+        "sor.md" => Ok(sor_has_terminal_closeout_truth_text(&fs::read_to_string(
+            path,
+        )?)),
         _ => Ok(true),
     }
 }
@@ -410,7 +416,13 @@ fn yaml_mapping_string_local(mapping: &serde_yaml::Mapping, key: &str) -> Option
     mapping
         .get(serde_yaml::Value::String(key.to_string()))
         .and_then(serde_yaml::Value::as_str)
-        .map(|value| value.trim().trim_matches('"').trim_matches('\'').to_ascii_lowercase())
+        .map(|value| {
+            value
+                .trim()
+                .trim_matches('"')
+                .trim_matches('\'')
+                .to_ascii_lowercase()
+        })
 }
 
 fn sor_has_terminal_closeout_truth_text(text: &str) -> bool {

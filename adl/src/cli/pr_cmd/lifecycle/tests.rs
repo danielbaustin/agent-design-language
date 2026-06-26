@@ -565,8 +565,11 @@ fn ensure_closed_completed_issue_bundle_truth_accepts_normalized_bundle() {
             "# ADL Input Card\n\nBranch: codex/1410-canonical-slug\n\n## Goal\n\nPreserve the closed/completed issue prompt and local card truth after closeout.\n",
         )
         .expect("write normalized sip");
-    fs::write(canonical_dir.join("srp.md"), issue_ref_completed_srp_content())
-        .expect("write normalized srp");
+    fs::write(
+        canonical_dir.join("srp.md"),
+        issue_ref_completed_srp_content(),
+    )
+    .expect("write normalized srp");
     let output = canonical_dir.join("sor.md");
     fs::write(
             &output,
@@ -594,8 +597,11 @@ fn ensure_closed_completed_issue_bundle_truth_accepts_retrospective_no_branch_cl
             "# ADL Input Card\n\nBranch: retrospective-no-branch\n\n## Goal\n\nPreserve the closed/completed issue prompt and local card truth after closeout.\n",
         )
         .expect("write normalized sip");
-    fs::write(canonical_dir.join("srp.md"), issue_ref_completed_srp_content())
-        .expect("write normalized srp");
+    fs::write(
+        canonical_dir.join("srp.md"),
+        issue_ref_completed_srp_content(),
+    )
+    .expect("write normalized srp");
     let output = canonical_dir.join("sor.md");
     fs::write(
             &output,
@@ -889,8 +895,11 @@ fn closeout_closed_completed_issue_bundle_records_prune_result_on_canonical_outp
     fs::create_dir_all(&canonical_dir).expect("canonical dir");
     fs::write(canonical_dir.join("stp.md"), stp_text).expect("write stp");
     fs::write(canonical_dir.join("sip.md"), sip_text).expect("write sip");
-    fs::write(canonical_dir.join("srp.md"), issue_ref_completed_srp_content())
-        .expect("write srp");
+    fs::write(
+        canonical_dir.join("srp.md"),
+        issue_ref_completed_srp_content(),
+    )
+    .expect("write srp");
     let output = canonical_dir.join("sor.md");
     fs::write(&output, issue_ref_sync_completed_output_content()).expect("write sor");
 
@@ -949,8 +958,11 @@ fn closeout_recovers_missing_primary_cards_from_bound_worktree_bundle() {
     ensure_task_bundle_stp(&repo, &issue_ref, &source_path).expect("stp");
     ensure_pre_run_bootstrap_cards(&repo, &issue_ref, title, &source_path).expect("cards");
     let canonical_dir = issue_ref.task_bundle_dir_path(&repo);
-    fs::write(canonical_dir.join("srp.md"), issue_ref_completed_srp_content())
-        .expect("write completed srp");
+    fs::write(
+        canonical_dir.join("srp.md"),
+        issue_ref_completed_srp_content(),
+    )
+    .expect("write completed srp");
     let output = issue_ref.task_bundle_output_path(&repo);
     fs::write(&output, issue_ref_sync_completed_output_content()).expect("write completed sor");
 
@@ -1026,7 +1038,12 @@ fn closeout_recovers_stale_root_srp_and_sor_from_bound_worktree_bundle() {
     copy_prompt_templates(&repo);
     fs::write(repo.join(".gitignore"), ".adl/\n").expect("write gitignore");
     assert!(Command::new("git")
-        .args(["-C", path_str(&repo).expect("repo path"), "add", ".gitignore"])
+        .args([
+            "-C",
+            path_str(&repo).expect("repo path"),
+            "add",
+            ".gitignore"
+        ])
         .status()
         .expect("git add gitignore")
         .success());
@@ -1084,25 +1101,19 @@ fn closeout_recovers_stale_root_srp_and_sor_from_bound_worktree_bundle() {
         .success());
     let worktree_bundle = issue_ref.task_bundle_dir_path(&worktree);
     fs::create_dir_all(&worktree_bundle).expect("worktree bundle");
-    fs::copy(
-        canonical_dir.join("stp.md"),
-        worktree_bundle.join("stp.md"),
+    fs::copy(canonical_dir.join("stp.md"), worktree_bundle.join("stp.md")).expect("copy stp");
+    fs::copy(canonical_dir.join("sip.md"), worktree_bundle.join("sip.md")).expect("copy sip");
+    fs::copy(canonical_dir.join("spp.md"), worktree_bundle.join("spp.md")).expect("copy spp");
+    fs::write(
+        worktree_bundle.join("srp.md"),
+        issue_ref_completed_srp_content(),
     )
-    .expect("copy stp");
-    fs::copy(
-        canonical_dir.join("sip.md"),
-        worktree_bundle.join("sip.md"),
+    .expect("write final worktree srp");
+    fs::write(
+        worktree_bundle.join("sor.md"),
+        issue_ref_sync_completed_output_content(),
     )
-    .expect("copy sip");
-    fs::copy(
-        canonical_dir.join("spp.md"),
-        worktree_bundle.join("spp.md"),
-    )
-    .expect("copy spp");
-    fs::write(worktree_bundle.join("srp.md"), issue_ref_completed_srp_content())
-        .expect("write final worktree srp");
-    fs::write(worktree_bundle.join("sor.md"), issue_ref_sync_completed_output_content())
-        .expect("write final worktree sor");
+    .expect("write final worktree sor");
 
     closeout_closed_completed_issue_bundle(&repo, &repo, &issue_ref, &output)
         .expect("closeout should recover stale root review/output truth from worktree");
@@ -1130,7 +1141,12 @@ fn closeout_recovers_malformed_root_srp_from_bound_worktree_bundle() {
     copy_prompt_templates(&repo);
     fs::write(repo.join(".gitignore"), ".adl/\n").expect("write gitignore");
     assert!(Command::new("git")
-        .args(["-C", path_str(&repo).expect("repo path"), "add", ".gitignore"])
+        .args([
+            "-C",
+            path_str(&repo).expect("repo path"),
+            "add",
+            ".gitignore"
+        ])
         .status()
         .expect("git add gitignore")
         .success());
@@ -1188,10 +1204,16 @@ fn closeout_recovers_malformed_root_srp_from_bound_worktree_bundle() {
         fs::copy(canonical_dir.join(relative), worktree_bundle.join(relative))
             .expect("copy card to worktree");
     }
-    fs::write(worktree_bundle.join("srp.md"), issue_ref_completed_srp_content())
-        .expect("write final worktree srp");
-    fs::write(worktree_bundle.join("sor.md"), issue_ref_sync_completed_output_content())
-        .expect("write final worktree sor");
+    fs::write(
+        worktree_bundle.join("srp.md"),
+        issue_ref_completed_srp_content(),
+    )
+    .expect("write final worktree srp");
+    fs::write(
+        worktree_bundle.join("sor.md"),
+        issue_ref_sync_completed_output_content(),
+    )
+    .expect("write final worktree sor");
 
     closeout_closed_completed_issue_bundle(&repo, &repo, &issue_ref, &output)
         .expect("closeout should recover malformed root srp from worktree");
@@ -1250,8 +1272,11 @@ fn closeout_retains_dirty_stale_worktree_when_canonical_truth_is_complete() {
     ensure_task_bundle_stp(&repo, &issue_ref, &source_path).expect("stp");
     ensure_pre_run_bootstrap_cards(&repo, &issue_ref, title, &source_path).expect("cards");
     let canonical_dir = issue_ref.task_bundle_dir_path(&repo);
-    fs::write(canonical_dir.join("srp.md"), issue_ref_completed_srp_content())
-        .expect("write completed srp");
+    fs::write(
+        canonical_dir.join("srp.md"),
+        issue_ref_completed_srp_content(),
+    )
+    .expect("write completed srp");
     let output = issue_ref.task_bundle_output_path(&repo);
     fs::write(&output, issue_ref_sync_completed_output_content()).expect("write completed sor");
 
