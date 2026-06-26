@@ -10,13 +10,18 @@ BOOTSTRAP_PATH="${ROOT_DIR}/demos/v0.91.6/unity-observatory/Assets/Scripts/Unity
 BOOTSTRAP_META_PATH="${ROOT_DIR}/demos/v0.91.6/unity-observatory/Assets/Scripts/UnityObservatoryBootstrap.cs.meta"
 SHELL_PATH="${ROOT_DIR}/demos/v0.91.6/unity-observatory/Assets/Scripts/UnityObservatoryShellController.cs"
 SHELL_META_PATH="${ROOT_DIR}/demos/v0.91.6/unity-observatory/Assets/Scripts/UnityObservatoryShellController.cs.meta"
+EDITOR_DIR_META_PATH="${ROOT_DIR}/demos/v0.91.6/unity-observatory/Assets/Editor.meta"
+VALIDATOR_PATH="${ROOT_DIR}/demos/v0.91.6/unity-observatory/Assets/Editor/UnityObservatoryBatchValidator.cs"
+VALIDATOR_META_PATH="${ROOT_DIR}/demos/v0.91.6/unity-observatory/Assets/Editor/UnityObservatoryBatchValidator.cs.meta"
 UXML_PATH="${ROOT_DIR}/demos/v0.91.6/unity-observatory/Assets/UI/ObservatoryShell.uxml"
 UXML_META_PATH="${ROOT_DIR}/demos/v0.91.6/unity-observatory/Assets/UI/ObservatoryShell.uxml.meta"
 USS_PATH="${ROOT_DIR}/demos/v0.91.6/unity-observatory/Assets/UI/ObservatoryShell.uss"
 USS_META_PATH="${ROOT_DIR}/demos/v0.91.6/unity-observatory/Assets/UI/ObservatoryShell.uss.meta"
 MANIFEST_PATH="${ROOT_DIR}/demos/v0.91.6/unity-observatory/Packages/manifest.json"
+LOCK_PATH="${ROOT_DIR}/demos/v0.91.6/unity-observatory/Packages/packages-lock.json"
 BUILD_SETTINGS_PATH="${ROOT_DIR}/demos/v0.91.6/unity-observatory/ProjectSettings/EditorBuildSettings.asset"
 PROJECT_VERSION_PATH="${ROOT_DIR}/demos/v0.91.6/unity-observatory/ProjectSettings/ProjectVersion.txt"
+PROJECT_SETTINGS_PATH="${ROOT_DIR}/demos/v0.91.6/unity-observatory/ProjectSettings/ProjectSettings.asset"
 REVIEW_PATH="${ROOT_DIR}/docs/milestones/v0.91.6/review/observatory/UNITY_OBSERVATORY_IMPLEMENTATION_BASELINE_4030.md"
 
 for path in \
@@ -28,13 +33,18 @@ for path in \
   "${BOOTSTRAP_META_PATH}" \
   "${SHELL_PATH}" \
   "${SHELL_META_PATH}" \
+  "${EDITOR_DIR_META_PATH}" \
+  "${VALIDATOR_PATH}" \
+  "${VALIDATOR_META_PATH}" \
   "${UXML_PATH}" \
   "${UXML_META_PATH}" \
   "${USS_PATH}" \
   "${USS_META_PATH}" \
   "${MANIFEST_PATH}" \
+  "${LOCK_PATH}" \
   "${BUILD_SETTINGS_PATH}" \
   "${PROJECT_VERSION_PATH}" \
+  "${PROJECT_SETTINGS_PATH}" \
   "${REVIEW_PATH}"
 do
   if [[ ! -f "${path}" ]]; then
@@ -112,6 +122,10 @@ require_contains_any \
   "This launch baseline shows the bounded ingress seam that #4032 will deepen into a real Unity-facing loader." \
   "This shell is reading a deterministic Unity-facing contract derived from"
 require_contains "${SHELL_META_PATH}" "guid: 40310000000000000000000000001002"
+require_contains "${VALIDATOR_PATH}" "UnityObservatoryBatchValidator"
+require_contains "${VALIDATOR_PATH}" "ValidateScene"
+require_contains "${VALIDATOR_PATH}" "Unity Observatory compatibility verification passed."
+require_contains "${VALIDATOR_META_PATH}" "guid:"
 
 require_contains_any "${UXML_PATH}" "Launch-baseline governed shell" "fixture backed governed shell"
 require_contains "${UXML_PATH}" "packet-ref"
@@ -126,11 +140,28 @@ require_contains "${USS_PATH}" ".observatory-shell"
 require_contains "${USS_PATH}" ".card"
 require_contains "${USS_META_PATH}" "guid: 40310000000000000000000000002002"
 
-require_contains "${MANIFEST_PATH}" "\"com.unity.ui\": \"1.0.0\""
-require_contains "${MANIFEST_PATH}" "\"com.unity.ugui\": \"1.0.0\""
+require_contains "${MANIFEST_PATH}" "\"com.unity.ui\": \"2.0.0\""
+require_contains "${MANIFEST_PATH}" "\"com.unity.ugui\": \"2.5.0\""
+require_contains "${MANIFEST_PATH}" "\"com.unity.modules.uielements\": \"1.0.0\""
+require_contains "${LOCK_PATH}" "\"com.unity.modules.uielements\""
+require_contains "${LOCK_PATH}" "\"com.unity.ui\""
+require_contains "${LOCK_PATH}" "\"com.unity.ugui\""
+if grep -Fq "\"com.unity.inputsystem\"" "${MANIFEST_PATH}"; then
+  echo "unexpected stale com.unity.inputsystem dependency in ${MANIFEST_PATH}" >&2
+  exit 1
+fi
+if grep -Fq "\"com.unity.timeline\"" "${MANIFEST_PATH}"; then
+  echo "unexpected stale com.unity.timeline dependency in ${MANIFEST_PATH}" >&2
+  exit 1
+fi
+if grep -Fq "\"com.unity.textmeshpro\"" "${MANIFEST_PATH}"; then
+  echo "unexpected stale com.unity.textmeshpro dependency in ${MANIFEST_PATH}" >&2
+  exit 1
+fi
 require_contains "${BUILD_SETTINGS_PATH}" "path: Assets/Scenes/UnityObservatory.unity"
 require_contains "${BUILD_SETTINGS_PATH}" "guid: 40310000000000000000000000000001"
-require_contains "${PROJECT_VERSION_PATH}" "m_EditorVersion: 2022.3.62f1"
+require_contains "${PROJECT_VERSION_PATH}" "m_EditorVersion: 6000.5.1f1"
+require_contains "${PROJECT_SETTINGS_PATH}" "productName: unity-observatory"
 require_contains "${PROOF_PATH}" "not claimed as"
 require_contains "${PROOF_PATH}" "live-loaded runtime assets in this issue"
 

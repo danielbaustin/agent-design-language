@@ -5,8 +5,9 @@
 Launchable-baseline scaffold for WP-09 issue `#4031`.
 
 This directory now contains the first Unity Observatory project scaffold for
-`v0.91.6`. It is intended to open as a Unity `2022.3 LTS` project and provide
-one launchable-equivalent shell for the richer Observatory lane.
+`v0.91.6`. It is intended to open as a Unity `6.5` project on the current
+local baseline `6000.5.1f1` and provide one launchable-equivalent shell for
+the richer Observatory lane.
 
 This issue now adds one bounded inhabitant-readiness projection for `#4033`
 through the same checked-in Unity-facing contract seed. The shell now presents:
@@ -39,10 +40,12 @@ instead of reconstructing the launch surface from planning prose alone.
 ## Project Surface
 
 - Unity project root: `demos/v0.91.6/unity-observatory`
-- Intended editor family: Unity `2022.3 LTS`
+- Intended editor family: Unity `6.5`
+- Local proof baseline: Unity `6000.5.1f1`
 - Primary scene path: `Assets/Scenes/UnityObservatory.unity`
 - Primary bootstrap script: `Assets/Scripts/UnityObservatoryBootstrap.cs`
 - Runtime controller: `Assets/Scripts/UnityObservatoryShellController.cs`
+- Batch validation script: `Assets/Editor/UnityObservatoryBatchValidator.cs`
 - Reference UI asset: `Assets/UI/ObservatoryShell.uxml`
 - Reference style asset: `Assets/UI/ObservatoryShell.uss`
 - Unity contract seed: `Assets/Resources/observatory_contract.json`
@@ -148,7 +151,8 @@ This Unity surface intentionally leaves the following issue boundaries explicit:
 
 1. Open Unity Hub.
 2. Add project from disk: `demos/v0.91.6/unity-observatory`.
-3. Use Unity `2022.3 LTS` or a compatible editor.
+3. Use Unity `6.5` with the local proof baseline `6000.5.1f1` or a compatible
+   Unity 6 editor.
 4. Open `Assets/Scenes/UnityObservatory.unity`.
 5. Press Play.
 
@@ -200,6 +204,12 @@ Focused contract-seed guardrail for this issue:
 bash adl/tools/test_v0916_unity_observatory_contract.sh
 ```
 
+Focused Unity 6.5 working-scene smoke proof for this issue:
+
+```bash
+bash adl/tools/test_v0916_unity_observatory_unity65_smoke.sh
+```
+
 Focused O-04 review packet inspection:
 
 ```bash
@@ -223,20 +233,31 @@ the editor menu instead of batch mode:
 Repository structure validation: passed by focused file/content checks during
 issue execution.
 
-Unity editor validation: passed through the in-editor menu verifier
-`ADL -> Observatory -> Verify Compatibility Canvas`, driven by
-`Assets/Editor/UnityObservatoryCompatibilityVerifier.cs`. The observed proof
-result on Unity `2022.3.62f3` asserted the expected compatibility path
-(`shouldUseCompatibilityCanvas=True`), a non-empty compatibility payload, and
-`sortingOrder=10`.
+Unity editor validation now has two bounded proving lanes:
+
+- Unity `2022.3.62f3` compatibility fallback proof from `#4524`, driven by
+  `Assets/Editor/UnityObservatoryCompatibilityVerifier.cs` through
+  `ADL -> Observatory -> Verify Compatibility Canvas`. The observed proof
+  asserted `shouldUseCompatibilityCanvas=True`, a non-empty compatibility
+  payload, and `sortingOrder=10`.
+- Unity `6000.5.1f1` working-scene migration proof from `#4529`, driven by
+  `bash adl/tools/test_v0916_unity_observatory_unity65_smoke.sh`. That proof
+  compiles the migrated project under Unity `6.5`, opens
+  `Assets/Scenes/UnityObservatory.unity`, loads
+  `Assets/Resources/observatory_contract.json`, and executes the checked-in
+  editor validator at `Assets/Editor/UnityObservatoryBatchValidator.cs`, which
+  now drives the runtime bootstrap path and confirms the theme/style-backed
+  Observatory shell builds the expected title, packet-contract, and
+  observability cards.
 
 Unity build validation: not run.
 
 C# compiler validation outside Unity: not run.
 
-This means `#4031` now records a deterministic launchable-equivalent scaffold
-with a proved Unity editor compatibility path on this machine, while Unity
-build-pipeline success remains unclaimed.
+This means the checked-in Unity Observatory demo now retains a proved
+Unity `2022.3.x` compatibility fallback while also carrying a focused
+Unity `6000.5.1f1` working-scene migration proof. It still does not claim a
+player build or broader production readiness.
 
 ## Non-Claims
 
@@ -244,5 +265,6 @@ build-pipeline success remains unclaimed.
 - No live Runtime v2 ingestion is claimed.
 - No live OpenTelemetry collector or exporter integration is claimed.
 - No inhabitant-safe profile or memory display closure is claimed.
+- No standalone Unity player build success is claimed.
 - No Unity build success is claimed.
 - No production Observatory readiness is claimed.

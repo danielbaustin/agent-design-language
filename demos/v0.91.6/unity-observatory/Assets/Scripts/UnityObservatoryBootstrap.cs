@@ -8,6 +8,9 @@ namespace ADL.Demos.UnityObservatory
     public sealed class UnityObservatoryBootstrap : MonoBehaviour
     {
         private const string ContractResourcePath = "observatory_contract";
+        private const string RuntimeThemeResourcePath = "UnityDefaultRuntimeTheme";
+        private const string BootstrapObjectName = "Unity Observatory Bootstrap";
+        private const string ShellObjectName = "Unity Observatory Shell";
         [SerializeField] private int baselineCitizenCount = 3;
         [SerializeField] private int baselineEpisodeCount = 2;
         [SerializeField] private string packetSchema = "adl.csm_visibility_packet.v1";
@@ -15,9 +18,34 @@ namespace ADL.Demos.UnityObservatory
             "demos/fixtures/csm_observatory/proto-csm-02-governed-observatory-packet.json";
         [SerializeField] private string defaultRoomLabel = "World / Reality";
         [SerializeField] private string defaultLensLabel = "Operator lens";
+        private bool bootstrapped;
+
+        [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.AfterSceneLoad)]
+        private static void EnsureBootstrapOnSceneLoad()
+        {
+            UnityObservatoryBootstrap bootstrap = FindAnyObjectByType<UnityObservatoryBootstrap>();
+            if (bootstrap == null)
+            {
+                GameObject bootstrapObject = new(BootstrapObjectName);
+                bootstrap = bootstrapObject.AddComponent<UnityObservatoryBootstrap>();
+            }
+
+            bootstrap.Boot();
+        }
 
         private void Awake()
         {
+            Boot();
+        }
+
+        private void Boot()
+        {
+            if (bootstrapped)
+            {
+                return;
+            }
+
+            bootstrapped = true;
             EnsureCamera();
             StartCoroutine(CreateObservatoryShell());
         }
@@ -39,7 +67,14 @@ namespace ADL.Demos.UnityObservatory
 
         private IEnumerator CreateObservatoryShell()
         {
-            GameObject shellObject = new("Unity Observatory Shell");
+            GameObject existingShell = GameObject.Find(ShellObjectName);
+            if (existingShell != null)
+            {
+                Destroy(existingShell);
+                yield return null;
+            }
+
+            GameObject shellObject = new(ShellObjectName);
             UnityObservatoryShellController controller =
                 shellObject.AddComponent<UnityObservatoryShellController>();
             TextAsset contractAsset = Resources.Load<TextAsset>(ContractResourcePath);
@@ -148,7 +183,9 @@ namespace ADL.Demos.UnityObservatory
         {
             PanelSettings settings = ScriptableObject.CreateInstance<PanelSettings>();
             settings.name = "Unity Observatory Runtime Panel Settings";
-            settings.themeStyleSheet = ResolveThemeStyleSheet();
+            settings.themeStyleSheet =
+                Resources.Load<ThemeStyleSheet>(RuntimeThemeResourcePath)
+                ?? ResolveThemeStyleSheet();
             settings.scaleMode = PanelScaleMode.ScaleWithScreenSize;
             settings.referenceResolution = new Vector2Int(1440, 900);
             settings.screenMatchMode = PanelScreenMatchMode.MatchWidthOrHeight;

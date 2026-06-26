@@ -46,7 +46,8 @@ This baseline names:
 ### Unity project target
 
 - Project root: `demos/v0.91.6/unity-observatory`
-- Editor family: Unity `2022.3 LTS`
+- Editor family: Unity `6.5`
+- Local proof baseline for the post-WP-09 migration follow-on: Unity `6000.5.1f1`
 - Primary scene target: `Assets/Scenes/UnityObservatory.unity`
 - Bootstrap target: `Assets/Scripts/UnityObservatoryBootstrap.cs`
 - UI shell target:
@@ -92,12 +93,23 @@ It does not permit:
 This issue proves the baseline by making the target root and contract explicit,
 not by claiming that Unity already launches.
 
+The active post-WP-09 migration follow-on now retargets the same bounded
+project root to Unity `6.5` (`6000.5.1f1`) without widening the original
+baseline claim into production Unity readiness.
+
+That migration now carries a focused local working-scene proof under the same
+Unity `6000.5.1f1` baseline: the migrated project compiles under Unity `6.5`,
+opens `Assets/Scenes/UnityObservatory.unity`, and runs a checked-in editor
+validator that confirms the scene's bootstrap and contract-backed Observatory
+shell build successfully.
+
 Focused proof surfaces:
 
 ```bash
 test -f demos/v0.91.6/unity-observatory/README.md
 test -f demos/fixtures/csm_observatory/proto-csm-02-governed-observatory-packet.json
 bash adl/tools/test_v0916_unity_observatory_baseline.sh
+bash adl/tools/test_v0916_unity_observatory_unity65_smoke.sh
 cargo test --manifest-path adl/Cargo.toml runtime_v2_csm_observatory -- --nocapture
 ```
 
@@ -111,12 +123,15 @@ cargo test --manifest-path adl/Cargo.toml csm_observatory_cli_writes_fixture_bac
 
 This packet does not prove:
 
-- a launchable Unity Observatory
 - completed inhabitant-facing surfaces
 - completed ADL ingestion into Unity
 - completed logging/OTel/security consumption closure
 - HTML/mobile Observatory completion
 - WP-09 umbrella closeout readiness
+
+For this migrated baseline, the bounded launchable-equivalent Unity Observatory
+scene proof is now established locally; what remains unproven is broader player
+build/distribution readiness and downstream runtime integration scope.
 
 ## Reviewer takeaway
 
