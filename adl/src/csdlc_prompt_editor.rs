@@ -603,9 +603,9 @@ fn import_values_document_from_rendered_card(
         Ok(values) => values,
         Err(err)
             if card.key == "stp"
-                && err
-                    .to_string()
-                    .contains("stp rendered card cannot find post-placeholder literal for title") =>
+                && err.to_string().contains(
+                    "stp rendered card cannot find post-placeholder literal for title",
+                ) =>
         {
             extract_active_stp_values(rendered).with_context(|| err.to_string())?
         }
@@ -634,10 +634,9 @@ fn extract_active_stp_values(rendered: &str) -> Result<BTreeMap<String, String>>
     let version = version_from_rendered_title(&title)
         .or_else(|| mapping_required_scalar(mapping, "milestone_sprint").ok())
         .unwrap_or_else(|| "v0.0.0-imported".to_string());
-    let required_outcome_type = yaml_sequence_summary(
-        mapping.get(Value::String("required_outcome_type".to_string())),
-    )
-    .unwrap_or_else(|| "combination".to_string());
+    let required_outcome_type =
+        yaml_sequence_summary(mapping.get(Value::String("required_outcome_type".to_string())))
+            .unwrap_or_else(|| "combination".to_string());
     let repo_inputs = markdown_section_body_local(rendered, "Repo Inputs")
         .map(|body| body.trim().to_string())
         .filter(|body| !body.is_empty())
@@ -665,16 +664,19 @@ fn extract_active_stp_values(rendered: &str) -> Result<BTreeMap<String, String>>
         "wp".to_string(),
         mapping_required_scalar(mapping, "wp").unwrap_or_else(|_| "unassigned".to_string()),
     );
-    values.insert(
-        "required_outcome_type".to_string(),
-        required_outcome_type,
-    );
+    values.insert("required_outcome_type".to_string(), required_outcome_type);
     values.insert(
         "demo_required".to_string(),
         mapping_required_scalar(mapping, "demo_required").unwrap_or_else(|_| "false".to_string()),
     );
-    values.insert("summary".to_string(), required_markdown_section(rendered, "Summary")?);
-    values.insert("goal".to_string(), required_markdown_section(rendered, "Goal")?);
+    values.insert(
+        "summary".to_string(),
+        required_markdown_section(rendered, "Summary")?,
+    );
+    values.insert(
+        "goal".to_string(),
+        required_markdown_section(rendered, "Goal")?,
+    );
     values.insert(
         "required_outcome".to_string(),
         required_markdown_section(rendered, "Required Outcome")?,

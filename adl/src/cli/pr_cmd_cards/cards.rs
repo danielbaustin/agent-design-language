@@ -302,7 +302,8 @@ impl SourcePromptMetadata {
                 out.initial_pvf_lane_source = yaml_string_field(mapping, "initial_pvf_lane_source");
             }
             if out.estimate_elapsed_seconds.is_none() {
-                out.estimate_elapsed_seconds = yaml_string_field(mapping, "estimate_elapsed_seconds");
+                out.estimate_elapsed_seconds =
+                    yaml_string_field(mapping, "estimate_elapsed_seconds");
             }
             if out.estimate_total_tokens.is_none() {
                 out.estimate_total_tokens = yaml_string_field(mapping, "estimate_total_tokens");

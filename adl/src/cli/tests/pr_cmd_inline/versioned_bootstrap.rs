@@ -470,8 +470,8 @@ The generated pre-execution card bundle is complete and deterministic.
     assert!(spp.contains("- Issue goal token budget: `400000`"));
     assert!(spp.contains("- Estimate data source: `manual_entry`"));
 
-    let vpp = fs::read_to_string(issue_ref.task_bundle_validation_plan_path(&repo))
-        .expect("read vpp");
+    let vpp =
+        fs::read_to_string(issue_ref.task_bundle_validation_plan_path(&repo)).expect("read vpp");
     assert!(vpp.contains("validation_family: \"prompt_template_card_profile\""));
     assert!(vpp.contains("validation_size_split: \"all_card_kind_fixture\""));
     assert!(vpp.contains("planned_validation_seconds: \"3000\""));
@@ -506,8 +506,7 @@ fn versioned_bootstrap_uses_unquoted_numeric_source_prompt_metadata_in_rendered_
         "tools-validation-implement-operational-nessus-remote-validation-lane".to_string(),
     )
     .expect("issue ref");
-    let title =
-        "[v0.91.6][tools][validation] Implement operational Nessus remote-validation lane";
+    let title = "[v0.91.6][tools][validation] Implement operational Nessus remote-validation lane";
     let source_path = issue_ref.issue_prompt_path(&repo);
     fs::create_dir_all(source_path.parent().expect("source parent")).expect("mkdir");
     fs::write(
@@ -611,8 +610,8 @@ Bootstrap cards render numeric planning metadata truthfully whether the source p
     assert!(spp.contains("- Estimated elapsed seconds: `9000`"));
     assert!(spp.contains("- Estimated total tokens: `400000`"));
 
-    let vpp = fs::read_to_string(issue_ref.task_bundle_validation_plan_path(&repo))
-        .expect("read vpp");
+    let vpp =
+        fs::read_to_string(issue_ref.task_bundle_validation_plan_path(&repo)).expect("read vpp");
     assert!(vpp.contains("planned_validation_seconds: \"3000\""));
     assert!(vpp.contains("planned_validation_tokens: \"80000\""));
     assert!(vpp.contains("- Planned validation seconds: `3000`"));
@@ -889,7 +888,9 @@ The active card bootstrap path produces complete, schema-valid pre-execution car
         "--set".to_string(),
         "summary=This edit should fail closed.".to_string(),
         "--out".to_string(),
-        repo.join("should-not-render.md").to_string_lossy().to_string(),
+        repo.join("should-not-render.md")
+            .to_string_lossy()
+            .to_string(),
     ])
     .expect_err("stp edit-rendered should fail closed for template prose drift");
     assert!(err.to_string().contains("locked template text drifted"));
