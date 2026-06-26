@@ -1281,7 +1281,9 @@ mod tests {
             "proof packet should exist after regeneration"
         );
         assert!(
-            out_dir.join("runtime/temporary_agent_execution_summary.json").is_file(),
+            out_dir
+                .join("runtime/temporary_agent_execution_summary.json")
+                .is_file(),
             "runtime summary should exist after regeneration"
         );
 
@@ -1299,7 +1301,10 @@ mod tests {
         assert_eq!(rels, vec!["nested/deeper/file.txt"]);
 
         assert_eq!(
-            artifact_ref("runtime-4546", "runtime/comms/coding/structured_proposal.json"),
+            artifact_ref(
+                "runtime-4546",
+                "runtime/comms/coding/structured_proposal.json"
+            ),
             "artifacts/runtime-4546/runtime/comms/coding/structured_proposal.json"
         );
         assert_eq!(
@@ -1314,10 +1319,7 @@ mod tests {
             acip_status_name(&AcipInvocationStatusV1::Refused),
             "refused"
         );
-        assert_eq!(
-            acip_status_name(&AcipInvocationStatusV1::Failed),
-            "failed"
-        );
+        assert_eq!(acip_status_name(&AcipInvocationStatusV1::Failed), "failed");
         assert_eq!(
             acip_status_name(&AcipInvocationStatusV1::Partial),
             "partial"
@@ -1358,8 +1360,12 @@ mod tests {
             ]
         });
 
-        let proof =
-            build_proof_packet(&runtime_packet, &acip_packet, &obsmem_request, &evidence_index);
+        let proof = build_proof_packet(
+            &runtime_packet,
+            &acip_packet,
+            &obsmem_request,
+            &evidence_index,
+        );
         assert_eq!(proof["issue"], 4546);
         assert_eq!(proof["status_summary"]["acip_positive_status"], "delivered");
         assert_eq!(proof["status_summary"]["acip_denied_status"], "refused");

@@ -5618,12 +5618,13 @@ mod tests {
         let requested_paths = "adl/Cargo.toml,adl/Cargo.lock";
 
         let err = select_finish_validation_plan_for_finish(4546, requested_paths, &changed_paths)
-            .expect_err("cargo-only runtime slice without an explicit bound lane should fail closed");
+            .expect_err(
+                "cargo-only runtime slice without an explicit bound lane should fail closed",
+            );
 
-        assert!(
-            err.to_string()
-                .contains("selector left changed paths without validation-lane coverage")
-        );
+        assert!(err
+            .to_string()
+            .contains("selector left changed paths without validation-lane coverage"));
     }
 
     #[test]
@@ -5634,16 +5635,14 @@ mod tests {
         let plan = select_finish_validation_plan_for_finish(4178, requested_paths, &changed_paths)
             .expect("issue 4178 manifest-only exception should stay on the tokio validation lane");
 
-        assert!(
-            plan.commands
-                .iter()
-                .any(|cmd| cmd.contains("cargo test --manifest-path adl/Cargo.toml pr_cmd::github"))
-        );
-        assert!(
-            plan.commands
-                .iter()
-                .any(|cmd| cmd.contains("cargo test --manifest-path adl/Cargo.toml long_lived_agent"))
-        );
+        assert!(plan
+            .commands
+            .iter()
+            .any(|cmd| cmd.contains("cargo test --manifest-path adl/Cargo.toml pr_cmd::github")));
+        assert!(plan
+            .commands
+            .iter()
+            .any(|cmd| cmd.contains("cargo test --manifest-path adl/Cargo.toml long_lived_agent")));
     }
 
     #[test]
