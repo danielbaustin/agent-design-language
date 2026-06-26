@@ -447,7 +447,7 @@ TOKEN_MAP = {
     "scheduler_cli": 'test(/^cli::scheduler_cmd::tests::/) or test(/^cli::tests::runtime_dispatch_exposes_help_and_version_without_csdlc_dispatch$/) or test(/^cli::tests::open_usage::usage_mentions_v0_4_and_legacy_examples$/)',
     "demo_adl_gws_context_mirror": 'binary_id(adl::bin/demo-adl-gws-context-mirror) and test(/^tests::/)',
     "demo_adl_gws_native_drive_sync": 'binary_id(adl::bin/demo-adl-gws-native-drive-sync) and test(/^tests::/)',
-    "run_v0916_integrated_runtime_soak": 'binary_id(adl::bin/run-v0916-integrated-runtime-soak) and test(/^tests::/)',
+    "run_v0916_integrated_runtime_soak": 'binary_id(adl::bin/run_v0916_integrated_runtime_soak) and test(/^tests::/)',
     "tokio_bootstrap": 'test(/^cli::pr_cmd::github::/) or test(/^cli::pr_cmd::github_client::/) or test(/^cli::tooling_cmd::github_release::/)',
     "pr_cmd": 'binary_id(adl::bin/adl) and test(/^cli::pr_cmd::/)',
     "pr_cmd_finish": 'binary_id(adl::bin/adl-pr-finish) and test(/^cli::pr_cmd::tests::finish::arg_render::/) or binary_id(adl::bin/adl-pr-finish) and test(/^cli::pr_cmd::finish_support::tests::/)',

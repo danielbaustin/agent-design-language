@@ -149,7 +149,7 @@ scheduler_cli_wave_output="$(bash "$SCRIPT" --changed-files "$scheduler_cli_wave
 assert_has "$scheduler_cli_wave_output" "mode=focused"
 assert_has "$scheduler_cli_wave_output" "reason=bounded_rust_surface_runs_focused_nextest"
 assert_has "$scheduler_cli_wave_output" "filter_tokens=run_v0916_integrated_runtime_soak,scheduler_cli"
-assert_has "$scheduler_cli_wave_output" "filter_expression=binary_id(adl::bin/run-v0916-integrated-runtime-soak) and test(/^tests::/) or test(/^cli::scheduler_cmd::tests::/) or test(/^cli::tests::runtime_dispatch_exposes_help_and_version_without_csdlc_dispatch$/) or test(/^cli::tests::open_usage::usage_mentions_v0_4_and_legacy_examples$/)"
+assert_has "$scheduler_cli_wave_output" "filter_expression=binary_id(adl::bin/run_v0916_integrated_runtime_soak) and test(/^tests::/) or test(/^cli::scheduler_cmd::tests::/) or test(/^cli::tests::runtime_dispatch_exposes_help_and_version_without_csdlc_dispatch$/) or test(/^cli::tests::open_usage::usage_mentions_v0_4_and_legacy_examples$/)"
 
 tokio_bootstrap_wave="$TMP/tokio_bootstrap_wave.txt"
 cat >"$tokio_bootstrap_wave" <<'EOF'
