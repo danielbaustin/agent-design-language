@@ -25,6 +25,11 @@ implementation proof.
 - `deferred`: explicitly outside `v0.92` activation scope;
 - `routed`: owned by a named follow-on issue or milestone.
 
+For product/runtime surfaces inherited from `v0.91.6`, `doc-ready` is not
+runtime completion. Those surfaces require an explicit completion class from
+[`../v0.91.6/OPERATIONAL_COMPLETION_GATE_v0.91.6.md`](../v0.91.6/OPERATIONAL_COMPLETION_GATE_v0.91.6.md),
+and only `integrated_proven` counts as operational completion.
+
 ## Surface Dispositions
 
 | Surface | Handoff state | v0.92 consumption limit | Source doc |
@@ -44,6 +49,7 @@ implementation proof.
 
 | Surface | Required state before v0.92 |
 | --- | --- |
+| Product and runtime completion truth | `v0.91.6` product/runtime surfaces must carry an explicit operational completion class. `doc-ready`, `seam_ready`, `mock_proven`, `component_proven`, `local_slice_proven`, and `demo_scaffold` remain prerequisite evidence only; `v0.92` may treat a surface as operationally complete only when `integrated_proven` evidence is recorded or a blocker, defer, or route is named plainly. |
 | C-SDLC integration control plane | v0.91.6 `#4388`-`#4398`, `#4405`, `#4412`-`#4413`, `#4417`-`#4421` plus `#4425`, `#4433`-`#4438`, and `#4443` / SEP / VPP / PVF / templates / GitHub-octocrab convergence / session ledger / logging / watcher-lifecycle automation / operational adoption / shepherding / FastContext complete, blocked, deferred, or routed with clear sprint-execution consequences. |
 | Goal and metrics accounting | Time/token/resource, nested-goal, forward capture `#4431`, v0.91.6-only backfill `#4441`, and host goal snapshot `#4442` route explicit enough for v0.92 issue planning. |
 | Scheduler/provider/local agents | Routing policy and suitability path explicit enough to protect premium cognition. |
