@@ -4499,6 +4499,13 @@ pub(super) fn run_finish_validation_rust(
                     let script = repo_root.join("adl/tools/test_sprint_conductor_helpers.sh");
                     run_finish_validation_status("bash", &[path_str(&script)?])?;
                 }
+                "bash adl/tools/test_sprint_conductor_helpers.sh && bash adl/tools/test_install_adl_operational_skills.sh" => {
+                    let sprint_helpers = repo_root.join("adl/tools/test_sprint_conductor_helpers.sh");
+                    let install_helpers =
+                        repo_root.join("adl/tools/test_install_adl_operational_skills.sh");
+                    run_finish_validation_status("bash", &[path_str(&sprint_helpers)?])?;
+                    run_finish_validation_status("bash", &[path_str(&install_helpers)?])?;
+                }
                 other => bail!("finish: unsupported focused validation command '{other}'"),
             }
         }
