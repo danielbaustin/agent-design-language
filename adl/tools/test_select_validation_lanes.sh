@@ -445,4 +445,31 @@ assert lane["proof_role"] == "demo_contract"
 assert lane["owner"] == "review"
 PY
 
+unity_observatory="$TMP/unity-observatory.txt"
+cat >"$unity_observatory" <<'EOF'
+M	adl/tools/test_v0916_unity_observatory_contract.sh
+M	adl/tools/test_v0916_unity_observatory_unity65_smoke.sh
+M	demos/v0.91.6/unity-observatory/Assets/Resources/observatory_contract.json
+M	demos/v0.91.6/unity-observatory/Assets/Scripts/UnityObservatoryBootstrap.cs
+EOF
+bash "$SCRIPT" --changed-files "$unity_observatory" --json >"$TMP/unity-observatory.json"
+python3 - <<'PY' "$TMP/unity-observatory.json"
+import json
+import sys
+
+profile = json.load(open(sys.argv[1]))
+assert profile["schema_version"] == "adl.validation_lane_plan.v1"
+assert profile["aggregate_status"] == "selected"
+assert profile["pr_publication_sufficient"] is True
+assert set(profile["lanes"].keys()) == {"unity_observatory_contract_surface"}
+lane = profile["lanes"]["unity_observatory_contract_surface"]
+assert lane["status"] == "selected"
+assert lane["proof_role"] == "demo_contract"
+assert lane["owner"] == "review"
+assert "bash -n adl/tools/test_v0916_unity_observatory_unity65_smoke.sh" in lane["command"]
+assert "test_v0916_unity_observatory_baseline.sh" in lane["command"]
+assert "test_v0916_unity_observatory_contract.sh" in lane["command"]
+assert "csm_observatory_cli_writes_unity_contract_bundle" in lane["command"]
+PY
+
 echo "PASS test_select_validation_lanes"

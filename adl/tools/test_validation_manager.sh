@@ -64,6 +64,36 @@ assert surface["resource_class"] == "small"
 assert profile["validation_dag"]["nodes"][0]["proof_role"] == "ci_contract"
 PY
 
+unity_observatory="$TMP/unity-observatory.txt"
+cat >"$unity_observatory" <<'EOF'
+M	demos/v0.91.6/unity-observatory/Assets/Resources/observatory_contract.json
+M	demos/v0.91.6/unity-observatory/Assets/Scripts/UnityObservatoryBootstrap.cs
+M	adl/tools/test_v0916_unity_observatory_unity65_smoke.sh
+EOF
+bash "$SCRIPT" --changed-files "$unity_observatory" --json >"$TMP/unity-observatory.json"
+python3 - <<'PY' "$TMP/unity-observatory.json"
+import json
+import sys
+
+profile = json.load(open(sys.argv[1]))
+assert profile["schema_version"] == "adl.validation_profile.v1"
+assert profile["selected_profile"] == "unity_observatory_contract_surface_profile"
+assert profile["status"] == "ready_to_run"
+assert profile["pr_publication_sufficient"] is True
+assert [item["lane_id"] for item in profile["run"]] == ["unity_observatory_contract_surface"]
+surface = profile["behavior_surfaces"][0]
+assert surface["id"] == "demo_contract_unity_observatory_contract_surface"
+assert surface["owner"] == "review"
+assert surface["proof_role"] == "demo_contract"
+assert surface["resource_class"] == "small"
+assert "bash -n adl/tools/test_v0916_unity_observatory_unity65_smoke.sh" in profile["run"][0]["command"]
+assert "test_v0916_unity_observatory_baseline.sh" in profile["run"][0]["command"]
+assert "test_v0916_unity_observatory_contract.sh" in profile["run"][0]["command"]
+assert "csm_observatory_cli_writes_unity_contract_bundle" in profile["run"][0]["command"]
+assert profile["diagnostics"] == []
+assert profile["escalation"]["required"] is False
+PY
+
 runtime="$TMP/runtime.txt"
 printf 'M\tadl/src/runtime_v2/contract_schema.rs\n' >"$runtime"
 bash "$SCRIPT" --changed-files "$runtime" --json >"$TMP/runtime.json"

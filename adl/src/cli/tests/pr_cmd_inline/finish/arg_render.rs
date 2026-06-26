@@ -2689,8 +2689,8 @@ fn finish_validation_profile_does_not_treat_behavioral_tooling_as_docs_only() {
 }
 
 #[test]
-fn finish_validation_profile_classifies_unity_observatory_guardrail_script_as_small_binary_focused()
-{
+fn finish_validation_profile_classifies_unity_observatory_guardrail_script_as_larger_binary_focused(
+) {
     let plan = select_finish_validation_plan_for_finish(
         4030,
         ".",
@@ -2701,7 +2701,7 @@ fn finish_validation_profile_classifies_unity_observatory_guardrail_script_as_sm
     )
     .expect("unity observatory guardrail plan");
 
-    assert_eq!(plan.mode, FinishValidationMode::SmallBinaryFocused);
+    assert_eq!(plan.mode, FinishValidationMode::LargerBinaryFocused);
     assert!(plan
         .commands
         .contains(&"bash adl/tools/check_no_tracked_adl_issue_record_residue.sh".to_string()));
@@ -2709,7 +2709,8 @@ fn finish_validation_profile_classifies_unity_observatory_guardrail_script_as_sm
 }
 
 #[test]
-fn finish_validation_profile_classifies_unity_observatory_scaffold_slice_as_small_binary_focused() {
+fn finish_validation_profile_classifies_unity_observatory_scaffold_slice_as_larger_binary_focused()
+{
     let plan = select_finish_validation_plan_for_finish(
         4031,
         ".",
@@ -2722,32 +2723,44 @@ fn finish_validation_profile_classifies_unity_observatory_scaffold_slice_as_smal
     )
     .expect("unity observatory scaffold plan");
 
-    assert_eq!(plan.mode, FinishValidationMode::SmallBinaryFocused);
+    assert_eq!(plan.mode, FinishValidationMode::LargerBinaryFocused);
     assert!(plan
         .commands
         .contains(&"bash adl/tools/check_no_tracked_adl_issue_record_residue.sh".to_string()));
     assert!(plan.commands.contains(&"git diff --check".to_string()));
     assert!(plan
         .commands
-        .contains(&"bash adl/tools/test_v0916_unity_observatory_baseline.sh".to_string()));
+        .iter()
+        .any(|command| command.contains("test_v0916_unity_observatory_contract.sh")));
 }
 
 #[test]
-fn finish_validation_profile_keeps_unity_observatory_scaffold_lane_issue_local() {
-    let err = select_finish_validation_plan_for_finish(
+fn finish_validation_profile_covers_unity_observatory_scaffold_lane_from_manifest() {
+    let plan = select_finish_validation_plan_for_finish(
         4032,
         ".",
         &["demos/v0.91.6/unity-observatory/Assets/Scenes/UnityObservatory.unity".to_string()],
     )
-    .expect_err("future observatory issue should fail closed until it declares its own lane");
+    .expect("unity observatory scaffold path should be manifest-covered");
 
-    assert!(err
-        .to_string()
-        .contains("selector left changed paths without validation-lane coverage"));
+    assert_eq!(plan.mode, FinishValidationMode::LargerBinaryFocused);
+    assert!(plan
+        .commands
+        .contains(&"bash adl/tools/check_no_tracked_adl_issue_record_residue.sh".to_string()));
+    assert!(plan.commands.contains(&"git diff --check".to_string()));
+    assert!(plan
+        .commands
+        .iter()
+        .any(|command| command.contains("test_v0916_unity_observatory_contract.sh")));
+    assert!(plan
+        .commands
+        .iter()
+        .any(|command| command.contains("csm_observatory_cli_writes_unity_contract_bundle")));
 }
 
 #[test]
-fn finish_validation_profile_classifies_unity_observatory_contract_slice_as_small_binary_focused() {
+fn finish_validation_profile_classifies_unity_observatory_contract_slice_as_larger_binary_focused()
+{
     let plan = select_finish_validation_plan_for_finish(
         4032,
         ".",
@@ -2761,16 +2774,27 @@ fn finish_validation_profile_classifies_unity_observatory_contract_slice_as_smal
     )
     .expect("unity observatory contract plan");
 
-    assert_eq!(plan.mode, FinishValidationMode::SmallBinaryFocused);
+    assert_eq!(plan.mode, FinishValidationMode::LargerBinaryFocused);
     assert!(plan
         .commands
-        .contains(&"bash adl/tools/test_v0916_unity_observatory_contract.sh".to_string()));
+        .iter()
+        .any(|command| command.contains("test_v0916_unity_observatory_unity65_smoke.sh")));
+    assert!(plan
+        .commands
+        .iter()
+        .any(|command| command.contains("test_v0916_unity_observatory_baseline.sh")));
+    assert!(plan
+        .commands
+        .iter()
+        .any(|command| command.contains("test_v0916_unity_observatory_contract.sh")));
     assert!(plan.commands.iter().any(|command| command
         .contains("csm_observatory_cli_writes_unity_contract_bundle_and_matches_seeded_resource")));
+    assert!(!plan.commands.iter().any(|command| command
+        .contains("finish_validation_profile_classifies_unity_observatory_contract_slice")));
 }
 
 #[test]
-fn finish_validation_profile_classifies_inhabitant_readiness_slice_as_small_binary_focused() {
+fn finish_validation_profile_classifies_inhabitant_readiness_slice_as_larger_binary_focused() {
     let plan = select_finish_validation_plan_for_finish(
         4033,
         ".",
@@ -2784,16 +2808,17 @@ fn finish_validation_profile_classifies_inhabitant_readiness_slice_as_small_bina
     )
     .expect("unity observatory inhabitant-readiness plan");
 
-    assert_eq!(plan.mode, FinishValidationMode::SmallBinaryFocused);
+    assert_eq!(plan.mode, FinishValidationMode::LargerBinaryFocused);
     assert!(plan
         .commands
-        .contains(&"bash adl/tools/test_v0916_unity_observatory_contract.sh".to_string()));
+        .iter()
+        .any(|command| command.contains("test_v0916_unity_observatory_contract.sh")));
     assert!(plan.commands.iter().any(|command| command
         .contains("csm_observatory_cli_writes_unity_contract_bundle_and_matches_seeded_resource")));
 }
 
 #[test]
-fn finish_validation_profile_classifies_observability_consumption_slice_as_small_binary_focused() {
+fn finish_validation_profile_classifies_observability_consumption_slice_as_larger_binary_focused() {
     let plan = select_finish_validation_plan_for_finish(
         4034,
         ".",
@@ -2807,16 +2832,17 @@ fn finish_validation_profile_classifies_observability_consumption_slice_as_small
     )
     .expect("unity observatory observability-consumption plan");
 
-    assert_eq!(plan.mode, FinishValidationMode::SmallBinaryFocused);
+    assert_eq!(plan.mode, FinishValidationMode::LargerBinaryFocused);
     assert!(plan
         .commands
-        .contains(&"bash adl/tools/test_v0916_unity_observatory_contract.sh".to_string()));
+        .iter()
+        .any(|command| command.contains("test_v0916_unity_observatory_contract.sh")));
     assert!(plan.commands.iter().any(|command| command
         .contains("csm_observatory_cli_writes_unity_contract_bundle_and_matches_seeded_resource")));
 }
 
 #[test]
-fn finish_validation_profile_classifies_unity_observatory_repair_slice_as_small_binary_focused() {
+fn finish_validation_profile_classifies_unity_observatory_repair_slice_as_larger_binary_focused() {
     let plan = select_finish_validation_plan_for_finish(
         4416,
         ".",
@@ -2832,10 +2858,11 @@ fn finish_validation_profile_classifies_unity_observatory_repair_slice_as_small_
     )
     .expect("unity observatory repair plan");
 
-    assert_eq!(plan.mode, FinishValidationMode::SmallBinaryFocused);
+    assert_eq!(plan.mode, FinishValidationMode::LargerBinaryFocused);
     assert!(plan
         .commands
-        .contains(&"bash adl/tools/test_v0916_unity_observatory_contract.sh".to_string()));
+        .iter()
+        .any(|command| command.contains("test_v0916_unity_observatory_contract.sh")));
     assert!(plan.commands.iter().any(|command| command
         .contains("csm_observatory_cli_writes_unity_contract_bundle_and_matches_seeded_resource")));
 }

@@ -220,6 +220,35 @@
       "reason": "portable_html_observatory_surface_requires_governed_demo_smoke"
     },
     {
+      "id": "unity_observatory_contract_surface",
+      "lane_class": "cli_workflow",
+      "default_surface": "tooling",
+      "owner": "review",
+      "proof_role": "demo_contract",
+      "requirement_ids": [
+        "unity_observatory_contract_surface"
+      ],
+      "path_selectors": [
+        "adl/tools/test_v0916_unity_observatory_baseline.sh",
+        "adl/tools/test_v0916_unity_observatory_contract.sh",
+        "adl/tools/test_v0916_unity_observatory_unity65_smoke.sh",
+        "demos/v0.91.6/unity-observatory/Assets/**",
+        "demos/v0.91.6/unity-observatory/Packages/**",
+        "demos/v0.91.6/unity-observatory/ProjectSettings/**"
+      ],
+      "path_hints": [
+        "adl/tools/test_v0916_unity_observatory_baseline.sh",
+        "adl/tools/test_v0916_unity_observatory_contract.sh",
+        "adl/tools/test_v0916_unity_observatory_unity65_smoke.sh",
+        "demos/v0.91.6/unity-observatory/Assets/**",
+        "demos/v0.91.6/unity-observatory/Packages/**",
+        "demos/v0.91.6/unity-observatory/ProjectSettings/**"
+      ],
+      "command": "bash -n adl/tools/test_v0916_unity_observatory_unity65_smoke.sh && bash adl/tools/test_v0916_unity_observatory_baseline.sh && bash adl/tools/test_v0916_unity_observatory_contract.sh && cargo test --manifest-path adl/Cargo.toml --test cli_smoke csm_observatory_cli_writes_unity_contract_bundle_and_matches_seeded_resource -- --nocapture",
+      "run_command": "bash -n adl/tools/test_v0916_unity_observatory_unity65_smoke.sh && bash adl/tools/test_v0916_unity_observatory_baseline.sh && bash adl/tools/test_v0916_unity_observatory_contract.sh && cargo test --manifest-path adl/Cargo.toml --test cli_smoke csm_observatory_cli_writes_unity_contract_bundle_and_matches_seeded_resource -- --nocapture",
+      "reason": "unity_observatory_surface_requires_contract_and_csm_smoke"
+    },
+    {
       "id": "csdlc_owner_lane",
       "lane_class": "cli_workflow",
       "default_surface": "tooling",
