@@ -36,6 +36,9 @@ use crate::cli::pr_cmd_validate::{
 };
 use ::adl::control_plane::{resolve_cards_root, sanitize_slug, IssueRef};
 
+const FINISH_VALIDATION_SELECTOR_MANIFEST: &str =
+    "adl/config/validation_lane_selector.v0.91.6.json";
+
 pub(super) fn real_pr_finish(args: &[String]) -> Result<()> {
     let parsed = parse_finish_args(args)?;
     let repo_root = repo_root()?;
@@ -123,11 +126,18 @@ pub(super) fn real_pr_finish(args: &[String]) -> Result<()> {
         issue_ref.scope(),
         &validation_changed_paths,
     )?;
-    let finish_validation_plan = select_finish_validation_plan_for_finish(
-        parsed.issue,
-        &parsed.paths,
-        &validation_changed_paths,
-    )?;
+    let finish_validation_plan = if parsed.no_checks {
+        FinishValidationPlan {
+            mode: FinishValidationMode::DocsOnly,
+            commands: Vec::new(),
+        }
+    } else {
+        select_finish_validation_plan_for_finish(
+            parsed.issue,
+            &parsed.paths,
+            &validation_changed_paths,
+        )?
+    };
     let finish_validation_profile = if parsed.no_checks {
         None
     } else {
@@ -2268,11 +2278,17 @@ pub(super) fn select_finish_validation_plan_for_finish(
     let changed_paths_need_finish_rust_validation = changed_paths
         .iter()
         .any(|path| finish_path_needs_pr_finish_rust_focused_validation(path));
+    let repo_root = repo_root()?;
     let finish_profile_result =
-        load_finish_validation_profile_for_execution(&repo_root()?, changed_paths);
+        load_finish_validation_profile_for_execution(&repo_root, changed_paths);
     if !changed_paths_need_finish_rust_validation {
         if let Ok(finish_profile) = &finish_profile_result {
             if let Some(plan) = profile_backed_finish_validation_plan(finish_profile) {
+                ensure_finish_validation_profile_is_runnable(
+                    &repo_root,
+                    finish_profile,
+                    changed_paths,
+                )?;
                 return Ok(plan);
             }
         }
@@ -2293,15 +2309,39 @@ pub(super) fn select_finish_validation_plan_for_finish(
     }
     let finish_profile = finish_profile_result?;
     if let Some(plan) = profile_backed_finish_validation_plan(&finish_profile) {
+        ensure_finish_validation_profile_is_runnable(&repo_root, &finish_profile, changed_paths)?;
         return Ok(plan);
+    }
+    if !finish_validation_profile_allows_legacy_fallback(&finish_profile, changed_paths) {
+        ensure_finish_validation_profile_is_runnable(&repo_root, &finish_profile, changed_paths)?;
     }
     match select_finish_validation_plan(&changed_paths.join(",")) {
         Ok(plan) => Ok(plan),
         Err(legacy_err) => {
-            ensure_finish_validation_profile_is_runnable(&finish_profile, changed_paths)?;
+            ensure_finish_validation_profile_is_runnable(
+                &repo_root,
+                &finish_profile,
+                changed_paths,
+            )?;
             Err(legacy_err)
         }
     }
+}
+
+fn finish_validation_profile_allows_legacy_fallback(
+    profile: &FinishValidationProfile,
+    changed_paths: &[String],
+) -> bool {
+    profile.escalation.required
+        && !changed_paths.is_empty()
+        && changed_paths
+            .iter()
+            .all(|path| finish_path_is_docs_only(path))
+        && profile
+            .escalation
+            .reasons
+            .iter()
+            .all(|reason| reason.lane_id == "unmapped_change_surface")
 }
 
 fn profile_backed_finish_validation_plan(
@@ -2333,6 +2373,7 @@ fn profile_backed_finish_validation_mode(
     if profile.run.iter().any(|item| {
         item.lane_id == "rust_pr_fast"
             || item.lane_id.contains("owner_lane")
+            || item.lane_id == "unity_observatory_contract_surface"
             || item.command.contains("run_owner_validation_lane.sh")
             || item.command.contains("run_pr_fast_test_lane.sh")
             || item
@@ -2344,7 +2385,8 @@ fn profile_backed_finish_validation_mode(
     FinishValidationMode::SmallBinaryFocused
 }
 
-fn ensure_finish_validation_profile_is_runnable(
+pub(super) fn ensure_finish_validation_profile_is_runnable(
+    repo_root: &Path,
     profile: &FinishValidationProfile,
     changed_paths: &[String],
 ) -> Result<()> {
@@ -2352,6 +2394,9 @@ fn ensure_finish_validation_profile_is_runnable(
         && profile.pr_publication_sufficient
         && !profile.escalation.required
     {
+        for item in &profile.run {
+            ensure_finish_validation_command_supported(repo_root, &item.command)?;
+        }
         return Ok(());
     }
     let changed = if changed_paths.is_empty() {
@@ -2391,6 +2436,227 @@ fn ensure_finish_validation_profile_is_runnable(
         details.push("validation manager selected no runnable lanes".to_string());
     }
     bail!("{}", details.join("; "))
+}
+
+fn registered_validation_run_commands(repo_root: &Path) -> Result<BTreeSet<String>> {
+    let manifest_path = repo_root.join(FINISH_VALIDATION_SELECTOR_MANIFEST);
+    let payload = fs::read_to_string(&manifest_path).with_context(|| {
+        format!(
+            "finish: failed to read validation selector manifest '{}'",
+            manifest_path.display()
+        )
+    })?;
+    let manifest: serde_json::Value = serde_json::from_str(&payload).with_context(|| {
+        format!(
+            "finish: validation selector manifest '{}' is not valid JSON",
+            manifest_path.display()
+        )
+    })?;
+    let lanes = manifest
+        .get("lanes")
+        .and_then(|value| value.as_array())
+        .ok_or_else(|| {
+            anyhow::anyhow!(
+                "finish: validation selector manifest '{}' does not expose a lanes array",
+                manifest_path.display()
+            )
+        })?;
+    let mut commands = BTreeSet::new();
+    for lane in lanes {
+        let command = lane
+            .get("run_command")
+            .or_else(|| lane.get("command"))
+            .and_then(|value| value.as_str())
+            .unwrap_or("")
+            .trim();
+        if !command.is_empty() {
+            commands.insert(command.to_string());
+        }
+    }
+    Ok(commands)
+}
+
+fn command_is_registered_validation_run_command(repo_root: &Path, command: &str) -> Result<bool> {
+    Ok(registered_validation_run_commands(repo_root)?.contains(command))
+}
+
+fn ensure_finish_validation_command_supported(repo_root: &Path, command: &str) -> Result<()> {
+    if command == "git diff --check" {
+        return Ok(());
+    }
+    if command.starts_with("bash adl/tools/run_pr_fast_test_lane.sh --changed-files ") {
+        manager_backed_pr_fast_changed_files_arg(command)?;
+        return Ok(());
+    }
+    if !repo_root
+        .join(FINISH_VALIDATION_SELECTOR_MANIFEST)
+        .is_file()
+        && registered_validation_command_supported(command)
+    {
+        return Ok(());
+    }
+    if command_is_registered_validation_run_command(repo_root, command)?
+        && registered_validation_command_supported(command)
+    {
+        return Ok(());
+    }
+    bail!(
+        "finish: selected validation lane cannot be published by finish yet: '{}'",
+        sanitize_validation_profile_command(command)
+    );
+}
+
+fn registered_validation_command_supported(command: &str) -> bool {
+    split_registered_validation_sequence(command)
+        .into_iter()
+        .all(registered_validation_atom_supported)
+}
+
+fn split_registered_validation_sequence(command: &str) -> Vec<&str> {
+    command
+        .split("&&")
+        .map(str::trim)
+        .filter(|item| !item.is_empty())
+        .collect()
+}
+
+fn registered_validation_atom_supported(command: &str) -> bool {
+    if command == "git diff --check" {
+        return true;
+    }
+    if command.starts_with("bash adl/tools/run_pr_fast_test_lane.sh --changed-files ") {
+        return manager_backed_pr_fast_changed_files_arg(command).is_ok();
+    }
+    let parts = command.split_whitespace().collect::<Vec<_>>();
+    match parts.as_slice() {
+        ["bash", script] => matches!(
+            *script,
+            "adl/tools/test_prompt_template_workflow_integration.sh"
+                | "adl/tools/test_run_pvf_validation_lane.sh"
+                | "adl/tools/test_pvf_ci_release_policy.sh"
+                | "adl/tools/test_ci_path_policy.sh"
+                | "adl/tools/test_select_validation_lanes.sh"
+                | "adl/tools/test_validation_manager.sh"
+                | "adl/tools/test_run_nessus_remote_validation.sh"
+                | "adl/tools/test_check_coverage_impact.sh"
+                | "adl/tools/test_demo_v0904_csm_observatory_governed_prototype.sh"
+                | "adl/tools/test_v0916_unity_observatory_baseline.sh"
+                | "adl/tools/test_v0916_unity_observatory_contract.sh"
+                | "adl/tools/test_v0916_unity_observatory_soak_integration.sh"
+                | "adl/tools/test_sprint_conductor_helpers.sh"
+                | "adl/tools/test_install_adl_operational_skills.sh"
+        ),
+        ["bash", "-n", script] => matches!(
+            *script,
+            "adl/tools/polis_status_for_ssm.sh"
+                | "adl/tools/polis_status_for_ssm_qts.sh"
+                | "adl/tools/test_v0916_unity_observatory_unity65_smoke.sh"
+        ),
+        ["bash", "adl/tools/run_owner_validation_lane.sh", lane] => {
+            matches!(*lane, "csdlc" | "runtime" | "review")
+        }
+        ["python3", script] => matches!(
+            *script,
+            "adl/tools/validate_polis_status_for_ssm_qts.py"
+                | "adl/tools/validate_polis_status_for_ssm_windows.py"
+        ),
+        ["python3", script, ..] => matches!(
+            *script,
+            "adl/tools/validate_polis_status_for_ssm_qts.py"
+                | "adl/tools/validate_polis_status_for_ssm_windows.py"
+        ),
+        ["cargo", "test", "--manifest-path", "adl/Cargo.toml", "--test", "cli_smoke", "csm_observatory_cli_writes_unity_contract_bundle_and_matches_seeded_resource", "--", "--nocapture"] => {
+            true
+        }
+        _ => false,
+    }
+}
+
+fn execute_registered_validation_command(repo_root: &Path, command: &str) -> Result<bool> {
+    if command == "git diff --check"
+        || !repo_root
+            .join(FINISH_VALIDATION_SELECTOR_MANIFEST)
+            .is_file()
+        || !command_is_registered_validation_run_command(repo_root, command)?
+    {
+        return Ok(false);
+    }
+    ensure_finish_validation_command_supported(repo_root, command)?;
+    for atom in split_registered_validation_sequence(command) {
+        execute_registered_validation_atom(repo_root, atom)?;
+    }
+    Ok(true)
+}
+
+fn execute_registered_validation_atom(repo_root: &Path, command: &str) -> Result<()> {
+    if command == "git diff --check" {
+        return Ok(());
+    }
+    if command.starts_with("bash adl/tools/run_pr_fast_test_lane.sh --changed-files ") {
+        let changed_files = manager_backed_pr_fast_changed_files_arg(command)?;
+        let script = repo_root.join("adl/tools/run_pr_fast_test_lane.sh");
+        let result = run_finish_validation_status(
+            "bash",
+            &[path_str(&script)?, "--changed-files", &changed_files],
+        );
+        let _ = fs::remove_file(&changed_files);
+        return result;
+    }
+    let parts = command.split_whitespace().collect::<Vec<_>>();
+    match parts.as_slice() {
+        ["bash", script] => {
+            let script = repo_root.join(script);
+            run_finish_validation_status("bash", &[path_str(&script)?])
+        }
+        ["bash", "-n", script] => {
+            let script = repo_root.join(script);
+            run_finish_validation_status("bash", &["-n", path_str(&script)?])
+        }
+        ["bash", script, args @ ..] => {
+            let script = repo_root.join(script);
+            let mut owned = vec![path_str(&script)?.to_string()];
+            for arg in args {
+                owned.push(finish_registered_validation_arg(repo_root, arg)?);
+            }
+            let refs = owned.iter().map(String::as_str).collect::<Vec<_>>();
+            run_finish_validation_status("bash", &refs)
+        }
+        ["python3", script] => {
+            let script = repo_root.join(script);
+            run_finish_validation_status("python3", &[path_str(&script)?])
+        }
+        ["python3", script, args @ ..] => {
+            let script = repo_root.join(script);
+            let mut owned = vec![path_str(&script)?.to_string()];
+            for arg in args {
+                owned.push(finish_registered_validation_arg(repo_root, arg)?);
+            }
+            let refs = owned.iter().map(String::as_str).collect::<Vec<_>>();
+            run_finish_validation_status("python3", &refs)
+        }
+        ["cargo", "test", manifest_flag, manifest_path, args @ ..]
+            if *manifest_flag == "--manifest-path" =>
+        {
+            let mut owned = vec![
+                "test".to_string(),
+                (*manifest_flag).to_string(),
+                finish_registered_validation_arg(repo_root, manifest_path)?,
+            ];
+            for arg in args {
+                owned.push(finish_registered_validation_arg(repo_root, arg)?);
+            }
+            let refs = owned.iter().map(String::as_str).collect::<Vec<_>>();
+            run_finish_validation_status("cargo", &refs)
+        }
+        _ => bail!("finish: unsupported registered validation command '{command}'"),
+    }
+}
+
+fn finish_registered_validation_arg(repo_root: &Path, arg: &str) -> Result<String> {
+    if arg.starts_with("adl/") || arg.starts_with("docs/") || arg.starts_with("infra/") {
+        return Ok(path_str(&repo_root.join(arg))?.to_string());
+    }
+    Ok(arg.to_string())
 }
 
 fn finish_paths_are_version_metadata_update(changed_paths: &[String]) -> bool {
@@ -3650,6 +3916,9 @@ pub(super) fn run_finish_validation_rust(
         run_finish_validation_status("git", &["-C", path_str(repo_root)?, "diff", "--check"])?;
         let manifest = repo_root.join("adl/Cargo.toml");
         for command in &plan.commands {
+            if execute_registered_validation_command(repo_root, command)? {
+                continue;
+            }
             match command.as_str() {
                 "bash adl/tools/check_no_tracked_adl_issue_record_residue.sh" => {}
                 "git diff --check" => {}

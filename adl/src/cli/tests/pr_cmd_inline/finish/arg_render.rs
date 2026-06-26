@@ -1,8 +1,9 @@
 use super::*;
 use crate::cli::pr_cmd::finish_support::{
     ensure_finish_branch_not_behind_origin_main, ensure_finish_task_bundle_surfaces,
-    ensure_no_staged_issue_bundle_mutations, extra_pr_body_looks_like_issue_template,
-    extract_markdown_section, finish_declared_paths_for_validation, finish_inputs_fingerprint,
+    ensure_finish_validation_profile_is_runnable, ensure_no_staged_issue_bundle_mutations,
+    extra_pr_body_looks_like_issue_template, extract_markdown_section,
+    finish_declared_paths_for_validation, finish_inputs_fingerprint,
     issue_bundle_issue_number_from_repo_relative, load_finish_validation_profile,
     load_finish_validation_profile_for_execution, non_closing_lifecycle_line,
     normalize_docs_only_sor_text, normalize_sor_emitted_facts_fixture, open_pr_url_nonblocking,
@@ -1522,9 +1523,18 @@ fn load_finish_validation_profile_cleans_tempfile_on_invalid_manager_json() {
     assert!(err
         .to_string()
         .contains("validation manager returned invalid profile JSON"));
+    let retained_manifests = fs::read_dir(&tmpdir)
+        .expect("read temp dir")
+        .filter_map(|entry| entry.ok())
+        .filter(|entry| {
+            entry
+                .file_name()
+                .to_string_lossy()
+                .starts_with("finish-validation-profile-")
+        })
+        .count();
     assert_eq!(
-        fs::read_dir(&tmpdir).expect("read temp dir").count(),
-        0,
+        retained_manifests, 0,
         "temporary changed-file manifests should be cleaned up on parse failure"
     );
 }
@@ -1591,9 +1601,18 @@ print(json.dumps({{
     assert!(err
         .to_string()
         .contains("expected ADL-created retained manifest"));
+    let retained_manifests = fs::read_dir(&tmpdir)
+        .expect("read temp dir")
+        .filter_map(|entry| entry.ok())
+        .filter(|entry| {
+            entry
+                .file_name()
+                .to_string_lossy()
+                .starts_with("finish-validation-profile-")
+        })
+        .count();
     assert_eq!(
-        fs::read_dir(&tmpdir).expect("read temp dir").count(),
-        0,
+        retained_manifests, 0,
         "real retained tempfile should be cleaned when manager substitutes the changed-file path"
     );
 }
@@ -1657,10 +1676,12 @@ print(json.dumps({
                 .to_string_lossy()
                 .starts_with("finish-validation-profile-")
         })
+        .filter_map(|entry| fs::read_to_string(entry.path()).ok())
+        .filter(|body| body.contains("adl/src/cli/pr_cmd/doctor.rs"))
         .count();
     assert_eq!(
         retained_manifests, 0,
-        "render-time profile loads should not retain temp changed-file manifests"
+        "render-time profile loads should not retain this test's changed-file manifest"
     );
 }
 
@@ -2699,13 +2720,25 @@ fn finish_validation_profile_classifies_unity_observatory_guardrail_script_as_la
             "docs/milestones/v0.91.6/review/observatory/UNITY_OBSERVATORY_IMPLEMENTATION_BASELINE_4030.md".to_string(),
         ],
     )
-    .expect("unity observatory guardrail plan");
+    .expect("unity observatory guardrail slice should resolve to the registered manifest lane");
 
     assert_eq!(plan.mode, FinishValidationMode::LargerBinaryFocused);
     assert!(plan
         .commands
         .contains(&"bash adl/tools/check_no_tracked_adl_issue_record_residue.sh".to_string()));
     assert!(plan.commands.contains(&"git diff --check".to_string()));
+    assert!(plan
+        .commands
+        .iter()
+        .any(|command| command.contains("test_v0916_unity_observatory_unity65_smoke.sh")));
+    assert!(plan
+        .commands
+        .iter()
+        .any(|command| command.contains("test_v0916_unity_observatory_baseline.sh")));
+    assert!(plan
+        .commands
+        .iter()
+        .any(|command| command.contains("test_v0916_unity_observatory_contract.sh")));
 }
 
 #[test]
@@ -2962,7 +2995,7 @@ fn finish_validation_profile_keeps_public_prompt_packet_changes_focused() {
 
 #[test]
 fn finish_validation_profile_classifies_github_token_loading_surfaces() {
-    let plan = select_finish_validation_plan_for_finish(
+    let err = select_finish_validation_plan_for_finish(
         4001,
         ".",
         &[
@@ -2976,25 +3009,12 @@ fn finish_validation_profile_classifies_github_token_loading_surfaces() {
             "docs/default_workflow.md".to_string(),
         ],
     )
-    .expect("github token loading plan");
+    .expect_err("github token loading slice should fail closed when manager requires escalation");
 
-    assert_eq!(plan.mode, FinishValidationMode::LargerBinaryFocused);
-    assert!(plan
-        .commands
-        .contains(&"cargo fmt --manifest-path adl/Cargo.toml --all --check".to_string()));
-    assert!(plan
-        .commands
-        .contains(&"cargo test --manifest-path adl/Cargo.toml --bin adl github_token".to_string()));
-    assert!(plan.commands.contains(
-        &"cargo test --manifest-path adl/Cargo.toml --bin adl github_client".to_string()
-    ));
-    assert!(plan.commands.contains(
-        &"cargo test --manifest-path adl/Cargo.toml --bin adl github_release_octocrab_covers_absent_draft_present_publish"
-            .to_string()
-    ));
-    assert!(plan
-        .commands
-        .contains(&"cargo test --manifest-path adl/Cargo.toml --bin adl cli::pr_cmd".to_string()));
+    let message = err.to_string();
+    assert!(message.contains("validation manager reported a non-runnable profile"));
+    assert!(message.contains("lane=rust_pr_fast"));
+    assert!(message.contains("status=escalation_required"));
 }
 
 #[test]
@@ -3023,7 +3043,7 @@ fn finish_validation_profile_classifies_tokio_manifest_runtime_wave_paths() {
 
 #[test]
 fn finish_validation_profile_classifies_long_lived_agent_tokio_paths() {
-    let plan = select_finish_validation_plan_for_finish(
+    let err = select_finish_validation_plan_for_finish(
         4179,
         ".",
         &[
@@ -3033,20 +3053,17 @@ fn finish_validation_profile_classifies_long_lived_agent_tokio_paths() {
             "adl/src/runtime_aws_signal.rs".to_string(),
         ],
     )
-    .expect("long-lived tokio plan");
+    .expect_err("long-lived tokio slice should fail closed when manager requires escalation");
 
-    assert_eq!(plan.mode, FinishValidationMode::LargerBinaryFocused);
-    assert!(plan
-        .commands
-        .contains(&"cargo fmt --manifest-path adl/Cargo.toml --all --check".to_string()));
-    assert!(plan
-        .commands
-        .contains(&"cargo test --manifest-path adl/Cargo.toml long_lived_agent".to_string()));
+    let message = err.to_string();
+    assert!(message.contains("validation manager reported a non-runnable profile"));
+    assert!(message.contains("lane=rust_pr_fast"));
+    assert!(message.contains("status=escalation_required"));
 }
 
 #[test]
 fn finish_validation_profile_classifies_long_lived_agent_continuity_adjacent_paths() {
-    let plan = select_finish_validation_plan_for_finish(
+    let err = select_finish_validation_plan_for_finish(
         4246,
         ".",
         &[
@@ -3058,15 +3075,14 @@ fn finish_validation_profile_classifies_long_lived_agent_continuity_adjacent_pat
             "adl/tests/demo_tests.rs".to_string(),
         ],
     )
-    .expect("long-lived continuity adjacent plan");
+    .expect_err(
+        "long-lived continuity adjacent slice should fail closed when manager requires escalation",
+    );
 
-    assert_eq!(plan.mode, FinishValidationMode::LargerBinaryFocused);
-    assert!(plan
-        .commands
-        .contains(&"cargo fmt --manifest-path adl/Cargo.toml --all --check".to_string()));
-    assert!(plan
-        .commands
-        .contains(&"cargo test --manifest-path adl/Cargo.toml long_lived_agent".to_string()));
+    let message = err.to_string();
+    assert!(message.contains("validation manager reported a non-runnable profile"));
+    assert!(message.contains("lane=rust_pr_fast"));
+    assert!(message.contains("status=escalation_required"));
 }
 
 #[test]
@@ -3093,7 +3109,7 @@ fn finish_validation_profile_classifies_tokio_bootstrap_helper_paths() {
 
 #[test]
 fn finish_validation_profile_classifies_remote_exec_tokio_paths() {
-    let plan = select_finish_validation_plan_for_finish(
+    let err = select_finish_validation_plan_for_finish(
         4181,
         ".",
         &[
@@ -3104,24 +3120,12 @@ fn finish_validation_profile_classifies_remote_exec_tokio_paths() {
             "adl/src/remote_exec/types.rs".to_string(),
         ],
     )
-    .expect("remote exec tokio plan");
+    .expect_err("remote exec tokio slice should fail closed when manager requires escalation");
 
-    assert_eq!(plan.mode, FinishValidationMode::LargerBinaryFocused);
-    assert!(plan.commands.contains(
-        &"cargo test --manifest-path adl/Cargo.toml build_remote_execute_request_preserves_conversation_as_audit_metadata"
-            .to_string()
-    ));
-    assert!(plan.commands.contains(
-        &"cargo test --manifest-path adl/Cargo.toml execute_step_with_retry_does_not_retry_remote_schema_violation"
-            .to_string()
-    ));
-    assert!(plan.commands.contains(
-        &"cargo test --manifest-path adl/Cargo.toml security_envelope_rejects_tampered_signed_conversation_metadata"
-            .to_string()
-    ));
-    assert!(plan
-        .commands
-        .contains(&"cargo test --manifest-path adl/Cargo.toml remote_exec::".to_string()));
+    let message = err.to_string();
+    assert!(message.contains("validation manager reported a non-runnable profile"));
+    assert!(message.contains("lane=rust_pr_fast"));
+    assert!(message.contains("status=escalation_required"));
 }
 
 #[test]
@@ -3387,7 +3391,7 @@ fn finish_validation_profile_classifies_session_ledger_issue_4419_slice() {
 
 #[test]
 fn finish_validation_profile_classifies_delegate_liveness_small_binary_slice() {
-    let plan = select_finish_validation_plan_for_finish(
+    let err = select_finish_validation_plan_for_finish(
         4413,
         ".",
         &[
@@ -3397,20 +3401,11 @@ fn finish_validation_profile_classifies_delegate_liveness_small_binary_slice() {
             "adl/tools/test_pr_delegate_prefers_primary_checkout_binary.sh".to_string(),
         ],
     )
-    .expect("delegate liveness small binary focused plan");
+    .expect_err("delegate liveness slice should fail closed when manager requires escalation");
 
-    assert_eq!(plan.mode, FinishValidationMode::SmallBinaryFocused);
-    assert!(plan
-        .commands
-        .contains(&"bash adl/tools/test_pr_small_binary_delegation.sh".to_string()));
-    assert!(!plan
-        .commands
-        .iter()
-        .any(|command| command.contains("cargo clippy")));
-    assert!(!plan
-        .commands
-        .iter()
-        .any(|command| command.contains("cargo nextest")));
+    let message = err.to_string();
+    assert!(message.contains("validation manager reported a non-runnable profile"));
+    assert!(message.contains("status=escalation_required"));
 }
 
 #[test]
@@ -3717,9 +3712,11 @@ fn finish_validation_profile_classifies_validation_manager_slice_as_small_binary
     .expect("validation manager plan");
 
     assert_eq!(plan.mode, FinishValidationMode::SmallBinaryFocused);
-    assert!(plan
-        .commands
-        .contains(&"bash adl/tools/test_validation_manager.sh".to_string()));
+    assert!(plan.commands.iter().any(|command| {
+        command.contains("bash adl/tools/test_ci_path_policy.sh")
+            && command.contains("bash adl/tools/test_select_validation_lanes.sh")
+            && command.contains("bash adl/tools/test_validation_manager.sh")
+    }));
     assert!(!plan
         .commands
         .iter()
@@ -3829,7 +3826,7 @@ fn finish_validation_profile_accepts_workflow_metrics_backfill_publication_slice
 
 #[test]
 fn finish_validation_profile_classifies_validation_inventory_slice_as_small_binary_focused() {
-    let plan = select_finish_validation_plan_for_finish(
+    let err = select_finish_validation_plan_for_finish(
         4213,
         ".",
         &[
@@ -3838,16 +3835,11 @@ fn finish_validation_profile_classifies_validation_inventory_slice_as_small_bina
             "adl/tools/test_validation_inventory.sh".to_string(),
         ],
     )
-    .expect("validation inventory plan");
+    .expect_err("validation inventory slice should fail closed when manager requires escalation");
 
-    assert_eq!(plan.mode, FinishValidationMode::SmallBinaryFocused);
-    assert!(plan
-        .commands
-        .contains(&"bash adl/tools/test_validation_inventory.sh".to_string()));
-    assert!(!plan
-        .commands
-        .iter()
-        .any(|command| command.contains("cargo test --manifest-path adl/Cargo.toml --bin adl")));
+    let message = err.to_string();
+    assert!(message.contains("validation manager reported a non-runnable profile"));
+    assert!(message.contains("status=escalation_required"));
 }
 
 #[test]
@@ -3902,7 +3894,7 @@ fn finish_helper_paths_run_sprint_conductor_helper_validation() {
 
 #[test]
 fn finish_validation_profile_classifies_slow_proof_family_split_slice() {
-    let plan = select_finish_validation_plan_for_finish(
+    let err = select_finish_validation_plan_for_finish(
         4219,
         ".",
         &[
@@ -3919,24 +3911,14 @@ fn finish_validation_profile_classifies_slow_proof_family_split_slice() {
             "adl/tools/ci_path_policy.sh".to_string(),
         ],
     )
-    .expect("slow-proof family split plan");
+    .expect_err(
+        "slow-proof family split slice should fail closed when manager requires escalation",
+    );
 
-    assert_eq!(plan.mode, FinishValidationMode::LargerBinaryFocused);
-    assert!(plan
-        .commands
-        .contains(&"cargo fmt --manifest-path adl/Cargo.toml --all --check".to_string()));
-    assert!(plan
-        .commands
-        .contains(&"bash adl/tools/test_slow_proof_lane_contract.sh".to_string()));
-    assert!(plan
-        .commands
-        .contains(&"bash adl/tools/test_validation_inventory.sh".to_string()));
-    assert!(plan
-        .commands
-        .contains(&"bash adl/tools/test_validation_manager.sh".to_string()));
-    assert!(plan
-        .commands
-        .contains(&"bash adl/tools/test_ci_path_policy.sh".to_string()));
+    let message = err.to_string();
+    assert!(message.contains("validation manager reported a non-runnable profile"));
+    assert!(message.contains("lane=slow_proof_review"));
+    assert!(message.contains("status=escalation_required"));
 }
 
 #[test]
@@ -4479,6 +4461,208 @@ fn finish_helper_paths_run_validation_manager_validation() {
 
     let focused_calls = fs::read_to_string(&focused_log).expect("focused log");
     assert!(focused_calls.contains("validation-manager"));
+}
+
+#[test]
+fn finish_helper_paths_run_registered_runtime_owner_lane_command() {
+    let _guard = env_lock();
+    let temp = unique_temp_dir("adl-pr-finish-registered-runtime-owner-lane");
+    let repo = temp.join("repo");
+    fs::create_dir_all(repo.join("adl/tools")).expect("adl tools dir");
+    fs::create_dir_all(repo.join("adl/config")).expect("adl config dir");
+    fs::write(
+        repo.join("adl/Cargo.toml"),
+        "[package]\nname='adl'\nversion='0.1.0'\n",
+    )
+    .expect("cargo toml");
+    fs::write(
+        repo.join("adl/config/validation_lane_selector.v0.91.6.json"),
+        r#"{"schema_version":"adl.validation_lane_selector.v1","lanes":[{"id":"runtime_owner_lane","run_command":"bash adl/tools/run_owner_validation_lane.sh runtime"}]}"#,
+    )
+    .expect("validation manifest");
+    write_executable(
+        &repo.join("adl/tools/check_no_tracked_adl_issue_record_residue.sh"),
+        "#!/usr/bin/env bash\nset -euo pipefail\nexit 0\n",
+    );
+    write_executable(
+        &repo.join("adl/tools/run_owner_validation_lane.sh"),
+        "#!/usr/bin/env bash\nset -euo pipefail\nprintf 'owner:%s\\n' \"$1\" >> \"$FOCUSED_LOG\"\n",
+    );
+    init_git_repo(&repo);
+
+    let bin_dir = temp.join("bin");
+    fs::create_dir_all(&bin_dir).expect("bin dir");
+    let focused_log = temp.join("focused.log");
+    let old_path = env::var("PATH").unwrap_or_default();
+    let old_focused_log = env::var("FOCUSED_LOG").ok();
+    unsafe {
+        env::set_var("PATH", format!("{}:{}", bin_dir.display(), old_path));
+        env::set_var("FOCUSED_LOG", &focused_log);
+    }
+
+    let plan = FinishValidationPlan {
+        mode: FinishValidationMode::SmallBinaryFocused,
+        commands: vec![
+            "bash adl/tools/check_no_tracked_adl_issue_record_residue.sh".to_string(),
+            "git diff --check".to_string(),
+            "bash adl/tools/run_owner_validation_lane.sh runtime".to_string(),
+        ],
+    };
+    run_finish_validation_rust(&repo, &plan).expect("registered runtime owner lane validation");
+
+    unsafe {
+        env::set_var("PATH", old_path);
+    }
+    match old_focused_log {
+        Some(value) => unsafe { env::set_var("FOCUSED_LOG", value) },
+        None => unsafe { env::remove_var("FOCUSED_LOG") },
+    }
+
+    let focused_calls = fs::read_to_string(&focused_log).expect("focused log");
+    assert!(focused_calls.contains("owner:runtime"));
+}
+
+#[test]
+fn finish_helper_paths_run_registered_polis_wrapper_command() {
+    let _guard = env_lock();
+    let temp = unique_temp_dir("adl-pr-finish-registered-polis-wrapper");
+    let repo = temp.join("repo");
+    fs::create_dir_all(repo.join("adl/tools")).expect("adl tools dir");
+    fs::create_dir_all(repo.join("adl/config")).expect("adl config dir");
+    fs::write(
+        repo.join("adl/Cargo.toml"),
+        "[package]\nname='adl'\nversion='0.1.0'\n",
+    )
+    .expect("cargo toml");
+    fs::write(
+        repo.join("adl/config/validation_lane_selector.v0.91.6.json"),
+        r#"{"schema_version":"adl.validation_lane_selector.v1","lanes":[{"id":"local_polis_ssm_wrapper","run_command":"bash -n adl/tools/polis_status_for_ssm.sh && bash -n adl/tools/polis_status_for_ssm_qts.sh && python3 adl/tools/validate_polis_status_for_ssm_qts.py"}]}"#,
+    )
+    .expect("validation manifest");
+    write_executable(
+        &repo.join("adl/tools/check_no_tracked_adl_issue_record_residue.sh"),
+        "#!/usr/bin/env bash\nset -euo pipefail\nexit 0\n",
+    );
+    write_executable(
+        &repo.join("adl/tools/polis_status_for_ssm.sh"),
+        "#!/usr/bin/env bash\nset -euo pipefail\nprintf 'polis-status\\n'\n",
+    );
+    write_executable(
+        &repo.join("adl/tools/polis_status_for_ssm_qts.sh"),
+        "#!/usr/bin/env bash\nset -euo pipefail\nprintf 'polis-status-qts\\n'\n",
+    );
+    fs::write(
+        repo.join("adl/tools/validate_polis_status_for_ssm_qts.py"),
+        "from pathlib import Path\nimport os\nPath(os.environ['FOCUSED_LOG']).write_text('validated\\n')\n",
+    )
+    .expect("python validator");
+    init_git_repo(&repo);
+
+    let old_focused_log = env::var("FOCUSED_LOG").ok();
+    let focused_log = temp.join("focused.log");
+    unsafe {
+        env::set_var("FOCUSED_LOG", &focused_log);
+    }
+
+    let plan = FinishValidationPlan {
+        mode: FinishValidationMode::SmallBinaryFocused,
+        commands: vec![
+            "bash adl/tools/check_no_tracked_adl_issue_record_residue.sh".to_string(),
+            "git diff --check".to_string(),
+            "bash -n adl/tools/polis_status_for_ssm.sh && bash -n adl/tools/polis_status_for_ssm_qts.sh && python3 adl/tools/validate_polis_status_for_ssm_qts.py".to_string(),
+        ],
+    };
+    run_finish_validation_rust(&repo, &plan).expect("registered polis wrapper validation");
+
+    match old_focused_log {
+        Some(value) => unsafe { env::set_var("FOCUSED_LOG", value) },
+        None => unsafe { env::remove_var("FOCUSED_LOG") },
+    }
+
+    assert_eq!(
+        fs::read_to_string(&focused_log)
+            .expect("focused log")
+            .trim(),
+        "validated"
+    );
+}
+
+#[test]
+fn finish_validation_profile_fails_closed_when_ready_profile_command_is_not_publishable() {
+    let temp = unique_temp_dir("adl-pr-finish-unpublishable-registered-command");
+    let repo = temp.join("repo");
+    fs::create_dir_all(repo.join("adl/config")).expect("adl config dir");
+    fs::write(
+        repo.join("adl/config/validation_lane_selector.v0.91.6.json"),
+        r#"{"schema_version":"adl.validation_lane_selector.v1","lanes":[{"id":"unsupported_lane","run_command":"bash adl/tools/not-a-real-registered-command.sh --dangerous"}]}"#,
+    )
+    .expect("validation manifest");
+    let profile = FinishValidationProfile {
+        selected_profile: "unsupported_profile".to_string(),
+        status: "ready_to_run".to_string(),
+        pr_publication_sufficient: true,
+        run: vec![FinishValidationProfileRunItem {
+            lane_id: "unsupported_lane".to_string(),
+            command: "bash adl/tools/not-a-real-registered-command.sh --dangerous".to_string(),
+            reason: "fixture".to_string(),
+            matched_paths: vec!["adl/tools/not-a-real-registered-command.sh".to_string()],
+            vpp_record: None,
+        }],
+        not_run: Vec::new(),
+        deferred: Vec::new(),
+        escalation: FinishValidationProfileEscalation {
+            required: false,
+            reasons: Vec::new(),
+        },
+    };
+
+    let err = ensure_finish_validation_profile_is_runnable(
+        &repo,
+        &profile,
+        &["adl/tools/not-a-real-registered-command.sh".to_string()],
+    )
+    .expect_err("unsupported registered command should fail closed");
+    assert!(err
+        .to_string()
+        .contains("selected validation lane cannot be published by finish yet"));
+}
+
+#[test]
+fn finish_validation_profile_accepts_ready_profile_with_registered_nessus_remote_validation_command(
+) {
+    let temp = unique_temp_dir("adl-pr-finish-publishable-nessus-remote-validation-command");
+    let repo = temp.join("repo");
+    fs::create_dir_all(repo.join("adl/config")).expect("adl config dir");
+    fs::write(
+        repo.join("adl/config/validation_lane_selector.v0.91.6.json"),
+        r#"{"schema_version":"adl.validation_lane_selector.v1","lanes":[{"id":"validation_manager_surface","run_command":"bash adl/tools/test_ci_path_policy.sh && bash adl/tools/test_select_validation_lanes.sh && bash adl/tools/test_validation_manager.sh && bash adl/tools/test_run_nessus_remote_validation.sh"}]}"#,
+    )
+    .expect("validation manifest");
+    let profile = FinishValidationProfile {
+        selected_profile: "validation_manager_surface".to_string(),
+        status: "ready_to_run".to_string(),
+        pr_publication_sufficient: true,
+        run: vec![FinishValidationProfileRunItem {
+            lane_id: "validation_manager_surface".to_string(),
+            command: "bash adl/tools/test_ci_path_policy.sh && bash adl/tools/test_select_validation_lanes.sh && bash adl/tools/test_validation_manager.sh && bash adl/tools/test_run_nessus_remote_validation.sh".to_string(),
+            reason: "fixture".to_string(),
+            matched_paths: vec!["adl/tools/test_run_nessus_remote_validation.sh".to_string()],
+            vpp_record: None,
+        }],
+        not_run: Vec::new(),
+        deferred: Vec::new(),
+        escalation: FinishValidationProfileEscalation {
+            required: false,
+            reasons: Vec::new(),
+        },
+    };
+
+    ensure_finish_validation_profile_is_runnable(
+        &repo,
+        &profile,
+        &["adl/tools/test_run_nessus_remote_validation.sh".to_string()],
+    )
+    .expect("registered nessus remote validation command should be publishable");
 }
 
 #[test]
