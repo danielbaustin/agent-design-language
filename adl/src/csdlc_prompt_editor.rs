@@ -599,7 +599,18 @@ fn import_values_document_from_rendered_card(
     template_set: &str,
     rendered: &str,
 ) -> Result<(PromptValuesDocument, Vec<String>)> {
-    let mut extracted = extract_template_values(card, &card.template, rendered)?;
+    let mut extracted = match extract_template_values(card, &card.template, rendered) {
+        Ok(values) => values,
+        Err(err)
+            if card.key == "stp"
+                && err.to_string().contains(
+                    "stp rendered card cannot find post-placeholder literal for title",
+                ) =>
+        {
+            extract_active_stp_values(rendered).with_context(|| err.to_string())?
+        }
+        Err(err) => return Err(err),
+    };
     let unrepresented_required_fields =
         populate_unrepresented_required_import_fields(card, &mut extracted)?;
     Ok(prompt_values_document_from_extracted(
@@ -608,6 +619,133 @@ fn import_values_document_from_rendered_card(
         extracted,
         unrepresented_required_fields,
     ))
+}
+
+fn extract_active_stp_values(rendered: &str) -> Result<BTreeMap<String, String>> {
+    let (frontmatter, _) = split_front_matter_local(rendered)?;
+    let doc = serde_yaml::from_str::<Value>(&frontmatter)
+        .context("stp import requires valid YAML front matter")?;
+    let mapping = doc
+        .as_mapping()
+        .ok_or_else(|| anyhow!("stp front matter must be a mapping"))?;
+
+    let issue = mapping_required_scalar(mapping, "issue_number")?;
+    let title = mapping_required_scalar(mapping, "title")?;
+    let version = version_from_rendered_title(&title)
+        .or_else(|| mapping_required_scalar(mapping, "milestone_sprint").ok())
+        .unwrap_or_else(|| "v0.0.0-imported".to_string());
+    let required_outcome_type =
+        yaml_sequence_summary(mapping.get(Value::String("required_outcome_type".to_string())))
+            .unwrap_or_else(|| "combination".to_string());
+    let repo_inputs = markdown_section_body_local(rendered, "Repo Inputs")
+        .map(|body| body.trim().to_string())
+        .filter(|body| !body.is_empty())
+        .ok_or_else(|| anyhow!("stp import requires Repo Inputs section"))?;
+
+    let mut values = BTreeMap::new();
+    values.insert("issue".to_string(), issue.clone());
+    values.insert("version".to_string(), version);
+    values.insert(
+        "timestamp".to_string(),
+        mapping_required_scalar(mapping, "generated_at")
+            .unwrap_or_else(|_| "legacy_import_unknown_timestamp".to_string()),
+    );
+    values.insert(
+        "card_status".to_string(),
+        mapping_required_scalar(mapping, "card_status").unwrap_or_else(|_| "draft".to_string()),
+    );
+    values.insert(
+        "slug".to_string(),
+        mapping_required_scalar(mapping, "slug")
+            .unwrap_or_else(|_| "imported-rendered-prompt-card".to_string()),
+    );
+    values.insert("title".to_string(), title);
+    values.insert(
+        "wp".to_string(),
+        mapping_required_scalar(mapping, "wp").unwrap_or_else(|_| "unassigned".to_string()),
+    );
+    values.insert("required_outcome_type".to_string(), required_outcome_type);
+    values.insert(
+        "demo_required".to_string(),
+        mapping_required_scalar(mapping, "demo_required").unwrap_or_else(|_| "false".to_string()),
+    );
+    values.insert(
+        "summary".to_string(),
+        required_markdown_section(rendered, "Summary")?,
+    );
+    values.insert(
+        "goal".to_string(),
+        required_markdown_section(rendered, "Goal")?,
+    );
+    values.insert(
+        "required_outcome".to_string(),
+        required_markdown_section(rendered, "Required Outcome")?,
+    );
+    values.insert(
+        "deliverables".to_string(),
+        required_markdown_section(rendered, "Deliverables")?,
+    );
+    values.insert(
+        "acceptance_criteria".to_string(),
+        required_markdown_section(rendered, "Acceptance Criteria")?,
+    );
+    values.insert("repo_inputs".to_string(), repo_inputs.clone());
+    values.insert(
+        "dependencies".to_string(),
+        required_markdown_section(rendered, "Dependencies")?,
+    );
+    values.insert(
+        "target_files_surfaces".to_string(),
+        required_markdown_section(rendered, "Target Files / Surfaces")?,
+    );
+    values.insert(
+        "validation_plan".to_string(),
+        required_markdown_section(rendered, "Validation Plan")?,
+    );
+    values.insert(
+        "demo_proof_requirements".to_string(),
+        required_markdown_section(rendered, "Demo Expectations")?,
+    );
+    values.insert(
+        "non_goals".to_string(),
+        required_markdown_section(rendered, "Non-goals")?,
+    );
+    values.insert(
+        "issue_graph_notes".to_string(),
+        required_markdown_section(rendered, "Issue-Graph Notes")?,
+    );
+    values.insert(
+        "issue_graph_note".to_string(),
+        values["issue_graph_notes"]
+            .lines()
+            .find(|line| !line.trim().is_empty())
+            .map(str::trim)
+            .unwrap_or("not recorded in rendered card")
+            .to_string(),
+    );
+    values.insert(
+        "notes_risks".to_string(),
+        required_markdown_section(rendered, "Notes")?,
+    );
+    values.insert(
+        "tooling_notes".to_string(),
+        required_markdown_section(rendered, "Tooling Notes")?,
+    );
+    Ok(values)
+}
+
+fn required_markdown_section(rendered: &str, heading: &str) -> Result<String> {
+    markdown_section_body_local(rendered, heading)
+        .map(|body| body.trim().to_string())
+        .filter(|body| !body.is_empty())
+        .ok_or_else(|| anyhow!("stp import requires {heading} section"))
+}
+
+fn version_from_rendered_title(title: &str) -> Option<String> {
+    let start = title.find("[v")?;
+    let rest = &title[start + 1..];
+    let end = rest.find(']')?;
+    Some(rest[..end].to_string())
 }
 
 fn import_values_document_from_legacy_rendered_card(

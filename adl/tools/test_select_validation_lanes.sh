@@ -76,6 +76,13 @@ assert_has "$TMP/metric-backfill-tool.out" "aggregate_status=selected"
 assert_has "$TMP/metric-backfill-tool.out" "csdlc_owner_lane status=selected"
 assert_not_has "$TMP/metric-backfill-tool.out" "unmapped_change_surface"
 
+remote_validation_tool="$TMP/remote-validation-tool.txt"
+printf 'M\tadl/tools/run_nessus_remote_validation.sh\n' >"$remote_validation_tool"
+bash "$SCRIPT" --changed-files "$remote_validation_tool" >"$TMP/remote-validation-tool.out"
+assert_has "$TMP/remote-validation-tool.out" "aggregate_status=selected"
+assert_has "$TMP/remote-validation-tool.out" "ci_path_policy_contracts status=selected"
+assert_not_has "$TMP/remote-validation-tool.out" "unmapped_change_surface"
+
 release_gate="$TMP/release-gate.txt"
 printf 'M\t.github/workflows/ci.yaml\n' >"$release_gate"
 bash "$SCRIPT" --changed-files "$release_gate" >"$TMP/release.out"

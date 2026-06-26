@@ -336,11 +336,564 @@ Bootstrap VPP generation should name selected lanes, commands, and deferred rati
     assert!(vpp.contains("Expected proof cost: `medium`"));
     assert!(vpp.contains("bash adl/tools/test_ci_path_policy.sh && bash adl/tools/test_select_validation_lanes.sh && bash adl/tools/test_validation_manager.sh"));
     assert!(vpp.contains("bash adl/tools/run_owner_validation_lane.sh csdlc"));
-    assert!(vpp.contains("bash adl/tools/run_pr_fast_test_lane.sh --changed-files"));
+    assert!(vpp.contains(
+        "bash adl/tools/run_pr_fast_test_lane.sh --changed-files .adl/generated-vpp-changed-files.txt"
+    ));
+    assert!(!vpp.contains("<changed-files>"));
     assert!(vpp.contains("deferred full_workspace_nextest: not selected by validation profile"));
     assert!(vpp.contains(
         "Generated from validation profile selected_3_lane_profile (status=ready_to_run, pr_publication_sufficient=true)."
     ));
+}
+
+#[test]
+fn versioned_bootstrap_uses_source_prompt_metric_metadata_in_rendered_cards() {
+    let _guard = env_lock();
+    let repo = unique_temp_dir("adl-pr-versioned-source-prompt-metric-metadata");
+    init_git_repo(&repo);
+    copy_bootstrap_support_files(&repo);
+    copy_versioned_prompt_templates(&repo);
+
+    let issue_ref = IssueRef::new(
+        4552,
+        "v0.91.6".to_string(),
+        "tools-cards-make-card-bootstrap-and-edit-rendered-deterministic-for-execution-budgets"
+            .to_string(),
+    )
+    .expect("issue ref");
+    let title =
+        "[v0.91.6][tools][cards] Make card bootstrap and edit-rendered deterministic for execution budgets";
+    let source_path = issue_ref.issue_prompt_path(&repo);
+    fs::create_dir_all(source_path.parent().expect("source parent")).expect("mkdir");
+    fs::write(
+        &source_path,
+        r#"---
+title: "[v0.91.6][tools][cards] Make card bootstrap and edit-rendered deterministic for execution budgets"
+labels:
+  - "track:roadmap"
+  - "type:bug"
+  - "area:tools"
+  - "version:v0.91.6"
+issue_number: 4552
+required_outcome_type:
+  - "code"
+repo_inputs:
+  - "adl/src/cli/pr_cmd_cards/cards.rs"
+  - "adl/src/cli/tooling_cmd/prompt_template.rs"
+demo_required: false
+initial_pvf_lane: "prompt_template"
+initial_pvf_lane_source: "configured_policy_from_title_labels_and_body_inference"
+estimate_elapsed_seconds: "9000"
+estimate_total_tokens: "400000"
+estimate_validation_seconds: "3000"
+issue_goal_token_budget: "400000"
+estimate_confidence: "medium"
+estimate_data_source: "manual_entry"
+estimate_source_ref: "docs/milestones/v0.91.6/features/PER_ISSUE_EXECUTION_METRICS_FOUNDATION_v0.91.6.md"
+goal_metrics_rollup_ref: "docs/milestones/v0.91.6/features/FIRST_CLASS_NESTED_GOAL_ACCOUNTING_v0.91.6.md"
+validation_runtime_class: "normal"
+validation_resource_profile: "local"
+validation_family: "prompt_template_card_profile"
+validation_size_split: "all_card_kind_fixture"
+expected_proof_cost: "medium"
+planned_validation_seconds: "3000"
+planned_validation_tokens: "80000"
+---
+
+# [v0.91.6][tools][cards] Make card bootstrap and edit-rendered deterministic for execution budgets
+
+## Summary
+
+Fix the bootstrap generator/editor path.
+
+## Goal
+
+Keep freshly initialized issue bundles validator-clean without manual card surgery.
+
+## Required Outcome
+
+The generated pre-execution card bundle is complete and deterministic.
+
+## Deliverables
+
+- deterministic bootstrap cards
+- focused regression coverage
+
+## Acceptance Criteria
+
+- SPP, VPP, and SOR render the seeded planning metrics truthfully
+
+## Repo Inputs
+
+- `adl/src/cli/pr_cmd_cards/cards.rs`
+- `adl/src/cli/tooling_cmd/prompt_template.rs`
+
+## Dependencies
+
+- none
+
+## Demo Expectations
+
+- none
+
+## Non-goals
+
+- no runtime behavior changes
+
+## Issue-Graph Notes
+
+- regression fixture
+
+## Notes
+
+- seeded planning metrics fixture
+
+## Tooling Notes
+
+- run focused bootstrap coverage only
+"#,
+    )
+    .expect("write source prompt");
+
+    ensure_task_bundle_stp(&repo, &issue_ref, &source_path).expect("stp");
+    let (_stp, _sip, sor_path) =
+        ensure_pre_run_bootstrap_cards(&repo, &issue_ref, title, &source_path)
+            .expect("pre-run bootstrap cards");
+
+    let spp = fs::read_to_string(issue_ref.task_bundle_plan_path(&repo)).expect("read spp");
+    assert!(spp.contains("estimate_elapsed_seconds: \"9000\""));
+    assert!(spp.contains("estimate_total_tokens: \"400000\""));
+    assert!(spp.contains("issue_goal_token_budget: \"400000\""));
+    assert!(spp.contains("goal_metrics_rollup_ref: \"docs/milestones/v0.91.6/features/FIRST_CLASS_NESTED_GOAL_ACCOUNTING_v0.91.6.md\""));
+    assert!(spp.contains("- Estimated elapsed seconds: `9000`"));
+    assert!(spp.contains("- Estimated total tokens: `400000`"));
+    assert!(spp.contains("- Issue goal token budget: `400000`"));
+    assert!(spp.contains("- Estimate data source: `manual_entry`"));
+
+    let vpp =
+        fs::read_to_string(issue_ref.task_bundle_validation_plan_path(&repo)).expect("read vpp");
+    assert!(vpp.contains("validation_family: \"prompt_template_card_profile\""));
+    assert!(vpp.contains("validation_size_split: \"all_card_kind_fixture\""));
+    assert!(vpp.contains("planned_validation_seconds: \"3000\""));
+    assert!(vpp.contains("planned_validation_tokens: \"80000\""));
+    assert!(vpp.contains("goal_metrics_rollup_ref: \"docs/milestones/v0.91.6/features/FIRST_CLASS_NESTED_GOAL_ACCOUNTING_v0.91.6.md\""));
+    assert!(vpp.contains("- Validation family: `prompt_template_card_profile`"));
+    assert!(vpp.contains("- Validation size split: `all_card_kind_fixture`"));
+    assert!(vpp.contains("- Planned validation seconds: `3000`"));
+    assert!(vpp.contains("- Planned validation token budget: `80000`"));
+    assert!(vpp.contains("- Goal metrics rollup ref: `docs/milestones/v0.91.6/features/FIRST_CLASS_NESTED_GOAL_ACCOUNTING_v0.91.6.md`"));
+
+    let sor = fs::read_to_string(&sor_path).expect("read sor");
+    assert!(sor.contains("- Estimated elapsed seconds: `9000`"));
+    assert!(sor.contains("- Estimated total tokens: `400000`"));
+    assert!(sor.contains("- Estimated validation seconds: `3000`"));
+    assert!(sor.contains("- Budget source: `manual_entry`"));
+    assert!(sor.contains("- Goal metrics source ref: `docs/milestones/v0.91.6/features/PER_ISSUE_EXECUTION_METRICS_FOUNDATION_v0.91.6.md`"));
+    assert!(sor.contains("- Goal metrics rollup ref: `docs/milestones/v0.91.6/features/FIRST_CLASS_NESTED_GOAL_ACCOUNTING_v0.91.6.md`"));
+}
+
+#[test]
+fn versioned_bootstrap_uses_unquoted_numeric_source_prompt_metadata_in_rendered_cards() {
+    let _guard = env_lock();
+    let repo = unique_temp_dir("adl-pr-versioned-source-prompt-unquoted-metric-metadata");
+    init_git_repo(&repo);
+    copy_bootstrap_support_files(&repo);
+    copy_versioned_prompt_templates(&repo);
+
+    let issue_ref = IssueRef::new(
+        4553,
+        "v0.91.6".to_string(),
+        "tools-validation-implement-operational-nessus-remote-validation-lane".to_string(),
+    )
+    .expect("issue ref");
+    let title = "[v0.91.6][tools][validation] Implement operational Nessus remote-validation lane";
+    let source_path = issue_ref.issue_prompt_path(&repo);
+    fs::create_dir_all(source_path.parent().expect("source parent")).expect("mkdir");
+    fs::write(
+        &source_path,
+        r#"---
+title: "[v0.91.6][tools][validation] Implement operational Nessus remote-validation lane"
+labels:
+  - "track:roadmap"
+  - "type:task"
+  - "area:tools"
+  - "version:v0.91.6"
+issue_number: 4553
+required_outcome_type:
+  - "code"
+repo_inputs:
+  - "adl/src/cli/pr_cmd_cards/cards.rs"
+  - "adl/tools/validation_manager.py"
+demo_required: false
+initial_pvf_lane: "prompt_template"
+initial_pvf_lane_source: "configured_policy_from_title_labels_and_body_inference"
+estimate_elapsed_seconds: 9000
+estimate_total_tokens: 400000
+estimate_validation_seconds: 3000
+issue_goal_token_budget: 400000
+estimate_confidence: "medium"
+estimate_data_source: "manual_entry"
+estimate_source_ref: "docs/milestones/v0.91.6/features/PER_ISSUE_EXECUTION_METRICS_FOUNDATION_v0.91.6.md"
+goal_metrics_rollup_ref: "docs/milestones/v0.91.6/features/FIRST_CLASS_NESTED_GOAL_ACCOUNTING_v0.91.6.md"
+validation_runtime_class: "normal"
+validation_resource_profile: "local"
+validation_family: "prompt_template_card_profile"
+validation_size_split: "all_card_kind_fixture"
+expected_proof_cost: "medium"
+planned_validation_seconds: 3000
+planned_validation_tokens: 80000
+---
+
+# [v0.91.6][tools][validation] Implement operational Nessus remote-validation lane
+
+## Summary
+
+Keep unquoted numeric planning metadata deterministic across bootstrap cards.
+
+## Goal
+
+Allow ordinary YAML numeric values to survive source-prompt bootstrap unchanged.
+
+## Required Outcome
+
+Bootstrap cards render numeric planning metadata truthfully whether the source prompt quotes those scalars or not.
+
+## Deliverables
+
+- scalar-tolerant bootstrap metadata parsing
+
+## Acceptance Criteria
+
+- SPP, VPP, and SOR render unquoted numeric metrics truthfully
+
+## Repo Inputs
+
+- `adl/src/cli/pr_cmd_cards/cards.rs`
+- `adl/tools/validation_manager.py`
+
+## Dependencies
+
+- none
+
+## Demo Expectations
+
+- none
+
+## Non-goals
+
+- no runtime behavior changes
+
+## Issue-Graph Notes
+
+- regression fixture
+
+## Notes
+
+- unquoted numeric metadata fixture
+
+## Tooling Notes
+
+- run focused bootstrap coverage only
+"#,
+    )
+    .expect("write source prompt");
+
+    ensure_task_bundle_stp(&repo, &issue_ref, &source_path).expect("stp");
+    let (_stp, _sip, sor_path) =
+        ensure_pre_run_bootstrap_cards(&repo, &issue_ref, title, &source_path)
+            .expect("pre-run bootstrap cards");
+
+    let spp = fs::read_to_string(issue_ref.task_bundle_plan_path(&repo)).expect("read spp");
+    assert!(spp.contains("estimate_elapsed_seconds: \"9000\""));
+    assert!(spp.contains("estimate_total_tokens: \"400000\""));
+    assert!(spp.contains("issue_goal_token_budget: \"400000\""));
+    assert!(spp.contains("- Estimated elapsed seconds: `9000`"));
+    assert!(spp.contains("- Estimated total tokens: `400000`"));
+
+    let vpp =
+        fs::read_to_string(issue_ref.task_bundle_validation_plan_path(&repo)).expect("read vpp");
+    assert!(vpp.contains("planned_validation_seconds: \"3000\""));
+    assert!(vpp.contains("planned_validation_tokens: \"80000\""));
+    assert!(vpp.contains("- Planned validation seconds: `3000`"));
+    assert!(vpp.contains("- Planned validation token budget: `80000`"));
+
+    let sor = fs::read_to_string(&sor_path).expect("read sor");
+    assert!(sor.contains("- Estimated elapsed seconds: `9000`"));
+    assert!(sor.contains("- Estimated total tokens: `400000`"));
+    assert!(sor.contains("- Estimated validation seconds: `3000`"));
+}
+
+#[test]
+fn versioned_bootstrap_stp_supports_edit_rendered_round_trip() {
+    let _guard = env_lock();
+    let repo = unique_temp_dir("adl-pr-versioned-bootstrap-edit-rendered-stp");
+    init_git_repo(&repo);
+    copy_bootstrap_support_files(&repo);
+    copy_versioned_prompt_templates(&repo);
+
+    let issue_ref = IssueRef::new(
+        4552,
+        "v0.91.6".to_string(),
+        "tools-cards-make-card-bootstrap-and-edit-rendered-deterministic-for-execution-budgets"
+            .to_string(),
+    )
+    .expect("issue ref");
+    let source_path = issue_ref.issue_prompt_path(&repo);
+    fs::create_dir_all(source_path.parent().expect("source parent")).expect("mkdir");
+    fs::write(
+        &source_path,
+        r#"---
+title: "[v0.91.6][tools][cards] Make card bootstrap and edit-rendered deterministic for execution budgets"
+wp: "unassigned"
+labels:
+  - "track:roadmap"
+  - "type:bug"
+  - "area:tools"
+  - "version:v0.91.6"
+issue_number: 4552
+required_outcome_type:
+  - "code"
+repo_inputs:
+  - "adl/src/cli/pr_cmd_cards/cards.rs"
+  - "adl/src/cli/tooling_cmd/prompt_template.rs"
+demo_required: false
+initial_pvf_lane: "prompt_template"
+initial_pvf_lane_source: "configured_policy_from_title_labels_and_body_inference"
+---
+
+# [v0.91.6][tools][cards] Make card bootstrap and edit-rendered deterministic for execution budgets
+
+## Summary
+
+Fix the C-SDLC prompt-card generator/editor path so newly prepared issues can be made execution-ready without manual Markdown cleanup.
+
+## Goal
+
+A freshly created and initialized issue with complete source-prompt metadata must be be editable through the rendered-card round trip.
+
+## Required Outcome
+
+The active card bootstrap path produces complete, schema-valid pre-execution card bundles for authored issues without manual Markdown surgery.
+
+## Deliverables
+
+- deterministic card bootstrap behavior
+- repaired `edit-rendered --kind stp` behavior
+
+## Acceptance Criteria
+
+- `edit-rendered --kind stp` works on a freshly generated STP
+
+## Repo Inputs
+
+- `adl/src/cli/pr_cmd_cards/cards.rs`
+- `adl/src/cli/tooling_cmd/prompt_template.rs`
+
+## Dependencies
+
+- Active prompt-template registry remains authoritative.
+- No `gh` fallback.
+
+## Demo Expectations
+
+- none
+
+## Non-goals
+
+- no runtime/product changes
+
+## Issue-Graph Notes
+
+- regression fixture
+
+## Notes
+
+- generated in focused test
+
+## Tooling Notes
+
+- run focused prompt-template coverage only
+"#,
+    )
+    .expect("write source");
+
+    let stp = ensure_task_bundle_stp(&repo, &issue_ref, &source_path).expect("bootstrap stp");
+    let edited = repo.join("edited-stp.md");
+    let values_out = repo.join("edited-stp.values.yaml");
+    let repo_root_for_tooling = std::path::PathBuf::from(env!("CARGO_MANIFEST_DIR"))
+        .parent()
+        .expect("workspace root")
+        .to_path_buf();
+
+    crate::cli::tooling_cmd::real_tooling(&[
+        "prompt-template".to_string(),
+        "edit-rendered".to_string(),
+        "--repo-root".to_string(),
+        repo_root_for_tooling.to_string_lossy().to_string(),
+        "--kind".to_string(),
+        "stp".to_string(),
+        "--input".to_string(),
+        stp.to_string_lossy().to_string(),
+        "--set".to_string(),
+        "summary=Deterministic bootstrap regression.".to_string(),
+        "--values-out".to_string(),
+        values_out.to_string_lossy().to_string(),
+        "--out".to_string(),
+        edited.to_string_lossy().to_string(),
+    ])
+    .expect("edit-rendered should accept freshly bootstrapped stp");
+
+    let edited_text = fs::read_to_string(&edited).expect("edited stp");
+    assert!(edited_text.contains("Deterministic bootstrap regression."));
+
+    crate::cli::tooling_cmd::real_tooling(&[
+        "prompt-template".to_string(),
+        "validate-structure".to_string(),
+        "--repo-root".to_string(),
+        repo_root_for_tooling.to_string_lossy().to_string(),
+        "--kind".to_string(),
+        "stp".to_string(),
+        "--input".to_string(),
+        edited.to_string_lossy().to_string(),
+    ])
+    .expect("edited bootstrap stp should remain structure-valid");
+}
+
+#[test]
+fn versioned_bootstrap_stp_edit_rendered_fails_closed_for_template_text_drift() {
+    let _guard = env_lock();
+    let repo = unique_temp_dir("adl-pr-versioned-bootstrap-edit-rendered-stp-drift");
+    init_git_repo(&repo);
+    copy_bootstrap_support_files(&repo);
+    copy_versioned_prompt_templates(&repo);
+
+    let issue_ref = IssueRef::new(
+        4552,
+        "v0.91.6".to_string(),
+        "tools-cards-make-card-bootstrap-and-edit-rendered-deterministic-for-execution-budgets"
+            .to_string(),
+    )
+    .expect("issue ref");
+    let source_path = issue_ref.issue_prompt_path(&repo);
+    fs::create_dir_all(source_path.parent().expect("source parent")).expect("mkdir");
+    fs::write(
+        &source_path,
+        r#"---
+title: "[v0.91.6][tools][cards] Make card bootstrap and edit-rendered deterministic for execution budgets"
+wp: "unassigned"
+labels:
+  - "track:roadmap"
+  - "type:bug"
+  - "area:tools"
+  - "version:v0.91.6"
+issue_number: 4552
+required_outcome_type:
+  - "code"
+repo_inputs:
+  - "adl/src/cli/pr_cmd_cards/cards.rs"
+  - "adl/src/cli/tooling_cmd/prompt_template.rs"
+demo_required: false
+initial_pvf_lane: "prompt_template"
+initial_pvf_lane_source: "configured_policy_from_title_labels_and_body_inference"
+---
+
+# [v0.91.6][tools][cards] Make card bootstrap and edit-rendered deterministic for execution budgets
+
+## Summary
+
+Fix the C-SDLC prompt-card generator/editor path so newly prepared issues can be made execution-ready without manual Markdown cleanup.
+
+## Goal
+
+A freshly created and initialized issue with complete source-prompt metadata must be be editable through the rendered-card round trip.
+
+## Required Outcome
+
+The active card bootstrap path produces complete, schema-valid pre-execution card bundles for authored issues without manual Markdown surgery.
+
+## Deliverables
+
+- deterministic card bootstrap behavior
+- repaired `edit-rendered --kind stp` behavior
+
+## Acceptance Criteria
+
+- `edit-rendered --kind stp` works on a freshly generated STP
+
+## Repo Inputs
+
+- `adl/src/cli/pr_cmd_cards/cards.rs`
+- `adl/src/cli/tooling_cmd/prompt_template.rs`
+
+## Dependencies
+
+- Active prompt-template registry remains authoritative.
+- No `gh` fallback.
+
+## Target Files / Surfaces
+
+- `adl/src/cli/pr_cmd_cards/cards.rs`
+- `adl/src/csdlc_prompt_editor.rs`
+
+## Validation Plan
+
+- focused prompt-template proof only
+
+## Demo Expectations
+
+- none
+
+## Non-goals
+
+- no runtime/product changes
+
+## Issue-Graph Notes
+
+- regression fixture
+
+## Notes
+
+- generated in focused test
+
+## Tooling Notes
+
+- run focused prompt-template coverage only
+"#,
+    )
+    .expect("write source");
+
+    let stp = ensure_task_bundle_stp(&repo, &issue_ref, &source_path).expect("bootstrap stp");
+    let drifted = repo.join("drifted-stp.md");
+    let original = fs::read_to_string(&stp).expect("read stp");
+    fs::write(
+        &drifted,
+        original.replace("Canonical Template Source:", "Canonical Template Drift:"),
+    )
+    .expect("write drifted stp");
+
+    let repo_root_for_tooling = std::path::PathBuf::from(env!("CARGO_MANIFEST_DIR"))
+        .parent()
+        .expect("workspace root")
+        .to_path_buf();
+
+    let err = crate::cli::tooling_cmd::real_tooling(&[
+        "prompt-template".to_string(),
+        "edit-rendered".to_string(),
+        "--repo-root".to_string(),
+        repo_root_for_tooling.to_string_lossy().to_string(),
+        "--kind".to_string(),
+        "stp".to_string(),
+        "--input".to_string(),
+        drifted.to_string_lossy().to_string(),
+        "--set".to_string(),
+        "summary=This edit should fail closed.".to_string(),
+        "--out".to_string(),
+        repo.join("should-not-render.md")
+            .to_string_lossy()
+            .to_string(),
+    ])
+    .expect_err("stp edit-rendered should fail closed for template prose drift");
+    assert!(err.to_string().contains("locked template text drifted"));
 }
 
 #[test]
