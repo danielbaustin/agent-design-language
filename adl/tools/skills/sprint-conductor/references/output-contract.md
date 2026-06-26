@@ -104,6 +104,79 @@ sprint:
         model_ref: <string or null>
         session_ref: <string or null>
         thread_id: <string or null>
+        goal_instance_count: <int>
+        cumulative_metrics:
+          goal_instance_count: <int>
+          data_source_counts:
+            codex_goal_tool: <int>
+            manual_entry: <int>
+            derived_sprint_state: <int>
+            unknown: <int>
+          completion_state_counts:
+            completed: <int>
+            completed_with_follow_on: <int>
+            blocked: <int>
+            failed: <int>
+            deferred: <int>
+            cancelled: <int>
+            unknown: <int>
+          elapsed_seconds_known_sum: <int>
+          elapsed_availability_counts:
+            known: <int>
+            unknown: <int>
+            not_collected: <int>
+            not_available: <int>
+            not_applicable: <int>
+          active_work_seconds_known_sum: <int>
+          active_work_availability_counts:
+            known: <int>
+            unknown: <int>
+            not_collected: <int>
+            not_available: <int>
+            not_applicable: <int>
+          validation_seconds_known_sum: <int>
+          validation_availability_counts:
+            known: <int>
+            unknown: <int>
+            not_collected: <int>
+            not_available: <int>
+            not_applicable: <int>
+          pr_wait_seconds_known_sum: <int>
+          pr_wait_availability_counts:
+            known: <int>
+            unknown: <int>
+            not_collected: <int>
+            not_available: <int>
+            not_applicable: <int>
+          ci_wait_seconds_known_sum: <int>
+          ci_wait_availability_counts:
+            known: <int>
+            unknown: <int>
+            not_collected: <int>
+            not_available: <int>
+            not_applicable: <int>
+          token_usage:
+            total_tokens_known_sum: <int>
+            total_availability_counts:
+              known: <int>
+              unknown: <int>
+              not_collected: <int>
+              not_available: <int>
+              not_applicable: <int>
+            prompt_tokens_known_sum: <int>
+            prompt_availability_counts:
+              known: <int>
+              unknown: <int>
+              not_collected: <int>
+              not_available: <int>
+              not_applicable: <int>
+            completion_tokens_known_sum: <int>
+            completion_availability_counts:
+              known: <int>
+              unknown: <int>
+              not_collected: <int>
+              not_available: <int>
+              not_applicable: <int>
       closeout_gate:
         issue_closed: true | false
         pr_state: merged | closed_no_merge | not_applicable | unknown

@@ -295,6 +295,7 @@ def default_goal_metrics_summary() -> dict[str, Any]:
         "status": "not_recorded",
         "raw_log_path": None,
         "record_count": 0,
+        "goal_instance_count": 0,
         "phases_recorded": [],
         "segments_recorded": [],
         "selected_stage": None,
@@ -333,6 +334,7 @@ def default_goal_metrics_summary() -> dict[str, Any]:
         "session_ref": None,
         "thread_id": None,
         "goal_terminal_state": default_goal_terminal_state_summary(),
+        "cumulative_metrics": default_cumulative_goal_metrics_summary(),
     }
 
 
@@ -353,6 +355,42 @@ def default_goal_terminal_state_summary() -> dict[str, Any]:
         "truth_status": "unknown",
         "reason": "goal terminal-state truth was not evaluated",
     }
+
+
+def default_cumulative_goal_metrics_summary() -> dict[str, Any]:
+    return {
+        "goal_instance_count": 0,
+        "data_source_counts": {source: 0 for source in sorted(DATA_SOURCE_VALUES)},
+        "completion_state_counts": {state: 0 for state in sorted(COMPLETION_STATE_VALUES)},
+        "elapsed_seconds_known_sum": 0,
+        "elapsed_availability_counts": {availability: 0 for availability in sorted(AVAILABILITY_VALUES)},
+        "active_work_seconds_known_sum": 0,
+        "active_work_availability_counts": {availability: 0 for availability in sorted(AVAILABILITY_VALUES)},
+        "validation_seconds_known_sum": 0,
+        "validation_availability_counts": {availability: 0 for availability in sorted(AVAILABILITY_VALUES)},
+        "pr_wait_seconds_known_sum": 0,
+        "pr_wait_availability_counts": {availability: 0 for availability in sorted(AVAILABILITY_VALUES)},
+        "ci_wait_seconds_known_sum": 0,
+        "ci_wait_availability_counts": {availability: 0 for availability in sorted(AVAILABILITY_VALUES)},
+        "token_usage": {
+            "total_tokens_known_sum": 0,
+            "total_availability_counts": {availability: 0 for availability in sorted(AVAILABILITY_VALUES)},
+            "prompt_tokens_known_sum": 0,
+            "prompt_availability_counts": {availability: 0 for availability in sorted(AVAILABILITY_VALUES)},
+            "completion_tokens_known_sum": 0,
+            "completion_availability_counts": {availability: 0 for availability in sorted(AVAILABILITY_VALUES)},
+        },
+    }
+
+
+def data_source_preference(source: str | None) -> int:
+    preference = {
+        "manual_entry": 4,
+        "codex_goal_tool": 3,
+        "derived_sprint_state": 2,
+        "unknown": 1,
+    }
+    return preference.get(source or "unknown", 0)
 
 
 def normalize_choice(
@@ -839,23 +877,180 @@ def build_unknown_issue_goal_metrics_record(
     )
 
 
+def goal_metrics_sort_key(record: dict[str, Any]) -> tuple[int, str]:
+    return (
+        STAGE_PRIORITY.get(record.get("capture_stage"), 0),
+        record.get("recorded_at") or "",
+    )
+
+
+def goal_instance_snapshot_sort_key(record: dict[str, Any]) -> tuple[str, int, int]:
+    return (
+        record.get("recorded_at") or "",
+        STAGE_PRIORITY.get(record.get("capture_stage"), 0),
+        data_source_preference(record.get("data_source")),
+    )
+
+
+def strong_distinct_goal_instance_key(record: dict[str, Any]) -> tuple[Any, ...] | None:
+    goal_id = record.get("goal_id")
+    if goal_id and (record.get("goal_id_availability") or "unknown") == "known":
+        return ("goal_id", goal_id)
+
+    session_ref = record.get("session_ref") or ""
+    thread_id = record.get("thread_id") or ""
+    issue_goal_ref = record.get("issue_goal_ref") or ""
+    started_at = record.get("started_at")
+    if started_at:
+        return ("started_at", issue_goal_ref, session_ref, thread_id, started_at)
+
+    completed_at = record.get("completed_at")
+    if completed_at:
+        return ("completed_at", issue_goal_ref, session_ref, thread_id, completed_at)
+
+    return None
+
+
+def fallback_goal_context_key(record: dict[str, Any]) -> tuple[Any, ...]:
+    issue_goal_ref = record.get("issue_goal_ref") or ""
+    session_ref = record.get("session_ref") or ""
+    thread_id = record.get("thread_id") or ""
+    raw_log_path = record.get("raw_log_path") or ""
+    if issue_goal_ref or session_ref or thread_id or raw_log_path:
+        return (issue_goal_ref, session_ref, thread_id, raw_log_path)
+
+    return ("record_fallback", record.get("capture_stage") or "", record.get("recorded_at") or "")
+
+
+def summarize_distinct_goal_instances(records: list[dict[str, Any]]) -> list[dict[str, Any]]:
+    distinct: dict[tuple[Any, ...], dict[str, Any]] = {}
+    fallback_cycle_by_context: dict[tuple[Any, ...], int] = {}
+    fallback_last_stage_priority: dict[tuple[Any, ...], int] = {}
+    for record in sorted(records, key=goal_instance_snapshot_sort_key):
+        key = strong_distinct_goal_instance_key(record)
+        if key is None:
+            context = fallback_goal_context_key(record)
+            current_cycle = fallback_cycle_by_context.get(context, 0)
+            current_priority = STAGE_PRIORITY.get(record.get("capture_stage"), 0)
+            last_priority = fallback_last_stage_priority.get(context)
+            if last_priority is not None and current_priority < last_priority:
+                current_cycle += 1
+            fallback_cycle_by_context[context] = current_cycle
+            fallback_last_stage_priority[context] = current_priority
+            key = ("goal_fallback_cycle", *context, current_cycle)
+        current = distinct.get(key)
+        if current is None or goal_instance_snapshot_sort_key(record) > goal_instance_snapshot_sort_key(current):
+            distinct[key] = record
+    return sorted(distinct.values(), key=goal_metrics_sort_key)
+
+
+def increment_availability_count(counts: dict[str, int], availability: str | None) -> str:
+    normalized = availability or "unknown"
+    if normalized not in counts:
+        counts[normalized] = 0
+    counts[normalized] += 1
+    return normalized
+
+
+def summarize_cumulative_goal_metrics(records: list[dict[str, Any]]) -> dict[str, Any]:
+    cumulative = default_cumulative_goal_metrics_summary()
+    distinct_records = summarize_distinct_goal_instances(records)
+    cumulative["goal_instance_count"] = len(distinct_records)
+
+    for record in distinct_records:
+        data_source = record.get("data_source") or "unknown"
+        if data_source not in cumulative["data_source_counts"]:
+            cumulative["data_source_counts"][data_source] = 0
+        cumulative["data_source_counts"][data_source] += 1
+
+        completion_state = record.get("completion_state") or "unknown"
+        if completion_state not in cumulative["completion_state_counts"]:
+            cumulative["completion_state_counts"][completion_state] = 0
+        cumulative["completion_state_counts"][completion_state] += 1
+
+        elapsed_availability = increment_availability_count(
+            cumulative["elapsed_availability_counts"],
+            record.get("elapsed_availability"),
+        )
+        if elapsed_availability == "known" and isinstance(record.get("elapsed_seconds"), int):
+            cumulative["elapsed_seconds_known_sum"] += int(record["elapsed_seconds"])
+
+        active_work_availability = increment_availability_count(
+            cumulative["active_work_availability_counts"],
+            record.get("active_work_availability"),
+        )
+        if active_work_availability == "known" and isinstance(record.get("active_work_seconds"), int):
+            cumulative["active_work_seconds_known_sum"] += int(record["active_work_seconds"])
+
+        validation_availability = increment_availability_count(
+            cumulative["validation_availability_counts"],
+            record.get("validation_availability"),
+        )
+        if validation_availability == "known" and isinstance(record.get("validation_seconds"), int):
+            cumulative["validation_seconds_known_sum"] += int(record["validation_seconds"])
+
+        pr_wait_availability = increment_availability_count(
+            cumulative["pr_wait_availability_counts"],
+            record.get("pr_wait_availability"),
+        )
+        if pr_wait_availability == "known" and isinstance(record.get("pr_wait_seconds"), int):
+            cumulative["pr_wait_seconds_known_sum"] += int(record["pr_wait_seconds"])
+
+        ci_wait_availability = increment_availability_count(
+            cumulative["ci_wait_availability_counts"],
+            record.get("ci_wait_availability"),
+        )
+        if ci_wait_availability == "known" and isinstance(record.get("ci_wait_seconds"), int):
+            cumulative["ci_wait_seconds_known_sum"] += int(record["ci_wait_seconds"])
+
+        token_usage = record.get("token_usage") or {}
+        total_availability = increment_availability_count(
+            cumulative["token_usage"]["total_availability_counts"],
+            token_usage.get("total_availability"),
+        )
+        if total_availability == "known" and isinstance(token_usage.get("total_tokens"), int):
+            cumulative["token_usage"]["total_tokens_known_sum"] += int(token_usage["total_tokens"])
+
+        prompt_availability = increment_availability_count(
+            cumulative["token_usage"]["prompt_availability_counts"],
+            token_usage.get("prompt_availability"),
+        )
+        if prompt_availability == "known" and isinstance(token_usage.get("prompt_tokens"), int):
+            cumulative["token_usage"]["prompt_tokens_known_sum"] += int(token_usage["prompt_tokens"])
+
+        completion_availability = increment_availability_count(
+            cumulative["token_usage"]["completion_availability_counts"],
+            token_usage.get("completion_availability"),
+        )
+        if completion_availability == "known" and isinstance(token_usage.get("completion_tokens"), int):
+            cumulative["token_usage"]["completion_tokens_known_sum"] += int(token_usage["completion_tokens"])
+
+    return cumulative
+
+
+def summarize_cumulative_availability(counts: dict[str, int]) -> str:
+    non_zero = {key for key, value in counts.items() if value}
+    if not non_zero:
+        return "unknown"
+    if non_zero == {"known"}:
+        return "known"
+    if len(non_zero) == 1:
+        return next(iter(non_zero))
+    return "unknown"
+
+
 def summarize_issue_goal_metrics(records: list[dict[str, Any]], raw_log_path: str | None) -> dict[str, Any]:
     if not records:
         summary = default_goal_metrics_summary()
         summary["raw_log_path"] = raw_log_path
         return summary
 
-    def sort_key(record: dict[str, Any]) -> tuple[int, str]:
-        return (
-            STAGE_PRIORITY.get(record.get("capture_stage"), 0),
-            record.get("recorded_at") or "",
-        )
-
-    selected = sorted(records, key=sort_key)[-1]
+    selected = sorted(records, key=goal_metrics_sort_key)[-1]
     summary = default_goal_metrics_summary()
     summary["status"] = "recorded"
     summary["raw_log_path"] = raw_log_path
     summary["record_count"] = len(records)
+    summary["goal_instance_count"] = len(summarize_distinct_goal_instances(records))
     summary["phases_recorded"] = sorted(
         {record.get("capture_stage") for record in records if record.get("capture_stage")}
     )
@@ -892,6 +1087,7 @@ def summarize_issue_goal_metrics(records: list[dict[str, Any]], raw_log_path: st
     summary["goal_terminal_state"] = deepcopy(
         selected.get("goal_terminal_state") or default_goal_terminal_state_summary()
     )
+    summary["cumulative_metrics"] = summarize_cumulative_goal_metrics(records)
     return summary
 
 
@@ -933,6 +1129,7 @@ def compute_goal_metrics_rollup(issue_records: list[dict[str, Any]]) -> dict[str
     for record in issue_records:
         rollup["issue_count"] += 1
         summary = record.get("goal_metrics") or default_goal_metrics_summary()
+        cumulative = summary.get("cumulative_metrics") or default_cumulative_goal_metrics_summary()
         if summary.get("status") == "recorded":
             rollup["issues_with_recorded_metrics"] += 1
         else:
@@ -959,64 +1156,83 @@ def compute_goal_metrics_rollup(issue_records: list[dict[str, Any]]) -> dict[str
             rollup["terminal_truth_status_counts"][truth_status] = 0
         rollup["terminal_truth_status_counts"][truth_status] += 1
 
-        elapsed_availability = summary.get("elapsed_availability") or "unknown"
+        elapsed_availability = summarize_cumulative_availability(
+            cumulative.get("elapsed_availability_counts") or {}
+        )
         if elapsed_availability not in rollup["elapsed_availability_counts"]:
             rollup["elapsed_availability_counts"][elapsed_availability] = 0
         rollup["elapsed_availability_counts"][elapsed_availability] += 1
-        if elapsed_availability == "known" and isinstance(summary.get("elapsed_seconds"), int):
+        cumulative_elapsed_sum = cumulative.get("elapsed_seconds_known_sum")
+        if elapsed_availability == "known" and isinstance(cumulative_elapsed_sum, int):
             rollup["issues_with_known_elapsed"] += 1
-            rollup["total_elapsed_seconds_known_sum"] += int(summary["elapsed_seconds"])
+            rollup["total_elapsed_seconds_known_sum"] += cumulative_elapsed_sum
         elif elapsed_availability == "unknown":
             rollup["issues_with_unknown_elapsed"] += 1
 
-        active_work_availability = summary.get("active_work_availability") or "unknown"
+        active_work_availability = summarize_cumulative_availability(
+            cumulative.get("active_work_availability_counts") or {}
+        )
         if active_work_availability not in rollup["active_work_availability_counts"]:
             rollup["active_work_availability_counts"][active_work_availability] = 0
         rollup["active_work_availability_counts"][active_work_availability] += 1
-        if active_work_availability == "known" and isinstance(summary.get("active_work_seconds"), int):
+        cumulative_active_work_sum = cumulative.get("active_work_seconds_known_sum")
+        if active_work_availability == "known" and isinstance(cumulative_active_work_sum, int):
             rollup["issues_with_known_active_work"] += 1
-            rollup["total_active_work_seconds_known_sum"] += int(summary["active_work_seconds"])
+            rollup["total_active_work_seconds_known_sum"] += cumulative_active_work_sum
         elif active_work_availability == "unknown":
             rollup["issues_with_unknown_active_work"] += 1
 
-        validation_availability = summary.get("validation_availability") or "unknown"
+        validation_availability = summarize_cumulative_availability(
+            cumulative.get("validation_availability_counts") or {}
+        )
         if validation_availability not in rollup["validation_availability_counts"]:
             rollup["validation_availability_counts"][validation_availability] = 0
         rollup["validation_availability_counts"][validation_availability] += 1
-        if validation_availability == "known" and isinstance(summary.get("validation_seconds"), int):
+        cumulative_validation_sum = cumulative.get("validation_seconds_known_sum")
+        if validation_availability == "known" and isinstance(cumulative_validation_sum, int):
             rollup["issues_with_known_validation_seconds"] += 1
-            rollup["total_validation_seconds_known_sum"] += int(summary["validation_seconds"])
+            rollup["total_validation_seconds_known_sum"] += cumulative_validation_sum
         elif validation_availability == "unknown":
             rollup["issues_with_unknown_validation_seconds"] += 1
 
-        pr_wait_availability = summary.get("pr_wait_availability") or "unknown"
+        pr_wait_availability = summarize_cumulative_availability(
+            cumulative.get("pr_wait_availability_counts") or {}
+        )
         if pr_wait_availability not in rollup["pr_wait_availability_counts"]:
             rollup["pr_wait_availability_counts"][pr_wait_availability] = 0
         rollup["pr_wait_availability_counts"][pr_wait_availability] += 1
-        if pr_wait_availability == "known" and isinstance(summary.get("pr_wait_seconds"), int):
+        cumulative_pr_wait_sum = cumulative.get("pr_wait_seconds_known_sum")
+        if pr_wait_availability == "known" and isinstance(cumulative_pr_wait_sum, int):
             rollup["issues_with_known_pr_wait"] += 1
-            rollup["total_pr_wait_seconds_known_sum"] += int(summary["pr_wait_seconds"])
+            rollup["total_pr_wait_seconds_known_sum"] += cumulative_pr_wait_sum
         elif pr_wait_availability == "unknown":
             rollup["issues_with_unknown_pr_wait"] += 1
 
-        ci_wait_availability = summary.get("ci_wait_availability") or "unknown"
+        ci_wait_availability = summarize_cumulative_availability(
+            cumulative.get("ci_wait_availability_counts") or {}
+        )
         if ci_wait_availability not in rollup["ci_wait_availability_counts"]:
             rollup["ci_wait_availability_counts"][ci_wait_availability] = 0
         rollup["ci_wait_availability_counts"][ci_wait_availability] += 1
-        if ci_wait_availability == "known" and isinstance(summary.get("ci_wait_seconds"), int):
+        cumulative_ci_wait_sum = cumulative.get("ci_wait_seconds_known_sum")
+        if ci_wait_availability == "known" and isinstance(cumulative_ci_wait_sum, int):
             rollup["issues_with_known_ci_wait"] += 1
-            rollup["total_ci_wait_seconds_known_sum"] += int(summary["ci_wait_seconds"])
+            rollup["total_ci_wait_seconds_known_sum"] += cumulative_ci_wait_sum
         elif ci_wait_availability == "unknown":
             rollup["issues_with_unknown_ci_wait"] += 1
 
         token_usage = summary.get("token_usage") or {}
-        total_token_availability = token_usage.get("total_availability") or "unknown"
+        total_token_availability = summarize_cumulative_availability(
+            cumulative.get("token_usage", {}).get("total_availability_counts") or {}
+        )
         if total_token_availability not in rollup["total_token_availability_counts"]:
             rollup["total_token_availability_counts"][total_token_availability] = 0
         rollup["total_token_availability_counts"][total_token_availability] += 1
-        if total_token_availability == "known" and isinstance(token_usage.get("total_tokens"), int):
+        cumulative_token_usage = cumulative.get("token_usage") or {}
+        cumulative_total_tokens_sum = cumulative_token_usage.get("total_tokens_known_sum")
+        if total_token_availability == "known" and isinstance(cumulative_total_tokens_sum, int):
             rollup["issues_with_known_total_tokens"] += 1
-            rollup["total_tokens_known_sum"] += int(token_usage["total_tokens"])
+            rollup["total_tokens_known_sum"] += cumulative_total_tokens_sum
         elif total_token_availability == "unknown":
             rollup["issues_with_unknown_total_tokens"] += 1
     return rollup

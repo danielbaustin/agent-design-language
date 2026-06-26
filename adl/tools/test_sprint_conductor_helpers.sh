@@ -1988,3 +1988,280 @@ summary = issue_goal_metrics.summarize_issue_goal_metrics(records, None)
 assert summary["selected_stage"] == "doctor_readiness"
 assert summary["selected_segment"] == "readiness_prep"
 PY
+
+python3 - "${repo_root}" <<'PY'
+import sys
+from pathlib import Path
+
+sys.path.insert(0, str(Path(sys.argv[1]) / "adl/tools/skills/sprint-conductor/scripts"))
+import issue_goal_metrics
+
+records = [
+    {
+        "capture_stage": "issue_init",
+        "recorded_at": "2026-06-24T00:00:01Z",
+        "metrics_segment": "readiness_prep",
+        "data_source": "codex_goal_tool",
+        "started_at": "2026-06-24T00:00:00Z",
+        "elapsed_seconds": 10,
+        "elapsed_availability": "known",
+        "active_work_seconds": 8,
+        "active_work_availability": "known",
+        "validation_seconds": None,
+        "validation_availability": "unknown",
+        "pr_wait_seconds": None,
+        "pr_wait_availability": "unknown",
+        "ci_wait_seconds": None,
+        "ci_wait_availability": "unknown",
+        "completion_state": "unknown",
+        "token_usage": {
+            "total_tokens": 100,
+            "prompt_tokens": 70,
+            "completion_tokens": 30,
+            "availability": "known",
+            "total_availability": "known",
+            "prompt_availability": "known",
+            "completion_availability": "known",
+        },
+        "goal_terminal_state": issue_goal_metrics.default_goal_terminal_state_summary(),
+    },
+    {
+        "capture_stage": "execution_ready",
+        "recorded_at": "2026-06-24T00:00:05Z",
+        "metrics_segment": "readiness_prep",
+        "data_source": "codex_goal_tool",
+        "started_at": "2026-06-24T00:00:00Z",
+        "elapsed_seconds": 20,
+        "elapsed_availability": "known",
+        "active_work_seconds": 15,
+        "active_work_availability": "known",
+        "validation_seconds": None,
+        "validation_availability": "unknown",
+        "pr_wait_seconds": None,
+        "pr_wait_availability": "unknown",
+        "ci_wait_seconds": None,
+        "ci_wait_availability": "unknown",
+        "completion_state": "deferred",
+        "token_usage": {
+            "total_tokens": 150,
+            "prompt_tokens": 100,
+            "completion_tokens": 50,
+            "availability": "known",
+            "total_availability": "known",
+            "prompt_availability": "known",
+            "completion_availability": "known",
+        },
+        "goal_terminal_state": issue_goal_metrics.default_goal_terminal_state_summary(),
+    },
+    {
+        "capture_stage": "pr_publication",
+        "recorded_at": "2026-06-24T00:01:00Z",
+        "metrics_segment": "bound_execution",
+        "data_source": "codex_goal_tool",
+        "started_at": "2026-06-24T00:00:40Z",
+        "elapsed_seconds": 12,
+        "elapsed_availability": "known",
+        "active_work_seconds": 9,
+        "active_work_availability": "known",
+        "validation_seconds": 2,
+        "validation_availability": "known",
+        "pr_wait_seconds": 3,
+        "pr_wait_availability": "known",
+        "ci_wait_seconds": None,
+        "ci_wait_availability": "not_applicable",
+        "completion_state": "completed",
+        "token_usage": {
+            "total_tokens": 90,
+            "prompt_tokens": 60,
+            "completion_tokens": 30,
+            "availability": "known",
+            "total_availability": "known",
+            "prompt_availability": "known",
+            "completion_availability": "known",
+        },
+        "goal_terminal_state": issue_goal_metrics.default_goal_terminal_state_summary(),
+    },
+]
+
+summary = issue_goal_metrics.summarize_issue_goal_metrics(records, None)
+assert summary["selected_stage"] == "pr_publication"
+assert summary["goal_instance_count"] == 2
+assert summary["cumulative_metrics"]["goal_instance_count"] == 2
+assert summary["cumulative_metrics"]["elapsed_seconds_known_sum"] == 32
+assert summary["cumulative_metrics"]["active_work_seconds_known_sum"] == 24
+assert summary["cumulative_metrics"]["validation_seconds_known_sum"] == 2
+assert summary["cumulative_metrics"]["pr_wait_seconds_known_sum"] == 3
+assert summary["cumulative_metrics"]["token_usage"]["total_tokens_known_sum"] == 240
+assert summary["cumulative_metrics"]["token_usage"]["prompt_tokens_known_sum"] == 160
+assert summary["cumulative_metrics"]["token_usage"]["completion_tokens_known_sum"] == 80
+assert summary["cumulative_metrics"]["completion_state_counts"]["deferred"] == 1
+assert summary["cumulative_metrics"]["completion_state_counts"]["completed"] == 1
+
+rollup = issue_goal_metrics.compute_goal_metrics_rollup(
+    [
+        {"goal_metrics": summary},
+    ]
+)
+assert rollup["issues_with_known_elapsed"] == 1
+assert rollup["total_elapsed_seconds_known_sum"] == 32
+assert rollup["issues_with_known_total_tokens"] == 1
+assert rollup["total_tokens_known_sum"] == 240
+
+same_goal_source_switch = [
+    {
+        **records[1],
+        "data_source": "codex_goal_tool",
+        "recorded_at": "2026-06-24T00:00:05Z",
+    },
+    {
+        **records[1],
+        "data_source": "manual_entry",
+        "recorded_at": "2026-06-24T00:00:06Z",
+        "elapsed_seconds": 22,
+        "active_work_seconds": 16,
+        "token_usage": {
+            "total_tokens": 155,
+            "prompt_tokens": 103,
+            "completion_tokens": 52,
+            "availability": "known",
+            "total_availability": "known",
+            "prompt_availability": "known",
+            "completion_availability": "known",
+        },
+    },
+]
+same_goal_summary = issue_goal_metrics.summarize_issue_goal_metrics(same_goal_source_switch, None)
+assert same_goal_summary["goal_instance_count"] == 1
+assert same_goal_summary["cumulative_metrics"]["goal_instance_count"] == 1
+assert same_goal_summary["cumulative_metrics"]["elapsed_seconds_known_sum"] == 22
+assert same_goal_summary["cumulative_metrics"]["token_usage"]["total_tokens_known_sum"] == 155
+
+mixed_known_unknown_summary = issue_goal_metrics.summarize_issue_goal_metrics(
+    [
+        records[1],
+        {
+            **records[2],
+            "started_at": "2026-06-24T00:02:00Z",
+            "elapsed_seconds": None,
+            "elapsed_availability": "unknown",
+            "token_usage": {
+                "total_tokens": None,
+                "prompt_tokens": None,
+                "completion_tokens": None,
+                "availability": "unknown",
+                "total_availability": "unknown",
+                "prompt_availability": "unknown",
+                "completion_availability": "unknown",
+            },
+        },
+    ],
+    None,
+)
+mixed_rollup = issue_goal_metrics.compute_goal_metrics_rollup(
+    [
+        {"goal_metrics": mixed_known_unknown_summary},
+    ]
+)
+assert mixed_rollup["elapsed_availability_counts"]["unknown"] == 1
+assert mixed_rollup["issues_with_known_elapsed"] == 0
+assert mixed_rollup["total_elapsed_seconds_known_sum"] == 0
+assert mixed_rollup["total_token_availability_counts"]["unknown"] == 1
+assert mixed_rollup["issues_with_known_total_tokens"] == 0
+assert mixed_rollup["total_tokens_known_sum"] == 0
+
+fallback_only_records = [
+    {
+        "capture_stage": "issue_start",
+        "recorded_at": "2026-06-24T00:10:00Z",
+        "metrics_segment": "bound_execution",
+        "data_source": "unknown",
+        "issue_goal_ref": "issue-4550",
+        "session_ref": "codex-thread:test",
+        "thread_id": "thread-test",
+        "elapsed_seconds": None,
+        "elapsed_availability": "unknown",
+        "active_work_seconds": None,
+        "active_work_availability": "unknown",
+        "validation_seconds": None,
+        "validation_availability": "unknown",
+        "pr_wait_seconds": None,
+        "pr_wait_availability": "unknown",
+        "ci_wait_seconds": None,
+        "ci_wait_availability": "unknown",
+        "completion_state": "unknown",
+        "token_usage": {
+            "total_tokens": None,
+            "prompt_tokens": None,
+            "completion_tokens": None,
+            "availability": "unknown",
+            "total_availability": "unknown",
+            "prompt_availability": "unknown",
+            "completion_availability": "unknown",
+        },
+        "goal_terminal_state": issue_goal_metrics.default_goal_terminal_state_summary(),
+    },
+    {
+        "capture_stage": "pr_publication",
+        "recorded_at": "2026-06-24T00:11:00Z",
+        "metrics_segment": "bound_execution",
+        "data_source": "unknown",
+        "issue_goal_ref": "issue-4550",
+        "session_ref": "codex-thread:test",
+        "thread_id": "thread-test",
+        "elapsed_seconds": None,
+        "elapsed_availability": "unknown",
+        "active_work_seconds": None,
+        "active_work_availability": "unknown",
+        "validation_seconds": None,
+        "validation_availability": "unknown",
+        "pr_wait_seconds": None,
+        "pr_wait_availability": "unknown",
+        "ci_wait_seconds": None,
+        "ci_wait_availability": "unknown",
+        "completion_state": "unknown",
+        "token_usage": {
+            "total_tokens": None,
+            "prompt_tokens": None,
+            "completion_tokens": None,
+            "availability": "unknown",
+            "total_availability": "unknown",
+            "prompt_availability": "unknown",
+            "completion_availability": "unknown",
+        },
+        "goal_terminal_state": issue_goal_metrics.default_goal_terminal_state_summary(),
+    },
+    {
+        "capture_stage": "issue_start",
+        "recorded_at": "2026-06-24T00:12:00Z",
+        "metrics_segment": "bound_execution",
+        "data_source": "unknown",
+        "issue_goal_ref": "issue-4550",
+        "session_ref": "codex-thread:test",
+        "thread_id": "thread-test",
+        "elapsed_seconds": None,
+        "elapsed_availability": "unknown",
+        "active_work_seconds": None,
+        "active_work_availability": "unknown",
+        "validation_seconds": None,
+        "validation_availability": "unknown",
+        "pr_wait_seconds": None,
+        "pr_wait_availability": "unknown",
+        "ci_wait_seconds": None,
+        "ci_wait_availability": "unknown",
+        "completion_state": "unknown",
+        "token_usage": {
+            "total_tokens": None,
+            "prompt_tokens": None,
+            "completion_tokens": None,
+            "availability": "unknown",
+            "total_availability": "unknown",
+            "prompt_availability": "unknown",
+            "completion_availability": "unknown",
+        },
+        "goal_terminal_state": issue_goal_metrics.default_goal_terminal_state_summary(),
+    },
+]
+fallback_only_summary = issue_goal_metrics.summarize_issue_goal_metrics(fallback_only_records, None)
+assert fallback_only_summary["goal_instance_count"] == 2
+assert fallback_only_summary["cumulative_metrics"]["goal_instance_count"] == 2
+PY
