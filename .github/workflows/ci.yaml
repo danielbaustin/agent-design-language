@@ -151,6 +151,9 @@ jobs:
 
       - name: tracked proof-validation lane contract
         if: steps.path-policy.outputs.ci_contracts_required == 'true'
+        env:
+          RUSTFLAGS: ""
+          RUST_LINK_ACCEL: system
         run: bash adl/tools/test_run_v0913_proof_validation_lane.sh
         working-directory: .
 

@@ -71,7 +71,7 @@ cleanup_child() {
   if kill -0 "${unity_pid}" 2>/dev/null; then
     kill -KILL "${unity_pid}" 2>/dev/null || true
   fi
-  rm -rf "${RUNTIME_ROOT}"
+  rm -rf "${RUNTIME_ROOT}" || true
 }
 
 trap cleanup_child EXIT
@@ -127,7 +127,7 @@ if ! grep -Fq "Unity Observatory compatibility verification passed." "${LOG_PATH
   exit 5
 fi
 
-rm -rf "${RUNTIME_ROOT}"
+rm -rf "${RUNTIME_ROOT}" || true
 
 echo "Unity 6.5 smoke passed."
 echo "log: .adl/tmp/unity-observatory-4529/unity-6000.5.1f1-batch.log"

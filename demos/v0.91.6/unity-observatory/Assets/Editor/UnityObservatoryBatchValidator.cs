@@ -17,6 +17,11 @@ namespace ADL.Demos.UnityObservatory.Editor
         private const string ThemeResourcePath = "UnityDefaultRuntimeTheme";
         private const string RuntimeStyleSheetResourcePath = "ObservatoryShellRuntime";
         private const string ShellObjectName = "Unity Observatory Shell";
+        private const string ExpectedTitleEnvVar = "ADL_UNITY_EXPECTED_TITLE";
+        private const string ExpectedPacketRefEnvVar = "ADL_UNITY_EXPECTED_PACKET_REF";
+        private const string ExpectedArtifactRootEnvVar = "ADL_UNITY_EXPECTED_ARTIFACT_ROOT";
+        private const string ExpectedReportRefEnvVar = "ADL_UNITY_EXPECTED_REPORT_REF";
+        private const string ExpectedEvidenceLevelEnvVar = "ADL_UNITY_EXPECTED_EVIDENCE_LEVEL";
 
         public static void ValidateScene()
         {
@@ -136,8 +141,45 @@ namespace ADL.Demos.UnityObservatory.Editor
 
                 string title = root.Q<Label>("title")?.text ?? "unknown";
                 string packetSchema = root.Q<Label>("packet-schema")?.text ?? "unknown";
+                string packetRef = root.Q<Label>("packet-ref")?.text ?? "unknown";
+                string artifactRoot = root.Q<Label>("artifact-root")?.text ?? "unknown";
+                string reportRef = root.Q<Label>("report-ref")?.text ?? "unknown";
+                string packetNote = root.Q<Label>("packet-note")?.text ?? "unknown";
+
+                AssertMatchesExpectation(
+                    "title",
+                    title,
+                    Environment.GetEnvironmentVariable(ExpectedTitleEnvVar)
+                );
+                AssertMatchesExpectation(
+                    "packet-ref",
+                    packetRef,
+                    Environment.GetEnvironmentVariable(ExpectedPacketRefEnvVar)
+                );
+                AssertMatchesExpectation(
+                    "artifact-root",
+                    artifactRoot,
+                    Environment.GetEnvironmentVariable(ExpectedArtifactRootEnvVar)
+                );
+                AssertMatchesExpectation(
+                    "report-ref",
+                    reportRef,
+                    Environment.GetEnvironmentVariable(ExpectedReportRefEnvVar)
+                );
+
+                string expectedEvidenceLevel = Environment.GetEnvironmentVariable(
+                    ExpectedEvidenceLevelEnvVar
+                );
+                if (!string.IsNullOrWhiteSpace(expectedEvidenceLevel) &&
+                    !packetNote.Contains(expectedEvidenceLevel, StringComparison.Ordinal))
+                {
+                    throw new InvalidOperationException(
+                        $"Unity Observatory validation expected packet-note to contain '{expectedEvidenceLevel}' but observed '{packetNote}'."
+                    );
+                }
+
                 Debug.Log(
-                    $"Unity Observatory compatibility verification passed. rootChildren={root.childCount}; title={title}; packetSchema={packetSchema}"
+                    $"Unity Observatory compatibility verification passed. rootChildren={root.childCount}; title={title}; packetSchema={packetSchema}; packetRef={packetRef}; artifactRoot={artifactRoot}; reportRef={reportRef}"
                 );
             }
             finally
@@ -147,6 +189,21 @@ namespace ADL.Demos.UnityObservatory.Editor
                 {
                     UnityEngine.Object.DestroyImmediate(shellObject);
                 }
+            }
+        }
+
+        private static void AssertMatchesExpectation(
+            string label,
+            string observed,
+            string expected
+        )
+        {
+            if (!string.IsNullOrWhiteSpace(expected) &&
+                !string.Equals(observed, expected, StringComparison.Ordinal))
+            {
+                throw new InvalidOperationException(
+                    $"Unity Observatory validation expected {label} '{expected}' but observed '{observed}'."
+                );
             }
         }
 
