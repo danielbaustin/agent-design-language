@@ -4315,7 +4315,7 @@ pub(super) fn run_finish_validation_rust(
                     let script = repo_root.join("adl/tools/test_validation_manager.sh");
                     run_finish_validation_status("bash", &[path_str(&script)?])?;
                 }
-                "bash adl/tools/test_ci_path_policy.sh && bash adl/tools/test_select_validation_lanes.sh && bash adl/tools/test_validation_manager.sh" => {
+                "bash adl/tools/test_ci_path_policy.sh && bash adl/tools/test_select_validation_lanes.sh && bash adl/tools/test_validation_manager.sh && bash adl/tools/test_run_nessus_remote_validation.sh" => {
                     let ci_path_policy = repo_root.join("adl/tools/test_ci_path_policy.sh");
                     run_finish_validation_status("bash", &[path_str(&ci_path_policy)?])?;
                     let select_validation_lanes =
@@ -4324,6 +4324,9 @@ pub(super) fn run_finish_validation_rust(
                     let validation_manager =
                         repo_root.join("adl/tools/test_validation_manager.sh");
                     run_finish_validation_status("bash", &[path_str(&validation_manager)?])?;
+                    let nessus_remote_runner =
+                        repo_root.join("adl/tools/test_run_nessus_remote_validation.sh");
+                    run_finish_validation_status("bash", &[path_str(&nessus_remote_runner)?])?;
                 }
                 "bash adl/tools/test_validation_inventory.sh" => {
                     let script = repo_root.join("adl/tools/test_validation_inventory.sh");
