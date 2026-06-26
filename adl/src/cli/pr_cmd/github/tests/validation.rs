@@ -1,64 +1,146 @@
 use super::*;
 use crate::cli::pr_cmd::github::transport::pr_validation_report_from_snapshot_with_disposition;
+use crate::cli::pr_cmd::github::transport::pr_validation_wait_disposition_is_terminal;
 
 #[test]
 fn pr_validation_wait_classifies_pending_failed_successful_and_skipped_states() {
-    let snapshot = |checks: Vec<PrValidationCheckSnapshot>| PrValidationSnapshot {
+    let snapshot = |is_draft: bool, checks: Vec<PrValidationCheckSnapshot>| PrValidationSnapshot {
         pr_number: 1159,
         commit_sha: "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa".to_string(),
         state: "OPEN".to_string(),
-        is_draft: false,
+        is_draft,
         checks,
     };
 
     assert_eq!(
-        classify_pr_validation_snapshot(&snapshot(vec![PrValidationCheckSnapshot {
-            name: "adl-ci".to_string(),
-            status: "IN_PROGRESS".to_string(),
-            conclusion: "UNKNOWN".to_string(),
-            job_run_id: "8801".to_string(),
-        }])),
+        classify_pr_validation_snapshot(&snapshot(
+            false,
+            vec![PrValidationCheckSnapshot {
+                name: "adl-ci".to_string(),
+                status: "IN_PROGRESS".to_string(),
+                conclusion: "UNKNOWN".to_string(),
+                job_run_id: "8801".to_string(),
+            }]
+        )),
         PrValidationDisposition::Pending
     );
     assert_eq!(
-        classify_pr_validation_snapshot(&snapshot(vec![PrValidationCheckSnapshot {
-            name: "adl-ci".to_string(),
-            status: "COMPLETED".to_string(),
-            conclusion: "FAILURE".to_string(),
-            job_run_id: "8801".to_string(),
-        }])),
+        classify_pr_validation_snapshot(&snapshot(
+            false,
+            vec![PrValidationCheckSnapshot {
+                name: "adl-ci".to_string(),
+                status: "COMPLETED".to_string(),
+                conclusion: "FAILURE".to_string(),
+                job_run_id: "8801".to_string(),
+            }]
+        )),
         PrValidationDisposition::Failed
     );
     assert_eq!(
-        classify_pr_validation_snapshot(&snapshot(vec![PrValidationCheckSnapshot {
-            name: "adl-ci".to_string(),
-            status: "COMPLETED".to_string(),
-            conclusion: "SUCCESS".to_string(),
-            job_run_id: "8801".to_string(),
-        }])),
+        classify_pr_validation_snapshot(&snapshot(
+            false,
+            vec![PrValidationCheckSnapshot {
+                name: "adl-ci".to_string(),
+                status: "COMPLETED".to_string(),
+                conclusion: "SUCCESS".to_string(),
+                job_run_id: "8801".to_string(),
+            }]
+        )),
         PrValidationDisposition::Success
     );
     assert_eq!(
-        classify_pr_validation_snapshot(&snapshot(Vec::new())),
+        classify_pr_validation_snapshot(&snapshot(false, Vec::new())),
         PrValidationDisposition::Pending
     );
     assert_eq!(
-        classify_pr_validation_snapshot(&snapshot(vec![PrValidationCheckSnapshot {
-            name: "optional-lane".to_string(),
-            status: "COMPLETED".to_string(),
-            conclusion: "SKIPPED".to_string(),
-            job_run_id: "8803".to_string(),
-        }])),
+        classify_pr_validation_snapshot(&snapshot(
+            false,
+            vec![PrValidationCheckSnapshot {
+                name: "optional-lane".to_string(),
+                status: "COMPLETED".to_string(),
+                conclusion: "SKIPPED".to_string(),
+                job_run_id: "8803".to_string(),
+            }]
+        )),
         PrValidationDisposition::Skipped
     );
     assert_eq!(
-        classify_pr_validation_snapshot(&snapshot(vec![PrValidationCheckSnapshot {
-            name: "adl-ci".to_string(),
-            status: "COMPLETED".to_string(),
-            conclusion: "CANCELLED".to_string(),
-            job_run_id: "8801".to_string(),
-        }])),
+        classify_pr_validation_snapshot(&snapshot(
+            false,
+            vec![PrValidationCheckSnapshot {
+                name: "adl-ci".to_string(),
+                status: "COMPLETED".to_string(),
+                conclusion: "CANCELLED".to_string(),
+                job_run_id: "8801".to_string(),
+            }]
+        )),
         PrValidationDisposition::Cancelled
+    );
+    assert_eq!(
+        classify_pr_validation_snapshot(&snapshot(
+            true,
+            vec![PrValidationCheckSnapshot {
+                name: "adl-ci".to_string(),
+                status: "COMPLETED".to_string(),
+                conclusion: "SUCCESS".to_string(),
+                job_run_id: "8805".to_string(),
+            }]
+        )),
+        PrValidationDisposition::Success
+    );
+    assert_eq!(
+        classify_pr_validation_snapshot(&snapshot(
+            true,
+            vec![PrValidationCheckSnapshot {
+                name: "adl-ci".to_string(),
+                status: "IN_PROGRESS".to_string(),
+                conclusion: "UNKNOWN".to_string(),
+                job_run_id: "8806".to_string(),
+            }]
+        )),
+        PrValidationDisposition::Pending
+    );
+    assert_eq!(
+        classify_pr_validation_snapshot(&snapshot(
+            true,
+            vec![PrValidationCheckSnapshot {
+                name: "adl-ci".to_string(),
+                status: "COMPLETED".to_string(),
+                conclusion: "FAILURE".to_string(),
+                job_run_id: "8807".to_string(),
+            }]
+        )),
+        PrValidationDisposition::Failed
+    );
+    assert!(
+        !pr_validation_wait_disposition_is_terminal(
+            &snapshot(
+                true,
+                vec![PrValidationCheckSnapshot {
+                    name: "adl-ci".to_string(),
+                    status: "COMPLETED".to_string(),
+                    conclusion: "SUCCESS".to_string(),
+                    job_run_id: "8808".to_string(),
+                }]
+            ),
+            PrValidationDisposition::Success,
+        ),
+        "green draft PRs must stay non-terminal for validation wait paths"
+    );
+    assert!(
+        pr_validation_wait_disposition_is_terminal(
+            &snapshot(
+                false,
+                vec![PrValidationCheckSnapshot {
+                    name: "adl-ci".to_string(),
+                    status: "COMPLETED".to_string(),
+                    conclusion: "SUCCESS".to_string(),
+                    job_run_id: "8809".to_string(),
+                }]
+            ),
+            PrValidationDisposition::Success,
+        ),
+        "ready PRs with green checks should stay terminal"
     );
 
     let merged_success = PrValidationSnapshot {
@@ -69,7 +151,7 @@ fn pr_validation_wait_classifies_pending_failed_successful_and_skipped_states() 
             conclusion: "SUCCESS".to_string(),
             job_run_id: "8804".to_string(),
         }],
-        ..snapshot(Vec::new())
+        ..snapshot(false, Vec::new())
     };
     assert_eq!(
         classify_pr_validation_snapshot(&merged_success),
@@ -116,8 +198,9 @@ fn pr_validation_report_exposes_projection_status_for_pr_lifecycle_states() {
 
     let green_draft = pr_validation_report_from_snapshot_with_disposition(
         &snapshot(true, vec![completed("SUCCESS")]),
-        PrValidationDisposition::Success,
+        classify_pr_validation_snapshot(&snapshot(true, vec![completed("SUCCESS")])),
     );
+    assert_eq!(green_draft.disposition, "success");
     assert_eq!(green_draft.projection_status, "checks_green_but_draft");
 
     let green_ready = pr_validation_report_from_snapshot_with_disposition(
@@ -125,6 +208,29 @@ fn pr_validation_report_exposes_projection_status_for_pr_lifecycle_states() {
         PrValidationDisposition::Success,
     );
     assert_eq!(green_ready.projection_status, "ready_to_merge_or_review");
+
+    let pending_draft = pr_validation_report_from_snapshot_with_disposition(
+        &snapshot(
+            true,
+            vec![PrValidationCheckSnapshot {
+                name: "adl-ci".to_string(),
+                status: "IN_PROGRESS".to_string(),
+                conclusion: "UNKNOWN".to_string(),
+                job_run_id: "8802".to_string(),
+            }],
+        ),
+        classify_pr_validation_snapshot(&snapshot(
+            true,
+            vec![PrValidationCheckSnapshot {
+                name: "adl-ci".to_string(),
+                status: "IN_PROGRESS".to_string(),
+                conclusion: "UNKNOWN".to_string(),
+                job_run_id: "8802".to_string(),
+            }],
+        )),
+    );
+    assert_eq!(pending_draft.disposition, "pending");
+    assert_eq!(pending_draft.projection_status, "checks_pending");
 }
 
 #[test]
