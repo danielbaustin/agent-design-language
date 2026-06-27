@@ -1,0 +1,6 @@
+{
+  "case": "malformed_request_authority_drift",
+  "error": "local ACIP carrier requires request_message.authority_scope to match invocation_contract.authority_scope",
+  "expected_classification": "malformed",
+  "schema_version": "adl.runtime.acip_negative_case.v1"
+}
