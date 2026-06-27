@@ -2283,7 +2283,8 @@ pub(super) fn select_finish_validation_plan_for_finish(
         load_finish_validation_profile_for_execution(&repo_root, changed_paths);
     if !changed_paths_need_finish_rust_validation {
         if let Ok(finish_profile) = &finish_profile_result {
-            if let Some(plan) = profile_backed_finish_validation_plan(finish_profile) {
+            if let Some(plan) = profile_backed_finish_validation_plan(issue_number, finish_profile)
+            {
                 ensure_finish_validation_profile_is_runnable(
                     &repo_root,
                     finish_profile,
@@ -2308,7 +2309,7 @@ pub(super) fn select_finish_validation_plan_for_finish(
         return Ok(build_html_observatory_validation_plan(changed_paths));
     }
     let finish_profile = finish_profile_result?;
-    if let Some(plan) = profile_backed_finish_validation_plan(&finish_profile) {
+    if let Some(plan) = profile_backed_finish_validation_plan(issue_number, &finish_profile) {
         ensure_finish_validation_profile_is_runnable(&repo_root, &finish_profile, changed_paths)?;
         return Ok(plan);
     }
@@ -2345,6 +2346,7 @@ fn finish_validation_profile_allows_legacy_fallback(
 }
 
 fn profile_backed_finish_validation_plan(
+    issue_number: u32,
     profile: &FinishValidationProfile,
 ) -> Option<FinishValidationPlan> {
     if profile.status != "ready_to_run"
@@ -2357,22 +2359,36 @@ fn profile_backed_finish_validation_plan(
         "bash adl/tools/check_no_tracked_adl_issue_record_residue.sh".to_string(),
         "git diff --check".to_string(),
     ];
+    if finish_validation_profile_runs_rust_fast_lane(profile) {
+        push_finish_validation_command(
+            &mut commands,
+            "cargo fmt --manifest-path adl/Cargo.toml --all --check",
+        );
+    }
     for item in &profile.run {
         push_finish_validation_command(&mut commands, &item.command);
     }
-    let mode = profile_backed_finish_validation_mode(profile);
+    let mode = profile_backed_finish_validation_mode(issue_number, profile);
     Some(FinishValidationPlan { mode, commands })
 }
 
 fn profile_backed_finish_validation_mode(
+    issue_number: u32,
     profile: &FinishValidationProfile,
 ) -> FinishValidationMode {
     if profile.run.len() == 1 && profile.run[0].lane_id == "docs_diff_check" {
         return FinishValidationMode::DocsOnly;
     }
+    if issue_number == 4593
+        && profile.run.len() == 1
+        && finish_validation_run_item_is_pr_janitor_finish_test_repair(&profile.run[0])
+    {
+        return FinishValidationMode::SmallBinaryFocused;
+    }
     if profile.run.iter().any(|item| {
         item.lane_id == "rust_pr_fast"
             || item.lane_id.contains("owner_lane")
+            || item.lane_id == "coverage_impact_contracts"
             || item.lane_id == "unity_observatory_contract_surface"
             || item.command.contains("run_owner_validation_lane.sh")
             || item.command.contains("run_pr_fast_test_lane.sh")
@@ -2383,6 +2399,28 @@ fn profile_backed_finish_validation_mode(
         return FinishValidationMode::LargerBinaryFocused;
     }
     FinishValidationMode::SmallBinaryFocused
+}
+
+fn finish_validation_profile_runs_rust_fast_lane(profile: &FinishValidationProfile) -> bool {
+    profile
+        .run
+        .iter()
+        .any(finish_validation_run_item_is_rust_fast_lane)
+}
+
+fn finish_validation_run_item_is_rust_fast_lane(item: &FinishValidationProfileRunItem) -> bool {
+    item.lane_id == "rust_pr_fast" || item.command.contains("run_pr_fast_test_lane.sh")
+}
+
+fn finish_validation_run_item_is_pr_janitor_finish_test_repair(
+    item: &FinishValidationProfileRunItem,
+) -> bool {
+    finish_validation_run_item_is_rust_fast_lane(item)
+        && !item.matched_paths.is_empty()
+        && item
+            .matched_paths
+            .iter()
+            .all(|path| path == "adl/src/cli/tests/pr_cmd_inline/finish/arg_render.rs")
 }
 
 pub(super) fn ensure_finish_validation_profile_is_runnable(
@@ -2542,6 +2580,7 @@ fn registered_validation_atom_supported(command: &str) -> bool {
                 | "adl/tools/test_demo_v0904_csm_observatory_governed_prototype.sh"
                 | "adl/tools/test_v0916_unity_observatory_baseline.sh"
                 | "adl/tools/test_v0916_unity_observatory_contract.sh"
+                | "adl/tools/test_v0916_unity_observatory_local_runtime_consumption.sh"
                 | "adl/tools/test_v0916_unity_observatory_soak_integration.sh"
                 | "adl/tools/test_sprint_conductor_helpers.sh"
                 | "adl/tools/test_install_adl_operational_skills.sh"
