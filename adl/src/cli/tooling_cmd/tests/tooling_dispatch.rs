@@ -304,6 +304,12 @@ metrics:
   goal_metrics_data_source: "codex_goal_tool"
   goal_metrics_source_ref: ".adl/v0.91.6/tasks/issue-4559__srp-sor-update/sor.md"
   data_source_confidence: high
+release_tail:
+  watcher_disposition: green_draft_requires_publication_action
+  pr_state: draft_green
+  closeout_state: not_started
+  residual_risks:
+    - "PR remains draft until operator publication action."
 "#,
     );
     let srp = repo.write_rel("srp.md", &valid_srp_text(4559));
@@ -328,6 +334,10 @@ metrics:
     assert!(!srp_text.contains("review_results_exception"));
     assert!(sor_text.contains("- Actual elapsed seconds: `900`"));
     assert!(sor_text.contains("- Integration state: pr_open"));
+    assert!(sor_text.contains("- Watcher disposition: green_draft_requires_publication_action"));
+    assert!(sor_text.contains("- PR state: draft_green"));
+    assert!(sor_text.contains("- Closeout state: not_started"));
+    assert!(sor_text.contains("- PR remains draft until operator publication action."));
     assert!(sor_text.contains("  - `adl/src/cli/tooling_cmd/srp_sor_update.rs`"));
     assert!(sor_text.contains("- `cargo test --manifest-path adl/Cargo.toml srp_sor_update` - exercise SRP/SOR fact updater"));
     assert!(sor_text.contains("    status: PASS"));
@@ -389,6 +399,139 @@ fn srp_sor_update_fails_closed_for_empty_fact_packet() {
     assert!(err
         .to_string()
         .contains("facts file contains no SRP/SOR updates"));
+}
+
+#[test]
+fn srp_sor_update_refuses_terminal_closeout_without_terminal_supporting_facts() {
+    let repo = TempRepo::new("srp-sor-update-terminal-refusal");
+    let facts = repo.write_rel(
+        "facts.yaml",
+        r#"review:
+  findings_status: resolved
+  recommended_outcome: pass
+validation:
+  status: pass
+integration:
+  integration_state: pr_open
+release_tail:
+  pr_state: draft_green
+  closeout_state: complete
+"#,
+    );
+    let srp = repo.write_rel("srp.md", &valid_srp_text(4559));
+    let sor = repo.write_rel("sor.md", &valid_sor_text());
+
+    let err = real_srp_sor_update(&[
+        "--facts".into(),
+        facts.display().to_string(),
+        "--srp".into(),
+        srp.display().to_string(),
+        "--sor".into(),
+        sor.display().to_string(),
+    ])
+    .expect_err("unsupported terminal closeout must fail closed");
+
+    assert!(err
+        .to_string()
+        .contains("terminal closeout_state requires terminal integration.integration_state"));
+}
+
+#[test]
+fn srp_sor_update_allows_closed_no_pr_terminal_closeout_without_pr_state() {
+    let repo = TempRepo::new("srp-sor-update-closed-no-pr");
+    let facts = repo.write_rel(
+        "facts.yaml",
+        r#"review:
+  findings_status: resolved
+  recommended_outcome: pass
+validation:
+  status: pass
+integration:
+  integration_state: closed_no_pr
+  result: PASS
+release_tail:
+  closeout_state: complete
+"#,
+    );
+    let srp = repo.write_rel("srp.md", &valid_srp_text(4559));
+    let sor = repo.write_rel("sor.md", &valid_sor_text());
+
+    real_srp_sor_update(&[
+        "--facts".into(),
+        facts.display().to_string(),
+        "--srp".into(),
+        srp.display().to_string(),
+        "--sor".into(),
+        sor.display().to_string(),
+    ])
+    .expect("closed_no_pr closeout does not require PR state");
+
+    let sor_text = fs::read_to_string(&sor).expect("read sor");
+    assert!(sor_text.contains("- Integration state: closed_no_pr"));
+    assert!(sor_text.contains("- Closeout state: complete"));
+}
+
+#[test]
+fn srp_sor_update_preserves_existing_followups_when_adding_residual_risks() {
+    let repo = TempRepo::new("srp-sor-update-followups");
+    let facts = repo.write_rel(
+        "facts.yaml",
+        r#"release_tail:
+  residual_risks:
+    - "Finish watcher still needs to observe CI."
+"#,
+    );
+    let srp = repo.write_rel("srp.md", &valid_srp_text(4559));
+    let sor = repo.write_rel(
+        "sor.md",
+        &valid_sor_text().replace(
+            "## Follow-ups / Deferred work\n- none\n",
+            "## Follow-ups / Deferred work\n- Keep operator review open until CI is green.\n",
+        ),
+    );
+
+    real_srp_sor_update(&[
+        "--facts".into(),
+        facts.display().to_string(),
+        "--srp".into(),
+        srp.display().to_string(),
+        "--sor".into(),
+        sor.display().to_string(),
+    ])
+    .expect("residual risk update preserves follow-up section");
+
+    let sor_text = fs::read_to_string(&sor).expect("read sor");
+    assert!(sor_text.contains("- Keep operator review open until CI is green."));
+    assert!(sor_text.contains("- Residual risks:\n  - Finish watcher still needs to observe CI."));
+}
+
+#[test]
+fn srp_sor_update_refuses_contradictory_validation_facts() {
+    let repo = TempRepo::new("srp-sor-update-validation-refusal");
+    let facts = repo.write_rel(
+        "facts.yaml",
+        r#"validation:
+  status: pass
+  commands:
+    - command: "git diff --check"
+      purpose: "whitespace proof"
+      result: FAIL
+"#,
+    );
+    let srp = repo.write_rel("srp.md", &valid_srp_text(4559));
+    let sor = repo.write_rel("sor.md", &valid_sor_text());
+
+    let err = real_srp_sor_update(&[
+        "--facts".into(),
+        facts.display().to_string(),
+        "--srp".into(),
+        srp.display().to_string(),
+        "--sor".into(),
+        sor.display().to_string(),
+    ])
+    .expect_err("contradictory validation facts must fail closed");
+
+    assert!(err.to_string().contains("contradictory validation facts"));
 }
 
 #[test]
