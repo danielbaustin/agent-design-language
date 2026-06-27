@@ -1,0 +1,1 @@
+MaxSpotInstanceCountExceeded: AWS account currently has no available Spot instance quota for the requested c7i.4xlarge one-time Spot proof.

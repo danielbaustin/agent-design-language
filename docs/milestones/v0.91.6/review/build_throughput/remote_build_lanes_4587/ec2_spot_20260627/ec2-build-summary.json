@@ -1,0 +1,24 @@
+{
+  "build_seconds": 99,
+  "commands": [
+    "cargo build --manifest-path adl/Cargo.toml --locked --bin adl-pr-doctor",
+    "cargo test --manifest-path adl/Cargo.toml --locked provider_communication -- --nocapture"
+  ],
+  "elapsed_seconds": 575,
+  "finished_at": "2026-06-27T08:29:50Z",
+  "instance_handle_sha256": "f916e7a4ecab11676d2f2505bfa63b53508831b7764779d3fbf2609da5b311ec",
+  "log_root": "/opt/adl-spot-build-4587/20260627-issue-4587-ec2-rerun2",
+  "purchase_option": "on_demand_after_spot_quota_block",
+  "resource_handles": {
+    "instance_profile_name": "ADLSpotBuild4587InstanceProfile",
+    "issue_tag": "4587",
+    "role_name": "ADLSpotBuild4587SSMRole",
+    "security_group_name": "adl-spot-build-4587"
+  },
+  "resolved_commit": "b3c4528fc08b6284aa9ee3c50d209b88d64f59d5",
+  "run_id": "20260627-issue-4587-ec2-rerun2",
+  "schema_version": "adl.ec2_build_run.v1",
+  "started_at": "2026-06-27T08:20:15Z",
+  "status": "passed",
+  "test_seconds": 252
+}
