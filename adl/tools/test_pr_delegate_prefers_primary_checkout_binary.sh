@@ -86,6 +86,7 @@ touch "$worktree/adl/Cargo.toml"
 (
   cd "$worktree"
   ADL_PRIMARY_CHECKOUT_ROOT="$repo" \
+    ADL_PR_RUST_ALLOW_CARGO_FALLBACK=1 \
     "$BASH_BIN" adl/tools/pr.sh doctor 4413 --slug rust-start --no-fetch-issue --version v0.91.6 --mode full >/dev/null
 )
 

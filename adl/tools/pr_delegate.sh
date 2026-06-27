@@ -34,6 +34,15 @@ rust_pr_delegate_available() {
   if [[ -n "$cached_bin" && -x "$cached_bin" ]]; then
     return 0
   fi
+  cached_bin="$(rust_pr_subcommand_path_bin "${1:-}" || true)"
+  if [[ -n "$cached_bin" && -x "$cached_bin" ]]; then
+    return 0
+  fi
+  cached_bin="$(rust_pr_delegate_path_bin || true)"
+  if [[ -n "$cached_bin" && -x "$cached_bin" ]]; then
+    return 0
+  fi
+  rust_pr_cargo_fallback_allowed || return 1
   command -v cargo >/dev/null 2>&1 || return 1
   return 0
 }
@@ -189,6 +198,65 @@ rust_pr_subcommand_primary_cached_bin() {
     return 1
   fi
   printf '%s\n' "$candidate"
+}
+
+rust_pr_subcommand_path_bin() {
+  [[ "${ADL_PR_RUST_DISABLE_PATH_LOOKUP:-0}" != "1" ]] || return 1
+  local binary_name candidate
+  binary_name="$(rust_pr_subcommand_binary_name "$1" || true)"
+  [[ -n "$binary_name" ]] || return 1
+  candidate="$(command -v "$binary_name" 2>/dev/null || true)"
+  [[ -n "$candidate" && -x "$candidate" ]] || return 1
+  printf '%s\n' "$candidate"
+}
+
+rust_pr_delegate_path_bin() {
+  [[ "${ADL_PR_RUST_DISABLE_PATH_LOOKUP:-0}" != "1" ]] || return 1
+  local candidate
+  candidate="$(command -v adl 2>/dev/null || true)"
+  [[ -n "$candidate" && -x "$candidate" ]] || return 1
+  printf '%s\n' "$candidate"
+}
+
+rust_pr_cargo_fallback_allowed() {
+  case "${ADL_PR_RUST_ALLOW_CARGO_FALLBACK:-0}" in
+    1|true|TRUE|yes|YES|on|ON) return 0 ;;
+    *) return 1 ;;
+  esac
+}
+
+rust_pr_report_missing_owner_binary() {
+  local subcommand="$1" root="$2"
+  local direct_bin override_var primary_root
+  direct_bin="$(rust_pr_subcommand_binary_name "$subcommand" || true)"
+  override_var="$(rust_pr_subcommand_override_var_name "$subcommand" || true)"
+  primary_root="$(rust_pr_delegate_primary_root)"
+  adl_obs_event "pr.sh" "rust_delegate" "failed" \
+    "subcommand" "$subcommand" \
+    "reason_code" "missing_owner_binary_cargo_fallback_disabled" \
+    "cargo_fallback" "disabled"
+  cat >&2 <<EOF
+ERROR: missing dedicated ADL PR owner binary for subcommand '$subcommand'.
+Expected one of:
+- ADL_PR_RUST_BIN
+EOF
+  if [[ -n "$override_var" ]]; then
+    printf '%s\n' "- $override_var" >&2
+  fi
+  if [[ -n "$direct_bin" ]]; then
+    cat >&2 <<EOF
+- $root/adl/target/debug/$direct_bin
+- $primary_root/adl/target/debug/$direct_bin
+- $direct_bin on PATH
+EOF
+  fi
+  cat >&2 <<EOF
+- $root/adl/target/debug/adl
+- $primary_root/adl/target/debug/adl
+- adl on PATH
+Build owner binaries first with: bash adl/tools/run_owner_validation_lane.sh csdlc --build
+Set ADL_PR_RUST_ALLOW_CARGO_FALLBACK=1 only for explicit bootstrap/debug use.
+EOF
 }
 
 rust_pr_cargo_delegate_timeout_secs() {
@@ -433,6 +501,11 @@ delegate_pr_command_to_rust() {
     adl_obs_event "pr.sh" "rust_delegate" "exec" "subcommand" "$subcommand" "delegate" "$direct_bin"
     exec "$direct_bin" "$@"
   fi
+  direct_bin="$(rust_pr_subcommand_path_bin "$subcommand" || true)"
+  if [[ -n "$direct_bin" ]]; then
+    adl_obs_event "pr.sh" "rust_delegate" "exec" "subcommand" "$subcommand" "delegate" "$direct_bin"
+    exec "$direct_bin" "$@"
+  fi
   cached_bin="$(rust_pr_delegate_cached_bin || true)"
   if [[ -n "$cached_bin" ]]; then
     adl_obs_event "pr.sh" "rust_delegate" "exec" "subcommand" "$subcommand" "delegate" "$cached_bin"
@@ -442,6 +515,15 @@ delegate_pr_command_to_rust() {
   if [[ -n "$cached_bin" ]]; then
     adl_obs_event "pr.sh" "rust_delegate" "exec" "subcommand" "$subcommand" "delegate" "$cached_bin"
     exec "$cached_bin" pr "$subcommand" "$@"
+  fi
+  cached_bin="$(rust_pr_delegate_path_bin || true)"
+  if [[ -n "$cached_bin" ]]; then
+    adl_obs_event "pr.sh" "rust_delegate" "exec" "subcommand" "$subcommand" "delegate" "$cached_bin"
+    exec "$cached_bin" pr "$subcommand" "$@"
+  fi
+  if ! rust_pr_cargo_fallback_allowed; then
+    rust_pr_report_missing_owner_binary "$subcommand" "$root"
+    exit 75
   fi
   build_lock_dir="${ADL_PR_CARGO_DELEGATE_BUILD_LOCK_DIR:-$root/adl/target/.adl-pr-rust-delegate-build.lock}"
   mkdir -p "$(dirname "$build_lock_dir")"
@@ -474,6 +556,9 @@ delegate_pr_command_to_rust() {
 
 require_rust_pr_delegate() {
   rust_pr_delegate_available "${1:-}" && return 0
+  if [[ "${ADL_PR_RUST_DISABLE:-0}" != "1" ]] && ! rust_pr_cargo_fallback_allowed; then
+    rust_pr_report_missing_owner_binary "${1:-unknown}" "$(rust_pr_delegate_root)"
+    exit 75
+  fi
   die "Rust PR control-plane path unavailable; the five-command lifecycle is Rust-owned."
 }
-

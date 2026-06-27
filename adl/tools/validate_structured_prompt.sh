@@ -1,48 +1,9 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-resolve_manifest_root() {
-  if [[ -n "${ADL_TOOLING_MANIFEST_ROOT:-}" ]]; then
-    if [[ -f "$ADL_TOOLING_MANIFEST_ROOT/adl/Cargo.toml" ]]; then
-      printf '%s\n' "$ADL_TOOLING_MANIFEST_ROOT"
-      return 0
-    fi
-    echo "ERROR: ADL_TOOLING_MANIFEST_ROOT does not contain adl/Cargo.toml: $ADL_TOOLING_MANIFEST_ROOT" >&2
-    exit 1
-  fi
-
-  local script_dir root
-  script_dir="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-  root="$(cd "$script_dir/../.." && pwd)"
-  if [[ -f "$root/adl/Cargo.toml" ]]; then
-    printf '%s\n' "$root"
-    return 0
-  fi
-
-  echo "ERROR: unable to locate ADL tooling manifest root; set ADL_TOOLING_MANIFEST_ROOT to the primary checkout root" >&2
-  exit 1
-}
-
-resolve_primary_root() {
-  local root="$1"
-  if [[ -n "${ADL_PRIMARY_CHECKOUT_ROOT:-}" ]]; then
-    if [[ -f "$ADL_PRIMARY_CHECKOUT_ROOT/adl/Cargo.toml" ]]; then
-      printf '%s\n' "$ADL_PRIMARY_CHECKOUT_ROOT"
-      return 0
-    fi
-    echo "ERROR: ADL_PRIMARY_CHECKOUT_ROOT does not contain adl/Cargo.toml: $ADL_PRIMARY_CHECKOUT_ROOT" >&2
-    exit 1
-  fi
-
-  case "$root" in
-    */.worktrees/*)
-      printf '%s\n' "${root%%/.worktrees/*}"
-      ;;
-    *)
-      printf '%s\n' "$root"
-      ;;
-  esac
-}
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+# shellcheck source=adl/tools/owner_binary_resolution.sh
+source "$SCRIPT_DIR/owner_binary_resolution.sh"
 
 acquire_build_lock() {
   local lock_dir="$1"
@@ -67,36 +28,8 @@ MSG
   trap 'if [[ -n "${ADL_VALIDATOR_BUILD_LOCK_HELD:-}" ]]; then rmdir "$ADL_VALIDATOR_BUILD_LOCK_HELD" 2>/dev/null || true; fi' EXIT
 }
 
-run_if_executable() {
-  local candidate="$1"
-  shift
-  if [[ -n "$candidate" && -x "$candidate" ]]; then
-    exec "$candidate" "$@"
-  fi
-}
-
-run_target_dir_validator_if_present() {
-  local target_dir="$1"
-  shift
-  if [[ -z "$target_dir" ]]; then
-    return 0
-  fi
-  # Keep this lookup order aligned with
-  # docs/tooling/structured-prompt-validator-binary-resolution.md.
-  case "$target_dir" in
-    /*)
-      run_if_executable "$target_dir/debug/adl-validate-structured-prompt" "$@"
-      ;;
-    *)
-      run_if_executable "$PWD/$target_dir/debug/adl-validate-structured-prompt" "$@"
-      run_if_executable "$ROOT_DIR/adl/$target_dir/debug/adl-validate-structured-prompt" "$@"
-      run_if_executable "$PRIMARY_ROOT/adl/$target_dir/debug/adl-validate-structured-prompt" "$@"
-      ;;
-  esac
-}
-
-ROOT_DIR="$(resolve_manifest_root)"
-PRIMARY_ROOT="$(resolve_primary_root "$ROOT_DIR")"
+ROOT_DIR="$(adl_owner_manifest_root)"
+PRIMARY_ROOT="$(adl_owner_primary_root "$ROOT_DIR")"
 EXPLICIT_VALIDATOR_BIN="${ADL_STRUCTURED_PROMPT_VALIDATOR_BIN:-}"
 ALLOW_CARGO_FALLBACK="${ADL_STRUCTURED_PROMPT_VALIDATOR_ALLOW_CARGO_FALLBACK:-0}"
 DISABLE_PATH_LOOKUP="${ADL_STRUCTURED_PROMPT_VALIDATOR_DISABLE_PATH_LOOKUP:-0}"
@@ -106,16 +39,15 @@ if [[ -n "$EXPLICIT_VALIDATOR_BIN" && ! -x "$EXPLICIT_VALIDATOR_BIN" ]]; then
   exit 1
 fi
 
-run_if_executable "$EXPLICIT_VALIDATOR_BIN" "$@"
-run_target_dir_validator_if_present "${CARGO_TARGET_DIR:-}" "$@"
-run_target_dir_validator_if_present "${CARGO_LLVM_COV_TARGET_DIR:-}" "$@"
-run_if_executable "$ROOT_DIR/adl/target/debug/adl-validate-structured-prompt" "$@"
-run_if_executable "$PRIMARY_ROOT/adl/target/debug/adl-validate-structured-prompt" "$@"
-run_if_executable "$ROOT_DIR/adl/target/llvm-cov-target/debug/adl-validate-structured-prompt" "$@"
-run_if_executable "$PRIMARY_ROOT/adl/target/llvm-cov-target/debug/adl-validate-structured-prompt" "$@"
-if [[ "$DISABLE_PATH_LOOKUP" != "1" ]] && command -v adl-validate-structured-prompt >/dev/null 2>&1; then
-  exec adl-validate-structured-prompt "$@"
-fi
+# Keep this lookup order aligned with
+# docs/tooling/structured-prompt-validator-binary-resolution.md.
+adl_owner_run_binary_resolution \
+  "adl-validate-structured-prompt" \
+  "$EXPLICIT_VALIDATOR_BIN" \
+  "$DISABLE_PATH_LOOKUP" \
+  "$ROOT_DIR" \
+  "$PRIMARY_ROOT" \
+  "$@"
 
 if [[ "$ALLOW_CARGO_FALLBACK" != "1" ]]; then
   cat >&2 <<MSG

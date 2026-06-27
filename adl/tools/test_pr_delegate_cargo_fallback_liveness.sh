@@ -61,10 +61,45 @@ run_from_repo() {
   )
 }
 
+default_fail_log="$tmpdir/default-fail.log"
+default_fail_args="$tmpdir/default-fail.args"
+: >"$default_fail_args"
+set +e
+run_from_repo \
+  env \
+    ADL_OBSERVABILITY_LOG="$default_fail_log" \
+    ADL_OBSERVABILITY_STDERR=0 \
+    ADL_TEST_CARGO_MODE=heartbeat \
+    ADL_TEST_CARGO_ARGS="$default_fail_args" \
+    "$BASH_BIN" adl/tools/pr.sh doctor 4413 --slug demo --no-fetch-issue --version v0.91.6 --mode full >/dev/null 2>"$tmpdir/default-fail.stderr"
+default_fail_status="$?"
+set -e
+[[ "$default_fail_status" == "75" ]] || {
+  echo "assertion failed: missing owner binary should fail closed with exit 75, got $default_fail_status" >&2
+  cat "$tmpdir/default-fail.stderr" >&2
+  exit 1
+}
+[[ ! -s "$default_fail_args" ]] || {
+  echo "assertion failed: cargo must not run when fallback is not explicitly enabled" >&2
+  cat "$default_fail_args" >&2
+  exit 1
+}
+grep -F "reason_code=missing_owner_binary_cargo_fallback_disabled" "$default_fail_log" >/dev/null || {
+  echo "assertion failed: missing owner binary should emit a classified observability event" >&2
+  cat "$default_fail_log" >&2
+  exit 1
+}
+grep -F "ADL_PR_RUST_ALLOW_CARGO_FALLBACK=1" "$tmpdir/default-fail.stderr" >/dev/null || {
+  echo "assertion failed: missing owner binary diagnostic should explain the explicit fallback opt-in" >&2
+  cat "$tmpdir/default-fail.stderr" >&2
+  exit 1
+}
+
 heartbeat_log="$tmpdir/heartbeat.log"
 heartbeat_args="$tmpdir/heartbeat.args"
 run_from_repo \
   env \
+    ADL_PR_RUST_ALLOW_CARGO_FALLBACK=1 \
     ADL_OBSERVABILITY_LOG="$heartbeat_log" \
     ADL_OBSERVABILITY_STDERR=0 \
     ADL_OBSERVABILITY_HEARTBEAT_MS=25 \
@@ -84,6 +119,7 @@ issue_log="$tmpdir/issue.log"
 issue_args="$tmpdir/issue.args"
 run_from_repo \
   env \
+    ADL_PR_RUST_ALLOW_CARGO_FALLBACK=1 \
     ADL_OBSERVABILITY_LOG="$issue_log" \
     ADL_OBSERVABILITY_STDERR=0 \
     ADL_OBSERVABILITY_HEARTBEAT_MS=25 \
@@ -100,6 +136,7 @@ timeout_args="$tmpdir/timeout.args"
 set +e
 run_from_repo \
   env \
+    ADL_PR_RUST_ALLOW_CARGO_FALLBACK=1 \
     ADL_OBSERVABILITY_LOG="$timeout_log" \
     ADL_OBSERVABILITY_STDERR=0 \
     ADL_OBSERVABILITY_HEARTBEAT_MS=25 \
@@ -132,6 +169,7 @@ printf '%s\n' "adl-pr-doctor" >"$lock_dir/delegate_bin"
 set +e
 run_from_repo \
   env \
+    ADL_PR_RUST_ALLOW_CARGO_FALLBACK=1 \
     ADL_OBSERVABILITY_LOG="$lock_log" \
     ADL_OBSERVABILITY_STDERR=0 \
     ADL_PR_CARGO_DELEGATE_BUILD_LOCK_TIMEOUT_SECS=0 \
@@ -172,6 +210,7 @@ printf '%s\n' "finish" >"$lock_dir/subcommand"
 printf '%s\n' "adl-pr-finish" >"$lock_dir/delegate_bin"
 run_from_repo \
   env \
+    ADL_PR_RUST_ALLOW_CARGO_FALLBACK=1 \
     ADL_OBSERVABILITY_LOG="$stale_log" \
     ADL_OBSERVABILITY_STDERR=0 \
     ADL_OBSERVABILITY_HEARTBEAT_MS=25 \

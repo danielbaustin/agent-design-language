@@ -2,8 +2,8 @@
 set -euo pipefail
 
 ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)"
-PROMPT_TEMPLATE_BIN=(cargo run --quiet --manifest-path "$ROOT/adl/Cargo.toml" --bin adl-prompt-template --)
-VALIDATOR_BIN=(cargo run --quiet --manifest-path "$ROOT/adl/Cargo.toml" --bin adl-validate-structured-prompt --)
+PROMPT_TEMPLATE_BIN=("$ROOT/adl/tools/prompt_template.sh")
+VALIDATOR_BIN=("$ROOT/adl/tools/validate_structured_prompt.sh")
 WORKDIR="$(mktemp -d "${TMPDIR:-/tmp}/adl-prompt-template-workflow.XXXXXX")"
 cleanup() {
   rm -rf "$WORKDIR"
