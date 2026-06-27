@@ -3450,9 +3450,9 @@ Pre-run output scaffold initialized during issue-wave opening.
         let (values, _) = extract_legacy_sor_values(rendered).expect("legacy sor values");
         let err = ensure_legacy_sor_is_representable_in_active_template(&values)
             .expect_err("bootstrap legacy sor without vpp card should fail clearly");
-        assert!(err
-            .to_string()
-            .contains("legacy sor import requires Validation planning prompt line to infer vpp_card"));
+        assert!(err.to_string().contains(
+            "legacy sor import requires Validation planning prompt line to infer vpp_card"
+        ));
     }
 
     #[test]
