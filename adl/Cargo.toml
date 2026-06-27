@@ -102,10 +102,6 @@ path = "src/bin/demo_adl_gws_native_drive_sync.rs"
 name = "demo-adl-gws-context-mirror"
 path = "src/bin/demo_adl_gws_context_mirror.rs"
 
-[[bin]]
-name = "run_v0916_acip_aee_memory_integration"
-path = "src/bin/run_v0916_acip_aee_memory_integration.rs"
-
 [features]
 # Heavy runtime_v2 proof-materialization and CLI proof-smoke tests stay out of
 # ordinary `cargo test` but remain covered by authoritative `--all-features`
