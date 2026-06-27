@@ -1,0 +1,19 @@
+{
+  "advisory_agent_mode": "local_agent_advisory_only",
+  "authoritative_classifier": "adl",
+  "classification": "closeout_needed",
+  "continuation": "action_required",
+  "issue": 4584,
+  "issue_state": "CLOSED",
+  "linked_pr": null,
+  "local_readiness": {
+    "pr_run_readiness": "unknown",
+    "reason": "missing canonical source issue prompt: /Users/daniel/git/agent-design-language/.worktrees/adl-wp-4588/.adl/v0.91.6/bodies/issue-4584-v0-91-6-tools-templates-infer-vpp-card-when-importing-older-sor-cards.md",
+    "status": "failed"
+  },
+  "next_skill": "pr-closeout",
+  "reason": "issue_closed_completed",
+  "schema": "adl.pr.watch.v1",
+  "shepherd_state": "closeout_required",
+  "tail_owner": "pr-closeout"
+}

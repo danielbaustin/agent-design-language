@@ -1,0 +1,56 @@
+{
+  "schema": "adl.pr.watch.v1",
+  "issue": 4539,
+  "issue_state": "CLOSED",
+  "authoritative_classifier": "adl",
+  "advisory_agent_mode": "local_agent_advisory_only",
+  "classification": "closeout_needed",
+  "tail_owner": "pr-closeout",
+  "shepherd_state": "closeout_required",
+  "next_skill": "pr-closeout",
+  "continuation": "action_required",
+  "reason": "issue_closed_completed",
+  "local_readiness": {
+    "status": "ready",
+    "pr_run_readiness": "ready",
+    "reason": "doctor_ready_pass"
+  },
+  "linked_pr": {
+    "number": 4556,
+    "url": "https://github.com/danielbaustin/agent-design-language/pull/4556",
+    "head_ref_name": "codex/4539-v0-91-6-runtime-quality-enforce-integrated-completion-gate-for-product-runtime-features",
+    "base_ref_name": "main",
+    "is_draft": false,
+    "state": "CLOSED",
+    "validation": {
+      "pr_number": 4556,
+      "commit_sha": "89d4411a955476e94d0495543c0b0fe2d4d8baec",
+      "pr_state": "MERGED",
+      "is_draft": false,
+      "disposition": "success",
+      "projection_status": "merged",
+      "checks": [
+        {
+          "name": "adl-ci",
+          "status": "COMPLETED",
+          "conclusion": "SUCCESS",
+          "job_run_id": "28249254959"
+        },
+        {
+          "name": "adl-slow-proof",
+          "status": "COMPLETED",
+          "conclusion": "SKIPPED",
+          "job_run_id": "28249254959"
+        },
+        {
+          "name": "adl-coverage",
+          "status": "COMPLETED",
+          "conclusion": "SUCCESS",
+          "job_run_id": "28249254959"
+        }
+      ],
+      "failed_checks": [],
+      "pending_checks": []
+    }
+  }
+}

@@ -20,6 +20,9 @@ Current issue truth for release consumption must be read from:
   for the ordered open release-tail issue wave
 - [OPERATIONAL_COMPLETION_GATE_v0.91.6.md](OPERATIONAL_COMPLETION_GATE_v0.91.6.md)
   for the required completion-class boundary on product/runtime claims
+- [CONTROL_PLANE_RESCUE_SPRINT_v0.91.6.md](CONTROL_PLANE_RESCUE_SPRINT_v0.91.6.md)
+  for the control-plane rescue gate that must clear before release-tail work
+  resumes through the standard issue wave
 
 Use [review/V0916_RELEASE_AND_BRIDGE_DOC_TRUTH_CONSUMPTION_REVIEW_4522.md](review/V0916_RELEASE_AND_BRIDGE_DOC_TRUTH_CONSUMPTION_REVIEW_4522.md)
 as the bounded audit of this rule and the remaining manual boundary, not as a
@@ -30,6 +33,10 @@ ledger.
 
 ## 0. Release-Tail Convergence
 
+- [ ] Control-plane rescue sprint `#4588` completed before ordered release-tail
+  execution resumes. Any incomplete child, blocked follow-on, or retained
+  watcher residue requires an explicit operator waiver in `#4588` with
+  release-tail impact, retained watcher evidence, and follow-on owner.
 - [ ] Bridge ledger refreshed from first-tranche outcomes, consuming the
   retained-evidence matrix for closed bridge umbrellas and the closeout-tail
   sprint surface for open ordered release-tail work.
@@ -44,6 +51,14 @@ ledger.
 - [ ] Open residuals routed to `v0.91.7`, `v0.92`, or later milestones.
 - [ ] Tooling reliability issues have complete, blocked, deferred, or routed
   status.
+- [x] Workflow-critical ADL commands use independent binaries rather than
+  implicit Cargo execution during normal finish, validation, watcher, and
+  closeout paths through merged issue `#4590`.
+- [x] Deterministic `finish --ready` publication and Git push authentication
+  repaired through merged issue `#4598`.
+- [x] Shared C-SDLC operating docs and installed skill guidance reflect the
+  current watcher, prep-scout, scheduler, binary-first, and closeout contract
+  through merged issue `#4591`.
 - [ ] Public prompt record security/export status recorded.
 - [ ] Provider/model reliability status recorded.
 - [ ] Security/CAV status recorded.

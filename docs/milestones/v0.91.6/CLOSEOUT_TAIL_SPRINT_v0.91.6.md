@@ -4,6 +4,19 @@
 
 The milestone closeout tail is one ordered sprint, not a loose collection of independent mini-sprints. Each work package remains its own issue with its own cards, worktree, review, PR, and closeout, but the sprint-level sequence and wait-state handling are standardized.
 
+## Rescue Gate
+
+Before the ordered closeout-tail wave resumes, complete the control-plane
+rescue sprint in
+[CONTROL_PLANE_RESCUE_SPRINT_v0.91.6.md](CONTROL_PLANE_RESCUE_SPRINT_v0.91.6.md).
+Any incomplete child, blocked follow-on, or retained watcher residue requires
+an explicit operator waiver in the rescue sprint packet with release-tail
+impact, retained watcher evidence, and follow-on owner.
+
+The rescue gate exists because watcher, validation, SRP/SOR, closeout, and
+remote-build relief must be operational in the actual release-tail path, not
+merely implemented as isolated components.
+
 ## Standard ordered issue wave
 
 | Order | Issue | Role | Must wait for | May spawn follow-on remediation | Watcher expectation |
@@ -47,6 +60,9 @@ The milestone closeout tail is one ordered sprint, not a loose collection of ind
   - a summary that names the retained watcher packet path and disposition; or
   - an explicit not-applicable reason for issues that never entered a wait
     state.
+- After the rescue gate, every real wait state must have a retained or
+  summarized `adl/tools/pr.sh watch <issue> --json` packet, or a one-line
+  not-applicable reason.
 - Required watcher routing must use the packet's top-level
   `classification`, `tail_owner`, and `next_skill` fields as the authority.
   Nested fields such as `linked_pr.validation.disposition` are supporting

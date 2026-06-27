@@ -1,0 +1,129 @@
+{
+  "schema": "adl.pr.doctor.v1",
+  "issue": 4598,
+  "version": "v0.91.6",
+  "slug": "v0-91-6-tools-finish-make-finish-ready-publication-and-git-push-auth-deterministic",
+  "branch": "codex/4598-v0-91-6-tools-finish-make-finish-ready-publication-and-git-push-auth-deterministic",
+  "mode": "ready",
+  "target_queue": "tools",
+  "target_queue_source": "explicit",
+  "preflight_status": "WARN",
+  "preflight_block_kind": "open_pr_wave_override",
+  "preflight_guidance": "Open PR wave scan was explicitly skipped by --allow-open-pr-wave; record why the queue override is unrelated or intentionally sequenced.",
+  "open_pr_scan_status": "skipped_by_override",
+  "open_pr_count": null,
+  "open_prs": [],
+  "session_ledger": {
+    "status": "PASS",
+    "block_kind": "session_self_claim",
+    "guidance": "The current session already owns the relevant claim. Keep it fresh with `adl session heartbeat` and release it with `adl session release` when handing off.",
+    "ledger_path": "/Users/daniel/git/agent-design-language/.adl/session-ledger/ledger.json",
+    "current_session_id": "019ec95a-0758-7240-9330-0f98b3027080",
+    "relevant_claim_count": 1,
+    "relevant_claims": [
+      {
+        "claim_id": "issue-4598-20260627t095508z",
+        "session_id": "019ec95a-0758-7240-9330-0f98b3027080",
+        "owner": "codex",
+        "resource_kind": "issue",
+        "resource_id": "4598",
+        "mode": "active",
+        "classification": "active",
+        "issue": 4598,
+        "branch": "codex/4598-v0-91-6-tools-finish-make-finish-ready-publication-and-git-push-auth-deterministic",
+        "worktree_path": null,
+        "matches_issue": true,
+        "matches_branch": true,
+        "matches_worktree": false,
+        "self_claim": true
+      }
+    ]
+  },
+  "lifecycle_state": "pre_run",
+  "ready_status": "PASS",
+  "worktree": null,
+  "source": ".adl/v0.91.6/bodies/issue-4598-v0-91-6-tools-finish-make-finish-ready-publication-and-git-push-auth-deterministic.md",
+  "root_stp": ".adl/v0.91.6/tasks/issue-4598__v0-91-6-tools-finish-make-finish-ready-publication-and-git-push-auth-deterministic/stp.md",
+  "root_input": ".adl/v0.91.6/tasks/issue-4598__v0-91-6-tools-finish-make-finish-ready-publication-and-git-push-auth-deterministic/sip.md",
+  "root_output": ".adl/v0.91.6/tasks/issue-4598__v0-91-6-tools-finish-make-finish-ready-publication-and-git-push-auth-deterministic/sor.md",
+  "wt_stp": null,
+  "wt_input": null,
+  "wt_output": null,
+  "card_lifecycle": {
+    "order": [
+      "SIP",
+      "STP",
+      "SPP",
+      "VPP",
+      "SRP",
+      "SOR"
+    ],
+    "active_stage": "SOR",
+    "next_required_stage": "SOR",
+    "pr_run_readiness": "ready",
+    "pr_finish_readiness": "blocked",
+    "stages": [
+      {
+        "stage": "SIP",
+        "path": ".adl/v0.91.6/tasks/issue-4598__v0-91-6-tools-finish-make-finish-ready-publication-and-git-push-auth-deterministic/sip.md",
+        "state": "complete",
+        "complete": true,
+        "design_time_complete": true,
+        "final_ready": false,
+        "next_editor": null,
+        "detail": "SIP has issue-specific design-time intent for execution planning."
+      },
+      {
+        "stage": "STP",
+        "path": ".adl/v0.91.6/tasks/issue-4598__v0-91-6-tools-finish-make-finish-ready-publication-and-git-push-auth-deterministic/stp.md",
+        "state": "complete",
+        "complete": true,
+        "design_time_complete": true,
+        "final_ready": false,
+        "next_editor": null,
+        "detail": "STP has the required issue-specific task intent, acceptance, and dependency surfaces."
+      },
+      {
+        "stage": "SPP",
+        "path": ".adl/v0.91.6/tasks/issue-4598__v0-91-6-tools-finish-make-finish-ready-publication-and-git-push-auth-deterministic/spp.md",
+        "state": "complete",
+        "complete": true,
+        "design_time_complete": true,
+        "final_ready": false,
+        "next_editor": null,
+        "detail": "SPP has ready, reviewed, or approved design-time planning state."
+      },
+      {
+        "stage": "VPP",
+        "path": ".adl/v0.91.6/tasks/issue-4598__v0-91-6-tools-finish-make-finish-ready-publication-and-git-push-auth-deterministic/vpp.md",
+        "state": "complete",
+        "complete": true,
+        "design_time_complete": true,
+        "final_ready": false,
+        "next_editor": null,
+        "detail": "VPP has ready, reviewed, or approved validation planning state."
+      },
+      {
+        "stage": "SRP",
+        "path": ".adl/v0.91.6/tasks/issue-4598__v0-91-6-tools-finish-make-finish-ready-publication-and-git-push-auth-deterministic/srp.md",
+        "state": "pre_review",
+        "complete": true,
+        "design_time_complete": true,
+        "final_ready": false,
+        "next_editor": null,
+        "detail": "SRP is a Structured Review Prompt ready for review; final review results are not recorded yet."
+      },
+      {
+        "stage": "SOR",
+        "path": ".adl/v0.91.6/tasks/issue-4598__v0-91-6-tools-finish-make-finish-ready-publication-and-git-push-auth-deterministic/sor.md",
+        "state": "scaffold",
+        "complete": false,
+        "design_time_complete": false,
+        "final_ready": false,
+        "next_editor": "sor-editor",
+        "detail": "SOR is still the pre-execution output scaffold."
+      }
+    ]
+  },
+  "doctor_status": "PASS"
+}

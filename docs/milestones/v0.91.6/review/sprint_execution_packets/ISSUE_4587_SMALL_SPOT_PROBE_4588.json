@@ -1,0 +1,37 @@
+{
+  "schema_version": "adl.remote_build.small_spot_probe.v1",
+  "issue": 4587,
+  "captured_by": 4588,
+  "run_id": "adl-spot-small-20260627174340",
+  "region": "us-west-2",
+  "instance_type": "c7i.large",
+  "market": "spot",
+  "purpose": "prove smaller EC2 Spot instance can launch and accept SSM commands after the earlier c7i.4xlarge Spot quota block",
+  "launch_result": {
+    "instance_id_present": true,
+    "initial_state": "pending",
+    "ssm_status": "Online",
+    "command_status": "Success",
+    "command_output_preview": "Linux Amazon Linux 2023 x86_64 kernel; /usr/bin/dnf present"
+  },
+  "teardown_result": {
+    "instance_state": "terminated",
+    "security_group_exists": false,
+    "instance_profile_exists": false,
+    "role_exists": false
+  },
+  "billing_and_quota_truth": {
+    "cost_explorer_api_access": "agent-logic-admin profile can read Cost Explorer monthly UnblendedCost",
+    "budgets_api_access": "agent-logic-admin profile can read Agent Logic Monthly budget",
+    "console_billing_visibility": "not proven from CLI; likely requires root-enabled IAM access to Billing and Cost Management if the console hides Billing/Cost pages",
+    "standard_spot_vcpu_quota_us_west_2": 32.0,
+    "larger_spot_result": "c7i.4xlarge Spot remained blocked in #4587 by MaxSpotInstanceCountExceeded",
+    "smaller_spot_result": "c7i.large Spot launch, SSM smoke command, and teardown succeeded"
+  },
+  "non_claims": [
+    "This probe did not install Rust or sccache.",
+    "This probe did not clone ADL or run ADL validation.",
+    "This probe does not prove final AWS billing line items.",
+    "This probe does not replace the planned AWS orchestrator / Spot manager."
+  ]
+}

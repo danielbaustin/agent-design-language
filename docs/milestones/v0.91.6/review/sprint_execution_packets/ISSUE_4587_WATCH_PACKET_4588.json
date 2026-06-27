@@ -1,0 +1,56 @@
+{
+  "schema": "adl.pr.watch.v1",
+  "issue": 4587,
+  "issue_state": "OPEN",
+  "authoritative_classifier": "adl",
+  "advisory_agent_mode": "local_agent_advisory_only",
+  "classification": "checks_green",
+  "tail_owner": "issue-watcher",
+  "shepherd_state": "watcher_owned_waiting_for_review",
+  "next_skill": "human_review",
+  "continuation": "ask_operator",
+  "reason": "linked_pr_checks_green_waiting_review",
+  "local_readiness": {
+    "status": "failed",
+    "pr_run_readiness": "unknown",
+    "reason": "missing canonical source issue prompt: /Users/daniel/git/agent-design-language/.worktrees/adl-wp-4588/.adl/v0.91.6/bodies/issue-4587-v0-91-6-build-remote-prove-nessus-and-ec2-remote-build-lanes-for-adl-validation.md"
+  },
+  "linked_pr": {
+    "number": 4599,
+    "url": "https://github.com/danielbaustin/agent-design-language/pull/4599",
+    "head_ref_name": "codex/4587-prove-nessus-and-ec2-remote-build-lanes-for-adl-validation",
+    "base_ref_name": "main",
+    "is_draft": false,
+    "state": "OPEN",
+    "validation": {
+      "pr_number": 4599,
+      "commit_sha": "c44553562c0763645fc181fb85712178a19f3794",
+      "pr_state": "OPEN",
+      "is_draft": false,
+      "disposition": "success",
+      "projection_status": "ready_to_merge_or_review",
+      "checks": [
+        {
+          "name": "adl-ci",
+          "status": "COMPLETED",
+          "conclusion": "SUCCESS",
+          "job_run_id": "28284412979"
+        },
+        {
+          "name": "adl-slow-proof",
+          "status": "COMPLETED",
+          "conclusion": "SKIPPED",
+          "job_run_id": "28284412979"
+        },
+        {
+          "name": "adl-coverage",
+          "status": "COMPLETED",
+          "conclusion": "SUCCESS",
+          "job_run_id": "28284412979"
+        }
+      ],
+      "failed_checks": [],
+      "pending_checks": []
+    }
+  }
+}

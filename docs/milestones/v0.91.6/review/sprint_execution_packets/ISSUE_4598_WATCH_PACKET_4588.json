@@ -1,0 +1,55 @@
+{
+  "schema": "adl.pr.watch.v1",
+  "issue": 4598,
+  "issue_state": "CLOSED",
+  "authoritative_classifier": "adl",
+  "advisory_agent_mode": "local_agent_advisory_only",
+  "classification": "closeout_completed",
+  "tail_owner": "complete",
+  "shepherd_state": "closed_and_locally_closed_out",
+  "next_skill": null,
+  "continuation": "stop",
+  "observed_at": "2026-06-27T17:31:33Z",
+  "reason": "PR #4601 merged, issue #4598 closed, and pr.sh closeout 4598 validated local STP/SIP/SOR truth.",
+  "local_readiness": {
+    "status": "terminal_closeout_complete",
+    "closeout_validation": [
+      "bash adl/tools/pr.sh finish 4598 --merge",
+      "bash adl/tools/pr.sh closeout 4598 --version v0.91.6"
+    ],
+    "reason": "finish merged PR #4601 after adl-ci completed; closeout confirmed the issue worktree was already pruned."
+  },
+  "linked_pr": {
+    "number": 4601,
+    "url": "https://github.com/danielbaustin/agent-design-language/pull/4601",
+    "state": "MERGED",
+    "is_draft": false,
+    "head_ref_name": "codex/4598-v0-91-6-tools-finish-make-finish-ready-publication-and-git-push-auth-deterministic",
+    "head_sha": "06e484de08eab8ee6209cf4e16979832ecfac51f",
+    "checks": [
+      {
+        "name": "adl-ci",
+        "status": "COMPLETED",
+        "conclusion": "SUCCESS",
+        "job_run_id": "28295926296"
+      },
+      {
+        "name": "adl-slow-proof",
+        "status": "COMPLETED",
+        "conclusion": "SKIPPED",
+        "job_run_id": "28295926296"
+      },
+      {
+        "name": "adl-coverage",
+        "status": "COMPLETED",
+        "conclusion": "SUCCESS",
+        "job_run_id": "28295926296"
+      }
+    ]
+  },
+  "observed_tooling_notes": [
+    "finish push emitted 'fatal: failed to store: 100001' while branch publication still succeeded",
+    "initial finish merge tail timed out after about fifteen minutes waiting for adl-ci",
+    "a later ADL validation watcher saw adl-ci complete successfully, after which finish --merge completed"
+  ]
+}
