@@ -1,4 +1,4 @@
-# v0.91.6 Candidate Work Breakdown Structure
+# v0.91.6 Promoted Work Breakdown Structure
 
 ## Metadata
 

@@ -1,7 +1,7 @@
 # v0.91.6 WP-13 Docs And Review-Surface Alignment
 
-Issue: `#3978`  
-Status: `ready_for_pr_after_bounded_review`  
+Issue: `#3978`
+Status: `ready_for_pr_after_bounded_review`
 Date: 2026-06-27
 
 ## Purpose
@@ -88,7 +88,7 @@ Relevant recently closed release-tail issues:
 
 WP-13 ran focused docs validation:
 
-- `git diff --check`: passed.
+- `git diff --check origin/main...HEAD`: passed.
 - `python3 adl/tools/check_repo_quality_staleness.py --milestone v0.91.6`:
   passed.
 - YAML parse for `docs/milestones/v0.91.6/WP_ISSUE_WAVE_v0.91.6.yaml`:
