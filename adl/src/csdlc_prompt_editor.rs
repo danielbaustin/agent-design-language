@@ -1016,6 +1016,12 @@ fn extract_legacy_sor_values(rendered: &str) -> Result<(BTreeMap<String, String>
             .filter(|body| !body.is_empty())
             .ok_or_else(|| anyhow!("legacy sor import requires Validation section"))?,
     );
+    if let Some(vpp_card) = rendered
+        .lines()
+        .find_map(extract_legacy_sor_validation_planning_prompt)
+    {
+        values.insert("vpp_card".to_string(), vpp_card);
+    }
 
     let mut defaulted = Vec::new();
     for (key, value) in [
@@ -1071,7 +1077,31 @@ fn ensure_legacy_sor_is_representable_in_active_template(
         status == "NOT_STARTED",
         "legacy sor import only supports bootstrap scaffolds; non-bootstrap legacy sor cards are not representable in the active template set"
     );
+    ensure!(
+        values
+            .get("vpp_card")
+            .map(|value| !value.trim().is_empty())
+            .unwrap_or(false),
+        "legacy sor import requires Validation planning prompt line to infer vpp_card"
+    );
     Ok(())
+}
+
+fn extract_legacy_sor_validation_planning_prompt(line: &str) -> Option<String> {
+    let value = line
+        .trim()
+        .strip_prefix("- Validation planning prompt:")?
+        .trim();
+    let value = value
+        .strip_prefix('`')
+        .and_then(|value| value.strip_suffix('`'))
+        .unwrap_or(value)
+        .trim();
+    if value.is_empty() {
+        None
+    } else {
+        Some(value.to_string())
+    }
 }
 
 fn scalar_to_import_string(value: &Value) -> Option<String> {
@@ -3355,6 +3385,74 @@ mod tests {
         assert!(err
             .to_string()
             .contains("legacy sor import only supports bootstrap scaffolds"));
+    }
+
+    #[test]
+    fn legacy_sor_import_infers_vpp_card_from_validation_planning_prompt() {
+        let rendered = r#"# infer-vpp-card-when-importing-older-sor-cards
+
+Task ID: issue-4584
+Run ID: issue-4584
+Version: v0.91.6
+Title: [v0.91.6][tools][templates] Infer vpp_card when importing older SOR cards
+Branch: codex/4584-infer-vpp-card-when-importing-older-sor-cards
+Card Status: draft
+Status: NOT_STARTED
+
+## Summary
+
+Pre-run output scaffold initialized during issue-wave opening.
+
+## Issue Metrics Truth
+- Validation planning prompt: `.adl/v0.91.6/tasks/issue-4584__infer-vpp-card-when-importing-older-sor-cards/vpp.md`
+
+## Artifacts produced
+- Local ignored output-card scaffold.
+
+## Validation
+- `bash adl/tools/validate_structured_prompt.sh --type sor --phase bootstrap --input .adl/v0.91.6/tasks/issue-4584__infer-vpp-card-when-importing-older-sor-cards/sor.md`
+  Verified bootstrap SOR contract compliance.
+"#;
+
+        let (values, _) = extract_legacy_sor_values(rendered).expect("legacy sor values");
+        ensure_legacy_sor_is_representable_in_active_template(&values)
+            .expect("bootstrap legacy sor with vpp card should be representable");
+        assert_eq!(
+            values.get("vpp_card").map(String::as_str),
+            Some(".adl/v0.91.6/tasks/issue-4584__infer-vpp-card-when-importing-older-sor-cards/vpp.md")
+        );
+    }
+
+    #[test]
+    fn legacy_sor_import_requires_vpp_card_for_bootstrap_scaffolds() {
+        let rendered = r#"# infer-vpp-card-when-importing-older-sor-cards
+
+Task ID: issue-4584
+Run ID: issue-4584
+Version: v0.91.6
+Title: [v0.91.6][tools][templates] Infer vpp_card when importing older SOR cards
+Branch: codex/4584-infer-vpp-card-when-importing-older-sor-cards
+Card Status: draft
+Status: NOT_STARTED
+
+## Summary
+
+Pre-run output scaffold initialized during issue-wave opening.
+
+## Artifacts produced
+- Local ignored output-card scaffold.
+
+## Validation
+- `bash adl/tools/validate_structured_prompt.sh --type sor --phase bootstrap --input .adl/v0.91.6/tasks/issue-4584__infer-vpp-card-when-importing-older-sor-cards/sor.md`
+  Verified bootstrap SOR contract compliance.
+"#;
+
+        let (values, _) = extract_legacy_sor_values(rendered).expect("legacy sor values");
+        let err = ensure_legacy_sor_is_representable_in_active_template(&values)
+            .expect_err("bootstrap legacy sor without vpp card should fail clearly");
+        assert!(err.to_string().contains(
+            "legacy sor import requires Validation planning prompt line to infer vpp_card"
+        ));
     }
 
     #[test]
