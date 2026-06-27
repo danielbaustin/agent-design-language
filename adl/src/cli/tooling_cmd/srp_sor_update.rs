@@ -17,6 +17,8 @@ struct FactPacket {
     #[serde(default)]
     integration: IntegrationFacts,
     #[serde(default)]
+    release_tail: ReleaseTailFacts,
+    #[serde(default)]
     metrics: MetricsFacts,
 }
 
@@ -52,6 +54,15 @@ struct IntegrationFacts {
     #[serde(default)]
     verification_performed: Vec<String>,
     result: Option<String>,
+}
+
+#[derive(Debug, Default, Deserialize)]
+struct ReleaseTailFacts {
+    watcher_disposition: Option<String>,
+    pr_state: Option<String>,
+    closeout_state: Option<String>,
+    #[serde(default)]
+    residual_risks: Vec<String>,
 }
 
 #[derive(Debug, Default, Deserialize)]
@@ -106,6 +117,7 @@ pub(super) fn real_srp_sor_update(args: &[String]) -> Result<()> {
         facts.has_actionable_facts(),
         "facts file contains no SRP/SOR updates"
     );
+    facts.validate_consistency()?;
 
     let srp_text =
         fs::read_to_string(srp_path).with_context(|| format!("read SRP {}", srp_path.display()))?;
@@ -174,12 +186,93 @@ impl FactPacket {
             || self.integration.integration_method.is_some()
             || !self.integration.verification_performed.is_empty()
             || self.integration.result.is_some()
+            || self.release_tail.watcher_disposition.is_some()
+            || self.release_tail.pr_state.is_some()
+            || self.release_tail.closeout_state.is_some()
+            || !self.release_tail.residual_risks.is_empty()
             || self.metrics.actual_elapsed_seconds.is_some()
             || self.metrics.actual_total_tokens.is_some()
             || self.metrics.actual_validation_seconds.is_some()
             || self.metrics.goal_metrics_data_source.is_some()
             || self.metrics.goal_metrics_source_ref.is_some()
             || self.metrics.data_source_confidence.is_some()
+    }
+
+    fn validate_consistency(&self) -> Result<()> {
+        let findings = self
+            .review
+            .findings_status
+            .as_deref()
+            .map(normalize_findings_status)
+            .transpose()?;
+        let outcome = self
+            .review
+            .recommended_outcome
+            .as_deref()
+            .map(normalize_recommended_outcome)
+            .transpose()?;
+        if matches!(findings.as_deref(), Some("findings_present"))
+            && matches!(outcome.as_deref(), Some("pass"))
+        {
+            bail!(
+                "contradictory review facts: recommended_outcome pass with findings_status findings_present"
+            );
+        }
+
+        let validation_status = self
+            .validation
+            .status
+            .as_deref()
+            .map(normalize_status_token);
+        if matches!(validation_status.as_deref(), Some("PASS"))
+            && self
+                .validation
+                .commands
+                .iter()
+                .any(|command| command.result.as_deref().is_some_and(is_failure_status))
+        {
+            bail!("contradictory validation facts: validation.status PASS with a failing command result");
+        }
+
+        if self
+            .release_tail
+            .closeout_state
+            .as_deref()
+            .is_some_and(is_terminal_closeout_state)
+        {
+            ensure!(
+                matches!(findings.as_deref(), Some("no_findings"))
+                    && matches!(outcome.as_deref(), Some("pass")),
+                "terminal closeout_state requires review.findings_status no_findings and review.recommended_outcome pass"
+            );
+            ensure!(
+                matches!(validation_status.as_deref(), Some("PASS")),
+                "terminal closeout_state requires validation.status PASS"
+            );
+            ensure!(
+                self.integration
+                    .integration_state
+                    .as_deref()
+                    .is_some_and(is_terminal_integration_state),
+                "terminal closeout_state requires terminal integration.integration_state"
+            );
+            if !self
+                .integration
+                .integration_state
+                .as_deref()
+                .is_some_and(is_no_pr_terminal_integration_state)
+            {
+                ensure!(
+                    self.release_tail
+                        .pr_state
+                        .as_deref()
+                        .is_some_and(is_terminal_pr_state),
+                    "terminal closeout_state requires terminal release_tail.pr_state unless integration.integration_state is closed_no_pr"
+                );
+            }
+        }
+
+        Ok(())
     }
 }
 
@@ -263,6 +356,7 @@ fn update_sor(text: &str, facts: &FactPacket) -> Result<String> {
     let mut out = text.to_string();
     out = replace_metric_fields(&out, &facts.metrics);
     out = replace_integration_fields(&out, &facts.integration);
+    out = replace_release_tail_fields(&out, &facts.release_tail);
     out = replace_validation_section(&out, &facts.validation);
     out = replace_verification_summary_validation(&out, &facts.validation)?;
     Ok(out)
@@ -354,6 +448,21 @@ fn assert_requested_facts_landed(srp_text: &str, sor_text: &str, facts: &FactPac
             "Result",
             facts.integration.result.as_deref(),
         ),
+        (
+            "Main Repo Integration (REQUIRED)",
+            "Watcher disposition",
+            facts.release_tail.watcher_disposition.as_deref(),
+        ),
+        (
+            "Main Repo Integration (REQUIRED)",
+            "PR state",
+            facts.release_tail.pr_state.as_deref(),
+        ),
+        (
+            "Main Repo Integration (REQUIRED)",
+            "Closeout state",
+            facts.release_tail.closeout_state.as_deref(),
+        ),
     ] {
         if let Some(value) = value {
             let observed = markdown_block_field(sor_text, block, label).unwrap_or_default();
@@ -390,8 +499,15 @@ fn assert_requested_facts_landed(srp_text: &str, sor_text: &str, facts: &FactPac
     }
     if let Some(status) = facts.validation.status.as_deref() {
         ensure!(
-            sor_text.contains(&format!("    status: {status}")),
-            "requested validation status did not land in Verification Summary: {status}"
+            sor_text.contains(&format!("    status: {}", normalize_status_token(status))),
+            "requested validation status did not land in Verification Summary: {}",
+            normalize_status_token(status)
+        );
+    }
+    for risk in &facts.release_tail.residual_risks {
+        ensure!(
+            sor_text.contains(&format!("- {}", escape_backticks(risk))),
+            "requested residual risk did not land: {risk}"
         );
     }
 
@@ -493,6 +609,69 @@ fn replace_integration_fields_in_section(text: &str, integration: &IntegrationFa
     out
 }
 
+fn replace_release_tail_fields(text: &str, release_tail: &ReleaseTailFacts) -> String {
+    let mut out = replace_section_body(text, "Main Repo Integration (REQUIRED)", |section_text| {
+        replace_release_tail_fields_in_integration_section(section_text, release_tail)
+    });
+    if !release_tail.residual_risks.is_empty() {
+        out = replace_followups_with_residual_risks(&out, &release_tail.residual_risks);
+    }
+    out
+}
+
+fn replace_release_tail_fields_in_integration_section(
+    text: &str,
+    release_tail: &ReleaseTailFacts,
+) -> String {
+    let mut out = text.to_string();
+    for (label, value) in [
+        (
+            "Watcher disposition",
+            release_tail.watcher_disposition.as_deref(),
+        ),
+        ("PR state", release_tail.pr_state.as_deref()),
+        ("Closeout state", release_tail.closeout_state.as_deref()),
+    ] {
+        if let Some(value) = value {
+            out = upsert_dash_field(&out, label, value, Some("Result"));
+        }
+    }
+    out
+}
+
+fn replace_followups_with_residual_risks(text: &str, residual_risks: &[String]) -> String {
+    replace_section_body(text, "Follow-ups / Deferred work", |section_text| {
+        upsert_residual_risk_block(section_text, residual_risks)
+    })
+}
+
+fn upsert_residual_risk_block(text: &str, residual_risks: &[String]) -> String {
+    let mut out = Vec::new();
+    let mut lines = text.lines().peekable();
+    while let Some(line) = lines.next() {
+        if line.trim_start() == "- Residual risks:" {
+            while let Some(next) = lines.peek() {
+                let trimmed = next.trim_start();
+                let indent_len = next.len() - trimmed.len();
+                if indent_len == 0 && trimmed.starts_with("- ") {
+                    break;
+                }
+                lines.next();
+            }
+        } else {
+            out.push(line.to_string());
+        }
+    }
+    if !out.is_empty() && out.last().is_some_and(|line| !line.trim().is_empty()) {
+        out.push(String::new());
+    }
+    out.push("- Residual risks:".to_string());
+    for risk in residual_risks {
+        out.push(format!("  - {}", escape_backticks(risk)));
+    }
+    out.join("\n") + trailing_newline(text)
+}
+
 fn replace_validation_section(text: &str, validation: &ValidationFacts) -> String {
     if validation.commands.is_empty() && validation.status.is_none() {
         return text.to_string();
@@ -554,7 +733,11 @@ fn replace_verification_summary_validation(
     let mut block = String::from("  validation:\n");
     block.push_str(&format!(
         "    status: {}\n",
-        validation.status.as_deref().unwrap_or("not_recorded")
+        validation
+            .status
+            .as_deref()
+            .map(normalize_status_token)
+            .unwrap_or_else(|| "not_recorded".to_string())
     ));
     block.push_str("    checks_run:\n");
     if validation.commands.is_empty() {
@@ -589,6 +772,36 @@ fn replace_dash_field(text: &str, label: &str, value: &str) -> String {
         .collect::<Vec<_>>()
         .join("\n")
         + trailing_newline(text)
+}
+
+fn upsert_dash_field(text: &str, label: &str, value: &str, after_label: Option<&str>) -> String {
+    let prefix = format!("- {label}:");
+    if text
+        .lines()
+        .any(|line| line.trim_start().starts_with(&prefix))
+    {
+        return replace_dash_field(text, label, value);
+    }
+
+    let after_prefix = after_label.map(|label| format!("- {label}:"));
+    let mut out = Vec::new();
+    let mut inserted = false;
+    for line in text.lines() {
+        out.push(line.to_string());
+        if !inserted
+            && after_prefix
+                .as_ref()
+                .is_some_and(|prefix| line.trim_start().starts_with(prefix))
+        {
+            let indent_len = line.len() - line.trim_start().len();
+            out.push(format!("{}- {label}: {value}", " ".repeat(indent_len)));
+            inserted = true;
+        }
+    }
+    if !inserted {
+        out.push(format!("- {label}: {value}"));
+    }
+    out.join("\n") + trailing_newline(text)
 }
 
 fn replace_indented_list_field(text: &str, label: &str, values: &[String]) -> String {
@@ -703,6 +916,48 @@ fn escape_backticks(value: &str) -> String {
 
 fn yaml_double_quoted(value: &str) -> String {
     value.replace('\\', "\\\\").replace('"', "\\\"")
+}
+
+fn normalize_status_token(value: &str) -> String {
+    match value.trim().to_ascii_lowercase().as_str() {
+        "pass" | "passed" | "success" | "succeeded" | "green" => "PASS".to_string(),
+        "fail" | "failed" | "failure" | "red" => "FAIL".to_string(),
+        "skip" | "skipped" => "SKIPPED".to_string(),
+        "not_run" | "not-run" | "not recorded" | "not_recorded" => "not_recorded".to_string(),
+        other => other.to_string(),
+    }
+}
+
+fn is_failure_status(value: &str) -> bool {
+    matches!(
+        value.trim().to_ascii_lowercase().as_str(),
+        "fail" | "failed" | "failure" | "red" | "blocked"
+    )
+}
+
+fn is_terminal_closeout_state(value: &str) -> bool {
+    matches!(
+        value.trim().to_ascii_lowercase().as_str(),
+        "closed" | "complete" | "completed" | "closeout_complete" | "merged_and_closed"
+    )
+}
+
+fn is_terminal_integration_state(value: &str) -> bool {
+    matches!(
+        value.trim().to_ascii_lowercase().as_str(),
+        "merged" | "main_repo" | "main_repo_integrated" | "closed" | "closed_no_pr" | "complete"
+    )
+}
+
+fn is_no_pr_terminal_integration_state(value: &str) -> bool {
+    value.trim().eq_ignore_ascii_case("closed_no_pr")
+}
+
+fn is_terminal_pr_state(value: &str) -> bool {
+    matches!(
+        value.trim().to_ascii_lowercase().as_str(),
+        "merged" | "closed_merged" | "merged_and_closed" | "closed"
+    )
 }
 
 fn trailing_newline(text: &str) -> &'static str {

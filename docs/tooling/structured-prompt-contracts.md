@@ -246,6 +246,24 @@ evidence while updating the `SOR` to the terminal GitHub and local closeout
 state. Future `ObsMem` ingestion should receive those as distinct memory inputs,
 not as one collapsed summary.
 
+For common release-tail issues, use the deterministic fact-sync helper instead
+of hand-editing SRP/SOR truth:
+
+```sh
+adl tooling srp-sor-update \
+  --facts /path/to/srp-sor-facts.yaml \
+  --srp .adl/<version>/tasks/<issue>/srp.md \
+  --sor .adl/<version>/tasks/<issue>/sor.md
+```
+
+The fact packet may provide `review`, `validation`, `integration`,
+`release_tail`, and `metrics` sections. The `release_tail` section records the
+watcher disposition, PR state, closeout state, and residual risks used during
+finish/closeout. Terminal closeout claims fail closed unless review,
+validation, PR, and integration facts all support that terminal state. Missing
+facts remain unclaimed; the helper does not infer review or validation success
+from file presence.
+
 See `srp-sor-obsmem-handoff-v0.91.2.md` for the bounded `v0.91.2` handoff
 model and follow-on enforcement routing.
 
