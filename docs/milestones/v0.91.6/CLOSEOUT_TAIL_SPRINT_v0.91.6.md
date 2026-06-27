@@ -25,6 +25,11 @@ The milestone closeout tail is one ordered sprint, not a loose collection of ind
 - Each issue still uses the normal ADL lifecycle: GitHub issue truth, `workflow-conductor`, bound worktree execution, bounded review, PR publication, and closeout.
 - Do not advance to the next issue merely because a prior issue has a branch or draft PR; advance only when the prior issue's required truth surface is available.
 - If an issue is blocked on review, checks, conflicts, or an upstream gate, assign a watcher immediately rather than leaving the sprint in an unmanaged wait state.
+- Use `docs/tooling/C_SDLC_RESCUE_SPRINT_OPERATING_CONTRACT.md` as the
+  operator-facing rescue-sprint workflow contract while completing this tail.
+- Workflow-critical command paths should be binary-first per `#4590`. A
+  closeout-tail issue should not rely on hidden `cargo run` behavior unless its
+  validation plan explicitly opts into that fallback.
 
 ## Watcher policy
 
@@ -87,6 +92,12 @@ The milestone closeout tail is one ordered sprint, not a loose collection of ind
 - Pre-wire watcher expectations into the issue body or task bundle so wait states are never unmanaged.
 - Pre-classify likely remediation sinks so internal-review, external-review, and quality-gate findings can route deterministically.
 - Treat next-milestone planning and review as part of the current milestone closeout tail, not as free-floating backlog work.
+- Pre-wire prep-scout handoffs only as read-only readiness lanes. Promotion
+  from prep scout to execution still requires a normal session claim, `pr.sh
+  run`, issue-bound goal creation, and bound-worktree edits.
+- State scheduler claims narrowly. In v0.91.6 the scheduler is advisory
+  planning/evidence infrastructure, not autonomous sprint conduction, GitHub
+  mutation, provider authority, or timed execution.
 
 ## v0.91.6 adoption note
 

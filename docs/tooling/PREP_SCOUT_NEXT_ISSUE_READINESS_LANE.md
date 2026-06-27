@@ -9,6 +9,11 @@ merge-needs-closeout wait.
 The lane is preparation-only. It reduces cold-start time for the next issue,
 but it does not start implementation early.
 
+Use the broader rescue-sprint operating contract in
+`docs/tooling/C_SDLC_RESCUE_SPRINT_OPERATING_CONTRACT.md` for how prep-scout
+handoffs interact with watcher ownership, session-ledger claims, and the normal
+`pr.sh run` promotion path.
+
 ## When To Use It
 
 Use the lane when all of the following are true:
@@ -82,6 +87,9 @@ normal execution path.
 6. Run `pr.sh doctor --mode ready --json` for the candidate when a task bundle
    already exists.
 7. Emit one bounded handoff result and stop.
+8. If the candidate is promoted into execution, create the normal session
+   claim, run `bash adl/tools/pr.sh run <issue>`, create the issue-bound goal,
+   and then begin edits in the bound worktree.
 
 ## Handoff States
 
@@ -153,3 +161,5 @@ Execution Packet should name:
 - This lane does not weaken issue-start gates from `#4435`.
 - This lane does not authorize tracked work on `main`.
 - This lane does not claim a prep-only mutation surface already exists.
+- This lane does not replace watcher ownership for the current issue's wait
+  state.

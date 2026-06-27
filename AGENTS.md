@@ -128,13 +128,18 @@ These rules are mandatory for ADL issue work.
 - Keep tests boring. Do not push shard mechanics, CI/release-mode branching, or
   hidden routing policy down into ordinary test logic; that belongs in manifests,
   runners, and policy docs.
-- Preserve the canonical card lifecycle: `SIP -> STP -> SPP -> SRP -> SOR`.
-  `SRP` is the Structured Review Prompt and review-result surface; `SOR` is the
-  truthful execution and integration record.
+- Preserve the canonical card lifecycle:
+  `SIP -> STP -> SPP -> VPP -> SRP -> SOR`. `VPP` is validation-planning
+  truth; `SRP` is the Structured Review Prompt and review-result surface; `SOR`
+  is the truthful execution and integration record.
 - Treat prompt cards as durable C-SDLC state, not disposable chat output.
   `SIP`, `STP`, and `SPP` should be issue-specific and design-time ready before
   execution starts. If they are generic, stale, or incomplete, route them through
   the appropriate editor skill before running the issue.
+- During v0.91.6 rescue-sprint and release-tail work, also follow
+  `docs/tooling/C_SDLC_RESCUE_SPRINT_OPERATING_CONTRACT.md` for watcher-owned
+  wait states, prep-scout promotion, scheduler non-authority, and binary-first
+  workflow command expectations.
 - Treat `SPP` as the operative issue-local plan. If real execution diverges
   materially from the tracked plan, update the `SPP` before continuing.
 - Treat `SRP` and `SOR` as truth surfaces. `SRP` records review prompts,
@@ -171,7 +176,7 @@ For a normal tracked issue:
 2. route through `workflow-conductor`
 3. confirm the primary checkout is clean on `main`, inspect active worktrees,
    and preserve any session handoff or collision evidence before binding work
-4. confirm all five C-SDLC cards exist and came from the active prompt-template
+4. confirm all six C-SDLC cards exist and came from the active prompt-template
    registry
 5. make sure `SIP`, `STP`, and `SPP` are issue-specific and design-time ready
 6. follow the conductor-selected lifecycle step

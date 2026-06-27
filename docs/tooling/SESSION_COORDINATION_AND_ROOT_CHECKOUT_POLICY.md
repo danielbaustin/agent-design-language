@@ -13,6 +13,7 @@ branch, overwrite active work, or hide important workflow state in memory.
 This document clarifies the existing workflow rules in:
 
 - `AGENTS.md`
+- `docs/tooling/C_SDLC_RESCUE_SPRINT_OPERATING_CONTRACT.md`
 - `docs/onboarding.md`
 - `adl/tools/skills/docs/OPERATIONAL_SKILLS_GUIDE.md`
 - the `workflow-conductor` and `pr-run` skill contracts
@@ -69,6 +70,9 @@ Prep-scout exception:
 - if a candidate would require mutation before it can be called ready and there
   is no proven prep-only repo-native bind surface, stop as `needs_operator` and
   record the tooling gap instead of improvising a manual fallback
+- if the candidate issue is promoted into execution, leave prep-scout mode and
+  use the normal session claim plus `adl/tools/pr.sh run <issue>` path before
+  any tracked edits occur
 
 ## Required Startup Check
 
@@ -162,6 +166,14 @@ state, tracked cards, and closeout records remain authoritative for lifecycle
 truth. A stale ledger claim must block blind writes; it does not authorize
 destructive cleanup by itself.
 
+Current rescue-sprint practice uses the ledger to transfer wait states rather
+than abandon them. When an issue enters CI, review, mergeability, dependency, or
+operator-decision wait, the active session should release or hand off the
+implementation claim and create a watcher claim that names the issue, PR,
+branch, worktree, and expected next skill. When the watcher routes a blocker to
+`pr-janitor` or a merged PR to `pr-closeout`, the claim should move with that
+route instead of leaving duplicate active ownership behind.
+
 Mutating commands acquire a short-lived sibling lock file next to the selected
 ledger path, such as `.adl/session-ledger/ledger.json.lock`, before loading and
 rewriting the ledger. A leftover lock file means a previous process may have
@@ -181,6 +193,11 @@ in the relevant issue, sprint packet, PR, or closeout record. Examples:
 
 Broadcast notes should be factual, brief, and free of secrets. They should name
 the issue, branch, worktree, and next expected owner/action.
+
+For v0.91.6 rescue-sprint work, broadcast notes should also name whether the
+state is active execution, watcher-owned wait, janitor repair, prep-scout
+handoff, or closeout. This keeps resumed sessions from guessing whether a draft
+PR is healthy, blocked, or abandoned.
 
 ## Collision Handling
 
