@@ -1,0 +1,56 @@
+{
+  "schema": "adl.pr.watch.v1",
+  "issue": 4586,
+  "issue_state": "OPEN",
+  "authoritative_classifier": "adl",
+  "advisory_agent_mode": "local_agent_advisory_only",
+  "classification": "checks_green",
+  "tail_owner": "issue-watcher",
+  "shepherd_state": "watcher_owned_waiting_for_review",
+  "next_skill": "human_review",
+  "continuation": "ask_operator",
+  "reason": "linked_pr_checks_green_waiting_review",
+  "local_readiness": {
+    "status": "failed",
+    "pr_run_readiness": "unknown",
+    "reason": "missing canonical source issue prompt: /Users/daniel/git/agent-design-language/.worktrees/adl-wp-4588/.adl/v0.91.6/bodies/issue-4586-v0-91-6-tools-cards-automate-fast-srp-sor-fact-sync-for-finish-and-closeout.md"
+  },
+  "linked_pr": {
+    "number": 4600,
+    "url": "https://github.com/danielbaustin/agent-design-language/pull/4600",
+    "head_ref_name": "codex/4586-automate-fast-srp-sor-fact-sync-for-finish-and-closeout",
+    "base_ref_name": "main",
+    "is_draft": false,
+    "state": "OPEN",
+    "validation": {
+      "pr_number": 4600,
+      "commit_sha": "96a12c14162662925784b943d163bf8cd14059ba",
+      "pr_state": "OPEN",
+      "is_draft": false,
+      "disposition": "success",
+      "projection_status": "ready_to_merge_or_review",
+      "checks": [
+        {
+          "name": "adl-ci",
+          "status": "COMPLETED",
+          "conclusion": "SUCCESS",
+          "job_run_id": "28284998655"
+        },
+        {
+          "name": "adl-slow-proof",
+          "status": "COMPLETED",
+          "conclusion": "SKIPPED",
+          "job_run_id": "28284998655"
+        },
+        {
+          "name": "adl-coverage",
+          "status": "COMPLETED",
+          "conclusion": "SUCCESS",
+          "job_run_id": "28284998655"
+        }
+      ],
+      "failed_checks": [],
+      "pending_checks": []
+    }
+  }
+}

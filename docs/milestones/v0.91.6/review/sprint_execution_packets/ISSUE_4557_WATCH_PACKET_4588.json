@@ -1,0 +1,56 @@
+{
+  "schema": "adl.pr.watch.v1",
+  "issue": 4557,
+  "issue_state": "CLOSED",
+  "authoritative_classifier": "adl",
+  "advisory_agent_mode": "local_agent_advisory_only",
+  "classification": "closeout_needed",
+  "tail_owner": "pr-closeout",
+  "shepherd_state": "closeout_required",
+  "next_skill": "pr-closeout",
+  "continuation": "action_required",
+  "reason": "issue_closed_completed",
+  "local_readiness": {
+    "status": "ready",
+    "pr_run_readiness": "ready",
+    "reason": "doctor_ready_pass"
+  },
+  "linked_pr": {
+    "number": 4579,
+    "url": "https://github.com/danielbaustin/agent-design-language/pull/4579",
+    "head_ref_name": "codex/4557-v0-91-6-tools-validation-unify-publication-validation-lane-contract",
+    "base_ref_name": "main",
+    "is_draft": false,
+    "state": "CLOSED",
+    "validation": {
+      "pr_number": 4579,
+      "commit_sha": "f1217b6b3df618f39e94227c4d6b508ad0a971a7",
+      "pr_state": "MERGED",
+      "is_draft": false,
+      "disposition": "success",
+      "projection_status": "merged",
+      "checks": [
+        {
+          "name": "adl-ci",
+          "status": "COMPLETED",
+          "conclusion": "SUCCESS",
+          "job_run_id": "28270520888"
+        },
+        {
+          "name": "adl-slow-proof",
+          "status": "COMPLETED",
+          "conclusion": "SKIPPED",
+          "job_run_id": "28270520888"
+        },
+        {
+          "name": "adl-coverage",
+          "status": "COMPLETED",
+          "conclusion": "SUCCESS",
+          "job_run_id": "28270520888"
+        }
+      ],
+      "failed_checks": [],
+      "pending_checks": []
+    }
+  }
+}

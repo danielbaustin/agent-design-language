@@ -1,0 +1,56 @@
+{
+  "schema": "adl.pr.watch.v1",
+  "issue": 4591,
+  "issue_state": "OPEN",
+  "authoritative_classifier": "adl",
+  "advisory_agent_mode": "local_agent_advisory_only",
+  "classification": "checks_green",
+  "tail_owner": "issue-watcher",
+  "shepherd_state": "watcher_owned_waiting_for_review",
+  "next_skill": "human_review",
+  "continuation": "ask_operator",
+  "reason": "linked_pr_checks_green_waiting_review",
+  "local_readiness": {
+    "status": "failed",
+    "pr_run_readiness": "unknown",
+    "reason": "missing canonical source issue prompt: /Users/daniel/git/agent-design-language/.worktrees/adl-wp-4588/.adl/v0.91.6/bodies/issue-4591-v0-91-6-tools-workflow-refresh-c-sdlc-operating-docs-and-skills-for-rescue-sprint-practice.md"
+  },
+  "linked_pr": {
+    "number": 4597,
+    "url": "https://github.com/danielbaustin/agent-design-language/pull/4597",
+    "head_ref_name": "codex/4591-v0-91-6-tools-workflow-refresh-c-sdlc-operating-docs-and-skills-for-rescue-sprint-practice",
+    "base_ref_name": "main",
+    "is_draft": false,
+    "state": "OPEN",
+    "validation": {
+      "pr_number": 4597,
+      "commit_sha": "2d5437a7c238ddf6007a147682477060269bf609",
+      "pr_state": "OPEN",
+      "is_draft": false,
+      "disposition": "success",
+      "projection_status": "ready_to_merge_or_review",
+      "checks": [
+        {
+          "name": "adl-ci",
+          "status": "COMPLETED",
+          "conclusion": "SUCCESS",
+          "job_run_id": "28283339914"
+        },
+        {
+          "name": "adl-slow-proof",
+          "status": "COMPLETED",
+          "conclusion": "SKIPPED",
+          "job_run_id": "28283339914"
+        },
+        {
+          "name": "adl-coverage",
+          "status": "COMPLETED",
+          "conclusion": "SUCCESS",
+          "job_run_id": "28283339914"
+        }
+      ],
+      "failed_checks": [],
+      "pending_checks": []
+    }
+  }
+}

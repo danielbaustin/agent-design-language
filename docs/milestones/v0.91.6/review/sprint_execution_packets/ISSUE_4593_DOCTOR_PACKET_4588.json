@@ -1,0 +1,145 @@
+{
+  "branch": "codex/4593-narrow-pr-janitor-repair-validation",
+  "card_lifecycle": {
+    "active_stage": "SOR",
+    "next_required_stage": null,
+    "order": [
+      "SIP",
+      "STP",
+      "SPP",
+      "VPP",
+      "SRP",
+      "SOR"
+    ],
+    "pr_finish_readiness": "ready",
+    "pr_run_readiness": "ready",
+    "stages": [
+      {
+        "complete": true,
+        "design_time_complete": true,
+        "detail": "SIP has issue-specific design-time intent for execution planning.",
+        "final_ready": false,
+        "next_editor": null,
+        "path": ".adl/v0.91.6/tasks/issue-4593__narrow-pr-janitor-repair-validation/sip.md",
+        "stage": "SIP",
+        "state": "complete"
+      },
+      {
+        "complete": true,
+        "design_time_complete": true,
+        "detail": "STP has the required issue-specific task intent, acceptance, and dependency surfaces.",
+        "final_ready": false,
+        "next_editor": null,
+        "path": ".adl/v0.91.6/tasks/issue-4593__narrow-pr-janitor-repair-validation/stp.md",
+        "stage": "STP",
+        "state": "complete"
+      },
+      {
+        "complete": true,
+        "design_time_complete": true,
+        "detail": "SPP has ready, reviewed, or approved design-time planning state.",
+        "final_ready": false,
+        "next_editor": null,
+        "path": ".adl/v0.91.6/tasks/issue-4593__narrow-pr-janitor-repair-validation/spp.md",
+        "stage": "SPP",
+        "state": "complete"
+      },
+      {
+        "complete": true,
+        "design_time_complete": true,
+        "detail": "VPP has ready, reviewed, or approved validation planning state.",
+        "final_ready": false,
+        "next_editor": null,
+        "path": ".adl/v0.91.6/tasks/issue-4593__narrow-pr-janitor-repair-validation/vpp.md",
+        "stage": "VPP",
+        "state": "complete"
+      },
+      {
+        "complete": true,
+        "design_time_complete": true,
+        "detail": "SRP contains review results or an explicit policy exception for final review truth.",
+        "final_ready": true,
+        "next_editor": null,
+        "path": ".adl/v0.91.6/tasks/issue-4593__narrow-pr-janitor-repair-validation/srp.md",
+        "stage": "SRP",
+        "state": "final"
+      },
+      {
+        "complete": true,
+        "design_time_complete": false,
+        "detail": "SOR records terminal integration, validation, closeout, and artifact truth.",
+        "final_ready": true,
+        "next_editor": null,
+        "path": ".adl/v0.91.6/tasks/issue-4593__narrow-pr-janitor-repair-validation/sor.md",
+        "stage": "SOR",
+        "state": "final"
+      }
+    ]
+  },
+  "doctor_status": "PASS",
+  "issue": 4593,
+  "lifecycle_state": "closed",
+  "mode": "ready",
+  "open_pr_count": null,
+  "open_pr_scan_status": "skipped_by_override",
+  "open_prs": [],
+  "preflight_block_kind": "open_pr_wave_override",
+  "preflight_guidance": "Open PR wave scan was explicitly skipped by --allow-open-pr-wave; record why the queue override is unrelated or intentionally sequenced.",
+  "preflight_status": "WARN",
+  "ready_status": "PASS",
+  "root_input": ".adl/v0.91.6/tasks/issue-4593__narrow-pr-janitor-repair-validation/sip.md",
+  "root_output": ".adl/v0.91.6/tasks/issue-4593__narrow-pr-janitor-repair-validation/sor.md",
+  "root_stp": ".adl/v0.91.6/tasks/issue-4593__narrow-pr-janitor-repair-validation/stp.md",
+  "schema": "adl.pr.doctor.v1",
+  "session_ledger": {
+    "block_kind": "session_self_claim",
+    "current_session_id": "019ec95a-0758-7240-9330-0f98b3027080",
+    "guidance": "The current session already owns the relevant claim. Keep it fresh with `adl session heartbeat` and release it with `adl session release` when handing off.",
+    "ledger_path": "/Users/daniel/git/agent-design-language/.adl/session-ledger/ledger.json",
+    "relevant_claim_count": 2,
+    "relevant_claims": [
+      {
+        "branch": "codex/4593-narrow-pr-janitor-repair-validation",
+        "claim_id": "csdlc-issue-4593-20260627t020439z",
+        "classification": "released",
+        "issue": 4593,
+        "matches_branch": true,
+        "matches_issue": true,
+        "matches_worktree": true,
+        "mode": "released",
+        "owner": "codex",
+        "resource_id": "4593",
+        "resource_kind": "csdlc_issue",
+        "self_claim": true,
+        "session_id": "019ec95a-0758-7240-9330-0f98b3027080",
+        "worktree_path": ".worktrees/adl-wp-4593"
+      },
+      {
+        "branch": "codex/4593-narrow-pr-janitor-repair-validation",
+        "claim_id": "csdlc-issue-4593-20260627t071953z",
+        "classification": "released",
+        "issue": 4593,
+        "matches_branch": true,
+        "matches_issue": true,
+        "matches_worktree": true,
+        "mode": "released",
+        "owner": "codex",
+        "resource_id": "4593",
+        "resource_kind": "csdlc_issue",
+        "self_claim": true,
+        "session_id": "019ec95a-0758-7240-9330-0f98b3027080",
+        "worktree_path": ".worktrees/adl-wp-4593"
+      }
+    ],
+    "status": "PASS"
+  },
+  "slug": "narrow-pr-janitor-repair-validation",
+  "source": ".adl/v0.91.6/bodies/issue-4593-narrow-pr-janitor-repair-validation.md",
+  "target_queue": "tools",
+  "target_queue_source": "explicit",
+  "version": "v0.91.6",
+  "worktree": null,
+  "wt_input": null,
+  "wt_output": null,
+  "wt_stp": null
+}
