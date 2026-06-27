@@ -63,7 +63,7 @@ export PATH="$mockbin:$PATH"
 set +e
 run_output="$(
   cd "$repo" &&
-  "$BASH_BIN" adl/tools/pr.sh run 4306 --slug locked-fallback --no-fetch-issue --version v0.86 2>&1
+  ADL_PR_RUST_ALLOW_CARGO_FALLBACK=1 "$BASH_BIN" adl/tools/pr.sh run 4306 --slug locked-fallback --no-fetch-issue --version v0.86 2>&1
 )"
 run_status=$?
 set -e

@@ -45,7 +45,7 @@ export PATH="$mockbin:$PATH"
 run_and_capture() {
   (
     cd "$repo"
-    "$BASH_BIN" adl/tools/pr.sh "$@" >/dev/null
+    ADL_PR_RUST_ALLOW_CARGO_FALLBACK=1 "$BASH_BIN" adl/tools/pr.sh "$@" >/dev/null
   )
 }
 
@@ -60,42 +60,42 @@ run_and_capture doctor 1152 --slug rust-start --no-fetch-issue --version v0.86 -
 run_and_capture finish 1153 --title "Example" --no-checks --no-open
 
 args="$(cat "$TMP_CARGO_ARGS")"
-[[ "$args" == *"--bin adl -- pr create --title [v0.86][tools] Example --slug example-create --version v0.86"* ]] || {
+[[ "$args" == *"--bin adl-pr-create -- --title [v0.86][tools] Example --slug example-create --version v0.86"* ]] || {
   echo "assertion failed: expected rust delegation for create" >&2
   echo "$args" >&2
   exit 1
 }
-[[ "$args" == *"--bin adl -- pr init 1151 --slug example --no-fetch-issue --version v0.86"* ]] || {
+[[ "$args" == *"--bin adl-pr-init -- 1151 --slug example --no-fetch-issue --version v0.86"* ]] || {
   echo "assertion failed: expected rust delegation for init" >&2
   echo "$args" >&2
   exit 1
 }
-[[ "$args" == *"--bin adl -- pr start 1152 --slug rust-start --no-fetch-issue --version v0.86 --allow-open-pr-wave"* ]] || {
+[[ "$args" == *"--bin adl-pr-run -- 1152 --slug rust-start --no-fetch-issue --version v0.86 --allow-open-pr-wave"* ]] || {
   echo "assertion failed: expected rust delegation for start" >&2
   echo "$args" >&2
   exit 1
 }
-[[ "$args" == *"--bin adl -- pr doctor 1152 --slug rust-start --no-fetch-issue --version v0.86 --mode full"* ]] || {
+[[ "$args" == *"--bin adl-pr-doctor -- 1152 --slug rust-start --no-fetch-issue --version v0.86 --mode full"* ]] || {
   echo "assertion failed: expected rust delegation for doctor" >&2
   echo "$args" >&2
   exit 1
 }
-[[ "$args" == *"--bin adl -- pr ready 1152 --slug rust-start --no-fetch-issue --version v0.86 --json"* ]] || {
+[[ "$args" == *"--bin adl-pr-ready -- 1152 --slug rust-start --no-fetch-issue --version v0.86 --json"* ]] || {
   echo "assertion failed: expected rust delegation for ready" >&2
   echo "$args" >&2
   exit 1
 }
-[[ "$args" == *"--bin adl -- pr preflight 1152 --slug rust-start --no-fetch-issue --version v0.86 --json"* ]] || {
+[[ "$args" == *"--bin adl-pr-preflight -- 1152 --slug rust-start --no-fetch-issue --version v0.86 --json"* ]] || {
   echo "assertion failed: expected rust delegation for preflight" >&2
   echo "$args" >&2
   exit 1
 }
-[[ "$args" == *"--bin adl -- pr doctor 1152 --slug rust-start --no-fetch-issue --version v0.86 --mode full --json"* ]] || {
+[[ "$args" == *"--bin adl-pr-doctor -- 1152 --slug rust-start --no-fetch-issue --version v0.86 --mode full --json"* ]] || {
   echo "assertion failed: expected rust delegation for doctor" >&2
   echo "$args" >&2
   exit 1
 }
-[[ "$args" == *"--bin adl -- pr finish 1153 --title Example --no-checks --no-open"* ]] || {
+[[ "$args" == *"--bin adl-pr-finish -- 1153 --title Example --no-checks --no-open"* ]] || {
   echo "assertion failed: expected rust delegation for finish" >&2
   echo "$args" >&2
   exit 1

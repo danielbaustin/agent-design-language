@@ -9,6 +9,7 @@ PR_USAGE_SRC="$ROOT_DIR/adl/tools/pr_usage.sh"
 CARD_PATHS_SRC="$ROOT_DIR/adl/tools/card_paths.sh"
 PROMPT_LINT_SRC="$ROOT_DIR/adl/tools/lint_prompt_spec.sh"
 PROMPT_VALIDATOR_SRC="$ROOT_DIR/adl/tools/validate_structured_prompt.sh"
+OWNER_BINARY_RESOLUTION_SRC="$ROOT_DIR/adl/tools/owner_binary_resolution.sh"
 INPUT_TPL_SRC="$ROOT_DIR/adl/templates/cards/input_card_template.md"
 OUTPUT_TPL_SRC="$ROOT_DIR/adl/templates/cards/output_card_template.md"
 STP_CONTRACT_SRC="$ROOT_DIR/adl/schemas/structured_task_prompt.contract.yaml"
@@ -34,6 +35,7 @@ cp "$PR_USAGE_SRC" "$repo/adl/tools/pr_usage.sh"
 cp "$CARD_PATHS_SRC" "$repo/adl/tools/card_paths.sh"
 cp "$PROMPT_LINT_SRC" "$repo/adl/tools/lint_prompt_spec.sh"
 cp "$PROMPT_VALIDATOR_SRC" "$repo/adl/tools/validate_structured_prompt.sh"
+cp "$OWNER_BINARY_RESOLUTION_SRC" "$repo/adl/tools/owner_binary_resolution.sh"
 cp "$INPUT_TPL_SRC" "$repo/adl/templates/cards/input_card_template.md"
 cp "$OUTPUT_TPL_SRC" "$repo/adl/templates/cards/output_card_template.md"
 cp "$STP_CONTRACT_SRC" "$repo/adl/schemas/structured_task_prompt.contract.yaml"
@@ -42,7 +44,7 @@ cp "$SOR_CONTRACT_SRC" "$repo/adl/schemas/structured_output_record.contract.yaml
 cat > "$repo/adl/tools/README.md" <<'EOF_README'
 seed tooling readme
 EOF_README
-chmod +x "$repo/adl/tools/pr.sh" "$repo/adl/tools/lint_prompt_spec.sh" "$repo/adl/tools/validate_structured_prompt.sh"
+chmod +x "$repo/adl/tools/pr.sh" "$repo/adl/tools/lint_prompt_spec.sh" "$repo/adl/tools/validate_structured_prompt.sh" "$repo/adl/tools/owner_binary_resolution.sh"
 
 cat >"$mockbin/gh" <<'EOF_GH'
 #!/usr/bin/env bash
