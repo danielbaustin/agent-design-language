@@ -1,0 +1,63 @@
+{
+  "schema": "adl.pr.watch.v1",
+  "issue": 4584,
+  "issue_state": "OPEN",
+  "authoritative_classifier": "adl",
+  "advisory_agent_mode": "local_agent_advisory_only",
+  "classification": "checks_failed",
+  "tail_owner": "pr-janitor",
+  "shepherd_state": "janitor_owned_checks_failed",
+  "next_skill": "pr-janitor",
+  "continuation": "action_required",
+  "reason": "linked_pr_checks_failed",
+  "local_readiness": {
+    "status": "failed",
+    "pr_run_readiness": "unknown",
+    "reason": "missing canonical source issue prompt: <repo>/.adl/v0.91.6/bodies/issue-4584-v0-91-6-tools-templates-infer-vpp-card-when-importing-older-sor-cards.md"
+  },
+  "linked_pr": {
+    "number": 4589,
+    "url": "https://github.com/danielbaustin/agent-design-language/pull/4589",
+    "head_ref_name": "codex/4584-infer-vpp-card-when-importing-older-sor-cards",
+    "base_ref_name": "main",
+    "is_draft": true,
+    "state": "OPEN",
+    "validation": {
+      "pr_number": 4589,
+      "commit_sha": "ecdd8bb61fd419d8ef828cd39dd17858f0069ce8",
+      "pr_state": "OPEN",
+      "is_draft": true,
+      "disposition": "failed",
+      "projection_status": "checks_failed",
+      "checks": [
+        {
+          "name": "adl-ci",
+          "status": "COMPLETED",
+          "conclusion": "FAILURE",
+          "job_run_id": "28273036502"
+        },
+        {
+          "name": "adl-slow-proof",
+          "status": "COMPLETED",
+          "conclusion": "SKIPPED",
+          "job_run_id": "28273036502"
+        },
+        {
+          "name": "adl-coverage",
+          "status": "COMPLETED",
+          "conclusion": "SUCCESS",
+          "job_run_id": "28273036502"
+        }
+      ],
+      "failed_checks": [
+        {
+          "name": "adl-ci",
+          "status": "COMPLETED",
+          "conclusion": "FAILURE",
+          "job_run_id": "28273036502"
+        }
+      ],
+      "pending_checks": []
+    }
+  }
+}

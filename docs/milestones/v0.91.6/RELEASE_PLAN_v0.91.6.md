@@ -33,6 +33,9 @@ ledger.
 - [ ] Bridge ledger refreshed from first-tranche outcomes, consuming the
   retained-evidence matrix for closed bridge umbrellas and the closeout-tail
   sprint surface for open ordered release-tail work.
+- [ ] Every release-tail issue that entered a wait state records a retained
+  watcher packet, watcher-packet summary, or explicit not-applicable reason
+  before it is counted as cleanly advanced or complete.
 - [ ] Every touched product/runtime surface is classified with the operational
   completion gate before release truth calls it complete.
 - [ ] The operational completion gate is the required truth boundary for
