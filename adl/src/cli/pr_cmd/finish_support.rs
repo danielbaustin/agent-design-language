@@ -2274,10 +2274,30 @@ pub(super) fn select_finish_validation_plan_for_finish(
     if finish_paths_need_github_projection_watch_validation(changed_paths) {
         return Ok(build_github_projection_watch_validation_plan());
     }
+    let changed_paths_need_finish_rust_validation = changed_paths
+        .iter()
+        .any(|path| finish_path_needs_pr_finish_rust_focused_validation(path));
+    let repo_root = repo_root()?;
+    let finish_profile_result =
+        load_finish_validation_profile_for_execution(&repo_root, changed_paths);
     if changed_paths
         .iter()
         .all(|path| finish_path_is_docs_only(path.trim().trim_matches('/')))
     {
+        if !changed_paths_need_finish_rust_validation {
+            if let Ok(finish_profile) = &finish_profile_result {
+                if let Some(plan) =
+                    profile_backed_finish_validation_plan(issue_number, finish_profile)
+                {
+                    ensure_finish_validation_profile_is_runnable(
+                        &repo_root,
+                        finish_profile,
+                        changed_paths,
+                    )?;
+                    return Ok(plan);
+                }
+            }
+        }
         return Ok(FinishValidationPlan {
             mode: FinishValidationMode::DocsOnly,
             commands: vec![
@@ -2286,13 +2306,6 @@ pub(super) fn select_finish_validation_plan_for_finish(
             ],
         });
     }
-
-    let changed_paths_need_finish_rust_validation = changed_paths
-        .iter()
-        .any(|path| finish_path_needs_pr_finish_rust_focused_validation(path));
-    let repo_root = repo_root()?;
-    let finish_profile_result =
-        load_finish_validation_profile_for_execution(&repo_root, changed_paths);
     if !changed_paths_need_finish_rust_validation {
         if let Ok(finish_profile) = &finish_profile_result {
             if let Some(plan) = profile_backed_finish_validation_plan(issue_number, finish_profile)
