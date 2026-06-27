@@ -1401,6 +1401,8 @@ fn manager_backed_profile_retains_changed_file_for_pr_fast_execution() {
         "[package]\nname='adl'\nversion='0.1.0'\n",
     )
     .expect("cargo toml");
+    fs::create_dir_all(repo.join("adl/src")).expect("src dir");
+    fs::write(repo.join("adl/src/lib.rs"), "pub fn fixture() {}\n").expect("lib rs");
     write_executable(
         &repo.join("adl/tools/check_no_tracked_adl_issue_record_residue.sh"),
         "#!/usr/bin/env bash\nset -euo pipefail\nexit 0\n",
@@ -2673,7 +2675,7 @@ fn finish_validation_profile_treats_skill_schema_and_agent_manifest_as_docs_only
 }
 
 #[test]
-fn finish_validation_profile_treats_demo_markdown_as_docs_only() {
+fn finish_validation_profile_routes_unity_demo_markdown_to_contract_lane() {
     let plan = select_finish_validation_plan_for_finish(
         4030,
         ".",
@@ -2682,16 +2684,18 @@ fn finish_validation_profile_treats_demo_markdown_as_docs_only() {
             "docs/milestones/v0.91.6/review/observatory/UNITY_OBSERVATORY_IMPLEMENTATION_BASELINE_4030.md".to_string(),
         ],
     )
-    .expect("demo markdown docs-only plan");
+    .expect("unity demo markdown contract plan");
 
-    assert_eq!(plan.mode, FinishValidationMode::DocsOnly);
-    assert_eq!(
-        plan.commands,
-        vec![
-            "bash adl/tools/check_no_tracked_adl_issue_record_residue.sh".to_string(),
-            "git diff --check".to_string(),
-        ]
-    );
+    assert_eq!(plan.mode, FinishValidationMode::LargerBinaryFocused);
+    assert!(plan.commands.contains(&"git diff --check".to_string()));
+    assert!(plan.commands.iter().any(
+        |command| command.contains("test_v0916_unity_observatory_local_runtime_consumption.sh")
+    ));
+    assert!(!plan.commands.iter().any(|command| {
+        command.contains("run_authoritative_coverage_lane.sh")
+            || command.contains("llvm-cov")
+            || command.contains("coverage_release_gate")
+    }));
 }
 
 #[test]
@@ -3181,6 +3185,99 @@ fn finish_validation_profile_keeps_finish_support_changes_narrow() {
         .commands
         .iter()
         .any(|command| command.contains("cargo nextest")));
+}
+
+#[test]
+fn finish_validation_profile_keeps_pr_janitor_test_repair_fast() {
+    let plan = select_finish_validation_plan_for_finish(
+        4593,
+        ".",
+        &["adl/src/cli/tests/pr_cmd_inline/finish/arg_render.rs".to_string()],
+    )
+    .expect("narrow pr-janitor test repair plan");
+
+    assert_eq!(plan.mode, FinishValidationMode::SmallBinaryFocused);
+    assert!(plan.commands.contains(&"git diff --check".to_string()));
+    assert!(plan
+        .commands
+        .contains(&"cargo fmt --manifest-path adl/Cargo.toml --all --check".to_string()));
+    assert!(plan.commands.iter().any(|command| {
+        command.starts_with("bash adl/tools/run_pr_fast_test_lane.sh --changed-files ")
+    }));
+    assert!(!plan
+        .commands
+        .iter()
+        .any(|command| command.contains("cargo nextest")));
+    assert!(!plan.commands.iter().any(|command| {
+        command.contains("run_authoritative_coverage_lane.sh")
+            || command.contains("llvm-cov")
+            || command.contains("coverage_release_gate")
+    }));
+}
+
+#[test]
+fn finish_validation_profile_runs_fmt_before_broader_finish_support_lane() {
+    let plan = select_finish_validation_plan_for_finish(
+        4593,
+        ".",
+        &[
+            "adl/src/cli/pr_cmd/finish_support.rs".to_string(),
+            "adl/src/cli/tests/pr_cmd_inline/finish/arg_render.rs".to_string(),
+        ],
+    )
+    .expect("finish-support repair plan");
+
+    assert_eq!(plan.mode, FinishValidationMode::LargerBinaryFocused);
+    let fmt_index = plan
+        .commands
+        .iter()
+        .position(|command| command == "cargo fmt --manifest-path adl/Cargo.toml --all --check")
+        .expect("fmt command should front-run focused Rust validation");
+    let fast_lane_index = plan
+        .commands
+        .iter()
+        .position(|command| {
+            command.starts_with("bash adl/tools/run_pr_fast_test_lane.sh --changed-files ")
+        })
+        .expect("focused rust lane should run");
+    assert!(fmt_index < fast_lane_index);
+    assert!(plan
+        .commands
+        .contains(&"bash adl/tools/run_owner_validation_lane.sh csdlc".to_string()));
+    assert!(!plan.commands.iter().any(|command| {
+        command.contains("run_authoritative_coverage_lane.sh")
+            || command.contains("llvm-cov")
+            || command.contains("coverage_release_gate")
+    }));
+}
+
+#[test]
+fn finish_validation_profile_keeps_validation_policy_repairs_broader_but_not_full_coverage() {
+    let plan = select_finish_validation_plan_for_finish(
+        4593,
+        ".",
+        &[
+            "adl/src/cli/tests/pr_cmd_inline/finish/arg_render.rs".to_string(),
+            "adl/tools/check_coverage_impact.sh".to_string(),
+        ],
+    )
+    .expect("validation-policy repair plan");
+
+    assert_eq!(plan.mode, FinishValidationMode::LargerBinaryFocused);
+    assert!(plan
+        .commands
+        .contains(&"bash adl/tools/test_check_coverage_impact.sh".to_string()));
+    assert!(plan
+        .commands
+        .contains(&"cargo fmt --manifest-path adl/Cargo.toml --all --check".to_string()));
+    assert!(plan.commands.iter().any(|command| {
+        command.starts_with("bash adl/tools/run_pr_fast_test_lane.sh --changed-files ")
+    }));
+    assert!(!plan.commands.iter().any(|command| {
+        command.contains("run_authoritative_coverage_lane.sh")
+            || command.contains("llvm-cov")
+            || command.contains("coverage_release_gate")
+    }));
 }
 
 #[test]
