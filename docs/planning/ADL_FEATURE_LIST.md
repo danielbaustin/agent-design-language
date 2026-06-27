@@ -119,10 +119,11 @@ contracts it depends on.
 
 ## Current Repo Status
 
-Current roadmap planning truth as of 2026-06-15:
+Current roadmap planning truth as of 2026-06-27:
 - the feature-doc production wave is tracked as issue `#3779` with child
   issues `#3778`, `#3780`, `#3781`, and `#3782`
-- `v0.91.6` is the first pre-v0.92 bridge/readiness tranche
+- `v0.91.6` is the first pre-v0.92 bridge/readiness tranche and is currently
+  in release-tail execution after WP-12
 - `v0.91.7` is now planned as the second required pre-v0.92 bridge tranche
 - `v0.92` remains the first true identity, continuity, and birthday milestone
 - `v0.95` remains MVP convergence and packaging, not first implementation of
@@ -136,8 +137,9 @@ Recent completed/planned milestone reading:
 - `v0.91.4` completed the C-SDLC default-operation hardening band
 - `v0.91.5` carried bridge/tooling/provider/public-record pressure toward the
   pre-v0.92 path
-- `v0.91.6` and `v0.91.7` are the planned bridge/readiness tranches before
-  v0.92 activation
+- `v0.91.6` and `v0.91.7` are the bridge/readiness tranches before v0.92
+  activation; v0.91.6 has landed WP-11 demo/proof convergence and WP-12
+  quality gate, with internal review `#4582` next
 - most recently completed tooling/workflow-pressure milestone package: `v0.91.2`
 - most recently completed inhabited-runtime milestone package: `v0.91.1`
 - most recently completed moral-governance milestone package: `v0.91`

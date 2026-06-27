@@ -23,6 +23,10 @@ merely implemented as isolated components.
 
 Active sprint umbrella: `#4604`.
 
+Current progress: `#3976` WP-11 and `#3977` WP-12 are merged and closed.
+`#3978` WP-13 is the active docs/review alignment step. `#4582` WP-14A is the
+next internal-review owner after WP-13 publishes its alignment packet.
+
 | Order | Issue | Role | Must wait for | May spawn follow-on remediation | Watcher expectation |
 | --- | --- | --- | --- | --- | --- |
 | 1 | `#3976` | Demo convergence | prior milestone implementation wave complete enough for demos | No | Watch demo proofs and PR checks; poll at most every 30 seconds while waiting |

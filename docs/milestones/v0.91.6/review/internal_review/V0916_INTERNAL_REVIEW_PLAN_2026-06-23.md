@@ -1,7 +1,7 @@
 # v0.91.6 Internal Review Plan
 
 Date: `2026-06-23`
-Owner issue: `#3979` `[v0.91.6][WP-14][review] Internal review and pre-v0.92 burn-down checklist`
+Owner issue: `#4582` `[v0.91.6][WP-14A][review] Complete internal review and pre-v0.92 burn-down checklist`
 Prepared for: v0.91.6 internal review before external review, remediation/final preflight, next-milestone planning, and release ceremony.
 Status: `ready_for_execution`
 
@@ -13,7 +13,7 @@ The review must check code, docs, lifecycle cards, sprint evidence, singleton is
 
 ## Stop Boundary
 
-This plan prepares the internal review. It does not execute the review, remediate findings, approve external review readiness, close `#3979`, close v0.91.6, or start release ceremony.
+This plan prepares the internal review. It does not execute the review, remediate findings, approve external review readiness, close `#4582`, close v0.91.6, or start release ceremony.
 
 The review execution should produce separate tracked artifacts for findings, synthesis, remediation queue, and handoff.
 
@@ -38,10 +38,11 @@ The findings register must be findings-first, severity-ordered, source-backed, a
 
 Before executing the internal review, confirm:
 
-- `#3979` is the active owner issue.
+- `#4582` is the active owner issue. Closed `#3979` is retained
+  source/planning evidence only.
 - Active sprint and singleton review packets are present or their absence is recorded as a finding.
 - Known open/dirty PRs are listed rather than silently ignored.
-- The session ledger has no conflicting active claim for `#3979` or the selected review worktree.
+- The session ledger has no conflicting active claim for `#4582` or the selected review worktree.
 - The review session creates an issue-bound goal with an explicit token budget.
 - Review execution uses a bound issue worktree, not tracked edits on `main`.
 - The review plan, findings, and handoff are tracked repo artifacts, not local-only `.adl` memory.
@@ -55,13 +56,14 @@ Before executing the internal review, confirm:
 - `docs/milestones/v0.91.6/SPRINT_PLAN_v0.91.6.md`
 - `docs/milestones/v0.91.6/WP_ISSUE_WAVE_v0.91.6.yaml`
 - `docs/milestones/v0.91.6/FEATURE_DOCS_v0.91.6.md`
-- `docs/milestones/v0.91.6/FEATURE_PROOF_COVERAGE_v0.91.6.md`
+- `docs/milestones/v0.91.6/DEMO_MATRIX_v0.91.6.md`
 - `docs/milestones/v0.91.6/DEMO_MATRIX_v0.91.6.md`
 - `docs/milestones/v0.91.6/MILESTONE_CHECKLIST_v0.91.6.md`
 - `docs/milestones/v0.91.6/REVIEW_AND_VALIDATION_CHECKLIST_v0.91.6.md`
 - `docs/milestones/v0.91.6/RELEASE_PLAN_v0.91.6.md`
 - `docs/milestones/v0.91.6/RELEASE_NOTES_v0.91.6.md`
-- `docs/milestones/v0.91.6/NEXT_MILESTONE_HANDOFF_v0.91.6.md`
+- `docs/milestones/v0.91.6/RUNTIME_INTEGRATION_SOAK_SPRINT_v0.91.6.md`
+- `docs/milestones/v0.91.6/review/V0916_WP12_QUALITY_GATE_3977.md`
 
 ### Review and proof evidence
 
@@ -277,7 +279,7 @@ This v0.91.6 internal review should explicitly account for improvements that did
 ## Handoff Prompt For Review Execution
 
 ```text
-Complete #3979 for v0.91.6 internal review. Use AGENTS.md, workflow-conductor, the session ledger, sprint-review/repo-review skills, and bounded subagents. Use gh where pr.sh/adl pr is currently broken, but keep all lifecycle cards and SOR/SRP truth explicit.
+Complete #4582 for v0.91.6 internal review. Use AGENTS.md, workflow-conductor, the session ledger, sprint-review/repo-review skills, and bounded subagents. Use ADL repo-native tools only; do not use gh. Keep all lifecycle cards and SOR/SRP truth explicit.
 
 Do not remediate findings inside the review issue except tiny typo/path fixes. Do not close v0.91.6. Do not start external review. Produce tracked artifacts under docs/milestones/v0.91.6/review/internal_review/:
 - findings register

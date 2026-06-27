@@ -149,13 +149,14 @@ from issue
 
 ## Recent Milestones
 
-### v0.91.6 - Active First Bridge Tranche
+### v0.91.6 - Active Release-Tail Bridge Tranche
 
-v0.91.6 is the active first pre-v0.92 bridge/readiness tranche. It carries the
-first execution wave for resilience/persistence, logging/tooling proof-loop
-reliability, public prompt records, provider/model reliability, ACIP/A2A
-communications, security bridge readiness, and bridge accounting needed before
-v0.92 activation can open from reviewed evidence.
+v0.91.6 is the active first pre-v0.92 bridge/readiness tranche. Its bridge
+implementation and proof waves have landed through WP-12, including demo/proof
+convergence and the quality gate. The current release-tail frontier is internal
+review under `#4582`, with sprint umbrella `#4604` tracking the remaining
+ordered closeout path through external review, remediation/preflight,
+next-milestone handoff, and ceremony.
 
 Start here:
 
@@ -293,8 +294,9 @@ production markets.
 - Active milestone: v0.91.6
 - Current crate version: 0.91.6
 - Most recently completed milestone: v0.91.5
-- Current milestone state: v0.91.6 is executing as the first pre-v0.92 bridge
-  tranche, with bridge/reliability lanes still active.
+- Current milestone state: v0.91.6 is in release-tail execution after WP-12;
+  internal review `#4582` is the next active child under sprint umbrella
+  `#4604`.
 - Previous completed milestone before v0.91.2: v0.91.1
 - Primary implementation language: Rust
 

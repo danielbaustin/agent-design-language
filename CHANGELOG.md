@@ -9,8 +9,10 @@ and is the first execution bridge tranche before `v0.92`.
 
 Current state:
 - The planning package and feature-doc wave are landed.
-- WP-03 logging/tooling and WP-04 public-records umbrellas have merged.
-- Additional bridge-quality and reliability lanes remain in flight.
+- WP-03 through WP-10 bridge umbrellas are closed with retained evidence.
+- WP-11 demo/proof convergence and WP-12 quality gate have merged.
+- The active release-tail frontier is internal review `#4582`, tracked under
+  sprint umbrella `#4604`.
 - This is an active planning/execution milestone entry, not a release entry.
 
 Scope notes:
@@ -21,9 +23,9 @@ Scope notes:
 - `v0.91.6` prepares `v0.92`; it does not claim first-birthday activation by
   planning docs alone.
 
-## v0.91.5 (Previous bridge milestone)
+## v0.91.5 (Released 2026-06-17)
 
-Status: Active Sprint 4 release-tail execution. The v0.91.5 package lives under
+Status: Released. The v0.91.5 package lives under
 `docs/milestones/v0.91.5/` and carries pre-v0.92 stabilization work that moved
 out of v0.91.4 release closeout.
 
@@ -31,10 +33,9 @@ Current state:
 - Sprint 1 through Sprint 3 delivery is materially landed.
 - First internal review already happened.
 - The first internal-review remediation tranche closed through `#3899`.
-- Sprint 4 remains open through WP-14 quality gate, WP-15 docs/review
-  alignment, second-pass internal review, external review, final remediation/
-  preflight, next-milestone planning, and release ceremony.
-- This is still an active bridge entry, not a release entry.
+- Sprint 4 release-tail closeout and release ceremony completed on
+  2026-06-17.
+- This is a completed bridge/release entry.
 
 Scope notes:
 - v0.91.5 owns multi-agent stabilization, provider/model matrix work,

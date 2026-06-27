@@ -1,30 +1,35 @@
-# v0.91.6 Candidate Work Breakdown Structure
+# v0.91.6 Promoted Work Breakdown Structure
 
 ## Metadata
 
 - Milestone: `v0.91.6`
 - Version: `v0.91.6`
 - Date: `2026-06-16`
-- Status: candidate WP sequence for first pre-`v0.92` bridge tranche
+- Status: promoted bridge WBS with current release-tail ordering
 - Setup issue: `#3800`
 
 ## Status
 
-This WBS has been promoted into concrete `v0.91.6` issues. The WP-03
-logging/tooling route is opened as umbrella `#3968` with child lanes
-`#3995`-`#4001`, and the WP-04 public-records route is opened as umbrella
-`#3969` with child lanes `#4002`-`#4006`.
+This WBS has been promoted into concrete `v0.91.6` issues. The first bridge
+waves have landed through WP-12. The active release-tail sequence now continues
+through internal review `#4582` and umbrella `#4604`, rather than the older
+seeded WP-11/WP-13 names from the first candidate package.
 
 WP-01 consumed this document and
 [WP_ISSUE_WAVE_v0.91.6.yaml](WP_ISSUE_WAVE_v0.91.6.yaml) to begin opening
-concrete GitHub issues with canonical C-SDLC cards. Additional WPs may still
-remain in planning or queue-blocked state.
+concrete GitHub issues with canonical C-SDLC cards. The current actionable
+release-tail entrypoints are `#3978` WP-13, `#4582` WP-14A, and sprint umbrella
+`#4604`; downstream ordered release-tail children remain listed in the
+closeout-tail sprint packet and must verify live issue state when they start.
 
 Current live state:
 
 - WP-03 has merged through `#4001`
 - WP-04 child issues `#4002`-`#4006` have merged through `#4006`
 - WP-04 umbrella `#3969` has merged and closed after the merged child wave
+- WP-11 demo/proof convergence `#3976` and WP-12 quality gate `#3977` have
+  merged and closed
+- WP-13 `#3978` is this docs/review-surface alignment pass
 
 ## WBS Summary
 
@@ -45,9 +50,15 @@ decision records, and proof-loop repairs before `v0.92` activation opens.
 | WP-08 | Identity/continuity and capability-selector bridge | Connect capability evidence, identity continuity, negative cases, and resilience/citizen persistence. | Bridge record for v0.92 consumption. | WP-02, WP-05. |
 | WP-09 | Observatory/Unity consumption classification | Classify Observatory/Unity surfaces as proof, rehearsal, substrate, blocked, or deferred. | Consumption classification record. | WP-01, prior demo-readiness docs. |
 | WP-10 | AEE, Memory/ObsMem, and ACP accounting | Record AEE completion boundary, residual runtime/provider action routing, ObsMem handoff, Memory Palace planning state, ACP/profile scope, privacy boundary, and what v0.92 may consume. | Bridge accounting record for AEE, Memory/ObsMem, and ACP. | WP-01, WP-02, WP-05. |
-| WP-11 | Bridge ledger refresh and v0.91.7 handoff | Update first-tranche dispositions and route remaining second-tranche work into `#3801`. | Updated bridge-ledger addendum or handoff record. | WP-02 through WP-10. |
-| WP-12 | Internal review | Review docs for missing bridge surfaces, overclaims, security gaps, and vague spillover. | Review packet and finding register. | WP-11. |
-| WP-13 | Remediation and closeout | Fix review findings, update milestone docs, and produce closeout truth. | Remediation PRs, final checklist, and closeout packet. | WP-12. |
+| WP-11 | Demo/proof convergence | Consume bridge proof and demo surfaces so the release tail has a coherent proof matrix. | Demo matrix and feature-doc proof convergence. | WP-02 through WP-10. |
+| WP-12 | Quality gate | Consume WP-11 and repo-quality/staleness truth, route blockers, and clear docs/review alignment only when evidence supports it. | Quality-gate packet and release-tail gate update. | WP-11. |
+| WP-13 | Docs and review-surface alignment | Align README, changelog, milestone planning docs, release docs, feature-list references, and review entrypoints before internal review. | Docs/review alignment packet and corrected entrypoint truth. | WP-12. |
+| WP-14A | Internal review and pre-v0.92 burn-down checklist | Run findings-first internal review and burn-down classification. Active owner is `#4582`; closed `#3979` remains retained source/planning evidence only. | Internal review findings, synthesis, remediation queue, and burn-down checklist. | WP-13. |
+| WP-15 | External review | Run external/third-party review after internal review packet is ready. | External review packet and findings disposition. | WP-14A. |
+| WP-16 | Review findings remediation and final preflight | Fix or route internal/external findings and prove final preflight readiness. | Remediation PRs and final preflight packet. | WP-15. |
+| WP-17 | Next milestone planning and v0.91.7 handoff | Ensure v0.91.7 starts from reviewed residuals and handoff truth. | v0.91.7 handoff/planning packet. | WP-16. |
+| WP-18 | Next milestone review pass | Review the next milestone plan before ceremony. | Next-milestone review packet. | WP-17. |
+| WP-19 | Release ceremony | Run final ceremony only after review, remediation, and handoff truth settle. | Release evidence, tag/release steps if approved, and closeout truth. | WP-18. |
 
 ## Companion Planning Queue
 

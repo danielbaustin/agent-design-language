@@ -15,10 +15,10 @@ milestone truthfully.
 ## Sprint Issue
 
 - Umbrella: `#4588`
-- Status: active rescue gate before release-tail continuation
+- Status: complete rescue gate; release-tail continuation resumed under `#4604`
 - Execution mode: sequential core with prep-scout and watcher side lanes
-- Release-tail resume gate: do not resume `#3976` through `#3984` until this
-  sprint review says the path is clear or records explicit operator override.
+- Release-tail resume gate: satisfied by the retained `#4588` sprint truth;
+  the closeout-tail wave is now governed by `#4604`.
 
 ## Current Sprint State
 
