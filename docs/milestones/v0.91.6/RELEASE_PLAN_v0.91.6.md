@@ -72,6 +72,10 @@ ledger.
   consumes merged `#3976` / PR `#4605` demo/proof truth, clears WP-13 to start
   after the WP-12 PR lands, and routes WP-11 closeout normalization as
   release-tail hygiene rather than a proof blocker.
+- [ ] WP-13 docs/review-surface alignment has landed. Current owner: `#3978`.
+  It must leave README, changelog, milestone planning docs, release docs,
+  feature-list references, and review entrypoints aligned before `#4582`
+  internal review begins.
 
 ## 1. Release Readiness
 

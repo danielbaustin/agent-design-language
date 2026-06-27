@@ -11,10 +11,11 @@
 
 ## Status
 
-Current status: the first pre-`v0.92` bridge tranche now includes multiple
-completed or routed bridge waves, with WP-03 through WP-08 and WP-10 carrying
-retained closeout truth while a smaller set of downstream runtime and
-Observatory work remains open.
+Current status: the first pre-`v0.92` bridge tranche now includes completed or
+routed bridge waves, with WP-03 through WP-10 carrying retained closeout truth.
+WP-11 demo/proof convergence and WP-12 quality gate have also merged. WP-13 is
+the current docs/review-surface alignment pass, and internal review `#4582` is
+the next active release-tail child under sprint umbrella `#4604`.
 
 - Planning: created by `#3800`
 - Documentation completion: `#3824`
@@ -22,13 +23,14 @@ Observatory work remains open.
   retained closeout truth now available for WP-03 `#3968`, WP-04 `#3969`,
   WP-05 `#3970`, WP-06 `#3971`, WP-07 `#3972`, WP-08 `#3973`, and WP-10
   `#3975`
-- Execution: WP-03 through WP-10 and ACIP runtime `#4160` now have bounded
-  merged/closed bridge truth; Tokio integrated soak `#4185` and the ordered
-  closeout-tail issue wave remain explicit downstream work rather than hidden
+- Execution: WP-03 through WP-12 and ACIP runtime `#4160` now have bounded
+  merged/closed bridge truth; internal review `#4582` and the remaining
+  closeout-tail wave remain explicit downstream work rather than hidden
   blockers
 - Validation: docs-readiness validation plus focused issue/PR and retained
   closeout proof for the completed bridge waves
-- Release readiness: not applicable until `v0.91.6` executes
+- Release readiness: not applicable until internal review, external review,
+  remediation/preflight, next-milestone handoff, and release ceremony complete
 
 This package does not implement runtime features and does not claim `v0.92`
 activation readiness. It exists so the first bridge tranche can open concrete

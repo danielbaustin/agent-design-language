@@ -7,15 +7,16 @@
 - Start date: not scheduled
 - End date: not scheduled
 - Owner: ADL maintainers
-- Status: bridge issue waves opened; WP-03 through WP-10 and ACIP runtime now have bounded merged/closed truth; integrated runtime soak and closeout-tail lanes remain open downstream work
+- Status: bridge issue waves opened; WP-03 through WP-12 and ACIP runtime now have bounded merged/closed truth; WP-13 docs/review alignment is active; internal review `#4582` is next under closeout-tail umbrella `#4604`
 
 ## Status
 
 The first bridge tranche is no longer just a WP-03/WP-04 opening plan. The
 milestone now has retained closeout truth for WP-03 `#3968`, WP-04 `#3969`,
 WP-05 `#3970`, WP-06 `#3971`, WP-07 `#3972`, WP-08 `#3973`, WP-09 `#3974`,
-and WP-10 `#3975`, while open downstream runtime and closeout-tail work
-remains explicitly routed.
+WP-10 `#3975`, WP-11 `#3976`, and WP-12 `#3977`, while WP-13 `#3978` aligns
+docs/review surfaces and open internal-review/release-tail work remains
+explicitly routed through `#4582` and `#4604`.
 
 Current issue truth for this sprint should be consumed from:
 
@@ -53,10 +54,13 @@ turns planning docs and feature docs into issue-ready work with review gates.
 | 7 | ACIP/A2A/provider communications route | `#3971`, `#4013`-`#4018`, `#4055` | ADL maintainers | merged and closed |
 | 8 | Security bridge and CAV route | `#3972`, `#4019`-`#4024`, `#4064` | ADL maintainers | merged and closed with explicit downstream residual routes |
 | 9 | Identity, Observatory/Unity, AEE, Memory/ObsMem, ACP accounting | `#3973`, `#3974`, and `#3975` merged and closed or in final umbrella closeout publication | ADL maintainers | closeout-ready: identity, Observatory/Unity, and WP-10 retained truth is bounded |
-| 10 | Bridge-ledger refresh and `v0.91.7` handoff | not opened | ADL maintainers | planned |
+| 10 | Demo/proof convergence | `#3976` | ADL maintainers | merged and closed |
+| 10A | Quality gate | `#3977` | ADL maintainers | merged and closed |
+| 10B | Docs and review-surface alignment | `#3978` | ADL maintainers | active |
+| 10C | Internal review and pre-v0.92 burn-down checklist | `#4582` | ADL maintainers | next active release-tail child |
 | 11 | `agent-logic.ai` AWS account/setup planning | `#3902` | ADL maintainers | complete; AWS Activate review tracked as post-close external follow-up |
 | 12 | CodeFriend v1 / adapter v2 and guild route preservation | feature-list routes | ADL maintainers | planned |
-| 13 | Runtime integration soak sprint planning and Soak #1 route | `#4185` | ADL maintainers | planned |
+| 13 | Runtime integration soak sprint planning and Soak #1 route | `#4185` plus retained runtime soak packets | ADL maintainers | planned/routed; not release readiness by itself |
 
 ## Execution Policy
 

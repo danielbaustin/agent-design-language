@@ -97,6 +97,10 @@ runtime or product completion.
   consumes merged `#3976` / PR `#4605` demo/proof truth and clears WP-13 to
   start after the WP-12 PR lands. WP-11 closeout normalization remains routed
   as release-tail hygiene.
+- [ ] WP-13 docs/review-surface alignment completed. Current owner: `#3978`.
+  This must align README, changelog, milestone planning docs, release docs,
+  feature-list references, and review entrypoints before internal review
+  `#4582`.
 - [ ] Bridge-ledger dispositions refreshed or handed off.
 - [ ] Runtime/product closeout rows preserve explicit completion class, evidence,
   and blocker or defer routes when not `integrated_proven`.

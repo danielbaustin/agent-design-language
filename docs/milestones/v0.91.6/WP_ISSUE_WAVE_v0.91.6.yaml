@@ -1,15 +1,16 @@
 milestone: v0.91.6
 version: v0.91.6
-status: candidate_issue_wave
+status: promoted_issue_wave_release_tail_active
 created_by_issue: 3800
 source_bridge_ledger: docs/milestones/v0.91.5/PRE_V092_BRIDGE_FEATURE_DOC_LEDGER_v0.91.5.md
 notes:
-  - "Candidate wave only; WP-01 must open concrete GitHub issues and render C-SDLC cards."
+  - "Promoted wave; WP-01 opened concrete issues and rendered C-SDLC cards."
   - "Do not claim v0.92 activation readiness from this seed."
   - "Keep v0.91.7 residuals explicit."
   - "Keep #3902 visible as v0.91.6 account/setup planning, not v0.92 activation proof."
   - "Keep CodeFriend v1 / adapter v2 and guild routes visible without treating them as first-tranche activation proof."
   - "Keep runtime Soak #1 visible as the v0.91.6 post-Tokio walking-skeleton proof, and Soak #2/#3 visible as the v0.91.7 full feature-list readiness gate before v0.92."
+  - "Current release-tail truth: WP-11 #3976 and WP-12 #3977 are closed/merged; WP-13 #3978 is the docs/review alignment pass; WP-14A #4582 is the active internal-review owner; #4604 is the release-tail sprint umbrella."
 work_packages:
   - wp: WP-01
     title: v0.91.6 planning promotion and issue-wave readiness
@@ -88,8 +89,9 @@ work_packages:
     deliverables:
       - "AEE_MEMORY_ACP_BRIDGE_ACCOUNTING_v0.91.6.md"
   - wp: WP-11
-    title: Bridge ledger refresh and v0.91.7 handoff
-    outcome: Record first-tranche dispositions and hand residuals to #3801.
+    title: Demo/proof convergence
+    issue: "#3976"
+    outcome: Consume bridge proof and demo surfaces so the release tail has a coherent proof matrix.
     depends_on:
       - "WP-02"
       - "WP-03"
@@ -101,21 +103,77 @@ work_packages:
       - "WP-09"
       - "WP-10"
     deliverables:
-      - "v0.91.6 bridge disposition addendum or handoff record"
+      - "DEMO_MATRIX_v0.91.6.md"
+      - "FEATURE_DOCS_v0.91.6.md proof convergence update"
   - wp: WP-12
-    title: Internal review
-    outcome: Review the first-tranche docs for missing surfaces, overclaims, and vague spillover.
+    title: Quality gate
+    issue: "#3977"
+    outcome: Consume WP-11 and repo-quality/staleness truth, route blockers, and clear docs/review alignment only when evidence supports it.
     depends_on:
       - "WP-11"
     deliverables:
-      - "Review packet and finding register"
+      - "V0916_WP12_QUALITY_GATE_3977.md"
   - wp: WP-13
-    title: Remediation and closeout
-    outcome: Fix or route review findings and record closeout truth.
+    title: Docs and review-surface alignment
+    issue: "#3978"
+    outcome: Align README, changelog, milestone planning docs, release docs, feature-list references, and review entrypoints before internal review.
     depends_on:
       - "WP-12"
     deliverables:
-      - "Closeout packet"
+      - "WP-13 docs/review alignment packet"
+  - wp: WP-14A
+    title: Internal review and pre-v0.92 burn-down checklist
+    issue: "#4582"
+    outcome: Run findings-first internal review and burn-down classification; closed #3979 remains retained source/planning evidence only.
+    depends_on:
+      - "WP-13"
+    deliverables:
+      - "Internal review findings"
+      - "Internal review synthesis"
+      - "Remediation queue"
+      - "Pre-v0.92 burn-down checklist"
+  - wp: WP-15
+    title: External review
+    issue: "#3980"
+    outcome: Run external/third-party review after the internal review packet is ready.
+    depends_on:
+      - "WP-14A"
+    deliverables:
+      - "External review packet"
+  - wp: WP-16
+    title: Review findings remediation and final preflight
+    issue: "#3981"
+    outcome: Fix or route review findings and prove final preflight readiness.
+    depends_on:
+      - "WP-15"
+    deliverables:
+      - "Remediation PRs"
+      - "Final preflight packet"
+  - wp: WP-17
+    title: Next milestone planning and v0.91.7 handoff
+    issue: "#3982"
+    outcome: Ensure v0.91.7 starts from reviewed residuals and handoff truth.
+    depends_on:
+      - "WP-16"
+    deliverables:
+      - "v0.91.7 handoff/planning packet"
+  - wp: WP-18
+    title: Next milestone review pass
+    issue: "#3983"
+    outcome: Review the next milestone plan before ceremony.
+    depends_on:
+      - "WP-17"
+    deliverables:
+      - "Next-milestone review packet"
+  - wp: WP-19
+    title: Release ceremony
+    issue: "#3984"
+    outcome: Run final ceremony only after review, remediation, and handoff truth settle.
+    depends_on:
+      - "WP-18"
+    deliverables:
+      - "Release evidence"
+      - "Release closeout truth"
 companion_planning:
   - issue: "#3902"
     title: Create agent-logic.ai AWS account

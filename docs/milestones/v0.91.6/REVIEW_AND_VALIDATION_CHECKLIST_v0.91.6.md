@@ -9,7 +9,9 @@
 
 ## Status
 
-Candidate review checklist for docs/planning and first-tranche bridge work.
+Release-tail review checklist for docs/planning and first-tranche bridge work.
+WP-11 `#3976` and WP-12 `#3977` have merged; WP-13 `#3978` uses this
+checklist to align reviewer-facing docs before internal review `#4582`.
 
 ## Required Local Validation
 
@@ -75,3 +77,20 @@ Closeout must record:
 - what `#3780` may consume for `v0.92`
 - which validations ran locally
 - which CI checks were relied on after PR publication
+
+## WP-13 Entry Review
+
+Before internal review starts, WP-13 must leave these entrypoints aligned:
+
+- root `README.md`
+- root `CHANGELOG.md`
+- `docs/planning/ADL_FEATURE_LIST.md`
+- `README.md`, `WBS`, `SPRINT_PLAN`, `WP_ISSUE_WAVE`, `MILESTONE_CHECKLIST`,
+  `RELEASE_PLAN`, and `RELEASE_NOTES` under `docs/milestones/v0.91.6/`
+- `docs/milestones/v0.91.6/review/internal_review/V0916_INTERNAL_REVIEW_PLAN_2026-06-23.md`
+- `docs/milestones/v0.91.6/review/V0916_WP12_QUALITY_GATE_3977.md`
+- `docs/milestones/v0.91.6/review/sprint_execution_packets/ISSUE_3977_QUALITY_GATE_LIVE_STATE_2026-06-27.md`
+
+Allowed result: aligned docs may still say `v0.91.6` is not release-ready.
+They must not say `#3979` is active, `v0.91.5` is active, or that `v0.92`
+activation is open.
