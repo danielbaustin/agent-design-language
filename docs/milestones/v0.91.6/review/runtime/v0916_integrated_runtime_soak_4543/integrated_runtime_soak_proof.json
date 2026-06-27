@@ -79,7 +79,7 @@
       "reviewer_walkthrough.md",
       "scheduler/scheduler_plan.json"
     ],
-    "generated_at": "2026-06-26T19:01:01.296868+00:00",
+    "generated_at": "2026-06-26T20:17:11.048970+00:00",
     "issue": 4543,
     "prerequisite_refs": [
       "docs/milestones/v0.91.6/features/TOKIO_RUNTIME_SUBSTRATE_v0.91.6.md",
@@ -90,7 +90,7 @@
     "schema_version": "adl.integrated_runtime_soak_evidence_index.v1"
   },
   "evidence_index_ref": "integrated_runtime_soak_evidence_index.json",
-  "generated_at": "2026-06-26T19:01:01.297090+00:00",
+  "generated_at": "2026-06-26T20:17:11.052662+00:00",
   "issue": 4543,
   "reviewer_path": [
     "README.md",

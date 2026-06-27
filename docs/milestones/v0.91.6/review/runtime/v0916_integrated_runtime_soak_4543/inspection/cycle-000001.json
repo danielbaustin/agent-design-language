@@ -3,7 +3,7 @@
   "continuity_restore": {
     "checkpoint": {
       "agent_instance_id": "v0916-runtime-soak",
-      "captured_at": "2026-06-26T19:00:59.832155Z",
+      "captured_at": "2026-06-26T20:17:09.515435Z",
       "checkpoint_reason": "status_refreshed",
       "completed_cycle_count": 3,
       "consecutive_failure_count": 0,
@@ -40,7 +40,7 @@
         "next_cycle_id": "cycle-000004",
         "recover_stale_lease_required": false
       },
-      "generated_at": "2026-06-26T19:00:59.832405Z",
+      "generated_at": "2026-06-26T20:17:09.516343Z",
       "non_claims": [
         "not_mid_step_checkpointing",
         "not_full_runtime_persistence",
@@ -65,7 +65,7 @@
     }
   },
   "cycle_count": 3,
-  "generated_at": "2026-06-26T19:00:59.833062Z",
+  "generated_at": "2026-06-26T20:17:09.517920Z",
   "reviewer_proof": {
     "cycle_ref_status": "selected_cycle_artifacts_present",
     "status": "pass",
@@ -190,7 +190,7 @@
     "schema": "adl.long_lived_agent_status.v1",
     "state": "completed",
     "stop_requested": false,
-    "updated_at": "2026-06-26T19:00:59.831230Z"
+    "updated_at": "2026-06-26T20:17:09.514034Z"
   },
   "status_ref": "status.json",
   "trace_query_decision": {

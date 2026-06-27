@@ -2274,13 +2274,38 @@ pub(super) fn select_finish_validation_plan_for_finish(
     if finish_paths_need_github_projection_watch_validation(changed_paths) {
         return Ok(build_github_projection_watch_validation_plan());
     }
-
     let changed_paths_need_finish_rust_validation = changed_paths
         .iter()
         .any(|path| finish_path_needs_pr_finish_rust_focused_validation(path));
     let repo_root = repo_root()?;
     let finish_profile_result =
         load_finish_validation_profile_for_execution(&repo_root, changed_paths);
+    if changed_paths
+        .iter()
+        .all(|path| finish_path_is_docs_only(path.trim().trim_matches('/')))
+    {
+        if !changed_paths_need_finish_rust_validation {
+            if let Ok(finish_profile) = &finish_profile_result {
+                if let Some(plan) =
+                    profile_backed_finish_validation_plan(issue_number, finish_profile)
+                {
+                    ensure_finish_validation_profile_is_runnable(
+                        &repo_root,
+                        finish_profile,
+                        changed_paths,
+                    )?;
+                    return Ok(plan);
+                }
+            }
+        }
+        return Ok(FinishValidationPlan {
+            mode: FinishValidationMode::DocsOnly,
+            commands: vec![
+                "bash adl/tools/check_no_tracked_adl_issue_record_residue.sh".to_string(),
+                "git diff --check".to_string(),
+            ],
+        });
+    }
     if !changed_paths_need_finish_rust_validation {
         if let Ok(finish_profile) = &finish_profile_result {
             if let Some(plan) = profile_backed_finish_validation_plan(issue_number, finish_profile)
@@ -4657,7 +4682,7 @@ pub(super) fn run_finish_validation_rust(
                     let script = repo_root.join("adl/tools/test_v0916_unity_observatory_contract.sh");
                     run_finish_validation_status("bash", &[path_str(&script)?])?;
                 }
-                "bash -n adl/tools/test_v0916_unity_observatory_unity65_smoke.sh && bash adl/tools/test_v0916_unity_observatory_baseline.sh && bash adl/tools/test_v0916_unity_observatory_contract.sh && bash adl/tools/test_v0916_unity_observatory_soak_integration.sh && cargo test --manifest-path adl/Cargo.toml --test cli_smoke csm_observatory_cli_writes_unity_contract_bundle_and_matches_seeded_resource -- --nocapture" => {
+                "bash -n adl/tools/test_v0916_unity_observatory_unity65_smoke.sh && bash adl/tools/test_v0916_unity_observatory_baseline.sh && bash adl/tools/test_v0916_unity_observatory_contract.sh && bash adl/tools/test_v0916_unity_observatory_local_runtime_consumption.sh && bash adl/tools/test_v0916_unity_observatory_soak_integration.sh && cargo test --manifest-path adl/Cargo.toml --test cli_smoke csm_observatory_cli_writes_unity_contract_bundle_and_matches_seeded_resource -- --nocapture" => {
                     let unity65_smoke =
                         repo_root.join("adl/tools/test_v0916_unity_observatory_unity65_smoke.sh");
                     run_finish_validation_status("bash", &["-n", path_str(&unity65_smoke)?])?;
@@ -4667,6 +4692,12 @@ pub(super) fn run_finish_validation_rust(
                     let contract =
                         repo_root.join("adl/tools/test_v0916_unity_observatory_contract.sh");
                     run_finish_validation_status("bash", &[path_str(&contract)?])?;
+                    let local_runtime_consumption = repo_root
+                        .join("adl/tools/test_v0916_unity_observatory_local_runtime_consumption.sh");
+                    run_finish_validation_status(
+                        "bash",
+                        &[path_str(&local_runtime_consumption)?],
+                    )?;
                     let soak_integration = repo_root
                         .join("adl/tools/test_v0916_unity_observatory_soak_integration.sh");
                     run_finish_validation_status("bash", &[path_str(&soak_integration)?])?;

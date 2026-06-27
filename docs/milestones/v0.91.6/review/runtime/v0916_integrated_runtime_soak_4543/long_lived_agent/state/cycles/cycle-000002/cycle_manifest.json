@@ -9,7 +9,7 @@
     "observations": "observations.json",
     "run_ref": "run_ref.json"
   },
-  "completed_at": "2026-06-26T19:00:59.810592Z",
+  "completed_at": "2026-06-26T20:17:09.481902Z",
   "cycle_id": "cycle-000002",
   "input_hash": "sha256:5cdfbf07f7274af321200d3297dd9942bc4366651edbf8419ac210b80fe71f69",
   "next_cycle_hint": "sleep_until_next_heartbeat",
@@ -17,7 +17,7 @@
   "output_hash": "sha256:53888ecff31ce41156a372149747c87d31e2de76b31260b2a20a7135af158b91",
   "previous_cycle_id": "cycle-000001",
   "schema": "adl.long_lived_agent_cycle_manifest.v1",
-  "started_at": "2026-06-26T19:00:59.807723Z",
+  "started_at": "2026-06-26T20:17:09.478011Z",
   "status": "success",
   "workflow_kind": "demo_adapter",
   "workflow_ref": "v0916_runtime_soak"

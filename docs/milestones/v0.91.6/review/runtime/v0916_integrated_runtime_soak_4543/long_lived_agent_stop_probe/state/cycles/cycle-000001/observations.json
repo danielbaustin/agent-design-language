@@ -13,7 +13,7 @@
       "value": "v0916_runtime_soak"
     }
   ],
-  "observed_at": "2026-06-26T19:00:59.846442Z",
+  "observed_at": "2026-06-26T20:17:09.533593Z",
   "schema": "adl.long_lived_agent_observations.v1",
   "sources": [
     {

@@ -4391,6 +4391,10 @@ fn finish_helper_paths_run_unity_observatory_soak_lane_validation() {
         "#!/usr/bin/env bash\nset -euo pipefail\nprintf '%s\\n' contract >> \"$FOCUSED_LOG\"\n",
     );
     write_executable(
+        &repo.join("adl/tools/test_v0916_unity_observatory_local_runtime_consumption.sh"),
+        "#!/usr/bin/env bash\nset -euo pipefail\nprintf '%s\\n' local-runtime >> \"$FOCUSED_LOG\"\n",
+    );
+    write_executable(
         &repo.join("adl/tools/test_v0916_unity_observatory_soak_integration.sh"),
         "#!/usr/bin/env bash\nset -euo pipefail\nprintf '%s\\n' soak >> \"$FOCUSED_LOG\"\n",
     );
@@ -4419,7 +4423,7 @@ fn finish_helper_paths_run_unity_observatory_soak_lane_validation() {
         commands: vec![
             "bash adl/tools/check_no_tracked_adl_issue_record_residue.sh".to_string(),
             "git diff --check".to_string(),
-            "bash -n adl/tools/test_v0916_unity_observatory_unity65_smoke.sh && bash adl/tools/test_v0916_unity_observatory_baseline.sh && bash adl/tools/test_v0916_unity_observatory_contract.sh && bash adl/tools/test_v0916_unity_observatory_soak_integration.sh && cargo test --manifest-path adl/Cargo.toml --test cli_smoke csm_observatory_cli_writes_unity_contract_bundle_and_matches_seeded_resource -- --nocapture".to_string(),
+            "bash -n adl/tools/test_v0916_unity_observatory_unity65_smoke.sh && bash adl/tools/test_v0916_unity_observatory_baseline.sh && bash adl/tools/test_v0916_unity_observatory_contract.sh && bash adl/tools/test_v0916_unity_observatory_local_runtime_consumption.sh && bash adl/tools/test_v0916_unity_observatory_soak_integration.sh && cargo test --manifest-path adl/Cargo.toml --test cli_smoke csm_observatory_cli_writes_unity_contract_bundle_and_matches_seeded_resource -- --nocapture".to_string(),
         ],
     };
     run_finish_validation_rust(&repo, &plan).expect("unity observatory soak lane validation");
@@ -4445,6 +4449,7 @@ fn finish_helper_paths_run_unity_observatory_soak_lane_validation() {
     );
     assert!(focused_calls.contains("baseline"));
     assert!(focused_calls.contains("contract"));
+    assert!(focused_calls.contains("local-runtime"));
     assert!(focused_calls.contains("soak"));
 }
 
