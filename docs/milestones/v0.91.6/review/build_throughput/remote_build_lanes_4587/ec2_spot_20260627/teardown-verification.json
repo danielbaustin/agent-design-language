@@ -1,0 +1,13 @@
+{
+  "instance_handle_sha256": "f916e7a4ecab11676d2f2505bfa63b53508831b7764779d3fbf2609da5b311ec",
+  "instance_state": "terminated",
+  "resource_handles": {
+    "instance_profile_name": "ADLSpotBuild4587InstanceProfile",
+    "issue_tag": "4587",
+    "role_name": "ADLSpotBuild4587SSMRole",
+    "security_group_name": "adl-spot-build-4587"
+  },
+  "security_group_exists": false,
+  "instance_profile_exists": false,
+  "role_exists": false
+}

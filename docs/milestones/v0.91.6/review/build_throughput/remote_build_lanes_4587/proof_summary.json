@@ -1,0 +1,79 @@
+{
+  "consumed_evidence": [
+    "docs/milestones/v0.91.6/review/build_throughput/BUILD_THROUGHPUT_MEASUREMENT_4315.md",
+    "docs/milestones/v0.91.6/review/build_throughput/CODEBUILD_REMOTE_VALIDATION_EVALUATION_4316.md",
+    "docs/milestones/v0.91.6/review/build_throughput/NESSUS_LOCAL_REMOTE_RUST_VALIDATION_RUNNER_4317.md",
+    "docs/milestones/v0.91.6/review/build_throughput/NESSUS_REMOTE_VALIDATION_LANE_4553.md"
+  ],
+  "date": "2026-06-27",
+  "ec2_lane": {
+    "cost_guardrails": [
+      "short-lived instance only",
+      "explicit stop/teardown before closeout",
+      "issue/owner tags required",
+      "SSM preferred for command execution",
+      "no reserved fleet or always-on runner in first pilot"
+    ],
+    "reason": "Live proof executed after operator approved up to $50 spend; Spot was quota-blocked, so one short-lived c7i.2xlarge on-demand instance was used and then torn down. The retained packet does not prove final AWS spend.",
+    "status": "on_demand_proven_after_spot_quota_block"
+  },
+  "ec2_live_proof": {
+    "build_seconds": 99,
+    "commands": [
+      "cargo build --manifest-path adl/Cargo.toml --locked --bin adl-pr-doctor",
+      "cargo test --manifest-path adl/Cargo.toml --locked provider_communication -- --nocapture"
+    ],
+    "elapsed_seconds": 575,
+    "instance_termination_state": "terminated",
+    "instance_type": "c7i.2xlarge",
+    "instance_handle_sha256": "f916e7a4ecab11676d2f2505bfa63b53508831b7764779d3fbf2609da5b311ec",
+    "purchase_option": "on_demand_after_spot_quota_block",
+    "resource_handles": {
+      "instance_profile_name": "ADLSpotBuild4587InstanceProfile",
+      "issue_tag": "4587",
+      "role_name": "ADLSpotBuild4587SSMRole",
+      "security_group_name": "adl-spot-build-4587"
+    },
+    "resolved_commit": "b3c4528fc08b6284aa9ee3c50d209b88d64f59d5",
+    "spot_status": "blocked_by_MaxSpotInstanceCountExceeded",
+    "status": "passed_on_demand_after_spot_quota_block",
+    "summary_path": "docs/milestones/v0.91.6/review/build_throughput/remote_build_lanes_4587/ec2_spot_20260627/ec2-build-summary.json",
+    "teardown_path": "docs/milestones/v0.91.6/review/build_throughput/remote_build_lanes_4587/ec2_spot_20260627/teardown-verification.json",
+    "test_seconds": 252
+  },
+  "follow_up_required": [
+    "Implement Rust AWS orchestrator / Spot manager using official AWS SDK for Rust, not Rusoto.",
+    "Add quota discovery, instance-type fallback, SSM command upload/polling, log capture, cost accounting, and teardown guards.",
+    "Use prebuilt AMI or cached bootstrap so sccache installation is not paid per proof run.",
+    "Fix Rust test targeting so focused validation does not compile broad binary harnesses."
+  ],
+  "immediate_lane": "nessus",
+  "issue": 4587,
+  "non_claims": [
+    "No Spot instance was successfully launched under #4587 because the account is quota-blocked.",
+    "No exact final AWS billing line items were available at closeout time.",
+    "No provider credentials or GitHub credentials were copied to the remote runner.",
+    "The full ADL test surface was not run remotely.",
+    "The proof does not migrate CI to Nessus or EC2."
+  ],
+  "remote_live_proof": {
+    "command": "cargo test --manifest-path adl/Cargo.toml --locked provider_communication -- --nocapture",
+    "elapsed_seconds": 92,
+    "exit_code": 0,
+    "log_bundle_path": "docs/milestones/v0.91.6/review/build_throughput/remote_build_lanes_4587/live_nessus_20260627/run-logs.tar.gz",
+    "sccache_stats": {
+      "cache_hits": "0",
+      "cache_misses": "0",
+      "compile_requests": "102",
+      "compile_requests_executed": "0",
+      "non_cacheable_calls": "102"
+    },
+    "resolved_commit": "b3c4528fc08b6284aa9ee3c50d209b88d64f59d5",
+    "run_id": "20260627-issue-4587",
+    "runner": "nessus",
+    "status": "passed",
+    "summary_path": "docs/milestones/v0.91.6/review/build_throughput/remote_build_lanes_4587/live_nessus_20260627/summary.json"
+  },
+  "schema_version": "adl.remote_build_lanes.proof_summary.v1",
+  "status": "nessus_operational_ec2_on_demand_proven_spot_blocked"
+}
