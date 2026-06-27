@@ -128,6 +128,42 @@ Acceptable durable evidence surfaces include:
 - PR closeout results
 - task-bundle records when those records are the canonical issue truth surface
 
+## Wait-State Evidence Rule
+
+Healthy waiting is active lifecycle work. It must leave durable evidence.
+
+When an issue or PR enters `pr_waiting`, `janitor_active`, or
+`merged_needs_closeout`, the owning workflow must retain one of:
+
+- a repo-native `pr.sh watch <issue-or-pr> --json` packet;
+- a task-bundle, SRP, SOR, or closeout summary that names the retained watcher
+  packet path and its disposition; or
+- an explicit not-applicable reason when the issue never entered a wait state.
+
+Watcher routing must use the packet's top-level `classification`,
+`tail_owner`, and `next_skill` fields as the authoritative lifecycle routing
+surface. Nested fields such as `linked_pr.validation.disposition` explain the
+check result and may support diagnosis, but they are not the routing key.
+
+Current watcher classifications route as follows:
+
+- `pr_open` or `checks_running` keeps the issue in watcher-owned wait state
+  with `next_skill: issue-watcher`.
+- `checks_failed`, requested changes, merge-conflict blockers, or other
+  actionable blockers route to `pr-janitor`.
+- `checks_green_but_draft` routes to `pr-janitor` because the draft-state
+  transition is an actionable PR-tail task.
+- `checks_green` preserves the `next_skill: human_review` handoff and the
+  merge-authority boundary before completion is claimed.
+- `merged_pending_closeout` or `closeout_needed` routes to `pr-closeout`.
+- `closed` requires explicit no-PR or already-settled closeout rationale.
+- `ready_for_run` or `blocked` is pre-publication readiness truth and should
+  route to the packet's declared `next_skill`.
+
+Issue closeout is not clean when a known wait state occurred but the final SOR,
+SRP, closeout artifact, or sprint execution packet has no watcher packet
+reference and no not-applicable reason.
+
 ## Shared Output Shape
 
 When a lifecycle or observation surface needs to record shepherd state, use

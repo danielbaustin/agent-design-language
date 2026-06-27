@@ -28,7 +28,37 @@ The milestone closeout tail is one ordered sprint, not a loose collection of ind
 
 ## Watcher policy
 
+- Before a release-tail issue enters a long CI wait, run the cheapest
+  applicable local guardrail first and record it in the issue SOR or sprint
+  packet. Examples include `git diff --check`, docs/path hygiene for docs-only
+  changes, and `cargo fmt --all -- --check` for Rust changes. A release-tail
+  PR should not spend a long CI window discovering a deterministic formatting
+  or whitespace failure that the focused local preflight could have caught.
 - Every closeout-tail issue must have a watcher path whenever work is waiting on CI, review, mergeability, upstream truth, or dependent issue completion.
+- Every closeout-tail wait state must retain one of these evidence records in
+  the issue SOR, SRP, closeout artifact, or sprint execution packet before the
+  issue can truthfully advance:
+  - a repo-native `pr.sh watch <issue-or-pr> --json` packet;
+  - a summary that names the retained watcher packet path and disposition; or
+  - an explicit not-applicable reason for issues that never entered a wait
+    state.
+- Required watcher routing must use the packet's top-level
+  `classification`, `tail_owner`, and `next_skill` fields as the authority.
+  Nested fields such as `linked_pr.validation.disposition` are supporting
+  check evidence, not the lifecycle routing key.
+- Current watcher classifications route as follows:
+  - `pr_open` or `checks_running`: keep the issue in watcher-owned
+    `pr_waiting` state with `next_skill: issue-watcher`;
+  - `checks_failed`, review/action blockers, or merge-conflict blockers: route
+    to `pr-janitor` and preserve the watcher packet as janitor input;
+  - `checks_green_but_draft`: route to `pr-janitor` because the draft-state
+    transition is an actionable PR-tail task;
+  - `checks_green`: preserve the `next_skill: human_review` handoff and the
+    merge-authority boundary before claiming completion;
+  - `merged_pending_closeout` or `closeout_needed`: route to `pr-closeout`;
+  - `closed`: record the no-PR or already-settled rationale before advancing;
+  - `ready_for_run` or `blocked`: treat as pre-publication readiness truth and
+    route to the packet's declared `next_skill`.
 - Watchers are janitor and status-routing helpers, not silent implementers.
 - A watcher should check its target at most every 30 seconds while the issue is actively blocked and should stop once the target is healthy, merged, or rerouted to a human decision.
 - Watchers should record the blocker class explicitly: review wait, checks failing, merge conflict, upstream dependency wait, or operator decision required.
@@ -43,6 +73,10 @@ The milestone closeout tail is one ordered sprint, not a loose collection of ind
 ## Closeout expectations per issue
 
 - Each closeout-tail issue must stop at truthful PR publication and bounded subagent review; do not self-merge or silently self-close unless the operator explicitly requested that authority.
+- If the issue had any wait state, closeout must reference the retained watcher
+  packet or the explicit not-applicable reason. A closeout that says the issue
+  is complete while omitting watcher evidence for a known wait state is not
+  release-tail clean.
 - After merge or intentional closure, run normal issue closeout so `SIP`, `STP`, `SPP`, `SRP`, `SOR`, and GitHub truth agree.
 - The sprint umbrella should remain open until the ordered closeout-tail issue wave is actually complete.
 
