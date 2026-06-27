@@ -27,8 +27,9 @@ Primary evidence surfaces:
 - `docs/milestones/v0.91.6/review/V0916_COMPLETED_SPRINT_RETAINED_EVIDENCE_MATRIX_4251.md`
 - `docs/milestones/v0.91.6/review/V0916_POST_MATRIX_SINGLETON_REVIEW_4502.md`
 - `docs/milestones/v0.91.6/review/V0916_CSDLC_ADOPTION_AUDIT_4434.md`
+- `docs/milestones/v0.91.6/review/internal_review/V0916_FULL_CODE_REVIEW_2026-06-27.md`
 - repo-native live issue search for open `version:v0.91.6` issues
-- focused pr.sh help and code-surface scan for PR/GitHub review tooling
+- focused code review over PR lifecycle, SOR/SRP fact emission, runtime AWS signal, prompt/card, GitHub transport, and module-size surfaces
 
 ## Findings
 
@@ -87,6 +88,26 @@ Recommended route: consume
 `V0916_PRE_V092_BURN_DOWN_CHECKLIST_2026-06-27.md` in `#3981` and `#3982`; do
 not advance activation claims in `#3984` ceremony.
 
+### P1: `pr finish` can erase numbered SRP findings from machine-readable SOR facts
+
+Expected: when an SRP records findings, `pr finish` should preserve those
+findings in the emitted `sor_facts.review.findings` block regardless of Markdown
+list style.
+
+Observed: `parse_sor_review_evidence` reads findings through
+`bullet_lines_from_markdown_section` at `adl/src/cli/pr_cmd/finish_support.rs:1003`,
+but that helper only accepts lines with a `- ` prefix at
+`adl/src/cli/pr_cmd/finish_support.rs:1063`. The WP-14A SRP used numbered
+findings, so the current SOR emitted `findings_status: findings_present` while
+`findings` became `not_recorded` at
+`.adl/v0.91.6/tasks/issue-4582__v0-91-6-wp-14a-review-complete-internal-review-and-pre-v0-92-burn-down-checklist/sor.md:153`.
+
+Impact: release-tail automation can claim findings exist while losing the actual
+finding text in the machine-readable record.
+
+Recommended route: fix the parser to support numbered Markdown list items and
+add regression coverage using an SRP with numbered findings.
+
 ### P2: Repo-native PR inventory is still incomplete for internal-review use
 
 Expected: the internal-review plan requires known open/dirty PRs to be listed
@@ -95,9 +116,9 @@ ADL/pr.sh and Octocrab-backed paths.
 
 Observed: `pr.sh` supports issue search/view/create/comment/edit/close,
 validation, watch, and closing-linkage, but it does not expose a supported
-`pr list` command. Running `pr.sh pr list --state open --limit 100 --json` fails
-with `Unknown command: pr`. The help surface confirms no PR-list subcommand is
-available.
+`pr list` command. The command dispatch in `adl/src/cli/pr_cmd.rs:210` has no PR
+inventory subcommand, and the wrapper help in `adl/tools/pr.sh:18` confirms no
+PR-list surface is advertised.
 
 Impact: internal review can enumerate live issues and per-issue watcher state,
 but cannot yet produce a fully repo-native open-PR inventory from the same
@@ -153,6 +174,27 @@ C-SDLC control plane as fully autonomous or fail-closed everywhere yet.
 Recommended route: preserve this as a v0.91.7/v0.92 C-SDLC adoption residual and
 ensure `#3982` carries it forward explicitly.
 
+### P2: Live AWS runtime heartbeat attempts consume sequence numbers even when no signal is published
+
+Expected: blocked live heartbeat publication should fail closed without mutating
+heartbeat cursor state, because no durable signal was emitted.
+
+Observed: `publish_runtime_heartbeat_signal` reserves a sequence before choosing
+between mock and live mode at `adl/src/runtime_aws_signal.rs:344`. The live mode
+branch then emits a failure and returns `Blocked` at
+`adl/src/runtime_aws_signal.rs:404`. The reservation writes the cursor at
+`adl/src/runtime_aws_signal.rs:847`. Existing tests assert that live mode blocks
+at `adl/src/runtime_aws_signal.rs:1160`, but they do not assert that the cursor
+remains absent or unchanged.
+
+Impact: a misconfigured or intentionally blocked live runtime can advance local
+heartbeat sequence state without publishing a heartbeat.
+
+Recommended route: reserve heartbeat sequence only after the chosen transport is
+known to be publishable, or roll back/avoid cursor writes for blocked live mode;
+add a regression test asserting blocked live mode does not create or advance the
+cursor.
+
 ### P3: The internal-review plan has minor duplicate input noise
 
 Expected: the internal-review plan should be clean enough for downstream review
@@ -166,6 +208,23 @@ Impact: harmless, but it is a small signal of review-packet polish debt.
 
 Recommended route: fix opportunistically in WP-16 docs cleanup or leave as a
 non-blocking P3.
+
+### P3: Several control-plane modules are too large for cheap, reliable review
+
+Expected: high-churn workflow-control files should stay small enough that review,
+coverage routing, and local reasoning remain cheap.
+
+Observed: code inventory found `adl/src/cli/pr_cmd/finish_support.rs` at roughly
+`6167` lines, `adl/src/resilience.rs` at roughly `5225` lines, and
+`adl/src/csdlc_prompt_editor.rs` at roughly `3875` lines. The largest finish-path
+test file is roughly `7993` lines.
+
+Impact: this is not an immediate behavior bug, but it increases regression risk
+and review latency. The repeated finish/SOR/card-truth issues in this milestone
+cluster around exactly these dense control-plane surfaces.
+
+Recommended route: route a v0.91.7 refactoring/design issue to split the highest
+churn control-plane files along stable seams.
 
 ## Positive Review Results
 
@@ -182,6 +241,9 @@ non-blocking P3.
   separating prerequisite proof from integrated runtime/product completion.
 - Runtime evidence is unusually disciplined: Soak #1 is explicitly a walking
   skeleton, not a full runtime coherence claim.
+- The full code review pass found concrete code issues while confirming several
+  important workflow surfaces are materially stronger than earlier milestone
+  state.
 
 ## Non-Claims
 
