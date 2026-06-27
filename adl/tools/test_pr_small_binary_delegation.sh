@@ -121,6 +121,48 @@ grep -Fqx 'run:3838 --slug demo --no-fetch-issue --version v0.91.5' "$run_log" |
 }
 
 finish_log="$tmpdir/finish.log"
+set +e
+missing_title_output="$(
+  cd "$repo"
+  ADL_TEST_LOG="$finish_log" \
+    ADL_PR_FINISH_BIN="$finish_bin" \
+    "$BASH_BIN" adl/tools/pr.sh finish 3838 2>&1
+)"
+missing_title_status=$?
+set -e
+if [[ "$missing_title_status" -eq 0 ]]; then
+  echo "assertion failed: finish without --title should fail before delegate" >&2
+  exit 1
+fi
+if [[ -e "$finish_log" ]]; then
+  echo "assertion failed: finish without --title should not invoke delegated Rust binary" >&2
+  exit 1
+fi
+if [[ "$missing_title_output" != *"finish: --title is required"* ]]; then
+  echo "assertion failed: finish without --title should report missing title" >&2
+  exit 1
+fi
+set +e
+flag_as_title_output="$(
+  cd "$repo"
+  ADL_TEST_LOG="$finish_log" \
+    ADL_PR_FINISH_BIN="$finish_bin" \
+    "$BASH_BIN" adl/tools/pr.sh finish 3838 --title --ready 2>&1
+)"
+flag_as_title_status=$?
+set -e
+if [[ "$flag_as_title_status" -eq 0 ]]; then
+  echo "assertion failed: finish with --title followed by a flag should fail before delegate" >&2
+  exit 1
+fi
+if [[ -e "$finish_log" ]]; then
+  echo "assertion failed: finish with --title followed by a flag should not invoke delegated Rust binary" >&2
+  exit 1
+fi
+if [[ "$flag_as_title_output" != *"finish: --title is required"* ]]; then
+  echo "assertion failed: finish with --title followed by a flag should report missing title" >&2
+  exit 1
+fi
 (
   cd "$repo"
   ADL_TEST_LOG="$finish_log" \

@@ -1921,6 +1921,29 @@ cmd_finish() {
     usage_finish
     return 0
   fi
+  local finish_arg previous_arg title_value_seen
+  previous_arg=""
+  title_value_seen=0
+  for finish_arg in "$@"; do
+    if [[ "$previous_arg" == "--title" ]]; then
+      if [[ -n "$finish_arg" && "$finish_arg" != --* ]]; then
+        title_value_seen=1
+      fi
+      break
+    fi
+    case "$finish_arg" in
+      --title=*)
+        if [[ -n "${finish_arg#--title=}" && "${finish_arg#--title=}" != --* ]]; then
+          title_value_seen=1
+        fi
+        break
+        ;;
+    esac
+    previous_arg="$finish_arg"
+  done
+  if [[ "$title_value_seen" != "1" ]]; then
+    die_with_usage "finish: --title is required" usage_finish
+  fi
   adl_obs_event "pr.sh" "finish" "started" "issue" "${1:-}"
   require_rust_pr_delegate finish
   delegate_pr_command_to_rust finish "$@"

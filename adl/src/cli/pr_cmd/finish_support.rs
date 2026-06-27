@@ -3,6 +3,8 @@ use serde::{Deserialize, Serialize};
 use serde_yaml::{Mapping, Value};
 use std::collections::BTreeSet;
 use std::fs;
+#[cfg(unix)]
+use std::os::unix::fs::PermissionsExt;
 use std::path::{Path, PathBuf};
 use std::process::Command;
 use std::thread;
@@ -22,6 +24,11 @@ use super::github::{
 };
 use super::lifecycle;
 use super::DEFAULT_VERSION;
+use crate::cli::github_token::{
+    resolve_github_token, ResolvedGithubToken, ADL_GITHUB_TOKEN_FILE_ENV,
+    ADL_GITHUB_TOKEN_KEYCHAIN_ACCOUNT_ENV, ADL_GITHUB_TOKEN_KEYCHAIN_SERVICE_ENV, GH_TOKEN_ENV,
+    GITHUB_TOKEN_ENV,
+};
 use crate::cli::observability::ProgressHeartbeat;
 use crate::cli::pr_cmd_args::parse_finish_args;
 use crate::cli::pr_cmd_cards::{
@@ -238,10 +245,7 @@ pub(super) fn real_pr_finish(args: &[String]) -> Result<()> {
         )?;
     }
 
-    let _ = run_status_allow_failure(
-        "git",
-        &["-C", path_str(&repo_root)?, "push", "origin", &branch],
-    )?;
+    push_finish_branch(&repo_root, &branch)?;
 
     let pr_base = resolve_finish_pr_base(&repo_root, &branch)?;
 
@@ -449,6 +453,151 @@ pub(super) fn open_pr_url_nonblocking_with_timeout(
             ),
         },
     }
+}
+
+pub(super) fn push_finish_branch(repo_root: &Path, branch: &str) -> Result<()> {
+    let token = resolve_github_token()?;
+    push_finish_branch_with_git("git", repo_root, branch, token.as_ref())
+}
+
+pub(super) fn push_finish_branch_with_git(
+    git_program: &str,
+    repo_root: &Path,
+    branch: &str,
+    token: Option<&ResolvedGithubToken>,
+) -> Result<()> {
+    let auth_dir = if let Some(token) = token {
+        Some(write_finish_git_askpass_bundle(token)?)
+    } else {
+        None
+    };
+
+    let mut command = Command::new(git_program);
+    command
+        .args(["-C", path_str(repo_root)?, "push", "origin", branch])
+        .env("GIT_TERMINAL_PROMPT", "0")
+        .env_remove(GITHUB_TOKEN_ENV)
+        .env_remove(GH_TOKEN_ENV)
+        .env_remove(ADL_GITHUB_TOKEN_FILE_ENV)
+        .env_remove(ADL_GITHUB_TOKEN_KEYCHAIN_SERVICE_ENV)
+        .env_remove(ADL_GITHUB_TOKEN_KEYCHAIN_ACCOUNT_ENV);
+
+    if let Some(auth_dir) = auth_dir.as_ref() {
+        command
+            .env("GIT_ASKPASS", &auth_dir.askpass_path)
+            .env("SSH_ASKPASS", &auth_dir.askpass_path)
+            .env("ADL_GIT_ASKPASS_TOKEN_FILE", &auth_dir.token_path);
+    }
+
+    let status = command.status();
+
+    let cleanup_result = auth_dir.map(FinishGitAuthDir::cleanup);
+
+    let status =
+        status.with_context(|| "finish: failed to spawn git push for publication branch")?;
+
+    if let Some(cleanup_result) = cleanup_result {
+        cleanup_result?;
+    }
+
+    if !status.success() {
+        bail!(
+            "finish: git push failed for publication branch '{}' with status {:?}; configure the shared GitHub token source or remote auth before rerunning finish",
+            branch,
+            status.code()
+        );
+    }
+    Ok(())
+}
+
+#[derive(Debug)]
+struct FinishGitAuthDir {
+    dir: PathBuf,
+    askpass_path: PathBuf,
+    token_path: PathBuf,
+}
+
+impl FinishGitAuthDir {
+    fn cleanup(self) -> Result<()> {
+        let dir = self.dir;
+        fs::remove_dir_all(&dir).with_context(|| {
+            format!(
+                "finish: failed to remove temporary git auth directory {}; remove it manually before rerunning finish",
+                dir.display()
+            )
+        })
+    }
+}
+
+fn write_finish_git_askpass_bundle(token: &ResolvedGithubToken) -> Result<FinishGitAuthDir> {
+    let dir = std::env::temp_dir().join(format!(
+        "adl-pr-finish-git-auth-{}-{}",
+        std::process::id(),
+        std::time::SystemTime::now()
+            .duration_since(std::time::UNIX_EPOCH)
+            .unwrap_or_default()
+            .as_nanos()
+    ));
+    fs::create_dir(&dir).with_context(|| {
+        format!(
+            "finish: failed to create temporary git auth directory {}",
+            dir.display()
+        )
+    })?;
+    #[cfg(unix)]
+    fs::set_permissions(&dir, fs::Permissions::from_mode(0o700)).with_context(|| {
+        format!(
+            "finish: failed to restrict temporary git auth directory {}",
+            dir.display()
+        )
+    })?;
+
+    let token_path = dir.join("token");
+    fs::write(&token_path, token.value()).with_context(|| {
+        format!(
+            "finish: failed to write temporary git auth token file {}",
+            token_path.display()
+        )
+    })?;
+    #[cfg(unix)]
+    fs::set_permissions(&token_path, fs::Permissions::from_mode(0o600)).with_context(|| {
+        format!(
+            "finish: failed to restrict temporary git auth token file {}",
+            token_path.display()
+        )
+    })?;
+
+    let askpass_path = dir.join("askpass.sh");
+    fs::write(
+        &askpass_path,
+        r#"#!/usr/bin/env bash
+set -euo pipefail
+case "${1:-}" in
+  *Username*) printf '%s\n' 'x-access-token' ;;
+  *Password*) cat "${ADL_GIT_ASKPASS_TOKEN_FILE:?}" ;;
+  *) printf '%s\n' 'x-access-token' ;;
+esac
+"#,
+    )
+    .with_context(|| {
+        format!(
+            "finish: failed to write temporary git askpass helper {}",
+            askpass_path.display()
+        )
+    })?;
+    #[cfg(unix)]
+    fs::set_permissions(&askpass_path, fs::Permissions::from_mode(0o700)).with_context(|| {
+        format!(
+            "finish: failed to make temporary git askpass helper executable {}",
+            askpass_path.display()
+        )
+    })?;
+
+    Ok(FinishGitAuthDir {
+        dir,
+        askpass_path,
+        token_path,
+    })
 }
 
 pub(super) fn ensure_finish_branch_not_behind_origin_main(repo_root: &Path) -> Result<()> {
