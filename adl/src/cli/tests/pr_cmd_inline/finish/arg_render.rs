@@ -1,4 +1,5 @@
 use super::*;
+use crate::cli::github_token::{GithubTokenSource, ResolvedGithubToken};
 use crate::cli::pr_cmd::finish_support::{
     ensure_finish_branch_not_behind_origin_main, ensure_finish_task_bundle_surfaces,
     ensure_finish_validation_profile_is_runnable, ensure_no_staged_issue_bundle_mutations,
@@ -7,7 +8,7 @@ use crate::cli::pr_cmd::finish_support::{
     issue_bundle_issue_number_from_repo_relative, load_finish_validation_profile,
     load_finish_validation_profile_for_execution, non_closing_lifecycle_line,
     normalize_docs_only_sor_text, normalize_sor_emitted_facts_fixture, open_pr_url_nonblocking,
-    open_pr_url_nonblocking_with_timeout, real_pr_finish,
+    open_pr_url_nonblocking_with_timeout, push_finish_branch_with_git, real_pr_finish,
     reject_local_issue_bundle_paths_in_finish_paths, render_default_finish_validation,
     resolve_finish_issue_scope_and_slug, restage_finish_output_truth_paths,
     run_finish_validation_status, select_finish_validation_plan_for_finish, FinishValidationMode,
@@ -142,6 +143,95 @@ fn local_pr_url_opener_timeout_is_non_blocking_warning() {
     assert!(result.warning.contains(
         "Open manually: https://github.com/danielbaustin/agent-design-language/pull/3830"
     ));
+}
+
+#[test]
+fn finish_push_uses_token_askpass_without_leaking_token_in_argv() {
+    let temp = unique_temp_dir("adl-pr-finish-token-aware-push");
+    let repo = temp.join("repo");
+    fs::create_dir_all(&repo).expect("repo dir");
+    let log = temp.join("git-push.log");
+    let git = temp.join("git");
+    write_executable(
+        &git,
+        &format!(
+            r#"#!/usr/bin/env bash
+set -euo pipefail
+log='{log}'
+printf 'argv:%s\n' "$*" >"$log"
+printf 'prompt:%s\n' "${{GIT_TERMINAL_PROMPT:-}}" >>"$log"
+printf 'askpass:%s\n' "${{GIT_ASKPASS:-}}" >>"$log"
+printf 'token_file:%s\n' "${{ADL_GIT_ASKPASS_TOKEN_FILE:-}}" >>"$log"
+printf 'github_token_env:%s\n' "${{GITHUB_TOKEN:-}}" >>"$log"
+printf 'gh_token_env:%s\n' "${{GH_TOKEN:-}}" >>"$log"
+printf 'token_file_env:%s\n' "${{ADL_GITHUB_TOKEN_FILE:-}}" >>"$log"
+if [[ -n "${{GIT_ASKPASS:-}}" ]]; then
+  printf 'user:%s\n' "$("$GIT_ASKPASS" 'Username for https://github.com')" >>"$log"
+  printf 'pass:%s\n' "$("$GIT_ASKPASS" 'Password for https://x-access-token@github.com')" >>"$log"
+fi
+"#,
+            log = path_str(&log).expect("log path")
+        ),
+    );
+    let token = ResolvedGithubToken::new("test-token-4598", GithubTokenSource::GithubToken)
+        .expect("fake token");
+
+    push_finish_branch_with_git(
+        path_str(&git).expect("git path"),
+        &repo,
+        "codex/4598-example",
+        Some(&token),
+    )
+    .expect("push succeeds");
+
+    let log_text = fs::read_to_string(&log).expect("read push log");
+    assert!(log_text.contains("argv:-C "));
+    assert!(log_text.contains(" push origin codex/4598-example"));
+    assert!(log_text.contains("prompt:0"));
+    assert!(log_text.contains("askpass:"));
+    assert!(log_text.contains("token_file:"));
+    assert!(log_text.contains("github_token_env:\n"));
+    assert!(log_text.contains("gh_token_env:\n"));
+    assert!(log_text.contains("token_file_env:\n"));
+    assert!(log_text.contains("user:x-access-token"));
+    assert!(log_text.contains("pass:test-token-4598"));
+    let token_file_line = log_text
+        .lines()
+        .find_map(|line| line.strip_prefix("token_file:"))
+        .expect("token file line");
+    assert!(
+        !Path::new(token_file_line).exists(),
+        "temporary git askpass token file must be removed after push"
+    );
+    let argv_line = log_text
+        .lines()
+        .find(|line| line.starts_with("argv:"))
+        .expect("argv line");
+    assert!(
+        !argv_line.contains("test-token-4598"),
+        "token must not be passed on the git command line"
+    );
+}
+
+fn copy_finish_bootstrap_support_files(repo: &Path) {
+    copy_bootstrap_support_files(repo);
+    let workspace_root = PathBuf::from(env!("CARGO_MANIFEST_DIR"))
+        .parent()
+        .expect("workspace root")
+        .to_path_buf();
+    let tools_dir = repo.join("adl/tools");
+    fs::copy(
+        workspace_root.join("adl/tools/owner_binary_resolution.sh"),
+        tools_dir.join("owner_binary_resolution.sh"),
+    )
+    .expect("copy owner binary resolution helper");
+    #[cfg(unix)]
+    {
+        let helper = tools_dir.join("owner_binary_resolution.sh");
+        let mut perms = fs::metadata(&helper).expect("metadata").permissions();
+        perms.set_mode(0o755);
+        fs::set_permissions(&helper, perms).expect("chmod owner binary helper");
+    }
 }
 
 #[test]
@@ -6211,7 +6301,7 @@ fn real_pr_finish_happy_path_is_covered_in_default_lane() {
     let origin = temp.join("origin.git");
     let repo = temp.join("repo");
     fs::create_dir_all(&repo).expect("repo dir");
-    copy_bootstrap_support_files(&repo);
+    copy_finish_bootstrap_support_files(&repo);
     init_git_repo(&repo);
     assert!(Command::new("git")
         .args(["config", "user.name", "Test User"])
@@ -6454,7 +6544,7 @@ fn real_pr_finish_restages_tracked_output_truth_written_during_validation() {
     let origin = temp.join("origin.git");
     let repo = temp.join("repo");
     fs::create_dir_all(&repo).expect("repo dir");
-    copy_bootstrap_support_files(&repo);
+    copy_finish_bootstrap_support_files(&repo);
     init_git_repo(&repo);
     assert!(Command::new("git")
         .args(["config", "user.name", "Test User"])
@@ -6836,7 +6926,7 @@ fn real_pr_finish_updates_existing_pr_marks_ready_and_keeps_non_closing_commit_t
     let origin = temp.join("origin.git");
     let repo = temp.join("repo");
     fs::create_dir_all(&repo).expect("repo dir");
-    copy_bootstrap_support_files(&repo);
+    copy_finish_bootstrap_support_files(&repo);
     init_git_repo(&repo);
     assert!(Command::new("git")
         .args(["config", "user.name", "Test User"])
@@ -7089,7 +7179,7 @@ fn real_pr_finish_rejects_missing_output_card_before_publication() {
     let temp = unique_temp_dir("adl-pr-finish-missing-output");
     let repo = temp.join("repo");
     fs::create_dir_all(&repo).expect("repo dir");
-    copy_bootstrap_support_files(&repo);
+    copy_finish_bootstrap_support_files(&repo);
     init_git_repo(&repo);
     assert!(Command::new("git")
         .args(["config", "user.name", "Test User"])
@@ -7186,7 +7276,7 @@ fn real_pr_finish_rejects_empty_output_card_before_publication() {
     let temp = unique_temp_dir("adl-pr-finish-empty-output");
     let repo = temp.join("repo");
     fs::create_dir_all(&repo).expect("repo dir");
-    copy_bootstrap_support_files(&repo);
+    copy_finish_bootstrap_support_files(&repo);
     init_git_repo(&repo);
     assert!(Command::new("git")
         .args(["config", "user.name", "Test User"])
@@ -7285,7 +7375,7 @@ fn real_pr_finish_rejects_branch_name_mismatch() {
     let temp = unique_temp_dir("adl-pr-finish-branch-mismatch");
     let repo = temp.join("repo");
     fs::create_dir_all(&repo).expect("repo dir");
-    copy_bootstrap_support_files(&repo);
+    copy_finish_bootstrap_support_files(&repo);
     init_git_repo(&repo);
     assert!(Command::new("git")
         .args(["config", "user.name", "Test User"])
@@ -7388,7 +7478,7 @@ fn real_pr_finish_rejects_closed_issue_with_stale_canonical_truth() {
     let origin = temp.join("origin.git");
     let repo = temp.join("repo");
     fs::create_dir_all(&repo).expect("repo dir");
-    copy_bootstrap_support_files(&repo);
+    copy_finish_bootstrap_support_files(&repo);
     init_git_repo(&repo);
     assert!(Command::new("git")
         .args(["config", "user.name", "Test User"])
@@ -7547,7 +7637,7 @@ fn real_pr_finish_opener_failure_is_nonblocking_when_no_open_is_false() {
     let origin = temp.join("origin.git");
     let repo = temp.join("repo");
     fs::create_dir_all(&repo).expect("repo dir");
-    copy_bootstrap_support_files(&repo);
+    copy_finish_bootstrap_support_files(&repo);
     init_git_repo(&repo);
     assert!(Command::new("git")
         .args(["config", "user.name", "Test User"])
@@ -7715,7 +7805,7 @@ fn real_pr_finish_merge_mode_rejects_no_checks() {
     let origin = temp.join("origin.git");
     let repo = temp.join("repo");
     fs::create_dir_all(&repo).expect("repo dir");
-    copy_bootstrap_support_files(&repo);
+    copy_finish_bootstrap_support_files(&repo);
     init_git_repo(&repo);
     assert!(Command::new("git")
         .args(["config", "user.name", "Test User"])

@@ -81,7 +81,7 @@ rust_pr_worktree_inputs_are_newer_than_bin() {
   [[ -f "$root/adl/Cargo.toml" && "$root/adl/Cargo.toml" -nt "$candidate" ]] && return 0
   [[ -f "$root/adl/Cargo.lock" && "$root/adl/Cargo.lock" -nt "$candidate" ]] && return 0
   [[ -f "$root/adl/build.rs" && "$root/adl/build.rs" -nt "$candidate" ]] && return 0
-  if [[ -d "$root/adl/src" ]] && find "$root/adl/src" -type f -newer "$candidate" -print -quit | grep -q .; then
+  if [[ -d "$root/adl/src" ]] && find "$root/adl/src" -type f -newer "$candidate" ! -path "$root/adl/src/cli/tests/*" -print -quit | grep -q .; then
     return 0
   fi
   return 1
@@ -122,7 +122,7 @@ rust_pr_delegate_bin_is_fresh() {
     return 1
   fi
   if [[ -d "$root/adl/src" ]]; then
-    if find "$root/adl/src" -type f -newer "$candidate" -print -quit | grep -q .; then
+    if find "$root/adl/src" -type f -newer "$candidate" ! -path "$root/adl/src/cli/tests/*" -print -quit | grep -q .; then
       return 1
     fi
   fi
