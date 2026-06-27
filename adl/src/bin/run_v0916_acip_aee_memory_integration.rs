@@ -966,24 +966,42 @@ fn write_issue_bound_signed_trace(
         &unsigned_path,
         "version: \"0.5\"\n\nproviders:\n  local:\n    type: \"ollama\"\n    config:\n      model: \"phi4-mini\"\n\nagents:\n  trace_recorder:\n    provider: \"local\"\n    model: \"phi4-mini\"\n\ntasks:\n  transition_summary:\n    prompt:\n      user: \"Transition {{issue}} concluded via {{proof_surface}}.\"\n\nrun:\n  name: \"runtime-4546-transition-trace\"\n  workflow:\n    kind: \"sequential\"\n    steps:\n      - id: \"record.transition\"\n        agent: \"trace_recorder\"\n        task: \"transition_summary\"\n        inputs:\n          issue: \"4546\"\n          proof_surface: \"runtime_acip_aee_memory_4546\"\n",
     )?;
-    let key_dir = repo_root.join("target/runtime-4546-trace-signing");
-    let (private_key_path, public_key_path) = signing::keygen(&key_dir)?;
-    fs::copy(&public_key_path, repo_root.join(trace_key_rel))
-        .with_context(|| format!("copy generated trace key to {}", trace_key_rel))?;
-    signing::sign_file(
-        &unsigned_path,
-        &private_key_path,
-        "runtime-4546-trace",
-        Some(&repo_root.join(signed_trace_rel)),
-    )?;
-    signing::verify_file(
-        &repo_root.join(signed_trace_rel),
-        Some(&repo_root.join(trace_key_rel)),
-    )?;
-    let _ = fs::remove_file(private_key_path);
-    let _ = fs::remove_file(public_key_path);
+    let key_dir = repo_root.join("target").join(format!(
+        "runtime-4546-trace-signing-{}-{}",
+        std::process::id(),
+        SystemTime::now()
+            .duration_since(UNIX_EPOCH)
+            .unwrap_or_default()
+            .as_nanos()
+    ));
+    let signing_result = (|| -> Result<(PathBuf, PathBuf)> {
+        let (private_key_path, public_key_path) = signing::keygen(&key_dir)?;
+        fs::copy(&public_key_path, repo_root.join(trace_key_rel))
+            .with_context(|| format!("copy generated trace key to {}", trace_key_rel))?;
+        signing::sign_file(
+            &unsigned_path,
+            &private_key_path,
+            "runtime-4546-trace",
+            Some(&repo_root.join(signed_trace_rel)),
+        )?;
+        signing::verify_file(
+            &repo_root.join(signed_trace_rel),
+            Some(&repo_root.join(trace_key_rel)),
+        )?;
+        Ok((private_key_path, public_key_path))
+    })();
+    if let Ok((private_key_path, public_key_path)) = &signing_result {
+        let _ = fs::remove_file(private_key_path);
+        let _ = fs::remove_file(public_key_path);
+    } else if key_dir.exists() {
+        if let Ok(entries) = fs::read_dir(&key_dir) {
+            for entry in entries.flatten() {
+                let _ = fs::remove_file(entry.path());
+            }
+        }
+    }
     let _ = fs::remove_dir(&key_dir);
-    Ok(())
+    signing_result.map(|_| ())
 }
 
 fn build_evidence_index(out_dir: &Path, runtime_packet: &RuntimePacket) -> Result<Value> {
@@ -1242,22 +1260,31 @@ mod tests {
         let repo_root = Path::new(env!("CARGO_MANIFEST_DIR"))
             .parent()
             .expect("repo root");
+        let trace_dir = format!(
+            "tmp/runtime-4546-trace-fixtures-{}-{}",
+            std::process::id(),
+            Utc::now().timestamp_nanos_opt().unwrap_or_default()
+        );
+        let signed_trace_rel = format!("{trace_dir}/trace_signed.adl.yaml");
+        let unsigned_trace_rel = format!("{trace_dir}/trace_unsigned.adl.yaml");
+        let trace_key_rel = format!("{trace_dir}/trace_key.b64");
         write_issue_bound_signed_trace(
             repo_root,
-            "tmp/trace_signed.adl.yaml",
-            "tmp/trace_unsigned.adl.yaml",
-            "tmp/trace_key.b64",
+            &signed_trace_rel,
+            &unsigned_trace_rel,
+            &trace_key_rel,
         )
         .expect("copy trace fixtures");
         signing::verify_file(
-            &repo_root.join("tmp/trace_signed.adl.yaml"),
-            Some(&repo_root.join("tmp/trace_key.b64")),
+            &repo_root.join(&signed_trace_rel),
+            Some(&repo_root.join(&trace_key_rel)),
         )
         .expect("signed trace fixture should verify");
 
-        let _ = fs::remove_file(repo_root.join("tmp/trace_signed.adl.yaml"));
-        let _ = fs::remove_file(repo_root.join("tmp/trace_unsigned.adl.yaml"));
-        let _ = fs::remove_file(repo_root.join("tmp/trace_key.b64"));
+        let _ = fs::remove_file(repo_root.join(&signed_trace_rel));
+        let _ = fs::remove_file(repo_root.join(&unsigned_trace_rel));
+        let _ = fs::remove_file(repo_root.join(&trace_key_rel));
+        let _ = fs::remove_dir_all(repo_root.join(trace_dir));
         let _ = fs::remove_dir_all(out_dir);
     }
 
