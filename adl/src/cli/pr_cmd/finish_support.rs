@@ -2274,6 +2274,18 @@ pub(super) fn select_finish_validation_plan_for_finish(
     if finish_paths_need_github_projection_watch_validation(changed_paths) {
         return Ok(build_github_projection_watch_validation_plan());
     }
+    if changed_paths
+        .iter()
+        .all(|path| finish_path_is_docs_only(path.trim().trim_matches('/')))
+    {
+        return Ok(FinishValidationPlan {
+            mode: FinishValidationMode::DocsOnly,
+            commands: vec![
+                "bash adl/tools/check_no_tracked_adl_issue_record_residue.sh".to_string(),
+                "git diff --check".to_string(),
+            ],
+        });
+    }
 
     let changed_paths_need_finish_rust_validation = changed_paths
         .iter()
