@@ -89,6 +89,8 @@ runtime or product completion.
 
 ## Review And Closeout
 
+- [ ] WP-14A `#4582` is the active internal-review and pre-`v0.92` burn-down
+  owner; closed `#3979` remains retained planning/source evidence only.
 - [ ] Bounded internal review completed.
 - [ ] Findings fixed or explicitly routed.
 - [x] WP-12 quality gate consumed WP-11 proof convergence. Current retained
