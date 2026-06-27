@@ -2828,7 +2828,6 @@ fn finish_validation_profile_classifies_unity_observatory_contract_slice_as_larg
 
 #[test]
 fn finish_validation_profile_classifies_inhabitant_readiness_slice_as_larger_binary_focused() {
-    let _guard = env_lock();
     let plan = select_finish_validation_plan_for_finish(
         4033,
         ".",
@@ -2853,7 +2852,6 @@ fn finish_validation_profile_classifies_inhabitant_readiness_slice_as_larger_bin
 
 #[test]
 fn finish_validation_profile_classifies_observability_consumption_slice_as_larger_binary_focused() {
-    let _guard = env_lock();
     let plan = select_finish_validation_plan_for_finish(
         4034,
         ".",
@@ -2878,7 +2876,6 @@ fn finish_validation_profile_classifies_observability_consumption_slice_as_large
 
 #[test]
 fn finish_validation_profile_classifies_unity_observatory_repair_slice_as_larger_binary_focused() {
-    let _guard = env_lock();
     let plan = select_finish_validation_plan_for_finish(
         4416,
         ".",
@@ -3275,7 +3272,6 @@ fn finish_validation_profile_classifies_lifecycle_inline_tests() {
 
 #[test]
 fn finish_validation_profile_keeps_small_binary_delegation_proof_focused() {
-    let _guard = env_lock();
     let plan = select_finish_validation_plan_for_finish(
         1153,
         ".",

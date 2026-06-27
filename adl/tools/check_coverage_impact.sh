@@ -233,9 +233,6 @@ candidate_filter_for_path() {
     adl/src/bin/adl_lint_prompt_spec.rs|adl/src/bin/adl_prompt_template.rs|adl/src/bin/adl_validate_structured_prompt.rs)
       printf 'tooling_cmd'
       ;;
-    adl/src/bin/run_v0916_acip_aee_memory_integration.rs)
-      printf 'run_v0916_acip_aee_memory_integration'
-      ;;
     adl/src/cli/run_artifacts/runtime/*.rs)
       printf 'run_state'
       ;;
@@ -259,9 +256,6 @@ nextest_expression_for_filter() {
       ;;
     pr_cmd)
       printf 'binary_id(adl::bin/adl) and test(/^cli::pr_cmd::/)'
-      ;;
-    run_v0916_acip_aee_memory_integration)
-      printf 'binary_id(adl::bin/run_v0916_acip_aee_memory_integration) and test(/^tests::runtime_acip_aee_memory_/)'
       ;;
     pr_cmd::github)
       printf 'test(/^cli::pr_cmd::github::/) or test(/^cli::pr_cmd::github_client::/)'

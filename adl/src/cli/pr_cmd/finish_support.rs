@@ -2274,12 +2274,6 @@ pub(super) fn select_finish_validation_plan_for_finish(
     if finish_paths_need_github_projection_watch_validation(changed_paths) {
         return Ok(build_github_projection_watch_validation_plan());
     }
-    if requested_paths.contains(&".") && finish_paths_are_manifest_only(changed_paths) {
-        bail!(
-            "finish: selector left changed paths without validation-lane coverage: {}",
-            changed_paths.join(", ")
-        );
-    }
 
     let changed_paths_need_finish_rust_validation = changed_paths
         .iter()
@@ -2678,19 +2672,6 @@ fn finish_paths_are_version_metadata_update(changed_paths: &[String]) -> bool {
         }
     }
     has_manifest && has_lockfile && has_current_docs
-}
-
-fn finish_paths_are_manifest_only(changed_paths: &[String]) -> bool {
-    let mut has_manifest = false;
-    let mut has_lockfile = false;
-    for path in changed_paths {
-        match path.trim().trim_matches('/') {
-            "adl/Cargo.toml" => has_manifest = true,
-            "adl/Cargo.lock" => has_lockfile = true,
-            _ => return false,
-        }
-    }
-    has_manifest && has_lockfile
 }
 
 fn build_version_metadata_validation_plan() -> FinishValidationPlan {

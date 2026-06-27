@@ -1156,7 +1156,7 @@ mod tests {
     }
 
     #[test]
-    fn runtime_acip_aee_memory_packet_generates_expected_artifacts() {
+    fn run_v0916_acip_aee_memory_integration_packet_generates_expected_artifacts() {
         let out_dir = temp_dir("runtime-4546-proof");
         run(Args {
             out: out_dir.clone(),
@@ -1206,7 +1206,7 @@ mod tests {
     }
 
     #[test]
-    fn runtime_proof_helpers_remain_reviewable() {
+    fn run_v0916_acip_aee_memory_integration_proof_helpers_remain_reviewable() {
         let out_dir = temp_dir("runtime-4546-helpers");
         fs::create_dir_all(&out_dir).expect("create out dir");
 
@@ -1289,7 +1289,7 @@ mod tests {
     }
 
     #[test]
-    fn runtime_acip_aee_memory_run_replaces_existing_output_directory() {
+    fn run_v0916_acip_aee_memory_integration_run_replaces_existing_output_directory() {
         let out_dir = temp_dir("runtime-4546-existing-out");
         fs::create_dir_all(&out_dir).expect("create out dir");
         fs::write(out_dir.join("stale.txt"), "stale").expect("write stale marker");
@@ -1318,7 +1318,7 @@ mod tests {
     }
 
     #[test]
-    fn runtime_acip_aee_memory_support_helpers_cover_builder_edges() {
+    fn run_v0916_acip_aee_memory_integration_support_helpers_cover_builder_edges() {
         let out_dir = temp_dir("runtime-4546-support-helpers");
         fs::create_dir_all(out_dir.join("nested/deeper")).expect("create nested dir");
         fs::write(out_dir.join("nested/deeper/file.txt"), "ok").expect("write nested file");
