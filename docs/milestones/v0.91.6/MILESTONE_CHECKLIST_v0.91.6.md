@@ -91,6 +91,12 @@ runtime or product completion.
 
 - [ ] Bounded internal review completed.
 - [ ] Findings fixed or explicitly routed.
+- [x] WP-12 quality gate consumed WP-11 proof convergence. Current retained
+  packet:
+  [review/V0916_WP12_QUALITY_GATE_3977.md](review/V0916_WP12_QUALITY_GATE_3977.md)
+  consumes merged `#3976` / PR `#4605` demo/proof truth and clears WP-13 to
+  start after the WP-12 PR lands. WP-11 closeout normalization remains routed
+  as release-tail hygiene.
 - [ ] Bridge-ledger dispositions refreshed or handed off.
 - [ ] Runtime/product closeout rows preserve explicit completion class, evidence,
   and blocker or defer routes when not `integrated_proven`.

@@ -33,7 +33,7 @@ ledger.
 
 ## 0. Release-Tail Convergence
 
-- [ ] Control-plane rescue sprint `#4588` completed before ordered release-tail
+- [x] Control-plane rescue sprint `#4588` completed before ordered release-tail
   execution resumes. Any incomplete child, blocked follow-on, or retained
   watcher residue requires an explicit operator waiver in `#4588` with
   release-tail impact, retained watcher evidence, and follow-on owner.
@@ -66,6 +66,12 @@ ledger.
   `#3902` without exposing sensitive offer identifiers.
 - [ ] CodeFriend v1 / portable adapter v2 and guild route preservation status
   recorded without expanding first-tranche activation scope.
+- [x] WP-12 quality gate has consumed WP-11 proof convergence. Current retained
+  packet:
+  [review/V0916_WP12_QUALITY_GATE_3977.md](review/V0916_WP12_QUALITY_GATE_3977.md)
+  consumes merged `#3976` / PR `#4605` demo/proof truth, clears WP-13 to start
+  after the WP-12 PR lands, and routes WP-11 closeout normalization as
+  release-tail hygiene rather than a proof blocker.
 
 ## 1. Release Readiness
 
