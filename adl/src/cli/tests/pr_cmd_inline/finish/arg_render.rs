@@ -957,6 +957,56 @@ fn sor_emitted_facts_parse_review_truth_from_crlf_front_matter() {
 }
 
 #[test]
+fn sor_emitted_facts_capture_numbered_review_findings_and_dispositions() {
+    let output = "## Verification Summary\n\n```yaml\nverification_summary:\n  validation:\n    status: PASS\n```\n";
+    let review = r#"---
+review_results:
+  findings_status: "findings_present"
+  recommended_outcome: "needs_followup"
+---
+
+# Structured Review Prompt
+
+## Findings
+
+1. Numbered finding survives into machine-readable SOR facts.
+2) Alternate ordered-list syntax also survives.
+   - nested evidence should not become a separate finding.
+
+## Dispositions
+
+1. Added focused regression coverage for numbered findings.
+2) Deferred larger PR inventory work into a retained route packet.
+   - nested disposition detail should not become a separate disposition.
+"#;
+
+    let normalized = normalize_sor_emitted_facts_fixture(
+        output,
+        &["adl/src/cli/pr_cmd/finish_support.rs".to_string()],
+        &["git diff --check".to_string()],
+        review,
+        SorFactEmissionContext {
+            validation_status: "PASS",
+            pr_url: None,
+            integration_state: "worktree_only",
+            closing_linkage_repaired: false,
+        },
+    )
+    .expect("normalize numbered finding review evidence");
+
+    assert!(normalized.contains("findings_status: findings_present"));
+    assert!(normalized.contains("recommended_outcome: needs_followup"));
+    assert!(normalized.contains("Numbered finding survives into machine-readable SOR facts."));
+    assert!(normalized.contains("Alternate ordered-list syntax also survives."));
+    assert!(normalized.contains("Added focused regression coverage for numbered findings."));
+    assert!(normalized.contains("Deferred larger PR inventory work into a retained route packet."));
+    assert!(!normalized.contains("nested evidence should not become a separate finding."));
+    assert!(
+        !normalized.contains("nested disposition detail should not become a separate disposition.")
+    );
+}
+
+#[test]
 fn render_default_finish_validation_includes_profile_truth_and_sanitizes_changed_files() {
     let plan = FinishValidationPlan {
         mode: FinishValidationMode::SmallBinaryFocused,
