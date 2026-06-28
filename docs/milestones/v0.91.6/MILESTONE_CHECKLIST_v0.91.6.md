@@ -96,13 +96,13 @@ runtime or product completion.
 - [x] WP-12 quality gate consumed WP-11 proof convergence. Current retained
   packet:
   [review/V0916_WP12_QUALITY_GATE_3977.md](review/V0916_WP12_QUALITY_GATE_3977.md)
-  consumes merged `#3976` / PR `#4605` demo/proof truth and clears WP-13 to
-  start after the WP-12 PR lands. WP-11 closeout normalization remains routed
-  as release-tail hygiene.
-- [ ] WP-13 docs/review-surface alignment completed. Current owner: `#3978`.
-  This must align README, changelog, milestone planning docs, release docs,
-  feature-list references, and review entrypoints before internal review
-  `#4582`.
+  consumes merged `#3976` / PR `#4605` demo/proof truth and cleared WP-13 to
+  start after the WP-12 PR landed. WP-11 closeout normalization remains routed
+  as release-tail hygiene rather than a proof blocker.
+- [x] WP-13 docs/review-surface alignment completed through merged `#3978` /
+  PR `#4608`. Follow-on release-tail doc-truth cleanup remains explicitly
+  routed through `#4609`; internal review owner `#4582` stays the current
+  active WP-14A packet.
 - [ ] Bridge-ledger dispositions refreshed or handed off.
 - [ ] Runtime/product closeout rows preserve explicit completion class, evidence,
   and blocker or defer routes when not `integrated_proven`.

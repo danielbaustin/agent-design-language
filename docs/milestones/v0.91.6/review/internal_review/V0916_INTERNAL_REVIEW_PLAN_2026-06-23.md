@@ -57,7 +57,6 @@ Before executing the internal review, confirm:
 - `docs/milestones/v0.91.6/WP_ISSUE_WAVE_v0.91.6.yaml`
 - `docs/milestones/v0.91.6/FEATURE_DOCS_v0.91.6.md`
 - `docs/milestones/v0.91.6/DEMO_MATRIX_v0.91.6.md`
-- `docs/milestones/v0.91.6/DEMO_MATRIX_v0.91.6.md`
 - `docs/milestones/v0.91.6/MILESTONE_CHECKLIST_v0.91.6.md`
 - `docs/milestones/v0.91.6/REVIEW_AND_VALIDATION_CHECKLIST_v0.91.6.md`
 - `docs/milestones/v0.91.6/RELEASE_PLAN_v0.91.6.md`
