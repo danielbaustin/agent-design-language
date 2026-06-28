@@ -10,8 +10,10 @@
 ## Status
 
 Release-tail review checklist for docs/planning and first-tranche bridge work.
-WP-11 `#3976` and WP-12 `#3977` have merged; WP-13 `#3978` uses this
-checklist to align reviewer-facing docs before internal review `#4582`.
+WP-11 `#3976`, WP-12 `#3977`, WP-13 `#3978`, and WP-14A `#4582` have merged.
+Current docs-truth repair and final-preflight consumers should use the same
+checklist while keeping WP-15 failed-review truth and WP-16 remediation state
+explicit.
 
 ## Required Local Validation
 

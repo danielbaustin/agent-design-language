@@ -42,8 +42,9 @@ frontier is the ordered release-tail sprint under `#4604`.
 - These notes do not claim release publication yet.
 - These notes do not claim full runtime/product integration from prerequisite
   proof.
-- WP-11 and WP-12 are merged; WP-13 docs/review alignment is active. WP-14A
-  through WP-19 release-tail work remains active until `#4604` closes.
+- WP-11, WP-12, WP-13, and WP-14A are complete. WP-15 external review has run
+  and failed on stale handoff truth; WP-16 remediation/final preflight remains
+  active until `#4604` closes.
 - `v0.91.7` remains required for second-tranche conceptual surfaces.
 - `v0.92` activation remains blocked until bridge truth is reviewed.
 

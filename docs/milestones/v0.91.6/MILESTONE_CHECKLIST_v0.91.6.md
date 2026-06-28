@@ -89,9 +89,9 @@ runtime or product completion.
 
 ## Review And Closeout
 
-- [ ] WP-14A `#4582` is the active internal-review and pre-`v0.92` burn-down
-  owner; closed `#3979` remains retained planning/source evidence only.
-- [ ] Bounded internal review completed.
+- [x] WP-14A `#4582` completed the internal-review and pre-`v0.92` burn-down
+  step; closed `#3979` remains retained planning/source evidence only.
+- [x] Bounded internal review completed.
 - [ ] Findings fixed or explicitly routed.
 - [x] WP-12 quality gate consumed WP-11 proof convergence. Current retained
   packet:
@@ -100,9 +100,12 @@ runtime or product completion.
   start after the WP-12 PR landed. WP-11 closeout normalization remains routed
   as release-tail hygiene rather than a proof blocker.
 - [x] WP-13 docs/review-surface alignment completed through merged `#3978` /
-  PR `#4608`. Follow-on release-tail doc-truth cleanup remains explicitly
-  routed through `#4609`; internal review owner `#4582` stays the current
-  active WP-14A packet.
+  PR `#4608`. Follow-on release-tail doc-truth cleanup landed through closed
+  `#4609`, and the internal-review owner `#4582` has closed.
+- [ ] WP-15 external review failure is recorded truthfully and does not read as
+  pending-send or approved. Current retained packet:
+  [review/external_review/V0916_EXTERNAL_REVIEW_FINDINGS_2026-06-28.md](review/external_review/V0916_EXTERNAL_REVIEW_FINDINGS_2026-06-28.md)
+  keeps `#3980` open and routes accepted findings into `#3981`.
 - [ ] Bridge-ledger dispositions refreshed or handed off.
 - [ ] Runtime/product closeout rows preserve explicit completion class, evidence,
   and blocker or defer routes when not `integrated_proven`.

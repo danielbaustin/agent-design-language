@@ -42,6 +42,7 @@ start with:
 - `docs/milestones/v0.91.6/review/internal_review/V0916_INTERNAL_REVIEW_HANDOFF_2026-06-27.md`
 - `docs/milestones/v0.91.6/review/internal_review/V0916_PRE_V092_BURN_DOWN_CHECKLIST_2026-06-27.md`
 - `docs/milestones/v0.91.6/review/internal_review/V0916_FULL_CODE_REVIEW_2026-06-27.md`
+- `docs/milestones/v0.91.6/review/external_review/V0916_EXTERNAL_REVIEW_FINDINGS_2026-06-28.md`
 - `docs/milestones/v0.91.6/features/`
 - `docs/milestones/v0.91.7/README.md`
 - `docs/milestones/v0.91.7/PLANNING_SOURCE_CAPTURE_v0.91.7.md`
@@ -89,10 +90,11 @@ Tail closeout docs review is complete only when this surface has either been
 updated, confirmed current, or explicitly ruled not applicable with evidence.
 
 The current review posture is v0.91.6 release-tail review and dependency-gated
-v0.91.7 planning. v0.91.7 planning may be prepared, but v0.91.7 execution must
-not begin until v0.91.6 WP-15 external review, WP-16 remediation/final preflight,
-and remaining WP-14A remediation truth are complete, blocked, deferred, or
-explicitly routed.
+v0.91.7 planning. WP-14A `#4582` is closed, WP-15 `#3980` has already run and
+failed on stale handoff truth, and WP-16 `#3981` remains the canonical
+remediation/final-preflight sink. v0.91.7 planning may be prepared, but
+v0.91.7 execution must not begin until v0.91.6 WP-15/WP-16 truth is complete,
+blocked, deferred, or explicitly routed.
 
 Important active non-claims:
 

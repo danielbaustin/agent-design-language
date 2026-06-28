@@ -43,8 +43,8 @@ ledger.
 - [ ] Every release-tail issue that entered a wait state records a retained
   watcher packet, watcher-packet summary, or explicit not-applicable reason
   before it is counted as cleanly advanced or complete.
-- [ ] WP-14A internal review and pre-`v0.92` burn-down executes under `#4582`;
-  closed `#3979` is consumed only as retained planning/source evidence.
+- [x] WP-14A internal review and pre-`v0.92` burn-down executed under merged
+  `#4582`; closed `#3979` remains retained planning/source evidence only.
 - [ ] Every touched product/runtime surface is classified with the operational
   completion gate before release truth calls it complete.
 - [ ] The operational completion gate is the required truth boundary for
@@ -75,9 +75,12 @@ ledger.
   start after the WP-12 PR landed, and routes WP-11 closeout normalization as
   release-tail hygiene rather than a proof blocker.
 - [x] WP-13 docs/review-surface alignment landed through merged `#3978` /
-  PR `#4608`. Follow-on release-tail doc-truth cleanup remains explicitly
-  routed through `#4609`, while `#4582` remains the current active
-  internal-review owner.
+  PR `#4608`. Follow-on release-tail doc-truth cleanup landed through closed
+  `#4609`, and the WP-14A owner `#4582` has also closed.
+- [ ] WP-15 external review truth is recorded as `failed_on_stale_handoff`,
+  not pending-send or approved. Current retained packet:
+  [review/external_review/V0916_EXTERNAL_REVIEW_FINDINGS_2026-06-28.md](review/external_review/V0916_EXTERNAL_REVIEW_FINDINGS_2026-06-28.md)
+  keeps `#3980` open while `#3981` owns accepted disposition work.
 
 ## 1. Release Readiness
 
