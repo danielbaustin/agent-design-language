@@ -32,7 +32,7 @@ next internal-review owner after WP-13 publishes its alignment packet.
 | 1 | `#3976` | Demo convergence | prior milestone implementation wave complete enough for demos | No | Watch demo proofs and PR checks; poll at most every 30 seconds while waiting |
 | 2 | `#3977` | Quality gate | demo truth available | Yes, if gate finds bounded gaps | Watch findings, truth drift, and PR checks; poll at most every 30 seconds while waiting |
 | 3 | `#3978` | Docs and review alignment | quality-gate truth available | Yes, for stale or contradictory docs surfaces | Watch doc-alignment PR state and downstream truth handoff; poll at most every 30 seconds while waiting |
-| 4 | `#4582` | WP-14A internal review | docs/review alignment packet ready; consumes closed `#3979` as retained source/planning evidence | Yes, for findings remediation routed into preflight | Watch review packet readiness, review completion, and linked remediation state; poll at most every 30 seconds while waiting |
+| 4 | `#4582` | WP-14A internal review and pre-`v0.92` burn-down | docs/review alignment packet ready; closed `#3979` consumed as retained source evidence only | Yes, for findings remediation routed into preflight | Watch review packet readiness, review completion, burn-down checklist publication, and linked remediation state; poll at most every 30 seconds while waiting |
 | 5 | `#3980` | External review | internal review packet ready | Yes, for external findings remediation routed into preflight | Watch external-review packet readiness and returned findings state; poll at most every 30 seconds while waiting |
 | 6 | `#3981` | Remediation and final preflight | internal and external review truth settled enough to act | Yes; this is the canonical remediation sink for closeout-tail findings | Watch blockers, PR checks, and release-gate proof; poll at most every 30 seconds while waiting |
 | 7 | `#3982` | Next milestone planning | remediation/preflight truth stable enough to size next work | No; fold recurring planning/handoff concerns here, including work previously split into `#3893` | Watch planning-doc readiness and approval state; poll at most every 30 seconds while waiting |
@@ -49,6 +49,8 @@ Closed source packet:
 
 - Treat the closeout tail as one sprint umbrella with ordered child issues.
 - Do not run these issues as separate sprint umbrellas.
+- Treat `#3979` as closed retained planning/source evidence only. Active
+  internal-review execution for this tail is `#4582` / WP-14A.
 - Each issue still uses the normal ADL lifecycle: GitHub issue truth, `workflow-conductor`, bound worktree execution, bounded review, PR publication, and closeout.
 - Do not advance to the next issue merely because a prior issue has a branch or draft PR; advance only when the prior issue's required truth surface is available.
 - If an issue is blocked on review, checks, conflicts, or an upstream gate, assign a watcher immediately rather than leaving the sprint in an unmanaged wait state.

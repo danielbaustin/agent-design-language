@@ -43,6 +43,8 @@ ledger.
 - [ ] Every release-tail issue that entered a wait state records a retained
   watcher packet, watcher-packet summary, or explicit not-applicable reason
   before it is counted as cleanly advanced or complete.
+- [ ] WP-14A internal review and pre-`v0.92` burn-down executes under `#4582`;
+  closed `#3979` is consumed only as retained planning/source evidence.
 - [ ] Every touched product/runtime surface is classified with the operational
   completion gate before release truth calls it complete.
 - [ ] The operational completion gate is the required truth boundary for
