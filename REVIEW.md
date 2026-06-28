@@ -21,21 +21,33 @@ The reviewer should not audit ADL against a frozen abstract standard alone. The 
 
 ## Current Review Entry Point
 
-For the active v0.91.5 Sprint 4 release-tail review, start with:
+For the active v0.91.6 release-tail review and v0.91.7 handoff preparation,
+start with:
 
-- `docs/milestones/v0.91.5/README.md`
-- `docs/milestones/v0.91.5/WBS_v0.91.5.md`
-- `docs/milestones/v0.91.5/SPRINT_v0.91.5.md`
-- `docs/milestones/v0.91.5/WP_ISSUE_WAVE_v0.91.5.yaml`
-- `docs/milestones/v0.91.5/QUALITY_GATE_v0.91.5.md`
-- `docs/milestones/v0.91.5/MILESTONE_CHECKLIST_v0.91.5.md`
-- `docs/milestones/v0.91.5/RELEASE_PLAN_v0.91.5.md`
-- `docs/milestones/v0.91.5/RELEASE_NOTES_v0.91.5.md`
-- `docs/milestones/v0.91.5/review/internal_review/V0915_FIRST_INTERNAL_REVIEW_FINDINGS_REGISTER_2026-06-16.md`
-- `docs/milestones/v0.91.5/review/internal_review/V0915_SECOND_PASS_INTERNAL_REVIEW_PLAN_2026-06-17.md`
-- `docs/milestones/v0.91.5/review/internal_review/V0915_WP14_QUALITY_GATE_APPLICATION_2026-06-17.md`
-- `docs/milestones/v0.91.5/review/internal_review/`
-- `docs/milestones/v0.91.5/features/`
+- `docs/milestones/v0.91.6/README.md`
+- `docs/milestones/v0.91.6/WBS_v0.91.6.md`
+- `docs/milestones/v0.91.6/SPRINT_PLAN_v0.91.6.md`
+- `docs/milestones/v0.91.6/WP_ISSUE_WAVE_v0.91.6.yaml`
+- `docs/milestones/v0.91.6/FEATURE_DOCS_v0.91.6.md`
+- `docs/milestones/v0.91.6/DEMO_MATRIX_v0.91.6.md`
+- `docs/milestones/v0.91.6/MILESTONE_CHECKLIST_v0.91.6.md`
+- `docs/milestones/v0.91.6/REVIEW_AND_VALIDATION_CHECKLIST_v0.91.6.md`
+- `docs/milestones/v0.91.6/RELEASE_PLAN_v0.91.6.md`
+- `docs/milestones/v0.91.6/RELEASE_NOTES_v0.91.6.md`
+- `docs/milestones/v0.91.6/OPERATIONAL_COMPLETION_GATE_v0.91.6.md`
+- `docs/milestones/v0.91.6/CLOSEOUT_TAIL_SPRINT_v0.91.6.md`
+- `docs/milestones/v0.91.6/review/internal_review/V0916_INTERNAL_REVIEW_FINDINGS_REGISTER_2026-06-27.md`
+- `docs/milestones/v0.91.6/review/internal_review/V0916_INTERNAL_REVIEW_SYNTHESIS_2026-06-27.md`
+- `docs/milestones/v0.91.6/review/internal_review/V0916_INTERNAL_REVIEW_REMEDIATION_QUEUE_2026-06-27.md`
+- `docs/milestones/v0.91.6/review/internal_review/V0916_INTERNAL_REVIEW_HANDOFF_2026-06-27.md`
+- `docs/milestones/v0.91.6/review/internal_review/V0916_PRE_V092_BURN_DOWN_CHECKLIST_2026-06-27.md`
+- `docs/milestones/v0.91.6/review/internal_review/V0916_FULL_CODE_REVIEW_2026-06-27.md`
+- `docs/milestones/v0.91.6/features/`
+- `docs/milestones/v0.91.7/README.md`
+- `docs/milestones/v0.91.7/PLANNING_SOURCE_CAPTURE_v0.91.7.md`
+- `docs/milestones/v0.91.7/WP_ISSUE_WAVE_v0.91.7.yaml`
+- `docs/milestones/v0.91.7/V092_HANDOFF_v0.91.7.md`
+- `docs/milestones/v0.92/V092_ACTIVATION_BRIDGE_LEDGER_v0.92.md`
 - `docs/templates/prompts/`
 - `docs/cognitive-sdlc/`
 - `AGENTS.md`
@@ -45,7 +57,70 @@ For the active v0.91.5 Sprint 4 release-tail review, start with:
 - `adl/Cargo.toml`
 - `adl/Cargo.lock`
 
-The current review posture is v0.91.5 Sprint 4 release-tail review.
+For tail closeout docs-review issues, the canonical update surface is deliberately
+broad. Do not treat the short start list above as the whole docs pass. At
+minimum, inspect and update every applicable item in this checklist:
+
+- all `README.md` files in the active milestone, feature, review, docs, and
+  repository-root surfaces touched by the milestone
+- all tracked `.md` files under the active milestone directory
+- all active milestone planning docs, including vision, design, decisions,
+  WBS, sprint plan, demo matrix, milestone checklist, review/validation
+  checklist, release plan, release notes, closeout tail packet, operational
+  gate, runtime/soak/fire-up packets, and special mini-sprint packets
+- all active milestone feature docs and the active feature-doc index
+- all active milestone review docs, sprint-review packets, closeout packets,
+  remediation queues, internal-review packets, external-review handoff packets,
+  and release-tail findings registers
+- all next-milestone planning and handoff docs that the current milestone
+  prepares or gates, including v0.91.7 planning docs and v0.92 bridge ledgers
+  when the current milestone claims handoff readiness
+- root `README.md`, `REVIEW.md`, `CHANGELOG.md`, `AGENTS.md`, and
+  `docs/README.md`
+- canonical planning, prompt-template, C-SDLC, tooling, validation, and release
+  policy docs when the milestone changes process, cards, validation lanes,
+  closeout behavior, or review entrypoints
+- package/version surfaces such as `adl/Cargo.toml` and `adl/Cargo.lock` when
+  milestone version truth, binaries, dependencies, or command behavior changes
+- any tracked document explicitly named by the issue, SOR, SRP, review finding,
+  release checklist, milestone checklist, or handoff packet
+
+Tail closeout docs review is complete only when this surface has either been
+updated, confirmed current, or explicitly ruled not applicable with evidence.
+
+The current review posture is v0.91.6 release-tail review and dependency-gated
+v0.91.7 planning. v0.91.7 planning may be prepared, but v0.91.7 execution must
+not begin until v0.91.6 WP-15 external review, WP-16 remediation/final preflight,
+and remaining WP-14A remediation truth are complete, blocked, deferred, or
+explicitly routed.
+
+Important active non-claims:
+
+- v0.91.6 does not claim release readiness until external review,
+  remediation/final preflight, next-milestone review, and release ceremony
+  truth settle.
+- v0.91.7 planning docs do not prove runtime, demo, provider, scheduler, AWS,
+  C-SDLC, validation, or v0.92 activation readiness.
+- EC2 Spot or remote-builder work is planned/proof-routed for v0.91.7 WP-06;
+  it is not yet an accepted release-critical validation lane.
+- Mocks, seams, docs, and component tests count as prerequisites, not as
+  product/runtime feature completion.
+- v0.92 activation remains blocked until each named activation surface is
+  complete, blocked, deferred, or routed.
+
+For historical v0.91.5 Sprint 4 release-tail review, start with:
+
+- `docs/milestones/v0.91.5/README.md`
+- `docs/milestones/v0.91.5/WBS_v0.91.5.md`
+- `docs/milestones/v0.91.5/SPRINT_v0.91.5.md`
+- `docs/milestones/v0.91.5/WP_ISSUE_WAVE_v0.91.5.yaml`
+- `docs/milestones/v0.91.5/QUALITY_GATE_v0.91.5.md`
+- `docs/milestones/v0.91.5/MILESTONE_CHECKLIST_v0.91.5.md`
+- `docs/milestones/v0.91.5/RELEASE_PLAN_v0.91.5.md`
+- `docs/milestones/v0.91.5/RELEASE_NOTES_v0.91.5.md`
+- `docs/milestones/v0.91.5/review/internal_review/`
+- `docs/milestones/v0.91.5/review/external_review/`
+- `docs/milestones/v0.91.5/features/`
 
 For historical v0.91.4 release-ceremony review, use:
 
