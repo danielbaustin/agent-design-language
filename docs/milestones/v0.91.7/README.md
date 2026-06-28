@@ -10,6 +10,7 @@
 - Source bridge ledger: `docs/milestones/v0.91.5/PRE_V092_BRIDGE_FEATURE_DOC_LEDGER_v0.91.5.md`
 - First-tranche input: `docs/milestones/v0.91.6/`
 - Source-capture ledger: `PLANNING_SOURCE_CAPTURE_v0.91.7.md`
+- v0.91.6 handoff addendum: `V0916_TO_V0917_HANDOFF_ADDENDUM_3982.md`
 
 ## Status
 
@@ -17,10 +18,16 @@ Current status: planning refresh for the final pre-`v0.92` bridge and readiness 
 
 - Initial planning package: created by earlier v0.91.7 setup work.
 - Source-capture refresh: `#4368`.
+- v0.91.6 release-tail handoff refresh: `#3982`.
 - Execution: not started beyond planning/feature docs and `#4549` Soak #2
   execution-packet setup; no Soak #2 runtime execution has run.
 - Validation: docs-readiness validation only until implementation issues run.
 - Release readiness: not applicable until `v0.91.7` executes.
+- Dependency gate: v0.91.7 execution must consume the failed-but-closed WP-15
+  `#3980` external-review truth, closed WP-16 `#3981`
+  remediation/final-preflight truth, closed WP-16 children `#4620` and
+  `#4621`, the open v0.91.7 tooling route `#4622`, and closed WP-14A
+  remediation truth before opening dependent execution work.
 
 This package does not implement runtime features and does not claim `v0.92` activation readiness. It exists so every required pre-birthday surface is visible, scheduled, deferred, blocked, or routed before `v0.92` opens.
 
@@ -85,6 +92,7 @@ Every surface must exit as one of:
 - Decisions: [DECISIONS_v0.91.7.md](DECISIONS_v0.91.7.md)
 - Sprint plan: [SPRINT_PLAN_v0.91.7.md](SPRINT_PLAN_v0.91.7.md)
 - Runtime Soak #2 packet: [RUNTIME_SOAK_2_EXECUTION_PACKET_v0.91.7.md](RUNTIME_SOAK_2_EXECUTION_PACKET_v0.91.7.md)
+- v0.91.6-to-v0.91.7 handoff addendum: [V0916_TO_V0917_HANDOFF_ADDENDUM_3982.md](V0916_TO_V0917_HANDOFF_ADDENDUM_3982.md)
 - Demo matrix: [DEMO_MATRIX_v0.91.7.md](DEMO_MATRIX_v0.91.7.md)
 - Feature-doc index: [FEATURE_DOCS_v0.91.7.md](FEATURE_DOCS_v0.91.7.md)
 - v0.92 handoff: [V092_HANDOFF_v0.91.7.md](V092_HANDOFF_v0.91.7.md)
@@ -106,6 +114,7 @@ Every surface must exit as one of:
 ## Exit Criteria
 
 - Every required source in `PLANNING_SOURCE_CAPTURE_v0.91.7.md` is complete, blocked, deferred, or routed.
+- WP-01 consumes `V0916_TO_V0917_HANDOFF_ADDENDUM_3982.md` plus failed-but-closed WP-15 truth, final WP-16 closeout truth, closed `#4620` / `#4621`, and the v0.91.7-routed `#4622`, before starting dependent execution work.
 - Every v0.91.6 carryover issue has a truthful disposition before `v0.92` opens.
 - `#3780` can refresh `v0.92` activation docs from tracked bridge truth without reconstructing scope from chat.
 - The first-birthday milestone starts with a clear runtime/demo/security/protocol/process substrate and known residual risks.

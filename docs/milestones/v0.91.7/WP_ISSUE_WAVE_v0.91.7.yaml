@@ -8,16 +8,18 @@ created_by_issues:
 source_bridge_ledger: docs/milestones/v0.91.5/PRE_V092_BRIDGE_FEATURE_DOC_LEDGER_v0.91.5.md
 first_tranche_input: docs/milestones/v0.91.6/
 source_capture: docs/milestones/v0.91.7/PLANNING_SOURCE_CAPTURE_v0.91.7.md
+release_tail_handoff_addendum: docs/milestones/v0.91.7/V0916_TO_V0917_HANDOFF_ADDENDUM_3982.md
 notes:
   - "Candidate wave only; WP-01 must open concrete GitHub issues and render C-SDLC cards."
   - "Do not claim v0.92 activation readiness from this seed."
   - "Keep v0.92 birthday implementation out of this planning package."
   - "Every source-capture input must exit complete, blocked, deferred, or routed."
+  - "WP-01 must consume failed-but-closed WP-15 #3980 external-review truth, closed WP-16 #3981/#4620/#4621 remediation truth, open v0.91.7 tooling route #4622, WP-14A #4582, and closed WP-14A remediation #4609-#4612 truth before dependent execution starts."
 work_packages:
   - wp: WP-01
     title: v0.91.7 planning promotion and issue-wave readiness
-    outcome: Promote the refreshed planning package, reconcile v0.91.6 closeout truth, classify every source-capture input, refresh or route feature-list/roadmap truth, and open the concrete v0.91.7 issue wave.
-    depends_on: ["#3778", "#3800", "#3801", "#4368", "v0.91.6 closeout truth"]
+    outcome: Promote the refreshed planning package, reconcile v0.91.6 closeout truth, consume V0916_TO_V0917_HANDOFF_ADDENDUM_3982.md, classify every source-capture input, refresh or route feature-list/roadmap truth, and open the concrete v0.91.7 issue wave.
+    depends_on: ["#3778", "#3800", "#3801", "#4368", "#3980", "#3981", "#4620", "#4621", "#4622", "#4582", "#4609", "#4610", "#4611", "#4612", "v0.91.6 closeout truth"]
     deliverables:
       - "Opened GitHub issue wave"
       - "SIP/STP/SPP/SRP/SOR cards for each opened issue"
@@ -73,11 +75,12 @@ work_packages:
       - "Capability-envelope and capability-testing routing"
   - wp: WP-06
     title: Build throughput and validation-cost reduction
-    outcome: Route validation manager, long-test fanout, CI log archive/S3, Nessus, CodeBuild runner evaluation, sccache/linker/target-dir cleanup, and validation DAG/build graph convergence.
+    outcome: Route validation manager, long-test fanout, CI log archive/S3, Nessus, CodeBuild runner evaluation, EC2 Spot or alternate remote-builder proof, sccache/linker/target-dir cleanup, and validation DAG/build graph convergence.
     depends_on: ["WP-03", "validation sprint outputs"]
     deliverables:
       - "Build/validation throughput sprint"
       - "Remote/local validation runner decision"
+      - "EC2 Spot or alternate remote-builder time/cost/cleanup evidence route"
   - wp: WP-07
     title: Runtime integration fire-up and Soak 2
     outcome: Assemble one minimal end-to-end runtime path, reconcile Runtime v2 minimal prototype with current substrate, run or route integrated runtime Soak #2, identify runtime bloat/seam pain, and preserve Soak #3 contingency.

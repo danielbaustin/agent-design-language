@@ -7,6 +7,7 @@
 - Date: `2026-06-21`
 - Issue: `#4368`
 - Status: planning-source ledger for v0.91.7 scheduling
+- Release-tail refresh: `#3982` / `V0916_TO_V0917_HANDOFF_ADDENDUM_3982.md`
 
 ## Purpose
 
@@ -30,11 +31,12 @@ It must answer three questions before `v0.92` opens:
 | --- | --- | --- |
 | `docs/milestones/v0.91.5/PRE_V092_BRIDGE_FEATURE_DOC_LEDGER_v0.91.5.md` | Pre-`v0.92` bridge ledger / `#3778` source | Consume as upstream bridge authority; do not let v0.91.7 contradict the ledger without an explicit decision. |
 | `docs/milestones/v0.91.6/` | First bridge tranche, runtime/tooling/provider/security/observability evidence | Consume closeout truth from the milestone's canonical issue-truth surfaces; do not duplicate completed work. |
+| `docs/milestones/v0.91.7/V0916_TO_V0917_HANDOFF_ADDENDUM_3982.md` | Dependency-gated v0.91.6-to-v0.91.7 handoff | WP-01 must consume this addendum with the failed-but-closed WP-15 external-review truth, closed WP-16 remediation/preflight truth, closed `#4620` / `#4621` dispositions, and open v0.91.7 route `#4622` before opening dependent execution work. |
 | `docs/milestones/v0.91.6/review/` | Sprint reviews, remediation, proof packets, and retained evidence | Read current closed-umbrella truth from `V0916_COMPLETED_SPRINT_RETAINED_EVIDENCE_MATRIX_4251.md`, then convert residual findings into explicit v0.91.7 routes or deferrals. |
 | `docs/milestones/v0.91.6/RUNTIME_FIRE_UP_PLAN_v0.91.6.md` | Runtime fire-up and soak continuity | Carry into runtime Soak #2 / integrated runtime proof. |
 | `docs/milestones/v0.91.6/features/COGNITIVE_SCHEDULER_v0.91.6.md` | Scheduler v1 bridge | Preserve as scheduler/economics input, not just docs residue. |
 | `docs/milestones/v0.91.6/review/scheduler/` | Scheduler proof and economics inputs | Feed v0.91.7 scheduler execution or closeout route. |
-| `docs/milestones/v0.91.6/review/build_throughput/` | Build throughput, sccache/linker/target-dir/CodeBuild/Nessus evidence | Feed validation/build-throughput follow-ons and remote-build decisions. |
+| `docs/milestones/v0.91.6/review/build_throughput/` | Build throughput, sccache/linker/target-dir/CodeBuild/Nessus evidence | Feed validation/build-throughput follow-ons and remote-build decisions, including an early v0.91.7 EC2 Spot or alternative remote-builder proof. |
 | `docs/milestones/v0.91.6/review/provider/` | Provider reliability, suitability, profiles v2, role profiles | Feed provider/scheduler/local-agent routes and v0.92 model-readiness boundaries. |
 | `docs/milestones/v0.91.6/review/security/` | CAV, SSM, access-rule, security residual evidence | Feed security residual and v0.93 enterprise-security handoff. |
 | `docs/milestones/v0.91.6/review/runtime_aws_signal_bridge/` | ACIP-to-SNS and heartbeat bridge proof | Feed runtime AWS/heartbeat operational route and later ObsMem/community memory. |
@@ -52,6 +54,11 @@ These were open at the source-capture pass and should be explicitly closed, comp
 | --- | --- | --- |
 | `#3974` | Observatory mini-sprint umbrella | Must complete or truthfully route Observatory readiness. |
 | `#3976`-`#3984` | v0.91.6 release-tail WPs | Must close v0.91.6 before v0.91.7/v0.92 sequencing is trusted. |
+| `#3980` | WP-15 external / third-party review | Closed. External review ran and failed on stale handoff truth; consume the failed-review record as release-tail truth, not as approval. |
+| `#3981` | WP-16 review remediation and final preflight | Closed. WP-16 consumed the accepted findings, closed `#4620` and `#4621`, and routed `#4622` to v0.91.7. |
+| `#4620` | WP-16 external-review proof-gap verification | Closed. Consume the proof-gap packet and its non-claims; do not count unexecuted product/runtime surfaces as proof. |
+| `#4621` | WP-16 failed external-review truth and release-tail docs repair | Closed. Consume the failed-review truth repair and release-tail doc disposition. |
+| `#4622` | Repo-native PR inventory for release-tail review | Open and retitled/relabelled to v0.91.7. Treat as routed tooling work before future release-tail reviews rely on PR inventory automation. |
 | `#4030`-`#4035`, `#4341` | Observatory children | Must be resolved or explicitly carried into v0.91.7 demo/runtime readiness. |
 | `#4286` | PR closing-linkage guard | Tooling residual; route with process-hardening work. |
 | `#4299` | Issue resource telemetry archive | Feeds metrics/S3/ObsMem history. |
@@ -75,6 +82,7 @@ These were open at the source-capture pass and should be explicitly closed, comp
 | `#4520`-`#4522` | Observability-boundary and release/docs truth-consumption follow-ons from the adoption audit | Closed v0.91.6 follow-on input; consume their retained proofs instead of carrying the audit gaps forward as still-open activation blockers. |
 | `#4442` | Native host-integrated goal snapshot capture | v0.91.7-facing input for host/session goal accounting; route through WP-04 unless completed before v0.91.7 starts. |
 | `#4443` | Full issue-lifecycle shepherd | v0.91.7-facing lifecycle input above watcher/janitor/closeout; route through WP-03 unless completed before v0.91.7 starts. |
+| `#4609`-`#4612` | WP-14A remediation route | Closed inputs for WP-15/WP-16. `#4611` deliberately routed full PR inventory to `#4622`; do not count PR inventory as fixed from `#4611` alone. |
 | `#4368` | v0.91.7 planning docs | This source-capture and planning alignment issue. |
 
 ## Local TBD Inputs To Capture Or Route
@@ -86,7 +94,7 @@ Local `.adl/docs/TBD/` files are ignored planning inputs, not tracked proof. The
 | `.adl/docs/TBD/ADL_GOAL_STATE.md` | Schedule as goal-state/nested-goal substrate input; connect to issue metrics, SOR accounting, and v0.92 continuity. |
 | `.adl/docs/TBD/ADL_COGNITIVE_SCHEDULER_v1.md` | Schedule as scheduler execution route; connect provider profiles, aptitude, local agents, quota/cost, and sprint orchestration. |
 | `.adl/docs/TBD/ADL_COGNITIVE_ECONOMICS.md` | Use as scheduler/economics rationale; default to context and routing unless a bounded test is promoted. |
-| `.adl/docs/TBD/ADL_BUILD_IMPROVEMENTS.md` | Use for build-throughput, remote validation, Nessus, CodeBuild, sccache/linker, and validation-DAG convergence routes. |
+| `.adl/docs/TBD/ADL_BUILD_IMPROVEMENTS.md` | Use for build-throughput, remote validation, Nessus, CodeBuild, EC2 Spot experiments, `sccache`, and validation-DAG convergence routes. |
 | `.adl/docs/TBD/LAUNCH_PLAN_JULY_2026.md` | Route into v0.91.7/v0.92 launch-readiness planning; do not let launch work silently expand birthday scope. |
 | `.adl/docs/TBD/LOCAL_BACKLOG.md` | Use as the local backlog source for queued work that is not already represented as a public GitHub issue; promote only bounded rows with clear milestone fit. |
 | `.adl/docs/TBD/ADL_AND_GUILDS.md` | Route into v0.91.7/v0.93 governance planning; do not make guilds a v0.92 implementation blocker unless explicitly promoted. |
@@ -121,7 +129,7 @@ Local `.adl/docs/TBD/` files are ignored planning inputs, not tracked proof. The
 | Goal state, nested goals, time/token/resource metrics | v0.92 needs continuity and issue/sprint accounting. `#4431` owns forward capture; `#4441` owns bounded v0.91.6 backfill; `#4442` owns host-integrated goal snapshots. | Early process/runtime bridge. |
 | Cognitive scheduler and local-agent acceleration | Premium cognition is now a bottleneck; local/deepseek/hosted agent suitability must route work. | Early scheduler/provider sprint. |
 | Capability envelope and capability-testing boundary | v0.92 memory/identity/birthday evidence depends on knowing what capability envelope, witnesses/receipt, and Aptitude Atlas evidence may or may not claim. | Scheduler/provider and handoff bridge. |
-| Build throughput and validation cost | C-SDLC speed is limited by build/validation tail. | Parallel validation/build sprint. |
+| Build throughput and validation cost | C-SDLC speed is limited by build/validation tail; v0.91.6 exposed remote-build work as planned/experimental rather than proven. | Parallel validation/build sprint, with EC2 Spot or alternate remote-builder proof early in WP-06. |
 | Runtime integration / Soak #2 / fire-up | v0.92 birthday needs one assembled runtime path, not disconnected components or docs-only confidence. | Runtime sprint after substrate readiness. |
 | Runtime architecture diet | Integration will expose bloat, seams, duplicate abstractions, and premature surfaces that should be routed without blocking the first assembled runtime proof. | Runtime sprint output plus bounded follow-on route. |
 | Observatory and demo readiness | First birthday evidence needs visible runtime/workflow surfaces. | Demo/runtime visibility sprint. |
@@ -142,5 +150,6 @@ Local `.adl/docs/TBD/` files are ignored planning inputs, not tracked proof. The
 - This ledger does require every cited pre-v0.92 input to be complete, blocked, deferred, or routed before `v0.92` starts.
 
 Current `v0.91.6` closeout and release-tail issue truth should be consumed from
-the retained-evidence matrix and the closeout-tail sprint surface, not
-reconstructed manually from scattered historical packets.
+the retained-evidence matrix, the closeout-tail sprint surface, the failed
+external-review record, and WP-16 child issue dispositions, not reconstructed
+manually from scattered historical packets.

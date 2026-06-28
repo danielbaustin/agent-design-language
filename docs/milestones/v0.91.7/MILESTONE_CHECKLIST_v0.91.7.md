@@ -7,6 +7,7 @@
 - Date: `2026-06-21`
 - Setup lineage: `#3801`, `#3825`, `#4368`
 - Source capture: `PLANNING_SOURCE_CAPTURE_v0.91.7.md`
+- Release-tail handoff addendum: `V0916_TO_V0917_HANDOFF_ADDENDUM_3982.md`
 
 ## Status
 
@@ -17,6 +18,7 @@ Forward checklist. Items are intentionally unchecked because `v0.91.7` execution
 - [ ] `#3778` bridge ledger consumed.
 - [ ] v0.91.5 pre-v0.92 bridge ledger source row consumed.
 - [ ] `v0.91.6` first-tranche package consumed.
+- [ ] `V0916_TO_V0917_HANDOFF_ADDENDUM_3982.md` consumed with failed-but-closed WP-15 `#3980` review truth, closed WP-16 `#3981` remediation truth, closed `#4620` / `#4621`, open v0.91.7 route `#4622`, and closed WP-14A remediation truth.
 - [ ] Closed ADR release-tail issues `#4324` and `#4369`-`#4376` consumed, and open tooling remediation `#4378` completed, blocked, deferred, or routed.
 - [ ] `PLANNING_SOURCE_CAPTURE_v0.91.7.md` reviewed.
 - [ ] Candidate WBS reviewed and promoted or corrected.
@@ -42,7 +44,8 @@ Forward checklist. Items are intentionally unchecked because `v0.91.7` execution
 - [x] Runtime fire-up / Soak #2 route is concrete.
   - Tracked execution packet: `RUNTIME_SOAK_2_EXECUTION_PACKET_v0.91.7.md`
 - [ ] Runtime AWS/heartbeat/ACIP-SNS/SSM/S3 archive routes are concrete.
-- [ ] Nessus/CodeBuild/remote validation and local build-throughput decisions are routed.
+- [ ] Nessus/CodeBuild/EC2 Spot or alternate remote validation and local build-throughput decisions are routed.
+- [ ] Remote-builder proof records time, cost, region/instance class, cache posture, interruption behavior, and cleanup/termination evidence before it becomes a release-critical validation lane.
 
 ## Feature And Bridge Docs
 

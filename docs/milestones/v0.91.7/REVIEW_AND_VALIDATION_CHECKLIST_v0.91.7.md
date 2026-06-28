@@ -17,6 +17,7 @@ For planning-doc-only changes:
 
 - `git diff --check`
 - `PLANNING_SOURCE_CAPTURE_v0.91.7.md` exists and is linked from `README.md`
+- `V0916_TO_V0917_HANDOFF_ADDENDUM_3982.md` exists and is linked from `README.md`
 - required-file check for `README.md`, `WBS_v0.91.7.md`,
   `FEATURE_DOCS_v0.91.7.md`, `MILESTONE_CHECKLIST_v0.91.7.md`,
   `REVIEW_AND_VALIDATION_CHECKLIST_v0.91.7.md`, and
@@ -40,6 +41,8 @@ For planning-doc-only changes:
   final standard?
 - Are security and ACIP/A2A residuals fixed or routed?
 - Are SEP/VPP/PVF, goal/metrics, scheduler/provider, build/validation, runtime Soak #2, and Observatory/demo routes explicit enough for v0.92?
+- Does WP-01 consume failed-but-closed v0.91.6 WP-15 truth, closed final WP-16 truth, closed `#4620` / `#4621`, open v0.91.7 route `#4622`, and closed WP-14A remediation truth before dependent v0.91.7 execution starts?
+- Does the build/validation route distinguish EC2 Spot or alternate remote-builder proof from an accepted release-critical validation lane?
 - Are affect/happiness, Godel mechanics, and economics context bounded by
   safe-test and non-claim language?
 
