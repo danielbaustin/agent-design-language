@@ -23,11 +23,12 @@ merely implemented as isolated components.
 
 Active sprint umbrella: `#4604`.
 
-Current progress: `#3976` WP-11, `#3977` WP-12, `#3978` WP-13, and `#4582`
-WP-14A are merged and closed. `#4609`, `#4610`, `#4611`, and `#4612` are also
-closed remediation children. WP-15 `#3980` has already run and failed on stale
-handoff truth, and WP-16 `#3981` remains the active remediation/final-preflight
-owner.
+Current progress: `#3976` WP-11, `#3977` WP-12, `#3978` WP-13, `#4582`
+WP-14A, `#3980` WP-15, `#3981` WP-16, `#3982` WP-17, and `#3983` WP-18 are
+merged and closed. `#4609`, `#4610`, `#4611`, `#4612`, `#4620`, and `#4621`
+are also closed remediation children. WP-15 `#3980` ran and failed on stale
+handoff truth; WP-16 `#3981` remediated the accepted findings and routed
+`#4622` to v0.91.7. WP-19 `#3984` is the active release ceremony owner.
 
 | Order | Issue | Role | Must wait for | May spawn follow-on remediation | Watcher expectation |
 | --- | --- | --- | --- | --- | --- |

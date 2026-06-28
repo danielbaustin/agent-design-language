@@ -2,18 +2,24 @@
 
 All notable project-level changes are summarized here by milestone/release.
 
-## v0.91.6 (Active bridge/readiness tranche)
+## v0.91.6 (Release-tail ceremony)
 
-Status: Active. The `v0.91.6` package lives under `docs/milestones/v0.91.6/`
-and is the first execution bridge tranche before `v0.92`.
+Status: Release-tail ceremony. The `v0.91.6` package lives under
+`docs/milestones/v0.91.6/` and is the first execution bridge tranche before
+`v0.92`.
 
 Current state:
 - The planning package and feature-doc wave are landed.
 - WP-03 through WP-10 bridge umbrellas are closed with retained evidence.
-- WP-11 demo/proof convergence and WP-12 quality gate have merged.
-- The active release-tail frontier is internal review `#4582`, tracked under
-  sprint umbrella `#4604`.
-- This is an active planning/execution milestone entry, not a release entry.
+- WP-11 demo/proof convergence, WP-12 quality gate, WP-13 docs/review
+  alignment, WP-14A internal review, WP-15 external review, WP-16 remediation
+  and final preflight, WP-17 next-milestone planning, and WP-18 next-milestone
+  review have all closed.
+- The active release-tail frontier is WP-19 `#3984`, with sprint umbrella
+  `#4604` retained until the ceremony issue closes.
+- This is a release-tail ceremony entry. Public tag/GitHub Release publication
+  remains conditional on the ceremony script and operator-approved mutation
+  flags.
 
 Scope notes:
 - `v0.91.6` owns the first bridge tranche for resilience/persistence,
@@ -22,6 +28,9 @@ Scope notes:
   bridge readiness, and activation-adjacent accounting surfaces.
 - `v0.91.6` prepares `v0.92`; it does not claim first-birthday activation by
   planning docs alone.
+- The external review failed on stale release-tail truth and WP-16 remediated
+  the accepted findings. That failure remains part of the release evidence, not
+  an approval claim.
 
 ## v0.91.5 (Released 2026-06-17)
 

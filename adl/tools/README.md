@@ -25,7 +25,7 @@ Keep behavioral and milestone narrative in canonical docs, not here.
 - `check_issue_metadata_parity.sh`: canonical metadata parity audit for GitHub issue title/labels plus local `.adl` body/STP metadata identity.
 - `check_repo_quality_staleness.py`: focused reviewer-facing docs and tracked-junk audit for the current milestone package and root repo status surfaces.
 - `closeout_completed_issue_wave.sh`: bounded local catch-up helper that runs `pr closeout` across closed/completed issue bundles for a milestone version so local-only `.adl` truth can converge after merge or main sync; `--dry-run` or `--report-only` emits the merged-needs-closeout candidate set without mutation.
-- `check_milestone_closed_issue_sor_truth.sh`: milestone closed-issue bundle truth gate for local-only `.adl` task bundles; verifies canonical `stp.md`, `sip.md`, and final `sor.md` truth for closed/completed issues.
+- `check_milestone_closed_issue_sor_truth.sh`: retired fail-closed milestone closed-issue bundle truth gate. `release_ceremony.sh` skips this retired shell gate until a Rust/PVF replacement exists.
 - `enforce_coverage_gates.sh`: deterministic coverage threshold enforcement (workspace + per-file).
 - `clean_coverage_artifacts.sh`: removes local generated coverage summaries and loose LLVM profile shards after coverage/report runs.
 - `report_large_rust_modules.sh`: non-blocking Rust source-and-test module size report for maintainability review.

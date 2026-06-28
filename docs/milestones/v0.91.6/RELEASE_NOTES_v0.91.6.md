@@ -4,14 +4,15 @@
 
 - Product: ADL
 - Version: `v0.91.6`
-- Release date: not scheduled
-- Tag: not assigned
+- Release date: ceremony pending
+- Tag: `v0.91.6` pending ceremony approval
 
 ## How To Use
 
 Keep these notes implementation-accurate. `v0.91.6` has executed a substantial
-bridge tranche, but these notes remain draft until the ordered release tail
-finishes and the release ceremony approves final publication truth.
+bridge tranche and is now in release ceremony. These notes are not a public
+tag/GitHub Release publication claim until the ceremony script passes and the
+operator approves mutating release actions.
 
 # ADL v0.91.6 Release Notes
 
@@ -22,8 +23,8 @@ activation-critical surfaces into tracked planning, feature, review, and proof
 surfaces so implementation and review can proceed without rediscovery.
 
 The bridge tranche is materially landed through retained evidence for the
-closed bridge umbrellas. The milestone is not release-complete yet; the active
-frontier is the ordered release-tail sprint under `#4604`.
+closed bridge umbrellas. The ordered release tail is complete through WP-18; the
+active frontier is WP-19 release ceremony under sprint umbrella `#4604`.
 
 ## Current Highlights
 
@@ -39,12 +40,14 @@ frontier is the ordered release-tail sprint under `#4604`.
 
 ## Known Limitations
 
-- These notes do not claim release publication yet.
+- These notes do not claim public release publication yet.
 - These notes do not claim full runtime/product integration from prerequisite
   proof.
-- WP-11, WP-12, WP-13, and WP-14A are complete. WP-15 external review has run
-  and failed on stale handoff truth; WP-16 remediation/final preflight remains
-  active until `#4604` closes.
+- WP-11 through WP-18 are complete. WP-15 external review failed on stale
+  handoff truth; WP-16 remediated the accepted findings, and that failed-review
+  truth remains retained rather than rewritten as approval.
+- WP-19 `#3984` and umbrella `#4604` remain open until ceremony and sprint
+  closeout complete.
 - `v0.91.7` remains required for second-tranche conceptual surfaces.
 - `v0.92` activation remains blocked until bridge truth is reviewed.
 

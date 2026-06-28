@@ -89,18 +89,20 @@ minimum, inspect and update every applicable item in this checklist:
 Tail closeout docs review is complete only when this surface has either been
 updated, confirmed current, or explicitly ruled not applicable with evidence.
 
-The current review posture is v0.91.6 release-tail review and dependency-gated
-v0.91.7 planning. WP-14A `#4582` is closed, WP-15 `#3980` has already run and
-failed on stale handoff truth, and WP-16 `#3981` remains the canonical
-remediation/final-preflight sink. v0.91.7 planning may be prepared, but
-v0.91.7 execution must not begin until v0.91.6 WP-15/WP-16 truth is complete,
-blocked, deferred, or explicitly routed.
+The current review posture is v0.91.6 release ceremony and dependency-gated
+v0.91.7 planning. WP-14A `#4582`, WP-15 `#3980`, WP-16 `#3981`, WP-17 `#3982`,
+and WP-18 `#3983` are closed. WP-15 ran and failed on stale handoff truth; that
+failure was accepted as release evidence and WP-16 remediated the accepted
+findings. WP-19 `#3984` is the active ceremony boundary, and umbrella `#4604`
+remains open only until the ordered closeout-tail wave is closed. v0.91.7
+planning may be prepared, but v0.91.7 execution must not begin until WP-19 and
+`#4604` close or are explicitly dispositioned.
 
 Important active non-claims:
 
-- v0.91.6 does not claim release readiness until external review,
-  remediation/final preflight, next-milestone review, and release ceremony
-  truth settle.
+- v0.91.6 does not claim public tag or GitHub Release publication until the
+  release ceremony script passes and any mutating release actions are
+  operator-approved.
 - v0.91.7 planning docs do not prove runtime, demo, provider, scheduler, AWS,
   C-SDLC, validation, or v0.92 activation readiness.
 - EC2 Spot or remote-builder work is planned/proof-routed for v0.91.7 WP-06;

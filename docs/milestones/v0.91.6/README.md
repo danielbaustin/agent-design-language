@@ -13,10 +13,11 @@
 
 Current status: the first pre-`v0.92` bridge tranche now includes completed or
 routed bridge waves, with WP-03 through WP-10 carrying retained closeout truth.
-WP-11 demo/proof convergence, WP-12 quality gate, and WP-13 docs/review-surface
-alignment have merged. Internal review `#4582` is the current active
-release-tail child under sprint umbrella `#4604`, while follow-on release-tail
-doc-truth cleanup remains explicitly routed rather than implied complete.
+WP-11 demo/proof convergence, WP-12 quality gate, WP-13 docs/review-surface
+alignment, WP-14A internal review, WP-15 external review, WP-16 remediation and
+final preflight, WP-17 next-milestone planning, and WP-18 next-milestone review
+have merged and closed. WP-19 `#3984` is the active release ceremony child
+under sprint umbrella `#4604`.
 
 - Planning: created by `#3800`
 - Documentation completion: `#3824`
@@ -24,14 +25,14 @@ doc-truth cleanup remains explicitly routed rather than implied complete.
   retained closeout truth now available for WP-03 `#3968`, WP-04 `#3969`,
   WP-05 `#3970`, WP-06 `#3971`, WP-07 `#3972`, WP-08 `#3973`, and WP-10
   `#3975`
-- Execution: WP-03 through WP-13 and ACIP runtime `#4160` now have bounded
-  merged/closed bridge truth; internal review `#4582` and the remaining
-  closeout-tail wave remain explicit downstream work rather than hidden
-  blockers
+- Execution: WP-03 through WP-18 and ACIP runtime `#4160` now have bounded
+  merged/closed bridge truth; WP-19 `#3984` remains the active ceremony issue
+  and `#4604` remains the umbrella until ceremony closes
 - Validation: docs-readiness validation plus focused issue/PR and retained
   closeout proof for the completed bridge waves
-- Release readiness: not applicable until internal review, external review,
-  remediation/preflight, next-milestone handoff, and release ceremony complete
+- Release readiness: release-tail evidence is ready for ceremony; public
+  tag/GitHub Release publication remains conditional on the ceremony script and
+  operator-approved mutation flags
 
 This package does not implement runtime features and does not claim `v0.92`
 activation readiness. It exists so the first bridge tranche can open concrete

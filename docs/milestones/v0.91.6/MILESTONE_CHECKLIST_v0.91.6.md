@@ -39,7 +39,7 @@ runtime or product completion.
 - [x] Security bridge and CAV feature doc completed or routed.
 - [x] Identity/continuity and capability-selector bridge record completed or
   routed.
-- [ ] Observatory/Unity consumption classification completed or routed.
+- [x] Observatory/Unity consumption classification completed or routed.
 - [x] AEE completion, Memory/ObsMem handoff, and ACP/cognitive profile
   accounting completed or routed.
 
@@ -58,33 +58,33 @@ runtime or product completion.
   offer identifiers.
 - [x] Account-bound Terraform and hosting/security boundaries are explicit
   before later infrastructure consumers rely on the account.
-- [ ] Runtime integration soak plan `#4185` distinguishes Soak #1 in `v0.91.6`
+- [x] Runtime integration soak plan `#4185` distinguishes Soak #1 in `v0.91.6`
   from Soak #2/#3 full feature-list readiness in `v0.91.7`.
-- [ ] CodeFriend v1 / portable adapter v2 route remains visible for
+- [x] CodeFriend v1 / portable adapter v2 route remains visible for
   post-v0.92 / pre-v0.95 proof work.
-- [ ] Guilds remain visible as an MVP-scoped governance route through v0.93 and
+- [x] Guilds remain visible as an MVP-scoped governance route through v0.93 and
   v0.95 consumption.
 
 ## Scope Integrity
 
-- [ ] Every product/runtime surface consumed by closeout is classified with the
-  operational completion gate.
-- [ ] No runtime feature is claimed by planning docs alone.
-- [ ] No runtime/product surface is treated as `done` from `docs_ready`,
+- [x] Every product/runtime surface consumed by closeout is classified with the
+  operational completion gate as a manual release-evidence boundary.
+- [x] No runtime feature is claimed by planning docs alone.
+- [x] No runtime/product surface is treated as `done` from `docs_ready`,
   `seam_ready`, `mock_proven`, `component_proven`, `local_slice_proven`, or
   `demo_scaffold` evidence alone.
-- [ ] No `v0.92` activation readiness claim appears without bridge evidence.
-- [ ] Security remains on the activation path.
-- [ ] ACIP/A2A decisions include protobuf/JSON/WebSocket/access-rule posture.
+- [x] No `v0.92` activation readiness claim appears without bridge evidence.
+- [x] Security remains on the activation path.
+- [x] ACIP/A2A decisions include protobuf/JSON/WebSocket/access-rule posture.
 - [x] Public prompt records preserve local editable authoring and public export
   boundaries.
-- [ ] Gemma/model reliability is addressed as part of multi-agent readiness.
-- [ ] AEE, Memory/ObsMem, and ACP/profile surfaces are visible before v0.92
+- [x] Gemma/model reliability is addressed as part of multi-agent readiness.
+- [x] AEE, Memory/ObsMem, and ACP/profile surfaces are visible before v0.92
   activation refresh.
-- [ ] Runtime coherence is not claimed from component completion or Soak #1
+- [x] Runtime coherence is not claimed from component completion or Soak #1
   alone; Soak #2, or Soak #3 if needed, remains a named pre-`v0.92` gate.
 - [x] `#3902` is visible as v0.91.6 setup planning, not v0.92 activation proof.
-- [ ] CodeFriend and guild route preservation is not treated as first-tranche
+- [x] CodeFriend and guild route preservation is not treated as first-tranche
   runtime or activation proof.
 
 ## Review And Closeout
@@ -92,7 +92,7 @@ runtime or product completion.
 - [x] WP-14A `#4582` completed the internal-review and pre-`v0.92` burn-down
   step; closed `#3979` remains retained planning/source evidence only.
 - [x] Bounded internal review completed.
-- [ ] Findings fixed or explicitly routed.
+- [x] Findings fixed or explicitly routed.
 - [x] WP-12 quality gate consumed WP-11 proof convergence. Current retained
   packet:
   [review/V0916_WP12_QUALITY_GATE_3977.md](review/V0916_WP12_QUALITY_GATE_3977.md)
@@ -102,15 +102,20 @@ runtime or product completion.
 - [x] WP-13 docs/review-surface alignment completed through merged `#3978` /
   PR `#4608`. Follow-on release-tail doc-truth cleanup landed through closed
   `#4609`, and the internal-review owner `#4582` has closed.
-- [ ] WP-15 external review failure is recorded truthfully and does not read as
+- [x] WP-15 external review failure is recorded truthfully and does not read as
   pending-send or approved. Current retained packet:
   [review/external_review/V0916_EXTERNAL_REVIEW_FINDINGS_2026-06-28.md](review/external_review/V0916_EXTERNAL_REVIEW_FINDINGS_2026-06-28.md)
-  keeps `#3980` open and routes accepted findings into `#3981`.
-- [ ] Bridge-ledger dispositions refreshed or handed off.
-- [ ] Runtime/product closeout rows preserve explicit completion class, evidence,
-  and blocker or defer routes when not `integrated_proven`.
-- [ ] `v0.91.7` planning issue `#3801` has the residuals it needs.
-- [ ] Closeout record states what `v0.92` may consume and what remains blocked.
+  records the failed review; `#3980` is closed and WP-16 `#3981` remediated the
+  accepted findings.
+- [x] WP-17 `#3982` refreshed the v0.91.7 handoff and closed.
+- [x] WP-18 `#3983` reviewed v0.91.7 readiness and closed.
+- [x] Bridge-ledger dispositions refreshed or handed off.
+- [x] Runtime/product closeout rows preserve explicit completion class, evidence,
+  and blocker or defer routes when not `integrated_proven`; mechanical
+  Rust/PVF enforcement of the closed-issue SOR bundle truth gate remains routed
+  residual work.
+- [x] `v0.91.7` planning issue `#3801` has the residuals it needs.
+- [x] Closeout record states what `v0.92` may consume and what remains blocked.
 
 ## Exit Criteria
 

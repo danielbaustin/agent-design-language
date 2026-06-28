@@ -11,16 +11,16 @@
 ## Status
 
 This WBS has been promoted into concrete `v0.91.6` issues. The first bridge
-waves have landed through WP-12. The active release-tail sequence now continues
-through internal review `#4582` and umbrella `#4604`, rather than the older
-seeded WP-11/WP-13 names from the first candidate package.
+waves and ordered release-tail children have landed through WP-18. The active
+release-tail sequence is now the WP-19 release ceremony `#3984`, with umbrella
+`#4604` retained until the ceremony and sprint closeout are complete.
 
 WP-01 consumed this document and
 [WP_ISSUE_WAVE_v0.91.6.yaml](WP_ISSUE_WAVE_v0.91.6.yaml) to begin opening
 concrete GitHub issues with canonical C-SDLC cards. The current actionable
-release-tail entrypoints are `#3980` WP-15, `#3981` WP-16, and sprint umbrella
-`#4604`; downstream ordered release-tail children remain listed in the
-closeout-tail sprint packet and must verify live issue state when they start.
+release-tail entrypoints are `#3984` WP-19 and sprint umbrella `#4604`;
+downstream `v0.91.7` residuals remain listed in the v0.91.7 planning source
+capture and handoff docs.
 
 Current live state:
 
@@ -30,8 +30,12 @@ Current live state:
 - WP-11 demo/proof convergence `#3976` and WP-12 quality gate `#3977` have
   merged and closed
 - WP-13 `#3978` and WP-14A `#4582` have merged and closed
-- WP-15 `#3980` has run and failed on stale handoff truth
-- WP-16 `#3981` is the active remediation/final-preflight owner
+- WP-15 `#3980` ran and failed on stale handoff truth, then closed with that
+  failure retained as release evidence
+- WP-16 `#3981` remediated the accepted external-review findings and closed
+- WP-17 `#3982` refreshed the v0.91.7 handoff and closed
+- WP-18 `#3983` reviewed v0.91.7 readiness and closed
+- WP-19 `#3984` is active as the release ceremony issue
 
 ## WBS Summary
 
@@ -56,11 +60,11 @@ decision records, and proof-loop repairs before `v0.92` activation opens.
 | WP-12 | Quality gate | Consume WP-11 and repo-quality/staleness truth, route blockers, and clear docs/review alignment only when evidence supports it. | Quality-gate packet and release-tail gate update. | WP-11. |
 | WP-13 | Docs and review-surface alignment | Align README, changelog, milestone planning docs, release docs, feature-list references, and review entrypoints before internal review. | Docs/review alignment packet and corrected entrypoint truth. | WP-12. |
 | WP-14A | Internal review and pre-v0.92 burn-down checklist | Run findings-first internal review and burn-down classification. Closed owner is `#4582`; closed `#3979` remains retained source/planning evidence only. | Internal review findings, synthesis, remediation queue, and burn-down checklist. | WP-13. |
-| WP-15 | External review | Run external/third-party review after internal review packet is ready. Current truthful result: `#3980` remains open because the review ran and failed on stale handoff truth. | External review packet and findings disposition. | WP-14A. |
-| WP-16 | Review findings remediation and final preflight | Fix or route internal/external findings and prove final preflight readiness. | Remediation PRs and final preflight packet. | WP-15. |
-| WP-17 | Next milestone planning and v0.91.7 handoff | Ensure v0.91.7 starts from reviewed residuals and handoff truth. | v0.91.7 handoff/planning packet. | WP-16. |
-| WP-18 | Next milestone review pass | Review the next milestone plan before ceremony. | Next-milestone review packet. | WP-17. |
-| WP-19 | Release ceremony | Run final ceremony only after review, remediation, and handoff truth settle. | Release evidence, tag/release steps if approved, and closeout truth. | WP-18. |
+| WP-15 | External review | Run external/third-party review after internal review packet is ready. Current truthful result: `#3980` closed after the review failed on stale handoff truth; the failed review remains retained evidence. | External review packet and findings disposition. | WP-14A. |
+| WP-16 | Review findings remediation and final preflight | Fix or route internal/external findings and prove final preflight readiness. Current truthful result: `#3981` closed after remediating accepted findings, closing `#4620` and `#4621`, and routing `#4622` to v0.91.7. | Remediation PRs and final preflight packet. | WP-15. |
+| WP-17 | Next milestone planning and v0.91.7 handoff | Ensure v0.91.7 starts from reviewed residuals and handoff truth. Current truthful result: `#3982` closed with the v0.91.7 handoff refreshed. | v0.91.7 handoff/planning packet. | WP-16. |
+| WP-18 | Next milestone review pass | Review the next milestone plan before ceremony. Current truthful result: `#3983` closed after v0.91.7 readiness review and release-doc refresh routing. | Next-milestone review packet. | WP-17. |
+| WP-19 | Release ceremony | Run final ceremony only after review, remediation, and handoff truth settle. Current truthful result: `#3984` is active. | Release evidence, tag/release steps if approved, and closeout truth. | WP-18. |
 
 ## Companion Planning Queue
 

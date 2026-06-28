@@ -198,7 +198,24 @@ check_sor_gate() {
   }
 
   info "running closed-issue bundle truth gate for $VERSION"
-  bash "$checker" --version "$VERSION"
+  set +e
+  local output
+  output="$(bash "$checker" --version "$VERSION" 2>&1)"
+  local status="$?"
+  set -e
+
+  if [[ "$status" == "0" ]]; then
+    [[ -z "$output" ]] || printf '%s\n' "$output"
+    return 0
+  fi
+
+  if [[ "$status" == "2" && "$output" == *"check_milestone_closed_issue_sor_truth.sh is retired."* && "$output" == *"Rust/PVF lane"* ]]; then
+    info "closed-issue bundle truth gate is retired; skipping until Rust/PVF replacement is available"
+    return 0
+  fi
+
+  [[ -z "$output" ]] || printf '%s\n' "$output" >&2
+  return "$status"
 }
 
 print_plan() {

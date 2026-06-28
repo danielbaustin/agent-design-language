@@ -4,7 +4,7 @@
 
 - Milestone: `v0.91.6`
 - Version: `v0.91.6`
-- Release date: not scheduled
+- Release date: ceremony pending
 - Release manager: ADL maintainers
 
 ## How To Use
@@ -37,7 +37,7 @@ ledger.
   execution resumes. Any incomplete child, blocked follow-on, or retained
   watcher residue requires an explicit operator waiver in `#4588` with
   release-tail impact, retained watcher evidence, and follow-on owner.
-- [ ] Bridge ledger refreshed from first-tranche outcomes, consuming the
+- [x] Bridge ledger refreshed from first-tranche outcomes, consuming the
   retained-evidence matrix for closed bridge umbrellas and the closeout-tail
   sprint surface for open ordered release-tail work.
 - [ ] Every release-tail issue that entered a wait state records a retained
@@ -45,13 +45,16 @@ ledger.
   before it is counted as cleanly advanced or complete.
 - [x] WP-14A internal review and pre-`v0.92` burn-down executed under merged
   `#4582`; closed `#3979` remains retained planning/source evidence only.
-- [ ] Every touched product/runtime surface is classified with the operational
-  completion gate before release truth calls it complete.
-- [ ] The operational completion gate is the required truth boundary for
-  product/runtime completion claims in this release tail.
+- [x] Every touched product/runtime surface is classified with the operational
+  completion gate before release truth calls it complete. This is a manual
+  release-evidence boundary in v0.91.6, not a mechanically complete Rust/PVF
+  gate.
+- [x] The operational completion gate is the required truth boundary for
+  product/runtime completion claims in this release tail. Mechanical
+  enforcement remains a routed tooling residual.
 - [ ] Feature docs reviewed and updated for final truth.
-- [ ] Open residuals routed to `v0.91.7`, `v0.92`, or later milestones.
-- [ ] Tooling reliability issues have complete, blocked, deferred, or routed
+- [x] Open residuals routed to `v0.91.7`, `v0.92`, or later milestones.
+- [x] Tooling reliability issues have complete, blocked, deferred, or routed
   status.
 - [x] Workflow-critical ADL commands use independent binaries rather than
   implicit Cargo execution during normal finish, validation, watcher, and
@@ -61,12 +64,12 @@ ledger.
 - [x] Shared C-SDLC operating docs and installed skill guidance reflect the
   current watcher, prep-scout, scheduler, binary-first, and closeout contract
   through merged issue `#4591`.
-- [ ] Public prompt record security/export status recorded.
-- [ ] Provider/model reliability status recorded.
-- [ ] Security/CAV status recorded.
+- [x] Public prompt record security/export status recorded.
+- [x] Provider/model reliability status recorded.
+- [x] Security/CAV status recorded.
 - [x] `agent-logic.ai` AWS account/setup planning status recorded through
   `#3902` without exposing sensitive offer identifiers.
-- [ ] CodeFriend v1 / portable adapter v2 and guild route preservation status
+- [x] CodeFriend v1 / portable adapter v2 and guild route preservation status
   recorded without expanding first-tranche activation scope.
 - [x] WP-12 quality gate has consumed WP-11 proof convergence. Current retained
   packet:
@@ -77,23 +80,33 @@ ledger.
 - [x] WP-13 docs/review-surface alignment landed through merged `#3978` /
   PR `#4608`. Follow-on release-tail doc-truth cleanup landed through closed
   `#4609`, and the WP-14A owner `#4582` has also closed.
-- [ ] WP-15 external review truth is recorded as `failed_on_stale_handoff`,
+- [x] WP-15 external review truth is recorded as `failed_on_stale_handoff`,
   not pending-send or approved. Current retained packet:
   [review/external_review/V0916_EXTERNAL_REVIEW_FINDINGS_2026-06-28.md](review/external_review/V0916_EXTERNAL_REVIEW_FINDINGS_2026-06-28.md)
-  keeps `#3980` open while `#3981` owns accepted disposition work.
+  records the failed review. `#3980` is closed; WP-16 `#3981` remediated the
+  accepted findings, closed `#4620` and `#4621`, and routed `#4622` to
+  v0.91.7.
+- [x] WP-17 `#3982` refreshed the v0.91.7 handoff and closed.
+- [x] WP-18 `#3983` reviewed v0.91.7 readiness and closed, leaving this
+  release-doc refresh as the final WP-19 ceremony task.
+- [x] The retired closed-issue SOR shell gate is not used as release proof.
+  `release_ceremony.sh` skips the retired stub and records the missing Rust/PVF
+  replacement as residual risk in the WP-19 ceremony packet.
 
 ## 1. Release Readiness
 
-- [ ] Milestone checklist complete or exceptions documented.
-- [ ] Release notes approved.
-- [ ] Go/no-go decision recorded in `DECISIONS_v0.91.6.md`.
+- [ ] Milestone checklist complete or exceptions documented by WP-19.
+- [ ] Release notes approved by WP-19.
+- [ ] Go/no-go decision recorded by WP-19 release evidence.
 
 ## 2. Branch And Tag Preparation
 
-- [ ] Target branch confirmed.
-- [ ] Working tree clean.
-- [ ] Version strings validated if code changes occur.
-- [ ] Tag created only after implementation scope, if any, lands.
+- [x] Target branch confirmed by ceremony preflight.
+- [x] Working tree clean or intentional dirty-check exception recorded by
+  ceremony preflight.
+- [x] Version strings validated for `adl/Cargo.toml` at `0.91.6`.
+- [ ] Tag created only after ceremony preflight passes and operator approves
+  mutating release flags.
 
 ## 3. GitHub Release Steps
 
@@ -104,7 +117,7 @@ ledger.
 
 ## 4. Verification
 
-- [ ] Focused docs validation recorded, including
+- [x] Focused docs validation recorded, including
   `python3 adl/tools/check_repo_quality_staleness.py --milestone v0.91.6`
   when reviewer-facing repo or milestone docs changed.
 - [ ] CI status checked for merged PRs.
@@ -113,11 +126,11 @@ ledger.
 
 ## 5. Communication
 
-- [ ] Roadmap/status updated.
-- [ ] `v0.91.7` handoff visible.
+- [ ] Roadmap/status updated by WP-19.
+- [x] `v0.91.7` handoff visible.
 - [x] `#3902` account/setup route visible for later infrastructure consumers.
-- [ ] CodeFriend and guild routes remain visible for later MVP consumers.
-- [ ] `v0.92` activation remains blocked or is explicitly opened by reviewed
+- [x] CodeFriend and guild routes remain visible for later MVP consumers.
+- [x] `v0.92` activation remains blocked or is explicitly opened by reviewed
   bridge truth.
 
 ## Exit Criteria
