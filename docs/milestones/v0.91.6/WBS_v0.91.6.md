@@ -18,7 +18,7 @@ seeded WP-11/WP-13 names from the first candidate package.
 WP-01 consumed this document and
 [WP_ISSUE_WAVE_v0.91.6.yaml](WP_ISSUE_WAVE_v0.91.6.yaml) to begin opening
 concrete GitHub issues with canonical C-SDLC cards. The current actionable
-release-tail entrypoints are `#3978` WP-13, `#4582` WP-14A, and sprint umbrella
+release-tail entrypoints are `#3980` WP-15, `#3981` WP-16, and sprint umbrella
 `#4604`; downstream ordered release-tail children remain listed in the
 closeout-tail sprint packet and must verify live issue state when they start.
 
@@ -29,7 +29,9 @@ Current live state:
 - WP-04 umbrella `#3969` has merged and closed after the merged child wave
 - WP-11 demo/proof convergence `#3976` and WP-12 quality gate `#3977` have
   merged and closed
-- WP-13 `#3978` is this docs/review-surface alignment pass
+- WP-13 `#3978` and WP-14A `#4582` have merged and closed
+- WP-15 `#3980` has run and failed on stale handoff truth
+- WP-16 `#3981` is the active remediation/final-preflight owner
 
 ## WBS Summary
 
@@ -53,8 +55,8 @@ decision records, and proof-loop repairs before `v0.92` activation opens.
 | WP-11 | Demo/proof convergence | Consume bridge proof and demo surfaces so the release tail has a coherent proof matrix. | Demo matrix and feature-doc proof convergence. | WP-02 through WP-10. |
 | WP-12 | Quality gate | Consume WP-11 and repo-quality/staleness truth, route blockers, and clear docs/review alignment only when evidence supports it. | Quality-gate packet and release-tail gate update. | WP-11. |
 | WP-13 | Docs and review-surface alignment | Align README, changelog, milestone planning docs, release docs, feature-list references, and review entrypoints before internal review. | Docs/review alignment packet and corrected entrypoint truth. | WP-12. |
-| WP-14A | Internal review and pre-v0.92 burn-down checklist | Run findings-first internal review and burn-down classification. Active owner is `#4582`; closed `#3979` remains retained source/planning evidence only. | Internal review findings, synthesis, remediation queue, and burn-down checklist. | WP-13. |
-| WP-15 | External review | Run external/third-party review after internal review packet is ready. | External review packet and findings disposition. | WP-14A. |
+| WP-14A | Internal review and pre-v0.92 burn-down checklist | Run findings-first internal review and burn-down classification. Closed owner is `#4582`; closed `#3979` remains retained source/planning evidence only. | Internal review findings, synthesis, remediation queue, and burn-down checklist. | WP-13. |
+| WP-15 | External review | Run external/third-party review after internal review packet is ready. Current truthful result: `#3980` remains open because the review ran and failed on stale handoff truth. | External review packet and findings disposition. | WP-14A. |
 | WP-16 | Review findings remediation and final preflight | Fix or route internal/external findings and prove final preflight readiness. | Remediation PRs and final preflight packet. | WP-15. |
 | WP-17 | Next milestone planning and v0.91.7 handoff | Ensure v0.91.7 starts from reviewed residuals and handoff truth. | v0.91.7 handoff/planning packet. | WP-16. |
 | WP-18 | Next milestone review pass | Review the next milestone plan before ceremony. | Next-milestone review packet. | WP-17. |

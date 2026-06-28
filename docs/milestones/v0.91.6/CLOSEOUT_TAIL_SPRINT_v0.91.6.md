@@ -23,10 +23,11 @@ merely implemented as isolated components.
 
 Active sprint umbrella: `#4604`.
 
-Current progress: `#3976` WP-11, `#3977` WP-12, and `#3978` WP-13 are merged
-and closed. `#4582` WP-14A is the current active internal-review owner, while
-release-tail documentation truth cleanup remains explicitly routed through
-follow-on issue `#4609`.
+Current progress: `#3976` WP-11, `#3977` WP-12, `#3978` WP-13, and `#4582`
+WP-14A are merged and closed. `#4609`, `#4610`, `#4611`, and `#4612` are also
+closed remediation children. WP-15 `#3980` has already run and failed on stale
+handoff truth, and WP-16 `#3981` remains the active remediation/final-preflight
+owner.
 
 | Order | Issue | Role | Must wait for | May spawn follow-on remediation | Watcher expectation |
 | --- | --- | --- | --- | --- | --- |
