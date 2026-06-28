@@ -46,6 +46,16 @@ Use `docs/milestones/v0.91.6/review/V0916_RELEASE_AND_BRIDGE_DOC_TRUTH_CONSUMPTI
 as the bounded audit of this consumption rule and its remaining manual
 boundary, not as a third current-state ledger.
 
+For pre-`v0.92` activation and C-SDLC carryforward specifically, the tracked
+v0.91.6 truth now includes:
+
+- closed adoption sprint `#4433`-`#4438`
+- closed observability/docs follow-ons `#4520`-`#4522`
+
+Those issues are closed retained inputs, not still-open activation blockers.
+What remains blocking for `v0.92` is any surface that still lacks reviewed
+runtime/product evidence or an explicit blocked/deferred/routed disposition.
+
 ## Consumption States
 
 - `complete`: reviewed feature doc and proof/review evidence are present.
@@ -61,7 +71,7 @@ Planning packages alone are not `complete` evidence. The `v0.91.6` and
 
 | Surface | Current state for v0.92 | Owner before activation | v0.92 consumption rule |
 | --- | --- | --- | --- |
-| Activation contract and bridge evidence | Routed | `v0.91.6`, `v0.91.7`, then `v0.92` WP-01 | `v0.92` may define the birthday contract now, but may not mark activation ready until every bridge surface has a complete, deferred, blocked, or routed disposition with evidence. |
+| Activation contract and bridge evidence | Routed | `v0.91.6`, `v0.91.7`, then `v0.92` WP-01 | `v0.92` may define the birthday contract now, but may not mark activation ready until every bridge surface has a complete, deferred, blocked, or routed disposition with evidence. Closed process/docs fixes from `#4433`-`#4438` and `#4520`-`#4522` count as retained bridge inputs rather than open blockers by themselves. |
 | Birthday and first-run behavior | Routed | `v0.92` birthday feature docs and `#3377` readiness packet | Birthday must remain evidence-bound. Startup, wake, restore, admission, copied state, and ordinary process launch are negative cases until the birthday packet proves otherwise. |
 | Identity and continuity | Routed | `v0.91.6` identity/continuity bridge, then `v0.92` identity feature docs | Stable name, identity root, continuity head, cycle evidence, and negative cases must be reviewable before the birthday claim can pass. |
 | AEE completion | Routed | `v0.91.6` AEE bridge accounting and residual runtime/provider action work | `v0.92` may consume only named AEE completion evidence and must preserve residual action/provider boundaries. |
