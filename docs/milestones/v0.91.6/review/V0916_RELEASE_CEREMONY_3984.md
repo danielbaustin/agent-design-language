@@ -67,6 +67,14 @@ in this packet before publication. Future release-tail work should replace this
 manual boundary with a runnable release-gate lane and selector coverage for the
 release ceremony wrapper.
 
+CI janitor residual: PR `#4627` initially failed `adl-coverage` on the unrelated
+Rust lifecycle fixture
+`closeout_closed_completed_issue_bundle_records_prune_result_on_canonical_output`.
+The fixture copied `validate_structured_prompt.sh` into a synthetic repository
+without also copying its sourced `owner_binary_resolution.sh` helper. WP-19
+repaired only that fixture dependency so broad coverage can execute the existing
+closeout test; this does not change the release-doc ceremony claim surface.
+
 ## v0.91.7 Handoff Boundary
 
 The current v0.91.7 handoff authority is:
@@ -114,6 +122,7 @@ Local pre-PR results:
   validation manager selected a non-runnable release-gate profile and left
   `adl/tools/release_ceremony.sh` unmapped. This packet is the manual
   release-gate disposition for WP-19.
+- `cargo test --manifest-path adl/Cargo.toml closeout_closed_completed_issue_bundle_records_prune_result_on_canonical_output -- --nocapture`: pass after the CI janitor fixture repair; validates that synthetic lifecycle closeout repos include the validator helper required by `validate_structured_prompt.sh`.
 
 ## v0.92 Consumption Boundary
 

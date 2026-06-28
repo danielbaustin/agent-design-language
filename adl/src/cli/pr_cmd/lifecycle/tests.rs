@@ -54,9 +54,9 @@ impl Drop for EnvVarGuard {
 }
 
 fn ensure_validate_structured_prompt_script(repo_root: &Path) {
-    let validator = Path::new(env!("CARGO_MANIFEST_DIR"))
-        .join("tools")
-        .join("validate_structured_prompt.sh");
+    let tools_root = Path::new(env!("CARGO_MANIFEST_DIR")).join("tools");
+    let validator = tools_root.join("validate_structured_prompt.sh");
+    let owner_binary_resolution = tools_root.join("owner_binary_resolution.sh");
     let destination_parent = repo_root.join("adl").join("tools");
     let destination = destination_parent.join("validate_structured_prompt.sh");
     if destination.exists() {
@@ -65,6 +65,11 @@ fn ensure_validate_structured_prompt_script(repo_root: &Path) {
 
     fs::create_dir_all(&destination_parent).expect("create tools dir");
     fs::copy(&validator, &destination).expect("copy validator script");
+    fs::copy(
+        &owner_binary_resolution,
+        destination_parent.join("owner_binary_resolution.sh"),
+    )
+    .expect("copy owner binary resolver");
     let mut perms = fs::metadata(&destination)
         .expect("metadata validator")
         .permissions();
