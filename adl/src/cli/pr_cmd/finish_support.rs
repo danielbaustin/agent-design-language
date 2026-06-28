@@ -1064,14 +1064,30 @@ fn bullet_lines_from_markdown_section(text: &str, heading: &str) -> Vec<String> 
     markdown_section_body_local(text, heading)
         .map(|body| {
             body.lines()
-                .map(str::trim)
-                .filter_map(|line| line.strip_prefix("- "))
+                .filter_map(markdown_list_item_text)
                 .map(str::trim)
                 .filter(|line| !line.is_empty())
                 .map(str::to_string)
                 .collect::<Vec<_>>()
         })
         .unwrap_or_default()
+}
+
+fn markdown_list_item_text(line: &str) -> Option<&str> {
+    if line.starts_with(char::is_whitespace) {
+        return None;
+    }
+    if let Some(item) = line.strip_prefix("- ") {
+        return Some(item);
+    }
+    let digit_count = line.chars().take_while(|ch| ch.is_ascii_digit()).count();
+    if digit_count == 0 {
+        return None;
+    }
+    let suffix = &line[digit_count..];
+    suffix
+        .strip_prefix(". ")
+        .or_else(|| suffix.strip_prefix(") "))
 }
 
 fn normalize_sor_emitted_facts_text(text: &str, facts: &SorFacts) -> Result<String> {
