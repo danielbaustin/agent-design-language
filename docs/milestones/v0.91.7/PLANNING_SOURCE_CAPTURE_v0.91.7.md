@@ -71,7 +71,8 @@ These were open at the source-capture pass and should be explicitly closed, comp
 | `#4425` | VPP generation from ownership and validation profile facts | Required input so VPPs become generated planning artifacts rather than chat-memory expectations. |
 | `#4431` | Forward authoritative workflow time/token accounting | Required forward-capture fix; must not be conflated with historical backfill. |
 | `#4441` | v0.91.6 workflow metric backfill evidence | Bounded archaeology/backfill input for v0.91.6 only; token values must remain explicit or `not_collected`, never inferred. |
-| `#4433`-`#4438` | Operationalize adopted C-SDLC practices after PVF2 | Required adoption sprint so watchers, VPPs, shepherding, card readiness, SOR fact capture, and full-path proof become operational defaults. |
+| `#4433`-`#4438` | Operationalize adopted C-SDLC practices after PVF2 | Closed v0.91.6 adoption sprint input; consume retained truth so watchers, VPPs, shepherding, card readiness, SOR fact capture, and full-path proof are treated as completed v0.91.6 control-plane work unless a named follow-on remains open. |
+| `#4520`-`#4522` | Observability-boundary and release/docs truth-consumption follow-ons from the adoption audit | Closed v0.91.6 follow-on input; consume their retained proofs instead of carrying the audit gaps forward as still-open activation blockers. |
 | `#4442` | Native host-integrated goal snapshot capture | v0.91.7-facing input for host/session goal accounting; route through WP-04 unless completed before v0.91.7 starts. |
 | `#4443` | Full issue-lifecycle shepherd | v0.91.7-facing lifecycle input above watcher/janitor/closeout; route through WP-03 unless completed before v0.91.7 starts. |
 | `#4368` | v0.91.7 planning docs | This source-capture and planning alignment issue. |
@@ -116,7 +117,7 @@ Local `.adl/docs/TBD/` files are ignored planning inputs, not tracked proof. The
 | Theme | Why it matters before v0.92 | Scheduling posture |
 | --- | --- | --- |
 | v0.91.6 closeout and release-tail truth | v0.92 cannot consume incomplete or stale bridge truth. | First gate. |
-| SEP/VPP/PVF, session-ledger, lifecycle automation, and template-version work | Sprint execution, validation planning, and time/token accounting must be predictable. `#4388`-`#4398`, `#4405`, `#4412`-`#4413`, `#4417`-`#4421` plus `#4425`, and `#4433`-`#4438` must exit complete, blocked, deferred, or routed before v0.92 relies on sprint-scale execution. | v0.91.6 closeout input consumed by v0.91.7 WP-02/WP-03. |
+| SEP/VPP/PVF, session-ledger, lifecycle automation, and template-version work | Sprint execution, validation planning, and time/token accounting must be predictable. `#4388`-`#4398`, `#4405`, `#4412`-`#4413`, `#4417`-`#4421` plus `#4425`, closed adoption sprint `#4433`-`#4438`, and closed release/docs follow-ons `#4520`-`#4522` must be consumed as complete, blocked, deferred, or routed truth before v0.92 relies on sprint-scale execution. | v0.91.6 closeout input consumed by v0.91.7 WP-02/WP-03. |
 | Goal state, nested goals, time/token/resource metrics | v0.92 needs continuity and issue/sprint accounting. `#4431` owns forward capture; `#4441` owns bounded v0.91.6 backfill; `#4442` owns host-integrated goal snapshots. | Early process/runtime bridge. |
 | Cognitive scheduler and local-agent acceleration | Premium cognition is now a bottleneck; local/deepseek/hosted agent suitability must route work. | Early scheduler/provider sprint. |
 | Capability envelope and capability-testing boundary | v0.92 memory/identity/birthday evidence depends on knowing what capability envelope, witnesses/receipt, and Aptitude Atlas evidence may or may not claim. | Scheduler/provider and handoff bridge. |
