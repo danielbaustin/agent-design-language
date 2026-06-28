@@ -7,13 +7,19 @@
 - Version: `v0.91.7`
 - Date: `2026-06-21`
 - Owner: ADL maintainers
-- Related issues: `#3825`, `#4368`, `#3780`
+- Related issues: `#3825`, `#4368`, `#3982`, `#3780`
 
 ## Purpose
 
 Record the second-tranche bridge surfaces that `#3780` / `v0.92` may consume
 after `v0.91.7` docs-package completion. This is a handoff record, not runtime
 implementation proof.
+
+Before `v0.92` consumes this handoff, `v0.91.7` WP-01 must consume
+`V0916_TO_V0917_HANDOFF_ADDENDUM_3982.md`, the failed v0.91.6 WP-15 external
+review truth, final WP-16 remediation/preflight truth, and `#4620`-`#4622`
+dispositions, plus closed WP-14A `#4582` and `#4609`-`#4612` remediation
+truth. If those inputs are missing, this handoff remains planning-only.
 
 ## Handoff Rule
 
@@ -54,7 +60,7 @@ and only `integrated_proven` counts as operational completion.
 | Goal and metrics accounting | Time/token/resource, nested-goal, forward capture `#4431`, v0.91.6-only backfill `#4441`, and host goal snapshot `#4442` route explicit enough for v0.92 issue planning. |
 | Scheduler/provider/local agents | Routing policy and suitability path explicit enough to protect premium cognition. |
 | Capability envelope and capability testing | Memory grounding, capability envelope, birth witnesses/receipt, and Aptitude Atlas boundaries explicitly consumed, deferred, blocked, or routed before birthday evidence relies on them. |
-| Build/validation throughput | Validation-cost, path ownership, SOR fact capture, validation manager, VPP generation, and remote/local build routes clear enough to avoid rediscovery during birthday work. |
+| Build/validation throughput | Validation-cost, path ownership, SOR fact capture, validation manager, VPP generation, and remote/local build routes clear enough to avoid rediscovery during birthday work. EC2 Spot or an alternate disposable remote-builder path must have time/cost/cache/cleanup evidence before it is treated as a release-critical lane. |
 | GitHub convergence and control-plane tooling | GitHub/octocrab/tooling convergence, session coordination, lifecycle liveness, and shepherd state explicit enough that v0.92 sprint execution does not depend on ambiguous `gh` fallback, stale control-plane assumptions, or chat-only session memory. |
 | Runtime integration, Soak #2, and AWS signal bridge | `RUNTIME_SOAK_2_EXECUTION_PACKET_v0.91.7.md` is the planning gate. `v0.92` remains blocked until that packet's rows exit as `integrated_proven`, `blocked`, `deferred`, or `routed_to_soak_3`; operational signal blockers must be named before birthday claims. |
 | Runtime architecture diet | Runtime module/seam map and keep/merge/defer/retire route explicit enough to reduce bloat without blocking the integration proof. |
