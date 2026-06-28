@@ -23,9 +23,10 @@ merely implemented as isolated components.
 
 Active sprint umbrella: `#4604`.
 
-Current progress: `#3976` WP-11 and `#3977` WP-12 are merged and closed.
-`#3978` WP-13 is the active docs/review alignment step. `#4582` WP-14A is the
-next internal-review owner after WP-13 publishes its alignment packet.
+Current progress: `#3976` WP-11, `#3977` WP-12, and `#3978` WP-13 are merged
+and closed. `#4582` WP-14A is the current active internal-review owner, while
+release-tail documentation truth cleanup remains explicitly routed through
+follow-on issue `#4609`.
 
 | Order | Issue | Role | Must wait for | May spawn follow-on remediation | Watcher expectation |
 | --- | --- | --- | --- | --- | --- |

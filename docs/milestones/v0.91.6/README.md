@@ -13,9 +13,10 @@
 
 Current status: the first pre-`v0.92` bridge tranche now includes completed or
 routed bridge waves, with WP-03 through WP-10 carrying retained closeout truth.
-WP-11 demo/proof convergence and WP-12 quality gate have also merged. WP-13 is
-the current docs/review-surface alignment pass, and internal review `#4582` is
-the next active release-tail child under sprint umbrella `#4604`.
+WP-11 demo/proof convergence, WP-12 quality gate, and WP-13 docs/review-surface
+alignment have merged. Internal review `#4582` is the current active
+release-tail child under sprint umbrella `#4604`, while follow-on release-tail
+doc-truth cleanup remains explicitly routed rather than implied complete.
 
 - Planning: created by `#3800`
 - Documentation completion: `#3824`
@@ -23,7 +24,7 @@ the next active release-tail child under sprint umbrella `#4604`.
   retained closeout truth now available for WP-03 `#3968`, WP-04 `#3969`,
   WP-05 `#3970`, WP-06 `#3971`, WP-07 `#3972`, WP-08 `#3973`, and WP-10
   `#3975`
-- Execution: WP-03 through WP-12 and ACIP runtime `#4160` now have bounded
+- Execution: WP-03 through WP-13 and ACIP runtime `#4160` now have bounded
   merged/closed bridge truth; internal review `#4582` and the remaining
   closeout-tail wave remain explicit downstream work rather than hidden
   blockers

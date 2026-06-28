@@ -69,13 +69,13 @@ ledger.
 - [x] WP-12 quality gate has consumed WP-11 proof convergence. Current retained
   packet:
   [review/V0916_WP12_QUALITY_GATE_3977.md](review/V0916_WP12_QUALITY_GATE_3977.md)
-  consumes merged `#3976` / PR `#4605` demo/proof truth, clears WP-13 to start
-  after the WP-12 PR lands, and routes WP-11 closeout normalization as
+  consumes merged `#3976` / PR `#4605` demo/proof truth, cleared WP-13 to
+  start after the WP-12 PR landed, and routes WP-11 closeout normalization as
   release-tail hygiene rather than a proof blocker.
-- [ ] WP-13 docs/review-surface alignment has landed. Current owner: `#3978`.
-  It must leave README, changelog, milestone planning docs, release docs,
-  feature-list references, and review entrypoints aligned before `#4582`
-  internal review begins.
+- [x] WP-13 docs/review-surface alignment landed through merged `#3978` /
+  PR `#4608`. Follow-on release-tail doc-truth cleanup remains explicitly
+  routed through `#4609`, while `#4582` remains the current active
+  internal-review owner.
 
 ## 1. Release Readiness
 
