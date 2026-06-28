@@ -64,8 +64,8 @@ automation.
 
 ## First v0.91.7 Execution Priorities
 
-When v0.91.7 opens, start with the following order unless WP-16 final preflight
-records a stronger blocker:
+When v0.91.7 opens, start with the following order. WP-16 is closed; WP-01
+consumes the closed WP-16 truth rather than waiting for a future WP-16 gate:
 
 1. WP-01: promote planning and consume final v0.91.6 closeout truth, including
    the failed WP-15 review, closed WP-16 remediation/final-preflight truth,
