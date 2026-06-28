@@ -445,6 +445,13 @@ fn tick_live_mode_without_approval_stays_fail_closed_and_observable() {
         !mock_signal_artifact_path(&loaded).exists(),
         "live-blocked mode should not write mock heartbeat envelopes"
     );
+    assert!(
+        !loaded
+            .state_root
+            .join("aws_runtime_heartbeat_cursor.json")
+            .exists(),
+        "live-blocked mode should not allocate heartbeat cursor state"
+    );
 }
 
 #[test]
