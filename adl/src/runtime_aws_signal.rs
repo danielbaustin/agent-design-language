@@ -341,74 +341,75 @@ pub(crate) fn publish_runtime_heartbeat_signal(
         };
     }
 
-    let heartbeat_seq = match reserve_heartbeat_seq(loaded) {
-        Ok(sequence) => sequence,
-        Err(_) => {
-            let failure_class = "aws_signal_cursor_write_failed";
+    match config.mode {
+        AwsSignalMode::Disabled => unreachable!("disabled mode returns before sequence allocation"),
+        AwsSignalMode::Mock => {
+            let heartbeat_seq = match reserve_heartbeat_seq(loaded) {
+                Ok(sequence) => sequence,
+                Err(_) => {
+                    let failure_class = "aws_signal_cursor_write_failed";
+                    emit_publish_failure(
+                        &config,
+                        loaded.spec.agent_instance_id.as_str(),
+                        cycle_id_for_status(status).as_str(),
+                        "not_allocated",
+                        runtime_signal_status(status),
+                        failure_class,
+                    );
+                    return PublishOutcome {
+                        disposition: PublishDisposition::Blocked,
+                        failure_class: Some(failure_class.to_string()),
+                    };
+                }
+            };
+
+            let envelope = build_runtime_heartbeat_envelope(loaded, status, &config, heartbeat_seq);
+            let heartbeat_seq_label = envelope.heartbeat_seq.to_string();
+            match append_mock_signal(loaded, &envelope) {
+                Ok(()) => {
+                    emit_event(
+                        "agent",
+                        "aws_runtime_heartbeat",
+                        "completed",
+                        &[
+                            ("mode", config.mode_label()),
+                            ("target_kind", config.target_kind.as_str()),
+                            ("runtime_id", envelope.runtime_id.as_str()),
+                            ("cycle_id", envelope.cycle_id.as_str()),
+                            ("heartbeat_seq", heartbeat_seq_label.as_str()),
+                            ("signal_status", envelope.status.as_str()),
+                        ],
+                    );
+                    PublishOutcome {
+                        disposition: PublishDisposition::PublishedMock,
+                        failure_class: None,
+                    }
+                }
+                Err(_) => {
+                    let failure_class = "aws_signal_mock_write_failed";
+                    emit_publish_failure(
+                        &config,
+                        envelope.runtime_id.as_str(),
+                        envelope.cycle_id.as_str(),
+                        heartbeat_seq_label.as_str(),
+                        envelope.status.as_str(),
+                        failure_class,
+                    );
+                    PublishOutcome {
+                        disposition: PublishDisposition::Blocked,
+                        failure_class: Some(failure_class.to_string()),
+                    }
+                }
+            }
+        }
+        AwsSignalMode::Live => {
+            let failure_class = config.live_block_reason();
             emit_publish_failure(
                 &config,
                 loaded.spec.agent_instance_id.as_str(),
                 cycle_id_for_status(status).as_str(),
                 "not_allocated",
                 runtime_signal_status(status),
-                failure_class,
-            );
-            return PublishOutcome {
-                disposition: PublishDisposition::Blocked,
-                failure_class: Some(failure_class.to_string()),
-            };
-        }
-    };
-
-    let envelope = build_runtime_heartbeat_envelope(loaded, status, &config, heartbeat_seq);
-    let heartbeat_seq_label = envelope.heartbeat_seq.to_string();
-
-    match config.mode {
-        AwsSignalMode::Disabled => unreachable!("disabled mode returns before sequence allocation"),
-        AwsSignalMode::Mock => match append_mock_signal(loaded, &envelope) {
-            Ok(()) => {
-                emit_event(
-                    "agent",
-                    "aws_runtime_heartbeat",
-                    "completed",
-                    &[
-                        ("mode", config.mode_label()),
-                        ("target_kind", config.target_kind.as_str()),
-                        ("runtime_id", envelope.runtime_id.as_str()),
-                        ("cycle_id", envelope.cycle_id.as_str()),
-                        ("heartbeat_seq", heartbeat_seq_label.as_str()),
-                        ("signal_status", envelope.status.as_str()),
-                    ],
-                );
-                PublishOutcome {
-                    disposition: PublishDisposition::PublishedMock,
-                    failure_class: None,
-                }
-            }
-            Err(_) => {
-                let failure_class = "aws_signal_mock_write_failed";
-                emit_publish_failure(
-                    &config,
-                    envelope.runtime_id.as_str(),
-                    envelope.cycle_id.as_str(),
-                    heartbeat_seq_label.as_str(),
-                    envelope.status.as_str(),
-                    failure_class,
-                );
-                PublishOutcome {
-                    disposition: PublishDisposition::Blocked,
-                    failure_class: Some(failure_class.to_string()),
-                }
-            }
-        },
-        AwsSignalMode::Live => {
-            let failure_class = config.live_block_reason();
-            emit_publish_failure(
-                &config,
-                envelope.runtime_id.as_str(),
-                envelope.cycle_id.as_str(),
-                heartbeat_seq_label.as_str(),
-                envelope.status.as_str(),
                 failure_class,
             );
             PublishOutcome {
@@ -1182,6 +1183,7 @@ mod tests {
                 unsupported.failure_class.as_deref(),
                 Some("aws_signal_unsupported_target")
             );
+            assert!(!heartbeat_cursor_path(&loaded).exists());
         }
 
         {
@@ -1196,7 +1198,55 @@ mod tests {
                 blocked.failure_class.as_deref(),
                 Some("aws_signal_live_not_approved")
             );
+            assert!(!heartbeat_cursor_path(&loaded).exists());
         }
+    }
+
+    #[test]
+    fn runtime_aws_signal_live_blocked_mode_preserves_existing_cursor_state() {
+        let root = temp_dir("live-blocked-cursor");
+        let loaded = sample_loaded(&root);
+
+        {
+            let _guard = MultiEnvGuard::set_all(&[
+                ("ADL_AWS_SIGNAL_MODE", "mock"),
+                ("ADL_AWS_REGION", "us-west-2"),
+            ]);
+            let outcome = publish_runtime_heartbeat_signal(
+                &loaded,
+                &sample_status(AgentStatusState::RunningCycle),
+            );
+            assert_eq!(outcome.disposition, PublishDisposition::PublishedMock);
+        }
+
+        let before: HeartbeatCursor = serde_json::from_str(
+            &fs::read_to_string(heartbeat_cursor_path(&loaded)).expect("cursor before"),
+        )
+        .expect("parse cursor before");
+        assert_eq!(before.next_heartbeat_seq, 2);
+
+        {
+            let _guard = MultiEnvGuard::set_all(&[
+                ("ADL_AWS_SIGNAL_MODE", "live"),
+                ("ADL_AWS_REGION", "us-west-2"),
+                ("ADL_AWS_HEARTBEAT_TARGET", "cloudwatch_logs"),
+                ("ADL_AWS_HEARTBEAT_LOG_GROUP", "private"),
+                ("ADL_AWS_HEARTBEAT_LOG_STREAM", "private"),
+            ]);
+            let blocked =
+                publish_runtime_heartbeat_signal(&loaded, &sample_status(AgentStatusState::Idle));
+            assert_eq!(blocked.disposition, PublishDisposition::Blocked);
+            assert_eq!(
+                blocked.failure_class.as_deref(),
+                Some("aws_signal_live_not_approved")
+            );
+        }
+
+        let after: HeartbeatCursor = serde_json::from_str(
+            &fs::read_to_string(heartbeat_cursor_path(&loaded)).expect("cursor after"),
+        )
+        .expect("parse cursor after");
+        assert_eq!(after.next_heartbeat_seq, 2);
     }
 
     #[test]
