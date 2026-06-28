@@ -31,7 +31,7 @@ It must answer three questions before `v0.92` opens:
 | --- | --- | --- |
 | `docs/milestones/v0.91.5/PRE_V092_BRIDGE_FEATURE_DOC_LEDGER_v0.91.5.md` | Pre-`v0.92` bridge ledger / `#3778` source | Consume as upstream bridge authority; do not let v0.91.7 contradict the ledger without an explicit decision. |
 | `docs/milestones/v0.91.6/` | First bridge tranche, runtime/tooling/provider/security/observability evidence | Consume closeout truth from the milestone's canonical issue-truth surfaces; do not duplicate completed work. |
-| `docs/milestones/v0.91.7/V0916_TO_V0917_HANDOFF_ADDENDUM_3982.md` | Dependency-gated v0.91.6-to-v0.91.7 handoff | WP-01 must consume this addendum with the failed WP-15 external-review truth, final WP-16 remediation/preflight truth, and `#4620`-`#4622` dispositions before opening dependent execution work. |
+| `docs/milestones/v0.91.7/V0916_TO_V0917_HANDOFF_ADDENDUM_3982.md` | Dependency-gated v0.91.6-to-v0.91.7 handoff | WP-01 must consume this addendum with the failed-but-closed WP-15 external-review truth, closed WP-16 remediation/preflight truth, closed `#4620` / `#4621` dispositions, and open v0.91.7 route `#4622` before opening dependent execution work. |
 | `docs/milestones/v0.91.6/review/` | Sprint reviews, remediation, proof packets, and retained evidence | Read current closed-umbrella truth from `V0916_COMPLETED_SPRINT_RETAINED_EVIDENCE_MATRIX_4251.md`, then convert residual findings into explicit v0.91.7 routes or deferrals. |
 | `docs/milestones/v0.91.6/RUNTIME_FIRE_UP_PLAN_v0.91.6.md` | Runtime fire-up and soak continuity | Carry into runtime Soak #2 / integrated runtime proof. |
 | `docs/milestones/v0.91.6/features/COGNITIVE_SCHEDULER_v0.91.6.md` | Scheduler v1 bridge | Preserve as scheduler/economics input, not just docs residue. |
@@ -54,11 +54,11 @@ These were open at the source-capture pass and should be explicitly closed, comp
 | --- | --- | --- |
 | `#3974` | Observatory mini-sprint umbrella | Must complete or truthfully route Observatory readiness. |
 | `#3976`-`#3984` | v0.91.6 release-tail WPs | Must close v0.91.6 before v0.91.7/v0.92 sequencing is trusted. |
-| `#3980` | WP-15 external / third-party review | External review has run and failed on stale handoff truth; WP-15 remains open until WP-16 remediation resolves or dispositions findings. |
-| `#3981` | WP-16 review remediation and final preflight | Must consume `#4620`, `#4621`, and `#4622`, then be consumed by WP-01 before v0.91.7 execution starts. |
-| `#4620` | WP-16 external-review proof-gap verification | Must prove or disposition the targeted regression and coverage gaps before v0.91.6 closeout can feed v0.91.7 execution. |
-| `#4621` | WP-16 failed external-review truth and release-tail docs repair | Must repair stale review/release-tail truth and record the failed external review without rerunning it. |
-| `#4622` | Repo-native PR inventory for release-tail review | Must be fixed or routed before future release-tail reviews rely on PR inventory automation. |
+| `#3980` | WP-15 external / third-party review | Closed. External review ran and failed on stale handoff truth; consume the failed-review record as release-tail truth, not as approval. |
+| `#3981` | WP-16 review remediation and final preflight | Closed. WP-16 consumed the accepted findings, closed `#4620` and `#4621`, and routed `#4622` to v0.91.7. |
+| `#4620` | WP-16 external-review proof-gap verification | Closed. Consume the proof-gap packet and its non-claims; do not count unexecuted product/runtime surfaces as proof. |
+| `#4621` | WP-16 failed external-review truth and release-tail docs repair | Closed. Consume the failed-review truth repair and release-tail doc disposition. |
+| `#4622` | Repo-native PR inventory for release-tail review | Open and retitled/relabelled to v0.91.7. Treat as routed tooling work before future release-tail reviews rely on PR inventory automation. |
 | `#4030`-`#4035`, `#4341` | Observatory children | Must be resolved or explicitly carried into v0.91.7 demo/runtime readiness. |
 | `#4286` | PR closing-linkage guard | Tooling residual; route with process-hardening work. |
 | `#4299` | Issue resource telemetry archive | Feeds metrics/S3/ObsMem history. |

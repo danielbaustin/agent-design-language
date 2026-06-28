@@ -18,7 +18,7 @@ Forward checklist. Items are intentionally unchecked because `v0.91.7` execution
 - [ ] `#3778` bridge ledger consumed.
 - [ ] v0.91.5 pre-v0.92 bridge ledger source row consumed.
 - [ ] `v0.91.6` first-tranche package consumed.
-- [ ] `V0916_TO_V0917_HANDOFF_ADDENDUM_3982.md` consumed with failed WP-15 `#3980` review truth, WP-16 `#3981` remediation truth, `#4620`-`#4622` dispositions, and closed WP-14A remediation truth.
+- [ ] `V0916_TO_V0917_HANDOFF_ADDENDUM_3982.md` consumed with failed-but-closed WP-15 `#3980` review truth, closed WP-16 `#3981` remediation truth, closed `#4620` / `#4621`, open v0.91.7 route `#4622`, and closed WP-14A remediation truth.
 - [ ] Closed ADR release-tail issues `#4324` and `#4369`-`#4376` consumed, and open tooling remediation `#4378` completed, blocked, deferred, or routed.
 - [ ] `PLANNING_SOURCE_CAPTURE_v0.91.7.md` reviewed.
 - [ ] Candidate WBS reviewed and promoted or corrected.

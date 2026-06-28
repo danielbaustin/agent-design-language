@@ -16,10 +16,11 @@ after `v0.91.7` docs-package completion. This is a handoff record, not runtime
 implementation proof.
 
 Before `v0.92` consumes this handoff, `v0.91.7` WP-01 must consume
-`V0916_TO_V0917_HANDOFF_ADDENDUM_3982.md`, the failed v0.91.6 WP-15 external
-review truth, final WP-16 remediation/preflight truth, and `#4620`-`#4622`
-dispositions, plus closed WP-14A `#4582` and `#4609`-`#4612` remediation
-truth. If those inputs are missing, this handoff remains planning-only.
+`V0916_TO_V0917_HANDOFF_ADDENDUM_3982.md`, the failed-but-closed v0.91.6
+WP-15 external-review truth, closed WP-16 remediation/preflight truth, closed
+`#4620` / `#4621`, and open v0.91.7 route `#4622`, plus closed WP-14A `#4582`
+and `#4609`-`#4612` remediation truth. If those inputs are missing, this
+handoff remains planning-only.
 
 ## Handoff Rule
 

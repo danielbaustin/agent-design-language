@@ -23,9 +23,10 @@ Current status: planning refresh for the final pre-`v0.92` bridge and readiness 
   execution-packet setup; no Soak #2 runtime execution has run.
 - Validation: docs-readiness validation only until implementation issues run.
 - Release readiness: not applicable until `v0.91.7` executes.
-- Dependency gate: v0.91.7 execution must consume the failed WP-15 `#3980`
-  external-review truth, WP-16 `#3981` remediation/final-preflight truth, WP-16
-  children `#4620` and `#4621`, tooling child `#4622`, and closed WP-14A
+- Dependency gate: v0.91.7 execution must consume the failed-but-closed WP-15
+  `#3980` external-review truth, closed WP-16 `#3981`
+  remediation/final-preflight truth, closed WP-16 children `#4620` and
+  `#4621`, the open v0.91.7 tooling route `#4622`, and closed WP-14A
   remediation truth before opening dependent execution work.
 
 This package does not implement runtime features and does not claim `v0.92` activation readiness. It exists so every required pre-birthday surface is visible, scheduled, deferred, blocked, or routed before `v0.92` opens.
@@ -113,7 +114,7 @@ Every surface must exit as one of:
 ## Exit Criteria
 
 - Every required source in `PLANNING_SOURCE_CAPTURE_v0.91.7.md` is complete, blocked, deferred, or routed.
-- WP-01 consumes `V0916_TO_V0917_HANDOFF_ADDENDUM_3982.md` plus failed WP-15 truth and final WP-16 closeout truth, including `#4620`, `#4621`, and `#4622`, before starting dependent execution work.
+- WP-01 consumes `V0916_TO_V0917_HANDOFF_ADDENDUM_3982.md` plus failed-but-closed WP-15 truth, final WP-16 closeout truth, closed `#4620` / `#4621`, and the v0.91.7-routed `#4622`, before starting dependent execution work.
 - Every v0.91.6 carryover issue has a truthful disposition before `v0.92` opens.
 - `#3780` can refresh `v0.92` activation docs from tracked bridge truth without reconstructing scope from chat.
 - The first-birthday milestone starts with a clear runtime/demo/security/protocol/process substrate and known residual risks.

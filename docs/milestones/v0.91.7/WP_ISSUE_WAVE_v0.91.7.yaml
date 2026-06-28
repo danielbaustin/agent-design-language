@@ -14,7 +14,7 @@ notes:
   - "Do not claim v0.92 activation readiness from this seed."
   - "Keep v0.92 birthday implementation out of this planning package."
   - "Every source-capture input must exit complete, blocked, deferred, or routed."
-  - "WP-01 must consume failed WP-15 #3980 external-review truth, WP-16 #3981/#4620/#4621 remediation truth, tooling route #4622, WP-14A #4582, and closed WP-14A remediation #4609-#4612 truth before dependent execution starts."
+  - "WP-01 must consume failed-but-closed WP-15 #3980 external-review truth, closed WP-16 #3981/#4620/#4621 remediation truth, open v0.91.7 tooling route #4622, WP-14A #4582, and closed WP-14A remediation #4609-#4612 truth before dependent execution starts."
 work_packages:
   - wp: WP-01
     title: v0.91.7 planning promotion and issue-wave readiness

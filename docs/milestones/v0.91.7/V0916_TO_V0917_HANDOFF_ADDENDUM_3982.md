@@ -12,8 +12,8 @@
 ## Purpose
 
 Record the current v0.91.6-to-v0.91.7 planning handoff after the WP-15
-external review failed on stale handoff truth and before WP-16 remediation
-closes.
+external review failed on stale handoff truth and WP-16 consumed the
+remediation/final-preflight findings.
 
 This document is not v0.91.6 closeout truth. It is a next-milestone planning
 addendum that lets v0.91.7 start quickly after v0.91.6 closes without losing
@@ -23,7 +23,7 @@ work, and C-SDLC operational repairs discovered during v0.91.6.
 ## Current Release-Tail Gate
 
 v0.91.7 planning may be prepared now, but v0.91.7 execution must not begin
-until the v0.91.6 release-tail gate has settled.
+until the v0.91.6 release-tail gate is consumed from current issue truth.
 
 The required handoff inputs are:
 
@@ -32,19 +32,20 @@ The required handoff inputs are:
 - `#4610`: closed pre-v0.92 activation and C-SDLC adoption residual routing.
 - `#4611`: closed numbered-SRP SOR fact fix and PR-inventory route.
 - `#4612`: closed runtime AWS heartbeat cursor semantics fix.
-- WP-15 `#3980`: open external / third-party review owner. The review has run
-  and failed on stale `draft_pre_send` handoff truth; WP-15 must remain open
-  until WP-16 remediation resolves or explicitly dispositions the findings.
-- WP-16 `#3981`: open review findings remediation and final preflight owner.
-- WP-16 child `#4621`: failed external-review truth and release-tail docs
-  repair.
-- WP-16 child `#4620`: external-review proof-gap verification.
-- Tooling child `#4622`: repo-native PR inventory gap routed from `#4611` and
-  required before future release-tail reviews rely on PR inventory automation.
+- WP-15 `#3980`: closed external / third-party review owner. The review ran
+  and failed on stale `draft_pre_send` handoff truth; the failure is recorded
+  as release-tail truth rather than rewritten as a clean pass.
+- WP-16 `#3981`: closed review findings remediation and final preflight owner.
+- WP-16 child `#4621`: closed failed external-review truth and release-tail
+  docs repair.
+- WP-16 child `#4620`: closed external-review proof-gap verification.
+- Tooling child `#4622`: still open, retitled/relabelled to `v0.91.7`, and
+  routed as the repo-native PR inventory gap from `#4611`; it is not a
+  v0.91.6 closeout blocker.
 
-If any of `#3980`, `#3981`, `#4620`, `#4621`, or `#4622` remain open when
-v0.91.7 starts, WP-01 must record a concrete blocked, deferred, or routed
-disposition before opening dependent execution work.
+If `#4622` remains open when v0.91.7 starts, WP-01 must record the concrete
+routed disposition before future release-tail reviews rely on PR inventory
+automation.
 
 ## Current Handoff Truth
 
@@ -52,7 +53,8 @@ disposition before opening dependent execution work.
 - v0.91.7 remains the final pre-v0.92 bridge/readiness tranche.
 - The WP-15 external review is complete and failed; v0.91.7 must consume that
   failure as release-tail truth, not rerun the review to erase it.
-- WP-16 is the remediation and final-preflight owner for the failed review.
+- WP-16 has closed as the remediation and final-preflight owner for the failed
+  review.
 - v0.92 activation must remain blocked until every named activation surface is
   complete, blocked, deferred, or routed.
 - Planning docs alone do not prove runtime, demo, C-SDLC, provider, scheduler,
@@ -66,7 +68,8 @@ When v0.91.7 opens, start with the following order unless WP-16 final preflight
 records a stronger blocker:
 
 1. WP-01: promote planning and consume final v0.91.6 closeout truth, including
-   the failed WP-15 review and WP-16 child issue dispositions.
+   the failed WP-15 review, closed WP-16 remediation/final-preflight truth,
+   closed `#4620` / `#4621` dispositions, and the open v0.91.7 `#4622` route.
 2. WP-02 / WP-03: consume C-SDLC control-plane truth and route any remaining
    tooling defects before relying on sprint-scale parallel execution.
 3. WP-06: preserve Nessus as the immediate Phase 1 remote validation lane and
@@ -129,8 +132,8 @@ WP-01 should update v0.91.7 issue-wave truth from:
 - this addendum;
 - `PLANNING_SOURCE_CAPTURE_v0.91.7.md`;
 - `WP_ISSUE_WAVE_v0.91.7.yaml`;
-- failed WP-15 and final WP-16 v0.91.6 outputs, including `#4620`, `#4621`,
-  and `#4622`;
+- failed WP-15 and final WP-16 v0.91.6 outputs, including closed `#4620` /
+  `#4621` and the v0.91.7-routed `#4622`;
 - `docs/milestones/v0.92/V092_ACTIVATION_BRIDGE_LEDGER_v0.92.md`;
 - any final v0.91.6 review/remediation packets merged after this addendum.
 
@@ -143,7 +146,7 @@ This addendum does not claim:
 
 - v0.91.6 is complete;
 - WP-15 passed external review;
-- WP-16 remediation has closed;
+- `#4622` has been implemented;
 - v0.91.7 is approved for execution;
 - EC2 Spot builds have been proven;
 - runtime Soak #2 has run;
