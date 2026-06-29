@@ -1,6 +1,6 @@
 milestone: v0.91.7
 version: v0.91.7
-status: candidate_issue_wave_refreshed
+status: issue_wave_opened
 created_by_issues:
   - 3801
   - 3825
@@ -10,11 +10,44 @@ first_tranche_input: docs/milestones/v0.91.6/
 source_capture: docs/milestones/v0.91.7/PLANNING_SOURCE_CAPTURE_v0.91.7.md
 release_tail_handoff_addendum: docs/milestones/v0.91.7/V0916_TO_V0917_HANDOFF_ADDENDUM_3982.md
 notes:
-  - "Candidate wave only; WP-01 must open concrete GitHub issues and render C-SDLC cards."
+  - "Issue wave opened by WP-01 #4628 on 2026-06-28."
   - "Do not claim v0.92 activation readiness from this seed."
   - "Keep v0.92 birthday implementation out of this planning package."
   - "Every source-capture input must exit complete, blocked, deferred, or routed."
   - "WP-01 must consume failed-but-closed WP-15 #3980 external-review truth, closed WP-16 #3981/#4620/#4621 remediation truth, open v0.91.7 tooling route #4622, WP-14A #4582, and closed WP-14A remediation #4609-#4612 truth before dependent execution starts."
+wp_issue_map:
+  - {wp: WP-01, issue: 4628}
+  - {wp: WP-02, issue: 4629}
+  - {wp: WP-03, issue: 4630}
+  - {wp: WP-04, issue: 4631}
+  - {wp: WP-05, issue: 4632}
+  - {wp: WP-06, issue: 4633}
+  - {wp: WP-07, issue: 4634}
+  - {wp: WP-08, issue: 4635}
+  - {wp: WP-09, issue: 4636}
+  - {wp: WP-10, issue: 4637}
+  - {wp: WP-11, issue: 4638}
+  - {wp: WP-12, issue: 4639}
+  - {wp: WP-13, issue: 4640}
+  - {wp: WP-14, issue: 4641}
+  - {wp: WP-15, issue: 4642}
+  - {wp: WP-16, issue: 4643}
+  - {wp: WP-17, issue: 4644}
+  - {wp: WP-18, issue: 4645}
+  - {wp: WP-19, issue: 4646}
+  - {wp: WP-20, issue: 4647}
+  - {wp: WP-21, issue: 4648}
+  - {wp: WP-22, issue: 4649}
+  - {wp: WP-23, issue: 4650}
+existing_issue_routes:
+  - {issue: 4603, wp: WP-06, route: "AWS Spot manager and remote validation lane"}
+  - {issue: 4617, wp: WP-04, route: "Codex session telemetry for metrics and prediction"}
+  - {issue: 4622, wp: WP-02, route: "Repo-native PR inventory for release-tail review"}
+non_wp_issue_routes:
+  - {issue: 4651, route: "Rust refactoring by ownership and validation cost", related_wp: "WP-03/WP-06"}
+  - {issue: 4652, route: "Unity demo surfaces", related_wp: "WP-09/WP-15"}
+  - {issue: 4653, route: "dspark speculative decoding with Qwen and Gemma", related_wp: "WP-05/WP-06"}
+  - {issue: 4654, route: "deepseek-v4-flash-dspark smoke on ephemeral 2xH100 EC2", related_wp: "WP-05/WP-06"}
 work_packages:
   - wp: WP-01
     title: v0.91.7 planning promotion and issue-wave readiness
