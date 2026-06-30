@@ -1,0 +1,11 @@
+{"timestamp":"2026-06-30T19:08:05.633641+00:00","stage":"start","status":"started","detail":"issue=Some(4603) region=us-west-2 instance_types=c7i.4xlarge out=docs/milestones/v0.91.7/review/build_throughput/remote_validation_4603/live_run_summary_retry8.json"}
+{"timestamp":"2026-06-30T19:08:10.781527+00:00","stage":"identity","status":"ok","detail":"caller identity resolved"}
+{"timestamp":"2026-06-30T19:08:25.059973+00:00","stage":"quota","status":"ok","detail":"quota snapshot captured"}
+{"timestamp":"2026-06-30T19:08:25.059990+00:00","stage":"launch_attempt","status":"started","detail":"instance_type=c7i.4xlarge market=spot"}
+{"timestamp":"2026-06-30T19:08:41.102927+00:00","stage":"launch_attempt","status":"warn","detail":"instance_type=c7i.4xlarge market=spot failed: InsufficientInstanceCapacity: service error"}
+{"timestamp":"2026-06-30T19:08:41.102935+00:00","stage":"launch_attempt","status":"started","detail":"instance_type=c7i.4xlarge market=on_demand"}
+{"timestamp":"2026-06-30T19:08:46.135796+00:00","stage":"launch_attempt","status":"ok","detail":"instance_type=c7i.4xlarge market=on_demand launched"}
+{"timestamp":"2026-06-30T19:09:09.435202+00:00","stage":"ssm","status":"ok","detail":"instance became SSM-ready with status Online"}
+{"timestamp":"2026-06-30T19:14:06.794628+00:00","stage":"remote_command","status":"failed","detail":"remote command failed with status=Failed response_code=Some(101)"}
+{"timestamp":"2026-06-30T19:14:08.465639+00:00","stage":"cleanup","status":"started","detail":"termination requested"}
+{"timestamp":"2026-06-30T19:15:28.601365+00:00","stage":"cleanup","status":"ok","detail":"termination observed state=terminated"}

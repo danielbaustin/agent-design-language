@@ -1,0 +1,18 @@
+{
+  "schema_version": "adl.aws_remote_validation_resume_state.v1",
+  "issue": 4603,
+  "run_id": "adl-aws-remote-20260630191252",
+  "max_spot_retries": 2,
+  "attempts": [
+    {
+      "attempt_index": 0,
+      "summary_path": "docs/milestones/v0.91.7/review/build_throughput/remote_validation_4603/artifacts_retry9/attempt-0/summary.json",
+      "status": "Failed",
+      "failure_reason": "remote command failed with status=Failed response_code=Some(101)",
+      "launch_instance_id": "i-0c3749b46a6d6ee58",
+      "provider_interruption_confirmed": false
+    }
+  ],
+  "next_action": "complete",
+  "final_status": "Failed"
+}

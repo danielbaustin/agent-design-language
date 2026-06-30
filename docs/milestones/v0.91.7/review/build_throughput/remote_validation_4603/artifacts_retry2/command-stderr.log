@@ -1,0 +1,199 @@
+ADL_REMOTE_FAILURE_STAGE=ensure_sccache
+ADL_REMOTE_LOG_BEGIN:rustup
+info: downloading installer
+warn: It looks like you have an existing rustup settings file at:
+warn: /root/.rustup/settings.toml
+warn: Rustup will install the default toolchain as specified in the settings file,
+warn: instead of the one inferred from the default host triple.
+info: profile set to minimal
+info: default host triple is x86_64-unknown-linux-gnu
+info: syncing channel updates for stable-x86_64-unknown-linux-gnu
+info: latest update on 2026-06-30 for version 1.96.1 (31fca3adb 2026-06-26)
+info: downloading 3 components
+info: default toolchain set to stable-x86_64-unknown-linux-gnu
+
+  stable-x86_64-unknown-linux-gnu installed - rustc 1.96.1 (31fca3adb 2026-06-26)
+
+
+Rust is installed now. Great!
+
+To get started you may need to restart your current shell.
+This would reload your PATH environment variable to include
+Cargo's bin directory ($HOME/.cargo/bin).
+
+To configure your current shell, you need to source
+the corresponding env file under $HOME/.cargo.
+
+This is usually done by running one of the following (note the leading DOT):
+. "$HOME/.cargo/env"            # For sh/bash/zsh/ash/dash/pdksh
+source "$HOME/.cargo/env.fish"  # For fish
+source "~/.cargo/env.nu"  # For nushell
+source "$HOME/.cargo/env.tcsh"  # For tcsh
+. "$HOME/.cargo/env.ps1"        # For pwsh
+source "$HOME/.cargo/env.xsh"   # For xonsh
+warn: no default linker (`cc`) was found in your PATH
+warn: many Rust crates require a system C toolchain to build
+ADL_REMOTE_LOG_END:rustup
+ADL_REMOTE_LOG_BEGIN:sccache_install
+    Updating crates.io index
+ Downloading crates ...
+  Downloaded sccache v0.16.0
+  Installing sccache v0.16.0
+    Updating crates.io index
+warning: package `iana-time-zone v0.1.59` in Cargo.lock is yanked in registry `crates-io`, consider running without --locked
+warning: package `scc v2.1.0` in Cargo.lock is yanked in registry `crates-io`, consider running without --locked
+    Updating crates.io index
+ Downloading crates ...
+  Downloaded adler2 v2.0.1
+  Downloaded fnv v1.0.7
+  Downloaded iana-time-zone v0.1.59
+  Downloaded anstyle-parse v0.2.1
+  Downloaded rand_chacha v0.3.1
+  Downloaded pkg-config v0.3.28
+  Downloaded lru-slab v0.1.2
+  Downloaded futures-task v0.3.31
+  Downloaded const-random-macro v0.1.16
+  Downloaded heck v0.5.0
+  Downloaded http-body-util v0.1.3
+  Downloaded cc v1.2.16
+  Downloaded aes v0.8.4
+  Downloaded openssl-probe v0.1.5
+  Downloaded hyper-rustls v0.27.2
+  Downloaded futures-sink v0.3.31
+  Downloaded bitflags v2.9.4
+  Downloaded crypto-common v0.1.6
+  Downloaded getrandom v0.2.11
+  Downloaded httparse v1.10.1
+  Downloaded hex v0.4.3
+  Downloaded http-body v1.0.0
+  Downloaded bb8 v0.9.0
+  Downloaded generic-array v0.14.7
+  Downloaded filetime v0.2.23
+  Downloaded rand_core v0.6.4
+  Downloaded lock_api v0.4.11
+  Downloaded serde_spanned v1.0.4
+  Downloaded httpdate v1.0.3
+  Downloaded reqsign-http-send-reqwest v2.0.0
+  Downloaded getrandom v0.3.3
+  Downloaded signal-hook-registry v1.4.1
+  Downloaded rustls-pki-types v1.12.0
+  Downloaded tokio-macros v2.6.0
+  Downloaded spki v0.7.3
+  Downloaded subtle v2.5.0
+  Downloaded strip-ansi-escapes v0.2.0
+  Downloaded toml_writer v1.0.6+spec-1.1.0
+  Downloaded tiny-keccak v2.0.2
+  Downloaded time v0.3.36
+  Downloaded tower-layer v0.3.3
+  Downloaded tracing-attributes v0.1.27
+  Downloaded uuid v1.18.1
+  Downloaded yoke-derive v0.8.1
+  Downloaded which v6.0.3
+  Downloaded zerofrom v0.1.6
+  Downloaded zstd-safe v7.1.0
+  Downloaded zstd v0.13.1
+  Downloaded version_check v0.9.4
+  Downloaded zerotrie v0.2.3
+  Downloaded winnow v0.7.14
+  Downloaded zip v0.6.6
+  Downloaded mime v0.3.17
+  Downloaded icu_collections v2.1.1
+  Downloaded zerovec-derive v0.11.2
+  Downloaded zerofrom-derive v0.1.6
+  Downloaded typenum v1.17.0
+  Downloaded webpki-roots v1.0.5
+  Downloaded icu_locale_core v2.1.1
+  Downloaded vte_generate_state_changes v0.1.1
+  Downloaded toml_parser v1.0.6+spec-1.1.0
+  Downloaded ring v0.17.13
+  Downloaded zstd-sys v2.0.10+zstd.1.5.6
+  Downloaded rustix v0.38.34
+  Downloaded semver v1.0.23
+  Downloaded rand v0.8.5
+  Downloaded icu_normalizer_data v2.1.1
+  Downloaded rustc-hash v2.0.0
+  Downloaded quinn-proto v0.11.14
+  Downloaded walkdir v2.5.0
+  Downloaded reqsign v0.16.5
+  Downloaded pin-project v1.1.7
+  Downloaded icu_properties_data v2.1.2
+  Downloaded pin-project-lite v0.2.13
+  Downloaded quinn v0.11.2
+  Downloaded regex-automata v0.4.13
+  Downloaded potential_utf v0.1.4
+  Downloaded parking_lot_core v0.9.9
+  Downloaded object v0.37.1
+  Downloaded icu_provider v2.1.1
+  Downloaded md-5 v0.10.6
+  Downloaded litemap v0.8.1
+  Downloaded reqsign-core v2.0.0
+  Downloaded pin-utils v0.1.0
+  Downloaded log v0.4.28
+  Downloaded ipnet v2.9.0
+  Downloaded num-conv v0.1.0
+  Downloaded linux-raw-sys v0.4.12
+  Downloaded idna v1.1.0
+  Downloaded reqsign-command-execute-tokio v2.0.0
+  Downloaded unicode-ident v1.0.12
+  Downloaded url v2.5.4
+  Downloaded quote v1.0.41
+  Downloaded num-traits v0.2.19
+  Downloaded num-integer v0.1.46
+  Downloaded tokio v1.49.0
+  Downloaded gzp v2.0.1
+  Downloaded openssl v0.10.75
+  Downloaded yoke v0.8.1
+  Downloaded vcpkg v0.2.15
+  Downloaded typed-path v0.12.0
+  Downloaded shlex v1.3.0
+  Downloaded zerovec v0.11.5
+  Downloaded zeroize v1.7.0
+  Downloaded xattr v1.2.0
+  Downloaded writeable v0.6.2
+  Downloaded webpki-roots v0.26.2
+  Downloaded try-lock v0.2.5
+  Downloaded utf8_iter v1.0.4
+  Downloaded tower-service v0.3.3
+  Downloaded opendal v0.55.0
+  Downloaded miniz_oxide v0.8.9
+  Downloaded jiff v0.2.15
+  Downloaded want v0.3.1
+  Downloaded trim-in-place v0.1.7
+  Downloaded toml_datetime v0.7.5+spec-1.1.0
+  Downloaded tokio-native-tls v0.3.1
+  Downloaded libc v0.2.177
+  Downloaded vte v0.11.1
+  Downloaded untrusted v0.9.0
+  Downloaded twox-hash v2.1.1
+  Downloaded tokio-rustls v0.26.0
+  Downloaded serde v1.0.228
+  Downloaded quinn-udp v0.5.2
+  Downloaded openssl-macros v0.1.1
+  Downloaded linked-hash-map v0.5.6
+  Downloaded jsonwebtoken v9.2.0
+  Downloaded encoding_rs v0.8.34
+  Downloaded utf8parse v0.2.1
+  Downloaded tracing-core v0.1.32
+  Downloaded tower-http v0.6.8
+  Downloaded quick-xml v0.38.4
+  Downloaded pem v3.0.3
+  Downloaded memchr v2.7.5
+  Downloaded jobserver v0.1.32
+  Downloaded icu_properties v2.1.2
+  Downloaded tracing v0.1.40
+  Downloaded tower v0.5.3
+  Downloaded tokio-util v0.7.10
+  Downloaded time-macros v0.2.18
+  Downloaded redis v0.32.7
+  Downloaded pkcs8 v0.10.2
+  Downloaded pin-project-internal v1.1.7
+  Downloaded parking_lot v0.12.1
+  Downloaded once_cell v1.19.0
+  Downloaded idna_adapter v1.2.1
+  Downloaded icu_normalizer v2.1.1
+  Downloaded hyper-tls v0.6.0
+  Downloaded toml v0.9.11+spec-1.1.0
+  Downloaded tokio-serde v0.9.0
+  Downloaded tinyvec_macros v0.1.1
+ADL_REMOTE_LOG_END:sccache_install
+failed to run commands: exit status 101

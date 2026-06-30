@@ -1,0 +1,504 @@
+ADL_REMOTE_FAILURE_STAGE=validation_command
+ADL_REMOTE_LOG_BEGIN:rustup
+info: downloading installer
+warn: It looks like you have an existing rustup settings file at:
+warn: /root/.rustup/settings.toml
+warn: Rustup will install the default toolchain as specified in the settings file,
+warn: instead of the one inferred from the default host triple.
+info: profile set to minimal
+info: default host triple is x86_64-unknown-linux-gnu
+info: syncing channel updates for stable-x86_64-unknown-linux-gnu
+info: latest update on 2026-06-30 for version 1.96.1 (31fca3adb 2026-06-26)
+info: downloading 3 components
+info: default toolchain set to stable-x86_64-unknown-linux-gnu
+
+  stable-x86_64-unknown-linux-gnu installed - rustc 1.96.1 (31fca3adb 2026-06-26)
+
+
+Rust is installed now. Great!
+
+To get started you may need to restart your current shell.
+This would reload your PATH environment variable to include
+Cargo's bin directory ($HOME/.cargo/bin).
+
+To configure your current shell, you need to source
+the corresponding env file under $HOME/.cargo.
+
+This is usually done by running one of the following (note the leading DOT):
+. "$HOME/.cargo/env"            # For sh/bash/zsh/ash/dash/pdksh
+source "$HOME/.cargo/env.fish"  # For fish
+source "~/.cargo/env.nu"  # For nushell
+source "$HOME/.cargo/env.tcsh"  # For tcsh
+. "$HOME/.cargo/env.ps1"        # For pwsh
+source "$HOME/.cargo/env.xsh"   # For xonsh
+ADL_REMOTE_LOG_END:rustup
+ADL_REMOTE_LOG_BEGIN:build_toolchain
+Last metadata expiration check: 0:00:05 ago on Tue Jun 30 19:09:39 2026.
+Package pkgconf-pkg-config-1.8.0-4.amzn2023.0.2.x86_64 is already installed.
+Dependencies resolved.
+================================================================================
+ Package              Arch     Version                      Repository     Size
+================================================================================
+Installing:
+ gcc                  x86_64   11.5.0-5.amzn2023.0.5        amazonlinux    36 M
+ gcc-c++              x86_64   11.5.0-5.amzn2023.0.5        amazonlinux    15 M
+ make                 x86_64   1:4.3-5.amzn2023.0.2         amazonlinux   534 k
+ openssl-devel        x86_64   1:3.5.5-1.amzn2023.0.5       amazonlinux   3.4 M
+Installing dependencies:
+ annobin-docs         noarch   12.69-1.amzn2023.0.1         amazonlinux    93 k
+ annobin-plugin-gcc   x86_64   12.69-1.amzn2023.0.1         amazonlinux   974 k
+ cpp                  x86_64   11.5.0-5.amzn2023.0.5        amazonlinux    11 M
+ gc                   x86_64   8.0.4-5.amzn2023.0.2         amazonlinux   105 k
+ gcc-plugin-annobin   x86_64   11.5.0-5.amzn2023.0.5        amazonlinux    38 k
+ glibc-devel          x86_64   2.34-231.amzn2023.0.4        amazonlinux    35 k
+ glibc-headers-x86    noarch   2.34-231.amzn2023.0.4        amazonlinux   441 k
+ guile22              x86_64   2.2.7-2.amzn2023.0.3         amazonlinux   6.4 M
+ kernel-headers       x86_64   1:6.1.175-219.359.amzn2023   amazonlinux   1.4 M
+ libmpc               x86_64   1.2.1-2.amzn2023.0.2         amazonlinux    62 k
+ libstdc++-devel      x86_64   11.5.0-5.amzn2023.0.5        amazonlinux   2.2 M
+ libtool-ltdl         x86_64   2.4.7-1.amzn2023.0.3         amazonlinux    38 k
+ libxcrypt-devel      x86_64   4.4.33-7.amzn2023            amazonlinux    32 k
+
+Transaction Summary
+================================================================================
+Install  17 Packages
+
+Total download size: 77 M
+Installed size: 242 M
+Downloading Packages:
+(1/17): annobin-docs-12.69-1.amzn2023.0.1.noarc 2.9 MB/s |  93 kB     00:00    
+(2/17): annobin-plugin-gcc-12.69-1.amzn2023.0.1  19 MB/s | 974 kB     00:00    
+(3/17): gc-8.0.4-5.amzn2023.0.2.x86_64.rpm      2.9 MB/s | 105 kB     00:00    
+(4/17): cpp-11.5.0-5.amzn2023.0.5.x86_64.rpm     67 MB/s |  11 MB     00:00    
+(5/17): gcc-plugin-annobin-11.5.0-5.amzn2023.0. 1.5 MB/s |  38 kB     00:00    
+(6/17): glibc-devel-2.34-231.amzn2023.0.4.x86_6 1.3 MB/s |  35 kB     00:00    
+(7/17): gcc-c++-11.5.0-5.amzn2023.0.5.x86_64.rp  77 MB/s |  15 MB     00:00    
+(8/17): glibc-headers-x86-2.34-231.amzn2023.0.4 8.4 MB/s | 441 kB     00:00    
+(9/17): kernel-headers-6.1.175-219.359.amzn2023  36 MB/s | 1.4 MB     00:00    
+(10/17): libmpc-1.2.1-2.amzn2023.0.2.x86_64.rpm 2.4 MB/s |  62 kB     00:00    
+(11/17): guile22-2.2.7-2.amzn2023.0.3.x86_64.rp  75 MB/s | 6.4 MB     00:00    
+(12/17): libstdc++-devel-11.5.0-5.amzn2023.0.5.  68 MB/s | 2.2 MB     00:00    
+(13/17): libtool-ltdl-2.4.7-1.amzn2023.0.3.x86_ 1.3 MB/s |  38 kB     00:00    
+(14/17): libxcrypt-devel-4.4.33-7.amzn2023.x86_ 1.3 MB/s |  32 kB     00:00    
+(15/17): make-4.3-5.amzn2023.0.2.x86_64.rpm      17 MB/s | 534 kB     00:00    
+(16/17): gcc-11.5.0-5.amzn2023.0.5.x86_64.rpm    74 MB/s |  36 MB     00:00    
+(17/17): openssl-devel-3.5.5-1.amzn2023.0.5.x86  21 MB/s | 3.4 MB     00:00    
+--------------------------------------------------------------------------------
+Total                                           130 MB/s |  77 MB     00:00     
+Running transaction check
+Transaction check succeeded.
+Running transaction test
+Transaction test succeeded.
+Running transaction
+  Preparing        :                                                        1/1 
+  Installing       : libmpc-1.2.1-2.amzn2023.0.2.x86_64                    1/17 
+  Installing       : cpp-11.5.0-5.amzn2023.0.5.x86_64                      2/17 
+  Installing       : libtool-ltdl-2.4.7-1.amzn2023.0.3.x86_64              3/17 
+  Installing       : libstdc++-devel-11.5.0-5.amzn2023.0.5.x86_64          4/17 
+  Installing       : kernel-headers-1:6.1.175-219.359.amzn2023.x86_64      5/17 
+  Installing       : glibc-headers-x86-2.34-231.amzn2023.0.4.noarch        6/17 
+  Installing       : libxcrypt-devel-4.4.33-7.amzn2023.x86_64              7/17 
+  Installing       : glibc-devel-2.34-231.amzn2023.0.4.x86_64              8/17 
+  Installing       : gc-8.0.4-5.amzn2023.0.2.x86_64                        9/17 
+  Installing       : guile22-2.2.7-2.amzn2023.0.3.x86_64                  10/17 
+  Installing       : make-1:4.3-5.amzn2023.0.2.x86_64                     11/17 
+  Installing       : gcc-11.5.0-5.amzn2023.0.5.x86_64                     12/17 
+  Running scriptlet: gcc-11.5.0-5.amzn2023.0.5.x86_64                     12/17 
+  Installing       : annobin-docs-12.69-1.amzn2023.0.1.noarch             13/17 
+  Installing       : annobin-plugin-gcc-12.69-1.amzn2023.0.1.x86_64       14/17 
+  Running scriptlet: annobin-plugin-gcc-12.69-1.amzn2023.0.1.x86_64       14/17 
+  Installing       : gcc-c++-11.5.0-5.amzn2023.0.5.x86_64                 15/17 
+  Installing       : gcc-plugin-annobin-11.5.0-5.amzn2023.0.5.x86_64      16/17 
+  Installing       : openssl-devel-1:3.5.5-1.amzn2023.0.5.x86_64          17/17 
+  Running scriptlet: openssl-devel-1:3.5.5-1.amzn2023.0.5.x86_64          17/17 
+  Verifying        : annobin-docs-12.69-1.amzn2023.0.1.noarch              1/17 
+  Verifying        : annobin-plugin-gcc-12.69-1.amzn2023.0.1.x86_64        2/17 
+  Verifying        : cpp-11.5.0-5.amzn2023.0.5.x86_64                      3/17 
+  Verifying        : gc-8.0.4-5.amzn2023.0.2.x86_64                        4/17 
+  Verifying        : gcc-11.5.0-5.amzn2023.0.5.x86_64                      5/17 
+  Verifying        : gcc-c++-11.5.0-5.amzn2023.0.5.x86_64                  6/17 
+  Verifying        : gcc-plugin-annobin-11.5.0-5.amzn2023.0.5.x86_64       7/17 
+  Verifying        : glibc-devel-2.34-231.amzn2023.0.4.x86_64              8/17 
+  Verifying        : glibc-headers-x86-2.34-231.amzn2023.0.4.noarch        9/17 
+  Verifying        : guile22-2.2.7-2.amzn2023.0.3.x86_64                  10/17 
+  Verifying        : kernel-headers-1:6.1.175-219.359.amzn2023.x86_64     11/17 
+  Verifying        : libmpc-1.2.1-2.amzn2023.0.2.x86_64                   12/17 
+  Verifying        : libstdc++-devel-11.5.0-5.amzn2023.0.5.x86_64         13/17 
+  Verifying        : libtool-ltdl-2.4.7-1.amzn2023.0.3.x86_64             14/17 
+  Verifying        : libxcrypt-devel-4.4.33-7.amzn2023.x86_64             15/17 
+  Verifying        : make-1:4.3-5.amzn2023.0.2.x86_64                     16/17 
+  Verifying        : openssl-devel-1:3.5.5-1.amzn2023.0.5.x86_64          17/17 
+
+Installed:
+  annobin-docs-12.69-1.amzn2023.0.1.noarch                                      
+  annobin-plugin-gcc-12.69-1.amzn2023.0.1.x86_64                                
+  cpp-11.5.0-5.amzn2023.0.5.x86_64                                              
+  gc-8.0.4-5.amzn2023.0.2.x86_64                                                
+  gcc-11.5.0-5.amzn2023.0.5.x86_64                                              
+  gcc-c++-11.5.0-5.amzn2023.0.5.x86_64                                          
+  gcc-plugin-annobin-11.5.0-5.amzn2023.0.5.x86_64                               
+  glibc-devel-2.34-231.amzn2023.0.4.x86_64                                      
+  glibc-headers-x86-2.34-231.amzn2023.0.4.noarch                                
+  guile22-2.2.7-2.amzn2023.0.3.x86_64                                           
+  kernel-headers-1:6.1.175-219.359.amzn2023.x86_64                              
+  libmpc-1.2.1-2.amzn2023.0.2.x86_64                                            
+  libstdc++-devel-11.5.0-5.amzn2023.0.5.x86_64                                  
+  libtool-ltdl-2.4.7-1.amzn2023.0.3.x86_64                                      
+  libxcrypt-devel-4.4.33-7.amzn2023.x86_64                                      
+  make-1:4.3-5.amzn2023.0.2.x86_64                                              
+  openssl-devel-1:3.5.5-1.amzn2023.0.5.x86_64                                   
+
+Complete!
+ADL_REMOTE_LOG_END:build_toolchain
+ADL_REMOTE_LOG_BEGIN:sccache_install
+    Updating crates.io index
+ Downloading crates ...
+  Downloaded sccache v0.16.0
+  Installing sccache v0.16.0
+    Updating crates.io index
+warning: package `iana-time-zone v0.1.59` in Cargo.lock is yanked in registry `crates-io`, consider running without --locked
+warning: package `scc v2.1.0` in Cargo.lock is yanked in registry `crates-io`, consider running without --locked
+    Updating crates.io index
+ Downloading crates ...
+  Downloaded adler2 v2.0.1
+  Downloaded addr2line v0.25.1
+  Downloaded block-buffer v0.10.4
+  Downloaded bb8 v0.9.0
+  Downloaded hyper-tls v0.6.0
+  Downloaded anstream v0.6.11
+  Downloaded httpdate v1.0.3
+  Downloaded bitflags v2.9.4
+  Downloaded byteorder v1.5.0
+  Downloaded bincode v1.3.3
+  Downloaded iana-time-zone v0.1.59
+  Downloaded hex v0.4.3
+  Downloaded ghac v0.2.0
+  Downloaded anstyle v1.0.13
+  Downloaded http-body v1.0.0
+  Downloaded hyper-rustls v0.27.2
+  Downloaded itoa v1.0.10
+  Downloaded ar v0.9.0
+  Downloaded home v0.5.9
+  Downloaded getrandom v0.2.11
+  Downloaded rustc-demangle v0.1.26
+  Downloaded option-ext v0.2.0
+  Downloaded rustc-hash v2.0.0
+  Downloaded reqsign-http-send-reqwest v2.0.0
+  Downloaded openssl-probe v0.1.5
+  Downloaded reqsign-core v2.0.0
+  Downloaded rand_chacha v0.9.0
+  Downloaded rustls-pemfile v2.1.2
+  Downloaded parking_lot v0.12.1
+  Downloaded rust-ini v0.21.0
+  Downloaded spin v0.5.2
+  Downloaded signature v2.2.0
+  Downloaded sha2 v0.10.8
+  Downloaded socket2 v0.6.0
+  Downloaded strsim v0.11.1
+  Downloaded thiserror-impl v2.0.17
+  Downloaded utf8_iter v1.0.4
+  Downloaded scrypt v0.11.0
+  Downloaded serde v1.0.228
+  Downloaded writeable v0.6.2
+  Downloaded xattr v1.2.0
+  Downloaded untrusted v0.9.0
+  Downloaded utf8parse v0.2.1
+  Downloaded walkdir v2.5.0
+  Downloaded zeroize v1.7.0
+  Downloaded which v6.0.3
+  Downloaded zerofrom-derive v0.1.6
+  Downloaded zstd v0.13.1
+  Downloaded zip v0.6.6
+  Downloaded zerotrie v0.2.3
+  Downloaded webpki-roots v1.0.5
+  Downloaded url v2.5.4
+  Downloaded zstd-safe v7.1.0
+  Downloaded zerovec v0.11.5
+  Downloaded webpki-roots v0.26.2
+  Downloaded time-macros v0.2.18
+  Downloaded tokio-util v0.7.10
+  Downloaded typed-path v0.12.0
+  Downloaded vte v0.11.1
+  Downloaded vcpkg v0.2.15
+  Downloaded tracing v0.1.40
+  Downloaded jiff v0.2.15
+  Downloaded unicode-ident v1.0.12
+  Downloaded regex-automata v0.4.13
+  Downloaded libc v0.2.177
+  Downloaded toml_parser v1.0.6+spec-1.1.0
+  Downloaded winnow v0.7.14
+  Downloaded synstructure v0.13.2
+  Downloaded version_check v0.9.4
+  Downloaded zerovec-derive v0.11.2
+  Downloaded typenum v1.17.0
+  Downloaded tokio-rustls v0.26.0
+  Downloaded tinyvec v1.6.0
+  Downloaded thiserror-impl v1.0.56
+  Downloaded zstd-sys v2.0.10+zstd.1.5.6
+  Downloaded zerofrom v0.1.6
+  Downloaded yoke v0.8.1
+  Downloaded tower-service v0.3.3
+  Downloaded toml v0.9.11+spec-1.1.0
+  Downloaded quinn-proto v0.11.14
+  Downloaded yoke-derive v0.8.1
+  Downloaded want v0.3.1
+  Downloaded vte_generate_state_changes v0.1.1
+  Downloaded tokio v1.49.0
+  Downloaded tracing-core v0.1.32
+  Downloaded tinyvec_macros v0.1.1
+  Downloaded tempfile v3.10.1
+  Downloaded regex-syntax v0.8.8
+  Downloaded tokio-serde v0.9.0
+  Downloaded tokio-native-tls v0.3.1
+  Downloaded redis v0.32.7
+  Downloaded icu_provider v2.1.1
+  Downloaded tower-layer v0.3.3
+  Downloaded tokio-macros v2.6.0
+  Downloaded opendal v0.55.0
+  Downloaded thiserror v2.0.17
+  Downloaded object v0.37.1
+  Downloaded num-bigint-dig v0.8.6
+  Downloaded uuid v1.18.1
+  Downloaded twox-hash v2.1.1
+  Downloaded tower v0.5.3
+  Downloaded linux-raw-sys v0.4.12
+  Downloaded time v0.3.36
+  Downloaded strip-ansi-escapes v0.2.0
+  Downloaded signal-hook-registry v1.4.1
+  Downloaded openssl v0.10.75
+  Downloaded trim-in-place v0.1.7
+  Downloaded tower-http v0.6.8
+  Downloaded tinystr v0.8.2
+  Downloaded sha1 v0.10.6
+  Downloaded rustls-native-certs v0.8.1
+  Downloaded quick-xml v0.38.4
+  Downloaded prost v0.13.5
+  Downloaded try-lock v0.2.5
+  Downloaded tracing-attributes v0.1.27
+  Downloaded tiny-keccak v2.0.2
+  Downloaded terminal_size v0.3.0
+  Downloaded tar v0.4.40
+  Downloaded sync_wrapper v1.0.1
+  Downloaded thiserror v1.0.56
+  Downloaded spki v0.7.3
+  Downloaded simple_asn1 v0.6.2
+  Downloaded simd-adler32 v0.3.7
+  Downloaded sha1_smol v1.0.0
+  Downloaded serde_spanned v1.0.4
+  Downloaded serde_json v1.0.146
+  Downloaded semver v1.0.23
+  Downloaded regex v1.12.2
+  Downloaded quick-xml v0.37.5
+  Downloaded icu_properties_data v2.1.2
+  Downloaded toml_writer v1.0.6+spec-1.1.0
+  Downloaded toml_datetime v0.7.5+spec-1.1.0
+  Downloaded stable_deref_trait v1.2.1
+  Downloaded slab v0.4.9
+  Downloaded idna v1.1.0
+  Downloaded scopeguard v1.2.0
+  Downloaded itertools v0.14.0
+  Downloaded time-core v0.1.2
+  Downloaded socket2 v0.5.5
+  Downloaded ruzstd v0.8.1
+  Downloaded num-bigint v0.4.6
+  Downloaded mio v1.1.0
+  Downloaded memchr v2.7.5
+  Downloaded indexmap v2.12.1
+  Downloaded gzp v2.0.1
+  Downloaded syn v2.0.106
+  Downloaded subtle v2.5.0
+  Downloaded smallvec v1.15.1
+  Downloaded shlex v1.3.0
+  Downloaded serde_core v1.0.228
+  Downloaded salsa20 v0.10.2
+ADL_REMOTE_LOG_END:sccache_install
+ADL_REMOTE_LOG_BEGIN:git_clone
+Cloning into '/tmp/adl-aws-remote-validation/adl-aws-remote-20260630190727/agent-design-language'...
+ADL_REMOTE_LOG_END:git_clone
+ADL_REMOTE_LOG_BEGIN:git_fetch
+ADL_REMOTE_LOG_END:git_fetch
+ADL_REMOTE_LOG_BEGIN:git_checkout
+Note: switching to 'origin/main'.
+
+You are in 'detached HEAD' state. You can look around, make experimental
+changes and commit them, and you can discard any commits you make in this
+state without impacting any branches by switching back to a branch.
+
+If you want to create a new branch to retain commits you create, you may
+do so (now or later) by using -c with the switch command. Example:
+
+  git switch -c <new-branch-name>
+
+Or undo this operation with:
+
+  git switch -
+
+Turn off this advice by setting config variable advice.detachedHead to false
+
+HEAD is now at 3bf05994 [v0.91.7][WP-01] Promote planning package and open issue wave (Closes #4628) (#4655)
+ADL_REMOTE_LOG_END:git_checkout
+ADL_REMOTE_LOG_BEGIN:command_stdout
+ADL_REMOTE_LOG_END:command_stdout
+ADL_REMOTE_LOG_BEGIN:command_stderr
+    Updating crates.io index
+ Downloading crates ...
+  Downloaded anstyle-query v1.1.5
+  Downloaded anstream v0.6.21
+  Downloaded anstyle-parse v0.2.7
+  Downloaded ahash v0.8.12
+  Downloaded percent-encoding v2.3.2
+  Downloaded phf_generator v0.11.3
+  Downloaded clap_lex v0.7.7
+  Downloaded parking_lot_core v0.9.12
+  Downloaded cpufeatures v0.2.17
+  Downloaded chunked_transfer v1.5.0
+  Downloaded dyn-clone v1.0.20
+  Downloaded p256 v0.13.2
+  Downloaded async-trait v0.1.89
+  Downloaded colorchoice v1.0.4
+  Downloaded clap v4.5.54
+  Downloaded serde_path_to_error v0.1.20
+  Downloaded phf v0.12.1
+  Downloaded bit-set v0.5.3
+  Downloaded openssl-probe v0.2.1
+  Downloaded curve25519-dalek-derive v0.1.1
+  Downloaded itoa v1.0.17
+  Downloaded is_terminal_polyfill v1.70.2
+  Downloaded rustls-native-certs v0.8.4
+  Downloaded web-time v1.1.0
+  Downloaded scoped-tls v1.0.1
+  Downloaded rfc6979 v0.4.0
+  Downloaded sync_wrapper v1.0.2
+  Downloaded quote v1.0.44
+  Downloaded version_check v0.9.5
+  Downloaded rustversion v1.0.22
+  Downloaded serde_yaml v0.9.34+deprecated
+  Downloaded unicode-id v0.3.6
+  Downloaded zeroize_derive v1.4.3
+  Downloaded zmij v1.0.16
+  Downloaded zeroize v1.8.2
+  Downloaded tokio-rustls v0.26.4
+  Downloaded yup-oauth2 v12.1.2
+  Downloaded url v2.5.8
+  Downloaded snafu v0.8.9
+  Downloaded tokio-util v0.7.18
+  Downloaded jsonschema v0.17.1
+  Downloaded reqwest v0.11.27
+  Downloaded num-iter v0.1.45
+  Downloaded encoding_rs v0.8.35
+  Downloaded tracing-subscriber v0.3.22
+  Downloaded webpki-roots v1.0.6
+  Downloaded markdown v1.0.0
+  Downloaded mime_guess2 v2.3.1
+  Downloaded zerocopy v0.8.33
+  Downloaded syn v2.0.114
+  Downloaded nu-ansi-term v0.50.3
+  Downloaded rustls v0.23.36
+  Downloaded bitflags v2.12.1
+  Downloaded quinn-proto v0.11.13
+  Downloaded http-body v1.0.1
+  Downloaded ecdsa v0.16.9
+  Downloaded deranged v0.5.5
+  Downloaded tracing v0.1.44
+  Downloaded libm v0.2.16
+  Downloaded time v0.3.47
+  Downloaded octocrab v0.53.0
+  Downloaded num-conv v0.2.0
+  Downloaded chrono v0.4.44
+  Downloaded chrono-tz v0.10.4
+  Downloaded ascii v1.1.0
+  Downloaded dirs-sys v0.4.1
+  Downloaded der v0.7.10
+  Downloaded typenum v1.19.0
+  Downloaded socket2 v0.6.2
+  Downloaded serde_json v1.0.149
+  Downloaded http v0.2.12
+  Downloaded h2 v0.4.15
+  Downloaded ed25519-dalek v2.2.0
+  Downloaded camino v1.2.2
+  Downloaded unsafe-libyaml v0.2.11
+  Downloaded tinyvec v1.10.0
+  Downloaded thiserror v1.0.69
+  Downloaded schemars v0.8.22
+  Downloaded rustls-webpki v0.103.9
+  Downloaded loom v0.7.2
+  Downloaded http-body v0.4.6
+  Downloaded tiny_http v0.12.0
+  Downloaded thiserror-impl v1.0.69
+  Downloaded thiserror v2.0.18
+  Downloaded socket2 v0.5.10
+  Downloaded siphasher v1.0.2
+  Downloaded sharded-slab v0.1.7
+  Downloaded sha2 v0.10.9
+  Downloaded quinn v0.11.9
+  Downloaded primeorder v0.13.6
+  Downloaded ppv-lite86 v0.2.21
+  Downloaded pin-project-internal v1.1.13
+  Downloaded libc v0.2.180
+  Downloaded utf8parse v0.2.2
+  Downloaded unicase v2.9.0
+  Downloaded tracing-attributes v0.1.31
+  Downloaded snafu-derive v0.8.9
+  Downloaded simple_asn1 v0.6.4
+  Downloaded unicode-ident v1.0.22
+  Downloaded time-core v0.1.8
+  Downloaded sync_wrapper v0.1.2
+  Downloaded secrecy v0.10.3
+  Downloaded pin-project-lite v0.2.16
+  Downloaded phf_macros v0.11.3
+  Downloaded lazy_static v1.5.0
+  Downloaded curve25519-dalek v4.1.3
+  Downloaded time-macros v0.2.27
+  Downloaded quinn-udp v0.5.14
+  Downloaded num v0.4.3
+  Downloaded nom v8.0.0
+  Downloaded lock_api v0.4.14
+  Downloaded indexmap v2.13.0
+  Downloaded hkdf v0.12.4
+  Downloaded group v0.13.0
+  Downloaded google-workspace v0.22.5
+  Downloaded getrandom v0.3.4
+  Downloaded generator v0.8.9
+  Downloaded ring v0.17.14
+  Downloaded cfg-if v1.0.4
+  Downloaded thread_local v1.1.9
+  Downloaded rustc-hash v2.1.1
+  Downloaded phf_shared v0.11.3
+  Downloaded hyper v1.8.1
+  Downloaded hyper v0.14.32
+  Downloaded h2 v0.3.27
+  Downloaded equivalent v1.0.2
+  Downloaded ed25519 v2.2.3
+  Downloaded clap_builder v4.5.54
+  Downloaded cargo_metadata v0.23.1
+  Downloaded aho-corasick v1.1.4
+  Downloaded mio v1.1.1
+  Downloaded matchers v0.2.0
+  Downloaded hyper-util v0.1.20
+  Downloaded http v1.4.0
+  Downloaded fraction v0.13.1
+  Downloaded fancy-regex v0.11.0
+  Downloaded crypto-common v0.1.7
+  Downloaded crypto-bigint v0.5.5
+  Downloaded cc v1.2.55
+  Downloaded bytes v1.11.0
+  Downloaded pin-project v1.1.13
+  Downloaded phf_shared v0.12.1
+  Downloaded memchr v2.7.6
+  Downloaded log v0.4.29
+  Downloaded jsonwebtoken v10.4.0
+  Downloaded iana-time-zone v0.1.65
+  Downloaded futures-executor v0.3.31
+  Downloaded uuid v1.20.0
+  Downloaded tracing-log v0.2.0
+  Downloaded tracing-core v0.1.36
+  Downloaded tokio-macros v2.6.1
+  Downloaded thiserror-impl v2.0.18
+  Downloaded serde_derive_internals v0.29.1
+  Downloaded semver v1.0.27
+  Downloaded sec1 v0.7.3
+  Downloaded seahash v4.1.0
+  Downloaded schemars_derive v0.8.22
+  Downloaded ryu v1.0.22
+ADL_REMOTE_LOG_END:command_stderr
+failed to run commands: exit status 101

@@ -1,0 +1,5 @@
+{"timestamp":"2026-06-30T19:05:26.720989+00:00","stage":"start","status":"started","detail":"issue=Some(4603) region=us-west-2 instance_types=c7i.4xlarge out=docs/milestones/v0.91.7/review/build_throughput/remote_validation_4603/live_run_summary_retry7.json"}
+{"timestamp":"2026-06-30T19:05:33.201945+00:00","stage":"identity","status":"ok","detail":"caller identity resolved"}
+{"timestamp":"2026-06-30T19:05:40.945017+00:00","stage":"quota","status":"ok","detail":"quota snapshot captured"}
+{"timestamp":"2026-06-30T19:05:40.945032+00:00","stage":"launch_attempt","status":"started","detail":"instance_type=c7i.4xlarge market=spot"}
+{"timestamp":"2026-06-30T19:05:59.960319+00:00","stage":"launch_attempt","status":"warn","detail":"instance_type=c7i.4xlarge market=spot failed: service error: service error"}

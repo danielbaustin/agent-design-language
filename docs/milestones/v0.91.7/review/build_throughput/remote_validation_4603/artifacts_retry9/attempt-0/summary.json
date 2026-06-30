@@ -1,0 +1,110 @@
+{
+  "schema_version": "adl.aws_remote_validation_run.v1",
+  "issue": 4603,
+  "run_id": "adl-aws-remote-20260630191252",
+  "status": "failed",
+  "region": "us-west-2",
+  "profile": "agent-logic-admin",
+  "started_at": "2026-06-30T19:13:30.079869+00:00",
+  "finished_at": "2026-06-30T19:21:41.764134+00:00",
+  "account_identity": {
+    "account_id": "713332525889",
+    "account_id_sha256": "b05e1f4379b5c7457d1de357e21447526ecf418ed47176ead2868d0a2d6589c9",
+    "arn": "arn:aws:iam::713332525889:user/daniel.austin.admin",
+    "user_id": "AIDA2MFPORNA76CEVY257"
+  },
+  "quota_snapshot": {
+    "spot_vcpu_quota": null,
+    "on_demand_vcpu_quota": null,
+    "notes": [
+      "spot quota 'All Standard (A, C, D, H, I, M, R, T, Z) Spot Instance Requests' not found",
+      "on-demand quota 'Running On-Demand Standard (A, C, D, H, I, M, R, T, Z) instances' not found"
+    ]
+  },
+  "attempts": [
+    {
+      "instance_type": "c7i.large",
+      "purchase_option": "spot",
+      "status": "launched",
+      "message": "spot launch succeeded"
+    }
+  ],
+  "launch": {
+    "purchase_option": "spot",
+    "instance_type": "c7i.large",
+    "instance_id": "i-0c3749b46a6d6ee58",
+    "instance_id_sha256": "86df79679090ebd3e3176f35cbb3a32d44ee165cc5128bc52e0141be651bb987",
+    "launched_at": "2026-06-30T19:13:40.904140+00:00",
+    "initial_state": "pending"
+  },
+  "command": {
+    "command_id": "176bac13-22af-420f-9bd2-328c78138cd3",
+    "status": "Failed",
+    "response_code": 101,
+    "stdout_path": "docs/milestones/v0.91.7/review/build_throughput/remote_validation_4603/artifacts_retry9/attempt-0/command-stdout.log",
+    "stderr_path": "docs/milestones/v0.91.7/review/build_throughput/remote_validation_4603/artifacts_retry9/attempt-0/command-stderr.log",
+    "output_preview": "",
+    "stderr_preview": "ADL_REMOTE_FAILURE_STAGE=validation_command | ADL_REMOTE_LOG_BEGIN:rustup | info: downloading installer | warn: It looks like you have an existing rustup settings file at: | warn: /root/.rustup/settings.toml | warn: Rustup will install the default toolchain as specified in the settings file, | warn: instead of the one inferred from the default host triple. | info: profile set to minimal"
+  },
+  "cleanup": {
+    "termination_attempted": true,
+    "final_instance_state": "terminated",
+    "termination_error": null
+  },
+  "launch_surface": {
+    "provisioning_mode": "ephemeral_aws_surface",
+    "ami_id": "ami-0b0b27dd5c039480f",
+    "ami_source": "ssm_public_parameter",
+    "vpc_id": "vpc-07dc67492b4aee743",
+    "subnet_id": "subnet-002ef5df5a93bbb1b",
+    "security_group_id": "sg-06e161cb78a2acb62",
+    "security_group_name": "adl-aws-remote-validation-sg-4603-adl-aws-remote-20260630191252",
+    "security_group_created": true,
+    "instance_profile_name": "ADLAwsRemoteValidationProfile-4603-adl-aws-remote-20260630191252",
+    "role_name": "ADLAwsRemoteValidationRole-4603-adl-aws-remote-20260630191252",
+    "instance_profile_created": true,
+    "notes": [
+      "Subnet auto-resolved from default VPC",
+      "AMI id resolved from public Amazon Linux 2023 SSM parameter",
+      "Created temporary security group for disposable builder",
+      "Created temporary IAM role and instance profile with AmazonSSMManagedInstanceCore"
+    ]
+  },
+  "launch_surface_cleanup": null,
+  "spot_termination_evidence": null,
+  "timings": {
+    "total_seconds": 491,
+    "launch_seconds": 2,
+    "ssm_ready_seconds": 24,
+    "remote_command_seconds": 391,
+    "teardown_seconds": 54
+  },
+  "remote_summary": null,
+  "cost_explorer": {
+    "start": "2026-06-01T00:00:00+00:00",
+    "end": "2026-07-01T19:21:32.124386+00:00",
+    "service": "Amazon Elastic Compute Cloud - Compute",
+    "amount": "0",
+    "unit": "USD",
+    "delayed_billing_boundary": true,
+    "note": "Cost Explorer reflects account spend on AWS delay; treat this as supporting cost evidence rather than exact per-run billing."
+  },
+  "budget_snapshot": {
+    "budget_name": "Agent Logic Monthly",
+    "limit_amount": "500.0",
+    "limit_unit": "USD",
+    "actual_spend_amount": "0.092",
+    "actual_spend_unit": "USD",
+    "forecast_spend_amount": null,
+    "forecast_spend_unit": null
+  },
+  "expected_max_cost_usd": 50.0,
+  "artifact_dir": "docs/milestones/v0.91.7/review/build_throughput/remote_validation_4603/artifacts_retry9/attempt-0",
+  "event_log_path": "docs/milestones/v0.91.7/review/build_throughput/remote_validation_4603/artifacts_retry9/attempt-0/events.jsonl",
+  "non_claims": [
+    "This summary does not claim broad CI migration to EC2.",
+    "This summary does not claim Spot savings unless a Spot-backed run retained cost and timing evidence.",
+    "This summary does not claim per-run final AWS billing line items when Cost Explorer data is delayed."
+  ],
+  "failure_reason": "remote command failed with status=Failed response_code=Some(101)"
+}

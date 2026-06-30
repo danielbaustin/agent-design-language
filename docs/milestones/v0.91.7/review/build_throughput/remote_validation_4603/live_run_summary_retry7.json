@@ -1,0 +1,101 @@
+{
+  "schema_version": "adl.aws_remote_validation_run.v1",
+  "issue": 4603,
+  "run_id": "adl-aws-remote-20260630190439",
+  "status": "failed",
+  "region": "us-west-2",
+  "profile": "agent-logic-admin",
+  "started_at": "2026-06-30T19:05:26.720965+00:00",
+  "finished_at": "2026-06-30T19:06:22.719009+00:00",
+  "account_identity": {
+    "account_id": "713332525889",
+    "account_id_sha256": "b05e1f4379b5c7457d1de357e21447526ecf418ed47176ead2868d0a2d6589c9",
+    "arn": "arn:aws:iam::713332525889:user/daniel.austin.admin",
+    "user_id": "AIDA2MFPORNA76CEVY257"
+  },
+  "quota_snapshot": {
+    "spot_vcpu_quota": null,
+    "on_demand_vcpu_quota": null,
+    "notes": [
+      "spot quota 'All Standard (A, C, D, H, I, M, R, T, Z) Spot Instance Requests' not found",
+      "on-demand quota 'Running On-Demand Standard (A, C, D, H, I, M, R, T, Z) instances' not found"
+    ]
+  },
+  "attempts": [
+    {
+      "instance_type": "c7i.4xlarge",
+      "purchase_option": "spot",
+      "status": "failed",
+      "message": "service error: service error"
+    }
+  ],
+  "launch": null,
+  "command": null,
+  "cleanup": {
+    "termination_attempted": false,
+    "final_instance_state": null,
+    "termination_error": null
+  },
+  "launch_surface": {
+    "provisioning_mode": "ephemeral_aws_surface",
+    "ami_id": "ami-0b0b27dd5c039480f",
+    "ami_source": "ssm_public_parameter",
+    "vpc_id": "vpc-07dc67492b4aee743",
+    "subnet_id": "subnet-002ef5df5a93bbb1b",
+    "security_group_id": "sg-0229e51d569549ad6",
+    "security_group_name": "adl-aws-remote-validation-sg-4603-adl-aws-remote-20260630190439",
+    "security_group_created": true,
+    "instance_profile_name": "ADLAwsRemoteValidationProfile-4603-adl-aws-remote-20260630190439",
+    "role_name": "ADLAwsRemoteValidationRole-4603-adl-aws-remote-20260630190439",
+    "instance_profile_created": true,
+    "notes": [
+      "Subnet auto-resolved from default VPC",
+      "AMI id resolved from public Amazon Linux 2023 SSM parameter",
+      "Created temporary security group for disposable builder",
+      "Created temporary IAM role and instance profile with AmazonSSMManagedInstanceCore"
+    ]
+  },
+  "launch_surface_cleanup": {
+    "security_group_deleted": true,
+    "instance_profile_deleted": true,
+    "role_deleted": true,
+    "notes": [
+      "Removed role 'ADLAwsRemoteValidationRole-4603-adl-aws-remote-20260630190439' from instance profile 'ADLAwsRemoteValidationProfile-4603-adl-aws-remote-20260630190439'"
+    ]
+  },
+  "timings": {
+    "total_seconds": 55,
+    "launch_seconds": 19,
+    "ssm_ready_seconds": null,
+    "remote_command_seconds": null,
+    "teardown_seconds": null
+  },
+  "remote_summary": null,
+  "cost_explorer": {
+    "start": "2026-06-01T00:00:00+00:00",
+    "end": "2026-07-01T19:05:59.960339+00:00",
+    "service": "Amazon Elastic Compute Cloud - Compute",
+    "amount": "0",
+    "unit": "USD",
+    "delayed_billing_boundary": true,
+    "note": "Cost Explorer reflects account spend on AWS delay; treat this as supporting cost evidence rather than exact per-run billing."
+  },
+  "budget_snapshot": {
+    "budget_name": "Agent Logic Monthly",
+    "limit_amount": "500.0",
+    "limit_unit": "USD",
+    "actual_spend_amount": "0.092",
+    "actual_spend_unit": "USD",
+    "forecast_spend_amount": null,
+    "forecast_spend_unit": null
+  },
+  "expected_max_cost_usd": 50.0,
+  "artifact_dir": "docs/milestones/v0.91.7/review/build_throughput/remote_validation_4603/artifacts_retry7",
+  "event_log_path": "docs/milestones/v0.91.7/review/build_throughput/remote_validation_4603/artifacts_retry7/events.jsonl",
+  "non_claims": [
+    "This summary does not claim broad CI migration to EC2.",
+    "This summary does not claim Spot savings unless a Spot-backed run retained cost and timing evidence.",
+    "This summary does not claim per-run final AWS billing line items when Cost Explorer data is delayed."
+  ],
+  "failure_reason": "spot launch failed without permitted fallback: service error: service error"
+}

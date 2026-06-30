@@ -15,6 +15,7 @@ They are planning and bridge documents, not runtime implementation proof.
 - [Affect And Happiness Bridge](AFFECT_HAPPINESS_BRIDGE_v0.91.7.md)
 - [Godel Mechanics Bridge](GODEL_MECHANICS_BRIDGE_v0.91.7.md)
 - [Economics Context Decision](ECONOMICS_CONTEXT_DECISION_v0.91.7.md)
+- [AWS Spot Remote Validation Lane](AWS_SPOT_REMOTE_VALIDATION_LANE_v0.91.7.md)
 
 ## Guardrails
 

@@ -1,0 +1,9 @@
+{"timestamp":"2026-06-30T18:27:55.913175+00:00","stage":"start","status":"started","detail":"issue=Some(4603) region=us-west-2 instance_types=c7i.large,c7i.xlarge,c7i.2xlarge out=docs/milestones/v0.91.7/review/build_throughput/remote_validation_4603/live_run_summary_retry2.json"}
+{"timestamp":"2026-06-30T18:28:01.128449+00:00","stage":"identity","status":"ok","detail":"caller identity resolved"}
+{"timestamp":"2026-06-30T18:28:06.970692+00:00","stage":"quota","status":"ok","detail":"quota snapshot captured"}
+{"timestamp":"2026-06-30T18:28:06.970715+00:00","stage":"launch_attempt","status":"started","detail":"instance_type=c7i.large market=spot"}
+{"timestamp":"2026-06-30T18:28:09.413158+00:00","stage":"launch_attempt","status":"ok","detail":"instance_type=c7i.large market=spot launched"}
+{"timestamp":"2026-06-30T18:28:25.485170+00:00","stage":"ssm","status":"ok","detail":"instance became SSM-ready with status Online"}
+{"timestamp":"2026-06-30T18:29:31.763839+00:00","stage":"remote_command","status":"failed","detail":"remote command failed with status=Failed response_code=Some(101)"}
+{"timestamp":"2026-06-30T18:29:37.899397+00:00","stage":"cleanup","status":"started","detail":"termination requested"}
+{"timestamp":"2026-06-30T18:29:39.973811+00:00","stage":"cleanup","status":"ok","detail":"termination observed state=shutting-down"}
