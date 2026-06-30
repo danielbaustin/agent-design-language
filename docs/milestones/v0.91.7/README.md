@@ -14,13 +14,24 @@
 
 ## Status
 
-Current status: planning refresh for the final pre-`v0.92` bridge and readiness tranche.
+Current status: milestone issue wave opened for the final pre-`v0.92` bridge and readiness tranche.
 
 - Initial planning package: created by earlier v0.91.7 setup work.
 - Source-capture refresh: `#4368`.
 - v0.91.6 release-tail handoff refresh: `#3982`.
-- Execution: not started beyond planning/feature docs and `#4549` Soak #2
-  execution-packet setup; no Soak #2 runtime execution has run.
+- WP-01 planning promotion: `#4628`.
+- Canonical WP issue wave: `#4628` through `#4650`.
+- Existing v0.91.7 routed issues:
+  - `#4603` routes into WP-06 build throughput / remote validation.
+  - `#4617` routes into WP-04 goal metrics / telemetry.
+  - `#4622` routes into WP-02 release-tail / PR inventory.
+- Non-WP v0.91.7 issues:
+  - `#4651` covers sensible Rust refactoring by ownership and validation cost.
+  - `#4652` covers Unity demo surfaces.
+  - `#4653` covers dspark speculative decoding evaluation with Qwen and Gemma.
+  - `#4654` covers deepseek-v4-flash-dspark smoke testing on ephemeral 2xH100 EC2 with teardown/cost proof.
+- Execution: the issue wave is open; implementation work beyond planning/feature
+  docs and `#4549` Soak #2 execution-packet setup has not run.
 - Validation: docs-readiness validation only until implementation issues run.
 - Release readiness: not applicable until `v0.91.7` executes.
 - Dependency gate: v0.91.7 execution must consume the failed-but-closed WP-15
@@ -96,7 +107,7 @@ Every surface must exit as one of:
 - Demo matrix: [DEMO_MATRIX_v0.91.7.md](DEMO_MATRIX_v0.91.7.md)
 - Feature-doc index: [FEATURE_DOCS_v0.91.7.md](FEATURE_DOCS_v0.91.7.md)
 - v0.92 handoff: [V092_HANDOFF_v0.91.7.md](V092_HANDOFF_v0.91.7.md)
-- Candidate issue wave: [WP_ISSUE_WAVE_v0.91.7.yaml](WP_ISSUE_WAVE_v0.91.7.yaml)
+- Opened issue wave: [WP_ISSUE_WAVE_v0.91.7.yaml](WP_ISSUE_WAVE_v0.91.7.yaml)
 - Checklist: [MILESTONE_CHECKLIST_v0.91.7.md](MILESTONE_CHECKLIST_v0.91.7.md)
 - Release plan: [RELEASE_PLAN_v0.91.7.md](RELEASE_PLAN_v0.91.7.md)
 - Release notes: [RELEASE_NOTES_v0.91.7.md](RELEASE_NOTES_v0.91.7.md)

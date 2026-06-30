@@ -7,12 +7,30 @@
 - Start date: not scheduled
 - End date: not scheduled
 - Owner: ADL maintainers
-- Status: planned
+- Status: issue wave opened
 - Source capture: `PLANNING_SOURCE_CAPTURE_v0.91.7.md`
 
 ## Status
 
-Planned. This document defines execution order; it does not start runtime work.
+The canonical WP issue wave is open. This document defines execution order; it does not by itself start runtime work.
+
+Opened WP issues:
+
+- WP-01: `#4628`
+- WP-02 through WP-23: `#4629` through `#4650`
+
+Existing routed v0.91.7 issues:
+
+- `#4603` routes into WP-06.
+- `#4617` routes into WP-04.
+- `#4622` routes into WP-02.
+
+Non-WP v0.91.7 issues:
+
+- `#4651` supports WP-03/WP-06 with Rust refactoring by ownership and validation cost.
+- `#4652` supports WP-09/WP-15 with Unity demo surfaces.
+- `#4653` supports WP-05/WP-06 with dspark speculative decoding evaluation for Qwen and Gemma.
+- `#4654` supports WP-05/WP-06 with a deepseek-v4-flash-dspark smoke on ephemeral 2xH100 EC2; quota, cost, and teardown proof are mandatory.
 
 ## Sprint Overview
 

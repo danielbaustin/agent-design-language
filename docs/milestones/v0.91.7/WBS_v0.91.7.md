@@ -1,26 +1,26 @@
-# v0.91.7 Candidate Work Breakdown Structure
+# v0.91.7 Work Breakdown Structure
 
 ## Metadata
 
 - Milestone: `v0.91.7`
 - Version: `v0.91.7`
 - Date: `2026-06-21`
-- Status: candidate WP sequence for final pre-`v0.92` bridge and readiness tranche
+- Status: WP issue wave opened for final pre-`v0.92` bridge and readiness tranche
 - Setup lineage: `#3801`, `#3825`, `#4368`
 - Source capture: `PLANNING_SOURCE_CAPTURE_v0.91.7.md`
 - Release-tail handoff addendum: `V0916_TO_V0917_HANDOFF_ADDENDUM_3982.md`
 
 ## Status
 
-Candidate allocation only. `v0.91.7` issues should be opened from this WBS only after the current `v0.91.6` closeout truth is reviewed. WP-01 must consume the current release-tail handoff and source-capture ledger before dependent execution work begins.
+WP allocation is promoted into the v0.91.7 issue wave. WP-01 is `#4628`; WP-02 through WP-23 are `#4629` through `#4650`. Existing v0.91.7 issues are routed rather than duplicated: `#4603` belongs to WP-06, `#4617` belongs to WP-04, and `#4622` belongs to WP-02.
 
-WP-01 should consume this document, `PLANNING_SOURCE_CAPTURE_v0.91.7.md`, and [WP_ISSUE_WAVE_v0.91.7.yaml](WP_ISSUE_WAVE_v0.91.7.yaml), then open concrete GitHub issues with canonical C-SDLC cards.
+WP-01 consumes this document, `PLANNING_SOURCE_CAPTURE_v0.91.7.md`, and [WP_ISSUE_WAVE_v0.91.7.yaml](WP_ISSUE_WAVE_v0.91.7.yaml), then keeps the opened issue wave and planning truth aligned before dependent execution begins.
 
 ## WBS Summary
 
 `v0.91.7` should make the path to `v0.92` explicit. It combines residual bridge docs with the operational substrate needed for first-birthday execution: sprint execution, validation planning, goal/metrics accounting, scheduler/provider/local-agent routing, build throughput, runtime integration/soak, runtime architecture diet, security/protocol residuals, demos, and launch handoff.
 
-## Candidate WP Sequence
+## WP Sequence
 
 | WP | Work Package | Description | Primary deliverable | Dependencies |
 | --- | --- | --- | --- | --- |
