@@ -14,6 +14,7 @@ Commands:
   doctor  <issue> [--slug <slug>] [--version <v>] [--no-fetch-issue] [--mode full|ready|preflight] [--allow-open-pr-wave] [--json]
   finish  <issue> --title "<title>" ... [-f <input_card.md>] [--output-card <output_card.md>] [--no-open] [--merge]
   validation <pr-number-or-url> [-R owner/repo] [--watch] [--json]
+  pr-inventory [-R owner/repo] [--json]
   watch   <issue-number-or-url> [--slug <slug>] [--version <v>] [-R owner/repo] [--json]
   closing-linkage [--event-name <event>] [--event-path <path>] [--head-ref <branch>] [-R owner/repo]
   issue   <list|search|view|create|comment|edit|close> ...
@@ -55,6 +56,7 @@ Notes:
 - `pr run <issue> ...` is the preferred public execution-context binder for issue work.
 - `pr doctor <issue> ...` is the preferred public readiness and drift diagnostic surface.
 - `pr watch <issue> ...` is the typed tracked-issue lifecycle watcher for issue/PR wait states.
+- `pr pr-inventory ...` is the typed release-tail PR inventory surface; use it instead of raw `gh pr list`.
 - `pr closeout <issue> ...` finalizes a closed issue locally and safely prunes its execution worktree when possible.
 - `pr closing-linkage ...` is the Rust-owned CI/linkage guard and prefers live PR metadata over stale event payloads when token context exists.
 - `pr start <issue> ...` remains only as a legacy alias over the same Rust binding path and is no longer part of the taught public flow.
@@ -318,4 +320,3 @@ Behavior:
 - prunes the matching issue worktree when it is safe to do so
 EOF
 }
-

@@ -39,6 +39,8 @@ fn linked_pr(number: u32, is_draft: bool) -> OpenPullRequest {
         base_ref_name: "main".to_string(),
         is_draft,
         state: "OPEN".to_string(),
+        updated_at: None,
+        mergeable: None,
         queue: None,
     }
 }

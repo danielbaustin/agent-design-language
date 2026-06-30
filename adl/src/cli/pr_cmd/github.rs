@@ -39,7 +39,7 @@ use self::transport::{
     create_pr_octocrab, current_pr_url_octocrab, issue_close_octocrab, issue_comment_octocrab,
     list_prs_by_head_ref_octocrab, list_prs_octocrab, mark_pr_ready_octocrab, merge_pr_octocrab,
     pr_base_ref_octocrab, pr_body_octocrab, pr_closing_issue_numbers_octocrab,
-    update_pr_body_octocrab, update_pr_title_body_octocrab,
+    pr_validation_inventory_report, update_pr_body_octocrab, update_pr_title_body_octocrab,
 };
 
 #[derive(Debug, Clone, PartialEq, Eq)]
@@ -61,6 +61,10 @@ pub(super) struct OpenPullRequest {
     pub(super) is_draft: bool,
     #[serde(default = "default_open_pr_state")]
     pub(super) state: String,
+    #[serde(rename = "updatedAt", default)]
+    pub(super) updated_at: Option<String>,
+    #[serde(default)]
+    pub(super) mergeable: Option<bool>,
     #[serde(skip)]
     pub(super) queue: Option<String>,
 }
@@ -1379,6 +1383,42 @@ pub(super) fn format_open_pr_wave(prs: &[OpenPullRequest]) -> String {
         })
         .collect::<Vec<_>>()
         .join("\n")
+}
+
+pub(super) fn pr_inventory(repo: &str) -> Result<Vec<PrInventoryRecord>> {
+    list_prs_octocrab(repo)?
+        .into_iter()
+        .map(|mut pr| {
+            pr.queue = infer_workflow_queue(&pr.title, "", None).map(str::to_string);
+            let validation = pr_validation_inventory_report(repo, &pr.number.to_string())
+                .with_context(|| {
+                    format!("failed to inspect validation status for PR #{}", pr.number)
+                })?;
+            let closing_issue_numbers =
+                pr_closing_issue_numbers_octocrab(repo, &pr.number.to_string()).with_context(
+                    || {
+                        format!(
+                            "failed to inspect closing issue references for PR #{}",
+                            pr.number
+                        )
+                    },
+                )?;
+            Ok(PrInventoryRecord {
+                number: pr.number,
+                title: pr.title,
+                url: pr.url,
+                head_ref_name: pr.head_ref_name,
+                base_ref_name: pr.base_ref_name,
+                state: pr.state,
+                is_draft: pr.is_draft,
+                updated_at: pr.updated_at,
+                mergeable: pr.mergeable,
+                queue: pr.queue,
+                closing_issue_numbers,
+                check_summary: PrInventoryCheckSummary::from_validation_report(&validation),
+            })
+        })
+        .collect()
 }
 
 pub(super) fn pr_has_closing_linkage(repo: &str, pr_ref: &str, issue: u32) -> Result<bool> {

@@ -81,7 +81,11 @@ rust_pr_worktree_inputs_are_newer_than_bin() {
   [[ -f "$root/adl/Cargo.toml" && "$root/adl/Cargo.toml" -nt "$candidate" ]] && return 0
   [[ -f "$root/adl/Cargo.lock" && "$root/adl/Cargo.lock" -nt "$candidate" ]] && return 0
   [[ -f "$root/adl/build.rs" && "$root/adl/build.rs" -nt "$candidate" ]] && return 0
-  if [[ -d "$root/adl/src" ]] && find "$root/adl/src" -type f -newer "$candidate" ! -path "$root/adl/src/cli/tests/*" -print -quit | grep -q .; then
+  if [[ -d "$root/adl/src" ]] && find "$root/adl/src" -type f -newer "$candidate" \
+      ! -path "$root/adl/src/cli/tests/*" \
+      ! -path "*/tests.rs" \
+      ! -path "*/tests/*" \
+      -print -quit | grep -q .; then
     return 0
   fi
   return 1
@@ -122,7 +126,11 @@ rust_pr_delegate_bin_is_fresh() {
     return 1
   fi
   if [[ -d "$root/adl/src" ]]; then
-    if find "$root/adl/src" -type f -newer "$candidate" ! -path "$root/adl/src/cli/tests/*" -print -quit | grep -q .; then
+    if find "$root/adl/src" -type f -newer "$candidate" \
+        ! -path "$root/adl/src/cli/tests/*" \
+        ! -path "*/tests.rs" \
+        ! -path "*/tests/*" \
+        -print -quit | grep -q .; then
       return 1
     fi
   fi
@@ -140,6 +148,7 @@ rust_pr_subcommand_binary_name() {
     preflight) printf 'adl-pr-preflight\n' ;;
     finish) printf 'adl-pr-finish\n' ;;
     validation) printf 'adl-pr-validation\n' ;;
+    pr-inventory) printf 'adl-pr-inventory\n' ;;
     closing-linkage) printf 'adl-pr-closing-linkage\n' ;;
     issue) printf 'adl-issue\n' ;;
     closeout) printf 'adl-pr-closeout\n' ;;
@@ -158,6 +167,7 @@ rust_pr_subcommand_override_var_name() {
     preflight) printf 'ADL_PR_PREFLIGHT_BIN\n' ;;
     finish) printf 'ADL_PR_FINISH_BIN\n' ;;
     validation) printf 'ADL_PR_VALIDATION_BIN\n' ;;
+    pr-inventory) printf 'ADL_PR_INVENTORY_BIN\n' ;;
     closing-linkage) printf 'ADL_PR_CLOSING_LINKAGE_BIN\n' ;;
     issue) printf 'ADL_ISSUE_BIN\n' ;;
     closeout) printf 'ADL_PR_CLOSEOUT_BIN\n' ;;

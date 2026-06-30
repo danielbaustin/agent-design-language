@@ -246,6 +246,8 @@ pub(super) fn list_prs_octocrab(repo: &str) -> Result<Vec<OpenPullRequest>> {
                         .map(|base| base.ref_field.clone())
                         .unwrap_or_default(),
                     is_draft: pr.draft.unwrap_or(false),
+                    updated_at: pr.updated_at.map(|updated_at| updated_at.to_rfc3339()),
+                    mergeable: pr.mergeable,
                     state: pr
                         .state
                         .map(|state| format!("{state:?}").to_uppercase())
@@ -319,6 +321,8 @@ pub(super) fn list_prs_by_head_ref_octocrab(
                     .map(|base| base.ref_field.clone())
                     .unwrap_or_default(),
                 is_draft: pr.draft.unwrap_or(false),
+                updated_at: pr.updated_at.map(|updated_at| updated_at.to_rfc3339()),
+                mergeable: pr.mergeable,
                 state: pr
                     .state
                     .map(|state| format!("{state:?}").to_uppercase())
@@ -353,6 +357,8 @@ pub(super) fn pr_metadata_octocrab(repo: &str, pr_ref: &str) -> Result<OpenPullR
                 .map(|base| base.ref_field.clone())
                 .unwrap_or_default(),
             is_draft: pr.draft.unwrap_or(false),
+            updated_at: pr.updated_at.map(|updated_at| updated_at.to_rfc3339()),
+            mergeable: pr.mergeable,
             state: pr
                 .state
                 .map(|state| format!("{state:?}").to_uppercase())
@@ -714,6 +720,19 @@ pub(super) fn pr_validation_report(repo: &str, pr_ref: &str) -> Result<PrValidat
         &snapshot,
         classify_pr_validation_snapshot(&snapshot),
     ))
+}
+
+pub(super) fn pr_validation_inventory_report(
+    repo: &str,
+    pr_ref: &str,
+) -> Result<PrValidationReport> {
+    let snapshot = pr_validation_status_octocrab(repo, pr_ref)?;
+    Ok(
+        pr_validation_effective_report_from_snapshot_with_disposition(
+            &snapshot,
+            classify_pr_validation_snapshot(&snapshot),
+        ),
+    )
 }
 
 pub(super) fn pr_validation_status_octocrab(
@@ -1302,6 +1321,46 @@ pub(super) fn pr_validation_report_from_snapshot_with_disposition(
         .checks
         .iter()
         .map(pr_validation_check_report)
+        .collect::<Vec<_>>();
+    let failed_checks = effective_checks
+        .iter()
+        .filter(|check| {
+            validation_conclusion_is_failed(&check.conclusion)
+                || status_context_failure_status(&check.status)
+        })
+        .map(|check| pr_validation_check_report(check))
+        .collect::<Vec<_>>();
+    let pending_checks = effective_checks
+        .iter()
+        .filter(|check| validation_check_is_pending(&check.status, &check.conclusion))
+        .map(|check| pr_validation_check_report(check))
+        .collect::<Vec<_>>();
+    PrValidationReport {
+        pr_number: snapshot.pr_number,
+        commit_sha: snapshot.commit_sha.clone(),
+        pr_state: snapshot.state.clone(),
+        is_draft: snapshot.is_draft,
+        disposition: disposition.as_event_result().to_string(),
+        projection_status: pr_validation_projection_status(
+            &snapshot.state,
+            snapshot.is_draft,
+            disposition.as_event_result(),
+        )
+        .to_string(),
+        checks,
+        failed_checks,
+        pending_checks,
+    }
+}
+
+pub(super) fn pr_validation_effective_report_from_snapshot_with_disposition(
+    snapshot: &PrValidationSnapshot,
+    disposition: PrValidationDisposition,
+) -> PrValidationReport {
+    let effective_checks = effective_pr_validation_checks(&snapshot.checks);
+    let checks = effective_checks
+        .iter()
+        .map(|check| pr_validation_check_report(check))
         .collect::<Vec<_>>();
     let failed_checks = effective_checks
         .iter()

@@ -23,7 +23,7 @@ Existing routed v0.91.7 issues:
 
 - `#4603` routes into WP-06.
 - `#4617` routes into WP-04.
-- `#4622` routes into WP-02.
+- `#4622` implements the WP-02 release-tail PR inventory command.
 
 Non-WP v0.91.7 issues:
 
@@ -40,7 +40,8 @@ Before execution begins, WP-01 must consume the v0.91.6 release-tail handoff
 addendum `V0916_TO_V0917_HANDOFF_ADDENDUM_3982.md` together with
 failed-but-closed WP-15 `#3980` external-review truth, closed WP-16 `#3981`
 remediation/final-preflight truth, closed WP-16 children `#4620` and `#4621`,
-the open v0.91.7 tooling route `#4622`, and closed WP-14A remediation truth.
+the WP-02 PR inventory command delivered by `#4622`, and closed WP-14A
+remediation truth.
 
 ## Sprint Goals
 
@@ -56,7 +57,7 @@ the open v0.91.7 tooling route `#4622`, and closed WP-14A remediation truth.
 
 | Order | Sprint / workstream | Primary WPs | Parallelism notes | Status |
 | --- | --- | --- | --- | --- |
-| 1 | Planning promotion, closeout-truth, and ADR release-tail gate | WP-01, WP-02 | Must start first; consume `V0916_TO_V0917_HANDOFF_ADDENDUM_3982.md`, failed-but-closed WP-15 truth, closed WP-16 / `#4620` / `#4621` truth, open v0.91.7 route `#4622`, issue-list/source-capture checks, and ADR route checks before dependent execution. | planned |
+| 1 | Planning promotion, closeout-truth, and ADR release-tail gate | WP-01, WP-02 | Must start first; consume `V0916_TO_V0917_HANDOFF_ADDENDUM_3982.md`, failed-but-closed WP-15 truth, closed WP-16 / `#4620` / `#4621` truth, the repo-native PR inventory command from `#4622`, issue-list/source-capture checks, and ADR checks before dependent execution. | planned |
 | 2 | v0.91.6 C-SDLC integration control-plane truth gate | WP-02, WP-03, WP-04 | Consume v0.91.6 `#4388`-`#4398` plus late `#4405`, `#4412`-`#4413`, `#4417`-`#4421` plus `#4425`, `#4431`, `#4441`, `#4433`-`#4438`, and `#4442`-`#4443`: VPP defaults, externalized PVF lanes, SEP automation, session ledger, forward metric capture, bounded v0.91.6 metric backfill, GitHub/octocrab convergence, prompt-card/template edge repair, runtime dependency routing, logging/reliability rough edges, watcher/lifecycle automation, operational adoption, lifecycle shepherding, and FastContext evaluation. Only create v0.91.7 follow-ons for incomplete or explicitly blocked surfaces. | planned |
 | 3 | Scheduler/provider/local-agent sprint | WP-05 | Can run alongside build-throughput work after WP-03 boundaries are stable. | planned |
 | 4 | Build throughput and validation-cost sprint | WP-06 | Can run in parallel with scheduler/provider work; isolate CI/workflow changes carefully. Prove EC2 Spot or an alternate disposable remote-builder path early, with `sccache`, time/cost, interruption, and cleanup evidence before treating it as release-critical. | planned |

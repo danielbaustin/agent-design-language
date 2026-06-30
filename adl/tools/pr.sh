@@ -26,6 +26,7 @@
 #   adl/tools/pr.sh doctor  <issue> [--slug <slug>] [--no-fetch-issue] [--version <v0.2>] [--mode full|ready|preflight] [--allow-open-pr-wave] [--json]
 #   adl/tools/pr.sh preflight <issue> [--slug <slug>] [--no-fetch-issue] [--version <v0.2>] [--allow-open-pr-wave] [--json]
 #   adl/tools/pr.sh finish  <issue> --title "<title>" [-f <input_card.md>] [--output-card <output_card.md>] [--body "<extra body>"] [--paths "<p1,p2,...>"] [--no-checks] [--no-close] [--ready] [--allow-gitignore] [--no-open]
+#   adl/tools/pr.sh pr-inventory [-R owner/repo] [--json]
 #   adl/tools/pr.sh closing-linkage [--event-name <event>] [--event-path <path>] [--head-ref <branch>] [-R owner/repo]
 #   adl/tools/pr.sh open
 #   adl/tools/pr.sh status
@@ -1959,6 +1960,18 @@ cmd_validation() {
   delegate_pr_command_to_rust validation "$@"
 }
 
+cmd_pr_inventory() {
+  if [[ "${1:-}" == "-h" || "${1:-}" == "--help" || "${1:-}" == "help" ]]; then
+    note "Usage: adl/tools/pr.sh pr-inventory [-R owner/repo] [--json]"
+    note ""
+    note "Lists open pull requests through the repo-native Octocrab transport with queue and closing-issue hints."
+    return 0
+  fi
+  adl_obs_event "pr.sh" "pr-inventory" "started"
+  require_rust_pr_delegate pr-inventory
+  delegate_pr_command_to_rust pr-inventory "$@"
+}
+
 cmd_watch() {
   if [[ "${1:-}" == "-h" || "${1:-}" == "--help" || "${1:-}" == "help" ]]; then
     usage_watch
@@ -2077,6 +2090,7 @@ main() {
     preflight) cmd_preflight "$@" ;;
     finish) cmd_finish "$@" ;;
     validation) cmd_validation "$@" ;;
+    pr-inventory) cmd_pr_inventory "$@" ;;
     watch) cmd_watch "$@" ;;
     closing-linkage) cmd_closing_linkage "$@" ;;
     issue) cmd_issue "$@" ;;

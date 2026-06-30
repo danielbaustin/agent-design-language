@@ -254,6 +254,10 @@ pub(crate) fn copy_bootstrap_support_files(repo: &Path) {
             tools_dir.join("validate_structured_prompt.sh"),
         ),
         (
+            workspace_root.join("adl/tools/owner_binary_resolution.sh"),
+            tools_dir.join("owner_binary_resolution.sh"),
+        ),
+        (
             workspace_root.join("adl/tools/lint_prompt_spec.sh"),
             tools_dir.join("lint_prompt_spec.sh"),
         ),

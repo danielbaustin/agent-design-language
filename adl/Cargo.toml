@@ -75,6 +75,10 @@ name = "adl-pr-validation"
 path = "src/bin/adl_pr_validation.rs"
 
 [[bin]]
+name = "adl-pr-inventory"
+path = "src/bin/adl_pr_inventory.rs"
+
+[[bin]]
 name = "adl-pr-closing-linkage"
 path = "src/bin/adl_pr_closing_linkage.rs"
 

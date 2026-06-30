@@ -5438,16 +5438,18 @@ fn finish_validation_profile_classifies_version_metadata_paths_without_issue_spe
         .iter()
         .any(|command| command.contains("cargo nextest")));
 
-    let err = select_finish_validation_plan_for_finish(
+    let plan = select_finish_validation_plan_for_finish(
         5000,
         ".",
         &["adl/Cargo.toml".to_string(), "adl/Cargo.lock".to_string()],
     )
-    .expect_err("non-Tokio manifest-only issues should stay unclassified");
+    .expect("manifest-only paths should be covered by validation-manager routing");
 
-    assert!(err
-        .to_string()
-        .contains("selector left changed paths without validation-lane coverage"));
+    assert_eq!(plan.mode, FinishValidationMode::LargerBinaryFocused);
+    assert!(plan
+        .commands
+        .iter()
+        .any(|command| command.contains("run_pr_fast_test_lane.sh")));
 }
 
 #[test]

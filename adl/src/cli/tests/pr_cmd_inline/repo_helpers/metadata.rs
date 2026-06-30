@@ -129,6 +129,8 @@ fn format_open_pr_wave_marks_draft_and_unknown_queue() {
         base_ref_name: "main".to_string(),
         is_draft: true,
         state: "OPEN".to_string(),
+        updated_at: None,
+        mergeable: None,
         queue: Some("docs".to_string()),
     };
     let rendered = format_open_pr_wave(&[pr.clone()]);
