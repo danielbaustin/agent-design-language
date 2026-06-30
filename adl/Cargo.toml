@@ -91,6 +91,10 @@ name = "adl-remote"
 path = "src/bin/adl_remote.rs"
 
 [[bin]]
+name = "adl-aws-remote-validation"
+path = "src/bin/adl_aws_remote_validation.rs"
+
+[[bin]]
 name = "adl-provider-adapter"
 path = "tools/adl_provider_adapter.rs"
 
@@ -150,6 +154,14 @@ reqwest = { version = "0.12", default-features = false, features = [
   "blocking",
   "rustls-tls",
 ] }
+aws-config = "1"
+aws-sdk-budgets = "1"
+aws-sdk-costexplorer = "1"
+aws-sdk-ec2 = "1"
+aws-sdk-iam = "1"
+aws-sdk-servicequotas = "1"
+aws-sdk-ssm = "1"
+aws-sdk-sts = "1"
 google-workspace = "0.22.5"
 yup-oauth2 = "12"
 async-trait = "0.1"

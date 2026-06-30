@@ -1,0 +1,10 @@
+{"timestamp":"2026-06-30T18:51:49.580826+00:00","stage":"start","status":"started","detail":"issue=Some(4603) region=us-west-2 instance_types=c7i.large,c7i.xlarge,c7i.2xlarge out=docs/milestones/v0.91.7/review/build_throughput/remote_validation_4603/live_run_summary_retry4.json"}
+{"timestamp":"2026-06-30T18:51:56.554613+00:00","stage":"identity","status":"ok","detail":"caller identity resolved"}
+{"timestamp":"2026-06-30T18:52:05.274379+00:00","stage":"quota","status":"ok","detail":"quota snapshot captured"}
+{"timestamp":"2026-06-30T18:52:05.274387+00:00","stage":"launch_attempt","status":"started","detail":"instance_type=c7i.large market=spot"}
+{"timestamp":"2026-06-30T18:52:07.367110+00:00","stage":"launch_attempt","status":"ok","detail":"instance_type=c7i.large market=spot launched"}
+{"timestamp":"2026-06-30T18:52:24.405994+00:00","stage":"ssm","status":"ok","detail":"instance became SSM-ready with status Online"}
+{"timestamp":"2026-06-30T18:56:19.193264+00:00","stage":"remote_command","status":"failed","detail":"dispatch failed while instance_state=running: SsmError: dispatch failure"}
+{"timestamp":"2026-06-30T18:56:21.281536+00:00","stage":"cleanup","status":"started","detail":"termination requested"}
+{"timestamp":"2026-06-30T18:57:45.913764+00:00","stage":"cleanup","status":"ok","detail":"termination observed state=terminated"}
+{"timestamp":"2026-06-30T18:57:56.710354+00:00","stage":"cost","status":"warn","detail":"cost snapshot unavailable: dispatch failure"}
