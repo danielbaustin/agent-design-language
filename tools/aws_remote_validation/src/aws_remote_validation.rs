@@ -1312,14 +1312,19 @@ bash "$CHECKOUT_DIR/tools/aws_remote_validation/scripts/remote_validation_runner
 }
 
 fn shell_single_quote(value: &str) -> String {
-    value.replace('\'', r#"'"'"'"#)
+    format!("'{}'", value.replace('\'', r#"'"'"'"#))
 }
 
 fn extract_run_root(command: &str) -> Option<String> {
-    let marker = "RUN_ROOT=\"";
+    let marker = "RUN_ROOT=";
     let start = command.find(marker)? + marker.len();
-    let end = command[start..].find('"')? + start;
-    Some(command[start..end].to_string())
+    let quote = command[start..].chars().next()?;
+    if quote != '"' && quote != '\'' {
+        return None;
+    }
+    let body_start = start + quote.len_utf8();
+    let end = command[body_start..].find(quote)? + body_start;
+    Some(command[body_start..end].to_string())
 }
 
 fn temp_resource_name(issue: Option<u32>, run_id: &str, prefix: &str, max_len: usize) -> String {
@@ -3392,7 +3397,9 @@ mod tests {
         ));
         let script = build_remote_command_script(&sample_config(&tmp));
         assert!(script.contains("export ADL_RUN_ROOT=\"$RUN_ROOT\""));
-        assert!(script.contains("export ADL_REMOTE_COMMAND="));
+        assert!(script.contains(
+            "export ADL_REMOTE_COMMAND='cargo test --manifest-path tools/aws_remote_validation/Cargo.toml --bin adl-aws-remote-validation -- --nocapture'"
+        ));
         assert!(script.contains("CURRENT_STAGE=\"tracked_remote_runner\""));
         assert!(script.contains("remote_validation_runner.sh"));
 
@@ -3435,6 +3442,24 @@ mod tests {
         assert!(tracked_runner.contains("server_shut_down_unexpectedly"));
         assert!(tracked_runner
             .contains("\"sccache_degraded\": os.environ.get(\"SCCACHE_DEGRADED\") == \"1\""));
+    }
+
+    #[test]
+    fn shell_single_quote_wraps_values_for_shell_assignment() {
+        assert_eq!(shell_single_quote("plain"), "'plain'");
+        assert_eq!(
+            shell_single_quote("it's complicated"),
+            "'it'\"'\"'s complicated'"
+        );
+    }
+
+    #[test]
+    fn extract_run_root_supports_single_quoted_assignments() {
+        let command = "set -e\nRUN_ROOT='/tmp/adl run root'\necho ok\n";
+        assert_eq!(
+            extract_run_root(command).as_deref(),
+            Some("/tmp/adl run root")
+        );
     }
 
     #[tokio::test]
