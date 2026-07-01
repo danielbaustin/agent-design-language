@@ -1211,7 +1211,6 @@ fn build_remote_command_script(config: &AwsRemoteValidationConfig) -> String {
         shell_single_quote(config.sccache_tarball_url.as_deref().unwrap_or(""));
     let escaped_nextest_tarball_url =
         shell_single_quote(config.nextest_tarball_url.as_deref().unwrap_or(""));
-    let cache_volume_enabled = build_cache_volume_request(config).is_some();
     let escaped_cache_volume_device_name = shell_single_quote(
         config
             .cache_volume_device_name
@@ -1224,256 +1223,35 @@ fn build_remote_command_script(config: &AwsRemoteValidationConfig) -> String {
             .as_deref()
             .unwrap_or("/mnt/adl-cache"),
     );
+    let escaped_run_root =
+        shell_single_quote(&format!("/tmp/adl-aws-remote-validation/{}", config.run_id));
+    let escaped_checkout_root = shell_single_quote(&format!(
+        "/tmp/adl-aws-remote-bootstrap/{}/agent-design-language",
+        config.run_id
+    ));
     let needs_nextest = if config.command.contains("nextest") {
         "1"
     } else {
         "0"
     };
-    let cache_volume_enabled_flag = if cache_volume_enabled { "1" } else { "0" };
+    let cache_volume_enabled_flag = if build_cache_volume_request(config).is_some() {
+        "1"
+    } else {
+        "0"
+    };
     format!(
         r#"set -euo pipefail
-PROGRESS_ROOT="/tmp/adl-aws-remote-validation-bootstrap/{run_id}"
-mkdir -p "$PROGRESS_ROOT"
-BOOTSTRAP_START="$(date +%s)"
-CURRENT_STAGE="bootstrap"
-
-emit_debug_log() {{
-  local label="$1"
-  local path="$2"
-  if [ -f "$path" ]; then
-    local line_count
-    line_count="$(wc -l < "$path" 2>/dev/null || echo 0)"
-    echo "ADL_REMOTE_LOG_BEGIN:$label" >&2
-    sed -n '1,160p' "$path" >&2 || true
-    if [ "$line_count" -gt 160 ]; then
-      echo "ADL_REMOTE_LOG_MIDDLE_ELIDED:$label:$line_count" >&2
-      tail -n 160 "$path" >&2 || true
-    fi
-    echo "ADL_REMOTE_LOG_END:$label" >&2
-  fi
-}}
+RUN_ROOT={run_root}
+CHECKOUT_DIR={checkout_root}
+mkdir -p "$RUN_ROOT" "$CHECKOUT_DIR"
 
 log_progress() {{
   local message="$1"
   local timestamp
-  local log_root
   timestamp="$(date -u +%Y-%m-%dT%H:%M:%SZ)"
-  log_root="${{RUN_ROOT:-$PROGRESS_ROOT}}"
-  mkdir -p "$log_root"
-  printf '%s %s\n' "$timestamp" "$message" | tee -a "$log_root/progress.log" >&2
+  printf '%s %s\n' "$timestamp" "$message" | tee -a "$RUN_ROOT/progress.log" >&2
 }}
 
-on_error() {{
-  local exit_code="$?"
-  echo "ADL_REMOTE_FAILURE_STAGE=$CURRENT_STAGE" >&2
-  emit_debug_log rustup /tmp/adl-rustup.log
-  emit_debug_log build_toolchain /tmp/adl-build-toolchain.log
-  emit_debug_log sccache_install /tmp/adl-sccache-install.log
-  emit_debug_log nextest_install /tmp/adl-nextest-install.log
-  emit_debug_log git_clone /tmp/adl-git-clone.log
-  emit_debug_log git_fetch /tmp/adl-git-fetch.log
-  emit_debug_log git_checkout /tmp/adl-git-checkout.log
-  emit_debug_log command_stdout "$RUN_ROOT/command.log"
-  emit_debug_log command_stderr "$RUN_ROOT/command.err"
-  emit_debug_log sccache_stats "$RUN_ROOT/sccache-stats.log"
-  exit "$exit_code"
-}}
-trap on_error ERR
-
-release_target_triple() {{
-  local arch
-  arch="$(uname -m)"
-  case "$arch" in
-    x86_64) printf '%s\n' "x86_64-unknown-linux-musl" ;;
-    aarch64|arm64) printf '%s\n' "aarch64-unknown-linux-musl" ;;
-    *) return 1 ;;
-  esac
-}}
-
-install_github_release_binary() {{
-  local repo_name binary_name target api_url asset_url archive_path extract_dir release_bin
-  repo_name="$1"
-  binary_name="$2"
-  if [ -n "${{3:-}}" ]; then
-    target="$3"
-  else
-    target="$(release_target_triple)" || return 1
-  fi
-  api_url="https://api.github.com/repos/$repo_name/releases/latest"
-  asset_url="$(curl -fsSL "$api_url" | python3 -c 'import json, sys
-repo = sys.argv[1]
-binary = sys.argv[2]
-target = sys.argv[3]
-data = json.load(sys.stdin)
-for asset in data.get("assets", []):
-    url = asset.get("browser_download_url", "")
-    if binary in url and target in url and url.endswith(".tar.gz"):
-        print(url)
-        break
-' "$repo_name" "$binary_name" "$target")"
-  [ -n "$asset_url" ] || return 1
-  archive_path="/tmp/adl-$binary_name-release.tar.gz"
-  extract_dir="/tmp/adl-$binary_name-release"
-  curl -fsSL "$asset_url" -o "$archive_path"
-  rm -rf "$extract_dir"
-  mkdir -p "$extract_dir"
-  tar -xzf "$archive_path" -C "$extract_dir"
-  release_bin="$(find "$extract_dir" -type f -name "$binary_name" | head -n 1)"
-  [ -n "$release_bin" ] || return 1
-  install -m 0755 "$release_bin" "$HOME/.cargo/bin/$binary_name"
-}}
-
-install_sccache_release() {{
-  local target
-  target="$(release_target_triple)" || return 1
-  case "$target" in
-    x86_64-unknown-linux-musl) target="x86_64-unknown-linux-gnu" ;;
-    aarch64-unknown-linux-musl) target="aarch64-unknown-linux-gnu" ;;
-    *) return 1 ;;
-  esac
-  install_github_release_binary "mozilla/sccache" "sccache" "$target"
-}}
-
-ensure_aws_cli() {{
-  if command -v aws >/dev/null 2>&1; then
-    return 0
-  fi
-  sudo dnf install -y awscli >/tmp/adl-awscli-install.log 2>&1 \
-    || sudo yum install -y awscli >/tmp/adl-awscli-install.log 2>&1
-}}
-
-archive_installed_binary() {{
-  local binary_name archive_path package_dir
-  binary_name="$1"
-  archive_path="$2"
-  package_dir="/tmp/adl-$binary_name-package"
-  rm -rf "$package_dir"
-  mkdir -p "$package_dir"
-  cp "$HOME/.cargo/bin/$binary_name" "$package_dir/$binary_name"
-  tar -czf "$archive_path" -C "$package_dir" "$binary_name"
-}}
-
-install_binary_from_tarball_url() {{
-  local binary_name tarball_url extract_dir archive_path release_bin
-  binary_name="$1"
-  tarball_url="$2"
-  [ -n "$tarball_url" ] || return 1
-  archive_path="/tmp/adl-$binary_name-cache.tar.gz"
-  extract_dir="/tmp/adl-$binary_name-cache"
-  curl -fsSL "$tarball_url" -o "$archive_path"
-  rm -rf "$extract_dir"
-  mkdir -p "$extract_dir"
-  tar -xzf "$archive_path" -C "$extract_dir"
-  release_bin="$(find "$extract_dir" -type f -name "$binary_name" | head -n 1)"
-  [ -n "$release_bin" ] || return 1
-  install -m 0755 "$release_bin" "$HOME/.cargo/bin/$binary_name"
-}}
-
-install_binary_from_s3_cache() {{
-  local binary_name bucket prefix object_uri archive_path tool_prefix
-  binary_name="$1"
-  bucket="$2"
-  prefix="$3"
-  [ -n "$bucket" ] || return 1
-  ensure_aws_cli || return 1
-  archive_path="/tmp/adl-$binary_name-cache.tar.gz"
-  tool_prefix="$prefix/tools"
-  object_uri="s3://$bucket/$tool_prefix/$binary_name.tar.gz"
-  aws s3 cp "$object_uri" "$archive_path" >/tmp/adl-$binary_name-s3-download.log 2>&1 || return 1
-  install_binary_from_tarball_url "$binary_name" "file://$archive_path"
-}}
-
-upload_binary_to_s3_cache() {{
-  local binary_name bucket prefix archive_path object_uri tool_prefix
-  binary_name="$1"
-  bucket="$2"
-  prefix="$3"
-  [ -n "$bucket" ] || return 0
-  ensure_aws_cli || return 1
-  archive_path="/tmp/adl-$binary_name-upload.tar.gz"
-  tool_prefix="$prefix/tools"
-  object_uri="s3://$bucket/$tool_prefix/$binary_name.tar.gz"
-  archive_installed_binary "$binary_name" "$archive_path" || return 1
-  aws s3 cp "$archive_path" "$object_uri"
-}}
-
-verify_sccache_binary() {{
-  command -v sccache >/dev/null 2>&1 || return 1
-  sccache --version >/dev/null 2>&1 || return 1
-  sccache --start-server >/dev/null 2>&1 || return 1
-  sccache --zero-stats >/dev/null 2>&1 || return 1
-}}
-
-remove_installed_binary() {{
-  local binary_name
-  binary_name="$1"
-  rm -f "$HOME/.cargo/bin/$binary_name"
-}}
-
-verify_nextest_binary() {{
-  cargo nextest --version >/dev/null 2>&1
-}}
-
-install_nextest_release() {{
-  local target
-  target="$(release_target_triple)" || return 1
-  case "$target" in
-    x86_64-unknown-linux-musl) target="x86_64-unknown-linux-gnu" ;;
-    aarch64-unknown-linux-musl) target="aarch64-unknown-linux-gnu" ;;
-    *) return 1 ;;
-  esac
-  install_github_release_binary "nextest-rs/nextest" "cargo-nextest" "$target"
-}}
-
-export HOME="${{HOME:-/root}}"
-CACHE_BUCKET='{cache_bucket}'
-CACHE_PREFIX='{cache_prefix}'
-SCCACHE_TARBALL_URL='{sccache_tarball_url}'
-NEXTEST_TARBALL_URL='{nextest_tarball_url}'
-CACHE_VOLUME_ENABLED="{cache_volume_enabled}"
-CACHE_VOLUME_DEVICE_NAME='{cache_volume_device_name}'
-CACHE_VOLUME_MOUNT_PATH='{cache_volume_mount_path}'
-NEEDS_NEXTEST="{needs_nextest}"
-if [ "$CACHE_VOLUME_ENABLED" = "1" ]; then
-  CURRENT_STAGE="prepare_cache_volume"
-  log_progress "stage=prepare_cache_volume"
-  ROOT_SOURCE="$(findmnt -n -o SOURCE / || true)"
-  ROOT_DISK="$(lsblk -no PKNAME "$ROOT_SOURCE" 2>/dev/null | head -n 1 || true)"
-  resolve_cache_device() {{
-    local attempt candidate basename
-    for attempt in $(seq 1 60); do
-      for candidate in "$CACHE_VOLUME_DEVICE_NAME" /dev/nvme1n1 /dev/nvme2n1 /dev/xvdf /dev/xvdg; do
-        [ -b "$candidate" ] || continue
-        basename="$(basename "$candidate")"
-        if [ -n "$ROOT_DISK" ] && [ "$basename" = "$ROOT_DISK" ]; then
-          continue
-        fi
-        readlink -f "$candidate" 2>/dev/null || printf '%s\n' "$candidate"
-        return 0
-      done
-      sleep 2
-    done
-    return 1
-  }}
-  CACHE_DEVICE="$(resolve_cache_device)"
-  sudo mkdir -p "$CACHE_VOLUME_MOUNT_PATH"
-  if ! sudo blkid "$CACHE_DEVICE" >/dev/null 2>&1; then
-    sudo mkfs.ext4 -F "$CACHE_DEVICE" >/tmp/adl-cache-volume-format.log 2>&1
-  fi
-  CACHE_UUID="$(sudo blkid -s UUID -o value "$CACHE_DEVICE")"
-  if ! grep -q "$CACHE_UUID" /etc/fstab 2>/dev/null; then
-    echo "UUID=$CACHE_UUID $CACHE_VOLUME_MOUNT_PATH ext4 defaults,nofail 0 2" | sudo tee -a /etc/fstab >/dev/null
-  fi
-  sudo mountpoint -q "$CACHE_VOLUME_MOUNT_PATH" || sudo mount "$CACHE_VOLUME_MOUNT_PATH"
-  sudo chown -R "$USER":"$USER" "$CACHE_VOLUME_MOUNT_PATH"
-  RUN_ROOT="$CACHE_VOLUME_MOUNT_PATH/adl-aws-remote-validation/{run_id}"
-else
-  RUN_ROOT="/tmp/adl-aws-remote-validation/{run_id}"
-fi
-REPO_DIR="$RUN_ROOT/agent-design-language"
-TARGET_DIR="$RUN_ROOT/target"
-SCCACHE_DIR="$RUN_ROOT/sccache"
-mkdir -p "$RUN_ROOT" "$TARGET_DIR" "$SCCACHE_DIR"
 CURRENT_STAGE="ensure_git"
 log_progress "stage=ensure_git"
 if ! command -v git >/dev/null 2>&1; then
@@ -1484,180 +1262,42 @@ log_progress "stage=ensure_curl"
 if ! command -v curl >/dev/null 2>&1; then
   sudo dnf install -y curl >/dev/null 2>&1 || sudo yum install -y curl >/dev/null 2>&1 || true
 fi
-CURRENT_STAGE="ensure_build_toolchain"
-log_progress "stage=ensure_build_toolchain"
-if ! command -v cc >/dev/null 2>&1; then
-  sudo dnf install -y gcc gcc-c++ make pkgconf-pkg-config openssl-devel >/tmp/adl-build-toolchain.log 2>&1 \
-    || sudo yum install -y gcc gcc-c++ make pkgconfig openssl-devel >/tmp/adl-build-toolchain.log 2>&1
-fi
-CURRENT_STAGE="ensure_rustup"
-log_progress "stage=ensure_rustup"
-if ! command -v cargo >/dev/null 2>&1; then
-  curl https://sh.rustup.rs -sSf | sh -s -- -y --profile minimal >/tmp/adl-rustup.log 2>&1
-fi
-if [ -f "$HOME/.cargo/env" ]; then
-  . "$HOME/.cargo/env"
-fi
-export PATH="$HOME/.cargo/bin:$PATH"
-export CARGO_TARGET_DIR="$TARGET_DIR"
-export SCCACHE_DIR="$SCCACHE_DIR"
-if [ -n "$CACHE_BUCKET" ]; then
-  export SCCACHE_BUCKET="$CACHE_BUCKET"
-  export SCCACHE_REGION="{region}"
-  export SCCACHE_S3_KEY_PREFIX="$CACHE_PREFIX/sccache"
-fi
-CURRENT_STAGE="ensure_sccache"
-log_progress "stage=ensure_sccache"
-if ! command -v sccache >/dev/null 2>&1; then
-  SCCACHE_CACHE_HIT=0
-  if install_binary_from_s3_cache sccache "$CACHE_BUCKET" "$CACHE_PREFIX" >/tmp/adl-sccache-install.log 2>&1 && verify_sccache_binary >>/tmp/adl-sccache-install.log 2>&1; then
-    SCCACHE_CACHE_HIT=1
-  elif install_binary_from_tarball_url sccache "$SCCACHE_TARBALL_URL" >>/tmp/adl-sccache-install.log 2>&1 && verify_sccache_binary >>/tmp/adl-sccache-install.log 2>&1; then
-    SCCACHE_CACHE_HIT=1
-  elif install_sccache_release >>/tmp/adl-sccache-install.log 2>&1 && verify_sccache_binary >>/tmp/adl-sccache-install.log 2>&1; then
-    :
-  else
-    remove_installed_binary sccache
-    cargo install sccache --locked --force >>/tmp/adl-sccache-install.log 2>&1
-    verify_sccache_binary >>/tmp/adl-sccache-install.log 2>&1
-  fi
-  if [ "$SCCACHE_CACHE_HIT" -eq 0 ]; then
-    upload_binary_to_s3_cache sccache "$CACHE_BUCKET" "$CACHE_PREFIX" >>/tmp/adl-sccache-install.log 2>&1 || true
-  fi
-fi
-CURRENT_STAGE="ensure_nextest"
-log_progress "stage=ensure_nextest"
-if [ "$NEEDS_NEXTEST" = "1" ] && ! cargo nextest --version >/dev/null 2>&1; then
-  NEXTEST_CACHE_HIT=0
-  if install_binary_from_s3_cache cargo-nextest "$CACHE_BUCKET" "$CACHE_PREFIX" >/tmp/adl-nextest-install.log 2>&1 && verify_nextest_binary >>/tmp/adl-nextest-install.log 2>&1; then
-    NEXTEST_CACHE_HIT=1
-  elif install_binary_from_tarball_url cargo-nextest "$NEXTEST_TARBALL_URL" >>/tmp/adl-nextest-install.log 2>&1 && verify_nextest_binary >>/tmp/adl-nextest-install.log 2>&1; then
-    NEXTEST_CACHE_HIT=1
-  elif install_nextest_release >>/tmp/adl-nextest-install.log 2>&1 && verify_nextest_binary >>/tmp/adl-nextest-install.log 2>&1; then
-    :
-  else
-    cargo install cargo-nextest --locked >>/tmp/adl-nextest-install.log 2>&1
-    verify_nextest_binary >>/tmp/adl-nextest-install.log 2>&1
-  fi
-  if [ "$NEXTEST_CACHE_HIT" -eq 0 ]; then
-    upload_binary_to_s3_cache cargo-nextest "$CACHE_BUCKET" "$CACHE_PREFIX" >>/tmp/adl-nextest-install.log 2>&1 || true
-  fi
-fi
-export RUSTC_WRAPPER="sccache"
 
 CURRENT_STAGE="clone_repo"
 log_progress "stage=clone_repo"
-if [ ! -d "$REPO_DIR/.git" ]; then
-  git clone '{repo_url}' "$REPO_DIR" >/tmp/adl-git-clone.log 2>&1
+if [ ! -d "$CHECKOUT_DIR/.git" ]; then
+  git clone {repo_url} "$CHECKOUT_DIR" >/tmp/adl-git-clone.log 2>&1
 fi
 CURRENT_STAGE="fetch_repo"
 log_progress "stage=fetch_repo"
-git -C "$REPO_DIR" fetch --all --tags >/tmp/adl-git-fetch.log 2>&1
+git -C "$CHECKOUT_DIR" fetch --all --tags >/tmp/adl-git-fetch.log 2>&1
 CURRENT_STAGE="checkout_ref"
 log_progress "stage=checkout_ref ref={git_ref}"
-git -C "$REPO_DIR" checkout '{git_ref}' >/tmp/adl-git-checkout.log 2>&1
-RESOLVED_COMMIT="$(git -C "$REPO_DIR" rev-parse HEAD)"
-RUSTC_VERSION="$(rustc --version 2>/dev/null || true)"
-CARGO_VERSION="$(cargo --version 2>/dev/null || true)"
-SCCACHE_VERSION="$(sccache --version 2>/dev/null || true)"
-sccache --start-server >/dev/null 2>&1 || true
-sccache --zero-stats >/dev/null 2>&1 || true
-SCCACHE_DEGRADED=0
-SCCACHE_DEGRADED_REASON=""
+git -C "$CHECKOUT_DIR" checkout {git_ref} >/tmp/adl-git-checkout.log 2>&1
 
-watch_sccache_health() {{
-  while true; do
-    if ! sccache --show-stats >/dev/null 2>&1; then
-      printf '%s sccache_watch_restart\n' "$(date -u +%Y-%m-%dT%H:%M:%SZ)" >> "$RUN_ROOT/sccache-watch.log"
-      sccache --start-server >/dev/null 2>&1 || true
-    fi
-    sleep 5
-  done
-}}
-watch_sccache_health >/tmp/adl-sccache-watch.log 2>&1 &
-SCCACHE_WATCH_PID="$!"
-
-INTERRUPTION_NOTICE=""
-watch_spot_notice() {{
-  while true; do
-    TOKEN="$(curl -sS -X PUT http://169.254.169.254/latest/api/token -H 'X-aws-ec2-metadata-token-ttl-seconds: 60' || true)"
-    if [ -n "$TOKEN" ]; then
-      NOTICE="$(curl -fsS -H "X-aws-ec2-metadata-token: $TOKEN" http://169.254.169.254/latest/meta-data/spot/instance-action || true)"
-    else
-      NOTICE="$(curl -fsS http://169.254.169.254/latest/meta-data/spot/instance-action || true)"
-    fi
-    if [ -n "$NOTICE" ]; then
-      printf '%s\n' "$NOTICE" > "$RUN_ROOT/spot-interruption.log"
-      break
-    fi
-    sleep 5
-  done
-}}
-watch_spot_notice >/tmp/adl-spot-watch.log 2>&1 &
-WATCH_PID="$!"
-
-BOOTSTRAP_END="$(date +%s)"
-COMMAND_START="$(date +%s)"
-CURRENT_STAGE="validation_command"
-log_progress "stage=validation_command command={command}"
-set +e
-( cd "$REPO_DIR" && bash -lc '{command}' ) >"$RUN_ROOT/command.log" 2>"$RUN_ROOT/command.err"
-COMMAND_EXIT="$?"
-set -e
-COMMAND_END="$(date +%s)"
-kill "$WATCH_PID" >/dev/null 2>&1 || true
-wait "$WATCH_PID" >/dev/null 2>&1 || true
-kill "$SCCACHE_WATCH_PID" >/dev/null 2>&1 || true
-wait "$SCCACHE_WATCH_PID" >/dev/null 2>&1 || true
-sccache --show-stats >"$RUN_ROOT/sccache-stats.log" 2>&1 || true
-[ -f "$RUN_ROOT/spot-interruption.log" ] && INTERRUPTION_NOTICE="$(cat "$RUN_ROOT/spot-interruption.log")"
-if grep -Fq "sccache: warning: The server looks like it shut down unexpectedly" "$RUN_ROOT/command.err"; then
-  SCCACHE_DEGRADED=1
-  SCCACHE_DEGRADED_REASON="server_shut_down_unexpectedly"
-elif grep -Fq "sccache: error:" "$RUN_ROOT/command.err"; then
-  SCCACHE_DEGRADED=1
-  SCCACHE_DEGRADED_REASON="client_or_server_error"
-fi
-if [ ! -s "$RUN_ROOT/sccache-stats.log" ]; then
-  SCCACHE_DEGRADED=1
-  if [ -z "$SCCACHE_DEGRADED_REASON" ]; then
-    SCCACHE_DEGRADED_REASON="missing_stats"
-  fi
-fi
-
+export ADL_RUN_ID={run_id}
 export ADL_RUN_ROOT="$RUN_ROOT"
-export COMMAND_EXIT BOOTSTRAP_START BOOTSTRAP_END COMMAND_START COMMAND_END
-export INTERRUPTION_NOTICE RESOLVED_COMMIT RUSTC_VERSION CARGO_VERSION SCCACHE_VERSION
-export SCCACHE_DEGRADED SCCACHE_DEGRADED_REASON
-python3 - <<'PY'
-import json
-import os
-from pathlib import Path
-run_root = Path(os.environ["ADL_RUN_ROOT"])
-payload = {{
-  "status": "passed" if int(os.environ["COMMAND_EXIT"]) == 0 else "failed",
-  "bootstrap_seconds": int(os.environ["BOOTSTRAP_END"]) - int(os.environ["BOOTSTRAP_START"]),
-  "command_seconds": int(os.environ["COMMAND_END"]) - int(os.environ["COMMAND_START"]),
-  "interruption_detected": bool(os.environ.get("INTERRUPTION_NOTICE", "")),
-  "interruption_notice": os.environ.get("INTERRUPTION_NOTICE") or None,
-  "resolved_commit": os.environ.get("RESOLVED_COMMIT") or None,
-  "rustc_version": os.environ.get("RUSTC_VERSION") or None,
-  "cargo_version": os.environ.get("CARGO_VERSION") or None,
-  "sccache_version": os.environ.get("SCCACHE_VERSION") or None,
-  "sccache_degraded": os.environ.get("SCCACHE_DEGRADED") == "1",
-  "sccache_degraded_reason": os.environ.get("SCCACHE_DEGRADED_REASON") or None,
-  "sccache_stats": {{"raw_excerpt": run_root.joinpath("sccache-stats.log").read_text(errors="replace").splitlines()[:16] if run_root.joinpath("sccache-stats.log").exists() else []}}
-}}
-print("ADL_AWS_REMOTE_SUMMARY_BEGIN")
-print(json.dumps(payload))
-print("ADL_AWS_REMOTE_SUMMARY_END")
-PY
-cat "$RUN_ROOT/command.log"
-cat "$RUN_ROOT/command.err" >&2
-exit "$COMMAND_EXIT""#,
-        run_id = config.run_id,
+export ADL_PROGRESS_ROOT="$RUN_ROOT"
+export ADL_REMOTE_REPO_DIR="$CHECKOUT_DIR"
+export ADL_REMOTE_COMMAND={command}
+export ADL_CACHE_BUCKET={cache_bucket}
+export ADL_CACHE_PREFIX={cache_prefix}
+export ADL_SCCACHE_TARBALL_URL={sccache_tarball_url}
+export ADL_NEXTEST_TARBALL_URL={nextest_tarball_url}
+export ADL_CACHE_VOLUME_ENABLED="{cache_volume_enabled}"
+export ADL_CACHE_VOLUME_DEVICE_NAME={cache_volume_device_name}
+export ADL_CACHE_VOLUME_MOUNT_PATH={cache_volume_mount_path}
+export ADL_NEEDS_NEXTEST="{needs_nextest}"
+export ADL_REGION={region}
+
+CURRENT_STAGE="tracked_remote_runner"
+log_progress "stage=tracked_remote_runner"
+bash "$CHECKOUT_DIR/tools/aws_remote_validation/scripts/remote_validation_runner.sh""#,
+        run_root = escaped_run_root,
+        checkout_root = escaped_checkout_root,
         repo_url = escaped_repo_url,
         git_ref = escaped_git_ref,
+        run_id = shell_single_quote(&config.run_id),
         cache_bucket = escaped_cache_bucket,
         cache_prefix = escaped_cache_prefix,
         sccache_tarball_url = escaped_sccache_tarball_url,
@@ -1667,7 +1307,7 @@ exit "$COMMAND_EXIT""#,
         cache_volume_mount_path = escaped_cache_volume_mount_path,
         needs_nextest = needs_nextest,
         command = escaped_command,
-        region = config.region,
+        region = shell_single_quote(&config.region),
     )
 }
 
@@ -3702,10 +3342,15 @@ mod tests {
             std::process::id()
         ));
         let script = build_remote_command_script(&sample_config(&tmp));
-        assert!(script.contains("os.environ[\"COMMAND_EXIT\"]"));
         assert!(script.contains("export ADL_RUN_ROOT=\"$RUN_ROOT\""));
-        assert!(!script.contains("int(\"${COMMAND_EXIT}\")"));
-        assert!(script.contains("curl -fsS"));
+        assert!(script.contains("export ADL_REMOTE_COMMAND="));
+        assert!(script.contains("CURRENT_STAGE=\"tracked_remote_runner\""));
+        assert!(script.contains("remote_validation_runner.sh"));
+
+        let tracked_runner = include_str!("../scripts/remote_validation_runner.sh");
+        assert!(tracked_runner.contains("os.environ[\"COMMAND_EXIT\"]"));
+        assert!(!tracked_runner.contains("int(\"${COMMAND_EXIT}\")"));
+        assert!(tracked_runner.contains("curl -fsS"));
     }
 
     #[test]
@@ -3720,8 +3365,10 @@ mod tests {
                 .to_string();
         let script = build_remote_command_script(&config);
         assert!(script.contains("NEEDS_NEXTEST=\"0\""));
-        assert!(script.contains("if [ \"$NEEDS_NEXTEST\" = \"1\" ]"));
         assert!(!script.contains("[[ \"bash -lc"));
+
+        let tracked_runner = include_str!("../scripts/remote_validation_runner.sh");
+        assert!(tracked_runner.contains("if [ \"$NEEDS_NEXTEST\" = \"1\" ]"));
     }
 
     #[test]
@@ -3731,12 +3378,14 @@ mod tests {
             std::process::id()
         ));
         let script = build_remote_command_script(&sample_config(&tmp));
-        assert!(script.contains("watch_sccache_health"));
-        assert!(script.contains("SCCACHE_DEGRADED=0"));
-        assert!(script.contains("server_shut_down_unexpectedly"));
-        assert!(
-            script.contains("\"sccache_degraded\": os.environ.get(\"SCCACHE_DEGRADED\") == \"1\"")
-        );
+        assert!(script.contains("CURRENT_STAGE=\"tracked_remote_runner\""));
+
+        let tracked_runner = include_str!("../scripts/remote_validation_runner.sh");
+        assert!(tracked_runner.contains("watch_sccache_health"));
+        assert!(tracked_runner.contains("SCCACHE_DEGRADED=0"));
+        assert!(tracked_runner.contains("server_shut_down_unexpectedly"));
+        assert!(tracked_runner
+            .contains("\"sccache_degraded\": os.environ.get(\"SCCACHE_DEGRADED\") == \"1\""));
     }
 
     #[tokio::test]
