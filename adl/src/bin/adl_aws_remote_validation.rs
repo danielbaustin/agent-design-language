@@ -69,7 +69,7 @@ impl Drop for EnvVarGuard {
 }
 
 fn usage() -> &'static str {
-    "adl-aws-remote-validation run --issue <number> --command <shell-command> --ami-id <ami> --subnet-id <subnet> --security-group-id <sg> --instance-profile-name <name> --out <summary.json> [--artifact-dir <dir>] [--instance-type <type> ...] [--budget-name <name>] [--expected-max-cost-usd <usd>] [--repo-url <url>] [--git-ref <ref>] [--cache-bucket <bucket>] [--cache-prefix <prefix>] [--sccache-tarball-url <url>] [--nextest-tarball-url <url>] [--ssh-key-name <name>] [--ssh-private-key-path <path>] [--ssh-user <user>] [--ssh-allowed-cidr <cidr>] [--region <region>] [--profile <profile>] [--json]"
+    "adl-aws-remote-validation run --issue <number> --command <shell-command> --ami-id <ami> --subnet-id <subnet> --security-group-id <sg> --instance-profile-name <name> --out <summary.json> [--artifact-dir <dir>] [--instance-type <type> ...] [--budget-name <name>] [--expected-max-cost-usd <usd>] [--repo-url <url>] [--git-ref <ref>] [--cache-bucket <bucket>] [--cache-prefix <prefix>] [--sccache-tarball-url <url>] [--nextest-tarball-url <url>] [--ssh-key-name <name>] [--ssh-private-key-path <path>] [--ssh-user <user>] [--ssh-allowed-cidr <cidr>] [--command-timeout-seconds <seconds>] [--region <region>] [--profile <profile>] [--json]"
 }
 
 fn local_git_stdout(args: &[&str]) -> Option<String> {
@@ -163,6 +163,7 @@ fn parse_args(args: &[String]) -> Result<ParsedArgs> {
     let mut instance_types: Vec<String> = Vec::new();
     let mut budget_name = None;
     let mut expected_max_cost_usd = None;
+    let mut command_timeout_seconds = None;
     let mut json_output = false;
     let mut max_spot_retries = 2u32;
 
@@ -357,6 +358,15 @@ fn parse_args(args: &[String]) -> Result<ParsedArgs> {
                         .map_err(|_| anyhow!("invalid --expected-max-cost-usd"))?,
                 );
             }
+            "--command-timeout-seconds" => {
+                i += 1;
+                command_timeout_seconds = Some(
+                    args.get(i)
+                        .ok_or_else(|| anyhow!("--command-timeout-seconds requires a value"))?
+                        .parse::<u64>()
+                        .map_err(|_| anyhow!("invalid --command-timeout-seconds"))?,
+                );
+            }
             "--max-spot-retries" => {
                 i += 1;
                 max_spot_retries = args
@@ -416,7 +426,7 @@ fn parse_args(args: &[String]) -> Result<ParsedArgs> {
             expected_max_cost_usd,
             poll_interval_seconds: 15,
             ssm_ready_timeout_seconds: 600,
-            command_timeout_seconds: 7200,
+            command_timeout_seconds,
             termination_timeout_seconds: 300,
         },
         json_output,
