@@ -1074,6 +1074,11 @@ fn build_remote_command_script(config: &AwsRemoteValidationConfig) -> String {
         shell_single_quote(config.sccache_tarball_url.as_deref().unwrap_or(""));
     let escaped_nextest_tarball_url =
         shell_single_quote(config.nextest_tarball_url.as_deref().unwrap_or(""));
+    let needs_nextest = if config.command.contains("nextest") {
+        "1"
+    } else {
+        "0"
+    };
     format!(
         r#"set -euo pipefail
 RUN_ROOT="/tmp/adl-aws-remote-validation/{run_id}"
@@ -1274,6 +1279,7 @@ CACHE_BUCKET='{cache_bucket}'
 CACHE_PREFIX='{cache_prefix}'
 SCCACHE_TARBALL_URL='{sccache_tarball_url}'
 NEXTEST_TARBALL_URL='{nextest_tarball_url}'
+NEEDS_NEXTEST="{needs_nextest}"
 CURRENT_STAGE="ensure_git"
 log_progress "stage=ensure_git"
 if ! command -v git >/dev/null 2>&1; then
@@ -1327,7 +1333,7 @@ if ! command -v sccache >/dev/null 2>&1; then
 fi
 CURRENT_STAGE="ensure_nextest"
 log_progress "stage=ensure_nextest"
-if [[ "{command}" == *"nextest"* ]] && ! cargo nextest --version >/dev/null 2>&1; then
+if [ "$NEEDS_NEXTEST" = "1" ] && ! cargo nextest --version >/dev/null 2>&1; then
   NEXTEST_CACHE_HIT=0
   if install_binary_from_s3_cache cargo-nextest "$CACHE_BUCKET" "$CACHE_PREFIX" >/tmp/adl-nextest-install.log 2>&1 && verify_nextest_binary >>/tmp/adl-nextest-install.log 2>&1; then
     NEXTEST_CACHE_HIT=1
@@ -1430,6 +1436,7 @@ exit "$COMMAND_EXIT""#,
         cache_prefix = escaped_cache_prefix,
         sccache_tarball_url = escaped_sccache_tarball_url,
         nextest_tarball_url = escaped_nextest_tarball_url,
+        needs_nextest = needs_nextest,
         command = escaped_command,
         region = config.region,
     )
@@ -2990,6 +2997,22 @@ mod tests {
         assert!(script.contains("os.environ[\"COMMAND_EXIT\"]"));
         assert!(script.contains("export ADL_RUN_ROOT=\"$RUN_ROOT\""));
         assert!(!script.contains("int(\"${COMMAND_EXIT}\")"));
+    }
+
+    #[test]
+    fn build_remote_command_script_uses_boolean_nextest_flag() {
+        let tmp = std::env::temp_dir().join(format!(
+            "adl-aws-remote-validation-nextest-{}",
+            std::process::id()
+        ));
+        let mut config = sample_config(&tmp);
+        config.command =
+            "bash -lc 'cargo build --manifest-path adl/Cargo.toml --locked --bin adl-pr-doctor && cargo test --manifest-path adl/Cargo.toml --locked provider_communication -- --nocapture'"
+                .to_string();
+        let script = build_remote_command_script(&config);
+        assert!(script.contains("NEEDS_NEXTEST=\"0\""));
+        assert!(script.contains("if [ \"$NEEDS_NEXTEST\" = \"1\" ]"));
+        assert!(!script.contains("[[ \"bash -lc"));
     }
 
     #[test]
