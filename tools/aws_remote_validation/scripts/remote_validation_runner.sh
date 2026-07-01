@@ -8,6 +8,11 @@ set -euo pipefail
 RUN_ROOT="${ADL_RUN_ROOT:-/tmp/adl-aws-remote-validation/${ADL_RUN_ID}}"
 PROGRESS_ROOT="${ADL_PROGRESS_ROOT:-$RUN_ROOT}"
 WORK_ROOT="$RUN_ROOT"
+TOOLCHAIN_ROOT=""
+TARGET_DIR="$WORK_ROOT/target"
+SCCACHE_DIR="$WORK_ROOT/sccache"
+CARGO_HOME_DIR="${HOME:-/root}/.cargo"
+RUSTUP_HOME_DIR="${HOME:-/root}/.rustup"
 
 if [ "${ADL_CACHE_VOLUME_ENABLED:-0}" = "1" ]; then
   CACHE_VOLUME_DEVICE_NAME="${ADL_CACHE_VOLUME_DEVICE_NAME:?ADL_CACHE_VOLUME_DEVICE_NAME is required}"
@@ -45,12 +50,15 @@ if [ "${ADL_CACHE_VOLUME_ENABLED:-0}" = "1" ]; then
   CACHE_OWNER_USER="$(id -un)"
   CACHE_OWNER_GROUP="$(id -gn)"
   sudo chown -R "$CACHE_OWNER_USER":"$CACHE_OWNER_GROUP" "$CACHE_VOLUME_MOUNT_PATH"
-  WORK_ROOT="$CACHE_VOLUME_MOUNT_PATH/adl-aws-remote-validation/${ADL_RUN_ID}"
+  TOOLCHAIN_ROOT="$CACHE_VOLUME_MOUNT_PATH/adl-aws-remote-validation/shared"
+  WORK_ROOT="$CACHE_VOLUME_MOUNT_PATH/adl-aws-remote-validation/runs/${ADL_RUN_ID}"
+  TARGET_DIR="$TOOLCHAIN_ROOT/target"
+  SCCACHE_DIR="$TOOLCHAIN_ROOT/sccache"
+  CARGO_HOME_DIR="$TOOLCHAIN_ROOT/cargo-home"
+  RUSTUP_HOME_DIR="$TOOLCHAIN_ROOT/rustup-home"
 fi
 
-TARGET_DIR="$WORK_ROOT/target"
-SCCACHE_DIR="$WORK_ROOT/sccache"
-mkdir -p "$RUN_ROOT" "$PROGRESS_ROOT" "$TARGET_DIR" "$SCCACHE_DIR"
+mkdir -p "$RUN_ROOT" "$PROGRESS_ROOT" "$WORK_ROOT" "$TARGET_DIR" "$SCCACHE_DIR" "$CARGO_HOME_DIR" "$RUSTUP_HOME_DIR"
 
 BOOTSTRAP_START="$(date +%s)"
 CURRENT_STAGE="bootstrap"
@@ -92,6 +100,8 @@ on_error() {
   exit "$exit_code"
 }
 trap on_error ERR
+
+TOOL_INSTALL_POLICY="package_manager_or_prebuilt_only"
 
 release_target_triple() {
   local arch
@@ -246,6 +256,8 @@ install_nextest_release() {
 }
 
 export HOME="${HOME:-/root}"
+export CARGO_HOME="$CARGO_HOME_DIR"
+export RUSTUP_HOME="$RUSTUP_HOME_DIR"
 CACHE_BUCKET="${ADL_CACHE_BUCKET:-}"
 CACHE_PREFIX="${ADL_CACHE_PREFIX:-}"
 SCCACHE_TARBALL_URL="${ADL_SCCACHE_TARBALL_URL:-}"
@@ -268,7 +280,7 @@ fi
 if [ -f "$HOME/.cargo/env" ]; then
   . "$HOME/.cargo/env"
 fi
-export PATH="$HOME/.cargo/bin:$PATH"
+export PATH="$CARGO_HOME/bin:$HOME/.cargo/bin:$PATH"
 export CARGO_TARGET_DIR="$TARGET_DIR"
 export SCCACHE_DIR="$SCCACHE_DIR"
 if [ -n "$CACHE_BUCKET" ]; then
@@ -279,6 +291,7 @@ fi
 
 CURRENT_STAGE="ensure_sccache"
 log_progress "stage=ensure_sccache"
+log_progress "tool_install_policy=$TOOL_INSTALL_POLICY tool=sccache"
 if ! command -v sccache >/dev/null 2>&1; then
   SCCACHE_CACHE_HIT=0
   if install_package_manager_binary sccache >>/tmp/adl-sccache-install.log 2>&1 && verify_sccache_binary >>/tmp/adl-sccache-install.log 2>&1; then
@@ -291,7 +304,7 @@ if ! command -v sccache >/dev/null 2>&1; then
     :
   else
     remove_installed_binary sccache
-    echo "failed to install prebuilt sccache via S3 cache, tarball URL, or GitHub release" >>/tmp/adl-sccache-install.log
+    echo "failed to install sccache via package manager or prebuilt artifact paths; source compilation is disabled" >>/tmp/adl-sccache-install.log
     exit 1
   fi
   if [ "$SCCACHE_CACHE_HIT" -eq 0 ]; then
@@ -301,6 +314,7 @@ fi
 
 CURRENT_STAGE="ensure_nextest"
 log_progress "stage=ensure_nextest"
+log_progress "tool_install_policy=$TOOL_INSTALL_POLICY tool=cargo-nextest"
 if [ "$NEEDS_NEXTEST" = "1" ] && ! cargo nextest --version >/dev/null 2>&1; then
   NEXTEST_CACHE_HIT=0
   if install_package_manager_binary cargo-nextest >>/tmp/adl-nextest-install.log 2>&1 && verify_nextest_binary >>/tmp/adl-nextest-install.log 2>&1; then
@@ -313,7 +327,7 @@ if [ "$NEEDS_NEXTEST" = "1" ] && ! cargo nextest --version >/dev/null 2>&1; then
     :
   else
     remove_installed_binary cargo-nextest
-    echo "failed to install prebuilt cargo-nextest via S3 cache, tarball URL, or GitHub release" >>/tmp/adl-nextest-install.log
+    echo "failed to install cargo-nextest via package manager or prebuilt artifact paths; source compilation is disabled" >>/tmp/adl-nextest-install.log
     exit 1
   fi
   if [ "$NEXTEST_CACHE_HIT" -eq 0 ]; then
