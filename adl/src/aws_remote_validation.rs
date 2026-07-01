@@ -1543,7 +1543,7 @@ impl LiveAwsRemoteValidationAdapter {
             .unwrap_or_else(|| Path::new("."))
             .join("remote-tail.log");
         let remote_command = format!(
-            "sudo mkdir -p {rr}; sudo touch {rr}/progress.log {rr}/command.log {rr}/command.err; sudo tail -n +1 -F {rr}/progress.log {rr}/command.log {rr}/command.err",
+            "mkdir -p {rr}; touch {rr}/progress.log {rr}/command.log {rr}/command.err; tail -n +1 -F {rr}/progress.log {rr}/command.log {rr}/command.err",
             rr = shell_single_quote(run_root)
         );
         let ssh_invocation = format!(
