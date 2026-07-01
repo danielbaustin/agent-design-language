@@ -7,13 +7,14 @@ RUNNER="$ROOT_DIR/adl/tools/run_owner_validation_lane.sh"
 plan_output="$(bash "$RUNNER" all --build --print-plan)"
 for expected in \
   "cargo build owner binaries" \
+  "--bin adl-pr-inventory" \
   "C-SDLC wrapper migration contract" \
   "C-SDLC run ambiguity policy" \
   "C-SDLC control-plane observability contract" \
   "runtime compatibility boundary" \
   "review compatibility boundary" \
   "PASS run_owner_validation_lane surface=all"; do
-  grep -Fq "$expected" <<<"$plan_output" || {
+  grep -Fq -- "$expected" <<<"$plan_output" || {
     echo "missing expected lane plan entry: $expected" >&2
     echo "$plan_output" >&2
     exit 1
