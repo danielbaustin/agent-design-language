@@ -8,6 +8,7 @@
 - Issue: `#4368`
 - Status: planning-source ledger for v0.91.7 scheduling
 - Release-tail refresh: `#3982` / `V0916_TO_V0917_HANDOFF_ADDENDUM_3982.md`
+- WP-02 closeout-consumption packet: `review/V0917_WP02_V0916_CLOSEOUT_TRUTH_CONSUMPTION_4661.md`
 
 ## Purpose
 
@@ -34,6 +35,7 @@ It must answer three questions before `v0.92` opens:
 | `docs/milestones/v0.91.5/PRE_V092_BRIDGE_FEATURE_DOC_LEDGER_v0.91.5.md` | Pre-`v0.92` bridge ledger / `#3778` source | Consume as upstream bridge authority; do not let v0.91.7 contradict the ledger without an explicit decision. |
 | `docs/milestones/v0.91.6/` | First bridge tranche, runtime/tooling/provider/security/observability evidence | Consume closeout truth from the milestone's canonical issue-truth surfaces; do not duplicate completed work. |
 | `docs/milestones/v0.91.7/V0916_TO_V0917_HANDOFF_ADDENDUM_3982.md` | Dependency-gated v0.91.6-to-v0.91.7 handoff | WP-01 must consume this addendum with the failed-but-closed WP-15 external-review truth, closed WP-16 remediation/preflight truth, closed `#4620` / `#4621` dispositions, and closed v0.91.7 `#4622` PR-inventory tooling proof before opening dependent execution work. |
+| `docs/milestones/v0.91.7/review/V0917_WP02_V0916_CLOSEOUT_TRUTH_CONSUMPTION_4661.md` | WP-02 closeout-truth child packet | Consumes `#3980`, `#3981`, `#4620`, `#4621`, `#4622`, `#4628`, and `#4629` as closed-with-evidence inputs, while leaving sibling WP-02 children `#4662`-`#4665` and wrapper `#4699` open until separately disposed. |
 | `docs/milestones/v0.91.6/review/` | Sprint reviews, remediation, proof packets, and retained evidence | Read current closed-umbrella truth from `V0916_COMPLETED_SPRINT_RETAINED_EVIDENCE_MATRIX_4251.md`, then convert residual findings into proof work, operator-approved non-claims, or evidence-backed blockers. |
 | `docs/milestones/v0.91.6/RUNTIME_FIRE_UP_PLAN_v0.91.6.md` | Runtime fire-up and soak continuity | Carry into runtime Soak #2 / integrated runtime proof. |
 | `docs/milestones/v0.91.6/features/COGNITIVE_SCHEDULER_v0.91.6.md` | Scheduler v1 bridge | Preserve as scheduler/economics input, not just docs residue. |
@@ -155,3 +157,9 @@ Current `v0.91.6` closeout and release-tail issue truth should be consumed from
 the retained-evidence matrix, the closeout-tail sprint surface, the failed
 external-review record, and WP-16 child issue dispositions, not reconstructed
 manually from scattered historical packets.
+
+Issue `#4661` records the WP-02 closeout-truth consumption packet at
+`docs/milestones/v0.91.7/review/V0917_WP02_V0916_CLOSEOUT_TRUTH_CONSUMPTION_4661.md`.
+That packet is the bounded closeout-truth evidence for `#4661`; ADR,
+Observatory, C-SDLC control-plane, and PR-inventory child dispositions remain
+owned by sibling issues `#4662`-`#4665`.

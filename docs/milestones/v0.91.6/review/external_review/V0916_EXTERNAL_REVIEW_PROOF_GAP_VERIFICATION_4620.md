@@ -37,6 +37,11 @@ the repo.
 
 ## External-Review Gap Status Table
 
+Post-closeout supersession note for `#4661`: the table below records the
+release-tail state at the time `#4620` ran. `#3980`, `#3981`, `#3984`, `#4620`,
+and `#4621` are now closed, and v0.91.7 consumes their final state through
+`docs/milestones/v0.91.7/review/V0917_WP02_V0916_CLOSEOUT_TRUTH_CONSUMPTION_4661.md`.
+
 | Gap surface | Classification | Owner / route | Evidence and note |
 | --- | --- | --- | --- |
 | Numbered SRP findings parser fix | `executed_pass` | `#4611` | Focused regression executed in this packet and passed; `#4611` is already closed. |
@@ -48,10 +53,10 @@ the repo.
 | Integrated failure injection / resilience proof | `routed` | `#4547` | [`docs/milestones/v0.91.6/review/runtime/v0916_runtime_failure_injection_4547/README.md`](../runtime/v0916_runtime_failure_injection_4547/README.md) proves the bounded long-lived-agent and resilience slice without widening to full runtime readiness. |
 | Unity / Observatory runtime consumption | `routed` | `#4548` | Issue `#4548` is closed, but this packet does not rerun Unity proof. It remains a separately consumed retained surface and must not be smuggled into runtime-complete claims. |
 | Soak #2 full feature-list integration gate | `routed` | `#4549` | Issue `#4549` is closed as the `v0.91.7` planning gate. It remains handoff/planning truth, not `v0.91.6` runtime proof. |
-| External review disposition itself | `blocked` | `#3980` | Issue `#3980` remains open. This packet verifies named proof gaps after the failed external review, but it does not by itself close the external-review lane. |
-| Findings remediation and final preflight | `in_progress` | `#3981` | Issue `#3981` remains open and is the canonical sink for these final preflight dispositions. |
-| `v0.91.7` residual handoff | `routed` | `#3982` | Issue `#3982` remains open and should consume any residuals that are planning-only or post-closeout. |
-| Release ceremony readiness | `blocked` | `#3984` | Issue `#3984` remains open. Ceremony should not proceed on the basis of read-only review claims. |
+| External review disposition itself | `blocked` | `#3980` | At packet-writing time, issue `#3980` was open. This packet verified named proof gaps after the failed external review, but did not by itself close the external-review lane. `#3980` is now closed and consumed by `#4661`. |
+| Findings remediation and final preflight | `in_progress` | `#3981` | At packet-writing time, issue `#3981` was open and was the canonical sink for these final preflight dispositions. `#3981` is now closed and consumed by `#4661`. |
+| `v0.91.7` residual handoff | `routed` | `#3982` | At packet-writing time, issue `#3982` was open and was expected to consume residuals that were planning-only or post-closeout. `#3982` is now closed and consumed by `#4661`. |
+| Release ceremony readiness | `blocked` | `#3984` | At packet-writing time, issue `#3984` had not yet closed. `#3984` is now closed; the failed-review non-approval boundary remains consumed by `#4661`. |
 
 ## Release-Tail Decision
 
@@ -61,8 +66,9 @@ Reason:
 
 - The two explicitly named remediation regressions now have direct executed
   proof and both passed.
-- The broader external-review lane is still not settled because `#3980`,
-  `#3981`, and `#3984` remain open.
+- At packet-writing time, the broader external-review lane was not settled
+  because `#3980`, `#3981`, and `#3984` had not yet closed. Those issues are
+  now closed and consumed by `#4661`.
 - Retained runtime, scheduler, AWS, ACIP/AEE/ObsMem, resilience, and Unity
   surfaces exist, but this packet does not convert them into a new blanket
   `integrated_proven` claim for the milestone.

@@ -43,6 +43,11 @@ existing_issue_routes:
   - {issue: 4603, wp: WP-06, route: "AWS Spot manager and remote validation lane"}
   - {issue: 4617, wp: WP-04, route: "Codex session telemetry for metrics and prediction"}
   - {issue: 4622, wp: WP-02, route: "Closed: repo-native `pr-inventory` command for release-tail review"}
+  - {issue: 4661, wp: WP-02, route: "v0.91.6 closeout-truth consumption packet"}
+  - {issue: 4662, wp: WP-02, route: "ADR release-tail child disposition"}
+  - {issue: 4663, wp: WP-02, route: "Observatory carryover child disposition"}
+  - {issue: 4664, wp: WP-02, route: "C-SDLC control-plane child disposition"}
+  - {issue: 4665, wp: WP-02, route: "PR-inventory closure child disposition"}
 non_wp_issue_routes:
   - {issue: 4651, route: "Rust refactoring by ownership and validation cost", related_wp: "WP-03/WP-06"}
   - {issue: 4652, route: "Unity demo surfaces", related_wp: "WP-09/WP-15"}
@@ -67,6 +72,8 @@ work_packages:
       #4388-#4398 C-SDLC integration control-plane work, and late
       control-plane inputs #4405, #4412-#4413, #4417-#4421, #4425, #4431,
       #4441, #4433-#4438, and #4442-#4443 before v0.92 consumes them.
+      The original parent issue is closed; active child dispositions are
+      #4661 through #4665 under mini-sprint wrapper #4699.
     depends_on: ["WP-01"]
     deliverables:
       - "Closeout truth ledger"

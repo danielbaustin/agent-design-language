@@ -18,6 +18,7 @@ Forward checklist. Items are intentionally unchecked because `v0.91.7` execution
 - [ ] `#3778` bridge ledger consumed.
 - [ ] v0.91.5 pre-v0.92 bridge ledger source row consumed.
 - [ ] `v0.91.6` first-tranche package consumed.
+  - WP-02 closeout-truth child packet: `docs/milestones/v0.91.7/review/V0917_WP02_V0916_CLOSEOUT_TRUTH_CONSUMPTION_4661.md`.
 - [ ] `V0916_TO_V0917_HANDOFF_ADDENDUM_3982.md` consumed with failed-but-closed WP-15 `#3980` review truth, closed WP-16 `#3981` remediation truth, closed `#4620` / `#4621`, closed v0.91.7 `#4622` PR-inventory proof, and closed WP-14A remediation truth.
 - [ ] Closed ADR release-tail issues `#4324` and `#4369`-`#4376` consumed, and open tooling remediation `#4378` closed with evidence or explicitly blocked with evidence and operator approval.
 - [ ] `PLANNING_SOURCE_CAPTURE_v0.91.7.md` reviewed.
