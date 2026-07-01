@@ -8,11 +8,14 @@ use tokio::fs;
 
 #[path = "../aws_remote_validation.rs"]
 mod aws_remote_validation;
+#[path = "../cli/observability.rs"]
+mod observability;
 
 use aws_remote_validation::{
     run_aws_remote_validation, write_summary_artifacts, AwsRemoteValidationConfig,
     LiveAwsRemoteValidationAdapter, RemoteRunStatus,
 };
+use observability::ProgressHeartbeat;
 
 #[derive(Debug)]
 struct ParsedArgs {
@@ -40,6 +43,29 @@ struct ResumeState {
     attempts: Vec<ResumeAttemptRecord>,
     next_action: String,
     final_status: Option<String>,
+}
+
+struct EnvVarGuard {
+    key: &'static str,
+    original: Option<String>,
+}
+
+impl EnvVarGuard {
+    fn set(key: &'static str, value: String) -> Self {
+        let original = env::var(key).ok();
+        env::set_var(key, value);
+        Self { key, original }
+    }
+}
+
+impl Drop for EnvVarGuard {
+    fn drop(&mut self) {
+        if let Some(value) = self.original.as_deref() {
+            env::set_var(self.key, value);
+        } else {
+            env::remove_var(self.key);
+        }
+    }
 }
 
 fn usage() -> &'static str {
@@ -374,10 +400,41 @@ fn main() -> Result<()> {
             let mut attempt_config = effective_config.clone();
             attempt_config.artifact_dir = attempt_dir.clone();
             attempt_config.out_path = attempt_out.clone();
+            let _obs_log = EnvVarGuard::set(
+                "ADL_OBSERVABILITY_LOG",
+                attempt_dir.join("command-status.log").display().to_string(),
+            );
+            let _obs_stderr = EnvVarGuard::set("ADL_OBSERVABILITY_STDERR", "0".to_string());
+            let _obs_heartbeat =
+                EnvVarGuard::set("ADL_OBSERVABILITY_HEARTBEAT_MS", "5000".to_string());
+            let _obs_root = EnvVarGuard::set(
+                "ADL_OBSERVABILITY_REPO_ROOT",
+                std::env::current_dir()?.display().to_string(),
+            );
+            let issue_string = effective_config.issue.unwrap_or_default().to_string();
+            let attempt_string = attempt_index.to_string();
+            let heartbeat = ProgressHeartbeat::start(
+                "adl-aws-remote-validation",
+                "attempt",
+                &[
+                    ("issue", issue_string.as_str()),
+                    ("run_id", effective_config.run_id.as_str()),
+                    ("attempt", attempt_string.as_str()),
+                ],
+            );
             resume_state.next_action = format!("run_attempt_{}", attempt_index);
             write_resume_state(&resume_state_path, &resume_state).await?;
-            let (mut summary, events) =
-                run_aws_remote_validation(&adapter, &attempt_config).await?;
+            let attempt_result = run_aws_remote_validation(&adapter, &attempt_config).await;
+            let (mut summary, events) = match attempt_result {
+                Ok(pair) => {
+                    heartbeat.completed(&[("result", "completed")]);
+                    pair
+                }
+                Err(err) => {
+                    heartbeat.failed(&[("result", "failed"), ("detail", &err.to_string())]);
+                    return Err(err);
+                }
+            };
             summary.launch_surface = Some(prepared.record.clone());
             write_summary_artifacts(&summary, &events, &attempt_out, &attempt_dir).await?;
             let provider_interruption_confirmed = summary

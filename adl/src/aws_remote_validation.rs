@@ -10,10 +10,14 @@ use aws_sdk_servicequotas as servicequotas;
 use aws_sdk_ssm as ssm;
 use aws_sdk_sts as sts;
 use chrono::{DateTime, Datelike, Duration as ChronoDuration, Timelike, Utc};
+use once_cell::sync::Lazy;
 use serde::{Deserialize, Serialize};
 use sha2::{Digest, Sha256};
 use std::fmt;
+use std::fs::OpenOptions;
+use std::io::Write;
 use std::path::{Path, PathBuf};
+use std::sync::Mutex;
 use std::time::{Duration, Instant};
 use tokio::fs;
 use tokio::time::sleep;
@@ -21,6 +25,10 @@ use tokio::time::sleep;
 const SPOT_QUOTA_NAME: &str = "All Standard (A, C, D, H, I, M, R, T, Z) Spot Instance Requests";
 const ON_DEMAND_QUOTA_NAME: &str =
     "Running On-Demand Standard (A, C, D, H, I, M, R, T, Z) instances";
+
+static LIVE_EVENT_LOG_PATH: Lazy<Mutex<Option<PathBuf>>> = Lazy::new(|| Mutex::new(None));
+static LIVE_COMMAND_STATUS_LOG_PATH: Lazy<Mutex<Option<PathBuf>>> = Lazy::new(|| Mutex::new(None));
+
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
 #[serde(rename_all = "snake_case")]
 pub enum PurchaseOption {
@@ -370,6 +378,7 @@ pub async fn run_aws_remote_validation<A: AwsRemoteValidationAdapter>(
     config: &AwsRemoteValidationConfig,
 ) -> Result<(AwsRemoteValidationSummary, Vec<EventRecord>)> {
     config.validate()?;
+    initialize_live_log_paths(&config.artifact_dir)?;
     let start_wall = Utc::now();
     let total_timer = Instant::now();
     let mut events = Vec::new();
@@ -862,6 +871,7 @@ pub async fn run_aws_remote_validation<A: AwsRemoteValidationAdapter>(
         failure_reason,
     };
 
+    clear_live_log_paths();
     Ok((summary, events))
 }
 
@@ -895,12 +905,67 @@ pub async fn write_summary_artifacts(
 }
 
 fn record_event(events: &mut Vec<EventRecord>, stage: &str, status: &str, detail: String) {
-    events.push(EventRecord {
+    let event = EventRecord {
         timestamp: Utc::now().to_rfc3339(),
         stage: stage.to_string(),
         status: status.to_string(),
         detail,
-    });
+    };
+    append_jsonl_line(&LIVE_EVENT_LOG_PATH, &event);
+    events.push(event);
+}
+
+fn initialize_live_log_paths(artifact_dir: &Path) -> Result<()> {
+    std::fs::create_dir_all(artifact_dir)
+        .with_context(|| format!("failed to create '{}'", artifact_dir.display()))?;
+    set_live_log_path(&LIVE_EVENT_LOG_PATH, artifact_dir.join("events.jsonl"));
+    set_live_log_path(
+        &LIVE_COMMAND_STATUS_LOG_PATH,
+        artifact_dir.join("command-status.log"),
+    );
+    Ok(())
+}
+
+fn clear_live_log_paths() {
+    set_live_log_path(&LIVE_EVENT_LOG_PATH, None::<PathBuf>);
+    set_live_log_path(&LIVE_COMMAND_STATUS_LOG_PATH, None::<PathBuf>);
+}
+
+fn set_live_log_path<P>(slot: &Lazy<Mutex<Option<PathBuf>>>, path: P)
+where
+    P: Into<Option<PathBuf>>,
+{
+    if let Ok(mut guard) = slot.lock() {
+        *guard = path.into();
+    }
+}
+
+fn append_jsonl_line<T: Serialize>(slot: &Lazy<Mutex<Option<PathBuf>>>, value: &T) {
+    let Some(path) = slot.lock().ok().and_then(|guard| guard.clone()) else {
+        return;
+    };
+    let Ok(mut file) = OpenOptions::new().create(true).append(true).open(path) else {
+        return;
+    };
+    let Ok(line) = serde_json::to_string(value) else {
+        return;
+    };
+    let _ = writeln!(file, "{line}");
+}
+
+fn append_command_status_line(status: &str, detail: impl Into<String>) {
+    let Some(path) = LIVE_COMMAND_STATUS_LOG_PATH
+        .lock()
+        .ok()
+        .and_then(|guard| guard.clone())
+    else {
+        return;
+    };
+    let Ok(mut file) = OpenOptions::new().create(true).append(true).open(path) else {
+        return;
+    };
+    let timestamp = Utc::now().to_rfc3339();
+    let _ = writeln!(file, "{timestamp} status={status} {}", detail.into());
 }
 
 fn sha256_hex(value: &str) -> String {
@@ -1705,10 +1770,18 @@ impl AwsRemoteValidationAdapter for LiveAwsRemoteValidationAdapter {
                     .map(|value| value.as_str())
                     .unwrap_or("Unknown");
                 if status == "Online" {
+                    append_command_status_line(
+                        "ssm_online",
+                        format!("instance_id={instance_id} ping_status={status}"),
+                    );
                     return Ok(SsmReadyResult {
                         status: status.to_string(),
                     });
                 }
+                append_command_status_line(
+                    "ssm_wait",
+                    format!("instance_id={instance_id} ping_status={status}"),
+                );
             }
             if start.elapsed() >= timeout {
                 return Err(AwsAdapterError {
@@ -1745,6 +1818,10 @@ impl AwsRemoteValidationAdapter for LiveAwsRemoteValidationAdapter {
             .and_then(|command| command.command_id())
             .unwrap_or_default()
             .to_string();
+        append_command_status_line(
+            "command_sent",
+            format!("instance_id={instance_id} command_id={command_id}"),
+        );
         let start = Instant::now();
         loop {
             let invocation = self
@@ -1760,6 +1837,14 @@ impl AwsRemoteValidationAdapter for LiveAwsRemoteValidationAdapter {
                 .or_else(|| invocation.status().map(|value| value.as_str()))
                 .unwrap_or("Unknown")
                 .to_string();
+            append_command_status_line(
+                "command_poll",
+                format!(
+                    "instance_id={instance_id} command_id={command_id} status={} response_code={}",
+                    status,
+                    invocation.response_code()
+                ),
+            );
             let terminal = matches!(
                 status.as_str(),
                 "Success" | "Cancelled" | "TimedOut" | "Failed" | "Cancelling"
