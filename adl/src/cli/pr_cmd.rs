@@ -13,8 +13,9 @@ use super::pr_cmd_args::parse_finish_args;
 use super::pr_cmd_args::{
     parse_closeout_args, parse_closing_linkage_args, parse_create_args, parse_doctor_args,
     parse_init_args, parse_issue_args, parse_pr_inventory_args, parse_preflight_args,
-    parse_projection_map_args, parse_ready_args, parse_repair_issue_body_args, parse_start_args,
-    parse_validation_args, parse_watch_args, DoctorArgs, DoctorMode, IssueArgs,
+    parse_projection_map_args, parse_ready_args, parse_repair_issue_body_args, parse_shepherd_args,
+    parse_start_args, parse_validation_args, parse_watch_args, DoctorArgs, DoctorMode, IssueArgs,
+    ShepherdArgs, WatchArgs,
 };
 use super::pr_cmd_cards::{
     branch_indicates_unbound_state, ensure_bootstrap_cards, ensure_local_issue_prompt_copy,
@@ -210,7 +211,7 @@ fn real_pr_run(args: &[String]) -> Result<()> {
 pub(crate) fn real_pr(args: &[String]) -> Result<()> {
     let Some(subcommand) = args.first().map(|s| s.as_str()) else {
         bail!(
-            "pr requires a subcommand: create | init | repair-issue-body | start | run | doctor | ready | preflight | finish | validation | pr-inventory | watch | closing-linkage | issue | projection-map | closeout"
+            "pr requires a subcommand: create | init | repair-issue-body | start | run | doctor | ready | preflight | finish | validation | pr-inventory | watch | shepherd | closing-linkage | issue | projection-map | closeout"
         );
     };
 
@@ -227,6 +228,7 @@ pub(crate) fn real_pr(args: &[String]) -> Result<()> {
         "validation" => real_pr_validation(&args[1..]),
         "pr-inventory" => real_pr_inventory(&args[1..]),
         "watch" => real_pr_watch(&args[1..]),
+        "shepherd" => real_pr_shepherd(&args[1..]),
         "closing-linkage" => real_pr_closing_linkage(&args[1..]),
         "issue" => real_pr_issue(&args[1..]),
         "projection-map" => real_pr_projection_map(&args[1..]),
@@ -459,92 +461,34 @@ fn real_pr_validation(args: &[String]) -> Result<()> {
 
 fn real_pr_watch(args: &[String]) -> Result<()> {
     let parsed = parse_watch_args(args)?;
-    let repo_root = repo_root()?;
-    let repo = parsed
-        .repo
-        .or_else(|| repo_from_issue_ref(&parsed.issue_ref))
-        .or_else(|| repo_from_pr_ref(&parsed.issue_ref))
-        .unwrap_or(default_repo(&repo_root)?);
-    let requested_number = parse_issue_ref_number("watch", &parsed.issue_ref)?;
-    let (issue, issue_record, direct_pr) = match github::gh_issue_view(&repo, requested_number) {
-        Ok(issue_record) => (requested_number, issue_record, None),
-        Err(err)
-            if err
-                .to_string()
-                .contains("GitHub returned a pull request instead of an issue") =>
-        {
-            let pr = github::pr_metadata_for_watch(&repo, &parsed.issue_ref)?;
-            let issue = github::issue_number_for_pr_watch(&repo, &pr)?;
-            let issue_record = github::gh_issue_view(&repo, issue)?;
-            (issue, issue_record, Some(pr))
-        }
-        Err(err) => return Err(err),
-    };
-    let closed_completed = github::gh_issue_is_closed_completed(issue, &repo)?;
-    let version = resolve_version_for_existing_issue(
-        &repo_root,
-        &repo,
-        issue,
-        parsed.version,
-        false,
-        "watch",
-    )?;
-    let local_identity = resolve_local_issue_identity(&repo_root, issue)?;
-    let slug = parsed
-        .slug
-        .or_else(|| local_identity.as_ref().map(|(_, slug)| slug.clone()))
-        .unwrap_or_else(|| sanitize_slug(&issue_record.title));
-    let issue_ref = IssueRef::new(issue, version, slug)?;
-    let linked_pr = if let Some(pr) = direct_pr {
-        let validation = github::pr_validation_report(&repo, &pr.number.to_string())?;
-        Some((pr, validation))
-    } else {
-        let linked_prs = github::linked_prs_for_issue(
-            &repo,
-            issue,
-            Some(issue_ref.branch_name("codex").as_str()),
-        )?;
-        match linked_prs.len() {
-            0 => None,
-            1 => {
-                let pr = linked_prs
-                    .into_iter()
-                    .next()
-                    .expect("single linked PR should exist");
-                let validation = github::pr_validation_report(&repo, &pr.number.to_string())?;
-                Some((pr, validation))
-            }
-            count => bail!(
-                "watch: issue #{issue} has {count} linked PRs; watcher requires a single unambiguous lifecycle target"
-            ),
-        }
-    };
-    let local_readiness = doctor::run_doctor_ready(
-        &repo_root,
-        &repo,
-        &issue_ref,
-        &issue_ref.branch_name("codex"),
-    )
-    .map(|ready| github::IssueWatchLocalReadinessReport {
-        status: "ready".to_string(),
-        pr_run_readiness: ready.card_lifecycle.pr_run_readiness.to_string(),
-        reason: "doctor_ready_pass".to_string(),
-    })
-    .unwrap_or_else(|err| github::IssueWatchLocalReadinessReport {
-        status: "failed".to_string(),
-        pr_run_readiness: "unknown".to_string(),
-        reason: err.to_string(),
-    });
-    let report = github::build_issue_watch_report(
-        &issue_record,
-        closed_completed,
-        local_readiness,
-        linked_pr,
-    );
+    let snapshot = build_issue_lifecycle_snapshot(&parsed)?;
+    let report = snapshot.watch_report;
     if parsed.json {
         print_json(&report)?;
     } else {
         print_issue_watch_report(&report);
+    }
+    Ok(())
+}
+
+fn real_pr_shepherd(args: &[String]) -> Result<()> {
+    let parsed: ShepherdArgs = parse_shepherd_args(args)?;
+    let snapshot = build_issue_lifecycle_snapshot(&WatchArgs {
+        issue_ref: parsed.issue_ref,
+        repo: parsed.repo,
+        slug: parsed.slug,
+        version: parsed.version,
+        json: parsed.json,
+    })?;
+    let report = github::build_issue_lifecycle_shepherd_report(
+        &snapshot.watch_report,
+        snapshot.ready_lifecycle_state,
+        snapshot.pr_finish_readiness,
+    );
+    if parsed.json {
+        print_json(&report)?;
+    } else {
+        print_issue_lifecycle_shepherd_report(&report);
     }
     Ok(())
 }
@@ -858,6 +802,114 @@ struct IssueMutationResult {
     reason: Option<&'static str>,
 }
 
+struct IssueLifecycleSnapshot {
+    watch_report: github::IssueWatchReport,
+    ready_lifecycle_state: &'static str,
+    pr_finish_readiness: &'static str,
+}
+
+fn build_issue_lifecycle_snapshot(parsed: &WatchArgs) -> Result<IssueLifecycleSnapshot> {
+    let repo_root = repo_root()?;
+    let repo = parsed
+        .repo
+        .clone()
+        .or_else(|| repo_from_issue_ref(&parsed.issue_ref))
+        .or_else(|| repo_from_pr_ref(&parsed.issue_ref))
+        .unwrap_or(default_repo(&repo_root)?);
+    let requested_number = parse_issue_ref_number("watch", &parsed.issue_ref)?;
+    let (issue, issue_record, direct_pr) = match github::gh_issue_view(&repo, requested_number) {
+        Ok(issue_record) => (requested_number, issue_record, None),
+        Err(err)
+            if err
+                .to_string()
+                .contains("GitHub returned a pull request instead of an issue") =>
+        {
+            let pr = github::pr_metadata_for_watch(&repo, &parsed.issue_ref)?;
+            let issue = github::issue_number_for_pr_watch(&repo, &pr)?;
+            let issue_record = github::gh_issue_view(&repo, issue)?;
+            (issue, issue_record, Some(pr))
+        }
+        Err(err) => return Err(err),
+    };
+    let closed_completed = github::gh_issue_is_closed_completed(issue, &repo)?;
+    let version = resolve_version_for_existing_issue(
+        &repo_root,
+        &repo,
+        issue,
+        parsed.version.clone(),
+        false,
+        "watch",
+    )?;
+    let local_identity = resolve_local_issue_identity(&repo_root, issue)?;
+    let slug = parsed
+        .slug
+        .clone()
+        .or_else(|| local_identity.as_ref().map(|(_, slug)| slug.clone()))
+        .unwrap_or_else(|| sanitize_slug(&issue_record.title));
+    let issue_ref = IssueRef::new(issue, version, slug)?;
+    let linked_pr = if let Some(pr) = direct_pr {
+        let validation = github::pr_validation_report(&repo, &pr.number.to_string())?;
+        Some((pr, validation))
+    } else {
+        let linked_prs = github::linked_prs_for_issue(
+            &repo,
+            issue,
+            Some(issue_ref.branch_name("codex").as_str()),
+        )?;
+        match linked_prs.len() {
+            0 => None,
+            1 => {
+                let pr = linked_prs
+                    .into_iter()
+                    .next()
+                    .expect("single linked PR should exist");
+                let validation = github::pr_validation_report(&repo, &pr.number.to_string())?;
+                Some((pr, validation))
+            }
+            count => bail!(
+                "watch: issue #{issue} has {count} linked PRs; watcher requires a single unambiguous lifecycle target"
+            ),
+        }
+    };
+    let ready = doctor::run_doctor_ready(
+        &repo_root,
+        &repo,
+        &issue_ref,
+        &issue_ref.branch_name("codex"),
+    );
+    let (ready_lifecycle_state, pr_finish_readiness, local_readiness) = match ready {
+        Ok(ready) => (
+            ready.lifecycle_state,
+            ready.card_lifecycle.pr_finish_readiness,
+            github::IssueWatchLocalReadinessReport {
+                status: "ready".to_string(),
+                pr_run_readiness: ready.card_lifecycle.pr_run_readiness.to_string(),
+                reason: "doctor_ready_pass".to_string(),
+            },
+        ),
+        Err(err) => (
+            "unknown",
+            "unknown",
+            github::IssueWatchLocalReadinessReport {
+                status: "failed".to_string(),
+                pr_run_readiness: "unknown".to_string(),
+                reason: err.to_string(),
+            },
+        ),
+    };
+    let watch_report = github::build_issue_watch_report(
+        &issue_record,
+        closed_completed,
+        local_readiness,
+        linked_pr,
+    );
+    Ok(IssueLifecycleSnapshot {
+        watch_report,
+        ready_lifecycle_state,
+        pr_finish_readiness,
+    })
+}
+
 fn parse_issue_ref_number(command: &str, issue_ref: &str) -> Result<u32> {
     if issue_ref.starts_with("http://") || issue_ref.starts_with("https://") {
         parse_issue_number_from_url(issue_ref)
@@ -978,6 +1030,57 @@ fn print_issue_watch_report(report: &github::IssueWatchReport) {
                     .join(", ")
             );
         }
+    }
+}
+
+fn print_issue_lifecycle_shepherd_report(report: &github::IssueLifecycleShepherdReport) {
+    println!(
+        "Issue #{} shepherd: {} -> {} ({})",
+        report.issue,
+        report.lifecycle_shepherd.state,
+        report.lifecycle_shepherd.next_skill,
+        report.reason
+    );
+    println!("watch_classification: {}", report.classification);
+    println!("issue_state: {}", report.issue_state);
+    println!("tail_owner: {}", report.tail_owner);
+    println!("watch_shepherd_state: {}", report.watch_shepherd_state);
+    println!("continuation: {}", report.continuation);
+    println!(
+        "lifecycle_shepherd: active={} state={} owner_skill={} next_skill={} closeout_required={}",
+        report.lifecycle_shepherd.active,
+        report.lifecycle_shepherd.state,
+        report.lifecycle_shepherd.owner_skill,
+        report.lifecycle_shepherd.next_skill,
+        report.lifecycle_shepherd.closeout_required
+    );
+    println!(
+        "authority_boundary: merge_authority_human_only={} issue_close_authority_human_only={} review_authority_human_only={}",
+        report
+            .lifecycle_shepherd
+            .authority_boundary
+            .merge_authority_human_only,
+        report
+            .lifecycle_shepherd
+            .authority_boundary
+            .issue_close_authority_human_only,
+        report
+            .lifecycle_shepherd
+            .authority_boundary
+            .review_authority_human_only
+    );
+    println!(
+        "local_readiness: status={} pr_run_readiness={} reason={}",
+        report.local_readiness.status,
+        report.local_readiness.pr_run_readiness,
+        report.local_readiness.reason
+    );
+    if let Some(pr) = &report.linked_pr {
+        println!(
+            "linked_pr: #{} state={} draft={} disposition={}",
+            pr.number, pr.state, pr.is_draft, pr.validation.disposition
+        );
+        println!("linked_pr_url: {}", pr.url);
     }
 }
 

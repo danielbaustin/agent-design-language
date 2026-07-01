@@ -1982,6 +1982,16 @@ cmd_watch() {
   delegate_pr_command_to_rust watch "$@"
 }
 
+cmd_shepherd() {
+  if [[ "${1:-}" == "-h" || "${1:-}" == "--help" || "${1:-}" == "help" ]]; then
+    usage_shepherd
+    return 0
+  fi
+  adl_obs_event "pr.sh" "shepherd" "started" "issue" "${1:-}"
+  require_rust_pr_delegate shepherd
+  delegate_pr_command_to_rust shepherd "$@"
+}
+
 cmd_closing_linkage() {
   if [[ "${1:-}" == "-h" || "${1:-}" == "--help" || "${1:-}" == "help" ]]; then
     note "Usage: adl/tools/pr.sh closing-linkage [--event-name <event>] [--event-path <path>] [--head-ref <branch>] [-R owner/repo]"
@@ -2092,6 +2102,7 @@ main() {
     validation) cmd_validation "$@" ;;
     pr-inventory) cmd_pr_inventory "$@" ;;
     watch) cmd_watch "$@" ;;
+    shepherd) cmd_shepherd "$@" ;;
     closing-linkage) cmd_closing_linkage "$@" ;;
     issue) cmd_issue "$@" ;;
     projection-map) cmd_projection_map "$@" ;;

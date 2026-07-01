@@ -149,6 +149,7 @@ rust_pr_subcommand_binary_name() {
     finish) printf 'adl-pr-finish\n' ;;
     validation) printf 'adl-pr-validation\n' ;;
     pr-inventory) printf 'adl-pr-inventory\n' ;;
+    shepherd) printf 'adl-pr-shepherd\n' ;;
     closing-linkage) printf 'adl-pr-closing-linkage\n' ;;
     issue) printf 'adl-issue\n' ;;
     closeout) printf 'adl-pr-closeout\n' ;;
@@ -168,6 +169,7 @@ rust_pr_subcommand_override_var_name() {
     finish) printf 'ADL_PR_FINISH_BIN\n' ;;
     validation) printf 'ADL_PR_VALIDATION_BIN\n' ;;
     pr-inventory) printf 'ADL_PR_INVENTORY_BIN\n' ;;
+    shepherd) printf 'ADL_PR_SHEPHERD_BIN\n' ;;
     closing-linkage) printf 'ADL_PR_CLOSING_LINKAGE_BIN\n' ;;
     issue) printf 'ADL_ISSUE_BIN\n' ;;
     closeout) printf 'ADL_PR_CLOSEOUT_BIN\n' ;;
