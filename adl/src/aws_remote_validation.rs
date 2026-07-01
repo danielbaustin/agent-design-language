@@ -18,9 +18,10 @@ use std::fs::OpenOptions;
 use std::io::Write;
 use std::path::{Path, PathBuf};
 use std::process::Command as StdCommand;
-use std::sync::Mutex;
+use std::sync::{Arc, Mutex};
 use std::time::{Duration, Instant};
 use tokio::fs;
+use tokio::io::{AsyncBufReadExt, BufReader};
 use tokio::process::{Child, Command as TokioCommand};
 use tokio::time::sleep;
 
@@ -31,6 +32,26 @@ const CACHE_ROLE_POLICY_NAME: &str = "AdlAwsRemoteValidationCacheAccess";
 
 static LIVE_EVENT_LOG_PATH: Lazy<Mutex<Option<PathBuf>>> = Lazy::new(|| Mutex::new(None));
 static LIVE_COMMAND_STATUS_LOG_PATH: Lazy<Mutex<Option<PathBuf>>> = Lazy::new(|| Mutex::new(None));
+
+fn spawn_tail_pump<R>(reader: R, sink: Arc<Mutex<std::fs::File>>)
+where
+    R: tokio::io::AsyncRead + Unpin + Send + 'static,
+{
+    tokio::spawn(async move {
+        let mut lines = BufReader::new(reader).lines();
+        loop {
+            match lines.next_line().await {
+                Ok(Some(line)) => {
+                    eprintln!("{line}");
+                    if let Ok(mut file) = sink.lock() {
+                        let _ = writeln!(file, "{line}");
+                    }
+                }
+                Ok(None) | Err(_) => break,
+            }
+        }
+    });
+}
 
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
 #[serde(rename_all = "snake_case")]
@@ -1542,6 +1563,12 @@ impl LiveAwsRemoteValidationAdapter {
             .parent()
             .unwrap_or_else(|| Path::new("."))
             .join("remote-tail.log");
+        let tail_log = OpenOptions::new()
+            .create(true)
+            .append(true)
+            .open(&tail_log_path)
+            .with_context(|| format!("open remote tail log at {}", tail_log_path.display()))?;
+        let tail_sink = Arc::new(Mutex::new(tail_log));
         let run_root_escaped = shell_single_quote(run_root);
         let progress_log_escaped = shell_single_quote(&format!("{run_root}/progress.log"));
         let command_log_escaped = shell_single_quote(&format!("{run_root}/command.log"));
@@ -1553,21 +1580,25 @@ impl LiveAwsRemoteValidationAdapter {
             command_log = command_log_escaped,
             command_err = command_err_escaped,
         );
-        let ssh_invocation = format!(
-            "ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -i {key} {user}@{host} {remote}",
-            key = shell_single_quote(&ssh_debug.private_key_path.display().to_string()),
-            user = ssh_debug.user,
-            host = public_ip,
-            remote = shell_single_quote(&remote_command),
-        );
-        let tee_command = format!(
-            "{ssh} 2>&1 | tee -a {tail_log} >&2",
-            ssh = ssh_invocation,
-            tail_log = shell_single_quote(&tail_log_path.display().to_string()),
-        );
-        let mut command = TokioCommand::new("bash");
-        command.arg("-lc").arg(tee_command);
-        let child = command.spawn()?;
+        let mut command = TokioCommand::new("ssh");
+        command
+            .arg("-o")
+            .arg("StrictHostKeyChecking=no")
+            .arg("-o")
+            .arg("UserKnownHostsFile=/dev/null")
+            .arg("-i")
+            .arg(&ssh_debug.private_key_path)
+            .arg(format!("{}@{}", ssh_debug.user, public_ip))
+            .arg(remote_command)
+            .stdout(std::process::Stdio::piped())
+            .stderr(std::process::Stdio::piped());
+        let mut child = command.spawn()?;
+        if let Some(stdout) = child.stdout.take() {
+            spawn_tail_pump(stdout, Arc::clone(&tail_sink));
+        }
+        if let Some(stderr) = child.stderr.take() {
+            spawn_tail_pump(stderr, tail_sink);
+        }
         append_command_status_line(
             "ssh_tail_started",
             format!(
