@@ -17,6 +17,7 @@ use std::fmt;
 use std::fs::OpenOptions;
 use std::io::Write;
 use std::path::{Path, PathBuf};
+use std::process::Command as StdCommand;
 use std::process::Stdio;
 use std::sync::Mutex;
 use std::time::{Duration, Instant};
@@ -1015,10 +1016,15 @@ fn build_ssh_debug_config(config: &AwsRemoteValidationConfig) -> Result<Option<S
     let allowed_cidr = match config.ssh_allowed_cidr.clone() {
         Some(value) => value,
         None => {
-            let ip = reqwest::blocking::get("https://checkip.amazonaws.com")
-                .context("failed to detect public IP for SSH debug mode")?
-                .text()
-                .context("failed to read public IP response for SSH debug mode")?;
+            let output = StdCommand::new("curl")
+                .args(["-fsSL", "https://checkip.amazonaws.com"])
+                .output()
+                .context("failed to detect public IP for SSH debug mode")?;
+            if !output.status.success() {
+                return Err(anyhow!("failed to detect public IP for SSH debug mode"));
+            }
+            let ip = String::from_utf8(output.stdout)
+                .context("failed to decode public IP response for SSH debug mode")?;
             format!("{}/32", ip.trim())
         }
     };
