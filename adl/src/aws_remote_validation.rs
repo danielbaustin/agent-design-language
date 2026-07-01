@@ -105,7 +105,7 @@ pub struct AwsRemoteValidationConfig {
     pub expected_max_cost_usd: Option<f64>,
     pub poll_interval_seconds: u64,
     pub ssm_ready_timeout_seconds: u64,
-    pub command_timeout_seconds: u64,
+    pub command_timeout_seconds: Option<u64>,
     pub termination_timeout_seconds: u64,
 }
 
@@ -386,7 +386,7 @@ pub trait AwsRemoteValidationAdapter {
         &self,
         instance_id: &str,
         command: &str,
-        timeout: Duration,
+        timeout: Option<Duration>,
         poll_interval: Duration,
     ) -> std::result::Result<CommandExecutionResult, AwsAdapterError>;
     async fn instance_state(
@@ -665,7 +665,7 @@ pub async fn run_aws_remote_validation<A: AwsRemoteValidationAdapter>(
                 .run_remote_command(
                     instance_id_ref,
                     &remote_script,
-                    Duration::from_secs(config.command_timeout_seconds),
+                    config.command_timeout_seconds.map(Duration::from_secs),
                     Duration::from_secs(config.poll_interval_seconds),
                 )
                 .await
@@ -2234,7 +2234,7 @@ impl AwsRemoteValidationAdapter for LiveAwsRemoteValidationAdapter {
         &self,
         instance_id: &str,
         command: &str,
-        timeout: Duration,
+        timeout: Option<Duration>,
         poll_interval: Duration,
     ) -> std::result::Result<CommandExecutionResult, AwsAdapterError> {
         let mut ssh_tail_child = match extract_run_root(command) {
@@ -2338,18 +2338,20 @@ impl AwsRemoteValidationAdapter for LiveAwsRemoteValidationAdapter {
                     spot_fallback_permitted: false,
                 });
             }
-            if start.elapsed() >= timeout {
-                if let Some(child) = ssh_tail_child.as_mut() {
-                    let _ = child.start_kill();
+            if let Some(timeout) = timeout {
+                if start.elapsed() >= timeout {
+                    if let Some(child) = ssh_tail_child.as_mut() {
+                        let _ = child.start_kill();
+                    }
+                    return Err(AwsAdapterError {
+                        code: Some("CommandTimedOut".to_string()),
+                        message: format!(
+                            "command {command_id} did not reach terminal state within {:?}",
+                            timeout
+                        ),
+                        spot_fallback_permitted: false,
+                    });
                 }
-                return Err(AwsAdapterError {
-                    code: Some("CommandTimedOut".to_string()),
-                    message: format!(
-                        "command {command_id} did not reach terminal state within {:?}",
-                        timeout
-                    ),
-                    spot_fallback_permitted: false,
-                });
             }
             sleep(poll_interval).await;
         }
@@ -2700,7 +2702,7 @@ mod tests {
             &self,
             _instance_id: &str,
             _command: &str,
-            _timeout: Duration,
+            _timeout: Option<Duration>,
             _poll_interval: Duration,
         ) -> std::result::Result<CommandExecutionResult, AwsAdapterError> {
             self.command_result.clone()
@@ -2779,7 +2781,7 @@ mod tests {
             expected_max_cost_usd: Some(20.0),
             poll_interval_seconds: 1,
             ssm_ready_timeout_seconds: 10,
-            command_timeout_seconds: 20,
+            command_timeout_seconds: Some(20),
             termination_timeout_seconds: 10,
         }
     }
