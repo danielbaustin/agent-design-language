@@ -1198,8 +1198,33 @@ fn real_pr_start_requires_an_active_self_claim_before_binding_worktree() {
 
     let err_text = err.to_string();
     assert!(err_text.contains("missing active self-claim"));
-    assert!(err_text.contains("adl session claim"));
+    let expected_adl_bin = repo.join("adl/target/debug/adl");
+    assert!(
+        err_text.contains(&format!("{} session claim", expected_adl_bin.display())),
+        "expected repo-local adl binary in error text:\n{err_text}"
+    );
+    assert!(
+        !err_text.contains("\n  adl session claim --"),
+        "error text should not suggest a bare adl command:\n{err_text}"
+    );
     assert!(!issue_ref.default_worktree_path(&repo, None).exists());
+}
+
+#[test]
+fn suggested_session_claim_command_quotes_shell_unsafe_paths() {
+    let repo_root = std::path::Path::new("/tmp/adl repo with spaces");
+    let worktree = repo_root.join(".worktrees/adl wp 1157");
+    let command = suggested_session_claim_command(
+        repo_root,
+        1157,
+        "codex/1157-branch with spaces",
+        &worktree,
+    );
+
+    assert!(command.contains("'/tmp/adl repo with spaces/adl/target/debug/adl' session claim"));
+    assert!(command.contains("--branch 'codex/1157-branch with spaces'"));
+    assert!(command.contains("--worktree '.worktrees/adl wp 1157'"));
+    assert!(!command.starts_with("adl session claim"));
 }
 
 #[test]

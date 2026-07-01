@@ -132,6 +132,12 @@ adl session heartbeat --claim-id <id> [--ttl-secs <n>] [--ledger <path>] [--json
 adl session release --claim-id <id> [--reason <text>] [--ledger <path>] [--json]
 ```
 
+When `adl` is not installed globally, run the same subcommands through the
+repo-local binary, for example `./adl/target/debug/adl session claim ...` from
+the primary checkout. Workflow diagnostics should prefer that repo-local form
+so a fresh session does not need shell-profile setup before it can repair a
+session claim.
+
 Default local ledger path:
 
 ```text

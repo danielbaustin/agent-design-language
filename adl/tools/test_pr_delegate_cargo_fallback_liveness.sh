@@ -57,7 +57,7 @@ chmod +x "$mockbin/cargo"
 run_from_repo() {
   (
     cd "$repo"
-    PATH="$mockbin:$PATH" "$@"
+    PATH="$mockbin:/usr/bin:/bin:/usr/sbin:/sbin" "$@"
   )
 }
 
