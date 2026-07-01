@@ -1228,6 +1228,12 @@ verify_sccache_binary() {{
   sccache --zero-stats >/dev/null 2>&1 || return 1
 }}
 
+remove_installed_binary() {{
+  local binary_name
+  binary_name="$1"
+  rm -f "$HOME/.cargo/bin/$binary_name"
+}}
+
 verify_nextest_binary() {{
   cargo nextest --version >/dev/null 2>&1
 }}
@@ -1291,7 +1297,8 @@ if ! command -v sccache >/dev/null 2>&1; then
   elif install_sccache_release >>/tmp/adl-sccache-install.log 2>&1 && verify_sccache_binary >>/tmp/adl-sccache-install.log 2>&1; then
     :
   else
-    cargo install sccache --locked >>/tmp/adl-sccache-install.log 2>&1
+    remove_installed_binary sccache
+    cargo install sccache --locked --force >>/tmp/adl-sccache-install.log 2>&1
     verify_sccache_binary >>/tmp/adl-sccache-install.log 2>&1
   fi
   if [ "$SCCACHE_CACHE_HIT" -eq 0 ]; then
