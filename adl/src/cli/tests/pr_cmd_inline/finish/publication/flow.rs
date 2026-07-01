@@ -944,7 +944,7 @@ fn real_pr_finish_fails_when_post_merge_closeout_auto_attach_fails() {
 }
 
 #[test]
-fn real_pr_finish_updates_existing_pr_and_marks_ready() {
+fn real_pr_finish_promotes_green_unchanged_existing_pr_ready() {
     let _guard = env_lock();
     let temp = unique_temp_dir("adl-pr-finish-edit");
     let origin = temp.join("origin.git");
@@ -1075,6 +1075,11 @@ fn real_pr_finish_updates_existing_pr_and_marks_ready() {
         .status()
         .expect("git commit")
         .success());
+    let head_sha = run_capture(
+        "git",
+        &["-C", path_str(&repo).unwrap(), "rev-parse", "HEAD"],
+    )
+    .expect("current head sha");
 
     let bin_dir = temp.join("bin");
     fs::create_dir_all(&bin_dir).expect("bin dir");
@@ -1088,10 +1093,88 @@ fn real_pr_finish_updates_existing_pr_and_marks_ready() {
             ),
         );
 
+    let listener = std::net::TcpListener::bind("127.0.0.1:0").expect("bind validation server");
+    let addr = listener.local_addr().expect("validation server addr");
+    let server = tiny_http::Server::from_listener(listener, None).expect("validation server");
+    let validation_handle = std::thread::spawn(move || {
+        for _ in 0..2 {
+            let Some(mut request) = server
+                .recv_timeout(std::time::Duration::from_secs(5))
+                .expect("validation server receive")
+            else {
+                return;
+            };
+            let mut body = String::new();
+            let _ = std::io::Read::read_to_string(&mut request.as_reader(), &mut body);
+            let response = if body.contains("statusCheckRollup") {
+                serde_json::json!({
+                    "data": {
+                        "repository": {
+                            "pullRequest": {
+                                "number": 1160,
+                                "headRefOid": head_sha.trim(),
+                                "state": "OPEN",
+                                "isDraft": true,
+                                "statusCheckRollup": {
+                                    "contexts": {
+                                        "nodes": [
+                                            {
+                                                "__typename": "CheckRun",
+                                                "name": "adl-ci",
+                                                "status": "COMPLETED",
+                                                "conclusion": "SUCCESS",
+                                                "databaseId": 991,
+                                                "checkSuite": {
+                                                    "workflowRun": {
+                                                        "databaseId": 8801
+                                                    }
+                                                }
+                                            }
+                                        ],
+                                        "pageInfo": {
+                                            "hasNextPage": false,
+                                            "endCursor": null
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                })
+            } else if body.contains("closingIssuesReferences") {
+                serde_json::json!({
+                    "data": {
+                        "repository": {
+                            "pullRequest": {
+                                "closingIssuesReferences": {
+                                    "nodes": [
+                                        {
+                                            "number": 1153
+                                        }
+                                    ]
+                                }
+                            }
+                        }
+                    }
+                })
+            } else {
+                panic!("unexpected validation server query: {body}");
+            }
+            .to_string();
+            let mut response = tiny_http::Response::from_string(response).with_status_code(200);
+            if let Ok(header) = tiny_http::Header::from_bytes("Content-Type", "application/json") {
+                response = response.with_header(header);
+            }
+            request.respond(response).expect("respond validation");
+        }
+    });
+
     let old_path = env::var("PATH").unwrap_or_default();
+    let old_base_uri = env::var_os("ADL_GITHUB_OCTOCRAB_BASE_URI");
     let prev_dir = env::current_dir().expect("cwd");
     unsafe {
         env::set_var("PATH", format!("{}:{}", bin_dir.display(), old_path));
+        env::set_var("ADL_GITHUB_OCTOCRAB_BASE_URI", format!("http://{addr}"));
     }
     env::set_current_dir(&repo).expect("chdir");
 
@@ -1114,14 +1197,18 @@ fn real_pr_finish_updates_existing_pr_and_marks_ready() {
     env::set_current_dir(prev_dir).expect("restore cwd");
     unsafe {
         env::set_var("PATH", old_path);
+        if let Some(value) = old_base_uri {
+            env::set_var("ADL_GITHUB_OCTOCRAB_BASE_URI", value);
+        } else {
+            env::remove_var("ADL_GITHUB_OCTOCRAB_BASE_URI");
+        }
     }
+    validation_handle.join().expect("validation server join");
     result.expect("real_pr finish edit");
 
     let gh_calls = fs::read_to_string(&gh_log).expect("read gh log");
-    assert!(gh_calls.contains("pr edit"));
+    assert!(!gh_calls.contains("pr edit"));
     assert!(gh_calls.contains("danielbaustin/agent-design-language"));
     assert!(gh_calls.contains("https://github.com/danielbaustin/agent-design-language/pull/1160"));
-    assert!(gh_calls.contains("--title [v0.86][tools] Rust finish test edit"));
-    assert!(gh_calls.contains("--body-file"));
     assert!(gh_calls.contains("pr ready"));
 }
