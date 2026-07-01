@@ -46,6 +46,17 @@ These rules are mandatory for ADL issue work.
      or `DEEPSEEK_API_KEY`. For provider-specific names such as Gemini/Google,
      follow the active provider setup docs instead of assuming aliases, and
      prefer those docs when preparing reusable local environment files.
+   - AWS work for ADL must default to the Agent Logic business AWS account, not
+     the operator's personal/default AWS account. Use the approved business
+     profile `agent-logic-admin` for AWS billing checks, runtime experiments,
+     SSM, CodeBuild, SNS, EC2/Spot, storage, and other ADL-related AWS work.
+     Before relying on AWS account state, verify that the profile resolves to
+     the approved Agent Logic business account rather than recording a static
+     account identifier in repo policy.
+     Personal/default profiles such as `default` or legacy user profiles may be
+     used only when the operator explicitly authorizes a bounded task against a
+     personal account. Do not print, copy, commit, or expose AWS credentials or
+     credential-file contents.
 2. Edit cards only with editor skills.
    - Use `sip-editor`, `stp-editor`, `spp-editor`, `srp-editor`, `sor-editor`,
      or other issue-card editor skills when card surfaces need normalization.
