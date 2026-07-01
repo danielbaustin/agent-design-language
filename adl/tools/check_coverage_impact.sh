@@ -206,6 +206,9 @@ candidate_filter_for_path() {
     adl/src/cli/tokio_runtime.rs)
       printf 'tokio_bootstrap'
       ;;
+    adl/src/bin/adl_pr_shepherd.rs)
+      printf 'pr_shepherd'
+      ;;
     adl/src/cli/pr_cmd/github.rs)
       printf 'pr_cmd'
       ;;
@@ -255,7 +258,10 @@ nextest_expression_for_filter() {
       printf 'test(/^cli::pr_cmd::github::/) or test(/^cli::pr_cmd::github_client::/) or test(/^cli::tooling_cmd::github_release::/)'
       ;;
     pr_cmd)
-      printf 'binary_id(adl::bin/adl) and test(/^cli::pr_cmd::/)'
+      printf '(binary_id(adl::bin/adl) and test(/^cli::pr_cmd::/)) or (binary_id(adl::bin/adl-pr-shepherd) and test(/^cli::pr_cmd::/))'
+      ;;
+    pr_shepherd)
+      printf '(binary_id(adl::bin/adl-pr-shepherd) and test(/^cli::pr_cmd::/)) or (binary_id(adl::bin/adl-pr-shepherd) and test(/^tests::adl_pr_shepherd_/))'
       ;;
     pr_cmd::github)
       printf 'test(/^cli::pr_cmd::github::/) or test(/^cli::pr_cmd::github_client::/)'
