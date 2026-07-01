@@ -33,6 +33,12 @@ const CACHE_ROLE_POLICY_NAME: &str = "AdlAwsRemoteValidationCacheAccess";
 static LIVE_EVENT_LOG_PATH: Lazy<Mutex<Option<PathBuf>>> = Lazy::new(|| Mutex::new(None));
 static LIVE_COMMAND_STATUS_LOG_PATH: Lazy<Mutex<Option<PathBuf>>> = Lazy::new(|| Mutex::new(None));
 
+fn ssh_debug_control_script_path() -> PathBuf {
+    PathBuf::from(env!("CARGO_MANIFEST_DIR"))
+        .join("scripts")
+        .join("ssh_debug_control.sh")
+}
+
 fn spawn_tail_pump<R>(reader: R, sink: Arc<Mutex<std::fs::File>>)
 where
     R: tokio::io::AsyncRead + Unpin + Send + 'static,
@@ -1654,111 +1660,6 @@ impl LiveAwsRemoteValidationAdapter {
         })
     }
 
-    async fn run_ssh_debug_repair_command(
-        &self,
-        instance_id: &str,
-        poll_interval: Duration,
-    ) -> std::result::Result<(), AwsAdapterError> {
-        let commands = vec![
-            "sudo systemctl enable --now sshd || sudo systemctl restart sshd || sudo service sshd restart || true".to_string(),
-            "sudo systemctl is-active sshd || true".to_string(),
-            "sudo ss -ltn | grep ':22 ' || true".to_string(),
-        ];
-        let output = self
-            .ssm
-            .send_command()
-            .document_name("AWS-RunShellScript")
-            .instance_ids(instance_id)
-            .parameters("commands", commands)
-            .send()
-            .await
-            .map_err(classify_ssm_error)?;
-        let command_id = output
-            .command()
-            .and_then(|command| command.command_id())
-            .unwrap_or_default()
-            .to_string();
-        append_command_status_line(
-            "ssh_debug_repair_started",
-            format!("instance_id={instance_id} command_id={command_id}"),
-        );
-        let start = Instant::now();
-        loop {
-            let invocation = match self
-                .ssm
-                .get_command_invocation()
-                .command_id(&command_id)
-                .instance_id(instance_id)
-                .send()
-                .await
-            {
-                Ok(invocation) => invocation,
-                Err(err) => {
-                    let detail = err.to_string();
-                    let propagation_window = start.elapsed() < Duration::from_secs(90);
-                    if propagation_window {
-                        append_command_status_line(
-                            "ssh_debug_repair_poll_retry",
-                            format!(
-                                "instance_id={instance_id} command_id={command_id} detail={detail}"
-                            ),
-                        );
-                        sleep(poll_interval).await;
-                        continue;
-                    }
-                    return Err(classify_ssm_error(err));
-                }
-            };
-            let status = invocation
-                .status_details()
-                .or_else(|| invocation.status().map(|value| value.as_str()))
-                .unwrap_or("Unknown")
-                .to_string();
-            append_command_status_line(
-                "ssh_debug_repair_poll",
-                format!(
-                    "instance_id={instance_id} command_id={command_id} status={} response_code={}",
-                    status,
-                    invocation.response_code()
-                ),
-            );
-            let terminal = matches!(
-                status.as_str(),
-                "Success" | "Cancelled" | "TimedOut" | "Failed" | "Cancelling"
-            );
-            if terminal {
-                if invocation.response_code() == 0 && status.eq_ignore_ascii_case("Success") {
-                    append_command_status_line(
-                        "ssh_debug_repair_ready",
-                        format!("instance_id={instance_id} command_id={command_id}"),
-                    );
-                    return Ok(());
-                }
-                return Err(AwsAdapterError {
-                    code: Some("SshDebugRepairFailed".to_string()),
-                    message: format!(
-                        "ssh debug repair command {} finished with status={} response_code={}",
-                        command_id,
-                        status,
-                        invocation.response_code()
-                    ),
-                    spot_fallback_permitted: false,
-                });
-            }
-            if start.elapsed() >= Duration::from_secs(90) {
-                return Err(AwsAdapterError {
-                    code: Some("SshDebugRepairTimedOut".to_string()),
-                    message: format!(
-                        "ssh debug repair command {} did not reach terminal state within 90s",
-                        command_id
-                    ),
-                    spot_fallback_permitted: false,
-                });
-            }
-            sleep(poll_interval).await;
-        }
-    }
-
     async fn wait_for_ssh_debug_ready(
         &self,
         instance_id: &str,
@@ -1783,36 +1684,21 @@ impl LiveAwsRemoteValidationAdapter {
                 spot_fallback_permitted: false,
             });
         };
-
-        self.run_ssh_debug_repair_command(instance_id, poll_interval)
-            .await?;
-
         let start = Instant::now();
         let mut attempt = 0_u32;
         let mut last_error = String::new();
+        let script_path = ssh_debug_control_script_path();
         while start.elapsed() < timeout {
             attempt += 1;
             append_command_status_line(
                 "ssh_debug_probe",
                 format!("instance_id={instance_id} public_ip={public_ip} attempt={attempt}"),
             );
-            let output = StdCommand::new("ssh")
-                .arg("-o")
-                .arg("BatchMode=yes")
-                .arg("-o")
-                .arg("StrictHostKeyChecking=no")
-                .arg("-o")
-                .arg("UserKnownHostsFile=/dev/null")
-                .arg("-o")
-                .arg("ConnectTimeout=10")
-                .arg("-o")
-                .arg("ServerAliveInterval=5")
-                .arg("-o")
-                .arg("ServerAliveCountMax=1")
-                .arg("-i")
+            let output = StdCommand::new(&script_path)
+                .arg("probe")
                 .arg(&ssh_debug.private_key_path)
-                .arg(format!("{}@{}", ssh_debug.user, public_ip))
-                .arg("true")
+                .arg(&ssh_debug.user)
+                .arg(&public_ip)
                 .output();
             match output {
                 Ok(result) if result.status.success() => {
@@ -1843,11 +1729,6 @@ impl LiveAwsRemoteValidationAdapter {
                 Err(err) => {
                     last_error = err.to_string();
                 }
-            }
-            if attempt == 1 || attempt % 3 == 0 {
-                let _ = self
-                    .run_ssh_debug_repair_command(instance_id, poll_interval)
-                    .await;
             }
             sleep(poll_interval).await;
         }
@@ -1895,27 +1776,14 @@ impl LiveAwsRemoteValidationAdapter {
             .open(&tail_log_path)
             .with_context(|| format!("open remote tail log at {}", tail_log_path.display()))?;
         let tail_sink = Arc::new(Mutex::new(tail_log));
-        let run_root_escaped = shell_single_quote(run_root);
-        let progress_log_escaped = shell_single_quote(&format!("{run_root}/progress.log"));
-        let command_log_escaped = shell_single_quote(&format!("{run_root}/command.log"));
-        let command_err_escaped = shell_single_quote(&format!("{run_root}/command.err"));
-        let remote_command = format!(
-            "while [ ! -d {run_root} ]; do sleep 1; done; tail -n +1 -F {progress} {command_log} {command_err}",
-            run_root = run_root_escaped,
-            progress = progress_log_escaped,
-            command_log = command_log_escaped,
-            command_err = command_err_escaped,
-        );
-        let mut command = TokioCommand::new("ssh");
+        let script_path = ssh_debug_control_script_path();
+        let mut command = TokioCommand::new(script_path);
         command
-            .arg("-o")
-            .arg("StrictHostKeyChecking=no")
-            .arg("-o")
-            .arg("UserKnownHostsFile=/dev/null")
-            .arg("-i")
+            .arg("tail")
             .arg(&ssh_debug.private_key_path)
-            .arg(format!("{}@{}", ssh_debug.user, public_ip))
-            .arg(remote_command)
+            .arg(&ssh_debug.user)
+            .arg(&public_ip)
+            .arg(run_root)
             .stdout(std::process::Stdio::piped())
             .stderr(std::process::Stdio::piped());
         let mut child = command.spawn()?;
@@ -2680,22 +2548,40 @@ impl AwsRemoteValidationAdapter for LiveAwsRemoteValidationAdapter {
         poll_interval: Duration,
     ) -> std::result::Result<CommandExecutionResult, AwsAdapterError> {
         let run_root = extract_run_root(command);
-        if run_root.is_some() && self.ssh_debug.is_some() {
-            self.wait_for_ssh_debug_ready(instance_id, Duration::from_secs(90), poll_interval)
-                .await?;
-        }
-        let mut ssh_tail_child = match run_root {
-            Some(run_root) => match self.start_ssh_tail(instance_id, &run_root).await {
-                Ok(child) => child,
+        let ssh_tail_ready = if run_root.is_some() && self.ssh_debug.is_some() {
+            match self
+                .wait_for_ssh_debug_ready(instance_id, Duration::from_secs(90), poll_interval)
+                .await
+            {
+                Ok(()) => true,
                 Err(err) => {
-                    return Err(AwsAdapterError {
-                        code: Some("SshTailStartFailed".to_string()),
-                        message: format!("failed to start ssh tail: {err}"),
-                        spot_fallback_permitted: false,
-                    });
+                    append_command_status_line(
+                        "ssh_debug_skip",
+                        format!("instance_id={instance_id} detail={err}"),
+                    );
+                    false
                 }
-            },
-            None => None,
+            }
+        } else {
+            false
+        };
+        let mut ssh_tail_child = if ssh_tail_ready {
+            if let Some(run_root) = run_root.as_deref() {
+                match self.start_ssh_tail(instance_id, run_root).await {
+                    Ok(child) => child,
+                    Err(err) => {
+                        append_command_status_line(
+                            "ssh_tail_skip",
+                            format!("instance_id={instance_id} detail={err}"),
+                        );
+                        None
+                    }
+                }
+            } else {
+                None
+            }
+        } else {
+            None
         };
         let output = self
             .ssm
