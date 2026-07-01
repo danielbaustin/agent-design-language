@@ -18,9 +18,10 @@ use super::git_support::{
 };
 use super::github::{
     attach_issue_watcher, attach_post_merge_closeout, attach_pr_janitor, current_pr_url,
-    ensure_or_repair_pr_closing_linkage, pr_create_finish, pr_edit_finish_existing,
-    pr_merge_finish, pr_ready_finish_allow_failure, pr_ready_finish_merge_allow_failure,
-    pr_view_base_ref_finish_existing, wait_for_pr_validation_finish, IssueWatcherAttachRequest,
+    ensure_or_repair_pr_closing_linkage, pr_closing_issue_numbers_finish_existing,
+    pr_create_finish, pr_edit_finish_existing, pr_merge_finish, pr_ready_finish_allow_failure,
+    pr_ready_finish_merge_allow_failure, pr_validation_report, pr_view_base_ref_finish_existing,
+    wait_for_pr_validation_finish, IssueWatcherAttachRequest, PrValidationReport,
 };
 use super::lifecycle;
 use super::DEFAULT_VERSION;
@@ -112,7 +113,8 @@ pub(super) fn real_pr_finish(args: &[String]) -> Result<()> {
         .context("finish: failed to fetch origin/main before stale-base guard")?;
     let ahead = commits_ahead_of_origin_main(&repo_root)?;
     ensure_finish_branch_not_behind_origin_main(&repo_root)?;
-    if staged_diff_is_empty(&repo_root)? {
+    let staged_diff_empty = staged_diff_is_empty(&repo_root)?;
+    if staged_diff_empty {
         if !has_uncommitted && ahead == 0 {
             bail!("No changes detected and branch has no commits ahead of origin/main. Nothing to PR.");
         }
@@ -120,6 +122,47 @@ pub(super) fn real_pr_finish(args: &[String]) -> Result<()> {
         bail!(
             "finish: staged .gitignore or adl/.gitignore changes detected. Revert them or re-run with --allow-gitignore. Canonical .adl issue bundles are local-only and must not be staged."
         );
+    }
+
+    if finish_ready_only_path_is_allowed(
+        parsed.ready,
+        parsed.merge_mode,
+        has_uncommitted,
+        staged_diff_empty,
+    ) {
+        if let Some(existing) = current_pr_url(&repo, &branch)? {
+            let pr_base = resolve_finish_pr_base(&repo_root, &branch)?;
+            ensure_existing_pr_base_matches(&repo, &existing, &pr_base)?;
+            let local_head = current_head_sha(&repo_root)?;
+            ensure_ready_only_finish_pr_is_green_and_linked(
+                &repo,
+                &existing,
+                parsed.issue,
+                &pr_base,
+                &local_head,
+                parsed.no_close,
+            )?;
+            let _ = pr_ready_finish_allow_failure(&repo, &existing)?;
+            attach_pr_janitor(&repo_root, &repo, parsed.issue, &branch, &existing, "ready")?;
+            attach_post_merge_closeout(&repo_root, &repo, parsed.issue, &branch, &existing)?;
+            if let Err(err) = attach_issue_watcher(IssueWatcherAttachRequest {
+                repo_root: &repo_root,
+                repo: &repo,
+                issue: parsed.issue,
+                branch: &branch,
+                pr_url: &existing,
+                expected_pr_state: "ready",
+                classification: "checks_running",
+                tail_owner: "issue-watcher",
+                shepherd_state: "watcher_owned_checks_running",
+            }) {
+                eprintln!(
+                    "warning: issue watcher auto-attach failed after lightweight PR ready promotion; PR remains ready and other tail attachments succeeded. Resolve watcher setup separately: {err}"
+                );
+            }
+            println!("{existing}");
+            return Ok(());
+        }
     }
 
     let changed_paths = finish_changed_paths(&repo_root, has_uncommitted)?;
@@ -748,6 +791,102 @@ pub(super) fn finish_changed_paths(repo_root: &Path, has_uncommitted: bool) -> R
         .filter(|line| !line.is_empty())
         .map(ToString::to_string)
         .collect())
+}
+
+pub(super) fn finish_ready_only_path_is_allowed(
+    ready: bool,
+    merge_mode: bool,
+    has_uncommitted: bool,
+    staged_diff_empty: bool,
+) -> bool {
+    ready && !merge_mode && !has_uncommitted && staged_diff_empty
+}
+
+fn ensure_ready_only_finish_pr_is_green_and_linked(
+    repo: &str,
+    pr_ref: &str,
+    issue: u32,
+    expected_base: &str,
+    expected_head: &str,
+    no_close: bool,
+) -> Result<()> {
+    let report = pr_validation_report(repo, pr_ref)?;
+    let base_ref = pr_view_base_ref_finish_existing(repo, pr_ref)?;
+    let closing_issues = if no_close {
+        Vec::new()
+    } else {
+        pr_closing_issue_numbers_finish_existing(repo, pr_ref)?
+    };
+    validate_ready_only_finish_pr_state(
+        &report,
+        &base_ref,
+        expected_base,
+        expected_head,
+        &closing_issues,
+        issue,
+        no_close,
+    )
+}
+
+pub(super) fn validate_ready_only_finish_pr_state(
+    report: &PrValidationReport,
+    actual_base: &str,
+    expected_base: &str,
+    expected_head: &str,
+    closing_issues: &[u32],
+    issue: u32,
+    no_close: bool,
+) -> Result<()> {
+    if !actual_base.trim().eq(expected_base.trim()) {
+        bail!(
+            "finish --ready: existing PR base '{}' does not match expected base '{}'",
+            actual_base,
+            expected_base
+        );
+    }
+    if !report.commit_sha.trim().eq(expected_head.trim()) {
+        bail!(
+            "finish --ready: existing PR #{} head '{}' does not match local HEAD '{}'; push the branch and wait for current checks before ready promotion",
+            report.pr_number,
+            report.commit_sha,
+            expected_head
+        );
+    }
+    if !no_close && !closing_issues.contains(&issue) {
+        bail!(
+            "finish --ready: existing PR #{} does not close issue #{}; linked closing issues: {}",
+            report.pr_number,
+            issue,
+            if closing_issues.is_empty() {
+                "none".to_string()
+            } else {
+                closing_issues
+                    .iter()
+                    .map(u32::to_string)
+                    .collect::<Vec<_>>()
+                    .join(", ")
+            }
+        );
+    }
+    match report.projection_status.as_str() {
+        "checks_green_but_draft" | "ready_to_merge_or_review" => Ok(()),
+        other => bail!(
+            "finish --ready: existing PR #{} is not green enough for lightweight ready promotion (projection_status={}, disposition={}, pending={}, failed={})",
+            report.pr_number,
+            other,
+            report.disposition,
+            report.pending_checks.len(),
+            report.failed_checks.len()
+        ),
+    }
+}
+
+fn current_head_sha(repo_root: &Path) -> Result<String> {
+    Ok(
+        run_capture("git", &["-C", path_str(repo_root)?, "rev-parse", "HEAD"])?
+            .trim()
+            .to_string(),
+    )
 }
 
 pub(super) fn finish_declared_paths_for_validation(paths: &str) -> Vec<String> {
