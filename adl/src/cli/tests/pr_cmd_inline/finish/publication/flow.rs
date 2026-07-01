@@ -1097,15 +1097,13 @@ fn real_pr_finish_promotes_green_unchanged_existing_pr_ready() {
     let addr = listener.local_addr().expect("validation server addr");
     let server = tiny_http::Server::from_listener(listener, None).expect("validation server");
     let validation_handle = std::thread::spawn(move || {
-        for _ in 0..2 {
-            let Some(mut request) = server
-                .recv_timeout(std::time::Duration::from_secs(5))
-                .expect("validation server receive")
-            else {
-                return;
-            };
+        while let Some(mut request) = server
+            .recv_timeout(std::time::Duration::from_secs(5))
+            .expect("validation server receive")
+        {
             let mut body = String::new();
             let _ = std::io::Read::read_to_string(&mut request.as_reader(), &mut body);
+            let is_closing_issue_query = body.contains("closingIssuesReferences");
             let response = if body.contains("statusCheckRollup") {
                 serde_json::json!({
                     "data": {
@@ -1129,6 +1127,18 @@ fn real_pr_finish_promotes_green_unchanged_existing_pr_ready() {
                                                         "databaseId": 8801
                                                     }
                                                 }
+                                            },
+                                            {
+                                                "__typename": "CheckRun",
+                                                "name": "adl-coverage",
+                                                "status": "COMPLETED",
+                                                "conclusion": "SUCCESS",
+                                                "databaseId": 992,
+                                                "checkSuite": {
+                                                    "workflowRun": {
+                                                        "databaseId": 8801
+                                                    }
+                                                }
                                             }
                                         ],
                                         "pageInfo": {
@@ -1141,7 +1151,7 @@ fn real_pr_finish_promotes_green_unchanged_existing_pr_ready() {
                         }
                     }
                 })
-            } else if body.contains("closingIssuesReferences") {
+            } else if is_closing_issue_query {
                 serde_json::json!({
                     "data": {
                         "repository": {
@@ -1166,6 +1176,9 @@ fn real_pr_finish_promotes_green_unchanged_existing_pr_ready() {
                 response = response.with_header(header);
             }
             request.respond(response).expect("respond validation");
+            if is_closing_issue_query {
+                break;
+            }
         }
     });
 
