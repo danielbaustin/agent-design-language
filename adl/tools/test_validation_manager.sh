@@ -282,6 +282,56 @@ assert [item["lane_id"] for item in profile["run"]] == [
 ]
 PY
 
+pr_inventory_finish="$TMP/pr-inventory-finish.txt"
+cat >"$pr_inventory_finish" <<'EOF'
+M	adl/Cargo.toml
+M	adl/config/validation_lane_selector.v0.91.6.json
+M	adl/src/bin/adl_pr_inventory.rs
+M	adl/src/cli/pr_cmd.rs
+M	adl/src/cli/pr_cmd/github.rs
+M	adl/src/cli/pr_cmd/github/tests/validation.rs
+M	adl/src/cli/pr_cmd/github/tests/watch.rs
+M	adl/src/cli/pr_cmd/github/transport.rs
+M	adl/src/cli/pr_cmd/lifecycle/tests.rs
+M	adl/src/cli/pr_cmd_args.rs
+M	adl/src/cli/tests/pr_cmd_inline/basics.rs
+M	adl/src/cli/tests/pr_cmd_inline/finish/arg_render.rs
+M	adl/src/cli/tests/pr_cmd_inline/repo_helpers/metadata.rs
+M	adl/src/cli/tests/pr_cmd_inline/support.rs
+M	adl/tools/pr.sh
+M	adl/tools/pr_delegate.sh
+M	adl/tools/pr_usage.sh
+M	adl/tools/run_pr_fast_test_lane.sh
+M	adl/tools/test_ci_path_policy.sh
+M	adl/tools/test_pr_delegate_prefers_primary_checkout_binary.sh
+M	adl/tools/test_validation_manager.sh
+M	docs/milestones/v0.91.7/README.md
+M	docs/milestones/v0.91.7/SPRINT_PLAN_v0.91.7.md
+M	docs/milestones/v0.91.7/WP_ISSUE_WAVE_v0.91.7.yaml
+M	docs/tooling/PR_INVENTORY_COMMAND.md
+EOF
+bash "$SCRIPT" --changed-files "$pr_inventory_finish" --json >"$TMP/pr-inventory-finish.json"
+python3 - <<'PY' "$TMP/pr-inventory-finish.json"
+import json
+import sys
+
+profile = json.load(open(sys.argv[1]))
+assert profile["schema_version"] == "adl.validation_profile.v1"
+assert profile["selected_profile"] == "selected_4_lane_profile"
+assert profile["status"] == "ready_to_run"
+assert profile["pr_publication_sufficient"] is True
+assert profile["escalation"]["required"] is False
+assert profile["diagnostics"] == []
+assert {item["lane_id"] for item in profile["run"]} == {
+    "ci_path_policy_contracts",
+    "csdlc_owner_lane",
+    "docs_diff_check",
+    "rust_pr_fast",
+}
+rust_lane = next(item for item in profile["run"] if item["lane_id"] == "rust_pr_fast")
+assert "adl/Cargo.toml" in rust_lane["matched_paths"]
+PY
+
 sprint_conductor="$TMP/sprint-conductor.txt"
 cat >"$sprint_conductor" <<'EOF'
 M	adl/tools/skills/sprint-conductor/SKILL.md

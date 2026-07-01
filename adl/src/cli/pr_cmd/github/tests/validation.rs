@@ -1,4 +1,5 @@
 use super::*;
+use crate::cli::pr_cmd::github::transport::pr_validation_effective_report_from_snapshot_with_disposition;
 use crate::cli::pr_cmd::github::transport::pr_validation_report_from_snapshot_with_disposition;
 use crate::cli::pr_cmd::github::transport::pr_validation_wait_disposition_is_terminal;
 
@@ -318,6 +319,15 @@ fn pr_validation_classification_uses_latest_logical_check_state() {
         report.pending_checks.is_empty(),
         "stale duplicate pending checks must not remain in pending_checks: {:#?}",
         report.pending_checks
+    );
+    let inventory_report = pr_validation_effective_report_from_snapshot_with_disposition(
+        &reversed_rollup,
+        classify_pr_validation_snapshot(&reversed_rollup),
+    );
+    assert_eq!(
+        inventory_report.checks.len(),
+        2,
+        "inventory reports must expose only effective checks"
     );
 
     assert_eq!(

@@ -547,11 +547,13 @@
       "default_surface": "shared_rust",
       "owner": "shared",
       "path_selectors": [
+        "adl/Cargo.toml",
         "adl/build.rs",
         "adl/src/**",
         "adl/tests/**"
       ],
       "path_hints": [
+        "adl/Cargo.toml",
         "adl/build.rs",
         "adl/src/**",
         "adl/tests/**"
@@ -570,7 +572,7 @@
       "rust_pr_fast"
     ],
     "pr_fast": {
-      "max_rust_surface_count": 6,
+      "max_rust_surface_count": 13,
       "max_filter_token_count": 4,
       "max_family_token_count": 3,
       "blocked_modes": [
@@ -586,6 +588,7 @@
     "docs/milestones/**/MILESTONE_CHECKLIST*.md"
   ],
   "rust_path_hints": [
+    "adl/Cargo.toml",
     "adl/build.rs",
     "adl/src/**",
     "adl/tests/**"

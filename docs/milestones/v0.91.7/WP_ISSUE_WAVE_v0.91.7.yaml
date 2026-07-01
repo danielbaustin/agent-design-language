@@ -42,7 +42,7 @@ wp_issue_map:
 existing_issue_routes:
   - {issue: 4603, wp: WP-06, route: "AWS Spot manager and remote validation lane"}
   - {issue: 4617, wp: WP-04, route: "Codex session telemetry for metrics and prediction"}
-  - {issue: 4622, wp: WP-02, route: "Repo-native PR inventory for release-tail review"}
+  - {issue: 4622, wp: WP-02, route: "Implement repo-native `pr-inventory` command for release-tail review"}
 non_wp_issue_routes:
   - {issue: 4651, route: "Rust refactoring by ownership and validation cost", related_wp: "WP-03/WP-06"}
   - {issue: 4652, route: "Unity demo surfaces", related_wp: "WP-09/WP-15"}

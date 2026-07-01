@@ -57,19 +57,35 @@ fn ensure_validate_structured_prompt_script(repo_root: &Path) {
     let validator = Path::new(env!("CARGO_MANIFEST_DIR"))
         .join("tools")
         .join("validate_structured_prompt.sh");
+    let owner_binary_resolution = Path::new(env!("CARGO_MANIFEST_DIR"))
+        .join("tools")
+        .join("owner_binary_resolution.sh");
     let destination_parent = repo_root.join("adl").join("tools");
     let destination = destination_parent.join("validate_structured_prompt.sh");
-    if destination.exists() {
+    let owner_destination = destination_parent.join("owner_binary_resolution.sh");
+    if destination.exists() && owner_destination.exists() {
         return;
     }
 
     fs::create_dir_all(&destination_parent).expect("create tools dir");
-    fs::copy(&validator, &destination).expect("copy validator script");
-    let mut perms = fs::metadata(&destination)
-        .expect("metadata validator")
-        .permissions();
-    perms.set_mode(0o755);
-    fs::set_permissions(&destination, perms).expect("chmod validator");
+    for (source, target, label) in [
+        (&validator, &destination, "validator"),
+        (
+            &owner_binary_resolution,
+            &owner_destination,
+            "owner binary resolution",
+        ),
+    ] {
+        if !target.exists() {
+            fs::copy(source, target).unwrap_or_else(|err| panic!("copy {label} script: {err}"));
+        }
+        let mut perms = fs::metadata(target)
+            .unwrap_or_else(|err| panic!("metadata {label} script: {err}"))
+            .permissions();
+        perms.set_mode(0o755);
+        fs::set_permissions(target, perms)
+            .unwrap_or_else(|err| panic!("chmod {label} script: {err}"));
+    }
 }
 
 fn copy_prompt_templates(repo_root: &Path) {

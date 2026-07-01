@@ -39,6 +39,8 @@ fn linked_pr(number: u32, is_draft: bool) -> OpenPullRequest {
         base_ref_name: "main".to_string(),
         is_draft,
         state: "OPEN".to_string(),
+        updated_at: None,
+        mergeable: None,
         queue: None,
     }
 }
@@ -48,6 +50,253 @@ fn linked_pr_with_head(number: u32, head_ref_name: &str) -> OpenPullRequest {
         head_ref_name: head_ref_name.to_string(),
         ..linked_pr(number, false)
     }
+}
+
+#[test]
+fn open_pr_wave_format_includes_known_and_unknown_queue_truth() {
+    let mut queued = linked_pr(4705, true);
+    queued.title = "[v0.91.7][WP-02] Add repo-native PR inventory command".to_string();
+    queued.queue = Some("wp".to_string());
+    let unclassified = linked_pr(4706, false);
+
+    let rendered = format_open_pr_wave(&[queued, unclassified]);
+
+    assert!(rendered.contains("#4705 [draft] [queue=wp]"));
+    assert!(rendered.contains("#4706 [ready] [queue=unknown]"));
+}
+
+#[test]
+fn non_closing_lifecycle_marker_is_case_insensitive() {
+    assert!(body_declares_non_closing_lifecycle_pr(
+        "This is a NON-CLOSING LIFECYCLE PR for review only."
+    ));
+    assert!(!body_declares_non_closing_lifecycle_pr(
+        "This PR closes the tracked implementation issue."
+    ));
+}
+
+#[test]
+fn pr_metadata_helpers_parse_expected_success_and_error_shapes() {
+    let repo = parse_repo("danielbaustin/agent-design-language").expect("repo parses");
+    assert_eq!(repo.owner, "danielbaustin");
+    assert_eq!(repo.name, "agent-design-language");
+    assert!(parse_repo("missing-slash").is_err());
+    assert!(parse_repo("/missing-owner").is_err());
+
+    assert_eq!(parse_pr_number("4705").expect("numeric PR"), 4705);
+    assert_eq!(
+        parse_pr_number("https://github.com/danielbaustin/agent-design-language/pull/4705/files")
+            .expect("URL PR"),
+        4705
+    );
+    assert!(parse_pr_number("not-a-pr").is_err());
+}
+
+#[test]
+fn issue_record_conversion_filters_pull_requests_and_preserves_issue_fields() {
+    let issue: RestIssueRecord = serde_json::from_value(serde_json::json!({
+        "number": 4661,
+        "title": "Consume closeout truth",
+        "state": "open",
+        "html_url": "https://github.com/owner/repo/issues/4661",
+        "created_at": "2026-06-30T17:30:12Z",
+        "closed_at": null,
+        "body": "body",
+        "labels": [{"name": "version:v0.91.7"}],
+        "milestone": {"title": "v0.91.7"}
+    }))
+    .expect("issue fixture");
+    let converted = issue.into_issue_record().expect("issue record");
+    assert_eq!(converted.number, 4661);
+    assert_eq!(converted.labels, vec!["version:v0.91.7"]);
+    assert_eq!(converted.milestone.as_deref(), Some("v0.91.7"));
+
+    let pull_request: RestIssueRecord = serde_json::from_value(serde_json::json!({
+        "number": 4705,
+        "title": "PR",
+        "state": "open",
+        "html_url": "https://github.com/owner/repo/pull/4705",
+        "pull_request": {}
+    }))
+    .expect("PR fixture");
+    assert!(pull_request.into_issue_record().is_none());
+
+    let missing_title: RestIssueRecord = serde_json::from_value(serde_json::json!({
+        "number": 4662,
+        "state": "open",
+        "html_url": "https://github.com/owner/repo/issues/4662"
+    }))
+    .expect("missing-title fixture");
+    assert!(missing_title.into_issue_record().is_none());
+
+    let missing_state: RestIssueRecord = serde_json::from_value(serde_json::json!({
+        "number": 4663,
+        "title": "Missing state",
+        "html_url": "https://github.com/owner/repo/issues/4663"
+    }))
+    .expect("missing-state fixture");
+    assert!(missing_state.into_issue_record().is_none());
+
+    let missing_url: RestIssueRecord = serde_json::from_value(serde_json::json!({
+        "number": 4664,
+        "title": "Missing URL",
+        "state": "open"
+    }))
+    .expect("missing-url fixture");
+    assert!(missing_url.into_issue_record().is_none());
+}
+
+#[test]
+fn github_argument_helpers_cover_expected_success_and_error_paths() {
+    assert_eq!(
+        arg_after(&["pr", "view", "-R", "owner/repo", "4705"], "-R").expect("repo flag"),
+        "owner/repo"
+    );
+    assert!(arg_after(&["pr", "view", "4705"], "-R")
+        .expect_err("missing repo flag")
+        .to_string()
+        .contains("missing required argument '-R'"));
+
+    assert_eq!(
+        positional_after(
+            &[
+                "pr",
+                "create",
+                "-R",
+                "owner/repo",
+                "--base",
+                "main",
+                "--head",
+                "codex/4622-pr-inventory",
+                "--draft",
+                "4705",
+            ],
+            "create"
+        )
+        .expect("positional after flags"),
+        "4705"
+    );
+    assert!(
+        positional_after(&["pr", "view", "-R", "owner/repo"], "view")
+            .expect_err("missing positional")
+            .to_string()
+            .contains("missing positional argument after 'view'")
+    );
+    assert!(positional_after(&["pr", "view", "4705"], "edit")
+        .expect_err("missing command")
+        .to_string()
+        .contains("missing GitHub command 'edit'"));
+}
+
+#[test]
+fn issue_close_reason_and_body_version_helpers_are_strict() {
+    assert!(matches!(
+        issue_close_reason_from_args(&["issue", "close", "4622"]).expect("default close reason"),
+        octocrab::models::issues::IssueStateReason::Completed
+    ));
+    assert!(matches!(
+        issue_close_reason_from_args(&["issue", "close", "4622", "--reason", "not-planned"])
+            .expect("hyphenated not planned"),
+        octocrab::models::issues::IssueStateReason::NotPlanned
+    ));
+    assert!(matches!(
+        issue_close_reason_from_args(&["issue", "close", "4622", "--state-reason", "not_planned",])
+            .expect("underscored not planned"),
+        octocrab::models::issues::IssueStateReason::NotPlanned
+    ));
+    assert!(
+        issue_close_reason_from_args(&["issue", "close", "4622", "--reason", "duplicate"])
+            .expect_err("unsupported close reason")
+            .to_string()
+            .contains("unsupported state reason 'duplicate'")
+    );
+
+    assert_eq!(
+        explicit_issue_body_version("Title\nVersion: v0.91.7\n").expect("body version"),
+        Some("v0.91.7".to_string())
+    );
+    assert_eq!(
+        explicit_issue_body_version("No explicit version").expect("no body version"),
+        None
+    );
+    assert!(
+        explicit_issue_body_version("Version: v0.91.6\nversion: v0.91.7")
+            .expect_err("conflicting versions")
+            .to_string()
+            .contains("conflicting explicit body version evidence")
+    );
+}
+
+#[test]
+fn open_pr_state_default_and_retry_policy_helpers_are_deterministic() {
+    let pr: OpenPullRequest = serde_json::from_value(serde_json::json!({
+        "number": 4705,
+        "title": "PR",
+        "url": "https://github.com/owner/repo/pull/4705",
+        "headRefName": "codex/4622-pr-inventory",
+        "baseRefName": "main",
+        "isDraft": true
+    }))
+    .expect("PR with default state");
+    assert_eq!(pr.state, default_open_pr_state());
+    assert!(octocrab_operation_allows_retry("pr.validation.status"));
+    assert!(octocrab_operation_allows_retry("issue.close"));
+    assert!(!octocrab_operation_allows_retry("pr.create.finish"));
+    assert_eq!(
+        octocrab_retry_delay(0),
+        std::time::Duration::from_millis(50)
+    );
+    assert_eq!(
+        octocrab_retry_delay(2),
+        std::time::Duration::from_millis(150)
+    );
+    assert_eq!(
+        octocrab_retry_delay(3),
+        std::time::Duration::from_millis(300)
+    );
+}
+
+#[test]
+fn projection_status_and_codex_branch_parsing_cover_edge_cases() {
+    assert_eq!(
+        pr_validation_projection_status("MERGED", true, "failed"),
+        "merged"
+    );
+    assert_eq!(
+        pr_validation_projection_status("OPEN", true, "success"),
+        "checks_green_but_draft"
+    );
+    assert_eq!(
+        pr_validation_projection_status("OPEN", false, "skipped"),
+        "ready_to_merge_or_review"
+    );
+    assert_eq!(
+        pr_validation_projection_status("OPEN", false, "timed_out"),
+        "checks_failed"
+    );
+    assert_eq!(
+        pr_validation_projection_status("OPEN", true, "unknown"),
+        "checks_pending"
+    );
+    assert_eq!(
+        pr_validation_projection_status("OPEN", false, "unknown"),
+        "unknown"
+    );
+
+    assert_eq!(
+        issue_number_from_codex_branch("refs/heads/codex/4622-pr-inventory"),
+        Some(4622)
+    );
+    assert_eq!(
+        issue_number_from_codex_branch("feature/codex/4622-pr-inventory"),
+        Some(4622)
+    );
+    assert_eq!(
+        issue_number_from_codex_branch("feature/not-codex/4622-pr-inventory"),
+        None
+    );
+    assert_eq!(issue_number_from_codex_branch("codex/no-number"), None);
+    assert_eq!(issue_number_from_codex_branch("codex/4622"), None);
 }
 
 fn validation_report(disposition: &str, is_draft: bool) -> PrValidationReport {

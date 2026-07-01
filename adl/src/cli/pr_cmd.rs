@@ -12,9 +12,9 @@ use std::sync::{Mutex, OnceLock};
 use super::pr_cmd_args::parse_finish_args;
 use super::pr_cmd_args::{
     parse_closeout_args, parse_closing_linkage_args, parse_create_args, parse_doctor_args,
-    parse_init_args, parse_issue_args, parse_preflight_args, parse_projection_map_args,
-    parse_ready_args, parse_repair_issue_body_args, parse_start_args, parse_validation_args,
-    parse_watch_args, DoctorArgs, DoctorMode, IssueArgs,
+    parse_init_args, parse_issue_args, parse_pr_inventory_args, parse_preflight_args,
+    parse_projection_map_args, parse_ready_args, parse_repair_issue_body_args, parse_start_args,
+    parse_validation_args, parse_watch_args, DoctorArgs, DoctorMode, IssueArgs,
 };
 use super::pr_cmd_cards::{
     branch_indicates_unbound_state, ensure_bootstrap_cards, ensure_local_issue_prompt_copy,
@@ -210,7 +210,7 @@ fn real_pr_run(args: &[String]) -> Result<()> {
 pub(crate) fn real_pr(args: &[String]) -> Result<()> {
     let Some(subcommand) = args.first().map(|s| s.as_str()) else {
         bail!(
-            "pr requires a subcommand: create | init | repair-issue-body | start | run | doctor | ready | preflight | finish | validation | watch | closing-linkage | issue | projection-map | closeout"
+            "pr requires a subcommand: create | init | repair-issue-body | start | run | doctor | ready | preflight | finish | validation | pr-inventory | watch | closing-linkage | issue | projection-map | closeout"
         );
     };
 
@@ -225,6 +225,7 @@ pub(crate) fn real_pr(args: &[String]) -> Result<()> {
         "preflight" => real_pr_preflight(&args[1..]),
         "finish" => finish_support::real_pr_finish(&args[1..]),
         "validation" => real_pr_validation(&args[1..]),
+        "pr-inventory" => real_pr_inventory(&args[1..]),
         "watch" => real_pr_watch(&args[1..]),
         "closing-linkage" => real_pr_closing_linkage(&args[1..]),
         "issue" => real_pr_issue(&args[1..]),
@@ -568,6 +569,158 @@ fn validation_disposition_blocks_shell_success(disposition: &str) -> bool {
 fn validation_report_blocks_shell_success(disposition: &str, projection_status: &str) -> bool {
     validation_disposition_blocks_shell_success(disposition)
         || projection_status == "checks_green_but_draft"
+}
+
+#[derive(Debug, Clone, Serialize)]
+struct PrInventoryReport {
+    schema: &'static str,
+    repo: String,
+    open_pr_count: usize,
+    pull_requests: Vec<PrInventoryRecord>,
+}
+
+#[derive(Debug, Clone, Serialize)]
+struct PrInventoryRecord {
+    number: u32,
+    title: String,
+    url: String,
+    head_ref_name: String,
+    base_ref_name: String,
+    state: String,
+    is_draft: bool,
+    updated_at: Option<String>,
+    mergeable: Option<bool>,
+    queue: Option<String>,
+    closing_issue_numbers: Vec<u32>,
+    check_summary: PrInventoryCheckSummary,
+}
+
+#[derive(Debug, Clone, Serialize)]
+struct PrInventoryCheckSummary {
+    total: usize,
+    failed: usize,
+    pending: usize,
+    passed: usize,
+    projection_status: String,
+}
+
+impl PrInventoryCheckSummary {
+    fn from_validation_report(validation: &github::PrValidationReport) -> Self {
+        let total = validation.checks.len();
+        let failed = validation.failed_checks.len();
+        let pending = validation.pending_checks.len();
+        Self {
+            total,
+            failed,
+            pending,
+            passed: total.saturating_sub(failed).saturating_sub(pending),
+            projection_status: validation.projection_status.clone(),
+        }
+    }
+}
+
+#[cfg(test)]
+mod pr_inventory_tests {
+    use super::github::{PrValidationCheckReport, PrValidationReport};
+    use super::PrInventoryCheckSummary;
+
+    fn check(
+        name: &str,
+        status: &str,
+        conclusion: &str,
+        job_run_id: &str,
+    ) -> PrValidationCheckReport {
+        PrValidationCheckReport {
+            name: name.to_string(),
+            status: status.to_string(),
+            conclusion: conclusion.to_string(),
+            job_run_id: job_run_id.to_string(),
+        }
+    }
+
+    #[test]
+    fn pr_inventory_summary_uses_effective_validation_report_counts() {
+        let failed = check("adl-ci", "COMPLETED", "FAILURE", "10");
+        let pending = check("adl-coverage", "IN_PROGRESS", "PENDING", "11");
+        let passed = check("docs", "COMPLETED", "SUCCESS", "12");
+        let validation = PrValidationReport {
+            pr_number: 4622,
+            commit_sha: "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa".to_string(),
+            pr_state: "OPEN".to_string(),
+            is_draft: false,
+            disposition: "failed".to_string(),
+            projection_status: "checks_failed".to_string(),
+            checks: vec![failed.clone(), pending.clone(), passed],
+            failed_checks: vec![failed],
+            pending_checks: vec![pending],
+        };
+
+        let summary = PrInventoryCheckSummary::from_validation_report(&validation);
+
+        assert_eq!(summary.total, 3);
+        assert_eq!(summary.failed, 1);
+        assert_eq!(summary.pending, 1);
+        assert_eq!(summary.passed, 1);
+        assert_eq!(summary.projection_status, "checks_failed");
+    }
+}
+
+fn real_pr_inventory(args: &[String]) -> Result<()> {
+    let parsed = parse_pr_inventory_args(args)?;
+    let repo_root = repo_root()?;
+    let repo = parsed.repo.unwrap_or(default_repo(&repo_root)?);
+    let records = github::pr_inventory(&repo)?;
+    let report = PrInventoryReport {
+        schema: "adl.pr_inventory.v1",
+        repo,
+        open_pr_count: records.len(),
+        pull_requests: records,
+    };
+    if parsed.json {
+        print_json(&report)?;
+    } else {
+        print_pr_inventory(&report);
+    }
+    Ok(())
+}
+
+fn print_pr_inventory(report: &PrInventoryReport) {
+    println!(
+        "PR inventory for {}: {} open PR(s)",
+        report.repo, report.open_pr_count
+    );
+    for pr in &report.pull_requests {
+        let draft = if pr.is_draft { "draft" } else { "ready" };
+        let queue = pr.queue.as_deref().unwrap_or("unknown");
+        let closing = if pr.closing_issue_numbers.is_empty() {
+            "none".to_string()
+        } else {
+            pr.closing_issue_numbers
+                .iter()
+                .map(|number| format!("#{number}"))
+                .collect::<Vec<_>>()
+                .join(",")
+        };
+        println!(
+            "- #{} [{}] [queue={}] {} -> {} closing={} checks={}/{} failed={} pending={} updated={} mergeable={} {} ({})",
+            pr.number,
+            draft,
+            queue,
+            pr.head_ref_name,
+            pr.base_ref_name,
+            closing,
+            pr.check_summary.passed,
+            pr.check_summary.total,
+            pr.check_summary.failed,
+            pr.check_summary.pending,
+            pr.updated_at.as_deref().unwrap_or("unknown"),
+            pr.mergeable
+                .map(|mergeable| mergeable.to_string())
+                .unwrap_or_else(|| "unknown".to_string()),
+            pr.title,
+            pr.url
+        );
+    }
 }
 
 fn real_pr_issue(args: &[String]) -> Result<()> {

@@ -24,21 +24,23 @@ Current status: milestone issue wave opened for the final pre-`v0.92` bridge and
 - Existing v0.91.7 routed issues:
   - `#4603` routes into WP-06 build throughput / remote validation.
   - `#4617` routes into WP-04 goal metrics / telemetry.
-  - `#4622` routes into WP-02 release-tail / PR inventory.
+  - `#4622` implements the WP-02 release-tail PR inventory path through
+    `bash adl/tools/pr.sh pr-inventory --json`.
 - Non-WP v0.91.7 issues:
   - `#4651` covers sensible Rust refactoring by ownership and validation cost.
   - `#4652` covers Unity demo surfaces.
   - `#4653` covers dspark speculative decoding evaluation with Qwen and Gemma.
   - `#4654` covers deepseek-v4-flash-dspark smoke testing on ephemeral 2xH100 EC2 with teardown/cost proof.
 - Execution: the issue wave is open; implementation work beyond planning/feature
-  docs and `#4549` Soak #2 execution-packet setup has not run.
+  docs and `#4549` Soak #2 execution-packet setup has not run except for the
+  WP-02 PR inventory utility implemented under `#4622`.
 - Validation: docs-readiness validation only until implementation issues run.
 - Release readiness: not applicable until `v0.91.7` executes.
 - Dependency gate: v0.91.7 execution must consume the failed-but-closed WP-15
   `#3980` external-review truth, closed WP-16 `#3981`
   remediation/final-preflight truth, closed WP-16 children `#4620` and
-  `#4621`, the open v0.91.7 tooling route `#4622`, and closed WP-14A
-  remediation truth before opening dependent execution work.
+  `#4621`, the WP-02 PR inventory command delivered by `#4622`, and closed
+  WP-14A remediation truth before opening dependent execution work.
 
 This package does not implement runtime features and does not claim `v0.92` activation readiness. It exists so every required pre-birthday surface is visible, scheduled, deferred, blocked, or routed before `v0.92` opens.
 

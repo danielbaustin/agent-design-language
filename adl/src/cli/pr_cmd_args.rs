@@ -106,6 +106,12 @@ pub(crate) struct ValidationArgs {
 }
 
 #[derive(Debug, Clone, PartialEq, Eq)]
+pub(crate) struct PrInventoryArgs {
+    pub(crate) repo: Option<String>,
+    pub(crate) json: bool,
+}
+
+#[derive(Debug, Clone, PartialEq, Eq)]
 pub(crate) struct WatchArgs {
     pub(crate) issue_ref: String,
     pub(crate) repo: Option<String>,
@@ -695,6 +701,26 @@ pub(crate) fn parse_validation_args(args: &[String]) -> Result<ValidationArgs> {
             "--watch" | "--wait" => parsed.watch = true,
             "--json" => parsed.json = true,
             other => bail!("validation: unknown arg: {other}"),
+        }
+        i += 1;
+    }
+    Ok(parsed)
+}
+
+pub(crate) fn parse_pr_inventory_args(args: &[String]) -> Result<PrInventoryArgs> {
+    let mut parsed = PrInventoryArgs {
+        repo: None,
+        json: false,
+    };
+    let mut i = 0;
+    while i < args.len() {
+        match args[i].as_str() {
+            "-R" | "--repo" => {
+                parsed.repo = Some(require_value(args, i, "pr-inventory", args[i].as_str())?);
+                i += 1;
+            }
+            "--json" => parsed.json = true,
+            other => bail!("pr-inventory: unknown arg: {other}"),
         }
         i += 1;
     }

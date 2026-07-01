@@ -391,6 +391,15 @@ filter_token_for_path() {
 family_token_for_path() {
   local path="$1"
   case "$path" in
+    adl/Cargo.toml|adl/Cargo.lock|\
+    adl/src/bin/adl_pr_*.rs|\
+    adl/src/cli/pr_cmd.rs|\
+    adl/src/cli/pr_cmd/*|\
+    adl/src/cli/pr_cmd_args.rs|\
+    adl/src/cli/tests/pr_cmd_inline/*)
+      printf 'pr_control_plane'
+      return 0
+      ;;
     adl/src/lib.rs)
       return 1
       ;;
@@ -450,6 +459,7 @@ TOKEN_MAP = {
     "run_v0916_integrated_runtime_soak": 'binary_id(adl::bin/run_v0916_integrated_runtime_soak) and test(/^tests::/)',
     "tokio_bootstrap": 'test(/^cli::pr_cmd::github::/) or test(/^cli::pr_cmd::github_client::/) or test(/^cli::tooling_cmd::github_release::/)',
     "pr_cmd": 'binary_id(adl::bin/adl) and test(/^cli::pr_cmd::/)',
+    "pr_control_plane": 'test(/^cli::pr_cmd::/)',
     "pr_cmd_finish": 'binary_id(adl::bin/adl-pr-finish) and test(/^cli::pr_cmd::tests::finish::arg_render::/) or binary_id(adl::bin/adl-pr-finish) and test(/^cli::pr_cmd::finish_support::tests::/)',
     "pr_cmd::github": 'test(/^cli::pr_cmd::github::/) or test(/^cli::pr_cmd::github_client::/)',
     "github_release_": 'test(/^cli::tooling_cmd::github_release::/)',
