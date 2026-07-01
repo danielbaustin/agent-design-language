@@ -20,8 +20,9 @@ is blocked, run one focused ADL validation command over SSM, retain timing plus
 ## Implemented Surface
 
 - Standalone binary: `adl-aws-remote-validation`
-- Source entrypoint: `adl/src/bin/adl_aws_remote_validation.rs`
-- Orchestration module: `adl/src/aws_remote_validation.rs`
+- Cargo package: `tools/aws_remote_validation/Cargo.toml`
+- Source entrypoint: `tools/aws_remote_validation/src/bin/adl_aws_remote_validation.rs`
+- Orchestration module: `tools/aws_remote_validation/src/aws_remote_validation.rs`
 - AWS SDK crates:
   - `aws-config`
   - `aws-sdk-ec2`
@@ -106,9 +107,9 @@ precision, or general Spot savings from this implementation alone.
 
 Local focused proof run for this issue:
 
-- `cargo fmt --manifest-path adl/Cargo.toml`
-- `cargo check --manifest-path adl/Cargo.toml --bin adl-aws-remote-validation`
-- `cargo test --manifest-path adl/Cargo.toml --bin adl-aws-remote-validation -- --nocapture`
+- `cargo fmt --manifest-path tools/aws_remote_validation/Cargo.toml`
+- `cargo build --manifest-path tools/aws_remote_validation/Cargo.toml --bin adl-aws-remote-validation`
+- `cargo test --manifest-path tools/aws_remote_validation/Cargo.toml --bin adl-aws-remote-validation -- --nocapture`
 
 Those tests currently prove:
 
