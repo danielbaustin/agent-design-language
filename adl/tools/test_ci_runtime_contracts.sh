@@ -173,6 +173,7 @@ for required_fragment in (
     'COVERAGE_BUILD_ROOT="${RUNNER_TEMP:-/tmp}/adl-pr-fast-coverage"',
     'export CARGO_TARGET_DIR="$COVERAGE_BUILD_ROOT/target"',
     'export CARGO_LLVM_COV_TARGET_DIR="$COVERAGE_BUILD_ROOT/llvm-cov-target"',
+    'cargo llvm-cov report --json --summary-only --output-path adl/coverage-summary.json',
 ):
     if required_fragment not in fast_summary_step:
         raise SystemExit(
