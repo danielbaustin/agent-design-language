@@ -58,7 +58,7 @@ chmod +x "$mockbin/cargo"
 TMP_CARGO_ARGS="$tmpdir/cargo_args.txt"
 TMP_LOCKFILE="$repo/adl/Cargo.lock"
 export TMP_CARGO_ARGS TMP_LOCKFILE
-export PATH="$mockbin:$PATH"
+export PATH="$mockbin:/usr/bin:/bin:/usr/sbin:/sbin"
 
 set +e
 run_output="$(

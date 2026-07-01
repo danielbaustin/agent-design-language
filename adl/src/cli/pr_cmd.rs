@@ -1708,6 +1708,7 @@ fn suggested_session_claim_command(
 ) -> String {
     let session_id = adl::session_ledger::current_codex_session_id()
         .unwrap_or_else(|| "<session-id>".to_string());
+    let adl_bin = repo_root.join("adl/target/debug/adl");
     let worktree_ref = if worktree_path.is_absolute() {
         worktree_path
             .strip_prefix(repo_root)
@@ -1718,9 +1719,28 @@ fn suggested_session_claim_command(
         worktree_path.display().to_string()
     };
     format!(
-        "adl session claim --session-id {} --owner codex --resource csdlc_issue:{} --purpose \"issue-mode execution ownership\" --issue {} --branch {} --worktree {} --policy-ref AGENTS.md --lifecycle-phase pr_run --mode active --json",
-        session_id, issue_number, issue_number, branch, worktree_ref
+        "{} session claim --session-id {} --owner codex --resource {} --purpose {} --issue {} --branch {} --worktree {} --policy-ref {} --lifecycle-phase {} --mode {} --json",
+        shell_quote_arg(&adl_bin.display().to_string()),
+        shell_quote_arg(&session_id),
+        shell_quote_arg(&format!("csdlc_issue:{issue_number}")),
+        shell_quote_arg("issue-mode execution ownership"),
+        issue_number,
+        shell_quote_arg(branch),
+        shell_quote_arg(&worktree_ref),
+        shell_quote_arg("AGENTS.md"),
+        shell_quote_arg("pr_run"),
+        shell_quote_arg("active"),
     )
+}
+
+fn shell_quote_arg(value: &str) -> String {
+    if value
+        .chars()
+        .all(|ch| ch.is_ascii_alphanumeric() || matches!(ch, '/' | '.' | '_' | '-' | ':' | '='))
+    {
+        return value.to_string();
+    }
+    format!("'{}'", value.replace('\'', "'\\''"))
 }
 
 fn format_session_claims_for_error(claims: &[adl::session_ledger::TargetClaimMatch]) -> String {
