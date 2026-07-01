@@ -25,7 +25,7 @@ as pending-send or silently approved.
 | --- | --- | --- | --- | --- |
 | External-review handoff was stale when consumed | `P1` | `accepted_fixed_or_verified` | `#4609`, `#4611`, `#4612`, `#4620`, `#4621` | The stale handoff referenced already-closed remediation work and masked the true state of the release tail. |
 | Release-tail docs still carried active-owner drift after WP-14A closed | `P1` | `accepted_in_remediation` | `#4621` | Reviewer-facing docs must stop calling `#4582` the active owner once WP-14A has closed. |
-| Final preflight must not treat the failed review as approval | `P1` | `accepted_routed` | `#3981` | WP-16 remains the canonical disposition sink for accepted internal/external findings. |
+| Final preflight must not treat the failed review as approval | `P1` | `accepted_routed` | `#3981` | WP-16 was the canonical disposition sink for accepted internal/external findings; it is now closed and consumed by `#4661`. |
 
 ## Consumed Closed Remediation Truth
 
@@ -39,9 +39,15 @@ before it was read:
 
 ## Current Truth Boundary
 
-- `#3980` remains open because the external review has run and failed; it is
-  not still waiting to be sent.
-- `#3981` remains open and owns final findings disposition and preflight truth.
+Post-closeout supersession note for `#4661`: `#3980`, `#3981`, `#4620`, and
+`#4621` are now closed. The bullets below record the state at the time this
+failed-review packet was written; v0.91.7 must consume the failure as release
+truth, not as a still-open wait state.
+
+- At packet-writing time, `#3980` was open because the external review had run
+  and failed; it was not still waiting to be sent. `#3980` is now closed.
+- At packet-writing time, `#3981` was open and owned final findings
+  disposition and preflight truth. `#3981` is now closed.
 - `#3984` must not treat this failed review as release approval.
 - `v0.92` activation remains blocked unless every named bridge surface is
   complete, blocked, deferred, or explicitly routed.

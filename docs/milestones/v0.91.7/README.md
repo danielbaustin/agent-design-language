@@ -19,6 +19,8 @@ Current status: milestone issue wave opened for the final pre-`v0.92` bridge and
 - Initial planning package: created by earlier v0.91.7 setup work.
 - Source-capture refresh: `#4368`.
 - v0.91.6 release-tail handoff refresh: `#3982`.
+- WP-02 v0.91.6 closeout-truth consumption: `#4661` /
+  `docs/milestones/v0.91.7/review/V0917_WP02_V0916_CLOSEOUT_TRUTH_CONSUMPTION_4661.md`.
 - WP-01 planning promotion: `#4628`.
 - Canonical WP issue wave: `#4628` through `#4650`.
 - Existing assigned v0.91.7 issues:
@@ -117,6 +119,8 @@ Assignment to a follow-on issue, sprint, or milestone is scheduling truth only. 
 - Release notes: [RELEASE_NOTES_v0.91.7.md](RELEASE_NOTES_v0.91.7.md)
 - Review and validation checklist: [REVIEW_AND_VALIDATION_CHECKLIST_v0.91.7.md](REVIEW_AND_VALIDATION_CHECKLIST_v0.91.7.md)
 - Feature directory index: [features/README.md](features/README.md)
+- WP-02 closeout-truth consumption packet:
+  [docs/milestones/v0.91.7/review/V0917_WP02_V0916_CLOSEOUT_TRUTH_CONSUMPTION_4661.md](review/V0917_WP02_V0916_CLOSEOUT_TRUTH_CONSUMPTION_4661.md)
 
 ## Non-Goals
 

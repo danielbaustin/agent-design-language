@@ -23,11 +23,12 @@ merely implemented as isolated components.
 
 Active sprint umbrella: `#4604`.
 
-Current progress: `#3976` WP-11, `#3977` WP-12, `#3978` WP-13, and `#4582`
-WP-14A are merged and closed. `#4609`, `#4610`, `#4611`, and `#4612` are also
-closed remediation children. WP-15 `#3980` has already run and failed on stale
-handoff truth, and WP-16 `#3981` remains the active remediation/final-preflight
-owner.
+Current progress: the v0.91.6 closeout-tail wave is complete. `#3976` WP-11,
+`#3977` WP-12, `#3978` WP-13, `#4582` WP-14A, WP-15 `#3980`, WP-16 `#3981`,
+WP-18 `#3983`, WP-19 `#3984`, and umbrella `#4604` are closed. `#4609`,
+`#4610`, `#4611`, `#4612`, `#4620`, and `#4621` are closed remediation
+children. The failed WP-15 review remains release truth; WP-16 consumed the
+accepted findings and final preflight truth.
 
 | Order | Issue | Role | Must wait for | May spawn follow-on remediation | Watcher expectation |
 | --- | --- | --- | --- | --- | --- |

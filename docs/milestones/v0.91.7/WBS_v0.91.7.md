@@ -53,6 +53,11 @@ Completion standard: planned, documented, mocked, component-proven, assigned, or
 ## Acceptance Mapping
 
 - v0.91.6 closeout truth and ADR release-tail decisions must be consumed before `v0.92` opens.
+- WP-02 closeout truth is split across child issues. `#4661` owns only the
+  v0.91.6 closeout-truth consumption packet
+  `docs/milestones/v0.91.7/review/V0917_WP02_V0916_CLOSEOUT_TRUTH_CONSUMPTION_4661.md`;
+  `#4662`-`#4665` own ADR, Observatory, C-SDLC control-plane, and PR-inventory
+  child dispositions.
 - SEP/VPP/PVF/template/session-ledger/workflow-adoption work must make sprint execution predictable rather than chat-memory driven, with the v0.91.6 C-SDLC completion stream named in the source-capture ledger serving as the integrated-control-plane input.
 - Goal and metrics work must preserve issue/sprint token/time/resource accounting, separating forward capture from bounded v0.91.6 backfill.
 - Scheduler/provider work must protect premium capacity and support local/hosted model routing.
