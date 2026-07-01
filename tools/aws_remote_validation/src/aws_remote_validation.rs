@@ -2473,21 +2473,70 @@ impl AwsRemoteValidationAdapter for LiveAwsRemoteValidationAdapter {
             spot_fallback_permitted: spec.purchase_option == PurchaseOption::Spot,
         })?;
         let instance_id = instance.instance_id().unwrap_or_default().to_string();
-        let mut cache_volume = if let Some(request) = spec.cache_volume.as_ref() {
-            let availability_zone =
-                self.subnet_availability_zone(&spec.subnet_id)
-                    .await
-                    .map_err(|err| AwsAdapterError {
-                        code: Some("CacheVolumeAvailabilityZoneUnavailable".to_string()),
-                        message: err.to_string(),
+        let mut cache_volume = None;
+        if let Some(request) = spec.cache_volume.as_ref() {
+            let cache_volume_result: std::result::Result<CacheVolumeRecord, AwsAdapterError> =
+                async {
+                    let availability_zone =
+                        self.subnet_availability_zone(&spec.subnet_id)
+                            .await
+                            .map_err(|err| AwsAdapterError {
+                                code: Some("CacheVolumeAvailabilityZoneUnavailable".to_string()),
+                                message: format!(
+                                    "instance_id={} subnet_id={} availability zone resolution failed: {}",
+                                    instance_id, spec.subnet_id, err
+                                ),
+                                spot_fallback_permitted: false,
+                            })?;
+                    let mut record =
+                        self.ensure_cache_volume(request, &availability_zone).await.map_err(
+                            |err| AwsAdapterError {
+                                code: err.code.clone().or(Some(
+                                    "CacheVolumeEnsureFailed".to_string(),
+                                )),
+                                message: format!(
+                                    "instance_id={} cache volume '{}' in {} could not be prepared: {}",
+                                    instance_id, request.name, availability_zone, err
+                                ),
+                                spot_fallback_permitted: false,
+                            },
+                        )?;
+                    self.attach_cache_volume(&instance_id, &mut record)
+                        .await
+                        .map_err(|err| AwsAdapterError {
+                            code: err.code.clone().or(Some(
+                                "CacheVolumeAttachFailed".to_string(),
+                            )),
+                            message: format!(
+                                "instance_id={} volume_id={} device={} attach failed: {}",
+                                instance_id, record.volume_id, record.device_name, err
+                            ),
+                            spot_fallback_permitted: false,
+                        })?;
+                    Ok(record)
+                }
+                .await;
+
+            match cache_volume_result {
+                Ok(record) => cache_volume = Some(record),
+                Err(err) => {
+                    let _ = self
+                        .ec2
+                        .terminate_instances()
+                        .instance_ids(instance_id.clone())
+                        .send()
+                        .await;
+                    return Err(AwsAdapterError {
+                        code: err.code,
+                        message: format!(
+                            "{}; launched instance {} was terminated to avoid leaking a builder",
+                            err.message, instance_id
+                        ),
                         spot_fallback_permitted: false,
-                    })?;
-            let mut record = self.ensure_cache_volume(request, &availability_zone).await?;
-            self.attach_cache_volume(&instance_id, &mut record).await?;
-            Some(record)
-        } else {
-            None
-        };
+                    });
+                }
+            }
+        }
         Ok(LaunchResult {
             instance_id,
             initial_state: instance
@@ -2495,7 +2544,7 @@ impl AwsRemoteValidationAdapter for LiveAwsRemoteValidationAdapter {
                 .and_then(|state| state.name())
                 .map(|state| state.as_str().to_string())
                 .unwrap_or_else(|| "unknown".to_string()),
-            cache_volume: cache_volume.take(),
+            cache_volume,
         })
     }
 
