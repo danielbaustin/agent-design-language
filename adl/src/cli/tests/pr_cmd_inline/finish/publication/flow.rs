@@ -1184,10 +1184,12 @@ fn real_pr_finish_promotes_green_unchanged_existing_pr_ready() {
 
     let old_path = env::var("PATH").unwrap_or_default();
     let old_base_uri = env::var_os("ADL_GITHUB_OCTOCRAB_BASE_URI");
+    let old_github_token = env::var_os("GITHUB_TOKEN");
     let prev_dir = env::current_dir().expect("cwd");
     unsafe {
         env::set_var("PATH", format!("{}:{}", bin_dir.display(), old_path));
         env::set_var("ADL_GITHUB_OCTOCRAB_BASE_URI", format!("http://{addr}"));
+        env::set_var("GITHUB_TOKEN", "test-token-for-mock-octocrab");
     }
     env::set_current_dir(&repo).expect("chdir");
 
@@ -1214,6 +1216,11 @@ fn real_pr_finish_promotes_green_unchanged_existing_pr_ready() {
             env::set_var("ADL_GITHUB_OCTOCRAB_BASE_URI", value);
         } else {
             env::remove_var("ADL_GITHUB_OCTOCRAB_BASE_URI");
+        }
+        if let Some(value) = old_github_token {
+            env::set_var("GITHUB_TOKEN", value);
+        } else {
+            env::remove_var("GITHUB_TOKEN");
         }
     }
     validation_handle.join().expect("validation server join");
