@@ -1583,14 +1583,41 @@ impl LiveAwsRemoteValidationAdapter {
         record: &mut CacheVolumeRecord,
     ) -> std::result::Result<(), AwsAdapterError> {
         self.wait_for_volume_available(&record.volume_id).await?;
-        self.ec2
-            .attach_volume()
-            .device(record.device_name.clone())
-            .instance_id(instance_id)
-            .volume_id(record.volume_id.clone())
-            .send()
-            .await
-            .map_err(classify_ec2_error)?;
+        let attach_start = Instant::now();
+        let mut attach_sent = false;
+        while attach_start.elapsed() < Duration::from_secs(90) {
+            match self
+                .ec2
+                .attach_volume()
+                .device(record.device_name.clone())
+                .instance_id(instance_id)
+                .volume_id(record.volume_id.clone())
+                .send()
+                .await
+            {
+                Ok(_) => {
+                    attach_sent = true;
+                    break;
+                }
+                Err(err) => {
+                    let classified = classify_ec2_error(err);
+                    sleep(Duration::from_secs(3)).await;
+                    if attach_start.elapsed() >= Duration::from_secs(90) {
+                        return Err(classified);
+                    }
+                }
+            }
+        }
+        if !attach_sent {
+            return Err(AwsAdapterError {
+                code: Some("CacheVolumeAttachNotAccepted".to_string()),
+                message: format!(
+                    "cache volume {} attach request was not accepted for instance {} within 90s",
+                    record.volume_id, instance_id
+                ),
+                spot_fallback_permitted: false,
+            });
+        }
         let start = Instant::now();
         while start.elapsed() < Duration::from_secs(180) {
             let response = self
@@ -1629,14 +1656,22 @@ impl LiveAwsRemoteValidationAdapter {
         instance_id: &str,
     ) -> std::result::Result<(), AwsAdapterError> {
         let start = Instant::now();
+        let mut last_error: Option<AwsAdapterError> = None;
         while start.elapsed() < Duration::from_secs(180) {
-            let response = self
+            let response = match self
                 .ec2
                 .describe_instances()
                 .instance_ids(instance_id)
                 .send()
                 .await
-                .map_err(classify_ec2_error)?;
+            {
+                Ok(response) => response,
+                Err(err) => {
+                    last_error = Some(classify_ec2_error(err));
+                    sleep(Duration::from_secs(3)).await;
+                    continue;
+                }
+            };
             let state = response
                 .reservations()
                 .first()
@@ -1649,6 +1684,9 @@ impl LiveAwsRemoteValidationAdapter {
                 return Ok(());
             }
             sleep(Duration::from_secs(3)).await;
+        }
+        if let Some(err) = last_error {
+            return Err(err);
         }
         Err(AwsAdapterError {
             code: Some("InstanceNotRunningForCacheAttach".to_string()),
