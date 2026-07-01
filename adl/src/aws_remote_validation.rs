@@ -25,6 +25,7 @@ use tokio::time::sleep;
 const SPOT_QUOTA_NAME: &str = "All Standard (A, C, D, H, I, M, R, T, Z) Spot Instance Requests";
 const ON_DEMAND_QUOTA_NAME: &str =
     "Running On-Demand Standard (A, C, D, H, I, M, R, T, Z) instances";
+const CACHE_ROLE_POLICY_NAME: &str = "AdlAwsRemoteValidationCacheAccess";
 
 static LIVE_EVENT_LOG_PATH: Lazy<Mutex<Option<PathBuf>>> = Lazy::new(|| Mutex::new(None));
 static LIVE_COMMAND_STATUS_LOG_PATH: Lazy<Mutex<Option<PathBuf>>> = Lazy::new(|| Mutex::new(None));
@@ -61,6 +62,10 @@ pub struct AwsRemoteValidationConfig {
     pub profile: Option<String>,
     pub repo_url: String,
     pub git_ref: String,
+    pub cache_bucket: Option<String>,
+    pub cache_prefix: Option<String>,
+    pub sccache_tarball_url: Option<String>,
+    pub nextest_tarball_url: Option<String>,
     pub command: String,
     pub out_path: PathBuf,
     pub artifact_dir: PathBuf,
@@ -991,6 +996,12 @@ fn build_remote_command_script(config: &AwsRemoteValidationConfig) -> String {
     let escaped_command = shell_single_quote(&config.command);
     let escaped_repo_url = shell_single_quote(&config.repo_url);
     let escaped_git_ref = shell_single_quote(&config.git_ref);
+    let escaped_cache_bucket = shell_single_quote(config.cache_bucket.as_deref().unwrap_or(""));
+    let escaped_cache_prefix = shell_single_quote(config.cache_prefix.as_deref().unwrap_or(""));
+    let escaped_sccache_tarball_url =
+        shell_single_quote(config.sccache_tarball_url.as_deref().unwrap_or(""));
+    let escaped_nextest_tarball_url =
+        shell_single_quote(config.nextest_tarball_url.as_deref().unwrap_or(""));
     format!(
         r#"set -euo pipefail
 RUN_ROOT="/tmp/adl-aws-remote-validation/{run_id}"
@@ -1023,6 +1034,7 @@ on_error() {{
   emit_debug_log rustup /tmp/adl-rustup.log
   emit_debug_log build_toolchain /tmp/adl-build-toolchain.log
   emit_debug_log sccache_install /tmp/adl-sccache-install.log
+  emit_debug_log nextest_install /tmp/adl-nextest-install.log
   emit_debug_log git_clone /tmp/adl-git-clone.log
   emit_debug_log git_fetch /tmp/adl-git-fetch.log
   emit_debug_log git_checkout /tmp/adl-git-checkout.log
@@ -1033,35 +1045,132 @@ on_error() {{
 }}
 trap on_error ERR
 
-install_sccache_release() {{
-  local arch target api_url asset_url
+release_target_triple() {{
+  local arch
   arch="$(uname -m)"
   case "$arch" in
-    x86_64) target="x86_64-unknown-linux-musl" ;;
-    aarch64|arm64) target="aarch64-unknown-linux-musl" ;;
+    x86_64) printf '%s\n' "x86_64-unknown-linux-musl" ;;
+    aarch64|arm64) printf '%s\n' "aarch64-unknown-linux-musl" ;;
     *) return 1 ;;
   esac
-  api_url="https://api.github.com/repos/mozilla/sccache/releases/latest"
+}}
+
+install_github_release_binary() {{
+  local repo_name binary_name target api_url asset_url archive_path extract_dir release_bin
+  repo_name="$1"
+  binary_name="$2"
+  if [ -n "${{3:-}}" ]; then
+    target="$3"
+  else
+    target="$(release_target_triple)" || return 1
+  fi
+  api_url="https://api.github.com/repos/$repo_name/releases/latest"
   asset_url="$(curl -fsSL "$api_url" | python3 -c 'import json, sys
-target = sys.argv[1]
+repo = sys.argv[1]
+binary = sys.argv[2]
+target = sys.argv[3]
 data = json.load(sys.stdin)
 for asset in data.get("assets", []):
     url = asset.get("browser_download_url", "")
-    if target in url and url.endswith(".tar.gz"):
+    if binary in url and target in url and url.endswith(".tar.gz"):
         print(url)
         break
-' "$target")"
+' "$repo_name" "$binary_name" "$target")"
   [ -n "$asset_url" ] || return 1
-  curl -fsSL "$asset_url" -o /tmp/adl-sccache-release.tar.gz
-  rm -rf /tmp/adl-sccache-release
-  mkdir -p /tmp/adl-sccache-release
-  tar -xzf /tmp/adl-sccache-release.tar.gz -C /tmp/adl-sccache-release
-  SCCACHE_RELEASE_BIN="$(find /tmp/adl-sccache-release -type f -name sccache | head -n 1)"
-  [ -n "$SCCACHE_RELEASE_BIN" ] || return 1
-  install -m 0755 "$SCCACHE_RELEASE_BIN" "$HOME/.cargo/bin/sccache"
+  archive_path="/tmp/adl-$binary_name-release.tar.gz"
+  extract_dir="/tmp/adl-$binary_name-release"
+  curl -fsSL "$asset_url" -o "$archive_path"
+  rm -rf "$extract_dir"
+  mkdir -p "$extract_dir"
+  tar -xzf "$archive_path" -C "$extract_dir"
+  release_bin="$(find "$extract_dir" -type f -name "$binary_name" | head -n 1)"
+  [ -n "$release_bin" ] || return 1
+  install -m 0755 "$release_bin" "$HOME/.cargo/bin/$binary_name"
+}}
+
+install_sccache_release() {{
+  install_github_release_binary "mozilla/sccache" "sccache"
+}}
+
+ensure_aws_cli() {{
+  if command -v aws >/dev/null 2>&1; then
+    return 0
+  fi
+  sudo dnf install -y awscli >/tmp/adl-awscli-install.log 2>&1 \
+    || sudo yum install -y awscli >/tmp/adl-awscli-install.log 2>&1
+}}
+
+archive_installed_binary() {{
+  local binary_name archive_path package_dir
+  binary_name="$1"
+  archive_path="$2"
+  package_dir="/tmp/adl-$binary_name-package"
+  rm -rf "$package_dir"
+  mkdir -p "$package_dir"
+  cp "$HOME/.cargo/bin/$binary_name" "$package_dir/$binary_name"
+  tar -czf "$archive_path" -C "$package_dir" "$binary_name"
+}}
+
+install_binary_from_tarball_url() {{
+  local binary_name tarball_url extract_dir archive_path release_bin
+  binary_name="$1"
+  tarball_url="$2"
+  [ -n "$tarball_url" ] || return 1
+  archive_path="/tmp/adl-$binary_name-cache.tar.gz"
+  extract_dir="/tmp/adl-$binary_name-cache"
+  curl -fsSL "$tarball_url" -o "$archive_path"
+  rm -rf "$extract_dir"
+  mkdir -p "$extract_dir"
+  tar -xzf "$archive_path" -C "$extract_dir"
+  release_bin="$(find "$extract_dir" -type f -name "$binary_name" | head -n 1)"
+  [ -n "$release_bin" ] || return 1
+  install -m 0755 "$release_bin" "$HOME/.cargo/bin/$binary_name"
+}}
+
+install_binary_from_s3_cache() {{
+  local binary_name bucket prefix object_uri archive_path tool_prefix
+  binary_name="$1"
+  bucket="$2"
+  prefix="$3"
+  [ -n "$bucket" ] || return 1
+  ensure_aws_cli || return 1
+  archive_path="/tmp/adl-$binary_name-cache.tar.gz"
+  tool_prefix="$prefix/tools"
+  object_uri="s3://$bucket/$tool_prefix/$binary_name.tar.gz"
+  aws s3 cp "$object_uri" "$archive_path" >/tmp/adl-$binary_name-s3-download.log 2>&1 || return 1
+  install_binary_from_tarball_url "$binary_name" "file://$archive_path"
+}}
+
+upload_binary_to_s3_cache() {{
+  local binary_name bucket prefix archive_path object_uri tool_prefix
+  binary_name="$1"
+  bucket="$2"
+  prefix="$3"
+  [ -n "$bucket" ] || return 0
+  ensure_aws_cli || return 1
+  archive_path="/tmp/adl-$binary_name-upload.tar.gz"
+  tool_prefix="$prefix/tools"
+  object_uri="s3://$bucket/$tool_prefix/$binary_name.tar.gz"
+  archive_installed_binary "$binary_name" "$archive_path" || return 1
+  aws s3 cp "$archive_path" "$object_uri"
+}}
+
+install_nextest_release() {{
+  local target
+  target="$(release_target_triple)" || return 1
+  case "$target" in
+    x86_64-unknown-linux-musl) target="x86_64-unknown-linux-gnu" ;;
+    aarch64-unknown-linux-musl) target="aarch64-unknown-linux-gnu" ;;
+    *) return 1 ;;
+  esac
+  install_github_release_binary "nextest-rs/nextest" "cargo-nextest" "$target"
 }}
 
 export HOME="${{HOME:-/root}}"
+CACHE_BUCKET='{cache_bucket}'
+CACHE_PREFIX='{cache_prefix}'
+SCCACHE_TARBALL_URL='{sccache_tarball_url}'
+NEXTEST_TARBALL_URL='{nextest_tarball_url}'
 CURRENT_STAGE="ensure_git"
 if ! command -v git >/dev/null 2>&1; then
   sudo dnf install -y git >/dev/null 2>&1 || sudo yum install -y git >/dev/null 2>&1 || true
@@ -1082,14 +1191,46 @@ fi
 if [ -f "$HOME/.cargo/env" ]; then
   . "$HOME/.cargo/env"
 fi
-CURRENT_STAGE="ensure_sccache"
-if ! command -v sccache >/dev/null 2>&1; then
-  install_sccache_release >/tmp/adl-sccache-install.log 2>&1 \
-    || cargo install sccache --locked >>/tmp/adl-sccache-install.log 2>&1
-fi
 export PATH="$HOME/.cargo/bin:$PATH"
 export CARGO_TARGET_DIR="$TARGET_DIR"
 export SCCACHE_DIR="$SCCACHE_DIR"
+if [ -n "$CACHE_BUCKET" ]; then
+  export SCCACHE_BUCKET="$CACHE_BUCKET"
+  export SCCACHE_REGION="{region}"
+  export SCCACHE_S3_KEY_PREFIX="$CACHE_PREFIX/sccache"
+fi
+CURRENT_STAGE="ensure_sccache"
+if ! command -v sccache >/dev/null 2>&1; then
+  SCCACHE_CACHE_HIT=0
+  if install_binary_from_s3_cache sccache "$CACHE_BUCKET" "$CACHE_PREFIX" >/tmp/adl-sccache-install.log 2>&1; then
+    SCCACHE_CACHE_HIT=1
+  elif install_binary_from_tarball_url sccache "$SCCACHE_TARBALL_URL" >>/tmp/adl-sccache-install.log 2>&1; then
+    SCCACHE_CACHE_HIT=1
+  elif install_sccache_release >>/tmp/adl-sccache-install.log 2>&1; then
+    :
+  else
+    cargo install sccache --locked >>/tmp/adl-sccache-install.log 2>&1
+  fi
+  if [ "$SCCACHE_CACHE_HIT" -eq 0 ]; then
+    upload_binary_to_s3_cache sccache "$CACHE_BUCKET" "$CACHE_PREFIX" >>/tmp/adl-sccache-install.log 2>&1 || true
+  fi
+fi
+CURRENT_STAGE="ensure_nextest"
+if [[ "{command}" == *"nextest"* ]] && ! cargo nextest --version >/dev/null 2>&1; then
+  NEXTEST_CACHE_HIT=0
+  if install_binary_from_s3_cache cargo-nextest "$CACHE_BUCKET" "$CACHE_PREFIX" >/tmp/adl-nextest-install.log 2>&1; then
+    NEXTEST_CACHE_HIT=1
+  elif install_binary_from_tarball_url cargo-nextest "$NEXTEST_TARBALL_URL" >>/tmp/adl-nextest-install.log 2>&1; then
+    NEXTEST_CACHE_HIT=1
+  elif install_nextest_release >>/tmp/adl-nextest-install.log 2>&1; then
+    :
+  else
+    cargo install cargo-nextest --locked >>/tmp/adl-nextest-install.log 2>&1
+  fi
+  if [ "$NEXTEST_CACHE_HIT" -eq 0 ]; then
+    upload_binary_to_s3_cache cargo-nextest "$CACHE_BUCKET" "$CACHE_PREFIX" >>/tmp/adl-nextest-install.log 2>&1 || true
+  fi
+fi
 export RUSTC_WRAPPER="sccache"
 
 CURRENT_STAGE="clone_repo"
@@ -1104,6 +1245,7 @@ RESOLVED_COMMIT="$(git -C "$REPO_DIR" rev-parse HEAD)"
 RUSTC_VERSION="$(rustc --version 2>/dev/null || true)"
 CARGO_VERSION="$(cargo --version 2>/dev/null || true)"
 SCCACHE_VERSION="$(sccache --version 2>/dev/null || true)"
+sccache --start-server >/dev/null 2>&1 || true
 sccache --zero-stats >/dev/null 2>&1 || true
 
 INTERRUPTION_NOTICE=""
@@ -1168,7 +1310,12 @@ exit "$COMMAND_EXIT""#,
         run_id = config.run_id,
         repo_url = escaped_repo_url,
         git_ref = escaped_git_ref,
+        cache_bucket = escaped_cache_bucket,
+        cache_prefix = escaped_cache_prefix,
+        sccache_tarball_url = escaped_sccache_tarball_url,
+        nextest_tarball_url = escaped_nextest_tarball_url,
         command = escaped_command,
+        region = config.region,
     )
 }
 
@@ -1394,6 +1541,13 @@ impl LiveAwsRemoteValidationAdapter {
         if let Some(role_name) = prepared.created_role_name.as_deref() {
             let _ = self
                 .iam
+                .delete_role_policy()
+                .role_name(role_name)
+                .policy_name(CACHE_ROLE_POLICY_NAME)
+                .send()
+                .await;
+            let _ = self
+                .iam
                 .detach_role_policy()
                 .role_name(role_name)
                 .policy_arn("arn:aws:iam::aws:policy/AmazonSSMManagedInstanceCore")
@@ -1607,6 +1761,47 @@ impl LiveAwsRemoteValidationAdapter {
             .policy_arn("arn:aws:iam::aws:policy/AmazonSSMManagedInstanceCore")
             .send()
             .await?;
+        if let Some(cache_bucket) = config.cache_bucket.as_deref() {
+            let cache_prefix = config
+                .cache_prefix
+                .as_deref()
+                .filter(|value| !value.trim().is_empty())
+                .unwrap_or("adl/aws-remote-validation");
+            let policy_document = format!(
+                r#"{{
+  "Version": "2012-10-17",
+  "Statement": [
+    {{
+      "Effect": "Allow",
+      "Action": ["s3:ListBucket"],
+      "Resource": "arn:aws:s3:::{bucket}",
+      "Condition": {{
+        "StringLike": {{
+          "s3:prefix": [
+            "{prefix}",
+            "{prefix}/*"
+          ]
+        }}
+      }}
+    }},
+    {{
+      "Effect": "Allow",
+      "Action": ["s3:GetObject", "s3:PutObject", "s3:AbortMultipartUpload"],
+      "Resource": "arn:aws:s3:::{bucket}/{prefix}/*"
+    }}
+  ]
+}}"#,
+                bucket = cache_bucket,
+                prefix = cache_prefix
+            );
+            self.iam
+                .put_role_policy()
+                .role_name(role_name)
+                .policy_name(CACHE_ROLE_POLICY_NAME)
+                .policy_document(policy_document)
+                .send()
+                .await?;
+        }
         self.iam
             .create_instance_profile()
             .instance_profile_name(profile_name)
@@ -2311,6 +2506,10 @@ mod tests {
             profile: Some("agent-logic-admin".to_string()),
             repo_url: "https://github.com/danielbaustin/agent-design-language.git".to_string(),
             git_ref: "origin/main".to_string(),
+            cache_bucket: Some("adl-aws-remote-tool-cache-agentlogic".to_string()),
+            cache_prefix: Some("adl/remote-validation/4603".to_string()),
+            sccache_tarball_url: None,
+            nextest_tarball_url: None,
             command:
                 "cargo test --manifest-path adl/Cargo.toml provider_communication -- --nocapture"
                     .to_string(),

@@ -69,7 +69,7 @@ impl Drop for EnvVarGuard {
 }
 
 fn usage() -> &'static str {
-    "adl-aws-remote-validation run --issue <number> --command <shell-command> --ami-id <ami> --subnet-id <subnet> --security-group-id <sg> --instance-profile-name <name> --out <summary.json> [--artifact-dir <dir>] [--instance-type <type> ...] [--budget-name <name>] [--expected-max-cost-usd <usd>] [--repo-url <url>] [--git-ref <ref>] [--region <region>] [--profile <profile>] [--json]"
+    "adl-aws-remote-validation run --issue <number> --command <shell-command> --ami-id <ami> --subnet-id <subnet> --security-group-id <sg> --instance-profile-name <name> --out <summary.json> [--artifact-dir <dir>] [--instance-type <type> ...] [--budget-name <name>] [--expected-max-cost-usd <usd>] [--repo-url <url>] [--git-ref <ref>] [--cache-bucket <bucket>] [--cache-prefix <prefix>] [--sccache-tarball-url <url>] [--nextest-tarball-url <url>] [--region <region>] [--profile <profile>] [--json]"
 }
 
 fn local_git_stdout(args: &[&str]) -> Option<String> {
@@ -144,6 +144,10 @@ fn parse_args(args: &[String]) -> Result<ParsedArgs> {
     let mut profile = env::var("AWS_PROFILE").ok();
     let mut repo_url = "https://github.com/danielbaustin/agent-design-language.git".to_string();
     let mut git_ref = detect_default_git_ref();
+    let mut cache_bucket = env::var("ADL_AWS_REMOTE_VALIDATION_CACHE_BUCKET").ok();
+    let mut cache_prefix = env::var("ADL_AWS_REMOTE_VALIDATION_CACHE_PREFIX").ok();
+    let mut sccache_tarball_url = env::var("ADL_AWS_REMOTE_VALIDATION_SCCACHE_TARBALL_URL").ok();
+    let mut nextest_tarball_url = env::var("ADL_AWS_REMOTE_VALIDATION_NEXTEST_TARBALL_URL").ok();
     let mut command = None;
     let mut out_path = None;
     let mut artifact_dir = None;
@@ -204,7 +208,39 @@ fn parse_args(args: &[String]) -> Result<ParsedArgs> {
                 git_ref = args
                     .get(i)
                     .ok_or_else(|| anyhow!("--git-ref requires a value"))?
-                    .to_string();
+                        .to_string();
+            }
+            "--cache-bucket" => {
+                i += 1;
+                cache_bucket = Some(
+                    args.get(i)
+                        .ok_or_else(|| anyhow!("--cache-bucket requires a value"))?
+                        .to_string(),
+                );
+            }
+            "--cache-prefix" => {
+                i += 1;
+                cache_prefix = Some(
+                    args.get(i)
+                        .ok_or_else(|| anyhow!("--cache-prefix requires a value"))?
+                        .to_string(),
+                );
+            }
+            "--sccache-tarball-url" => {
+                i += 1;
+                sccache_tarball_url = Some(
+                    args.get(i)
+                        .ok_or_else(|| anyhow!("--sccache-tarball-url requires a value"))?
+                        .to_string(),
+                );
+            }
+            "--nextest-tarball-url" => {
+                i += 1;
+                nextest_tarball_url = Some(
+                    args.get(i)
+                        .ok_or_else(|| anyhow!("--nextest-tarball-url requires a value"))?
+                        .to_string(),
+                );
             }
             "--command" => {
                 i += 1;
@@ -324,6 +360,10 @@ fn parse_args(args: &[String]) -> Result<ParsedArgs> {
             profile,
             repo_url,
             git_ref,
+            cache_bucket,
+            cache_prefix,
+            sccache_tarball_url,
+            nextest_tarball_url,
             command: command.ok_or_else(|| anyhow!("--command is required"))?,
             out_path,
             artifact_dir,
@@ -554,6 +594,14 @@ mod tests {
             "run",
             "--command",
             "bash adl/tools/run_owner_validation_lane.sh runtime",
+            "--cache-bucket",
+            "adl-aws-remote-tool-cache-agentlogic",
+            "--cache-prefix",
+            "adl/remote-validation/4603",
+            "--sccache-tarball-url",
+            "https://example.com/sccache.tar.gz",
+            "--nextest-tarball-url",
+            "https://example.com/cargo-nextest.tar.gz",
             "--ami-id",
             "ami-123",
             "--subnet-id",
@@ -575,6 +623,22 @@ mod tests {
         assert_eq!(
             parsed.config.instance_types,
             vec!["c7i.large".to_string(), "c7i.xlarge".to_string()]
+        );
+        assert_eq!(
+            parsed.config.cache_bucket.as_deref(),
+            Some("adl-aws-remote-tool-cache-agentlogic")
+        );
+        assert_eq!(
+            parsed.config.cache_prefix.as_deref(),
+            Some("adl/remote-validation/4603")
+        );
+        assert_eq!(
+            parsed.config.sccache_tarball_url.as_deref(),
+            Some("https://example.com/sccache.tar.gz")
+        );
+        assert_eq!(
+            parsed.config.nextest_tarball_url.as_deref(),
+            Some("https://example.com/cargo-nextest.tar.gz")
         );
         assert_eq!(parsed.config.artifact_dir, PathBuf::from("artifacts"));
         assert!(parsed.json_output);
