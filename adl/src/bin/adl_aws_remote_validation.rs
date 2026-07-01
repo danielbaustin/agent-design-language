@@ -69,7 +69,7 @@ impl Drop for EnvVarGuard {
 }
 
 fn usage() -> &'static str {
-    "adl-aws-remote-validation run --issue <number> --command <shell-command> --ami-id <ami> --subnet-id <subnet> --security-group-id <sg> --instance-profile-name <name> --out <summary.json> [--artifact-dir <dir>] [--instance-type <type> ...] [--budget-name <name>] [--expected-max-cost-usd <usd>] [--repo-url <url>] [--git-ref <ref>] [--cache-bucket <bucket>] [--cache-prefix <prefix>] [--sccache-tarball-url <url>] [--nextest-tarball-url <url>] [--region <region>] [--profile <profile>] [--json]"
+    "adl-aws-remote-validation run --issue <number> --command <shell-command> --ami-id <ami> --subnet-id <subnet> --security-group-id <sg> --instance-profile-name <name> --out <summary.json> [--artifact-dir <dir>] [--instance-type <type> ...] [--budget-name <name>] [--expected-max-cost-usd <usd>] [--repo-url <url>] [--git-ref <ref>] [--cache-bucket <bucket>] [--cache-prefix <prefix>] [--sccache-tarball-url <url>] [--nextest-tarball-url <url>] [--ssh-key-name <name>] [--ssh-private-key-path <path>] [--ssh-user <user>] [--ssh-allowed-cidr <cidr>] [--region <region>] [--profile <profile>] [--json]"
 }
 
 fn local_git_stdout(args: &[&str]) -> Option<String> {
@@ -148,6 +148,11 @@ fn parse_args(args: &[String]) -> Result<ParsedArgs> {
     let mut cache_prefix = env::var("ADL_AWS_REMOTE_VALIDATION_CACHE_PREFIX").ok();
     let mut sccache_tarball_url = env::var("ADL_AWS_REMOTE_VALIDATION_SCCACHE_TARBALL_URL").ok();
     let mut nextest_tarball_url = env::var("ADL_AWS_REMOTE_VALIDATION_NEXTEST_TARBALL_URL").ok();
+    let mut ssh_key_name = env::var("ADL_AWS_REMOTE_VALIDATION_SSH_KEY_NAME").ok();
+    let mut ssh_private_key_path =
+        env::var("ADL_AWS_REMOTE_VALIDATION_SSH_PRIVATE_KEY_PATH").ok().map(PathBuf::from);
+    let mut ssh_user = env::var("ADL_AWS_REMOTE_VALIDATION_SSH_USER").ok();
+    let mut ssh_allowed_cidr = env::var("ADL_AWS_REMOTE_VALIDATION_SSH_ALLOWED_CIDR").ok();
     let mut command = None;
     let mut out_path = None;
     let mut artifact_dir = None;
@@ -239,6 +244,37 @@ fn parse_args(args: &[String]) -> Result<ParsedArgs> {
                 nextest_tarball_url = Some(
                     args.get(i)
                         .ok_or_else(|| anyhow!("--nextest-tarball-url requires a value"))?
+                        .to_string(),
+                );
+            }
+            "--ssh-key-name" => {
+                i += 1;
+                ssh_key_name = Some(
+                    args.get(i)
+                        .ok_or_else(|| anyhow!("--ssh-key-name requires a value"))?
+                        .to_string(),
+                );
+            }
+            "--ssh-private-key-path" => {
+                i += 1;
+                ssh_private_key_path = Some(PathBuf::from(
+                    args.get(i)
+                        .ok_or_else(|| anyhow!("--ssh-private-key-path requires a value"))?,
+                ));
+            }
+            "--ssh-user" => {
+                i += 1;
+                ssh_user = Some(
+                    args.get(i)
+                        .ok_or_else(|| anyhow!("--ssh-user requires a value"))?
+                        .to_string(),
+                );
+            }
+            "--ssh-allowed-cidr" => {
+                i += 1;
+                ssh_allowed_cidr = Some(
+                    args.get(i)
+                        .ok_or_else(|| anyhow!("--ssh-allowed-cidr requires a value"))?
                         .to_string(),
                 );
             }
@@ -364,6 +400,10 @@ fn parse_args(args: &[String]) -> Result<ParsedArgs> {
             cache_prefix,
             sccache_tarball_url,
             nextest_tarball_url,
+            ssh_key_name,
+            ssh_private_key_path,
+            ssh_user,
+            ssh_allowed_cidr,
             command: command.ok_or_else(|| anyhow!("--command is required"))?,
             out_path,
             artifact_dir,
@@ -411,8 +451,7 @@ fn main() -> Result<()> {
     let out_path_display = config.out_path.display().to_string();
     remote_git_source_preflight(&config.git_ref)?;
     let (summary, _) = runtime.block_on(async move {
-        let adapter =
-            LiveAwsRemoteValidationAdapter::new(&config.region, config.profile.as_deref()).await?;
+        let adapter = LiveAwsRemoteValidationAdapter::new(&config).await?;
         let prepared = adapter.prepare_launch_surface(&config).await?;
         let mut effective_config = config.clone();
         effective_config.ami_id = prepared.record.ami_id.clone();
