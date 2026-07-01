@@ -13,7 +13,8 @@
 ## Purpose
 
 Account for security/CAV residuals left after `v0.91.6` and define what blocks
-or routes before `v0.92`.
+or records an evidence-backed blocker/non-claim with operator approval before
+`v0.92`.
 
 ## Scope
 
@@ -47,7 +48,8 @@ Out of scope:
 ## Validation And Review
 
 - Run focused threat-model review.
-- Record residuals as complete, blocked, deferred, or routed.
+- Record residuals as resolved, explicitly non-claimed with operator approval,
+  or blocked with evidence and operator approval.
 - Prevent silent deferral of activation-path security.
 
 ## v0.92 Consumption

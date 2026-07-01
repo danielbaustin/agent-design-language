@@ -21,10 +21,10 @@ Current status: milestone issue wave opened for the final pre-`v0.92` bridge and
 - v0.91.6 release-tail handoff refresh: `#3982`.
 - WP-01 planning promotion: `#4628`.
 - Canonical WP issue wave: `#4628` through `#4650`.
-- Existing v0.91.7 routed issues:
+- Existing assigned v0.91.7 issues:
   - `#4603` routes into WP-06 build throughput / remote validation.
   - `#4617` routes into WP-04 goal metrics / telemetry.
-  - `#4622` implements the WP-02 release-tail PR inventory path through
+  - `#4622` delivered the WP-02 release-tail PR inventory path through
     `bash adl/tools/pr.sh pr-inventory --json`.
 - Non-WP v0.91.7 issues:
   - `#4651` covers sensible Rust refactoring by ownership and validation cost.
@@ -42,7 +42,7 @@ Current status: milestone issue wave opened for the final pre-`v0.92` bridge and
   `#4621`, the WP-02 PR inventory command delivered by `#4622`, and closed
   WP-14A remediation truth before opening dependent execution work.
 
-This package does not implement runtime features and does not claim `v0.92` activation readiness. It exists so every required pre-birthday surface is visible, scheduled, deferred, blocked, or routed before `v0.92` opens.
+This package does not implement runtime features and does not claim `v0.92` activation readiness. It exists so every required pre-birthday surface is visible and forced to exit as integrated/proven, already closed with evidence, explicitly non-claimed with operator approval, or blocked with evidence and operator approval before `v0.92` opens.
 
 ## Purpose
 
@@ -74,26 +74,28 @@ It must convert the remaining major pre-birthday surfaces into reviewable issue 
 - local backlog routing from `.adl/docs/TBD/LOCAL_BACKLOG.md`;
 - local TBD source material captured in `PLANNING_SOURCE_CAPTURE_v0.91.7.md`.
 
-Every surface must exit as one of:
+Every activation-path surface must exit as one of:
 
-- `complete`: reviewed doc, issue, proof, or implementation evidence exists;
-- `deferred`: explicitly not required for `v0.92`, with risk accepted;
-- `blocked`: named missing evidence or operator decision prevents completion;
-- `routed`: owned by a named follow-on issue, sprint, or milestone with a clear exit condition.
+- `integrated_proven`: implementation runs in the integrated path with retained evidence;
+- `already_closed_with_evidence`: the source issue is closed and its retained evidence is current;
+- `operator_approved_non_claim`: explicitly not required for `v0.92`, with risk accepted by the operator;
+- `blocked_with_evidence`: named missing evidence or operator decision prevents completion.
+
+Assignment to a follow-on issue, sprint, or milestone is scheduling truth only. It does not count as completion.
 
 ## Required Work Streams
 
 | Work stream | Required output before v0.92 |
 | --- | --- |
-| Closeout truth | v0.91.6 release-tail and ADR issues closed or routed, with v0.91.7 not inheriting stale truth. |
-| C-SDLC integration control plane | v0.91.6 `#4388`-`#4398` plus late `#4405`, `#4412`-`#4413`, `#4417`-`#4421` plus `#4425`, `#4431`, `#4441`, closed adoption sprint `#4433`-`#4438`, closed release/docs follow-ons `#4520`-`#4522`, and any remaining `#4442` / `#4443` carryforward are consumed, blocked, deferred, or routed before v0.91.7 depends on them. |
-| Goal and metrics | Goal state, nested goals, SOR time/token/resource fields, forward metric capture `#4431`, bounded backfill `#4441`, and host snapshot capture `#4442` are scheduled or routed. |
-| Scheduler and providers | Cognitive scheduler, provider profiles, local/hosted model suitability, and local-agent delegation routes scheduled. |
-| Build and validation throughput | Validation manager, path ownership, SOR fact capture, VPP generation, long-test fanout, CI log archive/S3, Nessus/CodeBuild, sccache/linker/target-dir work scheduled. |
-| Runtime | Runtime Soak #2/fire-up, runtime heartbeat/AWS signal bridge, ACIP-to-SNS, and minimal prototype reconciliation routed. |
-| Observatory and demos | Unity/HTML Observatory and flagship demo readiness routed with proof expectations. |
+| Closeout truth | v0.91.6 release-tail and ADR issues closed with evidence or blocked with evidence and operator approval, with v0.91.7 not inheriting stale truth. |
+| C-SDLC integration control plane | v0.91.6 `#4388`-`#4398` plus late `#4405`, `#4412`-`#4413`, `#4417`-`#4421` plus `#4425`, `#4431`, `#4441`, closed adoption sprint `#4433`-`#4438`, closed release/docs follow-ons `#4520`-`#4522`, and any remaining `#4442` / `#4443` carryforward are consumed as integrated/proven, already closed with evidence, explicitly non-claimed with operator approval, or blocked with evidence and operator approval before v0.91.7 depends on them. |
+| Goal and metrics | Goal state, nested goals, SOR time/token/resource fields, forward metric capture `#4431`, bounded backfill `#4441`, and host snapshot capture `#4442` are implemented/proven or blocked with evidence and operator approval. |
+| Scheduler and providers | Cognitive scheduler, provider profiles, local/hosted model suitability, and local-agent delegation are implemented/proven or blocked with evidence and operator approval. |
+| Build and validation throughput | Validation manager, path ownership, SOR fact capture, VPP generation, long-test fanout, CI log archive/S3, Nessus/CodeBuild, sccache/linker/target-dir work are implemented/proven where v0.92 depends on them or blocked with evidence and operator approval. |
+| Runtime | Runtime Soak #2/fire-up, runtime heartbeat/AWS signal bridge, ACIP-to-SNS, and minimal prototype reconciliation are integrated/proven or blocked with evidence and operator approval. |
+| Observatory and demos | Unity/HTML Observatory and flagship demo readiness are proven with retained evidence or explicitly non-claimed/blocked with operator approval. |
 | Conceptual bridge docs | Curiosity, Constructability, reasoning graph/loop/skill standard, affect/happiness, Godel, economics, and guilds bounded. |
-| Security and protocol | Security/CAV/SSM and ACIP/A2A/protobuf residuals complete, blocked, deferred, or routed. |
+| Security and protocol | Security/CAV/SSM and ACIP/A2A/protobuf residuals are resolved or blocked with evidence and operator approval. |
 | Launch and birthday handoff | July launch planning and `v0.92` activation handoff aligned without absorbing birthday implementation. |
 
 ## Document Map
@@ -126,8 +128,8 @@ Every surface must exit as one of:
 
 ## Exit Criteria
 
-- Every required source in `PLANNING_SOURCE_CAPTURE_v0.91.7.md` is complete, blocked, deferred, or routed.
-- WP-01 consumes `V0916_TO_V0917_HANDOFF_ADDENDUM_3982.md` plus failed-but-closed WP-15 truth, final WP-16 closeout truth, closed `#4620` / `#4621`, and the v0.91.7-routed `#4622`, before starting dependent execution work.
+- Every required source in `PLANNING_SOURCE_CAPTURE_v0.91.7.md` is integrated/proven, already closed with evidence, explicitly non-claimed with operator approval, or blocked with evidence and operator approval.
+- WP-01 consumes `V0916_TO_V0917_HANDOFF_ADDENDUM_3982.md` plus failed-but-closed WP-15 truth, final WP-16 closeout truth, closed `#4620` / `#4621`, and closed `#4622` PR-inventory proof, before starting dependent execution work.
 - Every v0.91.6 carryover issue has a truthful disposition before `v0.92` opens.
 - `#3780` can refresh `v0.92` activation docs from tracked bridge truth without reconstructing scope from chat.
 - The first-birthday milestone starts with a clear runtime/demo/security/protocol/process substrate and known residual risks.

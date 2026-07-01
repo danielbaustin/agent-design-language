@@ -50,12 +50,14 @@ Out of scope:
 
 - Review discovery-cycle artifacts and budget enforcement.
 - Require a bounded proof before `v0.92` consumes Curiosity.
-- Block or route any curiosity claim that lacks governance.
+- Block any curiosity claim that lacks governance unless the operator explicitly
+  approves it as a non-claim with evidence and residual risk.
 
 ## v0.92 Consumption
 
 `v0.92` may consume Curiosity only if a governed discovery-cycle proof exists
-or the surface is explicitly blocked, deferred, or routed.
+or the surface is explicitly blocked with evidence or non-claimed with
+operator approval.
 
 ## Non-Goals
 

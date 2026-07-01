@@ -39,13 +39,10 @@ The required handoff inputs are:
 - WP-16 child `#4621`: closed failed external-review truth and release-tail
   docs repair.
 - WP-16 child `#4620`: closed external-review proof-gap verification.
-- Tooling child `#4622`: still open, retitled/relabelled to `v0.91.7`, and
-  routed as the repo-native PR inventory gap from `#4611`; it is not a
-  v0.91.6 closeout blocker.
-
-If `#4622` remains open when v0.91.7 starts, WP-01 must record the concrete
-routed disposition before future release-tail reviews rely on PR inventory
-automation.
+- Tooling child `#4622`: closed and delivered repo-native PR inventory for the
+  gap from `#4611`; it is not a v0.91.6 closeout blocker. Future release-tail
+  reviews should consume that proof instead of falling back to the failed owner
+  binary path.
 
 ## Current Handoff Truth
 
@@ -56,7 +53,8 @@ automation.
 - WP-16 has closed as the remediation and final-preflight owner for the failed
   review.
 - v0.92 activation must remain blocked until every named activation surface is
-  complete, blocked, deferred, or routed.
+  integrated/proven, explicitly non-claimed with operator approval, or blocked
+  with evidence and operator approval.
 - Planning docs alone do not prove runtime, demo, C-SDLC, provider, scheduler,
   AWS, or validation readiness.
 - Mocks, seams, docs, and component tests count as prerequisites, not as
@@ -69,9 +67,10 @@ consumes the closed WP-16 truth rather than waiting for a future WP-16 gate:
 
 1. WP-01: promote planning and consume final v0.91.6 closeout truth, including
    the failed WP-15 review, closed WP-16 remediation/final-preflight truth,
-   closed `#4620` / `#4621` dispositions, and the open v0.91.7 `#4622` route.
-2. WP-02 / WP-03: consume C-SDLC control-plane truth and route any remaining
-   tooling defects before relying on sprint-scale parallel execution.
+   closed `#4620` / `#4621` dispositions, and closed v0.91.7 `#4622` proof.
+2. WP-02 / WP-03: consume C-SDLC control-plane truth and implement or
+   explicitly block any remaining tooling defects before relying on
+   sprint-scale parallel execution.
 3. WP-06: preserve Nessus as the immediate Phase 1 remote validation lane and
    prove the next build/validation acceleration route early, including EC2 Spot
    or an alternative disposable builder, because v0.91.6 exposed build and
@@ -104,11 +103,11 @@ v0.91.7 should treat EC2 Spot / disposable builder work as an early WP-06 proof:
 - keep the total experiment bounded and do not make the lane release-critical
   until it has repeatable proof.
 
-This is a v0.91.7 route, not a v0.91.6 release blocker.
+This is v0.91.7 proof work, not a v0.91.6 release blocker.
 
 ## v0.92 Activation Surfaces To Preserve
 
-The v0.92 bridge must still account for:
+The v0.92 bridge must still resolve, prove, non-claim, or explicitly block:
 
 - AEE completion;
 - Memory / ObsMem handoff and Memory Palace context topology;
@@ -122,8 +121,9 @@ The v0.92 bridge must still account for:
 - C-SDLC operational reliability, including watchers, session ledger, VPP/PVF,
   SOR fact capture, and issue metrics.
 
-Every surface must be complete, blocked, deferred, or routed before v0.92
-activation docs may consume it.
+Every surface must be integrated/proven, explicitly non-claimed with operator
+approval, or blocked with evidence and operator approval before v0.92 activation
+docs may consume it.
 
 ## WP-01 Consumption Checklist
 

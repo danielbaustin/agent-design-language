@@ -16,10 +16,11 @@ planning package does not publish a release by itself.
 
 - [ ] Bridge ledger refreshed from second-tranche outcomes.
 - [ ] Feature docs reviewed and updated for final truth.
-- [ ] Open residuals routed to `v0.92`, `v0.93`, or later milestones.
+- [ ] Open residuals resolved, explicitly non-claimed with operator approval,
+  or blocked with evidence and operator approval.
 - [ ] Security and ACIP/A2A residual status recorded.
-- [ ] Curiosity and Constructability proof routes recorded.
-- [ ] Reasoning graph / `adl.skill.v1` route recorded.
+- [ ] Curiosity and Constructability proof or blocker status recorded.
+- [ ] Reasoning graph / `adl.skill.v1` proof or blocker status recorded.
 
 ## 1. Release Readiness
 
@@ -59,4 +60,4 @@ planning package does not publish a release by itself.
 
 - No hidden implementation or unresolved truth-maintenance work remains in the
   ceremony phase.
-- Every activation-relevant residual is complete, blocked, deferred, or routed.
+- Every activation-relevant residual is integrated/proven, explicitly non-claimed with operator approval, or blocked with evidence and operator approval.

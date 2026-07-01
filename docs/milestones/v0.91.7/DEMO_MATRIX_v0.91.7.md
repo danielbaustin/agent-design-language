@@ -59,7 +59,7 @@ No provider credentials or runtime services are required for this docs tranche.
 | D2 | Bridge overclaim scan | Docs do not claim runtime or `v0.92` readiness | text scan over `docs/milestones/v0.91.7` | review notes | claims are bounded by non-goals and consumption rules | deterministic text review | planned |
 | D3 | Residual visibility proof | Every second-tranche surface remains distinct | text scan over feature index and docs | index and feature docs | all eight surfaces are visible | deterministic text review | planned |
 | D4 | Runtime Soak #2 route | Runtime proof is scheduled, not implied | inspect `RUNTIME_SOAK_2_EXECUTION_PACKET_v0.91.7.md` and linked sprint/WBS/source-capture docs | runtime route rows and feature-list matrix | Soak #2 has a tracked owner packet, feature-list proof modes per row, and blocker/defer policy tied to `v0.92` activation | issue-local proof later | ready |
-| D5 | Observatory/birthday-visible proof route | Visible demo surfaces are scheduled without overclaiming | inspect demo matrix and Observatory route | planning docs and later demo artifacts | Observatory/Unity/HTML evidence is complete, blocked, deferred, or routed | issue-local proof later | planned |
+| D5 | Observatory/birthday-visible proof status | Visible demo surfaces are proven or explicitly non-claimed without overclaiming | inspect demo matrix and Observatory proof status | planning docs and later demo artifacts | Observatory/Unity/HTML evidence is integrated/proven, explicitly non-claimed with operator approval, or blocked with evidence and operator approval | issue-local proof later | planned |
 
 ## Known Limits
 

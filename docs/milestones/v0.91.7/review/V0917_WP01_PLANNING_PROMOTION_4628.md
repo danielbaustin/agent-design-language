@@ -59,7 +59,7 @@ WP-01 opened the canonical v0.91.7 work-package issue wave from the tracked plan
 ## Planning Checks
 
 - `WP_ISSUE_WAVE_v0.91.7.yaml` preserves the canonical 23-WP sequence.
-- `PLANNING_SOURCE_CAPTURE_v0.91.7.md` records closed v0.91.6 WP-15/WP-16 remediation truth and the open v0.91.7 route for `#4622`.
+- `PLANNING_SOURCE_CAPTURE_v0.91.7.md` records closed v0.91.6 WP-15/WP-16 remediation truth. Supersession note: `#4622` is now closed and should be consumed as repo-native PR-inventory proof, not as an open route.
 - `README.md`, `WBS_v0.91.7.md`, and `SPRINT_PLAN_v0.91.7.md` now name the opened issue wave.
 - v0.92 activation readiness is still not claimed from planning docs alone.
 
