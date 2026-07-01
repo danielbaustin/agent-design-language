@@ -1547,7 +1547,7 @@ impl LiveAwsRemoteValidationAdapter {
         let command_log_escaped = shell_single_quote(&format!("{run_root}/command.log"));
         let command_err_escaped = shell_single_quote(&format!("{run_root}/command.err"));
         let remote_command = format!(
-            "mkdir -p {run_root}; touch {progress} {command_log} {command_err}; tail -n +1 -F {progress} {command_log} {command_err}",
+            "while [ ! -d {run_root} ]; do sleep 1; done; tail -n +1 -F {progress} {command_log} {command_err}",
             run_root = run_root_escaped,
             progress = progress_log_escaped,
             command_log = command_log_escaped,
