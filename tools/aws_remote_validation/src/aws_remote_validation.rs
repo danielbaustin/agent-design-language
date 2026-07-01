@@ -1618,6 +1618,42 @@ impl LiveAwsRemoteValidationAdapter {
         })
     }
 
+    async fn wait_for_instance_running(
+        &self,
+        instance_id: &str,
+    ) -> std::result::Result<(), AwsAdapterError> {
+        let start = Instant::now();
+        while start.elapsed() < Duration::from_secs(180) {
+            let response = self
+                .ec2
+                .describe_instances()
+                .instance_ids(instance_id)
+                .send()
+                .await
+                .map_err(classify_ec2_error)?;
+            let state = response
+                .reservations()
+                .first()
+                .and_then(|reservation| reservation.instances().first())
+                .and_then(|instance| instance.state())
+                .and_then(|state| state.name())
+                .map(|state| state.as_str().to_string())
+                .unwrap_or_else(|| "unknown".to_string());
+            if state == "running" {
+                return Ok(());
+            }
+            sleep(Duration::from_secs(3)).await;
+        }
+        Err(AwsAdapterError {
+            code: Some("InstanceNotRunningForCacheAttach".to_string()),
+            message: format!(
+                "instance {} did not reach running state within 180s before cache attach",
+                instance_id
+            ),
+            spot_fallback_permitted: false,
+        })
+    }
+
     async fn run_ssh_debug_repair_command(
         &self,
         instance_id: &str,
@@ -2482,6 +2518,18 @@ impl AwsRemoteValidationAdapter for LiveAwsRemoteValidationAdapter {
         if let Some(request) = spec.cache_volume.as_ref() {
             let cache_volume_result: std::result::Result<CacheVolumeRecord, AwsAdapterError> =
                 async {
+                    self.wait_for_instance_running(&instance_id)
+                        .await
+                        .map_err(|err| AwsAdapterError {
+                            code: err.code.clone().or(Some(
+                                "CacheVolumeAttachInstanceNotReady".to_string(),
+                            )),
+                            message: format!(
+                                "instance_id={} was not ready for cache volume attach: {}",
+                                instance_id, err
+                            ),
+                            spot_fallback_permitted: false,
+                        })?;
                     let availability_zone =
                         self.subnet_availability_zone(&spec.subnet_id)
                             .await
