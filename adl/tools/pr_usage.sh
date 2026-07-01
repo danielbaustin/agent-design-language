@@ -16,6 +16,7 @@ Commands:
   validation <pr-number-or-url> [-R owner/repo] [--watch] [--json]
   pr-inventory [-R owner/repo] [--json]
   watch   <issue-number-or-url> [--slug <slug>] [--version <v>] [-R owner/repo] [--json]
+  shepherd <issue-number-or-url> [--slug <slug>] [--version <v>] [-R owner/repo] [--json]
   closing-linkage [--event-name <event>] [--event-path <path>] [--head-ref <branch>] [-R owner/repo]
   issue   <list|search|view|create|comment|edit|close> ...
   projection-map [--json]
@@ -57,6 +58,8 @@ Notes:
 - `pr doctor <issue> ...` is the preferred public readiness and drift diagnostic surface.
 - `pr watch <issue> ...` is the typed tracked-issue lifecycle watcher for issue/PR wait states.
 - `pr pr-inventory ...` is the typed release-tail PR inventory surface; use it instead of raw `gh pr list`.
+- `adl-pr-shepherd <issue> ...` is the owner lifecycle synthesis binary above readiness, watcher, janitor, and closeout.
+- `pr shepherd <issue> ...` remains a thin compatibility wrapper over `adl-pr-shepherd`.
 - `pr closeout <issue> ...` finalizes a closed issue locally and safely prunes its execution worktree when possible.
 - `pr closing-linkage ...` is the Rust-owned CI/linkage guard and prefers live PR metadata over stale event payloads when token context exists.
 - `pr start <issue> ...` remains only as a legacy alias over the same Rust binding path and is no longer part of the taught public flow.
@@ -267,6 +270,22 @@ Behavior:
 - keeps the JSON report compact enough to feed a future local watcher agent while ADL remains the authoritative classifier
 - emits explicit authority metadata so local watcher agents stay advisory-only
 - emits a JSON watcher report when --json is set
+EOF
+}
+
+usage_shepherd() {
+  cat <<'EOF'
+Usage:
+  adl-pr-shepherd <issue-number-or-url> [--slug <slug>] [--version <v>] [-R owner/repo] [--json]
+  adl/tools/pr.sh shepherd <issue-number-or-url> [--slug <slug>] [--version <v>] [-R owner/repo] [--json]
+
+Behavior:
+- `adl-pr-shepherd` is the owner binary; `pr.sh shepherd` is a compatibility wrapper
+- synthesizes one authoritative issue-lifecycle shepherd state above local readiness, PR-tail watcher state, janitor routing, and closeout routing
+- maps the current tracked issue into canonical lifecycle states such as pre_run, execution_bound, publication_ready, pr_waiting, janitor_active, merged_needs_closeout, settled, or blocked
+- preserves the human authority boundary for review, merge, and final closeout truth
+- uses typed GitHub transport plus local doctor readiness; does not fall back to raw `gh`
+- emits a JSON lifecycle shepherd report when --json is set
 EOF
 }
 

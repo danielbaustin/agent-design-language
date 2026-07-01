@@ -109,6 +109,13 @@ The first-class issue-lifecycle shepherd contract above those phases lives at:
 
 - `docs/tooling/ISSUE_LIFECYCLE_SHEPHERD_CONTRACT.md`
 
+The owner repo-native command surface for that contract is:
+
+- `adl-pr-shepherd <issue> [--json]`
+
+`pr.sh shepherd <issue> [--json]` remains a thin compatibility wrapper that
+delegates to the owner binary.
+
 `repo-code-review` is cross-cutting rather than phase-specific.
 `test-generator` is a bounded helper skill for focused tests for a concrete issue, diff, file, or worktree.
 `demo-operator` is a bounded helper skill for running one named demo and classifying the proof result consistently.

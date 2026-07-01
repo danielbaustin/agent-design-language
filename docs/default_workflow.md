@@ -17,7 +17,7 @@ bash adl/tools/install_adl_pr_cycle_skill.sh
 The canonical issue-card lifecycle is:
 
 ```text
-SIP -> STP -> SPP -> SRP -> SOR
+SIP -> STP -> SPP -> VPP -> SRP -> SOR
 ```
 
 See `docs/tooling/card-lifecycle.md` for the role of each card and the
@@ -31,6 +31,15 @@ The active control-plane surface is:
 - `pr doctor`
 - `pr run`
 - `pr finish`
+- `adl-pr-shepherd`
+
+Lifecycle synthesis and PR-tail waiting-state classification now have a
+dedicated owner binary:
+
+- `adl-pr-shepherd <issue> [--json]`
+
+The shell surface `pr.sh shepherd <issue> [--json]` remains a thin
+compatibility wrapper over that owner binary.
 
 The browser/editor adapter remains narrower:
 
@@ -47,6 +56,7 @@ Canonical local task bundle:
 - `.adl/<scope>/tasks/<task-id>__<slug>/sip.md`
 - `.adl/<scope>/tasks/<task-id>__<slug>/stp.md`
 - `.adl/<scope>/tasks/<task-id>__<slug>/spp.md`
+- `.adl/<scope>/tasks/<task-id>__<slug>/vpp.md`
 - `.adl/<scope>/tasks/<task-id>__<slug>/srp.md`
 - `.adl/<scope>/tasks/<task-id>__<slug>/sor.md`
 - `.adl/<scope>/tasks/<task-id>__<slug>/`
@@ -57,6 +67,7 @@ Minimum init contract:
 - `SIP` as issue-intent truth
 - `STP` as selected task/solution truth
 - `SPP` as execution-plan truth before implementation proceeds
+- `VPP` as validation-planning truth before proving execution claims
 - `SRP` as review prompt truth before PR publication, then review-result truth
 - `SOR` as final outcome truth after execution, publication, merge or closure,
   and closeout

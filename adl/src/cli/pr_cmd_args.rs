@@ -121,6 +121,15 @@ pub(crate) struct WatchArgs {
 }
 
 #[derive(Debug, Clone, PartialEq, Eq)]
+pub(crate) struct ShepherdArgs {
+    pub(crate) issue_ref: String,
+    pub(crate) repo: Option<String>,
+    pub(crate) slug: Option<String>,
+    pub(crate) version: Option<String>,
+    pub(crate) json: bool,
+}
+
+#[derive(Debug, Clone, PartialEq, Eq)]
 pub(crate) struct ClosingLinkageArgs {
     pub(crate) event_name: Option<String>,
     pub(crate) event_path: Option<PathBuf>,
@@ -759,6 +768,43 @@ pub(crate) fn parse_watch_args(args: &[String]) -> Result<WatchArgs> {
                 i += 1;
             }
             other => bail!("watch: unknown arg: {other}"),
+        }
+    }
+    Ok(parsed)
+}
+
+pub(crate) fn parse_shepherd_args(args: &[String]) -> Result<ShepherdArgs> {
+    let issue_ref = args
+        .first()
+        .ok_or_else(|| anyhow!("shepherd: missing <issue-number-or-url>"))?
+        .to_string();
+    let mut parsed = ShepherdArgs {
+        issue_ref,
+        repo: None,
+        slug: None,
+        version: None,
+        json: false,
+    };
+    let mut i = 1usize;
+    while i < args.len() {
+        match args[i].as_str() {
+            "-R" | "--repo" => {
+                parsed.repo = Some(require_value(args, i, "shepherd", args[i].as_str())?);
+                i += 2;
+            }
+            "--slug" => {
+                parsed.slug = Some(require_value(args, i, "shepherd", "--slug")?);
+                i += 2;
+            }
+            "--version" => {
+                parsed.version = Some(require_value(args, i, "shepherd", "--version")?);
+                i += 2;
+            }
+            "--json" => {
+                parsed.json = true;
+                i += 1;
+            }
+            other => bail!("shepherd: unknown arg: {other}"),
         }
     }
     Ok(parsed)

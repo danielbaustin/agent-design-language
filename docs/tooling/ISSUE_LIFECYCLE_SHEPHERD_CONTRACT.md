@@ -25,6 +25,21 @@ The shepherd contract ties together:
 - blocker remediation routing
 - terminal closeout
 
+## Repo-Native Command Surface
+
+The owner repo-native entrypoint for this contract is:
+
+- `adl-pr-shepherd <issue-number-or-url> [--json]`
+
+The compatibility shell wrapper remains available at:
+
+- `adl/tools/pr.sh shepherd <issue-number-or-url> [--json]`
+
+The owner binary should synthesize the current tracked issue into one canonical
+shepherd state using local doctor readiness plus the authoritative watcher/PR
+tail classifier. It is a coordination/reporting surface only; it does not gain
+merge, review, or close authority.
+
 ## Non-Authority Boundary
 
 The shepherd is coordination, not authority.
