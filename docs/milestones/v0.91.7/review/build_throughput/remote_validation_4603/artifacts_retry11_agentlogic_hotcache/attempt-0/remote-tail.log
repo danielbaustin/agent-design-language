@@ -1,0 +1,56 @@
+Warning: Permanently added '16.144.249.207' (ED25519) to the list of known hosts.
+tail: cannot open '/tmp/adl-aws-remote-validation/adl-aws-remote-20260701231749/command.log' for reading: No such file or directory
+tail: cannot open '/tmp/adl-aws-remote-validation/adl-aws-remote-20260701231749/command.err' for reading: No such file or directory
+==> /tmp/adl-aws-remote-validation/adl-aws-remote-20260701231749/progress.log <==
+2026-07-01T23:19:04Z stage=ensure_git
+
+==> /tmp/adl-aws-remote-validation/adl-aws-remote-20260701231749/progress.log <==
+2026-07-01T23:19:33Z stage=ensure_curl
+2026-07-01T23:19:33Z stage=clone_repo
+2026-07-01T23:19:35Z stage=fetch_repo
+2026-07-01T23:19:35Z stage=checkout_ref ref='codex/4603-v0-91-7-aws-spot-build-spot-manager-and-remote-validation-lane'
+2026-07-01T23:19:35Z stage=tracked_remote_runner
+2026-07-01T23:19:41Z stage=ensure_build_toolchain
+2026-07-01T23:19:47Z stage=ensure_rustup
+2026-07-01T23:19:48Z stage=ensure_sccache
+2026-07-01T23:19:48Z tool_install_policy=package_manager_or_prebuilt_only tool=sccache
+2026-07-01T23:19:48Z stage=ensure_nextest
+2026-07-01T23:19:48Z tool_install_policy=package_manager_or_prebuilt_only tool=cargo-nextest
+2026-07-01T23:19:48Z stage=validation_command command=cargo build --manifest-path adl/Cargo.toml --locked --bin adl-pr-doctor && cargo test --manifest-path adl/Cargo.toml --locked --lib provider_communication
+tail: '/tmp/adl-aws-remote-validation/adl-aws-remote-20260701231749/command.log' has appeared;  following new file
+tail: '/tmp/adl-aws-remote-validation/adl-aws-remote-20260701231749/command.err' has appeared;  following new file
+
+==> /tmp/adl-aws-remote-validation/adl-aws-remote-20260701231749/command.err <==
+   Compiling adl v0.91.6 (/tmp/adl-aws-remote-bootstrap/adl-aws-remote-20260701231749/agent-design-language/adl)
+    Finished `dev` profile [unoptimized + debuginfo] target(s) in 1m 02s
+   Compiling adl v0.91.6 (/tmp/adl-aws-remote-bootstrap/adl-aws-remote-20260701231749/agent-design-language/adl)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 50.75s
+     Running unittests src/lib.rs (/mnt/adl-cache/adl-aws-remote-validation/shared/target/debug/deps/adl-bd1cf3b390a4c354)
+
+==> /tmp/adl-aws-remote-validation/adl-aws-remote-20260701231749/command.log <==
+
+running 21 tests
+test provider_communication::tests::hosted_identity_is_provider_asserted_without_digest ... ok
+test provider_communication::tests::provider_attempt_policy_maps_to_resilience_policy ... ok
+test provider_communication::tests::ollama_identity_is_pinned_only_with_digest ... ok
+test provider_communication::tests::invalid_api_key_is_auth_error_not_missing_auth ... ok
+test provider_communication::tests::provider_failure_round_trips_through_shared_resilience_vocab ... ok
+test provider_communication::tests::provider_fault_classification_is_total_for_generic_provider_failures ... ok
+test provider_communication::tests::provider_fault_classification_redacts_sensitive_summary ... ok
+test provider_communication::tests::failure_classifier_covers_hosted_and_local_operational_failures ... ok
+test provider_communication::tests::provider_fault_classification_uses_shared_resilience_vocab ... ok
+test provider_communication::tests::request_validation_rejects_empty_and_zero_policy_fields ... ok
+test provider_communication::tests::review_provider_result_preserves_findings_and_provider_failure_boundaries ... ok
+test provider_communication::tests::review_provider_request_fails_closed_without_scope_or_authority ... ok
+test provider_communication::tests::review_provider_request_validates_scope_authority_and_provider_request ... ok
+test provider_communication::tests::review_provider_result_rejects_findings_on_failed_or_passed_status ... ok
+test provider_communication::tests::hosted_and_ollama_results_share_normalized_shape ... ok
+test provider_communication::tests::review_provider_result_rejects_passed_status_when_provider_failed ... ok
+test provider_communication::tests::review_provider_result_transitively_rejects_malformed_provider_result ... ok
+test provider_communication::tests::url_query_api_keys_are_redacted_from_provider_failures ... ok
+test provider_communication::tests::provider_run_logger_injects_request_and_artifact_refs_from_context ... ok
+test provider_communication::tests::utf8_diagnostics_truncate_without_panic ... ok
+test provider_communication::tests::provider_run_logger_writes_flushed_jsonl_without_prompt_or_secret_fields ... ok
+
+test result: ok. 21 passed; 0 failed; 0 ignored; 0 measured; 1492 filtered out; finished in 0.00s
+

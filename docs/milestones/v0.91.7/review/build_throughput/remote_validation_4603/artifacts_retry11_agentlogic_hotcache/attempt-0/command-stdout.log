@@ -1,0 +1,29 @@
+ADL_AWS_REMOTE_SUMMARY_BEGIN
+{"status": "passed", "bootstrap_seconds": 7, "command_seconds": 113, "interruption_detected": false, "interruption_notice": null, "resolved_commit": "afce29350658cb1992d27edbe943f98970fd0c8a", "rustc_version": "rustc 1.96.1 (31fca3adb 2026-06-26)", "cargo_version": "cargo 1.96.1 (356927216 2026-06-26)", "sccache_version": "sccache 0.16.0", "sccache_degraded": false, "sccache_degraded_reason": null, "sccache_stats": {"raw_excerpt": ["Compile requests                      3", "Compile requests executed             0", "Cache hits                            0", "Cache misses                          0", "Cache hits rate                       -", "Cache timeouts                        0", "Cache read errors                     0", "Forced recaches                       0", "Cache write errors                    0", "Cache errors                          0", "Compilations                          0", "Compilation failures                  0", "Non-cacheable compilations            0", "Non-cacheable calls                   3", "Non-compilation calls                 0", "Unsupported compiler calls            0"]}}
+ADL_AWS_REMOTE_SUMMARY_END
+
+running 21 tests
+test provider_communication::tests::hosted_identity_is_provider_asserted_without_digest ... ok
+test provider_communication::tests::provider_attempt_policy_maps_to_resilience_policy ... ok
+test provider_communication::tests::ollama_identity_is_pinned_only_with_digest ... ok
+test provider_communication::tests::invalid_api_key_is_auth_error_not_missing_auth ... ok
+test provider_communication::tests::provider_failure_round_trips_through_shared_resilience_vocab ... ok
+test provider_communication::tests::provider_fault_classification_is_total_for_generic_provider_failures ... ok
+test provider_communication::tests::provider_fault_classification_redacts_sensitive_summary ... ok
+test provider_communication::tests::failure_classifier_covers_hosted_and_local_operational_failures ... ok
+test provider_communication::tests::provider_fault_classification_uses_shared_resilience_vocab ... ok
+test provider_communication::tests::request_validation_rejects_empty_and_zero_policy_fields ... ok
+test provider_communication::tests::review_provider_result_preserves_findings_and_provider_failure_boundaries ... ok
+test provider_communication::tests::review_provider_request_fails_closed_without_scope_or_authority ... ok
+test provider_communication::tests::review_provider_request_validates_scope_authority_and_provider_request ... ok
+test provider_communication::tests::review_provider_result_rejects_findings_on_failed_or_passed_status ... ok
+test provider_communication::tests::hosted_and_ollama_results_share_normalized_shape ... ok
+test provider_communication::tests::review_provider_result_rejects_passed_status_when_provider_failed ... ok
+test provider_communication::tests::review_provider_result_transitively_rejects_malformed_provider_result ... ok
+test provider_communication::tests::url_query_api_keys_are_redacted_from_provider_failures ... ok
+test provider_communication::tests::provider_run_logger_injects_request_and_artifact_refs_from_context ... ok
+test provider_communication::tests::utf8_diagnostics_truncate_without_panic ... ok
+test provider_communication::tests::provider_run_logger_writes_flushed_jsonl_without_prompt_or_secret_fields ... ok
+
+test result: ok. 21 passed; 0 failed; 0 ignored; 0 measured; 1492 filtered out; finished in 0.00s
+
