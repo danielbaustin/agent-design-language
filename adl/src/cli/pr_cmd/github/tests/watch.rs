@@ -352,6 +352,32 @@ fn merged_validation_report() -> PrValidationReport {
     }
 }
 
+fn shepherd_report(
+    classification: &str,
+    tail_owner: &str,
+    shepherd_state: &str,
+    next_skill: &str,
+    continuation: &str,
+    reason: &str,
+    local_readiness: IssueWatchLocalReadinessReport,
+) -> IssueWatchReport {
+    IssueWatchReport {
+        schema: "adl.pr.watch.v1",
+        issue: 4630,
+        issue_state: "OPEN".to_string(),
+        authoritative_classifier: "adl",
+        advisory_agent_mode: "local_agent_advisory_only",
+        classification: classification.to_string(),
+        tail_owner: tail_owner.to_string(),
+        shepherd_state: shepherd_state.to_string(),
+        next_skill: next_skill.to_string(),
+        continuation: continuation.to_string(),
+        reason: reason.to_string(),
+        local_readiness,
+        linked_pr: None,
+    }
+}
+
 #[test]
 fn issue_watch_routes_ready_issue_without_pr_to_pr_run() {
     let report = build_issue_watch_report(&open_issue(4397), false, readiness_ready(), None);
@@ -550,4 +576,155 @@ fn issue_watch_routes_failed_local_readiness_without_pr_to_blocked() {
         report.local_readiness.reason,
         "doctor: sor failed validation"
     );
+}
+
+#[test]
+fn lifecycle_shepherd_maps_ready_without_pr_to_pre_run() {
+    let watch = shepherd_report(
+        "ready_for_run",
+        "pr-run",
+        "ready_without_pr",
+        "pr-run",
+        "continue",
+        "issue_ready_without_linked_pr",
+        readiness_ready(),
+    );
+    let report = build_issue_lifecycle_shepherd_report(&watch, "pre_run", "blocked");
+    assert!(report.lifecycle_shepherd.active);
+    assert_eq!(report.lifecycle_shepherd.state, "pre_run");
+    assert_eq!(report.lifecycle_shepherd.owner_skill, "pr-ready");
+    assert_eq!(report.lifecycle_shepherd.next_skill, "pr-run");
+    assert!(report.lifecycle_shepherd.closeout_required);
+    assert!(
+        report
+            .lifecycle_shepherd
+            .authority_boundary
+            .merge_authority_human_only
+    );
+}
+
+#[test]
+fn lifecycle_shepherd_maps_ready_run_bound_issue_to_execution_bound() {
+    let watch = shepherd_report(
+        "ready_for_run",
+        "pr-run",
+        "ready_without_pr",
+        "pr-run",
+        "continue",
+        "issue_ready_without_linked_pr",
+        readiness_ready(),
+    );
+    let report = build_issue_lifecycle_shepherd_report(&watch, "run_bound", "blocked");
+    assert_eq!(report.lifecycle_shepherd.state, "execution_bound");
+    assert_eq!(report.lifecycle_shepherd.owner_skill, "pr-run");
+    assert_eq!(report.lifecycle_shepherd.next_skill, "pr-run");
+}
+
+#[test]
+fn lifecycle_shepherd_maps_finish_ready_run_bound_issue_to_publication_ready() {
+    let watch = shepherd_report(
+        "ready_for_run",
+        "pr-run",
+        "ready_without_pr",
+        "pr-run",
+        "continue",
+        "issue_ready_without_linked_pr",
+        readiness_ready(),
+    );
+    let report = build_issue_lifecycle_shepherd_report(&watch, "run_bound", "ready");
+    assert_eq!(report.lifecycle_shepherd.state, "publication_ready");
+    assert_eq!(report.lifecycle_shepherd.owner_skill, "pr-finish");
+    assert_eq!(report.lifecycle_shepherd.next_skill, "pr-finish");
+}
+
+#[test]
+fn lifecycle_shepherd_maps_green_wait_state_to_pr_waiting() {
+    let watch = shepherd_report(
+        "checks_green",
+        "issue-watcher",
+        "watcher_owned_waiting_for_review",
+        "human_review",
+        "ask_operator",
+        "linked_pr_checks_green_waiting_review",
+        readiness_ready(),
+    );
+    let report = build_issue_lifecycle_shepherd_report(&watch, "run_bound", "blocked");
+    assert_eq!(report.lifecycle_shepherd.state, "pr_waiting");
+    assert_eq!(report.lifecycle_shepherd.owner_skill, "issue-watcher");
+    assert_eq!(report.lifecycle_shepherd.next_skill, "human_review");
+}
+
+#[test]
+fn lifecycle_shepherd_maps_failed_checks_to_janitor_active() {
+    let watch = shepherd_report(
+        "checks_failed",
+        "pr-janitor",
+        "janitor_owned_checks_failed",
+        "pr-janitor",
+        "action_required",
+        "linked_pr_checks_failed",
+        readiness_ready(),
+    );
+    let report = build_issue_lifecycle_shepherd_report(&watch, "run_bound", "blocked");
+    assert_eq!(report.lifecycle_shepherd.state, "janitor_active");
+    assert_eq!(report.lifecycle_shepherd.owner_skill, "pr-janitor");
+    assert_eq!(report.lifecycle_shepherd.next_skill, "pr-janitor");
+}
+
+#[test]
+fn lifecycle_shepherd_maps_closeout_needed_to_closed_no_pr() {
+    let watch = shepherd_report(
+        "closeout_needed",
+        "pr-closeout",
+        "closeout_required",
+        "pr-closeout",
+        "action_required",
+        "issue_closed_completed",
+        readiness_ready(),
+    );
+    let report = build_issue_lifecycle_shepherd_report(&watch, "run_bound", "blocked");
+    assert_eq!(report.lifecycle_shepherd.state, "closed_no_pr");
+    assert_eq!(report.lifecycle_shepherd.owner_skill, "pr-closeout");
+    assert_eq!(report.lifecycle_shepherd.next_skill, "pr-closeout");
+    assert!(report.lifecycle_shepherd.closeout_required);
+}
+
+#[test]
+fn lifecycle_shepherd_keeps_closed_ready_issue_in_closed_no_pr_until_closeout() {
+    let watch = IssueWatchReport {
+        issue_state: "CLOSED".to_string(),
+        ..shepherd_report(
+            "closeout_needed",
+            "pr-closeout",
+            "closeout_required",
+            "pr-closeout",
+            "action_required",
+            "issue_closed_completed",
+            readiness_ready(),
+        )
+    };
+    let report = build_issue_lifecycle_shepherd_report(&watch, "closed", "blocked");
+    assert!(report.lifecycle_shepherd.active);
+    assert_eq!(report.lifecycle_shepherd.state, "closed_no_pr");
+    assert_eq!(report.lifecycle_shepherd.owner_skill, "pr-closeout");
+    assert_eq!(report.lifecycle_shepherd.next_skill, "pr-closeout");
+    assert!(report.lifecycle_shepherd.closeout_required);
+}
+
+#[test]
+fn lifecycle_shepherd_preserves_blocked_state_for_failed_local_readiness() {
+    let watch = shepherd_report(
+        "blocked",
+        "pr-ready",
+        "local_readiness_failed",
+        "pr-ready",
+        "action_required",
+        "issue_local_readiness_failed",
+        readiness_failed(),
+    );
+    let report = build_issue_lifecycle_shepherd_report(&watch, "unknown", "unknown");
+    assert!(report.lifecycle_shepherd.active);
+    assert_eq!(report.lifecycle_shepherd.state, "blocked");
+    assert_eq!(report.lifecycle_shepherd.owner_skill, "pr-ready");
+    assert_eq!(report.lifecycle_shepherd.next_skill, "pr-ready");
 }

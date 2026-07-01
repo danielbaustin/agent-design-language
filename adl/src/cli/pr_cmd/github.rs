@@ -202,6 +202,40 @@ pub(crate) struct IssueWatchReport {
     pub(crate) linked_pr: Option<IssueWatchLinkedPrReport>,
 }
 
+#[derive(Debug, Clone, PartialEq, Eq, Serialize)]
+pub(crate) struct LifecycleShepherdAuthorityBoundary {
+    pub(crate) merge_authority_human_only: bool,
+    pub(crate) issue_close_authority_human_only: bool,
+    pub(crate) review_authority_human_only: bool,
+}
+
+#[derive(Debug, Clone, PartialEq, Eq, Serialize)]
+pub(crate) struct LifecycleShepherdStateReport {
+    pub(crate) active: bool,
+    pub(crate) state: String,
+    pub(crate) owner_skill: String,
+    pub(crate) next_skill: String,
+    pub(crate) closeout_required: bool,
+    pub(crate) authority_boundary: LifecycleShepherdAuthorityBoundary,
+}
+
+#[derive(Debug, Clone, PartialEq, Eq, Serialize)]
+pub(crate) struct IssueLifecycleShepherdReport {
+    pub(crate) schema: &'static str,
+    pub(crate) issue: u32,
+    pub(crate) issue_state: String,
+    pub(crate) authoritative_classifier: &'static str,
+    pub(crate) advisory_agent_mode: &'static str,
+    pub(crate) classification: String,
+    pub(crate) tail_owner: String,
+    pub(crate) watch_shepherd_state: String,
+    pub(crate) continuation: String,
+    pub(crate) reason: String,
+    pub(crate) lifecycle_shepherd: LifecycleShepherdStateReport,
+    pub(crate) local_readiness: IssueWatchLocalReadinessReport,
+    pub(crate) linked_pr: Option<IssueWatchLinkedPrReport>,
+}
+
 pub(super) fn wait_for_pr_validation_finish(repo: &str, pr_ref: &str) -> Result<()> {
     transport::wait_for_pr_validation_finish(repo, pr_ref)
 }
@@ -714,6 +748,97 @@ pub(crate) fn build_issue_watch_report(
             state: pr.state,
             validation,
         }),
+    }
+}
+
+pub(crate) fn build_issue_lifecycle_shepherd_report(
+    watch: &IssueWatchReport,
+    ready_lifecycle_state: &str,
+    pr_finish_readiness: &str,
+) -> IssueLifecycleShepherdReport {
+    let authority_boundary = LifecycleShepherdAuthorityBoundary {
+        merge_authority_human_only: true,
+        issue_close_authority_human_only: true,
+        review_authority_human_only: true,
+    };
+    let (active, state, owner_skill, next_skill, closeout_required) =
+        match watch.classification.as_str() {
+            "ready_for_run" => {
+                if ready_lifecycle_state == "run_bound" {
+                    if pr_finish_readiness == "ready" {
+                        (true, "publication_ready", "pr-finish", "pr-finish", true)
+                    } else {
+                        (true, "execution_bound", "pr-run", "pr-run", true)
+                    }
+                } else {
+                    (true, "pre_run", "pr-ready", "pr-run", true)
+                }
+            }
+            "pr_open" | "checks_running" | "checks_green" => (
+                true,
+                "pr_waiting",
+                "issue-watcher",
+                watch.next_skill.as_str(),
+                true,
+            ),
+            "checks_green_but_draft" | "checks_failed" => {
+                (true, "janitor_active", "pr-janitor", "pr-janitor", true)
+            }
+            "merged_pending_closeout" => (
+                true,
+                "merged_needs_closeout",
+                "pr-closeout",
+                "pr-closeout",
+                true,
+            ),
+            "closeout_needed" => (true, "closed_no_pr", "pr-closeout", "pr-closeout", true),
+            "blocked" => (
+                true,
+                "blocked",
+                if ready_lifecycle_state == "run_bound" {
+                    "pr-run"
+                } else {
+                    watch.tail_owner.as_str()
+                },
+                watch.next_skill.as_str(),
+                true,
+            ),
+            "closed" => (
+                true,
+                "blocked",
+                watch.tail_owner.as_str(),
+                watch.next_skill.as_str(),
+                true,
+            ),
+            _ => (
+                true,
+                "blocked",
+                watch.tail_owner.as_str(),
+                watch.next_skill.as_str(),
+                true,
+            ),
+        };
+    IssueLifecycleShepherdReport {
+        schema: "adl.pr.shepherd.v1",
+        issue: watch.issue,
+        issue_state: watch.issue_state.clone(),
+        authoritative_classifier: "adl",
+        advisory_agent_mode: "local_agent_advisory_only",
+        classification: watch.classification.clone(),
+        tail_owner: watch.tail_owner.clone(),
+        watch_shepherd_state: watch.shepherd_state.clone(),
+        continuation: watch.continuation.clone(),
+        reason: watch.reason.clone(),
+        lifecycle_shepherd: LifecycleShepherdStateReport {
+            active,
+            state: state.to_string(),
+            owner_skill: owner_skill.to_string(),
+            next_skill: next_skill.to_string(),
+            closeout_required,
+            authority_boundary,
+        },
+        local_readiness: watch.local_readiness.clone(),
+        linked_pr: watch.linked_pr.clone(),
     }
 }
 
