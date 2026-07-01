@@ -1,0 +1,9 @@
+{"timestamp":"2026-07-01T23:18:16.407458+00:00","stage":"start","status":"started","detail":"issue=Some(4603) region=us-west-2 instance_types=m7a.2xlarge out=/private/tmp/adl-4603-agentlogic-proof/artifacts_retryQ_agentlogic_hotcache/attempt-0/summary.json"}
+{"timestamp":"2026-07-01T23:18:27.352619+00:00","stage":"identity","status":"ok","detail":"caller identity resolved"}
+{"timestamp":"2026-07-01T23:18:32.754368+00:00","stage":"quota","status":"ok","detail":"quota snapshot captured"}
+{"timestamp":"2026-07-01T23:18:32.754530+00:00","stage":"launch_attempt","status":"started","detail":"instance_type=m7a.2xlarge market=spot"}
+{"timestamp":"2026-07-01T23:18:47.792662+00:00","stage":"launch_attempt","status":"ok","detail":"instance_type=m7a.2xlarge market=spot launched"}
+{"timestamp":"2026-07-01T23:19:03.110071+00:00","stage":"ssm","status":"ok","detail":"instance became SSM-ready with status Online"}
+{"timestamp":"2026-07-01T23:21:46.940198+00:00","stage":"remote_command","status":"ok","detail":"remote command completed with Success"}
+{"timestamp":"2026-07-01T23:21:49.358940+00:00","stage":"cleanup","status":"started","detail":"termination requested"}
+{"timestamp":"2026-07-01T23:22:22.385332+00:00","stage":"cleanup","status":"ok","detail":"termination observed state=terminated"}

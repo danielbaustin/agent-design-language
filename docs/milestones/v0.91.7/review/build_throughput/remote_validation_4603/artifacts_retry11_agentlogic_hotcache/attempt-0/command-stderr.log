@@ -1,0 +1,18 @@
+2026-07-01T23:19:04Z stage=ensure_git
+2026-07-01T23:19:33Z stage=ensure_curl
+2026-07-01T23:19:33Z stage=clone_repo
+2026-07-01T23:19:35Z stage=fetch_repo
+2026-07-01T23:19:35Z stage=checkout_ref ref='codex/4603-v0-91-7-aws-spot-build-spot-manager-and-remote-validation-lane'
+2026-07-01T23:19:35Z stage=tracked_remote_runner
+2026-07-01T23:19:41Z stage=ensure_build_toolchain
+2026-07-01T23:19:47Z stage=ensure_rustup
+2026-07-01T23:19:48Z stage=ensure_sccache
+2026-07-01T23:19:48Z tool_install_policy=package_manager_or_prebuilt_only tool=sccache
+2026-07-01T23:19:48Z stage=ensure_nextest
+2026-07-01T23:19:48Z tool_install_policy=package_manager_or_prebuilt_only tool=cargo-nextest
+2026-07-01T23:19:48Z stage=validation_command command=cargo build --manifest-path adl/Cargo.toml --locked --bin adl-pr-doctor && cargo test --manifest-path adl/Cargo.toml --locked --lib provider_communication
+   Compiling adl v0.91.6 (/tmp/adl-aws-remote-bootstrap/adl-aws-remote-20260701231749/agent-design-language/adl)
+    Finished `dev` profile [unoptimized + debuginfo] target(s) in 1m 02s
+   Compiling adl v0.91.6 (/tmp/adl-aws-remote-bootstrap/adl-aws-remote-20260701231749/agent-design-language/adl)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 50.75s
+     Running unittests src/lib.rs (/mnt/adl-cache/adl-aws-remote-validation/shared/target/debug/deps/adl-bd1cf3b390a4c354)
