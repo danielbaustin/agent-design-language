@@ -149,8 +149,9 @@ fn parse_args(args: &[String]) -> Result<ParsedArgs> {
     let mut sccache_tarball_url = env::var("ADL_AWS_REMOTE_VALIDATION_SCCACHE_TARBALL_URL").ok();
     let mut nextest_tarball_url = env::var("ADL_AWS_REMOTE_VALIDATION_NEXTEST_TARBALL_URL").ok();
     let mut ssh_key_name = env::var("ADL_AWS_REMOTE_VALIDATION_SSH_KEY_NAME").ok();
-    let mut ssh_private_key_path =
-        env::var("ADL_AWS_REMOTE_VALIDATION_SSH_PRIVATE_KEY_PATH").ok().map(PathBuf::from);
+    let mut ssh_private_key_path = env::var("ADL_AWS_REMOTE_VALIDATION_SSH_PRIVATE_KEY_PATH")
+        .ok()
+        .map(PathBuf::from);
     let mut ssh_user = env::var("ADL_AWS_REMOTE_VALIDATION_SSH_USER").ok();
     let mut ssh_allowed_cidr = env::var("ADL_AWS_REMOTE_VALIDATION_SSH_ALLOWED_CIDR").ok();
     let mut command = None;
@@ -214,7 +215,7 @@ fn parse_args(args: &[String]) -> Result<ParsedArgs> {
                 git_ref = args
                     .get(i)
                     .ok_or_else(|| anyhow!("--git-ref requires a value"))?
-                        .to_string();
+                    .to_string();
             }
             "--cache-bucket" => {
                 i += 1;
@@ -258,10 +259,10 @@ fn parse_args(args: &[String]) -> Result<ParsedArgs> {
             }
             "--ssh-private-key-path" => {
                 i += 1;
-                ssh_private_key_path = Some(PathBuf::from(
-                    args.get(i)
-                        .ok_or_else(|| anyhow!("--ssh-private-key-path requires a value"))?,
-                ));
+                ssh_private_key_path =
+                    Some(PathBuf::from(args.get(i).ok_or_else(|| {
+                        anyhow!("--ssh-private-key-path requires a value")
+                    })?));
             }
             "--ssh-user" => {
                 i += 1;

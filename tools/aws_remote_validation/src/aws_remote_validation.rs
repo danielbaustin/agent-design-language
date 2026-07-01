@@ -278,6 +278,10 @@ pub struct RemoteCommandSummary {
     pub rustc_version: Option<String>,
     pub cargo_version: Option<String>,
     pub sccache_version: Option<String>,
+    #[serde(default)]
+    pub sccache_degraded: bool,
+    #[serde(default)]
+    pub sccache_degraded_reason: Option<String>,
     pub sccache_stats: Option<SccacheStats>,
 }
 
@@ -714,6 +718,24 @@ pub async fn run_aws_remote_validation<A: AwsRemoteValidationAdapter>(
                             "remote_command",
                             "interrupted",
                             "interruption notice detected in remote summary".to_string(),
+                        );
+                    } else if remote_summary
+                        .as_ref()
+                        .map(|summary| summary.sccache_degraded)
+                        .unwrap_or(false)
+                    {
+                        status = RemoteRunStatus::Failed;
+                        let reason = remote_summary
+                            .as_ref()
+                            .and_then(|summary| summary.sccache_degraded_reason.clone())
+                            .unwrap_or_else(|| "unknown_sccache_degradation".to_string());
+                        failure_reason =
+                            Some(format!("remote command lost sccache integrity: {reason}"));
+                        record_event(
+                            &mut events,
+                            "remote_command",
+                            "failed",
+                            failure_reason.clone().unwrap_or_default(),
                         );
                     } else if result.response_code.unwrap_or(1) == 0
                         && result.status.eq_ignore_ascii_case("Success")
@@ -1368,6 +1390,20 @@ CARGO_VERSION="$(cargo --version 2>/dev/null || true)"
 SCCACHE_VERSION="$(sccache --version 2>/dev/null || true)"
 sccache --start-server >/dev/null 2>&1 || true
 sccache --zero-stats >/dev/null 2>&1 || true
+SCCACHE_DEGRADED=0
+SCCACHE_DEGRADED_REASON=""
+
+watch_sccache_health() {{
+  while true; do
+    if ! sccache --show-stats >/dev/null 2>&1; then
+      printf '%s sccache_watch_restart\n' "$(date -u +%Y-%m-%dT%H:%M:%SZ)" >> "$RUN_ROOT/sccache-watch.log"
+      sccache --start-server >/dev/null 2>&1 || true
+    fi
+    sleep 5
+  done
+}}
+watch_sccache_health >/tmp/adl-sccache-watch.log 2>&1 &
+SCCACHE_WATCH_PID="$!"
 
 INTERRUPTION_NOTICE=""
 watch_spot_notice() {{
@@ -1399,12 +1435,28 @@ set -e
 COMMAND_END="$(date +%s)"
 kill "$WATCH_PID" >/dev/null 2>&1 || true
 wait "$WATCH_PID" >/dev/null 2>&1 || true
+kill "$SCCACHE_WATCH_PID" >/dev/null 2>&1 || true
+wait "$SCCACHE_WATCH_PID" >/dev/null 2>&1 || true
 sccache --show-stats >"$RUN_ROOT/sccache-stats.log" 2>&1 || true
 [ -f "$RUN_ROOT/spot-interruption.log" ] && INTERRUPTION_NOTICE="$(cat "$RUN_ROOT/spot-interruption.log")"
+if grep -Fq "sccache: warning: The server looks like it shut down unexpectedly" "$RUN_ROOT/command.err"; then
+  SCCACHE_DEGRADED=1
+  SCCACHE_DEGRADED_REASON="server_shut_down_unexpectedly"
+elif grep -Fq "sccache: error:" "$RUN_ROOT/command.err"; then
+  SCCACHE_DEGRADED=1
+  SCCACHE_DEGRADED_REASON="client_or_server_error"
+fi
+if [ ! -s "$RUN_ROOT/sccache-stats.log" ]; then
+  SCCACHE_DEGRADED=1
+  if [ -z "$SCCACHE_DEGRADED_REASON" ]; then
+    SCCACHE_DEGRADED_REASON="missing_stats"
+  fi
+fi
 
 export ADL_RUN_ROOT="$RUN_ROOT"
 export COMMAND_EXIT BOOTSTRAP_START BOOTSTRAP_END COMMAND_START COMMAND_END
 export INTERRUPTION_NOTICE RESOLVED_COMMIT RUSTC_VERSION CARGO_VERSION SCCACHE_VERSION
+export SCCACHE_DEGRADED SCCACHE_DEGRADED_REASON
 python3 - <<'PY'
 import json
 import os
@@ -1420,6 +1472,8 @@ payload = {{
   "rustc_version": os.environ.get("RUSTC_VERSION") or None,
   "cargo_version": os.environ.get("CARGO_VERSION") or None,
   "sccache_version": os.environ.get("SCCACHE_VERSION") or None,
+  "sccache_degraded": os.environ.get("SCCACHE_DEGRADED") == "1",
+  "sccache_degraded_reason": os.environ.get("SCCACHE_DEGRADED_REASON") or None,
   "sccache_stats": {{"raw_excerpt": run_root.joinpath("sccache-stats.log").read_text(errors="replace").splitlines()[:16] if run_root.joinpath("sccache-stats.log").exists() else []}}
 }}
 print("ADL_AWS_REMOTE_SUMMARY_BEGIN")
@@ -1546,6 +1600,202 @@ impl LiveAwsRemoteValidationAdapter {
             .and_then(|reservation| reservation.instances().first())
             .and_then(|instance| instance.public_ip_address())
             .map(ToOwned::to_owned))
+    }
+
+    async fn run_ssh_debug_repair_command(
+        &self,
+        instance_id: &str,
+        poll_interval: Duration,
+    ) -> std::result::Result<(), AwsAdapterError> {
+        let commands = vec![
+            "sudo systemctl enable --now sshd || sudo systemctl restart sshd || sudo service sshd restart || true".to_string(),
+            "sudo systemctl is-active sshd || true".to_string(),
+            "sudo ss -ltn | grep ':22 ' || true".to_string(),
+        ];
+        let output = self
+            .ssm
+            .send_command()
+            .document_name("AWS-RunShellScript")
+            .instance_ids(instance_id)
+            .parameters("commands", commands)
+            .send()
+            .await
+            .map_err(classify_ssm_error)?;
+        let command_id = output
+            .command()
+            .and_then(|command| command.command_id())
+            .unwrap_or_default()
+            .to_string();
+        append_command_status_line(
+            "ssh_debug_repair_started",
+            format!("instance_id={instance_id} command_id={command_id}"),
+        );
+        let start = Instant::now();
+        loop {
+            let invocation = self
+                .ssm
+                .get_command_invocation()
+                .command_id(&command_id)
+                .instance_id(instance_id)
+                .send()
+                .await
+                .map_err(classify_ssm_error)?;
+            let status = invocation
+                .status_details()
+                .or_else(|| invocation.status().map(|value| value.as_str()))
+                .unwrap_or("Unknown")
+                .to_string();
+            append_command_status_line(
+                "ssh_debug_repair_poll",
+                format!(
+                    "instance_id={instance_id} command_id={command_id} status={} response_code={}",
+                    status,
+                    invocation.response_code()
+                ),
+            );
+            let terminal = matches!(
+                status.as_str(),
+                "Success" | "Cancelled" | "TimedOut" | "Failed" | "Cancelling"
+            );
+            if terminal {
+                if invocation.response_code() == 0 && status.eq_ignore_ascii_case("Success") {
+                    append_command_status_line(
+                        "ssh_debug_repair_ready",
+                        format!("instance_id={instance_id} command_id={command_id}"),
+                    );
+                    return Ok(());
+                }
+                return Err(AwsAdapterError {
+                    code: Some("SshDebugRepairFailed".to_string()),
+                    message: format!(
+                        "ssh debug repair command {} finished with status={} response_code={}",
+                        command_id,
+                        status,
+                        invocation.response_code()
+                    ),
+                    spot_fallback_permitted: false,
+                });
+            }
+            if start.elapsed() >= Duration::from_secs(90) {
+                return Err(AwsAdapterError {
+                    code: Some("SshDebugRepairTimedOut".to_string()),
+                    message: format!(
+                        "ssh debug repair command {} did not reach terminal state within 90s",
+                        command_id
+                    ),
+                    spot_fallback_permitted: false,
+                });
+            }
+            sleep(poll_interval).await;
+        }
+    }
+
+    async fn wait_for_ssh_debug_ready(
+        &self,
+        instance_id: &str,
+        timeout: Duration,
+        poll_interval: Duration,
+    ) -> std::result::Result<(), AwsAdapterError> {
+        let Some(ssh_debug) = self.ssh_debug.as_ref() else {
+            return Ok(());
+        };
+        let Some(public_ip) =
+            self.instance_public_ip(instance_id)
+                .await
+                .map_err(|err| AwsAdapterError {
+                    code: Some("SshDebugPublicIpUnavailable".to_string()),
+                    message: format!("failed to resolve public IP for ssh debug: {err}"),
+                    spot_fallback_permitted: false,
+                })?
+        else {
+            return Err(AwsAdapterError {
+                code: Some("SshDebugPublicIpUnavailable".to_string()),
+                message: format!("instance {instance_id} has no public IP for ssh debug"),
+                spot_fallback_permitted: false,
+            });
+        };
+
+        self.run_ssh_debug_repair_command(instance_id, poll_interval)
+            .await?;
+
+        let start = Instant::now();
+        let mut attempt = 0_u32;
+        let mut last_error = String::new();
+        while start.elapsed() < timeout {
+            attempt += 1;
+            append_command_status_line(
+                "ssh_debug_probe",
+                format!("instance_id={instance_id} public_ip={public_ip} attempt={attempt}"),
+            );
+            let output = StdCommand::new("ssh")
+                .arg("-o")
+                .arg("BatchMode=yes")
+                .arg("-o")
+                .arg("StrictHostKeyChecking=no")
+                .arg("-o")
+                .arg("UserKnownHostsFile=/dev/null")
+                .arg("-o")
+                .arg("ConnectTimeout=10")
+                .arg("-o")
+                .arg("ServerAliveInterval=5")
+                .arg("-o")
+                .arg("ServerAliveCountMax=1")
+                .arg("-i")
+                .arg(&ssh_debug.private_key_path)
+                .arg(format!("{}@{}", ssh_debug.user, public_ip))
+                .arg("true")
+                .output();
+            match output {
+                Ok(result) if result.status.success() => {
+                    append_command_status_line(
+                        "ssh_debug_ready",
+                        format!(
+                            "instance_id={instance_id} public_ip={public_ip} attempt={attempt}"
+                        ),
+                    );
+                    return Ok(());
+                }
+                Ok(result) => {
+                    let stderr_preview = String::from_utf8_lossy(&result.stderr)
+                        .lines()
+                        .take(4)
+                        .collect::<Vec<_>>()
+                        .join(" | ");
+                    last_error = format!(
+                        "exit_status={} stderr={}",
+                        result
+                            .status
+                            .code()
+                            .map(|code| code.to_string())
+                            .unwrap_or_else(|| "signal".to_string()),
+                        stderr_preview
+                    );
+                }
+                Err(err) => {
+                    last_error = err.to_string();
+                }
+            }
+            if attempt == 1 || attempt % 3 == 0 {
+                let _ = self
+                    .run_ssh_debug_repair_command(instance_id, poll_interval)
+                    .await;
+            }
+            sleep(poll_interval).await;
+        }
+        Err(AwsAdapterError {
+            code: Some("SshDebugNotReady".to_string()),
+            message: format!(
+                "ssh debug channel to {} was not ready within {:?}: {}",
+                public_ip,
+                timeout,
+                if last_error.is_empty() {
+                    "no successful banner/auth exchange".to_string()
+                } else {
+                    last_error
+                }
+            ),
+            spot_fallback_permitted: false,
+        })
     }
 
     async fn start_ssh_tail(&self, instance_id: &str, run_root: &str) -> Result<Option<Child>> {
@@ -2244,8 +2494,22 @@ impl AwsRemoteValidationAdapter for LiveAwsRemoteValidationAdapter {
         timeout: Option<Duration>,
         poll_interval: Duration,
     ) -> std::result::Result<CommandExecutionResult, AwsAdapterError> {
-        let mut ssh_tail_child = match extract_run_root(command) {
-            Some(run_root) => self.start_ssh_tail(instance_id, &run_root).await.ok().flatten(),
+        let run_root = extract_run_root(command);
+        if run_root.is_some() && self.ssh_debug.is_some() {
+            self.wait_for_ssh_debug_ready(instance_id, Duration::from_secs(90), poll_interval)
+                .await?;
+        }
+        let mut ssh_tail_child = match run_root {
+            Some(run_root) => match self.start_ssh_tail(instance_id, &run_root).await {
+                Ok(child) => child,
+                Err(err) => {
+                    return Err(AwsAdapterError {
+                        code: Some("SshTailStartFailed".to_string()),
+                        message: format!("failed to start ssh tail: {err}"),
+                        spot_fallback_permitted: false,
+                    });
+                }
+            },
             None => None,
         };
         let output = self
@@ -2807,6 +3071,8 @@ mod tests {
             "rustc_version": "rustc fixture",
             "cargo_version": "cargo fixture",
             "sccache_version": "sccache fixture",
+            "sccache_degraded": false,
+            "sccache_degraded_reason": null,
             "sccache_stats": {
                 "compile_requests": "10",
                 "compile_requests_executed": "4",
@@ -2903,7 +3169,7 @@ mod tests {
                 command_id: "cmd-2".to_string(),
                 status: "Success".to_string(),
                 response_code: Some(0),
-                stdout: "ADL_AWS_REMOTE_SUMMARY_BEGIN\n{\"status\":\"passed\",\"bootstrap_seconds\":1,\"command_seconds\":2,\"interruption_detected\":false,\"interruption_notice\":null,\"resolved_commit\":\"abc\",\"rustc_version\":null,\"cargo_version\":null,\"sccache_version\":null,\"sccache_stats\":null}\nADL_AWS_REMOTE_SUMMARY_END\n".to_string(),
+                stdout: "ADL_AWS_REMOTE_SUMMARY_BEGIN\n{\"status\":\"passed\",\"bootstrap_seconds\":1,\"command_seconds\":2,\"interruption_detected\":false,\"interruption_notice\":null,\"resolved_commit\":\"abc\",\"rustc_version\":null,\"cargo_version\":null,\"sccache_version\":null,\"sccache_degraded\":false,\"sccache_degraded_reason\":null,\"sccache_stats\":null}\nADL_AWS_REMOTE_SUMMARY_END\n".to_string(),
                 stderr: String::new(),
             }),
             terminate_result: Ok(()),
@@ -2940,7 +3206,7 @@ mod tests {
             "adl-aws-remote-validation-interruption-{}",
             std::process::id()
         ));
-        let stdout = "ADL_AWS_REMOTE_SUMMARY_BEGIN\n{\"status\":\"failed\",\"bootstrap_seconds\":1,\"command_seconds\":2,\"interruption_detected\":true,\"interruption_notice\":\"instance-action\",\"resolved_commit\":\"abc\",\"rustc_version\":null,\"cargo_version\":null,\"sccache_version\":null,\"sccache_stats\":null}\nADL_AWS_REMOTE_SUMMARY_END\n";
+        let stdout = "ADL_AWS_REMOTE_SUMMARY_BEGIN\n{\"status\":\"failed\",\"bootstrap_seconds\":1,\"command_seconds\":2,\"interruption_detected\":true,\"interruption_notice\":\"instance-action\",\"resolved_commit\":\"abc\",\"rustc_version\":null,\"cargo_version\":null,\"sccache_version\":null,\"sccache_degraded\":false,\"sccache_degraded_reason\":null,\"sccache_stats\":null}\nADL_AWS_REMOTE_SUMMARY_END\n";
         let adapter = FakeAdapter {
             quota: QuotaSnapshot {
                 spot_vcpu_quota: Some(32.0),
@@ -3016,11 +3282,80 @@ mod tests {
     }
 
     #[test]
+    fn build_remote_command_script_tracks_sccache_degradation() {
+        let tmp = std::env::temp_dir().join(format!(
+            "adl-aws-remote-validation-sccache-{}",
+            std::process::id()
+        ));
+        let script = build_remote_command_script(&sample_config(&tmp));
+        assert!(script.contains("watch_sccache_health"));
+        assert!(script.contains("SCCACHE_DEGRADED=0"));
+        assert!(script.contains("server_shut_down_unexpectedly"));
+        assert!(
+            script.contains("\"sccache_degraded\": os.environ.get(\"SCCACHE_DEGRADED\") == \"1\"")
+        );
+    }
+
+    #[tokio::test]
+    async fn remote_validation_fails_when_sccache_degrades() {
+        let tmp = std::env::temp_dir().join(format!(
+            "adl-aws-remote-validation-sccache-failed-{}",
+            std::process::id()
+        ));
+        let stdout = "ADL_AWS_REMOTE_SUMMARY_BEGIN\n{\"status\":\"passed\",\"bootstrap_seconds\":1,\"command_seconds\":2,\"interruption_detected\":false,\"interruption_notice\":null,\"resolved_commit\":\"abc\",\"rustc_version\":null,\"cargo_version\":null,\"sccache_version\":\"sccache fixture\",\"sccache_degraded\":true,\"sccache_degraded_reason\":\"server_shut_down_unexpectedly\",\"sccache_stats\":null}\nADL_AWS_REMOTE_SUMMARY_END\n";
+        let adapter = FakeAdapter {
+            quota: QuotaSnapshot {
+                spot_vcpu_quota: Some(32.0),
+                on_demand_vcpu_quota: Some(64.0),
+                notes: vec![],
+            },
+            identity: AwsAccountIdentity {
+                account_id: Some("123456789012".to_string()),
+                account_id_sha256: Some("hash".to_string()),
+                arn: None,
+                user_id: None,
+            },
+            launch_results: Mutex::new(VecDeque::from(vec![Ok(LaunchResult {
+                instance_id: "i-sccache".to_string(),
+                initial_state: "pending".to_string(),
+            })])),
+            ssm_ready: Ok(SsmReadyResult {
+                status: "Online".to_string(),
+            }),
+            command_result: Ok(CommandExecutionResult {
+                command_id: "cmd-sccache".to_string(),
+                status: "Success".to_string(),
+                response_code: Some(0),
+                stdout: stdout.to_string(),
+                stderr: String::new(),
+            }),
+            terminate_result: Ok(()),
+            final_state: Ok(Some("terminated".to_string())),
+            cost: None,
+            budget: None,
+        };
+
+        let (summary, events) = run_aws_remote_validation(&adapter, &sample_config(&tmp))
+            .await
+            .expect("summary");
+
+        assert_eq!(summary.status, RemoteRunStatus::Failed);
+        assert!(summary
+            .failure_reason
+            .as_deref()
+            .is_some_and(|reason| reason.contains("sccache")));
+        assert!(events
+            .iter()
+            .any(|event| event.stage == "remote_command" && event.status == "failed"));
+    }
+
+    #[test]
     fn parse_remote_summary_extracts_json_block() {
-        let input = "prefix\nADL_AWS_REMOTE_SUMMARY_BEGIN\n{\"status\":\"passed\",\"bootstrap_seconds\":1,\"command_seconds\":2,\"interruption_detected\":false,\"interruption_notice\":null,\"resolved_commit\":\"abc\",\"rustc_version\":null,\"cargo_version\":null,\"sccache_version\":null,\"sccache_stats\":null}\nADL_AWS_REMOTE_SUMMARY_END\nsuffix";
+        let input = "prefix\nADL_AWS_REMOTE_SUMMARY_BEGIN\n{\"status\":\"passed\",\"bootstrap_seconds\":1,\"command_seconds\":2,\"interruption_detected\":false,\"interruption_notice\":null,\"resolved_commit\":\"abc\",\"rustc_version\":null,\"cargo_version\":null,\"sccache_version\":null,\"sccache_degraded\":false,\"sccache_degraded_reason\":null,\"sccache_stats\":null}\nADL_AWS_REMOTE_SUMMARY_END\nsuffix";
         let summary = parse_remote_summary(input).expect("summary");
         assert_eq!(summary.status, "passed");
         assert_eq!(summary.bootstrap_seconds, Some(1));
         assert!(!summary.interruption_detected);
+        assert!(!summary.sccache_degraded);
     }
 }
