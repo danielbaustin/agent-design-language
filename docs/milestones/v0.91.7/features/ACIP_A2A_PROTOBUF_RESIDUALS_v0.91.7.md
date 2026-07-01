@@ -12,7 +12,7 @@
 
 ## Purpose
 
-Resolve or route remaining JSON/protobuf/WebSocket/access-rule decisions after
+Resolve remaining JSON/protobuf/WebSocket/access-rule decisions after
 the first ACIP/A2A bridge tranche.
 
 ## Scope
@@ -60,3 +60,8 @@ or a deferred route. Ambiguity is a blocker.
 - No protocol completion claim.
 - No default external-agent trust.
 - No hidden WebSocket implementation.
+
+## Blocker Rule
+
+Any unresolved activation-path decision blocks v0.92 unless the operator
+explicitly approves a non-claim with evidence and residual risk.

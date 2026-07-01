@@ -31,7 +31,7 @@ For planning-doc-only changes:
 
 ## Review Questions
 
-- Does every source-capture row have a complete, blocked, deferred, or routed disposition path?
+- Does every source-capture row have an integrated/proven, already-closed-with-evidence, operator-approved non-claim, or evidence-backed blocker disposition?
 - Does the change preserve the `#3778` bridge-ledger contract?
 - Does it consume the `v0.91.6` first-tranche package without duplicating it?
 - Does any doc claim `v0.92` readiness without evidence?
@@ -39,10 +39,10 @@ For planning-doc-only changes:
 - Are Curiosity and Constructability feature docs issue-ready?
 - Is reasoning graph / `adl.skill.v1` scoped as a bridge rather than a full
   final standard?
-- Are security and ACIP/A2A residuals fixed or routed?
-- Are SEP/VPP/PVF, goal/metrics, scheduler/provider, build/validation, runtime Soak #2, and Observatory/demo routes explicit enough for v0.92?
-- Does WP-01 consume failed-but-closed v0.91.6 WP-15 truth, closed final WP-16 truth, closed `#4620` / `#4621`, open v0.91.7 route `#4622`, and closed WP-14A remediation truth before dependent v0.91.7 execution starts?
-- Does the build/validation route distinguish EC2 Spot or alternate remote-builder proof from an accepted release-critical validation lane?
+- Are security and ACIP/A2A residuals fixed, explicitly non-claimed with operator approval, or blocked with evidence?
+- Are SEP/VPP/PVF, goal/metrics, scheduler/provider, build/validation, runtime Soak #2, and Observatory/demo surfaces proven or explicitly blocked/non-claimed for v0.92?
+- Does WP-01 consume failed-but-closed v0.91.6 WP-15 truth, closed final WP-16 truth, closed `#4620` / `#4621`, closed `#4622` PR-inventory proof, and closed WP-14A remediation truth before dependent v0.91.7 execution starts?
+- Does the build/validation plan distinguish EC2 Spot or alternate remote-builder proof from an accepted release-critical validation lane?
 - Are affect/happiness, Godel mechanics, and economics context bounded by
   safe-test and non-claim language?
 
@@ -51,8 +51,7 @@ For planning-doc-only changes:
 Allowed dispositions:
 
 - `fixed_in_scope`
-- `routed_to_named_issue`
-- `accepted_deferred_with_risk`
+- `operator_approved_non_claim_with_risk`
 - `blocked_pending_operator_decision`
 
 Disallowed dispositions:
@@ -66,7 +65,7 @@ Disallowed dispositions:
 Closeout must record:
 
 - what `v0.91.7` completed
-- what `v0.91.7` deferred or blocked
+- what `v0.91.7` explicitly non-claimed or blocked with evidence
 - what `#3780` may consume for `v0.92`
 - which validations ran locally
 - which CI checks were relied on after PR publication

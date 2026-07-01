@@ -36,4 +36,4 @@ Capture significant second-tranche bridge decisions and open questions.
 ## Exit Criteria
 
 - Milestone-critical decisions are logged with rationale.
-- Open questions are closed, blocked, deferred, or routed before activation.
+- Open questions are resolved, explicitly non-claimed with operator approval, or blocked with evidence and operator approval before activation.

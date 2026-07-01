@@ -19,11 +19,11 @@ Opened WP issues:
 - WP-01: `#4628`
 - WP-02 through WP-23: `#4629` through `#4650`
 
-Existing routed v0.91.7 issues:
+Existing assigned v0.91.7 issues:
 
 - `#4603` routes into WP-06.
 - `#4617` routes into WP-04.
-- `#4622` implements the WP-02 release-tail PR inventory command.
+- `#4622` delivered the WP-02 release-tail PR inventory command and is closed.
 
 Non-WP v0.91.7 issues:
 
@@ -46,7 +46,7 @@ remediation truth.
 ## Sprint Goals
 
 - Promote a complete v0.91.7 planning package from the refreshed source capture.
-- Finish or route v0.91.6 closeout truth and ADR release-tail decisions before v0.92 depends on them.
+- Finish v0.91.6 closeout truth and ADR release-tail decisions before v0.92 depends on them, or explicitly block v0.92 with evidence and operator approval.
 - Make sprint execution predictable through SEP, VPP, PVF, templates, goals, watchers, and closeout discipline.
 - Reduce validation/build/cognitive-resource bottlenecks enough for v0.92 to run quickly.
 - Fire up and soak the runtime integration path before birthday activation.
@@ -76,7 +76,7 @@ remediation truth.
 - Each issue should record estimated and actual time/token/resource cost in its SOR when template/tool support exists; `#4431` is the forward-capture gate and `#4441` is v0.91.6-only backfill.
 - Sprint watchers should track issue/PR/check status so completed issues close promptly and failed lanes are routed quickly.
 - Planning docs alone never prove runtime readiness.
-- Each surface exits as complete, blocked, deferred, or routed.
+- Product, runtime, release-gating, and C-SDLC control-plane surfaces exit as integrated/proven, already closed with evidence, or explicitly blocked with evidence and operator approval. Scheduling ownership is not completion truth.
 - `v0.92` remains blocked until bridge truth is reviewed.
 
 ## Risks / Dependencies
@@ -84,7 +84,7 @@ remediation truth.
 - Dependency: v0.91.6 release-tail and open closeout issues must not remain ambiguous.
 - Dependency: template/version, session-ledger, validation-manager, VPP generation, and goal/time-token changes must either land or leave explicit blockers/follow-ons before v0.92 execution depends on them.
 - Risk: the milestone becomes too broad.
-  - Mitigation: every source item is either implemented, explicitly routed, blocked, or deferred; no narrative-only expansion.
+  - Mitigation: every source item is implemented/proven, already closed with evidence, explicitly non-claimed with operator approval, or blocked with evidence and operator approval; no narrative-only expansion.
 - Risk: runtime proof arrives too late.
   - Mitigation: start runtime Soak #2 immediately after process/build/scheduler prerequisites are stable and use `RUNTIME_SOAK_2_EXECUTION_PACKET_v0.91.7.md` as the pre-run gate packet instead of rediscovering scope from chat.
 - Risk: remote builds stay aspirational and keep blocking PR/release flow.
@@ -100,7 +100,7 @@ Required review should inspect:
 - source-capture completeness;
 - v0.91.6 closeout truth;
 - whether every open issue/carryover has a disposition;
-- whether v0.91.6 `#4388`-`#4398`, `#4405`, `#4412`-`#4413`, `#4417`-`#4421` plus `#4425`, `#4431`, `#4441`, `#4433`-`#4438`, and `#4442`-`#4443` work is complete, blocked, deferred, or routed before sprint execution depends on it;
+- whether v0.91.6 `#4388`-`#4398`, `#4405`, `#4412`-`#4413`, `#4417`-`#4421` plus `#4425`, `#4431`, `#4441`, `#4433`-`#4438`, and `#4442`-`#4443` work is integrated/proven, already closed with evidence, explicitly non-claimed with operator approval, or blocked with evidence and operator approval before sprint execution depends on it;
 - whether runtime Soak #2 and Observatory proof are concrete enough for v0.92;
 - whether security/protocol residuals remain activation-path work;
 - whether launch/birthday docs avoid unsupported product, affect, wellbeing, or runtime claims.
@@ -109,7 +109,7 @@ Required review should inspect:
 ## Closeout Bar
 
 - All planned docs exist and are source-backed.
-- Every source-capture row is complete, blocked, deferred, or routed.
-- Review findings are fixed or routed.
+- Every source-capture row is integrated/proven, already closed with evidence, explicitly non-claimed with operator approval, or blocked with evidence and operator approval.
+- Review findings are fixed or recorded as evidence-backed residual risks with operator approval.
 - `#3780` handoff truth is explicit in `V092_HANDOFF_v0.91.7.md`.
-- Closeout-tail WPs are complete, blocked, deferred, or routed in canonical order before release ceremony.
+- Closeout-tail WPs are complete in canonical order before release ceremony; any residual blocker needs evidence and operator approval before the milestone can close.
