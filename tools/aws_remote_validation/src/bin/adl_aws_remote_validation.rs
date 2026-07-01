@@ -69,7 +69,7 @@ impl Drop for EnvVarGuard {
 }
 
 fn usage() -> &'static str {
-    "adl-aws-remote-validation run --issue <number> --command <shell-command> --ami-id <ami> --subnet-id <subnet> --security-group-id <sg> --instance-profile-name <name> --out <summary.json> [--artifact-dir <dir>] [--instance-type <type> ...] [--budget-name <name>] [--expected-max-cost-usd <usd>] [--repo-url <url>] [--git-ref <ref>] [--cache-bucket <bucket>] [--cache-prefix <prefix>] [--sccache-tarball-url <url>] [--nextest-tarball-url <url>] [--ssh-key-name <name>] [--ssh-private-key-path <path>] [--ssh-user <user>] [--ssh-allowed-cidr <cidr>] [--command-timeout-seconds <seconds>] [--region <region>] [--profile <profile>] [--json]"
+    "adl-aws-remote-validation run --issue <number> --command <shell-command> --ami-id <ami> --subnet-id <subnet> --security-group-id <sg> --instance-profile-name <name> --out <summary.json> [--artifact-dir <dir>] [--instance-type <type> ...] [--budget-name <name>] [--expected-max-cost-usd <usd>] [--repo-url <url>] [--git-ref <ref>] [--cache-bucket <bucket>] [--cache-prefix <prefix>] [--sccache-tarball-url <url>] [--nextest-tarball-url <url>] [--ssh-key-name <name>] [--ssh-private-key-path <path>] [--ssh-user <user>] [--ssh-allowed-cidr <cidr>] [--cache-volume-name <name>] [--cache-volume-size-gib <gib>] [--cache-volume-type <type>] [--cache-volume-iops <iops>] [--cache-volume-throughput-mbps <mbps>] [--cache-volume-device-name <device>] [--cache-volume-mount-path <path>] [--command-timeout-seconds <seconds>] [--region <region>] [--profile <profile>] [--json]"
 }
 
 fn local_git_stdout(args: &[&str]) -> Option<String> {
@@ -154,6 +154,22 @@ fn parse_args(args: &[String]) -> Result<ParsedArgs> {
         .map(PathBuf::from);
     let mut ssh_user = env::var("ADL_AWS_REMOTE_VALIDATION_SSH_USER").ok();
     let mut ssh_allowed_cidr = env::var("ADL_AWS_REMOTE_VALIDATION_SSH_ALLOWED_CIDR").ok();
+    let mut cache_volume_name = env::var("ADL_AWS_REMOTE_VALIDATION_CACHE_VOLUME_NAME").ok();
+    let mut cache_volume_size_gib = env::var("ADL_AWS_REMOTE_VALIDATION_CACHE_VOLUME_SIZE_GIB")
+        .ok()
+        .and_then(|value| value.parse::<i32>().ok());
+    let mut cache_volume_type = env::var("ADL_AWS_REMOTE_VALIDATION_CACHE_VOLUME_TYPE").ok();
+    let mut cache_volume_iops = env::var("ADL_AWS_REMOTE_VALIDATION_CACHE_VOLUME_IOPS")
+        .ok()
+        .and_then(|value| value.parse::<i32>().ok());
+    let mut cache_volume_throughput_mbps =
+        env::var("ADL_AWS_REMOTE_VALIDATION_CACHE_VOLUME_THROUGHPUT_MBPS")
+            .ok()
+            .and_then(|value| value.parse::<i32>().ok());
+    let mut cache_volume_device_name =
+        env::var("ADL_AWS_REMOTE_VALIDATION_CACHE_VOLUME_DEVICE_NAME").ok();
+    let mut cache_volume_mount_path =
+        env::var("ADL_AWS_REMOTE_VALIDATION_CACHE_VOLUME_MOUNT_PATH").ok();
     let mut command = None;
     let mut out_path = None;
     let mut artifact_dir = None;
@@ -277,6 +293,65 @@ fn parse_args(args: &[String]) -> Result<ParsedArgs> {
                 ssh_allowed_cidr = Some(
                     args.get(i)
                         .ok_or_else(|| anyhow!("--ssh-allowed-cidr requires a value"))?
+                        .to_string(),
+                );
+            }
+            "--cache-volume-name" => {
+                i += 1;
+                cache_volume_name = Some(
+                    args.get(i)
+                        .ok_or_else(|| anyhow!("--cache-volume-name requires a value"))?
+                        .to_string(),
+                );
+            }
+            "--cache-volume-size-gib" => {
+                i += 1;
+                cache_volume_size_gib = Some(
+                    args.get(i)
+                        .ok_or_else(|| anyhow!("--cache-volume-size-gib requires a value"))?
+                        .parse::<i32>()
+                        .map_err(|_| anyhow!("invalid --cache-volume-size-gib"))?,
+                );
+            }
+            "--cache-volume-type" => {
+                i += 1;
+                cache_volume_type = Some(
+                    args.get(i)
+                        .ok_or_else(|| anyhow!("--cache-volume-type requires a value"))?
+                        .to_string(),
+                );
+            }
+            "--cache-volume-iops" => {
+                i += 1;
+                cache_volume_iops = Some(
+                    args.get(i)
+                        .ok_or_else(|| anyhow!("--cache-volume-iops requires a value"))?
+                        .parse::<i32>()
+                        .map_err(|_| anyhow!("invalid --cache-volume-iops"))?,
+                );
+            }
+            "--cache-volume-throughput-mbps" => {
+                i += 1;
+                cache_volume_throughput_mbps = Some(
+                    args.get(i)
+                        .ok_or_else(|| anyhow!("--cache-volume-throughput-mbps requires a value"))?
+                        .parse::<i32>()
+                        .map_err(|_| anyhow!("invalid --cache-volume-throughput-mbps"))?,
+                );
+            }
+            "--cache-volume-device-name" => {
+                i += 1;
+                cache_volume_device_name = Some(
+                    args.get(i)
+                        .ok_or_else(|| anyhow!("--cache-volume-device-name requires a value"))?
+                        .to_string(),
+                );
+            }
+            "--cache-volume-mount-path" => {
+                i += 1;
+                cache_volume_mount_path = Some(
+                    args.get(i)
+                        .ok_or_else(|| anyhow!("--cache-volume-mount-path requires a value"))?
                         .to_string(),
                 );
             }
@@ -415,6 +490,13 @@ fn parse_args(args: &[String]) -> Result<ParsedArgs> {
             ssh_private_key_path,
             ssh_user,
             ssh_allowed_cidr,
+            cache_volume_name,
+            cache_volume_size_gib,
+            cache_volume_type,
+            cache_volume_iops,
+            cache_volume_throughput_mbps,
+            cache_volume_device_name,
+            cache_volume_mount_path,
             command: command.ok_or_else(|| anyhow!("--command is required"))?,
             out_path,
             artifact_dir,
