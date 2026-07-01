@@ -315,6 +315,40 @@ pub struct AwsRemoteValidationSummary {
     pub failure_reason: Option<String>,
 }
 
+fn is_valid_spot_interruption_notice(notice: Option<&str>) -> bool {
+    let Some(notice) = notice.map(str::trim).filter(|notice| !notice.is_empty()) else {
+        return false;
+    };
+    if notice.starts_with('<')
+        || notice.contains("<html")
+        || notice.contains("<!DOCTYPE")
+        || notice.contains("404 - Not Found")
+    {
+        return false;
+    }
+    match serde_json::from_str::<serde_json::Value>(notice) {
+        Ok(value) => {
+            let action = value
+                .get("action")
+                .and_then(|value| value.as_str())
+                .map(str::trim)
+                .filter(|value| !value.is_empty());
+            let time = value
+                .get("time")
+                .and_then(|value| value.as_str())
+                .map(str::trim)
+                .filter(|value| !value.is_empty());
+            action.is_some() && time.is_some()
+        }
+        Err(_) => false,
+    }
+}
+
+fn remote_summary_reports_valid_interruption(summary: &RemoteCommandSummary) -> bool {
+    summary.interruption_detected
+        && is_valid_spot_interruption_notice(summary.interruption_notice.as_deref())
+}
+
 #[derive(Debug, Clone, Serialize)]
 pub struct EventRecord {
     pub timestamp: String,
@@ -696,7 +730,7 @@ pub async fn run_aws_remote_validation<A: AwsRemoteValidationAdapter>(
                         .or_else(|| parse_remote_summary(&result.stderr));
                     let interruption_detected = parsed
                         .as_ref()
-                        .map(|summary| summary.interruption_detected)
+                        .map(remote_summary_reports_valid_interruption)
                         .unwrap_or(false);
                     command_record = Some(CommandRecord {
                         command_id: result.command_id.clone(),
@@ -1410,9 +1444,9 @@ watch_spot_notice() {{
   while true; do
     TOKEN="$(curl -sS -X PUT http://169.254.169.254/latest/api/token -H 'X-aws-ec2-metadata-token-ttl-seconds: 60' || true)"
     if [ -n "$TOKEN" ]; then
-      NOTICE="$(curl -sS -H "X-aws-ec2-metadata-token: $TOKEN" http://169.254.169.254/latest/meta-data/spot/instance-action || true)"
+      NOTICE="$(curl -fsS -H "X-aws-ec2-metadata-token: $TOKEN" http://169.254.169.254/latest/meta-data/spot/instance-action || true)"
     else
-      NOTICE="$(curl -sS http://169.254.169.254/latest/meta-data/spot/instance-action || true)"
+      NOTICE="$(curl -fsS http://169.254.169.254/latest/meta-data/spot/instance-action || true)"
     fi
     if [ -n "$NOTICE" ]; then
       printf '%s\n' "$NOTICE" > "$RUN_ROOT/spot-interruption.log"
@@ -3225,7 +3259,7 @@ mod tests {
             "adl-aws-remote-validation-interruption-{}",
             std::process::id()
         ));
-        let stdout = "ADL_AWS_REMOTE_SUMMARY_BEGIN\n{\"status\":\"failed\",\"bootstrap_seconds\":1,\"command_seconds\":2,\"interruption_detected\":true,\"interruption_notice\":\"instance-action\",\"resolved_commit\":\"abc\",\"rustc_version\":null,\"cargo_version\":null,\"sccache_version\":null,\"sccache_degraded\":false,\"sccache_degraded_reason\":null,\"sccache_stats\":null}\nADL_AWS_REMOTE_SUMMARY_END\n";
+        let stdout = "ADL_AWS_REMOTE_SUMMARY_BEGIN\n{\"status\":\"failed\",\"bootstrap_seconds\":1,\"command_seconds\":2,\"interruption_detected\":true,\"interruption_notice\":\"{\\\"action\\\":\\\"terminate\\\",\\\"time\\\":\\\"2026-07-01T20:00:00Z\\\"}\",\"resolved_commit\":\"abc\",\"rustc_version\":null,\"cargo_version\":null,\"sccache_version\":null,\"sccache_degraded\":false,\"sccache_degraded_reason\":null,\"sccache_stats\":null}\nADL_AWS_REMOTE_SUMMARY_END\n";
         let adapter = FakeAdapter {
             quota: QuotaSnapshot {
                 spot_vcpu_quota: Some(32.0),
@@ -3282,6 +3316,7 @@ mod tests {
         assert!(script.contains("os.environ[\"COMMAND_EXIT\"]"));
         assert!(script.contains("export ADL_RUN_ROOT=\"$RUN_ROOT\""));
         assert!(!script.contains("int(\"${COMMAND_EXIT}\")"));
+        assert!(script.contains("curl -fsS"));
     }
 
     #[test]
@@ -3366,6 +3401,56 @@ mod tests {
         assert!(events
             .iter()
             .any(|event| event.stage == "remote_command" && event.status == "failed"));
+    }
+
+    #[tokio::test]
+    async fn remote_validation_ignores_html_spot_notice_false_positives() {
+        let tmp = std::env::temp_dir().join(format!(
+            "adl-aws-remote-validation-html-notice-{}",
+            std::process::id()
+        ));
+        let stdout = "ADL_AWS_REMOTE_SUMMARY_BEGIN\n{\"status\":\"passed\",\"bootstrap_seconds\":1,\"command_seconds\":2,\"interruption_detected\":true,\"interruption_notice\":\"<?xml version=\\\"1.0\\\"?><html><title>404 - Not Found</title></html>\",\"resolved_commit\":\"abc\",\"rustc_version\":null,\"cargo_version\":null,\"sccache_version\":null,\"sccache_degraded\":false,\"sccache_degraded_reason\":null,\"sccache_stats\":null}\nADL_AWS_REMOTE_SUMMARY_END\n";
+        let adapter = FakeAdapter {
+            quota: QuotaSnapshot {
+                spot_vcpu_quota: Some(32.0),
+                on_demand_vcpu_quota: Some(64.0),
+                notes: vec![],
+            },
+            identity: AwsAccountIdentity {
+                account_id: Some("123456789012".to_string()),
+                account_id_sha256: Some("hash".to_string()),
+                arn: None,
+                user_id: None,
+            },
+            launch_results: Mutex::new(VecDeque::from(vec![Ok(LaunchResult {
+                instance_id: "i-html-false-positive".to_string(),
+                initial_state: "pending".to_string(),
+            })])),
+            ssm_ready: Ok(SsmReadyResult {
+                status: "Online".to_string(),
+            }),
+            command_result: Ok(CommandExecutionResult {
+                command_id: "cmd-html".to_string(),
+                status: "Success".to_string(),
+                response_code: Some(0),
+                stdout: stdout.to_string(),
+                stderr: String::new(),
+            }),
+            terminate_result: Ok(()),
+            final_state: Ok(Some("terminated".to_string())),
+            cost: None,
+            budget: None,
+        };
+
+        let (summary, events) = run_aws_remote_validation(&adapter, &sample_config(&tmp))
+            .await
+            .expect("summary");
+
+        assert_eq!(summary.status, RemoteRunStatus::Passed);
+        assert!(summary.failure_reason.is_none());
+        assert!(events
+            .iter()
+            .any(|event| event.stage == "remote_command" && event.status == "ok"));
     }
 
     #[test]
