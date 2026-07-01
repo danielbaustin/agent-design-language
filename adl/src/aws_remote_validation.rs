@@ -18,7 +18,6 @@ use std::fs::OpenOptions;
 use std::io::Write;
 use std::path::{Path, PathBuf};
 use std::process::Command as StdCommand;
-use std::process::Stdio;
 use std::sync::Mutex;
 use std::time::{Duration, Instant};
 use tokio::fs;
@@ -1543,27 +1542,24 @@ impl LiveAwsRemoteValidationAdapter {
             .parent()
             .unwrap_or_else(|| Path::new("."))
             .join("remote-tail.log");
-        let tail_log = std::fs::OpenOptions::new()
-            .create(true)
-            .append(true)
-            .open(&tail_log_path)?;
-        let tail_err = tail_log.try_clone()?;
         let remote_command = format!(
             "bash -lc 'sudo mkdir -p {rr}; sudo touch {rr}/progress.log {rr}/command.log {rr}/command.err; sudo tail -n +1 -F {rr}/progress.log {rr}/command.log {rr}/command.err'",
             rr = shell_single_quote(run_root)
         );
-        let mut command = TokioCommand::new("ssh");
-        command
-            .arg("-o")
-            .arg("StrictHostKeyChecking=no")
-            .arg("-o")
-            .arg("UserKnownHostsFile=/dev/null")
-            .arg("-i")
-            .arg(&ssh_debug.private_key_path)
-            .arg(format!("{}@{}", ssh_debug.user, public_ip))
-            .arg(remote_command)
-            .stdout(Stdio::from(tail_log))
-            .stderr(Stdio::from(tail_err));
+        let ssh_invocation = format!(
+            "ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -i {key} {user}@{host} {remote}",
+            key = shell_single_quote(&ssh_debug.private_key_path.display().to_string()),
+            user = shell_single_quote(&ssh_debug.user),
+            host = shell_single_quote(&public_ip),
+            remote = shell_single_quote(&remote_command),
+        );
+        let tee_command = format!(
+            "{ssh} 2>&1 | tee -a {tail_log} >&2",
+            ssh = ssh_invocation,
+            tail_log = shell_single_quote(&tail_log_path.display().to_string()),
+        );
+        let mut command = TokioCommand::new("bash");
+        command.arg("-lc").arg(tee_command);
         let child = command.spawn()?;
         append_command_status_line(
             "ssh_tail_started",
