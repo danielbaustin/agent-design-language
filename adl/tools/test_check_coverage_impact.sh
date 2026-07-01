@@ -86,6 +86,16 @@ mixed_pr_cmd_helper_filters="$TMP/mixed-pr-cmd-helper-filters.txt"
 bash "$SCRIPT" --changed-files "$mixed_pr_cmd_helper_changed" --print-risk-filters >"$mixed_pr_cmd_helper_filters"
 grep -Fx "pr_cmd" "$mixed_pr_cmd_helper_filters" >/dev/null
 
+shepherd_bin_changed="$TMP/shepherd-bin-changed.txt"
+printf 'A\tadl/src/bin/adl_pr_shepherd.rs\n' >"$shepherd_bin_changed"
+shepherd_bin_filters="$TMP/shepherd-bin-filters.txt"
+bash "$SCRIPT" --changed-files "$shepherd_bin_changed" --print-risk-filters >"$shepherd_bin_filters"
+grep -Fx "pr_shepherd" "$shepherd_bin_filters" >/dev/null
+
+shepherd_bin_expression="$(bash "$SCRIPT" --changed-files "$shepherd_bin_changed" --print-risk-nextest-expression)"
+grep -F "binary_id(adl::bin/adl-pr-shepherd) and test(/^cli::pr_cmd::/)" <<<"$shepherd_bin_expression" >/dev/null
+grep -F "binary_id(adl::bin/adl-pr-shepherd) and test(/^tests::adl_pr_shepherd_/)" <<<"$shepherd_bin_expression" >/dev/null
+
 split_runtime_changed="$TMP/split-runtime-changed.txt"
 printf 'A\tadl/src/runtime_v2/cultivating_intelligence_parts/builder.rs\n' >"$split_runtime_changed"
 split_runtime_filters="$TMP/split-runtime-filters.txt"
@@ -187,7 +197,15 @@ if bash "$SCRIPT" --changed-files "$mixed_pr_cmd_helper_changed" --require-summa
   exit 1
 fi
 grep -F "candidate filter: pr_cmd" /tmp/coverage-impact-mixed-helper-missing.out >/dev/null
+grep -F "binary_id(adl::bin/adl-pr-shepherd) and test(/^cli::pr_cmd::/)" /tmp/coverage-impact-mixed-helper-missing.out >/dev/null
 grep -F "github.rs is a mixed-purpose pr_cmd helper surface" /tmp/coverage-impact-mixed-helper-missing.out >/dev/null
+
+if bash "$SCRIPT" --changed-files "$shepherd_bin_changed" --require-summary-for-risk >/tmp/coverage-impact-shepherd-bin-missing.out 2>&1; then
+  echo "expected shepherd binary guidance to fail without summary" >&2
+  exit 1
+fi
+grep -F "candidate filter: pr_shepherd" /tmp/coverage-impact-shepherd-bin-missing.out >/dev/null
+grep -F "generate focused summary: cd adl && CARGO_INCREMENTAL=0 cargo llvm-cov nextest --workspace --status-level all --final-status-level slow --no-report -E '(binary_id(adl::bin/adl-pr-shepherd) and test(/^cli::pr_cmd::/)) or (binary_id(adl::bin/adl-pr-shepherd) and test(/^tests::adl_pr_shepherd_/))' && cargo llvm-cov report --json --summary-only --output-path target/coverage-impact-summary.json" /tmp/coverage-impact-shepherd-bin-missing.out >/dev/null
 
 branch_diff_changed="$TMP/branch-diff-changed.txt"
 printf 'A\tadl/src/runtime_v2/branch_mode_surface.rs\n' >"$branch_diff_changed"
