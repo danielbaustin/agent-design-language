@@ -1232,6 +1232,8 @@ fn build_remote_command_script(config: &AwsRemoteValidationConfig) -> String {
     let cache_volume_enabled_flag = if cache_volume_enabled { "1" } else { "0" };
     format!(
         r#"set -euo pipefail
+PROGRESS_ROOT="/tmp/adl-aws-remote-validation-bootstrap/{run_id}"
+mkdir -p "$PROGRESS_ROOT"
 BOOTSTRAP_START="$(date +%s)"
 CURRENT_STAGE="bootstrap"
 
@@ -1254,8 +1256,11 @@ emit_debug_log() {{
 log_progress() {{
   local message="$1"
   local timestamp
+  local log_root
   timestamp="$(date -u +%Y-%m-%dT%H:%M:%SZ)"
-  printf '%s %s\n' "$timestamp" "$message" | tee -a "$RUN_ROOT/progress.log" >&2
+  log_root="${{RUN_ROOT:-$PROGRESS_ROOT}}"
+  mkdir -p "$log_root"
+  printf '%s %s\n' "$timestamp" "$message" | tee -a "$log_root/progress.log" >&2
 }}
 
 on_error() {{
