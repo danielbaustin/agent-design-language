@@ -1522,7 +1522,7 @@ impl LiveAwsRemoteValidationAdapter {
             .open(&tail_log_path)?;
         let tail_err = tail_log.try_clone()?;
         let remote_command = format!(
-            "bash -lc 'mkdir -p {rr}; touch {rr}/progress.log; touch {rr}/command.log; touch {rr}/command.err; tail -n +1 -F {rr}/progress.log {rr}/command.log {rr}/command.err'",
+            "bash -lc 'sudo mkdir -p {rr}; sudo touch {rr}/progress.log {rr}/command.log {rr}/command.err; sudo tail -n +1 -F {rr}/progress.log {rr}/command.log {rr}/command.err'",
             rr = shell_single_quote(run_root)
         );
         let mut command = TokioCommand::new("ssh");
