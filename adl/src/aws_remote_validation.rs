@@ -1824,14 +1824,31 @@ impl AwsRemoteValidationAdapter for LiveAwsRemoteValidationAdapter {
         );
         let start = Instant::now();
         loop {
-            let invocation = self
+            let invocation = match self
                 .ssm
                 .get_command_invocation()
                 .command_id(&command_id)
                 .instance_id(instance_id)
                 .send()
                 .await
-                .map_err(classify_ssm_error)?;
+            {
+                Ok(invocation) => invocation,
+                Err(err) => {
+                    let detail = err.to_string();
+                    let propagation_window = start.elapsed() < Duration::from_secs(90);
+                    if propagation_window {
+                        append_command_status_line(
+                            "command_poll_retry",
+                            format!(
+                                "instance_id={instance_id} command_id={command_id} detail={detail}"
+                            ),
+                        );
+                        sleep(poll_interval).await;
+                        continue;
+                    }
+                    return Err(classify_ssm_error(err));
+                }
+            };
             let status = invocation
                 .status_details()
                 .or_else(|| invocation.status().map(|value| value.as_str()))
