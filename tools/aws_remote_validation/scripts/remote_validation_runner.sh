@@ -155,6 +155,13 @@ ensure_aws_cli() {
     || sudo yum install -y awscli >/tmp/adl-awscli-install.log 2>&1
 }
 
+install_package_manager_binary() {
+  local package_name
+  package_name="$1"
+  sudo dnf install -y "$package_name" >/tmp/adl-"$package_name"-pkg-install.log 2>&1 \
+    || sudo yum install -y "$package_name" >/tmp/adl-"$package_name"-pkg-install.log 2>&1
+}
+
 archive_installed_binary() {
   local binary_name archive_path package_dir
   binary_name="$1"
@@ -274,7 +281,9 @@ CURRENT_STAGE="ensure_sccache"
 log_progress "stage=ensure_sccache"
 if ! command -v sccache >/dev/null 2>&1; then
   SCCACHE_CACHE_HIT=0
-  if install_binary_from_s3_cache sccache "$CACHE_BUCKET" "$CACHE_PREFIX" >/tmp/adl-sccache-install.log 2>&1 && verify_sccache_binary >>/tmp/adl-sccache-install.log 2>&1; then
+  if install_package_manager_binary sccache >>/tmp/adl-sccache-install.log 2>&1 && verify_sccache_binary >>/tmp/adl-sccache-install.log 2>&1; then
+    SCCACHE_CACHE_HIT=1
+  elif install_binary_from_s3_cache sccache "$CACHE_BUCKET" "$CACHE_PREFIX" >/tmp/adl-sccache-install.log 2>&1 && verify_sccache_binary >>/tmp/adl-sccache-install.log 2>&1; then
     SCCACHE_CACHE_HIT=1
   elif install_binary_from_tarball_url sccache "$SCCACHE_TARBALL_URL" >>/tmp/adl-sccache-install.log 2>&1 && verify_sccache_binary >>/tmp/adl-sccache-install.log 2>&1; then
     SCCACHE_CACHE_HIT=1
@@ -282,8 +291,8 @@ if ! command -v sccache >/dev/null 2>&1; then
     :
   else
     remove_installed_binary sccache
-    cargo install sccache --locked --force >>/tmp/adl-sccache-install.log 2>&1
-    verify_sccache_binary >>/tmp/adl-sccache-install.log 2>&1
+    echo "failed to install prebuilt sccache via S3 cache, tarball URL, or GitHub release" >>/tmp/adl-sccache-install.log
+    exit 1
   fi
   if [ "$SCCACHE_CACHE_HIT" -eq 0 ]; then
     upload_binary_to_s3_cache sccache "$CACHE_BUCKET" "$CACHE_PREFIX" >>/tmp/adl-sccache-install.log 2>&1 || true
@@ -294,15 +303,18 @@ CURRENT_STAGE="ensure_nextest"
 log_progress "stage=ensure_nextest"
 if [ "$NEEDS_NEXTEST" = "1" ] && ! cargo nextest --version >/dev/null 2>&1; then
   NEXTEST_CACHE_HIT=0
-  if install_binary_from_s3_cache cargo-nextest "$CACHE_BUCKET" "$CACHE_PREFIX" >/tmp/adl-nextest-install.log 2>&1 && verify_nextest_binary >>/tmp/adl-nextest-install.log 2>&1; then
+  if install_package_manager_binary cargo-nextest >>/tmp/adl-nextest-install.log 2>&1 && verify_nextest_binary >>/tmp/adl-nextest-install.log 2>&1; then
+    NEXTEST_CACHE_HIT=1
+  elif install_binary_from_s3_cache cargo-nextest "$CACHE_BUCKET" "$CACHE_PREFIX" >/tmp/adl-nextest-install.log 2>&1 && verify_nextest_binary >>/tmp/adl-nextest-install.log 2>&1; then
     NEXTEST_CACHE_HIT=1
   elif install_binary_from_tarball_url cargo-nextest "$NEXTEST_TARBALL_URL" >>/tmp/adl-nextest-install.log 2>&1 && verify_nextest_binary >>/tmp/adl-nextest-install.log 2>&1; then
     NEXTEST_CACHE_HIT=1
   elif install_nextest_release >>/tmp/adl-nextest-install.log 2>&1 && verify_nextest_binary >>/tmp/adl-nextest-install.log 2>&1; then
     :
   else
-    cargo install cargo-nextest --locked >>/tmp/adl-nextest-install.log 2>&1
-    verify_nextest_binary >>/tmp/adl-nextest-install.log 2>&1
+    remove_installed_binary cargo-nextest
+    echo "failed to install prebuilt cargo-nextest via S3 cache, tarball URL, or GitHub release" >>/tmp/adl-nextest-install.log
+    exit 1
   fi
   if [ "$NEXTEST_CACHE_HIT" -eq 0 ]; then
     upload_binary_to_s3_cache cargo-nextest "$CACHE_BUCKET" "$CACHE_PREFIX" >>/tmp/adl-nextest-install.log 2>&1 || true
