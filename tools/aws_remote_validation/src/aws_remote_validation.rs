@@ -1892,6 +1892,7 @@ impl LiveAwsRemoteValidationAdapter {
             } else {
                 (config.security_group_id.clone(), None, false)
             };
+        self.ensure_ssh_debug_ingress(&security_group_id).await?;
         let ssh_allowed_cidr = self
             .ssh_debug
             .as_ref()
@@ -2190,10 +2191,16 @@ impl LiveAwsRemoteValidationAdapter {
             .group_id()
             .map(ToOwned::to_owned)
             .ok_or_else(|| anyhow!("create_security_group did not return a group id"))?;
+        self.ensure_ssh_debug_ingress(&group_id).await?;
+        Ok(group_id)
+    }
+
+    async fn ensure_ssh_debug_ingress(&self, group_id: &str) -> Result<()> {
         if let Some(ssh_debug) = self.ssh_debug.as_ref() {
-            self.ec2
+            match self
+                .ec2
                 .authorize_security_group_ingress()
-                .group_id(&group_id)
+                .group_id(group_id)
                 .ip_permissions(
                     ec2::types::IpPermission::builder()
                         .ip_protocol("tcp")
@@ -2208,9 +2215,18 @@ impl LiveAwsRemoteValidationAdapter {
                         .build(),
                 )
                 .send()
-                .await?;
+                .await
+            {
+                Ok(_) => {}
+                Err(err) => {
+                    let detail = err.to_string();
+                    if !detail.contains("InvalidPermission.Duplicate") {
+                        return Err(err.into());
+                    }
+                }
+            }
         }
-        Ok(group_id)
+        Ok(())
     }
 
     async fn create_instance_profile_with_ssm_role(
