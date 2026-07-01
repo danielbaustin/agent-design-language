@@ -17,9 +17,11 @@ use std::fmt;
 use std::fs::OpenOptions;
 use std::io::Write;
 use std::path::{Path, PathBuf};
+use std::process::Stdio;
 use std::sync::Mutex;
 use std::time::{Duration, Instant};
 use tokio::fs;
+use tokio::process::{Child, Command as TokioCommand};
 use tokio::time::sleep;
 
 const SPOT_QUOTA_NAME: &str = "All Standard (A, C, D, H, I, M, R, T, Z) Spot Instance Requests";
@@ -66,6 +68,10 @@ pub struct AwsRemoteValidationConfig {
     pub cache_prefix: Option<String>,
     pub sccache_tarball_url: Option<String>,
     pub nextest_tarball_url: Option<String>,
+    pub ssh_key_name: Option<String>,
+    pub ssh_private_key_path: Option<PathBuf>,
+    pub ssh_user: Option<String>,
+    pub ssh_allowed_cidr: Option<String>,
     pub command: String,
     pub out_path: PathBuf,
     pub artifact_dir: PathBuf,
@@ -80,6 +86,13 @@ pub struct AwsRemoteValidationConfig {
     pub ssm_ready_timeout_seconds: u64,
     pub command_timeout_seconds: u64,
     pub termination_timeout_seconds: u64,
+}
+
+#[derive(Debug, Clone)]
+struct SshDebugConfig {
+    private_key_path: PathBuf,
+    user: String,
+    allowed_cidr: String,
 }
 
 impl AwsRemoteValidationConfig {
@@ -189,6 +202,8 @@ pub struct LaunchSurfaceRecord {
     pub instance_profile_name: String,
     pub role_name: Option<String>,
     pub instance_profile_created: bool,
+    pub ssh_debug_enabled: bool,
+    pub ssh_allowed_cidr: Option<String>,
     pub notes: Vec<String>,
 }
 
@@ -291,6 +306,7 @@ pub struct LaunchSpec {
     pub subnet_id: String,
     pub security_group_id: String,
     pub instance_profile_name: String,
+    pub ssh_key_name: Option<String>,
 }
 
 #[derive(Debug, Clone, PartialEq, Eq)]
@@ -472,6 +488,7 @@ pub async fn run_aws_remote_validation<A: AwsRemoteValidationAdapter>(
             subnet_id: config.subnet_id.clone(),
             security_group_id: config.security_group_id.clone(),
             instance_profile_name: config.instance_profile_name.clone(),
+            ssh_key_name: config.ssh_key_name.clone(),
         };
         record_event(
             &mut events,
@@ -983,6 +1000,35 @@ fn preview(text: &str) -> String {
     text.lines().take(8).collect::<Vec<_>>().join(" | ")
 }
 
+fn build_ssh_debug_config(config: &AwsRemoteValidationConfig) -> Result<Option<SshDebugConfig>> {
+    let Some(_key_name) = config.ssh_key_name.as_deref() else {
+        return Ok(None);
+    };
+    let private_key_path = config
+        .ssh_private_key_path
+        .clone()
+        .ok_or_else(|| anyhow!("ssh_private_key_path is required when ssh_key_name is set"))?;
+    let user = config
+        .ssh_user
+        .clone()
+        .unwrap_or_else(|| "ec2-user".to_string());
+    let allowed_cidr = match config.ssh_allowed_cidr.clone() {
+        Some(value) => value,
+        None => {
+            let ip = reqwest::blocking::get("https://checkip.amazonaws.com")
+                .context("failed to detect public IP for SSH debug mode")?
+                .text()
+                .context("failed to read public IP response for SSH debug mode")?;
+            format!("{}/32", ip.trim())
+        }
+    };
+    Ok(Some(SshDebugConfig {
+        private_key_path,
+        user,
+        allowed_cidr,
+    }))
+}
+
 fn start_of_month(now: DateTime<Utc>) -> DateTime<Utc> {
     now.with_day(1)
         .and_then(|value| value.with_hour(0))
@@ -1026,6 +1072,13 @@ emit_debug_log() {{
     fi
     echo "ADL_REMOTE_LOG_END:$label" >&2
   fi
+}}
+
+log_progress() {{
+  local message="$1"
+  local timestamp
+  timestamp="$(date -u +%Y-%m-%dT%H:%M:%SZ)"
+  printf '%s %s\n' "$timestamp" "$message" | tee -a "$RUN_ROOT/progress.log" >&2
 }}
 
 on_error() {{
@@ -1172,19 +1225,23 @@ CACHE_PREFIX='{cache_prefix}'
 SCCACHE_TARBALL_URL='{sccache_tarball_url}'
 NEXTEST_TARBALL_URL='{nextest_tarball_url}'
 CURRENT_STAGE="ensure_git"
+log_progress "stage=ensure_git"
 if ! command -v git >/dev/null 2>&1; then
   sudo dnf install -y git >/dev/null 2>&1 || sudo yum install -y git >/dev/null 2>&1 || true
 fi
 CURRENT_STAGE="ensure_curl"
+log_progress "stage=ensure_curl"
 if ! command -v curl >/dev/null 2>&1; then
   sudo dnf install -y curl >/dev/null 2>&1 || sudo yum install -y curl >/dev/null 2>&1 || true
 fi
 CURRENT_STAGE="ensure_build_toolchain"
+log_progress "stage=ensure_build_toolchain"
 if ! command -v cc >/dev/null 2>&1; then
   sudo dnf install -y gcc gcc-c++ make pkgconf-pkg-config openssl-devel >/tmp/adl-build-toolchain.log 2>&1 \
     || sudo yum install -y gcc gcc-c++ make pkgconfig openssl-devel >/tmp/adl-build-toolchain.log 2>&1
 fi
 CURRENT_STAGE="ensure_rustup"
+log_progress "stage=ensure_rustup"
 if ! command -v cargo >/dev/null 2>&1; then
   curl https://sh.rustup.rs -sSf | sh -s -- -y --profile minimal >/tmp/adl-rustup.log 2>&1
 fi
@@ -1200,6 +1257,7 @@ if [ -n "$CACHE_BUCKET" ]; then
   export SCCACHE_S3_KEY_PREFIX="$CACHE_PREFIX/sccache"
 fi
 CURRENT_STAGE="ensure_sccache"
+log_progress "stage=ensure_sccache"
 if ! command -v sccache >/dev/null 2>&1; then
   SCCACHE_CACHE_HIT=0
   if install_binary_from_s3_cache sccache "$CACHE_BUCKET" "$CACHE_PREFIX" >/tmp/adl-sccache-install.log 2>&1; then
@@ -1216,6 +1274,7 @@ if ! command -v sccache >/dev/null 2>&1; then
   fi
 fi
 CURRENT_STAGE="ensure_nextest"
+log_progress "stage=ensure_nextest"
 if [[ "{command}" == *"nextest"* ]] && ! cargo nextest --version >/dev/null 2>&1; then
   NEXTEST_CACHE_HIT=0
   if install_binary_from_s3_cache cargo-nextest "$CACHE_BUCKET" "$CACHE_PREFIX" >/tmp/adl-nextest-install.log 2>&1; then
@@ -1234,12 +1293,15 @@ fi
 export RUSTC_WRAPPER="sccache"
 
 CURRENT_STAGE="clone_repo"
+log_progress "stage=clone_repo"
 if [ ! -d "$REPO_DIR/.git" ]; then
   git clone '{repo_url}' "$REPO_DIR" >/tmp/adl-git-clone.log 2>&1
 fi
 CURRENT_STAGE="fetch_repo"
+log_progress "stage=fetch_repo"
 git -C "$REPO_DIR" fetch --all --tags >/tmp/adl-git-fetch.log 2>&1
 CURRENT_STAGE="checkout_ref"
+log_progress "stage=checkout_ref ref={git_ref}"
 git -C "$REPO_DIR" checkout '{git_ref}' >/tmp/adl-git-checkout.log 2>&1
 RESOLVED_COMMIT="$(git -C "$REPO_DIR" rev-parse HEAD)"
 RUSTC_VERSION="$(rustc --version 2>/dev/null || true)"
@@ -1270,6 +1332,7 @@ WATCH_PID="$!"
 BOOTSTRAP_END="$(date +%s)"
 COMMAND_START="$(date +%s)"
 CURRENT_STAGE="validation_command"
+log_progress "stage=validation_command command={command}"
 set +e
 ( cd "$REPO_DIR" && bash -lc '{command}' ) >"$RUN_ROOT/command.log" 2>"$RUN_ROOT/command.err"
 COMMAND_EXIT="$?"
@@ -1323,6 +1386,13 @@ fn shell_single_quote(value: &str) -> String {
     value.replace('\'', r#"'"'"'"#)
 }
 
+fn extract_run_root(command: &str) -> Option<String> {
+    let marker = "RUN_ROOT=\"";
+    let start = command.find(marker)? + marker.len();
+    let end = command[start..].find('"')? + start;
+    Some(command[start..end].to_string())
+}
+
 fn temp_resource_name(issue: Option<u32>, run_id: &str, prefix: &str, max_len: usize) -> String {
     let normalized = run_id
         .chars()
@@ -1370,12 +1440,13 @@ pub struct LiveAwsRemoteValidationAdapter {
     costs: costexplorer::Client,
     budgets: budgets::Client,
     sts: sts::Client,
+    ssh_debug: Option<SshDebugConfig>,
 }
 
 impl LiveAwsRemoteValidationAdapter {
-    pub async fn new(region: &str, profile: Option<&str>) -> Result<Self> {
+    pub async fn new(config: &AwsRemoteValidationConfig) -> Result<Self> {
         let region_provider =
-            RegionProviderChain::first_try(Some(aws_config::Region::new(region.to_string())));
+            RegionProviderChain::first_try(Some(aws_config::Region::new(config.region.clone())));
         let timeout_config = aws_config::timeout::TimeoutConfig::builder()
             .connect_timeout(Duration::from_secs(10))
             .operation_timeout(Duration::from_secs(60))
@@ -1384,11 +1455,12 @@ impl LiveAwsRemoteValidationAdapter {
         let loader = aws_config::defaults(BehaviorVersion::latest())
             .region(region_provider)
             .timeout_config(timeout_config);
-        let shared_config = if let Some(profile_name) = profile {
+        let shared_config = if let Some(profile_name) = config.profile.as_deref() {
             loader.profile_name(profile_name).load().await
         } else {
             loader.load().await
         };
+        let ssh_debug = build_ssh_debug_config(config)?;
         Ok(Self {
             ec2: ec2::Client::new(&shared_config),
             iam: iam::Client::new(&shared_config),
@@ -1397,7 +1469,77 @@ impl LiveAwsRemoteValidationAdapter {
             costs: costexplorer::Client::new(&shared_config),
             budgets: budgets::Client::new(&shared_config),
             sts: sts::Client::new(&shared_config),
+            ssh_debug,
         })
+    }
+
+    async fn instance_public_ip(&self, instance_id: &str) -> Result<Option<String>> {
+        let resp = self
+            .ec2
+            .describe_instances()
+            .instance_ids(instance_id)
+            .send()
+            .await?;
+        Ok(resp
+            .reservations()
+            .first()
+            .and_then(|reservation| reservation.instances().first())
+            .and_then(|instance| instance.public_ip_address())
+            .map(ToOwned::to_owned))
+    }
+
+    async fn start_ssh_tail(&self, instance_id: &str, run_root: &str) -> Result<Option<Child>> {
+        let Some(ssh_debug) = self.ssh_debug.as_ref() else {
+            return Ok(None);
+        };
+        let Some(public_ip) = self.instance_public_ip(instance_id).await? else {
+            append_command_status_line(
+                "ssh_tail_skip",
+                format!("instance_id={instance_id} reason=no_public_ip"),
+            );
+            return Ok(None);
+        };
+        let Some(status_log_path) = LIVE_COMMAND_STATUS_LOG_PATH
+            .lock()
+            .ok()
+            .and_then(|guard| guard.clone())
+        else {
+            return Ok(None);
+        };
+        let tail_log_path = status_log_path
+            .parent()
+            .unwrap_or_else(|| Path::new("."))
+            .join("remote-tail.log");
+        let tail_log = std::fs::OpenOptions::new()
+            .create(true)
+            .append(true)
+            .open(&tail_log_path)?;
+        let tail_err = tail_log.try_clone()?;
+        let remote_command = format!(
+            "bash -lc 'mkdir -p {rr}; touch {rr}/progress.log; touch {rr}/command.log; touch {rr}/command.err; tail -n +1 -F {rr}/progress.log {rr}/command.log {rr}/command.err'",
+            rr = shell_single_quote(run_root)
+        );
+        let mut command = TokioCommand::new("ssh");
+        command
+            .arg("-o")
+            .arg("StrictHostKeyChecking=no")
+            .arg("-o")
+            .arg("UserKnownHostsFile=/dev/null")
+            .arg("-i")
+            .arg(&ssh_debug.private_key_path)
+            .arg(format!("{}@{}", ssh_debug.user, public_ip))
+            .arg(remote_command)
+            .stdout(Stdio::from(tail_log))
+            .stderr(Stdio::from(tail_err));
+        let child = command.spawn()?;
+        append_command_status_line(
+            "ssh_tail_started",
+            format!(
+                "instance_id={instance_id} public_ip={public_ip} tail_log={}",
+                tail_log_path.display()
+            ),
+        );
+        Ok(Some(child))
     }
 
     pub async fn prepare_launch_surface(
@@ -1426,6 +1568,10 @@ impl LiveAwsRemoteValidationAdapter {
             } else {
                 (config.security_group_id.clone(), None, false)
             };
+        let ssh_allowed_cidr = self
+            .ssh_debug
+            .as_ref()
+            .map(|config| config.allowed_cidr.clone());
 
         let (
             instance_profile_name,
@@ -1482,6 +1628,8 @@ impl LiveAwsRemoteValidationAdapter {
                 instance_profile_name,
                 role_name: created_role_name.clone(),
                 instance_profile_created,
+                ssh_debug_enabled: self.ssh_debug.is_some(),
+                ssh_allowed_cidr,
                 notes,
             },
             created_role_name,
@@ -1718,6 +1866,26 @@ impl LiveAwsRemoteValidationAdapter {
             .group_id()
             .map(ToOwned::to_owned)
             .ok_or_else(|| anyhow!("create_security_group did not return a group id"))?;
+        if let Some(ssh_debug) = self.ssh_debug.as_ref() {
+            self.ec2
+                .authorize_security_group_ingress()
+                .group_id(&group_id)
+                .ip_permissions(
+                    ec2::types::IpPermission::builder()
+                        .ip_protocol("tcp")
+                        .from_port(22)
+                        .to_port(22)
+                        .ip_ranges(
+                            ec2::types::IpRange::builder()
+                                .cidr_ip(&ssh_debug.allowed_cidr)
+                                .description("ADL SSH debug access")
+                                .build(),
+                        )
+                        .build(),
+                )
+                .send()
+                .await?;
+        }
         Ok(group_id)
     }
 
@@ -1907,6 +2075,9 @@ impl AwsRemoteValidationAdapter for LiveAwsRemoteValidationAdapter {
                     )
                     .build(),
             );
+        if let Some(key_name) = spec.ssh_key_name.as_deref() {
+            builder = builder.key_name(key_name);
+        }
         if spec.purchase_option == PurchaseOption::Spot {
             builder = builder.instance_market_options(
                 ec2::types::InstanceMarketOptionsRequest::builder()
@@ -1999,6 +2170,10 @@ impl AwsRemoteValidationAdapter for LiveAwsRemoteValidationAdapter {
         timeout: Duration,
         poll_interval: Duration,
     ) -> std::result::Result<CommandExecutionResult, AwsAdapterError> {
+        let mut ssh_tail_child = match extract_run_root(command) {
+            Some(run_root) => self.start_ssh_tail(instance_id, &run_root).await.ok().flatten(),
+            None => None,
+        };
         let output = self
             .ssm
             .send_command()
@@ -2062,6 +2237,9 @@ impl AwsRemoteValidationAdapter for LiveAwsRemoteValidationAdapter {
                 "Success" | "Cancelled" | "TimedOut" | "Failed" | "Cancelling"
             );
             if terminal {
+                if let Some(child) = ssh_tail_child.as_mut() {
+                    let _ = child.start_kill();
+                }
                 return Ok(CommandExecutionResult {
                     command_id,
                     status,
@@ -2081,6 +2259,9 @@ impl AwsRemoteValidationAdapter for LiveAwsRemoteValidationAdapter {
                 instance_state.as_deref(),
                 Some("shutting-down") | Some("terminated") | Some("stopping") | Some("stopped")
             ) {
+                if let Some(child) = ssh_tail_child.as_mut() {
+                    let _ = child.start_kill();
+                }
                 return Err(AwsAdapterError {
                     code: Some("InstanceUnavailableDuringCommand".to_string()),
                     message: format!(
@@ -2091,6 +2272,9 @@ impl AwsRemoteValidationAdapter for LiveAwsRemoteValidationAdapter {
                 });
             }
             if start.elapsed() >= timeout {
+                if let Some(child) = ssh_tail_child.as_mut() {
+                    let _ = child.start_kill();
+                }
                 return Err(AwsAdapterError {
                     code: Some("CommandTimedOut".to_string()),
                     message: format!(
@@ -2510,6 +2694,10 @@ mod tests {
             cache_prefix: Some("adl/remote-validation/4603".to_string()),
             sccache_tarball_url: None,
             nextest_tarball_url: None,
+            ssh_key_name: None,
+            ssh_private_key_path: None,
+            ssh_user: None,
+            ssh_allowed_cidr: None,
             command:
                 "cargo test --manifest-path adl/Cargo.toml provider_communication -- --nocapture"
                     .to_string(),
