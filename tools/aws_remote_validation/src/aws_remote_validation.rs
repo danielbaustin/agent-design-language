@@ -2820,7 +2820,13 @@ impl AwsRemoteValidationAdapter for LiveAwsRemoteValidationAdapter {
                     .build(),
             );
         }
-        let output = builder.send().await.map_err(classify_run_instances_error)?;
+        let output = builder.send().await.map_err(|err| {
+            let mut classified = classify_run_instances_error(err);
+            if spec.purchase_option == PurchaseOption::Spot && !classified.spot_fallback_permitted {
+                classified.spot_fallback_permitted = true;
+            }
+            classified
+        })?;
         let instance = output.instances().first().ok_or_else(|| AwsAdapterError {
             code: Some("MissingInstance".to_string()),
             message: "run_instances returned no instances".to_string(),
