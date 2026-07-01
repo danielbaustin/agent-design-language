@@ -2219,8 +2219,11 @@ impl LiveAwsRemoteValidationAdapter {
             {
                 Ok(_) => {}
                 Err(err) => {
+                    let code = err.code().unwrap_or_default().to_string();
                     let detail = err.to_string();
-                    if !detail.contains("InvalidPermission.Duplicate") {
+                    if code != "InvalidPermission.Duplicate"
+                        && !detail.contains("InvalidPermission.Duplicate")
+                    {
                         return Err(err.into());
                     }
                 }
