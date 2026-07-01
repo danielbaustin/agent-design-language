@@ -5,18 +5,21 @@ use crate::cli::pr_cmd::finish_support::{
     ensure_finish_validation_profile_is_runnable, ensure_no_staged_issue_bundle_mutations,
     extra_pr_body_looks_like_issue_template, extract_markdown_section,
     finish_declared_paths_for_validation, finish_inputs_fingerprint,
-    issue_bundle_issue_number_from_repo_relative, load_finish_validation_profile,
-    load_finish_validation_profile_for_execution, non_closing_lifecycle_line,
-    normalize_docs_only_sor_text, normalize_sor_emitted_facts_fixture, open_pr_url_nonblocking,
-    open_pr_url_nonblocking_with_timeout, push_finish_branch_with_git, real_pr_finish,
-    reject_local_issue_bundle_paths_in_finish_paths, render_default_finish_validation,
-    resolve_finish_issue_scope_and_slug, restage_finish_output_truth_paths,
-    run_finish_validation_status, select_finish_validation_plan_for_finish, FinishValidationMode,
-    FinishValidationPlan, FinishValidationProfile, FinishValidationProfileEscalation,
-    FinishValidationProfileEscalationReason, FinishValidationProfileRunItem,
-    FinishValidationProfileSurfaceItem, FinishValidationVppRecord, SorFactEmissionContext,
+    finish_ready_only_path_is_allowed, issue_bundle_issue_number_from_repo_relative,
+    load_finish_validation_profile, load_finish_validation_profile_for_execution,
+    non_closing_lifecycle_line, normalize_docs_only_sor_text, normalize_sor_emitted_facts_fixture,
+    open_pr_url_nonblocking, open_pr_url_nonblocking_with_timeout, push_finish_branch_with_git,
+    real_pr_finish, reject_local_issue_bundle_paths_in_finish_paths,
+    render_default_finish_validation, resolve_finish_issue_scope_and_slug,
+    restage_finish_output_truth_paths, run_finish_validation_status,
+    select_finish_validation_plan_for_finish, validate_ready_only_finish_pr_state,
+    FinishValidationMode, FinishValidationPlan, FinishValidationProfile,
+    FinishValidationProfileEscalation, FinishValidationProfileEscalationReason,
+    FinishValidationProfileRunItem, FinishValidationProfileSurfaceItem, FinishValidationVppRecord,
+    SorFactEmissionContext,
 };
 use crate::cli::pr_cmd::git_support::commits_behind_origin_main;
+use crate::cli::pr_cmd::github::{PrValidationCheckReport, PrValidationReport};
 use std::os::unix::fs::PermissionsExt;
 
 #[test]
@@ -25,6 +28,133 @@ fn finish_declared_paths_for_validation_splits_operator_surface() {
         finish_declared_paths_for_validation("docs, adl/src , ,README.md"),
         vec!["docs", "adl/src", "README.md"]
     );
+}
+
+fn ready_only_validation_report(projection_status: &str) -> PrValidationReport {
+    let (disposition, is_draft, failed_checks, pending_checks) = match projection_status {
+        "checks_green_but_draft" => ("success", true, Vec::new(), Vec::new()),
+        "ready_to_merge_or_review" => ("success", false, Vec::new(), Vec::new()),
+        "checks_pending" => (
+            "pending",
+            true,
+            Vec::new(),
+            vec![PrValidationCheckReport {
+                name: "adl-ci".to_string(),
+                status: "IN_PROGRESS".to_string(),
+                conclusion: "UNKNOWN".to_string(),
+                job_run_id: "8801".to_string(),
+            }],
+        ),
+        "checks_failed" => (
+            "failed",
+            false,
+            vec![PrValidationCheckReport {
+                name: "adl-coverage".to_string(),
+                status: "COMPLETED".to_string(),
+                conclusion: "FAILURE".to_string(),
+                job_run_id: "8802".to_string(),
+            }],
+            Vec::new(),
+        ),
+        other => (other, false, Vec::new(), Vec::new()),
+    };
+    PrValidationReport {
+        pr_number: 4705,
+        commit_sha: ready_only_head_sha().to_string(),
+        pr_state: "OPEN".to_string(),
+        is_draft,
+        disposition: disposition.to_string(),
+        projection_status: projection_status.to_string(),
+        checks: Vec::new(),
+        failed_checks,
+        pending_checks,
+    }
+}
+
+fn ready_only_head_sha() -> &'static str {
+    "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+}
+
+#[test]
+fn finish_ready_only_path_is_limited_to_clean_ready_non_merge_calls() {
+    assert!(finish_ready_only_path_is_allowed(true, false, false, true));
+    assert!(!finish_ready_only_path_is_allowed(
+        false, false, false, true
+    ));
+    assert!(!finish_ready_only_path_is_allowed(true, true, false, true));
+    assert!(!finish_ready_only_path_is_allowed(true, false, true, true));
+    assert!(!finish_ready_only_path_is_allowed(
+        true, false, false, false
+    ));
+}
+
+#[test]
+fn ready_only_finish_accepts_green_draft_and_ready_pr_state() {
+    validate_ready_only_finish_pr_state(
+        &ready_only_validation_report("checks_green_but_draft"),
+        "main",
+        "main",
+        ready_only_head_sha(),
+        &[4706],
+        4706,
+        false,
+    )
+    .expect("green draft PR should be promotable without local validation");
+
+    validate_ready_only_finish_pr_state(
+        &ready_only_validation_report("ready_to_merge_or_review"),
+        "main",
+        "main",
+        ready_only_head_sha(),
+        &[4706],
+        4706,
+        false,
+    )
+    .expect("already-ready green PR should stay idempotent");
+}
+
+#[test]
+fn ready_only_finish_fails_closed_for_pending_checks_or_missing_linkage() {
+    let pending = validate_ready_only_finish_pr_state(
+        &ready_only_validation_report("checks_pending"),
+        "main",
+        "main",
+        ready_only_head_sha(),
+        &[4706],
+        4706,
+        false,
+    )
+    .expect_err("pending checks cannot be promoted");
+    assert!(pending.to_string().contains("not green enough"));
+
+    let missing_linkage = validate_ready_only_finish_pr_state(
+        &ready_only_validation_report("checks_green_but_draft"),
+        "main",
+        "main",
+        ready_only_head_sha(),
+        &[],
+        4706,
+        false,
+    )
+    .expect_err("closing issue linkage is required");
+    assert!(missing_linkage
+        .to_string()
+        .contains("does not close issue #4706"));
+}
+
+#[test]
+fn ready_only_finish_fails_closed_when_remote_head_is_stale() {
+    let stale = validate_ready_only_finish_pr_state(
+        &ready_only_validation_report("checks_green_but_draft"),
+        "main",
+        "main",
+        "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+        &[4706],
+        4706,
+        false,
+    )
+    .expect_err("remote PR head must match local HEAD");
+    assert!(stale.to_string().contains("does not match local HEAD"));
 }
 
 #[test]

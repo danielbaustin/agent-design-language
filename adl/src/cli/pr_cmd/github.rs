@@ -793,6 +793,13 @@ pub(super) fn pr_view_base_ref_finish_existing(repo: &str, pr_ref: &str) -> Resu
     pr_base_ref_octocrab(repo, pr_ref)
 }
 
+pub(super) fn pr_closing_issue_numbers_finish_existing(
+    repo: &str,
+    pr_ref: &str,
+) -> Result<Vec<u32>> {
+    pr_closing_issue_numbers_octocrab(repo, pr_ref)
+}
+
 pub(super) fn pr_edit_finish_existing(
     repo: &str,
     pr_ref: &str,
