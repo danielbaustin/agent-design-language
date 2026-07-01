@@ -1542,9 +1542,16 @@ impl LiveAwsRemoteValidationAdapter {
             .parent()
             .unwrap_or_else(|| Path::new("."))
             .join("remote-tail.log");
+        let run_root_escaped = shell_single_quote(run_root);
+        let progress_log_escaped = shell_single_quote(&format!("{run_root}/progress.log"));
+        let command_log_escaped = shell_single_quote(&format!("{run_root}/command.log"));
+        let command_err_escaped = shell_single_quote(&format!("{run_root}/command.err"));
         let remote_command = format!(
-            "mkdir -p {rr}; touch {rr}/progress.log {rr}/command.log {rr}/command.err; tail -n +1 -F {rr}/progress.log {rr}/command.log {rr}/command.err",
-            rr = shell_single_quote(run_root)
+            "mkdir -p {run_root}; touch {progress} {command_log} {command_err}; tail -n +1 -F {progress} {command_log} {command_err}",
+            run_root = run_root_escaped,
+            progress = progress_log_escaped,
+            command_log = command_log_escaped,
+            command_err = command_err_escaped,
         );
         let ssh_invocation = format!(
             "ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -i {key} {user}@{host} {remote}",
