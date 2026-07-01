@@ -187,13 +187,21 @@ archive_installed_binary() {
 }
 
 install_binary_from_tarball_url() {
-  local binary_name tarball_url extract_dir archive_path release_bin
+  local binary_name tarball_url archive_path
   binary_name="$1"
   tarball_url="$2"
   [ -n "$tarball_url" ] || return 1
   archive_path="/tmp/adl-$binary_name-cache.tar.gz"
-  extract_dir="/tmp/adl-$binary_name-cache"
   curl -fsSL "$tarball_url" -o "$archive_path"
+  install_binary_from_archive_path "$binary_name" "$archive_path"
+}
+
+install_binary_from_archive_path() {
+  local binary_name archive_path extract_dir release_bin
+  binary_name="$1"
+  archive_path="$2"
+  [ -f "$archive_path" ] || return 1
+  extract_dir="/tmp/adl-$binary_name-cache"
   rm -rf "$extract_dir"
   mkdir -p "$extract_dir"
   tar -xzf "$archive_path" -C "$extract_dir"
@@ -213,7 +221,7 @@ install_binary_from_s3_cache() {
   tool_prefix="$prefix/tools"
   object_uri="s3://$bucket/$tool_prefix/$binary_name.tar.gz"
   aws s3 cp "$object_uri" "$archive_path" >/tmp/adl-$binary_name-s3-download.log 2>&1 || return 1
-  install_binary_from_tarball_url "$binary_name" "file://$archive_path"
+  install_binary_from_archive_path "$binary_name" "$archive_path"
 }
 
 upload_binary_to_s3_cache() {
