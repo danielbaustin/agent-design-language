@@ -522,11 +522,17 @@ fn main() -> Result<()> {
                 }
                 Err(err) => {
                     heartbeat.failed(&[("result", "failed"), ("detail", &err.to_string())]);
+                    let _cleanup = adapter.cleanup_launch_surface(&prepared).await;
                     return Err(err);
                 }
             };
             summary.launch_surface = Some(prepared.record.clone());
-            write_summary_artifacts(&summary, &events, &attempt_out, &attempt_dir).await?;
+            if let Err(err) =
+                write_summary_artifacts(&summary, &events, &attempt_out, &attempt_dir).await
+            {
+                let _cleanup = adapter.cleanup_launch_surface(&prepared).await;
+                return Err(err);
+            }
             let provider_interruption_confirmed = summary
                 .spot_termination_evidence
                 .as_ref()
