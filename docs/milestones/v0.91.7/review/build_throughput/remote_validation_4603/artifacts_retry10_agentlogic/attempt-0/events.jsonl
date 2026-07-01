@@ -1,0 +1,11 @@
+{"timestamp": "2026-07-01T22:34:52.913512+00:00", "stage": "start", "status": "started", "detail": "issue=Some(4603) region=us-west-2 instance_types=m7a.2xlarge out=docs/milestones/v0.91.7/review/build_throughput/remote_validation_4603/artifacts_retry10_agentlogic/attempt-0/summary.json"}
+{"timestamp": "2026-07-01T22:34:53.109940+00:00", "stage": "identity", "status": "ok", "detail": "caller identity resolved"}
+{"timestamp": "2026-07-01T22:34:53.551356+00:00", "stage": "quota", "status": "ok", "detail": "quota snapshot captured"}
+{"timestamp": "2026-07-01T22:34:53.551478+00:00", "stage": "launch_attempt", "status": "started", "detail": "instance_type=m7a.2xlarge market=spot"}
+{"timestamp": "2026-07-01T22:34:59.633157+00:00", "stage": "launch_attempt", "status": "warn", "detail": "instance_type=m7a.2xlarge market=spot failed: InsufficientInstanceCapacity: We currently do not have sufficient m7a.2xlarge capacity in the Availability Zone you requested (us-west-2a). Our system will be working on provisioning additional capacity. You can currently get m7a.2xlarge capacity by not specifying an Availability Zone in your request or choosing us-west-2b, us-west-2c, us-west-2d."}
+{"timestamp": "2026-07-01T22:34:59.633287+00:00", "stage": "launch_attempt", "status": "started", "detail": "instance_type=m7a.2xlarge market=on_demand"}
+{"timestamp": "2026-07-01T22:35:13.552970+00:00", "stage": "launch_attempt", "status": "ok", "detail": "instance_type=m7a.2xlarge market=on_demand launched"}
+{"timestamp": "2026-07-01T22:35:16.709477+00:00", "stage": "ssm", "status": "ok", "detail": "instance became SSM-ready with status Online"}
+{"timestamp": "2026-07-01T22:44:02.696528+00:00", "stage": "remote_command", "status": "ok", "detail": "remote command completed with Success"}
+{"timestamp": "2026-07-01T22:44:04.053819+00:00", "stage": "cleanup", "status": "started", "detail": "termination requested"}
+{"timestamp": "2026-07-01T22:44:38.431902+00:00", "stage": "cleanup", "status": "ok", "detail": "termination observed state=terminated"}

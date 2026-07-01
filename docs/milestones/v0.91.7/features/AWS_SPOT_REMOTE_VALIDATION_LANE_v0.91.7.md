@@ -122,52 +122,53 @@ Those tests currently prove:
 
 ## Live-Gated Follow-Through
 
-The retained proving run for issue `#4603` completed successfully on
-`2026-07-01` under the Agent Logic AWS account
-(`602077092456`, user `daustin`) and now proves:
+The retained account-bound proving run for issue `#4603` completed successfully
+on `2026-07-01` under `AWS_PROFILE=agent-logic-admin` in the Agent Logic AWS
+account (`713332525889`, user `daniel.austin.admin`) and now proves:
 
 - bounded launch-surface preparation in the approved AWS account with the
-  persistent security group `sg-0015b166dfa135a6a`;
-- Spot launch success on `m7a.2xlarge` with SSM readiness, SSH tail access,
-  remote command dispatch, and clean termination;
-- branch-tip validation of commit
-  `b66d5358fef173f84dd6a6030d3135789e802727`, not `origin/main`;
-- truthful distinction between valid Spot interruption payloads and bogus HTML
-  IMDS 404 bodies;
+  persistent security group `sg-052e1b4273335e5f7`;
+- truthful Spot-capacity fallback to on-demand on `m7a.2xlarge` in
+  `us-west-2a`;
+- SSM readiness, SSH tail access, remote command dispatch, cache-volume attach,
+  and clean termination;
+- remote validation of branch commit
+  `41e7767a393e073b49a73366aaf03fed8163354b`, not `origin/main`;
 - delayed-billing cost evidence capture plus machine-readable cleanup truth.
 
-Retained retry-5 proof artifacts:
+Retained retry-10 account-bound proof artifacts:
 
 - summary JSON:
-  `docs/milestones/v0.91.7/review/build_throughput/remote_validation_4603/live_run_summary_retry5.json`
+  `docs/milestones/v0.91.7/review/build_throughput/remote_validation_4603/live_run_summary_retry10_agentlogic.json`
+- canonical summary alias:
+  `docs/milestones/v0.91.7/review/build_throughput/remote_validation_4603/live_run_summary.json`
 - artifact root:
-  `docs/milestones/v0.91.7/review/build_throughput/remote_validation_4603/artifacts_retry5/attempt-0`
+  `docs/milestones/v0.91.7/review/build_throughput/remote_validation_4603/artifacts_retry10_agentlogic/attempt-0`
 
-Retained retry-5 timing and proof highlights:
+Retained retry-10 timing and proof highlights:
 
-- total lane runtime: `585s`
-- launch time: `1s`
-- SSM readiness: `15s`
-- remote command wall time: `521s`
-- remote bootstrap time inside the host: `224s`
-- focused validation command time inside the host: `274s`
+- total lane runtime: `588s`
+- launch time: `20s`
+- SSM readiness: `3s`
+- remote command wall time: `525s`
+- remote bootstrap time inside the host: `199s`
+- focused validation command time inside the host: `280s`
 - focused ADL proof:
   - `cargo build --manifest-path adl/Cargo.toml --locked --bin adl-pr-doctor`
-    finished in `3m 41s`
+    finished in `3m 46s`
   - `cargo test --manifest-path adl/Cargo.toml --locked --lib provider_communication`
     passed `21` tests with `1492` filtered
 - `sccache` result:
   - compile requests `778`
   - executed `707`
-  - cache hits `398`
-  - cache misses `305`
+  - cache hits `1`
+  - cache misses `702`
   - degraded: `false`
-- delayed Cost Explorer evidence: `0.0880847764 USD` with explicit
-  delayed-billing caveat
+- delayed Cost Explorer evidence: `0 USD` with explicit delayed-billing caveat
 
-This proof still does not claim steady-state best-case performance because the
-host bootstrapped `sccache` from source on first use, which consumed a large
-portion of the `224s` bootstrap window.
+The earlier retained `retry5` and `retry6` review surfaces remain historical
+artifacts, but they were captured in the wrong AWS account and must not be used
+as the account-bound proof for this lane.
 
 ## Non-Goals
 

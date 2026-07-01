@@ -89,14 +89,7 @@
       "Created temporary IAM role and instance profile with AmazonSSMManagedInstanceCore"
     ]
   },
-  "launch_surface_cleanup": {
-    "security_group_deleted": null,
-    "instance_profile_deleted": true,
-    "role_deleted": true,
-    "notes": [
-      "Removed role 'ADLAwsRemoteValidationRole-4603-adl-aws-remote-20260701223440' from instance profile 'ADLAwsRemoteValidationProfile-4603-adl-aws-remote-20260701223440'"
-    ]
-  },
+  "launch_surface_cleanup": null,
   "spot_termination_evidence": null,
   "timings": {
     "total_seconds": 588,
