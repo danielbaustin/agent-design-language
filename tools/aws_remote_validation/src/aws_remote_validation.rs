@@ -2937,7 +2937,13 @@ impl AwsRemoteValidationAdapter for LiveAwsRemoteValidationAdapter {
             .send_command()
             .document_name("AWS-RunShellScript")
             .instance_ids(instance_id)
-            .parameters("commands", vec![command.to_string()])
+            .parameters(
+                "commands",
+                command
+                    .lines()
+                    .map(|line| line.to_string())
+                    .collect::<Vec<_>>(),
+            )
             .send()
             .await
             .map_err(classify_ssm_error)?;
