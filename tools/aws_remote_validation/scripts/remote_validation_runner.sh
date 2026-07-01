@@ -13,6 +13,7 @@ TARGET_DIR="$WORK_ROOT/target"
 SCCACHE_DIR="$WORK_ROOT/sccache"
 CARGO_HOME_DIR="${HOME:-/root}/.cargo"
 RUSTUP_HOME_DIR="${HOME:-/root}/.rustup"
+CARGO_BIN_DIR=""
 
 if [ "${ADL_CACHE_VOLUME_ENABLED:-0}" = "1" ]; then
   CACHE_VOLUME_DEVICE_NAME="${ADL_CACHE_VOLUME_DEVICE_NAME:?ADL_CACHE_VOLUME_DEVICE_NAME is required}"
@@ -59,6 +60,8 @@ if [ "${ADL_CACHE_VOLUME_ENABLED:-0}" = "1" ]; then
 fi
 
 mkdir -p "$RUN_ROOT" "$PROGRESS_ROOT" "$WORK_ROOT" "$TARGET_DIR" "$SCCACHE_DIR" "$CARGO_HOME_DIR" "$RUSTUP_HOME_DIR"
+CARGO_BIN_DIR="$CARGO_HOME_DIR/bin"
+mkdir -p "$CARGO_BIN_DIR"
 
 BOOTSTRAP_START="$(date +%s)"
 CURRENT_STAGE="bootstrap"
@@ -143,7 +146,7 @@ for asset in data.get("assets", []):
   tar -xzf "$archive_path" -C "$extract_dir"
   release_bin="$(find "$extract_dir" -type f -name "$binary_name" | head -n 1)"
   [ -n "$release_bin" ] || return 1
-  install -m 0755 "$release_bin" "$HOME/.cargo/bin/$binary_name"
+  install -m 0755 "$release_bin" "$CARGO_BIN_DIR/$binary_name"
 }
 
 install_sccache_release() {
@@ -179,7 +182,7 @@ archive_installed_binary() {
   package_dir="/tmp/adl-$binary_name-package"
   rm -rf "$package_dir"
   mkdir -p "$package_dir"
-  cp "$HOME/.cargo/bin/$binary_name" "$package_dir/$binary_name"
+  cp "$CARGO_BIN_DIR/$binary_name" "$package_dir/$binary_name"
   tar -czf "$archive_path" -C "$package_dir" "$binary_name"
 }
 
@@ -196,7 +199,7 @@ install_binary_from_tarball_url() {
   tar -xzf "$archive_path" -C "$extract_dir"
   release_bin="$(find "$extract_dir" -type f -name "$binary_name" | head -n 1)"
   [ -n "$release_bin" ] || return 1
-  install -m 0755 "$release_bin" "$HOME/.cargo/bin/$binary_name"
+  install -m 0755 "$release_bin" "$CARGO_BIN_DIR/$binary_name"
 }
 
 install_binary_from_s3_cache() {
@@ -237,7 +240,7 @@ verify_sccache_binary() {
 remove_installed_binary() {
   local binary_name
   binary_name="$1"
-  rm -f "$HOME/.cargo/bin/$binary_name"
+  rm -f "$CARGO_BIN_DIR/$binary_name"
 }
 
 verify_nextest_binary() {

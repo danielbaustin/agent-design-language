@@ -3396,6 +3396,7 @@ mod tests {
         assert!(tracked_runner.contains("adl-aws-remote-validation/shared"));
         assert!(tracked_runner.contains("CARGO_HOME_DIR=\"$TOOLCHAIN_ROOT/cargo-home\""));
         assert!(tracked_runner.contains("RUSTUP_HOME_DIR=\"$TOOLCHAIN_ROOT/rustup-home\""));
+        assert!(tracked_runner.contains("CARGO_BIN_DIR=\"$CARGO_HOME_DIR/bin\""));
         assert!(!tracked_runner.contains("cargo install"));
         assert!(tracked_runner
             .contains("\"sccache_degraded\": os.environ.get(\"SCCACHE_DEGRADED\") == \"1\""));
