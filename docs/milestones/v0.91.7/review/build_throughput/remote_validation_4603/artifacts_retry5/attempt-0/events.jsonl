@@ -1,0 +1,9 @@
+{"timestamp":"2026-07-01T20:37:17.882927+00:00","stage":"start","status":"started","detail":"issue=Some(4603) region=us-west-2 instance_types=m7a.2xlarge out=docs/milestones/v0.91.7/review/build_throughput/remote_validation_4603/artifacts_retry5/attempt-0/summary.json"}
+{"timestamp":"2026-07-01T20:37:18.161911+00:00","stage":"identity","status":"ok","detail":"caller identity resolved"}
+{"timestamp":"2026-07-01T20:37:18.440637+00:00","stage":"quota","status":"ok","detail":"quota snapshot captured"}
+{"timestamp":"2026-07-01T20:37:18.440915+00:00","stage":"launch_attempt","status":"started","detail":"instance_type=m7a.2xlarge market=spot"}
+{"timestamp":"2026-07-01T20:37:19.871935+00:00","stage":"launch_attempt","status":"ok","detail":"instance_type=m7a.2xlarge market=spot launched"}
+{"timestamp":"2026-07-01T20:37:35.028211+00:00","stage":"ssm","status":"ok","detail":"instance became SSM-ready with status Online"}
+{"timestamp":"2026-07-01T20:46:16.901827+00:00","stage":"remote_command","status":"ok","detail":"remote command completed with Success"}
+{"timestamp":"2026-07-01T20:46:17.363102+00:00","stage":"cleanup","status":"started","detail":"termination requested"}
+{"timestamp":"2026-07-01T20:47:03.026013+00:00","stage":"cleanup","status":"ok","detail":"termination observed state=terminated"}

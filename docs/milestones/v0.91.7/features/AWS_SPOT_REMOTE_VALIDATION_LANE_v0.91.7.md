@@ -122,29 +122,52 @@ Those tests currently prove:
 
 ## Live-Gated Follow-Through
 
-Live attempts retained under
-`docs/milestones/v0.91.7/review/build_throughput/remote_validation_4603/`
-already prove:
+The retained proving run for issue `#4603` completed successfully on
+`2026-07-01` under the Agent Logic AWS account
+(`602077092456`, user `daustin`) and now proves:
 
-- bounded launch-surface preparation in the Agent Logic AWS account;
-- SSM readiness and remote command dispatch on disposable EC2 builders;
-- truthful distinction between a real Spot-capacity reclaim and
-  user-initiated cleanup after command failure;
-- delayed-billing cost evidence capture.
+- bounded launch-surface preparation in the approved AWS account with the
+  persistent security group `sg-0015b166dfa135a6a`;
+- Spot launch success on `m7a.2xlarge` with SSM readiness, SSH tail access,
+  remote command dispatch, and clean termination;
+- branch-tip validation of commit
+  `b66d5358fef173f84dd6a6030d3135789e802727`, not `origin/main`;
+- truthful distinction between valid Spot interruption payloads and bogus HTML
+  IMDS 404 bodies;
+- delayed-billing cost evidence capture plus machine-readable cleanup truth.
 
-This document does not yet claim a successful end-to-end validation of the
-current `#4603` issue worktree, because an earlier live run was validating
-`origin/main` rather than the bound issue branch. The lane now fails fast on
-that condition instead of spending AWS time on the wrong source snapshot.
+Retained retry-5 proof artifacts:
 
-The proving live run for v0.91.7 should:
+- summary JSON:
+  `docs/milestones/v0.91.7/review/build_throughput/remote_validation_4603/live_run_summary_retry5.json`
+- artifact root:
+  `docs/milestones/v0.91.7/review/build_throughput/remote_validation_4603/artifacts_retry5/attempt-0`
 
-- use the Agent Logic AWS account/profile approved for this lane;
-- run from a clean issue worktree whose branch is pushed to `origin`;
-- execute a real focused ADL validation command, not a shell smoke command;
-- retain the generated summary and event log artifacts;
-- confirm cleanup state after termination;
-- record truthful timing and delayed-billing boundaries.
+Retained retry-5 timing and proof highlights:
+
+- total lane runtime: `585s`
+- launch time: `1s`
+- SSM readiness: `15s`
+- remote command wall time: `521s`
+- remote bootstrap time inside the host: `224s`
+- focused validation command time inside the host: `274s`
+- focused ADL proof:
+  - `cargo build --manifest-path adl/Cargo.toml --locked --bin adl-pr-doctor`
+    finished in `3m 41s`
+  - `cargo test --manifest-path adl/Cargo.toml --locked --lib provider_communication`
+    passed `21` tests with `1492` filtered
+- `sccache` result:
+  - compile requests `778`
+  - executed `707`
+  - cache hits `398`
+  - cache misses `305`
+  - degraded: `false`
+- delayed Cost Explorer evidence: `0.0880847764 USD` with explicit
+  delayed-billing caveat
+
+This proof still does not claim steady-state best-case performance because the
+host bootstrapped `sccache` from source on first use, which consumed a large
+portion of the `224s` bootstrap window.
 
 ## Non-Goals
 

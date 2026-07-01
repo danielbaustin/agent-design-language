@@ -1,0 +1,146 @@
+{
+  "schema_version": "adl.aws_remote_validation_run.v1",
+  "issue": 4603,
+  "run_id": "adl-aws-remote-20260701203704",
+  "status": "passed",
+  "region": "us-west-2",
+  "profile": null,
+  "started_at": "2026-07-01T20:37:17.882907+00:00",
+  "finished_at": "2026-07-01T20:47:03.785751+00:00",
+  "account_identity": {
+    "account_id": "602077092456",
+    "account_id_sha256": "666fa8f84b86557f1343830a72f026a14ec6d92421c08c7ab1d70f21bb564e9c",
+    "arn": "arn:aws:iam::602077092456:user/daustin",
+    "user_id": "AIDAIYMSX3B5VVDEQ7G6O"
+  },
+  "quota_snapshot": {
+    "spot_vcpu_quota": null,
+    "on_demand_vcpu_quota": null,
+    "notes": [
+      "spot quota 'All Standard (A, C, D, H, I, M, R, T, Z) Spot Instance Requests' not found",
+      "on-demand quota 'Running On-Demand Standard (A, C, D, H, I, M, R, T, Z) instances' not found"
+    ]
+  },
+  "attempts": [
+    {
+      "instance_type": "m7a.2xlarge",
+      "purchase_option": "spot",
+      "status": "launched",
+      "message": "spot launch succeeded"
+    }
+  ],
+  "launch": {
+    "purchase_option": "spot",
+    "instance_type": "m7a.2xlarge",
+    "instance_id": "i-0a394987457188d6b",
+    "instance_id_sha256": "b19c31dad44e10b21c598a33ada893b12c77dadc0c422138674125849d496fdc",
+    "launched_at": "2026-07-01T20:37:19.871886+00:00",
+    "initial_state": "pending"
+  },
+  "command": {
+    "command_id": "6dc4aeb7-6be3-4799-a088-c4d2add80ec7",
+    "status": "Success",
+    "response_code": 0,
+    "stdout_path": "docs/milestones/v0.91.7/review/build_throughput/remote_validation_4603/artifacts_retry5/attempt-0/command-stdout.log",
+    "stderr_path": "docs/milestones/v0.91.7/review/build_throughput/remote_validation_4603/artifacts_retry5/attempt-0/command-stderr.log",
+    "output_preview": "ADL_AWS_REMOTE_SUMMARY_BEGIN | {\"status\": \"passed\", \"bootstrap_seconds\": 224, \"command_seconds\": 274, \"interruption_detected\": false, \"interruption_notice\": null, \"resolved_commit\": \"b66d5358fef173f84dd6a6030d3135789e802727\", \"rustc_version\": \"rustc 1.96.1 (31fca3adb 2026-06-26)\", \"cargo_version\": \"cargo 1.96.1 (356927216 2026-06-26)\", \"sccache_version\": \"sccache 0.16.0\", \"sccache_degraded\": false, \"sccache_degraded_reason\": null, \"sccache_stats\": {\"raw_excerpt\": [\"Compile requests                     778\", \"Compile requests executed            707\", \"Cache hits                           398\", \"Cache hits (Assembler)               125\", \"Cache hits (C/C++)                   273\", \"Cache misses                         305\", \"Cache misses (Rust)                  305\", \"Cache hits rate                    56.61 %\", \"Cache hits rate (Assembler)       100.00 %\", \"Cache hits rate (C/C++)           100.00 %\", \"Cache hits rate (Rust)              0.00 %\", \"Cache timeouts                         0\", \"Cache read errors                      0\", \"Forced recaches                        0\", \"Cache write errors                     0\", \"Cache errors                           0\"]}} | ADL_AWS_REMOTE_SUMMARY_END |  | running 21 tests | test provider_communication::tests::hosted_identity_is_provider_asserted_without_digest ... ok | test provider_communication::tests::provider_attempt_policy_maps_to_resilience_policy ... ok | test provider_communication::tests::ollama_identity_is_pinned_only_with_digest ... ok",
+    "stderr_preview": "2026-07-01T20:37:52Z stage=ensure_git | 2026-07-01T20:38:15Z stage=ensure_curl | 2026-07-01T20:38:15Z stage=ensure_build_toolchain | 2026-07-01T20:38:21Z stage=ensure_rustup | 2026-07-01T20:38:28Z stage=ensure_sccache | 2026-07-01T20:41:34Z stage=ensure_nextest | 2026-07-01T20:41:34Z stage=clone_repo | 2026-07-01T20:41:36Z stage=fetch_repo"
+  },
+  "cleanup": {
+    "termination_attempted": true,
+    "final_instance_state": "terminated",
+    "termination_error": null
+  },
+  "launch_surface": {
+    "provisioning_mode": "ephemeral_aws_surface",
+    "ami_id": "ami-0b0b27dd5c039480f",
+    "ami_source": "ssm_public_parameter",
+    "vpc_id": "vpc-56c84633",
+    "subnet_id": "subnet-68bbdd0d",
+    "security_group_id": "sg-0015b166dfa135a6a",
+    "security_group_name": null,
+    "security_group_created": false,
+    "instance_profile_name": "ADLAwsRemoteValidationProfile-4603-adl-aws-remote-20260701203704",
+    "role_name": "ADLAwsRemoteValidationRole-4603-adl-aws-remote-20260701203704",
+    "instance_profile_created": true,
+    "ssh_debug_enabled": true,
+    "ssh_allowed_cidr": "47.146.81.109/32",
+    "notes": [
+      "Subnet auto-resolved from default VPC",
+      "AMI id resolved from public Amazon Linux 2023 SSM parameter",
+      "Created temporary IAM role and instance profile with AmazonSSMManagedInstanceCore"
+    ]
+  },
+  "launch_surface_cleanup": {
+    "security_group_deleted": null,
+    "instance_profile_deleted": true,
+    "role_deleted": true,
+    "notes": [
+      "Removed role 'ADLAwsRemoteValidationRole-4603-adl-aws-remote-20260701203704' from instance profile 'ADLAwsRemoteValidationProfile-4603-adl-aws-remote-20260701203704'"
+    ]
+  },
+  "spot_termination_evidence": null,
+  "timings": {
+    "total_seconds": 585,
+    "launch_seconds": 1,
+    "ssm_ready_seconds": 15,
+    "remote_command_seconds": 521,
+    "teardown_seconds": 46
+  },
+  "remote_summary": {
+    "status": "passed",
+    "bootstrap_seconds": 224,
+    "command_seconds": 274,
+    "interruption_detected": false,
+    "interruption_notice": null,
+    "resolved_commit": "b66d5358fef173f84dd6a6030d3135789e802727",
+    "rustc_version": "rustc 1.96.1 (31fca3adb 2026-06-26)",
+    "cargo_version": "cargo 1.96.1 (356927216 2026-06-26)",
+    "sccache_version": "sccache 0.16.0",
+    "sccache_degraded": false,
+    "sccache_degraded_reason": null,
+    "sccache_stats": {
+      "compile_requests": null,
+      "compile_requests_executed": null,
+      "cache_hits": null,
+      "cache_misses": null,
+      "raw_excerpt": [
+        "Compile requests                     778",
+        "Compile requests executed            707",
+        "Cache hits                           398",
+        "Cache hits (Assembler)               125",
+        "Cache hits (C/C++)                   273",
+        "Cache misses                         305",
+        "Cache misses (Rust)                  305",
+        "Cache hits rate                    56.61 %",
+        "Cache hits rate (Assembler)       100.00 %",
+        "Cache hits rate (C/C++)           100.00 %",
+        "Cache hits rate (Rust)              0.00 %",
+        "Cache timeouts                         0",
+        "Cache read errors                      0",
+        "Forced recaches                        0",
+        "Cache write errors                     0",
+        "Cache errors                           0"
+      ]
+    }
+  },
+  "cost_explorer": {
+    "start": "2026-07-01T00:00:00+00:00",
+    "end": "2026-07-02T20:47:03.026259+00:00",
+    "service": "Amazon Elastic Compute Cloud - Compute",
+    "amount": "0.0880847764",
+    "unit": "USD",
+    "delayed_billing_boundary": true,
+    "note": "Cost Explorer reflects account spend on AWS delay; treat this as supporting cost evidence rather than exact per-run billing."
+  },
+  "budget_snapshot": null,
+  "expected_max_cost_usd": null,
+  "artifact_dir": "docs/milestones/v0.91.7/review/build_throughput/remote_validation_4603/artifacts_retry5/attempt-0",
+  "event_log_path": "docs/milestones/v0.91.7/review/build_throughput/remote_validation_4603/artifacts_retry5/attempt-0/events.jsonl",
+  "non_claims": [
+    "This summary does not claim broad CI migration to EC2.",
+    "This summary does not claim Spot savings unless a Spot-backed run retained cost and timing evidence.",
+    "This summary does not claim per-run final AWS billing line items when Cost Explorer data is delayed."
+  ],
+  "failure_reason": null
+}
