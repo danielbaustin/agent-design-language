@@ -1148,7 +1148,14 @@ for asset in data.get("assets", []):
 }}
 
 install_sccache_release() {{
-  install_github_release_binary "mozilla/sccache" "sccache"
+  local target
+  target="$(release_target_triple)" || return 1
+  case "$target" in
+    x86_64-unknown-linux-musl) target="x86_64-unknown-linux-gnu" ;;
+    aarch64-unknown-linux-musl) target="aarch64-unknown-linux-gnu" ;;
+    *) return 1 ;;
+  esac
+  install_github_release_binary "mozilla/sccache" "sccache" "$target"
 }}
 
 ensure_aws_cli() {{
@@ -1214,6 +1221,17 @@ upload_binary_to_s3_cache() {{
   aws s3 cp "$archive_path" "$object_uri"
 }}
 
+verify_sccache_binary() {{
+  command -v sccache >/dev/null 2>&1 || return 1
+  sccache --version >/dev/null 2>&1 || return 1
+  sccache --start-server >/dev/null 2>&1 || return 1
+  sccache --zero-stats >/dev/null 2>&1 || return 1
+}}
+
+verify_nextest_binary() {{
+  cargo nextest --version >/dev/null 2>&1
+}}
+
 install_nextest_release() {{
   local target
   target="$(release_target_triple)" || return 1
@@ -1266,14 +1284,15 @@ CURRENT_STAGE="ensure_sccache"
 log_progress "stage=ensure_sccache"
 if ! command -v sccache >/dev/null 2>&1; then
   SCCACHE_CACHE_HIT=0
-  if install_binary_from_s3_cache sccache "$CACHE_BUCKET" "$CACHE_PREFIX" >/tmp/adl-sccache-install.log 2>&1; then
+  if install_binary_from_s3_cache sccache "$CACHE_BUCKET" "$CACHE_PREFIX" >/tmp/adl-sccache-install.log 2>&1 && verify_sccache_binary >>/tmp/adl-sccache-install.log 2>&1; then
     SCCACHE_CACHE_HIT=1
-  elif install_binary_from_tarball_url sccache "$SCCACHE_TARBALL_URL" >>/tmp/adl-sccache-install.log 2>&1; then
+  elif install_binary_from_tarball_url sccache "$SCCACHE_TARBALL_URL" >>/tmp/adl-sccache-install.log 2>&1 && verify_sccache_binary >>/tmp/adl-sccache-install.log 2>&1; then
     SCCACHE_CACHE_HIT=1
-  elif install_sccache_release >>/tmp/adl-sccache-install.log 2>&1; then
+  elif install_sccache_release >>/tmp/adl-sccache-install.log 2>&1 && verify_sccache_binary >>/tmp/adl-sccache-install.log 2>&1; then
     :
   else
     cargo install sccache --locked >>/tmp/adl-sccache-install.log 2>&1
+    verify_sccache_binary >>/tmp/adl-sccache-install.log 2>&1
   fi
   if [ "$SCCACHE_CACHE_HIT" -eq 0 ]; then
     upload_binary_to_s3_cache sccache "$CACHE_BUCKET" "$CACHE_PREFIX" >>/tmp/adl-sccache-install.log 2>&1 || true
@@ -1283,14 +1302,15 @@ CURRENT_STAGE="ensure_nextest"
 log_progress "stage=ensure_nextest"
 if [[ "{command}" == *"nextest"* ]] && ! cargo nextest --version >/dev/null 2>&1; then
   NEXTEST_CACHE_HIT=0
-  if install_binary_from_s3_cache cargo-nextest "$CACHE_BUCKET" "$CACHE_PREFIX" >/tmp/adl-nextest-install.log 2>&1; then
+  if install_binary_from_s3_cache cargo-nextest "$CACHE_BUCKET" "$CACHE_PREFIX" >/tmp/adl-nextest-install.log 2>&1 && verify_nextest_binary >>/tmp/adl-nextest-install.log 2>&1; then
     NEXTEST_CACHE_HIT=1
-  elif install_binary_from_tarball_url cargo-nextest "$NEXTEST_TARBALL_URL" >>/tmp/adl-nextest-install.log 2>&1; then
+  elif install_binary_from_tarball_url cargo-nextest "$NEXTEST_TARBALL_URL" >>/tmp/adl-nextest-install.log 2>&1 && verify_nextest_binary >>/tmp/adl-nextest-install.log 2>&1; then
     NEXTEST_CACHE_HIT=1
-  elif install_nextest_release >>/tmp/adl-nextest-install.log 2>&1; then
+  elif install_nextest_release >>/tmp/adl-nextest-install.log 2>&1 && verify_nextest_binary >>/tmp/adl-nextest-install.log 2>&1; then
     :
   else
     cargo install cargo-nextest --locked >>/tmp/adl-nextest-install.log 2>&1
+    verify_nextest_binary >>/tmp/adl-nextest-install.log 2>&1
   fi
   if [ "$NEXTEST_CACHE_HIT" -eq 0 ]; then
     upload_binary_to_s3_cache cargo-nextest "$CACHE_BUCKET" "$CACHE_PREFIX" >>/tmp/adl-nextest-install.log 2>&1 || true
