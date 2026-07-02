@@ -151,10 +151,14 @@ for required_fragment in (
     'printf \'/mnt/adl-authoritative-coverage\\n\'',
     'printf \'%s\\n\' "$ADL_DIR/target/authoritative-coverage-scratch"',
     'COVERAGE_BUILD_ROOT="${ADL_COVERAGE_BUILD_ROOT:-$(default_coverage_build_root)}"',
-    'rm -rf "$COVERAGE_BUILD_ROOT/target" "$COVERAGE_BUILD_ROOT/llvm-cov-target"',
-    'mkdir -p "$COVERAGE_BUILD_ROOT/target" "$COVERAGE_BUILD_ROOT/llvm-cov-target"',
+    'ROOT_SCCACHE_DIR="${HOME:-}/.cache/sccache"',
+    'SCCACHE_BUILD_ROOT="$COVERAGE_BUILD_ROOT/sccache"',
+    'rm -rf "$ROOT_SCCACHE_DIR"',
+    'rm -rf "$COVERAGE_BUILD_ROOT/target" "$COVERAGE_BUILD_ROOT/llvm-cov-target" "$SCCACHE_BUILD_ROOT"',
+    'mkdir -p "$COVERAGE_BUILD_ROOT/target" "$COVERAGE_BUILD_ROOT/llvm-cov-target" "$SCCACHE_BUILD_ROOT"',
     'export CARGO_TARGET_DIR="$COVERAGE_BUILD_ROOT/target"',
     'export CARGO_LLVM_COV_TARGET_DIR="$COVERAGE_BUILD_ROOT/llvm-cov-target"',
+    'export SCCACHE_DIR="$SCCACHE_BUILD_ROOT"',
 ):
     if required_fragment not in runner_script_text:
         raise SystemExit(

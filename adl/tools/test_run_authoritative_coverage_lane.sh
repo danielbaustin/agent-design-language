@@ -64,10 +64,16 @@ set -euo pipefail
 printf 'cmd=%s\n' "$*" >> "$AUTHORITATIVE_CARGO_LOG"
 printf 'target=%s\n' "${CARGO_TARGET_DIR:-}" >> "$AUTHORITATIVE_CARGO_LOG"
 printf 'llvm_cov_target=%s\n' "${CARGO_LLVM_COV_TARGET_DIR:-}" >> "$AUTHORITATIVE_CARGO_LOG"
+printf 'sccache_dir=%s\n' "${SCCACHE_DIR:-}" >> "$AUTHORITATIVE_CARGO_LOG"
 exit 0
 EOF
 chmod +x "$bin_dir/cargo"
 
+home_dir="$temp_root/home"
+mkdir -p "$home_dir/.cache/sccache"
+touch "$home_dir/.cache/sccache/stale-root-cache"
+
+HOME="$home_dir" \
 PATH="$bin_dir:$PATH" \
 AUTHORITATIVE_CARGO_LOG="$cargo_log" \
 ADL_COVERAGE_BUILD_ROOT="$scratch_root" \
@@ -82,11 +88,17 @@ for required_dir in "$scratch_root/target" "$scratch_root/llvm-cov-target"; do
   fi
 done
 
+if [ -e "$home_dir/.cache/sccache/stale-root-cache" ]; then
+  echo "expected root-mounted sccache residue to be reclaimed before authoritative coverage run" >&2
+  exit 1
+fi
+
 for required in \
   "cmd=llvm-cov nextest --workspace --status-level all --final-status-level slow --no-report" \
   "cmd=llvm-cov report --json --summary-only --output-path coverage-summary.json" \
   "target=$scratch_root/target" \
-  "llvm_cov_target=$scratch_root/llvm-cov-target"
+  "llvm_cov_target=$scratch_root/llvm-cov-target" \
+  "sccache_dir=$scratch_root/sccache"
 do
   if ! grep -F "$required" "$cargo_log" >/dev/null 2>&1; then
     echo "missing authoritative coverage execution token: $required" >&2
