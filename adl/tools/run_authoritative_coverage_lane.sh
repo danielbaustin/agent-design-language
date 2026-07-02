@@ -78,6 +78,16 @@ fi
 
 cd "$ADL_DIR"
 
+#
+# CI note:
+# - rust-cache may restore adl/target onto the runner root filesystem even
+#   though the authoritative lane relocates active cargo/llvm-cov outputs onto
+#   a scratch mount.
+# - reclaim repo-local target space before the lane starts so mixed
+#   policy+runtime PRs do not fail late with runner disk exhaustion while
+#   linking the authoritative coverage build.
+rm -rf "$ADL_DIR/target"
+
 rm -rf "$COVERAGE_BUILD_ROOT/target" "$COVERAGE_BUILD_ROOT/llvm-cov-target"
 mkdir -p "$COVERAGE_BUILD_ROOT/target" "$COVERAGE_BUILD_ROOT/llvm-cov-target"
 export CARGO_TARGET_DIR="$COVERAGE_BUILD_ROOT/target"
