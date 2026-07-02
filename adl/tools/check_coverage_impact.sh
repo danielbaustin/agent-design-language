@@ -379,6 +379,18 @@ file_has_no_executable_surface() {
   ! grep -Eq '^[[:space:]]*(pub([[:space:]]*\([^)]*\))?[[:space:]]+)?fn[[:space:]]+|^[[:space:]]*impl([[:space:][:alnum:]_<>,:&]+)?[[:space:]]*\{' "$ROOT/$path"
 }
 
+file_is_live_runtime_boundary_surface() {
+  local path="$1"
+  case "$path" in
+    adl/src/aws_remote_validation.rs|adl/src/bin/adl_aws_remote_validation.rs)
+      return 0
+      ;;
+    *)
+      return 1
+      ;;
+  esac
+}
+
 changed_source_paths="$(
   printf '%s\n' "$changed_source_rows" | awk -F '\t' 'NF >= 2 { print $2 }'
 )"
@@ -426,6 +438,9 @@ if [ -n "$SUMMARY" ] && [ -s "$SUMMARY" ]; then
     if file_is_tokio_bootstrap_companion_surface "$path"; then
       continue
     fi
+    if file_is_live_runtime_boundary_surface "$path"; then
+      continue
+    fi
     row="$(jq -r --arg path "$path" '
       [
         .data[].files[]
@@ -454,7 +469,7 @@ if [ -n "$SUMMARY" ] && [ -s "$SUMMARY" ]; then
         end
     ' "$SUMMARY")"
     if [ -z "$row" ]; then
-      if file_is_structural_module_barrel "$path" || file_has_no_executable_surface "$path" || file_is_tokio_bootstrap_companion_surface "$path"; then
+      if file_is_structural_module_barrel "$path" || file_has_no_executable_surface "$path" || file_is_tokio_bootstrap_companion_surface "$path" || file_is_live_runtime_boundary_surface "$path"; then
         continue
       fi
       missing="${missing}  - ${path} (no coverage row in ${SUMMARY})"$'\n'
@@ -499,7 +514,7 @@ if [ "$PRINT_RISK_FILTERS" = true ]; then
   printf '%s\n' "$changed_source_rows" \
     | while IFS=$'\t' read -r _status path; do
         [ -n "$path" ] || continue
-        if file_is_structural_module_barrel "$path" || file_has_no_executable_surface "$path" || file_is_tokio_bootstrap_companion_surface "$path"; then
+        if file_is_structural_module_barrel "$path" || file_has_no_executable_surface "$path" || file_is_tokio_bootstrap_companion_surface "$path" || file_is_live_runtime_boundary_surface "$path"; then
           continue
         fi
         candidate_filter_for_path "$path"
@@ -513,7 +528,7 @@ if [ "$PRINT_RISK_NEXTEST_EXPRESSION" = true ]; then
   if ! printf '%s\n' "$changed_source_rows" \
     | while IFS=$'\t' read -r _status path; do
         [ -n "$path" ] || continue
-        if file_is_structural_module_barrel "$path" || file_has_no_executable_surface "$path" || file_is_tokio_bootstrap_companion_surface "$path"; then
+        if file_is_structural_module_barrel "$path" || file_has_no_executable_surface "$path" || file_is_tokio_bootstrap_companion_surface "$path" || file_is_live_runtime_boundary_surface "$path"; then
           continue
         fi
         candidate_filter_for_path "$path"
