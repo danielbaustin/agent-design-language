@@ -25,8 +25,8 @@ feature docs so `v0.92` can proceed from reviewed evidence.
 - Curiosity Engine / Discovery Substrate bridge.
 - Constructability Gate bridge.
 - Reasoning graph, loop runtime, and `adl.skill.v1` bridge.
-- Residual security readiness route.
-- Residual ACIP/A2A/protobuf route.
+- Residual security readiness proof/blocker status.
+- Residual ACIP/A2A/protobuf proof/blocker status.
 - Affect and happiness safe-test/non-claim bridge.
 - Godel mechanics bridge.
 - Economics-context decision.
@@ -50,8 +50,8 @@ Expected validation for this documentation package:
 ## What's Next
 
 - Refresh `v0.92` activation docs from reviewed bridge truth.
-- Open implementation issues only after doc and issue routes are clear.
-- Carry security/governance residuals into `v0.93` when explicitly routed.
+- Open implementation issues only after doc and issue assignments are clear.
+- Carry security/governance residuals into `v0.93` only when explicitly assigned or operator-approved as non-claims.
 
 ## Exit Criteria
 

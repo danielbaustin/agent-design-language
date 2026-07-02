@@ -27,7 +27,7 @@ handoff remains planning-only.
 `v0.92` may consume an activation-path surface only as one of:
 
 - `integrated_proven`: implementation runs in the integrated path with retained evidence;
-- `doc_ready_non_claim`: reviewed bridge doc exists, but implementation proof remains future issue work and the operator accepts that it is not a v0.92 activation claim;
+- `doc_ready_non_claim`: reviewed bridge doc exists, but implementation proof is not part of the `v0.92` activation claim and the operator accepts the explicit non-claim and residual risk;
 - `blocked_with_evidence`: named missing evidence or decision prevents activation use;
 - `operator_approved_non_claim`: explicitly outside `v0.92` activation scope, with evidence and risk accepted.
 
@@ -62,6 +62,7 @@ and only `integrated_proven` counts as operational completion.
 | Capability envelope and capability testing | Memory grounding, capability envelope, birth witnesses/receipt, and Aptitude Atlas boundaries explicitly proven, non-claimed with operator approval, or blocked with evidence before birthday evidence relies on them. |
 | Build/validation throughput | Validation-cost, path ownership, SOR fact capture, validation manager, VPP generation, and remote/local build paths implemented/proven enough to avoid rediscovery during birthday work. EC2 Spot or an alternate disposable remote-builder path must have time/cost/cache/cleanup evidence before it is treated as a release-critical lane. |
 | GitHub convergence and control-plane tooling | GitHub/octocrab/tooling convergence, session coordination, lifecycle liveness, and shepherd state explicit enough that v0.92 sprint execution does not depend on ambiguous `gh` fallback, stale control-plane assumptions, or chat-only session memory. |
+| Integrated logging, OTel boundary, and Observatory consumption | `#4718` is the current pre-v0.92 proof issue. `v0.92` remains blocked from relying on runtime/provider/control-plane logging, OTel compatibility, AWS/signal observability, or Observatory/Unity consumption until current integrated evidence exists for events, stdout/stderr separation, redaction/path hygiene, OTel boundary truth, and consumer samples. |
 | Runtime integration, Soak #2, and AWS signal bridge | `RUNTIME_SOAK_2_EXECUTION_PACKET_v0.91.7.md` is the planning gate. `v0.92` remains blocked until that packet's required rows exit as `integrated_proven` or `blocked_with_evidence`; Soak #3 risk requires explicit operator approval. |
 | Runtime architecture diet | Runtime module/seam map and keep/merge/defer/retire follow-ons explicit enough to reduce bloat without counting refactoring plans as integration proof. |
 | Observatory and demo readiness | Visible proof surfaces integrated/proven, explicitly non-claimed with operator approval, or blocked with evidence and operator approval. |
@@ -70,6 +71,7 @@ and only `integrated_proven` counts as operational completion.
 ## Activation Blockers To Preserve
 
 - No `v0.92` activation claim may cite these docs as runtime proof.
+- Logging and observability are activation-path infrastructure, not optional garnish; no polis/runtime/Observatory claim may proceed without current integrated logging evidence.
 - Security and ACIP/A2A residuals remain activation-path work until resolved,
   explicitly non-claimed with operator approval, or blocked with evidence and operator approval.
 - Curiosity and Constructability require proof issues before public claims.

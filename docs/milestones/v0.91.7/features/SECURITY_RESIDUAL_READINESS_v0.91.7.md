@@ -24,7 +24,7 @@ In scope:
 - Curiosity and Constructability security implications;
 - ACIP/A2A/protobuf residual security;
 - public evidence and profile privacy residuals;
-- activation blockers and routes to `v0.93`.
+- activation blockers and explicitly approved `v0.93` assignments.
 
 Out of scope:
 
@@ -35,7 +35,7 @@ Out of scope:
 ## Required Decisions
 
 - Which residuals block `v0.92`?
-- Which residuals route to `v0.93` enterprise security?
+- Which residuals are explicitly postponed to `v0.93` enterprise security?
 - Which Curiosity/Constructability actions need security gates?
 - Which protocol choices require signing, access control, or privacy review?
 

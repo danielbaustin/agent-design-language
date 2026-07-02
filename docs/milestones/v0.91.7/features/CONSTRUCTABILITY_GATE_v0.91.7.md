@@ -48,12 +48,12 @@ Out of scope:
 
 - Review schemas for determinism and evidence boundaries.
 - Validate that provisional claims cannot become public truth without anchors.
-- Require blocked/deferred/routed status for missing validators.
+- Require implemented proof, explicit non-claim, or evidence-backed blocker status for missing validators.
 
 ## v0.92 Consumption
 
-`v0.92` may consume Constructability only as a reviewed boundary and proof
-route. It must not present provisional cognition as authoritative shared
+`v0.92` may consume Constructability only as a reviewed boundary and proven or
+operator-approved non-claim surface. It must not present provisional cognition as authoritative shared
 reality.
 
 ## Non-Goals

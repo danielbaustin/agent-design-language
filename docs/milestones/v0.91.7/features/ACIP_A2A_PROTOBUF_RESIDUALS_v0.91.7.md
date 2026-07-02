@@ -33,7 +33,7 @@ Out of scope:
 
 ## Required Decisions
 
-- Does `v0.92` consume JSON projection, protobuf, mock carrier, or a deferred route?
+- Does `v0.92` consume JSON projection, protobuf, mock carrier, or an operator-approved deferral?
 - Which access rules are required before any external-agent communication?
 - Which WebSocket residuals block activation?
 - Which protocol proofs are schema-only versus runtime?
@@ -48,12 +48,12 @@ Out of scope:
 
 - Review schema and access decisions together.
 - Validate JSON/protobuf projection determinism where claimed.
-- Route unresolved wire-format choices explicitly.
+- Resolve unresolved wire-format choices or record them as evidence-backed blockers with operator approval.
 
 ## v0.92 Consumption
 
 `v0.92` must know whether it consumes JSON projection, protobuf, mock carrier,
-or a deferred route. Ambiguity is a blocker.
+or an operator-approved deferral. Ambiguity is a blocker.
 
 ## Non-Goals
 
