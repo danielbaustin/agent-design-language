@@ -1,0 +1,67 @@
+{
+  "actual_comparison": {
+    "note": "No closeout actuals were supplied to this prediction run.",
+    "status": "not_available"
+  },
+  "confidence": {
+    "known_core_feature_count": 2,
+    "note": "Deterministic heuristic baseline; accuracy must be compared against closeout actuals as data accumulates.",
+    "overall": "medium"
+  },
+  "input_feature_availability": {
+    "active_work_seconds": [
+      "known"
+    ],
+    "ci_wait_seconds": [
+      "unknown"
+    ],
+    "elapsed_seconds": [
+      "known"
+    ],
+    "pr_wait_seconds": [
+      "unknown"
+    ],
+    "total_tokens": [
+      "known"
+    ],
+    "validation_seconds": [
+      "unknown"
+    ]
+  },
+  "input_packet_count": 1,
+  "input_schema_version": "adl.issue_goal_metrics.reporting_prediction.v1",
+  "issue_goal_ref": "goal:v0.91.7:issue:4617",
+  "known_inputs": [
+    "active_work_seconds",
+    "elapsed_seconds",
+    "total_tokens"
+  ],
+  "missing_inputs": [
+    "ci_wait_seconds",
+    "pr_wait_seconds",
+    "validation_seconds"
+  ],
+  "prediction_basis": {
+    "ci_wait_risk": "heuristic_missing_wait_input",
+    "elapsed_seconds": "known_elapsed_seconds",
+    "outlier_risk": "max(scale_risk, pr_wait_risk, ci_wait_risk)",
+    "pr_wait_risk": "heuristic_missing_wait_input",
+    "total_tokens": "known_total_tokens",
+    "validation_seconds": "heuristic_from_elapsed_seconds"
+  },
+  "predictions": {
+    "ci_wait_risk": "medium",
+    "elapsed_seconds": 321,
+    "outlier_risk": "medium",
+    "pr_wait_risk": "medium",
+    "total_tokens": 54321,
+    "validation_seconds": 32
+  },
+  "schema_version": "adl.issue_goal_metrics.execution_prediction.v1",
+  "source_prediction_packets": [
+    "docs/milestones/v0.91.7/review/V0917_WP04_CODEX_SESSION_TELEMETRY_SAMPLE_4617.prediction.json"
+  ],
+  "sprint_goal_ref": "goal:v0.91.7:wp-04",
+  "status": "predicted",
+  "unknown_values_policy": "unknown_is_not_zero"
+}

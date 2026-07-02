@@ -1676,6 +1676,116 @@ grep -Fq 'reporting ready: `True`' "${codex_goal_report}"
 grep -Fq 'total_tokens: `39238` availability=`known`' "${codex_goal_report}"
 grep -Fq 'validation_seconds: `unknown` availability=`unknown`' "${codex_goal_report}"
 
+codex_goal_execution_prediction="${tmpdir}/issue-4431-execution-prediction.json"
+codex_goal_execution_prediction_report="${tmpdir}/issue-4431-execution-prediction.md"
+python3 "${repo_root}/adl/tools/skills/sprint-conductor/scripts/predict_issue_execution_metrics.py" \
+  --packet "${codex_goal_prediction}" \
+  --prediction-out "${codex_goal_execution_prediction}" \
+  --report-out "${codex_goal_execution_prediction_report}" \
+  --print-json > "${tmpdir}/issue-4431-execution-prediction-result.json"
+python3 - "${codex_goal_execution_prediction}" "${tmpdir}/issue-4431-execution-prediction-result.json" <<'PY'
+import json
+import sys
+from pathlib import Path
+
+prediction = json.loads(Path(sys.argv[1]).read_text())
+result = json.loads(Path(sys.argv[2]).read_text())
+assert prediction["schema_version"] == "adl.issue_goal_metrics.execution_prediction.v1"
+assert prediction["input_schema_version"] == "adl.issue_goal_metrics.reporting_prediction.v1"
+assert prediction["status"] == "predicted"
+assert prediction["predictions"]["elapsed_seconds"] == 56
+assert prediction["prediction_basis"]["elapsed_seconds"] == "known_elapsed_seconds"
+assert prediction["predictions"]["total_tokens"] == 39238
+assert prediction["prediction_basis"]["total_tokens"] == "known_total_tokens"
+assert prediction["predictions"]["validation_seconds"] == 30
+assert prediction["prediction_basis"]["validation_seconds"] == "heuristic_from_elapsed_seconds"
+assert prediction["predictions"]["pr_wait_risk"] == "medium"
+assert prediction["prediction_basis"]["pr_wait_risk"] == "heuristic_missing_wait_input"
+assert prediction["predictions"]["ci_wait_risk"] == "medium"
+assert prediction["predictions"]["outlier_risk"] == "medium"
+assert prediction["confidence"]["overall"] == "medium"
+assert prediction["unknown_values_policy"] == "unknown_is_not_zero"
+assert "validation_seconds" in prediction["missing_inputs"]
+assert "elapsed_seconds" in prediction["known_inputs"]
+assert prediction["actual_comparison"]["status"] == "not_available"
+assert result["outlier_risk"] == "medium"
+PY
+grep -Fq '# Issue Execution Metrics Prediction' "${codex_goal_execution_prediction_report}"
+grep -Fq 'elapsed_seconds: `56` basis=`known_elapsed_seconds`' "${codex_goal_execution_prediction_report}"
+grep -Fq 'validation_seconds: `30` basis=`heuristic_from_elapsed_seconds`' "${codex_goal_execution_prediction_report}"
+grep -Fq 'pr_wait_risk: `medium` basis=`heuristic_missing_wait_input`' "${codex_goal_execution_prediction_report}"
+
+codex_goal_actual_summary="${tmpdir}/issue-4431-goal-metrics-closeout-summary.json"
+python3 - "${codex_goal_summary}" "${codex_goal_actual_summary}" <<'PY'
+import json
+import sys
+from pathlib import Path
+
+summary = json.loads(Path(sys.argv[1]).read_text())
+summary["elapsed_seconds"] = 60
+summary["validation_seconds"] = 45
+summary["validation_availability"] = "known"
+summary["token_usage"]["total_tokens"] = 40000
+Path(sys.argv[2]).write_text(json.dumps(summary, indent=2, sort_keys=True) + "\n")
+PY
+codex_goal_execution_prediction_with_actuals="${tmpdir}/issue-4431-execution-prediction-with-actuals.json"
+python3 "${repo_root}/adl/tools/skills/sprint-conductor/scripts/predict_issue_execution_metrics.py" \
+  --packet "${codex_goal_prediction}" \
+  --actual-summary "${codex_goal_actual_summary}" \
+  --prediction-out "${codex_goal_execution_prediction_with_actuals}" \
+  --print-json > "${tmpdir}/issue-4431-execution-prediction-with-actuals-result.json"
+python3 - "${codex_goal_execution_prediction_with_actuals}" "${tmpdir}/issue-4431-execution-prediction-with-actuals-result.json" <<'PY'
+import json
+import sys
+from pathlib import Path
+
+prediction = json.loads(Path(sys.argv[1]).read_text())
+result = json.loads(Path(sys.argv[2]).read_text())
+comparison = prediction["actual_comparison"]
+assert comparison["status"] == "compared"
+assert comparison["known_actual_count"] == 3
+assert comparison["comparisons"]["elapsed_seconds"]["actual"] == 60
+assert comparison["comparisons"]["elapsed_seconds"]["predicted"] == 56
+assert comparison["comparisons"]["total_tokens"]["actual"] == 40000
+assert comparison["comparisons"]["validation_seconds"]["actual"] == 45
+assert result["prediction_path"] == "<external:issue-4431-execution-prediction-with-actuals.json>"
+assert result["report_path"] is None
+PY
+
+absolute_packet_prediction="${tmpdir}/issue-4431-absolute-path-prediction.json"
+python3 "${repo_root}/adl/tools/skills/sprint-conductor/scripts/predict_issue_execution_metrics.py" \
+  --packet "$(cd "${tmpdir}" && pwd)/issue-4431-goal-metrics-prediction.json" \
+  --prediction-out "${absolute_packet_prediction}" >/dev/null
+python3 - "${absolute_packet_prediction}" <<'PY'
+import json
+import sys
+from pathlib import Path
+
+prediction = json.loads(Path(sys.argv[1]).read_text())
+source_refs = prediction["source_prediction_packets"]
+assert source_refs == ["<external:issue-4431-goal-metrics-prediction.json>"]
+assert not any(ref.startswith("/") for ref in source_refs)
+PY
+
+mismatched_packet="${tmpdir}/issue-9999-goal-metrics-prediction.json"
+python3 - "${codex_goal_prediction}" "${mismatched_packet}" <<'PY'
+import json
+import sys
+from pathlib import Path
+
+packet = json.loads(Path(sys.argv[1]).read_text())
+packet["issue_goal_ref"] = "goal:v0.91.7:issue:9999"
+Path(sys.argv[2]).write_text(json.dumps(packet, indent=2, sort_keys=True) + "\n")
+PY
+if python3 "${repo_root}/adl/tools/skills/sprint-conductor/scripts/predict_issue_execution_metrics.py" \
+  --packet "${codex_goal_prediction}" \
+  --packet "${mismatched_packet}" \
+  --prediction-out "${tmpdir}/mixed-identity-prediction.json" >/dev/null 2>"${tmpdir}/mixed-identity.err"; then
+  echo "expected mixed issue_goal_ref packets to fail closed" >&2
+  exit 1
+fi
+grep -Fq "mixed issue_goal_ref values are not safe to aggregate" "${tmpdir}/mixed-identity.err"
+
 codex_budgetlimited_snapshot="${tmpdir}/codex-goal-budgetlimited-state.json"
 cat >"${codex_budgetlimited_snapshot}" <<'JSON'
 {

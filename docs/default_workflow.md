@@ -256,6 +256,26 @@ availability states and declares `unknown_is_not_zero`. A packet is reporting
 and prediction ready only when a recorded summary has known elapsed seconds and
 known total tokens.
 
+To produce the deterministic baseline consumed by scheduler or shepherd
+planning, run the execution metrics prediction engine over one or more
+prediction-feature packets:
+
+```bash
+python3 adl/tools/skills/sprint-conductor/scripts/predict_issue_execution_metrics.py \
+  --packet .adl/<version>/tasks/issue-<n>__<slug>/artifacts/goal_metrics/issue-<n>-goal-metrics-prediction.json \
+  --actual-summary .adl/<version>/tasks/issue-<n>__<slug>/artifacts/goal_metrics/issue-<n>-goal-metrics-closeout-summary.json \
+  --prediction-out .adl/<version>/tasks/issue-<n>__<slug>/artifacts/goal_metrics/issue-<n>-execution-prediction.json \
+  --report-out .adl/<version>/tasks/issue-<n>__<slug>/artifacts/goal_metrics/issue-<n>-execution-prediction.md
+```
+
+The execution prediction output is a heuristic baseline, not a model-backed
+forecast. It predicts elapsed time, token usage, validation time, PR wait risk,
+CI wait risk, and outlier risk while recording which inputs were known,
+unknown, derived, or unavailable. The optional `--actual-summary` input compares
+predictions against closeout actuals when they exist. Scheduler and shepherd
+decisions may use the result for ordering and risk triage, but SOR closeout must
+keep prediction accuracy claims tied to actual comparison evidence.
+
 ## 4.5) Prep-Scout Lane During Closeout Waits
 
 When the active issue is waiting on PR checks, review, janitor work, or
