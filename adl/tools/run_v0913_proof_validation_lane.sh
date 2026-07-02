@@ -29,8 +29,13 @@ validate_card_lifecycle_bundle() {
 }
 
 validate_card_lifecycle_contract() {
-  cargo test --manifest-path "$ROOT_DIR/adl/Cargo.toml" tracked_csdlc_card_bundle -- --nocapture
-  cargo test --manifest-path "$ROOT_DIR/adl/Cargo.toml" card_lifecycle_accepts_tracked_csdlc_bundle -- --nocapture
+  # Keep the proof lane bounded to one CLI target and exact test names so
+  # contract validation does not fan out across every binary that links the
+  # shared CLI test modules.
+  cargo test --manifest-path "$ROOT_DIR/adl/Cargo.toml" --bin adl \
+    tracked_csdlc_card_bundle_validates -- --exact --nocapture
+  cargo test --manifest-path "$ROOT_DIR/adl/Cargo.toml" --bin adl \
+    card_lifecycle_accepts_tracked_csdlc_bundle -- --exact --nocapture
 }
 
 run_check transition_dag_packet \
