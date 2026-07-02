@@ -1973,6 +1973,25 @@ assert summary["active_work_availability"] == "unknown"
 assert summary["token_usage"]["total_availability"] == "unknown"
 PY
 
+codex_invalid_stage_artifacts_dir="${tmpdir}/issue-4444-invalid-stage-artifacts/goal_metrics"
+codex_invalid_stage_err="${tmpdir}/issue-4444-invalid-stage.err"
+if python3 "${repo_root}/adl/tools/skills/sprint-conductor/scripts/record_issue_goal_stage_from_codex_session.py" \
+  --issue-number 4444 \
+  --artifacts-dir "${codex_invalid_stage_artifacts_dir}" \
+  --capture-stage issue_execution \
+  --issue-goal-ref "goal:v0.91.6:issue:4444" \
+  --metrics-confidence unknown \
+  --thread-id "thread-missing" \
+  --session-root "${tmpdir}/missing-codex-sessions" 2>"${codex_invalid_stage_err}"; then
+  echo "expected invalid capture stage to fail closed" >&2
+  exit 1
+fi
+grep -Fq "invalid choice: 'issue_execution'" "${codex_invalid_stage_err}"
+test ! -e "${codex_invalid_stage_artifacts_dir}/issue-4444-goal-metrics.jsonl"
+test ! -e "${codex_invalid_stage_artifacts_dir}/issue-4444-goal-metrics-summary.json"
+test ! -e "${codex_invalid_stage_artifacts_dir}/issue-4444-pr-publication-snapshot.json"
+test ! -d "${codex_invalid_stage_artifacts_dir}"
+
 python3 - "${repo_root}" <<'PY'
 import sys
 from pathlib import Path

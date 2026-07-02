@@ -8,6 +8,7 @@ from pathlib import Path
 from tempfile import NamedTemporaryFile
 
 from issue_goal_metrics import (
+    CAPTURE_STAGES,
     build_issue_goal_metrics_record,
     build_issue_goal_metrics_record_from_codex_goal_snapshot,
     build_unknown_issue_goal_metrics_record,
@@ -25,7 +26,7 @@ def parse_args() -> argparse.Namespace:
     )
     parser.add_argument("--issue-number", type=int, required=True)
     parser.add_argument("--artifacts-dir", required=True)
-    parser.add_argument("--capture-stage", required=True)
+    parser.add_argument("--capture-stage", required=True, choices=sorted(CAPTURE_STAGES))
     parser.add_argument("--issue-goal-ref")
     parser.add_argument("--sprint-goal-ref")
     parser.add_argument("--goal-metrics-rollup-ref")
