@@ -3,6 +3,7 @@ use std::path::{Path, PathBuf};
 
 use anyhow::{anyhow, bail, ensure, Context, Result};
 use serde::Deserialize;
+use serde_json::Value as JsonValue;
 use serde_yaml::{Mapping, Value};
 
 use super::markdown::{markdown_block_field, split_front_matter};
@@ -67,17 +68,26 @@ struct ReleaseTailFacts {
 
 #[derive(Debug, Default, Deserialize)]
 struct MetricsFacts {
+    estimated_elapsed_seconds: Option<String>,
     actual_elapsed_seconds: Option<String>,
+    estimated_total_tokens: Option<String>,
     actual_total_tokens: Option<String>,
+    estimated_validation_seconds: Option<String>,
     actual_validation_seconds: Option<String>,
     goal_metrics_data_source: Option<String>,
     goal_metrics_source_ref: Option<String>,
     data_source_confidence: Option<String>,
+    estimate_error_percent: Option<String>,
+    variance_analysis_required: Option<String>,
+    variance_analysis_completed: Option<String>,
+    variance_category: Option<String>,
+    variance_note: Option<String>,
 }
 
 #[derive(Debug, Default)]
 struct Args {
     facts: Option<PathBuf>,
+    goal_metrics_summary: Option<PathBuf>,
     srp: Option<PathBuf>,
     sor: Option<PathBuf>,
     out_srp: Option<PathBuf>,
@@ -94,10 +104,10 @@ pub(super) fn real_srp_sor_update(args: &[String]) -> Result<()> {
     }
 
     let args = parse_args(args)?;
-    let facts_path = args
-        .facts
-        .as_deref()
-        .ok_or_else(|| anyhow!("missing required --facts <facts.yaml>"))?;
+    ensure!(
+        args.facts.is_some() || args.goal_metrics_summary.is_some(),
+        "missing required --facts <facts.yaml> or --goal-metrics-summary <summary.json>"
+    );
     let srp_path = args
         .srp
         .as_deref()
@@ -109,10 +119,19 @@ pub(super) fn real_srp_sor_update(args: &[String]) -> Result<()> {
     let out_srp = args.out_srp.as_deref().unwrap_or(srp_path);
     let out_sor = args.out_sor.as_deref().unwrap_or(sor_path);
 
-    let facts_text = fs::read_to_string(facts_path)
-        .with_context(|| format!("read facts file {}", facts_path.display()))?;
-    let facts: FactPacket = serde_yaml::from_str(&facts_text)
-        .with_context(|| format!("parse facts file {}", facts_path.display()))?;
+    let mut facts = if let Some(facts_path) = args.facts.as_deref() {
+        let facts_text = fs::read_to_string(facts_path)
+            .with_context(|| format!("read facts file {}", facts_path.display()))?;
+        serde_yaml::from_str(&facts_text)
+            .with_context(|| format!("parse facts file {}", facts_path.display()))?
+    } else {
+        FactPacket::default()
+    };
+    if let Some(summary_path) = args.goal_metrics_summary.as_deref() {
+        facts
+            .merge_goal_metrics_summary(summary_path)
+            .with_context(|| format!("project goal metrics summary {}", summary_path.display()))?;
+    }
     ensure!(
         facts.has_actionable_facts(),
         "facts file contains no SRP/SOR updates"
@@ -150,6 +169,10 @@ fn parse_args(raw: &[String]) -> Result<Args> {
     while idx < raw.len() {
         match raw[idx].as_str() {
             "--facts" => args.facts = Some(next_path(raw, &mut idx, "--facts")?),
+            "--goal-metrics-summary" => {
+                args.goal_metrics_summary =
+                    Some(next_path(raw, &mut idx, "--goal-metrics-summary")?)
+            }
             "--srp" => args.srp = Some(next_path(raw, &mut idx, "--srp")?),
             "--sor" => args.sor = Some(next_path(raw, &mut idx, "--sor")?),
             "--out-srp" => args.out_srp = Some(next_path(raw, &mut idx, "--out-srp")?),
@@ -162,7 +185,7 @@ fn parse_args(raw: &[String]) -> Result<Args> {
 }
 
 fn srp_sor_update_usage() -> &'static str {
-    "adl tooling srp-sor-update --facts <facts.yaml> --srp <srp.md> --sor <sor.md> [--out-srp <srp.md>] [--out-sor <sor.md>]"
+    "adl tooling srp-sor-update (--facts <facts.yaml> | --goal-metrics-summary <summary.json>) --srp <srp.md> --sor <sor.md> [--out-srp <srp.md>] [--out-sor <sor.md>]"
 }
 
 fn next_path(raw: &[String], idx: &mut usize, flag: &str) -> Result<PathBuf> {
@@ -190,12 +213,20 @@ impl FactPacket {
             || self.release_tail.pr_state.is_some()
             || self.release_tail.closeout_state.is_some()
             || !self.release_tail.residual_risks.is_empty()
+            || self.metrics.estimated_elapsed_seconds.is_some()
             || self.metrics.actual_elapsed_seconds.is_some()
+            || self.metrics.estimated_total_tokens.is_some()
             || self.metrics.actual_total_tokens.is_some()
+            || self.metrics.estimated_validation_seconds.is_some()
             || self.metrics.actual_validation_seconds.is_some()
             || self.metrics.goal_metrics_data_source.is_some()
             || self.metrics.goal_metrics_source_ref.is_some()
             || self.metrics.data_source_confidence.is_some()
+            || self.metrics.estimate_error_percent.is_some()
+            || self.metrics.variance_analysis_required.is_some()
+            || self.metrics.variance_analysis_completed.is_some()
+            || self.metrics.variance_category.is_some()
+            || self.metrics.variance_note.is_some()
     }
 
     fn validate_consistency(&self) -> Result<()> {
@@ -272,6 +303,39 @@ impl FactPacket {
             }
         }
 
+        Ok(())
+    }
+
+    fn merge_goal_metrics_summary(&mut self, summary_path: &Path) -> Result<()> {
+        let text = fs::read_to_string(summary_path)
+            .with_context(|| format!("read goal metrics summary {}", summary_path.display()))?;
+        let summary: JsonValue = serde_json::from_str(&text)
+            .with_context(|| format!("parse goal metrics summary {}", summary_path.display()))?;
+
+        let status = json_string(&summary, "status").unwrap_or_else(|| "not_recorded".to_string());
+        ensure!(
+            status == "recorded",
+            "goal metrics summary must have status recorded before it can update SOR metrics"
+        );
+
+        let elapsed =
+            json_metric_or_availability(&summary, "elapsed_seconds", "elapsed_availability");
+        let validation =
+            json_metric_or_availability(&summary, "validation_seconds", "validation_availability");
+        let token_usage = summary.get("token_usage").unwrap_or(&JsonValue::Null);
+        let total_tokens =
+            json_metric_or_availability(token_usage, "total_tokens", "total_availability");
+        let data_source =
+            json_string(&summary, "data_source").unwrap_or_else(|| "unknown".to_string());
+        let confidence =
+            json_string(&summary, "metrics_confidence").unwrap_or_else(|| "unknown".to_string());
+
+        self.metrics.actual_elapsed_seconds = Some(elapsed);
+        self.metrics.actual_total_tokens = Some(total_tokens);
+        self.metrics.actual_validation_seconds = Some(validation);
+        self.metrics.goal_metrics_data_source = Some(data_source);
+        self.metrics.goal_metrics_source_ref = Some(summary_path.to_string_lossy().to_string());
+        self.metrics.data_source_confidence = Some(confidence);
         Ok(())
     }
 }
@@ -395,13 +459,28 @@ fn assert_requested_facts_landed(srp_text: &str, sor_text: &str, facts: &FactPac
     for (block, label, value) in [
         (
             "Issue Metrics Truth",
+            "Estimated elapsed seconds",
+            facts.metrics.estimated_elapsed_seconds.as_deref(),
+        ),
+        (
+            "Issue Metrics Truth",
             "Actual elapsed seconds",
             facts.metrics.actual_elapsed_seconds.as_deref(),
         ),
         (
             "Issue Metrics Truth",
+            "Estimated total tokens",
+            facts.metrics.estimated_total_tokens.as_deref(),
+        ),
+        (
+            "Issue Metrics Truth",
             "Actual total tokens",
             facts.metrics.actual_total_tokens.as_deref(),
+        ),
+        (
+            "Issue Metrics Truth",
+            "Estimated validation seconds",
+            facts.metrics.estimated_validation_seconds.as_deref(),
         ),
         (
             "Issue Metrics Truth",
@@ -422,6 +501,31 @@ fn assert_requested_facts_landed(srp_text: &str, sor_text: &str, facts: &FactPac
             "Issue Metrics Truth",
             "Data-source confidence",
             facts.metrics.data_source_confidence.as_deref(),
+        ),
+        (
+            "Issue Metrics Truth",
+            "Estimate error percent",
+            facts.metrics.estimate_error_percent.as_deref(),
+        ),
+        (
+            "Variance Analysis",
+            "Variance analysis required",
+            facts.metrics.variance_analysis_required.as_deref(),
+        ),
+        (
+            "Variance Analysis",
+            "Variance analysis completed",
+            facts.metrics.variance_analysis_completed.as_deref(),
+        ),
+        (
+            "Variance Analysis",
+            "Variance category",
+            facts.metrics.variance_category.as_deref(),
+        ),
+        (
+            "Variance Analysis",
+            "Variance note",
+            facts.metrics.variance_note.as_deref(),
         ),
         (
             "Main Repo Integration (REQUIRED)",
@@ -530,12 +634,24 @@ fn replace_metric_fields(text: &str, metrics: &MetricsFacts) -> String {
     let mut out = text.to_string();
     for (label, value) in [
         (
+            "Estimated elapsed seconds",
+            metrics.estimated_elapsed_seconds.as_deref(),
+        ),
+        (
             "Actual elapsed seconds",
             metrics.actual_elapsed_seconds.as_deref(),
         ),
         (
+            "Estimated total tokens",
+            metrics.estimated_total_tokens.as_deref(),
+        ),
+        (
             "Actual total tokens",
             metrics.actual_total_tokens.as_deref(),
+        ),
+        (
+            "Estimated validation seconds",
+            metrics.estimated_validation_seconds.as_deref(),
         ),
         (
             "Actual validation seconds",
@@ -553,12 +669,40 @@ fn replace_metric_fields(text: &str, metrics: &MetricsFacts) -> String {
             "Data-source confidence",
             metrics.data_source_confidence.as_deref(),
         ),
+        (
+            "Estimate error percent",
+            metrics.estimate_error_percent.as_deref(),
+        ),
     ] {
         if let Some(value) = value {
             out = replace_dash_field(&out, label, &format!("`{value}`"));
         }
     }
+    out = replace_variance_fields(&out, metrics);
     out
+}
+
+fn replace_variance_fields(text: &str, metrics: &MetricsFacts) -> String {
+    replace_section_body(text, "Variance Analysis", |section_text| {
+        let mut out = section_text.to_string();
+        for (label, value) in [
+            (
+                "Variance analysis required",
+                metrics.variance_analysis_required.as_deref(),
+            ),
+            (
+                "Variance analysis completed",
+                metrics.variance_analysis_completed.as_deref(),
+            ),
+            ("Variance category", metrics.variance_category.as_deref()),
+            ("Variance note", metrics.variance_note.as_deref()),
+        ] {
+            if let Some(value) = value {
+                out = replace_dash_field(&out, label, &format!("`{value}`"));
+            }
+        }
+        out
+    })
 }
 
 fn replace_integration_fields(text: &str, integration: &IntegrationFacts) -> String {
@@ -916,6 +1060,28 @@ fn escape_backticks(value: &str) -> String {
 
 fn yaml_double_quoted(value: &str) -> String {
     value.replace('\\', "\\\\").replace('"', "\\\"")
+}
+
+fn json_string(value: &JsonValue, key: &str) -> Option<String> {
+    value
+        .get(key)
+        .and_then(JsonValue::as_str)
+        .map(str::trim)
+        .filter(|raw| !raw.is_empty())
+        .map(ToOwned::to_owned)
+}
+
+fn json_metric_or_availability(
+    value: &JsonValue,
+    metric_key: &str,
+    availability_key: &str,
+) -> String {
+    if let Some(metric) = value.get(metric_key).and_then(JsonValue::as_i64) {
+        if metric >= 0 {
+            return metric.to_string();
+        }
+    }
+    json_string(value, availability_key).unwrap_or_else(|| "unknown".to_string())
 }
 
 fn normalize_status_token(value: &str) -> String {

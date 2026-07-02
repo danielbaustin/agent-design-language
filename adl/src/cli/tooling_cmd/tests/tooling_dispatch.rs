@@ -347,6 +347,99 @@ release_tail:
 }
 
 #[test]
+fn srp_sor_update_projects_goal_metrics_summary_into_sor() {
+    let repo = TempRepo::new("srp-sor-update-goal-summary");
+    let summary = repo.write_rel(
+        "artifacts/goal_metrics/issue-4667-goal-metrics-summary.json",
+        r#"{
+  "status": "recorded",
+  "data_source": "codex_goal_tool",
+  "metrics_confidence": "high",
+  "elapsed_seconds": 1500,
+  "elapsed_availability": "known",
+  "validation_seconds": null,
+  "validation_availability": "not_collected",
+  "token_usage": {
+    "total_tokens": 320000,
+    "total_availability": "known"
+  }
+}
+"#,
+    );
+    let summary_arg = Path::new("..").join(
+        summary
+            .strip_prefix(repo_root_for_tests())
+            .expect("repo-relative summary"),
+    );
+    let srp = repo.write_rel("srp.md", &valid_srp_text(4667));
+    let sor = repo.write_rel("sor.md", &valid_sor_text());
+
+    real_srp_sor_update(&[
+        "--goal-metrics-summary".into(),
+        summary_arg.to_string_lossy().to_string(),
+        "--srp".into(),
+        srp.display().to_string(),
+        "--sor".into(),
+        sor.display().to_string(),
+    ])
+    .expect("summary-driven update should succeed");
+
+    let sor_text = fs::read_to_string(&sor).expect("read sor");
+    assert!(sor_text.contains("- Actual elapsed seconds: `1500`"));
+    assert!(sor_text.contains("- Actual total tokens: `320000`"));
+    assert!(sor_text.contains("- Actual validation seconds: `not_collected`"));
+    assert!(sor_text.contains("- Goal metrics data source: `codex_goal_tool`"));
+    assert!(sor_text.contains("- Data-source confidence: `high`"));
+    assert!(sor_text.contains("- Goal metrics source ref: `../.tmp/tooling_cmd_tests/"));
+    validate_sor_text(&sor_text, None).expect("sor validates");
+}
+
+#[test]
+fn srp_sor_update_preserves_known_zero_goal_metrics() {
+    let repo = TempRepo::new("srp-sor-update-zero-goal-summary");
+    let summary = repo.write_rel(
+        "artifacts/goal_metrics/issue-4667-goal-metrics-summary.json",
+        r#"{
+  "status": "recorded",
+  "data_source": "codex_goal_tool",
+  "metrics_confidence": "high",
+  "elapsed_seconds": 0,
+  "elapsed_availability": "known",
+  "validation_seconds": 0,
+  "validation_availability": "known",
+  "token_usage": {
+    "total_tokens": 0,
+    "total_availability": "known"
+  }
+}
+"#,
+    );
+    let summary_arg = Path::new("..").join(
+        summary
+            .strip_prefix(repo_root_for_tests())
+            .expect("repo-relative summary"),
+    );
+    let srp = repo.write_rel("srp.md", &valid_srp_text(4667));
+    let sor = repo.write_rel("sor.md", &valid_sor_text());
+
+    real_srp_sor_update(&[
+        "--goal-metrics-summary".into(),
+        summary_arg.to_string_lossy().to_string(),
+        "--srp".into(),
+        srp.display().to_string(),
+        "--sor".into(),
+        sor.display().to_string(),
+    ])
+    .expect("summary-driven update should preserve zero values");
+
+    let sor_text = fs::read_to_string(&sor).expect("read sor");
+    assert!(sor_text.contains("- Actual elapsed seconds: `0`"));
+    assert!(sor_text.contains("- Actual total tokens: `0`"));
+    assert!(sor_text.contains("- Actual validation seconds: `0`"));
+    validate_sor_text(&sor_text, None).expect("sor validates");
+}
+
+#[test]
 fn srp_sor_update_is_idempotent_when_facts_already_applied() {
     let repo = TempRepo::new("srp-sor-update-idempotent");
     let facts = repo.write_rel(

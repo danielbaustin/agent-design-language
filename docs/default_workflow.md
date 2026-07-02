@@ -211,6 +211,20 @@ The helper validates that the discovered goal objective matches the target
 issue number and falls back to `unknown` instead of attaching a snapshot from a
 different issue or sprint thread.
 
+After the summary exists, project it into the issue-local SOR metrics section
+with the SRP/SOR updater rather than copying values by hand:
+
+```bash
+adl tooling srp-sor-update \
+  --goal-metrics-summary .adl/<version>/tasks/issue-<n>__<slug>/artifacts/goal_metrics/issue-<n>-goal-metrics-summary.json \
+  --srp .adl/<version>/tasks/issue-<n>__<slug>/srp.md \
+  --sor .adl/<version>/tasks/issue-<n>__<slug>/sor.md
+```
+
+The updater preserves `unknown`, `not_collected`, `not_available`, and
+`not_applicable` as explicit availability states. It must not translate missing
+metrics into `0`.
+
 ## 4.5) Prep-Scout Lane During Closeout Waits
 
 When the active issue is waiting on PR checks, review, janitor work, or
