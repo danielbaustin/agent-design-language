@@ -1143,7 +1143,7 @@ mod tests {
         fs::write(repo.join("DIRTY.txt"), "dirty\n").expect("write dirty marker");
         let dirty = remote_git_source_preflight_in_dir("codex/4603-test", Some(&repo));
         assert!(dirty.is_err());
-        let dirty_text = dirty.err().expect("dirty error").to_string();
+        let dirty_text = dirty.expect_err("dirty error").to_string();
         assert!(dirty_text.contains("cannot include local uncommitted or untracked changes"));
     }
 }

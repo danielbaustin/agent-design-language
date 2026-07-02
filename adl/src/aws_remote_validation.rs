@@ -23,6 +23,8 @@ use std::time::{Duration, Instant};
 use tokio::fs;
 use tokio::io::{AsyncBufReadExt, BufReader};
 use tokio::process::{Child, Command as TokioCommand};
+#[cfg(test)]
+use tokio::sync::Mutex as AsyncMutex;
 use tokio::time::sleep;
 
 const SPOT_QUOTA_NAME: &str = "All Standard (A, C, D, H, I, M, R, T, Z) Spot Instance Requests";
@@ -39,15 +41,10 @@ where
 {
     tokio::spawn(async move {
         let mut lines = BufReader::new(reader).lines();
-        loop {
-            match lines.next_line().await {
-                Ok(Some(line)) => {
-                    eprintln!("{line}");
-                    if let Ok(mut file) = sink.lock() {
-                        let _ = writeln!(file, "{line}");
-                    }
-                }
-                Ok(None) | Err(_) => break,
+        while let Ok(Some(line)) = lines.next_line().await {
+            eprintln!("{line}");
+            if let Ok(mut file) = sink.lock() {
+                let _ = writeln!(file, "{line}");
             }
         }
     });
@@ -1809,7 +1806,7 @@ impl LiveAwsRemoteValidationAdapter {
                     last_error = err.to_string();
                 }
             }
-            if attempt == 1 || attempt % 3 == 0 {
+            if attempt == 1 || attempt.is_multiple_of(3) {
                 let _ = self
                     .run_ssh_debug_repair_command(instance_id, poll_interval)
                     .await;
@@ -3006,7 +3003,7 @@ mod tests {
         spot_termination_evidence: Option<SpotTerminationEvidence>,
     }
 
-    static TEST_LOG_PATH_GUARD: Lazy<Mutex<()>> = Lazy::new(|| Mutex::new(()));
+    static TEST_LOG_PATH_GUARD: Lazy<AsyncMutex<()>> = Lazy::new(|| AsyncMutex::new(()));
 
     #[async_trait]
     impl AwsRemoteValidationAdapter for FakeAdapter {
@@ -3242,7 +3239,7 @@ mod tests {
 
     #[tokio::test]
     async fn remote_validation_prefers_spot_and_records_success() {
-        let _guard = TEST_LOG_PATH_GUARD.lock().expect("test log path guard");
+        let _guard = TEST_LOG_PATH_GUARD.lock().await;
         let tmp =
             std::env::temp_dir().join(format!("adl-aws-remote-validation-{}", std::process::id()));
         let remote_json = serde_json::json!({
@@ -3320,7 +3317,7 @@ mod tests {
 
     #[tokio::test]
     async fn remote_validation_falls_back_to_on_demand_after_spot_capacity_failure() {
-        let _guard = TEST_LOG_PATH_GUARD.lock().expect("test log path guard");
+        let _guard = TEST_LOG_PATH_GUARD.lock().await;
         let tmp = std::env::temp_dir().join(format!(
             "adl-aws-remote-validation-fallback-{}",
             std::process::id()
@@ -3389,7 +3386,7 @@ mod tests {
 
     #[tokio::test]
     async fn remote_validation_classifies_spot_interruptions_truthfully() {
-        let _guard = TEST_LOG_PATH_GUARD.lock().expect("test log path guard");
+        let _guard = TEST_LOG_PATH_GUARD.lock().await;
         let tmp = std::env::temp_dir().join(format!(
             "adl-aws-remote-validation-interruption-{}",
             std::process::id()
@@ -3488,7 +3485,7 @@ mod tests {
 
     #[tokio::test]
     async fn remote_validation_fails_when_sccache_degrades() {
-        let _guard = TEST_LOG_PATH_GUARD.lock().expect("test log path guard");
+        let _guard = TEST_LOG_PATH_GUARD.lock().await;
         let tmp = std::env::temp_dir().join(format!(
             "adl-aws-remote-validation-sccache-failed-{}",
             std::process::id()
@@ -3543,7 +3540,7 @@ mod tests {
 
     #[tokio::test]
     async fn remote_validation_ignores_html_spot_notice_false_positives() {
-        let _guard = TEST_LOG_PATH_GUARD.lock().expect("test log path guard");
+        let _guard = TEST_LOG_PATH_GUARD.lock().await;
         let tmp = std::env::temp_dir().join(format!(
             "adl-aws-remote-validation-html-notice-{}",
             std::process::id()
@@ -3605,7 +3602,7 @@ mod tests {
 
     #[test]
     fn helper_functions_cover_preview_paths_and_log_writes() {
-        let _guard = TEST_LOG_PATH_GUARD.lock().expect("test log path guard");
+        let _guard = TEST_LOG_PATH_GUARD.blocking_lock();
         let tmp = std::env::temp_dir().join(unique_test_suffix("adl-aws-remote-validation-log"));
         let _ = std::fs::remove_dir_all(&tmp);
         initialize_live_log_paths(&tmp).expect("init log paths");
@@ -3715,7 +3712,7 @@ mod tests {
 
     #[tokio::test]
     async fn remote_validation_records_non_success_paths_truthfully() {
-        let _guard = TEST_LOG_PATH_GUARD.lock().expect("test log path guard");
+        let _guard = TEST_LOG_PATH_GUARD.lock().await;
         let tmp = std::env::temp_dir().join(format!(
             "adl-aws-remote-validation-failure-path-{}",
             std::process::id()
@@ -3790,7 +3787,7 @@ mod tests {
 
     #[tokio::test]
     async fn remote_validation_handles_dispatch_interruptions_and_writes_artifacts() {
-        let _guard = TEST_LOG_PATH_GUARD.lock().expect("test log path guard");
+        let _guard = TEST_LOG_PATH_GUARD.lock().await;
         let tmp = std::env::temp_dir().join(format!(
             "adl-aws-remote-validation-dispatch-{}",
             std::process::id()
@@ -3857,7 +3854,7 @@ mod tests {
 
     #[tokio::test]
     async fn remote_validation_fails_when_spot_launch_is_not_fallbackable() {
-        let _guard = TEST_LOG_PATH_GUARD.lock().expect("test log path guard");
+        let _guard = TEST_LOG_PATH_GUARD.lock().await;
         let tmp = std::env::temp_dir().join(format!(
             "adl-aws-remote-validation-no-fallback-{}",
             std::process::id()
@@ -3912,7 +3909,7 @@ mod tests {
 
     #[tokio::test]
     async fn remote_validation_reports_non_interruption_command_failure() {
-        let _guard = TEST_LOG_PATH_GUARD.lock().expect("test log path guard");
+        let _guard = TEST_LOG_PATH_GUARD.lock().await;
         let tmp = std::env::temp_dir().join(format!(
             "adl-aws-remote-validation-command-failed-{}",
             std::process::id()
@@ -3967,7 +3964,7 @@ mod tests {
 
     #[tokio::test]
     async fn remote_validation_records_cleanup_wait_failure_after_successful_termination_request() {
-        let _guard = TEST_LOG_PATH_GUARD.lock().expect("test log path guard");
+        let _guard = TEST_LOG_PATH_GUARD.lock().await;
         let tmp = std::env::temp_dir().join(format!(
             "adl-aws-remote-validation-cleanup-wait-{}",
             std::process::id()
