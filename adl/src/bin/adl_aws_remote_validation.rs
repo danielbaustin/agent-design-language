@@ -101,7 +101,9 @@ fn render_summary_output(
     }
 }
 
-fn classify_summary_result(summary: &aws_remote_validation::AwsRemoteValidationSummary) -> Result<()> {
+fn classify_summary_result(
+    summary: &aws_remote_validation::AwsRemoteValidationSummary,
+) -> Result<()> {
     if matches!(summary.status, RemoteRunStatus::Passed) {
         Ok(())
     } else {
@@ -152,12 +154,18 @@ fn remote_git_source_preflight_in_dir(git_ref: &str, cwd: Option<&Path>) -> Resu
 
     let remote_branch_ref = format!("refs/heads/{git_ref}");
     let branch_exists = git_command(
-        &["ls-remote", "--exit-code", "--heads", "origin", &remote_branch_ref],
+        &[
+            "ls-remote",
+            "--exit-code",
+            "--heads",
+            "origin",
+            &remote_branch_ref,
+        ],
         cwd,
     )
-        .output()
-        .map(|output| output.status.success())
-        .unwrap_or(false);
+    .output()
+    .map(|output| output.status.success())
+    .unwrap_or(false);
     if branch_exists {
         return Ok(());
     }
@@ -881,7 +889,10 @@ mod tests {
         let _ = fs::remove_dir_all(&tmp);
         fs::create_dir_all(&tmp).expect("create temp dir");
         assert!(local_git_stdout_in_dir(&["status"], Some(&tmp)).is_none());
-        assert_eq!(detect_default_git_ref_in_dir(Some(&tmp)), "origin/main".to_string());
+        assert_eq!(
+            detect_default_git_ref_in_dir(Some(&tmp)),
+            "origin/main".to_string()
+        );
     }
 
     #[test]
@@ -923,12 +934,16 @@ mod tests {
             let _guard =
                 EnvVarGuard::set("ADL_AWS_REMOTE_VALIDATION_TEST_GUARD", "during".to_string());
             assert_eq!(
-                env::var("ADL_AWS_REMOTE_VALIDATION_TEST_GUARD").ok().as_deref(),
+                env::var("ADL_AWS_REMOTE_VALIDATION_TEST_GUARD")
+                    .ok()
+                    .as_deref(),
                 Some("during")
             );
         }
         assert_eq!(
-            env::var("ADL_AWS_REMOTE_VALIDATION_TEST_GUARD").ok().as_deref(),
+            env::var("ADL_AWS_REMOTE_VALIDATION_TEST_GUARD")
+                .ok()
+                .as_deref(),
             Some("before")
         );
         env::remove_var("ADL_AWS_REMOTE_VALIDATION_TEST_GUARD");
@@ -1020,10 +1035,13 @@ mod tests {
 
         let text_output = render_summary_output(&passed_summary, "/tmp/summary.json", false)
             .expect("text output");
-        assert_eq!(text_output, "aws_remote_validation_summary=/tmp/summary.json");
+        assert_eq!(
+            text_output,
+            "aws_remote_validation_summary=/tmp/summary.json"
+        );
 
-        let json_output = render_summary_output(&passed_summary, "/tmp/summary.json", true)
-            .expect("json output");
+        let json_output =
+            render_summary_output(&passed_summary, "/tmp/summary.json", true).expect("json output");
         assert!(json_output.contains("\"status\": \"passed\""));
         classify_summary_result(&passed_summary).expect("passed summary");
 
@@ -1031,14 +1049,13 @@ mod tests {
         failed_summary.status = RemoteRunStatus::Failed;
         failed_summary.failure_reason = Some("remote command failed".to_string());
         let err = classify_summary_result(&failed_summary).expect_err("failed summary");
-        assert!(err
-            .to_string()
-            .contains("aws remote validation did not complete successfully: remote command failed"));
+        assert!(err.to_string().contains(
+            "aws remote validation did not complete successfully: remote command failed"
+        ));
 
         let mut interrupted_summary = passed_summary;
         interrupted_summary.status = RemoteRunStatus::InterruptedByAws;
-        let err = classify_summary_result(&interrupted_summary)
-            .expect_err("interrupted summary");
+        let err = classify_summary_result(&interrupted_summary).expect_err("interrupted summary");
         assert!(err
             .to_string()
             .contains("aws remote validation did not complete successfully: InterruptedByAws"));

@@ -2983,9 +2983,7 @@ mod tests {
     };
     use aws_sdk_ec2::config::{Credentials as Ec2Credentials, Region as Ec2Region};
     use aws_sdk_iam::config::{Credentials as IamCredentials, Region as IamRegion};
-    use aws_sdk_servicequotas::config::{
-        Credentials as QuotasCredentials, Region as QuotasRegion,
-    };
+    use aws_sdk_servicequotas::config::{Credentials as QuotasCredentials, Region as QuotasRegion};
     use aws_sdk_ssm::config::{Credentials as SsmCredentials, Region as SsmRegion};
     use aws_sdk_sts::config::{Credentials as StsCredentials, Region as StsRegion};
     use aws_smithy_http_client::test_util::{capture_request, ReplayEvent, StaticReplayClient};
@@ -3082,9 +3080,7 @@ mod tests {
             _start: DateTime<Utc>,
             _end: DateTime<Utc>,
         ) -> Result<Option<CostExplorerSnapshot>> {
-            self.cost_result
-                .clone()
-                .map_err(|message| anyhow!(message))
+            self.cost_result.clone().map_err(|message| anyhow!(message))
         }
 
         async fn budget_snapshot(&self, _budget_name: &str) -> Result<Option<BudgetSnapshot>> {
@@ -3623,7 +3619,10 @@ mod tests {
         let command_log =
             std::fs::read_to_string(tmp.join("command-status.log")).expect("command log");
         assert!(command_log.contains("status=poll"));
-        assert_eq!(preview("1\n2\n3\n4\n5\n6\n7\n8\n9"), "1 | 2 | 3 | 4 | 5 | 6 | 7 | 8");
+        assert_eq!(
+            preview("1\n2\n3\n4\n5\n6\n7\n8\n9"),
+            "1 | 2 | 3 | 4 | 5 | 6 | 7 | 8"
+        );
         assert_eq!(sha256_hex("abc").len(), 64);
         assert_eq!(shell_single_quote("a'b"), "a'\"'\"'b");
         assert_eq!(
@@ -3664,8 +3663,12 @@ mod tests {
         assert!(is_valid_spot_interruption_notice(Some(
             "{\"action\":\"terminate\",\"time\":\"2026-07-01T20:00:00Z\"}"
         )));
-        assert!(!is_valid_spot_interruption_notice(Some("<html>404 - Not Found</html>")));
-        assert!(!is_valid_spot_interruption_notice(Some("{\"action\":\"terminate\"}")));
+        assert!(!is_valid_spot_interruption_notice(Some(
+            "<html>404 - Not Found</html>"
+        )));
+        assert!(!is_valid_spot_interruption_notice(Some(
+            "{\"action\":\"terminate\"}"
+        )));
         assert!(!is_valid_spot_interruption_notice(None));
 
         let summary = RemoteCommandSummary {
@@ -3772,11 +3775,17 @@ mod tests {
             .is_some_and(|reason| reason.contains("SSM-ready")));
         assert_eq!(summary.cleanup.final_instance_state, None);
         assert!(summary.cleanup.termination_error.is_some());
-        assert!(summary.quota_snapshot.notes.iter().any(|note| note.contains("quota capture unavailable")));
+        assert!(summary
+            .quota_snapshot
+            .notes
+            .iter()
+            .any(|note| note.contains("quota capture unavailable")));
         assert!(summary.account_identity.is_none());
         assert!(summary.cost_explorer.is_some());
         assert!(summary.budget_snapshot.is_some());
-        assert!(events.iter().any(|event| event.stage == "ssm" && event.status == "failed"));
+        assert!(events
+            .iter()
+            .any(|event| event.stage == "ssm" && event.status == "failed"));
     }
 
     #[tokio::test]
@@ -4059,10 +4068,7 @@ mod tests {
             identity.arn.as_deref(),
             Some("arn:aws:sts::123456789012:assumed-role/agent-logic/session")
         );
-        assert_eq!(
-            identity.account_id_sha256,
-            Some(sha256_hex("123456789012"))
-        );
+        assert_eq!(identity.account_id_sha256, Some(sha256_hex("123456789012")));
     }
 
     #[tokio::test]
@@ -4133,7 +4139,10 @@ mod tests {
             sts_http_client,
         );
 
-        let state = adapter.instance_state("i-spot").await.expect("instance state");
+        let state = adapter
+            .instance_state("i-spot")
+            .await
+            .expect("instance state");
         assert_eq!(state.as_deref(), Some("terminated"));
 
         let ec2_http_client = StaticReplayClient::new(vec![
@@ -4422,7 +4431,10 @@ mod tests {
             .await
             .expect("prepare launch surface");
 
-        assert_eq!(prepared.record.provisioning_mode, "reviewed_baseline_inputs");
+        assert_eq!(
+            prepared.record.provisioning_mode,
+            "reviewed_baseline_inputs"
+        );
         assert_eq!(prepared.record.ami_id, "ami-test");
         assert_eq!(prepared.record.ami_source, "explicit_input");
         assert_eq!(prepared.record.vpc_id, "vpc-123");
