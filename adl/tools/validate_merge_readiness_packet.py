@@ -3,6 +3,7 @@
 import sys
 import json
 from pathlib import Path
+from typing import Optional
 
 
 REQUIRED_FILES = [
@@ -44,13 +45,13 @@ REQUIRED_SNAPSHOT_KEYS = {
 }
 
 
-def require_repo_relative_path(rel_path: str, label: str) -> str | None:
+def require_repo_relative_path(rel_path: str, label: str) -> Optional[str]:
     if rel_path.startswith("/") or rel_path.startswith("../") or "/../" in rel_path:
         return f"{label} is not a safe repo-relative path: {rel_path}"
     return None
 
 
-def require_repo_relative_file(repo_root: Path, rel_path: str, label: str) -> str | None:
+def require_repo_relative_file(repo_root: Path, rel_path: str, label: str) -> Optional[str]:
     error = require_repo_relative_path(rel_path, label)
     if error:
         return error

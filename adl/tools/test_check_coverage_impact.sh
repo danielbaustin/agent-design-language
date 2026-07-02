@@ -143,6 +143,14 @@ native_gws_demo_bins_expression="$(bash "$SCRIPT" --changed-files "$native_gws_d
 grep -F "binary_id(adl::bin/demo-adl-gws-context-mirror) and test(/^tests::/)" <<<"$native_gws_demo_bins_expression" >/dev/null
 grep -F "binary_id(adl::bin/demo-adl-gws-native-drive-sync) and test(/^tests::/)" <<<"$native_gws_demo_bins_expression" >/dev/null
 
+aws_remote_validation_bin_changed="$TMP/aws-remote-validation-bin-changed.txt"
+printf 'M\tadl/src/bin/adl_aws_remote_validation.rs\n' >"$aws_remote_validation_bin_changed"
+aws_remote_validation_bin_filters="$TMP/aws-remote-validation-bin-filters.txt"
+bash "$SCRIPT" --changed-files "$aws_remote_validation_bin_changed" --print-risk-filters >"$aws_remote_validation_bin_filters"
+grep -Fx "adl_aws_remote_validation_bin" "$aws_remote_validation_bin_filters" >/dev/null
+aws_remote_validation_bin_expression="$(bash "$SCRIPT" --changed-files "$aws_remote_validation_bin_changed" --print-risk-nextest-expression)"
+grep -F "binary_id(adl::bin/adl-aws-remote-validation) and test(/^tests::/)" <<<"$aws_remote_validation_bin_expression" >/dev/null
+
 gws_live_changed="$TMP/gws-live-changed.txt"
 cat >"$gws_live_changed" <<'EOF'
 A	adl/src/gws_live_capability_execution_surface.rs

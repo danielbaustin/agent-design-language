@@ -2977,29 +2977,51 @@ fn classify_ec2_error<E: fmt::Display>(err: E) -> AwsAdapterError {
 #[cfg(test)]
 mod tests {
     use super::*;
+    use aws_sdk_budgets::config::{Credentials as BudgetsCredentials, Region as BudgetsRegion};
+    use aws_sdk_costexplorer::config::{
+        Credentials as CostExplorerCredentials, Region as CostExplorerRegion,
+    };
+    use aws_sdk_ec2::config::{Credentials as Ec2Credentials, Region as Ec2Region};
+    use aws_sdk_iam::config::{Credentials as IamCredentials, Region as IamRegion};
+    use aws_sdk_servicequotas::config::{
+        Credentials as QuotasCredentials, Region as QuotasRegion,
+    };
+    use aws_sdk_ssm::config::{Credentials as SsmCredentials, Region as SsmRegion};
+    use aws_sdk_sts::config::{Credentials as StsCredentials, Region as StsRegion};
+    use aws_smithy_http_client::test_util::{capture_request, ReplayEvent, StaticReplayClient};
+    use aws_smithy_types::body::SdkBody;
+    use http::Response;
     use std::collections::VecDeque;
     use std::sync::Mutex;
+    use std::time::{SystemTime, UNIX_EPOCH};
 
     struct FakeAdapter {
-        quota: QuotaSnapshot,
-        identity: AwsAccountIdentity,
+        quota_result: std::result::Result<QuotaSnapshot, String>,
+        identity_result: std::result::Result<AwsAccountIdentity, String>,
         launch_results: Mutex<VecDeque<std::result::Result<LaunchResult, AwsAdapterError>>>,
         ssm_ready: std::result::Result<SsmReadyResult, AwsAdapterError>,
         command_result: std::result::Result<CommandExecutionResult, AwsAdapterError>,
         terminate_result: std::result::Result<(), AwsAdapterError>,
         final_state: std::result::Result<Option<String>, AwsAdapterError>,
-        cost: Option<CostExplorerSnapshot>,
-        budget: Option<BudgetSnapshot>,
+        cost_result: std::result::Result<Option<CostExplorerSnapshot>, String>,
+        budget_result: std::result::Result<Option<BudgetSnapshot>, String>,
+        spot_termination_evidence: Option<SpotTerminationEvidence>,
     }
+
+    static TEST_LOG_PATH_GUARD: Lazy<Mutex<()>> = Lazy::new(|| Mutex::new(()));
 
     #[async_trait]
     impl AwsRemoteValidationAdapter for FakeAdapter {
         async fn caller_identity(&self) -> Result<AwsAccountIdentity> {
-            Ok(self.identity.clone())
+            self.identity_result
+                .clone()
+                .map_err(|message| anyhow!(message))
         }
 
         async fn quota_snapshot(&self) -> Result<QuotaSnapshot> {
-            Ok(self.quota.clone())
+            self.quota_result
+                .clone()
+                .map_err(|message| anyhow!(message))
         }
 
         async fn launch_instance(
@@ -3060,18 +3082,22 @@ mod tests {
             _start: DateTime<Utc>,
             _end: DateTime<Utc>,
         ) -> Result<Option<CostExplorerSnapshot>> {
-            Ok(self.cost.clone())
+            self.cost_result
+                .clone()
+                .map_err(|message| anyhow!(message))
         }
 
         async fn budget_snapshot(&self, _budget_name: &str) -> Result<Option<BudgetSnapshot>> {
-            Ok(self.budget.clone())
+            self.budget_result
+                .clone()
+                .map_err(|message| anyhow!(message))
         }
 
         async fn spot_termination_evidence(
             &self,
             _instance_id: &str,
         ) -> Result<Option<SpotTerminationEvidence>> {
-            Ok(None)
+            Ok(self.spot_termination_evidence.clone())
         }
     }
 
@@ -3110,8 +3136,117 @@ mod tests {
         }
     }
 
+    fn unique_test_suffix(label: &str) -> String {
+        let nanos = SystemTime::now()
+            .duration_since(UNIX_EPOCH)
+            .expect("clock before epoch")
+            .as_nanos();
+        format!("{label}-{}-{nanos}", std::process::id())
+    }
+
+    fn test_live_adapter_with_clients<EC2, IAMC, SSMC, QC, CC, BC, STSC>(
+        ec2_http_client: EC2,
+        iam_http_client: IAMC,
+        ssm_http_client: SSMC,
+        quotas_http_client: QC,
+        costs_http_client: CC,
+        budgets_http_client: BC,
+        sts_http_client: STSC,
+    ) -> LiveAwsRemoteValidationAdapter
+    where
+        EC2: aws_smithy_runtime_api::client::http::HttpClient + 'static,
+        IAMC: aws_smithy_runtime_api::client::http::HttpClient + 'static,
+        SSMC: aws_smithy_runtime_api::client::http::HttpClient + 'static,
+        QC: aws_smithy_runtime_api::client::http::HttpClient + 'static,
+        CC: aws_smithy_runtime_api::client::http::HttpClient + 'static,
+        BC: aws_smithy_runtime_api::client::http::HttpClient + 'static,
+        STSC: aws_smithy_runtime_api::client::http::HttpClient + 'static,
+    {
+        let ec2 = ec2::Client::from_conf(
+            ec2::Config::builder()
+                .behavior_version_latest()
+                .region(Ec2Region::new("us-west-2"))
+                .credentials_provider(Ec2Credentials::for_tests())
+                .http_client(ec2_http_client)
+                .build(),
+        );
+        let iam = iam::Client::from_conf(
+            iam::Config::builder()
+                .behavior_version_latest()
+                .region(IamRegion::new("us-west-2"))
+                .credentials_provider(IamCredentials::for_tests())
+                .http_client(iam_http_client)
+                .build(),
+        );
+        let ssm = ssm::Client::from_conf(
+            ssm::Config::builder()
+                .behavior_version_latest()
+                .region(SsmRegion::new("us-west-2"))
+                .credentials_provider(SsmCredentials::for_tests())
+                .http_client(ssm_http_client)
+                .build(),
+        );
+        let quotas = servicequotas::Client::from_conf(
+            servicequotas::Config::builder()
+                .behavior_version_latest()
+                .region(QuotasRegion::new("us-west-2"))
+                .credentials_provider(QuotasCredentials::for_tests())
+                .http_client(quotas_http_client)
+                .build(),
+        );
+        let costs = costexplorer::Client::from_conf(
+            costexplorer::Config::builder()
+                .behavior_version_latest()
+                .region(CostExplorerRegion::new("us-west-2"))
+                .credentials_provider(CostExplorerCredentials::for_tests())
+                .http_client(costs_http_client)
+                .build(),
+        );
+        let budgets = budgets::Client::from_conf(
+            budgets::Config::builder()
+                .behavior_version_latest()
+                .region(BudgetsRegion::new("us-west-2"))
+                .credentials_provider(BudgetsCredentials::for_tests())
+                .http_client(budgets_http_client)
+                .build(),
+        );
+        let sts = sts::Client::from_conf(
+            sts::Config::builder()
+                .behavior_version_latest()
+                .region(StsRegion::new("us-west-2"))
+                .credentials_provider(StsCredentials::for_tests())
+                .http_client(sts_http_client)
+                .build(),
+        );
+        LiveAwsRemoteValidationAdapter {
+            ec2,
+            iam,
+            ssm,
+            quotas,
+            costs,
+            budgets,
+            sts,
+            ssh_debug: None,
+        }
+    }
+
+    fn empty_http_response() -> Response<SdkBody> {
+        Response::builder()
+            .status(200)
+            .body(SdkBody::empty())
+            .expect("empty response")
+    }
+
+    fn empty_http_request() -> http::Request<SdkBody> {
+        http::Request::builder()
+            .uri("https://example.invalid/")
+            .body(SdkBody::empty())
+            .expect("empty request")
+    }
+
     #[tokio::test]
     async fn remote_validation_prefers_spot_and_records_success() {
+        let _guard = TEST_LOG_PATH_GUARD.lock().expect("test log path guard");
         let tmp =
             std::env::temp_dir().join(format!("adl-aws-remote-validation-{}", std::process::id()));
         let remote_json = serde_json::json!({
@@ -3139,17 +3274,17 @@ mod tests {
             remote_json
         );
         let adapter = FakeAdapter {
-            quota: QuotaSnapshot {
+            quota_result: Ok(QuotaSnapshot {
                 spot_vcpu_quota: Some(32.0),
                 on_demand_vcpu_quota: Some(64.0),
                 notes: vec![],
-            },
-            identity: AwsAccountIdentity {
+            }),
+            identity_result: Ok(AwsAccountIdentity {
                 account_id: Some("123456789012".to_string()),
                 account_id_sha256: Some("hash".to_string()),
                 arn: Some("arn:aws:sts::123456789012:assumed-role/example".to_string()),
                 user_id: Some("AIDAEXAMPLE".to_string()),
-            },
+            }),
             launch_results: Mutex::new(VecDeque::from(vec![Ok(LaunchResult {
                 instance_id: "i-1234567890".to_string(),
                 initial_state: "pending".to_string(),
@@ -3166,8 +3301,9 @@ mod tests {
             }),
             terminate_result: Ok(()),
             final_state: Ok(Some("terminated".to_string())),
-            cost: None,
-            budget: None,
+            cost_result: Ok(None),
+            budget_result: Ok(None),
+            spot_termination_evidence: None,
         };
         let (summary, events) = run_aws_remote_validation(&adapter, &sample_config(&tmp))
             .await
@@ -3188,22 +3324,23 @@ mod tests {
 
     #[tokio::test]
     async fn remote_validation_falls_back_to_on_demand_after_spot_capacity_failure() {
+        let _guard = TEST_LOG_PATH_GUARD.lock().expect("test log path guard");
         let tmp = std::env::temp_dir().join(format!(
             "adl-aws-remote-validation-fallback-{}",
             std::process::id()
         ));
         let adapter = FakeAdapter {
-            quota: QuotaSnapshot {
+            quota_result: Ok(QuotaSnapshot {
                 spot_vcpu_quota: Some(32.0),
                 on_demand_vcpu_quota: Some(64.0),
                 notes: vec![],
-            },
-            identity: AwsAccountIdentity {
+            }),
+            identity_result: Ok(AwsAccountIdentity {
                 account_id: Some("123456789012".to_string()),
                 account_id_sha256: Some("hash".to_string()),
                 arn: None,
                 user_id: None,
-            },
+            }),
             launch_results: Mutex::new(VecDeque::from(vec![
                 Err(AwsAdapterError {
                     code: Some("InsufficientInstanceCapacity".to_string()),
@@ -3227,8 +3364,9 @@ mod tests {
             }),
             terminate_result: Ok(()),
             final_state: Ok(Some("terminated".to_string())),
-            cost: None,
-            budget: None,
+            cost_result: Ok(None),
+            budget_result: Ok(None),
+            spot_termination_evidence: None,
         };
 
         let (summary, _) = run_aws_remote_validation(&adapter, &sample_config(&tmp))
@@ -3255,23 +3393,24 @@ mod tests {
 
     #[tokio::test]
     async fn remote_validation_classifies_spot_interruptions_truthfully() {
+        let _guard = TEST_LOG_PATH_GUARD.lock().expect("test log path guard");
         let tmp = std::env::temp_dir().join(format!(
             "adl-aws-remote-validation-interruption-{}",
             std::process::id()
         ));
         let stdout = "ADL_AWS_REMOTE_SUMMARY_BEGIN\n{\"status\":\"failed\",\"bootstrap_seconds\":1,\"command_seconds\":2,\"interruption_detected\":true,\"interruption_notice\":\"{\\\"action\\\":\\\"terminate\\\",\\\"time\\\":\\\"2026-07-01T20:00:00Z\\\"}\",\"resolved_commit\":\"abc\",\"rustc_version\":null,\"cargo_version\":null,\"sccache_version\":null,\"sccache_degraded\":false,\"sccache_degraded_reason\":null,\"sccache_stats\":null}\nADL_AWS_REMOTE_SUMMARY_END\n";
         let adapter = FakeAdapter {
-            quota: QuotaSnapshot {
+            quota_result: Ok(QuotaSnapshot {
                 spot_vcpu_quota: Some(32.0),
                 on_demand_vcpu_quota: Some(64.0),
                 notes: vec![],
-            },
-            identity: AwsAccountIdentity {
+            }),
+            identity_result: Ok(AwsAccountIdentity {
                 account_id: Some("123456789012".to_string()),
                 account_id_sha256: Some("hash".to_string()),
                 arn: None,
                 user_id: None,
-            },
+            }),
             launch_results: Mutex::new(VecDeque::from(vec![Ok(LaunchResult {
                 instance_id: "i-interrupted".to_string(),
                 initial_state: "pending".to_string(),
@@ -3288,8 +3427,9 @@ mod tests {
             }),
             terminate_result: Ok(()),
             final_state: Ok(Some("terminated".to_string())),
-            cost: None,
-            budget: None,
+            cost_result: Ok(None),
+            budget_result: Ok(None),
+            spot_termination_evidence: None,
         };
 
         let (summary, events) = run_aws_remote_validation(&adapter, &sample_config(&tmp))
@@ -3352,23 +3492,24 @@ mod tests {
 
     #[tokio::test]
     async fn remote_validation_fails_when_sccache_degrades() {
+        let _guard = TEST_LOG_PATH_GUARD.lock().expect("test log path guard");
         let tmp = std::env::temp_dir().join(format!(
             "adl-aws-remote-validation-sccache-failed-{}",
             std::process::id()
         ));
         let stdout = "ADL_AWS_REMOTE_SUMMARY_BEGIN\n{\"status\":\"passed\",\"bootstrap_seconds\":1,\"command_seconds\":2,\"interruption_detected\":false,\"interruption_notice\":null,\"resolved_commit\":\"abc\",\"rustc_version\":null,\"cargo_version\":null,\"sccache_version\":\"sccache fixture\",\"sccache_degraded\":true,\"sccache_degraded_reason\":\"server_shut_down_unexpectedly\",\"sccache_stats\":null}\nADL_AWS_REMOTE_SUMMARY_END\n";
         let adapter = FakeAdapter {
-            quota: QuotaSnapshot {
+            quota_result: Ok(QuotaSnapshot {
                 spot_vcpu_quota: Some(32.0),
                 on_demand_vcpu_quota: Some(64.0),
                 notes: vec![],
-            },
-            identity: AwsAccountIdentity {
+            }),
+            identity_result: Ok(AwsAccountIdentity {
                 account_id: Some("123456789012".to_string()),
                 account_id_sha256: Some("hash".to_string()),
                 arn: None,
                 user_id: None,
-            },
+            }),
             launch_results: Mutex::new(VecDeque::from(vec![Ok(LaunchResult {
                 instance_id: "i-sccache".to_string(),
                 initial_state: "pending".to_string(),
@@ -3385,8 +3526,9 @@ mod tests {
             }),
             terminate_result: Ok(()),
             final_state: Ok(Some("terminated".to_string())),
-            cost: None,
-            budget: None,
+            cost_result: Ok(None),
+            budget_result: Ok(None),
+            spot_termination_evidence: None,
         };
 
         let (summary, events) = run_aws_remote_validation(&adapter, &sample_config(&tmp))
@@ -3405,23 +3547,24 @@ mod tests {
 
     #[tokio::test]
     async fn remote_validation_ignores_html_spot_notice_false_positives() {
+        let _guard = TEST_LOG_PATH_GUARD.lock().expect("test log path guard");
         let tmp = std::env::temp_dir().join(format!(
             "adl-aws-remote-validation-html-notice-{}",
             std::process::id()
         ));
         let stdout = "ADL_AWS_REMOTE_SUMMARY_BEGIN\n{\"status\":\"passed\",\"bootstrap_seconds\":1,\"command_seconds\":2,\"interruption_detected\":true,\"interruption_notice\":\"<?xml version=\\\"1.0\\\"?><html><title>404 - Not Found</title></html>\",\"resolved_commit\":\"abc\",\"rustc_version\":null,\"cargo_version\":null,\"sccache_version\":null,\"sccache_degraded\":false,\"sccache_degraded_reason\":null,\"sccache_stats\":null}\nADL_AWS_REMOTE_SUMMARY_END\n";
         let adapter = FakeAdapter {
-            quota: QuotaSnapshot {
+            quota_result: Ok(QuotaSnapshot {
                 spot_vcpu_quota: Some(32.0),
                 on_demand_vcpu_quota: Some(64.0),
                 notes: vec![],
-            },
-            identity: AwsAccountIdentity {
+            }),
+            identity_result: Ok(AwsAccountIdentity {
                 account_id: Some("123456789012".to_string()),
                 account_id_sha256: Some("hash".to_string()),
                 arn: None,
                 user_id: None,
-            },
+            }),
             launch_results: Mutex::new(VecDeque::from(vec![Ok(LaunchResult {
                 instance_id: "i-html-false-positive".to_string(),
                 initial_state: "pending".to_string(),
@@ -3438,8 +3581,9 @@ mod tests {
             }),
             terminate_result: Ok(()),
             final_state: Ok(Some("terminated".to_string())),
-            cost: None,
-            budget: None,
+            cost_result: Ok(None),
+            budget_result: Ok(None),
+            spot_termination_evidence: None,
         };
 
         let (summary, events) = run_aws_remote_validation(&adapter, &sample_config(&tmp))
@@ -3461,5 +3605,891 @@ mod tests {
         assert_eq!(summary.bootstrap_seconds, Some(1));
         assert!(!summary.interruption_detected);
         assert!(!summary.sccache_degraded);
+    }
+
+    #[test]
+    fn helper_functions_cover_preview_paths_and_log_writes() {
+        let _guard = TEST_LOG_PATH_GUARD.lock().expect("test log path guard");
+        let tmp = std::env::temp_dir().join(unique_test_suffix("adl-aws-remote-validation-log"));
+        let _ = std::fs::remove_dir_all(&tmp);
+        initialize_live_log_paths(&tmp).expect("init log paths");
+        let mut events = Vec::new();
+        record_event(&mut events, "stage", "ok", "detail".to_string());
+        append_command_status_line("poll", "instance_id=i-test");
+        clear_live_log_paths();
+
+        let event_log = std::fs::read_to_string(tmp.join("events.jsonl")).expect("event log");
+        assert!(event_log.contains("\"stage\":\"stage\""));
+        let command_log =
+            std::fs::read_to_string(tmp.join("command-status.log")).expect("command log");
+        assert!(command_log.contains("status=poll"));
+        assert_eq!(preview("1\n2\n3\n4\n5\n6\n7\n8\n9"), "1 | 2 | 3 | 4 | 5 | 6 | 7 | 8");
+        assert_eq!(sha256_hex("abc").len(), 64);
+        assert_eq!(shell_single_quote("a'b"), "a'\"'\"'b");
+        assert_eq!(
+            extract_run_root("RUN_ROOT=\"/tmp/run\"\necho hi"),
+            Some("/tmp/run".to_string())
+        );
+        assert!(extract_run_root("echo hi").is_none());
+        assert!(temp_resource_name(Some(4603), "run__ID", "adl--prefix", 24).len() <= 24);
+    }
+
+    #[test]
+    fn helper_functions_cover_validation_and_summary_edge_cases() {
+        let now = DateTime::parse_from_rfc3339("2026-07-02T19:45:33Z")
+            .expect("timestamp")
+            .with_timezone(&Utc);
+        let month_start = start_of_month(now);
+        assert_eq!(month_start.day(), 1);
+        assert_eq!(month_start.hour(), 0);
+        assert_eq!(month_start.minute(), 0);
+        assert_eq!(month_start.second(), 0);
+
+        let tmp = std::env::temp_dir().join(format!(
+            "adl-aws-remote-validation-helper-{}",
+            std::process::id()
+        ));
+        let config = sample_config(&tmp);
+        assert!(config.validate().is_ok());
+        let mut invalid = config.clone();
+        invalid.command = "   ".to_string();
+        assert!(invalid.validate().is_err());
+        invalid = config.clone();
+        invalid.instance_types.clear();
+        assert!(invalid.validate().is_err());
+        invalid = config.clone();
+        invalid.ami_id.clear();
+        assert!(invalid.validate().is_err());
+
+        assert!(is_valid_spot_interruption_notice(Some(
+            "{\"action\":\"terminate\",\"time\":\"2026-07-01T20:00:00Z\"}"
+        )));
+        assert!(!is_valid_spot_interruption_notice(Some("<html>404 - Not Found</html>")));
+        assert!(!is_valid_spot_interruption_notice(Some("{\"action\":\"terminate\"}")));
+        assert!(!is_valid_spot_interruption_notice(None));
+
+        let summary = RemoteCommandSummary {
+            status: "failed".to_string(),
+            bootstrap_seconds: Some(1),
+            command_seconds: Some(2),
+            interruption_detected: true,
+            interruption_notice: Some(
+                "{\"action\":\"terminate\",\"time\":\"2026-07-01T20:00:00Z\"}".to_string(),
+            ),
+            resolved_commit: None,
+            rustc_version: None,
+            cargo_version: None,
+            sccache_version: None,
+            sccache_degraded: false,
+            sccache_degraded_reason: None,
+            sccache_stats: None,
+        };
+        assert!(remote_summary_reports_valid_interruption(&summary));
+        assert!(parse_remote_summary("missing markers").is_none());
+        assert!(parse_remote_summary(
+            "ADL_AWS_REMOTE_SUMMARY_END\n{}\nADL_AWS_REMOTE_SUMMARY_BEGIN"
+        )
+        .is_none());
+
+        let ssh_config = build_ssh_debug_config(&AwsRemoteValidationConfig {
+            ssh_key_name: Some("adl-ssh".to_string()),
+            ssh_private_key_path: Some(PathBuf::from("/tmp/adl-ssh.pem")),
+            ssh_user: Some("ec2-user".to_string()),
+            ssh_allowed_cidr: Some("203.0.113.9/32".to_string()),
+            ..config.clone()
+        })
+        .expect("ssh config")
+        .expect("ssh config present");
+        assert_eq!(ssh_config.user, "ec2-user");
+        assert_eq!(ssh_config.allowed_cidr, "203.0.113.9/32");
+        let missing_key = build_ssh_debug_config(&AwsRemoteValidationConfig {
+            ssh_key_name: Some("adl-ssh".to_string()),
+            ssh_private_key_path: None,
+            ..config
+        });
+        assert!(missing_key.is_err());
+    }
+
+    #[tokio::test]
+    async fn remote_validation_records_non_success_paths_truthfully() {
+        let _guard = TEST_LOG_PATH_GUARD.lock().expect("test log path guard");
+        let tmp = std::env::temp_dir().join(format!(
+            "adl-aws-remote-validation-failure-path-{}",
+            std::process::id()
+        ));
+        let adapter = FakeAdapter {
+            quota_result: Err("quota unavailable".to_string()),
+            identity_result: Err("identity unavailable".to_string()),
+            launch_results: Mutex::new(VecDeque::from(vec![Ok(LaunchResult {
+                instance_id: "i-failure".to_string(),
+                initial_state: "pending".to_string(),
+            })])),
+            ssm_ready: Err(AwsAdapterError {
+                code: Some("SsmNotOnline".to_string()),
+                message: "never online".to_string(),
+                spot_fallback_permitted: false,
+            }),
+            command_result: Err(AwsAdapterError {
+                code: Some("ShouldNotRun".to_string()),
+                message: "command should not run".to_string(),
+                spot_fallback_permitted: false,
+            }),
+            terminate_result: Err(AwsAdapterError {
+                code: Some("TerminateFailed".to_string()),
+                message: "termination failed".to_string(),
+                spot_fallback_permitted: false,
+            }),
+            final_state: Ok(Some("stopping".to_string())),
+            cost_result: Ok(Some(CostExplorerSnapshot {
+                start: "2026-07-01T00:00:00Z".to_string(),
+                end: "2026-07-02T00:00:00Z".to_string(),
+                service: "Amazon Elastic Compute Cloud - Compute".to_string(),
+                amount: Some("1.23".to_string()),
+                unit: Some("USD".to_string()),
+                delayed_billing_boundary: true,
+                note: "fixture".to_string(),
+            })),
+            budget_result: Ok(Some(BudgetSnapshot {
+                budget_name: "Agent Logic Monthly".to_string(),
+                limit_amount: Some("25".to_string()),
+                limit_unit: Some("USD".to_string()),
+                actual_spend_amount: Some("1.23".to_string()),
+                actual_spend_unit: Some("USD".to_string()),
+                forecast_spend_amount: Some("2.34".to_string()),
+                forecast_spend_unit: Some("USD".to_string()),
+            })),
+            spot_termination_evidence: None,
+        };
+
+        let (summary, events) = run_aws_remote_validation(&adapter, &sample_config(&tmp))
+            .await
+            .expect("summary");
+
+        assert_eq!(summary.status, RemoteRunStatus::Failed);
+        assert!(summary
+            .failure_reason
+            .as_deref()
+            .is_some_and(|reason| reason.contains("SSM-ready")));
+        assert_eq!(summary.cleanup.final_instance_state, None);
+        assert!(summary.cleanup.termination_error.is_some());
+        assert!(summary.quota_snapshot.notes.iter().any(|note| note.contains("quota capture unavailable")));
+        assert!(summary.account_identity.is_none());
+        assert!(summary.cost_explorer.is_some());
+        assert!(summary.budget_snapshot.is_some());
+        assert!(events.iter().any(|event| event.stage == "ssm" && event.status == "failed"));
+    }
+
+    #[tokio::test]
+    async fn remote_validation_handles_dispatch_interruptions_and_writes_artifacts() {
+        let _guard = TEST_LOG_PATH_GUARD.lock().expect("test log path guard");
+        let tmp = std::env::temp_dir().join(format!(
+            "adl-aws-remote-validation-dispatch-{}",
+            std::process::id()
+        ));
+        let adapter = FakeAdapter {
+            quota_result: Ok(QuotaSnapshot {
+                spot_vcpu_quota: Some(32.0),
+                on_demand_vcpu_quota: Some(64.0),
+                notes: vec![],
+            }),
+            identity_result: Ok(AwsAccountIdentity {
+                account_id: Some("123456789012".to_string()),
+                account_id_sha256: Some("hash".to_string()),
+                arn: None,
+                user_id: None,
+            }),
+            launch_results: Mutex::new(VecDeque::from(vec![Ok(LaunchResult {
+                instance_id: "i-dispatch".to_string(),
+                initial_state: "pending".to_string(),
+            })])),
+            ssm_ready: Ok(SsmReadyResult {
+                status: "Online".to_string(),
+            }),
+            command_result: Err(AwsAdapterError {
+                code: Some("DispatchFailed".to_string()),
+                message: "dispatch failed".to_string(),
+                spot_fallback_permitted: false,
+            }),
+            terminate_result: Ok(()),
+            final_state: Ok(Some("terminated".to_string())),
+            cost_result: Ok(None),
+            budget_result: Ok(None),
+            spot_termination_evidence: Some(SpotTerminationEvidence {
+                instance_id: "i-dispatch".to_string(),
+                instance_lifecycle: Some("spot".to_string()),
+                state_reason_code: Some("Server.SpotInstanceTermination".to_string()),
+                state_reason_message: Some("capacity".to_string()),
+                state_transition_reason: Some("capacity".to_string()),
+                spot_instance_request_id: Some("sir-123".to_string()),
+                spot_request_status_code: Some("instance-terminated-no-capacity".to_string()),
+                spot_request_status_message: Some("no capacity".to_string()),
+                provider_interruption_confirmed: true,
+            }),
+        };
+
+        let (summary, events) = run_aws_remote_validation(&adapter, &sample_config(&tmp))
+            .await
+            .expect("summary");
+        assert_eq!(summary.status, RemoteRunStatus::InterruptedByAws);
+        assert!(summary
+            .failure_reason
+            .as_deref()
+            .is_some_and(|reason| reason.contains("dispatch failed")));
+        assert!(summary.spot_termination_evidence.is_some());
+
+        let out_path = tmp.join("written").join("summary.json");
+        let artifact_dir = tmp.join("written").join("artifacts");
+        write_summary_artifacts(&summary, &events, &out_path, &artifact_dir)
+            .await
+            .expect("artifacts");
+        assert!(out_path.is_file());
+        assert!(artifact_dir.join("events.jsonl").is_file());
+    }
+
+    #[tokio::test]
+    async fn remote_validation_fails_when_spot_launch_is_not_fallbackable() {
+        let _guard = TEST_LOG_PATH_GUARD.lock().expect("test log path guard");
+        let tmp = std::env::temp_dir().join(format!(
+            "adl-aws-remote-validation-no-fallback-{}",
+            std::process::id()
+        ));
+        let adapter = FakeAdapter {
+            quota_result: Ok(QuotaSnapshot {
+                spot_vcpu_quota: Some(32.0),
+                on_demand_vcpu_quota: Some(64.0),
+                notes: vec![],
+            }),
+            identity_result: Ok(AwsAccountIdentity {
+                account_id: Some("123456789012".to_string()),
+                account_id_sha256: Some("hash".to_string()),
+                arn: None,
+                user_id: None,
+            }),
+            launch_results: Mutex::new(VecDeque::from(vec![Err(AwsAdapterError {
+                code: Some("AuthFailure".to_string()),
+                message: "auth failed".to_string(),
+                spot_fallback_permitted: false,
+            })])),
+            ssm_ready: Ok(SsmReadyResult {
+                status: "Online".to_string(),
+            }),
+            command_result: Ok(CommandExecutionResult {
+                command_id: "unused".to_string(),
+                status: "Success".to_string(),
+                response_code: Some(0),
+                stdout: String::new(),
+                stderr: String::new(),
+            }),
+            terminate_result: Ok(()),
+            final_state: Ok(Some("terminated".to_string())),
+            cost_result: Ok(None),
+            budget_result: Ok(None),
+            spot_termination_evidence: None,
+        };
+
+        let (summary, events) = run_aws_remote_validation(&adapter, &sample_config(&tmp))
+            .await
+            .expect("summary");
+        assert_eq!(summary.status, RemoteRunStatus::Failed);
+        assert!(summary.launch.is_none());
+        assert!(summary
+            .failure_reason
+            .as_deref()
+            .is_some_and(|reason| reason.contains("without permitted fallback")));
+        assert!(events
+            .iter()
+            .any(|event| event.stage == "launch_attempt" && event.status == "warn"));
+    }
+
+    #[tokio::test]
+    async fn remote_validation_reports_non_interruption_command_failure() {
+        let _guard = TEST_LOG_PATH_GUARD.lock().expect("test log path guard");
+        let tmp = std::env::temp_dir().join(format!(
+            "adl-aws-remote-validation-command-failed-{}",
+            std::process::id()
+        ));
+        let adapter = FakeAdapter {
+            quota_result: Ok(QuotaSnapshot {
+                spot_vcpu_quota: Some(32.0),
+                on_demand_vcpu_quota: Some(64.0),
+                notes: vec![],
+            }),
+            identity_result: Ok(AwsAccountIdentity {
+                account_id: Some("123456789012".to_string()),
+                account_id_sha256: Some("hash".to_string()),
+                arn: None,
+                user_id: None,
+            }),
+            launch_results: Mutex::new(VecDeque::from(vec![Ok(LaunchResult {
+                instance_id: "i-failed".to_string(),
+                initial_state: "pending".to_string(),
+            })])),
+            ssm_ready: Ok(SsmReadyResult {
+                status: "Online".to_string(),
+            }),
+            command_result: Ok(CommandExecutionResult {
+                command_id: "cmd-failed".to_string(),
+                status: "Failed".to_string(),
+                response_code: Some(17),
+                stdout: "plain output".to_string(),
+                stderr: "plain stderr".to_string(),
+            }),
+            terminate_result: Ok(()),
+            final_state: Ok(Some("terminated".to_string())),
+            cost_result: Err("cost unavailable".to_string()),
+            budget_result: Err("budget unavailable".to_string()),
+            spot_termination_evidence: None,
+        };
+
+        let (summary, events) = run_aws_remote_validation(&adapter, &sample_config(&tmp))
+            .await
+            .expect("summary");
+        assert_eq!(summary.status, RemoteRunStatus::Failed);
+        assert!(summary
+            .failure_reason
+            .as_deref()
+            .is_some_and(|reason| reason.contains("response_code=Some(17)")));
+        assert!(summary.cost_explorer.is_none());
+        assert!(summary.budget_snapshot.is_none());
+        assert!(events
+            .iter()
+            .any(|event| event.stage == "remote_command" && event.status == "failed"));
+    }
+
+    #[tokio::test]
+    async fn remote_validation_records_cleanup_wait_failure_after_successful_termination_request() {
+        let _guard = TEST_LOG_PATH_GUARD.lock().expect("test log path guard");
+        let tmp = std::env::temp_dir().join(format!(
+            "adl-aws-remote-validation-cleanup-wait-{}",
+            std::process::id()
+        ));
+        let stdout = "ADL_AWS_REMOTE_SUMMARY_BEGIN\n{\"status\":\"passed\",\"bootstrap_seconds\":1,\"command_seconds\":2,\"interruption_detected\":false,\"interruption_notice\":null,\"resolved_commit\":\"abc\",\"rustc_version\":null,\"cargo_version\":null,\"sccache_version\":null,\"sccache_degraded\":false,\"sccache_degraded_reason\":null,\"sccache_stats\":null}\nADL_AWS_REMOTE_SUMMARY_END\n";
+        let adapter = FakeAdapter {
+            quota_result: Ok(QuotaSnapshot {
+                spot_vcpu_quota: Some(32.0),
+                on_demand_vcpu_quota: Some(64.0),
+                notes: vec![],
+            }),
+            identity_result: Ok(AwsAccountIdentity {
+                account_id: Some("123456789012".to_string()),
+                account_id_sha256: Some("hash".to_string()),
+                arn: None,
+                user_id: None,
+            }),
+            launch_results: Mutex::new(VecDeque::from(vec![Ok(LaunchResult {
+                instance_id: "i-cleanup".to_string(),
+                initial_state: "pending".to_string(),
+            })])),
+            ssm_ready: Ok(SsmReadyResult {
+                status: "Online".to_string(),
+            }),
+            command_result: Ok(CommandExecutionResult {
+                command_id: "cmd-cleanup".to_string(),
+                status: "Success".to_string(),
+                response_code: Some(0),
+                stdout: stdout.to_string(),
+                stderr: String::new(),
+            }),
+            terminate_result: Ok(()),
+            final_state: Err(AwsAdapterError {
+                code: Some("TerminationTimeout".to_string()),
+                message: "timeout waiting".to_string(),
+                spot_fallback_permitted: false,
+            }),
+            cost_result: Ok(None),
+            budget_result: Ok(None),
+            spot_termination_evidence: None,
+        };
+
+        let (summary, events) = run_aws_remote_validation(&adapter, &sample_config(&tmp))
+            .await
+            .expect("summary");
+        assert_eq!(summary.status, RemoteRunStatus::Passed);
+        assert!(summary.cleanup.termination_attempted);
+        assert!(summary.cleanup.final_instance_state.is_none());
+        assert!(summary
+            .cleanup
+            .termination_error
+            .as_deref()
+            .is_some_and(|reason| reason.contains("timeout waiting")));
+        assert!(events
+            .iter()
+            .any(|event| event.stage == "cleanup" && event.status == "warn"));
+    }
+
+    #[tokio::test]
+    async fn live_adapter_caller_identity_hashes_account_id() {
+        let sts_body = r#"<?xml version="1.0" encoding="UTF-8"?>
+<GetCallerIdentityResponse xmlns="https://sts.amazonaws.com/doc/2011-06-15/">
+  <GetCallerIdentityResult>
+    <Arn>arn:aws:sts::123456789012:assumed-role/agent-logic/session</Arn>
+    <UserId>AIDAEXAMPLE</UserId>
+    <Account>123456789012</Account>
+  </GetCallerIdentityResult>
+  <ResponseMetadata>
+    <RequestId>req-123</RequestId>
+  </ResponseMetadata>
+</GetCallerIdentityResponse>"#;
+        let (sts_http_client, _) = capture_request(Some(
+            Response::builder()
+                .status(200)
+                .body(SdkBody::from(sts_body))
+                .expect("sts response"),
+        ));
+        let (ec2_http_client, _) = capture_request(Some(empty_http_response()));
+        let (iam_http_client, _) = capture_request(Some(empty_http_response()));
+        let (ssm_http_client, _) = capture_request(Some(empty_http_response()));
+        let (quotas_http_client, _) = capture_request(Some(empty_http_response()));
+        let (costs_http_client, _) = capture_request(Some(empty_http_response()));
+        let (budgets_http_client, _) = capture_request(Some(empty_http_response()));
+        let adapter = test_live_adapter_with_clients(
+            ec2_http_client,
+            iam_http_client,
+            ssm_http_client,
+            quotas_http_client,
+            costs_http_client,
+            budgets_http_client,
+            sts_http_client,
+        );
+
+        let identity = adapter.caller_identity().await.expect("caller identity");
+        assert_eq!(identity.account_id.as_deref(), Some("123456789012"));
+        assert_eq!(identity.user_id.as_deref(), Some("AIDAEXAMPLE"));
+        assert_eq!(
+            identity.arn.as_deref(),
+            Some("arn:aws:sts::123456789012:assumed-role/agent-logic/session")
+        );
+        assert_eq!(
+            identity.account_id_sha256,
+            Some(sha256_hex("123456789012"))
+        );
+    }
+
+    #[tokio::test]
+    async fn live_adapter_instance_state_and_spot_evidence_parse_ec2_responses() {
+        let describe_instances_body = r#"<?xml version="1.0" encoding="UTF-8"?>
+<DescribeInstancesResponse xmlns="http://ec2.amazonaws.com/doc/2016-11-15/">
+  <reservationSet>
+    <item>
+      <instancesSet>
+        <item>
+          <instanceId>i-spot</instanceId>
+          <instanceLifecycle>spot</instanceLifecycle>
+          <instanceState>
+            <name>terminated</name>
+          </instanceState>
+          <stateReason>
+            <code>Server.SpotInstanceTermination</code>
+            <message>Server terminated Spot instance</message>
+          </stateReason>
+          <stateTransitionReason>User initiated (2026-07-02 00:00:00 GMT)</stateTransitionReason>
+          <spotInstanceRequestId>sir-spot</spotInstanceRequestId>
+        </item>
+      </instancesSet>
+    </item>
+  </reservationSet>
+</DescribeInstancesResponse>"#;
+        let describe_spot_requests_body = r#"<?xml version="1.0" encoding="UTF-8"?>
+<DescribeSpotInstanceRequestsResponse xmlns="http://ec2.amazonaws.com/doc/2016-11-15/">
+  <spotInstanceRequestSet>
+    <item>
+      <spotInstanceRequestId>sir-spot</spotInstanceRequestId>
+      <status>
+        <code>instance-terminated-no-capacity</code>
+        <message>No Spot capacity available</message>
+      </status>
+    </item>
+  </spotInstanceRequestSet>
+</DescribeSpotInstanceRequestsResponse>"#;
+        let ec2_http_client = StaticReplayClient::new(vec![
+            ReplayEvent::new(
+                empty_http_request(),
+                Response::builder()
+                    .status(200)
+                    .body(SdkBody::from(describe_instances_body))
+                    .expect("ec2 describe instances response"),
+            ),
+            ReplayEvent::new(
+                empty_http_request(),
+                Response::builder()
+                    .status(200)
+                    .body(SdkBody::from(describe_spot_requests_body))
+                    .expect("ec2 describe spot requests response"),
+            ),
+        ]);
+        let (iam_http_client, _) = capture_request(Some(empty_http_response()));
+        let (ssm_http_client, _) = capture_request(Some(empty_http_response()));
+        let (quotas_http_client, _) = capture_request(Some(empty_http_response()));
+        let (costs_http_client, _) = capture_request(Some(empty_http_response()));
+        let (budgets_http_client, _) = capture_request(Some(empty_http_response()));
+        let (sts_http_client, _) = capture_request(Some(empty_http_response()));
+        let adapter = test_live_adapter_with_clients(
+            ec2_http_client,
+            iam_http_client,
+            ssm_http_client,
+            quotas_http_client,
+            costs_http_client,
+            budgets_http_client,
+            sts_http_client,
+        );
+
+        let state = adapter.instance_state("i-spot").await.expect("instance state");
+        assert_eq!(state.as_deref(), Some("terminated"));
+
+        let ec2_http_client = StaticReplayClient::new(vec![
+            ReplayEvent::new(
+                empty_http_request(),
+                Response::builder()
+                    .status(200)
+                    .body(SdkBody::from(describe_instances_body))
+                    .expect("ec2 describe instances response"),
+            ),
+            ReplayEvent::new(
+                empty_http_request(),
+                Response::builder()
+                    .status(200)
+                    .body(SdkBody::from(describe_spot_requests_body))
+                    .expect("ec2 describe spot requests response"),
+            ),
+        ]);
+        let (iam_http_client, _) = capture_request(Some(empty_http_response()));
+        let (ssm_http_client, _) = capture_request(Some(empty_http_response()));
+        let (quotas_http_client, _) = capture_request(Some(empty_http_response()));
+        let (costs_http_client, _) = capture_request(Some(empty_http_response()));
+        let (budgets_http_client, _) = capture_request(Some(empty_http_response()));
+        let (sts_http_client, _) = capture_request(Some(empty_http_response()));
+        let adapter = test_live_adapter_with_clients(
+            ec2_http_client,
+            iam_http_client,
+            ssm_http_client,
+            quotas_http_client,
+            costs_http_client,
+            budgets_http_client,
+            sts_http_client,
+        );
+        let evidence = adapter
+            .spot_termination_evidence("i-spot")
+            .await
+            .expect("spot evidence")
+            .expect("spot evidence payload");
+        assert_eq!(evidence.instance_lifecycle.as_deref(), Some("spot"));
+        assert_eq!(
+            evidence.state_reason_code.as_deref(),
+            Some("Server.SpotInstanceTermination")
+        );
+        assert_eq!(
+            evidence.spot_request_status_code.as_deref(),
+            Some("instance-terminated-no-capacity")
+        );
+        assert!(evidence.provider_interruption_confirmed);
+    }
+
+    #[tokio::test]
+    async fn live_adapter_cost_and_budget_snapshots_parse_expected_payloads() {
+        let cost_body = r#"{
+  "ResultsByTime": [
+    {
+      "TimePeriod": {"Start": "2026-07-01", "End": "2026-07-03"},
+      "Total": {
+        "UnblendedCost": {
+          "Amount": "1.23",
+          "Unit": "USD"
+        }
+      }
+    }
+  ]
+}"#;
+        let budget_body = r#"{
+  "Budget": {
+    "BudgetName": "Agent Logic Monthly",
+    "BudgetLimit": {"Amount": "25", "Unit": "USD"},
+    "CalculatedSpend": {
+      "ActualSpend": {"Amount": "1.23", "Unit": "USD"},
+      "ForecastedSpend": {"Amount": "2.34", "Unit": "USD"}
+    }
+  }
+}"#;
+        let sts_body = r#"<?xml version="1.0" encoding="UTF-8"?>
+<GetCallerIdentityResponse xmlns="https://sts.amazonaws.com/doc/2011-06-15/">
+  <GetCallerIdentityResult>
+    <Account>123456789012</Account>
+  </GetCallerIdentityResult>
+</GetCallerIdentityResponse>"#;
+        let (ec2_http_client, _) = capture_request(Some(empty_http_response()));
+        let (iam_http_client, _) = capture_request(Some(empty_http_response()));
+        let (ssm_http_client, _) = capture_request(Some(empty_http_response()));
+        let (quotas_http_client, _) = capture_request(Some(empty_http_response()));
+        let (costs_http_client, _) = capture_request(Some(
+            Response::builder()
+                .status(200)
+                .header("content-type", "application/x-amz-json-1.1")
+                .body(SdkBody::from(cost_body))
+                .expect("cost response"),
+        ));
+        let (budgets_http_client, _) = capture_request(Some(
+            Response::builder()
+                .status(200)
+                .header("content-type", "application/x-amz-json-1.1")
+                .body(SdkBody::from(budget_body))
+                .expect("budget response"),
+        ));
+        let (sts_http_client, _) = capture_request(Some(
+            Response::builder()
+                .status(200)
+                .body(SdkBody::from(sts_body))
+                .expect("sts response"),
+        ));
+        let adapter = test_live_adapter_with_clients(
+            ec2_http_client,
+            iam_http_client,
+            ssm_http_client,
+            quotas_http_client,
+            costs_http_client,
+            budgets_http_client,
+            sts_http_client,
+        );
+
+        let start = DateTime::parse_from_rfc3339("2026-07-01T00:00:00Z")
+            .expect("start time")
+            .with_timezone(&Utc);
+        let end = DateTime::parse_from_rfc3339("2026-07-03T00:00:00Z")
+            .expect("end time")
+            .with_timezone(&Utc);
+        let cost = adapter
+            .cost_snapshot(start, end)
+            .await
+            .expect("cost snapshot")
+            .expect("cost payload");
+        assert_eq!(cost.amount.as_deref(), Some("1.23"));
+        assert_eq!(cost.unit.as_deref(), Some("USD"));
+        assert!(cost.delayed_billing_boundary);
+
+        let budget = adapter
+            .budget_snapshot("Agent Logic Monthly")
+            .await
+            .expect("budget snapshot")
+            .expect("budget payload");
+        assert_eq!(budget.limit_amount.as_deref(), Some("25"));
+        assert_eq!(budget.actual_spend_amount.as_deref(), Some("1.23"));
+        assert_eq!(budget.forecast_spend_amount.as_deref(), Some("2.34"));
+    }
+
+    #[tokio::test]
+    async fn live_adapter_quota_snapshot_parses_expected_quota_values() {
+        let quotas_body = format!(
+            r#"{{
+  "Quotas": [
+    {{"QuotaName":"{spot}","Value":32.0}},
+    {{"QuotaName":"{ondemand}","Value":64.0}}
+  ]
+}}"#,
+            spot = SPOT_QUOTA_NAME,
+            ondemand = ON_DEMAND_QUOTA_NAME
+        );
+        let (ec2_http_client, _) = capture_request(Some(empty_http_response()));
+        let (iam_http_client, _) = capture_request(Some(empty_http_response()));
+        let (ssm_http_client, _) = capture_request(Some(empty_http_response()));
+        let (quotas_http_client, _) = capture_request(Some(
+            Response::builder()
+                .status(200)
+                .header("content-type", "application/x-amz-json-1.1")
+                .body(SdkBody::from(quotas_body))
+                .expect("quotas response"),
+        ));
+        let (costs_http_client, _) = capture_request(Some(empty_http_response()));
+        let (budgets_http_client, _) = capture_request(Some(empty_http_response()));
+        let (sts_http_client, _) = capture_request(Some(empty_http_response()));
+        let adapter = test_live_adapter_with_clients(
+            ec2_http_client,
+            iam_http_client,
+            ssm_http_client,
+            quotas_http_client,
+            costs_http_client,
+            budgets_http_client,
+            sts_http_client,
+        );
+
+        let snapshot = adapter.quota_snapshot().await.expect("quota snapshot");
+        assert_eq!(snapshot.spot_vcpu_quota, Some(32.0));
+        assert_eq!(snapshot.on_demand_vcpu_quota, Some(64.0));
+        assert!(snapshot.notes.is_empty());
+    }
+
+    #[tokio::test]
+    async fn live_adapter_launch_instance_and_ssm_online_parse_success_payloads() {
+        let run_instances_body = r#"<?xml version="1.0" encoding="UTF-8"?>
+<RunInstancesResponse xmlns="http://ec2.amazonaws.com/doc/2016-11-15/">
+  <instancesSet>
+    <item>
+      <instanceId>i-launch</instanceId>
+      <instanceState>
+        <name>pending</name>
+      </instanceState>
+    </item>
+  </instancesSet>
+</RunInstancesResponse>"#;
+        let ssm_body = r#"{
+  "InstanceInformationList": [
+    {"PingStatus":"Online"}
+  ]
+}"#;
+        let (ec2_http_client, _) = capture_request(Some(
+            Response::builder()
+                .status(200)
+                .body(SdkBody::from(run_instances_body))
+                .expect("run instances response"),
+        ));
+        let (iam_http_client, _) = capture_request(Some(empty_http_response()));
+        let (ssm_http_client, _) = capture_request(Some(
+            Response::builder()
+                .status(200)
+                .header("content-type", "application/x-amz-json-1.1")
+                .body(SdkBody::from(ssm_body))
+                .expect("ssm response"),
+        ));
+        let (quotas_http_client, _) = capture_request(Some(empty_http_response()));
+        let (costs_http_client, _) = capture_request(Some(empty_http_response()));
+        let (budgets_http_client, _) = capture_request(Some(empty_http_response()));
+        let (sts_http_client, _) = capture_request(Some(empty_http_response()));
+        let adapter = test_live_adapter_with_clients(
+            ec2_http_client,
+            iam_http_client,
+            ssm_http_client,
+            quotas_http_client,
+            costs_http_client,
+            budgets_http_client,
+            sts_http_client,
+        );
+
+        let launch = adapter
+            .launch_instance(&LaunchSpec {
+                instance_type: "m7a.2xlarge".to_string(),
+                purchase_option: PurchaseOption::OnDemand,
+                ami_id: "ami-123".to_string(),
+                subnet_id: "subnet-123".to_string(),
+                security_group_id: "sg-123".to_string(),
+                instance_profile_name: "profile-123".to_string(),
+                ssh_key_name: Some("adl-ssh".to_string()),
+            })
+            .await
+            .expect("launch result");
+        assert_eq!(launch.instance_id, "i-launch");
+        assert_eq!(launch.initial_state, "pending");
+
+        let ssm_status = adapter
+            .wait_for_ssm_online("i-launch", Duration::from_secs(0), Duration::from_secs(0))
+            .await
+            .expect("ssm online");
+        assert_eq!(ssm_status.status, "Online");
+    }
+
+    #[tokio::test]
+    async fn live_adapter_prepare_launch_surface_preserves_reviewed_inputs() {
+        let describe_subnets_body = r#"<?xml version="1.0" encoding="UTF-8"?>
+<DescribeSubnetsResponse xmlns="http://ec2.amazonaws.com/doc/2016-11-15/">
+  <subnetSet>
+    <item>
+      <subnetId>subnet-123</subnetId>
+      <vpcId>vpc-123</vpcId>
+    </item>
+  </subnetSet>
+</DescribeSubnetsResponse>"#;
+        let (ec2_http_client, _) = capture_request(Some(
+            Response::builder()
+                .status(200)
+                .body(SdkBody::from(describe_subnets_body))
+                .expect("describe subnets response"),
+        ));
+        let (iam_http_client, _) = capture_request(Some(empty_http_response()));
+        let (ssm_http_client, _) = capture_request(Some(empty_http_response()));
+        let (quotas_http_client, _) = capture_request(Some(empty_http_response()));
+        let (costs_http_client, _) = capture_request(Some(empty_http_response()));
+        let (budgets_http_client, _) = capture_request(Some(empty_http_response()));
+        let (sts_http_client, _) = capture_request(Some(empty_http_response()));
+        let adapter = test_live_adapter_with_clients(
+            ec2_http_client,
+            iam_http_client,
+            ssm_http_client,
+            quotas_http_client,
+            costs_http_client,
+            budgets_http_client,
+            sts_http_client,
+        );
+
+        let tmp = std::env::temp_dir().join(unique_test_suffix("adl-aws-prepare-launch-surface"));
+        let prepared = adapter
+            .prepare_launch_surface(&sample_config(&tmp))
+            .await
+            .expect("prepare launch surface");
+
+        assert_eq!(prepared.record.provisioning_mode, "reviewed_baseline_inputs");
+        assert_eq!(prepared.record.ami_id, "ami-test");
+        assert_eq!(prepared.record.ami_source, "explicit_input");
+        assert_eq!(prepared.record.vpc_id, "vpc-123");
+        assert_eq!(prepared.record.subnet_id, "subnet-test");
+        assert_eq!(prepared.record.security_group_id, "sg-test");
+        assert_eq!(prepared.record.instance_profile_name, "profile-test");
+        assert!(!prepared.record.security_group_created);
+        assert!(!prepared.record.instance_profile_created);
+        assert!(!prepared.record.ssh_debug_enabled);
+        assert!(prepared.record.notes.is_empty());
+        assert!(prepared.created_role_name.is_none());
+        assert!(prepared.created_instance_profile_name.is_none());
+    }
+
+    #[tokio::test]
+    async fn live_adapter_cleanup_launch_surface_deletes_ephemeral_resources() {
+        let (ec2_http_client, _) = capture_request(Some(empty_http_response()));
+        let iam_http_client = StaticReplayClient::new(vec![
+            ReplayEvent::new(empty_http_request(), empty_http_response()),
+            ReplayEvent::new(empty_http_request(), empty_http_response()),
+            ReplayEvent::new(empty_http_request(), empty_http_response()),
+            ReplayEvent::new(empty_http_request(), empty_http_response()),
+            ReplayEvent::new(empty_http_request(), empty_http_response()),
+        ]);
+        let (ssm_http_client, _) = capture_request(Some(empty_http_response()));
+        let (quotas_http_client, _) = capture_request(Some(empty_http_response()));
+        let (costs_http_client, _) = capture_request(Some(empty_http_response()));
+        let (budgets_http_client, _) = capture_request(Some(empty_http_response()));
+        let (sts_http_client, _) = capture_request(Some(empty_http_response()));
+        let adapter = test_live_adapter_with_clients(
+            ec2_http_client,
+            iam_http_client,
+            ssm_http_client,
+            quotas_http_client,
+            costs_http_client,
+            budgets_http_client,
+            sts_http_client,
+        );
+
+        let prepared = PreparedLaunchSurface {
+            record: LaunchSurfaceRecord {
+                provisioning_mode: "ephemeral_aws_surface".to_string(),
+                ami_id: "ami-test".to_string(),
+                ami_source: "explicit_input".to_string(),
+                vpc_id: "vpc-test".to_string(),
+                subnet_id: "subnet-test".to_string(),
+                security_group_id: "sg-test".to_string(),
+                security_group_name: Some("adl-aws-remote-validation-sg".to_string()),
+                security_group_created: false,
+                instance_profile_name: "profile-test".to_string(),
+                role_name: Some("role-test".to_string()),
+                instance_profile_created: true,
+                ssh_debug_enabled: false,
+                ssh_allowed_cidr: None,
+                notes: vec!["fixture".to_string()],
+            },
+            created_role_name: Some("role-test".to_string()),
+            created_instance_profile_name: Some("profile-test".to_string()),
+        };
+
+        let cleanup = adapter.cleanup_launch_surface(&prepared).await;
+        assert_eq!(cleanup.instance_profile_deleted, Some(true));
+        assert_eq!(cleanup.role_deleted, Some(true));
+        assert_eq!(cleanup.security_group_deleted, None);
+        assert!(cleanup
+            .notes
+            .iter()
+            .any(|note| note.contains("Removed role 'role-test'")));
     }
 }

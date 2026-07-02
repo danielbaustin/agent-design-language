@@ -72,8 +72,51 @@ fn usage() -> &'static str {
     "adl-aws-remote-validation run --issue <number> --command <shell-command> --ami-id <ami> --subnet-id <subnet> --security-group-id <sg> --instance-profile-name <name> --out <summary.json> [--artifact-dir <dir>] [--instance-type <type> ...] [--budget-name <name>] [--expected-max-cost-usd <usd>] [--repo-url <url>] [--git-ref <ref>] [--cache-bucket <bucket>] [--cache-prefix <prefix>] [--sccache-tarball-url <url>] [--nextest-tarball-url <url>] [--ssh-key-name <name>] [--ssh-private-key-path <path>] [--ssh-user <user>] [--ssh-allowed-cidr <cidr>] [--command-timeout-seconds <seconds>] [--region <region>] [--profile <profile>] [--json]"
 }
 
-fn local_git_stdout(args: &[&str]) -> Option<String> {
-    let output = Command::new("git").args(args).output().ok()?;
+fn git_command(args: &[&str], cwd: Option<&Path>) -> Command {
+    let mut command = Command::new("git");
+    command.args(args);
+    if let Some(cwd) = cwd {
+        command.current_dir(cwd);
+    }
+    command
+}
+
+fn should_print_usage(raw_args: &[String]) -> bool {
+    raw_args.is_empty()
+        || matches!(
+            raw_args.first().map(|value| value.as_str()),
+            Some("--help" | "-h" | "help")
+        )
+}
+
+fn render_summary_output(
+    summary: &aws_remote_validation::AwsRemoteValidationSummary,
+    out_path_display: &str,
+    json_output: bool,
+) -> Result<String> {
+    if json_output {
+        Ok(serde_json::to_string_pretty(summary)?)
+    } else {
+        Ok(format!("aws_remote_validation_summary={out_path_display}"))
+    }
+}
+
+fn classify_summary_result(summary: &aws_remote_validation::AwsRemoteValidationSummary) -> Result<()> {
+    if matches!(summary.status, RemoteRunStatus::Passed) {
+        Ok(())
+    } else {
+        bail!(
+            "aws remote validation did not complete successfully: {}",
+            summary
+                .failure_reason
+                .clone()
+                .unwrap_or_else(|| format!("{:?}", summary.status))
+        )
+    }
+}
+
+fn local_git_stdout_in_dir(args: &[&str], cwd: Option<&Path>) -> Option<String> {
+    let output = git_command(args, cwd).output().ok()?;
     if !output.status.success() {
         return None;
     }
@@ -86,14 +129,20 @@ fn local_git_stdout(args: &[&str]) -> Option<String> {
     }
 }
 
-fn detect_default_git_ref() -> String {
-    local_git_stdout(&["symbolic-ref", "--quiet", "--short", "HEAD"])
-        .or_else(|| local_git_stdout(&["rev-parse", "HEAD"]))
+fn detect_default_git_ref_in_dir(cwd: Option<&Path>) -> String {
+    local_git_stdout_in_dir(&["symbolic-ref", "--quiet", "--short", "HEAD"], cwd)
+        .or_else(|| local_git_stdout_in_dir(&["rev-parse", "HEAD"], cwd))
         .unwrap_or_else(|| "origin/main".to_string())
 }
 
-fn remote_git_source_preflight(git_ref: &str) -> Result<()> {
-    if let Some(status) = local_git_stdout(&["status", "--porcelain", "--untracked-files=all"]) {
+fn detect_default_git_ref() -> String {
+    detect_default_git_ref_in_dir(None)
+}
+
+fn remote_git_source_preflight_in_dir(git_ref: &str, cwd: Option<&Path>) -> Result<()> {
+    if let Some(status) =
+        local_git_stdout_in_dir(&["status", "--porcelain", "--untracked-files=all"], cwd)
+    {
         if !status.is_empty() {
             bail!(
                 "remote validation uses a remote git checkout and cannot include local uncommitted or untracked changes; clean, commit, and push the worktree before running live AWS validation"
@@ -102,14 +151,10 @@ fn remote_git_source_preflight(git_ref: &str) -> Result<()> {
     }
 
     let remote_branch_ref = format!("refs/heads/{git_ref}");
-    let branch_exists = Command::new("git")
-        .args([
-            "ls-remote",
-            "--exit-code",
-            "--heads",
-            "origin",
-            &remote_branch_ref,
-        ])
+    let branch_exists = git_command(
+        &["ls-remote", "--exit-code", "--heads", "origin", &remote_branch_ref],
+        cwd,
+    )
         .output()
         .map(|output| output.status.success())
         .unwrap_or(false);
@@ -117,8 +162,7 @@ fn remote_git_source_preflight(git_ref: &str) -> Result<()> {
         return Ok(());
     }
 
-    let generic_ref_exists = Command::new("git")
-        .args(["ls-remote", "--exit-code", "origin", git_ref])
+    let generic_ref_exists = git_command(&["ls-remote", "--exit-code", "origin", git_ref], cwd)
         .output()
         .map(|output| output.status.success())
         .unwrap_or(false);
@@ -129,6 +173,10 @@ fn remote_git_source_preflight(git_ref: &str) -> Result<()> {
     bail!(
         "git ref '{git_ref}' is not advertised by origin; push the branch or pass an explicit remote ref before running live AWS validation"
     );
+}
+
+fn remote_git_source_preflight(git_ref: &str) -> Result<()> {
+    remote_git_source_preflight_in_dir(git_ref, None)
 }
 
 fn parse_args(args: &[String]) -> Result<ParsedArgs> {
@@ -445,12 +493,7 @@ async fn write_resume_state(path: &Path, state: &ResumeState) -> Result<()> {
 
 fn main() -> Result<()> {
     let raw_args: Vec<String> = env::args().skip(1).collect();
-    if raw_args.is_empty()
-        || matches!(
-            raw_args.first().map(|value| value.as_str()),
-            Some("--help" | "-h" | "help")
-        )
-    {
+    if should_print_usage(&raw_args) {
         println!("{}", usage());
         return Ok(());
     }
@@ -578,26 +621,18 @@ fn main() -> Result<()> {
         .await?;
         Result::<_, anyhow::Error>::Ok((summary, events))
     })?;
-    if json_output {
-        println!("{}", serde_json::to_string_pretty(&summary)?);
-    } else {
-        println!("aws_remote_validation_summary={out_path_display}");
-    }
-    if matches!(summary.status, RemoteRunStatus::Passed) {
-        Ok(())
-    } else {
-        bail!(
-            "aws remote validation did not complete successfully: {}",
-            summary
-                .failure_reason
-                .unwrap_or_else(|| format!("{:?}", summary.status))
-        )
-    }
+    println!(
+        "{}",
+        render_summary_output(&summary, &out_path_display, json_output)?
+    );
+    classify_summary_result(&summary)
 }
 
 #[cfg(test)]
 mod tests {
     use super::*;
+    use std::fs;
+    use std::process::Command as StdCommand;
 
     fn parse_ok(args: &[&str]) -> ParsedArgs {
         parse_args(
@@ -728,5 +763,370 @@ mod tests {
         assert!(err.config.subnet_id.is_empty());
         assert!(err.config.security_group_id.is_empty());
         assert!(err.config.instance_profile_name.is_empty());
+    }
+
+    #[test]
+    fn parse_args_accepts_extended_launch_and_budget_settings() {
+        let parsed = parse_ok(&[
+            "run",
+            "--issue",
+            "4603",
+            "--run-id",
+            "custom-run",
+            "--region",
+            "us-east-2",
+            "--profile",
+            "agent-logic-admin",
+            "--repo-url",
+            "https://github.com/example/repo.git",
+            "--git-ref",
+            "codex/4603-branch",
+            "--cache-bucket",
+            "adl-cache",
+            "--cache-prefix",
+            "adl/remote-validation",
+            "--ssh-key-name",
+            "adl-ssh",
+            "--ssh-private-key-path",
+            "/tmp/adl-ssh.pem",
+            "--ssh-user",
+            "ec2-user",
+            "--ssh-allowed-cidr",
+            "203.0.113.9/32",
+            "--budget-name",
+            "Agent Logic Monthly",
+            "--expected-max-cost-usd",
+            "12.5",
+            "--command-timeout-seconds",
+            "900",
+            "--command",
+            "echo hi",
+            "--ami-id",
+            "ami-123",
+            "--subnet-id",
+            "subnet-123",
+            "--security-group-id",
+            "sg-123",
+            "--instance-profile-name",
+            "profile-123",
+            "--out",
+            "summary.json",
+        ]);
+        assert_eq!(parsed.config.issue, Some(4603));
+        assert_eq!(parsed.config.run_id, "custom-run");
+        assert_eq!(parsed.config.region, "us-east-2");
+        assert_eq!(parsed.config.profile.as_deref(), Some("agent-logic-admin"));
+        assert_eq!(
+            parsed.config.repo_url,
+            "https://github.com/example/repo.git".to_string()
+        );
+        assert_eq!(parsed.config.git_ref, "codex/4603-branch".to_string());
+        assert_eq!(parsed.config.cache_bucket.as_deref(), Some("adl-cache"));
+        assert_eq!(
+            parsed.config.cache_prefix.as_deref(),
+            Some("adl/remote-validation")
+        );
+        assert_eq!(parsed.config.ssh_key_name.as_deref(), Some("adl-ssh"));
+        assert_eq!(
+            parsed.config.ssh_private_key_path.as_deref(),
+            Some(Path::new("/tmp/adl-ssh.pem"))
+        );
+        assert_eq!(parsed.config.ssh_user.as_deref(), Some("ec2-user"));
+        assert_eq!(
+            parsed.config.ssh_allowed_cidr.as_deref(),
+            Some("203.0.113.9/32")
+        );
+        assert_eq!(
+            parsed.config.budget_name.as_deref(),
+            Some("Agent Logic Monthly")
+        );
+        assert_eq!(parsed.config.expected_max_cost_usd, Some(12.5));
+        assert_eq!(parsed.config.command_timeout_seconds, Some(900));
+    }
+
+    #[test]
+    fn parse_args_reports_usage_and_invalid_values_truthfully() {
+        assert!(parse_args(&[]).is_err());
+        assert!(parse_args(&["noop".to_string()]).is_err());
+        assert!(parse_args(&["run".to_string(), "--unknown".to_string()]).is_err());
+        assert!(parse_args(&[
+            "run".to_string(),
+            "--command".to_string(),
+            "echo hi".to_string(),
+            "--out".to_string(),
+            "summary.json".to_string(),
+            "--expected-max-cost-usd".to_string(),
+            "oops".to_string(),
+        ])
+        .is_err());
+        assert!(parse_args(&[
+            "run".to_string(),
+            "--command".to_string(),
+            "echo hi".to_string(),
+            "--out".to_string(),
+            "summary.json".to_string(),
+            "--max-spot-retries".to_string(),
+            "oops".to_string(),
+        ])
+        .is_err());
+        assert!(usage().contains("adl-aws-remote-validation run"));
+    }
+
+    #[test]
+    fn local_git_helpers_cover_missing_and_branch_detection_paths() {
+        let tmp = std::env::temp_dir().join(format!(
+            "adl-aws-remote-validation-git-{}",
+            std::process::id()
+        ));
+        let _ = fs::remove_dir_all(&tmp);
+        fs::create_dir_all(&tmp).expect("create temp dir");
+        assert!(local_git_stdout_in_dir(&["status"], Some(&tmp)).is_none());
+        assert_eq!(detect_default_git_ref_in_dir(Some(&tmp)), "origin/main".to_string());
+    }
+
+    #[test]
+    fn write_resume_state_materializes_parent_directories() {
+        let tmp = std::env::temp_dir().join(format!(
+            "adl-aws-remote-validation-resume-{}",
+            std::process::id()
+        ));
+        let path = tmp.join("nested").join("resume-state.json");
+        let state = ResumeState {
+            schema_version: "adl.aws_remote_validation_resume_state.v1".to_string(),
+            issue: Some(4603),
+            run_id: "test-run".to_string(),
+            max_spot_retries: 2,
+            attempts: vec![ResumeAttemptRecord {
+                attempt_index: 0,
+                summary_path: "attempt-0/summary.json".to_string(),
+                status: "Passed".to_string(),
+                failure_reason: None,
+                launch_instance_id: Some("i-123".to_string()),
+                provider_interruption_confirmed: false,
+            }],
+            next_action: "complete".to_string(),
+            final_status: Some("Passed".to_string()),
+        };
+        let runtime = tokio::runtime::Runtime::new().expect("runtime");
+        runtime
+            .block_on(write_resume_state(&path, &state))
+            .expect("write resume state");
+        let text = fs::read_to_string(&path).expect("resume state file");
+        assert!(text.contains("\"schema_version\": \"adl.aws_remote_validation_resume_state.v1\""));
+        assert!(text.contains("\"next_action\": \"complete\""));
+    }
+
+    #[test]
+    fn env_var_guard_restores_previous_values() {
+        env::set_var("ADL_AWS_REMOTE_VALIDATION_TEST_GUARD", "before");
+        {
+            let _guard =
+                EnvVarGuard::set("ADL_AWS_REMOTE_VALIDATION_TEST_GUARD", "during".to_string());
+            assert_eq!(
+                env::var("ADL_AWS_REMOTE_VALIDATION_TEST_GUARD").ok().as_deref(),
+                Some("during")
+            );
+        }
+        assert_eq!(
+            env::var("ADL_AWS_REMOTE_VALIDATION_TEST_GUARD").ok().as_deref(),
+            Some("before")
+        );
+        env::remove_var("ADL_AWS_REMOTE_VALIDATION_TEST_GUARD");
+    }
+
+    #[test]
+    fn env_var_guard_removes_value_when_original_was_absent() {
+        env::remove_var("ADL_AWS_REMOTE_VALIDATION_TEST_GUARD_ABSENT");
+        {
+            let _guard = EnvVarGuard::set(
+                "ADL_AWS_REMOTE_VALIDATION_TEST_GUARD_ABSENT",
+                "during".to_string(),
+            );
+            assert_eq!(
+                env::var("ADL_AWS_REMOTE_VALIDATION_TEST_GUARD_ABSENT")
+                    .ok()
+                    .as_deref(),
+                Some("during")
+            );
+        }
+        assert!(env::var("ADL_AWS_REMOTE_VALIDATION_TEST_GUARD_ABSENT").is_err());
+    }
+
+    #[test]
+    fn parse_args_rejects_missing_value_for_ssh_private_key_path() {
+        let err = parse_args(&[
+            "run".to_string(),
+            "--command".to_string(),
+            "echo hi".to_string(),
+            "--out".to_string(),
+            "summary.json".to_string(),
+            "--ssh-private-key-path".to_string(),
+        ])
+        .expect_err("missing ssh-private-key-path value should fail");
+        assert!(err
+            .to_string()
+            .contains("--ssh-private-key-path requires a value"));
+    }
+
+    #[test]
+    fn helper_functions_cover_usage_and_summary_rendering_paths() {
+        assert!(should_print_usage(&Vec::new()));
+        assert!(should_print_usage(&["help".to_string()]));
+        assert!(should_print_usage(&["-h".to_string()]));
+        assert!(!should_print_usage(&["run".to_string()]));
+
+        let passed_summary = aws_remote_validation::AwsRemoteValidationSummary {
+            schema_version: "adl.aws_remote_validation_summary.v1".to_string(),
+            issue: Some(4603),
+            run_id: "test-run".to_string(),
+            status: RemoteRunStatus::Passed,
+            region: "us-west-2".to_string(),
+            profile: Some("agent-logic-admin".to_string()),
+            started_at: "2026-07-02T00:00:00Z".to_string(),
+            finished_at: "2026-07-02T00:01:00Z".to_string(),
+            account_identity: None,
+            quota_snapshot: aws_remote_validation::QuotaSnapshot {
+                spot_vcpu_quota: Some(32.0),
+                on_demand_vcpu_quota: Some(64.0),
+                notes: Vec::new(),
+            },
+            attempts: Vec::new(),
+            launch: None,
+            command: None,
+            cleanup: aws_remote_validation::CleanupRecord {
+                termination_attempted: false,
+                final_instance_state: None,
+                termination_error: None,
+            },
+            launch_surface: None,
+            launch_surface_cleanup: None,
+            spot_termination_evidence: None,
+            timings: aws_remote_validation::TimingRecord {
+                total_seconds: 60,
+                launch_seconds: 5,
+                ssm_ready_seconds: None,
+                remote_command_seconds: None,
+                teardown_seconds: None,
+            },
+            remote_summary: None,
+            cost_explorer: None,
+            budget_snapshot: None,
+            expected_max_cost_usd: Some(20.0),
+            artifact_dir: "/tmp/adl-aws-remote-validation".to_string(),
+            event_log_path: "/tmp/adl-aws-remote-validation/events.jsonl".to_string(),
+            non_claims: vec!["fixture".to_string()],
+            failure_reason: None,
+        };
+
+        let text_output = render_summary_output(&passed_summary, "/tmp/summary.json", false)
+            .expect("text output");
+        assert_eq!(text_output, "aws_remote_validation_summary=/tmp/summary.json");
+
+        let json_output = render_summary_output(&passed_summary, "/tmp/summary.json", true)
+            .expect("json output");
+        assert!(json_output.contains("\"status\": \"passed\""));
+        classify_summary_result(&passed_summary).expect("passed summary");
+
+        let mut failed_summary = passed_summary.clone();
+        failed_summary.status = RemoteRunStatus::Failed;
+        failed_summary.failure_reason = Some("remote command failed".to_string());
+        let err = classify_summary_result(&failed_summary).expect_err("failed summary");
+        assert!(err
+            .to_string()
+            .contains("aws remote validation did not complete successfully: remote command failed"));
+
+        let mut interrupted_summary = passed_summary;
+        interrupted_summary.status = RemoteRunStatus::InterruptedByAws;
+        let err = classify_summary_result(&interrupted_summary)
+            .expect_err("interrupted summary");
+        assert!(err
+            .to_string()
+            .contains("aws remote validation did not complete successfully: InterruptedByAws"));
+    }
+
+    #[test]
+    fn remote_git_source_preflight_accepts_remote_branch_and_rejects_dirty_or_missing_refs() {
+        let tmp = std::env::temp_dir().join(format!(
+            "adl-aws-remote-validation-preflight-{}",
+            std::process::id()
+        ));
+        let _ = fs::remove_dir_all(&tmp);
+        let bare = tmp.join("origin.git");
+        let repo = tmp.join("repo");
+        fs::create_dir_all(&tmp).expect("create temp dir");
+        assert!(StdCommand::new("git")
+            .args(["init", "--bare", bare.to_str().expect("bare path")])
+            .status()
+            .expect("init bare")
+            .success());
+        assert!(StdCommand::new("git")
+            .args(["init", repo.to_str().expect("repo path")])
+            .status()
+            .expect("init repo")
+            .success());
+        assert!(StdCommand::new("git")
+            .current_dir(&repo)
+            .args(["config", "user.email", "codex@example.com"])
+            .status()
+            .expect("config email")
+            .success());
+        assert!(StdCommand::new("git")
+            .current_dir(&repo)
+            .args(["config", "user.name", "Codex"])
+            .status()
+            .expect("config name")
+            .success());
+        assert!(StdCommand::new("git")
+            .current_dir(&repo)
+            .args(["remote", "add", "origin", bare.to_str().expect("bare path")])
+            .status()
+            .expect("add origin")
+            .success());
+        fs::write(repo.join("README.md"), "hello\n").expect("write readme");
+        assert!(StdCommand::new("git")
+            .current_dir(&repo)
+            .args(["add", "README.md"])
+            .status()
+            .expect("git add")
+            .success());
+        assert!(StdCommand::new("git")
+            .current_dir(&repo)
+            .args(["commit", "-m", "init"])
+            .status()
+            .expect("git commit")
+            .success());
+        assert!(StdCommand::new("git")
+            .current_dir(&repo)
+            .args(["branch", "-M", "codex/4603-test"])
+            .status()
+            .expect("rename branch")
+            .success());
+        assert!(StdCommand::new("git")
+            .current_dir(&repo)
+            .args(["push", "-u", "origin", "codex/4603-test"])
+            .status()
+            .expect("push branch")
+            .success());
+        assert!(StdCommand::new("git")
+            .current_dir(&repo)
+            .args(["tag", "live-proof"])
+            .status()
+            .expect("create tag")
+            .success());
+        assert!(StdCommand::new("git")
+            .current_dir(&repo)
+            .args(["push", "origin", "refs/tags/live-proof"])
+            .status()
+            .expect("push tag")
+            .success());
+
+        assert!(remote_git_source_preflight_in_dir("codex/4603-test", Some(&repo)).is_ok());
+        assert!(remote_git_source_preflight_in_dir("refs/tags/live-proof", Some(&repo)).is_ok());
+        assert!(remote_git_source_preflight_in_dir("missing-branch", Some(&repo)).is_err());
+        fs::write(repo.join("DIRTY.txt"), "dirty\n").expect("write dirty marker");
+        let dirty = remote_git_source_preflight_in_dir("codex/4603-test", Some(&repo));
+        assert!(dirty.is_err());
+        let dirty_text = dirty.err().expect("dirty error").to_string();
+        assert!(dirty_text.contains("cannot include local uncommitted or untracked changes"));
     }
 }

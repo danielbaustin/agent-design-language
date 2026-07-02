@@ -192,3 +192,7 @@ sha2 = "0.10"
 
 [dev-dependencies]
 loom = "0.7"
+aws-smithy-http-client = { version = "1", features = ["test-util"] }
+aws-smithy-runtime-api = "1"
+aws-smithy-types = "1"
+http = "1"

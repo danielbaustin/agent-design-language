@@ -233,6 +233,9 @@ candidate_filter_for_path() {
     adl/src/bin/adl_lint_prompt_spec.rs|adl/src/bin/adl_prompt_template.rs|adl/src/bin/adl_validate_structured_prompt.rs)
       printf 'tooling_cmd'
       ;;
+    adl/src/bin/adl_aws_remote_validation.rs)
+      printf 'adl_aws_remote_validation_bin'
+      ;;
     adl/src/cli/run_artifacts/runtime/*.rs)
       printf 'run_state'
       ;;
@@ -256,6 +259,9 @@ nextest_expression_for_filter() {
       ;;
     pr_cmd)
       printf 'binary_id(adl::bin/adl) and test(/^cli::pr_cmd::/)'
+      ;;
+    adl_aws_remote_validation_bin)
+      printf 'binary_id(adl::bin/adl-aws-remote-validation) and test(/^tests::/)'
       ;;
     pr_cmd::github)
       printf 'test(/^cli::pr_cmd::github::/) or test(/^cli::pr_cmd::github_client::/)'
