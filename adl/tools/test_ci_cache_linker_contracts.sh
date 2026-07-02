@@ -11,10 +11,19 @@ import sys
 workflow = pathlib.Path(sys.argv[1]).read_text()
 
 required_fragments = [
+    "tool: sccache",
+    'SCCACHE_ROOT="${RUNNER_TEMP:-/tmp}/adl-sccache"',
+    'SCCACHE_ROOT="${RUNNER_TEMP:-/tmp}/adl-coverage-sccache"',
+    'rm -rf "$SCCACHE_ROOT"',
+    'mkdir -p "$SCCACHE_ROOT"',
+    'echo "RUSTC_WRAPPER=sccache" >> "$GITHUB_ENV"',
+    'echo "SCCACHE_DIR=$SCCACHE_ROOT" >> "$GITHUB_ENV"',
     'sudo apt-get install -y lld',
     'command -v ld.lld',
     'echo "::error::ld.lld is unavailable after the install step"',
     'echo "RUSTFLAGS=-C link-arg=-fuse-ld=lld" >> "$GITHUB_ENV"',
+    'sccache --zero-stats || true',
+    'sccache --show-stats || true',
 ]
 
 missing = [frag for frag in required_fragments if frag not in workflow]
@@ -25,8 +34,10 @@ if missing:
     )
 
 for step in [
+    "Install sccache",
     "Install lld",
     "Configure Rust acceleration",
+    "Install sccache for coverage",
     "Install lld for coverage",
     "Configure Rust acceleration for coverage",
     "Rust acceleration stats",
