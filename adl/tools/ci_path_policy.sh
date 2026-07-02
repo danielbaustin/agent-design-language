@@ -78,6 +78,7 @@ validation_profile_run_lanes=""
 validation_profile_primary_reason=""
 validation_profile_escalation_lanes=""
 validation_profile_error=""
+validation_profile_contract_lanes_selected="$bool_false"
 large_file_lines="${COVERAGE_IMPACT_LARGE_FILE_LINES:-200}"
 large_file_delta="${COVERAGE_IMPACT_LARGE_FILE_DELTA:-80}"
 
@@ -1206,6 +1207,12 @@ EOF
   fi
 fi
 
+case ",$validation_profile_run_lanes," in
+  *contracts*)
+    validation_profile_contract_lanes_selected=true
+    ;;
+esac
+
 emit "rust_required" "$rust_required"
 emit "coverage_required" "$coverage_required"
 emit "full_coverage_required" "$full_coverage_required"
@@ -1213,6 +1220,7 @@ emit "demo_smoke_required" "$demo_smoke_required"
 emit "v0913_proof_required" "$v0913_proof_required"
 emit "release_version_only" "$release_version_only"
 emit "ci_contracts_required" "$ci_contracts_required"
+emit "validation_profile_contract_lanes_selected" "$validation_profile_contract_lanes_selected"
 emit "fail_closed" "$fail_closed"
 emit "coverage_lane" "$coverage_lane"
 emit "coverage_authority" "$coverage_authority"
@@ -1236,6 +1244,7 @@ printf '  demo_smoke_required=%s\n' "$demo_smoke_required"
 printf '  v0913_proof_required=%s\n' "$v0913_proof_required"
 printf '  release_version_only=%s\n' "$release_version_only"
 printf '  ci_contracts_required=%s\n' "$ci_contracts_required"
+printf '  validation_profile_contract_lanes_selected=%s\n' "$validation_profile_contract_lanes_selected"
 printf '  fail_closed=%s\n' "$fail_closed"
 printf '  coverage_lane=%s\n' "$coverage_lane"
 printf '  coverage_authority=%s\n' "$coverage_authority"

@@ -130,13 +130,15 @@ def test_links_only_external_dependency_deps() -> None:
 
         if summary["status"] != "ok":
             raise AssertionError(summary)
-        if summary["linked_files"] != 3:
-            raise AssertionError(f"expected 3 linked dependency files: {summary}")
+        if summary["linked_files"] != 2:
+            raise AssertionError(f"expected 2 linked dependency files: {summary}")
+        if summary["skipped_dep_info"] != 1:
+            raise AssertionError(f"expected dep-info files to be skipped: {summary}")
 
-        for name in ["libserde-abc.rlib", "serde-abc.d", "libproc_macro2-def.rmeta"]:
+        for name in ["libserde-abc.rlib", "libproc_macro2-def.rmeta"]:
             assert_same_inode(source_target / "debug" / "deps" / name, dest_target / "debug" / "deps" / name)
 
-        for name in ["libadl-aaa.rlib", "libhelper-bbb.rlib", "unmatched-file"]:
+        for name in ["serde-abc.d", "libadl-aaa.rlib", "libhelper-bbb.rlib", "unmatched-file"]:
             if (dest_target / "debug" / "deps" / name).exists():
                 raise AssertionError(f"unexpected workspace or unmatched artifact linked: {name}")
 

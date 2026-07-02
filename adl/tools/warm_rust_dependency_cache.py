@@ -30,6 +30,7 @@ class Summary:
     external_target_prefixes: int = 0
     candidate_files: int = 0
     linked_files: int = 0
+    skipped_dep_info: int = 0
     skipped_existing: int = 0
     skipped_unmatched: int = 0
     errors: int = 0
@@ -110,6 +111,12 @@ def iter_dependency_artifacts(profile_dir: Path, prefixes: set[str], summary: Su
         return
     for source in deps_dir.iterdir():
         if not source.is_file():
+            continue
+        if source.suffix == ".d":
+            # Cargo dep-info files can contain source-target/build paths from
+            # the donor target. Do not hardlink them unless path rewriting is
+            # implemented and proven.
+            summary.skipped_dep_info += 1
             continue
         if artifact_matches(source, prefixes):
             yield source, Path("deps") / source.name

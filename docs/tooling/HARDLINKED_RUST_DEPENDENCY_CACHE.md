@@ -2,7 +2,7 @@
 
 ADL issue worktrees often pay avoidable Rust cold-build cost. In one EC2 warm-build comparison, warming build state cut build time by roughly 60%. This helper turns that lesson into a small, explicit local tool without introducing a shared global `CARGO_TARGET_DIR`.
 
-The design follows the dependency-artifact hardlinking pattern described in Howard John, [Sharing Rust Build Cache](https://blog.howardjohn.info/posts/shared-rust-build/): do not share one target directory, and do not copy mutable workspace outputs. Instead, reuse dependency artifacts by hardlinking them into a fresh target directory. ADL's first helper uses `Cargo.lock` rather than live registry metadata so dry-run and review paths stay local and predictable, and it starts with the safer `deps/` artifact surface only.
+The design follows the dependency-artifact hardlinking pattern described in Howard John, [Sharing Rust Build Cache](https://blog.howardjohn.info/posts/shared-rust-build/): do not share one target directory, and do not copy mutable workspace outputs. Instead, reuse dependency artifacts by hardlinking them into a fresh target directory. ADL's first helper uses `Cargo.lock` rather than live registry metadata so dry-run and review paths stay local and predictable, and it starts with the safer `deps/` artifact surface only. Cargo dep-info files (`*.d`) are excluded because they can contain donor-target build/source paths; they should not be warmed unless dep-info rewriting is implemented and proven.
 
 ## Tool
 
@@ -22,6 +22,7 @@ Remove `--dry-run` only after inspecting the JSON summary.
 - The tool uses `Cargo.lock` package names as a local, deterministic dependency classifier.
 - The current manifest package and explicit workspace-member packages are excluded from the eligible prefix set.
 - Only files under `target/<profile>/deps` are warmed by default; `.fingerprint` and `build` metadata are intentionally not hardlinked in this first version.
+- Cargo dep-info files (`*.d`) are intentionally skipped because they can encode paths from the source target.
 - Dependency package artifacts are eligible for warmup when their filenames match lockfile-derived prefixes.
 - Workspace package outputs are not selected intentionally.
 - Existing destination files are skipped unless `--replace` is supplied.
@@ -73,8 +74,9 @@ The helper has its own focused behavior test:
 python3 adl/tools/test_warm_rust_dependency_cache.py
 ```
 
-That test proves dependency artifacts are linked, workspace outputs are not
-linked, `.fingerprint` and `build` are not linked, and `--replace` is explicit.
+That test proves dependency artifacts are linked, Cargo dep-info files are not
+linked, workspace outputs are not linked, `.fingerprint` and `build` are not
+linked, and `--replace` is explicit.
 
 ## Non-Claims
 
