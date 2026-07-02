@@ -1642,6 +1642,39 @@ assert summary["elapsed_seconds"] == 56
 assert summary["elapsed_availability"] == "known"
 assert summary["metrics_confidence"] == "high"
 PY
+codex_goal_report="${tmpdir}/issue-4431-goal-metrics-report.md"
+codex_goal_prediction="${tmpdir}/issue-4431-goal-metrics-prediction.json"
+python3 "${repo_root}/adl/tools/skills/sprint-conductor/scripts/write_issue_goal_metrics_report.py" \
+  --summary "${codex_goal_summary}" \
+  --report-out "${codex_goal_report}" \
+  --prediction-out "${codex_goal_prediction}" \
+  --print-json > "${tmpdir}/issue-4431-goal-metrics-report-result.json"
+python3 - "${codex_goal_prediction}" "${tmpdir}/issue-4431-goal-metrics-report-result.json" <<'PY'
+import json
+import sys
+from pathlib import Path
+
+prediction = json.loads(Path(sys.argv[1]).read_text())
+result = json.loads(Path(sys.argv[2]).read_text())
+assert prediction["schema_version"] == "adl.issue_goal_metrics.reporting_prediction.v1"
+assert prediction["status"] == "recorded"
+assert prediction["reporting_ready"] is True
+assert prediction["prediction_ready"] is True
+assert prediction["features"]["elapsed_seconds"] == 56
+assert prediction["feature_availability"]["elapsed_seconds"] == "known"
+assert prediction["features"]["total_tokens"] == 39238
+assert prediction["feature_availability"]["total_tokens"] == "known"
+assert prediction["feature_availability"]["validation_seconds"] == "unknown"
+assert prediction["features"]["validation_seconds"] is None
+assert "validation_seconds" in prediction["missing_prediction_features"]
+assert prediction["unknown_values_policy"] == "unknown_is_not_zero"
+assert result["reporting_ready"] is True
+assert result["prediction_ready"] is True
+PY
+grep -Fq '# Issue Goal Metrics Reporting Sample' "${codex_goal_report}"
+grep -Fq 'reporting ready: `True`' "${codex_goal_report}"
+grep -Fq 'total_tokens: `39238` availability=`known`' "${codex_goal_report}"
+grep -Fq 'validation_seconds: `unknown` availability=`unknown`' "${codex_goal_report}"
 
 codex_budgetlimited_snapshot="${tmpdir}/codex-goal-budgetlimited-state.json"
 cat >"${codex_budgetlimited_snapshot}" <<'JSON'

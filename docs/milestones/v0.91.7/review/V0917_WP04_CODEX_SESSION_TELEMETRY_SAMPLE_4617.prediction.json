@@ -1,0 +1,34 @@
+{
+  "data_source": "codex_goal_tool",
+  "feature_availability": {
+    "active_work_seconds": "known",
+    "ci_wait_seconds": "unknown",
+    "elapsed_seconds": "known",
+    "pr_wait_seconds": "unknown",
+    "total_tokens": "known",
+    "validation_seconds": "unknown"
+  },
+  "features": {
+    "active_work_seconds": 321,
+    "ci_wait_seconds": null,
+    "elapsed_seconds": 321,
+    "pr_wait_seconds": null,
+    "total_tokens": 54321,
+    "validation_seconds": null
+  },
+  "issue_goal_ref": "goal:v0.91.7:issue:4617",
+  "known_prediction_feature_count": 3,
+  "metrics_confidence": "high",
+  "missing_prediction_features": [
+    "validation_seconds",
+    "pr_wait_seconds",
+    "ci_wait_seconds"
+  ],
+  "prediction_ready": true,
+  "reporting_ready": true,
+  "schema_version": "adl.issue_goal_metrics.reporting_prediction.v1",
+  "selected_stage": "pr_publication",
+  "sprint_goal_ref": "goal:v0.91.7:wp-04",
+  "status": "recorded",
+  "unknown_values_policy": "unknown_is_not_zero"
+}

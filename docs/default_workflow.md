@@ -240,6 +240,22 @@ The updater preserves `unknown`, `not_collected`, `not_available`, and
 `not_applicable` as explicit availability states. It must not translate missing
 metrics into `0`.
 
+When the issue needs a retained reporting or prediction proof from captured
+goal metrics, render the summary into a redacted Markdown report and a compact
+JSON prediction-feature packet:
+
+```bash
+python3 adl/tools/skills/sprint-conductor/scripts/write_issue_goal_metrics_report.py \
+  --summary .adl/<version>/tasks/issue-<n>__<slug>/artifacts/goal_metrics/issue-<n>-goal-metrics-summary.json \
+  --report-out .adl/<version>/tasks/issue-<n>__<slug>/artifacts/goal_metrics/issue-<n>-goal-metrics-report.md \
+  --prediction-out .adl/<version>/tasks/issue-<n>__<slug>/artifacts/goal_metrics/issue-<n>-goal-metrics-prediction.json
+```
+
+The prediction packet preserves missing timing or token fields as explicit
+availability states and declares `unknown_is_not_zero`. A packet is reporting
+and prediction ready only when a recorded summary has known elapsed seconds and
+known total tokens.
+
 ## 4.5) Prep-Scout Lane During Closeout Waits
 
 When the active issue is waiting on PR checks, review, janitor work, or
