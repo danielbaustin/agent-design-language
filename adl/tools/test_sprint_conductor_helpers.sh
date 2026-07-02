@@ -1660,6 +1660,9 @@ assert prediction["schema_version"] == "adl.issue_goal_metrics.reporting_predict
 assert prediction["status"] == "recorded"
 assert prediction["reporting_ready"] is True
 assert prediction["prediction_ready"] is True
+assert prediction["minimal_prediction_ready"] is True
+assert prediction["full_prediction_ready"] is False
+assert prediction["prediction_readiness"] == "minimal"
 assert prediction["features"]["elapsed_seconds"] == 56
 assert prediction["feature_availability"]["elapsed_seconds"] == "known"
 assert prediction["features"]["total_tokens"] == 39238
@@ -1670,9 +1673,15 @@ assert "validation_seconds" in prediction["missing_prediction_features"]
 assert prediction["unknown_values_policy"] == "unknown_is_not_zero"
 assert result["reporting_ready"] is True
 assert result["prediction_ready"] is True
+assert result["minimal_prediction_ready"] is True
+assert result["full_prediction_ready"] is False
+assert result["prediction_readiness"] == "minimal"
 PY
 grep -Fq '# Issue Goal Metrics Reporting Sample' "${codex_goal_report}"
 grep -Fq 'reporting ready: `True`' "${codex_goal_report}"
+grep -Fq 'minimal prediction ready: `True`' "${codex_goal_report}"
+grep -Fq 'full prediction ready: `False`' "${codex_goal_report}"
+grep -Fq 'prediction readiness: `minimal`' "${codex_goal_report}"
 grep -Fq 'total_tokens: `39238` availability=`known`' "${codex_goal_report}"
 grep -Fq 'validation_seconds: `unknown` availability=`unknown`' "${codex_goal_report}"
 

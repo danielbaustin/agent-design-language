@@ -15,6 +15,14 @@ METRIC_FIELDS = (
     ("ci_wait_seconds", "ci_wait_availability"),
 )
 
+FULL_PREDICTION_FIELDS = (
+    "elapsed_seconds",
+    "total_tokens",
+    "validation_seconds",
+    "pr_wait_seconds",
+    "ci_wait_seconds",
+)
+
 
 def load_json(path: Path) -> dict[str, Any]:
     return json.loads(path.read_text())
@@ -66,7 +74,18 @@ def prediction_features(summary: dict[str, Any]) -> dict[str, Any]:
         and feature_packet["feature_availability"].get("elapsed_seconds") == "known"
         and feature_packet["feature_availability"].get("total_tokens") == "known"
     )
-    feature_packet["prediction_ready"] = feature_packet["reporting_ready"]
+    feature_packet["minimal_prediction_ready"] = feature_packet["reporting_ready"]
+    feature_packet["full_prediction_ready"] = all(
+        feature_packet["feature_availability"].get(field) == "known" for field in FULL_PREDICTION_FIELDS
+    )
+    feature_packet["prediction_readiness"] = (
+        "full" if feature_packet["full_prediction_ready"]
+        else "minimal" if feature_packet["minimal_prediction_ready"]
+        else "not_ready"
+    )
+    # Backward-compatible alias for existing consumers. New callers should use
+    # minimal_prediction_ready/full_prediction_ready to avoid overstating proof.
+    feature_packet["prediction_ready"] = feature_packet["minimal_prediction_ready"]
     return feature_packet
 
 
@@ -81,7 +100,9 @@ def render_markdown(summary: dict[str, Any], packet: dict[str, Any]) -> str:
         f"- data source: `{packet.get('data_source') or 'unknown'}`",
         f"- metrics confidence: `{packet.get('metrics_confidence') or 'unknown'}`",
         f"- reporting ready: `{packet['reporting_ready']}`",
-        f"- prediction ready: `{packet['prediction_ready']}`",
+        f"- minimal prediction ready: `{packet['minimal_prediction_ready']}`",
+        f"- full prediction ready: `{packet['full_prediction_ready']}`",
+        f"- prediction readiness: `{packet['prediction_readiness']}`",
         f"- unknown values policy: `{packet['unknown_values_policy']}`",
         "",
         "## Features",
@@ -154,6 +175,9 @@ def main() -> int:
         "prediction_path": str(prediction_path),
         "reporting_ready": packet["reporting_ready"],
         "prediction_ready": packet["prediction_ready"],
+        "minimal_prediction_ready": packet["minimal_prediction_ready"],
+        "full_prediction_ready": packet["full_prediction_ready"],
+        "prediction_readiness": packet["prediction_readiness"],
         "known_prediction_feature_count": packet["known_prediction_feature_count"],
         "missing_prediction_features": packet["missing_prediction_features"],
     }

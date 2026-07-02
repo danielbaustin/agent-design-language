@@ -7,7 +7,9 @@
 - data source: `codex_goal_tool`
 - metrics confidence: `high`
 - reporting ready: `True`
-- prediction ready: `True`
+- minimal prediction ready: `True`
+- full prediction ready: `False`
+- prediction readiness: `minimal`
 - unknown values policy: `unknown_is_not_zero`
 
 ## Features

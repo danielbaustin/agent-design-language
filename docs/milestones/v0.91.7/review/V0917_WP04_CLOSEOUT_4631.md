@@ -2,15 +2,16 @@
 
 Issue: `#4631`
 
-Status: complete, pending PR publication for this umbrella closeout artifact.
+Status: complete and merged.
 
 ## Summary
 
-WP-04 is complete. The child issue set delivered goal accounting, SOR
-time/token/resource accounting, session telemetry harvesting, bounded v0.91.6
-metrics backfill, execution outlier analysis, and the execution metrics
-prediction engine. This umbrella closeout records the integrated proof surface
-and closes the WP-04 sprint wrapper without adding new implementation scope.
+WP-04 is complete with residual metric-capture limits recorded. The child issue
+set delivered goal accounting, SOR time/token/resource accounting, session
+telemetry harvesting, bounded v0.91.6 metrics backfill, execution outlier
+analysis, and the execution metrics prediction engine. This umbrella closeout
+records the integrated proof surface and closes the WP-04 sprint wrapper
+without adding new implementation scope.
 
 ## Child Issue Truth
 
@@ -47,9 +48,17 @@ The umbrella closeout used repo-native lifecycle tools only.
 - `#4736` remains the tracked closeout-tool bug for the repeated unrelated
   `#4630` VPP deletion during closeout. The affected VPP was restored before
   manual worktree pruning, and root checkout remained clean.
-- Some child issue actual elapsed/token metrics remain `unknown` where nested
-  issue goal creation was refused by the active WP-04 tail goal. This is
-  truthful accounting, not a zero or inferred metric.
+- WP-04 delivered the metrics fields, harvesting scripts, reports, samples, and
+  prediction packet flow, but it did not fully prove automatic nested per-issue
+  goal capture while an umbrella goal is active. Several child issues therefore
+  retain `unknown` actual elapsed/token metrics where nested issue goal creation
+  was refused by the active WP-04 tail goal. This is truthful accounting, not a
+  zero or inferred metric, and it remains the residual before claiming fully
+  automatic per-issue accounting in all sprint execution modes.
+- `#4747` records the post-closeout review remediation: stale local SOR fields
+  were normalized, `#4617` received its missing `wp:WP-04` label, and
+  prediction readiness was split into minimal and full readiness so missing
+  validation/PR/CI wait inputs cannot be mistaken for full prediction proof.
 
 ## Non-Claims
 

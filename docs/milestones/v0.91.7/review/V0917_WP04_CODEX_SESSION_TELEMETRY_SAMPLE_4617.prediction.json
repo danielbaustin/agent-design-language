@@ -16,14 +16,17 @@
     "total_tokens": 54321,
     "validation_seconds": null
   },
+  "full_prediction_ready": false,
   "issue_goal_ref": "goal:v0.91.7:issue:4617",
   "known_prediction_feature_count": 3,
   "metrics_confidence": "high",
+  "minimal_prediction_ready": true,
   "missing_prediction_features": [
     "validation_seconds",
     "pr_wait_seconds",
     "ci_wait_seconds"
   ],
+  "prediction_readiness": "minimal",
   "prediction_ready": true,
   "reporting_ready": true,
   "schema_version": "adl.issue_goal_metrics.reporting_prediction.v1",
