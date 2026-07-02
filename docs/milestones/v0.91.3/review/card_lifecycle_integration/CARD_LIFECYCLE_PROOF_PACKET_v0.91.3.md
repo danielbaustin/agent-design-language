@@ -30,8 +30,8 @@ bash adl/tools/validate_structured_prompt.sh --type stp --input docs/milestones/
 bash adl/tools/validate_structured_prompt.sh --type spp --phase final --input docs/milestones/v0.91.3/review/evidence/csdlc/issues/issue-3201-card-lifecycle-demo/cards/spp.md
 bash adl/tools/validate_structured_prompt.sh --type srp --phase final --input docs/milestones/v0.91.3/review/evidence/csdlc/issues/issue-3201-card-lifecycle-demo/cards/srp.md
 bash adl/tools/validate_structured_prompt.sh --type sor --phase final --input docs/milestones/v0.91.3/review/evidence/csdlc/issues/issue-3201-card-lifecycle-demo/cards/sor.md
-cargo test --manifest-path adl/Cargo.toml tracked_csdlc_card_bundle -- --nocapture
-cargo test --manifest-path adl/Cargo.toml card_lifecycle_accepts_tracked_csdlc_bundle -- --nocapture
+cargo test --manifest-path adl/Cargo.toml --bin adl 'cli::tooling_cmd::tests::structured_prompt::tracked_csdlc_card_bundle_validates' -- --exact --nocapture
+cargo test --manifest-path adl/Cargo.toml --bin adl 'cli::pr_cmd::doctor::tests::card_lifecycle_accepts_tracked_csdlc_bundle' -- --exact --nocapture
 ```
 
 ## Non-Claims

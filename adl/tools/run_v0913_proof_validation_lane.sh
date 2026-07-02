@@ -29,8 +29,8 @@ validate_card_lifecycle_bundle() {
 }
 
 validate_card_lifecycle_contract() {
-  cargo test --manifest-path "$ROOT_DIR/adl/Cargo.toml" tracked_csdlc_card_bundle -- --nocapture
-  cargo test --manifest-path "$ROOT_DIR/adl/Cargo.toml" card_lifecycle_accepts_tracked_csdlc_bundle -- --nocapture
+  cargo test --manifest-path "$ROOT_DIR/adl/Cargo.toml" --bin adl 'cli::tooling_cmd::tests::structured_prompt::tracked_csdlc_card_bundle_validates' -- --exact --nocapture
+  cargo test --manifest-path "$ROOT_DIR/adl/Cargo.toml" --bin adl 'cli::pr_cmd::doctor::tests::card_lifecycle_accepts_tracked_csdlc_bundle' -- --exact --nocapture
 }
 
 run_check transition_dag_packet \
