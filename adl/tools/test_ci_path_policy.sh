@@ -1028,6 +1028,67 @@ PY
   assert_has "$runtime_bounded_pr_fast_output" "coverage_authority=pr_changed_surface"
   assert_has "$runtime_bounded_pr_fast_output" "reason=bounded_pr_fast_coverage_policy_change_keeps_pr_fast_validation"
 
+  git checkout -q -b aws-remote-validation-bounded-pr-fast-coverage-policy-change "$base_sha"
+  mkdir -p adl/src/bin adl/tools
+  cat > adl/src/bin/adl_aws_remote_validation.rs <<'EOF'
+fn main() {}
+
+#[cfg(test)]
+mod tests {
+    #[test]
+    fn smoke() {
+        assert!(true);
+    }
+}
+EOF
+  python3 - <<'PY'
+from pathlib import Path
+
+coverage = Path("adl/tools/check_coverage_impact.sh")
+coverage.parent.mkdir(parents=True, exist_ok=True)
+coverage.write_text(
+    "#!/usr/bin/env bash\n"
+    "candidate_filter_for_path() {\n"
+    "  local path=\"$1\"\n"
+    "  case \"$path\" in\n"
+    "    adl/src/bin/adl_aws_remote_validation.rs)\n"
+    "      printf 'adl_aws_remote_validation_bin'\n"
+    "      ;;\n"
+    "  esac\n"
+    "}\n"
+)
+
+coverage_test = Path("adl/tools/test_check_coverage_impact.sh")
+coverage_test.write_text("#!/usr/bin/env bash\n# adl_aws_remote_validation_bin\n")
+
+runner = Path("adl/tools/run_authoritative_coverage_lane.sh")
+runner.write_text(
+    "#!/usr/bin/env bash\n"
+    "echo \"Authoritative coverage linker mode: ${RUST_LINK_ACCEL:-default}\"\n"
+    "echo \"Authoritative coverage cargo build jobs: ${ADL_AUTHORITATIVE_COVERAGE_BUILD_JOBS:-1}\"\n"
+)
+
+runner_test = Path("adl/tools/test_run_authoritative_coverage_lane.sh")
+runner_test.write_text("#!/usr/bin/env bash\n# build_jobs=1\n# link_accel=lld\n")
+PY
+  git add adl/src/bin/adl_aws_remote_validation.rs \
+    adl/tools/check_coverage_impact.sh \
+    adl/tools/test_check_coverage_impact.sh \
+    adl/tools/run_authoritative_coverage_lane.sh \
+    adl/tools/test_run_authoritative_coverage_lane.sh
+  git commit -q -m aws-remote-validation-bounded-pr-fast-coverage-policy-change
+  aws_remote_validation_bounded_pr_fast_head="$(git rev-parse HEAD)"
+
+  aws_remote_validation_bounded_pr_fast_output="$("$POLICY" --event-name pull_request --base "$base_sha" --head "$aws_remote_validation_bounded_pr_fast_head" --ref "refs/pull/1/merge")"
+  assert_has "$aws_remote_validation_bounded_pr_fast_output" "rust_required=true"
+  assert_has "$aws_remote_validation_bounded_pr_fast_output" "coverage_required=true"
+  assert_has "$aws_remote_validation_bounded_pr_fast_output" "full_coverage_required=false"
+  assert_has "$aws_remote_validation_bounded_pr_fast_output" "demo_smoke_required=true"
+  assert_has "$aws_remote_validation_bounded_pr_fast_output" "ci_contracts_required=true"
+  assert_has "$aws_remote_validation_bounded_pr_fast_output" "coverage_lane=pr_fast"
+  assert_has "$aws_remote_validation_bounded_pr_fast_output" "coverage_authority=pr_changed_surface"
+  assert_has "$aws_remote_validation_bounded_pr_fast_output" "reason=bounded_pr_fast_coverage_policy_change_keeps_pr_fast_validation"
+
   git checkout -q -b feature-branch-before-main-advances "$base_sha"
   mkdir -p adl/tools docs/milestones/v0.91.4/review/demo_showcase
   printf '#!/usr/bin/env bash\nprintf demo\n' > adl/tools/demo_v0914_complete_issue.sh

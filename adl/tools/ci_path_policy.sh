@@ -437,8 +437,10 @@ is_bounded_pr_fast_coverage_policy_surface() {
     .github/workflows/ci.yaml|\
     adl/tools/check_coverage_impact.sh|\
     adl/tools/ci_path_policy.sh|\
+    adl/tools/run_authoritative_coverage_lane.sh|\
     adl/tools/test_check_coverage_impact.sh|\
     adl/tools/test_ci_path_policy.sh|\
+    adl/tools/test_run_authoritative_coverage_lane.sh|\
     adl/tools/test_ci_runtime_contracts.sh)
       return 0
       ;;
@@ -467,7 +469,7 @@ is_bounded_pr_fast_coverage_policy_change() {
         fi
         ;;
       adl/tools/check_coverage_impact.sh)
-        if git_pr_patch "$path" | grep -F 'adl/src/cli/process_cmd.rs' >/dev/null 2>&1; then
+        if git_pr_patch "$path" | grep -E 'adl/src/cli/process_cmd.rs|adl/src/bin/adl_aws_remote_validation.rs|adl_aws_remote_validation_bin' >/dev/null 2>&1; then
           saw_bounded_marker=true
         else
           saw_other=true
@@ -481,7 +483,21 @@ is_bounded_pr_fast_coverage_policy_change() {
         fi
         ;;
       adl/tools/test_check_coverage_impact.sh)
-        if git_pr_patch "$path" | grep -F 'process_status' >/dev/null 2>&1; then
+        if git_pr_patch "$path" | grep -E 'process_status|adl_aws_remote_validation_bin|adl-aws-remote-validation' >/dev/null 2>&1; then
+          saw_bounded_marker=true
+        else
+          saw_other=true
+        fi
+        ;;
+      adl/tools/run_authoritative_coverage_lane.sh)
+        if git_pr_patch "$path" | grep -E 'ADL_AUTHORITATIVE_COVERAGE_BUILD_JOBS|RUST_LINK_ACCEL|Authoritative coverage cargo build jobs|Authoritative coverage linker mode' >/dev/null 2>&1; then
+          saw_bounded_marker=true
+        else
+          saw_other=true
+        fi
+        ;;
+      adl/tools/test_run_authoritative_coverage_lane.sh)
+        if git_pr_patch "$path" | grep -E 'build_jobs=1|link_accel=lld|ADL_AUTHORITATIVE_COVERAGE_BUILD_JOBS|RUST_LINK_ACCEL' >/dev/null 2>&1; then
           saw_bounded_marker=true
         else
           saw_other=true
