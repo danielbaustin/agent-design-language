@@ -67,14 +67,6 @@ jobs:
         with:
           workspaces: |
             adl -> target
-          cache-directories: |
-            ~/.cache/sccache
-
-      - name: Install sccache
-        if: steps.path-policy.outputs.rust_required == 'true'
-        uses: taiki-e/install-action@e5c52b603cc5f5e9b52b6a43afad8e9fe0527090 # install-action
-        with:
-          tool: sccache
 
       - name: Install lld
         if: steps.path-policy.outputs.rust_required == 'true'
@@ -92,17 +84,12 @@ jobs:
       - name: Configure Rust acceleration
         if: steps.path-policy.outputs.rust_required == 'true'
         run: |
-          mkdir -p "$HOME/.cache/sccache"
-          echo "SCCACHE_DIR=$HOME/.cache/sccache" >> "$GITHUB_ENV"
-          echo "SCCACHE_CACHE_SIZE=2G" >> "$GITHUB_ENV"
-          echo "RUSTC_WRAPPER=sccache" >> "$GITHUB_ENV"
           if ! command -v ld.lld >/dev/null 2>&1; then
             echo "::error::ld.lld is unavailable after the install step"
             exit 1
           fi
           echo "RUSTFLAGS=-C link-arg=-fuse-ld=lld" >> "$GITHUB_ENV"
           echo "RUST_LINK_ACCEL=lld" >> "$GITHUB_ENV"
-          sccache --zero-stats || true
 
       - name: tooling sanity (bash -n)
         run: bash -n adl/tools/*.sh
@@ -318,7 +305,6 @@ jobs:
         if: always() && steps.path-policy.outputs.rust_required == 'true'
         run: |
           echo "Linker mode: ${RUST_LINK_ACCEL:-unknown}"
-          sccache --show-stats || true
 
   adl-slow-proof:
     if: github.event_name == 'push' || github.event_name == 'schedule' || github.event_name == 'workflow_dispatch'
@@ -427,18 +413,10 @@ jobs:
         with:
           workspaces: |
             adl -> target
-          cache-directories: |
-            ~/.cache/sccache
 
       - name: Install cargo-llvm-cov
         if: steps.path-policy.outputs.full_coverage_required == 'true' || steps.coverage-impact.outputs.needs_fast_summary == 'true'
         uses: taiki-e/install-action@e5c52b603cc5f5e9b52b6a43afad8e9fe0527090 # cargo-llvm-cov
-
-      - name: Install sccache for coverage
-        if: steps.path-policy.outputs.full_coverage_required == 'true' || steps.coverage-impact.outputs.needs_fast_summary == 'true'
-        uses: taiki-e/install-action@e5c52b603cc5f5e9b52b6a43afad8e9fe0527090 # install-action
-        with:
-          tool: sccache
 
       - name: Install lld for coverage
         if: steps.path-policy.outputs.full_coverage_required == 'true' || steps.coverage-impact.outputs.needs_fast_summary == 'true'
@@ -456,17 +434,12 @@ jobs:
       - name: Configure Rust acceleration for coverage
         if: steps.path-policy.outputs.full_coverage_required == 'true' || steps.coverage-impact.outputs.needs_fast_summary == 'true'
         run: |
-          mkdir -p "$HOME/.cache/sccache"
-          echo "SCCACHE_DIR=$HOME/.cache/sccache" >> "$GITHUB_ENV"
-          echo "SCCACHE_CACHE_SIZE=2G" >> "$GITHUB_ENV"
-          echo "RUSTC_WRAPPER=sccache" >> "$GITHUB_ENV"
           if ! command -v ld.lld >/dev/null 2>&1; then
             echo "::error::ld.lld is unavailable after the install step"
             exit 1
           fi
           echo "RUSTFLAGS=-C link-arg=-fuse-ld=lld" >> "$GITHUB_ENV"
           echo "RUST_LINK_ACCEL=lld" >> "$GITHUB_ENV"
-          sccache --zero-stats || true
 
       - name: Install cargo-nextest for coverage
         if: steps.path-policy.outputs.full_coverage_required == 'true' || steps.coverage-impact.outputs.needs_fast_summary == 'true'
@@ -612,4 +585,3 @@ jobs:
         if: always() && (steps.path-policy.outputs.full_coverage_required == 'true' || steps.coverage-impact.outputs.needs_fast_summary == 'true')
         run: |
           echo "Linker mode: ${RUST_LINK_ACCEL:-unknown}"
-          sccache --show-stats || true
