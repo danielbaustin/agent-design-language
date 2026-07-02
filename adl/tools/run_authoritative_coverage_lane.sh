@@ -17,8 +17,6 @@ default_coverage_build_root() {
 }
 
 COVERAGE_BUILD_ROOT="${ADL_COVERAGE_BUILD_ROOT:-$(default_coverage_build_root)}"
-ROOT_SCCACHE_DIR="${HOME:-}/.cache/sccache"
-SCCACHE_BUILD_ROOT="$COVERAGE_BUILD_ROOT/sccache"
 
 usage() {
   cat <<'USAGE'
@@ -80,27 +78,10 @@ fi
 
 cd "$ADL_DIR"
 
-#
-# CI note:
-# - rust-cache may restore adl/target onto the runner root filesystem even
-#   though the authoritative lane relocates active cargo/llvm-cov outputs onto
-#   a scratch mount.
-# - reclaim repo-local target space before the lane starts so mixed
-#   policy+runtime PRs do not fail late with runner disk exhaustion while
-#   linking the authoritative coverage build.
-# - rust-cache may also restore ~/.cache/sccache onto the runner root
-#   filesystem; reclaim it here and move the live sccache workspace onto the
-#   scratch mount before the instrumented build starts.
-rm -rf "$ADL_DIR/target"
-if [ -n "${HOME:-}" ]; then
-  rm -rf "$ROOT_SCCACHE_DIR"
-fi
-
-rm -rf "$COVERAGE_BUILD_ROOT/target" "$COVERAGE_BUILD_ROOT/llvm-cov-target" "$SCCACHE_BUILD_ROOT"
-mkdir -p "$COVERAGE_BUILD_ROOT/target" "$COVERAGE_BUILD_ROOT/llvm-cov-target" "$SCCACHE_BUILD_ROOT"
+rm -rf "$COVERAGE_BUILD_ROOT/target" "$COVERAGE_BUILD_ROOT/llvm-cov-target"
+mkdir -p "$COVERAGE_BUILD_ROOT/target" "$COVERAGE_BUILD_ROOT/llvm-cov-target"
 export CARGO_TARGET_DIR="$COVERAGE_BUILD_ROOT/target"
 export CARGO_LLVM_COV_TARGET_DIR="$COVERAGE_BUILD_ROOT/llvm-cov-target"
-export SCCACHE_DIR="$SCCACHE_BUILD_ROOT"
 
 if [ "$MODE" = "full_authoritative_default_features" ]; then
   echo "Authoritative coverage mode: full_authoritative_default_features"
