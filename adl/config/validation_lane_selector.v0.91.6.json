@@ -152,6 +152,7 @@
       "path_selectors": [
         "adl/config/validation_lane_selector.v0.91.6.json",
         "adl/tools/ci_path_policy.sh",
+        "adl/tools/run_v0913_proof_validation_lane.sh",
         "adl/tools/run_pr_fast_test_lane.sh",
         "adl/tools/run_nessus_remote_validation.sh",
         "adl/tools/select_validation_lanes.py",
@@ -167,6 +168,7 @@
       "path_hints": [
         "adl/config/validation_lane_selector.v0.91.6.json",
         "adl/tools/ci_path_policy.sh",
+        "adl/tools/run_v0913_proof_validation_lane.sh",
         "adl/tools/run_pr_fast_test_lane.sh",
         "adl/tools/run_nessus_remote_validation.sh",
         "adl/tools/select_validation_lanes.py",
