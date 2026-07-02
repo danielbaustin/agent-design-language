@@ -125,7 +125,7 @@ if "tool: nextest" not in workflow:
     )
 
 expected_coverage = (
-    'bash tools/run_authoritative_coverage_lane.sh --authority "${{ steps.path-policy.outputs.coverage_authority }}" '
+    'bash tools/run_authoritative_coverage_lane.sh --authority "adl_coverage_always_on" '
     '--event-name "${{ github.event_name }}"'
 )
 coverage_step = step_run("Coverage run and summary (json)")
@@ -151,7 +151,7 @@ for required_fragment in (
     'printf \'/mnt/adl-authoritative-coverage\\n\'',
     'printf \'%s\\n\' "$ADL_DIR/target/authoritative-coverage-scratch"',
     'COVERAGE_BUILD_ROOT="${ADL_COVERAGE_BUILD_ROOT:-$(default_coverage_build_root)}"',
-    'rm -rf "$COVERAGE_BUILD_ROOT/target" "$COVERAGE_BUILD_ROOT/llvm-cov-target"',
+    'rm -rf "$COVERAGE_BUILD_ROOT/llvm-cov-target"',
     'mkdir -p "$COVERAGE_BUILD_ROOT/target" "$COVERAGE_BUILD_ROOT/llvm-cov-target"',
     'export CARGO_TARGET_DIR="$COVERAGE_BUILD_ROOT/target"',
     'export CARGO_LLVM_COV_TARGET_DIR="$COVERAGE_BUILD_ROOT/llvm-cov-target"',
@@ -162,23 +162,22 @@ for required_fragment in (
             f"missing fragment: {required_fragment}"
         )
 
-fast_summary_step = step_block("PR fast coverage summary (json)")
-if 'coverage-summary.json' not in fast_summary_step:
-    raise SystemExit(
-        "PR fast coverage summary must emit coverage-summary.json inside the adl working directory; "
-        "workflow is missing that output path"
-    )
+if step_count("PR fast coverage summary (json)") != 0:
+    raise SystemExit("adl-coverage must not use the old PR fast coverage summary path")
+if step_count("Determine PR fast coverage filters") != 0:
+    raise SystemExit("adl-coverage must not use the old coverage-impact output filter step")
 for required_fragment in (
-    'rm -rf target/debug target/llvm-cov-target',
-    'COVERAGE_BUILD_ROOT="${RUNNER_TEMP:-/tmp}/adl-pr-fast-coverage"',
-    'export CARGO_TARGET_DIR="$COVERAGE_BUILD_ROOT/target"',
-    'export CARGO_LLVM_COV_TARGET_DIR="$COVERAGE_BUILD_ROOT/llvm-cov-target"',
+    "cargo llvm-cov nextest \\",
+    "    --workspace \\",
+    "    --lib \\",
 ):
-    if required_fragment not in fast_summary_step:
+    if required_fragment not in runner_script_text:
         raise SystemExit(
-            "PR fast coverage summary must move heavy llvm-cov build outputs onto the runner scratch mount; "
+            "authoritative coverage runner must execute real library coverage without linking ADL binaries; "
             f"missing fragment: {required_fragment}"
         )
+if "    --tests \\" in runner_script_text or "    --bins \\" in runner_script_text or "    --all-targets \\" in runner_script_text:
+    raise SystemExit("authoritative coverage runner must not link test/bin/all-target surfaces")
 
 authoritative_gate_step = step_block("Coverage-impact changed-source gate")
 if '--summary adl/coverage-summary.json \\' not in authoritative_gate_step:
@@ -187,12 +186,8 @@ if '--summary adl/coverage-summary.json \\' not in authoritative_gate_step:
         "workflow is missing that summary reference"
     )
 
-pr_preflight_step = step_block("PR coverage-impact preflight")
-if '--summary adl/coverage-summary.json \\' not in pr_preflight_step:
-    raise SystemExit(
-        "PR coverage-impact preflight must read adl/coverage-summary.json emitted by the fast lane working directory; "
-        "workflow is missing that summary reference"
-    )
+if step_count("PR coverage-impact preflight") != 0:
+    raise SystemExit("adl-coverage must not carry the old PR coverage-impact preflight step")
 
 gate_if = step_if("Enforce coverage policy gates (workspace + per-file)")
 if "github.event_name != 'pull_request'" not in gate_if:
