@@ -424,7 +424,7 @@ is_pr_fast_coverage_workflow_change() {
   local diff_text
   diff_text="$(git_pr_patch "$path")"
   [ -n "$diff_text" ] || return 1
-  grep -E 'Determine PR fast coverage filters|PR fast coverage summary \(json\)|coverage-impact-filters.txt|run_cli_smoke_process_status|run_finish_bins|generic_filters|summary_files|coverage-summary-process-status.json|coverage-summary-finish.json|coverage-summary-generic.json|coverage-summary.json|process_status|adl-pr-finish|jq -s ' <<<"$diff_text" >/dev/null 2>&1 || return 1
+  grep -E 'Determine PR fast coverage filters|PR fast coverage summary \(json\)|coverage-impact-filters.txt|run_cli_smoke_process_status|run_finish_bins|generic_filters|summary_files|coverage-summary-process-status.json|coverage-summary-finish.json|coverage-summary-generic.json|coverage-summary.json|--summary coverage-summary.json|--summary adl/coverage-summary.json|process_status|adl-pr-finish|adl-pr-shepherd|jq -s ' <<<"$diff_text" >/dev/null 2>&1 || return 1
   if grep -E 'Coverage run and summary \(json\)|Coverage-impact changed-source gate|Enforce coverage policy gates|Coverage \(ADL Rust workspace lcov\)|Upload coverage artifact|Upload coverage to Codecov|run_authoritative_coverage_lane|full_coverage_required|coverage_authority=' <<<"$diff_text" >/dev/null 2>&1; then
     return 1
   fi
@@ -467,21 +467,21 @@ is_bounded_pr_fast_coverage_policy_change() {
         fi
         ;;
       adl/tools/check_coverage_impact.sh)
-        if git_pr_patch "$path" | grep -F 'adl/src/cli/process_cmd.rs' >/dev/null 2>&1; then
+        if git_pr_patch "$path" | grep -E 'adl/src/cli/process_cmd.rs|adl/src/bin/adl_pr_shepherd.rs|pr_shepherd' >/dev/null 2>&1; then
           saw_bounded_marker=true
         else
           saw_other=true
         fi
         ;;
       adl/tools/ci_path_policy.sh)
-        if git_pr_patch "$path" | grep -E 'is_pr_fast_coverage_workflow_change|is_bounded_pr_fast_coverage_policy_surface|is_bounded_pr_fast_coverage_policy_change|bounded_pr_fast_coverage_policy_change_keeps_pr_fast_validation' >/dev/null 2>&1; then
+        if git_pr_patch "$path" | grep -E 'is_pr_fast_coverage_workflow_change|is_bounded_pr_fast_coverage_policy_surface|is_bounded_pr_fast_coverage_policy_change|bounded_pr_fast_coverage_policy_change_keeps_pr_fast_validation|adl-pr-shepherd|coverage-summary.json' >/dev/null 2>&1; then
           saw_bounded_marker=true
         else
           saw_other=true
         fi
         ;;
       adl/tools/test_check_coverage_impact.sh)
-        if git_pr_patch "$path" | grep -F 'process_status' >/dev/null 2>&1; then
+        if git_pr_patch "$path" | grep -E 'process_status|pr_shepherd|adl-pr-shepherd' >/dev/null 2>&1; then
           saw_bounded_marker=true
         else
           saw_other=true
