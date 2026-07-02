@@ -1629,23 +1629,120 @@ fn record_issue_goal_metrics_stage(
         issue_ref.scope(),
         issue_ref.issue_number()
     );
-    let args = [
-        path_str(&script_path)?,
-        "--issue-number",
-        issue_number.as_str(),
-        "--artifacts-dir",
-        path_str(&artifacts_dir)?,
-        "--capture-stage",
-        capture_stage,
-        "--issue-goal-ref",
-        issue_goal_ref.as_str(),
-        "--metrics-confidence",
-        "high",
-        "--fallback-data-source",
-        "derived_sprint_state",
+    let (sprint_goal_ref, goal_metrics_rollup_ref) =
+        read_issue_goal_metric_refs(repo_root, issue_ref)?;
+    let mut args = vec![
+        path_str(&script_path)?.to_string(),
+        "--issue-number".to_string(),
+        issue_number,
+        "--artifacts-dir".to_string(),
+        path_str(&artifacts_dir)?.to_string(),
+        "--capture-stage".to_string(),
+        capture_stage.to_string(),
+        "--issue-goal-ref".to_string(),
+        issue_goal_ref,
     ];
-    run_capture("python3", &args)?;
+    if let Some(value) = sprint_goal_ref {
+        args.push("--sprint-goal-ref".to_string());
+        args.push(value);
+    }
+    if let Some(value) = goal_metrics_rollup_ref {
+        args.push("--goal-metrics-rollup-ref".to_string());
+        args.push(value);
+    }
+    args.extend([
+        "--metrics-confidence".to_string(),
+        "high".to_string(),
+        "--fallback-data-source".to_string(),
+        "derived_sprint_state".to_string(),
+    ]);
+    let arg_refs: Vec<&str> = args.iter().map(String::as_str).collect();
+    run_capture("python3", &arg_refs)?;
     Ok(())
+}
+
+fn read_issue_goal_metric_refs(
+    repo_root: &Path,
+    issue_ref: &IssueRef,
+) -> Result<(Option<String>, Option<String>)> {
+    let bundle_dir = issue_ref.task_bundle_dir_path(repo_root);
+    let mut sprint_goal_ref = None;
+    let mut goal_metrics_rollup_ref = None;
+    for card_name in ["spp.md", "vpp.md"] {
+        let card_path = bundle_dir.join(card_name);
+        let Some(frontmatter) = read_yaml_frontmatter(&card_path)? else {
+            continue;
+        };
+        let yaml: serde_yaml::Value = serde_yaml::from_str(&frontmatter).with_context(|| {
+            format!(
+                "failed to parse goal metric refs from '{}'",
+                card_path.display()
+            )
+        })?;
+        merge_goal_metric_ref(
+            &mut sprint_goal_ref,
+            yaml_string_field(&yaml, "sprint_goal_ref"),
+            "sprint_goal_ref",
+            &card_path,
+        )?;
+        merge_goal_metric_ref(
+            &mut goal_metrics_rollup_ref,
+            yaml_string_field(&yaml, "goal_metrics_rollup_ref"),
+            "goal_metrics_rollup_ref",
+            &card_path,
+        )?;
+    }
+    Ok((sprint_goal_ref, goal_metrics_rollup_ref))
+}
+
+fn merge_goal_metric_ref(
+    current: &mut Option<String>,
+    candidate: Option<String>,
+    field: &str,
+    card_path: &Path,
+) -> Result<()> {
+    let Some(candidate) = candidate.filter(|value| !value.eq_ignore_ascii_case("unknown")) else {
+        return Ok(());
+    };
+    if let Some(existing) = current.as_ref() {
+        if existing != &candidate {
+            bail!(
+                "conflicting {field} values in issue goal metric cards: existing '{existing}' but '{}' declares '{candidate}'",
+                card_path.display()
+            );
+        }
+        return Ok(());
+    }
+    *current = Some(candidate);
+    Ok(())
+}
+
+fn read_yaml_frontmatter(path: &Path) -> Result<Option<String>> {
+    let Ok(text) = fs::read_to_string(path) else {
+        return Ok(None);
+    };
+    let mut lines = text.lines();
+    if lines.next() != Some("---") {
+        return Ok(None);
+    }
+    let mut yaml = Vec::new();
+    for line in lines {
+        if line == "---" {
+            return Ok(Some(yaml.join("\n")));
+        }
+        yaml.push(line);
+    }
+    Ok(None)
+}
+
+fn yaml_string_field(value: &serde_yaml::Value, key: &str) -> Option<String> {
+    value
+        .as_mapping()?
+        .get(serde_yaml::Value::String(key.to_string()))?
+        .as_str()
+        .map(str::trim)
+        .filter(|value| !value.is_empty())
+        .map(ToOwned::to_owned)
 }
 
 fn emit_start_session_ledger_notes(assessment: &adl::session_ledger::TargetClaimAssessment) {
@@ -1999,7 +2096,9 @@ fn bootstrap_ready_status_label(status: &str) -> &str {
 
 #[cfg(test)]
 mod bootstrap_output_tests {
-    use super::bootstrap_ready_status_label;
+    use super::{bootstrap_ready_status_label, read_issue_goal_metric_refs};
+    use ::adl::control_plane::IssueRef;
+    use std::fs;
 
     #[test]
     fn bootstrap_ready_status_explains_card_review_blockers() {
@@ -2008,6 +2107,92 @@ mod bootstrap_output_tests {
             "BLOCKED_PENDING_CARD_REVIEW"
         );
         assert_eq!(bootstrap_ready_status_label("PASS"), "PASS");
+    }
+
+    #[test]
+    fn issue_goal_metric_refs_are_read_from_task_bundle_cards() {
+        let repo =
+            std::env::temp_dir().join(format!("adl-goal-metric-refs-{}", std::process::id()));
+        let _ = fs::remove_dir_all(&repo);
+        let issue_ref =
+            IssueRef::new(4666, "v0.91.7", "nested-goal-accounting").expect("issue ref");
+        let bundle_dir = issue_ref.task_bundle_dir_path(&repo);
+        fs::create_dir_all(&bundle_dir).expect("bundle dir");
+        fs::write(
+            bundle_dir.join("spp.md"),
+            "---\nsprint_goal_ref: \"issue-4631\"\ngoal_metrics_rollup_ref: \".adl/v0.91.7/tasks/issue-4666__nested-goal-accounting/artifacts/goal_metrics/issue-4666-goal-metrics-summary.json\"\n---\n",
+        )
+        .expect("write spp");
+
+        let (sprint_goal_ref, rollup_ref) =
+            read_issue_goal_metric_refs(&repo, &issue_ref).expect("read refs");
+        assert_eq!(sprint_goal_ref.as_deref(), Some("issue-4631"));
+        assert_eq!(
+            rollup_ref.as_deref(),
+            Some(".adl/v0.91.7/tasks/issue-4666__nested-goal-accounting/artifacts/goal_metrics/issue-4666-goal-metrics-summary.json")
+        );
+
+        let _ = fs::remove_dir_all(&repo);
+    }
+
+    #[test]
+    fn issue_goal_metric_refs_fall_back_from_spp_to_vpp_when_spp_is_unknown() {
+        let repo = std::env::temp_dir().join(format!(
+            "adl-goal-metric-refs-vpp-fallback-{}",
+            std::process::id()
+        ));
+        let _ = fs::remove_dir_all(&repo);
+        let issue_ref =
+            IssueRef::new(4666, "v0.91.7", "nested-goal-accounting").expect("issue ref");
+        let bundle_dir = issue_ref.task_bundle_dir_path(&repo);
+        fs::create_dir_all(&bundle_dir).expect("bundle dir");
+        fs::write(
+            bundle_dir.join("spp.md"),
+            "---\nsprint_goal_ref: unknown\ngoal_metrics_rollup_ref: unknown\n---\n",
+        )
+        .expect("write spp");
+        fs::write(
+            bundle_dir.join("vpp.md"),
+            "---\nsprint_goal_ref: \"issue-4631\"\ngoal_metrics_rollup_ref: \".adl/v0.91.7/tasks/issue-4666__nested-goal-accounting/artifacts/goal_metrics/issue-4666-goal-metrics-summary.json\"\n---\n",
+        )
+        .expect("write vpp");
+
+        let (sprint_goal_ref, rollup_ref) =
+            read_issue_goal_metric_refs(&repo, &issue_ref).expect("read refs");
+        assert_eq!(sprint_goal_ref.as_deref(), Some("issue-4631"));
+        assert_eq!(
+            rollup_ref.as_deref(),
+            Some(".adl/v0.91.7/tasks/issue-4666__nested-goal-accounting/artifacts/goal_metrics/issue-4666-goal-metrics-summary.json")
+        );
+
+        let _ = fs::remove_dir_all(&repo);
+    }
+
+    #[test]
+    fn issue_goal_metric_refs_reject_spp_vpp_drift() {
+        let repo =
+            std::env::temp_dir().join(format!("adl-goal-metric-refs-drift-{}", std::process::id()));
+        let _ = fs::remove_dir_all(&repo);
+        let issue_ref =
+            IssueRef::new(4666, "v0.91.7", "nested-goal-accounting").expect("issue ref");
+        let bundle_dir = issue_ref.task_bundle_dir_path(&repo);
+        fs::create_dir_all(&bundle_dir).expect("bundle dir");
+        fs::write(
+            bundle_dir.join("spp.md"),
+            "---\nsprint_goal_ref: \"issue-4631\"\ngoal_metrics_rollup_ref: \".adl/v0.91.7/tasks/issue-4666__nested-goal-accounting/artifacts/goal_metrics/issue-4666-goal-metrics-summary.json\"\n---\n",
+        )
+        .expect("write spp");
+        fs::write(
+            bundle_dir.join("vpp.md"),
+            "---\nsprint_goal_ref: \"issue-9999\"\ngoal_metrics_rollup_ref: \".adl/v0.91.7/tasks/issue-9999__wrong/artifacts/goal_metrics/issue-9999-goal-metrics-summary.json\"\n---\n",
+        )
+        .expect("write vpp");
+
+        let err = read_issue_goal_metric_refs(&repo, &issue_ref)
+            .expect_err("conflicting refs should fail closed");
+        assert!(err.to_string().contains("conflicting sprint_goal_ref"));
+
+        let _ = fs::remove_dir_all(&repo);
     }
 }
 

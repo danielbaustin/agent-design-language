@@ -302,6 +302,7 @@
         "adl/tools/test_control_plane_observability.sh",
         "adl/tools/test_five_command_regression_suite.sh",
         "adl/tools/test_owner_validation_lane.sh",
+        "adl/tools/test_readiness_prep_metrics_non_terminal.sh",
         "adl/tools/test_pr_*.sh"
       ],
       "path_hints": [
@@ -319,6 +320,7 @@
         "adl/tools/test_control_plane_observability.sh",
         "adl/tools/test_five_command_regression_suite.sh",
         "adl/tools/test_owner_validation_lane.sh",
+        "adl/tools/test_readiness_prep_metrics_non_terminal.sh",
         "adl/tools/test_pr_*.sh"
       ],
       "command": "bash adl/tools/run_owner_validation_lane.sh csdlc --print-plan",
