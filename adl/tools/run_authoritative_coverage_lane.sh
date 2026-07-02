@@ -84,8 +84,11 @@ export CARGO_TARGET_DIR="$COVERAGE_BUILD_ROOT/target"
 export CARGO_LLVM_COV_TARGET_DIR="$COVERAGE_BUILD_ROOT/llvm-cov-target"
 
 if [ "$MODE" = "full_authoritative_default_features" ]; then
+  export CARGO_BUILD_JOBS="${ADL_AUTHORITATIVE_COVERAGE_BUILD_JOBS:-1}"
   echo "Authoritative coverage mode: full_authoritative_default_features"
   echo "Features: default"
+  echo "Authoritative coverage linker mode: ${RUST_LINK_ACCEL:-default}"
+  echo "Authoritative coverage cargo build jobs: ${CARGO_BUILD_JOBS}"
   cargo llvm-cov nextest \
     --workspace \
     --status-level all \

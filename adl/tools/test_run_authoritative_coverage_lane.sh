@@ -64,6 +64,8 @@ set -euo pipefail
 printf 'cmd=%s\n' "$*" >> "$AUTHORITATIVE_CARGO_LOG"
 printf 'target=%s\n' "${CARGO_TARGET_DIR:-}" >> "$AUTHORITATIVE_CARGO_LOG"
 printf 'llvm_cov_target=%s\n' "${CARGO_LLVM_COV_TARGET_DIR:-}" >> "$AUTHORITATIVE_CARGO_LOG"
+printf 'build_jobs=%s\n' "${CARGO_BUILD_JOBS:-}" >> "$AUTHORITATIVE_CARGO_LOG"
+printf 'link_accel=%s\n' "${RUST_LINK_ACCEL:-}" >> "$AUTHORITATIVE_CARGO_LOG"
 exit 0
 EOF
 chmod +x "$bin_dir/cargo"
@@ -91,6 +93,25 @@ do
   if ! grep -F "$required" "$cargo_log" >/dev/null 2>&1; then
     echo "missing authoritative coverage execution token: $required" >&2
     cat "$cargo_log" >&2
+    exit 1
+  fi
+done
+
+lld_cargo_log="$temp_root/lld-cargo.log"
+PATH="$bin_dir:$PATH" \
+AUTHORITATIVE_CARGO_LOG="$lld_cargo_log" \
+ADL_COVERAGE_BUILD_ROOT="$scratch_root" \
+RUST_LINK_ACCEL="lld" \
+ADL_AUTHORITATIVE_COVERAGE_BUILD_JOBS="1" \
+  bash "$ROOT_DIR/adl/tools/run_authoritative_coverage_lane.sh"
+
+for required in \
+  "build_jobs=1" \
+  "link_accel=lld"
+do
+  if ! grep -F "$required" "$lld_cargo_log" >/dev/null 2>&1; then
+    echo "missing authoritative coverage concurrency token: $required" >&2
+    cat "$lld_cargo_log" >&2
     exit 1
   fi
 done
