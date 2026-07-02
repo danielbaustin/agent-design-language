@@ -43,7 +43,7 @@ It must answer three questions before `v0.92` opens:
 | `docs/milestones/v0.91.6/review/build_throughput/` | Build throughput, sccache/linker/target-dir/CodeBuild/Nessus evidence | Feed validation/build-throughput follow-ons and remote-build decisions, including an early v0.91.7 EC2 Spot or alternative remote-builder proof. |
 | `docs/milestones/v0.91.6/review/provider/` | Provider reliability, suitability, profiles v2, role profiles | Feed provider/scheduler/local-agent routes and v0.92 model-readiness boundaries. |
 | `docs/milestones/v0.91.6/review/security/` | CAV, SSM, access-rule, security residual evidence | Feed security residual and v0.93 enterprise-security handoff. |
-| `docs/milestones/v0.91.6/review/runtime_aws_signal_bridge/` | ACIP-to-SNS and heartbeat bridge proof | Feed runtime AWS/heartbeat operational route and later ObsMem/community memory. |
+| `docs/milestones/v0.91.6/review/runtime_aws_signal_bridge/` | ACIP-to-SNS and heartbeat bridge proof | Feed runtime AWS/heartbeat operational proof and later ObsMem/community memory assignments. |
 | `docs/milestones/v0.91.6/review/sprint_execution_packets/` | SEP, activity logs, sprint-conductor simulation | Feed sprint-execution process and nested-goal/PVF scheduling. |
 | `docs/templates/planning/` | Milestone planning template authority | Use current planning template process; do not hand-roll canonical docs. |
 | `docs/templates/sprints/` | Sprint Execution Packet template authority | Use for mini-sprint/sprint setup and closeout expectations. |
@@ -64,12 +64,12 @@ These were open at the source-capture pass and should be explicitly closed with 
 | `#4621` | WP-16 failed external-review truth and release-tail docs repair | Closed. Consume the failed-review truth repair and release-tail doc disposition. |
 | `#4622` | Repo-native PR inventory for release-tail review | Closed by PR `#4708`. Consume as delivered tooling proof that release-tail issue/PR inventory no longer depends on the failing `missing_owner_binary_cargo_fallback_disabled` path. |
 | `#4030`-`#4035`, `#4341` | Observatory children | Must be resolved or explicitly carried into v0.91.7 demo/runtime readiness. |
-| `#4286` | PR closing-linkage guard | Tooling residual; route with process-hardening work. |
+| `#4286` | PR closing-linkage guard | Tooling residual; assign with process-hardening work. |
 | `#4299` | Issue resource telemetry archive | Feeds metrics/S3/ObsMem history. |
 | `#4308` | VPP and externalized PVF lane registry | Required for validation planning prompt substrate. |
 | `#4309` | Next prompt-template version with VPP, time, token, goal fields | Required template-version work before full SEP/VPP maturity. |
-| `#4317` | Nessus remote Rust validation runner | Build/validation throughput route. |
-| `#4322` | CI checks and validation cost review | Validation/test-tax route. |
+| `#4317` | Nessus remote Rust validation runner | Build/validation throughput assignment. |
+| `#4322` | CI checks and validation cost review | Validation/test-tax assignment. |
 | `#4324`, `#4369`-`#4376`, `#4378` | ADR mini-sprint, candidate ADR reviews, and tooling remediation | `#4324` and `#4369`-`#4376` are closed inputs; open `#4378` must be closed with evidence or explicitly blocked with evidence and operator approval by WP-02 before v0.92 handoff. |
 | `#4329` | Per-issue execution metrics foundation | Required for time/token prediction and issue baselines. |
 | `#4331` | First-class nested goal accounting | Closed input that must be consumed by goal-state and SOR metrics planning. |
@@ -86,10 +86,10 @@ These were open at the source-capture pass and should be explicitly closed with 
 | `#4520`-`#4522` | Observability-boundary and release/docs truth-consumption follow-ons from the adoption audit | Closed v0.91.6 follow-on input; consume their retained proofs instead of carrying the audit gaps forward as still-open activation blockers. |
 | `#4442` | Native host-integrated goal snapshot capture | v0.91.7-facing input for host/session goal accounting; prove through WP-04 unless completed before v0.91.7 starts. |
 | `#4443` | Full issue-lifecycle shepherd | v0.91.7-facing lifecycle input above watcher/janitor/closeout; implement/prove through WP-03 unless completed before v0.91.7 starts. |
-| `#4609`-`#4612` | WP-14A remediation route | Closed inputs for WP-15/WP-16. `#4611` deliberately routed full PR inventory to `#4622`; do not count PR inventory as fixed from `#4611` alone. |
+| `#4609`-`#4612` | WP-14A remediation assignment | Closed inputs for WP-15/WP-16. `#4611` deliberately routed full PR inventory to `#4622`; do not count PR inventory as fixed from `#4611` alone. |
 | `#4368` | v0.91.7 planning docs | This source-capture and planning alignment issue. |
 
-## Local TBD Inputs To Capture Or Route
+## Local TBD Inputs To Capture Or Assign
 
 Local `.adl/docs/TBD/` files are ignored planning inputs, not tracked proof. They are cited here as source material that must be either promoted into tracked docs/issues or explicitly deferred.
 
@@ -97,14 +97,14 @@ Local `.adl/docs/TBD/` files are ignored planning inputs, not tracked proof. The
 | --- | --- |
 | `.adl/docs/TBD/ADL_GOAL_STATE.md` | Schedule as goal-state/nested-goal substrate input; connect to issue metrics, SOR accounting, and v0.92 continuity. |
 | `.adl/docs/TBD/ADL_COGNITIVE_SCHEDULER_v1.md` | Schedule as scheduler execution proof; connect provider profiles, aptitude, local agents, quota/cost, and sprint orchestration. |
-| `.adl/docs/TBD/ADL_COGNITIVE_ECONOMICS.md` | Use as scheduler/economics rationale; default to context and routing unless a bounded test is promoted. |
+| `.adl/docs/TBD/ADL_COGNITIVE_ECONOMICS.md` | Use as scheduler/economics rationale; default to context and explicit assignment unless a bounded test is promoted. |
 | `.adl/docs/TBD/ADL_BUILD_IMPROVEMENTS.md` | Use for build-throughput, remote validation, Nessus, CodeBuild, EC2 Spot experiments, `sccache`, and validation-DAG convergence routes. |
-| `.adl/docs/TBD/LAUNCH_PLAN_JULY_2026.md` | Route into v0.91.7/v0.92 launch-readiness planning; do not let launch work silently expand birthday scope. |
+| `.adl/docs/TBD/LAUNCH_PLAN_JULY_2026.md` | Assign into v0.91.7/v0.92 launch-readiness planning; do not let launch work silently expand birthday scope. |
 | `.adl/docs/TBD/LOCAL_BACKLOG.md` | Use as the local backlog source for queued work that is not already represented as a public GitHub issue; promote only bounded rows with clear milestone fit. |
-| `.adl/docs/TBD/ADL_AND_GUILDS.md` | Route into v0.91.7/v0.93 governance planning; do not make guilds a v0.92 implementation blocker unless explicitly promoted. |
-| `.adl/docs/TBD/workflow_tooling/PARALLEL_EXECUTION_LANES_AND_COMPRESSION_MODEL.md` | Account in PVF/VPP/validation-lane planning. |
-| `.adl/docs/TBD/workflow_tooling/planning/SPRINT_CYCLE_TIME_REDUCTION_PLAN.md` | Account in SEP, sprint-conductor, VPP, and validation manager routes. |
-| `.adl/docs/TBD/tools/VALIDATION_MANAGER_TEST_TAX_RECOVERY_PLAN.md` | Account in validation manager / test-tax / CI lane planning. |
+| `.adl/docs/TBD/ADL_AND_GUILDS.md` | Assign into v0.91.7/v0.93 governance planning; do not make guilds a v0.92 implementation blocker unless explicitly promoted. |
+| `.adl/docs/TBD/workflow_tooling/PARALLEL_EXECUTION_LANES_AND_COMPRESSION_MODEL.md` | Assign to PVF/VPP/validation-lane planning. |
+| `.adl/docs/TBD/workflow_tooling/planning/SPRINT_CYCLE_TIME_REDUCTION_PLAN.md` | Assign to SEP, sprint-conductor, VPP, and validation manager work. |
+| `.adl/docs/TBD/tools/VALIDATION_MANAGER_TEST_TAX_RECOVERY_PLAN.md` | Assign to validation manager / test-tax / CI lane planning. |
 | `.adl/docs/TBD/csm_observatory/UNITY_OBSERVATORY_DEMO.md` | Align with Observatory proof status; do not claim Unity completion until issue evidence exists. |
 | `.adl/docs/TBD/runtime_v2/RUNTIME_V2_MINIMAL_PROTOTYPE.md` | Reconcile with current runtime fire-up/soak plan; preserve minimal runtime proof requirements. |
 | `.adl/docs/TBD/Test_Tax_Prompt_2.md` | Retire as scratch after captured validation/test-tax facts are represented elsewhere. |
@@ -120,7 +120,7 @@ Local `.adl/docs/TBD/` files are ignored planning inputs, not tracked proof. The
 | `issue-feature-list-roadmap-sync.md` | Feature-list/roadmap sync candidate; assign to planning/feature-list work without counting assignment as completion. |
 | `issue-test-cycle-architecture-split.md` | Validation architecture split candidate; assign to validation/PVF/build-throughput planning without counting assignment as completion. |
 | `issue-codefriend-v1-proof-and-adapter-v2-acceptance.md` | Pre-v0.95 proof-planning input; preserve but do not expand v0.91.7 unless launch readiness needs it. |
-| `issue-ci-runtime-budget-observability.md` | CI/runtime budget and observability route; connect with resource telemetry and build logs. |
+| `issue-ci-runtime-budget-observability.md` | CI/runtime budget and observability assignment; connect with resource telemetry and build logs. |
 | `issue-memory-palace-v092-bridge-feature-doc.md` | v0.92 memory bridge input; ensure v0.91.7 handoff names it. |
 | `issue-v093-v095-mvp-feature-doc-production.md` | Later feature-doc wave source; explicitly non-claim for v0.91.7 unless promoted by operator decision. |
 

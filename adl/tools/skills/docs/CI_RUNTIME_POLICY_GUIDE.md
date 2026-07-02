@@ -162,6 +162,30 @@ Skills should treat this as throughput infrastructure, not proof by itself:
 - missing `lld` after the install step is a CI failure because the workflow is
   explicitly claiming linker acceleration on the hosted runner path
 
+For local issue worktrees and remote builders, ADL also provides a bounded
+dependency-artifact warmup helper:
+
+```bash
+python3 adl/tools/warm_rust_dependency_cache.py \
+  --source-target <warm-target> \
+  --dest-target <issue-worktree>/adl/target \
+  --manifest-path <issue-worktree>/adl/Cargo.toml \
+  --json
+```
+
+Use it before Rust-heavy validation only when a trusted warm source target from
+the same host, same filesystem, same checkout family, and same toolchain is
+available. It hardlinks dependency artifacts under `target/<profile>/deps` and
+intentionally avoids workspace outputs, `.fingerprint`, and `build` metadata.
+Its focused proof is:
+
+```bash
+python3 adl/tools/test_warm_rust_dependency_cache.py
+```
+
+Skills must treat this as acceleration only. A successful warmup does not prove
+the issue and must not replace the selected validation lane.
+
 ### Docs-Only PR
 
 Observed:

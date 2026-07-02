@@ -13,8 +13,9 @@ use super::pr_cmd_args::parse_finish_args;
 use super::pr_cmd_args::{
     parse_closeout_args, parse_closing_linkage_args, parse_create_args, parse_doctor_args,
     parse_init_args, parse_issue_args, parse_pr_inventory_args, parse_preflight_args,
-    parse_projection_map_args, parse_ready_args, parse_repair_issue_body_args, parse_start_args,
-    parse_validation_args, parse_watch_args, DoctorArgs, DoctorMode, IssueArgs,
+    parse_projection_map_args, parse_ready_args, parse_repair_issue_body_args, parse_shepherd_args,
+    parse_start_args, parse_validation_args, parse_watch_args, DoctorArgs, DoctorMode, IssueArgs,
+    ShepherdArgs, WatchArgs,
 };
 use super::pr_cmd_cards::{
     branch_indicates_unbound_state, ensure_bootstrap_cards, ensure_local_issue_prompt_copy,
@@ -210,7 +211,7 @@ fn real_pr_run(args: &[String]) -> Result<()> {
 pub(crate) fn real_pr(args: &[String]) -> Result<()> {
     let Some(subcommand) = args.first().map(|s| s.as_str()) else {
         bail!(
-            "pr requires a subcommand: create | init | repair-issue-body | start | run | doctor | ready | preflight | finish | validation | pr-inventory | watch | closing-linkage | issue | projection-map | closeout"
+            "pr requires a subcommand: create | init | repair-issue-body | start | run | doctor | ready | preflight | finish | validation | pr-inventory | watch | shepherd | closing-linkage | issue | projection-map | closeout"
         );
     };
 
@@ -227,6 +228,7 @@ pub(crate) fn real_pr(args: &[String]) -> Result<()> {
         "validation" => real_pr_validation(&args[1..]),
         "pr-inventory" => real_pr_inventory(&args[1..]),
         "watch" => real_pr_watch(&args[1..]),
+        "shepherd" => real_pr_shepherd(&args[1..]),
         "closing-linkage" => real_pr_closing_linkage(&args[1..]),
         "issue" => real_pr_issue(&args[1..]),
         "projection-map" => real_pr_projection_map(&args[1..]),
@@ -459,92 +461,34 @@ fn real_pr_validation(args: &[String]) -> Result<()> {
 
 fn real_pr_watch(args: &[String]) -> Result<()> {
     let parsed = parse_watch_args(args)?;
-    let repo_root = repo_root()?;
-    let repo = parsed
-        .repo
-        .or_else(|| repo_from_issue_ref(&parsed.issue_ref))
-        .or_else(|| repo_from_pr_ref(&parsed.issue_ref))
-        .unwrap_or(default_repo(&repo_root)?);
-    let requested_number = parse_issue_ref_number("watch", &parsed.issue_ref)?;
-    let (issue, issue_record, direct_pr) = match github::gh_issue_view(&repo, requested_number) {
-        Ok(issue_record) => (requested_number, issue_record, None),
-        Err(err)
-            if err
-                .to_string()
-                .contains("GitHub returned a pull request instead of an issue") =>
-        {
-            let pr = github::pr_metadata_for_watch(&repo, &parsed.issue_ref)?;
-            let issue = github::issue_number_for_pr_watch(&repo, &pr)?;
-            let issue_record = github::gh_issue_view(&repo, issue)?;
-            (issue, issue_record, Some(pr))
-        }
-        Err(err) => return Err(err),
-    };
-    let closed_completed = github::gh_issue_is_closed_completed(issue, &repo)?;
-    let version = resolve_version_for_existing_issue(
-        &repo_root,
-        &repo,
-        issue,
-        parsed.version,
-        false,
-        "watch",
-    )?;
-    let local_identity = resolve_local_issue_identity(&repo_root, issue)?;
-    let slug = parsed
-        .slug
-        .or_else(|| local_identity.as_ref().map(|(_, slug)| slug.clone()))
-        .unwrap_or_else(|| sanitize_slug(&issue_record.title));
-    let issue_ref = IssueRef::new(issue, version, slug)?;
-    let linked_pr = if let Some(pr) = direct_pr {
-        let validation = github::pr_validation_report(&repo, &pr.number.to_string())?;
-        Some((pr, validation))
-    } else {
-        let linked_prs = github::linked_prs_for_issue(
-            &repo,
-            issue,
-            Some(issue_ref.branch_name("codex").as_str()),
-        )?;
-        match linked_prs.len() {
-            0 => None,
-            1 => {
-                let pr = linked_prs
-                    .into_iter()
-                    .next()
-                    .expect("single linked PR should exist");
-                let validation = github::pr_validation_report(&repo, &pr.number.to_string())?;
-                Some((pr, validation))
-            }
-            count => bail!(
-                "watch: issue #{issue} has {count} linked PRs; watcher requires a single unambiguous lifecycle target"
-            ),
-        }
-    };
-    let local_readiness = doctor::run_doctor_ready(
-        &repo_root,
-        &repo,
-        &issue_ref,
-        &issue_ref.branch_name("codex"),
-    )
-    .map(|ready| github::IssueWatchLocalReadinessReport {
-        status: "ready".to_string(),
-        pr_run_readiness: ready.card_lifecycle.pr_run_readiness.to_string(),
-        reason: "doctor_ready_pass".to_string(),
-    })
-    .unwrap_or_else(|err| github::IssueWatchLocalReadinessReport {
-        status: "failed".to_string(),
-        pr_run_readiness: "unknown".to_string(),
-        reason: err.to_string(),
-    });
-    let report = github::build_issue_watch_report(
-        &issue_record,
-        closed_completed,
-        local_readiness,
-        linked_pr,
-    );
+    let snapshot = build_issue_lifecycle_snapshot(&parsed)?;
+    let report = snapshot.watch_report;
     if parsed.json {
         print_json(&report)?;
     } else {
         print_issue_watch_report(&report);
+    }
+    Ok(())
+}
+
+fn real_pr_shepherd(args: &[String]) -> Result<()> {
+    let parsed: ShepherdArgs = parse_shepherd_args(args)?;
+    let snapshot = build_issue_lifecycle_snapshot(&WatchArgs {
+        issue_ref: parsed.issue_ref,
+        repo: parsed.repo,
+        slug: parsed.slug,
+        version: parsed.version,
+        json: parsed.json,
+    })?;
+    let report = github::build_issue_lifecycle_shepherd_report(
+        &snapshot.watch_report,
+        snapshot.ready_lifecycle_state,
+        snapshot.pr_finish_readiness,
+    );
+    if parsed.json {
+        print_json(&report)?;
+    } else {
+        print_issue_lifecycle_shepherd_report(&report);
     }
     Ok(())
 }
@@ -858,6 +802,114 @@ struct IssueMutationResult {
     reason: Option<&'static str>,
 }
 
+struct IssueLifecycleSnapshot {
+    watch_report: github::IssueWatchReport,
+    ready_lifecycle_state: &'static str,
+    pr_finish_readiness: &'static str,
+}
+
+fn build_issue_lifecycle_snapshot(parsed: &WatchArgs) -> Result<IssueLifecycleSnapshot> {
+    let repo_root = repo_root()?;
+    let repo = parsed
+        .repo
+        .clone()
+        .or_else(|| repo_from_issue_ref(&parsed.issue_ref))
+        .or_else(|| repo_from_pr_ref(&parsed.issue_ref))
+        .unwrap_or(default_repo(&repo_root)?);
+    let requested_number = parse_issue_ref_number("watch", &parsed.issue_ref)?;
+    let (issue, issue_record, direct_pr) = match github::gh_issue_view(&repo, requested_number) {
+        Ok(issue_record) => (requested_number, issue_record, None),
+        Err(err)
+            if err
+                .to_string()
+                .contains("GitHub returned a pull request instead of an issue") =>
+        {
+            let pr = github::pr_metadata_for_watch(&repo, &parsed.issue_ref)?;
+            let issue = github::issue_number_for_pr_watch(&repo, &pr)?;
+            let issue_record = github::gh_issue_view(&repo, issue)?;
+            (issue, issue_record, Some(pr))
+        }
+        Err(err) => return Err(err),
+    };
+    let closed_completed = github::gh_issue_is_closed_completed(issue, &repo)?;
+    let version = resolve_version_for_existing_issue(
+        &repo_root,
+        &repo,
+        issue,
+        parsed.version.clone(),
+        false,
+        "watch",
+    )?;
+    let local_identity = resolve_local_issue_identity(&repo_root, issue)?;
+    let slug = parsed
+        .slug
+        .clone()
+        .or_else(|| local_identity.as_ref().map(|(_, slug)| slug.clone()))
+        .unwrap_or_else(|| sanitize_slug(&issue_record.title));
+    let issue_ref = IssueRef::new(issue, version, slug)?;
+    let linked_pr = if let Some(pr) = direct_pr {
+        let validation = github::pr_validation_report(&repo, &pr.number.to_string())?;
+        Some((pr, validation))
+    } else {
+        let linked_prs = github::linked_prs_for_issue(
+            &repo,
+            issue,
+            Some(issue_ref.branch_name("codex").as_str()),
+        )?;
+        match linked_prs.len() {
+            0 => None,
+            1 => {
+                let pr = linked_prs
+                    .into_iter()
+                    .next()
+                    .expect("single linked PR should exist");
+                let validation = github::pr_validation_report(&repo, &pr.number.to_string())?;
+                Some((pr, validation))
+            }
+            count => bail!(
+                "watch: issue #{issue} has {count} linked PRs; watcher requires a single unambiguous lifecycle target"
+            ),
+        }
+    };
+    let ready = doctor::run_doctor_ready(
+        &repo_root,
+        &repo,
+        &issue_ref,
+        &issue_ref.branch_name("codex"),
+    );
+    let (ready_lifecycle_state, pr_finish_readiness, local_readiness) = match ready {
+        Ok(ready) => (
+            ready.lifecycle_state,
+            ready.card_lifecycle.pr_finish_readiness,
+            github::IssueWatchLocalReadinessReport {
+                status: "ready".to_string(),
+                pr_run_readiness: ready.card_lifecycle.pr_run_readiness.to_string(),
+                reason: "doctor_ready_pass".to_string(),
+            },
+        ),
+        Err(err) => (
+            "unknown",
+            "unknown",
+            github::IssueWatchLocalReadinessReport {
+                status: "failed".to_string(),
+                pr_run_readiness: "unknown".to_string(),
+                reason: err.to_string(),
+            },
+        ),
+    };
+    let watch_report = github::build_issue_watch_report(
+        &issue_record,
+        closed_completed,
+        local_readiness,
+        linked_pr,
+    );
+    Ok(IssueLifecycleSnapshot {
+        watch_report,
+        ready_lifecycle_state,
+        pr_finish_readiness,
+    })
+}
+
 fn parse_issue_ref_number(command: &str, issue_ref: &str) -> Result<u32> {
     if issue_ref.starts_with("http://") || issue_ref.starts_with("https://") {
         parse_issue_number_from_url(issue_ref)
@@ -978,6 +1030,57 @@ fn print_issue_watch_report(report: &github::IssueWatchReport) {
                     .join(", ")
             );
         }
+    }
+}
+
+fn print_issue_lifecycle_shepherd_report(report: &github::IssueLifecycleShepherdReport) {
+    println!(
+        "Issue #{} shepherd: {} -> {} ({})",
+        report.issue,
+        report.lifecycle_shepherd.state,
+        report.lifecycle_shepherd.next_skill,
+        report.reason
+    );
+    println!("watch_classification: {}", report.classification);
+    println!("issue_state: {}", report.issue_state);
+    println!("tail_owner: {}", report.tail_owner);
+    println!("watch_shepherd_state: {}", report.watch_shepherd_state);
+    println!("continuation: {}", report.continuation);
+    println!(
+        "lifecycle_shepherd: active={} state={} owner_skill={} next_skill={} closeout_required={}",
+        report.lifecycle_shepherd.active,
+        report.lifecycle_shepherd.state,
+        report.lifecycle_shepherd.owner_skill,
+        report.lifecycle_shepherd.next_skill,
+        report.lifecycle_shepherd.closeout_required
+    );
+    println!(
+        "authority_boundary: merge_authority_human_only={} issue_close_authority_human_only={} review_authority_human_only={}",
+        report
+            .lifecycle_shepherd
+            .authority_boundary
+            .merge_authority_human_only,
+        report
+            .lifecycle_shepherd
+            .authority_boundary
+            .issue_close_authority_human_only,
+        report
+            .lifecycle_shepherd
+            .authority_boundary
+            .review_authority_human_only
+    );
+    println!(
+        "local_readiness: status={} pr_run_readiness={} reason={}",
+        report.local_readiness.status,
+        report.local_readiness.pr_run_readiness,
+        report.local_readiness.reason
+    );
+    if let Some(pr) = &report.linked_pr {
+        println!(
+            "linked_pr: #{} state={} draft={} disposition={}",
+            pr.number, pr.state, pr.is_draft, pr.validation.disposition
+        );
+        println!("linked_pr_url: {}", pr.url);
     }
 }
 
@@ -1629,23 +1732,120 @@ fn record_issue_goal_metrics_stage(
         issue_ref.scope(),
         issue_ref.issue_number()
     );
-    let args = [
-        path_str(&script_path)?,
-        "--issue-number",
-        issue_number.as_str(),
-        "--artifacts-dir",
-        path_str(&artifacts_dir)?,
-        "--capture-stage",
-        capture_stage,
-        "--issue-goal-ref",
-        issue_goal_ref.as_str(),
-        "--metrics-confidence",
-        "high",
-        "--fallback-data-source",
-        "derived_sprint_state",
+    let (sprint_goal_ref, goal_metrics_rollup_ref) =
+        read_issue_goal_metric_refs(repo_root, issue_ref)?;
+    let mut args = vec![
+        path_str(&script_path)?.to_string(),
+        "--issue-number".to_string(),
+        issue_number,
+        "--artifacts-dir".to_string(),
+        path_str(&artifacts_dir)?.to_string(),
+        "--capture-stage".to_string(),
+        capture_stage.to_string(),
+        "--issue-goal-ref".to_string(),
+        issue_goal_ref,
     ];
-    run_capture("python3", &args)?;
+    if let Some(value) = sprint_goal_ref {
+        args.push("--sprint-goal-ref".to_string());
+        args.push(value);
+    }
+    if let Some(value) = goal_metrics_rollup_ref {
+        args.push("--goal-metrics-rollup-ref".to_string());
+        args.push(value);
+    }
+    args.extend([
+        "--metrics-confidence".to_string(),
+        "high".to_string(),
+        "--fallback-data-source".to_string(),
+        "derived_sprint_state".to_string(),
+    ]);
+    let arg_refs: Vec<&str> = args.iter().map(String::as_str).collect();
+    run_capture("python3", &arg_refs)?;
     Ok(())
+}
+
+fn read_issue_goal_metric_refs(
+    repo_root: &Path,
+    issue_ref: &IssueRef,
+) -> Result<(Option<String>, Option<String>)> {
+    let bundle_dir = issue_ref.task_bundle_dir_path(repo_root);
+    let mut sprint_goal_ref = None;
+    let mut goal_metrics_rollup_ref = None;
+    for card_name in ["spp.md", "vpp.md"] {
+        let card_path = bundle_dir.join(card_name);
+        let Some(frontmatter) = read_yaml_frontmatter(&card_path)? else {
+            continue;
+        };
+        let yaml: serde_yaml::Value = serde_yaml::from_str(&frontmatter).with_context(|| {
+            format!(
+                "failed to parse goal metric refs from '{}'",
+                card_path.display()
+            )
+        })?;
+        merge_goal_metric_ref(
+            &mut sprint_goal_ref,
+            yaml_string_field(&yaml, "sprint_goal_ref"),
+            "sprint_goal_ref",
+            &card_path,
+        )?;
+        merge_goal_metric_ref(
+            &mut goal_metrics_rollup_ref,
+            yaml_string_field(&yaml, "goal_metrics_rollup_ref"),
+            "goal_metrics_rollup_ref",
+            &card_path,
+        )?;
+    }
+    Ok((sprint_goal_ref, goal_metrics_rollup_ref))
+}
+
+fn merge_goal_metric_ref(
+    current: &mut Option<String>,
+    candidate: Option<String>,
+    field: &str,
+    card_path: &Path,
+) -> Result<()> {
+    let Some(candidate) = candidate.filter(|value| !value.eq_ignore_ascii_case("unknown")) else {
+        return Ok(());
+    };
+    if let Some(existing) = current.as_ref() {
+        if existing != &candidate {
+            bail!(
+                "conflicting {field} values in issue goal metric cards: existing '{existing}' but '{}' declares '{candidate}'",
+                card_path.display()
+            );
+        }
+        return Ok(());
+    }
+    *current = Some(candidate);
+    Ok(())
+}
+
+fn read_yaml_frontmatter(path: &Path) -> Result<Option<String>> {
+    let Ok(text) = fs::read_to_string(path) else {
+        return Ok(None);
+    };
+    let mut lines = text.lines();
+    if lines.next() != Some("---") {
+        return Ok(None);
+    }
+    let mut yaml = Vec::new();
+    for line in lines {
+        if line == "---" {
+            return Ok(Some(yaml.join("\n")));
+        }
+        yaml.push(line);
+    }
+    Ok(None)
+}
+
+fn yaml_string_field(value: &serde_yaml::Value, key: &str) -> Option<String> {
+    value
+        .as_mapping()?
+        .get(serde_yaml::Value::String(key.to_string()))?
+        .as_str()
+        .map(str::trim)
+        .filter(|value| !value.is_empty())
+        .map(ToOwned::to_owned)
 }
 
 fn emit_start_session_ledger_notes(assessment: &adl::session_ledger::TargetClaimAssessment) {
@@ -1999,7 +2199,9 @@ fn bootstrap_ready_status_label(status: &str) -> &str {
 
 #[cfg(test)]
 mod bootstrap_output_tests {
-    use super::bootstrap_ready_status_label;
+    use super::{bootstrap_ready_status_label, read_issue_goal_metric_refs};
+    use ::adl::control_plane::IssueRef;
+    use std::fs;
 
     #[test]
     fn bootstrap_ready_status_explains_card_review_blockers() {
@@ -2008,6 +2210,92 @@ mod bootstrap_output_tests {
             "BLOCKED_PENDING_CARD_REVIEW"
         );
         assert_eq!(bootstrap_ready_status_label("PASS"), "PASS");
+    }
+
+    #[test]
+    fn issue_goal_metric_refs_are_read_from_task_bundle_cards() {
+        let repo =
+            std::env::temp_dir().join(format!("adl-goal-metric-refs-{}", std::process::id()));
+        let _ = fs::remove_dir_all(&repo);
+        let issue_ref =
+            IssueRef::new(4666, "v0.91.7", "nested-goal-accounting").expect("issue ref");
+        let bundle_dir = issue_ref.task_bundle_dir_path(&repo);
+        fs::create_dir_all(&bundle_dir).expect("bundle dir");
+        fs::write(
+            bundle_dir.join("spp.md"),
+            "---\nsprint_goal_ref: \"issue-4631\"\ngoal_metrics_rollup_ref: \".adl/v0.91.7/tasks/issue-4666__nested-goal-accounting/artifacts/goal_metrics/issue-4666-goal-metrics-summary.json\"\n---\n",
+        )
+        .expect("write spp");
+
+        let (sprint_goal_ref, rollup_ref) =
+            read_issue_goal_metric_refs(&repo, &issue_ref).expect("read refs");
+        assert_eq!(sprint_goal_ref.as_deref(), Some("issue-4631"));
+        assert_eq!(
+            rollup_ref.as_deref(),
+            Some(".adl/v0.91.7/tasks/issue-4666__nested-goal-accounting/artifacts/goal_metrics/issue-4666-goal-metrics-summary.json")
+        );
+
+        let _ = fs::remove_dir_all(&repo);
+    }
+
+    #[test]
+    fn issue_goal_metric_refs_fall_back_from_spp_to_vpp_when_spp_is_unknown() {
+        let repo = std::env::temp_dir().join(format!(
+            "adl-goal-metric-refs-vpp-fallback-{}",
+            std::process::id()
+        ));
+        let _ = fs::remove_dir_all(&repo);
+        let issue_ref =
+            IssueRef::new(4666, "v0.91.7", "nested-goal-accounting").expect("issue ref");
+        let bundle_dir = issue_ref.task_bundle_dir_path(&repo);
+        fs::create_dir_all(&bundle_dir).expect("bundle dir");
+        fs::write(
+            bundle_dir.join("spp.md"),
+            "---\nsprint_goal_ref: unknown\ngoal_metrics_rollup_ref: unknown\n---\n",
+        )
+        .expect("write spp");
+        fs::write(
+            bundle_dir.join("vpp.md"),
+            "---\nsprint_goal_ref: \"issue-4631\"\ngoal_metrics_rollup_ref: \".adl/v0.91.7/tasks/issue-4666__nested-goal-accounting/artifacts/goal_metrics/issue-4666-goal-metrics-summary.json\"\n---\n",
+        )
+        .expect("write vpp");
+
+        let (sprint_goal_ref, rollup_ref) =
+            read_issue_goal_metric_refs(&repo, &issue_ref).expect("read refs");
+        assert_eq!(sprint_goal_ref.as_deref(), Some("issue-4631"));
+        assert_eq!(
+            rollup_ref.as_deref(),
+            Some(".adl/v0.91.7/tasks/issue-4666__nested-goal-accounting/artifacts/goal_metrics/issue-4666-goal-metrics-summary.json")
+        );
+
+        let _ = fs::remove_dir_all(&repo);
+    }
+
+    #[test]
+    fn issue_goal_metric_refs_reject_spp_vpp_drift() {
+        let repo =
+            std::env::temp_dir().join(format!("adl-goal-metric-refs-drift-{}", std::process::id()));
+        let _ = fs::remove_dir_all(&repo);
+        let issue_ref =
+            IssueRef::new(4666, "v0.91.7", "nested-goal-accounting").expect("issue ref");
+        let bundle_dir = issue_ref.task_bundle_dir_path(&repo);
+        fs::create_dir_all(&bundle_dir).expect("bundle dir");
+        fs::write(
+            bundle_dir.join("spp.md"),
+            "---\nsprint_goal_ref: \"issue-4631\"\ngoal_metrics_rollup_ref: \".adl/v0.91.7/tasks/issue-4666__nested-goal-accounting/artifacts/goal_metrics/issue-4666-goal-metrics-summary.json\"\n---\n",
+        )
+        .expect("write spp");
+        fs::write(
+            bundle_dir.join("vpp.md"),
+            "---\nsprint_goal_ref: \"issue-9999\"\ngoal_metrics_rollup_ref: \".adl/v0.91.7/tasks/issue-9999__wrong/artifacts/goal_metrics/issue-9999-goal-metrics-summary.json\"\n---\n",
+        )
+        .expect("write vpp");
+
+        let err = read_issue_goal_metric_refs(&repo, &issue_ref)
+            .expect_err("conflicting refs should fail closed");
+        assert!(err.to_string().contains("conflicting sprint_goal_ref"));
+
+        let _ = fs::remove_dir_all(&repo);
     }
 }
 

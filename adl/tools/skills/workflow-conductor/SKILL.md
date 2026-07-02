@@ -186,6 +186,12 @@ Important rule:
 - when routing to `pr-run` or resuming bound execution, include the issue-bound
   session-goal requirement in the handoff: create the goal after bind/readiness
   succeeds and before implementation starts
+- when routing to `pr-run` for Rust-heavy validation in a fresh or cold
+  worktree, include the dependency-cache warmup reminder in the handoff:
+  `python3 adl/tools/warm_rust_dependency_cache.py --source-target <warm-target> --dest-target <issue-worktree>/adl/target --manifest-path <issue-worktree>/adl/Cargo.toml`.
+  The reminder is an acceleration step, not validation proof, and should be
+  skipped when no trusted same-host, same-filesystem, same-checkout-family, and
+  same-toolchain warm target is available.
 
 ## Policy Model
 

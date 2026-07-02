@@ -12,7 +12,7 @@
 
 ## Purpose
 
-Define safe tests, non-claims, and public-evidence limits for affect, humor,
+Establish safe tests, non-claims, and public-evidence limits for affect, humor,
 happiness, and wellbeing surfaces before `v0.92`.
 
 ## Scope
@@ -47,7 +47,7 @@ Out of scope:
 
 - Review public language for unsupported affect/wellbeing claims.
 - Require safe-test framing for any demo evidence.
-- Route unproved claims as blocked or deferred.
+- Record unproved claims as explicit non-claims or evidence-backed blockers with operator approval.
 
 ## v0.92 Consumption
 

@@ -33,9 +33,9 @@ validate_card_lifecycle_contract() {
   # contract validation does not fan out across every binary that links the
   # shared CLI test modules.
   cargo test --manifest-path "$ROOT_DIR/adl/Cargo.toml" --bin adl \
-    tracked_csdlc_card_bundle_validates -- --exact --nocapture
+    'cli::tooling_cmd::tests::structured_prompt::tracked_csdlc_card_bundle_validates' -- --exact --nocapture
   cargo test --manifest-path "$ROOT_DIR/adl/Cargo.toml" --bin adl \
-    card_lifecycle_accepts_tracked_csdlc_bundle -- --exact --nocapture
+    'cli::pr_cmd::doctor::tests::card_lifecycle_accepts_tracked_csdlc_bundle' -- --exact --nocapture
 }
 
 run_check transition_dag_packet \

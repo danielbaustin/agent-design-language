@@ -47,7 +47,7 @@ Out of scope:
 
 - Review mechanics against evidence and non-goals.
 - Require replay/proof expectations for any lifecycle claim.
-- Route self-improvement claims away from `v0.92` unless proven.
+- Keep self-improvement claims out of `v0.92` unless proven; unresolved claims become explicit non-claims or evidence-backed blockers with operator approval.
 
 ## v0.92 Consumption
 

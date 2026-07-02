@@ -72,8 +72,8 @@ risks_and_edge_cases:
   - "The tracked bundle could accidentally depend on local-only .adl assumptions."
   - "Doctor expectations could pass on temp fixtures while drifting from the public bundle."
 test_strategy:
-  - "cargo test --manifest-path adl/Cargo.toml tracked_csdlc_card_bundle -- --nocapture"
-  - "cargo test --manifest-path adl/Cargo.toml card_lifecycle_accepts_tracked_csdlc_bundle -- --nocapture"
+  - "cargo test --manifest-path adl/Cargo.toml --bin adl 'cli::tooling_cmd::tests::structured_prompt::tracked_csdlc_card_bundle_validates' -- --exact --nocapture"
+  - "cargo test --manifest-path adl/Cargo.toml --bin adl 'cli::pr_cmd::doctor::tests::card_lifecycle_accepts_tracked_csdlc_bundle' -- --exact --nocapture"
   - "bash adl/tools/validate_structured_prompt.sh --type sip --phase bootstrap --input docs/milestones/v0.91.3/review/evidence/csdlc/issues/issue-3201-card-lifecycle-demo/cards/sip.md"
   - "bash adl/tools/validate_structured_prompt.sh --type stp --input docs/milestones/v0.91.3/review/evidence/csdlc/issues/issue-3201-card-lifecycle-demo/cards/stp.md"
   - "bash adl/tools/validate_structured_prompt.sh --type spp --phase final --input docs/milestones/v0.91.3/review/evidence/csdlc/issues/issue-3201-card-lifecycle-demo/cards/spp.md"
@@ -153,8 +153,8 @@ issue bundle plus focused validator and doctor expectations.
 
 ## Test Strategy
 
-- `cargo test --manifest-path adl/Cargo.toml tracked_csdlc_card_bundle -- --nocapture`
-- `cargo test --manifest-path adl/Cargo.toml card_lifecycle_accepts_tracked_csdlc_bundle -- --nocapture`
+- `cargo test --manifest-path adl/Cargo.toml --bin adl 'cli::tooling_cmd::tests::structured_prompt::tracked_csdlc_card_bundle_validates' -- --exact --nocapture`
+- `cargo test --manifest-path adl/Cargo.toml --bin adl 'cli::pr_cmd::doctor::tests::card_lifecycle_accepts_tracked_csdlc_bundle' -- --exact --nocapture`
 - `bash adl/tools/validate_structured_prompt.sh --type sip --phase bootstrap --input docs/milestones/v0.91.3/review/evidence/csdlc/issues/issue-3201-card-lifecycle-demo/cards/sip.md`
 - `bash adl/tools/validate_structured_prompt.sh --type stp --input docs/milestones/v0.91.3/review/evidence/csdlc/issues/issue-3201-card-lifecycle-demo/cards/stp.md`
 - `bash adl/tools/validate_structured_prompt.sh --type spp --phase final --input docs/milestones/v0.91.3/review/evidence/csdlc/issues/issue-3201-card-lifecycle-demo/cards/spp.md`

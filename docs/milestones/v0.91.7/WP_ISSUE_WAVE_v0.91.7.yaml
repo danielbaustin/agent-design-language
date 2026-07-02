@@ -40,19 +40,67 @@ wp_issue_map:
   - {wp: WP-22, issue: 4649}
   - {wp: WP-23, issue: 4650}
 existing_issue_routes:
-  - {issue: 4603, wp: WP-06, route: "AWS Spot manager and remote validation lane"}
-  - {issue: 4617, wp: WP-04, route: "Codex session telemetry for metrics and prediction"}
-  - {issue: 4622, wp: WP-02, route: "Closed: repo-native `pr-inventory` command for release-tail review"}
-  - {issue: 4661, wp: WP-02, route: "v0.91.6 closeout-truth consumption packet"}
-  - {issue: 4662, wp: WP-02, route: "ADR release-tail child disposition"}
-  - {issue: 4663, wp: WP-02, route: "Observatory carryover child disposition"}
-  - {issue: 4664, wp: WP-02, route: "C-SDLC control-plane child disposition"}
-  - {issue: 4665, wp: WP-02, route: "PR-inventory closure child disposition"}
+  - {issue: 4603, wp: WP-06, assignment: "AWS Spot manager and remote validation lane"}
+  - {issue: 4617, wp: WP-04, assignment: "Codex session telemetry for metrics and prediction"}
+  - {issue: 4622, wp: WP-02, assignment: "Closed: repo-native `pr-inventory` command for release-tail review"}
+  - {issue: 4661, wp: WP-02, assignment: "v0.91.6 closeout-truth consumption packet"}
+  - {issue: 4662, wp: WP-02, assignment: "ADR release-tail child disposition"}
+  - {issue: 4663, wp: WP-02, assignment: "Observatory carryover child disposition"}
+  - {issue: 4664, wp: WP-02, assignment: "C-SDLC control-plane child disposition"}
+  - {issue: 4665, wp: WP-02, assignment: "PR-inventory closure child disposition"}
+  - {issue: 4718, wp: WP-07, assignment: "Integrated logging and OTel proof; consumed by WP-08 AWS/signal operations and WP-09 Observatory/Unity proof"}
+wp_child_issue_routes:
+  - {issue: 4656, wp: WP-12, assignment: "[security] Resolve security and CAV pre-v0.92 residuals"}
+  - {issue: 4657, wp: WP-12, assignment: "[ops] Prove SSM readiness"}
+  - {issue: 4658, wp: WP-12, assignment: "[ACIP] Finalize ACIP schema and protobuf projection"}
+  - {issue: 4659, wp: WP-12, assignment: "[A2A] Prove WebSocket transport path"}
+  - {issue: 4660, wp: WP-12, assignment: "[access] Finalize access rules and activation blockers"}
+  - {issue: 4666, wp: WP-04, assignment: "[goals] Implement nested issue and sprint goal accounting"}
+  - {issue: 4667, wp: WP-04, assignment: "[metrics] Implement SOR time-token-resource accounting"}
+  - {issue: 4668, wp: WP-04, assignment: "[telemetry] Implement Codex session telemetry harvesting"}
+  - {issue: 4669, wp: WP-04, assignment: "[backfill] Execute bounded v0.91.6 metrics backfill"}
+  - {issue: 4670, wp: WP-04, assignment: "[outliers] Implement execution outlier analysis"}
+  - {issue: 4671, wp: WP-05, assignment: "[scheduler] Implement cognitive scheduler v1"}
+  - {issue: 4672, wp: WP-05, assignment: "[providers] Implement provider profile selection"}
+  - {issue: 4673, wp: WP-05, assignment: "[models] Implement model suitability selection proof"}
+  - {issue: 4674, wp: WP-05, assignment: "[policy] Implement cheapest validated outcome policy"}
+  - {issue: 4675, wp: WP-05, assignment: "[delegation] Implement local-agent delegation readiness"}
+  - {issue: 4676, wp: WP-06, assignment: "[validation-manager] Implement validation manager"}
+  - {issue: 4677, wp: WP-06, assignment: "[archive] Implement CI log archive to S3"}
+  - {issue: 4678, wp: WP-06, assignment: "[remote] Consume Nessus remote validation lane"}
+  - {issue: 4679, wp: WP-06, assignment: "[aws] Prove EC2 Spot or alternate remote builder"}
+  - {issue: 4680, wp: WP-06, assignment: "[cache] Improve sccache linker and target-dir setup"}
+  - {issue: 4681, wp: WP-07, assignment: "[runtime] Assemble minimal integrated runtime path"}
+  - {issue: 4682, wp: WP-07, assignment: "[soak] Run runtime Soak 2"}
+  - {issue: 4683, wp: WP-07, assignment: "[architecture] Execute runtime module diet map"}
+  - {issue: 4684, wp: WP-08, assignment: "[heartbeat] Implement heartbeat publisher"}
+  - {issue: 4685, wp: WP-08, assignment: "[ACIP-SNS] Implement ACIP to SNS bridge"}
+  - {issue: 4686, wp: WP-08, assignment: "[AWS] Implement AWS signal bridge"}
+  - {issue: 4687, wp: WP-08, assignment: "[SSM] Implement local polis SSM operations"}
+  - {issue: 4688, wp: WP-08, assignment: "[archive] Finalize S3 ObsMem community-memory archive policy"}
+  - {issue: 4689, wp: WP-09, assignment: "[unity] Deliver Unity Observatory integrated proof"}
+  - {issue: 4690, wp: WP-09, assignment: "[html] Deliver HTML Observatory integrated proof"}
+  - {issue: 4691, wp: WP-09, assignment: "[demo-matrix] Deliver birthday-visible demo matrix"}
+  - {issue: 4692, wp: WP-10, assignment: "[curiosity] Implement curiosity engine bridge"}
+  - {issue: 4693, wp: WP-10, assignment: "[constructability] Implement constructability anchor validator"}
+  - {issue: 4694, wp: WP-11, assignment: "[reasoning-graph] Implement reasoning graph bridge"}
+  - {issue: 4695, wp: WP-11, assignment: "[loops] Implement loop runtime bridge"}
+  - {issue: 4696, wp: WP-11, assignment: "[skill-standard] Implement adl.skill.v1 bridge"}
+  - {issue: 4697, wp: WP-11, assignment: "[AEE-ObsMem] Implement AEE ObsMem and PVF trace bridge"}
+  - {issue: 4698, wp: WP-06, assignment: "[tests] Reduce long-test fanout"}
 non_wp_issue_routes:
-  - {issue: 4651, route: "Rust refactoring by ownership and validation cost", related_wp: "WP-03/WP-06"}
-  - {issue: 4652, route: "Unity demo surfaces", related_wp: "WP-09/WP-15"}
-  - {issue: 4653, route: "dspark speculative decoding with Qwen and Gemma", related_wp: "WP-05/WP-06"}
-  - {issue: 4654, route: "deepseek-v4-flash-dspark smoke on ephemeral 2xH100 EC2", related_wp: "WP-05/WP-06"}
+  - {issue: 4651, assignment: "Rust refactoring by ownership and validation cost", related_wp: "WP-03/WP-06"}
+  - {issue: 4652, assignment: "Unity demo surfaces", related_wp: "WP-09/WP-15"}
+  - {issue: 4653, assignment: "dspark speculative decoding with Qwen and Gemma", related_wp: "WP-05/WP-06"}
+  - {issue: 4654, assignment: "deepseek-v4-flash-dspark smoke on ephemeral 2xH100 EC2", related_wp: "WP-05/WP-06"}
+  - {issue: 4702, assignment: "Flagship Unity observatory demo mini-sprint", related_wp: "WP-09/WP-15"}
+  - {issue: 4703, assignment: "Stage flagship observatory environment from imported asset packs", related_wp: "WP-09/WP-15"}
+  - {issue: 4704, assignment: "Capture reproducible Unity observatory proof and operator walkthrough surfaces", related_wp: "WP-09/WP-15"}
+  - {issue: 4709, assignment: "Prevent issue edits from dirtying root main", related_wp: "WP-03/WP-06"}
+  - {issue: 4713, assignment: "Implement Rust closeout watcher attach", related_wp: "WP-03"}
+  - {issue: 4719, assignment: "Sync issue wave and WBS to implementation-proof standard", related_wp: "WP-01/WP-02"}
+  - {issue: 4720, assignment: "Hardlinked Rust dependency cache warmup for issue worktrees", related_wp: "WP-06"}
+  - {issue: 4721, assignment: "Repo-native GitHub label ensure command for issue metadata repair", related_wp: "WP-03/WP-06"}
 work_packages:
   - wp: WP-01
     title: v0.91.7 planning promotion and issue-wave readiness
@@ -88,7 +136,7 @@ work_packages:
       GitHub/octocrab convergence, session ledger, goal/time/token metrics,
       metric backfill, logging, watcher/lifecycle automation,
       validation-manager/SOR fact routing, operational adoption, runtime
-      dependency routing, tooling reliability, lifecycle shepherding, and
+      dependency disposition, tooling reliability, lifecycle shepherding, and
       FastContext evaluation. Create v0.91.7 follow-ons only for surfaces that
       are incomplete or explicitly blocked by WP-02.
     depends_on: ["WP-01", "WP-02", "#4308", "#4309", "#4332", "#4388-#4398", "#4405", "#4412-#4413", "#4417-#4421", "#4425", "#4431", "#4441", "#4433-#4438", "#4442-#4443"]
@@ -108,7 +156,7 @@ work_packages:
       - "Goal/metrics implementation proof"
       - "Template-field plan"
   - wp: WP-05
-    title: Cognitive scheduler and provider local-agent routing
+    title: Cognitive scheduler and provider local-agent execution
     outcome: Implement scheduler v1, provider profiles, local/hosted model suitability, capability-envelope inputs, cheapest-validated-outcome policy, and local-agent delegation readiness, or block v0.92 with evidence and operator approval.
     depends_on: ["WP-03", "WP-04", "provider sprint outputs"]
     deliverables:
@@ -124,11 +172,12 @@ work_packages:
       - "Remote/local validation runner decision"
       - "EC2 Spot or alternate remote-builder time/cost/cleanup evidence"
   - wp: WP-07
-    title: Runtime integration fire-up and Soak 2
-    outcome: Assemble one minimal end-to-end runtime path, reconcile Runtime v2 minimal prototype with current substrate, run integrated runtime Soak #2, identify runtime bloat/seam pain, and preserve Soak #3 only as an operator-approved risk if Soak #2 cannot prove the activation path.
+    title: Runtime integration logging and OTel fire-up and Soak 2
+    outcome: Assemble one minimal end-to-end runtime path, reconcile Runtime v2 minimal prototype with current substrate, implement/prove integrated logging and OTel-compatible observability through #4718, run integrated runtime Soak #2, identify runtime bloat/seam pain, and preserve Soak #3 only as an operator-approved risk if Soak #2 cannot prove the activation path.
     depends_on: ["WP-02", "WP-05", "WP-06"]
     deliverables:
       - "Runtime integration proof or blocker list"
+      - "Integrated logging/OTel proof"
       - "Runtime module map"
       - "Architecture-diet follow-on"
   - wp: WP-08
@@ -145,16 +194,18 @@ work_packages:
       - "Demo/Observatory readiness packet"
   - wp: WP-10
     title: Curiosity and Constructability bridge
-    outcome: Preserve governed discovery-cycle proof expectations and shared-reality anchor validator boundaries.
+    outcome: Implement and integrate the governed discovery-cycle slice and shared-reality anchor validator boundary needed before v0.92, or block activation with evidence and operator approval.
     depends_on: ["WP-01", "WP-07"]
     deliverables:
-      - "Curiosity and Constructability issue-ready docs, proof records, or evidence-backed blockers"
+      - "Curiosity discovery-cycle integrated proof or evidence-backed blocker"
+      - "Constructability anchor validator integrated proof or evidence-backed blocker"
   - wp: WP-11
     title: Reasoning graph loops and adl.skill.v1 bridge
-    outcome: Define bridge among prompts, skills, loops, trace, ObsMem, PVF, AEE, Runtime v2, UTS, ACC, and adl.skill.v1.
+    outcome: Implement and integrate the bridge slice among prompts, skills, loops, trace, ObsMem, PVF, AEE, Runtime v2, UTS, ACC, and adl.skill.v1 needed before v0.92, or block activation with evidence and operator approval.
     depends_on: ["WP-03", "WP-07", "WP-10"]
     deliverables:
-      - "Reasoning graph / skill-standard bridge proof or evidence-backed blocker"
+      - "Reasoning graph / skill-standard integrated proof or evidence-backed blocker"
+      - "AEE / ObsMem / PVF trace bridge integrated proof or evidence-backed blocker"
   - wp: WP-12
     title: Security CAV SSM and ACIP A2A protobuf residuals
     outcome: Resolve security/CAV residuals, SSM readiness, ACIP/A2A/protobuf/JSON/WebSocket/access-rule choices, and activation blockers; anything unresolved blocks v0.92 unless the operator explicitly approves a non-claim with evidence.
@@ -200,7 +251,7 @@ work_packages:
       - "Repaired planning surfaces"
   - wp: WP-18
     title: Internal review
-    outcome: Review docs, code routes, feature routing, source capture, sprint/issue plans, and release-tail packets for missing surfaces, stale claims, overclaims, or unowned blockers.
+    outcome: Review docs, code paths, feature coverage, source capture, sprint/issue plans, and release-tail packets for missing surfaces, stale claims, overclaims, or unowned blockers.
     depends_on: ["WP-17"]
     deliverables:
       - "Internal review packet"

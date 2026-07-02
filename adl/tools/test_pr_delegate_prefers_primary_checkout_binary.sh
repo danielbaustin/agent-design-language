@@ -126,3 +126,43 @@ grep -F -- "--bin adl-pr-doctor -- 4413 --slug rust-start --no-fetch-issue --ver
 }
 
 echo "pr.sh worktree prefers primary checkout built binary: ok"
+
+rm -f "$repo/adl/target/debug/adl-pr-doctor"
+cat >"$repo/adl/target/debug/adl" <<'EOF_ADL_GENERIC'
+#!/usr/bin/env bash
+set -euo pipefail
+printf '%s\n' "$*" >"${TMP_ADL_ARGS}"
+EOF_ADL_GENERIC
+chmod +x "$repo/adl/target/debug/adl"
+sleep 1
+touch "$repo/adl/target/debug/adl"
+: >"$TMP_ADL_ARGS"
+: >"$TMP_CARGO_ARGS"
+
+set +e
+shepherd_output="$(
+  (
+    cd "$worktree" && \
+    ADL_PRIMARY_CHECKOUT_ROOT="$repo" \
+    "$BASH_BIN" adl/tools/pr.sh shepherd 4413 --slug rust-start --version v0.91.6 --json
+  ) 2>&1
+)"
+shepherd_status="$?"
+set -e
+
+if [[ "$shepherd_status" -eq 0 ]]; then
+  echo "assertion failed: shepherd should not silently fall through to the generic primary checkout adl binary" >&2
+  exit 1
+fi
+[[ ! -s "$TMP_ADL_ARGS" ]] || {
+  echo "assertion failed: generic primary checkout adl binary should not be used for shepherd when the dedicated owner binary is missing" >&2
+  cat "$TMP_ADL_ARGS" >&2
+  exit 1
+}
+grep -F "missing dedicated ADL PR owner binary for subcommand 'shepherd'" <<<"$shepherd_output" >/dev/null || {
+  echo "assertion failed: expected missing dedicated owner binary guidance for shepherd" >&2
+  echo "$shepherd_output" >&2
+  exit 1
+}
+
+echo "pr.sh shepherd requires dedicated owner binary when generic adl is stale: ok"

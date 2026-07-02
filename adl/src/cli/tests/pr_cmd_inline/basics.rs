@@ -763,6 +763,33 @@ fn parse_watch_args_accepts_repo_slug_version_and_json_flags() {
 }
 
 #[test]
+fn parse_shepherd_args_accepts_repo_slug_version_and_json_flags() {
+    let parsed = parse_shepherd_args(&[
+        "https://github.com/example/repo/issues/4630".to_string(),
+        "-R".to_string(),
+        "example/repo".to_string(),
+        "--slug".to_string(),
+        "shepherd-target".to_string(),
+        "--version".to_string(),
+        "v0.91.7".to_string(),
+        "--json".to_string(),
+    ])
+    .expect("parse shepherd");
+    assert_eq!(
+        parsed.issue_ref,
+        "https://github.com/example/repo/issues/4630"
+    );
+    assert_eq!(parsed.repo.as_deref(), Some("example/repo"));
+    assert_eq!(parsed.slug.as_deref(), Some("shepherd-target"));
+    assert_eq!(parsed.version.as_deref(), Some("v0.91.7"));
+    assert!(parsed.json);
+
+    let err = parse_shepherd_args(&["4630".to_string(), "--bogus".to_string()])
+        .expect_err("unknown shepherd arg");
+    assert!(err.to_string().contains("shepherd: unknown arg"));
+}
+
+#[test]
 fn parse_projection_map_args_accepts_json_and_rejects_unknown_args() {
     let parsed = parse_projection_map_args(&["--json".to_string()]).expect("parse projection-map");
     assert!(parsed.json);
@@ -2710,7 +2737,7 @@ fn same_checkout_root_handles_equivalent_and_missing_paths() {
 fn real_pr_dispatch_rejects_missing_and_unknown_subcommands() {
     let err = real_pr(&[]).expect_err("missing subcommand");
     assert!(err.to_string().contains(
-        "pr requires a subcommand: create | init | repair-issue-body | start | run | doctor | ready | preflight | finish | validation | pr-inventory | watch | closing-linkage | issue | projection-map | closeout"
+        "pr requires a subcommand: create | init | repair-issue-body | start | run | doctor | ready | preflight | finish | validation | pr-inventory | watch | shepherd | closing-linkage | issue | projection-map | closeout"
     ));
 
     let err = real_pr(&["bogus".to_string()]).expect_err("unknown subcommand");

@@ -12,7 +12,7 @@
 
 ## Purpose
 
-Define the pre-`v0.92` bridge among loop prompts, reasoning graphs, skills,
+Establish the pre-`v0.92` bridge among loop prompts, reasoning graphs, skills,
 trace, ObsMem, PVF, AEE, Runtime v2, UTS, ACC, and the future `adl.skill.v1`
 standard.
 
@@ -49,7 +49,7 @@ Out of scope:
 
 - Review that the bridge maps existing systems without inventing completion.
 - Require explicit non-goals for the future standard.
-- Route full standard work to later implementation issues.
+- Record any full-standard work that does not land before `v0.92` as an explicit non-claim or evidence-backed blocker with operator approval.
 
 ## v0.92 Consumption
 

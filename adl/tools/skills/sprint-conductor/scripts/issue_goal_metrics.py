@@ -772,6 +772,10 @@ def build_issue_goal_metrics_record_from_codex_goal_snapshot(
 ) -> dict[str, Any]:
     snapshot = parse_codex_goal_tool_snapshot(goal_state_path)
     completion_state = completion_state_override or snapshot["completion_state"]
+    completed_at = snapshot.get("completed_at")
+    if completion_state_override is None and CAPTURE_SEGMENT_BY_STAGE[capture_stage] == "readiness_prep":
+        completion_state = "unknown"
+        completed_at = None
     thread_id = snapshot.get("thread_id")
     return build_issue_goal_metrics_record(
         sprint_issue_number=None,
@@ -786,7 +790,7 @@ def build_issue_goal_metrics_record_from_codex_goal_snapshot(
         goal_id=None,
         goal_id_state="not_available",
         started_at=snapshot.get("started_at"),
-        completed_at=snapshot.get("completed_at"),
+        completed_at=completed_at,
         elapsed_seconds_raw=snapshot.get("elapsed_seconds_raw"),
         active_work_seconds_raw=snapshot.get("active_work_seconds_raw"),
         validation_seconds_raw="unknown",

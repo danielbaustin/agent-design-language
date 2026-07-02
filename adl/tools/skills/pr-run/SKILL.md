@@ -236,6 +236,27 @@ Do not run an oversized validation suite unless the changed surface truly requir
 Use `adl/tools/skills/docs/CI_RUNTIME_POLICY_GUIDE.md` when selecting and
 recording the validation lane.
 
+#### Rust Dependency-Cache Warmup
+
+Before Rust-heavy validation in a fresh or cold issue worktree, consider using
+the hardlinked dependency-cache warmup helper when a trusted warm target from
+the same host, same filesystem, same checkout family, and same toolchain is
+available:
+
+```bash
+python3 adl/tools/warm_rust_dependency_cache.py \
+  --source-target <warm-target> \
+  --dest-target <issue-worktree>/adl/target \
+  --manifest-path <issue-worktree>/adl/Cargo.toml \
+  --json
+```
+
+Use `--dry-run --json` first when the source target or filesystem relationship
+is uncertain. Do not use a shared global `CARGO_TARGET_DIR`, do not treat
+warmup as validation proof, and do not skip the issue's selected validation
+lane because cache warmup succeeded. Record warmup as build acceleration in the
+execution record when it materially affects validation time.
+
 For docs, planning, and non-runtime tooling changes:
 - run focused docs, tooling, contract, path, and guardrail checks
 - record the lane as a docs-only or tooling-only path-policy validation surface

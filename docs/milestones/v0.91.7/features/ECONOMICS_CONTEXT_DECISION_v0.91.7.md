@@ -34,7 +34,7 @@ Out of scope:
 
 - Is economics context-only for `v0.92`?
 - If tests are required, what do they prove?
-- Which economics surfaces route to `v0.94.1` or post-MVP?
+- Which economics surfaces are explicitly postponed to `v0.94.1` or post-MVP?
 - Which claims are unsafe before governance/security mature?
 
 ## Dependencies
@@ -47,7 +47,7 @@ Out of scope:
 
 - Review economics language for scope creep.
 - Ensure no payment/product claim enters `v0.92` without a tracked decision.
-- Route implementation to later milestones.
+- Record implementation that does not land before `v0.92` as explicitly postponed, with operator approval where it affects activation claims.
 
 ## v0.92 Consumption
 

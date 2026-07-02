@@ -62,9 +62,9 @@ Completed the tracked public `WP-03` proof bundle for the canonical
 - Verification scope: main_repo
 - Integration method used: tracked public fixture bundle committed for validator/doctor proof
 - Verification performed:
-  - `cargo test --manifest-path adl/Cargo.toml tracked_csdlc_card_bundle -- --nocapture`
+  - `cargo test --manifest-path adl/Cargo.toml --bin adl 'cli::tooling_cmd::tests::structured_prompt::tracked_csdlc_card_bundle_validates' -- --exact --nocapture`
     Verified the structured-prompt validator accepts the tracked public card bundle.
-  - `cargo test --manifest-path adl/Cargo.toml card_lifecycle_accepts_tracked_csdlc_bundle -- --nocapture`
+  - `cargo test --manifest-path adl/Cargo.toml --bin adl 'cli::pr_cmd::doctor::tests::card_lifecycle_accepts_tracked_csdlc_bundle' -- --exact --nocapture`
     Verified the doctor lifecycle classifier accepts the tracked public bundle as final review/output truth.
 - Result: PASS
 
@@ -81,9 +81,9 @@ Completed the tracked public `WP-03` proof bundle for the canonical
     Verified the tracked public SRP bundle card.
   - `bash adl/tools/validate_structured_prompt.sh --type sor --phase final --input docs/milestones/v0.91.3/review/evidence/csdlc/issues/issue-3201-card-lifecycle-demo/cards/sor.md`
     Verified the tracked public SOR bundle card.
-  - `cargo test --manifest-path adl/Cargo.toml tracked_csdlc_card_bundle -- --nocapture`
+  - `cargo test --manifest-path adl/Cargo.toml --bin adl 'cli::tooling_cmd::tests::structured_prompt::tracked_csdlc_card_bundle_validates' -- --exact --nocapture`
     Verified the structured-prompt validator accepts the tracked public bundle.
-  - `cargo test --manifest-path adl/Cargo.toml card_lifecycle_accepts_tracked_csdlc_bundle -- --nocapture`
+  - `cargo test --manifest-path adl/Cargo.toml --bin adl 'cli::pr_cmd::doctor::tests::card_lifecycle_accepts_tracked_csdlc_bundle' -- --exact --nocapture`
     Verified doctor lifecycle expectations for the tracked public bundle.
 - Results:
   - PASS
@@ -108,8 +108,8 @@ verification_summary:
       - "bash adl/tools/validate_structured_prompt.sh --type spp --phase final --input docs/milestones/v0.91.3/review/evidence/csdlc/issues/issue-3201-card-lifecycle-demo/cards/spp.md"
       - "bash adl/tools/validate_structured_prompt.sh --type srp --phase final --input docs/milestones/v0.91.3/review/evidence/csdlc/issues/issue-3201-card-lifecycle-demo/cards/srp.md"
       - "bash adl/tools/validate_structured_prompt.sh --type sor --phase final --input docs/milestones/v0.91.3/review/evidence/csdlc/issues/issue-3201-card-lifecycle-demo/cards/sor.md"
-      - "cargo test --manifest-path adl/Cargo.toml tracked_csdlc_card_bundle -- --nocapture"
-      - "cargo test --manifest-path adl/Cargo.toml card_lifecycle_accepts_tracked_csdlc_bundle -- --nocapture"
+      - "cargo test --manifest-path adl/Cargo.toml --bin adl 'cli::tooling_cmd::tests::structured_prompt::tracked_csdlc_card_bundle_validates' -- --exact --nocapture"
+      - "cargo test --manifest-path adl/Cargo.toml --bin adl 'cli::pr_cmd::doctor::tests::card_lifecycle_accepts_tracked_csdlc_bundle' -- --exact --nocapture"
   determinism:
     status: PASS
     replay_verified: partial
@@ -146,7 +146,7 @@ verification_summary:
 
 - Trace bundle path(s): not_applicable
 - Run artifact root: `docs/milestones/v0.91.3/review/evidence/csdlc/issues/issue-3201-card-lifecycle-demo/`
-- Replay command used for verification: `cargo test --manifest-path adl/Cargo.toml tracked_csdlc_card_bundle -- --nocapture`
+- Replay command used for verification: `cargo test --manifest-path adl/Cargo.toml --bin adl 'cli::tooling_cmd::tests::structured_prompt::tracked_csdlc_card_bundle_validates' -- --exact --nocapture`
 - Replay result: PASS
 
 ## Artifact Verification

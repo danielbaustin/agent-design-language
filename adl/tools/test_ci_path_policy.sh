@@ -18,6 +18,9 @@ assert_has() {
 tmp_dir="$(mktemp -d)"
 trap 'rm -rf "$tmp_dir"' EXIT
 
+python3 "$ROOT_DIR/adl/tools/test_warm_rust_dependency_cache.py"
+(cd "$ROOT_DIR" && bash adl/tools/test_select_validation_lanes.sh && bash adl/tools/test_validation_manager.sh)
+
 (
   cd "$tmp_dir"
   git init -q
@@ -110,6 +113,7 @@ EOF
   assert_has "$docs_output" "v0913_proof_required=false"
   assert_has "$docs_output" "release_version_only=false"
   assert_has "$docs_output" "ci_contracts_required=false"
+  assert_has "$docs_output" "validation_profile_contract_lanes_selected=false"
   assert_has "$docs_output" "coverage_lane=skip"
   assert_has "$docs_output" "coverage_authority=not_required"
   assert_has "$docs_output" "proof_validation_scope=not_required"
@@ -200,6 +204,7 @@ EOF
   assert_has "$cargo_structural_output" "v0913_proof_required=false"
   assert_has "$cargo_structural_output" "release_version_only=false"
   assert_has "$cargo_structural_output" "ci_contracts_required=true"
+  assert_has "$cargo_structural_output" "validation_profile_contract_lanes_selected=false"
   assert_has "$cargo_structural_output" "fail_closed=false"
   assert_has "$cargo_structural_output" "coverage_lane=pr_fast"
   assert_has "$cargo_structural_output" "coverage_authority=pr_changed_surface"
@@ -314,6 +319,131 @@ EOF
   assert_has "$sprint_conductor_only_output" "validation_profile_status=ready_to_run"
   assert_has "$sprint_conductor_only_output" "validation_profile_escalation_required=false"
   assert_has "$sprint_conductor_only_output" "validation_profile_run_lanes=sprint_conductor_contracts"
+
+  git checkout -q -b rust-dependency-cache-warmup-helper "$base_sha"
+  mkdir -p adl/tools docs/tooling
+  printf 'print("warmup")\n' > adl/tools/warm_rust_dependency_cache.py
+  printf '# Hardlinked Rust dependency cache\n' > docs/tooling/HARDLINKED_RUST_DEPENDENCY_CACHE.md
+  git add adl/tools/warm_rust_dependency_cache.py docs/tooling/HARDLINKED_RUST_DEPENDENCY_CACHE.md
+  git commit -q -m rust-dependency-cache-warmup-helper
+  rust_dependency_cache_warmup_head="$(git rev-parse HEAD)"
+
+  rust_dependency_cache_warmup_output="$("$POLICY" --event-name pull_request --base "$base_sha" --head "$rust_dependency_cache_warmup_head" --ref "refs/pull/1/merge")"
+  assert_has "$rust_dependency_cache_warmup_output" "rust_required=false"
+  assert_has "$rust_dependency_cache_warmup_output" "coverage_required=false"
+  assert_has "$rust_dependency_cache_warmup_output" "full_coverage_required=false"
+  assert_has "$rust_dependency_cache_warmup_output" "demo_smoke_required=false"
+  assert_has "$rust_dependency_cache_warmup_output" "v0913_proof_required=false"
+  assert_has "$rust_dependency_cache_warmup_output" "release_version_only=false"
+  assert_has "$rust_dependency_cache_warmup_output" "ci_contracts_required=false"
+  assert_has "$rust_dependency_cache_warmup_output" "validation_profile_contract_lanes_selected=true"
+  assert_has "$rust_dependency_cache_warmup_output" "fail_closed=false"
+  assert_has "$rust_dependency_cache_warmup_output" "coverage_lane=skip"
+  assert_has "$rust_dependency_cache_warmup_output" "coverage_authority=not_required"
+  assert_has "$rust_dependency_cache_warmup_output" "reason=rust_dependency_cache_warmup_helper_requires_python_contract_checks"
+  assert_has "$rust_dependency_cache_warmup_output" "validation_profile_status=ready_to_run"
+  assert_has "$rust_dependency_cache_warmup_output" "validation_profile_escalation_required=false"
+  assert_has "$rust_dependency_cache_warmup_output" "validation_profile_run_lanes=docs_diff_check,rust_dependency_cache_warmup_contracts"
+
+  git checkout -q -b rust-dependency-cache-warmup-policy-change "$base_sha"
+  mkdir -p adl/config adl/tools/skills/docs adl/tools/skills/pr-run adl/tools/skills/workflow-conductor docs/tooling
+  printf '{\"schema_version\":\"adl.validation_lane_selector.v1\",\"surface_defaults\":{},\"lanes\":[],\"special_surfaces\":{},\"manager_guardrails\":{\"docs_only_forbidden_lane_ids\":[\"rust_pr_fast\"],\"pr_fast\":{\"max_rust_surface_count\":4,\"max_filter_token_count\":4,\"max_family_token_count\":3,\"blocked_modes\":[\"full\",\"contract_only\"]}},\"release_gate_hints\":[],\"rust_path_hints\":[]}\n' > adl/config/validation_lane_selector.v0.91.6.json
+  printf '#!/usr/bin/env bash\nprintf policy\\n' > adl/tools/ci_path_policy.sh
+  printf '#!/usr/bin/env bash\nprintf policy-test\\n' > adl/tools/test_ci_path_policy.sh
+  printf 'print("warmup")\n' > adl/tools/warm_rust_dependency_cache.py
+  printf 'print("warmup test")\n' > adl/tools/test_warm_rust_dependency_cache.py
+  printf '# AGENTS warmup guidance\n' > AGENTS.md
+  printf '# CI warmup guidance\n' > adl/tools/skills/docs/CI_RUNTIME_POLICY_GUIDE.md
+  printf '# pr-run warmup guidance\n' > adl/tools/skills/pr-run/SKILL.md
+  printf '# workflow-conductor warmup guidance\n' > adl/tools/skills/workflow-conductor/SKILL.md
+  printf '# Hardlinked Rust dependency cache\n' > docs/tooling/HARDLINKED_RUST_DEPENDENCY_CACHE.md
+  git add AGENTS.md \
+    adl/config/validation_lane_selector.v0.91.6.json \
+    adl/tools/skills/docs/CI_RUNTIME_POLICY_GUIDE.md \
+    adl/tools/skills/pr-run/SKILL.md \
+    adl/tools/skills/workflow-conductor/SKILL.md \
+    adl/tools/ci_path_policy.sh \
+    adl/tools/test_ci_path_policy.sh \
+    adl/tools/warm_rust_dependency_cache.py \
+    adl/tools/test_warm_rust_dependency_cache.py \
+    docs/tooling/HARDLINKED_RUST_DEPENDENCY_CACHE.md
+  git commit -q -m rust-dependency-cache-warmup-policy-change
+  rust_dependency_cache_policy_head="$(git rev-parse HEAD)"
+
+  rust_dependency_cache_policy_output="$("$POLICY" --event-name pull_request --base "$base_sha" --head "$rust_dependency_cache_policy_head" --ref "refs/pull/1/merge")"
+  assert_has "$rust_dependency_cache_policy_output" "rust_required=false"
+  assert_has "$rust_dependency_cache_policy_output" "coverage_required=false"
+  assert_has "$rust_dependency_cache_policy_output" "full_coverage_required=false"
+  assert_has "$rust_dependency_cache_policy_output" "demo_smoke_required=false"
+  assert_has "$rust_dependency_cache_policy_output" "v0913_proof_required=false"
+  assert_has "$rust_dependency_cache_policy_output" "release_version_only=false"
+  assert_has "$rust_dependency_cache_policy_output" "ci_contracts_required=false"
+  assert_has "$rust_dependency_cache_policy_output" "validation_profile_contract_lanes_selected=true"
+  assert_has "$rust_dependency_cache_policy_output" "fail_closed=false"
+  assert_has "$rust_dependency_cache_policy_output" "coverage_lane=skip"
+  assert_has "$rust_dependency_cache_policy_output" "coverage_authority=not_required"
+  assert_has "$rust_dependency_cache_policy_output" "reason=bounded_rust_dependency_cache_warmup_policy_change_runs_python_and_path_policy_checks"
+  assert_has "$rust_dependency_cache_policy_output" "validation_profile_status=ready_to_run"
+  assert_has "$rust_dependency_cache_policy_output" "validation_profile_escalation_required=false"
+  assert_has "$rust_dependency_cache_policy_output" "validation_profile_run_lanes=ci_path_policy_contracts,docs_diff_check,rust_dependency_cache_warmup_contracts"
+
+  git checkout -q -b rust-dependency-cache-warmup-mixed-policy-change "$base_sha"
+  mkdir -p adl/config adl/tools docs/tooling
+  printf '{\"schema_version\":\"adl.validation_lane_selector.v1\",\"surface_defaults\":{},\"lanes\":[],\"special_surfaces\":{},\"manager_guardrails\":{\"docs_only_forbidden_lane_ids\":[\"rust_pr_fast\"],\"pr_fast\":{\"max_rust_surface_count\":4,\"max_filter_token_count\":4,\"max_family_token_count\":3,\"blocked_modes\":[\"full\",\"contract_only\"]}},\"release_gate_hints\":[],\"rust_path_hints\":[]}\n' > adl/config/validation_lane_selector.v0.91.6.json
+  printf '#!/usr/bin/env bash\nprintf policy\\n' > adl/tools/ci_path_policy.sh
+  printf '#!/usr/bin/env bash\nprintf policy-test\\n' > adl/tools/test_ci_path_policy.sh
+  printf 'print("selector mixed change")\n' > adl/tools/select_validation_lanes.py
+  printf 'print("warmup")\n' > adl/tools/warm_rust_dependency_cache.py
+  printf 'print("warmup test")\n' > adl/tools/test_warm_rust_dependency_cache.py
+  printf '# Hardlinked Rust dependency cache\n' > docs/tooling/HARDLINKED_RUST_DEPENDENCY_CACHE.md
+  git add adl/config/validation_lane_selector.v0.91.6.json \
+    adl/tools/ci_path_policy.sh \
+    adl/tools/test_ci_path_policy.sh \
+    adl/tools/select_validation_lanes.py \
+    adl/tools/warm_rust_dependency_cache.py \
+    adl/tools/test_warm_rust_dependency_cache.py \
+    docs/tooling/HARDLINKED_RUST_DEPENDENCY_CACHE.md
+  git commit -q -m rust-dependency-cache-warmup-mixed-policy-change
+  rust_dependency_cache_mixed_policy_head="$(git rev-parse HEAD)"
+
+  rust_dependency_cache_mixed_policy_output="$("$POLICY" --event-name pull_request --base "$base_sha" --head "$rust_dependency_cache_mixed_policy_head" --ref "refs/pull/1/merge")"
+  assert_has "$rust_dependency_cache_mixed_policy_output" "ci_contracts_required=true"
+  assert_has "$rust_dependency_cache_mixed_policy_output" "reason=ci_policy_surface_requires_path_policy_contract_checks"
+  assert_has "$rust_dependency_cache_mixed_policy_output" "validation_profile_status=ready_to_run"
+  assert_has "$rust_dependency_cache_mixed_policy_output" "validation_profile_escalation_required=false"
+  assert_has "$rust_dependency_cache_mixed_policy_output" "validation_profile_run_lanes=ci_path_policy_contracts,docs_diff_check,rust_dependency_cache_warmup_contracts"
+
+  git checkout -q -b rust-dependency-cache-warmup-unrelated-guidance-change "$base_sha"
+  mkdir -p adl/config adl/tools/skills/docs adl/tools/skills/pr-run adl/tools/skills/workflow-conductor docs/tooling
+  printf '{\"schema_version\":\"adl.validation_lane_selector.v1\",\"surface_defaults\":{},\"lanes\":[],\"special_surfaces\":{},\"manager_guardrails\":{\"docs_only_forbidden_lane_ids\":[\"rust_pr_fast\"],\"pr_fast\":{\"max_rust_surface_count\":4,\"max_filter_token_count\":4,\"max_family_token_count\":3,\"blocked_modes\":[\"full\",\"contract_only\"]}},\"release_gate_hints\":[],\"rust_path_hints\":[]}\n' > adl/config/validation_lane_selector.v0.91.6.json
+  printf '#!/usr/bin/env bash\nprintf policy\\n' > adl/tools/ci_path_policy.sh
+  printf '#!/usr/bin/env bash\nprintf policy-test\\n' > adl/tools/test_ci_path_policy.sh
+  printf 'print("warmup")\n' > adl/tools/warm_rust_dependency_cache.py
+  printf 'print("warmup test")\n' > adl/tools/test_warm_rust_dependency_cache.py
+  printf '# unrelated AGENTS guidance\n' > AGENTS.md
+  printf '# unrelated CI guidance\n' > adl/tools/skills/docs/CI_RUNTIME_POLICY_GUIDE.md
+  printf '# unrelated pr-run guidance\n' > adl/tools/skills/pr-run/SKILL.md
+  printf '# unrelated workflow guidance\n' > adl/tools/skills/workflow-conductor/SKILL.md
+  printf '# Hardlinked Rust dependency cache\n' > docs/tooling/HARDLINKED_RUST_DEPENDENCY_CACHE.md
+  git add AGENTS.md \
+    adl/config/validation_lane_selector.v0.91.6.json \
+    adl/tools/skills/docs/CI_RUNTIME_POLICY_GUIDE.md \
+    adl/tools/skills/pr-run/SKILL.md \
+    adl/tools/skills/workflow-conductor/SKILL.md \
+    adl/tools/ci_path_policy.sh \
+    adl/tools/test_ci_path_policy.sh \
+    adl/tools/warm_rust_dependency_cache.py \
+    adl/tools/test_warm_rust_dependency_cache.py \
+    docs/tooling/HARDLINKED_RUST_DEPENDENCY_CACHE.md
+  git commit -q -m rust-dependency-cache-warmup-unrelated-guidance-change
+  rust_dependency_cache_unrelated_guidance_head="$(git rev-parse HEAD)"
+
+  rust_dependency_cache_unrelated_guidance_output="$("$POLICY" --event-name pull_request --base "$base_sha" --head "$rust_dependency_cache_unrelated_guidance_head" --ref "refs/pull/1/merge")"
+  assert_has "$rust_dependency_cache_unrelated_guidance_output" "ci_contracts_required=true"
+  assert_has "$rust_dependency_cache_unrelated_guidance_output" "reason=ci_policy_surface_requires_path_policy_contract_checks"
+  assert_has "$rust_dependency_cache_unrelated_guidance_output" "validation_profile_status=ready_to_run"
+  assert_has "$rust_dependency_cache_unrelated_guidance_output" "validation_profile_escalation_required=false"
+  assert_has "$rust_dependency_cache_unrelated_guidance_output" "validation_profile_run_lanes=ci_path_policy_contracts,docs_diff_check,rust_dependency_cache_warmup_contracts"
 
   git checkout -q -b classifier-followup "$base_sha"
   mkdir -p adl/tools/skills/sprint-conductor/scripts adl/config adl/tools

@@ -30,7 +30,7 @@ The required handoff inputs are:
 - WP-14A `#4582`: closed internal review and pre-v0.92 burn-down truth.
 - `#4609`: closed release-tail documentation truth findings.
 - `#4610`: closed pre-v0.92 activation and C-SDLC adoption residual routing.
-- `#4611`: closed numbered-SRP SOR fact fix and PR-inventory route.
+- `#4611`: closed numbered-SRP SOR fact fix and PR-inventory assignment.
 - `#4612`: closed runtime AWS heartbeat cursor semantics fix.
 - WP-15 `#3980`: closed external / third-party review owner. The review ran
   and failed on stale `draft_pre_send` handoff truth; the failure is recorded
@@ -72,13 +72,13 @@ consumes the closed WP-16 truth rather than waiting for a future WP-16 gate:
    explicitly block any remaining tooling defects before relying on
    sprint-scale parallel execution.
 3. WP-06: preserve Nessus as the immediate Phase 1 remote validation lane and
-   prove the next build/validation acceleration route early, including EC2 Spot
+   prove the next build/validation acceleration assignment early, including EC2 Spot
    or an alternative disposable builder, because v0.91.6 exposed build and
    validation latency as a release-risk multiplier.
 4. WP-07 / WP-08: run runtime integration and AWS/signal bridge work after the
-   build/validation route is no longer a wait-state trap.
+   build/validation assignment is no longer a wait-state trap.
 
-## Remote Build Route
+## Remote Build Assignment
 
 v0.91.6 established that Nessus is the current Phase 1 operational remote
 validation lane for focused heavyweight local-offload proof when the lane is
@@ -138,7 +138,7 @@ WP-01 should update v0.91.7 issue-wave truth from:
 - any final v0.91.6 review/remediation packets merged after this addendum.
 
 WP-01 should not reconstruct scope from chat or local scratch files when a
-tracked handoff or issue route exists.
+tracked handoff or issue assignment exists.
 
 ## Explicit Non-Claims
 

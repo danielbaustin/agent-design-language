@@ -195,10 +195,13 @@ For a normal tracked issue:
 8. call `create_goal` for the bound tracked issue session before implementation
    starts
 9. make the bounded change in the issue worktree, never on `main`
-10. run the smallest meaningful validation for the touched surface
-11. run a pre-PR subagent review and fix findings
-12. verify PR base/stack topology, then publish through the normal PR workflow
-13. use `update_goal` for truthful terminal session state, then perform closeout
+10. before Rust validation in a fresh or cold issue worktree, consider warming
+   dependency artifacts with `adl/tools/warm_rust_dependency_cache.py`; see
+   `docs/tooling/HARDLINKED_RUST_DEPENDENCY_CACHE.md`
+11. run the smallest meaningful validation for the touched surface
+12. run a pre-PR subagent review and fix findings
+13. verify PR base/stack topology, then publish through the normal PR workflow
+14. use `update_goal` for truthful terminal session state, then perform closeout
    after merge/closure
 
 ## Validation Expectations
@@ -211,6 +214,13 @@ For a normal tracked issue:
   safe for the touched surface.
 - For owner-binary surfaces, prefer the focused lane runner when it matches the
   change: `bash adl/tools/run_owner_validation_lane.sh csdlc|runtime|review|all`.
+- Before Rust-heavy validation in a fresh issue worktree or on an EC2/remote
+  builder, use the dependency-cache warmup helper only when a trusted warm
+  target from the same host, same filesystem, same checkout family, and same
+  toolchain is available:
+  `python3 adl/tools/warm_rust_dependency_cache.py --source-target <warm-target> --dest-target <issue-worktree>/adl/target --manifest-path <issue-worktree>/adl/Cargo.toml`.
+  Treat this as build acceleration only, not validation proof, and never replace
+  the required validation lane with cache-warmup evidence.
 - Keep review records and output cards truthful about what was and was not run.
 - Docs-only and policy-only PVF work should prefer focused docs/path/contract/
   guardrail proof unless tracked runtime behavior changed.

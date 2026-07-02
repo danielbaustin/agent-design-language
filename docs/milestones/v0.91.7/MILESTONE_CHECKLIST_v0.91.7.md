@@ -29,7 +29,7 @@ Forward checklist. Items are intentionally unchecked because `v0.91.7` execution
 
 ## Process And Validation Substrate
 
-- [ ] v0.91.6 `#4388`-`#4398` C-SDLC integration control-plane sprint is consumed as integrated/proven, already closed with evidence, or explicitly blocked with evidence and operator approval, including SEP, VPP, PVF/template-version work, GitHub/octocrab convergence, goal metrics, logging, watcher/lifecycle automation, runtime dependency routing, tooling reliability, and FastContext evaluation.
+- [ ] v0.91.6 `#4388`-`#4398` C-SDLC integration control-plane sprint is consumed as integrated/proven, already closed with evidence, or explicitly blocked with evidence and operator approval, including SEP, VPP, PVF/template-version work, GitHub/octocrab convergence, goal metrics, logging, watcher/lifecycle automation, runtime dependency disposition, tooling reliability, and FastContext evaluation.
 - [ ] Late control-plane inputs `#4405`, `#4412`-`#4413`, `#4417`-`#4421` plus `#4425`, `#4431`, `#4441`, `#4433`-`#4438`, and `#4442`-`#4443` are integrated/proven, already closed with evidence, explicitly non-claimed with operator approval, or blocked with evidence and operator approval before v0.91.7 execution relies on them.
 - [ ] Sprint `/goal`, issue goal, session ledger, watcher, activity log, shepherd, and closeout rules are implemented in templates/skills/tools or blocked with evidence and operator approval.
 - [ ] PVF/VPP lane assignment and generated VPP creation can be made during planning or are explicitly blocked with evidence and operator approval.
@@ -42,8 +42,10 @@ Forward checklist. Items are intentionally unchecked because `v0.91.7` execution
 - [ ] Goal-state and nested-goal continuity inputs are implemented/proven or blocked with evidence and operator approval.
 - [ ] Cognitive scheduler and economics inputs are implemented/proven or blocked with evidence and operator approval.
 - [ ] Provider/local-agent suitability and model-routing proof is current.
-- [x] Runtime fire-up / Soak #2 route is concrete.
+- [ ] Runtime fire-up / Soak #2 packet is concrete and reviewed before execution starts.
   - Tracked execution packet: `RUNTIME_SOAK_2_EXECUTION_PACKET_v0.91.7.md`
+- [ ] Integrated logging/OTel proof `#4718` is complete before v0.92 consumes runtime, provider, control-plane, AWS/signal, Observatory, or Unity readiness.
+  - Required proof: current integrated runtime/provider/control-plane events, stdout/stderr separation, redaction/path hygiene, OTel-compatible boundary truth, and Observatory/Unity event consumption.
 - [ ] Runtime AWS/heartbeat/ACIP-SNS/SSM/S3 archive proof is concrete or blocked with evidence and operator approval.
 - [ ] Nessus/CodeBuild/EC2 Spot or alternate remote validation and local build-throughput decisions are proven or explicitly blocked with evidence and operator approval.
 - [ ] Remote-builder proof records time, cost, region/instance class, cache posture, interruption behavior, and cleanup/termination evidence before it becomes a release-critical validation lane.
@@ -71,6 +73,7 @@ Forward checklist. Items are intentionally unchecked because `v0.91.7` execution
 ## Scope Integrity
 
 - [ ] No runtime feature is claimed by planning docs alone.
+- [ ] No logging, observability, OTel, runtime, or Observatory readiness claim is made without current integrated evidence.
 - [ ] No `v0.92` activation readiness claim appears without evidence.
 - [ ] Security and ACIP/A2A residuals remain on the activation path unless explicitly non-claimed with evidence, risk, and operator approval.
 - [ ] Affect/happiness/Godel claims preserve safe-test and non-claim boundaries.

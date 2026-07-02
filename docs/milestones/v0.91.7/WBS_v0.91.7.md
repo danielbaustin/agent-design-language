@@ -12,13 +12,13 @@
 
 ## Status
 
-WP allocation is promoted into the v0.91.7 issue wave. WP-01 is `#4628`; WP-02 through WP-23 are `#4629` through `#4650`. Existing v0.91.7 issues are assigned rather than duplicated: `#4603` belongs to WP-06, `#4617` belongs to WP-04, and `#4622` belongs to WP-02. `#4622` is closed and delivered the repo-native PR inventory command required for release-tail review.
+WP allocation is promoted into the v0.91.7 issue wave. WP-01 is `#4628`; WP-02 through WP-23 are `#4629` through `#4650`. Existing v0.91.7 issues are assigned rather than duplicated: `#4603` belongs to WP-06, `#4617` belongs to WP-04, `#4622` belongs to WP-02, and integrated logging/OTel proof `#4718` belongs to WP-07 with WP-08/WP-09 consumers. `#4622` is closed and delivered the repo-native PR inventory command required for release-tail review.
 
 WP-01 consumes this document, `PLANNING_SOURCE_CAPTURE_v0.91.7.md`, and [WP_ISSUE_WAVE_v0.91.7.yaml](WP_ISSUE_WAVE_v0.91.7.yaml), then keeps the opened issue wave and planning truth aligned before dependent execution begins.
 
 ## WBS Summary
 
-`v0.91.7` should make the path to `v0.92` explicit. It combines residual bridge docs with the operational substrate needed for first-birthday execution: sprint execution, validation planning, goal/metrics accounting, scheduler/provider/local-agent routing, build throughput, runtime integration/soak, runtime architecture diet, security/protocol residuals, demos, and launch handoff.
+`v0.91.7` should make the path to `v0.92` explicit. It combines residual bridge docs with the operational substrate needed for first-birthday execution: sprint execution, validation planning, goal/metrics accounting, scheduler/provider/local-agent execution, build throughput, integrated logging/OTel proof, runtime integration/soak, runtime architecture diet, AWS/signal operations, security/protocol residuals, demos, and launch handoff.
 
 Completion standard: planned, documented, mocked, component-proven, assigned, or routed work does not count as done for a product, runtime, or release-gating surface. Any activation-path surface must exit v0.91.7 as `integrated_proven` or `blocked_with_evidence`. Blocked exits require owner, evidence, residual risk, and explicit operator approval. Assignment to another issue or later milestone is scheduling truth only, not completion truth.
 
@@ -27,12 +27,12 @@ Completion standard: planned, documented, mocked, component-proven, assigned, or
 | WP | Work Package | Description | Primary deliverable | Dependencies |
 | --- | --- | --- | --- | --- |
 | WP-01 | Planning promotion and issue-wave readiness | Promote the refreshed planning package, consume `V0916_TO_V0917_HANDOFF_ADDENDUM_3982.md`, classify every source in the source-capture ledger, sync the feature-list/roadmap truth, and open the issue wave. | Opened issue wave, C-SDLC card bundles, and source/feature-list disposition ledger. | Pre-v0.92 bridge ledger, v0.91.6 closeout truth, source-capture ledger, and feature-list/roadmap truth. |
-| WP-02 | Closeout truth, ADR route, and carryover cleanup | Consume release-tail, ADR, Observatory, C-SDLC, and late-control-plane carryovers from the source-capture ledger; classify each as integrated/proven, already closed with evidence, or explicitly blocked with evidence and operator approval. | Closeout truth ledger, ADR disposition, tooling-remediation disposition, C-SDLC control-plane disposition, late-input disposition, and carryover proof/blocker updates. | WP-01. |
+| WP-02 | Closeout truth, ADR disposition, and carryover cleanup | Consume release-tail, ADR, Observatory, C-SDLC, and late-control-plane carryovers from the source-capture ledger; classify each as integrated/proven, already closed with evidence, or explicitly blocked with evidence and operator approval. | Closeout truth ledger, ADR disposition, tooling-remediation disposition, C-SDLC control-plane disposition, late-input disposition, and carryover proof/blocker updates. | WP-01. |
 | WP-03 | Consume C-SDLC integration control-plane truth | Consume the v0.91.6 C-SDLC/control-plane completion stream named in the source-capture ledger. Do not recreate completed v0.91.6 work as fresh v0.91.7 implementation scope unless WP-02 records a blocker that must be implemented before v0.92. | Process/tooling truth-consumption gate with explicit implementation owner or evidence-backed blocker only where v0.91.6 did not complete. | WP-01, WP-02, source-capture ledger. |
 | WP-04 | Goal state, nested goals, and execution metrics | Implement first-class goal-state consumption, issue/sprint goal nesting, SOR time/token/resource accounting, forward capture, bounded archaeology/backfill, host goal snapshots, and outlier analysis, or record an evidence-backed blocker with operator approval. | Goal/metrics implementation proof and template-field updates. | WP-03 and source-capture ledger. |
 | WP-05 | Cognitive scheduler and provider/local-agent routing | Implement scheduler v1, provider profiles, model suitability, local/hosted agent routing, capability-envelope inputs, cheapest-validated-outcome policy, and local-agent delegation readiness, or block v0.92 with evidence and operator approval. | Scheduler/provider execution proof, role suitability matrix, and capability-envelope proof. | WP-03, WP-04, provider sprint outputs. |
 | WP-06 | Build throughput and validation-cost reduction | Implement validation manager, long-test fanout, CI log archive/S3, Nessus, CodeBuild runner evaluation, EC2 Spot or alternate remote-builder proof, `sccache`/linker/target-dir cleanup, and validation DAG/build graph convergence where required before v0.92; otherwise record explicit blockers with evidence and operator approval. | Build/validation throughput sprint, remote-builder proof, and cost/time evidence. | WP-03, validation sprint outputs. |
-| WP-07 | Runtime integration, fire-up, and Soak #2 | Assemble the runtime substrate into one minimal end-to-end path, reconcile Runtime v2 minimal prototype with current Tokio/runtime substrate, run integrated runtime Soak #2, identify bloat/seam pain, and preserve Soak #3 only as an operator-approved risk if Soak #2 cannot prove the activation path. | Runtime integration proof or evidence-backed blocker list, runtime module map, and architecture-diet follow-on. | WP-02, WP-05, WP-06. |
+| WP-07 | Runtime integration, logging/OTel proof, fire-up, and Soak #2 | Assemble the runtime substrate into one minimal end-to-end path, reconcile Runtime v2 minimal prototype with current Tokio/runtime substrate, implement/prove current integrated logging and OTel-compatible observability through `#4718`, run integrated runtime Soak #2, identify bloat/seam pain, and preserve Soak #3 only as an operator-approved risk if Soak #2 cannot prove the activation path. | Runtime integration proof or evidence-backed blocker list, integrated logging/OTel proof, runtime module map, and architecture-diet follow-on. | WP-02, WP-05, WP-06. |
 | WP-08 | Runtime AWS and signal bridge operations | Integrate heartbeat publisher, ACIP-to-SNS, AWS signal bridge, local polis SSM, and future S3/ObsMem/community-memory archive policy enough to produce runtime AWS/local operations evidence, or block v0.92 with evidence and operator approval. | Runtime AWS/local operations proof and proof expectations. | WP-07, security inputs. |
 | WP-09 | Observatory, demos, and birthday-visible proof | Finish Unity/HTML Observatory, demo matrix convergence, and first-birthday-visible proof surfaces with retained evidence; unsupported runtime claims become explicit non-claims or blockers, not scheduled completion. | Demo/Observatory readiness packet. | WP-07, WP-08. |
 | WP-10 | Curiosity and Constructability bridge | Implement or explicitly block governed discovery-cycle proof expectations and shared-reality/anchor/validator boundaries required before v0.92. | Curiosity and Constructability issue-ready docs, proof records, or evidence-backed blockers. | WP-01, WP-07. |
@@ -43,7 +43,7 @@ Completion standard: planned, documented, mocked, component-proven, assigned, or
 | WP-15 | Demo convergence | Confirm Observatory/demo matrix truth, visible proof status, demo non-claims, and any evidence-backed demo blockers before review. | Demo convergence packet and demo matrix update. | WP-09, WP-14. |
 | WP-16 | Quality gate | Run focused repo-quality, checklist, stale-doc, validation-plan, and release-readiness checks appropriate for a planning/bridge milestone. | Quality-gate packet and blocker list. | WP-14, WP-15. |
 | WP-17 | Documentation alignment | Align README, feature docs, WBS, sprint plan, checklist, handoff, issue wave, and feature-list/roadmap truth before formal review. | Docs alignment packet and repaired planning surfaces. | WP-16. |
-| WP-18 | Internal review | Review docs, code routes, feature routing, source capture, sprint/issue plans, and release-tail packets for missing surfaces, stale claims, overclaims, or unowned blockers. | Internal review packet and finding register. | WP-17. |
+| WP-18 | Internal review | Review docs, code paths, feature coverage, source capture, sprint/issue plans, and release-tail packets for missing surfaces, stale claims, overclaims, or unowned blockers. | Internal review packet and finding register. | WP-17. |
 | WP-19 | External review | Prepare and run the external/third-party review handoff after internal review remediation is ready enough for outside scrutiny. | External review handoff and finding register. | WP-18. |
 | WP-20 | Remediation and preflight | Fix internal/external review findings, rerun focused checks, update checklists, and record only evidence-backed residual risks explicitly approved by the operator. | Remediation PRs, preflight packet, final checklist updates. | WP-19. |
 | WP-21 | Next milestone planning | Prepare v0.92 planning inputs from reviewed v0.91.7 bridge truth without reopening v0.91.7 scope. | v0.92 planning seed and source-capture handoff. | WP-20. |
@@ -51,6 +51,23 @@ Completion standard: planned, documented, mocked, component-proven, assigned, or
 | WP-23 | Release ceremony | Finalize release evidence, closeout truth, release notes/checklist state, and ceremony packet after all review findings are fixed or explicitly blocked with evidence and operator approval. | Release ceremony packet and final closeout record. | WP-22. |
 
 ## Acceptance Mapping
+
+- Pre-v0.92 required surface coverage:
+
+| Required surface before v0.92 | v0.91.7 issue coverage | Completion bar |
+| --- | --- | --- |
+| C-SDLC shepherd, watcher, session ledger, predictable execution | `#4630`, `#4713`, `#4709`, WP-03 `#4630` and source-capture inputs | Repo-native tool path works in normal issue/PR flow, or v0.92 remains blocked with evidence and operator approval. |
+| Goal/time/token/resource metrics and backfill | `#4631`, `#4666`-`#4670`, `#4617` | Forward capture works from current SPP/VPP/SOR/goal surfaces; backfill gaps are explicit. |
+| Scheduler/provider/local-agent execution | `#4632`, `#4671`-`#4675`, `#4653`, `#4654` | Scheduler/provider decisions are executable and protect premium cognition with model-suitability evidence. |
+| Build throughput and validation-cost reduction | `#4633`, `#4676`-`#4680`, `#4698`, `#4603`, `#4651` | Tail validation and remote/local build lanes are measured, bounded, and operational enough for the milestone. |
+| Runtime integration and Soak #2 | `#4634`, `#4681`-`#4683` | One minimal runtime path runs with retained soak evidence or named blockers. |
+| Integrated logging, observability, and OTel-compatible boundary | `#4718` | Current runtime/provider/control-plane events, stdout/stderr separation, redaction/path hygiene, OTel boundary truth, and Observatory/Unity consumption are proven. |
+| AWS/signal bridge operations | `#4635`, `#4684`-`#4688` | Heartbeat, ACIP-to-SNS, AWS signal, local SSM, and archive policy have working evidence or blockers. |
+| Observatory/Unity/HTML birthday-visible proof | `#4636`, `#4689`-`#4691`, `#4652`, `#4702`-`#4704` | Visible proof surfaces run or carry explicit non-claims/blockers. |
+| Curiosity and Constructability | `#4637`, `#4692`, `#4693` | Governed discovery and constructability-anchor proof surfaces are implemented/proven or blocked. |
+| Reasoning graph, loops, `adl.skill.v1`, AEE/ObsMem/PVF bridge | `#4638`, `#4694`-`#4697` | Bridge behavior has at least one producer/consumer or runtime proof path. |
+| Security/CAV/SSM/ACIP/A2A/protobuf/WebSocket/access residuals | `#4639`, `#4656`-`#4660` | Activation blockers are resolved or v0.92 remains blocked with evidence and operator approval. |
+| Affect/happiness/Godel/economics/guild/CodeFriend/publication boundaries | `#4640` plus later split issues if WP-13 finds implementation gaps | MVP-scope guild/CodeFriend obligations are proven or blocked; publication and inner-state claims are non-claimed unless proven. |
 
 - v0.91.6 closeout truth and ADR release-tail decisions must be consumed before `v0.92` opens.
 - WP-02 closeout truth is split across child issues. `#4661` owns only the
@@ -65,8 +82,9 @@ Completion standard: planned, documented, mocked, component-proven, assigned, or
 - Build/validation work must reduce the validation tail without weakening proof; EC2 Spot or another disposable remote-builder path must be proven before it becomes a release-critical lane.
 - GitHub convergence/control-plane work must be reliable enough for sprint execution or explicitly recorded as a v0.92 blocker with evidence and operator approval. The `#4622` repo-native PR inventory command removes the `missing_owner_binary_cargo_fallback_disabled` failure from release-tail issue/PR inventory.
 - Runtime integration/Soak #2 must prove one assembled minimal runtime path or name blockers before birthday activation.
-- Runtime architecture diet must identify keep/merge/defer/retire boundaries without hiding speculative refactoring inside the integration sprint.
-- Security and ACIP/A2A residuals must not silently defer out of activation.
+- Logging/observability is not optional polis infrastructure. `#4718` must prove current integrated runtime/provider/control-plane logging, stdout/stderr separation, redaction/path hygiene, OTel-compatible boundary truth, and Observatory/Unity consumption before v0.92 may rely on logging readiness.
+- Runtime architecture diet must identify keep/merge/postpone/retire boundaries without hiding speculative refactoring inside the integration sprint.
+- Security and ACIP/A2A residuals must not silently move out of activation.
 - Curiosity, Constructability, reasoning graphs, affect/happiness, Godel mechanics, economics, guilds, CodeFriend/adapter work, and publication surfaces must be bounded by evidence and non-claims.
 - Launch planning must inform v0.92 sequencing without expanding v0.92 implementation scope.
 
