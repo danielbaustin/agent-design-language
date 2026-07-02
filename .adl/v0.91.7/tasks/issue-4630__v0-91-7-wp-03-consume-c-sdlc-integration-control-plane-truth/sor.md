@@ -26,7 +26,7 @@ Execution:
 
 ## Summary
 
-Execution resumed in a clean rebound worktree after an accidental early start was preserved as local evidence. The issue now has a published draft PR for a first-class repo-native `adl-pr-shepherd` owner binary above readiness, watcher, janitor, and closeout surfaces. After publication, `adl-ci` failed in the retained v0.91.3 proof-validation lane because the older card-lifecycle contract commands broad-compiled enough of the tree to exhaust runner disk. The branch was janitored first by narrowing that retained proof lane to the exact `--bin adl` card-lifecycle tests, then by hardening `pr.sh shepherd` so it fails closed with dedicated owner-binary guidance instead of delegating into a stale generic `adl` binary. A later user-directed rollback restored `adl/tools/run_authoritative_coverage_lane.sh` to the pre-regression baseline on commit `c9b3ba7faf99f77c7d6a5253750383dbd6b29f02`; that head then failed `adl-coverage` in PR `#4714` after a `7m 38s` run with runner disk exhaustion during link and a GitHub warning that only `69 MB` remained free. The issue worktree has now been rebased onto current `origin/main`, inheriting merged coverage-host fix `#4722`, and the stale branch-local `adl/tools/test_run_authoritative_coverage_lane.sh` contract has been realigned to the new host-side sccache layout. Focused local proof is green again, but a fresh post-rebase PR run is still required to measure the real warm-cache effect and verify the GitHub lane on the current head `7e7b770bce906c779c5ff71ff2f2064bfc61cd1e`.
+Execution resumed in a clean rebound worktree after an accidental early start was preserved as local evidence. The issue now has a published draft PR for a first-class repo-native `adl-pr-shepherd` owner binary above readiness, watcher, janitor, and closeout surfaces. After publication, `adl-ci` failed in the retained v0.91.3 proof-validation lane because the older card-lifecycle contract commands broad-compiled enough of the tree to exhaust runner disk. The branch was janitored first by narrowing that retained proof lane to the exact `--bin adl` card-lifecycle tests, then by hardening `pr.sh shepherd` so it fails closed with dedicated owner-binary guidance instead of delegating into a stale generic `adl` binary. A later user-directed rollback restored `adl/tools/run_authoritative_coverage_lane.sh` to the pre-regression baseline on commit `c9b3ba7faf99f77c7d6a5253750383dbd6b29f02`; that head then failed `adl-coverage` in PR `#4714` after a `7m 38s` run with runner disk exhaustion during link and a GitHub warning that only `69 MB` remained free. The issue worktree was then rebased onto current `origin/main`, inheriting merged coverage-host fix `#4722`, and the stale branch-local `adl/tools/test_run_authoritative_coverage_lane.sh` contract was realigned to the new host-side sccache layout. A fresh rerun on published head `908714b985b9fc07aef31ca380a3d8f4a80ba0ff` survived past the old coverage crash point, which proved the previous coverage disk-exhaustion mode was no longer the first blocker, but `adl-ci` still failed in the retained proof-validation lane with a linker bus error while the job exported stale temp-backed `SCCACHE_DIR` values. The bound worktree now carries a narrow three-file janitor realignment to current `origin/main` truth for `.github/workflows/ci.yaml`, `adl/tools/test_ci_cache_linker_contracts.sh`, and `adl/tools/test_ci_runtime_contracts.sh`, and focused local proof for that cluster is green before the next push.
 
 ## PVF Lane Truth
 - Initial PVF lane: `prompt_template`
@@ -105,7 +105,9 @@ Execution resumed in a clean rebound worktree after an accidental early start wa
 - Re-checked the repo-native watcher after the rollback push; the latest successful watcher packet still reported the issue under watcher ownership with `classification=pr_open` while fresh `adl-ci` / `adl-coverage` results were pending on PR `#4714`. A subsequent repeat watcher probe failed in `github_client.octocrab_transport` (`issue.view.state` Serde error) before classification and has been left as explicit residual control-plane evidence instead of being hidden.
 - Diagnosed the failed `adl-coverage` GitHub job as runner disk exhaustion during link after a `7m 38s` run on head `c9b3ba7faf99f77c7d6a5253750383dbd6b29f02`, not as a shepherd-command logic error.
 - Rebases the issue worktree onto current `origin/main`, inheriting merged warm-cache host fix `#4722`, then aligned the stale branch-local `adl/tools/test_run_authoritative_coverage_lane.sh` contract to the new `main` truth and reran focused local proof.
-- Reconfirmed that a fresh post-rebase PR run is still needed for authoritative timing: local proof is green, but `pr.sh watch` currently fails closed in this worktree because the dedicated owner binary is not present and cargo fallback remains disabled by policy.
+- Ran the repo-native root owner binary watcher and confirmed the published PR head `908714b985b9fc07aef31ca380a3d8f4a80ba0ff` currently classifies as `checks_failed`, with `adl-ci` failed and `adl-coverage` still in progress on workflow run `28615903545`.
+- Diagnosed the fresh `adl-ci` failure on head `908714b985b9fc07aef31ca380a3d8f4a80ba0ff` as stale branch-local CI/cache contracts: the job still exported temp-backed `SCCACHE_DIR` values and failed the retained proof-validation lane with `ld terminated with signal 7 [Bus error]`.
+- Realigned `.github/workflows/ci.yaml`, `adl/tools/test_ci_cache_linker_contracts.sh`, and `adl/tools/test_ci_runtime_contracts.sh` to current `origin/main` truth, then reran focused local proof for that cluster.
 
 ## Main Repo Integration (REQUIRED)
 - Main-repo paths updated:
@@ -180,6 +182,10 @@ Rules:
     Proved the narrow retained proof-validation lane contract and replay-surface updates are internally consistent after the janitor fix.
   - `bash adl/tools/test_pr_delegate_prefers_primary_checkout_binary.sh`
     Proved the wrapper now enforces dedicated owner-binary truth for `shepherd` instead of silently falling through to stale generic `adl`.
+  - `bash adl/tools/test_ci_cache_linker_contracts.sh`
+    Proved the branch-local CI cache/linker contract now matches current `main` truth after realigning the workflow and helper cluster.
+  - `bash adl/tools/test_ci_runtime_contracts.sh`
+    Proved the branch-local CI runtime contract now matches current `main` truth after realigning the workflow and helper cluster.
   - `git diff --check`
     Proved the branch has no whitespace or malformed patch residue after remediation.
   - `ADL_GITHUB_TOKEN_FILE=$HOME/keys/github.token cargo run --quiet --manifest-path adl/Cargo.toml --bin adl-pr-shepherd -- 4630 --version v0.91.7 --json`
@@ -188,6 +194,8 @@ Rules:
     Proved the shell compatibility wrapper now fails closed with dedicated owner-binary guidance when `adl-pr-shepherd` is not already built locally.
   - `ADL_GITHUB_TOKEN_FILE=$HOME/keys/github.token ./adl/tools/pr.sh watch 4630 --json`
     Proved the PR-tail classifier now reports `pr_open` / watcher ownership with fresh checks pending on the latest janitored commit.
+  - `ADL_GITHUB_TOKEN_FILE=$HOME/keys/github.token /Users/daniel/git/agent-design-language/adl/target/debug/adl pr watch 4630 --json`
+    Proved the repo-native watcher packet remains authoritative from the root owner binary even while the worktree-local `pr.sh watch` wrapper lacks a dedicated local owner binary.
 - Results:
   - PASS: focused lifecycle-shepherd tests passed.
   - PASS: exact retained proof-lane card-lifecycle tests passed under `--bin adl`.
@@ -197,8 +205,10 @@ Rules:
   - PASS: wrapper `pr.sh shepherd` now fails closed with dedicated owner-binary guidance instead of delegating into stale generic `adl`.
   - PASS: watcher JSON on head `c9b3ba7faf99f77c7d6a5253750383dbd6b29f02` reported the issue under `issue-watcher` ownership with fresh checks pending on PR `#4714`.
   - PASS: `bash adl/tools/test_run_authoritative_coverage_lane.sh` passed after the rebase and branch-local contract realignment to merged `#4722` truth.
-  - PARTIAL: authoritative post-rebase GitHub timing and pass/fail proof for the warm-cache host fix are still pending because the rebased branch has not yet been pushed and rerun.
-  - PARTIAL: re-checking PR state through `pr.sh watch` after the rebase is currently blocked on a missing local dedicated owner binary with cargo fallback disabled.
+  - PASS: `bash adl/tools/test_ci_cache_linker_contracts.sh` passed after aligning the stale branch-local CI/cache/linker contract cluster back to current `main`.
+  - PASS: `bash adl/tools/test_ci_runtime_contracts.sh` passed after aligning the stale branch-local CI/runtime contract cluster back to current `main`.
+  - PASS: root owner-binary `adl pr watch 4630 --json` classified PR `#4714` as `checks_failed`, showing `adl-ci` failed and `adl-coverage` still in progress on run `28615903545`.
+  - PARTIAL: authoritative post-realignment GitHub proof is still pending because the three-file CI contract fix has not yet been pushed and rerun on PR `#4714`.
 
 Validation command/path rules:
 - Prefer repository-relative paths in recorded commands and artifact references.
@@ -216,8 +226,11 @@ verification_summary:
     - cargo test --manifest-path adl/Cargo.toml --bin adl lifecycle_shepherd -- --nocapture
     - bash adl/tools/test_run_authoritative_coverage_lane.sh
     - bash adl/tools/test_pr_delegate_prefers_primary_checkout_binary.sh
+    - bash adl/tools/test_ci_cache_linker_contracts.sh
+    - bash adl/tools/test_ci_runtime_contracts.sh
     - git diff --check
     - ADL_GITHUB_TOKEN_FILE=$HOME/keys/github.token cargo run --quiet --manifest-path adl/Cargo.toml --bin adl-pr-shepherd -- 4630 --version v0.91.7 --json
+    - ADL_GITHUB_TOKEN_FILE=$HOME/keys/github.token /Users/daniel/git/agent-design-language/adl/target/debug/adl pr watch 4630 --json
   determinism:
     status: NOT_RUN
     replay_verified: unknown
@@ -248,8 +261,11 @@ sor_facts:
   - adl/tools/pr.sh
   - adl/tools/pr_delegate.sh
   - adl/tools/pr_usage.sh
+  - adl/tools/test_ci_cache_linker_contracts.sh
+  - adl/tools/test_ci_runtime_contracts.sh
   - adl/tools/skills/docs/OPERATIONAL_SKILLS_GUIDE.md
   - adl/tools/test_pr_delegate_prefers_primary_checkout_binary.sh
+  - .github/workflows/ci.yaml
   - docs/default_workflow.md
   - docs/milestones/v0.91.3/review/card_lifecycle_integration/CARD_LIFECYCLE_PROOF_PACKET_v0.91.3.md
   - docs/milestones/v0.91.3/review/evidence/csdlc/issues/issue-3201-card-lifecycle-demo/cards/spp.md
@@ -271,12 +287,14 @@ sor_facts:
   finish:
     pr_url: https://github.com/danielbaustin/agent-design-language/pull/4714
     blocking_notes:
-    - Fresh `adl-ci` and `adl-coverage` results are pending on commit `3a62c9e6cc866513fa554298f877bac9ed17d03f`.
+    - Published head `908714b985b9fc07aef31ca380a3d8f4a80ba0ff` currently classifies as `checks_failed`: `adl-ci` failed in the retained proof-validation lane while `adl-coverage` remains in progress on workflow run `28615903545`.
+    - The narrow three-file CI/cache contract realignment is still local-only and must be pushed before the next authoritative PR rerun.
     fix_notes:
     - Published draft PR `#4714` for the `adl-pr-shepherd` implementation slice.
     - Janitored the first red `adl-ci` run by narrowing the retained v0.91.3 proof-validation lane to exact `--bin adl` card-lifecycle tests and updating the matching replay surfaces.
     - Janitored the authoritative coverage lane by reclaiming restored repo-local `adl/target` state before launching scratch-mounted llvm-cov work.
     - Janitored the compatibility wrapper by refusing stale generic `adl` fallback for `shepherd` and surfacing dedicated owner-binary build guidance instead.
+    - Janitored the stale branch-local CI cluster by restoring current `main` truth for `.github/workflows/ci.yaml`, `adl/tools/test_ci_cache_linker_contracts.sh`, and `adl/tools/test_ci_runtime_contracts.sh`.
   integration:
     state: pr_open
     main_repo_paths:

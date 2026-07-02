@@ -11,13 +11,10 @@ import sys
 workflow = pathlib.Path(sys.argv[1]).read_text()
 
 required_fragments = [
+    "cache-directories: |\n            ~/.cache/sccache",
     "tool: sccache",
-    'SCCACHE_ROOT="${RUNNER_TEMP:-/tmp}/adl-sccache"',
-    'SCCACHE_ROOT="${RUNNER_TEMP:-/tmp}/adl-coverage-sccache"',
-    'rm -rf "$SCCACHE_ROOT"',
-    'mkdir -p "$SCCACHE_ROOT"',
     'echo "RUSTC_WRAPPER=sccache" >> "$GITHUB_ENV"',
-    'echo "SCCACHE_DIR=$SCCACHE_ROOT" >> "$GITHUB_ENV"',
+    'echo "SCCACHE_DIR=$HOME/.cache/sccache" >> "$GITHUB_ENV"',
     'sudo apt-get install -y lld',
     'command -v ld.lld',
     'echo "::error::ld.lld is unavailable after the install step"',

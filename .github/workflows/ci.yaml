@@ -67,6 +67,8 @@ jobs:
         with:
           workspaces: |
             adl -> target
+          cache-directories: |
+            ~/.cache/sccache
 
       - name: Install sccache
         if: steps.path-policy.outputs.rust_required == 'true'
@@ -90,10 +92,8 @@ jobs:
       - name: Configure Rust acceleration
         if: steps.path-policy.outputs.rust_required == 'true'
         run: |
-          SCCACHE_ROOT="${RUNNER_TEMP:-/tmp}/adl-sccache"
-          rm -rf "$SCCACHE_ROOT"
-          mkdir -p "$SCCACHE_ROOT"
-          echo "SCCACHE_DIR=$SCCACHE_ROOT" >> "$GITHUB_ENV"
+          mkdir -p "$HOME/.cache/sccache"
+          echo "SCCACHE_DIR=$HOME/.cache/sccache" >> "$GITHUB_ENV"
           echo "SCCACHE_CACHE_SIZE=2G" >> "$GITHUB_ENV"
           echo "RUSTC_WRAPPER=sccache" >> "$GITHUB_ENV"
           if ! command -v ld.lld >/dev/null 2>&1; then
@@ -427,6 +427,8 @@ jobs:
         with:
           workspaces: |
             adl -> target
+          cache-directories: |
+            ~/.cache/sccache
 
       - name: Install cargo-llvm-cov
         if: steps.path-policy.outputs.full_coverage_required == 'true' || steps.coverage-impact.outputs.needs_fast_summary == 'true'
@@ -454,10 +456,8 @@ jobs:
       - name: Configure Rust acceleration for coverage
         if: steps.path-policy.outputs.full_coverage_required == 'true' || steps.coverage-impact.outputs.needs_fast_summary == 'true'
         run: |
-          SCCACHE_ROOT="${RUNNER_TEMP:-/tmp}/adl-coverage-sccache"
-          rm -rf "$SCCACHE_ROOT"
-          mkdir -p "$SCCACHE_ROOT"
-          echo "SCCACHE_DIR=$SCCACHE_ROOT" >> "$GITHUB_ENV"
+          mkdir -p "$HOME/.cache/sccache"
+          echo "SCCACHE_DIR=$HOME/.cache/sccache" >> "$GITHUB_ENV"
           echo "SCCACHE_CACHE_SIZE=2G" >> "$GITHUB_ENV"
           echo "RUSTC_WRAPPER=sccache" >> "$GITHUB_ENV"
           if ! command -v ld.lld >/dev/null 2>&1; then
@@ -497,7 +497,7 @@ jobs:
           bash adl/tools/check_coverage_impact.sh \
             --base "${{ github.event.pull_request.base.sha }}" \
             --head "${{ github.event.pull_request.head.sha }}" \
-            --summary coverage-summary.json \
+            --summary adl/coverage-summary.json \
             --threshold "$PER_FILE_LINE_THRESHOLD"
         working-directory: .
 
@@ -510,7 +510,7 @@ jobs:
             bash adl/tools/check_coverage_impact.sh \
               --base "${{ github.event.pull_request.base.sha }}" \
               --head "${{ github.event.pull_request.head.sha }}" \
-              --summary coverage-summary.json \
+              --summary adl/coverage-summary.json \
               --require-summary-for-risk \
               --threshold "$PER_FILE_LINE_THRESHOLD"
           else

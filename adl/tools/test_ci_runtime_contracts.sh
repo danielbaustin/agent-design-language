@@ -151,14 +151,10 @@ for required_fragment in (
     'printf \'/mnt/adl-authoritative-coverage\\n\'',
     'printf \'%s\\n\' "$ADL_DIR/target/authoritative-coverage-scratch"',
     'COVERAGE_BUILD_ROOT="${ADL_COVERAGE_BUILD_ROOT:-$(default_coverage_build_root)}"',
-    'ROOT_SCCACHE_DIR="${HOME:-}/.cache/sccache"',
-    'SCCACHE_BUILD_ROOT="$COVERAGE_BUILD_ROOT/sccache"',
-    'rm -rf "$ROOT_SCCACHE_DIR"',
-    'rm -rf "$COVERAGE_BUILD_ROOT/target" "$COVERAGE_BUILD_ROOT/llvm-cov-target" "$SCCACHE_BUILD_ROOT"',
-    'mkdir -p "$COVERAGE_BUILD_ROOT/target" "$COVERAGE_BUILD_ROOT/llvm-cov-target" "$SCCACHE_BUILD_ROOT"',
+    'rm -rf "$COVERAGE_BUILD_ROOT/target" "$COVERAGE_BUILD_ROOT/llvm-cov-target"',
+    'mkdir -p "$COVERAGE_BUILD_ROOT/target" "$COVERAGE_BUILD_ROOT/llvm-cov-target"',
     'export CARGO_TARGET_DIR="$COVERAGE_BUILD_ROOT/target"',
     'export CARGO_LLVM_COV_TARGET_DIR="$COVERAGE_BUILD_ROOT/llvm-cov-target"',
-    'export SCCACHE_DIR="$SCCACHE_BUILD_ROOT"',
 ):
     if required_fragment not in runner_script_text:
         raise SystemExit(
@@ -177,7 +173,6 @@ for required_fragment in (
     'COVERAGE_BUILD_ROOT="${RUNNER_TEMP:-/tmp}/adl-pr-fast-coverage"',
     'export CARGO_TARGET_DIR="$COVERAGE_BUILD_ROOT/target"',
     'export CARGO_LLVM_COV_TARGET_DIR="$COVERAGE_BUILD_ROOT/llvm-cov-target"',
-    'cargo llvm-cov report --json --summary-only --output-path coverage-summary.json',
 ):
     if required_fragment not in fast_summary_step:
         raise SystemExit(
@@ -186,16 +181,16 @@ for required_fragment in (
         )
 
 authoritative_gate_step = step_block("Coverage-impact changed-source gate")
-if '--summary coverage-summary.json \\' not in authoritative_gate_step:
+if '--summary adl/coverage-summary.json \\' not in authoritative_gate_step:
     raise SystemExit(
-        "authoritative changed-source coverage gate must read coverage-summary.json from the adl job working directory; "
+        "authoritative changed-source coverage gate must read adl/coverage-summary.json from the runner output; "
         "workflow is missing that summary reference"
     )
 
 pr_preflight_step = step_block("PR coverage-impact preflight")
-if '--summary coverage-summary.json \\' not in pr_preflight_step:
+if '--summary adl/coverage-summary.json \\' not in pr_preflight_step:
     raise SystemExit(
-        "PR coverage-impact preflight must read coverage-summary.json emitted inside the adl job working directory; "
+        "PR coverage-impact preflight must read adl/coverage-summary.json emitted by the fast lane working directory; "
         "workflow is missing that summary reference"
     )
 
