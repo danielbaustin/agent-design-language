@@ -222,6 +222,15 @@ rust_pr_subcommand_path_bin() {
   printf '%s\n' "$candidate"
 }
 
+rust_pr_subcommand_requires_dedicated_owner_binary() {
+  case "${1:-}" in
+    shepherd)
+      return 0
+      ;;
+  esac
+  return 1
+}
+
 rust_pr_delegate_path_bin() {
   [[ "${ADL_PR_RUST_DISABLE_PATH_LOOKUP:-0}" != "1" ]] || return 1
   local candidate
@@ -517,6 +526,27 @@ delegate_pr_command_to_rust() {
   if [[ -n "$direct_bin" ]]; then
     adl_obs_event "pr.sh" "rust_delegate" "exec" "subcommand" "$subcommand" "delegate" "$direct_bin"
     exec "$direct_bin" "$@"
+  fi
+  if rust_pr_subcommand_requires_dedicated_owner_binary "$subcommand"; then
+    if ! rust_pr_cargo_fallback_allowed; then
+      rust_pr_report_missing_owner_binary "$subcommand" "$root"
+      exit 75
+    fi
+    build_lock_dir="${ADL_PR_CARGO_DELEGATE_BUILD_LOCK_DIR:-$root/adl/target/.adl-pr-rust-delegate-build.lock}"
+    mkdir -p "$(dirname "$build_lock_dir")"
+    ADL_PR_RUST_DELEGATE_BUILD_LOCK_HELD=""
+    direct_bin="$(rust_pr_subcommand_binary_name "$subcommand" || true)"
+    adl_obs_event "pr.sh" "rust_delegate" "exec" "subcommand" "$subcommand" "delegate" "cargo" "manifest" "$manifest" "bin" "$direct_bin" "lock_mode" "locked"
+    acquire_rust_pr_delegate_build_lock "$build_lock_dir" "$subcommand" "$direct_bin" || exit "$?"
+    trap 'if [[ -n "${ADL_PR_RUST_DELEGATE_BUILD_LOCK_HELD:-}" ]]; then rust_pr_delegate_build_lock_cleanup "$ADL_PR_RUST_DELEGATE_BUILD_LOCK_HELD"; fi' EXIT
+    set +e
+    run_rust_pr_delegate_with_liveness "$subcommand" "$manifest" "$direct_bin" "$@"
+    local status="$?"
+    set -e
+    rust_pr_delegate_build_lock_cleanup "$build_lock_dir"
+    ADL_PR_RUST_DELEGATE_BUILD_LOCK_HELD=""
+    trap - EXIT
+    exit "$status"
   fi
   cached_bin="$(rust_pr_delegate_cached_bin || true)"
   if [[ -n "$cached_bin" ]]; then
