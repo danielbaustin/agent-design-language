@@ -45,7 +45,8 @@ run_check transition_dag_contract \
   bash "$ROOT_DIR/adl/tools/test_transition_dag_packet.sh"
 
 run_check transition_manifest_schema \
-  cargo test --manifest-path "$ROOT_DIR/adl/Cargo.toml" cognitive_transition_schema -- --nocapture
+  cargo test --manifest-path "$ROOT_DIR/adl/Cargo.toml" --lib \
+    cognitive_transition_schema -- --nocapture
 
 run_check card_lifecycle_bundle validate_card_lifecycle_bundle
 
