@@ -269,6 +269,28 @@ fn structured_prompt_sor_issue_metrics_truth_rejects_zero_placeholders() {
 }
 
 #[test]
+fn structured_prompt_sor_actual_metrics_accept_availability_tokens() {
+    let sor = valid_sor_text()
+        .replace(
+            "- Actual elapsed seconds: `300`",
+            "- Actual elapsed seconds: `not_collected`",
+        )
+        .replace(
+            "- Actual validation seconds: `45`",
+            "- Actual validation seconds: `not_available`",
+        );
+    validate_sor_text(&sor, Some("completed"))
+        .expect("actual metrics should preserve availability tokens");
+
+    let zero_sor = valid_sor_text().replace(
+        "- Actual total tokens: `1200`",
+        "- Actual total tokens: `0`",
+    );
+    validate_sor_text(&zero_sor, Some("completed"))
+        .expect("actual metrics should accept machine-captured zero values");
+}
+
+#[test]
 fn structured_prompt_sor_issue_metrics_truth_allows_zero_percent_exact_match() {
     let sor = valid_sor_text()
         .replace(

@@ -65,6 +65,7 @@ ci_contracts_required="$bool_false"
 fail_closed=false
 coverage_lane="skip"
 coverage_authority="not_required"
+coverage_execution_state="skipped_by_path_policy"
 proof_validation_scope="not_required"
 reason="path_policy_docs_or_tooling_only"
 changed_count=0
@@ -105,6 +106,7 @@ mark_authoritative_full_coverage() {
   require_full_validation
   coverage_lane="authoritative_full"
   coverage_authority="$authority"
+  coverage_execution_state="authoritative_full_required"
   reason="$reason_value"
 }
 
@@ -115,6 +117,7 @@ mark_pr_fast_coverage() {
   ci_contracts_required=true
   coverage_lane="pr_fast"
   coverage_authority="pr_changed_surface"
+  coverage_execution_state="pr_fast_preflight_required"
   reason="runtime_or_rust_test_change_runs_pr_fast_validation"
 }
 
@@ -125,6 +128,7 @@ mark_policy_surface_full_coverage() {
   full_coverage_required=true
   coverage_lane="authoritative_full"
   coverage_authority="$authority"
+  coverage_execution_state="authoritative_full_required"
   reason="$reason_value"
 }
 
@@ -134,6 +138,7 @@ mark_policy_surface_contract_validation() {
   full_coverage_required=false
   coverage_lane="skip"
   coverage_authority="not_required"
+  coverage_execution_state="skipped_by_path_policy"
   reason="coverage_policy_surface_tooling_change_runs_contract_validation"
 }
 
@@ -687,6 +692,17 @@ is_v0913_proof_surface() {
   return 1
 }
 
+is_v0913_proof_contract_surface() {
+  local path="$1"
+  case "$path" in
+    adl/tools/run_v0913_proof_validation_lane.sh|\
+    adl/tools/test_run_v0913_proof_validation_lane.sh)
+      return 0
+      ;;
+  esac
+  return 1
+}
+
 cargo_manifest_package_version_only_change() {
   python3 - "$base_sha" "$head_sha" <<'PY'
 import io
@@ -1106,7 +1122,7 @@ else
           saw_full_coverage_policy_surface=true
         fi
       fi
-      if is_v0913_proof_surface "$path"; then
+      if is_v0913_proof_surface "$path" && ! is_v0913_proof_contract_surface "$path"; then
         saw_v0913_proof_surface=true
       fi
     done <<EOF
@@ -1133,6 +1149,10 @@ EOF
           continue
         fi
         if is_v0913_proof_surface "$path"; then
+          if is_v0913_proof_contract_surface "$path"; then
+            ci_contracts_required=true
+            continue
+          fi
           mark_v0913_proof_required
         fi
         case "$path" in
@@ -1228,6 +1248,9 @@ case ",$validation_profile_run_lanes," in
     validation_profile_contract_lanes_selected=true
     ;;
 esac
+if [ "$fail_closed" = true ]; then
+  coverage_execution_state="fail_closed_authoritative_full_required"
+fi
 
 emit "rust_required" "$rust_required"
 emit "coverage_required" "$coverage_required"
@@ -1240,6 +1263,7 @@ emit "validation_profile_contract_lanes_selected" "$validation_profile_contract_
 emit "fail_closed" "$fail_closed"
 emit "coverage_lane" "$coverage_lane"
 emit "coverage_authority" "$coverage_authority"
+emit "coverage_execution_state" "$coverage_execution_state"
 emit "proof_validation_scope" "$proof_validation_scope"
 emit "changed_count" "$changed_count"
 emit "reason" "$reason"
@@ -1264,5 +1288,6 @@ printf '  validation_profile_contract_lanes_selected=%s\n' "$validation_profile_
 printf '  fail_closed=%s\n' "$fail_closed"
 printf '  coverage_lane=%s\n' "$coverage_lane"
 printf '  coverage_authority=%s\n' "$coverage_authority"
+printf '  coverage_execution_state=%s\n' "$coverage_execution_state"
 printf '  proof_validation_scope=%s\n' "$proof_validation_scope"
 printf '  changed_count=%s\n' "$changed_count"

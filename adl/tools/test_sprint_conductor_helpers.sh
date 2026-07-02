@@ -1642,6 +1642,39 @@ assert summary["elapsed_seconds"] == 56
 assert summary["elapsed_availability"] == "known"
 assert summary["metrics_confidence"] == "high"
 PY
+codex_goal_report="${tmpdir}/issue-4431-goal-metrics-report.md"
+codex_goal_prediction="${tmpdir}/issue-4431-goal-metrics-prediction.json"
+python3 "${repo_root}/adl/tools/skills/sprint-conductor/scripts/write_issue_goal_metrics_report.py" \
+  --summary "${codex_goal_summary}" \
+  --report-out "${codex_goal_report}" \
+  --prediction-out "${codex_goal_prediction}" \
+  --print-json > "${tmpdir}/issue-4431-goal-metrics-report-result.json"
+python3 - "${codex_goal_prediction}" "${tmpdir}/issue-4431-goal-metrics-report-result.json" <<'PY'
+import json
+import sys
+from pathlib import Path
+
+prediction = json.loads(Path(sys.argv[1]).read_text())
+result = json.loads(Path(sys.argv[2]).read_text())
+assert prediction["schema_version"] == "adl.issue_goal_metrics.reporting_prediction.v1"
+assert prediction["status"] == "recorded"
+assert prediction["reporting_ready"] is True
+assert prediction["prediction_ready"] is True
+assert prediction["features"]["elapsed_seconds"] == 56
+assert prediction["feature_availability"]["elapsed_seconds"] == "known"
+assert prediction["features"]["total_tokens"] == 39238
+assert prediction["feature_availability"]["total_tokens"] == "known"
+assert prediction["feature_availability"]["validation_seconds"] == "unknown"
+assert prediction["features"]["validation_seconds"] is None
+assert "validation_seconds" in prediction["missing_prediction_features"]
+assert prediction["unknown_values_policy"] == "unknown_is_not_zero"
+assert result["reporting_ready"] is True
+assert result["prediction_ready"] is True
+PY
+grep -Fq '# Issue Goal Metrics Reporting Sample' "${codex_goal_report}"
+grep -Fq 'reporting ready: `True`' "${codex_goal_report}"
+grep -Fq 'total_tokens: `39238` availability=`known`' "${codex_goal_report}"
+grep -Fq 'validation_seconds: `unknown` availability=`unknown`' "${codex_goal_report}"
 
 codex_budgetlimited_snapshot="${tmpdir}/codex-goal-budgetlimited-state.json"
 cat >"${codex_budgetlimited_snapshot}" <<'JSON'
@@ -1972,6 +2005,25 @@ assert summary["thread_id"] == "thread-missing"
 assert summary["active_work_availability"] == "unknown"
 assert summary["token_usage"]["total_availability"] == "unknown"
 PY
+
+codex_invalid_stage_artifacts_dir="${tmpdir}/issue-4444-invalid-stage-artifacts/goal_metrics"
+codex_invalid_stage_err="${tmpdir}/issue-4444-invalid-stage.err"
+if python3 "${repo_root}/adl/tools/skills/sprint-conductor/scripts/record_issue_goal_stage_from_codex_session.py" \
+  --issue-number 4444 \
+  --artifacts-dir "${codex_invalid_stage_artifacts_dir}" \
+  --capture-stage issue_execution \
+  --issue-goal-ref "goal:v0.91.6:issue:4444" \
+  --metrics-confidence unknown \
+  --thread-id "thread-missing" \
+  --session-root "${tmpdir}/missing-codex-sessions" 2>"${codex_invalid_stage_err}"; then
+  echo "expected invalid capture stage to fail closed" >&2
+  exit 1
+fi
+grep -Fq "invalid choice: 'issue_execution'" "${codex_invalid_stage_err}"
+test ! -e "${codex_invalid_stage_artifacts_dir}/issue-4444-goal-metrics.jsonl"
+test ! -e "${codex_invalid_stage_artifacts_dir}/issue-4444-goal-metrics-summary.json"
+test ! -e "${codex_invalid_stage_artifacts_dir}/issue-4444-pr-publication-snapshot.json"
+test ! -d "${codex_invalid_stage_artifacts_dir}"
 
 python3 - "${repo_root}" <<'PY'
 import sys

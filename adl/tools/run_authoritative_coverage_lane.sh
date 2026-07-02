@@ -9,7 +9,9 @@ EVENT_NAME="push"
 MODE="full_authoritative_default_features"
 
 default_coverage_build_root() {
-  if [ -d /mnt ] && [ -w /mnt ]; then
+  if [ "${GITHUB_ACTIONS:-}" = "true" ]; then
+    printf '%s\n' "$ADL_DIR/target/authoritative-coverage-scratch"
+  elif [ -d /mnt ] && [ -w /mnt ]; then
     printf '/mnt/adl-authoritative-coverage\n'
   else
     printf '%s\n' "$ADL_DIR/target/authoritative-coverage-scratch"
@@ -69,16 +71,21 @@ if [ "$PRINT_PLAN" = true ]; then
   if [ "$MODE" = "full_authoritative_default_features" ]; then
     printf 'features=default\n'
     printf 'workspace=full\n'
+    printf 'targets=lib\n'
   else
     printf 'features=default\n'
     printf 'workspace=bounded_policy_surface\n'
+    printf 'targets=lib\n'
   fi
   exit 0
 fi
 
 cd "$ADL_DIR"
 
-rm -rf "$COVERAGE_BUILD_ROOT/target" "$COVERAGE_BUILD_ROOT/llvm-cov-target"
+# Keep compiled target artifacts warm across CI runs. Only clear llvm-cov output
+# so the final report reflects the current run without throwing away the build
+# cache that makes the lane practical.
+rm -rf "$COVERAGE_BUILD_ROOT/llvm-cov-target"
 mkdir -p "$COVERAGE_BUILD_ROOT/target" "$COVERAGE_BUILD_ROOT/llvm-cov-target"
 export CARGO_TARGET_DIR="$COVERAGE_BUILD_ROOT/target"
 export CARGO_LLVM_COV_TARGET_DIR="$COVERAGE_BUILD_ROOT/llvm-cov-target"
@@ -89,20 +96,22 @@ if [ "$MODE" = "full_authoritative_default_features" ]; then
   echo "Features: default"
   echo "Authoritative coverage linker mode: ${RUST_LINK_ACCEL:-default}"
   echo "Authoritative coverage cargo build jobs: ${CARGO_BUILD_JOBS}"
-  cargo llvm-cov nextest \
+  cargo llvm-cov \
+    --no-clean \
     --workspace \
-    --status-level all \
-    --final-status-level slow \
-    --no-report
+    --lib \
+    --json \
+    --summary-only \
+    --output-path coverage-summary.json
 else
   echo "Authoritative coverage mode: bounded_policy_surface_pr"
   echo "Features: default"
   echo "Full authoritative default-feature proof remains reserved for push-to-main and mixed runtime policy changes."
-  cargo llvm-cov nextest \
+  cargo llvm-cov \
+    --no-clean \
     --workspace \
-    --status-level all \
-    --final-status-level slow \
-    --no-report
+    --lib \
+    --json \
+    --summary-only \
+    --output-path coverage-summary.json
 fi
-
-cargo llvm-cov report --json --summary-only --output-path coverage-summary.json

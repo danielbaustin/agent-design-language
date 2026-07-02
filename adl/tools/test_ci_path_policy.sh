@@ -15,10 +15,45 @@ assert_has() {
   fi
 }
 
+
+assert_file_has() {
+  local file="$1"
+  local needle="$2"
+  if ! grep -Fq "$needle" "$file"; then
+    echo "expected $file to contain: $needle" >&2
+    exit 1
+  fi
+}
+
+assert_file_not_has() {
+  local file="$1"
+  local needle="$2"
+  if grep -Fq "$needle" "$file"; then
+    echo "expected $file not to contain: $needle" >&2
+    exit 1
+  fi
+}
+
+assert_current_coverage_workflow_contract() {
+  local workflow="$ROOT_DIR/.github/workflows/ci.yaml"
+  assert_file_has "$workflow" 'run: bash tools/setup_required_coverage_toolchain.sh install-lld'
+  assert_file_has "$workflow" 'bash tools/setup_required_coverage_toolchain.sh configure "$GITHUB_ENV"'
+  assert_file_has "$workflow" 'run: bash tools/setup_required_coverage_toolchain.sh verify'
+  assert_file_has "$workflow" 'run: bash tools/run_authoritative_coverage_lane.sh --authority "adl_coverage_always_on" --event-name "${{ github.event_name }}"'
+  assert_file_has "$workflow" 'run: bash tools/setup_required_coverage_toolchain.sh stats'
+  assert_file_has "$workflow" "steps.coverage-toolchain.outputs.ready == 'true'"
+  assert_file_has "$workflow" 'actual adl-coverage execution state'
+  assert_file_not_has "$workflow" 'Coverage skipped by path policy'
+  assert_file_not_has "$workflow" 'steps.coverage-impact.outputs'
+  assert_file_not_has "$workflow" 'Full coverage deferred by PR policy'
+}
+
 tmp_dir="$(mktemp -d)"
 trap 'rm -rf "$tmp_dir"' EXIT
 
 python3 "$ROOT_DIR/adl/tools/test_warm_rust_dependency_cache.py"
+bash "$ROOT_DIR/adl/tools/test_run_authoritative_coverage_lane.sh"
+assert_current_coverage_workflow_contract
 (cd "$ROOT_DIR" && bash adl/tools/test_select_validation_lanes.sh && bash adl/tools/test_validation_manager.sh)
 
 (
@@ -116,6 +151,7 @@ EOF
   assert_has "$docs_output" "validation_profile_contract_lanes_selected=false"
   assert_has "$docs_output" "coverage_lane=skip"
   assert_has "$docs_output" "coverage_authority=not_required"
+  assert_has "$docs_output" "coverage_execution_state=skipped_by_path_policy"
   assert_has "$docs_output" "proof_validation_scope=not_required"
   assert_has "$docs_output" "validation_profile_selected=docs_diff_check_profile"
   assert_has "$docs_output" "validation_profile_status=ready_to_run"
@@ -208,6 +244,7 @@ EOF
   assert_has "$cargo_structural_output" "fail_closed=false"
   assert_has "$cargo_structural_output" "coverage_lane=pr_fast"
   assert_has "$cargo_structural_output" "coverage_authority=pr_changed_surface"
+  assert_has "$cargo_structural_output" "coverage_execution_state=pr_fast_preflight_required"
   assert_has "$cargo_structural_output" "proof_validation_scope=not_required"
   assert_has "$cargo_structural_output" "reason=manifest_only_rust_wave_runs_focused_nextest"
   assert_has "$cargo_structural_output" "validation_profile_selected=rust_pr_fast_profile"
@@ -232,6 +269,7 @@ EOF
   assert_has "$runtime_output" "fail_closed=true"
   assert_has "$runtime_output" "coverage_lane=authoritative_full"
   assert_has "$runtime_output" "coverage_authority=fail_closed"
+  assert_has "$runtime_output" "coverage_execution_state=fail_closed_authoritative_full_required"
   assert_has "$runtime_output" "proof_validation_scope=not_required"
   assert_has "$runtime_output" "reason=validation_manager_escalation_requires_authoritative_full_coverage"
   assert_has "$runtime_output" "validation_profile_selected=escalated_1_lane_profile"
@@ -1133,6 +1171,7 @@ PY
   assert_has "$main_output" "ci_contracts_required=true"
   assert_has "$main_output" "coverage_lane=authoritative_full"
   assert_has "$main_output" "coverage_authority=push_main"
+  assert_has "$main_output" "coverage_execution_state=authoritative_full_required"
   assert_has "$main_output" "reason=push_main_runs_authoritative_full_coverage"
 
   fail_closed_output="$("$POLICY" --event-name pull_request --base "" --head "$runtime_head" --ref "refs/pull/1/merge")"

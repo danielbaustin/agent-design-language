@@ -1,0 +1,147 @@
+{
+  "active_work_availability": "known",
+  "active_work_seconds": 321,
+  "ci_wait_availability": "unknown",
+  "ci_wait_seconds": null,
+  "completed_at": "2026-06-22T18:44:15Z",
+  "completion_state": "completed",
+  "cumulative_metrics": {
+    "active_work_availability_counts": {
+      "known": 1,
+      "not_applicable": 0,
+      "not_available": 0,
+      "not_collected": 0,
+      "unknown": 0
+    },
+    "active_work_seconds_known_sum": 321,
+    "ci_wait_availability_counts": {
+      "known": 0,
+      "not_applicable": 0,
+      "not_available": 0,
+      "not_collected": 0,
+      "unknown": 1
+    },
+    "ci_wait_seconds_known_sum": 0,
+    "completion_state_counts": {
+      "blocked": 0,
+      "cancelled": 0,
+      "completed": 1,
+      "completed_with_follow_on": 0,
+      "deferred": 0,
+      "failed": 0,
+      "unknown": 0
+    },
+    "data_source_counts": {
+      "codex_goal_tool": 1,
+      "derived_sprint_state": 0,
+      "manual_entry": 0,
+      "unknown": 0
+    },
+    "elapsed_availability_counts": {
+      "known": 1,
+      "not_applicable": 0,
+      "not_available": 0,
+      "not_collected": 0,
+      "unknown": 0
+    },
+    "elapsed_seconds_known_sum": 321,
+    "goal_instance_count": 1,
+    "pr_wait_availability_counts": {
+      "known": 0,
+      "not_applicable": 0,
+      "not_available": 0,
+      "not_collected": 0,
+      "unknown": 1
+    },
+    "pr_wait_seconds_known_sum": 0,
+    "token_usage": {
+      "completion_availability_counts": {
+        "known": 0,
+        "not_applicable": 0,
+        "not_available": 0,
+        "not_collected": 0,
+        "unknown": 1
+      },
+      "completion_tokens_known_sum": 0,
+      "prompt_availability_counts": {
+        "known": 0,
+        "not_applicable": 0,
+        "not_available": 0,
+        "not_collected": 0,
+        "unknown": 1
+      },
+      "prompt_tokens_known_sum": 0,
+      "total_availability_counts": {
+        "known": 1,
+        "not_applicable": 0,
+        "not_available": 0,
+        "not_collected": 0,
+        "unknown": 0
+      },
+      "total_tokens_known_sum": 54321
+    },
+    "validation_availability_counts": {
+      "known": 0,
+      "not_applicable": 0,
+      "not_available": 0,
+      "not_collected": 0,
+      "unknown": 1
+    },
+    "validation_seconds_known_sum": 0
+  },
+  "data_source": "codex_goal_tool",
+  "elapsed_availability": "known",
+  "elapsed_seconds": 321,
+  "goal_id": null,
+  "goal_id_availability": "not_available",
+  "goal_instance_count": 1,
+  "goal_metrics_rollup_ref": "docs/milestones/v0.91.7/review/V0917_WP04_CODEX_SESSION_TELEMETRY_SAMPLE_4617.summary.json",
+  "goal_terminal_state": {
+    "boundary_source": "explicit",
+    "checks_state": "green",
+    "closeout_truth": "unknown",
+    "completion_allowed": true,
+    "declared_boundary": "pr_green",
+    "goal_kind": "implementation",
+    "issue_state": "open",
+    "merge_conflicts": "false",
+    "pr_state": "open",
+    "reason": "PR checks are green or explicitly skipped and review truth is current",
+    "review_truth": "current",
+    "sprint_rollup_status": "unknown",
+    "truth_status": "satisfied",
+    "watch_target_status": "unknown"
+  },
+  "issue_goal_ref": "goal:v0.91.7:issue:4617",
+  "metrics_confidence": "high",
+  "model_ref": "gpt-5-codex",
+  "phases_recorded": [
+    "pr_publication"
+  ],
+  "pr_wait_availability": "unknown",
+  "pr_wait_seconds": null,
+  "raw_log_path": "docs/milestones/v0.91.7/review/V0917_WP04_CODEX_SESSION_TELEMETRY_SAMPLE_4617.jsonl",
+  "record_count": 1,
+  "recorded_at": "2026-06-22T18:44:15Z",
+  "segments_recorded": [
+    "bound_execution"
+  ],
+  "selected_segment": "bound_execution",
+  "selected_stage": "pr_publication",
+  "session_ref": "codex-thread:thread-4617-sample",
+  "sprint_goal_ref": "goal:v0.91.7:wp-04",
+  "started_at": "2026-06-22T18:38:54Z",
+  "status": "recorded",
+  "thread_id": "thread-4617-sample",
+  "token_usage": {
+    "availability": "known",
+    "completion_availability": "unknown",
+    "completion_tokens": null,
+    "prompt_availability": "unknown",
+    "prompt_tokens": null,
+    "total_availability": "known",
+    "total_tokens": 54321
+  },
+  "validation_availability": "unknown",
+  "validation_seconds": null
+}

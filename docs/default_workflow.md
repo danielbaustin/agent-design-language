@@ -221,6 +221,40 @@ and preserves metric fields as `unknown` rather than fabricating values.
 The helper validates that the discovered goal objective matches the target
 issue number and falls back to `unknown` instead of attaching a snapshot from a
 different issue or sprint thread.
+Accepted `--capture-stage` values are: `issue_init`, `doctor_readiness`,
+`card_repair`, `execution_ready`, `issue_start`, `pr_publication`,
+`review_handoff`, `merge_closeout`, and `sprint_closeout`. The helper fails
+closed before writing artifacts for any other stage name.
+
+After the summary exists, project it into the issue-local SOR metrics section
+with the SRP/SOR updater rather than copying values by hand:
+
+```bash
+adl tooling srp-sor-update \
+  --goal-metrics-summary .adl/<version>/tasks/issue-<n>__<slug>/artifacts/goal_metrics/issue-<n>-goal-metrics-summary.json \
+  --srp .adl/<version>/tasks/issue-<n>__<slug>/srp.md \
+  --sor .adl/<version>/tasks/issue-<n>__<slug>/sor.md
+```
+
+The updater preserves `unknown`, `not_collected`, `not_available`, and
+`not_applicable` as explicit availability states. It must not translate missing
+metrics into `0`.
+
+When the issue needs a retained reporting or prediction proof from captured
+goal metrics, render the summary into a redacted Markdown report and a compact
+JSON prediction-feature packet:
+
+```bash
+python3 adl/tools/skills/sprint-conductor/scripts/write_issue_goal_metrics_report.py \
+  --summary .adl/<version>/tasks/issue-<n>__<slug>/artifacts/goal_metrics/issue-<n>-goal-metrics-summary.json \
+  --report-out .adl/<version>/tasks/issue-<n>__<slug>/artifacts/goal_metrics/issue-<n>-goal-metrics-report.md \
+  --prediction-out .adl/<version>/tasks/issue-<n>__<slug>/artifacts/goal_metrics/issue-<n>-goal-metrics-prediction.json
+```
+
+The prediction packet preserves missing timing or token fields as explicit
+availability states and declares `unknown_is_not_zero`. A packet is reporting
+and prediction ready only when a recorded summary has known elapsed seconds and
+known total tokens.
 
 ## 4.5) Prep-Scout Lane During Closeout Waits
 

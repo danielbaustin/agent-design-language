@@ -2,55 +2,61 @@
 set -euo pipefail
 
 ROOT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)"
-DEFAULT_BUILD_ROOT="$(bash "$ROOT_DIR/adl/tools/run_authoritative_coverage_lane.sh" --print-plan | awk -F= '/^build_root=/{print $2}')"
+SCRIPT="$ROOT_DIR/adl/tools/run_authoritative_coverage_lane.sh"
 
-plan="$(bash "$ROOT_DIR/adl/tools/run_authoritative_coverage_lane.sh" --print-plan)"
-
-for required in \
-  "authority=push_main" \
-  "event_name=push" \
-  "mode=full_authoritative_default_features" \
-  "build_root=$DEFAULT_BUILD_ROOT" \
-  "features=default" \
-  "workspace=full"
-do
-  if ! grep -F "$required" <<<"$plan" >/dev/null 2>&1; then
-    echo "missing authoritative coverage plan token: $required" >&2
+plan="$(GITHUB_ACTIONS=true "$SCRIPT" --print-plan --authority adl_coverage_always_on --event-name pull_request)"
+case "$plan" in
+  *"build_root=$ROOT_DIR/adl/target/authoritative-coverage-scratch"*) ;;
+  *)
+    echo "expected GitHub Actions coverage build root under cached adl/target" >&2
+    echo "$plan" >&2
     exit 1
-  fi
-done
-
-policy_plan="$(bash "$ROOT_DIR/adl/tools/run_authoritative_coverage_lane.sh" --authority pr_policy_surface_tooling_only --event-name pull_request --print-plan)"
-
-for required in \
-  "authority=pr_policy_surface_tooling_only" \
-  "event_name=pull_request" \
-  "mode=bounded_policy_surface_pr" \
-  "build_root=$DEFAULT_BUILD_ROOT" \
-  "features=default" \
-  "workspace=bounded_policy_surface"
-do
-  if ! grep -F "$required" <<<"$policy_plan" >/dev/null 2>&1; then
-    echo "missing policy-surface authoritative coverage plan token: $required" >&2
+    ;;
+esac
+case "$plan" in
+  *"targets=lib"*) ;;
+  *)
+    echo "expected authoritative coverage plan to use library targets only" >&2
+    echo "$plan" >&2
     exit 1
-  fi
-done
+    ;;
+esac
 
-runtime_policy_plan="$(bash "$ROOT_DIR/adl/tools/run_authoritative_coverage_lane.sh" --authority pr_policy_surface_runtime_mixed --event-name pull_request --print-plan)"
-
-for required in \
-  "authority=pr_policy_surface_runtime_mixed" \
-  "event_name=pull_request" \
-  "mode=full_authoritative_default_features" \
-  "build_root=$DEFAULT_BUILD_ROOT" \
-  "features=default" \
-  "workspace=full"
-do
-  if ! grep -F "$required" <<<"$runtime_policy_plan" >/dev/null 2>&1; then
-    echo "missing mixed policy-surface authoritative coverage plan token: $required" >&2
+custom_root="$ROOT_DIR/adl/target/custom-coverage-root"
+custom_plan="$(ADL_COVERAGE_BUILD_ROOT="$custom_root" "$SCRIPT" --print-plan)"
+case "$custom_plan" in
+  *"build_root=$custom_root"*) ;;
+  *)
+    echo "expected ADL_COVERAGE_BUILD_ROOT override to win" >&2
+    echo "$custom_plan" >&2
     exit 1
-  fi
+    ;;
+esac
+
+script_text="$(cat "$SCRIPT")"
+for required_fragment in \
+  "cargo llvm-cov" \
+  "--no-clean" \
+  "--workspace" \
+  "--lib" \
+  "--json" \
+  "--summary-only" \
+  "--output-path coverage-summary.json"
+do
+  case "$script_text" in
+    *"$required_fragment"*) ;;
+    *)
+      echo "expected cargo llvm-cov command shape for library-only JSON summary; missing $required_fragment" >&2
+      exit 1
+      ;;
+  esac
 done
+case "$script_text" in
+  *"cargo llvm-cov nextest"*|*"--tests"*|*"--bins"*|*"--all-targets"*)
+    echo "coverage runner must not use nextest, tests, bins, or all-targets" >&2
+    exit 1
+    ;;
+esac
 
 temp_root="$(mktemp -d)"
 trap 'rm -rf "$temp_root"' EXIT
@@ -73,9 +79,7 @@ chmod +x "$bin_dir/cargo"
 PATH="$bin_dir:$PATH" \
 AUTHORITATIVE_CARGO_LOG="$cargo_log" \
 ADL_COVERAGE_BUILD_ROOT="$scratch_root" \
-  bash "$ROOT_DIR/adl/tools/run_authoritative_coverage_lane.sh" \
-    --authority pr_policy_surface_tooling_only \
-    --event-name pull_request
+  bash "$SCRIPT" --authority pr_policy_surface_tooling_only --event-name pull_request
 
 for required_dir in "$scratch_root/target" "$scratch_root/llvm-cov-target"; do
   if [ ! -d "$required_dir" ]; then
@@ -85,8 +89,7 @@ for required_dir in "$scratch_root/target" "$scratch_root/llvm-cov-target"; do
 done
 
 for required in \
-  "cmd=llvm-cov nextest --workspace --status-level all --final-status-level slow --no-report" \
-  "cmd=llvm-cov report --json --summary-only --output-path coverage-summary.json" \
+  "cmd=llvm-cov --no-clean --workspace --lib --json --summary-only --output-path coverage-summary.json" \
   "target=$scratch_root/target" \
   "llvm_cov_target=$scratch_root/llvm-cov-target"
 do
@@ -103,7 +106,7 @@ AUTHORITATIVE_CARGO_LOG="$lld_cargo_log" \
 ADL_COVERAGE_BUILD_ROOT="$scratch_root" \
 RUST_LINK_ACCEL="lld" \
 ADL_AUTHORITATIVE_COVERAGE_BUILD_JOBS="1" \
-  bash "$ROOT_DIR/adl/tools/run_authoritative_coverage_lane.sh"
+  bash "$SCRIPT"
 
 for required in \
   "build_jobs=1" \

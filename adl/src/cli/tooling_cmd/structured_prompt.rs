@@ -71,6 +71,16 @@ fn validate_unknown_or_nonnegative_int(field: &str, actual: &str) -> Result<()> 
     Ok(())
 }
 
+fn validate_unknown_or_availability_or_nonnegative_int(field: &str, actual: &str) -> Result<()> {
+    if matches!(
+        actual,
+        "unknown" | "not_collected" | "not_available" | "not_applicable"
+    ) {
+        return Ok(());
+    }
+    validate_unknown_or_nonnegative_int(field, actual)
+}
+
 fn validate_optional_yaml_metric_field(fm: &serde_yaml::Mapping, field: &str) -> Result<()> {
     if let Some(value) = mapping_string(fm, field) {
         validate_unknown_or_positive_int(field, &value)?;
@@ -104,6 +114,11 @@ fn validate_optional_markdown_metric_field(section: &str, label: &str) -> Result
     if let Some(value) = markdown_metric_field(section, label) {
         if label == "Estimate error percent" {
             validate_unknown_or_nonnegative_int(&format!("Issue Metrics Truth.{label}"), &value)?;
+        } else if label.starts_with("Actual ") {
+            validate_unknown_or_availability_or_nonnegative_int(
+                &format!("Issue Metrics Truth.{label}"),
+                &value,
+            )?;
         } else {
             validate_unknown_or_positive_int(&format!("Issue Metrics Truth.{label}"), &value)?;
         }
@@ -112,7 +127,7 @@ fn validate_optional_markdown_metric_field(section: &str, label: &str) -> Result
 }
 
 fn metrics_pair_known(left: &str, right: &str) -> bool {
-    left != "unknown" && right != "unknown"
+    left.parse::<u64>().is_ok() && right.parse::<u64>().is_ok()
 }
 
 fn metrics_pair_exceeds_variance_threshold(left: &str, right: &str) -> Option<bool> {

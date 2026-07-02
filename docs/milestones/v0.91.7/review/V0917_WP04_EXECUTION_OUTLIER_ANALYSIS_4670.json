@@ -1,0 +1,341 @@
+{
+  "schema": "adl.v0917.execution_outlier_analysis.v1",
+  "issue": 4670,
+  "source": {
+    "input_csv": "docs/milestones/v0.91.6/review/V0916_WORKFLOW_METRIC_BACKFILL_INVENTORY_4441.csv",
+    "backfill_issue": 4441,
+    "consumption_issue": 4669
+  },
+  "summary": {
+    "surveyed_issue_count": 348,
+    "closed_issue_count": 348,
+    "row_contract_counts": {
+      "complete": 348
+    },
+    "metric_availability_counts": {
+      "cycle_only_recovered": 24,
+      "full_metrics_known": 32,
+      "timing_recovered_token_gap": 292
+    },
+    "row_confidence_counts": {
+      "high": 32,
+      "low": 316
+    }
+  },
+  "metrics": {
+    "actual_session_elapsed_seconds": {
+      "known_count": 323,
+      "unknown_count": 24,
+      "invalid_count": 1,
+      "min": 0,
+      "median": 875,
+      "p90": 30560,
+      "p95": 64218,
+      "max": 162409,
+      "outlier_count": 17,
+      "top_outliers": [
+        {
+          "issue_number": 3972,
+          "title": "[v0.91.6][WP-07][security] Complete security bridge readiness and CAV route",
+          "value": 162409,
+          "status": "derived",
+          "metric_availability_class": "timing_recovered_token_gap",
+          "row_confidence": "low"
+        },
+        {
+          "issue_number": 3973,
+          "title": "[v0.91.6][WP-08][identity] Complete identity continuity and capability-selector bridge",
+          "value": 162409,
+          "status": "derived",
+          "metric_availability_class": "timing_recovered_token_gap",
+          "row_confidence": "low"
+        },
+        {
+          "issue_number": 3975,
+          "title": "[v0.91.6][WP-10][memory] Account for AEE, Memory/ObsMem, Memory Palace, and ACP",
+          "value": 162408,
+          "status": "derived",
+          "metric_availability_class": "timing_recovered_token_gap",
+          "row_confidence": "low"
+        },
+        {
+          "issue_number": 4241,
+          "title": "[v0.91.6][runtime][sprint] Runtime resilience follow-on sprint",
+          "value": 93744,
+          "status": "derived",
+          "metric_availability_class": "timing_recovered_token_gap",
+          "row_confidence": "low"
+        },
+        {
+          "issue_number": 3966,
+          "title": "[v0.91.6][WP-01][planning] Promote v0.91.6 issue wave and schedule existing work",
+          "value": 93496,
+          "status": "derived",
+          "metric_availability_class": "timing_recovered_token_gap",
+          "row_confidence": "low"
+        },
+        {
+          "issue_number": 4012,
+          "title": "[v0.91.6][WP-05][provider][M-05] Complete provider/model reliability closeout matrix",
+          "value": 90990,
+          "status": "derived",
+          "metric_availability_class": "timing_recovered_token_gap",
+          "row_confidence": "low"
+        },
+        {
+          "issue_number": 3967,
+          "title": "[v0.91.6][WP-02][resilience] Resilience layer mini-sprint umbrella",
+          "value": 90574,
+          "status": "derived",
+          "metric_availability_class": "timing_recovered_token_gap",
+          "row_confidence": "low"
+        },
+        {
+          "issue_number": 3970,
+          "title": "[v0.91.6][WP-05][provider] Complete provider/model reliability and multi-agent readiness",
+          "value": 90425,
+          "status": "derived",
+          "metric_availability_class": "timing_recovered_token_gap",
+          "row_confidence": "low"
+        },
+        {
+          "issue_number": 4341,
+          "title": "[v0.91.6][WP-09][observatory][O-06] Rebuild the HTML Observatory as a mobile-capable governed surface",
+          "value": 87946,
+          "status": "derived",
+          "metric_availability_class": "timing_recovered_token_gap",
+          "row_confidence": "low"
+        },
+        {
+          "issue_number": 4286,
+          "title": "[v0.91.6][tools][projection] Move PR closing-linkage guard into Rust/PVF",
+          "value": 79593,
+          "status": "derived",
+          "metric_availability_class": "timing_recovered_token_gap",
+          "row_confidence": "low"
+        },
+        {
+          "issue_number": 4167,
+          "title": "[v0.91.6][acip][runtime][R-04] Prove the first local multi-agent ACIP runtime slice",
+          "value": 78192,
+          "status": "derived",
+          "metric_availability_class": "timing_recovered_token_gap",
+          "row_confidence": "low"
+        },
+        {
+          "issue_number": 4438,
+          "title": "[v0.91.6][csdlc][adoption] Prove full operational C-SDLC path on a fresh issue",
+          "value": 77602,
+          "status": "derived",
+          "metric_availability_class": "timing_recovered_token_gap",
+          "row_confidence": "low"
+        },
+        {
+          "issue_number": 4543,
+          "title": "[v0.91.6][runtime][soak] Execute integrated runtime/ops Soak #1",
+          "value": 76501,
+          "status": "derived",
+          "metric_availability_class": "timing_recovered_token_gap",
+          "row_confidence": "low"
+        },
+        {
+          "issue_number": 4394,
+          "title": "[v0.91.6][tools][templates] Repair prompt-card template edge cases",
+          "value": 71842,
+          "status": "derived",
+          "metric_availability_class": "timing_recovered_token_gap",
+          "row_confidence": "low"
+        },
+        {
+          "issue_number": 4390,
+          "title": "[v0.91.6][tools][pvf] Externalize PVF lane selection and configuration",
+          "value": 68568,
+          "status": "derived",
+          "metric_availability_class": "timing_recovered_token_gap",
+          "row_confidence": "low"
+        }
+      ],
+      "invalid_rows": [
+        {
+          "issue_number": 4149,
+          "title": "[v0.91.6][tools] Execute workflow-control tools mini-sprint",
+          "raw_value": "-41431",
+          "status": "derived",
+          "metric_availability_class": "timing_recovered_token_gap",
+          "row_confidence": "low"
+        }
+      ]
+    },
+    "github_cycle_time_seconds": {
+      "known_count": 348,
+      "unknown_count": 0,
+      "invalid_count": 0,
+      "min": 122,
+      "median": 44640,
+      "p90": 165664,
+      "p95": 261493,
+      "max": 955044,
+      "outlier_count": 18,
+      "top_outliers": [
+        {
+          "issue_number": 3984,
+          "title": "[v0.91.6][WP-19][release] Release ceremony",
+          "value": 955044,
+          "status": "derived",
+          "metric_availability_class": "full_metrics_known",
+          "row_confidence": "high"
+        },
+        {
+          "issue_number": 3983,
+          "title": "[v0.91.6][WP-18][review] Next milestone review pass",
+          "value": 948361,
+          "status": "derived",
+          "metric_availability_class": "timing_recovered_token_gap",
+          "row_confidence": "low"
+        },
+        {
+          "issue_number": 3982,
+          "title": "[v0.91.6][WP-17][planning] Next milestone planning and v0.91.7 handoff",
+          "value": 946330,
+          "status": "derived",
+          "metric_availability_class": "timing_recovered_token_gap",
+          "row_confidence": "low"
+        },
+        {
+          "issue_number": 3981,
+          "title": "[v0.91.6][WP-16][review] Findings remediation and final preflight",
+          "value": 943815,
+          "status": "derived",
+          "metric_availability_class": "timing_recovered_token_gap",
+          "row_confidence": "low"
+        },
+        {
+          "issue_number": 3980,
+          "title": "[v0.91.6][WP-15][review] External and third-party review",
+          "value": 943780,
+          "status": "derived",
+          "metric_availability_class": "timing_recovered_token_gap",
+          "row_confidence": "low"
+        },
+        {
+          "issue_number": 3978,
+          "title": "[v0.91.6][WP-13][docs] Docs and review-surface alignment",
+          "value": 854168,
+          "status": "derived",
+          "metric_availability_class": "timing_recovered_token_gap",
+          "row_confidence": "low"
+        },
+        {
+          "issue_number": 3977,
+          "title": "[v0.91.6][WP-12][quality] Coverage and quality gate",
+          "value": 850474,
+          "status": "derived",
+          "metric_availability_class": "timing_recovered_token_gap",
+          "row_confidence": "low"
+        },
+        {
+          "issue_number": 3976,
+          "title": "[v0.91.6][WP-11][demo] Demo matrix and proof convergence",
+          "value": 849703,
+          "status": "derived",
+          "metric_availability_class": "timing_recovered_token_gap",
+          "row_confidence": "low"
+        },
+        {
+          "issue_number": 3979,
+          "title": "[v0.91.6][WP-14][review] Internal review and pre-v0.92 burn-down checklist",
+          "value": 536616,
+          "status": "derived",
+          "metric_availability_class": "timing_recovered_token_gap",
+          "row_confidence": "low"
+        },
+        {
+          "issue_number": 3974,
+          "title": "[v0.91.6][WP-09][observatory] Implement Observatory and Unity demo readiness",
+          "value": 362254,
+          "status": "derived",
+          "metric_availability_class": "timing_recovered_token_gap",
+          "row_confidence": "low"
+        },
+        {
+          "issue_number": 4035,
+          "title": "[v0.91.6][WP-09][observatory][O-05] Complete working Unity Observatory closeout proof",
+          "value": 349869,
+          "status": "derived",
+          "metric_availability_class": "timing_recovered_token_gap",
+          "row_confidence": "low"
+        },
+        {
+          "issue_number": 4034,
+          "title": "[v0.91.6][WP-09][observatory][O-04] Complete logging OTel and security consumption proof",
+          "value": 349204,
+          "status": "derived",
+          "metric_availability_class": "timing_recovered_token_gap",
+          "row_confidence": "low"
+        },
+        {
+          "issue_number": 4033,
+          "title": "[v0.91.6][WP-09][observatory][O-03] Implement inhabitant-readiness surfaces",
+          "value": 320804,
+          "status": "derived",
+          "metric_availability_class": "timing_recovered_token_gap",
+          "row_confidence": "low"
+        },
+        {
+          "issue_number": 4032,
+          "title": "[v0.91.6][WP-09][observatory][O-02] Implement ADL evidence data contract for Observatory",
+          "value": 318713,
+          "status": "derived",
+          "metric_availability_class": "timing_recovered_token_gap",
+          "row_confidence": "low"
+        },
+        {
+          "issue_number": 4622,
+          "title": "[v0.91.6][tools][github] Add repo-native PR inventory for release-tail review",
+          "value": 315288,
+          "status": "derived",
+          "metric_availability_class": "timing_recovered_token_gap",
+          "row_confidence": "low"
+        }
+      ],
+      "invalid_rows": []
+    },
+    "actual_total_tokens": {
+      "known_count": 32,
+      "unknown_count": 316,
+      "invalid_count": 0,
+      "min": 41582,
+      "median": 264239,
+      "p90": 1021648,
+      "p95": 1937899,
+      "max": 9333614,
+      "outlier_count": 2,
+      "top_outliers": [
+        {
+          "issue_number": 4417,
+          "title": "[v0.91.6][tools][mini-sprint] Validation throughput and lifecycle automation",
+          "value": 9333614,
+          "status": "explicit",
+          "metric_availability_class": "full_metrics_known",
+          "row_confidence": "high"
+        },
+        {
+          "issue_number": 4529,
+          "title": "[v0.91.6][demo] Migrate Unity Observatory to Unity 6.5 baseline",
+          "value": 1937899,
+          "status": "explicit",
+          "metric_availability_class": "full_metrics_known",
+          "row_confidence": "high"
+        }
+      ],
+      "invalid_rows": []
+    }
+  },
+  "non_claims": [
+    "Unknown values are excluded from percentile and outlier thresholds, not treated as zero.",
+    "Invalid numeric values are excluded from thresholds and counted separately from unknown values.",
+    "Historical token totals remain sparse; token outliers cover only rows with explicit token evidence.",
+    "This analysis is descriptive over the retained backfill artifact and is not a predictive model.",
+    "The report reflects the input CSV at runtime."
+  ]
+}

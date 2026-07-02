@@ -3,12 +3,19 @@ set -euo pipefail
 
 ROOT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)"
 ONLY_CHECKS=",${ADL_V0913_PROOF_ONLY_CHECKS:-},"
+DRY_RUN="${ADL_V0913_PROOF_DRY_RUN:-false}"
 
 run_check() {
   local key="$1"
   shift
   if [[ "$ONLY_CHECKS" != ",," && "$ONLY_CHECKS" != *",$key,"* ]]; then
     echo "SKIP $key (filtered)"
+    return 0
+  fi
+  if [ "$DRY_RUN" = "true" ]; then
+    printf 'DRY-RUN %s' "$key"
+    printf ' %q' "$@"
+    printf '\n'
     return 0
   fi
   echo "RUN  $key"
