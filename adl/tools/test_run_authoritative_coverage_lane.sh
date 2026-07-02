@@ -13,6 +13,14 @@ case "$plan" in
     exit 1
     ;;
 esac
+case "$plan" in
+  *"targets=lib,tests"*) ;;
+  *)
+    echo "expected authoritative coverage plan to use library and integration test targets" >&2
+    echo "$plan" >&2
+    exit 1
+    ;;
+esac
 
 custom_root="$ROOT_DIR/adl/target/custom-coverage-root"
 custom_plan="$(ADL_COVERAGE_BUILD_ROOT="$custom_root" "$SCRIPT" --print-plan)"

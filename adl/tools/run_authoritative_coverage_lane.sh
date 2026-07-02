@@ -69,9 +69,11 @@ if [ "$PRINT_PLAN" = true ]; then
   if [ "$MODE" = "full_authoritative_default_features" ]; then
     printf 'features=default\n'
     printf 'workspace=full\n'
+    printf 'targets=lib,tests\n'
   else
     printf 'features=default\n'
     printf 'workspace=bounded_policy_surface\n'
+    printf 'targets=lib,tests\n'
   fi
   exit 0
 fi
@@ -91,6 +93,8 @@ if [ "$MODE" = "full_authoritative_default_features" ]; then
   echo "Features: default"
   cargo llvm-cov nextest \
     --workspace \
+    --lib \
+    --tests \
     --status-level all \
     --final-status-level slow \
     --no-report
@@ -100,6 +104,8 @@ else
   echo "Full authoritative default-feature proof remains reserved for push-to-main and mixed runtime policy changes."
   cargo llvm-cov nextest \
     --workspace \
+    --lib \
+    --tests \
     --status-level all \
     --final-status-level slow \
     --no-report
