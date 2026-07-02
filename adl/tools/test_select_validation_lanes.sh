@@ -83,6 +83,34 @@ assert_has "$TMP/remote-validation-tool.out" "aggregate_status=selected"
 assert_has "$TMP/remote-validation-tool.out" "ci_path_policy_contracts status=selected"
 assert_not_has "$TMP/remote-validation-tool.out" "unmapped_change_surface"
 
+aws_remote_validation_tool="$TMP/aws-remote-validation-tool.txt"
+printf 'A\ttools/aws_remote_validation/src/aws_remote_validation.rs\n' >"$aws_remote_validation_tool"
+bash "$SCRIPT" --changed-files "$aws_remote_validation_tool" >"$TMP/aws-remote-validation-tool.out"
+assert_has "$TMP/aws-remote-validation-tool.out" "aggregate_status=selected"
+assert_has "$TMP/aws-remote-validation-tool.out" "aws_remote_validation_tooling status=selected"
+assert_not_has "$TMP/aws-remote-validation-tool.out" "unmapped_change_surface"
+
+issue_4603_surface="$TMP/issue-4603-surface.txt"
+cat >"$issue_4603_surface" <<'EOF'
+M	adl/Cargo.lock
+M	adl/Cargo.toml
+A	adl/src/aws_remote_validation.rs
+A	adl/src/bin/adl_aws_remote_validation.rs
+A	docs/milestones/v0.91.7/features/AWS_SPOT_REMOTE_VALIDATION_LANE_v0.91.7.md
+A	tools/aws_remote_validation/Cargo.lock
+A	tools/aws_remote_validation/Cargo.toml
+A	tools/aws_remote_validation/scripts/remote_validation_runner.sh
+A	tools/aws_remote_validation/scripts/ssh_debug_control.sh
+A	tools/aws_remote_validation/src/aws_remote_validation.rs
+A	tools/aws_remote_validation/src/bin/adl_aws_remote_validation.rs
+A	tools/aws_remote_validation/src/cli/observability.rs
+EOF
+bash "$SCRIPT" --changed-files "$issue_4603_surface" >"$TMP/issue-4603-surface.out"
+assert_has "$TMP/issue-4603-surface.out" "aggregate_status=selected"
+assert_has "$TMP/issue-4603-surface.out" "aws_remote_validation_tooling status=selected"
+assert_has "$TMP/issue-4603-surface.out" "rust_pr_fast status=selected"
+assert_not_has "$TMP/issue-4603-surface.out" "unmapped_change_surface"
+
 release_gate="$TMP/release-gate.txt"
 printf 'M\t.github/workflows/ci.yaml\n' >"$release_gate"
 bash "$SCRIPT" --changed-files "$release_gate" >"$TMP/release.out"

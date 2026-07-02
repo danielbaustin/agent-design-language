@@ -414,6 +414,31 @@
       "reason": "bounded_windows_ssm_status_wrapper_requires_static_contract_validation"
     },
     {
+      "id": "aws_remote_validation_tooling",
+      "lane_class": "cli_workflow",
+      "default_surface": "tooling",
+      "owner": "tools",
+      "proof_role": "regression",
+      "requirement_ids": [
+        "aws_remote_validation_tooling"
+      ],
+      "path_selectors": [
+        "tools/aws_remote_validation/Cargo.toml",
+        "tools/aws_remote_validation/Cargo.lock",
+        "tools/aws_remote_validation/scripts/**",
+        "tools/aws_remote_validation/src/**"
+      ],
+      "path_hints": [
+        "tools/aws_remote_validation/Cargo.toml",
+        "tools/aws_remote_validation/Cargo.lock",
+        "tools/aws_remote_validation/scripts/**",
+        "tools/aws_remote_validation/src/**"
+      ],
+      "command": "bash -n tools/aws_remote_validation/scripts/remote_validation_runner.sh && bash -n tools/aws_remote_validation/scripts/ssh_debug_control.sh && cargo check --manifest-path tools/aws_remote_validation/Cargo.toml --bin adl-aws-remote-validation && cargo test --manifest-path tools/aws_remote_validation/Cargo.toml --bin adl-aws-remote-validation -- --nocapture",
+      "run_command": "bash -n tools/aws_remote_validation/scripts/remote_validation_runner.sh && bash -n tools/aws_remote_validation/scripts/ssh_debug_control.sh && cargo check --manifest-path tools/aws_remote_validation/Cargo.toml --bin adl-aws-remote-validation && cargo test --manifest-path tools/aws_remote_validation/Cargo.toml --bin adl-aws-remote-validation -- --nocapture",
+      "reason": "aws_remote_validation_tool_surface_requires_focused_tooling_regression_checks"
+    },
+    {
       "id": "validation_lane_selector_contracts",
       "lane_class": "cli_workflow",
       "default_surface": "tooling",
