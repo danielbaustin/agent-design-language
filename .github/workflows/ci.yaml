@@ -392,6 +392,7 @@ jobs:
             echo "| profile status | \`${{ steps.path-policy.outputs.validation_profile_status }}\` |"
             echo "| coverage lane | \`${{ steps.path-policy.outputs.coverage_lane }}\` |"
             echo "| coverage authority | \`${{ steps.path-policy.outputs.coverage_authority }}\` |"
+            echo "| coverage execution state | \`${{ steps.path-policy.outputs.coverage_execution_state }}\` |"
             echo "| profile run lanes | \`${{ steps.path-policy.outputs.validation_profile_run_lanes }}\` |"
             echo "| escalation required | \`${{ steps.path-policy.outputs.validation_profile_escalation_required }}\` |"
           } >> "$GITHUB_STEP_SUMMARY"
@@ -531,6 +532,7 @@ jobs:
           echo "Policy reason: ${{ steps.path-policy.outputs.reason }}"
           echo "Coverage lane: ${{ steps.path-policy.outputs.coverage_lane }}"
           echo "Coverage authority: ${{ steps.path-policy.outputs.coverage_authority }}"
+          echo "Coverage execution state: ${{ steps.path-policy.outputs.coverage_execution_state }}"
         working-directory: .
 
       - name: Enforce coverage policy gates (workspace + per-file)
@@ -552,6 +554,7 @@ jobs:
           echo "Policy reason: ${{ steps.path-policy.outputs.reason }}"
           echo "Coverage lane: ${{ steps.path-policy.outputs.coverage_lane }}"
           echo "Coverage authority: ${{ steps.path-policy.outputs.coverage_authority }}"
+          echo "Coverage execution state: ${{ steps.path-policy.outputs.coverage_execution_state }}"
 
       - name: Coverage (ADL Rust workspace lcov)
         if: github.event_name != 'pull_request' && steps.path-policy.outputs.full_coverage_required == 'true' && steps.path-policy.outputs.coverage_authority != 'pr_policy_surface_tooling_only'
@@ -595,6 +598,7 @@ jobs:
           echo "This keeps the adl-coverage check stable while avoiding full cargo-llvm-cov for docs/planning/tools-only PRs."
           echo "Coverage lane: ${{ steps.path-policy.outputs.coverage_lane }}"
           echo "Coverage authority: ${{ steps.path-policy.outputs.coverage_authority }}"
+          echo "Coverage execution state: ${{ steps.path-policy.outputs.coverage_execution_state }}"
         working-directory: .
 
       - name: Upload coverage to Codecov
