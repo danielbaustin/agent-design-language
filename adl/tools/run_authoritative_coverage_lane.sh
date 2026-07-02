@@ -78,7 +78,10 @@ fi
 
 cd "$ADL_DIR"
 
-rm -rf "$COVERAGE_BUILD_ROOT/target" "$COVERAGE_BUILD_ROOT/llvm-cov-target"
+# Keep compiled target artifacts warm across CI runs. Only clear llvm-cov output
+# so the final report reflects the current run without throwing away the build
+# cache that makes the lane practical.
+rm -rf "$COVERAGE_BUILD_ROOT/llvm-cov-target"
 mkdir -p "$COVERAGE_BUILD_ROOT/target" "$COVERAGE_BUILD_ROOT/llvm-cov-target"
 export CARGO_TARGET_DIR="$COVERAGE_BUILD_ROOT/target"
 export CARGO_LLVM_COV_TARGET_DIR="$COVERAGE_BUILD_ROOT/llvm-cov-target"

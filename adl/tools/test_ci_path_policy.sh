@@ -53,6 +53,7 @@ trap 'rm -rf "$tmp_dir"' EXIT
 
 python3 "$ROOT_DIR/adl/tools/test_warm_rust_dependency_cache.py"
 bash "$ROOT_DIR/adl/tools/test_setup_required_coverage_toolchain.sh"
+bash "$ROOT_DIR/adl/tools/test_run_authoritative_coverage_lane.sh"
 assert_current_coverage_workflow_contract
 (cd "$ROOT_DIR" && bash adl/tools/test_select_validation_lanes.sh && bash adl/tools/test_validation_manager.sh)
 
