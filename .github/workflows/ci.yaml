@@ -390,40 +390,21 @@ jobs:
             echo "| reason | \`${{ steps.path-policy.outputs.reason }}\` |"
             echo "| selected profile | \`${{ steps.path-policy.outputs.validation_profile_selected }}\` |"
             echo "| profile status | \`${{ steps.path-policy.outputs.validation_profile_status }}\` |"
-            echo "| coverage lane | \`${{ steps.path-policy.outputs.coverage_lane }}\` |"
-            echo "| coverage authority | \`${{ steps.path-policy.outputs.coverage_authority }}\` |"
-            echo "| coverage execution state | \`${{ steps.path-policy.outputs.coverage_execution_state }}\` |"
+            echo "| policy coverage lane | \`${{ steps.path-policy.outputs.coverage_lane }}\` |"
+            echo "| policy coverage authority | \`${{ steps.path-policy.outputs.coverage_authority }}\` |"
+            echo "| policy coverage execution state | \`${{ steps.path-policy.outputs.coverage_execution_state }}\` |"
+            echo "| actual adl-coverage execution state | `authoritative_full_required` |"
             echo "| profile run lanes | \`${{ steps.path-policy.outputs.validation_profile_run_lanes }}\` |"
             echo "| escalation required | \`${{ steps.path-policy.outputs.validation_profile_escalation_required }}\` |"
           } >> "$GITHUB_STEP_SUMMARY"
         working-directory: .
 
-      - name: Determine PR fast coverage filters
-        id: coverage-impact
-        if: github.event_name == 'pull_request' && steps.path-policy.outputs.coverage_required == 'true' && steps.path-policy.outputs.full_coverage_required != 'true'
-        run: |
-          set -euo pipefail
-          bash adl/tools/check_coverage_impact.sh \
-            --base "${{ github.event.pull_request.base.sha }}" \
-            --head "${{ github.event.pull_request.head.sha }}" \
-            --print-risk-nextest-expression > adl/coverage-impact-filter-expression.txt
-          if test -s adl/coverage-impact-filter-expression.txt; then
-            echo "needs_fast_summary=true" >> "$GITHUB_OUTPUT"
-            echo "filter_expression=$(cat adl/coverage-impact-filter-expression.txt)" >> "$GITHUB_OUTPUT"
-          else
-            echo "needs_fast_summary=false" >> "$GITHUB_OUTPUT"
-            echo "filter_expression=" >> "$GITHUB_OUTPUT"
-          fi
-        working-directory: .
-
       - name: Install Rust toolchain
-        if: steps.path-policy.outputs.full_coverage_required == 'true' || steps.coverage-impact.outputs.needs_fast_summary == 'true'
         uses: dtolnay/rust-toolchain@631a55b12751854ce901bb631d5902ceb48146f7 # stable
         with:
           components: llvm-tools-preview
 
       - name: Rust cache
-        if: steps.path-policy.outputs.full_coverage_required == 'true' || steps.coverage-impact.outputs.needs_fast_summary == 'true'
         uses: Swatinem/rust-cache@779680da715d629ac1d338a641029a2f4372abb5 # v2
         with:
           workspaces: |
@@ -432,63 +413,32 @@ jobs:
             ~/.cache/sccache
 
       - name: Install cargo-llvm-cov
-        if: steps.path-policy.outputs.full_coverage_required == 'true' || steps.coverage-impact.outputs.needs_fast_summary == 'true'
         uses: taiki-e/install-action@e5c52b603cc5f5e9b52b6a43afad8e9fe0527090 # cargo-llvm-cov
 
       - name: Install sccache for coverage
-        if: steps.path-policy.outputs.full_coverage_required == 'true' || steps.coverage-impact.outputs.needs_fast_summary == 'true'
         uses: taiki-e/install-action@e5c52b603cc5f5e9b52b6a43afad8e9fe0527090 # install-action
         with:
           tool: sccache
 
       - name: Install lld for coverage
-        if: steps.path-policy.outputs.full_coverage_required == 'true' || steps.coverage-impact.outputs.needs_fast_summary == 'true'
-        run: |
-          if ! command -v ld.lld >/dev/null 2>&1; then
-            # GitHub-hosted runners can carry browser apt sources unrelated to
-            # Rust. Keep lld installation isolated from transient Chrome mirror
-            # sync failures.
-            sudo find /etc/apt/sources.list.d -type f -name '*google-chrome*' -exec mv {} {}.disabled \; 2>/dev/null || true
-            sudo apt-get update
-            sudo apt-get install -y lld
-          fi
-          command -v ld.lld
+        run: bash tools/setup_required_coverage_toolchain.sh install-lld
 
       - name: Configure Rust acceleration for coverage
-        if: steps.path-policy.outputs.full_coverage_required == 'true' || steps.coverage-impact.outputs.needs_fast_summary == 'true'
+        id: coverage-toolchain
         run: |
-          mkdir -p "$HOME/.cache/sccache"
-          echo "SCCACHE_DIR=$HOME/.cache/sccache" >> "$GITHUB_ENV"
-          echo "SCCACHE_CACHE_SIZE=2G" >> "$GITHUB_ENV"
-          echo "RUSTC_WRAPPER=sccache" >> "$GITHUB_ENV"
-          if ! command -v ld.lld >/dev/null 2>&1; then
-            echo "::error::ld.lld is unavailable after the install step"
-            exit 1
-          fi
-          echo "RUSTFLAGS=-C link-arg=-fuse-ld=lld" >> "$GITHUB_ENV"
-          echo "RUST_LINK_ACCEL=lld" >> "$GITHUB_ENV"
-          sccache --zero-stats || true
+          bash tools/setup_required_coverage_toolchain.sh configure "$GITHUB_ENV"
+          echo "ready=true" >> "$GITHUB_OUTPUT"
 
       - name: Install cargo-nextest for coverage
-        if: steps.path-policy.outputs.full_coverage_required == 'true' || steps.coverage-impact.outputs.needs_fast_summary == 'true'
         uses: taiki-e/install-action@e5c52b603cc5f5e9b52b6a43afad8e9fe0527090 # install-action
         with:
           tool: nextest
 
-      - name: Coverage run and summary (json)
-        if: steps.path-policy.outputs.full_coverage_required == 'true'
-        run: bash tools/run_authoritative_coverage_lane.sh --authority "${{ steps.path-policy.outputs.coverage_authority }}" --event-name "${{ github.event_name }}"
+      - name: Verify required coverage toolchain
+        run: bash tools/setup_required_coverage_toolchain.sh verify
 
-      - name: PR fast coverage summary (json)
-        if: github.event_name == 'pull_request' && steps.path-policy.outputs.coverage_required == 'true' && steps.path-policy.outputs.full_coverage_required != 'true' && steps.coverage-impact.outputs.needs_fast_summary == 'true'
-        run: |
-          rm -rf target/debug target/llvm-cov-target
-          COVERAGE_BUILD_ROOT="${RUNNER_TEMP:-/tmp}/adl-pr-fast-coverage"
-          mkdir -p "$COVERAGE_BUILD_ROOT/target" "$COVERAGE_BUILD_ROOT/llvm-cov-target"
-          export CARGO_TARGET_DIR="$COVERAGE_BUILD_ROOT/target"
-          export CARGO_LLVM_COV_TARGET_DIR="$COVERAGE_BUILD_ROOT/llvm-cov-target"
-          CARGO_INCREMENTAL=0 cargo llvm-cov nextest --workspace --status-level all --final-status-level slow --no-report -E "${{ steps.coverage-impact.outputs.filter_expression }}"
-          cargo llvm-cov report --json --summary-only --output-path coverage-summary.json
+      - name: Coverage run and summary (json)
+        run: bash tools/run_authoritative_coverage_lane.sh --authority "adl_coverage_always_on" --event-name "${{ github.event_name }}"
 
       - name: Coverage-impact changed-source gate
         if: github.event_name == 'pull_request' && steps.path-policy.outputs.full_coverage_required == 'true'
@@ -500,39 +450,6 @@ jobs:
             --head "${{ github.event.pull_request.head.sha }}" \
             --summary adl/coverage-summary.json \
             --threshold "$PER_FILE_LINE_THRESHOLD"
-        working-directory: .
-
-      - name: PR coverage-impact preflight
-        if: github.event_name == 'pull_request' && steps.path-policy.outputs.coverage_required == 'true' && steps.path-policy.outputs.full_coverage_required != 'true'
-        env:
-          PER_FILE_LINE_THRESHOLD: "80"
-        run: |
-          if [ "${{ steps.coverage-impact.outputs.needs_fast_summary }}" = "true" ]; then
-            bash adl/tools/check_coverage_impact.sh \
-              --base "${{ github.event.pull_request.base.sha }}" \
-              --head "${{ github.event.pull_request.head.sha }}" \
-              --summary adl/coverage-summary.json \
-              --require-summary-for-risk \
-              --threshold "$PER_FILE_LINE_THRESHOLD"
-          else
-            bash adl/tools/check_coverage_impact.sh \
-              --base "${{ github.event.pull_request.base.sha }}" \
-              --head "${{ github.event.pull_request.head.sha }}" \
-              --require-summary-for-risk \
-              --threshold "$PER_FILE_LINE_THRESHOLD"
-          fi
-        working-directory: .
-
-      - name: Full coverage deferred by PR policy
-        if: github.event_name == 'pull_request' && steps.path-policy.outputs.coverage_required == 'true' && steps.path-policy.outputs.full_coverage_required != 'true'
-        run: |
-          echo "Full cargo-llvm-cov is deferred for this PR to avoid duplicate full test execution."
-          echo "This check ran the changed-source coverage-impact preflight instead."
-          echo "Full coverage remains required on push-to-main, nightly coverage ratchet, and fail-closed classification."
-          echo "Policy reason: ${{ steps.path-policy.outputs.reason }}"
-          echo "Coverage lane: ${{ steps.path-policy.outputs.coverage_lane }}"
-          echo "Coverage authority: ${{ steps.path-policy.outputs.coverage_authority }}"
-          echo "Coverage execution state: ${{ steps.path-policy.outputs.coverage_execution_state }}"
         working-directory: .
 
       - name: Enforce coverage policy gates (workspace + per-file)
@@ -554,7 +471,8 @@ jobs:
           echo "Policy reason: ${{ steps.path-policy.outputs.reason }}"
           echo "Coverage lane: ${{ steps.path-policy.outputs.coverage_lane }}"
           echo "Coverage authority: ${{ steps.path-policy.outputs.coverage_authority }}"
-          echo "Coverage execution state: ${{ steps.path-policy.outputs.coverage_execution_state }}"
+          echo "Policy coverage execution state: ${{ steps.path-policy.outputs.coverage_execution_state }}"
+          echo "Actual adl-coverage execution state: authoritative_full_required"
 
       - name: Coverage (ADL Rust workspace lcov)
         if: github.event_name != 'pull_request' && steps.path-policy.outputs.full_coverage_required == 'true' && steps.path-policy.outputs.coverage_authority != 'pr_policy_surface_tooling_only'
@@ -590,15 +508,14 @@ jobs:
           echo "Normalize runner-local paths and run redaction/publication review before reusing them in publication-adjacent or customer-facing packets."
         working-directory: .
 
-      - name: Coverage skipped by path policy
+      - name: Coverage policy annotation
         if: steps.path-policy.outputs.coverage_required != 'true'
         run: |
-          echo "Coverage skipped because changed paths do not touch Rust runtime or test surfaces."
+          echo "Path policy did not require coverage for these changed paths, but adl-coverage is always-on and has already run authoritative coverage."
           echo "Policy reason: ${{ steps.path-policy.outputs.reason }}"
-          echo "This keeps the adl-coverage check stable while avoiding full cargo-llvm-cov for docs/planning/tools-only PRs."
-          echo "Coverage lane: ${{ steps.path-policy.outputs.coverage_lane }}"
-          echo "Coverage authority: ${{ steps.path-policy.outputs.coverage_authority }}"
-          echo "Coverage execution state: ${{ steps.path-policy.outputs.coverage_execution_state }}"
+          echo "Coverage lane requested by policy: ${{ steps.path-policy.outputs.coverage_lane }}"
+          echo "Coverage authority requested by policy: ${{ steps.path-policy.outputs.coverage_authority }}"
+          echo "Actual adl-coverage execution state: authoritative_full_required"
         working-directory: .
 
       - name: Upload coverage to Codecov
@@ -613,7 +530,5 @@ jobs:
           verbose: true
 
       - name: Rust acceleration stats for coverage
-        if: always() && (steps.path-policy.outputs.full_coverage_required == 'true' || steps.coverage-impact.outputs.needs_fast_summary == 'true')
-        run: |
-          echo "Linker mode: ${RUST_LINK_ACCEL:-unknown}"
-          sccache --show-stats || true
+        if: always() && steps.coverage-toolchain.outputs.ready == 'true'
+        run: bash tools/setup_required_coverage_toolchain.sh stats

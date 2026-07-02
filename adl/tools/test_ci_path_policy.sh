@@ -15,10 +15,45 @@ assert_has() {
   fi
 }
 
+
+assert_file_has() {
+  local file="$1"
+  local needle="$2"
+  if ! grep -Fq "$needle" "$file"; then
+    echo "expected $file to contain: $needle" >&2
+    exit 1
+  fi
+}
+
+assert_file_not_has() {
+  local file="$1"
+  local needle="$2"
+  if grep -Fq "$needle" "$file"; then
+    echo "expected $file not to contain: $needle" >&2
+    exit 1
+  fi
+}
+
+assert_current_coverage_workflow_contract() {
+  local workflow="$ROOT_DIR/.github/workflows/ci.yaml"
+  assert_file_has "$workflow" 'run: bash tools/setup_required_coverage_toolchain.sh install-lld'
+  assert_file_has "$workflow" 'bash tools/setup_required_coverage_toolchain.sh configure "$GITHUB_ENV"'
+  assert_file_has "$workflow" 'run: bash tools/setup_required_coverage_toolchain.sh verify'
+  assert_file_has "$workflow" 'run: bash tools/run_authoritative_coverage_lane.sh --authority "adl_coverage_always_on" --event-name "${{ github.event_name }}"'
+  assert_file_has "$workflow" 'run: bash tools/setup_required_coverage_toolchain.sh stats'
+  assert_file_has "$workflow" "steps.coverage-toolchain.outputs.ready == 'true'"
+  assert_file_has "$workflow" 'actual adl-coverage execution state'
+  assert_file_not_has "$workflow" 'Coverage skipped by path policy'
+  assert_file_not_has "$workflow" 'steps.coverage-impact.outputs'
+  assert_file_not_has "$workflow" 'Full coverage deferred by PR policy'
+}
+
 tmp_dir="$(mktemp -d)"
 trap 'rm -rf "$tmp_dir"' EXIT
 
 python3 "$ROOT_DIR/adl/tools/test_warm_rust_dependency_cache.py"
+bash "$ROOT_DIR/adl/tools/test_setup_required_coverage_toolchain.sh"
+assert_current_coverage_workflow_contract
 (cd "$ROOT_DIR" && bash adl/tools/test_select_validation_lanes.sh && bash adl/tools/test_validation_manager.sh)
 
 (
