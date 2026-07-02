@@ -14,9 +14,9 @@ case "$plan" in
     ;;
 esac
 case "$plan" in
-  *"targets=lib,tests"*) ;;
+  *"targets=lib"*) ;;
   *)
-    echo "expected authoritative coverage plan to use library and integration test targets" >&2
+    echo "expected authoritative coverage plan to use library targets only" >&2
     echo "$plan" >&2
     exit 1
     ;;

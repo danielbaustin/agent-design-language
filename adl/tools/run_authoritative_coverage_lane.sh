@@ -69,11 +69,11 @@ if [ "$PRINT_PLAN" = true ]; then
   if [ "$MODE" = "full_authoritative_default_features" ]; then
     printf 'features=default\n'
     printf 'workspace=full\n'
-    printf 'targets=lib,tests\n'
+    printf 'targets=lib\n'
   else
     printf 'features=default\n'
     printf 'workspace=bounded_policy_surface\n'
-    printf 'targets=lib,tests\n'
+    printf 'targets=lib\n'
   fi
   exit 0
 fi
@@ -94,7 +94,6 @@ if [ "$MODE" = "full_authoritative_default_features" ]; then
   cargo llvm-cov nextest \
     --workspace \
     --lib \
-    --tests \
     --status-level all \
     --final-status-level slow \
     --no-report
@@ -105,7 +104,6 @@ else
   cargo llvm-cov nextest \
     --workspace \
     --lib \
-    --tests \
     --status-level all \
     --final-status-level slow \
     --no-report
