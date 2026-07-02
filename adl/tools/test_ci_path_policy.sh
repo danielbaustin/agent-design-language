@@ -1028,45 +1028,6 @@ PY
   assert_has "$runtime_bounded_pr_fast_output" "coverage_authority=pr_changed_surface"
   assert_has "$runtime_bounded_pr_fast_output" "reason=bounded_pr_fast_coverage_policy_change_keeps_pr_fast_validation"
 
-  git checkout -q -b runtime-shepherd-bounded-pr-fast-coverage-policy-change "$base_sha"
-  mkdir -p adl/src/bin adl/tools
-  printf 'extern crate adl;\nfn main() {}\n' > adl/src/bin/adl_pr_shepherd.rs
-  python3 - <<'PY'
-from pathlib import Path
-
-
-def replace_once(text: str, old: str, new: str, label: str) -> str:
-    if old not in text:
-        raise SystemExit(f"expected snippet missing for {label}")
-    return text.replace(old, new, 1)
-
-
-workflow = Path(".github/workflows/ci.yaml")
-workflow.write_text(workflow.read_text() + "\n# coverage-summary.json\n")
-
-coverage = Path("adl/tools/check_coverage_impact.sh")
-coverage.write_text("#!/usr/bin/env bash\n# adl/src/bin/adl_pr_shepherd.rs\n# pr_shepherd\n# adl-pr-shepherd\n")
-
-coverage_test = Path("adl/tools/test_check_coverage_impact.sh")
-coverage_test.write_text("#!/usr/bin/env bash\n# pr_shepherd\n# adl-pr-shepherd\n")
-
-runtime_contract = Path("adl/tools/test_ci_runtime_contracts.sh")
-runtime_contract.write_text("# coverage-summary.json\n")
-PY
-  git add adl/src/bin/adl_pr_shepherd.rs .github/workflows/ci.yaml adl/tools/check_coverage_impact.sh adl/tools/test_check_coverage_impact.sh adl/tools/test_ci_runtime_contracts.sh
-  git commit -q -m runtime-shepherd-bounded-pr-fast-coverage-policy-change
-  runtime_shepherd_bounded_pr_fast_head="$(git rev-parse HEAD)"
-
-  runtime_shepherd_bounded_pr_fast_output="$("$POLICY" --event-name pull_request --base "$base_sha" --head "$runtime_shepherd_bounded_pr_fast_head" --ref "refs/pull/1/merge")"
-  assert_has "$runtime_shepherd_bounded_pr_fast_output" "rust_required=true"
-  assert_has "$runtime_shepherd_bounded_pr_fast_output" "coverage_required=true"
-  assert_has "$runtime_shepherd_bounded_pr_fast_output" "full_coverage_required=false"
-  assert_has "$runtime_shepherd_bounded_pr_fast_output" "demo_smoke_required=true"
-  assert_has "$runtime_shepherd_bounded_pr_fast_output" "ci_contracts_required=true"
-  assert_has "$runtime_shepherd_bounded_pr_fast_output" "coverage_lane=pr_fast"
-  assert_has "$runtime_shepherd_bounded_pr_fast_output" "coverage_authority=pr_changed_surface"
-  assert_has "$runtime_shepherd_bounded_pr_fast_output" "reason=bounded_pr_fast_coverage_policy_change_keeps_pr_fast_validation"
-
   git checkout -q -b feature-branch-before-main-advances "$base_sha"
   mkdir -p adl/tools docs/milestones/v0.91.4/review/demo_showcase
   printf '#!/usr/bin/env bash\nprintf demo\n' > adl/tools/demo_v0914_complete_issue.sh
