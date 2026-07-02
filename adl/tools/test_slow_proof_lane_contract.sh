@@ -7,74 +7,89 @@ FAMILY_CONFIG="$ADL_DIR/config/slow_proof_families.v0.91.6.json"
 tmpdir="$(mktemp -d)"
 trap 'rm -rf "$tmpdir"' EXIT
 
-default_list="$tmpdir/default-nextest-list.txt"
-full_list="$tmpdir/full-nextest-list.txt"
-family_matrix="$tmpdir/families.tsv"
+python3 - "$FAMILY_CONFIG" <<'PY'
+import json
+import sys
+from pathlib import Path
 
-python3 - "$FAMILY_CONFIG" >"$family_matrix" <<'PY'
+config = json.loads(Path(sys.argv[1]).read_text())
+if config.get("schema_version") != "adl.slow_proof_families.v1":
+    raise SystemExit("unsupported slow-proof family config schema")
+if config.get("umbrella_feature") != "slow-proof-tests":
+    raise SystemExit("slow-proof umbrella feature drifted")
+families = config.get("families", [])
+if not families:
+    raise SystemExit("slow-proof family config must declare at least one family")
+seen_ids = set()
+seen_features = set()
+seen_samples = set()
+for family in families:
+    family_id = family.get("id")
+    feature = family.get("feature")
+    samples = family.get("sample_tests", [])
+    if not family_id or family_id in seen_ids:
+        raise SystemExit(f"invalid or duplicate slow-proof family id: {family_id!r}")
+    if not feature or feature in seen_features:
+        raise SystemExit(f"invalid or duplicate slow-proof feature: {feature!r}")
+    if not feature.startswith("slow-proof-"):
+        raise SystemExit(f"slow-proof feature must use slow-proof-* prefix: {feature}")
+    if not samples:
+        raise SystemExit(f"slow-proof family must carry sample tests: {family_id}")
+    for sample in samples:
+        if not sample.startswith("runtime_v2_"):
+            raise SystemExit(f"slow-proof sample must stay runtime_v2-scoped: {sample}")
+        if sample in seen_samples:
+            raise SystemExit(f"duplicate slow-proof sample test: {sample}")
+        seen_samples.add(sample)
+    seen_ids.add(family_id)
+    seen_features.add(feature)
+PY
+
+python3 - "$FAMILY_CONFIG" >"$tmpdir/families.tsv" <<'PY'
 import json
 import sys
 from pathlib import Path
 
 payload = json.loads(Path(sys.argv[1]).read_text())
 for family in payload["families"]:
-    for sample in family.get("sample_tests", []):
-        print(f"{family['id']}\t{family['feature']}\t{sample}")
+    print(f"{family['id']}\t{family['feature']}")
 PY
 
-runtime_plan="$tmpdir/runtime-plan.json"
-bash "$ROOT_DIR/adl/tools/run_slow_proof_family.sh" --family runtime --json >"$runtime_plan"
-python3 - "$runtime_plan" <<'PY'
+while IFS=$'\t' read -r family feature; do
+  [ -n "$family" ] || continue
+  plan="$tmpdir/${family}.json"
+  bash "$ROOT_DIR/adl/tools/run_slow_proof_family.sh" --family "$family" --json >"$plan"
+  python3 - "$plan" "$family" "$feature" <<'PY'
 import json
 import sys
 from pathlib import Path
 
 payload = json.loads(Path(sys.argv[1]).read_text())
-assert payload["run_command"][:6] == [
+family = sys.argv[2]
+feature = sys.argv[3]
+if payload["id"] != family:
+    raise SystemExit(f"wrong family id in plan: {payload['id']} != {family}")
+if payload["feature"] != feature:
+    raise SystemExit(f"wrong feature in plan: {payload['feature']} != {feature}")
+expected_list = ["cargo", "nextest", "list", "--lib", "--features", feature, "runtime_v2_"]
+expected_run = [
     "cargo",
     "nextest",
     "run",
     "--lib",
     "--features",
-    "slow-proof-runtime",
+    feature,
+    "runtime_v2_",
+    "--status-level",
+    "all",
+    "--final-status-level",
+    "slow",
 ]
-assert "runtime_v2_" in payload["run_command"]
+if payload["list_command"] != expected_list:
+    raise SystemExit(f"slow-proof list command drifted for {family}: {payload['list_command']}")
+if payload["run_command"] != expected_run:
+    raise SystemExit(f"slow-proof run command drifted for {family}: {payload['run_command']}")
 PY
-
-(
-  cd "$ADL_DIR"
-  cargo nextest list --lib runtime_v2_ > "$default_list"
-  cargo nextest list --lib --features slow-proof-tests runtime_v2_ > "$full_list"
-)
-
-while IFS=$'\t' read -r family feature sample_test; do
-  [ -n "$family" ] || continue
-  family_list="$tmpdir/${family}-nextest-list.txt"
-  bash "$ROOT_DIR/adl/tools/run_slow_proof_family.sh" --family "$family" --list >"$family_list"
-
-  if grep -Fq "$sample_test" "$default_list"; then
-    echo "slow proof test leaked into default PR lane: $sample_test" >&2
-    exit 1
-  fi
-  if ! grep -Fq "$sample_test" "$family_list"; then
-    echo "family '$family' missing expected slow-proof test: $sample_test" >&2
-    exit 1
-  fi
-  if ! grep -Fq "$sample_test" "$full_list"; then
-    echo "umbrella slow-proof lane missing family sample test: $sample_test" >&2
-    exit 1
-  fi
-
-  while IFS=$'\t' read -r other_family _other_feature other_sample; do
-    [ -n "$other_family" ] || continue
-    if [ "$other_family" = "$family" ]; then
-      continue
-    fi
-    if grep -Fq "$other_sample" "$family_list"; then
-      echo "family '$family' leaked unrelated slow-proof test from '$other_family': $other_sample" >&2
-      exit 1
-    fi
-  done <"$family_matrix"
-done <"$family_matrix"
+done <"$tmpdir/families.tsv"
 
 echo "PASS test_slow_proof_lane_contract"

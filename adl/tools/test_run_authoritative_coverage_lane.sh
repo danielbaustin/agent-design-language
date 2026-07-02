@@ -33,4 +33,29 @@ case "$custom_plan" in
     ;;
 esac
 
+script_text="$(cat "$SCRIPT")"
+for required_fragment in \
+  "cargo llvm-cov" \
+  "--no-clean" \
+  "--workspace" \
+  "--lib" \
+  "--json" \
+  "--summary-only" \
+  "--output-path coverage-summary.json"
+do
+  case "$script_text" in
+    *"$required_fragment"*) ;;
+    *)
+      echo "expected cargo llvm-cov command shape for library-only JSON summary; missing $required_fragment" >&2
+      exit 1
+      ;;
+  esac
+done
+case "$script_text" in
+  *"cargo llvm-cov nextest"*|*"--tests"*|*"--bins"*|*"--all-targets"*)
+    echo "coverage runner must not use nextest, tests, bins, or all-targets" >&2
+    exit 1
+    ;;
+esac
+
 echo "PASS test_run_authoritative_coverage_lane"

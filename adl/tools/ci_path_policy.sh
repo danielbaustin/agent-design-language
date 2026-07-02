@@ -676,6 +676,17 @@ is_v0913_proof_surface() {
   return 1
 }
 
+is_v0913_proof_contract_surface() {
+  local path="$1"
+  case "$path" in
+    adl/tools/run_v0913_proof_validation_lane.sh|\
+    adl/tools/test_run_v0913_proof_validation_lane.sh)
+      return 0
+      ;;
+  esac
+  return 1
+}
+
 cargo_manifest_package_version_only_change() {
   python3 - "$base_sha" "$head_sha" <<'PY'
 import io
@@ -1095,7 +1106,7 @@ else
           saw_full_coverage_policy_surface=true
         fi
       fi
-      if is_v0913_proof_surface "$path"; then
+      if is_v0913_proof_surface "$path" && ! is_v0913_proof_contract_surface "$path"; then
         saw_v0913_proof_surface=true
       fi
     done <<EOF
@@ -1122,6 +1133,10 @@ EOF
           continue
         fi
         if is_v0913_proof_surface "$path"; then
+          if is_v0913_proof_contract_surface "$path"; then
+            ci_contracts_required=true
+            continue
+          fi
           mark_v0913_proof_required
         fi
         case "$path" in

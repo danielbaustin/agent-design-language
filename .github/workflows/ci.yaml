@@ -415,6 +415,11 @@ jobs:
       - name: Install cargo-llvm-cov
         uses: taiki-e/install-action@e5c52b603cc5f5e9b52b6a43afad8e9fe0527090 # cargo-llvm-cov
 
+      - name: Install cargo-nextest for coverage
+        uses: taiki-e/install-action@e5c52b603cc5f5e9b52b6a43afad8e9fe0527090 # install-action
+        with:
+          tool: nextest
+
       - name: Install sccache for coverage
         uses: taiki-e/install-action@e5c52b603cc5f5e9b52b6a43afad8e9fe0527090 # install-action
         with:
@@ -428,11 +433,6 @@ jobs:
         run: |
           bash tools/setup_required_coverage_toolchain.sh configure "$GITHUB_ENV"
           echo "ready=true" >> "$GITHUB_OUTPUT"
-
-      - name: Install cargo-nextest for coverage
-        uses: taiki-e/install-action@e5c52b603cc5f5e9b52b6a43afad8e9fe0527090 # install-action
-        with:
-          tool: nextest
 
       - name: Verify required coverage toolchain
         run: bash tools/setup_required_coverage_toolchain.sh verify

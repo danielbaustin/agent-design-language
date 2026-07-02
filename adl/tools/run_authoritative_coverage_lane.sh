@@ -9,7 +9,9 @@ EVENT_NAME="push"
 MODE="full_authoritative_default_features"
 
 default_coverage_build_root() {
-  if [ -d /mnt ] && [ -w /mnt ]; then
+  if [ "${GITHUB_ACTIONS:-}" = "true" ]; then
+    printf '%s\n' "$ADL_DIR/target/authoritative-coverage-scratch"
+  elif [ -d /mnt ] && [ -w /mnt ]; then
     printf '/mnt/adl-authoritative-coverage\n'
   else
     printf '%s\n' "$ADL_DIR/target/authoritative-coverage-scratch"
@@ -91,22 +93,22 @@ export CARGO_LLVM_COV_TARGET_DIR="$COVERAGE_BUILD_ROOT/llvm-cov-target"
 if [ "$MODE" = "full_authoritative_default_features" ]; then
   echo "Authoritative coverage mode: full_authoritative_default_features"
   echo "Features: default"
-  cargo llvm-cov nextest \
+  cargo llvm-cov \
+    --no-clean \
     --workspace \
     --lib \
-    --status-level all \
-    --final-status-level slow \
-    --no-report
+    --json \
+    --summary-only \
+    --output-path coverage-summary.json
 else
   echo "Authoritative coverage mode: bounded_policy_surface_pr"
   echo "Features: default"
   echo "Full authoritative default-feature proof remains reserved for push-to-main and mixed runtime policy changes."
-  cargo llvm-cov nextest \
+  cargo llvm-cov \
+    --no-clean \
     --workspace \
     --lib \
-    --status-level all \
-    --final-status-level slow \
-    --no-report
+    --json \
+    --summary-only \
+    --output-path coverage-summary.json
 fi
-
-cargo llvm-cov report --json --summary-only --output-path coverage-summary.json
