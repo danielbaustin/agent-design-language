@@ -429,8 +429,18 @@ is_pr_fast_coverage_workflow_change() {
   local diff_text
   diff_text="$(git_pr_patch "$path")"
   [ -n "$diff_text" ] || return 1
-  grep -E 'Determine PR fast coverage filters|PR fast coverage summary \(json\)|coverage-impact-filters.txt|run_cli_smoke_process_status|run_finish_bins|generic_filters|summary_files|coverage-summary-process-status.json|coverage-summary-finish.json|coverage-summary-generic.json|coverage-summary.json|process_status|adl-pr-finish|jq -s ' <<<"$diff_text" >/dev/null 2>&1 || return 1
-  if grep -E 'Coverage run and summary \(json\)|Coverage-impact changed-source gate|Enforce coverage policy gates|Coverage \(ADL Rust workspace lcov\)|Upload coverage artifact|Upload coverage to Codecov|run_authoritative_coverage_lane|full_coverage_required|coverage_authority=' <<<"$diff_text" >/dev/null 2>&1; then
+  local changed_payload
+  changed_payload="$(printf '%s
+' "$diff_text" | awk '/^[+-]/ && $0 !~ /^(---|\+\+\+)/ { print substr($0, 2) }')"
+  [ -n "$changed_payload" ] || return 1
+  grep -E 'Determine PR fast coverage filters|PR fast coverage summary \(json\)|PR coverage-impact preflight|coverage-impact-filter-expression.txt|--print-risk-nextest-expression|needs_fast_summary|filter_expression|coverage-summary.json|process_status|adl-pr-finish' <<<"$changed_payload" >/dev/null 2>&1 || return 1
+  if grep -E 'Enforce coverage policy gates|Coverage \(ADL Rust workspace lcov\)|Upload coverage artifact|Upload coverage to Codecov' <<<"$changed_payload" >/dev/null 2>&1; then
+    return 1
+  fi
+  if grep -E -e '--tests|--bins|--all-targets' <<<"$changed_payload" >/dev/null 2>&1; then
+    return 1
+  fi
+  if grep -E '^ *run: .*--authority "adl_coverage_always_on"|^ *--authority "adl_coverage_always_on"' <<<"$changed_payload" >/dev/null 2>&1; then
     return 1
   fi
   return 0
