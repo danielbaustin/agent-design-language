@@ -1,0 +1,205 @@
+{
+  "schema_version": "adl.scheduler.economics_input_bundle.provider_cheapest_validated_outcome.v1",
+  "source_doc_ref": "docs/milestones/v0.91.7/review/provider/CHEAPEST_VALIDATED_OUTCOME_POLICY_4674.md",
+  "included_concepts": [
+    "validation_cost",
+    "role_scoped_model_suitability",
+    "cheapest_validated_outcome_policy"
+  ],
+  "deferred_concepts": [
+    "live_provider_price_lookup",
+    "provider_output_replay_stability",
+    "autonomous_merge_or_closeout_authority"
+  ],
+  "role_provider_context": {
+    "schema_version": "adl.scheduler.role_provider_selection_context.v1",
+    "generated_from": "v0.91.7 WP-05 #4672 provider profile selection consumed by #4674",
+    "policies": [
+      {
+        "role_profile": "reviewer_provider",
+        "advisory_authority_limit": "advisory review only; cannot merge, close, or override operator gates",
+        "required_capabilities": [
+          "code_review",
+          "csdlc_truth_review"
+        ],
+        "forbidden_capabilities": [
+          "merge_authority"
+        ],
+        "candidate_routes": [
+          {
+            "route": {
+              "provider_profile_ref": "ollama:qwen2.5-7b",
+              "provider_spec_kind": "ollama",
+              "provider_family": "local_ollama",
+              "model_ref": "qwen2.5:7b",
+              "model_identity": "qwen2.5:7b local ollama profile",
+              "runtime_surface": "provider::OllamaProvider",
+              "provider_selection_reason": "local reviewer candidate retained as fallback evidence",
+              "route_resolution_trace": [
+                "candidate=local_ollama"
+              ],
+              "output_contract_ref": "adl.provider.output.review_advisory.v1"
+            },
+            "eligible": false,
+            "ineligibility_reason": "local model not yet proven for reviewer role"
+          },
+          {
+            "route": {
+              "provider_profile_ref": "chatgpt:gpt-5.3-codex",
+              "provider_spec_kind": "http",
+              "provider_family": "chatgpt",
+              "model_ref": "gpt-5.3-codex",
+              "model_identity": "ChatGPT GPT-5.3 Codex profile",
+              "runtime_surface": "provider::HttpProvider",
+              "provider_selection_reason": "tracked reviewer-capable provider profile selected for advisory review",
+              "route_resolution_trace": [
+                "candidate=chatgpt"
+              ],
+              "output_contract_ref": "adl.provider.output.review_advisory.v1"
+            },
+            "eligible": true
+          }
+        ]
+      }
+    ],
+    "assignments": [
+      {
+        "task_id": "first-pass-review",
+        "role_profile": "reviewer_provider"
+      }
+    ]
+  },
+  "model_suitability_context": {
+    "schema_version": "adl.scheduler.model_suitability_selection_context.v1",
+    "generated_from": "v0.91.7 WP-05 #4674 cheapest validated outcome proof fixture",
+    "evidence_refs": [
+      "docs/milestones/v0.91.6/review/provider/openrouter_current_models/openrouter_current_model_suitability_state_2026-06-22.json",
+      "docs/milestones/v0.91.6/review/provider/gemini_current_models/gemini_current_model_suitability_state_2026-06-18.json",
+      "docs/milestones/v0.91.5/review/remote_gemma_watcher/REMOTE_GEMMA_WATCHER_PROOF_2026-06-15.md"
+    ],
+    "candidates": [
+      {
+        "candidate_id": "openrouter:gpt-5.4",
+        "provider_profile_ref": "unprofiled:openrouter:openai/gpt-5.4",
+        "provider_family": "openrouter",
+        "model_ref": "openai/gpt-5.4",
+        "runtime_surface": "hosted_api",
+        "classification": "useful_with_limits",
+        "selection_priority": 90,
+        "roles": [
+          "reviewer",
+          "planner",
+          "worker"
+        ],
+        "source_ref": "docs/milestones/v0.91.6/review/provider/openrouter_current_models/openrouter_current_model_suitability_state_2026-06-22.json",
+        "evidence_digest": "sha256:bounded-openrouter-gpt-5-4-panel",
+        "advisory_authority_only": true
+      },
+      {
+        "candidate_id": "gemini:gemini-2.5-flash",
+        "provider_profile_ref": "unprofiled:gemini:gemini-2.5-flash",
+        "provider_family": "google",
+        "model_ref": "gemini-2.5-flash",
+        "runtime_surface": "hosted_api",
+        "classification": "useful_with_limits",
+        "selection_priority": 80,
+        "roles": [
+          "reviewer",
+          "planner"
+        ],
+        "source_ref": "docs/milestones/v0.91.6/review/provider/gemini_current_models/gemini_current_model_suitability_state_2026-06-18.json",
+        "evidence_digest": "sha256:bounded-gemini-flash-panel",
+        "advisory_authority_only": true
+      },
+      {
+        "candidate_id": "local:gemma4-e2b",
+        "provider_profile_ref": "historical:ollama:gemma4-e2b",
+        "provider_family": "ollama",
+        "model_ref": "gemma4:e2b",
+        "runtime_surface": "local_ollama",
+        "classification": "historical_only",
+        "selection_priority": 10,
+        "roles": [
+          "reviewer"
+        ],
+        "source_ref": "docs/milestones/v0.91.5/review/remote_gemma_watcher/REMOTE_GEMMA_WATCHER_PROOF_2026-06-15.md",
+        "evidence_digest": "sha256:historical-gemma-empty-output-boundary",
+        "advisory_authority_only": true
+      }
+    ],
+    "task_requirements": [
+      {
+        "task_id": "first-pass-review",
+        "role": "reviewer",
+        "minimum_classification": "useful_with_limits",
+        "claim_boundary": "bounded_role_suitability_not_authority"
+      }
+    ]
+  },
+  "cheapest_validated_outcome_policy": {
+    "schema_version": "adl.scheduler.cheapest_validated_outcome_policy.v1",
+    "generated_from": "v0.91.7 WP-05 #4674 retained model-cost evidence fixture",
+    "evidence_refs": [
+      "docs/milestones/v0.91.7/review/provider/artifacts/cheapest_validated_cost_table_4674.json",
+      "docs/milestones/v0.91.6/review/provider/openrouter_current_models/openrouter_current_model_suitability_state_2026-06-22.json",
+      "docs/milestones/v0.91.6/review/provider/gemini_current_models/gemini_current_model_suitability_state_2026-06-18.json",
+      "docs/milestones/v0.91.5/review/remote_gemma_watcher/REMOTE_GEMMA_WATCHER_PROOF_2026-06-15.md"
+    ],
+    "candidate_evidence": [
+      {
+        "candidate_id": "openrouter:gpt-5.4",
+        "candidate_source_ref": "docs/milestones/v0.91.6/review/provider/openrouter_current_models/openrouter_current_model_suitability_state_2026-06-22.json",
+        "outcome_cost_tier": "high",
+        "validation_ref": "docs/milestones/v0.91.7/review/provider/artifacts/cheapest_validated_cost_table_4674.json",
+        "validated_outcome": true
+      },
+      {
+        "candidate_id": "gemini:gemini-2.5-flash",
+        "candidate_source_ref": "docs/milestones/v0.91.6/review/provider/gemini_current_models/gemini_current_model_suitability_state_2026-06-18.json",
+        "outcome_cost_tier": "low",
+        "validation_ref": "docs/milestones/v0.91.7/review/provider/artifacts/cheapest_validated_cost_table_4674.json",
+        "validated_outcome": true
+      },
+      {
+        "candidate_id": "local:gemma4-e2b",
+        "candidate_source_ref": "docs/milestones/v0.91.5/review/remote_gemma_watcher/REMOTE_GEMMA_WATCHER_PROOF_2026-06-15.md",
+        "outcome_cost_tier": "low",
+        "validation_ref": "docs/milestones/v0.91.7/review/provider/artifacts/cheapest_validated_cost_table_4674.json",
+        "validated_outcome": true
+      }
+    ],
+    "task_policies": [
+      {
+        "task_id": "first-pass-review",
+        "max_outcome_cost_tier": "medium",
+        "allow_unvalidated_fallback": false,
+        "claim_boundary": "bounded_cheapest_validated_outcome_not_exact_cost"
+      }
+    ]
+  },
+  "inputs": [
+    {
+      "schema_version": "adl.scheduler.economics_input.v1",
+      "task_id": "first-pass-review",
+      "task_type": "review",
+      "estimated_effort": "medium",
+      "estimated_validation_cost": "medium",
+      "estimated_coordination_cost": "medium",
+      "risk_level": "medium",
+      "expected_value": "high",
+      "urgency": "normal",
+      "dependency_posture": "clear",
+      "parallelism_potential": "highly_parallelizable",
+      "premium_capacity_pressure": "high",
+      "governor_attention_pressure": "low",
+      "confidence": "medium",
+      "human_required": false,
+      "required_capabilities": [
+        "role:reviewer",
+        "provider:model_suitability",
+        "policy:cheapest_validated_outcome"
+      ],
+      "claim_boundary": "bounded_v1_inputs_not_exact_measurement"
+    }
+  ]
+}

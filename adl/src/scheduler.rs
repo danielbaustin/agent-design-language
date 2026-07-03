@@ -12,17 +12,27 @@ pub const SCHEDULER_ECONOMICS_INPUT_BUNDLE_WITH_PROVIDER_ROUTE_SCHEMA_V1: &str =
     "adl.scheduler.economics_input_bundle.provider_route.v1";
 pub const SCHEDULER_MODEL_SUITABILITY_INPUT_BUNDLE_SCHEMA_V1: &str =
     "adl.scheduler.economics_input_bundle.model_suitability.v1";
+pub const SCHEDULER_CHEAPEST_VALIDATED_OUTCOME_INPUT_BUNDLE_SCHEMA_V1: &str =
+    "adl.scheduler.economics_input_bundle.cheapest_validated_outcome.v1";
+pub const SCHEDULER_PROVIDER_CHEAPEST_VALIDATED_OUTCOME_INPUT_BUNDLE_SCHEMA_V1: &str =
+    "adl.scheduler.economics_input_bundle.provider_cheapest_validated_outcome.v1";
 pub const COGNITIVE_SCHEDULER_DECISION_SCHEMA_V1: &str = "adl.scheduler.decision.v1";
 pub const COGNITIVE_SCHEDULER_DECISION_WITH_PROVIDER_ROUTE_SCHEMA_V1: &str =
     "adl.scheduler.decision.provider_route.v1";
 pub const COGNITIVE_SCHEDULER_DECISION_MODEL_SUITABILITY_SCHEMA_V1: &str =
     "adl.scheduler.decision.model_suitability.v1";
+pub const COGNITIVE_SCHEDULER_DECISION_CHEAPEST_VALIDATED_OUTCOME_SCHEMA_V1: &str =
+    "adl.scheduler.decision.cheapest_validated_outcome.v1";
+pub const COGNITIVE_SCHEDULER_DECISION_PROVIDER_CHEAPEST_VALIDATED_OUTCOME_SCHEMA_V1: &str =
+    "adl.scheduler.decision.provider_cheapest_validated_outcome.v1";
 pub const COGNITIVE_SCHEDULER_PLAN_SCHEMA_V1: &str = "adl.scheduler.plan.v1";
 pub const CHRONOSENSE_SCHEDULER_CONTEXT_SCHEMA_V1: &str = "adl.scheduler.chronosense_context.v1";
 pub const ROLE_PROVIDER_SELECTION_CONTEXT_SCHEMA_V1: &str =
     "adl.scheduler.role_provider_selection_context.v1";
 pub const MODEL_SUITABILITY_SELECTION_CONTEXT_SCHEMA_V1: &str =
     "adl.scheduler.model_suitability_selection_context.v1";
+pub const CHEAPEST_VALIDATED_OUTCOME_POLICY_SCHEMA_V1: &str =
+    "adl.scheduler.cheapest_validated_outcome_policy.v1";
 
 #[derive(Debug, Clone, Serialize, Deserialize, JsonSchema, PartialEq, Eq)]
 #[serde(rename_all = "snake_case")]
@@ -334,6 +344,37 @@ pub struct ModelSuitabilitySelectionContextV1 {
 
 #[derive(Debug, Clone, Serialize, Deserialize, JsonSchema, PartialEq, Eq)]
 #[serde(deny_unknown_fields)]
+pub struct CheapestValidatedCandidateEvidenceV1 {
+    pub candidate_id: String,
+    pub candidate_source_ref: String,
+    pub outcome_cost_tier: SchedulerCostLevelV1,
+    pub validation_ref: String,
+    #[serde(default)]
+    pub validated_outcome: bool,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize, JsonSchema, PartialEq, Eq)]
+#[serde(deny_unknown_fields)]
+pub struct CheapestValidatedOutcomeTaskPolicyV1 {
+    pub task_id: String,
+    pub max_outcome_cost_tier: SchedulerCostLevelV1,
+    #[serde(default)]
+    pub allow_unvalidated_fallback: bool,
+    pub claim_boundary: String,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize, JsonSchema, PartialEq, Eq)]
+#[serde(deny_unknown_fields)]
+pub struct CheapestValidatedOutcomePolicyV1 {
+    pub schema_version: String,
+    pub generated_from: String,
+    pub evidence_refs: Vec<String>,
+    pub candidate_evidence: Vec<CheapestValidatedCandidateEvidenceV1>,
+    pub task_policies: Vec<CheapestValidatedOutcomeTaskPolicyV1>,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize, JsonSchema, PartialEq, Eq)]
+#[serde(deny_unknown_fields)]
 pub struct SchedulerEconomicsInputV1 {
     pub schema_version: String,
     pub task_id: String,
@@ -373,6 +414,8 @@ pub struct SchedulerEconomicsInputBundleV1 {
     pub role_provider_context: Option<RoleProviderSelectionContextV1>,
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub model_suitability_context: Option<ModelSuitabilitySelectionContextV1>,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub cheapest_validated_outcome_policy: Option<CheapestValidatedOutcomePolicyV1>,
     pub inputs: Vec<SchedulerEconomicsInputV1>,
 }
 
@@ -430,6 +473,10 @@ pub struct ModelSuitabilitySelectionTraceV1 {
     pub model_ref: String,
     pub disposition: ModelSuitabilityTraceDispositionV1,
     pub reason: String,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub outcome_cost_tier: Option<SchedulerCostLevelV1>,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub validation_ref: Option<String>,
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize, JsonSchema, PartialEq, Eq)]
@@ -447,6 +494,12 @@ pub struct ModelSuitabilitySelectionV1 {
     pub evidence_digest: Option<String>,
     pub advisory_authority_only: bool,
     pub claim_boundary: String,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub outcome_cost_tier: Option<SchedulerCostLevelV1>,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub validation_ref: Option<String>,
+    #[serde(default)]
+    pub cheapest_validated_outcome: bool,
     pub selection_trace: Vec<ModelSuitabilitySelectionTraceV1>,
 }
 
@@ -501,41 +554,94 @@ pub fn validate_economics_bundle(bundle: &SchedulerEconomicsInputBundleV1) -> Re
         bundle.schema_version.as_str(),
         bundle.role_provider_context.as_ref(),
         bundle.model_suitability_context.as_ref(),
+        bundle.cheapest_validated_outcome_policy.as_ref(),
     ) {
-        (SCHEDULER_ECONOMICS_INPUT_BUNDLE_SCHEMA_V1, None, None) => {}
-        (SCHEDULER_ECONOMICS_INPUT_BUNDLE_SCHEMA_V1, Some(_), _) => {
+        (SCHEDULER_ECONOMICS_INPUT_BUNDLE_SCHEMA_V1, None, None, None) => {}
+        (SCHEDULER_ECONOMICS_INPUT_BUNDLE_SCHEMA_V1, Some(_), _, _) => {
             return Err(anyhow!(
                 "scheduler economics bundle with role_provider_context must use schema {SCHEDULER_ECONOMICS_INPUT_BUNDLE_WITH_PROVIDER_ROUTE_SCHEMA_V1}"
             ));
         }
-        (SCHEDULER_ECONOMICS_INPUT_BUNDLE_SCHEMA_V1, _, Some(_)) => {
+        (SCHEDULER_ECONOMICS_INPUT_BUNDLE_SCHEMA_V1, _, Some(_), _) => {
             return Err(anyhow!(
                 "model_suitability_context requires scheduler bundle schema {SCHEDULER_MODEL_SUITABILITY_INPUT_BUNDLE_SCHEMA_V1}"
             ));
         }
-        (SCHEDULER_ECONOMICS_INPUT_BUNDLE_WITH_PROVIDER_ROUTE_SCHEMA_V1, Some(_), None) => {}
-        (SCHEDULER_ECONOMICS_INPUT_BUNDLE_WITH_PROVIDER_ROUTE_SCHEMA_V1, None, _) => {
+        (SCHEDULER_ECONOMICS_INPUT_BUNDLE_SCHEMA_V1, _, _, Some(_)) => {
+            return Err(anyhow!(
+                "cheapest_validated_outcome_policy requires scheduler bundle schema {SCHEDULER_CHEAPEST_VALIDATED_OUTCOME_INPUT_BUNDLE_SCHEMA_V1}"
+            ));
+        }
+        (SCHEDULER_ECONOMICS_INPUT_BUNDLE_WITH_PROVIDER_ROUTE_SCHEMA_V1, Some(_), None, None) => {}
+        (SCHEDULER_ECONOMICS_INPUT_BUNDLE_WITH_PROVIDER_ROUTE_SCHEMA_V1, None, _, _) => {
             return Err(anyhow!(
                 "scheduler bundle schema {SCHEDULER_ECONOMICS_INPUT_BUNDLE_WITH_PROVIDER_ROUTE_SCHEMA_V1} requires role_provider_context"
             ));
         }
-        (SCHEDULER_ECONOMICS_INPUT_BUNDLE_WITH_PROVIDER_ROUTE_SCHEMA_V1, _, Some(_)) => {
+        (SCHEDULER_ECONOMICS_INPUT_BUNDLE_WITH_PROVIDER_ROUTE_SCHEMA_V1, _, Some(_), _) => {
             return Err(anyhow!(
                 "scheduler bundle schema {SCHEDULER_ECONOMICS_INPUT_BUNDLE_WITH_PROVIDER_ROUTE_SCHEMA_V1} cannot include model_suitability_context without a combined schema"
             ));
         }
-        (SCHEDULER_MODEL_SUITABILITY_INPUT_BUNDLE_SCHEMA_V1, None, Some(_)) => {}
-        (SCHEDULER_MODEL_SUITABILITY_INPUT_BUNDLE_SCHEMA_V1, Some(_), _) => {
+        (SCHEDULER_ECONOMICS_INPUT_BUNDLE_WITH_PROVIDER_ROUTE_SCHEMA_V1, _, _, Some(_)) => {
+            return Err(anyhow!(
+                "scheduler bundle schema {SCHEDULER_ECONOMICS_INPUT_BUNDLE_WITH_PROVIDER_ROUTE_SCHEMA_V1} cannot include cheapest_validated_outcome_policy without a combined schema"
+            ));
+        }
+        (SCHEDULER_MODEL_SUITABILITY_INPUT_BUNDLE_SCHEMA_V1, None, Some(_), None) => {}
+        (SCHEDULER_MODEL_SUITABILITY_INPUT_BUNDLE_SCHEMA_V1, Some(_), _, _) => {
             return Err(anyhow!(
                 "scheduler bundle schema {SCHEDULER_MODEL_SUITABILITY_INPUT_BUNDLE_SCHEMA_V1} cannot include role_provider_context without a combined schema"
             ));
         }
-        (SCHEDULER_MODEL_SUITABILITY_INPUT_BUNDLE_SCHEMA_V1, _, None) => {
+        (SCHEDULER_MODEL_SUITABILITY_INPUT_BUNDLE_SCHEMA_V1, _, None, _) => {
             return Err(anyhow!(
                 "scheduler bundle schema {SCHEDULER_MODEL_SUITABILITY_INPUT_BUNDLE_SCHEMA_V1} requires model_suitability_context"
             ));
         }
-        (other, _, _) => {
+        (SCHEDULER_MODEL_SUITABILITY_INPUT_BUNDLE_SCHEMA_V1, _, _, Some(_)) => {
+            return Err(anyhow!(
+                "cheapest_validated_outcome_policy requires scheduler bundle schema {SCHEDULER_CHEAPEST_VALIDATED_OUTCOME_INPUT_BUNDLE_SCHEMA_V1}"
+            ));
+        }
+        (SCHEDULER_CHEAPEST_VALIDATED_OUTCOME_INPUT_BUNDLE_SCHEMA_V1, None, Some(_), Some(_)) => {}
+        (SCHEDULER_CHEAPEST_VALIDATED_OUTCOME_INPUT_BUNDLE_SCHEMA_V1, Some(_), _, _) => {
+            return Err(anyhow!(
+                "scheduler bundle schema {SCHEDULER_CHEAPEST_VALIDATED_OUTCOME_INPUT_BUNDLE_SCHEMA_V1} cannot include role_provider_context"
+            ));
+        }
+        (SCHEDULER_CHEAPEST_VALIDATED_OUTCOME_INPUT_BUNDLE_SCHEMA_V1, _, None, _) => {
+            return Err(anyhow!(
+                "scheduler bundle schema {SCHEDULER_CHEAPEST_VALIDATED_OUTCOME_INPUT_BUNDLE_SCHEMA_V1} requires model_suitability_context"
+            ));
+        }
+        (SCHEDULER_CHEAPEST_VALIDATED_OUTCOME_INPUT_BUNDLE_SCHEMA_V1, _, _, None) => {
+            return Err(anyhow!(
+                "scheduler bundle schema {SCHEDULER_CHEAPEST_VALIDATED_OUTCOME_INPUT_BUNDLE_SCHEMA_V1} requires cheapest_validated_outcome_policy"
+            ));
+        }
+        (
+            SCHEDULER_PROVIDER_CHEAPEST_VALIDATED_OUTCOME_INPUT_BUNDLE_SCHEMA_V1,
+            Some(_),
+            Some(_),
+            Some(_),
+        ) => {}
+        (SCHEDULER_PROVIDER_CHEAPEST_VALIDATED_OUTCOME_INPUT_BUNDLE_SCHEMA_V1, None, _, _) => {
+            return Err(anyhow!(
+                "scheduler bundle schema {SCHEDULER_PROVIDER_CHEAPEST_VALIDATED_OUTCOME_INPUT_BUNDLE_SCHEMA_V1} requires role_provider_context"
+            ));
+        }
+        (SCHEDULER_PROVIDER_CHEAPEST_VALIDATED_OUTCOME_INPUT_BUNDLE_SCHEMA_V1, _, None, _) => {
+            return Err(anyhow!(
+                "scheduler bundle schema {SCHEDULER_PROVIDER_CHEAPEST_VALIDATED_OUTCOME_INPUT_BUNDLE_SCHEMA_V1} requires model_suitability_context"
+            ));
+        }
+        (SCHEDULER_PROVIDER_CHEAPEST_VALIDATED_OUTCOME_INPUT_BUNDLE_SCHEMA_V1, _, _, None) => {
+            return Err(anyhow!(
+                "scheduler bundle schema {SCHEDULER_PROVIDER_CHEAPEST_VALIDATED_OUTCOME_INPUT_BUNDLE_SCHEMA_V1} requires cheapest_validated_outcome_policy"
+            ));
+        }
+        (other, _, _, _) => {
             return Err(anyhow!(
                 "unsupported scheduler economics bundle schema: {other}"
             ));
@@ -572,6 +678,12 @@ pub fn validate_economics_bundle(bundle: &SchedulerEconomicsInputBundleV1) -> Re
     }
     if let Some(context) = &bundle.model_suitability_context {
         validate_model_suitability_context(context, &bundle.inputs)?;
+    }
+    if let Some(policy) = &bundle.cheapest_validated_outcome_policy {
+        let context = bundle.model_suitability_context.as_ref().ok_or_else(|| {
+            anyhow!("cheapest validated outcome policy requires model suitability context")
+        })?;
+        validate_cheapest_validated_outcome_policy(policy, context, &bundle.inputs)?;
     }
     Ok(())
 }
@@ -895,10 +1007,173 @@ pub fn validate_model_suitability_context(
                 ));
             }
         }
-        select_model_suitability_candidate(context, requirement).map_err(|err| {
+        select_model_suitability_candidate(context, requirement, None).map_err(|err| {
             anyhow!(
                 "model suitability task {} has no eligible candidate: {err}",
                 requirement.task_id
+            )
+        })?;
+    }
+
+    Ok(())
+}
+
+pub fn validate_cheapest_validated_outcome_policy(
+    policy: &CheapestValidatedOutcomePolicyV1,
+    context: &ModelSuitabilitySelectionContextV1,
+    inputs: &[SchedulerEconomicsInputV1],
+) -> Result<()> {
+    if policy.schema_version != CHEAPEST_VALIDATED_OUTCOME_POLICY_SCHEMA_V1 {
+        return Err(anyhow!(
+            "unsupported cheapest validated outcome policy schema: {}",
+            policy.schema_version
+        ));
+    }
+    if policy.generated_from.trim().is_empty() {
+        return Err(anyhow!(
+            "cheapest validated outcome policy generated_from is required"
+        ));
+    }
+    if policy.evidence_refs.is_empty() {
+        return Err(anyhow!(
+            "cheapest validated outcome policy must retain at least one evidence_ref"
+        ));
+    }
+    if policy.candidate_evidence.is_empty() {
+        return Err(anyhow!(
+            "cheapest validated outcome policy must include candidate evidence"
+        ));
+    }
+    if policy.task_policies.is_empty() {
+        return Err(anyhow!(
+            "cheapest validated outcome policy must include task policies"
+        ));
+    }
+
+    let retained_evidence_refs = policy
+        .evidence_refs
+        .iter()
+        .cloned()
+        .collect::<BTreeSet<_>>();
+    let candidate_ids = context
+        .candidates
+        .iter()
+        .map(|candidate| candidate.candidate_id.as_str())
+        .collect::<BTreeSet<_>>();
+    let mut seen_candidate_evidence = BTreeSet::new();
+    for evidence in &policy.candidate_evidence {
+        if evidence.candidate_id.trim().is_empty() {
+            return Err(anyhow!(
+                "cheapest validated outcome candidate_id is required"
+            ));
+        }
+        if evidence.candidate_source_ref.trim().is_empty() {
+            return Err(anyhow!(
+                "cheapest validated outcome candidate {} candidate_source_ref is required",
+                evidence.candidate_id
+            ));
+        }
+        if !seen_candidate_evidence.insert(evidence.candidate_id.clone()) {
+            return Err(anyhow!(
+                "duplicate cheapest validated outcome candidate evidence for {}",
+                evidence.candidate_id
+            ));
+        }
+        let candidate = context
+            .candidates
+            .iter()
+            .find(|candidate| candidate.candidate_id == evidence.candidate_id)
+            .ok_or_else(|| {
+                anyhow!(
+                    "cheapest validated outcome candidate {} is not in model suitability candidates",
+                    evidence.candidate_id
+                )
+            })?;
+        if !candidate_ids.contains(evidence.candidate_id.as_str()) {
+            return Err(anyhow!(
+                "cheapest validated outcome candidate {} is not in model suitability candidates",
+                evidence.candidate_id
+            ));
+        }
+        if evidence.candidate_source_ref != candidate.source_ref {
+            return Err(anyhow!(
+                "cheapest validated outcome candidate {} candidate_source_ref does not match model suitability source_ref",
+                evidence.candidate_id
+            ));
+        }
+        if !retained_evidence_refs.contains(&evidence.candidate_source_ref) {
+            return Err(anyhow!(
+                "cheapest validated outcome candidate {} candidate_source_ref is not retained in evidence_refs",
+                evidence.candidate_id
+            ));
+        }
+        if evidence.validation_ref.trim().is_empty() {
+            return Err(anyhow!(
+                "cheapest validated outcome candidate {} validation_ref is required",
+                evidence.candidate_id
+            ));
+        }
+        if !retained_evidence_refs.contains(&evidence.validation_ref) {
+            return Err(anyhow!(
+                "cheapest validated outcome candidate {} validation_ref is not retained in evidence_refs",
+                evidence.candidate_id
+            ));
+        }
+        if !evidence.validated_outcome {
+            return Err(anyhow!(
+                "cheapest validated outcome candidate {} must have validated_outcome=true",
+                evidence.candidate_id
+            ));
+        }
+    }
+
+    let input_ids = inputs
+        .iter()
+        .map(|input| input.task_id.as_str())
+        .collect::<BTreeSet<_>>();
+    let mut seen_task_policies = BTreeSet::new();
+    for task_policy in &policy.task_policies {
+        if task_policy.task_id.trim().is_empty() {
+            return Err(anyhow!("cheapest validated outcome task_id is required"));
+        }
+        if !seen_task_policies.insert(task_policy.task_id.clone()) {
+            return Err(anyhow!(
+                "duplicate cheapest validated outcome task policy for {}",
+                task_policy.task_id
+            ));
+        }
+        if !input_ids.contains(task_policy.task_id.as_str()) {
+            return Err(anyhow!(
+                "cheapest validated outcome task {} does not match a scheduler input task_id",
+                task_policy.task_id
+            ));
+        }
+        if !valid_cheapest_validated_outcome_claim_boundary(&task_policy.claim_boundary) {
+            return Err(anyhow!(
+                "cheapest validated outcome task {} claim_boundary must be an approved bounded policy value",
+                task_policy.task_id
+            ));
+        }
+        if task_policy.allow_unvalidated_fallback {
+            return Err(anyhow!(
+                "cheapest validated outcome task {} cannot allow unvalidated fallback",
+                task_policy.task_id
+            ));
+        }
+        let requirement = context
+            .task_requirements
+            .iter()
+            .find(|requirement| requirement.task_id == task_policy.task_id)
+            .ok_or_else(|| {
+                anyhow!(
+                    "cheapest validated outcome task {} has no model suitability requirement",
+                    task_policy.task_id
+                )
+            })?;
+        select_model_suitability_candidate(context, requirement, Some(policy)).map_err(|err| {
+            anyhow!(
+                "cheapest validated outcome task {} has no validated affordable candidate: {err}",
+                task_policy.task_id
             )
         })?;
     }
@@ -1035,8 +1310,10 @@ pub fn schedule_economics_bundle(
         apply_chronosense_scheduler_context(&bundle.inputs, bundle.chronosense_context.as_ref());
     let provider_routes =
         resolve_role_provider_assignments(bundle.role_provider_context.as_ref(), &adjusted_inputs)?;
-    let model_suitability =
-        resolve_model_suitability_assignments(bundle.model_suitability_context.as_ref())?;
+    let model_suitability = resolve_model_suitability_assignments(
+        bundle.model_suitability_context.as_ref(),
+        bundle.cheapest_validated_outcome_policy.as_ref(),
+    )?;
     let mut decisions = adjusted_inputs
         .iter()
         .map(|input| {
@@ -1062,6 +1339,7 @@ pub fn schedule_economics_bundle(
 
 pub fn resolve_model_suitability_assignments(
     context: Option<&ModelSuitabilitySelectionContextV1>,
+    cheapest_policy: Option<&CheapestValidatedOutcomePolicyV1>,
 ) -> Result<BTreeMap<String, ModelSuitabilitySelectionV1>> {
     let Some(context) = context else {
         return Ok(BTreeMap::new());
@@ -1070,7 +1348,7 @@ pub fn resolve_model_suitability_assignments(
     for requirement in &context.task_requirements {
         selected.insert(
             requirement.task_id.clone(),
-            select_model_suitability_candidate(context, requirement)?,
+            select_model_suitability_candidate(context, requirement, cheapest_policy)?,
         );
     }
     Ok(selected)
@@ -1079,26 +1357,54 @@ pub fn resolve_model_suitability_assignments(
 fn select_model_suitability_candidate(
     context: &ModelSuitabilitySelectionContextV1,
     requirement: &ModelSuitabilityTaskRequirementV1,
+    cheapest_policy: Option<&CheapestValidatedOutcomePolicyV1>,
 ) -> Result<ModelSuitabilitySelectionV1> {
+    let task_policy = cheapest_policy.and_then(|policy| {
+        policy
+            .task_policies
+            .iter()
+            .find(|task_policy| task_policy.task_id == requirement.task_id)
+            .map(|task_policy| (policy, task_policy))
+    });
     let mut eligible = context
         .candidates
         .iter()
-        .filter(|candidate| model_candidate_matches_requirement(candidate, requirement))
+        .filter(|candidate| {
+            model_candidate_matches_requirement(candidate, requirement)
+                && cheapest_policy_allows_candidate(candidate, task_policy)
+        })
         .collect::<Vec<_>>();
     if eligible.is_empty() {
         return Err(anyhow!(
             "no candidate matched required role and classification"
         ));
     }
-    eligible.sort_by(|left, right| {
-        model_classification_rank(&right.classification)
-            .cmp(&model_classification_rank(&left.classification))
-            .then_with(|| right.selection_priority.cmp(&left.selection_priority))
-            .then_with(|| left.provider_profile_ref.cmp(&right.provider_profile_ref))
-            .then_with(|| left.model_ref.cmp(&right.model_ref))
-            .then_with(|| left.candidate_id.cmp(&right.candidate_id))
-    });
+    if let Some((policy, _task_policy)) = task_policy {
+        eligible.sort_by(|left, right| {
+            cheapest_candidate_cost_rank(policy, left)
+                .cmp(&cheapest_candidate_cost_rank(policy, right))
+                .then_with(|| {
+                    model_classification_rank(&right.classification)
+                        .cmp(&model_classification_rank(&left.classification))
+                })
+                .then_with(|| right.selection_priority.cmp(&left.selection_priority))
+                .then_with(|| left.provider_profile_ref.cmp(&right.provider_profile_ref))
+                .then_with(|| left.model_ref.cmp(&right.model_ref))
+                .then_with(|| left.candidate_id.cmp(&right.candidate_id))
+        });
+    } else {
+        eligible.sort_by(|left, right| {
+            model_classification_rank(&right.classification)
+                .cmp(&model_classification_rank(&left.classification))
+                .then_with(|| right.selection_priority.cmp(&left.selection_priority))
+                .then_with(|| left.provider_profile_ref.cmp(&right.provider_profile_ref))
+                .then_with(|| left.model_ref.cmp(&right.model_ref))
+                .then_with(|| left.candidate_id.cmp(&right.candidate_id))
+        });
+    }
     let selected = eligible[0];
+    let selected_policy_evidence = task_policy
+        .and_then(|(policy, _task_policy)| cheapest_candidate_evidence(policy, selected));
     let selection_trace = context
         .candidates
         .iter()
@@ -1113,7 +1419,18 @@ fn select_model_suitability_candidate(
                 } else {
                     ModelSuitabilityTraceDispositionV1::Rejected
                 },
-                reason: model_suitability_trace_reason(candidate, requirement, selected_candidate),
+                reason: model_suitability_trace_reason(
+                    candidate,
+                    requirement,
+                    selected_candidate,
+                    task_policy,
+                ),
+                outcome_cost_tier: task_policy
+                    .and_then(|(policy, _)| cheapest_candidate_evidence(policy, candidate))
+                    .map(|evidence| evidence.outcome_cost_tier.clone()),
+                validation_ref: task_policy
+                    .and_then(|(policy, _)| cheapest_candidate_evidence(policy, candidate))
+                    .map(|evidence| evidence.validation_ref.clone()),
             }
         })
         .collect::<Vec<_>>();
@@ -1129,8 +1446,52 @@ fn select_model_suitability_candidate(
         evidence_digest: selected.evidence_digest.clone(),
         advisory_authority_only: selected.advisory_authority_only,
         claim_boundary: requirement.claim_boundary.clone(),
+        outcome_cost_tier: selected_policy_evidence
+            .as_ref()
+            .map(|evidence| evidence.outcome_cost_tier.clone()),
+        validation_ref: selected_policy_evidence
+            .as_ref()
+            .map(|evidence| evidence.validation_ref.clone()),
+        cheapest_validated_outcome: selected_policy_evidence.is_some(),
         selection_trace,
     })
+}
+
+fn cheapest_policy_allows_candidate(
+    candidate: &ModelSuitabilityCandidateV1,
+    task_policy: Option<(
+        &CheapestValidatedOutcomePolicyV1,
+        &CheapestValidatedOutcomeTaskPolicyV1,
+    )>,
+) -> bool {
+    let Some((policy, task_policy)) = task_policy else {
+        return true;
+    };
+    let Some(evidence) = cheapest_candidate_evidence(policy, candidate) else {
+        return false;
+    };
+    evidence.validated_outcome
+        && cost_weight(&evidence.outcome_cost_tier)
+            <= cost_weight(&task_policy.max_outcome_cost_tier)
+}
+
+fn cheapest_candidate_evidence<'a>(
+    policy: &'a CheapestValidatedOutcomePolicyV1,
+    candidate: &ModelSuitabilityCandidateV1,
+) -> Option<&'a CheapestValidatedCandidateEvidenceV1> {
+    policy
+        .candidate_evidence
+        .iter()
+        .find(|evidence| evidence.candidate_id == candidate.candidate_id)
+}
+
+fn cheapest_candidate_cost_rank(
+    policy: &CheapestValidatedOutcomePolicyV1,
+    candidate: &ModelSuitabilityCandidateV1,
+) -> u32 {
+    cheapest_candidate_evidence(policy, candidate)
+        .map(|evidence| cost_weight(&evidence.outcome_cost_tier))
+        .unwrap_or(99)
 }
 
 fn model_candidate_matches_requirement(
@@ -1150,8 +1511,20 @@ fn model_suitability_trace_reason(
     candidate: &ModelSuitabilityCandidateV1,
     requirement: &ModelSuitabilityTaskRequirementV1,
     selected: bool,
+    task_policy: Option<(
+        &CheapestValidatedOutcomePolicyV1,
+        &CheapestValidatedOutcomeTaskPolicyV1,
+    )>,
 ) -> String {
     if selected {
+        if let Some((policy, _)) = task_policy {
+            if let Some(evidence) = cheapest_candidate_evidence(policy, candidate) {
+                return format!(
+                    "selected by cheapest validated outcome policy with {:?} cost and priority {}",
+                    evidence.outcome_cost_tier, candidate.selection_priority
+                );
+            }
+        }
         return format!(
             "selected by bounded role suitability ranking with priority {}",
             candidate.selection_priority
@@ -1172,6 +1545,20 @@ fn model_suitability_trace_reason(
     {
         return "provider profile not allowed for this task".to_string();
     }
+    if let Some((policy, task_policy)) = task_policy {
+        let Some(evidence) = cheapest_candidate_evidence(policy, candidate) else {
+            return "no retained cost/validation evidence for cheapest validated outcome policy"
+                .to_string();
+        };
+        if !evidence.validated_outcome {
+            return "outcome is not validated for cheapest validated outcome policy".to_string();
+        }
+        if cost_weight(&evidence.outcome_cost_tier)
+            > cost_weight(&task_policy.max_outcome_cost_tier)
+        {
+            return "outcome cost exceeds task policy maximum".to_string();
+        }
+    }
     "eligible but not selected by deterministic ranking".to_string()
 }
 
@@ -1181,6 +1568,14 @@ fn valid_model_suitability_claim_boundary(value: &str) -> bool {
         "bounded_role_suitability_not_authority"
             | "bounded_model_suitability_not_authority"
             | "bounded_current_panel_not_authority"
+    )
+}
+
+fn valid_cheapest_validated_outcome_claim_boundary(value: &str) -> bool {
+    matches!(
+        value,
+        "bounded_cheapest_validated_outcome_not_exact_cost"
+            | "bounded_cost_heuristic_not_authority"
     )
 }
 
@@ -1453,7 +1848,18 @@ fn schedule_economics_input_with_provider_route(
     let scheduling_rank_key = scheduling_rank_key(input, &summary, &selected_lane);
 
     Ok(CognitiveSchedulerDecisionV1 {
-        schema_version: if provider_route.is_some() {
+        schema_version: if provider_route.is_some()
+            && model_suitability_selection
+                .as_ref()
+                .is_some_and(|selection| selection.cheapest_validated_outcome)
+        {
+            COGNITIVE_SCHEDULER_DECISION_PROVIDER_CHEAPEST_VALIDATED_OUTCOME_SCHEMA_V1.to_string()
+        } else if model_suitability_selection
+            .as_ref()
+            .is_some_and(|selection| selection.cheapest_validated_outcome)
+        {
+            COGNITIVE_SCHEDULER_DECISION_CHEAPEST_VALIDATED_OUTCOME_SCHEMA_V1.to_string()
+        } else if provider_route.is_some() {
             COGNITIVE_SCHEDULER_DECISION_WITH_PROVIDER_ROUTE_SCHEMA_V1.to_string()
         } else if model_suitability_selection.is_some() {
             COGNITIVE_SCHEDULER_DECISION_MODEL_SUITABILITY_SCHEMA_V1.to_string()
@@ -1790,6 +2196,8 @@ mod tests {
     const FIXTURE: &str = include_str!("../tests/fixtures/scheduler/economics_inputs_v1.json");
     const MODEL_SUITABILITY_FIXTURE: &str =
         include_str!("../tests/fixtures/scheduler/model_suitability_inputs_v1.json");
+    const CHEAPEST_VALIDATED_OUTCOME_FIXTURE: &str =
+        include_str!("../tests/fixtures/scheduler/cheapest_validated_outcome_inputs_v1.json");
 
     #[test]
     fn scheduler_economics_bundle_fixture_parses_and_summarizes() {
@@ -1863,6 +2271,114 @@ mod tests {
         assert_eq!(docs.schema_version, COGNITIVE_SCHEDULER_DECISION_SCHEMA_V1);
         assert!(docs.model_suitability_selection.is_none());
         assert!(docs.provider_route.is_none());
+    }
+
+    #[test]
+    fn cheapest_validated_outcome_policy_selects_lowest_cost_valid_candidate() {
+        let bundle = parse_economics_bundle_json(CHEAPEST_VALIDATED_OUTCOME_FIXTURE)
+            .expect("fixture parses");
+        assert_eq!(
+            bundle.schema_version,
+            SCHEDULER_PROVIDER_CHEAPEST_VALIDATED_OUTCOME_INPUT_BUNDLE_SCHEMA_V1
+        );
+
+        let plan = schedule_economics_bundle(&bundle).expect("cheapest validated outcome plan");
+        assert_eq!(
+            plan.source_schema_version,
+            SCHEDULER_PROVIDER_CHEAPEST_VALIDATED_OUTCOME_INPUT_BUNDLE_SCHEMA_V1
+        );
+        let review = decision(&plan, "first-pass-review");
+        assert_eq!(
+            review.schema_version,
+            COGNITIVE_SCHEDULER_DECISION_PROVIDER_CHEAPEST_VALIDATED_OUTCOME_SCHEMA_V1
+        );
+        let route = review
+            .provider_route
+            .as_ref()
+            .expect("combined policy keeps provider route");
+        assert_eq!(
+            route.provider_profile_ref.as_deref(),
+            Some("chatgpt:gpt-5.3-codex")
+        );
+        let selection = review
+            .model_suitability_selection
+            .as_ref()
+            .expect("review task has cheapest validated outcome selection");
+        assert_eq!(selection.selected_candidate_id, "gemini:gemini-2.5-flash");
+        assert_eq!(selection.outcome_cost_tier, Some(SchedulerCostLevelV1::Low));
+        assert!(selection.cheapest_validated_outcome);
+        assert_eq!(
+            selection.validation_ref.as_deref(),
+            Some(
+                "docs/milestones/v0.91.7/review/provider/artifacts/cheapest_validated_cost_table_4674.json"
+            )
+        );
+        assert!(selection.selection_trace.iter().any(|trace| {
+            trace.candidate_id == "openrouter:gpt-5.4"
+                && trace.reason == "outcome cost exceeds task policy maximum"
+                && trace.outcome_cost_tier == Some(SchedulerCostLevelV1::High)
+        }));
+        assert!(selection.selection_trace.iter().any(|trace| {
+            trace.candidate_id == "local:gemma4-e2b"
+                && trace.reason == "classification below task minimum"
+        }));
+    }
+
+    #[test]
+    fn cheapest_validated_outcome_policy_requires_schema_bump() {
+        let mut bundle = parse_economics_bundle_json(CHEAPEST_VALIDATED_OUTCOME_FIXTURE)
+            .expect("fixture parses");
+        bundle.schema_version = SCHEDULER_MODEL_SUITABILITY_INPUT_BUNDLE_SCHEMA_V1.to_string();
+        bundle.role_provider_context = None;
+        let err = validate_economics_bundle(&bundle).expect_err("schema bump required");
+        assert!(err
+            .to_string()
+            .contains("cheapest_validated_outcome_policy requires scheduler bundle schema"));
+    }
+
+    #[test]
+    fn cheapest_validated_outcome_policy_rejects_unvalidated_candidate() {
+        let mut bundle = parse_economics_bundle_json(CHEAPEST_VALIDATED_OUTCOME_FIXTURE)
+            .expect("fixture parses");
+        let policy = bundle
+            .cheapest_validated_outcome_policy
+            .as_mut()
+            .expect("cheapest policy");
+        policy.candidate_evidence[1].validated_outcome = false;
+        let err = validate_economics_bundle(&bundle).expect_err("unvalidated outcome rejected");
+        assert!(err.to_string().contains("must have validated_outcome=true"));
+    }
+
+    #[test]
+    fn cheapest_validated_outcome_policy_rejects_uncited_validation_ref() {
+        let mut bundle = parse_economics_bundle_json(CHEAPEST_VALIDATED_OUTCOME_FIXTURE)
+            .expect("fixture parses");
+        let policy = bundle
+            .cheapest_validated_outcome_policy
+            .as_mut()
+            .expect("cheapest policy");
+        policy.candidate_evidence[1].validation_ref =
+            "docs/milestones/v0.91.7/review/provider/artifacts/missing-cost-table.json".to_string();
+        let err = validate_economics_bundle(&bundle).expect_err("uncited validation rejected");
+        assert!(err
+            .to_string()
+            .contains("validation_ref is not retained in evidence_refs"));
+    }
+
+    #[test]
+    fn cheapest_validated_outcome_policy_rejects_mismatched_candidate_source_ref() {
+        let mut bundle = parse_economics_bundle_json(CHEAPEST_VALIDATED_OUTCOME_FIXTURE)
+            .expect("fixture parses");
+        let policy = bundle
+            .cheapest_validated_outcome_policy
+            .as_mut()
+            .expect("cheapest policy");
+        policy.candidate_evidence[1].candidate_source_ref =
+            "docs/milestones/v0.91.6/review/provider/openrouter_current_models/openrouter_current_model_suitability_state_2026-06-22.json".to_string();
+        let err = validate_economics_bundle(&bundle).expect_err("mismatched source rejected");
+        assert!(err
+            .to_string()
+            .contains("candidate_source_ref does not match model suitability source_ref"));
     }
 
     #[test]

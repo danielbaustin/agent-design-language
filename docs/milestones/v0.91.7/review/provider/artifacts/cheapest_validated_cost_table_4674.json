@@ -1,0 +1,36 @@
+{
+  "schema_version": "adl.scheduler.cheapest_validated_cost_table.v1",
+  "issue": 4674,
+  "generated_from": "v0.91.7 WP-05 #4674 deterministic fixture evidence",
+  "claim_boundary": "bounded_cost_tier_fixture_not_live_provider_price",
+  "currency_boundary": "No live provider price lookup is claimed by this artifact.",
+  "candidates": [
+    {
+      "candidate_id": "openrouter:gpt-5.4",
+      "candidate_source_ref": "docs/milestones/v0.91.6/review/provider/openrouter_current_models/openrouter_current_model_suitability_state_2026-06-22.json",
+      "provider_family": "openrouter",
+      "model_ref": "openai/gpt-5.4",
+      "outcome_cost_tier": "high",
+      "validated_outcome": true,
+      "validation_basis": "Retained current-model suitability evidence plus bounded fixture cost tier."
+    },
+    {
+      "candidate_id": "gemini:gemini-2.5-flash",
+      "candidate_source_ref": "docs/milestones/v0.91.6/review/provider/gemini_current_models/gemini_current_model_suitability_state_2026-06-18.json",
+      "provider_family": "google",
+      "model_ref": "gemini-2.5-flash",
+      "outcome_cost_tier": "low",
+      "validated_outcome": true,
+      "validation_basis": "Retained current-model suitability evidence plus bounded fixture cost tier."
+    },
+    {
+      "candidate_id": "local:gemma4-e2b",
+      "candidate_source_ref": "docs/milestones/v0.91.5/review/remote_gemma_watcher/REMOTE_GEMMA_WATCHER_PROOF_2026-06-15.md",
+      "provider_family": "ollama",
+      "model_ref": "gemma4:e2b",
+      "outcome_cost_tier": "low",
+      "validated_outcome": true,
+      "validation_basis": "Historical remote Gemma evidence is retained, but model suitability classification remains below the reviewer requirement."
+    }
+  ]
+}
