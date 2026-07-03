@@ -135,6 +135,27 @@ fn process_status_reports_reachable_localhost_port_as_bound() {
 }
 
 #[test]
+fn process_status_human_output_reports_port_status() {
+    let listener = TcpListener::bind(("127.0.0.1", 0)).expect("bind test listener");
+    let port = listener
+        .local_addr()
+        .expect("listener address")
+        .port()
+        .to_string();
+
+    let out = run_adl(&["process", "status", "--port", &port]);
+
+    assert!(
+        out.status.success(),
+        "stdout:\n{}\nstderr:\n{}",
+        String::from_utf8_lossy(&out.stdout),
+        String::from_utf8_lossy(&out.stderr)
+    );
+    let stdout = String::from_utf8_lossy(&out.stdout);
+    assert!(stdout.contains("bound_port 127.0.0.1:"));
+}
+
+#[test]
 fn process_status_rejects_non_loopback_port_hosts() {
     let out = run_status_failure(&["--port", "8787", "--host", "0.0.0.0", "--json"]);
 
@@ -246,4 +267,19 @@ fn process_status_help_documents_safe_surface() {
     assert!(stdout.contains("adl process status --pid <pid>"));
     assert!(stdout.contains("--pid-file <path>"));
     assert!(stdout.contains("does not run ps, pgrep, lsof"));
+}
+
+#[test]
+fn process_status_parent_help_and_unknown_subcommand_are_bounded() {
+    let help = run_adl(&["process", "--help"]);
+    assert!(help.status.success());
+    assert!(String::from_utf8_lossy(&help.stdout).contains("adl process status"));
+
+    let unknown = run_adl(&["process", "unknown"]);
+    assert!(!unknown.status.success());
+    assert!(
+        String::from_utf8_lossy(&unknown.stderr).contains("unknown process command"),
+        "stderr:\n{}",
+        String::from_utf8_lossy(&unknown.stderr)
+    );
 }
