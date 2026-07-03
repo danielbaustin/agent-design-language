@@ -1,0 +1,58 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+usage() {
+  cat <<'USAGE'
+Usage:
+  adl/tools/run_pr_fast_coverage_lane.sh --filter-expression <nextest-expression>
+
+Runs the bounded PR-fast coverage lane for changed Rust source surfaces.
+The expression must come from check_coverage_impact.sh --print-risk-nextest-expression.
+USAGE
+}
+
+FILTER_EXPRESSION=""
+while [ "$#" -gt 0 ]; do
+  case "$1" in
+    --filter-expression)
+      FILTER_EXPRESSION="${2:-}"
+      shift 2
+      ;;
+    -h|--help)
+      usage
+      exit 0
+      ;;
+    *)
+      echo "unknown argument: $1" >&2
+      usage >&2
+      exit 2
+      ;;
+  esac
+done
+
+if [ -z "$FILTER_EXPRESSION" ]; then
+  echo "run_pr_fast_coverage_lane: --filter-expression is required" >&2
+  exit 2
+fi
+
+ADL_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
+cd "$ADL_DIR"
+
+rm -rf target/debug target/llvm-cov-target
+COVERAGE_BUILD_ROOT="${RUNNER_TEMP:-/tmp}/adl-pr-fast-coverage"
+mkdir -p "$COVERAGE_BUILD_ROOT/target" "$COVERAGE_BUILD_ROOT/llvm-cov-target"
+export CARGO_TARGET_DIR="$COVERAGE_BUILD_ROOT/target"
+export CARGO_LLVM_COV_TARGET_DIR="$COVERAGE_BUILD_ROOT/llvm-cov-target"
+
+printf 'PR-fast coverage expression: %s\n' "$FILTER_EXPRESSION"
+CARGO_INCREMENTAL=0 cargo llvm-cov nextest \
+  --workspace \
+  --status-level all \
+  --final-status-level slow \
+  --no-report \
+  -E "$FILTER_EXPRESSION"
+
+cargo llvm-cov report \
+  --json \
+  --summary-only \
+  --output-path coverage-summary.json

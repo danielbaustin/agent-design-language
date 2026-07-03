@@ -57,3 +57,27 @@ Final review result: no blockers.
 ## Expected GitHub evidence
 
 The PR should show `adl-coverage` using the restored PR-fast path for this coverage-policy repair. The expected outcome is a green required `adl-coverage` check with timing substantially below the previous 30-45 minute accidental full-workspace run.
+
+## Follow-up CI-contract repair
+
+After draft PR publication, GitHub `adl-ci` failed because `test_ci_runtime_contracts.sh` correctly forbids inline `cargo llvm-cov nextest` commands in `.github/workflows/ci.yaml`.
+
+Disposition:
+
+- kept the delegation contract
+- added `adl/tools/run_pr_fast_coverage_lane.sh`
+- changed the workflow `PR fast coverage summary (json)` step to call the runner script instead of inlining `cargo llvm-cov nextest`
+- updated CI/path-policy contract tests to require the delegated runner path
+
+Additional local validation:
+
+```bash
+bash adl/tools/test_ci_runtime_contracts.sh
+bash adl/tools/test_ci_path_policy.sh
+bash adl/tools/test_check_coverage_impact.sh
+bash adl/tools/test_run_authoritative_coverage_lane.sh
+bash adl/tools/run_pr_fast_coverage_lane.sh --help
+git diff --check
+```
+
+Results: all passed locally before pushing the CI-contract repair.

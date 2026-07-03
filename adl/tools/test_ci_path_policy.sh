@@ -40,7 +40,7 @@ assert_current_coverage_workflow_contract() {
   assert_file_has "$workflow" '--print-risk-nextest-expression > adl/coverage-impact-filter-expression.txt'
   assert_file_has "$workflow" 'filter_expression<<ADL_COVERAGE_EXPR'
   assert_file_has "$workflow" 'PR fast coverage summary (json)'
-  assert_file_has "$workflow" 'CARGO_INCREMENTAL=0 cargo llvm-cov nextest --workspace --status-level all --final-status-level slow --no-report -E "${{ steps.coverage-impact.outputs.filter_expression }}"'
+  assert_file_has "$workflow" 'bash tools/run_pr_fast_coverage_lane.sh --filter-expression "${{ steps.coverage-impact.outputs.filter_expression }}"'
   assert_file_has "$workflow" 'PR coverage-impact preflight'
   assert_file_has "$workflow" 'args+=(--require-summary-for-risk)'
   assert_file_has "$workflow" "if: steps.path-policy.outputs.full_coverage_required == 'true' || steps.coverage-impact.outputs.needs_fast_summary == 'true'"
@@ -128,7 +128,7 @@ jobs:
           mkdir -p "$COVERAGE_BUILD_ROOT/target" "$COVERAGE_BUILD_ROOT/llvm-cov-target"
           export CARGO_TARGET_DIR="$COVERAGE_BUILD_ROOT/target"
           export CARGO_LLVM_COV_TARGET_DIR="$COVERAGE_BUILD_ROOT/llvm-cov-target"
-          CARGO_INCREMENTAL=0 cargo llvm-cov nextest --workspace --status-level all --final-status-level slow --no-report -E "${{ steps.coverage-impact.outputs.filter_expression }}"
+          bash tools/run_pr_fast_coverage_lane.sh --filter-expression "${{ steps.coverage-impact.outputs.filter_expression }}"
           cargo llvm-cov report --json --summary-only --output-path coverage-summary.json
         working-directory: .
       - name: Coverage run and summary (json)
@@ -1051,12 +1051,6 @@ text = replace_once(
             echo "run_cli_smoke_basics=true" >> "$GITHUB_OUTPUT"
 """,
     "coverage-impact output augmentation",
-)
-text = replace_once(
-    text,
-    "          rm -rf target/debug target/llvm-cov-target\n          COVERAGE_BUILD_ROOT=\"${RUNNER_TEMP:-/tmp}/adl-pr-fast-coverage\"\n          mkdir -p \"$COVERAGE_BUILD_ROOT/target\" \"$COVERAGE_BUILD_ROOT/llvm-cov-target\"\n          export CARGO_TARGET_DIR=\"$COVERAGE_BUILD_ROOT/target\"\n          export CARGO_LLVM_COV_TARGET_DIR=\"$COVERAGE_BUILD_ROOT/llvm-cov-target\"\n          CARGO_INCREMENTAL=0 cargo llvm-cov nextest --workspace --status-level all --final-status-level slow --no-report -E \"${{ steps.coverage-impact.outputs.filter_expression }}\"\n          cargo llvm-cov report --json --summary-only --output-path coverage-summary.json\n",
-    "          rm -rf target/debug target/llvm-cov-target\n          COVERAGE_BUILD_ROOT=\"${RUNNER_TEMP:-/tmp}/adl-pr-fast-coverage\"\n          mkdir -p \"$COVERAGE_BUILD_ROOT/target\" \"$COVERAGE_BUILD_ROOT/llvm-cov-target\"\n          export CARGO_TARGET_DIR=\"$COVERAGE_BUILD_ROOT/target\"\n          export CARGO_LLVM_COV_TARGET_DIR=\"$COVERAGE_BUILD_ROOT/llvm-cov-target\"\n          summary_files=()\n          if [ \"${{ steps.coverage-impact.outputs.run_cli_smoke_process_status }}\" = \"true\" ]; then\n            CARGO_INCREMENTAL=0 cargo llvm-cov nextest --workspace --test cli_smoke process_status --no-report\n            cargo llvm-cov report --json --summary-only --output-path coverage-summary-process-status.json\n            summary_files+=(coverage-summary-process-status.json)\n          fi\n          if [ \"${{ steps.coverage-impact.outputs.run_cli_smoke_basics }}\" = \"true\" ]; then\n            CARGO_INCREMENTAL=0 cargo llvm-cov nextest --workspace --test cli_smoke basics --no-report\n            cargo llvm-cov report --json --summary-only --output-path coverage-summary-cli-basics.json\n            summary_files+=(coverage-summary-cli-basics.json)\n          fi\n          cp \"${summary_files[0]}\" coverage-summary.json\n",
-    "coverage summary command split",
 )
 workflow.write_text(text)
 

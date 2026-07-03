@@ -4,7 +4,7 @@ set -euo pipefail
 ROOT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)"
 WORKFLOW="$ROOT_DIR/.github/workflows/ci.yaml"
 
-python3 - "$WORKFLOW" "$ROOT_DIR/adl/tools/test_run_authoritative_coverage_lane.sh" "$ROOT_DIR/adl/tools/run_authoritative_coverage_lane.sh" <<'PY'
+python3 - "$WORKFLOW" "$ROOT_DIR/adl/tools/test_run_authoritative_coverage_lane.sh" "$ROOT_DIR/adl/tools/run_authoritative_coverage_lane.sh" "$ROOT_DIR/adl/tools/run_pr_fast_coverage_lane.sh" <<'PY'
 import pathlib
 import re
 import sys
@@ -13,6 +13,7 @@ workflow_path = pathlib.Path(sys.argv[1])
 workflow = workflow_path.read_text()
 runner_test = pathlib.Path(sys.argv[2])
 runner_script = pathlib.Path(sys.argv[3])
+pr_fast_runner = pathlib.Path(sys.argv[4])
 workflow_root = workflow_path.parent
 
 def step_run(name: str) -> str:
@@ -124,10 +125,10 @@ if "tool: nextest" not in workflow:
         "coverage lanes must install cargo-nextest as a required coverage toolchain dependency"
     )
 if "cargo llvm-cov nextest" in workflow:
-    raise SystemExit("adl-coverage workflow must delegate coverage execution to the runner, not inline nextest")
+    raise SystemExit("adl-coverage workflow must delegate coverage execution to runner scripts, not inline nextest")
 
 expected_coverage = (
-    'bash tools/run_authoritative_coverage_lane.sh --authority "adl_coverage_always_on" '
+    'bash tools/run_authoritative_coverage_lane.sh --authority "${{ steps.path-policy.outputs.coverage_authority }}" '
     '--event-name "${{ github.event_name }}"'
 )
 expected_wrapped_coverage = (
@@ -141,9 +142,9 @@ if coverage_step not in {expected_coverage, expected_wrapped_coverage}:
         f"found: {coverage_step}"
     )
 coverage_step_if = step_if("Coverage run and summary (json)")
-if coverage_step_if != "steps.path-policy.outputs.coverage_required == 'true'":
+if coverage_step_if != "steps.path-policy.outputs.full_coverage_required == 'true'":
     raise SystemExit(
-        "authoritative coverage execution must respect path-policy coverage_required; "
+        "authoritative coverage execution must be limited to full_coverage_required surfaces; "
         f"found: {coverage_step_if}"
     )
 coverage_not_required_step = step_if("Coverage not required by path policy")
@@ -160,6 +161,10 @@ if not runner_test.exists():
 if not runner_script.exists():
     raise SystemExit(
         "authoritative coverage runner script must exist"
+    )
+if not pr_fast_runner.exists():
+    raise SystemExit(
+        "PR-fast coverage runner script must exist"
     )
 
 runner_script_text = runner_script.read_text()
@@ -179,10 +184,45 @@ for required_fragment in (
             f"missing fragment: {required_fragment}"
         )
 
-if step_count("PR fast coverage summary (json)") != 0:
-    raise SystemExit("adl-coverage must not use the old PR fast coverage summary path")
-if step_count("Determine PR fast coverage filters") != 0:
-    raise SystemExit("adl-coverage must not use the old coverage-impact output filter step")
+pr_fast_step = step_run("PR fast coverage summary (json)")
+expected_pr_fast_step = 'bash tools/run_pr_fast_coverage_lane.sh --filter-expression "${{ steps.coverage-impact.outputs.filter_expression }}"'
+if pr_fast_step != expected_pr_fast_step:
+    raise SystemExit(
+        "PR-fast coverage must delegate to the bounded runner script; "
+        f"found: {pr_fast_step}"
+    )
+pr_fast_if = step_if("PR fast coverage summary (json)")
+if "steps.coverage-impact.outputs.needs_fast_summary == 'true'" not in pr_fast_if:
+    raise SystemExit(
+        "PR-fast coverage must run only when coverage-impact requires a focused summary; "
+        f"found: {pr_fast_if}"
+    )
+filter_if = step_if("Determine PR fast coverage filters")
+if "steps.path-policy.outputs.full_coverage_required != 'true'" not in filter_if:
+    raise SystemExit(
+        "PR-fast filter determination must be limited to non-full PR coverage; "
+        f"found: {filter_if}"
+    )
+pr_fast_runner_text = pr_fast_runner.read_text()
+for required_fragment in (
+    'FILTER_EXPRESSION=""',
+    '--filter-expression',
+    'CARGO_INCREMENTAL=0 cargo llvm-cov nextest',
+    '--workspace',
+    '--status-level all',
+    '--final-status-level slow',
+    '--no-report',
+    '-E "$FILTER_EXPRESSION"',
+    'cargo llvm-cov report',
+    '--json',
+    '--summary-only',
+    '--output-path coverage-summary.json',
+):
+    if required_fragment not in pr_fast_runner_text:
+        raise SystemExit(
+            "PR-fast coverage runner must execute targeted nextest coverage and produce summary JSON; "
+            f"missing fragment: {required_fragment}"
+        )
 for required_fragment in (
     "cargo llvm-cov nextest \\",
     "    --workspace \\",
@@ -208,8 +248,12 @@ if '--summary adl/coverage-summary.json \\' not in authoritative_gate_step:
         "workflow is missing that summary reference"
     )
 
-if step_count("PR coverage-impact preflight") != 0:
-    raise SystemExit("adl-coverage must not carry the old PR coverage-impact preflight step")
+pr_preflight_if = step_if("PR coverage-impact preflight")
+if "steps.path-policy.outputs.full_coverage_required != 'true'" not in pr_preflight_if:
+    raise SystemExit(
+        "PR coverage-impact preflight must be limited to non-full PR coverage; "
+        f"found: {pr_preflight_if}"
+    )
 
 gate_if = step_if("Enforce coverage policy gates (workspace + per-file)")
 if "github.event_name != 'pull_request'" not in gate_if:
