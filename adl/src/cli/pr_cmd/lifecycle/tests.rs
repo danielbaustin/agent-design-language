@@ -731,7 +731,7 @@ fn prune_issue_worktree_rejects_dirty_worktree() {
 }
 
 #[test]
-fn scrub_noncanonical_issue_bundle_residue_keeps_only_canonical_issue_bundle() {
+fn scrub_noncanonical_issue_bundle_residue_preserves_unrelated_issue_bundles() {
     let _guard = env_lock();
     let temp = temp_dir("adl-pr-lifecycle-scrub-foreign-bundles");
     let repo = temp.join("repo");
@@ -772,8 +772,12 @@ fn scrub_noncanonical_issue_bundle_residue_keeps_only_canonical_issue_bundle() {
 
     assert!(canonical_body.is_file());
     assert!(canonical_bundle.is_dir());
-    assert!(!foreign_body.exists());
-    assert!(!foreign_bundle.exists());
+    assert!(foreign_body.is_file());
+    assert!(foreign_bundle.is_dir());
+    assert!(
+        foreign_bundle.join("stp.md").is_file(),
+        "unrelated issue bundle contents must not be deleted during closeout scrub"
+    );
     assert!(!drift_body.exists());
     assert!(!drift_bundle.exists());
 }

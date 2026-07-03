@@ -128,8 +128,8 @@ pub(crate) fn scrub_noncanonical_issue_bundle_residue(
                 let path = entry.path();
                 let name = entry.file_name().to_string_lossy().to_string();
                 if name.starts_with("issue-")
-                    && (name.starts_with(&body_prefix) && path != canonical_body
-                        || !name.starts_with(&body_prefix))
+                    && name.starts_with(&body_prefix)
+                    && path != canonical_body
                 {
                     fs::remove_file(&path).with_context(|| {
                         format!(
@@ -148,8 +148,8 @@ pub(crate) fn scrub_noncanonical_issue_bundle_residue(
                 let path = entry.path();
                 let name = entry.file_name().to_string_lossy().to_string();
                 if name.starts_with("issue-")
-                    && (name.starts_with(&task_prefix) && path != canonical_bundle
-                        || !name.starts_with(&task_prefix))
+                    && name.starts_with(&task_prefix)
+                    && path != canonical_bundle
                 {
                     fs::remove_dir_all(&path).with_context(|| {
                         format!(
