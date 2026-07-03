@@ -611,6 +611,9 @@ elif is_manifest_only_rust_wave; then
 elif [ "$slow_proof_inventory_surface_count" -gt 0 ] && [ "$rust_surface_count" -eq "$slow_proof_inventory_surface_count" ]; then
   mode="contract_only"
   reason="slow_proof_inventory_change_covered_by_contract_check"
+elif [ "$rust_surface_count" -eq 0 ] && [ "$structural_surface_count" -eq 0 ]; then
+  mode="skip"
+  reason="no_rust_surface_detected_for_fast_lane"
 elif [ "$rust_surface_count" -eq 0 ]; then
   mode="full"
   reason="no_relevant_rust_surface_detected_for_fast_lane"
@@ -703,6 +706,8 @@ if [ "$mode" = "focused" ] || [ "$mode" = "family" ]; then
   cargo nextest run --status-level all --final-status-level slow -E "$filter_expression"
 elif [ "$mode" = "contract_only" ]; then
   echo "Skipping ordinary nextest lane: slow-proof inventory change is covered by the slow-proof lane contract."
+elif [ "$mode" = "skip" ]; then
+  echo "Skipping ordinary nextest lane: no Rust test surface was detected for this PR-fast lane."
 else
   echo "Running full nextest lane: $reason"
   cargo nextest run --status-level all --final-status-level slow
