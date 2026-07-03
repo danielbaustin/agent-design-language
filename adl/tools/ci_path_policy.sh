@@ -110,14 +110,15 @@ mark_authoritative_full_coverage() {
   reason="$reason_value"
 }
 
-mark_pr_fast_coverage() {
+mark_pr_fast_rust_validation() {
   rust_required=true
-  coverage_required=true
+  coverage_required=false
+  full_coverage_required=false
   demo_smoke_required=true
   ci_contracts_required=true
-  coverage_lane="pr_fast"
-  coverage_authority="pr_changed_surface"
-  coverage_execution_state="pr_fast_preflight_required"
+  coverage_lane="deferred_pr_fast"
+  coverage_authority="focused_nextest_pr_fast"
+  coverage_execution_state="deferred_to_focused_nextest_pr_fast"
   reason="runtime_or_rust_test_change_runs_pr_fast_validation"
 }
 
@@ -125,6 +126,7 @@ mark_policy_surface_full_coverage() {
   local authority="$1"
   local reason_value="$2"
   ci_contracts_required=true
+  coverage_required=true
   full_coverage_required=true
   coverage_lane="authoritative_full"
   coverage_authority="$authority"
@@ -492,7 +494,7 @@ is_bounded_pr_fast_coverage_policy_change() {
         fi
         ;;
       adl/tools/ci_path_policy.sh)
-        if git_pr_patch "$path" | grep -E 'is_pr_fast_coverage_workflow_change|is_bounded_pr_fast_coverage_policy_surface|is_bounded_pr_fast_coverage_policy_change|bounded_pr_fast_coverage_policy_change_keeps_pr_fast_validation' >/dev/null 2>&1; then
+        if git_pr_patch "$path" | grep -E 'is_pr_fast_coverage_workflow_change|is_bounded_pr_fast_coverage_policy_surface|is_bounded_pr_fast_coverage_policy_change|bounded_pr_fast_coverage_policy_change_keeps_pr_fast_rust_validation' >/dev/null 2>&1; then
           saw_bounded_marker=true
         else
           saw_other=true
@@ -1043,7 +1045,7 @@ apply_validation_manager_routing() {
       return 0
       ;;
     ready_to_run:rust_pr_fast:false)
-      mark_pr_fast_coverage
+      mark_pr_fast_rust_validation
       reason="${validation_profile_primary_reason:-bounded_rust_surface_runs_focused_nextest}"
       return 0
       ;;
@@ -1185,7 +1187,7 @@ EOF
             if [ "$release_version_only" = true ] && { [ "$path" = "adl/Cargo.toml" ] || [ "$path" = "adl/Cargo.lock" ]; }; then
               continue
             fi
-            mark_pr_fast_coverage
+            mark_pr_fast_rust_validation
             ;;
           demos/*|adl/tools/demo_*|adl/tools/test_demo_*)
             ci_contracts_required=true
@@ -1199,7 +1201,7 @@ EOF
 $changed_files
 EOF
       bounded_pr_fast_coverage_policy_change=false
-      if [ "$coverage_required" = true ] && is_bounded_pr_fast_coverage_policy_change; then
+      if [ "$rust_required" = true ] && is_bounded_pr_fast_coverage_policy_change; then
         bounded_pr_fast_coverage_policy_change=true
       fi
       while IFS=$'\t' read -r _status path; do
@@ -1209,7 +1211,7 @@ EOF
         fi
         if [ "$bounded_pr_fast_coverage_policy_change" = true ] && is_bounded_pr_fast_coverage_policy_surface "$path"; then
           if [ "$reason" = "runtime_or_rust_test_change_runs_pr_fast_validation" ]; then
-            reason="bounded_pr_fast_coverage_policy_change_keeps_pr_fast_validation"
+            reason="bounded_pr_fast_coverage_policy_change_keeps_pr_fast_rust_validation"
           fi
           continue
         fi
@@ -1239,7 +1241,7 @@ EOF
             fi
             continue
           fi
-          if [ "$coverage_required" = true ]; then
+          if [ "$coverage_required" = true ] || [ "$rust_required" = true ]; then
             mark_policy_surface_full_coverage \
               "pr_policy_surface_runtime_mixed" \
               "coverage_policy_surface_change_with_runtime_surface_runs_full_coverage"
