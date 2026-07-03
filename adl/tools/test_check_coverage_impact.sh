@@ -126,6 +126,21 @@ run_artifacts_runtime_filters="$TMP/run-artifacts-runtime-filters.txt"
 bash "$SCRIPT" --changed-files "$run_artifacts_runtime_changed" --print-risk-filters >"$run_artifacts_runtime_filters"
 grep -Fx "run_state" "$run_artifacts_runtime_filters" >/dev/null
 
+chronosense_runtime_trace_changed="$TMP/chronosense-runtime-trace-changed.txt"
+cat >"$chronosense_runtime_trace_changed" <<'EOF'
+M	adl/src/chronosense.rs
+A	adl/src/chronosense/service.rs
+M	adl/src/chronosense/tests.rs
+M	adl/src/cli/run_artifacts/runtime/trace_envelope.rs
+M	adl/src/cli/tests/run_state/persistence.rs
+M	adl/src/trace_schema_v1.rs
+EOF
+chronosense_runtime_trace_filters="$TMP/chronosense-runtime-trace-filters.txt"
+bash "$SCRIPT" --changed-files "$chronosense_runtime_trace_changed" --print-risk-filters >"$chronosense_runtime_trace_filters"
+grep -Fx "chronosense" "$chronosense_runtime_trace_filters" >/dev/null
+grep -Fx "run_state" "$chronosense_runtime_trace_filters" >/dev/null
+grep -Fx "trace_schema_v1" "$chronosense_runtime_trace_filters" >/dev/null
+
 direct_tooling_binaries_changed="$TMP/direct-tooling-binaries-changed.txt"
 cat >"$direct_tooling_binaries_changed" <<'EOF'
 A	adl/src/bin/adl_lint_prompt_spec.rs

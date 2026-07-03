@@ -197,6 +197,28 @@ if "steps.coverage-impact.outputs.needs_fast_summary == 'true'" not in pr_fast_i
         "PR-fast coverage must run only when coverage-impact requires a focused summary; "
         f"found: {pr_fast_if}"
     )
+pr_fast_runner_text = pr_fast_runner.read_text()
+for required_fragment in (
+    'COVERAGE_BUILD_ROOT="${ADL_PR_FAST_COVERAGE_BUILD_ROOT:-$ADL_DIR/target/pr-fast-coverage}"',
+    'export CARGO_TARGET_DIR="$COVERAGE_BUILD_ROOT"',
+    'export CARGO_LLVM_COV_TARGET_DIR="$COVERAGE_BUILD_ROOT/llvm-cov-target"',
+    "PR-fast coverage target:",
+):
+    if required_fragment not in pr_fast_runner_text:
+        raise SystemExit(
+            "PR-fast coverage must use cacheable repo target subdirs; "
+            f"missing fragment: {required_fragment}"
+        )
+for forbidden_fragment in (
+    "RUNNER_TEMP",
+    "rm -rf target/debug",
+    "rm -rf target/llvm-cov-target",
+):
+    if forbidden_fragment in pr_fast_runner_text:
+        raise SystemExit(
+            "PR-fast coverage must not destroy or bypass the Rust cache; "
+            f"forbidden fragment: {forbidden_fragment}"
+        )
 filter_if = step_if("Determine PR fast coverage filters")
 if "steps.path-policy.outputs.full_coverage_required != 'true'" not in filter_if:
     raise SystemExit(

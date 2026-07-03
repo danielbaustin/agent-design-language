@@ -38,13 +38,13 @@ fi
 ADL_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 cd "$ADL_DIR"
 
-rm -rf target/debug target/llvm-cov-target
-COVERAGE_BUILD_ROOT="${RUNNER_TEMP:-/tmp}/adl-pr-fast-coverage"
-mkdir -p "$COVERAGE_BUILD_ROOT/target" "$COVERAGE_BUILD_ROOT/llvm-cov-target"
-export CARGO_TARGET_DIR="$COVERAGE_BUILD_ROOT/target"
+COVERAGE_BUILD_ROOT="${ADL_PR_FAST_COVERAGE_BUILD_ROOT:-$ADL_DIR/target/pr-fast-coverage}"
+mkdir -p "$COVERAGE_BUILD_ROOT" "$COVERAGE_BUILD_ROOT/llvm-cov-target"
+export CARGO_TARGET_DIR="$COVERAGE_BUILD_ROOT"
 export CARGO_LLVM_COV_TARGET_DIR="$COVERAGE_BUILD_ROOT/llvm-cov-target"
 
 printf 'PR-fast coverage expression: %s\n' "$FILTER_EXPRESSION"
+printf 'PR-fast coverage target: %s\n' "$CARGO_TARGET_DIR"
 CARGO_INCREMENTAL=0 cargo llvm-cov nextest \
   --workspace \
   --status-level all \

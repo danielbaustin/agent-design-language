@@ -239,6 +239,9 @@ candidate_filter_for_path() {
     adl/src/bin/adl_aws_remote_validation.rs)
       printf 'adl_aws_remote_validation_bin'
       ;;
+    adl/src/chronosense.rs|adl/src/chronosense/*.rs)
+      printf 'chronosense'
+      ;;
     adl/src/cli/run_artifacts/runtime/*.rs)
       printf 'run_state'
       ;;

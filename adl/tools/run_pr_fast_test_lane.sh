@@ -309,6 +309,10 @@ filter_token_for_path() {
       printf 'run_v0916_integrated_runtime_soak'
       return 0
       ;;
+    adl/src/chronosense.rs|adl/src/chronosense/*.rs)
+      printf 'chronosense'
+      return 0
+      ;;
     adl/src/long_lived_agent.rs|adl/src/long_lived_agent/tests.rs)
       printf 'long_lived_agent'
       return 0
@@ -402,6 +406,10 @@ family_token_for_path() {
       ;;
     adl/src/lib.rs)
       return 1
+      ;;
+    adl/src/chronosense.rs|adl/src/chronosense/*)
+      printf 'chronosense'
+      return 0
       ;;
     adl/src/runtime_v2/*)
       printf 'runtime_v2'

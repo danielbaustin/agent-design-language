@@ -362,6 +362,21 @@ assert_has "$long_lived_agent_only_output" "reason=bounded_rust_surface_runs_foc
 assert_has "$long_lived_agent_only_output" "filter_tokens=long_lived_agent"
 assert_has "$long_lived_agent_only_output" "filter_expression=test(/^long_lived_agent::/)"
 
+chronosense_runtime_trace="$TMP/chronosense-runtime-trace.txt"
+cat >"$chronosense_runtime_trace" <<'EOF'
+M	adl/src/chronosense.rs
+A	adl/src/chronosense/service.rs
+M	adl/src/chronosense/tests.rs
+M	adl/src/cli/run_artifacts/runtime/trace_envelope.rs
+M	adl/src/cli/tests/run_state/persistence.rs
+M	adl/src/trace_schema_v1.rs
+EOF
+chronosense_runtime_trace_output="$(bash "$SCRIPT" --changed-files "$chronosense_runtime_trace" --print-plan)"
+assert_has "$chronosense_runtime_trace_output" "mode=focused"
+assert_has "$chronosense_runtime_trace_output" "reason=bounded_rust_surface_runs_focused_nextest"
+assert_has "$chronosense_runtime_trace_output" "filter_tokens=chronosense,run_state,trace_schema_v1"
+assert_has "$chronosense_runtime_trace_output" "filter_expression=test(chronosense) or test(run_state) or test(trace_schema_v1)"
+
 too_many_families="$TMP/too_many_families.txt"
 cat >"$too_many_families" <<'EOF'
 M	adl/src/runtime_v2/subdir/nested.rs

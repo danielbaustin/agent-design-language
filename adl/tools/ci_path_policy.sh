@@ -453,6 +453,7 @@ is_bounded_pr_fast_coverage_policy_surface() {
     adl/tools/check_coverage_impact.sh|\
     adl/tools/ci_path_policy.sh|\
     adl/tools/run_authoritative_coverage_lane.sh|\
+    adl/tools/run_pr_fast_coverage_lane.sh|\
     adl/tools/test_check_coverage_impact.sh|\
     adl/tools/test_ci_path_policy.sh|\
     adl/tools/test_run_authoritative_coverage_lane.sh|\
@@ -484,7 +485,7 @@ is_bounded_pr_fast_coverage_policy_change() {
         fi
         ;;
       adl/tools/check_coverage_impact.sh)
-        if git_pr_patch "$path" | grep -E 'adl/src/cli/process_cmd.rs|adl/src/bin/adl_aws_remote_validation.rs|adl_aws_remote_validation_bin' >/dev/null 2>&1; then
+        if git_pr_patch "$path" | grep -E 'adl/src/cli/process_cmd.rs|adl/src/bin/adl_aws_remote_validation.rs|adl_aws_remote_validation_bin|adl/src/chronosense|chronosense' >/dev/null 2>&1; then
           saw_bounded_marker=true
         else
           saw_other=true
@@ -498,7 +499,7 @@ is_bounded_pr_fast_coverage_policy_change() {
         fi
         ;;
       adl/tools/test_check_coverage_impact.sh)
-        if git_pr_patch "$path" | grep -E 'process_status|adl_aws_remote_validation_bin|adl-aws-remote-validation' >/dev/null 2>&1; then
+        if git_pr_patch "$path" | grep -E 'process_status|adl_aws_remote_validation_bin|adl-aws-remote-validation|chronosense-runtime-trace|adl/src/chronosense' >/dev/null 2>&1; then
           saw_bounded_marker=true
         else
           saw_other=true
@@ -506,6 +507,13 @@ is_bounded_pr_fast_coverage_policy_change() {
         ;;
       adl/tools/run_authoritative_coverage_lane.sh)
         if git_pr_patch "$path" | grep -E 'ADL_AUTHORITATIVE_COVERAGE_BUILD_JOBS|RUST_LINK_ACCEL|Authoritative coverage cargo build jobs|Authoritative coverage linker mode' >/dev/null 2>&1; then
+          saw_bounded_marker=true
+        else
+          saw_other=true
+        fi
+        ;;
+      adl/tools/run_pr_fast_coverage_lane.sh)
+        if git_pr_patch "$path" | grep -E 'ADL_PR_FAST_COVERAGE_BUILD_ROOT|pr-fast-coverage|PR-fast coverage target' >/dev/null 2>&1; then
           saw_bounded_marker=true
         else
           saw_other=true
