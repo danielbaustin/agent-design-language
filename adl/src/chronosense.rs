@@ -28,8 +28,9 @@ mod service;
 mod temporal_schema;
 
 pub use causality::{
-    CausalRelationContract, ExplanationFixture, ExplanationSurfaceContract,
-    TemporalCausalityExplanationContract,
+    build_temporal_causality_trace_review, CausalRelationContract, ExplanationFixture,
+    ExplanationSurfaceContract, TemporalCausalityExplanationContract,
+    TemporalCausalityTraceExplanation, TemporalCausalityTraceReviewArtifact,
 };
 pub use commitments::{
     CommitmentDeadlineContract, CommitmentLifecycleContract, CommitmentRecordRequirements,

@@ -1,5 +1,10 @@
 //! Test helpers for chronosense fixtures.
 use super::*;
+use crate::trace_schema_v1::{
+    TraceActorTypeV1, TraceActorV1, TraceDecisionContextV1, TraceEventEnvelopeV1, TraceEventTypeV1,
+    TraceEventV1, TraceGovernanceEvidenceV1, TraceScopeLevelV1, TraceScopeV1,
+    TraceTemporalAnchorV1,
+};
 use chrono::{TimeZone, Utc};
 use std::{
     env, fs,
@@ -16,6 +21,103 @@ fn unique_temp_path(label: &str) -> PathBuf {
         "chronosense-{label}-{}-{nanos}",
         std::process::id()
     ))
+}
+
+fn trace_review_envelope(events: Vec<TraceEventV1>) -> TraceEventEnvelopeV1 {
+    TraceEventEnvelopeV1 {
+        schema_version: "trace.v2".to_string(),
+        chronosense_clock_stack: None,
+        events,
+    }
+}
+
+fn trace_review_event(
+    event_id: &str,
+    event_type: TraceEventTypeV1,
+    event_sequence: u64,
+    runtime_elapsed_ms: u64,
+    prior_event_delta_ms: u64,
+) -> TraceEventV1 {
+    let decision_context = if matches!(
+        event_type,
+        TraceEventTypeV1::Decision
+            | TraceEventTypeV1::Approval
+            | TraceEventTypeV1::Rejection
+            | TraceEventTypeV1::Revision
+    ) {
+        Some(TraceDecisionContextV1 {
+            context: format!("chronosense-review:{event_id}"),
+            outcome: format!("{event_type:?}"),
+            rationale: Some("fixture decision context for trace schema validation".to_string()),
+        })
+    } else {
+        None
+    };
+
+    TraceEventV1 {
+        event_id: event_id.to_string(),
+        timestamp: "2026-04-03T12:00:00Z".to_string(),
+        temporal_anchor: Some(TraceTemporalAnchorV1 {
+            schema_version: CHRONOSENSE_EVENT_ANCHOR_SCHEMA.to_string(),
+            utc_timestamp_rfc3339: "2026-04-03T12:00:00Z".to_string(),
+            local_timestamp_rfc3339: "2026-04-03T12:00:00Z".to_string(),
+            timezone: "UTC".to_string(),
+            utc_offset: "+00:00".to_string(),
+            runtime_lifetime_elapsed_ms: runtime_elapsed_ms,
+            runtime_monotonic_elapsed_ms: runtime_elapsed_ms,
+            event_sequence,
+            prior_event_delta_ms,
+            reference_frames: vec![
+                "utc_epoch_millis".to_string(),
+                "local_civil_time".to_string(),
+                "runtime_lifetime".to_string(),
+                "runtime_monotonic_elapsed".to_string(),
+                "event_sequence".to_string(),
+            ],
+        }),
+        event_type,
+        trace_id: "trace-chronosense-review".to_string(),
+        run_id: "run-chronosense-review".to_string(),
+        span_id: format!("span-{event_id}"),
+        parent_span_id: None,
+        actor: TraceActorV1 {
+            r#type: TraceActorTypeV1::Agent,
+            id: "agent.main".to_string(),
+        },
+        scope: TraceScopeV1 {
+            level: TraceScopeLevelV1::Run,
+            name: "chronosense-review".to_string(),
+        },
+        inputs_ref: None,
+        outputs_ref: None,
+        artifact_ref: None,
+        decision_context,
+        provider: None,
+        error: None,
+        contract_validation: None,
+        governance: None,
+        redaction: None,
+    }
+}
+
+fn trace_governance_with_evidence(evidence_ref: &str) -> TraceGovernanceEvidenceV1 {
+    TraceGovernanceEvidenceV1 {
+        proposal_id: Some("proposal-1".to_string()),
+        normalized_proposal_ref: None,
+        acc_contract_id: None,
+        policy_evidence_ref: None,
+        gate_candidate_id: None,
+        gate_boundary: None,
+        gate_reason_code: None,
+        action_id: None,
+        tool_name: None,
+        adapter_id: None,
+        replay_posture: Some("reviewable".to_string()),
+        result_ref: None,
+        redaction_summary: None,
+        evidence_refs: vec![evidence_ref.to_string()],
+        visibility_views: None,
+    }
 }
 
 #[test]
@@ -473,6 +575,170 @@ fn temporal_causality_explanation_contract_has_bounded_proof_hook_and_uncertaint
     assert!(contract
         .proof_hook_output_path
         .contains("temporal_causality_explanation_v1.json"));
+}
+
+#[test]
+fn temporal_causality_trace_review_preserves_sequence_uncertainty() {
+    let envelope = trace_review_envelope(vec![
+        trace_review_event("event-run-start", TraceEventTypeV1::RunStart, 1, 0, 0),
+        trace_review_event("event-a", TraceEventTypeV1::Decision, 2, 10, 10),
+        trace_review_event("event-b", TraceEventTypeV1::Revision, 3, 25, 15),
+        trace_review_event("event-run-end", TraceEventTypeV1::RunEnd, 4, 30, 5),
+    ]);
+
+    let artifact =
+        build_temporal_causality_trace_review(&envelope).expect("causality review artifact");
+
+    assert_eq!(
+        artifact.schema_version,
+        TEMPORAL_CAUSALITY_EXPLANATION_SCHEMA
+    );
+    assert_eq!(artifact.sequence_only_count, 3);
+    assert_eq!(artifact.causal_or_dependency_count, 0);
+    assert_eq!(artifact.uncertainty_count, 3);
+    assert!(artifact
+        .review_notes
+        .contains(&"sequence alone is insufficient evidence for causality".to_string()));
+    assert!(artifact.explanations.iter().all(|explanation| {
+        explanation.relation_type == "temporal_succession"
+            && explanation.confidence == "unknown"
+            && explanation.evidence_refs.is_empty()
+    }));
+}
+
+#[test]
+fn temporal_causality_trace_review_uses_parent_span_and_evidence_refs() {
+    let mut event_a = trace_review_event("event-a", TraceEventTypeV1::Decision, 2, 10, 10);
+    event_a.span_id = "span-a".to_string();
+    let mut event_b = trace_review_event("event-b", TraceEventTypeV1::Revision, 3, 25, 15);
+    event_b.span_id = "span-b".to_string();
+    event_b.parent_span_id = Some("span-a".to_string());
+    let mut event_c = trace_review_event("event-c", TraceEventTypeV1::Approval, 4, 35, 10);
+    event_c.governance = Some(trace_governance_with_evidence("event-b"));
+    let envelope = trace_review_envelope(vec![
+        trace_review_event("event-run-start", TraceEventTypeV1::RunStart, 1, 0, 0),
+        event_a,
+        event_b,
+        event_c,
+        trace_review_event("event-run-end", TraceEventTypeV1::RunEnd, 5, 40, 5),
+    ]);
+
+    let artifact =
+        build_temporal_causality_trace_review(&envelope).expect("causality review artifact");
+
+    assert_eq!(artifact.causal_or_dependency_count, 2);
+    assert!(artifact.uncertainty_count >= 2);
+    let dependency = artifact
+        .explanations
+        .iter()
+        .find(|explanation| {
+            explanation.source_event_id == "event-a"
+                && explanation.target_event_id == "event-b"
+                && explanation.relation_type == "declared_dependency"
+        })
+        .expect("parent span dependency");
+    assert_eq!(dependency.relation_type, "declared_dependency");
+    assert_eq!(dependency.confidence, "medium");
+    assert_eq!(dependency.temporal_delta_ms, Some(15));
+    assert!(dependency
+        .evidence_refs
+        .contains(&"parent_span_id:span-a->span-b".to_string()));
+
+    let contribution = artifact
+        .explanations
+        .iter()
+        .find(|explanation| {
+            explanation.source_event_id == "event-b"
+                && explanation.target_event_id == "event-c"
+                && explanation.relation_type == "causal_contribution"
+        })
+        .expect("evidence ref contribution");
+    assert_eq!(contribution.relation_type, "causal_contribution");
+    assert_eq!(contribution.confidence, "medium");
+    assert_eq!(contribution.evidence_refs, vec!["event-b".to_string()]);
+    assert!(contribution
+        .explanation_note
+        .contains("record bounded confidence or uncertainty"));
+}
+
+#[test]
+fn temporal_causality_trace_review_requires_temporal_anchors() {
+    let mut run_start = trace_review_event("event-run-start", TraceEventTypeV1::RunStart, 1, 0, 0);
+    run_start.temporal_anchor = None;
+    let mut event_a = trace_review_event("event-a", TraceEventTypeV1::Decision, 2, 10, 10);
+    event_a.temporal_anchor = None;
+    let mut run_end = trace_review_event("event-run-end", TraceEventTypeV1::RunEnd, 3, 20, 10);
+    run_end.temporal_anchor = None;
+    let envelope = trace_review_envelope(vec![run_start, event_a, run_end]);
+
+    let err = build_temporal_causality_trace_review(&envelope)
+        .expect_err("unanchored temporal causality review must fail");
+
+    assert!(err
+        .to_string()
+        .contains("temporal causality review requires temporal_anchor"));
+}
+
+#[test]
+fn temporal_causality_trace_review_finds_non_adjacent_evidence_and_parent_span_links() {
+    let mut event_a = trace_review_event("event-a", TraceEventTypeV1::Decision, 2, 10, 10);
+    event_a.span_id = "span-a".to_string();
+    let event_b = trace_review_event("event-b", TraceEventTypeV1::StepStart, 3, 20, 10);
+    let event_c = trace_review_event("event-c", TraceEventTypeV1::StepEnd, 4, 30, 10);
+    let mut event_d = trace_review_event("event-d", TraceEventTypeV1::Revision, 5, 45, 15);
+    event_d.parent_span_id = Some("span-a".to_string());
+    event_d.governance = Some(trace_governance_with_evidence("event-b"));
+
+    let envelope = trace_review_envelope(vec![
+        trace_review_event("event-run-start", TraceEventTypeV1::RunStart, 1, 0, 0),
+        event_a,
+        event_b,
+        event_c,
+        event_d,
+        trace_review_event("event-run-end", TraceEventTypeV1::RunEnd, 6, 50, 5),
+    ]);
+
+    let artifact =
+        build_temporal_causality_trace_review(&envelope).expect("causality review artifact");
+
+    let dependency = artifact
+        .explanations
+        .iter()
+        .find(|explanation| {
+            explanation.source_event_id == "event-a" && explanation.target_event_id == "event-d"
+        })
+        .expect("non-adjacent parent span dependency");
+    assert_eq!(dependency.relation_type, "declared_dependency");
+    assert_eq!(dependency.confidence, "medium");
+    assert_eq!(dependency.temporal_delta_ms, Some(35));
+
+    let contribution = artifact
+        .explanations
+        .iter()
+        .find(|explanation| {
+            explanation.source_event_id == "event-b" && explanation.target_event_id == "event-d"
+        })
+        .expect("non-adjacent evidence ref contribution");
+    assert_eq!(contribution.relation_type, "causal_contribution");
+    assert_eq!(contribution.confidence, "medium");
+    assert_eq!(contribution.temporal_delta_ms, Some(25));
+    assert_eq!(contribution.evidence_refs, vec!["event-b".to_string()]);
+}
+
+#[test]
+fn temporal_causality_trace_review_rejects_single_event_trace() {
+    let envelope = trace_review_envelope(vec![trace_review_event(
+        "event-run-start",
+        TraceEventTypeV1::RunStart,
+        1,
+        0,
+        0,
+    )]);
+
+    let err = build_temporal_causality_trace_review(&envelope).expect_err("invalid trace");
+    assert!(err
+        .to_string()
+        .contains("trace schema v1 requires at least one RUN_END event"));
 }
 
 #[test]
