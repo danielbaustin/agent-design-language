@@ -245,7 +245,9 @@ Truthful interpretation:
 - The non-coverage `test` step now runs through
   `adl/tools/run_pr_fast_test_lane.sh`. For bounded PRs, that runner may use a
   focused `cargo nextest` expression. For broad or ambiguous PRs, it fails
-  closed to the full ordinary nextest sweep.
+  closed before cache warmup or cargo execution. Full nextest fanout is allowed
+  only when an explicit manual or release lane sets
+  `ADL_PR_FAST_ALLOW_FULL_NEXTEST=1` and records why full fanout is intended.
 - When the validation manager emits `validation_split.fast_lane`, use it as the
   machine-readable explanation for why the PR-fast lane is sufficient or not
   sufficient for publication. Keep `validation_profile.status`,

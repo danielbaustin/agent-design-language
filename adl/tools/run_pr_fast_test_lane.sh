@@ -28,7 +28,8 @@ This script selects the ordinary PR-fast non-coverage Rust test lane.
 It prefers:
   1. focused nextest filters for small, precisely-mapped changes
   2. bounded family filters for broader-but-still-bounded changes
-  3. the full nextest sweep only for broad or ambiguous changes
+  3. fail-closed refusal for broad or ambiguous changes, unless
+     ADL_PR_FAST_ALLOW_FULL_NEXTEST=1 is set by an explicit manual/release lane
 USAGE
 }
 
@@ -699,6 +700,14 @@ if [ "$PRINT_PLAN" = true ]; then
   exit 0
 fi
 
+if [ "$mode" = "full" ] && [ "${ADL_PR_FAST_ALLOW_FULL_NEXTEST:-0}" != "1" ]; then
+  {
+    echo "Refusing full nextest lane in ordinary PR-fast validation: $reason"
+    echo "Set ADL_PR_FAST_ALLOW_FULL_NEXTEST=1 only from an explicit manual/release lane that records why full fanout is intended."
+  } >&2
+  exit 3
+fi
+
 cd "$ROOT_DIR/adl"
 ADL_RUST_WARM_CACHE_SOURCE_TARGET="${ADL_PR_FAST_TEST_WARM_SOURCE_TARGET:-}" \
 ADL_RUST_WARM_CACHE_DEST_TARGET="${CARGO_TARGET_DIR:-$ROOT_DIR/adl/target}" \
@@ -713,6 +722,6 @@ elif [ "$mode" = "contract_only" ]; then
 elif [ "$mode" = "skip" ]; then
   echo "Skipping ordinary nextest lane: no Rust test surface was detected for this PR-fast lane."
 else
-  echo "Running full nextest lane: $reason"
+  echo "Running full nextest lane by explicit opt-in: $reason"
   cargo nextest run --status-level all --final-status-level slow
 fi

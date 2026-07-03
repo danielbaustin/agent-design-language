@@ -396,4 +396,72 @@ too_many_families_output="$(bash "$SCRIPT" --changed-files "$too_many_families" 
 assert_has "$too_many_families_output" "mode=full"
 assert_has "$too_many_families_output" "reason=unmapped_rust_surface_requires_full_nextest"
 
+refusal_warm_output="$TMP/refusal-warm-cache.json"
+set +e
+too_many_families_run_output="$(
+  ADL_PR_FAST_TEST_WARM_CACHE_OUTPUT="$refusal_warm_output" \
+    ADL_PR_FAST_TEST_WARM_SOURCE_TARGET="$TMP/missing-source-target" \
+    bash "$SCRIPT" --changed-files "$too_many_families" 2>&1
+)"
+too_many_families_run_status=$?
+set -e
+if [ "$too_many_families_run_status" -ne 3 ]; then
+  echo "expected ordinary PR-fast full-fanout refusal to exit 3, got $too_many_families_run_status" >&2
+  echo "$too_many_families_run_output" >&2
+  exit 1
+fi
+grep -Fq "Refusing full nextest lane in ordinary PR-fast validation: unmapped_rust_surface_requires_full_nextest" <<<"$too_many_families_run_output" || {
+  echo "expected full-fanout refusal message" >&2
+  echo "$too_many_families_run_output" >&2
+  exit 1
+}
+grep -Fq "ADL_PR_FAST_ALLOW_FULL_NEXTEST=1" <<<"$too_many_families_run_output" || {
+  echo "expected explicit opt-in guidance" >&2
+  echo "$too_many_families_run_output" >&2
+  exit 1
+}
+if [ -e "$refusal_warm_output" ]; then
+  echo "expected full-fanout refusal before warm-cache side effects" >&2
+  cat "$refusal_warm_output" >&2
+  exit 1
+fi
+
+fakebin="$TMP/fakebin"
+mkdir -p "$fakebin"
+cat >"$fakebin/cargo" <<'EOF'
+#!/usr/bin/env bash
+printf '%s\n' "$*" >"${ADL_FAKE_CARGO_ARGS:?}"
+if [ "$1" = "nextest" ] && [ "$2" = "run" ]; then
+  exit 0
+fi
+echo "unexpected cargo invocation: $*" >&2
+exit 99
+EOF
+chmod +x "$fakebin/cargo"
+opt_in_cargo_args="$TMP/opt-in-cargo-args.txt"
+opt_in_warm_output="$TMP/opt-in-warm-cache.json"
+opt_in_output="$(
+  PATH="$fakebin:$PATH" \
+    ADL_FAKE_CARGO_ARGS="$opt_in_cargo_args" \
+    ADL_PR_FAST_ALLOW_FULL_NEXTEST=1 \
+    ADL_PR_FAST_TEST_WARM_CACHE_OUTPUT="$opt_in_warm_output" \
+    ADL_PR_FAST_TEST_WARM_SOURCE_TARGET="$TMP/missing-source-target" \
+    bash "$SCRIPT" --changed-files "$too_many_families" 2>&1
+)"
+grep -Fq "Running full nextest lane by explicit opt-in: unmapped_rust_surface_requires_full_nextest" <<<"$opt_in_output" || {
+  echo "expected explicit opt-in full nextest message" >&2
+  echo "$opt_in_output" >&2
+  exit 1
+}
+grep -Fqx -- "nextest run --status-level all --final-status-level slow" "$opt_in_cargo_args" || {
+  echo "expected opt-in path to invoke cargo nextest run with full-lane args" >&2
+  cat "$opt_in_cargo_args" >&2
+  exit 1
+}
+grep -Fq '"status":"skipped"' "$opt_in_warm_output" || {
+  echo "expected opt-in path to run warm-cache wrapper before cargo" >&2
+  cat "$opt_in_warm_output" >&2
+  exit 1
+}
+
 echo "PASS test_run_pr_fast_test_lane"
