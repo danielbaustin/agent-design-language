@@ -85,10 +85,22 @@ printf 'started_at=%s\n' "$started_at" | tee -a "$combined_log"
 printf 'command_argc=%s\n' "${#COMMAND[@]}" | tee -a "$combined_log"
 printf 'command_redaction=metadata_only\n' | tee -a "$combined_log"
 
+stdout_fifo="$log_dir/stdout.fifo"
+stderr_fifo="$log_dir/stderr.fifo"
+mkfifo "$stdout_fifo" "$stderr_fifo"
+tee "$stdout_log" <"$stdout_fifo" &
+stdout_tee_pid=$!
+tee "$stderr_log" <"$stderr_fifo" >&2 &
+stderr_tee_pid=$!
+
 set +e
-"${COMMAND[@]}" > >(tee "$stdout_log") 2> >(tee "$stderr_log" >&2)
+"${COMMAND[@]}" >"$stdout_fifo" 2>"$stderr_fifo"
 status=$?
 set -e
+
+wait "$stdout_tee_pid" || true
+wait "$stderr_tee_pid" || true
+rm -f "$stdout_fifo" "$stderr_fifo"
 
 finished_at="$(date -u +%Y-%m-%dT%H:%M:%SZ)"
 finished_epoch="$(date +%s)"
