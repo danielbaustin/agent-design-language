@@ -392,6 +392,10 @@ fn validate_adapter_request(request: &ProviderInvocationRequestV1) -> Result<()>
     Ok(())
 }
 
+fn output_token_budget_or_default(request: &ProviderInvocationRequestV1, default: u64) -> u64 {
+    request.max_output_tokens.unwrap_or(default)
+}
+
 fn ensure_request_identity(request: &mut ProviderInvocationRequestV1) {
     let expected_runtime = match request.route.runtime_surface {
         RuntimeSurfaceV1::HostedApi => "hosted_api",
@@ -462,10 +466,7 @@ fn execute_hosted_openai(
     let response = client(policy)?
         .post(url)
         .bearer_auth(key)
-        .json(&json!({
-            "model": request.route.provider_model_id,
-            "input": request.input_text.as_deref().unwrap_or_default(),
-        }))
+        .json(&openai_request_body(request))
         .send()
         .map_err(map_reqwest_error)?;
     decode_text_response(
@@ -474,6 +475,19 @@ fn execute_hosted_openai(
         |_| None,
         RuntimeSurfaceV1::HostedApi,
     )
+}
+
+fn openai_request_body(request: &ProviderInvocationRequestV1) -> Value {
+    let mut body = json!({
+        "model": request.route.provider_model_id,
+        "input": request.input_text.as_deref().unwrap_or_default(),
+    });
+    if let Some(max_output_tokens) = request.max_output_tokens {
+        body.as_object_mut()
+            .expect("openai request body is object")
+            .insert("max_output_tokens".to_string(), json!(max_output_tokens));
+    }
+    body
 }
 
 fn execute_hosted_anthropic(
@@ -491,14 +505,7 @@ fn execute_hosted_anthropic(
         .post(url)
         .header("x-api-key", key)
         .header("anthropic-version", "2023-06-01")
-        .json(&json!({
-            "model": request.route.provider_model_id,
-            "max_tokens": 256,
-            "messages": [{
-                "role": "user",
-                "content": request.input_text.as_deref().unwrap_or_default(),
-            }],
-        }))
+        .json(&anthropic_request_body(request))
         .send()
         .map_err(map_reqwest_error)?;
     decode_text_response(
@@ -507,6 +514,17 @@ fn execute_hosted_anthropic(
         |_| None,
         RuntimeSurfaceV1::HostedApi,
     )
+}
+
+fn anthropic_request_body(request: &ProviderInvocationRequestV1) -> Value {
+    json!({
+        "model": request.route.provider_model_id,
+        "max_tokens": output_token_budget_or_default(request, 256),
+        "messages": [{
+            "role": "user",
+            "content": request.input_text.as_deref().unwrap_or_default(),
+        }],
+    })
 }
 
 fn execute_hosted_deepseek(
@@ -523,15 +541,7 @@ fn execute_hosted_deepseek(
     let response = client(policy)?
         .post(url)
         .bearer_auth(key)
-        .json(&json!({
-            "model": request.route.provider_model_id,
-            "messages": [{
-                "role": "user",
-                "content": request.input_text.as_deref().unwrap_or_default(),
-            }],
-            "max_tokens": 256,
-            "stream": false,
-        }))
+        .json(&deepseek_request_body(request))
         .send()
         .map_err(map_reqwest_error)?;
     decode_text_response(
@@ -540,6 +550,18 @@ fn execute_hosted_deepseek(
         |_| None,
         RuntimeSurfaceV1::HostedApi,
     )
+}
+
+fn deepseek_request_body(request: &ProviderInvocationRequestV1) -> Value {
+    json!({
+        "model": request.route.provider_model_id,
+        "messages": [{
+            "role": "user",
+            "content": request.input_text.as_deref().unwrap_or_default(),
+        }],
+        "max_tokens": output_token_budget_or_default(request, 256),
+        "stream": false,
+    })
 }
 
 fn execute_hosted_openrouter(
@@ -559,15 +581,7 @@ fn execute_hosted_openrouter(
     let response = client(policy)?
         .post(url)
         .bearer_auth(key)
-        .json(&json!({
-            "model": request.route.provider_model_id,
-            "messages": [{
-                "role": "user",
-                "content": request.input_text.as_deref().unwrap_or_default(),
-            }],
-            "max_tokens": DEFAULT_OPENROUTER_MAX_TOKENS,
-            "stream": false,
-        }))
+        .json(&openrouter_request_body(request))
         .send()
         .map_err(map_reqwest_error)?;
     decode_text_response(
@@ -576,6 +590,18 @@ fn execute_hosted_openrouter(
         extract_chat_completion_model_id,
         RuntimeSurfaceV1::HostedApi,
     )
+}
+
+fn openrouter_request_body(request: &ProviderInvocationRequestV1) -> Value {
+    json!({
+        "model": request.route.provider_model_id,
+        "messages": [{
+            "role": "user",
+            "content": request.input_text.as_deref().unwrap_or_default(),
+        }],
+        "max_tokens": output_token_budget_or_default(request, DEFAULT_OPENROUTER_MAX_TOKENS),
+        "stream": false,
+    })
 }
 
 fn execute_hosted_gemini(
@@ -597,12 +623,7 @@ fn execute_hosted_gemini(
     let response = client(policy)?
         .post(url)
         .header("x-goog-api-key", key)
-        .json(&json!({
-            "contents": [{
-                "role": "user",
-                "parts": [{"text": request.input_text.as_deref().unwrap_or_default()}],
-            }],
-        }))
+        .json(&gemini_request_body(request))
         .send()
         .map_err(map_reqwest_error)?;
     decode_text_response(
@@ -613,6 +634,24 @@ fn execute_hosted_gemini(
     )
 }
 
+fn gemini_request_body(request: &ProviderInvocationRequestV1) -> Value {
+    let mut body = json!({
+        "contents": [{
+            "role": "user",
+            "parts": [{"text": request.input_text.as_deref().unwrap_or_default()}],
+        }],
+    });
+    if let Some(max_output_tokens) = request.max_output_tokens {
+        body.as_object_mut()
+            .expect("gemini request body is object")
+            .insert(
+                "generationConfig".to_string(),
+                json!({"maxOutputTokens": max_output_tokens}),
+            );
+    }
+    body
+}
+
 fn execute_ollama_http(
     request: &mut ProviderInvocationRequestV1,
     policy: &ProviderAttemptPolicyV1,
@@ -620,12 +659,7 @@ fn execute_ollama_http(
     refresh_ollama_identity(request, policy);
     let response = client(policy)?
         .post(ollama_generate_url(request.route.endpoint_ref.as_deref()))
-        .json(&json!({
-            "model": request.route.provider_model_id,
-            "prompt": request.input_text.as_deref().unwrap_or_default(),
-            "stream": false,
-            "think": false,
-        }))
+        .json(&ollama_request_body(request))
         .send()
         .map_err(map_reqwest_error)?;
     decode_text_response(
@@ -638,6 +672,24 @@ fn execute_ollama_http(
         |_| None,
         RuntimeSurfaceV1::OllamaHttp,
     )
+}
+
+fn ollama_request_body(request: &ProviderInvocationRequestV1) -> Value {
+    let mut body = json!({
+        "model": request.route.provider_model_id,
+        "prompt": request.input_text.as_deref().unwrap_or_default(),
+        "stream": false,
+        "think": false,
+    });
+    if let Some(max_output_tokens) = request.max_output_tokens {
+        body.as_object_mut()
+            .expect("ollama request body is object")
+            .insert(
+                "options".to_string(),
+                json!({"num_predict": max_output_tokens}),
+            );
+    }
+    body
 }
 
 fn decode_text_response(
@@ -1137,6 +1189,7 @@ mod tests {
                 retry_backoff_ms: Some(1),
             },
             input_text: Some("secret prompt should not enter logs".to_string()),
+            max_output_tokens: None,
             inference_parameter_fingerprint: None,
             tool_surface: None,
             governance_surface: None,
@@ -1184,6 +1237,59 @@ mod tests {
             "https://generativelanguage.googleapis.com/v1beta/models/gemini-test:generateContent"
         );
         assert!(!url.contains("key="));
+    }
+
+    #[test]
+    fn optional_output_token_budget_maps_to_provider_native_fields() {
+        let mut req = request(
+            RuntimeSurfaceV1::HostedApi,
+            "http://127.0.0.1:1".to_string(),
+        );
+        req.max_output_tokens = Some(1_024);
+
+        assert_eq!(openai_request_body(&req)["max_output_tokens"], json!(1_024));
+        assert_eq!(anthropic_request_body(&req)["max_tokens"], json!(1_024));
+        assert_eq!(deepseek_request_body(&req)["max_tokens"], json!(1_024));
+        assert_eq!(openrouter_request_body(&req)["max_tokens"], json!(1_024));
+        assert_eq!(
+            gemini_request_body(&req)
+                .pointer("/generationConfig/maxOutputTokens")
+                .cloned(),
+            Some(json!(1_024))
+        );
+
+        let mut ollama_req = request(
+            RuntimeSurfaceV1::OllamaHttp,
+            "http://127.0.0.1:11434".to_string(),
+        );
+        ollama_req.max_output_tokens = Some(1_024);
+        assert_eq!(
+            ollama_request_body(&ollama_req).pointer("/options/num_predict"),
+            Some(&json!(1_024))
+        );
+    }
+
+    #[test]
+    fn omitted_output_token_budget_preserves_adapter_defaults() {
+        let req = request(
+            RuntimeSurfaceV1::HostedApi,
+            "http://127.0.0.1:1".to_string(),
+        );
+
+        assert!(openai_request_body(&req).get("max_output_tokens").is_none());
+        assert_eq!(anthropic_request_body(&req)["max_tokens"], json!(256));
+        assert_eq!(deepseek_request_body(&req)["max_tokens"], json!(256));
+        assert_eq!(
+            openrouter_request_body(&req)["max_tokens"],
+            json!(DEFAULT_OPENROUTER_MAX_TOKENS)
+        );
+        assert!(gemini_request_body(&req).get("generationConfig").is_none());
+
+        let ollama_req = request(
+            RuntimeSurfaceV1::OllamaHttp,
+            "http://127.0.0.1:11434".to_string(),
+        );
+        assert!(ollama_request_body(&ollama_req).get("options").is_none());
     }
 
     #[test]

@@ -74,6 +74,8 @@ pub struct ProviderInvocationRequestV1 {
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub input_text: Option<String>,
     #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub max_output_tokens: Option<u64>,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
     pub inference_parameter_fingerprint: Option<String>,
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub tool_surface: Option<String>,
@@ -631,6 +633,9 @@ pub fn validate_provider_request(request: &ProviderInvocationRequestV1) -> Resul
         return Err(anyhow!(
             "attempt_policy.timeout_ms must be greater than zero"
         ));
+    }
+    if request.max_output_tokens == Some(0) {
+        return Err(anyhow!("max_output_tokens must be greater than zero"));
     }
     Ok(())
 }
@@ -1206,6 +1211,7 @@ mod tests {
                 retry_backoff_ms: Some(100),
             },
             input_text: Some("test prompt".to_string()),
+            max_output_tokens: None,
             inference_parameter_fingerprint: None,
             tool_surface: None,
             governance_surface: None,
@@ -1214,6 +1220,9 @@ mod tests {
         };
         validate_provider_request(&request).unwrap();
         request.attempt_policy.max_attempts = 0;
+        assert!(validate_provider_request(&request).is_err());
+        request.attempt_policy.max_attempts = 1;
+        request.max_output_tokens = Some(0);
         assert!(validate_provider_request(&request).is_err());
     }
 
@@ -1241,6 +1250,7 @@ mod tests {
                 retry_backoff_ms: None,
             },
             input_text: None,
+            max_output_tokens: None,
             inference_parameter_fingerprint: Some("sha256:test".to_string()),
             tool_surface: None,
             governance_surface: Some("codefriend.synthesis_required.v1".to_string()),

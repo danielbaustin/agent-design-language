@@ -71,6 +71,7 @@ pub fn build_acip_coding_provider_boundary_adapter_v1(
         request_id: Some(contract.invocation.invocation_id.clone()),
         attempt_policy: attempt_policy_for_provider_lane(&contract.provider_lane),
         input_text: Some(message.content.clone()),
+        max_output_tokens: None,
         inference_parameter_fingerprint: Some(inference_parameter_fingerprint),
         tool_surface: Some("acip_coding_request".to_string()),
         governance_surface: Some(ACIP_CODING_PROVIDER_ADAPTER_SCHEMA_VERSION.to_string()),

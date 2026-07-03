@@ -35,7 +35,18 @@ Provider failures are normalized into the result file. The process exits non-zer
 
 ## Request Shape
 
-The request is `ProviderInvocationRequestV1`. The adapter requires `input_text` for execution while preserving existing `model_ref` / `provider_model_id` compatibility.
+The request is `ProviderInvocationRequestV1`. The adapter requires `input_text` for execution while preserving existing `model_ref` / `provider_model_id` compatibility. Callers may set optional `max_output_tokens` when a lane needs a larger response budget; the value must be greater than zero.
+
+When present, `max_output_tokens` maps to each provider's native request field:
+
+- OpenAI Responses API: `max_output_tokens`
+- Anthropic Messages API: `max_tokens`
+- DeepSeek chat completions: `max_tokens`
+- OpenRouter chat completions: `max_tokens`
+- Gemini `generateContent`: `generationConfig.maxOutputTokens`
+- Ollama `/api/generate`: `options.num_predict`
+
+When omitted, the adapter preserves its existing defaults: OpenAI, Gemini, and Ollama omit the provider-native cap; Anthropic and DeepSeek use `256`; OpenRouter uses the adapter's OpenRouter default.
 
 Hosted providers use `runtime_surface: "hosted_api"` and dispatch by `route.provider`:
 
