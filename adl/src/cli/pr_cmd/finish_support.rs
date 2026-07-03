@@ -1759,12 +1759,57 @@ pub(super) struct FinishValidationProfile {
     pub status: String,
     pub pr_publication_sufficient: bool,
     #[serde(default)]
+    pub validation_split: Option<FinishValidationSplit>,
+    #[serde(default)]
     pub run: Vec<FinishValidationProfileRunItem>,
     #[serde(default)]
     pub not_run: Vec<FinishValidationProfileSurfaceItem>,
     #[serde(default)]
     pub deferred: Vec<FinishValidationProfileSurfaceItem>,
     pub escalation: FinishValidationProfileEscalation,
+}
+
+#[derive(Debug, Deserialize)]
+pub(super) struct FinishValidationSplit {
+    pub schema_version: String,
+    pub fast_lane: FinishValidationSplitFastLane,
+    #[serde(default)]
+    pub slow_families: Vec<FinishValidationSplitSlowFamily>,
+    pub fanout_policy: FinishValidationSplitFanoutPolicy,
+    pub fail_closed: FinishValidationSplitFailClosed,
+}
+
+#[derive(Debug, Deserialize)]
+pub(super) struct FinishValidationSplitFastLane {
+    pub status: String,
+    #[serde(default)]
+    pub selected_lanes: Vec<String>,
+    pub runnable: bool,
+    pub pr_publication_sufficient: bool,
+    pub execution_model: String,
+}
+
+#[derive(Debug, Deserialize)]
+pub(super) struct FinishValidationSplitSlowFamily {
+    pub id: String,
+    pub feature: String,
+    pub proof_role: String,
+    pub disposition: String,
+    pub owner: String,
+    pub command: String,
+}
+
+#[derive(Debug, Deserialize)]
+pub(super) struct FinishValidationSplitFanoutPolicy {
+    pub mode: String,
+    pub missing_or_unmapped_proof: String,
+    pub release_gate_note: String,
+}
+
+#[derive(Debug, Deserialize)]
+pub(super) struct FinishValidationSplitFailClosed {
+    pub required: bool,
+    pub reason_count: usize,
 }
 
 #[derive(Debug, Deserialize)]
@@ -5681,6 +5726,48 @@ pub(super) fn render_default_finish_validation(
             "- Selected validation profile: `{}` (`status={}`, `pr_publication_sufficient={}`)",
             profile.selected_profile, profile.status, profile.pr_publication_sufficient
         ));
+        if let Some(split) = &profile.validation_split {
+            lines.push(format!(
+                "- Validation split: `{}` fast_lane_status={} runnable={} publication_sufficient={} execution_model={}",
+                split.schema_version,
+                split.fast_lane.status,
+                split.fast_lane.runnable,
+                split.fast_lane.pr_publication_sufficient,
+                split.fast_lane.execution_model
+            ));
+            let selected_lanes = if split.fast_lane.selected_lanes.is_empty() {
+                "none".to_string()
+            } else {
+                split.fast_lane.selected_lanes.join(", ")
+            };
+            lines.push(format!("  - Fast lane selected lanes: {selected_lanes}"));
+            if split.slow_families.is_empty() {
+                lines.push("  - Slow-family fanout: none".to_string());
+            } else {
+                lines.push("  - Slow-family fanout:".to_string());
+                for family in &split.slow_families {
+                    lines.push(format!(
+                        "    - `{}` feature={} proof_role={} disposition={} owner={} command=`{}`",
+                        family.id,
+                        family.feature,
+                        family.proof_role,
+                        family.disposition,
+                        family.owner,
+                        family.command
+                    ));
+                }
+            }
+            lines.push(format!(
+                "  - Fanout policy: mode={} missing_or_unmapped_proof={} release_gate_note={}",
+                split.fanout_policy.mode,
+                split.fanout_policy.missing_or_unmapped_proof,
+                split.fanout_policy.release_gate_note
+            ));
+            lines.push(format!(
+                "  - Fail-closed: required={} reason_count={}",
+                split.fail_closed.required, split.fail_closed.reason_count
+            ));
+        }
         if profile.run.is_empty() {
             lines.push("- Profile-selected run lanes: none".to_string());
         } else {

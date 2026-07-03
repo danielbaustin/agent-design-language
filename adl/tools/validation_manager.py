@@ -206,6 +206,47 @@ def estimate_cost(selected: list[tuple[str, dict[str, Any]]], blocked: list[tupl
     }
 
 
+def validation_split_contract(
+    *,
+    status: str,
+    pr_publication_sufficient: bool,
+    selected: list[tuple[str, dict[str, Any]]],
+    slow_proof_families: list[dict[str, Any]],
+    escalation_required: bool,
+    escalation_reasons: list[dict[str, Any]],
+) -> dict[str, Any]:
+    return {
+        "schema_version": "adl.validation_split.v1",
+        "fast_lane": {
+            "status": status,
+            "selected_lanes": [lane_id for lane_id, _lane in selected],
+            "runnable": status in {"ready_to_run", "no_validation_needed"},
+            "pr_publication_sufficient": pr_publication_sufficient,
+            "execution_model": "local_fast_lane",
+        },
+        "slow_families": [
+            {
+                "id": family["id"],
+                "feature": family["feature"],
+                "proof_role": family.get("proof_role", "slow_proof"),
+                "disposition": "reserved_for_explicit_family_selection",
+                "owner": "slow_proof_family_runner",
+                "command": f"bash adl/tools/run_slow_proof_family.sh --family {family['id']} --run",
+            }
+            for family in slow_proof_families
+        ],
+        "fanout_policy": {
+            "mode": "explicit_family_selection",
+            "missing_or_unmapped_proof": "fail_closed",
+            "release_gate_note": "Fast-lane proof does not replace required slow-proof or release-gate evidence.",
+        },
+        "fail_closed": {
+            "required": escalation_required,
+            "reason_count": len(escalation_reasons),
+        },
+    }
+
+
 def manifest_rule_for(lane: dict[str, Any]) -> str:
     manifest_rule = lane.get("manifest_rule")
     if isinstance(manifest_rule, str) and manifest_rule:
@@ -553,6 +594,14 @@ def build_profile(plan: dict[str, Any], guardrails: dict[str, Any], manifest_pat
         and not escalation_required
         and status == "ready_to_run"
     )
+    validation_split = validation_split_contract(
+        status=status,
+        pr_publication_sufficient=pr_publication_sufficient,
+        selected=selected,
+        slow_proof_families=slow_proof_families,
+        escalation_required=escalation_required,
+        escalation_reasons=escalation_reasons,
+    )
 
     return {
         "schema_version": "adl.validation_profile.v1",
@@ -564,6 +613,7 @@ def build_profile(plan: dict[str, Any], guardrails: dict[str, Any], manifest_pat
         "run": run,
         "not_run": not_run,
         "deferred": [],
+        "validation_split": validation_split,
         "behavior_surfaces": behavior_surfaces,
         "validation_dag": {
             "nodes": dag_nodes,

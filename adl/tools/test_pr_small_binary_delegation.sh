@@ -12,6 +12,8 @@ BASH_BIN="$(command -v bash)"
 tmpdir="$(mktemp -d)"
 trap 'rm -rf "$tmpdir"' EXIT
 
+unset ADL_PR_RUST_BIN
+
 repo="$tmpdir/repo"
 mkdir -p "$repo/adl/tools" "$repo/adl" "$repo/bin"
 cp "$PR_SH_SRC" "$repo/adl/tools/pr.sh"

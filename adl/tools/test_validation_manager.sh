@@ -41,6 +41,11 @@ assert profile["behavior_surfaces"][0]["resource_class"] == "tiny"
 assert profile["validation_dag"]["nodes"][0]["status"] == "runnable"
 assert profile["validation_dag"]["nodes"][0]["proof_role"] == "diff_hygiene"
 assert profile["estimated_cost"]["runtime_class"] == "tiny"
+assert profile["validation_split"]["schema_version"] == "adl.validation_split.v1"
+assert profile["validation_split"]["fast_lane"]["selected_lanes"] == ["docs_diff_check"]
+assert profile["validation_split"]["fast_lane"]["runnable"] is True
+assert profile["validation_split"]["fast_lane"]["pr_publication_sufficient"] is True
+assert profile["validation_split"]["fanout_policy"]["missing_or_unmapped_proof"] == "fail_closed"
 assert profile["validation_dag"]["compression_note"].startswith("profile validates behavior surfaces")
 assert profile["diagnostics"] == []
 PY
@@ -127,6 +132,16 @@ assert [family["id"] for family in profile["slow_proof_families"]] == [
     "observatory",
     "security",
 ]
+split = profile["validation_split"]
+assert split["fast_lane"]["selected_lanes"] == ["rust_pr_fast"]
+assert split["fast_lane"]["execution_model"] == "local_fast_lane"
+assert [family["id"] for family in split["slow_families"]] == [
+    "runtime",
+    "private_state",
+    "observatory",
+    "security",
+]
+assert split["slow_families"][0]["disposition"] == "reserved_for_explicit_family_selection"
 assert profile["slow_proof_families"][0]["feature"] == "slow-proof-runtime"
 surface = profile["behavior_surfaces"][0]
 assert surface["id"] == "rust_focused_behavior"
@@ -219,6 +234,8 @@ assert profile["schema_version"] == "adl.validation_profile.v1"
 assert profile["selected_profile"] == "validation_none"
 assert profile["status"] == "escalation_required"
 assert profile["pr_publication_sufficient"] is False
+assert profile["validation_split"]["fast_lane"]["runnable"] is False
+assert profile["validation_split"]["fail_closed"]["required"] is True
 assert profile["run"] == []
 assert profile["escalation"]["required"] is True
 reason = profile["escalation"]["reasons"][0]

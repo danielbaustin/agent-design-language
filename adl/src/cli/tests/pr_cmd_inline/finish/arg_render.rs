@@ -16,7 +16,9 @@ use crate::cli::pr_cmd::finish_support::{
     validate_release_gate_disposition, FinishValidationMode, FinishValidationPlan,
     FinishValidationProfile, FinishValidationProfileEscalation,
     FinishValidationProfileEscalationReason, FinishValidationProfileRunItem,
-    FinishValidationProfileSurfaceItem, FinishValidationVppRecord, SorFactEmissionContext,
+    FinishValidationProfileSurfaceItem, FinishValidationSplit, FinishValidationSplitFailClosed,
+    FinishValidationSplitFanoutPolicy, FinishValidationSplitFastLane,
+    FinishValidationSplitSlowFamily, FinishValidationVppRecord, SorFactEmissionContext,
 };
 use crate::cli::pr_cmd::git_support::commits_behind_origin_main;
 use crate::cli::pr_cmd::github::{PrValidationCheckReport, PrValidationReport};
@@ -1157,6 +1159,34 @@ fn render_default_finish_validation_includes_profile_truth_and_sanitizes_changed
         selected_profile: "selected_2_lane_profile".to_string(),
         status: "ready_to_run".to_string(),
         pr_publication_sufficient: true,
+        validation_split: Some(FinishValidationSplit {
+            schema_version: "adl.validation_split.v1".to_string(),
+            fast_lane: FinishValidationSplitFastLane {
+                status: "ready_to_run".to_string(),
+                selected_lanes: vec!["csdlc_owner_lane".to_string(), "rust_pr_fast".to_string()],
+                runnable: true,
+                pr_publication_sufficient: true,
+                execution_model: "local_fast_lane".to_string(),
+            },
+            slow_families: vec![FinishValidationSplitSlowFamily {
+                id: "runtime".to_string(),
+                feature: "slow-proof-runtime".to_string(),
+                proof_role: "slow_proof".to_string(),
+                disposition: "reserved_for_explicit_family_selection".to_string(),
+                owner: "slow_proof_family_runner".to_string(),
+                command: "bash adl/tools/run_slow_proof_family.sh --family runtime --run"
+                    .to_string(),
+            }],
+            fanout_policy: FinishValidationSplitFanoutPolicy {
+                mode: "explicit_family_selection".to_string(),
+                missing_or_unmapped_proof: "fail_closed".to_string(),
+                release_gate_note: "Fast-lane proof does not replace required slow-proof or release-gate evidence.".to_string(),
+            },
+            fail_closed: FinishValidationSplitFailClosed {
+                required: false,
+                reason_count: 0,
+            },
+        }),
         run: vec![
             FinishValidationProfileRunItem {
                 lane_id: "csdlc_owner_lane".to_string(),
@@ -1204,6 +1234,11 @@ fn render_default_finish_validation_includes_profile_truth_and_sanitizes_changed
     let rendered = render_default_finish_validation(&plan, Some(&profile));
 
     assert!(rendered.contains("Selected validation profile: `selected_2_lane_profile`"));
+    assert!(rendered.contains("Validation split: `adl.validation_split.v1`"));
+    assert!(rendered.contains("Fast lane selected lanes: csdlc_owner_lane, rust_pr_fast"));
+    assert!(rendered.contains("`runtime` feature=slow-proof-runtime proof_role=slow_proof disposition=reserved_for_explicit_family_selection owner=slow_proof_family_runner"));
+    assert!(rendered.contains("missing_or_unmapped_proof=fail_closed"));
+    assert!(rendered.contains("Fail-closed: required=false reason_count=0"));
     assert!(rendered.contains("Profile-selected run lanes:"));
     assert!(rendered
         .contains("`csdlc_owner_lane` via `bash adl/tools/run_owner_validation_lane.sh csdlc`"));
@@ -4985,6 +5020,7 @@ fn finish_validation_profile_fails_closed_when_ready_profile_command_is_not_publ
         selected_profile: "unsupported_profile".to_string(),
         status: "ready_to_run".to_string(),
         pr_publication_sufficient: true,
+        validation_split: None,
         run: vec![FinishValidationProfileRunItem {
             lane_id: "unsupported_lane".to_string(),
             command: "bash adl/tools/not-a-real-registered-command.sh --dangerous".to_string(),
@@ -5026,6 +5062,7 @@ fn finish_validation_profile_accepts_ready_profile_with_registered_nessus_remote
         selected_profile: "validation_manager_surface".to_string(),
         status: "ready_to_run".to_string(),
         pr_publication_sufficient: true,
+        validation_split: None,
         run: vec![FinishValidationProfileRunItem {
             lane_id: "validation_manager_surface".to_string(),
             command: "bash adl/tools/test_ci_path_policy.sh && bash adl/tools/test_ci_runtime_contracts.sh && bash adl/tools/test_select_validation_lanes.sh && bash adl/tools/test_validation_manager.sh && bash adl/tools/test_run_nessus_remote_validation.sh".to_string(),
@@ -5076,6 +5113,7 @@ residual_ci_proof_required_before_merge: required
         selected_profile: "release_gate_required_2_lane_profile".to_string(),
         status: "escalation_required".to_string(),
         pr_publication_sufficient: false,
+        validation_split: None,
         run: vec![FinishValidationProfileRunItem {
             lane_id: "ci_path_policy_contracts".to_string(),
             command: "bash adl/tools/test_ci_path_policy.sh && bash adl/tools/test_ci_runtime_contracts.sh && bash adl/tools/test_select_validation_lanes.sh && bash adl/tools/test_validation_manager.sh && bash adl/tools/test_run_nessus_remote_validation.sh".to_string(),
@@ -5136,6 +5174,7 @@ residual_ci_proof_required_before_merge: required
         selected_profile: "release_gate_required_2_lane_profile".to_string(),
         status: "escalation_required".to_string(),
         pr_publication_sufficient: false,
+        validation_split: None,
         run: Vec::new(),
         not_run: Vec::new(),
         deferred: Vec::new(),
