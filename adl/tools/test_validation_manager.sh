@@ -45,6 +45,20 @@ assert profile["validation_dag"]["compression_note"].startswith("profile validat
 assert profile["diagnostics"] == []
 PY
 
+docs_report="$TMP/docs-report.json"
+bash "$SCRIPT" --changed-files "$docs_only" --json --report-out "$docs_report" >"$TMP/docs-report-stdout.json"
+python3 - <<'PY' "$docs_report" "$TMP/docs-report-stdout.json"
+import json
+import sys
+
+recorded = json.load(open(sys.argv[1]))
+stdout_profile = json.load(open(sys.argv[2]))
+assert recorded["schema_version"] == "adl.validation_profile.v1"
+assert recorded["selected_profile"] == "docs_diff_check_profile"
+assert recorded["status"] == "ready_to_run"
+assert recorded == stdout_profile
+PY
+
 tooling="$TMP/tooling.txt"
 printf 'M\tadl/tools/ci_path_policy.sh\n' >"$tooling"
 bash "$SCRIPT" --changed-files "$tooling" --json >"$TMP/tooling.json"

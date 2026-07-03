@@ -79,6 +79,7 @@ validation_profile_run_lanes=""
 validation_profile_primary_reason=""
 validation_profile_escalation_lanes=""
 validation_profile_error=""
+validation_profile_report=""
 validation_profile_contract_lanes_selected="$bool_false"
 large_file_lines="${COVERAGE_IMPACT_LARGE_FILE_LINES:-200}"
 large_file_delta="${COVERAGE_IMPACT_LARGE_FILE_DELTA:-80}"
@@ -825,12 +826,17 @@ load_validation_manager_profile() {
   printf '%s\n' "$changed_rows" >"$changed_file_list"
   if ! python3 - "$VALIDATION_MANAGER" "$changed_file_list" <<'PY' >"$tmp_dir/meta.txt" 2>"$tmp_dir/error.txt"
 import json
+import os
 import subprocess
 import sys
 
 manager, changed_files = sys.argv[1], sys.argv[2]
+cmd = ["python3", manager, "--changed-files", changed_files, "--json"]
+report_out = os.environ.get("ADL_VALIDATION_PROFILE_REPORT", "").strip()
+if report_out:
+    cmd.extend(["--report-out", report_out])
 result = subprocess.run(
-    ["python3", manager, "--changed-files", changed_files, "--json"],
+    cmd,
     text=True,
     stdout=subprocess.PIPE,
     stderr=subprocess.PIPE,
@@ -860,6 +866,7 @@ print(
 print(f"run_lanes={run_lanes}")
 print(f"primary_reason={primary_reason}")
 print(f"escalation_lanes={escalation_lanes}")
+print(f"report_out={report_out}")
 PY
   then
     validation_profile_error="$(tr '\n' ' ' <"$tmp_dir/error.txt" | sed 's/[[:space:]]\+/ /g; s/^ //; s/ $//')"
@@ -876,6 +883,7 @@ PY
   validation_profile_run_lanes="$(awk -F= '$1=="run_lanes"{print substr($0, index($0, "=")+1)}' "$tmp_dir/meta.txt")"
   validation_profile_primary_reason="$(awk -F= '$1=="primary_reason"{print substr($0, index($0, "=")+1)}' "$tmp_dir/meta.txt")"
   validation_profile_escalation_lanes="$(awk -F= '$1=="escalation_lanes"{print substr($0, index($0, "=")+1)}' "$tmp_dir/meta.txt")"
+  validation_profile_report="$(awk -F= '$1=="report_out"{print substr($0, index($0, "=")+1)}' "$tmp_dir/meta.txt")"
   rm -rf "$tmp_dir"
 }
 
@@ -1295,6 +1303,7 @@ emit "validation_profile_run_lanes" "$validation_profile_run_lanes"
 emit "validation_profile_primary_reason" "$validation_profile_primary_reason"
 emit "validation_profile_escalation_lanes" "$validation_profile_escalation_lanes"
 emit "validation_profile_error" "$validation_profile_error"
+emit "validation_profile_report" "$validation_profile_report"
 
 printf '\nChanged path policy: %s\n' "$reason"
 printf '  rust_required=%s\n' "$rust_required"
@@ -1305,6 +1314,7 @@ printf '  v0913_proof_required=%s\n' "$v0913_proof_required"
 printf '  release_version_only=%s\n' "$release_version_only"
 printf '  ci_contracts_required=%s\n' "$ci_contracts_required"
 printf '  validation_profile_contract_lanes_selected=%s\n' "$validation_profile_contract_lanes_selected"
+printf '  validation_profile_report=%s\n' "$validation_profile_report"
 printf '  fail_closed=%s\n' "$fail_closed"
 printf '  coverage_lane=%s\n' "$coverage_lane"
 printf '  coverage_authority=%s\n' "$coverage_authority"

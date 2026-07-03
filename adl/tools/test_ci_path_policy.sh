@@ -194,6 +194,20 @@ EOF
   assert_has "$docs_output" "validation_profile_run_lanes=docs_diff_check"
   assert_has "$docs_output" "validation_profile_primary_reason=docs_only_surface_requires_diff_hygiene"
 
+  docs_profile_report="$tmp_dir/docs-profile-report.json"
+  docs_report_output="$(ADL_VALIDATION_PROFILE_REPORT="$docs_profile_report" "$POLICY" --event-name pull_request --base "$base_sha" --head "$docs_head" --ref "refs/pull/1/merge")"
+  assert_has "$docs_report_output" "validation_profile_report=$docs_profile_report"
+  python3 - <<'PY' "$docs_profile_report"
+import json
+import sys
+
+profile = json.load(open(sys.argv[1]))
+assert profile["schema_version"] == "adl.validation_profile.v1"
+assert profile["selected_profile"] == "docs_diff_check_profile"
+assert profile["status"] == "ready_to_run"
+assert [item["lane_id"] for item in profile["run"]] == ["docs_diff_check"]
+PY
+
   git checkout -q -b release-version-only "$base_sha"
   python3 - <<'PY'
 from pathlib import Path
