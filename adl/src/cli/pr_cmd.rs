@@ -216,6 +216,12 @@ pub(crate) fn real_pr(args: &[String]) -> Result<()> {
     };
 
     match subcommand {
+        "--help" | "-h" | "help" => {
+            println!(
+                "Usage:\n  adl pr <subcommand> [args]\n\nSubcommands:\n  create | init | repair-issue-body | start | run | doctor | ready | preflight | finish | validation | pr-inventory | watch | shepherd | closing-linkage | issue | projection-map | closeout\n\nUse `adl tools/pr.sh <subcommand> --help` or the matching owner binary help for subcommand-specific options."
+            );
+            Ok(())
+        }
         "create" => real_pr_create(&args[1..]),
         "init" => real_pr_init(&args[1..]),
         "repair-issue-body" => real_pr_repair_issue_body(&args[1..]),

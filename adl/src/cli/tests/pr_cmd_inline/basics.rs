@@ -2740,6 +2740,10 @@ fn real_pr_dispatch_rejects_missing_and_unknown_subcommands() {
         "pr requires a subcommand: create | init | repair-issue-body | start | run | doctor | ready | preflight | finish | validation | pr-inventory | watch | shepherd | closing-linkage | issue | projection-map | closeout"
     ));
 
+    real_pr(&["--help".to_string()]).expect("top-level pr help should succeed");
+    real_pr(&["-h".to_string()]).expect("short top-level pr help should succeed");
+    real_pr(&["help".to_string()]).expect("help alias should succeed");
+
     let err = real_pr(&["bogus".to_string()]).expect_err("unknown subcommand");
     assert!(err.to_string().contains("unknown pr subcommand: bogus"));
 }

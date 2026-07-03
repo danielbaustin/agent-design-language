@@ -71,3 +71,74 @@ grep -Fqx 'path-doctor:4590 --slug path-bin --no-fetch-issue --version v0.91.6 -
 }
 
 echo "pr.sh prefers PATH owner binary: ok"
+
+repo_bin_log="$tmpdir/repo-bin-issue.log"
+path_issue_log="$tmpdir/path-issue.log"
+mkdir -p "$repo/adl/target/debug"
+cat >"$repo/adl/target/debug/adl-issue" <<'EOF_ISSUE'
+#!/usr/bin/env bash
+set -euo pipefail
+printf 'repo-issue:%s\n' "$*" >"${ADL_TEST_REPO_ISSUE_LOG}"
+EOF_ISSUE
+chmod +x "$repo/adl/target/debug/adl-issue"
+cat >"$pathbin/adl-issue" <<'EOF_PATH_ISSUE'
+#!/usr/bin/env bash
+set -euo pipefail
+printf 'path-issue:%s\n' "$*" >"${ADL_TEST_PATH_ISSUE_LOG}"
+EOF_PATH_ISSUE
+chmod +x "$pathbin/adl-issue"
+sleep 1
+touch "$repo/adl/Cargo.toml"
+: >"$cargo_args"
+
+(
+  cd "$repo"
+  PATH="$pathbin:$mockbin:$PATH" \
+    ADL_TEST_REPO_ISSUE_LOG="$repo_bin_log" \
+    ADL_TEST_PATH_ISSUE_LOG="$path_issue_log" \
+    ADL_TEST_CARGO_ARGS="$cargo_args" \
+    "$BASH_BIN" adl/tools/pr.sh issue search "owner binary" --json >/dev/null
+)
+grep -Fqx 'path-issue:search owner binary --json' "$path_issue_log" || {
+  echo "assertion failed: fresh PATH adl-issue should win over stale repo-local adl-issue" >&2
+  cat "$path_issue_log" >&2
+  exit 1
+}
+[[ ! -s "$repo_bin_log" ]] || {
+  echo "assertion failed: stale repo-local adl-issue should not beat PATH adl-issue" >&2
+  cat "$repo_bin_log" >&2
+  exit 1
+}
+[[ ! -s "$cargo_args" ]] || {
+  echo "assertion failed: cargo should not run when PATH adl-issue exists" >&2
+  cat "$cargo_args" >&2
+  exit 1
+}
+
+echo "pr.sh prefers PATH adl-issue before stale repo-local owner binary: ok"
+
+rm -f "$pathbin/adl-issue"
+: >"$repo_bin_log"
+: >"$path_issue_log"
+: >"$cargo_args"
+
+(
+  cd "$repo"
+  PATH="$pathbin:$mockbin:$PATH" \
+    ADL_TEST_REPO_ISSUE_LOG="$repo_bin_log" \
+    ADL_TEST_PATH_ISSUE_LOG="$path_issue_log" \
+    ADL_TEST_CARGO_ARGS="$cargo_args" \
+    "$BASH_BIN" adl/tools/pr.sh issue search "owner binary" --json >/dev/null
+)
+grep -Fqx 'repo-issue:search owner binary --json' "$repo_bin_log" || {
+  echo "assertion failed: repo-local adl-issue owner binary should be last-resort issue fallback" >&2
+  cat "$repo_bin_log" >&2
+  exit 1
+}
+[[ ! -s "$cargo_args" ]] || {
+  echo "assertion failed: cargo should not run when repo-local adl-issue exists" >&2
+  cat "$cargo_args" >&2
+  exit 1
+}
+
+echo "pr.sh prefers repo-local adl-issue owner binary: ok"
