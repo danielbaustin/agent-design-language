@@ -861,29 +861,10 @@ mod tests {
 
     #[test]
     fn validate_trace_event_envelope_v1_rejects_empty_chronosense_clock_stack_fields() {
-        let cases: [(&str, fn(&mut TraceChronosenseClockStackV1)); 4] = [
-            (
-                "utc_timestamp_rfc3339",
-                |clock_stack: &mut TraceChronosenseClockStackV1| {
-                    clock_stack.utc_timestamp_rfc3339.clear()
-                },
-            ),
-            (
-                "local_timestamp_rfc3339",
-                |clock_stack: &mut TraceChronosenseClockStackV1| {
-                    clock_stack.local_timestamp_rfc3339.clear()
-                },
-            ),
-            (
-                "timezone",
-                |clock_stack: &mut TraceChronosenseClockStackV1| clock_stack.timezone.clear(),
-            ),
-            (
-                "utc_offset",
-                |clock_stack: &mut TraceChronosenseClockStackV1| clock_stack.utc_offset.clear(),
-            ),
-        ];
-        for (field_name, mutate) in cases {
+        fn assert_rejects_empty_clock_stack_field(
+            field_name: &str,
+            mutate: impl FnOnce(&mut TraceChronosenseClockStackV1),
+        ) {
             let mut invalid = sample_clock_stack();
             mutate(&mut invalid);
             let envelope = TraceEventEnvelopeV1 {
@@ -901,6 +882,19 @@ mod tests {
                 "expected error for {field_name}, got {err}"
             );
         }
+
+        assert_rejects_empty_clock_stack_field("utc_timestamp_rfc3339", |clock_stack| {
+            clock_stack.utc_timestamp_rfc3339.clear()
+        });
+        assert_rejects_empty_clock_stack_field("local_timestamp_rfc3339", |clock_stack| {
+            clock_stack.local_timestamp_rfc3339.clear()
+        });
+        assert_rejects_empty_clock_stack_field("timezone", |clock_stack| {
+            clock_stack.timezone.clear()
+        });
+        assert_rejects_empty_clock_stack_field("utc_offset", |clock_stack| {
+            clock_stack.utc_offset.clear()
+        });
     }
 
     #[test]
