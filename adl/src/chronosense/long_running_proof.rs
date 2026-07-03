@@ -503,6 +503,7 @@ fn scheduler_bundle_with_chronosense_context() -> SchedulerEconomicsInputBundleV
         role_provider_context: None,
         model_suitability_context: None,
         cheapest_validated_outcome_policy: None,
+        local_agent_delegation_context: None,
         inputs: vec![SchedulerEconomicsInputV1 {
             schema_version: SCHEDULER_ECONOMICS_INPUT_SCHEMA_V1.to_string(),
             task_id: "resume-context-proof".to_string(),

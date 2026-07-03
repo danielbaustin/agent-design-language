@@ -16,6 +16,11 @@ pub const SCHEDULER_CHEAPEST_VALIDATED_OUTCOME_INPUT_BUNDLE_SCHEMA_V1: &str =
     "adl.scheduler.economics_input_bundle.cheapest_validated_outcome.v1";
 pub const SCHEDULER_PROVIDER_CHEAPEST_VALIDATED_OUTCOME_INPUT_BUNDLE_SCHEMA_V1: &str =
     "adl.scheduler.economics_input_bundle.provider_cheapest_validated_outcome.v1";
+pub const SCHEDULER_LOCAL_AGENT_DELEGATION_INPUT_BUNDLE_SCHEMA_V1: &str =
+    "adl.scheduler.economics_input_bundle.local_agent_delegation.v1";
+pub const SCHEDULER_PROVIDER_CHEAPEST_VALIDATED_LOCAL_AGENT_DELEGATION_INPUT_BUNDLE_SCHEMA_V1:
+    &str =
+    "adl.scheduler.economics_input_bundle.provider_cheapest_validated_local_agent_delegation.v1";
 pub const COGNITIVE_SCHEDULER_DECISION_SCHEMA_V1: &str = "adl.scheduler.decision.v1";
 pub const COGNITIVE_SCHEDULER_DECISION_WITH_PROVIDER_ROUTE_SCHEMA_V1: &str =
     "adl.scheduler.decision.provider_route.v1";
@@ -25,6 +30,10 @@ pub const COGNITIVE_SCHEDULER_DECISION_CHEAPEST_VALIDATED_OUTCOME_SCHEMA_V1: &st
     "adl.scheduler.decision.cheapest_validated_outcome.v1";
 pub const COGNITIVE_SCHEDULER_DECISION_PROVIDER_CHEAPEST_VALIDATED_OUTCOME_SCHEMA_V1: &str =
     "adl.scheduler.decision.provider_cheapest_validated_outcome.v1";
+pub const COGNITIVE_SCHEDULER_DECISION_LOCAL_AGENT_DELEGATION_SCHEMA_V1: &str =
+    "adl.scheduler.decision.local_agent_delegation.v1";
+pub const COGNITIVE_SCHEDULER_DECISION_PROVIDER_CHEAPEST_VALIDATED_LOCAL_AGENT_DELEGATION_SCHEMA_V1: &str =
+    "adl.scheduler.decision.provider_cheapest_validated_local_agent_delegation.v1";
 pub const COGNITIVE_SCHEDULER_PLAN_SCHEMA_V1: &str = "adl.scheduler.plan.v1";
 pub const CHRONOSENSE_SCHEDULER_CONTEXT_SCHEMA_V1: &str = "adl.scheduler.chronosense_context.v1";
 pub const ROLE_PROVIDER_SELECTION_CONTEXT_SCHEMA_V1: &str =
@@ -33,6 +42,8 @@ pub const MODEL_SUITABILITY_SELECTION_CONTEXT_SCHEMA_V1: &str =
     "adl.scheduler.model_suitability_selection_context.v1";
 pub const CHEAPEST_VALIDATED_OUTCOME_POLICY_SCHEMA_V1: &str =
     "adl.scheduler.cheapest_validated_outcome_policy.v1";
+pub const LOCAL_AGENT_DELEGATION_READINESS_CONTEXT_SCHEMA_V1: &str =
+    "adl.scheduler.local_agent_delegation_readiness_context.v1";
 
 #[derive(Debug, Clone, Serialize, Deserialize, JsonSchema, PartialEq, Eq)]
 #[serde(rename_all = "snake_case")]
@@ -198,6 +209,28 @@ pub enum ModelSuitabilityTraceDispositionV1 {
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize, JsonSchema, PartialEq, Eq)]
+#[serde(rename_all = "snake_case")]
+pub enum LocalAgentDelegationReadinessStatusV1 {
+    Ready,
+    ShadowOnly,
+    Blocked,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize, JsonSchema, PartialEq, Eq)]
+#[serde(rename_all = "snake_case")]
+pub enum LocalAgentDelegationModeV1 {
+    AdvisorySupport,
+    ShadowMode,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize, JsonSchema, PartialEq, Eq)]
+#[serde(rename_all = "snake_case")]
+pub enum LocalAgentDelegationTraceDispositionV1 {
+    Selected,
+    Rejected,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize, JsonSchema, PartialEq, Eq)]
 #[serde(rename_all = "SCREAMING_SNAKE_CASE")]
 pub enum CognitiveSchedulerLaneV1 {
     Local,
@@ -344,6 +377,50 @@ pub struct ModelSuitabilitySelectionContextV1 {
 
 #[derive(Debug, Clone, Serialize, Deserialize, JsonSchema, PartialEq, Eq)]
 #[serde(deny_unknown_fields)]
+pub struct LocalAgentDelegationCandidateV1 {
+    pub candidate_id: String,
+    pub provider_profile_ref: String,
+    pub model_ref: String,
+    pub runtime_surface: String,
+    pub supported_roles: Vec<ModelSuitabilityRoleV1>,
+    pub capabilities: Vec<String>,
+    pub evidence_ref: String,
+    pub readiness: LocalAgentDelegationReadinessStatusV1,
+    pub readiness_reason: String,
+    #[serde(default)]
+    pub advisory_authority_only: bool,
+    #[serde(default)]
+    pub can_execute_autonomously: bool,
+    #[serde(default)]
+    pub can_mutate_repo: bool,
+    #[serde(default)]
+    pub can_close_or_merge: bool,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize, JsonSchema, PartialEq, Eq)]
+#[serde(deny_unknown_fields)]
+pub struct LocalAgentDelegationTaskRequirementV1 {
+    pub task_id: String,
+    pub role: ModelSuitabilityRoleV1,
+    #[serde(default, skip_serializing_if = "Vec::is_empty")]
+    pub required_capabilities: Vec<String>,
+    #[serde(default)]
+    pub allow_shadow_mode: bool,
+    pub claim_boundary: String,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize, JsonSchema, PartialEq, Eq)]
+#[serde(deny_unknown_fields)]
+pub struct LocalAgentDelegationReadinessContextV1 {
+    pub schema_version: String,
+    pub generated_from: String,
+    pub evidence_refs: Vec<String>,
+    pub candidates: Vec<LocalAgentDelegationCandidateV1>,
+    pub task_requirements: Vec<LocalAgentDelegationTaskRequirementV1>,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize, JsonSchema, PartialEq, Eq)]
+#[serde(deny_unknown_fields)]
 pub struct CheapestValidatedCandidateEvidenceV1 {
     pub candidate_id: String,
     pub candidate_source_ref: String,
@@ -416,6 +493,8 @@ pub struct SchedulerEconomicsInputBundleV1 {
     pub model_suitability_context: Option<ModelSuitabilitySelectionContextV1>,
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub cheapest_validated_outcome_policy: Option<CheapestValidatedOutcomePolicyV1>,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub local_agent_delegation_context: Option<LocalAgentDelegationReadinessContextV1>,
     pub inputs: Vec<SchedulerEconomicsInputV1>,
 }
 
@@ -505,6 +584,45 @@ pub struct ModelSuitabilitySelectionV1 {
 
 #[derive(Debug, Clone, Serialize, Deserialize, JsonSchema, PartialEq, Eq)]
 #[serde(deny_unknown_fields)]
+pub struct LocalAgentDelegationReadinessTraceV1 {
+    pub candidate_id: String,
+    pub provider_profile_ref: String,
+    pub model_ref: String,
+    pub disposition: LocalAgentDelegationTraceDispositionV1,
+    pub reason: String,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize, JsonSchema, PartialEq, Eq)]
+#[serde(deny_unknown_fields)]
+pub struct LocalAgentDelegationReadinessV1 {
+    pub role: ModelSuitabilityRoleV1,
+    pub readiness: LocalAgentDelegationReadinessStatusV1,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub selected_candidate_id: Option<String>,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub provider_profile_ref: Option<String>,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub model_ref: Option<String>,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub runtime_surface: Option<String>,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub delegation_mode: Option<LocalAgentDelegationModeV1>,
+    #[serde(default)]
+    pub advisory_authority_only: bool,
+    #[serde(default)]
+    pub can_execute_autonomously: bool,
+    #[serde(default)]
+    pub can_mutate_repo: bool,
+    #[serde(default)]
+    pub can_close_or_merge: bool,
+    pub claim_boundary: String,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub evidence_ref: Option<String>,
+    pub readiness_trace: Vec<LocalAgentDelegationReadinessTraceV1>,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize, JsonSchema, PartialEq, Eq)]
+#[serde(deny_unknown_fields)]
 pub struct CognitiveSchedulerDecisionV1 {
     pub schema_version: String,
     pub task_id: String,
@@ -518,6 +636,8 @@ pub struct CognitiveSchedulerDecisionV1 {
     pub provider_route: Option<ProviderRouteV1>,
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub model_suitability_selection: Option<ModelSuitabilitySelectionV1>,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub local_agent_delegation_readiness: Option<LocalAgentDelegationReadinessV1>,
     pub confidence: SchedulerConfidenceV1,
     pub scheduling_rank_key: String,
 }
@@ -555,69 +675,124 @@ pub fn validate_economics_bundle(bundle: &SchedulerEconomicsInputBundleV1) -> Re
         bundle.role_provider_context.as_ref(),
         bundle.model_suitability_context.as_ref(),
         bundle.cheapest_validated_outcome_policy.as_ref(),
+        bundle.local_agent_delegation_context.as_ref(),
     ) {
-        (SCHEDULER_ECONOMICS_INPUT_BUNDLE_SCHEMA_V1, None, None, None) => {}
-        (SCHEDULER_ECONOMICS_INPUT_BUNDLE_SCHEMA_V1, Some(_), _, _) => {
+        (SCHEDULER_ECONOMICS_INPUT_BUNDLE_SCHEMA_V1, None, None, None, None) => {}
+        (SCHEDULER_ECONOMICS_INPUT_BUNDLE_SCHEMA_V1, Some(_), _, _, _) => {
             return Err(anyhow!(
                 "scheduler economics bundle with role_provider_context must use schema {SCHEDULER_ECONOMICS_INPUT_BUNDLE_WITH_PROVIDER_ROUTE_SCHEMA_V1}"
             ));
         }
-        (SCHEDULER_ECONOMICS_INPUT_BUNDLE_SCHEMA_V1, _, Some(_), _) => {
+        (SCHEDULER_ECONOMICS_INPUT_BUNDLE_SCHEMA_V1, _, Some(_), _, _) => {
             return Err(anyhow!(
                 "model_suitability_context requires scheduler bundle schema {SCHEDULER_MODEL_SUITABILITY_INPUT_BUNDLE_SCHEMA_V1}"
             ));
         }
-        (SCHEDULER_ECONOMICS_INPUT_BUNDLE_SCHEMA_V1, _, _, Some(_)) => {
+        (SCHEDULER_ECONOMICS_INPUT_BUNDLE_SCHEMA_V1, _, _, Some(_), _) => {
             return Err(anyhow!(
                 "cheapest_validated_outcome_policy requires scheduler bundle schema {SCHEDULER_CHEAPEST_VALIDATED_OUTCOME_INPUT_BUNDLE_SCHEMA_V1}"
             ));
         }
-        (SCHEDULER_ECONOMICS_INPUT_BUNDLE_WITH_PROVIDER_ROUTE_SCHEMA_V1, Some(_), None, None) => {}
-        (SCHEDULER_ECONOMICS_INPUT_BUNDLE_WITH_PROVIDER_ROUTE_SCHEMA_V1, None, _, _) => {
+        (SCHEDULER_ECONOMICS_INPUT_BUNDLE_SCHEMA_V1, _, _, _, Some(_)) => {
+            return Err(anyhow!(
+                "local_agent_delegation_context requires scheduler bundle schema {SCHEDULER_LOCAL_AGENT_DELEGATION_INPUT_BUNDLE_SCHEMA_V1}"
+            ));
+        }
+        (
+            SCHEDULER_ECONOMICS_INPUT_BUNDLE_WITH_PROVIDER_ROUTE_SCHEMA_V1,
+            Some(_),
+            None,
+            None,
+            None,
+        ) => {}
+        (SCHEDULER_ECONOMICS_INPUT_BUNDLE_WITH_PROVIDER_ROUTE_SCHEMA_V1, None, _, _, _) => {
             return Err(anyhow!(
                 "scheduler bundle schema {SCHEDULER_ECONOMICS_INPUT_BUNDLE_WITH_PROVIDER_ROUTE_SCHEMA_V1} requires role_provider_context"
             ));
         }
-        (SCHEDULER_ECONOMICS_INPUT_BUNDLE_WITH_PROVIDER_ROUTE_SCHEMA_V1, _, Some(_), _) => {
+        (SCHEDULER_ECONOMICS_INPUT_BUNDLE_WITH_PROVIDER_ROUTE_SCHEMA_V1, _, Some(_), _, _) => {
             return Err(anyhow!(
                 "scheduler bundle schema {SCHEDULER_ECONOMICS_INPUT_BUNDLE_WITH_PROVIDER_ROUTE_SCHEMA_V1} cannot include model_suitability_context without a combined schema"
             ));
         }
-        (SCHEDULER_ECONOMICS_INPUT_BUNDLE_WITH_PROVIDER_ROUTE_SCHEMA_V1, _, _, Some(_)) => {
+        (SCHEDULER_ECONOMICS_INPUT_BUNDLE_WITH_PROVIDER_ROUTE_SCHEMA_V1, _, _, Some(_), _) => {
             return Err(anyhow!(
                 "scheduler bundle schema {SCHEDULER_ECONOMICS_INPUT_BUNDLE_WITH_PROVIDER_ROUTE_SCHEMA_V1} cannot include cheapest_validated_outcome_policy without a combined schema"
             ));
         }
-        (SCHEDULER_MODEL_SUITABILITY_INPUT_BUNDLE_SCHEMA_V1, None, Some(_), None) => {}
-        (SCHEDULER_MODEL_SUITABILITY_INPUT_BUNDLE_SCHEMA_V1, Some(_), _, _) => {
+        (SCHEDULER_ECONOMICS_INPUT_BUNDLE_WITH_PROVIDER_ROUTE_SCHEMA_V1, _, _, _, Some(_)) => {
+            return Err(anyhow!(
+                "scheduler bundle schema {SCHEDULER_ECONOMICS_INPUT_BUNDLE_WITH_PROVIDER_ROUTE_SCHEMA_V1} cannot include local_agent_delegation_context without a combined schema"
+            ));
+        }
+        (SCHEDULER_MODEL_SUITABILITY_INPUT_BUNDLE_SCHEMA_V1, None, Some(_), None, None) => {}
+        (SCHEDULER_MODEL_SUITABILITY_INPUT_BUNDLE_SCHEMA_V1, Some(_), _, _, _) => {
             return Err(anyhow!(
                 "scheduler bundle schema {SCHEDULER_MODEL_SUITABILITY_INPUT_BUNDLE_SCHEMA_V1} cannot include role_provider_context without a combined schema"
             ));
         }
-        (SCHEDULER_MODEL_SUITABILITY_INPUT_BUNDLE_SCHEMA_V1, _, None, _) => {
+        (SCHEDULER_MODEL_SUITABILITY_INPUT_BUNDLE_SCHEMA_V1, _, None, _, _) => {
             return Err(anyhow!(
                 "scheduler bundle schema {SCHEDULER_MODEL_SUITABILITY_INPUT_BUNDLE_SCHEMA_V1} requires model_suitability_context"
             ));
         }
-        (SCHEDULER_MODEL_SUITABILITY_INPUT_BUNDLE_SCHEMA_V1, _, _, Some(_)) => {
+        (SCHEDULER_MODEL_SUITABILITY_INPUT_BUNDLE_SCHEMA_V1, _, _, Some(_), _) => {
             return Err(anyhow!(
                 "cheapest_validated_outcome_policy requires scheduler bundle schema {SCHEDULER_CHEAPEST_VALIDATED_OUTCOME_INPUT_BUNDLE_SCHEMA_V1}"
             ));
         }
-        (SCHEDULER_CHEAPEST_VALIDATED_OUTCOME_INPUT_BUNDLE_SCHEMA_V1, None, Some(_), Some(_)) => {}
-        (SCHEDULER_CHEAPEST_VALIDATED_OUTCOME_INPUT_BUNDLE_SCHEMA_V1, Some(_), _, _) => {
+        (SCHEDULER_MODEL_SUITABILITY_INPUT_BUNDLE_SCHEMA_V1, _, _, _, Some(_)) => {
+            return Err(anyhow!(
+                "local_agent_delegation_context requires scheduler bundle schema {SCHEDULER_LOCAL_AGENT_DELEGATION_INPUT_BUNDLE_SCHEMA_V1}"
+            ));
+        }
+        (
+            SCHEDULER_CHEAPEST_VALIDATED_OUTCOME_INPUT_BUNDLE_SCHEMA_V1,
+            None,
+            Some(_),
+            Some(_),
+            None,
+        ) => {}
+        (SCHEDULER_CHEAPEST_VALIDATED_OUTCOME_INPUT_BUNDLE_SCHEMA_V1, Some(_), _, _, _) => {
             return Err(anyhow!(
                 "scheduler bundle schema {SCHEDULER_CHEAPEST_VALIDATED_OUTCOME_INPUT_BUNDLE_SCHEMA_V1} cannot include role_provider_context"
             ));
         }
-        (SCHEDULER_CHEAPEST_VALIDATED_OUTCOME_INPUT_BUNDLE_SCHEMA_V1, _, None, _) => {
+        (SCHEDULER_CHEAPEST_VALIDATED_OUTCOME_INPUT_BUNDLE_SCHEMA_V1, _, None, _, _) => {
             return Err(anyhow!(
                 "scheduler bundle schema {SCHEDULER_CHEAPEST_VALIDATED_OUTCOME_INPUT_BUNDLE_SCHEMA_V1} requires model_suitability_context"
             ));
         }
-        (SCHEDULER_CHEAPEST_VALIDATED_OUTCOME_INPUT_BUNDLE_SCHEMA_V1, _, _, None) => {
+        (SCHEDULER_CHEAPEST_VALIDATED_OUTCOME_INPUT_BUNDLE_SCHEMA_V1, _, _, None, _) => {
             return Err(anyhow!(
                 "scheduler bundle schema {SCHEDULER_CHEAPEST_VALIDATED_OUTCOME_INPUT_BUNDLE_SCHEMA_V1} requires cheapest_validated_outcome_policy"
+            ));
+        }
+        (SCHEDULER_CHEAPEST_VALIDATED_OUTCOME_INPUT_BUNDLE_SCHEMA_V1, _, _, _, Some(_)) => {
+            return Err(anyhow!(
+                "local_agent_delegation_context requires scheduler bundle schema {SCHEDULER_LOCAL_AGENT_DELEGATION_INPUT_BUNDLE_SCHEMA_V1}"
+            ));
+        }
+        (SCHEDULER_LOCAL_AGENT_DELEGATION_INPUT_BUNDLE_SCHEMA_V1, None, Some(_), None, Some(_)) => {
+        }
+        (SCHEDULER_LOCAL_AGENT_DELEGATION_INPUT_BUNDLE_SCHEMA_V1, Some(_), _, _, _) => {
+            return Err(anyhow!(
+                "scheduler bundle schema {SCHEDULER_LOCAL_AGENT_DELEGATION_INPUT_BUNDLE_SCHEMA_V1} cannot include role_provider_context without a combined schema"
+            ));
+        }
+        (SCHEDULER_LOCAL_AGENT_DELEGATION_INPUT_BUNDLE_SCHEMA_V1, _, None, _, _) => {
+            return Err(anyhow!(
+                "scheduler bundle schema {SCHEDULER_LOCAL_AGENT_DELEGATION_INPUT_BUNDLE_SCHEMA_V1} requires model_suitability_context"
+            ));
+        }
+        (SCHEDULER_LOCAL_AGENT_DELEGATION_INPUT_BUNDLE_SCHEMA_V1, _, _, Some(_), _) => {
+            return Err(anyhow!(
+                "scheduler bundle schema {SCHEDULER_LOCAL_AGENT_DELEGATION_INPUT_BUNDLE_SCHEMA_V1} cannot include cheapest_validated_outcome_policy without a combined schema"
+            ));
+        }
+        (SCHEDULER_LOCAL_AGENT_DELEGATION_INPUT_BUNDLE_SCHEMA_V1, _, _, _, None) => {
+            return Err(anyhow!(
+                "scheduler bundle schema {SCHEDULER_LOCAL_AGENT_DELEGATION_INPUT_BUNDLE_SCHEMA_V1} requires local_agent_delegation_context"
             ));
         }
         (
@@ -625,23 +800,86 @@ pub fn validate_economics_bundle(bundle: &SchedulerEconomicsInputBundleV1) -> Re
             Some(_),
             Some(_),
             Some(_),
+            None,
         ) => {}
-        (SCHEDULER_PROVIDER_CHEAPEST_VALIDATED_OUTCOME_INPUT_BUNDLE_SCHEMA_V1, None, _, _) => {
+        (SCHEDULER_PROVIDER_CHEAPEST_VALIDATED_OUTCOME_INPUT_BUNDLE_SCHEMA_V1, None, _, _, _) => {
             return Err(anyhow!(
                 "scheduler bundle schema {SCHEDULER_PROVIDER_CHEAPEST_VALIDATED_OUTCOME_INPUT_BUNDLE_SCHEMA_V1} requires role_provider_context"
             ));
         }
-        (SCHEDULER_PROVIDER_CHEAPEST_VALIDATED_OUTCOME_INPUT_BUNDLE_SCHEMA_V1, _, None, _) => {
+        (SCHEDULER_PROVIDER_CHEAPEST_VALIDATED_OUTCOME_INPUT_BUNDLE_SCHEMA_V1, _, None, _, _) => {
             return Err(anyhow!(
                 "scheduler bundle schema {SCHEDULER_PROVIDER_CHEAPEST_VALIDATED_OUTCOME_INPUT_BUNDLE_SCHEMA_V1} requires model_suitability_context"
             ));
         }
-        (SCHEDULER_PROVIDER_CHEAPEST_VALIDATED_OUTCOME_INPUT_BUNDLE_SCHEMA_V1, _, _, None) => {
+        (SCHEDULER_PROVIDER_CHEAPEST_VALIDATED_OUTCOME_INPUT_BUNDLE_SCHEMA_V1, _, _, None, _) => {
             return Err(anyhow!(
                 "scheduler bundle schema {SCHEDULER_PROVIDER_CHEAPEST_VALIDATED_OUTCOME_INPUT_BUNDLE_SCHEMA_V1} requires cheapest_validated_outcome_policy"
             ));
         }
-        (other, _, _, _) => {
+        (
+            SCHEDULER_PROVIDER_CHEAPEST_VALIDATED_OUTCOME_INPUT_BUNDLE_SCHEMA_V1,
+            _,
+            _,
+            _,
+            Some(_),
+        ) => {
+            return Err(anyhow!(
+                "local_agent_delegation_context requires scheduler bundle schema {SCHEDULER_PROVIDER_CHEAPEST_VALIDATED_LOCAL_AGENT_DELEGATION_INPUT_BUNDLE_SCHEMA_V1}"
+            ));
+        }
+        (
+            SCHEDULER_PROVIDER_CHEAPEST_VALIDATED_LOCAL_AGENT_DELEGATION_INPUT_BUNDLE_SCHEMA_V1,
+            Some(_),
+            Some(_),
+            Some(_),
+            Some(_),
+        ) => {}
+        (
+            SCHEDULER_PROVIDER_CHEAPEST_VALIDATED_LOCAL_AGENT_DELEGATION_INPUT_BUNDLE_SCHEMA_V1,
+            None,
+            _,
+            _,
+            _,
+        ) => {
+            return Err(anyhow!(
+                "scheduler bundle schema {SCHEDULER_PROVIDER_CHEAPEST_VALIDATED_LOCAL_AGENT_DELEGATION_INPUT_BUNDLE_SCHEMA_V1} requires role_provider_context"
+            ));
+        }
+        (
+            SCHEDULER_PROVIDER_CHEAPEST_VALIDATED_LOCAL_AGENT_DELEGATION_INPUT_BUNDLE_SCHEMA_V1,
+            _,
+            None,
+            _,
+            _,
+        ) => {
+            return Err(anyhow!(
+                "scheduler bundle schema {SCHEDULER_PROVIDER_CHEAPEST_VALIDATED_LOCAL_AGENT_DELEGATION_INPUT_BUNDLE_SCHEMA_V1} requires model_suitability_context"
+            ));
+        }
+        (
+            SCHEDULER_PROVIDER_CHEAPEST_VALIDATED_LOCAL_AGENT_DELEGATION_INPUT_BUNDLE_SCHEMA_V1,
+            _,
+            _,
+            None,
+            _,
+        ) => {
+            return Err(anyhow!(
+                "scheduler bundle schema {SCHEDULER_PROVIDER_CHEAPEST_VALIDATED_LOCAL_AGENT_DELEGATION_INPUT_BUNDLE_SCHEMA_V1} requires cheapest_validated_outcome_policy"
+            ));
+        }
+        (
+            SCHEDULER_PROVIDER_CHEAPEST_VALIDATED_LOCAL_AGENT_DELEGATION_INPUT_BUNDLE_SCHEMA_V1,
+            _,
+            _,
+            _,
+            None,
+        ) => {
+            return Err(anyhow!(
+                "scheduler bundle schema {SCHEDULER_PROVIDER_CHEAPEST_VALIDATED_LOCAL_AGENT_DELEGATION_INPUT_BUNDLE_SCHEMA_V1} requires local_agent_delegation_context"
+            ));
+        }
+        (other, _, _, _, _) => {
             return Err(anyhow!(
                 "unsupported scheduler economics bundle schema: {other}"
             ));
@@ -684,6 +922,12 @@ pub fn validate_economics_bundle(bundle: &SchedulerEconomicsInputBundleV1) -> Re
             anyhow!("cheapest validated outcome policy requires model suitability context")
         })?;
         validate_cheapest_validated_outcome_policy(policy, context, &bundle.inputs)?;
+    }
+    if let Some(context) = &bundle.local_agent_delegation_context {
+        let model_context = bundle.model_suitability_context.as_ref().ok_or_else(|| {
+            anyhow!("local agent delegation context requires model suitability context")
+        })?;
+        validate_local_agent_delegation_context(context, model_context, &bundle.inputs)?;
     }
     Ok(())
 }
@@ -1018,6 +1262,189 @@ pub fn validate_model_suitability_context(
     Ok(())
 }
 
+pub fn validate_local_agent_delegation_context(
+    context: &LocalAgentDelegationReadinessContextV1,
+    model_context: &ModelSuitabilitySelectionContextV1,
+    inputs: &[SchedulerEconomicsInputV1],
+) -> Result<()> {
+    if context.schema_version != LOCAL_AGENT_DELEGATION_READINESS_CONTEXT_SCHEMA_V1 {
+        return Err(anyhow!(
+            "unsupported local agent delegation context schema: {}",
+            context.schema_version
+        ));
+    }
+    if context.generated_from.trim().is_empty() {
+        return Err(anyhow!(
+            "local agent delegation context generated_from is required"
+        ));
+    }
+    if context.evidence_refs.is_empty() {
+        return Err(anyhow!(
+            "local agent delegation context must retain at least one evidence_ref"
+        ));
+    }
+    if context.candidates.is_empty() {
+        return Err(anyhow!(
+            "local agent delegation context must include at least one candidate"
+        ));
+    }
+    if context.task_requirements.is_empty() {
+        return Err(anyhow!(
+            "local agent delegation context must include at least one task requirement"
+        ));
+    }
+
+    let evidence_refs = context
+        .evidence_refs
+        .iter()
+        .cloned()
+        .collect::<BTreeSet<_>>();
+    let model_candidates = model_context
+        .candidates
+        .iter()
+        .map(|candidate| (candidate.candidate_id.as_str(), candidate))
+        .collect::<BTreeMap<_, _>>();
+    let mut seen_candidates = BTreeSet::new();
+    for candidate in &context.candidates {
+        if candidate.candidate_id.trim().is_empty()
+            || candidate.provider_profile_ref.trim().is_empty()
+            || candidate.model_ref.trim().is_empty()
+            || candidate.runtime_surface.trim().is_empty()
+            || candidate.evidence_ref.trim().is_empty()
+            || candidate.readiness_reason.trim().is_empty()
+        {
+            return Err(anyhow!(
+                "local agent delegation candidate fields are required for {}",
+                candidate.candidate_id
+            ));
+        }
+        if !seen_candidates.insert(candidate.candidate_id.clone()) {
+            return Err(anyhow!(
+                "duplicate local agent delegation candidate {}",
+                candidate.candidate_id
+            ));
+        }
+        let model_candidate = model_candidates
+            .get(candidate.candidate_id.as_str())
+            .ok_or_else(|| {
+                anyhow!(
+                    "local agent delegation candidate {} is not present in model suitability candidates",
+                    candidate.candidate_id
+                )
+            })?;
+        if candidate.provider_profile_ref != model_candidate.provider_profile_ref
+            || candidate.model_ref != model_candidate.model_ref
+            || candidate.runtime_surface != model_candidate.runtime_surface
+        {
+            return Err(anyhow!(
+                "local agent delegation candidate {} must match model suitability provider/model/runtime identity",
+                candidate.candidate_id
+            ));
+        }
+        if !is_local_agent_runtime_surface(&candidate.runtime_surface) {
+            return Err(anyhow!(
+                "local agent delegation candidate {} must use a local runtime surface",
+                candidate.candidate_id
+            ));
+        }
+        if !evidence_refs.contains(&candidate.evidence_ref) {
+            return Err(anyhow!(
+                "local agent delegation candidate {} evidence_ref is not retained in evidence_refs",
+                candidate.candidate_id
+            ));
+        }
+        if candidate.evidence_ref != model_candidate.source_ref {
+            return Err(anyhow!(
+                "local agent delegation candidate {} evidence_ref must match model suitability source_ref",
+                candidate.candidate_id
+            ));
+        }
+        if candidate.supported_roles.is_empty() {
+            return Err(anyhow!(
+                "local agent delegation candidate {} must include at least one supported role",
+                candidate.candidate_id
+            ));
+        }
+        for role in &candidate.supported_roles {
+            if !model_candidate.roles.contains(role) {
+                return Err(anyhow!(
+                    "local agent delegation candidate {} role {:?} is not proven by model suitability",
+                    candidate.candidate_id,
+                    role
+                ));
+            }
+        }
+        if candidate.capabilities.is_empty() {
+            return Err(anyhow!(
+                "local agent delegation candidate {} must include at least one capability",
+                candidate.candidate_id
+            ));
+        }
+        if !candidate.advisory_authority_only {
+            return Err(anyhow!(
+                "local agent delegation candidate {} must be advisory_authority_only",
+                candidate.candidate_id
+            ));
+        }
+        if candidate.can_execute_autonomously
+            || candidate.can_mutate_repo
+            || candidate.can_close_or_merge
+        {
+            return Err(anyhow!(
+                "local agent delegation candidate {} cannot claim autonomous execution, repo mutation, closeout, or merge authority",
+                candidate.candidate_id
+            ));
+        }
+    }
+
+    let input_ids = inputs
+        .iter()
+        .map(|input| input.task_id.as_str())
+        .collect::<BTreeSet<_>>();
+    let mut seen_requirements = BTreeSet::new();
+    for requirement in &context.task_requirements {
+        if requirement.task_id.trim().is_empty() {
+            return Err(anyhow!("local agent delegation task_id is required"));
+        }
+        if !seen_requirements.insert(requirement.task_id.clone()) {
+            return Err(anyhow!(
+                "duplicate local agent delegation task requirement for {}",
+                requirement.task_id
+            ));
+        }
+        if !input_ids.contains(requirement.task_id.as_str()) {
+            return Err(anyhow!(
+                "local agent delegation task {} does not match a scheduler input task_id",
+                requirement.task_id
+            ));
+        }
+        if !valid_local_agent_delegation_claim_boundary(&requirement.claim_boundary) {
+            return Err(anyhow!(
+                "local agent delegation task {} claim_boundary must be an approved bounded non-authority value",
+                requirement.task_id
+            ));
+        }
+        let model_requirement = model_context
+            .task_requirements
+            .iter()
+            .find(|model_requirement| model_requirement.task_id == requirement.task_id)
+            .ok_or_else(|| {
+                anyhow!(
+                    "local agent delegation task {} has no model suitability requirement",
+                    requirement.task_id
+                )
+            })?;
+        if model_requirement.role != requirement.role {
+            return Err(anyhow!(
+                "local agent delegation task {} role must match model suitability requirement",
+                requirement.task_id
+            ));
+        }
+    }
+
+    Ok(())
+}
+
 pub fn validate_cheapest_validated_outcome_policy(
     policy: &CheapestValidatedOutcomePolicyV1,
     context: &ModelSuitabilitySelectionContextV1,
@@ -1314,6 +1741,9 @@ pub fn schedule_economics_bundle(
         bundle.model_suitability_context.as_ref(),
         bundle.cheapest_validated_outcome_policy.as_ref(),
     )?;
+    let local_agent_delegation = resolve_local_agent_delegation_readiness_assignments(
+        bundle.local_agent_delegation_context.as_ref(),
+    )?;
     let mut decisions = adjusted_inputs
         .iter()
         .map(|input| {
@@ -1321,6 +1751,7 @@ pub fn schedule_economics_bundle(
                 input,
                 provider_routes.get(&input.task_id).cloned(),
                 model_suitability.get(&input.task_id).cloned(),
+                local_agent_delegation.get(&input.task_id).cloned(),
             )
         })
         .collect::<Result<Vec<_>>>()?;
@@ -1457,6 +1888,187 @@ fn select_model_suitability_candidate(
     })
 }
 
+pub fn resolve_local_agent_delegation_readiness_assignments(
+    context: Option<&LocalAgentDelegationReadinessContextV1>,
+) -> Result<BTreeMap<String, LocalAgentDelegationReadinessV1>> {
+    let Some(context) = context else {
+        return Ok(BTreeMap::new());
+    };
+    let mut selected = BTreeMap::new();
+    for requirement in &context.task_requirements {
+        selected.insert(
+            requirement.task_id.clone(),
+            select_local_agent_delegation_candidate(context, requirement),
+        );
+    }
+    Ok(selected)
+}
+
+fn select_local_agent_delegation_candidate(
+    context: &LocalAgentDelegationReadinessContextV1,
+    requirement: &LocalAgentDelegationTaskRequirementV1,
+) -> LocalAgentDelegationReadinessV1 {
+    let mut eligible = context
+        .candidates
+        .iter()
+        .filter(|candidate| local_agent_candidate_matches_requirement(candidate, requirement))
+        .collect::<Vec<_>>();
+    eligible.sort_by(|left, right| {
+        local_agent_readiness_rank(&right.readiness)
+            .cmp(&local_agent_readiness_rank(&left.readiness))
+            .then_with(|| left.provider_profile_ref.cmp(&right.provider_profile_ref))
+            .then_with(|| left.model_ref.cmp(&right.model_ref))
+            .then_with(|| left.candidate_id.cmp(&right.candidate_id))
+    });
+    let selected = eligible.first().copied();
+    let readiness_trace = context
+        .candidates
+        .iter()
+        .map(|candidate| {
+            let selected_candidate =
+                selected.is_some_and(|selected| selected.candidate_id == candidate.candidate_id);
+            LocalAgentDelegationReadinessTraceV1 {
+                candidate_id: candidate.candidate_id.clone(),
+                provider_profile_ref: candidate.provider_profile_ref.clone(),
+                model_ref: candidate.model_ref.clone(),
+                disposition: if selected_candidate {
+                    LocalAgentDelegationTraceDispositionV1::Selected
+                } else {
+                    LocalAgentDelegationTraceDispositionV1::Rejected
+                },
+                reason: local_agent_delegation_trace_reason(
+                    candidate,
+                    requirement,
+                    selected_candidate,
+                ),
+            }
+        })
+        .collect::<Vec<_>>();
+
+    if let Some(candidate) = selected {
+        LocalAgentDelegationReadinessV1 {
+            role: requirement.role.clone(),
+            readiness: candidate.readiness.clone(),
+            selected_candidate_id: Some(candidate.candidate_id.clone()),
+            provider_profile_ref: Some(candidate.provider_profile_ref.clone()),
+            model_ref: Some(candidate.model_ref.clone()),
+            runtime_surface: Some(candidate.runtime_surface.clone()),
+            delegation_mode: Some(match candidate.readiness {
+                LocalAgentDelegationReadinessStatusV1::Ready => {
+                    LocalAgentDelegationModeV1::AdvisorySupport
+                }
+                LocalAgentDelegationReadinessStatusV1::ShadowOnly => {
+                    LocalAgentDelegationModeV1::ShadowMode
+                }
+                LocalAgentDelegationReadinessStatusV1::Blocked => {
+                    LocalAgentDelegationModeV1::ShadowMode
+                }
+            }),
+            advisory_authority_only: candidate.advisory_authority_only,
+            can_execute_autonomously: candidate.can_execute_autonomously,
+            can_mutate_repo: candidate.can_mutate_repo,
+            can_close_or_merge: candidate.can_close_or_merge,
+            claim_boundary: requirement.claim_boundary.clone(),
+            evidence_ref: Some(candidate.evidence_ref.clone()),
+            readiness_trace,
+        }
+    } else {
+        LocalAgentDelegationReadinessV1 {
+            role: requirement.role.clone(),
+            readiness: LocalAgentDelegationReadinessStatusV1::Blocked,
+            selected_candidate_id: None,
+            provider_profile_ref: None,
+            model_ref: None,
+            runtime_surface: None,
+            delegation_mode: None,
+            advisory_authority_only: true,
+            can_execute_autonomously: false,
+            can_mutate_repo: false,
+            can_close_or_merge: false,
+            claim_boundary: requirement.claim_boundary.clone(),
+            evidence_ref: None,
+            readiness_trace,
+        }
+    }
+}
+
+fn local_agent_candidate_matches_requirement(
+    candidate: &LocalAgentDelegationCandidateV1,
+    requirement: &LocalAgentDelegationTaskRequirementV1,
+) -> bool {
+    candidate.supported_roles.contains(&requirement.role)
+        && requirement
+            .required_capabilities
+            .iter()
+            .all(|capability| candidate.capabilities.contains(capability))
+        && candidate.advisory_authority_only
+        && !candidate.can_execute_autonomously
+        && !candidate.can_mutate_repo
+        && !candidate.can_close_or_merge
+        && match candidate.readiness {
+            LocalAgentDelegationReadinessStatusV1::Ready => true,
+            LocalAgentDelegationReadinessStatusV1::ShadowOnly => requirement.allow_shadow_mode,
+            LocalAgentDelegationReadinessStatusV1::Blocked => false,
+        }
+}
+
+fn local_agent_delegation_trace_reason(
+    candidate: &LocalAgentDelegationCandidateV1,
+    requirement: &LocalAgentDelegationTaskRequirementV1,
+    selected: bool,
+) -> String {
+    if selected {
+        return match candidate.readiness {
+            LocalAgentDelegationReadinessStatusV1::Ready => {
+                "selected for bounded advisory local-agent delegation".to_string()
+            }
+            LocalAgentDelegationReadinessStatusV1::ShadowOnly => {
+                "selected for shadow-mode local-agent delegation only".to_string()
+            }
+            LocalAgentDelegationReadinessStatusV1::Blocked => {
+                "blocked candidates cannot be selected".to_string()
+            }
+        };
+    }
+    if !candidate.supported_roles.contains(&requirement.role) {
+        return "does not support the requested delegation role".to_string();
+    }
+    if !requirement
+        .required_capabilities
+        .iter()
+        .all(|capability| candidate.capabilities.contains(capability))
+    {
+        return "missing required local-agent delegation capability".to_string();
+    }
+    if !candidate.advisory_authority_only
+        || candidate.can_execute_autonomously
+        || candidate.can_mutate_repo
+        || candidate.can_close_or_merge
+    {
+        return "authority boundary exceeds local-agent delegation policy".to_string();
+    }
+    match candidate.readiness {
+        LocalAgentDelegationReadinessStatusV1::Ready => {
+            "eligible but not selected by deterministic local-agent ranking".to_string()
+        }
+        LocalAgentDelegationReadinessStatusV1::ShadowOnly if !requirement.allow_shadow_mode => {
+            "shadow-mode delegation is not allowed for this task".to_string()
+        }
+        LocalAgentDelegationReadinessStatusV1::ShadowOnly => {
+            "eligible shadow-mode candidate but not selected by deterministic ranking".to_string()
+        }
+        LocalAgentDelegationReadinessStatusV1::Blocked => candidate.readiness_reason.clone(),
+    }
+}
+
+fn local_agent_readiness_rank(readiness: &LocalAgentDelegationReadinessStatusV1) -> u32 {
+    match readiness {
+        LocalAgentDelegationReadinessStatusV1::Ready => 2,
+        LocalAgentDelegationReadinessStatusV1::ShadowOnly => 1,
+        LocalAgentDelegationReadinessStatusV1::Blocked => 0,
+    }
+}
+
 fn cheapest_policy_allows_candidate(
     candidate: &ModelSuitabilityCandidateV1,
     task_policy: Option<(
@@ -1576,6 +2188,20 @@ fn valid_cheapest_validated_outcome_claim_boundary(value: &str) -> bool {
         value,
         "bounded_cheapest_validated_outcome_not_exact_cost"
             | "bounded_cost_heuristic_not_authority"
+    )
+}
+
+fn valid_local_agent_delegation_claim_boundary(value: &str) -> bool {
+    matches!(
+        value,
+        "bounded_local_agent_delegation_not_authority" | "bounded_local_shadow_mode_not_authority"
+    )
+}
+
+fn is_local_agent_runtime_surface(value: &str) -> bool {
+    matches!(
+        value,
+        "local_ollama" | "local_agent" | "provider::OllamaProvider"
     )
 }
 
@@ -1833,13 +2459,14 @@ fn max_pressure(
 pub fn schedule_economics_input(
     input: &SchedulerEconomicsInputV1,
 ) -> Result<CognitiveSchedulerDecisionV1> {
-    schedule_economics_input_with_provider_route(input, None, None)
+    schedule_economics_input_with_provider_route(input, None, None, None)
 }
 
 fn schedule_economics_input_with_provider_route(
     input: &SchedulerEconomicsInputV1,
     provider_route: Option<ProviderRouteV1>,
     model_suitability_selection: Option<ModelSuitabilitySelectionV1>,
+    local_agent_delegation_readiness: Option<LocalAgentDelegationReadinessV1>,
 ) -> Result<CognitiveSchedulerDecisionV1> {
     let summary = summarize_economics_input(input)?;
     let selected_lane = select_lane(input, &summary);
@@ -1849,6 +2476,15 @@ fn schedule_economics_input_with_provider_route(
 
     Ok(CognitiveSchedulerDecisionV1 {
         schema_version: if provider_route.is_some()
+            && model_suitability_selection
+                .as_ref()
+                .is_some_and(|selection| selection.cheapest_validated_outcome)
+            && local_agent_delegation_readiness.is_some()
+        {
+            COGNITIVE_SCHEDULER_DECISION_PROVIDER_CHEAPEST_VALIDATED_LOCAL_AGENT_DELEGATION_SCHEMA_V1.to_string()
+        } else if local_agent_delegation_readiness.is_some() {
+            COGNITIVE_SCHEDULER_DECISION_LOCAL_AGENT_DELEGATION_SCHEMA_V1.to_string()
+        } else if provider_route.is_some()
             && model_suitability_selection
                 .as_ref()
                 .is_some_and(|selection| selection.cheapest_validated_outcome)
@@ -1890,6 +2526,7 @@ fn schedule_economics_input_with_provider_route(
         },
         provider_route,
         model_suitability_selection,
+        local_agent_delegation_readiness,
         confidence: input.confidence.clone(),
         scheduling_rank_key,
     })
@@ -2322,6 +2959,152 @@ mod tests {
             trace.candidate_id == "local:gemma4-e2b"
                 && trace.reason == "classification below task minimum"
         }));
+    }
+
+    #[test]
+    fn scheduler_economics_local_agent_delegation_readiness_selects_shadow_delegate_without_authority(
+    ) {
+        let bundle = local_agent_delegation_bundle_fixture();
+        let plan = schedule_economics_bundle(&bundle).expect("local delegation plan");
+        assert_eq!(
+            plan.source_schema_version,
+            SCHEDULER_PROVIDER_CHEAPEST_VALIDATED_LOCAL_AGENT_DELEGATION_INPUT_BUNDLE_SCHEMA_V1
+        );
+        let review = decision(&plan, "first-pass-review");
+        assert_eq!(
+            review.schema_version,
+            COGNITIVE_SCHEDULER_DECISION_PROVIDER_CHEAPEST_VALIDATED_LOCAL_AGENT_DELEGATION_SCHEMA_V1
+        );
+        assert!(review.provider_route.is_some());
+        assert!(review.model_suitability_selection.is_some());
+        let readiness = review
+            .local_agent_delegation_readiness
+            .as_ref()
+            .expect("local delegation readiness recorded");
+        assert_eq!(readiness.role, ModelSuitabilityRoleV1::Reviewer);
+        assert_eq!(
+            readiness.readiness,
+            LocalAgentDelegationReadinessStatusV1::ShadowOnly
+        );
+        assert_eq!(
+            readiness.selected_candidate_id.as_deref(),
+            Some("local:gemma4-e2b")
+        );
+        assert_eq!(
+            readiness.delegation_mode,
+            Some(LocalAgentDelegationModeV1::ShadowMode)
+        );
+        assert!(readiness.advisory_authority_only);
+        assert!(!readiness.can_execute_autonomously);
+        assert!(!readiness.can_mutate_repo);
+        assert!(!readiness.can_close_or_merge);
+        assert_eq!(
+            readiness.claim_boundary,
+            "bounded_local_shadow_mode_not_authority"
+        );
+        assert!(readiness.readiness_trace.iter().any(|trace| {
+            trace.candidate_id == "local:gemma4-e2b"
+                && trace.disposition == LocalAgentDelegationTraceDispositionV1::Selected
+                && trace
+                    .reason
+                    .contains("shadow-mode local-agent delegation only")
+        }));
+    }
+
+    #[test]
+    fn scheduler_economics_local_agent_delegation_context_requires_combined_schema() {
+        let mut bundle = local_agent_delegation_bundle_fixture();
+        bundle.schema_version =
+            SCHEDULER_PROVIDER_CHEAPEST_VALIDATED_OUTCOME_INPUT_BUNDLE_SCHEMA_V1.to_string();
+        let err = validate_economics_bundle(&bundle).expect_err("schema bump required");
+        assert!(err
+            .to_string()
+            .contains("local_agent_delegation_context requires scheduler bundle schema"));
+    }
+
+    #[test]
+    fn scheduler_economics_local_agent_delegation_context_rejects_repo_mutation_authority() {
+        let mut bundle = local_agent_delegation_bundle_fixture();
+        let context = bundle
+            .local_agent_delegation_context
+            .as_mut()
+            .expect("local delegation context");
+        context.candidates[0].can_mutate_repo = true;
+        let err = validate_economics_bundle(&bundle).expect_err("authority rejected");
+        assert!(err.to_string().contains(
+            "cannot claim autonomous execution, repo mutation, closeout, or merge authority"
+        ));
+    }
+
+    #[test]
+    fn scheduler_economics_local_agent_delegation_context_rejects_role_mismatch() {
+        let mut bundle = local_agent_delegation_bundle_fixture();
+        let context = bundle
+            .local_agent_delegation_context
+            .as_mut()
+            .expect("local delegation context");
+        context.task_requirements[0].role = ModelSuitabilityRoleV1::Planner;
+        let err = validate_economics_bundle(&bundle).expect_err("role mismatch rejected");
+        assert!(err
+            .to_string()
+            .contains("role must match model suitability requirement"));
+    }
+
+    #[test]
+    fn scheduler_economics_local_agent_delegation_context_rejects_unproven_candidate_role() {
+        let mut bundle = local_agent_delegation_bundle_fixture();
+        let context = bundle
+            .local_agent_delegation_context
+            .as_mut()
+            .expect("local delegation context");
+        context.candidates[0]
+            .supported_roles
+            .push(ModelSuitabilityRoleV1::Worker);
+        let err = validate_economics_bundle(&bundle).expect_err("unproven role rejected");
+        assert!(err
+            .to_string()
+            .contains("is not proven by model suitability"));
+    }
+
+    #[test]
+    fn scheduler_economics_local_agent_delegation_context_rejects_hosted_runtime_delegate() {
+        let mut bundle = local_agent_delegation_bundle_fixture();
+        let context = bundle
+            .local_agent_delegation_context
+            .as_mut()
+            .expect("local delegation context");
+        context.candidates[0].candidate_id = "gemini:gemini-2.5-flash".to_string();
+        context.candidates[0].provider_profile_ref =
+            "unprofiled:gemini:gemini-2.5-flash".to_string();
+        context.candidates[0].model_ref = "gemini-2.5-flash".to_string();
+        context.candidates[0].runtime_surface = "hosted_api".to_string();
+        context.candidates[0].evidence_ref =
+            "docs/milestones/v0.91.6/review/provider/gemini_current_models/gemini_current_model_suitability_state_2026-06-18.json".to_string();
+        context.evidence_refs = vec![context.candidates[0].evidence_ref.clone()];
+        let err = validate_economics_bundle(&bundle).expect_err("hosted runtime rejected");
+        assert!(err.to_string().contains("must use a local runtime surface"));
+    }
+
+    #[test]
+    fn scheduler_economics_local_agent_delegation_context_rejects_remote_ollama_label() {
+        let mut bundle = local_agent_delegation_bundle_fixture();
+        let context = bundle
+            .local_agent_delegation_context
+            .as_mut()
+            .expect("local delegation context");
+        context.candidates[0].runtime_surface = "remote_ollama_proxy".to_string();
+        let model_context = bundle
+            .model_suitability_context
+            .as_mut()
+            .expect("model suitability context");
+        let local_model = model_context
+            .candidates
+            .iter_mut()
+            .find(|candidate| candidate.candidate_id == "local:gemma4-e2b")
+            .expect("local model candidate");
+        local_model.runtime_surface = "remote_ollama_proxy".to_string();
+        let err = validate_economics_bundle(&bundle).expect_err("remote ollama label rejected");
+        assert!(err.to_string().contains("must use a local runtime surface"));
     }
 
     #[test]
@@ -3129,5 +3912,52 @@ claim_boundary: bounded_v1_inputs_not_exact_measurement
                 role_profile: RoleProviderProfileV1::ReviewerProvider,
             }],
         }
+    }
+
+    fn local_agent_delegation_bundle_fixture() -> SchedulerEconomicsInputBundleV1 {
+        let mut bundle = parse_economics_bundle_json(CHEAPEST_VALIDATED_OUTCOME_FIXTURE)
+            .expect("cheapest validated fixture parses");
+        bundle.schema_version =
+            SCHEDULER_PROVIDER_CHEAPEST_VALIDATED_LOCAL_AGENT_DELEGATION_INPUT_BUNDLE_SCHEMA_V1
+                .to_string();
+        bundle
+            .included_concepts
+            .push("local_agent_delegation_readiness_shadow_mode_gate".to_string());
+        bundle.local_agent_delegation_context = Some(LocalAgentDelegationReadinessContextV1 {
+            schema_version: LOCAL_AGENT_DELEGATION_READINESS_CONTEXT_SCHEMA_V1.to_string(),
+            generated_from: "v0.91.7 WP-05 #4675 local-agent delegation readiness fixture"
+                .to_string(),
+            evidence_refs: vec![
+                "docs/milestones/v0.91.5/review/remote_gemma_watcher/REMOTE_GEMMA_WATCHER_PROOF_2026-06-15.md".to_string(),
+            ],
+            candidates: vec![LocalAgentDelegationCandidateV1 {
+                candidate_id: "local:gemma4-e2b".to_string(),
+                provider_profile_ref: "historical:ollama:gemma4-e2b".to_string(),
+                model_ref: "gemma4:e2b".to_string(),
+                runtime_surface: "local_ollama".to_string(),
+                supported_roles: vec![ModelSuitabilityRoleV1::Reviewer],
+                capabilities: vec![
+                    "shadow_review".to_string(),
+                    "advisory_summary".to_string(),
+                ],
+                evidence_ref: "docs/milestones/v0.91.5/review/remote_gemma_watcher/REMOTE_GEMMA_WATCHER_PROOF_2026-06-15.md".to_string(),
+                readiness: LocalAgentDelegationReadinessStatusV1::ShadowOnly,
+                readiness_reason:
+                    "remote Gemma proof is historical and useful only as shadow advisory evidence"
+                        .to_string(),
+                advisory_authority_only: true,
+                can_execute_autonomously: false,
+                can_mutate_repo: false,
+                can_close_or_merge: false,
+            }],
+            task_requirements: vec![LocalAgentDelegationTaskRequirementV1 {
+                task_id: "first-pass-review".to_string(),
+                role: ModelSuitabilityRoleV1::Reviewer,
+                required_capabilities: vec!["shadow_review".to_string()],
+                allow_shadow_mode: true,
+                claim_boundary: "bounded_local_shadow_mode_not_authority".to_string(),
+            }],
+        });
+        bundle
     }
 }
