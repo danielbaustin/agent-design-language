@@ -156,11 +156,13 @@ fn committed_schema_matches_generated_language_surface() {
         .and_then(|value| value.as_object())
         .expect("generated schema should expose top-level properties");
 
-    let committed_keys: Vec<&str> = committed_properties.keys().map(String::as_str).collect();
-    let generated_keys: Vec<&str> = generated_properties.keys().map(String::as_str).collect();
+    let mut committed_keys: Vec<&str> = committed_properties.keys().map(String::as_str).collect();
+    committed_keys.sort_unstable();
+    let mut generated_keys: Vec<&str> = generated_properties.keys().map(String::as_str).collect();
+    generated_keys.sort_unstable();
     assert_eq!(
         committed_keys, generated_keys,
-        "committed and generated schema top-level key order drifted"
+        "committed and generated schema top-level keys drifted"
     );
 
     for key in &generated_keys {

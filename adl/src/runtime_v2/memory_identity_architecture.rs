@@ -539,6 +539,7 @@ fn memory_write_example(
                 hash: "observatory-projection-hash-0001".to_string(),
             },
         ],
+        temporal_anchor: None,
         review_findings: Vec::new(),
         residual_risks: Vec::new(),
         follow_on_refs: Vec::new(),
@@ -571,6 +572,7 @@ fn memory_query_example() -> MemoryQuery {
             "memory-identity".to_string(),
             "continuity".to_string(),
         ],
+        temporal: None,
         limit: 5,
     };
     query.normalize();

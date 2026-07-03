@@ -42,7 +42,11 @@ impl TemporalQueryRetrievalContract {
                 "adl::chronosense::TemporalQueryRetrievalContract".to_string(),
                 "adl::chronosense::TemporalQueryPrimitiveSet".to_string(),
                 "adl::execute::state::runtime_control::MemoryQueryState".to_string(),
+                "adl::obsmem_contract::MemoryTemporalAnchor".to_string(),
+                "adl::obsmem_contract::MemoryTemporalQuery".to_string(),
                 "adl::obsmem_contract::MemoryQuery".to_string(),
+                "adl::obsmem_adapter::ObsMemAdapter::query_temporal".to_string(),
+                "adl::obsmem_store::FileObsMemClient temporal filtering".to_string(),
                 "adl::obsmem_retrieval_policy::RetrievalPolicyV1".to_string(),
                 "adl identity retrieval".to_string(),
             ],
@@ -102,10 +106,12 @@ impl TemporalQueryRetrievalContract {
                     "lookup by time anchor".to_string(),
                     "lookup by interval".to_string(),
                     "ordering by monotonic sequence".to_string(),
+                    "ordering by effective temporal anchor then event sequence".to_string(),
                     "filtering by continuity-relevant boundaries".to_string(),
                     "neighbor retrieval around focal event".to_string(),
                 ],
                 deterministic_ordering: vec![
+                    "effective_epoch_ms_then_event_sequence_then_id_ascending".to_string(),
                     "workflow_id_then_run_id_ascending".to_string(),
                     "score_desc_id_asc".to_string(),
                     "evidence_adjusted_desc_id_asc".to_string(),
@@ -114,6 +120,11 @@ impl TemporalQueryRetrievalContract {
             },
             proof_fixture_hooks: vec![
                 "obsmem_retrieval_policy::apply_policy_filters_and_orders_deterministically"
+                    .to_string(),
+                "obsmem_store::file_store_temporal_query_filters_and_orders_deterministically"
+                    .to_string(),
+                "obsmem_store::file_store_temporal_query_supports_staleness".to_string(),
+                "obsmem_adapter::adapter_query_temporal_uses_file_store_temporal_index"
                     .to_string(),
                 "obsmem_validation_tests::retrieval_determinism_returns_identical_result_set_and_order"
                     .to_string(),
@@ -125,7 +136,7 @@ impl TemporalQueryRetrievalContract {
                     .to_string(),
             proof_hook_output_path: ".adl/state/temporal_query_retrieval_v1.json".to_string(),
             scope_boundary:
-                "temporal query/retrieval semantics only; full temporal indexing, causality, and distributed temporal truth remain downstream work"
+                "ObsMem / Memory Palace temporal anchors and local temporal index filtering are implemented here; causality, neighbor expansion, and distributed temporal truth remain downstream work"
                     .to_string(),
         }
     }

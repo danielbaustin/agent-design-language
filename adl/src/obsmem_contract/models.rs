@@ -46,6 +46,54 @@ pub struct MemoryTraceRef {
     pub delegation_id: Option<String>,
 }
 
+/// Optional Chronosense-compatible temporal anchor for memory records.
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
+pub struct MemoryTemporalAnchor {
+    pub t_created_epoch_ms: u128,
+    pub t_observed_epoch_ms: Option<u128>,
+    pub t_effective_epoch_ms: Option<u128>,
+    pub continuity_id: Option<String>,
+    pub event_sequence: Option<usize>,
+}
+
+impl MemoryTemporalAnchor {
+    pub fn effective_epoch_ms(&self) -> u128 {
+        self.t_effective_epoch_ms
+            .or(self.t_observed_epoch_ms)
+            .unwrap_or(self.t_created_epoch_ms)
+    }
+
+    pub fn validate(&self) -> Result<(), ObsMemContractError> {
+        if let Some(observed) = self.t_observed_epoch_ms {
+            if observed < self.t_created_epoch_ms {
+                return Err(ObsMemContractError::new(
+                    ObsMemContractErrorCode::InvalidRequest,
+                    "memory temporal anchor observed time must not precede created time",
+                ));
+            }
+        }
+        if let Some(effective) = self.t_effective_epoch_ms {
+            if effective < self.t_created_epoch_ms {
+                return Err(ObsMemContractError::new(
+                    ObsMemContractErrorCode::InvalidRequest,
+                    "memory temporal anchor effective time must not precede created time",
+                ));
+            }
+        }
+        if self
+            .continuity_id
+            .as_ref()
+            .is_some_and(|id| id.trim().is_empty())
+        {
+            return Err(ObsMemContractError::new(
+                ObsMemContractErrorCode::InvalidRequest,
+                "memory temporal anchor continuity_id must be non-empty when present",
+            ));
+        }
+        Ok(())
+    }
+}
+
 /// Contract payload used to write a normalized run summary into ObsMem.
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
 pub struct MemoryWriteRequest {
@@ -59,6 +107,8 @@ pub struct MemoryWriteRequest {
     pub tags: Vec<String>,
     pub citations: Vec<MemoryCitation>,
     pub trace_event_refs: Vec<MemoryTraceRef>,
+    #[serde(default)]
+    pub temporal_anchor: Option<MemoryTemporalAnchor>,
     #[serde(default)]
     pub review_findings: Vec<MemoryReviewFinding>,
     #[serde(default)]
@@ -160,6 +210,9 @@ impl MemoryWriteRequest {
                 ));
             }
         }
+        if let Some(anchor) = &self.temporal_anchor {
+            anchor.validate()?;
+        }
         for finding in &self.review_findings {
             if finding.id.trim().is_empty()
                 || finding.severity.trim().is_empty()
@@ -193,12 +246,13 @@ impl MemoryWriteRequest {
         }
 
         let text = format!(
-            "{}\n{}\n{:?}\n{:?}\n{:?}\n{:?}\n{:?}\n{:?}",
+            "{}\n{}\n{:?}\n{:?}\n{:?}\n{:?}\n{:?}\n{:?}\n{:?}",
             self.summary,
             self.trace_bundle_rel_path,
             self.tags,
             self.citations,
             self.trace_event_refs,
+            self.temporal_anchor,
             self.review_findings,
             self.residual_risks,
             self.follow_on_refs
@@ -228,7 +282,52 @@ pub struct MemoryQuery {
     pub workflow_id: Option<String>,
     pub failure_code: Option<String>,
     pub tags: Vec<String>,
+    #[serde(default)]
+    pub temporal: Option<MemoryTemporalQuery>,
     pub limit: usize,
+}
+
+/// Temporal retrieval filters for ObsMem / Memory Palace query paths.
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize, Default)]
+pub struct MemoryTemporalQuery {
+    pub after_epoch_ms: Option<u128>,
+    pub before_epoch_ms: Option<u128>,
+    pub interval_start_epoch_ms: Option<u128>,
+    pub interval_end_epoch_ms: Option<u128>,
+    pub stale_at_epoch_ms: Option<u128>,
+    pub stale_after_ms: Option<u128>,
+    pub continuity_id: Option<String>,
+}
+
+impl MemoryTemporalQuery {
+    pub fn validate(&self) -> Result<(), ObsMemContractError> {
+        if let (Some(start), Some(end)) = (self.interval_start_epoch_ms, self.interval_end_epoch_ms)
+        {
+            if start > end {
+                return Err(ObsMemContractError::new(
+                    ObsMemContractErrorCode::InvalidQuery,
+                    "temporal interval start must be <= interval end",
+                ));
+            }
+        }
+        if self.stale_at_epoch_ms.is_some() != self.stale_after_ms.is_some() {
+            return Err(ObsMemContractError::new(
+                ObsMemContractErrorCode::InvalidQuery,
+                "staleness queries require both stale_at_epoch_ms and stale_after_ms",
+            ));
+        }
+        if self
+            .continuity_id
+            .as_ref()
+            .is_some_and(|id| id.trim().is_empty())
+        {
+            return Err(ObsMemContractError::new(
+                ObsMemContractErrorCode::InvalidQuery,
+                "temporal continuity_id must be non-empty when present",
+            ));
+        }
+        Ok(())
+    }
 }
 
 impl MemoryQuery {
@@ -261,6 +360,9 @@ impl MemoryQuery {
                 "query limit must be <= 1000",
             ));
         }
+        if let Some(temporal) = &self.temporal {
+            temporal.validate()?;
+        }
         Ok(())
     }
 }
@@ -276,6 +378,8 @@ pub struct MemoryRecord {
     pub score: String,
     pub citations: Vec<MemoryCitation>,
     pub trace_event_refs: Vec<MemoryTraceRef>,
+    #[serde(default)]
+    pub temporal_anchor: Option<MemoryTemporalAnchor>,
     #[serde(default)]
     pub review_findings: Vec<MemoryReviewFinding>,
     #[serde(default)]

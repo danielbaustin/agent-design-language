@@ -138,6 +138,7 @@ impl RetrievalRequest {
             workflow_id: request.workflow_id,
             failure_code,
             tags: merged_tags,
+            temporal: None,
             limit,
         };
         q.normalize();
@@ -446,6 +447,7 @@ mod tests {
                 step_id: Some("s1".to_string()),
                 delegation_id: None,
             }],
+            temporal_anchor: None,
             review_findings: Vec::new(),
             residual_risks: Vec::new(),
             follow_on_refs: Vec::new(),

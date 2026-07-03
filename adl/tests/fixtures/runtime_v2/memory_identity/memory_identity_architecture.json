@@ -113,6 +113,7 @@
         "delegation_id": null
       }
     ],
+    "temporal_anchor": null,
     "review_findings": [],
     "residual_risks": [],
     "follow_on_refs": []
@@ -126,6 +127,7 @@
       "memory-identity",
       "reviewable-evidence"
     ],
+    "temporal": null,
     "limit": 5
   },
   "fixture_matrix": [

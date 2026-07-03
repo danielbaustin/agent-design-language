@@ -66,6 +66,7 @@ impl ObsMemClient for ObsMemInMemory {
                 score: "1.0".to_string(),
                 citations: entry.citations.clone(),
                 trace_event_refs: entry.trace_event_refs.clone(),
+                temporal_anchor: entry.temporal_anchor.clone(),
                 review_findings: entry.review_findings.clone(),
                 residual_risks: entry.residual_risks.clone(),
                 follow_on_refs: entry.follow_on_refs.clone(),
@@ -104,6 +105,7 @@ fn sample_request() -> MemoryWriteRequest {
             step_id: Some("s1".to_string()),
             delegation_id: None,
         }],
+        temporal_anchor: None,
         review_findings: vec![MemoryReviewFinding {
             id: "finding-001".to_string(),
             severity: "P2".to_string(),
@@ -347,6 +349,7 @@ fn models_query_validation_rejects_invalid_bounds_and_version() {
         workflow_id: None,
         failure_code: None,
         tags: vec![],
+        temporal: None,
         limit: 1,
     };
     let err = query.validate().expect_err("version mismatch should fail");
@@ -363,12 +366,50 @@ fn models_query_validation_rejects_invalid_bounds_and_version() {
 }
 
 #[test]
+fn models_query_validation_rejects_invalid_temporal_filters() {
+    let mut query = MemoryQuery {
+        contract_version: OBSMEM_CONTRACT_VERSION,
+        workflow_id: None,
+        failure_code: None,
+        tags: vec![],
+        temporal: Some(crate::obsmem_contract::MemoryTemporalQuery {
+            interval_start_epoch_ms: Some(2_000),
+            interval_end_epoch_ms: Some(1_000),
+            ..Default::default()
+        }),
+        limit: 1,
+    };
+    let err = query.validate().expect_err("inverted interval should fail");
+    assert_eq!(err.code.as_str(), "OBSMEM_INVALID_QUERY");
+
+    query.temporal = Some(crate::obsmem_contract::MemoryTemporalQuery {
+        stale_at_epoch_ms: Some(10_000),
+        stale_after_ms: None,
+        ..Default::default()
+    });
+    let err = query
+        .validate()
+        .expect_err("partial staleness filter should fail");
+    assert_eq!(err.code.as_str(), "OBSMEM_INVALID_QUERY");
+
+    query.temporal = Some(crate::obsmem_contract::MemoryTemporalQuery {
+        continuity_id: Some(" ".to_string()),
+        ..Default::default()
+    });
+    let err = query
+        .validate()
+        .expect_err("blank continuity id should fail");
+    assert_eq!(err.code.as_str(), "OBSMEM_INVALID_QUERY");
+}
+
+#[test]
 fn models_query_normalization_is_deterministic() {
     let mut query = MemoryQuery {
         contract_version: OBSMEM_CONTRACT_VERSION,
         workflow_id: Some("wf-a".to_string()),
         failure_code: None,
         tags: vec!["z".to_string(), "a".to_string(), "a".to_string()],
+        temporal: None,
         limit: 5,
     };
 
@@ -384,6 +425,7 @@ fn models_query_validation_accepts_valid_query() {
         workflow_id: Some("wf-a".to_string()),
         failure_code: Some("TOOL_FAILURE".to_string()),
         tags: vec!["tool".to_string()],
+        temporal: None,
         limit: 2,
     };
 
@@ -420,6 +462,7 @@ fn models_in_memory_client_round_trip_is_deterministic() {
         workflow_id: Some("wf-a".to_string()),
         failure_code: Some("TOOL_FAILURE".to_string()),
         tags: vec!["tool".to_string(), "failure".to_string()],
+        temporal: None,
         limit: 5,
     };
 
@@ -451,6 +494,7 @@ fn models_in_memory_client_filters_and_truncates_results() {
         workflow_id: Some("wf-a".to_string()),
         failure_code: Some("TOOL_FAILURE".to_string()),
         tags: vec!["tool".to_string()],
+        temporal: None,
         limit: 5,
     };
     let failure_hits = client.query(&by_failure).expect("failure query");
@@ -464,6 +508,7 @@ fn models_in_memory_client_filters_and_truncates_results() {
         workflow_id: None,
         failure_code: None,
         tags: vec!["tool".to_string()],
+        temporal: None,
         limit: 1,
     };
     let limited_hits = client.query(&tag_filtered).expect("tag query");

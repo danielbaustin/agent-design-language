@@ -383,6 +383,15 @@ fn temporal_query_retrieval_contract_matches_runtime_and_retrieval_surfaces() {
         .owned_runtime_surfaces
         .contains(&"adl::obsmem_contract::MemoryQuery".to_string()));
     assert!(contract
+        .owned_runtime_surfaces
+        .contains(&"adl::obsmem_contract::MemoryTemporalAnchor".to_string()));
+    assert!(contract
+        .owned_runtime_surfaces
+        .contains(&"adl::obsmem_contract::MemoryTemporalQuery".to_string()));
+    assert!(contract
+        .owned_runtime_surfaces
+        .contains(&"adl::obsmem_adapter::ObsMemAdapter::query_temporal".to_string()));
+    assert!(contract
         .query_primitives
         .staleness_queries
         .contains(&"stale beyond decision horizon".to_string()));
@@ -393,7 +402,10 @@ fn temporal_query_retrieval_contract_matches_runtime_and_retrieval_surfaces() {
     assert!(contract
         .retrieval_semantics
         .deterministic_ordering
-        .contains(&"score_desc_id_asc".to_string()));
+        .contains(&"effective_epoch_ms_then_event_sequence_then_id_ascending".to_string()));
+    assert!(contract.proof_fixture_hooks.contains(
+        &"obsmem_adapter::adapter_query_temporal_uses_file_store_temporal_index".to_string()
+    ));
     assert!(contract
         .proof_hook_output_path
         .contains("temporal_query_retrieval_v1.json"));

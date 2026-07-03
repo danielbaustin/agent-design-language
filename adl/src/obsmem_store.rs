@@ -4,8 +4,8 @@ use std::path::{Path, PathBuf};
 use serde::{Deserialize, Serialize};
 
 use crate::obsmem_contract::{
-    MemoryQuery, MemoryQueryResult, MemoryRecord, MemoryWriteAck, MemoryWriteRequest, ObsMemClient,
-    ObsMemContractError, ObsMemContractErrorCode,
+    MemoryQuery, MemoryQueryResult, MemoryRecord, MemoryTemporalQuery, MemoryWriteAck,
+    MemoryWriteRequest, ObsMemClient, ObsMemContractError, ObsMemContractErrorCode,
 };
 
 pub const OBSMEM_STORE_SCHEMA_NAME: &str = "obsmem_store.v1";
@@ -148,45 +148,128 @@ impl ObsMemClient for FileObsMemClient {
         normalized_query.validate()?;
 
         let store = self.load_store()?;
-        let mut hits: Vec<MemoryRecord> = store
-            .entries
-            .iter()
-            .filter(|entry| {
-                normalized_query
-                    .workflow_id
-                    .as_ref()
-                    .is_none_or(|wid| &entry.workflow_id == wid)
-                    && normalized_query
-                        .failure_code
-                        .as_ref()
-                        .is_none_or(|fc| entry.failure_code.as_ref() == Some(fc))
-                    && normalized_query
-                        .tags
-                        .iter()
-                        .all(|tag| entry.tags.binary_search(tag).is_ok())
-            })
-            .map(|entry| MemoryRecord {
-                id: format!("{}::{}", entry.run_id, entry.workflow_id),
-                run_id: entry.run_id.clone(),
-                workflow_id: entry.workflow_id.clone(),
-                tags: entry.tags.clone(),
-                payload: entry.summary.clone(),
-                score: "1.00".to_string(),
-                citations: entry.citations.clone(),
-                trace_event_refs: entry.trace_event_refs.clone(),
-                review_findings: entry.review_findings.clone(),
-                residual_risks: entry.residual_risks.clone(),
-                follow_on_refs: entry.follow_on_refs.clone(),
-            })
-            .collect();
-        hits.sort_by(|a, b| {
-            a.id.cmp(&b.id)
-                .then_with(|| a.run_id.cmp(&b.run_id))
-                .then_with(|| a.workflow_id.cmp(&b.workflow_id))
-                .then_with(|| a.payload.cmp(&b.payload))
-        });
+        let mut hits: Vec<MemoryRecord> = if let Some(temporal) = &normalized_query.temporal {
+            temporal_index_for(&store.entries)
+                .into_iter()
+                .filter(|indexed| {
+                    base_query_matches(&normalized_query, indexed.entry)
+                        && temporal_query_matches(temporal, indexed.entry)
+                })
+                .map(|indexed| memory_record_from_entry(indexed.entry))
+                .collect()
+        } else {
+            store
+                .entries
+                .iter()
+                .filter(|entry| base_query_matches(&normalized_query, entry))
+                .map(memory_record_from_entry)
+                .collect()
+        };
+        if normalized_query.temporal.is_none() {
+            hits.sort_by(|a, b| {
+                a.id.cmp(&b.id)
+                    .then_with(|| a.run_id.cmp(&b.run_id))
+                    .then_with(|| a.workflow_id.cmp(&b.workflow_id))
+                    .then_with(|| a.payload.cmp(&b.payload))
+            });
+        }
         hits.truncate(normalized_query.limit);
         Ok(MemoryQueryResult { hits })
+    }
+}
+
+struct TemporalIndexedEntry<'a> {
+    effective_epoch_ms: u128,
+    event_sequence: usize,
+    id: String,
+    entry: &'a MemoryWriteRequest,
+}
+
+fn temporal_index_for(entries: &[MemoryWriteRequest]) -> Vec<TemporalIndexedEntry<'_>> {
+    let mut indexed: Vec<TemporalIndexedEntry<'_>> = entries
+        .iter()
+        .filter_map(|entry| {
+            let anchor = entry.temporal_anchor.as_ref()?;
+            Some(TemporalIndexedEntry {
+                effective_epoch_ms: anchor.effective_epoch_ms(),
+                event_sequence: anchor.event_sequence.unwrap_or(usize::MAX),
+                id: format!("{}::{}", entry.run_id, entry.workflow_id),
+                entry,
+            })
+        })
+        .collect();
+    indexed.sort_by(|a, b| {
+        a.effective_epoch_ms
+            .cmp(&b.effective_epoch_ms)
+            .then_with(|| a.event_sequence.cmp(&b.event_sequence))
+            .then_with(|| a.id.cmp(&b.id))
+            .then_with(|| a.entry.run_id.cmp(&b.entry.run_id))
+            .then_with(|| a.entry.workflow_id.cmp(&b.entry.workflow_id))
+            .then_with(|| a.entry.summary.cmp(&b.entry.summary))
+    });
+    indexed
+}
+
+fn base_query_matches(query: &MemoryQuery, entry: &MemoryWriteRequest) -> bool {
+    query
+        .workflow_id
+        .as_ref()
+        .is_none_or(|wid| &entry.workflow_id == wid)
+        && query
+            .failure_code
+            .as_ref()
+            .is_none_or(|fc| entry.failure_code.as_ref() == Some(fc))
+        && query
+            .tags
+            .iter()
+            .all(|tag| entry.tags.binary_search(tag).is_ok())
+}
+
+fn temporal_query_matches(temporal: &MemoryTemporalQuery, entry: &MemoryWriteRequest) -> bool {
+    let Some(anchor) = &entry.temporal_anchor else {
+        return false;
+    };
+    let effective = anchor.effective_epoch_ms();
+    temporal
+        .after_epoch_ms
+        .is_none_or(|after| effective >= after)
+        && temporal
+            .before_epoch_ms
+            .is_none_or(|before| effective <= before)
+        && temporal
+            .interval_start_epoch_ms
+            .is_none_or(|start| effective >= start)
+        && temporal
+            .interval_end_epoch_ms
+            .is_none_or(|end| effective <= end)
+        && temporal
+            .continuity_id
+            .as_ref()
+            .is_none_or(|id| anchor.continuity_id.as_ref() == Some(id))
+        && temporal_staleness_matches(temporal, effective)
+}
+
+fn temporal_staleness_matches(temporal: &MemoryTemporalQuery, effective: u128) -> bool {
+    match (temporal.stale_at_epoch_ms, temporal.stale_after_ms) {
+        (Some(at), Some(after)) => at.saturating_sub(effective) >= after,
+        _ => true,
+    }
+}
+
+fn memory_record_from_entry(entry: &MemoryWriteRequest) -> MemoryRecord {
+    MemoryRecord {
+        id: format!("{}::{}", entry.run_id, entry.workflow_id),
+        run_id: entry.run_id.clone(),
+        workflow_id: entry.workflow_id.clone(),
+        tags: entry.tags.clone(),
+        payload: entry.summary.clone(),
+        score: "1.00".to_string(),
+        citations: entry.citations.clone(),
+        trace_event_refs: entry.trace_event_refs.clone(),
+        temporal_anchor: entry.temporal_anchor.clone(),
+        review_findings: entry.review_findings.clone(),
+        residual_risks: entry.residual_risks.clone(),
+        follow_on_refs: entry.follow_on_refs.clone(),
     }
 }
 
@@ -232,6 +315,7 @@ mod tests {
                 step_id: Some("s1".to_string()),
                 delegation_id: None,
             }],
+            temporal_anchor: None,
             review_findings: Vec::new(),
             residual_risks: Vec::new(),
             follow_on_refs: Vec::new(),
@@ -263,6 +347,7 @@ mod tests {
                     "status:failed".to_string(),
                     "workflow:wf-shared".to_string(),
                 ],
+                temporal: None,
                 limit: 10,
             })
             .expect("query");
@@ -325,6 +410,7 @@ mod tests {
                     "workflow:wf-shared".to_string(),
                     "topic:memory".to_string(),
                 ],
+                temporal: None,
                 limit: 1,
             })
             .expect("query");
@@ -332,6 +418,147 @@ mod tests {
         assert_eq!(result.hits.len(), 1);
         assert_eq!(result.hits[0].run_id, "run-a");
         assert_eq!(result.hits[0].payload, "alpha");
+    }
+
+    #[test]
+    fn file_store_temporal_query_filters_and_orders_deterministically() {
+        let root = unique_temp_dir("temporal-query");
+        let store_path = root.join("_shared/obsmem_store.v1.json");
+        let client = FileObsMemClient::new(&store_path);
+
+        for (run_id, t, seq, continuity) in [
+            ("run-late", 3000_u128, 3_usize, "chain-a"),
+            ("run-early", 1000_u128, 1_usize, "chain-a"),
+            ("run-mid", 2000_u128, 2_usize, "chain-a"),
+            ("run-other", 1500_u128, 4_usize, "chain-b"),
+        ] {
+            let mut req = request(run_id, run_id);
+            req.temporal_anchor = Some(crate::obsmem_contract::MemoryTemporalAnchor {
+                t_created_epoch_ms: t,
+                t_observed_epoch_ms: Some(t),
+                t_effective_epoch_ms: Some(t),
+                continuity_id: Some(continuity.to_string()),
+                event_sequence: Some(seq),
+            });
+            req.normalize();
+            client.write_entry(&req).expect("write temporal entry");
+        }
+
+        let query = MemoryQuery {
+            contract_version: OBSMEM_CONTRACT_VERSION,
+            workflow_id: Some("wf-shared".to_string()),
+            failure_code: Some("tool_failure".to_string()),
+            tags: vec!["status:failed".to_string()],
+            temporal: Some(crate::obsmem_contract::MemoryTemporalQuery {
+                after_epoch_ms: Some(1000),
+                before_epoch_ms: Some(3000),
+                interval_start_epoch_ms: Some(1500),
+                interval_end_epoch_ms: Some(3000),
+                stale_at_epoch_ms: None,
+                stale_after_ms: None,
+                continuity_id: Some("chain-a".to_string()),
+            }),
+            limit: 10,
+        };
+
+        let first = client.query(&query).expect("first temporal query");
+        let second = client.query(&query).expect("second temporal query");
+        assert_eq!(first, second);
+        assert_eq!(
+            first
+                .hits
+                .iter()
+                .map(|hit| hit.run_id.as_str())
+                .collect::<Vec<_>>(),
+            vec!["run-mid", "run-late"]
+        );
+    }
+
+    #[test]
+    fn file_store_plain_query_preserves_existing_order_with_temporal_anchors() {
+        let root = unique_temp_dir("plain-query-temporal-anchors");
+        let store_path = root.join("_shared/obsmem_store.v1.json");
+        let client = FileObsMemClient::new(&store_path);
+
+        for (run_id, t) in [("run-b", 1_000_u128), ("run-a", 3_000_u128)] {
+            let mut req = request(run_id, run_id);
+            req.temporal_anchor = Some(crate::obsmem_contract::MemoryTemporalAnchor {
+                t_created_epoch_ms: t,
+                t_observed_epoch_ms: Some(t),
+                t_effective_epoch_ms: Some(t),
+                continuity_id: Some("chain-a".to_string()),
+                event_sequence: Some(1),
+            });
+            req.normalize();
+            client.write_entry(&req).expect("write anchored entry");
+        }
+
+        let result = client
+            .query(&MemoryQuery {
+                contract_version: OBSMEM_CONTRACT_VERSION,
+                workflow_id: Some("wf-shared".to_string()),
+                failure_code: Some("tool_failure".to_string()),
+                tags: vec!["status:failed".to_string()],
+                temporal: None,
+                limit: 10,
+            })
+            .expect("plain query");
+
+        assert_eq!(
+            result
+                .hits
+                .iter()
+                .map(|hit| hit.run_id.as_str())
+                .collect::<Vec<_>>(),
+            vec!["run-a", "run-b"]
+        );
+    }
+
+    #[test]
+    fn file_store_temporal_query_supports_staleness() {
+        let root = unique_temp_dir("temporal-stale");
+        let store_path = root.join("_shared/obsmem_store.v1.json");
+        let client = FileObsMemClient::new(&store_path);
+
+        let mut old = request("run-old", "old");
+        old.temporal_anchor = Some(crate::obsmem_contract::MemoryTemporalAnchor {
+            t_created_epoch_ms: 1_000,
+            t_observed_epoch_ms: Some(1_000),
+            t_effective_epoch_ms: Some(1_000),
+            continuity_id: Some("chain-a".to_string()),
+            event_sequence: Some(1),
+        });
+        old.normalize();
+        client.write_entry(&old).expect("write old");
+
+        let mut fresh = request("run-fresh", "fresh");
+        fresh.temporal_anchor = Some(crate::obsmem_contract::MemoryTemporalAnchor {
+            t_created_epoch_ms: 9_500,
+            t_observed_epoch_ms: Some(9_500),
+            t_effective_epoch_ms: Some(9_500),
+            continuity_id: Some("chain-a".to_string()),
+            event_sequence: Some(2),
+        });
+        fresh.normalize();
+        client.write_entry(&fresh).expect("write fresh");
+
+        let result = client
+            .query(&MemoryQuery {
+                contract_version: OBSMEM_CONTRACT_VERSION,
+                workflow_id: Some("wf-shared".to_string()),
+                failure_code: Some("tool_failure".to_string()),
+                tags: vec!["status:failed".to_string()],
+                temporal: Some(crate::obsmem_contract::MemoryTemporalQuery {
+                    stale_at_epoch_ms: Some(10_000),
+                    stale_after_ms: Some(5_000),
+                    ..Default::default()
+                }),
+                limit: 10,
+            })
+            .expect("staleness query");
+
+        assert_eq!(result.hits.len(), 1);
+        assert_eq!(result.hits[0].run_id, "run-old");
     }
 
     #[test]
@@ -348,6 +575,7 @@ mod tests {
                 workflow_id: None,
                 failure_code: None,
                 tags: Vec::new(),
+                temporal: None,
                 limit: 10,
             })
             .expect_err("malformed store should fail");
@@ -376,6 +604,7 @@ mod tests {
                 workflow_id: None,
                 failure_code: None,
                 tags: Vec::new(),
+                temporal: None,
                 limit: 10,
             })
             .expect_err("schema mismatch should fail");
@@ -415,6 +644,7 @@ mod tests {
                     "status:failed".to_string(),
                     "workflow:wf-shared".to_string(),
                 ],
+                temporal: None,
                 limit: 10,
             })
             .expect("query");

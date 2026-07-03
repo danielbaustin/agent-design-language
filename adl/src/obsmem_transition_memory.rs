@@ -204,6 +204,7 @@ pub fn build_write_request_from_transition_handoff(
             step_id: Some("csdlc_transition_memory".to_string()),
             delegation_id: None,
         }],
+        temporal_anchor: None,
         review_findings: review_synthesis
             .findings
             .into_iter()

@@ -5,8 +5,9 @@ use crate::obsmem_indexing::index_run_from_artifacts;
 use crate::obsmem_transition_memory::build_write_request_from_transition_handoff;
 
 use crate::obsmem_contract::{
-    MemoryCitation, MemoryQuery, MemoryQueryResult, MemoryWriteAck, MemoryWriteRequest,
-    ObsMemClient, ObsMemContractError, ObsMemContractErrorCode, OBSMEM_CONTRACT_VERSION,
+    MemoryCitation, MemoryQuery, MemoryQueryResult, MemoryTemporalQuery, MemoryWriteAck,
+    MemoryWriteRequest, ObsMemClient, ObsMemContractError, ObsMemContractErrorCode,
+    OBSMEM_CONTRACT_VERSION,
 };
 use crate::obsmem_retrieval_policy::{
     apply_policy_to_results, RetrievalPolicyV1, RetrievalRequest,
@@ -65,6 +66,7 @@ impl<C: ObsMemClient> ObsMemAdapter<C> {
             workflow_id: workflow_id.map(str::to_string),
             failure_code: failure_code.map(str::to_string),
             tags: tags.to_vec(),
+            temporal: None,
             limit,
         };
         q.normalize();
@@ -80,6 +82,29 @@ impl<C: ObsMemClient> ObsMemAdapter<C> {
         let query = request.to_query(policy)?;
         let result = self.client.query(&query)?;
         apply_policy_to_results(policy, request, result)
+    }
+
+    /// Execute deterministic temporal retrieval over ObsMem / Memory Palace
+    /// records using Chronosense-compatible anchors.
+    pub fn query_temporal(
+        &self,
+        workflow_id: Option<&str>,
+        failure_code: Option<&str>,
+        tags: &[String],
+        temporal: MemoryTemporalQuery,
+        limit: usize,
+    ) -> Result<MemoryQueryResult, ObsMemContractError> {
+        let mut q = MemoryQuery {
+            contract_version: OBSMEM_CONTRACT_VERSION,
+            workflow_id: workflow_id.map(str::to_string),
+            failure_code: failure_code.map(str::to_string),
+            tags: tags.to_vec(),
+            temporal: Some(temporal),
+            limit,
+        };
+        q.normalize();
+        q.validate()?;
+        self.client.query(&q)
     }
 }
 
@@ -134,6 +159,7 @@ pub fn build_write_request_from_run_artifacts(
         tags,
         citations,
         trace_event_refs,
+        temporal_anchor: None,
         review_findings: Vec::new(),
         residual_risks: Vec::new(),
         follow_on_refs: Vec::new(),
@@ -175,7 +201,10 @@ mod tests {
     use std::sync::{Arc, Mutex};
 
     use super::*;
-    use crate::obsmem_contract::MemoryRecord;
+    use crate::obsmem_contract::{
+        MemoryRecord, MemoryTemporalAnchor, MemoryTraceRef, OBSMEM_CONTRACT_VERSION,
+    };
+    use crate::obsmem_store::FileObsMemClient;
 
     #[derive(Clone, Default)]
     struct ObsMemInMemory {
@@ -216,6 +245,10 @@ mod tests {
                             .as_ref()
                             .is_none_or(|fc| e.failure_code.as_ref() == Some(fc))
                         && query.tags.iter().all(|t| e.tags.binary_search(t).is_ok())
+                        && query
+                            .temporal
+                            .as_ref()
+                            .is_none_or(|temporal| temporal_matches(temporal, e))
                 })
                 .map(|e| MemoryRecord {
                     id: format!("{}::{}", e.run_id, e.workflow_id),
@@ -226,6 +259,7 @@ mod tests {
                     score: "1.0".to_string(),
                     citations: e.citations.clone(),
                     trace_event_refs: e.trace_event_refs.clone(),
+                    temporal_anchor: e.temporal_anchor.clone(),
                     review_findings: e.review_findings.clone(),
                     residual_risks: e.residual_risks.clone(),
                     follow_on_refs: e.follow_on_refs.clone(),
@@ -235,6 +269,33 @@ mod tests {
             hits.truncate(query.limit);
             Ok(MemoryQueryResult { hits })
         }
+    }
+
+    fn temporal_matches(temporal: &MemoryTemporalQuery, entry: &MemoryWriteRequest) -> bool {
+        let Some(anchor) = &entry.temporal_anchor else {
+            return false;
+        };
+        let effective = anchor.effective_epoch_ms();
+        temporal
+            .after_epoch_ms
+            .is_none_or(|after| effective >= after)
+            && temporal
+                .before_epoch_ms
+                .is_none_or(|before| effective <= before)
+            && temporal
+                .interval_start_epoch_ms
+                .is_none_or(|start| effective >= start)
+            && temporal
+                .interval_end_epoch_ms
+                .is_none_or(|end| effective <= end)
+            && temporal
+                .continuity_id
+                .as_ref()
+                .is_none_or(|id| anchor.continuity_id.as_ref() == Some(id))
+            && match (temporal.stale_at_epoch_ms, temporal.stale_after_ms) {
+                (Some(at), Some(after)) => at.saturating_sub(effective) >= after,
+                _ => true,
+            }
     }
 
     fn write_fixture_run(root: &Path, run_id: &str) {
@@ -271,6 +332,49 @@ mod tests {
         let _ = std::fs::remove_dir_all(&dir);
         std::fs::create_dir_all(&dir).expect("create temp dir");
         dir
+    }
+
+    fn temporal_write_request(
+        run_id: &str,
+        effective_epoch_ms: u128,
+        event_sequence: usize,
+        continuity_id: &str,
+    ) -> MemoryWriteRequest {
+        let mut request = MemoryWriteRequest {
+            contract_version: OBSMEM_CONTRACT_VERSION,
+            run_id: run_id.to_string(),
+            workflow_id: "wf-memory-palace".to_string(),
+            trace_bundle_rel_path: "trace_bundle_v2/manifest.json".to_string(),
+            activation_log_rel_path: format!("runs/{run_id}/logs/activation_log.json"),
+            failure_code: Some("temporal_lookup".to_string()),
+            summary: format!("temporal memory {run_id}"),
+            tags: vec![
+                "status:known".to_string(),
+                "workflow:wf-memory-palace".to_string(),
+            ],
+            citations: vec![MemoryCitation {
+                path: format!("runs/{run_id}/run_summary.json"),
+                hash: "det64:0000000000000042".to_string(),
+            }],
+            trace_event_refs: vec![MemoryTraceRef {
+                event_sequence,
+                event_kind: "memory_observed".to_string(),
+                step_id: Some("memory-palace".to_string()),
+                delegation_id: None,
+            }],
+            temporal_anchor: Some(MemoryTemporalAnchor {
+                t_created_epoch_ms: effective_epoch_ms,
+                t_observed_epoch_ms: Some(effective_epoch_ms),
+                t_effective_epoch_ms: Some(effective_epoch_ms),
+                continuity_id: Some(continuity_id.to_string()),
+                event_sequence: Some(event_sequence),
+            }),
+            review_findings: Vec::new(),
+            residual_risks: Vec::new(),
+            follow_on_refs: Vec::new(),
+        };
+        request.normalize();
+        request
     }
 
     #[test]
@@ -451,6 +555,64 @@ mod tests {
             .expect("query with evidence-adjusted policy");
         let ids: Vec<&str> = result.hits.iter().map(|h| h.run_id.as_str()).collect();
         assert_eq!(ids, vec!["r-success", "r-failed"]);
+    }
+
+    #[test]
+    fn adapter_query_temporal_uses_file_store_temporal_index() {
+        let tmp = unique_temp_dir("temporal-adapter");
+        let store_path = tmp.join("_shared/obsmem_store.v1.json");
+        let writer = FileObsMemClient::new(&store_path);
+        for (run_id, effective_epoch_ms, event_sequence, continuity_id) in [
+            ("run-late", 3_000_u128, 3_usize, "chain-a"),
+            ("run-early", 1_000_u128, 1_usize, "chain-a"),
+            ("run-mid", 2_000_u128, 2_usize, "chain-a"),
+            ("run-other", 1_500_u128, 4_usize, "chain-b"),
+        ] {
+            writer
+                .write_entry(&temporal_write_request(
+                    run_id,
+                    effective_epoch_ms,
+                    event_sequence,
+                    continuity_id,
+                ))
+                .expect("write temporal entry");
+        }
+
+        let adapter = ObsMemAdapter::new(FileObsMemClient::new(&store_path));
+        let temporal = MemoryTemporalQuery {
+            interval_start_epoch_ms: Some(1_500),
+            interval_end_epoch_ms: Some(3_000),
+            continuity_id: Some("chain-a".to_string()),
+            ..Default::default()
+        };
+        let first = adapter
+            .query_temporal(
+                Some("wf-memory-palace"),
+                Some("temporal_lookup"),
+                &["status:known".to_string()],
+                temporal.clone(),
+                10,
+            )
+            .expect("first temporal adapter query");
+        let second = adapter
+            .query_temporal(
+                Some("wf-memory-palace"),
+                Some("temporal_lookup"),
+                &["status:known".to_string()],
+                temporal,
+                10,
+            )
+            .expect("second temporal adapter query");
+
+        assert_eq!(first, second);
+        assert_eq!(
+            first
+                .hits
+                .iter()
+                .map(|hit| hit.run_id.as_str())
+                .collect::<Vec<_>>(),
+            vec!["run-mid", "run-late"]
+        );
     }
 
     #[test]
