@@ -340,6 +340,7 @@ mod tests {
         let event = TraceEventV1 {
             event_id: "event-1".to_string(),
             timestamp: "2026-06-20T00:00:00.000Z".to_string(),
+            temporal_anchor: None,
             event_type: TraceEventTypeV1::Error,
             trace_id: "trace-1".to_string(),
             run_id: "run-1".to_string(),

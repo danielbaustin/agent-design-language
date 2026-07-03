@@ -14,6 +14,7 @@ pub const INSTINCT_MODEL_SCHEMA: &str = "instinct_model.v1";
 pub const INSTINCT_RUNTIME_SURFACE_SCHEMA: &str = "instinct_runtime_surface.v1";
 pub const CHRONOSENSE_RUNTIME_SERVICE_SCHEMA: &str = "chronosense_runtime_service.v1";
 pub const CHRONOSENSE_CLOCK_STACK_SCHEMA: &str = "chronosense_clock_stack.v1";
+pub const CHRONOSENSE_EVENT_ANCHOR_SCHEMA: &str = "chronosense_event_anchor.v1";
 
 mod causality;
 mod commitments;

@@ -3,7 +3,10 @@ use schemars::{schema_for, JsonSchema};
 use serde::{Deserialize, Serialize};
 use serde_json::Value as JsonValue;
 
-use crate::model_identity::{validate_model_identity_v1, ModelIdentityV1};
+use crate::{
+    chronosense::CHRONOSENSE_EVENT_ANCHOR_SCHEMA,
+    model_identity::{validate_model_identity_v1, ModelIdentityV1},
+};
 
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq, JsonSchema)]
 #[serde(rename_all = "SCREAMING_SNAKE_CASE")]
@@ -155,6 +158,8 @@ pub struct TraceRedactionDecisionV1 {
 pub struct TraceEventV1 {
     pub event_id: String,
     pub timestamp: String,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub temporal_anchor: Option<TraceTemporalAnchorV1>,
     pub event_type: TraceEventTypeV1,
     pub trace_id: String,
     pub run_id: String,
@@ -171,6 +176,20 @@ pub struct TraceEventV1 {
     pub contract_validation: Option<TraceContractValidationV1>,
     pub governance: Option<TraceGovernanceEvidenceV1>,
     pub redaction: Option<TraceRedactionDecisionV1>,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq, JsonSchema)]
+pub struct TraceTemporalAnchorV1 {
+    pub schema_version: String,
+    pub utc_timestamp_rfc3339: String,
+    pub local_timestamp_rfc3339: String,
+    pub timezone: String,
+    pub utc_offset: String,
+    pub runtime_lifetime_elapsed_ms: u64,
+    pub runtime_monotonic_elapsed_ms: u64,
+    pub event_sequence: u64,
+    pub prior_event_delta_ms: u64,
+    pub reference_frames: Vec<String>,
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq, JsonSchema)]
@@ -247,8 +266,15 @@ pub fn validate_trace_event_envelope_v1(envelope: &TraceEventEnvelopeV1) -> Resu
             "governed trace events require schema_version=trace.v2"
         ));
     }
+    let has_temporal_anchor = envelope
+        .events
+        .iter()
+        .any(|event| event.temporal_anchor.is_some());
     if let Some(clock_stack) = envelope.chronosense_clock_stack.as_ref() {
         validate_trace_chronosense_clock_stack_v1(clock_stack)?;
+        validate_trace_event_temporal_anchors_v1(&envelope.events, true)?;
+    } else if has_temporal_anchor {
+        validate_trace_event_temporal_anchors_v1(&envelope.events, false)?;
     }
     Ok(())
 }
@@ -293,6 +319,103 @@ fn validate_trace_chronosense_clock_stack_v1(
         {
             return Err(anyhow!(
                 "chronosense_clock_stack.reference_frames missing required frame '{required}'"
+            ));
+        }
+    }
+    Ok(())
+}
+
+fn validate_trace_event_temporal_anchors_v1(
+    events: &[TraceEventV1],
+    require_all_events: bool,
+) -> Result<()> {
+    let mut previous_elapsed_ms: Option<u64> = None;
+    for (index, event) in events.iter().enumerate() {
+        let Some(anchor) = event.temporal_anchor.as_ref() else {
+            if require_all_events {
+                return Err(anyhow!(
+                    "trace event '{}' requires temporal_anchor when chronosense_clock_stack is present",
+                    event.event_id
+                ));
+            }
+            continue;
+        };
+        validate_trace_temporal_anchor_v1(&event.timestamp, anchor)?;
+        let expected_sequence = u64::try_from(index + 1).context("trace event index overflow")?;
+        if anchor.event_sequence != expected_sequence {
+            return Err(anyhow!(
+                "trace event '{}' temporal_anchor.event_sequence must be {}, found {}",
+                event.event_id,
+                expected_sequence,
+                anchor.event_sequence
+            ));
+        }
+        let expected_delta = previous_elapsed_ms
+            .map(|previous| anchor.runtime_monotonic_elapsed_ms.saturating_sub(previous))
+            .unwrap_or(0);
+        if anchor.prior_event_delta_ms != expected_delta {
+            return Err(anyhow!(
+                "trace event '{}' temporal_anchor.prior_event_delta_ms must be {}, found {}",
+                event.event_id,
+                expected_delta,
+                anchor.prior_event_delta_ms
+            ));
+        }
+        previous_elapsed_ms = Some(anchor.runtime_monotonic_elapsed_ms);
+    }
+    Ok(())
+}
+
+fn validate_trace_temporal_anchor_v1(
+    event_timestamp: &str,
+    anchor: &TraceTemporalAnchorV1,
+) -> Result<()> {
+    if anchor.schema_version != CHRONOSENSE_EVENT_ANCHOR_SCHEMA {
+        return Err(anyhow!(
+            "temporal_anchor schema_version must be {}, found '{}'",
+            CHRONOSENSE_EVENT_ANCHOR_SCHEMA,
+            anchor.schema_version
+        ));
+    }
+    require_non_empty(
+        "temporal_anchor.utc_timestamp_rfc3339",
+        &anchor.utc_timestamp_rfc3339,
+    )?;
+    require_non_empty(
+        "temporal_anchor.local_timestamp_rfc3339",
+        &anchor.local_timestamp_rfc3339,
+    )?;
+    require_non_empty("temporal_anchor.timezone", &anchor.timezone)?;
+    require_non_empty("temporal_anchor.utc_offset", &anchor.utc_offset)?;
+    if anchor.utc_timestamp_rfc3339 != event_timestamp {
+        return Err(anyhow!(
+            "temporal_anchor.utc_timestamp_rfc3339 must match event timestamp"
+        ));
+    }
+    if anchor.runtime_lifetime_elapsed_ms != anchor.runtime_monotonic_elapsed_ms {
+        return Err(anyhow!(
+            "temporal_anchor.runtime_lifetime_elapsed_ms must match runtime_monotonic_elapsed_ms"
+        ));
+    }
+    if anchor.reference_frames.is_empty() {
+        return Err(anyhow!(
+            "temporal_anchor.reference_frames must not be empty"
+        ));
+    }
+    for required in [
+        "utc_epoch_millis",
+        "local_civil_time",
+        "runtime_lifetime",
+        "runtime_monotonic_elapsed",
+        "event_sequence",
+    ] {
+        if !anchor
+            .reference_frames
+            .iter()
+            .any(|frame| frame == required)
+        {
+            return Err(anyhow!(
+                "temporal_anchor.reference_frames missing required frame '{required}'"
             ));
         }
     }
@@ -661,6 +784,7 @@ mod tests {
         TraceEventV1 {
             event_id: format!("event-{event_type:?}"),
             timestamp: "2026-04-03T12:00:00Z".to_string(),
+            temporal_anchor: None,
             event_type,
             trace_id: "trace-1".to_string(),
             run_id: "run-1".to_string(),
@@ -702,6 +826,46 @@ mod tests {
                 "runtime_monotonic_elapsed".to_string(),
             ],
         }
+    }
+
+    fn sample_temporal_anchor(
+        event_sequence: u64,
+        runtime_elapsed_ms: u64,
+        prior_event_delta_ms: u64,
+    ) -> TraceTemporalAnchorV1 {
+        TraceTemporalAnchorV1 {
+            schema_version: CHRONOSENSE_EVENT_ANCHOR_SCHEMA.to_string(),
+            utc_timestamp_rfc3339: "2026-04-03T12:00:00Z".to_string(),
+            local_timestamp_rfc3339: "2026-04-03T12:00:00Z".to_string(),
+            timezone: "UTC".to_string(),
+            utc_offset: "+00:00".to_string(),
+            runtime_lifetime_elapsed_ms: runtime_elapsed_ms,
+            runtime_monotonic_elapsed_ms: runtime_elapsed_ms,
+            event_sequence,
+            prior_event_delta_ms,
+            reference_frames: vec![
+                "utc_epoch_millis".to_string(),
+                "local_civil_time".to_string(),
+                "runtime_lifetime".to_string(),
+                "runtime_monotonic_elapsed".to_string(),
+                "event_sequence".to_string(),
+            ],
+        }
+    }
+
+    fn anchored_sample_event(
+        event_type: TraceEventTypeV1,
+        event_sequence: u64,
+        runtime_elapsed_ms: u64,
+        prior_event_delta_ms: u64,
+    ) -> TraceEventV1 {
+        let mut event = sample_event(event_type);
+        event.temporal_anchor = Some(sample_temporal_anchor(
+            event_sequence,
+            runtime_elapsed_ms,
+            prior_event_delta_ms,
+        ));
+        event
     }
 
     #[test]
@@ -761,12 +925,93 @@ mod tests {
             schema_version: "trace.v1".to_string(),
             chronosense_clock_stack: Some(sample_clock_stack()),
             events: vec![
-                sample_event(TraceEventTypeV1::RunStart),
-                sample_event(TraceEventTypeV1::RunEnd),
+                anchored_sample_event(TraceEventTypeV1::RunStart, 1, 0, 0),
+                anchored_sample_event(TraceEventTypeV1::RunEnd, 2, 1_000, 1_000),
             ],
         };
 
         validate_trace_event_envelope_v1(&envelope).expect("clock stack should validate");
+    }
+
+    #[test]
+    fn validate_trace_event_envelope_v1_rejects_clock_stack_without_event_anchor() {
+        let envelope = TraceEventEnvelopeV1 {
+            schema_version: "trace.v1".to_string(),
+            chronosense_clock_stack: Some(sample_clock_stack()),
+            events: vec![
+                anchored_sample_event(TraceEventTypeV1::RunStart, 1, 0, 0),
+                sample_event(TraceEventTypeV1::RunEnd),
+            ],
+        };
+
+        let err = validate_trace_event_envelope_v1(&envelope)
+            .expect_err("clock stack requires event anchors");
+        assert!(err.to_string().contains("requires temporal_anchor"));
+    }
+
+    #[test]
+    fn validate_trace_event_envelope_v1_rejects_mismatched_event_anchor_timestamp() {
+        let mut event = anchored_sample_event(TraceEventTypeV1::RunStart, 1, 0, 0);
+        event
+            .temporal_anchor
+            .as_mut()
+            .expect("anchor")
+            .utc_timestamp_rfc3339 = "2026-04-03T12:00:01Z".to_string();
+        let envelope = TraceEventEnvelopeV1 {
+            schema_version: "trace.v1".to_string(),
+            chronosense_clock_stack: Some(sample_clock_stack()),
+            events: vec![
+                event,
+                anchored_sample_event(TraceEventTypeV1::RunEnd, 2, 1_000, 1_000),
+            ],
+        };
+
+        let err = validate_trace_event_envelope_v1(&envelope)
+            .expect_err("anchor timestamp must match event timestamp");
+        assert!(err.to_string().contains("must match event timestamp"));
+    }
+
+    #[test]
+    fn validate_trace_event_envelope_v1_rejects_bad_anchor_without_clock_stack() {
+        let mut event = anchored_sample_event(TraceEventTypeV1::RunStart, 1, 0, 0);
+        event
+            .temporal_anchor
+            .as_mut()
+            .expect("anchor")
+            .utc_timestamp_rfc3339 = "2026-04-03T12:00:01Z".to_string();
+        let envelope = TraceEventEnvelopeV1 {
+            schema_version: "trace.v1".to_string(),
+            chronosense_clock_stack: None,
+            events: vec![event, sample_event(TraceEventTypeV1::RunEnd)],
+        };
+
+        let err = validate_trace_event_envelope_v1(&envelope)
+            .expect_err("malformed event anchor should fail even without clock stack");
+        assert!(err.to_string().contains("must match event timestamp"));
+    }
+
+    #[test]
+    fn validate_trace_event_envelope_v1_rejects_lifetime_and_monotonic_anchor_drift() {
+        let mut event = anchored_sample_event(TraceEventTypeV1::RunStart, 1, 0, 0);
+        event
+            .temporal_anchor
+            .as_mut()
+            .expect("anchor")
+            .runtime_lifetime_elapsed_ms = 10;
+        let envelope = TraceEventEnvelopeV1 {
+            schema_version: "trace.v1".to_string(),
+            chronosense_clock_stack: Some(sample_clock_stack()),
+            events: vec![
+                event,
+                anchored_sample_event(TraceEventTypeV1::RunEnd, 2, 1_000, 1_000),
+            ],
+        };
+
+        let err =
+            validate_trace_event_envelope_v1(&envelope).expect_err("lifetime drift must fail");
+        assert!(err
+            .to_string()
+            .contains("runtime_lifetime_elapsed_ms must match"));
     }
 
     #[test]
@@ -792,6 +1037,24 @@ mod tests {
                 {
                     "event_id": "run-start-1",
                     "timestamp": "2026-04-03T12:00:00Z",
+                    "temporal_anchor": {
+                        "schema_version": "chronosense_event_anchor.v1",
+                        "utc_timestamp_rfc3339": "2026-04-03T12:00:00Z",
+                        "local_timestamp_rfc3339": "2026-04-03T12:00:00Z",
+                        "timezone": "UTC",
+                        "utc_offset": "+00:00",
+                        "runtime_lifetime_elapsed_ms": 0,
+                        "runtime_monotonic_elapsed_ms": 0,
+                        "event_sequence": 1,
+                        "prior_event_delta_ms": 0,
+                        "reference_frames": [
+                            "utc_epoch_millis",
+                            "local_civil_time",
+                            "runtime_lifetime",
+                            "runtime_monotonic_elapsed",
+                            "event_sequence"
+                        ]
+                    },
                     "event_type": "RUN_START",
                     "trace_id": "trace-1",
                     "run_id": "run-1",
@@ -812,6 +1075,24 @@ mod tests {
                 {
                     "event_id": "run-end-1",
                     "timestamp": "2026-04-03T12:00:01Z",
+                    "temporal_anchor": {
+                        "schema_version": "chronosense_event_anchor.v1",
+                        "utc_timestamp_rfc3339": "2026-04-03T12:00:01Z",
+                        "local_timestamp_rfc3339": "2026-04-03T12:00:01Z",
+                        "timezone": "UTC",
+                        "utc_offset": "+00:00",
+                        "runtime_lifetime_elapsed_ms": 1000,
+                        "runtime_monotonic_elapsed_ms": 1000,
+                        "event_sequence": 2,
+                        "prior_event_delta_ms": 1000,
+                        "reference_frames": [
+                            "utc_epoch_millis",
+                            "local_civil_time",
+                            "runtime_lifetime",
+                            "runtime_monotonic_elapsed",
+                            "event_sequence"
+                        ]
+                    },
                     "event_type": "RUN_END",
                     "trace_id": "trace-1",
                     "run_id": "run-1",

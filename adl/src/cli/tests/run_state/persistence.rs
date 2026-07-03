@@ -116,6 +116,41 @@ fn write_run_state_and_load_resume_round_trip() {
     assert!(clock_stack
         .reference_frames
         .contains(&"runtime_monotonic_elapsed".to_string()));
+    assert!(
+        trace_v1
+            .events
+            .iter()
+            .all(|event| event.temporal_anchor.is_some()),
+        "runtime trace events must carry chronosense temporal anchors"
+    );
+    let run_start_anchor = trace_v1
+        .events
+        .iter()
+        .find(|event| event.event_type == TraceEventTypeV1::RunStart)
+        .and_then(|event| event.temporal_anchor.as_ref())
+        .expect("run start anchor");
+    assert_eq!(
+        run_start_anchor.schema_version,
+        "chronosense_event_anchor.v1"
+    );
+    assert_eq!(run_start_anchor.runtime_lifetime_elapsed_ms, 0);
+    assert_eq!(run_start_anchor.prior_event_delta_ms, 0);
+    assert_eq!(run_start_anchor.event_sequence, 1);
+    assert!(run_start_anchor
+        .reference_frames
+        .contains(&"event_sequence".to_string()));
+    for (index, event) in trace_v1.events.iter().enumerate() {
+        let anchor = event.temporal_anchor.as_ref().expect("event anchor");
+        assert_eq!(anchor.utc_timestamp_rfc3339, event.timestamp);
+        assert_eq!(anchor.event_sequence, u64::try_from(index + 1).unwrap());
+    }
+    let run_end_anchor = trace_v1
+        .events
+        .iter()
+        .find(|event| event.event_type == TraceEventTypeV1::RunEnd)
+        .and_then(|event| event.temporal_anchor.as_ref())
+        .expect("run end anchor");
+    assert_eq!(run_end_anchor.runtime_lifetime_elapsed_ms, 50);
     let event_types: Vec<TraceEventTypeV1> = trace_v1
         .events
         .iter()
