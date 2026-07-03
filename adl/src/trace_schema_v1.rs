@@ -176,7 +176,21 @@ pub struct TraceEventV1 {
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq, JsonSchema)]
 pub struct TraceEventEnvelopeV1 {
     pub schema_version: String,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub chronosense_clock_stack: Option<TraceChronosenseClockStackV1>,
     pub events: Vec<TraceEventV1>,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq, JsonSchema)]
+pub struct TraceChronosenseClockStackV1 {
+    pub schema_version: String,
+    pub utc_timestamp_rfc3339: String,
+    pub local_timestamp_rfc3339: String,
+    pub timezone: String,
+    pub utc_offset: String,
+    pub lifetime_elapsed_ms: u64,
+    pub monotonic_elapsed_ms: u64,
+    pub reference_frames: Vec<String>,
 }
 
 pub fn trace_schema_v1_json() -> Result<String> {
@@ -232,6 +246,55 @@ pub fn validate_trace_event_envelope_v1(envelope: &TraceEventEnvelopeV1) -> Resu
         return Err(anyhow!(
             "governed trace events require schema_version=trace.v2"
         ));
+    }
+    if let Some(clock_stack) = envelope.chronosense_clock_stack.as_ref() {
+        validate_trace_chronosense_clock_stack_v1(clock_stack)?;
+    }
+    Ok(())
+}
+
+fn validate_trace_chronosense_clock_stack_v1(
+    clock_stack: &TraceChronosenseClockStackV1,
+) -> Result<()> {
+    if clock_stack.schema_version != "chronosense_clock_stack.v1" {
+        return Err(anyhow!(
+            "chronosense_clock_stack schema_version must be chronosense_clock_stack.v1, found '{}'",
+            clock_stack.schema_version
+        ));
+    }
+    require_non_empty(
+        "chronosense_clock_stack.utc_timestamp_rfc3339",
+        &clock_stack.utc_timestamp_rfc3339,
+    )?;
+    require_non_empty(
+        "chronosense_clock_stack.local_timestamp_rfc3339",
+        &clock_stack.local_timestamp_rfc3339,
+    )?;
+    require_non_empty("chronosense_clock_stack.timezone", &clock_stack.timezone)?;
+    require_non_empty(
+        "chronosense_clock_stack.utc_offset",
+        &clock_stack.utc_offset,
+    )?;
+    if clock_stack.reference_frames.is_empty() {
+        return Err(anyhow!(
+            "chronosense_clock_stack.reference_frames must not be empty"
+        ));
+    }
+    for required in [
+        "utc_epoch_millis",
+        "local_civil_time",
+        "runtime_lifetime",
+        "runtime_monotonic_elapsed",
+    ] {
+        if !clock_stack
+            .reference_frames
+            .iter()
+            .any(|frame| frame == required)
+        {
+            return Err(anyhow!(
+                "chronosense_clock_stack.reference_frames missing required frame '{required}'"
+            ));
+        }
     }
     Ok(())
 }
@@ -623,6 +686,24 @@ mod tests {
         }
     }
 
+    fn sample_clock_stack() -> TraceChronosenseClockStackV1 {
+        TraceChronosenseClockStackV1 {
+            schema_version: "chronosense_clock_stack.v1".to_string(),
+            utc_timestamp_rfc3339: "2026-04-03T12:00:01+00:00".to_string(),
+            local_timestamp_rfc3339: "2026-04-03T12:00:01+00:00".to_string(),
+            timezone: "UTC".to_string(),
+            utc_offset: "+00:00".to_string(),
+            lifetime_elapsed_ms: 1_000,
+            monotonic_elapsed_ms: 1_000,
+            reference_frames: vec![
+                "utc_epoch_millis".to_string(),
+                "local_civil_time".to_string(),
+                "runtime_lifetime".to_string(),
+                "runtime_monotonic_elapsed".to_string(),
+            ],
+        }
+    }
+
     #[test]
     fn trace_schema_v1_json_mentions_required_event_types() {
         let schema_json = trace_schema_v1_json().expect("schema json");
@@ -631,6 +712,7 @@ mod tests {
         assert!(schema_json.contains("FREEDOM_GATE_DECISION"));
         assert!(schema_json.contains("MODEL_INVOCATION"));
         assert!(schema_json.contains("CONTRACT_VALIDATION"));
+        assert!(schema_json.contains("chronosense_clock_stack"));
     }
 
     #[test]
@@ -667,15 +749,198 @@ mod tests {
         run_end.parent_span_id = Some("span-root".to_string());
         let envelope = TraceEventEnvelopeV1 {
             schema_version: "trace.v1".to_string(),
+            chronosense_clock_stack: None,
             events: vec![run_start, model, run_end],
         };
         validate_trace_event_envelope_v1(&envelope).expect("valid envelope");
     }
 
     #[test]
+    fn validate_trace_event_envelope_v1_accepts_chronosense_clock_stack() {
+        let envelope = TraceEventEnvelopeV1 {
+            schema_version: "trace.v1".to_string(),
+            chronosense_clock_stack: Some(sample_clock_stack()),
+            events: vec![
+                sample_event(TraceEventTypeV1::RunStart),
+                sample_event(TraceEventTypeV1::RunEnd),
+            ],
+        };
+
+        validate_trace_event_envelope_v1(&envelope).expect("clock stack should validate");
+    }
+
+    #[test]
+    fn validate_trace_event_envelope_v1_value_accepts_chronosense_clock_stack_json() {
+        let value = serde_json::json!({
+            "schema_version": "trace.v1",
+            "chronosense_clock_stack": {
+                "schema_version": "chronosense_clock_stack.v1",
+                "utc_timestamp_rfc3339": "2026-04-03T12:00:01+00:00",
+                "local_timestamp_rfc3339": "2026-04-03T12:00:01+00:00",
+                "timezone": "UTC",
+                "utc_offset": "+00:00",
+                "lifetime_elapsed_ms": 1000,
+                "monotonic_elapsed_ms": 1000,
+                "reference_frames": [
+                    "utc_epoch_millis",
+                    "local_civil_time",
+                    "runtime_lifetime",
+                    "runtime_monotonic_elapsed"
+                ]
+            },
+            "events": [
+                {
+                    "event_id": "run-start-1",
+                    "timestamp": "2026-04-03T12:00:00Z",
+                    "event_type": "RUN_START",
+                    "trace_id": "trace-1",
+                    "run_id": "run-1",
+                    "span_id": "span-root",
+                    "parent_span_id": null,
+                    "actor": {"type": "agent", "id": "agent.main"},
+                    "scope": {"level": "run", "name": "run"},
+                    "inputs_ref": null,
+                    "outputs_ref": null,
+                    "artifact_ref": null,
+                    "decision_context": null,
+                    "provider": null,
+                    "error": null,
+                    "contract_validation": null,
+                    "governance": null,
+                    "redaction": null
+                },
+                {
+                    "event_id": "run-end-1",
+                    "timestamp": "2026-04-03T12:00:01Z",
+                    "event_type": "RUN_END",
+                    "trace_id": "trace-1",
+                    "run_id": "run-1",
+                    "span_id": "span-root",
+                    "parent_span_id": null,
+                    "actor": {"type": "agent", "id": "agent.main"},
+                    "scope": {"level": "run", "name": "run"},
+                    "inputs_ref": null,
+                    "outputs_ref": null,
+                    "artifact_ref": null,
+                    "decision_context": null,
+                    "provider": null,
+                    "error": null,
+                    "contract_validation": null,
+                    "governance": null,
+                    "redaction": null
+                }
+            ]
+        });
+
+        let envelope = validate_trace_event_envelope_v1_value(&value).expect("value validates");
+        assert_eq!(
+            envelope
+                .chronosense_clock_stack
+                .expect("clock stack")
+                .monotonic_elapsed_ms,
+            1_000
+        );
+    }
+
+    #[test]
+    fn validate_trace_event_envelope_v1_rejects_invalid_chronosense_clock_stack() {
+        let mut invalid = sample_clock_stack();
+        invalid.schema_version = "chronosense_clock_stack.v0".to_string();
+        let envelope = TraceEventEnvelopeV1 {
+            schema_version: "trace.v1".to_string(),
+            chronosense_clock_stack: Some(invalid),
+            events: vec![
+                sample_event(TraceEventTypeV1::RunStart),
+                sample_event(TraceEventTypeV1::RunEnd),
+            ],
+        };
+        let err = validate_trace_event_envelope_v1(&envelope)
+            .expect_err("clock stack schema drift must fail");
+        assert!(err.to_string().contains("chronosense_clock_stack.v1"));
+    }
+
+    #[test]
+    fn validate_trace_event_envelope_v1_rejects_empty_chronosense_clock_stack_fields() {
+        let cases: [(&str, fn(&mut TraceChronosenseClockStackV1)); 4] = [
+            (
+                "utc_timestamp_rfc3339",
+                |clock_stack: &mut TraceChronosenseClockStackV1| {
+                    clock_stack.utc_timestamp_rfc3339.clear()
+                },
+            ),
+            (
+                "local_timestamp_rfc3339",
+                |clock_stack: &mut TraceChronosenseClockStackV1| {
+                    clock_stack.local_timestamp_rfc3339.clear()
+                },
+            ),
+            (
+                "timezone",
+                |clock_stack: &mut TraceChronosenseClockStackV1| clock_stack.timezone.clear(),
+            ),
+            (
+                "utc_offset",
+                |clock_stack: &mut TraceChronosenseClockStackV1| clock_stack.utc_offset.clear(),
+            ),
+        ];
+        for (field_name, mutate) in cases {
+            let mut invalid = sample_clock_stack();
+            mutate(&mut invalid);
+            let envelope = TraceEventEnvelopeV1 {
+                schema_version: "trace.v1".to_string(),
+                chronosense_clock_stack: Some(invalid),
+                events: vec![
+                    sample_event(TraceEventTypeV1::RunStart),
+                    sample_event(TraceEventTypeV1::RunEnd),
+                ],
+            };
+            let err = validate_trace_event_envelope_v1(&envelope)
+                .expect_err("empty clock stack field must fail");
+            assert!(
+                err.to_string().contains(field_name),
+                "expected error for {field_name}, got {err}"
+            );
+        }
+    }
+
+    #[test]
+    fn validate_trace_event_envelope_v1_rejects_incomplete_chronosense_reference_frames() {
+        let mut invalid = sample_clock_stack();
+        invalid.reference_frames.clear();
+        let envelope = TraceEventEnvelopeV1 {
+            schema_version: "trace.v1".to_string(),
+            chronosense_clock_stack: Some(invalid),
+            events: vec![
+                sample_event(TraceEventTypeV1::RunStart),
+                sample_event(TraceEventTypeV1::RunEnd),
+            ],
+        };
+        let err = validate_trace_event_envelope_v1(&envelope)
+            .expect_err("empty reference frames must fail");
+        assert!(err.to_string().contains("reference_frames"));
+
+        let mut invalid = sample_clock_stack();
+        invalid
+            .reference_frames
+            .retain(|frame| frame != "runtime_monotonic_elapsed");
+        let envelope = TraceEventEnvelopeV1 {
+            schema_version: "trace.v1".to_string(),
+            chronosense_clock_stack: Some(invalid),
+            events: vec![
+                sample_event(TraceEventTypeV1::RunStart),
+                sample_event(TraceEventTypeV1::RunEnd),
+            ],
+        };
+        let err = validate_trace_event_envelope_v1(&envelope)
+            .expect_err("missing required frame must fail");
+        assert!(err.to_string().contains("runtime_monotonic_elapsed"));
+    }
+
+    #[test]
     fn validate_trace_event_envelope_v1_rejects_missing_provider_on_model_invocation() {
         let envelope = TraceEventEnvelopeV1 {
             schema_version: "trace.v1".to_string(),
+            chronosense_clock_stack: None,
             events: vec![
                 sample_event(TraceEventTypeV1::RunStart),
                 sample_event(TraceEventTypeV1::ModelInvocation),
@@ -716,6 +981,7 @@ mod tests {
         });
         let envelope = TraceEventEnvelopeV1 {
             schema_version: "trace.v1".to_string(),
+            chronosense_clock_stack: None,
             events: vec![
                 sample_event(TraceEventTypeV1::RunStart),
                 model,
@@ -755,6 +1021,7 @@ mod tests {
         });
         let envelope = TraceEventEnvelopeV1 {
             schema_version: "trace.v1".to_string(),
+            chronosense_clock_stack: None,
             events: vec![
                 sample_event(TraceEventTypeV1::RunStart),
                 model,
@@ -771,6 +1038,7 @@ mod tests {
         run_start.inputs_ref = Some("/tmp/not-allowed.json".to_string());
         let envelope = TraceEventEnvelopeV1 {
             schema_version: "trace.v1".to_string(),
+            chronosense_clock_stack: None,
             events: vec![run_start, sample_event(TraceEventTypeV1::RunEnd)],
         };
         let err = validate_trace_event_envelope_v1(&envelope)
@@ -876,6 +1144,7 @@ mod tests {
         let run_end = sample_event(TraceEventTypeV1::RunEnd);
         let envelope = TraceEventEnvelopeV1 {
             schema_version: "trace.v2".to_string(),
+            chronosense_clock_stack: None,
             events: vec![run_start, proposal, redaction, run_end],
         };
         validate_trace_event_envelope_v1(&envelope).expect("governed envelope");
@@ -885,6 +1154,7 @@ mod tests {
     fn validate_trace_event_envelope_v1_rejects_governed_events_without_required_blocks() {
         let envelope = TraceEventEnvelopeV1 {
             schema_version: "trace.v1".to_string(),
+            chronosense_clock_stack: None,
             events: vec![
                 sample_event(TraceEventTypeV1::RunStart),
                 sample_event(TraceEventTypeV1::Proposal),
@@ -918,6 +1188,7 @@ mod tests {
         });
         let envelope = TraceEventEnvelopeV1 {
             schema_version: "trace.v2".to_string(),
+            chronosense_clock_stack: None,
             events: vec![
                 sample_event(TraceEventTypeV1::RunStart),
                 result,
@@ -957,6 +1228,7 @@ mod tests {
         });
         let envelope = TraceEventEnvelopeV1 {
             schema_version: "trace.v2".to_string(),
+            chronosense_clock_stack: None,
             events: vec![
                 sample_event(TraceEventTypeV1::RunStart),
                 visibility,
@@ -990,6 +1262,7 @@ mod tests {
         });
         let envelope = TraceEventEnvelopeV1 {
             schema_version: "trace.v1".to_string(),
+            chronosense_clock_stack: None,
             events: vec![
                 sample_event(TraceEventTypeV1::RunStart),
                 proposal,

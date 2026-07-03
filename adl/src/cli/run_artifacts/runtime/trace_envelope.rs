@@ -1,9 +1,12 @@
 use super::super::*;
+use ::adl::chronosense::{
+    ChronosenseClockStack, ChronosenseRuntimeService, ChronosenseRuntimeServiceConfig,
+};
 use ::adl::trace_schema_v1::{
     validate_trace_event_envelope_v1, ContractValidationResultV1, TraceActorTypeV1, TraceActorV1,
-    TraceContractValidationV1, TraceDecisionContextV1, TraceErrorV1, TraceEventEnvelopeV1,
-    TraceEventTypeV1, TraceEventV1, TraceGovernanceEvidenceV1, TraceRedactionDecisionV1,
-    TraceScopeLevelV1, TraceScopeV1, TraceVisibilityViewsV1,
+    TraceChronosenseClockStackV1, TraceContractValidationV1, TraceDecisionContextV1, TraceErrorV1,
+    TraceEventEnvelopeV1, TraceEventTypeV1, TraceEventV1, TraceGovernanceEvidenceV1,
+    TraceRedactionDecisionV1, TraceScopeLevelV1, TraceScopeV1, TraceVisibilityViewsV1,
 };
 use serde_json::json;
 
@@ -18,6 +21,8 @@ pub(super) fn build_trace_v1_envelope(
 ) -> Result<TraceEventEnvelopeV1> {
     let mut events = Vec::new();
     let mut next_id: u64 = 1;
+    let chronosense =
+        ChronosenseRuntimeService::new(ChronosenseRuntimeServiceConfig::utc(start_ms)).ok();
     let trace_id = resolved.run_id.clone();
     let root_span_id = format!("run:{}", resolved.run_id);
     let run_ref = artifact_ref(&resolved.run_id, "run.json");
@@ -29,7 +34,7 @@ pub(super) fn build_trace_v1_envelope(
         &mut next_id,
         TraceEventV1 {
             event_id: String::new(),
-            timestamp: trace::format_iso_utc_ms(start_ms),
+            timestamp: chronosense_trace_timestamp(&chronosense, start_ms),
             event_type: TraceEventTypeV1::RunStart,
             trace_id: trace_id.clone(),
             run_id: resolved.run_id.clone(),
@@ -62,7 +67,7 @@ pub(super) fn build_trace_v1_envelope(
                 &mut next_id,
                 TraceEventV1 {
                     event_id: String::new(),
-                    timestamp: trace::format_iso_utc_ms(*ts_ms),
+                    timestamp: chronosense_trace_timestamp(&chronosense, *ts_ms),
                     event_type: TraceEventTypeV1::LifecyclePhase,
                     trace_id: trace_id.clone(),
                     run_id: resolved.run_id.clone(),
@@ -101,7 +106,7 @@ pub(super) fn build_trace_v1_envelope(
                 &mut next_id,
                 TraceEventV1 {
                     event_id: String::new(),
-                    timestamp: trace::format_iso_utc_ms(*ts_ms),
+                    timestamp: chronosense_trace_timestamp(&chronosense, *ts_ms),
                     event_type: TraceEventTypeV1::ExecutionBoundary,
                     trace_id: trace_id.clone(),
                     run_id: resolved.run_id.clone(),
@@ -146,7 +151,7 @@ pub(super) fn build_trace_v1_envelope(
                 &mut next_id,
                 TraceEventV1 {
                     event_id: String::new(),
-                    timestamp: trace::format_iso_utc_ms(*ts_ms),
+                    timestamp: chronosense_trace_timestamp(&chronosense, *ts_ms),
                     event_type: TraceEventTypeV1::Proposal,
                     trace_id: trace_id.clone(),
                     run_id: resolved.run_id.clone(),
@@ -198,7 +203,7 @@ pub(super) fn build_trace_v1_envelope(
                 &mut next_id,
                 TraceEventV1 {
                     event_id: String::new(),
-                    timestamp: trace::format_iso_utc_ms(*ts_ms),
+                    timestamp: chronosense_trace_timestamp(&chronosense, *ts_ms),
                     event_type: TraceEventTypeV1::ProposalNormalization,
                     trace_id: trace_id.clone(),
                     run_id: resolved.run_id.clone(),
@@ -252,7 +257,7 @@ pub(super) fn build_trace_v1_envelope(
                 &mut next_id,
                 TraceEventV1 {
                     event_id: String::new(),
-                    timestamp: trace::format_iso_utc_ms(*ts_ms),
+                    timestamp: chronosense_trace_timestamp(&chronosense, *ts_ms),
                     event_type: TraceEventTypeV1::CapabilityContract,
                     trace_id: trace_id.clone(),
                     run_id: resolved.run_id.clone(),
@@ -304,7 +309,7 @@ pub(super) fn build_trace_v1_envelope(
                 &mut next_id,
                 TraceEventV1 {
                     event_id: String::new(),
-                    timestamp: trace::format_iso_utc_ms(*ts_ms),
+                    timestamp: chronosense_trace_timestamp(&chronosense, *ts_ms),
                     event_type: TraceEventTypeV1::PolicyInjection,
                     trace_id: trace_id.clone(),
                     run_id: resolved.run_id.clone(),
@@ -363,7 +368,7 @@ pub(super) fn build_trace_v1_envelope(
                 &mut next_id,
                 TraceEventV1 {
                     event_id: String::new(),
-                    timestamp: trace::format_iso_utc_ms(*ts_ms),
+                    timestamp: chronosense_trace_timestamp(&chronosense, *ts_ms),
                     event_type: TraceEventTypeV1::VisibilityPolicy,
                     trace_id: trace_id.clone(),
                     run_id: resolved.run_id.clone(),
@@ -424,7 +429,7 @@ pub(super) fn build_trace_v1_envelope(
                 &mut next_id,
                 TraceEventV1 {
                     event_id: String::new(),
-                    timestamp: trace::format_iso_utc_ms(*ts_ms),
+                    timestamp: chronosense_trace_timestamp(&chronosense, *ts_ms),
                     event_type: TraceEventTypeV1::FreedomGateDecision,
                     trace_id: trace_id.clone(),
                     run_id: resolved.run_id.clone(),
@@ -482,7 +487,7 @@ pub(super) fn build_trace_v1_envelope(
                 &mut next_id,
                 TraceEventV1 {
                     event_id: String::new(),
-                    timestamp: trace::format_iso_utc_ms(*ts_ms),
+                    timestamp: chronosense_trace_timestamp(&chronosense, *ts_ms),
                     event_type: TraceEventTypeV1::ActionSelection,
                     trace_id: trace_id.clone(),
                     run_id: resolved.run_id.clone(),
@@ -541,7 +546,7 @@ pub(super) fn build_trace_v1_envelope(
                 &mut next_id,
                 TraceEventV1 {
                     event_id: String::new(),
-                    timestamp: trace::format_iso_utc_ms(*ts_ms),
+                    timestamp: chronosense_trace_timestamp(&chronosense, *ts_ms),
                     event_type: TraceEventTypeV1::ActionRejection,
                     trace_id: trace_id.clone(),
                     run_id: resolved.run_id.clone(),
@@ -599,7 +604,7 @@ pub(super) fn build_trace_v1_envelope(
                 &mut next_id,
                 TraceEventV1 {
                     event_id: String::new(),
-                    timestamp: trace::format_iso_utc_ms(*ts_ms),
+                    timestamp: chronosense_trace_timestamp(&chronosense, *ts_ms),
                     event_type: TraceEventTypeV1::ExecutionResult,
                     trace_id: trace_id.clone(),
                     run_id: resolved.run_id.clone(),
@@ -656,7 +661,7 @@ pub(super) fn build_trace_v1_envelope(
                 &mut next_id,
                 TraceEventV1 {
                     event_id: String::new(),
-                    timestamp: trace::format_iso_utc_ms(*ts_ms),
+                    timestamp: chronosense_trace_timestamp(&chronosense, *ts_ms),
                     event_type: TraceEventTypeV1::Refusal,
                     trace_id: trace_id.clone(),
                     run_id: resolved.run_id.clone(),
@@ -714,7 +719,7 @@ pub(super) fn build_trace_v1_envelope(
                 &mut next_id,
                 TraceEventV1 {
                     event_id: String::new(),
-                    timestamp: trace::format_iso_utc_ms(*ts_ms),
+                    timestamp: chronosense_trace_timestamp(&chronosense, *ts_ms),
                     event_type: TraceEventTypeV1::RedactionDecision,
                     trace_id: trace_id.clone(),
                     run_id: resolved.run_id.clone(),
@@ -770,7 +775,7 @@ pub(super) fn build_trace_v1_envelope(
                 &mut next_id,
                 TraceEventV1 {
                     event_id: String::new(),
-                    timestamp: trace::format_iso_utc_ms(*ts_ms),
+                    timestamp: chronosense_trace_timestamp(&chronosense, *ts_ms),
                     event_type: TraceEventTypeV1::StepStart,
                     trace_id: trace_id.clone(),
                     run_id: resolved.run_id.clone(),
@@ -807,7 +812,7 @@ pub(super) fn build_trace_v1_envelope(
                     &mut next_id,
                     TraceEventV1 {
                         event_id: String::new(),
-                        timestamp: trace::format_iso_utc_ms(*ts_ms),
+                        timestamp: chronosense_trace_timestamp(&chronosense, *ts_ms),
                         event_type: TraceEventTypeV1::StepEnd,
                         trace_id: trace_id.clone(),
                         run_id: resolved.run_id.clone(),
@@ -838,7 +843,7 @@ pub(super) fn build_trace_v1_envelope(
                         &mut next_id,
                         TraceEventV1 {
                             event_id: String::new(),
-                            timestamp: trace::format_iso_utc_ms(*ts_ms),
+                            timestamp: chronosense_trace_timestamp(&chronosense, *ts_ms),
                             event_type: TraceEventTypeV1::Error,
                             trace_id: trace_id.clone(),
                             run_id: resolved.run_id.clone(),
@@ -891,7 +896,7 @@ pub(super) fn build_trace_v1_envelope(
                     &mut next_id,
                     TraceEventV1 {
                         event_id: String::new(),
-                        timestamp: trace::format_iso_utc_ms(*ts_ms),
+                        timestamp: chronosense_trace_timestamp(&chronosense, *ts_ms),
                         event_type: TraceEventTypeV1::ContractValidation,
                         trace_id: trace_id.clone(),
                         run_id: resolved.run_id.clone(),
@@ -932,7 +937,7 @@ pub(super) fn build_trace_v1_envelope(
                 &mut next_id,
                 TraceEventV1 {
                     event_id: String::new(),
-                    timestamp: trace::format_iso_utc_ms(*ts_ms),
+                    timestamp: chronosense_trace_timestamp(&chronosense, *ts_ms),
                     event_type: TraceEventTypeV1::Approval,
                     trace_id: trace_id.clone(),
                     run_id: resolved.run_id.clone(),
@@ -973,7 +978,7 @@ pub(super) fn build_trace_v1_envelope(
                 &mut next_id,
                 TraceEventV1 {
                     event_id: String::new(),
-                    timestamp: trace::format_iso_utc_ms(*ts_ms),
+                    timestamp: chronosense_trace_timestamp(&chronosense, *ts_ms),
                     event_type: TraceEventTypeV1::Rejection,
                     trace_id: trace_id.clone(),
                     run_id: resolved.run_id.clone(),
@@ -1007,7 +1012,7 @@ pub(super) fn build_trace_v1_envelope(
                 &mut next_id,
                 TraceEventV1 {
                     event_id: String::new(),
-                    timestamp: trace::format_iso_utc_ms(*ts_ms),
+                    timestamp: chronosense_trace_timestamp(&chronosense, *ts_ms),
                     event_type: TraceEventTypeV1::Error,
                     trace_id: trace_id.clone(),
                     run_id: resolved.run_id.clone(),
@@ -1052,7 +1057,7 @@ pub(super) fn build_trace_v1_envelope(
         &mut next_id,
         TraceEventV1 {
             event_id: String::new(),
-            timestamp: trace::format_iso_utc_ms(end_ms),
+            timestamp: chronosense_trace_timestamp(&chronosense, end_ms),
             event_type: TraceEventTypeV1::RunEnd,
             trace_id,
             run_id: resolved.run_id.clone(),
@@ -1104,10 +1109,36 @@ pub(super) fn build_trace_v1_envelope(
     };
     let envelope = TraceEventEnvelopeV1 {
         schema_version: schema_version.to_string(),
+        chronosense_clock_stack: chronosense
+            .as_ref()
+            .and_then(|service| service.capture_epoch_millis(end_ms).ok())
+            .and_then(trace_clock_stack_from_chronosense),
         events,
     };
     validate_trace_event_envelope_v1(&envelope)?;
     Ok(envelope)
+}
+
+fn chronosense_trace_timestamp(service: &Option<ChronosenseRuntimeService>, ts_ms: u128) -> String {
+    service
+        .as_ref()
+        .and_then(|service| service.rfc3339_for_epoch_millis(ts_ms).ok())
+        .unwrap_or_else(|| trace::format_iso_utc_ms(ts_ms))
+}
+
+fn trace_clock_stack_from_chronosense(
+    clock_stack: ChronosenseClockStack,
+) -> Option<TraceChronosenseClockStackV1> {
+    Some(TraceChronosenseClockStackV1 {
+        schema_version: clock_stack.schema_version,
+        utc_timestamp_rfc3339: clock_stack.utc_timestamp_rfc3339,
+        local_timestamp_rfc3339: clock_stack.local_timestamp_rfc3339,
+        timezone: clock_stack.timezone,
+        utc_offset: clock_stack.utc_offset,
+        lifetime_elapsed_ms: u64::try_from(clock_stack.lifetime_elapsed_ms).ok()?,
+        monotonic_elapsed_ms: u64::try_from(clock_stack.monotonic_elapsed_ms).ok()?,
+        reference_frames: clock_stack.reference_frames,
+    })
 }
 
 fn push_trace_v1_event(events: &mut Vec<TraceEventV1>, next_id: &mut u64, mut event: TraceEventV1) {
@@ -1126,4 +1157,84 @@ fn step_artifact_ref(run_id: &str, steps: &[StepStateArtifact], step_id: &str) -
         .find(|step| step.step_id == step_id)
         .and_then(|step| step.output_artifact_path.as_deref())?;
     Some(artifact_ref(run_id, rel))
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn chronosense_trace_timestamp_uses_clock_service_when_available() {
+        let service =
+            ChronosenseRuntimeService::new(ChronosenseRuntimeServiceConfig::utc(1_774_982_400_000))
+                .expect("chronosense service");
+
+        let timestamp = chronosense_trace_timestamp(&Some(service), 1_774_982_401_250);
+
+        assert_eq!(timestamp, "2026-03-31T18:40:01.250+00:00");
+    }
+
+    #[test]
+    fn chronosense_trace_timestamp_falls_back_without_clock_service() {
+        let timestamp = chronosense_trace_timestamp(&None, 1_774_982_401_250);
+
+        assert_eq!(timestamp, trace::format_iso_utc_ms(1_774_982_401_250));
+    }
+
+    #[test]
+    fn trace_clock_stack_from_chronosense_maps_runtime_clock_stack() {
+        let service =
+            ChronosenseRuntimeService::new(ChronosenseRuntimeServiceConfig::utc(1_774_982_400_000))
+                .expect("chronosense service");
+        let clock_stack = service
+            .capture_epoch_millis(1_774_982_401_250)
+            .expect("clock stack");
+
+        let mapped = trace_clock_stack_from_chronosense(clock_stack).expect("mapped stack");
+
+        assert_eq!(mapped.schema_version, "chronosense_clock_stack.v1");
+        assert_eq!(
+            mapped.utc_timestamp_rfc3339,
+            "2026-03-31T18:40:01.250+00:00"
+        );
+        assert_eq!(mapped.timezone, "UTC");
+        assert_eq!(mapped.utc_offset, "+00:00");
+        assert_eq!(mapped.lifetime_elapsed_ms, 1_250);
+        assert_eq!(mapped.monotonic_elapsed_ms, 1_250);
+        assert!(mapped
+            .reference_frames
+            .contains(&"runtime_monotonic_elapsed".to_string()));
+    }
+
+    #[test]
+    fn trace_clock_stack_from_chronosense_rejects_u64_overflow() {
+        let service = ChronosenseRuntimeService::new(ChronosenseRuntimeServiceConfig::utc(0))
+            .expect("chronosense service");
+        let mut clock_stack = service.capture_epoch_millis(1).expect("clock stack");
+        clock_stack.lifetime_elapsed_ms = u128::from(u64::MAX) + 1;
+
+        assert!(trace_clock_stack_from_chronosense(clock_stack).is_none());
+    }
+
+    #[test]
+    fn artifact_ref_and_step_artifact_ref_remain_repo_relative() {
+        let steps = vec![StepStateArtifact {
+            step_id: "step-1".to_string(),
+            agent_id: "agent.main".to_string(),
+            provider_id: "provider.local".to_string(),
+            conversation: None,
+            status: "completed".to_string(),
+            output_artifact_path: Some("steps/step-1.json".to_string()),
+        }];
+
+        assert_eq!(
+            artifact_ref("run-1", "run.json"),
+            "artifacts/run-1/run.json"
+        );
+        assert_eq!(
+            step_artifact_ref("run-1", &steps, "step-1").as_deref(),
+            Some("artifacts/run-1/steps/step-1.json")
+        );
+        assert_eq!(step_artifact_ref("run-1", &steps, "missing"), None);
+    }
 }

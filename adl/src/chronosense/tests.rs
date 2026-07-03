@@ -97,6 +97,122 @@ fn temporal_context_includes_identity_and_age() {
 }
 
 #[test]
+fn runtime_service_captures_clock_stack_frames() {
+    let profile = IdentityProfile::from_birthday(
+        "codex",
+        "Codex",
+        "2026-03-30T13:34:00-07:00",
+        "America/Los_Angeles",
+        "daniel",
+    )
+    .expect("profile");
+    let started_at = Utc
+        .with_ymd_and_hms(2026, 3, 31, 20, 0, 0)
+        .unwrap()
+        .timestamp_millis() as u128;
+    let service = ChronosenseRuntimeService::new(ChronosenseRuntimeServiceConfig::with_identity(
+        "America/Los_Angeles",
+        profile,
+        started_at,
+    ))
+    .expect("runtime service");
+
+    let captured = service
+        .capture_epoch_millis(started_at + 1_250)
+        .expect("clock stack");
+
+    assert_eq!(captured.schema_version, CHRONOSENSE_CLOCK_STACK_SCHEMA);
+    assert_eq!(captured.timezone, "America/Los_Angeles");
+    assert_eq!(captured.utc_offset, "-07:00");
+    assert_eq!(captured.lifetime_elapsed_ms, 1_250);
+    assert_eq!(captured.monotonic_elapsed_ms, 1_250);
+    assert!(captured
+        .reference_frames
+        .contains(&"runtime_monotonic_elapsed".to_string()));
+    assert_eq!(
+        captured.temporal_context.identity_agent_id.as_deref(),
+        Some("codex")
+    );
+    assert_eq!(
+        service
+            .rfc3339_for_epoch_millis(started_at)
+            .expect("timestamp"),
+        "2026-03-31T20:00:00+00:00"
+    );
+}
+
+#[test]
+fn runtime_service_utc_config_exposes_foundation_and_saturating_elapsed() {
+    let started_at = Utc
+        .with_ymd_and_hms(2026, 3, 31, 20, 0, 0)
+        .unwrap()
+        .timestamp_millis() as u128;
+    let service = ChronosenseRuntimeService::new(ChronosenseRuntimeServiceConfig::utc(started_at))
+        .expect("runtime service");
+
+    assert_eq!(
+        service.config().schema_version,
+        CHRONOSENSE_RUNTIME_SERVICE_SCHEMA
+    );
+    assert_eq!(service.config().timezone, "UTC");
+    assert_eq!(service.config().identity, None);
+    assert_eq!(
+        service.foundation().schema_version,
+        CHRONOSENSE_FOUNDATION_SCHEMA
+    );
+
+    let captured = service
+        .capture_epoch_millis(started_at - 500)
+        .expect("clock stack before start still captures");
+
+    assert_eq!(captured.timezone, "UTC");
+    assert_eq!(captured.utc_offset, "+00:00");
+    assert_eq!(captured.temporal_context.identity_agent_id, None);
+    assert_eq!(captured.lifetime_elapsed_ms, 0);
+    assert_eq!(captured.monotonic_elapsed_ms, 0);
+    assert_eq!(
+        captured.utc_timestamp_rfc3339,
+        "2026-03-31T19:59:59.500+00:00"
+    );
+}
+
+#[test]
+fn runtime_service_rejects_unrepresentable_epoch_millis() {
+    let err = ChronosenseRuntimeService::new(ChronosenseRuntimeServiceConfig::utc(u128::MAX))
+        .expect_err("unrepresentable start epoch should fail");
+    assert!(err.to_string().contains("exceeds supported i64 range"));
+
+    let service = ChronosenseRuntimeService::new(ChronosenseRuntimeServiceConfig::utc(0))
+        .expect("runtime service");
+    let err = service
+        .capture_epoch_millis(u128::MAX)
+        .expect_err("unrepresentable capture epoch should fail");
+    assert!(err.to_string().contains("exceeds supported i64 range"));
+
+    let err = service
+        .rfc3339_for_epoch_millis(u128::MAX)
+        .expect_err("unrepresentable RFC3339 epoch should fail");
+    assert!(err.to_string().contains("exceeds supported i64 range"));
+}
+
+#[test]
+fn runtime_service_rejects_invalid_configuration() {
+    let mut config = ChronosenseRuntimeServiceConfig::utc(0);
+    config.timezone = "Mars/Olympus".to_string();
+    let err = ChronosenseRuntimeService::new(config).expect_err("invalid timezone");
+    assert!(err
+        .to_string()
+        .contains("invalid chronosense runtime service configuration"));
+
+    let mut config = ChronosenseRuntimeServiceConfig::utc(0);
+    config.schema_version = "chronosense_runtime_service.v0".to_string();
+    let err = ChronosenseRuntimeService::new(config).expect_err("invalid schema");
+    assert!(err
+        .to_string()
+        .contains("unsupported chronosense runtime service schema version"));
+}
+
+#[test]
 fn temporal_context_rejects_identity_with_invalid_persisted_birthday() {
     let profile = IdentityProfile {
         schema_version: IDENTITY_PROFILE_SCHEMA.to_string(),

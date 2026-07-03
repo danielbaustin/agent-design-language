@@ -12,6 +12,8 @@ pub const EXECUTION_POLICY_COST_MODEL_SCHEMA: &str = "execution_policy_cost_mode
 pub const PHI_INTEGRATION_METRICS_SCHEMA: &str = "phi_integration_metrics.v1";
 pub const INSTINCT_MODEL_SCHEMA: &str = "instinct_model.v1";
 pub const INSTINCT_RUNTIME_SURFACE_SCHEMA: &str = "instinct_runtime_surface.v1";
+pub const CHRONOSENSE_RUNTIME_SERVICE_SCHEMA: &str = "chronosense_runtime_service.v1";
+pub const CHRONOSENSE_CLOCK_STACK_SCHEMA: &str = "chronosense_clock_stack.v1";
 
 mod causality;
 mod commitments;
@@ -21,6 +23,7 @@ mod instinct;
 mod phi;
 mod policy_cost;
 mod retrieval;
+mod service;
 mod temporal_schema;
 
 pub use causality::{
@@ -51,6 +54,9 @@ pub use policy_cost::{
 };
 pub use retrieval::{
     TemporalQueryPrimitiveSet, TemporalQueryRetrievalContract, TemporalRetrievalSemantics,
+};
+pub use service::{
+    ChronosenseClockStack, ChronosenseRuntimeService, ChronosenseRuntimeServiceConfig,
 };
 pub use temporal_schema::{
     CostVectorSchema, ExecutionPolicySchema, ExecutionRealizationSchema, SubjectiveTimeSchema,

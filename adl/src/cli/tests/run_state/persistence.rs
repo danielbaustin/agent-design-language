@@ -105,6 +105,17 @@ fn write_run_state_and_load_resume_round_trip() {
     .expect("parse trace_v1.json");
     validate_trace_event_envelope_v1(&trace_v1).expect("trace v1 must validate");
     assert_eq!(trace_v1.schema_version, "trace.v1");
+    let clock_stack = trace_v1
+        .chronosense_clock_stack
+        .as_ref()
+        .expect("runtime trace must carry chronosense clock stack");
+    assert_eq!(clock_stack.schema_version, "chronosense_clock_stack.v1");
+    assert_eq!(clock_stack.timezone, "UTC");
+    assert_eq!(clock_stack.utc_offset, "+00:00");
+    assert_eq!(clock_stack.lifetime_elapsed_ms, 50);
+    assert!(clock_stack
+        .reference_frames
+        .contains(&"runtime_monotonic_elapsed".to_string()));
     let event_types: Vec<TraceEventTypeV1> = trace_v1
         .events
         .iter()
@@ -379,6 +390,13 @@ fn trace_v1_records_delegation_and_failure_events() {
     .expect("parse trace_v1.json");
     validate_trace_event_envelope_v1(&trace_v1).expect("trace v1 must validate");
     assert_eq!(trace_v1.schema_version, "trace.v2");
+    let clock_stack = trace_v1
+        .chronosense_clock_stack
+        .as_ref()
+        .expect("runtime trace must carry chronosense clock stack");
+    assert_eq!(clock_stack.schema_version, "chronosense_clock_stack.v1");
+    assert_eq!(clock_stack.timezone, "UTC");
+    assert_eq!(clock_stack.lifetime_elapsed_ms, 75);
 
     assert!(trace_v1.events.iter().any(|event| {
         event.event_type == TraceEventTypeV1::ContractValidation
