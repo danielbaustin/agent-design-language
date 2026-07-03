@@ -5058,6 +5058,10 @@ fn finish_runner_executes_combined_ci_policy_selector_command() {
         "#!/usr/bin/env bash\nset -euo pipefail\nprintf '%s\\n' ci-path-policy >> \"$FOCUSED_LOG\"\n",
     );
     write_executable(
+        &repo.join("adl/tools/test_ci_runtime_contracts.sh"),
+        "#!/usr/bin/env bash\nset -euo pipefail\nprintf '%s\\n' ci-runtime-contracts >> \"$FOCUSED_LOG\"\n",
+    );
+    write_executable(
         &repo.join("adl/tools/test_select_validation_lanes.sh"),
         "#!/usr/bin/env bash\nset -euo pipefail\nprintf '%s\\n' select-validation-lanes >> \"$FOCUSED_LOG\"\n",
     );
@@ -5112,6 +5116,7 @@ fn finish_runner_executes_combined_ci_policy_selector_command() {
 
     let focused_calls = fs::read_to_string(&focused_log).expect("focused log");
     assert!(focused_calls.contains("ci-path-policy"));
+    assert!(focused_calls.contains("ci-runtime-contracts"));
     assert!(focused_calls.contains("select-validation-lanes"));
     assert!(focused_calls.contains("validation-manager"));
     assert!(focused_calls.contains("nessus-remote-runner"));
