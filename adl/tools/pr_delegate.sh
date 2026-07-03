@@ -77,7 +77,33 @@ rust_pr_delegate_primary_root() {
 }
 
 rust_pr_worktree_inputs_are_newer_than_bin() {
-  local root="$1" candidate="$2"
+  local root="$1" candidate="$2" primary_root="${3:-}"
+  if [[ -n "$primary_root" && "$primary_root" != "$root" ]] &&
+      git -C "$root" rev-parse --show-toplevel >/dev/null 2>&1 &&
+      git -C "$primary_root" rev-parse --show-toplevel >/dev/null 2>&1; then
+    local primary_head
+    primary_head="$(git -C "$primary_root" rev-parse HEAD 2>/dev/null || true)"
+    if [[ -n "$primary_head" ]]; then
+      if ! git -C "$root" diff --quiet "$primary_head" -- \
+          adl/Cargo.toml \
+          adl/Cargo.lock \
+          adl/build.rs \
+          adl/src; then
+        return 0
+      fi
+      if git -C "$root" ls-files --others --exclude-standard -- \
+          adl/Cargo.toml \
+          adl/Cargo.lock \
+          adl/build.rs \
+          adl/src |
+          grep -Ev '(^adl/src/cli/tests/|/tests\.rs$|/tests/)' |
+          grep -q .; then
+        return 0
+      fi
+      return 1
+    fi
+  fi
+
   [[ -f "$root/adl/Cargo.toml" && "$root/adl/Cargo.toml" -nt "$candidate" ]] && return 0
   [[ -f "$root/adl/Cargo.lock" && "$root/adl/Cargo.lock" -nt "$candidate" ]] && return 0
   [[ -f "$root/adl/build.rs" && "$root/adl/build.rs" -nt "$candidate" ]] && return 0
@@ -109,7 +135,7 @@ rust_pr_delegate_primary_cached_bin() {
   candidate="$primary_root/adl/target/debug/adl"
   [[ -x "$candidate" ]] || return 1
   rust_pr_delegate_bin_is_fresh "$primary_root" "$candidate" || return 1
-  if rust_pr_worktree_inputs_are_newer_than_bin "$root" "$candidate"; then
+  if rust_pr_worktree_inputs_are_newer_than_bin "$root" "$candidate" "$primary_root"; then
     return 1
   fi
   printf '%s\n' "$candidate"
@@ -206,7 +232,7 @@ rust_pr_subcommand_primary_cached_bin() {
   candidate="$primary_root/adl/target/debug/$binary_name"
   [[ -x "$candidate" ]] || return 1
   rust_pr_delegate_bin_is_fresh "$primary_root" "$candidate" || return 1
-  if rust_pr_worktree_inputs_are_newer_than_bin "$root" "$candidate"; then
+  if rust_pr_worktree_inputs_are_newer_than_bin "$root" "$candidate" "$primary_root"; then
     return 1
   fi
   printf '%s\n' "$candidate"

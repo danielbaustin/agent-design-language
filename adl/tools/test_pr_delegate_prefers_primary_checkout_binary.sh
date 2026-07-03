@@ -32,6 +32,20 @@ printf '%s\n' "$*" >"${TMP_ADL_ARGS}"
 EOF_ADL
 chmod +x "$repo/adl/target/debug/adl-pr-doctor"
 
+cat >"$repo/adl/target/debug/adl-pr-finish" <<'EOF_ADL_FINISH'
+#!/usr/bin/env bash
+set -euo pipefail
+printf 'finish:%s\n' "$*" >"${TMP_ADL_ARGS}"
+EOF_ADL_FINISH
+chmod +x "$repo/adl/target/debug/adl-pr-finish"
+
+cat >"$repo/adl/target/debug/adl-pr-validation" <<'EOF_ADL_VALIDATION'
+#!/usr/bin/env bash
+set -euo pipefail
+printf 'validation:%s\n' "$*" >"${TMP_ADL_ARGS}"
+EOF_ADL_VALIDATION
+chmod +x "$repo/adl/target/debug/adl-pr-validation"
+
 cat >"$mockbin/cargo" <<'EOF_CARGO'
 #!/usr/bin/env bash
 set -euo pipefail
@@ -52,7 +66,7 @@ chmod +x "$mockbin/cargo"
 )
 
 sleep 1
-touch "$repo/adl/target/debug/adl-pr-doctor"
+touch "$repo/adl/target/debug/adl-pr-doctor" "$repo/adl/target/debug/adl-pr-finish" "$repo/adl/target/debug/adl-pr-validation"
 
 TMP_ADL_ARGS="$tmpdir/adl_args.txt"
 TMP_CARGO_ARGS="$tmpdir/cargo_args.txt"
@@ -103,7 +117,7 @@ args="$(cat "$TMP_ADL_ARGS")"
 }
 
 sleep 1
-touch "$worktree/adl/Cargo.toml"
+printf '\n# worktree-only manifest drift\n' >>"$worktree/adl/Cargo.toml"
 : >"$TMP_ADL_ARGS"
 : >"$TMP_CARGO_ARGS"
 
@@ -115,17 +129,88 @@ touch "$worktree/adl/Cargo.toml"
 )
 
 [[ ! -s "$TMP_ADL_ARGS" ]] || {
-  echo "assertion failed: stale worktree Cargo.toml should block reuse of the primary checkout direct binary" >&2
+  echo "assertion failed: content-drifted worktree Cargo.toml should block reuse of the primary checkout direct binary" >&2
   cat "$TMP_ADL_ARGS" >&2
   exit 1
 }
 grep -F -- "--bin adl-pr-doctor -- 4413 --slug rust-start --no-fetch-issue --version v0.91.6 --mode full" "$TMP_CARGO_ARGS" >/dev/null || {
-  echo "assertion failed: stale worktree Cargo.toml should force cargo fallback" >&2
+  echo "assertion failed: content-drifted worktree Cargo.toml should force cargo fallback" >&2
   cat "$TMP_CARGO_ARGS" >&2
   exit 1
 }
 
 echo "pr.sh worktree prefers primary checkout built binary: ok"
+
+cp "$repo/adl/Cargo.toml" "$worktree/adl/Cargo.toml"
+mkdir -p "$worktree/adl/src"
+printf 'pub fn untracked_worktree_input() {}\n' >"$worktree/adl/src/untracked_owner_input.rs"
+sleep 1
+touch "$repo/adl/target/debug/adl-pr-doctor"
+: >"$TMP_ADL_ARGS"
+: >"$TMP_CARGO_ARGS"
+
+(
+  cd "$worktree"
+  ADL_PRIMARY_CHECKOUT_ROOT="$repo" \
+    ADL_PR_RUST_ALLOW_CARGO_FALLBACK=1 \
+    "$BASH_BIN" adl/tools/pr.sh doctor 4413 --slug rust-start --no-fetch-issue --version v0.91.6 --mode full >/dev/null
+)
+
+[[ ! -s "$TMP_ADL_ARGS" ]] || {
+  echo "assertion failed: untracked worktree Rust input should block reuse of the primary checkout direct binary" >&2
+  cat "$TMP_ADL_ARGS" >&2
+  exit 1
+}
+grep -F -- "--bin adl-pr-doctor -- 4413 --slug rust-start --no-fetch-issue --version v0.91.6 --mode full" "$TMP_CARGO_ARGS" >/dev/null || {
+  echo "assertion failed: untracked worktree Rust input should force cargo fallback" >&2
+  cat "$TMP_CARGO_ARGS" >&2
+  exit 1
+}
+rm -f "$worktree/adl/src/untracked_owner_input.rs"
+
+: >"$TMP_ADL_ARGS"
+: >"$TMP_CARGO_ARGS"
+
+(
+  cd "$worktree"
+  ADL_PRIMARY_CHECKOUT_ROOT="$repo" \
+    "$BASH_BIN" adl/tools/pr.sh finish 4413 --title "worktree finish" --output-card out.md >/dev/null
+)
+
+args="$(cat "$TMP_ADL_ARGS")"
+[[ "$args" == "finish:4413 --title worktree finish --output-card out.md" ]] || {
+  echo "assertion failed: worktree finish should delegate through the primary checkout adl-pr-finish binary without override" >&2
+  echo "$args" >&2
+  exit 1
+}
+[[ ! -s "$TMP_CARGO_ARGS" ]] || {
+  echo "assertion failed: cargo should not run when the primary checkout finish binary is fresh for the worktree" >&2
+  cat "$TMP_CARGO_ARGS" >&2
+  exit 1
+}
+
+: >"$TMP_ADL_ARGS"
+: >"$TMP_CARGO_ARGS"
+
+(
+  cd "$worktree"
+  ADL_PRIMARY_CHECKOUT_ROOT="$repo" \
+    "$BASH_BIN" adl/tools/pr.sh validation 4772 --json >/dev/null
+)
+
+args="$(cat "$TMP_ADL_ARGS")"
+[[ "$args" == "validation:4772 --json" ]] || {
+  echo "assertion failed: worktree validation should delegate through the primary checkout adl-pr-validation binary without override" >&2
+  echo "$args" >&2
+  exit 1
+}
+[[ ! -s "$TMP_CARGO_ARGS" ]] || {
+  echo "assertion failed: cargo should not run when the primary checkout validation binary is fresh for the worktree" >&2
+  cat "$TMP_CARGO_ARGS" >&2
+  exit 1
+}
+
+echo "pr.sh worktree prefers primary checkout finish/validation owner binaries: ok"
 
 rm -f "$repo/adl/target/debug/adl-pr-doctor"
 cat >"$repo/adl/target/debug/adl" <<'EOF_ADL_GENERIC'
