@@ -1,0 +1,69 @@
+review:
+  findings_status: resolved
+  recommended_outcome: pass
+  notes: "Pre-PR subagent review found three issues: unsupported provider/profile evidence, weak claim-boundary validation, and lexicographic tie-break semantics. All were repaired before publication by matching retained evidence refs, adding exact non-authority claim-boundary validation, adding retained source-ref checks, and adding explicit selection_priority ordering."
+validation:
+  status: PASS
+  commands:
+    - command: "cargo fmt --manifest-path adl/Cargo.toml --all -- --check"
+      purpose: "Verified Rust formatting for the changed scheduler and Chronosense compatibility surfaces."
+      result: PASS
+    - command: "cargo test --manifest-path adl/Cargo.toml scheduler::tests::model_suitability --lib -- --nocapture"
+      purpose: "Verified positive model-suitability selection plus schema, advisory-boundary, uncited-source, overclaim-boundary, and no-eligible-candidate negative cases."
+      result: PASS
+    - command: "cargo test --manifest-path adl/Cargo.toml scheduler::tests --lib -- --nocapture"
+      purpose: "Verified the full scheduler unit suite, including ordinary scheduler, Chronosense scheduler context, and model-suitability decision behavior."
+      result: PASS
+    - command: "cargo build --manifest-path adl/Cargo.toml --bin adl"
+      purpose: "Built the issue-worktree ADL binary used for the scheduler CLI proof."
+      result: PASS
+    - command: "ADL_OBSERVABILITY_LOG=$TMPDIR/adl-4673-model-suitability.log adl/target/debug/adl scheduler plan --input adl/tests/fixtures/scheduler/model_suitability_inputs_v1.json --out docs/milestones/v0.91.7/review/provider/artifacts/model_suitability_plan_4673.json --json"
+      purpose: "Generated the retained scheduler plan artifact through the integrated CLI path."
+      result: PASS
+    - command: "python3 - <<'PY' ... PY"
+      purpose: "Asserted the retained scheduler plan schema, model-suitability decision schema, selected OpenRouter GPT-5.4 reviewer candidate, advisory-only boundary, rejected historical Gemma trace, and ordinary decision schema for tasks without model-suitability requirements."
+      result: PASS
+    - command: "git diff --check"
+      purpose: "Verified whitespace hygiene for the issue diff."
+      result: PASS
+integration:
+  main_repo_paths_updated:
+    - "adl/src/scheduler.rs"
+    - "adl/src/chronosense/long_running_proof.rs"
+    - "adl/tests/fixtures/scheduler/model_suitability_inputs_v1.json"
+    - "docs/milestones/v0.91.7/review/provider/MODEL_SUITABILITY_SELECTION_4673.md"
+    - "docs/milestones/v0.91.7/review/provider/artifacts/model_suitability_plan_4673.json"
+    - "docs/milestones/v0.91.7/review/provider/artifacts/srp_sor_facts_4673.yaml"
+  worktree_only_paths_remaining: "none after PR publication; currently issue worktree changes are unmerged pre-publication artifacts"
+  integration_state: worktree_only
+  verification_scope: worktree
+  integration_method: "Bound issue worktree via pr.sh run, implementation in issue branch, pending pr.sh finish publication."
+  verification_performed:
+    - "cargo fmt --manifest-path adl/Cargo.toml --all -- --check"
+    - "cargo test --manifest-path adl/Cargo.toml scheduler::tests --lib -- --nocapture"
+    - "adl/target/debug/adl scheduler plan --input adl/tests/fixtures/scheduler/model_suitability_inputs_v1.json --out docs/milestones/v0.91.7/review/provider/artifacts/model_suitability_plan_4673.json --json"
+    - "python3 JSON assertion over docs/milestones/v0.91.7/review/provider/artifacts/model_suitability_plan_4673.json"
+    - "git diff --check"
+  result: PASS
+release_tail:
+  watcher_disposition: not_started
+  pr_state: not_open
+  closeout_state: not_started
+  residual_risks:
+    - "Provider-route integration from #4672 is a sibling PR and remains separate; this issue uses retained evidence refs and unprofiled provider ids rather than pre-baking #4672 profile semantics."
+    - "This issue does not run new live provider probes; it consumes retained v0.91.6 suitability evidence."
+metrics:
+  estimated_elapsed_seconds: "1800"
+  actual_elapsed_seconds: "unknown"
+  estimated_total_tokens: "100000"
+  actual_total_tokens: "unknown"
+  estimated_validation_seconds: "120"
+  actual_validation_seconds: "unknown"
+  goal_metrics_data_source: "manual_entry"
+  goal_metrics_source_ref: "docs/milestones/v0.91.7/review/provider/artifacts/srp_sor_facts_4673.yaml"
+  data_source_confidence: "low"
+  estimate_error_percent: "unknown"
+  variance_analysis_required: "not_applicable"
+  variance_analysis_completed: "not_applicable"
+  variance_category: "not_applicable"
+  variance_note: "Actual time/token values remain active-goal runtime data until terminal closeout."

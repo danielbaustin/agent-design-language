@@ -1,0 +1,130 @@
+{
+  "schema_version": "adl.scheduler.economics_input_bundle.model_suitability.v1",
+  "source_doc_ref": "docs/milestones/v0.91.7/review/provider/MODEL_SUITABILITY_SELECTION_4673.md",
+  "included_concepts": [
+    "validation_cost",
+    "role_scoped_model_suitability",
+    "advisory_authority_boundary"
+  ],
+  "deferred_concepts": [
+    "live_provider_price_lookup",
+    "provider_output_replay_stability",
+    "autonomous_merge_or_closeout_authority"
+  ],
+  "model_suitability_context": {
+    "schema_version": "adl.scheduler.model_suitability_selection_context.v1",
+    "generated_from": "v0.91.6 current-model suitability proof packets consumed by v0.91.7 WP-05 #4673",
+    "evidence_refs": [
+      "docs/milestones/v0.91.6/review/provider/CURRENT_MODEL_SUITABILITY_MINI_SPRINT_CLOSEOUT_4158.md",
+      "docs/milestones/v0.91.6/review/provider/openrouter_current_models/openrouter_current_model_suitability_state_2026-06-22.json",
+      "docs/milestones/v0.91.6/review/provider/gemini_current_models/gemini_current_model_suitability_state_2026-06-18.json",
+      "docs/milestones/v0.91.5/review/remote_gemma_watcher/REMOTE_GEMMA_WATCHER_PROOF_2026-06-15.md"
+    ],
+    "candidates": [
+      {
+        "candidate_id": "openrouter:gpt-5.4",
+        "provider_profile_ref": "unprofiled:openrouter:openai/gpt-5.4",
+        "provider_family": "openrouter",
+        "model_ref": "openai/gpt-5.4",
+        "runtime_surface": "hosted_api",
+        "classification": "useful_with_limits",
+        "selection_priority": 90,
+        "roles": [
+          "watcher",
+          "card_validator",
+          "reviewer",
+          "planner",
+          "closeout_checker",
+          "worker"
+        ],
+        "source_ref": "docs/milestones/v0.91.6/review/provider/openrouter_current_models/openrouter_current_model_suitability_state_2026-06-22.json",
+        "evidence_digest": "sha256:bounded-openrouter-gpt-5-4-panel",
+        "advisory_authority_only": true
+      },
+      {
+        "candidate_id": "gemini:gemini-2.5-flash",
+        "provider_profile_ref": "unprofiled:gemini:gemini-2.5-flash",
+        "provider_family": "google",
+        "model_ref": "gemini-2.5-flash",
+        "runtime_surface": "hosted_api",
+        "classification": "useful_with_limits",
+        "selection_priority": 80,
+        "roles": [
+          "watcher",
+          "card_validator",
+          "reviewer",
+          "planner",
+          "closeout_checker"
+        ],
+        "source_ref": "docs/milestones/v0.91.6/review/provider/gemini_current_models/gemini_current_model_suitability_state_2026-06-18.json",
+        "evidence_digest": "sha256:bounded-gemini-flash-panel",
+        "advisory_authority_only": true
+      },
+      {
+        "candidate_id": "local:gemma4-e2b",
+        "provider_profile_ref": "historical:ollama:gemma4-e2b",
+        "provider_family": "ollama",
+        "model_ref": "gemma4:e2b",
+        "runtime_surface": "local_ollama",
+        "classification": "historical_only",
+        "selection_priority": 10,
+        "roles": [
+          "watcher"
+        ],
+        "source_ref": "docs/milestones/v0.91.5/review/remote_gemma_watcher/REMOTE_GEMMA_WATCHER_PROOF_2026-06-15.md",
+        "evidence_digest": "sha256:historical-gemma-empty-output-boundary",
+        "advisory_authority_only": true
+      }
+    ],
+    "task_requirements": [
+      {
+        "task_id": "first-pass-review",
+        "role": "reviewer",
+        "minimum_classification": "useful_with_limits",
+        "claim_boundary": "bounded_role_suitability_not_authority"
+      }
+    ]
+  },
+  "inputs": [
+    {
+      "schema_version": "adl.scheduler.economics_input.v1",
+      "task_id": "first-pass-review",
+      "task_type": "review",
+      "estimated_effort": "medium",
+      "estimated_validation_cost": "medium",
+      "estimated_coordination_cost": "medium",
+      "risk_level": "medium",
+      "expected_value": "high",
+      "urgency": "normal",
+      "dependency_posture": "clear",
+      "parallelism_potential": "highly_parallelizable",
+      "premium_capacity_pressure": "high",
+      "governor_attention_pressure": "low",
+      "confidence": "medium",
+      "human_required": false,
+      "required_capabilities": [
+        "role:reviewer",
+        "provider:model_suitability"
+      ],
+      "claim_boundary": "bounded_v1_inputs_not_exact_measurement"
+    },
+    {
+      "schema_version": "adl.scheduler.economics_input.v1",
+      "task_id": "docs-status-check",
+      "task_type": "documentation",
+      "estimated_effort": "small",
+      "estimated_validation_cost": "low",
+      "estimated_coordination_cost": "low",
+      "risk_level": "low",
+      "expected_value": "medium",
+      "urgency": "low",
+      "dependency_posture": "clear",
+      "parallelism_potential": "serial",
+      "premium_capacity_pressure": "high",
+      "governor_attention_pressure": "low",
+      "confidence": "high",
+      "human_required": false,
+      "claim_boundary": "bounded_v1_inputs_not_exact_measurement"
+    }
+  ]
+}

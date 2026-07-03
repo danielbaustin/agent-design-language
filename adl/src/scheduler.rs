@@ -10,13 +10,19 @@ pub const SCHEDULER_ECONOMICS_INPUT_BUNDLE_SCHEMA_V1: &str =
     "adl.scheduler.economics_input_bundle.v1";
 pub const SCHEDULER_ECONOMICS_INPUT_BUNDLE_WITH_PROVIDER_ROUTE_SCHEMA_V1: &str =
     "adl.scheduler.economics_input_bundle.provider_route.v1";
+pub const SCHEDULER_MODEL_SUITABILITY_INPUT_BUNDLE_SCHEMA_V1: &str =
+    "adl.scheduler.economics_input_bundle.model_suitability.v1";
 pub const COGNITIVE_SCHEDULER_DECISION_SCHEMA_V1: &str = "adl.scheduler.decision.v1";
 pub const COGNITIVE_SCHEDULER_DECISION_WITH_PROVIDER_ROUTE_SCHEMA_V1: &str =
     "adl.scheduler.decision.provider_route.v1";
+pub const COGNITIVE_SCHEDULER_DECISION_MODEL_SUITABILITY_SCHEMA_V1: &str =
+    "adl.scheduler.decision.model_suitability.v1";
 pub const COGNITIVE_SCHEDULER_PLAN_SCHEMA_V1: &str = "adl.scheduler.plan.v1";
 pub const CHRONOSENSE_SCHEDULER_CONTEXT_SCHEMA_V1: &str = "adl.scheduler.chronosense_context.v1";
 pub const ROLE_PROVIDER_SELECTION_CONTEXT_SCHEMA_V1: &str =
     "adl.scheduler.role_provider_selection_context.v1";
+pub const MODEL_SUITABILITY_SELECTION_CONTEXT_SCHEMA_V1: &str =
+    "adl.scheduler.model_suitability_selection_context.v1";
 
 #[derive(Debug, Clone, Serialize, Deserialize, JsonSchema, PartialEq, Eq)]
 #[serde(rename_all = "snake_case")]
@@ -153,6 +159,35 @@ pub enum RoleProviderProfileV1 {
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize, JsonSchema, PartialEq, Eq)]
+#[serde(rename_all = "snake_case")]
+pub enum ModelSuitabilityRoleV1 {
+    Watcher,
+    CardValidator,
+    Reviewer,
+    Planner,
+    CloseoutChecker,
+    Worker,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize, JsonSchema, PartialEq, Eq)]
+#[serde(rename_all = "snake_case")]
+pub enum ModelSuitabilityClassificationV1 {
+    UsefulWithLimits,
+    SupportedWithLimits,
+    CandidateOnly,
+    RuntimeUnsuitableForThisPanel,
+    HistoricalOnly,
+    Blocked,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize, JsonSchema, PartialEq, Eq)]
+#[serde(rename_all = "snake_case")]
+pub enum ModelSuitabilityTraceDispositionV1 {
+    Selected,
+    Rejected,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize, JsonSchema, PartialEq, Eq)]
 #[serde(rename_all = "SCREAMING_SNAKE_CASE")]
 pub enum CognitiveSchedulerLaneV1 {
     Local,
@@ -260,6 +295,45 @@ pub struct RoleProviderSelectionContextV1 {
 
 #[derive(Debug, Clone, Serialize, Deserialize, JsonSchema, PartialEq, Eq)]
 #[serde(deny_unknown_fields)]
+pub struct ModelSuitabilityCandidateV1 {
+    pub candidate_id: String,
+    pub provider_profile_ref: String,
+    pub provider_family: String,
+    pub model_ref: String,
+    pub runtime_surface: String,
+    pub classification: ModelSuitabilityClassificationV1,
+    pub selection_priority: u32,
+    pub roles: Vec<ModelSuitabilityRoleV1>,
+    pub source_ref: String,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub evidence_digest: Option<String>,
+    #[serde(default)]
+    pub advisory_authority_only: bool,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize, JsonSchema, PartialEq, Eq)]
+#[serde(deny_unknown_fields)]
+pub struct ModelSuitabilityTaskRequirementV1 {
+    pub task_id: String,
+    pub role: ModelSuitabilityRoleV1,
+    pub minimum_classification: ModelSuitabilityClassificationV1,
+    #[serde(default, skip_serializing_if = "Vec::is_empty")]
+    pub allowed_provider_profile_refs: Vec<String>,
+    pub claim_boundary: String,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize, JsonSchema, PartialEq, Eq)]
+#[serde(deny_unknown_fields)]
+pub struct ModelSuitabilitySelectionContextV1 {
+    pub schema_version: String,
+    pub generated_from: String,
+    pub evidence_refs: Vec<String>,
+    pub candidates: Vec<ModelSuitabilityCandidateV1>,
+    pub task_requirements: Vec<ModelSuitabilityTaskRequirementV1>,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize, JsonSchema, PartialEq, Eq)]
+#[serde(deny_unknown_fields)]
 pub struct SchedulerEconomicsInputV1 {
     pub schema_version: String,
     pub task_id: String,
@@ -297,6 +371,8 @@ pub struct SchedulerEconomicsInputBundleV1 {
     pub chronosense_context: Option<ChronosenseSchedulerContextV1>,
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub role_provider_context: Option<RoleProviderSelectionContextV1>,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub model_suitability_context: Option<ModelSuitabilitySelectionContextV1>,
     pub inputs: Vec<SchedulerEconomicsInputV1>,
 }
 
@@ -348,6 +424,34 @@ pub struct SchedulerManualOverrideV1 {
 
 #[derive(Debug, Clone, Serialize, Deserialize, JsonSchema, PartialEq, Eq)]
 #[serde(deny_unknown_fields)]
+pub struct ModelSuitabilitySelectionTraceV1 {
+    pub candidate_id: String,
+    pub provider_profile_ref: String,
+    pub model_ref: String,
+    pub disposition: ModelSuitabilityTraceDispositionV1,
+    pub reason: String,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize, JsonSchema, PartialEq, Eq)]
+#[serde(deny_unknown_fields)]
+pub struct ModelSuitabilitySelectionV1 {
+    pub role: ModelSuitabilityRoleV1,
+    pub selected_candidate_id: String,
+    pub provider_profile_ref: String,
+    pub provider_family: String,
+    pub model_ref: String,
+    pub runtime_surface: String,
+    pub classification: ModelSuitabilityClassificationV1,
+    pub source_ref: String,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub evidence_digest: Option<String>,
+    pub advisory_authority_only: bool,
+    pub claim_boundary: String,
+    pub selection_trace: Vec<ModelSuitabilitySelectionTraceV1>,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize, JsonSchema, PartialEq, Eq)]
+#[serde(deny_unknown_fields)]
 pub struct CognitiveSchedulerDecisionV1 {
     pub schema_version: String,
     pub task_id: String,
@@ -359,6 +463,8 @@ pub struct CognitiveSchedulerDecisionV1 {
     pub manual_override: SchedulerManualOverrideV1,
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub provider_route: Option<ProviderRouteV1>,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub model_suitability_selection: Option<ModelSuitabilitySelectionV1>,
     pub confidence: SchedulerConfidenceV1,
     pub scheduling_rank_key: String,
 }
@@ -391,20 +497,49 @@ pub fn parse_economics_bundle_json(input: &str) -> Result<SchedulerEconomicsInpu
 }
 
 pub fn validate_economics_bundle(bundle: &SchedulerEconomicsInputBundleV1) -> Result<()> {
-    if bundle.schema_version != SCHEDULER_ECONOMICS_INPUT_BUNDLE_SCHEMA_V1
-        && bundle.schema_version != SCHEDULER_ECONOMICS_INPUT_BUNDLE_WITH_PROVIDER_ROUTE_SCHEMA_V1
-    {
-        return Err(anyhow!(
-            "unsupported scheduler economics bundle schema: {}",
-            bundle.schema_version
-        ));
-    }
-    if bundle.role_provider_context.is_some()
-        && bundle.schema_version != SCHEDULER_ECONOMICS_INPUT_BUNDLE_WITH_PROVIDER_ROUTE_SCHEMA_V1
-    {
-        return Err(anyhow!(
-            "scheduler economics bundle with role_provider_context must use schema {SCHEDULER_ECONOMICS_INPUT_BUNDLE_WITH_PROVIDER_ROUTE_SCHEMA_V1}"
-        ));
+    match (
+        bundle.schema_version.as_str(),
+        bundle.role_provider_context.as_ref(),
+        bundle.model_suitability_context.as_ref(),
+    ) {
+        (SCHEDULER_ECONOMICS_INPUT_BUNDLE_SCHEMA_V1, None, None) => {}
+        (SCHEDULER_ECONOMICS_INPUT_BUNDLE_SCHEMA_V1, Some(_), _) => {
+            return Err(anyhow!(
+                "scheduler economics bundle with role_provider_context must use schema {SCHEDULER_ECONOMICS_INPUT_BUNDLE_WITH_PROVIDER_ROUTE_SCHEMA_V1}"
+            ));
+        }
+        (SCHEDULER_ECONOMICS_INPUT_BUNDLE_SCHEMA_V1, _, Some(_)) => {
+            return Err(anyhow!(
+                "model_suitability_context requires scheduler bundle schema {SCHEDULER_MODEL_SUITABILITY_INPUT_BUNDLE_SCHEMA_V1}"
+            ));
+        }
+        (SCHEDULER_ECONOMICS_INPUT_BUNDLE_WITH_PROVIDER_ROUTE_SCHEMA_V1, Some(_), None) => {}
+        (SCHEDULER_ECONOMICS_INPUT_BUNDLE_WITH_PROVIDER_ROUTE_SCHEMA_V1, None, _) => {
+            return Err(anyhow!(
+                "scheduler bundle schema {SCHEDULER_ECONOMICS_INPUT_BUNDLE_WITH_PROVIDER_ROUTE_SCHEMA_V1} requires role_provider_context"
+            ));
+        }
+        (SCHEDULER_ECONOMICS_INPUT_BUNDLE_WITH_PROVIDER_ROUTE_SCHEMA_V1, _, Some(_)) => {
+            return Err(anyhow!(
+                "scheduler bundle schema {SCHEDULER_ECONOMICS_INPUT_BUNDLE_WITH_PROVIDER_ROUTE_SCHEMA_V1} cannot include model_suitability_context without a combined schema"
+            ));
+        }
+        (SCHEDULER_MODEL_SUITABILITY_INPUT_BUNDLE_SCHEMA_V1, None, Some(_)) => {}
+        (SCHEDULER_MODEL_SUITABILITY_INPUT_BUNDLE_SCHEMA_V1, Some(_), _) => {
+            return Err(anyhow!(
+                "scheduler bundle schema {SCHEDULER_MODEL_SUITABILITY_INPUT_BUNDLE_SCHEMA_V1} cannot include role_provider_context without a combined schema"
+            ));
+        }
+        (SCHEDULER_MODEL_SUITABILITY_INPUT_BUNDLE_SCHEMA_V1, _, None) => {
+            return Err(anyhow!(
+                "scheduler bundle schema {SCHEDULER_MODEL_SUITABILITY_INPUT_BUNDLE_SCHEMA_V1} requires model_suitability_context"
+            ));
+        }
+        (other, _, _) => {
+            return Err(anyhow!(
+                "unsupported scheduler economics bundle schema: {other}"
+            ));
+        }
     }
     if bundle.source_doc_ref.trim().is_empty() {
         return Err(anyhow!(
@@ -434,6 +569,9 @@ pub fn validate_economics_bundle(bundle: &SchedulerEconomicsInputBundleV1) -> Re
     }
     if let Some(context) = &bundle.role_provider_context {
         validate_role_provider_selection_context(context, &bundle.inputs)?;
+    }
+    if let Some(context) = &bundle.model_suitability_context {
+        validate_model_suitability_context(context, &bundle.inputs)?;
     }
     Ok(())
 }
@@ -624,6 +762,150 @@ pub fn validate_role_provider_selection_context(
     Ok(())
 }
 
+pub fn validate_model_suitability_context(
+    context: &ModelSuitabilitySelectionContextV1,
+    inputs: &[SchedulerEconomicsInputV1],
+) -> Result<()> {
+    if context.schema_version != MODEL_SUITABILITY_SELECTION_CONTEXT_SCHEMA_V1 {
+        return Err(anyhow!(
+            "unsupported model suitability context schema: {}",
+            context.schema_version
+        ));
+    }
+    if context.generated_from.trim().is_empty() {
+        return Err(anyhow!(
+            "model suitability context generated_from is required"
+        ));
+    }
+    if context.evidence_refs.is_empty() {
+        return Err(anyhow!(
+            "model suitability context must retain at least one evidence_ref"
+        ));
+    }
+    if context.candidates.is_empty() {
+        return Err(anyhow!(
+            "model suitability context must include at least one candidate"
+        ));
+    }
+    if context.task_requirements.is_empty() {
+        return Err(anyhow!(
+            "model suitability context must include at least one task requirement"
+        ));
+    }
+
+    let evidence_refs = context
+        .evidence_refs
+        .iter()
+        .cloned()
+        .collect::<BTreeSet<_>>();
+    let mut seen_candidates = BTreeSet::new();
+    let mut seen_provider_models = BTreeSet::new();
+    for candidate in &context.candidates {
+        if candidate.candidate_id.trim().is_empty()
+            || candidate.provider_profile_ref.trim().is_empty()
+            || candidate.provider_family.trim().is_empty()
+            || candidate.model_ref.trim().is_empty()
+            || candidate.runtime_surface.trim().is_empty()
+            || candidate.source_ref.trim().is_empty()
+        {
+            return Err(anyhow!(
+                "model suitability candidate fields are required for {}",
+                candidate.candidate_id
+            ));
+        }
+        if !seen_candidates.insert(candidate.candidate_id.clone()) {
+            return Err(anyhow!(
+                "duplicate model suitability candidate {}",
+                candidate.candidate_id
+            ));
+        }
+        if !seen_provider_models.insert((
+            candidate.provider_profile_ref.clone(),
+            candidate.model_ref.clone(),
+        )) {
+            return Err(anyhow!(
+                "duplicate model suitability provider/model pair {} {}",
+                candidate.provider_profile_ref,
+                candidate.model_ref
+            ));
+        }
+        if !evidence_refs.contains(&candidate.source_ref) {
+            return Err(anyhow!(
+                "model suitability candidate {} source_ref is not retained in evidence_refs",
+                candidate.candidate_id
+            ));
+        }
+        if candidate.roles.is_empty() {
+            return Err(anyhow!(
+                "model suitability candidate {} must include at least one role",
+                candidate.candidate_id
+            ));
+        }
+        if candidate.selection_priority == 0 {
+            return Err(anyhow!(
+                "model suitability candidate {} selection_priority must be greater than zero",
+                candidate.candidate_id
+            ));
+        }
+        if !candidate.advisory_authority_only {
+            return Err(anyhow!(
+                "model suitability candidate {} must be advisory_authority_only",
+                candidate.candidate_id
+            ));
+        }
+    }
+
+    let input_ids = inputs
+        .iter()
+        .map(|input| input.task_id.as_str())
+        .collect::<BTreeSet<_>>();
+    let mut seen_requirements = BTreeSet::new();
+    for requirement in &context.task_requirements {
+        if requirement.task_id.trim().is_empty() {
+            return Err(anyhow!("model suitability task_id is required"));
+        }
+        if !seen_requirements.insert(requirement.task_id.clone()) {
+            return Err(anyhow!(
+                "duplicate model suitability task requirement for {}",
+                requirement.task_id
+            ));
+        }
+        if !input_ids.contains(requirement.task_id.as_str()) {
+            return Err(anyhow!(
+                "model suitability task {} does not match a scheduler input task_id",
+                requirement.task_id
+            ));
+        }
+        if !valid_model_suitability_claim_boundary(&requirement.claim_boundary) {
+            return Err(anyhow!(
+                "model suitability task {} claim_boundary must be one of the approved bounded non-authority values",
+                requirement.task_id
+            ));
+        }
+        for allowed in &requirement.allowed_provider_profile_refs {
+            if !context
+                .candidates
+                .iter()
+                .any(|candidate| candidate.provider_profile_ref == *allowed)
+            {
+                return Err(anyhow!(
+                    "model suitability task {} allows unknown provider_profile_ref {}",
+                    requirement.task_id,
+                    allowed
+                ));
+            }
+        }
+        select_model_suitability_candidate(context, requirement).map_err(|err| {
+            anyhow!(
+                "model suitability task {} has no eligible candidate: {err}",
+                requirement.task_id
+            )
+        })?;
+    }
+
+    Ok(())
+}
+
 pub fn validate_provider_route(
     route: &ProviderRouteV1,
     known_profiles: &BTreeSet<String>,
@@ -753,12 +1035,15 @@ pub fn schedule_economics_bundle(
         apply_chronosense_scheduler_context(&bundle.inputs, bundle.chronosense_context.as_ref());
     let provider_routes =
         resolve_role_provider_assignments(bundle.role_provider_context.as_ref(), &adjusted_inputs)?;
+    let model_suitability =
+        resolve_model_suitability_assignments(bundle.model_suitability_context.as_ref())?;
     let mut decisions = adjusted_inputs
         .iter()
         .map(|input| {
             schedule_economics_input_with_provider_route(
                 input,
                 provider_routes.get(&input.task_id).cloned(),
+                model_suitability.get(&input.task_id).cloned(),
             )
         })
         .collect::<Result<Vec<_>>>()?;
@@ -773,6 +1058,141 @@ pub fn schedule_economics_bundle(
         decisions,
         recommended_order,
     })
+}
+
+pub fn resolve_model_suitability_assignments(
+    context: Option<&ModelSuitabilitySelectionContextV1>,
+) -> Result<BTreeMap<String, ModelSuitabilitySelectionV1>> {
+    let Some(context) = context else {
+        return Ok(BTreeMap::new());
+    };
+    let mut selected = BTreeMap::new();
+    for requirement in &context.task_requirements {
+        selected.insert(
+            requirement.task_id.clone(),
+            select_model_suitability_candidate(context, requirement)?,
+        );
+    }
+    Ok(selected)
+}
+
+fn select_model_suitability_candidate(
+    context: &ModelSuitabilitySelectionContextV1,
+    requirement: &ModelSuitabilityTaskRequirementV1,
+) -> Result<ModelSuitabilitySelectionV1> {
+    let mut eligible = context
+        .candidates
+        .iter()
+        .filter(|candidate| model_candidate_matches_requirement(candidate, requirement))
+        .collect::<Vec<_>>();
+    if eligible.is_empty() {
+        return Err(anyhow!(
+            "no candidate matched required role and classification"
+        ));
+    }
+    eligible.sort_by(|left, right| {
+        model_classification_rank(&right.classification)
+            .cmp(&model_classification_rank(&left.classification))
+            .then_with(|| right.selection_priority.cmp(&left.selection_priority))
+            .then_with(|| left.provider_profile_ref.cmp(&right.provider_profile_ref))
+            .then_with(|| left.model_ref.cmp(&right.model_ref))
+            .then_with(|| left.candidate_id.cmp(&right.candidate_id))
+    });
+    let selected = eligible[0];
+    let selection_trace = context
+        .candidates
+        .iter()
+        .map(|candidate| {
+            let selected_candidate = candidate.candidate_id == selected.candidate_id;
+            ModelSuitabilitySelectionTraceV1 {
+                candidate_id: candidate.candidate_id.clone(),
+                provider_profile_ref: candidate.provider_profile_ref.clone(),
+                model_ref: candidate.model_ref.clone(),
+                disposition: if selected_candidate {
+                    ModelSuitabilityTraceDispositionV1::Selected
+                } else {
+                    ModelSuitabilityTraceDispositionV1::Rejected
+                },
+                reason: model_suitability_trace_reason(candidate, requirement, selected_candidate),
+            }
+        })
+        .collect::<Vec<_>>();
+    Ok(ModelSuitabilitySelectionV1 {
+        role: requirement.role.clone(),
+        selected_candidate_id: selected.candidate_id.clone(),
+        provider_profile_ref: selected.provider_profile_ref.clone(),
+        provider_family: selected.provider_family.clone(),
+        model_ref: selected.model_ref.clone(),
+        runtime_surface: selected.runtime_surface.clone(),
+        classification: selected.classification.clone(),
+        source_ref: selected.source_ref.clone(),
+        evidence_digest: selected.evidence_digest.clone(),
+        advisory_authority_only: selected.advisory_authority_only,
+        claim_boundary: requirement.claim_boundary.clone(),
+        selection_trace,
+    })
+}
+
+fn model_candidate_matches_requirement(
+    candidate: &ModelSuitabilityCandidateV1,
+    requirement: &ModelSuitabilityTaskRequirementV1,
+) -> bool {
+    candidate.roles.contains(&requirement.role)
+        && model_classification_rank(&candidate.classification)
+            >= model_classification_rank(&requirement.minimum_classification)
+        && (requirement.allowed_provider_profile_refs.is_empty()
+            || requirement
+                .allowed_provider_profile_refs
+                .contains(&candidate.provider_profile_ref))
+}
+
+fn model_suitability_trace_reason(
+    candidate: &ModelSuitabilityCandidateV1,
+    requirement: &ModelSuitabilityTaskRequirementV1,
+    selected: bool,
+) -> String {
+    if selected {
+        return format!(
+            "selected by bounded role suitability ranking with priority {}",
+            candidate.selection_priority
+        );
+    }
+    if !candidate.roles.contains(&requirement.role) {
+        return "does not support the requested role".to_string();
+    }
+    if model_classification_rank(&candidate.classification)
+        < model_classification_rank(&requirement.minimum_classification)
+    {
+        return "classification below task minimum".to_string();
+    }
+    if !requirement.allowed_provider_profile_refs.is_empty()
+        && !requirement
+            .allowed_provider_profile_refs
+            .contains(&candidate.provider_profile_ref)
+    {
+        return "provider profile not allowed for this task".to_string();
+    }
+    "eligible but not selected by deterministic ranking".to_string()
+}
+
+fn valid_model_suitability_claim_boundary(value: &str) -> bool {
+    matches!(
+        value,
+        "bounded_role_suitability_not_authority"
+            | "bounded_model_suitability_not_authority"
+            | "bounded_current_panel_not_authority"
+    )
+}
+
+fn model_classification_rank(classification: &ModelSuitabilityClassificationV1) -> u32 {
+    match classification {
+        ModelSuitabilityClassificationV1::UsefulWithLimits => 5,
+        ModelSuitabilityClassificationV1::SupportedWithLimits => 4,
+        ModelSuitabilityClassificationV1::CandidateOnly => 3,
+        ModelSuitabilityClassificationV1::RuntimeUnsuitableForThisPanel => 2,
+        ModelSuitabilityClassificationV1::HistoricalOnly => 1,
+        ModelSuitabilityClassificationV1::Blocked => 0,
+    }
 }
 
 pub fn resolve_role_provider_assignments(
@@ -1018,12 +1438,13 @@ fn max_pressure(
 pub fn schedule_economics_input(
     input: &SchedulerEconomicsInputV1,
 ) -> Result<CognitiveSchedulerDecisionV1> {
-    schedule_economics_input_with_provider_route(input, None)
+    schedule_economics_input_with_provider_route(input, None, None)
 }
 
 fn schedule_economics_input_with_provider_route(
     input: &SchedulerEconomicsInputV1,
     provider_route: Option<ProviderRouteV1>,
+    model_suitability_selection: Option<ModelSuitabilitySelectionV1>,
 ) -> Result<CognitiveSchedulerDecisionV1> {
     let summary = summarize_economics_input(input)?;
     let selected_lane = select_lane(input, &summary);
@@ -1034,6 +1455,8 @@ fn schedule_economics_input_with_provider_route(
     Ok(CognitiveSchedulerDecisionV1 {
         schema_version: if provider_route.is_some() {
             COGNITIVE_SCHEDULER_DECISION_WITH_PROVIDER_ROUTE_SCHEMA_V1.to_string()
+        } else if model_suitability_selection.is_some() {
+            COGNITIVE_SCHEDULER_DECISION_MODEL_SUITABILITY_SCHEMA_V1.to_string()
         } else {
             COGNITIVE_SCHEDULER_DECISION_SCHEMA_V1.to_string()
         },
@@ -1060,6 +1483,7 @@ fn schedule_economics_input_with_provider_route(
             reason: input.manual_override.clone(),
         },
         provider_route,
+        model_suitability_selection,
         confidence: input.confidence.clone(),
         scheduling_rank_key,
     })
@@ -1364,6 +1788,8 @@ mod tests {
     use super::*;
 
     const FIXTURE: &str = include_str!("../tests/fixtures/scheduler/economics_inputs_v1.json");
+    const MODEL_SUITABILITY_FIXTURE: &str =
+        include_str!("../tests/fixtures/scheduler/model_suitability_inputs_v1.json");
 
     #[test]
     fn scheduler_economics_bundle_fixture_parses_and_summarizes() {
@@ -1387,6 +1813,135 @@ mod tests {
         assert!(summaries
             .iter()
             .any(|summary| summary.task_id == "blocked-proof" && summary.blocked));
+    }
+
+    #[test]
+    fn model_suitability_context_selects_bounded_role_candidate() {
+        let bundle =
+            parse_economics_bundle_json(MODEL_SUITABILITY_FIXTURE).expect("fixture parses");
+        assert_eq!(
+            bundle.schema_version,
+            SCHEDULER_MODEL_SUITABILITY_INPUT_BUNDLE_SCHEMA_V1
+        );
+
+        let plan = schedule_economics_bundle(&bundle).expect("model suitability plan");
+        assert_eq!(
+            plan.source_schema_version,
+            SCHEDULER_MODEL_SUITABILITY_INPUT_BUNDLE_SCHEMA_V1
+        );
+        let review = decision(&plan, "first-pass-review");
+        assert_eq!(
+            review.schema_version,
+            COGNITIVE_SCHEDULER_DECISION_MODEL_SUITABILITY_SCHEMA_V1
+        );
+        let selection = review
+            .model_suitability_selection
+            .as_ref()
+            .expect("review task has model suitability selection");
+        assert_eq!(selection.role, ModelSuitabilityRoleV1::Reviewer);
+        assert_eq!(selection.selected_candidate_id, "openrouter:gpt-5.4");
+        assert_eq!(
+            selection.provider_profile_ref,
+            "unprofiled:openrouter:openai/gpt-5.4"
+        );
+        assert_eq!(
+            selection.classification,
+            ModelSuitabilityClassificationV1::UsefulWithLimits
+        );
+        assert!(selection.advisory_authority_only);
+        assert_eq!(
+            selection.claim_boundary,
+            "bounded_role_suitability_not_authority"
+        );
+        assert!(selection.selection_trace.iter().any(|trace| {
+            trace.candidate_id == "local:gemma4-e2b"
+                && trace.disposition == ModelSuitabilityTraceDispositionV1::Rejected
+                && trace.reason.contains("does not support the requested role")
+        }));
+
+        let docs = decision(&plan, "docs-status-check");
+        assert_eq!(docs.schema_version, COGNITIVE_SCHEDULER_DECISION_SCHEMA_V1);
+        assert!(docs.model_suitability_selection.is_none());
+        assert!(docs.provider_route.is_none());
+    }
+
+    #[test]
+    fn model_suitability_context_requires_schema_bump() {
+        let mut bundle =
+            parse_economics_bundle_json(MODEL_SUITABILITY_FIXTURE).expect("fixture parses");
+        bundle.schema_version = SCHEDULER_ECONOMICS_INPUT_BUNDLE_SCHEMA_V1.to_string();
+        let err = validate_economics_bundle(&bundle).expect_err("schema bump required");
+        assert!(err
+            .to_string()
+            .contains("model_suitability_context requires scheduler bundle schema"));
+    }
+
+    #[test]
+    fn model_suitability_schema_requires_context() {
+        let mut bundle =
+            parse_economics_bundle_json(MODEL_SUITABILITY_FIXTURE).expect("fixture parses");
+        bundle.model_suitability_context = None;
+        let err = validate_economics_bundle(&bundle).expect_err("context required");
+        assert!(err
+            .to_string()
+            .contains("requires model_suitability_context"));
+    }
+
+    #[test]
+    fn model_suitability_context_rejects_non_advisory_candidate() {
+        let mut bundle =
+            parse_economics_bundle_json(MODEL_SUITABILITY_FIXTURE).expect("fixture parses");
+        let context = bundle
+            .model_suitability_context
+            .as_mut()
+            .expect("model context");
+        context.candidates[0].advisory_authority_only = false;
+        let err = validate_economics_bundle(&bundle).expect_err("non advisory rejected");
+        assert!(err.to_string().contains("must be advisory_authority_only"));
+    }
+
+    #[test]
+    fn model_suitability_context_rejects_unmatched_role_requirement() {
+        let mut bundle =
+            parse_economics_bundle_json(MODEL_SUITABILITY_FIXTURE).expect("fixture parses");
+        let context = bundle
+            .model_suitability_context
+            .as_mut()
+            .expect("model context");
+        context.task_requirements[0].role = ModelSuitabilityRoleV1::Worker;
+        context.task_requirements[0].allowed_provider_profile_refs =
+            vec!["unprofiled:gemini:gemini-2.5-flash".to_string()];
+        let err = validate_economics_bundle(&bundle).expect_err("no eligible worker");
+        assert!(err.to_string().contains("no eligible candidate"));
+    }
+
+    #[test]
+    fn model_suitability_context_rejects_overclaiming_claim_boundary() {
+        let mut bundle =
+            parse_economics_bundle_json(MODEL_SUITABILITY_FIXTURE).expect("fixture parses");
+        let context = bundle
+            .model_suitability_context
+            .as_mut()
+            .expect("model context");
+        context.task_requirements[0].claim_boundary = "unbounded_authority".to_string();
+        let err = validate_economics_bundle(&bundle).expect_err("overclaim rejected");
+        assert!(err.to_string().contains("claim_boundary must be one of"));
+    }
+
+    #[test]
+    fn model_suitability_context_rejects_uncited_candidate_source() {
+        let mut bundle =
+            parse_economics_bundle_json(MODEL_SUITABILITY_FIXTURE).expect("fixture parses");
+        let context = bundle
+            .model_suitability_context
+            .as_mut()
+            .expect("model context");
+        context.candidates[0].source_ref =
+            "docs/milestones/v0.91.7/review/provider/missing-source.md".to_string();
+        let err = validate_economics_bundle(&bundle).expect_err("uncited source rejected");
+        assert!(err
+            .to_string()
+            .contains("source_ref is not retained in evidence_refs"));
     }
 
     #[test]
