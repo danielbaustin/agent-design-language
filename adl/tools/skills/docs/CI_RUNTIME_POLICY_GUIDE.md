@@ -101,6 +101,34 @@ or assembling release evidence:
 The CI path-policy classifier does not mean every issue should run the full
 local Rust cycle before publication.
 
+ADL issue publication should prefer the repo-native validation profile emitted
+by:
+
+```bash
+python3 adl/tools/validation_manager.py --json --changed-files <changed-files>
+```
+
+That profile now includes a `validation_split` block when the manager can
+classify the changed surface. Skills and scripts that consume validation truth
+should preserve this block rather than flattening it into a generic pass/skip:
+
+- `fast_lane` records the ordinary PR validation lane that is selected for the
+  current changed surface, including whether it is runnable and sufficient for
+  PR publication.
+- `slow_families` records explicit slow-proof families that are fanned out or
+  deferred, with the family owner and command that would run the proof.
+- `fanout_policy.missing_or_unmapped_proof=fail_closed` means an unmapped
+  required proof is not an approved skip; it requires an explicit family
+  selection, a broader validation lane, or human/process routing.
+- `fail_closed.required=true` keeps the existing manager gates authoritative;
+  do not mark a PR-ready validation result from the fast lane alone when the
+  manager says fail-closed proof is required.
+
+For ordinary PRs, the fast lane can prove the changed surface while the slow
+families remain visible as deferred or release-owned work. For release evidence
+or a fail-closed manager result, the same slow-family entries become routing
+obligations instead of background notes.
+
 Skills should classify the changed surface first:
 
 - `docs-only`
@@ -218,6 +246,11 @@ Truthful interpretation:
   `adl/tools/run_pr_fast_test_lane.sh`. For bounded PRs, that runner may use a
   focused `cargo nextest` expression. For broad or ambiguous PRs, it fails
   closed to the full ordinary nextest sweep.
+- When the validation manager emits `validation_split.fast_lane`, use it as the
+  machine-readable explanation for why the PR-fast lane is sufficient or not
+  sufficient for publication. Keep `validation_profile.status`,
+  `pr_publication_sufficient`, and `escalation.required` as the authoritative
+  gates.
 - The ordinary PR lane must not re-enable heavyweight opt-in features such as
   `slow-proof-tests`; those stay reserved for dedicated heavy proof or
   authoritative coverage lanes.
@@ -250,6 +283,13 @@ cargo nextest run --features slow-proof-tests --partition count:1/4 --status-lev
 Use the matching `count:2/4`, `count:3/4`, and `count:4/4` partitions for the
 other shards. Individual tests should not contain shard-specific logic; they
 should only be classified as ordinary fast proof or explicit slow proof.
+
+When slow proof is intentionally deferred from a PR, record the family in
+`validation_split.slow_families` with disposition
+`reserved_for_explicit_family_selection` or a more specific owner-visible
+state. Do not collapse slow proof into a generic skipped check; the SOR and PR
+evidence should say which family owns the remaining proof and why ordinary
+PR-fast validation did not run it.
 
 ### Full-Evidence Runtime Event Or Policy-Surface PR
 

@@ -495,6 +495,19 @@ Validation should match the changed surface:
 - `janitor-focused`: failed PR checks or conflicts; reproduce the smallest
   failing check and validate the bounded repair
 
+When repo-native tooling provides a validation-manager profile, lifecycle and
+editor skills should carry its split truth forward:
+
+- record the selected `validation_split.fast_lane` in PR/SOR evidence when it
+  explains why ordinary PR validation is sufficient
+- record each `validation_split.slow_families` entry as executed, explicitly
+  deferred, or routed to its owning slow-proof/release surface
+- preserve fail-closed manager results; a fast lane is not publication proof
+  when `fail_closed.required=true`, `pr_publication_sufficient=false`, or
+  `escalation.required=true`
+- do not describe slow-family proof as merely skipped when the manager provides
+  a named family, command, and owner
+
 Default mapping:
 
 - `docs-only` -> `docs-bounded`
