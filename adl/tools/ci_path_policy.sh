@@ -534,7 +534,7 @@ is_bounded_pr_fast_coverage_policy_change() {
         fi
         ;;
       adl/tools/test_ci_runtime_contracts.sh)
-        if git_pr_patch "$path" | grep -F 'coverage-summary.json' >/dev/null 2>&1; then
+        if git_pr_patch "$path" | grep -E 'coverage-summary.json|ADL_PR_FAST_COVERAGE_BUILD_ROOT|PR-fast coverage target|pr-fast-coverage' >/dev/null 2>&1; then
           saw_bounded_marker=true
         else
           saw_other=true
