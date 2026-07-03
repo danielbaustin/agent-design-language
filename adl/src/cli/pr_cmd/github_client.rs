@@ -2,6 +2,7 @@
 // Shared GitHub client contract and octocrab transport bridge for C-SDLC issue
 // and PR workflow operations.
 
+use once_cell::sync::OnceCell;
 use std::collections::BTreeSet;
 use std::fmt;
 use std::marker::PhantomData;
@@ -186,6 +187,7 @@ impl AdlGithubClient {
                 missing_token_message(),
             )
         })?;
+        ensure_rustls_crypto_provider()?;
         let builder = octocrab::Octocrab::builder().personal_token(token.to_string());
         #[cfg(test)]
         let builder = if let Ok(base_uri) = std::env::var(ADL_GITHUB_OCTOCRAB_BASE_URI_ENV) {
@@ -205,6 +207,32 @@ impl AdlGithubClient {
             )
         })
     }
+}
+
+fn ensure_rustls_crypto_provider() -> Result<(), AdlGithubClientError> {
+    static RUSTLS_PROVIDER: OnceCell<()> = OnceCell::new();
+    if rustls::crypto::CryptoProvider::get_default().is_some() {
+        return Ok(());
+    }
+    RUSTLS_PROVIDER
+        .get_or_try_init(|| {
+        if rustls::crypto::CryptoProvider::get_default().is_none() {
+            let install_result = rustls::crypto::ring::default_provider().install_default();
+            if let Err(existing_provider) = install_result {
+                if rustls::crypto::CryptoProvider::get_default().is_none() {
+                    return Err(format!(
+                        "failed to install rustls ring CryptoProvider before octocrab client construction; existing process provider state remained unresolved: {existing_provider:?}"
+                    ));
+                }
+            }
+        }
+        Ok(())
+    })
+        .map(|_| ())
+        .map_err(|message| AdlGithubClientError::new(
+            AdlGithubClientErrorKind::Transport,
+            message,
+        ))
 }
 
 fn token_value(github_token: Option<&str>, gh_token: Option<&str>) -> Option<ResolvedGithubToken> {
@@ -695,6 +723,36 @@ mod tests {
         assert_eq!(GithubClientMode::Gh.as_str(), "gh");
         assert_eq!(GithubClientBackend::Octocrab.as_str(), "octocrab");
         assert_eq!(GithubClientBackend::GhFallback.as_str(), "gh");
+    }
+
+    #[test]
+    fn octocrab_build_installs_rustls_provider_once_before_client_construction() {
+        let _guard = env_lock();
+        let runtime = tokio::runtime::Builder::new_current_thread()
+            .enable_all()
+            .build()
+            .expect("tokio runtime");
+        let _runtime_guard = runtime.enter();
+        unsafe {
+            std::env::set_var(ADL_GITHUB_OCTOCRAB_BASE_URI_ENV, "https://api.github.test");
+        }
+        let client = AdlGithubClient::from_values(Some("octocrab"), Some("github"), None)
+            .expect("octocrab client config");
+
+        client
+            .octocrab()
+            .expect("first octocrab build should succeed");
+        assert!(
+            rustls::crypto::CryptoProvider::get_default().is_some(),
+            "octocrab path should leave a process-default rustls provider installed"
+        );
+        client
+            .octocrab()
+            .expect("second octocrab build should also succeed");
+
+        unsafe {
+            std::env::remove_var(ADL_GITHUB_OCTOCRAB_BASE_URI_ENV);
+        }
     }
 
     #[test]

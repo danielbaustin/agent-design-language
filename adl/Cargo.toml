@@ -181,6 +181,7 @@ octocrab = { version = "0.53", default-features = false, features = [
   "rustls",
   "rustls-ring",
 ] }
+rustls = { version = "0.23", default-features = false, features = ["ring"] }
 # Shared async runtime floor for long-lived cadence, ACIP runtime work, and
 # later bounded recurring verification on the existing ADL runtime.
 tokio = { version = "1", features = ["fs", "macros", "net", "rt", "rt-multi-thread", "sync", "time"] }
