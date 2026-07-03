@@ -35,24 +35,19 @@ install_nextest() {
   local version="${ADL_CARGO_NEXTEST_VERSION:-0.9.138}"
   local cargo_home="${CARGO_HOME:-$HOME/.cargo}"
   local bin_dir="$cargo_home/bin"
-  local tmp_dir=""
-  cleanup_nextest_tmp() {
-    if [ -n "$tmp_dir" ]; then
-      rm -rf "$tmp_dir"
-    fi
-  }
   mkdir -p "$bin_dir"
   if command -v cargo-nextest >/dev/null 2>&1 || cargo nextest --version >/dev/null 2>&1; then
     cargo nextest --version
     return 0
   fi
+  local tmp_dir
   tmp_dir="$(mktemp -d)"
-  trap cleanup_nextest_tmp EXIT
   retry "download cargo-nextest ${version}" \
     curl -fsSL --retry 3 --retry-delay 2 --connect-timeout 10 --max-time 60 \
       "https://get.nexte.st/${version}/linux" -o "$tmp_dir/cargo-nextest.tar.gz"
   tar -xzf "$tmp_dir/cargo-nextest.tar.gz" -C "$tmp_dir"
   install -m 0755 "$tmp_dir/cargo-nextest" "$bin_dir/cargo-nextest"
+  rm -rf "$tmp_dir"
   export PATH="$bin_dir:$PATH"
   cargo nextest --version
 }
