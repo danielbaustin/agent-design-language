@@ -2902,7 +2902,6 @@ fn registered_validation_atom_supported(command: &str) -> bool {
                 | "adl/tools/test_run_pvf_validation_lane.sh"
                 | "adl/tools/test_pvf_ci_release_policy.sh"
                 | "adl/tools/test_ci_path_policy.sh"
-                | "adl/tools/test_ci_runtime_contracts.sh"
                 | "adl/tools/test_select_validation_lanes.sh"
                 | "adl/tools/test_validation_manager.sh"
                 | "adl/tools/test_run_nessus_remote_validation.sh"

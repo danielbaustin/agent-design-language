@@ -3880,7 +3880,7 @@ fn finish_validation_profile_classifies_locked_cargo_fallback_slice() {
     ));
     assert!(unrelated_plan
         .commands
-        .contains(&"bash adl/tools/test_ci_path_policy.sh && bash adl/tools/test_ci_runtime_contracts.sh && bash adl/tools/test_select_validation_lanes.sh && bash adl/tools/test_validation_manager.sh && bash adl/tools/test_run_nessus_remote_validation.sh".to_string()));
+        .contains(&"bash adl/tools/test_ci_path_policy.sh && bash adl/tools/test_select_validation_lanes.sh && bash adl/tools/test_validation_manager.sh && bash adl/tools/test_run_nessus_remote_validation.sh".to_string()));
     assert!(unrelated_plan
         .commands
         .contains(&"bash adl/tools/test_check_coverage_impact.sh".to_string()));

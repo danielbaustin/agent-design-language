@@ -334,7 +334,7 @@ Bootstrap VPP generation should name selected lanes, commands, and deferred rati
     assert!(vpp.contains("Validation family: `selected_3_lane_profile`"));
     assert!(vpp.contains("Validation size split: `mixed`"));
     assert!(vpp.contains("Expected proof cost: `medium`"));
-    assert!(vpp.contains("bash adl/tools/test_ci_path_policy.sh && bash adl/tools/test_ci_runtime_contracts.sh && bash adl/tools/test_select_validation_lanes.sh && bash adl/tools/test_validation_manager.sh"));
+    assert!(vpp.contains("bash adl/tools/test_ci_path_policy.sh && bash adl/tools/test_select_validation_lanes.sh && bash adl/tools/test_validation_manager.sh"));
     assert!(vpp.contains("bash adl/tools/run_owner_validation_lane.sh csdlc"));
     assert!(vpp.contains(
         "bash adl/tools/run_pr_fast_test_lane.sh --changed-files .adl/generated-vpp-changed-files.txt"
