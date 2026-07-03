@@ -120,9 +120,9 @@ if release_version_truth != "bash adl/tools/check_release_version_surfaces.sh":
         f"found: {release_version_truth}"
     )
 
-if "tool: nextest" not in workflow:
+if "setup_required_coverage_toolchain.sh install-nextest" not in workflow:
     raise SystemExit(
-        "coverage lanes must install cargo-nextest as a required coverage toolchain dependency"
+        "coverage lanes must install cargo-nextest through the repo-owned required toolchain installer"
     )
 if "cargo llvm-cov nextest" in workflow:
     raise SystemExit("adl-coverage workflow must delegate coverage execution to runner scripts, not inline nextest")

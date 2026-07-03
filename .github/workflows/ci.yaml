@@ -93,9 +93,8 @@ jobs:
 
       - name: Install cargo-nextest for CI contract checks
         if: steps.path-policy.outputs.ci_contracts_required == 'true'
-        uses: taiki-e/install-action@e5c52b603cc5f5e9b52b6a43afad8e9fe0527090 # install-action
-        with:
-          tool: nextest
+        run: bash adl/tools/setup_required_coverage_toolchain.sh install-nextest
+        working-directory: .
 
       - name: Install lld
         if: steps.path-policy.outputs.rust_required == 'true'
@@ -265,9 +264,8 @@ jobs:
 
       - name: Install cargo-nextest
         if: steps.path-policy.outputs.rust_required == 'true' && steps.path-policy.outputs.full_coverage_required != 'true'
-        uses: taiki-e/install-action@e5c52b603cc5f5e9b52b6a43afad8e9fe0527090 # install-action
-        with:
-          tool: nextest
+        run: bash adl/tools/setup_required_coverage_toolchain.sh install-nextest
+        working-directory: .
 
       - name: test
         if: steps.path-policy.outputs.rust_required == 'true' && steps.path-policy.outputs.full_coverage_required != 'true'
@@ -373,9 +371,7 @@ jobs:
             ~/.cache/sccache
 
       - name: Install cargo-nextest
-        uses: taiki-e/install-action@e5c52b603cc5f5e9b52b6a43afad8e9fe0527090 # install-action
-        with:
-          tool: nextest
+        run: bash ../adl/tools/setup_required_coverage_toolchain.sh install-nextest
 
       - name: Slow proof shard
         run: |
@@ -477,9 +473,8 @@ jobs:
 
       - name: Install cargo-nextest for coverage
         if: steps.path-policy.outputs.full_coverage_required == 'true' || steps.coverage-impact.outputs.needs_fast_summary == 'true'
-        uses: taiki-e/install-action@e5c52b603cc5f5e9b52b6a43afad8e9fe0527090 # install-action
-        with:
-          tool: nextest
+        run: bash adl/tools/setup_required_coverage_toolchain.sh install-nextest
+        working-directory: .
 
       - name: Install sccache for coverage
         if: steps.path-policy.outputs.full_coverage_required == 'true' || steps.coverage-impact.outputs.needs_fast_summary == 'true'
