@@ -75,10 +75,10 @@ use self::git_support::commits_ahead_of_origin_main;
 #[cfg(test)]
 use self::git_support::has_uncommitted_changes;
 #[cfg(test)]
-use self::git_support::{branch_checked_out_worktree_path, infer_repo_from_remote};
+use self::git_support::infer_repo_from_remote;
 use self::git_support::{
-    current_branch, default_repo, ensure_git_metadata_writable, ensure_local_branch_exists,
-    ensure_worktree_for_branch, fetch_origin_main_with_fallback,
+    branch_checked_out_worktree_path, current_branch, default_repo, ensure_git_metadata_writable,
+    ensure_local_branch_exists, ensure_worktree_for_branch, fetch_origin_main_with_fallback,
     has_uncommitted_or_untracked_changes, issue_create_repo, path_str, primary_checkout_root,
     repo_root, run_capture, run_status, tracked_changes_status,
 };
@@ -1197,8 +1197,27 @@ fn real_pr_repair_issue_body(args: &[String]) -> Result<()> {
     validate_issue_body_for_create(&repo_root, &title, &normalized_labels, &slug, &body)?;
 
     let issue_ref = IssueRef::new(parsed.issue, version.clone(), slug.clone())?;
+    let primary_root = primary_checkout_root()?;
+    let local_repair_root = repair_issue_body_local_root(&repo_root, &primary_root, &issue_ref)?;
+    if !same_checkout_root(&local_repair_root, &repo_root)? {
+        if let Some((local_version, local_slug)) =
+            resolve_local_issue_identity(&local_repair_root, parsed.issue)?
+        {
+            if local_version != version || local_slug != slug {
+                bail!(
+                    "repair-issue-body: local identity drift in bound worktree for issue #{}; current worktree identity is {}:{} and requested identity is {}:{}. Keep the canonical identity or migrate the local prompt/task bundle manually before rerunning.",
+                    parsed.issue,
+                    local_version,
+                    local_slug,
+                    version,
+                    slug
+                );
+            }
+        }
+        ensure_no_duplicate_issue_identities(&local_repair_root, &issue_ref)?;
+    }
     ensure_no_duplicate_issue_identities(&repo_root, &issue_ref)?;
-    let source_path = issue_ref.issue_prompt_path(&repo_root);
+    let source_path = issue_ref.issue_prompt_path(&local_repair_root);
     if source_path.is_file() && !parsed.force {
         let current = fs::read_to_string(&source_path)
             .with_context(|| format!("failed to read {}", source_path.display()))?;
@@ -1240,27 +1259,27 @@ fn real_pr_repair_issue_body(args: &[String]) -> Result<()> {
         gh_issue_edit_body(&repo, parsed.issue, &body)?;
     }
     let source_path = write_source_issue_prompt(
-        &repo_root,
+        &local_repair_root,
         &issue_ref,
         &title,
         &normalized_labels,
         &issue_url,
         &body,
     )?;
-    validate_bootstrap_stp(&repo_root, &source_path)?;
+    validate_bootstrap_stp(&local_repair_root, &source_path)?;
     validate_authored_prompt_surface(
         "repair-issue-body",
         &source_path,
         PromptSurfaceKind::IssuePrompt,
     )?;
 
-    let bundle_dir = issue_ref.task_bundle_dir_path(&repo_root);
+    let bundle_dir = issue_ref.task_bundle_dir_path(&local_repair_root);
     if bundle_dir.is_dir() {
         fs::remove_dir_all(&bundle_dir)
             .with_context(|| format!("failed to remove stale bundle {}", bundle_dir.display()))?;
     }
     let (stp_path, bundle_input, bundle_output, bundle_dir) =
-        bootstrap_root_task_bundle(&repo_root, &issue_ref, &title, &source_path)?;
+        bootstrap_root_task_bundle(&local_repair_root, &issue_ref, &title, &source_path)?;
 
     println!("• Repaired issue metadata/source prompt:");
     println!("  ISSUE     #{}", parsed.issue);
@@ -1268,27 +1287,44 @@ fn real_pr_repair_issue_body(args: &[String]) -> Result<()> {
     println!("  SLUG      {slug}");
     println!(
         "  SOURCE    {}",
-        path_relative_to_repo(&repo_root, &source_path)
+        path_relative_to_repo(&local_repair_root, &source_path)
     );
     println!(
         "  STP       {}",
-        path_relative_to_repo(&repo_root, &stp_path)
+        path_relative_to_repo(&local_repair_root, &stp_path)
     );
     println!(
         "  SIP       {}",
-        path_relative_to_repo(&repo_root, &bundle_input)
+        path_relative_to_repo(&local_repair_root, &bundle_input)
     );
     println!(
         "  SOR       {}",
-        path_relative_to_repo(&repo_root, &bundle_output)
+        path_relative_to_repo(&local_repair_root, &bundle_output)
     );
     println!(
         "  BUNDLE    {}",
-        path_relative_to_repo(&repo_root, &bundle_dir)
+        path_relative_to_repo(&local_repair_root, &bundle_dir)
     );
     println!("  STATE     ISSUE_BODY_AND_BUNDLE_REPAIRED");
     println!("• Done.");
     Ok(())
+}
+
+fn repair_issue_body_local_root(
+    repo_root: &Path,
+    primary_root: &Path,
+    issue_ref: &IssueRef,
+) -> Result<PathBuf> {
+    if !same_checkout_root(repo_root, primary_root)? {
+        return Ok(repo_root.to_path_buf());
+    }
+    let expected_branch = issue_ref.branch_name("codex");
+    if let Some(path) = branch_checked_out_worktree_path(&expected_branch)? {
+        if !same_checkout_root(&path, primary_root)? {
+            return Ok(path);
+        }
+    }
+    Ok(primary_root.to_path_buf())
 }
 
 fn real_pr_create(args: &[String]) -> Result<()> {

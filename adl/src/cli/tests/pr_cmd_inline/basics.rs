@@ -2387,6 +2387,256 @@ fn real_pr_repair_issue_body_updates_github_source_prompt_and_bundle() {
 }
 
 #[test]
+fn real_pr_repair_issue_body_from_primary_writes_bound_worktree_not_root() {
+    let _guard = env_lock();
+    let repo = unique_temp_dir("adl-pr-repair-bound-worktree-not-root");
+    init_git_repo(&repo);
+    copy_bootstrap_support_files(&repo);
+    assert!(std::process::Command::new("git")
+        .args(["config", "user.email", "test@example.com"])
+        .current_dir(&repo)
+        .status()
+        .expect("git config email")
+        .success());
+    assert!(std::process::Command::new("git")
+        .args(["config", "user.name", "ADL Test"])
+        .current_dir(&repo)
+        .status()
+        .expect("git config name")
+        .success());
+    assert!(std::process::Command::new("git")
+        .args(["add", "."])
+        .current_dir(&repo)
+        .status()
+        .expect("git add")
+        .success());
+    assert!(std::process::Command::new("git")
+        .args(["commit", "-qm", "seed"])
+        .current_dir(&repo)
+        .status()
+        .expect("git commit")
+        .success());
+
+    let issue_ref = IssueRef::new(1302, "v0.91.5", "repair-body").expect("issue ref");
+    let branch = issue_ref.branch_name("codex");
+    assert!(std::process::Command::new("git")
+        .args(["branch", &branch])
+        .current_dir(&repo)
+        .status()
+        .expect("git branch")
+        .success());
+    let worktree = repo.join(".worktrees/custom-repair-body-worktree");
+    assert!(std::process::Command::new("git")
+        .args([
+            "worktree",
+            "add",
+            "-q",
+            path_str(&worktree).expect("worktree path"),
+            &branch
+        ])
+        .current_dir(&repo)
+        .status()
+        .expect("git worktree add")
+        .success());
+
+    let fixture = repo.join(".adl/test-fixtures/gh");
+    fs::create_dir_all(fixture.parent().expect("fixture parent")).expect("fixture dir");
+    let gh_log = repo.join("gh.log");
+    write_executable(
+        &fixture,
+        &format!(
+            r#"#!/usr/bin/env bash
+set -euo pipefail
+printf '%s\n' "$*" >> '{}'
+if [[ "$1 $2" == "label list" ]]; then
+  printf 'track:backlog\ntype:docs\narea:docs\nversion:v0.91.5\n'
+  exit 0
+fi
+if [[ "$1 $2" == "issue view" ]]; then
+  if printf '%s\n' "$*" | grep -q -- '--json title'; then
+    printf '[v0.91.5][tools] Repair body\n'
+    exit 0
+  fi
+  if printf '%s\n' "$*" | grep -q -- '--json labels'; then
+    printf 'track:backlog\ntype:docs\narea:docs\nversion:v0.91.5\n'
+    exit 0
+  fi
+fi
+if [[ "$1 $2" == "issue edit" ]]; then
+  exit 0
+fi
+exit 1
+"#,
+            gh_log.display()
+        ),
+    );
+    let _fixture_guard = GithubCliFixtureGuard::set(&fixture);
+
+    let body_path = repo.join("repair-body.md");
+    fs::write(&body_path, authored_repair_body()).expect("write body");
+    let prev_dir = env::current_dir().expect("cwd");
+    env::set_current_dir(&repo).expect("chdir primary");
+
+    let result = real_pr(&[
+        "repair-issue-body".to_string(),
+        "1302".to_string(),
+        "--slug".to_string(),
+        "repair-body".to_string(),
+        "--body-file".to_string(),
+        body_path.display().to_string(),
+        "--version".to_string(),
+        "v0.91.5".to_string(),
+    ]);
+
+    env::set_current_dir(prev_dir).expect("restore cwd");
+    result.expect("repair issue body");
+
+    assert!(
+        !issue_ref.issue_prompt_path(&repo).exists(),
+        "primary checkout should not receive repaired local issue prompt when bound worktree exists"
+    );
+    assert!(
+        !issue_ref.task_bundle_dir_path(&repo).exists(),
+        "primary checkout should not receive regenerated task bundle when bound worktree exists"
+    );
+    assert!(
+        issue_ref.issue_prompt_path(&worktree).is_file(),
+        "bound worktree should receive repaired local issue prompt"
+    );
+    assert!(
+        issue_ref.task_bundle_stp_path(&worktree).is_file(),
+        "bound worktree should receive regenerated task bundle"
+    );
+}
+
+#[test]
+fn real_pr_repair_issue_body_blocks_bound_worktree_identity_drift() {
+    let _guard = env_lock();
+    let repo = unique_temp_dir("adl-pr-repair-bound-worktree-identity-drift");
+    init_git_repo(&repo);
+    copy_bootstrap_support_files(&repo);
+    assert!(std::process::Command::new("git")
+        .args(["config", "user.email", "test@example.com"])
+        .current_dir(&repo)
+        .status()
+        .expect("git config email")
+        .success());
+    assert!(std::process::Command::new("git")
+        .args(["config", "user.name", "ADL Test"])
+        .current_dir(&repo)
+        .status()
+        .expect("git config name")
+        .success());
+    assert!(std::process::Command::new("git")
+        .args(["add", "."])
+        .current_dir(&repo)
+        .status()
+        .expect("git add")
+        .success());
+    assert!(std::process::Command::new("git")
+        .args(["commit", "-qm", "seed"])
+        .current_dir(&repo)
+        .status()
+        .expect("git commit")
+        .success());
+
+    let requested_ref = IssueRef::new(1302, "v0.91.5", "repair-body").expect("issue ref");
+    let branch = requested_ref.branch_name("codex");
+    assert!(std::process::Command::new("git")
+        .args(["branch", &branch])
+        .current_dir(&repo)
+        .status()
+        .expect("git branch")
+        .success());
+    let worktree = repo.join(".worktrees/custom-repair-body-drift");
+    assert!(std::process::Command::new("git")
+        .args([
+            "worktree",
+            "add",
+            "-q",
+            path_str(&worktree).expect("worktree path"),
+            &branch,
+        ])
+        .current_dir(&repo)
+        .status()
+        .expect("git worktree add")
+        .success());
+
+    let drift_ref = IssueRef::new(1302, "v0.91.5", "old-repair-body").expect("drift ref");
+    let drift_source = drift_ref.issue_prompt_path(&worktree);
+    fs::create_dir_all(drift_source.parent().expect("drift parent")).expect("drift dir");
+    fs::write(&drift_source, authored_repair_body()).expect("write drift source");
+
+    let fixture = repo.join(".adl/test-fixtures/gh");
+    fs::create_dir_all(fixture.parent().expect("fixture parent")).expect("fixture dir");
+    let gh_log = repo.join("gh.log");
+    write_executable(
+        &fixture,
+        &format!(
+            r#"#!/usr/bin/env bash
+set -euo pipefail
+printf '%s\n' "$*" >> '{}'
+if [[ "$1 $2" == "label list" ]]; then
+  printf 'track:backlog\ntype:docs\narea:docs\nversion:v0.91.5\n'
+  exit 0
+fi
+if [[ "$1 $2" == "issue view" ]]; then
+  if printf '%s\n' "$*" | grep -q -- '--json title'; then
+    printf '[v0.91.5][tools] Repair body\n'
+    exit 0
+  fi
+  if printf '%s\n' "$*" | grep -q -- '--json labels'; then
+    printf 'track:backlog\ntype:docs\narea:docs\nversion:v0.91.5\n'
+    exit 0
+  fi
+fi
+if [[ "$1 $2" == "issue edit" ]]; then
+  exit 0
+fi
+exit 1
+"#,
+            gh_log.display()
+        ),
+    );
+    let _fixture_guard = GithubCliFixtureGuard::set(&fixture);
+
+    let body_path = repo.join("repair-body.md");
+    fs::write(&body_path, authored_repair_body()).expect("write body");
+    let prev_dir = env::current_dir().expect("cwd");
+    env::set_current_dir(&repo).expect("chdir primary");
+
+    let err = real_pr(&[
+        "repair-issue-body".to_string(),
+        "1302".to_string(),
+        "--slug".to_string(),
+        "repair-body".to_string(),
+        "--body-file".to_string(),
+        body_path.display().to_string(),
+        "--version".to_string(),
+        "v0.91.5".to_string(),
+    ])
+    .expect_err("bound worktree identity drift should fail closed");
+
+    env::set_current_dir(prev_dir).expect("restore cwd");
+    assert!(
+        err.to_string()
+            .contains("local identity drift in bound worktree")
+            || err
+                .to_string()
+                .contains("duplicate local issue identities detected for issue #1302"),
+        "unexpected error: {err}"
+    );
+    assert!(
+        !requested_ref.issue_prompt_path(&repo).exists(),
+        "primary checkout should not receive a prompt when bound-worktree identity drift blocks repair"
+    );
+    assert!(
+        !requested_ref.issue_prompt_path(&worktree).exists(),
+        "repair should not create a second issue prompt beside the drifted bound-worktree identity"
+    );
+}
+
+#[test]
 fn real_pr_repair_issue_body_repairs_title_and_labels_without_body_mutation() {
     let _guard = env_lock();
     let repo = unique_temp_dir("adl-pr-repair-issue-metadata");
