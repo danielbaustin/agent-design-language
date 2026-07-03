@@ -583,6 +583,35 @@ fn long_running_context_continuity_proof_writes_reviewable_artifact_without_host
     assert!(root
         .join(LONG_RUNNING_CONTEXT_CONTINUITY_TRACE_ARTIFACT_REF)
         .is_file());
+    let trace_artifact_text =
+        fs::read_to_string(root.join(LONG_RUNNING_CONTEXT_CONTINUITY_TRACE_ARTIFACT_REF))
+            .expect("trace artifact text");
+    assert!(trace_artifact_text.contains(LONG_RUNNING_CONTEXT_CONTINUITY_TRACE_ARTIFACT_SCHEMA));
+    assert!(!trace_artifact_text.contains(LONG_RUNNING_CONTEXT_CONTINUITY_PROOF_SCHEMA));
+    assert!(!trace_artifact_text.contains(root.to_string_lossy().as_ref()));
+    let trace_artifact: LongRunningContextContinuityTraceArtifact =
+        serde_json::from_str(&trace_artifact_text).expect("trace artifact json");
+    assert_eq!(
+        trace_artifact.schema_version,
+        LONG_RUNNING_CONTEXT_CONTINUITY_TRACE_ARTIFACT_SCHEMA
+    );
+    assert_eq!(
+        trace_artifact.trace.events.len(),
+        trace_artifact
+            .temporal_causality_review
+            .explanations
+            .iter()
+            .map(|explanation| explanation.target_event_id.as_str())
+            .collect::<std::collections::BTreeSet<_>>()
+            .len()
+            + 1
+    );
+    assert!(
+        trace_artifact
+            .temporal_causality_review
+            .causal_or_dependency_count
+            >= 4
+    );
 
     fs::remove_dir_all(root).expect("cleanup proof root");
 }

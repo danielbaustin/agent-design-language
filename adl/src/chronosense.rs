@@ -50,10 +50,11 @@ pub use instinct::{
 pub use long_running_proof::{
     build_long_running_context_continuity_proof, validate_long_running_context_continuity_proof,
     write_long_running_context_continuity_proof, ContinuityProofCheck,
-    LongRunningContextContinuityProof, LONG_RUNNING_CONTEXT_CONTINUITY_PROOF_PATH,
-    LONG_RUNNING_CONTEXT_CONTINUITY_PROOF_SCHEMA,
+    LongRunningContextContinuityProof, LongRunningContextContinuityTraceArtifact,
+    LONG_RUNNING_CONTEXT_CONTINUITY_PROOF_PATH, LONG_RUNNING_CONTEXT_CONTINUITY_PROOF_SCHEMA,
     LONG_RUNNING_CONTEXT_CONTINUITY_RUNTIME_STATE_PATH,
     LONG_RUNNING_CONTEXT_CONTINUITY_TRACE_ARTIFACT_REF,
+    LONG_RUNNING_CONTEXT_CONTINUITY_TRACE_ARTIFACT_SCHEMA,
 };
 pub use phi::{
     PhiComparisonFixture, PhiComparisonProfile, PhiIntegrationMetricsContract, PhiMetricDimension,

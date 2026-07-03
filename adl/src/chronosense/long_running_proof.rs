@@ -7,7 +7,8 @@ use serde::{Deserialize, Serialize};
 
 use super::{
     build_temporal_causality_trace_review, ChronosenseRuntimeService,
-    ChronosenseRuntimeServiceConfig, CHRONOSENSE_EVENT_ANCHOR_SCHEMA, COMMITMENT_DEADLINE_SCHEMA,
+    ChronosenseRuntimeServiceConfig, TemporalCausalityTraceReviewArtifact,
+    CHRONOSENSE_EVENT_ANCHOR_SCHEMA, COMMITMENT_DEADLINE_SCHEMA,
 };
 use crate::{
     obsmem_adapter::ObsMemAdapter,
@@ -34,6 +35,8 @@ use crate::{
 
 pub const LONG_RUNNING_CONTEXT_CONTINUITY_PROOF_SCHEMA: &str =
     "chronosense.long_running_context_continuity_proof.v1";
+pub const LONG_RUNNING_CONTEXT_CONTINUITY_TRACE_ARTIFACT_SCHEMA: &str =
+    "chronosense.long_running_context_continuity_trace_artifact.v1";
 pub const LONG_RUNNING_CONTEXT_CONTINUITY_PROOF_PATH: &str =
     ".adl/state/chronosense/long_running_context_continuity_proof_v1.json";
 pub const LONG_RUNNING_CONTEXT_CONTINUITY_RUNTIME_STATE_PATH: &str =
@@ -78,9 +81,32 @@ pub struct ContinuityProofCheck {
     pub evidence: String,
 }
 
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
+pub struct LongRunningContextContinuityTraceArtifact {
+    pub schema_version: String,
+    pub proof_id: String,
+    pub continuity_id: String,
+    pub trace: TraceEventEnvelopeV1,
+    pub temporal_causality_review: TemporalCausalityTraceReviewArtifact,
+    pub review_surface: String,
+    pub claim_boundary: String,
+}
+
+#[derive(Debug, Clone, PartialEq, Eq)]
+struct LongRunningContextContinuityBuild {
+    proof: LongRunningContextContinuityProof,
+    trace_artifact: LongRunningContextContinuityTraceArtifact,
+}
+
 pub fn build_long_running_context_continuity_proof(
     proof_root: impl AsRef<Path>,
 ) -> Result<LongRunningContextContinuityProof> {
+    Ok(build_long_running_context_continuity_output(proof_root)?.proof)
+}
+
+fn build_long_running_context_continuity_output(
+    proof_root: impl AsRef<Path>,
+) -> Result<LongRunningContextContinuityBuild> {
     let proof_root = proof_root.as_ref();
     let continuity_id = "chronosense-proof-chain-a";
     let started_epoch_ms = 1_800_000_000_000_u128;
@@ -205,20 +231,33 @@ pub fn build_long_running_context_continuity_proof(
                 .to_string(),
     };
     validate_long_running_context_continuity_proof(&proof)?;
-    Ok(proof)
+    let trace_artifact = LongRunningContextContinuityTraceArtifact {
+        schema_version: LONG_RUNNING_CONTEXT_CONTINUITY_TRACE_ARTIFACT_SCHEMA.to_string(),
+        proof_id: proof.proof_id.clone(),
+        continuity_id: proof.continuity_id.clone(),
+        trace,
+        temporal_causality_review: causality_review,
+        review_surface: proof.review_surface.clone(),
+        claim_boundary: proof.claim_boundary.clone(),
+    };
+    validate_long_running_context_continuity_trace_artifact(&trace_artifact, &proof)?;
+    Ok(LongRunningContextContinuityBuild {
+        proof,
+        trace_artifact,
+    })
 }
 
 pub fn write_long_running_context_continuity_proof(
     proof_root: impl AsRef<Path>,
 ) -> Result<PathBuf> {
     let proof_root = proof_root.as_ref();
-    let proof = build_long_running_context_continuity_proof(proof_root)?;
+    let output = build_long_running_context_continuity_output(proof_root)?;
     let output_path = proof_root.join(LONG_RUNNING_CONTEXT_CONTINUITY_PROOF_PATH);
     if let Some(parent) = output_path.parent() {
         std::fs::create_dir_all(parent)
             .with_context(|| format!("create proof directory '{}'", parent.display()))?;
     }
-    let bytes = serde_json::to_vec_pretty(&proof)?;
+    let bytes = serde_json::to_vec_pretty(&output.proof)?;
     std::fs::write(&output_path, bytes)
         .with_context(|| format!("write proof '{}'", output_path.display()))?;
     let artifact_path = proof_root.join(LONG_RUNNING_CONTEXT_CONTINUITY_TRACE_ARTIFACT_REF);
@@ -226,10 +265,50 @@ pub fn write_long_running_context_continuity_proof(
         std::fs::create_dir_all(parent)
             .with_context(|| format!("create trace artifact directory '{}'", parent.display()))?;
     }
-    let artifact_bytes = serde_json::to_vec_pretty(&proof)?;
+    let artifact_bytes = serde_json::to_vec_pretty(&output.trace_artifact)?;
     std::fs::write(&artifact_path, artifact_bytes)
         .with_context(|| format!("write trace artifact '{}'", artifact_path.display()))?;
     Ok(output_path)
+}
+
+pub fn validate_long_running_context_continuity_trace_artifact(
+    artifact: &LongRunningContextContinuityTraceArtifact,
+    proof: &LongRunningContextContinuityProof,
+) -> Result<()> {
+    if artifact.schema_version != LONG_RUNNING_CONTEXT_CONTINUITY_TRACE_ARTIFACT_SCHEMA {
+        return Err(anyhow!(
+            "unsupported long-running context continuity trace artifact schema '{}'",
+            artifact.schema_version
+        ));
+    }
+    if artifact.proof_id != proof.proof_id || artifact.continuity_id != proof.continuity_id {
+        return Err(anyhow!(
+            "trace artifact identity does not match continuity proof"
+        ));
+    }
+    validate_trace_event_envelope_v1(&artifact.trace)?;
+    if artifact.trace.events.len() != proof.trace_event_count {
+        return Err(anyhow!("trace artifact event count does not match proof"));
+    }
+    if artifact.temporal_causality_review.run_id != proof.trace_run_id {
+        return Err(anyhow!(
+            "trace artifact causality review run id does not match proof"
+        ));
+    }
+    if artifact.temporal_causality_review.sequence_only_count
+        != proof.temporal_causality_sequence_only_count
+        || artifact
+            .temporal_causality_review
+            .causal_or_dependency_count
+            != proof.temporal_causality_or_dependency_count
+        || artifact.temporal_causality_review.uncertainty_count
+            != proof.temporal_causality_uncertainty_count
+    {
+        return Err(anyhow!(
+            "trace artifact causality review counts do not match proof"
+        ));
+    }
+    Ok(())
 }
 
 pub fn validate_long_running_context_continuity_proof(
