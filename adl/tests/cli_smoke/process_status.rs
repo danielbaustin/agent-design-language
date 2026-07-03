@@ -113,6 +113,28 @@ fn process_status_reports_bound_and_unbound_local_ports() {
 }
 
 #[test]
+fn process_status_reports_reachable_localhost_port_as_bound() {
+    let listener = TcpListener::bind(("127.0.0.1", 0)).expect("bind test listener");
+    let port = listener
+        .local_addr()
+        .expect("listener address")
+        .port()
+        .to_string();
+
+    let json = run_status_json(&["--port", &port, "--host", "localhost"]);
+
+    assert_eq!(json["check"], "port");
+    assert_eq!(json["status"], "bound_port");
+    assert_eq!(json["host"], "localhost");
+    assert_eq!(
+        json["note"],
+        "exact TCP connect probe reached a loopback service"
+    );
+    assert_eq!(json["broad_process_scan"], false);
+    assert_eq!(json["uses_ps"], false);
+}
+
+#[test]
 fn process_status_rejects_non_loopback_port_hosts() {
     let out = run_status_failure(&["--port", "8787", "--host", "0.0.0.0", "--json"]);
 
