@@ -527,6 +527,7 @@ assert lane["owner"] == "review"
 assert "bash -n adl/tools/test_v0916_unity_observatory_unity65_smoke.sh" in lane["command"]
 assert "test_v0916_unity_observatory_baseline.sh" in lane["command"]
 assert "test_v0916_unity_observatory_contract.sh" in lane["command"]
+assert "test_v0916_unity_observatory_local_runtime_consumption_unit.sh" in lane["command"]
 assert "test_v0916_unity_observatory_local_runtime_consumption.sh" in lane["command"]
 assert "test_v0916_unity_observatory_soak_integration.sh" in lane["command"]
 assert "csm_observatory_cli_writes_unity_contract_bundle" in lane["command"]
@@ -557,11 +558,13 @@ assert lane["matched_paths"] == [
     "docs/milestones/v0.91.6/review/observatory/UNITY_OBSERVATORY_LOGGING_OTEL_SECURITY_CONSUMPTION_4034.md",
 ]
 assert "test_v0916_unity_observatory_local_runtime_consumption.sh" in lane["command"]
+assert "test_v0916_unity_observatory_local_runtime_consumption_unit.sh" in lane["command"]
 PY
 
 unity_observatory_runtime_script="$TMP/unity-observatory-runtime-script.txt"
 cat >"$unity_observatory_runtime_script" <<'EOF'
 M	adl/tools/test_v0916_unity_observatory_local_runtime_consumption.sh
+M	adl/tools/test_v0916_unity_observatory_local_runtime_consumption_unit.sh
 EOF
 bash "$SCRIPT" --changed-files "$unity_observatory_runtime_script" --json >"$TMP/unity-observatory-runtime-script.json"
 python3 - <<'PY' "$TMP/unity-observatory-runtime-script.json"
@@ -576,8 +579,10 @@ assert set(profile["lanes"].keys()) == {"unity_observatory_contract_surface"}
 lane = profile["lanes"]["unity_observatory_contract_surface"]
 assert lane["matched_paths"] == [
     "adl/tools/test_v0916_unity_observatory_local_runtime_consumption.sh",
+    "adl/tools/test_v0916_unity_observatory_local_runtime_consumption_unit.sh",
 ]
 assert "test_v0916_unity_observatory_local_runtime_consumption.sh" in lane["command"]
+assert "test_v0916_unity_observatory_local_runtime_consumption_unit.sh" in lane["command"]
 PY
 
 echo "PASS test_select_validation_lanes"

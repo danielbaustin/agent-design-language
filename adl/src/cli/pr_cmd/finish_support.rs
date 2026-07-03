@@ -3191,6 +3191,7 @@ fn registered_validation_atom_supported(command: &str) -> bool {
                 | "adl/tools/test_v0916_unity_observatory_baseline.sh"
                 | "adl/tools/test_v0916_unity_observatory_contract.sh"
                 | "adl/tools/test_v0916_unity_observatory_local_runtime_consumption.sh"
+                | "adl/tools/test_v0916_unity_observatory_local_runtime_consumption_unit.sh"
                 | "adl/tools/test_v0916_unity_observatory_soak_integration.sh"
                 | "adl/tools/test_sprint_conductor_helpers.sh"
                 | "adl/tools/test_install_adl_operational_skills.sh"
@@ -3602,6 +3603,8 @@ fn finish_path_is_small_binary_focused(path: &str) -> bool {
             | "adl/tools/test_sprint_conductor_helpers.sh"
             | "adl/tools/test_v0916_unity_observatory_baseline.sh"
             | "adl/tools/test_v0916_unity_observatory_contract.sh"
+            | "adl/tools/test_v0916_unity_observatory_local_runtime_consumption.sh"
+            | "adl/tools/test_v0916_unity_observatory_local_runtime_consumption_unit.sh"
     ) || finish_path_needs_pr_finish_rust_focused_validation(trimmed)
 }
 
@@ -5269,7 +5272,13 @@ pub(super) fn run_finish_validation_rust(
                     let script = repo_root.join("adl/tools/test_v0916_unity_observatory_contract.sh");
                     run_finish_validation_status("bash", &[path_str(&script)?])?;
                 }
-                "bash -n adl/tools/test_v0916_unity_observatory_unity65_smoke.sh && bash adl/tools/test_v0916_unity_observatory_baseline.sh && bash adl/tools/test_v0916_unity_observatory_contract.sh && bash adl/tools/test_v0916_unity_observatory_local_runtime_consumption.sh && bash adl/tools/test_v0916_unity_observatory_soak_integration.sh && cargo test --manifest-path adl/Cargo.toml --test cli_smoke csm_observatory_cli_writes_unity_contract_bundle_and_matches_seeded_resource -- --nocapture" => {
+                "bash adl/tools/test_v0916_unity_observatory_local_runtime_consumption_unit.sh" => {
+                    let script = repo_root.join(
+                        "adl/tools/test_v0916_unity_observatory_local_runtime_consumption_unit.sh",
+                    );
+                    run_finish_validation_status("bash", &[path_str(&script)?])?;
+                }
+                "bash -n adl/tools/test_v0916_unity_observatory_unity65_smoke.sh && bash adl/tools/test_v0916_unity_observatory_baseline.sh && bash adl/tools/test_v0916_unity_observatory_contract.sh && bash adl/tools/test_v0916_unity_observatory_local_runtime_consumption_unit.sh && bash adl/tools/test_v0916_unity_observatory_local_runtime_consumption.sh && bash adl/tools/test_v0916_unity_observatory_soak_integration.sh && cargo test --manifest-path adl/Cargo.toml --test cli_smoke csm_observatory_cli_writes_unity_contract_bundle_and_matches_seeded_resource -- --nocapture" => {
                     let unity65_smoke =
                         repo_root.join("adl/tools/test_v0916_unity_observatory_unity65_smoke.sh");
                     run_finish_validation_status("bash", &["-n", path_str(&unity65_smoke)?])?;
@@ -5279,6 +5288,13 @@ pub(super) fn run_finish_validation_rust(
                     let contract =
                         repo_root.join("adl/tools/test_v0916_unity_observatory_contract.sh");
                     run_finish_validation_status("bash", &[path_str(&contract)?])?;
+                    let local_runtime_consumption_unit = repo_root.join(
+                        "adl/tools/test_v0916_unity_observatory_local_runtime_consumption_unit.sh",
+                    );
+                    run_finish_validation_status(
+                        "bash",
+                        &[path_str(&local_runtime_consumption_unit)?],
+                    )?;
                     let local_runtime_consumption = repo_root
                         .join("adl/tools/test_v0916_unity_observatory_local_runtime_consumption.sh");
                     run_finish_validation_status(
