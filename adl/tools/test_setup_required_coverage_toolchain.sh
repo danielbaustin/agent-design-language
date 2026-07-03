@@ -4,32 +4,39 @@ set -euo pipefail
 ROOT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)"
 SCRIPT="$ROOT_DIR/adl/tools/setup_required_coverage_toolchain.sh"
 
-require_or_skip() {
-  local command_name="$1"
-  local install_note="$2"
-  if ! command -v "$command_name" >/dev/null 2>&1; then
-    echo "SKIP test_setup_required_coverage_toolchain: $command_name is unavailable; $install_note"
-    exit 0
-  fi
-}
-
 tmp_dir="$(mktemp -d)"
 trap 'rm -rf "$tmp_dir"' EXIT
-env_file="$tmp_dir/github-env"
 
-require_or_skip rustc "install the Rust toolchain"
-require_or_skip cargo "install the Rust toolchain"
-require_or_skip cargo-llvm-cov "install cargo-llvm-cov before running this contract"
-require_or_skip cargo-nextest "install cargo-nextest before running this contract"
-require_or_skip sccache "install sccache before running this contract"
-require_or_skip ld.lld "install lld before running this contract"
+if "$SCRIPT" >/dev/null 2>&1; then
+  echo "expected setup script with no subcommand to fail" >&2
+  exit 1
+fi
 
-"$SCRIPT" configure "$env_file" >/dev/null
-"$SCRIPT" verify >/dev/null
-RUST_LINK_ACCEL=lld "$SCRIPT" stats >/dev/null
+if "$SCRIPT" configure >/dev/null 2>"$tmp_dir/configure.err"; then
+  echo "expected configure without GITHUB_ENV path to fail" >&2
+  exit 1
+fi
+grep -F "configure requires a GITHUB_ENV path" "$tmp_dir/configure.err" >/dev/null
 
-grep -Fx 'RUSTC_WRAPPER=sccache' "$env_file" >/dev/null
-grep -Fx 'RUSTFLAGS=-C link-arg=-fuse-ld=lld' "$env_file" >/dev/null
-grep -Fx 'RUST_LINK_ACCEL=lld' "$env_file" >/dev/null
+if command -v rustc >/dev/null 2>&1 \
+  && command -v cargo >/dev/null 2>&1 \
+  && command -v sccache >/dev/null 2>&1 \
+  && command -v ld.lld >/dev/null 2>&1 \
+  && cargo llvm-cov --version >/dev/null 2>&1 \
+  && cargo nextest --version >/dev/null 2>&1; then
+  env_file="$tmp_dir/github-env"
+  "$SCRIPT" verify >/dev/null
+  "$SCRIPT" configure "$env_file" >/dev/null
+  RUST_LINK_ACCEL=lld "$SCRIPT" stats >/dev/null
+  grep -Fx 'RUSTC_WRAPPER=sccache' "$env_file" >/dev/null
+  grep -Fx 'RUSTFLAGS=-C link-arg=-fuse-ld=lld' "$env_file" >/dev/null
+  grep -Fx 'RUST_LINK_ACCEL=lld' "$env_file" >/dev/null
+else
+  if "$SCRIPT" verify >/dev/null 2>"$tmp_dir/verify.err"; then
+    echo "expected verify to fail when one or more real required tools are unavailable" >&2
+    exit 1
+  fi
+  grep -F "required command is unavailable" "$tmp_dir/verify.err" >/dev/null
+fi
 
 echo "PASS test_setup_required_coverage_toolchain"

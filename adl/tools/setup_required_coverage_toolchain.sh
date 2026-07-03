@@ -60,7 +60,13 @@ configure() {
     echo "RUSTFLAGS=-C link-arg=-fuse-ld=lld"
     echo "RUST_LINK_ACCEL=lld"
   } >> "$github_env"
-  sccache --start-server
+  if ! sccache --start-server 2>/tmp/adl-sccache-start.err; then
+    if ! sccache --show-stats >/dev/null 2>&1; then
+      cat /tmp/adl-sccache-start.err >&2
+      exit 1
+    fi
+  fi
+  rm -f /tmp/adl-sccache-start.err
   sccache --zero-stats
 }
 

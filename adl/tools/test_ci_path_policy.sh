@@ -7,7 +7,7 @@ POLICY="$ROOT_DIR/adl/tools/ci_path_policy.sh"
 assert_has() {
   local haystack="$1"
   local needle="$2"
-  if ! grep -Fqx "$needle" <<<"$haystack"; then
+  if ! grep -Fqx -- "$needle" <<<"$haystack"; then
     echo "expected path-policy output to contain: $needle" >&2
     echo "actual output:" >&2
     echo "$haystack" >&2
@@ -19,7 +19,7 @@ assert_has() {
 assert_file_has() {
   local file="$1"
   local needle="$2"
-  if ! grep -Fq "$needle" "$file"; then
+  if ! grep -Fq -- "$needle" "$file"; then
     echo "expected $file to contain: $needle" >&2
     exit 1
   fi
@@ -28,21 +28,44 @@ assert_file_has() {
 assert_file_not_has() {
   local file="$1"
   local needle="$2"
-  if grep -Fq "$needle" "$file"; then
+  if grep -Fq -- "$needle" "$file"; then
     echo "expected $file not to contain: $needle" >&2
+    exit 1
+  fi
+}
+
+assert_file_order() {
+  local file="$1"
+  local first="$2"
+  local second="$3"
+  local first_line
+  local second_line
+  first_line="$(grep -Fn -- "$first" "$file" | head -n 1 | cut -d: -f1 || true)"
+  second_line="$(grep -Fn -- "$second" "$file" | head -n 1 | cut -d: -f1 || true)"
+  if [ -z "$first_line" ] || [ -z "$second_line" ] || [ "$first_line" -ge "$second_line" ]; then
+    echo "expected $file to contain '$first' before '$second'" >&2
     exit 1
   fi
 }
 
 assert_current_coverage_workflow_contract() {
   local workflow="$ROOT_DIR/.github/workflows/ci.yaml"
+  assert_file_has "$workflow" 'Determine PR fast coverage filters'
+  assert_file_has "$workflow" '--print-risk-nextest-expression > adl/coverage-impact-filter-expression.txt'
+  assert_file_has "$workflow" 'filter_expression<<ADL_COVERAGE_EXPR'
+  assert_file_has "$workflow" 'PR fast coverage summary (json)'
+  assert_file_has "$workflow" 'bash tools/run_pr_fast_coverage_lane.sh --filter-expression "${{ steps.coverage-impact.outputs.filter_expression }}"'
+  assert_file_has "$workflow" 'PR coverage-impact preflight'
+  assert_file_has "$workflow" 'args+=(--require-summary-for-risk)'
+  assert_file_has "$workflow" "if: steps.path-policy.outputs.full_coverage_required == 'true' || steps.coverage-impact.outputs.needs_fast_summary == 'true'"
   assert_file_has "$workflow" 'run: bash tools/setup_required_coverage_toolchain.sh install-lld'
-  assert_file_has "$workflow" "if: steps.path-policy.outputs.coverage_required == 'true'"
   assert_file_has "$workflow" 'bash tools/setup_required_coverage_toolchain.sh configure "$GITHUB_ENV"'
   assert_file_has "$workflow" 'run: bash tools/setup_required_coverage_toolchain.sh verify'
+  assert_file_order "$workflow" 'Install cargo-llvm-cov for CI contract checks' 'path-policy PR-fast coverage contract'
+  assert_file_order "$workflow" 'Install cargo-nextest for CI contract checks' 'path-policy PR-fast coverage contract'
   assert_file_has "$workflow" 'Coverage not required by path policy'
   assert_file_has "$workflow" "if: steps.path-policy.outputs.coverage_required != 'true'"
-  assert_file_has "$workflow" 'run: bash tools/run_ci_step_with_log.sh --name "coverage-run-summary-json" --log-root ci-step-logs -- bash tools/run_authoritative_coverage_lane.sh --authority "adl_coverage_always_on" --event-name "${{ github.event_name }}"'
+  assert_file_has "$workflow" 'run: bash tools/run_ci_step_with_log.sh --name "coverage-run-summary-json" --log-root ci-step-logs -- bash tools/run_authoritative_coverage_lane.sh --authority "${{ steps.path-policy.outputs.coverage_authority }}" --event-name "${{ github.event_name }}"'
   assert_file_has "$workflow" 'Upload ADL-owned coverage step logs'
   assert_file_has "$workflow" "if: always() && steps.path-policy.outputs.coverage_required == 'true'"
   assert_file_has "$workflow" 'name: adl-coverage-step-logs'
@@ -50,8 +73,8 @@ assert_current_coverage_workflow_contract() {
   assert_file_has "$workflow" 'run: bash tools/setup_required_coverage_toolchain.sh stats'
   assert_file_has "$workflow" "steps.coverage-toolchain.outputs.ready == 'true'"
   assert_file_has "$workflow" 'actual adl-coverage execution state'
-  assert_file_not_has "$workflow" 'steps.coverage-impact.outputs'
-  assert_file_not_has "$workflow" 'Full coverage deferred by PR policy'
+  assert_file_has "$workflow" 'Full workspace coverage gate deferred for PR'
+  assert_file_not_has "$workflow" '--authority "adl_coverage_always_on"'
 }
 
 tmp_dir="$(mktemp -d)"
@@ -103,7 +126,11 @@ jobs:
             --print-risk-nextest-expression > adl/coverage-impact-filter-expression.txt
           if test -s adl/coverage-impact-filter-expression.txt; then
             echo "needs_fast_summary=true" >> "$GITHUB_OUTPUT"
-            echo "filter_expression=$(cat adl/coverage-impact-filter-expression.txt)" >> "$GITHUB_OUTPUT"
+            {
+              echo "filter_expression<<ADL_COVERAGE_EXPR"
+              cat adl/coverage-impact-filter-expression.txt
+              echo "ADL_COVERAGE_EXPR"
+            } >> "$GITHUB_OUTPUT"
           else
             echo "needs_fast_summary=false" >> "$GITHUB_OUTPUT"
             echo "filter_expression=" >> "$GITHUB_OUTPUT"
@@ -117,7 +144,7 @@ jobs:
           mkdir -p "$COVERAGE_BUILD_ROOT/target" "$COVERAGE_BUILD_ROOT/llvm-cov-target"
           export CARGO_TARGET_DIR="$COVERAGE_BUILD_ROOT/target"
           export CARGO_LLVM_COV_TARGET_DIR="$COVERAGE_BUILD_ROOT/llvm-cov-target"
-          CARGO_INCREMENTAL=0 cargo llvm-cov nextest --workspace --status-level all --final-status-level slow --no-report -E "${{ steps.coverage-impact.outputs.filter_expression }}"
+          bash tools/run_pr_fast_coverage_lane.sh --filter-expression "${{ steps.coverage-impact.outputs.filter_expression }}"
           cargo llvm-cov report --json --summary-only --output-path coverage-summary.json
         working-directory: .
       - name: Coverage run and summary (json)
@@ -1025,15 +1052,21 @@ workflow = Path(".github/workflows/ci.yaml")
 text = workflow.read_text()
 text = replace_once(
     text,
-    '            echo "filter_expression=$(cat adl/coverage-impact-filter-expression.txt)" >> "$GITHUB_OUTPUT"\n',
-    '            echo "filter_expression=$(cat adl/coverage-impact-filter-expression.txt)" >> "$GITHUB_OUTPUT"\n            echo "run_cli_smoke_process_status=true" >> "$GITHUB_OUTPUT"\n            echo "run_cli_smoke_basics=true" >> "$GITHUB_OUTPUT"\n',
+    r"""            {
+              echo "filter_expression<<ADL_COVERAGE_EXPR"
+              cat adl/coverage-impact-filter-expression.txt
+              echo "ADL_COVERAGE_EXPR"
+            } >> "$GITHUB_OUTPUT"
+""",
+    r"""            {
+              echo "filter_expression<<ADL_COVERAGE_EXPR"
+              cat adl/coverage-impact-filter-expression.txt
+              echo "ADL_COVERAGE_EXPR"
+            } >> "$GITHUB_OUTPUT"
+            echo "run_cli_smoke_process_status=true" >> "$GITHUB_OUTPUT"
+            echo "run_cli_smoke_basics=true" >> "$GITHUB_OUTPUT"
+""",
     "coverage-impact output augmentation",
-)
-text = replace_once(
-    text,
-    "          rm -rf target/debug target/llvm-cov-target\n          COVERAGE_BUILD_ROOT=\"${RUNNER_TEMP:-/tmp}/adl-pr-fast-coverage\"\n          mkdir -p \"$COVERAGE_BUILD_ROOT/target\" \"$COVERAGE_BUILD_ROOT/llvm-cov-target\"\n          export CARGO_TARGET_DIR=\"$COVERAGE_BUILD_ROOT/target\"\n          export CARGO_LLVM_COV_TARGET_DIR=\"$COVERAGE_BUILD_ROOT/llvm-cov-target\"\n          CARGO_INCREMENTAL=0 cargo llvm-cov nextest --workspace --status-level all --final-status-level slow --no-report -E \"${{ steps.coverage-impact.outputs.filter_expression }}\"\n          cargo llvm-cov report --json --summary-only --output-path coverage-summary.json\n",
-    "          rm -rf target/debug target/llvm-cov-target\n          COVERAGE_BUILD_ROOT=\"${RUNNER_TEMP:-/tmp}/adl-pr-fast-coverage\"\n          mkdir -p \"$COVERAGE_BUILD_ROOT/target\" \"$COVERAGE_BUILD_ROOT/llvm-cov-target\"\n          export CARGO_TARGET_DIR=\"$COVERAGE_BUILD_ROOT/target\"\n          export CARGO_LLVM_COV_TARGET_DIR=\"$COVERAGE_BUILD_ROOT/llvm-cov-target\"\n          summary_files=()\n          if [ \"${{ steps.coverage-impact.outputs.run_cli_smoke_process_status }}\" = \"true\" ]; then\n            CARGO_INCREMENTAL=0 cargo llvm-cov nextest --workspace --test cli_smoke process_status --no-report\n            cargo llvm-cov report --json --summary-only --output-path coverage-summary-process-status.json\n            summary_files+=(coverage-summary-process-status.json)\n          fi\n          if [ \"${{ steps.coverage-impact.outputs.run_cli_smoke_basics }}\" = \"true\" ]; then\n            CARGO_INCREMENTAL=0 cargo llvm-cov nextest --workspace --test cli_smoke basics --no-report\n            cargo llvm-cov report --json --summary-only --output-path coverage-summary-cli-basics.json\n            summary_files+=(coverage-summary-cli-basics.json)\n          fi\n          cp \"${summary_files[0]}\" coverage-summary.json\n",
-    "coverage summary command split",
 )
 workflow.write_text(text)
 

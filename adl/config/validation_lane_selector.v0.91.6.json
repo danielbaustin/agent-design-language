@@ -165,7 +165,9 @@
         "adl/tools/test_validation_manager.sh",
         ".github/workflows/**",
         "adl/tools/run_ci_step_with_log.sh",
-        "adl/tools/test_run_ci_step_with_log.sh"
+        "adl/tools/test_run_ci_step_with_log.sh",
+        "adl/tools/setup_required_coverage_toolchain.sh",
+        "adl/tools/test_setup_required_coverage_toolchain.sh"
       ],
       "path_hints": [
         "adl/config/validation_lane_selector.v0.91.6.json",
@@ -183,7 +185,9 @@
         "adl/tools/test_validation_manager.sh",
         ".github/workflows/**",
         "adl/tools/run_ci_step_with_log.sh",
-        "adl/tools/test_run_ci_step_with_log.sh"
+        "adl/tools/test_run_ci_step_with_log.sh",
+        "adl/tools/setup_required_coverage_toolchain.sh",
+        "adl/tools/test_setup_required_coverage_toolchain.sh"
       ],
       "command": "bash adl/tools/test_ci_path_policy.sh && bash adl/tools/test_select_validation_lanes.sh && bash adl/tools/test_validation_manager.sh && bash adl/tools/test_run_nessus_remote_validation.sh",
       "run_command": "bash adl/tools/test_ci_path_policy.sh && bash adl/tools/test_select_validation_lanes.sh && bash adl/tools/test_validation_manager.sh && bash adl/tools/test_run_nessus_remote_validation.sh",
