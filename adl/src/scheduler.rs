@@ -876,11 +876,12 @@ fn alternative_reason(
 fn scheduling_rank_key(
     input: &SchedulerEconomicsInputV1,
     summary: &SchedulerEconomicsSummaryV1,
-    _selected_lane: &CognitiveSchedulerLaneV1,
+    selected_lane: &CognitiveSchedulerLaneV1,
 ) -> String {
     format!(
-        "blocked={};dependency={:02};gate={:02};risk={:02};urgency={:02};value={:02};validation={:02};premium_pressure={:02};coordination={:02};parallelism={:02};confidence={:02};task={}",
+        "blocked={};deferred={};dependency={:02};gate={:02};risk={:02};urgency={:02};value={:02};validation={:02};premium_pressure={:02};coordination={:02};parallelism={:02};confidence={:02};task={}",
         u8::from(summary.blocked),
+        deferred_lane_rank(selected_lane),
         summary.dependency_posture_score,
         gate_priority(input),
         reverse_weight(risk_weight(&input.risk_level)),
@@ -893,6 +894,10 @@ fn scheduling_rank_key(
         reverse_weight(summary.confidence_score),
         input.task_id
     )
+}
+
+fn deferred_lane_rank(selected_lane: &CognitiveSchedulerLaneV1) -> u8 {
+    u8::from(matches!(selected_lane, CognitiveSchedulerLaneV1::Delayed))
 }
 
 fn governor_candidate(input: &SchedulerEconomicsInputV1) -> bool {
@@ -1386,6 +1391,18 @@ mod tests {
             first.recommended_order.first().unwrap(),
             "release-authority"
         );
+        assert!(
+            first
+                .recommended_order
+                .iter()
+                .position(|task| task == "low-urgency-cleanup")
+                .expect("delayed low-urgency task in order")
+                > first
+                    .recommended_order
+                    .iter()
+                    .position(|task| task == "partial-dependency-review")
+                    .expect("schedulable partial dependency task in order")
+        );
         assert_eq!(first.recommended_order.last().unwrap(), "blocked-proof");
 
         let premium = decision(&first, "premium-code-repair");
@@ -1398,7 +1415,7 @@ mod tests {
                     && alternative.disposition == SchedulerAlternativeDispositionV1::Rejected
             ));
         assert!(premium.scheduling_rank_key.contains("gate=01"));
-        assert!(!premium.scheduling_rank_key.contains("lane="));
+        assert!(premium.scheduling_rank_key.contains("deferred=0"));
     }
 
     #[test]
