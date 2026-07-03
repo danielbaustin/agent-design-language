@@ -124,7 +124,7 @@ if "tool: nextest" not in workflow:
         "coverage lanes must install cargo-nextest as a required coverage toolchain dependency"
     )
 if "cargo llvm-cov nextest" in workflow:
-    raise SystemExit("adl-coverage must not use nextest as the hot coverage execution driver")
+    raise SystemExit("adl-coverage workflow must delegate coverage execution to the runner, not inline nextest")
 
 expected_coverage = (
     'bash tools/run_authoritative_coverage_lane.sh --authority "adl_coverage_always_on" '
@@ -135,6 +135,18 @@ if coverage_step != expected_coverage:
     raise SystemExit(
         "authoritative coverage lane must route through the bounded runner; "
         f"found: {coverage_step}"
+    )
+coverage_step_if = step_if("Coverage run and summary (json)")
+if coverage_step_if != "steps.path-policy.outputs.coverage_required == 'true'":
+    raise SystemExit(
+        "authoritative coverage execution must respect path-policy coverage_required; "
+        f"found: {coverage_step_if}"
+    )
+coverage_not_required_step = step_if("Coverage not required by path policy")
+if coverage_not_required_step != "steps.path-policy.outputs.coverage_required != 'true'":
+    raise SystemExit(
+        "adl-coverage must report a truthful non-rust/no-coverage-required state instead of compiling unrelated Rust; "
+        f"found: {coverage_not_required_step}"
     )
 
 if not runner_test.exists():
@@ -151,12 +163,11 @@ for required_fragment in (
     'default_coverage_build_root()',
     'if [ -d /mnt ] && [ -w /mnt ]; then',
     'printf \'/mnt/adl-authoritative-coverage\\n\'',
-    'printf \'%s\\n\' "$ADL_DIR/target/authoritative-coverage-scratch"',
+    'printf \'%s\\n\' "$ADL_DIR"',
     'COVERAGE_BUILD_ROOT="${ADL_COVERAGE_BUILD_ROOT:-$(default_coverage_build_root)}"',
-    'rm -rf "$COVERAGE_BUILD_ROOT/llvm-cov-target"',
-    'mkdir -p "$COVERAGE_BUILD_ROOT/target" "$COVERAGE_BUILD_ROOT/llvm-cov-target"',
+    'mkdir -p "$COVERAGE_BUILD_ROOT/target" "$COVERAGE_BUILD_ROOT/target/llvm-cov-target"',
     'export CARGO_TARGET_DIR="$COVERAGE_BUILD_ROOT/target"',
-    'export CARGO_LLVM_COV_TARGET_DIR="$COVERAGE_BUILD_ROOT/llvm-cov-target"',
+    'export CARGO_LLVM_COV_TARGET_DIR="$COVERAGE_BUILD_ROOT/target/llvm-cov-target"',
 ):
     if required_fragment not in runner_script_text:
         raise SystemExit(
@@ -169,21 +180,22 @@ if step_count("PR fast coverage summary (json)") != 0:
 if step_count("Determine PR fast coverage filters") != 0:
     raise SystemExit("adl-coverage must not use the old coverage-impact output filter step")
 for required_fragment in (
-    "cargo llvm-cov \\",
-    "    --no-clean \\",
+    "cargo llvm-cov nextest \\",
     "    --workspace \\",
     "    --lib \\",
-    "    --json \\",
-    "    --summary-only \\",
-    "    --output-path coverage-summary.json",
+    "    --no-report",
+    "cargo llvm-cov report \\",
+    "--json \\",
+    "--summary-only \\",
+    "--output-path coverage-summary.json",
 ):
     if required_fragment not in runner_script_text:
         raise SystemExit(
             "authoritative coverage runner must execute direct library-only coverage without linking ADL binaries; "
             f"missing fragment: {required_fragment}"
         )
-if "cargo llvm-cov nextest" in runner_script_text or "    --tests \\" in runner_script_text or "    --bins \\" in runner_script_text or "    --all-targets \\" in runner_script_text:
-    raise SystemExit("authoritative coverage runner must not use nextest or link test/bin/all-target surfaces")
+if "    --tests \\" in runner_script_text or "    --bins \\" in runner_script_text or "    --all-targets \\" in runner_script_text:
+    raise SystemExit("authoritative coverage runner must not link test/bin/all-target surfaces")
 
 authoritative_gate_step = step_block("Coverage-impact changed-source gate")
 if '--summary adl/coverage-summary.json \\' not in authoritative_gate_step:

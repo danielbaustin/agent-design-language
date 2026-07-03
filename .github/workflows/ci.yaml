@@ -413,18 +413,20 @@ jobs:
             echo "| policy coverage lane | \`${{ steps.path-policy.outputs.coverage_lane }}\` |"
             echo "| policy coverage authority | \`${{ steps.path-policy.outputs.coverage_authority }}\` |"
             echo "| policy coverage execution state | \`${{ steps.path-policy.outputs.coverage_execution_state }}\` |"
-            echo "| actual adl-coverage execution state | `authoritative_full_required` |"
+            echo "| actual adl-coverage execution state | \`${{ steps.path-policy.outputs.coverage_execution_state }}\` |"
             echo "| profile run lanes | \`${{ steps.path-policy.outputs.validation_profile_run_lanes }}\` |"
             echo "| escalation required | \`${{ steps.path-policy.outputs.validation_profile_escalation_required }}\` |"
           } >> "$GITHUB_STEP_SUMMARY"
         working-directory: .
 
       - name: Install Rust toolchain
+        if: steps.path-policy.outputs.coverage_required == 'true'
         uses: dtolnay/rust-toolchain@631a55b12751854ce901bb631d5902ceb48146f7 # stable
         with:
           components: llvm-tools-preview
 
       - name: Free runner disk space for coverage
+        if: steps.path-policy.outputs.coverage_required == 'true'
         run: |
           df -h
           sudo rm -rf /usr/share/dotnet || true
@@ -435,6 +437,7 @@ jobs:
         working-directory: .
 
       - name: Rust cache
+        if: steps.path-policy.outputs.coverage_required == 'true'
         uses: Swatinem/rust-cache@779680da715d629ac1d338a641029a2f4372abb5 # v2
         with:
           workspaces: |
@@ -443,31 +446,46 @@ jobs:
             ~/.cache/sccache
 
       - name: Install cargo-llvm-cov
+        if: steps.path-policy.outputs.coverage_required == 'true'
         uses: taiki-e/install-action@e5c52b603cc5f5e9b52b6a43afad8e9fe0527090 # cargo-llvm-cov
 
       - name: Install cargo-nextest for coverage
+        if: steps.path-policy.outputs.coverage_required == 'true'
         uses: taiki-e/install-action@e5c52b603cc5f5e9b52b6a43afad8e9fe0527090 # install-action
         with:
           tool: nextest
 
       - name: Install sccache for coverage
+        if: steps.path-policy.outputs.coverage_required == 'true'
         uses: taiki-e/install-action@e5c52b603cc5f5e9b52b6a43afad8e9fe0527090 # install-action
         with:
           tool: sccache
 
       - name: Install lld for coverage
+        if: steps.path-policy.outputs.coverage_required == 'true'
         run: bash tools/setup_required_coverage_toolchain.sh install-lld
 
       - name: Configure Rust acceleration for coverage
+        if: steps.path-policy.outputs.coverage_required == 'true'
         id: coverage-toolchain
         run: |
           bash tools/setup_required_coverage_toolchain.sh configure "$GITHUB_ENV"
           echo "ready=true" >> "$GITHUB_OUTPUT"
 
       - name: Verify required coverage toolchain
+        if: steps.path-policy.outputs.coverage_required == 'true'
         run: bash tools/setup_required_coverage_toolchain.sh verify
 
+      - name: Coverage not required by path policy
+        if: steps.path-policy.outputs.coverage_required != 'true'
+        run: |
+          echo "Rust coverage execution is not required for this changed surface."
+          echo "Policy reason: ${{ steps.path-policy.outputs.reason }}"
+          echo "Coverage lane: ${{ steps.path-policy.outputs.coverage_lane }}"
+          echo "Coverage authority: ${{ steps.path-policy.outputs.coverage_authority }}"
+          echo "Coverage execution state: ${{ steps.path-policy.outputs.coverage_execution_state }}"
       - name: Coverage run and summary (json)
+        if: steps.path-policy.outputs.coverage_required == 'true'
         run: bash tools/run_authoritative_coverage_lane.sh --authority "adl_coverage_always_on" --event-name "${{ github.event_name }}"
 
       - name: Coverage-impact changed-source gate
@@ -502,7 +520,7 @@ jobs:
           echo "Coverage lane: ${{ steps.path-policy.outputs.coverage_lane }}"
           echo "Coverage authority: ${{ steps.path-policy.outputs.coverage_authority }}"
           echo "Policy coverage execution state: ${{ steps.path-policy.outputs.coverage_execution_state }}"
-          echo "Actual adl-coverage execution state: authoritative_full_required"
+          echo "Actual adl-coverage execution state: ${{ steps.path-policy.outputs.coverage_execution_state }}"
 
       - name: Coverage (ADL Rust workspace lcov)
         if: github.event_name != 'pull_request' && steps.path-policy.outputs.full_coverage_required == 'true' && steps.path-policy.outputs.coverage_authority != 'pr_policy_surface_tooling_only'

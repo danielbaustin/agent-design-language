@@ -6,9 +6,9 @@ SCRIPT="$ROOT_DIR/adl/tools/run_authoritative_coverage_lane.sh"
 
 plan="$(GITHUB_ACTIONS=true "$SCRIPT" --print-plan --authority adl_coverage_always_on --event-name pull_request)"
 case "$plan" in
-  *"build_root=$ROOT_DIR/adl/target/authoritative-coverage-scratch"*) ;;
+  *"build_root=$ROOT_DIR/adl"*) ;;
   *)
-    echo "expected GitHub Actions coverage build root under cached adl/target" >&2
+    echo "expected GitHub Actions coverage build root to use cached adl target directly" >&2
     echo "$plan" >&2
     exit 1
     ;;
@@ -35,10 +35,11 @@ esac
 
 script_text="$(cat "$SCRIPT")"
 for required_fragment in \
-  "cargo llvm-cov" \
-  "--no-clean" \
+  "cargo llvm-cov nextest" \
   "--workspace" \
   "--lib" \
+  "--no-report" \
+  "cargo llvm-cov report" \
   "--json" \
   "--summary-only" \
   "--output-path coverage-summary.json"
@@ -52,14 +53,14 @@ do
   esac
 done
 case "$script_text" in
-  *"cargo llvm-cov nextest"*|*"--tests"*|*"--bins"*|*"--all-targets"*)
-    echo "coverage runner must not use nextest, tests, bins, or all-targets" >&2
+  *"--tests"*|*"--bins"*|*"--all-targets"*)
+    echo "coverage runner must not use tests, bins, or all-targets" >&2
     exit 1
     ;;
 esac
 
 temp_root="$(mktemp -d)"
-trap 'rm -rf "$temp_root"' EXIT
+trap 'rm -rf "$temp_root"; rm -f "$ROOT_DIR/adl/coverage-warm-cache.json"' EXIT
 bin_dir="$temp_root/bin"
 mkdir -p "$bin_dir"
 scratch_root="$temp_root/scratch"
@@ -81,7 +82,7 @@ AUTHORITATIVE_CARGO_LOG="$cargo_log" \
 ADL_COVERAGE_BUILD_ROOT="$scratch_root" \
   bash "$SCRIPT" --authority pr_policy_surface_tooling_only --event-name pull_request
 
-for required_dir in "$scratch_root/target" "$scratch_root/llvm-cov-target"; do
+for required_dir in "$scratch_root/target" "$scratch_root/target/llvm-cov-target"; do
   if [ ! -d "$required_dir" ]; then
     echo "expected authoritative coverage scratch dir: $required_dir" >&2
     exit 1
@@ -89,9 +90,10 @@ for required_dir in "$scratch_root/target" "$scratch_root/llvm-cov-target"; do
 done
 
 for required in \
-  "cmd=llvm-cov --no-clean --workspace --lib --json --summary-only --output-path coverage-summary.json" \
+  "cmd=llvm-cov nextest --workspace --lib --no-report" \
+  "cmd=llvm-cov report --json --summary-only --output-path coverage-summary.json" \
   "target=$scratch_root/target" \
-  "llvm_cov_target=$scratch_root/llvm-cov-target"
+  "llvm_cov_target=$scratch_root/target/llvm-cov-target"
 do
   if ! grep -F "$required" "$cargo_log" >/dev/null 2>&1; then
     echo "missing authoritative coverage execution token: $required" >&2
@@ -105,11 +107,9 @@ PATH="$bin_dir:$PATH" \
 AUTHORITATIVE_CARGO_LOG="$lld_cargo_log" \
 ADL_COVERAGE_BUILD_ROOT="$scratch_root" \
 RUST_LINK_ACCEL="lld" \
-ADL_AUTHORITATIVE_COVERAGE_BUILD_JOBS="1" \
   bash "$SCRIPT"
 
 for required in \
-  "build_jobs=1" \
   "link_accel=lld"
 do
   if ! grep -F "$required" "$lld_cargo_log" >/dev/null 2>&1; then

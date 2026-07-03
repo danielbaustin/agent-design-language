@@ -31,6 +31,7 @@ class Summary:
     candidate_files: int = 0
     linked_files: int = 0
     skipped_dep_info: int = 0
+    linked_fingerprint_files: int = 0
     skipped_existing: int = 0
     skipped_unmatched: int = 0
     errors: int = 0
@@ -107,21 +108,35 @@ def artifact_matches(path: Path, prefixes: set[str]) -> bool:
 
 def iter_dependency_artifacts(profile_dir: Path, prefixes: set[str], summary: Summary) -> Iterable[tuple[Path, Path]]:
     deps_dir = profile_dir / "deps"
-    if not deps_dir.exists():
+    if deps_dir.exists():
+        for source in deps_dir.iterdir():
+            if not source.is_file():
+                continue
+            if source.suffix == ".d":
+                # Cargo dep-info files can contain source-target/build paths from
+                # the donor target. Do not hardlink them unless path rewriting is
+                # implemented and proven.
+                summary.skipped_dep_info += 1
+                continue
+            if artifact_matches(source, prefixes):
+                yield source, Path("deps") / source.name
+            else:
+                summary.skipped_unmatched += 1
+
+    fingerprint_dir = profile_dir / ".fingerprint"
+    if not fingerprint_dir.exists():
         return
-    for source in deps_dir.iterdir():
-        if not source.is_file():
+    for crate_dir in fingerprint_dir.iterdir():
+        if not crate_dir.is_dir() or not artifact_matches(crate_dir, prefixes):
             continue
-        if source.suffix == ".d":
-            # Cargo dep-info files can contain source-target/build paths from
-            # the donor target. Do not hardlink them unless path rewriting is
-            # implemented and proven.
-            summary.skipped_dep_info += 1
-            continue
-        if artifact_matches(source, prefixes):
-            yield source, Path("deps") / source.name
-        else:
-            summary.skipped_unmatched += 1
+        for source in crate_dir.rglob("*"):
+            if not source.is_file():
+                continue
+            if source.suffix == ".d":
+                summary.skipped_dep_info += 1
+                continue
+            summary.linked_fingerprint_files += 1
+            yield source, Path(".fingerprint") / crate_dir.name / source.relative_to(crate_dir)
 
 def same_inode(a: Path, b: Path) -> bool:
     try:

@@ -105,7 +105,17 @@ def write_fixture(root: Path) -> tuple[Path, Path, Path]:
         (deps / name).write_text(content)
 
     (build / "libserde-build-output").write_text("must not link build output")
-    (fingerprint / "serde-fingerprint").write_text("must not link fingerprint")
+    serde_fingerprint = fingerprint / "serde-abc"
+    helper_fingerprint = fingerprint / "helper-bbb"
+    unmatched_fingerprint = fingerprint / "unmatched-ccc"
+    serde_fingerprint.mkdir()
+    helper_fingerprint.mkdir()
+    unmatched_fingerprint.mkdir()
+    (serde_fingerprint / "lib-serde").write_text("serde fingerprint")
+    (serde_fingerprint / "dep-lib-serde").write_text("serde dep fingerprint")
+    (serde_fingerprint / "serde-abc.d").write_text("must skip dep info")
+    (helper_fingerprint / "lib-helper").write_text("must not link workspace fingerprint")
+    (unmatched_fingerprint / "lib-unmatched").write_text("must not link unmatched fingerprint")
     return adl / "Cargo.toml", source_target, root / "dest-target"
 
 
@@ -130,9 +140,11 @@ def test_links_only_external_dependency_deps() -> None:
 
         if summary["status"] != "ok":
             raise AssertionError(summary)
-        if summary["linked_files"] != 2:
+        if summary["linked_files"] != 4:
             raise AssertionError(f"expected 2 linked dependency files: {summary}")
-        if summary["skipped_dep_info"] != 1:
+        if summary["linked_fingerprint_files"] != 2:
+            raise AssertionError(f"expected dependency fingerprint files to be linked: {summary}")
+        if summary["skipped_dep_info"] != 2:
             raise AssertionError(f"expected dep-info files to be skipped: {summary}")
 
         for name in ["libserde-abc.rlib", "libproc_macro2-def.rmeta"]:
@@ -144,8 +156,18 @@ def test_links_only_external_dependency_deps() -> None:
 
         if (dest_target / "debug" / "build").exists():
             raise AssertionError("build directory must not be linked")
-        if (dest_target / "debug" / ".fingerprint").exists():
-            raise AssertionError(".fingerprint directory must not be linked")
+        for name in ["lib-serde", "dep-lib-serde"]:
+            assert_same_inode(
+                source_target / "debug" / ".fingerprint" / "serde-abc" / name,
+                dest_target / "debug" / ".fingerprint" / "serde-abc" / name,
+            )
+        for name in [
+            "serde-abc/serde-abc.d",
+            "helper-bbb/lib-helper",
+            "unmatched-ccc/lib-unmatched",
+        ]:
+            if (dest_target / "debug" / ".fingerprint" / name).exists():
+                raise AssertionError(f"unexpected fingerprint artifact linked: {name}")
 
 
 def test_replace_semantics_are_explicit() -> None:

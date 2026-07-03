@@ -10,15 +10,16 @@ MODE="full_authoritative_default_features"
 
 default_coverage_build_root() {
   if [ "${GITHUB_ACTIONS:-}" = "true" ]; then
-    printf '%s\n' "$ADL_DIR/target/authoritative-coverage-scratch"
+    printf '%s\n' "$ADL_DIR"
   elif [ -d /mnt ] && [ -w /mnt ]; then
     printf '/mnt/adl-authoritative-coverage\n'
   else
-    printf '%s\n' "$ADL_DIR/target/authoritative-coverage-scratch"
+    printf '%s\n' "$ADL_DIR"
   fi
 }
 
 COVERAGE_BUILD_ROOT="${ADL_COVERAGE_BUILD_ROOT:-$(default_coverage_build_root)}"
+WARM_SOURCE_TARGET="${ADL_COVERAGE_WARM_SOURCE_TARGET:-$ADL_DIR/target}"
 
 usage() {
   cat <<'USAGE'
@@ -82,36 +83,49 @@ fi
 
 cd "$ADL_DIR"
 
-# Keep compiled target artifacts warm across CI runs. Only clear llvm-cov output
-# so the final report reflects the current run without throwing away the build
-# cache that makes the lane practical.
-rm -rf "$COVERAGE_BUILD_ROOT/llvm-cov-target"
-mkdir -p "$COVERAGE_BUILD_ROOT/target" "$COVERAGE_BUILD_ROOT/llvm-cov-target"
+# Keep compiled target artifacts warm across CI runs. GitHub-hosted coverage
+# defaults to the cached repo target, while remote builders can opt into a
+# scratch root and warm it from the restored target. Do not delete the
+# llvm-cov target between runs; it is the expensive instrumentation build cache.
+mkdir -p "$COVERAGE_BUILD_ROOT/target" "$COVERAGE_BUILD_ROOT/target/llvm-cov-target"
+if [ "${ADL_COVERAGE_WARM_CACHE:-1}" != "0" ] && [ -d "$WARM_SOURCE_TARGET/debug/deps" ]; then
+  SOURCE_REAL="$(cd "$WARM_SOURCE_TARGET" && pwd -P)"
+  DEST_REAL="$(cd "$COVERAGE_BUILD_ROOT/target" && pwd -P)"
+  if [ "$SOURCE_REAL" != "$DEST_REAL" ]; then
+    python3 "$ADL_DIR/tools/warm_rust_dependency_cache.py" \
+      --source-target "$SOURCE_REAL" \
+      --dest-target "$DEST_REAL" \
+      --manifest-path "$ADL_DIR/Cargo.toml" \
+      --replace \
+      --json | tee "$ADL_DIR/coverage-warm-cache.json"
+  else
+    printf '{"status":"skipped","reason":"source target is coverage target"}\n' | tee "$ADL_DIR/coverage-warm-cache.json"
+  fi
+else
+  printf '{"status":"skipped","reason":"source target cache missing or disabled"}\n' | tee "$ADL_DIR/coverage-warm-cache.json"
+fi
 export CARGO_TARGET_DIR="$COVERAGE_BUILD_ROOT/target"
-export CARGO_LLVM_COV_TARGET_DIR="$COVERAGE_BUILD_ROOT/llvm-cov-target"
+export CARGO_LLVM_COV_TARGET_DIR="$COVERAGE_BUILD_ROOT/target/llvm-cov-target"
 
 if [ "$MODE" = "full_authoritative_default_features" ]; then
-  export CARGO_BUILD_JOBS="${ADL_AUTHORITATIVE_COVERAGE_BUILD_JOBS:-1}"
   echo "Authoritative coverage mode: full_authoritative_default_features"
   echo "Features: default"
   echo "Authoritative coverage linker mode: ${RUST_LINK_ACCEL:-default}"
-  echo "Authoritative coverage cargo build jobs: ${CARGO_BUILD_JOBS}"
-  cargo llvm-cov \
-    --no-clean \
+  cargo llvm-cov nextest \
     --workspace \
     --lib \
-    --json \
-    --summary-only \
-    --output-path coverage-summary.json
+    --no-report
 else
   echo "Authoritative coverage mode: bounded_policy_surface_pr"
   echo "Features: default"
   echo "Full authoritative default-feature proof remains reserved for push-to-main and mixed runtime policy changes."
-  cargo llvm-cov \
-    --no-clean \
+  cargo llvm-cov nextest \
     --workspace \
     --lib \
-    --json \
-    --summary-only \
-    --output-path coverage-summary.json
+    --no-report
 fi
+
+cargo llvm-cov report \
+  --json \
+  --summary-only \
+  --output-path coverage-summary.json
