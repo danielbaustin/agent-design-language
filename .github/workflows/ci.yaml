@@ -87,6 +87,16 @@ jobs:
         with:
           tool: sccache
 
+      - name: Install cargo-llvm-cov for CI contract checks
+        if: steps.path-policy.outputs.ci_contracts_required == 'true'
+        uses: taiki-e/install-action@e5c52b603cc5f5e9b52b6a43afad8e9fe0527090 # cargo-llvm-cov
+
+      - name: Install cargo-nextest for CI contract checks
+        if: steps.path-policy.outputs.ci_contracts_required == 'true'
+        uses: taiki-e/install-action@e5c52b603cc5f5e9b52b6a43afad8e9fe0527090 # install-action
+        with:
+          tool: nextest
+
       - name: Install lld
         if: steps.path-policy.outputs.rust_required == 'true'
         run: |
@@ -153,12 +163,6 @@ jobs:
         if: steps.path-policy.outputs.ci_contracts_required == 'true'
         run: bash adl/tools/test_pvf_ci_release_policy.sh
         working-directory: .
-
-      - name: Install cargo-nextest for CI contract checks
-        if: steps.path-policy.outputs.ci_contracts_required == 'true'
-        uses: taiki-e/install-action@e5c52b603cc5f5e9b52b6a43afad8e9fe0527090 # install-action
-        with:
-          tool: nextest
 
       - name: tracked proof-validation lane contract
         if: steps.path-policy.outputs.ci_contracts_required == 'true'
