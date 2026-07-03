@@ -1,0 +1,248 @@
+{
+  "schema_version": "adl.scheduler.economics_input_bundle.provider_route.v1",
+  "source_doc_ref": "docs/milestones/v0.91.7/review/provider/PROVIDER_PROFILE_SELECTION_4672.md",
+  "included_concepts": [
+    "estimated_effort",
+    "validation_cost",
+    "coordination_cost",
+    "risk",
+    "expected_value",
+    "urgency",
+    "dependency_posture",
+    "parallelism_potential",
+    "premium_capacity_pressure",
+    "governor_attention_pressure",
+    "confidence"
+  ],
+  "deferred_concepts": [
+    "live_provider_price_lookup",
+    "measured_roi",
+    "autonomous_sprint_conduction",
+    "market_or_bidding_behavior",
+    "full_pvf_execution",
+    "subjective_value_measurement"
+  ],
+  "inputs": [
+    {
+      "schema_version": "adl.scheduler.economics_input.v1",
+      "task_id": "docs-status-check",
+      "task_type": "documentation",
+      "estimated_effort": "small",
+      "estimated_validation_cost": "low",
+      "estimated_coordination_cost": "low",
+      "risk_level": "low",
+      "expected_value": "medium",
+      "urgency": "normal",
+      "dependency_posture": "clear",
+      "parallelism_potential": "parallelizable",
+      "premium_capacity_pressure": "high",
+      "governor_attention_pressure": "low",
+      "confidence": "high",
+      "human_required": false,
+      "required_capabilities": [
+        "docs_scan"
+      ],
+      "claim_boundary": "bounded_v1_inputs_not_exact_measurement"
+    },
+    {
+      "schema_version": "adl.scheduler.economics_input.v1",
+      "task_id": "first-pass-review",
+      "task_type": "review",
+      "estimated_effort": "medium",
+      "estimated_validation_cost": "low",
+      "estimated_coordination_cost": "medium",
+      "risk_level": "medium",
+      "expected_value": "high",
+      "urgency": "normal",
+      "dependency_posture": "clear",
+      "parallelism_potential": "highly_parallelizable",
+      "premium_capacity_pressure": "high",
+      "governor_attention_pressure": "medium",
+      "confidence": "medium",
+      "human_required": false,
+      "required_capabilities": [
+        "review",
+        "summarization"
+      ],
+      "claim_boundary": "bounded_v1_inputs_not_exact_measurement"
+    },
+    {
+      "schema_version": "adl.scheduler.economics_input.v1",
+      "task_id": "premium-code-repair",
+      "task_type": "implementation",
+      "estimated_effort": "large",
+      "estimated_validation_cost": "high",
+      "estimated_coordination_cost": "medium",
+      "risk_level": "high",
+      "expected_value": "critical",
+      "urgency": "high",
+      "dependency_posture": "clear",
+      "parallelism_potential": "serial",
+      "premium_capacity_pressure": "medium",
+      "governor_attention_pressure": "medium",
+      "confidence": "medium",
+      "human_required": false,
+      "required_capabilities": [
+        "rust",
+        "debugging",
+        "validation"
+      ],
+      "claim_boundary": "bounded_v1_inputs_not_exact_measurement"
+    },
+    {
+      "schema_version": "adl.scheduler.economics_input.v1",
+      "task_id": "release-authority",
+      "task_type": "release_gate",
+      "estimated_effort": "small",
+      "estimated_validation_cost": "medium",
+      "estimated_coordination_cost": "high",
+      "risk_level": "critical",
+      "expected_value": "critical",
+      "urgency": "immediate",
+      "dependency_posture": "clear",
+      "parallelism_potential": "serial",
+      "premium_capacity_pressure": "low",
+      "governor_attention_pressure": "constrained",
+      "confidence": "high",
+      "human_required": true,
+      "required_capabilities": [
+        "release_authority"
+      ],
+      "claim_boundary": "bounded_v1_inputs_not_exact_measurement"
+    },
+    {
+      "schema_version": "adl.scheduler.economics_input.v1",
+      "task_id": "low-urgency-cleanup",
+      "task_type": "planning",
+      "estimated_effort": "medium",
+      "estimated_validation_cost": "medium",
+      "estimated_coordination_cost": "low",
+      "risk_level": "low",
+      "expected_value": "medium",
+      "urgency": "low",
+      "dependency_posture": "clear",
+      "parallelism_potential": "parallelizable",
+      "premium_capacity_pressure": "constrained",
+      "governor_attention_pressure": "high",
+      "confidence": "medium",
+      "human_required": false,
+      "manual_override": "delay_if_premium_capacity_is_constrained",
+      "claim_boundary": "bounded_v1_inputs_not_exact_measurement"
+    },
+    {
+      "schema_version": "adl.scheduler.economics_input.v1",
+      "task_id": "blocked-proof",
+      "task_type": "test_generation",
+      "estimated_effort": "small",
+      "estimated_validation_cost": "high",
+      "estimated_coordination_cost": "medium",
+      "risk_level": "medium",
+      "expected_value": "high",
+      "urgency": "normal",
+      "dependency_posture": "blocked",
+      "parallelism_potential": "blocked",
+      "premium_capacity_pressure": "medium",
+      "governor_attention_pressure": "medium",
+      "confidence": "high",
+      "human_required": false,
+      "dependencies": [
+        {
+          "task_id": "upstream-schema",
+          "status": "blocked",
+          "reason": "schema contract has not landed"
+        }
+      ],
+      "required_capabilities": [
+        "fixture_validation"
+      ],
+      "claim_boundary": "bounded_v1_inputs_not_exact_measurement"
+    },
+    {
+      "schema_version": "adl.scheduler.economics_input.v1",
+      "task_id": "partial-dependency-review",
+      "task_type": "review",
+      "estimated_effort": "medium",
+      "estimated_validation_cost": "medium",
+      "estimated_coordination_cost": "medium",
+      "risk_level": "medium",
+      "expected_value": "high",
+      "urgency": "high",
+      "dependency_posture": "partial",
+      "parallelism_potential": "parallelizable",
+      "premium_capacity_pressure": "medium",
+      "governor_attention_pressure": "medium",
+      "confidence": "medium",
+      "human_required": false,
+      "dependencies": [
+        {
+          "task_id": "upstream-doc",
+          "status": "partial",
+          "reason": "source doc exists but final proof packet is still pending"
+        }
+      ],
+      "required_capabilities": [
+        "review",
+        "dependency_triage"
+      ],
+      "claim_boundary": "bounded_v1_inputs_not_exact_measurement"
+    }
+  ],
+  "role_provider_context": {
+    "schema_version": "adl.scheduler.role_provider_selection_context.v1",
+    "generated_from": "provider profile selection proof artifact for #4672",
+    "policies": [
+      {
+        "role_profile": "reviewer_provider",
+        "advisory_authority_limit": "advisory review only; cannot merge, close, or override operator gates",
+        "required_capabilities": [
+          "code_review",
+          "csdlc_truth_review"
+        ],
+        "forbidden_capabilities": [
+          "merge_authority"
+        ],
+        "candidate_routes": [
+          {
+            "route": {
+              "provider_profile_ref": "ollama:qwen2.5-7b",
+              "provider_spec_kind": "ollama",
+              "provider_family": "local_ollama",
+              "model_ref": "qwen2.5:7b",
+              "model_identity": "qwen2.5:7b local ollama profile",
+              "runtime_surface": "provider::OllamaProvider",
+              "provider_selection_reason": "local reviewer candidate retained as fallback evidence",
+              "route_resolution_trace": [
+                "candidate=local_ollama"
+              ],
+              "output_contract_ref": "adl.provider.output.review_advisory.v1"
+            },
+            "eligible": false,
+            "ineligibility_reason": "local model not yet proven for reviewer role"
+          },
+          {
+            "route": {
+              "provider_profile_ref": "chatgpt:gpt-5.3-codex",
+              "provider_spec_kind": "http",
+              "provider_family": "chatgpt",
+              "model_ref": "gpt-5.3-codex",
+              "model_identity": "ChatGPT GPT-5.3 Codex profile",
+              "runtime_surface": "provider::HttpProvider",
+              "provider_selection_reason": "tracked reviewer-capable provider profile selected for advisory review",
+              "route_resolution_trace": [
+                "candidate=chatgpt"
+              ],
+              "output_contract_ref": "adl.provider.output.review_advisory.v1"
+            },
+            "eligible": true
+          }
+        ]
+      }
+    ],
+    "assignments": [
+      {
+        "task_id": "first-pass-review",
+        "role_profile": "reviewer_provider"
+      }
+    ]
+  }
+}

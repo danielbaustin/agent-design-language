@@ -1,14 +1,22 @@
 use crate::chronosense::{CommitmentDeadlineContract, COMMITMENT_DEADLINE_SCHEMA};
+use crate::provider::provider_profile_names;
 use anyhow::{anyhow, Result};
 use schemars::JsonSchema;
 use serde::{Deserialize, Serialize};
+use std::collections::{BTreeMap, BTreeSet};
 
 pub const SCHEDULER_ECONOMICS_INPUT_SCHEMA_V1: &str = "adl.scheduler.economics_input.v1";
 pub const SCHEDULER_ECONOMICS_INPUT_BUNDLE_SCHEMA_V1: &str =
     "adl.scheduler.economics_input_bundle.v1";
+pub const SCHEDULER_ECONOMICS_INPUT_BUNDLE_WITH_PROVIDER_ROUTE_SCHEMA_V1: &str =
+    "adl.scheduler.economics_input_bundle.provider_route.v1";
 pub const COGNITIVE_SCHEDULER_DECISION_SCHEMA_V1: &str = "adl.scheduler.decision.v1";
+pub const COGNITIVE_SCHEDULER_DECISION_WITH_PROVIDER_ROUTE_SCHEMA_V1: &str =
+    "adl.scheduler.decision.provider_route.v1";
 pub const COGNITIVE_SCHEDULER_PLAN_SCHEMA_V1: &str = "adl.scheduler.plan.v1";
 pub const CHRONOSENSE_SCHEDULER_CONTEXT_SCHEMA_V1: &str = "adl.scheduler.chronosense_context.v1";
+pub const ROLE_PROVIDER_SELECTION_CONTEXT_SCHEMA_V1: &str =
+    "adl.scheduler.role_provider_selection_context.v1";
 
 #[derive(Debug, Clone, Serialize, Deserialize, JsonSchema, PartialEq, Eq)]
 #[serde(rename_all = "snake_case")]
@@ -134,6 +142,16 @@ pub enum ChronosenseDeadlinePostureV1 {
     Missed,
 }
 
+#[derive(Debug, Clone, Serialize, Deserialize, JsonSchema, PartialEq, Eq, PartialOrd, Ord)]
+#[serde(rename_all = "snake_case")]
+pub enum RoleProviderProfileV1 {
+    ConductorProvider,
+    ArchitectProvider,
+    ImplementerProvider,
+    ReviewerProvider,
+    TesterProvider,
+}
+
 #[derive(Debug, Clone, Serialize, Deserialize, JsonSchema, PartialEq, Eq)]
 #[serde(rename_all = "SCREAMING_SNAKE_CASE")]
 pub enum CognitiveSchedulerLaneV1 {
@@ -190,6 +208,58 @@ pub struct ChronosenseSchedulerContextV1 {
 
 #[derive(Debug, Clone, Serialize, Deserialize, JsonSchema, PartialEq, Eq)]
 #[serde(deny_unknown_fields)]
+pub struct ProviderRouteV1 {
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub provider_profile_ref: Option<String>,
+    pub provider_spec_kind: String,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub provider_family: Option<String>,
+    pub model_ref: String,
+    pub model_identity: String,
+    pub runtime_surface: String,
+    pub provider_selection_reason: String,
+    pub route_resolution_trace: Vec<String>,
+    pub output_contract_ref: String,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize, JsonSchema, PartialEq, Eq)]
+#[serde(deny_unknown_fields)]
+pub struct RoleProviderCandidateRouteV1 {
+    pub route: ProviderRouteV1,
+    pub eligible: bool,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub ineligibility_reason: Option<String>,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize, JsonSchema, PartialEq, Eq)]
+#[serde(deny_unknown_fields)]
+pub struct RoleProviderProfilePolicyV1 {
+    pub role_profile: RoleProviderProfileV1,
+    pub advisory_authority_limit: String,
+    pub required_capabilities: Vec<String>,
+    #[serde(default, skip_serializing_if = "Vec::is_empty")]
+    pub forbidden_capabilities: Vec<String>,
+    pub candidate_routes: Vec<RoleProviderCandidateRouteV1>,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize, JsonSchema, PartialEq, Eq)]
+#[serde(deny_unknown_fields)]
+pub struct RoleProviderTaskAssignmentV1 {
+    pub task_id: String,
+    pub role_profile: RoleProviderProfileV1,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize, JsonSchema, PartialEq, Eq)]
+#[serde(deny_unknown_fields)]
+pub struct RoleProviderSelectionContextV1 {
+    pub schema_version: String,
+    pub generated_from: String,
+    pub policies: Vec<RoleProviderProfilePolicyV1>,
+    pub assignments: Vec<RoleProviderTaskAssignmentV1>,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize, JsonSchema, PartialEq, Eq)]
+#[serde(deny_unknown_fields)]
 pub struct SchedulerEconomicsInputV1 {
     pub schema_version: String,
     pub task_id: String,
@@ -225,6 +295,8 @@ pub struct SchedulerEconomicsInputBundleV1 {
     pub deferred_concepts: Vec<String>,
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub chronosense_context: Option<ChronosenseSchedulerContextV1>,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub role_provider_context: Option<RoleProviderSelectionContextV1>,
     pub inputs: Vec<SchedulerEconomicsInputV1>,
 }
 
@@ -285,6 +357,8 @@ pub struct CognitiveSchedulerDecisionV1 {
     pub score_breakdown: SchedulerScoreBreakdownV1,
     pub dependency_status: SchedulerDependencyPostureV1,
     pub manual_override: SchedulerManualOverrideV1,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub provider_route: Option<ProviderRouteV1>,
     pub confidence: SchedulerConfidenceV1,
     pub scheduling_rank_key: String,
 }
@@ -317,10 +391,19 @@ pub fn parse_economics_bundle_json(input: &str) -> Result<SchedulerEconomicsInpu
 }
 
 pub fn validate_economics_bundle(bundle: &SchedulerEconomicsInputBundleV1) -> Result<()> {
-    if bundle.schema_version != SCHEDULER_ECONOMICS_INPUT_BUNDLE_SCHEMA_V1 {
+    if bundle.schema_version != SCHEDULER_ECONOMICS_INPUT_BUNDLE_SCHEMA_V1
+        && bundle.schema_version != SCHEDULER_ECONOMICS_INPUT_BUNDLE_WITH_PROVIDER_ROUTE_SCHEMA_V1
+    {
         return Err(anyhow!(
             "unsupported scheduler economics bundle schema: {}",
             bundle.schema_version
+        ));
+    }
+    if bundle.role_provider_context.is_some()
+        && bundle.schema_version != SCHEDULER_ECONOMICS_INPUT_BUNDLE_WITH_PROVIDER_ROUTE_SCHEMA_V1
+    {
+        return Err(anyhow!(
+            "scheduler economics bundle with role_provider_context must use schema {SCHEDULER_ECONOMICS_INPUT_BUNDLE_WITH_PROVIDER_ROUTE_SCHEMA_V1}"
         ));
     }
     if bundle.source_doc_ref.trim().is_empty() {
@@ -348,6 +431,9 @@ pub fn validate_economics_bundle(bundle: &SchedulerEconomicsInputBundleV1) -> Re
     }
     if let Some(context) = &bundle.chronosense_context {
         validate_chronosense_scheduler_context(context, &bundle.inputs)?;
+    }
+    if let Some(context) = &bundle.role_provider_context {
+        validate_role_provider_selection_context(context, &bundle.inputs)?;
     }
     Ok(())
 }
@@ -410,6 +496,172 @@ pub fn validate_chronosense_scheduler_context(
                 signal.task_id
             ));
         }
+    }
+    Ok(())
+}
+
+pub fn validate_role_provider_selection_context(
+    context: &RoleProviderSelectionContextV1,
+    inputs: &[SchedulerEconomicsInputV1],
+) -> Result<()> {
+    if context.schema_version != ROLE_PROVIDER_SELECTION_CONTEXT_SCHEMA_V1 {
+        return Err(anyhow!(
+            "unsupported role provider selection context schema: {}",
+            context.schema_version
+        ));
+    }
+    if context.generated_from.trim().is_empty() {
+        return Err(anyhow!(
+            "role provider selection context generated_from is required"
+        ));
+    }
+    if context.policies.is_empty() {
+        return Err(anyhow!(
+            "role provider selection context must include at least one policy"
+        ));
+    }
+    if context.assignments.is_empty() {
+        return Err(anyhow!(
+            "role provider selection context must include at least one assignment"
+        ));
+    }
+
+    let known_profiles = provider_profile_names()
+        .into_iter()
+        .collect::<BTreeSet<_>>();
+    let input_ids = inputs
+        .iter()
+        .map(|input| input.task_id.as_str())
+        .collect::<BTreeSet<_>>();
+    let mut policy_roles = BTreeSet::new();
+    for policy in &context.policies {
+        if !policy_roles.insert(policy.role_profile.clone()) {
+            return Err(anyhow!(
+                "duplicate role provider policy for {:?}",
+                policy.role_profile
+            ));
+        }
+        if policy.advisory_authority_limit.trim().is_empty() {
+            return Err(anyhow!(
+                "role provider policy {:?} advisory_authority_limit is required",
+                policy.role_profile
+            ));
+        }
+        if policy.required_capabilities.is_empty() {
+            return Err(anyhow!(
+                "role provider policy {:?} must name required capabilities",
+                policy.role_profile
+            ));
+        }
+        if policy.candidate_routes.is_empty() {
+            return Err(anyhow!(
+                "role provider policy {:?} must include candidate routes",
+                policy.role_profile
+            ));
+        }
+        let mut has_eligible_route = false;
+        for candidate in &policy.candidate_routes {
+            validate_provider_route(&candidate.route, &known_profiles)?;
+            match (candidate.eligible, candidate.ineligibility_reason.as_ref()) {
+                (true, Some(reason)) if !reason.trim().is_empty() => {
+                    return Err(anyhow!(
+                        "eligible role provider candidate {:?} must not include ineligibility_reason",
+                        policy.role_profile
+                    ));
+                }
+                (false, None) => {
+                    return Err(anyhow!(
+                        "ineligible role provider candidate {:?} must include ineligibility_reason",
+                        policy.role_profile
+                    ));
+                }
+                (false, Some(reason)) if reason.trim().is_empty() => {
+                    return Err(anyhow!(
+                        "ineligible role provider candidate {:?} ineligibility_reason is empty",
+                        policy.role_profile
+                    ));
+                }
+                _ => {}
+            }
+            if candidate.eligible {
+                has_eligible_route = true;
+            }
+        }
+        if !has_eligible_route {
+            return Err(anyhow!(
+                "role provider policy {:?} has no eligible candidate route",
+                policy.role_profile
+            ));
+        }
+    }
+
+    let mut assigned_task_ids = BTreeSet::new();
+    for assignment in &context.assignments {
+        if assignment.task_id.trim().is_empty() {
+            return Err(anyhow!("role provider assignment task_id is required"));
+        }
+        if !assigned_task_ids.insert(assignment.task_id.clone()) {
+            return Err(anyhow!(
+                "duplicate role provider assignment for task {}",
+                assignment.task_id
+            ));
+        }
+        if !input_ids.contains(assignment.task_id.as_str()) {
+            return Err(anyhow!(
+                "role provider assignment {} does not match a scheduler input task_id",
+                assignment.task_id
+            ));
+        }
+        if !policy_roles.contains(&assignment.role_profile) {
+            return Err(anyhow!(
+                "role provider assignment {} references role {:?} without a policy",
+                assignment.task_id,
+                assignment.role_profile
+            ));
+        }
+    }
+
+    Ok(())
+}
+
+pub fn validate_provider_route(
+    route: &ProviderRouteV1,
+    known_profiles: &BTreeSet<String>,
+) -> Result<()> {
+    if let Some(profile_ref) = &route.provider_profile_ref {
+        if profile_ref.trim().is_empty() {
+            return Err(anyhow!("provider route provider_profile_ref is empty"));
+        }
+        if !known_profiles.contains(profile_ref) {
+            return Err(anyhow!(
+                "provider route profile ref {profile_ref} is not tracked in provider profile registry"
+            ));
+        }
+    }
+    if route.provider_spec_kind.trim().is_empty() {
+        return Err(anyhow!("provider route provider_spec_kind is required"));
+    }
+    if route.model_ref.trim().is_empty() {
+        return Err(anyhow!("provider route model_ref is required"));
+    }
+    if route.model_identity.trim().is_empty() {
+        return Err(anyhow!("provider route model_identity is required"));
+    }
+    if route.runtime_surface.trim().is_empty() {
+        return Err(anyhow!("provider route runtime_surface is required"));
+    }
+    if route.provider_selection_reason.trim().is_empty() {
+        return Err(anyhow!(
+            "provider route provider_selection_reason is required"
+        ));
+    }
+    if route.route_resolution_trace.is_empty() {
+        return Err(anyhow!(
+            "provider route route_resolution_trace must include at least one entry"
+        ));
+    }
+    if route.output_contract_ref.trim().is_empty() {
+        return Err(anyhow!("provider route output_contract_ref is required"));
     }
     Ok(())
 }
@@ -499,9 +751,16 @@ pub fn schedule_economics_bundle(
     validate_economics_bundle(bundle)?;
     let adjusted_inputs =
         apply_chronosense_scheduler_context(&bundle.inputs, bundle.chronosense_context.as_ref());
+    let provider_routes =
+        resolve_role_provider_assignments(bundle.role_provider_context.as_ref(), &adjusted_inputs)?;
     let mut decisions = adjusted_inputs
         .iter()
-        .map(schedule_economics_input)
+        .map(|input| {
+            schedule_economics_input_with_provider_route(
+                input,
+                provider_routes.get(&input.task_id).cloned(),
+            )
+        })
         .collect::<Result<Vec<_>>>()?;
     decisions.sort_by(|left, right| left.scheduling_rank_key.cmp(&right.scheduling_rank_key));
     let recommended_order = decisions
@@ -514,6 +773,80 @@ pub fn schedule_economics_bundle(
         decisions,
         recommended_order,
     })
+}
+
+pub fn resolve_role_provider_assignments(
+    context: Option<&RoleProviderSelectionContextV1>,
+    inputs: &[SchedulerEconomicsInputV1],
+) -> Result<BTreeMap<String, ProviderRouteV1>> {
+    let Some(context) = context else {
+        return Ok(BTreeMap::new());
+    };
+    validate_role_provider_selection_context(context, inputs)?;
+    let policy_by_role = context
+        .policies
+        .iter()
+        .map(|policy| (policy.role_profile.clone(), policy))
+        .collect::<BTreeMap<_, _>>();
+    let mut selected_routes = BTreeMap::new();
+    for assignment in &context.assignments {
+        let policy = policy_by_role
+            .get(&assignment.role_profile)
+            .ok_or_else(|| {
+                anyhow!(
+                    "role provider assignment {} references role {:?} without a policy",
+                    assignment.task_id,
+                    assignment.role_profile
+                )
+            })?;
+        let selected = policy
+            .candidate_routes
+            .iter()
+            .find(|candidate| candidate.eligible)
+            .ok_or_else(|| {
+                anyhow!(
+                    "role provider policy {:?} has no eligible candidate route",
+                    policy.role_profile
+                )
+            })?;
+        let mut route = selected.route.clone();
+        route.route_resolution_trace = role_provider_resolution_trace(policy, &selected.route);
+        selected_routes.insert(assignment.task_id.clone(), route);
+    }
+    Ok(selected_routes)
+}
+
+fn role_provider_resolution_trace(
+    policy: &RoleProviderProfilePolicyV1,
+    selected_route: &ProviderRouteV1,
+) -> Vec<String> {
+    let mut trace = vec![
+        format!("role_profile={:?}", policy.role_profile),
+        "resolution_policy=ordered_first_eligible_fail_closed".to_string(),
+    ];
+    for candidate in &policy.candidate_routes {
+        let label = candidate
+            .route
+            .provider_profile_ref
+            .as_deref()
+            .unwrap_or(candidate.route.model_ref.as_str());
+        if candidate.route == *selected_route {
+            trace.push(format!("selected={label}"));
+        } else if candidate.eligible {
+            trace.push(format!(
+                "not_selected={label};reason=later_ordered_candidate"
+            ));
+        } else {
+            trace.push(format!(
+                "rejected={label};reason={}",
+                candidate
+                    .ineligibility_reason
+                    .as_deref()
+                    .unwrap_or("not_eligible")
+            ));
+        }
+    }
+    trace
 }
 
 pub fn apply_chronosense_scheduler_context(
@@ -685,6 +1018,13 @@ fn max_pressure(
 pub fn schedule_economics_input(
     input: &SchedulerEconomicsInputV1,
 ) -> Result<CognitiveSchedulerDecisionV1> {
+    schedule_economics_input_with_provider_route(input, None)
+}
+
+fn schedule_economics_input_with_provider_route(
+    input: &SchedulerEconomicsInputV1,
+    provider_route: Option<ProviderRouteV1>,
+) -> Result<CognitiveSchedulerDecisionV1> {
     let summary = summarize_economics_input(input)?;
     let selected_lane = select_lane(input, &summary);
     let reason = decision_reason(input, &summary, &selected_lane);
@@ -692,7 +1032,11 @@ pub fn schedule_economics_input(
     let scheduling_rank_key = scheduling_rank_key(input, &summary, &selected_lane);
 
     Ok(CognitiveSchedulerDecisionV1 {
-        schema_version: COGNITIVE_SCHEDULER_DECISION_SCHEMA_V1.to_string(),
+        schema_version: if provider_route.is_some() {
+            COGNITIVE_SCHEDULER_DECISION_WITH_PROVIDER_ROUTE_SCHEMA_V1.to_string()
+        } else {
+            COGNITIVE_SCHEDULER_DECISION_SCHEMA_V1.to_string()
+        },
         task_id: input.task_id.clone(),
         selected_lane,
         alternatives_considered,
@@ -715,6 +1059,7 @@ pub fn schedule_economics_input(
             present: input.manual_override.is_some(),
             reason: input.manual_override.clone(),
         },
+        provider_route,
         confidence: input.confidence.clone(),
         scheduling_rank_key,
     })
@@ -1129,6 +1474,125 @@ mod tests {
     }
 
     #[test]
+    fn role_provider_context_selects_first_eligible_tracked_profile_for_scheduler_decision() {
+        let mut bundle = parse_economics_bundle_json(FIXTURE).expect("fixture parses");
+        bundle.schema_version =
+            SCHEDULER_ECONOMICS_INPUT_BUNDLE_WITH_PROVIDER_ROUTE_SCHEMA_V1.to_string();
+        bundle.role_provider_context = Some(role_provider_context_fixture());
+
+        let plan = schedule_economics_bundle(&bundle).expect("provider-aware scheduler plan");
+        assert_eq!(
+            plan.source_schema_version,
+            SCHEDULER_ECONOMICS_INPUT_BUNDLE_WITH_PROVIDER_ROUTE_SCHEMA_V1
+        );
+        let review = decision(&plan, "first-pass-review");
+        assert_eq!(
+            review.schema_version,
+            COGNITIVE_SCHEDULER_DECISION_WITH_PROVIDER_ROUTE_SCHEMA_V1
+        );
+        let route = review
+            .provider_route
+            .as_ref()
+            .expect("review task has provider route");
+
+        assert_eq!(
+            route.provider_profile_ref.as_deref(),
+            Some("chatgpt:gpt-5.3-codex")
+        );
+        assert_eq!(route.provider_spec_kind, "http");
+        assert_eq!(route.model_ref, "gpt-5.3-codex");
+        assert!(route
+            .route_resolution_trace
+            .contains(&"resolution_policy=ordered_first_eligible_fail_closed".to_string()));
+        assert!(route.route_resolution_trace.iter().any(|entry| {
+            entry == "rejected=ollama:qwen2.5-7b;reason=local model not yet proven for reviewer role"
+        }));
+        assert!(route
+            .route_resolution_trace
+            .contains(&"selected=chatgpt:gpt-5.3-codex".to_string()));
+
+        let docs = decision(&plan, "docs-status-check");
+        assert_eq!(docs.schema_version, COGNITIVE_SCHEDULER_DECISION_SCHEMA_V1);
+        assert!(docs.provider_route.is_none());
+    }
+
+    #[test]
+    fn role_provider_context_requires_provider_route_bundle_schema() {
+        let mut bundle = parse_economics_bundle_json(FIXTURE).expect("fixture parses");
+        bundle.role_provider_context = Some(role_provider_context_fixture());
+
+        let err = schedule_economics_bundle(&bundle).expect_err("old bundle schema rejected");
+        assert!(err
+            .to_string()
+            .contains(SCHEDULER_ECONOMICS_INPUT_BUNDLE_WITH_PROVIDER_ROUTE_SCHEMA_V1));
+    }
+
+    #[test]
+    fn role_provider_context_rejects_untracked_provider_profile_ref() {
+        let mut bundle = parse_economics_bundle_json(FIXTURE).expect("fixture parses");
+        let mut context = role_provider_context_fixture();
+        context.policies[0].candidate_routes[1]
+            .route
+            .provider_profile_ref = Some("unprofiled:openrouter:gpt-5.4".to_string());
+        bundle.schema_version =
+            SCHEDULER_ECONOMICS_INPUT_BUNDLE_WITH_PROVIDER_ROUTE_SCHEMA_V1.to_string();
+        bundle.role_provider_context = Some(context);
+
+        let err = schedule_economics_bundle(&bundle).expect_err("untracked profile rejected");
+        assert!(err
+            .to_string()
+            .contains("is not tracked in provider profile registry"));
+    }
+
+    #[test]
+    fn role_provider_context_rejects_assignment_without_policy() {
+        let mut bundle = parse_economics_bundle_json(FIXTURE).expect("fixture parses");
+        let mut context = role_provider_context_fixture();
+        context.assignments[0].role_profile = RoleProviderProfileV1::TesterProvider;
+        bundle.schema_version =
+            SCHEDULER_ECONOMICS_INPUT_BUNDLE_WITH_PROVIDER_ROUTE_SCHEMA_V1.to_string();
+        bundle.role_provider_context = Some(context);
+
+        let err = schedule_economics_bundle(&bundle).expect_err("missing policy rejected");
+        assert!(err.to_string().contains("TesterProvider"));
+        assert!(err.to_string().contains("without a policy"));
+    }
+
+    #[test]
+    fn role_provider_context_rejects_policy_without_eligible_route() {
+        let mut bundle = parse_economics_bundle_json(FIXTURE).expect("fixture parses");
+        let mut context = role_provider_context_fixture();
+        for candidate in &mut context.policies[0].candidate_routes {
+            candidate.eligible = false;
+            candidate.ineligibility_reason = Some("not available in this proof".to_string());
+        }
+        bundle.schema_version =
+            SCHEDULER_ECONOMICS_INPUT_BUNDLE_WITH_PROVIDER_ROUTE_SCHEMA_V1.to_string();
+        bundle.role_provider_context = Some(context);
+
+        let err = schedule_economics_bundle(&bundle).expect_err("no eligible route rejected");
+        assert!(err.to_string().contains("has no eligible candidate route"));
+    }
+
+    #[test]
+    fn role_provider_context_rejects_duplicate_task_assignment() {
+        let mut bundle = parse_economics_bundle_json(FIXTURE).expect("fixture parses");
+        let mut context = role_provider_context_fixture();
+        context.assignments.push(RoleProviderTaskAssignmentV1 {
+            task_id: "first-pass-review".to_string(),
+            role_profile: RoleProviderProfileV1::ReviewerProvider,
+        });
+        bundle.schema_version =
+            SCHEDULER_ECONOMICS_INPUT_BUNDLE_WITH_PROVIDER_ROUTE_SCHEMA_V1.to_string();
+        bundle.role_provider_context = Some(context);
+
+        let err = schedule_economics_bundle(&bundle).expect_err("duplicate assignment rejected");
+        assert!(err
+            .to_string()
+            .contains("duplicate role provider assignment for task first-pass-review"));
+    }
+
+    #[test]
     fn chronosense_context_raises_approaching_deadline_priority() {
         let mut bundle = parse_economics_bundle_json(FIXTURE).expect("fixture parses");
         bundle.chronosense_context = Some(ChronosenseSchedulerContextV1 {
@@ -1532,5 +1996,67 @@ claim_boundary: bounded_v1_inputs_not_exact_measurement
 
     fn assert_lane(plan: &CognitiveSchedulerPlanV1, task_id: &str, lane: CognitiveSchedulerLaneV1) {
         assert_eq!(decision(plan, task_id).selected_lane, lane);
+    }
+
+    fn role_provider_context_fixture() -> RoleProviderSelectionContextV1 {
+        RoleProviderSelectionContextV1 {
+            schema_version: ROLE_PROVIDER_SELECTION_CONTEXT_SCHEMA_V1.to_string(),
+            generated_from: "provider profile selection fixture for #4672".to_string(),
+            policies: vec![RoleProviderProfilePolicyV1 {
+                role_profile: RoleProviderProfileV1::ReviewerProvider,
+                advisory_authority_limit:
+                    "advisory review only; cannot merge, close, or override operator gates"
+                        .to_string(),
+                required_capabilities: vec![
+                    "code_review".to_string(),
+                    "csdlc_truth_review".to_string(),
+                ],
+                forbidden_capabilities: vec!["merge_authority".to_string()],
+                candidate_routes: vec![
+                    RoleProviderCandidateRouteV1 {
+                        route: ProviderRouteV1 {
+                            provider_profile_ref: Some("ollama:qwen2.5-7b".to_string()),
+                            provider_spec_kind: "ollama".to_string(),
+                            provider_family: Some("local_ollama".to_string()),
+                            model_ref: "qwen2.5:7b".to_string(),
+                            model_identity: "qwen2.5:7b local ollama profile".to_string(),
+                            runtime_surface: "provider::OllamaProvider".to_string(),
+                            provider_selection_reason:
+                                "local reviewer candidate retained as fallback evidence"
+                                    .to_string(),
+                            route_resolution_trace: vec!["candidate=local_ollama".to_string()],
+                            output_contract_ref: "adl.provider.output.review_advisory.v1"
+                                .to_string(),
+                        },
+                        eligible: false,
+                        ineligibility_reason: Some(
+                            "local model not yet proven for reviewer role".to_string(),
+                        ),
+                    },
+                    RoleProviderCandidateRouteV1 {
+                        route: ProviderRouteV1 {
+                            provider_profile_ref: Some("chatgpt:gpt-5.3-codex".to_string()),
+                            provider_spec_kind: "http".to_string(),
+                            provider_family: Some("chatgpt".to_string()),
+                            model_ref: "gpt-5.3-codex".to_string(),
+                            model_identity: "ChatGPT GPT-5.3 Codex profile".to_string(),
+                            runtime_surface: "provider::HttpProvider".to_string(),
+                            provider_selection_reason:
+                                "tracked reviewer-capable provider profile selected for advisory review"
+                                    .to_string(),
+                            route_resolution_trace: vec!["candidate=chatgpt".to_string()],
+                            output_contract_ref: "adl.provider.output.review_advisory.v1"
+                                .to_string(),
+                        },
+                        eligible: true,
+                        ineligibility_reason: None,
+                    },
+                ],
+            }],
+            assignments: vec![RoleProviderTaskAssignmentV1 {
+                task_id: "first-pass-review".to_string(),
+                role_profile: RoleProviderProfileV1::ReviewerProvider,
+            }],
+        }
     }
 }
