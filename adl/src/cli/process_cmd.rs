@@ -1,13 +1,15 @@
 use std::fs;
 use std::io::Read;
-use std::net::TcpListener;
+use std::net::{TcpListener, TcpStream, ToSocketAddrs};
 use std::path::PathBuf;
+use std::time::Duration;
 
 use anyhow::{anyhow, Context, Result};
 use serde::Serialize;
 
 const SCHEMA: &str = "adl.process_status.v1";
 const MAX_PID_FILE_BYTES: u64 = 64;
+const PORT_CONNECT_TIMEOUT: Duration = Duration::from_millis(150);
 
 #[derive(Debug, Clone, PartialEq, Eq)]
 enum Check {
@@ -291,6 +293,17 @@ fn pid_report(check: &'static str, pid: u32, live: Option<bool>) -> ProcessStatu
 }
 
 fn port_report(host: String, port: u16) -> ProcessStatusReport {
+    if port_accepts_tcp_connection(&host, port) {
+        return base_report(
+            "port",
+            "bound_port",
+            None,
+            Some(host),
+            Some(port),
+            "exact TCP connect probe reached a loopback service",
+        );
+    }
+
     match TcpListener::bind((host.as_str(), port)) {
         Ok(listener) => {
             drop(listener);
@@ -319,6 +332,15 @@ fn port_report(host: String, port: u16) -> ProcessStatusReport {
             Some(port),
             "local bind probe could not classify the port",
         ),
+    }
+}
+
+fn port_accepts_tcp_connection(host: &str, port: u16) -> bool {
+    match (host, port).to_socket_addrs() {
+        Ok(addrs) => addrs
+            .filter(|addr| addr.ip().is_loopback())
+            .any(|addr| TcpStream::connect_timeout(&addr, PORT_CONNECT_TIMEOUT).is_ok()),
+        Err(_) => false,
     }
 }
 
@@ -396,4 +418,56 @@ fn status_usage() -> &'static str {
 
 Notes:
   The helper classifies exact metadata targets only. It does not run ps, pgrep, lsof, or broad process scans."
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use std::io::Write;
+    use std::thread;
+
+    #[test]
+    fn port_report_classifies_reachable_loopback_service_as_bound() {
+        assert_reachable_loopback_service_reports_bound("127.0.0.1");
+    }
+
+    #[test]
+    fn port_report_classifies_reachable_localhost_service_as_bound() {
+        assert_reachable_loopback_service_reports_bound("localhost");
+    }
+
+    fn assert_reachable_loopback_service_reports_bound(host: &str) {
+        let listener = TcpListener::bind(("127.0.0.1", 0)).expect("bind local test listener");
+        let port = listener.local_addr().expect("local listener addr").port();
+
+        let server = thread::spawn(move || {
+            let (mut stream, _) = listener.accept().expect("accept process-status probe");
+            let _ = stream.write_all(b"HTTP/1.1 400 Bad Request\r\nContent-Length: 0\r\n\r\n");
+        });
+
+        let report = port_report(host.to_string(), port);
+
+        server.join().expect("test server should finish");
+        assert_eq!(report.status, "bound_port");
+        assert_eq!(
+            report.note,
+            "exact TCP connect probe reached a loopback service"
+        );
+        assert!(!report.broad_process_scan);
+        assert!(!report.uses_ps);
+    }
+
+    #[test]
+    fn port_report_preserves_unbound_status_for_free_loopback_port() {
+        let listener = TcpListener::bind(("127.0.0.1", 0)).expect("bind local test listener");
+        let port = listener.local_addr().expect("local listener addr").port();
+        drop(listener);
+
+        let report = port_report("127.0.0.1".to_string(), port);
+
+        assert_eq!(report.status, "unbound_port");
+        assert_eq!(report.note, "local bind probe succeeded");
+        assert!(!report.broad_process_scan);
+        assert!(!report.uses_ps);
+    }
 }
