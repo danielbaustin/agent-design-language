@@ -15,7 +15,7 @@ planned
 ## Purpose
 
 Define proof surfaces for the final pre-`v0.92` bridge/readiness tranche. `v0.91.7`
-does not claim runnable demo completion from planning docs; it uses reviewable docs, validation checks, and later issue-local proofs to assign and verify runtime and Observatory evidence.
+does not claim runnable demo completion from planning docs alone; it uses reviewable docs, validation checks, and issue-local proofs to assign and verify runtime and Observatory evidence.
 
 ## Scope
 
@@ -59,10 +59,10 @@ No provider credentials or runtime services are required for this docs tranche.
 | D2 | Bridge overclaim scan | Docs do not claim runtime or `v0.92` readiness | text scan over `docs/milestones/v0.91.7` | review notes | claims are bounded by non-goals and consumption rules | deterministic text review | planned |
 | D3 | Residual visibility proof | Every second-tranche surface remains distinct | text scan over feature index and docs | index and feature docs | all eight surfaces are visible | deterministic text review | planned |
 | D4 | Runtime Soak #2 assignment | Runtime proof is scheduled, not implied | inspect `RUNTIME_SOAK_2_EXECUTION_PACKET_v0.91.7.md` and linked sprint/WBS/source-capture docs | runtime assignment rows and feature-list matrix | Soak #2 has a tracked owner packet, feature-list proof modes per row, and blocker/non-claim policy tied to `v0.92` activation | issue-local proof later | ready |
-| D5 | Observatory/birthday-visible proof status | Visible demo surfaces are proven or explicitly non-claimed without overclaiming | inspect demo matrix and Observatory proof status | `docs/milestones/v0.91.7/review/unity_observatory_4704/4704-unity-mcp-proof-summary.md` and retained camera render | Unity-MCP on `localhost:29779` proved the #4704 project binding, opened `Assets/Scenes/FlagshipObservatoryStage.unity`, found runtime/polis scene objects, and retained a nonblank 1920x1080 PNG at `docs/milestones/v0.91.7/review/unity_observatory_4704/flagship-wide-observatory-camera-4704.png`; full investor walkthrough/build-player readiness remains non-claimed | issue-local proof captured; publication pending | partial_proof |
+| D5 | Observatory/birthday-visible proof status | Visible demo surfaces are proven or explicitly non-claimed without overclaiming | Unity-MCP proof for `#4652` and `#4704`; inspect demo matrix and Observatory proof status | `docs/milestones/v0.91.7/review/unity_observatory_4652/4652-unity-shell-proof-summary.md`; `docs/milestones/v0.91.7/review/unity_observatory_4704/4704-unity-mcp-proof-summary.md`; retained camera renders | #4652 proves the flagship shell/runtime-polis surface with investor lighting and runtime contract refs; #4704 proves project binding, scene loading, runtime/polis objects, and retained nonblank visual evidence. Full build-player and final parent-sprint closeout remain non-claimed until #4702 reconciles the wave. | live Unity-MCP proof plus retained images; no player build claimed | proven-limited |
 
 ## Known Limits
 
-- This matrix proves documentation readiness, not runtime behavior.
+- This matrix records documentation readiness and links to issue-local runtime/demo proof where that proof exists; rows without linked issue-local proof still do not claim runtime behavior.
 - Curiosity, Constructability, ACIP, security, and reasoning-graph proofs require
   issue-local evidence or evidence-backed blockers before `v0.92` can consume them.

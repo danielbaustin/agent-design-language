@@ -507,6 +507,7 @@ namespace ADL.Demos.UnityObservatory
             content.AddToClassList("content");
             content.style.flexGrow = 1f;
             content.style.flexDirection = FlexDirection.Column;
+            content.Add(BuildDemoSurfaceCard());
             content.Add(BuildSummaryCard());
             content.Add(BuildWorldCard());
             content.Add(BuildStatusCard());
@@ -518,6 +519,30 @@ namespace ADL.Demos.UnityObservatory
             body.Add(content);
 
             return body;
+        }
+
+        private VisualElement BuildDemoSurfaceCard()
+        {
+            VisualElement card = CreateCard();
+            card.AddToClassList("demo-surface-card");
+            card.Add(CreateLabel("Runtime polis surface", "demo-surface-title", 20, FontStyle.Bold, "demo-title"));
+
+            VisualElement strip = new();
+            strip.AddToClassList("demo-strip");
+            strip.Add(CreateDemoSignal("Polis state", healthSummary, "demo-polis-state"));
+            strip.Add(CreateDemoSignal("Evidence", evidenceLevel.Replace("_", " "), "demo-evidence-level"));
+            strip.Add(CreateDemoSignal("Operator guardrail", "proposal-only controls", "demo-operator-boundary"));
+            strip.Add(CreateDemoSignal("Next proof", "#4704 walkthrough capture", "demo-next-step"));
+            card.Add(strip);
+
+            card.Add(
+                CreateLabel(
+                    "This surface is the bounded shell handoff between the staged observatory environment and reproducible proof capture.",
+                    "demo-surface-boundary",
+                    13
+                )
+            );
+            return card;
         }
 
         private VisualElement BuildNavigation()
@@ -720,6 +745,15 @@ namespace ADL.Demos.UnityObservatory
             tile.Add(CreateLabel(value, null, 22, FontStyle.Bold, "metric-value"));
             tile.Add(CreateLabel(note, null, 11, FontStyle.Normal, "metric-note"));
             return tile;
+        }
+
+        private static VisualElement CreateDemoSignal(string label, string value, string valueName)
+        {
+            VisualElement signal = new();
+            signal.AddToClassList("demo-signal");
+            signal.Add(CreateLabel(label, null, 11, FontStyle.Bold, "demo-signal-label"));
+            signal.Add(CreateLabel(value, valueName, 13, FontStyle.Bold, "demo-signal-value"));
+            return signal;
         }
 
         private static VisualElement CreateStatRow(string label, string value, string valueName)
