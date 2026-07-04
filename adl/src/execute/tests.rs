@@ -1878,6 +1878,311 @@ fn runner_runtime_resilience_negative_failures_record_terminal_dispositions() {
 }
 
 #[test]
+fn runner_sequential_runtime_resilience_records_admitted_and_success() {
+    let mut resolved = minimal_resolved();
+    resolved
+        .doc
+        .providers
+        .insert("p1".to_string(), mock_provider_spec());
+    resolved.doc.run.workflow.as_mut().expect("workflow").kind = WorkflowKind::Sequential;
+    resolved.steps = vec![crate::resolve::ResolvedStep {
+        id: "seq.ok".to_string(),
+        agent: None,
+        provider: Some("p1".to_string()),
+        placement: Some(PlacementMode::Local),
+        task: None,
+        call: None,
+        with: HashMap::new(),
+        as_ns: None,
+        delegation: None,
+        conversation: None,
+        prompt: Some(PromptSpec {
+            user: Some("hello sequential".to_string()),
+            ..Default::default()
+        }),
+        inputs: HashMap::new(),
+        guards: vec![],
+        save_as: None,
+        write_to: None,
+        on_error: None,
+        retry: None,
+    }];
+    resolved.execution_plan = crate::execution_plan::ExecutionPlan {
+        workflow_kind: WorkflowKind::Sequential,
+        nodes: vec![crate::execution_plan::ExecutionNode {
+            step_id: "seq.ok".to_string(),
+            depends_on: vec![],
+            save_as: None,
+            delegation: None,
+        }],
+    };
+
+    let base = unique_temp_path("adl-runner-seq-resilience");
+    let out_dir = base.join("out");
+    std::fs::create_dir_all(&out_dir).expect("create out dir");
+    let mut tr = crate::trace::Trace::new("run", "wf", "0.3");
+    let result = execute_sequential(&resolved, &mut tr, false, false, &base, &out_dir)
+        .expect("sequential step should succeed");
+
+    assert_eq!(result.outputs.len(), 1);
+    assert!(tr.events.iter().any(|event| matches!(
+        event,
+        TraceEvent::RuntimeResilienceDecision { record, .. }
+            if record.step_id == "seq.ok"
+                && record.watcher_disposition == RuntimeResilienceDispositionV1::Admitted
+                && record.middleware_disposition == RuntimeResilienceDispositionV1::Admitted
+                && record.max_concurrency == Some(1)
+    )));
+    assert!(tr.events.iter().any(|event| matches!(
+        event,
+        TraceEvent::RuntimeResilienceDecision { record, .. }
+            if record.step_id == "seq.ok"
+                && record.watcher_disposition == RuntimeResilienceDispositionV1::Succeeded
+                && record.middleware_disposition == RuntimeResilienceDispositionV1::Succeeded
+                && !record.terminal
+    )));
+
+    let _ = std::fs::remove_dir_all(base);
+}
+
+#[test]
+fn runner_sequential_runtime_resilience_records_degraded_continue_and_terminal_failure() {
+    let mut resolved = minimal_resolved();
+    resolved
+        .doc
+        .providers
+        .insert("p1".to_string(), mock_provider_spec());
+    resolved.doc.run.workflow.as_mut().expect("workflow").kind = WorkflowKind::Sequential;
+    resolved.steps = vec![
+        crate::resolve::ResolvedStep {
+            id: "seq.degraded".to_string(),
+            agent: None,
+            provider: Some("p1".to_string()),
+            placement: Some(PlacementMode::Local),
+            task: None,
+            call: None,
+            with: HashMap::new(),
+            as_ns: None,
+            delegation: None,
+            conversation: None,
+            prompt: Some(PromptSpec {
+                user: Some("FAIL={{missing}}".to_string()),
+                ..Default::default()
+            }),
+            inputs: HashMap::new(),
+            guards: vec![],
+            save_as: None,
+            write_to: None,
+            on_error: Some(crate::adl::StepOnError::Continue),
+            retry: None,
+        },
+        crate::resolve::ResolvedStep {
+            id: "seq.terminal".to_string(),
+            agent: None,
+            provider: Some("p1".to_string()),
+            placement: Some(PlacementMode::Local),
+            task: None,
+            call: None,
+            with: HashMap::new(),
+            as_ns: None,
+            delegation: None,
+            conversation: None,
+            prompt: Some(PromptSpec {
+                user: Some("FAIL={{missing}}".to_string()),
+                ..Default::default()
+            }),
+            inputs: HashMap::new(),
+            guards: vec![],
+            save_as: None,
+            write_to: None,
+            on_error: None,
+            retry: None,
+        },
+    ];
+    resolved.execution_plan = crate::execution_plan::ExecutionPlan {
+        workflow_kind: WorkflowKind::Sequential,
+        nodes: vec![
+            crate::execution_plan::ExecutionNode {
+                step_id: "seq.degraded".to_string(),
+                depends_on: vec![],
+                save_as: None,
+                delegation: None,
+            },
+            crate::execution_plan::ExecutionNode {
+                step_id: "seq.terminal".to_string(),
+                depends_on: vec!["seq.degraded".to_string()],
+                save_as: None,
+                delegation: None,
+            },
+        ],
+    };
+
+    let base = unique_temp_path("adl-runner-seq-resilience-failures");
+    let out_dir = base.join("out");
+    std::fs::create_dir_all(&out_dir).expect("create out dir");
+    let mut tr = crate::trace::Trace::new("run", "wf", "0.3");
+    let result = execute_sequential(&resolved, &mut tr, false, false, &base, &out_dir);
+
+    assert!(
+        result.is_err(),
+        "terminal sequential failure must fail the run"
+    );
+    assert!(tr.events.iter().any(|event| matches!(
+        event,
+        TraceEvent::RuntimeResilienceDecision { record, .. }
+            if record.step_id == "seq.degraded"
+                && record.watcher_disposition == RuntimeResilienceDispositionV1::DegradedContinue
+                && record.middleware_disposition == RuntimeResilienceDispositionV1::DegradedContinue
+                && !record.terminal
+                && record.fault.is_some()
+    )));
+    assert!(tr.events.iter().any(|event| matches!(
+        event,
+        TraceEvent::RuntimeResilienceDecision { record, .. }
+            if record.step_id == "seq.terminal"
+                && record.watcher_disposition == RuntimeResilienceDispositionV1::TerminalFailure
+                && record.middleware_disposition == RuntimeResilienceDispositionV1::TerminalFailure
+                && record.terminal
+                && record.fault.is_some()
+    )));
+
+    let _ = std::fs::remove_dir_all(base);
+}
+
+#[test]
+fn runner_sequential_resume_skips_completed_step_then_writes_and_pauses() {
+    let mut resolved = minimal_resolved();
+    resolved
+        .doc
+        .providers
+        .insert("p1".to_string(), mock_provider_spec());
+    resolved.doc.run.workflow.as_mut().expect("workflow").kind = WorkflowKind::Sequential;
+    resolved.steps = vec![
+        crate::resolve::ResolvedStep {
+            id: "seq.done".to_string(),
+            agent: None,
+            provider: Some("p1".to_string()),
+            placement: Some(PlacementMode::Local),
+            task: None,
+            call: None,
+            with: HashMap::new(),
+            as_ns: None,
+            delegation: None,
+            conversation: None,
+            prompt: Some(PromptSpec {
+                user: Some("DONE".to_string()),
+                ..Default::default()
+            }),
+            inputs: HashMap::new(),
+            guards: vec![],
+            save_as: Some("first".to_string()),
+            write_to: None,
+            on_error: None,
+            retry: None,
+        },
+        crate::resolve::ResolvedStep {
+            id: "seq.pause".to_string(),
+            agent: None,
+            provider: Some("p1".to_string()),
+            placement: Some(PlacementMode::Local),
+            task: None,
+            call: None,
+            with: HashMap::new(),
+            as_ns: None,
+            delegation: None,
+            conversation: None,
+            prompt: Some(PromptSpec {
+                user: Some("SECOND={{prior}}".to_string()),
+                ..Default::default()
+            }),
+            inputs: HashMap::from([("prior".to_string(), "@state:first".to_string())]),
+            guards: vec![crate::adl::GuardSpec {
+                kind: "pause".to_string(),
+                config: HashMap::from([(
+                    "reason".to_string(),
+                    serde_json::Value::String("operator checkpoint".to_string()),
+                )]),
+            }],
+            save_as: Some("second".to_string()),
+            write_to: Some("artifacts/second.txt".to_string()),
+            on_error: None,
+            retry: None,
+        },
+    ];
+    resolved.execution_plan = crate::execution_plan::ExecutionPlan {
+        workflow_kind: WorkflowKind::Sequential,
+        nodes: vec![
+            crate::execution_plan::ExecutionNode {
+                step_id: "seq.done".to_string(),
+                depends_on: vec![],
+                save_as: Some("first".to_string()),
+                delegation: None,
+            },
+            crate::execution_plan::ExecutionNode {
+                step_id: "seq.pause".to_string(),
+                depends_on: vec!["seq.done".to_string()],
+                save_as: Some("second".to_string()),
+                delegation: None,
+            },
+        ],
+    };
+
+    let base = unique_temp_path("adl-runner-seq-resume-pause");
+    let out_dir = base.join("out");
+    std::fs::create_dir_all(&out_dir).expect("create out dir");
+    let mut completed_step_ids = std::collections::HashSet::new();
+    completed_step_ids.insert("seq.done".to_string());
+    let resume = ResumeState {
+        completed_step_ids,
+        saved_state: HashMap::from([("first".to_string(), "already-done".to_string())]),
+        completed_outputs: HashMap::new(),
+        steering_history: vec![],
+    };
+    let mut tr = crate::trace::Trace::new("run", "wf", "0.3");
+    let result = execute_sequential_with_resume(
+        &resolved,
+        &mut tr,
+        true,
+        true,
+        &base,
+        &out_dir,
+        Some(resume),
+    )
+    .expect("resume should skip completed step and pause after next step");
+
+    assert_eq!(result.outputs.len(), 1);
+    assert_eq!(result.records.len(), 1);
+    assert!(result
+        .records
+        .iter()
+        .any(|record| record.step_id == "seq.pause" && record.status == "success"));
+    let artifact = out_dir.join("artifacts/second.txt");
+    assert!(
+        artifact.exists(),
+        "sequential write_to branch should emit artifact"
+    );
+    let pause = result.pause.expect("pause result");
+    assert_eq!(pause.paused_step_id, "seq.pause");
+    assert_eq!(pause.reason.as_deref(), Some("operator checkpoint"));
+    assert_eq!(
+        pause.completed_step_ids,
+        vec!["seq.done".to_string(), "seq.pause".to_string()]
+    );
+    assert!(pause.remaining_step_ids.is_empty());
+    assert_eq!(
+        pause.saved_state.get("first").map(String::as_str),
+        Some("already-done")
+    );
+    assert!(pause.saved_state.contains_key("second"));
+    assert!(pause.completed_outputs.contains_key("seq.pause"));
+    assert!(!tr.events.iter().any(
+        |event| matches!(event, TraceEvent::StepStarted { step_id, .. } if step_id == "seq.done")
+    ));
+
+    let _ = std::fs::remove_dir_all(base);
+}
+
+#[test]
 fn runtime_resilience_failure_helper_classifies_timeout_and_cancelled() {
     let step = local_retry_step(1);
     let mut timeout_trace = crate::trace::Trace::new("run", "wf", "0.3");

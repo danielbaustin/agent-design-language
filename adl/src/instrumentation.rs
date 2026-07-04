@@ -536,6 +536,11 @@ mod tests {
     use super::*;
     use crate::adl::{DelegationSpec, WorkflowKind};
     use crate::execution_plan::ExecutionNode;
+    use crate::resilience::{
+        ResilienceFaultClassV1, ResilienceFaultClassificationV1, ResilienceFaultDispositionV1,
+        ResilienceSurfaceV1, RuntimeResilienceDispositionV1, RuntimeResilienceTraceV1,
+        RUNTIME_RESILIENCE_TRACE_SCHEMA_V1,
+    };
     use std::time::{SystemTime, UNIX_EPOCH};
 
     fn sample_plan() -> ExecutionPlan {
@@ -802,6 +807,248 @@ mod tests {
             payload.contains("\"tags\":[\"a\",\"z\"]"),
             "delegation should be sorted+deduped: {payload}"
         );
+    }
+
+    #[test]
+    fn normalize_trace_events_preserves_runtime_resilience_decision_projection() {
+        let events = vec![TraceEvent::RuntimeResilienceDecision {
+            ts_ms: 42,
+            elapsed_ms: 7,
+            record: RuntimeResilienceTraceV1 {
+                schema_version: RUNTIME_RESILIENCE_TRACE_SCHEMA_V1.to_string(),
+                policy_id: "runtime.scheduler_watcher.aee_resilience.v1".to_string(),
+                surface: ResilienceSurfaceV1::Runtime,
+                component: "execute.runner".to_string(),
+                step_id: "seq.fail".to_string(),
+                provider_id: "p1".to_string(),
+                task_id: "task.fail".to_string(),
+                watcher_disposition: RuntimeResilienceDispositionV1::TerminalFailure,
+                middleware_disposition: RuntimeResilienceDispositionV1::TerminalFailure,
+                terminal: true,
+                attempt_count: 2,
+                elapsed_ms: 7,
+                max_concurrency: Some(1),
+                queue_depth: None,
+                fault: Some(ResilienceFaultClassificationV1 {
+                    schema_version: crate::resilience::RESILIENCE_FAULT_CLASSIFICATION_SCHEMA_V1
+                        .to_string(),
+                    surface: ResilienceSurfaceV1::Runtime,
+                    fault_class: ResilienceFaultClassV1::WorkflowFailure,
+                    disposition: ResilienceFaultDispositionV1::Terminal,
+                    retryable: false,
+                    summary: "missing input".to_string(),
+                    component_ref: Some("execute.runner".to_string()),
+                    http_status: None,
+                    retry_after_ms: None,
+                }),
+                evidence_refs: vec!["adl/src/execute/mod.rs".to_string()],
+                decision_summary: "runtime resilience middleware recorded terminal failure"
+                    .to_string(),
+            },
+        }];
+
+        let normalized = normalize_trace_events(&events);
+
+        assert_eq!(
+            normalized,
+            vec![TraceEventNormalized::RuntimeResilienceDecision {
+                step_id: "seq.fail".to_string(),
+                watcher_disposition: "terminal_failure".to_string(),
+                middleware_disposition: "terminal_failure".to_string(),
+                terminal: true,
+                attempt_count: 2,
+            }]
+        );
+    }
+
+    #[test]
+    fn normalize_trace_events_projects_governed_scheduler_delegation_and_call_variants() {
+        let events = vec![
+            TraceEvent::GovernedAccConstructed {
+                ts_ms: 1,
+                elapsed_ms: 1,
+                proposal_id: "proposal-1".to_string(),
+                acc_contract_id: "acc-1".to_string(),
+                replay_posture: "replayable".to_string(),
+            },
+            TraceEvent::GovernedPolicyInjected {
+                ts_ms: 2,
+                elapsed_ms: 2,
+                proposal_id: "proposal-1".to_string(),
+                policy_evidence_ref: "policy/ref.json".to_string(),
+                outcome: "allowed".to_string(),
+            },
+            TraceEvent::GovernedVisibilityResolved {
+                ts_ms: 3,
+                elapsed_ms: 3,
+                proposal_id: "proposal-1".to_string(),
+                actor_view: "actor".to_string(),
+                operator_view: "operator".to_string(),
+                reviewer_view: "reviewer".to_string(),
+                public_report_view: "public".to_string(),
+                observatory_projection: "observatory".to_string(),
+            },
+            TraceEvent::GovernedFreedomGateDecided {
+                ts_ms: 4,
+                elapsed_ms: 4,
+                proposal_id: "proposal-1".to_string(),
+                candidate_id: "candidate-1".to_string(),
+                decision: "approved".to_string(),
+                reason_code: "policy_ok".to_string(),
+                boundary: "runtime".to_string(),
+                redaction_summary: "clean".to_string(),
+            },
+            TraceEvent::GovernedActionSelected {
+                ts_ms: 5,
+                elapsed_ms: 5,
+                proposal_id: "proposal-1".to_string(),
+                action_id: "action-1".to_string(),
+                tool_name: "tool.echo".to_string(),
+                adapter_id: "adapter.local".to_string(),
+                evidence_refs: vec!["evidence/action.json".to_string()],
+            },
+            TraceEvent::GovernedActionRejected {
+                ts_ms: 6,
+                elapsed_ms: 6,
+                proposal_id: "proposal-1".to_string(),
+                action_id: "action-2".to_string(),
+                tool_name: "tool.write".to_string(),
+                adapter_id: "adapter.local".to_string(),
+                reason_code: "denied".to_string(),
+                evidence_refs: vec!["evidence/reject.json".to_string()],
+            },
+            TraceEvent::GovernedExecutionResultRecorded {
+                ts_ms: 7,
+                elapsed_ms: 7,
+                proposal_id: "proposal-1".to_string(),
+                action_id: "action-1".to_string(),
+                adapter_id: "adapter.local".to_string(),
+                result_ref: "results/action.json".to_string(),
+                evidence_refs: vec!["evidence/result.json".to_string()],
+            },
+            TraceEvent::GovernedRefusalRecorded {
+                ts_ms: 8,
+                elapsed_ms: 8,
+                proposal_id: "proposal-1".to_string(),
+                action_id: "action-3".to_string(),
+                reason_code: "refused".to_string(),
+                evidence_refs: vec!["evidence/refusal.json".to_string()],
+            },
+            TraceEvent::GovernedRedactionDecisionRecorded {
+                ts_ms: 9,
+                elapsed_ms: 9,
+                proposal_id: "proposal-1".to_string(),
+                audience: "reviewer".to_string(),
+                surfaces: vec!["trace".to_string()],
+                outcome: "redacted".to_string(),
+                detail: Some("masked".to_string()),
+            },
+            TraceEvent::SchedulerPolicy {
+                ts_ms: 10,
+                elapsed_ms: 10,
+                max_concurrency: 2,
+                source: "workflow".to_string(),
+            },
+            TraceEvent::RunFailed {
+                ts_ms: 11,
+                elapsed_ms: 11,
+                message: "boom".to_string(),
+            },
+            TraceEvent::RunFinished {
+                ts_ms: 12,
+                elapsed_ms: 12,
+                success: false,
+            },
+            TraceEvent::DelegationApproved {
+                ts_ms: 13,
+                elapsed_ms: 13,
+                delegation_id: "del-1".to_string(),
+                step_id: "s1".to_string(),
+            },
+            TraceEvent::DelegationDenied {
+                ts_ms: 14,
+                elapsed_ms: 14,
+                delegation_id: "del-2".to_string(),
+                step_id: "s2".to_string(),
+                action_kind: "provider_call".to_string(),
+                target_id: "remote".to_string(),
+                rule_id: Some("deny-remote".to_string()),
+            },
+            TraceEvent::DelegationResultReceived {
+                ts_ms: 15,
+                elapsed_ms: 15,
+                delegation_id: "del-1".to_string(),
+                step_id: "s1".to_string(),
+                success: true,
+                output_bytes: 42,
+            },
+            TraceEvent::DelegationCompleted {
+                ts_ms: 16,
+                elapsed_ms: 16,
+                delegation_id: "del-1".to_string(),
+                step_id: "s1".to_string(),
+                outcome: "completed".to_string(),
+            },
+            TraceEvent::CallEntered {
+                ts_ms: 17,
+                elapsed_ms: 17,
+                caller_step_id: "caller".to_string(),
+                callee_workflow_id: "callee".to_string(),
+                namespace: "ns".to_string(),
+            },
+            TraceEvent::CallExited {
+                ts_ms: 18,
+                elapsed_ms: 18,
+                caller_step_id: "caller".to_string(),
+                status: "success".to_string(),
+                namespace: "ns".to_string(),
+            },
+        ];
+
+        let normalized = normalize_trace_events(&events);
+
+        assert_eq!(normalized.len(), events.len());
+        assert!(matches!(
+            &normalized[0],
+            TraceEventNormalized::GovernedAccConstructed {
+                proposal_id,
+                acc_contract_id,
+                replay_posture
+            } if proposal_id == "proposal-1"
+                && acc_contract_id == "acc-1"
+                && replay_posture == "replayable"
+        ));
+        assert!(matches!(
+            &normalized[8],
+            TraceEventNormalized::GovernedRedactionDecisionRecorded {
+                audience,
+                detail,
+                ..
+            } if audience == "reviewer" && detail.as_deref() == Some("masked")
+        ));
+        assert!(matches!(
+            &normalized[9],
+            TraceEventNormalized::SchedulerPolicy {
+                max_concurrency: 2,
+                source
+            } if source == "workflow"
+        ));
+        assert!(matches!(
+            &normalized[13],
+            TraceEventNormalized::DelegationDenied {
+                delegation_id,
+                rule_id,
+                ..
+            } if delegation_id == "del-2" && rule_id.as_deref() == Some("deny-remote")
+        ));
+        assert!(matches!(
+            &normalized[17],
+            TraceEventNormalized::CallExited {
+                caller_step_id,
+                status,
+                namespace
+            } if caller_step_id == "caller" && status == "success" && namespace == "ns"
+        ));
     }
 
     #[test]
