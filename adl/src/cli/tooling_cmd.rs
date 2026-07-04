@@ -115,7 +115,7 @@ pub(crate) fn real_tooling(args: &[String]) -> Result<()> {
 fn tooling_usage() -> &'static str {
     "adl tooling card-prompt --issue <number> [--out <path>]\n\
 adl tooling card-prompt --input <path> [--out <path>]\n\
-adl tooling ci-log-archive summarize --logs-dir <dir> --out <manifest.json> --s3-prefix s3://bucket/prefix [--repo owner/repo] [--pr <n>] [--run-id <id>] [--commit <sha>] [--raw-zip <logs.zip>] [--upload] [--threshold-seconds 60] [--redaction-status <status>]\n\
+adl tooling ci-log-archive summarize --logs-dir <dir> --out <manifest.json> --s3-prefix s3://bucket/prefix [--repo owner/repo] [--pr <n>] [--run-id <id>] [--commit <sha>] [--raw-zip <logs.zip>] [--upload] [--upload-manifest] [--aws-profile <profile>] [--threshold-seconds 60] [--redaction-status <status>]\n\
 adl tooling code-review --out <dir> [--backend fixture|ollama] [--visibility packet-only|read-only-repo] [--base <ref>] [--head <ref>] [--issue <number>] [--writer-session <id>] [--reviewer-session <id>] [--model <name>] [--allow-live-ollama] [--ollama-url <url>] [--timeout-secs <n>] [--include-working-tree] [--file <path> ...] [--fixture-case clean|blocked]\n\
 adl tooling codex-usage-watch parse --input <status.txt> [--json]\n\
 adl tooling codex-usage-watch parse --text \"Context: ...\" [--json]\n\

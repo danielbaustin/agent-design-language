@@ -23,6 +23,8 @@ struct ArchiveArgs {
     commit: Option<String>,
     raw_zip: Option<PathBuf>,
     upload: bool,
+    upload_manifest: bool,
+    aws_profile: Option<String>,
     threshold_seconds: f64,
     redaction_status: String,
 }
@@ -38,14 +40,22 @@ struct TimingEntry {
 
 pub(super) fn real_ci_log_archive(args: &[String]) -> Result<()> {
     let args = parse_args(args)?;
-    let manifest = run_archive(&args)?;
+    let mut manifest = run_archive(&args)?;
     if let Some(parent) = args.out.parent() {
         fs::create_dir_all(parent)
             .with_context(|| format!("failed to create output dir '{}'", parent.display()))?;
     }
-    fs::write(&args.out, serde_json::to_string_pretty(&manifest)? + "\n")
-        .with_context(|| format!("failed to write manifest '{}'", args.out.display()))?;
+    write_manifest(&args.out, &manifest)?;
+    if args.upload_manifest {
+        write_uploaded_manifest_file(&args, &mut manifest)?;
+    }
     println!("ci_log_archive_manifest={}", args.out.display());
+    Ok(())
+}
+
+fn write_manifest(path: &Path, manifest: &serde_json::Value) -> Result<()> {
+    fs::write(path, serde_json::to_string_pretty(manifest)? + "\n")
+        .with_context(|| format!("failed to write manifest '{}'", path.display()))?;
     Ok(())
 }
 
@@ -71,6 +81,8 @@ fn parse_args(args: &[String]) -> Result<ArchiveArgs> {
     let mut commit = None;
     let mut raw_zip = None;
     let mut upload = false;
+    let mut upload_manifest = false;
+    let mut aws_profile = None;
     let mut threshold_seconds = 60.0;
     let mut redaction_status = "not_redacted_private_archive_manifest_only".to_string();
 
@@ -95,6 +107,8 @@ fn parse_args(args: &[String]) -> Result<ArchiveArgs> {
             "--commit" => commit = Some(require_value(args, &mut i, "--commit")?),
             "--raw-zip" => raw_zip = Some(PathBuf::from(require_value(args, &mut i, "--raw-zip")?)),
             "--upload" => upload = true,
+            "--upload-manifest" => upload_manifest = true,
+            "--aws-profile" => aws_profile = Some(require_value(args, &mut i, "--aws-profile")?),
             "--threshold-seconds" => {
                 let value = require_value(args, &mut i, "--threshold-seconds")?;
                 threshold_seconds = value
@@ -130,6 +144,9 @@ fn parse_args(args: &[String]) -> Result<ArchiveArgs> {
             bail!("--raw-zip is not a file: {}", raw_zip.display());
         }
     }
+    if upload_manifest && !upload {
+        bail!("--upload-manifest requires --upload");
+    }
 
     validate_redaction_status(&redaction_status)?;
 
@@ -144,6 +161,8 @@ fn parse_args(args: &[String]) -> Result<ArchiveArgs> {
         commit,
         raw_zip,
         upload,
+        upload_manifest,
+        aws_profile,
         threshold_seconds,
         redaction_status,
     })
@@ -169,7 +188,7 @@ fn validate_redaction_status(value: &str) -> Result<()> {
 }
 
 fn usage() -> &'static str {
-    "adl tooling ci-log-archive summarize --logs-dir <dir> --out <manifest.json> --s3-prefix s3://bucket/prefix [--repo owner/repo] [--pr <n>] [--run-id <id>] [--commit <sha>] [--raw-zip <logs.zip>] [--upload] [--threshold-seconds 60] [--redaction-status <status>]"
+    "adl tooling ci-log-archive summarize --logs-dir <dir> --out <manifest.json> --s3-prefix s3://bucket/prefix [--repo owner/repo] [--pr <n>] [--run-id <id>] [--commit <sha>] [--raw-zip <logs.zip>] [--upload] [--upload-manifest] [--aws-profile <profile>] [--threshold-seconds 60] [--redaction-status <status>]"
 }
 
 fn run_archive(args: &ArchiveArgs) -> Result<serde_json::Value> {
@@ -188,10 +207,16 @@ fn run_archive(args: &ArchiveArgs) -> Result<serde_json::Value> {
         .filter(|entry| entry.duration_seconds > args.threshold_seconds)
         .count();
     let raw_log_ref = raw_log_s3_ref(args);
+    let manifest_ref = manifest_s3_ref(args);
     let upload_status = if args.upload {
         upload_raw_logs(args, &raw_log_ref)?
     } else {
         "upload_not_run".to_string()
+    };
+    let manifest_upload_status = if args.upload_manifest {
+        "pending_manifest_write"
+    } else {
+        "upload_not_run"
     };
 
     Ok(json!({
@@ -206,7 +231,9 @@ fn run_archive(args: &ArchiveArgs) -> Result<serde_json::Value> {
         "archive": {
             "backend": "s3",
             "raw_log_ref": raw_log_ref,
+            "manifest_ref": manifest_ref,
             "upload_status": upload_status,
+            "manifest_upload_status": manifest_upload_status,
             "redaction_status": args.redaction_status,
             "local_retention": "temporary_input_only"
         },
@@ -349,6 +376,18 @@ fn round3(value: f64) -> f64 {
 }
 
 fn raw_log_s3_ref(args: &ArchiveArgs) -> String {
+    let mut prefix = archive_base_s3_ref(args);
+    prefix.push_str("/github-actions-logs.zip");
+    prefix
+}
+
+fn manifest_s3_ref(args: &ArchiveArgs) -> String {
+    let mut prefix = archive_base_s3_ref(args);
+    prefix.push_str("/ci-log-archive-manifest.v1.json");
+    prefix
+}
+
+fn archive_base_s3_ref(args: &ArchiveArgs) -> String {
     let mut prefix = args.s3_prefix.trim_end_matches('/').to_string();
     if let Some(repo) = args.repo.as_deref() {
         prefix.push('/');
@@ -361,7 +400,6 @@ fn raw_log_s3_ref(args: &ArchiveArgs) -> String {
         prefix.push_str("/run-");
         prefix.push_str(&sanitize_key_component(run_id));
     }
-    prefix.push_str("/github-actions-logs.zip");
     prefix
 }
 
@@ -379,16 +417,62 @@ fn upload_raw_logs(args: &ArchiveArgs, raw_log_ref: &str) -> Result<String> {
     let Some(raw_zip) = args.raw_zip.as_ref() else {
         bail!("--upload requires --raw-zip so the uploaded payload is explicit");
     };
-    let status = Command::new("aws")
+    aws_s3_cp(args, raw_zip, raw_log_ref)
+        .context("failed to upload raw logs for ci-log-archive")?;
+    Ok("uploaded".to_string())
+}
+
+fn write_uploaded_manifest_file(
+    args: &ArchiveArgs,
+    manifest: &mut serde_json::Value,
+) -> Result<()> {
+    if manifest["archive"]["upload_status"] != "uploaded" {
+        bail!("manifest upload requires raw log upload to have completed");
+    }
+    let manifest_ref = manifest["archive"]["manifest_ref"]
+        .as_str()
+        .map(str::to_owned)
+        .ok_or_else(|| anyhow!("ci-log-archive manifest is missing archive.manifest_ref"))?;
+    let uploaded_manifest = uploaded_manifest_value(manifest);
+    let upload_path = manifest_upload_staging_path(&args.out);
+    write_manifest(&upload_path, &uploaded_manifest)?;
+    if let Err(err) = aws_s3_cp(args, &upload_path, &manifest_ref)
+        .context("failed to upload ci-log-archive manifest")
+    {
+        let _ = fs::remove_file(&upload_path);
+        return Err(err);
+    }
+    write_manifest(&args.out, &uploaded_manifest)?;
+    *manifest = uploaded_manifest;
+    let _ = fs::remove_file(&upload_path);
+    Ok(())
+}
+
+fn uploaded_manifest_value(manifest: &serde_json::Value) -> serde_json::Value {
+    let mut uploaded_manifest = manifest.clone();
+    uploaded_manifest["archive"]["manifest_upload_status"] = json!("uploaded");
+    uploaded_manifest
+}
+
+fn manifest_upload_staging_path(path: &Path) -> PathBuf {
+    path.with_extension("upload.json")
+}
+
+fn aws_s3_cp(args: &ArchiveArgs, source: &Path, dest: &str) -> Result<()> {
+    let mut command = Command::new("aws");
+    if let Some(profile) = args.aws_profile.as_deref() {
+        command.args(["--profile", profile]);
+    }
+    let status = command
         .args(["s3", "cp"])
-        .arg(raw_zip)
-        .arg(raw_log_ref)
+        .arg(source)
+        .arg(dest)
         .status()
         .context("failed to invoke aws s3 cp for ci-log-archive upload")?;
     if !status.success() {
         bail!("aws s3 cp failed for ci-log-archive upload");
     }
-    Ok("uploaded".to_string())
+    Ok(())
 }
 
 #[cfg(test)]
@@ -437,6 +521,8 @@ mod tests {
             commit: Some("abc123".to_string()),
             raw_zip: None,
             upload: false,
+            upload_manifest: false,
+            aws_profile: None,
             threshold_seconds: 60.0,
             redaction_status: "not_redacted_private_archive_manifest_only".to_string(),
         };
@@ -448,6 +534,14 @@ mod tests {
         assert_eq!(
             manifest["archive"]["raw_log_ref"],
             "s3://adl-ci-logs/v0.91.6/danielbaustin-agent-design-language/pr-4152/run-27840922589/github-actions-logs.zip"
+        );
+        assert_eq!(
+            manifest["archive"]["manifest_ref"],
+            "s3://adl-ci-logs/v0.91.6/danielbaustin-agent-design-language/pr-4152/run-27840922589/ci-log-archive-manifest.v1.json"
+        );
+        assert_eq!(
+            manifest["archive"]["manifest_upload_status"],
+            "upload_not_run"
         );
         let _ = fs::remove_dir_all(root);
     }
@@ -485,11 +579,60 @@ mod tests {
             commit: None,
             raw_zip: None,
             upload: true,
+            upload_manifest: false,
+            aws_profile: None,
             threshold_seconds: 60.0,
             redaction_status: "not_redacted_private_archive_manifest_only".to_string(),
         };
         let err = run_archive(&args).expect_err("upload without zip must fail");
         assert!(err.to_string().contains("--upload requires --raw-zip"));
+        let _ = fs::remove_dir_all(root);
+    }
+
+    #[test]
+    fn manifest_upload_requires_raw_upload() {
+        let root = temp_dir("manifest-upload-requires-upload");
+        let logs = root.join("logs");
+        fs::create_dir_all(&logs).expect("logs");
+        let args = vec![
+            "summarize".to_string(),
+            "--logs-dir".to_string(),
+            logs.to_string_lossy().to_string(),
+            "--out".to_string(),
+            root.join("manifest.json").to_string_lossy().to_string(),
+            "--s3-prefix".to_string(),
+            "s3://adl-ci-logs/v0.91.7".to_string(),
+            "--upload-manifest".to_string(),
+        ];
+        let err = parse_args(&args).expect_err("manifest upload without raw upload must fail");
+        assert!(err
+            .to_string()
+            .contains("--upload-manifest requires --upload"));
+        let _ = fs::remove_dir_all(root);
+    }
+
+    #[test]
+    fn uploaded_manifest_uses_staging_path_and_preserves_primary_pending_value() {
+        let root = temp_dir("manifest-upload-staging");
+        let primary = root.join("ci-log-archive-manifest.v1.json");
+        let manifest = json!({
+            "archive": {
+                "upload_status": "uploaded",
+                "manifest_upload_status": "pending_manifest_write"
+            }
+        });
+
+        let uploaded = uploaded_manifest_value(&manifest);
+
+        assert_eq!(
+            manifest["archive"]["manifest_upload_status"],
+            "pending_manifest_write"
+        );
+        assert_eq!(uploaded["archive"]["manifest_upload_status"], "uploaded");
+        assert_eq!(
+            manifest_upload_staging_path(&primary),
+            root.join("ci-log-archive-manifest.v1.upload.json")
+        );
         let _ = fs::remove_dir_all(root);
     }
 }
