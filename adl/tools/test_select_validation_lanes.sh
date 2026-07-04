@@ -97,6 +97,20 @@ assert_has "$TMP/aws-remote-validation-tool.out" "aggregate_status=selected"
 assert_has "$TMP/aws-remote-validation-tool.out" "aws_remote_validation_tooling status=selected"
 assert_not_has "$TMP/aws-remote-validation-tool.out" "unmapped_change_surface"
 
+aws_codefriend_build_lane="$TMP/aws-codefriend-build-lane.txt"
+cat >"$aws_codefriend_build_lane" <<'EOF'
+A	.github/workflows/aws-codefriend-build.yaml
+A	adl/tools/run_aws_codefriend_build_lane.sh
+A	adl/tools/test_run_aws_codefriend_build_lane.sh
+A	docs/tooling/AWS_CODEFRIEND_BUILD_LANE.md
+EOF
+bash "$SCRIPT" --changed-files "$aws_codefriend_build_lane" >"$TMP/aws-codefriend-build-lane.out"
+assert_has "$TMP/aws-codefriend-build-lane.out" "aggregate_status=release_gate_required"
+assert_has "$TMP/aws-codefriend-build-lane.out" "aws_codefriend_build_lane status=selected"
+assert_has "$TMP/aws-codefriend-build-lane.out" "ci_path_policy_contracts status=selected"
+assert_has "$TMP/aws-codefriend-build-lane.out" "release_gate_review status=release_gate_required"
+assert_not_has "$TMP/aws-codefriend-build-lane.out" "unmapped_change_surface"
+
 rust_warm_cache_surface="$TMP/rust-warm-cache-surface.txt"
 cat >"$rust_warm_cache_surface" <<'EOF'
 M	AGENTS.md

@@ -84,6 +84,7 @@ Important repo-local tooling surfaces include:
 - `adl tooling lint-prompt-spec` — Prompt Spec lint and validation
 - `adl tooling card-prompt` — deterministic prompt generation from cards
 - `adl tooling validate-structured-prompt` — structured prompt contract validation
+- `bash adl/tools/run_aws_codefriend_build_lane.sh` — manual GitHub Actions plus AWS CodeBuild lane wrapper for CodeFriend build orchestration; see [AWS CodeFriend Build Lane](AWS_CODEFRIEND_BUILD_LANE.md)
 - `adl tooling ci-log-archive summarize` — summarize extracted CI logs and optionally upload raw logs plus the generated manifest to private S3 evidence storage; see [CI Log Archive To S3](CI_LOG_ARCHIVE_S3.md)
 - `bash adl/tools/validate_structured_prompt.sh` — compatibility wrapper for the dedicated structured-prompt validator binary; see [binary resolution](structured-prompt-validator-binary-resolution.md)
 - `adl tooling generate-wp-issue-wave` — deterministic WBS/sprint-to-issue-wave planning generator
