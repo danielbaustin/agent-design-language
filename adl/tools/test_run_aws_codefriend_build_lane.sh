@@ -43,6 +43,12 @@ if [ "$1" = "codebuild" ] && [ "$2" = "start-build" ]; then
 JSON
   exit 0
 fi
+if [ "$1" = "codebuild" ] && [ "$2" = "batch-get-builds" ]; then
+  cat <<JSON
+{"id":"codefriend-build:1234","buildStatus":"SUCCEEDED","currentPhase":"COMPLETED","logs":{"groupName":"/aws/codebuild/adl-codefriend-build","streamName":"fixture"}}
+JSON
+  exit 0
+fi
 echo "unexpected fake aws args: $*" >&2
 exit 9
 EOF
@@ -67,7 +73,7 @@ assert_not_has "$TMP/run.out" "000000000000"
 assert_not_has "$TMP/run.out" "arn:aws"
 assert_not_has "$TMP/run.out" "AIDAEXAMPLE"
 assert_has "$TMP/aws-args.log" "sts get-caller-identity --profile agent-logic-admin --region us-west-2 --output json"
-assert_has "$TMP/aws-args.log" "codebuild start-build --profile agent-logic-admin --region us-west-2 --cli-input-json file://$TMP/artifacts/codebuild-request.json --output json"
+assert_has "$TMP/aws-args.log" "codebuild start-build --profile agent-logic-admin --region us-west-2 --cli-input-json file://$TMP/artifacts/codebuild-request.json --query"
 
 FAKE_AWS_ARGS_LOG="$TMP/aws-env-args.log" \
 ADL_AWS_CLI="$TMP/aws" \
@@ -81,7 +87,7 @@ bash "$SCRIPT" \
   --artifact-dir "$TMP/env-artifacts" >"$TMP/env.out"
 assert_has "$TMP/env.out" "PASS account_profile_resolved profile=env account_matches_retained_proof=true"
 assert_has "$TMP/aws-env-args.log" "sts get-caller-identity --region us-west-2 --output json"
-assert_has "$TMP/aws-env-args.log" "codebuild start-build --region us-west-2 --cli-input-json file://$TMP/env-artifacts/codebuild-request.json --output json"
+assert_has "$TMP/aws-env-args.log" "codebuild start-build --region us-west-2 --cli-input-json file://$TMP/env-artifacts/codebuild-request.json --query"
 assert_not_has "$TMP/aws-env-args.log" "--profile"
 
 python3 - <<'PY' "$TMP/summary.json" "$TMP/artifacts/codebuild-request.json"
@@ -95,10 +101,25 @@ assert summary["schema_version"] == "adl.aws_codefriend_build_lane.v1"
 assert summary["mode"] == "run"
 assert summary["account_hash_matched"] == "true"
 assert summary["build_id_present"] is True
+assert summary["aws_response_redacted"] is True
 assert request["projectName"] == "adl-codefriend-build"
 assert request["sourceVersion"] == "refs/heads/codex/example"
 assert request["environmentVariablesOverride"][0]["name"] == "ADL_CODEFRIEND_BUILD_COMMAND"
 PY
+
+FAKE_AWS_ARGS_LOG="$TMP/aws-wait-args.log" \
+ADL_AWS_CLI="$TMP/aws" \
+bash "$SCRIPT" \
+  --run \
+  --check-account \
+  --wait \
+  --poll-seconds 1 \
+  --expected-account-sha256 f7b11509f4d675c3c44f0dd37ca830bb02e8cfa58f04c46283c4bfcbdce1ff45 \
+  --project-name adl-codefriend-build \
+  --out "$TMP/wait-summary.json" \
+  --artifact-dir "$TMP/wait-artifacts" >"$TMP/wait.out"
+assert_has "$TMP/wait.out" "PASS aws_codefriend_build_completed project=adl-codefriend-build region=us-west-2 profile=agent-logic-admin status=SUCCEEDED"
+assert_has "$TMP/aws-wait-args.log" "codebuild batch-get-builds --profile agent-logic-admin --region us-west-2 --ids codefriend-build:1234 --query"
 
 FAKE_AWS_ARGS_LOG="$TMP/aws-dry-args.log" \
 ADL_AWS_CLI="$TMP/aws" \

@@ -20,6 +20,9 @@ Options:
   --env KEY=VALUE                   Environment variable override for CodeBuild. May be repeated.
   --out <path>                      JSON summary path. Default: .adl/tmp/aws-codefriend-build/summary.json.
   --artifact-dir <path>             Directory for request/response artifacts.
+  --wait                            Poll CodeBuild until the build reaches a terminal state.
+  --poll-seconds <n>                Poll interval for --wait. Default: 10.
+  --timeout-seconds <n>             Maximum wait time for --wait. Default: 2700.
   --print-command                   Print a redacted command preview.
   -h, --help                        Show this help.
 
@@ -46,6 +49,9 @@ AWS_PROFILE="${ADL_AWS_PROFILE:-agent-logic-admin}"
 OUT_PATH=".adl/tmp/aws-codefriend-build/summary.json"
 ARTIFACT_DIR=".adl/tmp/aws-codefriend-build"
 PRINT_COMMAND="false"
+WAIT_FOR_BUILD="false"
+POLL_SECONDS="10"
+TIMEOUT_SECONDS="2700"
 ENV_OVERRIDES=()
 
 while [ "$#" -gt 0 ]; do
@@ -105,6 +111,20 @@ while [ "$#" -gt 0 ]; do
       ARTIFACT_DIR="$2"
       shift 2
       ;;
+    --wait)
+      WAIT_FOR_BUILD="true"
+      shift
+      ;;
+    --poll-seconds)
+      [ "$#" -ge 2 ] || die "--poll-seconds requires a value"
+      POLL_SECONDS="$2"
+      shift 2
+      ;;
+    --timeout-seconds)
+      [ "$#" -ge 2 ] || die "--timeout-seconds requires a value"
+      TIMEOUT_SECONDS="$2"
+      shift 2
+      ;;
     --print-command)
       PRINT_COMMAND="true"
       shift
@@ -149,6 +169,7 @@ fi
 mkdir -p "$ARTIFACT_DIR" "$(dirname "$OUT_PATH")"
 REQUEST_PATH="$ARTIFACT_DIR/codebuild-request.json"
 RESPONSE_PATH="$ARTIFACT_DIR/codebuild-response.json"
+STATUS_PATH="$ARTIFACT_DIR/codebuild-status.json"
 
 ACCOUNT_HASH_MATCHED="not_checked"
 if [ "$CHECK_ACCOUNT" = "true" ]; then
@@ -196,12 +217,14 @@ if [ "$PRINT_COMMAND" = "true" ]; then
 fi
 
 BUILD_ID=""
-BUILD_ARN_PRESENT="false"
+BUILD_STATUS=""
+BUILD_SUCCEEDED="false"
 if [ "$MODE" = "run" ]; then
   "$AWS_CLI" codebuild start-build \
     "${AWS_PROFILE_ARGS[@]+"${AWS_PROFILE_ARGS[@]}"}" \
     --region "$AWS_REGION" \
     --cli-input-json "file://$REQUEST_PATH" \
+    --query '{build:{id:build.id,buildStatus:build.buildStatus,currentPhase:build.currentPhase,startTime:build.startTime,logs:{groupName:build.logs.groupName,streamName:build.logs.streamName}}}' \
     --output json >"$RESPONSE_PATH"
   BUILD_ID="$(
     python3 - <<'PY' "$RESPONSE_PATH"
@@ -213,21 +236,60 @@ data = json.loads(Path(sys.argv[1]).read_text())
 print(data.get("build", {}).get("id", ""))
 PY
   )"
-  BUILD_ARN_PRESENT="$(
+  BUILD_STATUS="$(
     python3 - <<'PY' "$RESPONSE_PATH"
 import json
 import sys
 from pathlib import Path
 
 data = json.loads(Path(sys.argv[1]).read_text())
-print("true" if data.get("build", {}).get("arn") else "false")
+print(data.get("build", {}).get("buildStatus", ""))
 PY
   )"
+  if [ "$WAIT_FOR_BUILD" = "true" ]; then
+    [ -n "$BUILD_ID" ] || die "CodeBuild start-build did not return a build id"
+    deadline=$(( $(date +%s) + TIMEOUT_SECONDS ))
+    while :; do
+      "$AWS_CLI" codebuild batch-get-builds \
+        "${AWS_PROFILE_ARGS[@]+"${AWS_PROFILE_ARGS[@]}"}" \
+        --region "$AWS_REGION" \
+        --ids "$BUILD_ID" \
+        --query 'builds[0].{id:id,buildStatus:buildStatus,currentPhase:currentPhase,startTime:startTime,endTime:endTime,logs:{groupName:logs.groupName,streamName:logs.streamName}}' \
+        --output json >"$STATUS_PATH"
+      BUILD_STATUS="$(
+        python3 - <<'PY' "$STATUS_PATH"
+import json
+import sys
+from pathlib import Path
+
+data = json.loads(Path(sys.argv[1]).read_text())
+print(data.get("buildStatus", "") if isinstance(data, dict) else "")
+PY
+      )"
+      case "$BUILD_STATUS" in
+        SUCCEEDED)
+          BUILD_SUCCEEDED="true"
+          break
+          ;;
+        FAILED|FAULT|STOPPED|TIMED_OUT)
+          BUILD_SUCCEEDED="false"
+          break
+          ;;
+      esac
+      if [ "$(date +%s)" -ge "$deadline" ]; then
+        die "timed out waiting for CodeBuild build to complete"
+      fi
+      sleep "$POLL_SECONDS"
+    done
+  else
+    printf '{"not_waited":true}\n' >"$STATUS_PATH"
+  fi
 else
   printf '{"dry_run":true,"build":{"id":"","arn":""}}\n' >"$RESPONSE_PATH"
+  printf '{"dry_run":true}\n' >"$STATUS_PATH"
 fi
 
-python3 - <<'PY' "$OUT_PATH" "$MODE" "$AWS_REGION" "$AWS_PROFILE" "$PROJECT_NAME" "$SOURCE_VERSION" "$CHECK_ACCOUNT" "$ACCOUNT_HASH_MATCHED" "$REQUEST_PATH" "$RESPONSE_PATH" "$BUILD_ID" "$BUILD_ARN_PRESENT"
+python3 - <<'PY' "$OUT_PATH" "$MODE" "$AWS_REGION" "$AWS_PROFILE" "$PROJECT_NAME" "$SOURCE_VERSION" "$CHECK_ACCOUNT" "$ACCOUNT_HASH_MATCHED" "$REQUEST_PATH" "$RESPONSE_PATH" "$STATUS_PATH" "$BUILD_ID" "$WAIT_FOR_BUILD" "$BUILD_STATUS" "$BUILD_SUCCEEDED"
 import json
 import sys
 from pathlib import Path
@@ -244,8 +306,12 @@ summary = {
     "account_hash_matched": sys.argv[8],
     "request_path": sys.argv[9],
     "response_path": sys.argv[10],
-    "build_id_present": bool(sys.argv[11]),
-    "build_arn_present": sys.argv[12] == "true",
+    "status_path": sys.argv[11],
+    "build_id_present": bool(sys.argv[12]),
+    "wait_requested": sys.argv[13] == "true",
+    "build_status": sys.argv[14],
+    "build_succeeded": sys.argv[15] == "true",
+    "aws_response_redacted": True,
 }
 Path(sys.argv[1]).write_text(json.dumps(summary, indent=2, sort_keys=True) + "\n")
 PY
@@ -255,4 +321,8 @@ if [ "$MODE" = "dry-run" ]; then
   printf 'PASS aws_codefriend_build_dry_run project=%s region=%s profile=%s\n' "$PROJECT_NAME" "$AWS_REGION" "$AWS_PROFILE"
 else
   printf 'PASS aws_codefriend_build_started project=%s region=%s profile=%s build_id_present=%s\n' "$PROJECT_NAME" "$AWS_REGION" "$AWS_PROFILE" "$([ -n "$BUILD_ID" ] && printf true || printf false)"
+  if [ "$WAIT_FOR_BUILD" = "true" ]; then
+    [ "$BUILD_SUCCEEDED" = "true" ] || die "CodeBuild build finished with status $BUILD_STATUS"
+    printf 'PASS aws_codefriend_build_completed project=%s region=%s profile=%s status=%s\n' "$PROJECT_NAME" "$AWS_REGION" "$AWS_PROFILE" "$BUILD_STATUS"
+  fi
 fi
