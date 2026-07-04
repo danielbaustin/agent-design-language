@@ -910,6 +910,71 @@ pub(super) fn build_trace_v1_envelope(
                     );
                 }
             }
+            trace::TraceEvent::RuntimeResilienceDecision { ts_ms, record, .. } => {
+                let result = if record.terminal {
+                    ContractValidationResultV1::Fail
+                } else {
+                    ContractValidationResultV1::Pass
+                };
+                push_trace_v1_event(
+                    &mut events,
+                    &mut next_id,
+                    &chronosense,
+                    TraceEventV1 {
+                        event_id: String::new(),
+                        timestamp: chronosense_trace_timestamp(&chronosense, *ts_ms),
+                        temporal_anchor: None,
+                        event_type: TraceEventTypeV1::ContractValidation,
+                        trace_id: trace_id.clone(),
+                        run_id: resolved.run_id.clone(),
+                        span_id: format!("step:{}:runtime-resilience", record.step_id),
+                        parent_span_id: Some(format!("step:{}", record.step_id)),
+                        actor: TraceActorV1 {
+                            r#type: TraceActorTypeV1::System,
+                            id: record.component.clone(),
+                        },
+                        scope: TraceScopeV1 {
+                            level: TraceScopeLevelV1::Step,
+                            name: record.step_id.clone(),
+                        },
+                        inputs_ref: Some(steps_ref.clone()),
+                        outputs_ref: Some(activation_log_ref.clone()),
+                        artifact_ref: Some(activation_log_ref.clone()),
+                        decision_context: Some(TraceDecisionContextV1 {
+                            context: "scheduler watcher and AEE resilience middleware".to_string(),
+                            outcome: record.middleware_disposition.as_str().to_string(),
+                            rationale: Some(record.decision_summary.clone()),
+                        }),
+                        provider: None,
+                        error: record.fault.as_ref().map(|fault| TraceErrorV1 {
+                            code: format!("{:?}", fault.fault_class),
+                            message: fault.summary.clone(),
+                            details: Some(json!({
+                                "disposition": format!("{:?}", fault.disposition),
+                                "retryable": fault.retryable,
+                            })),
+                        }),
+                        contract_validation: Some(TraceContractValidationV1 {
+                            contract_id: record.policy_id.clone(),
+                            result,
+                            details: Some(json!({
+                                "rule_id": format!(
+                                    "watcher:{} middleware:{}",
+                                    record.watcher_disposition.as_str(),
+                                    record.middleware_disposition.as_str()
+                                ),
+                                "evidence_refs": record.evidence_refs,
+                                "attempt_count": record.attempt_count,
+                                "elapsed_ms": record.elapsed_ms,
+                                "max_concurrency": record.max_concurrency,
+                                "queue_depth": record.queue_depth,
+                            })),
+                        }),
+                        governance: None,
+                        redaction: None,
+                    },
+                );
+            }
             trace::TraceEvent::DelegationPolicyEvaluated {
                 ts_ms,
                 step_id,

@@ -31,6 +31,7 @@ pub const RESILIENCE_FALLBACK_EXECUTION_TRACE_SCHEMA_V1: &str =
     "adl.resilience.fallback_execution_trace.v1";
 pub const RESILIENCE_POLICY_SCHEMA_V1: &str = "adl.resilience.policy.v1";
 pub const RESILIENCE_SUBSTRATE_SCHEMA_V1: &str = "adl.resilience.substrate_manifest.v1";
+pub const RUNTIME_RESILIENCE_TRACE_SCHEMA_V1: &str = "adl.runtime.resilience_trace.v1";
 pub const RUNTIME_CORRELATION_FIELDS_SCHEMA_V1: &str = "adl.runtime.correlation_fields.v1";
 pub const RUNTIME_HEALTH_STATUS_SCHEMA_V1: &str = "adl.runtime.health_status.v1";
 
@@ -47,6 +48,58 @@ pub enum RuntimeHealthStateV1 {
     Degraded,
     Blocked,
     Failed,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize, JsonSchema, PartialEq, Eq)]
+#[serde(rename_all = "snake_case")]
+pub enum RuntimeResilienceDispositionV1 {
+    Admitted,
+    QueuedBackpressure,
+    Succeeded,
+    Timeout,
+    Cancelled,
+    DegradedContinue,
+    TerminalFailure,
+}
+
+impl RuntimeResilienceDispositionV1 {
+    pub fn as_str(&self) -> &'static str {
+        match self {
+            Self::Admitted => "admitted",
+            Self::QueuedBackpressure => "queued_backpressure",
+            Self::Succeeded => "succeeded",
+            Self::Timeout => "timeout",
+            Self::Cancelled => "cancelled",
+            Self::DegradedContinue => "degraded_continue",
+            Self::TerminalFailure => "terminal_failure",
+        }
+    }
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize, JsonSchema, PartialEq, Eq)]
+#[serde(deny_unknown_fields)]
+pub struct RuntimeResilienceTraceV1 {
+    pub schema_version: String,
+    pub policy_id: String,
+    pub surface: ResilienceSurfaceV1,
+    pub component: String,
+    pub step_id: String,
+    pub provider_id: String,
+    pub task_id: String,
+    pub watcher_disposition: RuntimeResilienceDispositionV1,
+    pub middleware_disposition: RuntimeResilienceDispositionV1,
+    pub terminal: bool,
+    pub attempt_count: u32,
+    pub elapsed_ms: u64,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub max_concurrency: Option<u32>,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub queue_depth: Option<u32>,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub fault: Option<ResilienceFaultClassificationV1>,
+    #[serde(default, skip_serializing_if = "Vec::is_empty")]
+    pub evidence_refs: Vec<String>,
+    pub decision_summary: String,
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize, JsonSchema, PartialEq, Eq)]

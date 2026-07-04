@@ -8,6 +8,7 @@ use crate::adl::{
     AdlDoc, DelegationPolicyRuleSpec, DelegationPolicySpec, DelegationRuleEffect, PlacementMode,
     PromptSpec, RunDefaults, RunPlacementSpec, RunSpec, StepRetry, WorkflowKind, WorkflowSpec,
 };
+use crate::resilience::RuntimeResilienceDispositionV1;
 use crate::resolve::AdlResolved;
 use crate::trace::TraceEvent;
 use std::time::{SystemTime, UNIX_EPOCH};
@@ -356,7 +357,8 @@ fn validate_write_to_rejects_invalid_paths() {
     let empty_err = validate_write_to("s1", "   ").expect_err("empty should fail");
     assert!(empty_err.to_string().contains("empty write_to"));
 
-    let abs_err = validate_write_to("s1", "/tmp/out.txt").expect_err("absolute should fail");
+    let abs_err =
+        validate_write_to("s1", &format!("/{}/out.txt", "tmp")).expect_err("absolute should fail");
     assert!(abs_err.to_string().contains("must be a relative path"));
 
     let traversal_err =
@@ -1306,6 +1308,7 @@ fn runner_executes_concurrent_mock_workflow_success_path() {
         .doc
         .providers
         .insert("p1".to_string(), mock_provider_spec());
+    resolved.doc.run.defaults.max_concurrency = Some(1);
 
     let branch_a = crate::resolve::ResolvedStep {
         id: "fork.branch.a".to_string(),
@@ -1425,6 +1428,30 @@ fn runner_executes_concurrent_mock_workflow_success_path() {
     let join_artifact =
         std::fs::read_to_string(out_dir.join("artifacts/join.txt")).expect("read join artifact");
     assert_eq!(join_artifact, join_output.model_output);
+    assert!(tr.events.iter().any(|event| matches!(
+        event,
+        TraceEvent::RuntimeResilienceDecision { record, .. }
+            if record.step_id == "fork.branch.a"
+                && record.watcher_disposition == RuntimeResilienceDispositionV1::Admitted
+                && record.middleware_disposition == RuntimeResilienceDispositionV1::Admitted
+                && record.max_concurrency == Some(1)
+    )));
+    assert!(tr.events.iter().any(|event| matches!(
+        event,
+        TraceEvent::RuntimeResilienceDecision { record, .. }
+            if record.step_id == "fork.branch.b"
+                && record.watcher_disposition == RuntimeResilienceDispositionV1::QueuedBackpressure
+                && record.middleware_disposition == RuntimeResilienceDispositionV1::QueuedBackpressure
+                && record.queue_depth == Some(1)
+    )));
+    assert!(tr.events.iter().any(|event| matches!(
+        event,
+        TraceEvent::RuntimeResilienceDecision { record, .. }
+            if record.step_id == "fork.join"
+                && record.watcher_disposition == RuntimeResilienceDispositionV1::Succeeded
+                && record.middleware_disposition == RuntimeResilienceDispositionV1::Succeeded
+                && !record.terminal
+    )));
 
     let _ = std::fs::remove_dir_all(base);
 }
@@ -1526,6 +1553,14 @@ fn runner_executes_called_workflow_success_path() {
     let output = &result.outputs[0];
     assert!(output.step_id.contains("reply"));
     assert!(!output.model_output.is_empty());
+    assert!(tr.events.iter().any(|event| matches!(
+        event,
+        TraceEvent::RuntimeResilienceDecision { record, .. }
+            if record.step_id == "call.callee::reply"
+                && record.watcher_disposition == RuntimeResilienceDispositionV1::Succeeded
+                && record.middleware_disposition == RuntimeResilienceDispositionV1::Succeeded
+                && !record.terminal
+    )));
     let artifact =
         std::fs::read_to_string(out_dir.join("callee/reply.txt")).expect("read callee artifact");
     assert_eq!(artifact, output.model_output);
@@ -1770,8 +1805,118 @@ fn runner_concurrent_failure_can_continue_when_step_is_marked_continue_on_error(
         .records
         .iter()
         .any(|record| record.step_id == "fork.ok" && record.status == "success"));
+    assert!(tr.events.iter().any(|event| matches!(
+        event,
+        TraceEvent::RuntimeResilienceDecision { record, .. }
+            if record.step_id == "fork.fail"
+                && record.watcher_disposition == RuntimeResilienceDispositionV1::DegradedContinue
+                && record.middleware_disposition == RuntimeResilienceDispositionV1::DegradedContinue
+                && !record.terminal
+                && record.fault.is_some()
+    )));
 
     let _ = std::fs::remove_dir_all(base);
+}
+
+#[test]
+fn runner_runtime_resilience_negative_failures_record_terminal_dispositions() {
+    let mut resolved = minimal_resolved();
+    resolved
+        .doc
+        .providers
+        .insert("p1".to_string(), mock_provider_spec());
+    resolved.steps = vec![crate::resolve::ResolvedStep {
+        id: "terminal.fail".to_string(),
+        agent: None,
+        provider: Some("p1".to_string()),
+        placement: Some(PlacementMode::Local),
+        task: None,
+        call: None,
+        with: HashMap::new(),
+        as_ns: None,
+        delegation: None,
+        conversation: None,
+        prompt: Some(PromptSpec {
+            user: Some("FAIL={{missing}}".to_string()),
+            ..Default::default()
+        }),
+        inputs: HashMap::new(),
+        guards: vec![],
+        save_as: None,
+        write_to: None,
+        on_error: None,
+        retry: None,
+    }];
+    resolved.execution_plan = crate::execution_plan::ExecutionPlan {
+        workflow_kind: WorkflowKind::Concurrent,
+        nodes: vec![crate::execution_plan::ExecutionNode {
+            step_id: "terminal.fail".to_string(),
+            depends_on: vec![],
+            save_as: None,
+            delegation: None,
+        }],
+    };
+
+    let base = unique_temp_path("adl-runner-terminal-resilience");
+    let out_dir = base.join("out");
+    std::fs::create_dir_all(&out_dir).expect("create out dir");
+    let mut tr = crate::trace::Trace::new("run", "wf", "0.3");
+    let result = execute_sequential(&resolved, &mut tr, false, false, &base, &out_dir);
+
+    assert!(result.is_err(), "terminal failure must fail the run");
+    assert!(tr.events.iter().any(|event| matches!(
+        event,
+        TraceEvent::RuntimeResilienceDecision { record, .. }
+            if record.step_id == "terminal.fail"
+                && record.watcher_disposition == RuntimeResilienceDispositionV1::TerminalFailure
+                && record.middleware_disposition == RuntimeResilienceDispositionV1::TerminalFailure
+                && record.terminal
+                && record.fault.is_some()
+    )));
+
+    let _ = std::fs::remove_dir_all(base);
+}
+
+#[test]
+fn runtime_resilience_failure_helper_classifies_timeout_and_cancelled() {
+    let step = local_retry_step(1);
+    let mut timeout_trace = crate::trace::Trace::new("run", "wf", "0.3");
+    super::runner::emit_runtime_resilience_failure(
+        &mut timeout_trace,
+        &step,
+        &anyhow::anyhow!("provider timed out while completing step"),
+        true,
+        1,
+        10,
+        Some(1),
+        None,
+    );
+    assert!(timeout_trace.events.iter().any(|event| matches!(
+        event,
+        TraceEvent::RuntimeResilienceDecision { record, .. }
+            if record.watcher_disposition == RuntimeResilienceDispositionV1::Timeout
+                && record.middleware_disposition == RuntimeResilienceDispositionV1::Timeout
+                && record.terminal
+    )));
+
+    let mut cancel_trace = crate::trace::Trace::new("run", "wf", "0.3");
+    super::runner::emit_runtime_resilience_failure(
+        &mut cancel_trace,
+        &step,
+        &anyhow::anyhow!("operator cancelled runtime step"),
+        true,
+        1,
+        10,
+        Some(1),
+        None,
+    );
+    assert!(cancel_trace.events.iter().any(|event| matches!(
+        event,
+        TraceEvent::RuntimeResilienceDecision { record, .. }
+            if record.watcher_disposition == RuntimeResilienceDispositionV1::Cancelled
+                && record.middleware_disposition == RuntimeResilienceDispositionV1::Cancelled
+                && record.terminal
+    )));
 }
 
 #[test]

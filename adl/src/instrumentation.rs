@@ -181,6 +181,13 @@ pub enum TraceEventNormalized {
         step_id: String,
         success: bool,
     },
+    RuntimeResilienceDecision {
+        step_id: String,
+        watcher_disposition: String,
+        middleware_disposition: String,
+        terminal: bool,
+        attempt_count: u32,
+    },
     CallEntered {
         caller_step_id: String,
         callee_workflow_id: String,
@@ -422,6 +429,7 @@ pub fn replay_trace(events: &[TraceEventNormalized]) -> TraceReplay {
             TraceEventNormalized::StepFinished { step_id, .. } => {
                 step_finished_order.push(step_id.clone())
             }
+            TraceEventNormalized::RuntimeResilienceDecision { .. } => {}
             TraceEventNormalized::StepOutputChunk { step_id, .. } => {
                 step_output_chunk_order.push(step_id.clone())
             }
@@ -617,6 +625,13 @@ mod tests {
             TraceEventNormalized::StepFinished {
                 step_id: "s1".to_string(),
                 success: true,
+            },
+            TraceEventNormalized::RuntimeResilienceDecision {
+                step_id: "s1".to_string(),
+                watcher_disposition: "succeeded".to_string(),
+                middleware_disposition: "succeeded".to_string(),
+                terminal: false,
+                attempt_count: 1,
             },
         ];
         let right = vec![

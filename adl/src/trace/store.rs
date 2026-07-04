@@ -3,6 +3,7 @@ use std::time::{Instant, SystemTime, UNIX_EPOCH};
 
 use crate::adl::DelegationSpec;
 use crate::execute::{ExecutionBoundary, RuntimeLifecyclePhase};
+use crate::resilience::RuntimeResilienceTraceV1;
 
 use super::{report::sanitize_governed_text, Trace, TraceEvent};
 
@@ -485,6 +486,16 @@ impl Trace {
             step_id: step_id.to_string(),
             success,
             duration_ms,
+        });
+    }
+
+    pub fn runtime_resilience_decision(&mut self, record: RuntimeResilienceTraceV1) {
+        let elapsed_ms = self.run_started_instant.elapsed().as_millis();
+        let ts_ms = self.run_started_ms.saturating_add(elapsed_ms);
+        self.events.push(TraceEvent::RuntimeResilienceDecision {
+            ts_ms,
+            elapsed_ms,
+            record,
         });
     }
 

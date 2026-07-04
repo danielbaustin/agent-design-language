@@ -301,6 +301,15 @@ pub fn normalize_trace_events(events: &[TraceEvent]) -> Vec<TraceEventNormalized
                 step_id: step_id.clone(),
                 success: *success,
             },
+            TraceEvent::RuntimeResilienceDecision { record, .. } => {
+                TraceEventNormalized::RuntimeResilienceDecision {
+                    step_id: record.step_id.clone(),
+                    watcher_disposition: record.watcher_disposition.as_str().to_string(),
+                    middleware_disposition: record.middleware_disposition.as_str().to_string(),
+                    terminal: record.terminal,
+                    attempt_count: record.attempt_count,
+                }
+            }
             TraceEvent::CallEntered {
                 caller_step_id,
                 callee_workflow_id,
