@@ -51,3 +51,9 @@ For reviewer convenience, this PR includes a snapshot copy of the local skill co
 - `docs/milestones/v0.91.7/review/vpp_editor_skill/vpp-editor.SKILL.md`
 
 The authoritative runtime skill remains the local Codex skill root copy.
+
+## Operational Skill Routing Update
+
+The surrounding local operational skills were updated after the first PR publication so VPP card defects route to `vpp-editor` consistently. See:
+
+- `docs/milestones/v0.91.7/review/vpp_editor_skill/VPP_EDITOR_OPERATIONAL_SKILL_INTEGRATION_4876.md`
