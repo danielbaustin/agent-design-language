@@ -45,6 +45,22 @@
           },
           {
             "route": {
+              "provider_profile_ref": "http:gemini-2.5-flash",
+              "provider_spec_kind": "http",
+              "provider_family": "google",
+              "model_ref": "gemini-2.5-flash",
+              "model_identity": "Gemini 2.5 Flash hosted profile",
+              "runtime_surface": "provider::HttpProvider",
+              "provider_selection_reason": "cheapest validated reviewer-capable hosted model selected for advisory review",
+              "route_resolution_trace": [
+                "candidate=google"
+              ],
+              "output_contract_ref": "adl.provider.output.review_advisory.v1"
+            },
+            "eligible": true
+          },
+          {
+            "route": {
               "provider_profile_ref": "chatgpt:gpt-5.3-codex",
               "provider_spec_kind": "http",
               "provider_family": "chatgpt",
@@ -57,7 +73,8 @@
               ],
               "output_contract_ref": "adl.provider.output.review_advisory.v1"
             },
-            "eligible": true
+            "eligible": false,
+            "ineligibility_reason": "not the cheapest validated outcome for this task"
           }
         ]
       }

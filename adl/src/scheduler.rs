@@ -2468,6 +2468,11 @@ fn schedule_economics_input_with_provider_route(
     model_suitability_selection: Option<ModelSuitabilitySelectionV1>,
     local_agent_delegation_readiness: Option<LocalAgentDelegationReadinessV1>,
 ) -> Result<CognitiveSchedulerDecisionV1> {
+    ensure_provider_route_matches_model_suitability_selection(
+        &input.task_id,
+        provider_route.as_ref(),
+        model_suitability_selection.as_ref(),
+    )?;
     let summary = summarize_economics_input(input)?;
     let selected_lane = select_lane(input, &summary);
     let reason = decision_reason(input, &summary, &selected_lane);
@@ -2530,6 +2535,51 @@ fn schedule_economics_input_with_provider_route(
         confidence: input.confidence.clone(),
         scheduling_rank_key,
     })
+}
+
+fn ensure_provider_route_matches_model_suitability_selection(
+    task_id: &str,
+    provider_route: Option<&ProviderRouteV1>,
+    model_suitability_selection: Option<&ModelSuitabilitySelectionV1>,
+) -> Result<()> {
+    let (Some(route), Some(selection)) = (provider_route, model_suitability_selection) else {
+        return Ok(());
+    };
+    let route_family = route.provider_family.as_deref().ok_or_else(|| {
+        anyhow!(
+            "scheduler decision {task_id} combines provider_route with model_suitability_selection but provider_route.provider_family is missing"
+        )
+    })?;
+    let normalized_route_family = normalized_provider_family_for_scheduler_identity(route_family);
+    let normalized_selection_family =
+        normalized_provider_family_for_scheduler_identity(&selection.provider_family);
+    if normalized_route_family != normalized_selection_family {
+        return Err(anyhow!(
+            "scheduler decision {task_id} provider_route family/model {}/{} does not match model_suitability_selection family/model {}/{}",
+            route_family,
+            route.model_ref,
+            selection.provider_family,
+            selection.model_ref
+        ));
+    }
+    if route.model_ref != selection.model_ref {
+        return Err(anyhow!(
+            "scheduler decision {task_id} provider_route family/model {}/{} does not match model_suitability_selection family/model {}/{}",
+            route_family,
+            route.model_ref,
+            selection.provider_family,
+            selection.model_ref
+        ));
+    }
+    Ok(())
+}
+
+fn normalized_provider_family_for_scheduler_identity(provider_family: &str) -> &str {
+    match provider_family {
+        "chatgpt" => "openai",
+        "local_ollama" => "ollama",
+        other => other,
+    }
 }
 
 fn select_lane(
@@ -2935,13 +2985,19 @@ mod tests {
             .expect("combined policy keeps provider route");
         assert_eq!(
             route.provider_profile_ref.as_deref(),
-            Some("chatgpt:gpt-5.3-codex")
+            Some("http:gemini-2.5-flash")
         );
         let selection = review
             .model_suitability_selection
             .as_ref()
             .expect("review task has cheapest validated outcome selection");
         assert_eq!(selection.selected_candidate_id, "gemini:gemini-2.5-flash");
+        assert_eq!(route.provider_family.as_deref(), Some("google"));
+        assert_eq!(route.model_ref, selection.model_ref);
+        assert_eq!(
+            route.provider_family.as_deref(),
+            Some(selection.provider_family.as_str())
+        );
         assert_eq!(selection.outcome_cost_tier, Some(SchedulerCostLevelV1::Low));
         assert!(selection.cheapest_validated_outcome);
         assert_eq!(
@@ -2959,6 +3015,108 @@ mod tests {
             trace.candidate_id == "local:gemma4-e2b"
                 && trace.reason == "classification below task minimum"
         }));
+    }
+
+    #[test]
+    fn combined_provider_route_rejects_model_suitability_identity_mismatch() {
+        let mut bundle = parse_economics_bundle_json(CHEAPEST_VALIDATED_OUTCOME_FIXTURE)
+            .expect("fixture parses");
+        let policy = bundle
+            .role_provider_context
+            .as_mut()
+            .expect("provider context")
+            .policies
+            .first_mut()
+            .expect("policy");
+        policy.candidate_routes.iter_mut().for_each(|candidate| {
+            candidate.eligible = false;
+            if candidate.ineligibility_reason.is_none() {
+                candidate.ineligibility_reason =
+                    Some("disabled for provider/model identity mismatch regression".to_string());
+            }
+        });
+        let chatgpt_route = policy
+            .candidate_routes
+            .iter_mut()
+            .find(|candidate| {
+                candidate.route.provider_profile_ref.as_deref() == Some("chatgpt:gpt-5.3-codex")
+            })
+            .expect("chatgpt route retained for negative proof");
+        chatgpt_route.eligible = true;
+        chatgpt_route.ineligibility_reason = None;
+
+        let err = schedule_economics_bundle(&bundle)
+            .expect_err("provider route/model suitability mismatch rejected");
+        let message = err.to_string();
+        assert!(
+            message.contains("provider_route family/model chatgpt/gpt-5.3-codex does not match model_suitability_selection family/model google/gemini-2.5-flash"),
+            "{message}"
+        );
+    }
+
+    #[test]
+    fn combined_provider_route_accepts_known_provider_family_aliases_for_same_model() {
+        let input = parse_economics_bundle_json(CHEAPEST_VALIDATED_OUTCOME_FIXTURE)
+            .expect("fixture parses")
+            .inputs
+            .into_iter()
+            .find(|input| input.task_id == "first-pass-review")
+            .expect("review input");
+        let route = ProviderRouteV1 {
+            provider_profile_ref: Some("chatgpt:gpt-5.3-codex".to_string()),
+            provider_spec_kind: "http".to_string(),
+            provider_family: Some("chatgpt".to_string()),
+            model_ref: "gpt-5.3-codex".to_string(),
+            model_identity: "ChatGPT GPT-5.3 Codex profile".to_string(),
+            runtime_surface: "provider::HttpProvider".to_string(),
+            provider_selection_reason:
+                "tracked reviewer-capable provider profile selected for advisory review".to_string(),
+            route_resolution_trace: vec!["selected=chatgpt:gpt-5.3-codex".to_string()],
+            output_contract_ref: "adl.provider.output.review_advisory.v1".to_string(),
+        };
+        let selection = ModelSuitabilitySelectionV1 {
+            role: ModelSuitabilityRoleV1::Reviewer,
+            selected_candidate_id: "openai:gpt-5.3-codex".to_string(),
+            provider_profile_ref: "unprofiled:openai:gpt-5.3-codex".to_string(),
+            provider_family: "openai".to_string(),
+            model_ref: "gpt-5.3-codex".to_string(),
+            runtime_surface: "hosted_api".to_string(),
+            classification: ModelSuitabilityClassificationV1::UsefulWithLimits,
+            source_ref: "docs/milestones/v0.91.6/review/provider/openai_gpt53_codex_rerun/openai_gpt53_codex_suitability_state_2026-06-18.json".to_string(),
+            evidence_digest: Some("sha256:bounded-openai-gpt53-codex-panel".to_string()),
+            advisory_authority_only: true,
+            claim_boundary: "bounded_role_suitability_not_authority".to_string(),
+            outcome_cost_tier: None,
+            validation_ref: None,
+            cheapest_validated_outcome: false,
+            selection_trace: vec![],
+        };
+
+        let decision = schedule_economics_input_with_provider_route(
+            &input,
+            Some(route),
+            Some(selection),
+            None,
+        )
+        .expect("known provider family alias accepted");
+        assert_eq!(
+            decision.schema_version,
+            COGNITIVE_SCHEDULER_DECISION_WITH_PROVIDER_ROUTE_SCHEMA_V1
+        );
+        assert_eq!(
+            decision
+                .provider_route
+                .as_ref()
+                .and_then(|route| route.provider_family.as_deref()),
+            Some("chatgpt")
+        );
+        assert_eq!(
+            decision
+                .model_suitability_selection
+                .as_ref()
+                .map(|selection| selection.provider_family.as_str()),
+            Some("openai")
+        );
     }
 
     #[test]

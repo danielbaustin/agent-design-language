@@ -113,6 +113,7 @@ pub(crate) fn provider_profile_registry() -> BTreeMap<&'static str, ProviderProf
         ("http:claude-3-5-haiku", "claude-3-5-haiku-latest"),
         ("http:claude-3-7-sonnet", "claude-3-7-sonnet-latest"),
         ("http:gemini-2.0-flash", "gemini-2.0-flash"),
+        ("http:gemini-2.5-flash", "gemini-2.5-flash"),
         ("http:deepseek-chat", "deepseek-chat"),
         ("http:llama-3.3-70b", "llama-3.3-70b-instruct"),
     ] {

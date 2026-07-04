@@ -55,7 +55,7 @@ The retained proof fixture contains three reviewer candidates:
 - `gemini:gemini-2.5-flash`: useful with limits, lower suitability priority, low cost
 - `local:gemma4-e2b`: low cost, but historical-only classification
 
-The generated decision keeps the reviewer provider route and selects `gemini:gemini-2.5-flash` as the model-suitability candidate because it is the cheapest validated candidate that still satisfies the reviewer role requirement.
+The generated decision keeps a reviewer provider route for `http:gemini-2.5-flash` and selects `gemini:gemini-2.5-flash` as the model-suitability candidate because it is the cheapest validated candidate that still satisfies the reviewer role requirement.
 
 ## Validation
 
