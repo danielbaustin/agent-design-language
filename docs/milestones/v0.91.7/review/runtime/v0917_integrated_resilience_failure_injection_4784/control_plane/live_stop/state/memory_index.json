@@ -1,0 +1,9 @@
+{
+  "append_only": true,
+  "local_memory_refs": [
+    "cycles/cycle-000001/memory_writes.jsonl"
+  ],
+  "memory_namespace": "v0917-integrated-resilience-failure-injection",
+  "obsmem_export_status": "not_exported",
+  "schema": "adl.long_lived_agent_memory_index.v1"
+}

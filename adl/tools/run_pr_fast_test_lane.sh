@@ -327,6 +327,10 @@ filter_token_for_path() {
       printf 'run_v0916_integrated_runtime_soak'
       return 0
       ;;
+    adl/src/bin/run_v0917_integrated_resilience_failure_injection.rs)
+      printf 'run_v0917_integrated_resilience_failure_injection'
+      return 0
+      ;;
     adl/src/chronosense.rs|adl/src/chronosense/*.rs)
       printf 'chronosense'
       return 0
@@ -486,6 +490,7 @@ TOKEN_MAP = {
     "demo_adl_gws_context_mirror": 'binary_id(adl::bin/demo-adl-gws-context-mirror) and test(/^tests::/)',
     "demo_adl_gws_native_drive_sync": 'binary_id(adl::bin/demo-adl-gws-native-drive-sync) and test(/^tests::/)',
     "run_v0916_integrated_runtime_soak": 'binary_id(adl::bin/run_v0916_integrated_runtime_soak) and test(/^tests::/)',
+    "run_v0917_integrated_resilience_failure_injection": 'binary_id(adl::bin/run_v0917_integrated_resilience_failure_injection) and test(/^tests::/)',
     "runtime_v2_cmd": 'test(/^cli::runtime_v2_cmd::/)',
     "tokio_bootstrap": 'test(/^cli::pr_cmd::github::/) or test(/^cli::pr_cmd::github_client::/) or test(/^cli::tooling_cmd::github_release::/)',
     "pr_cmd": 'binary_id(adl::bin/adl) and test(/^cli::pr_cmd::/)',

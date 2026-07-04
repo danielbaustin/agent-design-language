@@ -1,0 +1,59 @@
+{
+  "pattern": "timeout",
+  "result": "timeout Timeout elapsed=80 budget=50",
+  "trace": {
+    "breach_kind": "timeout",
+    "decision_summary": "provider_route.timeout_budget: timeout budget exceeded after 80ms (budget 50ms)",
+    "elapsed_ms": 80,
+    "fault": {
+      "component_ref": "provider_route.timeout_budget",
+      "disposition": "retryable",
+      "fault_class": "runtime_failure",
+      "retryable": true,
+      "schema_version": "adl.resilience.fault_classification.v1",
+      "summary": "provider_route.timeout_budget exceeded timeout budget after 80ms (budget 50ms)",
+      "surface": "provider"
+    },
+    "final_status": "timed_out",
+    "policy_id": "v0917.integrated.timeout",
+    "recovery_artifact": {
+      "artifact_id": "v0917.integrated.timeout:timeout:provider_route.timeout_budget:2",
+      "disposition": "retry_allowed",
+      "evidence_refs": [
+        "v0917.integrated.timeout"
+      ],
+      "next_action": "operation exceeded deadline; retry only through the caller's bounded policy",
+      "schema_version": "adl.resilience.recovery_artifact.v1",
+      "surface": "provider",
+      "triggering_fault": {
+        "component_ref": "provider_route.timeout_budget",
+        "disposition": "retryable",
+        "fault_class": "runtime_failure",
+        "retryable": true,
+        "schema_version": "adl.resilience.fault_classification.v1",
+        "summary": "provider_route.timeout_budget exceeded timeout budget after 80ms (budget 50ms)",
+        "surface": "provider"
+      }
+    },
+    "schema_version": "adl.resilience.timeout_execution_trace.v1",
+    "surface": "provider",
+    "telemetry_event": {
+      "decision_summary": "provider_route.timeout_budget: timeout budget exceeded after 80ms (budget 50ms)",
+      "event_id": "v0917.integrated.timeout:timeout:provider_route.timeout_budget:1",
+      "event_kind": "timeout_decision",
+      "fault": {
+        "component_ref": "provider_route.timeout_budget",
+        "disposition": "retryable",
+        "fault_class": "runtime_failure",
+        "retryable": true,
+        "schema_version": "adl.resilience.fault_classification.v1",
+        "summary": "provider_route.timeout_budget exceeded timeout budget after 80ms (budget 50ms)",
+        "surface": "provider"
+      },
+      "policy_ref": "v0917.integrated.timeout",
+      "schema_version": "adl.resilience.telemetry_event.v1",
+      "surface": "provider"
+    },
+    "timeout_ms": 50
+  }
+}

@@ -1,0 +1,61 @@
+{
+  "outcome_kind": "Degraded",
+  "pattern": "degraded_fallback",
+  "result": {
+    "Ok": "degraded-provider-result"
+  },
+  "trace": {
+    "decision_summary": "provider_route.degraded_fallback: primary path failed; degraded fallback 'provider_route.cached_degraded_summary' executed",
+    "fallback_executed": true,
+    "fallback_ref": "provider_route.cached_degraded_summary",
+    "fault": {
+      "disposition": "retryable",
+      "fault_class": "provider_timeout",
+      "retryable": true,
+      "schema_version": "adl.resilience.fault_classification.v1",
+      "summary": "provider timeout",
+      "surface": "provider"
+    },
+    "final_status": "degraded_success",
+    "outcome_kind": "degraded",
+    "output_degraded": true,
+    "policy_id": "v0917.integrated.degraded_fallback",
+    "recovery_artifact": {
+      "artifact_id": "v0917.integrated.degraded_fallback:fallback:provider_route.degraded_fallback:2",
+      "disposition": "fallback_allowed",
+      "evidence_refs": [
+        "v0917.integrated.degraded_fallback",
+        "provider_route.cached_degraded_summary"
+      ],
+      "next_action": "surface degraded output explicitly for fallback 'provider_route.cached_degraded_summary' and preserve the original primary failure for downstream handling",
+      "schema_version": "adl.resilience.recovery_artifact.v1",
+      "surface": "provider",
+      "triggering_fault": {
+        "disposition": "retryable",
+        "fault_class": "provider_timeout",
+        "retryable": true,
+        "schema_version": "adl.resilience.fault_classification.v1",
+        "summary": "provider timeout",
+        "surface": "provider"
+      }
+    },
+    "schema_version": "adl.resilience.fallback_execution_trace.v1",
+    "surface": "provider",
+    "telemetry_event": {
+      "decision_summary": "provider_route.degraded_fallback: primary path failed; degraded fallback 'provider_route.cached_degraded_summary' executed",
+      "event_id": "v0917.integrated.degraded_fallback:fallback:provider_route.degraded_fallback:1",
+      "event_kind": "fallback_decision",
+      "fault": {
+        "disposition": "retryable",
+        "fault_class": "provider_timeout",
+        "retryable": true,
+        "schema_version": "adl.resilience.fault_classification.v1",
+        "summary": "provider timeout",
+        "surface": "provider"
+      },
+      "policy_ref": "v0917.integrated.degraded_fallback",
+      "schema_version": "adl.resilience.telemetry_event.v1",
+      "surface": "provider"
+    }
+  }
+}

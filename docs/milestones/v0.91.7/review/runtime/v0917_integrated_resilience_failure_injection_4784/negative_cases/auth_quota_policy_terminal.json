@@ -1,0 +1,155 @@
+{
+  "auth_classification": {
+    "disposition": "operator_gated",
+    "fault_class": "provider_auth_error",
+    "http_status": 401,
+    "retryable": false,
+    "schema_version": "adl.resilience.fault_classification.v1",
+    "summary": "redacted provider diagnostic",
+    "surface": "provider"
+  },
+  "auth_retry_trace": {
+    "attempts": [
+      {
+        "attempt_index": 1,
+        "decision_summary": "attempt 1 classified ProviderAuthError; terminal reason NonRetryableFault",
+        "duration_ms": 0,
+        "fault": {
+          "disposition": "operator_gated",
+          "fault_class": "provider_auth_error",
+          "http_status": 401,
+          "retryable": false,
+          "schema_version": "adl.resilience.fault_classification.v1",
+          "summary": "redacted provider diagnostic",
+          "surface": "provider"
+        },
+        "retry_allowed": false,
+        "scheduled_backoff_ms": 0,
+        "schema_version": "adl.resilience.retry_attempt.v1",
+        "started_at": "unix:1783153037",
+        "terminal_reason": "non_retryable_fault"
+      }
+    ],
+    "final_status": "failed",
+    "policy_id": "v0917.integrated.terminal",
+    "recovery_artifact": {
+      "artifact_id": "v0917.integrated.terminal:recovery:1",
+      "disposition": "operator_intervention_required",
+      "evidence_refs": [
+        "v0917.integrated.terminal"
+      ],
+      "next_action": "fault is non-retryable; inspect the failure before attempting recovery",
+      "schema_version": "adl.resilience.recovery_artifact.v1",
+      "surface": "provider",
+      "triggering_fault": {
+        "disposition": "operator_gated",
+        "fault_class": "provider_auth_error",
+        "http_status": 401,
+        "retryable": false,
+        "schema_version": "adl.resilience.fault_classification.v1",
+        "summary": "redacted provider diagnostic",
+        "surface": "provider"
+      }
+    },
+    "schema_version": "adl.resilience.retry_execution_trace.v1",
+    "surface": "provider",
+    "telemetry_events": [
+      {
+        "decision_summary": "provider_route.auth_no_retry: attempt 1 classified ProviderAuthError; terminal reason NonRetryableFault",
+        "event_id": "v0917.integrated.terminal:retry:1",
+        "event_kind": "retry_decision",
+        "fault": {
+          "disposition": "operator_gated",
+          "fault_class": "provider_auth_error",
+          "http_status": 401,
+          "retryable": false,
+          "schema_version": "adl.resilience.fault_classification.v1",
+          "summary": "redacted provider diagnostic",
+          "surface": "provider"
+        },
+        "policy_ref": "v0917.integrated.terminal",
+        "schema_version": "adl.resilience.telemetry_event.v1",
+        "surface": "provider"
+      }
+    ],
+    "total_duration_ms": 0
+  },
+  "pattern": "negative_auth_quota_policy",
+  "policy_decision": "denied",
+  "policy_rule_id": "deny-unapproved-remote-provider",
+  "quota_classification": {
+    "disposition": "operator_gated",
+    "fault_class": "provider_billing_blocked",
+    "http_status": 402,
+    "retryable": false,
+    "schema_version": "adl.resilience.fault_classification.v1",
+    "summary": "credit balance exhausted",
+    "surface": "provider"
+  },
+  "quota_retry_trace": {
+    "attempts": [
+      {
+        "attempt_index": 1,
+        "decision_summary": "attempt 1 classified ProviderBillingBlocked; terminal reason NonRetryableFault",
+        "duration_ms": 0,
+        "fault": {
+          "disposition": "operator_gated",
+          "fault_class": "provider_billing_blocked",
+          "http_status": 402,
+          "retryable": false,
+          "schema_version": "adl.resilience.fault_classification.v1",
+          "summary": "credit balance exhausted",
+          "surface": "provider"
+        },
+        "retry_allowed": false,
+        "scheduled_backoff_ms": 0,
+        "schema_version": "adl.resilience.retry_attempt.v1",
+        "started_at": "unix:1783153037",
+        "terminal_reason": "non_retryable_fault"
+      }
+    ],
+    "final_status": "failed",
+    "policy_id": "v0917.integrated.terminal",
+    "recovery_artifact": {
+      "artifact_id": "v0917.integrated.terminal:recovery:1",
+      "disposition": "operator_intervention_required",
+      "evidence_refs": [
+        "v0917.integrated.terminal"
+      ],
+      "next_action": "fault is non-retryable; inspect the failure before attempting recovery",
+      "schema_version": "adl.resilience.recovery_artifact.v1",
+      "surface": "provider",
+      "triggering_fault": {
+        "disposition": "operator_gated",
+        "fault_class": "provider_billing_blocked",
+        "http_status": 402,
+        "retryable": false,
+        "schema_version": "adl.resilience.fault_classification.v1",
+        "summary": "credit balance exhausted",
+        "surface": "provider"
+      }
+    },
+    "schema_version": "adl.resilience.retry_execution_trace.v1",
+    "surface": "provider",
+    "telemetry_events": [
+      {
+        "decision_summary": "provider_route.quota_no_retry: attempt 1 classified ProviderBillingBlocked; terminal reason NonRetryableFault",
+        "event_id": "v0917.integrated.terminal:retry:1",
+        "event_kind": "retry_decision",
+        "fault": {
+          "disposition": "operator_gated",
+          "fault_class": "provider_billing_blocked",
+          "http_status": 402,
+          "retryable": false,
+          "schema_version": "adl.resilience.fault_classification.v1",
+          "summary": "credit balance exhausted",
+          "surface": "provider"
+        },
+        "policy_ref": "v0917.integrated.terminal",
+        "schema_version": "adl.resilience.telemetry_event.v1",
+        "surface": "provider"
+      }
+    ],
+    "total_duration_ms": 0
+  }
+}

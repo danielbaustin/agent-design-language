@@ -50,6 +50,13 @@ assert_has "$TMP/focused.out" "mode=focused"
 assert_has "$TMP/focused.out" "filter_expression=test(contract_schema)"
 assert_not_has "$TMP/focused.out" "runtime_owner_lane status=selected"
 
+focused_resilience_binary="$TMP/focused-resilience-binary.txt"
+printf 'A\tadl/src/bin/run_v0917_integrated_resilience_failure_injection.rs\n' >"$focused_resilience_binary"
+bash "$SCRIPT" --changed-files "$focused_resilience_binary" >"$TMP/focused-resilience-binary.out"
+assert_has "$TMP/focused-resilience-binary.out" "rust_pr_fast status=selected"
+assert_has "$TMP/focused-resilience-binary.out" "mode=focused"
+assert_has "$TMP/focused-resilience-binary.out" "binary_id(adl::bin/run_v0917_integrated_resilience_failure_injection) and test(/^tests::/)"
+
 focused_rust_with_space="$TMP/focused rust paths.txt"
 printf 'M\tadl/src/runtime_v2/contract_schema.rs\n' >"$focused_rust_with_space"
 focused_rust_with_space_resolved="$(python3 - <<'PY' "$focused_rust_with_space"

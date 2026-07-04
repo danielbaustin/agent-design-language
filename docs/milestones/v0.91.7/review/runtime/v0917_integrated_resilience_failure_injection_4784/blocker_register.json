@@ -1,0 +1,18 @@
+{
+  "blockers": [
+    {
+      "blocker_id": "dependency-4783-scheduler-watcher-aee-middleware",
+      "classification": "blocked_dependency",
+      "evidence": [
+        "git status in .worktrees/adl-wp-4783 shows uncommitted edits on adl/src/execute/*, adl/src/instrumentation/*, adl/src/obsmem_indexing.rs, adl/src/resilience.rs, and adl/src/trace/*",
+        "git diff --stat origin/main...HEAD in .worktrees/adl-wp-4783 is empty because HEAD still matches origin/main; the dependency is not present on this branch"
+      ],
+      "impact": "This #4784 packet proves existing integrated ADL long-lived-agent, remote-exec, delegation-policy, and resilience primitives, but does not claim scheduler/watcher/AEE middleware resilience until #4783 lands.",
+      "missing_dependency": "#4783 integrated resilience middleware branch publication/merge",
+      "release_disposition": "blocks any v0.92 claim that specifically requires the #4783 scheduler/watcher/AEE integrated middleware path"
+    }
+  ],
+  "generated_at": "2026-07-04T08:17:18.165360+00:00",
+  "issue": 4784,
+  "schema_version": "adl.v0917.integrated_resilience_blocker_register.v1"
+}

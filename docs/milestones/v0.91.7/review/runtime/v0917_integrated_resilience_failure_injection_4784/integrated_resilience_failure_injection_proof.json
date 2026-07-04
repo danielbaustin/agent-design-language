@@ -1,0 +1,50 @@
+{
+  "blocker_register_ref": "blocker_register.json",
+  "disclaimer": "This packet is a bounded local proof for #4784. It exercises existing ADL long-lived-agent, remote-exec, delegation-policy, and resilience primitives under injected failures. It does not claim the #4783 scheduler/watcher/AEE resilience middleware path is available before that issue lands, and it does not claim complete product resilience or v0.92 readiness.",
+  "generated_at": "2026-07-04T08:17:18.165620+00:00",
+  "issue": 4784,
+  "matrix_ref": "failure_injection_matrix.json",
+  "reviewer_path": [
+    "README.md",
+    "integrated_resilience_failure_injection_proof.json",
+    "failure_injection_matrix.json",
+    "blocker_register.json",
+    "control_plane/long_lived_agent/resume_status_cycle3.json",
+    "control_plane/live_stop/stop_probe.json",
+    "resilience/retry_execution.json",
+    "resilience/timeout_execution.json",
+    "resilience/cancellation_execution.json",
+    "resilience/circuit_terminal_execution.json",
+    "resilience/rate_backpressure_execution.json",
+    "resilience/bulkhead_execution.json",
+    "resilience/degraded_fallback_execution.json",
+    "negative_cases/auth_quota_policy_terminal.json",
+    "runtime_provider/remote_timeout_probe.json",
+    "audit/artifact_safety_scan.json"
+  ],
+  "schema_version": "adl.v0917.integrated_resilience_failure_injection_proof.v1",
+  "status": "proved_with_blocked_dependency",
+  "status_summary": {
+    "blocker_count": 1,
+    "initial_state": "not_started",
+    "live_stop_state": "stopped",
+    "matrix_status_counts": {
+      "blocked_dependency": 1,
+      "proved": 11
+    },
+    "resume_state_after_cycle3": "completed",
+    "run_state_after_cycle2": "completed",
+    "status_after_stop": "stopped"
+  },
+  "what_this_does_not_prove": [
+    "The #4783 scheduler/watcher/AEE resilience middleware path, because it is not yet landed on this branch.",
+    "Complete product resilience across every runtime, provider, AWS, Unity, scheduler, and watcher surface.",
+    "v0.92 runtime readiness."
+  ],
+  "what_this_proves": [
+    "Existing ADL integrated runtime/control-plane paths exercise retry, timeout, cancellation, circuit-terminal guard, rate/backpressure, bulkhead, degraded fallback, and remote timeout proof under one artifact root.",
+    "At least one workflow/control-plane path is exercised through long-lived-agent run/resume/stop artifacts.",
+    "At least one runtime/provider path is exercised through remote-exec timeout and provider-surface resilience traces.",
+    "Negative auth, quota/billing, and delegation-policy cases fail closed without retrying as successful work."
+  ]
+}

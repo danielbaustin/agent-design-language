@@ -1,0 +1,103 @@
+{
+  "entries": [
+    {
+      "evidence_ref": "control_plane/long_lived_agent/resume_status_cycle3.json",
+      "expected_behavior": "long-lived-agent resumes bounded cycle state across reinvocation",
+      "observed_behavior": "resume_state=Completed completed_cycles=3",
+      "pattern": "control_plane_resume",
+      "status": "proved",
+      "surface": "workflow/control-plane"
+    },
+    {
+      "evidence_ref": "control_plane/live_stop/stop_probe.json",
+      "expected_behavior": "live stop leaves explicit stopped state and no second persisted stop-probe cycle",
+      "observed_behavior": "persisted_state=\"stopped\" completed_cycles=1 second_cycle_manifest_present=false",
+      "pattern": "control_plane_stop",
+      "status": "proved",
+      "surface": "workflow/control-plane"
+    },
+    {
+      "evidence_ref": "resilience/retry_execution.json",
+      "expected_behavior": "transient provider failure retries and then succeeds within attempt budget",
+      "observed_behavior": "attempt_count=3 final_status=\"succeeded\"",
+      "pattern": "retry",
+      "status": "proved",
+      "surface": "runtime/provider"
+    },
+    {
+      "evidence_ref": "resilience/timeout_execution.json",
+      "expected_behavior": "late provider completion is classified as timeout instead of success",
+      "observed_behavior": "final_status=\"timed_out\"",
+      "pattern": "timeout",
+      "status": "proved",
+      "surface": "runtime/provider"
+    },
+    {
+      "evidence_ref": "resilience/cancellation_execution.json",
+      "expected_behavior": "explicit cancellation is classified as cancelled and not hidden as success",
+      "observed_behavior": "final_status=\"cancelled\"",
+      "pattern": "cancellation",
+      "status": "proved",
+      "surface": "workflow/control-plane"
+    },
+    {
+      "evidence_ref": "resilience/circuit_terminal_execution.json",
+      "expected_behavior": "terminal auth failure opens the circuit and the next guarded operation is not executed",
+      "observed_behavior": "guard_status=\"open_rejected\" operation_executed=false",
+      "pattern": "circuit_terminal_guard",
+      "status": "proved",
+      "surface": "runtime/provider"
+    },
+    {
+      "evidence_ref": "resilience/rate_backpressure_execution.json",
+      "expected_behavior": "second provider request in the same window is throttled with wait metadata",
+      "observed_behavior": "final_status=\"throttled\" wait_ms=249",
+      "pattern": "rate_backpressure",
+      "status": "proved",
+      "surface": "runtime/provider"
+    },
+    {
+      "evidence_ref": "resilience/bulkhead_execution.json",
+      "expected_behavior": "saturated provider bulkhead rejects without executing the protected operation",
+      "observed_behavior": "final_status=\"saturated\" operation_executed=false",
+      "pattern": "bulkhead",
+      "status": "proved",
+      "surface": "runtime/provider"
+    },
+    {
+      "evidence_ref": "resilience/degraded_fallback_execution.json",
+      "expected_behavior": "provider timeout activates degraded fallback and marks output degraded",
+      "observed_behavior": "final_status=\"degraded_success\" output_degraded=true",
+      "pattern": "degraded_fallback",
+      "status": "proved",
+      "surface": "runtime/provider"
+    },
+    {
+      "evidence_ref": "negative_cases/auth_quota_policy_terminal.json",
+      "expected_behavior": "auth, quota, and policy failures remain terminal/operator-gated and do not retry",
+      "observed_behavior": "auth_status=\"failed\" quota_status=\"failed\" policy_decision=\"denied\"",
+      "pattern": "negative_auth_quota_policy",
+      "status": "proved",
+      "surface": "runtime/provider/security"
+    },
+    {
+      "evidence_ref": "runtime_provider/remote_timeout_probe.json",
+      "expected_behavior": "remote-exec hanging endpoint returns stable timeout failure kind with retryability truth",
+      "observed_behavior": "stable_failure_kind=\"timeout\" retryability=true",
+      "pattern": "remote_timeout",
+      "status": "proved",
+      "surface": "runtime/provider"
+    },
+    {
+      "evidence_ref": "blocker_register.json",
+      "expected_behavior": "consume #4783 integrated middleware once landed",
+      "observed_behavior": "#4783 worktree contains uncommitted edits on scheduler/watcher/AEE-adjacent runtime surfaces and is not a consumable dependency for this branch",
+      "pattern": "scheduler_watcher_aee_middleware",
+      "status": "blocked_dependency",
+      "surface": "scheduler/watcher/AEE"
+    }
+  ],
+  "generated_at": "2026-07-04T08:17:18.164833+00:00",
+  "issue": 4784,
+  "schema_version": "adl.v0917.integrated_resilience_failure_matrix.v1"
+}

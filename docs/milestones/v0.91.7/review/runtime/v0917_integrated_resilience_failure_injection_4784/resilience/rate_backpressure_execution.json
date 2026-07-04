@@ -1,0 +1,84 @@
+{
+  "allowed_trace": {
+    "decision_summary": "provider_route.rate_first: rate limit allowed 1/1 in 250ms window",
+    "final_status": "allowed",
+    "max_requests": 1,
+    "operation_executed": true,
+    "policy_id": "v0917.integrated.rate_backpressure",
+    "requests_in_window_after": 1,
+    "requests_in_window_before": 0,
+    "schema_version": "adl.resilience.rate_limit_execution_trace.v1",
+    "surface": "provider",
+    "telemetry_event": {
+      "decision_summary": "provider_route.rate_first: rate limit allowed 1/1 in 250ms window",
+      "event_id": "v0917.integrated.rate_backpressure:rate-limit:provider_route.rate_first:1",
+      "event_kind": "rate_limit_decision",
+      "policy_ref": "v0917.integrated.rate_backpressure",
+      "schema_version": "adl.resilience.telemetry_event.v1",
+      "surface": "provider"
+    },
+    "window_ms": 250,
+    "window_started_at_ms": 1000
+  },
+  "pattern": "rate_backpressure",
+  "throttled_result": "rate limit wait 249ms",
+  "throttled_trace": {
+    "decision_summary": "provider_route.rate_backpressure: rate limited at 1/1 requests; wait 249ms for window refill",
+    "fault": {
+      "disposition": "retryable",
+      "fault_class": "provider_rate_limited",
+      "http_status": 429,
+      "retryable": true,
+      "schema_version": "adl.resilience.fault_classification.v1",
+      "summary": "rate limit wait 249ms",
+      "surface": "provider"
+    },
+    "final_status": "throttled",
+    "max_requests": 1,
+    "operation_executed": false,
+    "policy_id": "v0917.integrated.rate_backpressure",
+    "recovery_artifact": {
+      "artifact_id": "v0917.integrated.rate_backpressure:rate-limit:provider_route.rate_backpressure:3",
+      "disposition": "retry_allowed",
+      "evidence_refs": [
+        "v0917.integrated.rate_backpressure"
+      ],
+      "next_action": "respect rate limit throttle by waiting at least 249ms before retrying",
+      "schema_version": "adl.resilience.recovery_artifact.v1",
+      "surface": "provider",
+      "triggering_fault": {
+        "disposition": "retryable",
+        "fault_class": "provider_rate_limited",
+        "http_status": 429,
+        "retryable": true,
+        "schema_version": "adl.resilience.fault_classification.v1",
+        "summary": "rate limit wait 249ms",
+        "surface": "provider"
+      }
+    },
+    "requests_in_window_after": 1,
+    "requests_in_window_before": 1,
+    "schema_version": "adl.resilience.rate_limit_execution_trace.v1",
+    "surface": "provider",
+    "telemetry_event": {
+      "decision_summary": "provider_route.rate_backpressure: rate limited at 1/1 requests; wait 249ms for window refill",
+      "event_id": "v0917.integrated.rate_backpressure:rate-limit:provider_route.rate_backpressure:2",
+      "event_kind": "rate_limit_decision",
+      "fault": {
+        "disposition": "retryable",
+        "fault_class": "provider_rate_limited",
+        "http_status": 429,
+        "retryable": true,
+        "schema_version": "adl.resilience.fault_classification.v1",
+        "summary": "rate limit wait 249ms",
+        "surface": "provider"
+      },
+      "policy_ref": "v0917.integrated.rate_backpressure",
+      "schema_version": "adl.resilience.telemetry_event.v1",
+      "surface": "provider"
+    },
+    "wait_ms": 249,
+    "window_ms": 250,
+    "window_started_at_ms": 1000
+  }
+}

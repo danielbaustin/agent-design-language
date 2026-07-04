@@ -1,0 +1,118 @@
+{
+  "first_failure_trace": {
+    "decision_summary": "provider_route.auth_terminal_failure: breaker opened after 1 consecutive failures",
+    "fault": {
+      "disposition": "operator_gated",
+      "fault_class": "provider_auth_error",
+      "http_status": 401,
+      "retryable": false,
+      "schema_version": "adl.resilience.fault_classification.v1",
+      "summary": "unauthorized provider request",
+      "surface": "provider"
+    },
+    "final_status": "closed_failure",
+    "now_ms": 100,
+    "operation_executed": true,
+    "policy_id": "v0917.integrated.circuit_terminal",
+    "recovery_artifact": {
+      "artifact_id": "v0917.integrated.circuit_terminal:circuit-breaker:provider_route.auth_terminal_failure:2",
+      "disposition": "retry_allowed",
+      "evidence_refs": [
+        "v0917.integrated.circuit_terminal"
+      ],
+      "next_action": "breaker opened; defer new attempts until the recovery window allows a bounded half-open probe",
+      "schema_version": "adl.resilience.recovery_artifact.v1",
+      "surface": "provider",
+      "triggering_fault": {
+        "disposition": "operator_gated",
+        "fault_class": "provider_auth_error",
+        "http_status": 401,
+        "retryable": false,
+        "schema_version": "adl.resilience.fault_classification.v1",
+        "summary": "unauthorized provider request",
+        "surface": "provider"
+      }
+    },
+    "schema_version": "adl.resilience.circuit_breaker_execution_trace.v1",
+    "state_after": "open",
+    "state_before": "closed",
+    "surface": "provider",
+    "telemetry_event": {
+      "decision_summary": "provider_route.auth_terminal_failure: breaker opened after 1 consecutive failures",
+      "event_id": "v0917.integrated.circuit_terminal:circuit-breaker:provider_route.auth_terminal_failure:1",
+      "event_kind": "circuit_breaker_decision",
+      "fault": {
+        "disposition": "operator_gated",
+        "fault_class": "provider_auth_error",
+        "http_status": 401,
+        "retryable": false,
+        "schema_version": "adl.resilience.fault_classification.v1",
+        "summary": "unauthorized provider request",
+        "surface": "provider"
+      },
+      "policy_ref": "v0917.integrated.circuit_terminal",
+      "schema_version": "adl.resilience.telemetry_event.v1",
+      "surface": "provider"
+    },
+    "used_fallback": false
+  },
+  "guard_result": "circuit remains open after terminal auth failure at Some(100); retry after 101ms",
+  "guard_trace": {
+    "decision_summary": "provider_route.auth_terminal_guard: breaker open at 1 failures; dependency call rejected",
+    "fault": {
+      "disposition": "operator_gated",
+      "fault_class": "provider_auth_error",
+      "http_status": 401,
+      "retryable": false,
+      "schema_version": "adl.resilience.fault_classification.v1",
+      "summary": "unauthorized provider request",
+      "surface": "provider"
+    },
+    "final_status": "open_rejected",
+    "now_ms": 101,
+    "operation_executed": false,
+    "policy_id": "v0917.integrated.circuit_terminal",
+    "recovery_artifact": {
+      "artifact_id": "v0917.integrated.circuit_terminal:circuit-breaker:provider_route.auth_terminal_guard:4",
+      "disposition": "retry_allowed",
+      "evidence_refs": [
+        "v0917.integrated.circuit_terminal"
+      ],
+      "next_action": "breaker remained open; wait for the recovery window before probing again",
+      "schema_version": "adl.resilience.recovery_artifact.v1",
+      "surface": "provider",
+      "triggering_fault": {
+        "disposition": "operator_gated",
+        "fault_class": "provider_auth_error",
+        "http_status": 401,
+        "retryable": false,
+        "schema_version": "adl.resilience.fault_classification.v1",
+        "summary": "unauthorized provider request",
+        "surface": "provider"
+      }
+    },
+    "schema_version": "adl.resilience.circuit_breaker_execution_trace.v1",
+    "state_after": "open",
+    "state_before": "open",
+    "surface": "provider",
+    "telemetry_event": {
+      "decision_summary": "provider_route.auth_terminal_guard: breaker open at 1 failures; dependency call rejected",
+      "event_id": "v0917.integrated.circuit_terminal:circuit-breaker:provider_route.auth_terminal_guard:3",
+      "event_kind": "circuit_breaker_decision",
+      "fault": {
+        "disposition": "operator_gated",
+        "fault_class": "provider_auth_error",
+        "http_status": 401,
+        "retryable": false,
+        "schema_version": "adl.resilience.fault_classification.v1",
+        "summary": "unauthorized provider request",
+        "surface": "provider"
+      },
+      "policy_ref": "v0917.integrated.circuit_terminal",
+      "schema_version": "adl.resilience.telemetry_event.v1",
+      "surface": "provider"
+    },
+    "used_fallback": false
+  },
+  "pattern": "circuit_terminal_guard"
+}

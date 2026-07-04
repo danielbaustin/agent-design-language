@@ -1,0 +1,8 @@
+{
+  "schema": "adl.long_lived_agent_stop.v1",
+  "agent_instance_id": "v0917-integrated-resilience-failure-injection",
+  "reason": "bounded v0.91.7 integrated resilience proof complete",
+  "requested_by": "operator",
+  "mode": "stop_before_next_cycle",
+  "requested_at": "2026-07-04T08:17:17.784838Z"
+}

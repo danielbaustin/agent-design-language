@@ -1,0 +1,6 @@
+{
+  "error_summary": "remote execution request timed out against a hanging local endpoint",
+  "pattern": "runtime_provider_remote_timeout",
+  "retryability": true,
+  "stable_failure_kind": "timeout"
+}

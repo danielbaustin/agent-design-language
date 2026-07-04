@@ -1,0 +1,65 @@
+{
+  "pattern": "cancellation",
+  "result": {
+    "disposition": "retryable",
+    "fault_class": "unknown",
+    "retryable": true,
+    "schema_version": "adl.resilience.fault_classification.v1",
+    "summary": "cancelled at 15",
+    "surface": "provider"
+  },
+  "trace": {
+    "decision_summary": "workflow_control.explicit_cancel: operation cancelled after 15ms",
+    "elapsed_ms": 15,
+    "fault": {
+      "component_ref": "workflow_control.explicit_cancel",
+      "disposition": "terminal",
+      "fault_class": "runtime_failure",
+      "retryable": false,
+      "schema_version": "adl.resilience.fault_classification.v1",
+      "summary": "workflow_control.explicit_cancel cancelled before completion",
+      "surface": "workflow"
+    },
+    "final_status": "cancelled",
+    "policy_id": "v0917.integrated.cancel",
+    "recovery_artifact": {
+      "artifact_id": "v0917.integrated.cancel:timeout:workflow_control.explicit_cancel:4",
+      "disposition": "resume_allowed",
+      "evidence_refs": [
+        "v0917.integrated.cancel"
+      ],
+      "next_action": "handle explicit cancellation before retrying or rescheduling",
+      "schema_version": "adl.resilience.recovery_artifact.v1",
+      "surface": "workflow",
+      "triggering_fault": {
+        "component_ref": "workflow_control.explicit_cancel",
+        "disposition": "terminal",
+        "fault_class": "runtime_failure",
+        "retryable": false,
+        "schema_version": "adl.resilience.fault_classification.v1",
+        "summary": "workflow_control.explicit_cancel cancelled before completion",
+        "surface": "workflow"
+      }
+    },
+    "schema_version": "adl.resilience.timeout_execution_trace.v1",
+    "surface": "workflow",
+    "telemetry_event": {
+      "decision_summary": "workflow_control.explicit_cancel: operation cancelled after 15ms",
+      "event_id": "v0917.integrated.cancel:timeout:workflow_control.explicit_cancel:3",
+      "event_kind": "timeout_decision",
+      "fault": {
+        "component_ref": "workflow_control.explicit_cancel",
+        "disposition": "terminal",
+        "fault_class": "runtime_failure",
+        "retryable": false,
+        "schema_version": "adl.resilience.fault_classification.v1",
+        "summary": "workflow_control.explicit_cancel cancelled before completion",
+        "surface": "workflow"
+      },
+      "policy_ref": "v0917.integrated.cancel",
+      "schema_version": "adl.resilience.telemetry_event.v1",
+      "surface": "workflow"
+    },
+    "timeout_ms": 100
+  }
+}
