@@ -3114,15 +3114,34 @@ impl AwsRemoteValidationAdapter for LiveAwsRemoteValidationAdapter {
             },
             None => None,
         };
-        let output = self
-            .ssm
-            .send_command()
-            .document_name("AWS-RunShellScript")
-            .instance_ids(instance_id)
-            .parameters("commands", vec![command.to_string()])
-            .send()
-            .await
-            .map_err(classify_ssm_error)?;
+        let dispatch_start = Instant::now();
+        let output = loop {
+            match self
+                .ssm
+                .send_command()
+                .document_name("AWS-RunShellScript")
+                .instance_ids(instance_id)
+                .parameters("commands", vec![command.to_string()])
+                .send()
+                .await
+            {
+                Ok(output) => break output,
+                Err(err) => {
+                    let classified = classify_ssm_error(err);
+                    if dispatch_start.elapsed() >= Duration::from_secs(90) {
+                        return Err(classified);
+                    }
+                    append_command_status_line(
+                        "command_dispatch_retry",
+                        format!(
+                            "instance_id={instance_id} detail={}",
+                            classified.message
+                        ),
+                    );
+                    sleep(poll_interval).await;
+                }
+            }
+        };
         let command_id = output
             .command()
             .and_then(|command| command.command_id())
