@@ -4,7 +4,7 @@
 the AWS Spot EC2 remote validation lane.
 
 It wraps the lower-level `adl-aws-remote-validation` binary from
-`tools/aws_remote_validation` and keeps the ADL operator contract small:
+`adl/target/debug` and keeps the ADL operator contract small:
 
 - default to the approved Agent Logic AWS profile, `agent-logic-admin`
 - verify the live STS account hash against retained Agent Logic proof before a
@@ -12,6 +12,7 @@ It wraps the lower-level `adl-aws-remote-validation` binary from
 - never print the AWS account id, ARN contents, or credentials
 - require `--run` before any EC2 resources can be launched
 - forward one explicit remote validation command to the AWS runner
+- reuse the retained warm EBS cache volume by default
 - retain the AWS runner's summary JSON and artifact directory
 
 ## Account Check
@@ -50,9 +51,51 @@ bash adl/tools/run_aws_spot_remote_validation_lane.sh \
   --json
 ```
 
+By default the wrapper forwards the retained WP-06 cache volume:
+
+```text
+name: adl-aws-remote-validation-cache-volume
+size/type: 100 GiB gp3
+iops/throughput: 3000 IOPS / 125 MiB/s
+device/mount: /dev/sdf -> /mnt/adl-cache
+```
+
+This EBS volume is a standing AWS resource and therefore has a standing storage
+cost even when no Spot instance is running. Keep it only while the lane is used
+often enough to justify the warm cache. Do not change `--cache-volume-name`
+unless intentionally creating a separate retained cache.
+
+The remote bootstrap mounts the volume and places shared build state under it:
+
+```text
+/mnt/adl-cache/adl-aws-remote-validation/shared/target
+/mnt/adl-cache/adl-aws-remote-validation/shared/sccache
+/mnt/adl-cache/adl-aws-remote-validation/shared/cargo-home
+/mnt/adl-cache/adl-aws-remote-validation/shared/rustup-home
+```
+
 The underlying AWS runner still owns launch-surface preparation, Spot-first
 selection, on-demand fallback for classified Spot capacity failures, SSM command
 dispatch, retained logs, interruption classification, and cleanup truth.
+
+## Benchmark Command
+
+Use the shared benchmark helper when comparing build platforms:
+
+```bash
+bash adl/tools/run_aws_spot_remote_validation_lane.sh \
+  --run \
+  --command 'bash adl/tools/run_build_platform_benchmark.sh --platform aws_spot --cache-posture warm_ebs_cache --out .adl/tmp/build-platform-benchmark/aws-spot-ebs-<date>/summary.json --artifact-dir .adl/tmp/build-platform-benchmark/aws-spot-ebs-<date>' \
+  --git-ref <branch-or-ref> \
+  --out .adl/tmp/aws-spot-remote-validation/<run-id>/summary.json \
+  --artifact-dir .adl/tmp/aws-spot-remote-validation/<run-id>/artifacts \
+  --instance-type m7a.2xlarge \
+  --json
+```
+
+The AWS summary must contain `cache_volume.attachment_state: "attached"` before
+the run can be claimed as warm-EBS proof. A benchmark line or cache-posture
+string alone is not enough.
 
 ## Retained Proof
 
@@ -68,9 +111,10 @@ Retained account-bound hot-cache proof:
 - artifacts:
   `docs/milestones/v0.91.7/review/build_throughput/remote_validation_4603/artifacts_retry11_agentlogic_hotcache/attempt-0`
 
-The retained run used `agent-logic-admin`, launched Spot `m7a.2xlarge`, passed,
-completed in `248s`, recorded `163s` remote command wall time, recorded `113s`
-focused command time inside the host, and recorded clean termination.
+The retained run used `agent-logic-admin`, launched Spot `m7a.2xlarge`, reused
+the retained EBS cache volume, passed, completed in `248s`, recorded `163s`
+remote command wall time, recorded `113s` focused command time inside the host,
+and recorded clean termination.
 
 Historical retry surfaces captured in the wrong AWS account are not accepted as
 current account-bound proof for this lane.

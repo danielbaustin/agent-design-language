@@ -81,6 +81,7 @@ bash "$SCRIPT" \
   --git-ref origin/main >"$TMP/check.out"
 grep -F "PASS account_profile_resolved profile=agent-logic-admin account_matches_retained_proof=true" "$TMP/check.out" >/dev/null
 grep -F "DRY-RUN no EC2 resources launched" "$TMP/check.out" >/dev/null
+grep -F "cache_volume=adl-aws-remote-validation-cache-volume cache_mount=/mnt/adl-cache" "$TMP/check.out" >/dev/null
 if grep -F "$account" "$TMP/check.out" >/dev/null; then
   echo "account id leaked in account-check output" >&2
   exit 1
@@ -118,6 +119,20 @@ grep -Fx -- "--issue" "$TMP/args.txt" >/dev/null
 grep -Fx -- "4837" "$TMP/args.txt" >/dev/null
 grep -Fx -- "--instance-type" "$TMP/args.txt" >/dev/null
 grep -Fx -- "m7a.2xlarge" "$TMP/args.txt" >/dev/null
+grep -Fx -- "--cache-volume-name" "$TMP/args.txt" >/dev/null
+grep -Fx -- "adl-aws-remote-validation-cache-volume" "$TMP/args.txt" >/dev/null
+grep -Fx -- "--cache-volume-size-gib" "$TMP/args.txt" >/dev/null
+grep -Fx -- "100" "$TMP/args.txt" >/dev/null
+grep -Fx -- "--cache-volume-type" "$TMP/args.txt" >/dev/null
+grep -Fx -- "gp3" "$TMP/args.txt" >/dev/null
+grep -Fx -- "--cache-volume-iops" "$TMP/args.txt" >/dev/null
+grep -Fx -- "3000" "$TMP/args.txt" >/dev/null
+grep -Fx -- "--cache-volume-throughput-mbps" "$TMP/args.txt" >/dev/null
+grep -Fx -- "125" "$TMP/args.txt" >/dev/null
+grep -Fx -- "--cache-volume-device-name" "$TMP/args.txt" >/dev/null
+grep -Fx -- "/dev/sdf" "$TMP/args.txt" >/dev/null
+grep -Fx -- "--cache-volume-mount-path" "$TMP/args.txt" >/dev/null
+grep -Fx -- "/mnt/adl-cache" "$TMP/args.txt" >/dev/null
 grep -Fx -- "--json" "$TMP/args.txt" >/dev/null
 test -f "$TMP/summary.json"
 test -f "$TMP/artifacts/events.jsonl"

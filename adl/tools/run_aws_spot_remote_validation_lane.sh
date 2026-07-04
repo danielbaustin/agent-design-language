@@ -20,6 +20,13 @@ CHECK_ACCOUNT=false
 JSON=false
 PRINT_COMMAND=false
 INSTANCE_TYPES=()
+CACHE_VOLUME_NAME="${ADL_AWS_REMOTE_VALIDATION_CACHE_VOLUME_NAME:-adl-aws-remote-validation-cache-volume}"
+CACHE_VOLUME_SIZE_GIB="${ADL_AWS_REMOTE_VALIDATION_CACHE_VOLUME_SIZE_GIB:-100}"
+CACHE_VOLUME_TYPE="${ADL_AWS_REMOTE_VALIDATION_CACHE_VOLUME_TYPE:-gp3}"
+CACHE_VOLUME_IOPS="${ADL_AWS_REMOTE_VALIDATION_CACHE_VOLUME_IOPS:-3000}"
+CACHE_VOLUME_THROUGHPUT_MBPS="${ADL_AWS_REMOTE_VALIDATION_CACHE_VOLUME_THROUGHPUT_MBPS:-125}"
+CACHE_VOLUME_DEVICE_NAME="${ADL_AWS_REMOTE_VALIDATION_CACHE_VOLUME_DEVICE_NAME:-/dev/sdf}"
+CACHE_VOLUME_MOUNT_PATH="${ADL_AWS_REMOTE_VALIDATION_CACHE_VOLUME_MOUNT_PATH:-/mnt/adl-cache}"
 
 usage() {
   cat <<'USAGE'
@@ -40,6 +47,16 @@ Options:
   --out <path>                  Summary JSON path. Defaults under .adl/tmp.
   --artifact-dir <dir>          Artifact root. Defaults beside --out.
   --instance-type <type>        Add an allowed EC2 instance type.
+  --cache-volume-name <name>    Warm EBS cache volume name. Defaults to retained WP-06 cache.
+  --cache-volume-size-gib <gib> Cache volume size when created. Defaults to 100.
+  --cache-volume-type <type>    Cache volume type. Defaults to gp3.
+  --cache-volume-iops <iops>    Cache volume IOPS. Defaults to 3000.
+  --cache-volume-throughput-mbps <mbps>
+                                Cache volume throughput. Defaults to 125.
+  --cache-volume-device-name <device>
+                                EC2 device name for attach. Defaults to /dev/sdf.
+  --cache-volume-mount-path <path>
+                                Remote mount path. Defaults to /mnt/adl-cache.
   --expected-proof <summary>    Retained Agent Logic proof summary used for account-hash comparison.
   --bin <path>                  adl-aws-remote-validation binary path.
   --json                        Pass --json to the underlying binary.
@@ -104,6 +121,34 @@ while [[ $# -gt 0 ]]; do
       INSTANCE_TYPES+=("${2:-}")
       shift 2
       ;;
+    --cache-volume-name)
+      CACHE_VOLUME_NAME="${2:-}"
+      shift 2
+      ;;
+    --cache-volume-size-gib)
+      CACHE_VOLUME_SIZE_GIB="${2:-}"
+      shift 2
+      ;;
+    --cache-volume-type)
+      CACHE_VOLUME_TYPE="${2:-}"
+      shift 2
+      ;;
+    --cache-volume-iops)
+      CACHE_VOLUME_IOPS="${2:-}"
+      shift 2
+      ;;
+    --cache-volume-throughput-mbps)
+      CACHE_VOLUME_THROUGHPUT_MBPS="${2:-}"
+      shift 2
+      ;;
+    --cache-volume-device-name)
+      CACHE_VOLUME_DEVICE_NAME="${2:-}"
+      shift 2
+      ;;
+    --cache-volume-mount-path)
+      CACHE_VOLUME_MOUNT_PATH="${2:-}"
+      shift 2
+      ;;
     --expected-proof)
       EXPECTED_PROOF="${2:-}"
       shift 2
@@ -130,6 +175,11 @@ done
 
 if [[ -z "$PROFILE" ]]; then
   echo "run_aws_spot_remote_validation_lane: --profile must not be empty" >&2
+  exit 2
+fi
+
+if [[ -z "$CACHE_VOLUME_NAME" ]]; then
+  echo "run_aws_spot_remote_validation_lane: cache volume name must not be empty" >&2
   exit 2
 fi
 
@@ -211,6 +261,13 @@ cmd=(
   --git-ref "$GIT_REF"
   --out "$OUT_PATH"
   --artifact-dir "$ARTIFACT_DIR"
+  --cache-volume-name "$CACHE_VOLUME_NAME"
+  --cache-volume-size-gib "$CACHE_VOLUME_SIZE_GIB"
+  --cache-volume-type "$CACHE_VOLUME_TYPE"
+  --cache-volume-iops "$CACHE_VOLUME_IOPS"
+  --cache-volume-throughput-mbps "$CACHE_VOLUME_THROUGHPUT_MBPS"
+  --cache-volume-device-name "$CACHE_VOLUME_DEVICE_NAME"
+  --cache-volume-mount-path "$CACHE_VOLUME_MOUNT_PATH"
 )
 
 if [[ -n "$COMMAND" ]]; then
@@ -231,7 +288,7 @@ if [[ "$PRINT_COMMAND" == true ]]; then
 fi
 
 if [[ "$RUN" != true ]]; then
-  echo "DRY-RUN aws_spot_remote_validation profile=$PROFILE region=$REGION git_ref=$GIT_REF out=$OUT_PATH artifact_dir=$ARTIFACT_DIR"
+  echo "DRY-RUN aws_spot_remote_validation profile=$PROFILE region=$REGION git_ref=$GIT_REF out=$OUT_PATH artifact_dir=$ARTIFACT_DIR cache_volume=$CACHE_VOLUME_NAME cache_mount=$CACHE_VOLUME_MOUNT_PATH"
   echo "DRY-RUN no EC2 resources launched; pass --run to execute"
   exit 0
 fi

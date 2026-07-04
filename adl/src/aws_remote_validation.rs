@@ -90,6 +90,13 @@ pub struct AwsRemoteValidationConfig {
     pub ssh_private_key_path: Option<PathBuf>,
     pub ssh_user: Option<String>,
     pub ssh_allowed_cidr: Option<String>,
+    pub cache_volume_name: Option<String>,
+    pub cache_volume_size_gib: Option<i32>,
+    pub cache_volume_type: Option<String>,
+    pub cache_volume_iops: Option<i32>,
+    pub cache_volume_throughput_mbps: Option<i32>,
+    pub cache_volume_device_name: Option<String>,
+    pub cache_volume_mount_path: Option<String>,
     pub command: String,
     pub out_path: PathBuf,
     pub artifact_dir: PathBuf,
@@ -120,6 +127,25 @@ impl AwsRemoteValidationConfig {
         }
         if self.instance_types.is_empty() {
             return Err(anyhow!("at least one --instance-type is required"));
+        }
+        let cache_volume_enabled = self.cache_volume_name.is_some()
+            || self.cache_volume_size_gib.is_some()
+            || self.cache_volume_type.is_some()
+            || self.cache_volume_iops.is_some()
+            || self.cache_volume_throughput_mbps.is_some()
+            || self.cache_volume_device_name.is_some()
+            || self.cache_volume_mount_path.is_some();
+        if cache_volume_enabled
+            && self
+                .cache_volume_name
+                .as_deref()
+                .unwrap_or("")
+                .trim()
+                .is_empty()
+        {
+            return Err(anyhow!(
+                "cache_volume_name is required when cache-volume options are set"
+            ));
         }
         if self.ami_id.trim().is_empty()
             || self.subnet_id.trim().is_empty()
@@ -246,6 +272,32 @@ pub struct SpotTerminationEvidence {
     pub provider_interruption_confirmed: bool,
 }
 
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
+pub struct CacheVolumeRequest {
+    pub name: String,
+    pub size_gib: i32,
+    pub volume_type: String,
+    pub iops: Option<i32>,
+    pub throughput_mbps: Option<i32>,
+    pub device_name: String,
+    pub mount_path: String,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
+pub struct CacheVolumeRecord {
+    pub name: String,
+    pub volume_id: String,
+    pub availability_zone: String,
+    pub size_gib: i32,
+    pub volume_type: String,
+    pub iops: Option<i32>,
+    pub throughput_mbps: Option<i32>,
+    pub device_name: String,
+    pub mount_path: String,
+    pub created: bool,
+    pub attachment_state: String,
+}
+
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
 pub struct TimingRecord {
     pub total_seconds: u64,
@@ -296,6 +348,7 @@ pub struct AwsRemoteValidationSummary {
     pub quota_snapshot: QuotaSnapshot,
     pub attempts: Vec<AttemptRecord>,
     pub launch: Option<LaunchRecord>,
+    pub cache_volume: Option<CacheVolumeRecord>,
     pub command: Option<CommandRecord>,
     pub cleanup: CleanupRecord,
     pub launch_surface: Option<LaunchSurfaceRecord>,
@@ -363,12 +416,14 @@ pub struct LaunchSpec {
     pub security_group_id: String,
     pub instance_profile_name: String,
     pub ssh_key_name: Option<String>,
+    pub cache_volume: Option<CacheVolumeRequest>,
 }
 
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub struct LaunchResult {
     pub instance_id: String,
     pub initial_state: String,
+    pub cache_volume: Option<CacheVolumeRecord>,
 }
 
 #[derive(Debug, Clone, PartialEq, Eq)]
@@ -534,7 +589,9 @@ pub async fn run_aws_remote_validation<A: AwsRemoteValidationAdapter>(
         }
     };
 
+    let cache_volume_request = build_cache_volume_request(config);
     let mut instance_id: Option<String> = None;
+    let mut cache_volume: Option<CacheVolumeRecord> = None;
     let launch_timer = Instant::now();
     'launch: for instance_type in &config.instance_types {
         let spot_spec = LaunchSpec {
@@ -545,6 +602,7 @@ pub async fn run_aws_remote_validation<A: AwsRemoteValidationAdapter>(
             security_group_id: config.security_group_id.clone(),
             instance_profile_name: config.instance_profile_name.clone(),
             ssh_key_name: config.ssh_key_name.clone(),
+            cache_volume: cache_volume_request.clone(),
         };
         record_event(
             &mut events,
@@ -565,6 +623,7 @@ pub async fn run_aws_remote_validation<A: AwsRemoteValidationAdapter>(
                     initial_state: result.initial_state,
                 });
                 instance_id = Some(result.instance_id);
+                cache_volume = result.cache_volume;
                 attempts.push(AttemptRecord {
                     instance_type: instance_type.clone(),
                     purchase_option: PurchaseOption::Spot,
@@ -627,6 +686,7 @@ pub async fn run_aws_remote_validation<A: AwsRemoteValidationAdapter>(
                     initial_state: result.initial_state,
                 });
                 instance_id = Some(result.instance_id);
+                cache_volume = result.cache_volume;
                 attempts.push(AttemptRecord {
                     instance_type: instance_type.clone(),
                     purchase_option: PurchaseOption::OnDemand,
@@ -941,6 +1001,7 @@ pub async fn run_aws_remote_validation<A: AwsRemoteValidationAdapter>(
         quota_snapshot,
         attempts,
         launch,
+        cache_volume,
         command: command_record,
         cleanup,
         launch_surface: None,
@@ -1127,7 +1188,24 @@ fn build_remote_command_script(config: &AwsRemoteValidationConfig) -> String {
         shell_single_quote(config.sccache_tarball_url.as_deref().unwrap_or(""));
     let escaped_nextest_tarball_url =
         shell_single_quote(config.nextest_tarball_url.as_deref().unwrap_or(""));
+    let escaped_cache_volume_device_name = shell_single_quote(
+        config
+            .cache_volume_device_name
+            .as_deref()
+            .unwrap_or("/dev/sdf"),
+    );
+    let escaped_cache_volume_mount_path = shell_single_quote(
+        config
+            .cache_volume_mount_path
+            .as_deref()
+            .unwrap_or("/mnt/adl-cache"),
+    );
     let needs_nextest = if config.command.contains("nextest") {
+        "1"
+    } else {
+        "0"
+    };
+    let cache_volume_enabled_flag = if build_cache_volume_request(config).is_some() {
         "1"
     } else {
         "0"
@@ -1136,9 +1214,12 @@ fn build_remote_command_script(config: &AwsRemoteValidationConfig) -> String {
         r#"set -euo pipefail
 RUN_ROOT="/tmp/adl-aws-remote-validation/{run_id}"
 REPO_DIR="$RUN_ROOT/agent-design-language"
-TARGET_DIR="$RUN_ROOT/target"
-SCCACHE_DIR="$RUN_ROOT/sccache"
-mkdir -p "$RUN_ROOT" "$TARGET_DIR" "$SCCACHE_DIR"
+WORK_ROOT="$RUN_ROOT"
+TOOLCHAIN_ROOT=""
+TARGET_DIR="$WORK_ROOT/target"
+SCCACHE_DIR="$WORK_ROOT/sccache"
+CARGO_HOME_DIR="${{HOME:-/root}}/.cargo"
+RUSTUP_HOME_DIR="${{HOME:-/root}}/.rustup"
 BOOTSTRAP_START="$(date +%s)"
 CURRENT_STAGE="bootstrap"
 
@@ -1181,6 +1262,52 @@ on_error() {{
   exit "$exit_code"
 }}
 trap on_error ERR
+
+if [ "{cache_volume_enabled}" = "1" ]; then
+  CACHE_VOLUME_DEVICE_NAME={cache_volume_device_name}
+  CACHE_VOLUME_MOUNT_PATH={cache_volume_mount_path}
+  CURRENT_STAGE="prepare_cache_volume"
+  mkdir -p "$RUN_ROOT"
+  ROOT_SOURCE="$(findmnt -n -o SOURCE / || true)"
+  ROOT_DISK="$(lsblk -no PKNAME "$ROOT_SOURCE" 2>/dev/null | head -n 1 || true)"
+  resolve_cache_device() {{
+    local attempt candidate basename
+    for attempt in $(seq 1 60); do
+      for candidate in "$CACHE_VOLUME_DEVICE_NAME" /dev/nvme1n1 /dev/nvme2n1 /dev/xvdf /dev/xvdg; do
+        [ -b "$candidate" ] || continue
+        basename="$(basename "$candidate")"
+        if [ -n "$ROOT_DISK" ] && [ "$basename" = "$ROOT_DISK" ]; then
+          continue
+        fi
+        printf '%s\n' "$candidate"
+        return 0
+      done
+      sleep 2
+    done
+    return 1
+  }}
+  CACHE_DEVICE="$(resolve_cache_device)"
+  sudo mkdir -p "$CACHE_VOLUME_MOUNT_PATH"
+  if ! sudo blkid "$CACHE_DEVICE" >/dev/null 2>&1; then
+    sudo mkfs.ext4 -F "$CACHE_DEVICE" >/tmp/adl-cache-volume-format.log 2>&1
+  fi
+  CACHE_UUID="$(sudo blkid -s UUID -o value "$CACHE_DEVICE")"
+  if ! grep -q "$CACHE_UUID" /etc/fstab 2>/dev/null; then
+    echo "UUID=$CACHE_UUID $CACHE_VOLUME_MOUNT_PATH ext4 defaults,nofail 0 2" | sudo tee -a /etc/fstab >/dev/null
+  fi
+  sudo mountpoint -q "$CACHE_VOLUME_MOUNT_PATH" || sudo mount "$CACHE_VOLUME_MOUNT_PATH"
+  CACHE_OWNER_USER="$(id -un)"
+  CACHE_OWNER_GROUP="$(id -gn)"
+  sudo chown -R "$CACHE_OWNER_USER":"$CACHE_OWNER_GROUP" "$CACHE_VOLUME_MOUNT_PATH"
+  TOOLCHAIN_ROOT="$CACHE_VOLUME_MOUNT_PATH/adl-aws-remote-validation/shared"
+  WORK_ROOT="$CACHE_VOLUME_MOUNT_PATH/adl-aws-remote-validation/runs/{run_id}"
+  TARGET_DIR="$TOOLCHAIN_ROOT/target"
+  SCCACHE_DIR="$TOOLCHAIN_ROOT/sccache"
+  CARGO_HOME_DIR="$TOOLCHAIN_ROOT/cargo-home"
+  RUSTUP_HOME_DIR="$TOOLCHAIN_ROOT/rustup-home"
+fi
+
+mkdir -p "$RUN_ROOT" "$WORK_ROOT" "$TARGET_DIR" "$SCCACHE_DIR" "$CARGO_HOME_DIR" "$RUSTUP_HOME_DIR"
 
 release_target_triple() {{
   local arch
@@ -1358,6 +1485,13 @@ if [ -f "$HOME/.cargo/env" ]; then
   . "$HOME/.cargo/env"
 fi
 export PATH="$HOME/.cargo/bin:$PATH"
+export CARGO_HOME="$CARGO_HOME_DIR"
+export RUSTUP_HOME="$RUSTUP_HOME_DIR"
+mkdir -p "$CARGO_HOME/bin"
+if [ -f "$HOME/.cargo/env" ]; then
+  . "$HOME/.cargo/env"
+fi
+export PATH="$CARGO_HOME/bin:$HOME/.cargo/bin:$PATH"
 export CARGO_TARGET_DIR="$TARGET_DIR"
 export SCCACHE_DIR="$SCCACHE_DIR"
 if [ -n "$CACHE_BUCKET" ]; then
@@ -1521,10 +1655,38 @@ exit "$COMMAND_EXIT""#,
         cache_prefix = escaped_cache_prefix,
         sccache_tarball_url = escaped_sccache_tarball_url,
         nextest_tarball_url = escaped_nextest_tarball_url,
+        cache_volume_enabled = cache_volume_enabled_flag,
+        cache_volume_device_name = escaped_cache_volume_device_name,
+        cache_volume_mount_path = escaped_cache_volume_mount_path,
         needs_nextest = needs_nextest,
         command = escaped_command,
         region = config.region,
     )
+}
+
+fn build_cache_volume_request(config: &AwsRemoteValidationConfig) -> Option<CacheVolumeRequest> {
+    let name = config.cache_volume_name.as_ref()?.trim();
+    if name.is_empty() {
+        return None;
+    }
+    Some(CacheVolumeRequest {
+        name: name.to_string(),
+        size_gib: config.cache_volume_size_gib.unwrap_or(200),
+        volume_type: config
+            .cache_volume_type
+            .clone()
+            .unwrap_or_else(|| "gp3".to_string()),
+        iops: config.cache_volume_iops,
+        throughput_mbps: config.cache_volume_throughput_mbps,
+        device_name: config
+            .cache_volume_device_name
+            .clone()
+            .unwrap_or_else(|| "/dev/sdf".to_string()),
+        mount_path: config
+            .cache_volume_mount_path
+            .clone()
+            .unwrap_or_else(|| "/mnt/adl-cache".to_string()),
+    })
 }
 
 fn shell_single_quote(value: &str) -> String {
@@ -1631,6 +1793,294 @@ impl LiveAwsRemoteValidationAdapter {
             .and_then(|reservation| reservation.instances().first())
             .and_then(|instance| instance.public_ip_address())
             .map(ToOwned::to_owned))
+    }
+
+    async fn subnet_availability_zone(&self, subnet_id: &str) -> Result<String> {
+        let subnet = self
+            .ec2
+            .describe_subnets()
+            .subnet_ids(subnet_id)
+            .send()
+            .await?;
+        subnet
+            .subnets()
+            .first()
+            .and_then(|entry| entry.availability_zone())
+            .map(ToOwned::to_owned)
+            .ok_or_else(|| anyhow!("subnet '{subnet_id}' did not report an availability zone"))
+    }
+
+    async fn ensure_cache_volume(
+        &self,
+        request: &CacheVolumeRequest,
+        availability_zone: &str,
+    ) -> std::result::Result<CacheVolumeRecord, AwsAdapterError> {
+        let describe = self
+            .ec2
+            .describe_volumes()
+            .filters(
+                ec2::types::Filter::builder()
+                    .name("tag:Name")
+                    .values(request.name.clone())
+                    .build(),
+            )
+            .filters(
+                ec2::types::Filter::builder()
+                    .name("availability-zone")
+                    .values(availability_zone.to_string())
+                    .build(),
+            )
+            .send()
+            .await
+            .map_err(classify_ec2_error)?;
+        if let Some(volume) = describe.volumes().first() {
+            let volume_id = volume.volume_id().unwrap_or_default().to_string();
+            let state = volume
+                .state()
+                .map(|value| value.as_str().to_string())
+                .unwrap_or_else(|| "unknown".to_string());
+            if state != "available" && state != "in-use" {
+                return Err(AwsAdapterError {
+                    code: Some("CacheVolumeNotAttachable".to_string()),
+                    message: format!(
+                        "cache volume {} is in state '{}' and cannot be reused",
+                        volume_id, state
+                    ),
+                    spot_fallback_permitted: false,
+                });
+            }
+            return Ok(CacheVolumeRecord {
+                name: request.name.clone(),
+                volume_id,
+                availability_zone: availability_zone.to_string(),
+                size_gib: volume.size().unwrap_or(request.size_gib),
+                volume_type: volume
+                    .volume_type()
+                    .map(|value| value.as_str().to_string())
+                    .unwrap_or_else(|| request.volume_type.clone()),
+                iops: volume.iops(),
+                throughput_mbps: volume.throughput(),
+                device_name: request.device_name.clone(),
+                mount_path: request.mount_path.clone(),
+                created: false,
+                attachment_state: state,
+            });
+        }
+
+        let mut create = self
+            .ec2
+            .create_volume()
+            .availability_zone(availability_zone)
+            .size(request.size_gib)
+            .volume_type(ec2::types::VolumeType::from(request.volume_type.as_str()))
+            .tag_specifications(
+                ec2::types::TagSpecification::builder()
+                    .resource_type(ec2::types::ResourceType::Volume)
+                    .tags(
+                        ec2::types::Tag::builder()
+                            .key("Name")
+                            .value(&request.name)
+                            .build(),
+                    )
+                    .build(),
+            );
+        if let Some(iops) = request.iops {
+            create = create.iops(iops);
+        }
+        if let Some(throughput) = request.throughput_mbps {
+            create = create.throughput(throughput);
+        }
+        let created = create.send().await.map_err(classify_ec2_error)?;
+        let volume_id = created.volume_id().ok_or_else(|| AwsAdapterError {
+            code: Some("CacheVolumeCreateMissingVolumeId".to_string()),
+            message: "create_volume returned no volume id".to_string(),
+            spot_fallback_permitted: false,
+        })?;
+        Ok(CacheVolumeRecord {
+            name: request.name.clone(),
+            volume_id: volume_id.to_string(),
+            availability_zone: availability_zone.to_string(),
+            size_gib: created.size().unwrap_or(request.size_gib),
+            volume_type: created
+                .volume_type()
+                .map(|value: &ec2::types::VolumeType| value.as_str().to_string())
+                .unwrap_or_else(|| request.volume_type.clone()),
+            iops: created.iops(),
+            throughput_mbps: created.throughput(),
+            device_name: request.device_name.clone(),
+            mount_path: request.mount_path.clone(),
+            created: true,
+            attachment_state: created
+                .state()
+                .map(|value: &ec2::types::VolumeState| value.as_str().to_string())
+                .unwrap_or_else(|| "creating".to_string()),
+        })
+    }
+
+    async fn wait_for_volume_available(
+        &self,
+        volume_id: &str,
+    ) -> std::result::Result<(), AwsAdapterError> {
+        let start = Instant::now();
+        while start.elapsed() < Duration::from_secs(180) {
+            let response = self
+                .ec2
+                .describe_volumes()
+                .volume_ids(volume_id)
+                .send()
+                .await
+                .map_err(classify_ec2_error)?;
+            let Some(volume) = response.volumes().first() else {
+                break;
+            };
+            let state = volume
+                .state()
+                .map(|value| value.as_str())
+                .unwrap_or("unknown");
+            if state == "available" || state == "in-use" {
+                return Ok(());
+            }
+            sleep(Duration::from_secs(3)).await;
+        }
+        Err(AwsAdapterError {
+            code: Some("CacheVolumeNotReady".to_string()),
+            message: format!("cache volume {volume_id} did not become ready within 180s"),
+            spot_fallback_permitted: false,
+        })
+    }
+
+    async fn attach_cache_volume(
+        &self,
+        instance_id: &str,
+        record: &mut CacheVolumeRecord,
+    ) -> std::result::Result<(), AwsAdapterError> {
+        self.wait_for_volume_available(&record.volume_id).await?;
+        let attach_start = Instant::now();
+        let mut attach_sent = false;
+        while attach_start.elapsed() < Duration::from_secs(90) {
+            match self
+                .ec2
+                .attach_volume()
+                .device(record.device_name.clone())
+                .instance_id(instance_id)
+                .volume_id(record.volume_id.clone())
+                .send()
+                .await
+            {
+                Ok(_) => {
+                    attach_sent = true;
+                    break;
+                }
+                Err(err) => {
+                    let classified = classify_ec2_error(err);
+                    sleep(Duration::from_secs(3)).await;
+                    if attach_start.elapsed() >= Duration::from_secs(90) {
+                        return Err(classified);
+                    }
+                }
+            }
+        }
+        if !attach_sent {
+            return Err(AwsAdapterError {
+                code: Some("CacheVolumeAttachNotAccepted".to_string()),
+                message: format!(
+                    "cache volume {} attach request was not accepted for instance {} within 90s",
+                    record.volume_id, instance_id
+                ),
+                spot_fallback_permitted: false,
+            });
+        }
+        let start = Instant::now();
+        while start.elapsed() < Duration::from_secs(180) {
+            let response = self
+                .ec2
+                .describe_volumes()
+                .volume_ids(record.volume_id.clone())
+                .send()
+                .await
+                .map_err(classify_ec2_error)?;
+            if let Some(state) = response
+                .volumes()
+                .first()
+                .and_then(|volume| volume.attachments().first())
+                .and_then(|attachment| attachment.state())
+                .map(|value| value.as_str().to_string())
+            {
+                record.attachment_state = state.clone();
+                if state == "attached" {
+                    return Ok(());
+                }
+            }
+            sleep(Duration::from_secs(3)).await;
+        }
+        Err(AwsAdapterError {
+            code: Some("CacheVolumeAttachTimedOut".to_string()),
+            message: format!(
+                "cache volume {} did not attach to instance {} within 180s",
+                record.volume_id, instance_id
+            ),
+            spot_fallback_permitted: false,
+        })
+    }
+
+    async fn wait_for_instance_running(
+        &self,
+        instance_id: &str,
+    ) -> std::result::Result<(), AwsAdapterError> {
+        let start = Instant::now();
+        let mut last_error: Option<AwsAdapterError> = None;
+        while start.elapsed() < Duration::from_secs(180) {
+            match self
+                .ec2
+                .describe_instances()
+                .instance_ids(instance_id)
+                .send()
+                .await
+            {
+                Ok(response) => {
+                    let state = response
+                        .reservations()
+                        .first()
+                        .and_then(|reservation| reservation.instances().first())
+                        .and_then(|instance| instance.state())
+                        .and_then(|state| state.name())
+                        .map(|state| state.as_str())
+                        .unwrap_or("unknown");
+                    if state == "running" {
+                        return Ok(());
+                    }
+                    if matches!(
+                        state,
+                        "shutting-down" | "terminated" | "stopping" | "stopped"
+                    ) {
+                        return Err(AwsAdapterError {
+                            code: Some("InstanceNotRunning".to_string()),
+                            message: format!(
+                                "instance {instance_id} entered non-running state '{state}'"
+                            ),
+                            spot_fallback_permitted: false,
+                        });
+                    }
+                }
+                Err(err) => {
+                    last_error = Some(classify_ec2_error(err));
+                }
+            }
+            sleep(Duration::from_secs(3)).await;
+        }
+        Err(AwsAdapterError {
+            code: Some("InstanceRunningTimedOut".to_string()),
+            message: last_error
+                .map(|err| {
+                    format!(
+                        "instance {instance_id} did not reach running within 180s; last error: {err}"
+                    )
+                })
+                .unwrap_or_else(|| {
+                    format!("instance {instance_id} did not reach running within 180s")
+                }),
+            spot_fallback_permitted: false,
+        })
     }
 
     async fn run_ssh_debug_repair_command(
@@ -2467,19 +2917,106 @@ impl AwsRemoteValidationAdapter for LiveAwsRemoteValidationAdapter {
                     .build(),
             );
         }
-        let output = builder.send().await.map_err(classify_run_instances_error)?;
+        let output = builder.send().await.map_err(|err| {
+            let mut classified = classify_run_instances_error(err);
+            if spec.purchase_option == PurchaseOption::Spot && !classified.spot_fallback_permitted {
+                classified.spot_fallback_permitted = true;
+            }
+            classified
+        })?;
         let instance = output.instances().first().ok_or_else(|| AwsAdapterError {
             code: Some("MissingInstance".to_string()),
             message: "run_instances returned no instances".to_string(),
             spot_fallback_permitted: spec.purchase_option == PurchaseOption::Spot,
         })?;
+        let instance_id = instance.instance_id().unwrap_or_default().to_string();
+        let mut cache_volume = None;
+        if let Some(request) = spec.cache_volume.as_ref() {
+            let cache_volume_result: std::result::Result<CacheVolumeRecord, AwsAdapterError> =
+                async {
+                    self.wait_for_instance_running(&instance_id)
+                        .await
+                        .map_err(|err| AwsAdapterError {
+                            code: err
+                                .code
+                                .clone()
+                                .or(Some("CacheVolumeAttachInstanceNotReady".to_string())),
+                            message: format!(
+                                "instance_id={} was not ready for cache volume attach: {}",
+                                instance_id, err
+                            ),
+                            spot_fallback_permitted: false,
+                        })?;
+                    let availability_zone =
+                        self.subnet_availability_zone(&spec.subnet_id)
+                            .await
+                            .map_err(|err| AwsAdapterError {
+                                code: Some("CacheVolumeAvailabilityZoneUnavailable".to_string()),
+                                message: format!(
+                                    "instance_id={} subnet_id={} availability zone resolution failed: {}",
+                                    instance_id, spec.subnet_id, err
+                                ),
+                                spot_fallback_permitted: false,
+                            })?;
+                    let mut record =
+                        self.ensure_cache_volume(request, &availability_zone)
+                            .await
+                            .map_err(|err| AwsAdapterError {
+                                code: err
+                                    .code
+                                    .clone()
+                                    .or(Some("CacheVolumeEnsureFailed".to_string())),
+                                message: format!(
+                                    "instance_id={} cache volume '{}' in {} could not be prepared: {}",
+                                    instance_id, request.name, availability_zone, err
+                                ),
+                                spot_fallback_permitted: false,
+                            })?;
+                    self.attach_cache_volume(&instance_id, &mut record)
+                        .await
+                        .map_err(|err| AwsAdapterError {
+                            code: err
+                                .code
+                                .clone()
+                                .or(Some("CacheVolumeAttachFailed".to_string())),
+                            message: format!(
+                                "instance_id={} volume_id={} device={} attach failed: {}",
+                                instance_id, record.volume_id, record.device_name, err
+                            ),
+                            spot_fallback_permitted: false,
+                        })?;
+                    Ok(record)
+                }
+                .await;
+
+            match cache_volume_result {
+                Ok(record) => cache_volume = Some(record),
+                Err(err) => {
+                    let _ = self
+                        .ec2
+                        .terminate_instances()
+                        .instance_ids(instance_id.clone())
+                        .send()
+                        .await;
+                    return Err(AwsAdapterError {
+                        code: err.code,
+                        message: format!(
+                            "{}; launched instance {} was terminated to avoid leaking a builder",
+                            err.message, instance_id
+                        ),
+                        spot_fallback_permitted: false,
+                    });
+                }
+            }
+        }
         Ok(LaunchResult {
-            instance_id: instance.instance_id().unwrap_or_default().to_string(),
+            instance_id,
             initial_state: instance
                 .state()
                 .and_then(|state| state.name())
                 .map(|state| state.as_str().to_string())
                 .unwrap_or_else(|| "unknown".to_string()),
+            cache_volume,
         })
     }
 
@@ -3110,6 +3647,13 @@ mod tests {
             ssh_private_key_path: None,
             ssh_user: None,
             ssh_allowed_cidr: None,
+            cache_volume_name: None,
+            cache_volume_size_gib: None,
+            cache_volume_type: None,
+            cache_volume_iops: None,
+            cache_volume_throughput_mbps: None,
+            cache_volume_device_name: None,
+            cache_volume_mount_path: None,
             command:
                 "cargo test --manifest-path adl/Cargo.toml provider_communication -- --nocapture"
                     .to_string(),
@@ -3281,6 +3825,7 @@ mod tests {
             launch_results: Mutex::new(VecDeque::from(vec![Ok(LaunchResult {
                 instance_id: "i-1234567890".to_string(),
                 initial_state: "pending".to_string(),
+                cache_volume: None,
             })])),
             ssm_ready: Ok(SsmReadyResult {
                 status: "Online".to_string(),
@@ -3343,6 +3888,7 @@ mod tests {
                 Ok(LaunchResult {
                     instance_id: "i-fallback".to_string(),
                     initial_state: "pending".to_string(),
+                cache_volume: None,
                 }),
             ])),
             ssm_ready: Ok(SsmReadyResult {
@@ -3407,6 +3953,7 @@ mod tests {
             launch_results: Mutex::new(VecDeque::from(vec![Ok(LaunchResult {
                 instance_id: "i-interrupted".to_string(),
                 initial_state: "pending".to_string(),
+                cache_volume: None,
             })])),
             ssm_ready: Ok(SsmReadyResult {
                 status: "Online".to_string(),
@@ -3506,6 +4053,7 @@ mod tests {
             launch_results: Mutex::new(VecDeque::from(vec![Ok(LaunchResult {
                 instance_id: "i-sccache".to_string(),
                 initial_state: "pending".to_string(),
+                cache_volume: None,
             })])),
             ssm_ready: Ok(SsmReadyResult {
                 status: "Online".to_string(),
@@ -3561,6 +4109,7 @@ mod tests {
             launch_results: Mutex::new(VecDeque::from(vec![Ok(LaunchResult {
                 instance_id: "i-html-false-positive".to_string(),
                 initial_state: "pending".to_string(),
+                cache_volume: None,
             })])),
             ssm_ready: Ok(SsmReadyResult {
                 status: "Online".to_string(),
@@ -3723,6 +4272,7 @@ mod tests {
             launch_results: Mutex::new(VecDeque::from(vec![Ok(LaunchResult {
                 instance_id: "i-failure".to_string(),
                 initial_state: "pending".to_string(),
+                cache_volume: None,
             })])),
             ssm_ready: Err(AwsAdapterError {
                 code: Some("SsmNotOnline".to_string()),
@@ -3807,6 +4357,7 @@ mod tests {
             launch_results: Mutex::new(VecDeque::from(vec![Ok(LaunchResult {
                 instance_id: "i-dispatch".to_string(),
                 initial_state: "pending".to_string(),
+                cache_volume: None,
             })])),
             ssm_ready: Ok(SsmReadyResult {
                 status: "Online".to_string(),
@@ -3929,6 +4480,7 @@ mod tests {
             launch_results: Mutex::new(VecDeque::from(vec![Ok(LaunchResult {
                 instance_id: "i-failed".to_string(),
                 initial_state: "pending".to_string(),
+                cache_volume: None,
             })])),
             ssm_ready: Ok(SsmReadyResult {
                 status: "Online".to_string(),
@@ -3985,6 +4537,7 @@ mod tests {
             launch_results: Mutex::new(VecDeque::from(vec![Ok(LaunchResult {
                 instance_id: "i-cleanup".to_string(),
                 initial_state: "pending".to_string(),
+                cache_volume: None,
             })])),
             ssm_ready: Ok(SsmReadyResult {
                 status: "Online".to_string(),
@@ -4376,6 +4929,7 @@ mod tests {
                 security_group_id: "sg-123".to_string(),
                 instance_profile_name: "profile-123".to_string(),
                 ssh_key_name: Some("adl-ssh".to_string()),
+                cache_volume: None,
             })
             .await
             .expect("launch result");
