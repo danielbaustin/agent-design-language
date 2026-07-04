@@ -1750,6 +1750,13 @@ pub struct LiveAwsRemoteValidationAdapter {
     ssh_debug: Option<SshDebugConfig>,
 }
 
+fn named_aws_profile(profile: Option<&str>) -> Option<&str> {
+    match profile.map(str::trim) {
+        Some("") | Some("env") | Some("environment") | None => None,
+        Some(profile_name) => Some(profile_name),
+    }
+}
+
 impl LiveAwsRemoteValidationAdapter {
     pub async fn new(config: &AwsRemoteValidationConfig) -> Result<Self> {
         let region_provider =
@@ -1762,7 +1769,8 @@ impl LiveAwsRemoteValidationAdapter {
         let loader = aws_config::defaults(BehaviorVersion::latest())
             .region(region_provider)
             .timeout_config(timeout_config);
-        let shared_config = if let Some(profile_name) = config.profile.as_deref() {
+        let shared_config = if let Some(profile_name) = named_aws_profile(config.profile.as_deref())
+        {
             loader.profile_name(profile_name).load().await
         } else {
             loader.load().await
@@ -3679,6 +3687,18 @@ mod tests {
             .expect("clock before epoch")
             .as_nanos();
         format!("{label}-{}-{nanos}", std::process::id())
+    }
+
+    #[test]
+    fn named_aws_profile_treats_env_as_ambient_credentials() {
+        assert_eq!(named_aws_profile(None), None);
+        assert_eq!(named_aws_profile(Some("")), None);
+        assert_eq!(named_aws_profile(Some(" env ")), None);
+        assert_eq!(named_aws_profile(Some("environment")), None);
+        assert_eq!(
+            named_aws_profile(Some("agent-logic-admin")),
+            Some("agent-logic-admin")
+        );
     }
 
     fn test_live_adapter_with_clients<EC2, IAMC, SSMC, QC, CC, BC, STSC>(

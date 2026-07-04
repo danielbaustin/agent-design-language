@@ -1,6 +1,6 @@
 # AWS Spot Remote Validation Lane Integration for `#4837`
 
-Status: `implemented_local_contract_proven_prior_live_proof_consumed_cache_volume_restored`
+Status: `implemented_local_contract_proven_prior_live_proof_consumed_cache_volume_restored_github_trigger_ready`
 Issue: `#4837`
 Date: 2026-07-04
 
@@ -29,17 +29,25 @@ This issue proves:
 - an account mismatch fails closed before the runner can launch AWS resources
 - profile override through arbitrary lower-level wrapper passthrough is not
   supported, so the checked profile cannot be replaced after preflight
+- the wrapper defaults live SSH tail settings to the retained debug key surface
+- the GitHub Actions workflow can dry-run or launch the Spot lane through OIDC
+- the AWS OIDC role setup helper exists and was applied in the Agent Logic AWS
+  account
 
 This issue does not prove:
 
-- migration of ordinary PR validation or GitHub Actions to AWS Spot
+- automatic migration of ordinary PR validation to AWS Spot
 - exact final AWS billing for any run
 - that Spot capacity will be available for every requested instance shape
+- that the repository secret has been inserted through GitHub; root policy
+  requires explicit operator authorization before using `gh secret set`
 
 ## Implemented Surfaces
 
 - `adl/tools/run_aws_spot_remote_validation_lane.sh`
+- `adl/tools/setup_aws_spot_remote_validation_github_resources.sh`
 - `adl/tools/test_run_aws_spot_remote_validation_lane.sh`
+- `.github/workflows/aws-spot-remote-validation.yaml`
 - `adl/src/aws_remote_validation.rs`
 - `adl/src/bin/adl_aws_remote_validation.rs`
 - `adl/config/validation_lane_selector.v0.91.6.json`
@@ -129,6 +137,13 @@ Assertions covered:
   `--cache-volume-device-name /dev/sdf`, and
   `--cache-volume-mount-path /mnt/adl-cache`
 - runner invocation includes `--json`
+- runner invocation includes retained SSH tail defaults:
+  `--ssh-key-name adl-4603-agentlogic-ssh-debug-20260701`,
+  `--ssh-private-key-path $HOME/.ssh/adl-4603-ssh-debug-20260701.pem`, and
+  `--ssh-user ec2-user`
+- workflow and setup surfaces include the OIDC role secret,
+  `aws-actions/configure-aws-credentials`, `--profile env`, account checking on
+  live runs, warm EBS cache summary text, and SSH tail summary text
 - summary and artifact files are retained
 - fixture account id, ARN prefix, and user id do not appear in account-check
   stdout
@@ -168,6 +183,30 @@ standing AWS storage cost even when no instance is running. Fresh live proof mus
 show `cache_volume.attachment_state: "attached"` in the AWS summary before it is
 claimed as warm-EBS proof.
 
+GitHub Actions setup:
+
+```bash
+bash adl/tools/setup_aws_spot_remote_validation_github_resources.sh \
+  --apply \
+  --profile agent-logic-admin \
+  --region us-west-2
+```
+
+Observed setup result on 2026-07-04:
+
+```text
+PASS aws_spot_remote_validation_github_resources_ready region=us-west-2 profile=agent-logic-admin role_configured=true
+```
+
+The helper generated a local `github-actions-config.env` containing the
+repository secret value for `AWS_SPOT_REMOTE_VALIDATION_ROLE_ARN`. The value was
+not printed in the proof record. It still needs to be inserted into GitHub by an
+operator-approved path before the manual workflow can run live from GitHub.
+
+The workflow uses `.github/workflows/aws-spot-remote-validation.yaml`, has only
+`workflow_dispatch`, and uses `--profile env` after OIDC credential setup. The
+Rust adapter treats `env` and `environment` as ambient AWS credential mode.
+
 ## Fresh Branch Baseline
 
 A fresh `#4837` branch run completed while this follow-up was in progress:
@@ -205,7 +244,6 @@ updates.
 
 ## Residual Risk
 
-This issue intentionally consumes retained live AWS proof and adds a local
-wrapper contract proof. A fresh live `#4837` branch run can be recorded later if
-the operator wants a new account-bound cost-incurring proof for this specific
-branch.
+This issue consumes retained live AWS proof and adds local wrapper/workflow
+contract proof plus an applied AWS OIDC role. A fresh live warm-EBS branch run is
+still required before claiming current-branch warm-EBS timings.

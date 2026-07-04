@@ -13,6 +13,7 @@ It wraps the lower-level `adl-aws-remote-validation` binary from
 - require `--run` before any EC2 resources can be launched
 - forward one explicit remote validation command to the AWS runner
 - reuse the retained warm EBS cache volume by default
+- enable live SSH tail logging by default when the retained debug key is present
 - retain the AWS runner's summary JSON and artifact directory
 
 ## Account Check
@@ -77,6 +78,40 @@ The remote bootstrap mounts the volume and places shared build state under it:
 The underlying AWS runner still owns launch-surface preparation, Spot-first
 selection, on-demand fallback for classified Spot capacity failures, SSM command
 dispatch, retained logs, interruption classification, and cleanup truth.
+
+## GitHub Actions Trigger
+
+The manual workflow `.github/workflows/aws-spot-remote-validation.yaml` can
+render a dry-run request or start the live Spot lane through GitHub Actions
+OIDC. It intentionally has no `push` or `pull_request` trigger.
+
+Create or refresh the AWS OIDC role with:
+
+```bash
+bash adl/tools/setup_aws_spot_remote_validation_github_resources.sh \
+  --apply \
+  --profile agent-logic-admin \
+  --region us-west-2
+```
+
+The setup helper writes a chmod-600 `github-actions-config.env` under the
+selected artifact directory. Configure the repository secret from that file:
+
+```text
+AWS_SPOT_REMOTE_VALIDATION_ROLE_ARN
+```
+
+The workflow uses `--profile env` after `aws-actions/configure-aws-credentials`
+assumes that role. The Rust runner treats `env` and `environment` as ambient AWS
+credentials rather than as named local profile names.
+
+Live workflow runs inherit the wrapper's defaults for:
+
+```text
+warm EBS cache: adl-aws-remote-validation-cache-volume -> /mnt/adl-cache
+SSH tail key: adl-4603-agentlogic-ssh-debug-20260701
+SSH user: ec2-user
+```
 
 ## Benchmark Command
 

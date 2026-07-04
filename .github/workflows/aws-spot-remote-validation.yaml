@@ -1,0 +1,135 @@
+name: aws-spot-remote-validation
+
+on:
+  workflow_dispatch:
+    inputs:
+      mode:
+        description: "Render the Spot request or launch the AWS Spot remote validation lane"
+        required: true
+        default: "dry-run"
+        type: choice
+        options:
+          - dry-run
+          - start-run
+      git_ref:
+        description: "Git ref checked out on the remote builder"
+        required: true
+        default: "HEAD"
+      validation_command:
+        description: "Remote command to run after checkout"
+        required: true
+        default: "bash adl/tools/run_pr_fast_test_lane.sh"
+      instance_type:
+        description: "Primary EC2 instance type"
+        required: true
+        default: "m7a.2xlarge"
+
+permissions:
+  contents: read
+  id-token: write
+
+concurrency:
+  group: aws-spot-remote-validation-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  spot-remote-validation:
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    env:
+      AWS_SPOT_REMOTE_VALIDATION_REGION: ${{ vars.AWS_SPOT_REMOTE_VALIDATION_REGION || 'us-west-2' }}
+      AWS_SPOT_REMOTE_VALIDATION_ROLE_ARN: ${{ secrets.AWS_SPOT_REMOTE_VALIDATION_ROLE_ARN }}
+    steps:
+      - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4
+        with:
+          fetch-depth: 0
+
+      - name: Validate dispatch inputs
+        run: |
+          case "${{ inputs.mode }}" in
+            dry-run|start-run) ;;
+            *)
+              echo "::error::mode must be dry-run or start-run"
+              exit 2
+              ;;
+          esac
+          if [ "${{ inputs.mode }}" = "start-run" ] && [ -z "$AWS_SPOT_REMOTE_VALIDATION_ROLE_ARN" ]; then
+            echo "::error::AWS_SPOT_REMOTE_VALIDATION_ROLE_ARN secret is required for live Spot runs"
+            exit 2
+          fi
+
+      - name: Configure Agent Logic AWS credentials
+        if: inputs.mode == 'start-run'
+        uses: aws-actions/configure-aws-credentials@7474bc4690e29a8392af63c5b98e7449536d5c3a # v4
+        with:
+          role-to-assume: ${{ secrets.AWS_SPOT_REMOTE_VALIDATION_ROLE_ARN }}
+          aws-region: ${{ env.AWS_SPOT_REMOTE_VALIDATION_REGION }}
+          mask-aws-account-id: true
+
+      - name: Prepare artifact directory
+        run: mkdir -p .adl/tmp/aws-spot-remote-validation
+
+      - name: Build Spot remote validation binary
+        if: inputs.mode == 'start-run'
+        run: cargo build --manifest-path adl/Cargo.toml --bin adl-aws-remote-validation
+
+      - name: Render Spot remote validation request
+        if: inputs.mode == 'dry-run'
+        env:
+          GIT_REF: ${{ inputs.git_ref }}
+          VALIDATION_COMMAND: ${{ inputs.validation_command }}
+          INSTANCE_TYPE: ${{ inputs.instance_type }}
+        run: |
+          bash adl/tools/run_aws_spot_remote_validation_lane.sh \
+            --profile env \
+            --region "$AWS_SPOT_REMOTE_VALIDATION_REGION" \
+            --git-ref "$GIT_REF" \
+            --command "$VALIDATION_COMMAND" \
+            --instance-type "$INSTANCE_TYPE" \
+            --out .adl/tmp/aws-spot-remote-validation/summary.json \
+            --artifact-dir .adl/tmp/aws-spot-remote-validation/artifacts \
+            --print-command
+
+      - name: Start Spot remote validation
+        if: inputs.mode == 'start-run'
+        env:
+          GIT_REF: ${{ inputs.git_ref }}
+          VALIDATION_COMMAND: ${{ inputs.validation_command }}
+          INSTANCE_TYPE: ${{ inputs.instance_type }}
+          ADL_AWS_REMOTE_VALIDATION_BIN: ${{ github.workspace }}/adl/target/debug/adl-aws-remote-validation
+        run: |
+          bash adl/tools/run_aws_spot_remote_validation_lane.sh \
+            --run \
+            --check-account \
+            --profile env \
+            --region "$AWS_SPOT_REMOTE_VALIDATION_REGION" \
+            --git-ref "$GIT_REF" \
+            --command "$VALIDATION_COMMAND" \
+            --instance-type "$INSTANCE_TYPE" \
+            --out .adl/tmp/aws-spot-remote-validation/summary.json \
+            --artifact-dir .adl/tmp/aws-spot-remote-validation/artifacts \
+            --json
+
+      - name: Spot remote validation summary
+        if: always()
+        run: |
+          {
+            echo "## AWS Spot remote validation"
+            echo
+            echo "| Field | Value |"
+            echo "|---|---|"
+            echo "| mode | \`${{ inputs.mode }}\` |"
+            echo "| region | \`$AWS_SPOT_REMOTE_VALIDATION_REGION\` |"
+            echo "| ebs cache | \`adl-aws-remote-validation-cache-volume:/mnt/adl-cache\` |"
+            echo "| ssh tail | \`enabled by wrapper defaults\` |"
+            echo "| summary artifact | \`.adl/tmp/aws-spot-remote-validation/summary.json\` |"
+          } >> "$GITHUB_STEP_SUMMARY"
+
+      - name: Upload Spot remote validation artifacts
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
+        with:
+          name: aws-spot-remote-validation-${{ github.run_id }}
+          path: .adl/tmp/aws-spot-remote-validation/
+          if-no-files-found: warn
+          retention-days: 14

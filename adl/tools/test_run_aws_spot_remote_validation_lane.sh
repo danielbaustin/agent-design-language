@@ -3,6 +3,8 @@ set -euo pipefail
 
 ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)"
 SCRIPT="$ROOT/adl/tools/run_aws_spot_remote_validation_lane.sh"
+SETUP_SCRIPT="$ROOT/adl/tools/setup_aws_spot_remote_validation_github_resources.sh"
+WORKFLOW="$ROOT/.github/workflows/aws-spot-remote-validation.yaml"
 TMP="$(mktemp -d)"
 trap 'rm -rf "$TMP"' EXIT
 
@@ -162,5 +164,23 @@ if ADL_AWS_CLI="$fake_bin/aws" bash "$SCRIPT" --check-account --expected-proof "
   exit 1
 fi
 grep -F "AWS profile account does not match retained Agent Logic proof" "$TMP/bad.err" >/dev/null
+
+[ -f "$SETUP_SCRIPT" ]
+[ -x "$SETUP_SCRIPT" ]
+[ -f "$WORKFLOW" ]
+grep -F -- "AWS_SPOT_REMOTE_VALIDATION_ROLE_ARN" "$WORKFLOW" >/dev/null
+grep -F -- "aws-actions/configure-aws-credentials@7474bc4690e29a8392af63c5b98e7449536d5c3a" "$WORKFLOW" >/dev/null
+grep -F -- "--profile env" "$WORKFLOW" >/dev/null
+grep -F -- "--check-account" "$WORKFLOW" >/dev/null
+grep -F -- "--json" "$WORKFLOW" >/dev/null
+grep -F -- "Build Spot remote validation binary" "$WORKFLOW" >/dev/null
+grep -F -- "adl-aws-remote-validation-cache-volume:/mnt/adl-cache" "$WORKFLOW" >/dev/null
+grep -F -- "ssh tail" "$WORKFLOW" >/dev/null
+grep -F -- "if-no-files-found: warn" "$WORKFLOW" >/dev/null
+grep -F -- "ec2:RunInstances" "$SETUP_SCRIPT" >/dev/null
+grep -F -- "ec2:CreateVolume" "$SETUP_SCRIPT" >/dev/null
+grep -F -- "ssm:SendCommand" "$SETUP_SCRIPT" >/dev/null
+grep -F -- "iam:PassRole" "$SETUP_SCRIPT" >/dev/null
+grep -F -- "AWS_SPOT_REMOTE_VALIDATION_ROLE_ARN" "$SETUP_SCRIPT" >/dev/null
 
 echo "PASS test_run_aws_spot_remote_validation_lane"
