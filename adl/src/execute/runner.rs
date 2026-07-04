@@ -34,6 +34,33 @@ pub(super) struct StepRunFailure {
 type StepJob =
     Box<dyn FnOnce() -> (String, std::result::Result<StepRunSuccess, StepRunFailure>) + Send>;
 
+#[derive(Debug)]
+pub(super) struct RuntimeResilienceExecutionContext {
+    pub(super) terminal: bool,
+    pub(super) attempts: u32,
+    pub(super) elapsed_ms: u64,
+    pub(super) max_concurrency: Option<usize>,
+    pub(super) queue_depth: Option<usize>,
+}
+
+impl RuntimeResilienceExecutionContext {
+    pub(super) fn new(
+        terminal: bool,
+        attempts: u32,
+        elapsed_ms: u64,
+        max_concurrency: Option<usize>,
+        queue_depth: Option<usize>,
+    ) -> Self {
+        Self {
+            terminal,
+            attempts,
+            elapsed_ms,
+            max_concurrency,
+            queue_depth,
+        }
+    }
+}
+
 pub const DELEGATION_POLICY_DENY_CODE: &str = "DELEGATION_POLICY_DENY";
 /// Error code used when an explicit approval decision is required.
 pub const DELEGATION_POLICY_APPROVAL_REQUIRED_CODE: &str = "DELEGATION_POLICY_APPROVAL_REQUIRED";
@@ -142,11 +169,7 @@ pub(super) fn emit_runtime_resilience_decision(
     step: &crate::resolve::ResolvedStep,
     watcher_disposition: RuntimeResilienceDispositionV1,
     middleware_disposition: RuntimeResilienceDispositionV1,
-    terminal: bool,
-    attempts: u32,
-    elapsed_ms: u64,
-    max_concurrency: Option<usize>,
-    queue_depth: Option<usize>,
+    execution: RuntimeResilienceExecutionContext,
     fault: Option<ResilienceFaultClassificationV1>,
     decision_summary: impl Into<String>,
 ) {
@@ -158,8 +181,12 @@ pub(super) fn emit_runtime_resilience_decision(
         .task
         .clone()
         .unwrap_or_else(|| "<unresolved-task>".to_string());
-    let max_concurrency = max_concurrency.map(|v| u32::try_from(v).unwrap_or(u32::MAX));
-    let queue_depth = queue_depth.map(|v| u32::try_from(v).unwrap_or(u32::MAX));
+    let max_concurrency = execution
+        .max_concurrency
+        .map(|v| u32::try_from(v).unwrap_or(u32::MAX));
+    let queue_depth = execution
+        .queue_depth
+        .map(|v| u32::try_from(v).unwrap_or(u32::MAX));
     tr.runtime_resilience_decision(RuntimeResilienceTraceV1 {
         schema_version: RUNTIME_RESILIENCE_TRACE_SCHEMA_V1.to_string(),
         policy_id: "runtime.scheduler_watcher.aee_resilience.v1".to_string(),
@@ -170,9 +197,9 @@ pub(super) fn emit_runtime_resilience_decision(
         task_id,
         watcher_disposition,
         middleware_disposition,
-        terminal,
-        attempt_count: attempts.max(1),
-        elapsed_ms,
+        terminal: execution.terminal,
+        attempt_count: execution.attempts.max(1),
+        elapsed_ms: execution.elapsed_ms,
         max_concurrency,
         queue_depth,
         fault,
@@ -188,33 +215,26 @@ pub(super) fn emit_runtime_resilience_failure(
     tr: &mut Trace,
     step: &crate::resolve::ResolvedStep,
     err: &anyhow::Error,
-    terminal: bool,
-    attempts: u32,
-    elapsed_ms: u64,
-    max_concurrency: Option<usize>,
-    queue_depth: Option<usize>,
+    execution: RuntimeResilienceExecutionContext,
 ) {
     let (middleware_disposition, fault) = classify_runtime_resilience_fault(err);
-    let watcher_disposition = if terminal {
+    let watcher_disposition = if execution.terminal {
         middleware_disposition.clone()
     } else {
         RuntimeResilienceDispositionV1::DegradedContinue
     };
-    let emitted_middleware_disposition = if terminal {
+    let emitted_middleware_disposition = if execution.terminal {
         middleware_disposition
     } else {
         RuntimeResilienceDispositionV1::DegradedContinue
     };
+    let terminal = execution.terminal;
     emit_runtime_resilience_decision(
         tr,
         step,
         watcher_disposition,
         emitted_middleware_disposition,
-        terminal,
-        attempts,
-        elapsed_ms,
-        max_concurrency,
-        queue_depth,
+        execution,
         Some(fault),
         if terminal {
             "runtime resilience middleware recorded terminal failure"
@@ -814,11 +834,13 @@ pub(super) fn execute_concurrent_deterministic(
                 step,
                 RuntimeResilienceDispositionV1::QueuedBackpressure,
                 RuntimeResilienceDispositionV1::QueuedBackpressure,
-                false,
-                1,
-                0,
-                Some(max_parallel),
-                Some(queued_index + 1),
+                RuntimeResilienceExecutionContext::new(
+                    false,
+                    1,
+                    0,
+                    Some(max_parallel),
+                    Some(queued_index + 1),
+                ),
                 None,
                 "scheduler watcher held ready step behind max_concurrency backpressure",
             );
@@ -837,11 +859,13 @@ pub(super) fn execute_concurrent_deterministic(
                 step,
                 RuntimeResilienceDispositionV1::Admitted,
                 RuntimeResilienceDispositionV1::Admitted,
-                false,
-                1,
-                0,
-                Some(max_parallel),
-                Some(pending.len().saturating_sub(batch_ids.len())),
+                RuntimeResilienceExecutionContext::new(
+                    false,
+                    1,
+                    0,
+                    Some(max_parallel),
+                    Some(pending.len().saturating_sub(batch_ids.len())),
+                ),
                 None,
                 "scheduler watcher admitted step under bounded concurrency policy",
             );
@@ -913,11 +937,13 @@ pub(super) fn execute_concurrent_deterministic(
                         step,
                         RuntimeResilienceDispositionV1::Succeeded,
                         RuntimeResilienceDispositionV1::Succeeded,
-                        false,
-                        success.attempts,
-                        u64::try_from(duration_ms).unwrap_or(u64::MAX),
-                        Some(max_parallel),
-                        Some(pending.len()),
+                        RuntimeResilienceExecutionContext::new(
+                            false,
+                            success.attempts,
+                            u64::try_from(duration_ms).unwrap_or(u64::MAX),
+                            Some(max_parallel),
+                            Some(pending.len()),
+                        ),
                         None,
                         "runtime resilience middleware recorded successful step completion",
                     );
@@ -988,11 +1014,13 @@ pub(super) fn execute_concurrent_deterministic(
                         tr,
                         step,
                         &failure.err,
-                        !continue_on_error,
-                        failure.attempts,
-                        u64::try_from(duration_ms).unwrap_or(u64::MAX),
-                        Some(max_parallel),
-                        Some(pending.len()),
+                        RuntimeResilienceExecutionContext::new(
+                            !continue_on_error,
+                            failure.attempts,
+                            u64::try_from(duration_ms).unwrap_or(u64::MAX),
+                            Some(max_parallel),
+                            Some(pending.len()),
+                        ),
                     );
                     if continue_on_error {
                         completed.insert(step_id);
@@ -1188,11 +1216,13 @@ pub(super) fn execute_called_workflow(
                     &resolved_step,
                     RuntimeResilienceDispositionV1::Succeeded,
                     RuntimeResilienceDispositionV1::Succeeded,
-                    false,
-                    success.attempts,
-                    u64::try_from(duration_ms).unwrap_or(u64::MAX),
-                    None,
-                    None,
+                    RuntimeResilienceExecutionContext::new(
+                        false,
+                        success.attempts,
+                        u64::try_from(duration_ms).unwrap_or(u64::MAX),
+                        None,
+                        None,
+                    ),
                     None,
                     "runtime resilience middleware recorded successful called-workflow step completion",
                 );
@@ -1243,11 +1273,13 @@ pub(super) fn execute_called_workflow(
                     tr,
                     &resolved_step,
                     &err,
-                    true,
-                    1,
-                    u64::try_from(duration_ms).unwrap_or(u64::MAX),
-                    None,
-                    None,
+                    RuntimeResilienceExecutionContext::new(
+                        true,
+                        1,
+                        u64::try_from(duration_ms).unwrap_or(u64::MAX),
+                        None,
+                        None,
+                    ),
                 );
                 progress_step_done(emit_progress, tr, &full_id, false, duration_ms);
                 tr.run_failed(&err.to_string());

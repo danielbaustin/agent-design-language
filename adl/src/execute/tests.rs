@@ -1885,11 +1885,7 @@ fn runtime_resilience_failure_helper_classifies_timeout_and_cancelled() {
         &mut timeout_trace,
         &step,
         &anyhow::anyhow!("provider timed out while completing step"),
-        true,
-        1,
-        10,
-        Some(1),
-        None,
+        super::runner::RuntimeResilienceExecutionContext::new(true, 1, 10, Some(1), None),
     );
     assert!(timeout_trace.events.iter().any(|event| matches!(
         event,
@@ -1904,11 +1900,7 @@ fn runtime_resilience_failure_helper_classifies_timeout_and_cancelled() {
         &mut cancel_trace,
         &step,
         &anyhow::anyhow!("operator cancelled runtime step"),
-        true,
-        1,
-        10,
-        Some(1),
-        None,
+        super::runner::RuntimeResilienceExecutionContext::new(true, 1, 10, Some(1), None),
     );
     assert!(cancel_trace.events.iter().any(|event| matches!(
         event,

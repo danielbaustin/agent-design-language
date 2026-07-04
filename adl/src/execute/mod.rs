@@ -28,6 +28,7 @@ use runner::{
     emit_runtime_resilience_decision, emit_runtime_resilience_failure,
     enforce_delegation_policy_for_step_actions, execute_called_workflow,
     execute_concurrent_deterministic, execute_step_with_retry_core,
+    RuntimeResilienceExecutionContext,
 };
 use state::DEFAULT_MAX_CONCURRENCY;
 use support::{
@@ -190,11 +191,7 @@ pub fn execute_sequential_with_resume(
             step,
             RuntimeResilienceDispositionV1::Admitted,
             RuntimeResilienceDispositionV1::Admitted,
-            false,
-            1,
-            0,
-            Some(1),
-            None,
+            RuntimeResilienceExecutionContext::new(false, 1, 0, Some(1), None),
             None,
             "AEE runtime admitted sequential step under resilience middleware",
         );
@@ -239,11 +236,13 @@ pub fn execute_sequential_with_resume(
                         step,
                         RuntimeResilienceDispositionV1::Succeeded,
                         RuntimeResilienceDispositionV1::Succeeded,
-                        false,
-                        1,
-                        u64::try_from(duration_ms).unwrap_or(u64::MAX),
-                        Some(1),
-                        None,
+                        RuntimeResilienceExecutionContext::new(
+                            false,
+                            1,
+                            u64::try_from(duration_ms).unwrap_or(u64::MAX),
+                            Some(1),
+                            None,
+                        ),
                         None,
                         "AEE runtime resilience middleware recorded successful call workflow completion",
                     );
@@ -301,11 +300,13 @@ pub fn execute_sequential_with_resume(
                         tr,
                         step,
                         &err,
-                        true,
-                        1,
-                        u64::try_from(duration_ms).unwrap_or(u64::MAX),
-                        Some(1),
-                        None,
+                        RuntimeResilienceExecutionContext::new(
+                            true,
+                            1,
+                            u64::try_from(duration_ms).unwrap_or(u64::MAX),
+                            Some(1),
+                            None,
+                        ),
                     );
                     progress_step_done(emit_progress, tr, &step_id, false, duration_ms);
                     tr.run_failed(&err.to_string());
@@ -343,11 +344,13 @@ pub fn execute_sequential_with_resume(
                     step,
                     RuntimeResilienceDispositionV1::Succeeded,
                     RuntimeResilienceDispositionV1::Succeeded,
-                    false,
-                    success.attempts,
-                    u64::try_from(duration_ms).unwrap_or(u64::MAX),
-                    Some(1),
-                    None,
+                    RuntimeResilienceExecutionContext::new(
+                        false,
+                        success.attempts,
+                        u64::try_from(duration_ms).unwrap_or(u64::MAX),
+                        Some(1),
+                        None,
+                    ),
                     None,
                     "AEE runtime resilience middleware recorded successful step completion",
                 );
@@ -432,11 +435,13 @@ pub fn execute_sequential_with_resume(
                     tr,
                     step,
                     &failure.err,
-                    !continue_on_error,
-                    failure.attempts,
-                    u64::try_from(duration_ms).unwrap_or(u64::MAX),
-                    Some(1),
-                    None,
+                    RuntimeResilienceExecutionContext::new(
+                        !continue_on_error,
+                        failure.attempts,
+                        u64::try_from(duration_ms).unwrap_or(u64::MAX),
+                        Some(1),
+                        None,
+                    ),
                 );
                 progress_step_done(emit_progress, tr, &step_id, false, duration_ms);
                 records.push(StepExecutionRecord {
