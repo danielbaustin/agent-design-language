@@ -342,6 +342,15 @@ fn trace_runtime_v2_integrated_csm_run_demo_writes_proof_bundle() {
     assert!(out_dir
         .join("artifacts/runtime-v2-governed-demo-run/governed/result.redacted.json")
         .is_file());
+    assert!(out_dir
+        .join("runtime_v2/reconciliation/reconciliation_packet.json")
+        .is_file());
+    assert!(out_dir
+        .join("current_runtime/long_lived_agent/run_status.json")
+        .is_file());
+    assert!(out_dir
+        .join("current_runtime/long_lived_agent/final_status.json")
+        .is_file());
     let json: serde_json::Value =
         serde_json::from_slice(&fs::read(&proof_path).expect("proof packet should exist"))
             .expect("valid json");
@@ -364,6 +373,24 @@ fn trace_runtime_v2_integrated_csm_run_demo_writes_proof_bundle() {
     assert!(observatory_console.contains("D10 Integrated CSM Run Observatory"));
     assert!(observatory_console.contains("CSM Observatory Operator Report"));
     assert!(observatory_console.contains("runtime_v2/observatory/visibility_packet.json"));
+    let reconciliation_json: serde_json::Value = serde_json::from_slice(
+        &fs::read(out_dir.join("runtime_v2/reconciliation/reconciliation_packet.json"))
+            .expect("reconciliation packet should exist"),
+    )
+    .expect("valid reconciliation json");
+    assert_eq!(
+        reconciliation_json["schema_version"],
+        "runtime_v2.current_runtime_reconciliation.v1"
+    );
+    assert_eq!(reconciliation_json["classification"], "integrated_proof");
+    assert_eq!(
+        reconciliation_json["current_runtime_substrate"]["status"],
+        "executed"
+    );
+    assert_eq!(
+        reconciliation_json["runtime_v2_prototype"]["status"],
+        "integrated_as_artifact_producer"
+    );
 
     fs::remove_dir_all(repo).ok();
 }
@@ -411,6 +438,18 @@ fn trace_runtime_v2_integrated_csm_run_demo_validates_stdout_help_and_output_pat
     assert!(err
         .to_string()
         .contains("runtime-v2 integrated-csm-run-demo requires --out <dir>"));
+
+    let err = real_runtime_v2_in_repo(
+        &[
+            "integrated-csm-run-demo".to_string(),
+            "--prototype-only".to_string(),
+        ],
+        &repo,
+    )
+    .expect_err("prototype-only path should fail closed");
+    assert!(err
+        .to_string()
+        .contains("no longer supports prototype-only execution"));
 
     fs::remove_dir_all(repo).ok();
 }
