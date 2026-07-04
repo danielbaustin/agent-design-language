@@ -107,6 +107,14 @@ fn runtime_v2_minimal_integrated_runtime_path_writes_retained_evidence() {
     .expect("summary text");
     assert!(!text.contains(temp_root.to_string_lossy().as_ref()));
     assert!(text.contains("runtime_v2.minimal_integrated_runtime_path_summary.v1"));
+    let summary: RuntimeV2MinimalIntegratedRuntimePathSummary =
+        serde_json::from_str(&text).expect("summary json");
+    for retained_ref in summary.retained_evidence_refs {
+        assert!(
+            temp_root.join(&retained_ref).is_file(),
+            "missing retained evidence ref: {retained_ref}"
+        );
+    }
 
     fs::remove_dir_all(temp_root).ok();
 }

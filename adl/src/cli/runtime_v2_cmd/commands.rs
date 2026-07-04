@@ -278,8 +278,6 @@ pub(crate) fn real_runtime_v2_minimal_integrated_runtime_path(
         )
     })?;
     artifacts.write_to_root(&resolved)?;
-    write_runtime_v2_governed_trace_demo(&resolved)?;
-    write_current_runtime_reconciliation(&resolved)?;
     println!(
         "RUNTIME_V2_MINIMAL_INTEGRATED_RUNTIME_PATH_ROOT={}",
         resolved.display()

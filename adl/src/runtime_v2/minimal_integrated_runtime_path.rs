@@ -3,9 +3,16 @@
 //! This layer binds the existing integrated CSM first-run substrate to the
 //! v0.91.7 WP-07 issue surface without widening into Soak #2 ownership.
 
-use std::path::Path;
+use chrono::Utc;
+use serde_json::json;
+use std::{fs, path::Path};
 
 use super::*;
+use crate::{
+    artifacts, governed_executor, instrumentation,
+    long_lived_agent::{self, RunOptions},
+    trace,
+};
 
 pub const RUNTIME_V2_MINIMAL_INTEGRATED_RUNTIME_PATH_SCHEMA: &str =
     "runtime_v2.minimal_integrated_runtime_path_summary.v1";
@@ -119,12 +126,155 @@ impl RuntimeV2MinimalIntegratedRuntimePathArtifacts {
         let root = root.as_ref();
         self.validate()?;
         self.integrated_run.write_to_root(root)?;
+        write_runtime_v2_governed_trace_demo(root)?;
+        write_current_runtime_reconciliation(root)?;
         write_relative(
             root,
             RUNTIME_V2_MINIMAL_INTEGRATED_RUNTIME_PATH_SUMMARY,
             self.summary_pretty_json_bytes()?,
         )
     }
+}
+
+fn write_runtime_v2_governed_trace_demo(root: &Path) -> Result<()> {
+    let mut governed_trace = trace::Trace::new(
+        "runtime-v2-governed-demo-run".to_string(),
+        "runtime_v2.integrated_csm_run_demo".to_string(),
+        "0.90.5".to_string(),
+    );
+    let outcome = governed_executor::emit_fixture_safe_read_trace_v1(&mut governed_trace);
+    if outcome.selected_actions.is_empty() {
+        return Err(anyhow!(
+            "runtime-v2 governed trace demo must emit one selected governed action"
+        ));
+    }
+
+    let run_paths = artifacts::RunArtifactPaths::for_run_in_root(
+        "runtime-v2-governed-demo-run",
+        root.join("artifacts"),
+    )?;
+    run_paths.ensure_layout()?;
+    run_paths.write_model_marker()?;
+    instrumentation::write_trace_artifact(
+        &run_paths.activation_log_json(),
+        &governed_trace.events,
+    )?;
+    write_governed_result_redacted(&run_paths.run_dir().join("governed/result.redacted.json"))?;
+    Ok(())
+}
+
+fn write_governed_result_redacted(path: &Path) -> Result<()> {
+    write_json(
+        path,
+        &json!({
+            "schema_version": "runtime_v2.governed_trace_result.v1",
+            "run_id": "runtime-v2-governed-demo-run",
+            "classification": "fixture_safe_governed_action",
+            "redaction": "tool arguments and private prompt payloads are omitted",
+            "selected_actions": 1,
+            "retained_trace_ref": "artifacts/runtime-v2-governed-demo-run/logs/activation_log.json"
+        }),
+    )
+}
+
+fn write_current_runtime_reconciliation(root: &Path) -> Result<()> {
+    let current_root = root.join("current_runtime/long_lived_agent");
+    fs::create_dir_all(&current_root)
+        .with_context(|| format!("create current runtime root {}", current_root.display()))?;
+    let spec_path = current_root.join("agent.yaml");
+    fs::write(
+        &spec_path,
+        r#"schema: adl.long_lived_agent_spec.v1
+agent_instance_id: runtime-v2-reconciled-current-runtime
+display_name: Runtime v2 Reconciled Current Runtime
+state_root: state
+workflow:
+  kind: demo_adapter
+  name: runtime_v2_reconciliation_current_runtime
+  run_args:
+    provider_id: local_ollama
+    model: gemma4:latest
+heartbeat:
+  interval_secs: 1
+  max_cycles: 1
+  stale_lease_after_secs: 60
+safety:
+  allow_network: false
+  allow_broker: false
+  allow_filesystem_writes_outside_state_root: false
+  allow_real_world_side_effects: false
+  require_public_artifact_sanitization: true
+  financial_advice: false
+  max_cycle_runtime_secs: 120
+  max_consecutive_failures: 2
+memory:
+  namespace: runtime-v2/reconciliation/current-runtime
+  write_policy: append_only
+"#,
+    )
+    .with_context(|| format!("write current runtime spec {}", spec_path.display()))?;
+
+    let initial_status = long_lived_agent::status(&spec_path)?;
+    let run_status = long_lived_agent::run(
+        &spec_path,
+        RunOptions {
+            max_cycles: 1,
+            interval_secs: Some(0),
+            no_sleep: true,
+            recover_stale_lease: false,
+        },
+    )?;
+    let stopped = long_lived_agent::stop(
+        &spec_path,
+        "bounded Runtime v2 reconciliation proof stop after current-runtime run",
+    )?;
+    let final_status = long_lived_agent::status(&spec_path)?;
+
+    write_json(&current_root.join("initial_status.json"), &initial_status)?;
+    write_json(&current_root.join("run_status.json"), &run_status)?;
+    write_json(&current_root.join("stop_status.json"), &stopped)?;
+    write_json(&current_root.join("final_status.json"), &final_status)?;
+    write_json(
+        &root.join(RUNTIME_V2_CURRENT_RUNTIME_RECONCILIATION_PACKET),
+        &json!({
+            "schema_version": "runtime_v2.current_runtime_reconciliation.v1",
+            "generated_at": Utc::now(),
+            "classification": "integrated_proof",
+            "runtime_v2_prototype": {
+                "status": "integrated_as_artifact_producer",
+                "proof_packet_ref": "runtime_v2/csm_run/integrated_first_run_proof_packet.json",
+                "transcript_ref": "runtime_v2/csm_run/integrated_first_run_transcript.jsonl",
+                "governed_trace_ref": "artifacts/runtime-v2-governed-demo-run/logs/activation_log.json"
+            },
+            "current_runtime_substrate": {
+                "status": "executed",
+                "agent_spec_ref": "current_runtime/long_lived_agent/agent.yaml",
+                "initial_status_ref": "current_runtime/long_lived_agent/initial_status.json",
+                "run_status_ref": "current_runtime/long_lived_agent/run_status.json",
+                "stop_status_ref": "current_runtime/long_lived_agent/stop_status.json",
+                "final_status_ref": "current_runtime/long_lived_agent/final_status.json",
+                "completed_cycle_count": final_status.completed_cycle_count,
+                "final_state": format!("{:?}", final_status.state)
+            },
+            "canonical_path_decision": "Runtime v2 integrated-csm-run-demo remains a bounded artifact producer only when it also emits this current-runtime reconciliation proof. WP-07 Soak #2 should consume the current runtime substrate path for start/run/stop truth.",
+            "fail_closed_negative_case": "The deprecated --prototype-only invocation is rejected by the command instead of silently producing a parallel Runtime v2-only proof.",
+            "non_claims": [
+                "does not execute full Soak #2",
+                "does not claim v0.92 runtime readiness",
+                "does not claim AWS, Observatory, provider, memory, or AEE completion beyond the referenced artifacts"
+            ]
+        }),
+    )
+}
+
+fn write_json(path: &Path, value: &impl Serialize) -> Result<()> {
+    if let Some(parent) = path.parent() {
+        fs::create_dir_all(parent)
+            .with_context(|| format!("create output directory {}", parent.display()))?;
+    }
+    let bytes = serde_json::to_vec_pretty(value)
+        .with_context(|| format!("serialize json artifact {}", path.display()))?;
+    fs::write(path, bytes).with_context(|| format!("write json artifact {}", path.display()))
 }
 
 impl RuntimeV2MinimalIntegratedRuntimePathSummary {
