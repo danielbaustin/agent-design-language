@@ -136,7 +136,7 @@ grep -Fx -- "/dev/sdf" "$TMP/args.txt" >/dev/null
 grep -Fx -- "--cache-volume-mount-path" "$TMP/args.txt" >/dev/null
 grep -Fx -- "/mnt/adl-cache" "$TMP/args.txt" >/dev/null
 grep -Fx -- "--ssh-key-name" "$TMP/args.txt" >/dev/null
-grep -Fx -- "adl-4603-agentlogic-ssh-debug-20260701" "$TMP/args.txt" >/dev/null
+grep -Fx -- "adl-wp06-spot-ssh-debug-20260704" "$TMP/args.txt" >/dev/null
 grep -Fx -- "--ssh-private-key-path" "$TMP/args.txt" >/dev/null
 grep -Fx -- "$HOME/.ssh/adl-4603-ssh-debug-20260701.pem" "$TMP/args.txt" >/dev/null
 grep -Fx -- "--ssh-user" "$TMP/args.txt" >/dev/null

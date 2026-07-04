@@ -138,7 +138,7 @@ Assertions covered:
   `--cache-volume-mount-path /mnt/adl-cache`
 - runner invocation includes `--json`
 - runner invocation includes retained SSH tail defaults:
-  `--ssh-key-name adl-4603-agentlogic-ssh-debug-20260701`,
+  `--ssh-key-name adl-wp06-spot-ssh-debug-20260704`,
   `--ssh-private-key-path $HOME/.ssh/adl-4603-ssh-debug-20260701.pem`, and
   `--ssh-user ec2-user`
 - workflow and setup surfaces include the OIDC role secret,
@@ -207,6 +207,32 @@ The workflow uses `.github/workflows/aws-spot-remote-validation.yaml`, has only
 `workflow_dispatch`, and uses `--profile env` after OIDC credential setup. The
 Rust adapter treats `env` and `environment` as ambient AWS credential mode.
 
+## Fresh Warm-EBS Branch Proof
+
+A fresh `#4837` branch run completed on 2026-07-04 after restoring the warm EBS
+cache path and hardening SSM dispatch readiness:
+
+- run id: `adl-wp-4837-ebs-benchmark-20260704f`
+- status: `passed`
+- resolved commit: `7e9845c9cb7ecd9a9b77efef83c4bdecd6115ecb`
+- purchase option: Spot
+- instance type: `m7a.2xlarge`
+- retained EBS cache volume: `adl-aws-remote-validation-cache-volume`
+- cache volume state: `attached`
+- cache mount: `/mnt/adl-cache`
+- total runner time: `270s`
+- remote command wall time: `168s`
+- benchmark build time: `65s`
+- benchmark test time: `55s`
+- benchmark total command time: `120s`
+- cleanup: instance termination recorded as `terminated`
+
+The run recorded `ssh_debug_degraded` because it used the old retained EC2 key
+pair name whose AWS key material did not match the local private key. During the
+same follow-up, the local public key was imported into a new Agent Logic EC2 key
+pair, `adl-wp06-spot-ssh-debug-20260704`, and the wrapper default was updated
+to use that matching key name for subsequent runs.
+
 ## Fresh Branch Baseline
 
 A fresh `#4837` branch run completed while this follow-up was in progress:
@@ -245,5 +271,8 @@ updates.
 ## Residual Risk
 
 This issue consumes retained live AWS proof and adds local wrapper/workflow
-contract proof plus an applied AWS OIDC role. A fresh live warm-EBS branch run is
-still required before claiming current-branch warm-EBS timings.
+contract proof plus an applied AWS OIDC role. The fresh warm-EBS branch run
+above proves the current branch can execute the benchmark with the retained EBS
+cache. A follow-up smoke run can verify live SSH auth with the repaired key
+default if the operator wants SSH-tail proof independent of the passed SSM
+benchmark.

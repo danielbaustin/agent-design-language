@@ -109,7 +109,7 @@ Live workflow runs inherit the wrapper's defaults for:
 
 ```text
 warm EBS cache: adl-aws-remote-validation-cache-volume -> /mnt/adl-cache
-SSH tail key: adl-4603-agentlogic-ssh-debug-20260701
+SSH tail key: adl-wp06-spot-ssh-debug-20260704
 SSH user: ec2-user
 ```
 
