@@ -469,6 +469,8 @@
       ],
       "path_selectors": [
         "adl/tools/run_aws_spot_remote_validation_lane.sh",
+        "adl/tools/run_build_platform_benchmark.sh",
+        "adl/tools/setup_aws_spot_remote_validation_github_resources.sh",
         "adl/tools/test_run_aws_spot_remote_validation_lane.sh",
         "tools/aws_remote_validation/Cargo.toml",
         "tools/aws_remote_validation/Cargo.lock",
@@ -477,6 +479,8 @@
       ],
       "path_hints": [
         "adl/tools/run_aws_spot_remote_validation_lane.sh",
+        "adl/tools/run_build_platform_benchmark.sh",
+        "adl/tools/setup_aws_spot_remote_validation_github_resources.sh",
         "adl/tools/test_run_aws_spot_remote_validation_lane.sh",
         "tools/aws_remote_validation/Cargo.toml",
         "tools/aws_remote_validation/Cargo.lock",

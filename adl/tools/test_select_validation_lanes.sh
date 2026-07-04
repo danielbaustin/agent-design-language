@@ -100,6 +100,8 @@ assert_not_has "$TMP/aws-remote-validation-tool.out" "unmapped_change_surface"
 aws_spot_wrapper_tool="$TMP/aws-spot-wrapper-tool.txt"
 cat >"$aws_spot_wrapper_tool" <<'EOF'
 A	adl/tools/run_aws_spot_remote_validation_lane.sh
+A	adl/tools/run_build_platform_benchmark.sh
+A	adl/tools/setup_aws_spot_remote_validation_github_resources.sh
 A	adl/tools/test_run_aws_spot_remote_validation_lane.sh
 A	docs/tooling/AWS_SPOT_REMOTE_VALIDATION_LANE.md
 EOF
