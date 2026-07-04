@@ -242,4 +242,48 @@ if [[ ! -x "$LANE_BIN" ]]; then
 fi
 
 mkdir -p "$(dirname "$OUT_PATH")" "$ARTIFACT_DIR"
-exec "${cmd[@]}"
+runner_stdout="$(mktemp "${TMPDIR:-/tmp}/adl-aws-spot-runner-stdout.XXXXXX")"
+runner_stderr="$(mktemp "${TMPDIR:-/tmp}/adl-aws-spot-runner-stderr.XXXXXX")"
+cleanup_runner_logs() {
+  rm -f "$runner_stdout" "$runner_stderr"
+}
+trap cleanup_runner_logs EXIT
+
+set +e
+"${cmd[@]}" >"$runner_stdout" 2>"$runner_stderr"
+runner_status="$?"
+set -e
+
+python3 - <<'PY' "$runner_stdout"
+import json
+import re
+import sys
+from pathlib import Path
+
+path = Path(sys.argv[1])
+text = path.read_text(encoding="utf-8", errors="replace")
+try:
+    payload = json.loads(text)
+except json.JSONDecodeError:
+    redacted = re.sub(r"\b\d{12}\b", "<aws-account-id-redacted>", text)
+    redacted = re.sub(r"arn:aws:[^\s,\"]+", "<aws-arn-redacted>", redacted)
+    print(redacted, end="")
+    raise SystemExit(0)
+
+identity = payload.get("account_identity")
+if isinstance(identity, dict):
+    for key in ("account_id", "arn", "user_id"):
+        if key in identity:
+            identity[key] = "<redacted>"
+for container_key in ("command",):
+    container = payload.get(container_key)
+    if isinstance(container, dict):
+        for key in ("stdout_preview", "stderr_preview", "output_preview"):
+            if key in container and isinstance(container[key], str):
+                container[key] = re.sub(r"\b\d{12}\b", "<aws-account-id-redacted>", container[key])
+                container[key] = re.sub(r"arn:aws:[^\s,\"]+", "<aws-arn-redacted>", container[key])
+print(json.dumps(payload, indent=2, sort_keys=False))
+PY
+
+cat "$runner_stderr" >&2
+exit "$runner_status"
