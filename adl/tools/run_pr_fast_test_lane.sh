@@ -416,6 +416,10 @@ family_token_for_path() {
       printf 'pr_control_plane'
       return 0
       ;;
+    adl/src/bin/adl_process.rs|adl/src/bin/adl_session.rs)
+      printf 'cli'
+      return 0
+      ;;
     adl/src/lib.rs)
       return 1
       ;;
@@ -471,6 +475,7 @@ import sys
 
 TOKEN_MAP = {
     "cli_dispatch": 'test(/^cli::tests::top_level_dispatch_routes_/)',
+    "cli": 'test(/^cli::/) or binary_id(adl::bin/adl-process) or binary_id(adl::bin/adl-session)',
     "cli_smoke_basics": 'binary_id(adl::cli_smoke) and test(/^basics::/)',
     "process_status": 'binary_id(adl::cli_smoke) and test(/^process_status::/)',
     "scheduler_cli": 'test(/^cli::scheduler_cmd::tests::/) or test(/^cli::tests::runtime_dispatch_exposes_help_and_version_without_csdlc_dispatch$/) or test(/^cli::tests::open_usage::usage_mentions_v0_4_and_legacy_examples$/)',
