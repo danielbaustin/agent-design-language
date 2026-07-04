@@ -7,15 +7,17 @@ changed_release_gate_surfaces:
 focused_validation_run: >
   Focused local proof passed: bash adl/tools/test_run_aws_codefriend_build_lane.sh;
   bash adl/tools/test_select_validation_lanes.sh; workflow YAML parse; git diff
-  --check; and a dry-run Agent Logic account-hash check with
-  ADL_AWS_PROFILE=agent-logic-admin.
+  --check; a dry-run Agent Logic account-hash check with
+  ADL_AWS_PROFILE=agent-logic-admin; Agent Logic AWS resource setup for
+  BUILD_GENERAL1_LARGE; and live CodeBuild start-build proof on the
+  adl-codefriend-build project.
 residual_ci_proof_required_before_merge: >
-  GitHub Actions dispatch and live CodeBuild start-build remain residual CI/AWS
-  proof. The workflow is manual-dispatch only, and live start-build is
-  fail-closed until AWS_CODEFRIEND_CODEBUILD_PROJECT,
-  AWS_CODEFRIEND_BUILD_ROLE_ARN, AWS_CODEFRIEND_ACCOUNT_SHA256, and an Agent
-  Logic CodeBuild project exist.
+  GitHub Actions workflow dispatch remains residual CI/AWS proof because the
+  repository variables/secrets are operator configuration, not committed repo
+  state. Local live CodeBuild start-build was proven through the repo-native
+  wrapper against the Agent Logic adl-codefriend-build project.
 notes:
   - The release-gate surface is a new manual workflow, not a change to ordinary PR or push CI.
   - The workflow uses GitHub OIDC with id-token write and contents read permissions.
   - The repo-native wrapper requires account-hash verification for every live run.
+  - BUILD_GENERAL1_XLARGE remains blocked by the Agent Logic CodeBuild Linux/XLarge quota.
