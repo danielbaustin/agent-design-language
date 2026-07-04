@@ -15,8 +15,9 @@ pub(crate) fn build_packet(root: &Path, args: &CodeReviewArgs) -> anyhow::Result
         super::code_review_helpers::git_output(root, &["rev-parse", "--abbrev-ref", "HEAD"])
             .unwrap_or_else(|_| "unknown".to_string());
     let changed_files = changed_files(root, args)?;
-    let focused_diff_hunks = diff_hunks(root, args, &changed_files)?;
+    let mut focused_diff_hunks = diff_hunks(root, args, &changed_files)?;
     let file_contexts = file_contexts(root, args, &changed_files)?;
+    redact_deleted_diff_lines(&mut focused_diff_hunks);
     let truncated_hunks = focused_diff_hunks.iter().any(|hunk| hunk.truncated);
     let file_limit_truncated = changed_files.len() > MAX_REVIEW_DIFF_FILES
         || changed_files.len() > MAX_REVIEW_CONTEXT_FILES;
@@ -186,6 +187,15 @@ pub(crate) fn file_contexts(
     let max_read_bytes = args.max_diff_bytes.saturating_add(1);
     let canonical_root = std::fs::canonicalize(root).context("canonicalize repo root")?;
     for file in files.iter().take(MAX_REVIEW_CONTEXT_FILES) {
+        if args.include_working_tree && !root.join(file).exists() {
+            contexts.push(FileContext {
+                file: file.clone(),
+                current_excerpt: String::new(),
+                truncated: false,
+                read_error: Some("file deleted in working tree".to_string()),
+            });
+            continue;
+        }
         let content = if args.include_working_tree {
             safe_read_worktree_file(root, &canonical_root, file, max_read_bytes)
                 .or_else(|_| git_show_file_prefix(root, &args.head_ref, file, max_read_bytes))
@@ -304,4 +314,98 @@ fn is_windows_drive_boundary(text: &str, idx: usize) -> bool {
             .chars()
             .next_back()
             .is_some_and(|ch| ch.is_ascii_alphanumeric() || ch == '_')
+}
+
+fn redact_deleted_diff_lines(hunks: &mut [DiffHunk]) {
+    for hunk in hunks {
+        hunk.diff_excerpt = hunk
+            .diff_excerpt
+            .split_inclusive('\n')
+            .map(|line| {
+                if line.starts_with('-') && !line.starts_with("---") {
+                    redact_review_sensitive_text(line)
+                } else {
+                    line.to_string()
+                }
+            })
+            .collect();
+    }
+}
+
+fn redact_review_sensitive_text(text: &str) -> String {
+    let redacted_paths = redact_windows_absolute_paths(
+        &text
+            .replace("/Users/", "[REDACTED_HOST_PATH]/")
+            .replace("/home/", "[REDACTED_HOST_PATH]/")
+            .replace("/tmp/", "[REDACTED_HOST_PATH]/")
+            .replace("/var/folders/", "[REDACTED_HOST_PATH]/"),
+    );
+    redact_secret_like_tokens(&redacted_paths)
+}
+
+fn redact_windows_absolute_paths(text: &str) -> String {
+    let mut redacted = String::with_capacity(text.len());
+    let mut chars = text.char_indices().peekable();
+    while let Some((idx, ch)) = chars.next() {
+        if ch.is_ascii_alphabetic()
+            && is_windows_drive_boundary(text, idx)
+            && chars.peek().map(|(_, next)| next) == Some(&':')
+        {
+            chars.next();
+            if chars.peek().map(|(_, next)| next) == Some(&'\\') {
+                redacted.push_str("[REDACTED_HOST_PATH]\\\\");
+                chars.next();
+                continue;
+            }
+            redacted.push(ch);
+            redacted.push(':');
+            continue;
+        }
+        redacted.push(ch);
+    }
+    redacted
+}
+
+fn redact_secret_like_tokens(text: &str) -> String {
+    let mut output = String::with_capacity(text.len());
+    let mut index = 0usize;
+    while index < text.len() {
+        let remaining = &text[index..];
+        if let Some(marker) = secret_marker_at(remaining) {
+            let token_len = secret_token_len(remaining);
+            output.push_str("[REDACTED_SECRET]");
+            index += token_len.max(marker.len());
+        } else {
+            let ch = remaining.chars().next().expect("remaining char");
+            output.push(ch);
+            index += ch.len_utf8();
+        }
+    }
+    output
+}
+
+fn secret_marker_at(text: &str) -> Option<&'static str> {
+    for marker in ["AKIA", "ghp_", "gho_", "ghu_", "ghs_", "ghr_"] {
+        if text.starts_with(marker) {
+            return Some(marker);
+        }
+    }
+    if text.starts_with("sk-") {
+        let suffix = &text[3..];
+        let token_len = suffix
+            .chars()
+            .take_while(|c| c.is_ascii_alphanumeric() || *c == '_')
+            .count();
+        if token_len >= 8 {
+            return Some("sk-");
+        }
+    }
+    None
+}
+
+fn secret_token_len(text: &str) -> usize {
+    text.chars()
+        .take_while(|c| c.is_ascii_alphanumeric() || *c == '_' || *c == '-')
+        .map(char::len_utf8)
+        .sum()
 }

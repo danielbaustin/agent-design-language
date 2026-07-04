@@ -481,6 +481,110 @@ fn code_review_build_packet_includes_staged_and_unstaged_worktree_diffs() {
 }
 
 #[test]
+fn code_review_build_packet_redacts_deleted_diff_line_secrets_before_gate() {
+    let root = init_temp_git_repo_with_changed_file(
+        "deleted-redaction",
+        "src/sample.rs",
+        "pub const OLD_PATH: &str = \"/Users/alice/repo\";\npub const OLD_TOKEN: &str = \"gho_secretvalue\";\n",
+        "pub const CURRENT: &str = \"repo-relative-clean\";\n",
+    );
+    let mut args = test_args();
+    args.base_ref = "HEAD".to_string();
+    args.head_ref = "HEAD".to_string();
+    args.include_working_tree = true;
+    args.include_files = vec!["src/sample.rs".to_string()];
+    args.max_diff_bytes = 4096;
+
+    let packet = code_review_build::build_packet(&root, &args).expect("build review packet");
+    let diff = &packet
+        .focused_diff_hunks
+        .first()
+        .expect("diff hunk")
+        .diff_excerpt;
+    assert!(diff.contains("[REDACTED_HOST_PATH]"));
+    assert!(diff.contains("[REDACTED_SECRET]"));
+    assert!(!diff.contains("/Users/alice"));
+    assert!(!diff.contains("gho_secretvalue"));
+    assert!(!packet.redaction_status.absolute_host_paths_present);
+    assert!(!packet.redaction_status.secret_like_values_present);
+
+    std::fs::remove_dir_all(&root).ok();
+}
+
+#[test]
+fn code_review_build_packet_keeps_added_secret_like_text_blocking() {
+    let root = init_temp_git_repo_with_changed_file(
+        "added-secret-blocks",
+        "src/sample.rs",
+        "pub const CURRENT: &str = \"repo-relative-clean\";\n",
+        "pub const CURRENT: &str = \"repo-relative-clean\";\npub const NEW_TOKEN: &str = \"gho_secretvalue\";\n",
+    );
+    let mut args = test_args();
+    args.base_ref = "HEAD".to_string();
+    args.head_ref = "HEAD".to_string();
+    args.include_working_tree = true;
+    args.include_files = vec!["src/sample.rs".to_string()];
+    args.max_diff_bytes = 4096;
+
+    let packet = code_review_build::build_packet(&root, &args).expect("build review packet");
+    assert!(packet
+        .focused_diff_hunks
+        .first()
+        .expect("diff hunk")
+        .diff_excerpt
+        .contains("gho_secretvalue"));
+    assert!(packet.redaction_status.secret_like_values_present);
+
+    std::fs::remove_dir_all(&root).ok();
+}
+
+#[test]
+fn code_review_build_packet_does_not_fallback_to_deleted_file_secret_context() {
+    let root = init_temp_git_repo("deleted-file-context");
+    let source_path = root.join("src/sample.rs");
+    std::fs::create_dir_all(source_path.parent().expect("source parent"))
+        .expect("create source parent");
+    std::fs::write(
+        &source_path,
+        "pub const OLD_PATH: &str = \"/Users/alice/repo\";\npub const OLD_TOKEN: &str = \"gho_secretvalue\";\n",
+    )
+    .expect("write initial source");
+    std::process::Command::new("git")
+        .args(["add", "."])
+        .current_dir(&root)
+        .output()
+        .expect("git add initial");
+    std::process::Command::new("git")
+        .args(["commit", "-m", "initial"])
+        .current_dir(&root)
+        .output()
+        .expect("git commit initial");
+    std::fs::remove_file(&source_path).expect("delete source");
+
+    let mut args = test_args();
+    args.base_ref = "HEAD".to_string();
+    args.head_ref = "HEAD".to_string();
+    args.include_working_tree = true;
+    args.include_files = vec!["src/sample.rs".to_string()];
+    args.max_diff_bytes = 4096;
+
+    let packet = code_review_build::build_packet(&root, &args).expect("build review packet");
+    let context = packet.file_contexts.first().expect("file context");
+    assert_eq!(context.current_excerpt, "");
+    assert_eq!(
+        context.read_error.as_deref(),
+        Some("file deleted in working tree")
+    );
+    assert!(!packet.redaction_status.absolute_host_paths_present);
+    assert!(!packet.redaction_status.secret_like_values_present);
+    let packet_text = serde_json::to_string(&packet).expect("serialize packet");
+    assert!(!packet_text.contains("/Users/alice"));
+    assert!(!packet_text.contains("gho_secretvalue"));
+
+    std::fs::remove_dir_all(&root).ok();
+}
+
+#[test]
 fn code_review_reviewer_real_code_review_fixture_run_writes_expected_artifacts() {
     let root = init_temp_git_repo_with_changed_file(
         "fixture-run",
