@@ -89,6 +89,7 @@ build_owner_bins() {
       --bin adl-pr-inventory --bin adl-pr-closing-linkage \
       --bin adl-issue \
       --bin adl-pr-closeout \
+      --bin adl-session --bin adl-process \
       --bin adl-prompt-template --bin adl-validate-structured-prompt
   if [[ "$PRINT_PLAN" == "1" ]]; then
     return 0

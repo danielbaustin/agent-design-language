@@ -8,6 +8,7 @@ plan_output="$(bash "$RUNNER" all --build --print-plan)"
 for expected in \
   "cargo build owner binaries" \
   "--bin adl-pr-inventory" \
+  "--bin adl-session --bin adl-process" \
   "C-SDLC wrapper migration contract" \
   "C-SDLC run ambiguity policy" \
   "C-SDLC control-plane observability contract" \

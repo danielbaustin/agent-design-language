@@ -123,7 +123,17 @@ worktrees. Future guilds may use the same claim model for research threads,
 publication drafts, model evaluations, memory-palace rooms, governance
 proposals, compute budgets, local machines, or Observatory surfaces.
 
-The first implemented ledger surface is:
+The preferred owner-binary ledger surface is:
+
+```bash
+adl-session status [--ledger <path>] [--json]
+adl-session claim --session-id <id> --owner <name> --resource <kind:id> --purpose <text> [--issue <n>] [--pr <n>] [--branch <name>] [--worktree <path>] [--policy-ref <path>] [--lifecycle-phase <phase>] [--mode active|watching|paused] [--ttl-secs <n>] [--do-not-touch <path>]... [--blocker <text>]... [--ledger <path>] [--json]
+adl-session heartbeat --claim-id <id> [--ttl-secs <n>] [--ledger <path>] [--json]
+adl-session release --claim-id <id> [--reason <text>] [--ledger <path>] [--json]
+```
+
+The compatibility `adl` surface remains available during the owner-binary
+migration:
 
 ```bash
 adl session status [--ledger <path>] [--json]
@@ -132,11 +142,11 @@ adl session heartbeat --claim-id <id> [--ttl-secs <n>] [--ledger <path>] [--json
 adl session release --claim-id <id> [--reason <text>] [--ledger <path>] [--json]
 ```
 
-When `adl` is not installed globally, run the same subcommands through the
-repo-local binary, for example `./adl/target/debug/adl session claim ...` from
-the primary checkout. Workflow diagnostics should prefer that repo-local form
-so a fresh session does not need shell-profile setup before it can repair a
-session claim.
+When `adl-session` is not installed globally, run the same subcommands through
+the repo-local owner binary, for example
+`./adl/target/debug/adl-session claim ...` from the primary checkout. Workflow
+diagnostics should prefer that repo-local owner-binary form so a fresh session
+does not need shell-profile setup before it can repair a session claim.
 
 Default local ledger path:
 

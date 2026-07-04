@@ -297,8 +297,18 @@ fn helper_attach_commands_cover_disabled_success_failure_and_fallback_paths() {
     assert!(janitor_calls.contains("ctx ADL_GITHUB_CLIENT=octocrab GH_TOKEN_PRESENT=present"));
     let closeout_calls = fs::read_to_string(&closeout_success).expect("closeout success log");
     assert!(closeout_calls.contains("--pr-url https://github.com/owner/repo/pull/1159"));
-    let closeout_codex_calls =
-        fs::read_to_string(&closeout_codex_success).expect("closeout codex success log");
+    let mut closeout_codex_calls = String::new();
+    for _ in 0..20 {
+        closeout_codex_calls = fs::read_to_string(&closeout_codex_success).unwrap_or_default();
+        if closeout_codex_calls.contains("post-merge closeout watcher") {
+            break;
+        }
+        thread::sleep(Duration::from_millis(25));
+    }
+    assert!(
+        !closeout_codex_calls.is_empty(),
+        "closeout codex success log should be written"
+    );
     assert!(closeout_codex_calls.contains("--output-last-message"));
     assert!(closeout_codex_calls.contains("post-merge closeout watcher"));
     assert!(closeout_calls.contains("ctx ADL_GITHUB_CLIENT=octocrab GH_TOKEN_PRESENT=present"));

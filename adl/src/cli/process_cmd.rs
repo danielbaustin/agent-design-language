@@ -406,11 +406,20 @@ fn print_human_report(report: &ProcessStatusReport) {
 
 fn process_usage() -> &'static str {
     "Usage:
+  adl-process status (--pid <pid> | --pid-file <path> | --port <port> [--host <host>] | --name <label>) [--json]
+
+Compatibility:
   adl process status (--pid <pid> | --pid-file <path> | --port <port> [--host <host>] | --name <label>) [--json]"
 }
 
 fn status_usage() -> &'static str {
     "Usage:
+  adl-process status --pid <pid> [--json]
+  adl-process status --pid-file <path> [--json]
+  adl-process status --port <port> [--host <host>] [--json]
+  adl-process status --name <label> [--json]
+
+Compatibility:
   adl process status --pid <pid> [--json]
   adl process status --pid-file <path> [--json]
   adl process status --port <port> [--host <host>] [--json]

@@ -10,7 +10,17 @@ ADL agents need a safe way to answer narrow questions such as "is the server
 PID I started still alive?" or "is this local port bound?" without asking macOS
 for broad process-inspection permissions or dumping host process tables.
 
-The first supported surface is:
+The preferred owner-binary surface is:
+
+```sh
+adl-process status --pid-file .adl/runs/demo/server.pid --json
+adl-process status --pid 12345 --json
+adl-process status --port 8787 --json
+adl-process status --name adl-demo-server --json
+```
+
+The compatibility `adl` surface remains available during the binary
+decomposition migration:
 
 ```sh
 adl process status --pid-file .adl/runs/demo/server.pid --json

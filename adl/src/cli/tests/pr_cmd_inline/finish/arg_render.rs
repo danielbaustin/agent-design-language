@@ -3662,21 +3662,19 @@ fn finish_validation_profile_classifies_process_status_helper_surfaces() {
 }
 
 #[test]
-fn finish_validation_profile_classifies_lifecycle_inline_tests() {
-    let plan = select_finish_validation_plan_for_finish(
+fn finish_validation_profile_escalates_lifecycle_inline_tests() {
+    let err = select_finish_validation_plan_for_finish(
         1153,
         ".",
         &["adl/src/cli/tests/pr_cmd_inline/lifecycle/start_ready.rs".to_string()],
     )
-    .expect("lifecycle inline test plan");
+    .expect_err("lifecycle inline test plan should require explicit slow-lane routing");
 
-    assert_eq!(plan.mode, FinishValidationMode::LargerBinaryFocused);
-    assert!(
-        plan.commands
-            .iter()
-            .any(|command| command
-                .contains("bash adl/tools/run_pr_fast_test_lane.sh --changed-files"))
-    );
+    let message = err.to_string();
+    assert!(message.contains("validation manager reported a non-runnable profile"));
+    assert!(message.contains("profile=escalated_"));
+    assert!(message.contains("lane=rust_pr_fast"));
+    assert!(message.contains("slow_pr_cmd_e2e_surface_requires_explicit_slow_lane"));
 }
 
 #[test]
@@ -4171,8 +4169,8 @@ fn finish_validation_profile_fails_closed_for_mixed_surface_with_unmapped_gap() 
 }
 
 #[test]
-fn finish_validation_profile_accepts_workflow_metrics_backfill_slice() {
-    let plan = select_finish_validation_plan_for_finish(
+fn finish_validation_profile_escalates_workflow_metrics_backfill_slice() {
+    let err = select_finish_validation_plan_for_finish(
         4441,
         ".",
         &[
@@ -4185,21 +4183,18 @@ fn finish_validation_profile_accepts_workflow_metrics_backfill_slice() {
             "docs/milestones/v0.91.6/review/V0916_WORKFLOW_METRIC_BACKFILL_4441.json".to_string(),
         ],
     )
-    .expect("workflow metrics backfill plan");
+    .expect_err("workflow metrics backfill plan should require explicit slow-lane routing");
 
-    assert_eq!(plan.mode, FinishValidationMode::LargerBinaryFocused);
-    assert!(plan
-        .commands
-        .contains(&"bash adl/tools/run_owner_validation_lane.sh csdlc".to_string()));
-    assert!(plan.commands.iter().any(|command| {
-        command.starts_with("bash adl/tools/run_pr_fast_test_lane.sh --changed-files ")
-    }));
-    assert!(plan.commands.contains(&"git diff --check".to_string()));
+    let message = err.to_string();
+    assert!(message.contains("validation manager reported a non-runnable profile"));
+    assert!(message.contains("profile=escalated_"));
+    assert!(message.contains("lane=rust_pr_fast"));
+    assert!(message.contains("slow_pr_cmd_e2e_surface_requires_explicit_slow_lane"));
 }
 
 #[test]
-fn finish_validation_profile_accepts_workflow_metrics_backfill_publication_slice() {
-    let plan = select_finish_validation_plan_for_finish(
+fn finish_validation_profile_escalates_workflow_metrics_backfill_publication_slice() {
+    let err = select_finish_validation_plan_for_finish(
         4441,
         ".",
         &[
@@ -4216,21 +4211,15 @@ fn finish_validation_profile_accepts_workflow_metrics_backfill_publication_slice
             "docs/milestones/v0.91.6/review/V0916_WORKFLOW_METRIC_BACKFILL_4441.json".to_string(),
         ],
     )
-    .expect("workflow metrics backfill publication plan");
+    .expect_err(
+        "workflow metrics backfill publication plan should require explicit slow-lane routing",
+    );
 
-    assert_eq!(plan.mode, FinishValidationMode::LargerBinaryFocused);
-    assert!(plan
-        .commands
-        .contains(&"bash adl/tools/run_owner_validation_lane.sh csdlc".to_string()));
-    assert!(plan.commands.iter().any(|command| {
-        command.contains("bash adl/tools/test_ci_path_policy.sh")
-            && command.contains("bash adl/tools/test_select_validation_lanes.sh")
-            && command.contains("bash adl/tools/test_validation_manager.sh")
-    }));
-    assert!(plan.commands.iter().any(|command| {
-        command.starts_with("bash adl/tools/run_pr_fast_test_lane.sh --changed-files ")
-    }));
-    assert!(plan.commands.contains(&"git diff --check".to_string()));
+    let message = err.to_string();
+    assert!(message.contains("validation manager reported a non-runnable profile"));
+    assert!(message.contains("profile=escalated_"));
+    assert!(message.contains("lane=rust_pr_fast"));
+    assert!(message.contains("slow_pr_cmd_e2e_surface_requires_explicit_slow_lane"));
 }
 
 #[test]

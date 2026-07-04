@@ -460,10 +460,15 @@ mod tests {
 
     fn write_spec(root: &Path) -> PathBuf {
         let spec = root.join("agent.yaml");
+        let agent_instance_id = root
+            .file_name()
+            .and_then(|name| name.to_str())
+            .unwrap_or("agent-cmd-test");
         fs::write(
             &spec,
-            r#"schema: adl.long_lived_agent_spec.v1
-agent_instance_id: agent-cmd-test
+            format!(
+                r#"schema: adl.long_lived_agent_spec.v1
+agent_instance_id: {agent_instance_id}
 display_name: Agent Command Test
 state_root: state
 workflow:
@@ -488,7 +493,8 @@ safety:
 memory:
   namespace: tests/agent-cmd
   write_policy: append_only
-"#,
+"#
+            ),
         )
         .expect("write spec");
         spec

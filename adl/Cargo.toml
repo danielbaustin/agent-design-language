@@ -95,6 +95,14 @@ name = "adl-pr-closeout"
 path = "src/bin/adl_pr_closeout.rs"
 
 [[bin]]
+name = "adl-session"
+path = "src/bin/adl_session.rs"
+
+[[bin]]
+name = "adl-process"
+path = "src/bin/adl_process.rs"
+
+[[bin]]
 name = "adl-remote"
 path = "src/bin/adl_remote.rs"
 

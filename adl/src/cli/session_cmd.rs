@@ -471,6 +471,12 @@ fn parse_claim_mode(raw: &str) -> Result<adl::session_ledger::ClaimMode> {
 
 fn session_usage() -> &'static str {
     "Usage:
+  adl-session status [--ledger <path>] [--json]
+  adl-session claim --session-id <id> --owner <name> --resource <kind:id> --purpose <text> [--issue <n>] [--pr <n>] [--branch <name>] [--worktree <path>] [--policy-ref <path>] [--lifecycle-phase <phase>] [--mode active|watching|paused] [--ttl-secs <n>] [--do-not-touch <path>]... [--blocker <text>]... [--ledger <path>] [--json]
+  adl-session heartbeat --claim-id <id> [--ttl-secs <n>] [--ledger <path>] [--json]
+  adl-session release --claim-id <id> [--reason <text>] [--ledger <path>] [--json]
+
+Compatibility:
   adl session status [--ledger <path>] [--json]
   adl session claim --session-id <id> --owner <name> --resource <kind:id> --purpose <text> [--issue <n>] [--pr <n>] [--branch <name>] [--worktree <path>] [--policy-ref <path>] [--lifecycle-phase <phase>] [--mode active|watching|paused] [--ttl-secs <n>] [--do-not-touch <path>]... [--blocker <text>]... [--ledger <path>] [--json]
   adl session heartbeat --claim-id <id> [--ttl-secs <n>] [--ledger <path>] [--json]
@@ -479,21 +485,33 @@ fn session_usage() -> &'static str {
 
 fn status_usage() -> &'static str {
     "Usage:
+  adl-session status [--ledger <path>] [--json]
+
+Compatibility:
   adl session status [--ledger <path>] [--json]"
 }
 
 fn claim_usage() -> &'static str {
     "Usage:
+  adl-session claim --session-id <id> --owner <name> --resource <kind:id> --purpose <text> [--issue <n>] [--pr <n>] [--branch <name>] [--worktree <path>] [--policy-ref <path>] [--lifecycle-phase <phase>] [--mode active|watching|paused] [--ttl-secs <n>] [--do-not-touch <path>]... [--blocker <text>]... [--ledger <path>] [--json]
+
+Compatibility:
   adl session claim --session-id <id> --owner <name> --resource <kind:id> --purpose <text> [--issue <n>] [--pr <n>] [--branch <name>] [--worktree <path>] [--policy-ref <path>] [--lifecycle-phase <phase>] [--mode active|watching|paused] [--ttl-secs <n>] [--do-not-touch <path>]... [--blocker <text>]... [--ledger <path>] [--json]"
 }
 
 fn heartbeat_usage() -> &'static str {
     "Usage:
+  adl-session heartbeat --claim-id <id> [--ttl-secs <n>] [--ledger <path>] [--json]
+
+Compatibility:
   adl session heartbeat --claim-id <id> [--ttl-secs <n>] [--ledger <path>] [--json]"
 }
 
 fn release_usage() -> &'static str {
     "Usage:
+  adl-session release --claim-id <id> [--reason <text>] [--ledger <path>] [--json]
+
+Compatibility:
   adl session release --claim-id <id> [--reason <text>] [--ledger <path>] [--json]"
 }
 
