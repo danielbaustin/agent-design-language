@@ -3133,10 +3133,7 @@ impl AwsRemoteValidationAdapter for LiveAwsRemoteValidationAdapter {
                     }
                     append_command_status_line(
                         "command_dispatch_retry",
-                        format!(
-                            "instance_id={instance_id} detail={}",
-                            classified.message
-                        ),
+                        format!("instance_id={instance_id} detail={}", classified.message),
                     );
                     sleep(poll_interval).await;
                 }
