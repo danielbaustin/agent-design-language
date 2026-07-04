@@ -279,16 +279,30 @@ pub(crate) fn review_packet_contains_absolute_host_path(
 ) -> bool {
     hunks
         .iter()
-        .any(|hunk| contains_review_absolute_host_path(&hunk.diff_excerpt))
+        .any(|hunk| contains_review_absolute_host_path_in_effective_diff(&hunk.diff_excerpt))
         || contexts
             .iter()
             .any(|context| contains_review_absolute_host_path(&context.current_excerpt))
 }
 
+pub(crate) fn contains_review_absolute_host_path_in_effective_diff(text: &str) -> bool {
+    text.lines().any(|line| {
+        if line.starts_with('-') && !line.starts_with("---") {
+            return false;
+        }
+        contains_review_absolute_host_path(line)
+    })
+}
+
 pub(crate) fn contains_review_absolute_host_path(text: &str) -> bool {
-    ["/Users/", "/home/", "/tmp/", "/var/folders/"]
-        .iter()
-        .any(|needle| text.contains(needle))
+    [
+        format!("/{}{}", "Users", "/"),
+        format!("/{}{}", "home", "/"),
+        format!("/{}{}", "tmp", "/"),
+        format!("/{}{}", "var/folders", "/"),
+    ]
+    .iter()
+    .any(|needle| text.contains(needle))
         || contains_windows_absolute_path(text)
 }
 

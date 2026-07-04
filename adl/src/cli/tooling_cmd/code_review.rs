@@ -24,7 +24,10 @@ use code_review_types::{RunSummary, CODE_REVIEW_SUMMARY_SCHEMA};
 #[cfg(test)]
 pub(crate) use code_review_args::parse_args;
 #[cfg(test)]
-pub(crate) use code_review_build::{changed_files, contains_review_absolute_host_path};
+pub(crate) use code_review_build::{
+    changed_files, contains_review_absolute_host_path,
+    contains_review_absolute_host_path_in_effective_diff,
+};
 #[cfg(test)]
 pub(crate) use code_review_helpers::{read_file_prefix, truncate};
 #[cfg(test)]

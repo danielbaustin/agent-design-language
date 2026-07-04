@@ -42,6 +42,7 @@ pub fn usage() -> &'static str {
   adl runtime-v2 security-boundary [--out <path>]
   adl runtime-v2 foundation-demo [--out <dir>]
   adl runtime-v2 integrated-csm-run-demo [--out <dir>]
+  adl runtime-v2 minimal-integrated-runtime-path [--out <dir>]
   adl runtime-v2 observatory-flagship-demo [--out <dir>]
   adl runtime-v2 cognitive-being-flagship-demo [--out <dir>]
   adl runtime-v2 contract-market-demo [--out <dir>]
@@ -89,13 +90,13 @@ Options:
 
 Examples:
   adl resume hitl-pause-seq
-  adl resume hitl-pause-seq --steer /tmp/steer.json
+  adl resume hitl-pause-seq --steer artifacts/examples/steer.json
   adl agent tick --spec .adl/long_lived_agents/example-agent.yaml
   adl agent run --spec .adl/long_lived_agents/example-agent.yaml --max-cycles 3 --no-sleep
   adl agent status --spec .adl/long_lived_agents/example-agent.yaml --json
   adl agent inspect --spec .adl/long_lived_agents/example-agent.yaml --json
   adl agent stop --spec .adl/long_lived_agents/example-agent.yaml --reason \"operator pause\"
-  adl artifact validate-control-path --root /tmp/adl-v086-control-path-demo/demo-g-v086-control-path
+  adl artifact validate-control-path --root artifacts/examples/adl-v086-control-path-demo/demo-g-v086-control-path
   adl csm observatory --packet demos/fixtures/csm_observatory/proto-csm-01-visibility-packet.json --format bundle --out artifacts/v0901/csm-observatory
   ADL_OLLAMA_BIN=adl/tools/mock_ollama_v0_4.sh adl examples/v0-4-demo-fork-join.adl.yaml --run --trace --out ./out
   adl examples/v0-3-concurrency-fork-join.adl.yaml --print-plan
@@ -125,12 +126,13 @@ Examples:
   adl runtime-v2 security-boundary --out .adl/state/runtime_v2_security_boundary_proof.v1.json
   adl runtime-v2 foundation-demo --out artifacts/v0901/demo-l-v0901-runtime-v2-foundation
   adl runtime-v2 integrated-csm-run-demo --out artifacts/v0902/demo-d10-integrated-csm-run
+  adl runtime-v2 minimal-integrated-runtime-path --out artifacts/v0917/issue-4681-minimal-integrated-runtime-path
   adl runtime-v2 observatory-flagship-demo --out artifacts/v0903/demo-d12-observatory-flagship
   adl runtime-v2 cognitive-being-flagship-demo --out artifacts/v091/demo-d13-cognitive-being-flagship
   adl runtime-v2 contract-market-demo --out artifacts/v0904/demo-d12-contract-market
   adl runtime-v2 governed-tools-flagship-demo --out artifacts/v0905/demo-d11-governed-tools-flagship
   adl runtime-v2 feature-proof-coverage --out artifacts/v0904/feature-proof-coverage.json
-  adl scheduler plan --input adl/tests/fixtures/scheduler/economics_inputs_v1.json --out /tmp/scheduler-plan.json
+  adl scheduler plan --input adl/tests/fixtures/scheduler/economics_inputs_v1.json --out artifacts/examples/scheduler-plan.json
   adl provider setup chatgpt
   adl provider setup claude
   adl provider setup openrouter
@@ -140,25 +142,25 @@ Examples:
   adl godel evaluate --failure-code tool_failure --experiment-result ok --score-delta 1
   adl godel affect-slice --initial-run-id v0-3-aee-recovery-initial --adapted-run-id v0-3-aee-recovery-adapted --godel-run-id review-godel-affect-001 --aee-runs-dir .adl/runs --godel-runs-dir .adl/reports/demo-affect-godel-vertical-slice/runs
   adl keygen --out-dir ./.keys
-  adl sign examples/v0-5-pattern-linear.adl.yaml --key ./.keys/ed25519-private.b64 --out /tmp/signed.adl.yaml
+  adl sign examples/v0-5-pattern-linear.adl.yaml --key ./.keys/ed25519-private.b64 --out artifacts/examples/signed.adl.yaml
   adl instrument graph examples/v0-5-pattern-fork-join.adl.yaml --format dot
   adl instrument graph examples/v0-5-pattern-fork-join.adl.yaml --format json
-  adl instrument replay /tmp/trace.json
-  adl instrument replay-bundle /tmp/trace_bundle_v2 run-123
-  adl instrument diff-trace /tmp/trace-a.json /tmp/trace-b.json
+  adl instrument replay artifacts/examples/trace.json
+  adl instrument replay-bundle artifacts/examples/trace_bundle_v2 run-123
+  adl instrument diff-trace artifacts/examples/trace-a.json artifacts/examples/trace-b.json
   adl instrument trace-schema
-  adl instrument validate-trace-v1 /tmp/trace-v1.json
+  adl instrument validate-trace-v1 artifacts/examples/trace-v1.json
   adl instrument provider-substrate examples/v0-6-provider-profile-delegation.adl.yaml
   adl instrument provider-substrate-schema
-  adl learn export --format bundle-v1 --runs-dir .adl/runs --out /tmp/learning-bundle
-  adl learn export --format trace-bundle-v2 --runs-dir .adl/runs --out /tmp/trace-bundle
-  adl learn export --format trace-bundle-v2 --runs-dir .adl/trace-archive --out /tmp/archived-trace-bundle
+  adl learn export --format bundle-v1 --runs-dir .adl/runs --out artifacts/examples/learning-bundle
+  adl learn export --format trace-bundle-v2 --runs-dir .adl/runs --out artifacts/examples/trace-bundle
+  adl learn export --format trace-bundle-v2 --runs-dir .adl/trace-archive --out artifacts/examples/archived-trace-bundle
   adl tooling lint-prompt-spec --issue 761
-  adl tooling card-prompt --issue 761 --out /tmp/issue-761.prompt.md
-  adl tooling csdlc-prompt-editor --emit-model-js docs/tooling/csdlc-prompt-editor/editor_model.js --render-samples /tmp/csdlc-prompt-samples
+  adl tooling card-prompt --issue 761 --out artifacts/examples/issue-761.prompt.md
+  adl tooling csdlc-prompt-editor --emit-model-js docs/tooling/csdlc-prompt-editor/editor_model.js --render-samples artifacts/examples/csdlc-prompt-samples
   adl tooling code-review --out artifacts/reviews/pr-review --backend fixture --visibility packet-only
   adl tooling code-review --out artifacts/reviews/file-review --backend ollama --file adl/src/lib.rs --allow-live-ollama
-  adl verify /tmp/signed.adl.yaml --key ./.keys/ed25519-public.b64"
+  adl verify artifacts/examples/signed.adl.yaml --key ./.keys/ed25519-public.b64"
 }
 
 pub fn resume_usage() -> &'static str {

@@ -1,0 +1,30 @@
+{
+  "schema_version": "adl.pr_review_result.v1",
+  "review_id": "review-34c573777970dbc6",
+  "reviewer_backend": "ollama",
+  "reviewer_model": "hf.co/mitkox/FastContext-1.0-4B-RL-Q4_K_M-GGUF:latest",
+  "reviewer_session": "ollama-reviewer-4681-retry-20260704",
+  "writer_session": "019f2b04-f36c-71f0-b555-2558cf160ea0",
+  "same_session_as_writer": false,
+  "visibility_mode": "packet_only",
+  "repo_access": {
+    "read_only": false,
+    "write_allowed": false,
+    "tool_execution_allowed": false
+  },
+  "packet_id": "34c573777970dbc6",
+  "static_analysis_summary": [
+    "PASS: git diff --check --end-of-options origin/main...HEAD"
+  ],
+  "findings": [],
+  "disposition": "skipped",
+  "residual_risk": [
+    "Ollama unavailable: error sending request for url (http://127.0.0.1:11434/api/generate)"
+  ],
+  "validation_claims": [],
+  "non_claims": [
+    "review result is not merge authority",
+    "reviewer did not execute repository writes",
+    "reviewer received a bounded packet, not live repository read tools"
+  ]
+}

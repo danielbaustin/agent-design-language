@@ -1,0 +1,9 @@
+{
+  "schema_version": "adl.pr_review_run_summary.v1",
+  "packet_path": "review_packet.json",
+  "result_path": "review_result.json",
+  "gate_path": "gate_result.json",
+  "backend": "fixture",
+  "visibility_mode": "packet_only",
+  "pr_open_allowed": false
+}

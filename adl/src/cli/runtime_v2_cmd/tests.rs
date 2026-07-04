@@ -25,6 +25,8 @@ const RUNTIME_V2_CLI_REGRESSION_SMOKES: &[&str] = &[
     "foundation-demo:arg-validation",
     "integrated-csm-run-demo:write-bundle",
     "integrated-csm-run-demo:arg-validation",
+    "minimal-integrated-runtime-path:write-bundle",
+    "minimal-integrated-runtime-path:arg-validation",
     "observatory-flagship-demo:write-bundle",
     "observatory-flagship-demo:arg-validation",
     "cognitive-being-flagship-demo:write-bundle",
@@ -455,6 +457,127 @@ fn trace_runtime_v2_integrated_csm_run_demo_validates_stdout_help_and_output_pat
 }
 
 #[test]
+fn trace_runtime_v2_minimal_integrated_runtime_path_writes_retained_evidence() {
+    let repo = temp_repo("minimal-integrated-runtime-path");
+    let out_dir = repo.join("out/minimal-integrated-runtime-path");
+
+    real_runtime_v2_in_repo(
+        &[
+            "minimal-integrated-runtime-path".to_string(),
+            "--out".to_string(),
+            "out/minimal-integrated-runtime-path".to_string(),
+        ],
+        &repo,
+    )
+    .expect("minimal integrated runtime path");
+
+    assert!(out_dir
+        .join("runtime_v2/csm_run/integrated_first_run_proof_packet.json")
+        .is_file());
+    assert!(out_dir
+        .join("runtime_v2/csm_run/integrated_first_run_transcript.jsonl")
+        .is_file());
+    assert!(out_dir
+        .join("runtime_v2/observatory/operator_report.md")
+        .is_file());
+    assert!(out_dir
+        .join("artifacts/runtime-v2-governed-demo-run/logs/activation_log.json")
+        .is_file());
+    assert!(out_dir
+        .join("artifacts/runtime-v2-governed-demo-run/governed/result.redacted.json")
+        .is_file());
+    let summary_path = out_dir.join("issue_4681/minimal_integrated_runtime_path_summary.json");
+    assert!(summary_path.is_file());
+    let json: serde_json::Value =
+        serde_json::from_slice(&fs::read(summary_path).expect("summary should exist"))
+            .expect("valid json");
+    assert_eq!(
+        json["schema_version"],
+        "runtime_v2.minimal_integrated_runtime_path_summary.v1"
+    );
+    assert_eq!(json["issue"], 4681);
+    assert!(json["negative_case_refs"]
+        .as_array()
+        .expect("negative cases")
+        .iter()
+        .any(|case| case
+            .as_str()
+            .unwrap_or_default()
+            .contains("absolute --out paths")));
+
+    fs::remove_dir_all(repo).ok();
+}
+
+#[test]
+fn trace_runtime_v2_minimal_integrated_runtime_path_validates_stdout_help_and_output_path_rules() {
+    let repo = temp_repo("minimal-integrated-runtime-path-branches");
+
+    real_runtime_v2_in_repo(&["minimal-integrated-runtime-path".to_string()], &repo)
+        .expect("stdout minimal integrated runtime path");
+    real_runtime_v2_in_repo(
+        &[
+            "minimal-integrated-runtime-path".to_string(),
+            "--help".to_string(),
+        ],
+        &repo,
+    )
+    .expect("minimal integrated runtime path help");
+    let err = real_runtime_v2_in_repo(
+        &[
+            "minimal-integrated-runtime-path".to_string(),
+            "--out".to_string(),
+            repo.join("absolute/minimal-integrated-runtime-path")
+                .to_string_lossy()
+                .to_string(),
+        ],
+        &repo,
+    )
+    .expect_err("absolute output dir should fail");
+    assert!(err.to_string().contains(
+        "runtime-v2 minimal-integrated-runtime-path --out path must be repository-relative"
+    ));
+
+    let err = real_runtime_v2_in_repo(
+        &[
+            "minimal-integrated-runtime-path".to_string(),
+            "--out".to_string(),
+            "../escape".to_string(),
+        ],
+        &repo,
+    )
+    .expect_err("parent traversal output dir should fail");
+    assert!(err.to_string().contains(
+        "runtime-v2 minimal-integrated-runtime-path --out path must stay within the repository"
+    ));
+
+    let err = real_runtime_v2_in_repo(
+        &[
+            "minimal-integrated-runtime-path".to_string(),
+            "--bogus".to_string(),
+        ],
+        &repo,
+    )
+    .expect_err("unknown arg should fail");
+    assert!(err
+        .to_string()
+        .contains("unknown arg for runtime-v2 minimal-integrated-runtime-path: --bogus"));
+
+    let err = real_runtime_v2_in_repo(
+        &[
+            "minimal-integrated-runtime-path".to_string(),
+            "--out".to_string(),
+        ],
+        &repo,
+    )
+    .expect_err("missing out value should fail");
+    assert!(err
+        .to_string()
+        .contains("runtime-v2 minimal-integrated-runtime-path requires --out <dir>"));
+
+    fs::remove_dir_all(repo).ok();
+}
+
+#[test]
 #[ignore = "full D12 CLI filesystem smoke is validated by the explicit observatory-flagship-demo command; keep always-on coverage bounded"]
 fn trace_runtime_v2_observatory_flagship_demo_writes_proof_bundle() {
     let repo = temp_repo("observatory-flagship-demo");
@@ -781,6 +904,8 @@ fn trace_runtime_v2_feature_proof_coverage_validates_runtime_v2_cli_regression_r
         trace_runtime_v2_foundation_demo_validates_stdout_help_and_output_path_rules,
         trace_runtime_v2_integrated_csm_run_demo_writes_proof_bundle,
         trace_runtime_v2_integrated_csm_run_demo_validates_stdout_help_and_output_path_rules,
+        trace_runtime_v2_minimal_integrated_runtime_path_writes_retained_evidence,
+        trace_runtime_v2_minimal_integrated_runtime_path_validates_stdout_help_and_output_path_rules,
         trace_runtime_v2_observatory_flagship_demo_writes_proof_bundle,
         trace_runtime_v2_observatory_flagship_demo_validates_stdout_help_and_output_path_rules,
         trace_runtime_v2_cognitive_being_flagship_demo_writes_proof_bundle,

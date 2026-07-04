@@ -45,6 +45,7 @@ mod kernel_loop;
 mod kindness_model;
 mod manifold;
 mod memory_identity_architecture;
+mod minimal_integrated_runtime_path;
 mod moral_event_validation;
 mod moral_metrics;
 mod moral_resources;

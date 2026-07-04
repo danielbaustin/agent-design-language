@@ -1,0 +1,30 @@
+{
+  "schema_version": "adl.pr_review_result.v1",
+  "review_id": "review-be35c0f336522ff2",
+  "reviewer_backend": "fixture",
+  "reviewer_model": "fixture-reviewer-v1",
+  "reviewer_session": "fixture-reviewer-4681-hygiene",
+  "writer_session": "019f2b2d-4681-continuation",
+  "same_session_as_writer": false,
+  "visibility_mode": "packet_only",
+  "repo_access": {
+    "read_only": false,
+    "write_allowed": false,
+    "tool_execution_allowed": false
+  },
+  "packet_id": "be35c0f336522ff2",
+  "static_analysis_summary": [
+    "PASS: git diff --check --end-of-options origin/main...HEAD"
+  ],
+  "findings": [],
+  "disposition": "non_proving",
+  "residual_risk": [
+    "fixture backend proves artifact shape only and cannot bless PR publication"
+  ],
+  "validation_claims": [],
+  "non_claims": [
+    "review result is not merge authority",
+    "reviewer did not execute repository writes",
+    "reviewer received a bounded packet, not live repository read tools"
+  ]
+}
