@@ -14,9 +14,9 @@ case "$plan" in
     ;;
 esac
 case "$plan" in
-  *"targets=lib"*) ;;
+  *"targets=workspace"*) ;;
   *)
-    echo "expected authoritative coverage plan to use library targets only" >&2
+    echo "expected authoritative coverage plan to use workspace targets" >&2
     echo "$plan" >&2
     exit 1
     ;;
@@ -37,7 +37,6 @@ script_text="$(cat "$SCRIPT")"
 for required_fragment in \
   "cargo llvm-cov nextest" \
   "--workspace" \
-  "--lib" \
   "--no-report" \
   "cargo llvm-cov report" \
   "--json" \
@@ -53,8 +52,8 @@ do
   esac
 done
 case "$script_text" in
-  *"--tests"*|*"--bins"*|*"--all-targets"*)
-    echo "coverage runner must not use tests, bins, or all-targets" >&2
+  *"--lib"*|*"--tests"*|*"--bins"*|*"--all-targets"*)
+    echo "coverage runner must not narrow authoritative workspace coverage targets" >&2
     exit 1
     ;;
 esac
@@ -90,7 +89,7 @@ for required_dir in "$scratch_root/target" "$scratch_root/target/llvm-cov-target
 done
 
 for required in \
-  "cmd=llvm-cov nextest --workspace --lib --no-report" \
+  "cmd=llvm-cov nextest --workspace --no-report" \
   "cmd=llvm-cov report --json --summary-only --output-path coverage-summary.json" \
   "target=$scratch_root/target" \
   "llvm_cov_target=$scratch_root/target/llvm-cov-target"

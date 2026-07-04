@@ -71,11 +71,11 @@ if [ "$PRINT_PLAN" = true ]; then
   if [ "$MODE" = "full_authoritative_default_features" ]; then
     printf 'features=default\n'
     printf 'workspace=full\n'
-    printf 'targets=lib\n'
+    printf 'targets=workspace\n'
   else
     printf 'features=default\n'
     printf 'workspace=bounded_policy_surface\n'
-    printf 'targets=lib\n'
+    printf 'targets=workspace\n'
   fi
   exit 0
 fi
@@ -101,7 +101,6 @@ if [ "$MODE" = "full_authoritative_default_features" ]; then
   echo "Authoritative coverage linker mode: ${RUST_LINK_ACCEL:-default}"
   cargo llvm-cov nextest \
     --workspace \
-    --lib \
     --no-report
 else
   echo "Authoritative coverage mode: bounded_policy_surface_pr"
@@ -109,7 +108,6 @@ else
   echo "Full authoritative default-feature proof remains reserved for push-to-main and mixed runtime policy changes."
   cargo llvm-cov nextest \
     --workspace \
-    --lib \
     --no-report
 fi
 

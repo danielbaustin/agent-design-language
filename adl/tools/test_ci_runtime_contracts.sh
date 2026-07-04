@@ -284,7 +284,6 @@ for required_fragment in (
 for required_fragment in (
     "cargo llvm-cov nextest \\",
     "    --workspace \\",
-    "    --lib \\",
     "    --no-report",
     "cargo llvm-cov report \\",
     "--json \\",
@@ -293,11 +292,11 @@ for required_fragment in (
 ):
     if required_fragment not in runner_script_text:
         raise SystemExit(
-            "authoritative coverage runner must execute direct library-only coverage without linking ADL binaries; "
+            "authoritative coverage runner must execute direct workspace coverage without narrowing source targets; "
             f"missing fragment: {required_fragment}"
         )
-if "    --tests \\" in runner_script_text or "    --bins \\" in runner_script_text or "    --all-targets \\" in runner_script_text:
-    raise SystemExit("authoritative coverage runner must not link test/bin/all-target surfaces")
+if "    --lib \\" in runner_script_text or "    --tests \\" in runner_script_text or "    --bins \\" in runner_script_text or "    --all-targets \\" in runner_script_text:
+    raise SystemExit("authoritative coverage runner must not narrow workspace coverage targets")
 
 authoritative_gate_step = step_block("Coverage-impact changed-source gate")
 if '--summary adl/coverage-summary.json \\' not in authoritative_gate_step:
