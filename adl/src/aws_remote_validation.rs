@@ -1213,13 +1213,14 @@ fn build_remote_command_script(config: &AwsRemoteValidationConfig) -> String {
     format!(
         r#"set -euo pipefail
 RUN_ROOT="/tmp/adl-aws-remote-validation/{run_id}"
+export HOME="${{HOME:-/root}}"
 REPO_DIR="$RUN_ROOT/agent-design-language"
 WORK_ROOT="$RUN_ROOT"
 TOOLCHAIN_ROOT=""
 TARGET_DIR="$WORK_ROOT/target"
 SCCACHE_DIR="$WORK_ROOT/sccache"
-CARGO_HOME_DIR="${{HOME:-/root}}/.cargo"
-RUSTUP_HOME_DIR="${{HOME:-/root}}/.rustup"
+CARGO_HOME_DIR="$HOME/.cargo"
+RUSTUP_HOME_DIR="$HOME/.rustup"
 BOOTSTRAP_START="$(date +%s)"
 CURRENT_STAGE="bootstrap"
 
@@ -1458,7 +1459,6 @@ install_nextest_release() {{
   install_github_release_binary "nextest-rs/nextest" "cargo-nextest" "$target"
 }}
 
-export HOME="${{HOME:-/root}}"
 CACHE_BUCKET='{cache_bucket}'
 CACHE_PREFIX='{cache_prefix}'
 SCCACHE_TARBALL_URL='{sccache_tarball_url}'
