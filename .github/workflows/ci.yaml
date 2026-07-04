@@ -244,10 +244,12 @@ jobs:
 
       - name: docs command check
         run: bash adl/tools/check_release_notes_commands.sh
+        working-directory: .
 
       - name: ci runtime contract check
         if: steps.path-policy.outputs.ci_contracts_required == 'true'
         run: bash adl/tools/test_ci_runtime_contracts.sh
+        working-directory: .
 
       - name: ci runtime budget report contract check
         if: steps.path-policy.outputs.ci_contracts_required == 'true'
@@ -257,6 +259,7 @@ jobs:
       - name: ci cache/linker contract check
         if: steps.path-policy.outputs.ci_contracts_required == 'true'
         run: bash adl/tools/test_ci_cache_linker_contracts.sh
+        working-directory: .
 
       - name: release version truth check
         if: steps.path-policy.outputs.release_version_only == 'true'

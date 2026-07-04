@@ -129,6 +129,19 @@ if release_version_truth != "bash adl/tools/check_release_version_surfaces.sh":
         f"found: {release_version_truth}"
     )
 
+for root_script_step in (
+    "docs command check",
+    "ci runtime contract check",
+    "ci runtime budget report contract check",
+    "ci cache/linker contract check",
+    "release version truth check",
+):
+    if step_working_directory(root_script_step) != ".":
+        raise SystemExit(
+            "adl-ci workflow steps that call repo-root adl/tools scripts must run from the repository root; "
+            f"{root_script_step!r} has working-directory: {step_working_directory(root_script_step)!r}"
+        )
+
 if "tool: nextest" not in workflow:
     raise SystemExit(
         "coverage lanes must install cargo-nextest as a required coverage toolchain dependency"
