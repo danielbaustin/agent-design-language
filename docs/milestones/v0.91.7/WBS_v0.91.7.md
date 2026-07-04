@@ -80,6 +80,14 @@ Completion standard: planned, documented, mocked, component-proven, assigned, or
 - Scheduler/provider work must protect premium capacity and support local/hosted model routing.
 - Capability-envelope, capability-testing, and Aptitude Atlas boundaries must be explicit before v0.92 consumes memory/identity/birthday evidence.
 - Build/validation work must reduce the validation tail without weakening proof; EC2 Spot or another disposable remote-builder path must be proven before it becomes a release-critical lane.
+- WP-06 selected sprint-lane truth is retained in
+  `review/V0917_WP06_BUILD_THROUGHPUT_VALIDATION_COST_REDUCTION_4633.md`.
+  Merged/closed children `#4676`, `#4800`, and `#4698` have local closeout
+  normalization. `#4726` remains in a janitor-required PR-tail state after
+  failed `adl-ci`; `#4677` and `#4678` are green open PRs waiting review/merge.
+  The `#4679` remote-builder work is split into `#4837` for AWS Spot EC2
+  integration and `#4838` for GitHub Actions plus AWS CodeFriend build-lane
+  proof.
 - GitHub convergence/control-plane work must be reliable enough for sprint execution or explicitly recorded as a v0.92 blocker with evidence and operator approval. The `#4622` repo-native PR inventory command removes the `missing_owner_binary_cargo_fallback_disabled` failure from release-tail issue/PR inventory.
 - Runtime integration/Soak #2 must prove one assembled minimal runtime path or name blockers before birthday activation.
 - Logging/observability is not optional polis infrastructure. `#4718` must prove current integrated runtime/provider/control-plane logging, stdout/stderr separation, redaction/path hygiene, OTel-compatible boundary truth, and Observatory/Unity consumption before v0.92 may rely on logging readiness.

@@ -22,6 +22,12 @@ Current status: milestone issue wave opened for the final pre-`v0.92` bridge and
 - WP-02 v0.91.6 closeout-truth consumption: `#4661` /
   `docs/milestones/v0.91.7/review/V0917_WP02_V0916_CLOSEOUT_TRUTH_CONSUMPTION_4661.md`.
 - WP-01 planning promotion: `#4628`.
+- WP-06 build-throughput sprint lane: `#4633` /
+  `review/V0917_WP06_BUILD_THROUGHPUT_VALIDATION_COST_REDUCTION_4633.md`.
+  The selected child lane has merged `#4676`, `#4800`, and `#4698`; `#4726`
+  has an open draft PR with failed `adl-ci`; `#4677` and `#4678` have green
+  open PRs waiting review/merge. WP-06 is not fully closed while those PR tails
+  and remote-builder follow-ups `#4837` / `#4838` remain unresolved.
 - Canonical WP issue wave: `#4628` through `#4650`.
 - Existing assigned v0.91.7 issues:
   - `#4603` routes into WP-06 build throughput / remote validation.
@@ -121,6 +127,8 @@ Assignment to a follow-on issue, sprint, or milestone is scheduling truth only. 
 - Feature directory index: [features/README.md](features/README.md)
 - WP-02 closeout-truth consumption packet:
   [docs/milestones/v0.91.7/review/V0917_WP02_V0916_CLOSEOUT_TRUTH_CONSUMPTION_4661.md](review/V0917_WP02_V0916_CLOSEOUT_TRUTH_CONSUMPTION_4661.md)
+- WP-06 build-throughput sprint packet:
+  [docs/milestones/v0.91.7/review/V0917_WP06_BUILD_THROUGHPUT_VALIDATION_COST_REDUCTION_4633.md](review/V0917_WP06_BUILD_THROUGHPUT_VALIDATION_COST_REDUCTION_4633.md)
 
 ## Non-Goals
 

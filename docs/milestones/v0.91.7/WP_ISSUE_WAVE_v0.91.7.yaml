@@ -68,7 +68,7 @@ wp_child_issue_routes:
   - {issue: 4676, wp: WP-06, assignment: "[validation-manager] Implement validation manager"}
   - {issue: 4677, wp: WP-06, assignment: "[archive] Implement CI log archive to S3"}
   - {issue: 4678, wp: WP-06, assignment: "[remote] Consume Nessus remote validation lane"}
-  - {issue: 4679, wp: WP-06, assignment: "[aws] Prove EC2 Spot or alternate remote builder"}
+  - {issue: 4679, wp: WP-06, assignment: "[aws] Superseded by split follow-ups #4837 AWS Spot EC2 integration and #4838 GitHub Actions plus AWS CodeFriend build lane"}
   - {issue: 4680, wp: WP-06, assignment: "[cache] Improve sccache linker and target-dir setup"}
   - {issue: 4681, wp: WP-07, assignment: "[runtime] Assemble minimal integrated runtime path"}
   - {issue: 4682, wp: WP-07, assignment: "[soak] Run runtime Soak 2"}
@@ -171,6 +171,12 @@ work_packages:
       - "Build/validation throughput sprint"
       - "Remote/local validation runner decision"
       - "EC2 Spot or alternate remote-builder time/cost/cleanup evidence"
+    status_notes:
+      - "Selected WP-06 sprint lane recorded in docs/milestones/v0.91.7/review/V0917_WP06_BUILD_THROUGHPUT_VALIDATION_COST_REDUCTION_4633.md."
+      - "#4676, #4800, and #4698 are merged/closed and locally closeouted."
+      - "#4726 has an open draft PR with failed adl-ci and needs janitor."
+      - "#4677 and #4678 are green open PRs waiting review/merge."
+      - "#4679 remote-builder work is split into #4837 AWS Spot EC2 integration and #4838 GitHub Actions plus AWS CodeFriend build lane."
   - wp: WP-07
     title: Runtime integration logging and OTel fire-up and Soak 2
     outcome: Assemble one minimal end-to-end runtime path, reconcile Runtime v2 minimal prototype with current substrate, implement/prove integrated logging and OTel-compatible observability through #4718, run integrated runtime Soak #2, identify runtime bloat/seam pain, and preserve Soak #3 only as an operator-approved risk if Soak #2 cannot prove the activation path.
