@@ -5359,25 +5359,6 @@ pub(super) fn run_finish_validation_rust(
                         &[path_str(&validation_manager_nessus_lane)?],
                     )?;
                 }
-                "bash adl/tools/test_ci_path_policy.sh && bash adl/tools/test_ci_runtime_contracts.sh && bash adl/tools/test_select_validation_lanes.sh && bash adl/tools/test_validation_manager.sh && bash adl/tools/test_run_nessus_remote_validation.sh && bash adl/tools/test_run_validation_manager_nessus_lane.sh" => {
-                    let ci_path_policy = repo_root.join("adl/tools/test_ci_path_policy.sh");
-                    run_finish_validation_status("bash", &[path_str(&ci_path_policy)?])?;
-                    let ci_runtime_contracts =
-                        repo_root.join("adl/tools/test_ci_runtime_contracts.sh");
-                    run_finish_validation_status("bash", &[path_str(&ci_runtime_contracts)?])?;
-                    let select_validation_lanes =
-                        repo_root.join("adl/tools/test_select_validation_lanes.sh");
-                    run_finish_validation_status("bash", &[path_str(&select_validation_lanes)?])?;
-                    let validation_manager =
-                        repo_root.join("adl/tools/test_validation_manager.sh");
-                    run_finish_validation_status("bash", &[path_str(&validation_manager)?])?;
-                    let nessus_remote_runner =
-                        repo_root.join("adl/tools/test_run_nessus_remote_validation.sh");
-                    run_finish_validation_status("bash", &[path_str(&nessus_remote_runner)?])?;
-                    let validation_manager_nessus =
-                        repo_root.join("adl/tools/test_run_validation_manager_nessus_lane.sh");
-                    run_finish_validation_status("bash", &[path_str(&validation_manager_nessus)?])?;
-                }
                 "bash -n adl/tools/polis_status_for_ssm.sh && bash -n adl/tools/polis_status_for_ssm_qts.sh && python3 adl/tools/validate_polis_status_for_ssm_qts.py" => {
                     let polis_status = repo_root.join("adl/tools/polis_status_for_ssm.sh");
                     run_finish_validation_status("bash", &["-n", path_str(&polis_status)?])?;
