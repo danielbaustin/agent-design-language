@@ -9,12 +9,12 @@ use crate::cli::pr_cmd::finish_support::{
     load_finish_validation_profile, load_finish_validation_profile_for_execution,
     non_closing_lifecycle_line, normalize_docs_only_sor_text, normalize_sor_emitted_facts_fixture,
     open_pr_url_nonblocking, open_pr_url_nonblocking_with_timeout, push_finish_branch_with_git,
-    real_pr_finish, reject_local_issue_bundle_paths_in_finish_paths,
-    render_default_finish_validation, resolve_finish_issue_scope_and_slug,
-    restage_finish_output_truth_paths, run_finish_validation_status,
-    select_finish_validation_plan_for_finish, validate_ready_only_finish_pr_state,
-    validate_release_gate_disposition, FinishValidationMode, FinishValidationPlan,
-    FinishValidationProfile, FinishValidationProfileEscalation,
+    ready_only_finish_pr_state_is_promotable, real_pr_finish,
+    reject_local_issue_bundle_paths_in_finish_paths, render_default_finish_validation,
+    resolve_finish_issue_scope_and_slug, restage_finish_output_truth_paths,
+    run_finish_validation_status, select_finish_validation_plan_for_finish,
+    validate_ready_only_finish_pr_state, validate_release_gate_disposition, FinishValidationMode,
+    FinishValidationPlan, FinishValidationProfile, FinishValidationProfileEscalation,
     FinishValidationProfileEscalationReason, FinishValidationProfileRunItem,
     FinishValidationProfileSurfaceItem, FinishValidationSplit, FinishValidationSplitFailClosed,
     FinishValidationSplitFanoutPolicy, FinishValidationSplitFastLane,
@@ -46,6 +46,7 @@ fn ready_only_validation_report(projection_status: &str) -> PrValidationReport {
                 status: "IN_PROGRESS".to_string(),
                 conclusion: "UNKNOWN".to_string(),
                 job_run_id: "8801".to_string(),
+                wait_reason: "check_state".to_string(),
             }],
         ),
         "checks_failed" => (
@@ -56,6 +57,7 @@ fn ready_only_validation_report(projection_status: &str) -> PrValidationReport {
                 status: "COMPLETED".to_string(),
                 conclusion: "FAILURE".to_string(),
                 job_run_id: "8802".to_string(),
+                wait_reason: "check_state".to_string(),
             }],
             Vec::new(),
         ),
@@ -72,6 +74,19 @@ fn ready_only_validation_report(projection_status: &str) -> PrValidationReport {
         failed_checks,
         pending_checks,
     }
+}
+
+fn ready_only_draft_gated_pending_validation_report() -> PrValidationReport {
+    let mut report = ready_only_validation_report("checks_pending");
+    report.is_draft = true;
+    report.pending_checks = vec![PrValidationCheckReport {
+        name: "adl-ci".to_string(),
+        status: "IN_PROGRESS".to_string(),
+        conclusion: "UNKNOWN".to_string(),
+        job_run_id: "8803".to_string(),
+        wait_reason: "pr_draft".to_string(),
+    }];
+    report
 }
 
 fn ready_only_head_sha() -> &'static str {
@@ -114,6 +129,22 @@ fn ready_only_finish_accepts_green_draft_and_ready_pr_state() {
         false,
     )
     .expect("already-ready green PR should stay idempotent");
+}
+
+#[test]
+fn ready_only_finish_accepts_only_draft_gated_pending_checks_for_draft_pr() {
+    let report = ready_only_draft_gated_pending_validation_report();
+    assert!(ready_only_finish_pr_state_is_promotable(&report));
+    validate_ready_only_finish_pr_state(
+        &report,
+        "main",
+        "main",
+        ready_only_head_sha(),
+        &[4706],
+        4706,
+        false,
+    )
+    .expect("draft-gated pending checks should allow ready promotion");
 }
 
 #[test]
@@ -5044,7 +5075,7 @@ fn finish_validation_profile_accepts_ready_profile_with_registered_nessus_remote
     fs::create_dir_all(repo.join("adl/config")).expect("adl config dir");
     fs::write(
         repo.join("adl/config/validation_lane_selector.v0.91.6.json"),
-        r#"{"schema_version":"adl.validation_lane_selector.v1","lanes":[{"id":"validation_manager_surface","run_command":"bash adl/tools/test_ci_path_policy.sh && bash adl/tools/test_ci_runtime_contracts.sh && bash adl/tools/test_select_validation_lanes.sh && bash adl/tools/test_validation_manager.sh && bash adl/tools/test_run_nessus_remote_validation.sh"}]}"#,
+        r#"{"schema_version":"adl.validation_lane_selector.v1","lanes":[{"id":"validation_manager_surface","run_command":"bash adl/tools/test_ci_path_policy.sh && bash adl/tools/test_ci_runtime_contracts.sh && bash adl/tools/test_select_validation_lanes.sh && bash adl/tools/test_validation_manager.sh && bash adl/tools/test_run_nessus_remote_validation.sh && bash adl/tools/test_run_validation_manager_nessus_lane.sh"}]}"#,
     )
     .expect("validation manifest");
     let profile = FinishValidationProfile {
@@ -5054,7 +5085,7 @@ fn finish_validation_profile_accepts_ready_profile_with_registered_nessus_remote
         validation_split: None,
         run: vec![FinishValidationProfileRunItem {
             lane_id: "validation_manager_surface".to_string(),
-            command: "bash adl/tools/test_ci_path_policy.sh && bash adl/tools/test_ci_runtime_contracts.sh && bash adl/tools/test_select_validation_lanes.sh && bash adl/tools/test_validation_manager.sh && bash adl/tools/test_run_nessus_remote_validation.sh".to_string(),
+            command: "bash adl/tools/test_ci_path_policy.sh && bash adl/tools/test_ci_runtime_contracts.sh && bash adl/tools/test_select_validation_lanes.sh && bash adl/tools/test_validation_manager.sh && bash adl/tools/test_run_nessus_remote_validation.sh && bash adl/tools/test_run_validation_manager_nessus_lane.sh".to_string(),
             reason: "fixture".to_string(),
             matched_paths: vec!["adl/tools/test_run_nessus_remote_validation.sh".to_string()],
             vpp_record: None,
@@ -5105,7 +5136,7 @@ residual_ci_proof_required_before_merge: required
         validation_split: None,
         run: vec![FinishValidationProfileRunItem {
             lane_id: "ci_path_policy_contracts".to_string(),
-            command: "bash adl/tools/test_ci_path_policy.sh && bash adl/tools/test_ci_runtime_contracts.sh && bash adl/tools/test_select_validation_lanes.sh && bash adl/tools/test_validation_manager.sh && bash adl/tools/test_run_nessus_remote_validation.sh".to_string(),
+            command: "bash adl/tools/test_ci_path_policy.sh && bash adl/tools/test_ci_runtime_contracts.sh && bash adl/tools/test_select_validation_lanes.sh && bash adl/tools/test_validation_manager.sh && bash adl/tools/test_run_nessus_remote_validation.sh && bash adl/tools/test_run_validation_manager_nessus_lane.sh".to_string(),
             reason: "release gate policy contracts".to_string(),
             matched_paths: vec![".github/workflows/ci.yaml".to_string()],
             vpp_record: None,

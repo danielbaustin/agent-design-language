@@ -585,6 +585,7 @@ mod pr_inventory_tests {
             status: status.to_string(),
             conclusion: conclusion.to_string(),
             job_run_id: job_run_id.to_string(),
+            wait_reason: "check_state".to_string(),
         }
     }
 

@@ -1317,10 +1317,18 @@ pub(super) fn pr_validation_report_from_snapshot_with_disposition(
     disposition: PrValidationDisposition,
 ) -> PrValidationReport {
     let effective_checks = effective_pr_validation_checks(&snapshot.checks);
+    let pending_wait_reason =
+        if snapshot.is_draft && disposition == PrValidationDisposition::Pending {
+            "pr_draft"
+        } else {
+            "check_state"
+        };
     let checks = snapshot
         .checks
         .iter()
-        .map(pr_validation_check_report)
+        .map(|check| {
+            pr_validation_check_report_with_pending_wait_reason(check, pending_wait_reason)
+        })
         .collect::<Vec<_>>();
     let failed_checks = effective_checks
         .iter()
@@ -1333,7 +1341,7 @@ pub(super) fn pr_validation_report_from_snapshot_with_disposition(
     let pending_checks = effective_checks
         .iter()
         .filter(|check| validation_check_is_pending(&check.status, &check.conclusion))
-        .map(|check| pr_validation_check_report(check))
+        .map(|check| pr_validation_check_report_with_wait_reason(check, pending_wait_reason))
         .collect::<Vec<_>>();
     PrValidationReport {
         pr_number: snapshot.pr_number,
@@ -1358,9 +1366,17 @@ pub(super) fn pr_validation_effective_report_from_snapshot_with_disposition(
     disposition: PrValidationDisposition,
 ) -> PrValidationReport {
     let effective_checks = effective_pr_validation_checks(&snapshot.checks);
+    let pending_wait_reason =
+        if snapshot.is_draft && disposition == PrValidationDisposition::Pending {
+            "pr_draft"
+        } else {
+            "check_state"
+        };
     let checks = effective_checks
         .iter()
-        .map(|check| pr_validation_check_report(check))
+        .map(|check| {
+            pr_validation_check_report_with_pending_wait_reason(check, pending_wait_reason)
+        })
         .collect::<Vec<_>>();
     let failed_checks = effective_checks
         .iter()
@@ -1373,7 +1389,7 @@ pub(super) fn pr_validation_effective_report_from_snapshot_with_disposition(
     let pending_checks = effective_checks
         .iter()
         .filter(|check| validation_check_is_pending(&check.status, &check.conclusion))
-        .map(|check| pr_validation_check_report(check))
+        .map(|check| pr_validation_check_report_with_wait_reason(check, pending_wait_reason))
         .collect::<Vec<_>>();
     PrValidationReport {
         pr_number: snapshot.pr_number,
@@ -1394,11 +1410,31 @@ pub(super) fn pr_validation_effective_report_from_snapshot_with_disposition(
 }
 
 fn pr_validation_check_report(check: &PrValidationCheckSnapshot) -> PrValidationCheckReport {
+    pr_validation_check_report_with_wait_reason(check, "check_state")
+}
+
+fn pr_validation_check_report_with_pending_wait_reason(
+    check: &PrValidationCheckSnapshot,
+    pending_wait_reason: &str,
+) -> PrValidationCheckReport {
+    let wait_reason = if validation_check_is_pending(&check.status, &check.conclusion) {
+        pending_wait_reason
+    } else {
+        "check_state"
+    };
+    pr_validation_check_report_with_wait_reason(check, wait_reason)
+}
+
+fn pr_validation_check_report_with_wait_reason(
+    check: &PrValidationCheckSnapshot,
+    wait_reason: &str,
+) -> PrValidationCheckReport {
     PrValidationCheckReport {
         name: check.name.clone(),
         status: check.status.clone(),
         conclusion: check.conclusion.clone(),
         job_run_id: check.job_run_id.clone(),
+        wait_reason: wait_reason.to_string(),
     }
 }
 

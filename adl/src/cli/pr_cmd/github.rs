@@ -152,6 +152,12 @@ pub(super) struct PrValidationCheckReport {
     pub(super) status: String,
     pub(super) conclusion: String,
     pub(super) job_run_id: String,
+    #[serde(default = "default_pr_validation_check_wait_reason")]
+    pub(super) wait_reason: String,
+}
+
+fn default_pr_validation_check_wait_reason() -> String {
+    "check_state".to_string()
 }
 
 #[derive(Debug, Clone, PartialEq, Eq, Serialize)]

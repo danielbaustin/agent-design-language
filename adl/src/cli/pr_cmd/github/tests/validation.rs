@@ -232,6 +232,10 @@ fn pr_validation_report_exposes_projection_status_for_pr_lifecycle_states() {
     );
     assert_eq!(pending_draft.disposition, "pending");
     assert_eq!(pending_draft.projection_status, "checks_pending");
+    assert_eq!(pending_draft.checks.len(), 1);
+    assert_eq!(pending_draft.checks[0].wait_reason, "pr_draft");
+    assert_eq!(pending_draft.pending_checks.len(), 1);
+    assert_eq!(pending_draft.pending_checks[0].wait_reason, "pr_draft");
 }
 
 #[test]

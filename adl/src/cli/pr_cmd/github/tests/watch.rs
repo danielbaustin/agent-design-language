@@ -306,6 +306,7 @@ fn validation_report(disposition: &str, is_draft: bool) -> PrValidationReport {
             status: "COMPLETED".to_string(),
             conclusion: "FAILURE".to_string(),
             job_run_id: "1".to_string(),
+            wait_reason: "check_state".to_string(),
         }]
     } else {
         vec![]
@@ -316,6 +317,7 @@ fn validation_report(disposition: &str, is_draft: bool) -> PrValidationReport {
             status: "IN_PROGRESS".to_string(),
             conclusion: "PENDING".to_string(),
             job_run_id: "2".to_string(),
+            wait_reason: "check_state".to_string(),
         }]
     } else {
         vec![]
