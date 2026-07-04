@@ -1308,6 +1308,10 @@ if [ "{cache_volume_enabled}" = "1" ]; then
 fi
 
 mkdir -p "$RUN_ROOT" "$WORK_ROOT" "$TARGET_DIR" "$SCCACHE_DIR" "$CARGO_HOME_DIR" "$RUSTUP_HOME_DIR"
+export CARGO_HOME="$CARGO_HOME_DIR"
+export RUSTUP_HOME="$RUSTUP_HOME_DIR"
+mkdir -p "$CARGO_HOME/bin"
+export PATH="$CARGO_HOME/bin:$HOME/.cargo/bin:$PATH"
 
 release_target_triple() {{
   local arch
@@ -1481,13 +1485,9 @@ log_progress "stage=ensure_rustup"
 if ! command -v cargo >/dev/null 2>&1; then
   curl https://sh.rustup.rs -sSf | sh -s -- -y --profile minimal >/tmp/adl-rustup.log 2>&1
 fi
-if [ -f "$HOME/.cargo/env" ]; then
-  . "$HOME/.cargo/env"
+if [ -f "$CARGO_HOME/env" ]; then
+  . "$CARGO_HOME/env"
 fi
-export PATH="$HOME/.cargo/bin:$PATH"
-export CARGO_HOME="$CARGO_HOME_DIR"
-export RUSTUP_HOME="$RUSTUP_HOME_DIR"
-mkdir -p "$CARGO_HOME/bin"
 if [ -f "$HOME/.cargo/env" ]; then
   . "$HOME/.cargo/env"
 fi
