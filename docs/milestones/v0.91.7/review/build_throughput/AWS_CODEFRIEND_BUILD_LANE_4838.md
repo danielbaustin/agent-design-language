@@ -28,6 +28,10 @@ successful live CodeBuild run on `BUILD_GENERAL1_LARGE`.
     handoff file.
   - Supports `--compute-type` so large and xlarge runs are intentional setup
     states rather than manual AWS console edits.
+  - Configures an S3 cache for cargo, rustup, cargo-installed binaries, and
+    `sccache` artifacts.
+  - Installs `sccache` from a pinned prebuilt release instead of compiling it in
+    CodeBuild.
 - `docs/tooling/AWS_CODEFRIEND_BUILD_LANE.md`
   - Operator runbook for dry-run, live boundary, required GitHub configuration,
     setup/update commands, benchmark command, compute size selection, and
@@ -102,6 +106,7 @@ The helper creates or updates:
 - the CodeBuild service role
 - the GitHub Actions start-build role
 - the `adl-codefriend-build` CodeBuild project
+- the S3 cache bucket/prefix used by the CodeBuild project
 - `.adl/tmp/aws-codefriend-build-resource-setup/github-actions-config.env`
 
 The local GitHub configuration file contains variable/secret values for the
@@ -133,6 +138,30 @@ CODEFRIEND_BENCHMARK build_seconds=394 test_seconds=322 total_seconds=716 status
 The earlier `BUILD_GENERAL1_MEDIUM` run failed after roughly fifteen minutes
 with the compiler killed while building a large AWS SDK dependency. The project
 was updated to large compute for the successful run.
+
+Follow-up optimization on 2026-07-04 configured S3 cache posture
+`s3_sccache_binary`:
+
+- cache bucket/prefix: `adl-codefriend-build-cache/codebuild/cache`
+- cached paths: cargo registry, cargo git, cargo bin, rustup, and sccache
+- excluded path: `target/**/*`
+- reason for excluding `target`: whole-target S3 cache upload left the build
+  stuck in post-build and was slower than useful repeated-build behavior
+- first successful S3/sccache binary run on `BUILD_GENERAL1_LARGE`:
+  - install phase: `1s`
+  - build phase: `560s`
+  - post-build cache upload: `57s`
+  - terminal status: `SUCCEEDED`
+
+A second repeated cached run was started to capture steady-state cache benefit.
+It remained in BUILD past the seed run's build duration and was stopped
+intentionally to avoid burning the full CodeBuild timeout:
+
+- run posture: `s3_sccache_binary_repeat`
+- terminal wrapper status: `STOPPED`
+- conclusion: S3/sccache cache restore and upload are bounded, but this cache
+  posture did not produce a fast repeated-build path for the benchmark workload
+  on `BUILD_GENERAL1_LARGE`
 
 The requested xlarge comparison was attempted after updating the project to
 `BUILD_GENERAL1_XLARGE`, but CodeBuild failed before launch with an account

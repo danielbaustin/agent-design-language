@@ -107,6 +107,7 @@ jobs:
             --source-version "$SOURCE_VERSION" \
             --region "$AWS_CODEFRIEND_REGION" \
             --env "ADL_CODEFRIEND_BUILD_COMMAND=$ADL_CODEFRIEND_BUILD_COMMAND" \
+            --wait \
             --out .adl/tmp/aws-codefriend-build/summary.json \
             --artifact-dir .adl/tmp/aws-codefriend-build
 

@@ -29,14 +29,18 @@ bash adl/tools/setup_aws_codefriend_build_resources.sh \
 ```
 
 Create or update the CodeBuild project, service role, and GitHub OIDC start
-role:
+role. The project includes an S3 cache for cargo, rustup, and `sccache`
+artifacts, and installs `sccache` from a pinned prebuilt release instead of
+compiling it during the build:
 
 ```sh
 ADL_AWS_PROFILE=agent-logic-admin \
 bash adl/tools/setup_aws_codefriend_build_resources.sh \
   --apply \
   --project-name adl-codefriend-build \
-  --compute-type BUILD_GENERAL1_LARGE
+  --compute-type BUILD_GENERAL1_LARGE \
+  --cache-bucket adl-codefriend-build-cache \
+  --cache-prefix codebuild/cache
 ```
 
 For xlarge comparison runs, update the project deliberately:
@@ -154,9 +158,17 @@ bash adl/tools/run_aws_codefriend_build_lane.sh \
   --artifact-dir .adl/tmp/aws-codefriend-build/<run-id>
 ```
 
-The current lane does not claim a persistent CodeBuild cache. Treat each run as
-disposable compute unless the project is explicitly extended with a cache
-configuration and that configuration is proven in the retained setup artifact.
+The current lane uses an S3 cache. It intentionally does not cache the full
+`target/` tree because that made post-build cache upload slower than the build
+work. Cached paths are limited to reusable toolchain and compiler-cache state:
+
+```text
+/root/.cargo/registry/**/*
+/root/.cargo/git/**/*
+/root/.cargo/bin/**/*
+/root/.rustup/**/*
+/root/.cache/sccache/**/*
+```
 
 ## Current Live Timing
 
@@ -169,6 +181,20 @@ CODEFRIEND_BENCHMARK build_seconds=394 test_seconds=322 total_seconds=716 status
 That run proved the project can execute the ADL build/test benchmark on large
 compute. The xlarge comparison is pending AWS quota approval for Linux/XLarge
 concurrency.
+
+The first S3/sccache binary-cache run also succeeded on
+`BUILD_GENERAL1_LARGE`:
+
+```text
+phase timings: install=1s build=560s post_build=57s status=SUCCEEDED
+```
+
+A repeated cached run was attempted after the seed run. It remained in BUILD
+past the seed build duration and was stopped intentionally to avoid burning the
+full CodeBuild timeout. Current evidence says this S3/sccache cache posture is
+operational and bounded, but it is not the fast repeated-build path for this
+Rust benchmark. Prefer the warm-EBS Spot lane when lowest repeated latency is
+the goal.
 
 ## Failure Handling
 

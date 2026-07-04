@@ -161,8 +161,18 @@ assert_has "$TMP/mismatch.err" "AWS profile did not resolve to the approved Agen
 [ -f "$WORKFLOW" ]
 [ -f "$SETUP_SCRIPT" ]
 assert_has "$SETUP_SCRIPT" "--compute-type <type>"
+assert_has "$SETUP_SCRIPT" "--cache-bucket <bucket>"
+assert_has "$SETUP_SCRIPT" 'CACHE_BUCKET="${ADL_AWS_CODEFRIEND_CACHE_BUCKET:-adl-codefriend-build-cache}"'
 assert_has "$SETUP_SCRIPT" 'COMPUTE_TYPE="${ADL_AWS_CODEFRIEND_COMPUTE_TYPE:-BUILD_GENERAL1_LARGE}"'
 assert_has "$SETUP_SCRIPT" '"computeType": compute_type'
+assert_has "$SETUP_SCRIPT" '"type": "S3"'
+assert_has "$SETUP_SCRIPT" 'SCCACHE_VERSION="${SCCACHE_VERSION:-v0.10.0}"'
+assert_has "$SETUP_SCRIPT" "https://github.com/mozilla/sccache/releases/download/"
+assert_not_has "$SETUP_SCRIPT" "cargo install sccache --locked"
+assert_has "$SETUP_SCRIPT" "'/root/.cargo/bin/**/*'"
+assert_has "$SETUP_SCRIPT" "'/root/.cache/sccache/**/*'"
+assert_not_has "$SETUP_SCRIPT" "'target/**/*'"
+assert_has "$SETUP_SCRIPT" 'aws_codefriend_cache_bucket_exists='
 assert_has "$SETUP_SCRIPT" 'compute_type=%s'
 assert_has "$WORKFLOW" "workflow_dispatch:"
 assert_has "$WORKFLOW" "id-token: write"
@@ -173,6 +183,7 @@ assert_has "$WORKFLOW" "AWS_CODEFRIEND_CODEBUILD_PROJECT"
 assert_has "$WORKFLOW" 'ADL_CODEFRIEND_BUILD_COMMAND: ${{ inputs.build_command }}'
 assert_has "$WORKFLOW" 'SOURCE_VERSION: ${{ inputs.source_version }}'
 assert_has "$WORKFLOW" '--source-version "$SOURCE_VERSION"'
+assert_has "$WORKFLOW" "--wait"
 assert_has "$WORKFLOW" "bash adl/tools/run_aws_codefriend_build_lane.sh"
 assert_not_has "$WORKFLOW" "pull_request:"
 assert_not_has "$WORKFLOW" "push:"
