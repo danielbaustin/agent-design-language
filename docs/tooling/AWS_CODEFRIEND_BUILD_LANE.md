@@ -71,6 +71,9 @@ That file is local operator material and must not be committed.
 The workflow only uses `workflow_dispatch`. It does not run on ordinary pull
 requests or pushes.
 
+The workflow rejects ambiguous `HEAD` input. Leave `source_version` blank to use
+the workflow run SHA, or pass an explicit branch, tag, or commit.
+
 Dispatch input `mode` controls the boundary:
 
 - `dry-run` renders the CodeBuild request and uploads the request/summary
@@ -96,6 +99,10 @@ The workflow uses `contents: read` and `id-token: write`. It does not require a
 long-lived AWS access key. The GitHub Actions path calls the wrapper with
 `--profile env` so the AWS CLI uses the OIDC credentials exported by
 `aws-actions/configure-aws-credentials`.
+
+The setup helper restricts the OIDC trust to repository `main` and `codex/*`
+refs. If another branch namespace needs live AWS builds, update and reapply the
+setup helper intentionally.
 
 ## Local AWS Account Contract
 
@@ -157,6 +164,10 @@ bash adl/tools/run_aws_codefriend_build_lane.sh \
   --out .adl/tmp/aws-codefriend-build/<run-id>/summary.json \
   --artifact-dir .adl/tmp/aws-codefriend-build/<run-id>
 ```
+
+If `--wait` times out, the wrapper requests `codebuild stop-build` before
+returning failure. The GitHub Actions starter role includes `codebuild:StopBuild`
+for that cleanup path.
 
 The current lane uses an S3 cache. It intentionally does not cache the full
 `target/` tree because that made post-build cache upload slower than the build

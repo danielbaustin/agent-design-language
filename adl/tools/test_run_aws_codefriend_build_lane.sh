@@ -50,6 +50,12 @@ if [ "$1" = "codebuild" ] && [ "$2" = "batch-get-builds" ]; then
 JSON
   exit 0
 fi
+if [ "$1" = "codebuild" ] && [ "$2" = "stop-build" ]; then
+  cat <<JSON
+{"build":{"id":"codefriend-build:1234","buildStatus":"STOPPED","currentPhase":"COMPLETED"}}
+JSON
+  exit 0
+fi
 echo "unexpected fake aws args: $*" >&2
 exit 9
 EOF
@@ -174,6 +180,11 @@ assert_has "$SETUP_SCRIPT" "'/root/.cache/sccache/**/*'"
 assert_not_has "$SETUP_SCRIPT" "'target/**/*'"
 assert_has "$SETUP_SCRIPT" 'aws_codefriend_cache_bucket_exists='
 assert_has "$SETUP_SCRIPT" 'compute_type=%s'
+assert_has "$SETUP_SCRIPT" "codebuild:StopBuild"
+assert_has "$SETUP_SCRIPT" "repo:{repo}:ref:refs/heads/main"
+assert_has "$SETUP_SCRIPT" "repo:{repo}:ref:refs/heads/codex/*"
+assert_has "$SCRIPT" "codebuild stop-build"
+assert_has "$SCRIPT" "timed out waiting for CodeBuild build to complete; stop-build requested"
 assert_has "$WORKFLOW" "workflow_dispatch:"
 assert_has "$WORKFLOW" "id-token: write"
 assert_has "$WORKFLOW" "aws-actions/configure-aws-credentials@7474bc4690e29a8392af63c5b98e7449536d5c3a"
@@ -181,7 +192,8 @@ assert_has "$WORKFLOW" "AWS_CODEFRIEND_BUILD_ROLE_ARN"
 assert_has "$WORKFLOW" "AWS_CODEFRIEND_ACCOUNT_SHA256"
 assert_has "$WORKFLOW" "AWS_CODEFRIEND_CODEBUILD_PROJECT"
 assert_has "$WORKFLOW" 'ADL_CODEFRIEND_BUILD_COMMAND: ${{ inputs.build_command }}'
-assert_has "$WORKFLOW" 'SOURCE_VERSION: ${{ inputs.source_version }}'
+assert_has "$WORKFLOW" 'SOURCE_VERSION: ${{ inputs.source_version || github.sha }}'
+assert_has "$WORKFLOW" "source_version must be a branch, tag, or SHA; HEAD is ambiguous"
 assert_has "$WORKFLOW" '--source-version "$SOURCE_VERSION"'
 assert_has "$WORKFLOW" "--wait"
 assert_has "$WORKFLOW" "bash adl/tools/run_aws_codefriend_build_lane.sh"

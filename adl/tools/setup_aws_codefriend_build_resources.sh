@@ -310,7 +310,10 @@ write(github_trust_path, {
                 "token.actions.githubusercontent.com:aud": "sts.amazonaws.com",
             },
             "StringLike": {
-                "token.actions.githubusercontent.com:sub": f"repo:{repo}:*",
+                "token.actions.githubusercontent.com:sub": [
+                    f"repo:{repo}:ref:refs/heads/main",
+                    f"repo:{repo}:ref:refs/heads/codex/*",
+                ],
             },
         },
     }],
@@ -324,6 +327,7 @@ write(github_policy_path, {
             "codebuild:BatchGetBuilds",
             "codebuild:BatchGetProjects",
             "codebuild:StartBuild",
+            "codebuild:StopBuild",
         ],
         "Resource": f"arn:aws:codebuild:{region}:{account_id}:project/{project_name}",
     }],

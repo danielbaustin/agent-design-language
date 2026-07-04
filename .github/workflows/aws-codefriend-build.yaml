@@ -12,9 +12,9 @@ on:
           - dry-run
           - start-build
       source_version:
-        description: "Git ref or commit passed to AWS CodeBuild"
-        required: true
-        default: "HEAD"
+        description: "Git ref or commit passed to AWS CodeBuild; blank uses this workflow run SHA"
+        required: false
+        default: ""
       build_command:
         description: "ADL command passed as ADL_CODEFRIEND_BUILD_COMMAND"
         required: true
@@ -55,6 +55,10 @@ jobs:
             echo "::error::AWS_CODEFRIEND_CODEBUILD_PROJECT repository variable is required"
             exit 2
           fi
+          if [ "${{ inputs.source_version }}" = "HEAD" ]; then
+            echo "::error::source_version must be a branch, tag, or SHA; HEAD is ambiguous"
+            exit 2
+          fi
           if [ "${{ inputs.mode }}" = "start-build" ]; then
             missing=""
             [ -n "$AWS_CODEFRIEND_BUILD_ROLE_ARN" ] || missing="$missing AWS_CODEFRIEND_BUILD_ROLE_ARN"
@@ -80,7 +84,7 @@ jobs:
         if: inputs.mode == 'dry-run'
         env:
           ADL_CODEFRIEND_BUILD_COMMAND: ${{ inputs.build_command }}
-          SOURCE_VERSION: ${{ inputs.source_version }}
+          SOURCE_VERSION: ${{ inputs.source_version || github.sha }}
         run: |
           bash adl/tools/run_aws_codefriend_build_lane.sh \
             --dry-run \
@@ -97,7 +101,7 @@ jobs:
         env:
           ADL_AWS_CODEFRIEND_ACCOUNT_SHA256: ${{ secrets.AWS_CODEFRIEND_ACCOUNT_SHA256 }}
           ADL_CODEFRIEND_BUILD_COMMAND: ${{ inputs.build_command }}
-          SOURCE_VERSION: ${{ inputs.source_version }}
+          SOURCE_VERSION: ${{ inputs.source_version || github.sha }}
         run: |
           bash adl/tools/run_aws_codefriend_build_lane.sh \
             --run \

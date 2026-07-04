@@ -32,6 +32,7 @@ successful live CodeBuild run on `BUILD_GENERAL1_LARGE`.
     `sccache` artifacts.
   - Installs `sccache` from a pinned prebuilt release instead of compiling it in
     CodeBuild.
+  - Restricts GitHub OIDC trust to repository `main` and `codex/*` refs.
 - `docs/tooling/AWS_CODEFRIEND_BUILD_LANE.md`
   - Operator runbook for dry-run, live boundary, required GitHub configuration,
     setup/update commands, benchmark command, compute size selection, and
@@ -111,6 +112,14 @@ The helper creates or updates:
 
 The local GitHub configuration file contains variable/secret values for the
 operator and is not committed.
+
+Review hardening after pre-PR subagent review:
+
+- The workflow rejects ambiguous `HEAD`; blank `source_version` resolves to the
+  workflow run SHA.
+- The GitHub Actions starter role includes `codebuild:StopBuild`.
+- The local wrapper requests `stop-build` when `--wait` times out, then fails
+  truthfully.
 
 ## Live CodeBuild Boundary
 

@@ -277,7 +277,13 @@ PY
           ;;
       esac
       if [ "$(date +%s)" -ge "$deadline" ]; then
-        die "timed out waiting for CodeBuild build to complete"
+        "$AWS_CLI" codebuild stop-build \
+          "${AWS_PROFILE_ARGS[@]+"${AWS_PROFILE_ARGS[@]}"}" \
+          --region "$AWS_REGION" \
+          --id "$BUILD_ID" \
+          --query '{id:build.id,buildStatus:build.buildStatus,currentPhase:build.currentPhase}' \
+          --output json >"$STATUS_PATH.stop-build.json" || true
+        die "timed out waiting for CodeBuild build to complete; stop-build requested"
       fi
       sleep "$POLL_SECONDS"
     done
