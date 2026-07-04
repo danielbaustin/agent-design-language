@@ -1,0 +1,49 @@
+{
+  "schema": "adl.v0917.integrated_observability_proof.v1",
+  "issue": 4718,
+  "branch": "codex/4718-v0-91-7-wp-07-observability-implement-integrated-logging-and-otel-proof",
+  "generated_at": "2026-07-04T02:43:45Z",
+  "proof_role": "current_issue_local_observability_evidence",
+  "doctor": {
+    "schema": "adl.pr.doctor.v1",
+    "doctor_status": "WARN",
+    "ready_status": "PASS",
+    "lifecycle_state": "run_bound",
+    "preflight_status": "WARN",
+    "preflight_block_kind": "open_pr_wave_override",
+    "session_ledger_block_kind": "session_self_claim",
+    "stdout_json_parse_safe": true,
+    "stdout_contains_adl_event": false,
+    "stderr_event_count": 7
+  },
+  "event_sample": {
+    "path": "docs/milestones/v0.91.7/review/observability_4718/generated/current_event_samples.log",
+    "line_count": 38,
+    "commands_observed": [
+      "adl",
+      "adl-control-plane",
+      "adl-provider-adapter",
+      "adl-runtime",
+      "adl-validate-structured-prompt",
+      "pr.sh"
+    ],
+    "results_observed": [
+      "completed",
+      "exec",
+      "heartbeat",
+      "ok",
+      "started"
+    ],
+    "redaction_path_hygiene": "passed"
+  },
+  "otel_boundary": {
+    "implemented_now": "ADL shared-vocabulary event samples and durable JSON proof packet are OTel-compatible mapping inputs.",
+    "not_claimed": "No production OpenTelemetry collector, OTLP exporter, hosted telemetry service, or exporter crate wiring is implemented or tested by this proof.",
+    "mapping_authority": "docs/milestones/v0.91.5/SHARED_OBSERVABILITY_AND_OTEL_CONTRACT_3705.md",
+    "export_boundary": "Events carry command/component, stage, result, issue_ref, run_id, artifact_ref, provider_model_id, and runtime_surface fields suitable for later opt-in OTEL export."
+  },
+  "observatory_unity_consumption": {
+    "current_sample_path": "docs/milestones/v0.91.7/review/observability_4718/generated/current_event_samples.log",
+    "classification": "current redacted ADL event samples suitable for Observatory/Unity ingestion-contract fixtures; not a Unity editor execution claim"
+  }
+}

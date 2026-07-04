@@ -1,0 +1,12 @@
+{
+  "schema": "adl.pr.doctor.v1",
+  "doctor_status": "WARN",
+  "ready_status": "PASS",
+  "lifecycle_state": "run_bound",
+  "preflight_status": "WARN",
+  "preflight_block_kind": "open_pr_wave_override",
+  "session_ledger_block_kind": "session_self_claim",
+  "stdout_json_parse_safe": true,
+  "stdout_contains_adl_event": false,
+  "stderr_event_count": 7
+}

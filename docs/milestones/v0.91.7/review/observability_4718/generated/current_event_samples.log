@@ -1,0 +1,38 @@
+adl_event schema=adl.observability.event.v1 command=pr.sh stage=source-helper result=ok helper=pr_delegate.sh
+adl_event schema=adl.observability.event.v1 command=pr.sh stage=source-helper result=ok helper=pr_usage.sh
+adl_event schema=adl.observability.event.v1 command=pr.sh stage=command_start result=started subcommand=doctor
+adl_event schema=adl.observability.event.v1 command=pr.sh stage=doctor result=started issue=4718
+adl_event schema=adl.observability.event.v1 command=pr.sh stage=rust_delegate result=exec subcommand=doctor delegate=<repo>/adl/target/debug/adl-pr-doctor
+adl_event schema=adl.observability.event.v1 command=adl stage=github_octocrab result=started operation=issue.view.state
+adl_event schema=adl.observability.event.v1 command=adl stage=github_octocrab result=completed operation=issue.view.state
+adl_event schema=adl.observability.event.v1 command=adl-validate-structured-prompt stage=command result=started type=stp
+adl_event schema=adl.observability.event.v1 command=adl-validate-structured-prompt stage=command result=completed type=stp
+adl_event schema=adl.observability.event.v1 command=adl-validate-structured-prompt stage=command result=started type=stp
+adl_event schema=adl.observability.event.v1 command=adl-validate-structured-prompt stage=command result=completed type=stp
+adl_event schema=adl.observability.event.v1 command=adl-validate-structured-prompt stage=command result=started type=spp
+adl_event schema=adl.observability.event.v1 command=adl-validate-structured-prompt stage=command result=completed type=spp
+adl_event schema=adl.observability.event.v1 command=adl-validate-structured-prompt stage=command result=started type=vpp
+adl_event schema=adl.observability.event.v1 command=adl-validate-structured-prompt stage=command result=completed type=vpp
+adl_event schema=adl.observability.event.v1 command=adl-validate-structured-prompt stage=command result=started type=srp
+adl_event schema=adl.observability.event.v1 command=adl-validate-structured-prompt stage=command result=completed type=srp
+adl_event schema=adl.observability.event.v1 command=adl-validate-structured-prompt stage=command result=started type=sor
+adl_event schema=adl.observability.event.v1 command=adl-validate-structured-prompt stage=command result=completed type=sor
+adl_event schema=adl.observability.event.v1 command=adl-validate-structured-prompt stage=command result=started type=stp
+adl_event schema=adl.observability.event.v1 command=adl-validate-structured-prompt stage=command result=completed type=stp
+adl_event schema=adl.observability.event.v1 command=adl-validate-structured-prompt stage=command result=started type=spp
+adl_event schema=adl.observability.event.v1 command=adl-validate-structured-prompt stage=command result=completed type=spp
+adl_event schema=adl.observability.event.v1 command=adl-validate-structured-prompt stage=command result=started type=vpp
+adl_event schema=adl.observability.event.v1 command=adl-validate-structured-prompt stage=command result=completed type=vpp
+adl_event schema=adl.observability.event.v1 command=adl-validate-structured-prompt stage=command result=started type=srp
+adl_event schema=adl.observability.event.v1 command=adl-validate-structured-prompt stage=command result=completed type=srp
+adl_event schema=adl.observability.event.v1 command=adl-validate-structured-prompt stage=command result=started type=spp
+adl_event schema=adl.observability.event.v1 command=adl-validate-structured-prompt stage=command result=completed type=spp
+adl_event schema=adl.observability.event.v1 command=adl-validate-structured-prompt stage=command result=started type=vpp
+adl_event schema=adl.observability.event.v1 command=adl-validate-structured-prompt stage=command result=completed type=vpp
+adl_event schema=adl.observability.event.v1 command=adl-validate-structured-prompt stage=command result=started type=srp
+adl_event schema=adl.observability.event.v1 command=adl-validate-structured-prompt stage=command result=completed type=srp
+adl_event schema=adl.observability.event.v1 command=adl-runtime stage=integrated_runtime_probe result=started issue_ref=#4718 run_id=issue-4718-v0917-observability-proof runtime_surface=runtime_control_plane
+adl_event schema=adl.observability.event.v1 command=adl-runtime stage=integrated_runtime_probe result=heartbeat issue_ref=#4718 run_id=issue-4718-v0917-observability-proof runtime_surface=runtime_control_plane
+adl_event schema=adl.observability.event.v1 command=adl-provider-adapter stage=provider_probe result=started issue_ref=#4718 run_id=issue-4718-v0917-observability-proof provider_model_id=mock.redacted
+adl_event schema=adl.observability.event.v1 command=adl-provider-adapter stage=provider_probe result=completed issue_ref=#4718 run_id=issue-4718-v0917-observability-proof provider_model_id=mock.redacted artifact_ref=<repo>/docs/milestones/v0.91.7/review/observability_4718/generated/proof_summary.json
+adl_event schema=adl.observability.event.v1 command=adl-control-plane stage=machine_readable_stdout_probe result=completed issue_ref=#4718 run_id=issue-4718-v0917-observability-proof artifact_ref=<repo>/.adl/v0.91.7/tasks/issue-4718__v0-91-7-wp-07-observability-implement-integrated-logging-and-otel-proof/sor.md
