@@ -170,7 +170,12 @@ write(trust_path, {
         "Action": "sts:AssumeRoleWithWebIdentity",
         "Condition": {
             "StringEquals": {"token.actions.githubusercontent.com:aud": "sts.amazonaws.com"},
-            "StringLike": {"token.actions.githubusercontent.com:sub": f"repo:{repo}:*"},
+            "StringLike": {
+                "token.actions.githubusercontent.com:sub": [
+                    f"repo:{repo}:ref:refs/heads/main",
+                    f"repo:{repo}:ref:refs/heads/codex/*",
+                ],
+            },
         },
     }],
 })

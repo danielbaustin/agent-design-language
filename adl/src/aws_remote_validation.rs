@@ -1847,11 +1847,11 @@ impl LiveAwsRemoteValidationAdapter {
                 .state()
                 .map(|value| value.as_str().to_string())
                 .unwrap_or_else(|| "unknown".to_string());
-            if state != "available" && state != "in-use" {
+            if state != "available" {
                 return Err(AwsAdapterError {
                     code: Some("CacheVolumeNotAttachable".to_string()),
                     message: format!(
-                        "cache volume {} is in state '{}' and cannot be reused",
+                        "cache volume {} is in state '{}' and cannot be reused until it is available",
                         volume_id, state
                     ),
                     spot_fallback_permitted: false,
@@ -1945,7 +1945,7 @@ impl LiveAwsRemoteValidationAdapter {
                 .state()
                 .map(|value| value.as_str())
                 .unwrap_or("unknown");
-            if state == "available" || state == "in-use" {
+            if state == "available" {
                 return Ok(());
             }
             sleep(Duration::from_secs(3)).await;

@@ -206,6 +206,17 @@ operator-approved path before the manual workflow can run live from GitHub.
 The workflow uses `.github/workflows/aws-spot-remote-validation.yaml`, has only
 `workflow_dispatch`, and uses `--profile env` after OIDC credential setup. The
 Rust adapter treats `env` and `environment` as ambient AWS credential mode.
+Review hardening added after pre-PR subagent review:
+
+- OIDC trust is limited to repository `main` and `codex/*` refs.
+- The workflow rejects ambiguous `HEAD`; blank `git_ref` resolves to the
+  workflow run SHA.
+- The workflow concurrency group is global for the retained EBS cache volume,
+  avoiding cross-ref cache-volume attach collisions.
+- The Rust runner rejects reuse of the retained EBS cache while the volume is
+  already `in-use`.
+- The workflow redacts raw AWS identity fields from JSON artifacts before
+  uploading them.
 
 ## Fresh Warm-EBS Branch Proof
 

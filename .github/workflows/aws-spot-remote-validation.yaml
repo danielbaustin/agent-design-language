@@ -12,9 +12,9 @@ on:
           - dry-run
           - start-run
       git_ref:
-        description: "Git ref checked out on the remote builder"
-        required: true
-        default: "HEAD"
+        description: "Git ref checked out on the remote builder; blank uses this workflow run SHA"
+        required: false
+        default: ""
       validation_command:
         description: "Remote command to run after checkout"
         required: true
@@ -29,7 +29,7 @@ permissions:
   id-token: write
 
 concurrency:
-  group: aws-spot-remote-validation-${{ github.ref }}
+  group: aws-spot-remote-validation-ebs-cache
   cancel-in-progress: false
 
 jobs:
@@ -57,6 +57,10 @@ jobs:
             echo "::error::AWS_SPOT_REMOTE_VALIDATION_ROLE_ARN secret is required for live Spot runs"
             exit 2
           fi
+          if [ "${{ inputs.git_ref }}" = "HEAD" ]; then
+            echo "::error::git_ref must be a branch, tag, or SHA; HEAD is ambiguous"
+            exit 2
+          fi
 
       - name: Configure Agent Logic AWS credentials
         if: inputs.mode == 'start-run'
@@ -76,7 +80,7 @@ jobs:
       - name: Render Spot remote validation request
         if: inputs.mode == 'dry-run'
         env:
-          GIT_REF: ${{ inputs.git_ref }}
+          GIT_REF: ${{ inputs.git_ref || github.sha }}
           VALIDATION_COMMAND: ${{ inputs.validation_command }}
           INSTANCE_TYPE: ${{ inputs.instance_type }}
         run: |
@@ -93,7 +97,7 @@ jobs:
       - name: Start Spot remote validation
         if: inputs.mode == 'start-run'
         env:
-          GIT_REF: ${{ inputs.git_ref }}
+          GIT_REF: ${{ inputs.git_ref || github.sha }}
           VALIDATION_COMMAND: ${{ inputs.validation_command }}
           INSTANCE_TYPE: ${{ inputs.instance_type }}
           ADL_AWS_REMOTE_VALIDATION_BIN: ${{ github.workspace }}/adl/target/debug/adl-aws-remote-validation
@@ -124,6 +128,27 @@ jobs:
             echo "| ssh tail | \`enabled by wrapper defaults\` |"
             echo "| summary artifact | \`.adl/tmp/aws-spot-remote-validation/summary.json\` |"
           } >> "$GITHUB_STEP_SUMMARY"
+
+      - name: Redact Spot artifact identities
+        if: always()
+        run: |
+          python3 - <<'PY'
+          import json
+          from pathlib import Path
+
+          root = Path(".adl/tmp/aws-spot-remote-validation")
+          for path in root.rglob("*.json"):
+              try:
+                  payload = json.loads(path.read_text(encoding="utf-8"))
+              except Exception:
+                  continue
+              identity = payload.get("account_identity") if isinstance(payload, dict) else None
+              if isinstance(identity, dict):
+                  for key in ("account_id", "arn", "user_id"):
+                      if key in identity:
+                          identity[key] = "<redacted>"
+                  path.write_text(json.dumps(payload, indent=2, sort_keys=False) + "\n", encoding="utf-8")
+          PY
 
       - name: Upload Spot remote validation artifacts
         if: always()
