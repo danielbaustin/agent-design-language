@@ -355,7 +355,11 @@ fi
 git -C "$REPO_DIR" reset --hard HEAD >"$RUN_ROOT/git-reset.log" 2>&1
 git -C "$REPO_DIR" clean -fd >"$RUN_ROOT/git-clean.log" 2>&1
 git -C "$REPO_DIR" fetch origin --prune >"$RUN_ROOT/git-fetch.log" 2>&1
-git -C "$REPO_DIR" checkout --detach "$GIT_REF" >"$RUN_ROOT/git-checkout.log" 2>&1
+CHECKOUT_REF="$GIT_REF"
+if git -C "$REPO_DIR" show-ref --verify --quiet "refs/remotes/origin/$GIT_REF"; then
+  CHECKOUT_REF="origin/$GIT_REF"
+fi
+git -C "$REPO_DIR" checkout --detach "$CHECKOUT_REF" >"$RUN_ROOT/git-checkout.log" 2>&1
 RESOLVED_COMMIT="$(git -C "$REPO_DIR" rev-parse HEAD)"
 
 export CARGO_TARGET_DIR="$TARGET_DIR"
