@@ -101,6 +101,8 @@ aws_codefriend_build_lane="$TMP/aws-codefriend-build-lane.txt"
 cat >"$aws_codefriend_build_lane" <<'EOF'
 A	.github/workflows/aws-codefriend-build.yaml
 A	adl/tools/run_aws_codefriend_build_lane.sh
+A	adl/tools/run_build_platform_benchmark.sh
+A	adl/tools/setup_aws_codefriend_build_resources.sh
 A	adl/tools/test_run_aws_codefriend_build_lane.sh
 A	docs/tooling/AWS_CODEFRIEND_BUILD_LANE.md
 EOF

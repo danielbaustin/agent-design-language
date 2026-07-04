@@ -495,12 +495,16 @@
       "path_selectors": [
         ".github/workflows/aws-codefriend-build.yaml",
         "adl/tools/run_aws_codefriend_build_lane.sh",
+        "adl/tools/run_build_platform_benchmark.sh",
+        "adl/tools/setup_aws_codefriend_build_resources.sh",
         "adl/tools/test_run_aws_codefriend_build_lane.sh",
         "docs/tooling/AWS_CODEFRIEND_BUILD_LANE.md"
       ],
       "path_hints": [
         ".github/workflows/aws-codefriend-build.yaml",
         "adl/tools/run_aws_codefriend_build_lane.sh",
+        "adl/tools/run_build_platform_benchmark.sh",
+        "adl/tools/setup_aws_codefriend_build_resources.sh",
         "adl/tools/test_run_aws_codefriend_build_lane.sh",
         "docs/tooling/AWS_CODEFRIEND_BUILD_LANE.md"
       ],
