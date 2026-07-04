@@ -3091,18 +3091,25 @@ impl AwsRemoteValidationAdapter for LiveAwsRemoteValidationAdapter {
     ) -> std::result::Result<CommandExecutionResult, AwsAdapterError> {
         let run_root = extract_run_root(command);
         if run_root.is_some() && self.ssh_debug.is_some() {
-            self.wait_for_ssh_debug_ready(instance_id, Duration::from_secs(90), poll_interval)
-                .await?;
+            if let Err(err) = self
+                .wait_for_ssh_debug_ready(instance_id, Duration::from_secs(90), poll_interval)
+                .await
+            {
+                append_command_status_line(
+                    "ssh_debug_degraded",
+                    format!("instance_id={instance_id} detail={err}"),
+                );
+            }
         }
         let mut ssh_tail_child = match run_root {
             Some(run_root) => match self.start_ssh_tail(instance_id, &run_root).await {
                 Ok(child) => child,
                 Err(err) => {
-                    return Err(AwsAdapterError {
-                        code: Some("SshTailStartFailed".to_string()),
-                        message: format!("failed to start ssh tail: {err}"),
-                        spot_fallback_permitted: false,
-                    });
+                    append_command_status_line(
+                        "ssh_tail_degraded",
+                        format!("instance_id={instance_id} detail={err}"),
+                    );
+                    None
                 }
             },
             None => None,
