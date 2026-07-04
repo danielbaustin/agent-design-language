@@ -111,7 +111,7 @@ fn trace_runtime_v2_dispatch_covers_help_and_subcommand_errors() {
     let err = real_runtime_v2_in_repo(&[], &repo).expect_err("missing subcommand should fail");
     assert!(err
             .to_string()
-            .contains("runtime-v2 requires a subcommand: operator-controls, security-boundary, foundation-demo, integrated-csm-run-demo, observatory-flagship-demo, cognitive-being-flagship-demo, contract-market-demo, governed-tools-flagship-demo, or feature-proof-coverage"));
+            .contains("runtime-v2 requires a subcommand: operator-controls, security-boundary, foundation-demo, integrated-csm-run-demo, minimal-integrated-runtime-path, observatory-flagship-demo, cognitive-being-flagship-demo, contract-market-demo, governed-tools-flagship-demo, or feature-proof-coverage"));
 
     let err = real_runtime_v2_in_repo(&["bogus".to_string()], &repo)
         .expect_err("unknown subcommand should fail");
