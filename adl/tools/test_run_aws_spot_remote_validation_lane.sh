@@ -81,7 +81,7 @@ bash "$SCRIPT" \
   --git-ref origin/main >"$TMP/check.out"
 grep -F "PASS account_profile_resolved profile=agent-logic-admin account_matches_retained_proof=true" "$TMP/check.out" >/dev/null
 grep -F "DRY-RUN no EC2 resources launched" "$TMP/check.out" >/dev/null
-grep -F "cache_volume=adl-aws-remote-validation-cache-volume cache_mount=/mnt/adl-cache" "$TMP/check.out" >/dev/null
+grep -F "cache_volume=adl-aws-remote-validation-cache-volume cache_mount=/mnt/adl-cache ssh_tail_enabled=true" "$TMP/check.out" >/dev/null
 if grep -F "$account" "$TMP/check.out" >/dev/null; then
   echo "account id leaked in account-check output" >&2
   exit 1
@@ -133,6 +133,12 @@ grep -Fx -- "--cache-volume-device-name" "$TMP/args.txt" >/dev/null
 grep -Fx -- "/dev/sdf" "$TMP/args.txt" >/dev/null
 grep -Fx -- "--cache-volume-mount-path" "$TMP/args.txt" >/dev/null
 grep -Fx -- "/mnt/adl-cache" "$TMP/args.txt" >/dev/null
+grep -Fx -- "--ssh-key-name" "$TMP/args.txt" >/dev/null
+grep -Fx -- "adl-4603-agentlogic-ssh-debug-20260701" "$TMP/args.txt" >/dev/null
+grep -Fx -- "--ssh-private-key-path" "$TMP/args.txt" >/dev/null
+grep -Fx -- "$HOME/.ssh/adl-4603-ssh-debug-20260701.pem" "$TMP/args.txt" >/dev/null
+grep -Fx -- "--ssh-user" "$TMP/args.txt" >/dev/null
+grep -Fx -- "ec2-user" "$TMP/args.txt" >/dev/null
 grep -Fx -- "--json" "$TMP/args.txt" >/dev/null
 test -f "$TMP/summary.json"
 test -f "$TMP/artifacts/events.jsonl"

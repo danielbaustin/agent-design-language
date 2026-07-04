@@ -27,6 +27,10 @@ CACHE_VOLUME_IOPS="${ADL_AWS_REMOTE_VALIDATION_CACHE_VOLUME_IOPS:-3000}"
 CACHE_VOLUME_THROUGHPUT_MBPS="${ADL_AWS_REMOTE_VALIDATION_CACHE_VOLUME_THROUGHPUT_MBPS:-125}"
 CACHE_VOLUME_DEVICE_NAME="${ADL_AWS_REMOTE_VALIDATION_CACHE_VOLUME_DEVICE_NAME:-/dev/sdf}"
 CACHE_VOLUME_MOUNT_PATH="${ADL_AWS_REMOTE_VALIDATION_CACHE_VOLUME_MOUNT_PATH:-/mnt/adl-cache}"
+SSH_KEY_NAME="${ADL_AWS_REMOTE_VALIDATION_SSH_KEY_NAME:-adl-4603-agentlogic-ssh-debug-20260701}"
+SSH_PRIVATE_KEY_PATH="${ADL_AWS_REMOTE_VALIDATION_SSH_PRIVATE_KEY_PATH:-$HOME/.ssh/adl-4603-ssh-debug-20260701.pem}"
+SSH_USER="${ADL_AWS_REMOTE_VALIDATION_SSH_USER:-ec2-user}"
+SSH_ALLOWED_CIDR="${ADL_AWS_REMOTE_VALIDATION_SSH_ALLOWED_CIDR:-}"
 
 usage() {
   cat <<'USAGE'
@@ -37,7 +41,7 @@ Options:
   --run                         Launch the AWS Spot remote validation lane.
   --check-account               Verify profile account against retained Agent Logic proof only.
   --print-command               Print the underlying adl-aws-remote-validation command.
-  --profile <name>              AWS profile. Defaults to agent-logic-admin.
+  --profile <name>              AWS profile. Defaults to agent-logic-admin. Use env for OIDC/env credentials.
   --region <region>             AWS region. Defaults to us-west-2.
   --issue <number>              Issue recorded in the summary. Defaults to 4837.
   --run-id <id>                 Stable run id for artifacts.
@@ -57,6 +61,11 @@ Options:
                                 EC2 device name for attach. Defaults to /dev/sdf.
   --cache-volume-mount-path <path>
                                 Remote mount path. Defaults to /mnt/adl-cache.
+  --ssh-key-name <name>          EC2 key pair for live remote-tail logging.
+                                Defaults to retained Agent Logic debug key.
+  --ssh-private-key-path <path>  Private key for live remote-tail logging.
+  --ssh-user <user>              SSH user. Defaults to ec2-user.
+  --ssh-allowed-cidr <cidr>      SSH source CIDR. Defaults to auto-detected operator IP.
   --expected-proof <summary>    Retained Agent Logic proof summary used for account-hash comparison.
   --bin <path>                  adl-aws-remote-validation binary path.
   --json                        Pass --json to the underlying binary.
@@ -149,6 +158,22 @@ while [[ $# -gt 0 ]]; do
       CACHE_VOLUME_MOUNT_PATH="${2:-}"
       shift 2
       ;;
+    --ssh-key-name)
+      SSH_KEY_NAME="${2:-}"
+      shift 2
+      ;;
+    --ssh-private-key-path)
+      SSH_PRIVATE_KEY_PATH="${2:-}"
+      shift 2
+      ;;
+    --ssh-user)
+      SSH_USER="${2:-}"
+      shift 2
+      ;;
+    --ssh-allowed-cidr)
+      SSH_ALLOWED_CIDR="${2:-}"
+      shift 2
+      ;;
     --expected-proof)
       EXPECTED_PROOF="${2:-}"
       shift 2
@@ -207,9 +232,13 @@ fi
 
 check_account() {
   local identity_json
+  local aws_profile_args=()
+  if [[ "$PROFILE" != "env" && "$PROFILE" != "environment" ]]; then
+    aws_profile_args=(--profile "$PROFILE")
+  fi
   identity_json="$(mktemp "${TMPDIR:-/tmp}/adl-aws-identity.XXXXXX")"
   trap 'rm -f "$identity_json"' RETURN
-  "$AWS_CLI" sts get-caller-identity --profile "$PROFILE" --output json >"$identity_json"
+  "$AWS_CLI" sts get-caller-identity "${aws_profile_args[@]}" --output json >"$identity_json"
   python3 - "$identity_json" "$EXPECTED_PROOF" "$PROFILE" <<'PY'
 import hashlib
 import json
@@ -270,6 +299,15 @@ cmd=(
   --cache-volume-mount-path "$CACHE_VOLUME_MOUNT_PATH"
 )
 
+if [[ -n "$SSH_KEY_NAME" ]]; then
+  cmd+=(--ssh-key-name "$SSH_KEY_NAME")
+  cmd+=(--ssh-private-key-path "$SSH_PRIVATE_KEY_PATH")
+  cmd+=(--ssh-user "$SSH_USER")
+  if [[ -n "$SSH_ALLOWED_CIDR" ]]; then
+    cmd+=(--ssh-allowed-cidr "$SSH_ALLOWED_CIDR")
+  fi
+fi
+
 if [[ -n "$COMMAND" ]]; then
   cmd+=(--command "$COMMAND")
 fi
@@ -288,7 +326,7 @@ if [[ "$PRINT_COMMAND" == true ]]; then
 fi
 
 if [[ "$RUN" != true ]]; then
-  echo "DRY-RUN aws_spot_remote_validation profile=$PROFILE region=$REGION git_ref=$GIT_REF out=$OUT_PATH artifact_dir=$ARTIFACT_DIR cache_volume=$CACHE_VOLUME_NAME cache_mount=$CACHE_VOLUME_MOUNT_PATH"
+  echo "DRY-RUN aws_spot_remote_validation profile=$PROFILE region=$REGION git_ref=$GIT_REF out=$OUT_PATH artifact_dir=$ARTIFACT_DIR cache_volume=$CACHE_VOLUME_NAME cache_mount=$CACHE_VOLUME_MOUNT_PATH ssh_tail_enabled=$([[ -n "$SSH_KEY_NAME" ]] && printf true || printf false)"
   echo "DRY-RUN no EC2 resources launched; pass --run to execute"
   exit 0
 fi
