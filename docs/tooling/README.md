@@ -91,6 +91,9 @@ Important repo-local tooling surfaces include:
 - `adl tooling review-runtime-surface` — deterministic validator for the `v0.87.1` runtime review package
 - `bash adl/tools/demo_v0871_operator_surface.sh` — canonical `v0.87.1` operator-surface demo for runtime bring-up and proof-surface inspection
 - `bash adl/tools/demo_v0871_review_surface.sh` — canonical `v0.87.1` reviewer walkthrough package across operator and runtime-state proof roots
+- `bash adl/tools/run_validation_manager_nessus_lane.sh` — validation-manager
+  wrapper that consumes one eligible local lane and routes it to the Nessus
+  remote runner; see [Nessus Validation Manager Lane](NESSUS_VALIDATION_MANAGER_LANE.md)
 - `adl/tools/*.sh` wrappers remain available as compatibility entrypoints over the Rust-owned commands
 - `adl/tools/report_large_rust_modules.sh` — non-blocking Rust source-and-test module size report; by default it scans both `adl/src` and `adl/tests`, and current snapshots should live under `.adl/reports/manual/` instead of tracked repo docs
 - `adl/tools/sync_task_bundle_prompts.sh` — refresh canonical local task-bundle prompt layout from compatibility paths

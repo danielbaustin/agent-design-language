@@ -129,6 +129,28 @@ families remain visible as deferred or release-owned work. For release evidence
 or a fail-closed manager result, the same slow-family entries become routing
 obligations instead of background notes.
 
+When the selected profile contains exactly one deterministic local lane and the
+operator wants to offload it to Nessus, consume the validation-manager result
+through:
+
+```bash
+bash adl/tools/run_validation_manager_nessus_lane.sh \
+  --changed-files <changed-files> \
+  --remote-artifact-dir <artifact-dir> \
+  --remote-git-ref <branch-or-ref> \
+  --report-out <report.json> \
+  --run \
+  --json
+```
+
+Do not hand-promote docs-only, tiny, escalated, multi-lane, or missing-command
+profiles to Nessus. The validation manager's `--remote-runner nessus` eligibility
+gates remain authoritative, and the resulting report must preserve the consumed
+`local_run` evidence under the `nessus_remote_validation` lane.
+For live SSH proof, pass a pushed issue branch or explicit commit ref with
+`--remote-git-ref`; `--changed-files` manifests are recreated inside the remote
+checkout before the consumed lane runs.
+
 Skills should classify the changed surface first:
 
 - `docs-only`

@@ -177,6 +177,7 @@
         "adl/tools/run_pr_fast_coverage_lane.sh",
         "adl/tools/run_pr_fast_test_lane.sh",
         "adl/tools/run_nessus_remote_validation.sh",
+        "adl/tools/run_validation_manager_nessus_lane.sh",
         "adl/tools/select_validation_lanes.py",
         "adl/tools/test_run_pr_fast_test_lane.sh",
         "adl/tools/test_select_validation_lanes.sh",
@@ -184,6 +185,7 @@
         "adl/tools/validation_manager.sh",
         "adl/tools/test_ci_path_policy.sh",
         "adl/tools/test_run_nessus_remote_validation.sh",
+        "adl/tools/test_run_validation_manager_nessus_lane.sh",
         "adl/tools/test_validation_manager.sh",
         ".github/workflows/**",
         "adl/tools/run_ci_step_with_log.sh",
@@ -199,6 +201,7 @@
         "adl/tools/run_pr_fast_coverage_lane.sh",
         "adl/tools/run_pr_fast_test_lane.sh",
         "adl/tools/run_nessus_remote_validation.sh",
+        "adl/tools/run_validation_manager_nessus_lane.sh",
         "adl/tools/select_validation_lanes.py",
         "adl/tools/test_run_pr_fast_test_lane.sh",
         "adl/tools/test_select_validation_lanes.sh",
@@ -206,6 +209,7 @@
         "adl/tools/validation_manager.sh",
         "adl/tools/test_ci_path_policy.sh",
         "adl/tools/test_run_nessus_remote_validation.sh",
+        "adl/tools/test_run_validation_manager_nessus_lane.sh",
         "adl/tools/test_validation_manager.sh",
         ".github/workflows/**",
         "adl/tools/run_ci_step_with_log.sh",
@@ -214,8 +218,8 @@
         "adl/tools/setup_required_coverage_toolchain.sh",
         "adl/tools/test_setup_required_coverage_toolchain.sh"
       ],
-      "command": "bash adl/tools/test_ci_path_policy.sh && bash adl/tools/test_ci_runtime_contracts.sh && bash adl/tools/test_select_validation_lanes.sh && bash adl/tools/test_validation_manager.sh && bash adl/tools/test_run_nessus_remote_validation.sh",
-      "run_command": "bash adl/tools/test_ci_path_policy.sh && bash adl/tools/test_ci_runtime_contracts.sh && bash adl/tools/test_select_validation_lanes.sh && bash adl/tools/test_validation_manager.sh && bash adl/tools/test_run_nessus_remote_validation.sh",
+      "command": "bash adl/tools/test_ci_path_policy.sh && bash adl/tools/test_ci_runtime_contracts.sh && bash adl/tools/test_select_validation_lanes.sh && bash adl/tools/test_validation_manager.sh && bash adl/tools/test_run_nessus_remote_validation.sh && bash adl/tools/test_run_validation_manager_nessus_lane.sh",
+      "run_command": "bash adl/tools/test_ci_path_policy.sh && bash adl/tools/test_ci_runtime_contracts.sh && bash adl/tools/test_select_validation_lanes.sh && bash adl/tools/test_validation_manager.sh && bash adl/tools/test_run_nessus_remote_validation.sh && bash adl/tools/test_run_validation_manager_nessus_lane.sh",
       "reason": "ci_policy_surface_requires_path_policy_contract_checks"
     },
     {
