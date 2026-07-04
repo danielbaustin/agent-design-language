@@ -14,6 +14,7 @@ Options:
   --project-name <name>           CodeBuild project. Default: adl-codefriend-build.
   --repo <owner/name>             GitHub repository. Default: danielbaustin/agent-design-language.
   --source-location <url>         CodeBuild GitHub source URL.
+  --compute-type <type>           CodeBuild compute type. Default: BUILD_GENERAL1_LARGE.
   --github-role-name <name>       OIDC role for GitHub Actions.
   --service-role-name <name>      CodeBuild service role.
   --artifact-dir <path>           Local setup artifact directory.
@@ -37,6 +38,7 @@ REGION="${ADL_AWS_REGION:-us-west-2}"
 PROJECT_NAME="${ADL_AWS_CODEFRIEND_CODEBUILD_PROJECT:-adl-codefriend-build}"
 REPO="danielbaustin/agent-design-language"
 SOURCE_LOCATION="https://github.com/danielbaustin/agent-design-language.git"
+COMPUTE_TYPE="${ADL_AWS_CODEFRIEND_COMPUTE_TYPE:-BUILD_GENERAL1_LARGE}"
 GITHUB_ROLE_NAME="adl-codefriend-github-actions-build-role"
 SERVICE_ROLE_NAME="adl-codefriend-codebuild-service-role"
 ARTIFACT_DIR=".adl/tmp/aws-codefriend-build-resource-setup"
@@ -75,6 +77,11 @@ while [ "$#" -gt 0 ]; do
     --source-location)
       [ "$#" -ge 2 ] || die "--source-location requires a value"
       SOURCE_LOCATION="$2"
+      shift 2
+      ;;
+    --compute-type)
+      [ "$#" -ge 2 ] || die "--compute-type requires a value"
+      COMPUTE_TYPE="$2"
       shift 2
       ;;
     --github-role-name)
@@ -194,7 +201,7 @@ github_trust="$ARTIFACT_DIR/github-actions-trust.json"
 github_policy="$ARTIFACT_DIR/github-actions-codebuild-policy.json"
 project_json="$ARTIFACT_DIR/codebuild-project.json"
 
-python3 - <<'PY' "$service_trust" "$service_policy" "$github_trust" "$github_policy" "$project_json" "$account_id" "$provider_arn" "$REPO" "$REGION" "$PROJECT_NAME" "$SOURCE_LOCATION" "$SERVICE_ROLE_NAME"
+python3 - <<'PY' "$service_trust" "$service_policy" "$github_trust" "$github_policy" "$project_json" "$account_id" "$provider_arn" "$REPO" "$REGION" "$PROJECT_NAME" "$SOURCE_LOCATION" "$SERVICE_ROLE_NAME" "$COMPUTE_TYPE"
 import json
 import sys
 from pathlib import Path
@@ -212,7 +219,8 @@ from pathlib import Path
     project_name,
     source_location,
     service_role_name,
-) = sys.argv[1:13]
+    compute_type,
+) = sys.argv[1:14]
 
 def write(path, payload):
     Path(path).write_text(json.dumps(payload, indent=2, sort_keys=True) + "\n")
@@ -307,7 +315,7 @@ write(project_path, {
     "environment": {
         "type": "LINUX_CONTAINER",
         "image": "aws/codebuild/standard:7.0",
-        "computeType": "BUILD_GENERAL1_LARGE",
+        "computeType": compute_type,
         "privilegedMode": False,
         "environmentVariables": [
             {"name": "ADL_CODEFRIEND_BUILD_COMMAND", "value": "bash adl/tools/run_pr_fast_test_lane.sh", "type": "PLAINTEXT"},
@@ -410,5 +418,5 @@ Path(path).write_text(
 PY
 chmod 600 "$github_config"
 
-printf 'PASS aws_codefriend_resources_ready project=%s region=%s profile=%s\n' "$PROJECT_NAME" "$REGION" "$PROFILE"
+printf 'PASS aws_codefriend_resources_ready project=%s region=%s profile=%s compute_type=%s\n' "$PROJECT_NAME" "$REGION" "$PROFILE" "$COMPUTE_TYPE"
 printf 'github_actions_config_path=%s\n' "$github_config"

@@ -3,6 +3,7 @@ set -euo pipefail
 
 ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)"
 SCRIPT="$ROOT/adl/tools/run_aws_codefriend_build_lane.sh"
+SETUP_SCRIPT="$ROOT/adl/tools/setup_aws_codefriend_build_resources.sh"
 WORKFLOW="$ROOT/.github/workflows/aws-codefriend-build.yaml"
 TMP="$(mktemp -d)"
 trap 'rm -rf "$TMP"' EXIT
@@ -158,6 +159,11 @@ fi
 assert_has "$TMP/mismatch.err" "AWS profile did not resolve to the approved Agent Logic account hash"
 
 [ -f "$WORKFLOW" ]
+[ -f "$SETUP_SCRIPT" ]
+assert_has "$SETUP_SCRIPT" "--compute-type <type>"
+assert_has "$SETUP_SCRIPT" 'COMPUTE_TYPE="${ADL_AWS_CODEFRIEND_COMPUTE_TYPE:-BUILD_GENERAL1_LARGE}"'
+assert_has "$SETUP_SCRIPT" '"computeType": compute_type'
+assert_has "$SETUP_SCRIPT" 'compute_type=%s'
 assert_has "$WORKFLOW" "workflow_dispatch:"
 assert_has "$WORKFLOW" "id-token: write"
 assert_has "$WORKFLOW" "aws-actions/configure-aws-credentials@7474bc4690e29a8392af63c5b98e7449536d5c3a"

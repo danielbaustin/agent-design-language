@@ -10,10 +10,57 @@ lane.
 
 - GitHub Actions workflow:
   `.github/workflows/aws-codefriend-build.yaml`
+- AWS resource setup helper:
+  `adl/tools/setup_aws_codefriend_build_resources.sh`
 - Repo-native wrapper:
   `adl/tools/run_aws_codefriend_build_lane.sh`
 - Local contract test:
   `adl/tools/test_run_aws_codefriend_build_lane.sh`
+
+## AWS Resource Setup
+
+Check current Agent Logic resources without mutation:
+
+```sh
+ADL_AWS_PROFILE=agent-logic-admin \
+bash adl/tools/setup_aws_codefriend_build_resources.sh \
+  --check \
+  --project-name adl-codefriend-build
+```
+
+Create or update the CodeBuild project, service role, and GitHub OIDC start
+role:
+
+```sh
+ADL_AWS_PROFILE=agent-logic-admin \
+bash adl/tools/setup_aws_codefriend_build_resources.sh \
+  --apply \
+  --project-name adl-codefriend-build \
+  --compute-type BUILD_GENERAL1_LARGE
+```
+
+For xlarge comparison runs, update the project deliberately:
+
+```sh
+ADL_AWS_PROFILE=agent-logic-admin \
+bash adl/tools/setup_aws_codefriend_build_resources.sh \
+  --apply \
+  --project-name adl-codefriend-build \
+  --compute-type BUILD_GENERAL1_XLARGE
+```
+
+As of the WP-06 proof pass on 2026-07-04, the Agent Logic account has Linux
+XLarge CodeBuild concurrency quota `0`. A quota increase to `1` has to be
+approved before an xlarge build can start. Keep the project on
+`BUILD_GENERAL1_LARGE` as the operational default until that approval lands.
+
+The setup helper writes the GitHub variable/secret values to:
+
+```text
+.adl/tmp/aws-codefriend-build-resource-setup/github-actions-config.env
+```
+
+That file is local operator material and must not be committed.
 
 ## Trigger Contract
 
@@ -90,6 +137,38 @@ bash adl/tools/run_aws_codefriend_build_lane.sh \
   --out .adl/tmp/aws-codefriend-build/summary.json \
   --artifact-dir .adl/tmp/aws-codefriend-build
 ```
+
+Use `--wait` to make the local wrapper block until CodeBuild reaches a terminal
+state and to retain a redacted status artifact:
+
+```sh
+ADL_AWS_PROFILE=agent-logic-admin \
+bash adl/tools/run_aws_codefriend_build_lane.sh \
+  --run \
+  --check-account \
+  --wait \
+  --project-name adl-codefriend-build \
+  --source-version <branch-or-ref> \
+  --env ADL_CODEFRIEND_BUILD_COMMAND='bash adl/tools/run_build_platform_benchmark.sh --platform codebuild --cache-posture codebuild_xlarge_no_persistent_cache --out .adl/tmp/build-platform-benchmark/codebuild-xlarge/summary.json --artifact-dir .adl/tmp/build-platform-benchmark/codebuild-xlarge' \
+  --out .adl/tmp/aws-codefriend-build/<run-id>/summary.json \
+  --artifact-dir .adl/tmp/aws-codefriend-build/<run-id>
+```
+
+The current lane does not claim a persistent CodeBuild cache. Treat each run as
+disposable compute unless the project is explicitly extended with a cache
+configuration and that configuration is proven in the retained setup artifact.
+
+## Current Live Timing
+
+Issue `#4838` has a successful live `BUILD_GENERAL1_LARGE` run:
+
+```text
+CODEFRIEND_BENCHMARK build_seconds=394 test_seconds=322 total_seconds=716 status=passed
+```
+
+That run proved the project can execute the ADL build/test benchmark on large
+compute. The xlarge comparison is pending AWS quota approval for Linux/XLarge
+concurrency.
 
 ## Failure Handling
 

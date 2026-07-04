@@ -2,9 +2,8 @@
 
 ## Status
 
-Implemented with local contract proof and live AWS account-boundary proof.
-Live CodeBuild execution is not claimed because the Agent Logic AWS account does
-not yet contain a CodeBuild project for this lane.
+Implemented with local contract proof, Agent Logic AWS resource setup, and a
+successful live CodeBuild run on `BUILD_GENERAL1_LARGE`.
 
 ## Implemented Surfaces
 
@@ -23,9 +22,16 @@ not yet contain a CodeBuild project for this lane.
   - Fake-AWS contract test for STS account hash check, CodeBuild request
     rendering, live `start-build` argument shape, dry-run no-AWS behavior,
     mismatch failure, and workflow trigger/secret contract.
+- `adl/tools/setup_aws_codefriend_build_resources.sh`
+  - Idempotently creates or updates the Agent Logic CodeBuild project, service
+    role, GitHub Actions OIDC start-build role, and local GitHub configuration
+    handoff file.
+  - Supports `--compute-type` so large and xlarge runs are intentional setup
+    states rather than manual AWS console edits.
 - `docs/tooling/AWS_CODEFRIEND_BUILD_LANE.md`
   - Operator runbook for dry-run, live boundary, required GitHub configuration,
-    and failure handling.
+    setup/update commands, benchmark command, compute size selection, and
+    failure handling.
 
 ## Local Proof
 
@@ -72,44 +78,73 @@ PASS aws_codefriend_build_dry_run project=adl-codefriend-build region=us-west-2 
 This proves the local AWS profile resolved to the same Agent Logic account hash
 as the retained issue `#4603` proof. It did not start CodeBuild.
 
+## Agent Logic AWS Resource Setup
+
+Setup helper:
+
+```sh
+ADL_AWS_PROFILE=agent-logic-admin \
+bash adl/tools/setup_aws_codefriend_build_resources.sh \
+  --apply \
+  --project-name adl-codefriend-build \
+  --compute-type BUILD_GENERAL1_LARGE
+```
+
+Observed result:
+
+```text
+PASS aws_codefriend_resources_ready project=adl-codefriend-build region=us-west-2 profile=agent-logic-admin compute_type=BUILD_GENERAL1_LARGE
+```
+
+The helper creates or updates:
+
+- the GitHub Actions OIDC provider if missing
+- the CodeBuild service role
+- the GitHub Actions start-build role
+- the `adl-codefriend-build` CodeBuild project
+- `.adl/tmp/aws-codefriend-build-resource-setup/github-actions-config.env`
+
+The local GitHub configuration file contains variable/secret values for the
+operator and is not committed.
+
 ## Live CodeBuild Boundary
 
-Bounded AWS read:
+Large compute benchmark command shape:
 
 ```sh
 ADL_AWS_PROFILE=agent-logic-admin \
-aws codebuild batch-get-projects \
-  --names adl-codefriend-build \
-  --region us-west-2 \
-  --output json
+bash adl/tools/run_aws_codefriend_build_lane.sh \
+  --run \
+  --check-account \
+  --wait \
+  --project-name adl-codefriend-build \
+  --source-version codex/4838-v0-91-7-wp-06-aws-add-github-actions-aws-codefriend-build-lane \
+  --env ADL_CODEFRIEND_BUILD_COMMAND='<benchmark command>' \
+  --out .adl/tmp/aws-codefriend-build/<run-id>/summary.json \
+  --artifact-dir .adl/tmp/aws-codefriend-build/<run-id>
 ```
 
-Observed result: no project was returned; `adl-codefriend-build` was reported in
-`projectsNotFound`.
+Observed live result on `BUILD_GENERAL1_LARGE`:
 
-Bounded AWS read:
-
-```sh
-ADL_AWS_PROFILE=agent-logic-admin \
-aws codebuild list-projects \
-  --region us-west-2 \
-  --sort-by NAME \
-  --output json
+```text
+CODEFRIEND_BENCHMARK build_seconds=394 test_seconds=322 total_seconds=716 status=passed
 ```
 
-Observed result: `projects` was empty.
+The earlier `BUILD_GENERAL1_MEDIUM` run failed after roughly fifteen minutes
+with the compiler killed while building a large AWS SDK dependency. The project
+was updated to large compute for the successful run.
 
-Therefore this issue does not claim live CodeBuild execution. Remaining setup
-needed before `start-build` can prove end-to-end execution:
-
-- create or designate the Agent Logic CodeBuild project
-- configure the GitHub repository variable `AWS_CODEFRIEND_CODEBUILD_PROJECT`
-- configure the GitHub repository secret `AWS_CODEFRIEND_BUILD_ROLE_ARN`
-- configure the GitHub repository secret `AWS_CODEFRIEND_ACCOUNT_SHA256`
+The requested xlarge comparison was attempted after updating the project to
+`BUILD_GENERAL1_XLARGE`, but CodeBuild failed before launch with an account
+limit error because the Agent Logic Linux/XLarge concurrent-build quota is `0`.
+The quota is adjustable, and a minimal increase request to `1` is pending. The
+project was restored to `BUILD_GENERAL1_LARGE` so the live operational lane
+continues to work while xlarge waits on AWS quota approval.
 
 ## Result Truth
 
-The integrated repo lane is present and locally proven. Reviewers can dispatch a
-safe dry-run workflow immediately after merge. A live AWS CodeBuild run is
-fail-closed until the missing Agent Logic CodeBuild project and GitHub
-configuration exist.
+The integrated repo lane is present, locally proven, and live-proven through the
+Agent Logic CodeBuild project. The GitHub Actions path still requires the
+repository variable/secret values from
+`.adl/tmp/aws-codefriend-build-resource-setup/github-actions-config.env` before
+workflow-dispatched `start-build` can be used from GitHub.
