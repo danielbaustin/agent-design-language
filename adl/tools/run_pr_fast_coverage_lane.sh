@@ -56,7 +56,8 @@ CARGO_INCREMENTAL=0 cargo llvm-cov nextest \
   --no-report \
   -E "$FILTER_EXPRESSION"
 
+mkdir -p target
 cargo llvm-cov report \
   --json \
   --summary-only \
-  --output-path coverage-summary.json
+  --output-path target/coverage-impact-summary.json

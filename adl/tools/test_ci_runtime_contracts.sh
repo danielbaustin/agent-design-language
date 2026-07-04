@@ -256,9 +256,14 @@ for forbidden_fragment in (
             f"forbidden fragment: {forbidden_fragment}"
         )
 filter_if = step_if("Determine PR fast coverage filters")
-if "steps.path-policy.outputs.full_coverage_required != 'true'" not in filter_if:
+if "github.event_name == 'pull_request'" not in filter_if or "steps.path-policy.outputs.coverage_required == 'true'" not in filter_if:
     raise SystemExit(
-        "PR-fast filter determination must be limited to non-full PR coverage; "
+        "PR-fast filter determination must be limited to coverage-requiring pull requests; "
+        f"found: {filter_if}"
+    )
+if "steps.path-policy.outputs.full_coverage_required != 'true'" in filter_if:
+    raise SystemExit(
+        "PR-fast filter determination must also run for full-coverage PRs so the changed-source gate can use focused evidence; "
         f"found: {filter_if}"
     )
 pr_fast_runner_text = pr_fast_runner.read_text()
@@ -274,11 +279,11 @@ for required_fragment in (
     'cargo llvm-cov report',
     '--json',
     '--summary-only',
-    '--output-path coverage-summary.json',
+    '--output-path target/coverage-impact-summary.json',
 ):
     if required_fragment not in pr_fast_runner_text:
         raise SystemExit(
-            "PR-fast coverage runner must execute targeted nextest coverage and produce summary JSON; "
+            "PR-fast coverage runner must execute targeted nextest coverage and produce focused impact summary JSON; "
             f"missing fragment: {required_fragment}"
         )
 for required_fragment in (
@@ -299,10 +304,15 @@ if "    --lib \\" in runner_script_text or "    --tests \\" in runner_script_tex
     raise SystemExit("authoritative coverage runner must not narrow workspace coverage targets")
 
 authoritative_gate_step = step_block("Coverage-impact changed-source gate")
-if '--summary adl/coverage-summary.json \\' not in authoritative_gate_step:
+if 'summary_path="adl/coverage-summary.json"' not in authoritative_gate_step:
     raise SystemExit(
-        "authoritative changed-source coverage gate must read adl/coverage-summary.json from the runner output; "
-        "workflow is missing that summary reference"
+        "authoritative changed-source coverage gate must default to adl/coverage-summary.json from the runner output; "
+        "workflow is missing that summary fallback"
+    )
+if 'adl/target/coverage-impact-summary.json' not in authoritative_gate_step:
+    raise SystemExit(
+        "authoritative changed-source coverage gate must prefer focused PR impact summaries when present; "
+        "workflow is missing the focused summary path"
     )
 
 pr_preflight_if = step_if("PR coverage-impact preflight")

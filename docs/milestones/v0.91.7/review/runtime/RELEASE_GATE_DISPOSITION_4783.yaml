@@ -1,0 +1,32 @@
+issue: 4783
+disposition: approved_for_pr_publication_with_residual_ci
+changed_release_gate_surfaces:
+  - .github/workflows/ci.yaml
+reviewer_or_review_mode: bounded release-gate review plus CI policy contract review
+focused_validation_run: >-
+  Local focused validation passed for the CI policy repair:
+  bash adl/tools/test_ci_runtime_contracts.sh;
+  bash adl/tools/test_ci_path_policy.sh;
+  bash adl/tools/run_authoritative_coverage_lane.sh;
+  CARGO_INCREMENTAL=0 cargo llvm-cov nextest --workspace --status-level all
+  --final-status-level slow --no-report -E 'test(run_state)' followed by
+  cargo llvm-cov report --json --summary-only --output-path
+  target/coverage-impact-summary.json; bash
+  adl/tools/check_coverage_impact.sh --base origin/main --head HEAD --summary
+  adl/target/coverage-impact-summary.json --threshold 80; git diff --check.
+residual_ci_proof_required_before_merge: >-
+  Required. This disposition permits PR publication for review of the CI-policy
+  surface only. The #4783 PR must still rerun GitHub adl-coverage after this
+  patch, and merge/closeout remains blocked unless the current PR checks are
+  green or a later operator-approved blocker disposition records otherwise.
+summary: >-
+  The CI workflow still runs the authoritative full coverage lane for
+  full-coverage-required pull requests, but the changed-source coverage-impact
+  gate now prefers the focused PR coverage summary when present. This preserves
+  the release/main workspace coverage gate boundary while making the PR
+  changed-source gate evaluate the focused evidence it was designed to judge.
+non_claims:
+  - This disposition does not mark WP-07 complete.
+  - This disposition does not claim v0.92 readiness.
+  - This disposition does not replace GitHub CI proof before merge.
+  - This disposition does not weaken the non-PR full workspace coverage gate.
