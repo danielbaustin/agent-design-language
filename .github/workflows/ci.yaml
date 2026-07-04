@@ -490,6 +490,7 @@ jobs:
       - name: Install lld for coverage
         if: steps.path-policy.outputs.full_coverage_required == 'true' || steps.coverage-impact.outputs.needs_fast_summary == 'true'
         run: bash adl/tools/setup_required_coverage_toolchain.sh install-lld
+        working-directory: .
 
       - name: Configure Rust acceleration for coverage
         if: steps.path-policy.outputs.full_coverage_required == 'true' || steps.coverage-impact.outputs.needs_fast_summary == 'true'
@@ -497,10 +498,12 @@ jobs:
         run: |
           bash adl/tools/setup_required_coverage_toolchain.sh configure "$GITHUB_ENV"
           echo "ready=true" >> "$GITHUB_OUTPUT"
+        working-directory: .
 
       - name: Verify required coverage toolchain
         if: steps.path-policy.outputs.full_coverage_required == 'true' || steps.coverage-impact.outputs.needs_fast_summary == 'true'
         run: bash adl/tools/setup_required_coverage_toolchain.sh verify
+        working-directory: .
 
       - name: Coverage not required by path policy
         if: steps.path-policy.outputs.coverage_required != 'true'
@@ -513,10 +516,12 @@ jobs:
       - name: Coverage run and summary (json)
         if: steps.path-policy.outputs.full_coverage_required == 'true'
         run: bash adl/tools/run_ci_step_with_log.sh --name "coverage-run-summary-json" --log-root ci-step-logs -- bash adl/tools/run_authoritative_coverage_lane.sh --authority "${{ steps.path-policy.outputs.coverage_authority }}" --event-name "${{ github.event_name }}"
+        working-directory: .
 
       - name: PR fast coverage summary (json)
         if: github.event_name == 'pull_request' && steps.path-policy.outputs.coverage_required == 'true' && steps.path-policy.outputs.full_coverage_required != 'true' && steps.coverage-impact.outputs.needs_fast_summary == 'true'
         run: bash adl/tools/run_pr_fast_coverage_lane.sh --filter-expression "${{ steps.coverage-impact.outputs.filter_expression }}"
+        working-directory: .
 
       - name: Upload ADL-owned coverage step logs
         if: always() && steps.path-policy.outputs.coverage_required == 'true'
@@ -567,6 +572,7 @@ jobs:
         run: |
           set -eu
           bash adl/tools/enforce_coverage_gates.sh coverage-summary.json
+        working-directory: .
 
       - name: Full workspace coverage gate deferred for PR
         if: github.event_name == 'pull_request' && steps.path-policy.outputs.full_coverage_required == 'true'
@@ -639,3 +645,4 @@ jobs:
       - name: Rust acceleration stats for coverage
         if: always() && steps.coverage-toolchain.outputs.ready == 'true'
         run: bash adl/tools/setup_required_coverage_toolchain.sh stats
+        working-directory: .

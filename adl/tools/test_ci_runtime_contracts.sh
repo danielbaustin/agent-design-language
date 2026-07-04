@@ -29,15 +29,17 @@ def step_run(name: str) -> str:
     return match.group(1).strip()
 
 def step_block(name: str) -> str:
-    pattern = re.compile(
-        rf"^\s*-\s+name:\s+{re.escape(name)}\s*$"
-        rf"((?:\n^\s+.*$)*?)(?=\n^\s*-\s+name:|\Z)",
+    start = re.search(
+        rf"^\s*-\s+name:\s+{re.escape(name)}\s*$",
+        workflow,
         re.MULTILINE,
     )
-    match = pattern.search(workflow)
-    if not match:
+    if not start:
         raise SystemExit(f"missing workflow step block: {name}")
-    return match.group(1)
+    next_step = re.search(r"^\s*-\s+name:\s+", workflow[start.end() :], re.MULTILINE)
+    if next_step:
+        return workflow[start.end() : start.end() + next_step.start()]
+    return workflow[start.end() :]
 
 def step_if(name: str) -> str:
     pattern = re.compile(
@@ -49,6 +51,13 @@ def step_if(name: str) -> str:
     match = pattern.search(workflow)
     if not match:
         raise SystemExit(f"missing workflow if condition for step: {name}")
+    return match.group(1).strip()
+
+def step_working_directory(name: str) -> str:
+    block = step_block(name)
+    match = re.search(r"^\s+working-directory:\s+(.+)$", block, re.MULTILINE)
+    if not match:
+        raise SystemExit(f"missing workflow working-directory for step: {name}")
     return match.group(1).strip()
 
 def step_count(name: str) -> int:
@@ -147,6 +156,20 @@ if coverage_step_if != "steps.path-policy.outputs.full_coverage_required == 'tru
         "authoritative coverage execution must be limited to full_coverage_required surfaces; "
         f"found: {coverage_step_if}"
     )
+for root_script_step in (
+    "Install lld for coverage",
+    "Configure Rust acceleration for coverage",
+    "Verify required coverage toolchain",
+    "Coverage run and summary (json)",
+    "PR fast coverage summary (json)",
+    "Enforce coverage policy gates (workspace + per-file)",
+    "Rust acceleration stats for coverage",
+):
+    if step_working_directory(root_script_step) != ".":
+        raise SystemExit(
+            "coverage workflow steps that call repo-root adl/tools scripts must run from the repository root; "
+            f"{root_script_step!r} has working-directory: {step_working_directory(root_script_step)!r}"
+        )
 coverage_not_required_step = step_if("Coverage not required by path policy")
 if coverage_not_required_step != "steps.path-policy.outputs.coverage_required != 'true'":
     raise SystemExit(
