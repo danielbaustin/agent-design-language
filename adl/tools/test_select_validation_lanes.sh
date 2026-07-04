@@ -97,6 +97,18 @@ assert_has "$TMP/aws-remote-validation-tool.out" "aggregate_status=selected"
 assert_has "$TMP/aws-remote-validation-tool.out" "aws_remote_validation_tooling status=selected"
 assert_not_has "$TMP/aws-remote-validation-tool.out" "unmapped_change_surface"
 
+aws_spot_wrapper_tool="$TMP/aws-spot-wrapper-tool.txt"
+cat >"$aws_spot_wrapper_tool" <<'EOF'
+A	adl/tools/run_aws_spot_remote_validation_lane.sh
+A	adl/tools/test_run_aws_spot_remote_validation_lane.sh
+A	docs/tooling/AWS_SPOT_REMOTE_VALIDATION_LANE.md
+EOF
+bash "$SCRIPT" --changed-files "$aws_spot_wrapper_tool" >"$TMP/aws-spot-wrapper-tool.out"
+assert_has "$TMP/aws-spot-wrapper-tool.out" "aggregate_status=selected"
+assert_has "$TMP/aws-spot-wrapper-tool.out" "aws_remote_validation_tooling status=selected"
+assert_has "$TMP/aws-spot-wrapper-tool.out" "docs_diff_check status=selected"
+assert_not_has "$TMP/aws-spot-wrapper-tool.out" "unmapped_change_surface"
+
 rust_warm_cache_surface="$TMP/rust-warm-cache-surface.txt"
 cat >"$rust_warm_cache_surface" <<'EOF'
 M	AGENTS.md
