@@ -117,6 +117,18 @@ assert_has "$nested_private_state_sanctuary_output" "mode=focused"
 assert_has "$nested_private_state_sanctuary_output" "filter_tokens=private_state_sanctuary"
 assert_has "$nested_private_state_sanctuary_output" "filter_expression=test(private_state_sanctuary)"
 
+runtime_v2_cmd_with_finish="$TMP/runtime_v2_cmd_with_finish.txt"
+cat >"$runtime_v2_cmd_with_finish" <<'EOF'
+M	adl/src/cli/runtime_v2_cmd/commands.rs
+M	adl/src/cli/runtime_v2_cmd/tests.rs
+M	adl/src/cli/tests/pr_cmd_inline/finish/arg_render.rs
+EOF
+runtime_v2_cmd_with_finish_output="$(bash "$SCRIPT" --changed-files "$runtime_v2_cmd_with_finish" --print-plan)"
+assert_has "$runtime_v2_cmd_with_finish_output" "mode=focused"
+assert_has "$runtime_v2_cmd_with_finish_output" "reason=bounded_rust_surface_runs_focused_nextest"
+assert_has "$runtime_v2_cmd_with_finish_output" "filter_tokens=runtime_v2_cmd,pr_cmd_finish"
+assert_has "$runtime_v2_cmd_with_finish_output" "filter_expression=test(/^cli::runtime_v2_cmd::/) or binary_id(adl::bin/adl-pr-finish) and test(/^cli::pr_cmd::tests::finish::arg_render::/) or binary_id(adl::bin/adl-pr-finish) and test(/^cli::pr_cmd::finish_support::tests::/)"
+
 nested_runtime_mod_family="$TMP/nested_runtime_mod_family.txt"
 printf 'M\tadl/src/runtime_v2/standing/mod.rs\n' >"$nested_runtime_mod_family"
 nested_runtime_mod_family_output="$(bash "$SCRIPT" --changed-files "$nested_runtime_mod_family" --print-plan)"
