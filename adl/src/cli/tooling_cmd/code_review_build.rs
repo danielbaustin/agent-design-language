@@ -322,7 +322,7 @@ fn redact_deleted_diff_lines(hunks: &mut [DiffHunk]) {
             .diff_excerpt
             .split_inclusive('\n')
             .map(|line| {
-                if line.starts_with('-') && !line.starts_with("---") {
+                if line.starts_with('-') && !is_unified_diff_old_file_header(line, &hunk.file) {
                     redact_review_sensitive_text(line)
                 } else {
                     line.to_string()
@@ -330,6 +330,14 @@ fn redact_deleted_diff_lines(hunks: &mut [DiffHunk]) {
             })
             .collect();
     }
+}
+
+fn is_unified_diff_old_file_header(line: &str, file: &str) -> bool {
+    let Some(rest) = line.strip_prefix("--- ") else {
+        return false;
+    };
+    let header_path = rest.trim_end_matches(['\r', '\n']);
+    header_path == format!("a/{file}") || header_path == "/dev/null"
 }
 
 fn redact_review_sensitive_text(text: &str) -> String {
@@ -390,8 +398,7 @@ fn secret_marker_at(text: &str) -> Option<&'static str> {
             return Some(marker);
         }
     }
-    if text.starts_with("sk-") {
-        let suffix = &text[3..];
+    if let Some(suffix) = text.strip_prefix("sk-") {
         let token_len = suffix
             .chars()
             .take_while(|c| c.is_ascii_alphanumeric() || *c == '_')

@@ -54,23 +54,23 @@ assert_current_coverage_workflow_contract() {
   assert_file_has "$workflow" '--print-risk-nextest-expression > adl/coverage-impact-filter-expression.txt'
   assert_file_has "$workflow" 'filter_expression<<ADL_COVERAGE_EXPR'
   assert_file_has "$workflow" 'PR fast coverage summary (json)'
-  assert_file_has "$workflow" 'bash tools/run_pr_fast_coverage_lane.sh --filter-expression "${{ steps.coverage-impact.outputs.filter_expression }}"'
+  assert_file_has "$workflow" 'bash adl/tools/run_pr_fast_coverage_lane.sh --filter-expression "${{ steps.coverage-impact.outputs.filter_expression }}"'
   assert_file_has "$workflow" 'PR coverage-impact preflight'
   assert_file_has "$workflow" 'args+=(--require-summary-for-risk)'
   assert_file_has "$workflow" "if: steps.path-policy.outputs.full_coverage_required == 'true' || steps.coverage-impact.outputs.needs_fast_summary == 'true'"
-  assert_file_has "$workflow" 'run: bash tools/setup_required_coverage_toolchain.sh install-lld'
-  assert_file_has "$workflow" 'bash tools/setup_required_coverage_toolchain.sh configure "$GITHUB_ENV"'
-  assert_file_has "$workflow" 'run: bash tools/setup_required_coverage_toolchain.sh verify'
+  assert_file_has "$workflow" 'run: bash adl/tools/setup_required_coverage_toolchain.sh install-lld'
+  assert_file_has "$workflow" 'bash adl/tools/setup_required_coverage_toolchain.sh configure "$GITHUB_ENV"'
+  assert_file_has "$workflow" 'run: bash adl/tools/setup_required_coverage_toolchain.sh verify'
   assert_file_order "$workflow" 'Install cargo-llvm-cov for CI contract checks' 'path-policy PR-fast coverage contract'
   assert_file_order "$workflow" 'Install cargo-nextest for CI contract checks' 'path-policy PR-fast coverage contract'
   assert_file_has "$workflow" 'Coverage not required by path policy'
   assert_file_has "$workflow" "if: steps.path-policy.outputs.coverage_required != 'true'"
-  assert_file_has "$workflow" 'run: bash tools/run_ci_step_with_log.sh --name "coverage-run-summary-json" --log-root ci-step-logs -- bash tools/run_authoritative_coverage_lane.sh --authority "${{ steps.path-policy.outputs.coverage_authority }}" --event-name "${{ github.event_name }}"'
+  assert_file_has "$workflow" 'run: bash adl/tools/run_ci_step_with_log.sh --name "coverage-run-summary-json" --log-root ci-step-logs -- bash adl/tools/run_authoritative_coverage_lane.sh --authority "${{ steps.path-policy.outputs.coverage_authority }}" --event-name "${{ github.event_name }}"'
   assert_file_has "$workflow" 'Upload ADL-owned coverage step logs'
   assert_file_has "$workflow" "if: always() && steps.path-policy.outputs.coverage_required == 'true'"
   assert_file_has "$workflow" 'name: adl-coverage-step-logs'
   assert_file_has "$workflow" 'Actual adl-coverage execution state: ${{ steps.path-policy.outputs.coverage_execution_state }}'
-  assert_file_has "$workflow" 'run: bash tools/setup_required_coverage_toolchain.sh stats'
+  assert_file_has "$workflow" 'run: bash adl/tools/setup_required_coverage_toolchain.sh stats'
   assert_file_has "$workflow" "steps.coverage-toolchain.outputs.ready == 'true'"
   assert_file_has "$workflow" 'actual adl-coverage execution state'
   assert_file_has "$workflow" 'Full workspace coverage gate deferred for PR'
@@ -144,11 +144,11 @@ jobs:
           mkdir -p "$COVERAGE_BUILD_ROOT/target" "$COVERAGE_BUILD_ROOT/llvm-cov-target"
           export CARGO_TARGET_DIR="$COVERAGE_BUILD_ROOT/target"
           export CARGO_LLVM_COV_TARGET_DIR="$COVERAGE_BUILD_ROOT/llvm-cov-target"
-          bash tools/run_pr_fast_coverage_lane.sh --filter-expression "${{ steps.coverage-impact.outputs.filter_expression }}"
+          bash adl/tools/run_pr_fast_coverage_lane.sh --filter-expression "${{ steps.coverage-impact.outputs.filter_expression }}"
           cargo llvm-cov report --json --summary-only --output-path coverage-summary.json
         working-directory: .
       - name: Coverage run and summary (json)
-        run: bash tools/run_authoritative_coverage_lane.sh
+        run: bash adl/tools/run_authoritative_coverage_lane.sh
       - name: Coverage summary (text)
         run: cargo llvm-cov report --summary-only | tee coverage-summary.txt
       - name: Upload coverage artifact
@@ -705,8 +705,8 @@ text = text.replace(
     1,
 )
 text = text.replace(
-    "      - name: Coverage run and summary (json)\n        run: bash tools/run_authoritative_coverage_lane.sh\n",
-    "      - name: slow-proof lane contract\n        if: steps.path-policy.outputs.ci_contracts_required == 'true'\n        run: bash adl/tools/test_slow_proof_lane_contract.sh\n      - name: Coverage run and summary (json)\n        run: bash tools/run_authoritative_coverage_lane.sh\n",
+    "      - name: Coverage run and summary (json)\n        run: bash adl/tools/run_authoritative_coverage_lane.sh\n",
+    "      - name: slow-proof lane contract\n        if: steps.path-policy.outputs.ci_contracts_required == 'true'\n        run: bash adl/tools/test_slow_proof_lane_contract.sh\n      - name: Coverage run and summary (json)\n        run: bash adl/tools/run_authoritative_coverage_lane.sh\n",
     1,
 )
 text += """
@@ -754,7 +754,7 @@ PY
 from pathlib import Path
 
 path = Path(".github/workflows/ci.yaml")
-path.write_text(path.read_text().replace("run: bash tools/run_authoritative_coverage_lane.sh", "run: bash tools/run_authoritative_coverage_lane.sh --strict", 1))
+path.write_text(path.read_text().replace("run: bash adl/tools/run_authoritative_coverage_lane.sh", "run: bash adl/tools/run_authoritative_coverage_lane.sh --strict", 1))
 PY
   git add .github/workflows/ci.yaml
   git commit -q -m workflow-authoritative-policy-change
@@ -917,7 +917,7 @@ replacement = r"""      - name: Validation profile summary (adl-coverage)
       - name: Determine PR fast coverage filters
 """
 text = text.replace(needle, replacement, 1)
-text = text.replace("run: bash tools/run_authoritative_coverage_lane.sh", "run: bash tools/run_authoritative_coverage_lane.sh --strict", 1)
+text = text.replace("run: bash adl/tools/run_authoritative_coverage_lane.sh", "run: bash adl/tools/run_authoritative_coverage_lane.sh --strict", 1)
 workflow.write_text(text)
 PY
   git add .github/workflows/ci.yaml

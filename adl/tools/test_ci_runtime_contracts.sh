@@ -128,11 +128,11 @@ if "cargo llvm-cov nextest" in workflow:
     raise SystemExit("adl-coverage workflow must delegate coverage execution to runner scripts, not inline nextest")
 
 expected_coverage = (
-    'bash tools/run_authoritative_coverage_lane.sh --authority "${{ steps.path-policy.outputs.coverage_authority }}" '
+    'bash adl/tools/run_authoritative_coverage_lane.sh --authority "${{ steps.path-policy.outputs.coverage_authority }}" '
     '--event-name "${{ github.event_name }}"'
 )
 expected_wrapped_coverage = (
-    'bash tools/run_ci_step_with_log.sh --name "coverage-run-summary-json" --log-root ci-step-logs -- '
+    'bash adl/tools/run_ci_step_with_log.sh --name "coverage-run-summary-json" --log-root ci-step-logs -- '
     + expected_coverage
 )
 coverage_step = step_run("Coverage run and summary (json)")
@@ -185,7 +185,7 @@ for required_fragment in (
         )
 
 pr_fast_step = step_run("PR fast coverage summary (json)")
-expected_pr_fast_step = 'bash tools/run_pr_fast_coverage_lane.sh --filter-expression "${{ steps.coverage-impact.outputs.filter_expression }}"'
+expected_pr_fast_step = 'bash adl/tools/run_pr_fast_coverage_lane.sh --filter-expression "${{ steps.coverage-impact.outputs.filter_expression }}"'
 if pr_fast_step != expected_pr_fast_step:
     raise SystemExit(
         "PR-fast coverage must delegate to the bounded runner script; "
