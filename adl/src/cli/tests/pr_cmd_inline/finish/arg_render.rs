@@ -4211,9 +4211,7 @@ fn finish_validation_profile_escalates_workflow_metrics_backfill_publication_sli
             "docs/milestones/v0.91.6/review/V0916_WORKFLOW_METRIC_BACKFILL_4441.json".to_string(),
         ],
     )
-    .expect_err(
-        "workflow metrics backfill publication plan should require explicit slow-lane routing",
-    );
+    .expect_err("workflow metrics backfill publication plan should require explicit slow-lane routing");
 
     let message = err.to_string();
     assert!(message.contains("validation manager reported a non-runnable profile"));
