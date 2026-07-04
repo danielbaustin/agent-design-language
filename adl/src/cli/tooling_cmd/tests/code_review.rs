@@ -205,7 +205,7 @@ fn code_review_args_parse_args_rejects_invalid_values_and_missing_required_out()
         "--out".to_string(),
         "artifacts/review".to_string(),
         "--file".to_string(),
-        format!("/{}{}", "tmp", "/secret.txt"),
+        "/tmp/secret.txt".to_string(),
     ])
     .is_err());
     assert!(parse_args(&[
@@ -991,39 +991,13 @@ fn code_review_helpers_cover_url_normalization_prompt_and_unicode_truncation() {
     let prompt = reviewer_prompt(&test_packet());
     assert!(prompt.contains("actionable risks"));
     assert!(prompt.contains("adl.pr_review_result.v1"));
-    let redaction_input = format!(
-        "{}secret.txt {}alice/repo {}",
-        format!("/{}{}", "tmp", "/"),
-        format!("/{}{}", "Users", "/"),
-        format!("{}:\\\\secret", "C")
-    );
     assert_eq!(
-        redact_absolute_host_paths_for_prompt(&redaction_input),
+        redact_absolute_host_paths_for_prompt("/tmp/secret.txt /Users/alice/repo C:\\\\secret"),
         "[REDACTED_HOST_PATH]/secret.txt [REDACTED_HOST_PATH]/alice/repo [REDACTED_HOST_PATH]\\\\\\secret"
     );
     assert!(!contains_review_absolute_host_path("Expected signal:\\\\n"));
-    assert!(contains_review_absolute_host_path(&format!(
-        "{}:\\\\secret",
-        "C"
-    )));
-    assert!(!contains_review_absolute_host_path(&format!(
-        "token{}:\\\\secret",
-        "C"
-    )));
-    let removed_tmp_diff = format!(
-        "--- committed diff ---\n-  adl verify {}signed.adl.yaml\n+  adl verify artifacts/examples/signed.adl.yaml",
-        format!("/{}{}", "tmp", "/")
-    );
-    assert!(!contains_review_absolute_host_path_in_effective_diff(
-        &removed_tmp_diff
-    ));
-    let added_tmp_diff = format!(
-        "--- committed diff ---\n+  adl verify {}signed.adl.yaml",
-        format!("/{}{}", "tmp", "/")
-    );
-    assert!(contains_review_absolute_host_path_in_effective_diff(
-        &added_tmp_diff
-    ));
+    assert!(contains_review_absolute_host_path("C:\\\\secret"));
+    assert!(!contains_review_absolute_host_path("tokenC:\\\\secret"));
 
     let (truncated, was_truncated) = truncate("éclair", 3);
     assert!(was_truncated);

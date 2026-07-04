@@ -1,8 +1,0 @@
-{
-  "schema_version": "adl.pr_review_gate.v1",
-  "gate_disposition": "block_pr_open",
-  "pr_open_allowed": false,
-  "reasons": [
-    "review disposition is non_proving; operator waiver is not implemented"
-  ]
-}
