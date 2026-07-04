@@ -1,0 +1,239 @@
+{
+  "schema_version": "adl.v0917.runtime_module_diet_map.v1",
+  "issue": 4683,
+  "umbrella_issue": 4634,
+  "generated_at": "2026-07-04T09:49:15Z",
+  "status": "current_pre_soak2_map",
+  "claim_boundary": "This map records module diet candidates from current WP-07 implementation evidence. It does not claim that broad runtime refactoring, Soak 2, or v0.92 activation readiness is complete.",
+  "source_evidence": [
+    {
+      "issue": 4681,
+      "state": "ready_pr_checks_pending",
+      "pr": 4868,
+      "commit": "711d8bb39e5521068308eb44451b943079219278",
+      "evidence": [
+        "adl/src/runtime_v2/minimal_integrated_runtime_path.rs",
+        "adl/src/cli/runtime_v2_cmd/commands.rs",
+        "docs/milestones/v0.91.7/review/runtime/MINIMAL_INTEGRATED_RUNTIME_PATH_4681.md"
+      ],
+      "observed_pain": "Minimal integrated path needed a Runtime v2 contract, CLI wiring, path-hygiene behavior, usage text, retained evidence packet, and a contract-writer repair so retained-evidence refs are backed by written files."
+    },
+    {
+      "issue": 4842,
+      "state": "merged_closed",
+      "pr": 4851,
+      "evidence": [
+        "runtime-v2 command wiring",
+        "current-runtime reconciliation proof"
+      ],
+      "observed_pain": "Runtime v2 prototype reconciliation touches runtime-v2 CLI and current-runtime substrate proof, showing the prototype and current runtime need a canonical integration boundary."
+    },
+    {
+      "issue": 4718,
+      "state": "merged_closed",
+      "pr": 4862,
+      "evidence": [
+        "adl/tools/test_pr_v0917_integrated_observability_proof.sh",
+        "docs/milestones/v0.91.7/review/observability_4718/INTEGRATED_LOGGING_OTEL_PROOF_4718.md"
+      ],
+      "observed_pain": "Logging/OTel proof is currently a retained proof/mapping surface, not a production collector/exporter; downstream runtime consumers must keep that boundary explicit."
+    },
+    {
+      "issue": 4783,
+      "state": "ready_pr_checks_pending",
+      "pr": 4869,
+      "commit": "c95c45f1e019b9424fab65db2219d714fbb8650c",
+      "evidence": [
+        "adl/src/execute/runner.rs",
+        "adl/src/instrumentation.rs",
+        "adl/src/obsmem_indexing.rs",
+        "adl/src/resilience.rs",
+        "adl/src/trace/report.rs"
+      ],
+      "observed_pain": "Scheduler watcher and AEE resilience integration crosses execution, instrumentation, trace, ObsMem indexing, and resilience decision code in one issue."
+    },
+    {
+      "issue": 4784,
+      "state": "ready_green_pr",
+      "pr": 4871,
+      "commit": "573307379d3e487c05ccd974eb5b29942128d8db",
+      "evidence": [
+        "adl/src/bin/run_v0917_integrated_resilience_failure_injection.rs",
+        "docs/milestones/v0.91.7/review/runtime/v0917_integrated_resilience_failure_injection_4784/integrated_resilience_failure_injection_proof.json",
+        "docs/milestones/v0.91.7/review/runtime/v0917_integrated_resilience_failure_injection_4784/blocker_register.json"
+      ],
+      "observed_pain": "Failure-injection proof can exercise existing primitives and classify dependency rows, but final integrated Soak 2 consumption still belongs to #4682."
+    },
+    {
+      "issue": 4843,
+      "state": "ready_green_pr",
+      "pr": 4870,
+      "commit": "2d15a0273d04d58467f1a477c9923cc6f6834b89",
+      "evidence": [
+        "docs/milestones/v0.91.7/review/runtime/SOAK2_FEATURE_LIST_MATRIX_4843.md",
+        "docs/milestones/v0.91.7/review/runtime/soak2_feature_list_matrix_4843.json",
+        "adl/tools/validate_v0917_soak2_matrix.sh"
+      ],
+      "observed_pain": "Soak 2 matrix and fixtures provide a canonical feature-list input, but are not themselves final Soak 2 execution evidence."
+    },
+    {
+      "issue": 4682,
+      "state": "blocked_packet_committed_rerun_pending_upstreams",
+      "evidence": [
+        "docs/milestones/v0.91.7/review/runtime/soak2_4682/soak2_execution_status_4682.json"
+      ],
+      "observed_pain": "Soak 2 execution has not run against consumable upstreams; this map must not claim final Soak 2 module-pain coverage."
+    }
+  ],
+  "size_signals": [
+    {
+      "surface": "adl/src/runtime_v2",
+      "metric": "rust_file_count",
+      "value": 163,
+      "interpretation": "Runtime v2 has enough artifact/proof modules that new integrated paths need a stable facade and evidence registry rather than direct module-by-module consumption."
+    },
+    {
+      "surface": "adl/src/resilience.rs",
+      "metric": "line_count",
+      "value": 5225,
+      "interpretation": "Resilience policy, models, and proof helpers are concentrated in one large file, increasing integration-review cost for #4783/#4784 style changes."
+    },
+    {
+      "surface": "adl/src/execute/tests.rs",
+      "metric": "line_count",
+      "value": 1878,
+      "interpretation": "Execution behavior tests are large enough that resilience/watcher changes should be split into narrower fixture and assertion modules."
+    }
+  ],
+  "diet_candidates": [
+    {
+      "id": "D-4683-01",
+      "priority": "P1",
+      "owner_surface": "runtime_v2 integrated proof facade",
+      "current_surfaces": [
+        "adl/src/runtime_v2/minimal_integrated_runtime_path.rs",
+        "adl/src/runtime_v2/integrated_csm_run.rs",
+        "adl/src/cli/runtime_v2_cmd/commands.rs",
+        "adl/src/cli/runtime_v2_cmd/tests.rs"
+      ],
+      "observed_coupling": "Runtime path assembly currently requires CLI command code and contract code to agree on proof packets, retained evidence files, validation commands, and non-claims.",
+      "evidence_refs": [
+        "#4681 MINIMAL_INTEGRATED_RUNTIME_PATH_4681.md",
+        "#4842 PR #4851",
+        "adl/src/runtime_v2 contains 163 Rust files"
+      ],
+      "recommended_follow_on": "Add a small Runtime v2 integrated-proof registry/facade that exposes issue-independent evidence bundle descriptors consumed by CLI commands and Soak 2 matrix fixtures.",
+      "non_goal": "Do not collapse Runtime v2 proof modules or change proof semantics while the registry is introduced.",
+      "residual_risk": "Without this facade, #4682 and later runtime evidence consumers may keep binding directly to individual proof artifacts and repeat non-claim/path-hygiene logic."
+    },
+    {
+      "id": "D-4683-02",
+      "priority": "P1",
+      "owner_surface": "resilience policy and execution boundary",
+      "current_surfaces": [
+        "adl/src/resilience.rs",
+        "adl/src/execute/runner.rs",
+        "adl/src/execute/mod.rs",
+        "adl/src/execute/tests.rs"
+      ],
+      "observed_coupling": "#4783 resilience integration crosses runner execution, resilience decision data, cancellation/backpressure/bulkhead behavior, trace projection, instrumentation formatting, and broad execution tests.",
+      "evidence_refs": [
+        "#4783 PR #4869",
+        "#4784 blocker_register.json",
+        "adl/src/resilience.rs line count 5225",
+        "adl/src/execute/tests.rs line count 1878"
+      ],
+      "recommended_follow_on": "Split resilience into decision model, middleware adapter, and proof-fixture modules, then move execution tests for watcher/AEE middleware into focused fixture files.",
+      "non_goal": "Do not do the split inside WP-07 until #4783/#4784/#4682 evidence has landed and behavior is pinned.",
+      "residual_risk": "A premature split could hide behavior drift in scheduler/watcher/AEE paths that are still under PR validation and Soak 2 consumption."
+    },
+    {
+      "id": "D-4683-03",
+      "priority": "P1",
+      "owner_surface": "review packet redaction and lifecycle gates",
+      "current_surfaces": [
+        "adl/src/cli/tooling_cmd/code_review_build.rs",
+        "adl/src/cli/tooling_cmd/tests/code_review.rs",
+        "adl/src/cli/pr_cmd/finish_support.rs",
+        "adl/src/cli/pr_cmd/github/transport.rs"
+      ],
+      "observed_coupling": "WP-07 runtime issues exposed that runtime proof can be blocked by lifecycle and review-control-plane behavior. Draft-state ready promotion and review packet hygiene affected publication even when local runtime proof passed.",
+      "evidence_refs": [
+        "#4681 PR #4868",
+        "#4783 PR #4869",
+        "#4867 ready-promotion fix on main"
+      ],
+      "recommended_follow_on": "Keep review packet redaction and ready-promotion behavior as dedicated control-plane surfaces with regression tests for deleted lines, deleted files, added/current secret blocking, and draft-gated check transitions.",
+      "non_goal": "Do not mark a runtime/product feature complete merely because control-plane publication was repaired; each runtime row still needs integrated evidence.",
+      "residual_risk": "If lifecycle gates drift again, WP-07 runtime PRs can become blocked by publication mechanics instead of runtime defects."
+    },
+    {
+      "id": "D-4683-04",
+      "priority": "P2",
+      "owner_surface": "observability proof boundary",
+      "current_surfaces": [
+        "adl/tools/test_pr_v0917_integrated_observability_proof.sh",
+        "docs/milestones/v0.91.7/review/observability_4718/INTEGRATED_LOGGING_OTEL_PROOF_4718.md"
+      ],
+      "observed_coupling": "The current logging/OTel surface is proof/mapping evidence and stdout/stderr/redaction validation, not a production OTel collector/exporter.",
+      "evidence_refs": [
+        "#4718 PR #4862",
+        "INTEGRATED_LOGGING_OTEL_PROOF_4718.md"
+      ],
+      "recommended_follow_on": "Create a narrow observability-consumer contract that Soak 2 and future runtime consumers can reference without overstating OTLP/exporter readiness.",
+      "non_goal": "Do not claim production OpenTelemetry collector, OTLP exporter, hosted telemetry service, or Unity editor execution from #4718 alone.",
+      "residual_risk": "Downstream readiness docs could accidentally treat OTel-compatible mapping proof as deployed telemetry."
+    },
+    {
+      "id": "D-4683-05",
+      "priority": "P2",
+      "owner_surface": "Soak 2 matrix and blocker register",
+      "current_surfaces": [
+        "docs/milestones/v0.91.7/review/runtime/SOAK2_FEATURE_LIST_MATRIX_4843.md",
+        "docs/milestones/v0.91.7/review/runtime/soak2_feature_list_matrix_4843.json",
+        "docs/milestones/v0.91.7/review/runtime/v0917_integrated_resilience_failure_injection_4784/blocker_register.json",
+        "docs/milestones/v0.91.7/review/runtime/soak2_4682/soak2_execution_status_4682.json"
+      ],
+      "observed_coupling": "Failure-injection proof and the feature-list matrix can classify dependency rows, but final Soak 2 truth still belongs to #4682 after upstream PRs are consumable.",
+      "evidence_refs": [
+        "#4843 PR #4870",
+        "#4784 PR #4871",
+        "#4682 soak2_execution_status_4682.json"
+      ],
+      "recommended_follow_on": "Make #4843's matrix the canonical source for future diet-map deltas and require #4682 to emit blocker rows that can be merged into this register.",
+      "non_goal": "Do not use this pre-Soak map as final Soak 2 architecture disposition.",
+      "residual_risk": "Module pain discovered only during #4682 Soak 2 is not represented here."
+    }
+  ],
+  "blockers": [
+    {
+      "id": "B-4683-01",
+      "blocking_scope": "final_soak2_diet_disposition",
+      "missing_input": "#4682 Soak 2 run evidence after upstream PRs are consumable",
+      "current_disposition": "recorded_as_follow_on_input",
+      "owner": "#4682"
+    },
+    {
+      "id": "B-4683-02",
+      "blocking_scope": "runtime_resilience_publication_truth",
+      "missing_input": "#4783 PR checks and merge/consumption state",
+      "current_disposition": "blocks any final v0.92 claim requiring scheduler/watcher/AEE integrated middleware",
+      "owner": "#4783/#4682"
+    },
+    {
+      "id": "B-4683-03",
+      "blocking_scope": "canonical_runtime_path_consumption",
+      "missing_input": "#4681 PR checks and merge/consumption state",
+      "current_disposition": "blocks final Soak 2 run truth until consumable",
+      "owner": "#4681/#4682"
+    }
+  ],
+  "validation": {
+    "planned_commands": [
+      "jq . docs/milestones/v0.91.7/review/runtime/runtime_module_diet_map_4683.json",
+      "rg -n \"D-4683-|B-4683-|#4681|#4718|#4783|#4784|#4843|#4682\" docs/milestones/v0.91.7/review/runtime/RUNTIME_MODULE_DIET_MAP_4683.md",
+      "git diff --check"
+    ],
+    "status": "planned"
+  }
+}
