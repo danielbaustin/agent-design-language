@@ -30,6 +30,11 @@ fn runtime_v2_minimal_integrated_runtime_path_contract_is_stable() {
             == "artifacts/runtime-v2-governed-demo-run/logs/activation_log.json"));
     assert!(artifacts
         .summary
+        .retained_evidence_refs
+        .iter()
+        .any(|artifact| artifact == "runtime_v2/reconciliation/reconciliation_packet.json"));
+    assert!(artifacts
+        .summary
         .negative_case_refs
         .iter()
         .any(|case| case.contains("birthday-readiness overclaims")));
@@ -37,7 +42,7 @@ fn runtime_v2_minimal_integrated_runtime_path_contract_is_stable() {
         .summary
         .non_claims
         .iter()
-        .any(|claim| claim.contains("#4718 owns that proof")));
+        .any(|claim| claim.contains("#4718 owns the landed logging/OTel proof")));
 }
 
 #[test]

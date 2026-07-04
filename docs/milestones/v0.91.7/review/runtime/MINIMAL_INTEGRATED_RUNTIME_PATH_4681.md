@@ -13,7 +13,9 @@ existing D10 integrated CSM run substrate into one reproducible runtime path.
 It emits retained local evidence under a stable issue-scoped artifact root and
 records the negative cases that keep the proof from becoming an overclaim.
 
-This work does not consume pending `#4842` runtime-v2 substrate changes.
+Because `#4842` has landed, this path now also emits the current-runtime
+reconciliation packet and long-lived-agent status artifacts required by the
+canonical Runtime v2 substrate proof.
 
 ## Implemented Surfaces
 
@@ -21,9 +23,9 @@ This work does not consume pending `#4842` runtime-v2 substrate changes.
   - Adds the issue-bound summary contract
     `runtime_v2.minimal_integrated_runtime_path_summary.v1`.
   - Validates issue/milestone binding, repository-relative evidence refs,
-    retained evidence inventory, negative-case inventory, runnable validation
-    commands, and non-claims for `#4682`, `#4718`, `#4842`, and v0.92
-    activation readiness.
+    retained evidence inventory, #4842 reconciliation refs, negative-case
+    inventory, runnable validation commands, and non-claims for `#4682`,
+    `#4718`, `#4842`, and v0.92 activation readiness.
   - Reuses `runtime_v2_csm_integrated_run_contract()` instead of forking the
     D10 substrate.
 
@@ -32,6 +34,8 @@ This work does not consume pending `#4842` runtime-v2 substrate changes.
   - Writes the integrated CSM bundle plus
     `issue_4681/minimal_integrated_runtime_path_summary.json`.
   - Emits the existing governed trace artifacts used by the D10 proof path.
+  - Emits the #4842 current-runtime reconciliation packet plus
+    long-lived-agent initial, run, stop, and final status artifacts.
 
 - `adl/src/cli/runtime_v2_cmd/helpers.rs` and `adl/src/cli/usage.rs`
   - Adds command dispatch, help text, and path-hygiene behavior consistent with
@@ -52,6 +56,11 @@ Primary retained refs inside that root:
 - `runtime_v2/csm_run/integrated_first_run_transcript.jsonl`
 - `runtime_v2/observatory/visibility_packet.json`
 - `runtime_v2/observatory/operator_report.md`
+- `runtime_v2/reconciliation/reconciliation_packet.json`
+- `current_runtime/long_lived_agent/initial_status.json`
+- `current_runtime/long_lived_agent/run_status.json`
+- `current_runtime/long_lived_agent/stop_status.json`
+- `current_runtime/long_lived_agent/final_status.json`
 - `artifacts/runtime-v2-governed-demo-run/logs/activation_log.json`
 - `artifacts/runtime-v2-governed-demo-run/governed/result.redacted.json`
 
@@ -115,7 +124,8 @@ Unit and CLI tests prove:
 ## Non-Claims
 
 - This does not close Runtime Soak #2; `#4682` owns the broader soak run.
-- This does not claim integrated logging or OTel readiness; `#4718` owns that
-  proof.
-- This does not depend on pending `#4842` runtime-v2 substrate changes.
+- This does not consume integrated logging or OTel proof into Soak #2; `#4718`
+  owns the landed proof and `#4682`/`#4843` own later consumption.
+- This does not replace the `#4842` runtime-v2 substrate reconciliation issue;
+  it consumes the landed reconciliation artifact shape as retained evidence.
 - This does not claim v0.92 birthday activation readiness.

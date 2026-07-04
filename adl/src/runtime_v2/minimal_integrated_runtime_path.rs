@@ -11,6 +11,16 @@ pub const RUNTIME_V2_MINIMAL_INTEGRATED_RUNTIME_PATH_SCHEMA: &str =
     "runtime_v2.minimal_integrated_runtime_path_summary.v1";
 pub const RUNTIME_V2_MINIMAL_INTEGRATED_RUNTIME_PATH_SUMMARY: &str =
     "issue_4681/minimal_integrated_runtime_path_summary.json";
+pub const RUNTIME_V2_CURRENT_RUNTIME_RECONCILIATION_PACKET: &str =
+    "runtime_v2/reconciliation/reconciliation_packet.json";
+pub const RUNTIME_V2_CURRENT_RUNTIME_INITIAL_STATUS: &str =
+    "current_runtime/long_lived_agent/initial_status.json";
+pub const RUNTIME_V2_CURRENT_RUNTIME_RUN_STATUS: &str =
+    "current_runtime/long_lived_agent/run_status.json";
+pub const RUNTIME_V2_CURRENT_RUNTIME_STOP_STATUS: &str =
+    "current_runtime/long_lived_agent/stop_status.json";
+pub const RUNTIME_V2_CURRENT_RUNTIME_FINAL_STATUS: &str =
+    "current_runtime/long_lived_agent/final_status.json";
 
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
 pub struct RuntimeV2MinimalIntegratedRuntimePathSummary {
@@ -52,6 +62,11 @@ impl RuntimeV2MinimalIntegratedRuntimePathArtifacts {
                 integrated_run.proof_packet.execution_transcript_ref.clone(),
                 integrated_run.proof_packet.observatory_packet_ref.clone(),
                 integrated_run.proof_packet.operator_report_ref.clone(),
+                RUNTIME_V2_CURRENT_RUNTIME_RECONCILIATION_PACKET.to_string(),
+                RUNTIME_V2_CURRENT_RUNTIME_INITIAL_STATUS.to_string(),
+                RUNTIME_V2_CURRENT_RUNTIME_RUN_STATUS.to_string(),
+                RUNTIME_V2_CURRENT_RUNTIME_STOP_STATUS.to_string(),
+                RUNTIME_V2_CURRENT_RUNTIME_FINAL_STATUS.to_string(),
                 "artifacts/runtime-v2-governed-demo-run/logs/activation_log.json".to_string(),
                 "artifacts/runtime-v2-governed-demo-run/governed/result.redacted.json".to_string(),
                 RUNTIME_V2_MINIMAL_INTEGRATED_RUNTIME_PATH_SUMMARY.to_string(),
@@ -71,12 +86,12 @@ impl RuntimeV2MinimalIntegratedRuntimePathArtifacts {
                 "git diff --check".to_string(),
             ],
             integration_summary:
-                "Issue #4681 assembles the existing D10 integrated CSM run substrate into one v0.91.7 in-product runtime-v2 entrypoint with retained proof packet, transcript, Observatory report, governed activation log, redacted governed result, and explicit negative-case guardrails."
+                "Issue #4681 assembles the existing D10 integrated CSM run substrate and the #4842 current-runtime reconciliation proof into one v0.91.7 in-product runtime-v2 entrypoint with retained proof packet, transcript, Observatory report, governed activation log, redacted governed result, current-runtime run/status evidence, and explicit negative-case guardrails."
                     .to_string(),
             non_claims: vec![
                 "does not claim full Runtime Soak #2 completion; #4682 owns the broader soak run".to_string(),
-                "does not claim integrated logging or OTel readiness; #4718 owns that proof".to_string(),
-                "does not consume pending #4842 runtime-v2 substrate changes".to_string(),
+                "does not consume integrated logging or OTel proof into Soak #2; #4718 owns the landed logging/OTel proof and #4682/#4843 own later consumption".to_string(),
+                "does not replace the #4842 runtime-v2 substrate reconciliation issue; it consumes the landed reconciliation artifact shape as retained evidence".to_string(),
                 "does not claim v0.92 birthday activation readiness".to_string(),
             ],
         };
@@ -175,6 +190,11 @@ impl RuntimeV2MinimalIntegratedRuntimePathSummary {
                 .as_str(),
             integrated_run.proof_packet.observatory_packet_ref.as_str(),
             integrated_run.proof_packet.operator_report_ref.as_str(),
+            RUNTIME_V2_CURRENT_RUNTIME_RECONCILIATION_PACKET,
+            RUNTIME_V2_CURRENT_RUNTIME_INITIAL_STATUS,
+            RUNTIME_V2_CURRENT_RUNTIME_RUN_STATUS,
+            RUNTIME_V2_CURRENT_RUNTIME_STOP_STATUS,
+            RUNTIME_V2_CURRENT_RUNTIME_FINAL_STATUS,
             "artifacts/runtime-v2-governed-demo-run/logs/activation_log.json",
             "artifacts/runtime-v2-governed-demo-run/governed/result.redacted.json",
             RUNTIME_V2_MINIMAL_INTEGRATED_RUNTIME_PATH_SUMMARY,
@@ -246,10 +266,19 @@ impl RuntimeV2MinimalIntegratedRuntimePathSummary {
         if !self
             .non_claims
             .iter()
-            .any(|claim| claim.contains("#4718 owns that proof"))
+            .any(|claim| claim.contains("#4718 owns the landed logging/OTel proof"))
         {
             return Err(anyhow!(
                 "minimal integrated runtime path summary must preserve the logging/OTel non-claim"
+            ));
+        }
+        if !self
+            .retained_evidence_refs
+            .iter()
+            .any(|reference| reference == RUNTIME_V2_CURRENT_RUNTIME_RECONCILIATION_PACKET)
+        {
+            return Err(anyhow!(
+                "minimal integrated runtime path summary must retain the current-runtime reconciliation packet"
             ));
         }
         Ok(())

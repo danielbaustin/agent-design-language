@@ -481,6 +481,21 @@ fn trace_runtime_v2_minimal_integrated_runtime_path_writes_retained_evidence() {
         .join("runtime_v2/observatory/operator_report.md")
         .is_file());
     assert!(out_dir
+        .join("runtime_v2/reconciliation/reconciliation_packet.json")
+        .is_file());
+    assert!(out_dir
+        .join("current_runtime/long_lived_agent/initial_status.json")
+        .is_file());
+    assert!(out_dir
+        .join("current_runtime/long_lived_agent/run_status.json")
+        .is_file());
+    assert!(out_dir
+        .join("current_runtime/long_lived_agent/stop_status.json")
+        .is_file());
+    assert!(out_dir
+        .join("current_runtime/long_lived_agent/final_status.json")
+        .is_file());
+    assert!(out_dir
         .join("artifacts/runtime-v2-governed-demo-run/logs/activation_log.json")
         .is_file());
     assert!(out_dir
@@ -496,6 +511,12 @@ fn trace_runtime_v2_minimal_integrated_runtime_path_writes_retained_evidence() {
         "runtime_v2.minimal_integrated_runtime_path_summary.v1"
     );
     assert_eq!(json["issue"], 4681);
+    assert!(json["retained_evidence_refs"]
+        .as_array()
+        .expect("retained evidence refs")
+        .iter()
+        .any(|reference| reference.as_str().unwrap_or_default()
+            == "runtime_v2/reconciliation/reconciliation_packet.json"));
     assert!(json["negative_case_refs"]
         .as_array()
         .expect("negative cases")

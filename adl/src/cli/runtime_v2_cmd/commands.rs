@@ -234,6 +234,61 @@ pub(crate) fn real_runtime_v2_integrated_csm_run_demo(
     Ok(())
 }
 
+pub(crate) fn real_runtime_v2_minimal_integrated_runtime_path(
+    repo_root: &Path,
+    args: &[String],
+) -> Result<()> {
+    let mut out_path: Option<PathBuf> = None;
+    let mut i = 0usize;
+    while i < args.len() {
+        match args[i].as_str() {
+            "--out" => {
+                let Some(value) = args.get(i + 1) else {
+                    return Err(anyhow!(
+                        "runtime-v2 minimal-integrated-runtime-path requires --out <dir>"
+                    ));
+                };
+                out_path = Some(PathBuf::from(value));
+                i += 1;
+            }
+            "--help" | "-h" => {
+                println!("{}", usage::usage());
+                return Ok(());
+            }
+            other => {
+                return Err(anyhow!(
+                    "unknown arg for runtime-v2 minimal-integrated-runtime-path: {other}"
+                ))
+            }
+        }
+        i += 1;
+    }
+
+    let artifacts = runtime_v2_minimal_integrated_runtime_path_contract()?;
+    let Some(out_path) = out_path else {
+        println!("{}", to_string_pretty(&artifacts.summary)?);
+        return Ok(());
+    };
+    let resolved =
+        resolve_relative_output_path(repo_root, &out_path, "minimal-integrated-runtime-path")?;
+    fs::create_dir_all::<&Path>(&resolved).with_context(|| {
+        format!(
+            "failed to create Runtime v2 minimal integrated runtime path root {}",
+            resolved.display()
+        )
+    })?;
+    artifacts.write_to_root(&resolved)?;
+    write_runtime_v2_governed_trace_demo(&resolved)?;
+    write_current_runtime_reconciliation(&resolved)?;
+    println!(
+        "RUNTIME_V2_MINIMAL_INTEGRATED_RUNTIME_PATH_ROOT={}",
+        resolved.display()
+    );
+    println!();
+    println!("{}", artifacts.integrated_run.execution_summary()?);
+    Ok(())
+}
+
 fn write_current_runtime_reconciliation(root: &Path) -> Result<()> {
     let current_root = root.join("current_runtime/long_lived_agent");
     fs::create_dir_all(&current_root)
@@ -334,60 +389,6 @@ fn write_json(path: &Path, value: &impl Serialize) -> Result<()> {
     let bytes = serde_json::to_vec_pretty(value)
         .with_context(|| format!("serialize json artifact {}", path.display()))?;
     fs::write(path, bytes).with_context(|| format!("write json artifact {}", path.display()))
-}
-
-pub(crate) fn real_runtime_v2_minimal_integrated_runtime_path(
-    repo_root: &Path,
-    args: &[String],
-) -> Result<()> {
-    let mut out_path: Option<PathBuf> = None;
-    let mut i = 0usize;
-    while i < args.len() {
-        match args[i].as_str() {
-            "--out" => {
-                let Some(value) = args.get(i + 1) else {
-                    return Err(anyhow!(
-                        "runtime-v2 minimal-integrated-runtime-path requires --out <dir>"
-                    ));
-                };
-                out_path = Some(PathBuf::from(value));
-                i += 1;
-            }
-            "--help" | "-h" => {
-                println!("{}", usage::usage());
-                return Ok(());
-            }
-            other => {
-                return Err(anyhow!(
-                    "unknown arg for runtime-v2 minimal-integrated-runtime-path: {other}"
-                ))
-            }
-        }
-        i += 1;
-    }
-
-    let artifacts = runtime_v2_minimal_integrated_runtime_path_contract()?;
-    let Some(out_path) = out_path else {
-        println!("{}", to_string_pretty(&artifacts.summary)?);
-        return Ok(());
-    };
-    let resolved =
-        resolve_relative_output_path(repo_root, &out_path, "minimal-integrated-runtime-path")?;
-    fs::create_dir_all::<&Path>(&resolved).with_context(|| {
-        format!(
-            "failed to create Runtime v2 minimal integrated runtime path root {}",
-            resolved.display()
-        )
-    })?;
-    artifacts.write_to_root(&resolved)?;
-    write_runtime_v2_governed_trace_demo(&resolved)?;
-    println!(
-        "RUNTIME_V2_MINIMAL_INTEGRATED_RUNTIME_PATH_ROOT={}",
-        resolved.display()
-    );
-    println!();
-    println!("{}", artifacts.integrated_run.execution_summary()?);
-    Ok(())
 }
 
 pub(crate) fn real_runtime_v2_observatory_flagship_demo(
