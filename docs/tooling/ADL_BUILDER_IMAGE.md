@@ -104,7 +104,10 @@ The run summary records `builder_image`, `builder_runtime`, and
 ## CodeBuild And Spot
 
 The CodeBuild lane should consume `ADL_AWS_CODEFRIEND_IMAGE` as the custom
-environment image. The Spot lane should consume `ADL_AWS_SPOT_BUILDER_IMAGE`
+environment image directly. Do not rebuild the image inside each CodeBuild run;
+publish a versioned ECR tag once, configure CodeBuild with
+`imagePullCredentialsType=SERVICE_ROLE`, and run validation commands in that
+environment. The Spot lane should consume `ADL_AWS_SPOT_BUILDER_IMAGE`
 when the instance has Docker or Podman available; otherwise it can continue
 using the image as the canonical setup definition while keeping the warm EBS
 cache path.
@@ -116,3 +119,8 @@ credentials and the exact S3 `sccache` bucket, region, and key prefix into the
 container. A successful nested-container run on 2026-07-05 proved execution but
 only reached a 0.26% total hit rate and 0% Rust hit rate, so that shape is not
 the preferred fast path until its cache key/path mismatch is fixed.
+
+The AWS-managed `aws/codebuild/standard:7.0` image is not a drop-in Rust image
+for this lane. A 2026-07-05 probe with `runtime-versions: rust: latest` failed
+before execution because that managed image did not advertise a Rust runtime.
+Use the ADL ECR image for no-install Rust validation.

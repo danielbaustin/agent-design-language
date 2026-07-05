@@ -123,6 +123,51 @@ Live CodeBuild image-backed run:
 Interpretation: the image runtime path works, and the mounted target directory
 works for same-host repeated execution. The nested CodeBuild image shape did
 not reuse the existing native CodeBuild S3 Rust cache; its cache key/path
-posture produced a cold-cache result. Do not claim the custom image is the fast
-CodeBuild path until the native custom-image environment is tested directly or
-the nested-container S3 `sccache` key/path mismatch is fixed.
+posture produced a cold-cache result. Do not use the nested-container shape for
+the steady-state lane.
+
+## Direct CodeBuild Image Fix
+
+The correct CodeBuild path is to publish the fixed image once and run CodeBuild
+directly on that ECR image. Rebuilding the image inside every benchmark run is
+not the operational path.
+
+One-time image publication:
+
+- Build id: `adl-codefriend-build:fed2a740-aabd-47d1-9442-9343b02c884d`
+- Tag: `adl-builder:v0.91.7-fixed`
+- Result: `SUCCEEDED`
+- Build phase duration: `88s`
+
+Managed-image probe:
+
+- Build id: `adl-codefriend-build:00a6ce14-aa97-48e2-bfec-5bf24f0fa6b7`
+- Image: `aws/codebuild/standard:7.0`
+- Result: `FAILED` before command execution
+- Cause: CodeBuild reported that the managed image did not know a `rust`
+  runtime; available runtimes were dotnet, golang, java, nodejs, php, python,
+  and ruby.
+
+Direct custom-image run:
+
+- Build id: `adl-codefriend-build:f9da1c33-e6a3-4c1f-b917-93a9d170556c`
+- Image: `adl-builder:v0.91.7-fixed`
+- Compute: `BUILD_GENERAL1_XLARGE`
+- Image pull: `SERVICE_ROLE`
+- Privileged mode: `false`
+- Rebuilt image during run: no
+- Build phase duration: `195s`
+- Provisioning duration: `22s`
+- Command result: `passed`, `21 passed; 0 failed; 1554 filtered out`
+- Benchmark line:
+  `ADL_BUILD_PLATFORM_BENCHMARK platform=codebuild-xlarge-direct-fixed-builder-image build_seconds=119 test_seconds=76 total_seconds=195 status=passed`
+- `sccache`: `845` compile requests, `763` hits, `3` misses, `99.61%` total
+  hit rate, `99.18%` Rust hit rate
+
+The live `adl-codefriend-build` project was left in the working direct-image
+state after this run:
+
+- image: `adl-builder:v0.91.7-fixed`
+- compute: `BUILD_GENERAL1_XLARGE`
+- privileged: `false`
+- image pull credentials: `SERVICE_ROLE`
