@@ -1,0 +1,139 @@
+name: aws-codefriend-build
+
+on:
+  workflow_dispatch:
+    inputs:
+      mode:
+        description: "Render the build request or start the AWS CodeBuild project"
+        required: true
+        default: "dry-run"
+        type: choice
+        options:
+          - dry-run
+          - start-build
+      source_version:
+        description: "Git ref or commit passed to AWS CodeBuild; blank uses this workflow run SHA"
+        required: false
+        default: ""
+      build_command:
+        description: "ADL command passed as ADL_CODEFRIEND_BUILD_COMMAND"
+        required: true
+        default: "bash adl/tools/run_pr_fast_test_lane.sh"
+
+permissions:
+  contents: read
+  id-token: write
+
+concurrency:
+  group: aws-codefriend-build-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  codefriend-build:
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    env:
+      AWS_CODEFRIEND_REGION: ${{ vars.AWS_CODEFRIEND_REGION || 'us-west-2' }}
+      AWS_CODEFRIEND_CODEBUILD_PROJECT: ${{ vars.AWS_CODEFRIEND_CODEBUILD_PROJECT }}
+      AWS_CODEFRIEND_BUILD_ROLE_ARN: ${{ secrets.AWS_CODEFRIEND_BUILD_ROLE_ARN }}
+      AWS_CODEFRIEND_ACCOUNT_SHA256: ${{ secrets.AWS_CODEFRIEND_ACCOUNT_SHA256 }}
+    steps:
+      - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4
+        with:
+          fetch-depth: 0
+
+      - name: Validate dispatch inputs
+        run: |
+          case "${{ inputs.mode }}" in
+            dry-run|start-build) ;;
+            *)
+              echo "::error::mode must be dry-run or start-build"
+              exit 2
+              ;;
+          esac
+          if [ -z "$AWS_CODEFRIEND_CODEBUILD_PROJECT" ]; then
+            echo "::error::AWS_CODEFRIEND_CODEBUILD_PROJECT repository variable is required"
+            exit 2
+          fi
+          if [ "${{ inputs.source_version }}" = "HEAD" ]; then
+            echo "::error::source_version must be a branch, tag, or SHA; HEAD is ambiguous"
+            exit 2
+          fi
+          if [ "${{ inputs.mode }}" = "start-build" ]; then
+            missing=""
+            [ -n "$AWS_CODEFRIEND_BUILD_ROLE_ARN" ] || missing="$missing AWS_CODEFRIEND_BUILD_ROLE_ARN"
+            [ -n "$AWS_CODEFRIEND_ACCOUNT_SHA256" ] || missing="$missing AWS_CODEFRIEND_ACCOUNT_SHA256"
+            if [ -n "$missing" ]; then
+              echo "::error::missing required live AWS boundary:$missing"
+              exit 2
+            fi
+          fi
+
+      - name: Configure Agent Logic AWS credentials
+        if: inputs.mode == 'start-build'
+        uses: aws-actions/configure-aws-credentials@7474bc4690e29a8392af63c5b98e7449536d5c3a # v4
+        with:
+          role-to-assume: ${{ secrets.AWS_CODEFRIEND_BUILD_ROLE_ARN }}
+          aws-region: ${{ env.AWS_CODEFRIEND_REGION }}
+          mask-aws-account-id: true
+
+      - name: Prepare artifact directory
+        run: mkdir -p .adl/tmp/aws-codefriend-build
+
+      - name: Render CodeFriend AWS build request
+        if: inputs.mode == 'dry-run'
+        env:
+          ADL_CODEFRIEND_BUILD_COMMAND: ${{ inputs.build_command }}
+          SOURCE_VERSION: ${{ inputs.source_version || github.sha }}
+        run: |
+          bash adl/tools/run_aws_codefriend_build_lane.sh \
+            --dry-run \
+            --project-name "$AWS_CODEFRIEND_CODEBUILD_PROJECT" \
+            --source-version "$SOURCE_VERSION" \
+            --region "$AWS_CODEFRIEND_REGION" \
+            --env "ADL_CODEFRIEND_BUILD_COMMAND=$ADL_CODEFRIEND_BUILD_COMMAND" \
+            --out .adl/tmp/aws-codefriend-build/summary.json \
+            --artifact-dir .adl/tmp/aws-codefriend-build \
+            --print-command
+
+      - name: Start CodeFriend AWS build
+        if: inputs.mode == 'start-build'
+        env:
+          ADL_AWS_CODEFRIEND_ACCOUNT_SHA256: ${{ secrets.AWS_CODEFRIEND_ACCOUNT_SHA256 }}
+          ADL_CODEFRIEND_BUILD_COMMAND: ${{ inputs.build_command }}
+          SOURCE_VERSION: ${{ inputs.source_version || github.sha }}
+        run: |
+          bash adl/tools/run_aws_codefriend_build_lane.sh \
+            --run \
+            --check-account \
+            --profile env \
+            --project-name "$AWS_CODEFRIEND_CODEBUILD_PROJECT" \
+            --source-version "$SOURCE_VERSION" \
+            --region "$AWS_CODEFRIEND_REGION" \
+            --env "ADL_CODEFRIEND_BUILD_COMMAND=$ADL_CODEFRIEND_BUILD_COMMAND" \
+            --wait \
+            --out .adl/tmp/aws-codefriend-build/summary.json \
+            --artifact-dir .adl/tmp/aws-codefriend-build
+
+      - name: CodeFriend build summary
+        if: always()
+        run: |
+          {
+            echo "## AWS CodeFriend build lane"
+            echo
+            echo "| Field | Value |"
+            echo "|---|---|"
+            echo "| mode | \`${{ inputs.mode }}\` |"
+            echo "| region | \`$AWS_CODEFRIEND_REGION\` |"
+            echo "| project configured | \`$([ -n "$AWS_CODEFRIEND_CODEBUILD_PROJECT" ] && printf true || printf false)\` |"
+            echo "| summary artifact | \`.adl/tmp/aws-codefriend-build/summary.json\` |"
+          } >> "$GITHUB_STEP_SUMMARY"
+
+      - name: Upload CodeFriend build artifacts
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
+        with:
+          name: aws-codefriend-build-${{ github.run_id }}
+          path: .adl/tmp/aws-codefriend-build/
+          if-no-files-found: error
+          retention-days: 14

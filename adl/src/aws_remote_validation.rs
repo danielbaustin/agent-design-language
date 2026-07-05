@@ -31,6 +31,7 @@ const SPOT_QUOTA_NAME: &str = "All Standard (A, C, D, H, I, M, R, T, Z) Spot Ins
 const ON_DEMAND_QUOTA_NAME: &str =
     "Running On-Demand Standard (A, C, D, H, I, M, R, T, Z) instances";
 const CACHE_ROLE_POLICY_NAME: &str = "AdlAwsRemoteValidationCacheAccess";
+const BUILDER_IMAGE_ECR_ROLE_POLICY_NAME: &str = "AdlAwsRemoteValidationBuilderImageEcrRead";
 
 static LIVE_EVENT_LOG_PATH: Lazy<Mutex<Option<PathBuf>>> = Lazy::new(|| Mutex::new(None));
 static LIVE_COMMAND_STATUS_LOG_PATH: Lazy<Mutex<Option<PathBuf>>> = Lazy::new(|| Mutex::new(None));
@@ -2340,6 +2341,48 @@ impl LiveAwsRemoteValidationAdapter {
                 .put_role_policy()
                 .role_name(role_name)
                 .policy_name(CACHE_ROLE_POLICY_NAME)
+                .policy_document(policy_document)
+                .send()
+                .await?;
+        }
+        let account_id = self
+            .sts
+            .get_caller_identity()
+            .send()
+            .await?
+            .account()
+            .unwrap_or_default()
+            .to_string();
+        if !account_id.trim().is_empty() {
+            let policy_document = format!(
+                r#"{{
+  "Version": "2012-10-17",
+  "Statement": [
+    {{
+      "Effect": "Allow",
+      "Action": ["ecr:GetAuthorizationToken"],
+      "Resource": "*"
+    }},
+    {{
+      "Effect": "Allow",
+      "Action": [
+        "ecr:BatchCheckLayerAvailability",
+        "ecr:BatchGetImage",
+        "ecr:DescribeImages",
+        "ecr:DescribeRepositories",
+        "ecr:GetDownloadUrlForLayer"
+      ],
+      "Resource": "arn:aws:ecr:{region}:{account_id}:repository/adl-builder"
+    }}
+  ]
+}}"#,
+                region = config.region,
+                account_id = account_id
+            );
+            self.iam
+                .put_role_policy()
+                .role_name(role_name)
+                .policy_name(BUILDER_IMAGE_ECR_ROLE_POLICY_NAME)
                 .policy_document(policy_document)
                 .send()
                 .await?;
