@@ -1,3 +1,4 @@
+use std::env;
 use std::fs;
 use std::path::{Path, PathBuf};
 use std::process::{Command, Stdio};
@@ -52,6 +53,8 @@ struct ServiceArgs {
     interval_secs: Option<u64>,
     recover_stale_lease: bool,
     no_sleep: bool,
+    otlp_endpoint: Option<String>,
+    otlp_timeout_ms: Option<u64>,
     json: bool,
 }
 
@@ -68,6 +71,12 @@ impl Default for ServiceArgs {
             interval_secs: None,
             recover_stale_lease: true,
             no_sleep: false,
+            otlp_endpoint: None,
+            otlp_timeout_ms: env::var("ADL_OTEL_EXPORTER_TIMEOUT_MS")
+                .or_else(|_| env::var("OTEL_EXPORTER_OTLP_TIMEOUT_MS"))
+                .ok()
+                .and_then(|value| value.parse::<u64>().ok())
+                .filter(|value| *value > 0),
             json: false,
         }
     }
@@ -98,6 +107,8 @@ struct ServiceManifest {
     interval_secs: Option<u64>,
     recover_stale_lease: bool,
     no_sleep: bool,
+    otlp_endpoint: Option<String>,
+    otlp_timeout_ms: Option<u64>,
     launchd_domain: String,
     unsupported_permanence_claims: Vec<String>,
     created_at: String,
@@ -121,6 +132,8 @@ struct ServiceStatus {
     observability_log_ref: String,
     otel_log_ref: String,
     otel_status_ref: String,
+    otlp_exporter_configured: bool,
+    otlp_endpoint_ref: Option<&'static str>,
     last_action: String,
     last_error: Option<String>,
     unsupported_permanence_claims: Vec<String>,
@@ -295,6 +308,21 @@ fn parse_service_args(args: &[String], require_spec: bool) -> Result<ServiceArgs
             }
             "--no-recover-stale-lease" => parsed.recover_stale_lease = false,
             "--no-sleep" => parsed.no_sleep = true,
+            "--otlp-endpoint" => {
+                let endpoint = required_value(args, i, "--otlp-endpoint")?
+                    .trim()
+                    .to_string();
+                validate_otlp_endpoint(&endpoint)?;
+                parsed.otlp_endpoint = Some(endpoint);
+                i += 1;
+            }
+            "--otlp-timeout-ms" => {
+                parsed.otlp_timeout_ms = Some(parse_positive_u64(
+                    required_value(args, i, "--otlp-timeout-ms")?,
+                    "--otlp-timeout-ms",
+                )?);
+                i += 1;
+            }
             "--json" => parsed.json = true,
             "--help" | "-h" => {
                 println!("{}", service_usage());
@@ -308,6 +336,9 @@ fn parse_service_args(args: &[String], require_spec: bool) -> Result<ServiceArgs
         return Err(anyhow!(
             "csm service install requires --spec <agent-spec.yaml>"
         ));
+    }
+    if parsed.otlp_endpoint.is_none() {
+        parsed.otlp_endpoint = env_otlp_endpoint()?;
     }
     Ok(parsed)
 }
@@ -345,6 +376,8 @@ fn build_manifest(
         interval_secs: parsed.interval_secs,
         recover_stale_lease: parsed.recover_stale_lease,
         no_sleep: parsed.no_sleep,
+        otlp_endpoint: parsed.otlp_endpoint,
+        otlp_timeout_ms: parsed.otlp_timeout_ms,
         launchd_domain,
         unsupported_permanence_claims: unsupported_permanence_claims(),
         created_at: Utc::now().to_rfc3339(),
@@ -378,6 +411,21 @@ fn write_launchd_plist(manifest: &ServiceManifest) -> Result<()> {
         .map(|arg| format!("    <string>{}</string>", xml_escape(arg)))
         .collect::<Vec<_>>()
         .join("\n");
+    let otlp_env = match manifest.otlp_endpoint.as_deref() {
+        Some(endpoint) => {
+            let mut block = format!(
+                "    <key>ADL_OTEL_EXPORTER_OTLP_ENDPOINT</key>\n    <string>{}</string>\n",
+                xml_escape(endpoint)
+            );
+            if let Some(timeout_ms) = manifest.otlp_timeout_ms {
+                block.push_str(&format!(
+                    "    <key>ADL_OTEL_EXPORTER_TIMEOUT_MS</key>\n    <string>{timeout_ms}</string>\n"
+                ));
+            }
+            block
+        }
+        None => String::new(),
+    };
     let plist = format!(
         r#"<?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
@@ -407,7 +455,7 @@ fn write_launchd_plist(manifest: &ServiceManifest) -> Result<()> {
     <string>{otel_log}</string>
     <key>ADL_OTEL_STATUS</key>
     <string>{otel_status}</string>
-  </dict>
+{otlp_env}  </dict>
 </dict>
 </plist>
 "#,
@@ -417,6 +465,7 @@ fn write_launchd_plist(manifest: &ServiceManifest) -> Result<()> {
         observability = xml_escape(&manifest.observability_log.display().to_string()),
         otel_log = xml_escape(&manifest.otel_log.display().to_string()),
         otel_status = xml_escape(&manifest.otel_status.display().to_string()),
+        otlp_env = otlp_env,
     );
     fs::write(&manifest.plist, plist).with_context(|| format!("write {}", manifest.plist.display()))
 }
@@ -458,6 +507,12 @@ fn start_local(manifest: &ServiceManifest) -> Result<()> {
         .env("ADL_OTEL_STATUS", &manifest.otel_status)
         .stdout(Stdio::from(stdout))
         .stderr(Stdio::from(stderr));
+    if let Some(endpoint) = manifest.otlp_endpoint.as_deref() {
+        command.env("ADL_OTEL_EXPORTER_OTLP_ENDPOINT", endpoint);
+    }
+    if let Some(timeout_ms) = manifest.otlp_timeout_ms {
+        command.env("ADL_OTEL_EXPORTER_TIMEOUT_MS", timeout_ms.to_string());
+    }
     if let Some(interval_secs) = manifest.interval_secs {
         command
             .arg("--interval-secs")
@@ -528,6 +583,8 @@ fn service_status(
         observability_log_ref: ref_for(&manifest.service_root, &manifest.observability_log),
         otel_log_ref: ref_for(&manifest.service_root, &manifest.otel_log),
         otel_status_ref: ref_for(&manifest.service_root, &manifest.otel_status),
+        otlp_exporter_configured: manifest.otlp_endpoint.is_some(),
+        otlp_endpoint_ref: manifest.otlp_endpoint.as_ref().map(|_| "<configured>"),
         last_action: action.to_string(),
         last_error: err,
         unsupported_permanence_claims: manifest.unsupported_permanence_claims.clone(),
@@ -633,6 +690,42 @@ fn validate_label(label: &str) -> Result<()> {
         ));
     }
     Ok(())
+}
+
+fn validate_otlp_endpoint(endpoint: &str) -> Result<()> {
+    if endpoint.is_empty() {
+        return Err(anyhow!("--otlp-endpoint requires a non-empty endpoint"));
+    }
+    if !(endpoint.starts_with("http://") || endpoint.starts_with("https://")) {
+        return Err(anyhow!(
+            "--otlp-endpoint must start with http:// or https://"
+        ));
+    }
+    let lower = endpoint.to_ascii_lowercase();
+    if lower.contains("token")
+        || lower.contains("secret")
+        || lower.contains("api_key")
+        || lower.contains("api-key")
+        || endpoint.contains('@')
+    {
+        return Err(anyhow!(
+            "--otlp-endpoint must not contain credentials, userinfo, or secret markers"
+        ));
+    }
+    Ok(())
+}
+
+fn env_otlp_endpoint() -> Result<Option<String>> {
+    let Some(endpoint) = env::var("ADL_OTEL_EXPORTER_OTLP_ENDPOINT")
+        .or_else(|_| env::var("OTEL_EXPORTER_OTLP_ENDPOINT"))
+        .ok()
+        .map(|value| value.trim().to_string())
+        .filter(|value| !value.is_empty())
+    else {
+        return Ok(None);
+    };
+    validate_otlp_endpoint(&endpoint)?;
+    Ok(Some(endpoint))
 }
 
 fn xml_escape(raw: &str) -> String {
@@ -753,7 +846,7 @@ fn unsupported_permanence_claims() -> Vec<String> {
 
 pub(crate) fn service_usage() -> &'static str {
     "Usage:
-  csm service install --spec <agent-spec.yaml> [--service-root <dir>] [--manager launchd|local] [--label <label>] [--csm-bin <path>] [--max-restarts <n>] [--checkpoint-interval-secs <n>] [--interval-secs <n>] [--no-recover-stale-lease] [--no-sleep] [--json]
+  csm service install --spec <agent-spec.yaml> [--service-root <dir>] [--manager launchd|local] [--label <label>] [--csm-bin <path>] [--max-restarts <n>] [--checkpoint-interval-secs <n>] [--interval-secs <n>] [--otlp-endpoint <url>] [--otlp-timeout-ms <n>] [--no-recover-stale-lease] [--no-sleep] [--json]
   csm service start [--service-root <dir>] [--json]
   csm service status [--service-root <dir>] [--json]
   csm service stop [--service-root <dir>] [--json]

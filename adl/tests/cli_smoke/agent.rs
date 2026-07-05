@@ -1,4 +1,91 @@
 use super::*;
+use std::io::Write;
+
+fn spawn_loopback_otlp_collector() -> (
+    String,
+    std::sync::mpsc::Receiver<String>,
+    std::thread::JoinHandle<()>,
+) {
+    let listener =
+        std::net::TcpListener::bind("127.0.0.1:0").expect("bind loopback otlp collector");
+    listener
+        .set_nonblocking(true)
+        .expect("set collector nonblocking");
+    let addr = listener.local_addr().expect("collector addr");
+    let (tx, rx) = std::sync::mpsc::channel();
+    let handle = std::thread::spawn(move || {
+        let started = std::time::Instant::now();
+        let mut last_request_at: Option<std::time::Instant> = None;
+        loop {
+            match listener.accept() {
+                Ok((mut stream, _)) => {
+                    let body = read_http_body(&mut stream);
+                    tx.send(body).expect("send otlp body");
+                    stream
+                        .write_all(b"HTTP/1.1 200 OK\r\ncontent-length: 2\r\n\r\nOK")
+                        .expect("write collector response");
+                    last_request_at = Some(std::time::Instant::now());
+                }
+                Err(err) if err.kind() == std::io::ErrorKind::WouldBlock => {
+                    let idle_done = last_request_at
+                        .map(|instant| instant.elapsed() > std::time::Duration::from_millis(750))
+                        .unwrap_or(false);
+                    if idle_done || started.elapsed() > std::time::Duration::from_secs(8) {
+                        break;
+                    }
+                    std::thread::sleep(std::time::Duration::from_millis(25));
+                }
+                Err(err) => panic!("collector accept failed: {err}"),
+            }
+        }
+    });
+    (format!("http://{addr}/v1/traces"), rx, handle)
+}
+
+fn read_http_body(stream: &mut std::net::TcpStream) -> String {
+    use std::io::Read;
+    let mut buf = Vec::new();
+    let mut temp = [0_u8; 4096];
+    loop {
+        let n = stream.read(&mut temp).expect("read request");
+        if n == 0 {
+            break;
+        }
+        buf.extend_from_slice(&temp[..n]);
+        if let Some(header_end) = find_header_end(&buf) {
+            let content_length = content_length(&buf[..header_end]).unwrap_or(0);
+            if buf.len() >= header_end + 4 + content_length {
+                break;
+            }
+        }
+    }
+    if let Some(header_end) = find_header_end(&buf) {
+        String::from_utf8_lossy(&buf[header_end + 4..]).to_string()
+    } else {
+        String::new()
+    }
+}
+
+fn find_header_end(buf: &[u8]) -> Option<usize> {
+    buf.windows(4).position(|window| window == b"\r\n\r\n")
+}
+
+fn content_length(headers: &[u8]) -> Option<usize> {
+    String::from_utf8_lossy(headers).lines().find_map(|line| {
+        let (name, value) = line.split_once(':')?;
+        name.eq_ignore_ascii_case("content-length")
+            .then(|| value.trim().parse::<usize>().ok())
+            .flatten()
+    })
+}
+
+fn otlp_attr_string<'a>(attrs: &'a serde_json::Value, key: &str) -> Option<&'a str> {
+    attrs.as_array()?.iter().find_map(|attr| {
+        (attr.get("key")?.as_str()? == key)
+            .then(|| attr.get("value")?.get("stringValue")?.as_str())
+            .flatten()
+    })
+}
 
 #[test]
 fn agent_run_writes_bounded_cycles_and_status() {
@@ -385,6 +472,118 @@ memory:
 }
 
 #[test]
+fn csm_daemon_exports_otlp_http_json_to_loopback_collector() {
+    let root = unique_test_temp_dir("csm-daemon-otlp");
+    let spec = root.join("agent.yaml");
+    fs::write(
+        &spec,
+        r#"schema: adl.long_lived_agent_spec.v1
+agent_instance_id: daemon-otlp-agent
+display_name: Daemon OTLP Agent
+state_root: state
+workflow:
+  kind: demo_adapter
+  name: otlp_probe
+  run_args: {}
+heartbeat:
+  interval_secs: 1
+  max_cycles: 2
+  stale_lease_after_secs: 60
+safety:
+  allow_network: false
+  allow_broker: false
+  allow_filesystem_writes_outside_state_root: false
+  allow_real_world_side_effects: false
+  require_public_artifact_sanitization: true
+  financial_advice: false
+  max_cycle_runtime_secs: 120
+  max_consecutive_failures: 2
+memory:
+  namespace: smoke/daemon-otlp-agent
+  write_policy: append_only
+"#,
+    )
+    .expect("write agent spec");
+    let (endpoint, captured, collector) = spawn_loopback_otlp_collector();
+    let observability_log = root.join("observability.log");
+    let otel_log = root.join("otel.jsonl");
+    let otel_status = root.join("otel-status.json");
+    let out = run_csm_with_env(
+        &[
+            "daemon",
+            "--spec",
+            spec.to_str().expect("utf8 spec"),
+            "--max-restarts",
+            "1",
+            "--checkpoint-interval-secs",
+            "1",
+            "--no-sleep",
+            "--json",
+        ],
+        &[
+            ("ADL_OBSERVABILITY_STDERR", "0"),
+            (
+                "ADL_OBSERVABILITY_LOG",
+                observability_log.to_str().expect("utf8 observability path"),
+            ),
+            ("ADL_OTEL_LOG", otel_log.to_str().expect("utf8 otel path")),
+            (
+                "ADL_OTEL_STATUS",
+                otel_status.to_str().expect("utf8 otel status path"),
+            ),
+            ("ADL_OTEL_EXPORTER_OTLP_ENDPOINT", endpoint.as_str()),
+            ("ADL_OTEL_EXPORTER_TIMEOUT_MS", "2000"),
+        ],
+    );
+    assert!(
+        out.status.success(),
+        "expected daemon OTLP success, stderr:\n{}",
+        String::from_utf8_lossy(&out.stderr)
+    );
+    collector.join().expect("collector joined");
+    let exported = captured.try_iter().collect::<Vec<_>>();
+    let mut span_names = std::collections::BTreeSet::new();
+    let mut service_names = std::collections::BTreeSet::new();
+    let mut trace_id_lengths = std::collections::BTreeSet::new();
+    for body in &exported {
+        let payload: serde_json::Value = serde_json::from_str(body).expect("parse otlp payload");
+        for resource_span in payload["resourceSpans"].as_array().expect("resource spans") {
+            if let Some(service_name) =
+                otlp_attr_string(&resource_span["resource"]["attributes"], "service.name")
+            {
+                service_names.insert(service_name.to_string());
+            }
+            for scope_span in resource_span["scopeSpans"].as_array().expect("scope spans") {
+                for span in scope_span["spans"].as_array().expect("spans") {
+                    span_names.insert(span["name"].as_str().expect("span name").to_string());
+                    trace_id_lengths.insert(span["traceId"].as_str().expect("trace id").len());
+                    assert_eq!(span["kind"], 1);
+                    assert!(span["startTimeUnixNano"].as_str().is_some());
+                    assert!(span["endTimeUnixNano"].as_str().is_some());
+                    assert_eq!(span["spanId"].as_str().expect("span id").len(), 16);
+                }
+            }
+        }
+    }
+    assert!(service_names.contains("csm-runtime-daemon"));
+    assert!(span_names.contains("csm.daemon_started"));
+    assert!(span_names.contains("csm.checkpoint_write"));
+    assert!(trace_id_lengths.contains(&32));
+    let exported_text = exported.join("\n");
+    assert!(!exported_text.contains("adl.otlp_http_json.export.v1"));
+    assert!(!exported_text.contains(root.to_str().expect("root utf8")));
+
+    let status: serde_json::Value =
+        serde_json::from_str(&fs::read_to_string(&otel_status).expect("read otel status"))
+            .expect("parse otel status");
+    assert_eq!(status["schema"], "adl.otel.monitor_status.v1");
+    assert_eq!(status["exporter"]["schema"], "adl.otel.exporter_status.v1");
+    assert_eq!(status["exporter"]["protocol"], "otlp_http_json");
+    assert_eq!(status["exporter"]["status"], "success");
+    assert_eq!(status["exporter"]["endpoint"], "<configured>");
+}
+
+#[test]
 fn csm_daemon_executes_adl_workflow_dag_with_aee_runtime_trace() {
     let root = unique_test_temp_dir("csm-adl-workflow");
     let spec = root.join("agent.yaml");
@@ -629,6 +828,10 @@ memory:
         csm_bin.to_str().expect("utf8 csm bin"),
         "--checkpoint-interval-secs",
         "1",
+        "--otlp-endpoint",
+        "http://127.0.0.1:4318/v1/traces",
+        "--otlp-timeout-ms",
+        "750",
         "--json",
     ]);
     assert!(
@@ -645,6 +848,8 @@ memory:
     assert_eq!(manifest["runtime_owner"], "csm");
     assert_eq!(manifest["manager"], "launchd");
     assert_eq!(manifest["checkpoint_interval_secs"], 1);
+    assert_eq!(manifest["otlp_endpoint"], "http://127.0.0.1:4318/v1/traces");
+    assert_eq!(manifest["otlp_timeout_ms"], 750);
     assert!(manifest["daemon_status"]
         .as_str()
         .expect("daemon status path")
@@ -663,6 +868,9 @@ memory:
     assert!(plist.contains("<key>KeepAlive</key>"));
     assert!(plist.contains("<string>daemon</string>"));
     assert!(plist.contains("ADL_OTEL_STATUS"));
+    assert!(plist.contains("ADL_OTEL_EXPORTER_OTLP_ENDPOINT"));
+    assert!(plist.contains("http://127.0.0.1:4318/v1/traces"));
+    assert!(plist.contains("ADL_OTEL_EXPORTER_TIMEOUT_MS"));
     assert!(!plist.contains("adl agent daemon"));
 
     let status: serde_json::Value = serde_json::from_str(
@@ -673,6 +881,125 @@ memory:
     assert_eq!(status["service_state"], "installed");
     assert_eq!(status["broad_process_scan"], false);
     assert_eq!(status["uses_ps"], false);
+    assert_eq!(status["otlp_exporter_configured"], true);
+    assert_eq!(status["otlp_endpoint_ref"], "<configured>");
+}
+
+#[test]
+fn csm_service_install_rejects_secret_bearing_otlp_endpoint() {
+    let root = unique_test_temp_dir("csm-service-secret-otlp");
+    let spec = root.join("agent.yaml");
+    fs::write(
+        &spec,
+        r#"schema: adl.long_lived_agent_spec.v1
+agent_instance_id: service-secret-otlp-agent
+display_name: Service Secret OTLP Agent
+state_root: state
+workflow:
+  kind: demo_adapter
+  name: service_secret_otlp_probe
+  run_args: {}
+heartbeat:
+  interval_secs: 1
+  max_cycles: 1
+  stale_lease_after_secs: 60
+safety:
+  allow_network: false
+  allow_broker: false
+  allow_filesystem_writes_outside_state_root: false
+  allow_real_world_side_effects: false
+  require_public_artifact_sanitization: true
+  financial_advice: false
+  max_cycle_runtime_secs: 120
+memory:
+  namespace: smoke/service-secret-otlp-agent
+  write_policy: append_only
+"#,
+    )
+    .expect("write agent spec");
+    let out = run_csm(&[
+        "service",
+        "install",
+        "--spec",
+        spec.to_str().expect("utf8 spec"),
+        "--service-root",
+        root.join("service").to_str().expect("utf8 service root"),
+        "--otlp-endpoint",
+        "https://collector.example.invalid/v1/traces?token=secret",
+        "--json",
+    ]);
+    assert!(
+        !out.status.success(),
+        "expected secret-bearing endpoint rejection, stdout:\n{}",
+        String::from_utf8_lossy(&out.stdout)
+    );
+    let stderr = String::from_utf8_lossy(&out.stderr);
+    assert!(
+        stderr.contains("--otlp-endpoint must not contain credentials"),
+        "stderr:\n{stderr}"
+    );
+}
+
+#[test]
+fn csm_service_install_rejects_secret_bearing_otlp_endpoint_from_env() {
+    let root = unique_test_temp_dir("csm-service-secret-otlp-env");
+    let spec = root.join("agent.yaml");
+    fs::write(
+        &spec,
+        r#"schema: adl.long_lived_agent_spec.v1
+agent_instance_id: service-secret-otlp-env-agent
+display_name: Service Secret OTLP Env Agent
+state_root: state
+workflow:
+  kind: demo_adapter
+  name: service_secret_otlp_env_probe
+  run_args: {}
+heartbeat:
+  interval_secs: 1
+  max_cycles: 1
+  stale_lease_after_secs: 60
+safety:
+  allow_network: false
+  allow_broker: false
+  allow_filesystem_writes_outside_state_root: false
+  allow_real_world_side_effects: false
+  require_public_artifact_sanitization: true
+  financial_advice: false
+  max_cycle_runtime_secs: 120
+memory:
+  namespace: smoke/service-secret-otlp-env-agent
+  write_policy: append_only
+"#,
+    )
+    .expect("write agent spec");
+    let service_root = root.join("service");
+    let out = run_csm_with_env(
+        &[
+            "service",
+            "install",
+            "--spec",
+            spec.to_str().expect("utf8 spec"),
+            "--service-root",
+            service_root.to_str().expect("utf8 service root"),
+            "--json",
+        ],
+        &[(
+            "ADL_OTEL_EXPORTER_OTLP_ENDPOINT",
+            "https://user:secret@collector.example.invalid/v1/traces",
+        )],
+    );
+    assert!(
+        !out.status.success(),
+        "expected env endpoint rejection, stdout:\n{}",
+        String::from_utf8_lossy(&out.stdout)
+    );
+    let stderr = String::from_utf8_lossy(&out.stderr);
+    assert!(
+        stderr.contains("--otlp-endpoint must not contain credentials"),
+        "stderr:\n{stderr}"
+    );
+    assert!(!service_root.join("service_manifest.json").exists());
+    assert!(!service_root.join("csm.launchd.plist").exists());
 }
 
 #[test]

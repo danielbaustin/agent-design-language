@@ -1,0 +1,7 @@
+{
+  "schema": "adl.csm.otlp_loopback_collector_status.v1",
+  "collector": "python_stdlib_loopback_http",
+  "endpoint_ref": "<loopback>",
+  "state": "completed",
+  "received_request_count": 8
+}

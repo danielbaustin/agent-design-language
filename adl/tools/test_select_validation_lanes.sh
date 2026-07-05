@@ -136,6 +136,17 @@ assert_has "$TMP/issue-4603-surface.out" "aws_remote_validation_tooling status=s
 assert_has "$TMP/issue-4603-surface.out" "rust_pr_fast status=selected"
 assert_not_has "$TMP/issue-4603-surface.out" "unmapped_change_surface"
 
+csm_otlp_4904_surface="$TMP/csm-otlp-4904-surface.txt"
+cat >"$csm_otlp_4904_surface" <<'EOF'
+A	adl/tools/run_v0917_csm_otlp_4904_proof.sh
+A	adl/tools/validate_v0917_csm_otlp_4904_status.sh
+A	docs/milestones/v0.91.7/review/runtime/csm_otlp_4904/proof_summary.json
+EOF
+bash "$SCRIPT" --changed-files "$csm_otlp_4904_surface" >"$TMP/csm-otlp-4904-surface.out"
+assert_has "$TMP/csm-otlp-4904-surface.out" "aggregate_status=selected"
+assert_has "$TMP/csm-otlp-4904-surface.out" "v0917_csm_otlp_4904_contracts status=selected"
+assert_not_has "$TMP/csm-otlp-4904-surface.out" "unmapped_change_surface"
+
 release_gate="$TMP/release-gate.txt"
 printf 'M\t.github/workflows/ci.yaml\n' >"$release_gate"
 bash "$SCRIPT" --changed-files "$release_gate" >"$TMP/release.out"

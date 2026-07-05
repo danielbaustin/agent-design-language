@@ -1,0 +1,41 @@
+{
+  "schema": "adl.csm.otlp_4904_proof_summary.v1",
+  "runtime_owner": "csm",
+  "proof_classification": "proving",
+  "collector_mode": "loopback_otlp_http_json_proto",
+  "exported_request_count": 8,
+  "exporter_status": {
+    "schema": "adl.otel.exporter_status.v1",
+    "protocol": "otlp_http_json",
+    "status": "success",
+    "http_status": 200,
+    "error": null,
+    "endpoint_configured": true,
+    "endpoint": "<configured>",
+    "updated_at": "2026-07-05T22:37:44.530258+00:00"
+  },
+  "local_fallbacks_retained": [
+    "logs/otel.jsonl",
+    "logs/otel_status.json",
+    "logs/observability.log"
+  ],
+  "semantics_claimed": {
+    "traces": true,
+    "spans": true,
+    "events": true,
+    "metrics": false,
+    "resources": true,
+    "trace_and_span_ids": true,
+    "service_name": "csm-runtime-daemon"
+  },
+  "negative_cases_retained": {
+    "malformed_endpoint": "covered by cli::observability::tests::otlp_exporter_malformed_endpoint_fails_closed_with_durable_status",
+    "collector_unavailable": "covered by exporter failure status path; no hosted backend claimed",
+    "redaction_sensitive_fields": "covered by loopback exporter unit test and retained ADL_OBSERVABILITY_REPO_ROOT path sanitization"
+  },
+  "non_claims": [
+    "does not claim hosted SaaS telemetry",
+    "does not claim protobuf OTLP/gRPC",
+    "does not claim metrics export beyond explicit false metric semantics"
+  ]
+}

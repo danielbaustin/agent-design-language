@@ -1,0 +1,9 @@
+{
+  "schema": "adl.long_lived_agent_memory_index.v1",
+  "memory_namespace": "smoke/csm-otlp-4904",
+  "append_only": true,
+  "local_memory_refs": [
+    "cycles/cycle-000001/memory_writes.jsonl"
+  ],
+  "obsmem_export_status": "not_exported"
+}

@@ -1,0 +1,19 @@
+{
+  "schema": "adl.otel.monitor_status.v1",
+  "event_count": 8,
+  "last_event": "csm.csm_daemon",
+  "last_result": "completed",
+  "last_trace_id": "agent.csm-otlp-4904.daemon",
+  "last_span_id": "daemon:daemon_completed:0",
+  "updated_at": "2026-07-05T22:37:44.530246+00:00",
+  "exporter": {
+    "schema": "adl.otel.exporter_status.v1",
+    "protocol": "otlp_http_json",
+    "status": "success",
+    "http_status": 200,
+    "error": null,
+    "endpoint_configured": true,
+    "endpoint": "<configured>",
+    "updated_at": "2026-07-05T22:37:44.530258+00:00"
+  }
+}
