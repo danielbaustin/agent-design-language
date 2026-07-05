@@ -7,6 +7,11 @@ Date: 2026-07-03
 PASS: Unity-MCP served the #4704 proof project on the required endpoint
 `http://localhost:29779`, with the prior wrong-port `24645` endpoint unbound.
 
+#4745 now records the publication boundary for this proof: Unity-MCP is local
+editor/proof tooling, imported third-party assets are local
+operator-provisioned inputs, and retained proof summaries/screenshots are the
+reviewable repository payload.
+
 ## Required Endpoint Proof
 
 `script-execute` on `http://localhost:29779` returned:
@@ -103,4 +108,5 @@ attached to #4789.
 This proof establishes project binding, flagship scene loading, runtime/polis
 surface presence, and retained camera-rendered visual evidence. It does not yet
 claim post-prune batchmode replay, full investor walkthrough readiness,
-build-player readiness, or complete mini-sprint closeout.
+build-player readiness, third-party asset redistribution rights, or complete
+mini-sprint closeout.

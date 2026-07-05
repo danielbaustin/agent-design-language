@@ -4,6 +4,13 @@
 
 Launchable-baseline scaffold for WP-09 issue `#4031`.
 
+Publication update for `#4745`: the canonical repository payload remains the
+owned Observatory scaffold, scripts, contracts, project settings, proof
+summaries, and retained visual evidence. Imported third-party asset-pack roots
+used for the flagship local investor staging are operator-provisioned local
+inputs until a later issue records license, storage, and subset approval. See
+`docs/milestones/v0.91.7/review/unity_observatory_4745/4745-asset-mcp-publication-policy.md`.
+
 This directory now contains the first Unity Observatory project scaffold for
 `v0.91.6`. It is intended to open as a Unity `6.5` project on the current
 local baseline `6000.5.1f1` and provide one launchable-equivalent shell for
@@ -58,6 +65,21 @@ instead of reconstructing the launch surface from planning prose alone.
 - Reference style asset: `Assets/UI/ObservatoryShell.uss`
 - Unity contract seed: `Assets/Resources/observatory_contract.json`
 - Proof packet: `PROOF_PACKET.md`
+
+The following local proof/input roots are intentionally not repository
+publication payloads without a later license/storage/subset decision:
+
+- `Assets/Creepy_Cat`
+- `Assets/ScifiOfficeLite`
+- `Assets/Sci-Fi Styled Modular Pack`
+- `Assets/Plugins/NuGet`
+- `Proof`
+
+To reproduce the full local flagship staging, import the Unity Asset Store
+packages named in the #4745 policy packet through Unity Package Manager / My
+Assets into those exact roots, then run the acquisition verification commands
+recorded in that packet. The repository itself only claims the scaffold and
+retained proof surfaces without those external package payloads.
 
 The current scene seed contains a single `UnityObservatoryBootstrap` object. At
 Play time the bootstrap creates the main camera when needed, creates explicit
@@ -198,6 +220,12 @@ Current local-runtime proof behavior for `#4548`:
   replaced for this validation lane
 
 ## Validation Entry Points
+
+Unity-MCP note for `#4745`: Unity-MCP is accepted as local editor/proof tooling
+for this mini-sprint. It is not claimed as runtime demo state or player-build
+readiness for the canonical Observatory scaffold. Use retained proof summaries
+and the repo-local Unity-MCP CLI for editor proof; do not require cloud MCP
+connectivity for the published demo truth.
 
 Focused proof that already exists for the bounded Observatory packet contract:
 

@@ -1,0 +1,80 @@
+{
+  "schema": "adl.unity_observatory.asset_mcp_publication_policy.v1",
+  "issue": 4745,
+  "date": "2026-07-04",
+  "result": "pass",
+  "asset_publication_decision": "external_operator_provisioned_until_license_storage_subset_approval",
+  "unity_mcp_decision": "editor_proof_tooling_not_runtime_demo_state",
+  "observed_inputs": [
+    {
+      "path": "demos/v0.91.6/unity-observatory/Assets/Creepy_Cat",
+      "observed_size": "5.3G",
+      "publish": false,
+      "reason": "oversized imported third-party asset root with no complete recorded redistribution notice"
+    },
+    {
+      "path": "demos/v0.91.6/unity-observatory/Assets/ScifiOfficeLite",
+      "observed_size": "274M",
+      "publish": false,
+      "reason": "imported third-party asset root; keep operator-provisioned until license and subset policy are recorded"
+    },
+    {
+      "path": "demos/v0.91.6/unity-observatory/Assets/Sci-Fi Styled Modular Pack",
+      "observed_size": "13M",
+      "publish": false,
+      "reason": "imported third-party asset root; license and exact subset still need explicit publication approval"
+    },
+    {
+      "path": "demos/v0.91.6/unity-observatory/Assets/Plugins/NuGet",
+      "observed_size": "17M",
+      "publish": false,
+      "reason": "generated/proof-tooling plugin payload; package manager or local proof tooling must be source of truth"
+    },
+    {
+      "path": "demos/v0.91.6/unity-observatory/Proof",
+      "observed_size": "2.1M",
+      "publish": "selected_docs_only",
+      "reason": "retain selected reviewer-facing screenshots under docs, not local proof working folders"
+    }
+  ],
+  "downstream_issue_routing": {
+    "4703": "publish owned staging/proof logic and selected evidence; keep full asset roots local/operator-provisioned",
+    "4652": "consume shell proof and runtime-polis surface without publishing copied full Unity project payload",
+    "4704": "own walkthrough and retained visual evidence; treat endpoint numbers as session-local unless explicitly proved",
+    "4702": "parent can claim local Unity proof, not clean-checkout full imported environment replay"
+  },
+  "operator_acquisition_inputs": [
+    {
+      "package_name": "3D Scifi Kit Starter Kit",
+      "license_type_observed": "Store",
+      "expected_root": "demos/v0.91.6/unity-observatory/Assets/Creepy_Cat/3D Scifi Kit Starter Kit_HD"
+    },
+    {
+      "package_name": "3D Showroom Level Kit Vol 11",
+      "license_type_observed": "Store",
+      "expected_root": "demos/v0.91.6/unity-observatory/Assets/Creepy_Cat/ShowRoom_Vol 11"
+    },
+    {
+      "package_name": "3D Showroom Level Kit Vol 32",
+      "license_type_observed": "Store",
+      "expected_root": "demos/v0.91.6/unity-observatory/Assets/Creepy_Cat/ShowRoom_Vol 32"
+    },
+    {
+      "package_name": "Free Sci-Fi Office Pack",
+      "license_type_observed": "Store",
+      "expected_root": "demos/v0.91.6/unity-observatory/Assets/ScifiOfficeLite"
+    },
+    {
+      "package_name": "Sci-Fi Styled Modular Pack",
+      "license_type_observed": "Store",
+      "expected_root": "demos/v0.91.6/unity-observatory/Assets/Sci-Fi Styled Modular Pack"
+    }
+  ],
+  "non_claims": [
+    "third_party_asset_redistribution_rights",
+    "full_imported_environment_clean_checkout_replay",
+    "unity_player_build_readiness",
+    "unity_mcp_cloud_requirement",
+    "mini_sprint_closeout"
+  ]
+}

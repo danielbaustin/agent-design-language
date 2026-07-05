@@ -2,7 +2,13 @@
 
 ## Status
 
-Current through ADL issue `#4548`.
+Current through ADL issue `#4745`.
+
+`#4745` adds the publication boundary for the v0.91.7 flagship staging work:
+imported third-party asset roots and generated proof/plugin payloads are not
+repository publication payloads until a later issue records license, storage,
+and subset approval. The retained review surface for that decision is
+`docs/milestones/v0.91.7/review/unity_observatory_4745/4745-asset-mcp-publication-policy.md`.
 
 ## Project Surface
 
@@ -156,6 +162,14 @@ C# compiler validation outside Unity: not run.
 - The working-scene proof is limited to the checked-in scene and shell surface;
   it does not claim a standalone player build.
 - No production Observatory readiness is claimed.
+- The v0.91.7 flagship local staging has used operator-provisioned imported
+  asset roots. Those roots are not clean-checkout repository replay proof until
+  a later issue records an approved redistribution or reduced-subset route.
+- #4745 records the Unity Asset Store package names, expected import roots, and
+  local metadata checks needed for an operator to reproduce the full local
+  flagship staging outside the repository payload.
+- Unity-MCP editor automation is proof tooling only in this packet. It is not
+  claimed as runtime demo state, player-build readiness, or a cloud dependency.
 
 ## Non-Claims
 
@@ -163,3 +177,7 @@ C# compiler validation outside Unity: not run.
 - This packet does not claim live ADL runtime ingestion.
 - This packet does not claim identity-safe inhabitant/profile closure.
 - This packet does not claim production Observatory readiness.
+- This packet does not grant redistribution rights for third-party Unity asset
+  packs.
+- This packet does not claim the full imported flagship environment is
+  replayable from a clean Git checkout.
