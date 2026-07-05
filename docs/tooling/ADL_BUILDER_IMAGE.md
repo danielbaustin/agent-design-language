@@ -166,6 +166,31 @@ bash adl/tools/run_aws_codefriend_build_lane.sh \
   --wait
 ```
 
+## CodeFriend Operational Contract
+
+For CodeFriend-scale use, treat CodeBuild as a repeatable industrial lane, not
+as an ad hoc benchmark runner.
+
+- Keep the builder image pinned and pre-published; do not build the image
+  inside validation jobs.
+- Run builds from stable in-container paths. The current CodeBuild project
+  copies `CODEBUILD_SRC_DIR` to `/codebuild/adl-source` and uses
+  `/codebuild/adl-target` for Cargo target artifacts.
+- Keep cache namespaces explicit. A production CodeFriend lane should include
+  repository identity, toolchain, image tag or digest, architecture, and lockfile
+  identity in cache-key policy so one customer repo cannot poison another
+  customer's build cache.
+- Use CodeBuild local custom cache for hot target reuse when the host is reused,
+  and S3 `sccache` for portable compiler-object reuse across hosts.
+- Treat CodeBuild local cache as a performance layer, not durable truth. A cold
+  placement must still pass; a warm placement should get the fast path.
+- Record every build id, source ref, cache posture, benchmark line, and
+  `sccache` stats before making throughput claims.
+
+The repaired XLARGE lane produced two clean repeated full benchmark runs on
+2026-07-05: `120s` total (`43s` build, `77s` test) and `124s` total (`45s`
+build, `79s` test), both with `100.00%` Rust `sccache` hit rate.
+
 ```sh
 bash adl/tools/run_aws_spot_remote_validation_lane.sh \
   --run \

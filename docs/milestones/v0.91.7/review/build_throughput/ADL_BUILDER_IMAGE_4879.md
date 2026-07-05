@@ -295,6 +295,27 @@ uses CodeBuild `LOCAL_CUSTOM_CACHE` for `/codebuild/adl-target/**/*` while S3
 - Warm `sccache`: `845` compile requests, `766` hits, `0` misses, `100.00%`
   total hit rate, `100.00%` Rust hit rate.
 
+#### Current Repeatability Check
+
+Two additional live CodeBuild XLARGE runs on 2026-07-05 used the repaired
+stable source/target configuration and completed successfully without manual
+intervention:
+
+- Run 1 build id: `adl-codefriend-build:192a49f6-11c4-4f45-9123-39ad6907a7cf`
+- Run 1 benchmark:
+  `ADL_BUILD_PLATFORM_BENCHMARK platform=codebuild-xlarge-stable-target-real-1 build_seconds=43 test_seconds=77 total_seconds=120 status=passed`
+- Run 2 build id: `adl-codefriend-build:59d362ec-725c-42e9-901b-8a7c54595775`
+- Run 2 benchmark:
+  `ADL_BUILD_PLATFORM_BENCHMARK platform=codebuild-xlarge-stable-target-real-2 build_seconds=45 test_seconds=79 total_seconds=124 status=passed`
+- Both runs expanded `/codebuild/adl-target/**/*`, symlinked
+  `/codebuild/adl-target` through CodeBuild `LOCAL_CUSTOM_CACHE`, and reported
+  `845` compile requests, `766` hits, `0` misses, and `100.00%` Rust
+  `sccache` hit rate.
+
+This is the current CodeBuild platform row for comparison tables: use the
+stable local target cache results (`120s` and `124s`), not the superseded
+S3-`sccache`-only diagnostic row.
+
 ### AWS Spot EC2
 
 Issue `#4879` now carries the repeatable Spot and CodeBuild launch helpers so
