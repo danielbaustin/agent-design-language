@@ -14,6 +14,8 @@ The reusable ADL builder image path is operational.
   - `rustc 1.96.1`
   - `cargo 1.96.1`
   - `sccache 0.16.0`
+  - `aws-cli/2.35.15`
+  - GNU `time`
   - `Ubuntu LLD 18.1.3`
 - S3 transit object:
   - Bucket/key: `s3://adl-codefriend-build-cache/builder-images/adl-builder/v0.91.7/amd64/adl-builder-v0.91.7-amd64.tar`
@@ -75,3 +77,52 @@ Live AWS validation:
 - ECR repository `adl-builder` exists.
 - S3 transit object exists at the key above.
 - CodeBuild importer pushed ECR tag `v0.91.7` successfully.
+
+## Follow-up Runtime Test
+
+The original publication proof built, shipped, and imported the image, but did
+not prove lane execution. A follow-up run on 2026-07-05 tested the image as a
+runtime container and exposed two missing image dependencies:
+
+- `/usr/bin/time`, required by benchmark helpers
+- AWS CLI v2, required by CodeBuild credential export and S3-backed `sccache`
+
+The Dockerfile now includes both dependencies, and local smoke verified:
+
+- `rustc 1.96.1`
+- `cargo 1.96.1`
+- `sccache 0.16.0`
+- `aws-cli/2.35.15`
+- GNU `time`
+
+Live CodeBuild image-backed run:
+
+- Project: `adl-codefriend-build`
+- Build id: `adl-codefriend-build:f1021b3b-e25b-4a7f-823e-1f8d77da51e1`
+- Compute: `BUILD_GENERAL1_XLARGE`
+- Shape: CodeBuild standard image built `adl-builder:measure` inside AWS, then
+  executed the benchmark command inside the fixed builder image with S3
+  `sccache` credentials and key prefix passed through.
+- Image build time inside AWS: `46s`
+- CodeBuild phase time: `566s`
+- Cold target pass:
+  - command: `cargo build --manifest-path adl/Cargo.toml --locked --bin adl-pr-doctor`
+    followed by `cargo test --manifest-path adl/Cargo.toml --locked --lib provider_communication -- --nocapture`
+  - build: `260s`
+  - test: `229s`
+  - total: `489s`
+  - result: `passed`, `21 passed; 0 failed; 1554 filtered out`
+  - `sccache`: `845` compile requests, `2` hits, `764` misses,
+    `0.26%` total hit rate, `0%` Rust hit rate
+- Warm target pass:
+  - build: `0s`
+  - test: `0s`
+  - total: `0s`
+  - result: `passed`
+
+Interpretation: the image runtime path works, and the mounted target directory
+works for same-host repeated execution. The nested CodeBuild image shape did
+not reuse the existing native CodeBuild S3 Rust cache; its cache key/path
+posture produced a cold-cache result. Do not claim the custom image is the fast
+CodeBuild path until the native custom-image environment is tested directly or
+the nested-container S3 `sccache` key/path mismatch is fixed.

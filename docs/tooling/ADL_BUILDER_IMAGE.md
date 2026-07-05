@@ -9,6 +9,8 @@ The image is defined at `adl/docker/adl-builder/Dockerfile` and includes:
 - Rust toolchain with `rustfmt` and `clippy`
 - `sccache` 0.16
 - `clang` and `lld`
+- AWS CLI v2 for CodeBuild credential export and S3-backed `sccache`
+- GNU `time` for benchmark wrappers that use `/usr/bin/time`
 - common validation helper dependencies such as `git`, `jq`, `python3`, and
   OpenSSH client tools
 
@@ -109,3 +111,8 @@ cache path.
 
 The image path is intentionally separate from cache selection. A custom image
 plus native S3 `sccache` is the expected fast repeated CodeBuild configuration.
+If CodeBuild runs the image in a nested container, pass the CodeBuild role
+credentials and the exact S3 `sccache` bucket, region, and key prefix into the
+container. A successful nested-container run on 2026-07-05 proved execution but
+only reached a 0.26% total hit rate and 0% Rust hit rate, so that shape is not
+the preferred fast path until its cache key/path mismatch is fixed.
