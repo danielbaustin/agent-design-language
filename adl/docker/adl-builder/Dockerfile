@@ -26,11 +26,23 @@ RUN apt-get update -y \
       pkg-config \
       python3 \
       tar \
+      time \
       unzip \
       xz-utils \
       zstd \
       libssl-dev \
     && rm -rf /var/lib/apt/lists/*
+
+RUN arch="$(uname -m)" \
+    && case "$arch" in \
+      x86_64) awscli_arch="x86_64" ;; \
+      aarch64|arm64) awscli_arch="aarch64" ;; \
+      *) echo "unsupported awscli arch: $arch" >&2; exit 2 ;; \
+    esac \
+    && curl -fsSL "https://awscli.amazonaws.com/awscli-exe-linux-${awscli_arch}.zip" -o /tmp/awscliv2.zip \
+    && unzip -q /tmp/awscliv2.zip -d /tmp \
+    && /tmp/aws/install \
+    && rm -rf /tmp/aws /tmp/awscliv2.zip
 
 RUN curl -fsSL https://sh.rustup.rs -o /tmp/rustup-init.sh \
     && sh /tmp/rustup-init.sh -y --no-modify-path --profile minimal --default-toolchain "${RUST_TOOLCHAIN}" \
