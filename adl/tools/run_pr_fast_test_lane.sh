@@ -251,6 +251,10 @@ filter_token_for_path() {
       basename "$path" .rs
       return 0
       ;;
+    adl/src/scheduler.rs|adl/src/provider/profiles.rs)
+      printf 'scheduler_economics'
+      return 0
+      ;;
     adl/src/cli/mod.rs)
       if [ "$saw_scheduler_related_surface" = true ]; then
         printf 'scheduler_cli'
@@ -487,6 +491,7 @@ TOKEN_MAP = {
     "cli_smoke_basics": 'binary_id(adl::cli_smoke) and test(/^basics::/)',
     "process_status": 'binary_id(adl::cli_smoke) and test(/^process_status::/)',
     "scheduler_cli": 'test(/^cli::scheduler_cmd::tests::/) or test(/^cli::tests::runtime_dispatch_exposes_help_and_version_without_csdlc_dispatch$/) or test(/^cli::tests::open_usage::usage_mentions_v0_4_and_legacy_examples$/)',
+    "scheduler_economics": 'test(/^scheduler::tests::/) or test(/^provider::tests::provider_mod_/) or binary_id(adl::provider_tests) and test(/^profiles::/)',
     "demo_adl_gws_context_mirror": 'binary_id(adl::bin/demo-adl-gws-context-mirror) and test(/^tests::/)',
     "demo_adl_gws_native_drive_sync": 'binary_id(adl::bin/demo-adl-gws-native-drive-sync) and test(/^tests::/)',
     "run_v0916_integrated_runtime_soak": 'binary_id(adl::bin/run_v0916_integrated_runtime_soak) and test(/^tests::/)',

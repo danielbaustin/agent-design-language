@@ -4200,6 +4200,32 @@ fn finish_validation_profile_fails_closed_for_mixed_surface_with_unmapped_gap() 
 }
 
 #[test]
+fn finish_validation_profile_accepts_scheduler_provider_policy_slice() {
+    let plan = select_finish_validation_plan_for_finish(
+        4849,
+        ".",
+        &[
+            "adl/src/provider/profiles.rs".to_string(),
+            "adl/src/scheduler.rs".to_string(),
+            "adl/tests/fixtures/scheduler/cheapest_validated_outcome_inputs_v1.json".to_string(),
+            "docs/milestones/v0.91.7/review/provider/CHEAPEST_VALIDATED_OUTCOME_POLICY_4674.md".to_string(),
+            "docs/milestones/v0.91.7/review/provider/artifacts/cheapest_validated_outcome_plan_4674.json".to_string(),
+        ],
+    )
+    .expect("scheduler/provider policy slice should be finish-runnable");
+
+    assert_eq!(plan.mode, FinishValidationMode::LargerBinaryFocused);
+    assert!(plan.commands.iter().any(|command| {
+        command.contains("bash adl/tools/run_pr_fast_test_lane.sh")
+            && command.contains("--changed-files")
+    }));
+    assert!(!plan.commands.iter().any(|command| {
+        command.contains("cargo nextest run")
+            || command.contains("cargo test --manifest-path adl/Cargo.toml --bin adl ")
+    }));
+}
+
+#[test]
 fn finish_validation_profile_escalates_workflow_metrics_backfill_slice() {
     let err = select_finish_validation_plan_for_finish(
         4441,

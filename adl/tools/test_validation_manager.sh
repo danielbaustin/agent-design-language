@@ -750,4 +750,37 @@ if bash "$SCRIPT" \
 fi
 assert_has "$TMP/remote-docs-run.err" "requested remote runner is not eligible"
 
+scheduler_provider_policy="$TMP/scheduler-provider-policy.txt"
+cat >"$scheduler_provider_policy" <<'EOF'
+M	adl/src/provider/profiles.rs
+M	adl/src/scheduler.rs
+M	adl/tests/fixtures/scheduler/cheapest_validated_outcome_inputs_v1.json
+M	docs/milestones/v0.91.7/review/provider/CHEAPEST_VALIDATED_OUTCOME_POLICY_4674.md
+M	docs/milestones/v0.91.7/review/provider/artifacts/cheapest_validated_outcome_plan_4674.json
+EOF
+bash "$SCRIPT" --changed-files "$scheduler_provider_policy" --json >"$TMP/scheduler-provider-policy.json"
+python3 - <<'PY' "$TMP/scheduler-provider-policy.json"
+import json
+import sys
+
+profile = json.load(open(sys.argv[1]))
+assert profile["schema_version"] == "adl.validation_profile.v1"
+assert profile["status"] == "ready_to_run"
+assert profile["selected_profile"] == "selected_2_lane_profile"
+assert profile["pr_publication_sufficient"] is True
+assert profile["escalation"]["required"] is False
+assert profile["validation_split"]["fast_lane"]["selected_lanes"] == ["docs_diff_check", "rust_pr_fast"]
+assert profile["validation_split"]["fast_lane"]["runnable"] is True
+assert profile["validation_split"]["fail_closed"]["required"] is False
+assert [item["lane_id"] for item in profile["run"]] == ["docs_diff_check", "rust_pr_fast"]
+assert "run_pr_fast_test_lane.sh" in profile["run"][1]["command"]
+surfaces = {surface["id"]: surface for surface in profile["behavior_surfaces"]}
+surface = surfaces["rust_focused_behavior"]
+assert surface["id"] == "rust_focused_behavior"
+assert "scheduler_economics" in surface["requirement_ids"]
+assert "adl/src/provider/profiles.rs" in surface["matched_paths"]
+assert "adl/src/scheduler.rs" in surface["matched_paths"]
+assert profile["diagnostics"] == []
+PY
+
 echo "PASS test_validation_manager"
