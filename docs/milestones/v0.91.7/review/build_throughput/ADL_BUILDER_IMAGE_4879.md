@@ -95,7 +95,7 @@ The Dockerfile now includes both dependencies, and local smoke verified:
 - `aws-cli/2.35.15`
 - GNU `time`
 
-Live CodeBuild image-backed run:
+Discarded nested-CodeBuild diagnostic:
 
 - Project: `adl-codefriend-build`
 - Build id: `adl-codefriend-build:f1021b3b-e25b-4a7f-823e-1f8d77da51e1`
@@ -124,7 +124,7 @@ Interpretation: the image runtime path works, and the mounted target directory
 works for same-host repeated execution. The nested CodeBuild image shape did
 not reuse the existing native CodeBuild S3 Rust cache; its cache key/path
 posture produced a cold-cache result. Do not use the nested-container shape for
-the steady-state lane.
+the steady-state lane, and do not report this row as a platform benchmark.
 
 ## Direct CodeBuild Image Fix
 
@@ -171,3 +171,45 @@ state after this run:
 - compute: `BUILD_GENERAL1_XLARGE`
 - privileged: `false`
 - image pull credentials: `SERVICE_ROLE`
+
+## Nessus Image Path Repair
+
+The first Nessus fixed-image run failed because the WSL filesystem was full,
+not because the image was built on Nessus. The container was compiling ADL
+inside the mounted target cache when the host reported `No space left on
+device`.
+
+Disk repair:
+
+- Before cleanup: `/dev/sdc` was `251G` used, `0` free, `100%`
+- Removed only rebuildable ADL validation cache:
+  `/root/adl-remote-runner/cache/target`
+- Removed cache size: `81G`
+- Immediately after cleanup: `69G` free
+- After pulling `adl-builder:v0.91.7-fixed` and rerunning the benchmark:
+  `59G` free
+- Retained cache after rerun:
+  - target cache: `7.5G`
+  - sccache cache: `1.4G`
+
+Fixed-image pull:
+
+- Image: `adl-builder:v0.91.7-fixed`
+- Pull result: `Downloaded newer image`
+- Digest: `sha256:cacba822a59fe610cb2f963a107ba33e4bf4969322a1c8d6aa53fb6383de3adf`
+
+Nessus image-backed benchmark:
+
+- Run id: `nessus-fixed-builder-image-inline-20260705T060710Z`
+- Image: `adl-builder:v0.91.7-fixed`
+- Runtime: Docker
+- Git ref: `3f8436beea30e261fc8bca85961abb014522f7e8`
+- Result: `passed`
+- Runner elapsed: `217s`
+- Command result: `21 passed; 0 failed; 1554 filtered out`
+- Benchmark line:
+  `ADL_BUILD_PLATFORM_BENCHMARK platform=nessus-fixed-builder-image build_seconds=55 test_seconds=157 total_seconds=212 status=passed`
+
+This is an image-backed Nessus result after target-cache cleanup. It is not a
+warm-target best-case result, because the target cache had just been pruned to
+restore disk headroom.
