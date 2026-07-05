@@ -45,6 +45,13 @@ fn run_adl_runtime(args: &[&str]) -> std::process::Output {
         .expect("run adl-runtime binary")
 }
 
+fn run_csm(args: &[&str]) -> std::process::Output {
+    Command::new(resolve_csm_exe())
+        .args(args)
+        .output()
+        .expect("run csm binary")
+}
+
 fn run_adl_review(args: &[&str]) -> std::process::Output {
     Command::new(resolve_adl_review_exe())
         .args(args)
@@ -59,6 +66,15 @@ fn run_adl_runtime_with_env(args: &[&str], envs: &[(&str, &str)]) -> std::proces
         cmd.env(k, v);
     }
     cmd.output().expect("run adl-runtime binary")
+}
+
+fn run_csm_with_env(args: &[&str], envs: &[(&str, &str)]) -> std::process::Output {
+    let mut cmd = Command::new(resolve_csm_exe());
+    cmd.args(args);
+    for (k, v) in envs {
+        cmd.env(k, v);
+    }
+    cmd.output().expect("run csm binary")
 }
 
 fn run_adl_with_env(args: &[&str], envs: &[(&str, &str)]) -> std::process::Output {
@@ -95,6 +111,17 @@ fn resolve_adl_csdlc_exe() -> PathBuf {
 fn resolve_adl_runtime_exe() -> PathBuf {
     let raw = std::env::var("CARGO_BIN_EXE_adl-runtime")
         .unwrap_or_else(|_| env!("CARGO_BIN_EXE_adl-runtime").to_string());
+    let path = PathBuf::from(raw);
+    if path.is_absolute() {
+        path
+    } else {
+        Path::new(env!("CARGO_MANIFEST_DIR")).join(path)
+    }
+}
+
+fn resolve_csm_exe() -> PathBuf {
+    let raw = std::env::var("CARGO_BIN_EXE_csm")
+        .unwrap_or_else(|_| env!("CARGO_BIN_EXE_csm").to_string());
     let path = PathBuf::from(raw);
     if path.is_absolute() {
         path

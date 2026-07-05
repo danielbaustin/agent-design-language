@@ -7,14 +7,13 @@ use ::adl::long_lived_agent::{self, DaemonOptions, InspectOptions, RunOptions, T
 pub(crate) fn real_agent(args: &[String]) -> Result<()> {
     let Some(subcommand) = args.first().map(|arg| arg.as_str()) else {
         return Err(anyhow!(
-            "agent requires a subcommand: tick | run | daemon | status | inspect | stop"
+            "agent requires a subcommand: tick | run | status | inspect | stop"
         ));
     };
 
     match subcommand {
         "tick" => real_tick(&args[1..]),
         "run" => real_run(&args[1..]),
-        "daemon" => real_daemon(&args[1..]),
         "status" => real_status(&args[1..]),
         "inspect" => real_inspect(&args[1..]),
         "stop" => real_stop(&args[1..]),
@@ -23,7 +22,7 @@ pub(crate) fn real_agent(args: &[String]) -> Result<()> {
             Ok(())
         }
         other => Err(anyhow!(
-            "unknown agent subcommand '{other}' (expected tick, run, daemon, status, inspect, stop)"
+            "unknown agent subcommand '{other}' (expected tick, run, status, inspect, stop)"
         )),
     }
 }
@@ -162,7 +161,29 @@ fn real_run(args: &[String]) -> Result<()> {
     }
 }
 
-fn real_daemon(args: &[String]) -> Result<()> {
+pub(crate) struct DaemonCommandConfig {
+    pub command_name: &'static str,
+    pub stage_name: &'static str,
+    pub process_class: &'static str,
+    pub otel_service_name: &'static str,
+    pub arg_context: &'static str,
+    pub help_text: fn() -> &'static str,
+}
+
+pub(crate) const CSM_DAEMON_CONFIG: DaemonCommandConfig = DaemonCommandConfig {
+    command_name: "csm",
+    stage_name: "csm_daemon",
+    process_class: "csm_runtime_daemon",
+    otel_service_name: "csm-runtime-daemon",
+    arg_context: "csm daemon",
+    help_text: super::csm_cmd::csm_usage,
+};
+
+pub(crate) fn real_csm_daemon(args: &[String]) -> Result<()> {
+    real_daemon_with_config(args, &CSM_DAEMON_CONFIG)
+}
+
+fn real_daemon_with_config(args: &[String], config: &DaemonCommandConfig) -> Result<()> {
     let mut parsed = AgentArgs::default();
     let mut max_restarts: u64 = 10;
     let mut checkpoint_interval_secs: u64 = 3;
@@ -196,10 +217,10 @@ fn real_daemon(args: &[String]) -> Result<()> {
             "--recover-stale-lease" => parsed.recover_stale_lease = true,
             "--json" => parsed.json_output = true,
             "--help" | "-h" => {
-                println!("{}", super::usage::usage());
+                println!("{}", (config.help_text)());
                 return Ok(());
             }
-            other => return Err(anyhow!("unknown arg for agent daemon: {other}")),
+            other => return Err(anyhow!("unknown arg for {}: {other}", config.arg_context)),
         }
         i += 1;
     }
@@ -214,15 +235,16 @@ fn real_daemon(args: &[String]) -> Result<()> {
         .ok()
         .map(|loaded| loaded.spec.agent_instance_id);
     let heartbeat = ProgressHeartbeat::start(
-        "agent",
-        "agent_daemon",
+        config.command_name,
+        config.stage_name,
         &[
-            ("process_class", "long_lived_daemon"),
+            ("process_class", config.process_class),
             ("spec", &spec_path.display().to_string()),
             ("max_restarts", &max_restarts_label),
             ("checkpoint_interval_secs", &checkpoint_interval_label),
             ("interval_secs", &interval_secs_label),
             ("no_sleep", &no_sleep_label),
+            ("otel_service_name", config.otel_service_name),
         ],
     );
     let status = long_lived_agent::daemon(
@@ -245,7 +267,7 @@ fn real_daemon(args: &[String]) -> Result<()> {
                 ("trace_id", status.trace_id.as_str()),
                 ("span_id", status.span_id.as_str()),
                 ("parent_span_id", parent_span_id),
-                ("otel_service_name", "adl-long-lived-agent-daemon"),
+                ("otel_service_name", config.otel_service_name),
             ]);
             print_daemon_status(&status, parsed.json_output)
         }
@@ -260,12 +282,12 @@ fn real_daemon(args: &[String]) -> Result<()> {
                 .as_ref()
                 .map(|agent_instance_id| format!("daemon:{agent_instance_id}:supervisor"));
             let mut fields = vec![
-                ("reason_code", "agent_daemon_failed"),
+                ("reason_code", "csm_daemon_failed"),
                 (
                     "next_action_hint",
                     "inspect_daemon_status_and_continuity_checkpoint",
                 ),
-                ("otel_service_name", "adl-long-lived-agent-daemon"),
+                ("otel_service_name", config.otel_service_name),
             ];
             if let Some(trace_id) = trace_id.as_deref() {
                 fields.push(("trace_id", trace_id));
@@ -702,13 +724,13 @@ memory:
         assert!(real_agent(&args(&["help"])).is_ok());
         assert!(real_agent(&args(&["tick", "--help"])).is_ok());
         assert!(real_agent(&args(&["run", "--help"])).is_ok());
-        assert!(real_agent(&args(&["daemon", "--help"])).is_ok());
         assert!(real_agent(&args(&["status", "--help"])).is_ok());
         assert!(real_agent(&args(&["inspect", "--help"])).is_ok());
         assert!(real_agent(&args(&["stop", "--help"])).is_ok());
 
         assert_err_contains(real_agent(&args(&[])), "agent requires a subcommand");
         assert_err_contains(real_agent(&args(&["bogus"])), "unknown agent subcommand");
+        assert_err_contains(real_agent(&args(&["daemon"])), "unknown agent subcommand");
     }
 
     #[test]
@@ -739,28 +761,6 @@ memory:
             "expected unsigned integer",
         );
         assert_err_contains(real_agent(&args(&["run", "--bogus"])), "unknown arg");
-        assert_err_contains(real_agent(&args(&["daemon"])), "requires --spec");
-        assert_err_contains(
-            real_agent(&args(&[
-                "daemon",
-                "--spec",
-                "/tmp/example-agent.yaml",
-                "--checkpoint-interval-secs",
-                "0",
-            ])),
-            "greater than zero",
-        );
-        assert_err_contains(
-            real_agent(&args(&[
-                "daemon",
-                "--spec",
-                "/tmp/example-agent.yaml",
-                "--interval-secs",
-                "0",
-            ])),
-            "--interval-secs must be greater than zero",
-        );
-        assert_err_contains(real_agent(&args(&["daemon", "--bogus"])), "unknown arg");
         assert_err_contains(real_agent(&args(&["status", "--bogus"])), "unknown arg");
         assert_err_contains(real_agent(&args(&["inspect", "--bogus"])), "unknown arg");
         assert_err_contains(
@@ -804,8 +804,7 @@ memory:
 
         assert!(real_agent(&args(&["status", "--spec", spec])).is_ok());
         assert!(real_agent(&args(&["status", "--spec", spec, "--json"])).is_ok());
-        assert!(real_agent(&args(&[
-            "daemon",
+        assert!(real_csm_daemon(&args(&[
             "--spec",
             spec,
             "--max-restarts",

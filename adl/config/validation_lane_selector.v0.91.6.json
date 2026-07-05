@@ -618,11 +618,13 @@
       ],
       "path_selectors": [
         "docs/**",
-        "*.md"
+        "*.md",
+        "adl/tools/validate_v0917_*_status.sh"
       ],
       "path_hints": [
         "docs/**",
-        "*.md"
+        "*.md",
+        "adl/tools/validate_v0917_*_status.sh"
       ],
       "command": "git diff --check",
       "run_command": "git diff --check",

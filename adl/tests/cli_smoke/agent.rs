@@ -263,8 +263,8 @@ memory:
 }
 
 #[test]
-fn agent_daemon_writes_status_checkpoints_and_otel_observability() {
-    let root = unique_test_temp_dir("agent-daemon");
+fn csm_daemon_writes_status_checkpoints_and_otel_observability() {
+    let root = unique_test_temp_dir("csm-daemon");
     let spec = root.join("agent.yaml");
     fs::write(
         &spec,
@@ -305,9 +305,8 @@ memory:
     let log_str = observability_log.to_str().expect("utf8 log path");
     let otel_log_str = otel_log.to_str().expect("utf8 otel log path");
     let otel_status_str = otel_status.to_str().expect("utf8 otel status path");
-    let out = run_adl_with_env(
+    let out = run_csm_with_env(
         &[
-            "agent",
             "daemon",
             "--spec",
             spec_str,
@@ -363,17 +362,19 @@ memory:
     assert!(operator_events.contains("\"otel\""));
 
     let observability = fs::read_to_string(&observability_log).expect("read observability log");
-    assert!(observability.contains("stage=agent_daemon"));
+    assert!(observability.contains("command=csm"));
+    assert!(observability.contains("stage=csm_daemon"));
     assert!(observability.contains("stage=daemon_started"));
     assert!(observability.contains("stage=checkpoint_write"));
-    assert!(observability.contains("otel_service_name=adl-long-lived-agent-daemon"));
+    assert!(observability.contains("otel_service_name=csm-runtime-daemon"));
     assert!(observability.contains("trace_id=agent.daemon-agent.daemon"));
 
     let otel_events = fs::read_to_string(&otel_log).expect("read otel jsonl");
     assert!(otel_events.contains("\"schema\":\"adl.otel.event.v1\""));
-    assert!(otel_events.contains("\"name\":\"agent.daemon_started\""));
+    assert!(otel_events.contains("\"name\":\"csm.daemon_started\""));
+    assert!(otel_events.contains("\"name\":\"csm.csm_daemon\""));
     assert!(otel_events.contains("\"trace_id\":\"agent.daemon-agent.daemon\""));
-    assert!(otel_events.contains("\"service.name\":\"adl-long-lived-agent-daemon\""));
+    assert!(otel_events.contains("\"service.name\":\"csm-runtime-daemon\""));
 
     let otel_status: serde_json::Value =
         serde_json::from_str(&fs::read_to_string(&otel_status).expect("read otel status"))
@@ -384,8 +385,192 @@ memory:
 }
 
 #[test]
-fn agent_daemon_restart_budget_failure_leaves_recoverable_checkpoint() {
-    let root = unique_test_temp_dir("agent-daemon-failure");
+fn csm_daemon_executes_adl_workflow_dag_with_aee_runtime_trace() {
+    let root = unique_test_temp_dir("csm-adl-workflow");
+    let spec = root.join("agent.yaml");
+    let workflow = fixture_path("examples/v0-3-scheduler-max-concurrency.adl.yaml");
+    fs::write(
+        &spec,
+        format!(
+            r#"schema: adl.long_lived_agent_spec.v1
+agent_instance_id: csm-dag-agent
+display_name: CSM DAG Agent
+state_root: state
+workflow:
+  kind: adl_workflow
+  name: scheduler_max_concurrency
+  path: {}
+  run_args: {{}}
+heartbeat:
+  interval_secs: 1
+  max_cycles: 3
+  stale_lease_after_secs: 60
+safety:
+  allow_network: false
+  allow_broker: false
+  allow_filesystem_writes_outside_state_root: false
+  allow_real_world_side_effects: false
+  require_public_artifact_sanitization: true
+  financial_advice: false
+  max_cycle_runtime_secs: 120
+  max_consecutive_failures: 2
+memory:
+  namespace: smoke/csm-dag-agent
+  write_policy: append_only
+"#,
+            workflow.display()
+        ),
+    )
+    .expect("write agent spec");
+
+    let observability_log = root.join("observability.log");
+    let otel_log = root.join("otel.jsonl");
+    let otel_status = root.join("otel-status.json");
+    let mock = fixture_path("tools/mock_ollama_v0_4.sh");
+    let spec_str = spec.to_str().expect("utf8 path");
+    let out = run_csm_with_env(
+        &[
+            "daemon",
+            "--spec",
+            spec_str,
+            "--max-restarts",
+            "1",
+            "--checkpoint-interval-secs",
+            "1",
+            "--no-sleep",
+            "--json",
+        ],
+        &[
+            ("ADL_OBSERVABILITY_STDERR", "0"),
+            (
+                "ADL_OBSERVABILITY_LOG",
+                observability_log.to_str().expect("utf8 observability path"),
+            ),
+            ("ADL_OTEL_LOG", otel_log.to_str().expect("utf8 otel path")),
+            (
+                "ADL_OTEL_STATUS",
+                otel_status.to_str().expect("utf8 otel status path"),
+            ),
+            ("ADL_OLLAMA_BIN", mock.to_str().expect("utf8 mock path")),
+        ],
+    );
+    assert!(
+        out.status.success(),
+        "expected csm DAG runtime success, stderr:\n{}",
+        String::from_utf8_lossy(&out.stderr)
+    );
+
+    let cycle_root = root.join("state/cycles/cycle-000001");
+    let run_status_path = cycle_root.join("csm_adl_run_status.json");
+    assert!(run_status_path.exists());
+    assert!(cycle_root.join("adl_runtime").exists());
+    let run_status: serde_json::Value =
+        serde_json::from_str(&fs::read_to_string(&run_status_path).expect("read run status"))
+            .expect("parse run status");
+    assert_eq!(run_status["schema"], "adl.csm.adl_workflow_run_status.v1");
+    assert_eq!(run_status["runtime_owner"], "csm");
+    assert_eq!(run_status["adl_role"], "tooling_control_plane");
+    assert_eq!(run_status["status"], "success");
+    assert_eq!(run_status["step_count"], 4);
+    assert_eq!(run_status["scheduler_policy"]["max_concurrency"], 2);
+    assert_eq!(run_status["scheduler_policy"]["source"], "run_default");
+    assert_eq!(run_status["records"][0]["step_id"], "fork.a");
+    assert_eq!(run_status["records"][0]["status"], "success");
+    assert!(run_status["trace_events"]
+        .as_array()
+        .expect("trace events array")
+        .iter()
+        .any(|event| event
+            .as_str()
+            .expect("trace event")
+            .contains("SchedulerPolicy max_concurrency=2 source=run_default")));
+    assert!(
+        run_status["trace_events"]
+            .as_array()
+            .expect("trace events array")
+            .iter()
+            .any(|event| event
+                .as_str()
+                .expect("trace event")
+                .contains("RuntimeResilienceDecision")),
+        "expected retained AEE/runtime resilience trace: {run_status}"
+    );
+    assert_eq!(
+        run_status["aee_resilience_trace"],
+        "retained_in_trace_events"
+    );
+
+    let run_ref: serde_json::Value =
+        serde_json::from_str(&fs::read_to_string(cycle_root.join("run_ref.json")).unwrap())
+            .expect("parse run ref");
+    assert_eq!(run_ref["run_status_ref"], "csm_adl_run_status.json");
+    assert!(run_ref["execution_note"]
+        .as_str()
+        .expect("execution note")
+        .contains("CSM executed the configured ADL DAG"));
+
+    let daemon_status: serde_json::Value = serde_json::from_str(
+        &fs::read_to_string(root.join("state/daemon_status.json")).expect("read daemon status"),
+    )
+    .expect("parse daemon status");
+    assert_eq!(
+        daemon_status["runtime_capabilities"]["chronosense"]["status"],
+        "integrated"
+    );
+    assert_eq!(
+        daemon_status["runtime_capabilities"]["aee"]["status"],
+        "integrated"
+    );
+    assert_eq!(
+        daemon_status["runtime_capabilities"]["scheduler_watcher"]["status"],
+        "integrated"
+    );
+    assert_eq!(
+        daemon_status["runtime_capabilities"]["resilience_middleware"]["status"],
+        "integrated"
+    );
+}
+
+#[test]
+fn csm_owns_daemon_and_adl_agent_daemon_is_removed() {
+    let help = run_csm(&["--help"]);
+    assert!(
+        help.status.success(),
+        "expected csm help success, stderr:\n{}",
+        String::from_utf8_lossy(&help.stderr)
+    );
+    let help_stdout = String::from_utf8_lossy(&help.stdout);
+    assert!(help_stdout.contains("csm daemon --spec"));
+    assert!(help_stdout.contains("dedicated runtime owner binary"));
+
+    let removed_agent = run_adl(&["agent", "daemon", "--help"]);
+    assert!(
+        !removed_agent.status.success(),
+        "expected adl agent daemon removal, stdout:\n{}",
+        String::from_utf8_lossy(&removed_agent.stdout)
+    );
+    let stderr = String::from_utf8_lossy(&removed_agent.stderr);
+    assert!(
+        stderr.contains("unknown agent subcommand 'daemon'"),
+        "stderr:\n{stderr}"
+    );
+
+    let removed_adl_csm = run_adl(&["csm", "daemon", "--help"]);
+    assert!(
+        !removed_adl_csm.status.success(),
+        "expected adl csm daemon removal, stdout:\n{}",
+        String::from_utf8_lossy(&removed_adl_csm.stdout)
+    );
+    let stderr = String::from_utf8_lossy(&removed_adl_csm.stderr);
+    assert!(
+        stderr.contains("csm daemon is owned by the standalone csm runtime binary"),
+        "stderr:\n{stderr}"
+    );
+}
+
+#[test]
+fn csm_daemon_restart_budget_failure_leaves_recoverable_checkpoint() {
+    let root = unique_test_temp_dir("csm-daemon-failure");
     let spec = root.join("agent.yaml");
     fs::write(
         &spec,
@@ -418,8 +603,7 @@ memory:
     .expect("write agent spec");
 
     let spec_str = spec.to_str().expect("utf8 path");
-    let out = run_adl(&[
-        "agent",
+    let out = run_csm(&[
         "daemon",
         "--spec",
         spec_str,

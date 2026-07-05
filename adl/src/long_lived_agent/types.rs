@@ -100,6 +100,8 @@ pub struct StatusRecord {
 pub struct DaemonStatusRecord {
     pub schema: String,
     pub agent_instance_id: String,
+    #[serde(default)]
+    pub runtime_capabilities: Value,
     pub state: String,
     pub supervisor_pid: u32,
     pub restart_count: u64,

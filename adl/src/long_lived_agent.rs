@@ -8,6 +8,9 @@ use std::io::{BufRead, BufReader, Write};
 use std::path::{Path, PathBuf};
 use std::time::Duration;
 
+use crate::chronosense::{ChronosenseRuntimeService, ChronosenseRuntimeServiceConfig};
+use crate::{adl, execute, resolve, trace};
+
 mod inspection;
 mod schema;
 mod storage;
@@ -123,19 +126,21 @@ pub fn run(spec_path: &Path, options: RunOptions) -> Result<StatusRecord> {
 pub fn daemon(spec_path: &Path, options: DaemonOptions) -> Result<DaemonStatusRecord> {
     if options.checkpoint_interval_secs == 0 {
         return Err(anyhow!(
-            "agent daemon requires --checkpoint-interval-secs greater than zero"
+            "csm daemon requires --checkpoint-interval-secs greater than zero"
         ));
     }
     if options.interval_secs == Some(0) {
         return Err(anyhow!(
-            "agent daemon requires --interval-secs greater than zero"
+            "csm daemon requires --interval-secs greater than zero"
         ));
     }
     let loaded = load_spec(spec_path)?;
     ensure_state_root(&loaded)?;
+    let runtime_context = CsmRuntimeContext::new()?;
     let mut restart_count = 0u64;
     let mut last_child_exit = None;
     let _ = write_daemon_status(
+        &runtime_context,
         &loaded,
         DaemonStatusInput {
             state: "starting",
@@ -149,6 +154,7 @@ pub fn daemon(spec_path: &Path, options: DaemonOptions) -> Result<DaemonStatusRe
     )?;
     let mut daemon_status: DaemonStatusRecord;
     emit_daemon_event(
+        &runtime_context,
         &loaded,
         "daemon_started",
         "started",
@@ -165,6 +171,7 @@ pub fn daemon(spec_path: &Path, options: DaemonOptions) -> Result<DaemonStatusRe
             let status = status(spec_path)?;
             persist_status(&loaded, &status, "daemon_stop_observed")?;
             let daemon_status = write_daemon_status(
+                &runtime_context,
                 &loaded,
                 DaemonStatusInput {
                     state: "stopped",
@@ -177,6 +184,7 @@ pub fn daemon(spec_path: &Path, options: DaemonOptions) -> Result<DaemonStatusRe
                 },
             )?;
             emit_daemon_event(
+                &runtime_context,
                 &loaded,
                 "stop_completed",
                 "completed",
@@ -187,6 +195,7 @@ pub fn daemon(spec_path: &Path, options: DaemonOptions) -> Result<DaemonStatusRe
         }
 
         emit_daemon_event(
+            &runtime_context,
             &loaded,
             "child_spawn",
             "started",
@@ -194,6 +203,7 @@ pub fn daemon(spec_path: &Path, options: DaemonOptions) -> Result<DaemonStatusRe
             json!({"supervised_unit": "long_lived_agent_tick"}),
         )?;
         let _ = write_daemon_status(
+            &runtime_context,
             &loaded,
             DaemonStatusInput {
                 state: "running",
@@ -215,6 +225,7 @@ pub fn daemon(spec_path: &Path, options: DaemonOptions) -> Result<DaemonStatusRe
             Ok(status) => {
                 last_child_exit = Some("success".to_string());
                 emit_daemon_event(
+                    &runtime_context,
                     &loaded,
                     "child_exit",
                     "completed",
@@ -226,6 +237,7 @@ pub fn daemon(spec_path: &Path, options: DaemonOptions) -> Result<DaemonStatusRe
                     }),
                 )?;
                 daemon_status = write_daemon_status(
+                    &runtime_context,
                     &loaded,
                     DaemonStatusInput {
                         state: "running",
@@ -260,6 +272,7 @@ pub fn daemon(spec_path: &Path, options: DaemonOptions) -> Result<DaemonStatusRe
                 status.updated_at = Utc::now();
                 persist_status(&loaded, &status, "daemon_child_failed_recoverable")?;
                 emit_daemon_event(
+                    &runtime_context,
                     &loaded,
                     "child_exit",
                     "failed",
@@ -273,6 +286,7 @@ pub fn daemon(spec_path: &Path, options: DaemonOptions) -> Result<DaemonStatusRe
                 )?;
                 if restart_count >= options.max_restarts {
                     let _ = write_daemon_status(
+                        &runtime_context,
                         &loaded,
                         DaemonStatusInput {
                             state: "failed",
@@ -285,6 +299,7 @@ pub fn daemon(spec_path: &Path, options: DaemonOptions) -> Result<DaemonStatusRe
                         },
                     )?;
                     emit_daemon_event(
+                        &runtime_context,
                         &loaded,
                         "restart_budget_exhausted",
                         "failed",
@@ -296,6 +311,7 @@ pub fn daemon(spec_path: &Path, options: DaemonOptions) -> Result<DaemonStatusRe
                 restart_count += 1;
                 let backoff_secs = restart_backoff_secs(restart_count);
                 daemon_status = write_daemon_status(
+                    &runtime_context,
                     &loaded,
                     DaemonStatusInput {
                         state: "restarting",
@@ -308,6 +324,7 @@ pub fn daemon(spec_path: &Path, options: DaemonOptions) -> Result<DaemonStatusRe
                     },
                 )?;
                 emit_daemon_event(
+                    &runtime_context,
                     &loaded,
                     "restart_scheduled",
                     "scheduled",
@@ -315,6 +332,7 @@ pub fn daemon(spec_path: &Path, options: DaemonOptions) -> Result<DaemonStatusRe
                     json!({"backoff_secs": backoff_secs}),
                 )?;
                 let stop_observed = sleep_with_partial_checkpoints(
+                    &runtime_context,
                     &loaded,
                     &mut daemon_status,
                     PartialCheckpointSleep {
@@ -332,6 +350,7 @@ pub fn daemon(spec_path: &Path, options: DaemonOptions) -> Result<DaemonStatusRe
                     continue;
                 }
                 emit_daemon_event(
+                    &runtime_context,
                     &loaded,
                     "restart_attempted",
                     "started",
@@ -344,6 +363,7 @@ pub fn daemon(spec_path: &Path, options: DaemonOptions) -> Result<DaemonStatusRe
 
         let sleep_secs = daemon_interval_secs(&loaded, options.interval_secs)?;
         let stop_observed = sleep_with_partial_checkpoints(
+            &runtime_context,
             &loaded,
             &mut daemon_status,
             PartialCheckpointSleep {
@@ -362,6 +382,7 @@ pub fn daemon(spec_path: &Path, options: DaemonOptions) -> Result<DaemonStatusRe
         }
         if options.no_sleep {
             daemon_status = write_daemon_status(
+                &runtime_context,
                 &loaded,
                 DaemonStatusInput {
                     state: "completed",
@@ -374,6 +395,7 @@ pub fn daemon(spec_path: &Path, options: DaemonOptions) -> Result<DaemonStatusRe
                 },
             )?;
             emit_daemon_event(
+                &runtime_context,
                 &loaded,
                 "daemon_completed",
                 "completed",
@@ -388,7 +410,7 @@ pub fn daemon(spec_path: &Path, options: DaemonOptions) -> Result<DaemonStatusRe
 fn daemon_interval_secs(loaded: &LoadedAgentSpec, override_secs: Option<u64>) -> Result<u64> {
     match override_secs.or(loaded.spec.heartbeat.interval_secs) {
         Some(0) => Err(anyhow!(
-            "agent daemon requires heartbeat.interval_secs or --interval-secs greater than zero"
+            "csm daemon requires heartbeat.interval_secs or --interval-secs greater than zero"
         )),
         Some(secs) => Ok(secs),
         None => Ok(DAEMON_DEFAULT_INTERVAL_SECS),
@@ -1017,6 +1039,12 @@ fn write_cycle_artifacts(loaded: &LoadedAgentSpec, cycle_id: &str) -> Result<()>
         dedup_strings(&mut rejected_actions);
     }
 
+    let adl_run = if workflow_supported && loaded.spec.workflow.kind == "adl_workflow" {
+        Some(run_adl_workflow_cycle(loaded, cycle_id, &cycle_dir)?)
+    } else {
+        None
+    };
+
     let guardrail_pass = workflow_supported
         && rejected_actions.is_empty()
         && sanitization.passed
@@ -1059,13 +1087,21 @@ fn write_cycle_artifacts(loaded: &LoadedAgentSpec, cycle_id: &str) -> Result<()>
     write_json_pretty(&cycle_dir.join("decision_result.json"), &decision_result)?;
 
     let run_ref = if loaded.spec.workflow.kind == "adl_workflow" {
+        let run_status_ref = adl_run
+            .as_ref()
+            .map(|run| run.status_ref.clone())
+            .unwrap_or_else(|| "csm_adl_run_status.json".to_string());
+        let trace_ref = adl_run
+            .as_ref()
+            .map(|run| run.trace_ref.clone())
+            .unwrap_or_else(|| "csm_adl_run_status.json#trace".to_string());
         json!({
             "schema": RUN_REF_SCHEMA,
             "workflow_kind": "adl_workflow",
             "workflow_ref": workflow_ref,
-            "run_status_ref": null,
-            "trace_ref": null,
-            "execution_note": "WP-03 records the cycle artifact contract; full workflow invocation remains bounded by the configured supervisor cycle."
+            "run_status_ref": run_status_ref,
+            "trace_ref": trace_ref,
+            "execution_note": "CSM executed the configured ADL DAG through the canonical resolver/executor inside this supervised runtime cycle."
         })
     } else {
         json!({
@@ -1217,6 +1253,14 @@ fn write_cycle_artifacts(loaded: &LoadedAgentSpec, cycle_id: &str) -> Result<()>
         "output_hash": sha256_json(&manifest_output)?,
         "previous_cycle_id": manifest_input["previous_cycle_id"].clone(),
         "next_cycle_hint": "sleep_until_next_heartbeat",
+        "csm_runtime": {
+            "runtime_owner": "csm",
+            "adl_role": "tooling_control_plane",
+            "aee": "integrated",
+            "chronosense": "integrated",
+            "scheduler_watcher": "integrated",
+            "resilience_middleware": "integrated"
+        },
         "artifacts": {
             "observations": "observations.json",
             "decision_request": "decision_request.json",
@@ -1224,7 +1268,8 @@ fn write_cycle_artifacts(loaded: &LoadedAgentSpec, cycle_id: &str) -> Result<()>
             "run_ref": "run_ref.json",
             "memory_writes": "memory_writes.jsonl",
             "guardrail_report": "guardrail_report.json",
-            "cycle_summary": "cycle_summary.md"
+            "cycle_summary": "cycle_summary.md",
+            "csm_adl_run_status": adl_run.as_ref().map(|run| run.status_ref.as_str())
         },
         "not_financial_advice": true
     });
@@ -1256,6 +1301,107 @@ fn write_cycle_artifacts(loaded: &LoadedAgentSpec, cycle_id: &str) -> Result<()>
     }
 
     Ok(())
+}
+
+#[derive(Debug)]
+struct AdlWorkflowRunSummary {
+    status_ref: String,
+    trace_ref: String,
+}
+
+fn run_adl_workflow_cycle(
+    loaded: &LoadedAgentSpec,
+    cycle_id: &str,
+    cycle_dir: &Path,
+) -> Result<AdlWorkflowRunSummary> {
+    let workflow_path = loaded.spec.workflow.path.as_ref().ok_or_else(|| {
+        anyhow!("adl_workflow requires workflow.path so CSM can execute the configured DAG")
+    })?;
+    let adl_path = if workflow_path.is_absolute() {
+        workflow_path.clone()
+    } else {
+        loaded
+            .spec_path
+            .parent()
+            .unwrap_or_else(|| Path::new("."))
+            .join(workflow_path)
+    };
+    let adl_path_str = adl_path
+        .to_str()
+        .context("adl_workflow path must be valid UTF-8")?;
+    let doc = adl::AdlDoc::load_from_file(adl_path_str)
+        .with_context(|| format!("failed loading CSM ADL workflow {}", adl_path.display()))?;
+    let resolved = resolve::resolve_run(&doc)
+        .with_context(|| format!("failed resolving CSM ADL workflow {}", adl_path.display()))?;
+    let adl_base_dir = adl_path.parent().unwrap_or_else(|| Path::new("."));
+    let out_dir = cycle_dir.join("adl_runtime");
+    fs::create_dir_all(&out_dir)
+        .with_context(|| format!("failed creating CSM ADL runtime dir {}", out_dir.display()))?;
+
+    let mut tr = trace::Trace::new(
+        resolved.run_id.clone(),
+        resolved.workflow_id.clone(),
+        resolved.doc.version.clone(),
+    );
+    let result =
+        execute::execute_sequential(&resolved, &mut tr, false, false, adl_base_dir, &out_dir)
+            .with_context(|| format!("CSM ADL DAG execution failed for cycle {cycle_id}"))?;
+    tr.run_finished(result.pause.is_none());
+
+    let records: Vec<Value> = result
+        .records
+        .iter()
+        .map(|record| {
+            json!({
+                "step_id": record.step_id,
+                "provider_id": record.provider_id,
+                "status": record.status,
+                "attempts": record.attempts,
+                "output_bytes": record.output_bytes
+            })
+        })
+        .collect();
+    let artifacts: Vec<String> = result
+        .artifacts
+        .iter()
+        .map(|path| path_artifact_ref(path))
+        .collect();
+    let scheduler_policy = execute::scheduler_policy_for_run(&resolved)?
+        .map(|(max_concurrency, source)| {
+            json!({
+                "max_concurrency": max_concurrency,
+                "source": source.as_str()
+            })
+        })
+        .unwrap_or(Value::Null);
+    let trace_events: Vec<String> = tr.events.iter().map(|event| event.summarize()).collect();
+    let status = json!({
+        "schema": "adl.csm.adl_workflow_run_status.v1",
+        "runtime_owner": "csm",
+        "adl_role": "tooling_control_plane",
+        "agent_instance_id": loaded.spec.agent_instance_id,
+        "cycle_id": cycle_id,
+        "workflow_path": path_artifact_ref(&adl_path),
+        "run_id": resolved.run_id,
+        "workflow_id": resolved.workflow_id,
+        "status": if result.pause.is_some() { "paused" } else { "success" },
+        "step_count": result.records.len(),
+        "records": records,
+        "artifacts": artifacts,
+        "out_dir": path_artifact_ref(&out_dir),
+        "scheduler_policy": scheduler_policy,
+        "runtime_control": serde_json::to_value(&result.runtime_control)?,
+        "trace_event_count": trace_events.len(),
+        "trace_events": trace_events,
+        "aee_resilience_trace": "retained_in_trace_events",
+        "chronosense_runtime": "retained_in_csm_daemon_events",
+        "completed_at": Utc::now()
+    });
+    write_json_pretty(&cycle_dir.join("csm_adl_run_status.json"), &status)?;
+    Ok(AdlWorkflowRunSummary {
+        status_ref: "csm_adl_run_status.json".to_string(),
+        trace_ref: "csm_adl_run_status.json#trace_events".to_string(),
+    })
 }
 
 fn status_with_state(
@@ -1313,7 +1459,23 @@ struct PartialCheckpointSleep<'a> {
     no_sleep: bool,
 }
 
+struct CsmRuntimeContext {
+    chronosense: ChronosenseRuntimeService,
+}
+
+impl CsmRuntimeContext {
+    fn new() -> Result<Self> {
+        let started_at_epoch_ms = epoch_millis_now();
+        let chronosense = ChronosenseRuntimeService::new(ChronosenseRuntimeServiceConfig::utc(
+            started_at_epoch_ms,
+        ))
+        .context("failed initializing CSM Chronosense runtime service")?;
+        Ok(Self { chronosense })
+    }
+}
+
 fn write_daemon_status(
+    runtime_context: &CsmRuntimeContext,
     loaded: &LoadedAgentSpec,
     input: DaemonStatusInput<'_>,
 ) -> Result<DaemonStatusRecord> {
@@ -1321,6 +1483,7 @@ fn write_daemon_status(
     let status = DaemonStatusRecord {
         schema: DAEMON_STATUS_SCHEMA.to_string(),
         agent_instance_id: loaded.spec.agent_instance_id.clone(),
+        runtime_capabilities: csm_runtime_capabilities(runtime_context),
         state: input.state.to_string(),
         supervisor_pid: std::process::id(),
         restart_count: input.restart_count,
@@ -1341,6 +1504,7 @@ fn write_daemon_status(
 }
 
 fn sleep_with_partial_checkpoints(
+    runtime_context: &CsmRuntimeContext,
     loaded: &LoadedAgentSpec,
     daemon_status: &mut DaemonStatusRecord,
     sleep: PartialCheckpointSleep<'_>,
@@ -1354,6 +1518,7 @@ fn sleep_with_partial_checkpoints(
         }
         persist_status(loaded, &current, "daemon_partial_checkpoint")?;
         *daemon_status = write_daemon_status(
+            runtime_context,
             loaded,
             DaemonStatusInput {
                 state: daemon_status.state.as_str(),
@@ -1366,6 +1531,7 @@ fn sleep_with_partial_checkpoints(
             },
         )?;
         emit_daemon_event(
+            runtime_context,
             loaded,
             "checkpoint_write",
             "completed",
@@ -1397,6 +1563,7 @@ fn sleep_with_partial_checkpoints(
             0
         };
         *daemon_status = write_daemon_status(
+            runtime_context,
             loaded,
             DaemonStatusInput {
                 state: daemon_status.state.as_str(),
@@ -1409,6 +1576,7 @@ fn sleep_with_partial_checkpoints(
             },
         )?;
         emit_daemon_event(
+            runtime_context,
             loaded,
             "checkpoint_write",
             "completed",
@@ -1424,6 +1592,7 @@ fn sleep_with_partial_checkpoints(
         if read_stop(loaded)?.is_some() {
             stop_observed = true;
             emit_daemon_event(
+                runtime_context,
                 loaded,
                 "graceful_shutdown_requested",
                 "observed",
@@ -1437,6 +1606,7 @@ fn sleep_with_partial_checkpoints(
 }
 
 fn emit_daemon_event(
+    runtime_context: &CsmRuntimeContext,
     loaded: &LoadedAgentSpec,
     event: &str,
     result: &str,
@@ -1456,28 +1626,93 @@ fn emit_daemon_event(
             "trace_id": trace_id,
             "span_id": span_id,
             "parent_span_id": parent_span_id,
-            "service_name": "adl-long-lived-agent-daemon",
+            "service_name": "csm-runtime-daemon",
             "event_name": event
         },
+        "runtime_capabilities": csm_runtime_capabilities(runtime_context),
+        "chronosense_clock_stack": csm_chronosense_clock_stack(runtime_context),
         "details": details
     });
     append_operator_event(loaded, event, event_details)?;
     let restart_count_s = restart_count.to_string();
     crate::observability::emit_event(
-        "agent",
+        "csm",
         event,
         result,
         &[
-            ("process_class", "long_lived_daemon"),
+            ("process_class", "csm_runtime_daemon"),
             ("agent_instance_id", loaded.spec.agent_instance_id.as_str()),
             ("trace_id", trace_id.as_str()),
             ("span_id", span_id.as_str()),
             ("parent_span_id", parent_span_id.as_str()),
-            ("otel_service_name", "adl-long-lived-agent-daemon"),
+            ("otel_service_name", "csm-runtime-daemon"),
+            ("runtime_role", "csm_runtime"),
+            ("adl_role", "tooling_control_plane"),
+            ("chronosense", "integrated"),
+            ("aee_recovery", "integrated"),
+            ("scheduler_watcher", "integrated"),
+            ("resilience_middleware", "integrated"),
+            ("observability", "integrated"),
             ("restart_count", restart_count_s.as_str()),
         ],
     );
     Ok(())
+}
+
+fn csm_runtime_capabilities(runtime_context: &CsmRuntimeContext) -> Value {
+    json!({
+        "schema": "adl.csm.runtime_capabilities.v1",
+        "runtime_owner": "csm",
+        "adl_role": "tooling_control_plane",
+        "process_class": "csm_runtime_daemon",
+        "chronosense": {
+            "status": "integrated",
+            "service_schema": runtime_context.chronosense.config().schema_version,
+            "clock_stack_schema": crate::chronosense::CHRONOSENSE_CLOCK_STACK_SCHEMA,
+            "clock_stack_capture": "daemon_event_time"
+        },
+        "aee": {
+            "status": "integrated",
+            "recoverable_states": ["idle", "completed", "failed", "stopped", "leased"],
+            "failure_recovery": "restart_budget_and_checkpoint_restore"
+        },
+        "scheduler_watcher": {
+            "status": "integrated",
+            "cadence_source": "heartbeat.interval_secs_or_daemon_default",
+            "partial_checkpoint_interval": "checkpoint_interval_secs",
+            "stop_observation": "stop_json_checked_between_cycles_and_sleep_slices"
+        },
+        "resilience_middleware": {
+            "status": "integrated",
+            "lease_policy": "active_stale_recoverable_blocked",
+            "restart_backoff": "bounded_exponential",
+            "partial_checkpoints": "daemon_partial_checkpoint"
+        },
+        "observability": {
+            "status": "integrated",
+            "event_command": "csm",
+            "otel_service_name": "csm-runtime-daemon",
+            "retained_outputs": ["operator_events.jsonl", "daemon_status.json", "ADL_OBSERVABILITY_LOG", "ADL_OTEL_LOG", "ADL_OTEL_STATUS"]
+        }
+    })
+}
+
+fn csm_chronosense_clock_stack(runtime_context: &CsmRuntimeContext) -> Value {
+    runtime_context
+        .chronosense
+        .capture_epoch_millis(epoch_millis_now())
+        .and_then(|clock| serde_json::to_value(clock).context("serialize chronosense clock stack"))
+        .unwrap_or_else(|err| {
+            json!({
+                "schema": crate::chronosense::CHRONOSENSE_CLOCK_STACK_SCHEMA,
+                "capture_status": "failed",
+                "error": err.to_string()
+            })
+        })
+}
+
+fn epoch_millis_now() -> u128 {
+    Utc::now().timestamp_millis().max(0) as u128
 }
 
 fn daemon_trace_id(loaded: &LoadedAgentSpec) -> String {

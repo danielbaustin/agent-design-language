@@ -3390,7 +3390,7 @@ fn finish_validation_profile_classifies_tokio_manifest_runtime_wave_paths() {
 
 #[test]
 fn finish_validation_profile_classifies_long_lived_agent_tokio_paths() {
-    let err = select_finish_validation_plan_for_finish(
+    let plan = select_finish_validation_plan_for_finish(
         4179,
         ".",
         &[
@@ -3400,12 +3400,16 @@ fn finish_validation_profile_classifies_long_lived_agent_tokio_paths() {
             "adl/src/runtime_aws_signal.rs".to_string(),
         ],
     )
-    .expect_err("long-lived tokio slice should fail closed when manager requires escalation");
+    .expect("long-lived tokio slice should use the runnable larger-binary lane");
 
-    let message = err.to_string();
-    assert!(message.contains("validation manager reported a non-runnable profile"));
-    assert!(message.contains("lane=rust_pr_fast"));
-    assert!(message.contains("status=escalation_required"));
+    assert_eq!(plan.mode, FinishValidationMode::LargerBinaryFocused);
+    assert!(plan.commands.contains(&"git diff --check".to_string()));
+    assert!(
+        plan.commands
+            .iter()
+            .any(|command| command
+                .contains("bash adl/tools/run_pr_fast_test_lane.sh --changed-files"))
+    );
 }
 
 #[test]
