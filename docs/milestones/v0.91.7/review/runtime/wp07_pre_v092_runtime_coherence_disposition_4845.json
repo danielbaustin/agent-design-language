@@ -23,7 +23,7 @@
       "issue": 4718,
       "state": "merged_closed_rerun_consumed",
       "evidence": "docs/milestones/v0.91.7/review/observability_4718/generated/proof_summary.json",
-      "claim_boundary": "otel_mapping_inputs_and_logging_contract_only_no_collector_exporter_claim"
+      "claim_boundary": "logging_contract_and_mapping_inputs_consumed_by_local_file_backed_otel_monitor_proof"
     },
     {
       "issue": 4681,
@@ -65,6 +65,12 @@
         "deferred_with_operator_approval": 1,
         "routed_to_soak_3": 0
       }
+    },
+    {
+      "issue": 4634,
+      "state": "umbrella_otel_monitor_repair",
+      "evidence": "docs/milestones/v0.91.7/review/runtime/soak2_4682/otel_monitor/otel_status.json",
+      "claim_boundary": "local_durable_ADL_OTEL_LOG_jsonl_and_ADL_OTEL_STATUS_monitor_only_no_network_otlp_backend"
     }
   ],
   "activation_decisions": [
@@ -77,8 +83,8 @@
     {
       "surface": "logging_otel",
       "decision": "integrated_proven_with_boundary",
-      "owners": [4718, 4880],
-      "v092_consequence": "Logging/event samples and OTel mapping inputs are proven; production collector/exporter remains non-claimed."
+      "owners": [4718, 4880, 4885, 4634],
+      "v092_consequence": "Logging/event samples, daemon trace/span/service fields, local durable ADL_OTEL_LOG JSONL export, and ADL_OTEL_STATUS monitor status are proven; network OTLP collector and hosted telemetry backend remain non-claimed."
     },
     {
       "surface": "scheduler_resilience_aee_memory",
@@ -134,7 +140,7 @@
     "Approve v0.92 non-claims/defer for AWS signal bridge, Unity live consumption, WP-12 ACIP/A2A activation, runtime-v2 capability envelope freshness, and runtime-v2 security/CAV freshness, or route those rows to Soak 3."
   ],
   "non_claims": [
-    "No production OpenTelemetry collector, OTLP exporter, hosted telemetry service, or exporter crate wiring is claimed.",
+    "No network OTLP collector, hosted telemetry service, or external exporter backend is claimed; WP-07 now claims only the local durable ADL_OTEL_LOG JSONL sink and ADL_OTEL_STATUS monitor file proven by #4634.",
     "No live AWS signal bridge/SNS/SSM heartbeat proof is claimed.",
     "No Unity editor live-consumption run is claimed.",
     "No WP-12 ACIP/A2A activation closure is claimed.",

@@ -299,8 +299,12 @@ memory:
     .expect("write agent spec");
 
     let observability_log = root.join("observability.log");
+    let otel_log = root.join("otel.jsonl");
+    let otel_status = root.join("otel-status.json");
     let spec_str = spec.to_str().expect("utf8 path");
     let log_str = observability_log.to_str().expect("utf8 log path");
+    let otel_log_str = otel_log.to_str().expect("utf8 otel log path");
+    let otel_status_str = otel_status.to_str().expect("utf8 otel status path");
     let out = run_adl_with_env(
         &[
             "agent",
@@ -318,6 +322,8 @@ memory:
             ("ADL_OBSERVABILITY_STDERR", "0"),
             ("ADL_OBSERVABILITY_LOG", log_str),
             ("ADL_OBSERVABILITY_HEARTBEAT_MS", "25"),
+            ("ADL_OTEL_LOG", otel_log_str),
+            ("ADL_OTEL_STATUS", otel_status_str),
         ],
     );
     assert!(
@@ -362,6 +368,19 @@ memory:
     assert!(observability.contains("stage=checkpoint_write"));
     assert!(observability.contains("otel_service_name=adl-long-lived-agent-daemon"));
     assert!(observability.contains("trace_id=agent.daemon-agent.daemon"));
+
+    let otel_events = fs::read_to_string(&otel_log).expect("read otel jsonl");
+    assert!(otel_events.contains("\"schema\":\"adl.otel.event.v1\""));
+    assert!(otel_events.contains("\"name\":\"agent.daemon_started\""));
+    assert!(otel_events.contains("\"trace_id\":\"agent.daemon-agent.daemon\""));
+    assert!(otel_events.contains("\"service.name\":\"adl-long-lived-agent-daemon\""));
+
+    let otel_status: serde_json::Value =
+        serde_json::from_str(&fs::read_to_string(&otel_status).expect("read otel status"))
+            .expect("parse otel status");
+    assert_eq!(otel_status["schema"], "adl.otel.monitor_status.v1");
+    assert!(otel_status["event_count"].as_u64().expect("event count") >= 4);
+    assert_eq!(otel_status["last_trace_id"], "agent.daemon-agent.daemon");
 }
 
 #[test]

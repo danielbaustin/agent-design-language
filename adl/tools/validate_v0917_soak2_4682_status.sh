@@ -16,6 +16,10 @@ evidence_path = root / "evidence_index.json"
 daemon_status_path = root / "daemon_supervision" / "state" / "daemon_status.json"
 daemon_checkpoint_path = root / "daemon_supervision" / "state" / "continuity_checkpoint.json"
 daemon_operator_events_path = root / "daemon_supervision" / "state" / "operator_events.jsonl"
+otel_log_path = root / "otel_monitor" / "otel.jsonl"
+otel_status_path = root / "otel_monitor" / "otel_status.json"
+otel_daemon_status_path = root / "otel_monitor" / "state" / "daemon_status.json"
+otel_observability_log_path = root / "otel_monitor" / "observability.log"
 
 for path in (
     status_path,
@@ -25,6 +29,10 @@ for path in (
     daemon_status_path,
     daemon_checkpoint_path,
     daemon_operator_events_path,
+    otel_log_path,
+    otel_status_path,
+    otel_daemon_status_path,
+    otel_observability_log_path,
 ):
     if not path.exists():
         raise SystemExit(f"missing required artifact: {path}")
@@ -34,6 +42,8 @@ blockers = json.loads(blocker_path.read_text())
 evidence = json.loads(evidence_path.read_text())
 daemon_status = json.loads(daemon_status_path.read_text())
 daemon_checkpoint = json.loads(daemon_checkpoint_path.read_text())
+otel_status = json.loads(otel_status_path.read_text())
+otel_daemon_status = json.loads(otel_daemon_status_path.read_text())
 
 if status.get("schema") != "adl.v0917.runtime_soak2.execution_status.v1":
     raise SystemExit("unexpected execution status schema")
@@ -130,6 +140,14 @@ required_refs = {
     "daemon_supervision/state/status.json",
     "daemon_supervision/state/continuity_checkpoint.json",
     "daemon_supervision/state/operator_events.jsonl",
+    "otel_monitor/README.md",
+    "otel_monitor/daemon_stdout.json",
+    "otel_monitor/observability.log",
+    "otel_monitor/otel.jsonl",
+    "otel_monitor/otel_status.json",
+    "otel_monitor/state/daemon_status.json",
+    "otel_monitor/state/continuity_checkpoint.json",
+    "otel_monitor/state/operator_events.jsonl",
     "security_cav_boundary/proof_packet.json",
     "capability_envelope/operator_control_report.json",
 }
@@ -177,6 +195,53 @@ for event_name in ("daemon_started", "child_spawn", "child_exit", "checkpoint_wr
 for otel_field in ("trace_id", "span_id", "parent_span_id", "service_name"):
     if otel_field not in operator_events:
         raise SystemExit(f"daemon operator events missing OTel field {otel_field}")
+
+otel_events = [
+    json.loads(line)
+    for line in otel_log_path.read_text().splitlines()
+    if line.strip()
+]
+if len(otel_events) < 8:
+    raise SystemExit("OTel monitor proof must retain every daemon lifecycle event")
+for event in otel_events:
+    if event.get("schema") != "adl.otel.event.v1":
+        raise SystemExit("unexpected OTel event schema")
+    if event.get("name") is None or event.get("severity_text") is None:
+        raise SystemExit("OTel event missing monitor fields")
+required_otel_names = {
+    "adl.dispatch",
+    "agent.agent_daemon",
+    "agent.daemon_started",
+    "agent.child_spawn",
+    "agent.child_exit",
+    "agent.checkpoint_write",
+    "agent.daemon_completed",
+}
+observed_otel_names = {event.get("name") for event in otel_events}
+missing_otel_names = sorted(required_otel_names - observed_otel_names)
+if missing_otel_names:
+    raise SystemExit(f"OTel monitor proof missing events: {missing_otel_names}")
+if otel_status.get("schema") != "adl.otel.monitor_status.v1":
+    raise SystemExit("OTel monitor status schema mismatch")
+if otel_status.get("event_count") != len(otel_events):
+    raise SystemExit("OTel monitor status event count must match JSONL line count")
+if otel_status.get("last_trace_id") != "agent.soak2-otel-monitor-agent.daemon":
+    raise SystemExit("OTel monitor status lost daemon trace identity")
+if otel_status.get("last_result") != "completed":
+    raise SystemExit("OTel monitor status must end completed")
+if otel_daemon_status.get("state") != "completed":
+    raise SystemExit("OTel monitor daemon status must be completed")
+if otel_daemon_status.get("trace_id") != "agent.soak2-otel-monitor-agent.daemon":
+    raise SystemExit("OTel monitor daemon status trace mismatch")
+otel_compat = otel_observability_log_path.read_text()
+for marker in (
+    "stage=daemon_started",
+    "stage=checkpoint_write",
+    "stage=agent_daemon",
+    "trace_id=agent.soak2-otel-monitor-agent.daemon",
+):
+    if marker not in otel_compat:
+        raise SystemExit(f"compatibility observability log missing {marker}")
 
 print("PASS validate_v0917_soak2_4682_status")
 PY

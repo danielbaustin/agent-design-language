@@ -8,7 +8,9 @@ The current result is `final_rerun_completed_with_blockers`: the merged
 `#4681` runtime path, `#4783` resilience middleware, `#4784` failure-injection
 proof, `#4843` matrix, `#4718` observability proof, and `#4885` supervised
 daemon mode were consumable from current `main`, and the local runtime/proof
-harnesses emitted retained evidence. Five activation-facing rows remain
+harnesses emitted retained evidence. The `#4634` umbrella repair adds a local
+durable OTel-shaped JSONL sink and monitor-status proof for the daemon path via
+`ADL_OTEL_LOG` and `ADL_OTEL_STATUS`. Five activation-facing rows remain
 blocked or require operator
 disposition before `#4634` can close as full v0.92 runtime-coherence proof:
 
@@ -36,6 +38,9 @@ disposition before `#4634` can close as full v0.92 runtime-coherence proof:
 - `daemon_supervision/state/daemon_status.json`
 - `daemon_supervision/state/operator_events.jsonl`
 - `daemon_supervision/state/continuity_checkpoint.json`
+- `otel_monitor/otel.jsonl`
+- `otel_monitor/otel_status.json`
+- `otel_monitor/state/daemon_status.json`
 - `security_cav_boundary/proof_packet.json` (static contract artifact only)
 - `capability_envelope/operator_control_report.json` (static contract artifact only)
 - `../../observability_4718/generated/proof_summary.json`
@@ -48,13 +53,16 @@ bash adl/tools/validate_v0917_soak2_4682_status.sh
 bash adl/tools/test_pr_v0917_integrated_observability_proof.sh
 bash adl/tools/test_provider_demo_common.sh
 adl/target/debug/adl agent daemon --spec docs/milestones/v0.91.7/review/runtime/soak2_4682/daemon_supervision/agent.yaml --max-restarts 1 --checkpoint-interval-secs 3 --no-sleep --json
+ADL_OBSERVABILITY_LOG=docs/milestones/v0.91.7/review/runtime/soak2_4682/otel_monitor/observability.log ADL_OTEL_LOG=docs/milestones/v0.91.7/review/runtime/soak2_4682/otel_monitor/otel.jsonl ADL_OTEL_STATUS=docs/milestones/v0.91.7/review/runtime/soak2_4682/otel_monitor/otel_status.json adl/target/debug/adl agent daemon --spec docs/milestones/v0.91.7/review/runtime/soak2_4682/otel_monitor/agent.yaml --max-restarts 1 --checkpoint-interval-secs 3 --no-sleep --json
 git diff --check
 ```
 
 ## Non-Claims
 
-- This packet does not claim production OpenTelemetry collector/exporter
-  behavior.
+- This packet claims the local `ADL_OTEL_LOG` JSONL sink and
+  `ADL_OTEL_STATUS` monitor file for ADL-emitted events; it does not claim a
+  network OTLP collector, hosted telemetry backend, or external exporter
+  service.
 - This packet does not claim live AWS signal bridge readiness.
 - This packet does not claim Unity editor live-consumption readiness.
 - This packet does not claim WP-12 ACIP/A2A activation closure.

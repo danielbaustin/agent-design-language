@@ -210,6 +210,9 @@ fn real_daemon(args: &[String]) -> Result<()> {
         .map(|value| value.to_string())
         .unwrap_or_else(|| "spec_default".to_string());
     let no_sleep_label = if no_sleep { "true" } else { "false" }.to_string();
+    let parsed_daemon_identity = long_lived_agent::load_spec(&spec_path)
+        .ok()
+        .map(|loaded| loaded.spec.agent_instance_id);
     let heartbeat = ProgressHeartbeat::start(
         "agent",
         "agent_daemon",
@@ -234,20 +237,46 @@ fn real_daemon(args: &[String]) -> Result<()> {
     );
     match status {
         Ok(status) => {
+            let restart_count = status.restart_count.to_string();
+            let parent_span_id = status.parent_span_id.as_deref().unwrap_or("");
             heartbeat.completed(&[
                 ("daemon_state", status.state.as_str()),
-                ("restart_count", &status.restart_count.to_string()),
+                ("restart_count", &restart_count),
+                ("trace_id", status.trace_id.as_str()),
+                ("span_id", status.span_id.as_str()),
+                ("parent_span_id", parent_span_id),
+                ("otel_service_name", "adl-long-lived-agent-daemon"),
             ]);
             print_daemon_status(&status, parsed.json_output)
         }
         Err(err) => {
-            heartbeat.failed(&[
+            let trace_id = parsed_daemon_identity
+                .as_ref()
+                .map(|agent_instance_id| format!("agent.{agent_instance_id}.daemon"));
+            let span_id = parsed_daemon_identity
+                .as_ref()
+                .map(|agent_instance_id| format!("daemon:{agent_instance_id}:failed"));
+            let parent_span_id = parsed_daemon_identity
+                .as_ref()
+                .map(|agent_instance_id| format!("daemon:{agent_instance_id}:supervisor"));
+            let mut fields = vec![
                 ("reason_code", "agent_daemon_failed"),
                 (
                     "next_action_hint",
                     "inspect_daemon_status_and_continuity_checkpoint",
                 ),
-            ]);
+                ("otel_service_name", "adl-long-lived-agent-daemon"),
+            ];
+            if let Some(trace_id) = trace_id.as_deref() {
+                fields.push(("trace_id", trace_id));
+            }
+            if let Some(span_id) = span_id.as_deref() {
+                fields.push(("span_id", span_id));
+            }
+            if let Some(parent_span_id) = parent_span_id.as_deref() {
+                fields.push(("parent_span_id", parent_span_id));
+            }
+            heartbeat.failed(&fields);
             Err(err)
         }
     }

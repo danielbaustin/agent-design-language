@@ -2,7 +2,7 @@
   "schema": "adl.v0917.integrated_observability_proof.v1",
   "issue": 4718,
   "branch": "codex/4718-v0-91-7-wp-07-observability-implement-integrated-logging-and-otel-proof",
-  "generated_at": "2026-07-05T04:36:56Z",
+  "generated_at": "2026-07-05T04:52:38Z",
   "proof_role": "current_issue_local_observability_evidence",
   "doctor": {
     "schema": "adl.pr.doctor.v1",

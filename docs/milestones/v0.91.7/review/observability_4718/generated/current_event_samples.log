@@ -2,7 +2,7 @@ adl_event schema=adl.observability.event.v1 command=pr.sh stage=source-helper re
 adl_event schema=adl.observability.event.v1 command=pr.sh stage=source-helper result=ok helper=pr_usage.sh
 adl_event schema=adl.observability.event.v1 command=pr.sh stage=command_start result=started subcommand=doctor
 adl_event schema=adl.observability.event.v1 command=pr.sh stage=doctor result=started issue=4718
-adl_event schema=adl.observability.event.v1 command=pr.sh stage=rust_delegate result=exec subcommand=doctor delegate=<home>/git/agent-design-language/adl/target/debug/adl-pr-doctor freshness=stale_allowed_primary_owner_last_resort
+adl_event schema=adl.observability.event.v1 command=pr.sh stage=rust_delegate result=exec subcommand=doctor delegate=<repo>/adl/target/debug/adl-pr-doctor
 adl_event schema=adl.observability.event.v1 command=adl stage=github_octocrab result=started operation=issue.view.state
 adl_event schema=adl.observability.event.v1 command=adl stage=github_octocrab result=completed operation=issue.view.state
 adl_event schema=adl.observability.event.v1 command=adl-validate-structured-prompt stage=command result=started type=stp

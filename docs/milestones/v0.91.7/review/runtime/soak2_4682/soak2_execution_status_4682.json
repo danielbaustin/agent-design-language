@@ -74,6 +74,12 @@
       "caveat": "Existing warmed repo binaries did not yet include #4885 daemon mode after merge, so #4880 warmed the issue target from the root cache and refreshed the issue-local adl binary before running the daemon proof."
     },
     {
+      "command": "ADL_OBSERVABILITY_LOG=docs/milestones/v0.91.7/review/runtime/soak2_4682/otel_monitor/observability.log ADL_OTEL_LOG=docs/milestones/v0.91.7/review/runtime/soak2_4682/otel_monitor/otel.jsonl ADL_OTEL_STATUS=docs/milestones/v0.91.7/review/runtime/soak2_4682/otel_monitor/otel_status.json adl/target/debug/adl agent daemon --spec docs/milestones/v0.91.7/review/runtime/soak2_4682/otel_monitor/agent.yaml --max-restarts 1 --checkpoint-interval-secs 3 --no-sleep --json",
+      "status": "passed",
+      "evidence": "docs/milestones/v0.91.7/review/runtime/soak2_4682/otel_monitor/otel_status.json",
+      "caveat": "This proves ADL's central event emitter can mirror daemon lifecycle events into a durable OTel-shaped JSONL sink and monitor-status file; it does not claim a network OTLP collector or hosted telemetry backend."
+    },
+    {
       "command": "cargo test --manifest-path adl/Cargo.toml runtime_v2 security -- --nocapture",
       "status": "not_run_invalid_matrix_command",
       "evidence": "Cargo rejected the matrix command with unexpected argument 'security'. Existing owner-binary security-boundary proof was used instead."
@@ -149,14 +155,16 @@
     {
       "id": "logging_observability",
       "state": "integrated_proven",
-      "owner_issues": [4718, 4880, 4885],
+      "owner_issues": [4718, 4880, 4885, 4634],
       "evidence": [
         "docs/milestones/v0.91.7/review/observability_4718/generated/proof_summary.json",
         "docs/milestones/v0.91.7/review/observability_4718/generated/current_event_samples.log",
         "docs/milestones/v0.91.7/review/runtime/soak2_4682/daemon_supervision/daemon_stderr.log",
-        "docs/milestones/v0.91.7/review/runtime/soak2_4682/daemon_supervision/state/operator_events.jsonl"
+        "docs/milestones/v0.91.7/review/runtime/soak2_4682/daemon_supervision/state/operator_events.jsonl",
+        "docs/milestones/v0.91.7/review/runtime/soak2_4682/otel_monitor/otel.jsonl",
+        "docs/milestones/v0.91.7/review/runtime/soak2_4682/otel_monitor/otel_status.json"
       ],
-      "reason": "The #4718 observability verifier reran during #4880 and preserved stdout JSON parse safety, stderr event samples, redaction/path hygiene, and the OTel exporter boundary non-claim. The #4885 daemon proof retained OTel-compatible trace/span/service fields for daemon lifecycle events."
+      "reason": "The #4718 observability verifier reran during #4880 and preserved stdout JSON parse safety, stderr event samples, and redaction/path hygiene. The #4885 daemon proof retained trace/span/service fields, and the #4634 umbrella repair proved ADL's central event emitter mirrors daemon lifecycle events into a durable OTel-shaped JSONL sink plus monitor status."
     },
     {
       "id": "daemon_supervision",
@@ -250,7 +258,7 @@
     "Approve v0.92 non-claims/defer for AWS signal bridge, Unity live consumption, WP-12 ACIP/A2A activation, runtime-v2 capability envelope freshness, and runtime-v2 security/CAV freshness, or route those rows to Soak 3."
   ],
   "non_claims": [
-    "No production OpenTelemetry collector, OTLP exporter, hosted telemetry service, or exporter crate wiring is claimed.",
+    "No network OTLP collector, hosted telemetry service, or external exporter backend is claimed; WP-07 now claims only the local durable ADL_OTEL_LOG JSONL sink and ADL_OTEL_STATUS monitor file proven by #4634.",
     "No live AWS signal bridge or SSM heartbeat proof was run in #4880.",
     "No Unity editor live-consumption run was executed in #4880.",
     "The daemon proof required a focused issue-local binary refresh because all existing warmed repo binaries predated #4885 and lacked `agent daemon`; that refresh is recorded as proof setup, not a broad release build.",

@@ -24,7 +24,10 @@ routes them to Soak 3.
 Reason: `#4880` proves the local integrated runtime path, inherited lifecycle
 runner, AEE/memory slice, resilience failure injection, provider fixture,
 scheduler packet, logging/OTel proof consumption, ObsMem handoff, and
-identity/continuity evidence. It emits runtime-v2 security-boundary and
+identity/continuity evidence. The `#4634` umbrella repair adds a retained
+local `ADL_OTEL_LOG` JSONL export and `ADL_OTEL_STATUS` monitor-status proof
+for the daemon path; this is still not a network OTLP collector or hosted
+telemetry backend claim. It emits runtime-v2 security-boundary and
 operator-control static contract artifacts, but those packets record
 `generated_at_utc: not_started` and are not fresh integrated proof. The run also
 does not prove live AWS/signal bridge, Unity editor live consumption, or WP-12
@@ -41,7 +44,8 @@ ACIP/A2A activation.
 | #4784 resilience failure injection | merged/closed | `docs/milestones/v0.91.7/review/runtime/soak2_4682/resilience/runtime_failure_injection_proof.json`. |
 | #4843 Soak 2 matrix | merged/closed | `docs/milestones/v0.91.7/review/runtime/soak2_feature_list_matrix_4843.json`. |
 | #4682 Soak 2 execution | superseded blocked-status packet | Historical `blocked_before_full_soak` attempt superseded by #4880. |
-| #4880 final Soak 2 rerun | in progress / ready for review | `docs/milestones/v0.91.7/review/runtime/soak2_4682/soak2_execution_status_4682.json`. |
+| #4880 final Soak 2 rerun | merged/closed | `docs/milestones/v0.91.7/review/runtime/soak2_4682/soak2_execution_status_4682.json`. |
+| #4634 umbrella OTel monitor repair | in progress | `docs/milestones/v0.91.7/review/runtime/soak2_4682/otel_monitor/otel_status.json`. |
 
 ## Activation Decision Table
 
@@ -49,7 +53,7 @@ ACIP/A2A activation.
 | --- | --- | --- | --- |
 | Canonical runtime path | integrated_proven | #4681/#4880 | Can be cited as local integrated runtime-path evidence. |
 | Runtime v2 reconciliation | integrated prerequisite | #4842/#4880 | Can be cited as substrate reconciliation. |
-| Logging/OTel | integrated_proven with boundary | #4718/#4880 | stdout/stderr, redaction, event samples, and OTel mapping inputs are proven; no collector/exporter claim. |
+| Logging/OTel | integrated_proven with boundary | #4718/#4880/#4885/#4634 | stdout/stderr, redaction, event samples, daemon trace/span/service fields, local `ADL_OTEL_LOG` JSONL export, and `ADL_OTEL_STATUS` monitor status are proven; no network OTLP collector or hosted backend claim. |
 | Scheduler watcher/AEE resilience middleware | integrated_proven | #4783/#4784/#4880 | Local scheduler/resilience rows are proven with retained evidence. |
 | Soak 2 execution | completed_with_blockers | #4880 | Remaining blockers require operator disposition before #4634 closes. |
 | Runtime AWS/signal bridge | blocked_with_evidence | WP-08 owners/#4880 | Must stay non-claimed, operator-deferred, or routed to Soak 3. |
@@ -71,8 +75,9 @@ operator decision needed before closing `#4634` is one of:
 
 ## Non-Claims
 
-- No production OpenTelemetry collector, OTLP exporter, hosted telemetry service,
-  or exporter crate wiring is claimed.
+- No network OTLP collector, hosted telemetry service, or external exporter
+  backend is claimed. WP-07 now claims the local durable `ADL_OTEL_LOG` JSONL
+  sink and `ADL_OTEL_STATUS` monitor file proven by `#4634`.
 - No live AWS signal bridge/SNS/SSM heartbeat proof is claimed.
 - No Unity editor live-consumption run is claimed.
 - No WP-12 ACIP/A2A activation closure is claimed.
