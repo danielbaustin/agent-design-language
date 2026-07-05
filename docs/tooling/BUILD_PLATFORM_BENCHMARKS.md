@@ -53,20 +53,9 @@ bash adl/tools/run_aws_spot_remote_validation_lane.sh \
   --json
 ```
 
-CodeBuild:
-
-```bash
-ADL_AWS_PROFILE=agent-logic-admin \
-bash adl/tools/run_aws_codefriend_build_lane.sh \
-  --run \
-  --check-account \
-  --wait \
-  --project-name adl-codefriend-build \
-  --source-version <branch-or-ref> \
-  --env ADL_CODEFRIEND_BUILD_COMMAND='bash adl/tools/run_build_platform_benchmark.sh --platform codebuild --cache-posture codebuild_xlarge_no_persistent_cache --out .adl/tmp/build-platform-benchmark/codebuild-xlarge/summary.json --artifact-dir .adl/tmp/build-platform-benchmark/codebuild-xlarge' \
-  --out .adl/tmp/aws-codefriend-build/<run-id>/summary.json \
-  --artifact-dir .adl/tmp/aws-codefriend-build/<run-id>
-```
+CodeBuild is owned by `#4838`. Do not use this `#4837` Spot branch as the
+source of CodeBuild operational commands; merge or inspect the CodeBuild issue
+branch for that lane's wrapper and current proof.
 
 ## Cache Postures
 
@@ -76,9 +65,9 @@ bash adl/tools/run_aws_codefriend_build_lane.sh \
 - `aws_spot`: retained warm EBS cache mounted at `/mnt/adl-cache`; this volume
   has a standing AWS storage cost and the run summary must show
   `cache_volume.attachment_state: "attached"`.
-- `codebuild`: disposable CodeBuild compute. The current lane uses larger
-  compute for memory headroom and does not claim a persistent cache unless the
-  setup helper is extended to configure one.
+- `codebuild`: tracked separately by `#4838`; this `#4837` branch does not
+  contain the CodeBuild wrapper and should not be used as CodeBuild runbook
+  truth.
 
 ## Current Comparison Snapshot
 
@@ -88,8 +77,9 @@ These are WP-06 working measurements, not universal performance claims:
 | --- | --- | ---: | ---: | ---: | --- |
 | Wuji | `linked_target_cache_warm` | 11s | 0s | 11s | Shared helper, warm local linked target cache. |
 | Nessus | `remote_target_sccache_warm` | 3s | 0s | 3s | Shared helper through Nessus SSH wrapper with `CC=clang`. |
-| AWS Spot | `no_explicit_ebs_cache` | 221s | 190s | 411s | Baseline run completed and cleaned up; not accepted as warm-EBS proof. |
-| CodeBuild large | `codebuild_large_no_persistent_cache` | 394s | 322s | 716s | Live CodeBuild run succeeded on `BUILD_GENERAL1_LARGE`. |
+| AWS Spot | `warm_ebs_cache` | 65s | 55s | 120s | Accepted warm-EBS proof; summary records `cache_volume.attachment_state: attached`; this run recorded `ssh_debug_degraded`, and the wrapper default was then updated to the matching retained key. |
+| AWS Spot baseline | `no_explicit_ebs_cache` | 221s | 190s | 411s | Historical baseline run completed and cleaned up; not accepted as warm-EBS proof. |
+| CodeBuild | tracked by `#4838` | pending in this branch | pending in this branch | pending in this branch | This Spot branch does not contain the CodeBuild wrapper or current CodeBuild proof. |
 
 Refresh this table only from retained summaries or logs. Do not infer a cache
 posture from command labels alone.
