@@ -1,0 +1,21 @@
+{
+  "schema_version": "adl.runtime.temporary_agent_execution_summary.v1",
+  "run_id": "runtime-4546-acip-aee-memory",
+  "run_dir_ref": "artifacts/runtime-4546-acip-aee-memory",
+  "delegation_sequence": [
+    "requested",
+    "policy_evaluated",
+    "approved",
+    "dispatched",
+    "result_received",
+    "completed"
+  ],
+  "delegation_requires_verification": true,
+  "reasoning_graph_upstream_delegations": 1,
+  "skill_id": "skill.temporary_agent_execution",
+  "skill_lifecycle_state": "authorized_ready_for_execution",
+  "authorization_decision": "approved",
+  "final_result": "execute temporary agent alpha through the AEE bounded execution lane",
+  "control_path_validation": "passed",
+  "output_ref": "outputs/temporary_agent_result.json"
+}

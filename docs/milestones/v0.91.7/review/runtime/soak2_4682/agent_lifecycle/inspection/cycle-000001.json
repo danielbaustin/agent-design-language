@@ -1,0 +1,203 @@
+{
+  "schema": "adl.long_lived_agent_inspection_packet.v1",
+  "agent_instance_id": "v0916-runtime-soak",
+  "generated_at": "2026-07-05T03:09:53.310024Z",
+  "state_root_ref": "state",
+  "status_ref": "status.json",
+  "status": {
+    "schema": "adl.long_lived_agent_status.v1",
+    "agent_instance_id": "v0916-runtime-soak",
+    "state": "completed",
+    "last_cycle_id": "cycle-000003",
+    "last_cycle_status": "success",
+    "completed_cycle_count": 3,
+    "consecutive_failure_count": 0,
+    "active_lease": null,
+    "stop_requested": false,
+    "last_error": null,
+    "safety_policy": {
+      "allow_network": false,
+      "allow_broker": false,
+      "allow_filesystem_writes_outside_state_root": false,
+      "allow_real_world_side_effects": false,
+      "require_public_artifact_sanitization": true,
+      "financial_advice": false,
+      "max_cycle_runtime_secs": 120,
+      "max_consecutive_failures": 2
+    },
+    "updated_at": "2026-07-05T03:09:53.304213Z"
+  },
+  "cycle_count": 3,
+  "selected_cycle_id": "cycle-000001",
+  "selected_cycle": {
+    "cycle_id": "cycle-000001",
+    "status": "success",
+    "workflow_kind": "demo_adapter",
+    "workflow_ref": "v0916_runtime_soak",
+    "refs": {
+      "manifest": "cycles/cycle-000001/cycle_manifest.json",
+      "guardrail_report": "cycles/cycle-000001/guardrail_report.json",
+      "cycle_summary": "cycles/cycle-000001/cycle_summary.md",
+      "decision_result": "cycles/cycle-000001/decision_result.json",
+      "run_ref": "cycles/cycle-000001/run_ref.json",
+      "memory_writes": "cycles/cycle-000001/memory_writes.jsonl"
+    },
+    "manifest": {
+      "input_hash": "sha256:d5aa18a8c6d07b64d7aa766248f4b30a374743eff7f680a86213bffa3d06d0f1",
+      "output_hash": "sha256:6cb24af919c184b30e14884496f86fc57ba6309caafbf7f7dff3449547be0bae",
+      "previous_cycle_id": null,
+      "not_financial_advice": true
+    },
+    "guardrails": {
+      "status": "pass",
+      "checks": [
+        {
+          "check_id": "spec_policy_loaded",
+          "result": "pass"
+        },
+        {
+          "check_id": "lease_valid",
+          "result": "pass"
+        },
+        {
+          "check_id": "stop_not_requested",
+          "result": "pass"
+        },
+        {
+          "check_id": "workflow_kind_supported",
+          "result": "pass"
+        },
+        {
+          "check_id": "no_forbidden_action",
+          "result": "pass"
+        },
+        {
+          "check_id": "artifact_sanitization",
+          "result": "pass"
+        },
+        {
+          "check_id": "max_runtime_not_exceeded",
+          "result": "pass"
+        },
+        {
+          "check_id": "no_real_trading",
+          "result": "pass"
+        },
+        {
+          "check_id": "no_broker_integration",
+          "result": "pass"
+        },
+        {
+          "check_id": "not_financial_advice",
+          "result": "pass"
+        },
+        {
+          "check_id": "no_real_world_side_effects",
+          "result": "pass"
+        },
+        {
+          "check_id": "writes_within_allowed_roots",
+          "result": "pass"
+        },
+        {
+          "check_id": "paper_only_ledger",
+          "result": "pass"
+        }
+      ],
+      "failed_checks": [],
+      "rejected_actions": []
+    },
+    "summary_preview": [
+      "# Long-Lived Agent Cycle cycle-000001",
+      "- Agent: `v0916-runtime-soak`",
+      "- Workflow kind: `demo_adapter`",
+      "- Cycle status: `success`",
+      "- Observations: `observations.json`",
+      "- Decision request: `decision_request.json`"
+    ],
+    "trace_boundary": {
+      "run_ref": "cycles/cycle-000001/run_ref.json",
+      "trace_ref": null,
+      "status": "cycle_artifact_only"
+    }
+  },
+  "reviewer_proof": {
+    "status": "pass",
+    "status_ref": {
+      "path": "status.json",
+      "exists": true
+    },
+    "cycle_ref_status": "selected_cycle_artifacts_present"
+  },
+  "continuity_restore": {
+    "continuity_ref": "continuity.json",
+    "checkpoint_ref": {
+      "path": "continuity_checkpoint.json",
+      "exists": true
+    },
+    "replay_manifest_ref": {
+      "path": "continuity_replay_manifest.json",
+      "exists": true
+    },
+    "checkpoint": {
+      "schema": "adl.long_lived_agent_continuity_checkpoint.v1",
+      "agent_instance_id": "v0916-runtime-soak",
+      "captured_at": "2026-07-05T03:09:53.305051Z",
+      "checkpoint_reason": "status_refreshed",
+      "state": "completed",
+      "stop_requested": false,
+      "latest_cycle_id": "cycle-000003",
+      "latest_cycle_status": "success",
+      "completed_cycle_count": 3,
+      "consecutive_failure_count": 0,
+      "continuity_kind": "pre_v0_92_handle",
+      "continuity_ref": "continuity.json",
+      "status_ref": "status.json",
+      "cycle_ledger_ref": "cycle_ledger.jsonl",
+      "lease_ref": null,
+      "lease_state": "clear",
+      "restore_basis": {
+        "ledger_entry_count": 3,
+        "max_cycle_number": 3,
+        "expected_next_cycle_id": "cycle-000004"
+      }
+    },
+    "replay_manifest": {
+      "schema": "adl.long_lived_agent_continuity_replay_manifest.v1",
+      "agent_instance_id": "v0916-runtime-soak",
+      "generated_at": "2026-07-05T03:09:53.305603Z",
+      "continuity_ref": "continuity.json",
+      "checkpoint_ref": "continuity_checkpoint.json",
+      "status_ref": "status.json",
+      "cycle_ledger_ref": "cycle_ledger.jsonl",
+      "expected_resume": {
+        "next_cycle_id": "cycle-000004",
+        "latest_cycle_id": "cycle-000003",
+        "active_lease_state": "clear",
+        "recover_stale_lease_required": false
+      },
+      "restore_invariants": [
+        "append_only_cycle_ledger",
+        "latest_cycle_id_matches_checkpoint",
+        "lease_file_blocks_duplicate_active_cycle_without_explicit_recovery"
+      ],
+      "reviewer_steps": [
+        "Inspect continuity_checkpoint.json for the latest captured cycle state.",
+        "Inspect continuity_replay_manifest.json for the next expected cycle id and lease posture.",
+        "Inspect cycle_ledger.jsonl to confirm resume continues at the next cycle id without duplicates."
+      ],
+      "non_claims": [
+        "not_mid_step_checkpointing",
+        "not_full_runtime_persistence",
+        "not_distributed_recovery"
+      ]
+    }
+  },
+  "trace_query_decision": {
+    "status": "deferred_full_platform",
+    "minimal_v0_90_boundary": "inspection packet over status, cycle manifest, guardrail report, run_ref, and cycle summary artifacts",
+    "full_tql_platform": "deferred",
+    "full_signed_trace_architecture": "deferred",
+    "reason": "WP-06 accepts the narrow reviewer inspection slice and does not widen into TQL or signed-trace architecture."
+  }
+}

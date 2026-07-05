@@ -1,0 +1,60 @@
+{
+  "final_status": "TimedOut",
+  "trace": {
+    "schema_version": "adl.resilience.timeout_execution_trace.v1",
+    "policy_id": "runtime.failure_injection.timeout.policy",
+    "surface": "runtime",
+    "final_status": "timed_out",
+    "elapsed_ms": 80,
+    "timeout_ms": 50,
+    "hard_deadline_ms": 75,
+    "breach_kind": "timeout",
+    "decision_summary": "runtime.failure_injection.timeout_probe: timeout budget exceeded after 80ms (budget 50ms)",
+    "fault": {
+      "schema_version": "adl.resilience.fault_classification.v1",
+      "surface": "runtime",
+      "fault_class": "runtime_failure",
+      "disposition": "retryable",
+      "retryable": true,
+      "summary": "runtime.failure_injection.timeout_probe exceeded timeout budget after 80ms (budget 50ms)",
+      "component_ref": "runtime.failure_injection.timeout_probe"
+    },
+    "telemetry_event": {
+      "schema_version": "adl.resilience.telemetry_event.v1",
+      "event_id": "runtime.failure_injection.timeout.policy:timeout:runtime.failure_injection.timeout_probe:1",
+      "event_kind": "timeout_decision",
+      "surface": "runtime",
+      "decision_summary": "runtime.failure_injection.timeout_probe: timeout budget exceeded after 80ms (budget 50ms)",
+      "policy_ref": "runtime.failure_injection.timeout.policy",
+      "fault": {
+        "schema_version": "adl.resilience.fault_classification.v1",
+        "surface": "runtime",
+        "fault_class": "runtime_failure",
+        "disposition": "retryable",
+        "retryable": true,
+        "summary": "runtime.failure_injection.timeout_probe exceeded timeout budget after 80ms (budget 50ms)",
+        "component_ref": "runtime.failure_injection.timeout_probe"
+      }
+    },
+    "recovery_artifact": {
+      "schema_version": "adl.resilience.recovery_artifact.v1",
+      "artifact_id": "runtime.failure_injection.timeout.policy:timeout:runtime.failure_injection.timeout_probe:2",
+      "surface": "runtime",
+      "triggering_fault": {
+        "schema_version": "adl.resilience.fault_classification.v1",
+        "surface": "runtime",
+        "fault_class": "runtime_failure",
+        "disposition": "retryable",
+        "retryable": true,
+        "summary": "runtime.failure_injection.timeout_probe exceeded timeout budget after 80ms (budget 50ms)",
+        "component_ref": "runtime.failure_injection.timeout_probe"
+      },
+      "disposition": "retry_allowed",
+      "next_action": "operation exceeded deadline; retry only through the caller's bounded policy",
+      "evidence_refs": [
+        "runtime.failure_injection.timeout.policy"
+      ]
+    }
+  },
+  "result": "timeout_probe Timeout elapsed=80 budget=50"
+}

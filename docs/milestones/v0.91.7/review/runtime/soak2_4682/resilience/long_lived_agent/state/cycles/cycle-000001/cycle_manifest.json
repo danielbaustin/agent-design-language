@@ -1,0 +1,24 @@
+{
+  "schema": "adl.long_lived_agent_cycle_manifest.v1",
+  "agent_instance_id": "v0916-runtime-failure-injection",
+  "cycle_id": "cycle-000001",
+  "status": "success",
+  "started_at": "2026-07-05T03:09:53.479667Z",
+  "completed_at": "2026-07-05T03:09:53.508749Z",
+  "workflow_kind": "demo_adapter",
+  "workflow_ref": "v0916_runtime_failure_injection",
+  "input_hash": "sha256:b36839e2c0720206d60198f432b410879a38440f1237520e774999918943fe79",
+  "output_hash": "sha256:6cb24af919c184b30e14884496f86fc57ba6309caafbf7f7dff3449547be0bae",
+  "previous_cycle_id": null,
+  "next_cycle_hint": "sleep_until_next_heartbeat",
+  "artifacts": {
+    "observations": "observations.json",
+    "decision_request": "decision_request.json",
+    "decision_result": "decision_result.json",
+    "run_ref": "run_ref.json",
+    "memory_writes": "memory_writes.jsonl",
+    "guardrail_report": "guardrail_report.json",
+    "cycle_summary": "cycle_summary.md"
+  },
+  "not_financial_advice": true
+}

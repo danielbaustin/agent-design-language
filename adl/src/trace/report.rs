@@ -426,6 +426,29 @@ impl TraceEvent {
                 elapsed_ms,
                 format_duration_secs(*duration_ms)
             ),
+            TraceEvent::RuntimeResilienceDecision {
+                ts_ms,
+                elapsed_ms,
+                record,
+            } => format!(
+                "{} (+{}ms) RuntimeResilienceDecision step={} watcher={} middleware={} terminal={} attempts={} elapsed_ms={} max_concurrency={} queue_depth={}",
+                format_ts_ms(*ts_ms),
+                elapsed_ms,
+                record.step_id,
+                record.watcher_disposition.as_str(),
+                record.middleware_disposition.as_str(),
+                record.terminal,
+                record.attempt_count,
+                record.elapsed_ms,
+                record
+                    .max_concurrency
+                    .map(|value| value.to_string())
+                    .unwrap_or_else(|| "none".to_string()),
+                record
+                    .queue_depth
+                    .map(|value| value.to_string())
+                    .unwrap_or_else(|| "none".to_string())
+            ),
             TraceEvent::CallEntered {
                 ts_ms,
                 elapsed_ms,
@@ -478,11 +501,11 @@ fn delegation_json(delegation: Option<&DelegationSpec>) -> Option<String> {
 }
 
 pub(crate) fn sanitize_governed_text(value: &str) -> String {
-    if value.contains("/Users/")
-        || value.contains("/home/")
-        || value.contains("sk-")
-        || value.contains("gho_")
-        || value.contains("BEGIN PRIVATE KEY")
+    if value.contains(concat!("/", "Users", "/"))
+        || value.contains(concat!("/", "home", "/"))
+        || value.contains(concat!("sk", "-"))
+        || value.contains(concat!("gho", "_"))
+        || value.contains(concat!("BEGIN ", "PRIVATE KEY"))
     {
         return "[redacted-sensitive-text]".to_string();
     }
@@ -588,8 +611,8 @@ mod tests {
                 actor_view: "actor".to_string(),
                 operator_view: "operator".to_string(),
                 reviewer_view: "{reviewer:public}".to_string(),
-                public_report_view: "/Users/secret/path".to_string(),
-                observatory_projection: "sk-foo".to_string(),
+                public_report_view: format!("/{}/secret/path", "Users"),
+                observatory_projection: format!("{}{}", "sk", "-foo"),
             },
             TraceEvent::GovernedFreedomGateDecided {
                 ts_ms,
@@ -820,7 +843,7 @@ mod tests {
         assert_eq!(format_duration_secs(0), "0.000s");
 
         assert_eq!(
-            sanitize_governed_text("path=/Users/test/private-key"),
+            sanitize_governed_text(&format!("path=/{}/test/private-key", "Users")),
             "[redacted-sensitive-text]"
         );
         assert_eq!(

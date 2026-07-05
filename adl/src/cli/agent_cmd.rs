@@ -2,18 +2,19 @@ use anyhow::{anyhow, Result};
 use std::path::PathBuf;
 
 use crate::cli::observability::ProgressHeartbeat;
-use ::adl::long_lived_agent::{self, InspectOptions, RunOptions, TickOptions};
+use ::adl::long_lived_agent::{self, DaemonOptions, InspectOptions, RunOptions, TickOptions};
 
 pub(crate) fn real_agent(args: &[String]) -> Result<()> {
     let Some(subcommand) = args.first().map(|arg| arg.as_str()) else {
         return Err(anyhow!(
-            "agent requires a subcommand: tick | run | status | inspect | stop"
+            "agent requires a subcommand: tick | run | daemon | status | inspect | stop"
         ));
     };
 
     match subcommand {
         "tick" => real_tick(&args[1..]),
         "run" => real_run(&args[1..]),
+        "daemon" => real_daemon(&args[1..]),
         "status" => real_status(&args[1..]),
         "inspect" => real_inspect(&args[1..]),
         "stop" => real_stop(&args[1..]),
@@ -22,7 +23,7 @@ pub(crate) fn real_agent(args: &[String]) -> Result<()> {
             Ok(())
         }
         other => Err(anyhow!(
-            "unknown agent subcommand '{other}' (expected tick, run, status, inspect, stop)"
+            "unknown agent subcommand '{other}' (expected tick, run, daemon, status, inspect, stop)"
         )),
     }
 }
@@ -161,6 +162,126 @@ fn real_run(args: &[String]) -> Result<()> {
     }
 }
 
+fn real_daemon(args: &[String]) -> Result<()> {
+    let mut parsed = AgentArgs::default();
+    let mut max_restarts: u64 = 10;
+    let mut checkpoint_interval_secs: u64 = 3;
+    let mut interval_secs: Option<u64> = None;
+    let mut no_sleep = false;
+
+    let mut i = 0usize;
+    while i < args.len() {
+        match args[i].as_str() {
+            "--spec" => {
+                parsed.spec = Some(PathBuf::from(required_value(args, i, "--spec")?));
+                i += 1;
+            }
+            "--max-restarts" => {
+                max_restarts = parse_u64(required_value(args, i, "--max-restarts")?)?;
+                i += 1;
+            }
+            "--checkpoint-interval-secs" => {
+                checkpoint_interval_secs =
+                    parse_u64(required_value(args, i, "--checkpoint-interval-secs")?)?;
+                i += 1;
+            }
+            "--interval-secs" => {
+                interval_secs = Some(parse_positive_u64(
+                    required_value(args, i, "--interval-secs")?,
+                    "--interval-secs",
+                )?);
+                i += 1;
+            }
+            "--no-sleep" => no_sleep = true,
+            "--recover-stale-lease" => parsed.recover_stale_lease = true,
+            "--json" => parsed.json_output = true,
+            "--help" | "-h" => {
+                println!("{}", super::usage::usage());
+                return Ok(());
+            }
+            other => return Err(anyhow!("unknown arg for agent daemon: {other}")),
+        }
+        i += 1;
+    }
+    let spec_path = parsed.spec()?;
+    let max_restarts_label = max_restarts.to_string();
+    let checkpoint_interval_label = checkpoint_interval_secs.to_string();
+    let interval_secs_label = interval_secs
+        .map(|value| value.to_string())
+        .unwrap_or_else(|| "spec_default".to_string());
+    let no_sleep_label = if no_sleep { "true" } else { "false" }.to_string();
+    let parsed_daemon_identity = long_lived_agent::load_spec(&spec_path)
+        .ok()
+        .map(|loaded| loaded.spec.agent_instance_id);
+    let heartbeat = ProgressHeartbeat::start(
+        "agent",
+        "agent_daemon",
+        &[
+            ("process_class", "long_lived_daemon"),
+            ("spec", &spec_path.display().to_string()),
+            ("max_restarts", &max_restarts_label),
+            ("checkpoint_interval_secs", &checkpoint_interval_label),
+            ("interval_secs", &interval_secs_label),
+            ("no_sleep", &no_sleep_label),
+        ],
+    );
+    let status = long_lived_agent::daemon(
+        &spec_path,
+        DaemonOptions {
+            max_restarts,
+            checkpoint_interval_secs,
+            interval_secs,
+            no_sleep,
+            recover_stale_lease: parsed.recover_stale_lease,
+        },
+    );
+    match status {
+        Ok(status) => {
+            let restart_count = status.restart_count.to_string();
+            let parent_span_id = status.parent_span_id.as_deref().unwrap_or("");
+            heartbeat.completed(&[
+                ("daemon_state", status.state.as_str()),
+                ("restart_count", &restart_count),
+                ("trace_id", status.trace_id.as_str()),
+                ("span_id", status.span_id.as_str()),
+                ("parent_span_id", parent_span_id),
+                ("otel_service_name", "adl-long-lived-agent-daemon"),
+            ]);
+            print_daemon_status(&status, parsed.json_output)
+        }
+        Err(err) => {
+            let trace_id = parsed_daemon_identity
+                .as_ref()
+                .map(|agent_instance_id| format!("agent.{agent_instance_id}.daemon"));
+            let span_id = parsed_daemon_identity
+                .as_ref()
+                .map(|agent_instance_id| format!("daemon:{agent_instance_id}:failed"));
+            let parent_span_id = parsed_daemon_identity
+                .as_ref()
+                .map(|agent_instance_id| format!("daemon:{agent_instance_id}:supervisor"));
+            let mut fields = vec![
+                ("reason_code", "agent_daemon_failed"),
+                (
+                    "next_action_hint",
+                    "inspect_daemon_status_and_continuity_checkpoint",
+                ),
+                ("otel_service_name", "adl-long-lived-agent-daemon"),
+            ];
+            if let Some(trace_id) = trace_id.as_deref() {
+                fields.push(("trace_id", trace_id));
+            }
+            if let Some(span_id) = span_id.as_deref() {
+                fields.push(("span_id", span_id));
+            }
+            if let Some(parent_span_id) = parent_span_id.as_deref() {
+                fields.push(("parent_span_id", parent_span_id));
+            }
+            heartbeat.failed(&fields);
+            Err(err)
+        }
+    }
+}
+
 fn real_status(args: &[String]) -> Result<()> {
     let mut parsed = AgentArgs::default();
     let mut i = 0usize;
@@ -289,6 +410,40 @@ fn required_value<'a>(args: &'a [String], index: usize, flag: &str) -> Result<&'
 fn parse_u64(raw: &str) -> Result<u64> {
     raw.parse::<u64>()
         .map_err(|_| anyhow!("expected unsigned integer, got '{raw}'"))
+}
+
+fn parse_positive_u64(raw: &str, flag: &str) -> Result<u64> {
+    let value = parse_u64(raw)?;
+    if value == 0 {
+        return Err(anyhow!("{flag} must be greater than zero"));
+    }
+    Ok(value)
+}
+
+fn print_daemon_status(
+    status: &long_lived_agent::DaemonStatusRecord,
+    json_output: bool,
+) -> Result<()> {
+    if json_output {
+        println!("{}", serde_json::to_string_pretty(status)?);
+        return Ok(());
+    }
+    println!("agent: {}", status.agent_instance_id);
+    println!("daemon state: {}", status.state);
+    println!("supervisor pid: {}", status.supervisor_pid);
+    println!("restart count: {}", status.restart_count);
+    println!("max restarts: {}", status.max_restarts);
+    println!(
+        "checkpoint interval secs: {}",
+        status.checkpoint_interval_secs
+    );
+    println!("last event: {}", status.last_event);
+    println!(
+        "last child exit: {}",
+        status.last_child_exit.as_deref().unwrap_or("none")
+    );
+    println!("trace id: {}", status.trace_id);
+    Ok(())
 }
 
 fn print_status(status: &long_lived_agent::StatusRecord, json_output: bool) -> Result<()> {
@@ -547,6 +702,7 @@ memory:
         assert!(real_agent(&args(&["help"])).is_ok());
         assert!(real_agent(&args(&["tick", "--help"])).is_ok());
         assert!(real_agent(&args(&["run", "--help"])).is_ok());
+        assert!(real_agent(&args(&["daemon", "--help"])).is_ok());
         assert!(real_agent(&args(&["status", "--help"])).is_ok());
         assert!(real_agent(&args(&["inspect", "--help"])).is_ok());
         assert!(real_agent(&args(&["stop", "--help"])).is_ok());
@@ -583,6 +739,28 @@ memory:
             "expected unsigned integer",
         );
         assert_err_contains(real_agent(&args(&["run", "--bogus"])), "unknown arg");
+        assert_err_contains(real_agent(&args(&["daemon"])), "requires --spec");
+        assert_err_contains(
+            real_agent(&args(&[
+                "daemon",
+                "--spec",
+                "/tmp/example-agent.yaml",
+                "--checkpoint-interval-secs",
+                "0",
+            ])),
+            "greater than zero",
+        );
+        assert_err_contains(
+            real_agent(&args(&[
+                "daemon",
+                "--spec",
+                "/tmp/example-agent.yaml",
+                "--interval-secs",
+                "0",
+            ])),
+            "--interval-secs must be greater than zero",
+        );
+        assert_err_contains(real_agent(&args(&["daemon", "--bogus"])), "unknown arg");
         assert_err_contains(real_agent(&args(&["status", "--bogus"])), "unknown arg");
         assert_err_contains(real_agent(&args(&["inspect", "--bogus"])), "unknown arg");
         assert_err_contains(
@@ -626,6 +804,19 @@ memory:
 
         assert!(real_agent(&args(&["status", "--spec", spec])).is_ok());
         assert!(real_agent(&args(&["status", "--spec", spec, "--json"])).is_ok());
+        assert!(real_agent(&args(&[
+            "daemon",
+            "--spec",
+            spec,
+            "--max-restarts",
+            "1",
+            "--checkpoint-interval-secs",
+            "1",
+            "--no-sleep",
+            "--json",
+        ]))
+        .is_ok());
+        assert!(root.join("state/daemon_status.json").exists());
         assert!(real_agent(&args(&["inspect", "--spec", spec])).is_ok());
         assert!(real_agent(&args(&[
             "inspect",

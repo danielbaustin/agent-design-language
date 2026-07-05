@@ -1,0 +1,596 @@
+{
+  "schema": "adl.csm_visibility_packet.v1",
+  "packet_id": "v0916-runtime-soak-observatory-packet-0001",
+  "generated_at": "2026-07-05T03:09:55.004005+00:00",
+  "source": {
+    "mode": "captured_artifacts",
+    "evidence_level": "bounded_local_runtime_capture",
+    "fixture": false,
+    "runtime_artifact_root": "docs/milestones/v0.91.7/review/runtime/soak2_4682/agent_lifecycle",
+    "claim_boundary": "This packet is a bounded local capture produced by the v0.91.6 integrated runtime soak. It is derived from runtime-owned artifacts, suitable for Unity Observatory consumption, and explicitly does not claim full product completion, live telemetry streaming, or v0.92 coherence.",
+    "source_refs": [
+      "docs/milestones/v0.91.7/review/runtime/soak2_4682/agent_lifecycle/long_lived_agent/state/status.json",
+      "docs/milestones/v0.91.7/review/runtime/soak2_4682/agent_lifecycle/long_lived_agent/state/cycle_ledger.jsonl",
+      "docs/milestones/v0.91.7/review/runtime/soak2_4682/agent_lifecycle/inspection/latest.json",
+      "docs/milestones/v0.91.7/review/runtime/soak2_4682/agent_lifecycle/long_lived_agent_stop_probe/stop_probe.json",
+      "docs/milestones/v0.91.7/review/runtime/soak2_4682/agent_lifecycle/resilience/timeout_execution.json",
+      "docs/milestones/v0.91.7/review/runtime/soak2_4682/agent_lifecycle/resilience/bulkhead_execution.json",
+      "docs/milestones/v0.91.7/review/runtime/soak2_4682/agent_lifecycle/resilience/degraded_fallback_execution.json",
+      "docs/milestones/v0.91.7/review/runtime/soak2_4682/agent_lifecycle/remote_exec/timeout_probe.json",
+      "docs/milestones/v0.91.7/review/runtime/soak2_4682/agent_lifecycle/obsmem/transition_memory_request.json"
+    ]
+  },
+  "manifold": {
+    "manifold_id": "v0916-runtime-soak-01",
+    "display_name": "Runtime / Ops Soak #1",
+    "state": "Stopped_after_reviewable_capture",
+    "lifecycle": "bounded_local_runtime_capture",
+    "current_tick": 3,
+    "uptime": "3 bounded cadence cycles captured across restart-proof execution",
+    "policy_profile": "v0916_integrated_runtime_soak",
+    "snapshot_status": {
+      "state": "not_applicable",
+      "latest_snapshot_id": "none",
+      "rehydration_report_ref": "docs/milestones/v0.91.7/review/runtime/soak2_4682/agent_lifecycle/obsmem/transition_memory_request.json",
+      "note": "This soak exports observatory evidence from runtime-owned artifacts; it does not claim live snapshot streaming."
+    },
+    "health": {
+      "summary": "Long-lived-agent cadence, stop-between-cycles control, resilience classifications, remote timeout semantics, and ObsMem handoff all emitted one bounded Unity-consumable review surface with final runtime state 'Stopped'.",
+      "level": "nominal",
+      "attention_items": [
+        "Unity contract and operator report are generated from the same soak-owned packet.",
+        "Artifact capture is bounded and local; no always-on or remote streaming claim is made.",
+        "Direct runtime mutation remains out of scope for the Unity consumer surface."
+      ]
+    },
+    "evidence_refs": [
+      "docs/milestones/v0.91.7/review/runtime/soak2_4682/agent_lifecycle/long_lived_agent/state/status.json",
+      "docs/milestones/v0.91.7/review/runtime/soak2_4682/agent_lifecycle/long_lived_agent_stop_probe/stop_probe.json",
+      "docs/milestones/v0.91.7/review/runtime/soak2_4682/agent_lifecycle/resilience/timeout_execution.json",
+      "docs/milestones/v0.91.7/review/runtime/soak2_4682/agent_lifecycle/remote_exec/timeout_probe.json",
+      "docs/milestones/v0.91.7/review/runtime/soak2_4682/agent_lifecycle/runtime_v2/observatory/visibility_packet.json"
+    ]
+  },
+  "kernel": {
+    "scheduler_state": "cadence_run_settled_Stopped",
+    "trace_state": "reviewable_artifact_capture",
+    "invariant_state": "proof_gates_passed",
+    "resource_state": "bounded_local_execution",
+    "service_states": [
+      {
+        "service_id": "long_lived_agent",
+        "state": "Completed"
+      },
+      {
+        "service_id": "resilience_timeout_lane",
+        "state": "timed_out"
+      },
+      {
+        "service_id": "resilience_bulkhead_lane",
+        "state": "saturated"
+      },
+      {
+        "service_id": "remote_exec_timeout_lane",
+        "state": "timeout"
+      }
+    ],
+    "active_guardrails": [
+      "duplicate activation remains lease-blocked",
+      "stop requests settle between cadence cycles",
+      "remote timeouts remain classifiable and retry-aware",
+      "Unity handoff remains read-only and packet-driven"
+    ],
+    "pulse": {
+      "status": "bounded_review_tick_complete",
+      "completed_through_event_sequence": 3,
+      "evidence_refs": [
+        "docs/milestones/v0.91.7/review/runtime/soak2_4682/agent_lifecycle/long_lived_agent/state/cycle_ledger.jsonl",
+        "docs/milestones/v0.91.7/review/runtime/soak2_4682/agent_lifecycle/inspection/latest.json"
+      ]
+    }
+  },
+  "citizens": [
+    {
+      "citizen_id": "runtime-lane-alpha",
+      "display_name": "Runtime lane alpha",
+      "role": "worker",
+      "lifecycle_state": "paused",
+      "continuity_status": "restart_proved_then_Stopped",
+      "current_episode": "episode-runtime-cadence",
+      "resource_balance": {
+        "compute_units": 6,
+        "scarcity_note": "Completed bounded cadence execution and emitted durable status, ledger, and inspection artifacts."
+      },
+      "recent_decisions": [
+        {
+          "decision_id": "runtime-lane-alpha-stop-window",
+          "decision": "allow",
+          "summary": "Let one cycle complete, then honor stop during the cadence sleep window.",
+          "evidence_ref": "docs/milestones/v0.91.7/review/runtime/soak2_4682/agent_lifecycle/long_lived_agent_stop_probe/stop_probe.json"
+        }
+      ],
+      "capability_envelope": {
+        "can_execute_episodes": true,
+        "allowed": [
+          "bounded_cadence_cycle",
+          "status_and_inspection_export"
+        ],
+        "forbidden": [
+          "cross_session_mutation",
+          "silent_overlap_activation",
+          "unguarded_live_export"
+        ]
+      },
+      "alerts": [],
+      "evidence_refs": [
+        "docs/milestones/v0.91.7/review/runtime/soak2_4682/agent_lifecycle/long_lived_agent/state/status.json",
+        "docs/milestones/v0.91.7/review/runtime/soak2_4682/agent_lifecycle/long_lived_agent/state/cycle_ledger.jsonl",
+        "docs/milestones/v0.91.7/review/runtime/soak2_4682/agent_lifecycle/inspection/latest.json"
+      ]
+    },
+    {
+      "citizen_id": "runtime-lane-beta",
+      "display_name": "Resilience review lane",
+      "role": "service",
+      "lifecycle_state": "active",
+      "continuity_status": "classification_proofs_captured",
+      "current_episode": "episode-resilience-classification",
+      "resource_balance": {
+        "compute_units": 4,
+        "scarcity_note": "Focused timeout, bulkhead saturation, and degraded fallback probes completed under bounded local policy execution."
+      },
+      "recent_decisions": [
+        {
+          "decision_id": "runtime-lane-beta-timeout-refusal",
+          "decision": "refuse",
+          "summary": "A hanging local endpoint was classified as a stable timeout with retryability captured explicitly.",
+          "evidence_ref": "docs/milestones/v0.91.7/review/runtime/soak2_4682/agent_lifecycle/remote_exec/timeout_probe.json"
+        }
+      ],
+      "capability_envelope": {
+        "can_execute_episodes": true,
+        "allowed": [
+          "timeout_probe",
+          "bulkhead_probe",
+          "degraded_fallback_probe"
+        ],
+        "forbidden": [
+          "network_escape",
+          "non_reviewable_failure",
+          "silent_retry_loop"
+        ]
+      },
+      "alerts": [],
+      "evidence_refs": [
+        "docs/milestones/v0.91.7/review/runtime/soak2_4682/agent_lifecycle/resilience/timeout_execution.json",
+        "docs/milestones/v0.91.7/review/runtime/soak2_4682/agent_lifecycle/resilience/bulkhead_execution.json",
+        "docs/milestones/v0.91.7/review/runtime/soak2_4682/agent_lifecycle/resilience/degraded_fallback_execution.json",
+        "docs/milestones/v0.91.7/review/runtime/soak2_4682/agent_lifecycle/remote_exec/timeout_probe.json"
+      ]
+    },
+    {
+      "citizen_id": "runtime-lane-gamma",
+      "display_name": "Observatory export lane",
+      "role": "reviewer",
+      "lifecycle_state": "awake",
+      "continuity_status": "unity_contract_export_ready",
+      "current_episode": "episode-unity-handoff",
+      "resource_balance": {
+        "compute_units": 2,
+        "scarcity_note": "Exports a Unity-facing contract and operator report from the same bounded packet without direct runtime mutation."
+      },
+      "recent_decisions": [
+        {
+          "decision_id": "runtime-lane-gamma-unity-export",
+          "decision": "allow",
+          "summary": "Packet, report, console reference, and Unity contract are retained under one reviewable artifact root.",
+          "evidence_ref": "docs/milestones/v0.91.7/review/runtime/soak2_4682/agent_lifecycle/runtime_v2/observatory/visibility_packet.json"
+        }
+      ],
+      "capability_envelope": {
+        "can_execute_episodes": false,
+        "allowed": [
+          "read_only_report_export",
+          "unity_contract_generation"
+        ],
+        "forbidden": [
+          "runtime_mutation",
+          "identity_rebinding",
+          "live_telemetry_claims"
+        ]
+      },
+      "alerts": [],
+      "evidence_refs": [
+        "docs/milestones/v0.91.7/review/runtime/soak2_4682/agent_lifecycle/runtime_v2/observatory/visibility_packet.json",
+        "docs/milestones/v0.91.7/review/runtime/soak2_4682/agent_lifecycle/runtime_v2/observatory/operator_report.md",
+        "docs/milestones/v0.91.7/review/runtime/soak2_4682/agent_lifecycle/runtime_v2/observatory/unity_observatory_contract.json"
+      ]
+    }
+  ],
+  "episodes": [
+    {
+      "episode_id": "episode-runtime-cadence",
+      "title": "Bounded cadence run and restart continuity",
+      "state": "completed",
+      "citizen_ids": [
+        "runtime-lane-alpha"
+      ],
+      "started_at": "2026-07-05T03:09:55.004612+00:00",
+      "last_event": "stop_honored_during_sleep_window",
+      "proof_surface": "docs/milestones/v0.91.7/review/runtime/soak2_4682/agent_lifecycle/long_lived_agent_stop_probe/stop_probe.json",
+      "blocked_reason": "not blocked; cadence run, restart proof, and stop-window control all emitted durable evidence"
+    },
+    {
+      "episode_id": "episode-resilience-classification",
+      "title": "Timeout, bulkhead, degraded fallback, and remote timeout classification",
+      "state": "completed",
+      "citizen_ids": [
+        "runtime-lane-beta"
+      ],
+      "started_at": "2026-07-05T03:09:55.004621+00:00",
+      "last_event": "remote_timeout_classified",
+      "proof_surface": "docs/milestones/v0.91.7/review/runtime/soak2_4682/agent_lifecycle/remote_exec/timeout_probe.json",
+      "blocked_reason": "not blocked; focused resilience probes completed under bounded local execution"
+    },
+    {
+      "episode_id": "episode-unity-handoff",
+      "title": "Unity Observatory packet and contract export",
+      "state": "completed",
+      "citizen_ids": [
+        "runtime-lane-alpha",
+        "runtime-lane-gamma"
+      ],
+      "started_at": "2026-07-05T03:09:55.004662+00:00",
+      "last_event": "unity_contract_written",
+      "proof_surface": "docs/milestones/v0.91.7/review/runtime/soak2_4682/agent_lifecycle/runtime_v2/observatory/visibility_packet.json",
+      "blocked_reason": "not blocked; Unity-facing contract is generated from the same packet and review path"
+    }
+  ],
+  "freedom_gate": {
+    "recent_docket": [
+      {
+        "decision_id": "fg-runtime-stop-window",
+        "actor": "runtime-lane-alpha",
+        "action": "honor_stop_between_cycles",
+        "decision": "allow",
+        "rationale": "Stop requests are allowed only after a bounded cycle completes and the cadence window is safe.",
+        "evidence_ref": "docs/milestones/v0.91.7/review/runtime/soak2_4682/agent_lifecycle/long_lived_agent_stop_probe/stop_probe.json"
+      },
+      {
+        "decision_id": "fg-resilience-bulkhead",
+        "actor": "runtime-lane-beta",
+        "action": "attempt_parallel_provider_work_under_saturation",
+        "decision": "defer",
+        "rationale": "Bulkhead saturation remains visible and reviewable instead of being hidden behind automatic queue growth.",
+        "evidence_ref": "docs/milestones/v0.91.7/review/runtime/soak2_4682/agent_lifecycle/resilience/bulkhead_execution.json"
+      },
+      {
+        "decision_id": "fg-remote-timeout-classification",
+        "actor": "runtime-lane-beta",
+        "action": "treat_hanging_local_endpoint_as_success",
+        "decision": "refuse",
+        "rationale": "Remote timeout failures must remain classifiable and retry-aware rather than being treated as success.",
+        "evidence_ref": "docs/milestones/v0.91.7/review/runtime/soak2_4682/agent_lifecycle/remote_exec/timeout_probe.json"
+      }
+    ],
+    "allow_count": 1,
+    "defer_count": 1,
+    "refuse_count": 1,
+    "open_questions": [],
+    "rejected_actions": [
+      "treat_hanging_local_endpoint_as_success"
+    ]
+  },
+  "invariants": [
+    {
+      "invariant_id": "runtime_stop_only_between_cycles",
+      "name": "Stop requests settle between cadence cycles",
+      "state": "healthy",
+      "severity": "high",
+      "last_checked": "stopped",
+      "evidence_ref": "docs/milestones/v0.91.7/review/runtime/soak2_4682/agent_lifecycle/long_lived_agent_stop_probe/stop_probe.json"
+    },
+    {
+      "invariant_id": "resilience_timeout_is_reviewable",
+      "name": "Timeout and degraded fallback traces remain reviewer-readable",
+      "state": "healthy",
+      "severity": "high",
+      "last_checked": "timed_out",
+      "evidence_ref": "docs/milestones/v0.91.7/review/runtime/soak2_4682/agent_lifecycle/resilience/timeout_execution.json"
+    },
+    {
+      "invariant_id": "unity_surface_is_read_only",
+      "name": "Unity consumer surface remains packet-driven and read only",
+      "state": "healthy",
+      "severity": "critical",
+      "last_checked": "unity_contract_written",
+      "evidence_ref": "docs/milestones/v0.91.7/review/runtime/soak2_4682/agent_lifecycle/runtime_v2/observatory/operator_report.md"
+    }
+  ],
+  "resources": {
+    "compute_units": {
+      "total": 12,
+      "allocated": 10,
+      "available": 2
+    },
+    "memory_pressure": "bounded_local_probe",
+    "queue_depth": 0,
+    "fairness_notes": [
+      "The soak favors durable proof emission over high-throughput execution.",
+      "Unity consumes the contract after export rather than participating in the runtime run itself."
+    ],
+    "scarcity_events": [
+      {
+        "event_id": "bulkhead_saturation_reviewed",
+        "summary": "Bulkhead saturation is surfaced explicitly as a bounded review event.",
+        "evidence_level": "bounded_local_runtime_capture"
+      }
+    ]
+  },
+  "trace": {
+    "trace_tail": [
+      {
+        "event_sequence": 1,
+        "actor": "runtime.long_lived_agent",
+        "event_type": "cycle_restart_proved",
+        "summary": "Restart path settled with completed_cycle_count=3.",
+        "evidence_ref": "docs/milestones/v0.91.7/review/runtime/soak2_4682/agent_lifecycle/long_lived_agent/state/status.json"
+      },
+      {
+        "event_sequence": 2,
+        "actor": "runtime.stop_probe",
+        "event_type": "stop_window_honored",
+        "summary": "Stop probe persisted runtime state 'stopped'.",
+        "evidence_ref": "docs/milestones/v0.91.7/review/runtime/soak2_4682/agent_lifecycle/long_lived_agent_stop_probe/stop_probe.json"
+      },
+      {
+        "event_sequence": 3,
+        "actor": "runtime.resilience",
+        "event_type": "bulkhead_and_timeout_classified",
+        "summary": "Timeout=timed_out, bulkhead=saturated, degraded=degraded_success.",
+        "evidence_ref": "docs/milestones/v0.91.7/review/runtime/soak2_4682/agent_lifecycle/resilience/timeout_execution.json"
+      },
+      {
+        "event_sequence": 4,
+        "actor": "runtime.remote_exec",
+        "event_type": "remote_timeout_captured",
+        "summary": "Remote timeout classified as 'timeout' with retryability 'unknown'.",
+        "evidence_ref": "docs/milestones/v0.91.7/review/runtime/soak2_4682/agent_lifecycle/remote_exec/timeout_probe.json"
+      },
+      {
+        "event_sequence": 5,
+        "actor": "runtime.observatory",
+        "event_type": "unity_contract_emitted",
+        "summary": "Packet, operator report, console reference, and Unity contract were emitted from the same capture.",
+        "evidence_ref": "docs/milestones/v0.91.7/review/runtime/soak2_4682/agent_lifecycle/runtime_v2/observatory/visibility_packet.json"
+      }
+    ],
+    "causal_gaps": [],
+    "latest_operator_event": {
+      "event_sequence": 5,
+      "event_ref": "docs/milestones/v0.91.7/review/runtime/soak2_4682/agent_lifecycle/runtime_v2/observatory/visibility_packet.json"
+    },
+    "latest_citizen_event": {
+      "event_sequence": 2,
+      "event_ref": "docs/milestones/v0.91.7/review/runtime/soak2_4682/agent_lifecycle/long_lived_agent_stop_probe/stop_probe.json"
+    },
+    "latest_kernel_event": {
+      "event_sequence": 4,
+      "event_ref": "docs/milestones/v0.91.7/review/runtime/soak2_4682/agent_lifecycle/remote_exec/timeout_probe.json"
+    }
+  },
+  "operator_actions": {
+    "available_actions": [
+      {
+        "action": "inspect_runtime_soak_packet",
+        "mode": "read_only",
+        "status": "available_from_bounded_capture"
+      },
+      {
+        "action": "open_unity_operator_report",
+        "mode": "read_only",
+        "status": "available_from_same_packet_bundle"
+      },
+      {
+        "action": "stage_unity_contract",
+        "mode": "read_only",
+        "status": "available_for_local_unity_consumption"
+      }
+    ],
+    "disabled_actions": [
+      {
+        "action": "promote_to_live_streaming",
+        "reason": "The Soak #1 observatory handoff is a bounded retained capture, not a live streaming bridge.",
+        "future_issue": 4555
+      },
+      {
+        "action": "mutate_runtime_from_unity_surface",
+        "reason": "The Unity Observatory consumer remains fail-closed and packet-driven in v0.91.6.",
+        "future_issue": 4555
+      }
+    ],
+    "required_confirmations": [
+      "All Unity-facing controls remain proposal-only presentation surfaces.",
+      "Runtime truth is the retained artifact bundle, not the transient editor state."
+    ],
+    "safety_notes": [
+      "No private paths, credentials, or unbounded logs are required by the Unity contract.",
+      "This packet is truthful only for the bounded Soak #1 capture that produced it."
+    ]
+  },
+  "review": {
+    "primary_artifacts": [
+      "docs/milestones/v0.91.7/review/runtime/soak2_4682/agent_lifecycle/runtime_v2/observatory/visibility_packet.json",
+      "docs/milestones/v0.91.7/review/runtime/soak2_4682/agent_lifecycle/runtime_v2/observatory/operator_report.md",
+      "docs/milestones/v0.91.7/review/runtime/soak2_4682/agent_lifecycle/runtime_v2/observatory/unity_observatory_contract.json",
+      "docs/milestones/v0.91.7/review/runtime/soak2_4682/agent_lifecycle/long_lived_agent/state/status.json",
+      "docs/milestones/v0.91.7/review/runtime/soak2_4682/agent_lifecycle/long_lived_agent_stop_probe/stop_probe.json",
+      "docs/milestones/v0.91.7/review/runtime/soak2_4682/agent_lifecycle/remote_exec/timeout_probe.json",
+      "docs/milestones/v0.91.7/review/runtime/soak2_4682/agent_lifecycle/obsmem/transition_memory_request.json"
+    ],
+    "missing_artifacts": [],
+    "demo_classification": "captured_artifacts",
+    "caveats": [
+      "This is a bounded local capture and not a live telemetry stream.",
+      "Unity consumes a deterministic contract produced after the soak run; it is not co-executing the runtime.",
+      "Inhabitant identity, profile, and v0.92 rebinding semantics remain out of scope."
+    ],
+    "next_consumers": [
+      {
+        "issue": 2189,
+        "consumer": "static Observatory console compatibility"
+      },
+      {
+        "issue": 2190,
+        "consumer": "operator report generator compatibility"
+      },
+      {
+        "issue": 2191,
+        "consumer": "CLI bundle compatibility"
+      },
+      {
+        "issue": 2192,
+        "consumer": "operator command packet design"
+      },
+      {
+        "issue": 2258,
+        "consumer": "WP-14 integrated first CSM run demo"
+      },
+      {
+        "issue": 4543,
+        "consumer": "Runtime/Ops Soak #1 sprint closeout evidence"
+      },
+      {
+        "issue": 4548,
+        "consumer": "Unity local-runtime consumption proof surfaces"
+      }
+    ]
+  },
+  "observatory_ui": {
+    "default_room": "world",
+    "default_lens": "operator",
+    "default_memory_dot": "runtime_overview",
+    "proposal_mode_statement": "Every active-looking control is a governed request proposal only. No direct runtime mutation is performed from this surface.",
+    "rooms": [
+      {
+        "room_id": "world",
+        "label": "World / Reality",
+        "question": "What runtime evidence exists right now, and what actually completed?",
+        "note": "Default integrated soak evidence view."
+      },
+      {
+        "room_id": "governance",
+        "label": "Operator / Governance",
+        "question": "What decision boundaries, disabled paths, and proof links remain explicit?",
+        "note": "Freedom Gate docket and guarded follow-on paths live here."
+      },
+      {
+        "room_id": "cognition",
+        "label": "Cognition / Internal State",
+        "question": "What bounded internal-state-adjacent signals are safe to project?",
+        "note": "Only review-safe signals are exposed."
+      }
+    ],
+    "lenses": [
+      {
+        "lens_id": "public",
+        "label": "Public lens",
+        "summary": "Investor-safe summary with bounded claims."
+      },
+      {
+        "lens_id": "operator",
+        "label": "Operator lens",
+        "summary": "Operational state, disabled reasons, and review links."
+      },
+      {
+        "lens_id": "reviewer",
+        "label": "Reviewer lens",
+        "summary": "Packet refs, report refs, and caveats."
+      }
+    ],
+    "memory_dots": [
+      {
+        "dot_id": "runtime_overview",
+        "label": "Runtime overview",
+        "room": "world",
+        "lens": "operator",
+        "selected_target": "runtime-lane-alpha",
+        "note": "Open the soak with runtime cadence state in focus."
+      },
+      {
+        "dot_id": "resilience_watch",
+        "label": "Resilience watch",
+        "room": "governance",
+        "lens": "reviewer",
+        "selected_target": "runtime-lane-beta",
+        "note": "Follow timeout and bulkhead evidence."
+      },
+      {
+        "dot_id": "investor_view",
+        "label": "Corporate Investor",
+        "room": "world",
+        "lens": "public",
+        "selected_target": "runtime-lane-gamma",
+        "note": "Presentation mode without changing evidence."
+      }
+    ],
+    "corporate_investor_fallback": {
+      "label": "Corporate Investor UI",
+      "keyboard_shortcut": "i",
+      "claim_boundary": "Presentation mode only; evidence, authority, and trace boundaries do not change."
+    },
+    "proposal_cases": [
+      {
+        "proposal_id": "proposal-open-runtime-report",
+        "title": "Open runtime operator report",
+        "target_kind": "service_actor",
+        "target_id": "runtime-lane-gamma",
+        "room": "world",
+        "lens": "operator",
+        "disposition": "available",
+        "summary": "Open the soak-owned operator report produced from the same packet.",
+        "authority_checks": [
+          "validate_projection_class",
+          "append_trace_anchor"
+        ],
+        "disabled_reason": null,
+        "trace_anchor": "docs/milestones/v0.91.7/review/runtime/soak2_4682/agent_lifecycle/runtime_v2/observatory/visibility_packet.json",
+        "review_export": "docs/milestones/v0.91.7/review/runtime/soak2_4682/agent_lifecycle/runtime_v2/observatory/operator_report.md"
+      },
+      {
+        "proposal_id": "proposal-review-timeout-floor",
+        "title": "Review remote timeout floor",
+        "target_kind": "service_actor",
+        "target_id": "runtime-lane-beta",
+        "room": "governance",
+        "lens": "reviewer",
+        "disposition": "challenge",
+        "summary": "Inspect retryability and stable-failure classification without widening into live network work.",
+        "authority_checks": [
+          "validate_service_actor_scope",
+          "emit_review_anchor"
+        ],
+        "disabled_reason": "Live transport closure remains future work after this bounded milestone proof.",
+        "trace_anchor": "docs/milestones/v0.91.7/review/runtime/soak2_4682/agent_lifecycle/remote_exec/timeout_probe.json",
+        "review_export": "docs/milestones/v0.91.7/review/runtime/soak2_4682/agent_lifecycle/runtime_v2/observatory/operator_report.md"
+      },
+      {
+        "proposal_id": "proposal-stage-unity-contract",
+        "title": "Stage Unity contract",
+        "target_kind": "service_actor",
+        "target_id": "runtime-lane-gamma",
+        "room": "world",
+        "lens": "public",
+        "disposition": "available",
+        "summary": "Prepare the Unity-facing contract and screenshots for review without mutating runtime state.",
+        "authority_checks": [
+          "validate_operator_identity",
+          "redact_private_state_by_lens"
+        ],
+        "disabled_reason": null,
+        "trace_anchor": "docs/milestones/v0.91.7/review/runtime/soak2_4682/agent_lifecycle/runtime_v2/observatory/visibility_packet.json",
+        "review_export": "docs/milestones/v0.91.7/review/runtime/soak2_4682/agent_lifecycle/runtime_v2/observatory/operator_report.md"
+      }
+    ]
+  }
+}

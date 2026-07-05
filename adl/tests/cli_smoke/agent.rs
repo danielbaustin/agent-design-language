@@ -261,3 +261,202 @@ memory:
     .expect("parse continuity checkpoint");
     assert_eq!(checkpoint["latest_cycle_id"], "cycle-000003");
 }
+
+#[test]
+fn agent_daemon_writes_status_checkpoints_and_otel_observability() {
+    let root = unique_test_temp_dir("agent-daemon");
+    let spec = root.join("agent.yaml");
+    fs::write(
+        &spec,
+        r#"schema: adl.long_lived_agent_spec.v1
+agent_instance_id: daemon-agent
+display_name: Daemon Agent
+state_root: state
+workflow:
+  kind: demo_adapter
+  name: wp02_smoke_probe
+  run_args:
+    provider_id: local_ollama
+    model: gemma4:latest
+heartbeat:
+  interval_secs: 1
+  max_cycles: 3
+  stale_lease_after_secs: 60
+safety:
+  allow_network: false
+  allow_broker: false
+  allow_filesystem_writes_outside_state_root: false
+  allow_real_world_side_effects: false
+  require_public_artifact_sanitization: true
+  financial_advice: false
+  max_cycle_runtime_secs: 120
+  max_consecutive_failures: 2
+memory:
+  namespace: smoke/daemon-agent
+  write_policy: append_only
+"#,
+    )
+    .expect("write agent spec");
+
+    let observability_log = root.join("observability.log");
+    let otel_log = root.join("otel.jsonl");
+    let otel_status = root.join("otel-status.json");
+    let spec_str = spec.to_str().expect("utf8 path");
+    let log_str = observability_log.to_str().expect("utf8 log path");
+    let otel_log_str = otel_log.to_str().expect("utf8 otel log path");
+    let otel_status_str = otel_status.to_str().expect("utf8 otel status path");
+    let out = run_adl_with_env(
+        &[
+            "agent",
+            "daemon",
+            "--spec",
+            spec_str,
+            "--max-restarts",
+            "1",
+            "--checkpoint-interval-secs",
+            "1",
+            "--no-sleep",
+            "--json",
+        ],
+        &[
+            ("ADL_OBSERVABILITY_STDERR", "0"),
+            ("ADL_OBSERVABILITY_LOG", log_str),
+            ("ADL_OBSERVABILITY_HEARTBEAT_MS", "25"),
+            ("ADL_OTEL_LOG", otel_log_str),
+            ("ADL_OTEL_STATUS", otel_status_str),
+        ],
+    );
+    assert!(
+        out.status.success(),
+        "expected daemon success, stderr:\n{}",
+        String::from_utf8_lossy(&out.stderr)
+    );
+    let stdout = String::from_utf8_lossy(&out.stdout);
+    assert!(
+        stdout.contains("\"schema\": \"adl.long_lived_agent_daemon_status.v1\""),
+        "stdout:\n{stdout}"
+    );
+    assert!(
+        stdout.contains("\"state\": \"completed\""),
+        "stdout:\n{stdout}"
+    );
+    assert!(root.join("state/daemon_status.json").exists());
+    assert!(root.join("state/continuity_checkpoint.json").exists());
+    assert!(root.join("state/continuity_replay_manifest.json").exists());
+
+    let daemon_status: serde_json::Value = serde_json::from_str(
+        &fs::read_to_string(root.join("state/daemon_status.json")).expect("read daemon status"),
+    )
+    .expect("parse daemon status");
+    assert_eq!(
+        daemon_status["unsupported_permanence_claims"][0],
+        "not_os_boot_persistent"
+    );
+    assert_eq!(daemon_status["trace_id"], "agent.daemon-agent.daemon");
+
+    let operator_events =
+        fs::read_to_string(root.join("state/operator_events.jsonl")).expect("operator events");
+    assert!(operator_events.contains("\"event\":\"daemon_started\""));
+    assert!(operator_events.contains("\"event\":\"child_spawn\""));
+    assert!(operator_events.contains("\"event\":\"checkpoint_write\""));
+    assert!(operator_events.contains("\"trace_id\":\"agent.daemon-agent.daemon\""));
+    assert!(operator_events.contains("\"otel\""));
+
+    let observability = fs::read_to_string(&observability_log).expect("read observability log");
+    assert!(observability.contains("stage=agent_daemon"));
+    assert!(observability.contains("stage=daemon_started"));
+    assert!(observability.contains("stage=checkpoint_write"));
+    assert!(observability.contains("otel_service_name=adl-long-lived-agent-daemon"));
+    assert!(observability.contains("trace_id=agent.daemon-agent.daemon"));
+
+    let otel_events = fs::read_to_string(&otel_log).expect("read otel jsonl");
+    assert!(otel_events.contains("\"schema\":\"adl.otel.event.v1\""));
+    assert!(otel_events.contains("\"name\":\"agent.daemon_started\""));
+    assert!(otel_events.contains("\"trace_id\":\"agent.daemon-agent.daemon\""));
+    assert!(otel_events.contains("\"service.name\":\"adl-long-lived-agent-daemon\""));
+
+    let otel_status: serde_json::Value =
+        serde_json::from_str(&fs::read_to_string(&otel_status).expect("read otel status"))
+            .expect("parse otel status");
+    assert_eq!(otel_status["schema"], "adl.otel.monitor_status.v1");
+    assert!(otel_status["event_count"].as_u64().expect("event count") >= 4);
+    assert_eq!(otel_status["last_trace_id"], "agent.daemon-agent.daemon");
+}
+
+#[test]
+fn agent_daemon_restart_budget_failure_leaves_recoverable_checkpoint() {
+    let root = unique_test_temp_dir("agent-daemon-failure");
+    let spec = root.join("agent.yaml");
+    fs::write(
+        &spec,
+        r#"schema: adl.long_lived_agent_spec.v1
+agent_instance_id: daemon-failure-agent
+display_name: Daemon Failure Agent
+state_root: state
+workflow:
+  kind: unsupported_adapter
+  name: failing_probe
+  run_args: {}
+heartbeat:
+  interval_secs: 1
+  max_cycles: 3
+  stale_lease_after_secs: 60
+safety:
+  allow_network: false
+  allow_broker: false
+  allow_filesystem_writes_outside_state_root: false
+  allow_real_world_side_effects: false
+  require_public_artifact_sanitization: true
+  financial_advice: false
+  max_cycle_runtime_secs: 120
+  max_consecutive_failures: 5
+memory:
+  namespace: smoke/daemon-failure-agent
+  write_policy: append_only
+"#,
+    )
+    .expect("write agent spec");
+
+    let spec_str = spec.to_str().expect("utf8 path");
+    let out = run_adl(&[
+        "agent",
+        "daemon",
+        "--spec",
+        spec_str,
+        "--max-restarts",
+        "1",
+        "--checkpoint-interval-secs",
+        "1",
+        "--no-sleep",
+        "--json",
+    ]);
+    assert!(
+        !out.status.success(),
+        "expected daemon failure, stdout:\n{}",
+        String::from_utf8_lossy(&out.stdout)
+    );
+
+    let daemon_status: serde_json::Value = serde_json::from_str(
+        &fs::read_to_string(root.join("state/daemon_status.json")).expect("read daemon status"),
+    )
+    .expect("parse daemon status");
+    assert_eq!(daemon_status["state"], "failed");
+    assert_eq!(daemon_status["restart_count"], 1);
+    assert_eq!(daemon_status["last_event"], "restart_budget_exhausted");
+    assert!(root.join("state/continuity_checkpoint.json").exists());
+    assert!(root.join("state/continuity_replay_manifest.json").exists());
+
+    let status: serde_json::Value = serde_json::from_str(
+        &fs::read_to_string(root.join("state/status.json")).expect("read status"),
+    )
+    .expect("parse status");
+    assert_eq!(status["state"], "failed");
+    assert_eq!(status["last_error"]["class"], "daemon_child_failed");
+
+    let operator_events =
+        fs::read_to_string(root.join("state/operator_events.jsonl")).expect("operator events");
+    assert!(operator_events.contains("\"event\":\"restart_scheduled\""));
+    assert!(operator_events.contains("\"event\":\"restart_attempted\""));
+    assert!(operator_events.contains("\"event\":\"restart_budget_exhausted\""));
+    assert!(operator_events.contains("\"checkpoint_ref\":\"continuity_checkpoint.json\""));
+}

@@ -9,6 +9,11 @@ that the flagship Unity observatory scene can be opened through the required
 Unity-MCP endpoint and that retained visual evidence exists for the runtime
 polis/observatory surface.
 
+#4745 owns the asset and Unity-MCP publication boundary for this walkthrough:
+endpoint values are session proof facts, Unity-MCP is local editor/proof
+tooling, and imported asset roots remain operator-provisioned unless a later
+issue approves publication.
+
 ## Preconditions
 
 - Unity editor is opened to `demos/v0.91.6/unity-observatory-4704-proof`.
@@ -44,4 +49,5 @@ polis/observatory surface.
 
 This walkthrough proves the #4704 endpoint binding, scene load, runtime/polis
 object presence, and retained visual proof. It does not claim build-player
-readiness, final investor polish, or mini-sprint closeout.
+readiness, final investor polish, third-party asset redistribution rights, or
+mini-sprint closeout.

@@ -1,0 +1,23 @@
+{
+  "schema": "adl.long_lived_agent_daemon_status.v1",
+  "agent_instance_id": "soak2-otel-monitor-agent",
+  "state": "completed",
+  "supervisor_pid": 63922,
+  "restart_count": 0,
+  "max_restarts": 1,
+  "checkpoint_interval_secs": 3,
+  "last_event": "daemon_completed",
+  "last_child_exit": "success",
+  "last_checkpoint_at": "2026-07-05T04:50:30.701582Z",
+  "next_backoff_secs": 0,
+  "trace_id": "agent.soak2-otel-monitor-agent.daemon",
+  "span_id": "daemon:daemon_completed:0",
+  "parent_span_id": "daemon:soak2-otel-monitor-agent:supervisor",
+  "unsupported_permanence_claims": [
+    "not_os_boot_persistent",
+    "not_kill_9_resistant",
+    "not_host_resource_exhaustion_resistant",
+    "not_missing_binary_resistant"
+  ],
+  "updated_at": "2026-07-05T04:50:30.701582Z"
+}

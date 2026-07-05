@@ -1,0 +1,24 @@
+{
+  "schema": "adl.long_lived_agent_cycle_manifest.v1",
+  "agent_instance_id": "v0916-runtime-soak",
+  "cycle_id": "cycle-000003",
+  "status": "success",
+  "started_at": "2026-07-05T03:09:53.262861Z",
+  "completed_at": "2026-07-05T03:09:53.272960Z",
+  "workflow_kind": "demo_adapter",
+  "workflow_ref": "v0916_runtime_soak",
+  "input_hash": "sha256:446323a15954e242dc3f8b925cb0f6878c2da68aa3087d4966fa3680958cab4b",
+  "output_hash": "sha256:6cb24af919c184b30e14884496f86fc57ba6309caafbf7f7dff3449547be0bae",
+  "previous_cycle_id": "cycle-000002",
+  "next_cycle_hint": "sleep_until_next_heartbeat",
+  "artifacts": {
+    "observations": "observations.json",
+    "decision_request": "decision_request.json",
+    "decision_result": "decision_result.json",
+    "run_ref": "run_ref.json",
+    "memory_writes": "memory_writes.jsonl",
+    "guardrail_report": "guardrail_report.json",
+    "cycle_summary": "cycle_summary.md"
+  },
+  "not_financial_advice": true
+}

@@ -10,6 +10,11 @@ use crate::delegation_policy::{self, DelegationDecision};
 use crate::prompt;
 use crate::provider;
 use crate::remote_exec;
+use crate::resilience::{
+    ResilienceFaultClassV1, ResilienceFaultClassificationV1, ResilienceFaultDispositionV1,
+    ResilienceSurfaceV1, RuntimeResilienceDispositionV1, RuntimeResilienceTraceV1,
+    RUNTIME_RESILIENCE_TRACE_SCHEMA_V1,
+};
 
 #[derive(Debug)]
 pub(super) struct StepRunSuccess {
@@ -26,7 +31,35 @@ pub(super) struct StepRunFailure {
     pub(super) stream_chunks: Vec<String>,
 }
 
-type StepJob = Box<dyn FnOnce() -> (String, Result<StepRunSuccess>) + Send>;
+type StepJob =
+    Box<dyn FnOnce() -> (String, std::result::Result<StepRunSuccess, StepRunFailure>) + Send>;
+
+#[derive(Debug)]
+pub(super) struct RuntimeResilienceExecutionContext {
+    pub(super) terminal: bool,
+    pub(super) attempts: u32,
+    pub(super) elapsed_ms: u64,
+    pub(super) max_concurrency: Option<usize>,
+    pub(super) queue_depth: Option<usize>,
+}
+
+impl RuntimeResilienceExecutionContext {
+    pub(super) fn new(
+        terminal: bool,
+        attempts: u32,
+        elapsed_ms: u64,
+        max_concurrency: Option<usize>,
+        queue_depth: Option<usize>,
+    ) -> Self {
+        Self {
+            terminal,
+            attempts,
+            elapsed_ms,
+            max_concurrency,
+            queue_depth,
+        }
+    }
+}
 
 pub const DELEGATION_POLICY_DENY_CODE: &str = "DELEGATION_POLICY_DENY";
 /// Error code used when an explicit approval decision is required.
@@ -60,6 +93,155 @@ fn deterministic_setup_error(message: impl Into<String>) -> anyhow::Error {
 fn is_deterministic_setup_error(err: &anyhow::Error) -> bool {
     err.chain()
         .any(|cause| cause.downcast_ref::<DeterministicSetupError>().is_some())
+}
+
+fn classify_runtime_resilience_fault(
+    err: &anyhow::Error,
+) -> (
+    RuntimeResilienceDispositionV1,
+    ResilienceFaultClassificationV1,
+) {
+    let stable_kind = remote_exec::stable_failure_kind(err);
+    let message = err.to_string();
+    let lower = message.to_ascii_lowercase();
+
+    let (middleware_disposition, fault_class, fault_disposition, retryable) = if stable_kind
+        == Some("timeout")
+        || lower.contains("timeout")
+        || lower.contains("timed out")
+    {
+        (
+            RuntimeResilienceDispositionV1::Timeout,
+            ResilienceFaultClassV1::ProviderTimeout,
+            ResilienceFaultDispositionV1::Retryable,
+            true,
+        )
+    } else if lower.contains("cancelled") || lower.contains("canceled") {
+        (
+            RuntimeResilienceDispositionV1::Cancelled,
+            ResilienceFaultClassV1::WorkflowFailure,
+            ResilienceFaultDispositionV1::Terminal,
+            false,
+        )
+    } else if provider::is_retryable_error(err) {
+        (
+            RuntimeResilienceDispositionV1::TerminalFailure,
+            ResilienceFaultClassV1::ProviderTransientHttp,
+            ResilienceFaultDispositionV1::Retryable,
+            true,
+        )
+    } else if is_deterministic_setup_error(err) {
+        (
+            RuntimeResilienceDispositionV1::TerminalFailure,
+            ResilienceFaultClassV1::WorkflowFailure,
+            ResilienceFaultDispositionV1::Terminal,
+            false,
+        )
+    } else {
+        (
+            RuntimeResilienceDispositionV1::TerminalFailure,
+            ResilienceFaultClassV1::ProviderError,
+            ResilienceFaultDispositionV1::Terminal,
+            false,
+        )
+    };
+
+    (
+        middleware_disposition,
+        ResilienceFaultClassificationV1 {
+            schema_version: crate::resilience::RESILIENCE_FAULT_CLASSIFICATION_SCHEMA_V1
+                .to_string(),
+            surface: ResilienceSurfaceV1::Runtime,
+            fault_class,
+            disposition: fault_disposition,
+            retryable,
+            summary: message,
+            component_ref: Some("execute.runner".to_string()),
+            http_status: None,
+            retry_after_ms: None,
+        },
+    )
+}
+
+#[allow(clippy::too_many_arguments)]
+pub(super) fn emit_runtime_resilience_decision(
+    tr: &mut Trace,
+    step: &crate::resolve::ResolvedStep,
+    watcher_disposition: RuntimeResilienceDispositionV1,
+    middleware_disposition: RuntimeResilienceDispositionV1,
+    execution: RuntimeResilienceExecutionContext,
+    fault: Option<ResilienceFaultClassificationV1>,
+    decision_summary: impl Into<String>,
+) {
+    let provider_id = step
+        .provider
+        .clone()
+        .unwrap_or_else(|| "<unresolved-provider>".to_string());
+    let task_id = step
+        .task
+        .clone()
+        .unwrap_or_else(|| "<unresolved-task>".to_string());
+    let max_concurrency = execution
+        .max_concurrency
+        .map(|v| u32::try_from(v).unwrap_or(u32::MAX));
+    let queue_depth = execution
+        .queue_depth
+        .map(|v| u32::try_from(v).unwrap_or(u32::MAX));
+    tr.runtime_resilience_decision(RuntimeResilienceTraceV1 {
+        schema_version: RUNTIME_RESILIENCE_TRACE_SCHEMA_V1.to_string(),
+        policy_id: "runtime.scheduler_watcher.aee_resilience.v1".to_string(),
+        surface: ResilienceSurfaceV1::Runtime,
+        component: "execute.runner".to_string(),
+        step_id: step.id.clone(),
+        provider_id,
+        task_id,
+        watcher_disposition,
+        middleware_disposition,
+        terminal: execution.terminal,
+        attempt_count: execution.attempts.max(1),
+        elapsed_ms: execution.elapsed_ms,
+        max_concurrency,
+        queue_depth,
+        fault,
+        evidence_refs: vec![
+            "adl/src/execute/runner.rs".to_string(),
+            "adl/src/trace/store.rs".to_string(),
+        ],
+        decision_summary: decision_summary.into(),
+    });
+}
+
+pub(super) fn emit_runtime_resilience_failure(
+    tr: &mut Trace,
+    step: &crate::resolve::ResolvedStep,
+    err: &anyhow::Error,
+    execution: RuntimeResilienceExecutionContext,
+) {
+    let (middleware_disposition, fault) = classify_runtime_resilience_fault(err);
+    let watcher_disposition = if execution.terminal {
+        middleware_disposition.clone()
+    } else {
+        RuntimeResilienceDispositionV1::DegradedContinue
+    };
+    let emitted_middleware_disposition = if execution.terminal {
+        middleware_disposition
+    } else {
+        RuntimeResilienceDispositionV1::DegradedContinue
+    };
+    let terminal = execution.terminal;
+    emit_runtime_resilience_decision(
+        tr,
+        step,
+        watcher_disposition,
+        emitted_middleware_disposition,
+        execution,
+        Some(fault),
+        if terminal {
+            "runtime resilience middleware recorded terminal failure"
+        } else {
+            "runtime resilience middleware degraded and continued after step failure"
+        },
+    );
 }
 
 fn effective_prompt_with_defaults_from_doc(
@@ -642,7 +824,27 @@ pub(super) fn execute_concurrent_deterministic(
         let run_id_snapshot = resolved.run_id.clone();
         let workflow_id_snapshot = resolved.workflow_id.clone();
 
-        let batch_ids: Vec<String> = ready_ids.into_iter().take(max_parallel).collect();
+        let batch_ids: Vec<String> = ready_ids.iter().take(max_parallel).cloned().collect();
+        for (queued_index, step_id) in ready_ids.iter().skip(max_parallel).enumerate() {
+            let step = by_id
+                .get(step_id)
+                .ok_or_else(|| anyhow!("execution plan references unknown step '{}'", step_id))?;
+            emit_runtime_resilience_decision(
+                tr,
+                step,
+                RuntimeResilienceDispositionV1::QueuedBackpressure,
+                RuntimeResilienceDispositionV1::QueuedBackpressure,
+                RuntimeResilienceExecutionContext::new(
+                    false,
+                    1,
+                    0,
+                    Some(max_parallel),
+                    Some(queued_index + 1),
+                ),
+                None,
+                "scheduler watcher held ready step behind max_concurrency backpressure",
+            );
+        }
 
         for step_id in &batch_ids {
             let step = by_id
@@ -652,6 +854,21 @@ pub(super) fn execute_concurrent_deterministic(
             let task_id = step.task.as_deref().unwrap_or("<unresolved-task>");
             let provider_id = step.provider.as_deref().unwrap_or("<unresolved-provider>");
             enforce_delegation_policy_for_step_actions(tr, step, &resolved.doc)?;
+            emit_runtime_resilience_decision(
+                tr,
+                step,
+                RuntimeResilienceDispositionV1::Admitted,
+                RuntimeResilienceDispositionV1::Admitted,
+                RuntimeResilienceExecutionContext::new(
+                    false,
+                    1,
+                    0,
+                    Some(max_parallel),
+                    Some(pending.len().saturating_sub(batch_ids.len())),
+                ),
+                None,
+                "scheduler watcher admitted step under bounded concurrency policy",
+            );
             emit_delegation_lifecycle_start(tr, step, &resolved.doc);
             tr.step_started(
                 step_id,
@@ -677,7 +894,7 @@ pub(super) fn execute_concurrent_deterministic(
             let run_id_snapshot = run_id_snapshot.clone();
             let workflow_id_snapshot = workflow_id_snapshot.clone();
             jobs.push(Box::new(move || {
-                let run = execute_step_with_retry(
+                let run = execute_step_with_retry_core(
                     &step,
                     &doc_snapshot,
                     &run_id_snapshot,
@@ -685,6 +902,7 @@ pub(super) fn execute_concurrent_deterministic(
                     &state_snapshot,
                     &base_snapshot,
                     true,
+                    |_| {},
                 );
                 (step_id_owned, run)
             }));
@@ -713,6 +931,21 @@ pub(super) fn execute_concurrent_deterministic(
                         progress_started_ms
                             .remove(&step_id)
                             .unwrap_or_else(|| tr.current_elapsed_ms()),
+                    );
+                    emit_runtime_resilience_decision(
+                        tr,
+                        step,
+                        RuntimeResilienceDispositionV1::Succeeded,
+                        RuntimeResilienceDispositionV1::Succeeded,
+                        RuntimeResilienceExecutionContext::new(
+                            false,
+                            success.attempts,
+                            u64::try_from(duration_ms).unwrap_or(u64::MAX),
+                            Some(max_parallel),
+                            Some(pending.len()),
+                        ),
+                        None,
+                        "runtime resilience middleware recorded successful step completion",
                     );
                     progress_step_done(emit_progress, tr, &step_id, true, duration_ms);
 
@@ -756,7 +989,7 @@ pub(super) fn execute_concurrent_deterministic(
                         batch_pause = Some((step_id.clone(), reason));
                     }
                 }
-                Err(err) => {
+                Err(failure) => {
                     tr.step_finished(&step_id, false);
                     let duration_ms = tr.current_elapsed_ms().saturating_sub(
                         progress_started_ms
@@ -772,19 +1005,31 @@ pub(super) fn execute_concurrent_deterministic(
                         step_id: step_id.clone(),
                         provider_id,
                         status: "failure".to_string(),
-                        attempts: step.retry.as_ref().map(|r| r.max_attempts).unwrap_or(1),
+                        attempts: failure.attempts,
                         output_bytes: 0,
                     });
                     let continue_on_error =
                         matches!(step.on_error, Some(crate::adl::StepOnError::Continue));
+                    emit_runtime_resilience_failure(
+                        tr,
+                        step,
+                        &failure.err,
+                        RuntimeResilienceExecutionContext::new(
+                            !continue_on_error,
+                            failure.attempts,
+                            u64::try_from(duration_ms).unwrap_or(u64::MAX),
+                            Some(max_parallel),
+                            Some(pending.len()),
+                        ),
+                    );
                     if continue_on_error {
                         completed.insert(step_id);
                         continue;
                     }
-                    tr.run_failed(&err.to_string());
+                    tr.run_failed(&failure.err.to_string());
                     tr.execution_boundary_crossed(ExecutionBoundary::RunCompletion, "failure");
                     tr.lifecycle_phase_entered(RuntimeLifecyclePhase::Teardown);
-                    return Err(anyhow!("step '{}' failed: {:#}", step_id, err));
+                    return Err(anyhow!("step '{}' failed: {:#}", step_id, failure.err));
                 }
             }
         }
@@ -966,6 +1211,21 @@ pub(super) fn execute_called_workflow(
                 tr.prompt_assembled(&full_id, &success.prompt_hash);
                 tr.step_finished(&full_id, true);
                 let duration_ms = tr.current_elapsed_ms().saturating_sub(step_started_elapsed);
+                emit_runtime_resilience_decision(
+                    tr,
+                    &resolved_step,
+                    RuntimeResilienceDispositionV1::Succeeded,
+                    RuntimeResilienceDispositionV1::Succeeded,
+                    RuntimeResilienceExecutionContext::new(
+                        false,
+                        success.attempts,
+                        u64::try_from(duration_ms).unwrap_or(u64::MAX),
+                        None,
+                        None,
+                    ),
+                    None,
+                    "runtime resilience middleware recorded successful called-workflow step completion",
+                );
                 progress_step_done(emit_progress, tr, &full_id, true, duration_ms);
 
                 if let Some(write_to) = resolved_step.write_to.as_deref() {
@@ -1009,6 +1269,18 @@ pub(super) fn execute_called_workflow(
             Err(err) => {
                 tr.step_finished(&full_id, false);
                 let duration_ms = tr.current_elapsed_ms().saturating_sub(step_started_elapsed);
+                emit_runtime_resilience_failure(
+                    tr,
+                    &resolved_step,
+                    &err,
+                    RuntimeResilienceExecutionContext::new(
+                        true,
+                        1,
+                        u64::try_from(duration_ms).unwrap_or(u64::MAX),
+                        None,
+                        None,
+                    ),
+                );
                 progress_step_done(emit_progress, tr, &full_id, false, duration_ms);
                 tr.run_failed(&err.to_string());
                 return Err(anyhow!(

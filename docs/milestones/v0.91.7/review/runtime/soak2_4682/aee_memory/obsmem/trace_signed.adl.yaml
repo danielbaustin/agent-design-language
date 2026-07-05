@@ -1,0 +1,33 @@
+version: '0.5'
+providers:
+  local:
+    type: ollama
+    config:
+      model: phi4-mini
+agents:
+  trace_recorder:
+    provider: local
+    model: phi4-mini
+tasks:
+  transition_summary:
+    prompt:
+      user: Transition {{issue}} concluded via {{proof_surface}}.
+run:
+  name: runtime-4546-transition-trace
+  workflow:
+    kind: sequential
+    steps:
+    - id: record.transition
+      agent: trace_recorder
+      task: transition_summary
+      inputs:
+        issue: '4546'
+        proof_surface: runtime_acip_aee_memory_4546
+signature:
+  alg: ed25519
+  key_id: runtime-4546-trace
+  public_key_b64: 2gt8/p1ZWeRogupS3jWzai6QHJyxkMP/oMIiBM8xGtE=
+  sig_b64: SC1QvBDEZI3ZRQP2TiLucN6I14dIXlFJTfarfMapRDe7av02rY+WO8K3Ad0UtMONyL528P3/8rVmVvMK5a3sDQ==
+  signed_header:
+    adl_version: '0.5'
+    workflow_id: null

@@ -592,4 +592,33 @@ assert "test_v0916_unity_observatory_local_runtime_consumption.sh" in lane["comm
 assert "test_v0916_unity_observatory_local_runtime_consumption_unit.sh" in lane["command"]
 PY
 
+scheduler_provider_policy="$TMP/scheduler-provider-policy.txt"
+cat >"$scheduler_provider_policy" <<'EOF'
+M	adl/src/provider/profiles.rs
+M	adl/src/scheduler.rs
+M	adl/tests/fixtures/scheduler/cheapest_validated_outcome_inputs_v1.json
+M	docs/milestones/v0.91.7/review/provider/CHEAPEST_VALIDATED_OUTCOME_POLICY_4674.md
+M	docs/milestones/v0.91.7/review/provider/artifacts/cheapest_validated_outcome_plan_4674.json
+EOF
+bash "$SCRIPT" --changed-files "$scheduler_provider_policy" --json >"$TMP/scheduler-provider-policy.json"
+python3 - <<'PY' "$TMP/scheduler-provider-policy.json"
+import json
+import sys
+
+profile = json.load(open(sys.argv[1]))
+assert profile["schema_version"] == "adl.validation_lane_plan.v1"
+assert profile["aggregate_status"] == "selected"
+assert profile["pr_publication_sufficient"] is True
+assert "rust_pr_fast" in profile["lanes"]
+lane = profile["lanes"]["rust_pr_fast"]
+assert lane["status"] == "selected"
+assert lane["mode"] == "focused"
+assert lane["filter_tokens"] == "scheduler_economics"
+assert "scheduler::tests::" in lane["filter_expression"]
+assert "provider::tests::provider_mod_" in lane["filter_expression"]
+assert "binary_id(adl::provider_tests) and test(/^profiles::/)" in lane["filter_expression"]
+assert "adl/src/provider/profiles.rs" in lane["matched_paths"]
+assert "adl/src/scheduler.rs" in lane["matched_paths"]
+PY
+
 echo "PASS test_select_validation_lanes"

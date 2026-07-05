@@ -1,0 +1,176 @@
+{
+  "schema": "adl.unity_observatory_contract.v1",
+  "contract_id": "unity-observatory-contract-v0916-runtime-soak-observatory-packet-0001",
+  "packet_schema": "adl.csm_visibility_packet.v1",
+  "source_packet_ref": "docs/milestones/v0.91.7/review/runtime/soak2_4682/agent_lifecycle/runtime_v2/observatory/visibility_packet.json",
+  "runtime_artifact_root": "docs/milestones/v0.91.7/review/runtime/soak2_4682/agent_lifecycle",
+  "claim_boundary": "This packet is a bounded local capture produced by the v0.91.6 integrated runtime soak. It is derived from runtime-owned artifacts, suitable for Unity Observatory consumption, and explicitly does not claim full product completion, live telemetry streaming, or v0.92 coherence.",
+  "evidence_level": "bounded_local_runtime_capture",
+  "manifold": {
+    "display_name": "Runtime / Ops Soak #1",
+    "state": "Stopped_after_reviewable_capture",
+    "health_summary": "Long-lived-agent cadence, stop-between-cycles control, resilience classifications, remote timeout semantics, and ObsMem handoff all emitted one bounded Unity-consumable review surface with final runtime state 'Stopped'.",
+    "current_tick": 3
+  },
+  "world": {
+    "default_room_label": "World / Reality",
+    "default_room_question": "What runtime evidence exists right now, and what actually completed?",
+    "default_room_note": "Default integrated soak evidence view.",
+    "default_lens_label": "Operator lens",
+    "default_lens_summary": "Operational state, disabled reasons, and review links.",
+    "corporate_investor_fallback_label": "Corporate Investor UI",
+    "corporate_investor_boundary": "Presentation mode only; evidence, authority, and trace boundaries do not change."
+  },
+  "summary": {
+    "citizen_count": 3,
+    "episode_count": 3,
+    "default_room_label": "World / Reality",
+    "default_lens_label": "Operator lens",
+    "proposal_mode_statement": "Every active-looking control is a governed request proposal only. No direct runtime mutation is performed from this surface."
+  },
+  "status": {
+    "health_summary": "Long-lived-agent cadence, stop-between-cycles control, resilience classifications, remote timeout semantics, and ObsMem handoff all emitted one bounded Unity-consumable review surface with final runtime state 'Stopped'.",
+    "snapshot_state": "not_applicable",
+    "snapshot_note": "This soak exports observatory evidence from runtime-owned artifacts; it does not claim live snapshot streaming.",
+    "kernel_pulse_status": "bounded_review_tick_complete",
+    "resource_state": "bounded_local_execution",
+    "attention_items": [
+      "Unity contract and operator report are generated from the same soak-owned packet.",
+      "Artifact capture is bounded and local; no always-on or remote streaming claim is made.",
+      "Direct runtime mutation remains out of scope for the Unity consumer surface."
+    ]
+  },
+  "inhabitant_readiness": {
+    "identity_boundary": "Identity and profile surfaces stay bounded to fixture aliases and readiness placeholders until WP-08 lands reviewed proof.",
+    "security_floor_ref": "docs/milestones/v0.91.6/review/security/UNITY_OBSERVATORY_INHABITANT_READINESS_SECURITY_REVIEW_4023.md",
+    "checklist": [
+      {
+        "check_id": "world-space",
+        "label": "World and lens surfaces are visible from governed packet evidence.",
+        "state": "ready",
+        "note": "Rooms, lenses, and proposal-mode boundaries come from the bounded Unity Observatory contract."
+      },
+      {
+        "check_id": "status-surface",
+        "label": "Status and evidence surfaces are visible without reading raw runtime files.",
+        "state": "ready",
+        "note": "Shell shows manifold health, snapshot posture, kernel pulse, and operator-report references."
+      },
+      {
+        "check_id": "identity-boundary",
+        "label": "Identity and profile display remains bounded to placeholder-safe projections.",
+        "state": "routed",
+        "note": "Do not treat fixture aliases or continuity labels as approved profile exposure before WP-08 proof lands."
+      },
+      {
+        "check_id": "mutation-boundary",
+        "label": "All inhabitant actions remain proposal-only and fail closed on direct mutation.",
+        "state": "ready",
+        "note": "Every active-looking control is a governed request proposal only. No direct runtime mutation is performed from this surface."
+      },
+      {
+        "check_id": "security-floor",
+        "label": "WP-07 security floor is consumed and kept explicit.",
+        "state": "ready",
+        "note": "Inhabitant-facing display uses the WP-07 review packet as a floor, not as closure proof."
+      }
+    ]
+  },
+  "freedom_gate": {
+    "allow_count": 1,
+    "defer_count": 1,
+    "refuse_count": 1
+  },
+  "observability": {
+    "consumption_status": "reviewed_floor_not_live_export",
+    "otel_boundary_ref": "docs/milestones/v0.91.6/review/logging_observability/OTEL_OBSERVATORY_CONSUMPTION_PROOF_3999.md",
+    "event_stream_example_ref": "docs/milestones/v0.91.6/review/logging_observability/observatory_event_stream_example_3999.jsonl",
+    "logging_validation_ref": "docs/milestones/v0.91.6/review/logging_observability/LOGGING_VALIDATION_REDACTION_PROOF_4000.md",
+    "security_review_ref": "docs/milestones/v0.91.6/review/security/UNITY_OBSERVATORY_INHABITANT_READINESS_SECURITY_REVIEW_4023.md",
+    "proof_packet_ref": "docs/milestones/v0.91.6/review/observatory/UNITY_OBSERVATORY_LOGGING_OTEL_SECURITY_CONSUMPTION_4034.md",
+    "claim_boundary": "Observatory consumers may reuse the redacted event-stream vocabulary and operator-report surfaces, but this contract does not claim a live OpenTelemetry collector or exporter integration.",
+    "private_state_posture": "No private paths, secrets, raw logs, or identity-sensitive state are required by this Unity surface.",
+    "findings_disposition": "Accepted WP-07 security findings remain explicit, while identity-safe display and final closeout stay routed to their owning issues."
+  },
+  "review": {
+    "demo_classification": "captured_artifacts",
+    "operator_report_ref": "docs/milestones/v0.91.7/review/runtime/soak2_4682/agent_lifecycle/runtime_v2/observatory/operator_report.md",
+    "primary_artifacts": [
+      "docs/milestones/v0.91.7/review/runtime/soak2_4682/agent_lifecycle/runtime_v2/observatory/visibility_packet.json",
+      "docs/milestones/v0.91.7/review/runtime/soak2_4682/agent_lifecycle/runtime_v2/observatory/operator_report.md",
+      "docs/milestones/v0.91.7/review/runtime/soak2_4682/agent_lifecycle/runtime_v2/observatory/unity_observatory_contract.json",
+      "docs/milestones/v0.91.7/review/runtime/soak2_4682/agent_lifecycle/long_lived_agent/state/status.json",
+      "docs/milestones/v0.91.7/review/runtime/soak2_4682/agent_lifecycle/long_lived_agent_stop_probe/stop_probe.json",
+      "docs/milestones/v0.91.7/review/runtime/soak2_4682/agent_lifecycle/remote_exec/timeout_probe.json",
+      "docs/milestones/v0.91.7/review/runtime/soak2_4682/agent_lifecycle/obsmem/transition_memory_request.json"
+    ],
+    "caveats": [
+      "This is a bounded local capture and not a live telemetry stream.",
+      "Unity consumes a deterministic contract produced after the soak run; it is not co-executing the runtime.",
+      "Inhabitant identity, profile, and v0.92 rebinding semantics remain out of scope."
+    ]
+  },
+  "rooms": [
+    {
+      "room_id": "world",
+      "label": "World / Reality",
+      "question": "What runtime evidence exists right now, and what actually completed?",
+      "note": "Default integrated soak evidence view."
+    },
+    {
+      "room_id": "governance",
+      "label": "Operator / Governance",
+      "question": "What decision boundaries, disabled paths, and proof links remain explicit?",
+      "note": "Freedom Gate docket and guarded follow-on paths live here."
+    },
+    {
+      "room_id": "cognition",
+      "label": "Cognition / Internal State",
+      "question": "What bounded internal-state-adjacent signals are safe to project?",
+      "note": "Only review-safe signals are exposed."
+    }
+  ],
+  "lenses": [
+    {
+      "lens_id": "public",
+      "label": "Public lens",
+      "summary": "Investor-safe summary with bounded claims."
+    },
+    {
+      "lens_id": "operator",
+      "label": "Operator lens",
+      "summary": "Operational state, disabled reasons, and review links."
+    },
+    {
+      "lens_id": "reviewer",
+      "label": "Reviewer lens",
+      "summary": "Packet refs, report refs, and caveats."
+    }
+  ],
+  "inhabitants": [
+    {
+      "projection_label": "Inhabitant lane 1",
+      "activity_posture": "bounded work lane",
+      "capability_summary": "episode execution allowed; 2 allowed lanes, 3 forbidden lanes.",
+      "alert_summary": "No routed operator alerts.",
+      "identity_visibility": "withheld_pending_wp08",
+      "identity_note": "Citizen identity, profile, memory, and continuity-sensitive details remain withheld until WP-08 proof lands."
+    },
+    {
+      "projection_label": "Inhabitant lane 2",
+      "activity_posture": "bounded work lane",
+      "capability_summary": "episode execution allowed; 3 allowed lanes, 3 forbidden lanes.",
+      "alert_summary": "No routed operator alerts.",
+      "identity_visibility": "withheld_pending_wp08",
+      "identity_note": "Citizen identity, profile, memory, and continuity-sensitive details remain withheld until WP-08 proof lands."
+    },
+    {
+      "projection_label": "Inhabitant lane 3",
+      "activity_posture": "review-only lane",
+      "capability_summary": "episode execution disabled; 2 allowed lanes, 3 forbidden lanes.",
+      "alert_summary": "No routed operator alerts.",
+      "identity_visibility": "withheld_pending_wp08",
+      "identity_note": "Citizen identity, profile, memory, and continuity-sensitive details remain withheld until WP-08 proof lands."
+    }
+  ]
+}

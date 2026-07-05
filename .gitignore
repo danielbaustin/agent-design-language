@@ -19,6 +19,15 @@ infra/ddns/build/
 infra/ddns/terraform.tfstate
 infra/ddns/terraform.tfstate.backup
 
+# Unity observatory local proof inputs. These are operator-provisioned or
+# generated proof/tooling payloads unless a later issue approves a specific
+# license/storage/subset route.
+demos/v0.91.6/unity-observatory/Assets/Creepy_Cat/
+demos/v0.91.6/unity-observatory/Assets/ScifiOfficeLite/
+demos/v0.91.6/unity-observatory/Assets/Sci-Fi Styled Modular Pack/
+demos/v0.91.6/unity-observatory/Assets/Plugins/NuGet/
+demos/v0.91.6/unity-observatory/Proof/
+
 # Local worktrees (generated)
 .worktrees/
 

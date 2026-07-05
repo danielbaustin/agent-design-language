@@ -419,6 +419,23 @@ assert_has "$long_lived_agent_only_output" "reason=bounded_rust_surface_runs_foc
 assert_has "$long_lived_agent_only_output" "filter_tokens=long_lived_agent"
 assert_has "$long_lived_agent_only_output" "filter_expression=test(/^long_lived_agent::/)"
 
+long_lived_agent_daemon_wave="$TMP/long_lived_agent_daemon_wave.txt"
+cat >"$long_lived_agent_daemon_wave" <<'EOF'
+M	adl/src/cli/agent_cmd.rs
+M	adl/src/cli/usage.rs
+M	adl/src/long_lived_agent.rs
+M	adl/src/long_lived_agent/schema.rs
+M	adl/src/long_lived_agent/storage.rs
+M	adl/src/long_lived_agent/tests.rs
+M	adl/src/long_lived_agent/types.rs
+M	adl/tests/cli_smoke/agent.rs
+EOF
+long_lived_agent_daemon_wave_output="$(bash "$SCRIPT" --changed-files "$long_lived_agent_daemon_wave" --print-plan)"
+assert_has "$long_lived_agent_daemon_wave_output" "mode=focused"
+assert_has "$long_lived_agent_daemon_wave_output" "reason=bounded_rust_surface_runs_focused_nextest"
+assert_has "$long_lived_agent_daemon_wave_output" "filter_tokens=agent_cmd,cli_smoke_basics,long_lived_agent,agent_cli_smoke"
+assert_has "$long_lived_agent_daemon_wave_output" "filter_expression=test(/^cli::agent_cmd::/) or binary_id(adl::cli_smoke) and test(/^basics::/) or test(/^long_lived_agent::/) or binary_id(adl::cli_smoke) and test(/^agent::/)"
+
 chronosense_runtime_trace="$TMP/chronosense-runtime-trace.txt"
 cat >"$chronosense_runtime_trace" <<'EOF'
 M	adl/src/chronosense.rs

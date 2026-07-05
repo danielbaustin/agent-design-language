@@ -71,7 +71,7 @@ pub(crate) fn resolve_relative_output_path(
 pub(crate) fn real_runtime_v2_in_repo(args: &[String], repo_root: &Path) -> Result<()> {
     let Some(subcommand) = args.first().map(|arg| arg.as_str()) else {
         return Err(anyhow!(
-            "runtime-v2 requires a subcommand: operator-controls, security-boundary, foundation-demo, integrated-csm-run-demo, observatory-flagship-demo, cognitive-being-flagship-demo, contract-market-demo, governed-tools-flagship-demo, or feature-proof-coverage"
+            "runtime-v2 requires a subcommand: operator-controls, security-boundary, foundation-demo, integrated-csm-run-demo, minimal-integrated-runtime-path, observatory-flagship-demo, cognitive-being-flagship-demo, contract-market-demo, governed-tools-flagship-demo, or feature-proof-coverage"
         ));
     };
 
@@ -81,6 +81,9 @@ pub(crate) fn real_runtime_v2_in_repo(args: &[String], repo_root: &Path) -> Resu
         "foundation-demo" => commands::real_runtime_v2_foundation_demo(repo_root, &args[1..]),
         "integrated-csm-run-demo" => {
             commands::real_runtime_v2_integrated_csm_run_demo(repo_root, &args[1..])
+        }
+        "minimal-integrated-runtime-path" => {
+            commands::real_runtime_v2_minimal_integrated_runtime_path(repo_root, &args[1..])
         }
         "observatory-flagship-demo" => {
             commands::real_runtime_v2_observatory_flagship_demo(repo_root, &args[1..])
@@ -100,7 +103,7 @@ pub(crate) fn real_runtime_v2_in_repo(args: &[String], repo_root: &Path) -> Resu
             Ok(())
         }
         _ => Err(anyhow!(
-            "unknown runtime-v2 subcommand '{subcommand}' (expected operator-controls, security-boundary, foundation-demo, integrated-csm-run-demo, observatory-flagship-demo, cognitive-being-flagship-demo, contract-market-demo, governed-tools-flagship-demo, or feature-proof-coverage)"
+            "unknown runtime-v2 subcommand '{subcommand}' (expected operator-controls, security-boundary, foundation-demo, integrated-csm-run-demo, minimal-integrated-runtime-path, observatory-flagship-demo, cognitive-being-flagship-demo, contract-market-demo, governed-tools-flagship-demo, or feature-proof-coverage)"
         )),
     }
 }

@@ -6,6 +6,11 @@ This packet records the bounded #4652 proof that the Unity observatory demo surf
 
 It does not claim a production runtime build, third-party asset redistribution readiness, or full mini-sprint closeout. #4703 owns environment staging, #4704 owns reproducible walkthrough capture, and #4702 owns parent wave closeout.
 
+#4745 now records the publication boundary for this proof: copied flagship
+Unity projects and imported third-party asset roots are local proof/operator
+inputs, not repository publication payloads, unless a later issue approves a
+specific license/storage/subset route.
+
 ## Live Project
 
 - Issue worktree: `.worktrees/adl-wp-4652`
@@ -57,4 +62,5 @@ The flagship scene includes investor-facing proof objects for:
 - This proof does not publish the copied third-party asset project.
 - This proof does not claim #4704 walkthrough capture is complete on this branch.
 - This proof does not claim full #4702 mini-sprint closeout.
+- This proof follows #4745 for asset and Unity-MCP publication boundaries.
 - Unity-MCP tooling anomalies remain tracked in #4789.

@@ -1,0 +1,21 @@
+{
+  "schema_version": "adl.runtime.acip_integration_matrix.v1",
+  "positive_case": {
+    "status": "completed",
+    "artifact_ref": "acip/acip_positive_packet.json"
+  },
+  "denied_case": {
+    "status": "refused",
+    "refusal_code": "route_class_denied",
+    "artifact_ref": "acip/acip_positive_packet.json"
+  },
+  "malformed_case": {
+    "classification": "malformed",
+    "artifact_ref": "acip/acip_malformed_case.json"
+  },
+  "failed_delivery_case": {
+    "status": "failed",
+    "failure_code": "provider_error",
+    "artifact_ref": "acip/acip_failed_delivery_exchange.json"
+  }
+}

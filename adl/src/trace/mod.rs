@@ -9,6 +9,7 @@ use std::time::Instant;
 
 use crate::adl::DelegationSpec;
 use crate::execute::{ExecutionBoundary, RuntimeLifecyclePhase};
+use crate::resilience::RuntimeResilienceTraceV1;
 
 /// In-memory execution trace captured during runtime operation.
 ///
@@ -236,6 +237,11 @@ pub enum TraceEvent {
         step_id: String,
         success: bool,
         duration_ms: u128,
+    },
+    RuntimeResilienceDecision {
+        ts_ms: u128,
+        elapsed_ms: u128,
+        record: RuntimeResilienceTraceV1,
     },
     CallEntered {
         ts_ms: u128,

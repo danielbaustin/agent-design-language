@@ -1,0 +1,2 @@
+{"schema":"adl.long_lived_agent_operator_event.v1","agent_instance_id":"v0916-runtime-stop-probe","event":"created","at":"2026-07-05T03:09:53.331098Z","operator":"local","details":{"locked_spec_ref":"agent_spec.locked.json","continuity_kind":"pre_v0_92_handle"}}
+{"schema":"adl.long_lived_agent_operator_event.v1","agent_instance_id":"v0916-runtime-stop-probe","event":"operator_stop_requested","at":"2026-07-05T03:09:53.492045Z","operator":"local","details":{"reason":"operator stop during bounded cadence sleep window","mode":"stop_before_next_cycle"}}

@@ -46,6 +46,10 @@ pub(super) fn operator_events_path(loaded: &LoadedAgentSpec) -> PathBuf {
     loaded.state_root.join("operator_events.jsonl")
 }
 
+pub(super) fn daemon_status_path(loaded: &LoadedAgentSpec) -> PathBuf {
+    loaded.state_root.join("daemon_status.json")
+}
+
 pub(super) fn status_path(loaded: &LoadedAgentSpec) -> PathBuf {
     loaded.state_root.join("status.json")
 }

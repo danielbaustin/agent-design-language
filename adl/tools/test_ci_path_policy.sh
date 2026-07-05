@@ -51,6 +51,7 @@ assert_file_order() {
 assert_current_coverage_workflow_contract() {
   local workflow="$ROOT_DIR/.github/workflows/ci.yaml"
   assert_file_has "$workflow" 'Determine PR fast coverage filters'
+  assert_file_has "$workflow" "if: github.event_name == 'pull_request' && steps.path-policy.outputs.coverage_required == 'true'"
   assert_file_has "$workflow" '--print-risk-nextest-expression > adl/coverage-impact-filter-expression.txt'
   assert_file_has "$workflow" 'filter_expression<<ADL_COVERAGE_EXPR'
   assert_file_has "$workflow" 'PR fast coverage summary (json)'
@@ -74,6 +75,7 @@ assert_current_coverage_workflow_contract() {
   assert_file_has "$workflow" "steps.coverage-toolchain.outputs.ready == 'true'"
   assert_file_has "$workflow" 'actual adl-coverage execution state'
   assert_file_has "$workflow" 'Full workspace coverage gate deferred for PR'
+  assert_file_has "$workflow" 'adl/target/coverage-impact-summary.json'
   assert_file_not_has "$workflow" '--authority "adl_coverage_always_on"'
 }
 
