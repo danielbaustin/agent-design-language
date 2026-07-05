@@ -12,7 +12,7 @@ on:
           - dry-run
           - start-build
       source_version:
-        description: "Git ref or commit passed to AWS CodeBuild; blank uses this workflow run SHA"
+        description: "Git ref or commit passed to AWS CodeBuild; blank uses this workflow branch/ref name"
         required: false
         default: ""
       build_command:
@@ -84,7 +84,7 @@ jobs:
         if: inputs.mode == 'dry-run'
         env:
           ADL_CODEFRIEND_BUILD_COMMAND: ${{ inputs.build_command }}
-          SOURCE_VERSION: ${{ inputs.source_version || github.sha }}
+          SOURCE_VERSION: ${{ inputs.source_version || github.ref_name }}
         run: |
           bash adl/tools/run_aws_codefriend_build_lane.sh \
             --dry-run \
@@ -101,7 +101,7 @@ jobs:
         env:
           ADL_AWS_CODEFRIEND_ACCOUNT_SHA256: ${{ secrets.AWS_CODEFRIEND_ACCOUNT_SHA256 }}
           ADL_CODEFRIEND_BUILD_COMMAND: ${{ inputs.build_command }}
-          SOURCE_VERSION: ${{ inputs.source_version || github.sha }}
+          SOURCE_VERSION: ${{ inputs.source_version || github.ref_name }}
         run: |
           bash adl/tools/run_aws_codefriend_build_lane.sh \
             --run \

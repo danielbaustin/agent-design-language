@@ -77,7 +77,11 @@ and ECR push operations.
 The image removes repeated toolchain setup from validation runs. It does not
 replace compiler-output caching.
 
-- CodeBuild should use native S3 `sccache` for compiler artifacts.
+- CodeBuild should use the ADL builder image, CodeBuild local custom cache for
+  the stable `/codebuild/adl-target` directory, and native S3 `sccache`. The
+  target cache is what makes repeated Rust validation comparable to Nessus or
+  Spot warm-cache runs; S3 `sccache` alone still leaves Cargo reconstructing
+  and relinking a cold `target` graph.
 - AWS Spot EC2 should keep using the warm EBS cache for retained dependency and
   target artifacts.
 - Nessus should keep using its persistent remote cache root when not running in
@@ -116,12 +120,33 @@ using the image as the canonical setup definition while keeping the warm EBS
 cache path.
 
 The image path is intentionally separate from cache selection. A custom image
-plus native S3 `sccache` is the expected fast repeated CodeBuild configuration.
+plus native S3 `sccache` is not sufficient by itself for the fastest repeated
+CodeBuild path. The CodeBuild project should be configured with
+`LOCAL_SOURCE_CACHE` and `LOCAL_CUSTOM_CACHE`, and the buildspec cache paths
+include `/codebuild/adl-target/**/*`. The buildspec copies `CODEBUILD_SRC_DIR`
+into stable `/codebuild/adl-source` before running Cargo and sets
+`CARGO_TARGET_DIR=/codebuild/adl-target`. The stable source and target paths are
+required because CodeBuild's native source checkout path changes between runs,
+which otherwise invalidates too much Cargo target state even when the local
+cache host is reused. This local target cache is best-effort because CodeBuild
+may place later runs on a different host, but when the host is reused it is the
+closest CodeBuild analogue to Nessus local target cache and Spot EBS target
+cache.
+
+`ADL_CODEFRIEND_TARGET_CACHE_MODE` defaults to `local`. Set
+`ADL_CODEFRIEND_TARGET_CACHE_MODE=disabled` for cold-cache measurements. The
+buildspec still has an explicit `s3-tar` diagnostic mode, keyed by
+`ADL_CODEFRIEND_TARGET_CACHE_KEY`, but do not use full-target S3 tar archives as
+the normal fast path; a 2026-07-05 populate attempt was stopped after it proved
+too slow for the operational lane. S3 `sccache` remains enabled underneath the
+local target cache.
+
 If CodeBuild runs the image in a nested container, pass the CodeBuild role
-credentials and the exact S3 `sccache` bucket, region, and key prefix into the
-container. A successful nested-container run on 2026-07-05 proved execution but
-only reached a 0.26% total hit rate and 0% Rust hit rate, so that shape is not
-the preferred fast path until its cache key/path mismatch is fixed.
+credentials and the exact S3 `sccache` bucket, region, target-cache settings,
+and key prefix into the container. A successful nested-container run on
+2026-07-05 proved execution but only reached a 0.26% total hit rate and 0% Rust
+hit rate, so that shape is not the preferred fast path until its cache key/path
+mismatch is fixed.
 
 The AWS-managed `aws/codebuild/standard:7.0` image is not a drop-in Rust image
 for this lane. A 2026-07-05 probe with `runtime-versions: rust: latest` failed
@@ -137,7 +162,7 @@ bash adl/tools/run_aws_codefriend_build_lane.sh \
   --run \
   --check-account \
   --project-name adl-codefriend-build \
-  --source-version <branch-or-sha> \
+  --source-version <branch-or-tag-for-warm-cache> \
   --wait
 ```
 

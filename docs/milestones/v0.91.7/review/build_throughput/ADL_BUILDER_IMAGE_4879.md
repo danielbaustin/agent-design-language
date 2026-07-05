@@ -261,6 +261,33 @@ This is the current direct custom-image CodeBuild warm-cache row. The nested
 Docker-in-CodeBuild diagnostic above remains excluded from platform benchmark
 tables because it used the wrong operational shape.
 
+#### CodeBuild Stable Local Target Cache Repair
+
+The first CodeBuild "warm" custom-image result was still mostly a cold Cargo
+target run: logs showed `382` `Compiling` lines even with a high S3 `sccache`
+hit rate. A full S3 target archive restore/save path was tested and rejected as
+the default operational path after the populate run exceeded the practical
+window. CodeBuild local custom cache then proved that simply caching `target`
+under the native source checkout was also insufficient because CodeBuild changes
+the source checkout path between runs.
+
+The repaired CodeBuild setup now copies `CODEBUILD_SRC_DIR` into stable
+`/codebuild/adl-source`, sets `CARGO_TARGET_DIR=/codebuild/adl-target`, and
+uses CodeBuild `LOCAL_CUSTOM_CACHE` for `/codebuild/adl-target/**/*` while S3
+`sccache` remains enabled underneath.
+
+- Populate build id: `adl-codefriend-build:92d11981-9119-4d52-9e12-3cf8371404c3`
+- Populate benchmark:
+  `ADL_BUILD_PLATFORM_BENCHMARK platform=codebuild-xlarge-stable-local-target-populate build_seconds=257 test_seconds=231 total_seconds=488 status=passed`
+- Warm build id: `adl-codefriend-build:5de168f4-e68f-4247-a765-587fc8aa6732`
+- Warm benchmark:
+  `ADL_BUILD_PLATFORM_BENCHMARK platform=codebuild-xlarge-stable-local-target-warm build_seconds=46 test_seconds=84 total_seconds=130 status=passed`
+- Warm cache evidence: CodeBuild expanded `/codebuild/adl-target/**/*` and
+  symlinked `/codebuild/adl-target` to the same local-cache target hash used by
+  the populate run.
+- Warm `sccache`: `845` compile requests, `766` hits, `0` misses, `100.00%`
+  total hit rate, `100.00%` Rust hit rate.
+
 ### AWS Spot EC2
 
 Issue `#4879` now carries the repeatable Spot and CodeBuild launch helpers so
