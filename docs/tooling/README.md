@@ -95,6 +95,12 @@ Important repo-local tooling surfaces include:
 - `bash adl/tools/run_validation_manager_nessus_lane.sh` — validation-manager
   wrapper that consumes one eligible local lane and routes it to the Nessus
   remote runner; see [Nessus Validation Manager Lane](NESSUS_VALIDATION_MANAGER_LANE.md)
+- `bash adl/tools/setup_adl_builder_image.sh` — shared validation toolchain
+  image setup for CodeBuild, AWS Spot EC2, Nessus, and local runners; see
+  [ADL Builder Image](ADL_BUILDER_IMAGE.md)
+- `bash adl/tools/import_adl_builder_image_from_s3_to_ecr.sh` — AWS-side
+  importer that loads a builder-image tar from S3 and pushes it to ECR through
+  a privileged, purpose-specific CodeBuild project
 - `adl/tools/*.sh` wrappers remain available as compatibility entrypoints over the Rust-owned commands
 - `adl/tools/report_large_rust_modules.sh` — non-blocking Rust source-and-test module size report; by default it scans both `adl/src` and `adl/tests`, and current snapshots should live under `.adl/reports/manual/` instead of tracked repo docs
 - `adl/tools/sync_task_bundle_prompts.sh` — refresh canonical local task-bundle prompt layout from compatibility paths
