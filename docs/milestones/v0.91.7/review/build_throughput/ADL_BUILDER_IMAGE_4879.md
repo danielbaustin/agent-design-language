@@ -242,6 +242,13 @@ the same as the measured `cargo test` command duration.
 
 ### CodeBuild
 
+#### Superseded S3 `sccache`-Only Diagnostic
+
+This row is retained as diagnostic evidence only. It is not the current
+CodeBuild warm-cache platform row because it used the builder image with S3
+`sccache` but without a stable local Cargo target cache. Logs showed `382`
+`Compiling` lines, so Cargo still reconstructed too much target state.
+
 - Build id: `adl-codefriend-build:44a2ba8a-d5cd-441e-b428-cc12fadcc1af`
 - Image: `adl-builder:v0.91.7-fixed`
 - Compute: `BUILD_GENERAL1_XLARGE`
@@ -257,11 +264,11 @@ the same as the measured `cargo test` command duration.
 - `sccache`: `845` compile requests, `765` hits, `1` miss, `99.87%` total
   hit rate, `99.73%` Rust hit rate
 
-This is the current direct custom-image CodeBuild warm-cache row. The nested
-Docker-in-CodeBuild diagnostic above remains excluded from platform benchmark
-tables because it used the wrong operational shape.
+Do not include this `173s` value in current platform comparison tables. The
+nested Docker-in-CodeBuild diagnostic above is also excluded from platform
+benchmark tables because it used the wrong operational shape.
 
-#### CodeBuild Stable Local Target Cache Repair
+#### Current Stable Local Target Cache Row
 
 The first CodeBuild "warm" custom-image result was still mostly a cold Cargo
 target run: logs showed `382` `Compiling` lines even with a high S3 `sccache`
