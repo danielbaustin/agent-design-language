@@ -347,13 +347,25 @@ phases:
       - . "$HOME/.cargo/env"
       - rustc --version
       - cargo --version
-      - mkdir -p "$HOME/.cargo/bin" "$HOME/.cargo/registry" "$HOME/.cargo/git" "$HOME/.rustup" "$HOME/.cache/sccache" "target"
-      - export CARGO_TARGET_DIR="$CODEBUILD_SRC_DIR/target"
-      - export SCCACHE_DIR="$HOME/.cache/sccache"
-      - export SCCACHE_CACHE_SIZE="${SCCACHE_CACHE_SIZE:-20G}"
+      - ln -sfn "$CODEBUILD_SRC_DIR" /workspace
       - |
-        if ! command -v sccache >/dev/null 2>&1; then
-          SCCACHE_VERSION="${SCCACHE_VERSION:-v0.10.0}"
+        if ! command -v ld.lld >/dev/null 2>&1; then
+          apt-get update -y
+          apt-get install -y lld clang
+        fi
+      - ld.lld --version
+      - mkdir -p "$HOME/.cargo/bin" "$HOME/.cargo/registry" "$HOME/.cargo/git" "$HOME/.rustup" "target"
+      - export CARGO_TARGET_DIR="/workspace/target"
+      - export SCCACHE_CACHE_SIZE="${SCCACHE_CACHE_SIZE:-20G}"
+      - export SCCACHE_BUCKET="__SCCACHE_BUCKET__"
+      - export SCCACHE_REGION="__SCCACHE_REGION__"
+      - export SCCACHE_S3_KEY_PREFIX="__SCCACHE_PREFIX__/sccache/x86_64-unknown-linux-gnu"
+      - eval "$(aws configure export-credentials --format env)"
+      - export CARGO_INCREMENTAL=0
+      - export RUSTFLAGS="${RUSTFLAGS:-} -C link-arg=-fuse-ld=lld --remap-path-prefix=/workspace=/workspace --remap-path-prefix=/root=/home"
+      - |
+        SCCACHE_VERSION="${SCCACHE_VERSION:-v0.16.0}"
+        if ! command -v sccache >/dev/null 2>&1 || ! sccache --version | grep -F "${SCCACHE_VERSION#v}" >/dev/null 2>&1; then
           SCCACHE_ARCHIVE="sccache-${SCCACHE_VERSION}-x86_64-unknown-linux-musl.tar.gz"
           curl -fsSL "https://github.com/mozilla/sccache/releases/download/${SCCACHE_VERSION}/${SCCACHE_ARCHIVE}" -o "/tmp/${SCCACHE_ARCHIVE}"
           tar -xzf "/tmp/${SCCACHE_ARCHIVE}" -C /tmp
@@ -366,9 +378,15 @@ phases:
     commands:
       - set -euo pipefail
       - . "$HOME/.cargo/env"
-      - export CARGO_TARGET_DIR="$CODEBUILD_SRC_DIR/target"
-      - export SCCACHE_DIR="$HOME/.cache/sccache"
+      - cd /workspace
+      - export CARGO_TARGET_DIR="/workspace/target"
       - export SCCACHE_CACHE_SIZE="${SCCACHE_CACHE_SIZE:-20G}"
+      - export SCCACHE_BUCKET="__SCCACHE_BUCKET__"
+      - export SCCACHE_REGION="__SCCACHE_REGION__"
+      - export SCCACHE_S3_KEY_PREFIX="__SCCACHE_PREFIX__/sccache/x86_64-unknown-linux-gnu"
+      - eval "$(aws configure export-credentials --format env)"
+      - export CARGO_INCREMENTAL=0
+      - export RUSTFLAGS="${RUSTFLAGS:-} -C link-arg=-fuse-ld=lld --remap-path-prefix=/workspace=/workspace --remap-path-prefix=/root=/home"
       - export RUSTC_WRAPPER=sccache
       - test -n "${ADL_CODEFRIEND_BUILD_COMMAND:-}"
       - bash -lc "$ADL_CODEFRIEND_BUILD_COMMAND"
@@ -381,8 +399,14 @@ cache:
     - '/root/.cargo/git/**/*'
     - '/root/.cargo/bin/**/*'
     - '/root/.rustup/**/*'
-    - '/root/.cache/sccache/**/*'
 """
+
+buildspec = (
+    buildspec
+    .replace("__SCCACHE_BUCKET__", cache_bucket)
+    .replace("__SCCACHE_REGION__", region)
+    .replace("__SCCACHE_PREFIX__", cache_prefix)
+)
 
 write(project_path, {
     "name": project_name,

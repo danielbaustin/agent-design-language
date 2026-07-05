@@ -29,9 +29,13 @@ bash adl/tools/setup_aws_codefriend_build_resources.sh \
 ```
 
 Create or update the CodeBuild project, service role, and GitHub OIDC start
-role. The project includes an S3 cache for cargo, rustup, and `sccache`
-artifacts, and installs `sccache` from a pinned prebuilt release instead of
-compiling it during the build:
+role. The project includes an S3 cache for cargo/rustup state, uses native S3
+`sccache` for compiler artifacts, installs `sccache` 0.16 from a pinned
+prebuilt release, enables `lld`, disables incremental compilation, and
+normalizes the checkout through `/workspace` for stable compiler-cache keys. The
+buildspec exports CodeBuild credentials for `sccache` through an in-memory
+`aws configure export-credentials` evaluation and does not write credential
+material to a temp file:
 
 ```sh
 ADL_AWS_PROFILE=agent-logic-admin \
@@ -53,10 +57,10 @@ bash adl/tools/setup_aws_codefriend_build_resources.sh \
   --compute-type BUILD_GENERAL1_XLARGE
 ```
 
-As of the WP-06 proof pass on 2026-07-04, the Agent Logic account has Linux
-XLarge CodeBuild concurrency quota `0`. A quota increase to `1` has to be
-approved before an xlarge build can start. Keep the project on
-`BUILD_GENERAL1_LARGE` as the operational default until that approval lands.
+As of the later WP-06 proof pass on 2026-07-04, the Linux/XLarge quota was
+approved and `BUILD_GENERAL1_XLARGE` produced the current fastest retained
+CodeBuild result with native S3 `sccache`. Use large only when intentionally
+testing the smaller/cheaper fallback.
 
 The setup helper writes the GitHub variable/secret values to:
 
@@ -169,16 +173,22 @@ If `--wait` times out, the wrapper requests `codebuild stop-build` before
 returning failure. The GitHub Actions starter role includes `codebuild:StopBuild`
 for that cleanup path.
 
-The current lane uses an S3 cache. It intentionally does not cache the full
-`target/` tree because that made post-build cache upload slower than the build
-work. Cached paths are limited to reusable toolchain and compiler-cache state:
+The current lane uses native S3 `sccache` for compiler artifacts. It
+intentionally does not cache the full `target/` tree through CodeBuild's S3
+cache because that made post-build cache upload slower than the build work.
+CodeBuild's S3 cache is limited to reusable toolchain state:
 
 ```text
 /root/.cargo/registry/**/*
 /root/.cargo/git/**/*
 /root/.cargo/bin/**/*
 /root/.rustup/**/*
-/root/.cache/sccache/**/*
+```
+
+Compiler artifacts are stored by `sccache` itself under:
+
+```text
+s3://adl-codefriend-build-cache/codebuild/cache/sccache/x86_64-unknown-linux-gnu
 ```
 
 ## Current Live Timing
@@ -190,8 +200,7 @@ CODEFRIEND_BENCHMARK build_seconds=394 test_seconds=322 total_seconds=716 status
 ```
 
 That run proved the project can execute the ADL build/test benchmark on large
-compute. The xlarge comparison is pending AWS quota approval for Linux/XLarge
-concurrency.
+compute.
 
 The first S3/sccache binary-cache run also succeeded on
 `BUILD_GENERAL1_LARGE`:
@@ -202,10 +211,37 @@ phase timings: install=1s build=560s post_build=57s status=SUCCEEDED
 
 A repeated cached run was attempted after the seed run. It remained in BUILD
 past the seed build duration and was stopped intentionally to avoid burning the
-full CodeBuild timeout. Current evidence says this S3/sccache cache posture is
-operational and bounded, but it is not the fast repeated-build path for this
-Rust benchmark. Prefer the warm-EBS Spot lane when lowest repeated latency is
-the goal.
+full CodeBuild timeout. That older local-cache/archive posture is operational
+and bounded, but not the fast repeated-build path.
+
+The xlarge native S3 `sccache` repeat proof supersedes the older large/no-fast
+cache result for repeated-build planning:
+
+```text
+ADL_BUILD_PLATFORM_BENCHMARK platform=codebuild build_seconds=101 test_seconds=79 total_seconds=180 status=passed
+```
+
+A current re-run after applying the xlarge/native-S3 project buildspec was
+slightly faster:
+
+```text
+ADL_BUILD_PLATFORM_BENCHMARK platform=codebuild build_seconds=96 test_seconds=75 total_seconds=171 status=passed
+```
+
+That run reported Rust cache hit rate `99.73%` with zero cache read/write
+errors. CodeBuild wall-clock from start to end was `310s`, including source
+download, install/setup, benchmark execution, post-build sccache stats, and S3
+cache upload.
+
+Retained proof:
+
+```text
+docs/milestones/v0.91.7/review/build_throughput/codebuild-xlarge-native-sccache-s3-repeat-20260704.md
+```
+
+Prefer warm-EBS Spot when lowest repeated latency is the goal and the retained
+EBS cache is attached. Use CodeBuild xlarge when scalable, isolated GitHub/AWS
+dispatch is more important than the absolute fastest warm-cache latency.
 
 ## Failure Handling
 

@@ -28,10 +28,13 @@ successful live CodeBuild run on `BUILD_GENERAL1_LARGE`.
     handoff file.
   - Supports `--compute-type` so large and xlarge runs are intentional setup
     states rather than manual AWS console edits.
-  - Configures an S3 cache for cargo, rustup, cargo-installed binaries, and
-    `sccache` artifacts.
-  - Installs `sccache` from a pinned prebuilt release instead of compiling it in
-    CodeBuild.
+  - Configures CodeBuild S3 cache for cargo/rustup state and native S3
+    `sccache` for compiler artifacts.
+  - Installs `sccache` 0.16 from a pinned prebuilt release instead of compiling
+    it in CodeBuild.
+  - Uses `lld`, disables incremental compilation, and normalizes the checkout
+    through `/workspace` so compiler-cache keys are stable across CodeBuild
+    source directories.
   - Restricts GitHub OIDC trust to repository `main` and `codex/*` refs.
 - `docs/tooling/AWS_CODEFRIEND_BUILD_LANE.md`
   - Operator runbook for dry-run, live boundary, required GitHub configuration,
@@ -148,7 +151,7 @@ The earlier `BUILD_GENERAL1_MEDIUM` run failed after roughly fifteen minutes
 with the compiler killed while building a large AWS SDK dependency. The project
 was updated to large compute for the successful run.
 
-Follow-up optimization on 2026-07-04 configured S3 cache posture
+Follow-up optimization on 2026-07-04 first configured S3 cache posture
 `s3_sccache_binary`:
 
 - cache bucket/prefix: `adl-codefriend-build-cache/codebuild/cache`
@@ -179,10 +182,63 @@ The quota is adjustable, and a minimal increase request to `1` is pending. The
 project was restored to `BUILD_GENERAL1_LARGE` so the live operational lane
 continues to work while xlarge waits on AWS quota approval.
 
+After quota approval, the lane was updated to use native S3 `sccache`, `lld`,
+`CARGO_INCREMENTAL=0`, and stable `/workspace` paths. The successful repeated
+xlarge run is retained at
+`docs/milestones/v0.91.7/review/build_throughput/codebuild-xlarge-native-sccache-s3-repeat-20260704.md`.
+
+Observed `BUILD_GENERAL1_XLARGE` native S3 `sccache` repeat result:
+
+```text
+ADL_BUILD_PLATFORM_BENCHMARK platform=codebuild build_seconds=101 test_seconds=79 total_seconds=180 status=passed
+```
+
+CodeBuild phase timings:
+
+- provisioning: `4s`
+- download source: `13s`
+- install: `11s`
+- build: `180s`
+- post build: `32s`
+
+Native S3 `sccache` evidence:
+
+- client: `0.16.0`
+- cache location: `adl-codefriend-build-cache/codebuild/cache/sccache/x86_64-unknown-linux-gnu`
+- compile requests: `845`
+- Rust cache hits: `366`
+- Rust cache misses: `2`
+- Rust cache hit rate: `99.46%`
+- cache read errors: `0`
+- cache write errors: `0`
+
+Current live re-run after applying the xlarge native S3 project buildspec:
+
+- Build id: `adl-codefriend-build:5e4ab258-a121-4561-8196-61249e60f793`
+- Status: `SUCCEEDED`
+- CodeBuild wall-clock: `310s`
+- Benchmark line:
+  - `ADL_BUILD_PLATFORM_BENCHMARK platform=codebuild build_seconds=96 test_seconds=75 total_seconds=171 status=passed`
+- Rust cache hit rate: `99.73%`
+- Cache read/write errors: `0`
+
+This current run still installed `lld`/`clang` during the install phase, so the
+shared builder image from `#4879` remains the expected next setup-time
+optimization.
+
+Post-review hardening replaced the buildspec's temporary credential file with
+fileless `eval "$(aws configure export-credentials --format env)"`. The live
+CodeBuild project buildspec was re-applied and verified to contain fileless
+credential export, no `codebuild-aws-credentials.env` path, native S3
+`sccache`, `lld`, and `/workspace` target normalization.
+
 ## Result Truth
 
 The integrated repo lane is present, locally proven, and live-proven through the
-Agent Logic CodeBuild project. The GitHub Actions path still requires the
-repository variable/secret values from
+Agent Logic CodeBuild project. The current fast repeated-build posture is
+`BUILD_GENERAL1_XLARGE` with native S3 `sccache`; a custom builder image from
+follow-up issue `#4879` is expected to reduce the remaining install/setup
+overhead while preserving this compiler-cache path. The GitHub Actions path
+still requires the repository variable/secret values from
 `.adl/tmp/aws-codefriend-build-resource-setup/github-actions-config.env` before
 workflow-dispatched `start-build` can be used from GitHub.

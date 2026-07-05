@@ -38,6 +38,39 @@ if [ "$1" = "sts" ] && [ "$2" = "get-caller-identity" ]; then
 JSON
   exit 0
 fi
+if [ "$1" = "s3api" ] && [ "$2" = "head-bucket" ]; then
+  exit 0
+fi
+if [ "$1" = "iam" ] && [ "$2" = "list-open-id-connect-providers" ]; then
+  printf 'arn:aws:iam::000000000000:oidc-provider/token.actions.githubusercontent.com\n'
+  exit 0
+fi
+if [ "$1" = "iam" ] && [ "$2" = "get-open-id-connect-provider" ]; then
+  printf 'token.actions.githubusercontent.com\n'
+  exit 0
+fi
+if [ "$1" = "iam" ] && [ "$2" = "get-role" ]; then
+  for arg in "$@"; do
+    if [ "$arg" = "Role.Arn" ]; then
+      printf 'arn:aws:iam::000000000000:role/fixture-role\n'
+      exit 0
+    fi
+  done
+  printf 'fixture-role\n'
+  exit 0
+fi
+if [ "$1" = "iam" ] && { [ "$2" = "update-assume-role-policy" ] || [ "$2" = "put-role-policy" ]; }; then
+  printf '{}\n'
+  exit 0
+fi
+if [ "$1" = "codebuild" ] && [ "$2" = "batch-get-projects" ]; then
+  printf '1\n'
+  exit 0
+fi
+if [ "$1" = "codebuild" ] && [ "$2" = "update-project" ]; then
+  printf 'adl-codefriend-build\n'
+  exit 0
+fi
 if [ "$1" = "codebuild" ] && [ "$2" = "start-build" ]; then
   cat <<JSON
 {"build":{"id":"codefriend-build:1234","arn":"arn:aws:codebuild:us-west-2:000000000000:build/codefriend-build:1234"}}
@@ -172,11 +205,25 @@ assert_has "$SETUP_SCRIPT" 'CACHE_BUCKET="${ADL_AWS_CODEFRIEND_CACHE_BUCKET:-adl
 assert_has "$SETUP_SCRIPT" 'COMPUTE_TYPE="${ADL_AWS_CODEFRIEND_COMPUTE_TYPE:-BUILD_GENERAL1_LARGE}"'
 assert_has "$SETUP_SCRIPT" '"computeType": compute_type'
 assert_has "$SETUP_SCRIPT" '"type": "S3"'
-assert_has "$SETUP_SCRIPT" 'SCCACHE_VERSION="${SCCACHE_VERSION:-v0.10.0}"'
+assert_has "$SETUP_SCRIPT" 'SCCACHE_VERSION="${SCCACHE_VERSION:-v0.16.0}"'
+assert_has "$SETUP_SCRIPT" 'sccache --version | grep -F "${SCCACHE_VERSION#v}"'
 assert_has "$SETUP_SCRIPT" "https://github.com/mozilla/sccache/releases/download/"
 assert_not_has "$SETUP_SCRIPT" "cargo install sccache --locked"
 assert_has "$SETUP_SCRIPT" "'/root/.cargo/bin/**/*'"
-assert_has "$SETUP_SCRIPT" "'/root/.cache/sccache/**/*'"
+assert_not_has "$SETUP_SCRIPT" "'/root/.cache/sccache/**/*'"
+assert_has "$SETUP_SCRIPT" 'ln -sfn "$CODEBUILD_SRC_DIR" /workspace'
+assert_has "$SETUP_SCRIPT" "cd /workspace"
+assert_has "$SETUP_SCRIPT" 'export CARGO_TARGET_DIR="/workspace/target"'
+assert_has "$SETUP_SCRIPT" 'export SCCACHE_BUCKET="__SCCACHE_BUCKET__"'
+assert_has "$SETUP_SCRIPT" 'export SCCACHE_REGION="__SCCACHE_REGION__"'
+assert_has "$SETUP_SCRIPT" 'export SCCACHE_S3_KEY_PREFIX="__SCCACHE_PREFIX__/sccache/x86_64-unknown-linux-gnu"'
+assert_has "$SETUP_SCRIPT" '.replace("__SCCACHE_BUCKET__", cache_bucket)'
+assert_has "$SETUP_SCRIPT" 'eval "$(aws configure export-credentials --format env)"'
+assert_not_has "$SETUP_SCRIPT" "codebuild-aws-credentials.env"
+assert_has "$SETUP_SCRIPT" "export CARGO_INCREMENTAL=0"
+assert_has "$SETUP_SCRIPT" "apt-get install -y lld clang"
+assert_has "$SETUP_SCRIPT" "ld.lld --version"
+assert_has "$SETUP_SCRIPT" 'export RUSTFLAGS="${RUSTFLAGS:-} -C link-arg=-fuse-ld=lld --remap-path-prefix=/workspace=/workspace --remap-path-prefix=/root=/home"'
 assert_not_has "$SETUP_SCRIPT" "'target/**/*'"
 assert_has "$SETUP_SCRIPT" 'aws_codefriend_cache_bucket_exists='
 assert_has "$SETUP_SCRIPT" 'compute_type=%s'
@@ -200,5 +247,50 @@ assert_has "$WORKFLOW" "bash adl/tools/run_aws_codefriend_build_lane.sh"
 assert_not_has "$WORKFLOW" "pull_request:"
 assert_not_has "$WORKFLOW" "push:"
 assert_has "$WORKFLOW" "if-no-files-found: error"
+
+FAKE_AWS_ARGS_LOG="$TMP/aws-setup-args.log" \
+ADL_AWS_CLI="$TMP/aws" \
+bash "$SETUP_SCRIPT" \
+  --apply \
+  --profile agent-logic-admin \
+  --region us-west-2 \
+  --project-name adl-codefriend-build \
+  --compute-type BUILD_GENERAL1_XLARGE \
+  --cache-bucket adl-codefriend-build-cache \
+  --cache-prefix codebuild/cache \
+  --artifact-dir "$TMP/setup-artifacts" >"$TMP/setup.out"
+assert_has "$TMP/setup.out" "PASS aws_codefriend_resources_ready project=adl-codefriend-build region=us-west-2 profile=agent-logic-admin compute_type=BUILD_GENERAL1_XLARGE cache_bucket=adl-codefriend-build-cache cache_prefix=codebuild/cache"
+assert_has "$TMP/aws-setup-args.log" "codebuild update-project --profile agent-logic-admin --region us-west-2 --cli-input-json file://$TMP/setup-artifacts/codebuild-project.json"
+
+python3 - <<'PY' "$TMP/setup-artifacts/codebuild-project.json"
+import json
+import sys
+from pathlib import Path
+
+project = json.loads(Path(sys.argv[1]).read_text())
+buildspec = project["source"]["buildspec"]
+assert project["environment"]["computeType"] == "BUILD_GENERAL1_XLARGE"
+assert project["cache"]["type"] == "S3"
+assert project["cache"]["location"] == "adl-codefriend-build-cache/codebuild/cache"
+assert "/root/.cache/sccache" not in buildspec
+assert "__SCCACHE_BUCKET__" not in buildspec
+assert "__SCCACHE_REGION__" not in buildspec
+assert "__SCCACHE_PREFIX__" not in buildspec
+assert 'export SCCACHE_BUCKET="adl-codefriend-build-cache"' in buildspec
+assert 'export SCCACHE_REGION="us-west-2"' in buildspec
+assert 'export SCCACHE_S3_KEY_PREFIX="codebuild/cache/sccache/x86_64-unknown-linux-gnu"' in buildspec
+assert 'eval "$(aws configure export-credentials --format env)"' in buildspec
+assert "codebuild-aws-credentials.env" not in buildspec
+assert 'export CARGO_TARGET_DIR="/workspace/target"' in buildspec
+assert "cd /workspace" in buildspec
+assert "apt-get install -y lld clang" in buildspec
+assert "ld.lld --version" in buildspec
+assert "CARGO_INCREMENTAL=0" in buildspec
+assert "-C link-arg=-fuse-ld=lld" in buildspec
+assert "--remap-path-prefix=/workspace=/workspace" in buildspec
+assert "--remap-path-prefix=/root=/home" in buildspec
+assert "AWS_SECRET_ACCESS_KEY" not in buildspec
+assert "AWS_SESSION_TOKEN" not in buildspec
+PY
 
 printf 'PASS test_run_aws_codefriend_build_lane\n'
