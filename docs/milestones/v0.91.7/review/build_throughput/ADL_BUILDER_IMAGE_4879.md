@@ -260,3 +260,75 @@ the same as the measured `cargo test` command duration.
 This is the current direct custom-image CodeBuild warm-cache row. The nested
 Docker-in-CodeBuild diagnostic above remains excluded from platform benchmark
 tables because it used the wrong operational shape.
+
+### AWS Spot EC2
+
+Issue `#4879` now carries the repeatable Spot and CodeBuild launch helpers so
+future runs do not depend on copying commands from prior issue branches:
+
+- `adl/tools/run_aws_spot_remote_validation_lane.sh`
+- `adl/tools/run_aws_codefriend_build_lane.sh`
+- `adl/tools/run_build_platform_benchmark.sh`
+- `.github/workflows/aws-spot-remote-validation.yaml`
+- `.github/workflows/aws-codefriend-build.yaml`
+
+The Spot image path required one additional live-lane permission: ephemeral
+Spot instance roles now receive narrow ECR read access for the `adl-builder`
+repository, plus the required unscoped `ecr:GetAuthorizationToken` action. This
+lets the instance pull `adl-builder:v0.91.7-fixed` directly through its role
+without embedding credentials in the SSM command.
+
+First image-backed EBS run:
+
+- Run id: `spot-fixed-builder-image-ebs-20260705T063747Z`
+- Image: `adl-builder:v0.91.7-fixed`
+- Instance: Spot `m7a.2xlarge`
+- Cache volume: `adl-aws-remote-validation-cache-volume`
+- Cache attachment: `attached`
+- Cache volume created during run: `false`
+- Result: `passed`
+- Cleanup: `terminated`
+- Remote command wall time: `457s`
+- Benchmark line:
+  `ADL_BUILD_PLATFORM_BENCHMARK platform=aws-spot-fixed-builder-image build_seconds=224 test_seconds=184 total_seconds=408 status=passed`
+
+Warm image-backed EBS repeat:
+
+- Run id: `spot-fixed-builder-image-ebs-warm-20260705T064805Z`
+- Image: `adl-builder:v0.91.7-fixed`
+- Instance: Spot `m7a.2xlarge`
+- Cache volume: `adl-aws-remote-validation-cache-volume`
+- Cache attachment: `attached`
+- Cache volume created during run: `false`
+- Result: `passed`
+- Cleanup: `terminated`
+- Remote command wall time: `122s`
+- Benchmark line:
+  `ADL_BUILD_PLATFORM_BENCHMARK platform=aws-spot-fixed-builder-image-warm build_seconds=24 test_seconds=49 total_seconds=73 status=passed`
+
+Both Spot runs installed Docker on the ephemeral Amazon Linux host and pulled
+the fixed image before entering the benchmark. The benchmark total excludes
+launch, Docker install, and image pull time; `remote command wall time` includes
+the remote bootstrap command wrapper around the image run. A pre-baked Spot AMI
+with Docker and the fixed image already present should reduce the non-benchmark
+overhead further.
+
+### Wuji
+
+Wuji is ARM64. The current published ECR image is amd64-only. A local Colima
+probe with `--platform linux/amd64` pulled the fixed image and entered QEMU, but
+the build failed in `aws-lc-sys` with a GCC internal compiler error while
+assembling x86_64 sources. That is not a valid wuji platform benchmark.
+
+Observed failed probe:
+
+- Run id: `wuji-fixed-builder-image-warm-20260705T063317Z`
+- Host Docker engine: `linux/arm64`
+- Image requested: `adl-builder:v0.91.7-fixed` as `linux/amd64`
+- Result: `failed`, excluded from benchmark table
+- Failure class: QEMU/amd64 emulation compiler failure
+- Evidence excerpt: `sccache: Compiler killed by signal 11` and
+  `cc: internal compiler error: Segmentation fault`
+
+Wuji needs an arm64 or multi-arch `adl-builder` image before it can produce a
+valid image-backed benchmark row.

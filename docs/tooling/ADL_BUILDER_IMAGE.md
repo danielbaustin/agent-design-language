@@ -84,6 +84,9 @@ replace compiler-output caching.
   a container; when `ADL_NESSUS_BUILDER_IMAGE` is set, the runner mounts the
   persistent target and sccache directories into the container.
 - Local Docker runs should mount target and sccache directories explicitly.
+- Wuji is ARM64. Do not use the current amd64-only `adl-builder:v0.91.7-fixed`
+  image as a wuji benchmark through QEMU emulation; publish an arm64 or
+  multi-arch image first.
 
 ## Nessus
 
@@ -124,3 +127,30 @@ The AWS-managed `aws/codebuild/standard:7.0` image is not a drop-in Rust image
 for this lane. A 2026-07-05 probe with `runtime-versions: rust: latest` failed
 before execution because that managed image did not advertise a Rust runtime.
 Use the ADL ECR image for no-install Rust validation.
+
+## Launching The Next Build
+
+Use the repo wrappers rather than rebuilding command lines by hand:
+
+```sh
+bash adl/tools/run_aws_codefriend_build_lane.sh \
+  --run \
+  --check-account \
+  --project-name adl-codefriend-build \
+  --source-version <branch-or-sha> \
+  --wait
+```
+
+```sh
+bash adl/tools/run_aws_spot_remote_validation_lane.sh \
+  --run \
+  --check-account \
+  --git-ref <branch-or-sha> \
+  --command 'bash adl/tools/run_build_platform_benchmark.sh --platform aws_spot --cache-posture warm_ebs_cache' \
+  --instance-type m7a.2xlarge \
+  --json
+```
+
+For Nessus, keep using `adl/tools/run_nessus_remote_validation.sh` with
+`ADL_NESSUS_BUILDER_IMAGE` set. For wuji, wait for an arm64 or multi-arch image
+before claiming an image-backed Docker benchmark.
