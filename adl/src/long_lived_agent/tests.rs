@@ -1085,15 +1085,17 @@ fn daemon_partial_checkpoint_preserves_recoverable_failure_reason() {
 
     let stop_observed = sleep_with_partial_checkpoints(
         &loaded,
-        0,
-        1,
-        1,
         &mut daemon_status,
-        1,
-        Some("error:cycle failed".to_string()),
-        Some(error),
-        "restart_backoff",
-        true,
+        PartialCheckpointSleep {
+            total_sleep_secs: 0,
+            checkpoint_interval_secs: 1,
+            restart_count: 1,
+            max_restarts: 1,
+            last_child_exit: Some("error:cycle failed".to_string()),
+            recoverable_error: Some(error),
+            event: "restart_backoff",
+            no_sleep: true,
+        },
     )
     .expect("partial checkpoint");
     assert!(!stop_observed);
@@ -1176,15 +1178,17 @@ fn daemon_heartbeat_partial_checkpoint_does_not_report_backoff() {
 
     let stop_observed = sleep_with_partial_checkpoints(
         &loaded,
-        1,
-        1,
-        0,
         &mut daemon_status,
-        1,
-        None,
-        None,
-        "daemon_heartbeat",
-        false,
+        PartialCheckpointSleep {
+            total_sleep_secs: 1,
+            checkpoint_interval_secs: 1,
+            restart_count: 0,
+            max_restarts: 1,
+            last_child_exit: None,
+            recoverable_error: None,
+            event: "daemon_heartbeat",
+            no_sleep: false,
+        },
     )
     .expect("partial checkpoint");
 
@@ -1221,15 +1225,17 @@ fn daemon_partial_checkpoint_reports_stop_observed_before_restart_attempt() {
 
     let stop_observed = sleep_with_partial_checkpoints(
         &loaded,
-        1,
-        1,
-        1,
         &mut daemon_status,
-        1,
-        Some("error:cycle failed".to_string()),
-        None,
-        "restart_backoff",
-        false,
+        PartialCheckpointSleep {
+            total_sleep_secs: 1,
+            checkpoint_interval_secs: 1,
+            restart_count: 1,
+            max_restarts: 1,
+            last_child_exit: Some("error:cycle failed".to_string()),
+            recoverable_error: None,
+            event: "restart_backoff",
+            no_sleep: false,
+        },
     )
     .expect("partial checkpoint");
     assert!(stop_observed);

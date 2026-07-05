@@ -316,15 +316,17 @@ pub fn daemon(spec_path: &Path, options: DaemonOptions) -> Result<DaemonStatusRe
                 )?;
                 let stop_observed = sleep_with_partial_checkpoints(
                     &loaded,
-                    backoff_secs,
-                    options.checkpoint_interval_secs,
-                    restart_count,
                     &mut daemon_status,
-                    options.max_restarts,
-                    last_child_exit.clone(),
-                    status.last_error.clone(),
-                    "restart_backoff",
-                    options.no_sleep,
+                    PartialCheckpointSleep {
+                        total_sleep_secs: backoff_secs,
+                        checkpoint_interval_secs: options.checkpoint_interval_secs,
+                        restart_count,
+                        max_restarts: options.max_restarts,
+                        last_child_exit: last_child_exit.clone(),
+                        recoverable_error: status.last_error.clone(),
+                        event: "restart_backoff",
+                        no_sleep: options.no_sleep,
+                    },
                 )?;
                 if stop_observed {
                     continue;
@@ -343,15 +345,17 @@ pub fn daemon(spec_path: &Path, options: DaemonOptions) -> Result<DaemonStatusRe
         let sleep_secs = daemon_interval_secs(&loaded, options.interval_secs)?;
         let stop_observed = sleep_with_partial_checkpoints(
             &loaded,
-            sleep_secs,
-            options.checkpoint_interval_secs,
-            restart_count,
             &mut daemon_status,
-            options.max_restarts,
-            last_child_exit.clone(),
-            None,
-            "daemon_heartbeat",
-            options.no_sleep,
+            PartialCheckpointSleep {
+                total_sleep_secs: sleep_secs,
+                checkpoint_interval_secs: options.checkpoint_interval_secs,
+                restart_count,
+                max_restarts: options.max_restarts,
+                last_child_exit: last_child_exit.clone(),
+                recoverable_error: None,
+                event: "daemon_heartbeat",
+                no_sleep: options.no_sleep,
+            },
         )?;
         if stop_observed {
             continue;
@@ -1298,6 +1302,17 @@ struct DaemonStatusInput<'a> {
     next_backoff_secs: u64,
 }
 
+struct PartialCheckpointSleep<'a> {
+    total_sleep_secs: u64,
+    checkpoint_interval_secs: u64,
+    restart_count: u64,
+    max_restarts: u64,
+    last_child_exit: Option<String>,
+    recoverable_error: Option<StatusError>,
+    event: &'a str,
+    no_sleep: bool,
+}
+
 fn write_daemon_status(
     loaded: &LoadedAgentSpec,
     input: DaemonStatusInput<'_>,
@@ -1327,20 +1342,13 @@ fn write_daemon_status(
 
 fn sleep_with_partial_checkpoints(
     loaded: &LoadedAgentSpec,
-    total_sleep_secs: u64,
-    checkpoint_interval_secs: u64,
-    restart_count: u64,
     daemon_status: &mut DaemonStatusRecord,
-    max_restarts: u64,
-    last_child_exit: Option<String>,
-    recoverable_error: Option<StatusError>,
-    event: &str,
-    no_sleep: bool,
+    sleep: PartialCheckpointSleep<'_>,
 ) -> Result<bool> {
-    let mut remaining = total_sleep_secs;
-    if remaining == 0 || no_sleep {
+    let mut remaining = sleep.total_sleep_secs;
+    if remaining == 0 || sleep.no_sleep {
         let mut current = status(&loaded.spec_path)?;
-        if let Some(error) = recoverable_error.clone() {
+        if let Some(error) = sleep.recoverable_error.clone() {
             current.state = AgentStatusState::Failed;
             current.last_error = Some(error);
         }
@@ -1349,11 +1357,11 @@ fn sleep_with_partial_checkpoints(
             loaded,
             DaemonStatusInput {
                 state: daemon_status.state.as_str(),
-                restart_count,
-                max_restarts,
-                checkpoint_interval_secs,
+                restart_count: sleep.restart_count,
+                max_restarts: sleep.max_restarts,
+                checkpoint_interval_secs: sleep.checkpoint_interval_secs,
                 last_event: "checkpoint_write",
-                last_child_exit,
+                last_child_exit: sleep.last_child_exit,
                 next_backoff_secs: 0,
             },
         )?;
@@ -1361,12 +1369,12 @@ fn sleep_with_partial_checkpoints(
             loaded,
             "checkpoint_write",
             "completed",
-            restart_count,
+            sleep.restart_count,
             json!({
                 "checkpoint_reason": "daemon_partial_checkpoint",
                 "checkpoint_ref": "continuity_checkpoint.json",
                 "status_ref": "status.json",
-                "trigger": event
+                "trigger": sleep.event
             }),
         )?;
         return Ok(false);
@@ -1374,16 +1382,16 @@ fn sleep_with_partial_checkpoints(
 
     let mut stop_observed = false;
     while remaining > 0 {
-        let slice = remaining.min(checkpoint_interval_secs);
+        let slice = remaining.min(sleep.checkpoint_interval_secs);
         std::thread::sleep(Duration::from_secs(slice));
         remaining -= slice;
         let mut current = status(&loaded.spec_path)?;
-        if let Some(error) = recoverable_error.clone() {
+        if let Some(error) = sleep.recoverable_error.clone() {
             current.state = AgentStatusState::Failed;
             current.last_error = Some(error);
         }
         persist_status(loaded, &current, "daemon_partial_checkpoint")?;
-        let next_backoff_secs = if event == "restart_backoff" {
+        let next_backoff_secs = if sleep.event == "restart_backoff" {
             remaining
         } else {
             0
@@ -1392,11 +1400,11 @@ fn sleep_with_partial_checkpoints(
             loaded,
             DaemonStatusInput {
                 state: daemon_status.state.as_str(),
-                restart_count,
-                max_restarts,
-                checkpoint_interval_secs,
+                restart_count: sleep.restart_count,
+                max_restarts: sleep.max_restarts,
+                checkpoint_interval_secs: sleep.checkpoint_interval_secs,
                 last_event: "checkpoint_write",
-                last_child_exit: last_child_exit.clone(),
+                last_child_exit: sleep.last_child_exit.clone(),
                 next_backoff_secs,
             },
         )?;
@@ -1404,12 +1412,12 @@ fn sleep_with_partial_checkpoints(
             loaded,
             "checkpoint_write",
             "completed",
-            restart_count,
+            sleep.restart_count,
             json!({
                 "checkpoint_reason": "daemon_partial_checkpoint",
                 "checkpoint_ref": "continuity_checkpoint.json",
                 "status_ref": "status.json",
-                "trigger": event,
+                "trigger": sleep.event,
                 "remaining_sleep_secs": remaining
             }),
         )?;
@@ -1419,7 +1427,7 @@ fn sleep_with_partial_checkpoints(
                 loaded,
                 "graceful_shutdown_requested",
                 "observed",
-                restart_count,
+                sleep.restart_count,
                 json!({"stop_ref": "stop.json"}),
             )?;
             break;
