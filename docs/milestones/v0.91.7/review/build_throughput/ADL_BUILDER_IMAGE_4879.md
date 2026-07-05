@@ -213,3 +213,50 @@ Nessus image-backed benchmark:
 This is an image-backed Nessus result after target-cache cleanup. It is not a
 warm-target best-case result, because the target cache had just been pruned to
 restore disk headroom.
+
+## Warm Cache Image-Backed Reruns
+
+These runs keep the fixed image and validation caches in place. They do not
+rebuild the image inside the validation job.
+
+### Nessus
+
+- Run id: `nessus-fixed-builder-image-warm-precise-20260705T062019Z`
+- Image: `adl-builder:v0.91.7-fixed`
+- Runtime: Docker
+- Git ref: `103b47fbca0de63fa3a04b4a2b1506c0302f0f83`
+- Result: `passed`
+- Runner elapsed: `40s`
+- Command result: `21 passed; 0 failed; 1554 filtered out`
+- Precise benchmark line:
+  `ADL_BUILD_PLATFORM_BENCHMARK_PRECISE platform=nessus-fixed-builder-image-warm build_ms=34084 test_ms=392 total_ms=34476 status=passed`
+- `/usr/bin/time` command timing:
+  - build: `34.08s`
+  - test command: `0.39s`
+  - total measured command time: `34.476s`
+
+The previous whole-second warm Nessus line rounded the test command to `0s`.
+This millisecond-timed rerun is the reporting source for the warm Nessus row.
+Cargo also reported the test binary body as `finished in 0.00s`; that is not
+the same as the measured `cargo test` command duration.
+
+### CodeBuild
+
+- Build id: `adl-codefriend-build:44a2ba8a-d5cd-441e-b428-cc12fadcc1af`
+- Image: `adl-builder:v0.91.7-fixed`
+- Compute: `BUILD_GENERAL1_XLARGE`
+- Image pull: `SERVICE_ROLE`
+- Privileged mode: `false`
+- Rebuilt image during run: no
+- Result: `SUCCEEDED`
+- Provisioning duration: `22s`
+- Build phase duration: `173s`
+- Command result: `21 passed; 0 failed; 1554 filtered out`
+- Benchmark line:
+  `ADL_BUILD_PLATFORM_BENCHMARK platform=codebuild-xlarge-direct-fixed-builder-image build_seconds=97 test_seconds=76 total_seconds=173 status=passed`
+- `sccache`: `845` compile requests, `765` hits, `1` miss, `99.87%` total
+  hit rate, `99.73%` Rust hit rate
+
+This is the current direct custom-image CodeBuild warm-cache row. The nested
+Docker-in-CodeBuild diagnostic above remains excluded from platform benchmark
+tables because it used the wrong operational shape.
