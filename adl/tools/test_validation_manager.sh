@@ -791,6 +791,139 @@ if bash "$SCRIPT" \
 fi
 assert_has "$TMP/remote-docs-run.err" "requested remote runner is not eligible"
 
+bash "$SCRIPT" \
+  --changed-files "$docs_only" \
+  --platform-routing \
+  --json >"$TMP/platform-docs.json"
+python3 - <<'PY' "$TMP/platform-docs.json"
+import json
+import sys
+
+profile = json.load(open(sys.argv[1]))
+routing = profile["platform_routing"]
+assert routing["schema_version"] == "adl.validation_platform_routing.v1"
+assert routing["requested_platform"] == "auto"
+assert routing["decision"] == "selected"
+assert routing["selected_platform"] == "local"
+assert routing["no_launch"] is True
+candidates = {item["platform"]: item for item in routing["candidates"]}
+assert candidates["local"]["decision"] == "eligible"
+assert candidates["local"]["cache_posture"] == "local_target_or_repo_configured"
+assert candidates["aws_spot"]["decision"] == "rejected"
+assert "not cost-appropriate" in candidates["aws_spot"]["reason"]
+assert candidates["codebuild"]["decision"] == "eligible"
+assert "run_aws_codefriend_build_lane.sh" in candidates["codebuild"]["command"]
+assert "--project-name adl-codefriend-build" in candidates["codebuild"]["command"]
+assert "--print-command" in candidates["codebuild"]["command"]
+assert "<branch-or-ref>" not in candidates["codebuild"]["command"]
+PY
+
+bash "$SCRIPT" \
+  --changed-files "$remote_profile_changed" \
+  --validation-platform nessus \
+  --json >"$TMP/platform-nessus.json"
+python3 - <<'PY' "$TMP/platform-nessus.json"
+import json
+import sys
+
+profile = json.load(open(sys.argv[1]))
+routing = profile["platform_routing"]
+assert routing["requested_platform"] == "nessus"
+assert routing["decision"] == "selected"
+assert routing["selected_platform"] == "nessus"
+candidates = {item["platform"]: item for item in routing["candidates"]}
+assert candidates["nessus"]["decision"] == "eligible"
+assert "run_nessus_remote_validation.sh" in candidates["nessus"]["command"]
+assert candidates["nessus"]["cache_posture"] == "remote_target_sccache_warm"
+PY
+
+bash "$SCRIPT" \
+  --changed-files "$remote_profile_changed" \
+  --validation-platform aws_spot \
+  --json >"$TMP/platform-spot.json"
+python3 - <<'PY' "$TMP/platform-spot.json"
+import json
+import sys
+
+profile = json.load(open(sys.argv[1]))
+routing = profile["platform_routing"]
+assert routing["requested_platform"] == "aws_spot"
+assert routing["decision"] == "selected"
+assert routing["selected_platform"] == "aws_spot"
+candidates = {item["platform"]: item for item in routing["candidates"]}
+spot = candidates["aws_spot"]
+assert spot["decision"] == "eligible"
+assert "run_aws_spot_remote_validation_lane.sh" in spot["command"]
+assert "--print-command" in spot["command"]
+assert "<branch-or-ref>" not in spot["command"]
+assert spot["cache_posture"] == "warm_ebs_cache:/mnt/adl-cache"
+assert any("retained EBS cache" in caveat for caveat in spot["caveats"])
+PY
+
+bash "$SCRIPT" \
+  --changed-files "$daemon_wave" \
+  --validation-platform codebuild \
+  --json >"$TMP/platform-codebuild.json"
+python3 - <<'PY' "$TMP/platform-codebuild.json"
+import json
+import sys
+
+profile = json.load(open(sys.argv[1]))
+routing = profile["platform_routing"]
+assert routing["requested_platform"] == "codebuild"
+assert routing["decision"] == "selected"
+assert routing["selected_platform"] == "codebuild"
+candidates = {item["platform"]: item for item in routing["candidates"]}
+codebuild = candidates["codebuild"]
+assert codebuild["decision"] == "eligible"
+assert "run_aws_codefriend_build_lane.sh" in codebuild["command"]
+assert "--project-name adl-codefriend-build" in codebuild["command"]
+assert "--print-command" in codebuild["command"]
+assert "<branch-or-ref>" not in codebuild["command"]
+assert "--git-ref" not in codebuild["command"]
+assert "--compute-type" not in codebuild["command"]
+assert codebuild["cache_posture"] == "stable_local_target_cache_plus_s3_sccache"
+assert "requires builder image and S3 sccache to be configured" in codebuild["caveats"]
+PY
+
+if bash "$SCRIPT" \
+  --changed-files "$daemon_wave" \
+  --validation-platform codebuild \
+  --run >"$TMP/platform-codebuild-run.out" 2>"$TMP/platform-codebuild-run.err"; then
+  echo "expected selected CodeBuild platform request to remain dry-run only under --run" >&2
+  exit 1
+fi
+assert_has "$TMP/platform-codebuild-run.err" "platform routing is dry-run only for non-local platforms"
+
+if bash "$SCRIPT" \
+  --changed-files "$remote_profile_changed" \
+  --validation-platform aws_spot \
+  --run >"$TMP/platform-spot-run.out" 2>"$TMP/platform-spot-run.err"; then
+  echo "expected selected non-local platform request to remain dry-run only under --run" >&2
+  exit 1
+fi
+assert_has "$TMP/platform-spot-run.err" "platform routing is dry-run only for non-local platforms"
+
+bash "$SCRIPT" \
+  --changed-files "$runtime" \
+  --validation-platform wuji \
+  --json >"$TMP/platform-wuji.json"
+python3 - <<'PY' "$TMP/platform-wuji.json"
+import json
+import sys
+
+profile = json.load(open(sys.argv[1]))
+routing = profile["platform_routing"]
+assert routing["requested_platform"] == "wuji"
+assert routing["decision"] == "rejected"
+assert routing["selected_platform"] is None
+candidates = {item["platform"]: item for item in routing["candidates"]}
+wuji = candidates["wuji"]
+assert "ARM" in wuji["reason"]
+assert wuji["cache_posture"] == "linked_target_cache_warm_arm64"
+assert "arm64_builder_image_gap" in wuji["caveats"]
+PY
+
 scheduler_provider_policy="$TMP/scheduler-provider-policy.txt"
 cat >"$scheduler_provider_policy" <<'EOF'
 M	adl/src/provider/profiles.rs

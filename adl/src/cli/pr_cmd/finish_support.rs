@@ -3245,6 +3245,7 @@ fn registered_validation_atom_supported(command: &str) -> bool {
                 | "adl/tools/test_ci_path_policy.sh"
                 | "adl/tools/test_ci_runtime_contracts.sh"
                 | "adl/tools/test_select_validation_lanes.sh"
+                | "adl/tools/test_run_aws_codefriend_build_lane.sh"
                 | "adl/tools/test_validation_manager.sh"
                 | "adl/tools/test_adl_builder_image.sh"
                 | "adl/tools/test_import_adl_builder_image_from_s3_to_ecr.sh"
@@ -3772,6 +3773,9 @@ fn finish_path_is_larger_binary_focused(path: &str) -> bool {
             | "adl/tools/ci_path_policy.sh"
             | "adl/tools/test_ci_path_policy.sh"
             | "adl/tools/test_ci_runtime_contracts.sh"
+            | "adl/tools/run_aws_codefriend_build_lane.sh"
+            | "adl/tools/test_run_aws_codefriend_build_lane.sh"
+            | "adl/tools/test_run_validation_manager_nessus_lane.sh"
             | "adl/tools/run_authoritative_coverage_lane.sh"
             | "adl/tools/test_run_authoritative_coverage_lane.sh"
             | "adl/tools/run_pr_fast_test_lane.sh"
@@ -5314,6 +5318,10 @@ pub(super) fn run_finish_validation_rust(
                     let script = repo_root.join("adl/tools/test_select_validation_lanes.sh");
                     run_finish_validation_status("bash", &[path_str(&script)?])?;
                 }
+                "bash adl/tools/test_run_aws_codefriend_build_lane.sh" => {
+                    let script = repo_root.join("adl/tools/test_run_aws_codefriend_build_lane.sh");
+                    run_finish_validation_status("bash", &[path_str(&script)?])?;
+                }
                 "bash adl/tools/test_prompt_template_workflow_integration.sh" => {
                     let script =
                         repo_root.join("adl/tools/test_prompt_template_workflow_integration.sh");
@@ -5326,6 +5334,11 @@ pub(super) fn run_finish_validation_rust(
                 }
                 "bash adl/tools/test_validation_manager.sh" => {
                     let script = repo_root.join("adl/tools/test_validation_manager.sh");
+                    run_finish_validation_status("bash", &[path_str(&script)?])?;
+                }
+                "bash adl/tools/test_run_validation_manager_nessus_lane.sh" => {
+                    let script =
+                        repo_root.join("adl/tools/test_run_validation_manager_nessus_lane.sh");
                     run_finish_validation_status("bash", &[path_str(&script)?])?;
                 }
                 "bash adl/tools/test_ci_path_policy.sh && bash adl/tools/test_ci_runtime_contracts.sh && bash adl/tools/test_select_validation_lanes.sh && bash adl/tools/test_validation_manager.sh && bash adl/tools/test_run_nessus_remote_validation.sh && bash adl/tools/test_run_validation_manager_nessus_lane.sh" => {

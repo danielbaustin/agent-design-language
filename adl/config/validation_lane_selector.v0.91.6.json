@@ -519,6 +519,35 @@
       "reason": "builder_image_surface_requires_dockerfile_setup_import_and_policy_contract_checks"
     },
     {
+      "id": "aws_codefriend_build_lane",
+      "lane_class": "cli_workflow",
+      "default_surface": "ci_policy",
+      "owner": "tools",
+      "proof_role": "ci_contract",
+      "requirement_ids": [
+        "aws_codefriend_build_lane"
+      ],
+      "path_selectors": [
+        ".github/workflows/aws-codefriend-build.yaml",
+        "adl/tools/run_aws_codefriend_build_lane.sh",
+        "adl/tools/run_build_platform_benchmark.sh",
+        "adl/tools/setup_aws_codefriend_build_resources.sh",
+        "adl/tools/test_run_aws_codefriend_build_lane.sh",
+        "docs/tooling/AWS_CODEFRIEND_BUILD_LANE.md"
+      ],
+      "path_hints": [
+        ".github/workflows/aws-codefriend-build.yaml",
+        "adl/tools/run_aws_codefriend_build_lane.sh",
+        "adl/tools/run_build_platform_benchmark.sh",
+        "adl/tools/setup_aws_codefriend_build_resources.sh",
+        "adl/tools/test_run_aws_codefriend_build_lane.sh",
+        "docs/tooling/AWS_CODEFRIEND_BUILD_LANE.md"
+      ],
+      "command": "bash adl/tools/test_run_aws_codefriend_build_lane.sh",
+      "run_command": "bash adl/tools/test_run_aws_codefriend_build_lane.sh",
+      "reason": "aws_codefriend_build_lane_requires_github_actions_and_aws_codebuild_contract_checks"
+    },
+    {
       "id": "v0917_soak2_status_contracts",
       "lane_class": "cli_workflow",
       "default_surface": "tooling",
