@@ -1,144 +1,267 @@
 {
   "schema": "adl.v0917.runtime_soak2.execution_status.v1",
-  "issue": 4682,
+  "issue": 4880,
+  "supersedes_attempt_issue": 4682,
   "umbrella_issue": 4634,
   "version": "v0.91.7",
-  "generated_at": "2026-07-04T22:40:54Z",
-  "status": "blocked_before_full_soak",
-  "v092_runtime_coherence_claim": "blocked",
-  "matrix_source": {
-    "owner_issue": 4843,
-    "pr": 4870,
-    "commit": "2d15a0273d04d58467f1a477c9923cc6f6834b89",
-    "state": "ready_green",
-    "main_contains_matrix": false,
-    "artifact_refs": [
-      "docs/milestones/v0.91.7/review/runtime/SOAK2_FEATURE_LIST_MATRIX_4843.md",
-      "docs/milestones/v0.91.7/review/runtime/soak2_feature_list_matrix_4843.json"
-    ]
+  "generated_at": "2026-07-05T04:35:25Z",
+  "status": "final_rerun_completed_with_blockers",
+  "v092_runtime_coherence_claim": "blocked_pending_operator_disposition",
+  "artifact_root": "docs/milestones/v0.91.7/review/runtime/soak2_4682/",
+  "execution_base": {
+    "base_branch": "origin/main",
+    "base_commit": "7efb6088b5c5ce4d5163dcf00df08da22a8c5e0e",
+    "runtime_path_issue": 4681,
+    "resilience_middleware_issue": 4783,
+    "matrix_issue": 4843,
+    "rerun_issue": 4880,
+    "note": "All previously blocking WP-07 child PRs were merged before this rerun started."
   },
-  "upstream_pr_evidence": [
+  "commands": [
     {
-      "issue": 4681,
-      "pr": 4868,
-      "commit": "0b8821ec1de112d3b84fa64e87d2a6fb9fb63a02",
-      "is_draft": false,
-      "projection_status": "ready_to_merge_or_review",
-      "failed_checks": [],
-      "pending_checks": []
+      "command": "adl/target/debug/adl-runtime run adl/examples/v0-87-1-minimal-runtime-demo.adl.yaml --trace --run --allow-unsigned --out docs/milestones/v0.91.7/review/runtime/soak2_4682/tokio_runtime_substrate",
+      "status": "passed",
+      "evidence": "docs/milestones/v0.91.7/review/runtime/soak2_4682/tokio_runtime_substrate/quickstart/runtime_marker.txt",
+      "caveat": "The example workflow is unsigned, so the run used the explicit dev-only --allow-unsigned override."
     },
     {
-      "issue": 4783,
-      "pr": 4869,
-      "commit": "2bee28ce00ca87a576d6c69ea06e1010f5cd954c",
-      "is_draft": false,
-      "projection_status": "ready_to_merge_or_review",
-      "failed_checks": [],
-      "pending_checks": []
+      "command": "bash adl/tools/test_provider_demo_common.sh",
+      "status": "passed",
+      "evidence": "provider_demo_common: ok"
     },
     {
-      "issue": 4843,
-      "pr": 4870,
-      "commit": "2d15a0273d04d58467f1a477c9923cc6f6834b89",
-      "is_draft": false,
-      "projection_status": "ready_to_merge_or_review",
-      "failed_checks": [],
-      "pending_checks": []
+      "command": "bash adl/tools/test_pr_v0917_integrated_observability_proof.sh",
+      "status": "passed",
+      "evidence": "docs/milestones/v0.91.7/review/observability_4718/generated/proof_summary.json"
     },
     {
-      "issue": 4784,
-      "pr": 4871,
-      "commit": "573307379d3e487c05ccd974eb5b29942128d8db",
-      "is_draft": false,
-      "projection_status": "ready_to_merge_or_review",
-      "failed_checks": [],
-      "pending_checks": []
+      "command": ".worktrees/adl-wp-4783/adl/target/debug/run_v0916_integrated_runtime_soak --out docs/milestones/v0.91.7/review/runtime/soak2_4682/agent_lifecycle",
+      "status": "passed_via_warmed_merged_worktree_binary",
+      "evidence": "docs/milestones/v0.91.7/review/runtime/soak2_4682/agent_lifecycle/integrated_runtime_soak_proof.json",
+      "caveat": "The inherited v0.91.6 runner embeds CARGO_MANIFEST_DIR. The primary warmed binary was stale to an old worktree; the successful run used the warmed #4783 worktree binary and copied same-relative-path artifacts into #4880."
     },
     {
-      "issue": 4683,
-      "pr": 4872,
-      "commit": "6464203cc8fe33d0f448dbf5973c73c8f5750f0e",
-      "is_draft": false,
-      "projection_status": "ready_to_merge_or_review",
-      "failed_checks": [],
-      "pending_checks": []
-    }
-  ],
-  "merged_evidence_consumed": [
-    {
-      "issue": 4842,
-      "status": "merged_closed",
-      "evidence": "Runtime v2 reconciliation is on main through PR #4851."
+      "command": ".worktrees/adl-wp-4783/adl/target/debug/run_v0916_acip_aee_memory_integration --out docs/milestones/v0.91.7/review/runtime/soak2_4682/aee_memory",
+      "status": "passed_via_warmed_merged_worktree_binary",
+      "evidence": "docs/milestones/v0.91.7/review/runtime/soak2_4682/aee_memory/runtime_acip_aee_memory_proof.json",
+      "caveat": "The inherited v0.91.6 runner embeds CARGO_MANIFEST_DIR; artifacts were generated from the warmed #4783 binary under the same relative artifact root and copied into #4880."
     },
     {
-      "issue": 4718,
-      "status": "merged_closed",
-      "evidence": "docs/milestones/v0.91.7/review/observability_4718/INTEGRATED_LOGGING_OTEL_PROOF_4718.md"
+      "command": ".worktrees/adl-wp-4783/adl/target/debug/run_v0916_runtime_failure_injection --out docs/milestones/v0.91.7/review/runtime/soak2_4682/resilience",
+      "status": "passed_via_warmed_merged_worktree_binary",
+      "evidence": "docs/milestones/v0.91.7/review/runtime/soak2_4682/resilience/runtime_failure_injection_proof.json",
+      "caveat": "The successful run used the warmed #4783 worktree binary and copied same-relative-path artifacts into #4880."
+    },
+    {
+      "command": "adl/target/debug/adl runtime-v2 security-boundary --out docs/milestones/v0.91.7/review/runtime/soak2_4682/security_cav_boundary/proof_packet.json",
+      "status": "passed",
+      "evidence": "docs/milestones/v0.91.7/review/runtime/soak2_4682/security_cav_boundary/proof_packet.json"
+    },
+    {
+      "command": "adl/target/debug/adl runtime-v2 operator-controls --out docs/milestones/v0.91.7/review/runtime/soak2_4682/capability_envelope/operator_control_report.json",
+      "status": "passed",
+      "evidence": "docs/milestones/v0.91.7/review/runtime/soak2_4682/capability_envelope/operator_control_report.json"
+    },
+    {
+      "command": "adl/target/debug/adl-runtime identity now",
+      "status": "passed",
+      "evidence": "stdout temporal_context.v1 snapshot captured during the run"
+    },
+    {
+      "command": "adl/target/debug/adl agent daemon --spec docs/milestones/v0.91.7/review/runtime/soak2_4682/daemon_supervision/agent.yaml --max-restarts 1 --checkpoint-interval-secs 3 --no-sleep --json",
+      "status": "passed_after_issue_binary_refresh",
+      "evidence": "docs/milestones/v0.91.7/review/runtime/soak2_4682/daemon_supervision/state/daemon_status.json",
+      "caveat": "Existing warmed repo binaries did not yet include #4885 daemon mode after merge, so #4880 warmed the issue target from the root cache and refreshed the issue-local adl binary before running the daemon proof."
+    },
+    {
+      "command": "ADL_OBSERVABILITY_LOG=docs/milestones/v0.91.7/review/runtime/soak2_4682/otel_monitor/observability.log ADL_OTEL_LOG=docs/milestones/v0.91.7/review/runtime/soak2_4682/otel_monitor/otel.jsonl ADL_OTEL_STATUS=docs/milestones/v0.91.7/review/runtime/soak2_4682/otel_monitor/otel_status.json adl/target/debug/adl agent daemon --spec docs/milestones/v0.91.7/review/runtime/soak2_4682/otel_monitor/agent.yaml --max-restarts 1 --checkpoint-interval-secs 3 --no-sleep --json",
+      "status": "passed",
+      "evidence": "docs/milestones/v0.91.7/review/runtime/soak2_4682/otel_monitor/otel_status.json",
+      "caveat": "This proves ADL's central event emitter can mirror daemon lifecycle events into a durable OTel-shaped JSONL sink and monitor-status file; it does not claim a network OTLP collector or hosted telemetry backend."
+    },
+    {
+      "command": "cargo test --manifest-path adl/Cargo.toml runtime_v2 security -- --nocapture",
+      "status": "not_run_invalid_matrix_command",
+      "evidence": "Cargo rejected the matrix command with unexpected argument 'security'. Existing owner-binary security-boundary proof was used instead."
     }
   ],
   "row_results": [
     {
       "id": "tokio_runtime_substrate",
-      "state": "blocked",
-      "owner_issues": [
-        4681,
-        4842,
-        4682
+      "state": "integrated_proven",
+      "owner_issues": [4681, 4842, 4880],
+      "evidence": [
+        "docs/milestones/v0.91.7/review/runtime/soak2_4682/tokio_runtime_substrate/quickstart/runtime_marker.txt",
+        "docs/milestones/v0.91.7/review/runtime/MINIMAL_INTEGRATED_RUNTIME_PATH_4681.md"
       ],
-      "reason": "#4681 canonical runtime path PR #4868 is ready-green, but the path is not merged to main or explicitly sequenced for the #4682 integrated run."
+      "reason": "The current runtime compatibility binary executed the minimal runtime path from the #4880 worktree and retained output."
     },
     {
       "id": "agent_lifecycle",
-      "state": "blocked",
-      "owner_issues": [
-        4681,
-        4682
+      "state": "integrated_proven",
+      "owner_issues": [4681, 4880],
+      "evidence": [
+        "docs/milestones/v0.91.7/review/runtime/soak2_4682/agent_lifecycle/integrated_runtime_soak_proof.json",
+        "docs/milestones/v0.91.7/review/runtime/soak2_4682/agent_lifecycle/completion_classification.json"
       ],
-      "reason": "Lifecycle proof must run through the #4681 v0.91.7 canonical runtime path after the PR is consumable."
+      "reason": "The inherited integrated runtime runner retained startup, restart, stop, lease, scheduler, remote-timeout, memory, and observatory packet evidence under the Soak 2 artifact root."
+    },
+    {
+      "id": "aee_path",
+      "state": "integrated_proven",
+      "owner_issues": [4546, 4697, 4880],
+      "evidence": [
+        "docs/milestones/v0.91.7/review/runtime/soak2_4682/aee_memory/runtime_acip_aee_memory_proof.json"
+      ],
+      "reason": "The ACIP/AEE/memory runner retained one temporary-agent execution path through the AEE/control-path artifact writer."
+    },
+    {
+      "id": "acip_a2a_path",
+      "state": "blocked_with_evidence",
+      "owner_issues": [4546, 4658, 4659, 4660, 4880],
+      "evidence": [
+        "docs/milestones/v0.91.7/review/runtime/soak2_4682/aee_memory/runtime_acip_aee_memory_proof.json"
+      ],
+      "reason": "Local ACIP positive, denied, malformed, and failed-delivery cases are retained, but WP-12 protocol/access-rule activation remains outside this WP-07 rerun."
+    },
+    {
+      "id": "provider_model_substrate",
+      "state": "integrated_proven",
+      "owner_issues": [4672, 4673, 4674, 4675, 4817, 4880],
+      "evidence": [
+        "bash adl/tools/test_provider_demo_common.sh -> provider_demo_common: ok"
+      ],
+      "reason": "The repo-native provider demo common proof passed. This remains local/provider-fixture proof and does not claim live premium-provider access."
+    },
+    {
+      "id": "scheduler",
+      "state": "integrated_proven",
+      "owner_issues": [4671, 4674, 4880],
+      "evidence": [
+        "docs/milestones/v0.91.7/review/runtime/soak2_4682/agent_lifecycle/scheduler/scheduler_plan.json"
+      ],
+      "reason": "The integrated runtime soak runner retained the deterministic scheduler economics plan artifact."
     },
     {
       "id": "resilience",
-      "state": "blocked",
-      "owner_issues": [
-        4783,
-        4784,
-        4682
+      "state": "integrated_proven",
+      "owner_issues": [4783, 4784, 4880],
+      "evidence": [
+        "docs/milestones/v0.91.7/review/runtime/soak2_4682/resilience/runtime_failure_injection_proof.json",
+        "docs/milestones/v0.91.7/review/runtime/soak2_4682/resilience/runtime_failure_register.json"
       ],
-      "reason": "#4783 and #4784 are ready-green, but the resilience middleware and failure-injection proof are not merged to main or explicitly sequenced into the #4682 integration base."
+      "reason": "The failure-injection runner retained retry, timeout, cancellation, bulkhead, degraded fallback, remote timeout, and run/resume/stop continuity truth."
     },
     {
       "id": "logging_observability",
-      "state": "prerequisite_proven",
-      "owner_issues": [
-        4718,
-        4682
+      "state": "integrated_proven",
+      "owner_issues": [4718, 4880, 4885, 4634],
+      "evidence": [
+        "docs/milestones/v0.91.7/review/observability_4718/generated/proof_summary.json",
+        "docs/milestones/v0.91.7/review/observability_4718/generated/current_event_samples.log",
+        "docs/milestones/v0.91.7/review/runtime/soak2_4682/daemon_supervision/daemon_stderr.log",
+        "docs/milestones/v0.91.7/review/runtime/soak2_4682/daemon_supervision/state/operator_events.jsonl",
+        "docs/milestones/v0.91.7/review/runtime/soak2_4682/otel_monitor/otel.jsonl",
+        "docs/milestones/v0.91.7/review/runtime/soak2_4682/otel_monitor/otel_status.json"
       ],
-      "reason": "#4718 is merged and retained proof exists; #4682 still must consume it in the final integrated Soak 2 run."
+      "reason": "The #4718 observability verifier reran during #4880 and preserved stdout JSON parse safety, stderr event samples, and redaction/path hygiene. The #4885 daemon proof retained trace/span/service fields, and the #4634 umbrella repair proved ADL's central event emitter mirrors daemon lifecycle events into a durable OTel-shaped JSONL sink plus monitor status."
     },
     {
-      "id": "soak2_matrix",
-      "state": "blocked",
-      "owner_issues": [
-        4843,
-        4682
+      "id": "daemon_supervision",
+      "state": "integrated_proven",
+      "owner_issues": [4885, 4880],
+      "evidence": [
+        "docs/milestones/v0.91.7/review/runtime/soak2_4682/daemon_supervision/daemon_stdout.json",
+        "docs/milestones/v0.91.7/review/runtime/soak2_4682/daemon_supervision/daemon_stderr.log",
+        "docs/milestones/v0.91.7/review/runtime/soak2_4682/daemon_supervision/state/daemon_status.json",
+        "docs/milestones/v0.91.7/review/runtime/soak2_4682/daemon_supervision/state/status.json",
+        "docs/milestones/v0.91.7/review/runtime/soak2_4682/daemon_supervision/state/continuity_checkpoint.json",
+        "docs/milestones/v0.91.7/review/runtime/soak2_4682/daemon_supervision/state/operator_events.jsonl"
       ],
-      "reason": "#4843 is ready-green, but the matrix is not merged to main for the #4682 run."
+      "reason": "The merged #4885 daemon mode fired up in the #4880 integrated soak path, supervised one bounded child tick, emitted retained daemon lifecycle events with OTel-compatible trace/span fields, wrote a daemon status record, and left the agent in recoverable idle state with a partial continuity checkpoint."
     },
     {
-      "id": "module_diet_map",
-      "state": "blocked",
-      "owner_issues": [
-        4683,
-        4682,
-        4844,
-        4845
+      "id": "runtime_aws_signal_bridge",
+      "state": "blocked_with_evidence",
+      "owner_issues": [4635, 4684, 4685, 4686, 4687, 4688, 4880],
+      "evidence": [
+        "docs/milestones/v0.91.7/RUNTIME_SOAK_2_EXECUTION_PACKET_v0.91.7.md"
       ],
-      "reason": "#4683 is ready-green, but downstream review/disposition must consume it after merge or explicit operator sequencing."
+      "reason": "No AWS_PROFILE=agent-logic-admin live heartbeat/SNS/SSM command was run in #4880. The row remains blocked for WP-08/live signal proof or explicit operator non-claim."
+    },
+    {
+      "id": "observatory_unity",
+      "state": "blocked_with_evidence",
+      "owner_issues": [4652, 4702, 4703, 4704, 4689, 4880],
+      "evidence": [
+        "docs/milestones/v0.91.7/review/runtime/soak2_4682/agent_lifecycle/runtime_v2/observatory/visibility_packet.json",
+        "docs/milestones/v0.91.7/review/runtime/soak2_4682/agent_lifecycle/runtime_v2/observatory/unity_observatory_contract.json"
+      ],
+      "reason": "Runtime-owned Observatory packets were produced, but no Unity editor live-consumption command was run in this environment."
+    },
+    {
+      "id": "obsmem_memory_handoff",
+      "state": "integrated_proven",
+      "owner_issues": [4546, 4697, 4880],
+      "evidence": [
+        "docs/milestones/v0.91.7/review/runtime/soak2_4682/aee_memory/obsmem/transition_memory_request.json",
+        "docs/milestones/v0.91.7/review/runtime/soak2_4682/agent_lifecycle/obsmem/transition_memory_request.json"
+      ],
+      "reason": "Both the AEE/memory and integrated lifecycle packets retained ObsMem transition-memory request evidence."
+    },
+    {
+      "id": "identity_continuity",
+      "state": "integrated_proven",
+      "owner_issues": [4681, 4842, 4880],
+      "evidence": [
+        "docs/milestones/v0.91.7/review/runtime/soak2_4682/agent_lifecycle/long_lived_agent/state/continuity.json",
+        "stdout temporal_context.v1 from adl-runtime identity now"
+      ],
+      "reason": "The lifecycle packet retained continuity state and the current identity command emitted a temporal context snapshot."
+    },
+    {
+      "id": "capability_envelope",
+      "state": "blocked_with_evidence",
+      "owner_issues": [4656, 4660, 4696, 4880],
+      "evidence": [
+        "docs/milestones/v0.91.7/review/runtime/soak2_4682/capability_envelope/operator_control_report.json"
+      ],
+      "reason": "The runtime-v2 operator-controls owner binary emitted a static contract report, but the packet records generated_at_utc as not_started and cannot be claimed as fresh integrated capability-envelope proof."
+    },
+    {
+      "id": "security_cav_boundary",
+      "state": "blocked_with_evidence",
+      "owner_issues": [4656, 4657, 4658, 4659, 4660, 4880],
+      "evidence": [
+        "docs/milestones/v0.91.7/review/runtime/soak2_4682/security_cav_boundary/proof_packet.json"
+      ],
+      "reason": "The runtime-v2 security-boundary owner binary emitted a static fail-closed contract packet, but the packet records generated_at_utc as not_started and cannot be claimed as fresh integrated security/CAV proof. The original matrix Cargo command was invalid and was not used as proof."
+    },
+    {
+      "id": "curiosity_constructability_optional",
+      "state": "deferred_with_operator_approval",
+      "owner_issues": [4692, 4693, 4880],
+      "evidence": [
+        "docs/milestones/v0.91.7/review/runtime/soak2_feature_list_matrix_4843.json"
+      ],
+      "reason": "The row remains optional_non_claim by matrix policy; no promoted curiosity/constructability owner issue evidence was present before #4880."
     }
   ],
-  "next_actions": [
-    "Keep #4681 PR #4868 ready-green as a sequencing prerequisite until it is merged or explicitly approved for the #4682 integration base.",
-    "Land or explicitly sequence #4783, #4843, #4784, and #4683 before final Soak 2 consumption.",
-    "After prerequisites are consumable, rerun #4682 and convert blocked rows to integrated_proven, deferred, or routed_to_soak_3 with evidence."
+  "remaining_blockers": [
+    "runtime_aws_signal_bridge",
+    "observatory_unity",
+    "acip_a2a_path",
+    "capability_envelope",
+    "security_cav_boundary"
+  ],
+  "operator_decision_required": [
+    "Approve v0.92 non-claims/defer for AWS signal bridge, Unity live consumption, WP-12 ACIP/A2A activation, runtime-v2 capability envelope freshness, and runtime-v2 security/CAV freshness, or route those rows to Soak 3."
+  ],
+  "non_claims": [
+    "No network OTLP collector, hosted telemetry service, or external exporter backend is claimed; WP-07 now claims only the local durable ADL_OTEL_LOG JSONL sink and ADL_OTEL_STATUS monitor file proven by #4634.",
+    "No live AWS signal bridge or SSM heartbeat proof was run in #4880.",
+    "No Unity editor live-consumption run was executed in #4880.",
+    "The daemon proof required a focused issue-local binary refresh because all existing warmed repo binaries predated #4885 and lacked `agent daemon`; that refresh is recorded as proof setup, not a broad release build.",
+    "The daemon mode proof does not claim OS boot persistence, kill -9 resistance, host resource exhaustion resistance, or missing-binary resistance."
   ]
 }

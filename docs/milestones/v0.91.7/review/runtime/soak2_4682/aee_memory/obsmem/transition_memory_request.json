@@ -1,0 +1,72 @@
+{
+  "contract_version": 1,
+  "run_id": "runtime-4546-obsmem-handoff",
+  "workflow_id": "runtime-4546-acip-aee-memory",
+  "trace_bundle_rel_path": "docs/milestones/v0.91.7/review/runtime/soak2_4682/aee_memory/obsmem/trace_signed.adl.yaml",
+  "activation_log_rel_path": "docs/milestones/v0.91.7/review/runtime/soak2_4682/aee_memory/obsmem/outcome_truth.json",
+  "failure_code": null,
+  "summary": "transition_issue=#4546 pr=#0 lifecycle_state=runtime_integration_proven_locally | ACIP local message flow, AEE temporary-agent execution, and one ObsMem-ready transition handoff were proven together under one bounded reviewer packet. | The integrated packet proves one bounded runtime slice without overclaiming scheduler, Unity, or federation closure. | ACIP positive, denied, malformed, and failed-delivery cases are retained. | Temporary-agent execution is trace-visible in AEE/control-path artifacts. | The handoff remains redaction-bounded and reviewer-readable.",
+  "tags": [
+    "evidence_bundle:runtime-4546-evidence-bundle",
+    "issue:4546",
+    "lifecycle:runtime_integration_proven_locally",
+    "memory:csdlc-transition",
+    "pr:0",
+    "review_synthesis:runtime-4546-synth-001"
+  ],
+  "citations": [
+    {
+      "path": "docs/milestones/v0.91.7/review/runtime/soak2_4682/aee_memory/acip/acip_integration_matrix.json",
+      "hash": "det64:3e61ba7a4492b7bc"
+    },
+    {
+      "path": "docs/milestones/v0.91.7/review/runtime/soak2_4682/aee_memory/artifacts/runtime-4546-acip-aee-memory/outputs/temporary_agent_result.json",
+      "hash": "det64:6b684ddb683d87f2"
+    },
+    {
+      "path": "docs/milestones/v0.91.7/review/runtime/soak2_4682/aee_memory/obsmem/evidence_bundle.json",
+      "hash": "det64:16bb3fb12bd10d68"
+    },
+    {
+      "path": "docs/milestones/v0.91.7/review/runtime/soak2_4682/aee_memory/obsmem/outcome_truth.json",
+      "hash": "det64:0c925d28013b8f39"
+    },
+    {
+      "path": "docs/milestones/v0.91.7/review/runtime/soak2_4682/aee_memory/obsmem/review_synthesis.json",
+      "hash": "det64:a9017d8795efd881"
+    },
+    {
+      "path": "docs/milestones/v0.91.7/review/runtime/soak2_4682/aee_memory/obsmem/trace_key.b64",
+      "hash": "det64:b4981aff8d55ab7d"
+    },
+    {
+      "path": "docs/milestones/v0.91.7/review/runtime/soak2_4682/aee_memory/obsmem/trace_signed.adl.yaml",
+      "hash": "det64:726434ee62649d93"
+    },
+    {
+      "path": "docs/milestones/v0.91.7/review/runtime/soak2_4682/aee_memory/runtime/temporary_agent_execution_summary.json",
+      "hash": "det64:e9e3fd1bed7672ca"
+    }
+  ],
+  "trace_event_refs": [
+    {
+      "event_sequence": 0,
+      "event_kind": "signed_trace_verified",
+      "step_id": "csdlc_transition_memory",
+      "delegation_id": null
+    }
+  ],
+  "temporal_anchor": null,
+  "review_findings": [],
+  "residual_risks": [
+    "Scheduler CLI/runtime advisory consumption remains owned by #4544.",
+    "This packet does not prove external transport or federation."
+  ],
+  "follow_on_refs": [
+    {
+      "issue_number": 4544,
+      "title": "[v0.91.6][runtime][scheduler] Wire Cognitive Scheduler into CLI artifacts and runtime advisory path",
+      "status": "open"
+    }
+  ]
+}

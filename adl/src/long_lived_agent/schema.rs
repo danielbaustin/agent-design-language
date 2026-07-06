@@ -2,6 +2,7 @@
 pub(crate) const SPEC_SCHEMA: &str = "adl.long_lived_agent_spec.v1";
 pub(crate) const LEASE_SCHEMA: &str = "adl.long_lived_agent_lease.v1";
 pub(crate) const STATUS_SCHEMA: &str = "adl.long_lived_agent_status.v1";
+pub(crate) const DAEMON_STATUS_SCHEMA: &str = "adl.long_lived_agent_daemon_status.v1";
 pub(crate) const STOP_SCHEMA: &str = "adl.long_lived_agent_stop.v1";
 pub(crate) const CYCLE_MANIFEST_SCHEMA: &str = "adl.long_lived_agent_cycle_manifest.v1";
 pub(crate) const OBSERVATIONS_SCHEMA: &str = "adl.long_lived_agent_observations.v1";

@@ -29,7 +29,7 @@ or ceremony.
 This packet aligns:
 
 - the current `v0.92` planning package
-- the `v0.91.6` and `v0.91.7` bridge tranches
+- the `v0.91.6` readiness tranche and `v0.91.7` implementation/proof tranche
 - the activation bridge ledger
 - the first-birthday feature docs
 - the demo matrix and candidate WBS
@@ -103,7 +103,7 @@ blocked, deferred, or routed with evidence before any public activation claim.
 | Curiosity Engine / Discovery Substrate | Treat governed discovery as required before activation consumes curiosity behavior; absent proof is blocked or routed. |
 | Constructability Gate | Require birthday evidence to separate provisional cognition from authoritative shared reality. |
 | Reasoning graph, loop runtime, and `adl.skill.v1` | Connect prompts, skills, loops, trace, ObsMem, PVF, AEE, Runtime v2, UTS, ACC, and `adl.skill.v1` at bridge level. |
-| Affect, happiness, humor, and wellbeing claims | Preserve non-claim language for affect/wellbeing and avoid inner-state overclaims. |
+| Affect, happiness, humor, and wellbeing claims | Preserve public claim-boundary language for affect/wellbeing and avoid inner-state overclaims. |
 | Godel mechanics | Require experiment, hypothesis, mutation, evaluation, promotion, and proof boundaries before relying on Godel mechanics. |
 | Economics context | Keep economics context-only unless a reviewed decision promotes a bounded test. |
 
@@ -119,7 +119,7 @@ blocked, deferred, or routed with evidence before any public activation claim.
 | ACP/cognitive profile | `ACP_COGNITIVE_PROFILES_v0.92.md` | WP-07 | Update rules, privacy boundary, and non-reputation checks. |
 | ACIP binary/schema transport readiness | `ACIP_BINARY_SCHEMA_AND_WEBSOCKET_TRANSPORT_v0.92.md` | WP-08 | Protobuf/JSON projection decision and mock/loopback carrier boundary. |
 | Witnesses and receipt | `MEMORY_GROUNDING_CAPABILITY_AND_WITNESSES_v0.92.md` | WP-09 | Receipt schema and witness validity checks. |
-| Birthday review packet | `FIRST_BIRTHDAY_DEMO_AND_GOVERNANCE_HANDOFF_v0.92.md` | WP-10 | One template with evidence, caveats, non-claims, and reviewer questions. |
+| Birthday review packet | `FIRST_BIRTHDAY_DEMO_AND_GOVERNANCE_HANDOFF_v0.92.md` | WP-10 | One template with evidence, caveats, public claim boundaries, and reviewer questions. |
 | Migration and cross-polis continuity | `CROSS_POLIS_CONTINUITY_AND_MIGRATION_v0.92.md` | WP-11 | Non-production migration language and continuity handoff shape. |
 | First birthday demo | `DEMO_MATRIX_v0.92.md` | WP-12 | Runnable command, fixtures, artifact list, and replay notes. |
 | Birthday-to-governance handoff | `FIRST_BIRTHDAY_DEMO_AND_GOVERNANCE_HANDOFF_v0.92.md` | WP-13 | v0.93 consumer fields without v0.93 governance claims. |
@@ -160,7 +160,7 @@ Minimum demo stages:
    evidence if communication proof is included.
 8. Validate witness set and citizen-facing receipt.
 9. Run the not-a-birthday negative suite.
-10. Produce reviewer-facing packet with caveats and non-claims.
+10. Produce reviewer-facing packet with caveats and public claim boundaries.
 11. Render Observatory/Unity presentation surfaces from the same packet if they
     are in scope.
 12. Produce v0.93 governance handoff map.
@@ -207,7 +207,7 @@ The negative suite must reject these cases as birthdays:
 - unsupported ACP/personality/reputation label
 
 Each rejection should explain which required evidence is missing or which
-non-claim boundary would be violated.
+public-claim boundary would be violated.
 
 ## Reviewer Handoff
 
@@ -237,7 +237,7 @@ Open v0.92 implementation only when:
 
 - every bridge surface has a complete, blocked, deferred, or routed
   disposition with evidence
-- the birthday claim/non-claim boundary is visible in milestone docs
+- the birthday public-claim boundary is visible in milestone docs
 - WP-01 can seed the issue wave without reconstructing scope from chat
 - the negative-suite plan is specific enough to implement
 - the demo rehearsal runbook names expected artifacts
@@ -245,7 +245,7 @@ Open v0.92 implementation only when:
   ACIP, resilience, curiosity, constructability, reasoning-loop, affect, Godel,
   and economics boundaries are accounted for
 - legal personhood, consciousness, production citizenship, constitutional
-  governance, and production transport non-claims are preserved
+  governance, and production transport public claim boundaries are preserved
 - reviewers can inspect engineering evidence without raw private-state exposure
 
 Do not open v0.92 implementation if:
@@ -279,7 +279,7 @@ Issue `#3377` is complete when:
 
 - this packet is tracked and linked from the `v0.92` planning package
 - every birthday requirement maps to a source, v0.92 owner, or readiness gap
-- claim and non-claim boundaries are explicit
+- public claim boundaries are explicit
 - the bridge gate is visible to WP-01
 - the issue-wave preflight is seedable
 - demo rehearsal and negative-suite plans are concrete

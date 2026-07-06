@@ -1,0 +1,23 @@
+{
+  "schema": "adl.long_lived_agent_continuity_checkpoint.v1",
+  "agent_instance_id": "v0916-runtime-failure-stop-probe",
+  "captured_at": "2026-07-05T03:09:54.651197Z",
+  "checkpoint_reason": "status_refreshed",
+  "state": "stopped",
+  "stop_requested": true,
+  "latest_cycle_id": "cycle-000001",
+  "latest_cycle_status": "success",
+  "completed_cycle_count": 1,
+  "consecutive_failure_count": 0,
+  "continuity_kind": "pre_v0_92_handle",
+  "continuity_ref": "continuity.json",
+  "status_ref": "status.json",
+  "cycle_ledger_ref": "cycle_ledger.jsonl",
+  "lease_ref": null,
+  "lease_state": "clear",
+  "restore_basis": {
+    "ledger_entry_count": 1,
+    "max_cycle_number": 1,
+    "expected_next_cycle_id": "cycle-000002"
+  }
+}

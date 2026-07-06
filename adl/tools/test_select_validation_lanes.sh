@@ -113,6 +113,20 @@ assert_has "$TMP/aws-codefriend-build-lane.out" "ci_path_policy_contracts status
 assert_has "$TMP/aws-codefriend-build-lane.out" "release_gate_review status=release_gate_required"
 assert_not_has "$TMP/aws-codefriend-build-lane.out" "unmapped_change_surface"
 
+aws_spot_wrapper_tool="$TMP/aws-spot-wrapper-tool.txt"
+cat >"$aws_spot_wrapper_tool" <<'EOF'
+A	adl/tools/run_aws_spot_remote_validation_lane.sh
+A	adl/tools/run_build_platform_benchmark.sh
+A	adl/tools/setup_aws_spot_remote_validation_github_resources.sh
+A	adl/tools/test_run_aws_spot_remote_validation_lane.sh
+A	docs/tooling/AWS_SPOT_REMOTE_VALIDATION_LANE.md
+EOF
+bash "$SCRIPT" --changed-files "$aws_spot_wrapper_tool" >"$TMP/aws-spot-wrapper-tool.out"
+assert_has "$TMP/aws-spot-wrapper-tool.out" "aggregate_status=selected"
+assert_has "$TMP/aws-spot-wrapper-tool.out" "aws_remote_validation_tooling status=selected"
+assert_has "$TMP/aws-spot-wrapper-tool.out" "docs_diff_check status=selected"
+assert_not_has "$TMP/aws-spot-wrapper-tool.out" "unmapped_change_surface"
+
 rust_warm_cache_surface="$TMP/rust-warm-cache-surface.txt"
 cat >"$rust_warm_cache_surface" <<'EOF'
 M	AGENTS.md
@@ -151,6 +165,17 @@ assert_has "$TMP/issue-4603-surface.out" "aggregate_status=selected"
 assert_has "$TMP/issue-4603-surface.out" "aws_remote_validation_tooling status=selected"
 assert_has "$TMP/issue-4603-surface.out" "rust_pr_fast status=selected"
 assert_not_has "$TMP/issue-4603-surface.out" "unmapped_change_surface"
+
+csm_otlp_4904_surface="$TMP/csm-otlp-4904-surface.txt"
+cat >"$csm_otlp_4904_surface" <<'EOF'
+A	adl/tools/run_v0917_csm_otlp_4904_proof.sh
+A	adl/tools/validate_v0917_csm_otlp_4904_status.sh
+A	docs/milestones/v0.91.7/review/runtime/csm_otlp_4904/proof_summary.json
+EOF
+bash "$SCRIPT" --changed-files "$csm_otlp_4904_surface" >"$TMP/csm-otlp-4904-surface.out"
+assert_has "$TMP/csm-otlp-4904-surface.out" "aggregate_status=selected"
+assert_has "$TMP/csm-otlp-4904-surface.out" "v0917_csm_otlp_4904_contracts status=selected"
+assert_not_has "$TMP/csm-otlp-4904-surface.out" "unmapped_change_surface"
 
 release_gate="$TMP/release-gate.txt"
 printf 'M\t.github/workflows/ci.yaml\n' >"$release_gate"
@@ -606,6 +631,35 @@ assert lane["matched_paths"] == [
 ]
 assert "test_v0916_unity_observatory_local_runtime_consumption.sh" in lane["command"]
 assert "test_v0916_unity_observatory_local_runtime_consumption_unit.sh" in lane["command"]
+PY
+
+scheduler_provider_policy="$TMP/scheduler-provider-policy.txt"
+cat >"$scheduler_provider_policy" <<'EOF'
+M	adl/src/provider/profiles.rs
+M	adl/src/scheduler.rs
+M	adl/tests/fixtures/scheduler/cheapest_validated_outcome_inputs_v1.json
+M	docs/milestones/v0.91.7/review/provider/CHEAPEST_VALIDATED_OUTCOME_POLICY_4674.md
+M	docs/milestones/v0.91.7/review/provider/artifacts/cheapest_validated_outcome_plan_4674.json
+EOF
+bash "$SCRIPT" --changed-files "$scheduler_provider_policy" --json >"$TMP/scheduler-provider-policy.json"
+python3 - <<'PY' "$TMP/scheduler-provider-policy.json"
+import json
+import sys
+
+profile = json.load(open(sys.argv[1]))
+assert profile["schema_version"] == "adl.validation_lane_plan.v1"
+assert profile["aggregate_status"] == "selected"
+assert profile["pr_publication_sufficient"] is True
+assert "rust_pr_fast" in profile["lanes"]
+lane = profile["lanes"]["rust_pr_fast"]
+assert lane["status"] == "selected"
+assert lane["mode"] == "focused"
+assert lane["filter_tokens"] == "scheduler_economics"
+assert "scheduler::tests::" in lane["filter_expression"]
+assert "provider::tests::provider_mod_" in lane["filter_expression"]
+assert "binary_id(adl::provider_tests) and test(/^profiles::/)" in lane["filter_expression"]
+assert "adl/src/provider/profiles.rs" in lane["matched_paths"]
+assert "adl/src/scheduler.rs" in lane["matched_paths"]
 PY
 
 echo "PASS test_select_validation_lanes"

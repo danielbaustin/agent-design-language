@@ -1,0 +1,9 @@
+{
+  "schema": "adl.otel.monitor_status.v1",
+  "event_count": 8,
+  "last_event": "agent.agent_daemon",
+  "last_result": "completed",
+  "last_trace_id": "agent.soak2-otel-monitor-agent.daemon",
+  "last_span_id": "daemon:daemon_completed:0",
+  "updated_at": "2026-07-05T04:50:30.703402+00:00"
+}

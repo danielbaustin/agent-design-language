@@ -10,12 +10,12 @@
 
 ## Purpose
 
-Define how the final pre-`v0.92` bridge/readiness tranche is organized, validated, and handed off.
+Define how the final pre-`v0.92` implementation/readiness tranche is organized, validated, and handed off.
 
 ## Problem Statement
 
-After `v0.91.6`, both conceptual bridge surfaces and operational substrates still need explicit scheduling before `v0.92`: Curiosity, Constructability, reasoning graphs and skill standard,
-security residuals, ACIP/A2A/protobuf residuals, affect and happiness
+After `v0.91.6`, both cognitive/protocol surfaces and operational substrates still need explicit implementation before `v0.92`: Curiosity, Constructability, reasoning graphs and skill standard,
+security requirements, ACIP/A2A/protobuf requirements, affect and happiness
 boundaries, Godel mechanics, and economics context.
 
 ## Goals
@@ -62,23 +62,23 @@ boundaries, Godel mechanics, and economics context.
 
 - Deterministic document structure and review path.
 - No host-local paths or private authoring links.
-- Explicit blocked/deferred/routed states for unready surfaces.
+- Explicit integrated-proven, operator-scoped-out, or blocked-with-evidence states for unready surfaces.
 
 ## Proposed Design
 
-`v0.91.7` is a bridge/readiness/control-plane tranche. It consumes `v0.91.6`
-bridge truth, prepares the Soak #2 runtime-coherence gate, and produces
-residual bridge docs for `#3780` / `v0.92` activation refresh. Each feature doc
+`v0.91.7` is an implementation/readiness/control-plane tranche. It consumes `v0.91.6`
+readiness truth, prepares the Soak #2 runtime-coherence gate, and produces
+implementation/proof docs for `#3780` / `v0.92` activation refresh. Each feature doc
 is a boundary and decision surface, not a runtime completion claim.
 
 ## Risks And Mitigations
 
 - Risk: Curiosity and Constructability remain aspirational.
   - Mitigation: require artifacts, hooks, validators, and proof expectations.
-- Risk: protocol residuals hide behind ACIP prose.
+- Risk: protocol requirements hide behind ACIP prose.
   - Mitigation: separate protobuf/JSON/WebSocket/access-rule decisions.
 - Risk: affect and happiness language overclaims.
-  - Mitigation: require safe tests and explicit non-claims.
+  - Mitigation: require safe tests and explicit public claim boundaries.
 
 ## Validation Plan
 
@@ -90,4 +90,4 @@ is a boundary and decision surface, not a runtime completion claim.
 ## Exit Criteria
 
 - Planning package and feature docs are complete enough for review.
-- `#3780` can consume second-tranche bridge truth without rediscovery.
+- `#3780` can consume second-tranche implementation/proof truth without rediscovery.

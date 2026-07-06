@@ -1,0 +1,178 @@
+{
+  "schema_version": "runtime_v2.operator_control_report.v1",
+  "report_id": "operator-report-0001",
+  "manifold_id": "proto-csm-01",
+  "artifact_path": "runtime_v2/operator/control_report.json",
+  "generated_at_utc": "not_started",
+  "control_interface_service_id": "operator_control_interface",
+  "commands": [
+    {
+      "command": "inspect_manifold",
+      "requested_by": "operator.cli",
+      "affected_service": "operator_control_interface",
+      "pre_state": {
+        "manifold_lifecycle_state": "active",
+        "kernel_loop_status": "bounded_tick_complete",
+        "active_citizen_count": 1,
+        "pending_citizen_count": 1,
+        "latest_snapshot_id": null,
+        "completed_through_event_sequence": 8
+      },
+      "post_state": {
+        "manifold_lifecycle_state": "active",
+        "kernel_loop_status": "bounded_tick_complete",
+        "active_citizen_count": 1,
+        "pending_citizen_count": 1,
+        "latest_snapshot_id": null,
+        "completed_through_event_sequence": 8
+      },
+      "outcome": "allowed",
+      "trace_event_ref": "runtime_v2/traces/operator/inspect-manifold.json",
+      "reason": "reported bounded manifold lifecycle and kernel status"
+    },
+    {
+      "command": "inspect_citizens",
+      "requested_by": "operator.cli",
+      "affected_service": "operator_control_interface",
+      "pre_state": {
+        "manifold_lifecycle_state": "active",
+        "kernel_loop_status": "bounded_tick_complete",
+        "active_citizen_count": 1,
+        "pending_citizen_count": 1,
+        "latest_snapshot_id": null,
+        "completed_through_event_sequence": 8
+      },
+      "post_state": {
+        "manifold_lifecycle_state": "active",
+        "kernel_loop_status": "bounded_tick_complete",
+        "active_citizen_count": 1,
+        "pending_citizen_count": 1,
+        "latest_snapshot_id": null,
+        "completed_through_event_sequence": 8
+      },
+      "outcome": "allowed",
+      "trace_event_ref": "runtime_v2/traces/operator/inspect-citizens.json",
+      "reason": "reported active and pending provisional citizen counts"
+    },
+    {
+      "command": "pause_manifold",
+      "requested_by": "operator.cli",
+      "affected_service": "scheduler",
+      "pre_state": {
+        "manifold_lifecycle_state": "active",
+        "kernel_loop_status": "bounded_tick_complete",
+        "active_citizen_count": 1,
+        "pending_citizen_count": 1,
+        "latest_snapshot_id": null,
+        "completed_through_event_sequence": 8
+      },
+      "post_state": {
+        "manifold_lifecycle_state": "active",
+        "kernel_loop_status": "bounded_tick_complete",
+        "active_citizen_count": 1,
+        "pending_citizen_count": 1,
+        "latest_snapshot_id": null,
+        "completed_through_event_sequence": 8
+      },
+      "outcome": "deferred",
+      "trace_event_ref": "runtime_v2/traces/operator/pause-manifold.json",
+      "reason": "pause command is deferred while kernel lifecycle gating is explicit"
+    },
+    {
+      "command": "resume_manifold",
+      "requested_by": "operator.cli",
+      "affected_service": "scheduler",
+      "pre_state": {
+        "manifold_lifecycle_state": "paused",
+        "kernel_loop_status": "operator_paused",
+        "active_citizen_count": 1,
+        "pending_citizen_count": 1,
+        "latest_snapshot_id": null,
+        "completed_through_event_sequence": 8
+      },
+      "post_state": {
+        "manifold_lifecycle_state": "paused",
+        "kernel_loop_status": "operator_paused",
+        "active_citizen_count": 1,
+        "pending_citizen_count": 1,
+        "latest_snapshot_id": null,
+        "completed_through_event_sequence": 8
+      },
+      "outcome": "refused",
+      "trace_event_ref": "runtime_v2/traces/operator/resume-manifold.json",
+      "reason": "invalid resume attempt is deferred until fresh invariant evidence exists"
+    },
+    {
+      "command": "request_snapshot",
+      "requested_by": "operator.cli",
+      "affected_service": "snapshot_manager",
+      "pre_state": {
+        "manifold_lifecycle_state": "active",
+        "kernel_loop_status": "bounded_tick_complete",
+        "active_citizen_count": 1,
+        "pending_citizen_count": 1,
+        "latest_snapshot_id": null,
+        "completed_through_event_sequence": 8
+      },
+      "post_state": {
+        "manifold_lifecycle_state": "active",
+        "kernel_loop_status": "bounded_tick_complete",
+        "active_citizen_count": 1,
+        "pending_citizen_count": 1,
+        "latest_snapshot_id": null,
+        "completed_through_event_sequence": 8
+      },
+      "outcome": "deferred",
+      "trace_event_ref": "runtime_v2/traces/operator/request-snapshot.json",
+      "reason": "snapshot command is deferred while live snapshot re-hydration policy is under v0.90.1 guard"
+    },
+    {
+      "command": "inspect_last_failures",
+      "requested_by": "operator.cli",
+      "affected_service": "invariant_checker",
+      "pre_state": {
+        "manifold_lifecycle_state": "active",
+        "kernel_loop_status": "bounded_tick_complete",
+        "active_citizen_count": 1,
+        "pending_citizen_count": 1,
+        "latest_snapshot_id": null,
+        "completed_through_event_sequence": 8
+      },
+      "post_state": {
+        "manifold_lifecycle_state": "active",
+        "kernel_loop_status": "bounded_tick_complete",
+        "active_citizen_count": 1,
+        "pending_citizen_count": 1,
+        "latest_snapshot_id": null,
+        "completed_through_event_sequence": 8
+      },
+      "outcome": "allowed",
+      "trace_event_ref": "runtime_v2/traces/invariants/violation-0001.json",
+      "reason": "latest blocking invariant failure is violation-0001"
+    },
+    {
+      "command": "terminate_manifold",
+      "requested_by": "operator.cli",
+      "affected_service": "resource_ledger",
+      "pre_state": {
+        "manifold_lifecycle_state": "active",
+        "kernel_loop_status": "bounded_tick_complete",
+        "active_citizen_count": 1,
+        "pending_citizen_count": 1,
+        "latest_snapshot_id": null,
+        "completed_through_event_sequence": 8
+      },
+      "post_state": {
+        "manifold_lifecycle_state": "active",
+        "kernel_loop_status": "bounded_tick_complete",
+        "active_citizen_count": 1,
+        "pending_citizen_count": 1,
+        "latest_snapshot_id": null,
+        "completed_through_event_sequence": 8
+      },
+      "outcome": "deferred",
+      "trace_event_ref": "runtime_v2/traces/operator/terminate-manifold.json",
+      "reason": "termination is deferred until live deactivation policy is explicit"
+    }
+  ]
+}

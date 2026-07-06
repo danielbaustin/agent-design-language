@@ -29,7 +29,7 @@ The missing layer is a bounded identity architecture that can say, with
 evidence, when the first true Gödel agent has been born and why that event is
 not ordinary process startup.
 
-`v0.91.5` release-tail closeout, the `v0.91.6` / `v0.91.7` bridge tranches,
+`v0.91.5` release-tail closeout, the `v0.91.6` readiness tranche, the `v0.91.7` implementation/proof tranche,
 and issue `#3377` are required readiness inputs for the launch packet,
 activation-test map, demo rehearsal, negative-suite plan, and review handoff.
 This design remains a planning surface until v0.92 execution produces
@@ -154,7 +154,7 @@ The ACP record should include:
 - Theory of Mind and intelligence-metric links where policy allows
 - update reason and update actor
 - privacy and redaction policy
-- explicit non-claims for identity, reputation, consciousness, or public
+- explicit public claim boundaries for identity, reputation, consciousness, or public
   standing
 
 ### ACIP Binary Transport Readiness
@@ -221,7 +221,7 @@ Later implementation should validate:
 | Birth becomes storytelling. | Require every birth claim to map to explicit evidence. |
 | Provisional identity is mistaken for birth. | Maintain a negative suite for startup, wake, snapshot, admission, and copied state. |
 | Memory grounding leaks private state. | Use references, witnesses, and redacted projections rather than raw private memory. |
-| Cognitive profiles become unsupported labels. | Require source evidence, update semantics, privacy boundaries, and non-claims for reputation or identity. |
+| Cognitive profiles become unsupported labels. | Require source evidence, update semantics, privacy boundaries, and public claim boundaries for reputation or identity. |
 | Binary ACIP becomes opaque transport authority. | Require public schema catalogs, deterministic JSON projection, and separate message-content access checks. |
 | v0.92 absorbs v0.93 governance. | Keep citizenship law, rights/duties, social contract, delegation, and IAM downstream. |
 | Continuity is treated as magic. | Require lineage, witnesses, cycle evidence, and ambiguity handling. |

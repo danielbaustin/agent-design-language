@@ -1174,14 +1174,44 @@ python3 "${repo_root}/adl/tools/skills/sprint-conductor/scripts/check_installed_
   --installed-skill-dir "${installed_skill_dir}" \
   --state "${state_path}" >/dev/null
 
+mkdir -p "${installed_skill_dir}/__pycache__" "${installed_skill_dir}/scripts/__pycache__"
+printf 'cache\n' > "${installed_skill_dir}/__pycache__/SKILL.cpython-312.pyc"
+printf 'cache\n' > "${installed_skill_dir}/scripts/__pycache__/helper.cpython-312.pyc"
+printf 'cache\n' > "${installed_skill_dir}/scripts/__pycache__/helper.pyo"
+printf 'cache\n' > "${installed_skill_dir}/.DS_Store"
+python3 "${repo_root}/adl/tools/skills/sprint-conductor/scripts/check_installed_skill_parity.py" \
+  --repo-root "${fake_repo}" \
+  --tracked-skill-dir "${tracked_skill_dir}" \
+  --installed-skill-dir "${installed_skill_dir}" \
+  --state "${state_path}" >/dev/null
+python3 - "${state_path}" <<'PY'
+import json
+import sys
+from pathlib import Path
+
+state = json.loads(Path(sys.argv[1]).read_text())
+parity = state["installed_skill_parity"]
+assert parity["status"] == "matched"
+assert parity["right_only"] == []
+assert parity["diff_files"] == []
+assert parity["ignored_generated_files"]
+assert parity["parity_policy"] == "installed bundle must match tracked bundle except generated cache artifacts"
+assert parity["repair_command"] == "bash adl/tools/install_adl_operational_skills.sh"
+assert any(path.endswith(".pyo") for path in parity["ignored_generated_files"])
+assert any(path.endswith(".DS_Store") for path in parity["ignored_generated_files"])
+PY
+
 printf 'beta\n' > "${installed_skill_dir}/SKILL.md"
+parity_failure_json="${tmpdir}/parity-failure.json"
 if python3 "${repo_root}/adl/tools/skills/sprint-conductor/scripts/check_installed_skill_parity.py" \
   --repo-root "${fake_repo}" \
   --tracked-skill-dir "${tracked_skill_dir}" \
-  --installed-skill-dir "${installed_skill_dir}" >/dev/null 2>&1; then
+  --installed-skill-dir "${installed_skill_dir}" \
+  --print-json >"${parity_failure_json}" 2>/dev/null; then
   echo "expected installed skill parity drift to fail" >&2
   exit 1
 fi
+grep -Fq "bash adl/tools/install_adl_operational_skills.sh" "${parity_failure_json}"
 
 cat >"${fake_repo}/.adl/v0.91.1/tasks/issue-2828__trial-wp06/sor.md" <<'EOF2'
 Status: IN_PROGRESS

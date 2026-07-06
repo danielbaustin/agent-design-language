@@ -1,5 +1,6 @@
 use std::env;
 use std::fs::OpenOptions;
+use std::hash::{Hash, Hasher};
 use std::io::Write;
 use std::path::Path;
 use std::sync::mpsc::{self, RecvTimeoutError, Sender};
@@ -7,6 +8,7 @@ use std::sync::mpsc::{self, RecvTimeoutError, Sender};
 use std::sync::{Mutex, MutexGuard, OnceLock};
 use std::thread::{self, JoinHandle};
 use std::time::{Duration, Instant};
+use std::time::{SystemTime, UNIX_EPOCH};
 
 pub(crate) fn emit_event(command: &str, stage: &str, result: &str, fields: &[(&str, &str)]) {
     if env::var("ADL_OBSERVABILITY").ok().as_deref() == Some("0") {
@@ -21,6 +23,59 @@ pub(crate) fn emit_event(command: &str, stage: &str, result: &str, fields: &[(&s
     if let Some(log_path) = compatibility_log_path() {
         if let Err(err) = append_to_compatibility_log(&log_path, &line) {
             emit_compatibility_sink_failure(command, stage, &log_path, &err, stderr_suppressed);
+        }
+    }
+    if let Some(otel_log_path) = otel_log_path() {
+        if let Err(err) = append_to_otel_log(&otel_log_path, command, stage, result, fields) {
+            emit_otel_sink_failure(
+                command,
+                stage,
+                &otel_log_path,
+                &err,
+                stderr_suppressed,
+                compatibility_log_path().as_deref(),
+            );
+        }
+    }
+    if let Some(endpoint) = otlp_endpoint() {
+        let event = otel_event(command, stage, result, fields);
+        match export_otlp_event(&endpoint, &event) {
+            Ok(status_code) => {
+                if let Some(status_path) = otel_status_path() {
+                    let _ = update_otel_export_status(
+                        &status_path,
+                        "success",
+                        Some(status_code),
+                        None,
+                        command,
+                        stage,
+                        result,
+                        fields,
+                    );
+                }
+            }
+            Err(err) => {
+                if let Some(status_path) = otel_status_path() {
+                    let _ = update_otel_export_status(
+                        &status_path,
+                        "failed",
+                        None,
+                        Some(&err),
+                        command,
+                        stage,
+                        result,
+                        fields,
+                    );
+                }
+                emit_otel_export_failure(
+                    command,
+                    stage,
+                    &endpoint,
+                    &err,
+                    stderr_suppressed,
+                    compatibility_log_path().as_deref(),
+                );
+            }
         }
     }
 }
@@ -46,6 +101,38 @@ fn compatibility_log_path() -> Option<String> {
         .ok()
         .map(|path| path.trim().to_string())
         .filter(|path| !path.is_empty())
+}
+
+fn otel_log_path() -> Option<String> {
+    env::var("ADL_OTEL_LOG")
+        .ok()
+        .map(|path| path.trim().to_string())
+        .filter(|path| !path.is_empty())
+}
+
+fn otel_status_path() -> Option<String> {
+    env::var("ADL_OTEL_STATUS")
+        .ok()
+        .map(|path| path.trim().to_string())
+        .filter(|path| !path.is_empty())
+}
+
+fn otlp_endpoint() -> Option<String> {
+    env::var("ADL_OTEL_EXPORTER_OTLP_ENDPOINT")
+        .or_else(|_| env::var("OTEL_EXPORTER_OTLP_ENDPOINT"))
+        .ok()
+        .map(|endpoint| endpoint.trim().to_string())
+        .filter(|endpoint| !endpoint.is_empty())
+}
+
+fn otlp_timeout() -> Duration {
+    let millis = env::var("ADL_OTEL_EXPORTER_TIMEOUT_MS")
+        .or_else(|_| env::var("OTEL_EXPORTER_OTLP_TIMEOUT_MS"))
+        .ok()
+        .and_then(|value| value.parse::<u64>().ok())
+        .filter(|value| *value > 0)
+        .unwrap_or(500);
+    Duration::from_millis(millis)
 }
 
 fn append_to_compatibility_log(log_path: &str, line: &str) -> Result<(), String> {
@@ -79,6 +166,395 @@ fn append_to_compatibility_log(log_path: &str, line: &str) -> Result<(), String>
     Ok(())
 }
 
+fn append_to_otel_log(
+    log_path: &str,
+    command: &str,
+    stage: &str,
+    result: &str,
+    fields: &[(&str, &str)],
+) -> Result<(), String> {
+    let event = otel_event(command, stage, result, fields);
+    let line = serde_json::to_string(&event).map_err(|err| {
+        format!(
+            "op=serialize sink={} error={}",
+            sanitize_value(log_path),
+            err
+        )
+    })?;
+    append_jsonl(log_path, &line)?;
+    if let Some(status_path) = otel_status_path() {
+        update_otel_status(&status_path, command, stage, result, fields)?;
+    }
+    Ok(())
+}
+
+fn append_jsonl(path: &str, line: &str) -> Result<(), String> {
+    if let Some(parent) = Path::new(path).parent() {
+        std::fs::create_dir_all(parent).map_err(|err| {
+            format!(
+                "op=create_dir_all sink={} error={}",
+                sanitize_value(path),
+                sanitize_value(&err.to_string())
+            )
+        })?;
+    }
+    let mut file = OpenOptions::new()
+        .create(true)
+        .append(true)
+        .open(path)
+        .map_err(|err| {
+            format!(
+                "op=open sink={} error={}",
+                sanitize_value(path),
+                sanitize_value(&err.to_string())
+            )
+        })?;
+    writeln!(file, "{line}").map_err(|err| {
+        format!(
+            "op=write sink={} error={}",
+            sanitize_value(path),
+            sanitize_value(&err.to_string())
+        )
+    })?;
+    Ok(())
+}
+
+fn otel_event(
+    command: &str,
+    stage: &str,
+    result: &str,
+    fields: &[(&str, &str)],
+) -> serde_json::Value {
+    let mut attributes = serde_json::Map::new();
+    attributes.insert(
+        "adl.command".to_string(),
+        serde_json::Value::String(sanitize_value(command)),
+    );
+    attributes.insert(
+        "adl.stage".to_string(),
+        serde_json::Value::String(sanitize_value(stage)),
+    );
+    attributes.insert(
+        "adl.result".to_string(),
+        serde_json::Value::String(sanitize_value(result)),
+    );
+    for (key, value) in fields {
+        attributes.insert(
+            format!("adl.{key}"),
+            serde_json::Value::String(sanitize_value(value)),
+        );
+    }
+
+    serde_json::json!({
+        "schema": "adl.otel.event.v1",
+        "timestamp": chrono::Utc::now().to_rfc3339(),
+        "name": format!("{command}.{stage}"),
+        "severity_text": otel_severity(result),
+        "trace_id": field_value(fields, "trace_id").map(sanitize_value),
+        "span_id": field_value(fields, "span_id").map(sanitize_value),
+        "parent_span_id": field_value(fields, "parent_span_id").map(sanitize_value),
+        "resource": {
+            "service.name": field_value(fields, "otel_service_name")
+                .map(sanitize_value)
+                .unwrap_or_else(|| "adl".to_string())
+        },
+        "attributes": attributes
+    })
+}
+
+fn update_otel_status(
+    status_path: &str,
+    command: &str,
+    stage: &str,
+    result: &str,
+    fields: &[(&str, &str)],
+) -> Result<(), String> {
+    if let Some(parent) = Path::new(status_path).parent() {
+        std::fs::create_dir_all(parent).map_err(|err| {
+            format!(
+                "op=create_dir_all sink={} error={}",
+                sanitize_value(status_path),
+                sanitize_value(&err.to_string())
+            )
+        })?;
+    }
+    let previous_count = std::fs::read_to_string(status_path)
+        .ok()
+        .and_then(|raw| serde_json::from_str::<serde_json::Value>(&raw).ok())
+        .and_then(|value| value.get("event_count").and_then(|count| count.as_u64()))
+        .unwrap_or(0);
+    let status = serde_json::json!({
+        "schema": "adl.otel.monitor_status.v1",
+        "event_count": previous_count + 1,
+        "last_event": format!("{command}.{stage}"),
+        "last_result": sanitize_value(result),
+        "last_trace_id": field_value(fields, "trace_id").map(sanitize_value),
+        "last_span_id": field_value(fields, "span_id").map(sanitize_value),
+        "updated_at": chrono::Utc::now().to_rfc3339()
+    });
+    let rendered = serde_json::to_string_pretty(&status).map_err(|err| {
+        format!(
+            "op=serialize sink={} error={}",
+            sanitize_value(status_path),
+            sanitize_value(&err.to_string())
+        )
+    })?;
+    std::fs::write(status_path, format!("{rendered}\n")).map_err(|err| {
+        format!(
+            "op=write sink={} error={}",
+            sanitize_value(status_path),
+            sanitize_value(&err.to_string())
+        )
+    })?;
+    Ok(())
+}
+
+fn update_otel_export_status(
+    status_path: &str,
+    export_status: &str,
+    http_status: Option<u16>,
+    error: Option<&str>,
+    command: &str,
+    stage: &str,
+    result: &str,
+    fields: &[(&str, &str)],
+) -> Result<(), String> {
+    let mut status = std::fs::read_to_string(status_path)
+        .ok()
+        .and_then(|raw| serde_json::from_str::<serde_json::Value>(&raw).ok())
+        .and_then(|value| value.as_object().cloned())
+        .unwrap_or_default();
+    status.insert(
+        "schema".to_string(),
+        serde_json::Value::String("adl.otel.monitor_status.v1".to_string()),
+    );
+    if !status.contains_key("event_count") {
+        status.insert(
+            "event_count".to_string(),
+            serde_json::Value::Number(1.into()),
+        );
+    }
+    status.insert(
+        "last_event".to_string(),
+        serde_json::Value::String(format!("{command}.{stage}")),
+    );
+    status.insert(
+        "last_result".to_string(),
+        serde_json::Value::String(sanitize_value(result)),
+    );
+    status.insert(
+        "last_trace_id".to_string(),
+        field_value(fields, "trace_id")
+            .map(sanitize_value)
+            .map(serde_json::Value::String)
+            .unwrap_or(serde_json::Value::Null),
+    );
+    status.insert(
+        "last_span_id".to_string(),
+        field_value(fields, "span_id")
+            .map(sanitize_value)
+            .map(serde_json::Value::String)
+            .unwrap_or(serde_json::Value::Null),
+    );
+    status.insert(
+        "updated_at".to_string(),
+        serde_json::Value::String(chrono::Utc::now().to_rfc3339()),
+    );
+    status.insert(
+        "exporter".to_string(),
+        serde_json::json!({
+            "schema": "adl.otel.exporter_status.v1",
+            "protocol": "otlp_http_json",
+            "status": sanitize_value(export_status),
+            "http_status": http_status,
+            "error": error.map(sanitize_value),
+            "endpoint_configured": true,
+            "endpoint": "<configured>",
+            "updated_at": chrono::Utc::now().to_rfc3339()
+        }),
+    );
+    if let Some(parent) = Path::new(status_path).parent() {
+        std::fs::create_dir_all(parent).map_err(|err| {
+            format!(
+                "op=create_dir_all sink={} error={}",
+                sanitize_value(status_path),
+                sanitize_value(&err.to_string())
+            )
+        })?;
+    }
+    let rendered =
+        serde_json::to_string_pretty(&serde_json::Value::Object(status)).map_err(|err| {
+            format!(
+                "op=serialize sink={} error={}",
+                sanitize_value(status_path),
+                sanitize_value(&err.to_string())
+            )
+        })?;
+    std::fs::write(status_path, format!("{rendered}\n")).map_err(|err| {
+        format!(
+            "op=write sink={} error={}",
+            sanitize_value(status_path),
+            sanitize_value(&err.to_string())
+        )
+    })?;
+    Ok(())
+}
+
+fn export_otlp_event(endpoint: &str, event: &serde_json::Value) -> Result<u16, String> {
+    if !(endpoint.starts_with("http://") || endpoint.starts_with("https://")) {
+        return Err("malformed_endpoint".to_string());
+    }
+    let client = reqwest::blocking::Client::builder()
+        .timeout(otlp_timeout())
+        .build()
+        .map_err(|err| sanitize_value(&err.to_string()))?;
+    let response = client
+        .post(endpoint)
+        .header("content-type", "application/json")
+        .json(&otlp_http_json_payload(event))
+        .send()
+        .map_err(|err| sanitize_value(&err.to_string()))?;
+    let status = response.status().as_u16();
+    if !(200..300).contains(&status) {
+        let body = response
+            .text()
+            .map(|body| sanitize_value(&body.chars().take(160).collect::<String>()))
+            .unwrap_or_else(|_| "unreadable_response_body".to_string());
+        return Err(format!("http_status={status} body={body}"));
+    }
+    Ok(status)
+}
+
+fn otlp_http_json_payload(event: &serde_json::Value) -> serde_json::Value {
+    let resource_attributes = event
+        .get("resource")
+        .and_then(|resource| resource.as_object())
+        .map(otel_attribute_array)
+        .unwrap_or_else(|| vec![otel_string_attribute("service.name", "adl")]);
+    let span_attributes = event
+        .get("attributes")
+        .and_then(|attributes| attributes.as_object())
+        .map(otel_attribute_array)
+        .unwrap_or_default();
+    let trace_source = event
+        .get("trace_id")
+        .and_then(|value| value.as_str())
+        .unwrap_or("adl-trace");
+    let span_source = event
+        .get("span_id")
+        .and_then(|value| value.as_str())
+        .unwrap_or_else(|| {
+            event
+                .get("name")
+                .and_then(|value| value.as_str())
+                .unwrap_or("adl-span")
+        });
+    let parent_source = event
+        .get("parent_span_id")
+        .and_then(|value| value.as_str())
+        .unwrap_or("adl-parent");
+    let now = unix_nanos_now();
+    serde_json::json!({
+        "resourceSpans": [{
+            "resource": {
+                "attributes": resource_attributes
+            },
+            "scopeSpans": [{
+                "scope": {
+                    "name": "adl.csm.runtime",
+                    "version": env!("CARGO_PKG_VERSION")
+                },
+                "spans": [{
+                    "name": event.get("name").cloned().unwrap_or(serde_json::Value::Null),
+                    "kind": 1,
+                    "traceId": otel_hex_id(trace_source, 32),
+                    "spanId": otel_hex_id(span_source, 16),
+                    "parentSpanId": otel_hex_id(parent_source, 16),
+                    "startTimeUnixNano": now,
+                    "endTimeUnixNano": now,
+                    "attributes": span_attributes,
+                    "status": {
+                        "code": otel_status_code(event.get("severity_text").and_then(|value| value.as_str())),
+                        "message": event.get("severity_text").cloned().unwrap_or(serde_json::Value::Null)
+                    },
+                    "events": [{
+                        "name": event.get("name").cloned().unwrap_or(serde_json::Value::Null),
+                        "timeUnixNano": now,
+                        "attributes": event
+                            .get("attributes")
+                            .and_then(|attributes| attributes.as_object())
+                            .map(otel_attribute_array)
+                            .unwrap_or_default()
+                    }]
+                }]
+            }]
+        }]
+    })
+}
+
+fn otel_attribute_array(
+    map: &serde_json::Map<String, serde_json::Value>,
+) -> Vec<serde_json::Value> {
+    map.iter()
+        .filter_map(|(key, value)| {
+            value
+                .as_str()
+                .map(|value| otel_string_attribute(key, value))
+        })
+        .collect()
+}
+
+fn otel_string_attribute(key: &str, value: &str) -> serde_json::Value {
+    serde_json::json!({
+        "key": key,
+        "value": {
+            "stringValue": value
+        }
+    })
+}
+
+fn otel_status_code(severity: Option<&str>) -> i32 {
+    match severity {
+        Some("ERROR") => 2,
+        _ => 1,
+    }
+}
+
+fn unix_nanos_now() -> String {
+    SystemTime::now()
+        .duration_since(UNIX_EPOCH)
+        .map(|duration| duration.as_nanos().to_string())
+        .unwrap_or_else(|_| "0".to_string())
+}
+
+fn otel_hex_id(input: &str, len: usize) -> String {
+    let mut out = String::with_capacity(len);
+    let mut salt = 0_u64;
+    while out.len() < len {
+        let mut hasher = std::collections::hash_map::DefaultHasher::new();
+        input.hash(&mut hasher);
+        salt.hash(&mut hasher);
+        out.push_str(&format!("{:016x}", hasher.finish()));
+        salt = salt.saturating_add(1);
+    }
+    out.truncate(len);
+    out
+}
+
+fn field_value<'a>(fields: &'a [(&str, &str)], wanted: &str) -> Option<&'a str> {
+    fields
+        .iter()
+        .find_map(|(key, value)| (*key == wanted).then_some(*value))
+}
+
+fn otel_severity(result: &str) -> &'static str {
+    match result {
+        "failed" | "timeout" => "ERROR",
+        "heartbeat" => "DEBUG",
+        _ => "INFO",
+    }
+}
+
 fn emit_compatibility_sink_failure(
     command: &str,
     stage: &str,
@@ -96,6 +572,54 @@ fn emit_compatibility_sink_failure(
         sanitize_value(log_path),
         sanitize_value(err),
     );
+    eprintln!("{line}");
+}
+
+fn emit_otel_sink_failure(
+    command: &str,
+    stage: &str,
+    log_path: &str,
+    err: &str,
+    stderr_suppressed: bool,
+    compatibility_log_path: Option<&str>,
+) {
+    let line = format!(
+        "adl_event schema=adl.observability.event.v1 command={} stage=otel_log result=failed original_stage={} sink={} detail={}",
+        sanitize_value(command),
+        sanitize_value(stage),
+        sanitize_value(log_path),
+        sanitize_value(err),
+    );
+    if let Some(compatibility_log_path) = compatibility_log_path {
+        let _ = append_to_compatibility_log(compatibility_log_path, &line);
+    }
+    if stderr_suppressed {
+        return;
+    }
+    eprintln!("{line}");
+}
+
+fn emit_otel_export_failure(
+    command: &str,
+    stage: &str,
+    endpoint: &str,
+    err: &str,
+    stderr_suppressed: bool,
+    compatibility_log_path: Option<&str>,
+) {
+    let line = format!(
+        "adl_event schema=adl.observability.event.v1 command={} stage=otel_export result=failed original_stage={} endpoint={} detail={}",
+        sanitize_value(command),
+        sanitize_value(stage),
+        sanitize_value(endpoint),
+        sanitize_value(err),
+    );
+    if let Some(compatibility_log_path) = compatibility_log_path {
+        let _ = append_to_compatibility_log(compatibility_log_path, &line);
+    }
+    if stderr_suppressed {
+        return;
+    }
     eprintln!("{line}");
 }
 
@@ -365,8 +889,10 @@ mod tests {
     };
     use std::env;
     use std::fs;
+    use std::io::{Read, Write};
+    use std::net::TcpListener;
     use std::path::{Path, PathBuf};
-    use std::sync::MutexGuard;
+    use std::sync::{mpsc, MutexGuard};
     use std::time::{Instant, SystemTime, UNIX_EPOCH};
 
     struct MultiEnvGuard {
@@ -420,6 +946,62 @@ mod tests {
             std::thread::sleep(std::time::Duration::from_millis(25));
         }
         fs::read_to_string(path).expect("read observability log")
+    }
+
+    fn spawn_loopback_otlp_collector(
+    ) -> (String, mpsc::Receiver<String>, std::thread::JoinHandle<()>) {
+        let listener = TcpListener::bind("127.0.0.1:0").expect("bind loopback collector");
+        let addr = listener.local_addr().expect("collector addr");
+        let (tx, rx) = mpsc::channel();
+        let handle = std::thread::spawn(move || {
+            let (mut stream, _) = listener.accept().expect("accept otlp export");
+            let mut buf = Vec::new();
+            let mut temp = [0_u8; 4096];
+            loop {
+                let n = stream.read(&mut temp).expect("read request");
+                if n == 0 {
+                    break;
+                }
+                buf.extend_from_slice(&temp[..n]);
+                if let Some(header_end) = find_header_end(&buf) {
+                    let content_length = content_length(&buf[..header_end]).unwrap_or(0);
+                    if buf.len() >= header_end + 4 + content_length {
+                        break;
+                    }
+                }
+            }
+            let body = if let Some(header_end) = find_header_end(&buf) {
+                String::from_utf8_lossy(&buf[header_end + 4..]).to_string()
+            } else {
+                String::new()
+            };
+            tx.send(body).expect("send captured body");
+            stream
+                .write_all(b"HTTP/1.1 200 OK\r\ncontent-length: 2\r\n\r\nOK")
+                .expect("write response");
+        });
+        (format!("http://{addr}/v1/traces"), rx, handle)
+    }
+
+    fn find_header_end(buf: &[u8]) -> Option<usize> {
+        buf.windows(4).position(|window| window == b"\r\n\r\n")
+    }
+
+    fn content_length(headers: &[u8]) -> Option<usize> {
+        String::from_utf8_lossy(headers).lines().find_map(|line| {
+            let (name, value) = line.split_once(':')?;
+            name.eq_ignore_ascii_case("content-length")
+                .then(|| value.trim().parse::<usize>().ok())
+                .flatten()
+        })
+    }
+
+    fn attr_string<'a>(attrs: &'a serde_json::Value, key: &str) -> Option<&'a str> {
+        attrs.as_array()?.iter().find_map(|attr| {
+            (attr.get("key")?.as_str()? == key)
+                .then(|| attr.get("value")?.get("stringValue")?.as_str())
+                .flatten()
+        })
     }
 
     #[test]
@@ -485,6 +1067,216 @@ mod tests {
         assert!(contents.contains("result=completed"));
         assert!(contents.contains("artifact_ref="));
         assert!(!contents.contains("/repo/adl/docs/proof.md"));
+    }
+
+    #[test]
+    fn emit_event_exports_otel_jsonl_and_monitor_status_when_configured() {
+        let temp = unique_temp_dir("adl-otel-log");
+        let otel_log = temp.join("otel.jsonl");
+        let otel_status = temp.join("otel-status.json");
+        let _env = MultiEnvGuard::set_all(&[
+            ("ADL_OBSERVABILITY_STDERR", "0"),
+            ("ADL_OBSERVABILITY_REPO_ROOT", "/repo/adl"),
+            ("ADL_OTEL_LOG", otel_log.to_str().expect("otel log utf8")),
+            (
+                "ADL_OTEL_STATUS",
+                otel_status.to_str().expect("otel status utf8"),
+            ),
+        ]);
+
+        emit_event(
+            "agent",
+            "daemon_started",
+            "started",
+            &[
+                ("trace_id", "trace-1"),
+                ("span_id", "span-1"),
+                ("parent_span_id", "span-root"),
+                ("otel_service_name", "adl-test-daemon"),
+                ("artifact_ref", "/repo/adl/docs/proof.md"),
+            ],
+        );
+
+        let line = fs::read_to_string(&otel_log).expect("read otel log");
+        let event: serde_json::Value =
+            serde_json::from_str(line.lines().next().expect("one otel event"))
+                .expect("parse otel json");
+        assert_eq!(event["schema"], "adl.otel.event.v1");
+        assert_eq!(event["name"], "agent.daemon_started");
+        assert_eq!(event["trace_id"], "trace-1");
+        assert_eq!(event["span_id"], "span-1");
+        assert_eq!(event["resource"]["service.name"], "adl-test-daemon");
+        assert_eq!(
+            event["attributes"]["adl.artifact_ref"],
+            "<repo>/docs/proof.md"
+        );
+
+        let status: serde_json::Value =
+            serde_json::from_str(&fs::read_to_string(&otel_status).expect("read otel status"))
+                .expect("parse status");
+        assert_eq!(status["schema"], "adl.otel.monitor_status.v1");
+        assert_eq!(status["event_count"], 1);
+        assert_eq!(status["last_event"], "agent.daemon_started");
+        assert_eq!(status["last_trace_id"], "trace-1");
+    }
+
+    #[test]
+    fn emit_event_exports_otlp_http_json_to_configured_collector() {
+        let temp = unique_temp_dir("adl-otlp-collector");
+        let otel_log = temp.join("otel.jsonl");
+        let otel_status = temp.join("otel-status.json");
+        let compatibility_log = temp.join("observability.log");
+        let (endpoint, captured, handle) = spawn_loopback_otlp_collector();
+        let _env = MultiEnvGuard::set_all(&[
+            ("ADL_OBSERVABILITY_STDERR", "0"),
+            (
+                "ADL_OBSERVABILITY_LOG",
+                compatibility_log
+                    .to_str()
+                    .expect("compatibility log path utf8"),
+            ),
+            ("ADL_OBSERVABILITY_REPO_ROOT", "/repo/adl"),
+            ("ADL_OTEL_LOG", otel_log.to_str().expect("otel log utf8")),
+            (
+                "ADL_OTEL_STATUS",
+                otel_status.to_str().expect("otel status utf8"),
+            ),
+            ("ADL_OTEL_EXPORTER_OTLP_ENDPOINT", endpoint.as_str()),
+            ("ADL_OTEL_EXPORTER_TIMEOUT_MS", "2000"),
+        ]);
+
+        emit_event(
+            "csm",
+            "checkpoint_write",
+            "completed",
+            &[
+                ("trace_id", "trace-csm-1"),
+                ("span_id", "span-csm-1"),
+                ("parent_span_id", "span-root"),
+                ("otel_service_name", "csm-runtime-daemon"),
+                ("artifact_ref", "/repo/adl/docs/proof.md"),
+                ("provider_token", "secret-value"),
+            ],
+        );
+
+        let body = captured.recv().expect("captured otlp body");
+        handle.join().expect("collector thread joined");
+        let payload: serde_json::Value = serde_json::from_str(&body).expect("parse payload");
+        let span = &payload["resourceSpans"][0]["scopeSpans"][0]["spans"][0];
+        assert_eq!(span["name"], "csm.checkpoint_write");
+        assert_eq!(span["kind"], 1);
+        assert_eq!(span["traceId"].as_str().expect("trace id").len(), 32);
+        assert_eq!(span["spanId"].as_str().expect("span id").len(), 16);
+        assert_eq!(
+            span["parentSpanId"].as_str().expect("parent span id").len(),
+            16
+        );
+        assert!(span["startTimeUnixNano"].as_str().is_some());
+        assert!(span["endTimeUnixNano"].as_str().is_some());
+        assert_eq!(span["status"]["code"], 1);
+        assert_eq!(
+            attr_string(
+                &payload["resourceSpans"][0]["resource"]["attributes"],
+                "service.name"
+            ),
+            Some("csm-runtime-daemon")
+        );
+        assert_eq!(
+            attr_string(&span["events"][0]["attributes"], "adl.artifact_ref"),
+            Some("<repo>/docs/proof.md")
+        );
+        assert_eq!(
+            attr_string(&span["events"][0]["attributes"], "adl.provider_token"),
+            Some("<redacted>")
+        );
+
+        let status: serde_json::Value =
+            serde_json::from_str(&fs::read_to_string(&otel_status).expect("read otel status"))
+                .expect("parse status");
+        assert_eq!(status["event_count"], 1);
+        assert_eq!(status["exporter"]["schema"], "adl.otel.exporter_status.v1");
+        assert_eq!(status["exporter"]["status"], "success");
+        assert_eq!(status["exporter"]["http_status"], 200);
+        assert_eq!(status["exporter"]["endpoint"], "<configured>");
+        assert!(
+            !fs::read_to_string(&otel_status)
+                .expect("status string")
+                .contains(endpoint.as_str()),
+            "status must not leak configured endpoint"
+        );
+    }
+
+    #[test]
+    fn otlp_exporter_malformed_endpoint_fails_closed_with_durable_status() {
+        let temp = unique_temp_dir("adl-otlp-bad-endpoint");
+        let otel_status = temp.join("otel-status.json");
+        let compatibility_log = temp.join("observability.log");
+        let _env = MultiEnvGuard::set_all(&[
+            ("ADL_OBSERVABILITY_STDERR", "0"),
+            (
+                "ADL_OBSERVABILITY_LOG",
+                compatibility_log
+                    .to_str()
+                    .expect("compatibility log path utf8"),
+            ),
+            (
+                "ADL_OTEL_STATUS",
+                otel_status.to_str().expect("status utf8"),
+            ),
+            ("ADL_OTEL_EXPORTER_OTLP_ENDPOINT", "not-a-url"),
+        ]);
+
+        emit_event(
+            "csm",
+            "daemon_started",
+            "started",
+            &[("trace_id", "trace-fail"), ("span_id", "span-fail")],
+        );
+
+        let status: serde_json::Value =
+            serde_json::from_str(&fs::read_to_string(&otel_status).expect("read status"))
+                .expect("parse status");
+        assert_eq!(status["schema"], "adl.otel.monitor_status.v1");
+        assert_eq!(status["event_count"], 1);
+        assert_eq!(status["exporter"]["status"], "failed");
+        assert_eq!(status["exporter"]["error"], "malformed_endpoint");
+        assert_eq!(status["exporter"]["endpoint"], "<configured>");
+
+        let failure_log =
+            fs::read_to_string(&compatibility_log).expect("read compatibility failure log");
+        assert!(failure_log.contains("stage=otel_export"));
+        assert!(failure_log.contains("result=failed"));
+        assert!(failure_log.contains("endpoint=not-a-url"));
+        assert!(failure_log.contains("detail=malformed_endpoint"));
+    }
+
+    #[test]
+    fn otel_sink_failure_is_durable_when_stderr_is_suppressed() {
+        let temp = unique_temp_dir("adl-otel-bad-log");
+        let compatibility_log = temp.join("compatibility.log");
+        let bad_otel_log = temp.join("directory-sink");
+        fs::create_dir_all(&bad_otel_log).expect("create bad otel sink directory");
+        let _env = MultiEnvGuard::set_all(&[
+            ("ADL_OBSERVABILITY_STDERR", "0"),
+            (
+                "ADL_OBSERVABILITY_LOG",
+                compatibility_log
+                    .to_str()
+                    .expect("compatibility log path utf8"),
+            ),
+            (
+                "ADL_OTEL_LOG",
+                bad_otel_log.to_str().expect("bad otel log path utf8"),
+            ),
+        ]);
+
+        emit_event("agent", "daemon_started", "started", &[]);
+
+        let contents =
+            fs::read_to_string(&compatibility_log).expect("read compatibility failure log");
+        assert!(contents.contains("stage=daemon_started"));
+        assert!(contents.contains("stage=otel_log"));
+        assert!(contents.contains("result=failed"));
     }
 
     #[test]

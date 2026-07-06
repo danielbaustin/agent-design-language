@@ -1,0 +1,28 @@
+{
+  "schema": "adl.csm.service_status.v1",
+  "label": "com.agentlogic.csm.wp07-4903",
+  "manager": "local",
+  "runtime_owner": "csm",
+  "service_state": "stopped_or_requested",
+  "pid": 99119,
+  "pid_liveness": "stale_pid",
+  "broad_process_scan": false,
+  "uses_ps": false,
+  "manifest_ref": "service_manifest.json",
+  "plist_ref": "csm.launchd.plist",
+  "daemon_status_ref": "../state/daemon_status.json",
+  "continuity_checkpoint_ref": "../state/continuity_checkpoint.json",
+  "observability_log_ref": "logs/observability.log",
+  "otel_log_ref": "logs/otel.jsonl",
+  "otel_status_ref": "logs/otel_status.json",
+  "last_action": "stop",
+  "last_error": null,
+  "unsupported_permanence_claims": [
+    "host_reboot_survival_not_proven",
+    "kill_9_recovery_not_proven",
+    "disk_full_recovery_not_proven",
+    "resource_exhaustion_recovery_not_proven",
+    "cloud_orchestration_not_claimed"
+  ],
+  "updated_at": "2026-07-05T19:48:45.146351+00:00"
+}

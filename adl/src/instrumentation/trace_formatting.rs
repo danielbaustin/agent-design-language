@@ -245,6 +245,15 @@ pub fn format_normalized_event(ev: &TraceEventNormalized) -> String {
         TraceEventNormalized::StepFinished { step_id, success } => {
             format!("StepFinished step={step_id} success={success}")
         }
+        TraceEventNormalized::RuntimeResilienceDecision {
+            step_id,
+            watcher_disposition,
+            middleware_disposition,
+            terminal,
+            attempt_count,
+        } => format!(
+            "RuntimeResilienceDecision step={step_id} watcher={watcher_disposition} middleware={middleware_disposition} terminal={terminal} attempts={attempt_count}"
+        ),
         TraceEventNormalized::CallEntered {
             caller_step_id,
             callee_workflow_id,
@@ -441,6 +450,16 @@ mod tests {
                     success: false,
                 },
                 "StepFinished step=s1 success=false",
+            ),
+            (
+                TraceEventNormalized::RuntimeResilienceDecision {
+                    step_id: "s1".to_string(),
+                    watcher_disposition: "succeeded".to_string(),
+                    middleware_disposition: "succeeded".to_string(),
+                    terminal: false,
+                    attempt_count: 1,
+                },
+                "RuntimeResilienceDecision step=s1 watcher=succeeded middleware=succeeded terminal=false attempts=1",
             ),
             (
                 TraceEventNormalized::CallEntered {

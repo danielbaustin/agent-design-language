@@ -96,6 +96,14 @@ Important repo-local tooling surfaces include:
 - `bash adl/tools/run_validation_manager_nessus_lane.sh` — validation-manager
   wrapper that consumes one eligible local lane and routes it to the Nessus
   remote runner; see [Nessus Validation Manager Lane](NESSUS_VALIDATION_MANAGER_LANE.md)
+- `bash adl/tools/run_aws_spot_remote_validation_lane.sh` — AWS Spot EC2
+  remote validation wrapper that checks the `agent-logic-admin` account against
+  retained Agent Logic proof before launch and reuses the retained warm EBS
+  cache volume by default; see
+  [AWS Spot Remote Validation Lane](AWS_SPOT_REMOTE_VALIDATION_LANE.md)
+- `bash adl/tools/run_build_platform_benchmark.sh` — shared Wuji, Nessus, AWS
+  Spot, and CodeBuild timing workload; see
+  [Build Platform Benchmarks](BUILD_PLATFORM_BENCHMARKS.md)
 - `adl/tools/*.sh` wrappers remain available as compatibility entrypoints over the Rust-owned commands
 - `adl/tools/report_large_rust_modules.sh` — non-blocking Rust source-and-test module size report; by default it scans both `adl/src` and `adl/tests`, and current snapshots should live under `.adl/reports/manual/` instead of tracked repo docs
 - `adl/tools/sync_task_bundle_prompts.sh` — refresh canonical local task-bundle prompt layout from compatibility paths

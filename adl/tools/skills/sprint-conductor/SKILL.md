@@ -146,6 +146,13 @@ missing sprint-management issue first.
    declaration, and activity-log declaration into one readiness result.
    Review and activity-log paths are declaration surfaces here; they do not
    need to exist on disk yet to satisfy readiness.
+   Installed skill parity means the installed `sprint-conductor` bundle must
+   match the tracked bundle after generated cache artifacts such as
+   `__pycache__`, `.pyc`, `.pyo`, and `.DS_Store` are filtered out. Real
+   installed-only helper scripts are drift and should be tracked or repaired,
+   not silently accepted as local-only behavior. The repo-native repair path is
+   `bash adl/tools/install_adl_operational_skills.sh`, which refreshes the
+   installed skill bundles from tracked repo sources.
 5. If the readiness sweep reports `needs_repair`, fix the flagged issue-local
    or sprint-local defects before starting child execution.
 6. Run sprint-wide structured prompt review before issue execution begins when

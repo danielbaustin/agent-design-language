@@ -20,7 +20,7 @@ Issue `#3377` remains the first-birthday readiness source for the launch
 packet, go/no-go checklist, demo rehearsal outline, negative-suite plan, and
 review handoff expectations. v0.92 WP-01 must consume `v0.91.5` release-tail
 closeout, the `v0.91.5` activation-test map, the `v0.91.6` / `v0.91.7`
-bridge tranches, and `#3377` before opening the final issue wave.
+readiness/proof tranches, and `#3377` before opening the final issue wave.
 
 ## Purpose
 
@@ -84,7 +84,7 @@ evidence.
 | Birthday review packet | Demo/proof feature | Reviewer-facing packet that distinguishes birth from process startup, wake, snapshot, and admission. |
 | Migration and cross-polis continuity | Design feature | Bounded planning for continuity when movement is allowed; no production migration claim. |
 | Learning and adaptation context | Context source | Use learning-model evidence to explain how post-birth learning remains inspectable. |
-| Memory palace context | Deferred/context source | Preserve spatial memory/identity ideas as future architecture; do not force full memory palace into v0.92. |
+| Memory palace context | Context source with proof boundary | Preserve spatial memory/identity ideas as future architecture and require any v0.92 claim to name the implemented/proven slice. |
 | Constitutional inheritance | Downstream handoff | Provide identity evidence that v0.93 governance can consume. |
 
 ## Source Corpus Disposition
@@ -132,7 +132,7 @@ A later v0.92 implementation should be able to emit a birthday record with:
 - signed witness set
 - citizen-facing receipt
 - reviewer finding that explains why the event counts as birth
-- caveats and deferred constitutional-governance claims
+- caveats and downstream constitutional-governance boundaries
 
 The record should be inspectable without raw private-state disclosure.
 

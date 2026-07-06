@@ -13,8 +13,10 @@ use ::adl::{
         runtime_v2_cognitive_being_flagship_demo_contract,
         runtime_v2_contract_market_demo_contract, runtime_v2_csm_integrated_run_contract,
         runtime_v2_feature_proof_coverage_contract, runtime_v2_foundation_demo_contract,
-        runtime_v2_governed_tools_flagship_demo_contract, runtime_v2_observatory_flagship_contract,
-        runtime_v2_operator_control_report_contract, runtime_v2_security_boundary_proof_contract,
+        runtime_v2_governed_tools_flagship_demo_contract,
+        runtime_v2_minimal_integrated_runtime_path_contract,
+        runtime_v2_observatory_flagship_contract, runtime_v2_operator_control_report_contract,
+        runtime_v2_security_boundary_proof_contract,
     },
 };
 
@@ -229,6 +231,59 @@ pub(crate) fn real_runtime_v2_integrated_csm_run_demo(
     println!("{}", artifacts.execution_summary()?);
     println!();
     println!("{}", artifacts.observatory_console_markdown()?);
+    Ok(())
+}
+
+pub(crate) fn real_runtime_v2_minimal_integrated_runtime_path(
+    repo_root: &Path,
+    args: &[String],
+) -> Result<()> {
+    let mut out_path: Option<PathBuf> = None;
+    let mut i = 0usize;
+    while i < args.len() {
+        match args[i].as_str() {
+            "--out" => {
+                let Some(value) = args.get(i + 1) else {
+                    return Err(anyhow!(
+                        "runtime-v2 minimal-integrated-runtime-path requires --out <dir>"
+                    ));
+                };
+                out_path = Some(PathBuf::from(value));
+                i += 1;
+            }
+            "--help" | "-h" => {
+                println!("{}", usage::usage());
+                return Ok(());
+            }
+            other => {
+                return Err(anyhow!(
+                    "unknown arg for runtime-v2 minimal-integrated-runtime-path: {other}"
+                ))
+            }
+        }
+        i += 1;
+    }
+
+    let artifacts = runtime_v2_minimal_integrated_runtime_path_contract()?;
+    let Some(out_path) = out_path else {
+        println!("{}", to_string_pretty(&artifacts.summary)?);
+        return Ok(());
+    };
+    let resolved =
+        resolve_relative_output_path(repo_root, &out_path, "minimal-integrated-runtime-path")?;
+    fs::create_dir_all::<&Path>(&resolved).with_context(|| {
+        format!(
+            "failed to create Runtime v2 minimal integrated runtime path root {}",
+            resolved.display()
+        )
+    })?;
+    artifacts.write_to_root(&resolved)?;
+    println!(
+        "RUNTIME_V2_MINIMAL_INTEGRATED_RUNTIME_PATH_ROOT={}",
+        resolved.display()
+    );
+    println!();
+    println!("{}", artifacts.integrated_run.execution_summary()?);
     Ok(())
 }
 

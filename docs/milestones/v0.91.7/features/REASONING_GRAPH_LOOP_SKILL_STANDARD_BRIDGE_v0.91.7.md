@@ -1,8 +1,8 @@
-# Reasoning Graph, Loop Runtime, And Skill Standard Bridge
+# Reasoning Graph, Loop Runtime, And Skill Standard Implementation
 
 ## Metadata
 
-- Feature Name: Reasoning Graph, Loop Runtime, And Skill Standard Bridge
+- Feature Name: Reasoning Graph, Loop Runtime, And Skill Standard Implementation
 - Milestone Target: `v0.91.7`
 - Status: planned
 - Owner: ADL maintainers
@@ -12,7 +12,7 @@
 
 ## Purpose
 
-Establish the pre-`v0.92` bridge among loop prompts, reasoning graphs, skills,
+Establish the pre-`v0.92` implementation path among loop prompts, reasoning graphs, skills,
 trace, ObsMem, PVF, AEE, Runtime v2, UTS, ACC, and the future `adl.skill.v1`
 standard.
 
@@ -34,7 +34,7 @@ Out of scope:
 
 ## Required Decisions
 
-- Which artifacts make up the minimal reasoning graph bridge?
+- Which artifacts make up the minimal reasoning graph implementation path?
 - Which loop prompts become standardizable skill inputs?
 - Which proof lanes validate a future skill standard?
 - Which dependencies block `v0.92` consumption?
@@ -43,17 +43,17 @@ Out of scope:
 
 - Curiosity Engine feature doc.
 - Constructability Gate feature doc.
-- AEE and Memory/ObsMem bridge truth from `v0.91.6`.
+- AEE and Memory/ObsMem readiness truth from `v0.91.6`.
 
 ## Validation And Review
 
-- Review that the bridge maps existing systems without inventing completion.
+- Review that the implementation path maps existing systems without inventing completion.
 - Require explicit non-goals for the future standard.
-- Record any full-standard work that does not land before `v0.92` as an explicit non-claim or evidence-backed blocker with operator approval.
+- Record any full-standard work that does not land before `v0.92` as an evidence-backed blocker with operator approval.
 
 ## v0.92 Consumption
 
-`v0.92` may consume the bridge map and minimal proof expectations. It must not
+`v0.92` may consume only integrated proof and minimal proof expectations. It must not
 claim a completed skill standard or graph runtime from this doc alone.
 
 ## Non-Goals

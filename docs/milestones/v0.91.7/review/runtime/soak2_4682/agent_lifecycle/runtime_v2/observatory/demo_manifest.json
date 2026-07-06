@@ -1,0 +1,15 @@
+{
+  "schema": "adl.csm_observatory.demo_manifest.v1",
+  "demo_id": "demo-v0901-csm-observatory",
+  "classification": "captured_artifacts",
+  "packet_id": "v0916-runtime-soak-observatory-packet-0001",
+  "proof_surfaces": {
+    "visibility_packet": "visibility_packet.json",
+    "operator_report": "operator_report.md",
+    "console_reference": "console_reference.md",
+    "unity_observatory_contract": "unity_observatory_contract.json"
+  },
+  "truth_boundary": "This packet is a bounded local capture produced by the v0.91.6 integrated runtime soak. It is derived from runtime-owned artifacts, suitable for Unity Observatory consumption, and explicitly does not claim full product completion, live telemetry streaming, or v0.92 coherence.",
+  "read_only": true,
+  "live_runtime_capture": false
+}

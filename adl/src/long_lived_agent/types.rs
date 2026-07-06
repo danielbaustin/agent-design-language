@@ -95,6 +95,29 @@ pub struct StatusRecord {
     pub updated_at: DateTime<Utc>,
 }
 
+/// Persistent daemon supervisor status for one long-lived agent.
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct DaemonStatusRecord {
+    pub schema: String,
+    pub agent_instance_id: String,
+    #[serde(default)]
+    pub runtime_capabilities: Value,
+    pub state: String,
+    pub supervisor_pid: u32,
+    pub restart_count: u64,
+    pub max_restarts: u64,
+    pub checkpoint_interval_secs: u64,
+    pub last_event: String,
+    pub last_child_exit: Option<String>,
+    pub last_checkpoint_at: DateTime<Utc>,
+    pub next_backoff_secs: u64,
+    pub trace_id: String,
+    pub span_id: String,
+    pub parent_span_id: Option<String>,
+    pub unsupported_permanence_claims: Vec<String>,
+    pub updated_at: DateTime<Utc>,
+}
+
 /// Stop request artifact persisted by operator/API calls.
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct StopRecord {
@@ -126,6 +149,16 @@ pub struct TickOptions {
 #[derive(Debug, Clone, Copy)]
 pub struct RunOptions {
     pub max_cycles: u64,
+    pub interval_secs: Option<u64>,
+    pub no_sleep: bool,
+    pub recover_stale_lease: bool,
+}
+
+/// Supervisor options for daemon-style foreground runtime execution.
+#[derive(Debug, Clone, Copy)]
+pub struct DaemonOptions {
+    pub max_restarts: u64,
+    pub checkpoint_interval_secs: u64,
     pub interval_secs: Option<u64>,
     pub no_sleep: bool,
     pub recover_stale_lease: bool,

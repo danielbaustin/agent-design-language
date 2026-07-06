@@ -22,10 +22,13 @@ pub use runner::{
 };
 pub use state::*;
 
+use crate::resilience::RuntimeResilienceDispositionV1;
 use runner::{
     emit_delegation_lifecycle_finish, emit_delegation_lifecycle_start,
+    emit_runtime_resilience_decision, emit_runtime_resilience_failure,
     enforce_delegation_policy_for_step_actions, execute_called_workflow,
     execute_concurrent_deterministic, execute_step_with_retry_core,
+    RuntimeResilienceExecutionContext,
 };
 use state::DEFAULT_MAX_CONCURRENCY;
 use support::{
@@ -183,6 +186,15 @@ pub fn execute_sequential_with_resume(
             validate_write_to(&step_id, write_to)?;
         }
         enforce_delegation_policy_for_step_actions(tr, step, &resolved.doc)?;
+        emit_runtime_resilience_decision(
+            tr,
+            step,
+            RuntimeResilienceDispositionV1::Admitted,
+            RuntimeResilienceDispositionV1::Admitted,
+            RuntimeResilienceExecutionContext::new(false, 1, 0, Some(1), None),
+            None,
+            "AEE runtime admitted sequential step under resilience middleware",
+        );
 
         emit_delegation_lifecycle_start(tr, step, &resolved.doc);
         tr.step_started(
@@ -219,6 +231,21 @@ pub fn execute_sequential_with_resume(
                     emit_delegation_lifecycle_finish(tr, step, &resolved.doc, true, 0);
                     tr.step_finished(&step_id, true);
                     let duration_ms = tr.current_elapsed_ms().saturating_sub(step_started_elapsed);
+                    emit_runtime_resilience_decision(
+                        tr,
+                        step,
+                        RuntimeResilienceDispositionV1::Succeeded,
+                        RuntimeResilienceDispositionV1::Succeeded,
+                        RuntimeResilienceExecutionContext::new(
+                            false,
+                            1,
+                            u64::try_from(duration_ms).unwrap_or(u64::MAX),
+                            Some(1),
+                            None,
+                        ),
+                        None,
+                        "AEE runtime resilience middleware recorded successful call workflow completion",
+                    );
                     progress_step_done(emit_progress, tr, &step_id, true, duration_ms);
 
                     for (k, v) in callee_final_state {
@@ -269,6 +296,18 @@ pub fn execute_sequential_with_resume(
                     emit_delegation_lifecycle_finish(tr, step, &resolved.doc, false, 0);
                     tr.step_finished(&step_id, false);
                     let duration_ms = tr.current_elapsed_ms().saturating_sub(step_started_elapsed);
+                    emit_runtime_resilience_failure(
+                        tr,
+                        step,
+                        &err,
+                        RuntimeResilienceExecutionContext::new(
+                            true,
+                            1,
+                            u64::try_from(duration_ms).unwrap_or(u64::MAX),
+                            Some(1),
+                            None,
+                        ),
+                    );
                     progress_step_done(emit_progress, tr, &step_id, false, duration_ms);
                     tr.run_failed(&err.to_string());
                     tr.execution_boundary_crossed(ExecutionBoundary::RunCompletion, "failure");
@@ -300,6 +339,21 @@ pub fn execute_sequential_with_resume(
                 );
                 tr.step_finished(&step_id, true);
                 let duration_ms = tr.current_elapsed_ms().saturating_sub(step_started_elapsed);
+                emit_runtime_resilience_decision(
+                    tr,
+                    step,
+                    RuntimeResilienceDispositionV1::Succeeded,
+                    RuntimeResilienceDispositionV1::Succeeded,
+                    RuntimeResilienceExecutionContext::new(
+                        false,
+                        success.attempts,
+                        u64::try_from(duration_ms).unwrap_or(u64::MAX),
+                        Some(1),
+                        None,
+                    ),
+                    None,
+                    "AEE runtime resilience middleware recorded successful step completion",
+                );
                 progress_step_done(emit_progress, tr, &step_id, true, duration_ms);
 
                 if let Some(write_to) = step.write_to.as_deref() {
@@ -377,6 +431,18 @@ pub fn execute_sequential_with_resume(
                 emit_delegation_lifecycle_finish(tr, step, &resolved.doc, false, 0);
                 tr.step_finished(&step_id, false);
                 let duration_ms = tr.current_elapsed_ms().saturating_sub(step_started_elapsed);
+                emit_runtime_resilience_failure(
+                    tr,
+                    step,
+                    &failure.err,
+                    RuntimeResilienceExecutionContext::new(
+                        !continue_on_error,
+                        failure.attempts,
+                        u64::try_from(duration_ms).unwrap_or(u64::MAX),
+                        Some(1),
+                        None,
+                    ),
+                );
                 progress_step_done(emit_progress, tr, &step_id, false, duration_ms);
                 records.push(StepExecutionRecord {
                     step_id: step_id.clone(),

@@ -1,18 +1,18 @@
 {
   "schema": "adl.v0917.wp07.pre_v092_runtime_coherence_disposition.v1",
   "issue": 4845,
+  "current_rerun_issue": 4880,
+  "superseded_attempt_issue": 4682,
   "umbrella_issue": 4634,
   "version": "v0.91.7",
-  "generated_at": "2026-07-04T23:29:08Z",
-  "disposition": "blocked",
-  "v092_activation_decision": "not_ready",
-  "wp07_closeout_instruction": "keep_umbrella_open",
+  "generated_at": "2026-07-05T03:11:00Z",
+  "disposition": "blocked_pending_operator_disposition",
+  "v092_activation_decision": "not_ready_for_full_runtime_coherence_claims",
+  "wp07_closeout_instruction": "keep_umbrella_open_until_4880_merges_and_operator_disposes_remaining_rows",
   "operator_approval": {
-    "soak3_required_scope_approved": false,
-    "blocked_surface_deferrals_approved": false
+    "blocked_surface_deferrals_approved": false,
+    "soak3_required_scope_approved": false
   },
-  "soak3_scope_status": "proposed_minimum_if_operator_authorizes_activation",
-  "soak3_required_by_this_packet": false,
   "evidence_inputs": [
     {
       "issue": 4842,
@@ -21,122 +21,142 @@
     },
     {
       "issue": 4718,
-      "state": "merged_closed",
-      "evidence": "docs/milestones/v0.91.7/review/observability_4718/INTEGRATED_LOGGING_OTEL_PROOF_4718.md",
-      "claim_boundary": "issue_proven_prerequisite_not_final_soak_integrated"
+      "state": "merged_closed_rerun_consumed",
+      "evidence": "docs/milestones/v0.91.7/review/observability_4718/generated/proof_summary.json",
+      "claim_boundary": "logging_contract_and_mapping_inputs_consumed_by_local_file_backed_otel_monitor_proof"
     },
     {
       "issue": 4681,
       "pr": 4868,
-      "commit": "632f4e94ceafa7ed2bf69aac2d1ecec84ff323ff",
-      "state": "checks_pending",
-      "pending_checks": ["adl-ci"],
-      "failed_checks": []
+      "state": "merged_closed",
+      "evidence": "docs/milestones/v0.91.7/review/runtime/MINIMAL_INTEGRATED_RUNTIME_PATH_4681.md"
     },
     {
       "issue": 4783,
       "pr": 4869,
-      "commit": "8c731da0978eed343df844ed88fe3cad76ee21e8",
-      "state": "checks_pending",
-      "pending_checks": ["adl-coverage"],
-      "failed_checks": []
+      "state": "merged_closed",
+      "evidence": "docs/milestones/v0.91.7/review/runtime/soak2_4682/resilience/runtime_failure_injection_proof.json"
     },
     {
       "issue": 4784,
       "pr": 4871,
-      "commit": "1812b54b",
-      "state": "merged_closed_with_closeout_needed"
+      "state": "merged_closed_consumed",
+      "evidence": "docs/milestones/v0.91.7/review/runtime/soak2_4682/resilience/runtime_failure_register.json"
     },
     {
       "issue": 4843,
       "pr": 4870,
-      "commit": "b8ad0ce3",
-      "state": "merged_closed"
+      "state": "merged_closed_consumed",
+      "evidence": "docs/milestones/v0.91.7/review/runtime/soak2_feature_list_matrix_4843.json"
     },
     {
       "issue": 4682,
       "pr": 4873,
-      "commit": "f1720dcb",
-      "state": "merged_closed_blocked_before_full_soak",
-      "pending_checks": [],
-      "failed_checks": [],
+      "state": "merged_closed_superseded_blocked_attempt",
       "evidence": "docs/milestones/v0.91.7/review/runtime/soak2_4682/soak2_execution_status_4682.json"
     },
     {
-      "issue": 4683,
-      "pr": 4872,
-      "commit": "512e0f95",
-      "state": "merged_closed_pre_soak_diet_map_with_closeout_needed"
-    },
-    {
-      "issue": 4844,
-      "pr": 4874,
-      "commit": "335eb280b8ef4b960fdfdf6054f45cfc6e040bcc",
-      "state": "ready_green_review_register",
+      "issue": 4880,
+      "state": "final_rerun_completed_with_blockers",
+      "evidence": "docs/milestones/v0.91.7/review/runtime/soak2_4682/soak2_execution_status_4682.json",
       "row_counts": {
-        "integrated_proven": 0,
-        "blocked": 14,
-        "deferred": 1,
+        "integrated_proven": 9,
+        "blocked_with_evidence": 5,
+        "deferred_with_operator_approval": 1,
         "routed_to_soak_3": 0
       }
+    },
+    {
+      "issue": 4634,
+      "state": "umbrella_otel_monitor_repair",
+      "evidence": "docs/milestones/v0.91.7/review/runtime/soak2_4682/otel_monitor/otel_status.json",
+      "claim_boundary": "local_durable_ADL_OTEL_LOG_jsonl_and_ADL_OTEL_STATUS_monitor_only_no_network_otlp_backend"
+    },
+    {
+      "issue": 4890,
+      "state": "runtime_owner_binary_split",
+      "evidence": "docs/milestones/v0.91.7/review/runtime/csm_4890/otel_status.json",
+      "claim_boundary": "csm_daemon_is_current_runtime_owner_with_local_ADL_OTEL_LOG_and_ADL_OTEL_STATUS_monitor_only_no_network_otlp_backend"
     }
   ],
   "activation_decisions": [
     {
       "surface": "canonical_runtime_path",
-      "decision": "blocked",
-      "owners": [4681, 4682],
-      "v092_consequence": "No runtime-coherence activation claim until assembled path runs with retained evidence."
-    },
-    {
-      "surface": "runtime_v2_reconciliation",
-      "decision": "integrated_prerequisite",
-      "owners": [4842],
-      "v092_consequence": "May be cited as substrate reconciliation only."
+      "decision": "integrated_proven",
+      "owners": [4681, 4842, 4880],
+      "v092_consequence": "May be cited as local integrated runtime-path evidence."
     },
     {
       "surface": "logging_otel",
-      "decision": "integrated_prerequisite",
-      "owners": [4718, 4682],
-      "v092_consequence": "Final sprint-level claim blocked until #4682 consumes #4718."
+      "decision": "integrated_proven_with_boundary",
+      "owners": [4718, 4880, 4885, 4634, 4890],
+      "v092_consequence": "Logging/event samples, CSM daemon trace/span/service fields, local durable ADL_OTEL_LOG JSONL export, and ADL_OTEL_STATUS monitor status are proven through the current csm daemon owner binary; network OTLP collector and hosted telemetry backend remain non-claimed."
     },
     {
-      "surface": "resilience_middleware",
-      "decision": "blocked",
-      "owners": [4783, 4784, 4682],
-      "v092_consequence": "No activation resilience claim until #4783 checks pass, it is merged or explicitly sequenced, and #4682 reruns."
+      "surface": "runtime_daemon_owner_binary",
+      "decision": "integrated_proven_with_boundary",
+      "owners": [4890],
+      "v092_consequence": "csm daemon is the current runtime daemon owner; adl agent daemon is not a public command. Historical WP-07 packets that mention adl agent daemon are retained only as historical proof of the superseded surface."
     },
     {
-      "surface": "soak2_execution",
-      "decision": "blocked",
-      "owners": [4682, 4843, 4844],
-      "v092_consequence": "Full Soak 2 remains unproven."
+      "surface": "scheduler_resilience_aee_memory",
+      "decision": "integrated_proven",
+      "owners": [4783, 4784, 4546, 4880],
+      "v092_consequence": "Local runtime resilience, AEE, scheduler, and ObsMem handoff proof can be cited with retained artifacts."
     },
     {
-      "surface": "wp08_wp12_consumers",
-      "decision": "blocked_or_non_claim_required",
-      "owners": [4684, 4656, 4658],
-      "v092_consequence": "Cannot be relied on unless owner issues prove them or operator approves non-claims."
+      "surface": "runtime_aws_signal_bridge",
+      "decision": "blocked_with_evidence",
+      "owners": [4684, 4685, 4686, 4687, 4688, 4880],
+      "v092_consequence": "Must remain non-claimed, operator-deferred, or routed to Soak 3."
+    },
+    {
+      "surface": "observatory_unity_live_consumption",
+      "decision": "blocked_with_evidence",
+      "owners": [4652, 4702, 4703, 4704, 4689, 4880],
+      "v092_consequence": "Runtime contract exists; Unity editor live-consumption readiness remains non-claimed/deferred or Soak 3."
+    },
+    {
+      "surface": "wp12_acip_a2a_activation",
+      "decision": "blocked_with_evidence",
+      "owners": [4658, 4659, 4660, 4880],
+      "v092_consequence": "Local ACIP cases exist; activation claims remain blocked/deferred unless operator approves non-claim."
+    },
+    {
+      "surface": "runtime_v2_capability_envelope_freshness",
+      "decision": "blocked_with_evidence",
+      "owners": [4696, 4880],
+      "v092_consequence": "Static operator-control packet exists with generated_at_utc not_started; fresh integrated capability proof remains non-claimed/deferred or Soak 3."
+    },
+    {
+      "surface": "runtime_v2_security_cav_freshness",
+      "decision": "blocked_with_evidence",
+      "owners": [4657, 4880],
+      "v092_consequence": "Static fail-closed security packet exists with generated_at_utc not_started; fresh integrated security/CAV proof remains non-claimed/deferred or Soak 3."
     },
     {
       "surface": "curiosity_constructability_optional",
       "decision": "explicitly_deferred",
-      "owners": [4692, 4693, 4682],
+      "owners": [4692, 4693, 4880],
       "v092_consequence": "Does not block v0.92 unless promoted into activation scope."
     }
   ],
-  "proposed_soak3_activation_scope": [
-    "Consume #4681 after required checks pass and it is merged or explicitly approved for sequencing.",
-    "Consume #4783 after required checks pass and it is merged or explicitly approved for sequencing.",
-    "Rerun #4682 against the #4843 15-row matrix from a consumable integration base.",
-    "Reclassify every #4844 row with retained evidence.",
-    "Consume #4718 logging/OTel in the integrated #4682 path.",
-    "Record final v0.92 non-claims for WP-08/WP-12 rows if they remain outside activation scope."
+  "remaining_blockers": [
+    "runtime_aws_signal_bridge",
+    "observatory_unity_live_consumption",
+    "wp12_acip_a2a_activation",
+    "runtime_v2_capability_envelope_freshness",
+    "runtime_v2_security_cav_freshness"
+  ],
+  "operator_decision_required": [
+    "Approve v0.92 non-claims/defer for AWS signal bridge, Unity live consumption, WP-12 ACIP/A2A activation, runtime-v2 capability envelope freshness, and runtime-v2 security/CAV freshness, or route those rows to Soak 3."
   ],
   "non_claims": [
-    "No Soak 2 row is integrated_proven.",
-    "No full WP-07 runtime readiness claim is made.",
-    "No production OpenTelemetry collector, OTLP exporter, hosted telemetry service, Unity editor execution, AWS signal bridge, ACIP/A2A activation, or CAV/security boundary readiness is claimed.",
+    "No network OTLP collector, hosted telemetry service, or external exporter backend is claimed; WP-07 now claims only the local durable ADL_OTEL_LOG JSONL sink and ADL_OTEL_STATUS monitor file proven by #4634 and current csm daemon ownership proven by #4890.",
+    "No live AWS signal bridge/SNS/SSM heartbeat proof is claimed.",
+    "No Unity editor live-consumption run is claimed.",
+    "No WP-12 ACIP/A2A activation closure is claimed.",
+    "No fresh runtime-v2 capability-envelope or security/CAV proof is claimed from static packets whose generated timestamp is not_started.",
     "This packet does not close umbrella #4634."
   ]
 }

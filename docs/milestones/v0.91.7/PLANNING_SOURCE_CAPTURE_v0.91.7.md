@@ -16,51 +16,51 @@ Capture the source surfaces that must be considered before `v0.91.7` opens for e
 
 This document is a source ledger, not proof of implementation. It distinguishes tracked milestone evidence, local TBD planning inputs, existing open issues, and deferred or non-authoritative scratch.
 
-Scheduling truth is not completion truth. A source is not done because it is assigned, planned, documented, or routed. Any activation-path source consumed by v0.92 must be integrated/proven, already closed with retained evidence, explicitly non-claimed with operator approval, or blocked with evidence and operator approval.
+Scheduling truth is not completion truth. A source is not done because it is assigned, planned, documented, or owned. Any activation-path source consumed by v0.92 must be integrated/proven, already closed with retained evidence, operator-scoped-out with evidence and approval, or blocked with evidence and operator approval.
 
 ## Planning Rule
 
-`v0.91.7` should be planned as the final pre-`v0.92` bridge and readiness tranche.
+`v0.91.7` should be planned as the final pre-`v0.92` implementation and readiness tranche.
 
 It must answer three questions before `v0.92` opens:
 
 1. What must be completed before first birthday activation can begin?
-2. What may be explicitly non-claimed or blocked with evidence and operator approval without weakening the birthday milestone?
+2. What may be operator-scoped-out or blocked with evidence and operator approval without weakening the birthday milestone?
 3. What operational substrate must be stable enough that `v0.92` can execute quickly and predictably?
 
 ## Tracked Inputs
 
 | Source | Planning use | Required v0.91.7 handling |
 | --- | --- | --- |
-| `docs/milestones/v0.91.5/PRE_V092_BRIDGE_FEATURE_DOC_LEDGER_v0.91.5.md` | Pre-`v0.92` bridge ledger / `#3778` source | Consume as upstream bridge authority; do not let v0.91.7 contradict the ledger without an explicit decision. |
-| `docs/milestones/v0.91.6/` | First bridge tranche, runtime/tooling/provider/security/observability evidence | Consume closeout truth from the milestone's canonical issue-truth surfaces; do not duplicate completed work. |
+| `docs/milestones/v0.91.5/PRE_V092_BRIDGE_FEATURE_DOC_LEDGER_v0.91.5.md` | Pre-`v0.92` source ledger / `#3778` source | Consume as upstream source authority; do not let v0.91.7 contradict the ledger without an explicit decision. |
+| `docs/milestones/v0.91.6/` | First readiness tranche, runtime/tooling/provider/security/observability evidence | Consume closeout truth from the milestone's canonical issue-truth surfaces; do not duplicate completed work. |
 | `docs/milestones/v0.91.7/V0916_TO_V0917_HANDOFF_ADDENDUM_3982.md` | Dependency-gated v0.91.6-to-v0.91.7 handoff | WP-01 must consume this addendum with the failed-but-closed WP-15 external-review truth, closed WP-16 remediation/preflight truth, closed `#4620` / `#4621` dispositions, and closed v0.91.7 `#4622` PR-inventory tooling proof before opening dependent execution work. |
 | `docs/milestones/v0.91.7/review/V0917_WP02_V0916_CLOSEOUT_TRUTH_CONSUMPTION_4661.md` | WP-02 closeout-truth child packet | Consumes `#3980`, `#3981`, `#4620`, `#4621`, `#4622`, `#4628`, and `#4629` as closed-with-evidence inputs, while leaving sibling WP-02 children `#4662`-`#4665` and wrapper `#4699` open until separately disposed. |
-| `docs/milestones/v0.91.6/review/` | Sprint reviews, remediation, proof packets, and retained evidence | Read current closed-umbrella truth from `V0916_COMPLETED_SPRINT_RETAINED_EVIDENCE_MATRIX_4251.md`, then convert residual findings into proof work, operator-approved non-claims, or evidence-backed blockers. |
+| `docs/milestones/v0.91.6/review/` | Sprint reviews, remediation, proof packets, and retained evidence | Read current closed-umbrella truth from `V0916_COMPLETED_SPRINT_RETAINED_EVIDENCE_MATRIX_4251.md`, then convert open findings into proof work, operator-scoped-out entries, or evidence-backed blockers. |
 | `docs/milestones/v0.91.6/RUNTIME_FIRE_UP_PLAN_v0.91.6.md` | Runtime fire-up and soak continuity | Carry into runtime Soak #2 / integrated runtime proof. |
-| `docs/milestones/v0.91.6/features/COGNITIVE_SCHEDULER_v0.91.6.md` | Scheduler v1 bridge | Preserve as scheduler/economics input, not just docs residue. |
+| `docs/milestones/v0.91.6/features/COGNITIVE_SCHEDULER_v0.91.6.md` | Scheduler v1 input | Preserve as scheduler/economics input, not just docs residue. |
 | `docs/milestones/v0.91.6/review/scheduler/` | Scheduler proof and economics inputs | Feed v0.91.7 scheduler execution proof or closeout blocker status. |
 | `docs/milestones/v0.91.6/review/build_throughput/` | Build throughput, sccache/linker/target-dir/CodeBuild/Nessus evidence | Feed validation/build-throughput follow-ons and remote-build decisions, including an early v0.91.7 EC2 Spot or alternative remote-builder proof. |
 | `docs/milestones/v0.91.6/review/provider/` | Provider reliability, suitability, profiles v2, role profiles | Feed provider/scheduler/local-agent routes and v0.92 model-readiness boundaries. |
-| `docs/milestones/v0.91.6/review/security/` | CAV, SSM, access-rule, security residual evidence | Feed security residual and v0.93 enterprise-security handoff. |
-| `docs/milestones/v0.91.6/review/runtime_aws_signal_bridge/` | ACIP-to-SNS and heartbeat bridge proof | Feed runtime AWS/heartbeat operational proof and later ObsMem/community memory assignments. |
+| `docs/milestones/v0.91.6/review/security/` | CAV, SSM, access-rule, security evidence | Feed security implementation and v0.93 enterprise-security handoff. |
+| `docs/milestones/v0.91.6/review/runtime_aws_signal_bridge/` | ACIP-to-SNS and heartbeat proof | Feed runtime AWS/heartbeat operational proof and later ObsMem/community memory assignments. |
 | `docs/milestones/v0.91.6/review/sprint_execution_packets/` | SEP, activity logs, sprint-conductor simulation | Feed sprint-execution process and nested-goal/PVF scheduling. |
 | `docs/templates/planning/` | Milestone planning template authority | Use current planning template process; do not hand-roll canonical docs. |
 | `docs/templates/sprints/` | Sprint Execution Packet template authority | Use for mini-sprint/sprint setup and closeout expectations. |
 | `docs/templates/prompts/` | SIP/STP/SPP/SRP/SOR template authority | Preserve card lifecycle and planned VPP/template-version changes. |
-| `docs/planning/ADL_FEATURE_LIST.md` | Roadmap/feature-list truth surface | Refresh, reconcile, explicitly non-claim, or block stale feature-list rows before v0.92 planning consumes them. |
+| `docs/planning/ADL_FEATURE_LIST.md` | Roadmap/feature-list truth surface | Refresh, reconcile, operator-scope-out, or block stale feature-list rows before v0.92 planning consumes them. |
 
 ## Open-Issue Inputs Observed During #4368
 
-These were open at the source-capture pass and should be explicitly closed with evidence, integrated/proven, assigned as non-activation scheduling work, non-claimed with operator approval, or blocked with evidence and operator approval before `v0.92` starts.
+These were open at the source-capture pass and should be explicitly closed with evidence, integrated/proven, assigned as non-activation scheduling work, operator-scoped-out with evidence and approval, or blocked with evidence and operator approval before `v0.92` starts.
 
 | Issue | Planning classification | v0.91.7 relevance |
 | --- | --- | --- |
-| `#3974` | Observatory mini-sprint umbrella | Must prove Observatory readiness, explicitly non-claim it with operator approval, or block it with evidence. |
+| `#3974` | Observatory mini-sprint umbrella | Must prove Observatory readiness, operator-scope it out with evidence and approval, or block it with evidence. |
 | `#3976`-`#3984` | v0.91.6 release-tail WPs | Must close v0.91.6 before v0.91.7/v0.92 sequencing is trusted. |
 | `#3980` | WP-15 external / third-party review | Closed. External review ran and failed on stale handoff truth; consume the failed-review record as release-tail truth, not as approval. |
 | `#3981` | WP-16 review remediation and final preflight | Closed. WP-16 consumed the accepted findings, closed `#4620` and `#4621`, and routed `#4622` to v0.91.7. |
-| `#4620` | WP-16 external-review proof-gap verification | Closed. Consume the proof-gap packet and its non-claims; do not count unexecuted product/runtime surfaces as proof. |
+| `#4620` | WP-16 external-review proof-gap verification | Closed. Consume the proof-gap packet and its claim boundaries; do not count unexecuted product/runtime surfaces as proof. |
 | `#4621` | WP-16 failed external-review truth and release-tail docs repair | Closed. Consume the failed-review truth repair and release-tail doc disposition. |
 | `#4622` | Repo-native PR inventory for release-tail review | Closed by PR `#4708`. Consume as delivered tooling proof that release-tail issue/PR inventory no longer depends on the failing `missing_owner_binary_cargo_fallback_disabled` path. |
 | `#4030`-`#4035`, `#4341` | Observatory children | Must be resolved or explicitly carried into v0.91.7 demo/runtime readiness. |
@@ -74,7 +74,7 @@ These were open at the source-capture pass and should be explicitly closed with 
 | `#4329` | Per-issue execution metrics foundation | Required for time/token prediction and issue baselines. |
 | `#4331` | First-class nested goal accounting | Closed input that must be consumed by goal-state and SOR metrics planning. |
 | `#4332` | VPP and PVF lane-template mini-sprint | Required validation-planning sprint; should follow template substrate as needed. |
-| `#4388`-`#4398` | v0.91.6 C-SDLC integration control-plane completion sprint | Required v0.91.6 completion sprint for SEP, VPP, PVF lane configuration, prompt-card templates, GitHub/octocrab convergence, goal metrics, logging, watcher/lifecycle automation, runtime dependency routing, tooling reliability, and FastContext evaluation before v0.92 depends on sprint-scale execution. v0.91.7 should consume the integrated/proven, already-closed, operator-approved non-claim, or evidence-backed blocker truth from this sprint rather than recreate it as new scope. |
+| `#4388`-`#4398` | v0.91.6 C-SDLC integration control-plane completion sprint | Required v0.91.6 completion sprint for SEP, VPP, PVF lane configuration, prompt-card templates, GitHub/octocrab convergence, goal metrics, logging, watcher/lifecycle automation, runtime dependency handling, tooling reliability, and FastContext evaluation before v0.92 depends on sprint-scale execution. v0.91.7 should consume the integrated/proven, already-closed, operator-scoped-out, or evidence-backed blocker truth from this sprint rather than recreate it as new scope. |
 | `#4405` | Session coordination and root checkout policy | Closed input for multi-session root-checkout safety; WP-02/WP-03 must consume it before v0.91.7 parallel execution starts. |
 | `#4412` | Session ledger and cross-session coordination commands | Required input for multi-account/multi-agent continuity; must be integrated/proven, closed with evidence, or blocked with evidence and operator approval before v0.92 relies on parallel session handoff. |
 | `#4413` | PR lifecycle delegate stalls and command liveness | Required tooling-reliability input for long-running lifecycle commands. |
@@ -114,44 +114,44 @@ Local `.adl/docs/TBD/` files are ignored planning inputs, not tracked proof. The
 
 | Source draft | Planning use |
 | --- | --- |
-| `issue-v0917-required-bridge-tranche.md` | Original v0.91.7 bridge-scope statement; keep as boundary source. |
+| `issue-v0917-required-bridge-tranche.md` | Original v0.91.7 scope statement; keep as boundary source. |
 | `issue-pre-v092-bridge-feature-doc-production.md` | Cross-milestone feature-doc production source; ensure v0.91.6/v0.91.7 split remains explicit. |
 | `issue-v092-activation-birthday-feature-doc-refresh.md` | v0.92 WP-01 input; v0.91.7 should produce what this needs. |
 | `issue-feature-list-roadmap-sync.md` | Feature-list/roadmap sync candidate; assign to planning/feature-list work without counting assignment as completion. |
 | `issue-test-cycle-architecture-split.md` | Validation architecture split candidate; assign to validation/PVF/build-throughput planning without counting assignment as completion. |
 | `issue-codefriend-v1-proof-and-adapter-v2-acceptance.md` | Pre-v0.95 proof-planning input; preserve but do not expand v0.91.7 unless launch readiness needs it. |
 | `issue-ci-runtime-budget-observability.md` | CI/runtime budget and observability assignment; connect with resource telemetry and build logs. |
-| `issue-memory-palace-v092-bridge-feature-doc.md` | v0.92 memory bridge input; ensure v0.91.7 handoff names it. |
-| `issue-v093-v095-mvp-feature-doc-production.md` | Later feature-doc wave source; explicitly non-claim for v0.91.7 unless promoted by operator decision. |
+| `issue-memory-palace-v092-bridge-feature-doc.md` | v0.92 Memory Palace input; ensure v0.91.7 handoff names it. |
+| `issue-v093-v095-mvp-feature-doc-production.md` | Later feature-doc wave source; operator-scope-out for v0.91.7 unless promoted by operator decision. |
 
 ## Required v0.91.7 Scheduling Themes
 
 | Theme | Why it matters before v0.92 | Scheduling posture |
 | --- | --- | --- |
-| v0.91.6 closeout and release-tail truth | v0.92 cannot consume incomplete or stale bridge truth. | First gate. |
+| v0.91.6 closeout and release-tail truth | v0.92 cannot consume incomplete or stale implementation/proof truth. | First gate. |
 | SEP/VPP/PVF, session-ledger, lifecycle automation, and template-version work | Sprint execution, validation planning, and time/token accounting must be predictable. `#4388`-`#4398`, `#4405`, `#4412`-`#4413`, `#4417`-`#4421` plus `#4425`, closed adoption sprint `#4433`-`#4438`, and closed release/docs follow-ons `#4520`-`#4522` must be consumed as integrated/proven, already closed with evidence, or blocked with evidence and operator approval before v0.92 relies on sprint-scale execution. | v0.91.6 closeout input consumed by v0.91.7 WP-02/WP-03. |
-| Goal state, nested goals, time/token/resource metrics | v0.92 needs continuity and issue/sprint accounting. `#4431` owns forward capture; `#4441` owns bounded v0.91.6 backfill; `#4442` owns host-integrated goal snapshots. | Early process/runtime bridge. |
+| Goal state, nested goals, time/token/resource metrics | v0.92 needs continuity and issue/sprint accounting. `#4431` owns forward capture; `#4441` owns bounded v0.91.6 backfill; `#4442` owns host-integrated goal snapshots. | Early process/runtime implementation. |
 | Cognitive scheduler and local-agent acceleration | Premium cognition is now a bottleneck; local/deepseek/hosted agent suitability must be implemented/proven where v0.92 depends on it. | Early scheduler/provider sprint. |
-| Capability envelope and capability-testing boundary | v0.92 memory/identity/birthday evidence depends on knowing what capability envelope, witnesses/receipt, and Aptitude Atlas evidence may or may not claim. | Scheduler/provider and handoff bridge. |
+| Capability envelope and capability-testing boundary | v0.92 memory/identity/birthday evidence depends on knowing what capability envelope, witnesses/receipt, and Aptitude Atlas evidence may or may not claim. | Scheduler/provider and handoff implementation. |
 | Build throughput and validation cost | C-SDLC speed is limited by build/validation tail; v0.91.6 exposed remote-build work as planned/experimental rather than proven. | Parallel validation/build sprint, with EC2 Spot or alternate remote-builder proof early in WP-06. |
 | Runtime integration / Soak #2 / fire-up | v0.92 birthday needs one assembled runtime path, not disconnected components or docs-only confidence. | Runtime sprint after substrate readiness. |
 | Runtime architecture diet | Integration will expose bloat, seams, duplicate abstractions, and premature surfaces that should become bounded follow-ons without counting as first assembled runtime proof. | Runtime sprint output plus bounded follow-on. |
 | Observatory and demo readiness | First birthday evidence needs visible runtime/workflow surfaces. | Demo/runtime visibility sprint. |
-| Curiosity and constructability | Major conceptual bridge surfaces need proof expectations before public consumption. | Bridge feature sprint. |
-| Reasoning graph / loops / `adl.skill.v1` | Skills, prompts, traces, ObsMem, and runtime loops must have a bridge map. | Bridge feature sprint. |
-| Security, CAV, SSM, ACIP/A2A/protobuf | Activation cannot hide governance, protocol, or security residuals. | Security/protocol sprint. |
-| Affect, happiness, Godel mechanics, economics, guilds | Public claims need safe boundaries, explicit non-claims, and future governance ownership. | Boundary/decision sprint. |
+| Curiosity and constructability | Major cognitive surfaces need proof expectations before public consumption. | Feature implementation sprint. |
+| Reasoning graph / loops / `adl.skill.v1` | Skills, prompts, traces, ObsMem, and runtime loops must have an implementation map. | Feature implementation sprint. |
+| Security, CAV, SSM, ACIP/A2A/protobuf | Activation cannot hide governance, protocol, or security requirements. | Security/protocol sprint. |
+| Affect, happiness, Godel mechanics, economics, guilds | Public claims need safe boundaries, proof, and future governance ownership. | Boundary/decision sprint. |
 | CodeFriend, adapter v2, papers, and publication surfaces | Launch and birthday docs must not silently inherit product or publication commitments from later roadmap rows. | Boundary/decision and launch handoff sprint. |
-| GitHub convergence/control-plane tooling | Sprint execution should know whether octocrab/tooling convergence is operationally reliable before relying on it. The v0.91.6 control-plane stream should consume GitHub/octocrab, watcher, lifecycle automation, logging, template-edge, FastContext, session-ledger, and operational-adoption defects; `#4443` is the v0.91.7-facing shepherd implementation issue if lifecycle orchestration remains incomplete. `#4622` closed the repo-native PR-inventory gap that exposed `missing_owner_binary_cargo_fallback_disabled`. | v0.91.6 process/tooling bridge consumed by v0.91.7 planning. |
+| GitHub convergence/control-plane tooling | Sprint execution should know whether octocrab/tooling convergence is operationally reliable before relying on it. The v0.91.6 control-plane stream should consume GitHub/octocrab, watcher, lifecycle automation, logging, template-edge, FastContext, session-ledger, and operational-adoption defects; `#4443` is the v0.91.7-facing shepherd implementation issue if lifecycle orchestration remains incomplete. `#4622` closed the repo-native PR-inventory gap that exposed `missing_owner_binary_cargo_fallback_disabled`. | v0.91.6 process/tooling truth consumed by v0.91.7 planning. |
 | Launch/birthday planning | July launch and v0.92 birthday must align without scope explosion. | Closeout/handoff sprint. |
 
-## Explicit Non-Claims
+## Explicit Boundaries
 
 - This ledger does not make local TBD drafts public proof.
 - This ledger does not implement v0.91.7 work.
 - This ledger does not approve v0.92 activation.
 - This ledger does not require every cited future idea to become v0.91.7 implementation.
-- This ledger does require every cited pre-v0.92 input to be integrated/proven, already closed with retained evidence, explicitly non-claimed with operator approval, or blocked with evidence and operator approval before `v0.92` starts.
+- This ledger does require every cited pre-v0.92 input to be integrated/proven, already closed with retained evidence, operator-scoped-out with evidence and approval, or blocked with evidence and operator approval before `v0.92` starts.
 
 Current `v0.91.6` closeout and release-tail issue truth should be consumed from
 the retained-evidence matrix, the closeout-tail sprint surface, the failed

@@ -1,0 +1,21 @@
+{
+  "schema_version": 1,
+  "handoff_id": "runtime-4546-obsmem-handoff",
+  "workflow_id": "runtime-4546-acip-aee-memory",
+  "outcome_truth_path": "docs/milestones/v0.91.7/review/runtime/soak2_4682/aee_memory/obsmem/outcome_truth.json",
+  "evidence_bundle_path": "docs/milestones/v0.91.7/review/runtime/soak2_4682/aee_memory/obsmem/evidence_bundle.json",
+  "review_synthesis_path": "docs/milestones/v0.91.7/review/runtime/soak2_4682/aee_memory/obsmem/review_synthesis.json",
+  "signed_trace_path": "docs/milestones/v0.91.7/review/runtime/soak2_4682/aee_memory/obsmem/trace_signed.adl.yaml",
+  "signed_trace_public_key_path": "docs/milestones/v0.91.7/review/runtime/soak2_4682/aee_memory/obsmem/trace_key.b64",
+  "follow_ons": [
+    {
+      "issue_number": 4544,
+      "title": "[v0.91.6][runtime][scheduler] Wire Cognitive Scheduler into CLI artifacts and runtime advisory path",
+      "status": "open"
+    }
+  ],
+  "notes": [
+    "Local pre-publication handoff for issue #4546.",
+    "The signed trace is generated for issue #4546 and verified with an explicit public key."
+  ]
+}

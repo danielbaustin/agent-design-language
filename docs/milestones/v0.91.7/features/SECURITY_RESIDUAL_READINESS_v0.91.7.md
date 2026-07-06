@@ -1,8 +1,8 @@
-# Security Residual Readiness
+# Security Implementation Readiness
 
 ## Metadata
 
-- Feature Name: Security Residual Readiness
+- Feature Name: Security Implementation Readiness
 - Milestone Target: `v0.91.7`
 - Status: planned
 - Owner: ADL maintainers
@@ -12,18 +12,18 @@
 
 ## Purpose
 
-Account for security/CAV residuals left after `v0.91.6` and define what blocks
-or records an evidence-backed blocker/non-claim with operator approval before
+Account for security/CAV work left after `v0.91.6` and define what blocks
+or records an evidence-backed blocker with operator approval before
 `v0.92`.
 
 ## Scope
 
 In scope:
 
-- residual threat-model gaps;
+- threat-model gaps;
 - Curiosity and Constructability security implications;
-- ACIP/A2A/protobuf residual security;
-- public evidence and profile privacy residuals;
+- ACIP/A2A/protobuf security;
+- public evidence and profile privacy requirements;
 - activation blockers and explicitly approved `v0.93` assignments.
 
 Out of scope:
@@ -34,28 +34,27 @@ Out of scope:
 
 ## Required Decisions
 
-- Which residuals block `v0.92`?
-- Which residuals are explicitly postponed to `v0.93` enterprise security?
+- Which requirements block `v0.92`?
+- Which requirements are explicitly postponed to `v0.93` enterprise security with evidence and operator approval?
 - Which Curiosity/Constructability actions need security gates?
 - Which protocol choices require signing, access control, or privacy review?
 
 ## Dependencies
 
-- `v0.91.6` security bridge and CAV doc.
+- `v0.91.6` security and CAV doc.
 - Constructability Gate feature doc.
-- ACIP/A2A protobuf residual doc.
+- ACIP/A2A protobuf implementation doc.
 
 ## Validation And Review
 
 - Run focused threat-model review.
-- Record residuals as resolved, explicitly non-claimed with operator approval,
-  or blocked with evidence and operator approval.
+- Record requirements as resolved or blocked with evidence and operator approval.
 - Prevent silent deferral of activation-path security.
 
 ## v0.92 Consumption
 
-`v0.92` may consume only reviewed residual status. Security cannot be silently
-deferred out of activation.
+`v0.92` may consume only reviewed implementation or blocker status. Security cannot be silently
+moved out of activation.
 
 ## Non-Goals
 

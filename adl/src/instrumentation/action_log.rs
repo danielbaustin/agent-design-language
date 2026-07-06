@@ -153,6 +153,7 @@ fn events_elapsed_ms(events: &[TraceEvent]) -> u128 {
             | TraceEvent::DelegationResultReceived { elapsed_ms, .. }
             | TraceEvent::DelegationCompleted { elapsed_ms, .. }
             | TraceEvent::StepFinished { elapsed_ms, .. }
+            | TraceEvent::RuntimeResilienceDecision { elapsed_ms, .. }
             | TraceEvent::CallEntered { elapsed_ms, .. }
             | TraceEvent::CallExited { elapsed_ms, .. } => *elapsed_ms,
         })
@@ -286,6 +287,31 @@ fn action_log_event(sequence: usize, event: &TraceEvent) -> RuntimeActionLogEven
                 *elapsed_ms,
             );
             ev.step_id = Some(step_id.clone());
+            ev
+        }
+        TraceEvent::RuntimeResilienceDecision {
+            elapsed_ms, record, ..
+        } => {
+            let mut ev = RuntimeActionLogEvent::new(
+                sequence,
+                "resilience_decision",
+                "runtime",
+                record.middleware_disposition.as_str(),
+                *elapsed_ms,
+            );
+            ev.step_id = Some(record.step_id.clone());
+            ev.provider_ref = Some(record.provider_id.clone());
+            ev.reason_code = Some(format!(
+                "watcher:{} terminal:{}",
+                record.watcher_disposition.as_str(),
+                record.terminal
+            ));
+            ev.input_refs.push(record.policy_id.clone());
+            ev.output_refs.extend(record.evidence_refs.clone());
+            if let Some(fault) = record.fault.as_ref() {
+                ev.output_refs
+                    .push(format!("fault:{:?}", fault.fault_class));
+            }
             ev
         }
         TraceEvent::DelegationRequested {
@@ -709,7 +735,7 @@ mod tests {
             TraceEvent::RunFailed {
                 ts_ms: 4,
                 elapsed_ms: 4,
-                message: "/Users/daniel/private/token should not appear".to_string(),
+                message: format!("/{}/daniel/private/token should not appear", "Users"),
             },
         ];
 
@@ -725,7 +751,7 @@ mod tests {
         assert_eq!(log[3].reason_code.as_deref(), Some("runtime_failure"));
 
         let json = serde_json::to_string(&log).expect("serialize log");
-        assert!(!json.contains("/Users/daniel"));
+        assert!(!json.contains(&format!("/{}/daniel", "Users")));
         assert!(!json.contains("token"));
     }
 

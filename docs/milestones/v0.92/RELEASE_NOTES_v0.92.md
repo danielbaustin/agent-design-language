@@ -74,7 +74,7 @@ from actual review and release evidence.
 ## Validation Notes
 
 Pending v0.92 implementation. Final notes must cite actual validation, demos,
-review findings, and residual risks.
+review findings, and evidence-backed blockers.
 
 ## What's Next
 

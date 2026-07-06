@@ -1,0 +1,66 @@
+{
+  "result": "local_runtime_busy: bulkhead saturated for runtime_failure_provider with in_flight=1",
+  "state": {
+    "schema_version": "adl.resilience.bulkhead_state.v1",
+    "policy_id": "runtime.failure_injection.bulkhead.policy",
+    "fault_domain": "runtime_failure_provider",
+    "in_flight": 1
+  },
+  "trace": {
+    "schema_version": "adl.resilience.bulkhead_execution_trace.v1",
+    "policy_id": "runtime.failure_injection.bulkhead.policy",
+    "surface": "provider",
+    "fault_domain": "runtime_failure_provider",
+    "final_status": "saturated",
+    "in_flight_before": 1,
+    "in_flight_during_execution": 1,
+    "in_flight_after": 1,
+    "max_concurrency": 1,
+    "max_queue_depth": 0,
+    "operation_executed": false,
+    "decision_summary": "runtime.failure_injection.bulkhead_probe: bulkhead saturated for fault domain 'runtime_failure_provider' at 1/1 in-flight",
+    "fault": {
+      "schema_version": "adl.resilience.fault_classification.v1",
+      "surface": "provider",
+      "fault_class": "local_runtime_busy",
+      "disposition": "retryable",
+      "retryable": true,
+      "summary": "local_runtime_busy: bulkhead saturated for runtime_failure_provider with in_flight=1"
+    },
+    "telemetry_event": {
+      "schema_version": "adl.resilience.telemetry_event.v1",
+      "event_id": "runtime.failure_injection.bulkhead.policy:bulkhead:runtime.failure_injection.bulkhead_probe:1",
+      "event_kind": "bulkhead_decision",
+      "surface": "provider",
+      "decision_summary": "runtime.failure_injection.bulkhead_probe: bulkhead saturated for fault domain 'runtime_failure_provider' at 1/1 in-flight",
+      "policy_ref": "runtime.failure_injection.bulkhead.policy",
+      "fault": {
+        "schema_version": "adl.resilience.fault_classification.v1",
+        "surface": "provider",
+        "fault_class": "local_runtime_busy",
+        "disposition": "retryable",
+        "retryable": true,
+        "summary": "local_runtime_busy: bulkhead saturated for runtime_failure_provider with in_flight=1"
+      }
+    },
+    "recovery_artifact": {
+      "schema_version": "adl.resilience.recovery_artifact.v1",
+      "artifact_id": "runtime.failure_injection.bulkhead.policy:bulkhead:runtime.failure_injection.bulkhead_probe:2",
+      "surface": "provider",
+      "triggering_fault": {
+        "schema_version": "adl.resilience.fault_classification.v1",
+        "surface": "provider",
+        "fault_class": "local_runtime_busy",
+        "disposition": "retryable",
+        "retryable": true,
+        "summary": "local_runtime_busy: bulkhead saturated for runtime_failure_provider with in_flight=1"
+      },
+      "disposition": "retry_allowed",
+      "next_action": "preserve isolation for fault domain 'runtime_failure_provider' and retry only after in-flight work drains or operator policy changes",
+      "evidence_refs": [
+        "runtime.failure_injection.bulkhead.policy",
+        "runtime_failure_provider"
+      ]
+    }
+  }
+}

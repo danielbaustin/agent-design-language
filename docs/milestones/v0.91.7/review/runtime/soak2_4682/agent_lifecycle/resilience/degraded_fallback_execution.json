@@ -1,0 +1,60 @@
+{
+  "outcome_kind": "Degraded",
+  "trace": {
+    "schema_version": "adl.resilience.fallback_execution_trace.v1",
+    "policy_id": "runtime.soak.fallback.policy",
+    "surface": "workflow",
+    "final_status": "degraded_success",
+    "outcome_kind": "degraded",
+    "fallback_executed": true,
+    "output_degraded": true,
+    "fallback_ref": "runtime.soak.degraded",
+    "decision_summary": "runtime.soak.degraded_probe: primary path failed; degraded fallback 'runtime.soak.degraded' executed",
+    "fault": {
+      "schema_version": "adl.resilience.fault_classification.v1",
+      "surface": "provider",
+      "fault_class": "provider_timeout",
+      "disposition": "retryable",
+      "retryable": true,
+      "summary": "provider timeout"
+    },
+    "telemetry_event": {
+      "schema_version": "adl.resilience.telemetry_event.v1",
+      "event_id": "runtime.soak.fallback.policy:fallback:runtime.soak.degraded_probe:1",
+      "event_kind": "fallback_decision",
+      "surface": "workflow",
+      "decision_summary": "runtime.soak.degraded_probe: primary path failed; degraded fallback 'runtime.soak.degraded' executed",
+      "policy_ref": "runtime.soak.fallback.policy",
+      "fault": {
+        "schema_version": "adl.resilience.fault_classification.v1",
+        "surface": "provider",
+        "fault_class": "provider_timeout",
+        "disposition": "retryable",
+        "retryable": true,
+        "summary": "provider timeout"
+      }
+    },
+    "recovery_artifact": {
+      "schema_version": "adl.resilience.recovery_artifact.v1",
+      "artifact_id": "runtime.soak.fallback.policy:fallback:runtime.soak.degraded_probe:2",
+      "surface": "workflow",
+      "triggering_fault": {
+        "schema_version": "adl.resilience.fault_classification.v1",
+        "surface": "provider",
+        "fault_class": "provider_timeout",
+        "disposition": "retryable",
+        "retryable": true,
+        "summary": "provider timeout"
+      },
+      "disposition": "fallback_allowed",
+      "next_action": "surface degraded output explicitly for fallback 'runtime.soak.degraded' and preserve the original primary failure for downstream handling",
+      "evidence_refs": [
+        "runtime.soak.fallback.policy",
+        "runtime.soak.degraded"
+      ]
+    }
+  },
+  "result": {
+    "Ok": "degraded-fallback-result"
+  }
+}

@@ -3247,6 +3247,7 @@ fn registered_validation_atom_supported(command: &str) -> bool {
                 | "adl/tools/test_select_validation_lanes.sh"
                 | "adl/tools/test_run_aws_codefriend_build_lane.sh"
                 | "adl/tools/test_validation_manager.sh"
+                | "adl/tools/test_run_aws_spot_remote_validation_lane.sh"
                 | "adl/tools/test_run_nessus_remote_validation.sh"
                 | "adl/tools/test_run_validation_manager_nessus_lane.sh"
                 | "adl/tools/test_rust_validation_warm_cache.sh"

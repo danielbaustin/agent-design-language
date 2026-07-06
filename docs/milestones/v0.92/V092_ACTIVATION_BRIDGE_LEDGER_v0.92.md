@@ -1,23 +1,24 @@
-# v0.92 Activation Bridge Ledger
+# v0.92 Activation Consumption Ledger
 
 ## Status
 
-Tracked activation bridge ledger for issue `#3780`.
+Tracked activation consumption ledger for issue `#3780`.
 
 This document refreshes the `v0.92` activation and first-birthday planning
-surface after the pre-`v0.92` bridge route was created. It is not activation
+surface after the pre-`v0.92` implementation/proof path was created. It is not activation
 evidence, release evidence, or a claim that `v0.92` is ready to execute.
 
 Current verdict: `v0.92` activation remains blocked until the `v0.91.6` and
-`v0.91.7` bridge tranches produce reviewed feature docs, decision records, or
-explicit blocked/deferred dispositions for every surface below.
+`v0.91.7` readiness, implementation, and integrated-proof tranches produce
+reviewed evidence, decision records, or explicit evidence-backed blockers for
+every required surface below.
 
 ## Purpose
 
-The `v0.92` birthday milestone should not reconstruct bridge requirements from
-chat history, local notes, or scattered feature docs. This ledger states what
-`v0.92` may consume, what must remain outside the birthday claim, and which
-upstream tranche owns the missing proof or decision.
+The `v0.92` birthday milestone should not reconstruct activation requirements
+from chat history, local notes, or scattered feature docs. This ledger states
+what `v0.92` may consume, what must remain outside the birthday claim, and
+which upstream issue owns any missing proof or decision.
 
 ## Source Evidence
 
@@ -34,11 +35,11 @@ Tracked sources:
 - `docs/planning/ADL_FEATURE_LIST.md`
 - `docs/planning/FEATURE_DOC_PRODUCTION_MINI_SPRINT_v0.91.5.md`
 
-When this ledger consumes `v0.91.6` bridge state, the current issue-truth
+When this ledger consumes `v0.91.6` readiness state, the current issue-truth
 surfaces are:
 
 - `docs/milestones/v0.91.6/review/V0916_COMPLETED_SPRINT_RETAINED_EVIDENCE_MATRIX_4251.md`
-  for closed bridge umbrellas and retained evidence posture
+  for closed umbrellas and retained evidence posture
 - `docs/milestones/v0.91.6/CLOSEOUT_TAIL_SPRINT_v0.91.6.md` for the ordered
   open release-tail issue wave
 
@@ -54,44 +55,49 @@ v0.91.6 truth now includes:
 
 Those issues are closed retained inputs, not still-open activation blockers.
 What remains blocking for `v0.92` is any surface that still lacks reviewed
-runtime/product evidence or an explicit blocked/deferred/routed disposition.
+runtime/product evidence or an explicit evidence-backed blocker with operator
+approval.
 
 ## Consumption States
 
-- `complete`: reviewed feature doc and proof/review evidence are present.
-- `deferred`: explicitly not required for `v0.92`, with risk accepted.
-- `blocked`: cannot proceed without named evidence or operator decision.
-- `routed`: owned by a named issue, milestone tranche, or `v0.92` work package
-  with a clear exit condition.
+- `integrated_proven`: reviewed feature doc and integrated proof/review
+  evidence are present.
+- `operator_scoped_out`: explicitly not required for `v0.92`, with evidence,
+  risk, and operator approval recorded.
+- `blocked_with_evidence`: cannot proceed without named evidence or operator
+  decision.
+- `implementation_required`: owned by a named issue or work package with a
+  clear exit condition, but not complete until integrated proof exists.
 
 Planning packages alone are not `complete` evidence. The `v0.91.6` and
-`v0.91.7` packages currently provide routes, not completed bridge proof.
+`v0.91.7` packages currently provide ownership and evidence requirements, not
+completion proof by themselves.
 
 ## Activation Surface Ledger
 
 | Surface | Current state for v0.92 | Owner before activation | v0.92 consumption rule |
 | --- | --- | --- | --- |
-| Activation contract and bridge evidence | Routed | `v0.91.6`, `v0.91.7`, then `v0.92` WP-01 | `v0.92` may define the birthday contract now, but may not mark activation ready until every bridge surface has a complete, deferred, blocked, or routed disposition with evidence. Closed process/docs fixes from `#4433`-`#4438` and `#4520`-`#4522` count as retained bridge inputs rather than open blockers by themselves. |
-| Birthday and first-run behavior | Routed | `v0.92` birthday feature docs and `#3377` readiness packet | Birthday must remain evidence-bound. Startup, wake, restore, admission, copied state, and ordinary process launch are negative cases until the birthday packet proves otherwise. |
-| Identity and continuity | Routed | `v0.91.6` identity/continuity bridge, then `v0.92` identity feature docs | Stable name, identity root, continuity head, cycle evidence, and negative cases must be reviewable before the birthday claim can pass. |
-| AEE completion | Routed | `v0.91.6` AEE bridge accounting and residual runtime/provider action work | `v0.92` may consume only named AEE completion evidence and must preserve residual action/provider boundaries. |
-| Memory/ObsMem handoff | Routed | `v0.91.6` AEE/Memory/ACP accounting and `v0.92` memory grounding docs | `v0.92` must distinguish ObsMem handoff, memory grounding, working set, context cache, and Memory Palace planning. |
-| Memory Palace | Routed | `v0.91.6`/`v0.92` handoff; detailed implementation remains under development | Memory Palace is a planned solution direction for long-running context, not a completed runtime surface for this refresh. Birthday docs may reference it only as planned or under development. |
-| ACP/cognitive profiles | Routed | `v0.91.6` bridge accounting and `v0.92` ACP feature docs | Profiles must state scope, privacy boundary, update rules, capability-envelope relation, and provider/model relation before activation consumes them. |
-| Capability evidence and selector | Routed | `v0.91.6` identity/capability bridge; later Aptitude Atlas deferred beyond MVP | `v0.92` may consume capability-testing evidence for envelopes and role suitability, but must not start or imply a complete Aptitude Atlas baseline. |
-| Provider/model matrix and multi-agent readiness | Routed | `v0.91.6` provider/model reliability feature doc | Hosted, local, remote, OpenRouter, Gemma, and multi-agent lanes need role suitability, known failure modes, and proof limits before birthday demos rely on them. |
-| Observatory/Unity readiness | Routed | `v0.91.6` Observatory/Unity consumption classification, then `v0.92` demo planning | Each surface must be classified as proof, rehearsal, substrate, blocked, or deferred before a birthday demo depends on it. |
-| ACIP/provider communications | Routed | `v0.91.6` ACIP/A2A/provider communications and `v0.91.7` residual decisions | Schema catalog, message access rules, provider communications, JSON projection, protobuf decision, and WebSocket boundary must be explicit before activation consumes the channel. |
-| Public prompt records | Routed | `v0.91.6` public prompt records export feature doc | `v0.92` may consume public prompt records only after local authoring, export, redaction, validation, indexing, evidence, and security review boundaries are documented. |
-| Logging/tooling proof-loop reliability | Routed | `v0.91.6` tooling proof-loop reliability feature doc | `v0.92` may rely on C-SDLC proof-loop outputs only after validation split, CI runtime-budget observability, OTel/logging consumption, and bounded PR reliability residuals are complete or explicitly routed. |
-| Security and Continuous Adversarial Verification | Routed | `v0.91.6` security bridge and CAV, with possible `v0.91.7` residuals | Activation cannot silently defer threat-model, adversarial-output, provider-trust, public-record security, or ACIP security requirements. |
-| Resilience, citizen persistence, and sleep/wake | Routed | `v0.91.6` resilience/persistence/sleep-wake feature doc | Transient fault handling, checkpoint/restore, sleep/wake, hibernation, simulation, in-transit custody, migration, replay, and continuity proof must be complete, blocked, deferred, or routed. |
-| Curiosity Engine / Discovery Substrate | Routed | `v0.91.7` Curiosity feature doc unless pulled forward | Curiosity is required before `v0.92` activation consumes governed discovery behavior; absent proof must be marked blocked, deferred, or routed. |
-| Constructability Gate | Routed | `v0.91.7` Constructability feature doc unless pulled forward | Birthday evidence must distinguish provisional cognition from authoritative shared reality. |
-| Reasoning graph, loop runtime, and `adl.skill.v1` | Routed | `v0.91.7` reasoning graph/loop/skill-standard bridge | Pre-`v0.92` bridge must connect prompts, skills, loops, trace, ObsMem, PVF, AEE, Runtime v2, UTS, ACC, and `adl.skill.v1`; deeper convergence remains later. |
-| Affect, happiness, humor, and wellbeing claims | Routed | `v0.91.7` affect/happiness bridge | Public birthday evidence must not imply unproved affect or wellbeing claims. |
-| Godel mechanics | Routed | `v0.91.7` Godel mechanics bridge and `v0.92` birthday docs | Experiment, hypothesis, mutation, evaluation, promotion, and proof boundaries must be reviewable before the first true Godel-agent birthday claim relies on them. |
-| Economics context | Routed | `v0.91.7` economics context decision | Economics is context-only unless a reviewed bridge decision says explicit activation tests are required. |
+| Activation contract and evidence | implementation_required | `v0.91.6`, `v0.91.7`, then `v0.92` WP-01 | `v0.92` may define the birthday contract now, but may not mark activation ready until every activation surface is integrated_proven, operator_scoped_out, or blocked_with_evidence. Closed process/docs fixes from `#4433`-`#4438` and `#4520`-`#4522` count as retained inputs rather than open blockers by themselves. |
+| Birthday and first-run behavior | implementation_required | `v0.92` birthday feature docs and `#3377` readiness packet | Birthday must remain evidence-bound. Startup, wake, restore, admission, copied state, and ordinary process launch are negative cases until the birthday packet proves otherwise. |
+| Identity and continuity | implementation_required | `v0.91.6` identity/continuity readiness, then `v0.92` identity feature docs | Stable name, identity root, continuity head, cycle evidence, and negative cases must be reviewable before the birthday claim can pass. |
+| AEE completion | implementation_required | `v0.91.6` AEE accounting and v0.91.7 runtime/provider action work | `v0.92` may consume only named AEE completion evidence and must preserve action/provider boundaries. |
+| Memory/ObsMem handoff | implementation_required | `v0.91.6` AEE/Memory/ACP accounting and `v0.92` memory grounding docs | `v0.92` must distinguish ObsMem handoff, memory grounding, working set, context cache, and Memory Palace planning. |
+| Memory Palace | implementation_required | `v0.92` handoff and Memory Palace feature slice | Memory Palace is required as the long-running context solution direction; birthday docs may consume only the smallest implemented/proven slice that distinguishes palace topology, working set, context cache, and ObsMem. |
+| ACP/cognitive profiles | implementation_required | `v0.91.6` accounting and `v0.92` ACP feature docs | Profiles must state scope, privacy boundary, update rules, capability-envelope relation, and provider/model relation before activation consumes them. |
+| Capability evidence and selector | implementation_required | `v0.91.6` identity/capability readiness; Aptitude Atlas operator_scoped_out beyond MVP | `v0.92` may consume capability-testing evidence for envelopes and role suitability, but must not start or imply a complete Aptitude Atlas baseline. |
+| Provider/model matrix and multi-agent readiness | implementation_required | `v0.91.6` provider/model reliability feature doc and v0.91.7 WP-05 | Hosted, local, remote, OpenRouter, Gemma, and multi-agent lanes need role suitability, known failure modes, and proof limits before birthday demos rely on them. |
+| Observatory/Unity readiness | implementation_required | `v0.91.6` Observatory/Unity consumption classification and v0.91.7 Unity/runtime proof | Each surface must be classified as proof, rehearsal, substrate, or blocked_with_evidence before a birthday demo depends on it. |
+| ACIP/provider communications | implementation_required | `v0.91.6` ACIP/A2A/provider communications and `v0.91.7` WP-12 | Schema catalog, message access rules, provider communications, JSON projection, protobuf decision, and WebSocket boundary must be explicit before activation consumes the channel. |
+| Public prompt records | implementation_required | `v0.91.6` public prompt records export feature doc | `v0.92` may consume public prompt records only after local authoring, export, redaction, validation, indexing, evidence, and security review boundaries are documented. |
+| Logging/tooling proof-loop reliability | implementation_required | closed v0.91.7 issue `#4718` plus WP-07/WP-09 consumers | `#4718` is the retained prerequisite proof for parse-safe JSON, stderr `adl_event` behavior, redaction hygiene, and OTel-compatible mapping. `v0.92` may rely on C-SDLC proof-loop outputs only after runtime Soak #2 and Observatory/Unity surfaces consume that proof; Unity editor execution and production telemetry export are not claimed by `#4718` alone. |
+| Security and Continuous Adversarial Verification | implementation_required | `v0.91.7` WP-12, including `#4639` and `#4656`-`#4660` | Activation cannot silently move threat-model, adversarial-output, provider-trust, public-record security, or ACIP security requirements out of scope. |
+| Resilience, citizen persistence, and sleep/wake | implementation_required | current concrete blocker evidence for `#4783`; owners `#4778` and `#4780`-`#4782` require per-issue disposition; WP-07 runtime integration consumes the result | Transient fault handling, checkpoint/restore, sleep/wake, hibernation, simulation, in-transit custody, migration, replay, and continuity proof must be integrated_proven or blocked_with_evidence before v0.92. Current repo-visible concrete blocked-state detail is strongest for `#4783`; the rest of the resilience family is ownership that still requires proof or blocker disposition. |
+| Curiosity Engine / Discovery Substrate | implementation_required | `v0.91.7` WP-10 | Curiosity is required before `v0.92` activation consumes governed discovery behavior; absent proof blocks activation with evidence and operator approval. |
+| Constructability Gate | implementation_required | `v0.91.7` WP-10 | Birthday evidence must distinguish provisional cognition from authoritative shared reality. |
+| Reasoning graph, loop runtime, and `adl.skill.v1` | implementation_required | `v0.91.7` WP-11 | Pre-`v0.92` implementation must connect prompts, skills, loops, trace, ObsMem, PVF, AEE, Runtime v2, UTS, ACC, and `adl.skill.v1`; deeper convergence remains later. |
+| Affect, happiness, humor, and wellbeing claims | implementation_required | `v0.91.7` WP-13 | Public birthday evidence must not imply unproved affect or wellbeing claims. |
+| Godel mechanics | implementation_required | `v0.91.7` WP-13 and `v0.92` birthday docs | Experiment, hypothesis, mutation, evaluation, promotion, and proof boundaries must be reviewable before the first true Godel-agent birthday claim relies on them. |
+| Economics context | operator_scoped_out | `v0.91.7` WP-13 | Economics is context-only for `v0.92` unless a reviewed decision reopens explicit activation tests; that scoped-out posture requires retained evidence, risk, and operator approval. |
 
 ## Birthday Contract Refresh
 
@@ -124,8 +130,8 @@ set should treat it as:
 
 - a named planning dependency
 - a continuity and context-management direction
-- a non-claim for raw private-state exposure
-- a non-claim for completed runtime behavior
+- a public claim boundary for raw private-state exposure
+- a public claim boundary for completed runtime behavior
 
 ## Demo And Review Expectations
 
@@ -138,39 +144,44 @@ behavior:
 - startup, wake, restore, snapshot, copied state, and admission fixtures are
   rejected as birth
 - Observatory/Unity surfaces used by the demo are classified as proof,
-  rehearsal, substrate, blocked, or deferred
+  rehearsal, substrate, or blocked_with_evidence
 - public prompt records used by review are exported, redacted, validated, and
   indexed under the documented public-record boundary
 - provider/model lanes used by the demo are named with reliability limits
 
 ## Upstream Tranche Gate
 
-`v0.91.6` must resolve or route:
+`v0.91.6` supplies retained readiness evidence for:
 
 - resilience, citizen persistence, sleep/wake, and continuity proof
 - logging/tooling proof-loop reliability and observability consumption
 - public prompt records export, redaction, validation, and indexing
 - provider/model reliability and multi-agent readiness
 - first ACIP/A2A/provider-communications decisions
-- first security bridge readiness and CAV decisions
-- identity/continuity and capability-selector bridge accounting
+- first security readiness and CAV decisions
+- identity/continuity and capability-selector accounting
 - AEE completion, Memory/ObsMem handoff, ACP/cognitive profile accounting
 - Observatory/Unity consumption classification
 
-`v0.92` should consume current `v0.91.6` bridge closure truth from the retained
+`v0.92` should consume current `v0.91.6` closure truth from the retained
 evidence matrix and current open release-tail truth from the closeout-tail
 sprint surface rather than reconstructing state from individual issue histories.
 
-`v0.91.7` must resolve or route:
+`v0.91.7` must implement/prove or block with evidence and operator approval:
 
 - Curiosity Engine / Discovery Substrate
 - Constructability Gate
 - reasoning graph, loop runtime, and `adl.skill.v1`
-- residual security readiness
-- residual ACIP/A2A/protobuf/JSON projection decisions
-- affect/happiness bridge
-- Godel mechanics bridge
+- security readiness
+- ACIP/A2A/protobuf/JSON/WebSocket projection decisions
+- affect/happiness model
+- Godel mechanics
 - economics-context decision
+- integrated logging/OTel consumption from closed `#4718`
+- resilience integration from `#4778` and `#4780`-`#4783`
+- Rust simplification and third-party-library adoption through `#4651` and
+  `#4892`-`#4900` where it affects validation cost, observability, provider
+  transport, signing, secrets, or ACIP runtime streaming.
 
 ## Non-Goals
 
@@ -179,7 +190,7 @@ sprint surface rather than reconstructing state from individual issue histories.
   runtime behavior here.
 - Do not absorb `v0.93` governance, `v0.94` secure execution/trust/time, or
   `v0.95` MVP convergence work.
-- Do not treat planning routes as completed proof.
+- Do not treat planning ownership as completed proof.
 - Do not publish or migrate local authoring notes from this issue.
 
 ## Validation Plan
@@ -196,7 +207,8 @@ When this ledger is updated:
 
 ## Current Verdict
 
-Every named activation surface is accounted for, but all are currently routed
-rather than complete. `v0.92` can use this ledger as a consumption map only
-after the upstream bridge tranches produce reviewed evidence or explicit
-blocked/deferred decisions.
+Every named activation surface is accounted for, but activation remains blocked
+until each required row is integrated_proven, operator-scoped-out with evidence,
+or blocked_with_evidence and operator approval. `v0.92` can use this ledger as
+a consumption map only after upstream work produces reviewed evidence or
+explicit blockers.

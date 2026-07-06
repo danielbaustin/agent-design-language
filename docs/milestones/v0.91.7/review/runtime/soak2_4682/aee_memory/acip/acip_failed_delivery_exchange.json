@@ -1,0 +1,248 @@
+{
+  "schema_version": "acip.local.invocation.exchange.v1",
+  "carrier": {
+    "schema_version": "acip.local.carrier.v1",
+    "routes": [
+      {
+        "agent": {
+          "kind": "agent",
+          "id": "reviewer.agent"
+        },
+        "route_class": "local_only",
+        "allowed_caller_classes": [
+          "workflow_agent"
+        ],
+        "supported_intents": [
+          "review_request"
+        ],
+        "handler": "review"
+      },
+      {
+        "agent": {
+          "kind": "agent",
+          "id": "coding.agent"
+        },
+        "route_class": "local_only",
+        "allowed_caller_classes": [
+          "workflow_agent"
+        ],
+        "supported_intents": [
+          "coding_request"
+        ],
+        "handler": "coding"
+      }
+    ]
+  },
+  "request_message": {
+    "schema_version": "acip.message.v1",
+    "message_id": "msg-acip-proof-0003",
+    "conversation_id": "conv-acip-proof-001",
+    "timestamp_utc": "2026-04-28T19:00:00Z",
+    "monotonic_order": 3,
+    "sender": {
+      "kind": "agent",
+      "id": "planner.agent"
+    },
+    "recipient": {
+      "kind": "agent",
+      "id": "coding.agent"
+    },
+    "intent": "coding_request",
+    "visibility": "private",
+    "trace_requirement": "full",
+    "content": "Please prepare a bounded proposal-only coding response with explicit validation and review handoff.",
+    "payload_refs": [
+      {
+        "payload_kind": "input_0",
+        "payload_ref": "runtime/comms/review/review_result.json",
+        "media_type": "application/json",
+        "content_sha256": "0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef",
+        "byte_length": 1024,
+        "inline_summary": "Bounded local ACIP proof input."
+      },
+      {
+        "payload_kind": "input_1",
+        "payload_ref": "runtime/comms/proof/acip_demo_task_bundle.json",
+        "media_type": "application/json",
+        "content_sha256": "0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef",
+        "byte_length": 1025,
+        "inline_summary": "Bounded local ACIP proof input."
+      },
+      {
+        "payload_kind": "input_2",
+        "payload_ref": "runtime/comms/proof/acip_demo_consultation_summary.md",
+        "media_type": "application/json",
+        "content_sha256": "0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef",
+        "byte_length": 1026,
+        "inline_summary": "Bounded local ACIP proof input."
+      },
+      {
+        "payload_kind": "input_3",
+        "payload_ref": "runtime/comms/proof/acip_demo_scope.json",
+        "media_type": "application/json",
+        "content_sha256": "0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef",
+        "byte_length": 1027,
+        "inline_summary": "Bounded local ACIP proof input."
+      }
+    ],
+    "artifact_refs": [
+      "runtime/comms/trace/thread_anchor.json"
+    ],
+    "attachments": [],
+    "authority_scope": {
+      "allowed_actions": [
+        "invoke",
+        "share_artifact"
+      ],
+      "authority_basis_refs": [
+        "runtime/comms/proof/acip_demo_authority_basis.json"
+      ],
+      "delegation_permitted": false
+    },
+    "correlation_id": "invoke-coding-proposal-0001",
+    "prior_message_id": "msg-acip-proof-0002"
+  },
+  "invocation_contract": {
+    "schema_version": "acip.invocation.contract.v1",
+    "invocation_id": "invoke-coding-proposal-0001",
+    "conversation_id": "conv-acip-proof-001",
+    "causal_message_id": "msg-acip-proof-0003",
+    "caller": {
+      "kind": "agent",
+      "id": "planner.agent"
+    },
+    "caller_class": "workflow_agent",
+    "target": {
+      "kind": "agent",
+      "id": "coding.agent"
+    },
+    "route_class": "local_only",
+    "intent": "coding_request",
+    "purpose": "Perform bounded coding work and return a reviewable patch or proposal surface.",
+    "input_refs": [
+      "runtime/comms/review/review_result.json",
+      "runtime/comms/proof/acip_demo_task_bundle.json",
+      "runtime/comms/proof/acip_demo_consultation_summary.md",
+      "runtime/comms/proof/acip_demo_scope.json"
+    ],
+    "constraints": {
+      "policy_refs": [
+        "runtime/comms/proof/acip_demo_policy.md",
+        "runtime/comms/policy/coding_policy.json"
+      ],
+      "required_capabilities": [
+        "propose_change",
+        "share_artifact"
+      ],
+      "prohibited_actions": [
+        "merge",
+        "push",
+        "self_review"
+      ],
+      "requires_redaction": true
+    },
+    "expected_outputs": [
+      {
+        "output_id": "structured_proposal",
+        "output_kind": "structured_proposal",
+        "artifact_role": "proposed_change_plan",
+        "schema_ref": "schemas/coding_proposal.schema.json",
+        "required": true
+      },
+      {
+        "output_id": "validation_summary",
+        "output_kind": "validation_summary",
+        "artifact_role": "validation_summary",
+        "schema_ref": "schemas/validation_summary.schema.json",
+        "required": true
+      },
+      {
+        "output_id": "review_handoff",
+        "output_kind": "review_handoff",
+        "artifact_role": "review_handoff",
+        "schema_ref": "schemas/review_handoff.schema.json",
+        "required": true
+      }
+    ],
+    "stop_policy": {
+      "max_turns": 4,
+      "max_output_artifacts": 3,
+      "completion_condition": "emit reviewable coding output and validation evidence",
+      "stop_on_refusal": true,
+      "stop_on_failure": true
+    },
+    "authority_scope": {
+      "allowed_actions": [
+        "invoke",
+        "share_artifact"
+      ],
+      "authority_basis_refs": [
+        "runtime/comms/proof/acip_demo_authority_basis.json"
+      ],
+      "delegation_permitted": false
+    },
+    "decision_event_ref": "gate.acip-proof-0001",
+    "response_channel": {
+      "kind": "artifact_reply",
+      "channel_ref": "runtime/comms/coding/structured_proposal.json"
+    },
+    "trace_requirement": "full"
+  },
+  "invocation_event": {
+    "schema_version": "acip.invocation.event.v1",
+    "invocation_id": "invoke-coding-proposal-0001",
+    "conversation_id": "conv-acip-proof-001",
+    "causal_message_id": "msg-acip-proof-0003",
+    "caller": {
+      "kind": "agent",
+      "id": "planner.agent"
+    },
+    "target": {
+      "kind": "agent",
+      "id": "coding.agent"
+    },
+    "contract_ref": "runtime/comms/invocation/contracts/review_request.json",
+    "contract_sha256": "89abcdef0123456789abcdef0123456789abcdef0123456789abcdef01234567",
+    "decision_event_ref": "gate.acip-proof-0001",
+    "input_refs": [
+      "runtime/comms/review/review_result.json",
+      "runtime/comms/proof/acip_demo_task_bundle.json",
+      "runtime/comms/proof/acip_demo_consultation_summary.md",
+      "runtime/comms/proof/acip_demo_scope.json"
+    ],
+    "output_refs": [],
+    "status": "failed",
+    "stop_reason": "provider_error",
+    "refusal_code": null,
+    "failure_code": "provider_error",
+    "evidence_refs": [
+      "runtime/comms/local_carrier/evidence/coding_trace.json"
+    ],
+    "trace_requirement": "full"
+  },
+  "response_message": {
+    "schema_version": "acip.message.v1",
+    "message_id": "msg-invoke-coding-proposal-0001-reply",
+    "conversation_id": "conv-acip-proof-001",
+    "timestamp_utc": "2026-04-28T19:03:00Z",
+    "monotonic_order": 4,
+    "sender": {
+      "kind": "agent",
+      "id": "coding.agent"
+    },
+    "recipient": {
+      "kind": "agent",
+      "id": "planner.agent"
+    },
+    "intent": "conversation",
+    "visibility": "private",
+    "trace_requirement": "full",
+    "content": "Invocation 'invoke-coding-proposal-0001' completed locally with status 'completed' and 3 output artifact(s).",
+    "payload_refs": [],
+    "artifact_refs": [],
+    "attachments": [],
+    "authority_scope": null,
+    "correlation_id": "invoke-coding-proposal-0001",
+    "prior_message_id": "msg-acip-proof-0003"
+  }
+}

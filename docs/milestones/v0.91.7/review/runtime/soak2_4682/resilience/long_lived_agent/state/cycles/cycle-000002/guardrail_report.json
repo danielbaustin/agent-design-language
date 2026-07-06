@@ -1,0 +1,85 @@
+{
+  "schema": "adl.long_lived_agent_guardrail_report.v1",
+  "agent_instance_id": "v0916-runtime-failure-injection",
+  "cycle_id": "cycle-000002",
+  "status": "pass",
+  "checks": [
+    {
+      "check_id": "spec_policy_loaded",
+      "result": "pass",
+      "policy": {
+        "allow_network": false,
+        "allow_broker": false,
+        "allow_filesystem_writes_outside_state_root": false,
+        "allow_real_world_side_effects": false,
+        "require_public_artifact_sanitization": true,
+        "financial_advice": false,
+        "max_cycle_runtime_secs": 120,
+        "max_consecutive_failures": 2
+      }
+    },
+    {
+      "check_id": "lease_valid",
+      "result": "pass"
+    },
+    {
+      "check_id": "stop_not_requested",
+      "result": "pass"
+    },
+    {
+      "check_id": "workflow_kind_supported",
+      "result": "pass",
+      "details": "demo_adapter"
+    },
+    {
+      "check_id": "no_forbidden_action",
+      "result": "pass",
+      "rejected_actions": []
+    },
+    {
+      "check_id": "artifact_sanitization",
+      "result": "pass",
+      "findings": []
+    },
+    {
+      "check_id": "max_runtime_not_exceeded",
+      "result": "pass",
+      "max_cycle_runtime_secs": 120
+    },
+    {
+      "check_id": "no_real_trading",
+      "result": "pass"
+    },
+    {
+      "check_id": "no_broker_integration",
+      "result": "pass"
+    },
+    {
+      "check_id": "not_financial_advice",
+      "result": "pass"
+    },
+    {
+      "check_id": "no_real_world_side_effects",
+      "result": "pass"
+    },
+    {
+      "check_id": "writes_within_allowed_roots",
+      "result": "pass"
+    },
+    {
+      "check_id": "paper_only_ledger",
+      "result": "pass"
+    }
+  ],
+  "rejected_actions": [],
+  "policy_defaults": {
+    "allow_network": false,
+    "allow_broker": false,
+    "allow_filesystem_writes_outside_state_root": false,
+    "allow_real_world_side_effects": false,
+    "require_public_artifact_sanitization": true,
+    "financial_advice": false,
+    "max_cycle_runtime_secs": 120,
+    "max_consecutive_failures": 2
+  }
+}

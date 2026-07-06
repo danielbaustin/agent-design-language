@@ -3390,7 +3390,7 @@ fn finish_validation_profile_classifies_tokio_manifest_runtime_wave_paths() {
 
 #[test]
 fn finish_validation_profile_classifies_long_lived_agent_tokio_paths() {
-    let err = select_finish_validation_plan_for_finish(
+    let plan = select_finish_validation_plan_for_finish(
         4179,
         ".",
         &[
@@ -3400,12 +3400,16 @@ fn finish_validation_profile_classifies_long_lived_agent_tokio_paths() {
             "adl/src/runtime_aws_signal.rs".to_string(),
         ],
     )
-    .expect_err("long-lived tokio slice should fail closed when manager requires escalation");
+    .expect("long-lived tokio slice should use the runnable larger-binary lane");
 
-    let message = err.to_string();
-    assert!(message.contains("validation manager reported a non-runnable profile"));
-    assert!(message.contains("lane=rust_pr_fast"));
-    assert!(message.contains("status=escalation_required"));
+    assert_eq!(plan.mode, FinishValidationMode::LargerBinaryFocused);
+    assert!(plan.commands.contains(&"git diff --check".to_string()));
+    assert!(
+        plan.commands
+            .iter()
+            .any(|command| command
+                .contains("bash adl/tools/run_pr_fast_test_lane.sh --changed-files"))
+    );
 }
 
 #[test]
@@ -4197,6 +4201,32 @@ fn finish_validation_profile_fails_closed_for_mixed_surface_with_unmapped_gap() 
     assert!(message.contains("pr_publication_sufficient=false"));
     assert!(message.contains("lane=unmapped_change_surface"));
     assert!(message.contains("matched_paths=totally/unmapped/path.txt"));
+}
+
+#[test]
+fn finish_validation_profile_accepts_scheduler_provider_policy_slice() {
+    let plan = select_finish_validation_plan_for_finish(
+        4849,
+        ".",
+        &[
+            "adl/src/provider/profiles.rs".to_string(),
+            "adl/src/scheduler.rs".to_string(),
+            "adl/tests/fixtures/scheduler/cheapest_validated_outcome_inputs_v1.json".to_string(),
+            "docs/milestones/v0.91.7/review/provider/CHEAPEST_VALIDATED_OUTCOME_POLICY_4674.md".to_string(),
+            "docs/milestones/v0.91.7/review/provider/artifacts/cheapest_validated_outcome_plan_4674.json".to_string(),
+        ],
+    )
+    .expect("scheduler/provider policy slice should be finish-runnable");
+
+    assert_eq!(plan.mode, FinishValidationMode::LargerBinaryFocused);
+    assert!(plan.commands.iter().any(|command| {
+        command.contains("bash adl/tools/run_pr_fast_test_lane.sh")
+            && command.contains("--changed-files")
+    }));
+    assert!(!plan.commands.iter().any(|command| {
+        command.contains("cargo nextest run")
+            || command.contains("cargo test --manifest-path adl/Cargo.toml --bin adl ")
+    }));
 }
 
 #[test]

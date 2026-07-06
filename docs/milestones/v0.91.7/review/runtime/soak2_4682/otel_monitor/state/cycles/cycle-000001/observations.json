@@ -1,0 +1,26 @@
+{
+  "schema": "adl.long_lived_agent_observations.v1",
+  "agent_instance_id": "soak2-otel-monitor-agent",
+  "cycle_id": "cycle-000001",
+  "observed_at": "2026-07-05T04:50:30.692499Z",
+  "sources": [
+    {
+      "source_id": "agent_spec",
+      "kind": "locked_supervisor_spec",
+      "trust_level": "operator_configured",
+      "artifact_ref": "../../agent_spec.locked.json"
+    }
+  ],
+  "facts": [
+    {
+      "key": "workflow.kind",
+      "value": "demo_adapter",
+      "as_of": "cycle-000001"
+    },
+    {
+      "key": "workflow.ref",
+      "value": "wp07_otel_monitor_probe",
+      "as_of": "cycle-000001"
+    }
+  ]
+}

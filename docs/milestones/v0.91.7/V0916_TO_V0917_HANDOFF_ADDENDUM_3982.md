@@ -53,8 +53,8 @@ The required handoff inputs are:
 - WP-16 has closed as the remediation and final-preflight owner for the failed
   review.
 - v0.92 activation must remain blocked until every named activation surface is
-  integrated/proven, explicitly non-claimed with operator approval, or blocked
-  with evidence and operator approval.
+  integrated/proven, already closed with evidence, operator-scoped-out with
+  evidence and approval, or blocked with evidence and operator approval.
 - Planning docs alone do not prove runtime, demo, C-SDLC, provider, scheduler,
   AWS, or validation readiness.
 - Mocks, seams, docs, and component tests count as prerequisites, not as
@@ -107,7 +107,8 @@ This is v0.91.7 proof work, not a v0.91.6 release blocker.
 
 ## v0.92 Activation Surfaces To Preserve
 
-The v0.92 bridge must still resolve, prove, non-claim, or explicitly block:
+The v0.92 readiness path must still implement/prove, confirm already-closed
+evidence, operator-scope-out with evidence and approval, or explicitly block:
 
 - AEE completion;
 - Memory / ObsMem handoff and Memory Palace context topology;
@@ -121,9 +122,9 @@ The v0.92 bridge must still resolve, prove, non-claim, or explicitly block:
 - C-SDLC operational reliability, including watchers, session ledger, VPP/PVF,
   SOR fact capture, and issue metrics.
 
-Every surface must be integrated/proven, explicitly non-claimed with operator
-approval, or blocked with evidence and operator approval before v0.92 activation
-docs may consume it.
+Every surface must be integrated/proven, already closed with evidence,
+operator-scoped-out with evidence and approval, or blocked with evidence and
+operator approval before v0.92 activation docs may consume it.
 
 ## WP-01 Consumption Checklist
 

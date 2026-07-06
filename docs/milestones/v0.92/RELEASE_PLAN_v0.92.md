@@ -23,7 +23,8 @@ evidence.
 
 Before release-tail execution, confirm implementation WPs, demos, internal
 review, external review, remediation, next-milestone planning, and next-
-milestone review are complete or explicitly routed.
+milestone review are complete, operator-scoped-out with evidence, or blocked
+with evidence and approval.
 
 ## 1. Release Readiness
 
@@ -69,7 +70,7 @@ constitutional governance.
 
 - Docs must separate engineering substrate, review model, and contextual claims.
 - Release evidence must account for the `#3377` first-birthday readiness
-  packet and any routed gaps.
+  packet and any evidence-backed blockers.
 - Release notes must not claim legal personhood, production citizenship, or
   complete constitutional authority.
 - Demo evidence must cite concrete artifacts, not birthday prose alone.
@@ -122,5 +123,6 @@ Do not ship v0.92 if:
 
 - Release readiness has concrete evidence for each planned claim.
 - Release notes describe landed work only.
-- Review findings are fixed, accepted, or routed.
+- Review findings are fixed, accepted with evidence, operator-scoped-out with
+  evidence, or blocked with approval.
 - v0.93 handoff is prepared and reviewed.

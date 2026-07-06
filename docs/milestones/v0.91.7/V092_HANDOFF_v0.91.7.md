@@ -11,7 +11,7 @@
 
 ## Purpose
 
-Record the second-tranche bridge surfaces that `#3780` / `v0.92` may consume
+Record the second-tranche implementation/proof surfaces that `#3780` / `v0.92` may consume
 after `v0.91.7` docs-package completion. This is a handoff record, not runtime
 implementation proof.
 
@@ -27,9 +27,9 @@ handoff remains planning-only.
 `v0.92` may consume an activation-path surface only as one of:
 
 - `integrated_proven`: implementation runs in the integrated path with retained evidence;
-- `doc_ready_non_claim`: reviewed bridge doc exists, but implementation proof is not part of the `v0.92` activation claim and the operator accepts the explicit non-claim and residual risk;
+- `operator_scoped_out`: implementation proof is explicitly outside `v0.92` activation scope, with evidence, risk, and operator approval recorded;
 - `blocked_with_evidence`: named missing evidence or decision prevents activation use;
-- `operator_approved_non_claim`: explicitly outside `v0.92` activation scope, with evidence and risk accepted.
+- `implementation_required`: owned by a named v0.91.7/v0.92 issue, but not consumable until integrated proof exists.
 
 For product/runtime surfaces inherited from `v0.91.6`, `doc-ready` is not
 runtime completion. Those surfaces require an explicit completion class from
@@ -40,14 +40,14 @@ and only `integrated_proven` counts as operational completion.
 
 | Surface | Handoff state | v0.92 consumption limit | Source doc |
 | --- | --- | --- | --- |
-| Curiosity Engine / Discovery Substrate | doc_ready_non_claim | `v0.92` may consume governance, artifact, budget, and proof expectations only; governed discovery-cycle proof remains future work unless separately integrated/proven. | `features/CURIOSITY_ENGINE_DISCOVERY_SUBSTRATE_v0.91.7.md` |
-| Constructability Gate | doc_ready_non_claim | `v0.92` may consume the shared-reality boundary and validator expectations only; runtime validator proof remains future work unless separately integrated/proven. | `features/CONSTRUCTABILITY_GATE_v0.91.7.md` |
-| Reasoning graph / loop runtime / `adl.skill.v1` | doc_ready_non_claim | `v0.92` may consume the bridge map; full skill-standard ratification and graph runtime remain later work unless separately integrated/proven. | `features/REASONING_GRAPH_LOOP_SKILL_STANDARD_BRIDGE_v0.91.7.md` |
-| Residual security readiness | blocked_with_evidence until resolved | `v0.92` may consume named residual categories; unresolved activation blockers must be resolved or explicitly blocked/non-claimed with evidence and operator approval before launch. | `features/SECURITY_RESIDUAL_READINESS_v0.91.7.md` |
-| ACIP/A2A/protobuf residuals | blocked_with_evidence until resolved | `v0.92` must choose JSON projection, protobuf, mock carrier, or explicit operator-approved non-claim before claiming protocol readiness. | `features/ACIP_A2A_PROTOBUF_RESIDUALS_v0.91.7.md` |
-| Affect and happiness | doc_ready_non_claim | `v0.92` may consume safe-test and non-claim boundaries only; no inner-state, wellbeing, or consciousness claim is supported. | `features/AFFECT_HAPPINESS_BRIDGE_v0.91.7.md` |
-| Godel mechanics | doc_ready_non_claim | `v0.92` may consume a reviewed mechanics map only; autonomous self-improvement and runtime completion are unsupported unless separately integrated/proven. | `features/GODEL_MECHANICS_BRIDGE_v0.91.7.md` |
-| Economics context | doc_ready_non_claim | Default `v0.92` posture is context-only unless an explicit operator decision promotes and proves a bounded test. | `features/ECONOMICS_CONTEXT_DECISION_v0.91.7.md` |
+| Curiosity Engine / Discovery Substrate | implementation_required | `v0.92` may consume this surface only after governed discovery-cycle proof is integrated/proven or blocked with evidence and operator approval. | `features/CURIOSITY_ENGINE_DISCOVERY_SUBSTRATE_v0.91.7.md` |
+| Constructability Gate | implementation_required | `v0.92` may consume this surface only after the shared-reality boundary and validator proof are integrated/proven or blocked with evidence and operator approval. | `features/CONSTRUCTABILITY_GATE_v0.91.7.md` |
+| Reasoning graph / loop runtime / `adl.skill.v1` | implementation_required | `v0.92` may consume this surface only after producer/consumer or runtime proof exists for the required graph/loop/skill-standard path. | `features/REASONING_GRAPH_LOOP_SKILL_STANDARD_BRIDGE_v0.91.7.md` |
+| Security readiness | blocked_with_evidence until resolved | Unresolved activation blockers must be resolved or blocked with evidence and operator approval before launch. | `features/SECURITY_RESIDUAL_READINESS_v0.91.7.md` |
+| ACIP/A2A/protobuf implementation | blocked_with_evidence until resolved | `v0.92` must choose JSON projection, protobuf, or another implemented carrier before claiming protocol readiness. | `features/ACIP_A2A_PROTOBUF_RESIDUALS_v0.91.7.md` |
+| Affect and happiness | implementation_required | `v0.92` may consume this surface only after the affect model and public claim boundaries are implemented/proven or blocked with evidence and operator approval. | `features/AFFECT_HAPPINESS_BRIDGE_v0.91.7.md` |
+| Godel mechanics | implementation_required | `v0.92` may consume this surface only after reviewed mechanics and proof boundaries are integrated/proven or blocked with evidence and operator approval. | `features/GODEL_MECHANICS_BRIDGE_v0.91.7.md` |
+| Economics context | operator_scoped_out unless reopened | Default `v0.92` posture is context-only unless an explicit operator decision promotes and proves a bounded test. | `features/ECONOMICS_CONTEXT_DECISION_v0.91.7.md` |
 
 ## Operational Substrate Handoff
 
@@ -59,37 +59,37 @@ and only `integrated_proven` counts as operational completion.
 | C-SDLC integration control plane | v0.91.6 `#4388`-`#4398`, `#4405`, `#4412`-`#4413`, `#4417`-`#4421` plus `#4425`, `#4431`, `#4441`, closed adoption sprint `#4433`-`#4438`, closed release/docs follow-ons `#4520`-`#4522`, and any remaining `#4442` / `#4443` carryforward / SEP / VPP / PVF / templates / GitHub-octocrab convergence / session ledger / logging / watcher-lifecycle automation / operational adoption / shepherding / FastContext work are consumed as integrated/proven, already closed with evidence, or blocked with evidence and operator approval before v0.92 relies on them. |
 | Goal and metrics accounting | Time/token/resource, nested-goal, forward capture `#4431`, v0.91.6-only backfill `#4441`, and host goal snapshot `#4442` are implemented/proven or blocked with evidence and operator approval before v0.92 issue planning relies on them. |
 | Scheduler/provider/local agents | Routing policy and suitability path implemented/proven enough to protect premium cognition, or blocked with evidence and operator approval. |
-| Capability envelope and capability testing | Memory grounding, capability envelope, birth witnesses/receipt, and Aptitude Atlas boundaries explicitly proven, non-claimed with operator approval, or blocked with evidence before birthday evidence relies on them. |
+| Capability envelope and capability testing | Memory grounding, capability envelope, birth witnesses/receipt, and Aptitude Atlas boundaries explicitly proven, operator-scoped-out with evidence, or blocked with evidence before birthday evidence relies on them. |
 | Build/validation throughput | Validation-cost, path ownership, SOR fact capture, validation manager, VPP generation, and remote/local build paths implemented/proven enough to avoid rediscovery during birthday work. EC2 Spot or an alternate disposable remote-builder path must have time/cost/cache/cleanup evidence before it is treated as a release-critical lane. |
 | GitHub convergence and control-plane tooling | GitHub/octocrab/tooling convergence, session coordination, lifecycle liveness, and shepherd state explicit enough that v0.92 sprint execution does not depend on ambiguous `gh` fallback, stale control-plane assumptions, or chat-only session memory. |
 | Integrated logging, OTel boundary, and Observatory consumption | `#4718` is the current pre-v0.92 proof issue. `v0.92` remains blocked from relying on runtime/provider/control-plane logging, OTel compatibility, AWS/signal observability, or Observatory/Unity consumption until current integrated evidence exists for events, stdout/stderr separation, redaction/path hygiene, OTel boundary truth, and consumer samples. |
-| Runtime integration, Soak #2, and AWS signal bridge | `RUNTIME_SOAK_2_EXECUTION_PACKET_v0.91.7.md` is the planning gate. `v0.92` remains blocked until that packet's required rows exit as `integrated_proven` or `blocked_with_evidence`; Soak #3 risk requires explicit operator approval. |
-| Runtime architecture diet | Runtime module/seam map and keep/merge/defer/retire follow-ons explicit enough to reduce bloat without counting refactoring plans as integration proof. |
-| Observatory and demo readiness | Visible proof surfaces integrated/proven, explicitly non-claimed with operator approval, or blocked with evidence and operator approval. |
-| CodeFriend, adapter v2, paper/publication surfaces | MVP-scope CodeFriend/adapter obligations are implemented/proven or blocked with evidence; paper/publication surfaces are explicitly non-claimed unless launch readiness promotes a bounded, evidence-backed slice. |
+| Runtime integration, Soak #2, and AWS signal integration | `RUNTIME_SOAK_2_EXECUTION_PACKET_v0.91.7.md` is the planning gate. `v0.92` remains blocked until that packet's required rows exit as `integrated_proven` or `blocked_with_evidence`; Soak #3 risk requires explicit operator approval. |
+| Runtime architecture diet | Runtime module map and keep/merge/postpone/retire follow-ons explicit enough to reduce bloat without counting refactoring plans as integration proof. |
+| Observatory and demo readiness | Visible proof surfaces integrated/proven or blocked with evidence and operator approval. |
+| CodeFriend, adapter v2, paper/publication surfaces | MVP-scope CodeFriend/adapter obligations are implemented/proven or blocked with evidence; paper/publication surfaces are operator-scoped-out unless launch readiness promotes a bounded, evidence-backed slice. |
 
 ## Activation Blockers To Preserve
 
 - No `v0.92` activation claim may cite these docs as runtime proof.
 - Logging and observability are activation-path infrastructure, not optional garnish; no polis/runtime/Observatory claim may proceed without current integrated logging evidence.
-- Security and ACIP/A2A residuals remain activation-path work until resolved,
-  explicitly non-claimed with operator approval, or blocked with evidence and operator approval.
+- Security and ACIP/A2A implementation remains activation-path work until resolved
+  or blocked with evidence and operator approval.
 - Curiosity and Constructability require proof issues before public claims.
-- Affect, happiness, and Godel mechanics require non-claim language in birthday
-  evidence.
+- Affect, happiness, and Godel mechanics require proof-bound public claim
+  language in birthday evidence.
 - Capability envelope, witnesses/receipt, and publication-facing narratives must
   not be inferred from launch language without tracked evidence.
 
 ## `#3780` Consumption Checklist
 
 - [ ] Read `FEATURE_DOCS_v0.91.7.md` and this handoff together.
-- [ ] For each second-tranche surface, record whether `#3780` consumes,
-  blocks with evidence, or treats it as an operator-approved non-claim.
-- [ ] Preserve runtime non-claims in `v0.92` activation docs.
+- [ ] For each second-tranche surface, record whether `#3780` consumes it as
+  integrated proof, blocks with evidence, or scopes it out with operator approval.
+- [ ] Preserve runtime claim boundaries in `v0.92` activation docs.
 - [ ] Do not reopen `v0.91.7` scope inside `v0.92` without a tracked issue.
 
 ## Non-Goals
 
 - This handoff does not implement runtime behavior.
 - This handoff does not approve `v0.92` activation.
-- This handoff does not replace the `v0.92` activation bridge ledger.
+- This handoff does not replace the `v0.92` activation consumption ledger.

@@ -13,11 +13,37 @@ artifacts/
 issue-*.sh
 *.profraw
 *.profdata
+demos/v0.91.6/unity-observatory/Library/
+demos/v0.91.6/unity-observatory/Logs/
+demos/v0.91.6/unity-observatory/Temp/
+demos/v0.91.6/unity-observatory/UserSettings/
+demos/v0.91.6/unity-observatory/.agents/
+demos/v0.91.6/unity-observatory/.codex/
+demos/v0.91.6/unity-observatory/mono_crash.*.json
+demos/v0.91.6/unity-observatory/Assets/Creepy_Cat.meta
+demos/v0.91.6/unity-observatory/Assets/Creepy_Cat/
+demos/v0.91.6/unity-observatory/Assets/ScifiOfficeLite.meta
+demos/v0.91.6/unity-observatory/Assets/ScifiOfficeLite/
+demos/v0.91.6/unity-observatory/Assets/Sci-Fi Styled Modular Pack.meta
+demos/v0.91.6/unity-observatory/Assets/Sci-Fi Styled Modular Pack/
+demos/v0.91.6/unity-observatory/Assets/Plugins.meta
+demos/v0.91.6/unity-observatory/Assets/Plugins/NuGet.meta
+demos/v0.91.6/unity-observatory/Assets/Plugins/NuGet/
+demos/v0.91.6/unity-observatory/Proof/
 infra/ddns/.terraform/
 infra/ddns/tfplan
 infra/ddns/build/
 infra/ddns/terraform.tfstate
 infra/ddns/terraform.tfstate.backup
+
+# Unity observatory local proof inputs. These are operator-provisioned or
+# generated proof/tooling payloads unless a later issue approves a specific
+# license/storage/subset route.
+demos/v0.91.6/unity-observatory/Assets/Creepy_Cat/
+demos/v0.91.6/unity-observatory/Assets/ScifiOfficeLite/
+demos/v0.91.6/unity-observatory/Assets/Sci-Fi Styled Modular Pack/
+demos/v0.91.6/unity-observatory/Assets/Plugins/NuGet/
+demos/v0.91.6/unity-observatory/Proof/
 
 # Local worktrees (generated)
 .worktrees/

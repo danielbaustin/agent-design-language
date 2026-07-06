@@ -8,6 +8,9 @@ use std::io::{BufRead, BufReader, Write};
 use std::path::{Path, PathBuf};
 use std::time::Duration;
 
+use crate::chronosense::{ChronosenseRuntimeService, ChronosenseRuntimeServiceConfig};
+use crate::{adl, execute, resolve, trace};
+
 mod inspection;
 mod schema;
 mod storage;
@@ -17,9 +20,12 @@ use schema::*;
 use storage::*;
 use types::LedgerCursor;
 pub use types::{
-    AgentSpec, AgentStatusState, HeartbeatSpec, InspectOptions, LeaseRecord, LoadedAgentSpec,
-    RunOptions, StatusError, StatusRecord, StopRecord, TickOptions, WorkflowSpec,
+    AgentSpec, AgentStatusState, DaemonOptions, DaemonStatusRecord, HeartbeatSpec, InspectOptions,
+    LeaseRecord, LoadedAgentSpec, RunOptions, StatusError, StatusRecord, StopRecord, TickOptions,
+    WorkflowSpec,
 };
+
+const DAEMON_DEFAULT_INTERVAL_SECS: u64 = 3;
 
 pub fn load_spec(spec_path: &Path) -> Result<LoadedAgentSpec> {
     let raw = fs::read_to_string(spec_path)
@@ -115,6 +121,300 @@ pub fn run(spec_path: &Path, options: RunOptions) -> Result<StatusRecord> {
         loaded,
         sleep_secs,
     ))
+}
+
+pub fn daemon(spec_path: &Path, options: DaemonOptions) -> Result<DaemonStatusRecord> {
+    if options.checkpoint_interval_secs == 0 {
+        return Err(anyhow!(
+            "csm daemon requires --checkpoint-interval-secs greater than zero"
+        ));
+    }
+    if options.interval_secs == Some(0) {
+        return Err(anyhow!(
+            "csm daemon requires --interval-secs greater than zero"
+        ));
+    }
+    let loaded = load_spec(spec_path)?;
+    ensure_state_root(&loaded)?;
+    let runtime_context = CsmRuntimeContext::new()?;
+    let mut restart_count = 0u64;
+    let mut last_child_exit = None;
+    let _ = write_daemon_status(
+        &runtime_context,
+        &loaded,
+        DaemonStatusInput {
+            state: "starting",
+            restart_count,
+            max_restarts: options.max_restarts,
+            checkpoint_interval_secs: options.checkpoint_interval_secs,
+            last_event: "daemon_started",
+            last_child_exit: None,
+            next_backoff_secs: 0,
+        },
+    )?;
+    let mut daemon_status: DaemonStatusRecord;
+    emit_daemon_event(
+        &runtime_context,
+        &loaded,
+        "daemon_started",
+        "started",
+        restart_count,
+        json!({
+            "checkpoint_interval_secs": options.checkpoint_interval_secs,
+            "max_restarts": options.max_restarts,
+            "unsupported_permanence_claims": unsupported_permanence_claims()
+        }),
+    )?;
+
+    loop {
+        if read_stop(&loaded)?.is_some() {
+            let status = status(spec_path)?;
+            persist_status(&loaded, &status, "daemon_stop_observed")?;
+            let daemon_status = write_daemon_status(
+                &runtime_context,
+                &loaded,
+                DaemonStatusInput {
+                    state: "stopped",
+                    restart_count,
+                    max_restarts: options.max_restarts,
+                    checkpoint_interval_secs: options.checkpoint_interval_secs,
+                    last_event: "stop_completed",
+                    last_child_exit: last_child_exit.clone(),
+                    next_backoff_secs: 0,
+                },
+            )?;
+            emit_daemon_event(
+                &runtime_context,
+                &loaded,
+                "stop_completed",
+                "completed",
+                restart_count,
+                json!({"recoverable_state": status.state}),
+            )?;
+            return Ok(daemon_status);
+        }
+
+        emit_daemon_event(
+            &runtime_context,
+            &loaded,
+            "child_spawn",
+            "started",
+            restart_count,
+            json!({"supervised_unit": "long_lived_agent_tick"}),
+        )?;
+        let _ = write_daemon_status(
+            &runtime_context,
+            &loaded,
+            DaemonStatusInput {
+                state: "running",
+                restart_count,
+                max_restarts: options.max_restarts,
+                checkpoint_interval_secs: options.checkpoint_interval_secs,
+                last_event: "child_spawn",
+                last_child_exit: last_child_exit.clone(),
+                next_backoff_secs: 0,
+            },
+        )?;
+
+        match tick(
+            spec_path,
+            TickOptions {
+                recover_stale_lease: options.recover_stale_lease,
+            },
+        ) {
+            Ok(status) => {
+                last_child_exit = Some("success".to_string());
+                emit_daemon_event(
+                    &runtime_context,
+                    &loaded,
+                    "child_exit",
+                    "completed",
+                    restart_count,
+                    json!({
+                        "exit_class": "success",
+                        "recoverable_state": status.state,
+                        "checkpoint_ref": "continuity_checkpoint.json"
+                    }),
+                )?;
+                daemon_status = write_daemon_status(
+                    &runtime_context,
+                    &loaded,
+                    DaemonStatusInput {
+                        state: "running",
+                        restart_count,
+                        max_restarts: options.max_restarts,
+                        checkpoint_interval_secs: options.checkpoint_interval_secs,
+                        last_event: "child_exit",
+                        last_child_exit: last_child_exit.clone(),
+                        next_backoff_secs: 0,
+                    },
+                )?;
+            }
+            Err(err) => {
+                last_child_exit = Some(format!("error:{err}"));
+                let mut status = read_status(&loaded)?.unwrap_or_else(|| {
+                    status_with_state(
+                        &loaded,
+                        AgentStatusState::Failed,
+                        None,
+                        None,
+                        None,
+                        false,
+                        None,
+                    )
+                });
+                status.state = AgentStatusState::Failed;
+                status.active_lease = read_lease(&loaded)?;
+                status.last_error = Some(StatusError {
+                    class: "daemon_child_failed".to_string(),
+                    message: err.to_string(),
+                });
+                status.updated_at = Utc::now();
+                persist_status(&loaded, &status, "daemon_child_failed_recoverable")?;
+                emit_daemon_event(
+                    &runtime_context,
+                    &loaded,
+                    "child_exit",
+                    "failed",
+                    restart_count,
+                    json!({
+                        "exit_class": "error",
+                        "error": err.to_string(),
+                        "recoverable_state": status.state,
+                        "checkpoint_ref": "continuity_checkpoint.json"
+                    }),
+                )?;
+                if restart_count >= options.max_restarts {
+                    let _ = write_daemon_status(
+                        &runtime_context,
+                        &loaded,
+                        DaemonStatusInput {
+                            state: "failed",
+                            restart_count,
+                            max_restarts: options.max_restarts,
+                            checkpoint_interval_secs: options.checkpoint_interval_secs,
+                            last_event: "restart_budget_exhausted",
+                            last_child_exit: last_child_exit.clone(),
+                            next_backoff_secs: 0,
+                        },
+                    )?;
+                    emit_daemon_event(
+                        &runtime_context,
+                        &loaded,
+                        "restart_budget_exhausted",
+                        "failed",
+                        restart_count,
+                        json!({"recoverable_state": status.state}),
+                    )?;
+                    return Err(err.context("daemon restart budget exhausted"));
+                }
+                restart_count += 1;
+                let backoff_secs = restart_backoff_secs(restart_count);
+                daemon_status = write_daemon_status(
+                    &runtime_context,
+                    &loaded,
+                    DaemonStatusInput {
+                        state: "restarting",
+                        restart_count,
+                        max_restarts: options.max_restarts,
+                        checkpoint_interval_secs: options.checkpoint_interval_secs,
+                        last_event: "restart_scheduled",
+                        last_child_exit: last_child_exit.clone(),
+                        next_backoff_secs: backoff_secs,
+                    },
+                )?;
+                emit_daemon_event(
+                    &runtime_context,
+                    &loaded,
+                    "restart_scheduled",
+                    "scheduled",
+                    restart_count,
+                    json!({"backoff_secs": backoff_secs}),
+                )?;
+                let stop_observed = sleep_with_partial_checkpoints(
+                    &runtime_context,
+                    &loaded,
+                    &mut daemon_status,
+                    PartialCheckpointSleep {
+                        total_sleep_secs: backoff_secs,
+                        checkpoint_interval_secs: options.checkpoint_interval_secs,
+                        restart_count,
+                        max_restarts: options.max_restarts,
+                        last_child_exit: last_child_exit.clone(),
+                        recoverable_error: status.last_error.clone(),
+                        event: "restart_backoff",
+                        no_sleep: options.no_sleep,
+                    },
+                )?;
+                if stop_observed {
+                    continue;
+                }
+                emit_daemon_event(
+                    &runtime_context,
+                    &loaded,
+                    "restart_attempted",
+                    "started",
+                    restart_count,
+                    json!({"previous_exit": last_child_exit}),
+                )?;
+                continue;
+            }
+        }
+
+        let sleep_secs = daemon_interval_secs(&loaded, options.interval_secs)?;
+        let stop_observed = sleep_with_partial_checkpoints(
+            &runtime_context,
+            &loaded,
+            &mut daemon_status,
+            PartialCheckpointSleep {
+                total_sleep_secs: sleep_secs,
+                checkpoint_interval_secs: options.checkpoint_interval_secs,
+                restart_count,
+                max_restarts: options.max_restarts,
+                last_child_exit: last_child_exit.clone(),
+                recoverable_error: None,
+                event: "daemon_heartbeat",
+                no_sleep: options.no_sleep,
+            },
+        )?;
+        if stop_observed {
+            continue;
+        }
+        if options.no_sleep {
+            daemon_status = write_daemon_status(
+                &runtime_context,
+                &loaded,
+                DaemonStatusInput {
+                    state: "completed",
+                    restart_count,
+                    max_restarts: options.max_restarts,
+                    checkpoint_interval_secs: options.checkpoint_interval_secs,
+                    last_event: "daemon_completed",
+                    last_child_exit: last_child_exit.clone(),
+                    next_backoff_secs: 0,
+                },
+            )?;
+            emit_daemon_event(
+                &runtime_context,
+                &loaded,
+                "daemon_completed",
+                "completed",
+                restart_count,
+                json!({"reason": "no_sleep_test_boundary"}),
+            )?;
+            return Ok(daemon_status);
+        }
+    }
+}
+
+fn daemon_interval_secs(loaded: &LoadedAgentSpec, override_secs: Option<u64>) -> Result<u64> {
+    match override_secs.or(loaded.spec.heartbeat.interval_secs) {
+        Some(0) => Err(anyhow!(
+            "csm daemon requires heartbeat.interval_secs or --interval-secs greater than zero"
+        )),
+        Some(secs) => Ok(secs),
+        None => Ok(DAEMON_DEFAULT_INTERVAL_SECS),
+    }
 }
 
 async fn run_with_tokio_cadence(
@@ -739,6 +1039,12 @@ fn write_cycle_artifacts(loaded: &LoadedAgentSpec, cycle_id: &str) -> Result<()>
         dedup_strings(&mut rejected_actions);
     }
 
+    let adl_run = if workflow_supported && loaded.spec.workflow.kind == "adl_workflow" {
+        Some(run_adl_workflow_cycle(loaded, cycle_id, &cycle_dir)?)
+    } else {
+        None
+    };
+
     let guardrail_pass = workflow_supported
         && rejected_actions.is_empty()
         && sanitization.passed
@@ -781,13 +1087,21 @@ fn write_cycle_artifacts(loaded: &LoadedAgentSpec, cycle_id: &str) -> Result<()>
     write_json_pretty(&cycle_dir.join("decision_result.json"), &decision_result)?;
 
     let run_ref = if loaded.spec.workflow.kind == "adl_workflow" {
+        let run_status_ref = adl_run
+            .as_ref()
+            .map(|run| run.status_ref.clone())
+            .unwrap_or_else(|| "csm_adl_run_status.json".to_string());
+        let trace_ref = adl_run
+            .as_ref()
+            .map(|run| run.trace_ref.clone())
+            .unwrap_or_else(|| "csm_adl_run_status.json#trace".to_string());
         json!({
             "schema": RUN_REF_SCHEMA,
             "workflow_kind": "adl_workflow",
             "workflow_ref": workflow_ref,
-            "run_status_ref": null,
-            "trace_ref": null,
-            "execution_note": "WP-03 records the cycle artifact contract; full workflow invocation remains bounded by the configured supervisor cycle."
+            "run_status_ref": run_status_ref,
+            "trace_ref": trace_ref,
+            "execution_note": "CSM executed the configured ADL DAG through the canonical resolver/executor inside this supervised runtime cycle."
         })
     } else {
         json!({
@@ -939,6 +1253,14 @@ fn write_cycle_artifacts(loaded: &LoadedAgentSpec, cycle_id: &str) -> Result<()>
         "output_hash": sha256_json(&manifest_output)?,
         "previous_cycle_id": manifest_input["previous_cycle_id"].clone(),
         "next_cycle_hint": "sleep_until_next_heartbeat",
+        "csm_runtime": {
+            "runtime_owner": "csm",
+            "adl_role": "tooling_control_plane",
+            "aee": "integrated",
+            "chronosense": "integrated",
+            "scheduler_watcher": "integrated",
+            "resilience_middleware": "integrated"
+        },
         "artifacts": {
             "observations": "observations.json",
             "decision_request": "decision_request.json",
@@ -946,7 +1268,8 @@ fn write_cycle_artifacts(loaded: &LoadedAgentSpec, cycle_id: &str) -> Result<()>
             "run_ref": "run_ref.json",
             "memory_writes": "memory_writes.jsonl",
             "guardrail_report": "guardrail_report.json",
-            "cycle_summary": "cycle_summary.md"
+            "cycle_summary": "cycle_summary.md",
+            "csm_adl_run_status": adl_run.as_ref().map(|run| run.status_ref.as_str())
         },
         "not_financial_advice": true
     });
@@ -978,6 +1301,107 @@ fn write_cycle_artifacts(loaded: &LoadedAgentSpec, cycle_id: &str) -> Result<()>
     }
 
     Ok(())
+}
+
+#[derive(Debug)]
+struct AdlWorkflowRunSummary {
+    status_ref: String,
+    trace_ref: String,
+}
+
+fn run_adl_workflow_cycle(
+    loaded: &LoadedAgentSpec,
+    cycle_id: &str,
+    cycle_dir: &Path,
+) -> Result<AdlWorkflowRunSummary> {
+    let workflow_path = loaded.spec.workflow.path.as_ref().ok_or_else(|| {
+        anyhow!("adl_workflow requires workflow.path so CSM can execute the configured DAG")
+    })?;
+    let adl_path = if workflow_path.is_absolute() {
+        workflow_path.clone()
+    } else {
+        loaded
+            .spec_path
+            .parent()
+            .unwrap_or_else(|| Path::new("."))
+            .join(workflow_path)
+    };
+    let adl_path_str = adl_path
+        .to_str()
+        .context("adl_workflow path must be valid UTF-8")?;
+    let doc = adl::AdlDoc::load_from_file(adl_path_str)
+        .with_context(|| format!("failed loading CSM ADL workflow {}", adl_path.display()))?;
+    let resolved = resolve::resolve_run(&doc)
+        .with_context(|| format!("failed resolving CSM ADL workflow {}", adl_path.display()))?;
+    let adl_base_dir = adl_path.parent().unwrap_or_else(|| Path::new("."));
+    let out_dir = cycle_dir.join("adl_runtime");
+    fs::create_dir_all(&out_dir)
+        .with_context(|| format!("failed creating CSM ADL runtime dir {}", out_dir.display()))?;
+
+    let mut tr = trace::Trace::new(
+        resolved.run_id.clone(),
+        resolved.workflow_id.clone(),
+        resolved.doc.version.clone(),
+    );
+    let result =
+        execute::execute_sequential(&resolved, &mut tr, false, false, adl_base_dir, &out_dir)
+            .with_context(|| format!("CSM ADL DAG execution failed for cycle {cycle_id}"))?;
+    tr.run_finished(result.pause.is_none());
+
+    let records: Vec<Value> = result
+        .records
+        .iter()
+        .map(|record| {
+            json!({
+                "step_id": record.step_id,
+                "provider_id": record.provider_id,
+                "status": record.status,
+                "attempts": record.attempts,
+                "output_bytes": record.output_bytes
+            })
+        })
+        .collect();
+    let artifacts: Vec<String> = result
+        .artifacts
+        .iter()
+        .map(|path| path_artifact_ref(path))
+        .collect();
+    let scheduler_policy = execute::scheduler_policy_for_run(&resolved)?
+        .map(|(max_concurrency, source)| {
+            json!({
+                "max_concurrency": max_concurrency,
+                "source": source.as_str()
+            })
+        })
+        .unwrap_or(Value::Null);
+    let trace_events: Vec<String> = tr.events.iter().map(|event| event.summarize()).collect();
+    let status = json!({
+        "schema": "adl.csm.adl_workflow_run_status.v1",
+        "runtime_owner": "csm",
+        "adl_role": "tooling_control_plane",
+        "agent_instance_id": loaded.spec.agent_instance_id,
+        "cycle_id": cycle_id,
+        "workflow_path": path_artifact_ref(&adl_path),
+        "run_id": resolved.run_id,
+        "workflow_id": resolved.workflow_id,
+        "status": if result.pause.is_some() { "paused" } else { "success" },
+        "step_count": result.records.len(),
+        "records": records,
+        "artifacts": artifacts,
+        "out_dir": path_artifact_ref(&out_dir),
+        "scheduler_policy": scheduler_policy,
+        "runtime_control": serde_json::to_value(&result.runtime_control)?,
+        "trace_event_count": trace_events.len(),
+        "trace_events": trace_events,
+        "aee_resilience_trace": "retained_in_trace_events",
+        "chronosense_runtime": "retained_in_csm_daemon_events",
+        "completed_at": Utc::now()
+    });
+    write_json_pretty(&cycle_dir.join("csm_adl_run_status.json"), &status)?;
+    Ok(AdlWorkflowRunSummary {
+        status_ref: "csm_adl_run_status.json".to_string(),
+        trace_ref: "csm_adl_run_status.json#trace_events".to_string(),
+    })
 }
 
 fn status_with_state(
@@ -1012,6 +1436,308 @@ fn persist_status(
 ) -> Result<()> {
     write_status(loaded, status)?;
     write_continuity_restore_artifacts(loaded, status, checkpoint_reason)
+}
+
+struct DaemonStatusInput<'a> {
+    state: &'a str,
+    restart_count: u64,
+    max_restarts: u64,
+    checkpoint_interval_secs: u64,
+    last_event: &'a str,
+    last_child_exit: Option<String>,
+    next_backoff_secs: u64,
+}
+
+struct PartialCheckpointSleep<'a> {
+    total_sleep_secs: u64,
+    checkpoint_interval_secs: u64,
+    restart_count: u64,
+    max_restarts: u64,
+    last_child_exit: Option<String>,
+    recoverable_error: Option<StatusError>,
+    event: &'a str,
+    no_sleep: bool,
+}
+
+struct CsmRuntimeContext {
+    chronosense: ChronosenseRuntimeService,
+}
+
+impl CsmRuntimeContext {
+    fn new() -> Result<Self> {
+        let started_at_epoch_ms = epoch_millis_now();
+        let chronosense = ChronosenseRuntimeService::new(ChronosenseRuntimeServiceConfig::utc(
+            started_at_epoch_ms,
+        ))
+        .context("failed initializing CSM Chronosense runtime service")?;
+        Ok(Self { chronosense })
+    }
+}
+
+fn write_daemon_status(
+    runtime_context: &CsmRuntimeContext,
+    loaded: &LoadedAgentSpec,
+    input: DaemonStatusInput<'_>,
+) -> Result<DaemonStatusRecord> {
+    let now = Utc::now();
+    let status = DaemonStatusRecord {
+        schema: DAEMON_STATUS_SCHEMA.to_string(),
+        agent_instance_id: loaded.spec.agent_instance_id.clone(),
+        runtime_capabilities: csm_runtime_capabilities(runtime_context),
+        state: input.state.to_string(),
+        supervisor_pid: std::process::id(),
+        restart_count: input.restart_count,
+        max_restarts: input.max_restarts,
+        checkpoint_interval_secs: input.checkpoint_interval_secs,
+        last_event: input.last_event.to_string(),
+        last_child_exit: input.last_child_exit,
+        last_checkpoint_at: now,
+        next_backoff_secs: input.next_backoff_secs,
+        trace_id: daemon_trace_id(loaded),
+        span_id: daemon_span_id(input.last_event, input.restart_count),
+        parent_span_id: Some(daemon_parent_span_id(loaded)),
+        unsupported_permanence_claims: unsupported_permanence_claims(),
+        updated_at: now,
+    };
+    write_json_pretty(&daemon_status_path(loaded), &status)?;
+    Ok(status)
+}
+
+fn sleep_with_partial_checkpoints(
+    runtime_context: &CsmRuntimeContext,
+    loaded: &LoadedAgentSpec,
+    daemon_status: &mut DaemonStatusRecord,
+    sleep: PartialCheckpointSleep<'_>,
+) -> Result<bool> {
+    let mut remaining = sleep.total_sleep_secs;
+    if remaining == 0 || sleep.no_sleep {
+        let mut current = status(&loaded.spec_path)?;
+        if let Some(error) = sleep.recoverable_error.clone() {
+            current.state = AgentStatusState::Failed;
+            current.last_error = Some(error);
+        }
+        persist_status(loaded, &current, "daemon_partial_checkpoint")?;
+        *daemon_status = write_daemon_status(
+            runtime_context,
+            loaded,
+            DaemonStatusInput {
+                state: daemon_status.state.as_str(),
+                restart_count: sleep.restart_count,
+                max_restarts: sleep.max_restarts,
+                checkpoint_interval_secs: sleep.checkpoint_interval_secs,
+                last_event: "checkpoint_write",
+                last_child_exit: sleep.last_child_exit,
+                next_backoff_secs: 0,
+            },
+        )?;
+        emit_daemon_event(
+            runtime_context,
+            loaded,
+            "checkpoint_write",
+            "completed",
+            sleep.restart_count,
+            json!({
+                "checkpoint_reason": "daemon_partial_checkpoint",
+                "checkpoint_ref": "continuity_checkpoint.json",
+                "status_ref": "status.json",
+                "trigger": sleep.event
+            }),
+        )?;
+        return Ok(false);
+    }
+
+    let mut stop_observed = false;
+    while remaining > 0 {
+        let slice = remaining.min(sleep.checkpoint_interval_secs);
+        std::thread::sleep(Duration::from_secs(slice));
+        remaining -= slice;
+        let mut current = status(&loaded.spec_path)?;
+        if let Some(error) = sleep.recoverable_error.clone() {
+            current.state = AgentStatusState::Failed;
+            current.last_error = Some(error);
+        }
+        persist_status(loaded, &current, "daemon_partial_checkpoint")?;
+        let next_backoff_secs = if sleep.event == "restart_backoff" {
+            remaining
+        } else {
+            0
+        };
+        *daemon_status = write_daemon_status(
+            runtime_context,
+            loaded,
+            DaemonStatusInput {
+                state: daemon_status.state.as_str(),
+                restart_count: sleep.restart_count,
+                max_restarts: sleep.max_restarts,
+                checkpoint_interval_secs: sleep.checkpoint_interval_secs,
+                last_event: "checkpoint_write",
+                last_child_exit: sleep.last_child_exit.clone(),
+                next_backoff_secs,
+            },
+        )?;
+        emit_daemon_event(
+            runtime_context,
+            loaded,
+            "checkpoint_write",
+            "completed",
+            sleep.restart_count,
+            json!({
+                "checkpoint_reason": "daemon_partial_checkpoint",
+                "checkpoint_ref": "continuity_checkpoint.json",
+                "status_ref": "status.json",
+                "trigger": sleep.event,
+                "remaining_sleep_secs": remaining
+            }),
+        )?;
+        if read_stop(loaded)?.is_some() {
+            stop_observed = true;
+            emit_daemon_event(
+                runtime_context,
+                loaded,
+                "graceful_shutdown_requested",
+                "observed",
+                sleep.restart_count,
+                json!({"stop_ref": "stop.json"}),
+            )?;
+            break;
+        }
+    }
+    Ok(stop_observed)
+}
+
+fn emit_daemon_event(
+    runtime_context: &CsmRuntimeContext,
+    loaded: &LoadedAgentSpec,
+    event: &str,
+    result: &str,
+    restart_count: u64,
+    details: Value,
+) -> Result<()> {
+    let trace_id = daemon_trace_id(loaded);
+    let span_id = daemon_span_id(event, restart_count);
+    let parent_span_id = daemon_parent_span_id(loaded);
+    let event_details = json!({
+        "event": event,
+        "result": result,
+        "trace_id": trace_id,
+        "span_id": span_id,
+        "parent_span_id": parent_span_id,
+        "otel": {
+            "trace_id": trace_id,
+            "span_id": span_id,
+            "parent_span_id": parent_span_id,
+            "service_name": "csm-runtime-daemon",
+            "event_name": event
+        },
+        "runtime_capabilities": csm_runtime_capabilities(runtime_context),
+        "chronosense_clock_stack": csm_chronosense_clock_stack(runtime_context),
+        "details": details
+    });
+    append_operator_event(loaded, event, event_details)?;
+    let restart_count_s = restart_count.to_string();
+    crate::observability::emit_event(
+        "csm",
+        event,
+        result,
+        &[
+            ("process_class", "csm_runtime_daemon"),
+            ("agent_instance_id", loaded.spec.agent_instance_id.as_str()),
+            ("trace_id", trace_id.as_str()),
+            ("span_id", span_id.as_str()),
+            ("parent_span_id", parent_span_id.as_str()),
+            ("otel_service_name", "csm-runtime-daemon"),
+            ("runtime_role", "csm_runtime"),
+            ("adl_role", "tooling_control_plane"),
+            ("chronosense", "integrated"),
+            ("aee_recovery", "integrated"),
+            ("scheduler_watcher", "integrated"),
+            ("resilience_middleware", "integrated"),
+            ("observability", "integrated"),
+            ("restart_count", restart_count_s.as_str()),
+        ],
+    );
+    Ok(())
+}
+
+fn csm_runtime_capabilities(runtime_context: &CsmRuntimeContext) -> Value {
+    json!({
+        "schema": "adl.csm.runtime_capabilities.v1",
+        "runtime_owner": "csm",
+        "adl_role": "tooling_control_plane",
+        "process_class": "csm_runtime_daemon",
+        "chronosense": {
+            "status": "integrated",
+            "service_schema": runtime_context.chronosense.config().schema_version,
+            "clock_stack_schema": crate::chronosense::CHRONOSENSE_CLOCK_STACK_SCHEMA,
+            "clock_stack_capture": "daemon_event_time"
+        },
+        "aee": {
+            "status": "integrated",
+            "recoverable_states": ["idle", "completed", "failed", "stopped", "leased"],
+            "failure_recovery": "restart_budget_and_checkpoint_restore"
+        },
+        "scheduler_watcher": {
+            "status": "integrated",
+            "cadence_source": "heartbeat.interval_secs_or_daemon_default",
+            "partial_checkpoint_interval": "checkpoint_interval_secs",
+            "stop_observation": "stop_json_checked_between_cycles_and_sleep_slices"
+        },
+        "resilience_middleware": {
+            "status": "integrated",
+            "lease_policy": "active_stale_recoverable_blocked",
+            "restart_backoff": "bounded_exponential",
+            "partial_checkpoints": "daemon_partial_checkpoint"
+        },
+        "observability": {
+            "status": "integrated",
+            "event_command": "csm",
+            "otel_service_name": "csm-runtime-daemon",
+            "retained_outputs": ["operator_events.jsonl", "daemon_status.json", "ADL_OBSERVABILITY_LOG", "ADL_OTEL_LOG", "ADL_OTEL_STATUS"]
+        }
+    })
+}
+
+fn csm_chronosense_clock_stack(runtime_context: &CsmRuntimeContext) -> Value {
+    runtime_context
+        .chronosense
+        .capture_epoch_millis(epoch_millis_now())
+        .and_then(|clock| serde_json::to_value(clock).context("serialize chronosense clock stack"))
+        .unwrap_or_else(|err| {
+            json!({
+                "schema": crate::chronosense::CHRONOSENSE_CLOCK_STACK_SCHEMA,
+                "capture_status": "failed",
+                "error": err.to_string()
+            })
+        })
+}
+
+fn epoch_millis_now() -> u128 {
+    Utc::now().timestamp_millis().max(0) as u128
+}
+
+fn daemon_trace_id(loaded: &LoadedAgentSpec) -> String {
+    format!("agent.{}.daemon", loaded.spec.agent_instance_id)
+}
+
+fn daemon_parent_span_id(loaded: &LoadedAgentSpec) -> String {
+    format!("daemon:{}:supervisor", loaded.spec.agent_instance_id)
+}
+
+fn daemon_span_id(event: &str, restart_count: u64) -> String {
+    format!("daemon:{event}:{restart_count}")
+}
+
+fn restart_backoff_secs(restart_count: u64) -> u64 {
+    2u64.saturating_pow(restart_count.min(4) as u32).min(30)
+}
+
+fn unsupported_permanence_claims() -> Vec<String> {
+    vec![
+        "not_os_boot_persistent".to_string(),
+        "not_kill_9_resistant".to_string(),
+        "not_host_resource_exhaustion_resistant".to_string(),
+        "not_missing_binary_resistant".to_string(),
+    ]
 }
 
 #[derive(Clone, Copy, Debug, PartialEq, Eq)]

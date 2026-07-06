@@ -910,6 +910,71 @@ pub(super) fn build_trace_v1_envelope(
                     );
                 }
             }
+            trace::TraceEvent::RuntimeResilienceDecision { ts_ms, record, .. } => {
+                let result = if record.terminal {
+                    ContractValidationResultV1::Fail
+                } else {
+                    ContractValidationResultV1::Pass
+                };
+                push_trace_v1_event(
+                    &mut events,
+                    &mut next_id,
+                    &chronosense,
+                    TraceEventV1 {
+                        event_id: String::new(),
+                        timestamp: chronosense_trace_timestamp(&chronosense, *ts_ms),
+                        temporal_anchor: None,
+                        event_type: TraceEventTypeV1::ContractValidation,
+                        trace_id: trace_id.clone(),
+                        run_id: resolved.run_id.clone(),
+                        span_id: format!("step:{}:runtime-resilience", record.step_id),
+                        parent_span_id: Some(format!("step:{}", record.step_id)),
+                        actor: TraceActorV1 {
+                            r#type: TraceActorTypeV1::System,
+                            id: record.component.clone(),
+                        },
+                        scope: TraceScopeV1 {
+                            level: TraceScopeLevelV1::Step,
+                            name: record.step_id.clone(),
+                        },
+                        inputs_ref: Some(steps_ref.clone()),
+                        outputs_ref: Some(activation_log_ref.clone()),
+                        artifact_ref: Some(activation_log_ref.clone()),
+                        decision_context: Some(TraceDecisionContextV1 {
+                            context: "scheduler watcher and AEE resilience middleware".to_string(),
+                            outcome: record.middleware_disposition.as_str().to_string(),
+                            rationale: Some(record.decision_summary.clone()),
+                        }),
+                        provider: None,
+                        error: record.fault.as_ref().map(|fault| TraceErrorV1 {
+                            code: format!("{:?}", fault.fault_class),
+                            message: fault.summary.clone(),
+                            details: Some(json!({
+                                "disposition": format!("{:?}", fault.disposition),
+                                "retryable": fault.retryable,
+                            })),
+                        }),
+                        contract_validation: Some(TraceContractValidationV1 {
+                            contract_id: record.policy_id.clone(),
+                            result,
+                            details: Some(json!({
+                                "rule_id": format!(
+                                    "watcher:{} middleware:{}",
+                                    record.watcher_disposition.as_str(),
+                                    record.middleware_disposition.as_str()
+                                ),
+                                "evidence_refs": record.evidence_refs,
+                                "attempt_count": record.attempt_count,
+                                "elapsed_ms": record.elapsed_ms,
+                                "max_concurrency": record.max_concurrency,
+                                "queue_depth": record.queue_depth,
+                            })),
+                        }),
+                        governance: None,
+                        redaction: None,
+                    },
+                );
+            }
             trace::TraceEvent::DelegationPolicyEvaluated {
                 ts_ms,
                 step_id,
@@ -1257,6 +1322,14 @@ fn step_artifact_ref(run_id: &str, steps: &[StepStateArtifact], step_id: &str) -
 #[cfg(test)]
 mod tests {
     use super::*;
+    use ::adl::adl::{AdlDoc, RunSpec, WorkflowKind, WorkflowSpec};
+    use ::adl::execution_plan::ExecutionPlan;
+    use ::adl::resilience::{
+        ResilienceFaultClassV1, ResilienceFaultClassificationV1, ResilienceFaultDispositionV1,
+        ResilienceSurfaceV1, RuntimeResilienceDispositionV1, RuntimeResilienceTraceV1,
+        RUNTIME_RESILIENCE_TRACE_SCHEMA_V1,
+    };
+    use ::adl::resolve::AdlResolved;
 
     #[test]
     fn chronosense_trace_timestamp_uses_clock_service_when_available() {
@@ -1331,5 +1404,114 @@ mod tests {
             Some("artifacts/run-1/steps/step-1.json")
         );
         assert_eq!(step_artifact_ref("run-1", &steps, "missing"), None);
+    }
+
+    #[test]
+    fn build_trace_v1_envelope_projects_runtime_resilience_as_contract_validation() {
+        let resolved = AdlResolved {
+            run_id: "run-1".to_string(),
+            workflow_id: "wf".to_string(),
+            doc: AdlDoc {
+                version: "0.3".to_string(),
+                providers: Default::default(),
+                tools: Default::default(),
+                agents: Default::default(),
+                tasks: Default::default(),
+                workflows: Default::default(),
+                patterns: vec![],
+                signature: None,
+                run: RunSpec {
+                    id: None,
+                    name: Some("run".to_string()),
+                    created_at: None,
+                    defaults: Default::default(),
+                    workflow_ref: None,
+                    workflow: Some(WorkflowSpec {
+                        id: None,
+                        kind: WorkflowKind::Sequential,
+                        max_concurrency: None,
+                        steps: vec![],
+                    }),
+                    pattern_ref: None,
+                    inputs: Default::default(),
+                    placement: None,
+                    remote: None,
+                    delegation_policy: None,
+                },
+            },
+            steps: vec![],
+            execution_plan: ExecutionPlan {
+                workflow_kind: WorkflowKind::Sequential,
+                nodes: vec![],
+            },
+        };
+        let mut trace = trace::Trace::new("run-1", "wf", "0.3");
+        trace.runtime_resilience_decision(RuntimeResilienceTraceV1 {
+            schema_version: RUNTIME_RESILIENCE_TRACE_SCHEMA_V1.to_string(),
+            policy_id: "runtime.scheduler_watcher.aee_resilience.v1".to_string(),
+            surface: ResilienceSurfaceV1::Runtime,
+            component: "execute.runner".to_string(),
+            step_id: "seq.fail".to_string(),
+            provider_id: "p1".to_string(),
+            task_id: "task.fail".to_string(),
+            watcher_disposition: RuntimeResilienceDispositionV1::TerminalFailure,
+            middleware_disposition: RuntimeResilienceDispositionV1::TerminalFailure,
+            terminal: true,
+            attempt_count: 2,
+            elapsed_ms: 11,
+            max_concurrency: Some(1),
+            queue_depth: None,
+            fault: Some(ResilienceFaultClassificationV1 {
+                schema_version: ::adl::resilience::RESILIENCE_FAULT_CLASSIFICATION_SCHEMA_V1
+                    .to_string(),
+                surface: ResilienceSurfaceV1::Runtime,
+                fault_class: ResilienceFaultClassV1::WorkflowFailure,
+                disposition: ResilienceFaultDispositionV1::Terminal,
+                retryable: false,
+                summary: "missing input".to_string(),
+                component_ref: Some("execute.runner".to_string()),
+                http_status: None,
+                retry_after_ms: None,
+            }),
+            evidence_refs: vec!["adl/src/execute/mod.rs".to_string()],
+            decision_summary: "runtime resilience middleware recorded terminal failure".to_string(),
+        });
+
+        let envelope = build_trace_v1_envelope(&resolved, &trace, &[], 0, 11, "failed", None)
+            .expect("runtime resilience trace envelope");
+
+        let resilience_event = envelope
+            .events
+            .iter()
+            .find(|event| event.span_id == "step:seq.fail:runtime-resilience")
+            .expect("runtime resilience event");
+        assert_eq!(
+            resilience_event.event_type,
+            TraceEventTypeV1::ContractValidation
+        );
+        assert_eq!(
+            resilience_event
+                .contract_validation
+                .as_ref()
+                .expect("contract validation")
+                .result,
+            ContractValidationResultV1::Fail
+        );
+        assert_eq!(
+            resilience_event
+                .decision_context
+                .as_ref()
+                .expect("decision context")
+                .outcome,
+            "terminal_failure"
+        );
+        assert_eq!(
+            resilience_event
+                .error
+                .as_ref()
+                .expect("fault projection")
+                .message,
+            "missing input"
+        );
     }
 }

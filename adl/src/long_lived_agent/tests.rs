@@ -1050,6 +1050,211 @@ fn loom_duplicate_activation_allows_only_one_cycle_start() {
 }
 
 #[test]
+fn daemon_partial_checkpoint_preserves_recoverable_failure_reason() {
+    let root = temp_dir("daemon-partial-failure-reason");
+    let spec = write_spec_with_workflow_kind(&root, "unsupported_adapter");
+    let loaded = load_spec(&spec).expect("load spec");
+    ensure_state_root(&loaded).expect("state root");
+    let runtime_context = CsmRuntimeContext::new().expect("csm runtime context");
+    let error = StatusError {
+        class: "daemon_child_failed".to_string(),
+        message: "cycle failed before restart".to_string(),
+    };
+    let failed = status_with_state(
+        &loaded,
+        AgentStatusState::Failed,
+        None,
+        None,
+        None,
+        false,
+        Some(error.clone()),
+    );
+    persist_status(&loaded, &failed, "daemon_child_failed_recoverable").expect("persist failed");
+    let mut daemon_status = write_daemon_status(
+        &runtime_context,
+        &loaded,
+        DaemonStatusInput {
+            state: "restarting",
+            restart_count: 1,
+            max_restarts: 1,
+            checkpoint_interval_secs: 1,
+            last_event: "restart_scheduled",
+            last_child_exit: Some("error:cycle failed".to_string()),
+            next_backoff_secs: 0,
+        },
+    )
+    .expect("daemon status");
+
+    let stop_observed = sleep_with_partial_checkpoints(
+        &runtime_context,
+        &loaded,
+        &mut daemon_status,
+        PartialCheckpointSleep {
+            total_sleep_secs: 0,
+            checkpoint_interval_secs: 1,
+            restart_count: 1,
+            max_restarts: 1,
+            last_child_exit: Some("error:cycle failed".to_string()),
+            recoverable_error: Some(error),
+            event: "restart_backoff",
+            no_sleep: true,
+        },
+    )
+    .expect("partial checkpoint");
+    assert!(!stop_observed);
+
+    let status = read_status(&loaded)
+        .expect("read status")
+        .expect("status exists");
+    assert_eq!(status.state, AgentStatusState::Failed);
+    assert_eq!(
+        status.last_error.as_ref().map(|error| error.class.as_str()),
+        Some("daemon_child_failed")
+    );
+    let checkpoint: serde_json::Value =
+        read_json_required(&continuity_checkpoint_path(&loaded)).expect("checkpoint");
+    assert_eq!(checkpoint["state"], "failed");
+}
+
+#[test]
+fn daemon_interval_defaults_positive_and_rejects_zero_cadence() {
+    let root = temp_dir("daemon-positive-cadence");
+    let spec = write_spec(&root);
+    let loaded = load_spec(&spec).expect("load spec");
+    assert_eq!(
+        daemon_interval_secs(&loaded, None).expect("spec interval"),
+        1
+    );
+    assert_eq!(
+        daemon_interval_secs(&loaded, Some(2)).expect("override interval"),
+        2
+    );
+    assert!(daemon_interval_secs(&loaded, Some(0))
+        .expect_err("zero override must fail")
+        .to_string()
+        .contains("greater than zero"));
+
+    let no_interval_spec = root.join("agent-no-interval.yaml");
+    let body = fs::read_to_string(&spec).expect("read spec");
+    fs::write(&no_interval_spec, body.replace("  interval_secs: 1\n", ""))
+        .expect("write no-interval spec");
+    let no_interval_loaded = load_spec(&no_interval_spec).expect("load no-interval spec");
+    assert_eq!(
+        daemon_interval_secs(&no_interval_loaded, None).expect("default interval"),
+        3
+    );
+
+    let zero_interval_spec = root.join("agent-zero-interval.yaml");
+    fs::write(
+        &zero_interval_spec,
+        fs::read_to_string(&spec)
+            .expect("read spec")
+            .replace("  interval_secs: 1\n", "  interval_secs: 0\n"),
+    )
+    .expect("write zero-interval spec");
+    let zero_interval_loaded = load_spec(&zero_interval_spec).expect("load zero-interval spec");
+    assert!(daemon_interval_secs(&zero_interval_loaded, None)
+        .expect_err("zero spec interval must fail")
+        .to_string()
+        .contains("greater than zero"));
+}
+
+#[test]
+fn daemon_heartbeat_partial_checkpoint_does_not_report_backoff() {
+    let root = temp_dir("daemon-heartbeat-no-backoff");
+    let spec = write_spec(&root);
+    let loaded = load_spec(&spec).expect("load spec");
+    ensure_state_root(&loaded).expect("state root");
+    let runtime_context = CsmRuntimeContext::new().expect("csm runtime context");
+    let mut daemon_status = write_daemon_status(
+        &runtime_context,
+        &loaded,
+        DaemonStatusInput {
+            state: "running",
+            restart_count: 0,
+            max_restarts: 1,
+            checkpoint_interval_secs: 1,
+            last_event: "daemon_started",
+            last_child_exit: None,
+            next_backoff_secs: 0,
+        },
+    )
+    .expect("daemon status");
+
+    let stop_observed = sleep_with_partial_checkpoints(
+        &runtime_context,
+        &loaded,
+        &mut daemon_status,
+        PartialCheckpointSleep {
+            total_sleep_secs: 1,
+            checkpoint_interval_secs: 1,
+            restart_count: 0,
+            max_restarts: 1,
+            last_child_exit: None,
+            recoverable_error: None,
+            event: "daemon_heartbeat",
+            no_sleep: false,
+        },
+    )
+    .expect("partial checkpoint");
+
+    assert!(!stop_observed);
+    assert_eq!(daemon_status.next_backoff_secs, 0);
+}
+
+#[test]
+fn daemon_partial_checkpoint_reports_stop_observed_before_restart_attempt() {
+    let root = temp_dir("daemon-stop-during-backoff");
+    let spec = write_spec(&root);
+    let loaded = load_spec(&spec).expect("load spec");
+    ensure_state_root(&loaded).expect("state root");
+    write_stop_record(
+        &loaded,
+        "operator pause before restart",
+        "operator",
+        "operator_stop_requested",
+    )
+    .expect("write stop");
+    let runtime_context = CsmRuntimeContext::new().expect("csm runtime context");
+    let mut daemon_status = write_daemon_status(
+        &runtime_context,
+        &loaded,
+        DaemonStatusInput {
+            state: "restarting",
+            restart_count: 1,
+            max_restarts: 1,
+            checkpoint_interval_secs: 1,
+            last_event: "restart_scheduled",
+            last_child_exit: Some("error:cycle failed".to_string()),
+            next_backoff_secs: 1,
+        },
+    )
+    .expect("daemon status");
+
+    let stop_observed = sleep_with_partial_checkpoints(
+        &runtime_context,
+        &loaded,
+        &mut daemon_status,
+        PartialCheckpointSleep {
+            total_sleep_secs: 1,
+            checkpoint_interval_secs: 1,
+            restart_count: 1,
+            max_restarts: 1,
+            last_child_exit: Some("error:cycle failed".to_string()),
+            recoverable_error: None,
+            event: "restart_backoff",
+            no_sleep: false,
+        },
+    )
+    .expect("partial checkpoint");
+    assert!(stop_observed);
+
+    let events = fs::read_to_string(operator_events_path(&loaded)).expect("operator events");
+    assert!(events.contains("\"event\":\"graceful_shutdown_requested\""));
+    assert!(!events.contains("\"event\":\"restart_attempted\""));
+}
+
+#[test]
 fn loom_stop_request_wins_over_concurrent_activation_and_follow_up_status() {
     loom::model(|| {
         use loom::sync::{Arc, Mutex};

@@ -1,48 +1,75 @@
 {
   "schema": "adl.v0917.runtime_soak2.blocker_register.v1",
-  "issue": 4682,
+  "issue": 4880,
+  "supersedes_attempt_issue": 4682,
   "umbrella_issue": 4634,
-  "status": "blockers_present",
+  "status": "blockers_present_after_final_rerun",
   "blockers": [
     {
-      "id": "soak2-matrix-not-on-main",
-      "owner_issue": 4843,
-      "owner_pr": 4870,
-      "classification": "sequencing_blocker",
-      "evidence": "PR #4870 is ready and green, but the #4843 matrix is not on main in the #4682 worktree.",
-      "v092_impact": "Blocks full Soak 2 execution from main."
+      "id": "runtime-aws-signal-bridge-not-run",
+      "owner_issue": 4684,
+      "owner_pr": null,
+      "classification": "blocked_with_evidence",
+      "evidence": "No AWS_PROFILE=agent-logic-admin live heartbeat/SNS/SSM command was run during #4880; the Soak 2 execution packet keeps this row tied to WP-08/live signal proof or explicit non-claim.",
+      "evidence_refs": [
+        "docs/milestones/v0.91.7/RUNTIME_SOAK_2_EXECUTION_PACKET_v0.91.7.md",
+        "docs/milestones/v0.91.7/review/runtime/soak2_4682/soak2_execution_status_4682.json"
+      ],
+      "v092_impact": "Blocks runtime AWS/signal bridge claims unless the operator approves a v0.92 non-claim or routes it to Soak 3."
     },
     {
-      "id": "runtime-path-not-on-main",
-      "owner_issue": 4681,
-      "owner_pr": 4868,
-      "classification": "sequencing_blocker",
-      "evidence": "PR #4868 is ready-green at 0b8821ec1de112d3b84fa64e87d2a6fb9fb63a02, but the canonical runtime path is not on main in the #4682 worktree.",
-      "v092_impact": "Blocks canonical runtime-path rows until consumable."
+      "id": "unity-live-consumption-not-run",
+      "owner_issue": 4689,
+      "owner_pr": null,
+      "classification": "blocked_with_evidence",
+      "evidence": "The runtime-owned Observatory visibility packet and Unity contract were generated, but no Unity editor live-consumption command ran in #4880.",
+      "evidence_refs": [
+        "docs/milestones/v0.91.7/review/runtime/soak2_4682/agent_lifecycle/runtime_v2/observatory/visibility_packet.json",
+        "docs/milestones/v0.91.7/review/runtime/soak2_4682/agent_lifecycle/runtime_v2/observatory/unity_observatory_contract.json"
+      ],
+      "v092_impact": "Blocks live Observatory/Unity consumption claims unless the operator approves a v0.92 non-claim or routes it to Soak 3."
     },
     {
-      "id": "resilience-middleware-not-on-main",
-      "owner_issue": 4783,
-      "owner_pr": 4869,
-      "classification": "sequencing_blocker",
-      "evidence": "PR #4869 is ready-green at 2bee28ce00ca87a576d6c69ea06e1010f5cd954c, but the scheduler watcher/AEE resilience middleware is not on main in the #4682 worktree.",
-      "v092_impact": "Blocks resilience Soak 2 row and scheduler/watcher/AEE resilience claims."
+      "id": "wp12-acip-a2a-activation-residual",
+      "owner_issue": 4660,
+      "owner_pr": null,
+      "classification": "blocked_with_evidence",
+      "evidence": "The AEE/memory runner retained local ACIP positive, denied, malformed, and failed-delivery cases, but WP-12 protocol/access-rule activation remains outside the #4880 WP-07 rerun.",
+      "evidence_refs": [
+        "docs/milestones/v0.91.7/review/runtime/soak2_4682/aee_memory/runtime_acip_aee_memory_proof.json"
+      ],
+      "v092_impact": "Blocks ACIP/A2A activation claims unless the operator approves a v0.92 non-claim or routes it to Soak 3."
     },
     {
-      "id": "resilience-failure-injection-not-on-main",
-      "owner_issue": 4784,
-      "owner_pr": 4871,
-      "classification": "sequencing_blocker",
-      "evidence": "PR #4871 is ready and green, but the integrated resilience failure-injection proof is not on main in the #4682 worktree.",
-      "v092_impact": "Blocks final Soak 2 resilience consumption from main."
+      "id": "runtime-v2-capability-envelope-static-proof-only",
+      "owner_issue": 4696,
+      "owner_pr": null,
+      "classification": "blocked_with_evidence",
+      "evidence": "The runtime-v2 operator-controls owner binary emitted a static contract report, but the packet records generated_at_utc as not_started and is not fresh integrated capability-envelope proof.",
+      "evidence_refs": [
+        "docs/milestones/v0.91.7/review/runtime/soak2_4682/capability_envelope/operator_control_report.json"
+      ],
+      "v092_impact": "Blocks fresh capability-envelope claims unless the operator approves a v0.92 non-claim or routes it to Soak 3."
     },
     {
-      "id": "runtime-diet-map-not-on-main",
-      "owner_issue": 4683,
-      "owner_pr": 4872,
-      "classification": "sequencing_blocker",
-      "evidence": "PR #4872 is ready and green, but the runtime module diet map is not on main in the #4682 worktree.",
-      "v092_impact": "Blocks final review/disposition inputs that depend on the diet map."
+      "id": "runtime-v2-security-cav-static-proof-only",
+      "owner_issue": 4657,
+      "owner_pr": null,
+      "classification": "blocked_with_evidence",
+      "evidence": "The runtime-v2 security-boundary owner binary emitted a static fail-closed packet, but the packet records generated_at_utc as not_started and is not fresh integrated security/CAV proof.",
+      "evidence_refs": [
+        "docs/milestones/v0.91.7/review/runtime/soak2_4682/security_cav_boundary/proof_packet.json"
+      ],
+      "v092_impact": "Blocks fresh security/CAV activation claims unless the operator approves a v0.92 non-claim or routes it to Soak 3."
+    }
+  ],
+  "invalid_or_replaced_commands": [
+    {
+      "id": "matrix-security-cargo-command-invalid",
+      "command": "cargo test --manifest-path adl/Cargo.toml runtime_v2 security -- --nocapture",
+      "classification": "matrix_command_defect_replaced_by_owner_binary",
+      "replacement_command": "adl/target/debug/adl runtime-v2 security-boundary --out docs/milestones/v0.91.7/review/runtime/soak2_4682/security_cav_boundary/proof_packet.json",
+      "evidence_ref": "docs/milestones/v0.91.7/review/runtime/soak2_4682/security_cav_boundary/proof_packet.json"
     }
   ]
 }

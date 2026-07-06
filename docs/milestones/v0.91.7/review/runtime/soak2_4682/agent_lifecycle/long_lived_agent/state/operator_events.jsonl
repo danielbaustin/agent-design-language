@@ -1,0 +1,2 @@
+{"schema":"adl.long_lived_agent_operator_event.v1","agent_instance_id":"v0916-runtime-soak","event":"created","at":"2026-07-05T03:09:53.191459Z","operator":"local","details":{"locked_spec_ref":"agent_spec.locked.json","continuity_kind":"pre_v0_92_handle"}}
+{"schema":"adl.long_lived_agent_operator_event.v1","agent_instance_id":"v0916-runtime-soak","event":"operator_stop_requested","at":"2026-07-05T03:09:54.997777Z","operator":"local","details":{"reason":"bounded integrated runtime soak stop after proof capture","mode":"stop_before_next_cycle"}}

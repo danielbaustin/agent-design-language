@@ -1,0 +1,21 @@
+schema_version: adl.release_gate_disposition.v1
+issue: 4837
+decision: approved_for_draft_pr_publication
+reviewer_or_review_mode: pre_pr_subagent_review_plus_local_release_gate_validation
+changed_release_gate_surfaces:
+  - .github/workflows/aws-spot-remote-validation.yaml
+focused_validation_run: >
+  Focused local proof passed: bash adl/tools/test_run_aws_spot_remote_validation_lane.sh;
+  bash adl/tools/test_select_validation_lanes.sh; workflow YAML parse; git diff
+  --check; and cargo test --manifest-path adl/Cargo.toml --bin
+  adl-aws-remote-validation -- --nocapture.
+residual_ci_proof_required_before_merge: >
+  GitHub Actions dispatch remains residual CI proof. The workflow is
+  manual-dispatch only, rejects ambiguous HEAD refs, uses global concurrency for
+  the retained EBS cache, and fail-closes unless the caller supplies the
+  expected Agent Logic account hash and SSH key material.
+notes:
+  - The release-gate surface is a new manual validation workflow, not a change to ordinary PR or push CI.
+  - The workflow uses GitHub OIDC with id-token write and contents read permissions.
+  - The AWS role trust is bounded to the repository's main and codex/* refs.
+  - Uploaded run artifacts redact AWS identity fields before upload.

@@ -6,12 +6,23 @@ import json
 from pathlib import Path
 
 
+def is_generated_artifact(rel: str) -> bool:
+    parts = rel.split('/')
+    if '__pycache__' in parts:
+        return True
+    if rel.endswith(('.pyc', '.pyo')):
+        return True
+    if rel.endswith('.DS_Store'):
+        return True
+    return False
+
+
 def collect_files(root: Path) -> set[str]:
     files: set[str] = set()
     for path in root.rglob('*'):
         if path.is_file():
             rel = path.relative_to(root).as_posix()
-            if rel.endswith('.DS_Store'):
+            if is_generated_artifact(rel):
                 continue
             files.add(rel)
     return files
@@ -34,6 +45,7 @@ def main() -> int:
     left_only: list[str] = []
     right_only: list[str] = []
     diff_files: list[str] = []
+    ignored_generated_files: list[str] = []
     status = 'matched'
 
     if not tracked.is_dir():
@@ -44,6 +56,12 @@ def main() -> int:
         notes.append(f'installed skill dir missing: {installed}')
 
     if status != 'blocked':
+        ignored_generated_files = sorted(
+            rel
+            for root in (tracked, installed)
+            for rel in (path.relative_to(root).as_posix() for path in root.rglob('*') if path.is_file())
+            if is_generated_artifact(rel)
+        )
         tracked_files = collect_files(tracked)
         installed_files = collect_files(installed)
         left_only = sorted(tracked_files - installed_files)
@@ -53,9 +71,12 @@ def main() -> int:
                 diff_files.append(rel)
         if left_only or right_only or diff_files:
             status = 'drift_detected'
-            notes.append('installed sprint-conductor differs from tracked bundle')
+            notes.append('installed sprint-conductor differs from tracked bundle after generated-file filtering')
+            notes.append('repair by running: bash adl/tools/install_adl_operational_skills.sh')
         else:
-            notes.append('installed sprint-conductor matches tracked bundle')
+            notes.append('installed sprint-conductor matches tracked bundle after generated-file filtering')
+        if ignored_generated_files:
+            notes.append('ignored generated parity artifacts such as __pycache__, .pyc, .pyo, and .DS_Store')
 
     result = {
         'status': status,
@@ -64,6 +85,9 @@ def main() -> int:
         'left_only': left_only,
         'right_only': right_only,
         'diff_files': diff_files,
+        'ignored_generated_files': ignored_generated_files,
+        'parity_policy': 'installed bundle must match tracked bundle except generated cache artifacts',
+        'repair_command': 'bash adl/tools/install_adl_operational_skills.sh',
         'notes': notes,
     }
 
