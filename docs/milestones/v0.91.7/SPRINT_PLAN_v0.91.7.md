@@ -27,14 +27,14 @@ Existing assigned v0.91.7 issues:
 
 Non-WP v0.91.7 issues:
 
-- `#4651` supports WP-03/WP-06 with Rust refactoring by ownership and validation cost.
+- `#4651` supports WP-03/WP-06 as the Rust refactoring and third-party-tool umbrella; execution is split across `#4892`-`#4900`.
 - `#4652` supports WP-09/WP-15 with Unity demo surfaces.
 - `#4653` supports WP-05/WP-06 with dspark speculative decoding evaluation for Qwen and Gemma.
 - `#4654` supports WP-05/WP-06 with a deepseek-v4-flash-dspark smoke on ephemeral 2xH100 EC2; quota, cost, and teardown proof are mandatory.
 
 ## Sprint Overview
 
-Complete the final bridge/readiness tranche before `v0.92` activation refresh. The milestone should move from source capture to operational readiness, then to conceptual/security/protocol bridge closure, then to launch/birthday handoff.
+Complete the final implementation/readiness tranche before `v0.92` activation refresh. The milestone should move from source capture to operational readiness, then to cognitive/security/protocol implementation closure, then to launch/birthday handoff.
 
 Before execution begins, WP-01 must consume the v0.91.6 release-tail handoff
 addendum `V0916_TO_V0917_HANDOFF_ADDENDUM_3982.md` together with
@@ -51,7 +51,7 @@ remediation truth.
 - Reduce validation/build/cognitive-resource bottlenecks enough for v0.92 to run quickly.
 - Fire up and soak the runtime integration path before birthday activation.
 - Keep demo, Observatory, security, protocol, and launch surfaces visible.
-- Preserve strong non-claim boundaries for affect, Godel mechanics, economics, guilds, and public birthday evidence.
+- Preserve strong public claim boundaries for affect, Godel mechanics, economics, guilds, and public birthday evidence.
 
 ## Recommended Sprint Order
 
@@ -63,8 +63,8 @@ remediation truth.
 | 4 | Build throughput and validation-cost sprint | WP-06 | Can run in parallel with scheduler/provider work; isolate CI/workflow changes carefully. Prove EC2 Spot or an alternate disposable remote-builder path early, with `sccache`, time/cost, interruption, and cleanup evidence before treating it as release-critical. | planned |
 | 5 | Runtime fire-up, logging/OTel, and Soak #2 sprint | WP-07, WP-08 | Starts after enough scheduler/build/runtime substrate is ready; AWS/SSM/SNS work can parallelize with local soak proof. Execution packet: `RUNTIME_SOAK_2_EXECUTION_PACKET_v0.91.7.md`. `#4718` is the required integrated logging/OTel proof gate for runtime, provider, control-plane, AWS/signal, Observatory, and Unity readiness claims. | planned |
 | 6 | Observatory and birthday-visible demo sprint | WP-09 | Can overlap late runtime work if data contracts are stable. | planned |
-| 7 | Conceptual bridge sprint | WP-10, WP-11, WP-13 | Curiosity, Constructability, reasoning graph, affect/Godel/economics/guilds can be split across agents with shared non-claim review. | planned |
-| 8 | Security and protocol residual sprint | WP-12 | Can overlap conceptual bridge but must feed final handoff. | planned |
+| 7 | Cognitive implementation sprint | WP-10, WP-11, WP-13 | Curiosity, Constructability, reasoning graph, affect/Godel/economics/guilds can be split across agents with shared public-claim review. | planned |
+| 8 | Security and protocol implementation sprint | WP-12 | Can overlap cognitive implementation but must feed final handoff. | planned |
 | 9 | Launch and v0.92 handoff sprint | WP-14 | Depends on all prior dispositions; planning/public-facing language must be reviewed carefully. | planned |
 | 10 | Canonical closeout-tail sprint | WP-15 through WP-23 | Demo convergence, quality gate, docs alignment, internal review, external review, remediation/preflight, next milestone planning/review, and release ceremony should stay as separate issues; review and remediation lanes can parallelize after each gate is opened. | planned |
 
@@ -77,21 +77,21 @@ remediation truth.
 - Sprint watchers should track issue/PR/check status so completed issues close promptly and failed lanes are routed quickly.
 - Planning docs alone never prove runtime readiness.
 - Product, runtime, release-gating, and C-SDLC control-plane surfaces exit as integrated/proven, already closed with evidence, or explicitly blocked with evidence and operator approval. Scheduling ownership is not completion truth.
-- `v0.92` remains blocked until bridge truth is reviewed.
+- `v0.92` remains blocked until implementation/proof truth is reviewed.
 
 ## Risks / Dependencies
 
 - Dependency: v0.91.6 release-tail and open closeout issues must not remain ambiguous.
 - Dependency: template/version, session-ledger, validation-manager, VPP generation, and goal/time-token changes must either land or leave explicit blockers/follow-ons before v0.92 execution depends on them.
 - Risk: the milestone becomes too broad.
-  - Mitigation: every source item is implemented/proven, already closed with evidence, explicitly non-claimed with operator approval, or blocked with evidence and operator approval; no narrative-only expansion.
+  - Mitigation: every source item is implemented/proven, already closed with evidence, operator-scoped-out with evidence and approval, or blocked with evidence and operator approval; no narrative-only expansion.
 - Risk: runtime proof arrives too late.
   - Mitigation: start runtime Soak #2 immediately after process/build/scheduler prerequisites are stable and use `RUNTIME_SOAK_2_EXECUTION_PACKET_v0.91.7.md` as the pre-run gate packet instead of rediscovering scope from chat.
 - Risk: remote builds stay aspirational and keep blocking PR/release flow.
   - Mitigation: make the first WP-06 proof a bounded disposable remote-builder
     experiment, not a broad infrastructure rollout.
 - Risk: launch planning expands v0.92.
-  - Mitigation: launch/birthday handoff states consumption limits and non-claims.
+  - Mitigation: launch/birthday handoff states consumption limits and public claim boundaries.
 
 ## Demo / Review Plan
 
@@ -100,16 +100,16 @@ Required review should inspect:
 - source-capture completeness;
 - v0.91.6 closeout truth;
 - whether every open issue/carryover has a disposition;
-- whether v0.91.6 `#4388`-`#4398`, `#4405`, `#4412`-`#4413`, `#4417`-`#4421` plus `#4425`, `#4431`, `#4441`, `#4433`-`#4438`, and `#4442`-`#4443` work is integrated/proven, already closed with evidence, explicitly non-claimed with operator approval, or blocked with evidence and operator approval before sprint execution depends on it;
+- whether v0.91.6 `#4388`-`#4398`, `#4405`, `#4412`-`#4413`, `#4417`-`#4421` plus `#4425`, `#4431`, `#4441`, `#4433`-`#4438`, and `#4442`-`#4443` work is integrated/proven, already closed with evidence, operator-scoped-out with evidence and approval, or blocked with evidence and operator approval before sprint execution depends on it;
 - whether runtime Soak #2, `#4718` integrated logging/OTel proof, and Observatory proof are complete enough for v0.92;
-- whether security/protocol residuals remain activation-path work;
+- whether security/protocol requirements remain activation-path work;
 - whether launch/birthday docs avoid unsupported product, affect, wellbeing, or runtime claims.
 - whether the closeout tail follows the canonical pattern: demo convergence, quality gate, docs alignment, internal review, external review, remediation/preflight, next milestone planning, next milestone review, and release ceremony.
 
 ## Closeout Bar
 
 - All planned docs exist and are source-backed.
-- Every source-capture row is integrated/proven, already closed with evidence, explicitly non-claimed with operator approval, or blocked with evidence and operator approval.
-- Review findings are fixed or recorded as evidence-backed residual risks with operator approval.
+- Every source-capture row is integrated/proven, already closed with evidence, operator-scoped-out with evidence and approval, or blocked with evidence and operator approval.
+- Review findings are fixed or recorded as evidence-backed blockers with operator approval.
 - `#3780` handoff truth is explicit in `V092_HANDOFF_v0.91.7.md`.
 - Closeout-tail WPs are complete in canonical order before release ceremony; any residual blocker needs evidence and operator approval before the milestone can close.

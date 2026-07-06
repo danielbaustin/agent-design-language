@@ -10,33 +10,33 @@
 ## How To Use
 
 Keep these notes implementation-accurate. Until `v0.91.7` executes, this file
-is a draft release-notes surface for planned residual bridge work.
+is a draft release-notes surface for planned implementation/proof work.
 
 # ADL v0.91.7 Release Notes
 
 ## Summary
 
-`v0.91.7` is planned as the second bridge/readiness tranche before `v0.92`.
-It organizes residual activation-critical surfaces into tracked planning and
+`v0.91.7` is planned as the final implementation/readiness tranche before `v0.92`.
+It organizes activation-critical surfaces into tracked planning and
 feature docs so `v0.92` can proceed from reviewed evidence.
 
 ## Planned Highlights
 
-- Curiosity Engine / Discovery Substrate bridge.
-- Constructability Gate bridge.
-- Reasoning graph, loop runtime, and `adl.skill.v1` bridge.
-- Residual security readiness proof/blocker status.
-- Residual ACIP/A2A/protobuf proof/blocker status.
-- Affect and happiness safe-test/non-claim bridge.
-- Godel mechanics bridge.
+- Curiosity Engine / Discovery Substrate implementation/proof.
+- Constructability Gate implementation/proof.
+- Reasoning graph, loop runtime, and `adl.skill.v1` implementation/proof.
+- Security readiness proof/blocker status.
+- ACIP/A2A/protobuf proof/blocker status.
+- Affect and happiness safe-test/public-claim-boundary implementation.
+- Godel mechanics implementation/proof.
 - Economics-context decision.
 
 ## Known Limitations
 
 - These notes do not claim shipped runtime behavior yet.
-- `v0.92` activation remains blocked until bridge truth is reviewed.
+- `v0.92` activation remains blocked until implementation/proof truth is reviewed.
 - Public affect, wellbeing, and cognitive claims remain bounded by safe tests
-  and non-claims.
+  and public claim boundaries.
 
 ## Validation Notes
 
@@ -49,9 +49,9 @@ Expected validation for this documentation package:
 
 ## What's Next
 
-- Refresh `v0.92` activation docs from reviewed bridge truth.
+- Refresh `v0.92` activation docs from reviewed implementation/proof truth.
 - Open implementation issues only after doc and issue assignments are clear.
-- Carry security/governance residuals into `v0.93` only when explicitly assigned or operator-approved as non-claims.
+- Carry security/governance work into `v0.93` only when explicitly assigned with evidence and operator approval.
 
 ## Exit Criteria
 

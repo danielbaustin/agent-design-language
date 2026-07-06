@@ -12,10 +12,10 @@
 ## Status
 
 Current status: forward planning for the later `v0.92` birthday milestone,
-after the planned `v0.91.6` and `v0.91.7` bridge tranches.
+after the planned `v0.91.6` readiness tranche and `v0.91.7` implementation/proof tranche.
 
 - Planning: candidate package refreshed during `v0.91.4` issue `#3434` and
-  bridge dependency added during `#3506`
+  pre-v0.92 dependency added during `#3506`
 - Execution: not started
 - Validation: docs-readiness validation only
 - Release readiness: not applicable until `v0.92` executes
@@ -26,7 +26,7 @@ must not be opened until `v0.92` begins. Its boundary was rechecked during the
 `v0.91.4` docs-preparation pass so it stays about identity and birth rather
 than absorbing economics, governed tools, or constitutional citizenship
 prematurely. It now depends on `v0.91.5` release-tail closeout plus the
-`v0.91.6` and `v0.91.7` bridge tranches before opening.
+`v0.91.6` readiness tranche and `v0.91.7` implementation/proof tranche before opening.
 
 ## Purpose
 
@@ -40,9 +40,9 @@ The first-birthday readiness source issue is
 That issue owns the launch packet and go/no-go readiness plan; this milestone
 package owns the canonical `docs/milestones/v0.92/` planning surface. Issue
 `#3377` remains the first-birthday readiness source issue, but `v0.92` WP-01
-must consume the full pre-`v0.92` bridge sequence: `v0.91.5` release-tail
+must consume the full pre-`v0.92` readiness/proof sequence: `v0.91.5` release-tail
 truth, `v0.91.5` activation-test outputs, and the `v0.91.6` / `v0.91.7`
-bridge tranches before opening the final issue wave.
+readiness/proof tranches before opening the final issue wave.
 
 ## Milestone Role
 
@@ -51,7 +51,7 @@ v0.92 should establish:
 - stable name and identity architecture
 - continuity evidence across bounded cycles
 - memory grounding tied to witnessed artifacts
-- Memory Palace context topology as a planned long-running-context bridge slice
+- Memory Palace context topology as a planned long-running-context proof slice
 - capability envelope at birth
 - ACP / cognitive profiles as a bounded runtime profile surface grounded in
   memory, capability, continuity, ToM, and intelligence evidence
@@ -112,9 +112,10 @@ v0.92 depends on:
 - v0.91.5 release-tail closeout for multi-agent, provider/model, public
   prompt, demo-readiness, and activation-test preflight
 - v0.91.5 issue `#3377` for first-birthday launch-packet readiness inputs
-- v0.91.6 and v0.91.7 bridge tranches for activation surfaces that must be
-  complete, deferred, blocked, or routed with evidence before birthday
-  activation claims can execute
+- v0.91.6 readiness and v0.91.7 implementation/proof tranches for activation
+  surfaces that must be integrated/proven, already closed with evidence,
+  operator-scoped-out with evidence and approval, or blocked with evidence
+  before birthday activation claims can execute
 
 ## Parallel Python Reduction Tranche
 
@@ -230,8 +231,8 @@ Later WP planning should preserve the standard milestone rhythm:
 
 - WP-01: promote reviewed milestone docs and issue wave
 - WP-01 must consume the candidate issue wave, `v0.91.5` release-tail
-  closeout, the activation-test map, the `v0.91.6` / `v0.91.7` bridge
-  tranches, and `#3377` readiness packet
+  closeout, the activation-test map, the `v0.91.6` readiness tranche, the
+  `v0.91.7` implementation/proof tranche, and `#3377` readiness packet
   rather than reconstructing the birthday plan from chat.
 - feature WPs: implement identity, continuity, memory grounding, capability,
   ACP/cognitive profile, ACIP binary transport-readiness, witness, receipt, and
@@ -257,9 +258,10 @@ claim-boundary review.
 
 v0.92 is ready to execute when:
 
-- the activation bridge ledger says every named activation surface is complete,
-  deferred, blocked, or routed with evidence after the `v0.91.6` and `v0.91.7`
-  bridge tranches execute
+- the activation bridge ledger says every named activation surface is
+  integrated/proven, already closed with evidence, operator-scoped-out with
+  evidence and approval, or blocked with evidence after the `v0.91.6`
+  readiness tranche and `v0.91.7` implementation/proof tranche execute
 - every birthday claim maps to name, identity, continuity, memory, capability,
   cognitive profile, witness, receipt, trace, or review evidence
 - negative cases clearly reject ordinary process startup as birth

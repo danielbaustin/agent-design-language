@@ -1,0 +1,17 @@
+{
+  "schema": "adl.long_lived_agent_decision_result.v1",
+  "agent_instance_id": "service-proof-agent",
+  "cycle_id": "cycle-000001",
+  "status": "accepted",
+  "decision": {
+    "action": "record_cycle",
+    "summary": "Bounded long-lived agent cycle completed under the v0.90 artifact contract.",
+    "workflow_ref": "csm_service_proof",
+    "paper_only": true
+  },
+  "provider": {
+    "source": "demo_adapter",
+    "model": null
+  },
+  "not_financial_advice": true
+}

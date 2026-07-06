@@ -616,6 +616,40 @@ EOF
   assert_has "$finish_control_plane_output" "ci_contracts_required=true"
   assert_has "$finish_control_plane_output" "reason=publication_control_plane_change_runs_focused_rust_validation"
 
+  git checkout -q -b finish-control-plane-plus-runtime-escalation "$base_sha"
+  mkdir -p adl/src/bin adl/src/cli/tests/pr_cmd_inline/finish adl/src/runtime_v2
+  printf 'pub fn runtime_compat() -> bool { true }\n' > adl/src/bin/adl_runtime.rs
+  printf 'pub fn csm_bin() -> bool { true }\n' > adl/src/bin/csm.rs
+  printf 'pub fn csm_runtime() -> bool { true }\n' > adl/src/csm_runtime.rs
+  printf 'pub fn csm_daemon() -> bool { true }\n' > adl/src/csm_daemon.rs
+  printf 'pub fn runtime_v2() -> bool { true }\n' > adl/src/runtime_v2.rs
+  printf 'pub fn observability() -> bool { true }\n' > adl/src/observability.rs
+  printf 'use super::*;\n#[test]\nfn finish_path_is_stable() {}\n' > adl/src/cli/tests/pr_cmd_inline/finish/arg_render.rs
+  git add adl/src/bin/adl_runtime.rs \
+    adl/src/bin/csm.rs \
+    adl/src/csm_runtime.rs \
+    adl/src/csm_daemon.rs \
+    adl/src/runtime_v2.rs \
+    adl/src/observability.rs \
+    adl/src/cli/tests/pr_cmd_inline/finish/arg_render.rs
+  git commit -q -m finish-control-plane-plus-runtime-escalation
+  finish_control_plane_plus_runtime_head="$(git rev-parse HEAD)"
+
+  finish_control_plane_plus_runtime_output="$("$POLICY" --event-name pull_request --base "$base_sha" --head "$finish_control_plane_plus_runtime_head" --ref "refs/pull/1/merge")"
+  assert_has "$finish_control_plane_plus_runtime_output" "rust_required=true"
+  assert_has "$finish_control_plane_plus_runtime_output" "coverage_required=true"
+  assert_has "$finish_control_plane_plus_runtime_output" "full_coverage_required=true"
+  assert_has "$finish_control_plane_plus_runtime_output" "demo_smoke_required=true"
+  assert_has "$finish_control_plane_plus_runtime_output" "ci_contracts_required=true"
+  assert_has "$finish_control_plane_plus_runtime_output" "fail_closed=true"
+  assert_has "$finish_control_plane_plus_runtime_output" "coverage_lane=authoritative_full"
+  assert_has "$finish_control_plane_plus_runtime_output" "coverage_authority=fail_closed"
+  assert_has "$finish_control_plane_plus_runtime_output" "coverage_execution_state=fail_closed_authoritative_full_required"
+  assert_has "$finish_control_plane_plus_runtime_output" "reason=validation_manager_escalation_requires_authoritative_full_coverage"
+  assert_has "$finish_control_plane_plus_runtime_output" "validation_profile_status=escalation_required"
+  assert_has "$finish_control_plane_plus_runtime_output" "validation_profile_escalation_required=true"
+  assert_has "$finish_control_plane_plus_runtime_output" "validation_profile_escalation_lanes=rust_pr_fast"
+
   git checkout -q -b policy-surface-change "$base_sha"
   mkdir -p adl/tools
   printf '#!/usr/bin/env bash\nprintf policy\n' > adl/tools/enforce_coverage_gates.sh

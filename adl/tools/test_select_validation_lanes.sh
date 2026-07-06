@@ -97,6 +97,20 @@ assert_has "$TMP/aws-remote-validation-tool.out" "aggregate_status=selected"
 assert_has "$TMP/aws-remote-validation-tool.out" "aws_remote_validation_tooling status=selected"
 assert_not_has "$TMP/aws-remote-validation-tool.out" "unmapped_change_surface"
 
+aws_spot_wrapper_tool="$TMP/aws-spot-wrapper-tool.txt"
+cat >"$aws_spot_wrapper_tool" <<'EOF'
+A	adl/tools/run_aws_spot_remote_validation_lane.sh
+A	adl/tools/run_build_platform_benchmark.sh
+A	adl/tools/setup_aws_spot_remote_validation_github_resources.sh
+A	adl/tools/test_run_aws_spot_remote_validation_lane.sh
+A	docs/tooling/AWS_SPOT_REMOTE_VALIDATION_LANE.md
+EOF
+bash "$SCRIPT" --changed-files "$aws_spot_wrapper_tool" >"$TMP/aws-spot-wrapper-tool.out"
+assert_has "$TMP/aws-spot-wrapper-tool.out" "aggregate_status=selected"
+assert_has "$TMP/aws-spot-wrapper-tool.out" "aws_remote_validation_tooling status=selected"
+assert_has "$TMP/aws-spot-wrapper-tool.out" "docs_diff_check status=selected"
+assert_not_has "$TMP/aws-spot-wrapper-tool.out" "unmapped_change_surface"
+
 rust_warm_cache_surface="$TMP/rust-warm-cache-surface.txt"
 cat >"$rust_warm_cache_surface" <<'EOF'
 M	AGENTS.md
@@ -135,6 +149,17 @@ assert_has "$TMP/issue-4603-surface.out" "aggregate_status=selected"
 assert_has "$TMP/issue-4603-surface.out" "aws_remote_validation_tooling status=selected"
 assert_has "$TMP/issue-4603-surface.out" "rust_pr_fast status=selected"
 assert_not_has "$TMP/issue-4603-surface.out" "unmapped_change_surface"
+
+csm_otlp_4904_surface="$TMP/csm-otlp-4904-surface.txt"
+cat >"$csm_otlp_4904_surface" <<'EOF'
+A	adl/tools/run_v0917_csm_otlp_4904_proof.sh
+A	adl/tools/validate_v0917_csm_otlp_4904_status.sh
+A	docs/milestones/v0.91.7/review/runtime/csm_otlp_4904/proof_summary.json
+EOF
+bash "$SCRIPT" --changed-files "$csm_otlp_4904_surface" >"$TMP/csm-otlp-4904-surface.out"
+assert_has "$TMP/csm-otlp-4904-surface.out" "aggregate_status=selected"
+assert_has "$TMP/csm-otlp-4904-surface.out" "v0917_csm_otlp_4904_contracts status=selected"
+assert_not_has "$TMP/csm-otlp-4904-surface.out" "unmapped_change_surface"
 
 release_gate="$TMP/release-gate.txt"
 printf 'M\t.github/workflows/ci.yaml\n' >"$release_gate"

@@ -1,0 +1,33 @@
+{
+  "schema": "adl.long_lived_agent_cycle_manifest.v1",
+  "agent_instance_id": "service-proof-agent",
+  "cycle_id": "cycle-000001",
+  "status": "success",
+  "started_at": "2026-07-05T19:48:36.654826Z",
+  "completed_at": "2026-07-05T19:48:36.657538Z",
+  "workflow_kind": "demo_adapter",
+  "workflow_ref": "csm_service_proof",
+  "input_hash": "sha256:fd9e5fd2a3ffef39ef68aaef7eebc697214747b3dd469698177cbd6923940b91",
+  "output_hash": "sha256:6cb24af919c184b30e14884496f86fc57ba6309caafbf7f7dff3449547be0bae",
+  "previous_cycle_id": null,
+  "next_cycle_hint": "sleep_until_next_heartbeat",
+  "csm_runtime": {
+    "runtime_owner": "csm",
+    "adl_role": "tooling_control_plane",
+    "aee": "integrated",
+    "chronosense": "integrated",
+    "scheduler_watcher": "integrated",
+    "resilience_middleware": "integrated"
+  },
+  "artifacts": {
+    "observations": "observations.json",
+    "decision_request": "decision_request.json",
+    "decision_result": "decision_result.json",
+    "run_ref": "run_ref.json",
+    "memory_writes": "memory_writes.jsonl",
+    "guardrail_report": "guardrail_report.json",
+    "cycle_summary": "cycle_summary.md",
+    "csm_adl_run_status": null
+  },
+  "not_financial_advice": true
+}

@@ -1,0 +1,9 @@
+{
+  "schema": "adl.otel.monitor_status.v1",
+  "event_count": 5,
+  "last_event": "csm.child_exit",
+  "last_result": "completed",
+  "last_trace_id": "agent.service-proof-agent.daemon",
+  "last_span_id": "daemon:child_exit:0",
+  "updated_at": "2026-07-05T19:48:36.661382+00:00"
+}

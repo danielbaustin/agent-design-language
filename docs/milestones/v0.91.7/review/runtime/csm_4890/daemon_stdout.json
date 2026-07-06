@@ -1,0 +1,70 @@
+{
+  "schema": "adl.long_lived_agent_daemon_status.v1",
+  "agent_instance_id": "soak2-otel-monitor-agent",
+  "runtime_capabilities": {
+    "schema": "adl.csm.runtime_capabilities.v1",
+    "runtime_owner": "csm",
+    "adl_role": "tooling_control_plane",
+    "process_class": "csm_runtime_daemon",
+    "chronosense": {
+      "status": "integrated",
+      "service_schema": "chronosense_runtime_service.v1",
+      "clock_stack_schema": "chronosense_clock_stack.v1",
+      "clock_stack_capture": "daemon_event_time"
+    },
+    "aee": {
+      "status": "integrated",
+      "recoverable_states": [
+        "idle",
+        "completed",
+        "failed",
+        "stopped",
+        "leased"
+      ],
+      "failure_recovery": "restart_budget_and_checkpoint_restore"
+    },
+    "scheduler_watcher": {
+      "status": "integrated",
+      "cadence_source": "heartbeat.interval_secs_or_daemon_default",
+      "partial_checkpoint_interval": "checkpoint_interval_secs",
+      "stop_observation": "stop_json_checked_between_cycles_and_sleep_slices"
+    },
+    "resilience_middleware": {
+      "status": "integrated",
+      "lease_policy": "active_stale_recoverable_blocked",
+      "restart_backoff": "bounded_exponential",
+      "partial_checkpoints": "daemon_partial_checkpoint"
+    },
+    "observability": {
+      "status": "integrated",
+      "event_command": "csm",
+      "otel_service_name": "csm-runtime-daemon",
+      "retained_outputs": [
+        "operator_events.jsonl",
+        "daemon_status.json",
+        "ADL_OBSERVABILITY_LOG",
+        "ADL_OTEL_LOG",
+        "ADL_OTEL_STATUS"
+      ]
+    }
+  },
+  "state": "completed",
+  "supervisor_pid": 44236,
+  "restart_count": 0,
+  "max_restarts": 1,
+  "checkpoint_interval_secs": 3,
+  "last_event": "daemon_completed",
+  "last_child_exit": "success",
+  "last_checkpoint_at": "2026-07-05T06:45:13.689129Z",
+  "next_backoff_secs": 0,
+  "trace_id": "agent.soak2-otel-monitor-agent.daemon",
+  "span_id": "daemon:daemon_completed:0",
+  "parent_span_id": "daemon:soak2-otel-monitor-agent:supervisor",
+  "unsupported_permanence_claims": [
+    "not_os_boot_persistent",
+    "not_kill_9_resistant",
+    "not_host_resource_exhaustion_resistant",
+    "not_missing_binary_resistant"
+  ],
+  "updated_at": "2026-07-05T06:45:13.689129Z"
+}

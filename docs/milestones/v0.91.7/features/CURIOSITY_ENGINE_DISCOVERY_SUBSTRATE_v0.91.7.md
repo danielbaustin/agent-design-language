@@ -43,21 +43,20 @@ Out of scope:
 ## Dependencies
 
 - Constructability Gate feature doc.
-- Reasoning graph / skill-standard bridge.
-- Security residual readiness.
+- Reasoning graph / skill-standard implementation.
+- Security implementation readiness.
 
 ## Validation And Review
 
 - Review discovery-cycle artifacts and budget enforcement.
 - Require a bounded proof before `v0.92` consumes Curiosity.
-- Block any curiosity claim that lacks governance unless the operator explicitly
-  approves it as a non-claim with evidence and residual risk.
+- Block any curiosity claim that lacks governance with evidence and operator
+  approval.
 
 ## v0.92 Consumption
 
 `v0.92` may consume Curiosity only if a governed discovery-cycle proof exists
-or the surface is explicitly blocked with evidence or non-claimed with
-operator approval.
+or the surface is explicitly blocked with evidence and operator approval.
 
 ## Non-Goals
 

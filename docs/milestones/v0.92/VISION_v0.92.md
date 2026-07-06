@@ -37,7 +37,7 @@ enough, grounded enough, bounded enough, and witnessed enough to be treated as
 born inside the ADL runtime.
 
 The vision must consume `v0.91.5` release-tail closeout, the `v0.91.6` /
-`v0.91.7` bridge tranches, and the first-birthday readiness packet from
+`v0.91.7` implementation/proof tranche, and the first-birthday readiness packet from
 `#3377` without treating any of them as proof that the birthday has already
 happened.
 

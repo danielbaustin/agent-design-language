@@ -7,14 +7,14 @@
 - Date: `2026-06-21`
 - Owner: ADL maintainers
 - Setup lineage: `#3801`, `#3825`, `#4368`
-- Source bridge ledger: `docs/milestones/v0.91.5/PRE_V092_BRIDGE_FEATURE_DOC_LEDGER_v0.91.5.md`
+- Source ledger: `docs/milestones/v0.91.5/PRE_V092_BRIDGE_FEATURE_DOC_LEDGER_v0.91.5.md`
 - First-tranche input: `docs/milestones/v0.91.6/`
 - Source-capture ledger: `PLANNING_SOURCE_CAPTURE_v0.91.7.md`
 - v0.91.6 handoff addendum: `V0916_TO_V0917_HANDOFF_ADDENDUM_3982.md`
 
 ## Status
 
-Current status: milestone issue wave opened for the final pre-`v0.92` bridge and readiness tranche.
+Current status: milestone issue wave opened for the final pre-`v0.92` implementation and integrated-proof tranche.
 
 - Initial planning package: created by earlier v0.91.7 setup work.
 - Source-capture refresh: `#4368`.
@@ -36,6 +36,10 @@ Current status: milestone issue wave opened for the final pre-`v0.92` bridge and
     `bash adl/tools/pr.sh pr-inventory --json`.
 - Non-WP v0.91.7 issues:
   - `#4651` covers sensible Rust refactoring by ownership and validation cost.
+    It is now split into executable child issues `#4892`-`#4900` for enum
+    typing, `strum`/third-party-library simplification, tracing-backed
+    observability, provider HTTP mechanics, secret/digest hygiene, canonical
+    JSON signing, and ACIP runtime streaming substrate proof.
   - `#4652` covers Unity demo surfaces.
   - `#4653` covers dspark speculative decoding evaluation with Qwen and Gemma.
   - `#4654` covers deepseek-v4-flash-dspark smoke testing on ephemeral 2xH100 EC2 with teardown/cost proof.
@@ -50,43 +54,43 @@ Current status: milestone issue wave opened for the final pre-`v0.92` bridge and
   `#4621`, the WP-02 PR inventory command delivered by `#4622`, and closed
   WP-14A remediation truth before opening dependent execution work.
 
-This package does not implement runtime features and does not claim `v0.92` activation readiness. It exists so every required pre-birthday surface is visible and forced to exit as integrated/proven, already closed with evidence, explicitly non-claimed with operator approval, or blocked with evidence and operator approval before `v0.92` opens.
+This package does not by itself claim `v0.92` activation readiness. It exists so every required pre-birthday surface is visible and forced to exit as integrated/proven, already closed with evidence, operator-scoped-out with evidence and approval, or blocked with evidence and operator approval before `v0.92` opens.
 
 ## Purpose
 
-`v0.91.7` is the final bridge/readiness tranche before `v0.92`.
+`v0.91.7` is the final implementation/readiness tranche before `v0.92`.
 
-It must convert the remaining major pre-birthday surfaces into reviewable issue routes, sprint structure, feature docs, and handoff truth:
+It must convert the remaining major pre-birthday surfaces into reviewable issue work, sprint structure, feature docs, and handoff truth:
 
 - v0.91.6 closeout truth, ADR release-tail decisions, and release-tail cleanup;
 - the v0.91.6 C-SDLC integration/control-plane completion stream: `#4388`-`#4398`, session coordination `#4405`, session-ledger and lifecycle liveness `#4412`-`#4413`, validation-throughput/lifecycle automation and generated VPP inputs `#4417`-`#4421` plus `#4425`, forward metric capture `#4431`, bounded v0.91.6 metric backfill `#4441`, closed operational-adoption sprint `#4433`-`#4438`, closed release/docs follow-ons `#4520`-`#4522`, and any surviving v0.91.7-facing goal snapshot/lifecycle shepherd work `#4442`-`#4443`;
 - goal state, nested goals, per-issue time/token/resource metrics, and predictable execution baselines;
 - cognitive scheduler, cognitive economics, provider suitability, and local-agent acceleration;
 - build throughput, validation manager, remote/local build runners, and CI/test-tax reduction;
-- runtime fire-up, Soak #2, runtime heartbeat/AWS/ACIP signal bridge, and runtime minimal-prototype reconciliation;
+- runtime fire-up, Soak #2, runtime heartbeat/AWS/ACIP signal integration, and runtime minimal-prototype reconciliation;
 - Observatory/Unity/demo readiness;
-- Curiosity Engine, Constructability Gate, reasoning graph, loop runtime, and `adl.skill.v1` bridge;
-- residual security/CAV/SSM and ACIP/A2A/protobuf decisions;
+- Curiosity Engine, Constructability Gate, reasoning graph, loop runtime, and `adl.skill.v1`;
+- security/CAV/SSM and ACIP/A2A/protobuf implementation decisions;
 - affect/happiness, Godel mechanics, economics-context, and guild/civilization boundaries;
 - launch/birthday planning and `v0.92` handoff.
 
 `v0.91.7` is not vague spillover. It is the final place to make the work to reach `v0.92` explicit before the first-birthday milestone begins.
 
-## Bridge Boundary
+## Activation Boundary
 
 `v0.91.7` consumes:
 
-- the `#3778` pre-`v0.92` bridge ledger;
+- the `#3778` pre-`v0.92` source ledger;
 - the `#3800` / `v0.91.6` first-tranche planning and evidence package;
-- residuals explicitly left by `v0.91.6` sprint reviews, late control-plane issues, and closeout;
-- local backlog routing from `.adl/docs/TBD/LOCAL_BACKLOG.md`;
+- blockers explicitly left by `v0.91.6` sprint reviews, late control-plane issues, and closeout;
+- local backlog ownership from `.adl/docs/TBD/LOCAL_BACKLOG.md`;
 - local TBD source material captured in `PLANNING_SOURCE_CAPTURE_v0.91.7.md`.
 
 Every activation-path surface must exit as one of:
 
 - `integrated_proven`: implementation runs in the integrated path with retained evidence;
 - `already_closed_with_evidence`: the source issue is closed and its retained evidence is current;
-- `operator_approved_non_claim`: explicitly not required for `v0.92`, with risk accepted by the operator;
+- `operator_scoped_out`: explicitly not required for `v0.92`, with evidence, risk, and operator approval recorded;
 - `blocked_with_evidence`: named missing evidence or operator decision prevents completion.
 
 Assignment to a follow-on issue, sprint, or milestone is scheduling truth only. It does not count as completion.
@@ -96,14 +100,14 @@ Assignment to a follow-on issue, sprint, or milestone is scheduling truth only. 
 | Work stream | Required output before v0.92 |
 | --- | --- |
 | Closeout truth | v0.91.6 release-tail and ADR issues closed with evidence or blocked with evidence and operator approval, with v0.91.7 not inheriting stale truth. |
-| C-SDLC integration control plane | v0.91.6 `#4388`-`#4398` plus late `#4405`, `#4412`-`#4413`, `#4417`-`#4421` plus `#4425`, `#4431`, `#4441`, closed adoption sprint `#4433`-`#4438`, closed release/docs follow-ons `#4520`-`#4522`, and any remaining `#4442` / `#4443` carryforward are consumed as integrated/proven, already closed with evidence, explicitly non-claimed with operator approval, or blocked with evidence and operator approval before v0.91.7 depends on them. |
+| C-SDLC integration control plane | v0.91.6 `#4388`-`#4398` plus late `#4405`, `#4412`-`#4413`, `#4417`-`#4421` plus `#4425`, `#4431`, `#4441`, closed adoption sprint `#4433`-`#4438`, closed release/docs follow-ons `#4520`-`#4522`, and any remaining `#4442` / `#4443` carryforward are consumed as integrated/proven, already closed with evidence, operator-scoped-out with evidence and operator approval, or blocked with evidence and operator approval before v0.91.7 depends on them. |
 | Goal and metrics | Goal state, nested goals, SOR time/token/resource fields, forward metric capture `#4431`, bounded backfill `#4441`, and host snapshot capture `#4442` are implemented/proven or blocked with evidence and operator approval. |
 | Scheduler and providers | Cognitive scheduler, provider profiles, local/hosted model suitability, and local-agent delegation are implemented/proven or blocked with evidence and operator approval. |
 | Build and validation throughput | Validation manager, path ownership, SOR fact capture, VPP generation, long-test fanout, CI log archive/S3, Nessus/CodeBuild, sccache/linker/target-dir work are implemented/proven where v0.92 depends on them or blocked with evidence and operator approval. |
-| Runtime | Runtime Soak #2/fire-up, runtime heartbeat/AWS signal bridge, ACIP-to-SNS, and minimal prototype reconciliation are integrated/proven or blocked with evidence and operator approval. |
-| Observatory and demos | Unity/HTML Observatory and flagship demo readiness are proven with retained evidence or explicitly non-claimed/blocked with operator approval. |
-| Conceptual bridge docs | Curiosity, Constructability, reasoning graph/loop/skill standard, affect/happiness, Godel, economics, and guilds bounded. |
-| Security and protocol | Security/CAV/SSM and ACIP/A2A/protobuf residuals are resolved or blocked with evidence and operator approval. |
+| Runtime | Runtime Soak #2/fire-up, runtime heartbeat/AWS signal integration, ACIP-to-SNS, and minimal prototype reconciliation are integrated/proven or blocked with evidence and operator approval. |
+| Observatory and demos | Unity/HTML Observatory and flagship demo readiness are proven with retained evidence, public-claim-bounded/operator-scoped-out with evidence and operator approval, or blocked with evidence and operator approval. |
+| Cognitive/protocol implementation surfaces | Curiosity, Constructability, reasoning graph/loop/skill standard, affect/happiness, Godel, economics, and guilds are implemented/proven or blocked with evidence and operator approval. |
+| Security and protocol | Security/CAV/SSM and ACIP/A2A/protobuf requirements are resolved or blocked with evidence and operator approval. |
 | Launch and birthday handoff | July launch planning and `v0.92` activation handoff aligned without absorbing birthday implementation. |
 
 ## Document Map
@@ -140,8 +144,8 @@ Assignment to a follow-on issue, sprint, or milestone is scheduling truth only. 
 
 ## Exit Criteria
 
-- Every required source in `PLANNING_SOURCE_CAPTURE_v0.91.7.md` is integrated/proven, already closed with evidence, explicitly non-claimed with operator approval, or blocked with evidence and operator approval.
+- Every required source in `PLANNING_SOURCE_CAPTURE_v0.91.7.md` is integrated/proven, already closed with evidence, operator-scoped-out with evidence and operator approval, or blocked with evidence and operator approval.
 - WP-01 consumes `V0916_TO_V0917_HANDOFF_ADDENDUM_3982.md` plus failed-but-closed WP-15 truth, final WP-16 closeout truth, closed `#4620` / `#4621`, and closed `#4622` PR-inventory proof, before starting dependent execution work.
 - Every v0.91.6 carryover issue has a truthful disposition before `v0.92` opens.
-- `#3780` can refresh `v0.92` activation docs from tracked bridge truth without reconstructing scope from chat.
-- The first-birthday milestone starts with a clear runtime/demo/security/protocol/process substrate and known residual risks.
+- `#3780` can refresh `v0.92` activation docs from tracked implementation/proof truth without reconstructing scope from chat.
+- The first-birthday milestone starts with a clear runtime/demo/security/protocol/process substrate and known evidence-backed blockers.

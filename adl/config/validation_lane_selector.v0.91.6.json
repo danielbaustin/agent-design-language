@@ -468,19 +468,27 @@
         "aws_remote_validation_tooling"
       ],
       "path_selectors": [
+        "adl/tools/run_aws_spot_remote_validation_lane.sh",
+        "adl/tools/run_build_platform_benchmark.sh",
+        "adl/tools/setup_aws_spot_remote_validation_github_resources.sh",
+        "adl/tools/test_run_aws_spot_remote_validation_lane.sh",
         "tools/aws_remote_validation/Cargo.toml",
         "tools/aws_remote_validation/Cargo.lock",
         "tools/aws_remote_validation/scripts/**",
         "tools/aws_remote_validation/src/**"
       ],
       "path_hints": [
+        "adl/tools/run_aws_spot_remote_validation_lane.sh",
+        "adl/tools/run_build_platform_benchmark.sh",
+        "adl/tools/setup_aws_spot_remote_validation_github_resources.sh",
+        "adl/tools/test_run_aws_spot_remote_validation_lane.sh",
         "tools/aws_remote_validation/Cargo.toml",
         "tools/aws_remote_validation/Cargo.lock",
         "tools/aws_remote_validation/scripts/**",
         "tools/aws_remote_validation/src/**"
       ],
-      "command": "bash -n tools/aws_remote_validation/scripts/remote_validation_runner.sh && bash -n tools/aws_remote_validation/scripts/ssh_debug_control.sh && cargo check --manifest-path tools/aws_remote_validation/Cargo.toml --bin adl-aws-remote-validation && cargo test --manifest-path tools/aws_remote_validation/Cargo.toml --bin adl-aws-remote-validation -- --nocapture",
-      "run_command": "bash -n tools/aws_remote_validation/scripts/remote_validation_runner.sh && bash -n tools/aws_remote_validation/scripts/ssh_debug_control.sh && cargo check --manifest-path tools/aws_remote_validation/Cargo.toml --bin adl-aws-remote-validation && cargo test --manifest-path tools/aws_remote_validation/Cargo.toml --bin adl-aws-remote-validation -- --nocapture",
+      "command": "bash adl/tools/test_run_aws_spot_remote_validation_lane.sh && bash -n tools/aws_remote_validation/scripts/remote_validation_runner.sh && bash -n tools/aws_remote_validation/scripts/ssh_debug_control.sh && cargo check --manifest-path tools/aws_remote_validation/Cargo.toml --bin adl-aws-remote-validation && cargo test --manifest-path tools/aws_remote_validation/Cargo.toml --bin adl-aws-remote-validation -- --nocapture",
+      "run_command": "bash adl/tools/test_run_aws_spot_remote_validation_lane.sh && bash -n tools/aws_remote_validation/scripts/remote_validation_runner.sh && bash -n tools/aws_remote_validation/scripts/ssh_debug_control.sh && cargo check --manifest-path tools/aws_remote_validation/Cargo.toml --bin adl-aws-remote-validation && cargo test --manifest-path tools/aws_remote_validation/Cargo.toml --bin adl-aws-remote-validation -- --nocapture",
       "reason": "aws_remote_validation_tool_surface_requires_focused_tooling_regression_checks"
     },
     {
@@ -530,6 +538,29 @@
       "command": "bash adl/tools/test_select_validation_lanes.sh",
       "run_command": "bash adl/tools/test_select_validation_lanes.sh",
       "reason": "v0917_soak2_status_surface_requires_selector_contract_checks; issue-local status validation runs through adl/tools/validate_v0917_soak2_4682_status.sh"
+    },
+    {
+      "id": "v0917_csm_otlp_4904_contracts",
+      "lane_class": "cli_workflow",
+      "default_surface": "tooling",
+      "owner": "runtime",
+      "proof_role": "runtime_otel_export_contract",
+      "requirement_ids": [
+        "v0917_csm_otlp_4904_contracts"
+      ],
+      "path_selectors": [
+        "adl/tools/run_v0917_csm_otlp_4904_proof.sh",
+        "adl/tools/validate_v0917_csm_otlp_4904_status.sh",
+        "docs/milestones/v0.91.7/review/runtime/csm_otlp_4904/**"
+      ],
+      "path_hints": [
+        "adl/tools/run_v0917_csm_otlp_4904_proof.sh",
+        "adl/tools/validate_v0917_csm_otlp_4904_status.sh",
+        "docs/milestones/v0.91.7/review/runtime/csm_otlp_4904/**"
+      ],
+      "command": "bash adl/tools/test_select_validation_lanes.sh",
+      "run_command": "bash adl/tools/test_select_validation_lanes.sh",
+      "reason": "v0917_csm_otlp_surface_requires_selector_contract_checks; issue-local runtime proof validation runs through adl/tools/validate_v0917_csm_otlp_4904_status.sh"
     },
     {
       "id": "v0917_soak2_matrix_contracts",
@@ -645,11 +676,13 @@
       ],
       "path_selectors": [
         "docs/**",
-        "*.md"
+        "*.md",
+        "adl/tools/validate_v0917_*_status.sh"
       ],
       "path_hints": [
         "docs/**",
-        "*.md"
+        "*.md",
+        "adl/tools/validate_v0917_*_status.sh"
       ],
       "command": "git diff --check",
       "run_command": "git diff --check",

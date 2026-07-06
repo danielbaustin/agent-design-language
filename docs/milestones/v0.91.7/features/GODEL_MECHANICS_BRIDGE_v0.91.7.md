@@ -1,8 +1,8 @@
-# Godel Mechanics Bridge
+# Godel Mechanics Implementation Boundary
 
 ## Metadata
 
-- Feature Name: Godel Mechanics Bridge
+- Feature Name: Godel Mechanics Implementation Boundary
 - Milestone Target: `v0.91.7`
 - Status: planned
 - Owner: ADL maintainers
@@ -35,19 +35,19 @@ Out of scope:
 - Which mechanics are conceptual versus executable before `v0.92`?
 - Which artifacts prove a hypothesis lifecycle?
 - Which promotions require Constructability or operator review?
-- Which mechanics remain blocked or deferred?
+- Which mechanics remain blocked with evidence?
 
 ## Dependencies
 
 - Curiosity Engine feature doc.
-- Reasoning graph / skill-standard bridge.
+- Reasoning graph / skill-standard implementation.
 - Constructability Gate.
 
 ## Validation And Review
 
 - Review mechanics against evidence and non-goals.
 - Require replay/proof expectations for any lifecycle claim.
-- Keep self-improvement claims out of `v0.92` unless proven; unresolved claims become explicit non-claims or evidence-backed blockers with operator approval.
+- Keep self-improvement claims out of `v0.92` unless proven; unresolved claims become evidence-backed blockers with operator approval.
 
 ## v0.92 Consumption
 

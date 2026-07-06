@@ -41,19 +41,19 @@ Out of scope:
 ## Dependencies
 
 - Curiosity Engine feature doc.
-- Security residual readiness.
-- ACIP/A2A residual decisions.
+- Security implementation readiness.
+- ACIP/A2A implementation decisions.
 
 ## Validation And Review
 
 - Review schemas for determinism and evidence boundaries.
 - Validate that provisional claims cannot become public truth without anchors.
-- Require implemented proof, explicit non-claim, or evidence-backed blocker status for missing validators.
+- Require implemented proof or evidence-backed blocker status for missing validators.
 
 ## v0.92 Consumption
 
 `v0.92` may consume Constructability only as a reviewed boundary and proven or
-operator-approved non-claim surface. It must not present provisional cognition as authoritative shared
+evidence-backed blocked surface. It must not present provisional cognition as authoritative shared
 reality.
 
 ## Non-Goals

@@ -1,0 +1,30 @@
+{
+  "schema": "adl.long_lived_agent_continuity_replay_manifest.v1",
+  "agent_instance_id": "soak2-otel-monitor-agent",
+  "generated_at": "2026-07-05T06:45:13.686527Z",
+  "continuity_ref": "continuity.json",
+  "checkpoint_ref": "continuity_checkpoint.json",
+  "status_ref": "status.json",
+  "cycle_ledger_ref": "cycle_ledger.jsonl",
+  "expected_resume": {
+    "next_cycle_id": "cycle-000002",
+    "latest_cycle_id": "cycle-000001",
+    "active_lease_state": "clear",
+    "recover_stale_lease_required": false
+  },
+  "restore_invariants": [
+    "append_only_cycle_ledger",
+    "latest_cycle_id_matches_checkpoint",
+    "lease_file_blocks_duplicate_active_cycle_without_explicit_recovery"
+  ],
+  "reviewer_steps": [
+    "Inspect continuity_checkpoint.json for the latest captured cycle state.",
+    "Inspect continuity_replay_manifest.json for the next expected cycle id and lease posture.",
+    "Inspect cycle_ledger.jsonl to confirm resume continues at the next cycle id without duplicates."
+  ],
+  "non_claims": [
+    "not_mid_step_checkpointing",
+    "not_full_runtime_persistence",
+    "not_distributed_recovery"
+  ]
+}

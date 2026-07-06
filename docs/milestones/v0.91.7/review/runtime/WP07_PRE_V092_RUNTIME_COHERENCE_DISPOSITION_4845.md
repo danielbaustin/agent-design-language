@@ -11,6 +11,17 @@ Machine-readable companion:
 
 - `docs/milestones/v0.91.7/review/runtime/wp07_pre_v092_runtime_coherence_disposition_4845.json`
 
+## #4890 Runtime Ownership Addendum
+
+Follow-on issue `#4890` separates daemon ownership from the ADL
+compiler/control-plane CLI. Current runtime daemon ownership is `csm daemon`;
+`adl agent daemon` is not retained as a public command. The CSM proof packet is
+`docs/milestones/v0.91.7/review/runtime/csm_4890/` and validates
+`command=csm`, `process_class=csm_runtime_daemon`, local `ADL_OTEL_LOG`, and
+`ADL_OTEL_STATUS` monitor status for the daemon path. Historical WP-07 packets
+that record the former `adl agent daemon` proof are preserved as historical
+evidence, not as the current runtime entrypoint.
+
 ## Decision
 
 Disposition: **blocked pending operator disposition**

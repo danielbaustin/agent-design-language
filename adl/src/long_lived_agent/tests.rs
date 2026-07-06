@@ -1055,6 +1055,7 @@ fn daemon_partial_checkpoint_preserves_recoverable_failure_reason() {
     let spec = write_spec_with_workflow_kind(&root, "unsupported_adapter");
     let loaded = load_spec(&spec).expect("load spec");
     ensure_state_root(&loaded).expect("state root");
+    let runtime_context = CsmRuntimeContext::new().expect("csm runtime context");
     let error = StatusError {
         class: "daemon_child_failed".to_string(),
         message: "cycle failed before restart".to_string(),
@@ -1070,6 +1071,7 @@ fn daemon_partial_checkpoint_preserves_recoverable_failure_reason() {
     );
     persist_status(&loaded, &failed, "daemon_child_failed_recoverable").expect("persist failed");
     let mut daemon_status = write_daemon_status(
+        &runtime_context,
         &loaded,
         DaemonStatusInput {
             state: "restarting",
@@ -1084,6 +1086,7 @@ fn daemon_partial_checkpoint_preserves_recoverable_failure_reason() {
     .expect("daemon status");
 
     let stop_observed = sleep_with_partial_checkpoints(
+        &runtime_context,
         &loaded,
         &mut daemon_status,
         PartialCheckpointSleep {
@@ -1162,7 +1165,9 @@ fn daemon_heartbeat_partial_checkpoint_does_not_report_backoff() {
     let spec = write_spec(&root);
     let loaded = load_spec(&spec).expect("load spec");
     ensure_state_root(&loaded).expect("state root");
+    let runtime_context = CsmRuntimeContext::new().expect("csm runtime context");
     let mut daemon_status = write_daemon_status(
+        &runtime_context,
         &loaded,
         DaemonStatusInput {
             state: "running",
@@ -1177,6 +1182,7 @@ fn daemon_heartbeat_partial_checkpoint_does_not_report_backoff() {
     .expect("daemon status");
 
     let stop_observed = sleep_with_partial_checkpoints(
+        &runtime_context,
         &loaded,
         &mut daemon_status,
         PartialCheckpointSleep {
@@ -1209,7 +1215,9 @@ fn daemon_partial_checkpoint_reports_stop_observed_before_restart_attempt() {
         "operator_stop_requested",
     )
     .expect("write stop");
+    let runtime_context = CsmRuntimeContext::new().expect("csm runtime context");
     let mut daemon_status = write_daemon_status(
+        &runtime_context,
         &loaded,
         DaemonStatusInput {
             state: "restarting",
@@ -1224,6 +1232,7 @@ fn daemon_partial_checkpoint_reports_stop_observed_before_restart_attempt() {
     .expect("daemon status");
 
     let stop_observed = sleep_with_partial_checkpoints(
+        &runtime_context,
         &loaded,
         &mut daemon_status,
         PartialCheckpointSleep {

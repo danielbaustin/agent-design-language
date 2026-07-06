@@ -1,8 +1,8 @@
-# ACIP/A2A Protobuf Residuals
+# ACIP/A2A Protobuf Implementation Decisions
 
 ## Metadata
 
-- Feature Name: ACIP/A2A Protobuf Residuals
+- Feature Name: ACIP/A2A Protobuf Implementation Decisions
 - Milestone Target: `v0.91.7`
 - Status: planned
 - Owner: ADL maintainers
@@ -12,8 +12,8 @@
 
 ## Purpose
 
-Resolve remaining JSON/protobuf/WebSocket/access-rule decisions after
-the first ACIP/A2A bridge tranche.
+Resolve JSON/protobuf/WebSocket/access-rule implementation decisions after
+the first ACIP/A2A readiness tranche.
 
 ## Scope
 
@@ -21,8 +21,8 @@ In scope:
 
 - JSON projection consumption posture;
 - protobuf wire-format decision;
-- WebSocket transport residuals;
-- access-rule residuals;
+- WebSocket transport decisions;
+- access-rule decisions;
 - provider and external-agent message posture.
 
 Out of scope:
@@ -33,15 +33,15 @@ Out of scope:
 
 ## Required Decisions
 
-- Does `v0.92` consume JSON projection, protobuf, mock carrier, or an operator-approved deferral?
+- Does `v0.92` consume JSON projection, protobuf, or another implemented carrier?
 - Which access rules are required before any external-agent communication?
-- Which WebSocket residuals block activation?
+- Which WebSocket decisions block activation?
 - Which protocol proofs are schema-only versus runtime?
 
 ## Dependencies
 
 - `v0.91.6` ACIP/A2A/provider communications doc.
-- Security residual readiness.
+- Security implementation readiness.
 - Constructability Gate.
 
 ## Validation And Review
@@ -52,8 +52,8 @@ Out of scope:
 
 ## v0.92 Consumption
 
-`v0.92` must know whether it consumes JSON projection, protobuf, mock carrier,
-or an operator-approved deferral. Ambiguity is a blocker.
+`v0.92` must know whether it consumes JSON projection, protobuf, or another
+implemented carrier. Ambiguity is a blocker.
 
 ## Non-Goals
 
@@ -64,4 +64,4 @@ or an operator-approved deferral. Ambiguity is a blocker.
 ## Blocker Rule
 
 Any unresolved activation-path decision blocks v0.92 unless the operator
-explicitly approves a non-claim with evidence and residual risk.
+explicitly scopes it out with evidence and risk.

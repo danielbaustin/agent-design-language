@@ -2,8 +2,8 @@
 
 ## Status
 
-Feature documents listed here define the final pre-`v0.92` bridge/readiness tranche.
-They are planning and bridge documents, not runtime implementation proof.
+Feature documents listed here define the final pre-`v0.92` implementation/readiness tranche.
+They are planning and proof-requirement documents, not runtime implementation proof by themselves.
 
 ## Feature Docs
 
@@ -21,7 +21,8 @@ They are planning and bridge documents, not runtime implementation proof.
 
 - Do not claim runtime feature completion from this index.
 - Do not claim `v0.92` activation readiness.
-- Keep `#3780` blocked until bridge truth is complete, deferred, blocked, or
-  routed.
+- Keep `#3780` blocked until required activation surfaces are integrated_proven,
+  operator-scoped-out with evidence, or blocked_with_evidence and operator
+  approval.
 - Keep Curiosity, Constructability, reasoning graphs, security, and ACIP/A2A
   visible in feature docs, not only in release-tail prose.

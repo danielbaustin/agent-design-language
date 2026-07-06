@@ -16,7 +16,7 @@ Candidate allocation only. v0.92 has no opened GitHub issue wave yet.
 
 The candidate WP sequence below should be consumed by the v0.92 WP-01 planning
 pass. WP-01 should verify prerequisite truth, reconcile `v0.91.5`
-release-tail closeout, the `v0.91.6` / `v0.91.7` bridge tranches, the AEE
+release-tail closeout, the `v0.91.6` readiness tranche, the `v0.91.7` implementation/proof tranche, the AEE
 completion tranche, and `#3377`, then seed the
 actual GitHub issue wave and full C-SDLC card set.
 
@@ -24,7 +24,7 @@ actual GitHub issue wave and full C-SDLC card set.
 
 Use this WBS as WP-01 seed input, not as proof that v0.92 issues are already
 open. WP-01 should reconcile the sequence with `v0.91.5` release-tail
-closeout, the `v0.91.6` / `v0.91.7` bridge tranches, the AEE completion
+closeout, the `v0.91.6` readiness tranche, the `v0.91.7` implementation/proof tranche, the AEE completion
 tranche, and `#3377`, then generate the
 real issue wave and all five C-SDLC cards for each opened issue.
 
@@ -38,11 +38,11 @@ milestones.
 
 | WP | Work Package | Description | Primary deliverable | Dependencies |
 | --- | --- | --- | --- | --- |
-| WP-01 | Design pass and issue-wave readiness | Promote reviewed v0.92 planning docs, consume `v0.91.5` release-tail closeout, the `v0.91.6` / `v0.91.7` bridge tranches, the AEE completion tranche, and `#3377`, seed issue wave, and prepare cards. | Opened issue wave and full SIP/STP/SPP/SRP/SOR cards, including AEE proof routing if required. | `v0.91.5` release-tail closeout, activation-test map, `v0.91.6` / `v0.91.7` bridge outputs, AEE completion tranche, and `#3377` readiness packet. |
+| WP-01 | Design pass and issue-wave readiness | Promote reviewed v0.92 planning docs, consume `v0.91.5` release-tail closeout, the `v0.91.6` readiness tranche, the `v0.91.7` implementation/proof tranche, the AEE completion tranche, and `#3377`, seed issue wave, and prepare cards. | Opened issue wave and full SIP/STP/SPP/SRP/SOR cards, including AEE proof ownership if required. | `v0.91.5` release-tail closeout, activation-test map, `v0.91.6` readiness outputs, `v0.91.7` implementation/proof outputs, AEE completion tranche, and `#3377` readiness packet. |
 | WP-02 | Birthday contract and negative cases | Define what counts as birth and what does not. | Feature contract, negative fixtures, and validation rules. | WP-01. |
 | WP-03 | Stable name and identity architecture | Define identity root, stable name, aliases, provenance, and continuity head. | Identity record contract and fixtures. | WP-02 and prior citizen-state lineage. |
 | WP-04 | Continuity across bounded cycles | Prove identity survives multiple bounded cycles with evidence. | Continuity record, cycle fixtures, validation. | WP-03. |
-| WP-05 | Memory grounding and Memory Palace bridge | Bind identity to witnessed artifacts and memory references without raw private-state exposure, and route the first Memory Palace context-topology slice. | Memory-grounding contract, redacted packet, and Memory Palace bridge feature route. | WP-03, WP-04, ObsMem/trace baseline. |
+| WP-05 | Memory grounding and Memory Palace proof slice | Bind identity to witnessed artifacts and memory references without raw private-state exposure, and implement or block the first Memory Palace context-topology slice. | Memory-grounding contract, redacted packet, and Memory Palace proof-slice disposition. | WP-03, WP-04, ObsMem/trace baseline. |
 | WP-06 | Capability envelope | Declare provider, model, tool, skill, authority, and limit context at birth. | Capability envelope and validation fixtures. | WP-03, governed-tool evidence where tool actions are in scope. |
 | WP-07 | ACP / cognitive profiles | Define runtime-visible cognitive profile records grounded in memory, capability, continuity, ToM, and intelligence evidence. | ACP/profile contract, update rules, privacy boundary, and fixtures. | WP-04 through WP-06 plus v0.91.1 evidence. |
 | WP-08 | ACIP binary schema and WebSocket carrier | Define protobuf ACIP wire schema, public schema catalog, deterministic JSON projection, and optional binary ACIP-over-WebSocket mock proof. | ACIP `.proto`, schema catalog rules, JSON/protobuf fixtures, mock WebSocket carrier proof. | ACIP substrate and trace/replay baseline. |
@@ -51,7 +51,7 @@ milestones.
 | WP-11 | Migration and cross-polis continuity planning | Define bounded design notes for future movement without production migration claims. | Cross-polis continuity feature note, design note, and non-goals. | WP-03, WP-04, WP-10. |
 | WP-12 | First birthday demo | Build a flagship demo showing a real birthday record and negative cases. | Runnable proof demo and artifacts linked to the first-birthday demo feature doc. | WP-02 through WP-10. |
 | WP-13 | Birthday-to-governance handoff | Produce the evidence map v0.93 governance will consume. | Handoff packet mapping identity evidence to governance and ADR-plan updates. | WP-10, WP-11, v0.93 allocation. |
-| WP-14 | Demo matrix, AEE proof, and proof coverage | Align demos and AEE proof expectations with milestone claims. | Demo matrix rows, AEE proof routing or proof packet, commands, artifacts, and validation notes. | WP-12, WP-13, v0.91.5 AEE completion tranche. |
+| WP-14 | Demo matrix, AEE proof, and proof coverage | Align demos and AEE proof expectations with milestone claims. | Demo matrix rows, AEE proof ownership or proof packet, commands, artifacts, and validation notes. | WP-12, WP-13, v0.91.5 AEE completion tranche. |
 | WP-15 | Quality gate | Validate implementation, fixtures, docs, and claim boundaries. | Quality-gate record and blocker disposition. | WP-14. |
 | WP-16 | Docs and release-truth pass | Align README, changelog, feature list, ADR plan, release notes, and milestone docs. | Docs review packet, ADR candidate packet if needed, and updated release docs. | WP-15. |
 | WP-17 | Internal review | Run internal code/docs/tests/process review. | Internal review report and finding register. | WP-16. |
@@ -92,12 +92,13 @@ draft input, not as an already-opened issue wave.
 Before opening v0.92 issues, WP-01 must:
 
 - reconcile the candidate sequence with `v0.91.5` release-tail closeout, the
-  activation-test map, the `v0.91.6` / `v0.91.7` bridge tranches, and `#3377`
+  activation-test map, the `v0.91.6` readiness tranche, the `v0.91.7`
+  implementation/proof tranche, and `#3377`
 - reconcile the AEE completion tranche from v0.91.5 and either seed concrete
   AEE proof work or record why existing v0.92 WPs cover it
 - verify all feature docs remain linked and scoped, including the Memory
-  Palace context-topology bridge
-- create all five cards for every opened issue from the active prompt-template
+  Palace context-topology proof slice
+- create all six lifecycle cards for every opened issue from the active prompt-template
   registry
 - keep `SIP`, `STP`, and `SPP` design-time ready before execution
 - keep `SRP` and `SOR` truthful to review and output lifecycle state

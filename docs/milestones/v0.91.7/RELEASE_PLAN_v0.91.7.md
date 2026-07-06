@@ -16,9 +16,9 @@ planning package does not publish a release by itself.
 
 - [ ] Bridge ledger refreshed from second-tranche outcomes.
 - [ ] Feature docs reviewed and updated for final truth.
-- [ ] Open residuals resolved, explicitly non-claimed with operator approval,
+- [ ] Open requirements resolved, operator-scoped-out with evidence and approval,
   or blocked with evidence and operator approval.
-- [ ] Security and ACIP/A2A residual status recorded.
+- [ ] Security and ACIP/A2A implementation/blocker status recorded.
 - [ ] Curiosity and Constructability proof or blocker status recorded.
 - [ ] Reasoning graph / `adl.skill.v1` proof or blocker status recorded.
 
@@ -54,10 +54,10 @@ planning package does not publish a release by itself.
 - [ ] Roadmap/status updated.
 - [ ] `#3780` activation handoff visible.
 - [ ] `v0.92` activation remains blocked or is explicitly opened by reviewed
-  bridge truth.
+  implementation/proof truth.
 
 ## Exit Criteria
 
 - No hidden implementation or unresolved truth-maintenance work remains in the
   ceremony phase.
-- Every activation-relevant residual is integrated/proven, explicitly non-claimed with operator approval, or blocked with evidence and operator approval.
+- Every activation-relevant surface is integrated/proven, operator-scoped-out with evidence, or blocked with evidence and operator approval.

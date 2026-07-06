@@ -1,10 +1,12 @@
 using System;
 using System.Collections;
+using System.IO;
 using System.Reflection;
 using ADL.Demos.UnityObservatory;
 using UnityEditor;
 using UnityEditor.SceneManagement;
 using UnityEngine;
+using UnityEngine.UI;
 using UnityEngine.UIElements;
 using UnityEngine.SceneManagement;
 
@@ -66,133 +68,22 @@ namespace ADL.Demos.UnityObservatory.Editor
                     );
                 }
 
-                UIDocument document = shellObject.GetComponent<UIDocument>();
-                if (document == null)
+                if (UsesCompatibilityCanvas())
                 {
-                    throw new InvalidOperationException(
-                        "Unity Observatory validation did not attach UIDocument to the runtime shell."
+                    ValidateCompatibilityCanvas(shellObject);
+                    Debug.Log(
+                        "Unity Observatory compatibility validation passed for the runtime shell."
                     );
                 }
-
-                if (document.panelSettings == null)
+                else
                 {
-                    throw new InvalidOperationException(
-                        "Unity Observatory validation did not create runtime PanelSettings."
-                    );
+                    ValidateUiToolkitShell(shellObject, runtimeStyleSheet);
                 }
 
-                if (document.panelSettings.themeStyleSheet == null)
-                {
-                    throw new InvalidOperationException(
-                        "Unity Observatory validation did not attach a runtime theme stylesheet."
-                    );
-                }
-
-                VisualElement root = document.rootVisualElement;
-
-                if (root == null || root.childCount == 0)
-                {
-                    throw new InvalidOperationException(
-                        "Unity Observatory validation built an empty root visual tree."
-                    );
-                }
-
-                if (root.Q<Label>("title") == null)
-                {
-                    throw new InvalidOperationException(
-                        "Unity Observatory validation did not find the title label in the built shell."
-                    );
-                }
-
-                if (root.Q<Label>("packet-schema") == null || root.Q<Label>("packet-ref") == null)
-                {
-                    throw new InvalidOperationException(
-                        "Unity Observatory validation did not find the packet contract labels in the built shell."
-                    );
-                }
-
-                if (root.Q<Label>("observability-title") == null)
-                {
-                    throw new InvalidOperationException(
-                        "Unity Observatory validation did not find the observability card in the built shell."
-                    );
-                }
-
-                if (root.Q<Label>("demo-surface-title") == null ||
-                    root.Q<Label>("demo-polis-state") == null ||
-                    root.Q<Label>("demo-operator-boundary") == null ||
-                    root.Q<Label>("demo-next-step") == null)
-                {
-                    throw new InvalidOperationException(
-                        "Unity Observatory validation did not find the runtime polis demo-surface strip."
-                    );
-                }
-
-                if (!root.styleSheets.Contains(runtimeStyleSheet))
-                {
-                    throw new InvalidOperationException(
-                        "Unity Observatory validation did not attach the runtime stylesheet to the root visual element."
-                    );
-                }
-
-                string title = root.Q<Label>("title")?.text ?? "unknown";
-                string packetSchema = root.Q<Label>("packet-schema")?.text ?? "unknown";
-                string packetRef = root.Q<Label>("packet-ref")?.text ?? "unknown";
-                string artifactRoot = root.Q<Label>("artifact-root")?.text ?? "unknown";
-                string reportRef = root.Q<Label>("report-ref")?.text ?? "unknown";
-                string packetNote = root.Q<Label>("packet-note")?.text ?? "unknown";
-                string demoOperatorBoundary =
-                    root.Q<Label>("demo-operator-boundary")?.text ?? "unknown";
-                string demoNextStep = root.Q<Label>("demo-next-step")?.text ?? "unknown";
-
-                AssertMatchesExpectation(
-                    "title",
-                    title,
-                    Environment.GetEnvironmentVariable(ExpectedTitleEnvVar)
-                );
-                AssertMatchesExpectation(
-                    "packet-ref",
-                    packetRef,
-                    Environment.GetEnvironmentVariable(ExpectedPacketRefEnvVar)
-                );
-                AssertMatchesExpectation(
-                    "artifact-root",
-                    artifactRoot,
-                    Environment.GetEnvironmentVariable(ExpectedArtifactRootEnvVar)
-                );
-                AssertMatchesExpectation(
-                    "report-ref",
-                    reportRef,
-                    Environment.GetEnvironmentVariable(ExpectedReportRefEnvVar)
-                );
-
-                string expectedEvidenceLevel = Environment.GetEnvironmentVariable(
-                    ExpectedEvidenceLevelEnvVar
-                );
-                if (!string.IsNullOrWhiteSpace(expectedEvidenceLevel) &&
-                    !packetNote.Contains(expectedEvidenceLevel, StringComparison.Ordinal))
-                {
-                    throw new InvalidOperationException(
-                        $"Unity Observatory validation expected packet-note to contain '{expectedEvidenceLevel}' but observed '{packetNote}'."
-                    );
-                }
-
-                if (!demoOperatorBoundary.Contains("proposal-only", StringComparison.Ordinal))
-                {
-                    throw new InvalidOperationException(
-                        $"Unity Observatory validation expected proposal-only demo boundary but observed '{demoOperatorBoundary}'."
-                    );
-                }
-
-                if (!demoNextStep.Contains("#4704", StringComparison.Ordinal))
-                {
-                    throw new InvalidOperationException(
-                        $"Unity Observatory validation expected #4704 handoff marker but observed '{demoNextStep}'."
-                    );
-                }
+                ValidateFlagshipScene();
 
                 Debug.Log(
-                    $"Unity Observatory compatibility verification passed. rootChildren={root.childCount}; title={title}; packetSchema={packetSchema}; packetRef={packetRef}; artifactRoot={artifactRoot}; reportRef={reportRef}; demoBoundary={demoOperatorBoundary}; demoNextStep={demoNextStep}"
+                    "Unity Observatory batch validation passed for the shell and flagship environment."
                 );
             }
             finally
@@ -207,7 +98,7 @@ namespace ADL.Demos.UnityObservatory.Editor
 
         public static void ValidateFlagshipShellScene()
         {
-            if (!System.IO.File.Exists(FlagshipScenePath))
+            if (!File.Exists(FlagshipScenePath))
             {
                 throw new InvalidOperationException(
                     $"Unity Observatory flagship validation requires '{FlagshipScenePath}'. Run this validator only in a staged flagship project."
@@ -237,66 +128,21 @@ namespace ADL.Demos.UnityObservatory.Editor
                     );
                 }
 
-                UIDocument document = shellObject.GetComponent<UIDocument>();
-                if (document == null || document.panelSettings == null)
+                if (UsesCompatibilityCanvas())
                 {
-                    throw new InvalidOperationException(
-                        "Unity Observatory flagship validation did not create a UIDocument with PanelSettings."
+                    ValidateCompatibilityCanvas(shellObject);
+                    Debug.Log(
+                        "Unity Observatory flagship compatibility validation passed for the runtime shell."
                     );
                 }
-
-                VisualElement root = document.rootVisualElement;
-                if (root == null || root.childCount == 0)
+                else
                 {
-                    throw new InvalidOperationException(
-                        "Unity Observatory flagship validation built an empty root visual tree."
-                    );
+                    ValidateUiToolkitShell(shellObject, runtimeStyleSheet);
                 }
 
-                Label title = root.Q<Label>("title");
-                Label packetRef = root.Q<Label>("packet-ref");
-                Label observabilityTitle = root.Q<Label>("observability-title");
-                Label demoSurfaceTitle = root.Q<Label>("demo-surface-title");
-                Label demoPolisState = root.Q<Label>("demo-polis-state");
-                Label demoOperatorBoundary = root.Q<Label>("demo-operator-boundary");
-                Label demoNextStep = root.Q<Label>("demo-next-step");
-
-                if (title == null ||
-                    packetRef == null ||
-                    observabilityTitle == null ||
-                    demoSurfaceTitle == null ||
-                    demoPolisState == null ||
-                    demoOperatorBoundary == null ||
-                    demoNextStep == null)
-                {
-                    throw new InvalidOperationException(
-                        "Unity Observatory flagship validation did not find the runtime shell, packet, observability, and polis handoff labels."
-                    );
-                }
-
-                if (!root.styleSheets.Contains(runtimeStyleSheet))
-                {
-                    throw new InvalidOperationException(
-                        "Unity Observatory flagship validation did not attach the runtime stylesheet to the root visual element."
-                    );
-                }
-
-                if (!demoOperatorBoundary.text.Contains("proposal-only", StringComparison.Ordinal))
-                {
-                    throw new InvalidOperationException(
-                        $"Unity Observatory flagship validation expected proposal-only demo boundary but observed '{demoOperatorBoundary.text}'."
-                    );
-                }
-
-                if (!demoNextStep.text.Contains("#4704", StringComparison.Ordinal))
-                {
-                    throw new InvalidOperationException(
-                        $"Unity Observatory flagship validation expected #4704 handoff marker but observed '{demoNextStep.text}'."
-                    );
-                }
-
+                UnityObservatoryFlagshipStageBuilder.ValidateFlagshipStage(scene);
                 Debug.Log(
-                    $"Unity Observatory flagship shell verification passed. scene={scene.name}; rootChildren={root.childCount}; title={title.text}; packetRef={packetRef.text}; observabilityTitle={observabilityTitle.text}; demoSurfaceTitle={demoSurfaceTitle.text}; polisState={demoPolisState.text}; demoBoundary={demoOperatorBoundary.text}; demoNextStep={demoNextStep.text}"
+                    $"Unity Observatory flagship shell verification passed. scene={scene.name}"
                 );
             }
             finally
@@ -307,6 +153,207 @@ namespace ADL.Demos.UnityObservatory.Editor
                     UnityEngine.Object.DestroyImmediate(shellObject);
                 }
             }
+        }
+
+        private static void ValidateUiToolkitShell(
+            GameObject shellObject,
+            StyleSheet runtimeStyleSheet
+        )
+        {
+            UIDocument document = shellObject.GetComponent<UIDocument>();
+            if (document == null)
+            {
+                throw new InvalidOperationException(
+                    "Unity Observatory validation did not attach UIDocument to the runtime shell."
+                );
+            }
+
+            if (document.panelSettings == null)
+            {
+                throw new InvalidOperationException(
+                    "Unity Observatory validation did not create runtime PanelSettings."
+                );
+            }
+
+            if (document.panelSettings.themeStyleSheet == null)
+            {
+                throw new InvalidOperationException(
+                    "Unity Observatory validation did not attach a runtime theme stylesheet."
+                );
+            }
+
+            VisualElement root = document.rootVisualElement;
+
+            if (root == null || root.childCount == 0)
+            {
+                throw new InvalidOperationException(
+                    "Unity Observatory validation built an empty root visual tree."
+                );
+            }
+
+            if (root.Q<Label>("title") == null)
+            {
+                throw new InvalidOperationException(
+                    "Unity Observatory validation did not find the title label in the built shell."
+                );
+            }
+
+            if (root.Q<Label>("packet-schema") == null || root.Q<Label>("packet-ref") == null)
+            {
+                throw new InvalidOperationException(
+                    "Unity Observatory validation did not find the packet contract labels in the built shell."
+                );
+            }
+
+            if (root.Q<Label>("observability-title") == null)
+            {
+                throw new InvalidOperationException(
+                    "Unity Observatory validation did not find the observability card in the built shell."
+                );
+            }
+
+            if (root.Q<Label>("demo-surface-title") == null ||
+                root.Q<Label>("demo-polis-state") == null ||
+                root.Q<Label>("demo-operator-boundary") == null ||
+                root.Q<Label>("demo-next-step") == null)
+            {
+                throw new InvalidOperationException(
+                    "Unity Observatory validation did not find the runtime polis demo-surface strip."
+                );
+            }
+
+            if (!root.styleSheets.Contains(runtimeStyleSheet))
+            {
+                throw new InvalidOperationException(
+                    "Unity Observatory validation did not attach the runtime stylesheet to the root visual element."
+                );
+            }
+
+            string title = root.Q<Label>("title")?.text ?? "unknown";
+            string packetRef = root.Q<Label>("packet-ref")?.text ?? "unknown";
+            string artifactRoot = root.Q<Label>("artifact-root")?.text ?? "unknown";
+            string reportRef = root.Q<Label>("report-ref")?.text ?? "unknown";
+            string packetNote = root.Q<Label>("packet-note")?.text ?? "unknown";
+            string demoOperatorBoundary =
+                root.Q<Label>("demo-operator-boundary")?.text ?? "unknown";
+            string demoNextStep = root.Q<Label>("demo-next-step")?.text ?? "unknown";
+
+            AssertContractExpectations(title, packetRef, artifactRoot, reportRef, packetNote);
+
+            if (!demoOperatorBoundary.Contains("proposal-only", StringComparison.Ordinal))
+            {
+                throw new InvalidOperationException(
+                    $"Unity Observatory validation expected proposal-only demo boundary but observed '{demoOperatorBoundary}'."
+                );
+            }
+
+            if (!demoNextStep.Contains("#4704", StringComparison.Ordinal))
+            {
+                throw new InvalidOperationException(
+                    $"Unity Observatory validation expected #4704 handoff marker but observed '{demoNextStep}'."
+                );
+            }
+        }
+
+        private static void ValidateCompatibilityCanvas(GameObject shellObject)
+        {
+            Canvas canvas = shellObject.GetComponent<Canvas>();
+            if (canvas == null)
+            {
+                throw new InvalidOperationException(
+                    "Unity Observatory validation expected the compatibility path to create a Canvas."
+                );
+            }
+
+            Transform panelTransform = shellObject.transform.Find("Observatory Compatibility Panel");
+            if (panelTransform == null)
+            {
+                throw new InvalidOperationException(
+                    "Unity Observatory validation did not create the compatibility panel."
+                );
+            }
+
+            UnityEngine.UI.Text text = panelTransform.GetComponentInChildren<UnityEngine.UI.Text>();
+            if (text == null || string.IsNullOrWhiteSpace(text.text))
+            {
+                throw new InvalidOperationException(
+                    "Unity Observatory validation did not create populated compatibility text."
+                );
+            }
+
+            string expectedTitle = Environment.GetEnvironmentVariable(ExpectedTitleEnvVar);
+            if (!string.IsNullOrWhiteSpace(expectedTitle) &&
+                !text.text.Contains(expectedTitle, StringComparison.Ordinal))
+            {
+                throw new InvalidOperationException(
+                    $"Unity Observatory validation expected compatibility text to contain title '{expectedTitle}'."
+                );
+            }
+
+            string expectedPacketRef = Environment.GetEnvironmentVariable(
+                ExpectedPacketRefEnvVar
+            );
+            if (!string.IsNullOrWhiteSpace(expectedPacketRef) &&
+                !text.text.Contains(expectedPacketRef, StringComparison.Ordinal))
+            {
+                throw new InvalidOperationException(
+                    $"Unity Observatory validation expected compatibility text to contain packet ref '{expectedPacketRef}'."
+                );
+            }
+        }
+
+        private static void AssertContractExpectations(
+            string title,
+            string packetRef,
+            string artifactRoot,
+            string reportRef,
+            string packetNote
+        )
+        {
+            AssertMatchesExpectation(
+                "title",
+                title,
+                Environment.GetEnvironmentVariable(ExpectedTitleEnvVar)
+            );
+            AssertMatchesExpectation(
+                "packet-ref",
+                packetRef,
+                Environment.GetEnvironmentVariable(ExpectedPacketRefEnvVar)
+            );
+            AssertMatchesExpectation(
+                "artifact-root",
+                artifactRoot,
+                Environment.GetEnvironmentVariable(ExpectedArtifactRootEnvVar)
+            );
+            AssertMatchesExpectation(
+                "report-ref",
+                reportRef,
+                Environment.GetEnvironmentVariable(ExpectedReportRefEnvVar)
+            );
+
+            string expectedEvidenceLevel = Environment.GetEnvironmentVariable(
+                ExpectedEvidenceLevelEnvVar
+            );
+            if (!string.IsNullOrWhiteSpace(expectedEvidenceLevel) &&
+                !packetNote.Contains(expectedEvidenceLevel, StringComparison.Ordinal))
+            {
+                throw new InvalidOperationException(
+                    $"Unity Observatory validation expected packet-note to contain '{expectedEvidenceLevel}' but observed '{packetNote}'."
+                );
+            }
+        }
+
+        private static void ValidateFlagshipScene()
+        {
+            if (!File.Exists(FlagshipScenePath))
+            {
+                throw new InvalidOperationException(
+                    $"Unity Observatory validation could not find submitted flagship scene at {FlagshipScenePath}."
+                );
+            }
+
+            Scene scene = EditorSceneManager.OpenScene(FlagshipScenePath);
+            UnityObservatoryFlagshipStageBuilder.ValidateFlagshipStage(scene);
         }
 
         private static UnityObservatoryBootstrap FindBootstrap(Scene scene)
@@ -367,6 +414,23 @@ namespace ADL.Demos.UnityObservatory.Editor
                 // Step the bounded coroutine to completion so the runtime shell is built
                 // under the same code path used by Play mode.
             }
+        }
+
+        private static bool UsesCompatibilityCanvas()
+        {
+            MethodInfo method = typeof(UnityObservatoryBootstrap).GetMethod(
+                "ShouldUseCompatibilityCanvas",
+                BindingFlags.NonPublic | BindingFlags.Static
+            );
+            if (method == null)
+            {
+                throw new MissingMethodException(
+                    typeof(UnityObservatoryBootstrap).FullName,
+                    "ShouldUseCompatibilityCanvas"
+                );
+            }
+
+            return (bool)method.Invoke(null, null);
         }
     }
 }

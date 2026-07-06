@@ -19,7 +19,7 @@ planning surfaces, not implementation closeout records.
 
 WP-01 must reconcile these feature contracts with `v0.91.5` release-tail
 closeout, the `v0.91.5` activation-test map, the `v0.91.6` / `v0.91.7`
-bridge tranches, and `#3377` before opening the final issue wave.
+readiness/proof tranches, and `#3377` before opening the final issue wave.
 
 ## Template Rules
 
@@ -56,7 +56,7 @@ milestone README, WBS, sprint plan, and candidate issue wave.
 
 1. WP-01 reviews this index and the linked feature docs.
 2. WP-01 reconciles them with `v0.91.5` release-tail closeout, the
-   activation-test map, the `v0.91.6` / `v0.91.7` bridge tranches, and
+   activation-test map, the `v0.91.6` readiness tranche, the `v0.91.7` implementation/proof tranche, and
    `#3377`.
 3. WP-01 opens or adjusts implementation issues.
 4. Later WPs update feature docs only with landed evidence.

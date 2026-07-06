@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+  <key>Label</key>
+  <string>com.agentlogic.csm.wp07-4903</string>
+  <key>ProgramArguments</key>
+  <array>
+    <string><repo>/adl/target/debug/csm</string>
+    <string>daemon</string>
+    <string>--spec</string>
+    <string><repo>/docs/milestones/v0.91.7/review/runtime/csm_service_4903/agent.yaml</string>
+    <string>--max-restarts</string>
+    <string>10</string>
+    <string>--checkpoint-interval-secs</string>
+    <string>1</string>
+    <string>--json</string>
+    <string>--recover-stale-lease</string>
+  </array>
+  <key>KeepAlive</key>
+  <true/>
+  <key>RunAtLoad</key>
+  <true/>
+  <key>StandardOutPath</key>
+  <string><repo>/docs/milestones/v0.91.7/review/runtime/csm_service_4903/service/logs/csm.stdout.log</string>
+  <key>StandardErrorPath</key>
+  <string><repo>/docs/milestones/v0.91.7/review/runtime/csm_service_4903/service/logs/csm.stderr.log</string>
+  <key>EnvironmentVariables</key>
+  <dict>
+    <key>ADL_OBSERVABILITY_LOG</key>
+    <string><repo>/docs/milestones/v0.91.7/review/runtime/csm_service_4903/service/logs/observability.log</string>
+    <key>ADL_OBSERVABILITY_STDERR</key>
+    <string>0</string>
+    <key>ADL_OTEL_LOG</key>
+    <string><repo>/docs/milestones/v0.91.7/review/runtime/csm_service_4903/service/logs/otel.jsonl</string>
+    <key>ADL_OTEL_STATUS</key>
+    <string><repo>/docs/milestones/v0.91.7/review/runtime/csm_service_4903/service/logs/otel_status.json</string>
+  </dict>
+</dict>
+</plist>

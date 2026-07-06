@@ -1159,7 +1159,9 @@ EOF
     used_validation_manager=false
     if [ "$release_version_only" != true ] && [ "$pvf_slow_proof_policy_change" != true ]; then
       if load_validation_manager_profile; then
-        if [ "$saw_pr_finish_control_plane" != true ] && [ "$saw_full_coverage_policy_surface" != true ] && [ "$saw_v0913_proof_surface" != true ] && apply_validation_manager_routing; then
+        if [ "$saw_pr_finish_control_plane" = true ] && [ "$validation_profile_status" = "escalation_required" ] && ! manager_profile_is_release_gate_only_escalation && apply_validation_manager_routing; then
+          used_validation_manager=true
+        elif [ "$saw_pr_finish_control_plane" != true ] && [ "$saw_full_coverage_policy_surface" != true ] && [ "$saw_v0913_proof_surface" != true ] && apply_validation_manager_routing; then
           used_validation_manager=true
         fi
       elif [ -n "$validation_profile_error" ]; then

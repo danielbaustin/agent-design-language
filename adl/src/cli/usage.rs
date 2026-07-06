@@ -4,11 +4,11 @@ pub fn usage() -> &'static str {
   adl resume <run_id> [--steer <steering.json>]
   adl agent tick --spec <agent-spec.yaml> [--recover-stale-lease] [--json]
   adl agent run --spec <agent-spec.yaml> --max-cycles <n> [--interval-secs <n>] [--no-sleep] [--recover-stale-lease] [--json]
-  adl agent daemon --spec <agent-spec.yaml> [--max-restarts <n>] [--checkpoint-interval-secs <n>] [--interval-secs <n>] [--no-sleep] [--recover-stale-lease] [--json]
   adl agent status --spec <agent-spec.yaml> [--json]
   adl agent inspect --spec <agent-spec.yaml> [--cycle <cycle-id>] [--json]
   adl agent stop --spec <agent-spec.yaml> --reason <text> [--json]
   adl artifact validate-control-path --root <dir>
+  csm daemon --spec <agent-spec.yaml> [--max-restarts <n>] [--checkpoint-interval-secs <n>] [--interval-secs <n>] [--no-sleep] [--recover-stale-lease] [--json]
   adl csm observatory --packet <visibility-packet.json> [--format bundle|json|report] [--out <dir>]
   adl demo <name> [--print-plan] [--trace] [--run] [--out <dir>] [--quiet] [--open] [--no-open]
   adl identity init --name <display-name> --birthday <rfc3339> --timezone <IANA> [--agent-id <id>] [--created-by <name>] [--force]
@@ -94,7 +94,7 @@ Examples:
   adl resume hitl-pause-seq --steer artifacts/examples/steer.json
   adl agent tick --spec .adl/long_lived_agents/example-agent.yaml
   adl agent run --spec .adl/long_lived_agents/example-agent.yaml --max-cycles 3 --no-sleep
-  adl agent daemon --spec .adl/long_lived_agents/example-agent.yaml --checkpoint-interval-secs 3 --json
+  csm daemon --spec .adl/long_lived_agents/example-agent.yaml --checkpoint-interval-secs 3 --json
   adl agent status --spec .adl/long_lived_agents/example-agent.yaml --json
   adl agent inspect --spec .adl/long_lived_agents/example-agent.yaml --json
   adl agent stop --spec .adl/long_lived_agents/example-agent.yaml --reason \"operator pause\"

@@ -24,8 +24,8 @@ checks needed for a truthful v0.92 closeout.
 - [ ] Milestone goal reviewed against the identity, continuity, and birthday
   allocation.
 - [ ] `v0.91.5` release-tail closeout, the activation-test map, and the
-  `v0.91.6` / `v0.91.7` bridge tranches are consumed.
-- [ ] `#3377` first-birthday readiness packet consumed or explicitly routed.
+  `v0.91.6` readiness tranche and `v0.91.7` implementation/proof tranche are consumed.
+- [ ] `#3377` first-birthday readiness packet consumed or blocked with evidence.
 - [ ] WBS converted from candidate allocation into concrete WPs.
 - [ ] Issue wave authored and opened.
 - [ ] Cards reviewed for concrete outputs and non-goals.
@@ -95,7 +95,7 @@ checks needed for a truthful v0.92 closeout.
 
 - [ ] v0.93 handoff accepted or routed.
 - [ ] Deferred findings are linked to follow-on issues or backlog entries.
-- [ ] Release ceremony notes record residual risks.
+- [ ] Release ceremony notes record evidence-backed blockers and scoped-out surfaces.
 
 ## Exit Criteria
 
