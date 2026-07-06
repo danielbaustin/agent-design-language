@@ -12,8 +12,9 @@ mod aws_remote_validation;
 mod observability;
 
 use aws_remote_validation::{
-    run_aws_remote_validation, write_summary_artifacts, AwsRemoteValidationConfig,
-    LiveAwsRemoteValidationAdapter, RemoteRunStatus,
+    run_aws_remote_validation, write_summary_artifacts, AwsRemoteResilienceFaultClass,
+    AwsRemoteValidationConfig, AwsRemoteValidationSummary, LiveAwsRemoteValidationAdapter,
+    RemoteRunStatus,
 };
 use observability::ProgressHeartbeat;
 
@@ -43,6 +44,22 @@ struct ResumeState {
     attempts: Vec<ResumeAttemptRecord>,
     next_action: String,
     final_status: Option<String>,
+}
+
+fn should_retry_remote_validation(
+    summary: &AwsRemoteValidationSummary,
+    provider_interruption_confirmed: bool,
+    attempt_index: u32,
+    max_retries: u32,
+) -> bool {
+    if attempt_index >= max_retries || !summary.resilience.retryable {
+        return false;
+    }
+    if summary.resilience.fault_class == AwsRemoteResilienceFaultClass::SpotInterrupted {
+        return matches!(summary.status, RemoteRunStatus::InterruptedByAws)
+            && provider_interruption_confirmed;
+    }
+    true
 }
 
 struct EnvVarGuard {
@@ -631,9 +648,12 @@ fn main() -> Result<()> {
                     .map(|launch| launch.instance_id.clone()),
                 provider_interruption_confirmed,
             });
-            let should_retry = matches!(summary.status, RemoteRunStatus::InterruptedByAws)
-                && provider_interruption_confirmed
-                && attempt_index < max_spot_retries;
+            let should_retry = should_retry_remote_validation(
+                &summary,
+                provider_interruption_confirmed,
+                attempt_index,
+                max_spot_retries,
+            );
             if should_retry {
                 resume_state.next_action =
                     format!("retry_after_interruption_{}", attempt_index + 1);
@@ -680,6 +700,109 @@ fn main() -> Result<()> {
 #[cfg(test)]
 mod tests {
     use super::*;
+
+    fn retry_summary(
+        status: RemoteRunStatus,
+        fault_class: AwsRemoteResilienceFaultClass,
+        retryable: bool,
+    ) -> AwsRemoteValidationSummary {
+        AwsRemoteValidationSummary {
+            schema_version: "adl.aws_remote_validation_run.v1".to_string(),
+            issue: Some(4782),
+            run_id: "retry-test".to_string(),
+            status,
+            region: "us-west-2".to_string(),
+            profile: Some("agent-logic-admin".to_string()),
+            started_at: "2026-07-06T00:00:00Z".to_string(),
+            finished_at: "2026-07-06T00:00:01Z".to_string(),
+            account_identity: None,
+            quota_snapshot: aws_remote_validation::QuotaSnapshot {
+                spot_vcpu_quota: Some(32.0),
+                on_demand_vcpu_quota: Some(64.0),
+                notes: vec![],
+            },
+            attempts: vec![],
+            launch: None,
+            cache_volume: None,
+            command: None,
+            cleanup: aws_remote_validation::CleanupRecord {
+                termination_attempted: false,
+                final_instance_state: None,
+                termination_error: None,
+            },
+            launch_surface: None,
+            launch_surface_cleanup: None,
+            resilience: aws_remote_validation::AwsRemoteResilienceRecord {
+                schema_version: "adl.aws_remote_validation.resilience.v1".to_string(),
+                policy: aws_remote_validation::AwsRemoteResiliencePolicyRecord {
+                    policy_id: "test".to_string(),
+                    max_launch_attempts: 2,
+                    spot_fallback_enabled: true,
+                    cleanup_required: true,
+                    cost_evidence_required: true,
+                    retryable_classes: vec![fault_class.clone()],
+                    operator_gated_classes: vec![],
+                },
+                fault_class,
+                disposition: aws_remote_validation::AwsRemoteResilienceDisposition::Retryable,
+                retryable,
+                cleanup_recorded: true,
+                cleanup_complete: true,
+                cost_evidence_recorded: false,
+                summary: "retry test".to_string(),
+                evidence_refs: vec![],
+                operator_action: None,
+            },
+            spot_termination_evidence: None,
+            timings: aws_remote_validation::TimingRecord {
+                total_seconds: 1,
+                launch_seconds: 0,
+                ssm_ready_seconds: None,
+                remote_command_seconds: None,
+                teardown_seconds: None,
+            },
+            remote_summary: None,
+            cost_explorer: None,
+            budget_snapshot: None,
+            expected_max_cost_usd: None,
+            artifact_dir: "artifacts".to_string(),
+            event_log_path: "events.jsonl".to_string(),
+            non_claims: vec![],
+            failure_reason: Some("retry fixture".to_string()),
+        }
+    }
+
+    #[test]
+    fn retry_decision_uses_retryable_resilience_classes() {
+        let summary = retry_summary(
+            RemoteRunStatus::Failed,
+            AwsRemoteResilienceFaultClass::SsmUnavailable,
+            true,
+        );
+        assert!(should_retry_remote_validation(&summary, false, 0, 2));
+        assert!(!should_retry_remote_validation(&summary, false, 2, 2));
+    }
+
+    #[test]
+    fn retry_decision_requires_confirmed_provider_interruption_for_spot() {
+        let summary = retry_summary(
+            RemoteRunStatus::InterruptedByAws,
+            AwsRemoteResilienceFaultClass::SpotInterrupted,
+            true,
+        );
+        assert!(!should_retry_remote_validation(&summary, false, 0, 2));
+        assert!(should_retry_remote_validation(&summary, true, 0, 2));
+    }
+
+    #[test]
+    fn retry_decision_stops_operator_gated_failures() {
+        let summary = retry_summary(
+            RemoteRunStatus::Failed,
+            AwsRemoteResilienceFaultClass::AuthPermissionFailure,
+            false,
+        );
+        assert!(!should_retry_remote_validation(&summary, false, 0, 2));
+    }
 
     fn parse_ok(args: &[&str]) -> ParsedArgs {
         parse_args(

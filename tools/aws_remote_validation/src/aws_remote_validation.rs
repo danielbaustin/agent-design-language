@@ -144,7 +144,13 @@ impl AwsRemoteValidationConfig {
             || self.cache_volume_throughput_mbps.is_some()
             || self.cache_volume_device_name.is_some()
             || self.cache_volume_mount_path.is_some();
-        if cache_volume_enabled && self.cache_volume_name.as_deref().unwrap_or("").trim().is_empty()
+        if cache_volume_enabled
+            && self
+                .cache_volume_name
+                .as_deref()
+                .unwrap_or("")
+                .trim()
+                .is_empty()
         {
             return Err(anyhow!(
                 "cache_volume_name is required when cache-volume options are set"
@@ -289,6 +295,58 @@ pub struct LaunchSurfaceCleanupRecord {
     pub notes: Vec<String>,
 }
 
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
+#[serde(rename_all = "snake_case")]
+pub enum AwsRemoteResilienceFaultClass {
+    None,
+    QuotaBlocked,
+    CapacityUnavailable,
+    AuthPermissionFailure,
+    TransientNetwork,
+    SsmUnavailable,
+    SpotInterrupted,
+    RemoteCommandFailure,
+    CleanupPartialFailure,
+    Unknown,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
+#[serde(rename_all = "snake_case")]
+pub enum AwsRemoteResilienceDisposition {
+    Succeeded,
+    Retryable,
+    Terminal,
+    OperatorActionRequired,
+    Interrupted,
+    CleanupReviewRequired,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
+pub struct AwsRemoteResiliencePolicyRecord {
+    pub policy_id: String,
+    pub max_launch_attempts: u32,
+    pub spot_fallback_enabled: bool,
+    pub cleanup_required: bool,
+    pub cost_evidence_required: bool,
+    pub retryable_classes: Vec<AwsRemoteResilienceFaultClass>,
+    pub operator_gated_classes: Vec<AwsRemoteResilienceFaultClass>,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
+pub struct AwsRemoteResilienceRecord {
+    pub schema_version: String,
+    pub policy: AwsRemoteResiliencePolicyRecord,
+    pub fault_class: AwsRemoteResilienceFaultClass,
+    pub disposition: AwsRemoteResilienceDisposition,
+    pub retryable: bool,
+    pub cleanup_recorded: bool,
+    pub cleanup_complete: bool,
+    pub cost_evidence_recorded: bool,
+    pub summary: String,
+    pub evidence_refs: Vec<String>,
+    pub operator_action: Option<String>,
+}
+
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
 pub struct SpotTerminationEvidence {
     pub instance_id: String,
@@ -357,6 +415,7 @@ pub struct AwsRemoteValidationSummary {
     pub cleanup: CleanupRecord,
     pub launch_surface: Option<LaunchSurfaceRecord>,
     pub launch_surface_cleanup: Option<LaunchSurfaceCleanupRecord>,
+    pub resilience: AwsRemoteResilienceRecord,
     pub spot_termination_evidence: Option<SpotTerminationEvidence>,
     pub timings: TimingRecord,
     pub remote_summary: Option<RemoteCommandSummary>,
@@ -401,6 +460,191 @@ fn is_valid_spot_interruption_notice(notice: Option<&str>) -> bool {
 fn remote_summary_reports_valid_interruption(summary: &RemoteCommandSummary) -> bool {
     summary.interruption_detected
         && is_valid_spot_interruption_notice(summary.interruption_notice.as_deref())
+}
+
+fn remote_resilience_policy(config: &AwsRemoteValidationConfig) -> AwsRemoteResiliencePolicyRecord {
+    AwsRemoteResiliencePolicyRecord {
+        policy_id: "adl.aws_remote_validation.resilience.v1".to_string(),
+        max_launch_attempts: (config.instance_types.len() as u32).saturating_mul(2),
+        spot_fallback_enabled: true,
+        cleanup_required: true,
+        cost_evidence_required: true,
+        retryable_classes: vec![
+            AwsRemoteResilienceFaultClass::CapacityUnavailable,
+            AwsRemoteResilienceFaultClass::TransientNetwork,
+            AwsRemoteResilienceFaultClass::SsmUnavailable,
+            AwsRemoteResilienceFaultClass::Unknown,
+        ],
+        operator_gated_classes: vec![
+            AwsRemoteResilienceFaultClass::QuotaBlocked,
+            AwsRemoteResilienceFaultClass::AuthPermissionFailure,
+            AwsRemoteResilienceFaultClass::CleanupPartialFailure,
+        ],
+    }
+}
+
+fn classify_aws_remote_failure(
+    status: &RemoteRunStatus,
+    attempts: &[AttemptRecord],
+    cleanup: &CleanupRecord,
+    failure_reason: Option<&str>,
+    remote_summary: Option<&RemoteCommandSummary>,
+    cost_explorer: Option<&CostExplorerSnapshot>,
+    budget_snapshot: Option<&BudgetSnapshot>,
+    config: &AwsRemoteValidationConfig,
+) -> AwsRemoteResilienceRecord {
+    let launched_resource = attempts.iter().any(|attempt| attempt.status == "launched");
+    let cleanup_recorded = cleanup.termination_attempted || !launched_resource;
+    let cleanup_complete = if !launched_resource {
+        true
+    } else {
+        cleanup.termination_error.is_none()
+            && cleanup
+                .final_instance_state
+                .as_deref()
+                .is_some_and(|state| state.eq_ignore_ascii_case("terminated"))
+    };
+    let cost_evidence_recorded = cost_explorer.is_some() || budget_snapshot.is_some();
+    let failure_text = attempts
+        .iter()
+        .map(|attempt| attempt.message.as_str())
+        .chain(failure_reason.into_iter())
+        .collect::<Vec<_>>()
+        .join(" ")
+        .to_ascii_lowercase();
+    let mut evidence_refs = vec![
+        "attempts".to_string(),
+        "cleanup".to_string(),
+        "timings".to_string(),
+    ];
+    if cost_evidence_recorded {
+        evidence_refs.push("cost_or_budget".to_string());
+    }
+    if remote_summary.is_some() {
+        evidence_refs.push("remote_summary".to_string());
+    }
+
+    let (fault_class, disposition, retryable, operator_action, summary) = if !cleanup_complete {
+        (
+            AwsRemoteResilienceFaultClass::CleanupPartialFailure,
+            AwsRemoteResilienceDisposition::CleanupReviewRequired,
+            false,
+            Some(
+                "inspect termination_error/final_instance_state before launching another paid run"
+                    .to_string(),
+            ),
+            "cleanup did not reach a complete terminated state; resource state is recorded for review"
+                .to_string(),
+        )
+    } else if matches!(status, RemoteRunStatus::Passed) {
+        (
+            AwsRemoteResilienceFaultClass::None,
+            AwsRemoteResilienceDisposition::Succeeded,
+            false,
+            None,
+            "remote validation completed and cleanup evidence was recorded".to_string(),
+        )
+    } else if matches!(status, RemoteRunStatus::InterruptedByAws) {
+        (
+            AwsRemoteResilienceFaultClass::SpotInterrupted,
+            AwsRemoteResilienceDisposition::Interrupted,
+            true,
+            None,
+            "AWS Spot interruption was classified separately from implementation failure"
+                .to_string(),
+        )
+    } else if failure_text.contains("maxspotinstancecountexceeded")
+        || failure_text.contains("vcpu limit")
+        || failure_text.contains("vCPU limit")
+        || failure_text.contains("quota")
+        || failure_text.contains("limitexceeded")
+    {
+        (
+            AwsRemoteResilienceFaultClass::QuotaBlocked,
+            AwsRemoteResilienceDisposition::OperatorActionRequired,
+            false,
+            Some("request quota or choose a smaller validation shape before retrying".to_string()),
+            "AWS quota or account limit blocked the remote-builder attempt".to_string(),
+        )
+    } else if failure_text.contains("insufficientinstancecapacity")
+        || failure_text.contains("unfulfillablecapacity")
+        || failure_text.contains("spotmaxpricetoolow")
+        || failure_text.contains("capacity")
+    {
+        (
+            AwsRemoteResilienceFaultClass::CapacityUnavailable,
+            AwsRemoteResilienceDisposition::Retryable,
+            true,
+            None,
+            "AWS capacity was unavailable; retry may use fallback or a different instance type"
+                .to_string(),
+        )
+    } else if failure_text.contains("unauthorized")
+        || failure_text.contains("accessdenied")
+        || failure_text.contains("auth")
+        || failure_text.contains("permission")
+        || failure_text.contains("not authorized")
+    {
+        (
+            AwsRemoteResilienceFaultClass::AuthPermissionFailure,
+            AwsRemoteResilienceDisposition::OperatorActionRequired,
+            false,
+            Some("fix Agent Logic AWS permissions or account binding before retrying".to_string()),
+            "AWS authentication or permission failure requires operator action".to_string(),
+        )
+    } else if failure_text.contains("ssm") {
+        (
+            AwsRemoteResilienceFaultClass::SsmUnavailable,
+            AwsRemoteResilienceDisposition::Retryable,
+            true,
+            None,
+            "SSM readiness or command dispatch failed and is classified separately".to_string(),
+        )
+    } else if failure_text.contains("timeout")
+        || failure_text.contains("timed out")
+        || failure_text.contains("network")
+        || failure_text.contains("connection")
+        || failure_text.contains("temporar")
+    {
+        (
+            AwsRemoteResilienceFaultClass::TransientNetwork,
+            AwsRemoteResilienceDisposition::Retryable,
+            true,
+            None,
+            "transient network or timeout failure is retryable within the bounded policy"
+                .to_string(),
+        )
+    } else if remote_summary.is_some() {
+        (
+            AwsRemoteResilienceFaultClass::RemoteCommandFailure,
+            AwsRemoteResilienceDisposition::Terminal,
+            false,
+            Some("inspect remote command stdout/stderr artifacts before retrying".to_string()),
+            "remote command failed after infrastructure setup succeeded".to_string(),
+        )
+    } else {
+        (
+            AwsRemoteResilienceFaultClass::Unknown,
+            AwsRemoteResilienceDisposition::Retryable,
+            true,
+            None,
+            "remote-builder failure was recorded but did not match a narrower class".to_string(),
+        )
+    };
+
+    AwsRemoteResilienceRecord {
+        schema_version: "adl.aws_remote_validation.resilience.v1".to_string(),
+        policy: remote_resilience_policy(config),
+        fault_class,
+        disposition,
+        retryable,
+        cleanup_recorded,
+        cleanup_complete,
+        cost_evidence_recorded,
+        summary,
+        evidence_refs,
+        operator_action,
+    }
 }
 
 #[derive(Debug, Clone, Serialize)]
@@ -991,7 +1235,45 @@ pub async fn run_aws_remote_validation<A: AwsRemoteValidationAdapter>(
     {
         status = RemoteRunStatus::Passed;
     }
+    let launched_resource = attempts.iter().any(|attempt| attempt.status == "launched");
+    let cleanup_complete = if !launched_resource {
+        true
+    } else {
+        cleanup.termination_error.is_none()
+            && cleanup
+                .final_instance_state
+                .as_deref()
+                .is_some_and(|state| state.eq_ignore_ascii_case("terminated"))
+    };
+    if !cleanup_complete {
+        status = RemoteRunStatus::Failed;
+        let cleanup_detail = cleanup
+            .termination_error
+            .as_deref()
+            .or(cleanup.final_instance_state.as_deref())
+            .unwrap_or("unknown cleanup state");
+        failure_reason = Some(format!(
+            "cleanup did not reach a complete terminated state: {cleanup_detail}"
+        ));
+        record_event(
+            &mut events,
+            "cleanup",
+            "failed",
+            "cleanup did not reach a complete terminated state; failing remote validation"
+                .to_string(),
+        );
+    }
     let finished_at = Utc::now();
+    let resilience = classify_aws_remote_failure(
+        &status,
+        &attempts,
+        &cleanup,
+        failure_reason.as_deref(),
+        remote_summary.as_ref(),
+        cost_explorer.as_ref(),
+        budget_snapshot.as_ref(),
+        config,
+    );
     let summary = AwsRemoteValidationSummary {
         schema_version: "adl.aws_remote_validation_run.v1".to_string(),
         issue: config.issue,
@@ -1010,6 +1292,7 @@ pub async fn run_aws_remote_validation<A: AwsRemoteValidationAdapter>(
         cleanup,
         launch_surface: None,
         launch_surface_cleanup: None,
+        resilience,
         spot_termination_evidence,
         timings: TimingRecord {
             total_seconds: total_timer.elapsed().as_secs(),
@@ -1509,7 +1792,12 @@ impl LiveAwsRemoteValidationAdapter {
             .tag_specifications(
                 ec2::types::TagSpecification::builder()
                     .resource_type(ec2::types::ResourceType::Volume)
-                    .tags(ec2::types::Tag::builder().key("Name").value(&request.name).build())
+                    .tags(
+                        ec2::types::Tag::builder()
+                            .key("Name")
+                            .value(&request.name)
+                            .build(),
+                    )
                     .build(),
             );
         if let Some(iops) = request.iops {
@@ -2073,7 +2361,10 @@ impl LiveAwsRemoteValidationAdapter {
             let availability_zone = subnet_entry
                 .availability_zone()
                 .ok_or_else(|| {
-                    anyhow!("subnet '{}' did not report an availability zone", config.subnet_id)
+                    anyhow!(
+                        "subnet '{}' did not report an availability zone",
+                        config.subnet_id
+                    )
                 })?
                 .to_string();
             return Ok((vpc_id, config.subnet_id.clone(), availability_zone, notes));
@@ -3236,13 +3527,31 @@ mod tests {
             }),
             terminate_result: Ok(()),
             final_state: Ok(Some("terminated".to_string())),
-            cost: None,
+            cost: Some(CostExplorerSnapshot {
+                start: "2026-07-01".to_string(),
+                end: "2026-07-06".to_string(),
+                service: "Amazon Elastic Compute Cloud - Compute".to_string(),
+                amount: Some("0.03".to_string()),
+                unit: Some("USD".to_string()),
+                delayed_billing_boundary: true,
+                note: "fixture observed cost evidence".to_string(),
+            }),
             budget: None,
         };
         let (summary, events) = run_aws_remote_validation(&adapter, &sample_config(&tmp))
             .await
             .expect("summary");
         assert_eq!(summary.status, RemoteRunStatus::Passed);
+        assert_eq!(
+            summary.resilience.fault_class,
+            AwsRemoteResilienceFaultClass::None
+        );
+        assert_eq!(
+            summary.resilience.disposition,
+            AwsRemoteResilienceDisposition::Succeeded
+        );
+        assert!(summary.resilience.cleanup_complete);
+        assert!(summary.resilience.cost_evidence_recorded);
         assert_eq!(
             summary
                 .launch
@@ -3325,6 +3634,244 @@ mod tests {
     }
 
     #[tokio::test]
+    async fn remote_validation_classifies_quota_blockers_as_operator_gated() {
+        let tmp = std::env::temp_dir().join(format!(
+            "adl-aws-remote-validation-quota-{}",
+            std::process::id()
+        ));
+        let adapter = FakeAdapter {
+            quota: QuotaSnapshot {
+                spot_vcpu_quota: Some(0.0),
+                on_demand_vcpu_quota: Some(0.0),
+                notes: vec!["quota fixture".to_string()],
+            },
+            identity: AwsAccountIdentity {
+                account_id: Some("123456789012".to_string()),
+                account_id_sha256: Some("hash".to_string()),
+                arn: None,
+                user_id: None,
+            },
+            launch_results: Mutex::new(VecDeque::from(vec![Err(AwsAdapterError {
+                code: Some("MaxSpotInstanceCountExceeded".to_string()),
+                message: "MaxSpotInstanceCountExceeded: vCPU limit exceeded".to_string(),
+                spot_fallback_permitted: false,
+            })])),
+            ssm_ready: Ok(SsmReadyResult {
+                status: "Online".to_string(),
+            }),
+            command_result: Ok(CommandExecutionResult {
+                command_id: "cmd-unused".to_string(),
+                status: "Success".to_string(),
+                response_code: Some(0),
+                stdout: String::new(),
+                stderr: String::new(),
+            }),
+            terminate_result: Ok(()),
+            final_state: Ok(Some("terminated".to_string())),
+            cost: None,
+            budget: None,
+        };
+
+        let (summary, _) = run_aws_remote_validation(&adapter, &sample_config(&tmp))
+            .await
+            .expect("summary");
+
+        assert_eq!(summary.status, RemoteRunStatus::Failed);
+        assert_eq!(
+            summary.resilience.fault_class,
+            AwsRemoteResilienceFaultClass::QuotaBlocked
+        );
+        assert_eq!(
+            summary.resilience.disposition,
+            AwsRemoteResilienceDisposition::OperatorActionRequired
+        );
+        assert!(!summary.resilience.retryable);
+        assert!(summary.resilience.cleanup_recorded);
+        assert!(summary.resilience.cleanup_complete);
+        assert!(summary.resilience.operator_action.is_some());
+    }
+
+    #[tokio::test]
+    async fn remote_validation_classifies_ssm_failures_as_retryable() {
+        let tmp = std::env::temp_dir().join(format!(
+            "adl-aws-remote-validation-ssm-{}",
+            std::process::id()
+        ));
+        let adapter = FakeAdapter {
+            quota: QuotaSnapshot {
+                spot_vcpu_quota: Some(32.0),
+                on_demand_vcpu_quota: Some(64.0),
+                notes: vec![],
+            },
+            identity: AwsAccountIdentity {
+                account_id: Some("123456789012".to_string()),
+                account_id_sha256: Some("hash".to_string()),
+                arn: None,
+                user_id: None,
+            },
+            launch_results: Mutex::new(VecDeque::from(vec![Ok(LaunchResult {
+                instance_id: "i-ssm-timeout".to_string(),
+                initial_state: "pending".to_string(),
+                cache_volume: None,
+            })])),
+            ssm_ready: Err(AwsAdapterError {
+                code: Some("SsmError".to_string()),
+                message: "SSM online wait timed out".to_string(),
+                spot_fallback_permitted: false,
+            }),
+            command_result: Ok(CommandExecutionResult {
+                command_id: "cmd-unused".to_string(),
+                status: "Success".to_string(),
+                response_code: Some(0),
+                stdout: String::new(),
+                stderr: String::new(),
+            }),
+            terminate_result: Ok(()),
+            final_state: Ok(Some("terminated".to_string())),
+            cost: None,
+            budget: None,
+        };
+
+        let (summary, _) = run_aws_remote_validation(&adapter, &sample_config(&tmp))
+            .await
+            .expect("summary");
+
+        assert_eq!(summary.status, RemoteRunStatus::Failed);
+        assert_eq!(
+            summary.resilience.fault_class,
+            AwsRemoteResilienceFaultClass::SsmUnavailable
+        );
+        assert_eq!(
+            summary.resilience.disposition,
+            AwsRemoteResilienceDisposition::Retryable
+        );
+        assert!(summary.resilience.retryable);
+        assert!(summary.resilience.cleanup_complete);
+    }
+
+    #[tokio::test]
+    async fn remote_validation_classifies_auth_permission_failures_as_operator_gated() {
+        let tmp = std::env::temp_dir().join(format!(
+            "adl-aws-remote-validation-auth-{}",
+            std::process::id()
+        ));
+        let adapter = FakeAdapter {
+            quota: QuotaSnapshot {
+                spot_vcpu_quota: Some(32.0),
+                on_demand_vcpu_quota: Some(64.0),
+                notes: vec![],
+            },
+            identity: AwsAccountIdentity {
+                account_id: Some("123456789012".to_string()),
+                account_id_sha256: Some("hash".to_string()),
+                arn: None,
+                user_id: None,
+            },
+            launch_results: Mutex::new(VecDeque::from(vec![Err(AwsAdapterError {
+                code: Some("UnauthorizedOperation".to_string()),
+                message: "UnauthorizedOperation: not authorized to RunInstances".to_string(),
+                spot_fallback_permitted: false,
+            })])),
+            ssm_ready: Ok(SsmReadyResult {
+                status: "Online".to_string(),
+            }),
+            command_result: Ok(CommandExecutionResult {
+                command_id: "cmd-unused".to_string(),
+                status: "Success".to_string(),
+                response_code: Some(0),
+                stdout: String::new(),
+                stderr: String::new(),
+            }),
+            terminate_result: Ok(()),
+            final_state: Ok(Some("terminated".to_string())),
+            cost: None,
+            budget: None,
+        };
+
+        let (summary, _) = run_aws_remote_validation(&adapter, &sample_config(&tmp))
+            .await
+            .expect("summary");
+
+        assert_eq!(summary.status, RemoteRunStatus::Failed);
+        assert_eq!(
+            summary.resilience.fault_class,
+            AwsRemoteResilienceFaultClass::AuthPermissionFailure
+        );
+        assert_eq!(
+            summary.resilience.disposition,
+            AwsRemoteResilienceDisposition::OperatorActionRequired
+        );
+        assert!(!summary.resilience.retryable);
+        assert!(summary.resilience.operator_action.is_some());
+    }
+
+    #[tokio::test]
+    async fn remote_validation_records_cleanup_partial_failure_even_after_command_success() {
+        let tmp = std::env::temp_dir().join(format!(
+            "adl-aws-remote-validation-cleanup-{}",
+            std::process::id()
+        ));
+        let stdout = "ADL_AWS_REMOTE_SUMMARY_BEGIN\n{\"status\":\"passed\",\"bootstrap_seconds\":1,\"command_seconds\":2,\"interruption_detected\":false,\"interruption_notice\":null,\"resolved_commit\":\"abc\",\"rustc_version\":null,\"cargo_version\":null,\"sccache_version\":null,\"sccache_degraded\":false,\"sccache_degraded_reason\":null,\"sccache_stats\":null}\nADL_AWS_REMOTE_SUMMARY_END\n";
+        let adapter = FakeAdapter {
+            quota: QuotaSnapshot {
+                spot_vcpu_quota: Some(32.0),
+                on_demand_vcpu_quota: Some(64.0),
+                notes: vec![],
+            },
+            identity: AwsAccountIdentity {
+                account_id: Some("123456789012".to_string()),
+                account_id_sha256: Some("hash".to_string()),
+                arn: None,
+                user_id: None,
+            },
+            launch_results: Mutex::new(VecDeque::from(vec![Ok(LaunchResult {
+                instance_id: "i-cleanup".to_string(),
+                initial_state: "pending".to_string(),
+                cache_volume: None,
+            })])),
+            ssm_ready: Ok(SsmReadyResult {
+                status: "Online".to_string(),
+            }),
+            command_result: Ok(CommandExecutionResult {
+                command_id: "cmd-cleanup".to_string(),
+                status: "Success".to_string(),
+                response_code: Some(0),
+                stdout: stdout.to_string(),
+                stderr: String::new(),
+            }),
+            terminate_result: Err(AwsAdapterError {
+                code: Some("Ec2Error".to_string()),
+                message: "temporary terminate-instance network failure".to_string(),
+                spot_fallback_permitted: false,
+            }),
+            final_state: Ok(Some("running".to_string())),
+            cost: None,
+            budget: None,
+        };
+
+        let (summary, _) = run_aws_remote_validation(&adapter, &sample_config(&tmp))
+            .await
+            .expect("summary");
+
+        assert_eq!(summary.status, RemoteRunStatus::Failed);
+        assert_eq!(
+            summary.resilience.fault_class,
+            AwsRemoteResilienceFaultClass::CleanupPartialFailure
+        );
+        assert_eq!(
+            summary.resilience.disposition,
+            AwsRemoteResilienceDisposition::CleanupReviewRequired
+        );
+        assert!(!summary.resilience.cleanup_complete);
+        assert!(summary.resilience.operator_action.is_some());
+        assert!(summary
+            .failure_reason
+            .as_deref()
+            .unwrap_or_default()
+            .contains("cleanup did not reach a complete terminated state"));
+    }
+
+    #[tokio::test]
     async fn remote_validation_classifies_spot_interruptions_truthfully() {
         let tmp = std::env::temp_dir().join(format!(
             "adl-aws-remote-validation-interruption-{}",
@@ -3369,6 +3916,15 @@ mod tests {
             .expect("summary");
 
         assert_eq!(summary.status, RemoteRunStatus::InterruptedByAws);
+        assert_eq!(
+            summary.resilience.fault_class,
+            AwsRemoteResilienceFaultClass::SpotInterrupted
+        );
+        assert_eq!(
+            summary.resilience.disposition,
+            AwsRemoteResilienceDisposition::Interrupted
+        );
+        assert!(summary.resilience.retryable);
         assert!(summary
             .failure_reason
             .as_deref()
@@ -3504,6 +4060,14 @@ mod tests {
             .expect("summary");
 
         assert_eq!(summary.status, RemoteRunStatus::Failed);
+        assert_eq!(
+            summary.resilience.fault_class,
+            AwsRemoteResilienceFaultClass::RemoteCommandFailure
+        );
+        assert_eq!(
+            summary.resilience.disposition,
+            AwsRemoteResilienceDisposition::Terminal
+        );
         assert!(summary
             .failure_reason
             .as_deref()
