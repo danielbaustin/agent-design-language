@@ -1,0 +1,9 @@
+{
+  "schema": "adl.otel.monitor_status.v1",
+  "event_count": 8,
+  "last_event": "csm.csm_daemon",
+  "last_result": "completed",
+  "last_trace_id": "agent.no-sparrow-agent.daemon",
+  "last_span_id": "daemon:daemon_completed:0",
+  "updated_at": "2026-07-05T22:56:23.274929+00:00"
+}

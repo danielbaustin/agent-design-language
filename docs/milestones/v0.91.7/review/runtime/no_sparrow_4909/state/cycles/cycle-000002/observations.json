@@ -1,0 +1,26 @@
+{
+  "schema": "adl.long_lived_agent_observations.v1",
+  "agent_instance_id": "no-sparrow-agent",
+  "cycle_id": "cycle-000002",
+  "observed_at": "2026-07-05T22:56:23.289172Z",
+  "sources": [
+    {
+      "source_id": "agent_spec",
+      "kind": "locked_supervisor_spec",
+      "trust_level": "operator_configured",
+      "artifact_ref": "../../agent_spec.locked.json"
+    }
+  ],
+  "facts": [
+    {
+      "key": "workflow.kind",
+      "value": "adl_workflow",
+      "as_of": "cycle-000002"
+    },
+    {
+      "key": "workflow.ref",
+      "value": "scheduler_max_concurrency",
+      "as_of": "cycle-000002"
+    }
+  ]
+}

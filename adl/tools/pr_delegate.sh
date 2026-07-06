@@ -171,7 +171,7 @@ rust_pr_delegate_primary_cached_bin() {
 
 rust_pr_subcommand_allows_primary_generic_last_resort() {
   case "${1:-}" in
-    watch)
+    watch|shepherd)
       return 0
       ;;
   esac
@@ -653,6 +653,33 @@ delegate_pr_command_to_rust() {
   if [[ -n "$direct_bin" ]]; then
     adl_obs_event "pr.sh" "rust_delegate" "exec" "subcommand" "$subcommand" "delegate" "$direct_bin" "freshness" "stale_allowed_primary_owner_last_resort"
     exec "$direct_bin" "$@"
+  fi
+  if rust_pr_subcommand_allows_primary_generic_last_resort "$subcommand"; then
+    cached_bin="$(rust_pr_delegate_cached_bin || true)"
+    if [[ -n "$cached_bin" ]]; then
+      adl_obs_event "pr.sh" "rust_delegate" "exec" "subcommand" "$subcommand" "delegate" "$cached_bin"
+      exec "$cached_bin" pr "$subcommand" "$@"
+    fi
+    cached_bin="$(rust_pr_delegate_primary_cached_bin || true)"
+    if [[ -n "$cached_bin" ]]; then
+      adl_obs_event "pr.sh" "rust_delegate" "exec" "subcommand" "$subcommand" "delegate" "$cached_bin"
+      exec "$cached_bin" pr "$subcommand" "$@"
+    fi
+    cached_bin="$(rust_pr_delegate_path_bin || true)"
+    if [[ -n "$cached_bin" ]]; then
+      adl_obs_event "pr.sh" "rust_delegate" "exec" "subcommand" "$subcommand" "delegate" "$cached_bin"
+      exec "$cached_bin" pr "$subcommand" "$@"
+    fi
+    cached_bin="$(rust_pr_delegate_cached_bin_last_resort || true)"
+    if [[ -n "$cached_bin" ]]; then
+      adl_obs_event "pr.sh" "rust_delegate" "exec" "subcommand" "$subcommand" "delegate" "$cached_bin" "freshness" "generic_adl_last_resort"
+      exec "$cached_bin" pr "$subcommand" "$@"
+    fi
+    cached_bin="$(rust_pr_delegate_primary_cached_bin_last_resort "$subcommand" || true)"
+    if [[ -n "$cached_bin" ]]; then
+      adl_obs_event "pr.sh" "rust_delegate" "exec" "subcommand" "$subcommand" "delegate" "$cached_bin" "freshness" "generic_adl_primary_last_resort"
+      exec "$cached_bin" pr "$subcommand" "$@"
+    fi
   fi
   if rust_pr_subcommand_requires_dedicated_owner_binary "$subcommand"; then
     if ! rust_pr_cargo_fallback_allowed; then

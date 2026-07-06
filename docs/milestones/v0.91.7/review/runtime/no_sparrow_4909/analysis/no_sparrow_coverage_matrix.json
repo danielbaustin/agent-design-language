@@ -1,0 +1,169 @@
+{
+  "issue": 4909,
+  "rows": [
+    {
+      "class": "csm_lifecycle",
+      "event_names": [
+        "csm.daemon_started",
+        "csm.child_spawn",
+        "csm.child_exit",
+        "csm.daemon_completed"
+      ],
+      "evidence": [
+        "happy/otel.jsonl",
+        "state/operator_events.jsonl",
+        "state/daemon_status.json"
+      ],
+      "observed": true,
+      "owner": "csm",
+      "required": true,
+      "status": "proven"
+    },
+    {
+      "class": "heartbeat_and_cycle_cadence",
+      "evidence": [
+        "state/cycle_ledger.jsonl",
+        "state/continuity_checkpoint.json"
+      ],
+      "non_claim": "Current CSM proof retains cycle cadence and checkpoints; explicit heartbeat-missed alerting is scheduled through #4921/#4918.",
+      "observed": true,
+      "owner": "csm",
+      "required": true,
+      "status": "partial"
+    },
+    {
+      "class": "checkpoint_and_recovery_state",
+      "event_names": [
+        "csm.checkpoint_write"
+      ],
+      "evidence": [
+        "state/continuity_checkpoint.json",
+        "state/continuity_replay_manifest.json",
+        "happy/otel.jsonl"
+      ],
+      "observed": true,
+      "owner": "csm",
+      "required": true,
+      "status": "proven"
+    },
+    {
+      "class": "dag_execution",
+      "evidence": [
+        "state/cycles/cycle-000001/csm_adl_run_status.json"
+      ],
+      "observed": true,
+      "owner": "csm",
+      "required": true,
+      "status": "proven"
+    },
+    {
+      "class": "scheduler_watcher",
+      "evidence": [
+        "state/cycles/cycle-000001/csm_adl_run_status.json",
+        "state/daemon_status.json"
+      ],
+      "observed": true,
+      "owner": "runtime_scheduler",
+      "required": true,
+      "status": "proven"
+    },
+    {
+      "class": "aee_resilience",
+      "evidence": [
+        "state/cycles/cycle-000001/csm_adl_run_status.json",
+        "state/daemon_status.json"
+      ],
+      "observed": true,
+      "owner": "aee_runtime",
+      "required": true,
+      "status": "proven"
+    },
+    {
+      "class": "chronosense",
+      "evidence": [
+        "state/cycles/cycle-000001/csm_adl_run_status.json",
+        "state/daemon_status.json"
+      ],
+      "observed": true,
+      "owner": "chronosense",
+      "required": true,
+      "status": "proven"
+    },
+    {
+      "class": "local_otel_and_retention",
+      "evidence": [
+        "happy/otel.jsonl",
+        "happy/otel_status.json",
+        "happy/observability.log"
+      ],
+      "observed": true,
+      "owner": "csm_observability",
+      "required": true,
+      "status": "proven"
+    },
+    {
+      "class": "retention_failure_accounting",
+      "evidence": [
+        "negative_retention/observability.log",
+        "negative_retention/csm_stdout.json",
+        "negative_retention/csm_stderr.log"
+      ],
+      "negative_case": "ADL_OTEL_LOG points at a directory; CSM remains machine-output safe and records sink failure observability.",
+      "observed": true,
+      "owner": "csm_observability",
+      "required": true,
+      "status": "proven"
+    },
+    {
+      "class": "shutdown",
+      "evidence": [
+        "happy/otel.jsonl",
+        "state/daemon_status.json"
+      ],
+      "non_claim": "Bounded no-sleep completion is proven; explicit signal-driven graceful shutdown is covered by service/daemon follow-on proof.",
+      "observed": true,
+      "owner": "csm",
+      "required": true,
+      "status": "partial"
+    },
+    {
+      "class": "snapshot_and_freeze_dry",
+      "evidence": [],
+      "non_claim": "Full freeze-dry migration and snapshot serialization are scheduled in #4910/#4911 and are not claimed by #4909.",
+      "observed": false,
+      "owner": "issue-4910",
+      "required": true,
+      "status": "blocked"
+    },
+    {
+      "class": "safe_fail_serialization",
+      "evidence": [],
+      "non_claim": "Safe-fail serialization maximization is scheduled in #4911.",
+      "observed": false,
+      "owner": "issue-4911",
+      "required": true,
+      "status": "blocked"
+    },
+    {
+      "class": "aws_control_plane_hooks",
+      "evidence": [],
+      "non_claim": "Live AWS signal hooks are scheduled under WP-08/#4635 and are not claimed from local CSM proof.",
+      "observed": false,
+      "owner": "wp-08",
+      "required": true,
+      "status": "blocked"
+    },
+    {
+      "class": "cav_security",
+      "evidence": [
+        "../soak2_4682/security_cav_boundary/proof_packet.json"
+      ],
+      "non_claim": "Soak 2 retains a CAV boundary proof packet; full runtime CAV red/blue event streaming is scheduled under WP-12 follow-ons.",
+      "observed": true,
+      "owner": "wp-12",
+      "required": true,
+      "status": "partial"
+    }
+  ],
+  "schema": "adl.no_sparrow.coverage_matrix.v1"
+}

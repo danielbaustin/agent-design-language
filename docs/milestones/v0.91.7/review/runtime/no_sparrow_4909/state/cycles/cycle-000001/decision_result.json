@@ -1,0 +1,17 @@
+{
+  "schema": "adl.long_lived_agent_decision_result.v1",
+  "agent_instance_id": "no-sparrow-agent",
+  "cycle_id": "cycle-000001",
+  "status": "accepted",
+  "decision": {
+    "action": "record_cycle",
+    "summary": "Bounded long-lived agent cycle completed under the v0.90 artifact contract.",
+    "workflow_ref": "scheduler_max_concurrency",
+    "paper_only": true
+  },
+  "provider": {
+    "source": "adl_workflow",
+    "model": null
+  },
+  "not_financial_advice": true
+}

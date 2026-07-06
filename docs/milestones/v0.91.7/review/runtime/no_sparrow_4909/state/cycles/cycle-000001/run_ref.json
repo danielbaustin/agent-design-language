@@ -1,0 +1,8 @@
+{
+  "schema": "adl.long_lived_agent_run_ref.v1",
+  "workflow_kind": "adl_workflow",
+  "workflow_ref": "scheduler_max_concurrency",
+  "run_status_ref": "csm_adl_run_status.json",
+  "trace_ref": "csm_adl_run_status.json#trace_events",
+  "execution_note": "CSM executed the configured ADL DAG through the canonical resolver/executor inside this supervised runtime cycle."
+}

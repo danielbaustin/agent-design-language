@@ -564,9 +564,32 @@
         "adl/tools/validate_v0917_soak2_4682_status.sh",
         "docs/milestones/v0.91.7/review/runtime/soak2_4682/**"
       ],
+      "command": "bash adl/tools/validate_v0917_no_sparrow_4909_status.sh",
+      "run_command": "bash adl/tools/validate_v0917_no_sparrow_4909_status.sh",
+      "reason": "v0917_soak2_status_surface_requires_selector_contract_checks; issue-local status validation runs through adl/tools/validate_v0917_soak2_4682_status.sh"
+    },
+    {
+      "id": "v0917_no_sparrow_4909_contracts",
+      "lane_class": "cli_workflow",
+      "default_surface": "tooling",
+      "owner": "runtime",
+      "proof_role": "runtime_observability_slo_contract",
+      "requirement_ids": [
+        "v0917_no_sparrow_4909_contracts"
+      ],
+      "path_selectors": [
+        "adl/tools/run_v0917_no_sparrow_4909_proof.sh",
+        "adl/tools/validate_v0917_no_sparrow_4909_status.sh",
+        "docs/milestones/v0.91.7/review/runtime/no_sparrow_4909/**"
+      ],
+      "path_hints": [
+        "adl/tools/run_v0917_no_sparrow_4909_proof.sh",
+        "adl/tools/validate_v0917_no_sparrow_4909_status.sh",
+        "docs/milestones/v0.91.7/review/runtime/no_sparrow_4909/**"
+      ],
       "command": "bash adl/tools/test_select_validation_lanes.sh",
       "run_command": "bash adl/tools/test_select_validation_lanes.sh",
-      "reason": "v0917_soak2_status_surface_requires_selector_contract_checks; issue-local status validation runs through adl/tools/validate_v0917_soak2_4682_status.sh"
+      "reason": "v0917_no_sparrow_surface_requires_selector_contract_checks; issue-local SLO proof validation runs through adl/tools/validate_v0917_no_sparrow_4909_status.sh"
     },
     {
       "id": "v0917_csm_otlp_4904_contracts",

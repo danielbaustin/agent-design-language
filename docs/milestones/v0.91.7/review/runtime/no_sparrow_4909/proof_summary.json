@@ -1,0 +1,48 @@
+{
+  "coverage_matrix": "analysis/no_sparrow_coverage_matrix.json",
+  "issue": 4909,
+  "machine_output_safety": {
+    "happy_stdout_json": true,
+    "negative_stdout_json": true,
+    "observability_log_records_retention_failure": true
+  },
+  "non_claims": [
+    "No hosted telemetry backend is claimed by #4909.",
+    "No network OTLP collector proof is claimed until #4904 merges.",
+    "No AWS control-plane heartbeat hook is claimed.",
+    "No full freeze-dry or safe-fail serialization proof is claimed.",
+    "No full CAV red/blue streaming proof is claimed."
+  ],
+  "observed_operator_event_names": [
+    "checkpoint_write",
+    "child_exit",
+    "child_spawn",
+    "created",
+    "daemon_completed",
+    "daemon_started"
+  ],
+  "observed_otel_event_names": [
+    "csm.checkpoint_write",
+    "csm.child_exit",
+    "csm.child_spawn",
+    "csm.csm_daemon",
+    "csm.daemon_completed",
+    "csm.daemon_started",
+    "csm.dispatch"
+  ],
+  "proof_classification": "proving_with_blocked_rows",
+  "representative_trace_id": "agent.no-sparrow-agent.daemon",
+  "runtime_owner": "csm",
+  "schema": "adl.no_sparrow_4909.proof_summary.v1",
+  "slo": {
+    "claim_boundary": "local CSM/runtime proof plus evidence-bound non-claims for unimplemented cloud, freeze-dry, safe-fail, and full CAV streaming surfaces",
+    "machine_stdout_corruption_allowed": false,
+    "max_unclassified_loss_events": 0,
+    "ownerless_required_event_classes": 0,
+    "required_event_classes": 14,
+    "retention_failure_visibility_required": true,
+    "schema": "adl.no_sparrow.slo.v1",
+    "silent_loss_allowed": false,
+    "undocumented_required_event_classes": 0
+  }
+}

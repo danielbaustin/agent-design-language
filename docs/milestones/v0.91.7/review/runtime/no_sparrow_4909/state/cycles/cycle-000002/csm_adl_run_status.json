@@ -1,0 +1,238 @@
+{
+  "schema": "adl.csm.adl_workflow_run_status.v1",
+  "runtime_owner": "csm",
+  "adl_role": "tooling_control_plane",
+  "agent_instance_id": "no-sparrow-agent",
+  "cycle_id": "cycle-000002",
+  "workflow_path": "docs/milestones/v0.91.7/review/runtime/no_sparrow_4909/../../../../../../adl/examples/v0-3-scheduler-max-concurrency.adl.yaml",
+  "run_id": "v0-3-scheduler-max-concurrency",
+  "workflow_id": "workflow",
+  "status": "success",
+  "step_count": 4,
+  "records": [
+    {
+      "step_id": "fork.a",
+      "provider_id": "local_ollama",
+      "status": "success",
+      "attempts": 1,
+      "output_bytes": 130
+    },
+    {
+      "step_id": "fork.b",
+      "provider_id": "local_ollama",
+      "status": "success",
+      "attempts": 1,
+      "output_bytes": 130
+    },
+    {
+      "step_id": "fork.c",
+      "provider_id": "local_ollama",
+      "status": "success",
+      "attempts": 1,
+      "output_bytes": 130
+    },
+    {
+      "step_id": "fork.join",
+      "provider_id": "local_ollama",
+      "status": "success",
+      "attempts": 1,
+      "output_bytes": 545
+    }
+  ],
+  "artifacts": [],
+  "out_dir": "docs/milestones/v0.91.7/review/runtime/no_sparrow_4909/state/cycles/cycle-000002/adl_runtime",
+  "scheduler_policy": {
+    "max_concurrency": 2,
+    "source": "run_default"
+  },
+  "runtime_control": {
+    "signals": {
+      "dominant_instinct": "coherence",
+      "completion_pressure": "steady",
+      "integrity_bias": "bounded",
+      "curiosity_bias": "low",
+      "candidate_selection_bias": "prefer candidates that preserve bounded coherence",
+      "urgency_level": "steady",
+      "salience_level": "low",
+      "persistence_pressure": "bounded_once",
+      "confidence_shift": "stable",
+      "downstream_influence": "dominant_instinct=coherence failure_count=0 retry_count=0 delegation_denied_count=0 max_parallel=2"
+    },
+    "arbitration": {
+      "route_selected": "fast",
+      "reasoning_mode": "direct_execution",
+      "confidence": "high",
+      "risk_class": "low",
+      "applied_constraints": [
+        "bounded_default_path"
+      ],
+      "cost_latency_assumption": "prefer lower-cost low-latency execution when bounded evidence is stable",
+      "route_reason": "route=fast dominant_instinct=coherence overall_status=success failure_count=0 retry_count=0 delegation_denied_count=0"
+    },
+    "fast_slow": {
+      "selected_path": "fast_path",
+      "path_family": "fast",
+      "runtime_branch_taken": "fast_direct_execution_branch",
+      "handoff_state": "direct_handoff",
+      "candidate_strategy": "accept first bounded candidate",
+      "review_depth": "minimal",
+      "execution_profile": "single_pass_direct_execution",
+      "termination_expectation": "terminate_on_first_bounded_success_or_policy_block",
+      "path_difference_summary": "fast_path favors direct execution with minimal review and a single bounded candidate handoff"
+    },
+    "agency": {
+      "candidate_generation_basis": "path=fast_path runtime_branch=fast_direct_execution_branch route=fast candidate_selection_bias=prefer candidates that preserve bounded coherence",
+      "selection_mode": "fast_candidate_commitment",
+      "candidate_set": [
+        {
+          "candidate_id": "cand-fast-execute",
+          "candidate_kind": "direct_execution",
+          "bounded_action": "execute selected candidate directly under bounded once semantics",
+          "review_requirement": "minimal",
+          "execution_priority": 1,
+          "rationale": "route=fast dominant_instinct=coherence confidence=high"
+        },
+        {
+          "candidate_id": "cand-fast-verify",
+          "candidate_kind": "bounded_verification",
+          "bounded_action": "perform one bounded verification pass before execution",
+          "review_requirement": "light",
+          "execution_priority": 2,
+          "rationale": "keep a bounded verification candidate available when instinct pressure favors uncertainty reduction or extra constraint checks"
+        }
+      ],
+      "selected_candidate_id": "cand-fast-execute",
+      "selected_candidate_kind": "direct_execution",
+      "selected_candidate_action": "execute selected candidate directly under bounded once semantics",
+      "selected_candidate_reason": "fast path prioritizes direct bounded execution when instinct pressure does not require extra verification"
+    },
+    "bounded_execution": {
+      "execution_status": "completed",
+      "continuation_state": "stop_after_one",
+      "provisional_termination_state": "ready_for_evaluation",
+      "iterations": [
+        {
+          "iteration_index": 1,
+          "stage": "execute",
+          "action": "execute selected candidate directly under bounded once semantics",
+          "outcome": "bounded_direct_execution_complete"
+        }
+      ]
+    },
+    "evaluation": {
+      "progress_signal": "steady_progress",
+      "contradiction_signal": "none",
+      "failure_signal": "none",
+      "termination_reason": "success",
+      "behavior_effect": "allow bounded execution to terminate cleanly after evaluation confirms progress",
+      "next_control_action": "complete_run"
+    },
+    "reframing": {
+      "frame_adequacy_score": 88,
+      "reframing_trigger": "not_triggered",
+      "reframing_reason": "current_frame_adequate_for_bounded_progress",
+      "prior_frame": "direct_execution_under_current_frame",
+      "new_frame": "retain_current_frame",
+      "reexecution_choice": "no_reframe_required",
+      "post_reframe_state": "complete_run"
+    },
+    "freedom_gate": {
+      "input": {
+        "candidate_id": "cand-fast-execute",
+        "candidate_action": "execute selected candidate directly under bounded once semantics",
+        "candidate_rationale": "fast path prioritizes direct bounded execution when instinct pressure does not require extra verification",
+        "risk_class": "low",
+        "policy_context": {
+          "route_selected": "fast",
+          "selected_candidate_kind": "direct_execution",
+          "requires_review": false,
+          "policy_blocked": false
+        },
+        "evaluation_signals": {
+          "progress_signal": "steady_progress",
+          "contradiction_signal": "none",
+          "failure_signal": "none",
+          "termination_reason": "success"
+        },
+        "consequence_context": {
+          "impact_scope": "local_bounded",
+          "recovery_cost": "low",
+          "operator_visibility": "routine",
+          "escalation_available": false
+        },
+        "frame_state": "complete_run"
+      },
+      "gate_decision": "allow",
+      "reason_code": "policy_allowed",
+      "decision_reason": "bounded policy context allows commitment for the selected candidate",
+      "selected_action_or_none": "execute selected candidate directly under bounded once semantics",
+      "commitment_blocked": false,
+      "judgment_boundary": "commitment_boundary",
+      "required_follow_up": "commit_selected_action",
+      "decision_record_kind": "gate_allow_record"
+    },
+    "memory": {
+      "read": {
+        "query": {
+          "workflow_id": "workflow",
+          "status_filter": "succeeded",
+          "limit": 3,
+          "source": "repo_local_runs_root"
+        },
+        "entries": [],
+        "retrieval_order": "workflow_id_then_run_id_ascending",
+        "influence_summary": "no_prior_memory_hits_available_for_this_workflow",
+        "influenced_stage": "evaluation_termination"
+      },
+      "write": {
+        "entry_id": "mem-entry::workflow::v0-3-scheduler-max-concurrency",
+        "content": "workflow=workflow status=success next_control_action=complete_run influence=no_prior_memory_hits_available_for_this_workflow",
+        "tags": [
+          "action:complete_run",
+          "candidate:direct_execution",
+          "route:fast",
+          "status:success",
+          "workflow:workflow"
+        ],
+        "logical_timestamp": "run:v0-3-scheduler-max-concurrency",
+        "write_reason": "record_success_for_future_bounded_context",
+        "source": "runtime_control_projection"
+      }
+    }
+  },
+  "trace_event_count": 29,
+  "trace_events": [
+    "2026-07-05T22:56:23.299Z (+0ms) LifecyclePhaseEntered phase=init",
+    "2026-07-05T22:56:23.299Z (+0ms) ExecutionBoundaryCrossed boundary=runtime_init state=fresh_start",
+    "2026-07-05T22:56:23.299Z (+0ms) LifecyclePhaseEntered phase=execute",
+    "2026-07-05T22:56:23.299Z (+0ms) SchedulerPolicy max_concurrency=2 source=run_default",
+    "2026-07-05T22:56:23.299Z (+0ms) RuntimeResilienceDecision step=fork.c watcher=queued_backpressure middleware=queued_backpressure terminal=false attempts=1 elapsed_ms=0 max_concurrency=2 queue_depth=1",
+    "2026-07-05T22:56:23.299Z (+0ms) RuntimeResilienceDecision step=fork.a watcher=admitted middleware=admitted terminal=false attempts=1 elapsed_ms=0 max_concurrency=2 queue_depth=2",
+    "2026-07-05T22:56:23.299Z (+0ms) StepStarted step=fork.a agent=coordinator provider=local_ollama task=branch_work",
+    "2026-07-05T22:56:23.299Z (+0ms) RuntimeResilienceDecision step=fork.b watcher=admitted middleware=admitted terminal=false attempts=1 elapsed_ms=0 max_concurrency=2 queue_depth=2",
+    "2026-07-05T22:56:23.299Z (+0ms) StepStarted step=fork.b agent=coordinator provider=local_ollama task=branch_work",
+    "2026-07-05T22:56:23.314Z (+15ms) PromptAssembled step=fork.a hash=6fad52b2ca422c69",
+    "2026-07-05T22:56:23.314Z (+15ms) StepFinished step=fork.a success=true duration=0.015s",
+    "2026-07-05T22:56:23.314Z (+15ms) RuntimeResilienceDecision step=fork.a watcher=succeeded middleware=succeeded terminal=false attempts=1 elapsed_ms=15 max_concurrency=2 queue_depth=3",
+    "2026-07-05T22:56:23.314Z (+15ms) PromptAssembled step=fork.b hash=edd395fc1db3914c",
+    "2026-07-05T22:56:23.314Z (+15ms) StepFinished step=fork.b success=true duration=0.015s",
+    "2026-07-05T22:56:23.314Z (+15ms) RuntimeResilienceDecision step=fork.b watcher=succeeded middleware=succeeded terminal=false attempts=1 elapsed_ms=15 max_concurrency=2 queue_depth=2",
+    "2026-07-05T22:56:23.314Z (+15ms) RuntimeResilienceDecision step=fork.c watcher=admitted middleware=admitted terminal=false attempts=1 elapsed_ms=0 max_concurrency=2 queue_depth=1",
+    "2026-07-05T22:56:23.314Z (+15ms) StepStarted step=fork.c agent=coordinator provider=local_ollama task=branch_work",
+    "2026-07-05T22:56:23.329Z (+30ms) PromptAssembled step=fork.c hash=fa768fce88052110",
+    "2026-07-05T22:56:23.329Z (+30ms) StepFinished step=fork.c success=true duration=0.015s",
+    "2026-07-05T22:56:23.329Z (+30ms) RuntimeResilienceDecision step=fork.c watcher=succeeded middleware=succeeded terminal=false attempts=1 elapsed_ms=15 max_concurrency=2 queue_depth=1",
+    "2026-07-05T22:56:23.329Z (+30ms) RuntimeResilienceDecision step=fork.join watcher=admitted middleware=admitted terminal=false attempts=1 elapsed_ms=0 max_concurrency=2 queue_depth=0",
+    "2026-07-05T22:56:23.329Z (+30ms) StepStarted step=fork.join agent=coordinator provider=local_ollama task=join_results",
+    "2026-07-05T22:56:23.345Z (+46ms) PromptAssembled step=fork.join hash=d7205061549eeb61",
+    "2026-07-05T22:56:23.345Z (+46ms) StepFinished step=fork.join success=true duration=0.016s",
+    "2026-07-05T22:56:23.345Z (+46ms) RuntimeResilienceDecision step=fork.join watcher=succeeded middleware=succeeded terminal=false attempts=1 elapsed_ms=16 max_concurrency=2 queue_depth=0",
+    "2026-07-05T22:56:23.345Z (+46ms) LifecyclePhaseEntered phase=complete",
+    "2026-07-05T22:56:23.345Z (+46ms) ExecutionBoundaryCrossed boundary=run_completion state=success",
+    "2026-07-05T22:56:23.345Z (+46ms) LifecyclePhaseEntered phase=teardown",
+    "2026-07-05T22:56:23.345Z (+46ms) RunFinished success=true"
+  ],
+  "aee_resilience_trace": "retained_in_trace_events",
+  "chronosense_runtime": "retained_in_csm_daemon_events",
+  "completed_at": "2026-07-05T22:56:23.346211Z"
+}
