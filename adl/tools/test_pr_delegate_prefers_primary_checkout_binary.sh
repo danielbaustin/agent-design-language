@@ -259,30 +259,29 @@ touch "$repo/adl/target/debug/adl"
 : >"$TMP_ADL_ARGS"
 : >"$TMP_CARGO_ARGS"
 
-set +e
-shepherd_output="$(
-  (
-    cd "$worktree" && \
-    ADL_PRIMARY_CHECKOUT_ROOT="$repo" \
-    "$BASH_BIN" adl/tools/pr.sh shepherd 4413 --slug rust-start --version v0.91.6 --json
-  ) 2>&1
-)"
-shepherd_status="$?"
-set -e
+shepherd_log="$tmpdir/shepherd-generic-fallback.log"
+(
+  cd "$worktree"
+  ADL_PRIMARY_CHECKOUT_ROOT="$repo" \
+    "$BASH_BIN" adl/tools/pr.sh shepherd 4413 --slug rust-start --version v0.91.6 --json >"$shepherd_log" 2>&1
+)
 
-if [[ "$shepherd_status" -eq 0 ]]; then
-  echo "assertion failed: shepherd should not silently fall through to the generic primary checkout adl binary" >&2
-  exit 1
-fi
-[[ ! -s "$TMP_ADL_ARGS" ]] || {
-  echo "assertion failed: generic primary checkout adl binary should not be used for shepherd when the dedicated owner binary is missing" >&2
-  cat "$TMP_ADL_ARGS" >&2
+args="$(cat "$TMP_ADL_ARGS")"
+[[ "$args" == "pr shepherd 4413 --slug rust-start --version v0.91.6 --json" ]] || {
+  echo "assertion failed: shepherd should use repo-owned generic adl fallback when dedicated owner binary is missing" >&2
+  echo "$args" >&2
+  cat "$shepherd_log" >&2
   exit 1
 }
-grep -F "missing dedicated ADL PR owner binary for subcommand 'shepherd'" <<<"$shepherd_output" >/dev/null || {
-  echo "assertion failed: expected missing dedicated owner binary guidance for shepherd" >&2
-  echo "$shepherd_output" >&2
+grep -F "stage=rust_delegate result=exec subcommand=shepherd" "$shepherd_log" >/dev/null || {
+  echo "assertion failed: generic primary checkout adl delegation should be observable for shepherd" >&2
+  cat "$shepherd_log" >&2
+  exit 1
+}
+[[ ! -s "$TMP_CARGO_ARGS" ]] || {
+  echo "assertion failed: cargo should not run when shepherd uses generic primary checkout adl fallback" >&2
+  cat "$TMP_CARGO_ARGS" >&2
   exit 1
 }
 
-echo "pr.sh shepherd requires dedicated owner binary when generic adl is stale: ok"
+echo "pr.sh shepherd uses generic primary checkout adl fallback when dedicated owner binary is missing: ok"
