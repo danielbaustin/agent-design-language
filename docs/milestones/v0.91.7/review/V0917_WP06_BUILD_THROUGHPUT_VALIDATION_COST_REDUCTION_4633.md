@@ -1,6 +1,6 @@
 # WP-06 Build Throughput And Validation-Cost Reduction Sprint Packet for `#4633`
 
-Status: `sprint_lane_partially_complete_pr_tail_active`
+Status: `selected_sprint_lane_closed_merged`
 Issue: `#4633`
 Date: 2026-07-04
 
@@ -35,9 +35,9 @@ rollup, then commented and closed as `not_planned` duplicates of `#4837` and
 | `#4676` | Validation manager | closed/merged | PR `#4828`, `adl-ci` success, `adl-coverage` success, `adl-slow-proof` skipped | local closeout run; worktree pruned |
 | `#4800` | Fast validation lane plus fanned slow families | closed/merged | PR `#4832`, `adl-ci` success, `adl-coverage` success, `adl-slow-proof` skipped | local closeout run; worktree already absent |
 | `#4698` | Reduce long-test fanout | closed/merged | PR `#4839`, `adl-ci` success, `adl-coverage` success, `adl-slow-proof` skipped | local closeout run; worktree already absent |
-| `#4726` | Decompose monolithic `adl` binary into command-owned tools | draft PR open | PR `#4852`, `adl-coverage` success, `adl-slow-proof` skipped, `adl-ci` failed | janitor action required |
-| `#4677` | CI log archive to S3 | PR open, not draft | PR `#4856`, `adl-ci` success, `adl-coverage` success, `adl-slow-proof` skipped | waiting for human review/merge |
-| `#4678` | Consume Nessus remote validation lane | PR open, not draft | PR `#4857`, `adl-ci` success, `adl-coverage` success, `adl-slow-proof` skipped | waiting for human review/merge |
+| `#4726` | Decompose monolithic `adl` binary into command-owned tools | closed/merged | PR `#4852`, `adl-ci` success, `adl-coverage` success, `adl-slow-proof` skipped | closeout still needed locally |
+| `#4677` | CI log archive to S3 | closed/merged | PR `#4856`, `adl-ci` success, `adl-coverage` success, `adl-slow-proof` skipped | closeout still needed locally |
+| `#4678` | Consume Nessus remote validation lane | closed/merged | PR `#4857`, `adl-ci` success, `adl-coverage` success, `adl-slow-proof` skipped | closeout still needed locally |
 
 ## Merged Capabilities
 
@@ -46,12 +46,6 @@ The merged child issues establish these integrated paths:
 - validation-manager path/profile selection and readiness routing
 - fast PR validation selection with fanned slow proof families
 - reduced default fanout for long tests
-
-## PR-Tail Candidate Capabilities
-
-The following capabilities are implemented on open PR branches but are not
-claimed as merged or fully closeouted yet:
-
 - first pass of command-owned `adl` binary decomposition
 - S3-backed CI log archive command with manifest truth and live S3 synthetic
   proof
@@ -79,17 +73,18 @@ to child issues.
 
 ## PR Tail Truth
 
-The current PR tail is mixed:
+The selected `#4633` sprint-lane PR tail has settled:
 
-- `#4726` / PR `#4852` is draft/open and needs janitor because `adl-ci` failed.
-- `#4677` / PR `#4856` is open, not draft, and green; it is waiting for human
-  review or merge.
-- `#4678` / PR `#4857` is open, not draft, and green; it is waiting for human
-  review or merge.
+- `#4726` / PR `#4852` is merged with `adl-ci` success, `adl-coverage`
+  success, and `adl-slow-proof` skipped.
+- `#4677` / PR `#4856` is merged with `adl-ci` success, `adl-coverage`
+  success, and `adl-slow-proof` skipped.
+- `#4678` / PR `#4857` is merged with `adl-ci` success, `adl-coverage`
+  success, and `adl-slow-proof` skipped.
 
-The umbrella issue must not close as fully complete until the open PR tail
-settles and closeout truth is reconciled, unless the operator explicitly accepts
-a partial sprint close with those PR tails still open.
+Local closeout reconciliation is still needed for those closed issues where
+repo-native watch reports `closeout_needed`, but this packet no longer records
+an active failed or waiting-review PR tail for the selected sprint lane.
 
 ## Remaining WP-06 Work
 
@@ -111,7 +106,8 @@ Earlier evidence to reference when creating those issues:
 ## Non-Claims
 
 - This packet does not claim WP-06 is fully done.
-- This packet does not claim the open draft PRs have passed `adl-ci`.
+- This packet does not claim local closeout has completed for every closed child
+  issue where repo-native watch still reports `closeout_needed`.
 - This packet does not claim fresh live SSH Nessus proof for `#4678`; that
   issue proved the wrapper contract locally and referenced prior live Nessus
   evidence.
