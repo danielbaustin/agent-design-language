@@ -44,9 +44,11 @@ pub(crate) fn emit_event(command: &str, stage: &str, result: &str, fields: &[(&s
                 if let Some(status_path) = otel_status_path() {
                     let _ = update_otel_export_status(
                         &status_path,
-                        "success",
-                        Some(status_code),
-                        None,
+                        OtelExportStatus {
+                            status: "success",
+                            http_status: Some(status_code),
+                            error: None,
+                        },
                         command,
                         stage,
                         result,
@@ -58,9 +60,11 @@ pub(crate) fn emit_event(command: &str, stage: &str, result: &str, fields: &[(&s
                 if let Some(status_path) = otel_status_path() {
                     let _ = update_otel_export_status(
                         &status_path,
-                        "failed",
-                        None,
-                        Some(&err),
+                        OtelExportStatus {
+                            status: "failed",
+                            http_status: None,
+                            error: Some(&err),
+                        },
                         command,
                         stage,
                         result,
@@ -309,11 +313,15 @@ fn update_otel_status(
     Ok(())
 }
 
+struct OtelExportStatus<'a> {
+    status: &'a str,
+    http_status: Option<u16>,
+    error: Option<&'a str>,
+}
+
 fn update_otel_export_status(
     status_path: &str,
-    export_status: &str,
-    http_status: Option<u16>,
-    error: Option<&str>,
+    export_status: OtelExportStatus<'_>,
     command: &str,
     stage: &str,
     result: &str,
@@ -365,9 +373,9 @@ fn update_otel_export_status(
         serde_json::json!({
             "schema": "adl.otel.exporter_status.v1",
             "protocol": "otlp_http_json",
-            "status": sanitize_value(export_status),
-            "http_status": http_status,
-            "error": error.map(sanitize_value),
+            "status": sanitize_value(export_status.status),
+            "http_status": export_status.http_status,
+            "error": export_status.error.map(sanitize_value),
             "endpoint_configured": true,
             "endpoint": "<configured>",
             "updated_at": chrono::Utc::now().to_rfc3339()
