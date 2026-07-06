@@ -123,6 +123,122 @@ PY
 grep -F "apt.releases.hashicorp.com" "$sources_list" >/dev/null
 assert_file "$kubernetes_list"
 
+cat >"$fake_bin/docker" <<'EOF'
+#!/usr/bin/env bash
+set -euo pipefail
+case "${1:-}" in
+  image)
+    [[ "${2:-}" == "inspect" ]]
+    exit 0
+    ;;
+  pull)
+    exit 0
+    ;;
+  run)
+    shift
+    while [[ $# -gt 0 ]]; do
+      case "$1" in
+        --rm)
+          shift
+          ;;
+        -v|-e|-w)
+          shift 2
+          ;;
+        *)
+          break
+          ;;
+      esac
+    done
+    image="${1:-}"
+    command="${2:-}"
+    if [[ "$image" != "example.invalid/adl-builder:test" ]]; then
+      echo "unexpected image: $image" >&2
+      exit 1
+    fi
+    case "$command" in
+      "rustc --version")
+        echo "rustc 1.96.0 (builder fixture)"
+        ;;
+      "cargo --version")
+        echo "cargo 1.96.0 (builder fixture)"
+        ;;
+      "sccache --version")
+        echo "sccache 0.16.0"
+        ;;
+      "sccache --zero-stats"* )
+        exit 0
+        ;;
+      "sccache --show-stats")
+        cat <<'STATS'
+Compile requests                      5
+Compile requests executed             1
+Cache hits                            4
+Cache misses                          1
+STATS
+        ;;
+      "printf builder-ok")
+        printf builder-ok
+        ;;
+      *)
+        echo "unexpected builder command: $command" >&2
+        exit 1
+        ;;
+    esac
+    ;;
+  *)
+    echo "unexpected docker invocation: $*" >&2
+    exit 1
+    ;;
+esac
+EOF
+chmod +x "$fake_bin/docker"
+
+PATH="$fake_bin:$PATH" \
+ADL_NESSUS_APT_SOURCES_LIST="$sources_list" \
+ADL_NESSUS_APT_KUBERNETES_LIST="$kubernetes_list" \
+bash "$SCRIPT" \
+  --executor local \
+  --repo-url "$origin_bare" \
+  --git-ref origin/main \
+  --remote-root "$TMP/remote-root-builder" \
+  --run-id fixture-builder \
+  --command "printf builder-ok" \
+  --builder-image "example.invalid/adl-builder:test" \
+  --local-artifact-dir "$TMP/artifacts-builder" \
+  >"$TMP/builder.json"
+
+assert_file "$TMP/artifacts-builder/summary.json"
+python3 - <<'PY' "$TMP/artifacts-builder/summary.json"
+import json
+import sys
+
+summary = json.load(open(sys.argv[1], encoding="utf-8"))
+assert summary["status"] == "passed"
+assert summary["builder_image"] == "example.invalid/adl-builder:test"
+assert summary["builder_runtime"] == "auto"
+assert summary["resolved_builder_runtime"] == "docker"
+assert summary["cache_status"]["cache_hits"] == "4"
+PY
+
+PATH="$fake_bin:$PATH" \
+FAIL_APT=1 \
+ADL_NESSUS_APT_SOURCES_LIST="$sources_list" \
+ADL_NESSUS_APT_KUBERNETES_LIST="$kubernetes_list" \
+bash "$SCRIPT" \
+  --executor local \
+  --repo-url "$origin_bare" \
+  --git-ref origin/main \
+  --remote-root "$TMP/remote-root-builder-apt-skip" \
+  --run-id fixture-builder-apt-skip \
+  --command "printf builder-ok" \
+  --builder-image "example.invalid/adl-builder:test" \
+  --local-artifact-dir "$TMP/artifacts-builder-apt-skip" \
+  >"$TMP/builder-apt-skip.json"
+
+assert_file "$TMP/artifacts-builder-apt-skip/summary.json"
+tar -xzf "$TMP/artifacts-builder-apt-skip/run-logs.tar.gz" -C "$TMP/artifacts-builder-apt-skip"
+grep -F "skipped: builder image mode uses container toolchain" "$TMP/artifacts-builder-apt-skip/apt-update.log" >/dev/null
+
 if PATH="$fake_bin:$PATH" \
   FAIL_APT=1 \
   ADL_NESSUS_APT_SOURCES_LIST="$sources_list" \

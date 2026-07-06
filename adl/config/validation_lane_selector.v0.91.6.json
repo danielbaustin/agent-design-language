@@ -492,6 +492,33 @@
       "reason": "aws_remote_validation_tool_surface_requires_focused_tooling_regression_checks"
     },
     {
+      "id": "adl_builder_image_tooling",
+      "lane_class": "cli_workflow",
+      "default_surface": "tooling",
+      "owner": "tools",
+      "proof_role": "builder_image_contract",
+      "requirement_ids": [
+        "adl_builder_image_tooling"
+      ],
+      "path_selectors": [
+        "adl/docker/adl-builder/**",
+        "adl/tools/import_adl_builder_image_from_s3_to_ecr.sh",
+        "adl/tools/setup_adl_builder_image.sh",
+        "adl/tools/test_adl_builder_image.sh",
+        "adl/tools/test_import_adl_builder_image_from_s3_to_ecr.sh"
+      ],
+      "path_hints": [
+        "adl/docker/adl-builder/**",
+        "adl/tools/import_adl_builder_image_from_s3_to_ecr.sh",
+        "adl/tools/setup_adl_builder_image.sh",
+        "adl/tools/test_adl_builder_image.sh",
+        "adl/tools/test_import_adl_builder_image_from_s3_to_ecr.sh"
+      ],
+      "command": "bash adl/tools/test_adl_builder_image.sh && bash adl/tools/test_import_adl_builder_image_from_s3_to_ecr.sh",
+      "run_command": "bash adl/tools/test_adl_builder_image.sh && bash adl/tools/test_import_adl_builder_image_from_s3_to_ecr.sh",
+      "reason": "builder_image_surface_requires_dockerfile_setup_import_and_policy_contract_checks"
+    },
+    {
       "id": "aws_codefriend_build_lane",
       "lane_class": "cli_workflow",
       "default_surface": "ci_policy",

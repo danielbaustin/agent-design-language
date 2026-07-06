@@ -15,6 +15,8 @@ Options:
   --repo <owner/name>             GitHub repository. Default: danielbaustin/agent-design-language.
   --source-location <url>         CodeBuild GitHub source URL.
   --compute-type <type>           CodeBuild compute type. Default: BUILD_GENERAL1_LARGE.
+  --image-uri <uri>               CodeBuild environment image. Default: ADL_AWS_CODEFRIEND_IMAGE,
+                                  then aws/codebuild/standard:7.0.
   --cache-bucket <bucket>         S3 cache bucket. Default: adl-codefriend-build-cache.
   --cache-prefix <prefix>         S3 cache prefix. Default: codebuild/cache.
   --github-role-name <name>       OIDC role for GitHub Actions.
@@ -41,6 +43,7 @@ PROJECT_NAME="${ADL_AWS_CODEFRIEND_CODEBUILD_PROJECT:-adl-codefriend-build}"
 REPO="danielbaustin/agent-design-language"
 SOURCE_LOCATION="https://github.com/danielbaustin/agent-design-language.git"
 COMPUTE_TYPE="${ADL_AWS_CODEFRIEND_COMPUTE_TYPE:-BUILD_GENERAL1_LARGE}"
+IMAGE_URI="${ADL_AWS_CODEFRIEND_IMAGE:-aws/codebuild/standard:7.0}"
 CACHE_BUCKET="${ADL_AWS_CODEFRIEND_CACHE_BUCKET:-adl-codefriend-build-cache}"
 CACHE_PREFIX="${ADL_AWS_CODEFRIEND_CACHE_PREFIX:-codebuild/cache}"
 GITHUB_ROLE_NAME="adl-codefriend-github-actions-build-role"
@@ -86,6 +89,11 @@ while [ "$#" -gt 0 ]; do
     --compute-type)
       [ "$#" -ge 2 ] || die "--compute-type requires a value"
       COMPUTE_TYPE="$2"
+      shift 2
+      ;;
+    --image-uri)
+      [ "$#" -ge 2 ] || die "--image-uri requires a value"
+      IMAGE_URI="$2"
       shift 2
       ;;
     --cache-bucket)
@@ -239,7 +247,7 @@ github_trust="$ARTIFACT_DIR/github-actions-trust.json"
 github_policy="$ARTIFACT_DIR/github-actions-codebuild-policy.json"
 project_json="$ARTIFACT_DIR/codebuild-project.json"
 
-python3 - <<'PY' "$service_trust" "$service_policy" "$github_trust" "$github_policy" "$project_json" "$account_id" "$provider_arn" "$REPO" "$REGION" "$PROJECT_NAME" "$SOURCE_LOCATION" "$SERVICE_ROLE_NAME" "$COMPUTE_TYPE" "$CACHE_BUCKET" "$CACHE_PREFIX"
+python3 - <<'PY' "$service_trust" "$service_policy" "$github_trust" "$github_policy" "$project_json" "$account_id" "$provider_arn" "$REPO" "$REGION" "$PROJECT_NAME" "$SOURCE_LOCATION" "$SERVICE_ROLE_NAME" "$COMPUTE_TYPE" "$IMAGE_URI" "$CACHE_BUCKET" "$CACHE_PREFIX"
 import json
 import sys
 from pathlib import Path
@@ -258,12 +266,60 @@ from pathlib import Path
     source_location,
     service_role_name,
     compute_type,
+    image_uri,
     cache_bucket,
     cache_prefix,
-) = sys.argv[1:16]
+) = sys.argv[1:17]
 
 def write(path, payload):
     Path(path).write_text(json.dumps(payload, indent=2, sort_keys=True) + "\n")
+
+image_pull_credentials_type = "SERVICE_ROLE" if ".dkr.ecr." in image_uri else "CODEBUILD"
+
+service_policy_statements = [{
+    "Effect": "Allow",
+    "Action": [
+        "logs:CreateLogGroup",
+        "logs:CreateLogStream",
+        "logs:PutLogEvents",
+    ],
+    "Resource": [
+        f"arn:aws:logs:{region}:{account_id}:log-group:/aws/codebuild/{project_name}",
+        f"arn:aws:logs:{region}:{account_id}:log-group:/aws/codebuild/{project_name}:*",
+    ],
+}, {
+    "Effect": "Allow",
+    "Action": ["s3:GetObject", "s3:PutObject", "s3:GetObjectVersion"],
+    "Resource": f"arn:aws:s3:::{cache_bucket}/{cache_prefix}/*",
+}, {
+    "Effect": "Allow",
+    "Action": ["s3:ListBucket", "s3:GetBucketLocation"],
+    "Resource": f"arn:aws:s3:::{cache_bucket}",
+    "Condition": {"StringLike": {"s3:prefix": [cache_prefix, f"{cache_prefix}/*"]}},
+}]
+
+if image_pull_credentials_type == "SERVICE_ROLE":
+    registry, _, repository_with_tag = image_uri.partition("/")
+    image_account = registry.split(".", 1)[0] if registry else account_id
+    repository = repository_with_tag.split("@", 1)[0].split(":", 1)[0]
+    repository_resource = (
+        f"arn:aws:ecr:{region}:{image_account}:repository/{repository}"
+        if repository
+        else f"arn:aws:ecr:{region}:{image_account}:repository/*"
+    )
+    service_policy_statements.extend([{
+        "Effect": "Allow",
+        "Action": ["ecr:GetAuthorizationToken"],
+        "Resource": "*",
+    }, {
+        "Effect": "Allow",
+        "Action": [
+            "ecr:BatchCheckLayerAvailability",
+            "ecr:BatchGetImage",
+            "ecr:GetDownloadUrlForLayer",
+        ],
+        "Resource": repository_resource,
+    }])
 
 write(service_trust_path, {
     "Version": "2012-10-17",
@@ -276,27 +332,7 @@ write(service_trust_path, {
 
 write(service_policy_path, {
     "Version": "2012-10-17",
-    "Statement": [{
-        "Effect": "Allow",
-        "Action": [
-            "logs:CreateLogGroup",
-            "logs:CreateLogStream",
-            "logs:PutLogEvents",
-        ],
-        "Resource": [
-            f"arn:aws:logs:{region}:{account_id}:log-group:/aws/codebuild/{project_name}",
-            f"arn:aws:logs:{region}:{account_id}:log-group:/aws/codebuild/{project_name}:*",
-        ],
-    }, {
-        "Effect": "Allow",
-        "Action": ["s3:GetObject", "s3:PutObject", "s3:GetObjectVersion"],
-        "Resource": f"arn:aws:s3:::{cache_bucket}/{cache_prefix}/*",
-    }, {
-        "Effect": "Allow",
-        "Action": ["s3:ListBucket", "s3:GetBucketLocation"],
-        "Resource": f"arn:aws:s3:::{cache_bucket}",
-        "Condition": {"StringLike": {"s3:prefix": [cache_prefix, f"{cache_prefix}/*"]}},
-    }],
+    "Statement": service_policy_statements,
 })
 
 write(github_trust_path, {
@@ -344,25 +380,32 @@ phases:
         if ! command -v cargo >/dev/null 2>&1; then
           curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y --profile minimal
         fi
-      - . "$HOME/.cargo/env"
+      - test ! -f "$HOME/.cargo/env" || . "$HOME/.cargo/env"
       - rustc --version
       - cargo --version
-      - ln -sfn "$CODEBUILD_SRC_DIR" /workspace
+      - rm -rf /codebuild/adl-source
+      - mkdir -p /codebuild/adl-source /codebuild/adl-target
+      - tar -C "$CODEBUILD_SRC_DIR" -cf - . | tar -C /codebuild/adl-source -xf -
+      - cd /codebuild/adl-source
       - |
-        if ! command -v ld.lld >/dev/null 2>&1; then
+        if ! command -v ld.lld >/dev/null 2>&1 || ! command -v zstd >/dev/null 2>&1; then
           apt-get update -y
-          apt-get install -y lld clang
+          apt-get install -y lld clang zstd
         fi
       - ld.lld --version
-      - mkdir -p "$HOME/.cargo/bin" "$HOME/.cargo/registry" "$HOME/.cargo/git" "$HOME/.rustup" "target"
-      - export CARGO_TARGET_DIR="/workspace/target"
+      - zstd --version
+      - mkdir -p "$HOME/.cargo/bin" "$HOME/.cargo/registry" "$HOME/.cargo/git" "$HOME/.rustup" /codebuild/adl-target
+      - export CARGO_TARGET_DIR="/codebuild/adl-target"
       - export SCCACHE_CACHE_SIZE="${SCCACHE_CACHE_SIZE:-20G}"
       - export SCCACHE_BUCKET="__SCCACHE_BUCKET__"
       - export SCCACHE_REGION="__SCCACHE_REGION__"
       - export SCCACHE_S3_KEY_PREFIX="__SCCACHE_PREFIX__/sccache/x86_64-unknown-linux-gnu"
+      - export ADL_CODEFRIEND_TARGET_CACHE_MODE="${ADL_CODEFRIEND_TARGET_CACHE_MODE:-local}"
+      - export ADL_CODEFRIEND_TARGET_CACHE_BUCKET="${ADL_CODEFRIEND_TARGET_CACHE_BUCKET:-__SCCACHE_BUCKET__}"
+      - export ADL_CODEFRIEND_TARGET_CACHE_PREFIX="${ADL_CODEFRIEND_TARGET_CACHE_PREFIX:-__SCCACHE_PREFIX__/target/x86_64-unknown-linux-gnu}"
       - eval "$(aws configure export-credentials --format env)"
       - export CARGO_INCREMENTAL=0
-      - export RUSTFLAGS="${RUSTFLAGS:-} -C link-arg=-fuse-ld=lld --remap-path-prefix=/workspace=/workspace --remap-path-prefix=/root=/home"
+      - export RUSTFLAGS="${RUSTFLAGS:-} -C link-arg=-fuse-ld=lld --remap-path-prefix=/codebuild/adl-source=/workspace --remap-path-prefix=/root=/home"
       - |
         SCCACHE_VERSION="${SCCACHE_VERSION:-v0.16.0}"
         if ! command -v sccache >/dev/null 2>&1 || ! sccache --version | grep -F "${SCCACHE_VERSION#v}" >/dev/null 2>&1; then
@@ -377,19 +420,60 @@ phases:
   build:
     commands:
       - set -euo pipefail
-      - . "$HOME/.cargo/env"
-      - cd /workspace
-      - export CARGO_TARGET_DIR="/workspace/target"
+      - test ! -f "$HOME/.cargo/env" || . "$HOME/.cargo/env"
+      - cd /codebuild/adl-source
+      - export CARGO_TARGET_DIR="/codebuild/adl-target"
       - export SCCACHE_CACHE_SIZE="${SCCACHE_CACHE_SIZE:-20G}"
       - export SCCACHE_BUCKET="__SCCACHE_BUCKET__"
       - export SCCACHE_REGION="__SCCACHE_REGION__"
       - export SCCACHE_S3_KEY_PREFIX="__SCCACHE_PREFIX__/sccache/x86_64-unknown-linux-gnu"
+      - export ADL_CODEFRIEND_TARGET_CACHE_MODE="${ADL_CODEFRIEND_TARGET_CACHE_MODE:-local}"
+      - export ADL_CODEFRIEND_TARGET_CACHE_BUCKET="${ADL_CODEFRIEND_TARGET_CACHE_BUCKET:-__SCCACHE_BUCKET__}"
+      - export ADL_CODEFRIEND_TARGET_CACHE_PREFIX="${ADL_CODEFRIEND_TARGET_CACHE_PREFIX:-__SCCACHE_PREFIX__/target/x86_64-unknown-linux-gnu}"
       - eval "$(aws configure export-credentials --format env)"
       - export CARGO_INCREMENTAL=0
-      - export RUSTFLAGS="${RUSTFLAGS:-} -C link-arg=-fuse-ld=lld --remap-path-prefix=/workspace=/workspace --remap-path-prefix=/root=/home"
+      - export RUSTFLAGS="${RUSTFLAGS:-} -C link-arg=-fuse-ld=lld --remap-path-prefix=/codebuild/adl-source=/workspace --remap-path-prefix=/root=/home"
       - export RUSTC_WRAPPER=sccache
       - test -n "${ADL_CODEFRIEND_BUILD_COMMAND:-}"
-      - bash -lc "$ADL_CODEFRIEND_BUILD_COMMAND"
+      - |
+        if [ -z "${ADL_CODEFRIEND_TARGET_CACHE_KEY:-}" ]; then
+          lock_hash="$(sha256sum adl/Cargo.lock | awk '{print $1}')"
+          source_key="${CODEBUILD_SOURCE_VERSION:-unknown-source}"
+          ADL_CODEFRIEND_TARGET_CACHE_KEY="$(printf '%s-%s' "$source_key" "$lock_hash" | tr -c 'A-Za-z0-9._=-' '_')"
+          export ADL_CODEFRIEND_TARGET_CACHE_KEY
+        fi
+        ADL_CODEFRIEND_TARGET_CACHE_URI="s3://${ADL_CODEFRIEND_TARGET_CACHE_BUCKET}/${ADL_CODEFRIEND_TARGET_CACHE_PREFIX}/${ADL_CODEFRIEND_TARGET_CACHE_KEY}.tar.zst"
+        export ADL_CODEFRIEND_TARGET_CACHE_URI
+        echo "ADL_CODEFRIEND_TARGET_CACHE mode=${ADL_CODEFRIEND_TARGET_CACHE_MODE} key=${ADL_CODEFRIEND_TARGET_CACHE_KEY}"
+        if [ "${ADL_CODEFRIEND_TARGET_CACHE_MODE}" = "s3-tar" ]; then
+          if aws s3 cp "${ADL_CODEFRIEND_TARGET_CACHE_URI}" /tmp/adl-codefriend-target-cache.tar.zst >/tmp/adl-codefriend-target-cache-restore.log 2>&1; then
+            mkdir -p /codebuild/adl-target
+            tar --zstd -xf /tmp/adl-codefriend-target-cache.tar.zst -C /codebuild
+            echo "ADL_CODEFRIEND_TARGET_CACHE_RESTORE status=hit"
+          else
+            echo "ADL_CODEFRIEND_TARGET_CACHE_RESTORE status=miss"
+          fi
+        elif [ "${ADL_CODEFRIEND_TARGET_CACHE_MODE}" = "local" ]; then
+          mkdir -p /codebuild/adl-target
+          echo "ADL_CODEFRIEND_TARGET_CACHE_RESTORE status=local-cache"
+        else
+          echo "ADL_CODEFRIEND_TARGET_CACHE_RESTORE status=disabled"
+        fi
+      - |
+        set +e
+        bash -lc "$ADL_CODEFRIEND_BUILD_COMMAND"
+        command_status=$?
+        set -e
+        if [ "${ADL_CODEFRIEND_TARGET_CACHE_MODE}" = "s3-tar" ] && [ -d "$CARGO_TARGET_DIR" ]; then
+          tar --zstd -cf /tmp/adl-codefriend-target-cache.tar.zst -C /codebuild adl-target
+          aws s3 cp /tmp/adl-codefriend-target-cache.tar.zst "${ADL_CODEFRIEND_TARGET_CACHE_URI}" >/tmp/adl-codefriend-target-cache-save.log
+          echo "ADL_CODEFRIEND_TARGET_CACHE_SAVE status=uploaded"
+        elif [ "${ADL_CODEFRIEND_TARGET_CACHE_MODE}" = "local" ]; then
+          echo "ADL_CODEFRIEND_TARGET_CACHE_SAVE status=local-cache"
+        else
+          echo "ADL_CODEFRIEND_TARGET_CACHE_SAVE status=skipped"
+        fi
+        exit "$command_status"
   post_build:
     commands:
       - if command -v sccache >/dev/null 2>&1; then sccache --show-stats || true; fi
@@ -399,6 +483,7 @@ cache:
     - '/root/.cargo/git/**/*'
     - '/root/.cargo/bin/**/*'
     - '/root/.rustup/**/*'
+    - '/codebuild/adl-target/**/*'
 """
 
 buildspec = (
@@ -419,14 +504,14 @@ write(project_path, {
     },
     "artifacts": {"type": "NO_ARTIFACTS"},
     "cache": {
-        "type": "S3",
-        "location": f"{cache_bucket}/{cache_prefix}",
+        "type": "LOCAL",
         "modes": ["LOCAL_SOURCE_CACHE", "LOCAL_CUSTOM_CACHE"],
     },
     "environment": {
         "type": "LINUX_CONTAINER",
-        "image": "aws/codebuild/standard:7.0",
+        "image": image_uri,
         "computeType": compute_type,
+        "imagePullCredentialsType": image_pull_credentials_type,
         "privilegedMode": False,
         "environmentVariables": [
             {"name": "ADL_CODEFRIEND_BUILD_COMMAND", "value": "bash adl/tools/run_pr_fast_test_lane.sh", "type": "PLAINTEXT"},
