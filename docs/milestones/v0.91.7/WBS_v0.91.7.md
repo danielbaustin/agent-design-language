@@ -83,9 +83,9 @@ Completion standard: planned, documented, mocked, component-proven, assigned, or
 - Build/validation work must reduce the validation tail without weakening proof; EC2 Spot or another disposable remote-builder path must be proven before it becomes a release-critical lane.
 - WP-06 selected sprint-lane truth is retained in
   `review/V0917_WP06_BUILD_THROUGHPUT_VALIDATION_COST_REDUCTION_4633.md`.
-  Merged/closed children `#4676`, `#4800`, and `#4698` have local closeout
-  normalization. `#4726` remains in a janitor-required PR-tail state after
-  failed `adl-ci`; `#4677` and `#4678` are green open PRs waiting review/merge.
+  Merged/closed children `#4676`, `#4800`, `#4698`, `#4726`, `#4677`, and
+  `#4678` have settled PR truth; local closeout reconciliation remains needed
+  where repo-native watch still reports `closeout_needed`.
   The `#4679` remote-builder work is split into `#4837` for AWS Spot EC2
   integration and `#4838` for GitHub Actions plus AWS CodeFriend build-lane
   proof.

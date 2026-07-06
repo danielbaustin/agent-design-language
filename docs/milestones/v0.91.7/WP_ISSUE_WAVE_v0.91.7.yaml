@@ -183,8 +183,7 @@ work_packages:
     status_notes:
       - "Selected WP-06 sprint lane recorded in docs/milestones/v0.91.7/review/V0917_WP06_BUILD_THROUGHPUT_VALIDATION_COST_REDUCTION_4633.md."
       - "#4676, #4800, and #4698 are merged/closed and locally closeouted."
-      - "#4726 has an open draft PR with failed adl-ci and needs janitor."
-      - "#4677 and #4678 are green open PRs waiting review/merge."
+      - "#4726, #4677, and #4678 are closed/merged with green adl-ci and coverage checks; local closeout reconciliation remains needed where repo-native watch reports closeout_needed."
       - "#4679 remote-builder work is split into #4837 AWS Spot EC2 integration and #4838 GitHub Actions plus AWS CodeFriend build lane."
   - wp: WP-07
     title: Runtime integration logging and OTel fire-up and Soak 2

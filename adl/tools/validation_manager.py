@@ -911,7 +911,11 @@ def codebuild_platform_candidate(profile: dict[str, Any], eligibility: dict[str,
         platform="codebuild",
         decision="eligible",
         reason="profile can use the scalable CodeFriend CodeBuild lane when the wrapper, project, builder image, and caches are available",
-        command=f"{AWS_CODEFRIEND_BUILD_RUNNER} --git-ref <branch-or-ref> --compute-type BUILD_GENERAL1_XLARGE --dry-run",
+        command=(
+            f"{AWS_CODEFRIEND_BUILD_RUNNER} --project-name adl-codefriend-build "
+            "--dry-run --print-command "
+            "--env ADL_CODEFRIEND_BUILD_COMMAND='bash adl/tools/run_pr_fast_test_lane.sh'"
+        ),
         cache_posture="stable_local_target_cache_plus_s3_sccache",
         cost_posture="aws_codebuild_compute_minutes",
         wrapper=AWS_CODEFRIEND_BUILD_RUNNER,

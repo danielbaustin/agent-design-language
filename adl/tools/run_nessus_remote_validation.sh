@@ -20,6 +20,9 @@ Options:
   --run-id <id>                    Deterministic run id. Defaults to UTC timestamp.
   --local-artifact-dir <path>      Optional local artifact directory for fetched summary + log tarball.
   --summary-name <name>            Remote summary filename. Defaults to summary.json.
+  --builder-image <image>          Optional ADL builder image used to execute the command.
+  --builder-runtime <auto|docker|podman>
+                                   Container runtime for --builder-image. Defaults to auto.
   --help                           Show this help.
 
 Environment overrides:
@@ -31,6 +34,8 @@ Environment overrides:
   ADL_NESSUS_REMOTE_REPO_URL
   ADL_NESSUS_REMOTE_GIT_REF
   ADL_NESSUS_REMOTE_ARTIFACT_DIR
+  ADL_NESSUS_BUILDER_IMAGE
+  ADL_NESSUS_BUILDER_RUNTIME
   ADL_NESSUS_APT_SOURCES_LIST
   ADL_NESSUS_APT_KUBERNETES_LIST
   SSH_BIN
@@ -56,6 +61,8 @@ GIT_REF="${ADL_NESSUS_REMOTE_GIT_REF:-origin/main}"
 RUN_ID=""
 LOCAL_ARTIFACT_DIR="${ADL_NESSUS_REMOTE_ARTIFACT_DIR:-}"
 SUMMARY_NAME="summary.json"
+BUILDER_IMAGE="${ADL_NESSUS_BUILDER_IMAGE:-}"
+BUILDER_RUNTIME="${ADL_NESSUS_BUILDER_RUNTIME:-auto}"
 SSH_BIN="${SSH_BIN:-ssh}"
 
 while [[ $# -gt 0 ]]; do
@@ -104,6 +111,14 @@ while [[ $# -gt 0 ]]; do
       SUMMARY_NAME="${2:-}"
       shift 2
       ;;
+    --builder-image)
+      BUILDER_IMAGE="${2:-}"
+      shift 2
+      ;;
+    --builder-runtime)
+      BUILDER_RUNTIME="${2:-}"
+      shift 2
+      ;;
     --help)
       usage
       exit 0
@@ -127,6 +142,11 @@ if [[ "$EXECUTOR" != "ssh" && "$EXECUTOR" != "local" ]]; then
   exit 2
 fi
 
+if [[ "$BUILDER_RUNTIME" != "auto" && "$BUILDER_RUNTIME" != "docker" && "$BUILDER_RUNTIME" != "podman" ]]; then
+  echo "run_nessus_remote_validation: unsupported --builder-runtime '$BUILDER_RUNTIME' (expected auto, docker, or podman)" >&2
+  exit 2
+fi
+
 if [[ -z "$RUN_ID" ]]; then
   RUN_ID="$(timestamp_id)"
 fi
@@ -146,6 +166,8 @@ GIT_REF="$3"
 RUN_ID="$4"
 COMMAND_B64="$5"
 SUMMARY_NAME="$6"
+BUILDER_IMAGE="$7"
+BUILDER_RUNTIME="$8"
 APT_SOURCES_LIST="${ADL_NESSUS_APT_SOURCES_LIST:-/etc/apt/sources.list}"
 APT_KUBERNETES_LIST="${ADL_NESSUS_APT_KUBERNETES_LIST:-/etc/apt/sources.list.d/kubernetes.list}"
 COMMAND_STRING="$(printf '%s' "$COMMAND_B64" | base64 -d)"
@@ -160,6 +182,7 @@ WSL_IDENTITY_FILE="$RUN_ROOT/wsl-identity.txt"
 STATUS="failed"
 RESOLVED_COMMIT="unknown"
 COMMAND_EXIT=1
+RESOLVED_BUILDER_RUNTIME="none"
 APT_MASKED=false
 HASHICORP_MASKED=false
 KUBERNETES_BACKUP=""
@@ -187,7 +210,8 @@ write_summary() {
   python3 - <<'PY' \
     "$SUMMARY_PATH" "$RUN_ID" "$STATUS" "$exit_code" "$START_ISO" "$end_iso" "$elapsed" \
     "$REPO_URL" "$GIT_REF" "$RESOLVED_COMMIT" "$COMMAND_STRING" "$REMOTE_ROOT" "$RUN_ROOT" \
-    "$REPO_DIR" "$TARGET_DIR" "$SCCACHE_DIR" "$APT_SOURCES_LIST" "$APT_KUBERNETES_LIST"
+    "$REPO_DIR" "$TARGET_DIR" "$SCCACHE_DIR" "$BUILDER_IMAGE" "$BUILDER_RUNTIME" "$RESOLVED_BUILDER_RUNTIME" \
+    "$APT_SOURCES_LIST" "$APT_KUBERNETES_LIST"
 import json
 import os
 import sys
@@ -210,6 +234,9 @@ from pathlib import Path
     repo_dir,
     target_dir,
     sccache_dir,
+    builder_image,
+    builder_runtime,
+    resolved_builder_runtime,
     apt_sources_list,
     apt_kubernetes_list,
 ) = sys.argv[1:]
@@ -251,6 +278,9 @@ payload = {
     "repo_dir": repo_dir,
     "target_dir": target_dir,
     "sccache_dir": sccache_dir,
+    "builder_image": builder_image,
+    "builder_runtime": builder_runtime,
+    "resolved_builder_runtime": resolved_builder_runtime,
     "cache_status": cache_status,
     "apt_sources_list": apt_sources_list,
     "apt_kubernetes_list": apt_kubernetes_list,
@@ -278,7 +308,7 @@ PY
 finish() {
   local exit_code="$1"
   set +e
-  if command -v sccache >/dev/null 2>&1; then
+  if [[ -z "$BUILDER_IMAGE" ]] && command -v sccache >/dev/null 2>&1; then
     sccache --show-stats >"$RUN_ROOT/sccache-stats.log" 2>&1
   fi
   restore_apt_sources
@@ -312,24 +342,72 @@ if [[ -f "$HOME/.cargo/env" ]]; then
 fi
 
 command -v git >/dev/null 2>&1
-command -v rustc >/dev/null 2>&1
-command -v cargo >/dev/null 2>&1
-command -v sccache >/dev/null 2>&1
 
-rustc --version >"$RUN_ROOT/rustc-version.log" 2>&1
-cargo --version >"$RUN_ROOT/cargo-version.log" 2>&1
-sccache --version >"$RUN_ROOT/sccache-version.log" 2>&1
-sccache --zero-stats >/dev/null 2>&1 || true
+resolve_builder_runtime() {
+  if [[ -z "$BUILDER_IMAGE" ]]; then
+    RESOLVED_BUILDER_RUNTIME="none"
+    return 0
+  fi
+  if [[ "$BUILDER_RUNTIME" == "docker" || "$BUILDER_RUNTIME" == "podman" ]]; then
+    command -v "$BUILDER_RUNTIME" >/dev/null 2>&1
+    RESOLVED_BUILDER_RUNTIME="$BUILDER_RUNTIME"
+    return 0
+  fi
+  if command -v docker >/dev/null 2>&1; then
+    RESOLVED_BUILDER_RUNTIME="docker"
+    return 0
+  fi
+  if command -v podman >/dev/null 2>&1; then
+    RESOLVED_BUILDER_RUNTIME="podman"
+    return 0
+  fi
+  echo "ADL builder image requested but neither docker nor podman is available" >&2
+  return 2
+}
 
-if [[ -f "$APT_KUBERNETES_LIST" ]]; then
-  KUBERNETES_BACKUP="$RUN_ROOT/kubernetes.list.backup"
-  mv "$APT_KUBERNETES_LIST" "$KUBERNETES_BACKUP"
-  APT_MASKED=true
+run_in_builder_image() {
+  local command="$1"
+  "$RESOLVED_BUILDER_RUNTIME" run --rm \
+    -v "$REPO_DIR:/workspace" \
+    -v "$TARGET_DIR:/workspace/target" \
+    -v "$SCCACHE_DIR:/cache/sccache" \
+    -e CARGO_TARGET_DIR=/workspace/target \
+    -e SCCACHE_DIR=/cache/sccache \
+    -e RUSTC_WRAPPER=sccache \
+    -w /workspace \
+    "$BUILDER_IMAGE" \
+    "$command"
+}
+
+resolve_builder_runtime
+if [[ -n "$BUILDER_IMAGE" ]]; then
+  "$RESOLVED_BUILDER_RUNTIME" image inspect "$BUILDER_IMAGE" >/dev/null 2>&1 \
+    || "$RESOLVED_BUILDER_RUNTIME" pull "$BUILDER_IMAGE" >"$RUN_ROOT/builder-image-pull.log" 2>&1
+  run_in_builder_image "rustc --version" >"$RUN_ROOT/rustc-version.log" 2>&1
+  run_in_builder_image "cargo --version" >"$RUN_ROOT/cargo-version.log" 2>&1
+  run_in_builder_image "sccache --version" >"$RUN_ROOT/sccache-version.log" 2>&1
+  run_in_builder_image "sccache --zero-stats >/dev/null 2>&1 || true" >/dev/null 2>&1 || true
+else
+  command -v rustc >/dev/null 2>&1
+  command -v cargo >/dev/null 2>&1
+  command -v sccache >/dev/null 2>&1
+
+  rustc --version >"$RUN_ROOT/rustc-version.log" 2>&1
+  cargo --version >"$RUN_ROOT/cargo-version.log" 2>&1
+  sccache --version >"$RUN_ROOT/sccache-version.log" 2>&1
+  sccache --zero-stats >/dev/null 2>&1 || true
 fi
-if [[ -f "$APT_SOURCES_LIST" ]] && grep -q 'apt.releases.hashicorp.com' "$APT_SOURCES_LIST"; then
-  SOURCES_BACKUP="$RUN_ROOT/sources.list.backup"
-  cp "$APT_SOURCES_LIST" "$SOURCES_BACKUP"
-  python3 - <<'PY' "$APT_SOURCES_LIST"
+
+if [[ -z "$BUILDER_IMAGE" ]]; then
+  if [[ -f "$APT_KUBERNETES_LIST" ]]; then
+    KUBERNETES_BACKUP="$RUN_ROOT/kubernetes.list.backup"
+    mv "$APT_KUBERNETES_LIST" "$KUBERNETES_BACKUP"
+    APT_MASKED=true
+  fi
+  if [[ -f "$APT_SOURCES_LIST" ]] && grep -q 'apt.releases.hashicorp.com' "$APT_SOURCES_LIST"; then
+    SOURCES_BACKUP="$RUN_ROOT/sources.list.backup"
+    cp "$APT_SOURCES_LIST" "$SOURCES_BACKUP"
+    python3 - <<'PY' "$APT_SOURCES_LIST"
 from pathlib import Path
 import sys
 
@@ -343,9 +421,12 @@ for line in lines:
         rewritten.append(line)
 path.write_text("\n".join(rewritten) + "\n", encoding="utf-8")
 PY
-  HASHICORP_MASKED=true
+    HASHICORP_MASKED=true
+  fi
+  apt-get update >"$RUN_ROOT/apt-update.log" 2>&1
+else
+  printf 'skipped: builder image mode uses container toolchain\n' >"$RUN_ROOT/apt-update.log"
 fi
-apt-get update >"$RUN_ROOT/apt-update.log" 2>&1
 
 mkdir -p "$REMOTE_ROOT"
 if [[ ! -d "$REPO_DIR/.git" ]]; then
@@ -366,7 +447,16 @@ export CARGO_TARGET_DIR="$TARGET_DIR"
 export SCCACHE_DIR
 export RUSTC_WRAPPER="sccache"
 
-if bash -lc "cd '$REPO_DIR' && $COMMAND_STRING" >"$RUN_ROOT/command.log" 2>&1; then
+if [[ -n "$BUILDER_IMAGE" ]]; then
+  if run_in_builder_image "$COMMAND_STRING" >"$RUN_ROOT/command.log" 2>&1; then
+    COMMAND_EXIT=0
+    STATUS="passed"
+  else
+    COMMAND_EXIT=$?
+    STATUS="failed"
+  fi
+  run_in_builder_image "sccache --show-stats" >"$RUN_ROOT/sccache-stats.log" 2>&1 || true
+elif bash -lc "cd '$REPO_DIR' && $COMMAND_STRING" >"$RUN_ROOT/command.log" 2>&1; then
   COMMAND_EXIT=0
   STATUS="passed"
 else
@@ -385,11 +475,11 @@ LOCAL_SUMMARY_PATH=""
 run_remote() {
   if [[ "$EXECUTOR" == "ssh" ]]; then
     local remote_cmd
-    remote_cmd="wsl.exe -u $WSL_USER -- bash -s -- '$(quote_remote_single "$REMOTE_ROOT")' '$(quote_remote_single "$REPO_URL")' '$(quote_remote_single "$GIT_REF")' '$(quote_remote_single "$RUN_ID")' '$(quote_remote_single "$COMMAND_B64")' '$(quote_remote_single "$SUMMARY_NAME")'"
+    remote_cmd="wsl.exe -u $WSL_USER -- bash -s -- '$(quote_remote_single "$REMOTE_ROOT")' '$(quote_remote_single "$REPO_URL")' '$(quote_remote_single "$GIT_REF")' '$(quote_remote_single "$RUN_ID")' '$(quote_remote_single "$COMMAND_B64")' '$(quote_remote_single "$SUMMARY_NAME")' '$(quote_remote_single "$BUILDER_IMAGE")' '$(quote_remote_single "$BUILDER_RUNTIME")'"
     "$SSH_BIN" -o BatchMode=yes -o ConnectTimeout=15 "${SSH_USER}@${HOST}" "$remote_cmd" <"$REMOTE_SCRIPT"
   else
     ADL_NESSUS_WINDOWS_IDENTITY="local-executor" bash "$REMOTE_SCRIPT" \
-      "$REMOTE_ROOT" "$REPO_URL" "$GIT_REF" "$RUN_ID" "$COMMAND_B64" "$SUMMARY_NAME"
+      "$REMOTE_ROOT" "$REPO_URL" "$GIT_REF" "$RUN_ID" "$COMMAND_B64" "$SUMMARY_NAME" "$BUILDER_IMAGE" "$BUILDER_RUNTIME"
   fi
 }
 
