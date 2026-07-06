@@ -95,6 +95,10 @@ Important repo-local tooling surfaces include:
 - `bash adl/tools/run_validation_manager_nessus_lane.sh` — validation-manager
   wrapper that consumes one eligible local lane and routes it to the Nessus
   remote runner; see [Nessus Validation Manager Lane](NESSUS_VALIDATION_MANAGER_LANE.md)
+- `bash adl/tools/validation_manager.sh --platform-routing` — first-class
+  local, Nessus, AWS Spot, CodeBuild, and wuji routing decisions for scheduler
+  consumption without launching paid cloud resources; see
+  [Validation Platform Routing](VALIDATION_PLATFORM_ROUTING.md)
 - `bash adl/tools/run_aws_spot_remote_validation_lane.sh` — AWS Spot EC2
   remote validation wrapper that checks the `agent-logic-admin` account against
   retained Agent Logic proof before launch and reuses the retained warm EBS

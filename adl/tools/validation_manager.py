@@ -17,6 +17,10 @@ SELECTOR = ROOT / "adl/tools/select_validation_lanes.sh"
 SLOW_PROOF_FAMILIES = ROOT / "adl/config/slow_proof_families.v0.91.6.json"
 DEFAULT_MANIFEST = ROOT / "adl/config/validation_lane_selector.v0.91.6.json"
 NESSUS_REMOTE_RUNNER = "bash adl/tools/run_nessus_remote_validation.sh"
+AWS_SPOT_REMOTE_RUNNER = "bash adl/tools/run_aws_spot_remote_validation_lane.sh"
+AWS_CODEFRIEND_BUILD_RUNNER = "bash adl/tools/run_aws_codefriend_build_lane.sh"
+AWS_CODEFRIEND_BUILD_RUNNER_PATH = ROOT / "adl/tools/run_aws_codefriend_build_lane.sh"
+VALIDATION_PLATFORMS = ("auto", "local", "nessus", "aws_spot", "codebuild", "wuji")
 
 
 def fail(message: str) -> None:
@@ -646,6 +650,349 @@ def shell_quote(value: str) -> str:
     return shlex.quote(value)
 
 
+def combined_run_command(profile: dict[str, Any]) -> str:
+    commands = [
+        str(item.get("command", "")).strip()
+        for item in profile.get("run", [])
+        if str(item.get("command", "")).strip()
+    ]
+    return " && ".join(commands)
+
+
+def deterministic_or_evidence_bound(profile: dict[str, Any]) -> tuple[bool, list[str]]:
+    allowed_determinism = {"deterministic", "evidence_bound"}
+    unsupported = [
+        surface.get("determinism_posture", "unknown")
+        for surface in profile.get("behavior_surfaces", [])
+        if surface.get("determinism_posture", "unknown") not in allowed_determinism
+    ]
+    return not unsupported, unsupported
+
+
+def base_platform_eligibility(profile: dict[str, Any]) -> dict[str, Any]:
+    selected_lane_count = int(profile["estimated_cost"]["selected_lane_count"])
+    runtime_class = str(profile["estimated_cost"]["runtime_class"])
+    deterministic_ok, unsupported_determinism = deterministic_or_evidence_bound(profile)
+    command = combined_run_command(profile)
+    return {
+        "status": profile["status"],
+        "escalation_required": bool(profile["escalation"]["required"]),
+        "selected_lane_count": selected_lane_count,
+        "runtime_class": runtime_class,
+        "deterministic_or_evidence_bound": deterministic_ok,
+        "unsupported_determinism": unsupported_determinism,
+        "command": command,
+    }
+
+
+def platform_candidate(
+    *,
+    platform: str,
+    decision: str,
+    reason: str,
+    command: str | None = None,
+    cache_posture: str,
+    cost_posture: str,
+    launch_posture: str = "dry_run_only",
+    wrapper: str | None = None,
+    caveats: list[str] | None = None,
+) -> dict[str, Any]:
+    candidate: dict[str, Any] = {
+        "platform": platform,
+        "decision": decision,
+        "reason": reason,
+        "cache_posture": cache_posture,
+        "cost_posture": cost_posture,
+        "launch_posture": launch_posture,
+    }
+    if command:
+        candidate["command"] = command
+    if wrapper:
+        candidate["wrapper"] = wrapper
+    if caveats:
+        candidate["caveats"] = caveats
+    return candidate
+
+
+def local_platform_candidate(profile: dict[str, Any], eligibility: dict[str, Any]) -> dict[str, Any]:
+    if eligibility["status"] not in {"ready_to_run", "no_validation_needed"}:
+        return platform_candidate(
+            platform="local",
+            decision="rejected",
+            reason=f"validation profile status {eligibility['status']} is not locally runnable",
+            cache_posture="local_target_or_repo_configured",
+            cost_posture="no_cloud_cost",
+        )
+    if eligibility["escalation_required"]:
+        return platform_candidate(
+            platform="local",
+            decision="rejected",
+            reason="validation profile requires escalation before local routing",
+            cache_posture="local_target_or_repo_configured",
+            cost_posture="no_cloud_cost",
+        )
+    command = eligibility["command"] or "true"
+    return platform_candidate(
+        platform="local",
+        decision="eligible",
+        reason="local platform can run the selected validation profile without cloud resources",
+        command=command,
+        cache_posture="local_target_or_repo_configured",
+        cost_posture="no_cloud_cost",
+    )
+
+
+def nessus_platform_candidate(profile: dict[str, Any], eligibility: dict[str, Any], command: str | None = None) -> dict[str, Any]:
+    remote_command = command or eligibility["command"]
+    if eligibility["status"] != "ready_to_run":
+        return platform_candidate(
+            platform="nessus",
+            decision="rejected",
+            reason=f"validation profile status {eligibility['status']} is not remote-runnable",
+            cache_posture="remote_target_sccache_warm",
+            cost_posture="operator_host_no_cloud_cost",
+            wrapper=NESSUS_REMOTE_RUNNER,
+        )
+    if eligibility["escalation_required"]:
+        return platform_candidate(
+            platform="nessus",
+            decision="rejected",
+            reason="validation profile already requires escalation",
+            cache_posture="remote_target_sccache_warm",
+            cost_posture="operator_host_no_cloud_cost",
+            wrapper=NESSUS_REMOTE_RUNNER,
+        )
+    if eligibility["selected_lane_count"] != 1:
+        return platform_candidate(
+            platform="nessus",
+            decision="rejected",
+            reason=f"Nessus routing requires exactly 1 selected lane, observed {eligibility['selected_lane_count']}",
+            cache_posture="remote_target_sccache_warm",
+            cost_posture="operator_host_no_cloud_cost",
+            wrapper=NESSUS_REMOTE_RUNNER,
+        )
+    if eligibility["runtime_class"] in {"none", "tiny", "escalated"}:
+        return platform_candidate(
+            platform="nessus",
+            decision="rejected",
+            reason=f"runtime_class {eligibility['runtime_class']} is not eligible for Nessus remote execution",
+            cache_posture="remote_target_sccache_warm",
+            cost_posture="operator_host_no_cloud_cost",
+            wrapper=NESSUS_REMOTE_RUNNER,
+        )
+    if not eligibility["deterministic_or_evidence_bound"]:
+        return platform_candidate(
+            platform="nessus",
+            decision="rejected",
+            reason="Nessus routing supports deterministic or evidence-bound lanes only",
+            cache_posture="remote_target_sccache_warm",
+            cost_posture="operator_host_no_cloud_cost",
+            wrapper=NESSUS_REMOTE_RUNNER,
+            caveats=[f"unsupported_determinism={','.join(eligibility['unsupported_determinism'])}"],
+        )
+    if not remote_command:
+        return platform_candidate(
+            platform="nessus",
+            decision="rejected",
+            reason="Nessus routing requires a validation command",
+            cache_posture="remote_target_sccache_warm",
+            cost_posture="operator_host_no_cloud_cost",
+            wrapper=NESSUS_REMOTE_RUNNER,
+        )
+    return platform_candidate(
+        platform="nessus",
+        decision="eligible",
+        reason="single-lane non-tiny deterministic profile is eligible for Nessus remote execution",
+        command=f"{NESSUS_REMOTE_RUNNER} --command {shell_quote(remote_command)}",
+        cache_posture="remote_target_sccache_warm",
+        cost_posture="operator_host_no_cloud_cost",
+        wrapper=NESSUS_REMOTE_RUNNER,
+    )
+
+
+def aws_spot_platform_candidate(profile: dict[str, Any], eligibility: dict[str, Any]) -> dict[str, Any]:
+    command = eligibility["command"]
+    if eligibility["status"] != "ready_to_run":
+        return platform_candidate(
+            platform="aws_spot",
+            decision="rejected",
+            reason=f"validation profile status {eligibility['status']} is not remote-runnable",
+            cache_posture="warm_ebs_cache:/mnt/adl-cache",
+            cost_posture="aws_spot_instance_plus_retained_ebs_storage",
+            wrapper=AWS_SPOT_REMOTE_RUNNER,
+        )
+    if eligibility["escalation_required"]:
+        return platform_candidate(
+            platform="aws_spot",
+            decision="rejected",
+            reason="validation profile already requires escalation",
+            cache_posture="warm_ebs_cache:/mnt/adl-cache",
+            cost_posture="aws_spot_instance_plus_retained_ebs_storage",
+            wrapper=AWS_SPOT_REMOTE_RUNNER,
+        )
+    if eligibility["runtime_class"] in {"none", "tiny", "escalated"}:
+        return platform_candidate(
+            platform="aws_spot",
+            decision="rejected",
+            reason=f"runtime_class {eligibility['runtime_class']} is not cost-appropriate for AWS Spot",
+            cache_posture="warm_ebs_cache:/mnt/adl-cache",
+            cost_posture="aws_spot_instance_plus_retained_ebs_storage",
+            wrapper=AWS_SPOT_REMOTE_RUNNER,
+        )
+    if not eligibility["deterministic_or_evidence_bound"]:
+        return platform_candidate(
+            platform="aws_spot",
+            decision="rejected",
+            reason="AWS Spot routing supports deterministic or evidence-bound lanes only",
+            cache_posture="warm_ebs_cache:/mnt/adl-cache",
+            cost_posture="aws_spot_instance_plus_retained_ebs_storage",
+            wrapper=AWS_SPOT_REMOTE_RUNNER,
+            caveats=[f"unsupported_determinism={','.join(eligibility['unsupported_determinism'])}"],
+        )
+    if not command:
+        return platform_candidate(
+            platform="aws_spot",
+            decision="rejected",
+            reason="AWS Spot routing requires a validation command",
+            cache_posture="warm_ebs_cache:/mnt/adl-cache",
+            cost_posture="aws_spot_instance_plus_retained_ebs_storage",
+            wrapper=AWS_SPOT_REMOTE_RUNNER,
+        )
+    return platform_candidate(
+        platform="aws_spot",
+        decision="eligible",
+        reason="non-tiny deterministic profile can use the warm-EBS AWS Spot lane when credentials and cache are available",
+        command=(
+            f"{AWS_SPOT_REMOTE_RUNNER} --command {shell_quote(command)} "
+            "--instance-type m7a.2xlarge --print-command"
+        ),
+        cache_posture="warm_ebs_cache:/mnt/adl-cache",
+        cost_posture="aws_spot_instance_plus_retained_ebs_storage",
+        wrapper=AWS_SPOT_REMOTE_RUNNER,
+        caveats=[
+            "requires Agent Logic AWS profile or GitHub OIDC role",
+            "requires retained EBS cache attachment for warm-cache proof",
+            "requires explicit --run outside validation-manager to launch paid resources",
+        ],
+    )
+
+
+def codebuild_platform_candidate(profile: dict[str, Any], eligibility: dict[str, Any]) -> dict[str, Any]:
+    wrapper_exists = AWS_CODEFRIEND_BUILD_RUNNER_PATH.exists()
+    if not wrapper_exists:
+        return platform_candidate(
+            platform="codebuild",
+            decision="rejected",
+            reason="CodeBuild wrapper is not present on this branch; merge or rebase the #4838 CodeFriend build lane first",
+            cache_posture="stable_local_target_cache_plus_s3_sccache_when_wrapper_available",
+            cost_posture="aws_codebuild_compute_minutes",
+            wrapper=AWS_CODEFRIEND_BUILD_RUNNER,
+            caveats=["dependency_issue=#4838", "dependency_pr=#4865"],
+        )
+    if eligibility["status"] != "ready_to_run":
+        return platform_candidate(
+            platform="codebuild",
+            decision="rejected",
+            reason=f"validation profile status {eligibility['status']} is not CodeBuild-runnable",
+            cache_posture="stable_local_target_cache_plus_s3_sccache",
+            cost_posture="aws_codebuild_compute_minutes",
+            wrapper=AWS_CODEFRIEND_BUILD_RUNNER,
+        )
+    if eligibility["escalation_required"]:
+        return platform_candidate(
+            platform="codebuild",
+            decision="rejected",
+            reason="validation profile already requires escalation",
+            cache_posture="stable_local_target_cache_plus_s3_sccache",
+            cost_posture="aws_codebuild_compute_minutes",
+            wrapper=AWS_CODEFRIEND_BUILD_RUNNER,
+        )
+    return platform_candidate(
+        platform="codebuild",
+        decision="eligible",
+        reason="profile can use the scalable CodeFriend CodeBuild lane when the wrapper, project, builder image, and caches are available",
+        command=f"{AWS_CODEFRIEND_BUILD_RUNNER} --git-ref <branch-or-ref> --compute-type BUILD_GENERAL1_XLARGE --dry-run",
+        cache_posture="stable_local_target_cache_plus_s3_sccache",
+        cost_posture="aws_codebuild_compute_minutes",
+        wrapper=AWS_CODEFRIEND_BUILD_RUNNER,
+        caveats=[
+            "requires Agent Logic AWS CodeBuild project and service role",
+            "requires builder image and S3 sccache to be configured",
+            "requires explicit live trigger outside validation-manager",
+        ],
+    )
+
+
+def wuji_platform_candidate(profile: dict[str, Any], eligibility: dict[str, Any]) -> dict[str, Any]:
+    if eligibility["status"] not in {"ready_to_run", "no_validation_needed"}:
+        reason = f"validation profile status {eligibility['status']} is not wuji-runnable"
+    elif eligibility["escalation_required"]:
+        reason = "validation profile requires escalation before wuji routing"
+    else:
+        reason = "wuji is ARM and requires a separate arm64 builder image before scheduler routing can claim parity"
+    return platform_candidate(
+        platform="wuji",
+        decision="rejected",
+        reason=reason,
+        cache_posture="linked_target_cache_warm_arm64",
+        cost_posture="operator_host_no_cloud_cost",
+        caveats=["arm64_builder_image_gap", "do_not_claim_x86_64_parity"],
+    )
+
+
+def platform_routing_decision(profile: dict[str, Any], args: argparse.Namespace) -> dict[str, Any] | None:
+    if not args.platform_routing and not args.validation_platform:
+        return None
+    requested = args.validation_platform or "auto"
+    eligibility = base_platform_eligibility(profile)
+    candidates = [
+        local_platform_candidate(profile, eligibility),
+        nessus_platform_candidate(profile, eligibility),
+        aws_spot_platform_candidate(profile, eligibility),
+        codebuild_platform_candidate(profile, eligibility),
+        wuji_platform_candidate(profile, eligibility),
+    ]
+    by_platform = {candidate["platform"]: candidate for candidate in candidates}
+
+    selected: dict[str, Any] | None = None
+    if requested != "auto":
+        candidate = by_platform[requested]
+        selected = candidate if candidate["decision"] == "eligible" else None
+    else:
+        lane_ids = [item.get("lane_id") for item in profile.get("run", [])]
+        if by_platform["local"]["decision"] == "eligible" and eligibility["runtime_class"] in {"none", "tiny"}:
+            selected = by_platform["local"]
+        elif "aws_remote_validation_tooling" in lane_ids and by_platform["aws_spot"]["decision"] == "eligible":
+            selected = by_platform["aws_spot"]
+        elif eligibility["selected_lane_count"] > 1 and by_platform["codebuild"]["decision"] == "eligible":
+            selected = by_platform["codebuild"]
+        elif by_platform["nessus"]["decision"] == "eligible":
+            selected = by_platform["nessus"]
+        elif by_platform["aws_spot"]["decision"] == "eligible":
+            selected = by_platform["aws_spot"]
+        elif by_platform["local"]["decision"] == "eligible":
+            selected = by_platform["local"]
+
+    decision = "selected" if selected else "rejected"
+    reason = (
+        selected["reason"]
+        if selected
+        else by_platform[requested]["reason"]
+        if requested != "auto"
+        else "no eligible validation platform candidate for this profile"
+    )
+    return {
+        "schema_version": "adl.validation_platform_routing.v1",
+        "requested_platform": requested,
+        "decision": decision,
+        "selected_platform": selected["platform"] if selected else None,
+        "reason": reason,
+        "no_launch": True,
+        "launch_policy": "validation-manager only emits routing decisions and dry-run commands; live cloud runs require platform wrappers with explicit --run",
+        "candidates": candidates,
+    }
+
+
 def remote_runner_decision(profile: dict[str, Any], args: argparse.Namespace) -> dict[str, Any] | None:
     if not args.remote_runner and not args.remote_command:
         return None
@@ -654,55 +1001,25 @@ def remote_runner_decision(profile: dict[str, Any], args: argparse.Namespace) ->
     if args.remote_runner != "nessus":
         fail(f"unsupported remote runner: {args.remote_runner}")
 
-    selected_lane_count = int(profile["estimated_cost"]["selected_lane_count"])
-    runtime_class = str(profile["estimated_cost"]["runtime_class"])
-    behavior_surfaces = profile.get("behavior_surfaces", [])
-    allowed_determinism = {"deterministic", "evidence_bound"}
-    unsupported_determinism = [
-        surface.get("determinism_posture", "unknown")
-        for surface in behavior_surfaces
-        if surface.get("determinism_posture", "unknown") not in allowed_determinism
-    ]
+    eligibility = base_platform_eligibility(profile)
+    candidate = nessus_platform_candidate(profile, eligibility, args.remote_command)
+    if candidate["decision"] != "eligible":
+        rejected = {
+            "requested": "nessus",
+            "decision": "rejected",
+            "reason": candidate["reason"],
+        }
+        if candidate.get("caveats"):
+            rejected["caveats"] = candidate["caveats"]
+        return rejected
 
-    if profile["status"] != "ready_to_run":
-        return {
-            "requested": "nessus",
-            "decision": "rejected",
-            "reason": f"validation profile status {profile['status']} is not remote-runnable",
-        }
-    if profile["escalation"]["required"]:
-        return {
-            "requested": "nessus",
-            "decision": "rejected",
-            "reason": "validation profile already requires escalation",
-        }
-    if selected_lane_count != 1:
-        return {
-            "requested": "nessus",
-            "decision": "rejected",
-            "reason": f"remote runner requires exactly 1 selected lane, observed {selected_lane_count}",
-        }
-    if runtime_class in {"none", "tiny", "escalated"}:
-        return {
-            "requested": "nessus",
-            "decision": "rejected",
-            "reason": f"runtime_class {runtime_class} is not eligible for Nessus remote execution",
-        }
-    if unsupported_determinism:
-        return {
-            "requested": "nessus",
-            "decision": "rejected",
-            "reason": "remote runner supports deterministic or evidence-bound lanes only",
-            "unsupported_determinism": unsupported_determinism,
-        }
-
-    remote_command = f"{NESSUS_REMOTE_RUNNER} --command {shell_quote(args.remote_command)}"
+    remote_command = candidate["command"]
     if args.remote_artifact_dir:
         remote_command += f" --local-artifact-dir {shell_quote(str(args.remote_artifact_dir.resolve()))}"
     return {
         "requested": "nessus",
         "decision": "selected",
-        "reason": "single-lane non-tiny deterministic profile is eligible for Nessus remote execution",
+        "reason": candidate["reason"],
         "command": remote_command,
     }
 
@@ -728,6 +1045,20 @@ def print_text(profile: dict[str, Any]) -> None:
         print(f"    reason={remote['reason']}")
         if remote.get("command"):
             print(f"    command={remote['command']}")
+    if profile.get("platform_routing"):
+        routing = profile["platform_routing"]
+        print("  platform_routing:")
+        print(f"    requested_platform={routing['requested_platform']}")
+        print(f"    decision={routing['decision']}")
+        print(f"    selected_platform={routing['selected_platform']}")
+        print(f"    reason={routing['reason']}")
+        for candidate in routing["candidates"]:
+            print(
+                f"    - platform={candidate['platform']} decision={candidate['decision']} "
+                f"cache={candidate['cache_posture']}"
+            )
+            if candidate.get("command"):
+                print(f"      command={candidate['command']}")
     if profile["escalation"]["required"]:
         print("  escalation:")
         for reason in profile["escalation"]["reasons"]:
@@ -770,6 +1101,17 @@ def write_report(path: Path, profile: dict[str, Any]) -> None:
 
 
 def run_profile(profile: dict[str, Any]) -> int:
+    platform_routing = profile.get("platform_routing")
+    if platform_routing:
+        selected_platform = platform_routing.get("selected_platform")
+        if platform_routing.get("decision") != "selected":
+            print_text(profile)
+            print("validation_manager: refusing --run because the requested validation platform is not eligible", file=sys.stderr)
+            return 1
+        if selected_platform != "local":
+            print_text(profile)
+            print("validation_manager: refusing --run because platform routing is dry-run only for non-local platforms", file=sys.stderr)
+            return 1
     remote_runner = profile.get("remote_runner")
     if remote_runner and remote_runner.get("decision") != "selected":
         print_text(profile)
@@ -805,6 +1147,8 @@ def parse_args(argv: list[str]) -> argparse.Namespace:
     parser.add_argument("--remote-runner", choices=["nessus"])
     parser.add_argument("--remote-command")
     parser.add_argument("--remote-artifact-dir", type=Path)
+    parser.add_argument("--platform-routing", action="store_true")
+    parser.add_argument("--validation-platform", choices=VALIDATION_PLATFORMS)
     return parser.parse_args(argv)
 
 
@@ -814,6 +1158,9 @@ def main(argv: list[str]) -> int:
     manifest_path = args.manifest.resolve() if args.manifest else DEFAULT_MANIFEST
     guardrails = manager_guardrails(load_manifest(manifest_path), args.max_selected_lanes)
     profile = build_profile(plan, guardrails, manifest_path)
+    platform_routing = platform_routing_decision(profile, args)
+    if platform_routing:
+        profile["platform_routing"] = platform_routing
     remote = remote_runner_decision(profile, args)
     if remote:
         profile["remote_runner"] = remote
