@@ -13,6 +13,7 @@ LARGE_FILE_DELTA="${COVERAGE_IMPACT_LARGE_FILE_DELTA:-80}"
 AEE_COMPANION_DELTA_LIMIT="${COVERAGE_IMPACT_AEE_COMPANION_DELTA:-80}"
 LOOP_RUNTIME_COMPANION_DELTA_LIMIT="${COVERAGE_IMPACT_LOOP_RUNTIME_COMPANION_DELTA:-80}"
 GODEL_AGENT_RUNTIME_COMPANION_DELTA_LIMIT="${COVERAGE_IMPACT_GODEL_AGENT_RUNTIME_COMPANION_DELTA:-80}"
+CSM_RUNTIME_CLI_COMPANION_DELTA_LIMIT="${COVERAGE_IMPACT_CSM_RUNTIME_CLI_COMPANION_DELTA:-20}"
 REQUIRE_SUMMARY_FOR_RISK=false
 PRINT_RISK_FILTERS=false
 PRINT_RISK_NEXTEST_EXPRESSION=false
@@ -501,6 +502,17 @@ file_is_godel_agent_runtime_companion_surface() {
   esac
 }
 
+file_is_csm_runtime_cli_companion_surface() {
+  local path="$1"
+  [ "$path" = "adl/src/cli/csm_cmd.rs" ] || return 1
+  grep -Eq '^adl/src/(csm_cav|csm_runtime_api|csm_api_gateway_bridge|long_lived_agent)\.rs$' \
+    <<<"$changed_source_paths" || return 1
+  local delta
+  delta="$(changed_line_delta_for_path "$path")"
+  awk -v delta="$delta" -v limit="$CSM_RUNTIME_CLI_COMPANION_DELTA_LIMIT" \
+    'BEGIN { exit ((delta + 0) <= (limit + 0)) ? 0 : 1 }'
+}
+
 focused_summary_command_for_filter() {
   local filter="$1"
   local expression
@@ -543,7 +555,7 @@ print_candidate_filters_fail_closed() {
 
   while IFS=$'\t' read -r status path; do
     [ -n "$path" ] || continue
-    if file_is_structural_module_barrel "$path" || file_has_no_executable_surface "$path" || file_is_tokio_bootstrap_companion_surface "$path" || file_is_aee_obsmem_pvf_handoff_companion_surface "$path" || file_is_loop_runtime_companion_surface "$path" || file_is_godel_agent_runtime_companion_surface "$path" || file_is_live_runtime_boundary_surface "$path"; then
+    if file_is_structural_module_barrel "$path" || file_has_no_executable_surface "$path" || file_is_tokio_bootstrap_companion_surface "$path" || file_is_aee_obsmem_pvf_handoff_companion_surface "$path" || file_is_loop_runtime_companion_surface "$path" || file_is_godel_agent_runtime_companion_surface "$path" || file_is_csm_runtime_cli_companion_surface "$path" || file_is_live_runtime_boundary_surface "$path"; then
       continue
     fi
     if path_has_companion_cli_dispatch_change "$path"; then
@@ -627,6 +639,9 @@ while IFS=$'\t' read -r status path; do
   if file_is_godel_agent_runtime_companion_surface "$path"; then
     continue
   fi
+  if file_is_csm_runtime_cli_companion_surface "$path"; then
+    continue
+  fi
   lines="$(line_count_for_path "$path")"
   delta="$(changed_line_delta_for_path "$path")"
   reason=""
@@ -665,6 +680,9 @@ if [ -n "$SUMMARY" ] && [ -s "$SUMMARY" ]; then
     if file_is_godel_agent_runtime_companion_surface "$path"; then
       continue
     fi
+    if file_is_csm_runtime_cli_companion_surface "$path"; then
+      continue
+    fi
     if file_is_live_runtime_boundary_surface "$path"; then
       continue
     fi
@@ -696,7 +714,7 @@ if [ -n "$SUMMARY" ] && [ -s "$SUMMARY" ]; then
         end
     ' "$SUMMARY")"
     if [ -z "$row" ]; then
-      if file_is_structural_module_barrel "$path" || file_has_no_executable_surface "$path" || file_is_tokio_bootstrap_companion_surface "$path" || file_is_aee_obsmem_pvf_handoff_companion_surface "$path" || file_is_loop_runtime_companion_surface "$path" || file_is_godel_agent_runtime_companion_surface "$path" || file_is_live_runtime_boundary_surface "$path"; then
+      if file_is_structural_module_barrel "$path" || file_has_no_executable_surface "$path" || file_is_tokio_bootstrap_companion_surface "$path" || file_is_aee_obsmem_pvf_handoff_companion_surface "$path" || file_is_loop_runtime_companion_surface "$path" || file_is_godel_agent_runtime_companion_surface "$path" || file_is_csm_runtime_cli_companion_surface "$path" || file_is_live_runtime_boundary_surface "$path"; then
         continue
       fi
       if path_has_companion_cli_dispatch_change "$path"; then
