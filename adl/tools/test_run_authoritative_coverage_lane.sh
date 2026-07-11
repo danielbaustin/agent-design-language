@@ -92,7 +92,7 @@ for required_dir in "$scratch_root/target" "$scratch_root/target/llvm-cov-target
 done
 
 for required in \
-  "cmd=llvm-cov nextest --workspace --no-report" \
+  "cmd=llvm-cov nextest --workspace --retries 2 --no-report" \
   "cmd=llvm-cov report --json --summary-only --output-path coverage-summary.json" \
   "target=$scratch_root/target" \
   "llvm_cov_target=$scratch_root/target/llvm-cov-target"
