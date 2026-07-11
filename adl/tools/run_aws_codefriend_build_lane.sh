@@ -367,6 +367,7 @@ PY
         if [ -n "$LOG_GROUP" ] && [ -n "$LOG_STREAM" ]; then
           : >"$LOG_PATH"
           (
+            set +e
             while :; do
               "$AWS_CLI" logs tail "$LOG_GROUP" \
                 "${AWS_PROFILE_ARGS[@]+"${AWS_PROFILE_ARGS[@]}"}" \

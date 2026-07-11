@@ -3620,8 +3620,20 @@ memory:
         otel_status_path: None,
         otel_log_path: None,
     };
-    let api_status = adl::csm_runtime_api::runtime_api_response(&api_options, "/status")
-        .expect("governed API status response");
+    let status_deadline = std::time::Instant::now() + std::time::Duration::from_secs(30);
+    let api_status = loop {
+        let status = adl::csm_runtime_api::runtime_api_response(&api_options, "/status")
+            .expect("governed API status response");
+        if status["daemon_liveness"]["state"] == "governed_stopped" {
+            break status;
+        }
+        assert!(
+            std::time::Instant::now() < status_deadline,
+            "daemon did not reach governed_stopped state: {}",
+            serde_json::to_string(&status).unwrap()
+        );
+        std::thread::sleep(std::time::Duration::from_millis(100));
+    };
     let api_ready = adl::csm_runtime_api::runtime_api_response(&api_options, "/ready")
         .expect("governed API ready response");
     assert_eq!(api_status["status"], "degraded");
@@ -3724,35 +3736,26 @@ memory:
         "start stderr:\n{}",
         String::from_utf8_lossy(&start.stderr)
     );
+    let restart_deadline = std::time::Instant::now() + std::time::Duration::from_secs(30);
     let mut observed_restart = false;
-    for _ in 0..25 {
-        let supervisor_status: serde_json::Value = serde_json::from_str(
-            &fs::read_to_string(service_root.join("logs/rust_supervisor_status.json"))
-                .expect("supervisor status"),
-        )
-        .expect("parse supervisor status");
-        if supervisor_status["restart_count"].as_u64().unwrap_or(0) >= 1 {
-            observed_restart = true;
-            break;
+    while std::time::Instant::now() < restart_deadline {
+        if let Ok(raw) = fs::read_to_string(service_root.join("logs/rust_supervisor_status.json")) {
+            if let Ok(supervisor_status) = serde_json::from_str::<serde_json::Value>(&raw) {
+                if supervisor_status["restart_count"].as_u64().unwrap_or(0) >= 1 {
+                    observed_restart = true;
+                    break;
+                }
+            }
         }
         std::thread::sleep(std::time::Duration::from_millis(200));
     }
-    assert!(
-        observed_restart,
-        "expected Rust supervisor to restart a real csm daemon child after bounded child completion"
-    );
     let supervisor_status: serde_json::Value = serde_json::from_str(
         &fs::read_to_string(service_root.join("logs/rust_supervisor_status.json"))
             .expect("supervisor status"),
     )
     .expect("parse supervisor status");
-    assert_eq!(supervisor_status["restart_policy"], "always");
-    assert_eq!(supervisor_status["max_cycles"], "not_applicable");
-    assert_eq!(supervisor_status["request_budget"], "not_applicable");
     let startup_ledger =
         fs::read_to_string(service_root.join("logs/startup_ledger.jsonl")).expect("startup ledger");
-    assert!(startup_ledger.contains("\"event\":\"rust_supervisor_child_exit\""));
-    assert!(startup_ledger.contains("\"event\":\"rust_supervisor_restart_scheduled\""));
     let stop = run_csm(&[
         "service",
         "stop",
@@ -3765,6 +3768,17 @@ memory:
         "stop stderr:\n{}",
         String::from_utf8_lossy(&stop.stderr)
     );
+    assert!(
+        observed_restart,
+        "expected Rust supervisor restart within 30s; status: {}; startup ledger:\n{}",
+        serde_json::to_string(&supervisor_status).unwrap(),
+        startup_ledger
+    );
+    assert_eq!(supervisor_status["restart_policy"], "always");
+    assert_eq!(supervisor_status["max_cycles"], "not_applicable");
+    assert_eq!(supervisor_status["request_budget"], "not_applicable");
+    assert!(startup_ledger.contains("\"event\":\"rust_supervisor_child_exit\""));
+    assert!(startup_ledger.contains("\"event\":\"rust_supervisor_restart_scheduled\""));
 }
 
 #[test]
