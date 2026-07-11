@@ -502,13 +502,24 @@ fn real_pr_watch(args: &[String]) -> Result<()> {
 
 fn real_pr_shepherd(args: &[String]) -> Result<()> {
     let parsed: ShepherdArgs = parse_shepherd_args(args)?;
-    let snapshot = build_issue_lifecycle_snapshot(&WatchArgs {
-        issue_ref: parsed.issue_ref,
-        repo: parsed.repo,
-        slug: parsed.slug,
-        version: parsed.version,
+    let watch_args = WatchArgs {
+        issue_ref: parsed.issue_ref.clone(),
+        repo: parsed.repo.clone(),
+        slug: parsed.slug.clone(),
+        version: parsed.version.clone(),
         json: parsed.json,
-    })?;
+    };
+    let mut snapshot = build_issue_lifecycle_snapshot(&watch_args)?;
+    if snapshot.watch_report.classification == "merged_pending_closeout" {
+        let issue = parse_issue_ref_number("shepherd", &parsed.issue_ref)?;
+        let repo = parsed
+            .repo
+            .clone()
+            .or_else(|| repo_from_issue_ref(&parsed.issue_ref))
+            .or_else(|| repo_from_pr_ref(&parsed.issue_ref));
+        closeout_closed_completed_issue(issue, parsed.version.clone(), parsed.slug.clone(), repo)?;
+        snapshot = build_issue_lifecycle_snapshot(&watch_args)?;
+    }
     let report = github::build_issue_lifecycle_shepherd_report(
         &snapshot.watch_report,
         snapshot.ready_lifecycle_state,
@@ -2155,38 +2166,47 @@ fn real_pr_doctor(args: &[String]) -> Result<()> {
 
 fn real_pr_closeout(args: &[String]) -> Result<()> {
     let parsed = parse_closeout_args(args)?;
+    let output_path = closeout_closed_completed_issue(
+        parsed.issue,
+        parsed.version.clone(),
+        parsed.slug.clone(),
+        None,
+    )?;
+    let primary_root = primary_checkout_root()?;
+    let task_bundle = output_path.parent().ok_or_else(|| {
+        anyhow!(
+            "closeout: output path has no parent: {}",
+            output_path.display()
+        )
+    })?;
+    println!("{}", path_relative_to_repo(&primary_root, task_bundle));
+    Ok(())
+}
+
+fn closeout_closed_completed_issue(
+    issue: u32,
+    version: Option<String>,
+    slug: Option<String>,
+    repo_override: Option<String>,
+) -> Result<PathBuf> {
     let repo_root = repo_root()?;
     let primary_root = primary_checkout_root()?;
-    let repo = default_repo(&primary_root)?;
-    let inferred =
-        resolve_issue_scope_and_slug_from_available_local_state(&primary_root, parsed.issue)?
-            .unwrap_or((
-                parsed
-                    .version
-                    .clone()
-                    .unwrap_or_else(|| DEFAULT_VERSION.to_string()),
-                parsed
-                    .slug
-                    .clone()
-                    .unwrap_or_else(|| format!("issue-{}", parsed.issue)),
-            ));
-    let issue_ref = IssueRef::new(parsed.issue, inferred.0, inferred.1)?;
+    let repo = repo_override.unwrap_or(default_repo(&primary_root)?);
+    let inferred = resolve_issue_scope_and_slug_from_available_local_state(&primary_root, issue)?
+        .unwrap_or((
+            version.unwrap_or_else(|| DEFAULT_VERSION.to_string()),
+            slug.unwrap_or_else(|| format!("issue-{issue}")),
+        ));
+    let issue_ref = IssueRef::new(issue, inferred.0, inferred.1)?;
     let output_path = issue_ref.task_bundle_output_path(&primary_root);
-    lifecycle::ensure_issue_closed_completed_for_closeout(parsed.issue, &repo)?;
+    lifecycle::ensure_issue_closed_completed_for_closeout(issue, &repo)?;
     lifecycle::closeout_closed_completed_issue_bundle(
         &repo_root,
         &primary_root,
         &issue_ref,
         &output_path,
     )?;
-    println!(
-        "{}",
-        path_relative_to_repo(
-            &primary_root,
-            &issue_ref.task_bundle_dir_path(&primary_root)
-        )
-    );
-    Ok(())
+    Ok(output_path)
 }
 
 fn print_json<T: Serialize>(value: &T) -> Result<()> {

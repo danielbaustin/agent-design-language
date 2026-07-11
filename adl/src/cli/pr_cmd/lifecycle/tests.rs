@@ -1149,6 +1149,43 @@ fn validated_closeout_state_accepts_legacy_canonical_truth_without_marker() {
 }
 
 #[test]
+fn validated_closeout_state_rejects_unpruned_clean_worktree_residue() {
+    let temp = temp_dir("adl-pr-lifecycle-closeout-unpruned-worktree");
+    let repo = temp.join("repo");
+    fs::create_dir_all(&repo).expect("repo dir");
+    let issue_ref = IssueRef::new(1410, "v0.87", "canonical-slug").expect("issue ref");
+    let canonical_dir = issue_ref.task_bundle_dir_path(&repo);
+    fs::create_dir_all(&canonical_dir).expect("canonical dir");
+    fs::write(
+        canonical_dir.join("stp.md"),
+        "status: \"complete\"\n# STP\n",
+    )
+    .expect("write stp");
+    fs::write(
+        canonical_dir.join("sip.md"),
+        "Branch: codex/1410-canonical-slug\n# SIP\n",
+    )
+    .expect("write sip");
+    fs::write(
+        canonical_dir.join("srp.md"),
+        issue_ref_completed_srp_content(),
+    )
+    .expect("write srp");
+    fs::write(
+        canonical_dir.join("sor.md"),
+        issue_ref_sync_completed_output_content(),
+    )
+    .expect("write sor");
+    fs::create_dir_all(issue_ref.default_worktree_path(&repo, None)).expect("worktree residue");
+
+    assert!(
+        !validated_closeout_state_is_current(&repo, &issue_ref)
+            .expect("valid SOR with unpruned worktree should be classified"),
+        "valid SOR truth alone must not settle a merged issue while its clean worktree remains"
+    );
+}
+
+#[test]
 fn validated_closeout_state_ignores_corrupt_marker_when_canonical_truth_is_valid() {
     let temp = temp_dir("adl-pr-lifecycle-closeout-corrupt-marker");
     let repo = temp.join("repo");
@@ -1848,6 +1885,11 @@ fn closeout_retains_dirty_stale_worktree_when_canonical_truth_is_complete() {
     assert!(text.contains("- Worktree-only paths remaining: issue worktree retained: adl-wp-1410"));
     ensure_closed_completed_issue_bundle_truth(&repo, &issue_ref, &output)
         .expect("canonical truth accepts retained stale worktree");
+    assert!(
+        validated_closeout_state_is_current(&repo, &issue_ref)
+            .expect("retained dirty closeout state should classify"),
+        "dirty retained worktree remains settled only when SOR records the retained reason"
+    );
 }
 
 #[test]
