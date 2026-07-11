@@ -64,7 +64,8 @@ impl Default for CsmCavComponentStatus {
             secrets_redacted: true,
             no_separate_binary: true,
             channels: CsmCavChannels::default(),
-            supervision_policy: "restart_with_backoff_and_block_security_ready_until_evidence_recovers",
+            supervision_policy:
+                "restart_with_backoff_and_block_security_ready_until_evidence_recovers",
             retained_status_ref: CSM_CAV_STATUS_REF,
         }
     }
