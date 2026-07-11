@@ -1,0 +1,29 @@
+{
+  "schema": "adl.csm.observability.integration_proof.v1",
+  "issue": 5117,
+  "vector": {
+    "version": "0.56.0",
+    "packaging": "csm_managed_verified_executable_component",
+    "installed_ref": ".adl/bin/vector",
+    "license": "MPL-2.0",
+    "config_validated": true,
+    "startup_health": "ready",
+    "forced_exit_recovered": true,
+    "restart_budget": null,
+    "shutdown_health": "stopped"
+  },
+  "local_delivery": {
+    "signals": ["logs", "metrics", "traces", "otel", "events"],
+    "accepted_events": 5,
+    "redaction_before_retention": true,
+    "durable_ingress": true,
+    "durable_channel_replay": true
+  },
+  "live_delivery": {
+    "cloudwatch_logs": "proven",
+    "cloudwatch_metrics": "proven",
+    "otlp_http_protobuf": "proven",
+    "eventbridge": "ordered_dependency_issue_5115"
+  },
+  "claim_boundary": "runtime child health is not treated as a remote delivery receipt"
+}

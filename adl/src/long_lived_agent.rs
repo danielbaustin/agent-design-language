@@ -213,6 +213,7 @@ pub fn daemon(spec_path: &Path, options: DaemonOptions) -> Result<DaemonStatusRe
     )?;
 
     loop {
+        runtime_context.maintain_observability()?;
         if let Some(stop) = read_stop(&loaded)? {
             let status = status(spec_path)?;
             persist_status(&loaded, &status, "daemon_stop_observed")?;
@@ -3416,14 +3417,8 @@ impl CsmRuntimeContext {
             .context("failed creating CSM typed-channel runtime")?;
         let channel_fabric = RuntimeChannelFabric::open(state_root.join("channel_spools"))
             .context("failed opening CSM typed-channel fabric")?;
-        let observability = ObservabilityConfig::from_runtime_environment(state_root)
-            .map(ObservabilityRuntime::start)
-            .unwrap_or_else(|| {
-                ObservabilityRuntime::disabled(
-                    state_root,
-                    "vector_binary_not_configured_set_adl_csm_vector_bin",
-                )
-            });
+        let observability =
+            ObservabilityRuntime::start(ObservabilityConfig::from_runtime_environment(state_root));
         let context = Self {
             chronosense,
             observability: Mutex::new(observability),
@@ -3454,6 +3449,14 @@ impl CsmRuntimeContext {
 
     fn time_sync_status(&self) -> crate::chronosense::ChronosenseTimeSyncStatus {
         capture_runtime_time_sync_status()
+    }
+
+    fn maintain_observability(&self) -> Result<()> {
+        self.observability
+            .lock()
+            .map_err(|_| anyhow!("CSM observability component lock poisoned"))?
+            .status();
+        Ok(())
     }
 
     fn transit(
@@ -3954,6 +3957,7 @@ fn sleep_with_partial_checkpoints(
     while remaining > 0 {
         let slice = remaining.min(sleep.checkpoint_interval_secs);
         std::thread::sleep(Duration::from_secs(slice));
+        runtime_context.maintain_observability()?;
         remaining -= slice;
         let last_checkpoint_at = daemon_status.last_checkpoint_at;
         let mut current = status(&loaded.spec_path)?;
