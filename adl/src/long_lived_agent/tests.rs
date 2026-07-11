@@ -842,6 +842,7 @@ fn inspect_specific_cycle_and_rejects_unsafe_cycle_refs() {
 
 #[test]
 fn status_recovers_latest_cycle_from_ledger_when_status_file_is_missing() {
+    let _env = MultiEnvGuard::set_all(&[("ADL_CSM_DISK_FLOOR_BYTES", "0")]);
     let root = temp_dir("ledger-restart");
     let spec = write_spec(&root);
     run(
@@ -1367,6 +1368,7 @@ fn daemon_partial_checkpoint_preserves_recoverable_failure_reason() {
 
 #[test]
 fn safe_fail_bundle_preserves_malformed_artifacts_and_quarantines_active_lease() {
+    let _env = MultiEnvGuard::set_all(&[("ADL_CSM_DISK_FLOOR_BYTES", "0")]);
     let root = temp_dir("safe-fail-malformed-quarantine");
     let spec = write_spec(&root);
     let loaded = load_spec(&spec).expect("load spec");
