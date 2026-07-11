@@ -50,6 +50,17 @@ assert_has "$TMP/focused.out" "mode=focused"
 assert_has "$TMP/focused.out" "filter_expression=test(contract_schema)"
 assert_not_has "$TMP/focused.out" "runtime_owner_lane status=selected"
 
+runtime_kernel="$TMP/runtime-kernel.txt"
+cat >"$runtime_kernel" <<'EOF'
+A	adl-runtime-kernel/src/lib.rs
+A	adl-runtime-kernel/tests/kernel.rs
+A	infra/rustysd/adl-runtime-kernel.service
+EOF
+bash "$SCRIPT" --changed-files "$runtime_kernel" >"$TMP/runtime-kernel.out"
+assert_has "$TMP/runtime-kernel.out" "aggregate_status=selected"
+assert_has "$TMP/runtime-kernel.out" "runtime_kernel_contracts status=selected"
+assert_not_has "$TMP/runtime-kernel.out" "unmapped_change_surface"
+
 focused_resilience_binary="$TMP/focused-resilience-binary.txt"
 printf 'A\tadl/src/bin/run_v0917_integrated_resilience_failure_injection.rs\n' >"$focused_resilience_binary"
 bash "$SCRIPT" --changed-files "$focused_resilience_binary" >"$TMP/focused-resilience-binary.out"

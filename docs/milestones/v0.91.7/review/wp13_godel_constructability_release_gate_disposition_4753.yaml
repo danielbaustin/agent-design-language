@@ -1,0 +1,14 @@
+schema_version: adl.release_gate_disposition.v1
+issue: 4753
+disposition: approved_with_focused_runtime_proof
+changed_release_gate_surfaces:
+  - docs/milestones/v0.91.7/MILESTONE_CHECKLIST_v0.91.7.md
+reviewer_or_review_mode: bounded pre-PR runtime and release-surface review
+focused_validation_run: "cargo test --manifest-path adl/Cargo.toml --lib runtime_v2_godel_agent_runtime -- --nocapture && cargo test --manifest-path adl/Cargo.toml --lib runtime_v2_godel_constructability_boundary -- --nocapture && git diff --check"
+residual_ci_proof_required_before_merge: required
+notes:
+  - "Validation manager escalated #4753 because the milestone checklist is a release-gate surface."
+  - "The checklist edit is limited to WP-13 Godel/constructability wording and does not mark unresolved milestone completion."
+  - "Focused local wuji proof passed for the Runtime v2 Godel launch plan, including complete provider-request coverage and provider-rebinding rejection."
+  - "Focused local wuji proof passed for the Runtime v2 Godel/constructability boundary, including launch-plan drift and punctuated prohibited-claim rejection."
+  - "GitHub PR checks remain required before merge."

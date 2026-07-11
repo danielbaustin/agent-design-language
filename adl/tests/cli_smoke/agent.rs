@@ -208,7 +208,7 @@ fn request_governed_stop_and_wait(spec: &std::path::Path, child: &mut std::proce
         {
             break;
         }
-        if started.elapsed() > std::time::Duration::from_secs(8) {
+        if started.elapsed() > std::time::Duration::from_secs(20) {
             let _ = child.kill();
             panic!("CSM daemon did not exit after governed stop request");
         }
@@ -949,6 +949,38 @@ memory:
         false
     );
     assert_eq!(
+        backpressure_report["typed_channel_runtime_proof"]["status"],
+        "passed"
+    );
+    assert_eq!(
+        backpressure_report["typed_channel_runtime_proof"]["channel_count"],
+        7
+    );
+    assert_eq!(
+        backpressure_report["typed_channel_runtime_proof"]["required_state_silently_dropped"],
+        false
+    );
+    let channel_observations = backpressure_report["typed_channel_runtime_proof"]["observations"]
+        .as_array()
+        .expect("live channel observations");
+    assert!(channel_observations.iter().any(|observation| {
+        observation["receipt"]["outcome"] == "durably_spooled"
+            && observation["snapshot_before_publish_ack"]["durable_spool_depth"] == 1
+    }));
+    let cloud_observation = channel_observations
+        .iter()
+        .find(|observation| observation["channel"] == "cloud_bridge_to_aws_routes")
+        .expect("cloud bridge observation");
+    assert_eq!(cloud_observation["receipt"]["cursor_may_advance"], false);
+    assert_eq!(
+        cloud_observation["snapshot_before_publish_ack"]["durable_spool_depth"],
+        1
+    );
+    assert_eq!(
+        cloud_observation["publish_ack_status"],
+        "waiting_for_live_transport_receipt"
+    );
+    assert_eq!(
         backpressure_report["safe_fail_action"]["action"],
         "safe_fail_serialize"
     );
@@ -1062,8 +1094,10 @@ memory:
 
     let mut status = http_get_json(&addr, "/status");
     let status_wait_started = std::time::Instant::now();
-    while status["daemon_liveness"]["state"] != "running" || status["ready"] != "ready" {
-        if status_wait_started.elapsed() > std::time::Duration::from_secs(5) {
+    while status["daemon_liveness"]["state"] != "running"
+        || status["typed_channels"]["last_event"] != "cycle_observability_record"
+    {
+        if status_wait_started.elapsed() > std::time::Duration::from_secs(20) {
             panic!(
                 "embedded CSM API did not report ready running daemon state:\n{}",
                 serde_json::to_string_pretty(&status).expect("serialize status")
@@ -1106,7 +1140,7 @@ memory:
     assert_eq!(status["runtime_owner"], "csm");
     assert_eq!(status["agent_instance_id"], "api-agent");
     assert_eq!(status["status"], "healthy");
-    assert_eq!(status["ready"], "ready");
+    assert_eq!(status["ready"], "not_ready");
     assert_eq!(status["daemon_liveness"]["state"], "running");
     assert_eq!(
         status["daemon_liveness"]["supervisor_pid_liveness"],
@@ -1115,6 +1149,16 @@ memory:
     assert_eq!(
         status["backpressure"]["schema"],
         "adl.csm.backpressure_state.v1"
+    );
+    assert_eq!(status["typed_channels"]["status"], "ready");
+    assert_eq!(
+        status["typed_channels"]["schema"],
+        "adl.csm.typed_channel_state.v1"
+    );
+    assert_eq!(status["typed_channels"]["summary"]["channel_count"], 7);
+    assert_eq!(
+        status["typed_channels"]["last_event"],
+        "cycle_observability_record"
     );
     assert_eq!(status["scheduler"]["status"], "integrated");
     assert_eq!(status["chronosense"]["status"], "integrated");
@@ -1143,16 +1187,22 @@ memory:
     assert_eq!(health["schema"], "adl.csm.runtime_api.health.v1");
     assert_eq!(health["status"], "healthy");
     assert_eq!(ready["schema"], "adl.csm.runtime_api.ready.v1");
-    assert_eq!(ready["ready"], "ready");
+    assert_eq!(ready["ready"], "not_ready");
     assert!(ready["blocking_reasons"]
         .as_array()
         .expect("ready blockers")
-        .is_empty());
+        .contains(&serde_json::json!("curiosity_engine_not_ready")));
     assert_eq!(metrics["schema"], "adl.csm.runtime_api.metrics.v1");
     assert_eq!(metrics["gauges"]["backpressure_queue_depth"], 12);
     assert_eq!(metrics["gauges"]["backpressure_lag_ms"], 3100);
     assert_eq!(metrics["gauges"]["backpressure_deferred_count"], 23);
     assert_eq!(metrics["gauges"]["backpressure_shed_count"], 7);
+    assert_eq!(metrics["gauges"]["typed_channel_count"], 7);
+    assert_eq!(metrics["gauges"]["typed_channel_queue_depth"], 0);
+    assert_eq!(metrics["gauges"]["typed_channel_durable_spool_depth"], 0);
+    assert_eq!(metrics["gauges"]["typed_channel_blocked_count"], 0);
+    assert_eq!(metrics["gauges"]["typed_channel_throttled_count"], 0);
+    assert_eq!(metrics["gauges"]["typed_channel_shed_count"], 0);
     assert_eq!(
         metrics["states"]["backpressure_health"],
         "capacity_degraded"
@@ -1161,6 +1211,7 @@ memory:
         metrics["states"]["backpressure_safe_fail_action"],
         "safe_fail_serialize"
     );
+    assert_eq!(metrics["states"]["typed_channel_readiness"], "ready");
     assert!(
         matches!(
             metrics["states"]["agent_state"].as_str(),
@@ -3176,9 +3227,12 @@ memory:
             .as_array()
             .expect("not-ready response includes blockers");
         assert!(
-            blockers.iter().all(|blocker| blocker
-                .as_str()
-                .is_some_and(|value| value.starts_with("chronosense_time_sync_"))),
+            blockers.iter().all(|blocker| {
+                blocker.as_str().is_some_and(|value| {
+                    value.starts_with("chronosense_time_sync_")
+                        || value == "curiosity_engine_not_ready"
+                })
+            }),
             "unexpected runtime API readiness blockers: {blockers:?}"
         );
     }

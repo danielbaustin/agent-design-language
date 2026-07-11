@@ -228,6 +228,7 @@ candidate_filter_for_path() {
       ;;
     adl/src/cli/csm_cmd.rs|\
     adl/src/csm_api_gateway_bridge.rs|\
+    adl/src/csm_curiosity_engine.rs|\
     adl/src/csm_freedom_gate.rs|\
     adl/src/csm_godel_snapshot.rs|\
     adl/src/csm_runtime_api.rs|\

@@ -10,6 +10,7 @@ use aws_sdk_eventbridge as eventbridge;
 use aws_sdk_lambda as lambda;
 use aws_sdk_sns as sns;
 use chrono::{DateTime, Utc};
+use cloudwatchlogs::operation::RequestId;
 use serde::{Deserialize, Serialize};
 use sha2::{Digest, Sha256};
 use std::env;
@@ -765,7 +766,9 @@ fn publish_csm_notice_cloudwatch(
                 Utc::now().timestamp_millis(),
                 message,
             ) {
-                Ok(()) => csm_notice_attempt(base, "published_live", None, None),
+                Ok(provider_receipt_id) => {
+                    csm_notice_attempt(base, "published_live", None, provider_receipt_id)
+                }
                 Err(_) => csm_notice_attempt(
                     base,
                     "failed",
@@ -973,13 +976,36 @@ fn publish_csm_notice_control_plane(
                     None,
                 );
             };
+            let idempotency_key = envelope
+                .get("correlation_id")
+                .and_then(serde_json::Value::as_str)
+                .unwrap_or("csm-notice")
+                .to_string();
             match reqwest::blocking::Client::builder()
                 .timeout(Duration::from_secs(10))
                 .build()
-                .and_then(|client| client.post(endpoint).json(&envelope).send())
-            {
+                .and_then(|client| {
+                    client
+                        .post(endpoint)
+                        .header("Idempotency-Key", idempotency_key.as_str())
+                        .json(&envelope)
+                        .send()
+                }) {
                 Ok(response) if response.status().is_success() => {
-                    csm_notice_attempt(base, "published_live", None, None)
+                    let status = response.status().as_u16();
+                    let provider_receipt_id = ["x-amzn-requestid", "x-request-id", "request-id"]
+                        .into_iter()
+                        .find_map(|name| {
+                            response
+                                .headers()
+                                .get(name)
+                                .and_then(|value| value.to_str().ok())
+                                .map(str::to_string)
+                        })
+                        .unwrap_or_else(|| {
+                            format!("http-{status}-idempotency-ack:{idempotency_key}")
+                        });
+                    csm_notice_attempt(base, "published_live", None, Some(provider_receipt_id))
                 }
                 Ok(response) => csm_notice_attempt(
                     base,
@@ -1506,7 +1532,7 @@ fn publish_live_cloudwatch_heartbeat(
         .context("ADL_AWS_HEARTBEAT_LOG_STREAM is required for live heartbeat publish")?;
     let message = serde_json::to_string(envelope)?;
     let timestamp = envelope.timestamp.timestamp_millis();
-    run_cloudwatch_put(config, log_group, log_stream, timestamp, message)
+    run_cloudwatch_put(config, log_group, log_stream, timestamp, message).map(|_| ())
 }
 
 fn run_cloudwatch_put(
@@ -1515,7 +1541,7 @@ fn run_cloudwatch_put(
     log_stream: &str,
     timestamp: i64,
     message: String,
-) -> Result<()> {
+) -> Result<Option<String>> {
     let runtime = tokio::runtime::Builder::new_current_thread()
         .enable_all()
         .build()
@@ -1545,7 +1571,7 @@ fn run_cloudwatch_put(
             .message(message)
             .build()
             .context("failed to build CloudWatch heartbeat log event")?;
-        client
+        let response = client
             .put_log_events()
             .log_group_name(log_group)
             .log_stream_name(log_stream)
@@ -1553,7 +1579,12 @@ fn run_cloudwatch_put(
             .send()
             .await
             .context("failed to publish runtime heartbeat to CloudWatch Logs")?;
-        Ok::<(), anyhow::Error>(())
+        Ok::<Option<String>, anyhow::Error>(
+            response
+                .request_id()
+                .map(ToString::to_string)
+                .or_else(|| response.next_sequence_token().map(ToString::to_string)),
+        )
     })
 }
 

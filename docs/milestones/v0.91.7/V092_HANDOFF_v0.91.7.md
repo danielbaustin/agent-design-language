@@ -45,8 +45,8 @@ and only `integrated_proven` counts as operational completion.
 | Reasoning graph / loop runtime / `adl.skill.v1` | implementation_required | `v0.92` may consume this surface only after producer/consumer or runtime proof exists for the required graph/loop/skill-standard path. | `features/REASONING_GRAPH_LOOP_SKILL_STANDARD_BRIDGE_v0.91.7.md` |
 | Security readiness | blocked_with_evidence until resolved | Unresolved activation blockers must be resolved or blocked with evidence and operator approval before launch. | `features/SECURITY_RESIDUAL_READINESS_v0.91.7.md` |
 | ACIP/A2A/protobuf implementation | blocked_with_evidence until resolved | `v0.92` must choose JSON projection, protobuf, or another implemented carrier before claiming protocol readiness. | `features/ACIP_A2A_PROTOBUF_RESIDUALS_v0.91.7.md` |
-| Affect and happiness | implementation_required | `v0.92` may consume this surface only after the affect model and public claim boundaries are implemented/proven or blocked with evidence and operator approval. | `features/AFFECT_HAPPINESS_BRIDGE_v0.91.7.md` |
-| Godel mechanics | implementation_required | `v0.92` may consume this surface only after reviewed mechanics and proof boundaries are integrated/proven or blocked with evidence and operator approval. | `features/GODEL_MECHANICS_BRIDGE_v0.91.7.md` |
+| Affect and happiness | integrated_proven for operational reasoning-control; subjective affect not_claimed | `v0.92` may consume the #4752 safe-test boundary and existing `affect_reasoning_control_packet.v1` proof only as operational reasoning-control evidence. Birthday, launch, demo, or publication copy must not imply hidden emotion, subjective happiness, wellbeing, suffering, consciousness, scalar happiness scores, reward channels, or public reputation. | `features/AFFECT_HAPPINESS_BRIDGE_v0.91.7.md`; `review/wp13_affect_happiness_boundary_4752.md` |
+| Godel mechanics | integrated_proven for CSM-supervised launch admission and claim-boundary consumption; live hosted invocation and adaptive DAG completion not_claimed | `v0.92` may consume the Runtime v2 Godel/constructability boundary for reviewed birthday claims only when retained Godel runtime evidence, launch-plan provider-request admission, and constructability anchors are cited. | `features/GODEL_MECHANICS_BRIDGE_v0.91.7.md`; `review/wp13_godel_constructability_boundary_4753.md` |
 | Economics context | operator_scoped_out unless reopened | Default `v0.92` posture is context-only unless an explicit operator decision promotes and proves a bounded test. | `features/ECONOMICS_CONTEXT_DECISION_v0.91.7.md` |
 
 ## Operational Substrate Handoff
@@ -75,8 +75,10 @@ and only `integrated_proven` counts as operational completion.
 - Security and ACIP/A2A implementation remains activation-path work until resolved
   or blocked with evidence and operator approval.
 - Curiosity and Constructability require proof issues before public claims.
-- Affect, happiness, and Godel mechanics require proof-bound public claim
-  language in birthday evidence.
+- Affect and happiness may use #4752 proof-bound operational
+  reasoning-control language only; subjective affect, happiness, wellbeing, and
+  consciousness remain explicit non-claims. Godel mechanics still require
+  proof-bound public claim language in birthday evidence.
 - Capability envelope, witnesses/receipt, and publication-facing narratives must
   not be inferred from launch language without tracked evidence.
 

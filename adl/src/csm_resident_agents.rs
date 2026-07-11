@@ -5,9 +5,10 @@
 //! CSM agents share one admission path.
 
 use adl_runtime::resident_agent::{
-    CsmResidentAgentAuthority, CsmResidentAgentChannels, CsmResidentAgentLifecycleState,
-    CsmResidentAgentPolicyGates, CsmResidentAgentProviderBinding, CsmResidentAgentSet,
-    CsmResidentAgentSpec, CSM_RESIDENT_AGENT_SCHEMA, CSM_RESIDENT_AGENT_SET_SCHEMA,
+    CsmResidentAgentAffectModel, CsmResidentAgentAuthority, CsmResidentAgentChannels,
+    CsmResidentAgentLifecycleState, CsmResidentAgentPolicyGates, CsmResidentAgentProviderBinding,
+    CsmResidentAgentSet, CsmResidentAgentSpec, CSM_RESIDENT_AGENT_SCHEMA,
+    CSM_RESIDENT_AGENT_SET_SCHEMA,
 };
 use anyhow::{anyhow, Result};
 use serde_json::{json, Value};
@@ -48,6 +49,9 @@ pub fn resident_agent_set_status(agent_instance_id: &str) -> Value {
                 "privileged_agent": "polis_shepherd_agent",
                 "ordinary_agents": ["codex_chatgpt_resident", "local_ollama_resident"],
                 "provider_entrypoint": "provider_substrate",
+                "affect_model_integrated": true,
+                "affect_model_schema": crate::runtime_v2::AFFECT_HAPPINESS_SAFE_TEST_MODEL_SCHEMA_VERSION,
+                "affect_invocation_policy": "operational_reasoning_control_only",
                 "no_shepherd_bespoke_provider_path": true
             }
         }),
@@ -160,11 +164,12 @@ fn resident_agent(
         provider_binding: provider_binding_from_target(target),
         channels: channels(&agent_instance_id),
         policy_gates: policy_gates(),
+        affect_model: affect_model()?,
         checkpoint_policy: "periodic_and_agent_requested_with_runtime_min_interval".to_string(),
         lifelog_policy:
-            "append_admission_lifecycle_provider_invocation_refusal_and_recovery_events".to_string(),
+            "append_admission_lifecycle_provider_invocation_refusal_recovery_and_affect_model_events".to_string(),
         observability_policy:
-            "emit_resident_agent_provider_lifecycle_metrics_traces_logs_and_runtime_events"
+            "emit_resident_agent_provider_lifecycle_affect_model_metrics_traces_logs_and_runtime_events"
                 .to_string(),
         privilege_reason: privilege_reason.to_string(),
     };
@@ -237,6 +242,23 @@ fn policy_gates() -> CsmResidentAgentPolicyGates {
     }
 }
 
+fn affect_model() -> Result<CsmResidentAgentAffectModel> {
+    let model = crate::runtime_v2::affect_happiness_safe_test_model()?;
+    Ok(CsmResidentAgentAffectModel {
+        schema_version: model.schema_version,
+        model_id: model.model_id,
+        affect_signal_count: model.consumed_affect_signal_ids.len() as u32,
+        wellbeing_dimension_count: model.consumed_wellbeing_dimension_ids.len() as u32,
+        safe_test_scenario_count: model.safe_test_scenarios.len() as u32,
+        public_claim_boundary_id: model.public_claim_boundary.boundary_id,
+        invocation_policy: "operational_reasoning_control_only".to_string(),
+        interpretation_boundary:
+            "Operational reasoning-control only; not hidden emotion and not subjective happiness."
+                .to_string(),
+        unsupported_public_claims: model.public_claim_boundary.unsupported_claims,
+    })
+}
+
 fn transport_label(transport: &ProviderTransportV1) -> &'static str {
     match transport {
         ProviderTransportV1::Http => "http",
@@ -274,6 +296,18 @@ mod tests {
             shepherd.provider_binding.binding_status,
             "provider_target_resolved"
         );
+        assert_eq!(
+            shepherd.affect_model.schema_version,
+            crate::runtime_v2::AFFECT_HAPPINESS_SAFE_TEST_MODEL_SCHEMA_VERSION
+        );
+        assert_eq!(
+            shepherd.affect_model.invocation_policy,
+            "operational_reasoning_control_only"
+        );
+        assert!(set.agents.iter().all(|agent| agent
+            .affect_model
+            .unsupported_public_claims
+            .contains(&"subjective_happiness".to_string())));
         assert!(set
             .agents
             .iter()
@@ -294,5 +328,9 @@ mod tests {
         assert_eq!(shepherd.provider_binding.source, "provider_substrate");
         assert!(shepherd.policy_gates.freedom_gate_required);
         assert!(shepherd.policy_gates.cav_required);
+        assert_eq!(
+            shepherd.lifelog_policy,
+            "append_admission_lifecycle_provider_invocation_refusal_recovery_and_affect_model_events"
+        );
     }
 }

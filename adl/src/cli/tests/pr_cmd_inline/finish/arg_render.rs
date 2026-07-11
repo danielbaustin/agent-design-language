@@ -5831,6 +5831,88 @@ fn finish_validation_profile_fails_closed_when_ready_profile_command_is_not_publ
 }
 
 #[test]
+fn finish_validation_profile_accepts_registered_runtime_kernel_commands() {
+    let _guard = env_lock();
+    let temp = unique_temp_dir("adl-pr-finish-runtime-kernel-command");
+    let repo = temp.join("repo");
+    fs::create_dir_all(repo.join("adl/config")).expect("adl config dir");
+    fs::create_dir_all(repo.join("adl/tools")).expect("adl tools dir");
+    fs::create_dir_all(repo.join("adl-runtime-kernel")).expect("runtime kernel dir");
+    write_executable(
+        &repo.join("adl/tools/check_no_tracked_adl_issue_record_residue.sh"),
+        "#!/usr/bin/env bash\nset -euo pipefail\n",
+    );
+    fs::write(
+        repo.join("adl-runtime-kernel/Cargo.toml"),
+        "[package]\nname='adl-runtime-kernel'\nversion='0.1.0'\n",
+    )
+    .expect("runtime kernel manifest");
+    let command = "cargo test --manifest-path adl-runtime-kernel/Cargo.toml && cargo clippy --manifest-path adl-runtime-kernel/Cargo.toml --all-targets -- -D warnings";
+    fs::write(
+        repo.join("adl/config/validation_lane_selector.v0.91.6.json"),
+        format!(
+            r#"{{"schema_version":"adl.validation_lane_selector.v1","lanes":[{{"id":"runtime_kernel_contracts","run_command":"{command}"}}]}}"#
+        ),
+    )
+    .expect("validation manifest");
+    let profile = FinishValidationProfile {
+        selected_profile: "runtime_kernel_contracts".to_string(),
+        status: "ready_to_run".to_string(),
+        pr_publication_sufficient: true,
+        validation_split: None,
+        run: vec![FinishValidationProfileRunItem {
+            lane_id: "runtime_kernel_contracts".to_string(),
+            command: command.to_string(),
+            reason: "fixture".to_string(),
+            matched_paths: vec!["adl-runtime-kernel/src/lib.rs".to_string()],
+            vpp_record: None,
+        }],
+        not_run: Vec::new(),
+        deferred: Vec::new(),
+        escalation: FinishValidationProfileEscalation {
+            required: false,
+            reasons: Vec::new(),
+        },
+    };
+
+    ensure_finish_validation_profile_is_runnable(
+        &repo,
+        &profile,
+        &["adl-runtime-kernel/src/lib.rs".to_string()],
+    )
+    .expect("registered runtime kernel commands should be publishable");
+
+    init_git_repo(&repo);
+    let bin_dir = temp.join("bin");
+    fs::create_dir_all(&bin_dir).expect("bin dir");
+    let cargo_log = temp.join("cargo.log");
+    write_executable(
+        &bin_dir.join("cargo"),
+        &format!(
+            "#!/usr/bin/env bash\nset -euo pipefail\nprintf '%s\\n' \"$*\" >> '{}'\n",
+            cargo_log.display()
+        ),
+    );
+    let old_path = env::var("PATH").unwrap_or_default();
+    unsafe {
+        env::set_var("PATH", format!("{}:{}", bin_dir.display(), old_path));
+    }
+    let plan = FinishValidationPlan {
+        mode: FinishValidationMode::SmallBinaryFocused,
+        commands: vec![command.to_string()],
+    };
+    let execution = run_finish_validation_rust(&repo, &plan);
+    unsafe {
+        env::set_var("PATH", old_path);
+    }
+    execution.expect("registered runtime kernel commands should execute");
+    let cargo_calls = fs::read_to_string(&cargo_log).expect("cargo log");
+    assert!(cargo_calls.contains("test --manifest-path"));
+    assert!(cargo_calls.contains("clippy --manifest-path"));
+    assert!(cargo_calls.contains("--all-targets -- -D warnings"));
+}
+
+#[test]
 fn finish_validation_profile_accepts_ready_profile_with_registered_nessus_remote_validation_command(
 ) {
     let temp = unique_temp_dir("adl-pr-finish-publishable-nessus-remote-validation-command");

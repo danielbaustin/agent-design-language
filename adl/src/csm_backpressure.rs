@@ -6,11 +6,14 @@ use serde::{Deserialize, Serialize};
 use serde_json::{json, Value};
 use std::fs;
 use std::path::{Path, PathBuf};
+use tokio_util::sync::CancellationToken;
 
 use crate::long_lived_agent;
 use crate::observability;
 
 pub use adl_runtime::backpressure::{
+    runtime_channel, runtime_channel_policy, typed_channel_policy_matrix_json, ChannelPriority,
+    FullQueuePolicy, RuntimeChannelId, RuntimeMessage, RuntimeSendOutcome,
     CSM_BACKPRESSURE_COMMAND_RESULT_SCHEMA, CSM_BACKPRESSURE_REPORT_SCHEMA,
     CSM_BACKPRESSURE_STATE_SCHEMA, NONCRITICAL_LOSS_POLICY, REQUIRED_STATE_LOSS_POLICY,
 };
@@ -51,6 +54,7 @@ pub fn prove_backpressure(options: BackpressureProofOptions) -> Result<Backpress
     let summary = summarize_cases(&cases);
     let safe_fail_bundle_path = loaded.state_root.join("safe_fail_bundle.json");
     let safe_fail_bundle = read_required_safe_fail_bundle(&safe_fail_bundle_path)?;
+    let live_channel_proof = run_live_channel_proof(&options.out_dir.join("channel_spools"))?;
     let safe_fail_action = json!({
         "status": "verified",
         "trigger": "survival_threshold_breached",
@@ -68,6 +72,8 @@ pub fn prove_backpressure(options: BackpressureProofOptions) -> Result<Backpress
         "profile": options.profile,
         "updated_at": Utc::now(),
         "queues": queue_state(),
+        "typed_channel_policy_matrix": typed_channel_policy_matrix_json(),
+        "typed_channel_runtime_proof": live_channel_proof,
         "summary": summary,
         "safe_fail_action": safe_fail_action,
         "observability": observability_contract(),
@@ -81,6 +87,8 @@ pub fn prove_backpressure(options: BackpressureProofOptions) -> Result<Backpress
         "status": "passed",
         "resource_taxonomy": taxonomy,
         "policy_matrix": policies,
+        "typed_channel_policy_matrix": typed_channel_policy_matrix_json(),
+        "typed_channel_runtime_proof": live_channel_proof,
         "proof_cases": cases,
         "summary": summary,
         "safe_fail_action": safe_fail_action,
@@ -131,6 +139,145 @@ pub fn prove_backpressure(options: BackpressureProofOptions) -> Result<Backpress
         event_count: 1,
         non_claims: non_claims(),
     })
+}
+
+fn run_live_channel_proof(spool_root: &Path) -> Result<Value> {
+    tokio::runtime::Builder::new_current_thread()
+        .enable_all()
+        .build()
+        .context("failed creating typed-channel proof runtime")?
+        .block_on(run_live_channel_proof_async(spool_root))
+}
+
+async fn run_live_channel_proof_async(spool_root: &Path) -> Result<Value> {
+    let cancellation = CancellationToken::new();
+    let mut observations = Vec::new();
+
+    for id in [
+        RuntimeChannelId::RuntimeApiToControlPlane,
+        RuntimeChannelId::SchedulerToReasoningRuntime,
+        RuntimeChannelId::ReasoningRuntimeToAee,
+        RuntimeChannelId::AeeToCheckpoint,
+        RuntimeChannelId::ComponentsToObservability,
+        RuntimeChannelId::ComponentsToLifelog,
+        RuntimeChannelId::CloudBridgeToAwsRoutes,
+    ] {
+        let policy = runtime_channel_policy(id);
+        let spool_path = spool_root.join(format!("{:?}.redb", id).to_ascii_lowercase());
+        let (sender, mut receiver) = runtime_channel(policy, &spool_path)
+            .with_context(|| format!("failed opening live channel {id:?}"))?;
+
+        for index in 0..policy.capacity {
+            sender
+                .send(
+                    RuntimeMessage::new(
+                        format!("{id:?}-capacity-{index}"),
+                        policy.priority,
+                        json!({"probe": "capacity", "index": index}),
+                    ),
+                    &cancellation,
+                )
+                .await
+                .with_context(|| format!("failed filling live channel {id:?}"))?;
+        }
+
+        let probe = RuntimeMessage::new(
+            format!("{id:?}-overload"),
+            if id == RuntimeChannelId::ComponentsToObservability {
+                ChannelPriority::LowPriorityObservability
+            } else {
+                policy.priority
+            },
+            json!({"probe": "overload"}),
+        );
+        let receipt = match policy.full_queue_policy {
+            FullQueuePolicy::BlockProducer => {
+                let sender = sender.clone();
+                let cancellation = cancellation.clone();
+                let blocked = tokio::spawn(async move { sender.send(probe, &cancellation).await });
+                tokio::task::yield_now().await;
+                let _ = receiver
+                    .recv()
+                    .await
+                    .context("full channel lost capacity message")?;
+                blocked
+                    .await
+                    .context("blocked channel task failed")?
+                    .with_context(|| format!("blocked live channel {id:?} failed"))?
+            }
+            _ => sender
+                .send(probe, &cancellation)
+                .await
+                .with_context(|| format!("overload live channel {id:?} failed"))?,
+        };
+
+        let before_ack = sender.snapshot().await?;
+        let publish_ack_status = if id == RuntimeChannelId::CloudBridgeToAwsRoutes {
+            receipt
+                .spool_sequence
+                .context("cloud bridge overload did not retain a spool sequence")?;
+            if receipt.cursor_may_advance {
+                bail!("cloud bridge cursor advanced before publishable acknowledgement");
+            }
+            "waiting_for_live_transport_receipt"
+        } else {
+            "not_applicable"
+        };
+
+        observations.push(json!({
+            "channel": id,
+            "full_queue_policy": policy.full_queue_policy,
+            "receipt": receipt,
+            "snapshot_before_publish_ack": before_ack,
+            "publish_ack_status": publish_ack_status,
+            "spool_path": spool_path.strip_prefix(spool_root.parent().unwrap_or(spool_root))
+                .unwrap_or(&spool_path),
+        }));
+    }
+
+    let required_state_silently_dropped = observations.iter().any(|observation| {
+        observation["receipt"]["outcome"] == json!(RuntimeSendOutcome::Cancelled)
+            || (observation["receipt"]["outcome"] == json!(RuntimeSendOutcome::Shed)
+                && observation["channel"] != json!(RuntimeChannelId::ComponentsToObservability))
+    });
+    if required_state_silently_dropped {
+        bail!("live typed-channel proof silently shed required state");
+    }
+    let durable_spool_depth = observations
+        .iter()
+        .filter_map(|observation| {
+            observation["snapshot_before_publish_ack"]["durable_spool_depth"].as_u64()
+        })
+        .sum::<u64>();
+    let shed_count = observations
+        .iter()
+        .filter_map(|observation| observation["snapshot_before_publish_ack"]["shed_count"].as_u64())
+        .sum::<u64>();
+    let blocked_count = observations
+        .iter()
+        .filter_map(|observation| {
+            observation["snapshot_before_publish_ack"]["blocked_count"].as_u64()
+        })
+        .sum::<u64>();
+    let throttled_count = observations
+        .iter()
+        .filter_map(|observation| {
+            observation["snapshot_before_publish_ack"]["throttled_count"].as_u64()
+        })
+        .sum::<u64>();
+
+    Ok(json!({
+        "schema": "adl.csm.typed_channel_runtime_proof.v1",
+        "status": "passed",
+        "channel_count": observations.len(),
+        "required_state_silently_dropped": required_state_silently_dropped,
+        "readiness": "overloaded_observed",
+        "durable_spool_depth": durable_spool_depth,
+        "blocked_count": blocked_count,
+        "throttled_count": throttled_count,
+        "shed_count": shed_count,
+        "observations": observations,
+    }))
 }
 
 fn validate_profile(profile: &str) -> Result<()> {

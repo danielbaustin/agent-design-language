@@ -26,11 +26,13 @@ mod csm_run;
 mod cultivating_intelligence;
 mod curiosity_engine;
 mod delegation_subcontract;
+mod economics_civilization_boundary;
 mod evaluation_selection;
 mod external_counterparty;
 mod feature_proof_coverage;
 mod foundation;
 mod godel_agent_runtime;
+mod godel_constructability_boundary;
 mod governed_episode;
 mod governed_learning_substrate;
 mod governed_tools_flagship_demo;
@@ -125,6 +127,8 @@ pub use curiosity_engine::*;
 #[allow(unused_imports)]
 pub use delegation_subcontract::*;
 #[allow(unused_imports)]
+pub use economics_civilization_boundary::*;
+#[allow(unused_imports)]
 pub use evaluation_selection::*;
 #[allow(unused_imports)]
 pub use external_counterparty::*;
@@ -134,6 +138,8 @@ pub use feature_proof_coverage::*;
 pub use foundation::*;
 #[allow(unused_imports)]
 pub use godel_agent_runtime::*;
+#[allow(unused_imports)]
+pub use godel_constructability_boundary::*;
 #[allow(unused_imports)]
 pub use governed_episode::*;
 #[allow(unused_imports)]

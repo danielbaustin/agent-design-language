@@ -3684,6 +3684,10 @@ fn registered_validation_atom_supported(command: &str) -> bool {
         ["cargo", "test", "--manifest-path", "adl/Cargo.toml", "--test", "cli_smoke", "csm_observatory_cli_writes_unity_contract_bundle_and_matches_seeded_resource", "--", "--nocapture"] => {
             true
         }
+        ["cargo", "test", "--manifest-path", "adl-runtime-kernel/Cargo.toml"] => true,
+        ["cargo", "clippy", "--manifest-path", "adl-runtime-kernel/Cargo.toml", "--all-targets", "--", "-D", "warnings"] => {
+            true
+        }
         ["cargo", "check", "--manifest-path", "tools/aws_remote_validation/Cargo.toml", "--bin", "adl-aws-remote-validation"] => {
             true
         }
@@ -3776,7 +3780,7 @@ fn execute_registered_validation_atom(repo_root: &Path, command: &str) -> Result
             let refs = owned.iter().map(String::as_str).collect::<Vec<_>>();
             run_finish_validation_status("python3", &refs)
         }
-        ["cargo", subcommand @ ("check" | "test"), manifest_flag, manifest_path, args @ ..]
+        ["cargo", subcommand @ ("check" | "clippy" | "test"), manifest_flag, manifest_path, args @ ..]
             if *manifest_flag == "--manifest-path" =>
         {
             let mut owned = vec![

@@ -1,0 +1,18 @@
+schema_version: adl.release_gate_disposition.v1
+issue: 4752
+disposition: approved_with_focused_runtime_and_resident_agent_proof
+changed_release_gate_surfaces:
+  - adl-runtime/src/resident_agent.rs
+  - adl/src/csm_resident_agents.rs
+  - adl/src/csm_runtime_api.rs
+  - docs/milestones/v0.91.7/MILESTONE_CHECKLIST_v0.91.7.md
+reviewer_or_review_mode: bounded pre-PR runtime and release-surface review
+focused_validation_run: "cargo test --manifest-path adl-runtime/Cargo.toml resident_agent -- --nocapture && cargo test --manifest-path adl/Cargo.toml --lib csm_resident_agent -- --nocapture && cargo test --manifest-path adl/Cargo.toml --lib runtime_v2_affect_reasoning_control -- --nocapture && cargo test --manifest-path adl/Cargo.toml --lib runtime_v2_affect_happiness_safe_test_model -- --nocapture && cargo test --manifest-path adl/Cargo.toml --lib runtime_api_surfaces_shepherd_agent_component_and_model_policy -- --nocapture && cargo test --manifest-path adl/Cargo.toml --lib runtime_api_rejects_legacy_resident_agent_artifact_without_affect_model -- --nocapture && git diff --check"
+residual_ci_proof_required_before_merge: required
+notes:
+  - "Validation manager escalated #4752 because the milestone checklist is a release-gate surface."
+  - "The checklist edit is limited to WP-13 affect/happiness wording and does not mark unresolved milestone completion."
+  - "Operator review required the affect model to be implemented and integrated into resident-agent runtime existence, not only documented."
+  - "Focused local wuji proof passed for adl-runtime resident-agent validation, ADL CSM resident-agent admission, runtime-v2 affect reasoning-control, affect/happiness safe-test model composition, retained-artifact acceptance/rejection, and diff hygiene."
+  - "Pre-PR review findings were fixed before publication by hardening safe-test scenarios, allowed claims, and runtime input validation."
+  - "GitHub PR checks remain required before merge."

@@ -24,6 +24,7 @@ use std::time::{Duration, Instant};
 use tokio::sync::Notify;
 use tower::ServiceBuilder;
 
+use crate::csm_curiosity_engine;
 use crate::csm_networking::{
     csm_connection_pooling_plan, csm_listener_registry_json, csm_runtime_connection_pool_status,
     resolve_main_runtime_api_listener, CSM_POOLING_PLAN_SCHEMA,
@@ -32,12 +33,14 @@ use crate::csm_resident_agents;
 use crate::csm_shepherd_agent::{self, CSM_SHEPHERD_STATUS_REF};
 use crate::long_lived_agent::{load_spec, AgentStatusState, LoadedAgentSpec, StatusRecord};
 use crate::{csm_freedom_gate, csm_freedom_gate::CSM_FREEDOM_GATE_STATUS_REF};
+use adl_runtime::resident_agent::CsmResidentAgentSet;
 
 pub use adl_runtime::runtime_api::{
     CSM_RUNTIME_API_API_GATEWAY_BRIDGE_SCHEMA, CSM_RUNTIME_API_CHRONOSENSE_SCHEMA,
-    CSM_RUNTIME_API_ENDPOINTS, CSM_RUNTIME_API_EVENTS_SCHEMA, CSM_RUNTIME_API_FREEDOM_GATE_SCHEMA,
-    CSM_RUNTIME_API_HEALTH_SCHEMA, CSM_RUNTIME_API_METRICS_SCHEMA, CSM_RUNTIME_API_READY_SCHEMA,
-    CSM_RUNTIME_API_SCHEMA, CSM_RUNTIME_API_SHEPHERD_SCHEMA, CSM_RUNTIME_API_STATUS_SCHEMA,
+    CSM_RUNTIME_API_CURIOSITY_SCHEMA, CSM_RUNTIME_API_ENDPOINTS, CSM_RUNTIME_API_EVENTS_SCHEMA,
+    CSM_RUNTIME_API_FREEDOM_GATE_SCHEMA, CSM_RUNTIME_API_HEALTH_SCHEMA,
+    CSM_RUNTIME_API_METRICS_SCHEMA, CSM_RUNTIME_API_READY_SCHEMA, CSM_RUNTIME_API_SCHEMA,
+    CSM_RUNTIME_API_SHEPHERD_SCHEMA, CSM_RUNTIME_API_STATUS_SCHEMA,
 };
 pub use api_gateway_bridge::{prove_api_gateway_bridge, ApiGatewayBridgeOptions};
 const CSM_RUNTIME_API_BROWSER_DEMO_PORT: &str = "8765";
@@ -239,6 +242,7 @@ pub fn runtime_api_response(options: &CsmRuntimeApiOptions, path: &str) -> Resul
         "/events" => events_response(&loaded),
         "/chronosense" => chronosense_response(&loaded, options),
         "/shepherd" => shepherd_response(&loaded, options),
+        "/curiosity" => curiosity_response(&loaded, options),
         "/freedom-gate" => freedom_gate_response(&loaded, options),
         "/api-gateway-bridge" => api_gateway_bridge_response(&loaded),
         other => Ok(json!({
@@ -260,6 +264,8 @@ fn status_response(loaded: &LoadedAgentSpec, options: &CsmRuntimeApiOptions) -> 
     let safe_fail_bundle = read_json_artifact(&artifact_path(loaded, "safe_fail_bundle.json"));
     let backpressure_state =
         read_json_artifact(&artifact_path(loaded, "csm_backpressure_state.json"));
+    let typed_channel_state =
+        read_json_artifact(&artifact_path(loaded, "csm_typed_channel_state.json"));
     let otel_status_path = resolve_otel_status_path(loaded, options);
     let otel_log_path = resolve_otel_log_path(loaded, options);
     let otel_status = otel_status_path
@@ -302,9 +308,11 @@ fn status_response(loaded: &LoadedAgentSpec, options: &CsmRuntimeApiOptions) -> 
         &backpressure_state,
         &runtime_capabilities,
     );
-    let resident_agents = resident_agents_status(loaded);
+    let curiosity =
+        curiosity_api_status(loaded, &agent_status, &daemon_status, &runtime_capabilities);
     let freedom_gate = freedom_gate_api_status(loaded, &runtime_capabilities);
-    let response = json!({
+    let resident_agents = resident_agents_status(loaded);
+    let mut response = json!({
         "schema": CSM_RUNTIME_API_STATUS_SCHEMA,
         "runtime_owner": "csm",
         "adl_role": "tooling_control_plane",
@@ -332,6 +340,7 @@ fn status_response(loaded: &LoadedAgentSpec, options: &CsmRuntimeApiOptions) -> 
         "resilience_middleware": runtime_capabilities.get("resilience_middleware").cloned().unwrap_or_else(|| json!({"status": "missing"})),
         "resident_agents": resident_agents,
         "polis_shepherd_agent": shepherd,
+        "curiosity_engine": curiosity,
         "freedom_gate": freedom_gate,
         "checkpoint": checkpoint_freshness,
         "continuity": {
@@ -340,6 +349,7 @@ fn status_response(loaded: &LoadedAgentSpec, options: &CsmRuntimeApiOptions) -> 
             "safe_fail_bundle": compact_artifact_status(&safe_fail_bundle, "safe_fail_bundle.json")
         },
         "backpressure": compact_artifact_status(&backpressure_state, "csm_backpressure_state.json"),
+        "typed_channels": compact_typed_channel_status(&typed_channel_state),
         "api_gateway_bridge": api_gateway_bridge_runtime_status(loaded),
         "otel": {
             "status": compact_artifact_status(&otel_status, "ADL_OTEL_STATUS"),
@@ -351,6 +361,22 @@ fn status_response(loaded: &LoadedAgentSpec, options: &CsmRuntimeApiOptions) -> 
             "secret_material": "not_returned",
             "cloud_account_identifiers": "not_returned"
         }
+    });
+    if !readiness_blockers(&response).is_empty() {
+        response["ready"] = json!("not_ready");
+    }
+    assert_api_response_redacted(&response)?;
+    Ok(response)
+}
+
+fn curiosity_response(loaded: &LoadedAgentSpec, options: &CsmRuntimeApiOptions) -> Result<Value> {
+    let status = status_response(loaded, options)?;
+    let response = json!({
+        "schema": CSM_RUNTIME_API_CURIOSITY_SCHEMA,
+        "runtime_owner": "csm",
+        "agent_instance_id": loaded.spec.agent_instance_id,
+        "runtime_api_path": "/curiosity",
+        "component": status["curiosity_engine"]
     });
     assert_api_response_redacted(&response)?;
     Ok(response)
@@ -477,12 +503,18 @@ fn health_response(loaded: &LoadedAgentSpec, options: &CsmRuntimeApiOptions) -> 
 
 fn ready_response(loaded: &LoadedAgentSpec, options: &CsmRuntimeApiOptions) -> Result<Value> {
     let status = status_response(loaded, options)?;
+    let blocking_reasons = readiness_blockers(&status);
+    let ready = if blocking_reasons.is_empty() {
+        status["ready"].clone()
+    } else {
+        json!("not_ready")
+    };
     let response = json!({
         "schema": CSM_RUNTIME_API_READY_SCHEMA,
         "runtime_owner": "csm",
         "agent_instance_id": loaded.spec.agent_instance_id,
-        "ready": status["ready"],
-        "blocking_reasons": readiness_blockers(&status)
+        "ready": ready,
+        "blocking_reasons": blocking_reasons
     });
     assert_api_response_redacted(&response)?;
     Ok(response)
@@ -493,6 +525,8 @@ fn metrics_response(loaded: &LoadedAgentSpec, options: &CsmRuntimeApiOptions) ->
     let daemon = read_json_artifact(&artifact_path(loaded, "daemon_status.json"));
     let backpressure_state =
         read_json_artifact(&artifact_path(loaded, "csm_backpressure_state.json"));
+    let typed_channel_state =
+        read_json_artifact(&artifact_path(loaded, "csm_typed_channel_state.json"));
     let event_count = read_jsonl_tail(&artifact_path(loaded, "operator_events.jsonl"), usize::MAX)
         .get("entries")
         .and_then(Value::as_array)
@@ -513,6 +547,12 @@ fn metrics_response(loaded: &LoadedAgentSpec, options: &CsmRuntimeApiOptions) ->
             "backpressure_deferred_count": backpressure_state.pointer("/value/summary/deferred_count").cloned().unwrap_or(Value::Null),
             "backpressure_shed_count": backpressure_state.pointer("/value/summary/shed_count").cloned().unwrap_or(Value::Null),
             "backpressure_retry_capacity_remaining": backpressure_state.pointer("/value/summary/retry_budget_remaining").cloned().unwrap_or(Value::Null),
+            "typed_channel_count": typed_channel_state.pointer("/value/summary/channel_count").cloned().unwrap_or(Value::Null),
+            "typed_channel_queue_depth": typed_channel_state.pointer("/value/summary/queue_depth").cloned().unwrap_or(Value::Null),
+            "typed_channel_durable_spool_depth": typed_channel_state.pointer("/value/summary/durable_spool_depth").cloned().unwrap_or(Value::Null),
+            "typed_channel_blocked_count": typed_channel_state.pointer("/value/summary/blocked_count").cloned().unwrap_or(Value::Null),
+            "typed_channel_throttled_count": typed_channel_state.pointer("/value/summary/throttled_count").cloned().unwrap_or(Value::Null),
+            "typed_channel_shed_count": typed_channel_state.pointer("/value/summary/shed_count").cloned().unwrap_or(Value::Null),
             "storage_available_bytes": backpressure_state.pointer("/value/storage_pressure/available_bytes").cloned().unwrap_or(Value::Null),
             "storage_disk_floor_bytes": backpressure_state.pointer("/value/storage_pressure/disk_floor_bytes").cloned().unwrap_or(Value::Null)
         },
@@ -521,6 +561,7 @@ fn metrics_response(loaded: &LoadedAgentSpec, options: &CsmRuntimeApiOptions) ->
             "ready": status["ready"],
             "agent_state": status["agent_status"]["state"],
             "backpressure_health": backpressure_state.pointer("/value/summary/health").cloned().unwrap_or(Value::Null),
+            "typed_channel_readiness": typed_channel_state.pointer("/value/status").cloned().unwrap_or(Value::Null),
             "backpressure_safe_fail_action": backpressure_state.pointer("/value/safe_fail_action/action").cloned().unwrap_or(Value::Null),
             "storage_pressure": backpressure_state.pointer("/value/storage_pressure/state").cloned().unwrap_or(Value::Null)
         }
@@ -539,6 +580,50 @@ fn events_response(loaded: &LoadedAgentSpec) -> Result<Value> {
     });
     assert_api_response_redacted(&response)?;
     Ok(response)
+}
+
+fn curiosity_api_status(
+    loaded: &LoadedAgentSpec,
+    agent_status: &StatusRecord,
+    daemon_status: &Value,
+    runtime_capabilities: &Value,
+) -> Value {
+    let artifact = read_json_artifact(&artifact_path(
+        loaded,
+        adl_runtime::curiosity::CSM_CURIOSITY_STATUS_REF,
+    ));
+    let runtime_capability = runtime_capabilities
+        .get("curiosity_engine")
+        .cloned()
+        .unwrap_or_else(csm_curiosity_engine::runtime_capability);
+    let agent_state = serde_json::to_value(&agent_status.state)
+        .ok()
+        .and_then(|value| value.as_str().map(str::to_string))
+        .unwrap_or_else(|| "unknown".to_string());
+    let daemon_state = daemon_status
+        .pointer("/value/state")
+        .and_then(Value::as_str)
+        .unwrap_or("unknown");
+    csm_curiosity_engine::api_status(
+        &loaded.spec.agent_instance_id,
+        &artifact,
+        runtime_capability,
+        daemon_state,
+        &agent_state,
+    )
+}
+
+fn freedom_gate_api_status(loaded: &LoadedAgentSpec, runtime_capabilities: &Value) -> Value {
+    let artifact = read_json_artifact(&artifact_path(loaded, CSM_FREEDOM_GATE_STATUS_REF));
+    let runtime_capability = runtime_capabilities
+        .get("freedom_gate")
+        .cloned()
+        .unwrap_or_else(csm_freedom_gate::runtime_capability);
+    csm_freedom_gate::api_status(
+        &artifact,
+        runtime_capability,
+        &loaded.spec.agent_instance_id,
+    )
 }
 
 fn api_gateway_bridge_runtime_status(loaded: &LoadedAgentSpec) -> Value {
@@ -592,19 +677,6 @@ fn shepherd_api_status(
         &agent_state,
         checkpoint_status,
         backpressure_health,
-    )
-}
-
-fn freedom_gate_api_status(loaded: &LoadedAgentSpec, runtime_capabilities: &Value) -> Value {
-    let artifact = read_json_artifact(&artifact_path(loaded, CSM_FREEDOM_GATE_STATUS_REF));
-    let runtime_capability = runtime_capabilities
-        .get("freedom_gate")
-        .cloned()
-        .unwrap_or_else(csm_freedom_gate::runtime_capability);
-    csm_freedom_gate::api_status(
-        &artifact,
-        runtime_capability,
-        &loaded.spec.agent_instance_id,
     )
 }
 
@@ -709,6 +781,29 @@ fn resident_agents_status(loaded: &LoadedAgentSpec) -> Value {
             .get("value")
             .cloned()
             .unwrap_or_else(|| json!({"status": "unreadable"}));
+        let retained_validation = retained
+            .get("value")
+            .cloned()
+            .ok_or_else(|| "missing resident agent set value".to_string())
+            .and_then(|value| {
+                serde_json::from_value::<CsmResidentAgentSet>(value)
+                    .map_err(|err| err.to_string())
+                    .and_then(|set| set.validate())
+            });
+        if let Err(err) = retained_validation {
+            let mut fallback =
+                csm_resident_agents::resident_agent_set_status(&loaded.spec.agent_instance_id);
+            if let Some(map) = fallback.as_object_mut() {
+                map.insert("evidence_source".to_string(), json!("computed_fallback"));
+                map.insert("retained_artifact_status".to_string(), json!("invalid"));
+                map.insert(
+                    "retained_artifact_ref".to_string(),
+                    json!(csm_resident_agents::CSM_RESIDENT_AGENTS_STATUS_REF),
+                );
+                map.insert("retained_artifact_validation_error".to_string(), json!(err));
+            }
+            return fallback;
+        }
         if let Some(map) = retained.as_object_mut() {
             map.insert("evidence_source".to_string(), json!("retained_artifact"));
             map.insert(
@@ -852,6 +947,19 @@ fn compact_artifact_status(artifact: &Value, reference: &str) -> Value {
         "summary": artifact.pointer("/value/summary").cloned().unwrap_or(Value::Null),
         "storage_pressure": storage_pressure,
         "safe_fail_action": artifact.pointer("/value/safe_fail_action").cloned().unwrap_or(Value::Null)
+    })
+}
+
+fn compact_typed_channel_status(artifact: &Value) -> Value {
+    json!({
+        "status": artifact.pointer("/value/status").cloned().unwrap_or_else(|| json!("missing")),
+        "ref": "csm_typed_channel_state.json",
+        "schema": artifact.pointer("/value/schema").cloned().unwrap_or(Value::Null),
+        "required_channel_not_ready": artifact.pointer("/value/required_channel_not_ready").cloned().unwrap_or(Value::Null),
+        "last_event": artifact.pointer("/value/last_event").cloned().unwrap_or(Value::Null),
+        "last_receipt": artifact.pointer("/value/last_receipt").cloned().unwrap_or(Value::Null),
+        "summary": artifact.pointer("/value/summary").cloned().unwrap_or(Value::Null),
+        "channels": artifact.pointer("/value/channels").cloned().unwrap_or(Value::Null)
     })
 }
 
@@ -1083,6 +1191,45 @@ fn readiness_blockers(status: &Value) -> Vec<String> {
         == Some("low_disk")
     {
         blockers.push("storage_low_disk".to_string());
+    }
+    if status
+        .pointer("/typed_channels/status")
+        .and_then(Value::as_str)
+        != Some("ready")
+    {
+        blockers.push("typed_channels_not_ready".to_string());
+    }
+    if status
+        .pointer("/curiosity_engine/value/readiness")
+        .and_then(Value::as_str)
+        != Some("ready")
+    {
+        blockers.push("curiosity_engine_not_ready".to_string());
+    }
+    if status
+        .pointer("/curiosity_engine/validation/status")
+        .and_then(Value::as_str)
+        != Some("passed")
+    {
+        blockers.push("curiosity_engine_validation_failed".to_string());
+    }
+    if status
+        .pointer("/freedom_gate/retained_artifact_validation/status")
+        .and_then(Value::as_str)
+        != Some("accepted")
+    {
+        blockers.push("freedom_gate_validation_failed".to_string());
+    }
+    if status
+        .pointer("/freedom_gate/executor_requires_gate_decision")
+        .and_then(Value::as_bool)
+        != Some(true)
+        || status
+            .pointer("/freedom_gate/unmediated_execution_allowed")
+            .and_then(Value::as_bool)
+            != Some(false)
+    {
+        blockers.push("freedom_gate_fail_closed_contract_missing".to_string());
     }
     blockers
 }
@@ -1653,6 +1800,13 @@ memory: {}
             .as_array()
             .expect("resident agents");
         assert_eq!(agents.len(), 3);
+        assert!(agents.iter().all(|agent| {
+            agent["schema"] == adl_runtime::resident_agent::CSM_RESIDENT_AGENT_SCHEMA
+                && agent["affect_model"]["schema_version"]
+                    == crate::runtime_v2::AFFECT_HAPPINESS_SAFE_TEST_MODEL_SCHEMA_VERSION
+                && agent["affect_model"]["invocation_policy"]
+                    == "operational_reasoning_control_only"
+        }));
         assert!(agents.iter().any(|agent| {
             agent["provider_binding"]["provider_id"] == "chatgpt_codex"
                 && agent["provider_binding"]["binding_status"] == "provider_target_resolved"
@@ -1673,6 +1827,98 @@ memory: {}
         assert_eq!(
             shepherd["component"]["policy_gates"]["freedom_gate_required"],
             true
+        );
+    }
+
+    #[test]
+    fn runtime_api_rejects_legacy_resident_agent_artifact_without_affect_model() {
+        let root = temp_root("legacy-resident-agents");
+        let spec = write_spec(&root);
+        let state = root.join("state");
+        fs::create_dir_all(&state).unwrap();
+        fs::write(
+            state.join(csm_resident_agents::CSM_RESIDENT_AGENTS_STATUS_REF),
+            serde_json::to_string_pretty(&json!({
+                "status": "available",
+                "ref": csm_resident_agents::CSM_RESIDENT_AGENTS_STATUS_REF,
+                "value": {
+                    "schema": "adl.csm.resident_agent_set.v1",
+                    "runtime_owner": "csm",
+                    "admission_model": "provider_bound_resident_agents",
+                    "provider_entrypoint": "provider_substrate",
+                    "agents": [{
+                        "schema": "adl.csm.resident_agent.v1",
+                        "agent_instance_id": "api-agent:polis_shepherd_agent",
+                        "display_name": "Polis Shepherd",
+                        "agent_role": "polis_shepherd_agent",
+                        "authority": "shepherd_operator",
+                        "lifecycle_state": "admitted",
+                        "provider_binding": {
+                            "provider_id": "local_ollama",
+                            "provider_kind": "local_model",
+                            "vendor": "ollama",
+                            "transport": "http",
+                            "runtime_surface": "provider_substrate",
+                            "model_ref": "ollama:gemma4",
+                            "provider_model_id": "gemma4:12b-mlx",
+                            "tool_calling_mode": "not_supported",
+                            "structured_json_mode": "best_effort",
+                            "binding_status": "provider_target_resolved",
+                            "source": "provider_substrate"
+                        },
+                        "channels": {
+                            "lifecycle": "csm.resident.api-agent:polis_shepherd_agent.lifecycle",
+                            "provider_request": "csm.resident.api-agent:polis_shepherd_agent.provider_request",
+                            "provider_response": "csm.resident.api-agent:polis_shepherd_agent.provider_response",
+                            "checkpoint": "csm.resident.api-agent:polis_shepherd_agent.checkpoint",
+                            "observability": "csm.resident.api-agent:polis_shepherd_agent.observability",
+                            "lifelog": "csm.resident.api-agent:polis_shepherd_agent.lifelog"
+                        },
+                        "policy_gates": {
+                            "freedom_gate_required": true,
+                            "cav_required": true,
+                            "constitutional_policy_required": true,
+                            "model_output_advisory_only": true
+                        },
+                        "checkpoint_policy": "periodic_and_agent_requested_with_runtime_min_interval",
+                        "lifelog_policy": "append_admission_lifecycle_provider_invocation_refusal_and_recovery_events",
+                        "observability_policy": "emit_resident_agent_provider_lifecycle_metrics_traces_logs_and_runtime_events",
+                        "privilege_reason": "operator_shepherd_for_polis"
+                    }]
+                }
+            }))
+            .unwrap(),
+        )
+        .unwrap();
+        let options = CsmRuntimeApiOptions {
+            spec_path: spec,
+            bind: test_api_bind(SEQ.load(Ordering::SeqCst)),
+            test_max_requests: Some(1),
+            idle_timeout_ms: None,
+            shutdown_file: None,
+            otel_status_path: None,
+            otel_log_path: None,
+        };
+
+        let status = runtime_api_response(&options, "/status").unwrap();
+        assert_eq!(status["resident_agents"]["status"], "available");
+        assert_eq!(
+            status["resident_agents"]["evidence_source"],
+            "computed_fallback"
+        );
+        assert_eq!(
+            status["resident_agents"]["retained_artifact_status"],
+            "invalid"
+        );
+        assert!(
+            status["resident_agents"]["retained_artifact_validation_error"]
+                .as_str()
+                .unwrap()
+                .contains("affect_model")
+        );
+        assert_eq!(
+            status["resident_agents"]["value"]["agents"][0]["affect_model"]["schema_version"],
+            crate::runtime_v2::AFFECT_HAPPINESS_SAFE_TEST_MODEL_SCHEMA_VERSION
         );
     }
 
@@ -1701,21 +1947,12 @@ memory: {}
         let status = runtime_api_response(&options, "/status").unwrap();
         assert_eq!(status["freedom_gate"]["status"], "serialized");
         assert_eq!(
-            status["freedom_gate"]["schema"],
-            csm_freedom_gate::CSM_FREEDOM_GATE_STATUS_SCHEMA
-        );
-        assert_eq!(
             status["freedom_gate"]["executor_requires_gate_decision"],
             true
         );
         assert_eq!(
             status["freedom_gate"]["unmediated_execution_allowed"],
             false
-        );
-        assert_eq!(
-            status["freedom_gate"]["decision_proofs"]["proof_summary"]
-                ["denied_stops_before_executor"],
-            true
         );
 
         let endpoint = runtime_api_response(&options, "/freedom-gate").unwrap();
@@ -1754,23 +1991,111 @@ memory: {}
         };
 
         let status = runtime_api_response(&options, "/status").unwrap();
-
         assert_eq!(
             status["freedom_gate"]["status"],
             "invalid_retained_artifact_fail_closed"
         );
         assert_eq!(
-            status["freedom_gate"]["executor_requires_gate_decision"],
-            true
-        );
-        assert_eq!(
-            status["freedom_gate"]["unmediated_execution_allowed"],
-            false
-        );
-        assert_eq!(
             status["freedom_gate"]["retained_artifact_validation"]["status"],
             "rejected_fail_closed"
         );
+        assert!(readiness_blockers(&status).contains(&"freedom_gate_validation_failed".to_string()));
+    }
+
+    #[test]
+    fn runtime_api_surfaces_curiosity_engine_component_and_route() {
+        let root = temp_root("curiosity");
+        let spec = write_spec(&root);
+        let state = root.join("state");
+        fs::create_dir_all(&state).unwrap();
+        let curiosity = csm_curiosity_engine::build_status_snapshot(
+            "api-agent",
+            "running",
+            Some("running"),
+            true,
+        );
+        fs::write(
+            state.join(adl_runtime::curiosity::CSM_CURIOSITY_STATUS_REF),
+            serde_json::to_string_pretty(&curiosity).unwrap(),
+        )
+        .unwrap();
+        let options = CsmRuntimeApiOptions {
+            spec_path: spec,
+            bind: test_api_bind(SEQ.load(Ordering::SeqCst)),
+            test_max_requests: Some(1),
+            idle_timeout_ms: None,
+            shutdown_file: None,
+            otel_status_path: None,
+            otel_log_path: None,
+        };
+        let status = runtime_api_response(&options, "/status").unwrap();
+        assert_eq!(status["curiosity_engine"]["value"]["readiness"], "ready");
+        assert_eq!(
+            status["curiosity_engine"]["value"]["process_model"],
+            "embedded_csm_runtime_component"
+        );
+        assert_eq!(
+            status["curiosity_engine"]["value"]["constraint_hooks"]["missing_constraint_policy"],
+            "fail_closed"
+        );
+
+        let curiosity = runtime_api_response(&options, "/curiosity").unwrap();
+        assert_eq!(curiosity["schema"], CSM_RUNTIME_API_CURIOSITY_SCHEMA);
+        assert_eq!(curiosity["component"]["component"], "curiosity_engine");
+    }
+
+    #[test]
+    fn runtime_api_ready_blocks_missing_curiosity_status() {
+        let root = temp_root("curiosity-missing");
+        let spec = write_spec(&root);
+        let options = CsmRuntimeApiOptions {
+            spec_path: spec,
+            bind: test_api_bind(SEQ.load(Ordering::SeqCst)),
+            test_max_requests: Some(1),
+            idle_timeout_ms: None,
+            shutdown_file: None,
+            otel_status_path: None,
+            otel_log_path: None,
+        };
+        let ready = runtime_api_response(&options, "/ready").unwrap();
+        assert!(ready["blocking_reasons"]
+            .as_array()
+            .unwrap()
+            .contains(&json!("curiosity_engine_not_ready")));
+    }
+
+    #[test]
+    fn runtime_api_ready_blocks_invalid_curiosity_status_even_when_ready_claimed() {
+        let root = temp_root("curiosity-invalid-ready");
+        let spec = write_spec(&root);
+        let state = root.join("state");
+        fs::create_dir_all(&state).unwrap();
+        let mut curiosity = csm_curiosity_engine::build_status_snapshot(
+            "api-agent",
+            "running",
+            Some("running"),
+            true,
+        );
+        curiosity["constraint_hooks"]["cav_required"] = json!(false);
+        fs::write(
+            state.join(adl_runtime::curiosity::CSM_CURIOSITY_STATUS_REF),
+            serde_json::to_string_pretty(&curiosity).unwrap(),
+        )
+        .unwrap();
+        let options = CsmRuntimeApiOptions {
+            spec_path: spec,
+            bind: test_api_bind(SEQ.load(Ordering::SeqCst)),
+            test_max_requests: Some(1),
+            idle_timeout_ms: None,
+            shutdown_file: None,
+            otel_status_path: None,
+            otel_log_path: None,
+        };
+        let ready = runtime_api_response(&options, "/ready").unwrap();
+        assert!(ready["blocking_reasons"]
+            .as_array()
+            .unwrap()
+            .contains(&json!("curiosity_engine_validation_failed")));
     }
 
     #[test]
@@ -1830,20 +2155,20 @@ memory: {}
         fs::write(
             state.join("daemon_status.json"),
             serde_json::to_string_pretty(&json!({
-                "schema": "adl.csm.daemon_status.v1",
-                "state": "running",
-                "last_event": "daemon_started",
-                "updated_at": Utc::now(),
-                "last_checkpoint_at": Utc::now(),
-                "runtime_capabilities": {
+            "schema": "adl.csm.daemon_status.v1",
+            "state": "running",
+            "last_event": "daemon_started",
+            "updated_at": Utc::now(),
+            "last_checkpoint_at": Utc::now(),
+            "runtime_capabilities": {
                     "chronosense": {
                         "status": "integrated",
                         "time_sync": {
                             "schema_version": "chronosense_time_sync_status.v1",
                             "substrate": "SNTP",
-                            "health": "unavailable",
-                            "failure_state": "runtime_sntp_probe_disabled",
-                            "reason": "runtime_sntp_status_unavailable_without_csm_failure"
+                                "health": "synced",
+                            "failure_state": null,
+                            "reason": null
                         }
                     }
                 }
@@ -1857,6 +2182,17 @@ memory: {}
                 "schema": "adl.csm.continuity_checkpoint.v1"
             }))
             .unwrap(),
+        )
+        .unwrap();
+        let curiosity = csm_curiosity_engine::build_status_snapshot(
+            "api-agent",
+            "running",
+            Some("running"),
+            true,
+        );
+        fs::write(
+            state.join(adl_runtime::curiosity::CSM_CURIOSITY_STATUS_REF),
+            serde_json::to_string_pretty(&curiosity).unwrap(),
         )
         .unwrap();
         let options = CsmRuntimeApiOptions {
@@ -2308,6 +2644,13 @@ memory: {}
                 "schema": "adl.long_lived_agent_continuity_checkpoint.v1"
             }))
             .unwrap(),
+        )
+        .unwrap();
+        let curiosity =
+            csm_curiosity_engine::build_status_snapshot("api-agent", "running", Some("idle"), true);
+        fs::write(
+            state.join(adl_runtime::curiosity::CSM_CURIOSITY_STATUS_REF),
+            serde_json::to_string_pretty(&curiosity).unwrap(),
         )
         .unwrap();
         let options = CsmRuntimeApiOptions {

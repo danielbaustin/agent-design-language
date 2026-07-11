@@ -44,6 +44,48 @@ fn runtime_v2_godel_agent_runtime_binds_agents_to_runtime_graph_and_loop() {
 }
 
 #[test]
+fn runtime_v2_godel_agent_runtime_builds_executable_launch_plan() {
+    let packet = runtime_v2_godel_agent_runtime_contract().expect("Godel agent runtime packet");
+    let launch = &packet.launch_plan;
+
+    assert_eq!(
+        launch.admission_model,
+        "csm_supervised_provider_request_admission"
+    );
+    assert_eq!(launch.runtime_owner, "csm");
+    assert_eq!(launch.provider_entrypoint, "provider_substrate");
+    assert_eq!(launch.ready_agent_count, 10);
+    assert_eq!(launch.provider_request_count, 10);
+    assert_eq!(
+        launch.max_concurrent_agents,
+        packet.scheduling.max_concurrent_agents
+    );
+    assert!(launch.policy_gates.freedom_gate_required);
+    assert!(launch.policy_gates.cav_required);
+    assert!(launch.policy_gates.constructability_anchor_required);
+    assert!(launch.policy_gates.constitutional_policy_required);
+    assert!(launch.policy_gates.model_output_advisory_only);
+    assert_eq!(launch.provider_requests.len(), packet.agents.len());
+    for request in &launch.provider_requests {
+        assert_eq!(request.lifecycle_state, "ready");
+        assert_eq!(
+            request.invocation_mode,
+            "admitted_provider_request_not_invoked"
+        );
+        assert!(request
+            .provider_request_channel
+            .starts_with(&packet.runtime_channels.provider_request_channel));
+        assert!(request
+            .provider_response_channel
+            .starts_with(&packet.runtime_channels.provider_response_channel));
+        assert!(packet
+            .agents
+            .iter()
+            .any(|agent| agent.agent_instance_id == request.agent_instance_id));
+    }
+}
+
+#[test]
 fn runtime_v2_godel_agent_runtime_rejects_underprovisioned_agent_sets() {
     let graph = runtime_v2_reasoning_graph_contract().expect("reasoning graph");
     let loop_runtime = runtime_v2_loop_runtime_contract().expect("loop runtime");
@@ -110,6 +152,49 @@ fn runtime_v2_godel_agent_runtime_rejects_schedule_agent_count_mismatch() {
         .expect_err("concurrency above actual agents should fail")
         .to_string()
         .contains("cannot exceed actual agent count"));
+}
+
+#[test]
+fn runtime_v2_godel_agent_runtime_rejects_incomplete_launch_plan() {
+    let mut packet = runtime_v2_godel_agent_runtime_contract().expect("Godel agent runtime packet");
+    packet.launch_plan.provider_requests.pop();
+    packet.launch_plan.provider_request_count = packet.launch_plan.provider_requests.len() as u32;
+    assert!(packet
+        .validate()
+        .expect_err("launch plan must cover every admitted agent")
+        .to_string()
+        .contains("provider request count"));
+
+    let mut packet = runtime_v2_godel_agent_runtime_contract().expect("Godel agent runtime packet");
+    packet
+        .launch_plan
+        .policy_gates
+        .constructability_anchor_required = false;
+    assert!(packet
+        .validate()
+        .expect_err("constructability gate must be mandatory")
+        .to_string()
+        .contains("constructability"));
+}
+
+#[test]
+fn runtime_v2_godel_agent_runtime_rejects_launch_plan_provider_rebinding() {
+    let mut packet = runtime_v2_godel_agent_runtime_contract().expect("Godel agent runtime packet");
+    let original_provider = packet.agents[0].provider_id.clone();
+    let alternate_provider = packet
+        .provider_registry
+        .iter()
+        .find(|provider| provider.provider_id != original_provider)
+        .expect("alternate provider")
+        .clone();
+    packet.launch_plan.provider_requests[0].provider_id = alternate_provider.provider_id;
+    packet.launch_plan.provider_requests[0].model_ref = alternate_provider.model_ref;
+
+    assert!(packet
+        .validate()
+        .expect_err("launch plan must preserve agent provider binding")
+        .to_string()
+        .contains("provider_id"));
 }
 
 #[test]

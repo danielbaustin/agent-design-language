@@ -1,12 +1,24 @@
 //! Long-lived agent orchestration surfaces.
+use adl_runtime::backpressure::{
+    ChannelPriority, ReadinessState, RuntimeChannelFabric, RuntimeChannelId, RuntimeDelivery,
+    RuntimeMessage, TransportPublishReceipt,
+};
+use adl_runtime::determinism::{
+    cycle_record_fingerprint, evaluate_core_decision, CapturedShellInputEvent, CoreDecisionInput,
+    CoreDecisionRequest, CsmCycleDeterminismBoundaryRecord, DeterministicCoreComponent,
+    DeterministicCoreDecision, DeterministicCoreInputKind, NondeterministicShellClass,
+    ObservationConfidence,
+};
 use anyhow::{anyhow, Context, Result};
 use chrono::{DateTime, Duration as ChronoDuration, Utc};
 use serde::Serialize;
 use serde_json::{json, Value};
 use sha2::{Digest, Sha256};
+use std::collections::BTreeMap;
 use std::fs::{self, File, OpenOptions};
 use std::io::{BufRead, BufReader, Write};
 use std::path::{Path, PathBuf};
+use std::sync::Mutex;
 use std::thread;
 use std::time::Duration;
 
@@ -14,6 +26,7 @@ use crate::chronosense::{
     capture_runtime_time_sync_status, start_runtime_time_observation, ChronosenseRuntimeService,
     ChronosenseRuntimeServiceConfig,
 };
+use crate::csm_curiosity_engine;
 use crate::csm_freedom_gate;
 use crate::csm_godel_snapshot::{validate_recovery_read, write_checkpoint_snapshot_diff};
 use crate::csm_resident_agents;
@@ -153,7 +166,8 @@ pub fn daemon(spec_path: &Path, options: DaemonOptions) -> Result<DaemonStatusRe
     ensure_state_root(&loaded)?;
     let checkpoint_interval_secs =
         effective_checkpoint_interval_secs(&loaded, options.checkpoint_interval_secs)?;
-    let runtime_context = CsmRuntimeContext::new()?;
+    let runtime_context = CsmRuntimeContext::new(&loaded)?;
+    let _startup_cloud_replay = drain_pending_cloud_notices(&runtime_context, &loaded, None)?;
     let runtime_api_shutdown = embedded_runtime_api_shutdown_path(&loaded);
     let _runtime_api_shutdown_guard = RuntimeApiShutdownGuard {
         path: runtime_api_shutdown.clone(),
@@ -290,12 +304,52 @@ pub fn daemon(spec_path: &Path, options: DaemonOptions) -> Result<DaemonStatusRe
             },
         )?;
 
-        match tick(
-            spec_path,
-            TickOptions {
-                recover_stale_lease: options.recover_stale_lease,
-            },
-        ) {
+        let cycle_result = runtime_context
+            .transit(
+                RuntimeChannelId::SchedulerToReasoningRuntime,
+                "cycle_admission",
+                ChannelPriority::GovernedExecution,
+                json!({"restart_count": restart_count}),
+            )
+            .and_then(|_| {
+                runtime_context.transit(
+                    RuntimeChannelId::ReasoningRuntimeToAee,
+                    "governed_execution_admission",
+                    ChannelPriority::GovernedExecution,
+                    json!({"restart_count": restart_count}),
+                )
+            })
+            .and_then(|_| {
+                tick(
+                    spec_path,
+                    TickOptions {
+                        recover_stale_lease: options.recover_stale_lease,
+                    },
+                )
+            })
+            .and_then(|status| {
+                runtime_context.transit(
+                    RuntimeChannelId::AeeToCheckpoint,
+                    "cycle_checkpoint",
+                    ChannelPriority::CriticalContinuity,
+                    json!({"state": status.state.clone(), "cycle_id": status.last_cycle_id.clone()}),
+                )?;
+                runtime_context.transit(
+                    RuntimeChannelId::ComponentsToLifelog,
+                    "cycle_lifecycle_record",
+                    ChannelPriority::Evidence,
+                    json!({"state": status.state.clone(), "cycle_id": status.last_cycle_id.clone()}),
+                )?;
+                runtime_context.transit(
+                    RuntimeChannelId::ComponentsToObservability,
+                    "cycle_observability_record",
+                    ChannelPriority::Audit,
+                    json!({"state": status.state.clone(), "cycle_id": status.last_cycle_id.clone()}),
+                )?;
+                Ok(status)
+            });
+
+        match cycle_result {
             Ok(status) => {
                 last_child_exit = Some("success".to_string());
                 emit_daemon_event(
@@ -876,7 +930,7 @@ pub fn governed_stop(spec_path: &Path, request: GovernedStopRequest) -> Result<V
     validate_governed_stop_request(&request)?;
     let loaded = load_spec(spec_path)?;
     ensure_state_root(&loaded)?;
-    let runtime_context = CsmRuntimeContext::new()?;
+    let runtime_context = CsmRuntimeContext::observer()?;
     let restart_count = daemon_restart_count_hint(&loaded);
     let governed_stop_id = governed_stop_id(&loaded, &request);
 
@@ -1568,6 +1622,164 @@ fn acquire_lease(
     Ok(lease)
 }
 
+struct CycleShellInputs {
+    by_class: BTreeMap<NondeterministicShellClass, CapturedShellInputEvent>,
+    retained: Vec<CapturedShellInputEvent>,
+}
+
+impl CycleShellInputs {
+    fn event(&self, shell_class: NondeterministicShellClass) -> Result<&CapturedShellInputEvent> {
+        self.by_class
+            .get(&shell_class)
+            .ok_or_else(|| anyhow!("missing retained {} shell input", shell_class.as_str()))
+    }
+
+    fn replace(&mut self, event: CapturedShellInputEvent) {
+        self.by_class.insert(event.shell_class, event.clone());
+        self.retained.push(event);
+    }
+}
+
+fn capture_cycle_shell_input(
+    cycle_id: &str,
+    shell_class: NondeterministicShellClass,
+    source: &str,
+    observed_at: DateTime<Utc>,
+    confidence: ObservationConfidence,
+    value: &Value,
+    suffix: &str,
+) -> Result<CapturedShellInputEvent> {
+    let event_id = format!("{cycle_id}-{}-{suffix}", shell_class.as_str());
+    let retention_location = format!("determinism_boundary.json#captured_shell_events/{event_id}");
+    let event = CapturedShellInputEvent::new(
+        event_id,
+        shell_class,
+        source,
+        observed_at.to_rfc3339(),
+        confidence,
+        retention_location,
+        value.clone(),
+    )
+    .with_context(|| format!("capture {} shell observation", shell_class.as_str()))?;
+    Ok(event)
+}
+
+fn capture_initial_cycle_shell_inputs(
+    loaded: &LoadedAgentSpec,
+    cycle_id: &str,
+    observed_at: DateTime<Utc>,
+    provider_binding: &Value,
+) -> Result<CycleShellInputs> {
+    let chronosense = serde_json::to_value(capture_runtime_time_sync_status())
+        .context("serialize Chronosense time-sync observation")?;
+    let observations = [
+        (
+            NondeterministicShellClass::ChronosenseNtp,
+            "chronosense_runtime_service",
+            ObservationConfidence::Medium,
+            chronosense,
+        ),
+        (
+            NondeterministicShellClass::AwsCloud,
+            "runtime_aws_signal_configuration",
+            ObservationConfidence::Medium,
+            json!({
+                "region_configured": std::env::var_os("ADL_AWS_REGION").is_some(),
+                "event_bus_configured": std::env::var_os("ADL_CSM_NOTICE_EVENT_BUS").is_some(),
+                "profile_configured": std::env::var_os("ADL_AWS_PROFILE").is_some()
+                    || std::env::var_os("AWS_PROFILE").is_some()
+            }),
+        ),
+        (
+            NondeterministicShellClass::NetworkIo,
+            "csm_cycle_network_boundary",
+            ObservationConfidence::Medium,
+            json!({
+                "provider_transport_requested": provider_binding["binding_status"] == "available",
+                "runtime_api_contract": "embedded",
+                "external_side_effects_allowed": false
+            }),
+        ),
+        (
+            NondeterministicShellClass::WallClock,
+            "chronosense_utc_clock",
+            ObservationConfidence::High,
+            json!({"observed_at": observed_at}),
+        ),
+        (
+            NondeterministicShellClass::LocalProcessState,
+            "csm_process_runtime",
+            ObservationConfidence::High,
+            json!({
+                "process_id": std::process::id(),
+                "state_root_exists": loaded.state_root.exists(),
+                "agent_instance_id": loaded.spec.agent_instance_id
+            }),
+        ),
+        (
+            NondeterministicShellClass::ObservabilitySink,
+            "csm_observability_configuration",
+            ObservationConfidence::Medium,
+            json!({
+                "otel_status_configured": std::env::var_os("ADL_OTEL_STATUS_PATH").is_some(),
+                "otel_log_configured": std::env::var_os("ADL_OTEL_LOG_PATH").is_some(),
+                "local_event_retention": true
+            }),
+        ),
+        (
+            NondeterministicShellClass::ProviderModelIo,
+            "csm_provider_binding",
+            ObservationConfidence::Medium,
+            provider_binding.clone(),
+        ),
+    ];
+
+    let mut by_class = BTreeMap::new();
+    let mut retained = Vec::new();
+    for (shell_class, source, confidence, value) in observations {
+        let event = capture_cycle_shell_input(
+            cycle_id,
+            shell_class,
+            source,
+            observed_at,
+            confidence,
+            &value,
+            "initial",
+        )?;
+        by_class.insert(shell_class, event.clone());
+        retained.push(event);
+    }
+    Ok(CycleShellInputs { by_class, retained })
+}
+
+fn safe_provider_result_summary(value: &Value) -> Value {
+    json!({
+        "schema": "adl.csm.provider_result_summary.v1",
+        "status": value.get("status").cloned().unwrap_or(Value::Null),
+        "workflow_kind": value.get("workflow_kind").cloned().unwrap_or(Value::Null),
+        "trace_event_count": value
+            .pointer("/trace/events")
+            .and_then(Value::as_array)
+            .map(|events| events.len()),
+        "result_available": !value.is_null()
+    })
+}
+
+fn evaluate_core_decision_fail_closed(
+    _cycle_dir: &Path,
+    request: CoreDecisionRequest,
+    events: &[CapturedShellInputEvent],
+) -> Result<DeterministicCoreDecision> {
+    match evaluate_core_decision(request, events) {
+        Ok(decision) => Ok(decision),
+        Err(quarantine) => Err(anyhow!(
+            "nondeterministic shell boundary quarantined {}: {}",
+            quarantine.component.as_str(),
+            quarantine.reason
+        )),
+    }
+}
+
 fn write_cycle_artifacts(loaded: &LoadedAgentSpec, cycle_id: &str) -> Result<()> {
     let cycle_dir = cycles_dir(loaded).join(cycle_id);
     fs::create_dir_all(&cycle_dir)
@@ -1576,6 +1788,33 @@ fn write_cycle_artifacts(loaded: &LoadedAgentSpec, cycle_id: &str) -> Result<()>
     let previous_cycle_id = latest_cycle_id(loaded)?;
     let workflow_ref = workflow_ref(&loaded.spec.workflow);
     let provider_binding = provider_binding(loaded, cycle_id, started_at);
+    let mut shell_inputs =
+        capture_initial_cycle_shell_inputs(loaded, cycle_id, started_at, &provider_binding)?;
+    let scheduler_request = CoreDecisionRequest::new(
+        format!("{cycle_id}-scheduler-admission"),
+        DeterministicCoreComponent::SchedulerAdmission,
+        vec![
+            CoreDecisionInput::deterministic(DeterministicCoreInputKind::CycleId, cycle_id),
+            CoreDecisionInput::deterministic(
+                DeterministicCoreInputKind::WorkflowId,
+                workflow_ref.clone(),
+            ),
+            CoreDecisionInput::captured(
+                shell_inputs.event(NondeterministicShellClass::ChronosenseNtp)?,
+            ),
+            CoreDecisionInput::captured(shell_inputs.event(NondeterministicShellClass::WallClock)?),
+            CoreDecisionInput::captured(
+                shell_inputs.event(NondeterministicShellClass::LocalProcessState)?,
+            ),
+        ],
+    );
+    let scheduler_decision = evaluate_core_decision_fail_closed(
+        &cycle_dir,
+        scheduler_request.clone(),
+        &shell_inputs.retained,
+    )?;
+    let mut decision_requests = vec![scheduler_request];
+    let mut core_decisions = vec![scheduler_decision];
     let safety_policy = effective_safety_policy(loaded);
     let workflow_supported = workflow_kind_supported(&loaded.spec.workflow.kind);
     let broker_allowed = safety_bool_default(&loaded.spec.safety, "allow_broker", false);
@@ -1654,13 +1893,6 @@ fn write_cycle_artifacts(loaded: &LoadedAgentSpec, cycle_id: &str) -> Result<()>
         dedup_strings(&mut rejected_actions);
     }
 
-    let max_runtime_not_exceeded =
-        Utc::now() <= started_at + ChronoDuration::seconds(max_cycle_runtime_secs(loaded) as i64);
-    if !max_runtime_not_exceeded {
-        rejected_actions.push("max_cycle_runtime_exceeded".to_string());
-        dedup_strings(&mut rejected_actions);
-    }
-
     let freedom_gate_admission =
         if workflow_supported && loaded.spec.workflow.kind == "adl_workflow" {
             let policy_decision = loaded
@@ -1684,16 +1916,156 @@ fn write_cycle_artifacts(loaded: &LoadedAgentSpec, cycle_id: &str) -> Result<()>
             None
         };
 
-    let guardrail_pass = workflow_supported
-        && rejected_actions.is_empty()
-        && sanitization.passed
-        && max_runtime_not_exceeded;
-    let adl_run = if guardrail_pass && loaded.spec.workflow.kind == "adl_workflow" {
+    let admission_pass = workflow_supported && rejected_actions.is_empty() && sanitization.passed;
+    let aee_request = CoreDecisionRequest::new(
+        format!("{cycle_id}-aee-governed-execution"),
+        DeterministicCoreComponent::AeeGovernedExecution,
+        vec![
+            CoreDecisionInput::deterministic(
+                DeterministicCoreInputKind::ActionId,
+                "stage_and_record_cycle",
+            ),
+            CoreDecisionInput::deterministic(
+                DeterministicCoreInputKind::PolicyDecision,
+                if admission_pass { "admit" } else { "deny" },
+            ),
+            CoreDecisionInput::captured(
+                shell_inputs.event(NondeterministicShellClass::ProviderModelIo)?,
+            ),
+            CoreDecisionInput::captured(shell_inputs.event(NondeterministicShellClass::NetworkIo)?),
+            CoreDecisionInput::captured(shell_inputs.event(NondeterministicShellClass::AwsCloud)?),
+            CoreDecisionInput::captured(
+                shell_inputs.event(NondeterministicShellClass::ObservabilitySink)?,
+            ),
+        ],
+    );
+    let aee_decision = evaluate_core_decision_fail_closed(
+        &cycle_dir,
+        aee_request.clone(),
+        &shell_inputs.retained,
+    )?;
+    decision_requests.push(aee_request);
+    core_decisions.push(aee_decision);
+
+    let adl_run = if admission_pass && loaded.spec.workflow.kind == "adl_workflow" {
         Some(run_adl_workflow_cycle(loaded, cycle_id, &cycle_dir)?)
     } else {
         None
     };
 
+    let provider_result_raw = match &adl_run {
+        Some(_) => read_json_required(&cycle_dir.join("csm_adl_run_status.json"))?,
+        None => provider_binding.clone(),
+    };
+    let provider_result_value = safe_provider_result_summary(&provider_result_raw);
+    let provider_result_sanitization =
+        sanitize_public_artifacts(&[("provider_result_summary", &provider_result_value)])?;
+    if !provider_result_sanitization.passed {
+        return Err(anyhow!(
+            "provider result summary failed sanitization before deterministic retention"
+        ));
+    }
+    let provider_result_event = capture_cycle_shell_input(
+        cycle_id,
+        NondeterministicShellClass::ProviderModelIo,
+        "csm_provider_execution_result",
+        Utc::now(),
+        ObservationConfidence::Medium,
+        &provider_result_value,
+        "result",
+    )?;
+    shell_inputs.replace(provider_result_event);
+
+    let completion_at = Utc::now();
+    let completion_clock_event = capture_cycle_shell_input(
+        cycle_id,
+        NondeterministicShellClass::WallClock,
+        "chronosense_utc_clock",
+        completion_at,
+        ObservationConfidence::High,
+        &json!({"observed_at": completion_at, "phase": "completion"}),
+        "completion",
+    )?;
+    shell_inputs.replace(completion_clock_event);
+    let max_runtime_not_exceeded = completion_at
+        <= started_at + ChronoDuration::seconds(max_cycle_runtime_secs(loaded) as i64);
+    if !max_runtime_not_exceeded {
+        rejected_actions.push("max_cycle_runtime_exceeded".to_string());
+        dedup_strings(&mut rejected_actions);
+    }
+
+    let reasoning_request = CoreDecisionRequest::new(
+        format!("{cycle_id}-reasoning-runtime"),
+        DeterministicCoreComponent::ReasoningRuntime,
+        vec![
+            CoreDecisionInput::deterministic(
+                DeterministicCoreInputKind::GraphId,
+                workflow_ref.clone(),
+            ),
+            CoreDecisionInput::captured(
+                shell_inputs.event(NondeterministicShellClass::ProviderModelIo)?,
+            ),
+            CoreDecisionInput::captured(shell_inputs.event(NondeterministicShellClass::NetworkIo)?),
+        ],
+    );
+    core_decisions.push(evaluate_core_decision_fail_closed(
+        &cycle_dir,
+        reasoning_request.clone(),
+        &shell_inputs.retained,
+    )?);
+    decision_requests.push(reasoning_request);
+    let checkpoint_request = CoreDecisionRequest::new(
+        format!("{cycle_id}-checkpoint-version-transition"),
+        DeterministicCoreComponent::CheckpointVersionTransition,
+        vec![
+            CoreDecisionInput::deterministic(
+                DeterministicCoreInputKind::CheckpointVersion,
+                "continuity_checkpoint.v1",
+            ),
+            CoreDecisionInput::captured(
+                shell_inputs.event(NondeterministicShellClass::LocalProcessState)?,
+            ),
+            CoreDecisionInput::captured(shell_inputs.event(NondeterministicShellClass::WallClock)?),
+        ],
+    );
+    core_decisions.push(evaluate_core_decision_fail_closed(
+        &cycle_dir,
+        checkpoint_request.clone(),
+        &shell_inputs.retained,
+    )?);
+    decision_requests.push(checkpoint_request);
+    let lifelog_request = CoreDecisionRequest::new(
+        format!("{cycle_id}-lifelog-ordering"),
+        DeterministicCoreComponent::LifelogOrdering,
+        vec![
+            CoreDecisionInput::deterministic(DeterministicCoreInputKind::LifelogSequence, cycle_id),
+            CoreDecisionInput::captured(
+                shell_inputs.event(NondeterministicShellClass::ChronosenseNtp)?,
+            ),
+            CoreDecisionInput::captured(shell_inputs.event(NondeterministicShellClass::WallClock)?),
+        ],
+    );
+    core_decisions.push(evaluate_core_decision_fail_closed(
+        &cycle_dir,
+        lifelog_request.clone(),
+        &shell_inputs.retained,
+    )?);
+    decision_requests.push(lifelog_request);
+    let boundary_record = CsmCycleDeterminismBoundaryRecord::new(
+        cycle_id,
+        shell_inputs.retained.clone(),
+        decision_requests,
+        core_decisions.clone(),
+    );
+    boundary_record
+        .validate()
+        .context("validate assembled CSM cycle determinism boundary")?;
+    write_json_pretty(
+        &cycle_dir.join("determinism_boundary.json"),
+        &boundary_record,
+    )?;
+
+    let guardrail_pass = admission_pass && max_runtime_not_exceeded;
     let cycle_status = if guardrail_pass { "success" } else { "blocked" };
     let decision_status = if guardrail_pass {
         "accepted"
@@ -1712,7 +2084,11 @@ fn write_cycle_artifacts(loaded: &LoadedAgentSpec, cycle_id: &str) -> Result<()>
     } else {
         json!({
             "action": "blocked",
-            "summary": "Cycle blocked before workflow execution because the configured contract failed required guardrails.",
+            "summary": if admission_pass {
+                "Workflow completed but a post-execution runtime guardrail failed."
+            } else {
+                "Cycle blocked before workflow execution because pre-execution admission failed."
+            },
             "workflow_ref": workflow_ref,
             "paper_only": true
         })
@@ -1730,8 +2106,8 @@ fn write_cycle_artifacts(loaded: &LoadedAgentSpec, cycle_id: &str) -> Result<()>
         "not_financial_advice": true
     });
     if let Some(event) = freedom_gate_admission.as_ref() {
-        if let Some(obj) = decision_result.as_object_mut() {
-            obj.insert(
+        if let Some(object) = decision_result.as_object_mut() {
+            object.insert(
                 "freedom_gate_decision".to_string(),
                 serde_json::to_value(event)?,
             );
@@ -1878,10 +2254,24 @@ fn write_cycle_artifacts(loaded: &LoadedAgentSpec, cycle_id: &str) -> Result<()>
     });
     write_json_pretty(&cycle_dir.join("guardrail_report.json"), &guardrail_report)?;
 
-    let completed_at = Utc::now();
+    let completed_at = completion_at;
+    let shell_event_fingerprints = boundary_record
+        .captured_shell_events
+        .iter()
+        .map(|event| {
+            json!({
+                "event_id": event.event_id,
+                "shell_class": event.shell_class,
+                "value_fingerprint": event.value_fingerprint,
+                "retention_location": event.retention_location
+            })
+        })
+        .collect::<Vec<_>>();
     let manifest_input = json!({
         "observations_ref": "observations.json",
         "decision_request_ref": "decision_request.json",
+        "determinism_boundary_ref": "determinism_boundary.json",
+        "shell_event_fingerprints": shell_event_fingerprints,
         "previous_cycle_id": previous_cycle_id,
         "workflow_kind": loaded.spec.workflow.kind.clone(),
         "workflow_ref": workflow_ref
@@ -1891,6 +2281,7 @@ fn write_cycle_artifacts(loaded: &LoadedAgentSpec, cycle_id: &str) -> Result<()>
         "run_ref": "run_ref.json",
         "memory_writes_ref": "memory_writes.jsonl",
         "guardrail_report_ref": "guardrail_report.json",
+        "determinism_boundary_digest": cycle_record_fingerprint(&boundary_record)?,
         "status": cycle_status
     });
     let manifest = json!({
@@ -1904,6 +2295,7 @@ fn write_cycle_artifacts(loaded: &LoadedAgentSpec, cycle_id: &str) -> Result<()>
         "workflow_ref": manifest_input["workflow_ref"].clone(),
         "input_hash": sha256_json(&manifest_input)?,
         "output_hash": sha256_json(&manifest_output)?,
+        "determinism_boundary_digest": manifest_output["determinism_boundary_digest"].clone(),
         "previous_cycle_id": manifest_input["previous_cycle_id"].clone(),
         "next_cycle_hint": "sleep_until_next_heartbeat",
         "csm_runtime": {
@@ -1912,7 +2304,8 @@ fn write_cycle_artifacts(loaded: &LoadedAgentSpec, cycle_id: &str) -> Result<()>
             "aee": "integrated",
             "chronosense": "integrated",
             "scheduler_watcher": "integrated",
-            "resilience_middleware": "integrated"
+            "resilience_middleware": "integrated",
+            "determinism_boundary": "typed_capture_and_fail_closed_quarantine"
         },
         "artifacts": {
             "observations": "observations.json",
@@ -1921,6 +2314,7 @@ fn write_cycle_artifacts(loaded: &LoadedAgentSpec, cycle_id: &str) -> Result<()>
             "run_ref": "run_ref.json",
             "memory_writes": "memory_writes.jsonl",
             "guardrail_report": "guardrail_report.json",
+            "determinism_boundary": "determinism_boundary.json",
             "cycle_summary": "cycle_summary.md",
             "csm_adl_run_status": adl_run.as_ref().map(|run| run.status_ref.as_str())
         },
@@ -1931,7 +2325,7 @@ fn write_cycle_artifacts(loaded: &LoadedAgentSpec, cycle_id: &str) -> Result<()>
     fs::write(
         cycle_dir.join("cycle_summary.md"),
         format!(
-            "# Long-Lived Agent Cycle {cycle_id}\n\n- Agent: `{}`\n- Workflow kind: `{}`\n- Cycle status: `{cycle_status}`\n- Observations: `observations.json`\n- Decision request: `decision_request.json`\n- Decision result: `decision_result.json`\n- Guardrail result: `{guardrail_status}`\n- Memory writes: `memory_writes.jsonl`\n- Next-cycle note: `sleep_until_next_heartbeat`\n- Safety: paper-only; not financial advice; no broker execution\n",
+            "# Long-Lived Agent Cycle {cycle_id}\n\n- Agent: `{}`\n- Workflow kind: `{}`\n- Cycle status: `{cycle_status}`\n- Observations: `observations.json`\n- Replayable determinism ledger: `determinism_boundary.json`\n- Decision request: `decision_request.json`\n- Decision result: `decision_result.json`\n- Guardrail result: `{guardrail_status}`\n- Memory writes: `memory_writes.jsonl`\n- Next-cycle note: `sleep_until_next_heartbeat`\n- Safety: paper-only; not financial advice; no broker execution\n",
             loaded.spec.agent_instance_id, loaded.spec.workflow.kind
         ),
     )
@@ -2256,6 +2650,99 @@ struct GovernedNoticeInput<'a> {
     details: Value,
 }
 
+struct CloudNoticeDrainResult {
+    target_attempts: Vec<Value>,
+    target_delivery: Option<Value>,
+    acknowledged_count: u64,
+}
+
+fn drain_pending_cloud_notices(
+    runtime_context: &CsmRuntimeContext,
+    loaded: &LoadedAgentSpec,
+    target_sequence: Option<u64>,
+) -> Result<CloudNoticeDrainResult> {
+    let mut target_attempts = Vec::new();
+    let mut target_delivery = None;
+    let mut acknowledged_count = 0u64;
+    loop {
+        let Some(delivery) =
+            runtime_context.replay_next(RuntimeChannelId::CloudBridgeToAwsRoutes)?
+        else {
+            break;
+        };
+        let sequence = delivery
+            .spool_sequence
+            .context("cloud replay delivery missing durable spool sequence")?;
+        let attempts = publish_csm_governed_notice_signal(loaded, &delivery.message.payload);
+        let verified_attempt = attempts.iter().find(|attempt| {
+            attempt.get("status").and_then(Value::as_str) == Some("published_live")
+                && attempt
+                    .get("provider_message_id")
+                    .and_then(Value::as_str)
+                    .is_some_and(|value| !value.trim().is_empty())
+        });
+        let delivery_state = if let Some(attempt) = verified_attempt {
+            let transport = attempt
+                .get("channel")
+                .and_then(Value::as_str)
+                .context("verified cloud attempt missing channel")?;
+            let provider_receipt_id = attempt
+                .get("provider_message_id")
+                .and_then(Value::as_str)
+                .context("verified cloud attempt missing provider receipt")?;
+            if let Err(error) =
+                runtime_context.acknowledge_cloud_publish(sequence, transport, provider_receipt_id)
+            {
+                runtime_context
+                    .release_replay(RuntimeChannelId::CloudBridgeToAwsRoutes, sequence)?;
+                return Err(error)
+                    .context("cloud transport succeeded but durable acknowledgement failed");
+            }
+            acknowledged_count = acknowledged_count.saturating_add(1);
+            json!({
+                "status": "published_and_atomically_acknowledged",
+                "spool_sequence": sequence,
+                "publish_cursor": sequence,
+                "transport": transport,
+                "provider_receipt_id": provider_receipt_id
+            })
+        } else {
+            runtime_context.release_replay(RuntimeChannelId::CloudBridgeToAwsRoutes, sequence)?;
+            json!({
+                "status": "durably_spooled_waiting_for_verified_transport_receipt",
+                "spool_sequence": sequence,
+                "cursor_advanced": false
+            })
+        };
+        if target_sequence == Some(sequence) {
+            target_attempts = attempts;
+            target_delivery = Some(delivery_state.clone());
+        }
+        if delivery_state
+            .get("cursor_advanced")
+            .and_then(Value::as_bool)
+            == Some(false)
+        {
+            if let Some(target) = target_sequence {
+                if target != sequence && target_delivery.is_none() {
+                    target_delivery = Some(json!({
+                        "status": "durably_spooled_behind_unacknowledged_sequence",
+                        "spool_sequence": target,
+                        "blocking_spool_sequence": sequence,
+                        "cursor_advanced": false
+                    }));
+                }
+            }
+            break;
+        }
+    }
+    Ok(CloudNoticeDrainResult {
+        target_attempts,
+        target_delivery,
+        acknowledged_count,
+    })
+}
+
 fn record_governed_runtime_notice(
     runtime_context: &CsmRuntimeContext,
     loaded: &LoadedAgentSpec,
@@ -2313,14 +2800,34 @@ fn record_governed_runtime_notice(
     append_jsonl(&csm_notice_ledger_path(loaded), &local_notice)?;
 
     let mut final_notice = local_notice;
+    let cloud_spool_sequence =
+        runtime_context.persist_cloud_notice(&notice_id, final_notice.clone())?;
     let mut attempts = vec![json!({
         "channel": "local_notice_ledger",
         "status": "recorded",
         "artifact_ref": "csm_governed_notices.jsonl"
     })];
-    attempts.extend(publish_csm_governed_notice_signal(loaded, &final_notice));
+    let typed_channel_delivery = match cloud_spool_sequence {
+        Some(sequence) => {
+            let drain = drain_pending_cloud_notices(runtime_context, loaded, Some(sequence))?;
+            attempts.extend(drain.target_attempts);
+            drain.target_delivery.unwrap_or_else(|| {
+                json!({
+                    "status": "durably_spooled_waiting_for_replay",
+                    "spool_sequence": sequence,
+                    "acknowledged_predecessor_count": drain.acknowledged_count,
+                    "cursor_advanced": false
+                })
+            })
+        }
+        None => json!({
+            "status": "observer_command_defers_to_daemon_channel_owner",
+            "cursor_advanced": false
+        }),
+    };
     if let Some(object) = final_notice.as_object_mut() {
         object.insert("delivery_attempts".to_string(), json!(attempts));
+        object.insert("typed_channel_delivery".to_string(), typed_channel_delivery);
         object.insert("delivery_completed_at".to_string(), json!(Utc::now()));
     }
     write_json_pretty(&csm_notice_latest_path(loaded), &final_notice)?;
@@ -2767,21 +3274,323 @@ struct PartialCheckpointSleep<'a> {
 
 struct CsmRuntimeContext {
     chronosense: ChronosenseRuntimeService,
+    channel_runtime: Option<tokio::runtime::Runtime>,
+    channel_fabric: Option<Mutex<RuntimeChannelFabric>>,
+    channel_state_path: Option<PathBuf>,
 }
 
 impl CsmRuntimeContext {
-    fn new() -> Result<Self> {
+    fn new(loaded: &LoadedAgentSpec) -> Result<Self> {
+        let state_root = &loaded.state_root;
         let started_at_epoch_ms = epoch_millis_now();
         let chronosense = ChronosenseRuntimeService::new(ChronosenseRuntimeServiceConfig::utc(
             started_at_epoch_ms,
         ))
         .context("failed initializing CSM Chronosense runtime service")?;
         let _initial_time_sync = start_runtime_time_observation();
-        Ok(Self { chronosense })
+        let channel_runtime = tokio::runtime::Builder::new_current_thread()
+            .enable_all()
+            .build()
+            .context("failed creating CSM typed-channel runtime")?;
+        let channel_fabric = RuntimeChannelFabric::open(state_root.join("channel_spools"))
+            .context("failed opening CSM typed-channel fabric")?;
+        let context = Self {
+            chronosense,
+            channel_runtime: Some(channel_runtime),
+            channel_fabric: Some(Mutex::new(channel_fabric)),
+            channel_state_path: Some(state_root.join("csm_typed_channel_state.json")),
+        };
+        context.recover_required_channels(loaded)?;
+        context.persist_channel_state("runtime_started", None)?;
+        Ok(context)
+    }
+
+    fn observer() -> Result<Self> {
+        let started_at_epoch_ms = epoch_millis_now();
+        let chronosense = ChronosenseRuntimeService::new(ChronosenseRuntimeServiceConfig::utc(
+            started_at_epoch_ms,
+        ))
+        .context("failed initializing CSM Chronosense observer context")?;
+        let _initial_time_sync = start_runtime_time_observation();
+        Ok(Self {
+            chronosense,
+            channel_runtime: None,
+            channel_fabric: None,
+            channel_state_path: None,
+        })
     }
 
     fn time_sync_status(&self) -> crate::chronosense::ChronosenseTimeSyncStatus {
         capture_runtime_time_sync_status()
+    }
+
+    fn transit(
+        &self,
+        channel: RuntimeChannelId,
+        event: &str,
+        priority: ChannelPriority,
+        payload: Value,
+    ) -> Result<Value> {
+        let message = RuntimeMessage::new(
+            format!(
+                "{}-{}",
+                event,
+                Utc::now().timestamp_nanos_opt().unwrap_or_default()
+            ),
+            priority,
+            payload,
+        );
+        let cancellation = tokio_util::sync::CancellationToken::new();
+        let mut fabric = self
+            .channel_fabric
+            .as_ref()
+            .context("CSM observer context cannot own typed-channel transit")?
+            .lock()
+            .map_err(|_| anyhow!("CSM typed-channel fabric lock poisoned"))?;
+        let (receipt, delivery) = self
+            .channel_runtime
+            .as_ref()
+            .context("CSM observer context has no typed-channel runtime")?
+            .block_on(fabric.transit(channel, message, &cancellation))
+            .context("CSM typed-channel transit failed")?;
+        let delivery = delivery.context("CSM typed-channel admission did not reach component")?;
+        if delivery.message.id != receipt.message_id {
+            return Err(anyhow!("CSM typed-channel delivery identity mismatch"));
+        }
+        drop(fabric);
+        self.persist_channel_state(event, Some(serde_json::to_value(&receipt)?))?;
+        Ok(serde_json::to_value(receipt)?)
+    }
+
+    fn recover_required_channels(&self, loaded: &LoadedAgentSpec) -> Result<()> {
+        for channel in RuntimeChannelId::ALL {
+            if channel == RuntimeChannelId::CloudBridgeToAwsRoutes {
+                continue;
+            }
+            while let Some(delivery) = self.replay_next(channel)? {
+                let sequence = delivery
+                    .spool_sequence
+                    .context("replayed runtime delivery missing durable spool sequence")?;
+                if let Err(error) = self.process_replayed_delivery(loaded, channel, &delivery) {
+                    self.release_replay(channel, sequence)?;
+                    return Err(error).context("failed processing durable CSM channel replay");
+                }
+                if let Err(error) = self.acknowledge_processed(channel, sequence) {
+                    self.release_replay(channel, sequence)?;
+                    return Err(error).context("failed acknowledging processed CSM channel replay");
+                }
+            }
+        }
+        Ok(())
+    }
+
+    fn process_replayed_delivery(
+        &self,
+        loaded: &LoadedAgentSpec,
+        channel: RuntimeChannelId,
+        delivery: &RuntimeDelivery,
+    ) -> Result<()> {
+        let sequence = delivery
+            .spool_sequence
+            .context("replayed runtime delivery missing durable spool sequence")?;
+        match channel {
+            RuntimeChannelId::AeeToCheckpoint => {
+                let status = read_status(loaded)?
+                    .context("cannot process checkpoint replay without retained agent status")?;
+                persist_status(loaded, &status, "typed_channel_replay")?;
+            }
+            RuntimeChannelId::ComponentsToLifelog => {
+                append_operator_event(
+                    loaded,
+                    "typed_channel_lifelog_replay",
+                    delivery.message.payload.clone(),
+                )?;
+            }
+            RuntimeChannelId::ComponentsToObservability => {
+                append_operator_event(
+                    loaded,
+                    "typed_channel_observability_replay",
+                    delivery.message.payload.clone(),
+                )?;
+                crate::observability::emit_event(
+                    "csm",
+                    "typed_channel_observability_replay",
+                    "processed",
+                    &[
+                        ("channel", channel.as_str()),
+                        ("message_id", delivery.message.id.as_str()),
+                    ],
+                );
+            }
+            RuntimeChannelId::SchedulerToReasoningRuntime
+            | RuntimeChannelId::ReasoningRuntimeToAee
+            | RuntimeChannelId::RuntimeApiToControlPlane => {
+                append_operator_event(
+                    loaded,
+                    "typed_channel_replay_reconciled",
+                    json!({
+                        "channel": channel.as_str(),
+                        "message_id": delivery.message.id,
+                        "spool_sequence": sequence,
+                        "payload": delivery.message.payload,
+                        "recovery_action": "reconciled_with_retained_runtime_state_before_new_admission"
+                    }),
+                )?;
+            }
+            RuntimeChannelId::CloudBridgeToAwsRoutes => {
+                return Err(anyhow!(
+                    "cloud replay requires verified transport processing"
+                ));
+            }
+        }
+        append_operator_event(
+            loaded,
+            "typed_channel_replay_processed",
+            json!({
+                "channel": channel.as_str(),
+                "message_id": delivery.message.id,
+                "spool_sequence": sequence
+            }),
+        )
+    }
+
+    fn replay_next(&self, channel: RuntimeChannelId) -> Result<Option<RuntimeDelivery>> {
+        let cancellation = tokio_util::sync::CancellationToken::new();
+        let mut fabric = self
+            .channel_fabric
+            .as_ref()
+            .context("CSM observer context cannot replay typed-channel state")?
+            .lock()
+            .map_err(|_| anyhow!("CSM typed-channel fabric lock poisoned"))?;
+        self.channel_runtime
+            .as_ref()
+            .context("CSM observer context has no typed-channel runtime")?
+            .block_on(fabric.replay_next(channel, &cancellation))
+            .context("failed replaying durable CSM typed-channel record")
+    }
+
+    fn acknowledge_processed(&self, channel: RuntimeChannelId, sequence: u64) -> Result<()> {
+        let fabric = self
+            .channel_fabric
+            .as_ref()
+            .context("CSM observer context cannot acknowledge typed-channel processing")?
+            .lock()
+            .map_err(|_| anyhow!("CSM typed-channel fabric lock poisoned"))?;
+        self.channel_runtime
+            .as_ref()
+            .context("CSM observer context has no typed-channel runtime")?
+            .block_on(fabric.acknowledge_processed(channel, sequence))
+            .context("failed acknowledging durable CSM typed-channel record")
+    }
+
+    fn release_replay(&self, channel: RuntimeChannelId, sequence: u64) -> Result<()> {
+        self.channel_fabric
+            .as_ref()
+            .context("CSM observer context cannot release typed-channel replay")?
+            .lock()
+            .map_err(|_| anyhow!("CSM typed-channel fabric lock poisoned"))?
+            .release_replay(channel, sequence)
+            .context("failed releasing durable CSM typed-channel replay")
+    }
+
+    fn persist_channel_state(&self, event: &str, receipt: Option<Value>) -> Result<()> {
+        let fabric = self
+            .channel_fabric
+            .as_ref()
+            .context("CSM observer context cannot persist typed-channel state")?
+            .lock()
+            .map_err(|_| anyhow!("CSM typed-channel fabric lock poisoned"))?;
+        let snapshots = self
+            .channel_runtime
+            .as_ref()
+            .context("CSM observer context has no typed-channel runtime")?
+            .block_on(fabric.snapshots())
+            .context("failed capturing CSM typed-channel snapshots")?;
+        let required_channel_not_ready = snapshots.iter().any(|snapshot| {
+            snapshot.readiness != ReadinessState::Ready
+                && !matches!(
+                    snapshot.channel,
+                    RuntimeChannelId::ComponentsToObservability
+                        | RuntimeChannelId::CloudBridgeToAwsRoutes
+                )
+        });
+        let summary = json!({
+            "channel_count": snapshots.len(),
+            "queue_depth": snapshots.iter().map(|snapshot| snapshot.depth as u64).sum::<u64>(),
+            "durable_spool_depth": snapshots.iter().map(|snapshot| snapshot.durable_spool_depth as u64).sum::<u64>(),
+            "blocked_count": snapshots.iter().map(|snapshot| snapshot.blocked_count).sum::<u64>(),
+            "throttled_count": snapshots.iter().map(|snapshot| snapshot.throttled_count).sum::<u64>(),
+            "shed_count": snapshots.iter().map(|snapshot| snapshot.shed_count).sum::<u64>(),
+        });
+        let state = json!({
+            "schema": "adl.csm.typed_channel_state.v1",
+            "runtime_owner": "csm",
+            "status": if required_channel_not_ready { "not_ready" } else { "ready" },
+            "required_channel_not_ready": required_channel_not_ready,
+            "last_event": event,
+            "last_receipt": receipt,
+            "summary": summary,
+            "channels": snapshots,
+            "updated_at": Utc::now(),
+        });
+        write_json_pretty(
+            self.channel_state_path
+                .as_ref()
+                .context("CSM observer context has no typed-channel state path")?,
+            &state,
+        )
+        .context("failed retaining CSM typed-channel state")
+    }
+
+    fn persist_cloud_notice(&self, notice_id: &str, notice: Value) -> Result<Option<u64>> {
+        let Some(channel_fabric) = self.channel_fabric.as_ref() else {
+            return Ok(None);
+        };
+        let channel_runtime = self
+            .channel_runtime
+            .as_ref()
+            .context("CSM channel owner has no typed-channel runtime")?;
+        let fabric = channel_fabric
+            .lock()
+            .map_err(|_| anyhow!("CSM typed-channel fabric lock poisoned"))?;
+        let receipt = channel_runtime
+            .block_on(fabric.persist_required(
+                RuntimeChannelId::CloudBridgeToAwsRoutes,
+                RuntimeMessage::new(notice_id, ChannelPriority::Evidence, notice),
+            ))
+            .context("failed persisting governed notice before cloud delivery")?;
+        drop(fabric);
+        self.persist_channel_state(
+            "cloud_notice_persisted",
+            Some(serde_json::to_value(&receipt)?),
+        )?;
+        Ok(receipt.spool_sequence)
+    }
+
+    fn acknowledge_cloud_publish(
+        &self,
+        sequence: u64,
+        transport: &str,
+        provider_receipt_id: &str,
+    ) -> Result<()> {
+        let channel_fabric = self
+            .channel_fabric
+            .as_ref()
+            .context("CSM observer context cannot acknowledge cloud publication")?;
+        let channel_runtime = self
+            .channel_runtime
+            .as_ref()
+            .context("CSM observer context has no typed-channel runtime")?;
+        let receipt =
+            TransportPublishReceipt::verified(sequence, sequence, transport, provider_receipt_id)?;
+        let fabric = channel_fabric
+            .lock()
+            .map_err(|_| anyhow!("CSM typed-channel fabric lock poisoned"))?;
+        channel_runtime
+            .block_on(fabric.acknowledge_published(receipt))
+            .context("failed atomically acknowledging cloud publication")?;
+        drop(fabric);
+        self.persist_channel_state("cloud_publish_acknowledged", None)
     }
 }
 
@@ -2869,22 +3678,23 @@ fn write_daemon_status(
             }),
         );
     }
-    if let Err(err) = write_json_pretty(
-        &loaded
-            .state_root
-            .join(csm_resident_agents::CSM_RESIDENT_AGENTS_STATUS_REF),
-        &resident_agents_status,
+    if let Err(err) = csm_curiosity_engine::write_status_snapshot(
+        &loaded.state_root,
+        &loaded.spec.agent_instance_id,
+        effective_state,
+        agent_state.as_deref(),
+        false,
     ) {
         let _ = append_operator_event(
             loaded,
-            "csm_resident_agents_status_write_failed",
+            "csm_curiosity_engine_status_write_failed",
             json!({
-                "schema": "adl.csm.resident_agents.write_failure.v1",
+                "schema": "adl.csm.curiosity_engine.write_failure.v1",
                 "runtime_owner": "csm",
-                "component": "resident_agents",
+                "component": "curiosity_engine",
                 "status": "degraded_nonfatal",
                 "reason": err.to_string(),
-                "recovery_policy": "continue_runtime_and_surface_computed_resident_agent_status"
+                "recovery_policy": "continue_runtime_and_surface_missing_or_fail_closed_curiosity_status"
             }),
         );
     }
@@ -2901,6 +3711,25 @@ fn write_daemon_status(
                 "status": "degraded_nonfatal",
                 "reason": err.to_string(),
                 "recovery_policy": "continue_runtime_and_fail_closed_for_executor_admission"
+            }),
+        );
+    }
+    if let Err(err) = write_json_pretty(
+        &loaded
+            .state_root
+            .join(csm_resident_agents::CSM_RESIDENT_AGENTS_STATUS_REF),
+        &resident_agents_status,
+    ) {
+        let _ = append_operator_event(
+            loaded,
+            "csm_resident_agents_status_write_failed",
+            json!({
+                "schema": "adl.csm.resident_agents.write_failure.v1",
+                "runtime_owner": "csm",
+                "component": "resident_agents",
+                "status": "degraded_nonfatal",
+                "reason": err.to_string(),
+                "recovery_policy": "continue_runtime_and_surface_computed_resident_agent_status"
             }),
         );
     }
@@ -3180,8 +4009,19 @@ fn csm_runtime_capabilities_with_resident_agents(
             "partial_checkpoints": "daemon_partial_checkpoint",
             "safe_fail_serialization": "integrated_safe_fail_bundle"
         },
+        "typed_channels": {
+            "status": "integrated",
+            "fabric_owner": "csm_runtime_context",
+            "channel_count": RuntimeChannelId::ALL.len(),
+            "state_ref": "csm_typed_channel_state.json",
+            "spool_root": "channel_spools/",
+            "durability": "redb_immediate_commit",
+            "delivery_semantics": "at_least_once_until_component_acknowledgement",
+            "cloud_cursor_policy": "atomic_transport_receipt_cursor_and_spool_commit"
+        },
         "resident_agents": resident_agents_status,
         "polis_shepherd_agent": csm_shepherd_agent::runtime_capability(),
+        "curiosity_engine": csm_curiosity_engine::runtime_capability(),
         "freedom_gate": csm_freedom_gate::runtime_capability(),
         "observability": {
             "status": "integrated",

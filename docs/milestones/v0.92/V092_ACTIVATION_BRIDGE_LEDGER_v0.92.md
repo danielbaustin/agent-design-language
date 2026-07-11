@@ -95,8 +95,8 @@ completion proof by themselves.
 | Curiosity Engine / Discovery Substrate | implementation_required | `v0.91.7` WP-10 | Curiosity is required before `v0.92` activation consumes governed discovery behavior; absent proof blocks activation with evidence and operator approval. |
 | Constructability Gate | implementation_required | `v0.91.7` WP-10 | Birthday evidence must distinguish provisional cognition from authoritative shared reality. |
 | Reasoning graph, loop runtime, and `adl.skill.v1` | implementation_required | `v0.91.7` WP-11 | Pre-`v0.92` implementation must connect prompts, skills, loops, trace, ObsMem, PVF, AEE, Runtime v2, UTS, ACC, and `adl.skill.v1`; deeper convergence remains later. |
-| Affect, happiness, humor, and wellbeing claims | implementation_required | `v0.91.7` WP-13 | Public birthday evidence must not imply unproved affect or wellbeing claims. |
-| Godel mechanics | implementation_required | `v0.91.7` WP-13 and `v0.92` birthday docs | Experiment, hypothesis, mutation, evaluation, promotion, and proof boundaries must be reviewable before the first true Godel-agent birthday claim relies on them. |
+| Affect, happiness, humor, and wellbeing claims | integrated_proven for operational reasoning-control; subjective affect not_claimed | `v0.91.7` WP-13 `#4752`; `docs/milestones/v0.91.7/features/AFFECT_HAPPINESS_BRIDGE_v0.91.7.md`; `docs/milestones/v0.91.7/review/wp13_affect_happiness_boundary_4752.md` | Public birthday evidence may cite bounded affect-like reasoning-control signals and safe-test language only. It must not imply hidden emotion, subjective happiness, wellbeing, suffering, consciousness, scalar happiness scores, reward channels, or public reputation. |
+| Godel mechanics | integrated_proven for CSM-supervised launch admission and claim-boundary consumption; live hosted invocation and adaptive DAG completion not_claimed | `v0.91.7` WP-13 and `v0.92` birthday docs | The first true Godel-agent birthday may consume only the Runtime v2 Godel/constructability boundary: retained Godel runtime evidence, CSM-supervised launch-plan provider-request admission, constructability anchors, validator pass, and operator review. |
 | Economics context | operator_scoped_out | `v0.91.7` WP-13 | Economics is context-only for `v0.92` unless a reviewed decision reopens explicit activation tests; that scoped-out posture requires retained evidence, risk, and operator approval. |
 
 ## Birthday Contract Refresh
@@ -174,7 +174,8 @@ sprint surface rather than reconstructing state from individual issue histories.
 - reasoning graph, loop runtime, and `adl.skill.v1`
 - security readiness
 - ACIP/A2A/protobuf/JSON/WebSocket projection decisions
-- affect/happiness model
+- affect/happiness operational reasoning-control boundary from `#4752`; no
+  subjective affect, happiness, wellbeing, or consciousness claim
 - Godel mechanics
 - economics-context decision
 - integrated logging/OTel consumption from closed `#4718`

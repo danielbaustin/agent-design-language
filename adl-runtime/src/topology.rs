@@ -39,6 +39,11 @@ pub fn runtime_components() -> Vec<RuntimeComponent> {
             role: "reasoning graphs, loops, and adaptive DAG execution",
         },
         RuntimeComponent {
+            id: "curiosity_engine",
+            plane: "cognition",
+            role: "governed discovery and bounded hypothesis proposal routing",
+        },
+        RuntimeComponent {
             id: "resident_agents",
             plane: "cognition",
             role: "provider-backed resident agents admitted through CSM lifecycle",
@@ -103,6 +108,12 @@ pub fn runtime_stack_json() -> Value {
             "status": "integrated",
             "source": "csm_connection_pool_status"
         },
+        "determinism_boundary": {
+            "schema": crate::determinism::CSM_DETERMINISM_BOUNDARY_SCHEMA,
+            "model": "typed_deterministic_core_and_nondeterministic_shell",
+            "capture_policy": "retain_before_governed_influence",
+            "failure_policy": "quarantine_missing_reclassified_or_mutated_shell_evidence"
+        },
         "time_sync": {
             "primary_crate": "rsntp",
             "status": "integrated",
@@ -120,6 +131,13 @@ pub fn runtime_stack_json() -> Value {
             "provider_entrypoint": "provider_substrate",
             "lifecycle": "same_csm_supervision_checkpoint_lifelog_observability_path_for_privileged_and_ordinary_agents",
             "shepherd_model": "privileged_resident_agent_not_bespoke_model_path"
+        },
+        "curiosity_engine": {
+            "schema": crate::curiosity::CSM_CURIOSITY_STATUS_SCHEMA,
+            "component": crate::curiosity::CSM_CURIOSITY_COMPONENT,
+            "process_model": "embedded_csm_runtime_component",
+            "retained_status_ref": crate::curiosity::CSM_CURIOSITY_STATUS_REF,
+            "governance": "freedom_gate_cav_constructability_fail_closed"
         },
         "freedom_gate": {
             "schema": crate::freedom_gate::CSM_FREEDOM_GATE_STATUS_SCHEMA,
@@ -146,6 +164,7 @@ mod tests {
         assert!(ids.contains(&"chronosense"));
         assert!(ids.contains(&"scheduler"));
         assert!(ids.contains(&"reasoning_runtime"));
+        assert!(ids.contains(&"curiosity_engine"));
         assert!(ids.contains(&"resident_agents"));
         assert!(ids.contains(&"freedom_gate"));
         assert!(ids.contains(&"observability"));

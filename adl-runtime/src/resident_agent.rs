@@ -5,8 +5,16 @@
 
 use serde::{Deserialize, Serialize};
 
-pub const CSM_RESIDENT_AGENT_SCHEMA: &str = "adl.csm.resident_agent.v1";
-pub const CSM_RESIDENT_AGENT_SET_SCHEMA: &str = "adl.csm.resident_agent_set.v1";
+pub const CSM_RESIDENT_AGENT_SCHEMA: &str = "adl.csm.resident_agent.v2";
+pub const CSM_RESIDENT_AGENT_SET_SCHEMA: &str = "adl.csm.resident_agent_set.v2";
+pub const CSM_RESIDENT_AGENT_AFFECT_MODEL_SCHEMA_VERSION: &str =
+    "affect_happiness_safe_test_model.v1";
+pub const CSM_RESIDENT_AGENT_AFFECT_MODEL_ID: &str = "affect-happiness-safe-test-model-alpha-001";
+pub const CSM_RESIDENT_AGENT_AFFECT_PUBLIC_CLAIM_BOUNDARY_ID: &str =
+    "public-claim-boundary-affect-happiness-wp13";
+pub const CSM_RESIDENT_AGENT_AFFECT_SIGNAL_COUNT: u32 = 5;
+pub const CSM_RESIDENT_AGENT_AFFECT_WELLBEING_DIMENSION_COUNT: u32 = 6;
+pub const CSM_RESIDENT_AGENT_AFFECT_SAFE_TEST_SCENARIO_COUNT: u32 = 3;
 
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
 #[serde(rename_all = "snake_case")]
@@ -59,6 +67,19 @@ pub struct CsmResidentAgentPolicyGates {
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
+pub struct CsmResidentAgentAffectModel {
+    pub schema_version: String,
+    pub model_id: String,
+    pub affect_signal_count: u32,
+    pub wellbeing_dimension_count: u32,
+    pub safe_test_scenario_count: u32,
+    pub public_claim_boundary_id: String,
+    pub invocation_policy: String,
+    pub interpretation_boundary: String,
+    pub unsupported_public_claims: Vec<String>,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
 pub struct CsmResidentAgentSpec {
     pub schema: String,
     pub agent_instance_id: String,
@@ -69,6 +90,7 @@ pub struct CsmResidentAgentSpec {
     pub provider_binding: CsmResidentAgentProviderBinding,
     pub channels: CsmResidentAgentChannels,
     pub policy_gates: CsmResidentAgentPolicyGates,
+    pub affect_model: CsmResidentAgentAffectModel,
     pub checkpoint_policy: String,
     pub lifelog_policy: String,
     pub observability_policy: String,
@@ -110,17 +132,88 @@ impl CsmResidentAgentSpec {
             "provider_target_resolved",
             "provider_binding.binding_status",
         )?;
-        if self.authority == CsmResidentAgentAuthority::ShepherdOperator {
-            if !self.policy_gates.freedom_gate_required
+        if self.authority == CsmResidentAgentAuthority::ShepherdOperator
+            && (!self.policy_gates.freedom_gate_required
                 || !self.policy_gates.cav_required
                 || !self.policy_gates.constitutional_policy_required
-                || !self.policy_gates.model_output_advisory_only
+                || !self.policy_gates.model_output_advisory_only)
+        {
+            return Err(
+                "shepherd resident agent must be gated by Freedom Gate, CAV, constitutional policy, and advisory output authority"
+                    .to_string(),
+            );
+        }
+        self.affect_model.validate()?;
+        Ok(())
+    }
+}
+
+impl CsmResidentAgentAffectModel {
+    pub fn validate(&self) -> Result<(), String> {
+        require_exact(
+            &self.invocation_policy,
+            "operational_reasoning_control_only",
+            "affect_model.invocation_policy",
+        )?;
+        require_exact(
+            &self.schema_version,
+            CSM_RESIDENT_AGENT_AFFECT_MODEL_SCHEMA_VERSION,
+            "affect_model.schema_version",
+        )?;
+        require_exact(
+            &self.model_id,
+            CSM_RESIDENT_AGENT_AFFECT_MODEL_ID,
+            "affect_model.model_id",
+        )?;
+        require_exact(
+            &self.public_claim_boundary_id,
+            CSM_RESIDENT_AGENT_AFFECT_PUBLIC_CLAIM_BOUNDARY_ID,
+            "affect_model.public_claim_boundary_id",
+        )?;
+        require_non_empty(
+            &self.interpretation_boundary,
+            "affect_model.interpretation_boundary",
+        )?;
+        if self.affect_signal_count != CSM_RESIDENT_AGENT_AFFECT_SIGNAL_COUNT {
+            return Err(format!(
+                "affect_model.affect_signal_count must be {CSM_RESIDENT_AGENT_AFFECT_SIGNAL_COUNT}"
+            ));
+        }
+        if self.wellbeing_dimension_count != CSM_RESIDENT_AGENT_AFFECT_WELLBEING_DIMENSION_COUNT {
+            return Err(format!(
+                "affect_model.wellbeing_dimension_count must be {CSM_RESIDENT_AGENT_AFFECT_WELLBEING_DIMENSION_COUNT}"
+            ));
+        }
+        if self.safe_test_scenario_count != CSM_RESIDENT_AGENT_AFFECT_SAFE_TEST_SCENARIO_COUNT {
+            return Err(format!(
+                "affect_model.safe_test_scenario_count must be {CSM_RESIDENT_AGENT_AFFECT_SAFE_TEST_SCENARIO_COUNT}"
+            ));
+        }
+        for required in [
+            "hidden_emotion",
+            "subjective_happiness",
+            "consciousness",
+            "scalar_happiness_score",
+        ] {
+            if !self
+                .unsupported_public_claims
+                .iter()
+                .any(|claim| claim == required)
             {
-                return Err(
-                    "shepherd resident agent must be gated by Freedom Gate, CAV, constitutional policy, and advisory output authority"
-                        .to_string(),
-                );
+                return Err(format!(
+                    "affect_model.unsupported_public_claims must include {required}"
+                ));
             }
+        }
+        let boundary = self.interpretation_boundary.to_lowercase();
+        if !boundary.contains("operational reasoning-control")
+            || !boundary.contains("not hidden emotion")
+            || !boundary.contains("not subjective")
+        {
+            return Err(
+                "affect_model.interpretation_boundary must preserve operational non-claim wording"
+                    .to_string(),
+            );
         }
         Ok(())
     }
@@ -209,6 +302,28 @@ mod tests {
         }
     }
 
+    fn affect_model() -> CsmResidentAgentAffectModel {
+        CsmResidentAgentAffectModel {
+            schema_version: CSM_RESIDENT_AGENT_AFFECT_MODEL_SCHEMA_VERSION.to_string(),
+            model_id: CSM_RESIDENT_AGENT_AFFECT_MODEL_ID.to_string(),
+            affect_signal_count: CSM_RESIDENT_AGENT_AFFECT_SIGNAL_COUNT,
+            wellbeing_dimension_count: CSM_RESIDENT_AGENT_AFFECT_WELLBEING_DIMENSION_COUNT,
+            safe_test_scenario_count: CSM_RESIDENT_AGENT_AFFECT_SAFE_TEST_SCENARIO_COUNT,
+            public_claim_boundary_id: CSM_RESIDENT_AGENT_AFFECT_PUBLIC_CLAIM_BOUNDARY_ID
+                .to_string(),
+            invocation_policy: "operational_reasoning_control_only".to_string(),
+            interpretation_boundary:
+                "Operational reasoning-control only; not hidden emotion and not subjective happiness."
+                    .to_string(),
+            unsupported_public_claims: vec![
+                "hidden_emotion".to_string(),
+                "subjective_happiness".to_string(),
+                "consciousness".to_string(),
+                "scalar_happiness_score".to_string(),
+            ],
+        }
+    }
+
     fn agent(id: &str, authority: CsmResidentAgentAuthority) -> CsmResidentAgentSpec {
         CsmResidentAgentSpec {
             schema: CSM_RESIDENT_AGENT_SCHEMA.to_string(),
@@ -220,6 +335,7 @@ mod tests {
             provider_binding: binding("local_ollama", "gemma4:12b-mlx"),
             channels: channels(id),
             policy_gates: gates(),
+            affect_model: affect_model(),
             checkpoint_policy: "periodic_and_agent_requested".to_string(),
             lifelog_policy: "append_lifecycle_provider_events".to_string(),
             observability_policy: "emit_provider_lifecycle_metrics_traces_logs".to_string(),
@@ -248,5 +364,39 @@ mod tests {
         let mut shepherd = agent("shepherd", CsmResidentAgentAuthority::ShepherdOperator);
         shepherd.policy_gates.cav_required = false;
         assert!(shepherd.validate().is_err());
+    }
+
+    #[test]
+    fn resident_agent_requires_affect_model_boundary() {
+        let mut shepherd = agent("shepherd", CsmResidentAgentAuthority::ShepherdOperator);
+        shepherd
+            .affect_model
+            .unsupported_public_claims
+            .retain(|claim| claim != "subjective_happiness");
+        assert!(shepherd
+            .validate()
+            .expect_err("missing affect non-claims")
+            .contains("subjective_happiness"));
+
+        let mut shepherd = agent("shepherd", CsmResidentAgentAuthority::ShepherdOperator);
+        shepherd.affect_model.invocation_policy = "subjective_emotion".to_string();
+        assert!(shepherd
+            .validate()
+            .expect_err("unsafe affect invocation policy")
+            .contains("affect_model.invocation_policy"));
+
+        let mut shepherd = agent("shepherd", CsmResidentAgentAuthority::ShepherdOperator);
+        shepherd.affect_model.schema_version = "not_the_safe_test_model.v1".to_string();
+        assert!(shepherd
+            .validate()
+            .expect_err("wrong affect model schema")
+            .contains("affect_model.schema_version"));
+
+        let mut shepherd = agent("shepherd", CsmResidentAgentAuthority::ShepherdOperator);
+        shepherd.affect_model.affect_signal_count += 1;
+        assert!(shepherd
+            .validate()
+            .expect_err("wrong affect signal count")
+            .contains("affect_model.affect_signal_count"));
     }
 }

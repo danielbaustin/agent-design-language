@@ -1,0 +1,25 @@
+[package]
+name = "adl-runtime-kernel"
+version = "0.92.0"
+edition = "2021"
+license = "MIT OR Apache-2.0"
+description = "Independent supervised component runtime kernel proof for ADL"
+
+[dependencies]
+async-trait = "0.1"
+blake3 = "1"
+futures = "0.3"
+petgraph = "0.7"
+serde = { version = "1.0", features = ["derive"] }
+serde_json = "1.0"
+thiserror = "1.0"
+tokio = { version = "1", features = ["fs", "macros", "process", "rt-multi-thread", "signal", "sync", "time"] }
+tokio-util = { version = "0.7", features = ["rt"] }
+tracing = "0.1"
+
+[dev-dependencies]
+tempfile = "3"
+
+[[bin]]
+name = "adl-runtime-kernel"
+path = "src/bin/adl-runtime-kernel.rs"

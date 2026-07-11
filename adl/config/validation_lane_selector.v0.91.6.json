@@ -1187,6 +1187,37 @@
       }
     },
     {
+      "id": "runtime_kernel_contracts",
+      "lane_class": "fast_unit",
+      "default_surface": "runtime",
+      "owner": "runtime",
+      "proof_role": "runtime_regression",
+      "requirement_ids": [
+        "runtime_kernel_contracts"
+      ],
+      "path_selectors": [
+        "adl-runtime-kernel/**",
+        "infra/rustysd/**"
+      ],
+      "path_hints": [
+        "adl-runtime-kernel/**",
+        "infra/rustysd/**"
+      ],
+      "command": "cargo test --manifest-path adl-runtime-kernel/Cargo.toml && cargo clippy --manifest-path adl-runtime-kernel/Cargo.toml --all-targets -- -D warnings",
+      "run_command": "cargo test --manifest-path adl-runtime-kernel/Cargo.toml && cargo clippy --manifest-path adl-runtime-kernel/Cargo.toml --all-targets -- -D warnings",
+      "reason": "independent_runtime_kernel_surface_requires_focused_crate_proof",
+      "vpp_record": {
+        "contract_version": "vpp.lane.v1",
+        "artifacts": [
+          "runtime_kernel_test_results"
+        ],
+        "expected_runtime_class": "normal",
+        "parallel_group": "runtime_kernel_focused_serial",
+        "cache_equivalence_group": "adl_runtime_kernel",
+        "failure_semantics": "fail_closed"
+      }
+    },
+    {
       "id": "docs_diff_check",
       "lane_class": "docs",
       "default_surface": "docs",

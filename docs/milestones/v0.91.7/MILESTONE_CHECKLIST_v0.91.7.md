@@ -57,8 +57,8 @@ Forward checklist. Items are intentionally unchecked because `v0.91.7` execution
 - [ ] Reasoning graph / loop runtime / `adl.skill.v1` implemented/proven or blocked with evidence and operator approval.
 - [ ] Residual security readiness resolved or blocked with evidence and operator approval.
 - [ ] Residual ACIP/A2A/protobuf decision record resolved or blocked with evidence and operator approval.
-- [ ] Affect/happiness model completed as proof-bound implementation or blocked with evidence and operator approval.
-- [ ] Godel mechanics completed as proof-bound implementation or blocked with evidence and operator approval.
+- [ ] Affect/happiness model completed as proof-bound operational reasoning-control implementation through `#4752`, with subjective affect/happiness/wellbeing claims explicitly not claimed.
+- [ ] Godel mechanics boundary implemented/proven for v0.92 claim consumption; live hosted invocation and adaptive DAG completion remain non-claimed.
 - [ ] Economics-context decision completed or blocked with evidence and operator approval.
 - [ ] Guilds/civilization-model boundary explicitly de-scoped or implemented with evidence, without becoming an accidental v0.92 blocker.
 - [ ] Memory Palace/context problem status is visible for v0.92 as proof or evidence-backed blocker.

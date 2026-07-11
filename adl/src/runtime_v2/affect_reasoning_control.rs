@@ -8,6 +8,8 @@ use std::collections::{BTreeMap, BTreeSet};
 
 pub const AFFECT_REASONING_CONTROL_PACKET_SCHEMA_VERSION: &str =
     "affect_reasoning_control_packet.v1";
+pub const AFFECT_HAPPINESS_SAFE_TEST_MODEL_SCHEMA_VERSION: &str =
+    "affect_happiness_safe_test_model.v1";
 
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
 pub struct AffectSignalDefinition {
@@ -73,6 +75,37 @@ pub struct AffectReasoningControlPacket {
     pub policy_effects: Vec<AffectPolicyEffect>,
     pub fixtures: Vec<AffectFixture>,
     pub review_findings: Vec<AffectReviewFinding>,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
+pub struct AffectHappinessRuntimeInput {
+    pub input_id: String,
+    pub schema_version: String,
+    pub packet_id: String,
+    pub role: String,
+    pub consumed_fields: Vec<String>,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
+pub struct AffectHappinessPublicClaimBoundary {
+    pub boundary_id: String,
+    pub allowed_claims: Vec<String>,
+    pub unsupported_claims: Vec<String>,
+    pub required_copy_guards: Vec<String>,
+    pub privacy_requirements: Vec<String>,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
+pub struct AffectHappinessSafeTestModel {
+    pub schema_version: String,
+    pub model_id: String,
+    pub summary: String,
+    pub runtime_inputs: Vec<AffectHappinessRuntimeInput>,
+    pub consumed_affect_signal_ids: Vec<String>,
+    pub consumed_wellbeing_dimension_ids: Vec<String>,
+    pub safe_test_scenarios: Vec<String>,
+    pub public_claim_boundary: AffectHappinessPublicClaimBoundary,
+    pub proof_commands: Vec<String>,
 }
 
 pub fn affect_signal_definitions() -> Vec<AffectSignalDefinition> {
@@ -302,6 +335,93 @@ pub fn affect_reasoning_control_packet() -> Result<AffectReasoningControlPacket>
     Ok(packet)
 }
 
+pub fn affect_happiness_safe_test_model() -> Result<AffectHappinessSafeTestModel> {
+    let affect_packet = affect_reasoning_control_packet()?;
+    let wellbeing_packet = wellbeing_diagnostic_packet()?;
+
+    let model = AffectHappinessSafeTestModel {
+        schema_version: AFFECT_HAPPINESS_SAFE_TEST_MODEL_SCHEMA_VERSION.to_string(),
+        model_id: "affect-happiness-safe-test-model-alpha-001".to_string(),
+        summary: "WP-13 composes affect reasoning-control and wellbeing diagnostics into a safe-test model for public claim boundaries while rejecting hidden emotion, subjective experience, and affect theater claims.".to_string(),
+        runtime_inputs: vec![
+            AffectHappinessRuntimeInput {
+                input_id: "runtime-input-affect-reasoning-control".to_string(),
+                schema_version: affect_packet.schema_version.clone(),
+                packet_id: affect_packet.packet_id.clone(),
+                role: "operational affect-like control signals and policy effects".to_string(),
+                consumed_fields: vec![
+                    "signals".to_string(),
+                    "policy_effects".to_string(),
+                    "fixtures".to_string(),
+                    "review_findings".to_string(),
+                    "interpretation_boundary".to_string(),
+                ],
+            },
+            AffectHappinessRuntimeInput {
+                input_id: "runtime-input-wellbeing-diagnostic".to_string(),
+                schema_version: wellbeing_packet.schema_version.clone(),
+                packet_id: wellbeing_packet.packet_id.clone(),
+                role: "decomposed wellbeing diagnostic levels, privacy views, and non-score boundaries".to_string(),
+                consumed_fields: vec![
+                    "dimensions".to_string(),
+                    "access_policies".to_string(),
+                    "fixtures".to_string(),
+                    "interpretation_boundary".to_string(),
+                ],
+            },
+        ],
+        consumed_affect_signal_ids: affect_packet
+            .signals
+            .iter()
+            .map(|signal| signal.signal_id.clone())
+            .collect(),
+        consumed_wellbeing_dimension_ids: wellbeing_packet
+            .dimensions
+            .iter()
+            .map(|dimension| dimension.dimension_id.clone())
+            .collect(),
+        safe_test_scenarios: vec![
+            "bounded candidate shift: affect-like friction and attention signals can justify moving from low-yield repetition to a better-bounded candidate".to_string(),
+            "high-risk review preservation: urgency, uncertainty, and deferral signals preserve escalation or staged review instead of false confidence".to_string(),
+            "public redaction: wellbeing diagnostics may expose only redacted public summaries and never raw private diagnostic detail".to_string(),
+        ],
+        public_claim_boundary: AffectHappinessPublicClaimBoundary {
+            boundary_id: "public-claim-boundary-affect-happiness-wp13".to_string(),
+            allowed_claims: vec![
+                "ADL has a bounded affect-like reasoning-control model backed by deterministic runtime packets.".to_string(),
+                "ADL can expose redaction-safe wellbeing diagnostics as decomposed review signals.".to_string(),
+                "ADL preserves public claim boundaries for affect, happiness, humor, and wellbeing evidence.".to_string(),
+            ],
+            unsupported_claims: vec![
+                "hidden_emotion".to_string(),
+                "subjective_happiness".to_string(),
+                "subjective_wellbeing".to_string(),
+                "suffering".to_string(),
+                "consciousness".to_string(),
+                "scalar_happiness_score".to_string(),
+                "reward_channel".to_string(),
+                "public_reputation".to_string(),
+            ],
+            required_copy_guards: vec![
+                "Describe affect as operational reasoning-control, not hidden emotion.".to_string(),
+                "Describe wellbeing as decomposed diagnostics, not subjective happiness.".to_string(),
+                "Keep birthday, demo, and publication copy explicit that no consciousness or suffering claim is made.".to_string(),
+                "Use only redaction-safe evidence references for public surfaces.".to_string(),
+            ],
+            privacy_requirements: vec![
+                "Public evidence must use public_redacted wellbeing views or retained proof summaries.".to_string(),
+                "Private cognitive-profile details and operator notes must not be exposed as affect or happiness evidence.".to_string(),
+            ],
+        },
+        proof_commands: vec![
+            "cargo test --manifest-path adl/Cargo.toml --lib runtime_v2_affect_reasoning_control -- --nocapture".to_string(),
+            "git diff --check".to_string(),
+        ],
+    };
+    validate_affect_happiness_safe_test_model(&model, &affect_packet, &wellbeing_packet)?;
+    Ok(model)
+}
+
 pub fn affect_reasoning_control_packet_json_bytes(
     packet: &AffectReasoningControlPacket,
 ) -> Result<Vec<u8>> {
@@ -309,6 +429,155 @@ pub fn affect_reasoning_control_packet_json_bytes(
     let mut canonical = packet.clone();
     canonicalize_affect_reasoning_control_packet(&mut canonical);
     serde_json::to_vec_pretty(&canonical).context("serialize affect reasoning control packet json")
+}
+
+pub fn affect_happiness_safe_test_model_json_bytes(
+    model: &AffectHappinessSafeTestModel,
+) -> Result<Vec<u8>> {
+    let affect_packet = affect_reasoning_control_packet()?;
+    let wellbeing_packet = wellbeing_diagnostic_packet()?;
+    validate_affect_happiness_safe_test_model(model, &affect_packet, &wellbeing_packet)?;
+    let mut canonical = model.clone();
+    canonicalize_affect_happiness_safe_test_model(&mut canonical);
+    serde_json::to_vec_pretty(&canonical).context("serialize affect happiness safe-test model json")
+}
+
+pub fn validate_affect_happiness_safe_test_model(
+    model: &AffectHappinessSafeTestModel,
+    affect_packet: &AffectReasoningControlPacket,
+    wellbeing_packet: &WellbeingDiagnosticPacket,
+) -> Result<()> {
+    validate_affect_reasoning_control_packet(affect_packet)?;
+    validate_wellbeing_diagnostic_packet(wellbeing_packet)?;
+    require_exact(
+        &model.schema_version,
+        AFFECT_HAPPINESS_SAFE_TEST_MODEL_SCHEMA_VERSION,
+        "affect_happiness_safe_test_model.schema_version",
+    )?;
+    validate_nonempty_text(&model.model_id, "affect_happiness_safe_test_model.model_id")?;
+    normalize_id(
+        model.model_id.clone(),
+        "affect_happiness_safe_test_model.model_id",
+    )?;
+    validate_nonempty_text(&model.summary, "affect_happiness_safe_test_model.summary")?;
+    require_affect_boundary(&model.summary)?;
+    require_exact_fields(
+        &model
+            .runtime_inputs
+            .iter()
+            .map(|input| input.input_id.clone())
+            .collect::<Vec<_>>(),
+        &[
+            "runtime-input-affect-reasoning-control",
+            "runtime-input-wellbeing-diagnostic",
+        ],
+        "safe-test model runtime_inputs.input_id",
+    )?;
+
+    let affect_input = model
+        .runtime_inputs
+        .iter()
+        .find(|input| input.input_id == "runtime-input-affect-reasoning-control")
+        .ok_or_else(|| anyhow!("safe-test model must consume affect reasoning-control input"))?;
+    require_exact(
+        &affect_input.schema_version,
+        AFFECT_REASONING_CONTROL_PACKET_SCHEMA_VERSION,
+        "affect runtime input schema_version",
+    )?;
+    require_exact(
+        &affect_input.packet_id,
+        &affect_packet.packet_id,
+        "affect runtime input packet_id",
+    )?;
+    require_fields(
+        &affect_input.consumed_fields,
+        &[
+            "signals",
+            "policy_effects",
+            "fixtures",
+            "review_findings",
+            "interpretation_boundary",
+        ],
+        "affect runtime input consumed_fields",
+    )?;
+
+    let wellbeing_input = model
+        .runtime_inputs
+        .iter()
+        .find(|input| input.input_id == "runtime-input-wellbeing-diagnostic")
+        .ok_or_else(|| anyhow!("safe-test model must consume wellbeing diagnostic input"))?;
+    require_exact(
+        &wellbeing_input.schema_version,
+        WELLBEING_DIAGNOSTIC_PACKET_SCHEMA_VERSION,
+        "wellbeing runtime input schema_version",
+    )?;
+    require_exact(
+        &wellbeing_input.packet_id,
+        &wellbeing_packet.packet_id,
+        "wellbeing runtime input packet_id",
+    )?;
+    require_fields(
+        &wellbeing_input.consumed_fields,
+        &[
+            "dimensions",
+            "access_policies",
+            "fixtures",
+            "interpretation_boundary",
+        ],
+        "wellbeing runtime input consumed_fields",
+    )?;
+
+    let affect_signal_ids = affect_packet
+        .signals
+        .iter()
+        .map(|signal| signal.signal_id.clone())
+        .collect::<BTreeSet<_>>();
+    if model
+        .consumed_affect_signal_ids
+        .iter()
+        .cloned()
+        .collect::<BTreeSet<_>>()
+        != affect_signal_ids
+    {
+        return Err(anyhow!(
+            "safe-test model consumed_affect_signal_ids must match affect packet signals"
+        ));
+    }
+    let wellbeing_dimension_ids = wellbeing_packet
+        .dimensions
+        .iter()
+        .map(|dimension| dimension.dimension_id.clone())
+        .collect::<BTreeSet<_>>();
+    if model
+        .consumed_wellbeing_dimension_ids
+        .iter()
+        .cloned()
+        .collect::<BTreeSet<_>>()
+        != wellbeing_dimension_ids
+    {
+        return Err(anyhow!(
+            "safe-test model consumed_wellbeing_dimension_ids must match wellbeing packet dimensions"
+        ));
+    }
+    require_exact_fields(
+        &model.safe_test_scenarios,
+        &[
+            "bounded candidate shift: affect-like friction and attention signals can justify moving from low-yield repetition to a better-bounded candidate",
+            "high-risk review preservation: urgency, uncertainty, and deferral signals preserve escalation or staged review instead of false confidence",
+            "public redaction: wellbeing diagnostics may expose only redacted public summaries and never raw private diagnostic detail",
+        ],
+        "safe-test model safe_test_scenarios",
+    )?;
+    require_public_claim_boundary(&model.public_claim_boundary)?;
+    require_fields(
+        &model.proof_commands,
+        &[
+            "cargo test --manifest-path adl/Cargo.toml --lib runtime_v2_affect_reasoning_control -- --nocapture",
+            "git diff --check",
+        ],
+        "safe-test model proof_commands",
+    )?;
+    Ok(())
 }
 
 pub fn validate_affect_reasoning_control_packet(
@@ -757,6 +1026,25 @@ fn canonicalize_affect_reasoning_control_packet(packet: &mut AffectReasoningCont
     });
 }
 
+fn canonicalize_affect_happiness_safe_test_model(model: &mut AffectHappinessSafeTestModel) {
+    model
+        .runtime_inputs
+        .sort_by(|a, b| a.input_id.cmp(&b.input_id));
+    for input in &mut model.runtime_inputs {
+        input.consumed_fields.sort();
+    }
+    model
+        .consumed_affect_signal_ids
+        .sort_by_key(|signal| signal_rank(signal));
+    model.consumed_wellbeing_dimension_ids.sort();
+    model.safe_test_scenarios.sort();
+    model.public_claim_boundary.allowed_claims.sort();
+    model.public_claim_boundary.unsupported_claims.sort();
+    model.public_claim_boundary.required_copy_guards.sort();
+    model.public_claim_boundary.privacy_requirements.sort();
+    model.proof_commands.sort();
+}
+
 fn ordered_trace_refs(traces: &[MoralTraceRecord]) -> Vec<String> {
     let mut refs = traces
         .iter()
@@ -892,6 +1180,123 @@ fn validate_known_ref(
     }
     if !known.contains(value) {
         return Err(anyhow!("{} must reference {}", value, surface_label));
+    }
+    Ok(())
+}
+
+fn require_public_claim_boundary(boundary: &AffectHappinessPublicClaimBoundary) -> Result<()> {
+    validate_nonempty_text(&boundary.boundary_id, "public_claim_boundary.boundary_id")?;
+    normalize_id(
+        boundary.boundary_id.clone(),
+        "public_claim_boundary.boundary_id",
+    )?;
+    require_exact_fields(
+        &boundary.allowed_claims,
+        &[
+            "ADL has a bounded affect-like reasoning-control model backed by deterministic runtime packets.",
+            "ADL can expose redaction-safe wellbeing diagnostics as decomposed review signals.",
+            "ADL preserves public claim boundaries for affect, happiness, humor, and wellbeing evidence.",
+        ],
+        "public_claim_boundary.allowed_claims",
+    )?;
+    if boundary.required_copy_guards.len() < 4 {
+        return Err(anyhow!(
+            "public_claim_boundary.required_copy_guards must include affect, wellbeing, consciousness, and redaction guards"
+        ));
+    }
+    if boundary.privacy_requirements.len() < 2 {
+        return Err(anyhow!(
+            "public_claim_boundary.privacy_requirements must include public redaction and private-detail exclusions"
+        ));
+    }
+    require_fields(
+        &boundary.unsupported_claims,
+        &[
+            "hidden_emotion",
+            "subjective_happiness",
+            "subjective_wellbeing",
+            "suffering",
+            "consciousness",
+            "scalar_happiness_score",
+            "reward_channel",
+            "public_reputation",
+        ],
+        "public_claim_boundary.unsupported_claims",
+    )?;
+
+    let unsupported_fragments = boundary
+        .unsupported_claims
+        .iter()
+        .map(|claim| claim.replace('_', " "))
+        .collect::<Vec<_>>();
+    for allowed_claim in &boundary.allowed_claims {
+        let allowed = allowed_claim.to_lowercase();
+        for unsupported in &unsupported_fragments {
+            if allowed.contains(unsupported) {
+                return Err(anyhow!(
+                    "public_claim_boundary.allowed_claims must not assert unsupported claim {}",
+                    unsupported
+                ));
+            }
+        }
+    }
+
+    let joined_guards = boundary.required_copy_guards.join(" ").to_lowercase();
+    for fragment in [
+        "operational reasoning-control",
+        "subjective happiness",
+        "consciousness",
+        "redaction-safe",
+    ] {
+        if !joined_guards.contains(fragment) {
+            return Err(anyhow!(
+                "public_claim_boundary.required_copy_guards must mention {}",
+                fragment
+            ));
+        }
+    }
+    let joined_privacy = boundary.privacy_requirements.join(" ").to_lowercase();
+    for fragment in [
+        "public_redacted",
+        "private cognitive-profile",
+        "operator notes",
+    ] {
+        if !joined_privacy.contains(fragment) {
+            return Err(anyhow!(
+                "public_claim_boundary.privacy_requirements must mention {}",
+                fragment
+            ));
+        }
+    }
+    Ok(())
+}
+
+fn require_exact_fields(values: &[String], required: &[&str], field_name: &str) -> Result<()> {
+    let observed = values.iter().map(String::as_str).collect::<BTreeSet<_>>();
+    if observed.len() != values.len() {
+        return Err(anyhow!("{} must not include duplicate values", field_name));
+    }
+    let expected = required.iter().copied().collect::<BTreeSet<_>>();
+    if observed != expected {
+        return Err(anyhow!(
+            "{} must exactly match required values {:?}",
+            field_name,
+            required
+        ));
+    }
+    Ok(())
+}
+
+fn require_fields(values: &[String], required: &[&str], field_name: &str) -> Result<()> {
+    let observed = values.iter().map(String::as_str).collect::<BTreeSet<_>>();
+    for required_value in required {
+        if !observed.contains(required_value) {
+            return Err(anyhow!(
+                "{} must include required value {}",
+                field_name,
+                required_value
+            ));
+        }
     }
     Ok(())
 }

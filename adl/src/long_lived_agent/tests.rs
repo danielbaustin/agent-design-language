@@ -2,6 +2,7 @@
 use super::*;
 use crate::observability::test_env_lock;
 use crate::runtime_aws_signal::mock_signal_artifact_path;
+use adl_runtime::determinism::verify_retained_cycle_record;
 use std::env;
 use std::ffi::OsString;
 use std::sync::atomic::{AtomicU64, Ordering};
@@ -109,6 +110,7 @@ fn required_cycle_files(root: &Path, cycle_id: &str) -> Vec<PathBuf> {
         "run_ref.json",
         "memory_writes.jsonl",
         "guardrail_report.json",
+        "determinism_boundary.json",
         "cycle_summary.md",
     ]
     .into_iter()
@@ -247,6 +249,83 @@ fn tick_creates_state_status_full_cycle_bundle_and_removes_lease() {
     assert_eq!(provider_entry["provider_id"], "local_ollama");
     assert_eq!(provider_entry["model"], "gemma4:latest");
     assert_eq!(provider_entry["binding_status"], "available");
+
+    let cycle_dir = root.join("state/cycles/cycle-000001");
+    let boundary: CsmCycleDeterminismBoundaryRecord = serde_json::from_str(
+        &fs::read_to_string(cycle_dir.join("determinism_boundary.json"))
+            .expect("read determinism boundary"),
+    )
+    .expect("parse determinism boundary");
+    assert_eq!(boundary.cycle_id, "cycle-000001");
+    assert_eq!(boundary.decisions.len(), 5);
+    assert_eq!(boundary.decision_requests.len(), 5);
+    boundary.replay().expect("replay retained cycle boundary");
+    let decision_components = boundary
+        .decisions
+        .iter()
+        .map(|decision| decision.component)
+        .collect::<Vec<_>>();
+    assert!(decision_components.contains(&DeterministicCoreComponent::SchedulerAdmission));
+    assert!(decision_components.contains(&DeterministicCoreComponent::ReasoningRuntime));
+    assert!(decision_components.contains(&DeterministicCoreComponent::AeeGovernedExecution));
+    assert!(decision_components.contains(&DeterministicCoreComponent::CheckpointVersionTransition));
+    assert!(decision_components.contains(&DeterministicCoreComponent::LifelogOrdering));
+    let aee_decision = boundary
+        .decisions
+        .iter()
+        .find(|decision| decision.component == DeterministicCoreComponent::AeeGovernedExecution)
+        .expect("AEE decision");
+    assert!(aee_decision
+        .cited_shell_events
+        .iter()
+        .any(|event_id| event_id.ends_with("provider_model_io-initial")));
+    let reasoning_decision = boundary
+        .decisions
+        .iter()
+        .find(|decision| decision.component == DeterministicCoreComponent::ReasoningRuntime)
+        .expect("reasoning decision");
+    assert!(reasoning_decision
+        .cited_shell_events
+        .iter()
+        .any(|event_id| event_id.ends_with("provider_model_io-result")));
+    for shell_class in NondeterministicShellClass::ALL {
+        assert!(
+            boundary
+                .captured_shell_events
+                .iter()
+                .any(|event| event.shell_class == shell_class),
+            "missing retained {} event",
+            shell_class.as_str()
+        );
+    }
+    assert!(boundary
+        .captured_shell_events
+        .iter()
+        .all(|event| !event.payload.is_null()));
+    assert!(boundary.captured_shell_events.iter().any(|event| {
+        event.shell_class == NondeterministicShellClass::WallClock
+            && event.payload["phase"] == "completion"
+    }));
+    assert!(!cycle_dir.join("shell_inputs").exists());
+    let determinism_artifacts = fs::read_dir(&cycle_dir)
+        .expect("read cycle directory")
+        .filter_map(Result::ok)
+        .filter_map(|entry| entry.file_name().into_string().ok())
+        .filter(|name| {
+            name.contains("determinism")
+                || name.starts_with("core_decision_")
+                || name.starts_with("nondeterminism_quarantine_")
+        })
+        .collect::<Vec<_>>();
+    assert_eq!(determinism_artifacts, vec!["determinism_boundary.json"]);
+    assert_eq!(
+        manifest["artifacts"]["determinism_boundary"],
+        "determinism_boundary.json"
+    );
+    assert_eq!(
+        manifest["csm_runtime"]["determinism_boundary"],
+        "typed_capture_and_fail_closed_quarantine"
+    );
     let memory_index: Value =
         serde_json::from_str(&fs::read_to_string(root.join("state/memory_index.json")).unwrap())
             .expect("parse memory index");
@@ -256,6 +335,125 @@ fn tick_creates_state_status_full_cycle_bundle_and_removes_lease() {
         "cycles/cycle-000001/memory_writes.jsonl"
     );
     assert!(!root.join("state/lease.json").exists());
+}
+
+#[test]
+fn assembled_cycle_fail_closes_tampered_and_uncaptured_shell_influence() {
+    let root = temp_dir("determinism-boundary-quarantine");
+    let spec = write_spec(&root);
+    tick(&spec, TickOptions::default()).expect("tick creates retained shell evidence");
+
+    let cycle_dir = root.join("state/cycles/cycle-000001");
+    let boundary_path = cycle_dir.join("determinism_boundary.json");
+    let boundary_bytes = fs::read(&boundary_path).expect("read determinism boundary");
+    let boundary: CsmCycleDeterminismBoundaryRecord =
+        serde_json::from_slice(&boundary_bytes).expect("parse determinism boundary");
+    let expected_fingerprint = cycle_record_fingerprint(&boundary).expect("boundary fingerprint");
+    verify_retained_cycle_record(&boundary, &expected_fingerprint)
+        .expect("verify retained cycle boundary");
+
+    let provider_index = boundary
+        .captured_shell_events
+        .iter()
+        .rposition(|event| event.shell_class == NondeterministicShellClass::ProviderModelIo)
+        .expect("provider result event");
+
+    let mut payload_tampered = boundary.clone();
+    payload_tampered.captured_shell_events[provider_index].payload["status"] = json!("tampered");
+    assert!(payload_tampered.replay().is_err());
+
+    let old_event = &boundary.captured_shell_events[provider_index];
+    let replacement = CapturedShellInputEvent::new(
+        old_event.event_id.clone(),
+        old_event.shell_class,
+        old_event.source.clone(),
+        old_event.observed_time.clone(),
+        old_event.confidence,
+        old_event.retention_location.clone(),
+        json!({"schema": "adl.csm.provider_result_summary.v1", "status": "tampered"}),
+    )
+    .expect("create coordinated tamper event");
+    let mut coordinated_tamper = boundary.clone();
+    coordinated_tamper.captured_shell_events[provider_index] = replacement.clone();
+    for request in &mut coordinated_tamper.decision_requests {
+        for input in &mut request.inputs {
+            if let CoreDecisionInput::CapturedShell {
+                event_id,
+                value_fingerprint,
+                ..
+            } = input
+            {
+                if event_id == &replacement.event_id {
+                    *value_fingerprint = replacement.value_fingerprint.clone();
+                }
+            }
+        }
+    }
+    assert!(verify_retained_cycle_record(&coordinated_tamper, &expected_fingerprint).is_err());
+
+    let mut uncaptured = boundary.clone();
+    let aee_request = uncaptured
+        .decision_requests
+        .iter_mut()
+        .find(|request| request.component == DeterministicCoreComponent::AeeGovernedExecution)
+        .expect("AEE request");
+    aee_request.inputs.push(CoreDecisionInput::CapturedShell {
+        shell_class: NondeterministicShellClass::AwsCloud,
+        event_id: "cycle-000001-aws-cloud-not-retained".to_string(),
+        value_fingerprint: old_event.value_fingerprint.clone(),
+    });
+    assert!(uncaptured.replay().is_err());
+    assert_eq!(fs::read(&boundary_path).unwrap(), boundary_bytes);
+}
+
+#[test]
+fn pre_execution_admission_blocks_unsupported_workflow_before_provider_work() {
+    let root = temp_dir("determinism-pre-execution-admission");
+    let spec = write_spec_with_workflow_kind(&root, "unsupported_external_workflow");
+
+    let error = tick(&spec, TickOptions::default()).expect_err("unsupported workflow is blocked");
+    assert!(error.to_string().contains("cycle_blocked"));
+    let cycle_dir = root.join("state/cycles/cycle-000001");
+    assert!(!cycle_dir.join("csm_adl_run_status.json").exists());
+    let boundary: CsmCycleDeterminismBoundaryRecord = serde_json::from_slice(
+        &fs::read(cycle_dir.join("determinism_boundary.json")).expect("read boundary"),
+    )
+    .expect("parse boundary");
+    let aee_request = boundary
+        .decision_requests
+        .iter()
+        .find(|request| request.component == DeterministicCoreComponent::AeeGovernedExecution)
+        .expect("AEE request");
+    assert!(aee_request.inputs.iter().any(|input| matches!(
+        input,
+        CoreDecisionInput::Deterministic {
+            kind: DeterministicCoreInputKind::PolicyDecision,
+            value
+        } if value == "deny"
+    )));
+}
+
+#[test]
+fn provider_result_summary_does_not_retain_sensitive_fields() {
+    let raw = json!({
+        "status": "success",
+        "workflow_kind": "adl_workflow",
+        "secret": "do-not-retain",
+        "token": "token-do-not-retain",
+        "prompt": "prompt-do-not-retain",
+        "output": "output-do-not-retain",
+        "tool_output": {"authorization": "also-do-not-retain"},
+        "trace": {"events": [{"sensitive": "value"}]}
+    });
+    let summary = safe_provider_result_summary(&raw);
+    let retained = serde_json::to_string(&summary).expect("serialize summary");
+    assert_eq!(summary["status"], "success");
+    assert_eq!(summary["trace_event_count"], 1);
+    assert!(!retained.contains("do-not-retain"));
+    assert!(!retained.contains("token-do-not-retain"));
+    assert!(!retained.contains("prompt-do-not-retain"));
+    assert!(!retained.contains("output-do-not-retain"));
+    assert!(!retained.contains("authorization"));
 }
 
 #[test]
@@ -1184,7 +1382,7 @@ fn daemon_partial_checkpoint_preserves_recoverable_failure_reason() {
     let spec = write_spec_with_workflow_kind(&root, "unsupported_adapter");
     let loaded = load_spec(&spec).expect("load spec");
     ensure_state_root(&loaded).expect("state root");
-    let runtime_context = CsmRuntimeContext::new().expect("csm runtime context");
+    let runtime_context = CsmRuntimeContext::new(&loaded).expect("csm runtime context");
     let error = StatusError {
         class: "daemon_child_failed".to_string(),
         message: "cycle failed before restart".to_string(),
@@ -1252,7 +1450,7 @@ fn safe_fail_bundle_preserves_malformed_artifacts_and_quarantines_active_lease()
     let spec = write_spec(&root);
     let loaded = load_spec(&spec).expect("load spec");
     ensure_state_root(&loaded).expect("state root");
-    let runtime_context = CsmRuntimeContext::new().expect("csm runtime context");
+    let runtime_context = CsmRuntimeContext::new(&loaded).expect("csm runtime context");
     let lease = LeaseRecord {
         schema: LEASE_SCHEMA.to_string(),
         agent_instance_id: loaded.spec.agent_instance_id.clone(),
@@ -1326,7 +1524,7 @@ fn safe_fail_bundle_suppresses_sequence_artifact_under_low_disk() {
     let spec = write_spec(&root);
     let loaded = load_spec(&spec).expect("load spec");
     ensure_state_root(&loaded).expect("state root");
-    let runtime_context = CsmRuntimeContext::new().expect("csm runtime context");
+    let runtime_context = CsmRuntimeContext::new(&loaded).expect("csm runtime context");
     let status = status_with_state(
         &loaded,
         AgentStatusState::Failed,
@@ -1454,7 +1652,7 @@ fn daemon_status_records_restart_always_permanent_service_contract() {
     let spec = write_spec(&root);
     let loaded = load_spec(&spec).expect("load spec");
     ensure_state_root(&loaded).expect("state root");
-    let runtime_context = CsmRuntimeContext::new().expect("csm runtime context");
+    let runtime_context = CsmRuntimeContext::new(&loaded).expect("csm runtime context");
 
     let running = write_daemon_status(
         &runtime_context,
@@ -1569,7 +1767,7 @@ memory:
         r#"{"schema":"adl.csm.agent_checkpoint_request.v1","reason":"agent-local state changed","requested_at":"2026-07-06T00:00:00Z"}"#,
     )
     .expect("write checkpoint request");
-    let runtime_context = CsmRuntimeContext::new().expect("runtime context");
+    let runtime_context = CsmRuntimeContext::new(&loaded).expect("runtime context");
     let accepted = observe_agent_checkpoint_request(
         &runtime_context,
         &loaded,
@@ -1624,7 +1822,7 @@ fn daemon_heartbeat_partial_checkpoint_does_not_report_backoff() {
     let spec = write_spec(&root);
     let loaded = load_spec(&spec).expect("load spec");
     ensure_state_root(&loaded).expect("state root");
-    let runtime_context = CsmRuntimeContext::new().expect("csm runtime context");
+    let runtime_context = CsmRuntimeContext::new(&loaded).expect("csm runtime context");
     let mut daemon_status = write_daemon_status(
         &runtime_context,
         &loaded,
@@ -1675,7 +1873,7 @@ fn daemon_partial_checkpoint_reports_stop_observed_before_restart_attempt() {
         "operator_stop_requested",
     )
     .expect("write stop");
-    let runtime_context = CsmRuntimeContext::new().expect("csm runtime context");
+    let runtime_context = CsmRuntimeContext::new(&loaded).expect("csm runtime context");
     let mut daemon_status = write_daemon_status(
         &runtime_context,
         &loaded,

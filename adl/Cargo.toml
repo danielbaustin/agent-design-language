@@ -218,6 +218,7 @@ rustls = { version = "0.23", default-features = false, features = ["ring"] }
 # Shared async runtime floor for long-lived cadence, ACIP runtime work, and
 # later bounded recurring verification on the existing ADL runtime.
 tokio = { version = "1", features = ["fs", "macros", "net", "rt", "rt-multi-thread", "sync", "time"] }
+tokio-util = { version = "0.7", features = ["rt"] }
 tokio-tungstenite = "0.24"
 axum = "0.7"
 tower = "0.5"

@@ -89,6 +89,7 @@ pub fn run_runtime_main() {
 
 #[allow(dead_code)]
 pub fn run_csm_main() {
+    adl_runtime::supervision::install_csm_redacting_panic_hook();
     if let Err(err) = real_csm_main() {
         print_error_chain(&err);
         std::process::exit(1);
