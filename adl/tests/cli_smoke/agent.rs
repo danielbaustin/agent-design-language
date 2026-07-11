@@ -3188,8 +3188,10 @@ memory:
     );
     assert!(
         start.status.success(),
-        "start stderr:\n{}",
-        String::from_utf8_lossy(&start.stderr)
+        "start stderr:\n{}\nchild stdout:\n{}\nchild stderr:\n{}",
+        String::from_utf8_lossy(&start.stderr),
+        read_text_or_missing(&service_root.join("logs/csm.stdout.log")),
+        read_text_or_missing(&service_root.join("logs/csm.stderr.log"))
     );
     std::thread::sleep(std::time::Duration::from_millis(1500));
 
@@ -3506,8 +3508,10 @@ memory:
     ]);
     assert!(
         start.status.success(),
-        "start stderr:\n{}",
-        String::from_utf8_lossy(&start.stderr)
+        "start stderr:\n{}\nchild stdout:\n{}\nchild stderr:\n{}",
+        String::from_utf8_lossy(&start.stderr),
+        read_text_or_missing(&service_root.join("logs/csm.stdout.log")),
+        read_text_or_missing(&service_root.join("logs/csm.stderr.log"))
     );
     std::thread::sleep(std::time::Duration::from_millis(1500));
 
