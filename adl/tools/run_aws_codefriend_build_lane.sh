@@ -221,7 +221,7 @@ if [ "$MODE" = "run" ]; then
   [ "$SOURCE_VERSION" != "HEAD" ] || die "--source-version HEAD is ambiguous"
 fi
 if [ "$FULL_NEXTEST" = "true" ]; then
-  ENV_OVERRIDES+=("ADL_CODEFRIEND_BUILD_COMMAND=cd adl && cargo nextest run --test-threads 8 --status-level all --final-status-level slow")
+  ENV_OVERRIDES+=("ADL_CODEFRIEND_BUILD_COMMAND=cd adl && cargo nextest run --test-threads 18 --status-level all --final-status-level slow")
 fi
 
 AWS_PROFILE_ARGS=()

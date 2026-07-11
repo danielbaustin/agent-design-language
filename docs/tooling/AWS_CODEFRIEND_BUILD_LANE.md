@@ -133,7 +133,8 @@ bash adl/tools/run_aws_codefriend_build_lane.sh \
 Live execution may incur AWS CodeBuild charges and requires the Agent Logic
 business account. Use an explicit 40-character commit SHA so preflight verifies
 that CodeBuild checked out the requested revision. `--wait` streams redacted
-CloudWatch logs by default and retains phase timings in the summary:
+CloudWatch logs by default and retains phase timings in the summary. The
+canonical XLARGE lane uses 18 Cargo build jobs and 18 nextest workers:
 
 ```sh
 ADL_AWS_PROFILE=agent-logic-admin \
