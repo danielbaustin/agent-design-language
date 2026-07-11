@@ -32,8 +32,8 @@ Create or update the CodeBuild project, service role, and GitHub OIDC start
 role. The helper resolves the approved ECR tag to an immutable digest before it
 updates the project. The image must already contain Rust, `cargo-nextest`,
 `sccache`, `lld`, `zstd`, AWS CLI, and Git; jobs never install those tools. The
-build uses 18 Cargo jobs on XLARGE, native S3 `sccache`, and a compatibility-
-keyed S3 target archive. It exports short-lived CodeBuild credentials in memory
+build uses 18 Cargo jobs and eight nextest workers on XLARGE, native S3
+`sccache`, and a compatibility-keyed S3 target archive. It exports short-lived CodeBuild credentials in memory
 and never writes credential material to a file:
 
 ```sh

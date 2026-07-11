@@ -4272,7 +4272,7 @@ memory:
     .expect("write agent spec");
 
     let spec_str = spec.to_str().expect("utf8 path");
-    let out = run_csm(&[
+    let out = run_csm_without_aws_credentials(&[
         "daemon",
         "--spec",
         spec_str,

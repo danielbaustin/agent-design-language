@@ -217,6 +217,7 @@ Record:
 - immutable builder image digest
 - stable `/codebuild/adl-source` and `/codebuild/adl-target` paths
 - 18 Cargo build jobs
+- eight nextest workers for process-spawning integration-test stability
 - S3 `sccache` and compatibility-keyed S3 target archive posture
 - redacted live CloudWatch stream attached by `--wait`
 - benchmark line

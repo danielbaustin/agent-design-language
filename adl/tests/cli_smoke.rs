@@ -59,6 +59,28 @@ fn run_csm(args: &[&str]) -> std::process::Output {
         .expect("run csm binary")
 }
 
+fn run_csm_without_aws_credentials(args: &[&str]) -> std::process::Output {
+    const AWS_CREDENTIAL_ENV: &[&str] = &[
+        "AWS_ACCESS_KEY_ID",
+        "AWS_SECRET_ACCESS_KEY",
+        "AWS_SESSION_TOKEN",
+        "AWS_PROFILE",
+        "AWS_DEFAULT_PROFILE",
+        "AWS_REGION",
+        "AWS_DEFAULT_REGION",
+        "AWS_CONTAINER_CREDENTIALS_RELATIVE_URI",
+        "AWS_CONTAINER_CREDENTIALS_FULL_URI",
+        "AWS_WEB_IDENTITY_TOKEN_FILE",
+        "AWS_ROLE_ARN",
+    ];
+    let mut command = Command::new(resolve_csm_exe());
+    command.args(args).env("AWS_EC2_METADATA_DISABLED", "true");
+    for name in AWS_CREDENTIAL_ENV {
+        command.env_remove(name);
+    }
+    command.output().expect("run csm binary without AWS credentials")
+}
+
 fn run_csmctl(args: &[&str]) -> std::process::Output {
     Command::new(resolve_csmctl_exe())
         .args(args)
