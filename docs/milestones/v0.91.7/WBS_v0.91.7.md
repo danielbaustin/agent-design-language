@@ -68,7 +68,7 @@ Completion standard: planned, documented, mocked, component-proven, assigned, or
 | Curiosity and Constructability | `#4637`, `#4692`, `#4693` | Governed discovery and constructability-anchor proof surfaces are implemented/proven or blocked. |
 | Reasoning graph, loops, `adl.skill.v1`, AEE/ObsMem/PVF | `#4638`, `#4694`-`#4697` | Required behavior has at least one producer/consumer or runtime proof path. |
 | Security/CAV/SSM/ACIP/A2A/protobuf/WebSocket/access implementation | `#4639`, `#4656`-`#4660`, `#4914`, `#4917`, `#4920` | `docs/milestones/v0.91.7/review/security/WP12_ACCESS_ACTIVATION_GATE_4660.md` is the access/activation gate. Rows marked `integrated_proven` may support scoped claims; `#4659` remains PR-open until PR truth closes, `#4914` remains blocked for red/blue CAV claims, and live WebSocket runtime API integration is backlog-only until promoted in the next milestone. |
-| Affect/happiness/Godel/economics/guild/CodeFriend/publication boundaries | `#4640` plus split issues if WP-13 finds implementation gaps | MVP-scope affect/Godel/guild/CodeFriend obligations are proven or blocked; publication and inner-state claims are claim-bounded unless proven. |
+| Affect/happiness/Godel/economics/guild/CodeFriend/publication boundaries | `#4640`, `#4752`-`#4757` | MVP-scope affect/Godel/guild/CodeFriend obligations are proven or blocked; publication and inner-state claims are claim-bounded by retained WP-13 packets, including the #4757 publication non-claim and promotion-gate packet. |
 
 - v0.91.6 closeout truth and ADR release-tail decisions must be consumed before `v0.92` opens.
 - WP-02 closeout truth is split across child issues. `#4661` owns only the

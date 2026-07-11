@@ -30,6 +30,9 @@ feature docs so `v0.92` can proceed from reviewed evidence.
 - Affect and happiness safe-test/public-claim-boundary implementation.
 - Godel mechanics implementation/proof.
 - Economics-context decision.
+- Guild, CodeFriend, and publication-boundary evidence that keeps birthday
+  launch claims separate from later product, paper, and customer-facing
+  publication work.
 
 ## Known Limitations
 
@@ -37,6 +40,10 @@ feature docs so `v0.92` can proceed from reviewed evidence.
 - `v0.92` activation remains blocked until implementation/proof truth is reviewed.
 - Public affect, wellbeing, and cognitive claims remain bounded by safe tests
   and public claim boundaries.
+- Paper/publication surfaces are not shipped artifacts in this milestone.
+  Papers, public launch approval, customer-facing CodeFriend/report readiness,
+  and publication claims require a later tracked artifact, redaction/public
+  claim review, and human approval.
 
 ## Validation Notes
 

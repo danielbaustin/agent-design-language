@@ -49,6 +49,7 @@ and only `integrated_proven` counts as operational completion.
 | Godel mechanics | integrated_proven for CSM-supervised launch admission and claim-boundary consumption; live hosted invocation and adaptive DAG completion not_claimed | `v0.92` may consume the Runtime v2 Godel/constructability boundary for reviewed birthday claims only when retained Godel runtime evidence, launch-plan provider-request admission, and constructability anchors are cited. | `features/GODEL_MECHANICS_BRIDGE_v0.91.7.md`; `review/wp13_godel_constructability_boundary_4753.md` |
 | Economics context | operator_scoped_out unless reopened | Default `v0.92` posture is context-only unless an explicit operator decision promotes and proves a bounded test. | `features/ECONOMICS_CONTEXT_DECISION_v0.91.7.md` |
 | Guild foundation | integrated_proven for governance handoff context; v0.93 governance not_claimed | `v0.92` may consume the Runtime v2 guild foundation boundary only as birthday governance context, identity witness evidence routing, community-memory boundary language, and future governance issue inputs. It must not imply constitutional citizenship, polis authority, delegated governance authority, binding collective decision-making, public guild product readiness, or completed governance. | `features/GUILD_FOUNDATION_BOUNDARY_v0.91.7.md`; `review/wp13_guild_foundation_boundary_4755.md` |
+| Paper and publication surfaces | scoped_out_for `v0.92` birthday activation by tracked #4757 boundary; external publication not approved | `v0.92` may consume the #4757 publication boundary only as non-claim and promotion-gate truth. It must not infer a published paper, public launch approval, customer-facing CodeFriend/report readiness, autonomous review authority, subjective affect/consciousness claims, economic/governance authority, v0.93 governance completion, or v0.95 CodeFriend MVP completion. | `review/wp13_publication_boundary_4757.md`; `review/wp13_publication_boundary_4757/boundary_packet.json` |
 
 ## Operational Substrate Handoff
 
@@ -67,7 +68,7 @@ and only `integrated_proven` counts as operational completion.
 | Runtime integration, Soak #2, and AWS signal integration | `RUNTIME_SOAK_2_EXECUTION_PACKET_v0.91.7.md` is the planning gate. `v0.92` remains blocked until that packet's required rows exit as `integrated_proven` or `blocked_with_evidence`; Soak #3 risk requires explicit operator approval. |
 | Runtime architecture diet | Runtime module map and keep/merge/postpone/retire follow-ons explicit enough to reduce bloat without counting refactoring plans as integration proof. |
 | Observatory and demo readiness | Visible proof surfaces integrated/proven or blocked with evidence and operator approval. |
-| CodeFriend, adapter v2, paper/publication surfaces | CodeFriend/adapter obligations are bounded by `#4756`, `docs/planning/codefriend/CODEFRIEND_V1_BUILD_PLAN.md`, and `runtime_v2.codefriend_adapter_obligations.v1`: v0.92 may consume the complete v1 plan and tracked handoff truth only, not CodeFriend product readiness or external-repo execution. CodeFriend v1 / adapter v2 external-repo proof packaging remains a v0.95 MVP-convergence obligation; paper/publication surfaces are operator-scoped-out unless launch readiness promotes a bounded, evidence-backed slice. |
+| CodeFriend, adapter v2, paper/publication surfaces | CodeFriend/adapter obligations are bounded by `#4756`, `docs/planning/codefriend/CODEFRIEND_V1_BUILD_PLAN.md`, and `runtime_v2.codefriend_adapter_obligations.v1`: v0.92 may consume the complete v1 plan and tracked handoff truth only, not CodeFriend product readiness or external-repo execution. CodeFriend v1 / adapter v2 external-repo proof packaging remains a v0.95 MVP-convergence obligation. Paper/publication surfaces are bounded by #4757 and `review/wp13_publication_boundary_4757.md`: they are non-claim/promotion-gate truth only unless a later tracked issue promotes a specific artifact with evidence, redaction/public-claim review, and human approval. |
 
 ## Activation Blockers To Preserve
 
@@ -82,6 +83,9 @@ and only `integrated_proven` counts as operational completion.
   proof-bound public claim language in birthday evidence.
 - Capability envelope, witnesses/receipt, and publication-facing narratives must
   not be inferred from launch language without tracked evidence.
+- Papers, public launch copy, customer-facing reports, and CodeFriend
+  publication claims must not be inferred from WP-13 closure. They require the
+  promotion gates in `review/wp13_publication_boundary_4757.md`.
 
 ## `#3780` Consumption Checklist
 
