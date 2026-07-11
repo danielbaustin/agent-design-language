@@ -1,6 +1,7 @@
 //! Native CSM reasoning graph, bounded-loop, and adaptive-DAG runtime.
 
 use std::collections::{BTreeMap, BTreeSet};
+use std::fmt;
 use std::sync::{Arc, Mutex};
 
 use hmac::{Hmac, Mac};
@@ -263,23 +264,58 @@ pub struct QuarantinedReasoningObject {
     pub input_evidence_preserved: bool,
 }
 
-#[derive(Debug)]
+struct ContinuityAuthority(Vec<u8>);
+
+impl ContinuityAuthority {
+    fn new(bytes: &[u8]) -> Result<Self, ReasoningRuntimeError> {
+        if bytes.is_empty() {
+            return Err(ReasoningRuntimeError::UnauthenticatedCheckpoint);
+        }
+        Ok(Self(bytes.to_vec()))
+    }
+
+    fn expose(&self) -> &[u8] {
+        &self.0
+    }
+}
+
+impl fmt::Debug for ContinuityAuthority {
+    fn fmt(&self, formatter: &mut fmt::Formatter<'_>) -> fmt::Result {
+        formatter.write_str("ContinuityAuthority(<redacted>)")
+    }
+}
+
+impl Drop for ContinuityAuthority {
+    fn drop(&mut self) {
+        self.0.fill(0);
+    }
+}
+
 pub struct ReasoningCore {
-    continuity_key: Vec<u8>,
+    continuity_authority: ContinuityAuthority,
     checkpoint_versions: BTreeMap<String, u64>,
     replay_cursors: BTreeMap<String, u64>,
     lifelog_sequence: u64,
     quarantined: BTreeMap<String, QuarantinedReasoningObject>,
 }
 
+impl fmt::Debug for ReasoningCore {
+    fn fmt(&self, formatter: &mut fmt::Formatter<'_>) -> fmt::Result {
+        formatter
+            .debug_struct("ReasoningCore")
+            .field("continuity_authority", &self.continuity_authority)
+            .field("checkpoint_versions", &self.checkpoint_versions)
+            .field("replay_cursors", &self.replay_cursors)
+            .field("lifelog_sequence", &self.lifelog_sequence)
+            .field("quarantined", &self.quarantined)
+            .finish()
+    }
+}
+
 impl ReasoningCore {
     pub fn new(continuity_key: impl AsRef<[u8]>) -> Result<Self, ReasoningRuntimeError> {
-        let continuity_key = continuity_key.as_ref();
-        if continuity_key.is_empty() {
-            return Err(ReasoningRuntimeError::UnauthenticatedCheckpoint);
-        }
         Ok(Self {
-            continuity_key: continuity_key.to_vec(),
+            continuity_authority: ContinuityAuthority::new(continuity_key.as_ref())?,
             checkpoint_versions: BTreeMap::new(),
             replay_cursors: BTreeMap::new(),
             lifelog_sequence: 0,
@@ -434,7 +470,7 @@ impl ReasoningCore {
             authentication_tag: String::new(),
         };
         checkpoint.authentication_tag =
-            checkpoint_authentication_tag(&self.continuity_key, &checkpoint)?;
+            checkpoint_authentication_tag(self.continuity_authority.expose(), &checkpoint)?;
         self.checkpoint_versions
             .insert(object_id.to_string(), checkpoint_version);
         self.replay_cursors
@@ -507,7 +543,8 @@ impl ReasoningCore {
         if checkpoint.object_id != object_id {
             return Err(ReasoningRuntimeError::CheckpointObjectMismatch);
         }
-        let expected_tag = checkpoint_authentication_tag(&self.continuity_key, checkpoint)?;
+        let expected_tag =
+            checkpoint_authentication_tag(self.continuity_authority.expose(), checkpoint)?;
         if checkpoint.authentication_tag != expected_tag {
             return Err(ReasoningRuntimeError::UnauthenticatedCheckpoint);
         }
@@ -644,6 +681,7 @@ pub struct ReasoningRuntimeStatus {
     pub completed: u64,
     pub quarantined: u64,
     pub saturation_count: u64,
+    pub blocked_admissions: u64,
     pub queue_capacity: usize,
     pub reason_code: String,
 }
@@ -658,6 +696,7 @@ impl ReasoningRuntimeStatus {
             completed: 0,
             quarantined: 0,
             saturation_count: 0,
+            blocked_admissions: 0,
             queue_capacity: capacity,
             reason_code: "component_starting".to_string(),
         }
@@ -681,6 +720,78 @@ pub struct ReasoningRuntimeHandle {
     sender: mpsc::Sender<RuntimeCommand>,
     status: watch::Receiver<ReasoningRuntimeStatus>,
     status_tx: watch::Sender<ReasoningRuntimeStatus>,
+    status_state: Arc<Mutex<ReasoningRuntimeStatus>>,
+}
+
+struct BlockedAdmissionGuard {
+    status_state: Arc<Mutex<ReasoningRuntimeStatus>>,
+    status_tx: watch::Sender<ReasoningRuntimeStatus>,
+}
+
+impl BlockedAdmissionGuard {
+    fn new(handle: &ReasoningRuntimeHandle) -> Self {
+        update_runtime_status(&handle.status_state, &handle.status_tx, |status| {
+            status.saturation_count = status.saturation_count.saturating_add(1);
+            status.blocked_admissions = status.blocked_admissions.saturating_add(1);
+            status.health = ReasoningHealth::Overloaded;
+            status.reason_code = "scheduler_reasoning_queue_saturated_blocking".to_string();
+        });
+        Self {
+            status_state: handle.status_state.clone(),
+            status_tx: handle.status_tx.clone(),
+        }
+    }
+}
+
+impl Drop for BlockedAdmissionGuard {
+    fn drop(&mut self) {
+        update_runtime_status(&self.status_state, &self.status_tx, |status| {
+            status.blocked_admissions = status.blocked_admissions.saturating_sub(1);
+            if status.blocked_admissions == 0 {
+                status.health = ReasoningHealth::Ready;
+                status.reason_code = "scheduler_reasoning_capacity_restored".to_string();
+            } else {
+                status.health = ReasoningHealth::Overloaded;
+                status.reason_code = "scheduler_reasoning_waiters_remain_blocked".to_string();
+            }
+        });
+    }
+}
+
+fn update_runtime_status(
+    state: &Arc<Mutex<ReasoningRuntimeStatus>>,
+    tx: &watch::Sender<ReasoningRuntimeStatus>,
+    update: impl FnOnce(&mut ReasoningRuntimeStatus),
+) {
+    if let Ok(mut status) = state.lock() {
+        update(&mut status);
+        let _ = tx.send(status.clone());
+    }
+}
+
+fn record_execution_completion(
+    state: &Arc<Mutex<ReasoningRuntimeStatus>>,
+    tx: &watch::Sender<ReasoningRuntimeStatus>,
+    succeeded: bool,
+) {
+    update_runtime_status(state, tx, |status| {
+        status.accepted = status.accepted.saturating_add(1);
+        if succeeded {
+            status.completed = status.completed.saturating_add(1);
+        } else {
+            status.quarantined = status.quarantined.saturating_add(1);
+        }
+        if status.blocked_admissions > 0 {
+            status.health = ReasoningHealth::Overloaded;
+            status.reason_code = "scheduler_reasoning_waiters_remain_blocked".to_string();
+        } else if succeeded {
+            status.health = ReasoningHealth::Ready;
+            status.reason_code = "object_completed".to_string();
+        } else {
+            status.health = ReasoningHealth::Degraded;
+            status.reason_code = "object_quarantined".to_string();
+        }
+    });
 }
 
 impl ReasoningRuntimeHandle {
@@ -695,20 +806,13 @@ impl ReasoningRuntimeHandle {
         let permit = match self.sender.try_reserve() {
             Ok(permit) => permit,
             Err(mpsc::error::TrySendError::Full(_)) => {
-                let mut status = self.status.borrow().clone();
-                status.health = ReasoningHealth::Overloaded;
-                status.saturation_count = status.saturation_count.saturating_add(1);
-                status.reason_code = "scheduler_reasoning_queue_saturated_blocking".to_string();
-                let _ = self.status_tx.send(status);
+                let blocked_guard = BlockedAdmissionGuard::new(self);
                 let permit = self
                     .sender
                     .reserve()
                     .await
                     .map_err(|_| ReasoningRuntimeError::ComponentStopped)?;
-                let mut status = self.status.borrow().clone();
-                status.health = ReasoningHealth::Ready;
-                status.reason_code = "scheduler_reasoning_capacity_restored".to_string();
-                let _ = self.status_tx.send(status);
+                drop(blocked_guard);
                 permit
             }
             Err(mpsc::error::TrySendError::Closed(_)) => {
@@ -741,6 +845,7 @@ impl ReasoningRuntimeComponent {
         );
         let (sender, mut receiver) = mpsc::channel::<RuntimeCommand>(capacity);
         let (status_tx, status_rx) = watch::channel(ReasoningRuntimeStatus::ready(capacity));
+        let status_state = Arc::new(Mutex::new(ReasoningRuntimeStatus::ready(capacity)));
         let cancellation = CancellationToken::new();
         let component_cancellation = cancellation.clone();
         let continuity_key = continuity_key.as_ref().to_vec();
@@ -749,52 +854,39 @@ impl ReasoningRuntimeComponent {
             "continuity key must not be empty"
         );
         let task_status_tx = status_tx.clone();
+        let task_status_state = status_state.clone();
         let task = tokio::spawn(async move {
             let core = Arc::new(Mutex::new(
                 ReasoningCore::new(continuity_key).expect("validated continuity key"),
             ));
-            let mut status = ReasoningRuntimeStatus::ready(capacity);
             loop {
                 tokio::select! {
                     _ = component_cancellation.cancelled() => break,
                     command = receiver.recv() => {
                         let Some(command) = command else { break; };
-                        status.accepted = status.accepted.saturating_add(1);
                         let result = core.lock()
                             .map_err(|_| ReasoningRuntimeError::ComponentStopped)
                             .and_then(|mut core| core.execute(command.admission));
-                        match &result {
-                            Ok(_) => {
-                                status.completed = status.completed.saturating_add(1);
-                                status.health = ReasoningHealth::Ready;
-                                status.reason_code = "object_completed".to_string();
-                            }
-                            Err(_) => {
-                                status.quarantined = status.quarantined.saturating_add(1);
-                                status.health = ReasoningHealth::Degraded;
-                                status.reason_code = "object_quarantined".to_string();
-                            }
-                        }
-                        let mut latest = task_status_tx.borrow().clone();
-                        latest.accepted = status.accepted;
-                        latest.completed = status.completed;
-                        latest.quarantined = status.quarantined;
-                        latest.health = status.health;
-                        latest.reason_code = status.reason_code.clone();
-                        let _ = task_status_tx.send(latest);
+                        record_execution_completion(
+                            &task_status_state,
+                            &task_status_tx,
+                            result.is_ok(),
+                        );
                         let _ = command.response.send(result);
                     }
                 }
             }
-            status.health = ReasoningHealth::Stopped;
-            status.reason_code = "governed_cancellation".to_string();
-            let _ = task_status_tx.send(status);
+            update_runtime_status(&task_status_state, &task_status_tx, |status| {
+                status.health = ReasoningHealth::Stopped;
+                status.reason_code = "governed_cancellation".to_string();
+            });
         });
         Self {
             handle: ReasoningRuntimeHandle {
                 sender,
                 status: status_rx,
                 status_tx,
+                status_state,
             },
             cancellation,
             task,
@@ -826,6 +918,15 @@ mod tests {
 
     fn core() -> ReasoningCore {
         ReasoningCore::new(CONTINUITY_KEY).unwrap()
+    }
+
+    #[test]
+    fn reasoning_core_debug_never_discloses_continuity_authority() {
+        let secret = "debug-must-not-expose-this-continuity-key";
+        let debug = format!("{:?}", ReasoningCore::new(secret.as_bytes()).unwrap());
+        assert!(!debug.contains(secret));
+        assert!(!debug.contains(&format!("{:?}", secret.as_bytes())));
+        assert!(debug.contains("ContinuityAuthority(<redacted>)"));
     }
 
     fn graph() -> ReasoningGraph {
@@ -1064,19 +1165,84 @@ mod tests {
     }
 
     #[tokio::test]
-    async fn saturated_admission_blocks_and_projects_overload_status() {
+    async fn concurrent_saturation_stays_overloaded_until_every_waiter_unblocks() {
         let (sender, mut receiver) = mpsc::channel(1);
-        let (status_tx, status) = watch::channel(ReasoningRuntimeStatus::ready(1));
+        let initial_status = ReasoningRuntimeStatus::ready(1);
+        let (status_tx, status) = watch::channel(initial_status.clone());
+        let status_state = Arc::new(Mutex::new(initial_status));
         let handle = ReasoningRuntimeHandle {
             sender: sender.clone(),
             status,
             status_tx,
+            status_state: status_state.clone(),
         };
         let (first_response, _) = oneshot::channel();
         sender
             .try_send(RuntimeCommand {
                 admission: admission(ReasoningObject::Graph(graph())),
                 response: first_response,
+            })
+            .unwrap();
+        let first_blocked = tokio::spawn({
+            let handle = handle.clone();
+            async move {
+                handle
+                    .admit(admission(ReasoningObject::Graph(graph())))
+                    .await
+            }
+        });
+        let second_blocked = tokio::spawn({
+            let handle = handle.clone();
+            async move {
+                handle
+                    .admit(admission(ReasoningObject::Graph(graph())))
+                    .await
+            }
+        });
+        tokio::task::yield_now().await;
+        assert_eq!(handle.status().health, ReasoningHealth::Overloaded);
+        assert_eq!(handle.status().saturation_count, 2);
+        assert_eq!(handle.status().blocked_admissions, 2);
+        assert!(!first_blocked.is_finished());
+        assert!(!second_blocked.is_finished());
+
+        record_execution_completion(&status_state, &handle.status_tx, true);
+        assert_eq!(handle.status().health, ReasoningHealth::Overloaded);
+        assert_eq!(handle.status().blocked_admissions, 2);
+
+        receiver.recv().await.unwrap();
+        tokio::task::yield_now().await;
+        assert_eq!(
+            usize::from(first_blocked.is_finished()) + usize::from(second_blocked.is_finished()),
+            1
+        );
+        assert_eq!(handle.status().health, ReasoningHealth::Overloaded);
+        assert_eq!(handle.status().blocked_admissions, 1);
+
+        receiver.recv().await.unwrap();
+        assert!(first_blocked.await.unwrap().is_ok());
+        assert!(second_blocked.await.unwrap().is_ok());
+        assert_eq!(handle.status().health, ReasoningHealth::Ready);
+        assert_eq!(handle.status().blocked_admissions, 0);
+        assert_eq!(handle.status().saturation_count, 2);
+    }
+
+    #[tokio::test]
+    async fn cancelled_saturated_admission_releases_waiter_accounting() {
+        let (sender, _receiver) = mpsc::channel(1);
+        let initial_status = ReasoningRuntimeStatus::ready(1);
+        let (status_tx, status) = watch::channel(initial_status.clone());
+        let handle = ReasoningRuntimeHandle {
+            sender: sender.clone(),
+            status,
+            status_tx,
+            status_state: Arc::new(Mutex::new(initial_status)),
+        };
+        let (response, _) = oneshot::channel();
+        sender
+            .try_send(RuntimeCommand {
+                admission: admission(ReasoningObject::Graph(graph())),
+                response,
             })
             .unwrap();
         let blocked = tokio::spawn({
@@ -1088,11 +1254,10 @@ mod tests {
             }
         });
         tokio::task::yield_now().await;
-        assert_eq!(handle.status().health, ReasoningHealth::Overloaded);
-        assert_eq!(handle.status().saturation_count, 1);
-        assert!(!blocked.is_finished());
-        receiver.recv().await.unwrap();
-        assert!(blocked.await.unwrap().is_ok());
+        assert_eq!(handle.status().blocked_admissions, 1);
+        blocked.abort();
+        let _ = blocked.await;
+        assert_eq!(handle.status().blocked_admissions, 0);
         assert_eq!(handle.status().health, ReasoningHealth::Ready);
     }
 }
