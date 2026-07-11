@@ -128,6 +128,7 @@ long_lived_agent_storage_filters="$TMP/long-lived-agent-storage-filters.txt"
 bash "$SCRIPT" --changed-files "$long_lived_agent_storage_changed" --print-risk-filters >"$long_lived_agent_storage_filters"
 grep -Fx "long_lived_agent_storage" "$long_lived_agent_storage_filters" >/dev/null
 long_lived_agent_storage_expression="$(bash "$SCRIPT" --changed-files "$long_lived_agent_storage_changed" --print-risk-nextest-expression)"
+grep -F "binary_id(adl) and test(long_lived_agent::storage)" <<<"$long_lived_agent_storage_expression" >/dev/null
 grep -F "test(long_lived_agent::storage)" <<<"$long_lived_agent_storage_expression" >/dev/null
 grep -F "test(run_v0916_runtime_failure_injection)" <<<"$long_lived_agent_storage_expression" >/dev/null
 
@@ -149,6 +150,7 @@ if [ "$(wc -l <"$csm_runtime_agent_filters" | tr -d ' ')" -ne 1 ]; then
   exit 1
 fi
 csm_runtime_agent_expression="$(bash "$SCRIPT" --changed-files "$csm_runtime_agent_changed" --print-risk-nextest-expression)"
+grep -F "binary_id(adl) and" <<<"$csm_runtime_agent_expression" >/dev/null
 grep -F "test(csm_runtime_api)" <<<"$csm_runtime_agent_expression" >/dev/null
 grep -F "test(csm_godel_snapshot)" <<<"$csm_runtime_agent_expression" >/dev/null
 grep -F "test(csm_shepherd_agent)" <<<"$csm_runtime_agent_expression" >/dev/null
@@ -195,7 +197,8 @@ shutdown_dag_filters="$TMP/shutdown-dag-filters.txt"
 bash "$SCRIPT" --changed-files "$shutdown_dag_changed" --print-risk-filters >"$shutdown_dag_filters"
 grep -Fx "runtime_v2_csm_shutdown_dag" "$shutdown_dag_filters" >/dev/null
 shutdown_dag_expression="$(bash "$SCRIPT" --changed-files "$shutdown_dag_changed" --print-risk-nextest-expression)"
-grep -Fx "test(runtime_v2_csm_shutdown_dag)" <<<"$shutdown_dag_expression" >/dev/null
+grep -F "test(runtime_v2_csm_shutdown_dag)" <<<"$shutdown_dag_expression" >/dev/null
+grep -F "binary_id(adl::cli_smoke) and test(csm_governed_shutdown_retains_continuity_and_publish_failures_without_false_success)" <<<"$shutdown_dag_expression" >/dev/null
 
 split_acc_changed="$TMP/split-acc-changed.txt"
 printf 'A\tadl/src/acc/validation.rs\n' >"$split_acc_changed"
