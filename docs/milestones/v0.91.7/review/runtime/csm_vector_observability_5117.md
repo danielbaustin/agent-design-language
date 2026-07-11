@@ -18,9 +18,10 @@ The proof used the official Vector `0.56.0` release. No fake Vector program was
 used for the integration or cloud proof.
 
 - Local lifecycle: Vector validated the generated config, reached ready with a
-  live PID, accepted five signal classes, retained five redacted outputs,
-  recovered from a forced child exit with a new PID and `restart_count: 1`, and
-  drained to stopped.
+  live PID, accepted five signal classes plus one audit event fsynced while the
+  child was down, replayed that outage event through the replacement process,
+  retained redacted outputs, recovered with a new PID and `restart_count: 1`,
+  and drained to stopped.
 - OpenTelemetry: the CSM-managed Vector process encoded an OTLP protobuf log and
   delivered it to a second real Vector `opentelemetry` receiver on reserved proof
   port `19956`. The receiver retained the decoded record with service name

@@ -519,11 +519,7 @@ fn base_status(root: &Path, health: ObservabilityHealth, reason: &str) -> Observ
                 None,
                 "block_audit_drop_low_priority_with_accounting",
             ),
-            route(
-                "metrics",
-                None,
-                "drop_low_priority_with_accounting",
-            ),
+            route("metrics", None, "drop_low_priority_with_accounting"),
             route(
                 "traces",
                 None,

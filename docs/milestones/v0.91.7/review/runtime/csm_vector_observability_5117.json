@@ -14,10 +14,11 @@
   },
   "local_delivery": {
     "signals": ["logs", "metrics", "traces", "otel", "events"],
-    "accepted_events": 5,
+    "accepted_events": 6,
     "redaction_before_retention": true,
     "durable_ingress": true,
-    "durable_channel_replay": true
+    "durable_channel_replay": true,
+    "outage_replay_proven": true
   },
   "live_delivery": {
     "cloudwatch_logs": "proven",

@@ -30,6 +30,25 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
                 return Err("failed to inject Vector child exit".into());
             }
         }
+        let exit_deadline = SystemTime::now() + Duration::from_secs(2);
+        loop {
+            let status = runtime.status();
+            if status.health == ObservabilityHealth::Degraded && status.vector_pid.is_none() {
+                break;
+            }
+            if SystemTime::now() >= exit_deadline {
+                return Err(format!("Vector child exit was not observed: {status:?}").into());
+            }
+            sleep(Duration::from_millis(25));
+        }
+        runtime.append(
+            "events",
+            "audit",
+            &json!({
+                "proof": "issue-5117-replay-during-vector-outage",
+                "authorization": "must-not-survive-redaction"
+            }),
+        )?;
         let restart_deadline = SystemTime::now() + Duration::from_secs(5);
         let restarted = loop {
             let status = runtime.status();
@@ -117,6 +136,9 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
         if !body.contains("issue-5117-real-vector") || body.contains("must-not-survive-redaction") {
             return Err(format!("invalid retained {signal} proof").into());
         }
+        if signal == "events" && !body.contains("issue-5117-replay-during-vector-outage") {
+            return Err("Vector replacement did not replay the outage event".into());
+        }
         retained.insert(signal.to_string(), json!(path));
     }
 
@@ -133,6 +155,7 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
         "stopped_health": stopped.health,
         "vector_pid_was_live": live.vector_pid.is_some(),
         "restart": restart,
+        "outage_replay_proven": true,
         "config_validated": live.config_validated,
         "accepted_events": live.accepted_events,
         "redaction_before_egress": live.redaction_before_egress,
