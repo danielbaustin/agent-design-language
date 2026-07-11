@@ -37,6 +37,7 @@ script_text="$(cat "$SCRIPT")"
 for required_fragment in \
   "cargo llvm-cov nextest" \
   "--workspace" \
+  "--retries 2" \
   "--no-report" \
   "cargo llvm-cov report" \
   "--json" \
