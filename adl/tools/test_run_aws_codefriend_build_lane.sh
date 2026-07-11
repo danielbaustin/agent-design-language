@@ -41,6 +41,14 @@ fi
 if [ "$1" = "s3api" ] && [ "$2" = "head-bucket" ]; then
   exit 0
 fi
+if [ "$1" = "logs" ] && [ "$2" = "describe-log-groups" ]; then
+  printf 'None\n'
+  exit 0
+fi
+if [ "$1" = "logs" ] && { [ "$2" = "create-log-group" ] || [ "$2" = "put-retention-policy" ]; }; then
+  printf '{}\n'
+  exit 0
+fi
 if [ "$1" = "iam" ] && [ "$2" = "list-open-id-connect-providers" ]; then
   printf 'arn:aws:iam::000000000000:oidc-provider/token.actions.githubusercontent.com\n'
   exit 0
@@ -285,6 +293,8 @@ assert_has "$SETUP_SCRIPT" "--compute-type <type>"
 assert_has "$SETUP_SCRIPT" "--image-uri <uri>"
 assert_has "$SETUP_SCRIPT" "--cache-bucket <bucket>"
 assert_has "$SETUP_SCRIPT" 'CACHE_BUCKET="${ADL_AWS_CODEFRIEND_CACHE_BUCKET:-adl-codefriend-build-cache}"'
+assert_has "$SETUP_SCRIPT" 'LOG_GROUP="/aws/codebuild/${PROJECT_NAME}"'
+assert_has "$SETUP_SCRIPT" 'LOG_RETENTION_DAYS="${ADL_AWS_CODEFRIEND_LOG_RETENTION_DAYS:-30}"'
 assert_has "$SETUP_SCRIPT" 'IMAGE_URI="${ADL_AWS_CODEFRIEND_IMAGE:-adl-builder:v0.91.7-fixed}"'
 assert_has "$SETUP_SCRIPT" 'COMPUTE_TYPE="${ADL_AWS_CODEFRIEND_COMPUTE_TYPE:-BUILD_GENERAL1_XLARGE}"'
 assert_has "$SETUP_SCRIPT" '"computeType": compute_type'
@@ -402,7 +412,10 @@ bash "$SETUP_SCRIPT" \
   --cache-prefix codebuild/cache \
   --artifact-dir "$TMP/setup-artifacts" >"$TMP/setup.out"
 assert_has "$TMP/setup.out" "PASS aws_codefriend_resources_ready project=adl-codefriend-build region=us-west-2 profile=agent-logic-admin compute_type=BUILD_GENERAL1_XLARGE cache_bucket=adl-codefriend-build-cache cache_prefix=codebuild/cache"
+assert_has "$TMP/setup.out" "aws_codefriend_log_group_exists=true retention_days=30"
 assert_has "$TMP/aws-setup-args.log" "codebuild update-project --profile agent-logic-admin --region us-west-2 --cli-input-json file://$TMP/setup-artifacts/codebuild-project.json"
+assert_has "$TMP/aws-setup-args.log" "logs create-log-group --profile agent-logic-admin --region us-west-2 --log-group-name /aws/codebuild/adl-codefriend-build"
+assert_has "$TMP/aws-setup-args.log" "logs put-retention-policy --profile agent-logic-admin --region us-west-2 --log-group-name /aws/codebuild/adl-codefriend-build --retention-in-days 30"
 
 python3 - <<'PY' "$TMP/setup-artifacts/codebuild-project.json"
 import json

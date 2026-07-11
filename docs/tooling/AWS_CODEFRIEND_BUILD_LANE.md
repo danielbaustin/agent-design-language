@@ -29,7 +29,8 @@ bash adl/tools/setup_aws_codefriend_build_resources.sh \
 ```
 
 Create or update the CodeBuild project, service role, and GitHub OIDC start
-role. The helper resolves the approved ECR tag to an immutable digest before it
+role. The helper also creates the project CloudWatch log group when absent and
+applies a 30-day retention policy by default. The helper resolves the approved ECR tag to an immutable digest before it
 updates the project. The image must already contain Rust, `cargo-nextest`,
 `sccache`, `lld`, `zstd`, AWS CLI, and Git; jobs never install those tools. The
 build uses 18 Cargo jobs and 18 nextest workers on XLARGE, native S3

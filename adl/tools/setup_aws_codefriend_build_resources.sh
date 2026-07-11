@@ -26,7 +26,8 @@ Options:
 
 Creates the minimum Agent Logic AWS resources for the CodeFriend CodeBuild lane:
 the CodeBuild service role, the GitHub Actions OIDC start-build role, and the
-CodeBuild project. Output intentionally avoids account ids, ARNs, and secrets.
+CodeBuild project plus its bounded-retention CloudWatch log group. Output
+intentionally avoids account ids, ARNs, and secrets.
 USAGE
 }
 
@@ -48,6 +49,7 @@ CACHE_BUCKET="${ADL_AWS_CODEFRIEND_CACHE_BUCKET:-adl-codefriend-build-cache}"
 CACHE_PREFIX="${ADL_AWS_CODEFRIEND_CACHE_PREFIX:-codebuild/cache}"
 GITHUB_ROLE_NAME="adl-codefriend-github-actions-build-role"
 SERVICE_ROLE_NAME="adl-codefriend-codebuild-service-role"
+LOG_RETENTION_DAYS="${ADL_AWS_CODEFRIEND_LOG_RETENTION_DAYS:-30}"
 ARTIFACT_DIR=".adl/local-artifacts/aws-codefriend-build-resource-setup"
 MODE="check"
 
@@ -136,6 +138,8 @@ case "$REPO" in
   *) die "--repo must be owner/name" ;;
 esac
 
+LOG_GROUP="/aws/codebuild/${PROJECT_NAME}"
+
 mkdir -p "$ARTIFACT_DIR"
 
 aws_args=(--profile "$PROFILE")
@@ -202,6 +206,19 @@ elif [ "$MODE" = "apply" ]; then
   cache_bucket_exists=true
 fi
 printf 'aws_codefriend_cache_bucket_exists=%s\n' "$cache_bucket_exists"
+
+log_group_exists=false
+log_group_name="$($AWS_CLI logs describe-log-groups "${aws_args[@]}" --region "$REGION" --log-group-name-prefix "$LOG_GROUP" --query "logGroups[?logGroupName=='${LOG_GROUP}'].logGroupName | [0]" --output text)"
+if [ "$log_group_name" = "$LOG_GROUP" ]; then
+  log_group_exists=true
+elif [ "$MODE" = "apply" ]; then
+  "$AWS_CLI" logs create-log-group "${aws_args[@]}" --region "$REGION" --log-group-name "$LOG_GROUP"
+  log_group_exists=true
+fi
+if [ "$MODE" = "apply" ]; then
+  "$AWS_CLI" logs put-retention-policy "${aws_args[@]}" --region "$REGION" --log-group-name "$LOG_GROUP" --retention-in-days "$LOG_RETENTION_DAYS"
+fi
+printf 'aws_codefriend_log_group_exists=%s retention_days=%s\n' "$log_group_exists" "$LOG_RETENTION_DAYS"
 
 provider_arn=""
 for arn in $("$AWS_CLI" iam list-open-id-connect-providers "${aws_args[@]}" --query 'OpenIDConnectProviderList[].Arn' --output text); do
