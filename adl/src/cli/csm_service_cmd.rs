@@ -5,7 +5,7 @@ use std::net::{SocketAddr, TcpStream};
 use std::path::{Path, PathBuf};
 use std::process::{Command, Stdio};
 use std::thread;
-use std::time::Duration;
+use std::time::{Duration, Instant};
 
 #[cfg(unix)]
 use std::os::unix::process::CommandExt;
@@ -1148,7 +1148,6 @@ fn runtime_api_bind_observed(manifest: &ServiceManifest) -> bool {
     let Ok(mut stream) = TcpStream::connect_timeout(&addr, Duration::from_millis(100)) else {
         return false;
     };
-    let _ = stream.set_read_timeout(Some(Duration::from_secs(2)));
     let _ = stream.set_write_timeout(Some(Duration::from_millis(200)));
     let request = format!(
         "GET /ready HTTP/1.1\r\nhost: {}\r\nconnection: close\r\n\r\n",
@@ -1157,33 +1156,39 @@ fn runtime_api_bind_observed(manifest: &ServiceManifest) -> bool {
     if stream.write_all(request.as_bytes()).is_err() {
         return false;
     }
-    let mut response = Vec::with_capacity(4096);
-    let mut chunk = [0_u8; 4096];
-    let body = loop {
-        match stream.read(&mut chunk) {
-            Ok(0) => break complete_http_body(&response),
-            Ok(count) => {
-                response.extend_from_slice(&chunk[..count]);
-                if response.len() > 1024 * 1024 {
-                    break None;
-                }
-                if let Some(body) = complete_http_body(&response) {
-                    break Some(body);
-                }
-            }
-            Err(_) => break None,
-        }
-    };
-    let Some(body) = body else {
+    let Some(body) = read_framed_http_body(&mut stream, Duration::from_secs(2)) else {
         return false;
     };
-    let Ok(value) = serde_json::from_slice::<Value>(body) else {
+    let Ok(value) = serde_json::from_slice::<Value>(&body) else {
         return false;
     };
     value.get("schema").and_then(Value::as_str) == Some("adl.csm.runtime_api.ready.v1")
         && expected_agent_id.as_deref().is_some_and(|agent_id| {
             value.get("agent_instance_id").and_then(Value::as_str) == Some(agent_id)
         })
+}
+
+fn read_framed_http_body(stream: &mut TcpStream, timeout: Duration) -> Option<Vec<u8>> {
+    let deadline = Instant::now().checked_add(timeout)?;
+    let mut response = Vec::with_capacity(4096);
+    let mut chunk = [0_u8; 4096];
+    loop {
+        let remaining = deadline.checked_duration_since(Instant::now())?;
+        stream.set_read_timeout(Some(remaining)).ok()?;
+        match stream.read(&mut chunk) {
+            Ok(0) => return complete_http_body(&response).map(ToOwned::to_owned),
+            Ok(count) => {
+                response.extend_from_slice(&chunk[..count]);
+                if response.len() > 1024 * 1024 {
+                    return None;
+                }
+                if let Some(body) = complete_http_body(&response) {
+                    return Some(body.to_vec());
+                }
+            }
+            Err(_) => return None,
+        }
+    }
 }
 
 fn complete_http_body(response: &[u8]) -> Option<&[u8]> {
@@ -1962,7 +1967,9 @@ Semantics:
 
 #[cfg(test)]
 mod tests {
-    use super::{classify_startup, complete_http_body, StartupEvidence};
+    use super::{classify_startup, complete_http_body, read_framed_http_body, StartupEvidence};
+    use std::io::Write as _;
+    use std::time::{Duration, Instant};
 
     fn bounded_restart_evidence(
         bounded_test_daemon_completed_observed: bool,
@@ -2027,5 +2034,26 @@ mod tests {
             None
         );
         assert_eq!(complete_http_body(b"HTTP/1.1 200 OK\r\n\r\n{}"), None);
+    }
+
+    #[test]
+    fn runtime_api_probe_does_not_wait_for_eof_after_complete_body() {
+        let listener = std::net::TcpListener::bind("127.0.0.1:0").unwrap();
+        let addr = listener.local_addr().unwrap();
+        let server = std::thread::spawn(move || {
+            let (mut stream, _) = listener.accept().unwrap();
+            stream
+                .write_all(b"HTTP/1.1 200 OK\r\nContent-Length: 11\r\n\r\n{\"ok\":true}")
+                .unwrap();
+            std::thread::sleep(Duration::from_millis(250));
+        });
+        let mut client = std::net::TcpStream::connect(addr).unwrap();
+        let started = Instant::now();
+
+        let body = read_framed_http_body(&mut client, Duration::from_millis(100));
+
+        assert_eq!(body.as_deref(), Some(b"{\"ok\":true}".as_slice()));
+        assert!(started.elapsed() < Duration::from_millis(100));
+        server.join().unwrap();
     }
 }
