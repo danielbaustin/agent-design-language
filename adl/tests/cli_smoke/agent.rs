@@ -223,7 +223,7 @@ fn reserve_csm_test_port(label: &str) -> (std::net::TcpListener, String) {
             return (listener, addr);
         }
     }
-    panic!("no reserved CSM test port available for {label} in 19950-19999");
+    panic!("could not bind one governed CSM test port for {label} in 19950-19999");
 }
 
 fn request_governed_stop_and_wait(spec: &std::path::Path, child: &mut std::process::Child) {
