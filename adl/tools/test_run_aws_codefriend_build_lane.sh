@@ -214,6 +214,8 @@ assert_has "$SETUP_SCRIPT" '"imagePullCredentialsType": image_pull_credentials_t
 assert_has "$SETUP_SCRIPT" '"type": "LOCAL"'
 assert_has "$SETUP_SCRIPT" '"modes": ["LOCAL_SOURCE_CACHE", "LOCAL_CUSTOM_CACHE"]'
 assert_has "$SETUP_SCRIPT" 'export PATH="/usr/local/cargo/bin:/usr/local/bin:/usr/bin:/bin"'
+assert_has "$SETUP_SCRIPT" 'export NO_PROXY="127.0.0.1,localhost,${NO_PROXY:-}"'
+assert_has "$SETUP_SCRIPT" 'export no_proxy="127.0.0.1,localhost,${no_proxy:-}"'
 assert_has "$SETUP_SCRIPT" 'for tool in rustc cargo cargo-nextest sccache ld.lld zstd aws git'
 assert_has "$SETUP_SCRIPT" 'classification=missing_tool'
 assert_has "$SETUP_SCRIPT" 'classification=wrong_image'
@@ -338,6 +340,8 @@ assert "apt-get install -y lld clang zstd" not in buildspec
 assert "https://sh.rustup.rs" not in buildspec
 assert "github.com/mozilla/sccache/releases" not in buildspec
 assert 'export PATH="/usr/local/cargo/bin:/usr/local/bin:/usr/bin:/bin"' in buildspec
+assert 'export NO_PROXY="127.0.0.1,localhost,${NO_PROXY:-}"' in buildspec
+assert 'export no_proxy="127.0.0.1,localhost,${no_proxy:-}"' in buildspec
 assert "cargo-nextest" in buildspec
 assert "classification=missing_tool" in buildspec
 assert "classification=wrong_image" in buildspec

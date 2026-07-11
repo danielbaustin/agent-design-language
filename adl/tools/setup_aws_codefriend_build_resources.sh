@@ -390,6 +390,8 @@ phases:
     commands:
       - set -euo pipefail
       - export PATH="/usr/local/cargo/bin:/usr/local/bin:/usr/bin:/bin"
+      - export NO_PROXY="127.0.0.1,localhost,${NO_PROXY:-}"
+      - export no_proxy="127.0.0.1,localhost,${no_proxy:-}"
       - |
         require_tool() {
           tool="$1"
@@ -455,6 +457,8 @@ phases:
     commands:
       - set -euo pipefail
       - export PATH="/usr/local/cargo/bin:/usr/local/bin:/usr/bin:/bin"
+      - export NO_PROXY="127.0.0.1,localhost,${NO_PROXY:-}"
+      - export no_proxy="127.0.0.1,localhost,${no_proxy:-}"
       - cd /codebuild/adl-source
       - export CARGO_TARGET_DIR="/codebuild/adl-target"
       - export CARGO_BUILD_JOBS="${CARGO_BUILD_JOBS:-18}"

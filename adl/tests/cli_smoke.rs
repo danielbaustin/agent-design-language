@@ -78,7 +78,9 @@ fn run_csm_without_aws_credentials(args: &[&str]) -> std::process::Output {
     for name in AWS_CREDENTIAL_ENV {
         command.env_remove(name);
     }
-    command.output().expect("run csm binary without AWS credentials")
+    command
+        .output()
+        .expect("run csm binary without AWS credentials")
 }
 
 fn run_csmctl(args: &[&str]) -> std::process::Output {
