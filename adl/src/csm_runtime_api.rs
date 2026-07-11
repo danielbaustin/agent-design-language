@@ -32,13 +32,18 @@ use crate::csm_networking::{
 use crate::csm_resident_agents;
 use crate::csm_shepherd_agent::{self, CSM_SHEPHERD_STATUS_REF};
 use crate::long_lived_agent::{load_spec, AgentStatusState, LoadedAgentSpec, StatusRecord};
+use adl_runtime::continuity_history::{
+    CheckpointStore, DomainHealth, LifelogStore, CHECKPOINT_DB_FILE, CHECKPOINT_SCHEMA_V1,
+    LIFELOG_DB_FILE, LIFELOG_SCHEMA_V1,
+};
 use adl_runtime::resident_agent::CsmResidentAgentSet;
 
 pub use adl_runtime::runtime_api::{
     CSM_RUNTIME_API_API_GATEWAY_BRIDGE_SCHEMA, CSM_RUNTIME_API_CHRONOSENSE_SCHEMA,
     CSM_RUNTIME_API_CURIOSITY_SCHEMA, CSM_RUNTIME_API_ENDPOINTS, CSM_RUNTIME_API_EVENTS_SCHEMA,
-    CSM_RUNTIME_API_HEALTH_SCHEMA, CSM_RUNTIME_API_METRICS_SCHEMA, CSM_RUNTIME_API_READY_SCHEMA,
-    CSM_RUNTIME_API_SCHEMA, CSM_RUNTIME_API_SHEPHERD_SCHEMA, CSM_RUNTIME_API_STATUS_SCHEMA,
+    CSM_RUNTIME_API_HEALTH_SCHEMA, CSM_RUNTIME_API_METRICS_SCHEMA,
+    CSM_RUNTIME_API_PERSISTENCE_SCHEMA, CSM_RUNTIME_API_READY_SCHEMA, CSM_RUNTIME_API_SCHEMA,
+    CSM_RUNTIME_API_SHEPHERD_SCHEMA, CSM_RUNTIME_API_STATUS_SCHEMA,
 };
 pub use api_gateway_bridge::{prove_api_gateway_bridge, ApiGatewayBridgeOptions};
 const CSM_RUNTIME_API_BROWSER_DEMO_PORT: &str = "8765";
@@ -242,6 +247,7 @@ pub fn runtime_api_response(options: &CsmRuntimeApiOptions, path: &str) -> Resul
         "/shepherd" => shepherd_response(&loaded, options),
         "/curiosity" => curiosity_response(&loaded, options),
         "/api-gateway-bridge" => api_gateway_bridge_response(&loaded),
+        "/persistence" => persistence_response(&loaded),
         other => Ok(json!({
             "schema": CSM_RUNTIME_API_SCHEMA,
             "status": "not_found",
@@ -308,6 +314,7 @@ fn status_response(loaded: &LoadedAgentSpec, options: &CsmRuntimeApiOptions) -> 
     let curiosity =
         curiosity_api_status(loaded, &agent_status, &daemon_status, &runtime_capabilities);
     let resident_agents = resident_agents_status(loaded);
+    let persistence = persistence_response(loaded)?;
     let mut response = json!({
         "schema": CSM_RUNTIME_API_STATUS_SCHEMA,
         "runtime_owner": "csm",
@@ -343,6 +350,7 @@ fn status_response(loaded: &LoadedAgentSpec, options: &CsmRuntimeApiOptions) -> 
             "replay_manifest": compact_artifact_status(&replay_manifest, "continuity_replay_manifest.json"),
             "safe_fail_bundle": compact_artifact_status(&safe_fail_bundle, "safe_fail_bundle.json")
         },
+        "persistence": persistence,
         "backpressure": compact_artifact_status(&backpressure_state, "csm_backpressure_state.json"),
         "typed_channels": compact_typed_channel_status(&typed_channel_state),
         "api_gateway_bridge": api_gateway_bridge_runtime_status(loaded),
@@ -357,11 +365,83 @@ fn status_response(loaded: &LoadedAgentSpec, options: &CsmRuntimeApiOptions) -> 
             "cloud_account_identifiers": "not_returned"
         }
     });
+    if response
+        .pointer("/persistence/checkpoint_continuity/status")
+        .and_then(Value::as_str)
+        != Some("healthy")
+    {
+        response["status"] = json!("degraded");
+    }
     if !readiness_blockers(&response).is_empty() {
         response["ready"] = json!("not_ready");
     }
     assert_api_response_redacted(&response)?;
     Ok(response)
+}
+
+fn persistence_response(loaded: &LoadedAgentSpec) -> Result<Value> {
+    let checkpoint = domain_health(
+        &loaded.state_root,
+        CHECKPOINT_DB_FILE,
+        "checkpoint_continuity",
+        CHECKPOINT_SCHEMA_V1,
+        true,
+        || CheckpointStore::open(&loaded.state_root).and_then(|store| store.health()),
+    );
+    let lifelog = domain_health(
+        &loaded.state_root,
+        LIFELOG_DB_FILE,
+        "autobiographical_lifelog",
+        LIFELOG_SCHEMA_V1,
+        false,
+        || LifelogStore::open(&loaded.state_root).and_then(|store| store.health()),
+    );
+    let response = adl_runtime::runtime_api::persistence_health(checkpoint, lifelog);
+    assert_api_response_redacted(&response)?;
+    Ok(response)
+}
+
+fn domain_health<F>(
+    root: &Path,
+    file: &'static str,
+    domain: &'static str,
+    schema: &'static str,
+    restore_authority: bool,
+    read: F,
+) -> DomainHealth
+where
+    F: FnOnce() -> adl_runtime::continuity_history::Result<DomainHealth>,
+{
+    if !root.join(file).is_file() {
+        return DomainHealth {
+            domain,
+            status: "not_initialized",
+            schema,
+            store: file,
+            restore_authority,
+            record_count: 0,
+            last_sequence: None,
+            failure_policy: if restore_authority {
+                "fail_closed_block_execution_admission"
+            } else {
+                "fail_lifecycle_completion_without_invalidating_checkpoint_restore"
+            },
+        };
+    }
+    read().unwrap_or(DomainHealth {
+        domain,
+        status: "corrupt_or_unavailable",
+        schema,
+        store: file,
+        restore_authority,
+        record_count: 0,
+        last_sequence: None,
+        failure_policy: if restore_authority {
+            "fail_closed_block_execution_admission"
+        } else {
+            "fail_lifecycle_completion_without_invalidating_checkpoint_restore"
+        },
+    })
 }
 
 fn curiosity_response(loaded: &LoadedAgentSpec, options: &CsmRuntimeApiOptions) -> Result<Value> {
@@ -1105,6 +1185,13 @@ fn readiness_blockers(status: &Value) -> Vec<String> {
         != Some("serialized")
     {
         blockers.push("continuity_checkpoint_missing".to_string());
+    }
+    if status
+        .pointer("/persistence/checkpoint_continuity/status")
+        .and_then(Value::as_str)
+        != Some("healthy")
+    {
+        blockers.push("checkpoint_persistence_unhealthy".to_string());
     }
     if status
         .pointer("/daemon_liveness/supervisor_pid_liveness")
@@ -1964,6 +2051,106 @@ memory: {}
             .as_array()
             .unwrap()
             .contains(&json!("curiosity_engine_validation_failed")));
+    }
+
+    #[test]
+    fn runtime_api_projects_checkpoint_and_lifelog_as_independent_domains() {
+        use adl_runtime::continuity_history::{
+            CheckpointReason, ExecutionCheckpointV1, LifelogEntryV1, LifelogKind,
+        };
+        use std::collections::BTreeMap;
+
+        let root = temp_root("persistence-domains");
+        let spec = write_spec(&root);
+        let state = load_spec(&spec).unwrap().state_root;
+        let checkpoints = CheckpointStore::open(&state).unwrap();
+        let lifelog = LifelogStore::open(&state).unwrap();
+        checkpoints
+            .write(
+                &ExecutionCheckpointV1::new(
+                    "cp-api-1",
+                    "api-agent",
+                    100,
+                    1,
+                    CheckpointReason::Cadence,
+                    BTreeMap::from([("graph_node".into(), "node-2".into())]),
+                    None,
+                )
+                .unwrap(),
+            )
+            .unwrap();
+        lifelog
+            .append(
+                &LifelogEntryV1::new(
+                    "event-api-1",
+                    "api-agent",
+                    101,
+                    1,
+                    LifelogKind::Lifecycle,
+                    "checkpoint completed",
+                    Some("cp-api-1".into()),
+                )
+                .unwrap(),
+            )
+            .unwrap();
+        drop(checkpoints);
+        drop(lifelog);
+        let options = CsmRuntimeApiOptions {
+            spec_path: spec,
+            bind: test_api_bind(SEQ.load(Ordering::SeqCst)),
+            test_max_requests: Some(1),
+            idle_timeout_ms: None,
+            shutdown_file: None,
+            otel_status_path: None,
+            otel_log_path: None,
+        };
+
+        let response = runtime_api_response(&options, "/persistence").unwrap();
+        assert_eq!(response["schema"], CSM_RUNTIME_API_PERSISTENCE_SCHEMA);
+        assert_eq!(response["restore_authority"], "checkpoint_continuity_only");
+        assert_eq!(response["checkpoint_continuity"]["record_count"], 1);
+        assert_eq!(response["checkpoint_continuity"]["restore_authority"], true);
+        assert_eq!(
+            response["checkpoint_continuity"]["store"],
+            CHECKPOINT_DB_FILE
+        );
+        assert_eq!(response["autobiographical_lifelog"]["record_count"], 1);
+        assert_eq!(
+            response["autobiographical_lifelog"]["restore_authority"],
+            false
+        );
+        assert_eq!(
+            response["autobiographical_lifelog"]["store"],
+            LIFELOG_DB_FILE
+        );
+    }
+
+    #[test]
+    fn checkpoint_persistence_failure_blocks_readiness_but_lifelog_failure_does_not() {
+        let base = json!({
+            "daemon_liveness": {"status": "observed", "supervisor_pid_liveness": "unknown", "state": "running"},
+            "continuity": {"checkpoint": {"status": "serialized"}},
+            "agent_status": {"state": "idle"},
+            "chronosense": {"time_sync": {"health": "synced", "failure_state": null}},
+            "backpressure": {"storage_pressure": {"state": "normal"}},
+            "typed_channels": {"status": "healthy"},
+            "persistence": {
+                "checkpoint_continuity": {"status": "healthy"},
+                "autobiographical_lifelog": {"status": "corrupt_or_unavailable"}
+            }
+        });
+        assert!(
+            !readiness_blockers(&base).contains(&"checkpoint_persistence_unhealthy".to_string())
+        );
+        let mut checkpoint_failed = base;
+        checkpoint_failed["persistence"]["checkpoint_continuity"]["status"] =
+            json!("corrupt_or_unavailable");
+        assert!(readiness_blockers(&checkpoint_failed)
+            .contains(&"checkpoint_persistence_unhealthy".to_string()));
+        checkpoint_failed["persistence"]["checkpoint_continuity"]["status"] =
+            json!("not_initialized");
+        assert!(readiness_blockers(&checkpoint_failed)
+            .contains(&"checkpoint_persistence_unhealthy".to_string()));
     }
 
     #[test]
