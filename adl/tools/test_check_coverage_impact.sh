@@ -136,6 +136,7 @@ csm_runtime_agent_changed="$TMP/csm-runtime-agent-changed.txt"
 cat >"$csm_runtime_agent_changed" <<'EOF'
 M	adl/src/cli/csm_cmd.rs
 M	adl/src/csm_api_gateway_bridge.rs
+A	adl/src/csm_cav.rs
 A	adl/src/csm_constructability_gate.rs
 M	adl/src/csm_curiosity_engine.rs
 A	adl/src/csm_freedom_gate.rs
@@ -156,12 +157,14 @@ csm_runtime_agent_expression="$(bash "$SCRIPT" --changed-files "$csm_runtime_age
 grep -F "binary_id(adl) and" <<<"$csm_runtime_agent_expression" >/dev/null
 grep -F "test(csm_cmd)" <<<"$csm_runtime_agent_expression" >/dev/null
 grep -F "test(csm_runtime_api)" <<<"$csm_runtime_agent_expression" >/dev/null
+grep -F "test(csm_cav)" <<<"$csm_runtime_agent_expression" >/dev/null
 grep -F "test(csm_constructability_gate)" <<<"$csm_runtime_agent_expression" >/dev/null
 grep -F "test(csm_freedom_gate)" <<<"$csm_runtime_agent_expression" >/dev/null
 grep -F "test(csm_godel_snapshot)" <<<"$csm_runtime_agent_expression" >/dev/null
 grep -F "test(csm_shepherd_agent)" <<<"$csm_runtime_agent_expression" >/dev/null
 grep -F "test(long_lived_agent)" <<<"$csm_runtime_agent_expression" >/dev/null
 grep -F "test(csm_service)" <<<"$csm_runtime_agent_expression" >/dev/null
+grep -F "test(/^cli::csm_cmd::tests::/)" <<<"$csm_runtime_agent_expression" >/dev/null
 
 cli_mod_changed="$TMP/cli-mod-changed.txt"
 printf 'A\tadl/src/cli/mod.rs\n' >"$cli_mod_changed"
