@@ -367,6 +367,11 @@ assert "AWS_SECRET_ACCESS_KEY" not in buildspec
 assert "AWS_SESSION_TOKEN" not in buildspec
 PY
 
+ruby -rjson -ryaml -e '
+project = JSON.parse(File.read(ARGV.fetch(0)))
+YAML.safe_load(project.fetch("source").fetch("buildspec"), aliases: false)
+' "$TMP/setup-artifacts/codebuild-project.json"
+
 FAKE_AWS_ARGS_LOG="$TMP/aws-setup-ecr-args.log" \
 ADL_AWS_CLI="$TMP/aws" \
 bash "$SETUP_SCRIPT" \

@@ -476,12 +476,7 @@ phases:
         if [ -z "${ADL_CODEFRIEND_TARGET_CACHE_KEY:-}" ]; then
           lock_hash="$(sha256sum adl/Cargo.lock | awk '{print $1}')"
           source_key="${CODEBUILD_RESOLVED_SOURCE_VERSION}"
-          compatibility_hash="$(printf '%s\n' \
-            "${ADL_CODEFRIEND_EXPECTED_IMAGE}" \
-            "$(rustc --version)" \
-            "${RUSTFLAGS}" \
-            "${CARGO_INCREMENTAL}" \
-            | sha256sum | awk '{print $1}')"
+          compatibility_hash="$(printf '%s\\n' "${ADL_CODEFRIEND_EXPECTED_IMAGE}" "$(rustc --version)" "${RUSTFLAGS}" "${CARGO_INCREMENTAL}" | sha256sum | awk '{print $1}')"
           ADL_CODEFRIEND_TARGET_CACHE_KEY="v2-${source_key}-${lock_hash}-${compatibility_hash}"
           export ADL_CODEFRIEND_TARGET_CACHE_KEY
         fi
