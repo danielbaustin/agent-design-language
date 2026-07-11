@@ -59,12 +59,58 @@ ENV_OVERRIDES=()
 FULL_NEXTEST="false"
 LIVE_LOGS="true"
 LOG_TAIL_PID=""
+LOG_GROUP=""
+LOG_STREAM=""
+LOG_PATH=""
+
+redact_log_stream() {
+  local destination="$1"
+  local echo_to_stderr="$2"
+  python3 -u -c '
+import re
+import sys
+
+destination = sys.argv[1]
+echo_to_stderr = sys.argv[2] == "true"
+with open(destination, "a", encoding="utf-8") as retained:
+    for line in sys.stdin:
+        line = re.sub(r"(?<![0-9])[0-9]{12}(?![0-9])", "[redacted-account]", line)
+        line = re.sub(r"arn:aws[a-zA-Z-]*:[^\s]+", "[redacted-arn]", line)
+        line = re.sub(r"(?i)(authorization|token|secret|credential)([=:]\s*)[^\s]+", r"\1\2[redacted]", line)
+        retained.write(line)
+        retained.flush()
+        if echo_to_stderr:
+            sys.stderr.write(line)
+            sys.stderr.flush()
+' "$destination" "$echo_to_stderr"
+}
 
 stop_log_tail() {
   if [ -n "$LOG_TAIL_PID" ]; then
     kill "$LOG_TAIL_PID" >/dev/null 2>&1 || true
     wait "$LOG_TAIL_PID" 2>/dev/null || true
     LOG_TAIL_PID=""
+  fi
+}
+
+capture_final_log() {
+  [ -n "$LOG_PATH" ] || return 0
+  [ -n "$LOG_GROUP" ] || return 0
+  [ -n "$LOG_STREAM" ] || return 0
+  local snapshot="${LOG_PATH}.snapshot"
+  : >"$snapshot"
+  set +e
+  "$AWS_CLI" logs tail "$LOG_GROUP" \
+    "${AWS_PROFILE_ARGS[@]+"${AWS_PROFILE_ARGS[@]}"}" \
+    --region "$AWS_REGION" \
+    --log-stream-names "$LOG_STREAM" \
+    --format short 2>&1 | redact_log_stream "$snapshot" "false"
+  local aws_status="${PIPESTATUS[0]}"
+  set -e
+  if [ "$aws_status" -eq 0 ] && [ -s "$snapshot" ]; then
+    mv "$snapshot" "$LOG_PATH"
+  else
+    rm -f "$snapshot"
   fi
 }
 
@@ -203,6 +249,7 @@ mkdir -p "$ARTIFACT_DIR" "$(dirname "$OUT_PATH")"
 REQUEST_PATH="$ARTIFACT_DIR/codebuild-request.json"
 RESPONSE_PATH="$ARTIFACT_DIR/codebuild-response.json"
 STATUS_PATH="$ARTIFACT_DIR/codebuild-status.json"
+LOG_PATH="$ARTIFACT_DIR/codebuild-live.log"
 
 ACCOUNT_HASH_MATCHED="not_checked"
 if [ "$CHECK_ACCOUNT" = "true" ]; then
@@ -306,7 +353,7 @@ print(data.get("buildStatus", "") if isinstance(data, dict) else "")
 PY
       )"
       if [ "$LIVE_LOGS" = "true" ] && [ -z "$LOG_TAIL_PID" ]; then
-        read -r log_group log_stream < <(
+        read -r LOG_GROUP LOG_STREAM < <(
           python3 - <<'PY' "$STATUS_PATH"
 import json
 import sys
@@ -317,24 +364,19 @@ logs = data.get("logs") or {}
 print(logs.get("groupName", ""), logs.get("streamName", ""))
 PY
         )
-        if [ -n "$log_group" ] && [ -n "$log_stream" ]; then
+        if [ -n "$LOG_GROUP" ] && [ -n "$LOG_STREAM" ]; then
+          : >"$LOG_PATH"
           (
-            "$AWS_CLI" logs tail "$log_group" \
-              "${AWS_PROFILE_ARGS[@]+"${AWS_PROFILE_ARGS[@]}"}" \
-              --region "$AWS_REGION" \
-              --log-stream-names "$log_stream" \
-              --follow \
-              --format short 2>&1 \
-              | python3 -u -c '
-import re
-import sys
-
-for line in sys.stdin:
-    line = re.sub(r"(?<![0-9])[0-9]{12}(?![0-9])", "[redacted-account]", line)
-    line = re.sub(r"arn:aws[a-zA-Z-]*:[^\\s]+", "[redacted-arn]", line)
-    line = re.sub(r"(?i)(authorization|token|secret|credential)([=:]\\s*)[^\\s]+", r"\\1\\2[redacted]", line)
-    sys.stderr.write(line)
-'
+            while :; do
+              "$AWS_CLI" logs tail "$LOG_GROUP" \
+                "${AWS_PROFILE_ARGS[@]+"${AWS_PROFILE_ARGS[@]}"}" \
+                --region "$AWS_REGION" \
+                --log-stream-names "$LOG_STREAM" \
+                --follow \
+                --format short 2>&1 \
+                | redact_log_stream "$LOG_PATH" "true"
+              sleep 2
+            done
           ) &
           LOG_TAIL_PID="$!"
           printf 'PASS aws_codefriend_live_logs_attached=true\n'
@@ -344,11 +386,13 @@ for line in sys.stdin:
         SUCCEEDED)
           BUILD_SUCCEEDED="true"
           stop_log_tail
+          capture_final_log
           break
           ;;
         FAILED|FAULT|STOPPED|TIMED_OUT)
           BUILD_SUCCEEDED="false"
           stop_log_tail
+          capture_final_log
           break
           ;;
       esac
@@ -371,7 +415,7 @@ else
   printf '{"dry_run":true}\n' >"$STATUS_PATH"
 fi
 
-python3 - <<'PY' "$OUT_PATH" "$MODE" "$AWS_REGION" "$AWS_PROFILE" "$PROJECT_NAME" "$SOURCE_VERSION" "$CHECK_ACCOUNT" "$ACCOUNT_HASH_MATCHED" "$REQUEST_PATH" "$RESPONSE_PATH" "$STATUS_PATH" "$BUILD_ID" "$WAIT_FOR_BUILD" "$BUILD_STATUS" "$BUILD_SUCCEEDED"
+python3 - <<'PY' "$OUT_PATH" "$MODE" "$AWS_REGION" "$AWS_PROFILE" "$PROJECT_NAME" "$SOURCE_VERSION" "$CHECK_ACCOUNT" "$ACCOUNT_HASH_MATCHED" "$REQUEST_PATH" "$RESPONSE_PATH" "$STATUS_PATH" "$BUILD_ID" "$WAIT_FOR_BUILD" "$BUILD_STATUS" "$BUILD_SUCCEEDED" "$LOG_PATH"
 import json
 import sys
 from pathlib import Path
@@ -394,6 +438,7 @@ summary = {
     "build_status": sys.argv[14],
     "build_succeeded": sys.argv[15] == "true",
     "aws_response_redacted": True,
+    "retained_log_path": sys.argv[16] if Path(sys.argv[16]).exists() else "",
 }
 status_path = Path(sys.argv[11])
 if status_path.exists():

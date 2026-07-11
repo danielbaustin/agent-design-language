@@ -89,6 +89,10 @@ if [ "$1" = "codebuild" ] && [ "$2" = "stop-build" ]; then
 JSON
   exit 0
 fi
+if [ "$1" = "logs" ] && [ "$2" = "tail" ]; then
+  printf 'fixture build log account=000000000000 arn=arn:aws:codebuild:us-west-2:000000000000:build/example\n'
+  exit 0
+fi
 echo "unexpected fake aws args: $*" >&2
 exit 9
 EOF
@@ -162,6 +166,9 @@ bash "$SCRIPT" \
   --artifact-dir "$TMP/wait-artifacts" >"$TMP/wait.out"
 assert_has "$TMP/wait.out" "PASS aws_codefriend_build_completed project=adl-codefriend-build region=us-west-2 profile=agent-logic-admin status=SUCCEEDED"
 assert_has "$TMP/aws-wait-args.log" "codebuild batch-get-builds --profile agent-logic-admin --region us-west-2 --ids codefriend-build:1234 --query"
+assert_has "$TMP/wait-artifacts/codebuild-live.log" "[redacted-account]"
+assert_has "$TMP/wait-artifacts/codebuild-live.log" "[redacted-arn]"
+assert_not_has "$TMP/wait-artifacts/codebuild-live.log" "000000000000"
 
 FAKE_AWS_ARGS_LOG="$TMP/aws-dry-args.log" \
 ADL_AWS_CLI="$TMP/aws" \
@@ -271,7 +278,8 @@ assert_has "$SCRIPT" "timed out waiting for CodeBuild build to complete; stop-bu
 assert_has "$SCRIPT" "--live-logs"
 assert_has "$SCRIPT" "--no-live-logs"
 assert_has "$SCRIPT" "aws_codefriend_live_logs_attached=true"
-assert_has "$SCRIPT" '"$AWS_CLI" logs tail "$log_group"'
+assert_has "$SCRIPT" '"$AWS_CLI" logs tail "$LOG_GROUP"'
+assert_has "$SCRIPT" '"retained_log_path"'
 assert_has "$SCRIPT" "[redacted-account]"
 assert_has "$SCRIPT" "[redacted-arn]"
 assert_has "$WORKFLOW" "workflow_dispatch:"

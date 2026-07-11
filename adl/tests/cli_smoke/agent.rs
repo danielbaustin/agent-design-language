@@ -4388,24 +4388,44 @@ memory:
         .iter()
         .any(|attempt| attempt["channel"] == "local_notice_ledger"
             && attempt["status"] == "recorded"));
-    assert!(
-        attempts
-            .iter()
-            .any(|attempt| attempt["channel"] == "cloudwatch_logs"
-                && attempt["status"] == "not_configured"),
-        "expected unconfigured CloudWatch attempt, actual: {}",
-        serde_json::to_string(attempts).unwrap()
+    assert_eq!(
+        notice_latest["typed_channel_delivery"]["status"],
+        "durably_spooled_behind_unacknowledged_sequence"
     );
-    assert!(attempts
-        .iter()
-        .any(|attempt| attempt["channel"] == "acip_sns" && attempt["status"] == "not_configured"));
-    assert!(attempts
-        .iter()
-        .any(|attempt| attempt["channel"] == "cloudfront_control_plane"
-            && attempt["status"] == "not_configured"
-            && attempt["dependency"] == "#4915"));
+    assert_eq!(
+        notice_latest["typed_channel_delivery"]["cursor_advanced"],
+        false
+    );
     let notice_ledger =
         fs::read_to_string(root.join("state/csm_governed_notices.jsonl")).expect("notice ledger");
     assert!(notice_ledger.contains("\"trigger\":\"daemon_child_failed\""));
     assert!(notice_ledger.contains("\"trigger\":\"bounded_test_supervisor_failure\""));
+    let ledger_entries = notice_ledger
+        .lines()
+        .map(|line| serde_json::from_str::<serde_json::Value>(line).expect("notice ledger JSON"))
+        .collect::<Vec<_>>();
+    let attempted_child_notice = ledger_entries
+        .iter()
+        .rev()
+        .find(|entry| {
+            entry["trigger"] == "daemon_child_failed"
+                && entry["delivery_attempts"]
+                    .as_array()
+                    .is_some_and(|attempts| attempts.len() > 1)
+        })
+        .expect("failed-child notice with cloud delivery attempts");
+    let child_attempts = attempted_child_notice["delivery_attempts"]
+        .as_array()
+        .expect("failed-child delivery attempts");
+    assert!(child_attempts.iter().any(|attempt| {
+        attempt["channel"] == "cloudwatch_logs" && attempt["status"] == "not_configured"
+    }));
+    assert!(child_attempts.iter().any(|attempt| {
+        attempt["channel"] == "acip_sns" && attempt["status"] == "not_configured"
+    }));
+    assert!(child_attempts.iter().any(|attempt| {
+        attempt["channel"] == "cloudfront_control_plane"
+            && attempt["status"] == "not_configured"
+            && attempt["dependency"] == "#4915"
+    }));
 }
