@@ -30,15 +30,11 @@ fn spawn_loopback_otlp_collector() -> (
                         .set_read_timeout(Some(std::time::Duration::from_secs(3)))
                         .expect("set collector stream read timeout");
                     let body = read_http_body(&mut stream);
-                    let observed_checkpoint_span = body.contains("csm.checkpoint_write");
                     tx.send(body).expect("send otlp body");
                     stream
                         .write_all(b"HTTP/1.1 200 OK\r\ncontent-length: 2\r\n\r\nOK")
                         .expect("write collector response");
                     last_request_at = Some(std::time::Instant::now());
-                    if observed_checkpoint_span {
-                        break;
-                    }
                 }
                 Err(err) if err.kind() == std::io::ErrorKind::WouldBlock => {
                     let idle_done = last_request_at
@@ -3577,15 +3573,15 @@ memory:
     assert!(state.join("csm_lifecycle_lifelog.index.json").exists());
     assert!(state.join("csm_governed_notices.jsonl").exists());
     assert!(state.join("csm_governed_notice_latest.json").exists());
-    assert!(
-        state.join("aws_csm_governed_notice_mock.jsonl").exists(),
-        "governed-stop notice delivery did not retain CloudWatch mock artifact: {}",
-        result["notice"]
+    assert_eq!(
+        result["notice"]["typed_channel_delivery"]["status"],
+        "observer_command_defers_to_daemon_channel_owner"
     );
-    assert!(state
+    assert!(!state.join("aws_csm_governed_notice_mock.jsonl").exists());
+    assert!(!state
         .join("aws_csm_governed_notice_sns_mock.jsonl")
         .exists());
-    assert!(state
+    assert!(!state
         .join("csm_governed_notice_control_plane_mock.jsonl")
         .exists());
 
@@ -4392,10 +4388,14 @@ memory:
         .iter()
         .any(|attempt| attempt["channel"] == "local_notice_ledger"
             && attempt["status"] == "recorded"));
-    assert!(attempts
-        .iter()
-        .any(|attempt| attempt["channel"] == "cloudwatch_logs"
-            && attempt["status"] == "not_configured"));
+    assert!(
+        attempts
+            .iter()
+            .any(|attempt| attempt["channel"] == "cloudwatch_logs"
+                && attempt["status"] == "not_configured"),
+        "expected unconfigured CloudWatch attempt, actual: {}",
+        serde_json::to_string(attempts).unwrap()
+    );
     assert!(attempts
         .iter()
         .any(|attempt| attempt["channel"] == "acip_sns" && attempt["status"] == "not_configured"));
