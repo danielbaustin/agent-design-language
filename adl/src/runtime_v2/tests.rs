@@ -81,6 +81,7 @@ mod recovery_eligibility;
 mod resource_stewardship_bridge;
 mod runtime_inhabitant_integration;
 mod security_boundary;
+mod shutdown_dag;
 mod snapshot_rehydration;
 mod standing;
 mod theory_of_mind_foundation;
