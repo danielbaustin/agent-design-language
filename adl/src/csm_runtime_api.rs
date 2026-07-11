@@ -24,6 +24,7 @@ use std::time::{Duration, Instant};
 use tokio::sync::Notify;
 use tower::ServiceBuilder;
 
+use crate::csm_cav::{self, CSM_CAV_STATUS_REF};
 use crate::csm_constructability_gate;
 use crate::csm_curiosity_engine;
 use crate::csm_networking::{
@@ -46,12 +47,13 @@ use adl_runtime::runtime_api_auth::{
 
 pub use adl_runtime::runtime_api::{
     CSM_RUNTIME_API_ACIP_SCHEMA, CSM_RUNTIME_API_API_GATEWAY_BRIDGE_SCHEMA,
-    CSM_RUNTIME_API_CHRONOSENSE_SCHEMA, CSM_RUNTIME_API_CONSTRUCTABILITY_SCHEMA,
-    CSM_RUNTIME_API_CURIOSITY_SCHEMA, CSM_RUNTIME_API_ENDPOINTS, CSM_RUNTIME_API_EVENTS_SCHEMA,
-    CSM_RUNTIME_API_FREEDOM_GATE_SCHEMA, CSM_RUNTIME_API_HEALTH_SCHEMA,
-    CSM_RUNTIME_API_METRICS_SCHEMA, CSM_RUNTIME_API_PERSISTENCE_SCHEMA,
-    CSM_RUNTIME_API_READY_SCHEMA, CSM_RUNTIME_API_REASONING_SCHEMA, CSM_RUNTIME_API_SCHEMA,
-    CSM_RUNTIME_API_SHEPHERD_SCHEMA, CSM_RUNTIME_API_STATUS_SCHEMA,
+    CSM_RUNTIME_API_CAV_SCHEMA, CSM_RUNTIME_API_CHRONOSENSE_SCHEMA,
+    CSM_RUNTIME_API_CONSTRUCTABILITY_SCHEMA, CSM_RUNTIME_API_CURIOSITY_SCHEMA,
+    CSM_RUNTIME_API_ENDPOINTS, CSM_RUNTIME_API_EVENTS_SCHEMA, CSM_RUNTIME_API_FREEDOM_GATE_SCHEMA,
+    CSM_RUNTIME_API_HEALTH_SCHEMA, CSM_RUNTIME_API_METRICS_SCHEMA,
+    CSM_RUNTIME_API_PERSISTENCE_SCHEMA, CSM_RUNTIME_API_READY_SCHEMA,
+    CSM_RUNTIME_API_REASONING_SCHEMA, CSM_RUNTIME_API_SCHEMA, CSM_RUNTIME_API_SHEPHERD_SCHEMA,
+    CSM_RUNTIME_API_STATUS_SCHEMA,
 };
 pub use api_gateway_bridge::{prove_api_gateway_bridge, ApiGatewayBridgeOptions};
 const CSM_RUNTIME_API_BROWSER_DEMO_PORT: &str = "8765";
@@ -362,6 +364,7 @@ fn runtime_api_response_with_identity(
         "/events" => events_response(&loaded),
         "/chronosense" => chronosense_response(&loaded, options),
         "/shepherd" => shepherd_response(&loaded, options),
+        "/cav" => cav_response(&loaded, options),
         "/curiosity" => curiosity_response(&loaded, options),
         "/acip" | "/acip/ws" => acip_response(&loaded, options, endpoint),
         "/freedom-gate" => freedom_gate_response(&loaded, options),
@@ -441,6 +444,9 @@ fn status_response(loaded: &LoadedAgentSpec, options: &CsmRuntimeApiOptions) -> 
     let freedom_gate = freedom_gate_api_status(loaded, &runtime_capabilities);
     let reasoning = reasoning_api_status(loaded);
     let resident_agents = resident_agents_status(loaded);
+    let cav = cav_api_status(loaded, &runtime_capabilities);
+    let cav_ready =
+        cav.pointer("/validation/status").and_then(Value::as_str) != Some("fail_closed");
     let constructability = constructability_api_status(loaded, &runtime_capabilities);
     let constructability_ready = constructability
         .pointer("/value/readiness")
@@ -450,12 +456,12 @@ fn status_response(loaded: &LoadedAgentSpec, options: &CsmRuntimeApiOptions) -> 
             .pointer("/validation/status")
             .and_then(Value::as_str)
             == Some("passed");
-    let health = if base_health == "healthy" && constructability_ready {
+    let health = if base_health == "healthy" && cav_ready && constructability_ready {
         "healthy"
     } else {
         "degraded"
     };
-    let ready = if base_ready == "ready" && constructability_ready {
+    let ready = if base_ready == "ready" && cav_ready && constructability_ready {
         "ready"
     } else {
         "not_ready"
@@ -489,6 +495,7 @@ fn status_response(loaded: &LoadedAgentSpec, options: &CsmRuntimeApiOptions) -> 
         "resilience_middleware": runtime_capabilities.get("resilience_middleware").cloned().unwrap_or_else(|| json!({"status": "missing"})),
         "resident_agents": resident_agents,
         "polis_shepherd_agent": shepherd,
+        "cav": cav,
         "curiosity_engine": curiosity,
         "acip_carrier": acip_carrier,
         "freedom_gate": freedom_gate,
@@ -632,6 +639,19 @@ fn reasoning_response(loaded: &LoadedAgentSpec) -> Result<Value> {
         "agent_instance_id": loaded.spec.agent_instance_id,
         "runtime_api_path": "/reasoning",
         "component": reasoning_api_status(loaded)
+    });
+    assert_api_response_redacted(&response)?;
+    Ok(response)
+}
+
+fn cav_response(loaded: &LoadedAgentSpec, options: &CsmRuntimeApiOptions) -> Result<Value> {
+    let status = status_response(loaded, options)?;
+    let response = json!({
+        "schema": CSM_RUNTIME_API_CAV_SCHEMA,
+        "runtime_owner": "csm",
+        "agent_instance_id": loaded.spec.agent_instance_id,
+        "runtime_api_path": "/cav",
+        "component": status["cav"]
     });
     assert_api_response_redacted(&response)?;
     Ok(response)
@@ -980,6 +1000,19 @@ fn api_gateway_bridge_required_runtime_routes() -> Vec<&'static str> {
         .copied()
         .filter(|endpoint| *endpoint != "/acip/ws")
         .collect()
+}
+
+fn cav_api_status(loaded: &LoadedAgentSpec, runtime_capabilities: &Value) -> Value {
+    let artifact = read_json_artifact(&artifact_path(loaded, CSM_CAV_STATUS_REF));
+    let runtime_capability = runtime_capabilities
+        .get("cav")
+        .cloned()
+        .unwrap_or_else(csm_cav::runtime_capability);
+    csm_cav::api_status(
+        &loaded.spec.agent_instance_id,
+        &artifact,
+        runtime_capability,
+    )
 }
 
 fn acip_api_status(loaded: &LoadedAgentSpec, runtime_capabilities: &Value) -> Value {
@@ -1551,6 +1584,13 @@ fn readiness_blockers(status: &Value) -> Vec<String> {
         == Some("low_disk")
     {
         blockers.push("storage_low_disk".to_string());
+    }
+    if status
+        .pointer("/cav/validation/status")
+        .and_then(Value::as_str)
+        == Some("fail_closed")
+    {
+        blockers.push("cav_security_validation_fail_closed".to_string());
     }
     if status
         .pointer("/typed_channels/status")
@@ -3346,6 +3386,115 @@ memory: {}
         let acip = runtime_api_response(&options, "/acip").unwrap();
         assert_eq!(acip["component"]["status"], "blocked");
         assert_eq!(acip["component"]["validation"]["status"], "fail_closed");
+    }
+
+    #[test]
+    fn runtime_api_surfaces_cav_component_and_decision_proofs() {
+        let root = temp_root("cav");
+        let spec = write_spec(&root);
+        let state = root.join("state");
+        fs::create_dir_all(&state).unwrap();
+        fs::write(
+            state.join(CSM_CAV_STATUS_REF),
+            serde_json::to_string_pretty(&csm_cav::build_status_snapshot("api-agent")).unwrap(),
+        )
+        .unwrap();
+        let options = CsmRuntimeApiOptions {
+            spec_path: spec,
+            bind: test_api_bind(SEQ.load(Ordering::SeqCst)),
+            test_max_requests: Some(1),
+            idle_timeout_ms: None,
+            shutdown_file: None,
+            otel_status_path: None,
+            otel_log_path: None,
+        };
+        let status = runtime_api_response(&options, "/status").unwrap();
+        assert_eq!(status["cav"]["component"], "cav");
+        assert_eq!(status["cav"]["validation"]["status"], "valid");
+        assert!(status["cav"]["decision_proofs"]
+            .as_array()
+            .unwrap()
+            .iter()
+            .any(|proof| proof["reason_code"] == "missing_evidence"
+                && proof["decision"] == "blocked"));
+
+        let cav = runtime_api_response(&options, "/cav").unwrap();
+        assert_eq!(cav["schema"], CSM_RUNTIME_API_CAV_SCHEMA);
+        assert_eq!(cav["runtime_api_path"], "/cav");
+        assert_eq!(
+            cav["component"]["capability"]["process_model"],
+            "in_process_csm_runtime_component"
+        );
+    }
+
+    #[test]
+    fn runtime_api_blocks_partial_cav_retained_artifact() {
+        let root = temp_root("cav-partial");
+        let spec = write_spec(&root);
+        let state = root.join("state");
+        fs::create_dir_all(&state).unwrap();
+        fs::write(
+            state.join(CSM_CAV_STATUS_REF),
+            serde_json::to_string_pretty(&json!({
+                "schema": "adl.csm.cav.status.v1",
+                "runtime_owner": "csm",
+                "component": "cav",
+                "process_model": "in_process_csm_runtime_component",
+                "no_separate_binary": true,
+                "fail_closed_on_missing_evidence": false,
+                "fail_closed_on_policy_conflict": true
+            }))
+            .unwrap(),
+        )
+        .unwrap();
+        let options = CsmRuntimeApiOptions {
+            spec_path: spec,
+            bind: test_api_bind(SEQ.load(Ordering::SeqCst)),
+            test_max_requests: Some(1),
+            idle_timeout_ms: None,
+            shutdown_file: None,
+            otel_status_path: None,
+            otel_log_path: None,
+        };
+        let status = runtime_api_response(&options, "/status").unwrap();
+        assert_eq!(status["cav"]["status"], "blocked");
+        assert_eq!(status["cav"]["validation"]["status"], "fail_closed");
+
+        let ready = runtime_api_response(&options, "/ready").unwrap();
+        assert!(ready["blocking_reasons"]
+            .as_array()
+            .unwrap()
+            .contains(&json!("cav_security_validation_fail_closed")));
+    }
+
+    #[test]
+    fn runtime_api_blocks_missing_cav_retained_artifact() {
+        let root = temp_root("cav-missing");
+        let spec = write_spec(&root);
+        fs::create_dir_all(root.join("state")).unwrap();
+        let options = CsmRuntimeApiOptions {
+            spec_path: spec,
+            bind: test_api_bind(SEQ.load(Ordering::SeqCst)),
+            test_max_requests: Some(1),
+            idle_timeout_ms: None,
+            shutdown_file: None,
+            otel_status_path: None,
+            otel_log_path: None,
+        };
+        let status = runtime_api_response(&options, "/status").unwrap();
+        assert_eq!(status["ready"], "not_ready");
+        assert_eq!(status["cav"]["status"], "blocked");
+        assert_eq!(
+            status["cav"]["validation"]["reason"],
+            "cav_retained_status_missing_or_unreadable"
+        );
+
+        let ready = runtime_api_response(&options, "/ready").unwrap();
+        assert_eq!(ready["ready"], "not_ready");
+        assert!(ready["blocking_reasons"]
+            .as_array()
+            .unwrap()
+            .contains(&json!("cav_security_validation_fail_closed")));
     }
 
     #[test]

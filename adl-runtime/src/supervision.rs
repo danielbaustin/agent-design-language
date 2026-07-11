@@ -38,6 +38,7 @@ pub enum ComponentId {
     Weather,
     AcipCarrier,
     CuriosityEngine,
+    Cav,
     FreedomGate,
     ReasoningRuntime,
     ConstructabilityGate,
@@ -49,13 +50,14 @@ pub enum ComponentId {
 }
 
 impl ComponentId {
-    pub const ALL: [ComponentId; 14] = [
+    pub const ALL: [ComponentId; 15] = [
         ComponentId::RuntimeApi,
         ComponentId::Chronosense,
         ComponentId::Scheduler,
         ComponentId::Weather,
         ComponentId::AcipCarrier,
         ComponentId::CuriosityEngine,
+        ComponentId::Cav,
         ComponentId::FreedomGate,
         ComponentId::ReasoningRuntime,
         ComponentId::ConstructabilityGate,
@@ -74,6 +76,7 @@ impl ComponentId {
             ComponentId::Weather => "weather",
             ComponentId::AcipCarrier => "acip_carrier",
             ComponentId::CuriosityEngine => "curiosity_engine",
+            ComponentId::Cav => "cav",
             ComponentId::FreedomGate => "freedom_gate",
             ComponentId::ReasoningRuntime => "reasoning_runtime",
             ComponentId::ConstructabilityGate => "constructability_gate",
@@ -245,6 +248,18 @@ pub fn default_component_supervision() -> Vec<ComponentSupervisionPolicy> {
             escalation_target: "operator_notice_if_curiosity_cannot_recover",
             readiness_impact: "ready_degraded_for_curiosity_only",
             critical_for_continuity: false,
+            telemetry_can_degrade: false,
+        },
+        ComponentSupervisionPolicy {
+            component: ComponentId::Cav,
+            restart_policy: ComponentRestartPolicy::RestartWithBackoff,
+            backoff_base_ms: 100,
+            backoff_cap_ms: 5_000,
+            escalation_interval_failures: 1,
+            degradation_behavior: "close_security_admission_until_cav_recovers",
+            escalation_target: "operator_and_security_control",
+            readiness_impact: "ready_false_for_security_admission",
+            critical_for_continuity: true,
             telemetry_can_degrade: false,
         },
         ComponentSupervisionPolicy {
@@ -1468,6 +1483,20 @@ mod tests {
         assert_eq!(
             freedom_gate.degradation_behavior,
             "close_execution_admission_until_freedom_gate_recovers"
+        );
+    }
+
+    #[test]
+    fn cav_policy_is_security_critical_and_not_telemetry_only() {
+        let cav = default_component_supervision()
+            .into_iter()
+            .find(|policy| policy.component == "cav")
+            .expect("cav policy");
+        assert!(cav.critical_for_continuity);
+        assert!(!cav.telemetry_can_degrade);
+        assert_eq!(
+            cav.restart_policy,
+            ComponentRestartPolicy::RestartWithBackoff
         );
     }
 }

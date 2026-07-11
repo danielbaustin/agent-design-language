@@ -30,6 +30,7 @@ pub mod control_plane;
 pub mod csdlc_prompt_editor;
 pub mod csm_backpressure;
 pub mod csm_cav_red_blue;
+pub mod csm_cav;
 pub mod csm_cloud_control;
 pub mod csm_constructability_gate;
 pub mod csm_continuity_capsule;

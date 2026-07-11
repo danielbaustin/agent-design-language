@@ -4,6 +4,7 @@ use serde::Serialize;
 use serde_json::{json, Value};
 
 use crate::acip::{runtime_capability as acip_runtime_capability, CSM_ACIP_COMPONENT};
+use crate::cav::{CsmCavComponentStatus, CSM_CAV_COMPONENT};
 use crate::supervision::{default_component_supervision, SUPERVISION_SCHEMA};
 
 pub const CSM_RUNTIME_STACK_SCHEMA: &str = "adl.csm.runtime_stack.v1";
@@ -58,6 +59,11 @@ pub fn runtime_components() -> Vec<RuntimeComponent> {
             id: "freedom_gate",
             plane: "security",
             role: "lawful execution and commitment mediation gate",
+        },
+        RuntimeComponent {
+            id: CSM_CAV_COMPONENT,
+            plane: "security",
+            role: "continuous adversarial verification and security readiness gate",
         },
         RuntimeComponent {
             id: "constructability_gate",
@@ -174,6 +180,7 @@ pub fn runtime_stack_json() -> Value {
             "shepherd_model": "privileged_resident_agent_not_bespoke_model_path"
         },
         "acip_carrier": acip_runtime_capability(),
+        "cav": CsmCavComponentStatus::default(),
         "curiosity_engine": {
             "schema": crate::curiosity::CSM_CURIOSITY_STATUS_SCHEMA,
             "component": crate::curiosity::CSM_CURIOSITY_COMPONENT,
@@ -229,6 +236,7 @@ mod tests {
         assert!(ids.contains(&"curiosity_engine"));
         assert!(ids.contains(&"resident_agents"));
         assert!(ids.contains(&"freedom_gate"));
+        assert!(ids.contains(&"cav"));
         assert!(ids.contains(&"acip_carrier"));
         assert!(ids.contains(&"constructability_gate"));
         assert!(ids.contains(&"observability"));
@@ -244,5 +252,15 @@ mod tests {
             true
         );
         assert_eq!(stack["freedom_gate"]["unmediated_execution_allowed"], false);
+    }
+
+    #[test]
+    fn topology_keeps_cav_in_security_plane() {
+        let cav = runtime_components()
+            .into_iter()
+            .find(|component| component.id == "cav")
+            .expect("cav component");
+        assert_eq!(cav.plane, "security");
+        assert!(cav.role.contains("adversarial verification"));
     }
 }

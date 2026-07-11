@@ -28,6 +28,7 @@ use crate::chronosense::{
     capture_runtime_time_sync_status, start_runtime_time_observation, ChronosenseRuntimeService,
     ChronosenseRuntimeServiceConfig,
 };
+use crate::csm_cav;
 use crate::csm_constructability_gate;
 use crate::csm_curiosity_engine;
 use crate::csm_freedom_gate;
@@ -4193,6 +4194,22 @@ fn write_daemon_status(
         .and_then(|status| serde_json::to_value(&status.state).ok())
         .and_then(|value| value.as_str().map(str::to_string));
     let checkpoint_observed = continuity_checkpoint_path(loaded).exists();
+    if let Err(err) =
+        csm_cav::write_status_snapshot(&loaded.state_root, &loaded.spec.agent_instance_id)
+    {
+        let _ = append_operator_event(
+            loaded,
+            "csm_cav_status_write_failed",
+            json!({
+                "schema": "adl.csm.cav.write_failure.v1",
+                "runtime_owner": "csm",
+                "component": "cav",
+                "status": "blocked_nonfatal",
+                "reason": err.to_string(),
+                "recovery_policy": "continue_runtime_and_surface_missing_or_blocked_cav_status"
+            }),
+        );
+    }
     if let Err(err) = csm_shepherd_agent::write_status_snapshot(
         &loaded.state_root,
         &loaded.spec.agent_instance_id,
@@ -4683,6 +4700,7 @@ fn csm_runtime_capabilities_with_resident_agents(
         },
         "resident_agents": resident_agents_status,
         "polis_shepherd_agent": csm_shepherd_agent::runtime_capability(),
+        "cav": csm_cav::runtime_capability(),
         "curiosity_engine": csm_curiosity_engine::runtime_capability(),
         "freedom_gate": csm_freedom_gate::runtime_capability(),
         "constructability_gate": csm_constructability_gate::runtime_capability(),
