@@ -120,6 +120,14 @@ pub fn runtime_stack_json() -> Value {
             "provider_entrypoint": "provider_substrate",
             "lifecycle": "same_csm_supervision_checkpoint_lifelog_observability_path_for_privileged_and_ordinary_agents",
             "shepherd_model": "privileged_resident_agent_not_bespoke_model_path"
+        },
+        "freedom_gate": {
+            "schema": crate::freedom_gate::CSM_FREEDOM_GATE_STATUS_SCHEMA,
+            "status": "integrated",
+            "component": crate::freedom_gate::CSM_FREEDOM_GATE_COMPONENT,
+            "retained_status_ref": crate::freedom_gate::CSM_FREEDOM_GATE_STATUS_REF,
+            "executor_requires_gate_decision": true,
+            "unmediated_execution_allowed": false
         }
     })
 }
@@ -139,7 +147,19 @@ mod tests {
         assert!(ids.contains(&"scheduler"));
         assert!(ids.contains(&"reasoning_runtime"));
         assert!(ids.contains(&"resident_agents"));
+        assert!(ids.contains(&"freedom_gate"));
         assert!(ids.contains(&"observability"));
         assert!(ids.contains(&"cloud_bridge"));
+    }
+
+    #[test]
+    fn runtime_stack_projects_freedom_gate_contract() {
+        let stack = runtime_stack_json();
+        assert_eq!(stack["freedom_gate"]["status"], "integrated");
+        assert_eq!(
+            stack["freedom_gate"]["executor_requires_gate_decision"],
+            true
+        );
+        assert_eq!(stack["freedom_gate"]["unmediated_execution_allowed"], false);
     }
 }

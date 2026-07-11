@@ -31,12 +31,13 @@ use crate::csm_networking::{
 use crate::csm_resident_agents;
 use crate::csm_shepherd_agent::{self, CSM_SHEPHERD_STATUS_REF};
 use crate::long_lived_agent::{load_spec, AgentStatusState, LoadedAgentSpec, StatusRecord};
+use crate::{csm_freedom_gate, csm_freedom_gate::CSM_FREEDOM_GATE_STATUS_REF};
 
 pub use adl_runtime::runtime_api::{
     CSM_RUNTIME_API_API_GATEWAY_BRIDGE_SCHEMA, CSM_RUNTIME_API_CHRONOSENSE_SCHEMA,
-    CSM_RUNTIME_API_ENDPOINTS, CSM_RUNTIME_API_EVENTS_SCHEMA, CSM_RUNTIME_API_HEALTH_SCHEMA,
-    CSM_RUNTIME_API_METRICS_SCHEMA, CSM_RUNTIME_API_READY_SCHEMA, CSM_RUNTIME_API_SCHEMA,
-    CSM_RUNTIME_API_SHEPHERD_SCHEMA, CSM_RUNTIME_API_STATUS_SCHEMA,
+    CSM_RUNTIME_API_ENDPOINTS, CSM_RUNTIME_API_EVENTS_SCHEMA, CSM_RUNTIME_API_FREEDOM_GATE_SCHEMA,
+    CSM_RUNTIME_API_HEALTH_SCHEMA, CSM_RUNTIME_API_METRICS_SCHEMA, CSM_RUNTIME_API_READY_SCHEMA,
+    CSM_RUNTIME_API_SCHEMA, CSM_RUNTIME_API_SHEPHERD_SCHEMA, CSM_RUNTIME_API_STATUS_SCHEMA,
 };
 pub use api_gateway_bridge::{prove_api_gateway_bridge, ApiGatewayBridgeOptions};
 const CSM_RUNTIME_API_BROWSER_DEMO_PORT: &str = "8765";
@@ -238,6 +239,7 @@ pub fn runtime_api_response(options: &CsmRuntimeApiOptions, path: &str) -> Resul
         "/events" => events_response(&loaded),
         "/chronosense" => chronosense_response(&loaded, options),
         "/shepherd" => shepherd_response(&loaded, options),
+        "/freedom-gate" => freedom_gate_response(&loaded, options),
         "/api-gateway-bridge" => api_gateway_bridge_response(&loaded),
         other => Ok(json!({
             "schema": CSM_RUNTIME_API_SCHEMA,
@@ -301,6 +303,7 @@ fn status_response(loaded: &LoadedAgentSpec, options: &CsmRuntimeApiOptions) -> 
         &runtime_capabilities,
     );
     let resident_agents = resident_agents_status(loaded);
+    let freedom_gate = freedom_gate_api_status(loaded, &runtime_capabilities);
     let response = json!({
         "schema": CSM_RUNTIME_API_STATUS_SCHEMA,
         "runtime_owner": "csm",
@@ -329,6 +332,7 @@ fn status_response(loaded: &LoadedAgentSpec, options: &CsmRuntimeApiOptions) -> 
         "resilience_middleware": runtime_capabilities.get("resilience_middleware").cloned().unwrap_or_else(|| json!({"status": "missing"})),
         "resident_agents": resident_agents,
         "polis_shepherd_agent": shepherd,
+        "freedom_gate": freedom_gate,
         "checkpoint": checkpoint_freshness,
         "continuity": {
             "checkpoint": compact_artifact_status(&continuity_checkpoint, "continuity_checkpoint.json"),
@@ -347,6 +351,22 @@ fn status_response(loaded: &LoadedAgentSpec, options: &CsmRuntimeApiOptions) -> 
             "secret_material": "not_returned",
             "cloud_account_identifiers": "not_returned"
         }
+    });
+    assert_api_response_redacted(&response)?;
+    Ok(response)
+}
+
+fn freedom_gate_response(
+    loaded: &LoadedAgentSpec,
+    options: &CsmRuntimeApiOptions,
+) -> Result<Value> {
+    let status = status_response(loaded, options)?;
+    let response = json!({
+        "schema": CSM_RUNTIME_API_FREEDOM_GATE_SCHEMA,
+        "runtime_owner": "csm",
+        "agent_instance_id": loaded.spec.agent_instance_id,
+        "runtime_api_path": "/freedom-gate",
+        "component": status["freedom_gate"]
     });
     assert_api_response_redacted(&response)?;
     Ok(response)
@@ -572,6 +592,19 @@ fn shepherd_api_status(
         &agent_state,
         checkpoint_status,
         backpressure_health,
+    )
+}
+
+fn freedom_gate_api_status(loaded: &LoadedAgentSpec, runtime_capabilities: &Value) -> Value {
+    let artifact = read_json_artifact(&artifact_path(loaded, CSM_FREEDOM_GATE_STATUS_REF));
+    let runtime_capability = runtime_capabilities
+        .get("freedom_gate")
+        .cloned()
+        .unwrap_or_else(csm_freedom_gate::runtime_capability);
+    csm_freedom_gate::api_status(
+        &artifact,
+        runtime_capability,
+        &loaded.spec.agent_instance_id,
     )
 }
 
@@ -1640,6 +1673,103 @@ memory: {}
         assert_eq!(
             shepherd["component"]["policy_gates"]["freedom_gate_required"],
             true
+        );
+    }
+
+    #[test]
+    fn runtime_api_surfaces_freedom_gate_component_from_retained_artifact() {
+        let root = temp_root("freedom-gate");
+        let spec = write_spec(&root);
+        let state = root.join("state");
+        fs::create_dir_all(&state).unwrap();
+        fs::write(
+            state.join(CSM_FREEDOM_GATE_STATUS_REF),
+            serde_json::to_string_pretty(&csm_freedom_gate::build_status_snapshot("api-agent"))
+                .unwrap(),
+        )
+        .unwrap();
+        let options = CsmRuntimeApiOptions {
+            spec_path: spec,
+            bind: test_api_bind(SEQ.load(Ordering::SeqCst)),
+            test_max_requests: Some(1),
+            idle_timeout_ms: None,
+            shutdown_file: None,
+            otel_status_path: None,
+            otel_log_path: None,
+        };
+
+        let status = runtime_api_response(&options, "/status").unwrap();
+        assert_eq!(status["freedom_gate"]["status"], "serialized");
+        assert_eq!(
+            status["freedom_gate"]["schema"],
+            csm_freedom_gate::CSM_FREEDOM_GATE_STATUS_SCHEMA
+        );
+        assert_eq!(
+            status["freedom_gate"]["executor_requires_gate_decision"],
+            true
+        );
+        assert_eq!(
+            status["freedom_gate"]["unmediated_execution_allowed"],
+            false
+        );
+        assert_eq!(
+            status["freedom_gate"]["decision_proofs"]["proof_summary"]
+                ["denied_stops_before_executor"],
+            true
+        );
+
+        let endpoint = runtime_api_response(&options, "/freedom-gate").unwrap();
+        assert_eq!(endpoint["schema"], CSM_RUNTIME_API_FREEDOM_GATE_SCHEMA);
+        assert_eq!(endpoint["runtime_api_path"], "/freedom-gate");
+        assert_eq!(endpoint["component"]["component"], "freedom_gate");
+    }
+
+    #[test]
+    fn runtime_api_rejects_unsafe_freedom_gate_retained_artifact_fail_closed() {
+        let root = temp_root("freedom-gate-unsafe-retained");
+        let spec = write_spec(&root);
+        let state = root.join("state");
+        fs::create_dir_all(&state).unwrap();
+        fs::write(
+            state.join(CSM_FREEDOM_GATE_STATUS_REF),
+            serde_json::to_string_pretty(&json!({
+                "schema": csm_freedom_gate::CSM_FREEDOM_GATE_STATUS_SCHEMA,
+                "runtime_owner": "csm",
+                "component": "freedom_gate",
+                "status": "integrated",
+                "executor_requires_gate_decision": true,
+                "unmediated_execution_allowed": false
+            }))
+            .unwrap(),
+        )
+        .unwrap();
+        let options = CsmRuntimeApiOptions {
+            spec_path: spec,
+            bind: test_api_bind(SEQ.load(Ordering::SeqCst)),
+            test_max_requests: Some(1),
+            idle_timeout_ms: None,
+            shutdown_file: None,
+            otel_status_path: None,
+            otel_log_path: None,
+        };
+
+        let status = runtime_api_response(&options, "/status").unwrap();
+
+        assert_eq!(
+            status["freedom_gate"]["status"],
+            "invalid_retained_artifact_fail_closed"
+        );
+        assert_eq!(
+            status["freedom_gate"]["executor_requires_gate_decision"],
+            true
+        );
+        assert_eq!(
+            status["freedom_gate"]["unmediated_execution_allowed"],
+            false
+        );
+        assert_eq!(
+            status["freedom_gate"]["retained_artifact_validation"]["status"],
+            "rejected_fail_closed"
         );
     }
 

@@ -4,6 +4,7 @@
 //! built without ADL compiler or C-SDLC control-plane crates.
 
 pub mod backpressure;
+pub mod freedom_gate;
 pub mod networking;
 pub mod resident_agent;
 pub mod runtime_api;

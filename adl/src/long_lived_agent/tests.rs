@@ -760,6 +760,86 @@ fn blocked_cycle_still_writes_reviewable_artifacts_before_returning_error() {
 }
 
 #[test]
+fn freedom_gate_denial_blocks_adl_workflow_before_executor() {
+    let root = temp_dir("freedom-gate-denied-adl-workflow");
+    let workflow = root.join("workflow.adl.yaml");
+    fs::write(
+        &workflow,
+        r#"version: "0.3"
+providers: {}
+agents: {}
+tasks: {}
+run:
+  name: denied-before-executor
+  workflow:
+    kind: "sequential"
+    steps: []
+"#,
+    )
+    .expect("write workflow");
+    let spec = root.join("agent.yaml");
+    fs::write(
+        &spec,
+        r#"schema: adl.long_lived_agent_spec.v1
+agent_instance_id: test-agent
+display_name: Test Agent
+state_root: state
+workflow:
+  kind: adl_workflow
+  name: denied_before_executor
+  path: workflow.adl.yaml
+  run_args:
+    provider_id: local_ollama
+    model: gemma4:latest
+    freedom_gate_policy_decision: denied
+heartbeat:
+  interval_secs: 1
+  max_cycles: 3
+  stale_lease_after_secs: 60
+safety:
+  allow_network: false
+  allow_broker: false
+  allow_filesystem_writes_outside_state_root: false
+  allow_real_world_side_effects: false
+  require_public_artifact_sanitization: true
+  financial_advice: false
+  max_cycle_runtime_secs: 120
+  max_consecutive_failures: 2
+memory:
+  namespace: tests/test-agent
+  write_policy: append_only
+"#,
+    )
+    .expect("write spec");
+
+    let err = tick(&spec, TickOptions::default()).expect_err("freedom gate denial blocks");
+
+    assert!(err.to_string().contains("cycle_blocked"));
+    let cycle_dir = root.join("state/cycles/cycle-000001");
+    let decision: Value = serde_json::from_str(
+        &fs::read_to_string(cycle_dir.join("freedom_gate_decision.json"))
+            .expect("read freedom gate decision"),
+    )
+    .expect("parse freedom gate decision");
+    assert_eq!(decision["decision"], "denied");
+    assert_eq!(decision["reason_code"], "policy_denied");
+    assert_eq!(decision["stopped_before_executor"], true);
+    assert_eq!(decision["executor_invocation_ref"], Value::Null);
+    assert!(
+        !cycle_dir.join("adl_runtime").exists(),
+        "Freedom Gate denial must stop before ADL executor creates runtime artifacts"
+    );
+    let guardrails: Value = serde_json::from_str(
+        &fs::read_to_string(cycle_dir.join("guardrail_report.json")).expect("read guardrails"),
+    )
+    .expect("parse guardrails");
+    assert!(guardrails["rejected_actions"]
+        .as_array()
+        .unwrap()
+        .contains(&json!("freedom_gate_policy_denied")));
+}
+
+#[test]
 fn forbidden_action_guardrails_block_cycle_with_specific_rejections() {
     let root = temp_dir("forbidden-actions");
     let spec = write_spec_with_safety(&root, "demo_adapter", true, true);
@@ -1402,6 +1482,21 @@ fn daemon_status_records_restart_always_permanent_service_contract() {
     assert_eq!(
         running.runtime_capabilities["supervisor"]["lifetime_boundary"],
         "operator_stop_or_fatal_supervisor_failure_only"
+    );
+    assert_eq!(
+        running.runtime_capabilities["freedom_gate"]["status"],
+        "integrated"
+    );
+    assert_eq!(
+        running.runtime_capabilities["freedom_gate"]["executor_requires_gate_decision"],
+        true
+    );
+    assert!(
+        loaded
+            .state_root
+            .join(crate::csm_freedom_gate::CSM_FREEDOM_GATE_STATUS_REF)
+            .exists(),
+        "daemon status write must retain CSM Freedom Gate status"
     );
 
     let bounded = write_daemon_status(

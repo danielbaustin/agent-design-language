@@ -41,6 +41,12 @@ pub fn default_component_supervision() -> Vec<ComponentSupervisionPolicy> {
             telemetry_can_degrade: false,
         },
         ComponentSupervisionPolicy {
+            component: "freedom_gate",
+            restart_policy: ComponentRestartPolicy::RestartWithBackoff,
+            critical_for_continuity: true,
+            telemetry_can_degrade: false,
+        },
+        ComponentSupervisionPolicy {
             component: "checkpoint",
             restart_policy: ComponentRestartPolicy::EscalateToGovernedShutdown,
             critical_for_continuity: true,
@@ -75,6 +81,20 @@ mod tests {
         assert_eq!(
             checkpoint.restart_policy,
             ComponentRestartPolicy::EscalateToGovernedShutdown
+        );
+    }
+
+    #[test]
+    fn freedom_gate_policy_is_runtime_critical_and_fail_closed() {
+        let freedom_gate = default_component_supervision()
+            .into_iter()
+            .find(|policy| policy.component == "freedom_gate")
+            .expect("freedom gate policy");
+        assert!(freedom_gate.critical_for_continuity);
+        assert!(!freedom_gate.telemetry_can_degrade);
+        assert_eq!(
+            freedom_gate.restart_policy,
+            ComponentRestartPolicy::RestartWithBackoff
         );
     }
 }

@@ -8,6 +8,7 @@ use std::io::Write;
 fn spawn_loopback_otlp_collector() -> (
     String,
     std::sync::mpsc::Receiver<String>,
+    std::sync::mpsc::Sender<()>,
     std::thread::JoinHandle<()>,
 ) {
     let listener =
@@ -17,9 +18,9 @@ fn spawn_loopback_otlp_collector() -> (
         .expect("set collector nonblocking");
     let addr = listener.local_addr().expect("collector addr");
     let (tx, rx) = std::sync::mpsc::channel();
+    let (shutdown_tx, shutdown_rx) = std::sync::mpsc::channel();
     let handle = std::thread::spawn(move || {
         let started = std::time::Instant::now();
-        let mut last_request_at: Option<std::time::Instant> = None;
         loop {
             match listener.accept() {
                 Ok((mut stream, _)) => {
@@ -34,13 +35,13 @@ fn spawn_loopback_otlp_collector() -> (
                     stream
                         .write_all(b"HTTP/1.1 200 OK\r\ncontent-length: 2\r\n\r\nOK")
                         .expect("write collector response");
-                    last_request_at = Some(std::time::Instant::now());
                 }
                 Err(err) if err.kind() == std::io::ErrorKind::WouldBlock => {
-                    let idle_done = last_request_at
-                        .map(|instant| instant.elapsed() > std::time::Duration::from_secs(3))
-                        .unwrap_or(false);
-                    if idle_done || started.elapsed() > std::time::Duration::from_secs(12) {
+                    match shutdown_rx.try_recv() {
+                        Ok(()) | Err(std::sync::mpsc::TryRecvError::Disconnected) => break,
+                        Err(std::sync::mpsc::TryRecvError::Empty) => {}
+                    }
+                    if started.elapsed() > std::time::Duration::from_secs(60) {
                         break;
                     }
                     std::thread::sleep(std::time::Duration::from_millis(25));
@@ -49,7 +50,7 @@ fn spawn_loopback_otlp_collector() -> (
             }
         }
     });
-    (format!("http://{addr}/v1/traces"), rx, handle)
+    (format!("http://{addr}/v1/traces"), rx, shutdown_tx, handle)
 }
 
 fn read_http_body(stream: &mut std::net::TcpStream) -> String {
@@ -2180,7 +2181,7 @@ memory:
 "#,
     )
     .expect("write agent spec");
-    let (endpoint, captured, collector) = spawn_loopback_otlp_collector();
+    let (endpoint, captured, shutdown_collector, collector) = spawn_loopback_otlp_collector();
     let observability_log = root.join("observability.log");
     let otel_log = root.join("otel.jsonl");
     let otel_status = root.join("otel-status.json");
@@ -2211,12 +2212,17 @@ memory:
             ("ADL_OTEL_EXPORTER_TIMEOUT_MS", "2000"),
         ],
     );
-    assert!(
-        out.status.success(),
-        "expected daemon OTLP success, stderr:\n{}",
-        String::from_utf8_lossy(&out.stderr)
-    );
+    let daemon_success = out.status.success();
+    let daemon_stderr = String::from_utf8_lossy(&out.stderr).to_string();
+    shutdown_collector
+        .send(())
+        .expect("signal otlp collector shutdown");
     collector.join().expect("collector joined");
+    assert!(
+        daemon_success,
+        "expected daemon OTLP success, stderr:\n{}",
+        daemon_stderr
+    );
     let exported = captured.try_iter().collect::<Vec<_>>();
     let mut span_names = std::collections::BTreeSet::new();
     let mut service_names = std::collections::BTreeSet::new();

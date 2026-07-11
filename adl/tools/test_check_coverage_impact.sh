@@ -133,7 +133,9 @@ grep -F "test(run_v0916_runtime_failure_injection)" <<<"$long_lived_agent_storag
 
 csm_runtime_agent_changed="$TMP/csm-runtime-agent-changed.txt"
 cat >"$csm_runtime_agent_changed" <<'EOF'
+M	adl/src/cli/csm_cmd.rs
 M	adl/src/csm_api_gateway_bridge.rs
+A	adl/src/csm_freedom_gate.rs
 M	adl/src/csm_godel_snapshot.rs
 M	adl/src/csm_runtime_api.rs
 M	adl/src/csm_shepherd_agent.rs
@@ -148,6 +150,7 @@ if [ "$(wc -l <"$csm_runtime_agent_filters" | tr -d ' ')" -ne 1 ]; then
   exit 1
 fi
 csm_runtime_agent_expression="$(bash "$SCRIPT" --changed-files "$csm_runtime_agent_changed" --print-risk-nextest-expression)"
+grep -F "test(csm_cmd)" <<<"$csm_runtime_agent_expression" >/dev/null
 grep -F "test(csm_runtime_api)" <<<"$csm_runtime_agent_expression" >/dev/null
 grep -F "test(csm_godel_snapshot)" <<<"$csm_runtime_agent_expression" >/dev/null
 grep -F "test(csm_shepherd_agent)" <<<"$csm_runtime_agent_expression" >/dev/null

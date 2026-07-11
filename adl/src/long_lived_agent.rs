@@ -14,6 +14,7 @@ use crate::chronosense::{
     capture_runtime_time_sync_status, start_runtime_time_observation, ChronosenseRuntimeService,
     ChronosenseRuntimeServiceConfig,
 };
+use crate::csm_freedom_gate;
 use crate::csm_godel_snapshot::{validate_recovery_read, write_checkpoint_snapshot_diff};
 use crate::csm_resident_agents;
 use crate::csm_runtime_api::{serve_runtime_api, CsmRuntimeApiOptions};
@@ -1660,16 +1661,39 @@ fn write_cycle_artifacts(loaded: &LoadedAgentSpec, cycle_id: &str) -> Result<()>
         dedup_strings(&mut rejected_actions);
     }
 
-    let adl_run = if workflow_supported && loaded.spec.workflow.kind == "adl_workflow" {
-        Some(run_adl_workflow_cycle(loaded, cycle_id, &cycle_dir)?)
-    } else {
-        None
-    };
+    let freedom_gate_admission =
+        if workflow_supported && loaded.spec.workflow.kind == "adl_workflow" {
+            let policy_decision = loaded
+                .spec
+                .workflow
+                .run_args
+                .get("freedom_gate_policy_decision")
+                .and_then(Value::as_str);
+            let event = csm_freedom_gate::adl_workflow_admission_event(
+                &loaded.spec.agent_instance_id,
+                cycle_id,
+                policy_decision,
+            );
+            write_json_pretty(&cycle_dir.join("freedom_gate_decision.json"), &event)?;
+            if event.stopped_before_executor {
+                rejected_actions.push(format!("freedom_gate_{}", event.reason_code));
+                dedup_strings(&mut rejected_actions);
+            }
+            Some(event)
+        } else {
+            None
+        };
 
     let guardrail_pass = workflow_supported
         && rejected_actions.is_empty()
         && sanitization.passed
         && max_runtime_not_exceeded;
+    let adl_run = if guardrail_pass && loaded.spec.workflow.kind == "adl_workflow" {
+        Some(run_adl_workflow_cycle(loaded, cycle_id, &cycle_dir)?)
+    } else {
+        None
+    };
+
     let cycle_status = if guardrail_pass { "success" } else { "blocked" };
     let decision_status = if guardrail_pass {
         "accepted"
@@ -1693,7 +1717,7 @@ fn write_cycle_artifacts(loaded: &LoadedAgentSpec, cycle_id: &str) -> Result<()>
             "paper_only": true
         })
     };
-    let decision_result = json!({
+    let mut decision_result = json!({
         "schema": DECISION_RESULT_SCHEMA,
         "agent_instance_id": loaded.spec.agent_instance_id.clone(),
         "cycle_id": cycle_id,
@@ -1705,6 +1729,14 @@ fn write_cycle_artifacts(loaded: &LoadedAgentSpec, cycle_id: &str) -> Result<()>
         },
         "not_financial_advice": true
     });
+    if let Some(event) = freedom_gate_admission.as_ref() {
+        if let Some(obj) = decision_result.as_object_mut() {
+            obj.insert(
+                "freedom_gate_decision".to_string(),
+                serde_json::to_value(event)?,
+            );
+        }
+    }
     write_json_pretty(&cycle_dir.join("decision_result.json"), &decision_result)?;
 
     let run_ref = if loaded.spec.workflow.kind == "adl_workflow" {
@@ -2856,6 +2888,22 @@ fn write_daemon_status(
             }),
         );
     }
+    if let Err(err) =
+        csm_freedom_gate::write_status_snapshot(&loaded.state_root, &loaded.spec.agent_instance_id)
+    {
+        let _ = append_operator_event(
+            loaded,
+            "csm_freedom_gate_status_write_failed",
+            json!({
+                "schema": "adl.csm.freedom_gate.write_failure.v1",
+                "runtime_owner": "csm",
+                "component": "freedom_gate",
+                "status": "degraded_nonfatal",
+                "reason": err.to_string(),
+                "recovery_policy": "continue_runtime_and_fail_closed_for_executor_admission"
+            }),
+        );
+    }
     Ok(status)
 }
 
@@ -3134,6 +3182,7 @@ fn csm_runtime_capabilities_with_resident_agents(
         },
         "resident_agents": resident_agents_status,
         "polis_shepherd_agent": csm_shepherd_agent::runtime_capability(),
+        "freedom_gate": csm_freedom_gate::runtime_capability(),
         "observability": {
             "status": "integrated",
             "event_command": "csm",
