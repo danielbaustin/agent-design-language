@@ -2,11 +2,11 @@
 
 Status: active_review_register
 
-Last updated: 2026-07-10
+Last updated: 2026-07-11
 
 Issue: #5134
 
-Current update: #4638
+Current update: #4637
 
 ## Purpose
 
@@ -69,7 +69,7 @@ closed out in the issue/card/PR surfaces.
 | WP-07 | #4634 | closed umbrella; post-blocker coherence blocked with evidence | `docs/milestones/v0.91.7/review/V0917_WP07_FINDINGS_REVIEW_5143.md`; runtime review packets under `docs/milestones/v0.91.7/review/runtime/` plus `docs/milestones/v0.91.7/review/observability_4718/` | Runtime/OTel/Soak artifacts exist. The separate #5143 findings record captures the fixed quiet-mode OTel logging bug, fixed #4718 observability proof defects, and the remaining `#4906` `blocked_with_evidence` release-readiness rows. Former CSM survival/post-blocker follow-ons `#4906`, `#4910`, `#4911`, `#4918`, `#4919`, `#4921`, `#4922`, `#4929`, `#4933`, Chronosense follow-up `#5098`, and WP-07A topology sprint `#5121` are closed. | Keep #4906 blocking rows visible and run or record the final WP-07 release-readiness disposition before consuming WP-07 as clean. |
 | WP-08 | #4635 | closed | `docs/milestones/v0.91.7/review/V0917_WP08_FINDINGS_REVIEW_5143.md`; `docs/milestones/v0.91.7/review/V0917_WP08_RUNTIME_AWS_SIGNAL_OPERATIONS_4635.md` | Runtime AWS/signal child issues `#4684`-`#4688`, `#4913`, `#4915`, and proof-hygiene follow-up `#5006` are closed with retained proof. The separate #5143 findings record captures fixed heartbeat, ACIP/SNS, local polis SSM, S3 archive classification, and #4998 AWS profile-binding findings. Adjacent WP-07/WP-08 CSM governed-notice bridge tail `#4998` / PR `#5016` is also closed/merged with `adl-ci` and `adl-coverage` green and repo-native closeout validation; its retained proof lives under `docs/milestones/v0.91.7/review/runtime/csm_governed_notice_4998/`. | Keep live AWS proof boundaries visible; do not claim broader WP-07 or release readiness from WP-08 alone. |
 | WP-09 | #4636 | open | Unity review artifacts under `docs/milestones/v0.91.7/review/unity_observatory_*` | Umbrella and child issues `#4689`-`#4691` remain open. | Finish Observatory/demo proof and review as WP-09. |
-| WP-10 | #4637 | open | none yet | Curiosity `#4692` and constructability `#4693` remain open. | Implement and review curiosity/constructability proof. |
+| WP-10 | #4637 | closeout active; children merged and closed | `docs/milestones/v0.91.7/review/V0917_WP10_CURIOSITY_CONSTRUCTABILITY_REVIEW_4637.md` | Curiosity `#4692` / PR `#5161` and constructability `#4693` / PR `#5163` are merged and closed with Runtime v2 core, CLI, negative-case, and validation proof. CSM supervisor hosting remains correctly owned by WP-07A. | Finish #4637 through the repo-native PR and closeout lifecycle; preserve the CSM-hosting non-claim. |
 | WP-11 | #4638 | open; child PRs merged; umbrella closeout review active | `docs/milestones/v0.91.7/review/V0917_WP11_REASONING_LOOPS_SKILL_REVIEW_4638.md` | Canonical children `#4694`-`#4697` are closed with merged PRs, and follow-ons `#4912`, `#5096`, and `#5136` are also closed. Review found the umbrella was not closeout-ready; the #4638 SRP/SOR have since been moved out of bootstrap/pre-review state and validated, stale #4638 review claims were released, and a retained Runtime v2 cognitive-control evidence packet was added at `docs/milestones/v0.91.7/review/V0917_WP11_RUNTIME_V2_COGNITIVE_CONTROL_EVIDENCE_4638.md`. Stale local child-card truth is explicitly superseded by that retained packet for WP-11 release consumption. | Finish #4638 through the normal lifecycle and keep the retained packet's non-claims visible; do not use stale local child cards as current release proof. |
 | WP-12 | #4639 | open | none yet | Security/protocol issues `#4656`-`#4660`, `#4914`, `#4917`, and `#4920` remain open. | Implement and review security/protocol surfaces. |
 | WP-13 | #4640 | open | none yet | Affect, Godel, economics, guild, CodeFriend, and publication issues remain open. | Implement and review WP-13 surfaces. |
