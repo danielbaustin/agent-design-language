@@ -189,6 +189,14 @@ split_wellbeing_filters="$TMP/split-wellbeing-filters.txt"
 bash "$SCRIPT" --changed-files "$split_wellbeing_changed" --print-risk-filters >"$split_wellbeing_filters"
 grep -Fx "wellbeing_metrics" "$split_wellbeing_filters" >/dev/null
 
+shutdown_dag_changed="$TMP/shutdown-dag-changed.txt"
+printf 'A\tadl/src/runtime_v2/shutdown_dag.rs\n' >"$shutdown_dag_changed"
+shutdown_dag_filters="$TMP/shutdown-dag-filters.txt"
+bash "$SCRIPT" --changed-files "$shutdown_dag_changed" --print-risk-filters >"$shutdown_dag_filters"
+grep -Fx "runtime_v2_csm_shutdown_dag" "$shutdown_dag_filters" >/dev/null
+shutdown_dag_expression="$(bash "$SCRIPT" --changed-files "$shutdown_dag_changed" --print-risk-nextest-expression)"
+grep -Fx "test(runtime_v2_csm_shutdown_dag)" <<<"$shutdown_dag_expression" >/dev/null
+
 split_acc_changed="$TMP/split-acc-changed.txt"
 printf 'A\tadl/src/acc/validation.rs\n' >"$split_acc_changed"
 split_acc_filters="$TMP/split-acc-filters.txt"
