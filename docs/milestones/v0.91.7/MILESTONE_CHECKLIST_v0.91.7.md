@@ -62,6 +62,7 @@ Forward checklist. Items are intentionally unchecked because `v0.91.7` execution
 - [ ] Economics-context decision completed or blocked with evidence and operator approval.
 - [ ] Guild foundation boundary implemented/proven through `#4755`, with v0.93 constitutional governance, polis authority, delegated authority, and public product readiness explicitly not claimed.
 - [ ] Paper/publication boundary recorded through `#4757`, with public launch approval, papers, customer-facing CodeFriend/report readiness, autonomous review authority, and unbounded WP-13 claims explicitly not claimed unless a later tracked issue promotes a bounded artifact with evidence, redaction/public-claim review, and human approval.
+- [ ] WP-13 parent closeout reconciled through `#4640` and `docs/milestones/v0.91.7/review/wp13_closeout_4640.md`.
 - [ ] Memory Palace/context problem status is visible for v0.92 as proof or evidence-backed blocker.
 
 ## Demo And Launch Readiness
