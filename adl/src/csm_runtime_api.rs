@@ -1508,6 +1508,18 @@ memory: {}
         spec
     }
 
+    fn write_ready_typed_channel_state(state_root: &Path) {
+        fs::write(
+            state_root.join("csm_typed_channel_state.json"),
+            serde_json::to_string_pretty(&json!({
+                "schema": "adl.csm.typed_channel_state.v1",
+                "status": "ready"
+            }))
+            .unwrap(),
+        )
+        .unwrap();
+    }
+
     fn test_api_bind(offset: u64) -> String {
         let port = 19950 + (offset % 47);
         format!("127.0.0.1:{port}")
@@ -2077,6 +2089,7 @@ memory: {}
         let spec = write_spec(&root);
         let state = root.join("state");
         fs::create_dir_all(&state).unwrap();
+        write_ready_typed_channel_state(&state);
         fs::write(
             state.join("status.json"),
             serde_json::to_string_pretty(&json!({
@@ -2545,6 +2558,7 @@ memory: {}
         let spec = write_spec(&root);
         let state = root.join("state");
         fs::create_dir_all(&state).unwrap();
+        write_ready_typed_channel_state(&state);
         fs::write(
             state.join("daemon_status.json"),
             serde_json::to_string_pretty(&json!({
