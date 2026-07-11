@@ -491,9 +491,8 @@ phases:
         export ADL_CODEFRIEND_TARGET_CACHE_OBJECT_KEY
         echo "ADL_CODEFRIEND_TARGET_CACHE mode=${ADL_CODEFRIEND_TARGET_CACHE_MODE} key=${ADL_CODEFRIEND_TARGET_CACHE_KEY}"
         if [ "${ADL_CODEFRIEND_TARGET_CACHE_MODE}" = "s3-tar" ]; then
-          if expected_cache_checksum="$(aws s3api head-object --bucket "$ADL_CODEFRIEND_TARGET_CACHE_BUCKET" --key "$ADL_CODEFRIEND_TARGET_CACHE_OBJECT_KEY" --query 'Metadata.sha256' --output text 2>/tmp/adl-codefriend-target-cache-restore.log)" &&
-             [ -n "$expected_cache_checksum" ] && [ "$expected_cache_checksum" != "None" ] &&
-             aws s3 cp "${ADL_CODEFRIEND_TARGET_CACHE_URI}" /tmp/adl-codefriend-target-cache.tar.zst >>/tmp/adl-codefriend-target-cache-restore.log 2>&1; then
+          if expected_cache_checksum="$(aws s3api get-object --bucket "$ADL_CODEFRIEND_TARGET_CACHE_BUCKET" --key "$ADL_CODEFRIEND_TARGET_CACHE_OBJECT_KEY" --query 'Metadata.sha256' --output text /tmp/adl-codefriend-target-cache.tar.zst 2>/tmp/adl-codefriend-target-cache-restore.log)" &&
+             [ -n "$expected_cache_checksum" ] && [ "$expected_cache_checksum" != "None" ]; then
             actual_cache_checksum="$(sha256sum /tmp/adl-codefriend-target-cache.tar.zst | awk '{print $1}')"
             if [ "$actual_cache_checksum" != "$expected_cache_checksum" ]; then
               echo "ADL_CODEFRIEND_PREFLIGHT status=failed classification=cache_configuration target_cache_checksum_failed" >&2

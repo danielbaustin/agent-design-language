@@ -329,7 +329,7 @@ assert_has "$SETUP_SCRIPT" 'export ADL_CODEFRIEND_TARGET_CACHE_BUCKET="${ADL_COD
 assert_has "$SETUP_SCRIPT" 'export ADL_CODEFRIEND_TARGET_CACHE_PREFIX="${ADL_CODEFRIEND_TARGET_CACHE_PREFIX:-__SCCACHE_PREFIX__/target/x86_64-unknown-linux-gnu}"'
 assert_has "$SETUP_SCRIPT" 'ADL_CODEFRIEND_TARGET_CACHE_URI="s3://${ADL_CODEFRIEND_TARGET_CACHE_BUCKET}/${ADL_CODEFRIEND_TARGET_CACHE_PREFIX}/${ADL_CODEFRIEND_TARGET_CACHE_KEY}.tar.zst"'
 assert_has "$SETUP_SCRIPT" 'ADL_CODEFRIEND_TARGET_CACHE_OBJECT_KEY="${ADL_CODEFRIEND_TARGET_CACHE_PREFIX}/${ADL_CODEFRIEND_TARGET_CACHE_KEY}.tar.zst"'
-assert_has "$SETUP_SCRIPT" 'aws s3api head-object --bucket "$ADL_CODEFRIEND_TARGET_CACHE_BUCKET" --key "$ADL_CODEFRIEND_TARGET_CACHE_OBJECT_KEY"'
+assert_has "$SETUP_SCRIPT" 'aws s3api get-object --bucket "$ADL_CODEFRIEND_TARGET_CACHE_BUCKET" --key "$ADL_CODEFRIEND_TARGET_CACHE_OBJECT_KEY"'
 assert_has "$SETUP_SCRIPT" "target_cache_checksum_failed"
 assert_has "$SETUP_SCRIPT" 'cache_upload_uri="${ADL_CODEFRIEND_TARGET_CACHE_URI}.upload-${cache_upload_suffix}"'
 assert_has "$SETUP_SCRIPT" '--metadata "sha256=${cache_checksum}"'
@@ -457,7 +457,7 @@ assert 'ADL_CODEFRIEND_BUILD_PREPARE status=completed' in buildspec
 assert 'ADL_CODEFRIEND_BUILD_COMMAND status=completed exit_code=${command_status}' in buildspec
 assert 'ADL_CODEFRIEND_TARGET_CACHE_SAVE status=local-cache' in buildspec
 assert 'ADL_CODEFRIEND_TARGET_CACHE_OBJECT_KEY="${ADL_CODEFRIEND_TARGET_CACHE_PREFIX}/${ADL_CODEFRIEND_TARGET_CACHE_KEY}.tar.zst"' in buildspec
-assert 'aws s3api head-object --bucket "$ADL_CODEFRIEND_TARGET_CACHE_BUCKET" --key "$ADL_CODEFRIEND_TARGET_CACHE_OBJECT_KEY"' in buildspec
+assert 'aws s3api get-object --bucket "$ADL_CODEFRIEND_TARGET_CACHE_BUCKET" --key "$ADL_CODEFRIEND_TARGET_CACHE_OBJECT_KEY"' in buildspec
 assert "target_cache_checksum_failed" in buildspec
 assert 'cache_upload_uri="${ADL_CODEFRIEND_TARGET_CACHE_URI}.upload-${cache_upload_suffix}"' in buildspec
 assert '--metadata "sha256=${cache_checksum}"' in buildspec
