@@ -3604,6 +3604,11 @@ memory: {}
             serde_json::to_string_pretty(&curiosity).unwrap(),
         )
         .unwrap();
+        fs::write(
+            state.join(CSM_CAV_STATUS_REF),
+            serde_json::to_string_pretty(&csm_cav::build_status_snapshot("api-agent")).unwrap(),
+        )
+        .unwrap();
         write_freedom_gate_status(&state);
         write_ready_runtime_gate_artifacts(&state);
         write_active_constructability_status(&state);
@@ -4076,6 +4081,11 @@ memory: {}
             serde_json::to_string_pretty(&curiosity).unwrap(),
         )
         .unwrap();
+        fs::write(
+            state.join(CSM_CAV_STATUS_REF),
+            serde_json::to_string_pretty(&csm_cav::build_status_snapshot("api-agent")).unwrap(),
+        )
+        .unwrap();
         write_freedom_gate_status(&state);
         write_ready_runtime_gate_artifacts(&state);
         write_active_constructability_status(&state);
@@ -4089,6 +4099,11 @@ memory: {}
             otel_log_path: None,
         };
 
+        let status = runtime_api_response(&options, "/status").unwrap();
+        assert_eq!(
+            status["cav"]["validation"]["status"], "valid",
+            "status={status:#}"
+        );
         let response = runtime_api_response(&options, "/chronosense").unwrap();
 
         assert_eq!(response["schema"], CSM_RUNTIME_API_CHRONOSENSE_SCHEMA);
