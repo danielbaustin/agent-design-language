@@ -154,17 +154,21 @@ if [ "$(wc -l <"$csm_runtime_agent_filters" | tr -d ' ')" -ne 1 ]; then
   exit 1
 fi
 csm_runtime_agent_expression="$(bash "$SCRIPT" --changed-files "$csm_runtime_agent_changed" --print-risk-nextest-expression)"
-grep -F "binary_id(adl) and" <<<"$csm_runtime_agent_expression" >/dev/null
-grep -F "test(csm_cmd)" <<<"$csm_runtime_agent_expression" >/dev/null
-grep -F "test(csm_runtime_api)" <<<"$csm_runtime_agent_expression" >/dev/null
-grep -F "test(csm_cav)" <<<"$csm_runtime_agent_expression" >/dev/null
-grep -F "test(csm_constructability_gate)" <<<"$csm_runtime_agent_expression" >/dev/null
-grep -F "test(csm_freedom_gate)" <<<"$csm_runtime_agent_expression" >/dev/null
-grep -F "test(csm_godel_snapshot)" <<<"$csm_runtime_agent_expression" >/dev/null
-grep -F "test(csm_shepherd_agent)" <<<"$csm_runtime_agent_expression" >/dev/null
-grep -F "test(long_lived_agent)" <<<"$csm_runtime_agent_expression" >/dev/null
-grep -F "test(csm_service)" <<<"$csm_runtime_agent_expression" >/dev/null
+grep -F "binary_id(adl) and (" <<<"$csm_runtime_agent_expression" >/dev/null
+grep -F "test(/^csm_runtime_api::/)" <<<"$csm_runtime_agent_expression" >/dev/null
+grep -F "test(/^csm_cav::/)" <<<"$csm_runtime_agent_expression" >/dev/null
+grep -F "test(/^csm_constructability_gate::/)" <<<"$csm_runtime_agent_expression" >/dev/null
+grep -F "test(/^csm_freedom_gate::/)" <<<"$csm_runtime_agent_expression" >/dev/null
+grep -F "test(/^csm_godel_snapshot::/)" <<<"$csm_runtime_agent_expression" >/dev/null
+grep -F "test(/^csm_shepherd_agent::/)" <<<"$csm_runtime_agent_expression" >/dev/null
+grep -F "test(/^long_lived_agent::/)" <<<"$csm_runtime_agent_expression" >/dev/null
+grep -F "test(/^cli::csm_service_cmd::/)" <<<"$csm_runtime_agent_expression" >/dev/null
 grep -F "test(/^cli::csm_cmd::tests::/)" <<<"$csm_runtime_agent_expression" >/dev/null
+grep -F "binary_id(adl::cli_smoke) and test(/^agent::csm_/)" <<<"$csm_runtime_agent_expression" >/dev/null
+if grep -F "test(long_lived_agent)" <<<"$csm_runtime_agent_expression" >/dev/null; then
+  echo "expected CSM runtime filter to avoid unrelated tests that merely mention long_lived_agent" >&2
+  exit 1
+fi
 
 csm_runtime_cli_companion_changed="$TMP/csm-runtime-cli-companion-changed.txt"
 cat >"$csm_runtime_cli_companion_changed" <<'EOF'

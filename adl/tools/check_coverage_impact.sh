@@ -376,7 +376,7 @@ nextest_expression_for_filter() {
       printf 'test(csmctl) or test(csm_service)'
       ;;
     csm_runtime_agent)
-      printf 'binary_id(adl) and (test(csm_cmd) or test(csm_runtime_api) or test(csm_cav) or test(csm_constructability_gate) or test(csm_freedom_gate) or test(csm_godel_snapshot) or test(csm_shepherd_agent) or test(long_lived_agent) or test(csm_service) or test(/^cli::csm_cmd::tests::/))'
+      printf 'binary_id(adl) and (test(/^csm_runtime_api::/) or test(/^csm_cav::/) or test(/^csm_constructability_gate::/) or test(/^csm_freedom_gate::/) or test(/^csm_godel_snapshot::/) or test(/^csm_shepherd_agent::/) or test(/^long_lived_agent::/) or test(/^cli::csm_service_cmd::/) or test(/^cli::csm_cmd::tests::/)) or binary_id(adl::cli_smoke) and test(/^agent::csm_/)'
       ;;
     long_lived_agent_storage)
       printf '(binary_id(adl) and test(long_lived_agent::storage)) or (binary_id(adl::bin/run_v0916_runtime_failure_injection) and test(run_v0916_runtime_failure_injection))'

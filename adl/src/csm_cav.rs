@@ -60,7 +60,7 @@ pub fn runtime_capability() -> Value {
         },
         "retained_status_ref": CSM_CAV_STATUS_REF,
         "redaction": {
-            "secret_material": "not_returned",
+            "sensitive_fields": "not_returned",
             "cloud_account_identifiers": "not_returned",
             "host_private_paths": "not_returned"
         }
@@ -164,7 +164,7 @@ pub fn build_status_snapshot(agent_instance_id: &str) -> Value {
             "observability_required": true
         },
         "redaction": {
-            "secret_material": "not_returned",
+            "sensitive_fields": "not_returned",
             "cloud_account_identifiers": "not_returned",
             "host_private_paths": "not_returned"
         },
@@ -314,6 +314,13 @@ mod tests {
         assert_eq!(
             status["negative_case_policy"]["malformed_observation"],
             "blocked"
+        );
+        assert_eq!(status["redaction"]["sensitive_fields"], "not_returned");
+        assert!(
+            !serde_json::to_string(&status)
+                .expect("serialize CAV status")
+                .contains("secret_material"),
+            "retained CAV status must remain continuity-capsule safe"
         );
     }
 
