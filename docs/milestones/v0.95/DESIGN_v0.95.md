@@ -39,7 +39,8 @@ people who already know the project history.
 - Shepherd/Gemma evaluator/training closure
 - capability-testing evidence consumption and Aptitude Atlas post-`v0.95`
   boundary
-- CodeFriend v1 and portable adapter v2 proof packaging
+- CodeFriend v1 and portable adapter v2 proof packaging, consuming the
+  complete build plan and pre-v0.92 boundary from `#4756`
 - distributed execution integration closure
 - walkthrough/catalog convergence
 - control-plane Rust migration and tooling hardening
@@ -62,7 +63,8 @@ lanes:
    Shepherd/Gemma follow-on, capability-testing evidence consumption, and the
    Aptitude Atlas post-`v0.95` product boundary.
 3. Platform integration surfaces:
-   distributed execution, CodeFriend external-repo proof packaging, and
+   distributed execution, CodeFriend external-repo proof packaging from the
+   `#4756` obligation boundary, and
    control-plane hardening.
 4. User/editor surfaces:
    walkthrough/catalog, web editor baseline, and Zed decision.

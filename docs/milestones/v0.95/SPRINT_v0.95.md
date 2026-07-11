@@ -25,7 +25,7 @@ boundary.
 | Order | Candidate tranche | Milestone role | Status |
 | --- | --- | --- | --- |
 | 1 | Dashboard/reporting + evaluator/evidence convergence | Make non-user-facing MVP surfaces explicit first. | Planned |
-| 1b | CodeFriend v1 / adapter v2 proof packaging | Ensure external-repo proof is ready for MVP consumption. | Planned |
+| 1b | CodeFriend v1 / adapter v2 proof packaging | Ensure external-repo proof is ready for MVP consumption by implementing the v0.95 side of the `#4756` complete v1 build plan and pre-v0.92 obligation boundary. | Planned |
 | 2 | Distributed integration + walkthrough/catalog + control-plane hardening | Build the integrated launch-shape story. | Planned |
 | 3 | Web editor baseline + Zed decision + final convergence/review tail | Resolve the editor boundary and close the MVP packet. | Planned |
 

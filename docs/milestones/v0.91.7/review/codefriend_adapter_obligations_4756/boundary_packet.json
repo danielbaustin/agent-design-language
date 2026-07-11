@@ -1,0 +1,101 @@
+{
+  "adapter_v2_dependencies": [
+    {
+      "blocks_v092": false,
+      "consequence": "v0.92 may cite the need for this manifest but may not claim external-repo execution readiness.",
+      "dependency_id": "external-repo-input-manifest",
+      "owner_milestone": "v0.95",
+      "required_state": "path-safe manifest for target repo, evidence roots, skipped surfaces, and redaction scope"
+    },
+    {
+      "blocks_v092": false,
+      "consequence": "No public CodeFriend claim may be inferred from v0.91.7 planning, v0.92 birthday copy, or this boundary packet.",
+      "dependency_id": "operator-publication-approval",
+      "owner_milestone": "v0.95",
+      "required_state": "operator approval gates any public/customer-facing CodeFriend v1 output"
+    },
+    {
+      "blocks_v092": false,
+      "consequence": "v0.92 birthday readiness is not blocked; MVP convergence must prove the adapter before product claims.",
+      "dependency_id": "portable-execution-adapter",
+      "owner_milestone": "v0.95",
+      "required_state": "adapter v2 maps CodeFriend packet execution onto ADL lifecycle without raw product authority"
+    },
+    {
+      "blocks_v092": false,
+      "consequence": "v0.92 may preserve the handoff only; retained proof is required before CodeFriend v1 claims.",
+      "dependency_id": "retained-proof-artifacts",
+      "owner_milestone": "v0.95",
+      "required_state": "stable packet, synthesis, redaction, report, and manifest evidence survive review"
+    }
+  ],
+  "artifact_path": "docs/milestones/v0.91.7/review/codefriend_adapter_obligations_4756/boundary_packet.json",
+  "boundary_id": "runtime-v2-codefriend-adapter-obligations-4756",
+  "claim_boundary": "WP-13 #4756 proves the Runtime v2 CodeFriend/adapter pre-v0.92 obligation boundary. It identifies the smallest CodeFriend v1 proof surfaces, binds adapter v2 dependencies to v0.95 MVP convergence, and allows v0.92 birthday work to consume only bounded handoff truth, not CodeFriend product readiness or external-repo execution.",
+  "issue": "#4756",
+  "milestone": "v0.91.7",
+  "mvp_birthday_consumption": [
+    "v0.92 may not depend on CodeFriend external-repo execution for birthday readiness.",
+    "v0.92 may route CodeFriend v1 proof packaging to v0.95 MVP convergence.",
+    "v0.92 may state that CodeFriend/adapter obligations are tracked and bounded, not complete.",
+    "v0.92 may use CodeFriend as product-roadmap context only when public claims preserve human-review and evidence-boundary language."
+  ],
+  "non_claims": [
+    "adapter_v2_implemented",
+    "autonomous_code_review_authority",
+    "codefriend_v1_product_complete",
+    "customer_publication_ready",
+    "external_repo_execution_proven",
+    "product_repo_migration_complete",
+    "v0_92_birthday_blocker"
+  ],
+  "pre_v092_posture": "proof_planning_boundary_for_v0_92",
+  "required_promotion_gates": [
+    "adapter_v2_manifest",
+    "bounded_external_repo_fixture",
+    "human_review_required",
+    "operator_approval",
+    "redaction_publication_review",
+    "retained_proof_artifact",
+    "tracked_issue"
+  ],
+  "schema_version": "runtime_v2.codefriend_adapter_obligations.v1",
+  "smallest_codefriend_v1_proof": [
+    {
+      "consumed_by": "v0.95 CodeFriend external-repo proof packaging",
+      "evidence_ref": "docs/milestones/v0.91.2/review/codefriend_productization/product_report_template.md",
+      "required_state": "customer-grade report generated from retained evidence",
+      "surface_id": "human-readable-report"
+    },
+    {
+      "consumed_by": "v0.95 CodeFriend external-repo proof packaging",
+      "evidence_ref": "docs/adr/0025-codefriend-review-packet-product-boundary.md",
+      "required_state": "publication safety check before any customer-facing report",
+      "surface_id": "redaction-publication-gate"
+    },
+    {
+      "consumed_by": "v0.95 CodeFriend external-repo proof packaging",
+      "evidence_ref": "docs/milestones/v0.91.2/features/CODEFRIEND_PRODUCTIZATION.md",
+      "required_state": "retained evidence-bound packet shape",
+      "surface_id": "repo-review-packet"
+    },
+    {
+      "consumed_by": "v0.95 CodeFriend external-repo proof packaging",
+      "evidence_ref": "docs/planning/codefriend/CODEFRIEND_SETUP_PLAN.md",
+      "required_state": "bounded reviewer roles with synthesis and findings truth",
+      "surface_id": "specialist-review-lanes"
+    }
+  ],
+  "v095_handoff": [
+    "consume docs/planning/codefriend/CODEFRIEND_V1_BUILD_PLAN.md as the complete CodeFriend v1 build plan",
+    "demonstrate human-review boundary and publication approval",
+    "map the proof into the v0.95 D4b demo candidate",
+    "prove one external-repo review packet through adapter v2",
+    "retain manifest, skipped-surface, redaction, synthesis, and report artifacts"
+  ],
+  "validation_commands": [
+    "cargo test --manifest-path adl/Cargo.toml runtime_v2_codefriend_adapter_obligations",
+    "git diff --check"
+  ],
+  "wp": "WP-13"
+}

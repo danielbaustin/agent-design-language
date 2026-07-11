@@ -67,7 +67,7 @@ and only `integrated_proven` counts as operational completion.
 | Runtime integration, Soak #2, and AWS signal integration | `RUNTIME_SOAK_2_EXECUTION_PACKET_v0.91.7.md` is the planning gate. `v0.92` remains blocked until that packet's required rows exit as `integrated_proven` or `blocked_with_evidence`; Soak #3 risk requires explicit operator approval. |
 | Runtime architecture diet | Runtime module map and keep/merge/postpone/retire follow-ons explicit enough to reduce bloat without counting refactoring plans as integration proof. |
 | Observatory and demo readiness | Visible proof surfaces integrated/proven or blocked with evidence and operator approval. |
-| CodeFriend, adapter v2, paper/publication surfaces | MVP-scope CodeFriend/adapter obligations are implemented/proven or blocked with evidence; paper/publication surfaces are operator-scoped-out unless launch readiness promotes a bounded, evidence-backed slice. |
+| CodeFriend, adapter v2, paper/publication surfaces | CodeFriend/adapter obligations are bounded by `#4756`, `docs/planning/codefriend/CODEFRIEND_V1_BUILD_PLAN.md`, and `runtime_v2.codefriend_adapter_obligations.v1`: v0.92 may consume the complete v1 plan and tracked handoff truth only, not CodeFriend product readiness or external-repo execution. CodeFriend v1 / adapter v2 external-repo proof packaging remains a v0.95 MVP-convergence obligation; paper/publication surfaces are operator-scoped-out unless launch readiness promotes a bounded, evidence-backed slice. |
 
 ## Activation Blockers To Preserve
 
