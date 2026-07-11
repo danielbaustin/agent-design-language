@@ -1204,7 +1204,10 @@ fn complete_http_body(response: &[u8]) -> Option<&[u8]> {
     })?;
     let body_start = header_end + 4;
     let body_end = body_start.checked_add(content_length)?;
-    (response.len() >= body_end).then_some(&response[body_start..body_end])
+    if response.len() < body_end {
+        return None;
+    }
+    Some(&response[body_start..body_end])
 }
 
 fn startup_classification(

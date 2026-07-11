@@ -297,7 +297,7 @@ assert_has "$WORKFLOW" "--wait"
 assert_has "$WORKFLOW" "bash adl/tools/run_aws_codefriend_build_lane.sh"
 assert_has "$SCRIPT" 'PROJECT_NAME="${ADL_AWS_CODEFRIEND_CODEBUILD_PROJECT:-adl-codefriend-build}"'
 assert_has "$SCRIPT" "--full-nextest"
-assert_has "$SCRIPT" "cd adl && cargo nextest run --test-threads 18 --status-level all --final-status-level slow"
+assert_has "$SCRIPT" "cd adl && cargo nextest run --test-threads 18 --no-fail-fast --status-level all --final-status-level slow"
 assert_has "$SCRIPT" "--run requires an explicit --source-version"
 assert_not_has "$WORKFLOW" "pull_request:"
 assert_not_has "$WORKFLOW" "push:"

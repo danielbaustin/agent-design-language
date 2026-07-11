@@ -218,6 +218,7 @@ Record:
 - stable `/codebuild/adl-source` and `/codebuild/adl-target` paths
 - 18 Cargo build jobs
 - 18 nextest workers, matching the lane's minimum half-vCPU concurrency policy
+- no-fail-fast broad execution so one paid run reports every failing test
 - S3 `sccache` and compatibility-keyed S3 target archive posture
 - redacted live CloudWatch stream attached by `--wait`
 - benchmark line
