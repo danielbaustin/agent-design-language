@@ -2485,6 +2485,38 @@ fn daemon_status_records_restart_always_permanent_service_contract() {
 }
 
 #[test]
+fn daemon_status_records_nonfatal_cav_snapshot_write_failure() {
+    let root = temp_dir("daemon-cav-write-failure");
+    let spec = write_spec(&root);
+    let loaded = load_spec(&spec).expect("load spec");
+    ensure_state_root(&loaded).expect("state root");
+    fs::create_dir(loaded.state_root.join(csm_cav::CSM_CAV_STATUS_REF))
+        .expect("block CAV status file with directory");
+    let runtime_context = CsmRuntimeContext::new().expect("csm runtime context");
+
+    let status = write_daemon_status(
+        &runtime_context,
+        &loaded,
+        DaemonStatusInput {
+            state: "running",
+            bounded_test_mode: true,
+            restart_count: 0,
+            bounded_test_restart_limit: None,
+            checkpoint_interval_secs: 1,
+            last_event: "daemon_started",
+            last_child_exit: None,
+            next_backoff_secs: 0,
+        },
+    )
+    .expect("CAV snapshot failure remains nonfatal");
+
+    assert_eq!(status.state, "running");
+    let events = fs::read_to_string(operator_events_path(&loaded)).expect("operator events");
+    assert!(events.contains("\"event\":\"csm_cav_status_write_failed\""));
+    assert!(events.contains("\"status\":\"blocked_nonfatal\""));
+}
+
+#[test]
 fn agent_checkpoint_policy_clamps_cadence_and_governs_requests() {
     let root = temp_dir("agent-checkpoint-policy");
     let spec = root.join("agent.yaml");
