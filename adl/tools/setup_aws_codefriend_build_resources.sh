@@ -302,7 +302,7 @@ service_policy_statements = [{
     ],
 }, {
     "Effect": "Allow",
-    "Action": ["s3:GetObject", "s3:PutObject", "s3:GetObjectVersion"],
+    "Action": ["s3:GetObject", "s3:PutObject", "s3:DeleteObject", "s3:GetObjectVersion"],
     "Resource": f"arn:aws:s3:::{cache_bucket}/{cache_prefix}/*",
 }, {
     "Effect": "Allow",
@@ -421,6 +421,7 @@ phases:
         echo "ADL_CODEFRIEND_TOOLCHAIN sccache=$(sccache --version)"
         echo "ADL_CODEFRIEND_TOOLCHAIN lld=$(ld.lld --version | head -n 1)"
         echo "ADL_CODEFRIEND_TOOLCHAIN zstd=$(zstd --version | head -n 1)"
+        echo "ADL_CODEFRIEND_TOOLCHAIN_SOURCE image=prebuilt per_job_install=false"
         echo "ADL_CODEFRIEND_PREFLIGHT status=passed image_digest_pinned=true source_sha_verified=true"
       - rm -rf /codebuild/adl-source
       - mkdir -p /codebuild/adl-source /codebuild/adl-target
@@ -485,14 +486,23 @@ phases:
           export ADL_CODEFRIEND_TARGET_CACHE_KEY
         fi
         ADL_CODEFRIEND_TARGET_CACHE_URI="s3://${ADL_CODEFRIEND_TARGET_CACHE_BUCKET}/${ADL_CODEFRIEND_TARGET_CACHE_PREFIX}/${ADL_CODEFRIEND_TARGET_CACHE_KEY}.tar.zst"
+        ADL_CODEFRIEND_TARGET_CACHE_OBJECT_KEY="${ADL_CODEFRIEND_TARGET_CACHE_PREFIX}/${ADL_CODEFRIEND_TARGET_CACHE_KEY}.tar.zst"
         export ADL_CODEFRIEND_TARGET_CACHE_URI
+        export ADL_CODEFRIEND_TARGET_CACHE_OBJECT_KEY
         echo "ADL_CODEFRIEND_TARGET_CACHE mode=${ADL_CODEFRIEND_TARGET_CACHE_MODE} key=${ADL_CODEFRIEND_TARGET_CACHE_KEY}"
         if [ "${ADL_CODEFRIEND_TARGET_CACHE_MODE}" = "s3-tar" ]; then
-          if aws s3 cp "${ADL_CODEFRIEND_TARGET_CACHE_URI}" /tmp/adl-codefriend-target-cache.tar.zst >/tmp/adl-codefriend-target-cache-restore.log 2>&1; then
+          if expected_cache_checksum="$(aws s3api head-object --bucket "$ADL_CODEFRIEND_TARGET_CACHE_BUCKET" --key "$ADL_CODEFRIEND_TARGET_CACHE_OBJECT_KEY" --query 'Metadata.sha256' --output text 2>/tmp/adl-codefriend-target-cache-restore.log)" &&
+             [ -n "$expected_cache_checksum" ] && [ "$expected_cache_checksum" != "None" ] &&
+             aws s3 cp "${ADL_CODEFRIEND_TARGET_CACHE_URI}" /tmp/adl-codefriend-target-cache.tar.zst >>/tmp/adl-codefriend-target-cache-restore.log 2>&1; then
+            actual_cache_checksum="$(sha256sum /tmp/adl-codefriend-target-cache.tar.zst | awk '{print $1}')"
+            if [ "$actual_cache_checksum" != "$expected_cache_checksum" ]; then
+              echo "ADL_CODEFRIEND_PREFLIGHT status=failed classification=cache_configuration target_cache_checksum_failed" >&2
+              exit 45
+            fi
             rm -rf /codebuild/adl-target
             mkdir -p /codebuild/adl-target
             if tar -I 'zstd -d -T0' -xf /tmp/adl-codefriend-target-cache.tar.zst -C /codebuild; then
-              echo "ADL_CODEFRIEND_TARGET_CACHE_RESTORE status=hit"
+              echo "ADL_CODEFRIEND_TARGET_CACHE_RESTORE status=hit checksum=verified"
             else
               echo "ADL_CODEFRIEND_PREFLIGHT status=failed classification=cache_configuration target_cache_extract_failed" >&2
               exit 45
@@ -507,20 +517,50 @@ phases:
           echo "ADL_CODEFRIEND_TARGET_CACHE_RESTORE status=disabled"
         fi
       - |
+        publish_target_cache() {
+          local source="$1"
+          if [ "${ADL_CODEFRIEND_TARGET_CACHE_MODE}" = "s3-tar" ] && [ -d "$CARGO_TARGET_DIR" ]; then
+            cache_upload_suffix="${CODEBUILD_BUILD_ID##*:}"
+            cache_upload_uri="${ADL_CODEFRIEND_TARGET_CACHE_URI}.upload-${cache_upload_suffix}"
+            tar -I 'zstd -T0 -1' -cf /tmp/adl-codefriend-target-cache.tar.zst -C /codebuild adl-target
+            cache_checksum="$(sha256sum /tmp/adl-codefriend-target-cache.tar.zst | awk '{print $1}')"
+            aws s3 cp /tmp/adl-codefriend-target-cache.tar.zst "$cache_upload_uri" --metadata "sha256=${cache_checksum}" >/tmp/adl-codefriend-target-cache-save.log
+            aws s3 cp "$cache_upload_uri" "$ADL_CODEFRIEND_TARGET_CACHE_URI" >>/tmp/adl-codefriend-target-cache-save.log
+            aws s3 rm "$cache_upload_uri" >>/tmp/adl-codefriend-target-cache-save.log
+            echo "ADL_CODEFRIEND_TARGET_CACHE_SAVE status=uploaded checksum=verified atomic=true source=${source}"
+          elif [ "${ADL_CODEFRIEND_TARGET_CACHE_MODE}" = "local" ]; then
+            echo "ADL_CODEFRIEND_TARGET_CACHE_SAVE status=local-cache source=${source}"
+          else
+            echo "ADL_CODEFRIEND_TARGET_CACHE_SAVE status=skipped source=${source}"
+          fi
+        }
+        prepared="false"
+        if [ -n "${ADL_CODEFRIEND_BUILD_PREPARE_COMMAND:-}" ]; then
+          echo "ADL_CODEFRIEND_BUILD_PREPARE status=started"
+          set +e
+          bash -lc "$ADL_CODEFRIEND_BUILD_PREPARE_COMMAND"
+          prepare_status=$?
+          set -e
+          if [ "$prepare_status" -ne 0 ]; then
+            echo "ADL_CODEFRIEND_TARGET_CACHE_SAVE status=skipped-prepare-failed"
+            exit "$prepare_status"
+          fi
+          echo "ADL_CODEFRIEND_BUILD_PREPARE status=completed"
+          prepared="true"
+          publish_target_cache prepare
+        fi
+        echo "ADL_CODEFRIEND_BUILD_COMMAND status=started"
         set +e
         bash -lc "$ADL_CODEFRIEND_BUILD_COMMAND"
         command_status=$?
         set -e
-        if [ "$command_status" -eq 0 ] && [ "${ADL_CODEFRIEND_TARGET_CACHE_MODE}" = "s3-tar" ] && [ -d "$CARGO_TARGET_DIR" ]; then
-          tar -I 'zstd -T0 -1' -cf /tmp/adl-codefriend-target-cache.tar.zst -C /codebuild adl-target
-          aws s3 cp /tmp/adl-codefriend-target-cache.tar.zst "${ADL_CODEFRIEND_TARGET_CACHE_URI}" >/tmp/adl-codefriend-target-cache-save.log
-          echo "ADL_CODEFRIEND_TARGET_CACHE_SAVE status=uploaded"
-        elif [ "$command_status" -ne 0 ] && [ "${ADL_CODEFRIEND_TARGET_CACHE_MODE}" = "s3-tar" ]; then
-          echo "ADL_CODEFRIEND_TARGET_CACHE_SAVE status=skipped-command-failed"
-        elif [ "${ADL_CODEFRIEND_TARGET_CACHE_MODE}" = "local" ]; then
-          echo "ADL_CODEFRIEND_TARGET_CACHE_SAVE status=local-cache"
-        else
-          echo "ADL_CODEFRIEND_TARGET_CACHE_SAVE status=skipped"
+        echo "ADL_CODEFRIEND_BUILD_COMMAND status=completed exit_code=${command_status}"
+        if [ "$prepared" = "false" ]; then
+          if [ "$command_status" -eq 0 ]; then
+            publish_target_cache command
+          else
+            echo "ADL_CODEFRIEND_TARGET_CACHE_SAVE status=skipped-command-failed"
+          fi
         fi
         exit "$command_status"
   post_build:

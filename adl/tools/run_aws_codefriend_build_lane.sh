@@ -76,13 +76,39 @@ with open(destination, "a", encoding="utf-8") as retained:
     for line in sys.stdin:
         line = re.sub(r"(?<![0-9])[0-9]{12}(?![0-9])", "[redacted-account]", line)
         line = re.sub(r"arn:aws[a-zA-Z-]*:[^\s]+", "[redacted-arn]", line)
-        line = re.sub(r"(?i)(authorization|token|secret|credential)([=:]\s*)[^\s]+", r"\1\2[redacted]", line)
+        line = re.sub(r"(?:AKIA|ASIA)[0-9A-Z]{16}", "[redacted-access-key]", line)
+        line = re.sub(r"(?i)(authorization\s*[:=]\s*)(?:bearer|basic)\s+[^\s]+", r"\1[redacted]", line)
+        line = re.sub(r"(?i)(authorization\s*[:=]\s*)[^\s]+", r"\1[redacted]", line)
+        line = re.sub(r"(?i)(\"?(?:token|secret|credential|api[_-]?key)\"?\s*[:=]\s*)(?:\"[^\"]*\"|[^\s]+)", r"\1[redacted]", line)
         retained.write(line)
         retained.flush()
         if echo_to_stderr:
             sys.stderr.write(line)
             sys.stderr.flush()
 ' "$destination" "$echo_to_stderr"
+}
+
+verify_retained_log_redaction() {
+  local path="$1"
+  [ -f "$path" ] || return 0
+  python3 - "$path" <<'PY'
+import re
+import sys
+from pathlib import Path
+
+text = Path(sys.argv[1]).read_text(encoding="utf-8", errors="replace")
+patterns = {
+    "aws_account_id": r"(?<![0-9])[0-9]{12}(?![0-9])",
+    "aws_arn": r"arn:aws[a-zA-Z-]*:",
+    "aws_access_key": r"(?:AKIA|ASIA)[0-9A-Z]{16}",
+    "authorization_value": r"(?i)authorization\s*[:=]\s*(?!\[redacted\])(?:bearer\s+|basic\s+)?\S+",
+    "json_credential": r"(?i)\"(?:token|secret|credential|api[_-]?key)\"\s*:\s*\"(?!\[redacted\])[^\"]+\"",
+}
+found = [name for name, pattern in patterns.items() if re.search(pattern, text)]
+if found:
+    print("ERROR: retained CodeBuild log failed redaction verification: " + ",".join(found), file=sys.stderr)
+    raise SystemExit(1)
+PY
 }
 
 stop_log_tail() {
@@ -221,6 +247,7 @@ if [ "$MODE" = "run" ]; then
   [ "$SOURCE_VERSION" != "HEAD" ] || die "--source-version HEAD is ambiguous"
 fi
 if [ "$FULL_NEXTEST" = "true" ]; then
+  ENV_OVERRIDES+=("ADL_CODEFRIEND_BUILD_PREPARE_COMMAND=cd adl && cargo nextest run --no-run")
   ENV_OVERRIDES+=("ADL_CODEFRIEND_BUILD_COMMAND=cd adl && cargo nextest run --test-threads 18 --no-fail-fast --status-level all --final-status-level slow")
 fi
 
@@ -233,6 +260,7 @@ if [ -z "$EXPECTED_ACCOUNT_SHA256" ]; then
   EXPECTED_ACCOUNT_SHA256="$(
     python3 - <<'PY' "$ROOT/docs/milestones/v0.91.7/review/build_throughput/remote_validation_4603/live_run_summary_retry11_agentlogic_hotcache.json"
 import json
+import re
 import sys
 from pathlib import Path
 
@@ -416,8 +444,15 @@ else
   printf '{"dry_run":true}\n' >"$STATUS_PATH"
 fi
 
-python3 - <<'PY' "$OUT_PATH" "$MODE" "$AWS_REGION" "$AWS_PROFILE" "$PROJECT_NAME" "$SOURCE_VERSION" "$CHECK_ACCOUNT" "$ACCOUNT_HASH_MATCHED" "$REQUEST_PATH" "$RESPONSE_PATH" "$STATUS_PATH" "$BUILD_ID" "$WAIT_FOR_BUILD" "$BUILD_STATUS" "$BUILD_SUCCEEDED" "$LOG_PATH"
+LOG_REDACTION_VERIFIED="not_applicable"
+if [ -f "$LOG_PATH" ]; then
+  verify_retained_log_redaction "$LOG_PATH"
+  LOG_REDACTION_VERIFIED="true"
+fi
+
+python3 - <<'PY' "$OUT_PATH" "$MODE" "$AWS_REGION" "$AWS_PROFILE" "$PROJECT_NAME" "$SOURCE_VERSION" "$CHECK_ACCOUNT" "$ACCOUNT_HASH_MATCHED" "$REQUEST_PATH" "$RESPONSE_PATH" "$STATUS_PATH" "$BUILD_ID" "$WAIT_FOR_BUILD" "$BUILD_STATUS" "$BUILD_SUCCEEDED" "$LOG_PATH" "$LOG_REDACTION_VERIFIED" "$FULL_NEXTEST"
 import json
+import re
 import sys
 from pathlib import Path
 
@@ -440,6 +475,8 @@ summary = {
     "build_succeeded": sys.argv[15] == "true",
     "aws_response_redacted": True,
     "retained_log_path": sys.argv[16] if Path(sys.argv[16]).exists() else "",
+    "retained_log_redaction_verified": sys.argv[17],
+    "full_nextest": sys.argv[18] == "true",
 }
 status_path = Path(sys.argv[11])
 if status_path.exists():
@@ -458,8 +495,47 @@ if status_path.exists():
             }
             for phase in (status.get("phases") or [])
         ]
+log_path = Path(sys.argv[16])
+if log_path.exists():
+    log_text = log_path.read_text(encoding="utf-8", errors="replace")
+    emitted_markers = []
+    for line in log_text.splitlines():
+        match = re.fullmatch(r"(?:\d{4}-\d{2}-\d{2}T\S+\s+)?(ADL_CODEFRIEND_[^\r\n]+)", line.strip())
+        if match:
+            emitted_markers.append(match.group(1))
+
+    def emitted(prefix):
+        return any(marker.startswith(prefix) for marker in emitted_markers)
+
+    summary["self_verification"] = {
+        "preflight_passed": emitted("ADL_CODEFRIEND_PREFLIGHT status=passed"),
+        "prebuilt_toolchain": emitted("ADL_CODEFRIEND_TOOLCHAIN_SOURCE image=prebuilt per_job_install=false"),
+        "prepare_completed": emitted("ADL_CODEFRIEND_BUILD_PREPARE status=completed"),
+        "build_command_succeeded": emitted("ADL_CODEFRIEND_BUILD_COMMAND status=completed exit_code=0"),
+        "target_cache_restore_verified": emitted("ADL_CODEFRIEND_TARGET_CACHE_RESTORE status=hit checksum=verified"),
+        "target_cache_save_verified": emitted("ADL_CODEFRIEND_TARGET_CACHE_SAVE status=uploaded checksum=verified atomic=true"),
+    }
+    required = (
+        "preflight_passed",
+        "prebuilt_toolchain",
+        "prepare_completed",
+        "build_command_succeeded",
+        "target_cache_save_verified",
+    )
+    summary["self_verification_passed"] = all(summary["self_verification"][key] for key in required)
 Path(sys.argv[1]).write_text(json.dumps(summary, indent=2, sort_keys=True) + "\n")
 PY
+
+if [ "$MODE" = "run" ] && [ "$WAIT_FOR_BUILD" = "true" ] && [ "$FULL_NEXTEST" = "true" ] && [ "$BUILD_SUCCEEDED" = "true" ]; then
+  python3 - <<'PY' "$OUT_PATH" || die "CodeBuild succeeded but required self-verification markers were missing"
+import json
+import sys
+from pathlib import Path
+
+summary = json.loads(Path(sys.argv[1]).read_text())
+raise SystemExit(0 if summary.get("self_verification_passed") is True else 1)
+PY
+fi
 
 printf 'aws_codefriend_build_summary=%s\n' "$OUT_PATH"
 if [ "$MODE" = "dry-run" ]; then

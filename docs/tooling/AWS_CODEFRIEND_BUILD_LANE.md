@@ -32,7 +32,7 @@ Create or update the CodeBuild project, service role, and GitHub OIDC start
 role. The helper resolves the approved ECR tag to an immutable digest before it
 updates the project. The image must already contain Rust, `cargo-nextest`,
 `sccache`, `lld`, `zstd`, AWS CLI, and Git; jobs never install those tools. The
-build uses 18 Cargo jobs and eight nextest workers on XLARGE, native S3
+build uses 18 Cargo jobs and 18 nextest workers on XLARGE, native S3
 `sccache`, and a compatibility-keyed S3 target archive. Both build phases put
 `127.0.0.1` and `localhost` in upper- and lowercase proxy-bypass variables so
 runtime API and OTLP loopback tests never route through an external proxy. It
@@ -174,8 +174,13 @@ for that cleanup path.
 The current lane uses native S3 `sccache` for compiler artifacts and an S3
 `.tar.zst` target archive for repeated exact-revision builds. The target-cache
 key includes the resolved source SHA, Cargo lock hash, immutable image digest,
-Rust version, linker flags, and incremental posture. Only successful commands
-publish an archive. CodeBuild's local cache is limited to dependency indexes:
+Rust version, linker flags, and incremental posture. The canonical broad lane
+first runs `cargo nextest run --no-run`, publishes the resulting target archive,
+and then runs the tests. A test failure therefore retains successful compilation
+work. Archive publication writes a SHA-256 metadata field on a temporary S3
+object and then server-side copies that single object to the stable key; restore
+requires the object metadata to match the downloaded archive before extraction.
+CodeBuild's local cache is limited to dependency indexes:
 
 ```text
 /root/.cargo/registry/**/*
@@ -185,6 +190,13 @@ publish an archive. CodeBuild's local cache is limited to dependency indexes:
 Do not add `/root/.cargo/bin`, `/root/.rustup`, or `/codebuild/adl-target` to
 CodeBuild local custom-cache paths. Those paths can shadow the immutable image
 toolchain or restore incompatible linker artifacts.
+
+The run summary records `self_verification` booleans for image preflight,
+prebuilt-toolchain use, compile preparation, build-command completion, and
+verified target-cache restore/save. It also records whether the retained log
+passed a post-capture scan for raw AWS account IDs, ARNs, and access-key forms.
+Treat a missing or false required marker as failed proof even when CodeBuild
+reports a terminal success.
 
 Compiler artifacts are stored by `sccache` itself under:
 
