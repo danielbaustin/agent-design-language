@@ -1,0 +1,169 @@
+{
+  "schema": "adl.runtime_v3.parity_matrix.v1",
+  "baseline_issue": 5170,
+  "sprint_issue": 5174,
+  "contract_issue": 5176,
+  "targets": {
+    "implementation_loc": 10000,
+    "implementation_loc_escape_ceiling": 20000,
+    "test_count_exclusive_max": 1000
+  },
+  "source_roots": [
+    "adl-runtime/src",
+    "adl/src/runtime_v2",
+    "adl-runtime-kernel/src"
+  ],
+  "coverage_policy": {
+    "baseline_manifest": "docs/architecture/runtime_v3_baseline_modules.v1.json",
+    "baseline_files": "all Rust source files below adl-runtime/src and adl/src/runtime_v2, including nested modules",
+    "grouping_rule": "capability entries route cohesive retained behavior, while the baseline manifest separately prevents source modules from disappearing unnoticed; module-to-capability closure is a required #5179 shadow-parity output and is not claimed here",
+    "unmapped_behavior": "fail the #5179 shadow-parity gate or add an explicit reviewed non-goal before cutover",
+    "ownership_rule": "matrix routing does not transfer ownership from open Runtime v2 issues"
+  },
+  "capabilities": [
+    {
+      "id": "kernel.lifecycle",
+      "sources": ["adl-runtime/src/supervision.rs", "adl/src/runtime_v2/kernel_loop.rs"],
+      "runtime_v3_owner": "kernel supervisor",
+      "disposition": "implemented_seed",
+      "parity": "typed completion, restart/degrade/fatal policy, readiness, bounded shutdown",
+      "proof": "adl-runtime-kernel/tests/kernel.rs"
+    },
+    {
+      "id": "kernel.topology_and_backpressure",
+      "sources": ["adl-runtime/src/topology.rs", "adl-runtime/src/backpressure.rs"],
+      "runtime_v3_owner": "topology and channel services",
+      "disposition": "implemented_seed",
+      "parity": "validated DAG, typed bounded ports, explicit full policy",
+      "proof": "adl-runtime-kernel/tests/kernel.rs"
+    },
+    {
+      "id": "service.contracts_and_configuration",
+      "sources": ["adl-runtime/src/runtime_api.rs", "adl/src/runtime_v2/types.rs"],
+      "runtime_v3_owner": "service contract and registry",
+      "disposition": "contract_defined",
+      "parity": "versioned identity, dependencies, capabilities, ports, lifecycle, config schema",
+      "proof": "adl-runtime-kernel/tests/contracts.rs"
+    },
+    {
+      "id": "continuity.replay_recovery",
+      "sources": ["adl/src/runtime_v2/snapshot.rs", "adl/src/runtime_v2/recovery.rs", "adl/src/runtime_v2/quarantine.rs"],
+      "runtime_v3_owner": "continuity service",
+      "disposition": "planned_5181",
+      "parity": "versioned checkpoint, canonical replay, recovery eligibility, quarantine",
+      "proof": "shared Runtime v2 fixtures plus Runtime v3 restart proofs"
+    },
+    {
+      "id": "private_state.security",
+      "sources": ["adl/src/runtime_v2/private_state*.rs", "adl/src/runtime_v2/security.rs", "adl/src/runtime_v2/access_control.rs"],
+      "runtime_v3_owner": "governed state boundary",
+      "disposition": "planned_5178",
+      "parity": "visibility, sealing, lineage, anti-equivocation, sanctuary, authorization",
+      "proof": "ported contract fixtures without raw private-state exposure"
+    },
+    {
+      "id": "control.health_observability",
+      "sources": ["adl/src/runtime_v2/operator.rs", "adl/src/runtime_v2/observatory*.rs", "adl-runtime/src/runtime_api.rs"],
+      "runtime_v3_owner": "control and observability services",
+      "disposition": "planned_5177",
+      "parity": "coherent snapshot, governed commands, logs, metrics, traces, health",
+      "proof": "control API and correlation contract tests"
+    },
+    {
+      "id": "reasoning.graphs_and_loops",
+      "sources": ["adl/src/runtime_v2/reasoning_graph.rs", "adl/src/runtime_v2/loop_runtime.rs"],
+      "runtime_v3_owner": "reasoning service",
+      "disposition": "planned_5180",
+      "parity": "graph validation, bounded loops, deterministic replay and resume continuity",
+      "proof": "shared graph and loop negative fixtures"
+    },
+    {
+      "id": "learning.adaptive_dag",
+      "sources": ["adl/src/runtime_v2/governed_learning_substrate.rs", "v0.92 adaptive-learning planning"],
+      "runtime_v3_owner": "adaptive learning service",
+      "disposition": "planned_5180",
+      "parity": "evaluation feedback, stateful adaptation, policy-governed graph mutation",
+      "proof": "bounded convergence, invalid mutation, rollback, and resume fixtures"
+    },
+    {
+      "id": "governance.freedom_gate_aee",
+      "sources": ["adl/src/runtime_v2/boot_admission.rs", "adl/src/runtime_v2/transition_authority.rs", "adl/src/runtime_v2/aee_obsmem_pvf_trace_handoff.rs"],
+      "runtime_v3_owner": "Freedom Gate and AEE services",
+      "disposition": "planned_5178",
+      "parity": "commitment mediation, lawful execution, refusal, appeal, audit",
+      "proof": "allow/refuse/revoke/delegate/recover fixtures"
+    },
+    {
+      "id": "contracts.delegation_resources",
+      "sources": ["adl/src/runtime_v2/contracts.rs", "adl/src/runtime_v2/delegation_subcontract.rs", "adl/src/runtime_v2/resource_stewardship_bridge.rs"],
+      "runtime_v3_owner": "governed execution services",
+      "disposition": "planned_5178",
+      "parity": "contract lifecycle, delegation constraints, resource limits, attribution",
+      "proof": "shared contract and negative-case fixtures"
+    },
+    {
+      "id": "agents.providers_scheduler",
+      "sources": ["adl-runtime/src/resident_agent.rs", "adl/src/runtime_v2/godel_agent_runtime.rs", "adl/src/runtime_v2/csm_run.rs"],
+      "runtime_v3_owner": "agent, provider, and scheduler services",
+      "disposition": "planned_5183",
+      "parity": "resident lifecycle, provider binding, admission, shepherd coordination",
+      "proof": "deterministic adapters and representative multi-agent topology"
+    },
+    {
+      "id": "network.acip_a2a_cloud",
+      "sources": ["adl-runtime/src/networking.rs", "adl/src/runtime_v2/acip_hardening.rs", "adl/src/runtime_v2/a2a_adapter_boundary.rs"],
+      "runtime_v3_owner": "external integration services",
+      "disposition": "planned_5183",
+      "parity": "typed transport, authority, retry, timeout, idempotency, backpressure",
+      "proof": "credential-free adapter fixtures plus separately classified live proofs"
+    },
+    {
+      "id": "clock.checkpoint_lifelog",
+      "sources": ["adl/src/runtime_v2/agent_lifecycle_state.rs", "adl/src/runtime_v2/memory_identity_architecture.rs", "issue 5119"],
+      "runtime_v3_owner": "Chronosense, checkpoint, and lifelog services",
+      "disposition": "planned_5181_5183",
+      "parity": "qualified time, operational continuity, distinct autobiographical history",
+      "proof": "clock degradation and checkpoint/lifelog separation fixtures"
+    },
+    {
+      "id": "citizen.identity_memory",
+      "sources": ["adl/src/runtime_v2/citizen*.rs", "adl/src/runtime_v2/memory_identity_architecture.rs"],
+      "runtime_v3_owner": "agent state services",
+      "disposition": "adapter_after_v092_contracts",
+      "parity": "identity, lifecycle, continuity and memory references without private-state leakage",
+      "proof": "v0.92 identity and birthday contract fixtures"
+    },
+    {
+      "id": "moral_affect_wellbeing",
+      "sources": ["adl/src/runtime_v2/moral_*.rs", "adl/src/runtime_v2/affect_reasoning_control.rs", "adl/src/runtime_v2/wellbeing_metrics.rs"],
+      "runtime_v3_owner": "governed cognition services",
+      "disposition": "adapter_after_5178",
+      "parity": "policy inputs and review records remain governed domain components",
+      "proof": "existing deterministic moral and wellbeing fixtures"
+    },
+    {
+      "id": "curiosity_intelligence_theory_of_mind",
+      "sources": ["adl-runtime/src/curiosity.rs", "adl/src/runtime_v2/curiosity_engine.rs", "adl/src/runtime_v2/*intelligence*.rs", "adl/src/runtime_v2/theory_of_mind_foundation.rs"],
+      "runtime_v3_owner": "cognitive domain services",
+      "disposition": "adapter_after_5180",
+      "parity": "domain logic remains outside supervisor and communicates through contracts",
+      "proof": "existing domain fixtures through Runtime v3 adapters"
+    },
+    {
+      "id": "migration.shadow_parity",
+      "sources": ["adl/src/runtime_v2/minimal_integrated_runtime_path.rs", "adl/src/runtime_v2/integrated_csm_run.rs"],
+      "runtime_v3_owner": "shadow parity harness",
+      "disposition": "planned_5179",
+      "parity": "shared inputs, normalized outputs, explicit divergence and reversible facade",
+      "proof": "cross-runtime fixture matrix"
+    },
+    {
+      "id": "guardian.packaging_soak",
+      "sources": ["infra/rustysd/adl-runtime-kernel.service", "issue 5120"],
+      "runtime_v3_owner": "external guardian and closeout lane",
+      "disposition": "planned_5175",
+      "parity": "restart, signals, output capture, fault injection, soak, footprint",
+      "proof": "rustysd/Horust/platform matrix and bounded soak"
+    }
+  ]
+}

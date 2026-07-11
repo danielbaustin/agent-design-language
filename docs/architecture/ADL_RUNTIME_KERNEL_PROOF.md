@@ -186,3 +186,12 @@ This proof does not establish:
 
 Related issues #5111 through #5120 retain ownership of their existing runtime
 acceptance surfaces.
+
+## Runtime v3 Contract Gate
+
+Issue #5176 extends this seed with a lightweight, OSGi-inspired
+design-by-contract layer while preserving the architecture above. See
+`docs/architecture/RUNTIME_V3_SERVICE_CONTRACT_ARCHITECTURE.md` for the
+contract and baseline-comparison diagrams, and
+`docs/architecture/runtime_v3_parity_matrix.v1.json` for the machine-readable
+parity inventory and cumulative LoC/test targets.

@@ -1,0 +1,17 @@
+flowchart TB
+  G["External guardian<br/>rustysd, Horust, systemd, container"]
+  K["Tokio kernel supervisor<br/>lifecycle and task ownership"]
+  R["Validated service registry<br/>contract compatibility before spawn"]
+  C1["Service component<br/>identity + semver capabilities"]
+  C2["Service component<br/>typed ports + lifecycle guarantees"]
+  C3["Service component<br/>config schema + failure policy"]
+  E["Evidence plane<br/>events, snapshots, checkpoints"]
+
+  G --> K
+  K --> R
+  R --> C1
+  R --> C2
+  R --> C3
+  C1 --> E
+  C2 --> E
+  C3 --> E

@@ -1,0 +1,30 @@
+classDiagram
+  class ServiceContract {
+    schema
+    component_id
+    service_name
+    service_version
+    config_schema
+    determinism_class
+    lifecycle_guarantees
+    failure_policy
+  }
+  class Capability {
+    name
+    semantic_version
+  }
+  class CapabilityRequirement {
+    name
+    semantic_version_range
+    optional
+  }
+  class ComponentSpec {
+    dependencies
+    typed_inputs
+    typed_outputs
+    failure_policy
+  }
+
+  ServiceContract "1" --> "*" Capability : provides
+  ServiceContract "1" --> "*" CapabilityRequirement : requires
+  ServiceContract "1" --> "1" ComponentSpec : binds exactly

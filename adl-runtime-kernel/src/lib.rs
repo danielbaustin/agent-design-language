@@ -2,6 +2,7 @@
 
 pub mod channel;
 pub mod component;
+pub mod contract;
 pub mod proof;
 pub mod supervisor;
 pub mod telemetry;
@@ -12,6 +13,7 @@ pub use component::{
     Component, ComponentContext, ComponentError, ComponentFactory, ComponentId, ComponentSpec,
     FailurePolicy, PortSpec, RunningState,
 };
+pub use contract::*;
 pub use supervisor::{Kernel, KernelError, KernelExit, KernelHandle};
 pub use telemetry::{BootstrapEvent, ClockAuthority, RuntimeRecorder};
 pub use topology::{ComponentRegistry, TopologyError, ValidatedTopology};
