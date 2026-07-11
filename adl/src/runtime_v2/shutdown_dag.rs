@@ -344,7 +344,10 @@ impl RuntimeV2CsmShutdownDag {
             "only when final disposition is publishable",
             "shutdown cloud notice policy must fail closed when not publishable",
         )?;
-        validate_requirement_list(&self.validation_commands, "shutdown_dag.validation_commands")?;
+        validate_requirement_list(
+            &self.validation_commands,
+            "shutdown_dag.validation_commands",
+        )?;
         if !self
             .validation_commands
             .iter()
@@ -374,7 +377,11 @@ impl RuntimeV2CsmShutdownDisposition {
             self.disposition_id.clone(),
             "shutdown_disposition.disposition_id",
         )?;
-        require_exact(&self.dag_ref, &dag.artifact_path, "shutdown_disposition.dag_ref")?;
+        require_exact(
+            &self.dag_ref,
+            &dag.artifact_path,
+            "shutdown_disposition.dag_ref",
+        )?;
         validate_relative_path(&self.artifact_path, "shutdown_disposition.artifact_path")?;
         match self.shutdown_kind.as_str() {
             "operator_requested_graceful" | "operator_requested_forced" => {}
@@ -662,6 +669,7 @@ fn disposition(
     }
 }
 
+#[allow(clippy::too_many_arguments)]
 fn step(
     step_id: &str,
     sequence: u32,
@@ -678,7 +686,10 @@ fn step(
         sequence,
         phase: phase.as_str().to_string(),
         component: component.to_string(),
-        required_before: required_before.iter().map(|value| value.to_string()).collect(),
+        required_before: required_before
+            .iter()
+            .map(|value| value.to_string())
+            .collect(),
         action: action.to_string(),
         expected_outcome: expected_outcome.to_string(),
         retained_evidence_ref: retained_evidence_ref.to_string(),
@@ -719,7 +730,9 @@ fn cloud_notice(
 
 fn validate_shutdown_steps(steps: &[RuntimeV2CsmShutdownStep]) -> Result<()> {
     if steps.len() != 12 {
-        return Err(anyhow!("shutdown DAG must contain the governed 12-step path"));
+        return Err(anyhow!(
+            "shutdown DAG must contain the governed 12-step path"
+        ));
     }
     let mut seen = std::collections::BTreeSet::new();
     let mut last_sequence = 0;
@@ -797,7 +810,10 @@ fn validate_component_outcomes(outcomes: &[RuntimeV2CsmShutdownComponentOutcome]
             &outcome.evidence_ref,
             "shutdown_disposition.component_outcome.evidence_ref",
         )?;
-        validate_nonempty_text(&outcome.phase, "shutdown_disposition.component_outcome.phase")?;
+        validate_nonempty_text(
+            &outcome.phase,
+            "shutdown_disposition.component_outcome.phase",
+        )?;
         validate_nonempty_text(
             &outcome.outcome,
             "shutdown_disposition.component_outcome.outcome",
@@ -827,7 +843,9 @@ fn validate_cloud_notices(
     final_state: &str,
 ) -> Result<()> {
     if notices.is_empty() {
-        return Err(anyhow!("shutdown disposition must record cloud notice decisions"));
+        return Err(anyhow!(
+            "shutdown disposition must record cloud notice decisions"
+        ));
     }
     let publishable = final_state != "shutdown_complete_notice_blocked";
     for notice in notices {

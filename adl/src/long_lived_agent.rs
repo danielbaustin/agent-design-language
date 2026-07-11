@@ -9,6 +9,7 @@ use adl_runtime::determinism::{
     DeterministicCoreDecision, DeterministicCoreInputKind, NondeterministicShellClass,
     ObservationConfidence,
 };
+use adl_runtime::shutdown::{GovernedShutdownState, ShutdownPhase, ShutdownStepOutcome};
 use anyhow::{anyhow, Context, Result};
 use chrono::{DateTime, Duration as ChronoDuration, Utc};
 use serde::Serialize;
@@ -20,7 +21,7 @@ use std::io::{BufRead, BufReader, Write};
 use std::path::{Path, PathBuf};
 use std::sync::Mutex;
 use std::thread;
-use std::time::Duration;
+use std::time::{Duration, Instant};
 
 use crate::chronosense::{
     capture_runtime_time_sync_status, start_runtime_time_observation, ChronosenseRuntimeService,
@@ -171,8 +172,9 @@ pub fn daemon(spec_path: &Path, options: DaemonOptions) -> Result<DaemonStatusRe
     let _runtime_api_shutdown_guard = RuntimeApiShutdownGuard {
         path: runtime_api_shutdown.clone(),
     };
-    let runtime_api_status =
+    let mut runtime_api =
         start_embedded_runtime_api_module(spec_path, &options, &runtime_api_shutdown);
+    let runtime_api_status = runtime_api.status.clone();
     let mut restart_count = 0u64;
     let mut last_child_exit = None;
     let _ = write_daemon_status(
@@ -211,73 +213,16 @@ pub fn daemon(spec_path: &Path, options: DaemonOptions) -> Result<DaemonStatusRe
 
     loop {
         if let Some(stop) = read_stop(&loaded)? {
-            let status = status(spec_path)?;
-            persist_status(&loaded, &status, "daemon_stop_observed")?;
-            let governed_stop = stop.classification == "governed_emergency_stop_recorded";
-            let daemon_state = if governed_stop {
-                "governed_stopped"
-            } else {
-                "stopped"
-            };
-            let daemon_event = if governed_stop {
-                "governed_emergency_stop_recorded"
-            } else {
-                "stop_completed"
-            };
-            let daemon_status = write_daemon_status(
+            return execute_governed_shutdown(
                 &runtime_context,
                 &loaded,
-                DaemonStatusInput {
-                    state: daemon_state,
-                    bounded_test_mode: options.no_sleep,
-                    restart_count,
-                    bounded_test_restart_limit: options.bounded_test_restart_limit,
-                    checkpoint_interval_secs,
-                    last_event: daemon_event,
-                    last_child_exit: last_child_exit.clone(),
-                    next_backoff_secs: 0,
-                },
-            )?;
-            let safe_fail = record_safe_fail_event(
-                &runtime_context,
-                &loaded,
-                SafeFailRecord {
-                    status: &status,
-                    trigger: "graceful_stop",
-                    restart_count,
-                    bounded_test_restart_limit: options.bounded_test_restart_limit,
-                    last_child_exit: last_child_exit.clone(),
-                    details: json!({"stop_ref": "stop.json"}),
-                },
-            )?;
-            let governed_notice = record_governed_runtime_notice(
-                &runtime_context,
-                &loaded,
-                GovernedNoticeInput {
-                    notice_kind: "graceful_shutdown",
-                    severity: "operator_notice",
-                    trigger: "graceful_stop",
-                    status: &status,
-                    restart_count,
-                    bounded_test_restart_limit: options.bounded_test_restart_limit,
-                    last_child_exit: last_child_exit.clone(),
-                    safe_fail: safe_fail.clone(),
-                    details: json!({"stop_ref": "stop.json"}),
-                },
-            )?;
-            emit_daemon_event(
-                &runtime_context,
-                &loaded,
-                daemon_event,
-                "completed",
+                &options,
                 restart_count,
-                json!({
-                    "recoverable_state": status.state,
-                    "safe_fail": safe_fail,
-                    "governed_notice": governed_notice
-                }),
-            )?;
-            return Ok(daemon_status);
+                checkpoint_interval_secs,
+                last_child_exit.clone(),
+                &stop.classification,
+                &mut runtime_api,
+            );
         }
 
         emit_daemon_event(
@@ -617,16 +562,26 @@ pub fn daemon(spec_path: &Path, options: DaemonOptions) -> Result<DaemonStatusRe
     }
 }
 
+struct EmbeddedRuntimeApi {
+    status: Value,
+    handle: Option<thread::JoinHandle<()>>,
+    shutdown_path: PathBuf,
+}
+
 fn start_embedded_runtime_api_module(
     spec_path: &Path,
     options: &DaemonOptions,
     shutdown_file: &Path,
-) -> Value {
+) -> EmbeddedRuntimeApi {
     let Some(bind) = options.api_bind.clone() else {
-        return json!({
-            "status": "disabled",
-            "reason": "api_bind_not_configured"
-        });
+        return EmbeddedRuntimeApi {
+            status: json!({
+                "status": "disabled",
+                "reason": "api_bind_not_configured"
+            }),
+            handle: None,
+            shutdown_path: shutdown_file.to_path_buf(),
+        };
     };
     let _ = fs::remove_file(shutdown_file);
     let api_options = CsmRuntimeApiOptions {
@@ -638,7 +593,7 @@ fn start_embedded_runtime_api_module(
         otel_status_path: options.api_otel_status_path.clone(),
         otel_log_path: options.api_otel_log_path.clone(),
     };
-    thread::Builder::new()
+    match thread::Builder::new()
         .name("csm-runtime-api".to_string())
         .spawn(move || {
             if let Err(err) = serve_runtime_api(api_options) {
@@ -651,22 +606,372 @@ fn start_embedded_runtime_api_module(
                 );
             }
         })
-        .map(|_| {
-            json!({
+    {
+        Ok(handle) => EmbeddedRuntimeApi {
+            status: json!({
                 "status": "embedded",
                 "bind": bind,
                 "thread": "csm-runtime-api",
                 "pid_model": "same_process_as_csm_daemon",
                 "shutdown_ref": path_artifact_ref(shutdown_file)
-            })
-        })
-        .unwrap_or_else(|err| {
-            json!({
+            }),
+            handle: Some(handle),
+            shutdown_path: shutdown_file.to_path_buf(),
+        },
+        Err(err) => EmbeddedRuntimeApi {
+            status: json!({
                 "status": "failed_to_start",
                 "bind": bind,
                 "error": err.to_string()
-            })
+            }),
+            handle: None,
+            shutdown_path: shutdown_file.to_path_buf(),
+        },
+    }
+}
+
+#[allow(clippy::too_many_arguments)]
+fn execute_governed_shutdown(
+    runtime_context: &CsmRuntimeContext,
+    loaded: &LoadedAgentSpec,
+    options: &DaemonOptions,
+    restart_count: u64,
+    checkpoint_interval_secs: u64,
+    last_child_exit: Option<String>,
+    stop_classification: &str,
+    runtime_api: &mut EmbeddedRuntimeApi,
+) -> Result<DaemonStatusRecord> {
+    let shutdown_id = format!(
+        "csm-shutdown-{}-{}",
+        loaded.spec.agent_instance_id,
+        Utc::now().timestamp_millis()
+    );
+    let mut shutdown = GovernedShutdownState::new(&shutdown_id)?;
+
+    record_shutdown_step(
+        loaded,
+        &mut shutdown,
+        ShutdownPhase::QuiesceAdmission,
+        ShutdownStepOutcome::Completed,
+        "runtime_api_and_scheduler",
+        "csm_shutdown_state.json",
+        json!({
+            "runtime_api_admission": "read_only_diagnostics_only",
+            "scheduler_admission": "closed",
+            "stop_ref": "stop.json"
+        }),
+    )?;
+    let _ = write_daemon_status(
+        runtime_context,
+        loaded,
+        DaemonStatusInput {
+            state: "stop_requested",
+            bounded_test_mode: options.no_sleep,
+            restart_count,
+            bounded_test_restart_limit: options.bounded_test_restart_limit,
+            checkpoint_interval_secs,
+            last_event: "shutdown_admission_quiesced",
+            last_child_exit: last_child_exit.clone(),
+            next_backoff_secs: 0,
+        },
+    )?;
+
+    let status = read_status(loaded)?.context("shutdown requires retained agent status")?;
+    let active_lease = read_lease(loaded)?;
+    let drain_outcome = if active_lease.is_some() {
+        ShutdownStepOutcome::RecoverablePartial
+    } else {
+        ShutdownStepOutcome::Completed
+    };
+    record_shutdown_step(
+        loaded,
+        &mut shutdown,
+        ShutdownPhase::DrainWork,
+        drain_outcome,
+        "scheduler_reasoning_runtime_aee",
+        "continuity_checkpoint.json",
+        json!({
+            "in_flight_work": if active_lease.is_some() { "serialized_as_recoverable_partial" } else { "none_between_cycles" },
+            "active_lease_observed": active_lease.is_some()
+        }),
+    )?;
+
+    let continuity_flush_error =
+        if std::env::var_os("ADL_CSM_TEST_SHUTDOWN_CONTINUITY_FAILURE").is_some() {
+            Some("injected shutdown continuity failure for integration proof".to_string())
+        } else {
+            persist_status(loaded, &status, "governed_shutdown_flush")
+                .err()
+                .map(|error| error.to_string())
+        };
+    let safe_fail = record_safe_fail_event(
+        runtime_context,
+        loaded,
+        SafeFailRecord {
+            status: &status,
+            trigger: "graceful_stop",
+            restart_count,
+            bounded_test_restart_limit: options.bounded_test_restart_limit,
+            last_child_exit: last_child_exit.clone(),
+            details: json!({"shutdown_id": shutdown_id, "stop_ref": "stop.json"}),
+        },
+    )?;
+    let checkpoint_current = fs::read(continuity_checkpoint_path(loaded))
+        .ok()
+        .and_then(|bytes| serde_json::from_slice::<Value>(&bytes).ok())
+        .and_then(|checkpoint| {
+            (checkpoint.get("checkpoint_reason").and_then(Value::as_str)
+                == Some("governed_shutdown_flush"))
+            .then_some(checkpoint)
         })
+        .is_some();
+    let safe_fail_status = safe_fail
+        .get("status")
+        .and_then(Value::as_str)
+        .unwrap_or("serialization_failed");
+    let continuity_outcome = if continuity_flush_error.is_some()
+        || safe_fail_status == "serialization_failed"
+        || !checkpoint_current
+    {
+        ShutdownStepOutcome::Blocked
+    } else if safe_fail_status != "serialized" {
+        ShutdownStepOutcome::RecoverablePartial
+    } else {
+        ShutdownStepOutcome::Completed
+    };
+    record_shutdown_step(
+        loaded,
+        &mut shutdown,
+        ShutdownPhase::FlushContinuity,
+        continuity_outcome,
+        "checkpoint_and_safe_fail",
+        "safe_fail_bundle.json",
+        json!({
+            "checkpoint_ref": "continuity_checkpoint.json",
+            "safe_fail": safe_fail,
+            "checkpoint_current": checkpoint_current,
+            "continuity_flush_error": continuity_flush_error
+        }),
+    )?;
+
+    record_lifecycle_lifelog(
+        loaded,
+        "governed_shutdown_lifelog_closed",
+        &shutdown_id,
+        &json!({"shutdown_id": shutdown_id, "status": "closed_after_flush"}),
+    )?;
+    record_shutdown_step(
+        loaded,
+        &mut shutdown,
+        ShutdownPhase::CloseLifelog,
+        ShutdownStepOutcome::Completed,
+        "lifelog",
+        "csm_lifecycle_lifelog.db.jsonl",
+        json!({"close_event": "governed_shutdown_lifelog_closed"}),
+    )?;
+
+    let initial_observability_barrier = verify_shutdown_observability_barrier(
+        runtime_context,
+        loaded,
+        "shutdown_observability_drain",
+        restart_count,
+        &shutdown_id,
+    )?;
+    record_shutdown_step(
+        loaded,
+        &mut shutdown,
+        ShutdownPhase::DrainObservability,
+        ShutdownStepOutcome::Completed,
+        "observability",
+        "operator_events.jsonl",
+        json!({
+            "flush_barrier": initial_observability_barrier,
+            "scope": "pre_final_notice_and_join_barrier",
+            "final_barrier_required_before_disposition": true
+        }),
+    )?;
+
+    let governed_notice = record_governed_runtime_notice(
+        runtime_context,
+        loaded,
+        GovernedNoticeInput {
+            notice_kind: "graceful_shutdown",
+            severity: "operator_notice",
+            trigger: "graceful_stop",
+            status: &status,
+            restart_count,
+            bounded_test_restart_limit: options.bounded_test_restart_limit,
+            last_child_exit: last_child_exit.clone(),
+            safe_fail: safe_fail.clone(),
+            details: json!({"shutdown_id": shutdown_id, "stop_ref": "stop.json"}),
+        },
+    )?;
+    let cloud_status = governed_notice
+        .pointer("/typed_channel_delivery/status")
+        .and_then(Value::as_str)
+        .unwrap_or("unknown");
+    let cloud_outcome = if cloud_status == "published_and_atomically_acknowledged" {
+        ShutdownStepOutcome::Completed
+    } else {
+        ShutdownStepOutcome::Blocked
+    };
+    record_shutdown_step(
+        loaded,
+        &mut shutdown,
+        ShutdownPhase::FinalCloudNotices,
+        cloud_outcome,
+        "cloud_bridge",
+        "csm_governed_notice_latest.json",
+        json!({"delivery_status": cloud_status, "notice": governed_notice}),
+    )?;
+
+    if let Some(parent) = runtime_api.shutdown_path.parent() {
+        fs::create_dir_all(parent)?;
+    }
+    fs::write(&runtime_api.shutdown_path, "shutdown\n")?;
+    let join_outcome = if let Some(handle) = runtime_api.handle.take() {
+        let deadline = Instant::now() + Duration::from_secs(10);
+        while !handle.is_finished() && Instant::now() < deadline {
+            thread::sleep(Duration::from_millis(25));
+        }
+        if handle.is_finished() {
+            match handle.join() {
+                Ok(()) => ShutdownStepOutcome::Completed,
+                Err(_) => ShutdownStepOutcome::Degraded,
+            }
+        } else {
+            ShutdownStepOutcome::RecoverablePartial
+        }
+    } else {
+        ShutdownStepOutcome::Completed
+    };
+    record_shutdown_step(
+        loaded,
+        &mut shutdown,
+        ShutdownPhase::JoinComponents,
+        join_outcome,
+        "supervised_component_set",
+        "csm_runtime_api_shutdown",
+        json!({"runtime_api_join": format!("{:?}", join_outcome)}),
+    )?;
+
+    record_shutdown_step(
+        loaded,
+        &mut shutdown,
+        ShutdownPhase::RetainDisposition,
+        ShutdownStepOutcome::Completed,
+        "csm_supervisor",
+        "csm_shutdown_disposition.json",
+        json!({"stop_classification": stop_classification}),
+    )?;
+    let final_state = if stop_classification == "governed_emergency_stop_recorded" {
+        "governed_stopped"
+    } else {
+        "stopped"
+    };
+    let daemon_status = write_daemon_status(
+        runtime_context,
+        loaded,
+        DaemonStatusInput {
+            state: final_state,
+            bounded_test_mode: options.no_sleep,
+            restart_count,
+            bounded_test_restart_limit: options.bounded_test_restart_limit,
+            checkpoint_interval_secs,
+            last_event: "governed_shutdown_complete",
+            last_child_exit,
+            next_backoff_secs: 0,
+        },
+    )?;
+    let final_observability_barrier = verify_shutdown_observability_barrier(
+        runtime_context,
+        loaded,
+        "shutdown_observability_finalized",
+        restart_count,
+        &shutdown_id,
+    )?;
+    if let Some(step) = shutdown
+        .steps
+        .iter_mut()
+        .find(|step| step.phase == ShutdownPhase::DrainObservability)
+    {
+        step.detail["final_barrier"] = final_observability_barrier;
+        step.detail["final_barrier_completed"] = json!(true);
+    }
+    let disposition = shutdown.disposition(final_state)?;
+    write_json_pretty(&shutdown_disposition_path(loaded), &disposition)?;
+    write_json_pretty(&shutdown_state_path(loaded), &shutdown)?;
+    Ok(daemon_status)
+}
+
+fn verify_shutdown_observability_barrier(
+    runtime_context: &CsmRuntimeContext,
+    loaded: &LoadedAgentSpec,
+    event: &str,
+    restart_count: u64,
+    shutdown_id: &str,
+) -> Result<Value> {
+    emit_daemon_event(
+        runtime_context,
+        loaded,
+        event,
+        "completed",
+        restart_count,
+        json!({"shutdown_id": shutdown_id}),
+    )?;
+    std::io::stderr()
+        .flush()
+        .context("failed flushing shutdown stderr observability")?;
+
+    let operator_events = fs::read_to_string(operator_events_path(loaded))
+        .context("failed reading shutdown operator-event barrier")?;
+    if !operator_events.contains(event) {
+        return Err(anyhow!("operator-event sink did not retain {event}"));
+    }
+    let mut sinks = vec![json!({"sink": "operator_events", "status": "retained"})];
+    for (env_name, marker) in [
+        ("ADL_OBSERVABILITY_LOG", format!("stage={event}")),
+        ("ADL_OTEL_LOG", format!("\"name\":\"csm.{event}\"")),
+    ] {
+        if let Some(path) = std::env::var_os(env_name).map(PathBuf::from) {
+            let retained = fs::read_to_string(&path)
+                .with_context(|| format!("failed reading configured {env_name} sink"))?;
+            if !retained.contains(&marker) {
+                return Err(anyhow!("configured {env_name} sink did not retain {event}"));
+            }
+            sinks.push(json!({"sink": env_name, "status": "retained"}));
+        }
+    }
+    if let Some(path) = std::env::var_os("ADL_OTEL_STATUS").map(PathBuf::from) {
+        let status: Value = serde_json::from_slice(
+            &fs::read(&path).context("failed reading configured ADL_OTEL_STATUS sink")?,
+        )
+        .context("configured ADL_OTEL_STATUS sink was not valid JSON")?;
+        if status.get("last_event").and_then(Value::as_str) != Some(&format!("csm.{event}")) {
+            return Err(anyhow!(
+                "configured ADL_OTEL_STATUS sink did not acknowledge {event}"
+            ));
+        }
+        sinks.push(json!({"sink": "ADL_OTEL_STATUS", "status": "acknowledged"}));
+    }
+    Ok(json!({
+        "event": event,
+        "mode": "synchronous_sink_verification",
+        "sinks": sinks
+    }))
+}
+
+fn record_shutdown_step(
+    loaded: &LoadedAgentSpec,
+    shutdown: &mut GovernedShutdownState,
+    phase: ShutdownPhase,
+    outcome: ShutdownStepOutcome,
+    component: &str,
+    evidence_ref: &str,
+    detail: Value,
+) -> Result<()> {
+    shutdown.record(phase, outcome, component, evidence_ref, detail)?;
+    write_json_pretty(&shutdown_state_path(loaded), shutdown)
 }
 
 struct RuntimeApiShutdownGuard {
@@ -2823,7 +3128,9 @@ fn record_governed_runtime_notice(
         "trigger": input.trigger,
         "notice_ref": "csm_governed_notice_latest.json",
         "notice_ledger_ref": "csm_governed_notices.jsonl",
-        "delivery_attempts": final_notice["delivery_attempts"].clone()
+        "delivery_attempts": final_notice["delivery_attempts"].clone(),
+        "typed_channel_delivery": final_notice["typed_channel_delivery"].clone(),
+        "delivery_completed_at": final_notice["delivery_completed_at"].clone()
     }))
 }
 

@@ -86,14 +86,25 @@ fn runtime_v2_csm_shutdown_dag_rejects_finalization_before_checkpoint_and_lifelo
         .iter()
         .position(|step| step.component == "cloud_bridge")
         .expect("cloud");
-    artifacts.dag.steps.swap(checkpoint_index, cloud_index);
+    let checkpoint_phase = artifacts.dag.steps[checkpoint_index].phase.clone();
+    let checkpoint_component = artifacts.dag.steps[checkpoint_index].component.clone();
+    let cloud_phase = artifacts.dag.steps[cloud_index].phase.clone();
+    let cloud_component = artifacts.dag.steps[cloud_index].component.clone();
+    artifacts.dag.steps[checkpoint_index].phase = cloud_phase;
+    artifacts.dag.steps[checkpoint_index].component = cloud_component;
+    artifacts.dag.steps[cloud_index].phase = checkpoint_phase;
+    artifacts.dag.steps[cloud_index].component = checkpoint_component;
 
-    assert!(artifacts
+    let error = artifacts
         .dag
         .validate()
-        .expect_err("checkpoint after cloud should fail")
-        .to_string()
-        .contains("phases must not finalize before prior drains and flushes"));
+        .expect_err("checkpoint after cloud should fail");
+    assert!(
+        error
+            .to_string()
+            .contains("phases must not finalize before prior drains and flushes"),
+        "unexpected shutdown ordering diagnostic: {error}"
+    );
 }
 
 #[test]

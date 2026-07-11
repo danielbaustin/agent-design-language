@@ -5,6 +5,51 @@ use std::collections::BTreeMap;
 use std::hash::{Hash, Hasher};
 use std::io::Write;
 
+fn spawn_loopback_control_plane() -> (
+    String,
+    std::sync::mpsc::Receiver<String>,
+    std::thread::JoinHandle<()>,
+) {
+    let listener = std::net::TcpListener::bind("127.0.0.1:0").expect("bind loopback control plane");
+    listener
+        .set_nonblocking(true)
+        .expect("set control plane nonblocking");
+    let addr = listener.local_addr().expect("control plane addr");
+    let (tx, rx) = std::sync::mpsc::channel();
+    let handle = std::thread::spawn(move || {
+        let started = std::time::Instant::now();
+        let mut last_request_at: Option<std::time::Instant> = None;
+        loop {
+            match listener.accept() {
+                Ok((mut stream, _)) => {
+                    stream
+                        .set_read_timeout(Some(std::time::Duration::from_secs(3)))
+                        .expect("set control plane read timeout");
+                    let request = read_http_request(&mut stream);
+                    tx.send(request).expect("retain control plane request");
+                    stream
+                        .write_all(
+                            b"HTTP/1.1 200 OK\r\nx-request-id: shutdown-live-receipt-1\r\ncontent-length: 2\r\n\r\nOK",
+                        )
+                        .expect("write control plane response");
+                    last_request_at = Some(std::time::Instant::now());
+                }
+                Err(err) if err.kind() == std::io::ErrorKind::WouldBlock => {
+                    let idle_done = last_request_at
+                        .map(|instant| instant.elapsed() > std::time::Duration::from_secs(2))
+                        .unwrap_or(false);
+                    if idle_done || started.elapsed() > std::time::Duration::from_secs(20) {
+                        break;
+                    }
+                    std::thread::sleep(std::time::Duration::from_millis(25));
+                }
+                Err(err) => panic!("control plane accept failed: {err}"),
+            }
+        }
+    });
+    (format!("http://{addr}/runtime-notices"), rx, handle)
+}
+
 fn spawn_loopback_otlp_collector() -> (
     String,
     std::sync::mpsc::Receiver<String>,
@@ -53,6 +98,14 @@ fn spawn_loopback_otlp_collector() -> (
 }
 
 fn read_http_body(stream: &mut std::net::TcpStream) -> String {
+    let request = read_http_request(stream);
+    request
+        .split_once("\r\n\r\n")
+        .map(|(_, body)| body.to_string())
+        .unwrap_or_default()
+}
+
+fn read_http_request(stream: &mut std::net::TcpStream) -> String {
     use std::io::Read;
     let mut buf = Vec::new();
     let mut temp = [0_u8; 4096];
@@ -69,11 +122,7 @@ fn read_http_body(stream: &mut std::net::TcpStream) -> String {
             }
         }
     }
-    if let Some(header_end) = find_header_end(&buf) {
-        String::from_utf8_lossy(&buf[header_end + 4..]).to_string()
-    } else {
-        String::new()
-    }
+    String::from_utf8_lossy(&buf).to_string()
 }
 
 fn find_header_end(buf: &[u8]) -> Option<usize> {
@@ -198,6 +247,10 @@ fn request_governed_stop_and_wait(spec: &std::path::Path, child: &mut std::proce
         "governed stop stderr:\n{}",
         String::from_utf8_lossy(&stop.stderr)
     );
+    wait_for_governed_shutdown_child(child);
+}
+
+fn wait_for_governed_shutdown_child(child: &mut std::process::Child) {
     let started = std::time::Instant::now();
     loop {
         if child
@@ -211,6 +264,67 @@ fn request_governed_stop_and_wait(spec: &std::path::Path, child: &mut std::proce
             let _ = child.kill();
             panic!("CSM daemon did not exit after governed stop request");
         }
+        std::thread::sleep(std::time::Duration::from_millis(100));
+    }
+}
+
+fn write_shutdown_probe_spec(root: &std::path::Path, agent_id: &str) -> std::path::PathBuf {
+    let spec = root.join("agent.yaml");
+    fs::write(
+        &spec,
+        format!(
+            r#"schema: adl.long_lived_agent_spec.v1
+agent_instance_id: {agent_id}
+display_name: Shutdown Probe
+state_root: state
+workflow:
+  kind: demo_adapter
+  name: shutdown_probe
+heartbeat:
+  interval_secs: 1
+  max_cycles: 2
+  stale_lease_after_secs: 60
+safety:
+  allow_network: false
+  allow_broker: false
+  allow_filesystem_writes_outside_state_root: false
+  allow_real_world_side_effects: false
+  require_public_artifact_sanitization: true
+  financial_advice: false
+  max_cycle_runtime_secs: 120
+  max_consecutive_failures: 2
+memory:
+  namespace: smoke/{agent_id}
+  write_policy: append_only
+"#
+        ),
+    )
+    .expect("write shutdown probe spec");
+    spec
+}
+
+fn wait_for_shutdown_probe_running(root: &std::path::Path) {
+    let status_path = root.join("state/daemon_status.json");
+    let started = std::time::Instant::now();
+    loop {
+        let running = fs::read(&status_path)
+            .ok()
+            .and_then(|bytes| serde_json::from_slice::<serde_json::Value>(&bytes).ok())
+            .and_then(|status| {
+                status
+                    .get("state")
+                    .and_then(serde_json::Value::as_str)
+                    .map(str::to_string)
+            })
+            .as_deref()
+            == Some("running");
+        if running {
+            return;
+        }
+        assert!(
+            started.elapsed() < std::time::Duration::from_secs(20),
+            "shutdown probe daemon did not reach running state"
+        );
         std::thread::sleep(std::time::Duration::from_millis(100));
     }
 }
@@ -1064,6 +1178,7 @@ memory:
     assert!(String::from_utf8_lossy(&bad_profile.stderr)
         .contains("unsupported csm backpressure profile"));
 
+    let (control_plane_url, control_plane_requests, control_plane) = spawn_loopback_control_plane();
     let (probe, addr) = reserve_csm_test_port("runtime API smoke");
     drop(probe);
     let mut child = std::process::Command::new(resolve_csm_exe())
@@ -1086,6 +1201,10 @@ memory:
             "ADL_OTEL_LOG",
             otel_log.to_str().expect("utf8 otel log path"),
         )
+        .env("ADL_CSM_NOTICE_CONTROL_PLANE_MODE", "live")
+        .env("ADL_CSM_NOTICE_CONTROL_PLANE_APPROVED", "1")
+        .env("ADL_CSM_NOTICE_CONTROL_PLANE_TARGET", "https")
+        .env("ADL_CSM_NOTICE_CONTROL_PLANE_URL", &control_plane_url)
         .stdout(std::process::Stdio::null())
         .stderr(std::process::Stdio::piped())
         .spawn()
@@ -1112,6 +1231,70 @@ memory:
     let shepherd = http_get_json(&addr, "/shepherd");
 
     request_governed_stop_and_wait(&spec, &mut child);
+    control_plane.join().expect("join loopback control plane");
+    let published_notices: Vec<_> = control_plane_requests.try_iter().collect();
+    assert!(
+        !published_notices.is_empty(),
+        "governed shutdown must publish at least one live control-plane notice"
+    );
+    assert!(published_notices.iter().all(|request| {
+        request
+            .lines()
+            .any(|line| line.to_ascii_lowercase().starts_with("idempotency-key:"))
+    }));
+    assert!(published_notices
+        .iter()
+        .any(|request| request.contains("\"notice_kind\":\"graceful_shutdown\"")));
+
+    let shutdown_state: serde_json::Value = serde_json::from_slice(
+        &fs::read(root.join("state/csm_shutdown_state.json")).expect("shutdown state"),
+    )
+    .expect("parse shutdown state");
+    let shutdown_disposition: serde_json::Value = serde_json::from_slice(
+        &fs::read(root.join("state/csm_shutdown_disposition.json")).expect("shutdown disposition"),
+    )
+    .expect("parse shutdown disposition");
+    let observed_phases: Vec<_> = shutdown_state["steps"]
+        .as_array()
+        .expect("shutdown steps")
+        .iter()
+        .map(|step| step["phase"].as_str().expect("shutdown phase"))
+        .collect();
+    assert_eq!(
+        observed_phases,
+        [
+            "quiesce_admission",
+            "drain_work",
+            "flush_continuity",
+            "close_lifelog",
+            "drain_observability",
+            "final_cloud_notices",
+            "join_components",
+            "retain_disposition",
+        ]
+    );
+    assert_eq!(shutdown_state["status"], "shutdown_complete");
+    assert_eq!(shutdown_state["admission_quiesced"], true);
+    assert_eq!(shutdown_disposition["status"], "retained");
+    assert_eq!(shutdown_disposition["final_state"], "governed_stopped");
+    assert_eq!(shutdown_disposition["publishable"], true);
+    assert_eq!(shutdown_disposition["blocked_count"], 0);
+    let cloud_notice_step = shutdown_disposition["steps"]
+        .as_array()
+        .expect("disposition steps")
+        .iter()
+        .find(|step| step["phase"] == "final_cloud_notices")
+        .expect("final cloud notice step");
+    assert_eq!(cloud_notice_step["outcome"], "completed");
+    assert_eq!(
+        cloud_notice_step["detail"]["notice"]["typed_channel_delivery"]["provider_receipt_id"],
+        "shutdown-live-receipt-1"
+    );
+    assert!(shutdown_disposition["steps"]
+        .as_array()
+        .expect("disposition steps")
+        .iter()
+        .any(|step| step["phase"] == "join_components"));
 
     assert_eq!(status["schema"], "adl.csm.runtime_api.status.v1");
     assert_eq!(
@@ -1238,6 +1421,93 @@ memory:
         );
         assert!(!raw.contains("Bearer "), "leaked bearer token:\n{raw}");
     }
+}
+
+#[test]
+fn csm_governed_shutdown_retains_continuity_and_publish_failures_without_false_success() {
+    let continuity_root = unique_test_temp_dir("csm-shutdown-continuity-failure");
+    let continuity_spec = write_shutdown_probe_spec(&continuity_root, "continuity-failure-agent");
+    let (control_plane_url, _requests, control_plane) = spawn_loopback_control_plane();
+    let mut continuity_child = std::process::Command::new(resolve_csm_exe())
+        .args([
+            "daemon",
+            "--spec",
+            continuity_spec.to_str().expect("utf8 continuity spec"),
+            "--checkpoint-interval-secs",
+            "1",
+            "--interval-secs",
+            "1",
+        ])
+        .env("ADL_CSM_NOTICE_CONTROL_PLANE_MODE", "live")
+        .env("ADL_CSM_NOTICE_CONTROL_PLANE_APPROVED", "1")
+        .env("ADL_CSM_NOTICE_CONTROL_PLANE_TARGET", "https")
+        .env("ADL_CSM_NOTICE_CONTROL_PLANE_URL", &control_plane_url)
+        .env("ADL_CSM_TEST_SHUTDOWN_CONTINUITY_FAILURE", "1")
+        .stdout(std::process::Stdio::null())
+        .stderr(std::process::Stdio::piped())
+        .spawn()
+        .expect("spawn continuity-failure daemon");
+    wait_for_shutdown_probe_running(&continuity_root);
+    request_governed_stop_and_wait(&continuity_spec, &mut continuity_child);
+    control_plane.join().expect("join continuity control plane");
+    let continuity_disposition: serde_json::Value = serde_json::from_slice(
+        &fs::read(continuity_root.join("state/csm_shutdown_disposition.json"))
+            .expect("continuity failure disposition"),
+    )
+    .expect("parse continuity failure disposition");
+    assert_eq!(continuity_disposition["publishable"], false);
+    let continuity_step = continuity_disposition["steps"]
+        .as_array()
+        .expect("continuity steps")
+        .iter()
+        .find(|step| step["phase"] == "flush_continuity")
+        .expect("continuity phase");
+    assert_eq!(continuity_step["outcome"], "blocked");
+    assert!(continuity_step["detail"]["continuity_flush_error"].is_string());
+
+    let publish_root = unique_test_temp_dir("csm-shutdown-publish-blocked");
+    let publish_spec = write_shutdown_probe_spec(&publish_root, "publish-blocked-agent");
+    let mut publish_child = std::process::Command::new(resolve_csm_exe())
+        .args([
+            "daemon",
+            "--spec",
+            publish_spec.to_str().expect("utf8 publish spec"),
+            "--checkpoint-interval-secs",
+            "1",
+            "--interval-secs",
+            "1",
+        ])
+        .env("ADL_CSM_NOTICE_CONTROL_PLANE_MODE", "live")
+        .env("ADL_CSM_NOTICE_CONTROL_PLANE_APPROVED", "1")
+        .env("ADL_CSM_NOTICE_CONTROL_PLANE_TARGET", "https")
+        .env(
+            "ADL_CSM_NOTICE_CONTROL_PLANE_URL",
+            "http://127.0.0.1:9/unreachable",
+        )
+        .stdout(std::process::Stdio::null())
+        .stderr(std::process::Stdio::piped())
+        .spawn()
+        .expect("spawn publish-blocked daemon");
+    wait_for_shutdown_probe_running(&publish_root);
+    request_governed_stop_and_wait(&publish_spec, &mut publish_child);
+    let publish_disposition: serde_json::Value = serde_json::from_slice(
+        &fs::read(publish_root.join("state/csm_shutdown_disposition.json"))
+            .expect("publish-blocked disposition"),
+    )
+    .expect("parse publish-blocked disposition");
+    assert_eq!(publish_disposition["publishable"], false);
+    assert_eq!(publish_disposition["blocked_count"], 1);
+    let cloud_step = publish_disposition["steps"]
+        .as_array()
+        .expect("publish steps")
+        .iter()
+        .find(|step| step["phase"] == "final_cloud_notices")
+        .expect("cloud notice phase");
+    assert_eq!(cloud_step["outcome"], "blocked");
+    assert_eq!(
+        cloud_step["detail"]["notice"]["typed_channel_delivery"]["cursor_advanced"],
+        false
+    );
 }
 
 #[test]

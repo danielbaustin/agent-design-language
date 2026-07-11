@@ -1139,7 +1139,7 @@ impl RuntimeChannelSender {
         let entries = tokio::task::spawn_blocking(move || spool.entries())
             .await
             .map_err(|error| RuntimeChannelError::Join(error.to_string()))??;
-        for (sequence, message) in entries {
+        if let Some((sequence, message)) = entries.into_iter().next() {
             {
                 let mut in_flight = self.replay_in_flight.lock().map_err(|_| {
                     RuntimeChannelError::Spool("replay in-flight lock poisoned".to_string())

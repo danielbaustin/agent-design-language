@@ -9,6 +9,7 @@ pub mod determinism;
 pub mod networking;
 pub mod resident_agent;
 pub mod runtime_api;
+pub mod shutdown;
 pub mod supervision;
 pub mod topology;
 

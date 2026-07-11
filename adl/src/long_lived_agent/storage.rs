@@ -54,6 +54,14 @@ pub(super) fn csm_notice_latest_path(loaded: &LoadedAgentSpec) -> PathBuf {
     loaded.state_root.join("csm_governed_notice_latest.json")
 }
 
+pub(super) fn shutdown_state_path(loaded: &LoadedAgentSpec) -> PathBuf {
+    loaded.state_root.join("csm_shutdown_state.json")
+}
+
+pub(super) fn shutdown_disposition_path(loaded: &LoadedAgentSpec) -> PathBuf {
+    loaded.state_root.join("csm_shutdown_disposition.json")
+}
+
 pub(super) fn governed_stop_path(loaded: &LoadedAgentSpec) -> PathBuf {
     loaded.state_root.join("governed_stop.json")
 }
