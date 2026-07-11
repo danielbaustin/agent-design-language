@@ -40,7 +40,7 @@ Rules:
 | --- | --- | --- |
 | Nessus | Fast no-cloud-cost remote validation on operator hardware | persistent remote target/cache; state cold or warm |
 | AWS Spot | Fast AWS/EC2 validation | fixed builder image plus retained warm EBS cache |
-| CodeBuild XLARGE | Scalable isolated CodeFriend-style repeated builds | fixed ECR image, stable `/codebuild` paths, local target cache, S3 `sccache` |
+| CodeBuild XLARGE | Scalable isolated CodeFriend-style repeated builds | immutable ECR digest, S3 `sccache`, compatibility-keyed S3 target archive |
 | Wuji/local | Local ARM work | no image-backed parity until ARM64 or multi-arch image exists |
 
 For scheduler routing without launching paid work:
@@ -200,9 +200,9 @@ bash adl/tools/run_aws_codefriend_build_lane.sh \
   --check-account \
   --profile agent-logic-admin \
   --project-name adl-codefriend-build \
-  --source-version <branch-or-commit> \
+  --source-version <40-character-commit-sha> \
   --region us-west-2 \
-  --env 'ADL_CODEFRIEND_BUILD_COMMAND=bash adl/tools/run_build_platform_benchmark.sh --platform codebuild --cache-posture fixed_builder_image_stable_local_target_cache_s3_sccache --out .adl/local-artifacts/build-platform/codebuild-summary.json --artifact-dir .adl/local-artifacts/build-platform/codebuild' \
+  --full-nextest \
   --out "$ADL_ARTIFACT_DIR/codebuild-live-summary.json" \
   --artifact-dir "$ADL_ARTIFACT_DIR/codebuild-live" \
   --wait \
@@ -214,9 +214,11 @@ Record:
 
 - project `adl-codefriend-build`
 - compute type
-- builder image tag
+- immutable builder image digest
 - stable `/codebuild/adl-source` and `/codebuild/adl-target` paths
-- CodeBuild local target cache and S3 `sccache` posture
+- 18 Cargo build jobs
+- S3 `sccache` and compatibility-keyed S3 target archive posture
+- redacted live CloudWatch stream attached by `--wait`
 - benchmark line
 - terminal CodeBuild status
 - redacted logs/artifacts
@@ -257,8 +259,9 @@ Every reported remote-build result should include:
 ## 8. Troubleshooting
 
 - Wrong AWS account: rerun the wrapper with `--check-account --profile agent-logic-admin`.
-- CodeBuild too slow: verify fixed ECR image, stable `/codebuild` paths,
-  local target cache, and S3 `sccache` hit rate.
+- CodeBuild too slow: verify the immutable ECR digest, 18 Cargo jobs, S3 target
+  cache restore result, and S3 `sccache` hit rate. Do not cache Cargo binaries,
+  rustup, or `/codebuild/adl-target` through CodeBuild local custom cache.
 - Spot interrupted: inspect `resume-state.json` and
   `wrapper-final-summary.json`, then rerun the same issue/ref/command context.
 - Spot too slow: verify retained EBS cache attachment and cleanup status.

@@ -1682,6 +1682,32 @@ memory: {}
         spec
     }
 
+    fn write_ready_typed_channel_state(state: &Path) {
+        fs::write(
+            state.join("csm_typed_channel_state.json"),
+            serde_json::to_string_pretty(&json!({
+                "schema": "adl.csm.typed_channel_state.v1",
+                "runtime_owner": "csm",
+                "status": "ready",
+                "required_channel_not_ready": false,
+                "last_event": "test_fixture_ready",
+                "last_receipt": null,
+                "summary": {
+                    "channel_count": 0,
+                    "queue_depth": 0,
+                    "durable_spool_depth": 0,
+                    "blocked_count": 0,
+                    "throttled_count": 0,
+                    "shed_count": 0
+                },
+                "channels": [],
+                "updated_at": Utc::now()
+            }))
+            .unwrap(),
+        )
+        .unwrap();
+    }
+
     fn test_api_bind(offset: u64) -> String {
         let port = 19950 + (offset % 47);
         format!("127.0.0.1:{port}")
@@ -2487,29 +2513,7 @@ memory: {}
             serde_json::to_string_pretty(&curiosity).unwrap(),
         )
         .unwrap();
-        fs::write(
-            state.join("csm_typed_channel_state.json"),
-            serde_json::to_string_pretty(&json!({
-                "schema": "adl.csm.typed_channel_state.v1",
-                "runtime_owner": "csm",
-                "status": "ready",
-                "required_channel_not_ready": false,
-                "last_event": "test_fixture_ready",
-                "last_receipt": null,
-                "summary": {
-                    "channel_count": 0,
-                    "queue_depth": 0,
-                    "durable_spool_depth": 0,
-                    "blocked_count": 0,
-                    "throttled_count": 0,
-                    "shed_count": 0
-                },
-                "channels": [],
-                "updated_at": Utc::now()
-            }))
-            .unwrap(),
-        )
-        .unwrap();
+        write_ready_typed_channel_state(&state);
         let options = CsmRuntimeApiOptions {
             spec_path: spec,
             bind: test_api_bind(SEQ.load(Ordering::SeqCst)),
@@ -2968,6 +2972,7 @@ memory: {}
             serde_json::to_string_pretty(&curiosity).unwrap(),
         )
         .unwrap();
+        write_ready_typed_channel_state(&state);
         let options = CsmRuntimeApiOptions {
             spec_path: spec,
             bind: test_api_bind(SEQ.load(Ordering::SeqCst)),

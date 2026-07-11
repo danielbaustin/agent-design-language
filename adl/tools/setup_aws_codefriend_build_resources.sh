@@ -14,7 +14,7 @@ Options:
   --project-name <name>           CodeBuild project. Default: adl-codefriend-build.
   --repo <owner/name>             GitHub repository. Default: danielbaustin/agent-design-language.
   --source-location <url>         CodeBuild GitHub source URL.
-  --compute-type <type>           CodeBuild compute type. Default: BUILD_GENERAL1_LARGE.
+  --compute-type <type>           CodeBuild compute type. Default: BUILD_GENERAL1_XLARGE.
   --image-uri <uri>               CodeBuild environment image. Default: ADL_AWS_CODEFRIEND_IMAGE,
                                   then adl-builder:v0.91.7-fixed.
   --cache-bucket <bucket>         S3 cache bucket. Default: adl-codefriend-build-cache.
@@ -42,13 +42,13 @@ REGION="${ADL_AWS_REGION:-us-west-2}"
 PROJECT_NAME="${ADL_AWS_CODEFRIEND_CODEBUILD_PROJECT:-adl-codefriend-build}"
 REPO="danielbaustin/agent-design-language"
 SOURCE_LOCATION="https://github.com/danielbaustin/agent-design-language.git"
-COMPUTE_TYPE="${ADL_AWS_CODEFRIEND_COMPUTE_TYPE:-BUILD_GENERAL1_LARGE}"
+COMPUTE_TYPE="${ADL_AWS_CODEFRIEND_COMPUTE_TYPE:-BUILD_GENERAL1_XLARGE}"
 IMAGE_URI="${ADL_AWS_CODEFRIEND_IMAGE:-adl-builder:v0.91.7-fixed}"
 CACHE_BUCKET="${ADL_AWS_CODEFRIEND_CACHE_BUCKET:-adl-codefriend-build-cache}"
 CACHE_PREFIX="${ADL_AWS_CODEFRIEND_CACHE_PREFIX:-codebuild/cache}"
 GITHUB_ROLE_NAME="adl-codefriend-github-actions-build-role"
 SERVICE_ROLE_NAME="adl-codefriend-codebuild-service-role"
-ARTIFACT_DIR=".adl/tmp/aws-codefriend-build-resource-setup"
+ARTIFACT_DIR=".adl/local-artifacts/aws-codefriend-build-resource-setup"
 MODE="check"
 
 while [ "$#" -gt 0 ]; do
@@ -163,6 +163,19 @@ print(json.loads(sys.argv[1]).get("Account", ""))
 PY
 )"
 [ -n "$account_id" ] || die "AWS profile did not return an account id"
+
+if [[ "$IMAGE_URI" == adl-builder:* ]]; then
+  IMAGE_URI="${account_id}.dkr.ecr.${REGION}.amazonaws.com/${IMAGE_URI}"
+fi
+if [[ "$IMAGE_URI" == *.dkr.ecr.*/*:* && "$IMAGE_URI" != *@sha256:* ]]; then
+  image_registry="${IMAGE_URI%%/*}"
+  image_repository_tag="${IMAGE_URI#*/}"
+  image_repository="${image_repository_tag%:*}"
+  image_tag="${image_repository_tag##*:}"
+  image_digest="$("$AWS_CLI" ecr describe-images "${aws_args[@]}" --region "$REGION" --repository-name "$image_repository" --image-ids "imageTag=$image_tag" --query 'imageDetails[0].imageDigest' --output text)"
+  [[ "$image_digest" == sha256:* ]] || die "CodeBuild builder image tag did not resolve to an immutable ECR digest"
+  IMAGE_URI="$image_registry/$image_repository@$image_digest"
+fi
 
 printf 'PASS account_profile_resolved profile=%s account_hash_available=true\n' "$PROFILE"
 
@@ -376,44 +389,63 @@ phases:
   install:
     commands:
       - set -euo pipefail
+      - export PATH="/usr/local/cargo/bin:/usr/local/bin:/usr/bin:/bin"
       - |
-        if ! command -v cargo >/dev/null 2>&1; then
-          curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y --profile minimal
+        require_tool() {
+          tool="$1"
+          if ! command -v "$tool" >/dev/null 2>&1; then
+            echo "ADL_CODEFRIEND_PREFLIGHT status=failed classification=missing_tool tool=$tool" >&2
+            exit 42
+          fi
+        }
+        for tool in rustc cargo cargo-nextest sccache ld.lld zstd aws git; do
+          require_tool "$tool"
+        done
+        case "${ADL_CODEFRIEND_EXPECTED_IMAGE:-}" in
+          *@sha256:*) ;;
+          *) echo "ADL_CODEFRIEND_PREFLIGHT status=failed classification=wrong_image expected_image_not_digest_pinned" >&2; exit 43 ;;
+        esac
+        printf '%s\\n' "${CODEBUILD_RESOLVED_SOURCE_VERSION:-}" | grep -Eq '^[0-9a-f]{40}$' || {
+          echo "ADL_CODEFRIEND_PREFLIGHT status=failed classification=wrong_ref resolved_source_sha_invalid" >&2
+          exit 44
+        }
+        if [ -n "${ADL_CODEFRIEND_EXPECTED_SOURCE_SHA:-}" ] && [ "$CODEBUILD_RESOLVED_SOURCE_VERSION" != "$ADL_CODEFRIEND_EXPECTED_SOURCE_SHA" ]; then
+          echo "ADL_CODEFRIEND_PREFLIGHT status=failed classification=wrong_ref expected_source_sha_mismatch" >&2
+          exit 44
         fi
-      - test ! -f "$HOME/.cargo/env" || . "$HOME/.cargo/env"
-      - rustc --version
-      - cargo --version
+        echo "ADL_CODEFRIEND_TOOLCHAIN rustc=$(rustc --version)"
+        echo "ADL_CODEFRIEND_TOOLCHAIN cargo=$(cargo --version)"
+        echo "ADL_CODEFRIEND_TOOLCHAIN nextest=$(cargo-nextest --version)"
+        echo "ADL_CODEFRIEND_TOOLCHAIN sccache=$(sccache --version)"
+        echo "ADL_CODEFRIEND_TOOLCHAIN lld=$(ld.lld --version | head -n 1)"
+        echo "ADL_CODEFRIEND_TOOLCHAIN zstd=$(zstd --version | head -n 1)"
+        echo "ADL_CODEFRIEND_PREFLIGHT status=passed image_digest_pinned=true source_sha_verified=true"
       - rm -rf /codebuild/adl-source
       - mkdir -p /codebuild/adl-source /codebuild/adl-target
       - tar -C "$CODEBUILD_SRC_DIR" -cf - . | tar -C /codebuild/adl-source -xf -
       - cd /codebuild/adl-source
       - |
-        if ! command -v ld.lld >/dev/null 2>&1 || ! command -v zstd >/dev/null 2>&1; then
-          apt-get update -y
-          apt-get install -y lld clang zstd
-        fi
-      - ld.lld --version
-      - zstd --version
-      - mkdir -p "$HOME/.cargo/bin" "$HOME/.cargo/registry" "$HOME/.cargo/git" "$HOME/.rustup" /codebuild/adl-target
+        [ "$(pwd -P)" = "/codebuild/adl-source" ] || {
+          echo "ADL_CODEFRIEND_PREFLIGHT status=failed classification=cache_configuration source_path_invalid" >&2
+          exit 45
+        }
+        [ -d /codebuild/adl-target ] && [ -w /codebuild/adl-target ] || {
+          echo "ADL_CODEFRIEND_PREFLIGHT status=failed classification=cache_configuration target_path_unwritable" >&2
+          exit 45
+        }
+      - mkdir -p "$HOME/.cargo/registry" "$HOME/.cargo/git" /codebuild/adl-target
       - export CARGO_TARGET_DIR="/codebuild/adl-target"
+      - export CARGO_BUILD_JOBS="${CARGO_BUILD_JOBS:-18}"
       - export SCCACHE_CACHE_SIZE="${SCCACHE_CACHE_SIZE:-20G}"
       - export SCCACHE_BUCKET="__SCCACHE_BUCKET__"
       - export SCCACHE_REGION="__SCCACHE_REGION__"
       - export SCCACHE_S3_KEY_PREFIX="__SCCACHE_PREFIX__/sccache/x86_64-unknown-linux-gnu"
-      - export ADL_CODEFRIEND_TARGET_CACHE_MODE="${ADL_CODEFRIEND_TARGET_CACHE_MODE:-local}"
+      - export ADL_CODEFRIEND_TARGET_CACHE_MODE="${ADL_CODEFRIEND_TARGET_CACHE_MODE:-s3-tar}"
       - export ADL_CODEFRIEND_TARGET_CACHE_BUCKET="${ADL_CODEFRIEND_TARGET_CACHE_BUCKET:-__SCCACHE_BUCKET__}"
       - export ADL_CODEFRIEND_TARGET_CACHE_PREFIX="${ADL_CODEFRIEND_TARGET_CACHE_PREFIX:-__SCCACHE_PREFIX__/target/x86_64-unknown-linux-gnu}"
       - eval "$(aws configure export-credentials --format env)"
       - export CARGO_INCREMENTAL=0
-      - export RUSTFLAGS="${RUSTFLAGS:-} -C link-arg=-fuse-ld=lld --remap-path-prefix=/codebuild/adl-source=/workspace --remap-path-prefix=/root=/home"
-      - |
-        SCCACHE_VERSION="${SCCACHE_VERSION:-v0.16.0}"
-        if ! command -v sccache >/dev/null 2>&1 || ! sccache --version | grep -F "${SCCACHE_VERSION#v}" >/dev/null 2>&1; then
-          SCCACHE_ARCHIVE="sccache-${SCCACHE_VERSION}-x86_64-unknown-linux-musl.tar.gz"
-          curl -fsSL "https://github.com/mozilla/sccache/releases/download/${SCCACHE_VERSION}/${SCCACHE_ARCHIVE}" -o "/tmp/${SCCACHE_ARCHIVE}"
-          tar -xzf "/tmp/${SCCACHE_ARCHIVE}" -C /tmp
-          install -m 0755 "/tmp/sccache-${SCCACHE_VERSION}-x86_64-unknown-linux-musl/sccache" "$HOME/.cargo/bin/sccache"
-        fi
+      - export RUSTFLAGS="-C link-arg=-fuse-ld=lld --remap-path-prefix=/codebuild/adl-source=/workspace --remap-path-prefix=/root=/home"
       - export RUSTC_WRAPPER=sccache
       - ADL_RUST_CACHE_TARGET_DIR="/codebuild/adl-target" ADL_RUST_CACHE_SCCACHE_DIR="${SCCACHE_DIR:-$HOME/.cache/sccache}" ADL_RUST_CACHE_SCCACHE_SIZE="${SCCACHE_CACHE_SIZE:-20G}" ADL_RUST_CACHE_REQUIRE_SCCACHE=1 ADL_RUST_CACHE_REQUIRE_LLD=1 ADL_RUST_CACHE_USE_LLD=1 bash adl/tools/rust_cache_env.sh write-shell-env /tmp/adl-rust-cache-env.sh
       - . /tmp/adl-rust-cache-env.sh
@@ -422,19 +454,20 @@ phases:
   build:
     commands:
       - set -euo pipefail
-      - test ! -f "$HOME/.cargo/env" || . "$HOME/.cargo/env"
+      - export PATH="/usr/local/cargo/bin:/usr/local/bin:/usr/bin:/bin"
       - cd /codebuild/adl-source
       - export CARGO_TARGET_DIR="/codebuild/adl-target"
+      - export CARGO_BUILD_JOBS="${CARGO_BUILD_JOBS:-18}"
       - export SCCACHE_CACHE_SIZE="${SCCACHE_CACHE_SIZE:-20G}"
       - export SCCACHE_BUCKET="__SCCACHE_BUCKET__"
       - export SCCACHE_REGION="__SCCACHE_REGION__"
       - export SCCACHE_S3_KEY_PREFIX="__SCCACHE_PREFIX__/sccache/x86_64-unknown-linux-gnu"
-      - export ADL_CODEFRIEND_TARGET_CACHE_MODE="${ADL_CODEFRIEND_TARGET_CACHE_MODE:-local}"
+      - export ADL_CODEFRIEND_TARGET_CACHE_MODE="${ADL_CODEFRIEND_TARGET_CACHE_MODE:-s3-tar}"
       - export ADL_CODEFRIEND_TARGET_CACHE_BUCKET="${ADL_CODEFRIEND_TARGET_CACHE_BUCKET:-__SCCACHE_BUCKET__}"
       - export ADL_CODEFRIEND_TARGET_CACHE_PREFIX="${ADL_CODEFRIEND_TARGET_CACHE_PREFIX:-__SCCACHE_PREFIX__/target/x86_64-unknown-linux-gnu}"
       - eval "$(aws configure export-credentials --format env)"
       - export CARGO_INCREMENTAL=0
-      - export RUSTFLAGS="${RUSTFLAGS:-} -C link-arg=-fuse-ld=lld --remap-path-prefix=/codebuild/adl-source=/workspace --remap-path-prefix=/root=/home"
+      - export RUSTFLAGS="-C link-arg=-fuse-ld=lld --remap-path-prefix=/codebuild/adl-source=/workspace --remap-path-prefix=/root=/home"
       - export RUSTC_WRAPPER=sccache
       - ADL_RUST_CACHE_TARGET_DIR="/codebuild/adl-target" ADL_RUST_CACHE_SCCACHE_DIR="${SCCACHE_DIR:-$HOME/.cache/sccache}" ADL_RUST_CACHE_SCCACHE_SIZE="${SCCACHE_CACHE_SIZE:-20G}" ADL_RUST_CACHE_REQUIRE_SCCACHE=1 ADL_RUST_CACHE_REQUIRE_LLD=1 ADL_RUST_CACHE_USE_LLD=1 bash adl/tools/rust_cache_env.sh write-shell-env /tmp/adl-rust-cache-env.sh
       - . /tmp/adl-rust-cache-env.sh
@@ -442,8 +475,14 @@ phases:
       - |
         if [ -z "${ADL_CODEFRIEND_TARGET_CACHE_KEY:-}" ]; then
           lock_hash="$(sha256sum adl/Cargo.lock | awk '{print $1}')"
-          source_key="${CODEBUILD_SOURCE_VERSION:-unknown-source}"
-          ADL_CODEFRIEND_TARGET_CACHE_KEY="$(printf '%s-%s' "$source_key" "$lock_hash" | tr -c 'A-Za-z0-9._=-' '_')"
+          source_key="${CODEBUILD_RESOLVED_SOURCE_VERSION}"
+          compatibility_hash="$(printf '%s\n' \
+            "${ADL_CODEFRIEND_EXPECTED_IMAGE}" \
+            "$(rustc --version)" \
+            "${RUSTFLAGS}" \
+            "${CARGO_INCREMENTAL}" \
+            | sha256sum | awk '{print $1}')"
+          ADL_CODEFRIEND_TARGET_CACHE_KEY="v2-${source_key}-${lock_hash}-${compatibility_hash}"
           export ADL_CODEFRIEND_TARGET_CACHE_KEY
         fi
         ADL_CODEFRIEND_TARGET_CACHE_URI="s3://${ADL_CODEFRIEND_TARGET_CACHE_BUCKET}/${ADL_CODEFRIEND_TARGET_CACHE_PREFIX}/${ADL_CODEFRIEND_TARGET_CACHE_KEY}.tar.zst"
@@ -451,9 +490,14 @@ phases:
         echo "ADL_CODEFRIEND_TARGET_CACHE mode=${ADL_CODEFRIEND_TARGET_CACHE_MODE} key=${ADL_CODEFRIEND_TARGET_CACHE_KEY}"
         if [ "${ADL_CODEFRIEND_TARGET_CACHE_MODE}" = "s3-tar" ]; then
           if aws s3 cp "${ADL_CODEFRIEND_TARGET_CACHE_URI}" /tmp/adl-codefriend-target-cache.tar.zst >/tmp/adl-codefriend-target-cache-restore.log 2>&1; then
+            rm -rf /codebuild/adl-target
             mkdir -p /codebuild/adl-target
-            tar --zstd -xf /tmp/adl-codefriend-target-cache.tar.zst -C /codebuild
-            echo "ADL_CODEFRIEND_TARGET_CACHE_RESTORE status=hit"
+            if tar -I 'zstd -d -T0' -xf /tmp/adl-codefriend-target-cache.tar.zst -C /codebuild; then
+              echo "ADL_CODEFRIEND_TARGET_CACHE_RESTORE status=hit"
+            else
+              echo "ADL_CODEFRIEND_PREFLIGHT status=failed classification=cache_configuration target_cache_extract_failed" >&2
+              exit 45
+            fi
           else
             echo "ADL_CODEFRIEND_TARGET_CACHE_RESTORE status=miss"
           fi
@@ -468,10 +512,12 @@ phases:
         bash -lc "$ADL_CODEFRIEND_BUILD_COMMAND"
         command_status=$?
         set -e
-        if [ "${ADL_CODEFRIEND_TARGET_CACHE_MODE}" = "s3-tar" ] && [ -d "$CARGO_TARGET_DIR" ]; then
-          tar --zstd -cf /tmp/adl-codefriend-target-cache.tar.zst -C /codebuild adl-target
+        if [ "$command_status" -eq 0 ] && [ "${ADL_CODEFRIEND_TARGET_CACHE_MODE}" = "s3-tar" ] && [ -d "$CARGO_TARGET_DIR" ]; then
+          tar -I 'zstd -T0 -1' -cf /tmp/adl-codefriend-target-cache.tar.zst -C /codebuild adl-target
           aws s3 cp /tmp/adl-codefriend-target-cache.tar.zst "${ADL_CODEFRIEND_TARGET_CACHE_URI}" >/tmp/adl-codefriend-target-cache-save.log
           echo "ADL_CODEFRIEND_TARGET_CACHE_SAVE status=uploaded"
+        elif [ "$command_status" -ne 0 ] && [ "${ADL_CODEFRIEND_TARGET_CACHE_MODE}" = "s3-tar" ]; then
+          echo "ADL_CODEFRIEND_TARGET_CACHE_SAVE status=skipped-command-failed"
         elif [ "${ADL_CODEFRIEND_TARGET_CACHE_MODE}" = "local" ]; then
           echo "ADL_CODEFRIEND_TARGET_CACHE_SAVE status=local-cache"
         else
@@ -485,9 +531,6 @@ cache:
   paths:
     - '/root/.cargo/registry/**/*'
     - '/root/.cargo/git/**/*'
-    - '/root/.cargo/bin/**/*'
-    - '/root/.rustup/**/*'
-    - '/codebuild/adl-target/**/*'
 """
 
 buildspec = (
@@ -519,6 +562,8 @@ write(project_path, {
         "privilegedMode": False,
         "environmentVariables": [
             {"name": "ADL_CODEFRIEND_BUILD_COMMAND", "value": "bash adl/tools/run_pr_fast_test_lane.sh", "type": "PLAINTEXT"},
+            {"name": "ADL_CODEFRIEND_EXPECTED_IMAGE", "value": image_uri, "type": "PLAINTEXT"},
+            {"name": "CARGO_BUILD_JOBS", "value": "18", "type": "PLAINTEXT"},
         ],
     },
     "serviceRole": f"arn:aws:iam::{account_id}:role/{service_role_name}",

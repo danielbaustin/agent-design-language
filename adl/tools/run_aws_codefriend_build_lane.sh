@@ -4,7 +4,7 @@ set -euo pipefail
 usage() {
   cat <<'USAGE'
 Usage:
-  run_aws_codefriend_build_lane.sh [--dry-run|--run] --project-name <name> [options]
+  run_aws_codefriend_build_lane.sh [--dry-run|--run] --source-version <ref> [options]
 
 Options:
   --dry-run                         Render the CodeBuild request without calling AWS (default).
@@ -12,15 +12,18 @@ Options:
   --check-account                   Verify STS account hash before live AWS work.
   --expected-account-sha256 <hash>  Expected AWS account SHA-256. Defaults to ADL_AWS_CODEFRIEND_ACCOUNT_SHA256,
                                     then the retained Agent Logic #4603 account proof.
-  --project-name <name>             AWS CodeBuild project name.
+  --project-name <name>             AWS CodeBuild project name. Default: adl-codefriend-build.
   --source-version <ref>            Source version/ref passed to CodeBuild.
+  --full-nextest                    Run the canonical broad Rust nextest lane.
   --region <region>                 AWS region. Default: ADL_AWS_REGION or us-west-2.
   --profile <profile>               AWS CLI profile for local runs. Default: agent-logic-admin.
                                     Use "env" when GitHub OIDC exports AWS env credentials.
   --env KEY=VALUE                   Environment variable override for CodeBuild. May be repeated.
-  --out <path>                      JSON summary path. Default: .adl/tmp/aws-codefriend-build/summary.json.
+  --out <path>                      JSON summary path. Default: .adl/local-artifacts/aws-codefriend-build/summary.json.
   --artifact-dir <path>             Directory for request/response artifacts.
   --wait                            Poll CodeBuild until the build reaches a terminal state.
+  --live-logs                       Stream redacted CloudWatch build logs while waiting (default).
+  --no-live-logs                    Wait without streaming CloudWatch build logs.
   --poll-seconds <n>                Poll interval for --wait. Default: 10.
   --timeout-seconds <n>             Maximum wait time for --wait. Default: 2700.
   --print-command                   Print a redacted command preview.
@@ -42,17 +45,30 @@ AWS_CLI="${ADL_AWS_CLI:-aws}"
 MODE="dry-run"
 CHECK_ACCOUNT="false"
 EXPECTED_ACCOUNT_SHA256="${ADL_AWS_CODEFRIEND_ACCOUNT_SHA256:-}"
-PROJECT_NAME="${ADL_AWS_CODEFRIEND_CODEBUILD_PROJECT:-}"
+PROJECT_NAME="${ADL_AWS_CODEFRIEND_CODEBUILD_PROJECT:-adl-codefriend-build}"
 SOURCE_VERSION=""
 AWS_REGION="${ADL_AWS_REGION:-us-west-2}"
 AWS_PROFILE="${ADL_AWS_PROFILE:-agent-logic-admin}"
-OUT_PATH=".adl/tmp/aws-codefriend-build/summary.json"
-ARTIFACT_DIR=".adl/tmp/aws-codefriend-build"
+OUT_PATH=".adl/local-artifacts/aws-codefriend-build/summary.json"
+ARTIFACT_DIR=".adl/local-artifacts/aws-codefriend-build"
 PRINT_COMMAND="false"
 WAIT_FOR_BUILD="false"
 POLL_SECONDS="10"
 TIMEOUT_SECONDS="2700"
 ENV_OVERRIDES=()
+FULL_NEXTEST="false"
+LIVE_LOGS="true"
+LOG_TAIL_PID=""
+
+stop_log_tail() {
+  if [ -n "$LOG_TAIL_PID" ]; then
+    kill "$LOG_TAIL_PID" >/dev/null 2>&1 || true
+    wait "$LOG_TAIL_PID" 2>/dev/null || true
+    LOG_TAIL_PID=""
+  fi
+}
+
+trap stop_log_tail EXIT
 
 while [ "$#" -gt 0 ]; do
   case "$1" in
@@ -82,6 +98,10 @@ while [ "$#" -gt 0 ]; do
       [ "$#" -ge 2 ] || die "--source-version requires a value"
       SOURCE_VERSION="$2"
       shift 2
+      ;;
+    --full-nextest)
+      FULL_NEXTEST="true"
+      shift
       ;;
     --region)
       [ "$#" -ge 2 ] || die "--region requires a value"
@@ -115,6 +135,14 @@ while [ "$#" -gt 0 ]; do
       WAIT_FOR_BUILD="true"
       shift
       ;;
+    --live-logs)
+      LIVE_LOGS="true"
+      shift
+      ;;
+    --no-live-logs)
+      LIVE_LOGS="false"
+      shift
+      ;;
     --poll-seconds)
       [ "$#" -ge 2 ] || die "--poll-seconds requires a value"
       POLL_SECONDS="$2"
@@ -139,10 +167,15 @@ while [ "$#" -gt 0 ]; do
   esac
 done
 
-[ -n "$PROJECT_NAME" ] || die "--project-name or ADL_AWS_CODEFRIEND_CODEBUILD_PROJECT is required"
-
 if [ "$MODE" = "run" ] && [ "$CHECK_ACCOUNT" != "true" ]; then
   die "--run requires --check-account"
+fi
+if [ "$MODE" = "run" ]; then
+  [ -n "$SOURCE_VERSION" ] || die "--run requires an explicit --source-version branch, tag, or SHA"
+  [ "$SOURCE_VERSION" != "HEAD" ] || die "--source-version HEAD is ambiguous"
+fi
+if [ "$FULL_NEXTEST" = "true" ]; then
+  ENV_OVERRIDES+=("ADL_CODEFRIEND_BUILD_COMMAND=cd adl && cargo nextest run --status-level all --final-status-level slow")
 fi
 
 AWS_PROFILE_ARGS=()
@@ -205,6 +238,12 @@ for item in sys.argv[4:]:
     env.append({"name": name, "value": value, "type": "PLAINTEXT"})
 if env:
     request["environmentVariablesOverride"] = env
+if len(sys.argv[3]) == 40 and all(ch in "0123456789abcdef" for ch in sys.argv[3].lower()):
+    request.setdefault("environmentVariablesOverride", []).append({
+        "name": "ADL_CODEFRIEND_EXPECTED_SOURCE_SHA",
+        "value": sys.argv[3].lower(),
+        "type": "PLAINTEXT",
+    })
 Path(sys.argv[1]).write_text(json.dumps(request, indent=2, sort_keys=True) + "\n")
 PY
 
@@ -254,7 +293,7 @@ PY
         "${AWS_PROFILE_ARGS[@]+"${AWS_PROFILE_ARGS[@]}"}" \
         --region "$AWS_REGION" \
         --ids "$BUILD_ID" \
-        --query 'builds[0].{id:id,buildStatus:buildStatus,currentPhase:currentPhase,startTime:startTime,endTime:endTime,logs:{groupName:logs.groupName,streamName:logs.streamName}}' \
+        --query 'builds[0].{id:id,buildStatus:buildStatus,currentPhase:currentPhase,startTime:startTime,endTime:endTime,phases:phases[].{type:phaseType,status:phaseStatus,duration_seconds:durationInSeconds,contexts:contexts},logs:{groupName:logs.groupName,streamName:logs.streamName}}' \
         --output json >"$STATUS_PATH"
       BUILD_STATUS="$(
         python3 - <<'PY' "$STATUS_PATH"
@@ -266,13 +305,50 @@ data = json.loads(Path(sys.argv[1]).read_text())
 print(data.get("buildStatus", "") if isinstance(data, dict) else "")
 PY
       )"
+      if [ "$LIVE_LOGS" = "true" ] && [ -z "$LOG_TAIL_PID" ]; then
+        read -r log_group log_stream < <(
+          python3 - <<'PY' "$STATUS_PATH"
+import json
+import sys
+from pathlib import Path
+
+data = json.loads(Path(sys.argv[1]).read_text())
+logs = data.get("logs") or {}
+print(logs.get("groupName", ""), logs.get("streamName", ""))
+PY
+        )
+        if [ -n "$log_group" ] && [ -n "$log_stream" ]; then
+          (
+            "$AWS_CLI" logs tail "$log_group" \
+              "${AWS_PROFILE_ARGS[@]+"${AWS_PROFILE_ARGS[@]}"}" \
+              --region "$AWS_REGION" \
+              --log-stream-names "$log_stream" \
+              --follow \
+              --format short 2>&1 \
+              | python3 -u -c '
+import re
+import sys
+
+for line in sys.stdin:
+    line = re.sub(r"(?<![0-9])[0-9]{12}(?![0-9])", "[redacted-account]", line)
+    line = re.sub(r"arn:aws[a-zA-Z-]*:[^\\s]+", "[redacted-arn]", line)
+    line = re.sub(r"(?i)(authorization|token|secret|credential)([=:]\\s*)[^\\s]+", r"\\1\\2[redacted]", line)
+    sys.stderr.write(line)
+'
+          ) &
+          LOG_TAIL_PID="$!"
+          printf 'PASS aws_codefriend_live_logs_attached=true\n'
+        fi
+      fi
       case "$BUILD_STATUS" in
         SUCCEEDED)
           BUILD_SUCCEEDED="true"
+          stop_log_tail
           break
           ;;
         FAILED|FAULT|STOPPED|TIMED_OUT)
           BUILD_SUCCEEDED="false"
+          stop_log_tail
           break
           ;;
       esac
@@ -319,6 +395,23 @@ summary = {
     "build_succeeded": sys.argv[15] == "true",
     "aws_response_redacted": True,
 }
+status_path = Path(sys.argv[11])
+if status_path.exists():
+    status = json.loads(status_path.read_text())
+    if isinstance(status, dict):
+        summary["phase_timings"] = [
+            {
+                "phase": phase.get("type", ""),
+                "status": phase.get("status", ""),
+                "duration_seconds": phase.get("duration_seconds"),
+                "failure_class": next((
+                    context.get("statusCode", "")
+                    for context in (phase.get("contexts") or [])
+                    if context.get("statusCode")
+                ), ""),
+            }
+            for phase in (status.get("phases") or [])
+        ]
 Path(sys.argv[1]).write_text(json.dumps(summary, indent=2, sort_keys=True) + "\n")
 PY
 
