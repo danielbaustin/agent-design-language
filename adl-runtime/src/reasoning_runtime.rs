@@ -314,13 +314,19 @@ impl fmt::Debug for ReasoningCore {
 
 impl ReasoningCore {
     pub fn new(continuity_key: impl AsRef<[u8]>) -> Result<Self, ReasoningRuntimeError> {
-        Ok(Self {
-            continuity_authority: ContinuityAuthority::new(continuity_key.as_ref())?,
+        Ok(Self::from_authority(ContinuityAuthority::new(
+            continuity_key.as_ref(),
+        )?))
+    }
+
+    fn from_authority(continuity_authority: ContinuityAuthority) -> Self {
+        Self {
+            continuity_authority,
             checkpoint_versions: BTreeMap::new(),
             replay_cursors: BTreeMap::new(),
             lifelog_sequence: 0,
             quarantined: BTreeMap::new(),
-        })
+        }
     }
 
     pub fn execute(
@@ -747,6 +753,9 @@ impl Drop for BlockedAdmissionGuard {
     fn drop(&mut self) {
         update_runtime_status(&self.status_state, &self.status_tx, |status| {
             status.blocked_admissions = status.blocked_admissions.saturating_sub(1);
+            if status.health == ReasoningHealth::Stopped {
+                return;
+            }
             if status.blocked_admissions == 0 {
                 status.health = ReasoningHealth::Ready;
                 status.reason_code = "scheduler_reasoning_capacity_restored".to_string();
@@ -848,17 +857,14 @@ impl ReasoningRuntimeComponent {
         let status_state = Arc::new(Mutex::new(ReasoningRuntimeStatus::ready(capacity)));
         let cancellation = CancellationToken::new();
         let component_cancellation = cancellation.clone();
-        let continuity_key = continuity_key.as_ref().to_vec();
-        assert!(
-            !continuity_key.is_empty(),
-            "continuity key must not be empty"
-        );
+        let continuity_authority = ContinuityAuthority::new(continuity_key.as_ref())
+            .expect("continuity key must not be empty");
         let task_status_tx = status_tx.clone();
         let task_status_state = status_state.clone();
         let task = tokio::spawn(async move {
-            let core = Arc::new(Mutex::new(
-                ReasoningCore::new(continuity_key).expect("validated continuity key"),
-            ));
+            let core = Arc::new(Mutex::new(ReasoningCore::from_authority(
+                continuity_authority,
+            )));
             loop {
                 tokio::select! {
                     _ = component_cancellation.cancelled() => break,
@@ -1259,5 +1265,48 @@ mod tests {
         let _ = blocked.await;
         assert_eq!(handle.status().blocked_admissions, 0);
         assert_eq!(handle.status().health, ReasoningHealth::Ready);
+    }
+
+    #[tokio::test]
+    async fn channel_closure_preserves_stopped_health_while_releasing_waiter() {
+        let (sender, receiver) = mpsc::channel(1);
+        let initial_status = ReasoningRuntimeStatus::ready(1);
+        let (status_tx, status) = watch::channel(initial_status.clone());
+        let status_state = Arc::new(Mutex::new(initial_status));
+        let handle = ReasoningRuntimeHandle {
+            sender: sender.clone(),
+            status,
+            status_tx,
+            status_state: status_state.clone(),
+        };
+        let (response, _) = oneshot::channel();
+        sender
+            .try_send(RuntimeCommand {
+                admission: admission(ReasoningObject::Graph(graph())),
+                response,
+            })
+            .unwrap();
+        let blocked = tokio::spawn({
+            let handle = handle.clone();
+            async move {
+                handle
+                    .admit(admission(ReasoningObject::Graph(graph())))
+                    .await
+            }
+        });
+        tokio::task::yield_now().await;
+        assert_eq!(handle.status().blocked_admissions, 1);
+        update_runtime_status(&status_state, &handle.status_tx, |status| {
+            status.health = ReasoningHealth::Stopped;
+            status.reason_code = "governed_cancellation".to_string();
+        });
+        drop(receiver);
+        assert!(matches!(
+            blocked.await.unwrap(),
+            Err(ReasoningRuntimeError::ComponentStopped)
+        ));
+        assert_eq!(handle.status().blocked_admissions, 0);
+        assert_eq!(handle.status().health, ReasoningHealth::Stopped);
+        assert_eq!(handle.status().reason_code, "governed_cancellation");
     }
 }

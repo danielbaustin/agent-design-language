@@ -1212,6 +1212,26 @@ fn readiness_blockers(status: &Value) -> Vec<String> {
     {
         blockers.push("curiosity_engine_validation_failed".to_string());
     }
+    let reasoning_status = status.get("reasoning_runtime");
+    if reasoning_status
+        .and_then(|value| value.get("status"))
+        .and_then(Value::as_str)
+        != Some("serialized")
+    {
+        blockers.push("reasoning_runtime_missing".to_string());
+    } else {
+        match reasoning_status
+            .and_then(|value| value.pointer("/value/health"))
+            .and_then(Value::as_str)
+        {
+            Some("ready") => {}
+            Some("stopped") => blockers.push("reasoning_runtime_stopped".to_string()),
+            Some("degraded") => blockers.push("reasoning_runtime_degraded".to_string()),
+            Some("overloaded") => blockers.push("reasoning_runtime_overloaded".to_string()),
+            Some(other) => blockers.push(format!("reasoning_runtime_{other}")),
+            None => blockers.push("reasoning_runtime_health_missing".to_string()),
+        }
+    }
     blockers
 }
 
@@ -1988,6 +2008,60 @@ memory: {}
             .as_array()
             .unwrap()
             .contains(&json!("curiosity_engine_not_ready")));
+        assert!(ready["blocking_reasons"]
+            .as_array()
+            .unwrap()
+            .contains(&json!("reasoning_runtime_missing")));
+    }
+
+    #[test]
+    fn runtime_api_ready_projects_reasoning_runtime_health() {
+        for (health, expected_blocker) in [
+            ("ready", None),
+            ("stopped", Some("reasoning_runtime_stopped")),
+            ("degraded", Some("reasoning_runtime_degraded")),
+            ("overloaded", Some("reasoning_runtime_overloaded")),
+        ] {
+            let root = temp_root(&format!("reasoning-{health}"));
+            let spec = write_spec(&root);
+            let state = root.join("state");
+            fs::create_dir_all(&state).unwrap();
+            fs::write(
+                state.join(adl_runtime::reasoning_runtime::REASONING_RUNTIME_STATUS_REF),
+                serde_json::to_string_pretty(&json!({
+                    "schema": adl_runtime::reasoning_runtime::REASONING_RUNTIME_STATUS_SCHEMA,
+                    "component": "reasoning_runtime",
+                    "health": health,
+                    "accepted": 0,
+                    "completed": 0,
+                    "quarantined": 0,
+                    "saturation_count": 0,
+                    "blocked_admissions": if health == "overloaded" { 1 } else { 0 },
+                    "queue_capacity": 64,
+                    "reason_code": format!("test_{health}")
+                }))
+                .unwrap(),
+            )
+            .unwrap();
+            let options = CsmRuntimeApiOptions {
+                spec_path: spec,
+                bind: test_api_bind(SEQ.load(Ordering::SeqCst)),
+                test_max_requests: Some(1),
+                idle_timeout_ms: None,
+                shutdown_file: None,
+                otel_status_path: None,
+                otel_log_path: None,
+            };
+            let ready = runtime_api_response(&options, "/ready").unwrap();
+            let blockers = ready["blocking_reasons"].as_array().unwrap();
+            if let Some(expected_blocker) = expected_blocker {
+                assert!(blockers.contains(&json!(expected_blocker)));
+            } else {
+                assert!(!blockers.iter().any(|blocker| blocker
+                    .as_str()
+                    .is_some_and(|value| value.starts_with("reasoning_runtime_"))));
+            }
+        }
     }
 
     #[test]
