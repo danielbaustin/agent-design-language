@@ -72,6 +72,16 @@ fn run_csm_without_aws_credentials(args: &[&str]) -> std::process::Output {
         "AWS_CONTAINER_CREDENTIALS_FULL_URI",
         "AWS_WEB_IDENTITY_TOKEN_FILE",
         "AWS_ROLE_ARN",
+        "AWS_CONFIG_FILE",
+        "AWS_SHARED_CREDENTIALS_FILE",
+        "AWS_SDK_LOAD_CONFIG",
+        "ADL_AWS_PROFILE",
+        "ADL_AWS_REGION",
+        "ADL_AWS_SIGNAL_MODE",
+        "ADL_AWS_SIGNAL_APPROVED",
+        "ADL_AWS_HEARTBEAT_LOG_GROUP",
+        "ADL_AWS_HEARTBEAT_LOG_STREAM",
+        "ADL_AWS_SNS_TOPIC_ARN",
     ];
     let mut command = Command::new(resolve_csm_exe());
     command.args(args).env("AWS_EC2_METADATA_DISABLED", "true");

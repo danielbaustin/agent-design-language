@@ -30,17 +30,21 @@ fn spawn_loopback_otlp_collector() -> (
                         .set_read_timeout(Some(std::time::Duration::from_secs(3)))
                         .expect("set collector stream read timeout");
                     let body = read_http_body(&mut stream);
+                    let observed_checkpoint_span = body.contains("csm.checkpoint_write");
                     tx.send(body).expect("send otlp body");
                     stream
                         .write_all(b"HTTP/1.1 200 OK\r\ncontent-length: 2\r\n\r\nOK")
                         .expect("write collector response");
                     last_request_at = Some(std::time::Instant::now());
+                    if observed_checkpoint_span {
+                        break;
+                    }
                 }
                 Err(err) if err.kind() == std::io::ErrorKind::WouldBlock => {
                     let idle_done = last_request_at
-                        .map(|instant| instant.elapsed() > std::time::Duration::from_secs(3))
+                        .map(|instant| instant.elapsed() > std::time::Duration::from_secs(10))
                         .unwrap_or(false);
-                    if idle_done || started.elapsed() > std::time::Duration::from_secs(12) {
+                    if idle_done || started.elapsed() > std::time::Duration::from_secs(30) {
                         break;
                     }
                     std::thread::sleep(std::time::Duration::from_millis(25));
@@ -3573,7 +3577,11 @@ memory:
     assert!(state.join("csm_lifecycle_lifelog.index.json").exists());
     assert!(state.join("csm_governed_notices.jsonl").exists());
     assert!(state.join("csm_governed_notice_latest.json").exists());
-    assert!(state.join("aws_csm_governed_notice_mock.jsonl").exists());
+    assert!(
+        state.join("aws_csm_governed_notice_mock.jsonl").exists(),
+        "governed-stop notice delivery did not retain CloudWatch mock artifact: {}",
+        result["notice"]
+    );
     assert!(state
         .join("aws_csm_governed_notice_sns_mock.jsonl")
         .exists());
