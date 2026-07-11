@@ -31,7 +31,9 @@ use crate::csm_godel_snapshot::{validate_recovery_read, write_checkpoint_snapsho
 use crate::csm_resident_agents;
 use crate::csm_runtime_api::{serve_runtime_api, CsmRuntimeApiOptions};
 use crate::csm_shepherd_agent;
-use crate::runtime_aws_signal::publish_csm_governed_notice_signal;
+use crate::runtime_aws_signal::{
+    preflight_csm_governed_notice_signal, publish_csm_governed_notice_signal_for_channel,
+};
 use crate::{adl, execute, resolve, trace};
 
 mod inspection;
@@ -2641,14 +2643,38 @@ fn drain_pending_cloud_notices(
         let sequence = delivery
             .spool_sequence
             .context("cloud replay delivery missing durable spool sequence")?;
-        let attempts = publish_csm_governed_notice_signal(loaded, &delivery.message.payload);
-        let verified_attempt = attempts.iter().find(|attempt| {
-            attempt.get("status").and_then(Value::as_str) == Some("published_live")
-                && attempt
-                    .get("provider_message_id")
-                    .and_then(Value::as_str)
-                    .is_some_and(|value| !value.trim().is_empty())
-        });
+        let preflight = preflight_csm_governed_notice_signal(&delivery.message.payload);
+        if preflight.status != "publishable"
+            || !persisted_route_contract_matches(&delivery.message.payload, &preflight)?
+        {
+            runtime_context.release_replay(RuntimeChannelId::CloudBridgeToAwsRoutes, sequence)?;
+            let delivery_state = json!({
+                "status": if preflight.status == "publishable" {
+                    "durably_spooled_route_contract_mismatch"
+                } else {
+                    "durably_spooled_waiting_for_publishable_route"
+                },
+                "spool_sequence": sequence,
+                "cursor_advanced": false,
+                "preflight": preflight,
+                "stored_route_contract": delivery.message.payload["publish_route_contract"].clone()
+            });
+            runtime_context.persist_channel_state(
+                "cloud_notice_route_blocked",
+                Some(delivery_state.clone()),
+            )?;
+            if target_sequence == Some(sequence) {
+                target_delivery = Some(delivery_state);
+            }
+            break;
+        }
+        let required_channel = preflight.required_channel.as_deref().unwrap_or_default();
+        let attempts = vec![publish_csm_governed_notice_signal_for_channel(
+            loaded,
+            &delivery.message.payload,
+            required_channel,
+        )];
+        let verified_attempt = verified_route_attempt(&attempts, required_channel);
         let delivery_state = if let Some(attempt) = verified_attempt {
             let transport = attempt
                 .get("channel")
@@ -2671,6 +2697,7 @@ fn drain_pending_cloud_notices(
                 "status": "published_and_atomically_acknowledged",
                 "spool_sequence": sequence,
                 "publish_cursor": sequence,
+                "cursor_advanced": true,
                 "transport": transport,
                 "provider_receipt_id": provider_receipt_id
             })
@@ -2679,9 +2706,18 @@ fn drain_pending_cloud_notices(
             json!({
                 "status": "durably_spooled_waiting_for_verified_transport_receipt",
                 "spool_sequence": sequence,
-                "cursor_advanced": false
+                "cursor_advanced": false,
+                "attempts": attempts.clone()
             })
         };
+        if delivery_state
+            .get("cursor_advanced")
+            .and_then(Value::as_bool)
+            == Some(false)
+        {
+            runtime_context
+                .persist_channel_state("cloud_publish_pending", Some(delivery_state.clone()))?;
+        }
         if target_sequence == Some(sequence) {
             target_attempts = attempts;
             target_delivery = Some(delivery_state.clone());
@@ -2711,6 +2747,36 @@ fn drain_pending_cloud_notices(
     })
 }
 
+fn persisted_route_contract_matches(
+    notice: &Value,
+    current: &crate::runtime_aws_signal::CsmCloudPublishPreflight,
+) -> Result<bool> {
+    let Some(stored) = notice.get("publish_route_contract") else {
+        return Ok(false);
+    };
+    let current = serde_json::to_value(current)?;
+    Ok([
+        "required_channel",
+        "route_kind",
+        "route_class",
+        "idempotency_key",
+        "target_sha256",
+    ]
+    .into_iter()
+    .all(|field| stored.get(field) == current.get(field)))
+}
+
+fn verified_route_attempt<'a>(attempts: &'a [Value], required_channel: &str) -> Option<&'a Value> {
+    attempts.iter().find(|attempt| {
+        attempt.get("status").and_then(Value::as_str) == Some("published_live")
+            && attempt.get("channel").and_then(Value::as_str) == Some(required_channel)
+            && attempt
+                .get("provider_message_id")
+                .and_then(Value::as_str)
+                .is_some_and(|value| !value.trim().is_empty())
+    })
+}
+
 fn record_governed_runtime_notice(
     runtime_context: &CsmRuntimeContext,
     loaded: &LoadedAgentSpec,
@@ -2718,7 +2784,7 @@ fn record_governed_runtime_notice(
 ) -> Result<Value> {
     let captured_at = Utc::now();
     let notice_id = governed_notice_id(loaded, input.trigger, input.restart_count, captured_at);
-    let local_notice = json!({
+    let mut local_notice = json!({
         "schema": "adl.csm.governed_notice.v1",
         "notice_id": notice_id,
         "runtime_owner": "csm",
@@ -2764,38 +2830,110 @@ fn record_governed_runtime_notice(
         }],
         "details": input.details
     });
+    let preflight = preflight_csm_governed_notice_signal(&local_notice);
+    if preflight.failure_class.as_deref() == Some("csm_notice_redaction_failed") {
+        local_notice = json!({
+            "schema": "adl.csm.governed_notice.v1",
+            "notice_id": notice_id,
+            "runtime_owner": "csm",
+            "agent_instance_id": loaded.spec.agent_instance_id.clone(),
+            "notice_kind": input.notice_kind,
+            "severity": input.severity,
+            "trigger": input.trigger,
+            "captured_at": captured_at,
+            "redaction": {
+                "status": "rejected_before_persistence",
+                "failure_class": "csm_notice_redaction_failed",
+                "retained_payload": false
+            },
+            "delivery_attempts": [{
+                "channel": "local_notice_ledger",
+                "status": "recorded_redacted_rejection",
+                "artifact_ref": "csm_governed_notices.jsonl"
+            }]
+        });
+    }
+    if let Some(object) = local_notice.as_object_mut() {
+        object.insert(
+            "publish_preflight".to_string(),
+            serde_json::to_value(&preflight)?,
+        );
+        if preflight.status == "publishable" {
+            object.insert(
+                "publish_route_contract".to_string(),
+                serde_json::to_value(&preflight)?,
+            );
+        }
+    }
     write_json_pretty(&csm_notice_latest_path(loaded), &local_notice)?;
     append_jsonl(&csm_notice_ledger_path(loaded), &local_notice)?;
 
     let mut final_notice = local_notice;
-    let cloud_spool_sequence =
-        runtime_context.persist_cloud_notice(&notice_id, final_notice.clone())?;
+    let cloud_spool_sequence = if preflight.status == "publishable" {
+        runtime_context.persist_cloud_notice(&notice_id, final_notice.clone())?
+    } else {
+        None
+    };
     let mut attempts = vec![json!({
         "channel": "local_notice_ledger",
         "status": "recorded",
         "artifact_ref": "csm_governed_notices.jsonl"
     })];
-    let typed_channel_delivery = match cloud_spool_sequence {
-        Some(sequence) => {
-            let drain = drain_pending_cloud_notices(runtime_context, loaded, Some(sequence))?;
-            attempts.extend(drain.target_attempts);
-            drain.target_delivery.unwrap_or_else(|| {
-                json!({
-                    "status": "durably_spooled_waiting_for_replay",
-                    "spool_sequence": sequence,
-                    "acknowledged_predecessor_count": drain.acknowledged_count,
-                    "cursor_advanced": false
+    let typed_channel_delivery = if preflight.status != "publishable" {
+        json!({
+            "status": "blocked_before_sequence_reservation",
+            "cursor_advanced": false,
+            "spool_sequence": Value::Null,
+            "preflight": preflight.clone()
+        })
+    } else {
+        match cloud_spool_sequence {
+            Some(sequence) => {
+                let drain = drain_pending_cloud_notices(runtime_context, loaded, Some(sequence))?;
+                attempts.extend(drain.target_attempts);
+                drain.target_delivery.unwrap_or_else(|| {
+                    json!({
+                        "status": "durably_spooled_waiting_for_replay",
+                        "spool_sequence": sequence,
+                        "acknowledged_predecessor_count": drain.acknowledged_count,
+                        "cursor_advanced": false
+                    })
                 })
-            })
+            }
+            None => json!({
+                "status": "observer_command_defers_to_daemon_channel_owner",
+                "cursor_advanced": false
+            }),
         }
-        None => json!({
-            "status": "observer_command_defers_to_daemon_channel_owner",
-            "cursor_advanced": false
-        }),
     };
+    let publish_transaction = json!({
+        "schema": "adl.csm.cloud_publish_transaction.v1",
+        "status": typed_channel_delivery["status"].clone(),
+        "idempotency_key": preflight.idempotency_key.clone(),
+        "required_channel": preflight.required_channel.clone(),
+        "route_kind": preflight.route_kind.clone(),
+        "route_class": preflight.route_class.clone(),
+        "target_sha256": preflight.target_sha256.clone(),
+        "preflight_status": preflight.status,
+        "spool_sequence": typed_channel_delivery["spool_sequence"].clone(),
+        "provider_receipt_id": typed_channel_delivery["provider_receipt_id"].clone(),
+        "cursor_advanced": typed_channel_delivery["cursor_advanced"].clone(),
+        "phase_order": [
+            "route_preflight",
+            "durable_spool_commit",
+            "selected_transport_publish",
+            "provider_receipt_verification",
+            "atomic_cursor_acknowledgement"
+        ]
+    });
     if let Some(object) = final_notice.as_object_mut() {
+        object.insert(
+            "publish_preflight".to_string(),
+            serde_json::to_value(&preflight)?,
+        );
         object.insert("delivery_attempts".to_string(), json!(attempts));
         object.insert("typed_channel_delivery".to_string(), typed_channel_delivery);
+        object.insert("publish_transaction".to_string(), publish_transaction);
         object.insert("delivery_completed_at".to_string(), json!(Utc::now()));
     }
     write_json_pretty(&csm_notice_latest_path(loaded), &final_notice)?;
@@ -2823,7 +2961,10 @@ fn record_governed_runtime_notice(
         "trigger": input.trigger,
         "notice_ref": "csm_governed_notice_latest.json",
         "notice_ledger_ref": "csm_governed_notices.jsonl",
-        "delivery_attempts": final_notice["delivery_attempts"].clone()
+        "publish_transaction_ref": "csm_governed_notice_latest.json#publish_transaction",
+        "delivery_attempts": final_notice["delivery_attempts"].clone(),
+        "typed_channel_delivery": final_notice["typed_channel_delivery"].clone(),
+        "delivery_completed_at": final_notice["delivery_completed_at"].clone()
     }))
 }
 
