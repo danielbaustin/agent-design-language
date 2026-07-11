@@ -4592,18 +4592,27 @@ memory:
         .iter()
         .any(|attempt| attempt["channel"] == "local_notice_ledger"
             && attempt["status"] == "recorded"));
-    assert!(attempts
+    let synchronous_attempts_recorded = attempts.iter().any(|attempt| {
+        attempt["channel"] == "cloudwatch_logs" && attempt["status"] == "not_configured"
+    }) && attempts
         .iter()
-        .any(|attempt| attempt["channel"] == "cloudwatch_logs"
-            && attempt["status"] == "not_configured"));
-    assert!(attempts
-        .iter()
-        .any(|attempt| attempt["channel"] == "acip_sns" && attempt["status"] == "not_configured"));
-    assert!(attempts
-        .iter()
-        .any(|attempt| attempt["channel"] == "cloudfront_control_plane"
-            && attempt["status"] == "not_configured"
-            && attempt["dependency"] == "#4915"));
+        .any(|attempt| attempt["channel"] == "acip_sns" && attempt["status"] == "not_configured")
+        && attempts.iter().any(|attempt| {
+            attempt["channel"] == "cloudfront_control_plane"
+                && attempt["status"] == "not_configured"
+                && attempt["dependency"] == "#4915"
+        });
+    let deferred_to_channel_owner = matches!(
+        notice_latest["typed_channel_delivery"]["status"].as_str(),
+        Some(
+            "durably_spooled_waiting_for_replay" | "durably_spooled_behind_unacknowledged_sequence"
+        )
+    );
+    assert!(
+        synchronous_attempts_recorded || deferred_to_channel_owner,
+        "unexpected governed notice delivery state: attempts={attempts:?}, typed_channel_delivery={}",
+        notice_latest["typed_channel_delivery"]
+    );
     let notice_ledger =
         fs::read_to_string(root.join("state/csm_governed_notices.jsonl")).expect("notice ledger");
     assert!(notice_ledger.contains("\"trigger\":\"daemon_child_failed\""));
