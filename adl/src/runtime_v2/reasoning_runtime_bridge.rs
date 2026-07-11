@@ -88,7 +88,8 @@ mod tests {
         let graph = runtime_v2_reasoning_graph_contract().expect("WP-11 reasoning graph");
         let loop_runtime = runtime_v2_loop_runtime_contract().expect("WP-11 loop runtime");
         let object = native_reasoning_loop(&graph, &loop_runtime).expect("native reasoning object");
-        let execution = ReasoningCore::default()
+        let execution = ReasoningCore::new(b"wp-11-native-proof-continuity-key")
+            .expect("continuity authority")
             .execute(ReasoningAdmission {
                 admission_id: "wp-11-native-proof".to_string(),
                 object,

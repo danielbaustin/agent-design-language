@@ -38,7 +38,8 @@ pub use adl_runtime::runtime_api::{
     CSM_RUNTIME_API_API_GATEWAY_BRIDGE_SCHEMA, CSM_RUNTIME_API_CHRONOSENSE_SCHEMA,
     CSM_RUNTIME_API_CURIOSITY_SCHEMA, CSM_RUNTIME_API_ENDPOINTS, CSM_RUNTIME_API_EVENTS_SCHEMA,
     CSM_RUNTIME_API_HEALTH_SCHEMA, CSM_RUNTIME_API_METRICS_SCHEMA, CSM_RUNTIME_API_READY_SCHEMA,
-    CSM_RUNTIME_API_SCHEMA, CSM_RUNTIME_API_SHEPHERD_SCHEMA, CSM_RUNTIME_API_STATUS_SCHEMA,
+    CSM_RUNTIME_API_REASONING_SCHEMA, CSM_RUNTIME_API_SCHEMA, CSM_RUNTIME_API_SHEPHERD_SCHEMA,
+    CSM_RUNTIME_API_STATUS_SCHEMA,
 };
 pub use api_gateway_bridge::{prove_api_gateway_bridge, ApiGatewayBridgeOptions};
 const CSM_RUNTIME_API_BROWSER_DEMO_PORT: &str = "8765";
@@ -241,6 +242,7 @@ pub fn runtime_api_response(options: &CsmRuntimeApiOptions, path: &str) -> Resul
         "/chronosense" => chronosense_response(&loaded, options),
         "/shepherd" => shepherd_response(&loaded, options),
         "/curiosity" => curiosity_response(&loaded, options),
+        "/reasoning" => reasoning_response(&loaded),
         "/api-gateway-bridge" => api_gateway_bridge_response(&loaded),
         other => Ok(json!({
             "schema": CSM_RUNTIME_API_SCHEMA,
@@ -307,6 +309,7 @@ fn status_response(loaded: &LoadedAgentSpec, options: &CsmRuntimeApiOptions) -> 
     );
     let curiosity =
         curiosity_api_status(loaded, &agent_status, &daemon_status, &runtime_capabilities);
+    let reasoning = reasoning_api_status(loaded);
     let resident_agents = resident_agents_status(loaded);
     let mut response = json!({
         "schema": CSM_RUNTIME_API_STATUS_SCHEMA,
@@ -337,6 +340,7 @@ fn status_response(loaded: &LoadedAgentSpec, options: &CsmRuntimeApiOptions) -> 
         "resident_agents": resident_agents,
         "polis_shepherd_agent": shepherd,
         "curiosity_engine": curiosity,
+        "reasoning_runtime": reasoning,
         "checkpoint": checkpoint_freshness,
         "continuity": {
             "checkpoint": compact_artifact_status(&continuity_checkpoint, "continuity_checkpoint.json"),
@@ -372,6 +376,18 @@ fn curiosity_response(loaded: &LoadedAgentSpec, options: &CsmRuntimeApiOptions) 
         "agent_instance_id": loaded.spec.agent_instance_id,
         "runtime_api_path": "/curiosity",
         "component": status["curiosity_engine"]
+    });
+    assert_api_response_redacted(&response)?;
+    Ok(response)
+}
+
+fn reasoning_response(loaded: &LoadedAgentSpec) -> Result<Value> {
+    let response = json!({
+        "schema": CSM_RUNTIME_API_REASONING_SCHEMA,
+        "runtime_owner": "csm",
+        "agent_instance_id": loaded.spec.agent_instance_id,
+        "runtime_api_path": "/reasoning",
+        "component": reasoning_api_status(loaded)
     });
     assert_api_response_redacted(&response)?;
     Ok(response)
@@ -590,6 +606,23 @@ fn curiosity_api_status(
         daemon_state,
         &agent_state,
     )
+}
+
+fn reasoning_api_status(loaded: &LoadedAgentSpec) -> Value {
+    let artifact = read_json_artifact(&artifact_path(
+        loaded,
+        adl_runtime::reasoning_runtime::REASONING_RUNTIME_STATUS_REF,
+    ));
+    json!({
+        "status": artifact.get("status").cloned().unwrap_or_else(|| json!("missing")),
+        "ref": adl_runtime::reasoning_runtime::REASONING_RUNTIME_STATUS_REF,
+        "value": artifact.get("value").cloned().unwrap_or_else(|| json!({
+            "schema": adl_runtime::reasoning_runtime::REASONING_RUNTIME_STATUS_SCHEMA,
+            "component": adl_runtime::reasoning_runtime::REASONING_RUNTIME_COMPONENT,
+            "health": "stopped",
+            "reason_code": "status_artifact_missing"
+        }))
+    })
 }
 
 fn api_gateway_bridge_runtime_status(loaded: &LoadedAgentSpec) -> Value {
@@ -1887,6 +1920,22 @@ memory: {}
             serde_json::to_string_pretty(&curiosity).unwrap(),
         )
         .unwrap();
+        fs::write(
+            state.join(adl_runtime::reasoning_runtime::REASONING_RUNTIME_STATUS_REF),
+            serde_json::to_string_pretty(&json!({
+                "schema": adl_runtime::reasoning_runtime::REASONING_RUNTIME_STATUS_SCHEMA,
+                "component": "reasoning_runtime",
+                "health": "ready",
+                "accepted": 4,
+                "completed": 4,
+                "quarantined": 0,
+                "saturation_count": 1,
+                "queue_capacity": 64,
+                "reason_code": "typed_channel_ready"
+            }))
+            .unwrap(),
+        )
+        .unwrap();
         let options = CsmRuntimeApiOptions {
             spec_path: spec,
             bind: test_api_bind(SEQ.load(Ordering::SeqCst)),
@@ -1910,6 +1959,15 @@ memory: {}
         let curiosity = runtime_api_response(&options, "/curiosity").unwrap();
         assert_eq!(curiosity["schema"], CSM_RUNTIME_API_CURIOSITY_SCHEMA);
         assert_eq!(curiosity["component"]["component"], "curiosity_engine");
+        let reasoning = runtime_api_response(&options, "/reasoning").unwrap();
+        assert_eq!(reasoning["schema"], CSM_RUNTIME_API_REASONING_SCHEMA);
+        assert_eq!(reasoning["runtime_api_path"], "/reasoning");
+        assert_eq!(reasoning["component"]["status"], "serialized");
+        assert_eq!(reasoning["component"]["value"]["health"], "ready");
+        assert_eq!(
+            status["reasoning_runtime"]["value"]["component"],
+            "reasoning_runtime"
+        );
     }
 
     #[test]

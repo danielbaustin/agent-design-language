@@ -3,6 +3,7 @@
 use std::collections::{BTreeMap, BTreeSet};
 use std::sync::{Arc, Mutex};
 
+use hmac::{Hmac, Mac};
 use serde::{Deserialize, Serialize};
 use serde_json::{json, Value};
 use sha2::{Digest, Sha256};
@@ -16,6 +17,7 @@ pub const REASONING_RUNTIME_CHECKPOINT_SCHEMA: &str = "adl.csm.reasoning_runtime
 pub const REASONING_RUNTIME_LIFELOG_SCHEMA: &str = "adl.csm.reasoning_runtime.lifelog.v1";
 pub const REASONING_RUNTIME_TELEMETRY_SCHEMA: &str = "adl.csm.reasoning_runtime.telemetry.v1";
 pub const REASONING_RUNTIME_COMPONENT: &str = "reasoning_runtime";
+pub const REASONING_RUNTIME_STATUS_REF: &str = "reasoning_runtime_status.json";
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Serialize, Deserialize)]
 #[serde(rename_all = "snake_case")]
@@ -73,14 +75,15 @@ impl ReasoningObject {
     }
 }
 
-#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
+#[derive(Debug, Clone, PartialEq, Eq, Serialize)]
 pub struct CapturedProviderResult {
-    pub event_id: String,
-    pub source: String,
-    pub retention_ref: String,
-    pub payload_fingerprint: String,
+    event_id: String,
+    source: String,
+    retention_ref: String,
+    payload_fingerprint: String,
+    evidence_fingerprint: String,
     #[serde(default)]
-    pub proposed_nodes: Vec<ReasoningNode>,
+    proposed_nodes: Vec<ReasoningNode>,
 }
 
 impl CapturedProviderResult {
@@ -93,13 +96,57 @@ impl CapturedProviderResult {
     ) -> Result<Self, ReasoningRuntimeError> {
         let canonical = serde_jcs::to_vec(payload)
             .map_err(|_| ReasoningRuntimeError::InvalidProviderCapture)?;
+        let event_id = event_id.into();
+        let source = source.into();
+        let retention_ref = retention_ref.into();
+        if retention_ref.trim().is_empty() {
+            return Err(ReasoningRuntimeError::InvalidProviderCapture);
+        }
+        let payload_fingerprint = sha256_hex(&canonical);
+        let evidence_fingerprint = provider_evidence_fingerprint(
+            &event_id,
+            &source,
+            &retention_ref,
+            &payload_fingerprint,
+            &proposed_nodes,
+        )?;
         Ok(Self {
-            event_id: event_id.into(),
-            source: source.into(),
-            retention_ref: retention_ref.into(),
-            payload_fingerprint: sha256_hex(&canonical),
+            event_id,
+            source,
+            retention_ref,
+            payload_fingerprint,
+            evidence_fingerprint,
             proposed_nodes,
         })
+    }
+
+    fn validate(&self) -> Result<(), ReasoningRuntimeError> {
+        if self.event_id.trim().is_empty()
+            || self.source.trim().is_empty()
+            || self.retention_ref.trim().is_empty()
+            || self.payload_fingerprint.trim().is_empty()
+        {
+            return Err(ReasoningRuntimeError::InvalidProviderCapture);
+        }
+        let expected = provider_evidence_fingerprint(
+            &self.event_id,
+            &self.source,
+            &self.retention_ref,
+            &self.payload_fingerprint,
+            &self.proposed_nodes,
+        )?;
+        if self.evidence_fingerprint != expected {
+            return Err(ReasoningRuntimeError::InvalidProviderCapture);
+        }
+        Ok(())
+    }
+
+    pub fn event_id(&self) -> &str {
+        &self.event_id
+    }
+
+    pub fn retention_ref(&self) -> &str {
+        &self.retention_ref
     }
 }
 
@@ -119,7 +166,7 @@ pub struct GovernanceContext {
     pub policy_ref: String,
 }
 
-#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
+#[derive(Debug, Clone, PartialEq, Eq, Serialize)]
 pub struct ReasoningAdmission {
     pub admission_id: String,
     pub object: ReasoningObject,
@@ -137,6 +184,7 @@ pub struct ReasoningCheckpoint {
     pub checkpoint_version: u64,
     pub replay_cursor: u64,
     pub state_fingerprint: String,
+    pub authentication_tag: String,
 }
 
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
@@ -200,10 +248,10 @@ pub enum ReasoningRuntimeError {
     InvalidProviderCapture,
     StaleCheckpoint,
     CheckpointObjectMismatch,
+    UnauthenticatedCheckpoint,
     FreedomGateDenied,
     FreedomGateDeferred,
     AeeUnavailable,
-    QueueFull,
     ComponentStopped,
 }
 
@@ -215,8 +263,9 @@ pub struct QuarantinedReasoningObject {
     pub input_evidence_preserved: bool,
 }
 
-#[derive(Debug, Default)]
+#[derive(Debug)]
 pub struct ReasoningCore {
+    continuity_key: Vec<u8>,
     checkpoint_versions: BTreeMap<String, u64>,
     replay_cursors: BTreeMap<String, u64>,
     lifelog_sequence: u64,
@@ -224,6 +273,20 @@ pub struct ReasoningCore {
 }
 
 impl ReasoningCore {
+    pub fn new(continuity_key: impl AsRef<[u8]>) -> Result<Self, ReasoningRuntimeError> {
+        let continuity_key = continuity_key.as_ref();
+        if continuity_key.is_empty() {
+            return Err(ReasoningRuntimeError::UnauthenticatedCheckpoint);
+        }
+        Ok(Self {
+            continuity_key: continuity_key.to_vec(),
+            checkpoint_versions: BTreeMap::new(),
+            replay_cursors: BTreeMap::new(),
+            lifelog_sequence: 0,
+            quarantined: BTreeMap::new(),
+        })
+    }
+
     pub fn execute(
         &mut self,
         admission: ReasoningAdmission,
@@ -281,9 +344,7 @@ impl ReasoningCore {
                 .provider_result
                 .as_ref()
                 .ok_or(ReasoningRuntimeError::ProviderCaptureRequired)?;
-            if !admission.replay_only && capture.retention_ref.trim().is_empty() {
-                return Err(ReasoningRuntimeError::InvalidProviderCapture);
-            }
+            capture.validate()?;
             let count = u32::try_from(capture.proposed_nodes.len()).unwrap_or(u32::MAX);
             if count > max_adaptations {
                 return Err(ReasoningRuntimeError::AdaptationLimitExceeded);
@@ -326,17 +387,27 @@ impl ReasoningCore {
             }
         };
 
+        let restored_cursor = admission
+            .checkpoint
+            .as_ref()
+            .map(|checkpoint| checkpoint.replay_cursor)
+            .unwrap_or(0);
         let replay_cursor = self
             .replay_cursors
             .get(object_id)
             .copied()
-            .unwrap_or(0)
+            .unwrap_or(restored_cursor)
             .saturating_add(u64::try_from(canonical_order.len()).unwrap_or(u64::MAX));
+        let restored_version = admission
+            .checkpoint
+            .as_ref()
+            .map(|checkpoint| checkpoint.checkpoint_version)
+            .unwrap_or(0);
         let checkpoint_version = self
             .checkpoint_versions
             .get(object_id)
             .copied()
-            .unwrap_or(0)
+            .unwrap_or(restored_version)
             .saturating_add(1);
         let state = json!({
             "object_id": object_id,
@@ -349,7 +420,7 @@ impl ReasoningCore {
         });
         let state_bytes =
             serde_jcs::to_vec(&state).map_err(|_| ReasoningRuntimeError::InvalidProviderCapture)?;
-        let checkpoint = ReasoningCheckpoint {
+        let mut checkpoint = ReasoningCheckpoint {
             schema: REASONING_RUNTIME_CHECKPOINT_SCHEMA.to_string(),
             object_id: object_id.to_string(),
             lineage_id: admission
@@ -360,7 +431,10 @@ impl ReasoningCore {
             checkpoint_version,
             replay_cursor,
             state_fingerprint: sha256_hex(&state_bytes),
+            authentication_tag: String::new(),
         };
+        checkpoint.authentication_tag =
+            checkpoint_authentication_tag(&self.continuity_key, &checkpoint)?;
         self.checkpoint_versions
             .insert(object_id.to_string(), checkpoint_version);
         self.replay_cursors
@@ -433,6 +507,10 @@ impl ReasoningCore {
         if checkpoint.object_id != object_id {
             return Err(ReasoningRuntimeError::CheckpointObjectMismatch);
         }
+        let expected_tag = checkpoint_authentication_tag(&self.continuity_key, checkpoint)?;
+        if checkpoint.authentication_tag != expected_tag {
+            return Err(ReasoningRuntimeError::UnauthenticatedCheckpoint);
+        }
         let expected = self
             .checkpoint_versions
             .get(object_id)
@@ -443,6 +521,44 @@ impl ReasoningCore {
         }
         Ok(())
     }
+}
+
+fn provider_evidence_fingerprint(
+    event_id: &str,
+    source: &str,
+    retention_ref: &str,
+    payload_fingerprint: &str,
+    proposed_nodes: &[ReasoningNode],
+) -> Result<String, ReasoningRuntimeError> {
+    let bytes = serde_jcs::to_vec(&json!({
+        "event_id": event_id,
+        "source": source,
+        "retention_ref": retention_ref,
+        "payload_fingerprint": payload_fingerprint,
+        "proposed_nodes": proposed_nodes,
+    }))
+    .map_err(|_| ReasoningRuntimeError::InvalidProviderCapture)?;
+    Ok(sha256_hex(&bytes))
+}
+
+fn checkpoint_authentication_tag(
+    key: &[u8],
+    checkpoint: &ReasoningCheckpoint,
+) -> Result<String, ReasoningRuntimeError> {
+    let bytes = serde_jcs::to_vec(&json!({
+        "schema": checkpoint.schema,
+        "object_id": checkpoint.object_id,
+        "lineage_id": checkpoint.lineage_id,
+        "checkpoint_version": checkpoint.checkpoint_version,
+        "replay_cursor": checkpoint.replay_cursor,
+        "state_fingerprint": checkpoint.state_fingerprint,
+    }))
+    .map_err(|_| ReasoningRuntimeError::UnauthenticatedCheckpoint)?;
+    let mut mac = Hmac::<Sha256>::new_from_slice(key)
+        .map_err(|_| ReasoningRuntimeError::UnauthenticatedCheckpoint)?;
+    mac.update(b"adl.csm.reasoning_runtime.checkpoint.auth.v1\0");
+    mac.update(&bytes);
+    Ok(format!("{:x}", mac.finalize().into_bytes()))
 }
 
 fn canonical_topological_order(
@@ -527,7 +643,7 @@ pub struct ReasoningRuntimeStatus {
     pub accepted: u64,
     pub completed: u64,
     pub quarantined: u64,
-    pub rejected_backpressure: u64,
+    pub saturation_count: u64,
     pub queue_capacity: usize,
     pub reason_code: String,
 }
@@ -541,7 +657,7 @@ impl ReasoningRuntimeStatus {
             accepted: 0,
             completed: 0,
             quarantined: 0,
-            rejected_backpressure: 0,
+            saturation_count: 0,
             queue_capacity: capacity,
             reason_code: "component_starting".to_string(),
         }
@@ -564,10 +680,11 @@ struct RuntimeCommand {
 pub struct ReasoningRuntimeHandle {
     sender: mpsc::Sender<RuntimeCommand>,
     status: watch::Receiver<ReasoningRuntimeStatus>,
+    status_tx: watch::Sender<ReasoningRuntimeStatus>,
 }
 
 impl ReasoningRuntimeHandle {
-    pub fn try_admit(
+    pub async fn admit(
         &self,
         admission: ReasoningAdmission,
     ) -> Result<
@@ -575,15 +692,33 @@ impl ReasoningRuntimeHandle {
         ReasoningRuntimeError,
     > {
         let (response, receiver) = oneshot::channel();
-        self.sender
-            .try_send(RuntimeCommand {
-                admission,
-                response,
-            })
-            .map_err(|error| match error {
-                mpsc::error::TrySendError::Full(_) => ReasoningRuntimeError::QueueFull,
-                mpsc::error::TrySendError::Closed(_) => ReasoningRuntimeError::ComponentStopped,
-            })?;
+        let permit = match self.sender.try_reserve() {
+            Ok(permit) => permit,
+            Err(mpsc::error::TrySendError::Full(_)) => {
+                let mut status = self.status.borrow().clone();
+                status.health = ReasoningHealth::Overloaded;
+                status.saturation_count = status.saturation_count.saturating_add(1);
+                status.reason_code = "scheduler_reasoning_queue_saturated_blocking".to_string();
+                let _ = self.status_tx.send(status);
+                let permit = self
+                    .sender
+                    .reserve()
+                    .await
+                    .map_err(|_| ReasoningRuntimeError::ComponentStopped)?;
+                let mut status = self.status.borrow().clone();
+                status.health = ReasoningHealth::Ready;
+                status.reason_code = "scheduler_reasoning_capacity_restored".to_string();
+                let _ = self.status_tx.send(status);
+                permit
+            }
+            Err(mpsc::error::TrySendError::Closed(_)) => {
+                return Err(ReasoningRuntimeError::ComponentStopped)
+            }
+        };
+        permit.send(RuntimeCommand {
+            admission,
+            response,
+        });
         Ok(receiver)
     }
 
@@ -599,7 +734,7 @@ pub struct ReasoningRuntimeComponent {
 }
 
 impl ReasoningRuntimeComponent {
-    pub fn start(capacity: usize) -> Self {
+    pub fn start(capacity: usize, continuity_key: impl AsRef<[u8]>) -> Self {
         assert!(
             capacity > 0,
             "reasoning runtime queue must be bounded and non-zero"
@@ -608,8 +743,16 @@ impl ReasoningRuntimeComponent {
         let (status_tx, status_rx) = watch::channel(ReasoningRuntimeStatus::ready(capacity));
         let cancellation = CancellationToken::new();
         let component_cancellation = cancellation.clone();
+        let continuity_key = continuity_key.as_ref().to_vec();
+        assert!(
+            !continuity_key.is_empty(),
+            "continuity key must not be empty"
+        );
+        let task_status_tx = status_tx.clone();
         let task = tokio::spawn(async move {
-            let core = Arc::new(Mutex::new(ReasoningCore::default()));
+            let core = Arc::new(Mutex::new(
+                ReasoningCore::new(continuity_key).expect("validated continuity key"),
+            ));
             let mut status = ReasoningRuntimeStatus::ready(capacity);
             loop {
                 tokio::select! {
@@ -632,19 +775,26 @@ impl ReasoningRuntimeComponent {
                                 status.reason_code = "object_quarantined".to_string();
                             }
                         }
-                        let _ = status_tx.send(status.clone());
+                        let mut latest = task_status_tx.borrow().clone();
+                        latest.accepted = status.accepted;
+                        latest.completed = status.completed;
+                        latest.quarantined = status.quarantined;
+                        latest.health = status.health;
+                        latest.reason_code = status.reason_code.clone();
+                        let _ = task_status_tx.send(latest);
                         let _ = command.response.send(result);
                     }
                 }
             }
             status.health = ReasoningHealth::Stopped;
             status.reason_code = "governed_cancellation".to_string();
-            let _ = status_tx.send(status);
+            let _ = task_status_tx.send(status);
         });
         Self {
             handle: ReasoningRuntimeHandle {
                 sender,
                 status: status_rx,
+                status_tx,
             },
             cancellation,
             task,
@@ -671,6 +821,12 @@ pub fn runtime_api_status(status: &ReasoningRuntimeStatus) -> Value {
 #[cfg(test)]
 mod tests {
     use super::*;
+
+    const CONTINUITY_KEY: &[u8] = b"issue-5118-focused-continuity-key";
+
+    fn core() -> ReasoningCore {
+        ReasoningCore::new(CONTINUITY_KEY).unwrap()
+    }
 
     fn graph() -> ReasoningGraph {
         ReasoningGraph {
@@ -724,10 +880,10 @@ mod tests {
     fn graph_order_is_canonical_and_governed_before_aee() {
         let mut reversed = graph();
         reversed.nodes.reverse();
-        let first = ReasoningCore::default()
+        let first = core()
             .execute(admission(ReasoningObject::Graph(graph())))
             .unwrap();
-        let second = ReasoningCore::default()
+        let second = core()
             .execute(admission(ReasoningObject::Graph(reversed)))
             .unwrap();
         assert_eq!(first.canonical_order, second.canonical_order);
@@ -746,7 +902,7 @@ mod tests {
             max_iterations: 3,
             exit_node_id: "outcome".into(),
         });
-        let mut core = ReasoningCore::default();
+        let mut core = core();
         let first = core.execute(admission(object.clone())).unwrap();
         let mut resumed = admission(object);
         resumed.admission_id = "admission-2".into();
@@ -782,8 +938,8 @@ mod tests {
         let mut replay = admission(object);
         replay.provider_result = Some(capture);
         replay.replay_only = true;
-        let live_result = ReasoningCore::default().execute(live).unwrap();
-        let replay_result = ReasoningCore::default().execute(replay).unwrap();
+        let live_result = core().execute(live).unwrap();
+        let replay_result = core().execute(replay).unwrap();
         assert_eq!(
             live_result.execution_fingerprint,
             replay_result.execution_fingerprint
@@ -792,8 +948,75 @@ mod tests {
     }
 
     #[test]
+    fn provider_capture_rejects_mutated_or_unretained_evidence() {
+        let mut capture = CapturedProviderResult::capture(
+            "provider-event-1",
+            "provider_model_io",
+            "evidence/provider-event-1.json",
+            &json!({"result": "captured"}),
+            vec![],
+        )
+        .unwrap();
+        capture.proposed_nodes.push(ReasoningNode {
+            id: "forged".into(),
+            kind: ReasoningNodeKind::ProviderObservation,
+            dependencies: vec!["evidence".into()],
+        });
+        let mut request = admission(ReasoningObject::AdaptiveDag(AdaptiveDag {
+            graph: graph(),
+            max_adaptations: 1,
+        }));
+        request.provider_result = Some(capture);
+        request.replay_only = true;
+        assert_eq!(
+            core().execute(request),
+            Err(ReasoningRuntimeError::InvalidProviderCapture)
+        );
+        assert_eq!(
+            CapturedProviderResult::capture(
+                "provider-event-2",
+                "provider_model_io",
+                "",
+                &json!({"result": "captured"}),
+                vec![],
+            ),
+            Err(ReasoningRuntimeError::InvalidProviderCapture)
+        );
+    }
+
+    #[test]
+    fn cold_restore_requires_authentication_and_preserves_cursor() {
+        let object = ReasoningObject::Graph(graph());
+        let first = core().execute(admission(object.clone())).unwrap();
+        let mut restored = admission(object.clone());
+        restored.admission_id = "cold-restore".into();
+        restored.checkpoint = Some(first.checkpoint.clone());
+        let second = core().execute(restored).unwrap();
+        assert_eq!(second.checkpoint.checkpoint_version, 2);
+        assert!(second.checkpoint.replay_cursor > first.checkpoint.replay_cursor);
+
+        let mut forged = admission(object.clone());
+        let mut forged_checkpoint = first.checkpoint.clone();
+        forged_checkpoint.replay_cursor = forged_checkpoint.replay_cursor.saturating_add(99);
+        forged.checkpoint = Some(forged_checkpoint);
+        assert_eq!(
+            core().execute(forged),
+            Err(ReasoningRuntimeError::UnauthenticatedCheckpoint)
+        );
+
+        let mut wrong_authority = admission(object);
+        wrong_authority.checkpoint = Some(first.checkpoint);
+        assert_eq!(
+            ReasoningCore::new(b"different-authority")
+                .unwrap()
+                .execute(wrong_authority),
+            Err(ReasoningRuntimeError::UnauthenticatedCheckpoint)
+        );
+    }
+
+    #[test]
     fn malformed_cycle_runaway_and_gate_fail_closed_are_quarantined() {
-        let mut core = ReasoningCore::default();
+        let mut core = core();
         let mut cyclic = graph();
         cyclic.nodes[0].dependencies.push("outcome".into());
         assert_eq!(
@@ -827,15 +1050,49 @@ mod tests {
 
     #[tokio::test]
     async fn component_exposes_lifecycle_health_and_typed_admission() {
-        let component = ReasoningRuntimeComponent::start(1);
+        let component = ReasoningRuntimeComponent::start(1, CONTINUITY_KEY);
         assert_eq!(component.handle.status().health, ReasoningHealth::Ready);
         let response = component
             .handle
-            .try_admit(admission(ReasoningObject::Graph(graph())))
+            .admit(admission(ReasoningObject::Graph(graph())))
+            .await
             .unwrap();
         let execution = response.await.unwrap().unwrap();
         assert_eq!(execution.object_id, "graph-1");
         assert_eq!(component.handle.status().completed, 1);
         component.shutdown().await;
+    }
+
+    #[tokio::test]
+    async fn saturated_admission_blocks_and_projects_overload_status() {
+        let (sender, mut receiver) = mpsc::channel(1);
+        let (status_tx, status) = watch::channel(ReasoningRuntimeStatus::ready(1));
+        let handle = ReasoningRuntimeHandle {
+            sender: sender.clone(),
+            status,
+            status_tx,
+        };
+        let (first_response, _) = oneshot::channel();
+        sender
+            .try_send(RuntimeCommand {
+                admission: admission(ReasoningObject::Graph(graph())),
+                response: first_response,
+            })
+            .unwrap();
+        let blocked = tokio::spawn({
+            let handle = handle.clone();
+            async move {
+                handle
+                    .admit(admission(ReasoningObject::Graph(graph())))
+                    .await
+            }
+        });
+        tokio::task::yield_now().await;
+        assert_eq!(handle.status().health, ReasoningHealth::Overloaded);
+        assert_eq!(handle.status().saturation_count, 1);
+        assert!(!blocked.is_finished());
+        receiver.recv().await.unwrap();
+        assert!(blocked.await.unwrap().is_ok());
+        assert_eq!(handle.status().health, ReasoningHealth::Ready);
     }
 }
