@@ -127,3 +127,51 @@ fi
 grep -F 'builder_image_not_immutable' "$missing_builder/err" >/dev/null
 
 echo "PASS test_aws_spot_artifact_finalize"
+
+attempt_layout="$TMP/attempt-layout"
+make_fixture "$attempt_layout"
+mkdir -p "$attempt_layout/artifacts/attempt-0"
+python3 - <<'PY' "$attempt_layout/summary.json" "$attempt_layout/artifacts/attempt-0"
+import json
+import sys
+from pathlib import Path
+
+path = Path(sys.argv[1])
+data = json.loads(path.read_text())
+data["artifact_dir"] = str(Path(sys.argv[2]))
+path.write_text(json.dumps(data))
+PY
+python3 - <<'PY' "$attempt_layout/summary.json" "$attempt_layout/artifacts/attempt-0/command-stdout.log"
+import json
+import sys
+from pathlib import Path
+
+data = json.loads(Path(sys.argv[1]).read_text())
+remote = data["remote_summary"]
+data["remote_summary"] = {}
+Path(sys.argv[1]).write_text(json.dumps(data))
+Path(sys.argv[2]).write_text(
+    "ADL_AWS_REMOTE_SUMMARY_BEGIN\n" + json.dumps(remote) + "\nADL_AWS_REMOTE_SUMMARY_END\n"
+)
+PY
+mv "$attempt_layout/artifacts/command-status.log" "$attempt_layout/artifacts/attempt-0/command-status.log"
+python3 "$FINALIZER" \
+  --summary "$attempt_layout/summary.json" \
+  --artifact-dir "$attempt_layout/artifacts" \
+  --wrapper-summary "$attempt_layout/wrapper.json" \
+  --expected-source-commit "$source_commit" \
+  --expected-image "$image" \
+  --expected-cache-volume-id-sha256 "$cache_volume_hash" \
+  --estimated-hourly-cost-usd 0.21 \
+  --runner-exit-code 0 >/dev/null
+python3 - <<'PY' "$attempt_layout/wrapper.json"
+import json
+import sys
+
+data = json.load(open(sys.argv[1], encoding="utf-8"))
+assert data["status"] == "passed", data
+assert data["self_verification"]["live_logs_verified"] is True, data
+assert data["self_verification"]["immutable_builder_image_verified"] is True, data
+PY
+
+echo "PASS test_aws_spot_artifact_finalize_attempt_layout"

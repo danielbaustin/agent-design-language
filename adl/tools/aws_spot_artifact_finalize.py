@@ -97,6 +97,18 @@ def redact_artifact_logs(artifact_dir: Path) -> None:
         path.write_text(redact_text(text), encoding="utf-8")
 
 
+def run_artifact_dir(raw: dict[str, Any], wrapper_artifact_dir: Path) -> Path:
+    recorded = raw.get("artifact_dir")
+    if isinstance(recorded, str) and recorded.strip():
+        candidate = Path(recorded)
+        if candidate.is_dir():
+            return candidate
+        nested = wrapper_artifact_dir / candidate.name
+        if nested.is_dir():
+            return nested
+    return wrapper_artifact_dir
+
+
 def main() -> int:
     parser = argparse.ArgumentParser()
     parser.add_argument("--summary", required=True, type=Path)
@@ -125,14 +137,15 @@ def main() -> int:
     private_summary = private_dir / "control-summary.json"
     private_summary.write_text(json.dumps(raw, indent=2, sort_keys=True) + "\n", encoding="utf-8")
     os.chmod(private_summary, 0o600)
-    command_status_path = args.artifact_dir / "command-status.log"
+    attempt_artifact_dir = run_artifact_dir(raw, args.artifact_dir)
+    command_status_path = attempt_artifact_dir / "command-status.log"
     if command_status_path.is_file():
         private_command_status = private_dir / "command-status.log"
         private_command_status.write_bytes(command_status_path.read_bytes())
         os.chmod(private_command_status, 0o600)
 
     remote = raw.get("remote_summary") if isinstance(raw.get("remote_summary"), dict) else {}
-    extracted = extract_remote_summary(args.artifact_dir / "command-stdout.log")
+    extracted = extract_remote_summary(attempt_artifact_dir / "command-stdout.log")
     if extracted:
         remote = extracted
     builder = remote.get("builder_proof") if isinstance(remote.get("builder_proof"), dict) else {}
