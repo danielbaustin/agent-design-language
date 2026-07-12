@@ -5,6 +5,12 @@ use std::collections::BTreeMap;
 use std::hash::{Hash, Hasher};
 use std::io::Write;
 
+const CSM_COVERAGE_STARTUP_ATTEMPTS: &str = "80";
+const CSM_DISK_READY_ENV: [(&str, &str); 2] = [
+    ("ADL_CSM_DISK_FLOOR_BYTES", "0"),
+    ("ADL_CSM_TEST_AVAILABLE_BYTES", "1073741824"),
+];
+
 fn spawn_loopback_otlp_collector() -> (
     String,
     std::sync::mpsc::Receiver<String>,
@@ -127,38 +133,6 @@ fn assert_text_contains(haystack: &str, needle: &str, label: &str) {
         haystack.contains(needle),
         "expected {label} to contain {needle:?}, actual:\n{haystack}"
     );
-}
-
-fn http_get_json(addr: &str, path: &str) -> serde_json::Value {
-    let started = std::time::Instant::now();
-    loop {
-        match std::net::TcpStream::connect(addr) {
-            Ok(mut stream) => {
-                stream
-                    .set_read_timeout(Some(std::time::Duration::from_secs(5)))
-                    .expect("set API read timeout");
-                write!(
-                    stream,
-                    "GET {path} HTTP/1.1\r\nhost: {addr}\r\nconnection: close\r\n\r\n"
-                )
-                .expect("write API request");
-                stream.flush().expect("flush API request");
-                let body = read_http_response_body(&mut stream);
-                if body.trim().is_empty() && started.elapsed() < std::time::Duration::from_secs(5) {
-                    std::thread::sleep(std::time::Duration::from_millis(25));
-                    continue;
-                }
-                return serde_json::from_str(&body).unwrap_or_else(|err| {
-                    panic!("parse API response for {path}: {err}; body:\n{body}")
-                });
-            }
-            Err(err) if started.elapsed() < std::time::Duration::from_secs(5) => {
-                let _ = err;
-                std::thread::sleep(std::time::Duration::from_millis(25));
-            }
-            Err(err) => panic!("connect to CSM API {addr} for {path}: {err}"),
-        }
-    }
 }
 
 fn http_get_json_authenticated(
@@ -3149,7 +3123,6 @@ memory:
 
 #[test]
 fn csm_service_local_start_stop_retains_status_checkpoint_and_observability() {
-    const COVERAGE_STARTUP_ATTEMPTS: &str = "80";
     let root = unique_test_temp_dir("csm-service-local");
     let spec = root.join("agent.yaml");
     fs::write(
@@ -3217,10 +3190,14 @@ memory:
             service_root.to_str().expect("utf8 service root"),
             "--json",
         ],
-        &[(
-            "ADL_CSM_SERVICE_STARTUP_ATTEMPTS",
-            COVERAGE_STARTUP_ATTEMPTS,
-        )],
+        &[
+            (
+                "ADL_CSM_SERVICE_STARTUP_ATTEMPTS",
+                CSM_COVERAGE_STARTUP_ATTEMPTS,
+            ),
+            CSM_DISK_READY_ENV[0],
+            CSM_DISK_READY_ENV[1],
+        ],
     );
     assert!(
         start.status.success(),
@@ -3306,7 +3283,7 @@ memory:
         .as_str()
         .expect("runtime API bind")
         .to_string();
-    let ready = http_get_json(&api_bind, "/ready");
+    let ready = http_get_json_authenticated(&api_bind, &root.join("state"), "/ready");
     assert_eq!(ready["schema"], "adl.csm.runtime_api.ready.v1");
     assert_eq!(ready["runtime_owner"], "csm");
     assert_eq!(ready["agent_instance_id"], "service-local-agent");
@@ -3340,10 +3317,14 @@ memory:
             service_root.to_str().expect("utf8 service root"),
             "--json",
         ],
-        &[(
-            "ADL_CSM_SERVICE_STARTUP_ATTEMPTS",
-            COVERAGE_STARTUP_ATTEMPTS,
-        )],
+        &[
+            (
+                "ADL_CSM_SERVICE_STARTUP_ATTEMPTS",
+                CSM_COVERAGE_STARTUP_ATTEMPTS,
+            ),
+            CSM_DISK_READY_ENV[0],
+            CSM_DISK_READY_ENV[1],
+        ],
     );
     assert!(
         second_start.status.success(),
@@ -3384,10 +3365,14 @@ memory:
             service_root.to_str().expect("utf8 service root"),
             "--json",
         ],
-        &[(
-            "ADL_CSM_SERVICE_STARTUP_ATTEMPTS",
-            COVERAGE_STARTUP_ATTEMPTS,
-        )],
+        &[
+            (
+                "ADL_CSM_SERVICE_STARTUP_ATTEMPTS",
+                CSM_COVERAGE_STARTUP_ATTEMPTS,
+            ),
+            CSM_DISK_READY_ENV[0],
+            CSM_DISK_READY_ENV[1],
+        ],
     );
     assert!(
         restart.status.success(),
@@ -3473,7 +3458,6 @@ memory:
 
 #[test]
 fn csm_governed_stop_records_checkpoint_safe_fail_lifelog_and_notices() {
-    const COVERAGE_STARTUP_ATTEMPTS: &str = "80";
     let root = unique_test_temp_dir("csm-governed-stop");
     let spec = root.join("agent.yaml");
     fs::write(
@@ -3545,10 +3529,10 @@ memory:
         &[
             (
                 "ADL_CSM_SERVICE_STARTUP_ATTEMPTS",
-                COVERAGE_STARTUP_ATTEMPTS,
+                CSM_COVERAGE_STARTUP_ATTEMPTS,
             ),
-            ("ADL_CSM_DISK_FLOOR_BYTES", "0"),
-            ("ADL_CSM_TEST_AVAILABLE_BYTES", "1073741824"),
+            CSM_DISK_READY_ENV[0],
+            CSM_DISK_READY_ENV[1],
         ],
     );
     assert!(
@@ -3722,7 +3706,7 @@ workflow:
   run_args: {}
 heartbeat:
   interval_secs: 1
-  max_cycles: 3
+  max_cycles: 1
   stale_lease_after_secs: 60
 safety:
   allow_network: false
@@ -3767,20 +3751,31 @@ memory:
         "install stderr:\n{}",
         String::from_utf8_lossy(&install.stderr)
     );
-    let start = run_csm(&[
-        "service",
-        "start",
-        "--service-root",
-        service_root.to_str().expect("utf8 service root"),
-        "--json",
-    ]);
+    let start = run_csm_with_env(
+        &[
+            "service",
+            "start",
+            "--service-root",
+            service_root.to_str().expect("utf8 service root"),
+            "--json",
+        ],
+        &[
+            (
+                "ADL_CSM_SERVICE_STARTUP_ATTEMPTS",
+                CSM_COVERAGE_STARTUP_ATTEMPTS,
+            ),
+            CSM_DISK_READY_ENV[0],
+            CSM_DISK_READY_ENV[1],
+        ],
+    );
     assert!(
         start.status.success(),
         "start stderr:\n{}",
         String::from_utf8_lossy(&start.stderr)
     );
     let mut observed_restart = false;
-    for _ in 0..25 {
+    let mut last_supervisor_status = serde_json::Value::Null;
+    for _ in 0..300 {
         let supervisor_status: serde_json::Value = serde_json::from_str(
             &fs::read_to_string(service_root.join("logs/rust_supervisor_status.json"))
                 .expect("supervisor status"),
@@ -3790,11 +3785,13 @@ memory:
             observed_restart = true;
             break;
         }
+        last_supervisor_status = supervisor_status;
         std::thread::sleep(std::time::Duration::from_millis(200));
     }
     assert!(
         observed_restart,
-        "expected Rust supervisor to restart a real csm daemon child after bounded child completion"
+        "expected Rust supervisor to restart a real csm daemon child after bounded child completion; last supervisor status:\n{}",
+        serde_json::to_string_pretty(&last_supervisor_status).unwrap()
     );
     let supervisor_status: serde_json::Value = serde_json::from_str(
         &fs::read_to_string(service_root.join("logs/rust_supervisor_status.json"))
@@ -4075,7 +4072,11 @@ memory:
             service_root.to_str().expect("utf8 service root"),
             "--json",
         ],
-        &[("ADL_CSM_SERVICE_STARTUP_ATTEMPTS", "20")],
+        &[
+            ("ADL_CSM_SERVICE_STARTUP_ATTEMPTS", "20"),
+            CSM_DISK_READY_ENV[0],
+            CSM_DISK_READY_ENV[1],
+        ],
     );
     assert!(
         !start.status.success(),

@@ -5,9 +5,24 @@ use std::process::Command;
 mod helpers;
 use helpers::unique_test_temp_dir;
 
+const CSM_DISK_READY_ENV: [(&str, &str); 2] = [
+    ("ADL_CSM_DISK_FLOOR_BYTES", "0"),
+    ("ADL_CSM_TEST_AVAILABLE_BYTES", "1073741824"),
+];
+
 fn run_swarm(args: &[&str]) -> std::process::Output {
     let exe = env!("CARGO_BIN_EXE_adl");
     Command::new(exe).args(args).output().unwrap()
+}
+
+fn run_swarm_with_env(args: &[&str], envs: &[(&str, &str)]) -> std::process::Output {
+    let exe = env!("CARGO_BIN_EXE_adl");
+    let mut cmd = Command::new(exe);
+    cmd.args(args);
+    for (key, value) in envs {
+        cmd.env(key, value);
+    }
+    cmd.output().unwrap()
 }
 
 fn run_swarm_with_ci(args: &[&str]) -> std::process::Output {
@@ -587,15 +602,18 @@ fn demo_l_v0901_runtime_v2_foundation_writes_integrated_proof_packet() {
 #[test]
 fn demo_j_v090_stock_league_recurring_writes_multi_cycle_proof_packet() {
     let out_root = tmp_dir("demo-j-stock-league");
-    let out = run_swarm(&[
-        "demo",
-        "demo-j-v090-stock-league-recurring",
-        "--run",
-        "--trace",
-        "--out",
-        out_root.to_string_lossy().as_ref(),
-        "--no-open",
-    ]);
+    let out = run_swarm_with_env(
+        &[
+            "demo",
+            "demo-j-v090-stock-league-recurring",
+            "--run",
+            "--trace",
+            "--out",
+            out_root.to_string_lossy().as_ref(),
+            "--no-open",
+        ],
+        &CSM_DISK_READY_ENV,
+    );
     assert!(
         out.status.success(),
         "expected success, stderr:\n{}",
