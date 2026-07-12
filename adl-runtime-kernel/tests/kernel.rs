@@ -174,7 +174,8 @@ async fn shutdown_remains_responsive_during_restart_backoff() {
 async fn fatal_component_exit_is_observable_by_process_owner() {
     let mut registry = ComponentRegistry::new();
     registry.register(FatalFactory);
-    let handle = Kernel::new(registry.validate().unwrap(), RuntimeRecorder::new(16))
+    let recorder = RuntimeRecorder::new(16);
+    let handle = Kernel::new(registry.validate().unwrap(), recorder.clone())
         .start()
         .await
         .unwrap();
@@ -183,6 +184,10 @@ async fn fatal_component_exit_is_observable_by_process_owner() {
         KernelExit::Fatal {
             component: ComponentId::from("fatal")
         }
+    );
+    assert_eq!(
+        recorder.snapshot().lifecycle,
+        adl_runtime_kernel::LifecycleState::Failed
     );
 }
 

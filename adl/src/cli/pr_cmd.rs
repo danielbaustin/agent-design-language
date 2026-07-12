@@ -502,13 +502,24 @@ fn real_pr_watch(args: &[String]) -> Result<()> {
 
 fn real_pr_shepherd(args: &[String]) -> Result<()> {
     let parsed: ShepherdArgs = parse_shepherd_args(args)?;
-    let snapshot = build_issue_lifecycle_snapshot(&WatchArgs {
-        issue_ref: parsed.issue_ref,
-        repo: parsed.repo,
-        slug: parsed.slug,
-        version: parsed.version,
+    let watch_args = WatchArgs {
+        issue_ref: parsed.issue_ref.clone(),
+        repo: parsed.repo.clone(),
+        slug: parsed.slug.clone(),
+        version: parsed.version.clone(),
         json: parsed.json,
-    })?;
+    };
+    let mut snapshot = build_issue_lifecycle_snapshot(&watch_args)?;
+    if snapshot.watch_report.classification == "merged_pending_closeout" {
+        let issue = parse_issue_ref_number("shepherd", &parsed.issue_ref)?;
+        let repo = parsed
+            .repo
+            .clone()
+            .or_else(|| repo_from_issue_ref(&parsed.issue_ref))
+            .or_else(|| repo_from_pr_ref(&parsed.issue_ref));
+        closeout_closed_completed_issue(issue, parsed.version.clone(), parsed.slug.clone(), repo)?;
+        snapshot = build_issue_lifecycle_snapshot(&watch_args)?;
+    }
     let report = github::build_issue_lifecycle_shepherd_report(
         &snapshot.watch_report,
         snapshot.ready_lifecycle_state,
@@ -945,36 +956,53 @@ fn build_issue_lifecycle_snapshot(parsed: &WatchArgs) -> Result<IssueLifecycleSn
             ),
         }
     };
-    let ready = doctor::run_doctor_ready(
-        &repo_root,
-        &repo,
-        &issue_ref,
-        &issue_ref.branch_name("codex"),
-    );
     let local_readiness_command = doctor_ready_command(&issue_ref);
-    let (ready_lifecycle_state, pr_finish_readiness, local_readiness) = match ready {
-        Ok(ready) => (
-            ready.lifecycle_state,
-            ready.card_lifecycle.pr_finish_readiness,
-            github::IssueWatchLocalReadinessReport {
-                status: "ready".to_string(),
-                pr_run_readiness: ready.card_lifecycle.pr_run_readiness.to_string(),
-                reason: "doctor_ready_pass".to_string(),
-                check: "doctor_ready".to_string(),
-                command: local_readiness_command.clone(),
-            },
-        ),
-        Err(err) => (
+    let needs_local_readiness =
+        issue_watch_needs_local_readiness(&issue_record.state, linked_pr.is_some());
+    let (ready_lifecycle_state, pr_finish_readiness, local_readiness) = if needs_local_readiness {
+        let ready = doctor::run_doctor_ready(
+            &repo_root,
+            &repo,
+            &issue_ref,
+            &issue_ref.branch_name("codex"),
+        );
+        match ready {
+            Ok(ready) => (
+                ready.lifecycle_state,
+                ready.card_lifecycle.pr_finish_readiness,
+                github::IssueWatchLocalReadinessReport {
+                    status: "ready".to_string(),
+                    pr_run_readiness: ready.card_lifecycle.pr_run_readiness.to_string(),
+                    reason: "doctor_ready_pass".to_string(),
+                    check: "doctor_ready".to_string(),
+                    command: local_readiness_command.clone(),
+                },
+            ),
+            Err(err) => (
+                "unknown",
+                "unknown",
+                github::IssueWatchLocalReadinessReport {
+                    status: "failed".to_string(),
+                    pr_run_readiness: "unknown".to_string(),
+                    reason: err.to_string(),
+                    check: "doctor_ready".to_string(),
+                    command: local_readiness_command,
+                },
+            ),
+        }
+    } else {
+        (
             "unknown",
             "unknown",
             github::IssueWatchLocalReadinessReport {
-                status: "failed".to_string(),
-                pr_run_readiness: "unknown".to_string(),
-                reason: err.to_string(),
+                status: "skipped".to_string(),
+                pr_run_readiness: "not_applicable".to_string(),
+                reason: "linked_pr_or_closed_issue_classification_does_not_require_local_readiness"
+                    .to_string(),
                 check: "doctor_ready".to_string(),
                 command: local_readiness_command,
             },
-        ),
+        )
     };
     let closeout_validated = if !closed_completed {
         false
@@ -1012,6 +1040,10 @@ fn doctor_ready_command(issue_ref: &IssueRef) -> String {
         issue_ref.scope(),
         issue_ref.slug()
     )
+}
+
+fn issue_watch_needs_local_readiness(issue_state: &str, has_linked_pr: bool) -> bool {
+    issue_state.eq_ignore_ascii_case("open") && !has_linked_pr
 }
 
 fn parse_issue_ref_number(command: &str, issue_ref: &str) -> Result<u32> {
@@ -2155,38 +2187,47 @@ fn real_pr_doctor(args: &[String]) -> Result<()> {
 
 fn real_pr_closeout(args: &[String]) -> Result<()> {
     let parsed = parse_closeout_args(args)?;
+    let output_path = closeout_closed_completed_issue(
+        parsed.issue,
+        parsed.version.clone(),
+        parsed.slug.clone(),
+        None,
+    )?;
+    let primary_root = primary_checkout_root()?;
+    let task_bundle = output_path.parent().ok_or_else(|| {
+        anyhow!(
+            "closeout: output path has no parent: {}",
+            output_path.display()
+        )
+    })?;
+    println!("{}", path_relative_to_repo(&primary_root, task_bundle));
+    Ok(())
+}
+
+fn closeout_closed_completed_issue(
+    issue: u32,
+    version: Option<String>,
+    slug: Option<String>,
+    repo_override: Option<String>,
+) -> Result<PathBuf> {
     let repo_root = repo_root()?;
     let primary_root = primary_checkout_root()?;
-    let repo = default_repo(&primary_root)?;
-    let inferred =
-        resolve_issue_scope_and_slug_from_available_local_state(&primary_root, parsed.issue)?
-            .unwrap_or((
-                parsed
-                    .version
-                    .clone()
-                    .unwrap_or_else(|| DEFAULT_VERSION.to_string()),
-                parsed
-                    .slug
-                    .clone()
-                    .unwrap_or_else(|| format!("issue-{}", parsed.issue)),
-            ));
-    let issue_ref = IssueRef::new(parsed.issue, inferred.0, inferred.1)?;
+    let repo = repo_override.unwrap_or(default_repo(&primary_root)?);
+    let inferred = resolve_issue_scope_and_slug_from_available_local_state(&primary_root, issue)?
+        .unwrap_or((
+            version.unwrap_or_else(|| DEFAULT_VERSION.to_string()),
+            slug.unwrap_or_else(|| format!("issue-{issue}")),
+        ));
+    let issue_ref = IssueRef::new(issue, inferred.0, inferred.1)?;
     let output_path = issue_ref.task_bundle_output_path(&primary_root);
-    lifecycle::ensure_issue_closed_completed_for_closeout(parsed.issue, &repo)?;
+    lifecycle::ensure_issue_closed_completed_for_closeout(issue, &repo)?;
     lifecycle::closeout_closed_completed_issue_bundle(
         &repo_root,
         &primary_root,
         &issue_ref,
         &output_path,
     )?;
-    println!(
-        "{}",
-        path_relative_to_repo(
-            &primary_root,
-            &issue_ref.task_bundle_dir_path(&primary_root)
-        )
-    );
-    Ok(())
+    Ok(output_path)
 }
 
 fn print_json<T: Serialize>(value: &T) -> Result<()> {
@@ -2339,7 +2380,10 @@ fn bootstrap_ready_status_label(status: &str) -> &str {
 
 #[cfg(test)]
 mod bootstrap_output_tests {
-    use super::{bootstrap_ready_status_label, doctor_ready_command, read_issue_goal_metric_refs};
+    use super::{
+        bootstrap_ready_status_label, doctor_ready_command, issue_watch_needs_local_readiness,
+        read_issue_goal_metric_refs,
+    };
     use ::adl::control_plane::IssueRef;
     use std::fs;
 
@@ -2360,6 +2404,30 @@ mod bootstrap_output_tests {
         assert_eq!(
             doctor_ready_command(&issue_ref),
             "adl pr doctor 5002 --version v0.91.7 --slug watch-target-with-spaces --mode ready --json"
+        );
+    }
+
+    #[test]
+    fn issue_watch_skips_local_readiness_when_pr_or_closed_issue_already_classifies_tail() {
+        assert!(
+            issue_watch_needs_local_readiness("OPEN", false),
+            "open issue without linked PR needs doctor readiness to decide pr-run routing"
+        );
+        assert!(
+            !issue_watch_needs_local_readiness("OPEN", true),
+            "linked PR validation state already classifies watcher/shepherd tail states"
+        );
+        assert!(
+            !issue_watch_needs_local_readiness("CLOSED", false),
+            "closed issue closeout routing does not need pre-run readiness"
+        );
+        assert!(
+            !issue_watch_needs_local_readiness("closed", true),
+            "closed issue with linked PR should avoid extra readiness work"
+        );
+        assert!(
+            !issue_watch_needs_local_readiness("not_planned", false),
+            "non-open issue states should avoid extra readiness work"
         );
     }
 

@@ -60,7 +60,9 @@ Forward checklist. Items are intentionally unchecked because `v0.91.7` execution
 - [ ] Affect/happiness model completed as proof-bound operational reasoning-control implementation through `#4752`, with subjective affect/happiness/wellbeing claims explicitly not claimed.
 - [ ] Godel mechanics boundary implemented/proven for v0.92 claim consumption; live hosted invocation and adaptive DAG completion remain non-claimed.
 - [ ] Economics-context decision completed or blocked with evidence and operator approval.
-- [ ] Guilds/civilization-model boundary explicitly de-scoped or implemented with evidence, without becoming an accidental v0.92 blocker.
+- [ ] Guild foundation boundary implemented/proven through `#4755`, with v0.93 constitutional governance, polis authority, delegated authority, and public product readiness explicitly not claimed.
+- [ ] Paper/publication boundary recorded through `#4757`, with public launch approval, papers, customer-facing CodeFriend/report readiness, autonomous review authority, and unbounded WP-13 claims explicitly not claimed unless a later tracked issue promotes a bounded artifact with evidence, redaction/public-claim review, and human approval.
+- [ ] WP-13 parent closeout reconciled through `#4640` and `docs/milestones/v0.91.7/review/wp13_closeout_4640.md`.
 - [ ] Memory Palace/context problem status is visible for v0.92 as proof or evidence-backed blocker.
 
 ## Demo And Launch Readiness
@@ -69,6 +71,7 @@ Forward checklist. Items are intentionally unchecked because `v0.91.7` execution
 - [ ] Demo matrix distinguishes proof, demo, and evidence-backed blocker surfaces.
 - [ ] July launch plan has v0.91.7/v0.92 proof or evidence-backed blocker status.
 - [ ] First birthday evidence boundaries are explicit.
+- [ ] Publication-facing narratives cite retained proof packets and preserve the #4757 non-claim boundary.
 
 ## Scope Integrity
 

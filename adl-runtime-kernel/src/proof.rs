@@ -54,7 +54,7 @@ pub fn build_proof_runtime(
     item_count: u64,
 ) -> Result<ProofRuntime, crate::TopologyError> {
     let recorder = RuntimeRecorder::new(128);
-    recorder.emit(None, "kernel_bootstrap_started");
+    recorder.emit(None, crate::RuntimeEvent::KernelBootstrapStarted);
 
     let (work_tx, work_rx) = channel(8, ChannelFullPolicy::Block);
     let (governed_tx, governed_rx) = channel(8, ChannelFullPolicy::Block);
@@ -175,7 +175,7 @@ impl Component for Observability {
         let flushed = context.recorder.promote_observability();
         context.recorder.emit(
             Some(context.id.clone()),
-            format!("startup_events_flushed:{}", flushed.len()),
+            crate::RuntimeEvent::StartupEventsFlushed(flushed.len()),
         );
         context.ready();
         context.cancellation.cancelled().await;

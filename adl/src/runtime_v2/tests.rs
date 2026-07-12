@@ -17,6 +17,7 @@ mod challenge;
 mod citizen_lifecycle;
 #[cfg(any(feature = "slow-proof-tests", feature = "slow-proof-runtime"))]
 mod citizen_state_substrate;
+mod codefriend_adapter_obligations;
 mod cognitive_being_flagship_demo;
 mod common;
 mod constructability_anchor_validator;
@@ -41,6 +42,7 @@ mod governed_episode;
 #[cfg(any(feature = "slow-proof-tests", feature = "slow-proof-runtime"))]
 mod governed_learning_substrate;
 mod governed_tools_flagship_demo;
+mod guild_foundation_boundary;
 mod hardening;
 mod humor_and_absurdity;
 mod integrated_csm_run;

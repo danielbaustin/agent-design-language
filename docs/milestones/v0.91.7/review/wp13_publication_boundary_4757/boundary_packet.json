@@ -1,0 +1,84 @@
+{
+  "schema": "adl.wp13.publication_boundary.v1",
+  "issue": 4757,
+  "work_package": "WP-13",
+  "status": "issue_bound_scoped_out_for_v0_92_activation",
+  "scope_decision_ref": "https://github.com/danielbaustin/agent-design-language/issues/4757",
+  "scope_decision_note": "Issue #4757 records the tracked scope decision that papers, launch copy, reports, and product publication claims are not v0.92 birthday blockers. This is not external publication approval.",
+  "retained_packet": "docs/milestones/v0.91.7/review/wp13_publication_boundary_4757.md",
+  "source_evidence": [
+    {
+      "surface": "affect_happiness",
+      "issue": 4752,
+      "ref": "docs/milestones/v0.91.7/review/wp13_affect_happiness_boundary_4752.md",
+      "publication_rule": "Operational reasoning-control language only; subjective affect, happiness, wellbeing, suffering, and consciousness remain non-claims."
+    },
+    {
+      "surface": "godel_constructability",
+      "issue": 4753,
+      "ref": "docs/milestones/v0.91.7/review/wp13_godel_constructability_boundary_4753.md",
+      "publication_rule": "Birthday/public claims require retained Godel runtime evidence, constructability anchors, and operator review; live hosted invocation and adaptive DAG completion remain non-claims."
+    },
+    {
+      "surface": "economics_civilization",
+      "issue": 4754,
+      "ref": "docs/milestones/v0.91.7/review/wp13_economics_civilization_boundary_4754.md",
+      "publication_rule": "Economics and civilization are context-only for v0.92 unless a later tracked issue promotes and proves a bounded test."
+    },
+    {
+      "surface": "guild_foundation",
+      "issue": 4755,
+      "ref": "docs/milestones/v0.91.7/review/wp13_guild_foundation_boundary_4755.md",
+      "publication_rule": "Guild foundation is governance handoff context only; constitutional citizenship, polis authority, delegated authority, and public product readiness remain non-claims."
+    },
+    {
+      "surface": "codefriend_adapter",
+      "issue": 4756,
+      "ref": "docs/milestones/v0.91.7/review/wp13_codefriend_adapter_obligations_4756.md",
+      "publication_rule": "CodeFriend v1 and adapter v2 are tracked handoff truth only before v0.92; external-repo proof packaging and product publication readiness remain future obligations."
+    }
+  ],
+  "v0_92_may_consume": [
+    "source_backed_non_claim_ledger",
+    "launch_and_birthday_copy_guardrails",
+    "future_product_planning_context",
+    "human_review_redaction_and_evidence_boundary_requirement"
+  ],
+  "v0_92_may_not_consume": [
+    "published_paper",
+    "customer_facing_codefriend_readiness",
+    "public_launch_approval",
+    "autonomous_review_authority",
+    "subjective_affect_or_consciousness_claims",
+    "live_hosted_godel_invocation_claims",
+    "payments_market_civilization_or_governance_authority_claims",
+    "v0_93_governance_completion",
+    "v0_95_codefriend_mvp_completion"
+  ],
+  "promotion_gates": [
+    "tracked_issue_scope",
+    "source_backed_publication_target",
+    "evidence_inventory",
+    "redaction_privacy_review",
+    "public_claim_non_claim_checklist",
+    "human_approval_record",
+    "retained_final_artifact_and_validation"
+  ],
+  "consuming_surfaces": [
+    "docs/milestones/v0.91.7/FEATURE_DOCS_v0.91.7.md",
+    "docs/milestones/v0.91.7/V092_HANDOFF_v0.91.7.md",
+    "docs/milestones/v0.91.7/MILESTONE_CHECKLIST_v0.91.7.md",
+    "docs/milestones/v0.91.7/RELEASE_NOTES_v0.91.7.md",
+    "docs/milestones/v0.91.7/RELEASE_PLAN_v0.91.7.md",
+    "docs/milestones/v0.91.7/WBS_v0.91.7.md",
+    "docs/milestones/v0.91.7/WP_ISSUE_WAVE_v0.91.7.yaml"
+  ],
+  "non_claims": [
+    "This packet does not publish a paper.",
+    "This packet does not approve external launch copy.",
+    "This packet does not claim CodeFriend product or customer readiness.",
+    "This packet does not claim subjective affect, consciousness, or wellbeing.",
+    "This packet does not claim payments, markets, civilization, or governance authority.",
+    "This packet does not start v0.92 implementation."
+  ]
+}

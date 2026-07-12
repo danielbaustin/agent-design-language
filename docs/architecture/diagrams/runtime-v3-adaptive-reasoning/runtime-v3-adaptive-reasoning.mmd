@@ -1,0 +1,18 @@
+flowchart LR
+    Observation["Recorded provider observation<br/>typed score + evidence hash"]
+    Graph["reasoning_graph<br/>petgraph validated DAG"]
+    Loop["loop_executor<br/>iteration + deadline + cancellation"]
+    Evaluation["evaluation_feedback<br/>integer score + direction"]
+    State["adaptation_state<br/>versioned checkpoint participant"]
+    Gate["mutation_gate<br/>Ed25519 grant + copy validation"]
+    Refusal["Retained refusal evidence"]
+    Continuity["Runtime v3 continuity<br/>checkpoint + hash-chained replay"]
+
+    Observation --> Graph --> Loop --> Evaluation --> State
+    State --> Gate
+    Gate -->|"authorized candidate"| Graph
+    Gate -->|"denied"| Refusal
+    Graph --> Continuity
+    Loop --> Continuity
+    State --> Continuity
+    Gate --> Continuity

@@ -32,6 +32,7 @@ and local-only notes.
 ## Documents In This Home
 
 - [CodeFriend setup plan](CODEFRIEND_SETUP_PLAN.md)
+- [CodeFriend v1 build plan](CODEFRIEND_V1_BUILD_PLAN.md)
 - [CodeFriend reference inventory](CODEFRIEND_REFERENCE_INVENTORY.md)
 - [CodeFriend pre-alpha repo and S3 welcome mini-sprint](CODEFRIEND_PRE_ALPHA_REPO_AND_S3_WELCOME_MINI_SPRINT.md)
 - [Reusable S3/Terraform static-site guide](../HOW_TO_CREATE_S3_WEBSITE_WITH_TERRAFORM.md)

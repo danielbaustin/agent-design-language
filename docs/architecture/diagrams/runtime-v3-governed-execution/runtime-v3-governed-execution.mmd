@@ -1,0 +1,17 @@
+flowchart LR
+    Request["GovernedActionRequest<br/>commitment + authority + resource"]
+    Gate["Freedom Gate<br/>deterministic lawful mediation"]
+    Refusal["Refusal / quarantine / appeal evidence"]
+    Permit["Signed one-shot ExecutionPermit"]
+    AEE["AEE<br/>governed nondeterministic shell"]
+    SDK["Provider / tool SDK<br/>injected ActuationShell"]
+    Result["RecordedActuationResult<br/>bounded bytes + canonical hash"]
+    Audit["Hash-chained audit + checkpoint"]
+
+    Request --> Gate
+    Gate -->|"refuse"| Refusal
+    Refusal -->|"signed operator review"| Gate
+    Gate -->|"allow"| Permit --> AEE --> SDK --> AEE --> Result
+    Gate --> Audit
+    Refusal --> Audit
+    Result --> Audit

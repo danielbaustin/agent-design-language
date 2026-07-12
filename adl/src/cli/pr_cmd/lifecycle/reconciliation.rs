@@ -94,7 +94,7 @@ pub(crate) fn validated_closeout_marker_is_current(
     }
     let canonical_output = repo_root.join(&marker.canonical_sor);
     ensure_closed_completed_issue_bundle_truth(repo_root, issue_ref, &canonical_output)?;
-    Ok(true)
+    closeout_worktree_settlement_is_current(repo_root, issue_ref, &canonical_output)
 }
 
 pub(crate) fn validated_closeout_state_is_current(
@@ -106,7 +106,7 @@ pub(crate) fn validated_closeout_state_is_current(
     }
     let canonical_output = issue_ref.task_bundle_output_path(repo_root);
     ensure_closed_completed_issue_bundle_truth(repo_root, issue_ref, &canonical_output)?;
-    Ok(true)
+    closeout_worktree_settlement_is_current(repo_root, issue_ref, &canonical_output)
 }
 
 pub(crate) fn validated_closeout_state_matches_linked_pr(
@@ -147,6 +147,45 @@ fn closeout_sor_names_linked_pr(text: &str, linked_pr_url: &str, _linked_pr_numb
         let value = value.trim().trim_matches('`').trim_matches('"');
         value.trim_end_matches('/') == expected_url
     })
+}
+
+fn closeout_worktree_settlement_is_current(
+    repo_root: &Path,
+    issue_ref: &IssueRef,
+    canonical_output: &Path,
+) -> Result<bool> {
+    let worktree_path = issue_ref.default_worktree_path(
+        repo_root,
+        std::env::var_os("ADL_WORKTREE_ROOT")
+            .map(PathBuf::from)
+            .as_deref(),
+    );
+    if !worktree_path.is_dir() {
+        return Ok(true);
+    }
+
+    let text = fs::read_to_string(canonical_output).with_context(|| {
+        format!(
+            "watch: failed to read canonical SOR '{}'",
+            canonical_output.display()
+        )
+    })?;
+    let worktree_prune_result = line_value_after_prefix(&text, "- Worktree prune result:");
+    let worktree_only_paths = line_value_after_prefix(&text, "- Worktree-only paths remaining:");
+    let retained_is_recorded = worktree_prune_result
+        .as_deref()
+        .unwrap_or_default()
+        .starts_with("retained_with_reason:")
+        || worktree_prune_result
+            .as_deref()
+            .unwrap_or_default()
+            .starts_with("blocked_dirty:");
+    let remaining_paths_record_retention = worktree_only_paths
+        .as_deref()
+        .unwrap_or_default()
+        .starts_with("issue worktree retained:");
+
+    Ok(retained_is_recorded && remaining_paths_record_retention)
 }
 
 fn closeout_sor_pr_url(text: &str) -> Option<String> {

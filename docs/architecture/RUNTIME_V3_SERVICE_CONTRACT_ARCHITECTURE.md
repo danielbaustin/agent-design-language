@@ -43,9 +43,9 @@ flowchart TB
 ```
 
 Compared with the basic architecture, the supervisor and component set remain
-in the same places. This issue defines and proves the contract resolver; #5182
-will bind it into topology construction as a mandatory pre-spawn gate. It is
-not a second scheduler or runtime.
+in the same places. #5176 defined and proved the contract resolver. #5182 now
+binds it into declarative topology construction as a mandatory pre-spawn gate.
+It is not a second scheduler or runtime.
 
 ## Contract Shape
 

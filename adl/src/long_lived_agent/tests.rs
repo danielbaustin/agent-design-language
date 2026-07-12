@@ -7,7 +7,7 @@ use std::env;
 use std::ffi::OsString;
 use std::sync::atomic::{AtomicU64, Ordering};
 use std::sync::MutexGuard;
-use std::time::Instant;
+use std::time::{Duration, Instant};
 
 static TEMP_SEQ: AtomicU64 = AtomicU64::new(0);
 
@@ -158,6 +158,82 @@ impl Drop for MultiEnvGuard {
             }
         }
     }
+}
+
+fn record_notice_for_http_failure(
+    prefix: &str,
+    response_status: u16,
+    response_delay: Duration,
+    timeout_ms: u64,
+) -> Value {
+    let listener = std::net::TcpListener::bind("127.0.0.1:0").expect("bind failure route");
+    let address = listener.local_addr().expect("failure route address");
+    let server = tiny_http::Server::from_listener(listener, None).expect("failure route server");
+    let receiver = thread::spawn(move || {
+        let request = server.recv().expect("receive failure notice");
+        thread::sleep(response_delay);
+        let _ = request.respond(tiny_http::Response::empty(response_status));
+    });
+    let endpoint = format!("http://{address}/{prefix}");
+    let timeout_ms = timeout_ms.to_string();
+    let _env = MultiEnvGuard::set_all(&[
+        ("ADL_CSM_NOTICE_REQUIRED_CHANNEL", "control_plane"),
+        ("ADL_CSM_NOTICE_CONTROL_PLANE_MODE", "live"),
+        ("ADL_CSM_NOTICE_CONTROL_PLANE_APPROVED", "1"),
+        ("ADL_CSM_NOTICE_CONTROL_PLANE_TARGET", "https"),
+        ("ADL_CSM_NOTICE_CONTROL_PLANE_URL", endpoint.as_str()),
+        ("ADL_AWS_SIGNAL_MODE", "mock"),
+        ("ADL_AWS_HEARTBEAT_TARGET", "cloudwatch_logs"),
+        (
+            "ADL_AWS_SNS_TOPIC_ARN",
+            "arn:aws:sns:us-west-2:000000000000:unselected-route",
+        ),
+        ("ADL_CSM_NOTICE_HTTP_TIMEOUT_MS", timeout_ms.as_str()),
+        ("ADL_CSM_DISK_FLOOR_BYTES", "0"),
+        ("ADL_CSM_TEST_AVAILABLE_BYTES", "1073741824"),
+    ]);
+    let root = temp_dir(prefix);
+    let spec = write_spec(&root);
+    let loaded = load_spec(&spec).expect("load spec");
+    ensure_state_root(&loaded).expect("state root");
+    let runtime_context = CsmRuntimeContext::new(&loaded).expect("csm runtime context");
+    let status = status_with_state(
+        &loaded,
+        AgentStatusState::Failed,
+        None,
+        None,
+        None,
+        false,
+        None,
+    );
+    record_governed_runtime_notice(
+        &runtime_context,
+        &loaded,
+        GovernedNoticeInput {
+            notice_kind: "runtime_degraded",
+            severity: "critical",
+            trigger: prefix,
+            status: &status,
+            restart_count: 0,
+            bounded_test_restart_limit: None,
+            last_child_exit: None,
+            safe_fail: json!({"status": "serialized"}),
+            details: json!({"proof": prefix}),
+        },
+    )
+    .expect("retain failed notice");
+    receiver.join().expect("failure route join");
+    let notice = read_json_required(&csm_notice_latest_path(&loaded))
+        .expect("latest failed governed notice");
+    let channel_state: Value =
+        read_json_required(&loaded.state_root.join("csm_typed_channel_state.json"))
+            .expect("failed typed channel state");
+    assert_eq!(channel_state["summary"]["durable_spool_depth"], 1);
+    assert!(!loaded
+        .state_root
+        .join("aws_csm_governed_notice_sns_mock.jsonl")
+        .exists());
+    notice
 }
 
 #[test]
@@ -1364,6 +1440,513 @@ fn daemon_partial_checkpoint_preserves_recoverable_failure_reason() {
     let checkpoint: serde_json::Value =
         read_json_required(&continuity_checkpoint_path(&loaded)).expect("checkpoint");
     assert_eq!(checkpoint["state"], "failed");
+}
+
+#[test]
+fn governed_notice_blocks_before_cloud_sequence_reservation_without_publishable_route() {
+    let _env = MultiEnvGuard::set_all(&[
+        ("ADL_CSM_NOTICE_REQUIRED_CHANNEL", "eventbridge"),
+        ("ADL_CSM_DISK_FLOOR_BYTES", "0"),
+        ("ADL_CSM_TEST_AVAILABLE_BYTES", "1073741824"),
+    ]);
+    let root = temp_dir("governed-notice-preflight-blocked");
+    let spec = write_spec(&root);
+    let loaded = load_spec(&spec).expect("load spec");
+    ensure_state_root(&loaded).expect("state root");
+    let runtime_context = CsmRuntimeContext::new(&loaded).expect("csm runtime context");
+    let status = status_with_state(
+        &loaded,
+        AgentStatusState::Failed,
+        None,
+        None,
+        None,
+        false,
+        Some(StatusError {
+            class: "cloud_route_unavailable".to_string(),
+            message: "publish route is not configured".to_string(),
+        }),
+    );
+
+    record_governed_runtime_notice(
+        &runtime_context,
+        &loaded,
+        GovernedNoticeInput {
+            notice_kind: "runtime_degraded",
+            severity: "critical",
+            trigger: "cloud_route_unavailable",
+            status: &status,
+            restart_count: 0,
+            bounded_test_restart_limit: None,
+            last_child_exit: None,
+            safe_fail: json!({"status": "serialized"}),
+            details: json!({"authorization_policy": {"decision": "allow"}}),
+        },
+    )
+    .expect("record blocked notice");
+    let notice: Value =
+        read_json_required(&csm_notice_latest_path(&loaded)).expect("latest governed notice");
+
+    assert_eq!(notice["publish_preflight"]["status"], "blocked");
+    assert_eq!(
+        notice["typed_channel_delivery"]["status"],
+        "blocked_before_sequence_reservation"
+    );
+    assert_eq!(
+        notice["typed_channel_delivery"]["spool_sequence"],
+        Value::Null
+    );
+    assert_eq!(notice["typed_channel_delivery"]["cursor_advanced"], false);
+    assert_eq!(
+        notice["publish_transaction"]["status"],
+        "blocked_before_sequence_reservation"
+    );
+    let channel_state: Value =
+        read_json_required(&loaded.state_root.join("csm_typed_channel_state.json"))
+            .expect("typed channel state");
+    assert_eq!(channel_state["summary"]["durable_spool_depth"], 0);
+}
+
+#[test]
+fn governed_notice_rejects_secret_material_before_any_durable_payload_write() {
+    let _env = MultiEnvGuard::set_all(&[
+        ("ADL_CSM_NOTICE_REQUIRED_CHANNEL", "eventbridge"),
+        ("ADL_CSM_DISK_FLOOR_BYTES", "0"),
+        ("ADL_CSM_TEST_AVAILABLE_BYTES", "1073741824"),
+    ]);
+    let root = temp_dir("governed-notice-redaction-rejected");
+    let spec = write_spec(&root);
+    let loaded = load_spec(&spec).expect("load spec");
+    ensure_state_root(&loaded).expect("state root");
+    let runtime_context = CsmRuntimeContext::new(&loaded).expect("csm runtime context");
+    let status = status_with_state(
+        &loaded,
+        AgentStatusState::Failed,
+        None,
+        None,
+        None,
+        false,
+        None,
+    );
+    let forbidden = "Bearer must-never-be-retained-5115";
+    record_governed_runtime_notice(
+        &runtime_context,
+        &loaded,
+        GovernedNoticeInput {
+            notice_kind: "runtime_degraded",
+            severity: "critical",
+            trigger: "redaction_rejection_proof",
+            status: &status,
+            restart_count: 0,
+            bounded_test_restart_limit: None,
+            last_child_exit: None,
+            safe_fail: json!({"status": "serialized"}),
+            details: json!({"authorization": forbidden}),
+        },
+    )
+    .expect("record redacted rejection");
+
+    let latest = fs::read_to_string(csm_notice_latest_path(&loaded)).expect("latest notice");
+    let ledger = fs::read_to_string(csm_notice_ledger_path(&loaded)).expect("notice ledger");
+    assert!(!latest.contains(forbidden));
+    assert!(!ledger.contains(forbidden));
+    let notice: Value = serde_json::from_str(&latest).expect("parse latest notice");
+    assert_eq!(notice["redaction"]["status"], "rejected_before_persistence");
+    assert_eq!(notice["redaction"]["retained_payload"], false);
+    assert_eq!(notice["publish_preflight"]["status"], "blocked");
+    assert_eq!(
+        notice["publish_preflight"]["failure_class"],
+        "csm_notice_redaction_failed"
+    );
+    let channel_state: Value =
+        read_json_required(&loaded.state_root.join("csm_typed_channel_state.json"))
+            .expect("typed channel state");
+    assert_eq!(channel_state["summary"]["durable_spool_depth"], 0);
+}
+
+#[test]
+fn cloud_publish_acknowledgement_requires_the_preflight_selected_route() {
+    let attempts = vec![
+        json!({
+            "channel": "cloudwatch_logs",
+            "status": "published_live",
+            "provider_message_id": "cloudwatch-receipt"
+        }),
+        json!({
+            "channel": "cloudfront_control_plane",
+            "status": "blocked",
+            "provider_message_id": Value::Null
+        }),
+    ];
+    assert!(verified_route_attempt(&attempts, "cloudfront_control_plane").is_none());
+    assert_eq!(
+        verified_route_attempt(&attempts, "cloudwatch_logs")
+            .and_then(|attempt| attempt["provider_message_id"].as_str()),
+        Some("cloudwatch-receipt")
+    );
+}
+
+#[test]
+fn governed_notice_advances_once_after_selected_live_route_confirms_publication() {
+    let listener = std::net::TcpListener::bind("127.0.0.1:0").expect("bind receipt server");
+    let address = listener.local_addr().expect("receipt server address");
+    let server = tiny_http::Server::from_listener(listener, None).expect("receipt server");
+    let receiver = thread::spawn(move || {
+        let request = server.recv().expect("receive governed notice");
+        let idempotency_key = request
+            .headers()
+            .iter()
+            .find(|header| header.field.equiv("Idempotency-Key"))
+            .map(|header| header.value.as_str().to_string())
+            .expect("idempotency key");
+        let response = tiny_http::Response::empty(202).with_header(
+            tiny_http::Header::from_bytes("x-request-id", "receipt-5115").expect("receipt header"),
+        );
+        request.respond(response).expect("respond to notice");
+        idempotency_key
+    });
+    let endpoint = format!("http://{address}/polis/runtime-events");
+    let _env = MultiEnvGuard::set_all(&[
+        ("ADL_CSM_NOTICE_REQUIRED_CHANNEL", "control_plane"),
+        ("ADL_CSM_NOTICE_CONTROL_PLANE_MODE", "live"),
+        ("ADL_CSM_NOTICE_CONTROL_PLANE_APPROVED", "1"),
+        ("ADL_CSM_NOTICE_CONTROL_PLANE_TARGET", "https"),
+        ("ADL_CSM_NOTICE_CONTROL_PLANE_URL", endpoint.as_str()),
+        ("ADL_AWS_SIGNAL_MODE", "mock"),
+        ("ADL_AWS_HEARTBEAT_TARGET", "cloudwatch_logs"),
+        (
+            "ADL_AWS_SNS_TOPIC_ARN",
+            "arn:aws:sns:us-west-2:000000000000:unselected-route",
+        ),
+        ("ADL_CSM_DISK_FLOOR_BYTES", "0"),
+        ("ADL_CSM_TEST_AVAILABLE_BYTES", "1073741824"),
+    ]);
+    let root = temp_dir("governed-notice-live-receipt");
+    let spec = write_spec(&root);
+    let loaded = load_spec(&spec).expect("load spec");
+    ensure_state_root(&loaded).expect("state root");
+    let runtime_context = CsmRuntimeContext::new(&loaded).expect("csm runtime context");
+    let status = status_with_state(
+        &loaded,
+        AgentStatusState::Failed,
+        None,
+        None,
+        None,
+        false,
+        None,
+    );
+
+    record_governed_runtime_notice(
+        &runtime_context,
+        &loaded,
+        GovernedNoticeInput {
+            notice_kind: "runtime_degraded",
+            severity: "critical",
+            trigger: "live_route_receipt_proof",
+            status: &status,
+            restart_count: 0,
+            bounded_test_restart_limit: None,
+            last_child_exit: None,
+            safe_fail: json!({"status": "serialized"}),
+            details: json!({"proof": "selected_route_receipt"}),
+        },
+    )
+    .expect("publish governed notice");
+    let received_idempotency_key = receiver.join().expect("receipt server join");
+    let notice: Value =
+        read_json_required(&csm_notice_latest_path(&loaded)).expect("latest governed notice");
+
+    assert_eq!(notice["publish_preflight"]["status"], "publishable");
+    assert_eq!(
+        notice["publish_preflight"]["idempotency_key"],
+        received_idempotency_key
+    );
+    assert_eq!(
+        notice["typed_channel_delivery"]["status"],
+        "published_and_atomically_acknowledged"
+    );
+    assert_eq!(
+        notice["typed_channel_delivery"]["provider_receipt_id"],
+        "receipt-5115"
+    );
+    assert_eq!(notice["typed_channel_delivery"]["cursor_advanced"], true);
+    assert_eq!(
+        notice["publish_transaction"]["status"],
+        "published_and_atomically_acknowledged"
+    );
+    let channel_state: Value =
+        read_json_required(&loaded.state_root.join("csm_typed_channel_state.json"))
+            .expect("typed channel state");
+    assert_eq!(channel_state["summary"]["durable_spool_depth"], 0);
+}
+
+#[test]
+fn governed_notice_retains_spool_and_cursor_when_selected_live_route_is_unreachable() {
+    let listener = std::net::TcpListener::bind("127.0.0.1:0").expect("reserve unreachable port");
+    let address = listener.local_addr().expect("unreachable address");
+    drop(listener);
+    let endpoint = format!("http://{address}/unreachable");
+    let _env = MultiEnvGuard::set_all(&[
+        ("ADL_CSM_NOTICE_REQUIRED_CHANNEL", "control_plane"),
+        ("ADL_CSM_NOTICE_CONTROL_PLANE_MODE", "live"),
+        ("ADL_CSM_NOTICE_CONTROL_PLANE_APPROVED", "1"),
+        ("ADL_CSM_NOTICE_CONTROL_PLANE_TARGET", "https"),
+        ("ADL_CSM_NOTICE_CONTROL_PLANE_URL", endpoint.as_str()),
+        ("ADL_AWS_SIGNAL_MODE", "mock"),
+        ("ADL_AWS_HEARTBEAT_TARGET", "cloudwatch_logs"),
+        (
+            "ADL_AWS_SNS_TOPIC_ARN",
+            "arn:aws:sns:us-west-2:000000000000:unselected-route",
+        ),
+        ("ADL_CSM_DISK_FLOOR_BYTES", "0"),
+        ("ADL_CSM_TEST_AVAILABLE_BYTES", "1073741824"),
+    ]);
+    let root = temp_dir("governed-notice-unreachable");
+    let spec = write_spec(&root);
+    let loaded = load_spec(&spec).expect("load spec");
+    ensure_state_root(&loaded).expect("state root");
+    let runtime_context = CsmRuntimeContext::new(&loaded).expect("csm runtime context");
+    let status = status_with_state(
+        &loaded,
+        AgentStatusState::Failed,
+        None,
+        None,
+        None,
+        false,
+        None,
+    );
+
+    record_governed_runtime_notice(
+        &runtime_context,
+        &loaded,
+        GovernedNoticeInput {
+            notice_kind: "runtime_degraded",
+            severity: "critical",
+            trigger: "unreachable_route_proof",
+            status: &status,
+            restart_count: 0,
+            bounded_test_restart_limit: None,
+            last_child_exit: None,
+            safe_fail: json!({"status": "serialized"}),
+            details: json!({"proof": "unreachable_selected_route"}),
+        },
+    )
+    .expect("retain unreachable notice");
+    let notice: Value =
+        read_json_required(&csm_notice_latest_path(&loaded)).expect("latest governed notice");
+
+    assert_eq!(notice["publish_preflight"]["status"], "publishable");
+    assert_eq!(
+        notice["typed_channel_delivery"]["status"],
+        "durably_spooled_waiting_for_verified_transport_receipt"
+    );
+    assert_eq!(notice["typed_channel_delivery"]["cursor_advanced"], false);
+    assert_eq!(
+        notice["publish_transaction"]["status"],
+        "durably_spooled_waiting_for_verified_transport_receipt"
+    );
+    assert!(notice["typed_channel_delivery"]["spool_sequence"].is_number());
+    assert!(notice["delivery_attempts"]
+        .as_array()
+        .expect("delivery attempts")
+        .iter()
+        .any(|attempt| {
+            attempt["channel"] == "cloudfront_control_plane"
+                && attempt["status"] == "failed"
+                && attempt["failure_class"] == "control_plane_http_unreachable"
+        }));
+    let attempted_channels: Vec<_> = notice["delivery_attempts"]
+        .as_array()
+        .expect("delivery attempts")
+        .iter()
+        .filter_map(|attempt| attempt["channel"].as_str())
+        .collect();
+    assert_eq!(
+        attempted_channels,
+        vec!["local_notice_ledger", "cloudfront_control_plane"]
+    );
+    let channel_state: Value =
+        read_json_required(&loaded.state_root.join("csm_typed_channel_state.json"))
+            .expect("typed channel state");
+    assert_eq!(channel_state["summary"]["durable_spool_depth"], 1);
+    assert!(!loaded
+        .state_root
+        .join("aws_csm_governed_notice_sns_mock.jsonl")
+        .exists());
+
+    unsafe {
+        env::set_var(
+            "ADL_CSM_NOTICE_CONTROL_PLANE_URL",
+            "http://127.0.0.1:1/configuration-changed",
+        );
+    }
+    let mismatched = drain_pending_cloud_notices(&runtime_context, &loaded, None)
+        .expect("fail closed on changed route contract");
+    assert_eq!(mismatched.acknowledged_count, 0);
+    let mismatched_channel_state: Value =
+        read_json_required(&loaded.state_root.join("csm_typed_channel_state.json"))
+            .expect("mismatched typed channel state");
+    assert_eq!(
+        mismatched_channel_state["summary"]["durable_spool_depth"],
+        1
+    );
+    assert_eq!(
+        mismatched_channel_state["last_receipt"]["status"],
+        "durably_spooled_route_contract_mismatch"
+    );
+    assert_eq!(
+        mismatched_channel_state["last_receipt"]["cursor_advanced"],
+        false
+    );
+    unsafe {
+        env::set_var("ADL_CSM_NOTICE_CONTROL_PLANE_URL", endpoint.as_str());
+    }
+
+    let listener = std::net::TcpListener::bind(address).expect("restore selected route");
+    let server = tiny_http::Server::from_listener(listener, None).expect("recovery server");
+    let receiver = thread::spawn(move || {
+        let request = server.recv().expect("receive replayed notice");
+        let idempotency_key = request
+            .headers()
+            .iter()
+            .find(|header| header.field.equiv("Idempotency-Key"))
+            .map(|header| header.value.as_str().to_string())
+            .expect("replay idempotency key");
+        request
+            .respond(
+                tiny_http::Response::empty(202).with_header(
+                    tiny_http::Header::from_bytes("x-request-id", "recovery-receipt-5115")
+                        .expect("recovery receipt header"),
+                ),
+            )
+            .expect("respond to replay");
+        idempotency_key
+    });
+    let recovered = drain_pending_cloud_notices(&runtime_context, &loaded, None)
+        .expect("replay retained notice");
+    let replay_idempotency_key = receiver.join().expect("recovery server join");
+    assert_eq!(recovered.acknowledged_count, 1);
+    assert_eq!(
+        notice["publish_preflight"]["idempotency_key"],
+        replay_idempotency_key
+    );
+    let duplicate_drain =
+        drain_pending_cloud_notices(&runtime_context, &loaded, None).expect("second replay drain");
+    assert_eq!(duplicate_drain.acknowledged_count, 0);
+    let recovered_channel_state: Value =
+        read_json_required(&loaded.state_root.join("csm_typed_channel_state.json"))
+            .expect("recovered typed channel state");
+    assert_eq!(recovered_channel_state["summary"]["durable_spool_depth"], 0);
+}
+
+#[test]
+fn governed_notice_retains_spool_and_cursor_when_selected_route_denies_access() {
+    let listener = std::net::TcpListener::bind("127.0.0.1:0").expect("bind denied route");
+    let address = listener.local_addr().expect("denied route address");
+    let server = tiny_http::Server::from_listener(listener, None).expect("denied route server");
+    let receiver = thread::spawn(move || {
+        let request = server.recv().expect("receive denied notice");
+        request
+            .respond(tiny_http::Response::empty(403))
+            .expect("deny notice");
+    });
+    let endpoint = format!("http://{address}/denied");
+    let _env = MultiEnvGuard::set_all(&[
+        ("ADL_CSM_NOTICE_REQUIRED_CHANNEL", "control_plane"),
+        ("ADL_CSM_NOTICE_CONTROL_PLANE_MODE", "live"),
+        ("ADL_CSM_NOTICE_CONTROL_PLANE_APPROVED", "1"),
+        ("ADL_CSM_NOTICE_CONTROL_PLANE_TARGET", "https"),
+        ("ADL_CSM_NOTICE_CONTROL_PLANE_URL", endpoint.as_str()),
+        ("ADL_CSM_DISK_FLOOR_BYTES", "0"),
+        ("ADL_CSM_TEST_AVAILABLE_BYTES", "1073741824"),
+    ]);
+    let root = temp_dir("governed-notice-denied");
+    let spec = write_spec(&root);
+    let loaded = load_spec(&spec).expect("load spec");
+    ensure_state_root(&loaded).expect("state root");
+    let runtime_context = CsmRuntimeContext::new(&loaded).expect("csm runtime context");
+    let status = status_with_state(
+        &loaded,
+        AgentStatusState::Failed,
+        None,
+        None,
+        None,
+        false,
+        None,
+    );
+
+    record_governed_runtime_notice(
+        &runtime_context,
+        &loaded,
+        GovernedNoticeInput {
+            notice_kind: "runtime_degraded",
+            severity: "critical",
+            trigger: "denied_route_proof",
+            status: &status,
+            restart_count: 0,
+            bounded_test_restart_limit: None,
+            last_child_exit: None,
+            safe_fail: json!({"status": "serialized"}),
+            details: json!({"proof": "authorization_denial"}),
+        },
+    )
+    .expect("retain denied notice");
+    receiver.join().expect("denied route join");
+    let notice: Value =
+        read_json_required(&csm_notice_latest_path(&loaded)).expect("latest governed notice");
+    assert_eq!(
+        notice["typed_channel_delivery"]["status"],
+        "durably_spooled_waiting_for_verified_transport_receipt"
+    );
+    assert_eq!(notice["typed_channel_delivery"]["cursor_advanced"], false);
+    assert!(notice["delivery_attempts"]
+        .as_array()
+        .expect("delivery attempts")
+        .iter()
+        .any(|attempt| {
+            attempt["channel"] == "cloudfront_control_plane"
+                && attempt["status"] == "failed"
+                && attempt["failure_class"] == "control_plane_http_access_denied_403"
+        }));
+    let channel_state: Value =
+        read_json_required(&loaded.state_root.join("csm_typed_channel_state.json"))
+            .expect("typed channel state");
+    assert_eq!(channel_state["summary"]["durable_spool_depth"], 1);
+}
+
+#[test]
+fn governed_notice_retains_spool_and_cursor_when_selected_route_throttles() {
+    let notice =
+        record_notice_for_http_failure("governed-notice-throttled", 429, Duration::ZERO, 1_000);
+    assert_eq!(
+        notice["typed_channel_delivery"]["status"],
+        "durably_spooled_waiting_for_verified_transport_receipt"
+    );
+    assert_eq!(notice["typed_channel_delivery"]["cursor_advanced"], false);
+    assert!(notice["delivery_attempts"]
+        .as_array()
+        .expect("delivery attempts")
+        .iter()
+        .any(|attempt| attempt["failure_class"] == "control_plane_http_throttled_429"));
+}
+
+#[test]
+fn governed_notice_retains_spool_and_cursor_for_ambiguous_timeout() {
+    let notice = record_notice_for_http_failure(
+        "governed-notice-timeout-ambiguous",
+        202,
+        Duration::from_millis(100),
+        10,
+    );
+    assert_eq!(
+        notice["typed_channel_delivery"]["status"],
+        "durably_spooled_waiting_for_verified_transport_receipt"
+    );
+    assert_eq!(notice["typed_channel_delivery"]["cursor_advanced"], false);
+    assert!(notice["delivery_attempts"]
+        .as_array()
+        .expect("delivery attempts")
+        .iter()
+        .any(|attempt| attempt["failure_class"] == "control_plane_http_timeout_ambiguous"));
 }
 
 #[test]

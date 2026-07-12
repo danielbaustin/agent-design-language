@@ -1,0 +1,14 @@
+schema_version: adl.release_gate_disposition.v1
+issue: 4755
+disposition: approved_with_focused_runtime_proof
+changed_release_gate_surfaces:
+  - docs/milestones/v0.91.7/MILESTONE_CHECKLIST_v0.91.7.md
+reviewer_or_review_mode: bounded pre-PR runtime and release-surface review
+focused_validation_run: "cargo fmt --manifest-path adl/Cargo.toml --all --check && cargo test --manifest-path adl/Cargo.toml runtime_v2_guild_foundation_boundary && git diff --check"
+residual_ci_proof_required_before_merge: required
+notes:
+  - "Validation manager escalated #4755 because the milestone checklist is a release-gate surface."
+  - "The checklist edit is limited to WP-13 guild foundation wording and does not mark unresolved milestone completion."
+  - "Focused local wuji proof passed for the Runtime v2 guild foundation boundary, including duplicate drift rejection, handoff-only v0.92 consumption, governance deferrals, promotion gates, non-claims, and path-safe JSON."
+  - "Independent pre-PR review found duplicate-drift validation risk; the finding was fixed before publication and covered by focused regression tests."
+  - "GitHub PR checks remain required before merge."
