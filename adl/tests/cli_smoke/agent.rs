@@ -586,16 +586,23 @@ memory:
     .expect("write agent spec");
 
     let spec_str = spec.to_str().expect("utf8 path");
-    let first = run_adl(&[
-        "agent",
-        "run",
-        "--spec",
-        spec_str,
-        "--max-cycles",
-        "2",
-        "--no-sleep",
-        "--json",
-    ]);
+    let disk_ready_env = [
+        ("ADL_CSM_DISK_FLOOR_BYTES", "0"),
+        ("ADL_CSM_TEST_AVAILABLE_BYTES", "1073741824"),
+    ];
+    let first = run_adl_with_env(
+        &[
+            "agent",
+            "run",
+            "--spec",
+            spec_str,
+            "--max-cycles",
+            "2",
+            "--no-sleep",
+            "--json",
+        ],
+        &disk_ready_env,
+    );
     assert!(
         first.status.success(),
         "expected first run success, stderr:\n{}",
@@ -604,7 +611,10 @@ memory:
 
     fs::remove_file(root.join("state/status.json")).expect("remove status to force restore");
 
-    let restored = run_adl(&["agent", "status", "--spec", spec_str, "--json"]);
+    let restored = run_adl_with_env(
+        &["agent", "status", "--spec", spec_str, "--json"],
+        &disk_ready_env,
+    );
     assert!(
         restored.status.success(),
         "expected restored status success, stderr:\n{}",
@@ -626,16 +636,19 @@ memory:
         "cycle-000003"
     );
 
-    let second = run_adl(&[
-        "agent",
-        "run",
-        "--spec",
-        spec_str,
-        "--max-cycles",
-        "1",
-        "--no-sleep",
-        "--json",
-    ]);
+    let second = run_adl_with_env(
+        &[
+            "agent",
+            "run",
+            "--spec",
+            spec_str,
+            "--max-cycles",
+            "1",
+            "--no-sleep",
+            "--json",
+        ],
+        &disk_ready_env,
+    );
     assert!(
         second.status.success(),
         "expected resumed run success, stderr:\n{}",
