@@ -1,0 +1,37 @@
+{
+  "schema": "adl.runtime.shadow_parity_report.v1",
+  "issue": 5179,
+  "decision": "continue_incubation",
+  "default_runtime": "v2",
+  "cutover_eligible": false,
+  "capabilities": [
+    {"id":"kernel.lifecycle","disposition":"blocked_shared_fixture","proof":"Runtime v3 kernel fixture exists; no equivalent live v2 adapter fixture"},
+    {"id":"kernel.topology_and_backpressure","disposition":"blocked_shared_fixture","proof":"Runtime v3 topology fixture exists; no equivalent live v2 adapter fixture"},
+    {"id":"service.contracts_and_configuration","disposition":"blocked_shared_fixture","proof":"Runtime v3 contract fixtures exist; no equivalent live v2 adapter fixture"},
+    {"id":"continuity.replay_recovery","disposition":"blocked_shared_fixture","proof":"Runtime v3 continuity fixtures exist; no equivalent live v2 adapter fixture"},
+    {"id":"private_state.security","disposition":"unsupported","proof":"No v3 private-state service; cutover remains blocked"},
+    {"id":"control.health_observability","disposition":"blocked_shared_fixture","proof":"Runtime v3 control fixtures exist; no equivalent live v2 adapter fixture"},
+    {"id":"reasoning.graphs_and_loops","disposition":"equivalent_live_fixture","proof":"21-run live v2 loop-runtime and v3 reasoning-engine process comparison in parity.rs"},
+    {"id":"learning.adaptive_dag","disposition":"blocked_shared_fixture","proof":"Runtime v3 adaptive fixtures exist; no equivalent live v2 adapter fixture"},
+    {"id":"governance.freedom_gate_aee","disposition":"blocked_shared_fixture","proof":"Runtime v3 governance fixtures exist; no equivalent live v2 adapter fixture"},
+    {"id":"contracts.delegation_resources","disposition":"blocked_shared_fixture","proof":"Runtime v3 governed-contract fixtures exist; no equivalent live v2 adapter fixture"},
+    {"id":"agents.providers_scheduler","disposition":"blocked_shared_fixture","proof":"Runtime v3 operational fixtures exist; no equivalent live v2 adapter fixture"},
+    {"id":"network.acip_a2a_cloud","disposition":"blocked_shared_fixture","proof":"Runtime v3 network adapter fixtures exist; no equivalent live v2 adapter fixture"},
+    {"id":"clock.checkpoint_lifelog","disposition":"blocked_shared_fixture","proof":"Runtime v3 clock/continuity fixtures exist; no equivalent live v2 adapter fixture"},
+    {"id":"citizen.identity_memory","disposition":"unsupported","proof":"Domain adapter deferred; no cutover claim"},
+    {"id":"moral_affect_wellbeing","disposition":"unsupported","proof":"Domain adapter deferred; no cutover claim"},
+    {"id":"curiosity_intelligence_theory_of_mind","disposition":"unsupported","proof":"Domain adapter deferred; no cutover claim"},
+    {"id":"migration.shadow_parity","disposition":"live_shadow_fixture","proof":"adl-runtime-kernel/tests/parity.rs live v2/v3 process backends and reversible forwarding facade"},
+    {"id":"guardian.packaging_soak","disposition":"bounded_soak_complete_pending_review","proof":"adl-runtime-kernel/tests/guardian_soak.rs and docs/architecture/runtime_v3_guardian_soak_report.v1.json"}
+  ],
+  "module_closure": {
+    "baseline_modules": 195,
+    "routed_modules": 195,
+    "proof": "Each filename routes to a capability disposition and proof reference; this is ownership routing, not behavioral equivalence"
+  },
+  "footprint": {
+    "v3": {"implementation_loc":8446,"direct_dependencies":18,"tests":106,"build_millis":null,"fixture_runtime_median_micros":5717},
+    "v2": {"implementation_loc":83048,"direct_dependencies":54,"tests":587,"build_millis":203980,"fixture_runtime_median_micros":7844},
+    "measurement": "Median of 21 sequential-backend fresh-process executions of the same logical three-iteration bounded reasoning loop after #5175 parity remediation; Runtime v3 isolated build time was not remeasured"
+  }
+}

@@ -12,7 +12,7 @@ use axum::{
 use chrono::{DateTime, Utc};
 use serde_json::{json, Value};
 use std::env;
-use std::fs;
+use std::fs::{self, OpenOptions};
 use std::io::Write;
 use std::net::{IpAddr, SocketAddr};
 use std::path::{Path, PathBuf};
@@ -37,6 +37,10 @@ use adl_runtime::continuity_history::{
     LIFELOG_DB_FILE, LIFELOG_SCHEMA_V1,
 };
 use adl_runtime::resident_agent::CsmResidentAgentSet;
+use adl_runtime::runtime_api_auth::{
+    RuntimeApiAuthDecision, RuntimeApiCredentialStore, VerifiedRuntimeApiGatewayIdentity,
+    CSM_RUNTIME_API_AUTH_EVENTS_FILE,
+};
 
 pub use adl_runtime::runtime_api::{
     CSM_RUNTIME_API_API_GATEWAY_BRIDGE_SCHEMA, CSM_RUNTIME_API_CHRONOSENSE_SCHEMA,
@@ -82,6 +86,20 @@ async fn serve_runtime_api_async(
     if options.test_max_requests == Some(0) {
         bail!("CSM runtime API test request limit must be greater than zero");
     }
+    let loaded = load_spec(&options.spec_path).context("load CSM runtime API owner spec")?;
+    let auth_store = RuntimeApiCredentialStore::for_state_root(&loaded.state_root);
+    let auth_metadata = auth_store
+        .ensure()
+        .map_err(anyhow::Error::msg)
+        .context("initialize CSM runtime API credential")?;
+    let auth_events_path = loaded.state_root.join(CSM_RUNTIME_API_AUTH_EVENTS_FILE);
+    append_runtime_api_auth_event(
+        &auth_events_path,
+        "credential_ready",
+        None,
+        None,
+        Some(&auth_metadata),
+    )?;
     let listener_config = resolve_main_runtime_api_listener(
         Some(&options.bind),
         options.test_max_requests.is_some()
@@ -114,13 +132,20 @@ async fn serve_runtime_api_async(
             "listener_role": listener_config.role.as_str(),
             "bind_addr": addr.to_string(),
             "runtime_owner": "csm",
+            "auth": {
+                "required": true,
+                "schema": auth_metadata.schema,
+                "generation": auth_metadata.generation,
+                "fingerprint": auth_metadata.fingerprint,
+                "credential_ref": "state://runtime_api_auth.json"
+            },
             "networking": listener_config.to_observability_json(),
             "pooling_plan_schema": CSM_POOLING_PLAN_SCHEMA
         }))?
     );
     std::io::stdout().flush().ok();
 
-    let state = RuntimeApiServerState::new(options);
+    let state = RuntimeApiServerState::new(options, auth_store, auth_events_path);
     let app = Router::new()
         .fallback(runtime_api_axum_handler)
         .layer(ServiceBuilder::new())
@@ -147,15 +172,23 @@ async fn serve_runtime_api_async(
 #[derive(Clone)]
 struct RuntimeApiServerState {
     options: Arc<CsmRuntimeApiOptions>,
+    auth_store: Arc<RuntimeApiCredentialStore>,
+    auth_events_path: Arc<PathBuf>,
     served_requests: Arc<AtomicUsize>,
     last_activity: Arc<Mutex<Instant>>,
     shutdown: Arc<Notify>,
 }
 
 impl RuntimeApiServerState {
-    fn new(options: CsmRuntimeApiOptions) -> Self {
+    fn new(
+        options: CsmRuntimeApiOptions,
+        auth_store: RuntimeApiCredentialStore,
+        auth_events_path: PathBuf,
+    ) -> Self {
         Self {
             options: Arc::new(options),
+            auth_store: Arc::new(auth_store),
+            auth_events_path: Arc::new(auth_events_path),
             served_requests: Arc::new(AtomicUsize::new(0)),
             last_activity: Arc::new(Mutex::new(Instant::now())),
             shutdown: Arc::new(Notify::new()),
@@ -226,15 +259,95 @@ async fn runtime_api_axum_handler(
     headers: HeaderMap,
 ) -> Response<Body> {
     let request = RuntimeApiRequest::from_axum_parts(method, uri, &headers);
-    let response = match runtime_api_http_response(&state.options, &request) {
-        Ok(response) => response,
-        Err(err) => runtime_api_internal_error_response(request.origin.as_deref(), &err),
+    let response = if request.method == "OPTIONS" {
+        runtime_api_http_response(&state.options, &request).unwrap_or_else(|err| {
+            runtime_api_internal_error_response(request.origin.as_deref(), &err)
+        })
+    } else {
+        match state.auth_store.authorize(request.authorization.as_deref()) {
+            RuntimeApiAuthDecision::Authenticated(metadata) => {
+                let gateway_identity = match state.auth_store.verify_gateway_identity(
+                    request.gateway_identity.as_deref(),
+                    request.gateway_signature.as_deref(),
+                ) {
+                    Ok(identity) => identity,
+                    Err(reason) => {
+                        let _ = append_runtime_api_auth_event(
+                            &state.auth_events_path,
+                            "gateway_identity_rejected",
+                            Some(&request),
+                            Some(&reason),
+                            Some(&metadata),
+                        );
+                        state.record_request();
+                        return runtime_api_axum_response(runtime_api_auth_error_response(
+                            request.origin.as_deref(),
+                            "401 Unauthorized",
+                            &reason,
+                        ));
+                    }
+                };
+                let _ = append_runtime_api_auth_event(
+                    &state.auth_events_path,
+                    "request_authenticated",
+                    Some(&request),
+                    None,
+                    Some(&metadata),
+                );
+                runtime_api_authenticated_http_response(
+                    &state.options,
+                    &request,
+                    &metadata,
+                    gateway_identity.as_ref(),
+                )
+                .unwrap_or_else(|err| {
+                    runtime_api_internal_error_response(request.origin.as_deref(), &err)
+                })
+            }
+            RuntimeApiAuthDecision::Rejected { reason, metadata } => {
+                let _ = append_runtime_api_auth_event(
+                    &state.auth_events_path,
+                    "request_rejected",
+                    Some(&request),
+                    Some(reason),
+                    metadata.as_ref(),
+                );
+                runtime_api_auth_error_response(
+                    request.origin.as_deref(),
+                    "401 Unauthorized",
+                    reason,
+                )
+            }
+            RuntimeApiAuthDecision::Unavailable { reason } => {
+                let _ = append_runtime_api_auth_event(
+                    &state.auth_events_path,
+                    "auth_unavailable",
+                    Some(&request),
+                    Some(&reason),
+                    None,
+                );
+                runtime_api_auth_error_response(
+                    request.origin.as_deref(),
+                    "503 Service Unavailable",
+                    "credential_unavailable",
+                )
+            }
+        }
     };
     state.record_request();
     runtime_api_axum_response(response)
 }
 
 pub fn runtime_api_response(options: &CsmRuntimeApiOptions, path: &str) -> Result<Value> {
+    runtime_api_response_with_identity(options, path, None, None)
+}
+
+fn runtime_api_response_with_identity(
+    options: &CsmRuntimeApiOptions,
+    path: &str,
+    identity: Option<&adl_runtime::runtime_api_auth::RuntimeApiCredentialMetadata>,
+    gateway_identity: Option<&VerifiedRuntimeApiGatewayIdentity>,
+) -> Result<Value> {
     let loaded = load_spec(&options.spec_path)?;
     let endpoint = path.split('?').next().unwrap_or(path);
     match endpoint {
@@ -246,7 +359,7 @@ pub fn runtime_api_response(options: &CsmRuntimeApiOptions, path: &str) -> Resul
         "/chronosense" => chronosense_response(&loaded, options),
         "/shepherd" => shepherd_response(&loaded, options),
         "/curiosity" => curiosity_response(&loaded, options),
-        "/api-gateway-bridge" => api_gateway_bridge_response(&loaded),
+        "/api-gateway-bridge" => api_gateway_bridge_response(&loaded, identity, gateway_identity),
         "/persistence" => persistence_response(&loaded),
         other => Ok(json!({
             "schema": CSM_RUNTIME_API_SCHEMA,
@@ -505,7 +618,11 @@ fn chronosense_response(loaded: &LoadedAgentSpec, options: &CsmRuntimeApiOptions
     Ok(response)
 }
 
-fn api_gateway_bridge_response(loaded: &LoadedAgentSpec) -> Result<Value> {
+fn api_gateway_bridge_response(
+    loaded: &LoadedAgentSpec,
+    identity: Option<&adl_runtime::runtime_api_auth::RuntimeApiCredentialMetadata>,
+    gateway_identity: Option<&VerifiedRuntimeApiGatewayIdentity>,
+) -> Result<Value> {
     let response = json!({
         "schema": CSM_RUNTIME_API_API_GATEWAY_BRIDGE_SCHEMA,
         "runtime_owner": "csm",
@@ -521,6 +638,15 @@ fn api_gateway_bridge_response(loaded: &LoadedAgentSpec) -> Result<Value> {
         "bridge_mode": "aws_api_gateway_to_authorized_loopback_runtime_api",
         "embedded_daemon_api": "loopback_only",
         "direct_public_daemon_bind": false,
+        "local_authenticated_identity": identity.map(|credential| json!({
+            "principal": format!("local-runtime-api:{}", credential.fingerprint),
+            "authentication_method": "local_bearer_credential",
+            "credential_generation": credential.generation,
+            "authorization_scopes": ["csm.runtime.read"],
+            "credential_material_propagated": false,
+            "gateway_identity_verified": false
+        })),
+        "verified_gateway_identity": gateway_identity,
         "required_runtime_routes": CSM_RUNTIME_API_ENDPOINTS,
         "negative_case_policy": {
             "missing_token": "api_gateway_authorization_denied",
@@ -1309,6 +1435,9 @@ struct RuntimeApiRequest {
     method: String,
     path: String,
     origin: Option<String>,
+    authorization: Option<String>,
+    gateway_identity: Option<String>,
+    gateway_signature: Option<String>,
 }
 
 impl RuntimeApiRequest {
@@ -1323,8 +1452,80 @@ impl RuntimeApiRequest {
                 .get("origin")
                 .and_then(|value| value.to_str().ok())
                 .map(str::to_string),
+            authorization: headers
+                .get("authorization")
+                .and_then(|value| value.to_str().ok())
+                .map(str::to_string),
+            gateway_identity: headers
+                .get("x-adl-gateway-identity")
+                .and_then(|value| value.to_str().ok())
+                .map(str::to_string),
+            gateway_signature: headers
+                .get("x-adl-gateway-signature")
+                .and_then(|value| value.to_str().ok())
+                .map(str::to_string),
         }
     }
+}
+
+fn runtime_api_auth_error_response(
+    origin: Option<&str>,
+    status: &'static str,
+    reason: &str,
+) -> RuntimeApiHttpResponse {
+    let mut headers = loopback_browser_access_headers(origin);
+    headers.push(("vary", "Origin".to_string()));
+    headers.push((
+        "www-authenticate",
+        "Bearer realm=\"csm-runtime-api\"".to_string(),
+    ));
+    RuntimeApiHttpResponse {
+        status,
+        headers,
+        body: Some(json!({
+            "schema": CSM_RUNTIME_API_SCHEMA,
+            "status": "unauthorized",
+            "reason": reason,
+            "credential_material_retained": false
+        })),
+    }
+}
+
+fn append_runtime_api_auth_event(
+    path: &Path,
+    event: &str,
+    request: Option<&RuntimeApiRequest>,
+    reason: Option<&str>,
+    metadata: Option<&adl_runtime::runtime_api_auth::RuntimeApiCredentialMetadata>,
+) -> Result<()> {
+    if let Some(parent) = path.parent() {
+        fs::create_dir_all(parent).with_context(|| {
+            format!(
+                "create runtime API auth event directory {}",
+                parent.display()
+            )
+        })?;
+    }
+    let record = json!({
+        "schema": "adl.csm.runtime_api.auth_event.v1",
+        "observed_at": Utc::now().to_rfc3339(),
+        "event": event,
+        "method": request.map(|value| value.method.as_str()),
+        "path": request.map(|value| value.path.split('?').next().unwrap_or(&value.path)),
+        "reason": reason,
+        "credential": metadata,
+        "secret_retained": false
+    });
+    assert_api_response_redacted(&record)?;
+    let mut file = OpenOptions::new()
+        .create(true)
+        .append(true)
+        .open(path)
+        .with_context(|| format!("open runtime API auth event log {}", path.display()))?;
+    serde_json::to_writer(&mut file, &record)?;
+    file.write_all(b"\n")?;
+    file.sync_data()?;
+    Ok(())
 }
 
 #[derive(Debug, Clone)]
@@ -1371,6 +1572,23 @@ fn runtime_api_http_response(
     }
 }
 
+fn runtime_api_authenticated_http_response(
+    options: &CsmRuntimeApiOptions,
+    request: &RuntimeApiRequest,
+    identity: &adl_runtime::runtime_api_auth::RuntimeApiCredentialMetadata,
+    gateway_identity: Option<&VerifiedRuntimeApiGatewayIdentity>,
+) -> Result<RuntimeApiHttpResponse> {
+    let mut response = runtime_api_http_response(options, request)?;
+    if request.method == "GET" {
+        response.body = Some(runtime_api_response_with_identity(
+            options,
+            &request.path,
+            Some(identity),
+            gateway_identity,
+        )?);
+    }
+    Ok(response)
+}
 fn runtime_api_internal_error_response(
     origin: Option<&str>,
     err: &anyhow::Error,
@@ -1426,6 +1644,7 @@ fn runtime_api_status_code(status: &str) -> StatusCode {
     match status {
         "200 OK" => StatusCode::OK,
         "204 No Content" => StatusCode::NO_CONTENT,
+        "401 Unauthorized" => StatusCode::UNAUTHORIZED,
         "404 Not Found" => StatusCode::NOT_FOUND,
         "405 Method Not Allowed" => StatusCode::METHOD_NOT_ALLOWED,
         "500 Internal Server Error" => StatusCode::INTERNAL_SERVER_ERROR,
@@ -1445,7 +1664,8 @@ fn loopback_browser_access_headers(origin: Option<&str>) -> Vec<(&'static str, S
         ("access-control-allow-methods", "GET, OPTIONS".to_string()),
         (
             "access-control-allow-headers",
-            "accept, content-type".to_string(),
+            "accept, authorization, content-type, x-adl-gateway-identity, x-adl-gateway-signature"
+                .to_string(),
         ),
         ("access-control-max-age", "600".to_string()),
     ]
@@ -1517,6 +1737,7 @@ pub fn assert_api_response_redacted(value: &Value) -> Result<()> {
 #[cfg(test)]
 mod tests {
     use super::*;
+    use axum::body::to_bytes;
     use std::sync::atomic::{AtomicU64, Ordering};
 
     static SEQ: AtomicU64 = AtomicU64::new(0);
@@ -1580,9 +1801,215 @@ memory: {}
             RuntimeApiRequest {
                 method: "OPTIONS".to_string(),
                 path: "/status?probe=1".to_string(),
-                origin: Some("http://127.0.0.1:8765".to_string())
+                origin: Some("http://127.0.0.1:8765".to_string()),
+                authorization: None,
+                gateway_identity: None,
+                gateway_signature: None,
             }
         );
+    }
+
+    #[tokio::test]
+    async fn runtime_api_http_auth_fails_closed_rotates_and_retains_redacted_events() {
+        let root = temp_root("http-auth");
+        let options = test_options(&root);
+        let loaded = load_spec(&options.spec_path).unwrap();
+        let store = RuntimeApiCredentialStore::for_state_root(&loaded.state_root);
+        store.ensure().unwrap();
+        let first_token = store
+            .with_bearer_token(str::to_string)
+            .expect("read first test token");
+        let events = loaded.state_root.join(CSM_RUNTIME_API_AUTH_EVENTS_FILE);
+        let state = RuntimeApiServerState::new(options, store.clone(), events.clone());
+
+        for endpoint in CSM_RUNTIME_API_ENDPOINTS {
+            let missing = runtime_api_axum_handler(
+                State(state.clone()),
+                Method::GET,
+                endpoint.parse::<Uri>().unwrap(),
+                HeaderMap::new(),
+            )
+            .await;
+            assert_eq!(
+                missing.status(),
+                StatusCode::UNAUTHORIZED,
+                "missing auth must reject {endpoint}"
+            );
+        }
+
+        let mut wrong_headers = HeaderMap::new();
+        wrong_headers.insert(
+            "authorization",
+            HeaderValue::from_static("Bearer definitely-wrong"),
+        );
+        let wrong = runtime_api_axum_handler(
+            State(state.clone()),
+            Method::GET,
+            Uri::from_static("/status"),
+            wrong_headers,
+        )
+        .await;
+        assert_eq!(wrong.status(), StatusCode::UNAUTHORIZED);
+
+        let mut malformed_headers = HeaderMap::new();
+        malformed_headers.insert(
+            "authorization",
+            HeaderValue::from_static("Basic not-a-bearer-token"),
+        );
+        let malformed = runtime_api_axum_handler(
+            State(state.clone()),
+            Method::GET,
+            Uri::from_static("/status"),
+            malformed_headers,
+        )
+        .await;
+        assert_eq!(malformed.status(), StatusCode::UNAUTHORIZED);
+
+        let mut valid_headers = HeaderMap::new();
+        valid_headers.insert(
+            "authorization",
+            HeaderValue::from_str(&format!("Bearer {first_token}")).unwrap(),
+        );
+        let valid = runtime_api_axum_handler(
+            State(state.clone()),
+            Method::GET,
+            Uri::from_static("/status"),
+            valid_headers.clone(),
+        )
+        .await;
+        assert_eq!(valid.status(), StatusCode::OK);
+        let ready = runtime_api_axum_handler(
+            State(state.clone()),
+            Method::GET,
+            Uri::from_static("/ready"),
+            valid_headers.clone(),
+        )
+        .await;
+        assert_eq!(ready.status(), StatusCode::OK);
+        let ready_body = to_bytes(ready.into_body(), 64 * 1024).await.unwrap();
+        let ready: Value = serde_json::from_slice(&ready_body).unwrap();
+        assert_eq!(ready["schema"], CSM_RUNTIME_API_READY_SCHEMA);
+        assert_eq!(ready["agent_instance_id"], loaded.spec.agent_instance_id);
+        for endpoint in CSM_RUNTIME_API_ENDPOINTS {
+            let authorized = runtime_api_axum_handler(
+                State(state.clone()),
+                Method::GET,
+                endpoint.parse::<Uri>().unwrap(),
+                valid_headers.clone(),
+            )
+            .await;
+            assert_ne!(
+                authorized.status(),
+                StatusCode::UNAUTHORIZED,
+                "valid auth must reach {endpoint}"
+            );
+        }
+
+        store.rotate().unwrap();
+        let stale = runtime_api_axum_handler(
+            State(state.clone()),
+            Method::GET,
+            Uri::from_static("/status"),
+            valid_headers,
+        )
+        .await;
+        assert_eq!(stale.status(), StatusCode::UNAUTHORIZED);
+        let second_token = store
+            .with_bearer_token(str::to_string)
+            .expect("read rotated test token");
+        let mut rotated_headers = HeaderMap::new();
+        rotated_headers.insert(
+            "authorization",
+            HeaderValue::from_str(&format!("Bearer {second_token}")).unwrap(),
+        );
+        let gateway_headers = api_gateway_bridge::prepare_runtime_gateway_identity_headers(
+            &loaded.state_root,
+            "operator@example.invalid",
+        )
+        .unwrap();
+        rotated_headers.insert(
+            "x-adl-gateway-identity",
+            HeaderValue::from_str(&gateway_headers.identity).unwrap(),
+        );
+        rotated_headers.insert(
+            "x-adl-gateway-signature",
+            HeaderValue::from_str(&gateway_headers.signature).unwrap(),
+        );
+        let rotated = runtime_api_axum_handler(
+            State(state.clone()),
+            Method::GET,
+            Uri::from_static("/api-gateway-bridge"),
+            rotated_headers.clone(),
+        )
+        .await;
+        assert_eq!(rotated.status(), StatusCode::OK);
+        let rotated_body = to_bytes(rotated.into_body(), 64 * 1024).await.unwrap();
+        let bridge: Value = serde_json::from_slice(&rotated_body).unwrap();
+        assert_eq!(
+            bridge["local_authenticated_identity"]["credential_material_propagated"],
+            false
+        );
+        assert_eq!(
+            bridge["local_authenticated_identity"]["authorization_scopes"][0],
+            "csm.runtime.read"
+        );
+        assert_eq!(
+            bridge["verified_gateway_identity"]["issuer"],
+            "aws_api_gateway_authorizer"
+        );
+        assert_eq!(
+            bridge["verified_gateway_identity"]["credential_material_propagated"],
+            false
+        );
+        assert!(!String::from_utf8_lossy(&rotated_body).contains("operator@example.invalid"));
+        assert!(!String::from_utf8_lossy(&rotated_body).contains(&second_token));
+
+        let mut forged_headers = rotated_headers.clone();
+        forged_headers.insert(
+            "x-adl-gateway-signature",
+            HeaderValue::from_static("forged"),
+        );
+        let forged = runtime_api_axum_handler(
+            State(state.clone()),
+            Method::GET,
+            Uri::from_static("/api-gateway-bridge"),
+            forged_headers,
+        )
+        .await;
+        assert_eq!(forged.status(), StatusCode::UNAUTHORIZED);
+
+        let mut partial_headers = rotated_headers.clone();
+        partial_headers.remove("x-adl-gateway-signature");
+        let partial = runtime_api_axum_handler(
+            State(state.clone()),
+            Method::GET,
+            Uri::from_static("/api-gateway-bridge"),
+            partial_headers,
+        )
+        .await;
+        assert_eq!(partial.status(), StatusCode::UNAUTHORIZED);
+
+        store.revoke().unwrap();
+        let revoked = runtime_api_axum_handler(
+            State(state),
+            Method::GET,
+            Uri::from_static("/status"),
+            rotated_headers,
+        )
+        .await;
+        assert_eq!(revoked.status(), StatusCode::UNAUTHORIZED);
+        let revoked_body = to_bytes(revoked.into_body(), 64 * 1024).await.unwrap();
+        assert!(!String::from_utf8_lossy(&revoked_body).contains(&second_token));
+
+        let retained = fs::read_to_string(events).unwrap();
+        assert!(retained.contains("missing_bearer_token"));
+        assert!(retained.contains("invalid_bearer_token"));
+        assert!(retained.contains("malformed_authorization"));
+        assert!(retained.contains("request_authenticated"));
+        assert!(retained.contains("credential_revoked"));
+        assert!(retained.contains("gateway_identity_rejected"));
+        assert!(!retained.contains(&first_token));
+        assert!(!retained.contains(&second_token));
     }
 
     #[test]
@@ -1610,6 +2037,9 @@ memory: {}
             method: "GET".to_string(),
             path: "/ready".to_string(),
             origin: Some("http://127.0.0.1:8765".to_string()),
+            authorization: None,
+            gateway_identity: None,
+            gateway_signature: None,
         };
         let response = runtime_api_http_response(&options, &request).unwrap();
         assert_eq!(response.status, "200 OK");
@@ -1634,6 +2064,9 @@ memory: {}
             method: "OPTIONS".to_string(),
             path: "/events".to_string(),
             origin: Some("http://localhost:8765".to_string()),
+            authorization: None,
+            gateway_identity: None,
+            gateway_signature: None,
         };
         let response = runtime_api_http_response(&options, &request).unwrap();
         assert_eq!(response.status, "204 No Content");
@@ -1655,6 +2088,9 @@ memory: {}
             method: "GET".to_string(),
             path: "/status".to_string(),
             origin: Some("http://example.com:8765".to_string()),
+            authorization: None,
+            gateway_identity: None,
+            gateway_signature: None,
         };
         let response = runtime_api_http_response(&options, &request).unwrap();
         assert_eq!(response.status, "200 OK");
@@ -2260,6 +2696,29 @@ memory: {}
             serde_json::to_string_pretty(&curiosity).unwrap(),
         )
         .unwrap();
+        fs::write(
+            state.join("csm_typed_channel_state.json"),
+            serde_json::to_string_pretty(&json!({
+                "schema": "adl.csm.typed_channel_state.v1",
+                "runtime_owner": "csm",
+                "status": "ready",
+                "required_channel_not_ready": false,
+                "last_event": "test_fixture_ready",
+                "last_receipt": null,
+                "summary": {
+                    "channel_count": 0,
+                    "queue_depth": 0,
+                    "durable_spool_depth": 0,
+                    "blocked_count": 0,
+                    "throttled_count": 0,
+                    "shed_count": 0
+                },
+                "channels": [],
+                "updated_at": Utc::now()
+            }))
+            .unwrap(),
+        )
+        .unwrap();
         let options = CsmRuntimeApiOptions {
             spec_path: spec,
             bind: test_api_bind(SEQ.load(Ordering::SeqCst)),
@@ -2270,7 +2729,7 @@ memory: {}
             otel_log_path: None,
         };
         let response = runtime_api_response(&options, "/ready").unwrap();
-        assert_eq!(response["ready"], "ready");
+        assert_eq!(response["ready"], "ready", "response: {response}");
         assert!(response["blocking_reasons"].as_array().unwrap().is_empty());
     }
 
@@ -2754,7 +3213,8 @@ memory: {}
             response["time_sync"]["port_policy"],
             "csm_in_process_async_sntp_client_ephemeral_udp_no_csm_udp_123_listener_no_shellout"
         );
-        assert_eq!(response["ready"], "ready");
+        assert_eq!(response["service"]["status"], "integrated");
+        assert_eq!(response["ready"], "not_ready");
     }
 
     #[test]

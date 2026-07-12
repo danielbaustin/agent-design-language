@@ -8,6 +8,7 @@ SOURCE_BIN_DIR=""
 NO_BUILD=0
 EXPLICIT_BINS=0
 BINS=()
+INSTALL_VECTOR_COMPONENT=0
 
 usage() {
   cat <<'EOF' >&2
@@ -67,6 +68,20 @@ if [[ "${#BINS[@]}" -eq 0 ]]; then
   )
 fi
 
+for bin in "${BINS[@]}"; do
+  if [[ "$bin" == "csm" ]]; then
+    INSTALL_VECTOR_COMPONENT=1
+    break
+  fi
+done
+
+install_vector_component() {
+  if [[ "$INSTALL_VECTOR_COMPONENT" == "1" ]]; then
+    ADL_VECTOR_INSTALL_ROOT="$(dirname "$STABLE_BIN_DIR")" \
+      bash "$ROOT_DIR/adl/tools/install_vector_component.sh"
+  fi
+}
+
 source_hash() {
   if git -C "$ROOT_DIR" rev-parse --show-toplevel >/dev/null 2>&1; then
     (
@@ -110,6 +125,7 @@ for bin in "${BINS[@]}"; do
 done
 
 if [[ "${#BUILD_BINS[@]}" -eq 0 ]]; then
+  install_vector_component
   echo "owner-binary install: all requested binaries are current"
   exit 0
 fi
@@ -156,3 +172,5 @@ if [[ "${#MISSING_BINS[@]}" -gt 0 ]]; then
   echo "install_owner_binaries: incomplete default --no-build install; missing source binaries: ${MISSING_BINS[*]}" >&2
   exit 1
 fi
+
+install_vector_component

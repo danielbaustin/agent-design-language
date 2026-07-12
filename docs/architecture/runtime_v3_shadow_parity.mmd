@@ -1,0 +1,24 @@
+flowchart LR
+    I["Canonical shared fixture"] --> H["Bounded shadow harness"]
+    H --> V2["Recorded / external Runtime v2 backend"]
+    H --> V3["Runtime v3 backend"]
+    V2 --> N["Normalized outcome envelope"]
+    V3 --> N
+    N --> D{"Deterministic comparison"}
+    D --> E["Equivalent"]
+    D --> F["Defect"]
+    D --> R["Intentional redesign"]
+    D --> U["Unsupported / blocked"]
+    E --> C["Cutover eligibility gate"]
+    F --> X["Continue incubation"]
+    R --> X
+    U --> X
+    C --> O["Explicit v3 opt-in"]
+    O --> B["Rollback to v2 default"]
+
+    classDef core fill:#d9e8ff,stroke:#2474d2,color:#061d3a;
+    classDef decision fill:#f9dcf8,stroke:#d637d6,color:#31102f;
+    classDef evidence fill:#d9f5f6,stroke:#00a4b7,color:#07343a;
+    class I,H,V2,V3,N core;
+    class D,C,X decision;
+    class E,F,R,U,O,B evidence;

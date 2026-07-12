@@ -956,36 +956,53 @@ fn build_issue_lifecycle_snapshot(parsed: &WatchArgs) -> Result<IssueLifecycleSn
             ),
         }
     };
-    let ready = doctor::run_doctor_ready(
-        &repo_root,
-        &repo,
-        &issue_ref,
-        &issue_ref.branch_name("codex"),
-    );
     let local_readiness_command = doctor_ready_command(&issue_ref);
-    let (ready_lifecycle_state, pr_finish_readiness, local_readiness) = match ready {
-        Ok(ready) => (
-            ready.lifecycle_state,
-            ready.card_lifecycle.pr_finish_readiness,
-            github::IssueWatchLocalReadinessReport {
-                status: "ready".to_string(),
-                pr_run_readiness: ready.card_lifecycle.pr_run_readiness.to_string(),
-                reason: "doctor_ready_pass".to_string(),
-                check: "doctor_ready".to_string(),
-                command: local_readiness_command.clone(),
-            },
-        ),
-        Err(err) => (
+    let needs_local_readiness =
+        issue_watch_needs_local_readiness(&issue_record.state, linked_pr.is_some());
+    let (ready_lifecycle_state, pr_finish_readiness, local_readiness) = if needs_local_readiness {
+        let ready = doctor::run_doctor_ready(
+            &repo_root,
+            &repo,
+            &issue_ref,
+            &issue_ref.branch_name("codex"),
+        );
+        match ready {
+            Ok(ready) => (
+                ready.lifecycle_state,
+                ready.card_lifecycle.pr_finish_readiness,
+                github::IssueWatchLocalReadinessReport {
+                    status: "ready".to_string(),
+                    pr_run_readiness: ready.card_lifecycle.pr_run_readiness.to_string(),
+                    reason: "doctor_ready_pass".to_string(),
+                    check: "doctor_ready".to_string(),
+                    command: local_readiness_command.clone(),
+                },
+            ),
+            Err(err) => (
+                "unknown",
+                "unknown",
+                github::IssueWatchLocalReadinessReport {
+                    status: "failed".to_string(),
+                    pr_run_readiness: "unknown".to_string(),
+                    reason: err.to_string(),
+                    check: "doctor_ready".to_string(),
+                    command: local_readiness_command,
+                },
+            ),
+        }
+    } else {
+        (
             "unknown",
             "unknown",
             github::IssueWatchLocalReadinessReport {
-                status: "failed".to_string(),
-                pr_run_readiness: "unknown".to_string(),
-                reason: err.to_string(),
+                status: "skipped".to_string(),
+                pr_run_readiness: "not_applicable".to_string(),
+                reason: "linked_pr_or_closed_issue_classification_does_not_require_local_readiness"
+                    .to_string(),
                 check: "doctor_ready".to_string(),
                 command: local_readiness_command,
             },
-        ),
+        )
     };
     let closeout_validated = if !closed_completed {
         false
@@ -1023,6 +1040,10 @@ fn doctor_ready_command(issue_ref: &IssueRef) -> String {
         issue_ref.scope(),
         issue_ref.slug()
     )
+}
+
+fn issue_watch_needs_local_readiness(issue_state: &str, has_linked_pr: bool) -> bool {
+    issue_state.eq_ignore_ascii_case("open") && !has_linked_pr
 }
 
 fn parse_issue_ref_number(command: &str, issue_ref: &str) -> Result<u32> {
@@ -2359,7 +2380,10 @@ fn bootstrap_ready_status_label(status: &str) -> &str {
 
 #[cfg(test)]
 mod bootstrap_output_tests {
-    use super::{bootstrap_ready_status_label, doctor_ready_command, read_issue_goal_metric_refs};
+    use super::{
+        bootstrap_ready_status_label, doctor_ready_command, issue_watch_needs_local_readiness,
+        read_issue_goal_metric_refs,
+    };
     use ::adl::control_plane::IssueRef;
     use std::fs;
 
@@ -2380,6 +2404,30 @@ mod bootstrap_output_tests {
         assert_eq!(
             doctor_ready_command(&issue_ref),
             "adl pr doctor 5002 --version v0.91.7 --slug watch-target-with-spaces --mode ready --json"
+        );
+    }
+
+    #[test]
+    fn issue_watch_skips_local_readiness_when_pr_or_closed_issue_already_classifies_tail() {
+        assert!(
+            issue_watch_needs_local_readiness("OPEN", false),
+            "open issue without linked PR needs doctor readiness to decide pr-run routing"
+        );
+        assert!(
+            !issue_watch_needs_local_readiness("OPEN", true),
+            "linked PR validation state already classifies watcher/shepherd tail states"
+        );
+        assert!(
+            !issue_watch_needs_local_readiness("CLOSED", false),
+            "closed issue closeout routing does not need pre-run readiness"
+        );
+        assert!(
+            !issue_watch_needs_local_readiness("closed", true),
+            "closed issue with linked PR should avoid extra readiness work"
+        );
+        assert!(
+            !issue_watch_needs_local_readiness("not_planned", false),
+            "non-open issue states should avoid extra readiness work"
         );
     }
 

@@ -9,6 +9,7 @@ use adl_runtime::determinism::{
     DeterministicCoreDecision, DeterministicCoreInputKind, NondeterministicShellClass,
     ObservationConfidence,
 };
+use adl_runtime::observability::{ObservabilityConfig, ObservabilityRuntime};
 use anyhow::{anyhow, Context, Result};
 use chrono::{DateTime, Duration as ChronoDuration, Utc};
 use serde::Serialize;
@@ -212,6 +213,7 @@ pub fn daemon(spec_path: &Path, options: DaemonOptions) -> Result<DaemonStatusRe
     )?;
 
     loop {
+        runtime_context.maintain_observability()?;
         if let Some(stop) = read_stop(&loaded)? {
             let status = status(spec_path)?;
             persist_status(&loaded, &status, "daemon_stop_observed")?;
@@ -3383,9 +3385,21 @@ struct PartialCheckpointSleep<'a> {
 
 struct CsmRuntimeContext {
     chronosense: ChronosenseRuntimeService,
+    observability: Mutex<ObservabilityRuntime>,
     channel_runtime: Option<tokio::runtime::Runtime>,
     channel_fabric: Option<Mutex<RuntimeChannelFabric>>,
     channel_state_path: Option<PathBuf>,
+}
+
+fn observability_priority_label(priority: ChannelPriority) -> &'static str {
+    match priority {
+        ChannelPriority::LowPriorityObservability => "low_priority_observability",
+        ChannelPriority::Audit => "audit",
+        ChannelPriority::Evidence => "evidence",
+        ChannelPriority::GovernedExecution => "governed_execution",
+        ChannelPriority::CriticalContinuity => "critical_continuity",
+        ChannelPriority::ControlPlane => "control_plane",
+    }
 }
 
 impl CsmRuntimeContext {
@@ -3403,8 +3417,11 @@ impl CsmRuntimeContext {
             .context("failed creating CSM typed-channel runtime")?;
         let channel_fabric = RuntimeChannelFabric::open(state_root.join("channel_spools"))
             .context("failed opening CSM typed-channel fabric")?;
+        let observability =
+            ObservabilityRuntime::start(ObservabilityConfig::from_runtime_environment(state_root));
         let context = Self {
             chronosense,
+            observability: Mutex::new(observability),
             channel_runtime: Some(channel_runtime),
             channel_fabric: Some(Mutex::new(channel_fabric)),
             channel_state_path: Some(state_root.join("csm_typed_channel_state.json")),
@@ -3423,6 +3440,7 @@ impl CsmRuntimeContext {
         let _initial_time_sync = start_runtime_time_observation();
         Ok(Self {
             chronosense,
+            observability: Mutex::new(ObservabilityRuntime::observer()),
             channel_runtime: None,
             channel_fabric: None,
             channel_state_path: None,
@@ -3431,6 +3449,14 @@ impl CsmRuntimeContext {
 
     fn time_sync_status(&self) -> crate::chronosense::ChronosenseTimeSyncStatus {
         capture_runtime_time_sync_status()
+    }
+
+    fn maintain_observability(&self) -> Result<()> {
+        self.observability
+            .lock()
+            .map_err(|_| anyhow!("CSM observability component lock poisoned"))?
+            .status();
+        Ok(())
     }
 
     fn transit(
@@ -3465,6 +3491,24 @@ impl CsmRuntimeContext {
         let delivery = delivery.context("CSM typed-channel admission did not reach component")?;
         if delivery.message.id != receipt.message_id {
             return Err(anyhow!("CSM typed-channel delivery identity mismatch"));
+        }
+        if channel == RuntimeChannelId::ComponentsToObservability {
+            self.observability
+                .lock()
+                .map_err(|_| anyhow!("CSM observability component lock poisoned"))?
+                .append(
+                    "events",
+                    observability_priority_label(delivery.message.priority),
+                    &delivery.message.payload,
+                )
+                .map_err(|reason| anyhow!("CSM observability ingress failed: {reason}"))?;
+            if let Some(sequence) = delivery.spool_sequence {
+                self.channel_runtime
+                    .as_ref()
+                    .context("CSM observability owner has no typed-channel runtime")?
+                    .block_on(fabric.acknowledge_processed(channel, sequence))
+                    .context("failed acknowledging delivered CSM observability record")?;
+            }
         }
         drop(fabric);
         self.persist_channel_state(event, Some(serde_json::to_value(&receipt)?))?;
@@ -3516,6 +3560,17 @@ impl CsmRuntimeContext {
                 )?;
             }
             RuntimeChannelId::ComponentsToObservability => {
+                self.observability
+                    .lock()
+                    .map_err(|_| anyhow!("CSM observability component lock poisoned"))?
+                    .append(
+                        "events",
+                        observability_priority_label(delivery.message.priority),
+                        &delivery.message.payload,
+                    )
+                    .map_err(|reason| {
+                        anyhow!("CSM observability replay ingress failed: {reason}")
+                    })?;
                 append_operator_event(
                     loaded,
                     "typed_channel_observability_replay",
@@ -3902,6 +3957,7 @@ fn sleep_with_partial_checkpoints(
     while remaining > 0 {
         let slice = remaining.min(sleep.checkpoint_interval_secs);
         std::thread::sleep(Duration::from_secs(slice));
+        runtime_context.maintain_observability()?;
         remaining -= slice;
         let last_checkpoint_at = daemon_status.last_checkpoint_at;
         let mut current = status(&loaded.spec_path)?;
@@ -4055,6 +4111,19 @@ fn csm_runtime_capabilities_with_resident_agents(
     runtime_context: &CsmRuntimeContext,
     resident_agents_status: Value,
 ) -> Value {
+    let observability_status = runtime_context
+        .observability
+        .lock()
+        .map(|mut component| serde_json::to_value(component.status()).unwrap_or(Value::Null))
+        .unwrap_or_else(|_| {
+            json!({
+                "schema": "adl.csm.observability.status.v1",
+                "component": "observability",
+                "runtime_owner": "csm",
+                "health": "degraded",
+                "reason_code": "component_lock_poisoned"
+            })
+        });
     json!({
         "schema": "adl.csm.runtime_capabilities.v1",
         "runtime_owner": "csm",
@@ -4115,12 +4184,7 @@ fn csm_runtime_capabilities_with_resident_agents(
         "resident_agents": resident_agents_status,
         "polis_shepherd_agent": csm_shepherd_agent::runtime_capability(),
         "curiosity_engine": csm_curiosity_engine::runtime_capability(),
-        "observability": {
-            "status": "integrated",
-            "event_command": "csm",
-            "otel_service_name": "csm-runtime-daemon",
-            "retained_outputs": ["operator_events.jsonl", "daemon_status.json", "safe_fail_bundle.json", "safe_fail_artifacts/", "csm_governed_notices.jsonl", "csm_governed_notice_latest.json", "ADL_OBSERVABILITY_LOG", "ADL_OTEL_LOG", "ADL_OTEL_STATUS"]
-        },
+        "observability": observability_status,
         "governed_shutdown_notices": {
             "status": "integrated",
             "local_notice_ledger": "csm_governed_notices.jsonl",

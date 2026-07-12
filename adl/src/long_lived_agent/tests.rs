@@ -11,6 +11,24 @@ use std::time::{Duration, Instant};
 
 static TEMP_SEQ: AtomicU64 = AtomicU64::new(0);
 
+#[test]
+fn observability_replay_preserves_every_typed_priority_label() {
+    let cases = [
+        (
+            ChannelPriority::LowPriorityObservability,
+            "low_priority_observability",
+        ),
+        (ChannelPriority::Audit, "audit"),
+        (ChannelPriority::Evidence, "evidence"),
+        (ChannelPriority::GovernedExecution, "governed_execution"),
+        (ChannelPriority::CriticalContinuity, "critical_continuity"),
+        (ChannelPriority::ControlPlane, "control_plane"),
+    ];
+    for (priority, expected) in cases {
+        assert_eq!(observability_priority_label(priority), expected);
+    }
+}
+
 fn temp_dir(prefix: &str) -> PathBuf {
     let dir = std::env::temp_dir().join(format!(
         "adl-long-lived-agent-{prefix}-{}-{}",
@@ -19,6 +37,39 @@ fn temp_dir(prefix: &str) -> PathBuf {
     ));
     fs::create_dir_all(&dir).expect("create temp dir");
     dir
+}
+
+fn issue_5169_scratch_dir(prefix: &str) -> PathBuf {
+    let dir = std::env::current_dir()
+        .expect("current dir")
+        .join(".adl/scratch/issue-5169")
+        .join(format!(
+            "{prefix}-{}-{}",
+            std::process::id(),
+            TEMP_SEQ.fetch_add(1, Ordering::Relaxed)
+        ));
+    fs::create_dir_all(&dir).expect("create issue 5169 scratch dir");
+    dir
+}
+
+fn wait_for_json_state(path: &Path, pointer: &str, expected: &str) -> Value {
+    let deadline = Instant::now() + Duration::from_secs(20);
+    loop {
+        if let Ok(raw) = fs::read_to_string(path) {
+            if let Ok(value) = serde_json::from_str::<Value>(&raw) {
+                if value.pointer(pointer).and_then(Value::as_str) == Some(expected) {
+                    return value;
+                }
+            }
+        }
+        assert!(
+            Instant::now() < deadline,
+            "timed out waiting for {} {}={expected}",
+            path.display(),
+            pointer
+        );
+        thread::sleep(Duration::from_millis(25));
+    }
 }
 
 fn write_spec(root: &Path) -> PathBuf {
@@ -1374,6 +1425,10 @@ fn loom_duplicate_activation_allows_only_one_cycle_start() {
 
 #[test]
 fn daemon_partial_checkpoint_preserves_recoverable_failure_reason() {
+    let _env = MultiEnvGuard::set_all(&[
+        ("ADL_CSM_DISK_FLOOR_BYTES", "4096"),
+        ("ADL_CSM_TEST_AVAILABLE_BYTES", "1073745920"),
+    ]);
     let root = temp_dir("daemon-partial-failure-reason");
     let spec = write_spec_with_workflow_kind(&root, "unsupported_adapter");
     let loaded = load_spec(&spec).expect("load spec");
@@ -1438,6 +1493,117 @@ fn daemon_partial_checkpoint_preserves_recoverable_failure_reason() {
     let checkpoint: serde_json::Value =
         read_json_required(&continuity_checkpoint_path(&loaded)).expect("checkpoint");
     assert_eq!(checkpoint["state"], "failed");
+}
+
+#[test]
+fn live_daemon_recovers_storage_and_runtime_api_without_process_restart() {
+    let _env = MultiEnvGuard::set_all(&[
+        ("ADL_CSM_DISK_FLOOR_BYTES", "4096"),
+        ("ADL_CSM_TEST_AVAILABLE_BYTES", "1024"),
+        ("ADL_AWS_SIGNAL_MODE", "disabled"),
+    ]);
+    let root = issue_5169_scratch_dir("same-process");
+    let spec = write_spec(&root);
+    let daemon_spec = spec.clone();
+    let daemon_thread = thread::spawn(move || {
+        daemon(
+            &daemon_spec,
+            DaemonOptions {
+                bounded_test_restart_limit: Some(3),
+                checkpoint_interval_secs: 1,
+                interval_secs: Some(3),
+                api_bind: None,
+                no_sleep: false,
+                recover_stale_lease: true,
+                api_otel_status_path: None,
+                api_otel_log_path: None,
+            },
+        )
+    });
+    let state_root = root.join("state");
+    let pressure_path = state_root.join("csm_backpressure_state.json");
+    let low_disk = wait_for_json_state(&pressure_path, "/storage_pressure/state", "low_disk");
+    assert!(low_disk["updated_at"].is_string());
+    let daemon_before =
+        wait_for_json_state(&state_root.join("daemon_status.json"), "/state", "running");
+    let process_before = daemon_before["supervisor_pid"].clone();
+    let checkpoint_path = state_root.join("continuity_checkpoint.json");
+    assert!(
+        !checkpoint_path.exists(),
+        "low disk must not manufacture a continuity checkpoint"
+    );
+
+    unsafe {
+        env::set_var("ADL_CSM_TEST_AVAILABLE_BYTES", "1073745920");
+    }
+    let recovered = wait_for_json_state(&pressure_path, "/storage_pressure/state", "recovered");
+    let checkpoint_after = wait_for_json_state(
+        &checkpoint_path,
+        "/schema",
+        "adl.long_lived_agent_continuity_checkpoint.v1",
+    );
+    let daemon_after =
+        wait_for_json_state(&state_root.join("daemon_status.json"), "/state", "running");
+    assert_eq!(daemon_after["supervisor_pid"], process_before);
+    assert_eq!(process_before, std::process::id());
+    assert!(recovered["storage_pressure"]["low_disk_captured_at"].is_string());
+    assert!(checkpoint_after["captured_at"].is_string());
+
+    let api_options = crate::csm_runtime_api::CsmRuntimeApiOptions {
+        spec_path: spec.clone(),
+        bind: "127.0.0.1:19969".to_string(),
+        test_max_requests: Some(1),
+        idle_timeout_ms: None,
+        shutdown_file: None,
+        otel_status_path: None,
+        otel_log_path: None,
+    };
+    let status = crate::csm_runtime_api::runtime_api_response(&api_options, "/status")
+        .expect("status response");
+    let health = crate::csm_runtime_api::runtime_api_response(&api_options, "/health")
+        .expect("health response");
+    let ready = crate::csm_runtime_api::runtime_api_response(&api_options, "/ready")
+        .expect("ready response");
+    let metrics = crate::csm_runtime_api::runtime_api_response(&api_options, "/metrics")
+        .expect("metrics response");
+    assert_eq!(
+        status["backpressure"]["storage_pressure"]["state"],
+        "recovered"
+    );
+    assert_eq!(
+        health["backpressure"]["storage_pressure"]["state"],
+        "recovered"
+    );
+    assert!(!ready["blocking_reasons"]
+        .as_array()
+        .expect("blocking reasons")
+        .contains(&json!("storage_low_disk")));
+    assert_eq!(metrics["states"]["storage_pressure"], "recovered");
+    assert_eq!(metrics["states"]["backpressure_health"], "healthy");
+
+    let events = fs::read_to_string(state_root.join("operator_events.jsonl"))
+        .expect("retained operator events");
+    assert!(events.contains("\"event\":\"low_disk_preflight\""));
+    assert!(events.contains("\"event\":\"storage_recovered\""));
+    assert!(events.contains("\"event_name\":\"storage_recovered\""));
+
+    write_json_pretty(
+        &stop_path(&load_spec(&spec).expect("load spec for stop")),
+        &StopRecord {
+            schema: "adl.long_lived_agent_stop.v1".to_string(),
+            agent_instance_id: "test-agent".to_string(),
+            reason: "integrated_storage_recovery_proven".to_string(),
+            requested_by: "issue-5169-test".to_string(),
+            classification: "operator_stop_requested".to_string(),
+            mode: "stop_before_next_cycle".to_string(),
+            requested_at: Utc::now(),
+        },
+    )
+    .expect("request daemon stop");
+    daemon_thread
+        .join()
+        .expect("daemon thread join")
+        .expect("daemon stop cleanly");
 }
 
 #[test]
@@ -1949,6 +2115,10 @@ fn governed_notice_retains_spool_and_cursor_for_ambiguous_timeout() {
 
 #[test]
 fn safe_fail_bundle_preserves_malformed_artifacts_and_quarantines_active_lease() {
+    let _env = MultiEnvGuard::set_all(&[
+        ("ADL_CSM_DISK_FLOOR_BYTES", "4096"),
+        ("ADL_CSM_TEST_AVAILABLE_BYTES", "1073745920"),
+    ]);
     let root = temp_dir("safe-fail-malformed-quarantine");
     let spec = write_spec(&root);
     let loaded = load_spec(&spec).expect("load spec");
@@ -2082,7 +2252,11 @@ fn continuity_checkpoint_low_disk_does_not_advance_godel_chain() {
     let spec = write_spec(&root);
     let loaded = load_spec(&spec).expect("load spec");
     ensure_state_root(&loaded).expect("state root");
-    fs::remove_dir_all(root.join("state/godel_snapshots")).expect("remove setup Godel chain");
+    match fs::remove_dir_all(root.join("state/godel_snapshots")) {
+        Ok(()) => {}
+        Err(err) if err.kind() == std::io::ErrorKind::NotFound => {}
+        Err(err) => panic!("remove setup Godel chain: {err}"),
+    }
     let _env = MultiEnvGuard::set_all(&[
         ("ADL_CSM_DISK_FLOOR_BYTES", "4096"),
         ("ADL_CSM_TEST_AVAILABLE_BYTES", "1024"),

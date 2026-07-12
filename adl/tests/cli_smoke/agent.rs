@@ -160,6 +160,56 @@ fn http_get_json(addr: &str, path: &str) -> serde_json::Value {
     }
 }
 
+fn http_get_json_authenticated(
+    addr: &str,
+    state_root: &std::path::Path,
+    path: &str,
+) -> serde_json::Value {
+    let store =
+        adl_runtime::runtime_api_auth::RuntimeApiCredentialStore::for_state_root(state_root);
+    let started = std::time::Instant::now();
+    loop {
+        match std::net::TcpStream::connect(addr) {
+            Ok(mut stream) => {
+                let response = store.with_bearer_token(|token| {
+                    stream
+                        .set_read_timeout(Some(std::time::Duration::from_secs(5)))
+                        .expect("set API read timeout");
+                    write!(
+                        stream,
+                        "GET {path} HTTP/1.1\r\nhost: {addr}\r\nauthorization: Bearer {token}\r\nconnection: close\r\n\r\n"
+                    )
+                    .expect("write authenticated API request");
+                    stream.flush().expect("flush authenticated API request");
+                    read_http_response_body(&mut stream)
+                });
+                match response {
+                    Ok(body)
+                        if !body.trim().is_empty()
+                            || started.elapsed() >= std::time::Duration::from_secs(5) =>
+                    {
+                        return serde_json::from_str(&body).unwrap_or_else(|err| {
+                            panic!(
+                                "parse authenticated API response for {path}: {err}; body:\n{body}"
+                            )
+                        });
+                    }
+                    Ok(_) | Err(_) if started.elapsed() < std::time::Duration::from_secs(5) => {
+                        std::thread::sleep(std::time::Duration::from_millis(25));
+                    }
+                    Ok(_) => panic!("authenticated API response for {path} was empty"),
+                    Err(err) => panic!("load runtime API credential for {path}: {err}"),
+                }
+            }
+            Err(err) if started.elapsed() < std::time::Duration::from_secs(5) => {
+                let _ = err;
+                std::thread::sleep(std::time::Duration::from_millis(25));
+            }
+            Err(err) => panic!("connect to authenticated CSM API {addr} for {path}: {err}"),
+        }
+    }
+}
+
 fn reserve_csm_test_port(label: &str) -> (std::net::TcpListener, String) {
     let mut ports: Vec<u16> = (19950..=19999).filter(|port| *port != 19997).collect();
     let mut hasher = std::collections::hash_map::DefaultHasher::new();
@@ -866,11 +916,16 @@ memory:
     let otel_log = root.join("otel.jsonl");
     let otel_status = root.join("otel-status.json");
     let spec_str = spec.to_str().expect("utf8 spec path");
+    let (daemon_api_probe, daemon_api_bind) =
+        reserve_csm_test_port("runtime API smoke bounded daemon");
+    drop(daemon_api_probe);
     let daemon = run_csm_with_env(
         &[
             "daemon",
             "--spec",
             spec_str,
+            "--api-bind",
+            &daemon_api_bind,
             "--test-supervisor-failure-after-restarts",
             "1",
             "--checkpoint-interval-secs",
@@ -893,6 +948,7 @@ memory:
                 "ADL_OTEL_STATUS",
                 otel_status.to_str().expect("utf8 otel status path"),
             ),
+            ("ADL_CSM_DISK_FLOOR_BYTES", "1"),
         ],
     );
     assert!(
@@ -1086,12 +1142,14 @@ memory:
             "ADL_OTEL_LOG",
             otel_log.to_str().expect("utf8 otel log path"),
         )
+        .env("ADL_CSM_DISK_FLOOR_BYTES", "1")
         .stdout(std::process::Stdio::null())
         .stderr(std::process::Stdio::piped())
         .spawn()
         .expect("spawn csm daemon with embedded API");
 
-    let mut status = http_get_json(&addr, "/status");
+    let api_state_root = root.join("state");
+    let mut status = http_get_json_authenticated(&addr, &api_state_root, "/status");
     let status_wait_started = std::time::Instant::now();
     while status["daemon_liveness"]["state"] != "running"
         || status["typed_channels"]["last_event"] != "cycle_observability_record"
@@ -1103,13 +1161,13 @@ memory:
             );
         }
         std::thread::sleep(std::time::Duration::from_millis(100));
-        status = http_get_json(&addr, "/status");
+        status = http_get_json_authenticated(&addr, &api_state_root, "/status");
     }
-    let health = http_get_json(&addr, "/health");
-    let ready = http_get_json(&addr, "/ready");
-    let metrics = http_get_json(&addr, "/metrics");
-    let events = http_get_json(&addr, "/events");
-    let shepherd = http_get_json(&addr, "/shepherd");
+    let health = http_get_json_authenticated(&addr, &api_state_root, "/health");
+    let ready = http_get_json_authenticated(&addr, &api_state_root, "/ready");
+    let metrics = http_get_json_authenticated(&addr, &api_state_root, "/metrics");
+    let events = http_get_json_authenticated(&addr, &api_state_root, "/events");
+    let shepherd = http_get_json_authenticated(&addr, &api_state_root, "/shepherd");
 
     request_governed_stop_and_wait(&spec, &mut child);
 
