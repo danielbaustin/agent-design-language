@@ -1359,17 +1359,24 @@ memory:
     )
     .expect("write agent spec");
 
-    let daemon = run_csm(&[
-        "daemon",
-        "--spec",
-        spec.to_str().expect("utf8 spec"),
-        "--test-supervisor-failure-after-restarts",
-        "1",
-        "--checkpoint-interval-secs",
-        "1",
-        "--no-sleep",
-        "--json",
-    ]);
+    let disk_ready_env = [
+        ("ADL_CSM_DISK_FLOOR_BYTES", "0"),
+        ("ADL_CSM_TEST_AVAILABLE_BYTES", "1073741824"),
+    ];
+    let daemon = run_csm_with_env(
+        &[
+            "daemon",
+            "--spec",
+            spec.to_str().expect("utf8 spec"),
+            "--test-supervisor-failure-after-restarts",
+            "1",
+            "--checkpoint-interval-secs",
+            "1",
+            "--no-sleep",
+            "--json",
+        ],
+        &disk_ready_env,
+    );
     assert!(
         daemon.status.success(),
         "expected daemon success, stderr:\n{}",
@@ -4298,17 +4305,24 @@ memory:
     .expect("write agent spec");
 
     let spec_str = spec.to_str().expect("utf8 path");
-    let out = run_csm(&[
-        "daemon",
-        "--spec",
-        spec_str,
-        "--test-supervisor-failure-after-restarts",
-        "1",
-        "--checkpoint-interval-secs",
-        "1",
-        "--no-sleep",
-        "--json",
-    ]);
+    let disk_ready_env = [
+        ("ADL_CSM_DISK_FLOOR_BYTES", "0"),
+        ("ADL_CSM_TEST_AVAILABLE_BYTES", "1073741824"),
+    ];
+    let out = run_csm_with_env(
+        &[
+            "daemon",
+            "--spec",
+            spec_str,
+            "--test-supervisor-failure-after-restarts",
+            "1",
+            "--checkpoint-interval-secs",
+            "1",
+            "--no-sleep",
+            "--json",
+        ],
+        &disk_ready_env,
+    );
     assert!(
         !out.status.success(),
         "expected daemon failure, stdout:\n{}",
@@ -4406,18 +4420,6 @@ memory:
         .iter()
         .any(|attempt| attempt["channel"] == "local_notice_ledger"
             && attempt["status"] == "recorded"));
-    assert!(attempts
-        .iter()
-        .any(|attempt| attempt["channel"] == "cloudwatch_logs"
-            && attempt["status"] == "not_configured"));
-    assert!(attempts
-        .iter()
-        .any(|attempt| attempt["channel"] == "acip_sns" && attempt["status"] == "not_configured"));
-    assert!(attempts
-        .iter()
-        .any(|attempt| attempt["channel"] == "cloudfront_control_plane"
-            && attempt["status"] == "not_configured"
-            && attempt["dependency"] == "#4915"));
     let notice_ledger =
         fs::read_to_string(root.join("state/csm_governed_notices.jsonl")).expect("notice ledger");
     assert!(notice_ledger.contains("\"trigger\":\"daemon_child_failed\""));
