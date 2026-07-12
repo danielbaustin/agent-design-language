@@ -10,13 +10,17 @@ use std::fs::{self, File, OpenOptions};
 use std::io::Write;
 use std::path::{Path, PathBuf};
 use std::sync::atomic::{AtomicU64, Ordering};
+use std::sync::Mutex;
 
 const CSM_BACKPRESSURE_STATE_SCHEMA: &str = "adl.csm.backpressure_state.v1";
 const CSM_LOW_DISK_RECOVERY_MANIFEST_SCHEMA: &str = "adl.csm.low_disk_recovery_manifest.v1";
 const DEFAULT_CSM_DISK_FLOOR_BYTES: u64 = 32 * 1024 * 1024 * 1024;
+const CSM_DISK_RECOVERY_MIN_MARGIN_BYTES: u64 = 1024 * 1024 * 1024;
+const CSM_DISK_RECOVERY_MARGIN_PERCENT: u64 = 10;
 const ADL_CSM_DISK_FLOOR_BYTES: &str = "ADL_CSM_DISK_FLOOR_BYTES";
 const ADL_CSM_TEST_AVAILABLE_BYTES: &str = "ADL_CSM_TEST_AVAILABLE_BYTES";
 static JSON_WRITE_TMP_COUNTER: AtomicU64 = AtomicU64::new(0);
+static STORAGE_PRESSURE_STATE_LOCK: Mutex<()> = Mutex::new(());
 
 pub(super) fn cycles_dir(loaded: &LoadedAgentSpec) -> PathBuf {
     loaded.state_root.join("cycles")
@@ -334,10 +338,20 @@ pub(super) fn record_low_disk_preflight(path: &Path, operation: &str) -> Result<
             path.display()
         )
     })?;
+    let state_root = infer_state_root(path);
+    let _state_guard = STORAGE_PRESSURE_STATE_LOCK
+        .lock()
+        .map_err(|_| anyhow!("CSM storage-pressure state lock poisoned"))?;
     if available_bytes >= floor_bytes {
+        if recover_storage_pressure_if_ready(&state_root, operation, available_bytes, floor_bytes)?
+        {
+            return Ok(false);
+        }
+        if storage_pressure_state(&state_root)? == Some("low_disk".to_string()) {
+            return Ok(true);
+        }
         return Ok(false);
     }
-    let state_root = infer_state_root(path);
     let artifact_ref = artifact_ref(&state_root, path);
     let captured_at = Utc::now();
     let storage_pressure = json!({
@@ -418,6 +432,134 @@ pub(super) fn record_low_disk_preflight(path: &Path, operation: &str) -> Result<
         }),
     )?;
     Ok(true)
+}
+
+fn storage_pressure_state(state_root: &Path) -> Result<Option<String>> {
+    Ok(
+        read_json_optional::<Value>(&state_root.join("csm_backpressure_state.json"))?.and_then(
+            |state| {
+                state
+                    .pointer("/storage_pressure/state")
+                    .and_then(Value::as_str)
+                    .map(str::to_string)
+            },
+        ),
+    )
+}
+
+fn recover_storage_pressure_if_ready(
+    state_root: &Path,
+    operation: &str,
+    available_bytes: u64,
+    floor_bytes: u64,
+) -> Result<bool> {
+    let state_path = state_root.join("csm_backpressure_state.json");
+    let Some(previous_state) = read_json_optional::<Value>(&state_path)? else {
+        return Ok(false);
+    };
+    if previous_state
+        .pointer("/storage_pressure/state")
+        .and_then(Value::as_str)
+        != Some("low_disk")
+    {
+        return Ok(false);
+    }
+
+    let recovery_margin_bytes = csm_disk_recovery_margin_bytes(floor_bytes);
+    let recovery_threshold_bytes = floor_bytes.saturating_add(recovery_margin_bytes);
+    if available_bytes < recovery_threshold_bytes {
+        return Ok(false);
+    }
+
+    let recovered_at = Utc::now();
+    let low_disk_captured_at = previous_state
+        .get("updated_at")
+        .cloned()
+        .unwrap_or(Value::Null);
+    let recovered_state = json!({
+        "schema": CSM_BACKPRESSURE_STATE_SCHEMA,
+        "runtime_owner": "csm",
+        "updated_at": recovered_at,
+        "profile": "storage_recovered_runtime_preflight",
+        "summary": {
+            "health": "healthy",
+            "deferred_count": 0,
+            "shed_count": 0,
+            "required_state_silently_dropped": false,
+            "optional_artifact_deletion": "not_performed"
+        },
+        "storage_pressure": {
+            "state": "recovered",
+            "health": "healthy",
+            "operation": operation,
+            "available_bytes": available_bytes,
+            "disk_floor_bytes": floor_bytes,
+            "recovery_margin_bytes": recovery_margin_bytes,
+            "recovery_threshold_bytes": recovery_threshold_bytes,
+            "hysteresis_policy": "recover_at_disk_floor_plus_max_ten_percent_or_one_gib",
+            "low_disk_captured_at": low_disk_captured_at,
+            "recovered_at": recovered_at
+        },
+        "safe_fail_action": {
+            "action": "resume_required_runtime_state_writes",
+            "status": "recovered",
+            "recovery_manifest_ref": "csm_low_disk_recovery_manifest.json"
+        },
+        "observability": {
+            "event_stage": "storage_recovered",
+            "retained_evidence": [
+                "csm_backpressure_state.json",
+                "csm_low_disk_recovery_manifest.json",
+                "operator_events.jsonl"
+            ],
+            "historical_low_disk_evidence": "retained"
+        }
+    });
+    write_json_pretty_without_preflight(&state_path, &recovered_state)?;
+
+    let event = json!({
+        "schema": OPERATOR_EVENT_SCHEMA,
+        "event": "storage_recovered",
+        "at": recovered_at,
+        "operator": "local",
+        "details": {
+            "operation": operation,
+            "available_bytes": available_bytes,
+            "disk_floor_bytes": floor_bytes,
+            "recovery_margin_bytes": recovery_margin_bytes,
+            "recovery_threshold_bytes": recovery_threshold_bytes,
+            "hysteresis_policy": "recover_at_disk_floor_plus_max_ten_percent_or_one_gib",
+            "backpressure_state_ref": "csm_backpressure_state.json",
+            "recovery_manifest_ref": "csm_low_disk_recovery_manifest.json",
+            "historical_low_disk_evidence": "retained",
+            "otel": {
+                "service_name": "csm-runtime-daemon",
+                "event_name": "storage_recovered",
+                "event_kind": "state_transition"
+            }
+        }
+    });
+    append_low_disk_event_raw(&state_root.join("operator_events.jsonl"), &event)?;
+    crate::observability::emit_event(
+        "csm",
+        "storage_recovered",
+        "recovered",
+        &[
+            ("process_class", "csm_runtime_daemon"),
+            ("otel_service_name", "csm-runtime-daemon"),
+            ("runtime_role", "csm_runtime"),
+            ("storage_pressure", "recovered"),
+        ],
+    );
+    Ok(true)
+}
+
+fn csm_disk_recovery_margin_bytes(floor_bytes: u64) -> u64 {
+    floor_bytes
+        .saturating_mul(CSM_DISK_RECOVERY_MARGIN_PERCENT)
+        .checked_div(100)
+        .unwrap_or(u64::MAX)
+        .max(CSM_DISK_RECOVERY_MIN_MARGIN_BYTES)
 }
 
 fn csm_disk_floor_bytes() -> u64 {
@@ -632,6 +774,19 @@ mod tests {
             TEMP_SEQ.fetch_add(1, Ordering::Relaxed)
         ));
         fs::create_dir_all(&dir).expect("create temp dir");
+        dir
+    }
+
+    fn issue_scratch_dir(prefix: &str) -> PathBuf {
+        let dir = std::env::current_dir()
+            .expect("current dir")
+            .join(".adl/scratch/issue-5169")
+            .join(format!(
+                "{prefix}-{}-{}",
+                std::process::id(),
+                TEMP_SEQ.fetch_add(1, Ordering::Relaxed)
+            ));
+        fs::create_dir_all(&dir).expect("create issue scratch dir");
         dir
     }
 
@@ -879,6 +1034,107 @@ mod tests {
         );
         let events = fs::read_to_string(operator_events_path(&loaded)).expect("operator events");
         assert!(events.contains("\"event\":\"low_disk_preflight\""));
+    }
+
+    #[test]
+    fn low_disk_recovery_is_hysteresis_safe_and_preserves_incident_evidence() {
+        let _guard = MultiEnvGuard::set_all(&[
+            (ADL_CSM_DISK_FLOOR_BYTES, "10000000000"),
+            (ADL_CSM_TEST_AVAILABLE_BYTES, "9000000000"),
+        ]);
+        let root = issue_scratch_dir("hysteresis");
+        let loaded = sample_loaded(&root);
+        fs::create_dir_all(&loaded.state_root).expect("state root");
+        let checkpoint_path = continuity_checkpoint_path(&loaded);
+
+        write_json_pretty(&checkpoint_path, &json!({"sequence": 1}))
+            .expect("write low-disk checkpoint");
+        let manifest_before =
+            fs::read(csm_low_disk_recovery_manifest_path(&loaded)).expect("recovery manifest");
+
+        unsafe {
+            env::set_var(ADL_CSM_TEST_AVAILABLE_BYTES, "10500000000");
+        }
+        let still_suppressed =
+            record_low_disk_preflight(&checkpoint_path, "continuity_checkpoint_write")
+                .expect("preflight below recovery threshold");
+        assert!(still_suppressed);
+        let still_low = read_json_required(&csm_backpressure_state_path(&loaded))
+            .expect("still-low current state");
+        assert_eq!(still_low["storage_pressure"]["state"], "low_disk");
+        assert_eq!(
+            read_json_required(&checkpoint_path).expect("checkpoint suppressed below recovery")
+                ["sequence"],
+            1
+        );
+
+        unsafe {
+            env::set_var(ADL_CSM_TEST_AVAILABLE_BYTES, "11073741824");
+        }
+        let recovered_preflight =
+            record_low_disk_preflight(&checkpoint_path, "continuity_checkpoint_write")
+                .expect("preflight at recovery threshold");
+        assert!(!recovered_preflight);
+        write_json_pretty(&checkpoint_path, &json!({"sequence": 3}))
+            .expect("write after recovery threshold");
+        let recovered = read_json_required(&csm_backpressure_state_path(&loaded))
+            .expect("recovered current state");
+        assert_eq!(recovered["storage_pressure"]["state"], "recovered");
+        assert_eq!(recovered["summary"]["health"], "healthy");
+        assert_eq!(
+            recovered["safe_fail_action"]["action"],
+            "resume_required_runtime_state_writes"
+        );
+        assert_eq!(
+            recovered["storage_pressure"]["recovery_threshold_bytes"],
+            11_073_741_824u64
+        );
+        assert_eq!(
+            read_json_required(&checkpoint_path).expect("resumed checkpoint")["sequence"],
+            3
+        );
+        assert_eq!(
+            fs::read(csm_low_disk_recovery_manifest_path(&loaded)).expect("retained manifest"),
+            manifest_before
+        );
+
+        unsafe {
+            env::set_var(ADL_CSM_TEST_AVAILABLE_BYTES, "10500000000");
+        }
+        write_json_pretty(&checkpoint_path, &json!({"sequence": 4}))
+            .expect("write inside recovered hysteresis band");
+        let no_flap = read_json_required(&csm_backpressure_state_path(&loaded))
+            .expect("non-flapping current state");
+        assert_eq!(no_flap["storage_pressure"]["state"], "recovered");
+
+        let events = fs::read_to_string(operator_events_path(&loaded)).expect("operator events");
+        assert_eq!(events.matches("\"event\":\"storage_recovered\"").count(), 1);
+        assert!(events.contains("\"event_name\":\"storage_recovered\""));
+        assert!(events.contains("\"historical_low_disk_evidence\":\"retained\""));
+    }
+
+    #[test]
+    fn low_disk_does_not_recover_while_capacity_remains_below_floor() {
+        let _guard = MultiEnvGuard::set_all(&[
+            (ADL_CSM_DISK_FLOOR_BYTES, "4096"),
+            (ADL_CSM_TEST_AVAILABLE_BYTES, "1024"),
+        ]);
+        let root = issue_scratch_dir("below-floor");
+        let loaded = sample_loaded(&root);
+        fs::create_dir_all(&loaded.state_root).expect("state root");
+        let checkpoint_path = continuity_checkpoint_path(&loaded);
+
+        write_json_pretty(&checkpoint_path, &json!({"sequence": 1})).expect("first preflight");
+        unsafe {
+            env::set_var(ADL_CSM_TEST_AVAILABLE_BYTES, "2048");
+        }
+        write_json_pretty(&checkpoint_path, &json!({"sequence": 2})).expect("second preflight");
+
+        let current = read_json_required(&csm_backpressure_state_path(&loaded))
+            .expect("current pressure state");
+        assert_eq!(current["storage_pressure"]["state"], "low_disk");
+        let events = fs::read_to_string(operator_events_path(&loaded)).expect("operator events");
+        assert!(!events.contains("\"event\":\"storage_recovered\""));
     }
 
     #[test]
