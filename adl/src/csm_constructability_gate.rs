@@ -460,7 +460,6 @@ pub fn write_status_snapshot(
         checkpoint_observed,
     );
     let snapshot = build_status_snapshot(agent_instance_id, &request);
-    write_json_atomic(&state_root.join(CSM_CONSTRUCTABILITY_STATUS_REF), &snapshot)?;
     append_jsonl(
         &state_root.join(CSM_CONSTRUCTABILITY_DECISIONS_REF),
         &json!({
@@ -471,6 +470,7 @@ pub fn write_status_snapshot(
             "recorded_at": Utc::now()
         }),
     )?;
+    write_json_atomic(&state_root.join(CSM_CONSTRUCTABILITY_STATUS_REF), &snapshot)?;
     Ok(snapshot)
 }
 
@@ -817,5 +817,25 @@ mod tests {
         let mut tampered = snapshot;
         tampered["last_decision"]["outcome"] = json!("block");
         assert!(validate_retained_status(&tampered, "agent-1").is_err());
+    }
+
+    #[test]
+    fn ledger_failure_does_not_publish_ready_status() {
+        let state_root = std::env::temp_dir().join(format!(
+            "adl-constructability-ledger-failure-{}",
+            std::process::id()
+        ));
+        let _ = fs::remove_dir_all(&state_root);
+        fs::create_dir_all(state_root.join(CSM_CONSTRUCTABILITY_DECISIONS_REF))
+            .expect("create ledger path as directory");
+
+        let result = write_status_snapshot(&state_root, "agent-1", "active", true);
+
+        assert!(result.is_err());
+        assert!(
+            !state_root.join(CSM_CONSTRUCTABILITY_STATUS_REF).exists(),
+            "Constructability status must not publish when required decision ledger retention fails"
+        );
+        let _ = fs::remove_dir_all(&state_root);
     }
 }
