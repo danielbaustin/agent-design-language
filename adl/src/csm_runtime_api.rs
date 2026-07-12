@@ -2004,6 +2004,9 @@ memory: {}
             method: "POST".to_string(),
             path: "/future-mutating-route".to_string(),
             origin: None,
+            authorization: None,
+            gateway_identity: None,
+            gateway_signature: None,
         };
         let response = runtime_api_http_response(&options, &request).expect("response");
         assert_eq!(response.status, "503 Service Unavailable");
