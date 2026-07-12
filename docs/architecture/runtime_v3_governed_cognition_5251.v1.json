@@ -1,0 +1,45 @@
+{
+  "schema": "adl.runtime_v3.governed_cognition.v1",
+  "issue": 5251,
+  "target_version": "v0.91.7",
+  "created_at_utc": "2026-07-12T12:38:00Z",
+  "capabilities": [
+    "moral_affect_wellbeing",
+    "curiosity_intelligence_theory_of_mind"
+  ],
+  "cutover_disposition": "accepted_intentional_divergence",
+  "runtime_v2_internal_reuse": false,
+  "hidden_model_or_provider_dependency": false,
+  "raw_runtime_v2_format_equivalence": false,
+  "invariants": {
+    "contract_boundary": "governed cognition is represented as deterministic Runtime v3 service contracts outside the supervisor",
+    "moral_affect_wellbeing": "bounded affect and wellbeing scores are checked against explicit policy thresholds and fail closed on invalid context, policy mismatch, or missing required review",
+    "curiosity_intelligence_theory_of_mind": "curiosity, intelligence confidence, and theory-of-mind confidence are checked against explicit policy thresholds and fail closed on missing required review",
+    "review_records": "review records are bound to subject id, policy hash, evidence hash, and context review hash before a review-required disposition is emitted",
+    "non_claim": "the adapter does not claim subjective cognition, provider reasoning, or Runtime v2 raw wire-format equivalence"
+  },
+  "proof_surfaces": [
+    "adl-runtime-kernel/src/cognition.rs",
+    "adl-runtime-kernel/tests/cognition.rs"
+  ],
+  "negative_tests": [
+    "invalid context hash rejected",
+    "policy mismatch rejected",
+    "missing required review fails closed",
+    "unbound review record rejected",
+    "JSON decision projection excludes provider or prompt payloads"
+  ],
+  "validation": [
+    "cargo fmt --manifest-path adl-runtime-kernel/Cargo.toml --check",
+    "cargo test --manifest-path adl-runtime-kernel/Cargo.toml --test cognition -- --nocapture",
+    "cargo clippy --manifest-path adl-runtime-kernel/Cargo.toml --test cognition -- -D warnings",
+    "cargo test --manifest-path adl-runtime-kernel/Cargo.toml --test parity -- --nocapture",
+    "cargo test --manifest-path adl-runtime-kernel/Cargo.toml"
+  ],
+  "residual_risks": [
+    "This proof does not authorize Runtime v3 as the default runtime.",
+    "This proof does not delete Runtime v2.",
+    "This proof does not claim subjective cognition, model-backed reasoning, or Runtime v2 raw cognition wire-format compatibility.",
+    "Broader production-like soak and shared live fixture expansion remain routed through #5253."
+  ]
+}

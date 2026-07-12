@@ -99,15 +99,13 @@
     },
     {
       "id": "moral_affect_wellbeing",
-      "disposition": "blocker",
-      "proof": "Governed cognition adapter proof is required.",
-      "blocking_issue": 5251
+      "disposition": "accepted_intentional_divergence",
+      "proof": "#5251 implements Runtime v3 moral/affect/wellbeing governed cognition adapters with deterministic service contracts, bounded score policy, policy-hash binding, review-required disposition, and review-record validation; subjective cognition and Runtime v2 raw cognition wire-format equivalence are intentionally not claimed."
     },
     {
       "id": "curiosity_intelligence_theory_of_mind",
-      "disposition": "blocker",
-      "proof": "Governed cognition adapter proof is required.",
-      "blocking_issue": 5251
+      "disposition": "accepted_intentional_divergence",
+      "proof": "#5251 implements Runtime v3 curiosity/intelligence/theory-of-mind governed cognition adapters with deterministic service contracts, bounded confidence policy, policy-hash binding, review-required disposition, and review-record validation; subjective cognition and Runtime v2 raw cognition wire-format equivalence are intentionally not claimed."
     },
     {
       "id": "migration.shadow_parity",
@@ -123,10 +121,10 @@
   ],
   "summary": {
     "live_equivalent_fixture": 1,
-    "accepted_intentional_divergence": 3,
+    "accepted_intentional_divergence": 5,
     "retained_v2_behavior_behind_adapter": 1,
     "deferred_non_cutover_surface": 0,
-    "blocker": 13
+    "blocker": 11
   },
   "non_claims": [
     "This packet does not authorize Runtime v3 as the default runtime.",

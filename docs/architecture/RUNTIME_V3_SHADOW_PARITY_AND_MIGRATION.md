@@ -24,8 +24,8 @@ The parity inventory contains 18 capability groups:
 - one normalized reasoning-loop fixture executes both real binaries for 21 runs and proves equivalent completion, decision, and replay-order semantics.
 - the migration harness and reversible forwarding facade have executable proof.
 - private-state security is an explicit unsupported equivalence.
-- citizen identity/memory, moral/affect/wellbeing, and curiosity/intelligence/
-  theory-of-mind remain deferred domain adapters.
+- moral/affect/wellbeing and curiosity/intelligence/theory-of-mind now have
+  deterministic Runtime v3 governed cognition adapter proof through #5251.
 - guardian packaging and the bounded 100-cycle soak are complete under `#5175`;
   post-fix aggregate review remains the decision gate.
 
