@@ -265,6 +265,17 @@ slightly faster:
 ADL_BUILD_PLATFORM_BENCHMARK platform=codebuild build_seconds=96 test_seconds=75 total_seconds=171 status=passed
 ```
 
+Issue `#5164` adds the canonical full-repository proof on the hardened lane.
+Two consecutive exact-SHA broad runs restored and verified the S3 target,
+performed zero compile requests, and passed all `22,609` selected tests:
+
+| Run | BUILD phase | Nextest time | Result |
+|---|---:|---:|---|
+| Broad 1 | 344s | 263.269s | 22,609 passed; 18 skipped |
+| Broad 2 | 352s | 262.689s | 22,609 passed; 18 skipped |
+
+See `docs/milestones/v0.91.7/review/build_throughput/CODEBUILD_DETERMINISTIC_VALIDATION_5164.md`.
+
 That run reported Rust cache hit rate `99.73%` with zero cache read/write
 errors. CodeBuild wall-clock from start to end was `310s`, including source
 download, install/setup, benchmark execution, post-build sccache stats, and S3
