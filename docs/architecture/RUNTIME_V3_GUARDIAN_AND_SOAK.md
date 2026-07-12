@@ -38,6 +38,10 @@ and its `Never` startup-failure counter resets when a child reaches `Started`.
 A native always-failing child therefore remains in a crash loop instead of
 exhausting the configured budget. This is retained as a cutover blocker and
 reported upstream at `https://github.com/FedericoPonzi/Horust/issues/318`.
+The proposed upstream repair is under review at
+`https://github.com/FedericoPonzi/Horust/pull/319`; ADL remains pinned to the
+published 0.1.13 release and blocked until a corrected release is available and
+the native qualification suite passes against that release.
 
 ## Packaging
 

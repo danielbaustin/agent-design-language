@@ -32,6 +32,7 @@
     "bounded_restart": {
       "status": "blocked",
       "upstream_issue": "https://github.com/FedericoPonzi/Horust/issues/318",
+      "upstream_fix_pr": "https://github.com/FedericoPonzi/Horust/pull/319",
       "reason": "Horust 0.1.13 does not enforce restart.attempts for repeated post-start failures under RestartStrategy::OnFailure"
     },
     "smallest_gpu_spot": {

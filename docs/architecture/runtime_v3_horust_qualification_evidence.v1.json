@@ -4,7 +4,7 @@
   "tested_commit": "85326915d25bfedfa78e8cad7496126ca647921c",
   "artifact_policy": "remote and host artifacts remain local and ignored; this redacted index retains stable identifiers and hashes without credentials or account identifiers",
   "unit_sha256": "c344a70df9e7bb57911b2c675b5bb0f7d22ffb680fd72277d3f6c6b2655eff27",
-  "horust_crate_provenance_sha256": "b0a9ae88756ba4ac9187b9844ccb5bfcb5503905e2dac199f094886a0bc6e9b1",
+  "horust_crate_provenance_sha256": "2e59a679087e227438c72b4cdef44815406ff2d118cf5b4134ae06780c90e5b2",
   "local_horust_binary_sha256": "707940ff4e569f416f2b3cb42801b1d9e5af8a6ea1ec842abf32b01b91f7cb9f",
   "runs": [
     {
