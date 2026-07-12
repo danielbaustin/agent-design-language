@@ -6,6 +6,7 @@ use std::hash::{Hash, Hasher};
 use std::io::Write;
 
 const CSM_COVERAGE_STARTUP_ATTEMPTS: &str = "80";
+const CSM_CONTROL_PLANE_FIRST_REQUEST_TIMEOUT_SECS: u64 = 90;
 const CSM_DISK_READY_ENV: [(&str, &str); 2] = [
     ("ADL_CSM_DISK_FLOOR_BYTES", "0"),
     ("ADL_CSM_TEST_AVAILABLE_BYTES", "1073741824"),
@@ -29,6 +30,9 @@ fn spawn_loopback_control_plane() -> (
             match listener.accept() {
                 Ok((mut stream, _)) => {
                     stream
+                        .set_nonblocking(false)
+                        .expect("set control plane stream blocking");
+                    stream
                         .set_read_timeout(Some(std::time::Duration::from_secs(3)))
                         .expect("set control plane read timeout");
                     let request = read_http_request(&mut stream);
@@ -44,7 +48,12 @@ fn spawn_loopback_control_plane() -> (
                     let idle_done = last_request_at
                         .map(|instant| instant.elapsed() > std::time::Duration::from_secs(2))
                         .unwrap_or(false);
-                    if idle_done || started.elapsed() > std::time::Duration::from_secs(20) {
+                    if idle_done
+                        || started.elapsed()
+                            > std::time::Duration::from_secs(
+                                CSM_CONTROL_PLANE_FIRST_REQUEST_TIMEOUT_SECS,
+                            )
+                    {
                         break;
                     }
                     std::thread::sleep(std::time::Duration::from_millis(25));
@@ -1267,6 +1276,7 @@ memory:
         )
         .env("ADL_CSM_NOTICE_CONTROL_PLANE_MODE", "live")
         .env("ADL_CSM_NOTICE_CONTROL_PLANE_APPROVED", "1")
+        .env("ADL_CSM_NOTICE_REQUIRED_CHANNEL", "control_plane")
         .env("ADL_CSM_NOTICE_CONTROL_PLANE_TARGET", "https")
         .env("ADL_CSM_NOTICE_CONTROL_PLANE_URL", &control_plane_url)
         .env("ADL_CSM_DISK_FLOOR_BYTES", "1")
@@ -1440,6 +1450,8 @@ memory:
         .as_array()
         .expect("ready blockers")
         .contains(&serde_json::json!("curiosity_engine_not_ready")));
+    assert_eq!(status["reasoning_runtime"]["status"], "serialized");
+    assert_eq!(status["reasoning_runtime"]["value"]["health"], "ready");
     assert_eq!(metrics["schema"], "adl.csm.runtime_api.metrics.v1");
     assert_eq!(metrics["gauges"]["backpressure_queue_depth"], 12);
     assert_eq!(metrics["gauges"]["backpressure_lag_ms"], 3100);
@@ -1487,6 +1499,7 @@ memory:
         );
         assert!(!raw.contains("Bearer "), "leaked bearer token:\n{raw}");
     }
+
 }
 
 #[test]
