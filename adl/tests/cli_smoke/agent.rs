@@ -1122,7 +1122,7 @@ memory:
 
     let (probe, addr) = reserve_csm_test_port("runtime API smoke");
     drop(probe);
-    let mut child = std::process::Command::new(resolve_csm_exe())
+    let mut child = runtime_test_command(resolve_csm_exe())
         .args([
             "daemon",
             "--spec",

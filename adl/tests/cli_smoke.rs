@@ -24,8 +24,16 @@ fn write_temp_adl_yaml() -> PathBuf {
     p
 }
 
+fn runtime_test_command(executable: PathBuf) -> Command {
+    let mut command = Command::new(executable);
+    command
+        .env("ADL_CSM_DISK_FLOOR_BYTES", "0")
+        .env("ADL_CSM_TEST_AVAILABLE_BYTES", "1073741824");
+    command
+}
+
 fn run_adl(args: &[&str]) -> std::process::Output {
-    Command::new(resolve_adl_exe())
+    runtime_test_command(resolve_adl_exe())
         .args(args)
         .output()
         .expect("run adl binary")
@@ -46,14 +54,14 @@ fn run_csdlc(args: &[&str]) -> std::process::Output {
 }
 
 fn run_adl_runtime(args: &[&str]) -> std::process::Output {
-    Command::new(resolve_adl_runtime_exe())
+    runtime_test_command(resolve_adl_runtime_exe())
         .args(args)
         .output()
         .expect("run adl-runtime binary")
 }
 
 fn run_csm(args: &[&str]) -> std::process::Output {
-    Command::new(resolve_csm_exe())
+    runtime_test_command(resolve_csm_exe())
         .args(args)
         .output()
         .expect("run csm binary")
@@ -83,7 +91,7 @@ fn run_csm_without_aws_credentials(args: &[&str]) -> std::process::Output {
         "ADL_AWS_HEARTBEAT_LOG_STREAM",
         "ADL_AWS_SNS_TOPIC_ARN",
     ];
-    let mut command = Command::new(resolve_csm_exe());
+    let mut command = runtime_test_command(resolve_csm_exe());
     command.args(args).env("AWS_EC2_METADATA_DISABLED", "true");
     for name in AWS_CREDENTIAL_ENV {
         command.env_remove(name);
@@ -108,7 +116,7 @@ fn run_adl_review(args: &[&str]) -> std::process::Output {
 }
 
 fn run_adl_runtime_with_env(args: &[&str], envs: &[(&str, &str)]) -> std::process::Output {
-    let mut cmd = Command::new(resolve_adl_runtime_exe());
+    let mut cmd = runtime_test_command(resolve_adl_runtime_exe());
     cmd.args(args);
     for (k, v) in envs {
         cmd.env(k, v);
@@ -117,7 +125,7 @@ fn run_adl_runtime_with_env(args: &[&str], envs: &[(&str, &str)]) -> std::proces
 }
 
 fn run_csm_with_env(args: &[&str], envs: &[(&str, &str)]) -> std::process::Output {
-    let mut cmd = Command::new(resolve_csm_exe());
+    let mut cmd = runtime_test_command(resolve_csm_exe());
     cmd.args(args);
     for (k, v) in envs {
         cmd.env(k, v);
@@ -126,7 +134,7 @@ fn run_csm_with_env(args: &[&str], envs: &[(&str, &str)]) -> std::process::Outpu
 }
 
 fn run_adl_with_env(args: &[&str], envs: &[(&str, &str)]) -> std::process::Output {
-    let mut cmd = Command::new(resolve_adl_exe());
+    let mut cmd = runtime_test_command(resolve_adl_exe());
     cmd.args(args);
     for (k, v) in envs {
         cmd.env(k, v);
