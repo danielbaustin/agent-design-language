@@ -1621,7 +1621,8 @@ memory:
     let observability_log = root.join("daemon-observability.log");
     let otel_log = root.join("daemon-otel.jsonl");
     let otel_status = root.join("daemon-otel-status.json");
-    let (otel_endpoint, _captured_otel, otel_collector) = spawn_loopback_otlp_collector();
+    let (otel_endpoint, _captured_otel, shutdown_otel_collector, otel_collector) =
+        spawn_loopback_otlp_collector();
     let daemon = run_csm_with_env(
         &[
             "daemon",
@@ -1657,6 +1658,9 @@ memory:
             ("ADL_OTEL_EXPORTER_TIMEOUT_MS", "2000"),
         ],
     );
+    shutdown_otel_collector
+        .send(())
+        .expect("signal continuity OTLP collector shutdown");
     otel_collector
         .join()
         .expect("join continuity OTLP collector");
