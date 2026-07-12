@@ -129,7 +129,9 @@ and verifies:
 Rust validation tools are not installed on the ephemeral host. Docker and AWS
 CLI are host transport dependencies and may be installed when the selected AMI
 does not already provide them. The builder image itself is never rebuilt by a
-validation run.
+validation run. Container validation sets
+`RUSTFLAGS=-C link-arg=-fuse-ld=lld`, so verifying `lld` also means the Rust
+link path actually selects it.
 
 The retained cache is mounted at `/mnt/adl-cache`. Container-backed state is
 under:
@@ -166,6 +168,12 @@ artifacts/.private/command-status.log
 The private directory is mode 700 and its files are mode 600. It can contain
 raw control identifiers needed to terminate a failed run. Do not copy or upload
 it. The GitHub workflow explicitly excludes hidden files.
+
+Automatic retries are bounded and restricted to classified capacity, transient
+network, and SSM failures, plus provider-confirmed Spot interruptions. A test or
+validation failure is terminal and is never relaunched as an infrastructure
+retry. `stop` discovers the latest attempt control log and verifies the
+instance's `adl:run_id` tag before termination.
 
 A successful `wrapper-final-summary.json` proves:
 

@@ -168,6 +168,8 @@ If Spot is interrupted, keep the retained artifact directory and rerun from the
 same issue/ref/command context. A successful retry must be recorded as
 `resumed_after_interruption`, with the previous interrupted attempt visible in
 `resume-state.json`; do not rewrite it as an ordinary `passed` run.
+Validation/test failures do not retry. Only classified infrastructure failures
+or a provider-confirmed Spot interruption may consume a bounded retry.
 
 ## 5. CodeBuild / CodeFriend
 

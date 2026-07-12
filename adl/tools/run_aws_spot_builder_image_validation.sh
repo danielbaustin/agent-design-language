@@ -181,6 +181,7 @@ VALIDATION_START="$(date +%s)"
   --env CARGO_TARGET_DIR=/workspace/adl/target \
   --env SCCACHE_DIR=/cache/sccache \
   --env RUSTC_WRAPPER=sccache \
+  --env 'RUSTFLAGS=-C link-arg=-fuse-ld=lld' \
   --env CARGO_INCREMENTAL=0 \
   --entrypoint /bin/bash \
   "$IMAGE" -lc "set +e; $COMMAND; status=\$?; sccache --show-stats > /run-output/sccache-stats.log 2>&1 || true; exit \$status"

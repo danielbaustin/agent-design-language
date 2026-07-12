@@ -46,9 +46,13 @@ run_id="fixture-controls"
 out="$TMP/$run_id/summary.json"
 artifacts="$TMP/$run_id/artifacts"
 mkdir -p "$artifacts"
-cat >"$artifacts/command-status.log" <<'LOG'
+mkdir -p "$artifacts/attempt-1"
+cat >"$artifacts/attempt-1/command-status.log" <<'LOG'
 status=ssh_debug_ready instance_id=i-0123456789abcdef0 public_ip=192.0.2.10
 status=ssh_tail_started instance_id=i-0123456789abcdef0 public_ip=192.0.2.10
+LOG
+cat >"$artifacts/attempt-1/remote-tail.log" <<'LOG'
+instance_id=i-0123456789abcdef0 public_ip=192.0.2.10
 LOG
 cat >"$artifacts/manager.stderr.log" <<'LOG'
 instance_id=i-0123456789abcdef0 account=123456789012 public_ip=192.0.2.10
