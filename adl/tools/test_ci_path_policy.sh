@@ -1351,8 +1351,23 @@ runner_contract.write_text(
     "# ADL_PR_FAST_COVERAGE_TEST_THREADS\n"
     "# --test-threads\n"
 )
+
+authoritative_runner = Path("adl/tools/run_authoritative_coverage_lane.sh")
+authoritative_runner.write_text(
+    "#!/usr/bin/env bash\n"
+    "cargo llvm-cov nextest --workspace --no-report\n"
+    "export ADL_CSM_DISK_FLOOR_BYTES=\"${ADL_CSM_DISK_FLOOR_BYTES:-0}\"\n"
+    "# --test-threads removed from authoritative coverage\n"
+)
+
+authoritative_runner_test = Path("adl/tools/test_run_authoritative_coverage_lane.sh")
+authoritative_runner_test.write_text(
+    "#!/usr/bin/env bash\n"
+    "# ADL_CSM_DISK_FLOOR_BYTES\n"
+    "# --test-threads removed from authoritative coverage\n"
+)
 PY
-  git add adl/src/cli/process_cmd.rs .github/workflows/ci.yaml adl/tools/check_coverage_impact.sh adl/tools/test_check_coverage_impact.sh adl/tools/test_ci_runtime_contracts.sh adl/tools/test_run_pr_fast_coverage_lane.sh
+  git add adl/src/cli/process_cmd.rs .github/workflows/ci.yaml adl/tools/check_coverage_impact.sh adl/tools/test_check_coverage_impact.sh adl/tools/test_ci_runtime_contracts.sh adl/tools/test_run_pr_fast_coverage_lane.sh adl/tools/run_authoritative_coverage_lane.sh adl/tools/test_run_authoritative_coverage_lane.sh
   git commit -q -m runtime-bounded-pr-fast-coverage-policy-change
   runtime_bounded_pr_fast_head="$(git rev-parse HEAD)"
 

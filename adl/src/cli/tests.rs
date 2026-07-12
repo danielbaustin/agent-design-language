@@ -170,6 +170,7 @@ fn top_level_dispatch_routes_safe_help_branches_without_workflow_execution() {
     for command in [
         "provider",
         "runtime-v2",
+        "runtime-v3",
         "keygen",
         "tooling",
         "resume",
@@ -226,11 +227,60 @@ fn runtime_dispatch_exposes_help_and_version_without_csdlc_dispatch() {
 
     let usage = runtime_usage();
     assert!(usage.contains("adl-runtime run <adl.yaml>"));
+    assert!(usage.contains("adl-runtime runtime-v3 select [--runtime v2|v3] [--json]"));
     assert!(
         usage.contains("adl-runtime scheduler plan --input <bundle.json> [--out <path>] [--json]")
     );
     assert!(usage.contains("adl <adl.yaml> remains available as a compatibility shortcut"));
     assert!(usage.contains("C-SDLC issue work belongs to adl/tools/pr.sh run <issue>"));
+}
+
+#[test]
+fn runtime_v3_selection_dispatch_is_explicit_and_reversible() {
+    dispatch_args(&["runtime-v3".to_string(), "--help".to_string()])
+        .expect("runtime-v3 help should succeed");
+    dispatch_args(&[
+        "runtime-v3".to_string(),
+        "select".to_string(),
+        "--runtime".to_string(),
+        "v3".to_string(),
+        "--json".to_string(),
+    ])
+    .expect("explicit runtime-v3 selection should succeed");
+    dispatch_args(&[
+        "runtime-v3".to_string(),
+        "select".to_string(),
+        "--runtime".to_string(),
+        "v2".to_string(),
+    ])
+    .expect("runtime-v2 fallback selection should remain available");
+
+    let err = dispatch_args(&[
+        "runtime-v3".to_string(),
+        "select".to_string(),
+        "--runtime".to_string(),
+        "v4".to_string(),
+    ])
+    .expect_err("unknown runtime selection should fail closed");
+    assert!(err
+        .to_string()
+        .contains("unsupported runtime selection 'v4'"));
+}
+
+#[test]
+fn runtime_v3_selection_routes_through_runtime_compatibility_binary() {
+    let _env = EnvGuard::set("ADL_RUNTIME_SELECTION", "v3");
+
+    dispatch_runtime_args(&["runtime-v3".to_string(), "select".to_string()])
+        .expect("runtime compatibility binary should route runtime-v3 selection");
+    dispatch_runtime_args(&[
+        "runtime-v3".to_string(),
+        "select".to_string(),
+        "--runtime".to_string(),
+        "v2".to_string(),
+        "--json".to_string(),
+    ])
+    .expect("--runtime should override ADL_RUNTIME_SELECTION");
 }
 
 #[test]

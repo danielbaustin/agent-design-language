@@ -93,6 +93,9 @@ cd "$ADL_DIR"
 mkdir -p "$COVERAGE_BUILD_ROOT/target" "$COVERAGE_BUILD_ROOT/target/llvm-cov-target"
 export CARGO_TARGET_DIR="$COVERAGE_BUILD_ROOT/target"
 export CARGO_LLVM_COV_TARGET_DIR="$COVERAGE_BUILD_ROOT/target/llvm-cov-target"
+# Coverage builds can consume enough runner disk to cross the production CSM
+# floor. Keep ordinary tests deterministic; low-disk tests set explicit values.
+export ADL_CSM_DISK_FLOOR_BYTES="${ADL_CSM_DISK_FLOOR_BYTES:-0}"
 ADL_RUST_WARM_CACHE="${ADL_COVERAGE_WARM_CACHE:-${ADL_RUST_WARM_CACHE:-1}}" \
 ADL_RUST_WARM_CACHE_SOURCE_TARGET="${ADL_COVERAGE_WARM_SOURCE_TARGET:-}" \
 ADL_RUST_WARM_CACHE_DEST_TARGET="$CARGO_TARGET_DIR" \

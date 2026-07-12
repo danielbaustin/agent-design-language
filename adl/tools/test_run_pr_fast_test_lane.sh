@@ -46,6 +46,42 @@ assert plan["mode"] == "focused"
 assert plan["filter_expression"] == "test(contract_schema)"
 PY
 
+focused_adl_runtime="$TMP/focused_adl_runtime.txt"
+cat >"$focused_adl_runtime" <<'EOF'
+M	adl-runtime/Cargo.toml
+M	adl-runtime/Cargo.lock
+M	adl-runtime/src/weather.rs
+EOF
+focused_adl_runtime_output="$(bash "$SCRIPT" --changed-files "$focused_adl_runtime" --print-plan)"
+assert_has "$focused_adl_runtime_output" "mode=focused"
+assert_has "$focused_adl_runtime_output" "reason=bounded_rust_surface_runs_focused_nextest"
+assert_has "$focused_adl_runtime_output" "filter_tokens=adl_runtime"
+assert_has "$focused_adl_runtime_output" "filter_expression=all()"
+
+focused_adl_runtime_example="$TMP/focused_adl_runtime_example.txt"
+printf 'M\tadl-runtime/examples/observability_vector_proof.rs\n' >"$focused_adl_runtime_example"
+focused_adl_runtime_example_output="$(bash "$SCRIPT" --changed-files "$focused_adl_runtime_example" --print-plan)"
+assert_has "$focused_adl_runtime_example_output" "mode=focused"
+assert_has "$focused_adl_runtime_example_output" "filter_tokens=adl_runtime"
+
+mixed_adl_runtime="$TMP/mixed_adl_runtime.txt"
+cat >"$mixed_adl_runtime" <<'EOF'
+M	adl-runtime/src/weather.rs
+M	adl/src/cli/mod.rs
+EOF
+mixed_adl_runtime_output="$(bash "$SCRIPT" --changed-files "$mixed_adl_runtime" --print-plan)"
+assert_has "$mixed_adl_runtime_output" "mode=full"
+assert_has "$mixed_adl_runtime_output" "reason=mixed_adl_runtime_with_other_fast_lane_surfaces_requires_full_nextest"
+
+mixed_adl_runtime_docs="$TMP/mixed_adl_runtime_docs.txt"
+cat >"$mixed_adl_runtime_docs" <<'EOF'
+M	adl-runtime/src/weather.rs
+M	docs/default_workflow.md
+EOF
+mixed_adl_runtime_docs_output="$(bash "$SCRIPT" --changed-files "$mixed_adl_runtime_docs" --print-plan)"
+assert_has "$mixed_adl_runtime_docs_output" "mode=full"
+assert_has "$mixed_adl_runtime_docs_output" "reason=mixed_adl_runtime_with_other_fast_lane_surfaces_requires_full_nextest"
+
 focused_control_plane="$TMP/focused_control_plane.txt"
 printf 'M\tdocs/default_workflow.md\n' >"$focused_control_plane"
 focused_control_plane_output="$(bash "$SCRIPT" --changed-files "$focused_control_plane" --print-plan)"
