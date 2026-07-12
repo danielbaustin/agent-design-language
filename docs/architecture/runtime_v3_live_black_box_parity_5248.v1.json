@@ -43,9 +43,8 @@
     },
     {
       "id": "private_state.security",
-      "disposition": "blocker",
-      "proof": "No Runtime v3 private-state equivalence proof exists yet.",
-      "blocking_issue": 5249
+      "disposition": "accepted_intentional_divergence",
+      "proof": "#5249 implements Runtime v3 private-state security invariants with signed lineage, redacted projection, anti-equivocation, sanctuary policy, and authorization; raw Runtime v2 format equivalence is intentionally not claimed."
     },
     {
       "id": "control.health_observability",
@@ -126,10 +125,10 @@
   ],
   "summary": {
     "live_equivalent_fixture": 1,
-    "accepted_intentional_divergence": 0,
+    "accepted_intentional_divergence": 1,
     "retained_v2_behavior_behind_adapter": 1,
     "deferred_non_cutover_surface": 0,
-    "blocker": 16
+    "blocker": 15
   },
   "non_claims": [
     "This packet does not authorize Runtime v3 as the default runtime.",

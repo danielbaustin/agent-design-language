@@ -9,7 +9,7 @@
     {"id":"kernel.topology_and_backpressure","disposition":"blocked_shared_fixture","proof":"Runtime v3 topology fixture exists; no equivalent live v2 adapter fixture"},
     {"id":"service.contracts_and_configuration","disposition":"blocked_shared_fixture","proof":"Runtime v3 contract fixtures exist; no equivalent live v2 adapter fixture"},
     {"id":"continuity.replay_recovery","disposition":"blocked_shared_fixture","proof":"Runtime v3 continuity fixtures exist; no equivalent live v2 adapter fixture"},
-    {"id":"private_state.security","disposition":"unsupported","proof":"No v3 private-state service; cutover remains blocked"},
+    {"id":"private_state.security","disposition":"accepted_intentional_divergence","proof":"#5249 Runtime v3 private-state security invariants: signed lineage, redacted projection, anti-equivocation, sanctuary policy, and authorization; raw Runtime v2 format equivalence is intentionally not claimed"},
     {"id":"control.health_observability","disposition":"blocked_shared_fixture","proof":"Runtime v3 control fixtures exist; no equivalent live v2 adapter fixture"},
     {"id":"reasoning.graphs_and_loops","disposition":"equivalent_live_fixture","proof":"21-run live v2 loop-runtime and v3 reasoning-engine process comparison in parity.rs"},
     {"id":"learning.adaptive_dag","disposition":"blocked_shared_fixture","proof":"Runtime v3 adaptive fixtures exist; no equivalent live v2 adapter fixture"},
