@@ -456,6 +456,13 @@ phases:
       - tar -C "$CODEBUILD_SRC_DIR" -cf - . | tar -C /codebuild/adl-source -xf -
       - cd /codebuild/adl-source
       - |
+        source_epoch="$(git show -s --format=%ct "$CODEBUILD_RESOLVED_SOURCE_VERSION")"
+        case "$source_epoch" in
+          ''|*[!0-9]*) echo "ADL_CODEFRIEND_PREFLIGHT status=failed classification=wrong_ref source_epoch_invalid" >&2; exit 44 ;;
+        esac
+        git ls-files -z --recurse-submodules | xargs -0r touch -h -d "@${source_epoch}" --
+        echo "ADL_CODEFRIEND_SOURCE_MTIME status=normalized source_epoch=${source_epoch}"
+      - |
         [ "$(pwd -P)" = "/codebuild/adl-source" ] || {
           echo "ADL_CODEFRIEND_PREFLIGHT status=failed classification=cache_configuration source_path_invalid" >&2
           exit 45

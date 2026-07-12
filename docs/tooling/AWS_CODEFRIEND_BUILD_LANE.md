@@ -30,8 +30,9 @@ bash adl/tools/setup_aws_codefriend_build_resources.sh \
 
 Create or update the CodeBuild project, service role, and GitHub OIDC start
 role. The helper also creates the project CloudWatch log group when absent and
-applies a 30-day retention policy by default. The helper resolves the approved ECR tag to an immutable digest before it
-updates the project. The image must already contain Rust, `cargo-nextest`,
+applies a 30-day retention policy by default. The helper resolves the approved
+ECR tag to an immutable digest before it updates the project. The image must
+already contain Rust, `cargo-nextest`,
 `sccache`, `lld`, `zstd`, AWS CLI, and Git; jobs never install those tools. The
 build uses 18 Cargo jobs and 18 nextest workers on XLARGE, native S3
 `sccache`, and a compatibility-keyed S3 target archive. Both build phases put
@@ -44,6 +45,11 @@ The validation profile sets `CARGO_PROFILE_TEST_DEBUG=0`: it remains an
 unoptimized test build, but omits debugger symbol payload that is not consumed
 by the lane. The setting is part of the target-cache compatibility hash so it
 cannot restore artifacts built under a different symbol posture.
+
+After copying the checkout to `/codebuild/adl-source`, the build normalizes
+every tracked file mtime to the resolved commit epoch. This prevents a fresh
+CodeBuild checkout timestamp from making Cargo relink otherwise valid artifacts
+restored for the same exact source SHA.
 
 ```sh
 ADL_AWS_PROFILE=agent-logic-admin \

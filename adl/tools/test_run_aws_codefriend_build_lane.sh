@@ -55,7 +55,7 @@ if [ "$1" = "logs" ] && [ "$2" = "get-log-events" ]; then
     exit 0
   fi
   cat <<'JSON'
-{"events":[{"message":"fixture build log account=000000000000 arn=arn:aws:codebuild:us-west-2:000000000000:build/example key=AKIA1234567890ABCDEF\nAuthorization: Bearer provider-token-value\n{\"token\":\"json-token-value\",\"api_key\":\"json-api-key-value\"}\nADL_CODEFRIEND_TOOLCHAIN_SOURCE image=prebuilt per_job_install=false\nADL_CODEFRIEND_PREFLIGHT status=passed image_digest_pinned=true source_sha_verified=true\nADL_CODEFRIEND_TARGET_CACHE_RESTORE status=hit checksum=verified\nADL_CODEFRIEND_BUILD_PREPARE status=completed\nADL_CODEFRIEND_TARGET_CACHE_SAVE status=uploaded checksum=verified atomic=true source=prepare\nADL_CODEFRIEND_BUILD_COMMAND status=completed exit_code=0\n"}],"nextForwardToken":"fixture-token"}
+{"events":[{"message":"fixture build log account=000000000000 arn=arn:aws:codebuild:us-west-2:000000000000:build/example key=AKIA1234567890ABCDEF\nAuthorization: Bearer provider-token-value\n{\"token\":\"json-token-value\",\"api_key\":\"json-api-key-value\"}\nADL_CODEFRIEND_TOOLCHAIN_SOURCE image=prebuilt per_job_install=false\nADL_CODEFRIEND_PREFLIGHT status=passed image_digest_pinned=true source_sha_verified=true\nADL_CODEFRIEND_SOURCE_MTIME status=normalized source_epoch=1\nADL_CODEFRIEND_TARGET_CACHE_RESTORE status=hit checksum=verified\nADL_CODEFRIEND_BUILD_PREPARE status=completed\nADL_CODEFRIEND_TARGET_CACHE_SAVE status=uploaded checksum=verified atomic=true source=prepare\nADL_CODEFRIEND_BUILD_COMMAND status=completed exit_code=0\n"}],"nextForwardToken":"fixture-token"}
 JSON
   exit 0
 fi
@@ -315,6 +315,8 @@ assert_not_has "$SETUP_SCRIPT" "'/root/.cache/sccache/**/*'"
 assert_not_has "$SETUP_SCRIPT" 'ln -sfn "$CODEBUILD_SRC_DIR" /workspace'
 assert_has "$SETUP_SCRIPT" "tar -C \"\$CODEBUILD_SRC_DIR\" -cf - . | tar -C /codebuild/adl-source -xf -"
 assert_has "$SETUP_SCRIPT" "cd /codebuild/adl-source"
+assert_has "$SETUP_SCRIPT" 'git ls-files -z --recurse-submodules | xargs -0r touch -h -d "@${source_epoch}" --'
+assert_has "$SETUP_SCRIPT" 'ADL_CODEFRIEND_SOURCE_MTIME status=normalized'
 assert_has "$SETUP_SCRIPT" 'export CARGO_TARGET_DIR="/codebuild/adl-target"'
 assert_has "$SETUP_SCRIPT" 'export CARGO_BUILD_JOBS="${CARGO_BUILD_JOBS:-18}"'
 assert_has "$SETUP_SCRIPT" 'export SCCACHE_BUCKET="__SCCACHE_BUCKET__"'
@@ -455,6 +457,8 @@ assert 'export CARGO_BUILD_JOBS="${CARGO_BUILD_JOBS:-18}"' in buildspec
 assert 'export ADL_CODEFRIEND_TARGET_CACHE_MODE="${ADL_CODEFRIEND_TARGET_CACHE_MODE:-s3-tar}"' in buildspec
 assert "tar -C \"$CODEBUILD_SRC_DIR\" -cf - . | tar -C /codebuild/adl-source -xf -" in buildspec
 assert "cd /codebuild/adl-source" in buildspec
+assert 'git ls-files -z --recurse-submodules | xargs -0r touch -h -d "@${source_epoch}" --' in buildspec
+assert "ADL_CODEFRIEND_SOURCE_MTIME status=normalized" in buildspec
 assert "apt-get install -y lld clang zstd" not in buildspec
 assert "https://sh.rustup.rs" not in buildspec
 assert "github.com/mozilla/sccache/releases" not in buildspec

@@ -589,6 +589,7 @@ if log_path.exists():
     summary["self_verification"] = {
         "preflight_passed": emitted("ADL_CODEFRIEND_PREFLIGHT status=passed"),
         "prebuilt_toolchain": emitted("ADL_CODEFRIEND_TOOLCHAIN_SOURCE image=prebuilt per_job_install=false"),
+        "source_mtime_normalized": emitted("ADL_CODEFRIEND_SOURCE_MTIME status=normalized"),
         "prepare_completed": emitted("ADL_CODEFRIEND_BUILD_PREPARE status=completed"),
         "build_command_succeeded": emitted("ADL_CODEFRIEND_BUILD_COMMAND status=completed exit_code=0"),
         "target_cache_restore_verified": emitted("ADL_CODEFRIEND_TARGET_CACHE_RESTORE status=hit checksum=verified"),
@@ -597,6 +598,7 @@ if log_path.exists():
     required = (
         "preflight_passed",
         "prebuilt_toolchain",
+        "source_mtime_normalized",
         "prepare_completed",
         "build_command_succeeded",
         "target_cache_save_verified",
