@@ -15,6 +15,8 @@ from typing import Any
 
 SUMMARY_BEGIN = "ADL_AWS_REMOTE_SUMMARY_BEGIN"
 SUMMARY_END = "ADL_AWS_REMOTE_SUMMARY_END"
+COVERAGE_SUMMARY_BEGIN = "ADL_SPOT_COVERAGE_SUMMARY_BEGIN"
+COVERAGE_SUMMARY_END = "ADL_SPOT_COVERAGE_SUMMARY_END"
 SENSITIVE_KEYS = {
     "account_id",
     "arn",
@@ -71,6 +73,22 @@ def extract_remote_summary(path: Path) -> dict[str, Any]:
     if start < 0 or end <= start:
         return {}
     body = text[start + len(SUMMARY_BEGIN) : end].strip()
+    try:
+        payload = json.loads(body)
+    except json.JSONDecodeError:
+        return {}
+    return payload if isinstance(payload, dict) else {}
+
+
+def extract_coverage_summary(path: Path) -> dict[str, Any]:
+    if not path.is_file():
+        return {}
+    text = path.read_text(encoding="utf-8", errors="replace")
+    start = text.rfind(COVERAGE_SUMMARY_BEGIN)
+    end = text.rfind(COVERAGE_SUMMARY_END)
+    if start < 0 or end <= start:
+        return {}
+    body = text[start + len(COVERAGE_SUMMARY_BEGIN) : end].strip()
     try:
         payload = json.loads(body)
     except json.JSONDecodeError:
@@ -149,6 +167,7 @@ def main() -> int:
     if extracted:
         remote = extracted
     builder = remote.get("builder_proof") if isinstance(remote.get("builder_proof"), dict) else {}
+    coverage_summary = extract_coverage_summary(attempt_artifact_dir / "command-stdout.log")
     expected_digest = args.expected_image.rsplit("@", 1)[-1]
     expected_digest_hash = sha256(expected_digest)
 
@@ -245,12 +264,19 @@ def main() -> int:
         "interrupted_attempt_count": len(interrupted_attempts),
         "resumed_after_interruption": str(raw.get("status", "")).lower() == "resumed_after_interruption",
         "next_action": resume.get("next_action"),
+        "coverage_summary_retained": bool(coverage_summary),
     }
 
     redacted = redact_json(raw)
     args.summary.parent.mkdir(parents=True, exist_ok=True)
     args.summary.write_text(json.dumps(redacted, indent=2, sort_keys=True) + "\n", encoding="utf-8")
     redact_artifact_logs(args.artifact_dir)
+    if coverage_summary:
+        coverage_path = args.artifact_dir / "coverage-summary.json"
+        coverage_path.write_text(
+            json.dumps(redact_json(coverage_summary), indent=2, sort_keys=True) + "\n",
+            encoding="utf-8",
+        )
     args.wrapper_summary.write_text(json.dumps(wrapper, indent=2, sort_keys=True) + "\n", encoding="utf-8")
     if failures:
         print("aws_spot_artifact_finalize: self-verification failed: " + ", ".join(failures), file=sys.stderr)

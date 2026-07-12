@@ -86,6 +86,27 @@ else
   export ADL_COVERAGE_WARM_SOURCE_TARGET="$CARGO_TARGET_DIR"
   "${command[@]}"
   test -s adl/coverage-summary.json
+  python3 - <<'PY' adl/coverage-summary.json "$HEAD_COMMIT"
+import json
+import sys
+from pathlib import Path
+
+path = Path(sys.argv[1])
+source_commit = sys.argv[2]
+raw = json.loads(path.read_text(encoding="utf-8"))
+data = raw.get("data") if isinstance(raw, dict) else None
+totals = data[0].get("totals") if isinstance(data, list) and data and isinstance(data[0], dict) else None
+if not isinstance(totals, dict):
+    raise SystemExit("run_aws_spot_ci_profile: coverage summary is missing aggregate totals")
+payload = {
+    "schema": "adl.aws_spot_coverage_summary.v1",
+    "source_commit": source_commit,
+    "totals": totals,
+}
+print("ADL_SPOT_COVERAGE_SUMMARY_BEGIN")
+print(json.dumps(payload, sort_keys=True, separators=(",", ":")))
+print("ADL_SPOT_COVERAGE_SUMMARY_END")
+PY
 fi
 finished_at="$(date +%s)"
 

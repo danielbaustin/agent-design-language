@@ -11,6 +11,8 @@ bash -n "$SCRIPT"
 grep -F 'ADL_PR_FAST_ALLOW_FULL_NEXTEST=1' "$SCRIPT" >/dev/null
 grep -F 'ADL_COVERAGE_BUILD_ROOT="$CARGO_TARGET_DIR/coverage"' "$SCRIPT" >/dev/null
 grep -F 'require_tool cargo-llvm-cov cargo llvm-cov --version' "$SCRIPT" >/dev/null
+grep -F 'ADL_SPOT_COVERAGE_SUMMARY_BEGIN' "$SCRIPT" >/dev/null
+grep -F 'adl.aws_spot_coverage_summary.v1' "$SCRIPT" >/dev/null
 grep -F 'rustup component add rustfmt clippy llvm-tools-preview' "$DOCKERFILE" >/dev/null
 grep -F 'cargo llvm-cov --version' "$DOCKERFILE" >/dev/null
 grep -F "grep -E '^llvm-tools-'" "$SCRIPT" >/dev/null

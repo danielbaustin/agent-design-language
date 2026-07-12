@@ -153,7 +153,16 @@ remote = data["remote_summary"]
 data["remote_summary"] = {}
 Path(sys.argv[1]).write_text(json.dumps(data))
 Path(sys.argv[2]).write_text(
-    "ADL_AWS_REMOTE_SUMMARY_BEGIN\n" + json.dumps(remote) + "\nADL_AWS_REMOTE_SUMMARY_END\n"
+    "ADL_AWS_REMOTE_SUMMARY_BEGIN\n"
+    + json.dumps(remote)
+    + "\nADL_AWS_REMOTE_SUMMARY_END\n"
+    + "ADL_SPOT_COVERAGE_SUMMARY_BEGIN\n"
+    + json.dumps({
+        "schema": "adl.aws_spot_coverage_summary.v1",
+        "source_commit": remote["builder_proof"]["source_commit"],
+        "totals": {"lines": {"count": 100, "covered": 91, "percent": 91.0}},
+    })
+    + "\nADL_SPOT_COVERAGE_SUMMARY_END\n"
 )
 PY
 mv "$attempt_layout/artifacts/command-status.log" "$attempt_layout/artifacts/attempt-0/command-status.log"
@@ -166,14 +175,18 @@ python3 "$FINALIZER" \
   --expected-cache-volume-id-sha256 "$cache_volume_hash" \
   --estimated-hourly-cost-usd 0.21 \
   --runner-exit-code 0 >/dev/null
-python3 - <<'PY' "$attempt_layout/wrapper.json"
+python3 - <<'PY' "$attempt_layout/wrapper.json" "$attempt_layout/artifacts/coverage-summary.json"
 import json
 import sys
 
 data = json.load(open(sys.argv[1], encoding="utf-8"))
+coverage = json.load(open(sys.argv[2], encoding="utf-8"))
 assert data["status"] == "passed", data
 assert data["self_verification"]["live_logs_verified"] is True, data
 assert data["self_verification"]["immutable_builder_image_verified"] is True, data
+assert data["coverage_summary_retained"] is True, data
+assert coverage["schema"] == "adl.aws_spot_coverage_summary.v1", coverage
+assert coverage["totals"]["lines"]["percent"] == 91.0, coverage
 PY
 
 echo "PASS test_aws_spot_artifact_finalize_attempt_layout"
