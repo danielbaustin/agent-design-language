@@ -116,6 +116,7 @@ while [[ $# -gt 0 ]]; do
       ;;
   esac
 done
+sleep "${ADL_FAKE_AWS_REMOTE_SLEEP:-0}"
 mkdir -p "$(dirname "$out")" "$artifact_dir"
 status="${ADL_FAKE_AWS_REMOTE_STATUS:-passed}"
 cat >"$out" <<JSON
@@ -447,6 +448,7 @@ assert payload["resumed_after_interruption"] is False
 PY
 
 ADL_FAKE_AWS_REMOTE_ARGS="$TMP/launch-args.txt" \
+ADL_FAKE_AWS_REMOTE_SLEEP=0.5 \
 ADL_FAKE_EXPECTED_SOURCE="$(git -C "$ROOT" rev-parse origin/main)" \
 ADL_FAKE_EXPECTED_IMAGE_DIGEST_HASH="$(python3 -c 'import hashlib,sys; print(hashlib.sha256(sys.argv[1].encode()).hexdigest())' "$builder_digest")" \
 ADL_AWS_CLI="$fake_bin/aws" \
@@ -464,6 +466,47 @@ bash "$SCRIPT" launch \
   --instance-type m7a.2xlarge \
   --json >"$TMP/launch.out"
 grep -F 'status=launched run_id=fixture-launch' "$TMP/launch.out" >/dev/null
+grep -F -- "--out $TMP/launch-summary.json --artifact-dir $TMP/launch-artifacts" "$TMP/launch.out" >/dev/null
+manager_pid="$(cat "$TMP/launch-artifacts/manager.pid")"
+kill -0 "$manager_pid"
+if ADL_FAKE_AWS_REMOTE_ARGS="$TMP/duplicate-launch-args.txt" \
+  ADL_FAKE_EXPECTED_SOURCE="$(git -C "$ROOT" rev-parse origin/main)" \
+  ADL_FAKE_EXPECTED_IMAGE_DIGEST_HASH="$(python3 -c 'import hashlib,sys; print(hashlib.sha256(sys.argv[1].encode()).hexdigest())' "$builder_digest")" \
+  ADL_AWS_CLI="$fake_bin/aws" \
+  bash "$SCRIPT" launch \
+    --expected-proof "$proof" \
+    --bin "$fake_bin/adl-aws-remote-validation" \
+    --run-id fixture-launch \
+    --builder-image "$builder_image" \
+    --estimated-hourly-cost-usd 0.15 \
+    --ssh-private-key-path "$test_ssh_key" \
+    --command "cargo nextest run --workspace" \
+    --git-ref origin/main \
+    --out "$TMP/launch-summary.json" \
+    --artifact-dir "$TMP/launch-artifacts" \
+    --instance-type m7a.2xlarge \
+    --json >"$TMP/duplicate-launch.out" 2>"$TMP/duplicate-launch.err"; then
+  echo "expected duplicate detached launch to fail closed" >&2
+  exit 1
+fi
+grep -E 'active manager|incomplete manager state' "$TMP/duplicate-launch.err" >/dev/null
+mkdir -p "$TMP/locked-artifacts/.launch-lock"
+if ADL_FAKE_AWS_REMOTE_ARGS="$TMP/locked-launch-args.txt" \
+  ADL_FAKE_EXPECTED_SOURCE="$(git -C "$ROOT" rev-parse origin/main)" \
+  ADL_FAKE_EXPECTED_IMAGE_DIGEST_HASH="$(python3 -c 'import hashlib,sys; print(hashlib.sha256(sys.argv[1].encode()).hexdigest())' "$builder_digest")" \
+  ADL_AWS_CLI="$fake_bin/aws" \
+  bash "$SCRIPT" launch \
+    --expected-proof "$proof" --bin "$fake_bin/adl-aws-remote-validation" \
+    --run-id fixture-locked --builder-image "$builder_image" \
+    --estimated-hourly-cost-usd 0.15 --ssh-private-key-path "$test_ssh_key" \
+    --command "cargo nextest run --workspace" --git-ref origin/main \
+    --out "$TMP/locked-summary.json" --artifact-dir "$TMP/locked-artifacts" \
+    --instance-type m7a.2xlarge --json \
+    >"$TMP/locked-launch.out" 2>"$TMP/locked-launch.err"; then
+  echo "expected contended launch lock to fail closed" >&2
+  exit 1
+fi
+grep -F 'run id launch lock is already held' "$TMP/locked-launch.err" >/dev/null
 for _ in $(seq 1 50); do
   [[ -f "$TMP/launch-artifacts/wrapper-final-summary.json" ]] && break
   sleep 0.1

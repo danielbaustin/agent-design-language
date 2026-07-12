@@ -1,6 +1,8 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
+ORIGINAL_ARGS=("$@")
+
 ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)"
 COMMON_GIT_DIR="$(git -C "$ROOT" rev-parse --path-format=absolute --git-common-dir 2>/dev/null || true)"
 PRIMARY_ROOT="${COMMON_GIT_DIR:+$(dirname "$COMMON_GIT_DIR")}"
@@ -602,10 +604,10 @@ private_command_status_path() {
 }
 
 run_status_action() {
-  if manager_is_active; then
-    printf 'status=running run_id=%s\n' "$RUN_ID"
-  elif [[ -f "$ARTIFACT_DIR/wrapper-final-summary.json" ]]; then
+  if [[ -f "$ARTIFACT_DIR/wrapper-final-summary.json" ]]; then
     cat "$ARTIFACT_DIR/wrapper-final-summary.json"
+  elif manager_is_active; then
+    printf 'status=running run_id=%s\n' "$RUN_ID"
   elif [[ -d "$ARTIFACT_DIR" ]]; then
     printf 'status=incomplete run_id=%s action=inspect_logs_or_cleanup\n' "$RUN_ID"
     return 1
@@ -923,16 +925,55 @@ PY
   return "$finalize_status"
 }
 
-if [[ "$ACTION" == "launch" ]]; then
+if [[ "$ACTION" == "launch" && "${ADL_SPOT_MANAGER_MODE:-0}" != "1" ]]; then
   mkdir -p "$(dirname "$OUT_PATH")" "$ARTIFACT_DIR"
-  (
-    trap '' HUP
-    execute_run >"$ARTIFACT_DIR/manager.stdout.log" 2>"$ARTIFACT_DIR/manager.stderr.log"
-  ) &
-  manager_pid="$!"
+  launch_lock="$ARTIFACT_DIR/.launch-lock"
+  if ! mkdir "$launch_lock" 2>/dev/null; then
+    echo "run_aws_spot_remote_validation_lane: run id launch lock is already held" >&2
+    exit 1
+  fi
+  trap 'rmdir "$launch_lock" 2>/dev/null || true' EXIT
+  if [[ -f "$ARTIFACT_DIR/wrapper-final-summary.json" || -f "$ARTIFACT_DIR/manager.exit-code" ]]; then
+    echo "run_aws_spot_remote_validation_lane: run id already has terminal manager state" >&2
+    exit 1
+  fi
+  if manager_is_active; then
+    echo "run_aws_spot_remote_validation_lane: run id already has an active manager" >&2
+    exit 1
+  fi
+  if [[ -f "$ARTIFACT_DIR/manager.pid" || -f "$ARTIFACT_DIR/resume-state.json" \
+      || -d "$ARTIFACT_DIR/attempt-0" ]]; then
+    echo "run_aws_spot_remote_validation_lane: run id has incomplete manager state; inspect or clean up before using a new run id" >&2
+    exit 1
+  fi
+  manager_pid="$(ADL_SPOT_MANAGER_MODE=1 python3 - \
+    "$ARTIFACT_DIR/manager.stdout.log" \
+    "$ARTIFACT_DIR/manager.stderr.log" \
+    "$0" "${ORIGINAL_ARGS[@]}" <<'PY'
+import os
+import subprocess
+import sys
+
+stdout_path, stderr_path, script, *args = sys.argv[1:]
+with open(stdout_path, "ab", buffering=0) as stdout, open(stderr_path, "ab", buffering=0) as stderr:
+    process = subprocess.Popen(
+        ["bash", script, *args],
+        stdin=subprocess.DEVNULL,
+        stdout=stdout,
+        stderr=stderr,
+        close_fds=True,
+        start_new_session=True,
+        env=os.environ.copy(),
+    )
+print(process.pid)
+PY
+)"
   printf '%s\n' "$manager_pid" >"$ARTIFACT_DIR/manager.pid"
+  rmdir "$launch_lock"
+  trap - EXIT
   printf 'status=launched run_id=%s pid=%s\n' "$RUN_ID" "$manager_pid"
-  printf 'next_status=bash adl/tools/run_aws_spot_remote_validation_lane.sh status --run-id %q\n' "$RUN_ID"
+  printf 'next_status=bash adl/tools/run_aws_spot_remote_validation_lane.sh status --run-id %q --out %q --artifact-dir %q\n' \
+    "$RUN_ID" "$OUT_PATH" "$ARTIFACT_DIR"
   exit 0
 fi
 

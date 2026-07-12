@@ -61,12 +61,21 @@ bash adl/tools/run_aws_spot_remote_validation_lane.sh run \
 This synchronous path is the canonical operator command. It waits through
 termination and temporary-resource cleanup before returning.
 
+For automation or a control terminal with a bounded lifetime, replace `run`
+with `launch`. The command performs the same fail-closed preflight, starts a
+detached manager in a new process session, writes `manager.pid`, and returns.
+The manager independently owns launch, live evidence, finalization, and
+cleanup; use `status` and `logs` below until `wrapper-final-summary.json`
+appears. Do not background the synchronous command with shell `&`.
+Run IDs are single-use. A duplicate active, incomplete, or terminal run ID is
+rejected; inspect or clean up the existing run and choose a new run ID.
+
 ## Observe And Recover
 
 ```sh
-bash adl/tools/run_aws_spot_remote_validation_lane.sh status --run-id "$RUN_ID" --json
-bash adl/tools/run_aws_spot_remote_validation_lane.sh logs --run-id "$RUN_ID" --follow
-bash adl/tools/run_aws_spot_remote_validation_lane.sh ssh --run-id "$RUN_ID"
+bash adl/tools/run_aws_spot_remote_validation_lane.sh status --run-id "$RUN_ID" --out ".adl/local-artifacts/$RUN_ID/summary.json" --artifact-dir ".adl/local-artifacts/$RUN_ID/artifacts" --json
+bash adl/tools/run_aws_spot_remote_validation_lane.sh logs --run-id "$RUN_ID" --out ".adl/local-artifacts/$RUN_ID/summary.json" --artifact-dir ".adl/local-artifacts/$RUN_ID/artifacts" --follow
+bash adl/tools/run_aws_spot_remote_validation_lane.sh ssh --run-id "$RUN_ID" --out ".adl/local-artifacts/$RUN_ID/summary.json" --artifact-dir ".adl/local-artifacts/$RUN_ID/artifacts"
 ```
 
 If the controlling terminal is interrupted, inspect status first. Then stop
