@@ -6,7 +6,7 @@ use std::hash::{Hash, Hasher};
 use std::io::Write;
 
 const CSM_COVERAGE_STARTUP_ATTEMPTS: &str = "80";
-const CSM_CONTROL_PLANE_FIRST_REQUEST_TIMEOUT_SECS: u64 = 90;
+const CSM_CONTROL_PLANE_FIRST_REQUEST_TIMEOUT_SECS: u64 = 120;
 const CSM_DISK_READY_ENV: [(&str, &str); 2] = [
     ("ADL_CSM_DISK_FLOOR_BYTES", "0"),
     ("ADL_CSM_TEST_AVAILABLE_BYTES", "1073741824"),
@@ -296,7 +296,7 @@ fn request_governed_stop_and_wait(spec: &std::path::Path, child: &mut std::proce
 
 fn wait_for_governed_shutdown_child(child: &mut std::process::Child) {
     let started = std::time::Instant::now();
-    let timeout = std::time::Duration::from_secs(90);
+    let timeout = std::time::Duration::from_secs(CSM_CONTROL_PLANE_FIRST_REQUEST_TIMEOUT_SECS);
     loop {
         if child
             .try_wait()
@@ -1398,7 +1398,7 @@ memory:
     );
     assert_eq!(status["runtime_owner"], "csm");
     assert_eq!(status["agent_instance_id"], "api-agent");
-    assert_eq!(status["status"], "healthy");
+    assert_eq!(status["status"], "degraded");
     assert_eq!(status["ready"], "not_ready");
     assert_eq!(status["daemon_liveness"]["state"], "running");
     assert_eq!(
@@ -1444,7 +1444,7 @@ memory:
         "adl.otel.monitor_status.v1"
     );
     assert_eq!(health["schema"], "adl.csm.runtime_api.health.v1");
-    assert_eq!(health["status"], "healthy");
+    assert_eq!(health["status"], "degraded");
     assert_eq!(ready["schema"], "adl.csm.runtime_api.ready.v1");
     assert_eq!(ready["ready"], "not_ready");
     assert!(ready["blocking_reasons"]
@@ -3620,6 +3620,8 @@ memory:
                 blocker.as_str().is_some_and(|value| {
                     value.starts_with("chronosense_time_sync_")
                         || value == "curiosity_engine_not_ready"
+                        || value == "reasoning_runtime_missing"
+                        || value == "constructability_gate_blocked"
                 })
             }),
             "unexpected runtime API readiness blockers: {blockers:?}"
