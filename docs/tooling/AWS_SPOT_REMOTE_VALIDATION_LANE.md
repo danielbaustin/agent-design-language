@@ -141,10 +141,15 @@ under:
 /mnt/adl-cache/adl-aws-remote-validation/shared/container-sccache
 /mnt/adl-cache/adl-aws-remote-validation/shared/container-cargo-home
 /mnt/adl-cache/adl-aws-remote-validation/shared/container-tmp
+/mnt/adl-cache/adl-aws-remote-validation/shared/source/agent-design-language
 ```
 
 The container maps `container-tmp` to `/tmp`, preventing large builds and
 disk-sensitive tests from consuming the small ephemeral root filesystem.
+The runner also reuses the EBS-backed tracked checkout. It fetches/checks out
+only when the requested commit changes, so same-commit runs preserve source
+mtimes and can reuse Cargo target fingerprints instead of relinking every test
+binary after each ephemeral instance starts.
 
 Historical AWS state contains two preserved volumes with the same Name tag in
 different availability zones. Do not select or delete either by name. The

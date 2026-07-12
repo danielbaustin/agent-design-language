@@ -57,6 +57,24 @@ if [ "${ADL_CACHE_VOLUME_ENABLED:-0}" = "1" ]; then
   SCCACHE_DIR="$TOOLCHAIN_ROOT/sccache"
   CARGO_HOME_DIR="$TOOLCHAIN_ROOT/cargo-home"
   RUSTUP_HOME_DIR="$TOOLCHAIN_ROOT/rustup-home"
+
+  EPHEMERAL_CHECKOUT="$ADL_REMOTE_REPO_DIR"
+  SOURCE_COMMIT="$(git -C "$EPHEMERAL_CHECKOUT" rev-parse HEAD)"
+  PERSISTENT_CHECKOUT="$TOOLCHAIN_ROOT/source/agent-design-language"
+  mkdir -p "$(dirname "$PERSISTENT_CHECKOUT")"
+  if [ ! -d "$PERSISTENT_CHECKOUT/.git" ]; then
+    git clone "$EPHEMERAL_CHECKOUT" "$PERSISTENT_CHECKOUT" >/tmp/adl-persistent-clone.log 2>&1
+  fi
+  CURRENT_PERSISTENT_COMMIT="$(git -C "$PERSISTENT_CHECKOUT" rev-parse HEAD 2>/dev/null || true)"
+  if [ "$CURRENT_PERSISTENT_COMMIT" != "$SOURCE_COMMIT" ]; then
+    git -C "$PERSISTENT_CHECKOUT" fetch "$EPHEMERAL_CHECKOUT" "$SOURCE_COMMIT" \
+      >/tmp/adl-persistent-fetch.log 2>&1
+    git -C "$PERSISTENT_CHECKOUT" checkout --detach --force "$SOURCE_COMMIT" \
+      >/tmp/adl-persistent-checkout.log 2>&1
+  fi
+  git -C "$PERSISTENT_CHECKOUT" clean -ffd >/tmp/adl-persistent-clean.log 2>&1
+  ADL_REMOTE_REPO_DIR="$PERSISTENT_CHECKOUT"
+  export ADL_REMOTE_REPO_DIR
 fi
 
 mkdir -p "$RUN_ROOT" "$PROGRESS_ROOT" "$WORK_ROOT" "$TARGET_DIR" "$SCCACHE_DIR" "$CARGO_HOME_DIR" "$RUSTUP_HOME_DIR"
