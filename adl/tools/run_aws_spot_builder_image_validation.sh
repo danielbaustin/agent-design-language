@@ -180,7 +180,10 @@ done
 CURRENT_STAGE="validation_command"
 stage "$CURRENT_STAGE"
 VALIDATION_START="$(date +%s)"
+VALIDATION_UID="$(id -u)"
+VALIDATION_GID="$(id -g)"
 "${DOCKER[@]}" run --rm \
+  --user "$VALIDATION_UID:$VALIDATION_GID" \
   --workdir /workspace \
   --volume "$ADL_REMOTE_REPO_DIR:/workspace" \
   --volume "$CACHE_ROOT:/cache-root" \
@@ -189,6 +192,7 @@ VALIDATION_START="$(date +%s)"
   --env CARGO_HOME=/cache-root/cargo-home \
   --env CARGO_TARGET_DIR=/cache-root/target \
   --env SCCACHE_DIR=/cache-root/sccache \
+  --env AWS_EC2_METADATA_DISABLED=true \
   --env TMPDIR=/tmp \
   --env RUSTC_WRAPPER=sccache \
   --env RUSTFLAGS= \

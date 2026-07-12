@@ -85,6 +85,10 @@ TOOLS
       echo "validation container did not preserve the known-good Rust flags" >&2
       exit 2
     }
+    [[ "$args" == *"--user "* && "$args" == *"AWS_EC2_METADATA_DISABLED=true"* ]] || {
+      echo "validation container did not isolate root permissions and EC2 role discovery" >&2
+      exit 2
+    }
     [[ "$args" == *":/cache-root"* && "$args" == *"CARGO_TARGET_DIR=/cache-root/target"* && "$args" == *"SCCACHE_DIR=/cache-root/sccache"* && "$args" == *"CARGO_HOME=/cache-root/cargo-home"* ]] || {
       echo "validation container did not preserve the known-good cache layout" >&2
       exit 2
