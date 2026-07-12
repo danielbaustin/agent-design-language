@@ -720,6 +720,15 @@ memory:
     let log_str = observability_log.to_str().expect("utf8 log path");
     let otel_log_str = otel_log.to_str().expect("utf8 otel log path");
     let otel_status_str = otel_status.to_str().expect("utf8 otel status path");
+    let disk_ready_env = [
+        ("ADL_OBSERVABILITY_STDERR", "0"),
+        ("ADL_OBSERVABILITY_LOG", log_str),
+        ("ADL_OBSERVABILITY_HEARTBEAT_MS", "25"),
+        ("ADL_OTEL_LOG", otel_log_str),
+        ("ADL_OTEL_STATUS", otel_status_str),
+        ("ADL_CSM_DISK_FLOOR_BYTES", "0"),
+        ("ADL_CSM_TEST_AVAILABLE_BYTES", "1073741824"),
+    ];
     let out = run_csm_with_env(
         &[
             "daemon",
@@ -732,13 +741,7 @@ memory:
             "--no-sleep",
             "--json",
         ],
-        &[
-            ("ADL_OBSERVABILITY_STDERR", "0"),
-            ("ADL_OBSERVABILITY_LOG", log_str),
-            ("ADL_OBSERVABILITY_HEARTBEAT_MS", "25"),
-            ("ADL_OTEL_LOG", otel_log_str),
-            ("ADL_OTEL_STATUS", otel_status_str),
-        ],
+        &disk_ready_env,
     );
     assert!(
         out.status.success(),
@@ -3470,6 +3473,7 @@ memory:
 
 #[test]
 fn csm_governed_stop_records_checkpoint_safe_fail_lifelog_and_notices() {
+    const COVERAGE_STARTUP_ATTEMPTS: &str = "80";
     let root = unique_test_temp_dir("csm-governed-stop");
     let spec = root.join("agent.yaml");
     fs::write(
@@ -3530,13 +3534,23 @@ memory:
         "install stderr:\n{}",
         String::from_utf8_lossy(&install.stderr)
     );
-    let start = run_csm(&[
-        "service",
-        "start",
-        "--service-root",
-        service_root.to_str().expect("utf8 service root"),
-        "--json",
-    ]);
+    let start = run_csm_with_env(
+        &[
+            "service",
+            "start",
+            "--service-root",
+            service_root.to_str().expect("utf8 service root"),
+            "--json",
+        ],
+        &[
+            (
+                "ADL_CSM_SERVICE_STARTUP_ATTEMPTS",
+                COVERAGE_STARTUP_ATTEMPTS,
+            ),
+            ("ADL_CSM_DISK_FLOOR_BYTES", "0"),
+            ("ADL_CSM_TEST_AVAILABLE_BYTES", "1073741824"),
+        ],
+    );
     assert!(
         start.status.success(),
         "start stderr:\n{}",
@@ -3564,6 +3578,7 @@ memory:
         &[
             ("ADL_AWS_SIGNAL_MODE", "mock"),
             ("ADL_AWS_SIGNAL_APPROVED", "1"),
+            ("ADL_AWS_HEARTBEAT_TARGET", "cloudwatch_logs"),
             ("ADL_AWS_REGION", "us-west-2"),
             ("ADL_AWS_PROFILE", "agent-logic-admin"),
             (
@@ -3602,13 +3617,28 @@ memory:
     assert!(state.join("csm_lifecycle_lifelog.index.json").exists());
     assert!(state.join("csm_governed_notices.jsonl").exists());
     assert!(state.join("csm_governed_notice_latest.json").exists());
-    assert!(state.join("aws_csm_governed_notice_mock.jsonl").exists());
-    assert!(state
-        .join("aws_csm_governed_notice_sns_mock.jsonl")
-        .exists());
-    assert!(state
-        .join("csm_governed_notice_control_plane_mock.jsonl")
-        .exists());
+    let latest_notice: serde_json::Value = serde_json::from_str(
+        &fs::read_to_string(state.join("csm_governed_notice_latest.json"))
+            .expect("latest governed notice"),
+    )
+    .expect("parse latest governed notice");
+    assert_eq!(
+        latest_notice["publish_preflight"]["required_channel"],
+        "cloudfront_control_plane"
+    );
+    assert_eq!(latest_notice["publish_preflight"]["status"], "blocked");
+    assert_eq!(
+        latest_notice["publish_preflight"]["failure_class"],
+        "control_plane_live_not_approved"
+    );
+    assert_eq!(
+        latest_notice["publish_transaction"]["status"],
+        "blocked_before_sequence_reservation"
+    );
+    assert_eq!(
+        latest_notice["delivery_attempts"][0]["channel"],
+        "local_notice_ledger"
+    );
 
     let governed_stop: serde_json::Value = serde_json::from_str(
         &fs::read_to_string(state.join("governed_stop.json")).expect("governed stop artifact"),
