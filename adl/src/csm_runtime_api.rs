@@ -3161,7 +3161,7 @@ memory: {}
             "csm_in_process_async_sntp_client_ephemeral_udp_no_csm_udp_123_listener_no_shellout"
         );
         assert_eq!(response["service"]["status"], "integrated");
-        assert_eq!(response["ready"], "not_ready");
+        assert_eq!(response["ready"], "ready");
     }
 
     #[test]
