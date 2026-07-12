@@ -360,6 +360,11 @@ write(policy_path, {
         ],
         "Resource": "*",
     }, {
+        "Sid": "ResolveAmazonLinuxAmi",
+        "Effect": "Allow",
+        "Action": ["ssm:GetParameter"],
+        "Resource": f"arn:aws:ssm:{region}::parameter/aws/service/ami-amazon-linux-latest/al2023-ami-kernel-default-x86_64",
+    }, {
         "Sid": "RemoteValidationEphemeralInstanceProfiles",
         "Effect": "Allow",
         "Action": [

@@ -16,6 +16,8 @@ grep -F 'cargo llvm-cov --version' "$DOCKERFILE" >/dev/null
 grep -F "grep -E '^llvm-tools-'" "$SCRIPT" >/dev/null
 grep -F 'ResolveImmutableBuilderImage' "$SETUP" >/dev/null
 grep -F 'DescribeAdlBuilderImage' "$SETUP" >/dev/null
+grep -F 'ssm:GetParameter' "$SETUP" >/dev/null
+grep -F 'al2023-ami-kernel-default-x86_64' "$SETUP" >/dev/null
 
 ci_plan="$(bash "$SCRIPT" adl-ci --base HEAD --head HEAD --print-command)"
 coverage_plan="$(bash "$SCRIPT" adl-coverage --base HEAD --head HEAD --print-command)"
