@@ -162,6 +162,13 @@ proof. Warm proof requires a second same-commit run with no unexpected
 compilation and materially reused target artifacts; nonzero preexisting bytes
 alone are not sufficient.
 
+Validation runs as the remote host's non-root UID/GID so permission-negative
+tests remain meaningful. The container also sets
+`AWS_EC2_METADATA_DISABLED=true`: AWS launch, EBS, SSM, ECR, logging, and
+teardown stay on the host control path, while ordinary Rust tests cannot
+silently discover the disposable instance role and turn unit tests into live
+AWS calls.
+
 Older experiments may leave `container-target`, `container-sccache`,
 `container-cargo-home`, or `container-tmp` beside the canonical directories.
 They are not consumed by this lane and are preserved until a separately
