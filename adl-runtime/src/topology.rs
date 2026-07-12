@@ -162,6 +162,15 @@ pub fn runtime_stack_json() -> Value {
             "retained_status_ref": crate::freedom_gate::CSM_FREEDOM_GATE_STATUS_REF,
             "executor_requires_gate_decision": true,
             "unmediated_execution_allowed": false
+        },
+        "reasoning_runtime": {
+            "schema": crate::reasoning_runtime::REASONING_RUNTIME_SCHEMA,
+            "component": crate::reasoning_runtime::REASONING_RUNTIME_COMPONENT,
+            "process_model": "csm_supervised_bounded_typed_channel_component",
+            "objects": ["reasoning_graph", "bounded_loop", "adaptive_dag"],
+            "determinism": "captured_provider_shell_then_deterministic_core_replay",
+            "continuity": "checkpoint_lineage_and_replay_cursor_distinct_from_lifelog_history",
+            "governance": "freedom_gate_before_aee"
         }
     })
 }

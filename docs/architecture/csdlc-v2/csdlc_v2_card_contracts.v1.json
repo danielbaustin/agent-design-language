@@ -1,0 +1,128 @@
+{
+  "schema": "adl.csdlc_v2.card_contracts.v1",
+  "issue": 5228,
+  "contract_version": "1.0.0-draft",
+  "template_policy": {
+    "templates": "independently authored v2 templates",
+    "values": "typed Rust structs serialized as versioned data",
+    "renderer": "deterministic full-card renderer",
+    "parser": "markdown.rs mdast",
+    "direct_markdown_edits": "forbidden",
+    "unknown_imported_nodes": "preserve_or_report",
+    "commit": "values, Markdown, AST digest, index, and audit event atomically"
+  },
+  "shared_system_fields": [
+    "schema_version",
+    "template_version",
+    "card_kind",
+    "issue",
+    "repository",
+    "title",
+    "slug",
+    "version",
+    "generation",
+    "created_at",
+    "updated_at"
+  ],
+  "shared_status": {
+    "enum": ["pre_phase", "draft", "ready", "approved", "blocked", "superseded", "complete"],
+    "strum_canonical": true,
+    "unknown": "fail_closed"
+  },
+  "cards": {
+    "sip": {
+      "owns": ["goal", "required_outcome", "declared_scope", "authority_boundary", "initial_assumptions", "operator_constraints"],
+      "typed_required": ["goal", "required_outcome", "declared_scope", "authority_boundary"],
+      "semantic_anchors": ["goal", "required_outcome", "scope", "authority", "assumptions"],
+      "pre_phase": "not_allowed; SIP is populated at init",
+      "ready_guard": "issue-specific goal, outcome, scope, and authority are nonempty and non-generic"
+    },
+    "stp": {
+      "owns": ["task_boundary", "deliverables", "acceptance_criteria", "dependencies", "repo_inputs", "non_goals"],
+      "typed_required": ["task_boundary", "deliverables", "acceptance_criteria", "dependencies", "non_goals"],
+      "semantic_anchors": ["task", "deliverables", "acceptance", "dependencies", "inputs", "non_goals"],
+      "pre_phase": "constructed at init from issue contract",
+      "ready_guard": "acceptance is observable, dependencies explicit, and scope does not exceed SIP"
+    },
+    "spp": {
+      "owns": ["plan_revision", "steps", "step_status", "affected_areas", "invariants", "risks", "execution_estimates", "stop_conditions", "replan_triggers"],
+      "typed_required": ["plan_revision", "steps", "invariants", "stop_conditions", "execution_estimates"],
+      "semantic_anchors": ["summary", "plan", "steps", "invariants", "risks", "estimates", "handoff", "stop_conditions"],
+      "pre_phase": "constructed at init with pending typed steps",
+      "ready_guard": "all steps issue-specific; estimates explicit; statuses are pending/in_progress/completed; no unsupported completion"
+    },
+    "vpp": {
+      "owns": ["pvf_lanes", "proof_roles", "determinism", "resource_profiles", "budgets", "planned_validation_seconds", "planned_validation_tokens", "commands", "parallel_groups", "defer_reasons", "failure_policy"],
+      "typed_required": ["pvf_lanes", "budgets", "planned_validation_seconds", "planned_validation_tokens", "commands", "failure_policy"],
+      "semantic_anchors": ["summary", "lane_inputs", "selected_lanes", "parallelization", "budgets", "commands", "failure_semantics", "handoff"],
+      "pre_phase": "constructed at init from declared outcome and paths; remains pre_phase until SPP ready",
+      "ready_guard": "all required lanes classified, argv arrays bounded, budgets explicit, and deferred work is not passed proof"
+    },
+    "srp": {
+      "owns": ["review_scope", "review_revision", "reviewer", "review_prompts", "findings", "finding_severity", "dispositions", "residual_risk"],
+      "typed_required": ["review_scope", "review_prompts"],
+      "semantic_anchors": ["scope", "prompts", "findings", "dispositions", "residual_risk", "review_result"],
+      "pre_phase": "constructed at init as pre_review with prompts and no result",
+      "ready_guard": "pre-publication review records exact revision and every actionable finding is fixed; post-publication findings remain distinct"
+    },
+    "sor": {
+      "owns": ["actual_changes", "artifacts", "actual_validation", "integration_state", "publication_state", "merge_state", "closeout_state", "follow_ups"],
+      "typed_required": [],
+      "semantic_anchors": ["summary", "artifacts", "execution", "validation", "integration", "publication", "closeout", "follow_ups"],
+      "pre_phase": "constructed at init as explicit pre_execution scaffold; empty outcome is valid but never complete",
+      "ready_guard": "actual-only facts; terminal completeness requires remote and local closeout truth"
+    }
+  },
+  "field_ownership_rules": [
+    "one owning card per mutable fact",
+    "later cards reference earlier facts by stable identifier and digest",
+    "later cards record disposition without silently rewriting earlier truth",
+    "scope changes return to SIP/STP and invalidate downstream readiness",
+    "plan changes increment SPP revision and invalidate review",
+    "validation-plan changes increment VPP revision and invalidate affected proof",
+    "implementation revision changes invalidate pre-publication SRP result",
+    "SOR records actual facts and never backfills planned proof as passed"
+  ],
+  "cross_card_invariants": [
+    {"id": "identity", "rule": "issue, repository, slug, and version agree across all cards and index"},
+    {"id": "scope", "rule": "STP task and deliverables are within SIP declared scope"},
+    {"id": "plan_acceptance", "rule": "every STP acceptance criterion maps to at least one SPP step and VPP proof role"},
+    {"id": "design", "rule": "SPP and VPP reference the current issue design and Mermaid diagram digests"},
+    {"id": "pvf", "rule": "VPP lanes cover touched surfaces and do not hide blocked/deferred proof"},
+    {"id": "review", "rule": "SRP reviewed revision equals the publication revision"},
+    {"id": "actual", "rule": "SOR validation and integration claims cite retained evidence and observed remote state"},
+    {"id": "monotonicity", "rule": "phase and card generations never move backward except an explicit supersede/replan transition"}
+  ],
+  "compatibility": {
+    "template_version": "semver",
+    "schema_version": "semver",
+    "read_unknown_major": "reject",
+    "read_newer_minor": "reject unless declared compatible",
+    "migration": "pure typed values migration before rendering",
+    "legacy_markdown": "one-way mdast import with unknown-node report",
+    "rollback": "retain prior values/render/index generation until atomic commit succeeds"
+  },
+  "worked_construction_example": {
+    "input": {
+      "operation": "set_field",
+      "card_kind": "vpp",
+      "field": "planned_validation_seconds",
+      "value": 120,
+      "expected_digest": "sha256:prior",
+      "claim": "issue-42-session-a",
+      "actor": "csdlc-validator",
+      "reason": "design-time budget approved"
+    },
+    "expected_pipeline": [
+      "authorize claim and field owner",
+      "apply typed u64 field update",
+      "render full VPP",
+      "parse markdown.rs mdast",
+      "validate VPP anchors and SPP/VPP budget invariants",
+      "write values/card/index/audit to temp files",
+      "fsync and atomic replace",
+      "return new digest and generation"
+    ],
+    "expected_rejections": ["stale digest", "missing claim", "wrong card owner", "invalid phase", "AST mismatch", "cross-card invariant failure"]
+  }
+}

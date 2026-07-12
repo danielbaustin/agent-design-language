@@ -10,11 +10,12 @@ pub const CSM_RUNTIME_API_CHRONOSENSE_SCHEMA: &str = "adl.csm.runtime_api.chrono
 pub const CSM_RUNTIME_API_SHEPHERD_SCHEMA: &str = "adl.csm.runtime_api.shepherd.v1";
 pub const CSM_RUNTIME_API_CURIOSITY_SCHEMA: &str = "adl.csm.runtime_api.curiosity.v1";
 pub const CSM_RUNTIME_API_FREEDOM_GATE_SCHEMA: &str = "adl.csm.runtime_api.freedom_gate.v1";
+pub const CSM_RUNTIME_API_REASONING_SCHEMA: &str = "adl.csm.runtime_api.reasoning.v1";
 pub const CSM_RUNTIME_API_API_GATEWAY_BRIDGE_SCHEMA: &str =
     "adl.csm.runtime_api.api_gateway_bridge.v1";
 pub const CSM_RUNTIME_API_PERSISTENCE_SCHEMA: &str = "adl.csm.runtime_api.persistence.v1";
 
-pub const CSM_RUNTIME_API_ENDPOINTS: [&str; 11] = [
+pub const CSM_RUNTIME_API_ENDPOINTS: [&str; 12] = [
     "/status",
     "/health",
     "/ready",
@@ -24,6 +25,7 @@ pub const CSM_RUNTIME_API_ENDPOINTS: [&str; 11] = [
     "/shepherd",
     "/curiosity",
     "/freedom-gate",
+    "/reasoning",
     "/api-gateway-bridge",
     "/persistence",
 ];
@@ -52,6 +54,7 @@ mod tests {
         assert!(CSM_RUNTIME_API_ENDPOINTS.contains(&"/shepherd"));
         assert!(CSM_RUNTIME_API_ENDPOINTS.contains(&"/curiosity"));
         assert!(CSM_RUNTIME_API_ENDPOINTS.contains(&"/freedom-gate"));
+        assert!(CSM_RUNTIME_API_ENDPOINTS.contains(&"/reasoning"));
         assert!(CSM_RUNTIME_API_ENDPOINTS.contains(&"/api-gateway-bridge"));
         assert_eq!(
             CSM_RUNTIME_API_STATUS_SCHEMA,

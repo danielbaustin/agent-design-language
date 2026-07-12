@@ -10,6 +10,7 @@ pub mod determinism;
 pub mod freedom_gate;
 pub mod networking;
 pub mod observability;
+pub mod reasoning_runtime;
 pub mod resident_agent;
 pub mod runtime_api;
 pub mod runtime_api_auth;
