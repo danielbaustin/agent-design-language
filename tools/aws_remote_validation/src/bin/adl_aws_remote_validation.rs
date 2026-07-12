@@ -75,7 +75,12 @@ fn should_retry_remote_validation(
         return matches!(summary.status, RemoteRunStatus::InterruptedByAws)
             && provider_interruption_confirmed;
     }
-    true
+    matches!(
+        summary.resilience.fault_class,
+        AwsRemoteResilienceFaultClass::CapacityUnavailable
+            | AwsRemoteResilienceFaultClass::TransientNetwork
+            | AwsRemoteResilienceFaultClass::SsmUnavailable
+    )
 }
 
 fn artifact_ref(path: &Path, artifact_root: &Path) -> String {
@@ -903,6 +908,16 @@ mod tests {
             RemoteRunStatus::Failed,
             AwsRemoteResilienceFaultClass::AuthPermissionFailure,
             false,
+        );
+        assert!(!should_retry_remote_validation(&summary, false, 0, 2));
+    }
+
+    #[test]
+    fn retry_decision_stops_unknown_validation_failures() {
+        let summary = retry_summary(
+            RemoteRunStatus::Failed,
+            AwsRemoteResilienceFaultClass::Unknown,
+            true,
         );
         assert!(!should_retry_remote_validation(&summary, false, 0, 2));
     }

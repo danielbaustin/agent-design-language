@@ -81,6 +81,10 @@ aws-cli/2.35.15
 TOOLS
       exit 0
     fi
+    [[ "$args" == *"RUSTFLAGS=-C link-arg=-fuse-ld=lld"* ]] || {
+      echo "validation container did not select lld" >&2
+      exit 2
+    }
     run_root=""
     previous=""
     for arg in "$@"; do

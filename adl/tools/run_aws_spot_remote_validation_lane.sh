@@ -566,6 +566,8 @@ manager_is_active() {
 private_command_status_path() {
   if [[ -f "$ARTIFACT_DIR/.private/command-status.log" ]]; then
     printf '%s\n' "$ARTIFACT_DIR/.private/command-status.log"
+  elif find "$ARTIFACT_DIR" -maxdepth 2 -path '*/attempt-*/command-status.log' -type f -print -quit 2>/dev/null | grep -q .; then
+    find "$ARTIFACT_DIR" -maxdepth 2 -path '*/attempt-*/command-status.log' -type f -print 2>/dev/null | sort | tail -n 1
   else
     printf '%s\n' "$ARTIFACT_DIR/command-status.log"
   fi
@@ -590,6 +592,10 @@ run_logs_action() {
   for path in "$ARTIFACT_DIR/manager.stderr.log" "$ARTIFACT_DIR/remote-tail.log" "$ARTIFACT_DIR/command-status.log" "$ARTIFACT_DIR/manager.stdout.log"; do
     [[ -f "$path" ]] && files+=("$path")
   done
+  while IFS= read -r path; do
+    [[ -f "$path" ]] && files+=("$path")
+  done < <(find "$ARTIFACT_DIR" -maxdepth 2 -path '*/attempt-*/*' -type f \
+    \( -name 'command-status.log' -o -name 'remote-tail.log' \) -print 2>/dev/null | sort)
   if [[ ${#files[@]} -eq 0 ]]; then
     echo "run_aws_spot_remote_validation_lane: no logs found for run id $RUN_ID" >&2
     return 1

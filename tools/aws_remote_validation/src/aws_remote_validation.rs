@@ -665,6 +665,7 @@ pub struct EventRecord {
 
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub struct LaunchSpec {
+    pub run_id: String,
     pub instance_type: String,
     pub purchase_option: PurchaseOption,
     pub ami_id: String,
@@ -851,6 +852,7 @@ pub async fn run_aws_remote_validation<A: AwsRemoteValidationAdapter>(
     let launch_timer = Instant::now();
     'launch: for instance_type in &config.instance_types {
         let spot_spec = LaunchSpec {
+            run_id: config.run_id.clone(),
             instance_type: instance_type.clone(),
             purchase_option: PurchaseOption::Spot,
             ami_id: config.ami_id.clone(),
@@ -2318,19 +2320,39 @@ impl LiveAwsRemoteValidationAdapter {
                 .await;
             let _ = self
                 .iam
+                .delete_role_policy()
+                .role_name(role_name)
+                .policy_name(BUILDER_IMAGE_ECR_ROLE_POLICY_NAME)
+                .send()
+                .await;
+            let _ = self
+                .iam
                 .detach_role_policy()
                 .role_name(role_name)
                 .policy_arn("arn:aws:iam::aws:policy/AmazonSSMManagedInstanceCore")
                 .send()
                 .await;
-            match self.iam.delete_role().role_name(role_name).send().await {
-                Ok(_) => cleanup.role_deleted = Some(true),
-                Err(err) => {
-                    cleanup.role_deleted = Some(false);
-                    cleanup
-                        .notes
-                        .push(format!("Failed deleting role '{}': {}", role_name, err));
+            let mut role_deleted = false;
+            let mut last_error = None;
+            for _ in 0..6 {
+                match self.iam.delete_role().role_name(role_name).send().await {
+                    Ok(_) => {
+                        role_deleted = true;
+                        break;
+                    }
+                    Err(err) => {
+                        last_error = Some(err.to_string());
+                        sleep(Duration::from_secs(2)).await;
+                    }
                 }
+            }
+            cleanup.role_deleted = Some(role_deleted);
+            if !role_deleted {
+                cleanup.notes.push(format!(
+                    "Failed deleting role '{}' after bounded retries: {}",
+                    role_name,
+                    last_error.unwrap_or_else(|| "unknown error".to_string())
+                ));
             }
         }
 
@@ -2767,6 +2789,12 @@ impl AwsRemoteValidationAdapter for LiveAwsRemoteValidationAdapter {
                         ec2::types::Tag::builder()
                             .key("Name")
                             .value("adl-aws-remote-validation")
+                            .build(),
+                    )
+                    .tags(
+                        ec2::types::Tag::builder()
+                            .key("adl:run_id")
+                            .value(&spec.run_id)
                             .build(),
                     )
                     .build(),
