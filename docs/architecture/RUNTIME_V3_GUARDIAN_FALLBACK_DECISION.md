@@ -125,6 +125,24 @@ disk cleanup, cloud telemetry, component health, checkpointing, and adaptive
 runtime behavior remain child/runtime component responsibilities unless a later
 issue explicitly moves a narrow piece across the boundary.
 
+## #5225 Adoption Result
+
+#5225 re-checked `rust-tokio-supervisor` before implementation and did not add
+it as a dependency. The crate remains a useful design reference for
+task-supervision concepts, but adopting it for this issue would still require
+ADL to write the external `tokio::process::Command` wrapper, output capture,
+signal forwarding, child reaping, restart-budget classification, and
+configuration-exit handling. That wrapper would be the actual guardian, while
+the crate would supervise only the wrapper task inside the same process.
+
+The implemented fallback therefore uses the smaller direct boundary:
+`adl_runtime::guardian` owns one external child process with `tokio::process`,
+keeps the canonical Runtime v3 control endpoint at `127.0.0.1:20997`, captures
+stdout and stderr, forwards shutdown to the child, reaps it, and stops
+restarting on configuration exits or exhausted restart budgets. This keeps the
+fallback smaller than a service manager while preserving the child-process
+contract for later cutover proof.
+
 ## Non-Claims
 
 - This packet does not authorize Runtime v3 cutover.
@@ -134,4 +152,6 @@ issue explicitly moves a narrow piece across the boundary.
 - This packet does not claim rustysd is cross-platform production ready.
 - This packet does not claim `rust_supervisor` or `rust-tokio-supervisor`
   directly supervise external OS child processes.
-- This packet does not implement a new ADL-owned guardian.
+- The original #5224 packet did not implement a new ADL-owned guardian; #5225
+  adds the bounded `adl_runtime::guardian` fallback described above without
+  authorizing default Runtime v3 cutover.

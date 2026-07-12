@@ -3,6 +3,7 @@
 use serde::Serialize;
 use serde_json::{json, Value};
 
+use crate::acip::{runtime_capability as acip_runtime_capability, CSM_ACIP_COMPONENT};
 use crate::supervision::{default_component_supervision, SUPERVISION_SCHEMA};
 
 pub const CSM_RUNTIME_STACK_SCHEMA: &str = "adl.csm.runtime_stack.v1";
@@ -32,6 +33,11 @@ pub fn runtime_components() -> Vec<RuntimeComponent> {
             id: "scheduler",
             plane: "operations",
             role: "cadence, admission, and scheduling control",
+        },
+        RuntimeComponent {
+            id: "weather",
+            plane: "operations",
+            role: "CPU, memory, disk, and GPU resource weather for graceful runtime stop decisions",
         },
         RuntimeComponent {
             id: "reasoning_runtime",
@@ -72,6 +78,11 @@ pub fn runtime_components() -> Vec<RuntimeComponent> {
             id: "lifelog",
             plane: "continuity",
             role: "database-backed lifecycle journal",
+        },
+        RuntimeComponent {
+            id: CSM_ACIP_COMPONENT,
+            plane: "communications",
+            role: "governed ACIP/A2A JSON, protobuf, and WebSocket carrier",
         },
         RuntimeComponent {
             id: "cloud_bridge",
@@ -119,6 +130,15 @@ pub fn runtime_stack_json() -> Value {
             "status": "integrated",
             "source": "/chronosense"
         },
+        "resource_weather": {
+            "schema": crate::weather::WEATHER_SCHEMA,
+            "component": "weather",
+            "primary_crate": "sysinfo",
+            "status": "integrated",
+            "source": "/weather",
+            "stop_policy": "serialize_state_then_stop_on_configured_cpu_memory_or_disk_pressure",
+            "gpu_policy": "observed_on_gpu_host_or_explicitly_deferred"
+        },
         "persistence_domains": {
             "schema": crate::continuity_history::PERSISTENCE_DOMAINS_SCHEMA,
             "checkpoint_continuity": {
@@ -148,12 +168,21 @@ pub fn runtime_stack_json() -> Value {
             "lifecycle": "same_csm_supervision_checkpoint_lifelog_observability_path_for_privileged_and_ordinary_agents",
             "shepherd_model": "privileged_resident_agent_not_bespoke_model_path"
         },
+        "acip_carrier": acip_runtime_capability(),
         "curiosity_engine": {
             "schema": crate::curiosity::CSM_CURIOSITY_STATUS_SCHEMA,
             "component": crate::curiosity::CSM_CURIOSITY_COMPONENT,
             "process_model": "embedded_csm_runtime_component",
             "retained_status_ref": crate::curiosity::CSM_CURIOSITY_STATUS_REF,
             "governance": "freedom_gate_cav_constructability_fail_closed"
+        },
+        "freedom_gate": {
+            "schema": crate::freedom_gate::CSM_FREEDOM_GATE_STATUS_SCHEMA,
+            "status": "integrated",
+            "component": crate::freedom_gate::CSM_FREEDOM_GATE_COMPONENT,
+            "retained_status_ref": crate::freedom_gate::CSM_FREEDOM_GATE_STATUS_REF,
+            "executor_requires_gate_decision": true,
+            "unmediated_execution_allowed": false
         },
         "reasoning_runtime": {
             "schema": crate::reasoning_runtime::REASONING_RUNTIME_SCHEMA,
@@ -180,10 +209,24 @@ mod tests {
         assert!(ids.contains(&"runtime_api"));
         assert!(ids.contains(&"chronosense"));
         assert!(ids.contains(&"scheduler"));
+        assert!(ids.contains(&"weather"));
         assert!(ids.contains(&"reasoning_runtime"));
         assert!(ids.contains(&"curiosity_engine"));
         assert!(ids.contains(&"resident_agents"));
+        assert!(ids.contains(&"freedom_gate"));
+        assert!(ids.contains(&"acip_carrier"));
         assert!(ids.contains(&"observability"));
         assert!(ids.contains(&"cloud_bridge"));
+    }
+
+    #[test]
+    fn runtime_stack_projects_freedom_gate_contract() {
+        let stack = runtime_stack_json();
+        assert_eq!(stack["freedom_gate"]["status"], "integrated");
+        assert_eq!(
+            stack["freedom_gate"]["executor_requires_gate_decision"],
+            true
+        );
+        assert_eq!(stack["freedom_gate"]["unmediated_execution_allowed"], false);
     }
 }

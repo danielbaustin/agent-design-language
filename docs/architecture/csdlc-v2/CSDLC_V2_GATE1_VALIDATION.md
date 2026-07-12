@@ -1,6 +1,6 @@
 # C-SDLC v2 Gate 1 Validation
 
-Issue: #5228  
+Issue: #5228
 Result: PASS with retained intermittent renderer-process observations
 
 ## Commands And Proof

@@ -1,11 +1,11 @@
 # C-SDLC v1 Baseline And v2 Budgets
 
-Issue: #5228  
-Captured: 2026-07-12  
-Host: Apple arm64, macOS 26.5 build 25F71  
-Repository revision: `020bba17deb9f172e91a2ec5c0599cf42e4defe9`  
-Rust: `rustc 1.92.0 (ded5c06cf 2025-12-08)`  
-Cargo: `cargo 1.92.0 (344c4567c 2025-10-21)`  
+Issue: #5228
+Captured: 2026-07-12
+Host: Apple arm64, macOS 26.5 build 25F71
+Repository revision: `020bba17deb9f172e91a2ec5c0599cf42e4defe9`
+Rust: `rustc 1.92.0 (ded5c06cf 2025-12-08)`
+Cargo: `cargo 1.92.0 (344c4567c 2025-10-21)`
 Installed artifacts: stable `.adl/bin` owner binaries built immediately before
 capture with `bash adl/tools/install_owner_binaries.sh`
 

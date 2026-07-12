@@ -68,6 +68,13 @@ fn run_csm(args: &[&str]) -> std::process::Output {
 }
 
 fn run_csm_without_aws_credentials(args: &[&str]) -> std::process::Output {
+    run_csm_with_env_without_aws_credentials(args, &[])
+}
+
+fn run_csm_with_env_without_aws_credentials(
+    args: &[&str],
+    envs: &[(&str, &str)],
+) -> std::process::Output {
     const AWS_CREDENTIAL_ENV: &[&str] = &[
         "AWS_ACCESS_KEY_ID",
         "AWS_SECRET_ACCESS_KEY",
@@ -93,6 +100,9 @@ fn run_csm_without_aws_credentials(args: &[&str]) -> std::process::Output {
     ];
     let mut command = runtime_test_command(resolve_csm_exe());
     command.args(args).env("AWS_EC2_METADATA_DISABLED", "true");
+    for (key, value) in envs {
+        command.env(key, value);
+    }
     for name in AWS_CREDENTIAL_ENV {
         command.env_remove(name);
     }

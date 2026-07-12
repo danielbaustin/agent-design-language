@@ -5,6 +5,12 @@ use std::collections::BTreeMap;
 use std::hash::{Hash, Hasher};
 use std::io::Write;
 
+const CSM_COVERAGE_STARTUP_ATTEMPTS: &str = "80";
+const CSM_DISK_READY_ENV: [(&str, &str); 2] = [
+    ("ADL_CSM_DISK_FLOOR_BYTES", "0"),
+    ("ADL_CSM_TEST_AVAILABLE_BYTES", "1073741824"),
+];
+
 fn spawn_loopback_control_plane() -> (
     String,
     std::sync::mpsc::Receiver<String>,
@@ -53,6 +59,7 @@ fn spawn_loopback_control_plane() -> (
 fn spawn_loopback_otlp_collector() -> (
     String,
     std::sync::mpsc::Receiver<String>,
+    std::sync::mpsc::Sender<()>,
     std::thread::JoinHandle<()>,
 ) {
     let listener =
@@ -62,9 +69,9 @@ fn spawn_loopback_otlp_collector() -> (
         .expect("set collector nonblocking");
     let addr = listener.local_addr().expect("collector addr");
     let (tx, rx) = std::sync::mpsc::channel();
+    let (shutdown_tx, shutdown_rx) = std::sync::mpsc::channel();
     let handle = std::thread::spawn(move || {
         let started = std::time::Instant::now();
-        let mut last_request_at: Option<std::time::Instant> = None;
         loop {
             match listener.accept() {
                 Ok((mut stream, _)) => {
@@ -79,13 +86,13 @@ fn spawn_loopback_otlp_collector() -> (
                     stream
                         .write_all(b"HTTP/1.1 200 OK\r\ncontent-length: 2\r\n\r\nOK")
                         .expect("write collector response");
-                    last_request_at = Some(std::time::Instant::now());
                 }
                 Err(err) if err.kind() == std::io::ErrorKind::WouldBlock => {
-                    let idle_done = last_request_at
-                        .map(|instant| instant.elapsed() > std::time::Duration::from_secs(10))
-                        .unwrap_or(false);
-                    if idle_done || started.elapsed() > std::time::Duration::from_secs(30) {
+                    match shutdown_rx.try_recv() {
+                        Ok(()) | Err(std::sync::mpsc::TryRecvError::Disconnected) => break,
+                        Err(std::sync::mpsc::TryRecvError::Empty) => {}
+                    }
+                    if started.elapsed() > std::time::Duration::from_secs(60) {
                         break;
                     }
                     std::thread::sleep(std::time::Duration::from_millis(25));
@@ -94,7 +101,7 @@ fn spawn_loopback_otlp_collector() -> (
             }
         }
     });
-    (format!("http://{addr}/v1/traces"), rx, handle)
+    (format!("http://{addr}/v1/traces"), rx, shutdown_tx, handle)
 }
 
 fn read_http_body(stream: &mut std::net::TcpStream) -> String {
@@ -523,16 +530,23 @@ memory:
     .expect("write agent spec");
 
     let spec_str = spec.to_str().expect("utf8 path");
-    let out = run_adl(&[
-        "agent",
-        "run",
-        "--spec",
-        spec_str,
-        "--max-cycles",
-        "3",
-        "--no-sleep",
-        "--json",
-    ]);
+    let disk_ready_env = [
+        ("ADL_CSM_DISK_FLOOR_BYTES", "0"),
+        ("ADL_CSM_TEST_AVAILABLE_BYTES", "1073741824"),
+    ];
+    let out = run_adl_with_env(
+        &[
+            "agent",
+            "run",
+            "--spec",
+            spec_str,
+            "--max-cycles",
+            "3",
+            "--no-sleep",
+            "--json",
+        ],
+        &disk_ready_env,
+    );
     assert!(
         out.status.success(),
         "expected agent run success, stderr:\n{}",
@@ -677,16 +691,23 @@ memory:
     .expect("write agent spec");
 
     let spec_str = spec.to_str().expect("utf8 path");
-    let first = run_adl(&[
-        "agent",
-        "run",
-        "--spec",
-        spec_str,
-        "--max-cycles",
-        "2",
-        "--no-sleep",
-        "--json",
-    ]);
+    let disk_ready_env = [
+        ("ADL_CSM_DISK_FLOOR_BYTES", "0"),
+        ("ADL_CSM_TEST_AVAILABLE_BYTES", "1073741824"),
+    ];
+    let first = run_adl_with_env(
+        &[
+            "agent",
+            "run",
+            "--spec",
+            spec_str,
+            "--max-cycles",
+            "2",
+            "--no-sleep",
+            "--json",
+        ],
+        &disk_ready_env,
+    );
     assert!(
         first.status.success(),
         "expected first run success, stderr:\n{}",
@@ -695,7 +716,10 @@ memory:
 
     fs::remove_file(root.join("state/status.json")).expect("remove status to force restore");
 
-    let restored = run_adl(&["agent", "status", "--spec", spec_str, "--json"]);
+    let restored = run_adl_with_env(
+        &["agent", "status", "--spec", spec_str, "--json"],
+        &disk_ready_env,
+    );
     assert!(
         restored.status.success(),
         "expected restored status success, stderr:\n{}",
@@ -717,16 +741,19 @@ memory:
         "cycle-000003"
     );
 
-    let second = run_adl(&[
-        "agent",
-        "run",
-        "--spec",
-        spec_str,
-        "--max-cycles",
-        "1",
-        "--no-sleep",
-        "--json",
-    ]);
+    let second = run_adl_with_env(
+        &[
+            "agent",
+            "run",
+            "--spec",
+            spec_str,
+            "--max-cycles",
+            "1",
+            "--no-sleep",
+            "--json",
+        ],
+        &disk_ready_env,
+    );
     assert!(
         second.status.success(),
         "expected resumed run success, stderr:\n{}",
@@ -791,6 +818,15 @@ memory:
     let log_str = observability_log.to_str().expect("utf8 log path");
     let otel_log_str = otel_log.to_str().expect("utf8 otel log path");
     let otel_status_str = otel_status.to_str().expect("utf8 otel status path");
+    let disk_ready_env = [
+        ("ADL_OBSERVABILITY_STDERR", "0"),
+        ("ADL_OBSERVABILITY_LOG", log_str),
+        ("ADL_OBSERVABILITY_HEARTBEAT_MS", "25"),
+        ("ADL_OTEL_LOG", otel_log_str),
+        ("ADL_OTEL_STATUS", otel_status_str),
+        ("ADL_CSM_DISK_FLOOR_BYTES", "0"),
+        ("ADL_CSM_TEST_AVAILABLE_BYTES", "1073741824"),
+    ];
     let out = run_csm_with_env(
         &[
             "daemon",
@@ -803,13 +839,7 @@ memory:
             "--no-sleep",
             "--json",
         ],
-        &[
-            ("ADL_OBSERVABILITY_STDERR", "0"),
-            ("ADL_OBSERVABILITY_LOG", log_str),
-            ("ADL_OBSERVABILITY_HEARTBEAT_MS", "25"),
-            ("ADL_OTEL_LOG", otel_log_str),
-            ("ADL_OTEL_STATUS", otel_status_str),
-        ],
+        &disk_ready_env,
     );
     assert!(
         out.status.success(),
@@ -1591,7 +1621,8 @@ memory:
     let observability_log = root.join("daemon-observability.log");
     let otel_log = root.join("daemon-otel.jsonl");
     let otel_status = root.join("daemon-otel-status.json");
-    let (otel_endpoint, _captured_otel, otel_collector) = spawn_loopback_otlp_collector();
+    let (otel_endpoint, _captured_otel, shutdown_otel_collector, otel_collector) =
+        spawn_loopback_otlp_collector();
     let daemon = run_csm_with_env(
         &[
             "daemon",
@@ -1621,10 +1652,15 @@ memory:
                 "ADL_OTEL_STATUS",
                 otel_status.to_str().expect("utf8 otel status path"),
             ),
+            CSM_DISK_READY_ENV[0],
+            CSM_DISK_READY_ENV[1],
             ("ADL_OTEL_EXPORTER_OTLP_ENDPOINT", otel_endpoint.as_str()),
             ("ADL_OTEL_EXPORTER_TIMEOUT_MS", "2000"),
         ],
     );
+    shutdown_otel_collector
+        .send(())
+        .expect("signal continuity OTLP collector shutdown");
     otel_collector
         .join()
         .expect("join continuity OTLP collector");
@@ -2454,7 +2490,7 @@ fn csm_credential_policy_proves_break_glass_and_negative_cases_without_secrets()
     let root = unique_test_temp_dir("csm-credential-policy");
     let observability_log = root.join("credential-observability.log");
     let proof_dir = root.join("credential-proof");
-    let out = run_csm_with_env(
+    let out = run_csm_with_env_without_aws_credentials(
         &[
             "credential-policy",
             "prove",
@@ -2567,7 +2603,7 @@ memory:
 "#,
     )
     .expect("write agent spec");
-    let (endpoint, captured, collector) = spawn_loopback_otlp_collector();
+    let (endpoint, captured, shutdown_collector, collector) = spawn_loopback_otlp_collector();
     let observability_log = root.join("observability.log");
     let otel_log = root.join("otel.jsonl");
     let otel_status = root.join("otel-status.json");
@@ -2598,12 +2634,17 @@ memory:
             ("ADL_OTEL_EXPORTER_TIMEOUT_MS", "2000"),
         ],
     );
-    assert!(
-        out.status.success(),
-        "expected daemon OTLP success, stderr:\n{}",
-        String::from_utf8_lossy(&out.stderr)
-    );
+    let daemon_success = out.status.success();
+    let daemon_stderr = String::from_utf8_lossy(&out.stderr).to_string();
+    shutdown_collector
+        .send(())
+        .expect("signal otlp collector shutdown");
     collector.join().expect("collector joined");
+    assert!(
+        daemon_success,
+        "expected daemon OTLP success, stderr:\n{}",
+        daemon_stderr
+    );
     let exported = captured.try_iter().collect::<Vec<_>>();
     let mut span_names = std::collections::BTreeSet::new();
     let mut service_names = std::collections::BTreeSet::new();
@@ -3391,7 +3432,6 @@ memory:
 
 #[test]
 fn csm_service_local_start_stop_retains_status_checkpoint_and_observability() {
-    const COVERAGE_STARTUP_ATTEMPTS: &str = "80";
     let root = unique_test_temp_dir("csm-service-local");
     let spec = root.join("agent.yaml");
     fs::write(
@@ -3459,10 +3499,14 @@ memory:
             service_root.to_str().expect("utf8 service root"),
             "--json",
         ],
-        &[(
-            "ADL_CSM_SERVICE_STARTUP_ATTEMPTS",
-            COVERAGE_STARTUP_ATTEMPTS,
-        )],
+        &[
+            (
+                "ADL_CSM_SERVICE_STARTUP_ATTEMPTS",
+                CSM_COVERAGE_STARTUP_ATTEMPTS,
+            ),
+            CSM_DISK_READY_ENV[0],
+            CSM_DISK_READY_ENV[1],
+        ],
     );
     assert!(
         start.status.success(),
@@ -3584,10 +3628,14 @@ memory:
             service_root.to_str().expect("utf8 service root"),
             "--json",
         ],
-        &[(
-            "ADL_CSM_SERVICE_STARTUP_ATTEMPTS",
-            COVERAGE_STARTUP_ATTEMPTS,
-        )],
+        &[
+            (
+                "ADL_CSM_SERVICE_STARTUP_ATTEMPTS",
+                CSM_COVERAGE_STARTUP_ATTEMPTS,
+            ),
+            CSM_DISK_READY_ENV[0],
+            CSM_DISK_READY_ENV[1],
+        ],
     );
     assert!(
         second_start.status.success(),
@@ -3628,10 +3676,14 @@ memory:
             service_root.to_str().expect("utf8 service root"),
             "--json",
         ],
-        &[(
-            "ADL_CSM_SERVICE_STARTUP_ATTEMPTS",
-            COVERAGE_STARTUP_ATTEMPTS,
-        )],
+        &[
+            (
+                "ADL_CSM_SERVICE_STARTUP_ATTEMPTS",
+                CSM_COVERAGE_STARTUP_ATTEMPTS,
+            ),
+            CSM_DISK_READY_ENV[0],
+            CSM_DISK_READY_ENV[1],
+        ],
     );
     assert!(
         restart.status.success(),
@@ -3777,13 +3829,23 @@ memory:
         "install stderr:\n{}",
         String::from_utf8_lossy(&install.stderr)
     );
-    let start = run_csm(&[
-        "service",
-        "start",
-        "--service-root",
-        service_root.to_str().expect("utf8 service root"),
-        "--json",
-    ]);
+    let start = run_csm_with_env(
+        &[
+            "service",
+            "start",
+            "--service-root",
+            service_root.to_str().expect("utf8 service root"),
+            "--json",
+        ],
+        &[
+            (
+                "ADL_CSM_SERVICE_STARTUP_ATTEMPTS",
+                CSM_COVERAGE_STARTUP_ATTEMPTS,
+            ),
+            CSM_DISK_READY_ENV[0],
+            CSM_DISK_READY_ENV[1],
+        ],
+    );
     assert!(
         start.status.success(),
         "start stderr:\n{}\nchild stdout:\n{}\nchild stderr:\n{}",
@@ -3813,6 +3875,7 @@ memory:
         &[
             ("ADL_AWS_SIGNAL_MODE", "mock"),
             ("ADL_AWS_SIGNAL_APPROVED", "1"),
+            ("ADL_AWS_HEARTBEAT_TARGET", "cloudwatch_logs"),
             ("ADL_AWS_REGION", "us-west-2"),
             ("ADL_AWS_PROFILE", "agent-logic-admin"),
             (
@@ -3851,21 +3914,28 @@ memory:
     assert!(state.join("csm_lifecycle_lifelog.index.json").exists());
     assert!(state.join("csm_governed_notices.jsonl").exists());
     assert!(state.join("csm_governed_notice_latest.json").exists());
+    let latest_notice: serde_json::Value = serde_json::from_str(
+        &fs::read_to_string(state.join("csm_governed_notice_latest.json"))
+            .expect("latest governed notice"),
+    )
+    .expect("parse latest governed notice");
     assert_eq!(
-        result["notice"]["typed_channel_delivery"]["status"],
+        latest_notice["publish_preflight"]["required_channel"],
+        "cloudfront_control_plane"
+    );
+    assert_eq!(latest_notice["publish_preflight"]["status"], "blocked");
+    assert_eq!(
+        latest_notice["publish_preflight"]["failure_class"],
+        "control_plane_live_not_approved"
+    );
+    assert_eq!(
+        latest_notice["publish_transaction"]["status"],
         "blocked_before_sequence_reservation"
     );
     assert_eq!(
-        result["notice"]["typed_channel_delivery"]["spool_sequence"],
-        serde_json::Value::Null
+        latest_notice["delivery_attempts"][0]["channel"],
+        "local_notice_ledger"
     );
-    assert!(!state.join("aws_csm_governed_notice_mock.jsonl").exists());
-    assert!(!state
-        .join("aws_csm_governed_notice_sns_mock.jsonl")
-        .exists());
-    assert!(!state
-        .join("csm_governed_notice_control_plane_mock.jsonl")
-        .exists());
 
     let governed_stop: serde_json::Value = serde_json::from_str(
         &fs::read_to_string(state.join("governed_stop.json")).expect("governed stop artifact"),
@@ -3961,7 +4031,7 @@ workflow:
   run_args: {}
 heartbeat:
   interval_secs: 1
-  max_cycles: 3
+  max_cycles: 1
   stale_lease_after_secs: 60
 safety:
   allow_network: false
@@ -4006,13 +4076,23 @@ memory:
         "install stderr:\n{}",
         String::from_utf8_lossy(&install.stderr)
     );
-    let start = run_csm(&[
-        "service",
-        "start",
-        "--service-root",
-        service_root.to_str().expect("utf8 service root"),
-        "--json",
-    ]);
+    let start = run_csm_with_env(
+        &[
+            "service",
+            "start",
+            "--service-root",
+            service_root.to_str().expect("utf8 service root"),
+            "--json",
+        ],
+        &[
+            (
+                "ADL_CSM_SERVICE_STARTUP_ATTEMPTS",
+                CSM_COVERAGE_STARTUP_ATTEMPTS,
+            ),
+            CSM_DISK_READY_ENV[0],
+            CSM_DISK_READY_ENV[1],
+        ],
+    );
     assert!(
         start.status.success(),
         "start stderr:\n{}",
@@ -4020,6 +4100,7 @@ memory:
     );
     let restart_deadline = std::time::Instant::now() + std::time::Duration::from_secs(30);
     let mut observed_restart = false;
+    let mut last_supervisor_status = serde_json::Value::Null;
     while std::time::Instant::now() < restart_deadline {
         if let Ok(raw) = fs::read_to_string(service_root.join("logs/rust_supervisor_status.json")) {
             if let Ok(supervisor_status) = serde_json::from_str::<serde_json::Value>(&raw) {
@@ -4027,10 +4108,16 @@ memory:
                     observed_restart = true;
                     break;
                 }
+                last_supervisor_status = supervisor_status;
             }
         }
         std::thread::sleep(std::time::Duration::from_millis(200));
     }
+    assert!(
+        observed_restart,
+        "expected Rust supervisor to restart a real csm daemon child after bounded child completion; last supervisor status:\n{}",
+        serde_json::to_string_pretty(&last_supervisor_status).unwrap()
+    );
     let supervisor_status: serde_json::Value = serde_json::from_str(
         &fs::read_to_string(service_root.join("logs/rust_supervisor_status.json"))
             .expect("supervisor status"),
@@ -4316,7 +4403,11 @@ memory:
             service_root.to_str().expect("utf8 service root"),
             "--json",
         ],
-        &[("ADL_CSM_SERVICE_STARTUP_ATTEMPTS", "20")],
+        &[
+            ("ADL_CSM_SERVICE_STARTUP_ATTEMPTS", "20"),
+            CSM_DISK_READY_ENV[0],
+            CSM_DISK_READY_ENV[1],
+        ],
     );
     assert!(
         !start.status.success(),
@@ -4576,17 +4667,24 @@ memory:
     .expect("write agent spec");
 
     let spec_str = spec.to_str().expect("utf8 path");
-    let out = run_csm_without_aws_credentials(&[
-        "daemon",
-        "--spec",
-        spec_str,
-        "--test-supervisor-failure-after-restarts",
-        "1",
-        "--checkpoint-interval-secs",
-        "1",
-        "--no-sleep",
-        "--json",
-    ]);
+    let disk_ready_env = [
+        ("ADL_CSM_DISK_FLOOR_BYTES", "0"),
+        ("ADL_CSM_TEST_AVAILABLE_BYTES", "1073741824"),
+    ];
+    let out = run_csm_with_env_without_aws_credentials(
+        &[
+            "daemon",
+            "--spec",
+            spec_str,
+            "--test-supervisor-failure-after-restarts",
+            "1",
+            "--checkpoint-interval-secs",
+            "1",
+            "--no-sleep",
+            "--json",
+        ],
+        &disk_ready_env,
+    );
     assert!(
         !out.status.success(),
         "expected daemon failure, stdout:\n{}",

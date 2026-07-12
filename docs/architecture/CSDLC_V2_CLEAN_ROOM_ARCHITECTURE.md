@@ -1,7 +1,7 @@
 # C-SDLC v2 Clean-Room Architecture
 
-Status: Gate 1 design contract for issue #5228  
-Decision authority: operator-reviewed; later implementation remains gated  
+Status: Gate 1 design contract for issue #5228
+Decision authority: operator-reviewed; later implementation remains gated
 Product boundary: standalone Rust workspace, independent from ADL Runtime
 
 ## Decision

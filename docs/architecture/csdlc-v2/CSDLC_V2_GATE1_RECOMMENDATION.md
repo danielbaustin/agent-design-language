@@ -1,7 +1,7 @@
 # C-SDLC v2 Gate 1 Recommendation
 
-Issue: #5228  
-Recommendation: `proceed`  
+Issue: #5228
+Recommendation: `proceed`
 Scope: authorize preparation of Gate 2 only after #5228 review, green checks,
 merge, and closeout
 

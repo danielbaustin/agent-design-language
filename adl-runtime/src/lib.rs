@@ -3,10 +3,13 @@
 //! This crate is intentionally limited to runtime-owned contracts that can be
 //! built without ADL compiler or C-SDLC control-plane crates.
 
+pub mod acip;
 pub mod backpressure;
 pub mod continuity_history;
 pub mod curiosity;
 pub mod determinism;
+pub mod freedom_gate;
+pub mod guardian;
 pub mod networking;
 pub mod observability;
 pub mod reasoning_runtime;
@@ -16,6 +19,7 @@ pub mod runtime_api_auth;
 pub mod shutdown;
 pub mod supervision;
 pub mod topology;
+pub mod weather;
 
 pub const CSM_RUNTIME_OWNER: &str = "csm";
 pub const ADL_TOOLING_ROLE: &str = "tooling_control_plane";

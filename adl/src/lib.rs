@@ -34,6 +34,7 @@ pub mod csm_cloud_control;
 pub mod csm_continuity_capsule;
 pub mod csm_credential_policy;
 pub mod csm_curiosity_engine;
+pub mod csm_freedom_gate;
 pub mod csm_godel_snapshot;
 pub mod csm_networking;
 pub mod csm_observatory;

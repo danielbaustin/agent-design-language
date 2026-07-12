@@ -226,8 +226,10 @@ candidate_filter_for_path() {
     adl/src/bin/csmctl.rs|adl/src/cli/csm_service_cmd.rs|adl/src/cli/csmctl_cmd.rs)
       printf 'csmctl'
       ;;
+    adl/src/cli/csm_cmd.rs|\
     adl/src/csm_api_gateway_bridge.rs|\
     adl/src/csm_curiosity_engine.rs|\
+    adl/src/csm_freedom_gate.rs|\
     adl/src/csm_godel_snapshot.rs|\
     adl/src/csm_runtime_api.rs|\
     adl/src/csm_shepherd_agent.rs|\
@@ -371,7 +373,7 @@ nextest_expression_for_filter() {
       printf 'test(csmctl) or test(csm_service)'
       ;;
     csm_runtime_agent)
-      printf 'binary_id(adl) and (test(csm_runtime_api) or test(csm_godel_snapshot) or test(csm_shepherd_agent) or test(long_lived_agent) or test(csm_service))'
+      printf 'binary_id(adl) and (test(csm_cmd) or test(csm_runtime_api) or test(csm_freedom_gate) or test(csm_godel_snapshot) or test(csm_shepherd_agent) or test(long_lived_agent) or test(csm_service))'
       ;;
     long_lived_agent_storage)
       printf '(binary_id(adl) and test(long_lived_agent::storage)) or (binary_id(adl::bin/run_v0916_runtime_failure_injection) and test(run_v0916_runtime_failure_injection))'

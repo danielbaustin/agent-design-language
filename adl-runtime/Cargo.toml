@@ -21,7 +21,9 @@ serde_json = "1.0"
 sha2 = "0.10"
 serde_jcs = "0.2"
 subtle = "2.6"
-tokio = { version = "1", features = ["fs", "macros", "rt", "rt-multi-thread", "sync", "time"] }
+prost = "0.13"
+sysinfo = { version = "0.38.4", default-features = false, features = ["disk", "system"] }
+tokio = { version = "1", features = ["fs", "io-util", "macros", "process", "rt", "rt-multi-thread", "signal", "sync", "time"] }
 tokio-util = { version = "0.7", features = ["rt"] }
 libc = "0.2"
 

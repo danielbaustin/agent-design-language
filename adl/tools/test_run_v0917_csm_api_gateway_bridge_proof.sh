@@ -23,7 +23,7 @@ case "$1 $2" in
     printf '%s\n' '{"Items":[{"StageName":"prod","AutoDeploy":true}]}'
     ;;
   "apigatewayv2 get-routes")
-    printf '%s\n' '{"Items":[{"RouteKey":"GET /status","Target":"integrations/int-1234567890"},{"RouteKey":"GET /health","Target":"integrations/int-1234567890"},{"RouteKey":"GET /ready","Target":"integrations/int-1234567890"},{"RouteKey":"GET /metrics","Target":"integrations/int-1234567890"},{"RouteKey":"GET /events","Target":"integrations/int-1234567890"},{"RouteKey":"GET /chronosense","Target":"integrations/int-1234567890"},{"RouteKey":"GET /shepherd","Target":"integrations/int-1234567890"},{"RouteKey":"GET /curiosity","Target":"integrations/int-1234567890"},{"RouteKey":"GET /reasoning","Target":"integrations/int-1234567890"},{"RouteKey":"GET /api-gateway-bridge","Target":"integrations/int-1234567890"},{"RouteKey":"GET /persistence","Target":"integrations/int-1234567890"}]}'
+    printf '%s\n' '{"Items":[{"RouteKey":"GET /status","Target":"integrations/int-1234567890"},{"RouteKey":"GET /health","Target":"integrations/int-1234567890"},{"RouteKey":"GET /ready","Target":"integrations/int-1234567890"},{"RouteKey":"GET /metrics","Target":"integrations/int-1234567890"},{"RouteKey":"GET /events","Target":"integrations/int-1234567890"},{"RouteKey":"GET /chronosense","Target":"integrations/int-1234567890"},{"RouteKey":"GET /shepherd","Target":"integrations/int-1234567890"},{"RouteKey":"GET /curiosity","Target":"integrations/int-1234567890"},{"RouteKey":"GET /acip","Target":"integrations/int-1234567890"},{"RouteKey":"GET /freedom-gate","Target":"integrations/int-1234567890"},{"RouteKey":"GET /reasoning","Target":"integrations/int-1234567890"},{"RouteKey":"GET /api-gateway-bridge","Target":"integrations/int-1234567890"},{"RouteKey":"GET /persistence","Target":"integrations/int-1234567890"}]}'
     ;;
   "apigatewayv2 get-integrations")
     printf '%s\n' '{"Items":[{"IntegrationId":"int-1234567890","IntegrationType":"HTTP_PROXY","IntegrationUri":"https://loopback-proxy.invalid/csm"}]}'
@@ -70,7 +70,7 @@ export FAKE_AWS_LOG="$TMP/aws.log"
 export FAKE_CURL_LOG="$TMP/curl.log"
 export AWS_BIN="$BIN/aws"
 export CURL_BIN="$BIN/curl"
-export REAL_CSM="$ROOT/adl/target/debug/csm"
+export REAL_CSM="${CARGO_TARGET_DIR:-$ROOT/adl/target}/debug/csm"
 printf '%s\n' "fixture-token" >"$TMP/operator-token"
 
 cargo build --manifest-path "$ROOT/adl/Cargo.toml" --bin csm >/dev/null
@@ -110,6 +110,13 @@ assert summary["polis_ingress"]["route_target"] == "authorized_api_gateway_to_cs
 assert summary["polis_ingress"]["per_polis_api"] is True
 assert summary["polis_ingress"]["runtime_identity_verified"] is True
 assert summary["api_gateway"]["route_target_count"] >= 7
+assert "GET /reasoning" in summary["api_gateway"]["supported_route_keys"]
+assert "GET /reasoning" in summary["api_gateway"]["planned_route_keys"]
+assert "GET /acip" in summary["api_gateway"]["supported_route_keys"]
+assert "GET /acip" in summary["api_gateway"]["planned_route_keys"]
+assert "GET /persistence" in summary["api_gateway"]["supported_route_keys"]
+assert "GET /persistence" in summary["api_gateway"]["planned_route_keys"]
+assert "GET /acip/ws" not in summary["api_gateway"]["planned_route_keys"]
 assert summary["api_gateway"]["integration_count"] >= 1
 assert summary["bridge"]["endpoint"] == "/api-gateway-bridge"
 assert summary["bridge"]["response_schema"] == "adl.csm.runtime_api.api_gateway_bridge.v1"

@@ -1199,7 +1199,7 @@ Semantics:
   - csm governed-stop is the only emergency polis stop path; it requires explicit operator metadata, checkpoints and safe-fail serialization before stop, lifecycle lifelog DB rows, and governed notice fan-out.
   - csm credential-policy proves no-secret credential class inventory, rotation cadence, break-glass audit events, revocation, and failed-closed negative cases for missing, expired, denied, and stale bindings.
   - csm cav red-blue proves bounded red-team fixtures and blue-team detection/response for CSM runtime security surfaces without retaining secrets or performing destructive cloud actions.
-  - csm daemon embeds the local-by-default runtime API at --api-bind and exposes /status, /health, /ready, /metrics, /events, /chronosense, and /api-gateway-bridge from retained runtime artifacts without leaking host-private paths or secrets.
+  - csm daemon embeds the local-by-default runtime API at --api-bind and exposes /status, /health, /ready, /metrics, /events, /chronosense, /shepherd, /freedom-gate, and /api-gateway-bridge from retained runtime artifacts without leaking host-private paths or secrets.
   - csm daemon defaults its embedded runtime API to listener_role=main_runtime_api on 127.0.0.1:19997; 19950-19999 is reserved for local CSM runtime/dev/test listeners, and 127.0.0.1:0 is accepted only for explicit bounded test harness flags.
   - csm aws-signal owns runtime AWS signal proof execution, including ACIP-to-SNS live publication under the Agent Logic account guard.
   - csm cloud-control owns read-only AWS cloud-control observation hooks, including CloudFront status and governed per-polis API Gateway bridge validation of the CSM runtime API /api-gateway-bridge path under the Agent Logic account guard.
@@ -1218,7 +1218,7 @@ Semantics:
 
 #[cfg(test)]
 mod tests {
-    use super::{csm_usage, real_csm, real_csm_standalone, required_value};
+    use super::{csm_usage, real_csm, real_csm_standalone, required_value, resolve_operator_token};
     use std::fs;
     use std::path::{Path, PathBuf};
     use std::sync::atomic::{AtomicU64, Ordering};
@@ -1340,6 +1340,17 @@ memory: {}
             .expect("fixture custody private key must be valid P-256");
         base64::engine::general_purpose::STANDARD
             .encode(signing.verifying_key().to_encoded_point(false).as_bytes())
+    }
+
+    fn write_executable(path: &Path, body: &str) {
+        fs::write(path, body).expect("write executable fixture");
+        #[cfg(unix)]
+        {
+            use std::os::unix::fs::PermissionsExt;
+            let mut permissions = fs::metadata(path).unwrap().permissions();
+            permissions.set_mode(0o755);
+            fs::set_permissions(path, permissions).unwrap();
+        }
     }
 
     #[test]
@@ -1755,5 +1766,109 @@ memory: {}
             "{acip_error}"
         );
         assert!(root.join("acip").join("acip_sns_summary.json").exists());
+    }
+
+    #[test]
+    fn standalone_csm_api_gateway_bridge_parser_covers_all_runtime_flags() {
+        let root = temp_root("api-gateway-parser");
+        let aws = root.join("aws");
+        write_executable(
+            &aws,
+            r#"#!/usr/bin/env bash
+set -euo pipefail
+if [ "$1 $2" = "sts get-caller-identity" ]; then
+  printf '%s\n' '123456789012'
+  exit 0
+fi
+echo "unexpected aws args: $*" >&2
+exit 2
+"#,
+        );
+        let args = vec![
+            "cloud-control",
+            "api-gateway-bridge",
+            "--out",
+            root.join("proof").to_str().unwrap(),
+            "--run-id",
+            "wp07-5122-cli-parser",
+            "--polis-id",
+            "polis-5122",
+            "--profile",
+            "agent-logic-admin",
+            "--region",
+            "us-west-2",
+            "--expected-account-sha256",
+            &"0".repeat(64),
+            "--api-id",
+            "api-5122",
+            "--stage",
+            "prod",
+            "--invoke-url",
+            "https://example.invalid/prod",
+            "--operator-token",
+            "bounded-test-token",
+            "--cloudwatch-log-group",
+            "/aws/apigateway/adl-csm",
+            "--eventbridge-bus",
+            "adl-csm-bus",
+            "--aws-bin",
+            aws.to_str().unwrap(),
+            "--http-bin",
+            "curl",
+            "--json",
+        ]
+        .into_iter()
+        .map(str::to_string)
+        .collect::<Vec<_>>();
+        let error = real_csm_standalone(&args)
+            .expect_err("account guard must reject the bounded fake account");
+        assert!(
+            error
+                .to_string()
+                .contains("approved Agent Logic account hash"),
+            "{error}"
+        );
+    }
+
+    #[test]
+    fn csm_operator_token_resolution_covers_direct_file_and_empty_inputs() {
+        assert_eq!(
+            resolve_operator_token("direct-token".to_string(), None).unwrap(),
+            "direct-token"
+        );
+        assert_eq!(resolve_operator_token(String::new(), None).unwrap(), "");
+        let root = temp_root("operator-token-file");
+        let token_file = root.join("operator.token");
+        fs::write(&token_file, " file-token\n").unwrap();
+        assert_eq!(
+            resolve_operator_token(
+                String::new(),
+                Some(token_file.to_string_lossy().into_owned())
+            )
+            .unwrap(),
+            "file-token"
+        );
+    }
+
+    #[test]
+    fn standalone_csm_observatory_parser_writes_bundle_outputs() {
+        let root = temp_root("observatory-parser");
+        let packet = Path::new(env!("CARGO_MANIFEST_DIR"))
+            .join("tests/fixtures/runtime_v2/observatory/visibility_packet.json");
+        let out = root.join("observatory");
+        let args = vec![
+            "observatory".to_string(),
+            "--packet".to_string(),
+            packet.to_string_lossy().into_owned(),
+            "--out".to_string(),
+            out.to_string_lossy().into_owned(),
+            "--format".to_string(),
+            "bundle".to_string(),
+        ];
+        real_csm_standalone(&args).expect("observatory parser writes bundle");
+        assert!(out.join("visibility_packet.json").exists());
+        assert!(out.join("operator_report.md").exists());
+        assert!(out.join("console_reference.md").exists());
+        assert!(out.join("demo_manifest.json").exists());
     }
 }
