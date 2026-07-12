@@ -21,7 +21,11 @@ on:
           - adl-coverage
           - custom
       git_ref:
-        description: "Git ref checked out on the remote builder; blank uses this workflow run SHA"
+        description: "Immutable commit used as the named profile head; blank uses this workflow run SHA"
+        required: false
+        default: ""
+      remote_ref:
+        description: "Advertised branch or tag checked out remotely; blank uses this workflow branch"
         required: false
         default: ""
       validation_command:
@@ -157,7 +161,7 @@ jobs:
       - name: Render Spot remote validation request
         if: inputs.mode == 'dry-run'
         env:
-          GIT_REF: ${{ github.ref_name }}
+          GIT_REF: ${{ inputs.remote_ref || github.ref_name }}
           PROFILE: ${{ inputs.profile }}
           CUSTOM_COMMAND: ${{ inputs.validation_command }}
           BASE_REF: ${{ inputs.base_ref }}
@@ -188,7 +192,7 @@ jobs:
       - name: Start Spot remote validation
         if: inputs.mode == 'start-run'
         env:
-          GIT_REF: ${{ github.ref_name }}
+          GIT_REF: ${{ inputs.remote_ref || github.ref_name }}
           PROFILE: ${{ inputs.profile }}
           CUSTOM_COMMAND: ${{ inputs.validation_command }}
           BASE_REF: ${{ inputs.base_ref }}
