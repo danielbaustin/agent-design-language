@@ -36,6 +36,10 @@ on:
         description: "Primary EC2 instance type"
         required: true
         default: "m7a.2xlarge"
+      builder_image_tag:
+        description: "Candidate ECR image tag; keep v0.91.7-fixed until a new tag is verified"
+        required: true
+        default: "v0.91.7-fixed"
 
 permissions:
   contents: read
@@ -129,6 +133,7 @@ jobs:
           BASE_REF: ${{ inputs.base_ref }}
           HEAD_REF: ${{ inputs.git_ref || github.sha }}
           INSTANCE_TYPE: ${{ inputs.instance_type }}
+          BUILDER_IMAGE_TAG: ${{ inputs.builder_image_tag }}
         run: |
           if [ "$PROFILE" = "custom" ]; then
             VALIDATION_COMMAND="$CUSTOM_COMMAND"
@@ -141,6 +146,7 @@ jobs:
             --git-ref "$GIT_REF" \
             --command "$VALIDATION_COMMAND" \
             --instance-type "$INSTANCE_TYPE" \
+            --builder-image-tag "$BUILDER_IMAGE_TAG" \
             --out .adl/tmp/aws-spot-remote-validation/summary.json \
             --artifact-dir .adl/tmp/aws-spot-remote-validation/artifacts \
             --print-command
@@ -154,6 +160,7 @@ jobs:
           BASE_REF: ${{ inputs.base_ref }}
           HEAD_REF: ${{ inputs.git_ref || github.sha }}
           INSTANCE_TYPE: ${{ inputs.instance_type }}
+          BUILDER_IMAGE_TAG: ${{ inputs.builder_image_tag }}
           ADL_AWS_REMOTE_VALIDATION_BIN: ${{ github.workspace }}/tools/aws_remote_validation/target/debug/adl-aws-remote-validation
           SSH_KEY_PATH: ${{ runner.temp }}/adl-spot-remote-validation.pem
         run: |
@@ -170,6 +177,7 @@ jobs:
             --git-ref "$GIT_REF" \
             --command "$VALIDATION_COMMAND" \
             --instance-type "$INSTANCE_TYPE" \
+            --builder-image-tag "$BUILDER_IMAGE_TAG" \
             --ssh-private-key-path "$SSH_KEY_PATH" \
             --out .adl/tmp/aws-spot-remote-validation/summary.json \
             --artifact-dir .adl/tmp/aws-spot-remote-validation/artifacts \
@@ -185,6 +193,7 @@ jobs:
             echo "|---|---|"
             echo "| mode | \`${{ inputs.mode }}\` |"
             echo "| profile | \`${{ inputs.profile }}\` |"
+            echo "| builder image tag | \`${{ inputs.builder_image_tag }}\` |"
             echo "| region | \`$AWS_SPOT_REMOTE_VALIDATION_REGION\` |"
             echo "| ebs cache | \`adl-aws-remote-validation-cache-volume:/mnt/adl-cache\` |"
             echo "| ssh tail | \`enabled by wrapper defaults\` |"
