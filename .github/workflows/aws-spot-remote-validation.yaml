@@ -81,6 +81,8 @@ jobs:
           git check-ref-format --branch "$REMOTE_REF" >/dev/null
           git fetch --no-tags origin \
             "+refs/heads/$REMOTE_REF:refs/remotes/origin/$REMOTE_REF"
+          git update-ref "refs/heads/$REMOTE_REF" \
+            "refs/remotes/origin/$REMOTE_REF"
           git rev-parse --verify "${REMOTE_REF}^{commit}" >/dev/null
 
       - name: Validate dispatch inputs
@@ -123,6 +125,7 @@ jobs:
           fi
 
       - name: Configure Agent Logic AWS credentials
+        id: aws-credentials
         if: inputs.mode == 'start-run'
         uses: aws-actions/configure-aws-credentials@7474bc4690e29a8392af63c5b98e7449536d5c3a # v4
         with:
@@ -236,7 +239,7 @@ jobs:
             --json
 
       - name: Ensure Spot compute cleanup
-        if: always() && inputs.mode == 'start-run'
+        if: always() && inputs.mode == 'start-run' && steps.aws-credentials.outcome == 'success'
         run: |
           bash adl/tools/run_aws_spot_remote_validation_lane.sh cleanup \
             --check-account \
