@@ -1,0 +1,84 @@
+flowchart TB
+  actor["Operator / automation"]
+
+  subgraph product["C-SDLC v2 — standalone clean-room Rust product"]
+    direction TB
+    subgraph entry["Seven small owner binaries"]
+      init["csdlc-init"]
+      doctor["csdlc-doctor"]
+      edit["csdlc-edit"]
+      bind["csdlc-bind"]
+      validate["csdlc-validate"]
+      publish["csdlc-publish"]
+      closeout["csdlc-closeout"]
+    end
+    api["Typed command boundary\nJSON stdout • diagnostics stderr • typed exits"]
+    subgraph core["Small shared C-SDLC library"]
+      machine["Lifecycle state machine\ntyped transitions • guards • invariants"]
+      cards["Automated card engine\ntyped values • templates • markdown.rs mdast"]
+      design["Design readiness\nissue design • diagram • review"]
+      claims["Session claims\nleases • heartbeats • protected paths"]
+      scheduler["Deterministic scheduler\nreadiness • dependencies • budgets"]
+      pvf["PVF\nlane selection • execution DAG • convergence"]
+      shepherd["Shepherd observer\nwaiting • retry • repair • operator"]
+      evidence["Evidence and projections\natomic records • digests • outcomes"]
+    end
+    subgraph adapters["Narrow adapters"]
+      git["Git / worktree"]
+      github["GitHub / Octocrab"]
+      process["Bounded process runner"]
+      files["Filesystem / schemas"]
+    end
+  end
+
+  subgraph records["Issue-local durable truth"]
+    prompts["SIP → STP → SPP → VPP → SRP → SOR"]
+    index["Operational index"]
+    designs["Design + Mermaid diagram"]
+    proof["PVF, logs, review evidence"]
+  end
+
+  subgraph external["External systems"]
+    repo["Git repository / worktrees"]
+    gh["GitHub issues / PRs / checks / reviews"]
+    commands["Repository-declared proof commands"]
+  end
+
+  subgraph separate["Separate products — no dependency"]
+    adl["Main ADL product"]
+    runtime["ADL Runtime v3"]
+  end
+
+  actor --> entry --> api --> machine
+  machine <--> cards
+  machine --> design
+  machine --> claims
+  machine --> scheduler
+  scheduler -. "eligibility report only" .-> machine
+  validate --> pvf --> shepherd --> machine
+  machine --> evidence
+
+  cards <--> prompts
+  design <--> designs
+  claims <--> index
+  evidence <--> index
+  pvf <--> proof
+  shepherd <--> proof
+
+  machine --> git
+  machine --> github
+  pvf --> process
+  cards --> files
+  evidence --> files
+  git <--> repo
+  github <--> gh
+  process --> commands
+  commands -. "explicit cross-product proof only" .-> adl
+  commands -. "explicit cross-product proof only" .-> runtime
+
+  classDef core fill:#eef4ff,stroke:#315a9b;
+  classDef truth fill:#fff7e6,stroke:#9a6b16;
+  classDef separate fill:#f4f4f4,stroke:#666,stroke-dasharray:5 5;
+  class machine,cards,design,claims,scheduler,pvf,shepherd,evidence core;
+  class prompts,index,designs,proof truth;
+  class adl,runtime separate;

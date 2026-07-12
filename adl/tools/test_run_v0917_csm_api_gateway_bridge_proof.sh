@@ -23,7 +23,7 @@ case "$1 $2" in
     printf '%s\n' '{"Items":[{"StageName":"prod","AutoDeploy":true}]}'
     ;;
   "apigatewayv2 get-routes")
-    printf '%s\n' '{"Items":[{"RouteKey":"GET /status","Target":"integrations/int-1234567890"},{"RouteKey":"GET /health","Target":"integrations/int-1234567890"},{"RouteKey":"GET /ready","Target":"integrations/int-1234567890"},{"RouteKey":"GET /metrics","Target":"integrations/int-1234567890"},{"RouteKey":"GET /events","Target":"integrations/int-1234567890"},{"RouteKey":"GET /chronosense","Target":"integrations/int-1234567890"},{"RouteKey":"GET /shepherd","Target":"integrations/int-1234567890"},{"RouteKey":"GET /curiosity","Target":"integrations/int-1234567890"},{"RouteKey":"GET /api-gateway-bridge","Target":"integrations/int-1234567890"}]}'
+    printf '%s\n' '{"Items":[{"RouteKey":"GET /status","Target":"integrations/int-1234567890"},{"RouteKey":"GET /health","Target":"integrations/int-1234567890"},{"RouteKey":"GET /ready","Target":"integrations/int-1234567890"},{"RouteKey":"GET /metrics","Target":"integrations/int-1234567890"},{"RouteKey":"GET /events","Target":"integrations/int-1234567890"},{"RouteKey":"GET /chronosense","Target":"integrations/int-1234567890"},{"RouteKey":"GET /shepherd","Target":"integrations/int-1234567890"},{"RouteKey":"GET /curiosity","Target":"integrations/int-1234567890"},{"RouteKey":"GET /reasoning","Target":"integrations/int-1234567890"},{"RouteKey":"GET /api-gateway-bridge","Target":"integrations/int-1234567890"},{"RouteKey":"GET /persistence","Target":"integrations/int-1234567890"}]}'
     ;;
   "apigatewayv2 get-integrations")
     printf '%s\n' '{"Items":[{"IntegrationId":"int-1234567890","IntegrationType":"HTTP_PROXY","IntegrationUri":"https://loopback-proxy.invalid/csm"}]}'
