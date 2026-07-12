@@ -11,6 +11,7 @@ pub mod networking;
 pub mod observability;
 pub mod resident_agent;
 pub mod runtime_api;
+pub mod runtime_api_auth;
 pub mod supervision;
 pub mod topology;
 
