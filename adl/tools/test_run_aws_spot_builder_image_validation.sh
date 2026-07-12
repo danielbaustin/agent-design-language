@@ -85,6 +85,10 @@ TOOLS
       echo "validation container did not select lld" >&2
       exit 2
     }
+    [[ "$args" == *":/cache-root"* && "$args" == *"CARGO_TARGET_DIR=/cache-root/container-target"* ]] || {
+      echo "validation container did not mount the cache root" >&2
+      exit 2
+    }
     run_root=""
     previous=""
     for arg in "$@"; do
