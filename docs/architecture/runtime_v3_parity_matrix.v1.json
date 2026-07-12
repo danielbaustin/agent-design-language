@@ -161,9 +161,9 @@
       "id": "guardian.packaging_soak",
       "sources": ["infra/rustysd/adl-runtime-kernel.service", "issue 5120"],
       "runtime_v3_owner": "external guardian and closeout lane",
-      "disposition": "planned_5175",
+      "disposition": "implemented_5175_pending_final_review",
       "parity": "restart, signals, output capture, fault injection, soak, footprint",
-      "proof": "rustysd/Horust/platform matrix and bounded soak"
+      "proof": "docs/architecture/RUNTIME_V3_GUARDIAN_AND_SOAK.md, infra/horust, infra/systemd, and adl-runtime-kernel/tests/guardian_soak.rs"
     }
   ]
 }

@@ -7,9 +7,11 @@ pub mod backpressure;
 pub mod curiosity;
 pub mod determinism;
 pub mod networking;
+pub mod observability;
 pub mod reasoning_runtime;
 pub mod resident_agent;
 pub mod runtime_api;
+pub mod runtime_api_auth;
 pub mod supervision;
 pub mod topology;
 

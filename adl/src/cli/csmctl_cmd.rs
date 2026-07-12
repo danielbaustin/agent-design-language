@@ -1,22 +1,28 @@
+use std::net::SocketAddr;
 use std::path::PathBuf;
+use std::time::Duration;
 
 use anyhow::{anyhow, Context, Result};
+use serde_json::json;
 
 use super::csm_cmd::real_csm_standalone;
 use super::process_cmd::real_process;
+use adl::long_lived_agent::load_spec;
+use adl_runtime::runtime_api_auth::RuntimeApiCredentialStore;
 
 pub(crate) fn real_csmctl(args: &[String]) -> Result<()> {
     match args.first().map(String::as_str) {
         Some("runtime") => real_runtime(&args[1..]),
         Some("status") => real_status(&args[1..]),
         Some("diagnostics") => real_diagnostics(&args[1..]),
+        Some("api") => real_api(&args[1..]),
         Some("cloud") => real_cloud(&args[1..]),
         Some("--help" | "-h" | "help") | None => {
             println!("{}", csmctl_usage());
             Ok(())
         }
         Some(other) => Err(anyhow!(
-            "unknown csmctl module '{other}'. Expected runtime, status, diagnostics, cloud, help, or --version.\n\n{}",
+            "unknown csmctl module '{other}'. Expected runtime, api, status, diagnostics, cloud, help, or --version.\n\n{}",
             csmctl_usage()
         )),
     }
@@ -31,6 +37,8 @@ Usage:\n\
   csmctl runtime backpressure prove ...\n\
   csmctl runtime storage prove-s3 ...\n\
   csmctl runtime observatory --packet <visibility-packet.json> ...\n\
+  csmctl api get --spec <agent-spec.yaml> [--path /status] [--bind 127.0.0.1:19997]\n\
+  csmctl api credential <status|rotate|revoke> --spec <agent-spec.yaml>\n\
   csmctl status [--pid <pid>|--pid-file <path>|--port <port> [--host 127.0.0.1]] [--json]\n\
   csmctl diagnostics process status [--pid <pid>|--pid-file <path>|--port <port>] [--json]\n\
   csmctl cloud aws-signal acip-sns-proof ...\n\
@@ -39,6 +47,7 @@ Usage:\n\
   csmctl --version\n\n\
 Modules:\n\
   runtime      Administer the CSM service, governed stop, embedded API bind, continuity, backpressure, storage, and observatory surfaces.\n\
+  api          Authenticated client and credential lifecycle for the embedded runtime API.\n\
   status       Permission-safe liveness checks for CSM process metadata or loopback ports.\n\
   diagnostics  Explicit diagnostic wrappers around permission-safe process probes.\n\
   cloud        Governed runtime cloud-control and signal proof surfaces.\n\n\
@@ -47,6 +56,133 @@ Boundaries:\n\
   - csmctl is the operator/admin control plane for that runtime.\n\
   - adl remains ADL language authoring, compilation, validation, and workflow tooling.\n\
   - C-SDLC issue execution remains with adl/tools/pr.sh and adl-csdlc compatibility surfaces."
+}
+
+fn real_api(args: &[String]) -> Result<()> {
+    match args.first().map(String::as_str) {
+        Some("get") => csmctl_api_get(&args[1..]),
+        Some("credential") => csmctl_api_credential(&args[1..]),
+        Some("--help" | "-h" | "help") | None => {
+            println!("{}", csmctl_api_usage());
+            Ok(())
+        }
+        Some(other) => Err(anyhow!(
+            "unknown csmctl api command '{other}'. Expected get, credential, or help.\n\n{}",
+            csmctl_api_usage()
+        )),
+    }
+}
+
+fn csmctl_api_usage() -> &'static str {
+    "csmctl api - authenticated CSM runtime API control plane\n\n\
+Usage:\n\
+  csmctl api get --spec <agent-spec.yaml> [--path /status] [--bind 127.0.0.1:19997]\n\
+  csmctl api credential status --spec <agent-spec.yaml>\n\
+  csmctl api credential rotate --spec <agent-spec.yaml>\n\
+  csmctl api credential revoke --spec <agent-spec.yaml>\n\n\
+Notes:\n\
+  Credentials are read from the runtime state root, sent only in the Authorization header, and never printed.\n\
+  Rotation and revocation are observed by the running CSM API without a restart."
+}
+
+fn csmctl_api_get(args: &[String]) -> Result<()> {
+    let spec = required_path_arg(args, "--spec")?;
+    let bind = optional_arg(args, "--bind").unwrap_or("127.0.0.1:19997");
+    let path = optional_arg(args, "--path").unwrap_or("/status");
+    if !path.starts_with('/') || path.contains(['\r', '\n']) {
+        return Err(anyhow!("csmctl api --path must be an absolute HTTP path"));
+    }
+    let addr: SocketAddr = bind
+        .parse()
+        .with_context(|| format!("parse csmctl API bind {bind}"))?;
+    if !addr.ip().is_loopback() {
+        return Err(anyhow!(
+            "csmctl refuses to send the runtime API credential to a non-loopback address"
+        ));
+    }
+    let loaded = load_spec(&spec).context("load CSM spec for authenticated API client")?;
+    let store = RuntimeApiCredentialStore::for_state_root(&loaded.state_root);
+    let url = format!("http://{bind}{path}");
+    let client = reqwest::blocking::Client::builder()
+        .connect_timeout(Duration::from_secs(2))
+        .timeout(Duration::from_secs(5))
+        .build()
+        .context("build csmctl runtime API client")?;
+    let response = store
+        .with_bearer_token(|token| {
+            for attempt in 0..20 {
+                match client.get(&url).bearer_auth(token).send() {
+                    Ok(response) => return Ok(response),
+                    Err(err) if err.is_connect() && attempt < 19 => {
+                        std::thread::sleep(Duration::from_millis(25));
+                    }
+                    Err(err) => return Err(err),
+                }
+            }
+            unreachable!("bounded runtime API connection retry loop always returns")
+        })
+        .map_err(anyhow::Error::msg)?
+        .context("call authenticated CSM runtime API")?;
+    let status = response.status();
+    let body = response.text().context("read CSM runtime API response")?;
+    if !status.is_success() {
+        return Err(anyhow!("CSM runtime API returned HTTP {status}: {body}"));
+    }
+    println!("{body}");
+    Ok(())
+}
+
+fn csmctl_api_credential(args: &[String]) -> Result<()> {
+    let action = args
+        .first()
+        .map(String::as_str)
+        .ok_or_else(|| anyhow!("csmctl api credential requires status, rotate, or revoke"))?;
+    let spec = required_path_arg(&args[1..], "--spec")?;
+    let loaded = load_spec(&spec).context("load CSM spec for credential administration")?;
+    let store = RuntimeApiCredentialStore::for_state_root(&loaded.state_root);
+    let metadata = match action {
+        "status" => {
+            let metadata = store.metadata().map_err(anyhow::Error::msg)?;
+            println!(
+                "{}",
+                serde_json::to_string_pretty(&json!({
+                    "schema": "adl.csmctl.runtime_api_credential.v1",
+                    "action": action,
+                    "status": if metadata.is_some() { "present" } else { "missing" },
+                    "credential": metadata,
+                    "secret_printed": false
+                }))?
+            );
+            return Ok(());
+        }
+        "rotate" => store.rotate(),
+        "revoke" => store.revoke(),
+        other => return Err(anyhow!("unknown credential action '{other}'")),
+    }
+    .map_err(anyhow::Error::msg)?;
+    println!(
+        "{}",
+        serde_json::to_string_pretty(&json!({
+            "schema": "adl.csmctl.runtime_api_credential.v1",
+            "action": action,
+            "status": "completed",
+            "credential": metadata,
+            "secret_printed": false
+        }))?
+    );
+    Ok(())
+}
+
+fn required_path_arg(args: &[String], flag: &str) -> Result<PathBuf> {
+    optional_arg(args, flag)
+        .map(PathBuf::from)
+        .ok_or_else(|| anyhow!("missing required {flag} <path>"))
+}
+
+fn optional_arg<'a>(args: &'a [String], flag: &str) -> Option<&'a str> {
+    args.windows(2)
+        .find(|pair| pair[0] == flag)
+        .map(|pair| pair[1].as_str())
 }
 
 fn real_runtime(args: &[String]) -> Result<()> {
@@ -184,11 +320,14 @@ fn default_csm_owner_binary() -> Result<PathBuf> {
 #[cfg(test)]
 mod tests {
     use super::{
-        csmctl_cloud_usage, csmctl_diagnostics_usage, csmctl_runtime_usage, csmctl_status_usage,
-        csmctl_usage, real_csmctl, runtime_service_args,
+        csmctl_api_get, csmctl_api_usage, csmctl_cloud_usage, csmctl_diagnostics_usage,
+        csmctl_runtime_usage, csmctl_status_usage, csmctl_usage, real_csmctl, runtime_service_args,
     };
+    use adl::csm_runtime_api::{serve_runtime_api, CsmRuntimeApiOptions};
+    use adl_runtime::runtime_api_auth::RuntimeApiCredentialStore;
     use serde_json::Value;
     use std::fs;
+    use std::net::TcpListener;
     use std::path::PathBuf;
     use std::sync::atomic::{AtomicU64, Ordering};
 
@@ -248,6 +387,7 @@ safety:
     fn csmctl_usage_documents_modular_runtime_control_plane() {
         let usage = csmctl_usage();
         assert!(usage.contains("csmctl runtime service"));
+        assert!(usage.contains("csmctl api get"));
         assert!(usage.contains("csmctl status"));
         assert!(usage.contains("csmctl diagnostics process status"));
         assert!(usage.contains("csmctl cloud aws-signal"));
@@ -255,6 +395,64 @@ safety:
         assert!(usage.contains("adl remains ADL language"));
         assert!(!usage.contains("adl compile"));
         assert!(!usage.contains("adl pr run"));
+    }
+
+    #[test]
+    fn csmctl_authenticated_api_client_uses_runtime_owned_credential() {
+        let root = temp_root("api-client");
+        let spec = write_spec(&root);
+        let reservation = (19_950..20_000)
+            .find_map(|port| TcpListener::bind(("127.0.0.1", port)).ok())
+            .expect("available governed CSM test port");
+        let bind = reservation.local_addr().unwrap().to_string();
+        drop(reservation);
+        let server_spec = spec.clone();
+        let server_bind = bind.clone();
+        let server = std::thread::spawn(move || {
+            serve_runtime_api(CsmRuntimeApiOptions {
+                spec_path: server_spec,
+                bind: server_bind,
+                test_max_requests: Some(1),
+                idle_timeout_ms: Some(5_000),
+                shutdown_file: None,
+                otel_status_path: None,
+                otel_log_path: None,
+            })
+        });
+        let loaded = adl::long_lived_agent::load_spec(&spec).unwrap();
+        let store = RuntimeApiCredentialStore::for_state_root(&loaded.state_root);
+        for _ in 0..100 {
+            if store.path().exists() {
+                break;
+            }
+            std::thread::sleep(std::time::Duration::from_millis(10));
+        }
+        csmctl_api_get(&[
+            "--spec".to_string(),
+            spec.display().to_string(),
+            "--bind".to_string(),
+            bind,
+            "--path".to_string(),
+            "/status".to_string(),
+        ])
+        .expect("csmctl authenticated API request");
+        let result = server.join().unwrap().unwrap();
+        assert_eq!(result.served_requests, 1);
+    }
+
+    #[test]
+    fn csmctl_api_refuses_to_send_credentials_off_loopback() {
+        let root = temp_root("api-non-loopback");
+        let spec = write_spec(&root);
+        let err = csmctl_api_get(&[
+            "--spec".to_string(),
+            spec.display().to_string(),
+            "--bind".to_string(),
+            "192.0.2.1:19997".to_string(),
+        ])
+        .unwrap_err();
+        assert!(err.to_string().contains("non-loopback"));
+        assert!(csmctl_api_usage().contains("never printed"));
     }
 
     #[test]

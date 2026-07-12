@@ -1,0 +1,72 @@
+{
+  "schema": "adl.runtime_v3.cutover_checklist.v1",
+  "issue": 5218,
+  "sprint_issue": 5174,
+  "decision": "continue_incubation",
+  "cutover_authorized": false,
+  "default_runtime_switch_authorized": false,
+  "runtime_v2_deletion_authorized": false,
+  "created_at_utc": "2026-07-12T05:40:00Z",
+  "evidence": {
+    "parity_matrix": "docs/architecture/runtime_v3_parity_matrix.v1.json",
+    "shadow_parity_report": "docs/architecture/runtime_v3_shadow_parity_report.v1.json",
+    "guardian_soak_report": "docs/architecture/runtime_v3_guardian_soak_report.v1.json",
+    "horust_qualification_report": "docs/architecture/runtime_v3_horust_qualification_report.v1.json",
+    "final_review": "docs/architecture/RUNTIME_V3_FINAL_REVIEW_5175.md"
+  },
+  "issue_states": [
+    {"issue": 5174, "state": "open", "role": "runtime_v3_sprint_umbrella", "cutover_effect": "blocks_final_sprint_closeout"},
+    {"issue": 5175, "state": "closed", "role": "guardian_packaging_soak", "cutover_effect": "evidence_supports_incubation"},
+    {"issue": 5176, "state": "closed", "role": "parity_inventory_contracts", "cutover_effect": "required_input_present"},
+    {"issue": 5177, "state": "closed", "role": "control_observability", "cutover_effect": "required_input_present"},
+    {"issue": 5178, "state": "closed", "role": "governed_execution", "cutover_effect": "required_input_present"},
+    {"issue": 5179, "state": "closed", "role": "shadow_parity_migration", "cutover_effect": "explicit_opt_in_only"},
+    {"issue": 5180, "state": "closed", "role": "reasoning_loops_adaptive_dags", "cutover_effect": "required_input_present"},
+    {"issue": 5181, "state": "closed", "role": "continuity_recovery", "cutover_effect": "required_input_present"},
+    {"issue": 5182, "state": "closed", "role": "configuration_topology", "cutover_effect": "required_input_present"},
+    {"issue": 5183, "state": "closed", "role": "operations_integrations", "cutover_effect": "required_input_present"},
+    {"issue": 5211, "state": "open", "role": "horust_adoption_qualification", "cutover_effect": "blocked_by_unreleased_restart_budget_fix"},
+    {"issue": 5221, "state": "open", "role": "fixed_horust_release_rollout", "cutover_effect": "required_before_guardian_cutover"},
+    {"issue": 5222, "state": "open", "role": "weather_gpu_qualification", "cutover_effect": "gpu_proof_deferred"}
+  ],
+  "gates": [
+    {
+      "id": "guardian.bounded_restart",
+      "status": "blocked",
+      "source": "docs/architecture/runtime_v3_horust_qualification_report.v1.json",
+      "reason": "Horust 0.1.13 does not enforce restart.attempts for repeated post-start failures.",
+      "unblocks_after": ["FedericoPonzi/Horust#319 merged", "fixed Horust release published", "#5221 pins and requalifies release"]
+    },
+    {
+      "id": "migration.default_runtime",
+      "status": "not_authorized",
+      "source": "docs/architecture/runtime_v3_shadow_parity_report.v1.json",
+      "reason": "Runtime v2 remains default; Runtime v3 support is explicit opt-in only."
+    },
+    {
+      "id": "release.proof_gate",
+      "status": "pending",
+      "source": "#5220",
+      "reason": "Release proof gate has not run for the selected cutover scope."
+    },
+    {
+      "id": "entrypoint.explicit_switch",
+      "status": "pending",
+      "source": "#5219",
+      "reason": "Default behavior must not change until an explicit reversible switch exists and is reviewed."
+    },
+    {
+      "id": "weather.gpu",
+      "status": "deferred",
+      "source": "#5222",
+      "reason": "GPU proof deferred to #5222; no GPU-runtime claim is made by #5211 or #5218."
+    }
+  ],
+  "non_claims": [
+    "No Runtime v3 production cutover is authorized.",
+    "No Runtime v2 deletion is authorized.",
+    "No Horust 0.1.13 bounded-restart guarantee is claimed.",
+    "No GPU monitoring or GPU runtime qualification is claimed.",
+    "Capability routing is not full Runtime v2 behavioral equivalence."
+  ]
+}

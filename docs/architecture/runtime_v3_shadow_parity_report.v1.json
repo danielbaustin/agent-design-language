@@ -22,16 +22,16 @@
     {"id":"moral_affect_wellbeing","disposition":"unsupported","proof":"Domain adapter deferred; no cutover claim"},
     {"id":"curiosity_intelligence_theory_of_mind","disposition":"unsupported","proof":"Domain adapter deferred; no cutover claim"},
     {"id":"migration.shadow_parity","disposition":"live_shadow_fixture","proof":"adl-runtime-kernel/tests/parity.rs live v2/v3 process backends and reversible forwarding facade"},
-    {"id":"guardian.packaging_soak","disposition":"blocked","proof":"Pending issue #5175"}
+    {"id":"guardian.packaging_soak","disposition":"bounded_soak_complete_pending_review","proof":"adl-runtime-kernel/tests/guardian_soak.rs and docs/architecture/runtime_v3_guardian_soak_report.v1.json"}
   ],
   "module_closure": {
-    "baseline_modules": 194,
-    "routed_modules": 194,
+    "baseline_modules": 195,
+    "routed_modules": 195,
     "proof": "Each filename routes to a capability disposition and proof reference; this is ownership routing, not behavioral equivalence"
   },
   "footprint": {
-    "v3": {"implementation_loc":7922,"direct_dependencies":17,"tests":93,"build_millis":13550,"fixture_runtime_median_micros":3890},
-    "v2": {"implementation_loc":83048,"direct_dependencies":54,"tests":587,"build_millis":203980,"fixture_runtime_median_micros":5645},
-    "measurement": "Fresh local debug builds in isolated target directories; median of 21 sequential fresh-process executions of the same logical three-iteration bounded reasoning loop"
+    "v3": {"implementation_loc":8446,"direct_dependencies":18,"tests":106,"build_millis":null,"fixture_runtime_median_micros":5717},
+    "v2": {"implementation_loc":83048,"direct_dependencies":54,"tests":587,"build_millis":203980,"fixture_runtime_median_micros":7844},
+    "measurement": "Median of 21 sequential-backend fresh-process executions of the same logical three-iteration bounded reasoning loop after #5175 parity remediation; Runtime v3 isolated build time was not remeasured"
   }
 }

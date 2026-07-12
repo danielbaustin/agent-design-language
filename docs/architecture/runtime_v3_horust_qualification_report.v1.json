@@ -1,0 +1,61 @@
+{
+  "schema": "adl.runtime_v3.horust_qualification.v1",
+  "issue": 5211,
+  "runtime_source_loc": 8446,
+  "guardian": {
+    "name": "horust",
+    "version": "0.1.13",
+    "crate_sha256": "a1ee5cbfda91cd77652dfd8849f68ecb40af8d2359ccc91f96fbff3d5a3976a3"
+  },
+  "gates": {
+    "macos_native_lifecycle": {
+      "status": "passed",
+      "tests_passed": 7,
+      "soak_cycles": 100
+    },
+    "linux_native_lifecycle": {
+      "status": "focused_pass",
+      "host_class": "wsl2-nvidia-rtx-3090",
+      "scope": ["packaging", "restart-budget-reproduction", "environment-isolation", "restart-continuity", "configuration-failure"],
+      "non_claim": "not a complete Linux soak or signal-forwarding qualification"
+    },
+    "linux_systemd_containment": {
+      "status": "passed",
+      "host_class": "disposable-aws-spot",
+      "control_group": "/system.slice/adl-runtime-kernel.service",
+      "dynamic_user": true,
+      "kill_mode": "control-group",
+      "memory_max_bytes": 2147483648,
+      "tasks_max": 512,
+      "instance_terminated": true
+    },
+    "bounded_restart": {
+      "status": "blocked",
+      "upstream_issue": "https://github.com/FedericoPonzi/Horust/issues/318",
+      "upstream_fix_pr": "https://github.com/FedericoPonzi/Horust/pull/319",
+      "reason": "Horust 0.1.13 does not enforce restart.attempts for repeated post-start failures under RestartStrategy::OnFailure"
+    },
+    "smallest_gpu_spot": {
+      "status": "blocked_before_launch",
+      "requested_smallest_shape": "g4dn.xlarge",
+      "fallback_family": "p3",
+      "reason": "All G and VT Spot Instance Requests quota was zero; g4dn.xlarge and g5.xlarge are offered in multiple regions but cannot launch, while the only advertised P3 shape required 96 vCPUs against the approved 8-vCPU P-family Spot quota",
+      "quota_evidence": {
+        "g_and_vt_spot_vcpus": 0,
+        "p_spot_vcpus": 8,
+        "available_p_shape": "p3dn.24xlarge",
+        "available_p_shape_vcpus": 96,
+        "small_gpu_shapes_offered": ["g4dn.xlarge", "g5.xlarge"]
+      },
+      "instance_launched": false,
+      "runtime_claim": false
+    }
+  },
+  "disposition": "blocked",
+  "cutover_authorized": false,
+  "non_claims": [
+    "This report does not authorize Runtime v3 cutover.",
+    "This report does not claim GPU monitoring or GPU runtime qualification from AWS Spot.",
+    "This report does not claim Horust enforces a bounded restart budget."
+  ]
+}

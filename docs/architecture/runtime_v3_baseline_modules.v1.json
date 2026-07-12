@@ -10,6 +10,7 @@
     "adl-runtime/src/determinism.rs",
     "adl-runtime/src/lib.rs",
     "adl-runtime/src/networking.rs",
+    "adl-runtime/src/observability.rs",
     "adl-runtime/src/resident_agent.rs",
     "adl-runtime/src/runtime_api.rs",
     "adl-runtime/src/supervision.rs",

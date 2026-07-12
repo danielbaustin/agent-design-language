@@ -1,0 +1,87 @@
+{
+  "schema": "adl.runtime_v3.guardian_soak_report.v1",
+  "issue": 5175,
+  "source_revision": "candidate_source_hashes_below",
+  "base_commit": "25fa0fe2c2c7bcd4d3db6fc71c6d573e48dbbf07",
+  "platform": "Darwin arm64",
+  "soak_execution": {
+    "schema": "adl.runtime_v3.guardian_soak_execution.v1",
+    "cycles": 100,
+    "items_per_cycle": 16,
+    "processed_items": 1600,
+    "continuity_generation": 100,
+    "result": "pass",
+    "faults": {
+      "component_failure": "restart succeeded after injected post-readiness failure",
+      "child_crash_restart": "classified fatal exit followed by continuity generation recovery",
+      "queue_saturation": "bounded reject policy and counters observed",
+      "corrupt_continuity": "failed closed without replacing corrupt bytes",
+      "clock_degradation": "observed_before_authority_promotion",
+      "shutdown_deadline": "non-cooperative component forcibly aborted"
+    },
+    "automatic_cutover": false
+  },
+  "parity_harness_adversarial_proof": {
+    "process_group_cleanup": "pass",
+    "timeout_cleanup": "pass",
+    "oversized_file_cleanup": "pass",
+    "invalid_fixture_boundary": "pass",
+    "divergent_backend_detection": "pass",
+    "sequential_live_fixture": {
+      "samples_per_runtime": 21,
+      "v2_median_micros": 7844,
+      "v3_median_micros": 5717,
+      "result": "equivalent bounded completion, terminal success, replay order, and source-specific state validation"
+    }
+  },
+  "footprint": {
+    "runtime_v2": {
+      "implementation_loc": 83048,
+      "tests": 587,
+      "binary_sha256": "aa57de1ba18821a31964fe812938f9b576ae719846408d0a6ee440c5a1249549"
+    },
+    "runtime_v3": {
+      "implementation_loc": 8446,
+      "normal_direct_dependencies": 18,
+      "tests": 106,
+      "binary_sha256": "c45c96d7616bc30842faba74a92dcb19add3987ad761a7db971aa54b8375f8f7"
+    }
+  },
+  "packaging": {
+    "selected_guardian": "horust-0.1.13",
+    "guardian_configuration": "infra/horust/adl-runtime-kernel.toml",
+    "bakeoff_configuration": "infra/horust/adl-runtime-kernel-bakeoff.toml",
+    "optional_linux_adapter": "infra/systemd/adl-runtime-kernel.service",
+    "rustysd_candidate": "infra/rustysd/adl-runtime-kernel.service",
+    "native_horust_restart": "pass: one injected fatal exit, generation advanced to 2",
+    "native_horust_sigterm": "pass: signal forwarded, generation 1 checkpointed, port 20997 closed",
+    "native_horust_configuration_exit": "pass: exit 78 executed once and was not restarted",
+    "bakeoff": "docs/architecture/runtime_v3_guardian_matrix.v1.json"
+  },
+  "validation_provenance": {
+    "executed_at_utc": "2026-07-12T01:40:54Z",
+    "host": "Darwin 26.5 arm64",
+    "rustc": "rustc 1.92.0 (ded5c06cf 2025-12-08)",
+    "cargo": "cargo 1.92.0 (344c4567c 2025-10-21)",
+    "horust_version": "0.1.13",
+    "horust_sha256": "707940ff4e569f416f2b3cb42801b1d9e5af8a6ea1ec842abf32b01b91f7cb9f",
+    "commands": [
+      "cargo test --manifest-path adl-runtime-kernel/Cargo.toml",
+      "ADL_HORUST_BIN=.adl/local-tools/horust/bin/horust ADL_RUNTIME_V3_SOAK_REPORT=.adl/local-artifacts/runtime-v3-soak/report.json cargo test --manifest-path adl-runtime-kernel/Cargo.toml --test guardian_soak -- --ignored --test-threads=1",
+      "ADL_RUNTIME_V2_BIN=<stable-owner-binary> ADL_RUNTIME_V3_BIN=<candidate-binary> cargo test --manifest-path adl-runtime-kernel/Cargo.toml --test parity live_v2_v3_process_backends_execute_one_shared_fixture -- --ignored --nocapture",
+      "cargo clippy --manifest-path adl-runtime-kernel/Cargo.toml --all-targets -- -D warnings"
+    ],
+    "candidate_source_sha256": {
+      "adl-runtime-kernel/src/parity.rs": "413f8d83a3eecdb231db69bd2cd52c000190edc3b307b8bc9f261c843bf5bd3e",
+      "adl-runtime-kernel/src/bin/adl-runtime-kernel.rs": "bff9213867cedd3937808b5ea979d050e7cf13806f65c79f34a60945eadef6c0",
+      "adl-runtime-kernel/tests/parity.rs": "4f1103f6fcc2946ad6bf4072c3284cd30e12f695db3a0ba82e66e33bd8b70454",
+      "adl-runtime-kernel/tests/guardian_soak.rs": "a355ed44f673dea6af45c3a8048d79c36806a8d86f6722f18ca69a724b151550",
+      "infra/horust/adl-runtime-kernel.toml": "a330dc604d007e1d47422ed6836a0333ee9164530d8c2acc263ee9a6d60a10db",
+      "infra/horust/adl-runtime-kernel-bakeoff.toml": "2d7fb098c7d99ebe838130971b91cca02867ac1ff42cdf1d6f5f5025ef15e512",
+      "docs/architecture/runtime_v3_parity_matrix.v1.json": "e7e188af5cafea2b53627d7d31c4287b9933bde31aa0fb8f1e3be5daf68ccfb8"
+    }
+  },
+  "automatic_cutover": false,
+  "cutover_authority": "none; in-process coverage evidence is not operator authorization",
+  "decision": "continue_incubation_reviewed_ready_for_5175_closeout"
+}
