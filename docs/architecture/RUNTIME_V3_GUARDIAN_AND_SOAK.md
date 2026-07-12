@@ -81,6 +81,16 @@ Horust adoption remains blocked by upstream issue 318. Passing platform,
 containment, and isolation gates does not compensate for an unbounded restart
 loop.
 
+Issue `#5224` reviews fallback candidates while that upstream Horust path is
+blocked. The retained fallback decision is
+`docs/architecture/RUNTIME_V3_GUARDIAN_FALLBACK_DECISION.md`: no reviewed COTS
+candidate is a drop-in cross-platform external guardian replacement. If Horust
+remains blocked, the next path is a separate follow-on that first tests whether
+`rust-tokio-supervisor` can supervise a narrow wrapper task that owns the
+runtime kernel as a `tokio::process` child, and otherwise builds a small
+ADL-owned Tokio process guardian shim that preserves the same child contract
+and uses COTS crates only for bounded supporting concerns.
+
 ## Soak Gate
 
 The bounded soak repeats integrated kernel execution and continuity recovery,
