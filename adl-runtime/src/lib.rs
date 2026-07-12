@@ -3,8 +3,8 @@
 //! This crate is intentionally limited to runtime-owned contracts that can be
 //! built without ADL compiler or C-SDLC control-plane crates.
 
-pub mod backpressure;
 pub mod acip;
+pub mod backpressure;
 pub mod continuity_history;
 pub mod curiosity;
 pub mod determinism;

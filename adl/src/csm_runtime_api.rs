@@ -648,8 +648,10 @@ fn acip_response(
         "transport": {
             "json_projection": "canonical_serde_jcs_payload_projection",
             "protobuf": "prost_envelope",
-            "websocket": "same_axum_runtime_api_listener_no_new_port",
-            "websocket_path": "/acip/ws"
+            "websocket": "upgrade_path_declared_but_not_activated_in_runtime_api_handler",
+            "websocket_path": "/acip/ws",
+            "activation_status": "not_activated",
+            "activation_policy": "fail_closed_until_runtime_upgrade_handler_is_integrated"
         }
     });
     assert_api_response_redacted(&response)?;
@@ -724,7 +726,12 @@ fn api_gateway_bridge_response(
             "gateway_identity_verified": false
         })),
         "verified_gateway_identity": gateway_identity,
-        "required_runtime_routes": CSM_RUNTIME_API_ENDPOINTS,
+        "required_runtime_routes": api_gateway_bridge_required_runtime_routes(),
+        "non_gateway_routes": [{
+            "route": "/acip/ws",
+            "reason": "websocket_upgrade_not_activated",
+            "activation_policy": "fail_closed_until_runtime_upgrade_handler_is_integrated"
+        }],
         "negative_case_policy": {
             "missing_token": "api_gateway_authorization_denied",
             "malformed_request": "api_gateway_malformed_request",
@@ -915,6 +922,14 @@ fn api_gateway_bridge_runtime_status(loaded: &LoadedAgentSpec) -> Value {
         "polis_id_hash": artifact.pointer("/value/polis_ingress/polis_id_hash").cloned().unwrap_or(Value::Null),
         "runtime_identity_verified": artifact.pointer("/value/polis_ingress/runtime_identity_verified").cloned().unwrap_or(Value::Null)
     })
+}
+
+fn api_gateway_bridge_required_runtime_routes() -> Vec<&'static str> {
+    CSM_RUNTIME_API_ENDPOINTS
+        .iter()
+        .copied()
+        .filter(|endpoint| *endpoint != "/acip/ws")
+        .collect()
 }
 
 fn acip_api_status(loaded: &LoadedAgentSpec, runtime_capabilities: &Value) -> Value {
@@ -1618,6 +1633,7 @@ struct RuntimeApiRequest {
     method: String,
     path: String,
     origin: Option<String>,
+    upgrade: bool,
     authorization: Option<String>,
     gateway_identity: Option<String>,
     gateway_signature: Option<String>,
@@ -1635,6 +1651,11 @@ impl RuntimeApiRequest {
                 .get("origin")
                 .and_then(|value| value.to_str().ok())
                 .map(str::to_string),
+            upgrade: headers
+                .get("upgrade")
+                .and_then(|value| value.to_str().ok())
+                .map(|value| value.eq_ignore_ascii_case("websocket"))
+                .unwrap_or(false),
             authorization: headers
                 .get("authorization")
                 .and_then(|value| value.to_str().ok())
@@ -1735,6 +1756,26 @@ fn runtime_api_http_response(
     ));
     match request.method.as_str() {
         "GET" => {
+            if request.path.split('?').next().unwrap_or(&request.path) == "/acip/ws" {
+                return Ok(RuntimeApiHttpResponse {
+                    status: if request.upgrade {
+                        "501 Not Implemented"
+                    } else {
+                        "426 Upgrade Required"
+                    },
+                    headers,
+                    body: Some(json!({
+                        "schema": CSM_RUNTIME_API_ACIP_SCHEMA,
+                        "runtime_owner": "csm",
+                        "status": "websocket_upgrade_not_activated",
+                        "runtime_api_path": "/acip/ws",
+                        "upgrade_required": true,
+                        "upgrade_handler": "not_activated_in_csm_runtime_api",
+                        "transport_contract": "protobuf_frame_contract_available_via_acip_carrier",
+                        "activation_policy": "fail_closed_until_runtime_upgrade_handler_is_integrated"
+                    })),
+                });
+            }
             let body = runtime_api_response(options, &request.path)?;
             let status = if body.get("status").and_then(Value::as_str) == Some("not_found") {
                 "404 Not Found"
@@ -1792,7 +1833,9 @@ fn runtime_api_authenticated_http_response(
     gateway_identity: Option<&VerifiedRuntimeApiGatewayIdentity>,
 ) -> Result<RuntimeApiHttpResponse> {
     let mut response = runtime_api_http_response(options, request)?;
-    if request.method == "GET" {
+    if request.method == "GET"
+        && request.path.split('?').next().unwrap_or(&request.path) != "/acip/ws"
+    {
         response.body = Some(runtime_api_response_with_identity(
             options,
             &request.path,
@@ -2094,6 +2137,7 @@ memory: {}
                 method: "OPTIONS".to_string(),
                 path: "/status?probe=1".to_string(),
                 origin: Some("http://127.0.0.1:8765".to_string()),
+                upgrade: false,
                 authorization: None,
                 gateway_identity: None,
                 gateway_signature: None,
@@ -2361,6 +2405,7 @@ memory: {}
             method: "GET".to_string(),
             path: "/ready".to_string(),
             origin: Some("http://127.0.0.1:8765".to_string()),
+            upgrade: false,
             authorization: None,
             gateway_identity: None,
             gateway_signature: None,
@@ -2388,6 +2433,7 @@ memory: {}
             method: "OPTIONS".to_string(),
             path: "/events".to_string(),
             origin: Some("http://localhost:8765".to_string()),
+            upgrade: false,
             authorization: None,
             gateway_identity: None,
             gateway_signature: None,
@@ -2412,6 +2458,7 @@ memory: {}
             method: "GET".to_string(),
             path: "/status".to_string(),
             origin: Some("http://example.com:8765".to_string()),
+            upgrade: false,
             authorization: None,
             gateway_identity: None,
             gateway_signature: None,
@@ -2478,6 +2525,18 @@ memory: {}
             .as_array()
             .unwrap()
             .contains(&json!("/api-gateway-bridge")));
+        assert!(response["required_runtime_routes"]
+            .as_array()
+            .unwrap()
+            .contains(&json!("/acip")));
+        assert!(!response["required_runtime_routes"]
+            .as_array()
+            .unwrap()
+            .contains(&json!("/acip/ws")));
+        assert_eq!(
+            response["non_gateway_routes"][0]["reason"],
+            "websocket_upgrade_not_activated"
+        );
     }
 
     #[test]
@@ -3105,6 +3164,37 @@ memory: {}
         let acip_ws = runtime_api_response(&options, "/acip/ws").unwrap();
         assert_eq!(acip_ws["schema"], CSM_RUNTIME_API_ACIP_SCHEMA);
         assert_eq!(acip_ws["transport"]["websocket_path"], "/acip/ws");
+        assert_eq!(acip_ws["transport"]["activation_status"], "not_activated");
+    }
+
+    #[test]
+    fn runtime_api_acip_websocket_path_fails_closed_until_upgrade_handler_exists() {
+        let root = temp_root("acip-ws-not-activated");
+        let options = test_options(&root);
+        let request = RuntimeApiRequest {
+            method: "GET".to_string(),
+            path: "/acip/ws".to_string(),
+            origin: Some("http://127.0.0.1:8765".to_string()),
+            upgrade: false,
+            authorization: None,
+            gateway_identity: None,
+            gateway_signature: None,
+        };
+        let response = runtime_api_http_response(&options, &request).unwrap();
+        assert_eq!(response.status, "426 Upgrade Required");
+        assert_eq!(
+            response.body.as_ref().unwrap()["status"],
+            "websocket_upgrade_not_activated"
+        );
+
+        let mut upgraded = request;
+        upgraded.upgrade = true;
+        let response = runtime_api_http_response(&options, &upgraded).unwrap();
+        assert_eq!(response.status, "501 Not Implemented");
+        assert_eq!(
+            response.body.as_ref().unwrap()["activation_policy"],
+            "fail_closed_until_runtime_upgrade_handler_is_integrated"
+        );
     }
 
     #[test]

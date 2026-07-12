@@ -128,8 +128,7 @@ impl CsmAcipProjectionProfile {
             websocket_schema: CSM_ACIP_WEBSOCKET_SCHEMA.to_string(),
             deterministic_projection: "sha256_over_jcs_payload_then_prost_envelope".to_string(),
             future_read_guarantee:
-                "schema_versioned_envelope_fields_are_append_only_for_v0_91_7_to_v0_92"
-                    .to_string(),
+                "schema_versioned_envelope_fields_are_append_only_for_v0_91_7_to_v0_92".to_string(),
         }
     }
 }
@@ -229,7 +228,10 @@ pub fn runtime_capability() -> Value {
 
 pub fn api_status(agent_instance_id: &str, artifact: &Value, runtime_capability: Value) -> Value {
     let default_status = CsmAcipCarrierStatus::runtime_default();
-    let artifact_status = artifact.get("status").and_then(Value::as_str).unwrap_or("missing");
+    let artifact_status = artifact
+        .get("status")
+        .and_then(Value::as_str)
+        .unwrap_or("missing");
     let candidate = artifact
         .get("value")
         .and_then(|value| serde_json::from_value::<CsmAcipCarrierStatus>(value.clone()).ok())
@@ -323,8 +325,15 @@ fn validate_envelope(envelope: &AcipRuntimeEnvelopeProto) -> Result<(), String> 
     if envelope.payload_json.len() > CSM_ACIP_MAX_PAYLOAD_BYTES {
         return Err("payload_json exceeds CSM ACIP payload limit".to_string());
     }
-    serde_json::from_str::<Value>(&envelope.payload_json)
+    let parsed = serde_json::from_str::<Value>(&envelope.payload_json)
         .map_err(|err| format!("payload_json must be valid JSON: {err}"))?;
+    let canonical = deterministic_payload_json(&parsed)?;
+    if envelope.payload_json != canonical {
+        return Err(
+            "payload_json must be canonical JCS JSON before protobuf envelope admission"
+                .to_string(),
+        );
+    }
     Ok(())
 }
 
@@ -394,5 +403,21 @@ mod tests {
         let malformed = websocket_frame_status(b"not-protobuf", true);
         assert_eq!(malformed["status"], "rejected");
         assert_eq!(malformed["sequence_reserved"], false);
+    }
+
+    #[test]
+    fn protobuf_decode_rejects_noncanonical_payload_json() {
+        let envelope = AcipRuntimeEnvelopeProto {
+            schema: CSM_ACIP_PROTOBUF_SCHEMA.to_string(),
+            message_id: "m-1".to_string(),
+            source: "agent-a".to_string(),
+            target: "agent-b".to_string(),
+            route: "invoke".to_string(),
+            payload_json: r#"{"z":1,"a":{"b":true}}"#.to_string(),
+            monotonic_sequence: 1,
+        };
+        let err = decode_protobuf_envelope(&envelope.encode_to_vec())
+            .expect_err("noncanonical payload must fail closed");
+        assert!(err.contains("canonical JCS JSON"));
     }
 }

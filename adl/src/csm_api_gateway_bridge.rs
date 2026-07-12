@@ -24,6 +24,7 @@ use adl_runtime::runtime_api_auth::{
 
 const SCHEMA: &str = "adl.csm.api_gateway_bridge_proof.v1";
 const EVENT_SCHEMA: &str = "adl.csm.api_gateway_bridge.event.v1";
+const API_GATEWAY_EXCLUDED_RUNTIME_ROUTES: [&str; 1] = ["/acip/ws"];
 
 #[derive(Debug, Clone, PartialEq, Eq)]
 #[cfg(test)]
@@ -397,10 +398,9 @@ pub fn prove_api_gateway_bridge(
             selected_stage_name_hash: short_hash(stage_name),
             selected_stage_auto_deploy: stage.get("AutoDeploy").and_then(Value::as_bool),
             supported_route_keys: public_route_keys(&route_keys),
-            planned_route_keys: CSM_RUNTIME_API_ENDPOINTS
+            planned_route_keys: api_gateway_required_runtime_routes()
                 .iter()
                 .map(|endpoint| format!("GET {endpoint}"))
-                .chain(std::iter::once("GET /chronosense".to_string()))
                 .collect(),
             route_target_count: route_targets.len(),
             integration_count: integration_targets.len(),
@@ -580,7 +580,7 @@ fn integration_targets(integrations: &Value) -> Vec<String> {
 }
 
 fn validate_required_routes(routes: &[String]) -> Result<()> {
-    for endpoint in CSM_RUNTIME_API_ENDPOINTS {
+    for endpoint in api_gateway_required_runtime_routes() {
         let get_route = format!("GET {endpoint}");
         if !routes
             .iter()
@@ -647,7 +647,7 @@ fn validate_polis_ingress_response(body: &Value, expected_polis_id: &str) -> Res
 
 fn public_route_keys(routes: &[String]) -> Vec<String> {
     let mut public = Vec::new();
-    for endpoint in CSM_RUNTIME_API_ENDPOINTS {
+    for endpoint in api_gateway_required_runtime_routes() {
         let route = format!("GET {endpoint}");
         if routes.iter().any(|candidate| candidate == &route) {
             public.push(route);
@@ -657,6 +657,14 @@ fn public_route_keys(routes: &[String]) -> Vec<String> {
         public.push("$default".to_string());
     }
     public
+}
+
+fn api_gateway_required_runtime_routes() -> Vec<&'static str> {
+    CSM_RUNTIME_API_ENDPOINTS
+        .iter()
+        .copied()
+        .filter(|endpoint| !API_GATEWAY_EXCLUDED_RUNTIME_ROUTES.contains(endpoint))
+        .collect()
 }
 
 #[derive(Debug)]
@@ -1034,7 +1042,7 @@ mod tests {
         let routes = if missing_routes {
             r#"{"Items":[{"RouteKey":"GET /status"}]}"#
         } else {
-            r#"{"Items":[{"RouteKey":"GET /status","Target":"integrations/int-1234567890"},{"RouteKey":"GET /health","Target":"integrations/int-1234567890"},{"RouteKey":"GET /ready","Target":"integrations/int-1234567890"},{"RouteKey":"GET /metrics","Target":"integrations/int-1234567890"},{"RouteKey":"GET /events","Target":"integrations/int-1234567890"},{"RouteKey":"GET /chronosense","Target":"integrations/int-1234567890"},{"RouteKey":"GET /shepherd","Target":"integrations/int-1234567890"},{"RouteKey":"GET /curiosity","Target":"integrations/int-1234567890"},{"RouteKey":"GET /freedom-gate","Target":"integrations/int-1234567890"},{"RouteKey":"GET /reasoning","Target":"integrations/int-1234567890"},{"RouteKey":"GET /api-gateway-bridge","Target":"integrations/int-1234567890"},{"RouteKey":"GET /persistence","Target":"integrations/int-1234567890"}]}"#
+            r#"{"Items":[{"RouteKey":"GET /status","Target":"integrations/int-1234567890"},{"RouteKey":"GET /health","Target":"integrations/int-1234567890"},{"RouteKey":"GET /ready","Target":"integrations/int-1234567890"},{"RouteKey":"GET /metrics","Target":"integrations/int-1234567890"},{"RouteKey":"GET /events","Target":"integrations/int-1234567890"},{"RouteKey":"GET /chronosense","Target":"integrations/int-1234567890"},{"RouteKey":"GET /shepherd","Target":"integrations/int-1234567890"},{"RouteKey":"GET /curiosity","Target":"integrations/int-1234567890"},{"RouteKey":"GET /acip","Target":"integrations/int-1234567890"},{"RouteKey":"GET /freedom-gate","Target":"integrations/int-1234567890"},{"RouteKey":"GET /reasoning","Target":"integrations/int-1234567890"},{"RouteKey":"GET /api-gateway-bridge","Target":"integrations/int-1234567890"},{"RouteKey":"GET /persistence","Target":"integrations/int-1234567890"}]}"#
         };
         fs::write(
             &path,
