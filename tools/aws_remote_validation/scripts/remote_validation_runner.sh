@@ -105,6 +105,13 @@ on_error() {
 trap on_error ERR
 
 TOOL_INSTALL_POLICY="package_manager_or_prebuilt_only"
+CONTAINERIZED_VALIDATION=0
+case "$ADL_REMOTE_COMMAND" in
+  "bash adl/tools/run_aws_spot_builder_image_validation.sh "*)
+    CONTAINERIZED_VALIDATION=1
+    TOOL_INSTALL_POLICY="immutable_builder_image_only"
+    ;;
+esac
 
 release_target_triple() {
   local arch
@@ -278,17 +285,17 @@ REGION="${ADL_REGION:-us-west-2}"
 
 CURRENT_STAGE="ensure_build_toolchain"
 log_progress "stage=ensure_build_toolchain"
-if ! command -v cc >/dev/null 2>&1; then
+if [ "$CONTAINERIZED_VALIDATION" = "0" ] && ! command -v cc >/dev/null 2>&1; then
   sudo dnf install -y gcc gcc-c++ make pkgconf-pkg-config openssl-devel >/tmp/adl-build-toolchain.log 2>&1 \
     || sudo yum install -y gcc gcc-c++ make pkgconfig openssl-devel >/tmp/adl-build-toolchain.log 2>&1
 fi
 
 CURRENT_STAGE="ensure_rustup"
 log_progress "stage=ensure_rustup"
-if ! command -v cargo >/dev/null 2>&1; then
+if [ "$CONTAINERIZED_VALIDATION" = "0" ] && ! command -v cargo >/dev/null 2>&1; then
   curl https://sh.rustup.rs -sSf | sh -s -- -y --profile minimal >/tmp/adl-rustup.log 2>&1
 fi
-if [ -f "$HOME/.cargo/env" ]; then
+if [ "$CONTAINERIZED_VALIDATION" = "0" ] && [ -f "$HOME/.cargo/env" ]; then
   . "$HOME/.cargo/env"
 fi
 export PATH="$CARGO_HOME/bin:$HOME/.cargo/bin:$PATH"
@@ -303,7 +310,7 @@ fi
 CURRENT_STAGE="ensure_sccache"
 log_progress "stage=ensure_sccache"
 log_progress "tool_install_policy=$TOOL_INSTALL_POLICY tool=sccache"
-if ! command -v sccache >/dev/null 2>&1; then
+if [ "$CONTAINERIZED_VALIDATION" = "0" ] && ! command -v sccache >/dev/null 2>&1; then
   SCCACHE_CACHE_HIT=0
   if install_package_manager_binary sccache >>/tmp/adl-sccache-install.log 2>&1 && verify_sccache_binary >>/tmp/adl-sccache-install.log 2>&1; then
     SCCACHE_CACHE_HIT=1
@@ -326,7 +333,7 @@ fi
 CURRENT_STAGE="ensure_nextest"
 log_progress "stage=ensure_nextest"
 log_progress "tool_install_policy=$TOOL_INSTALL_POLICY tool=cargo-nextest"
-if [ "$NEEDS_NEXTEST" = "1" ] && ! cargo nextest --version >/dev/null 2>&1; then
+if [ "$CONTAINERIZED_VALIDATION" = "0" ] && [ "$NEEDS_NEXTEST" = "1" ] && ! cargo nextest --version >/dev/null 2>&1; then
   NEXTEST_CACHE_HIT=0
   if install_package_manager_binary cargo-nextest >>/tmp/adl-nextest-install.log 2>&1 && verify_nextest_binary >>/tmp/adl-nextest-install.log 2>&1; then
     NEXTEST_CACHE_HIT=1
@@ -345,7 +352,9 @@ if [ "$NEEDS_NEXTEST" = "1" ] && ! cargo nextest --version >/dev/null 2>&1; then
     upload_binary_to_s3_cache cargo-nextest "$CACHE_BUCKET" "$CACHE_PREFIX" >>/tmp/adl-nextest-install.log 2>&1 || true
   fi
 fi
-export RUSTC_WRAPPER="sccache"
+if [ "$CONTAINERIZED_VALIDATION" = "0" ]; then
+  export RUSTC_WRAPPER="sccache"
+fi
 
 RESOLVED_COMMIT="$(git -C "$ADL_REMOTE_REPO_DIR" rev-parse HEAD)"
 RUSTC_VERSION="$(rustc --version 2>/dev/null || true)"
@@ -365,8 +374,11 @@ watch_sccache_health() {
     sleep 5
   done
 }
-watch_sccache_health >/tmp/adl-sccache-watch.log 2>&1 &
-SCCACHE_WATCH_PID="$!"
+SCCACHE_WATCH_PID=""
+if [ "$CONTAINERIZED_VALIDATION" = "0" ]; then
+  watch_sccache_health >/tmp/adl-sccache-watch.log 2>&1 &
+  SCCACHE_WATCH_PID="$!"
+fi
 
 INTERRUPTION_NOTICE=""
 watch_spot_notice() {
@@ -398,9 +410,11 @@ set -e
 COMMAND_END="$(date +%s)"
 kill "$WATCH_PID" >/dev/null 2>&1 || true
 wait "$WATCH_PID" >/dev/null 2>&1 || true
-kill "$SCCACHE_WATCH_PID" >/dev/null 2>&1 || true
-wait "$SCCACHE_WATCH_PID" >/dev/null 2>&1 || true
-sccache --show-stats >"$RUN_ROOT/sccache-stats.log" 2>&1 || true
+if [ -n "$SCCACHE_WATCH_PID" ]; then
+  kill "$SCCACHE_WATCH_PID" >/dev/null 2>&1 || true
+  wait "$SCCACHE_WATCH_PID" >/dev/null 2>&1 || true
+  sccache --show-stats >"$RUN_ROOT/sccache-stats.log" 2>&1 || true
+fi
 [ -f "$RUN_ROOT/spot-interruption.log" ] && INTERRUPTION_NOTICE="$(cat "$RUN_ROOT/spot-interruption.log")"
 if grep -Fq "sccache: warning: The server looks like it shut down unexpectedly" "$RUN_ROOT/command.err"; then
   SCCACHE_DEGRADED=1
@@ -409,7 +423,7 @@ elif grep -Fq "sccache: error:" "$RUN_ROOT/command.err"; then
   SCCACHE_DEGRADED=1
   SCCACHE_DEGRADED_REASON="client_or_server_error"
 fi
-if [ ! -s "$RUN_ROOT/sccache-stats.log" ]; then
+if [ "$CONTAINERIZED_VALIDATION" = "0" ] && [ ! -s "$RUN_ROOT/sccache-stats.log" ]; then
   SCCACHE_DEGRADED=1
   if [ -z "$SCCACHE_DEGRADED_REASON" ]; then
     SCCACHE_DEGRADED_REASON="missing_stats"
@@ -420,6 +434,7 @@ export ADL_RUN_ROOT="$RUN_ROOT"
 export COMMAND_EXIT BOOTSTRAP_START BOOTSTRAP_END COMMAND_START COMMAND_END
 export INTERRUPTION_NOTICE RESOLVED_COMMIT RUSTC_VERSION CARGO_VERSION SCCACHE_VERSION
 export SCCACHE_DEGRADED SCCACHE_DEGRADED_REASON
+export CONTAINERIZED_VALIDATION
 python3 - <<'PY'
 import json
 import os
@@ -439,6 +454,10 @@ payload = {
   "sccache_degraded_reason": os.environ.get("SCCACHE_DEGRADED_REASON") or None,
   "sccache_stats": {"raw_excerpt": run_root.joinpath("sccache-stats.log").read_text(errors="replace").splitlines()[:16] if run_root.joinpath("sccache-stats.log").exists() else []}
 }
+builder_summary = run_root.joinpath("spot-builder-summary.json")
+if builder_summary.exists():
+  payload["builder_proof"] = json.loads(builder_summary.read_text(encoding="utf-8"))
+payload["host_validation_tools_installed"] = os.environ.get("CONTAINERIZED_VALIDATION") != "1"
 print("ADL_AWS_REMOTE_SUMMARY_BEGIN")
 print(json.dumps(payload))
 print("ADL_AWS_REMOTE_SUMMARY_END")

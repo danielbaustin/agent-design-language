@@ -1,133 +1,205 @@
 # AWS Spot Remote Validation Lane
 
-`adl/tools/run_aws_spot_remote_validation_lane.sh` is the repo-owned wrapper for
-the AWS Spot EC2 remote validation lane.
+`adl/tools/run_aws_spot_remote_validation_lane.sh` is the canonical operator
+entry point for the existing Agent Logic Spot validation lane. It extends the
+launch, warm-EBS, SSH/logging, builder-image, interruption, and teardown work
+from `#4837`, `#4679`, `#4879`, and `#4955`; it does not create a
+parallel lane.
 
-It wraps the lower-level `adl-aws-remote-validation` binary from
-`adl/target/debug` and keeps the ADL operator contract small:
+The default contract is:
 
-- default to the approved Agent Logic AWS profile, `agent-logic-admin`
-- verify the live STS account hash against retained Agent Logic proof before a
-  live run
-- never print the AWS account id, ARN contents, or credentials
-- require `--run` before any EC2 resources can be launched
-- forward one explicit remote validation command to the AWS runner
-- reuse the retained warm EBS cache volume by default
-- enable live SSH tail logging by default when the retained debug key is present
-- retain the AWS runner's summary JSON and artifact directory
-- retain `resume-state.json` and `wrapper-final-summary.json` for interrupted
-  and resumed attempts
+- AWS profile `agent-logic-admin`, checked against retained account proof
+- Spot `m7a.2xlarge`
+- the retained hot-cache volume and subnet identified by prior live proof
+- `/mnt/adl-cache` with at least 10 GiB free and a writable filesystem
+- `adl-builder:v0.91.7-fixed`, resolved once to an immutable ECR digest
+- the dedicated `tools/aws_remote_validation` owner binary
+- passphraseless SSH and live remote-tail logging
+- explicit source-commit verification
+- automatic compute termination while the retained EBS volume survives
+- redacted retained evidence plus mode-600 private recovery state
 
-## Account Check
+## Quick Start
 
-Use this before a live run:
+Push the commit that will run. The remote checkout cannot consume uncommitted
+local changes.
 
-```bash
-bash adl/tools/run_aws_spot_remote_validation_lane.sh \
-  --check-account \
-  --git-ref <branch-or-ref>
-```
-
-The wrapper calls STS with `--profile agent-logic-admin` by default, hashes the
-resolved account id locally, and compares it to the retained hot-cache proof at:
-
-```text
-docs/milestones/v0.91.7/review/build_throughput/remote_validation_4603/live_run_summary_retry11_agentlogic_hotcache.json
-```
-
-That comparison proves the configured profile resolves to the same account as
-the retained Agent Logic proof without recording a static account id in this
-operator guide.
-
-## Live Run
-
-For a pushed branch or advertised remote ref:
+No-cost preflight:
 
 ```bash
-bash adl/tools/run_aws_spot_remote_validation_lane.sh \
-  --run \
-  --command 'cargo test --manifest-path adl/Cargo.toml --locked --lib provider_communication -- --nocapture' \
-  --git-ref <branch-or-ref> \
-  --out .adl/tmp/aws-spot-remote-validation/<run-id>/summary.json \
-  --artifact-dir .adl/tmp/aws-spot-remote-validation/<run-id>/artifacts \
+bash adl/tools/run_aws_spot_remote_validation_lane.sh preflight \
+  --git-ref <pushed-branch-or-commit>
+```
+
+The preflight performs read-only checks only. It verifies the Agent Logic
+account, immutable image digest, retained hot-cache identity and availability,
+cache/subnet availability-zone match, EBS shape, current AL2023 AMI, SSH key,
+source commit, and current Spot price. It creates no AWS resources.
+
+Asynchronous live run:
+
+```bash
+RUN_ID="adl-spot-$(date -u +%Y%m%d%H%M%S)"
+
+bash adl/tools/run_aws_spot_remote_validation_lane.sh launch \
+  --run-id "$RUN_ID" \
+  --git-ref <pushed-branch-or-commit> \
+  --command 'cargo nextest run --manifest-path adl/Cargo.toml --workspace --locked' \
   --instance-type m7a.2xlarge \
   --json
 ```
 
-Use `m7a.2xlarge` as the default ADL Spot validation shape for Rust builds that
-compile the AWS SDK stack. The current retained positive proof for this lane
-uses `m7a.2xlarge` with the warm EBS cache. Do not route ADL Rust/AWS SDK builds
-to `c7i.large`; #4998 retained negative evidence shows that shape failed during
-`aws-sdk-ec2` compilation with `sccache: Compiler killed by signal 9`. Smaller
-or cheaper instance types are experimental until they have retained success
-evidence for the same workload class.
-
-By default the wrapper forwards the retained WP-06 cache volume:
+`launch` is an explicit paid action. It returns the run id and background
+manager PID immediately. The default artifact root is:
 
 ```text
-name: adl-aws-remote-validation-cache-volume
-size/type: 100 GiB gp3
-iops/throughput: 3000 IOPS / 125 MiB/s
-device/mount: /dev/sdf -> /mnt/adl-cache
+.adl/tmp/aws-spot-remote-validation/<run-id>/
 ```
 
-This EBS volume is a standing AWS resource and therefore has a standing storage
-cost even when no Spot instance is running. Keep it only while the lane is used
-often enough to justify the warm cache. Do not change `--cache-volume-name`
-unless intentionally creating a separate retained cache.
+Use a synchronous run when the calling process should wait:
 
-The remote bootstrap mounts the volume and places shared build state under it:
+```bash
+bash adl/tools/run_aws_spot_remote_validation_lane.sh run --run \
+  --run-id "$RUN_ID" \
+  --git-ref <pushed-branch-or-commit> \
+  --command 'cargo nextest run --manifest-path adl/Cargo.toml --workspace --locked' \
+  --instance-type m7a.2xlarge \
+  --json
+```
+
+The repeated `run --run` spelling is intentional. The action chooses the
+synchronous lifecycle, and `--run` is the paid-resource confirmation.
+
+## Operate A Run
+
+All lifecycle actions use the same run id:
+
+```bash
+bash adl/tools/run_aws_spot_remote_validation_lane.sh status --run-id "$RUN_ID"
+bash adl/tools/run_aws_spot_remote_validation_lane.sh logs --run-id "$RUN_ID"
+bash adl/tools/run_aws_spot_remote_validation_lane.sh logs --follow --run-id "$RUN_ID"
+bash adl/tools/run_aws_spot_remote_validation_lane.sh ssh --run-id "$RUN_ID"
+```
+
+`logs` redacts account ids, ARNs, EC2/EBS/network resource ids, and IP
+addresses while streaming. `ssh` resolves the private endpoint from local
+control state, checks key mode, proves the key has no passphrase, and uses
+`BatchMode=yes`.
+
+Emergency stop:
+
+```bash
+bash adl/tools/run_aws_spot_remote_validation_lane.sh stop --run-id "$RUN_ID"
+```
+
+`stop` verifies the Agent Logic account and the instance's `adl:run_id` tag
+before termination. It refuses a tag mismatch and never deletes the cache
+volume.
+
+Cleanup verification:
+
+```bash
+bash adl/tools/run_aws_spot_remote_validation_lane.sh cleanup --run-id "$RUN_ID"
+```
+
+`cleanup` stops an active run when necessary, then verifies that the retained
+cache still exists in `available` or `in-use` state. The normal integrated
+runner also deletes its temporary security group, role, and instance profile.
+
+## Builder Image And Cache
+
+The wrapper resolves the canonical ECR tag to a digest before launch. An
+explicit override must use:
 
 ```text
-/mnt/adl-cache/adl-aws-remote-validation/shared/target
-/mnt/adl-cache/adl-aws-remote-validation/shared/sccache
-/mnt/adl-cache/adl-aws-remote-validation/shared/cargo-home
-/mnt/adl-cache/adl-aws-remote-validation/shared/rustup-home
+<registry>/<repository>@sha256:<64-hex-digest>
 ```
 
-The wrapper does not implicitly run Docker for every command. For a
-fixed-builder-image Spot claim, the remote command must explicitly run the
-published ADL builder image, for example through `ADL_AWS_SPOT_BUILDER_IMAGE`,
-or the retained proof must show that the command used that image. The retained
-warm EBS cache is the default cache posture, not evidence of image execution.
+Mutable tags are rejected for live execution. The instance pulls that digest
+and verifies:
 
-The underlying AWS runner still owns launch-surface preparation, Spot-first
-selection, on-demand fallback for classified Spot capacity failures, SSM command
-dispatch, retained logs, interruption classification, and cleanup truth.
+- `rustc`
+- `cargo`
+- `cargo-nextest`
+- `sccache`
+- `lld`
+- AWS CLI
+- image and runtime architecture
 
-## Interruption And Resume Artifacts
+Rust validation tools are not installed on the ephemeral host. Docker and AWS
+CLI are host transport dependencies and may be installed when the selected AMI
+does not already provide them. The builder image itself is never rebuilt by a
+validation run.
 
-Spot interruption is an expected recoverable lane outcome, not an implicit
-validation failure or success. The runner records each attempt in
-`<artifact-dir>/resume-state.json` before deciding whether to retry. Attempt
-records include the issue, run id, repo URL, git ref, command, artifact-relative
-summary paths, attempt timing, lifecycle state, retry disposition, and hashed
-instance identity only. They must not retain raw AWS account ids, ARNs, instance
-ids, credentials, or host-local absolute paths.
+The retained cache is mounted at `/mnt/adl-cache`. Container-backed state is
+under:
 
-The wrapper also writes `<artifact-dir>/wrapper-final-summary.json` after every
-live run attempt. That summary is the bounded local wrapper result and records
-`passed`, `failed`, `interrupted_by_aws`, or `resumed_after_interruption` from
-the retained runner summary/resume state plus the wrapper exit code.
+```text
+/mnt/adl-cache/adl-aws-remote-validation/shared/container-target
+/mnt/adl-cache/adl-aws-remote-validation/shared/container-sccache
+/mnt/adl-cache/adl-aws-remote-validation/shared/container-cargo-home
+```
 
-When a Spot interruption is confirmed and retries remain, the next attempt is a
-fresh remote attempt using the original issue, run id, git ref, repo URL, and
-command context. If that retry passes, the final AWS summary status is
-`resumed_after_interruption` so review records do not hide the interrupted
-attempt behind a plain success.
+Historical AWS state contains two preserved volumes with the same Name tag in
+different availability zones. Do not select or delete either by name. The
+wrapper reads the prior hot-cache proof, pins its subnet and hashed volume
+identity, verifies one matching volume in that availability zone, and fails
+closed on ambiguity or shape drift.
 
-## GitHub Actions Trigger
+## Evidence
 
-The manual workflow `.github/workflows/aws-spot-remote-validation.yaml` can
-render a dry-run request or start the live Spot lane through GitHub Actions
-OIDC. It intentionally has no `push` or `pull_request` trigger.
+Public evidence:
 
-The workflow serializes all live runs through one concurrency group because the
-default lane uses one retained EBS cache volume. It also rejects ambiguous
-`HEAD` input; leave `git_ref` blank to use the workflow run SHA, or pass an
-explicit branch, tag, or commit.
+- `summary.json`: recursively redacted AWS runner summary
+- `artifacts/wrapper-final-summary.json`: self-verifying lane result
+- `artifacts/events.jsonl`: redacted lifecycle events
+- `artifacts/remote-tail.log`: redacted live SSH tail
+- `artifacts/resume-state.json`: interruption and retry history when present
 
-Create or refresh the AWS OIDC role with:
+Private emergency recovery state:
+
+```text
+artifacts/.private/control-summary.json
+artifacts/.private/command-status.log
+```
+
+The private directory is mode 700 and its files are mode 600. It can contain
+raw control identifiers needed to terminate a failed run. Do not copy or upload
+it. The GitHub workflow explicitly excludes hidden files.
+
+A successful `wrapper-final-summary.json` proves:
+
+- Spot purchase option
+- immutable builder image and toolchain
+- exact source commit
+- retained cache identity, attachment, mount, writability, and free space
+- passphraseless SSH recovery and live tail startup
+- no host Rust validation-tool installation
+- compute termination
+- boot, launch, SSM, validation, teardown, and total timing
+- estimated compute cost from pre-run Spot price and observed lifetime
+
+For warm-cache proof, also inspect
+`cache_target_preexisting_entries` and
+`cache_target_preexisting_bytes`. A label saying "warm" is not proof.
+
+## GitHub Actions
+
+`.github/workflows/aws-spot-remote-validation.yaml` is manual
+`workflow_dispatch` only and serializes runs around the retained cache.
+
+Required repository secrets:
+
+```text
+AWS_SPOT_REMOTE_VALIDATION_ROLE_ARN
+AWS_SPOT_REMOTE_VALIDATION_SSH_PRIVATE_KEY_B64
+```
+
+The SSH secret is the base64 encoding of the retained passphraseless private
+key. The workflow decodes it under `RUNNER_TEMP`, verifies it with
+`ssh-keygen -P ''`, and never places it under the upload root.
+
+Refresh the existing OIDC role:
 
 ```bash
 bash adl/tools/setup_aws_spot_remote_validation_github_resources.sh \
@@ -136,84 +208,51 @@ bash adl/tools/setup_aws_spot_remote_validation_github_resources.sh \
   --region us-west-2
 ```
 
-The setup helper writes a chmod-600 `github-actions-config.env` under the
-selected artifact directory. Configure the repository secret from that file:
+The role may launch/terminate compute and manage ephemeral launch surfaces. It
+does not receive `CreateVolume` or `DeleteVolume`; the retained cache must
+already exist.
 
-```text
-AWS_SPOT_REMOTE_VALIDATION_ROLE_ARN
-```
+## Recovery
 
-The workflow uses `--profile env` after `aws-actions/configure-aws-credentials`
-assumes that role. The Rust runner treats `env` and `environment` as ambient AWS
-credentials rather than as named local profile names.
+1. Run `status` and `logs --follow`.
+2. Use `ssh` when application-level diagnosis is needed.
+3. Use `stop` if the manager is stuck or a validation must be cancelled.
+4. Run `cleanup` and require `retained_cache_preserved=true`.
+5. Inspect `wrapper-final-summary.json` for the failure classification.
+6. Keep `.private` local until compute termination is confirmed, then remove
+   it according to local artifact-retention policy.
 
-The OIDC trust generated by the setup helper is limited to `main` and `codex/*`
-refs for this repository. If the lane must run from another branch namespace,
-update the setup helper intentionally and reapply the role.
+Never delete or recreate the retained cache as a recovery shortcut.
 
-Before artifact upload, the workflow redacts raw `account_id`, `arn`, and
-`user_id` fields from JSON summaries under `.adl/tmp/aws-spot-remote-validation`.
-
-Live workflow runs inherit the wrapper's defaults for:
-
-```text
-warm EBS cache: adl-aws-remote-validation-cache-volume -> /mnt/adl-cache
-SSH tail key: adl-wp06-spot-ssh-debug-20260704
-SSH user: ec2-user
-```
-
-## Benchmark Command
-
-Use the shared benchmark helper when comparing build platforms:
+## Focused Contract Tests
 
 ```bash
-bash adl/tools/run_aws_spot_remote_validation_lane.sh \
-  --run \
-  --command 'bash adl/tools/run_build_platform_benchmark.sh --platform aws_spot --cache-posture warm_ebs_cache --out .adl/tmp/build-platform-benchmark/aws-spot-ebs-<date>/summary.json --artifact-dir .adl/tmp/build-platform-benchmark/aws-spot-ebs-<date>' \
-  --git-ref <branch-or-ref> \
-  --out .adl/tmp/aws-spot-remote-validation/<run-id>/summary.json \
-  --artifact-dir .adl/tmp/aws-spot-remote-validation/<run-id>/artifacts \
-  --instance-type m7a.2xlarge \
-  --json
+bash adl/tools/test_run_aws_spot_remote_validation_lane.sh
+bash adl/tools/test_run_aws_spot_builder_image_validation.sh
+bash adl/tools/test_aws_spot_artifact_finalize.sh
+bash adl/tools/test_aws_spot_lifecycle_controls.sh
+cargo test --manifest-path tools/aws_remote_validation/Cargo.toml \
+  --bin adl-aws-remote-validation
 ```
 
-The AWS summary must contain `cache_volume.attachment_state: "attached"` before
-the run can be claimed as warm-EBS proof. A benchmark line or cache-posture
-string alone is not enough.
+These tests cover immutable-image enforcement, missing tools, wrong source,
+cache mount and capacity failures, architecture mismatch, validation failure,
+interruption/resume, SSH recovery, redaction, tag-guarded stop, teardown
+failure, and retained-cache cleanup.
 
-## Retained Proof
+## Prior Proof
 
-Issue `#4837` integrates the lane entry point and consumes the earlier live AWS
-proof from `#4603`.
+The prior hot-cache authority remains:
 
-Retained account-bound hot-cache proof:
+```text
+docs/milestones/v0.91.7/review/build_throughput/remote_validation_4603/live_run_summary_retry11_agentlogic_hotcache.json
+```
 
-- summary:
-  `docs/milestones/v0.91.7/review/build_throughput/remote_validation_4603/live_run_summary_retry11_agentlogic_hotcache.json`
-- canonical alias:
-  `docs/milestones/v0.91.7/review/build_throughput/remote_validation_4603/live_run_summary.json`
-- artifacts:
-  `docs/milestones/v0.91.7/review/build_throughput/remote_validation_4603/artifacts_retry11_agentlogic_hotcache/attempt-0`
+The fixed builder-image and warm-EBS benchmark proof remains in:
 
-The retained run used `agent-logic-admin`, launched Spot `m7a.2xlarge`, reused
-the retained EBS cache volume, passed, completed in `248s`, recorded `163s`
-remote command wall time, recorded `113s` focused command time inside the host,
-and recorded clean termination.
+```text
+docs/milestones/v0.91.7/review/build_throughput/ADL_BUILDER_IMAGE_4879.md
+```
 
-Historical retry surfaces captured in the wrong AWS account are not accepted as
-current account-bound proof for this lane.
-
-## Failure Posture
-
-The wrapper fails closed when:
-
-- the selected AWS profile does not resolve
-- the resolved account hash differs from the retained Agent Logic proof
-- `--run` is set without an explicit remote command
-- the runner binary is unavailable or not executable
-- the underlying AWS runner reports launch, SSM, validation, interruption, or
-  cleanup failure
-- a final wrapper summary cannot be written under the artifact directory
-
-Fresh live AWS execution may incur AWS charges. Keep commands focused, use an
-advertised remote ref, and retain summary plus artifact paths in the issue SOR.
+Issue `#5191` adds new same-commit repeated live proof; do not claim those
+runs until their retained evidence exists.
