@@ -458,11 +458,13 @@
       "path_selectors": [
         "adl-runtime/**",
         "adl/src/bin/adl_runtime.rs",
+        "adl/tools/install_vector_component.sh",
         "adl/tools/test_adl_runtime_compatibility.sh"
       ],
       "path_hints": [
         "adl-runtime/**",
         "adl/src/bin/adl_runtime.rs",
+        "adl/tools/install_vector_component.sh",
         "adl/tools/test_adl_runtime_compatibility.sh"
       ],
       "command": "bash adl/tools/run_owner_validation_lane.sh runtime --print-plan",
