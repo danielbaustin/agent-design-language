@@ -180,13 +180,11 @@ VALIDATION_START="$(date +%s)"
 "${DOCKER[@]}" run --rm \
   --workdir /workspace \
   --volume "$ADL_REMOTE_REPO_DIR:/workspace" \
-  --volume "$TARGET_DIR:/workspace/adl/target" \
-  --volume "$SCCACHE_DIR:/cache/sccache" \
-  --volume "$CARGO_HOME_DIR:/cache/cargo-home" \
+  --volume "$CACHE_ROOT:/cache-root" \
   --volume "$ADL_RUN_ROOT:/run-output" \
-  --env CARGO_HOME=/cache/cargo-home \
-  --env CARGO_TARGET_DIR=/workspace/adl/target \
-  --env SCCACHE_DIR=/cache/sccache \
+  --env CARGO_HOME=/cache-root/container-cargo-home \
+  --env CARGO_TARGET_DIR=/cache-root/container-target \
+  --env SCCACHE_DIR=/cache-root/container-sccache \
   --env RUSTC_WRAPPER=sccache \
   --env 'RUSTFLAGS=-C link-arg=-fuse-ld=lld' \
   --env CARGO_INCREMENTAL=0 \
