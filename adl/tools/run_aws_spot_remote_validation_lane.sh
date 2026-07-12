@@ -360,7 +360,7 @@ check_account() {
   if [[ "$PROFILE" != "env" && "$PROFILE" != "environment" ]]; then
     aws_profile_args=(--profile "$PROFILE")
   fi
-  if ! identity_json="$("$AWS_CLI" sts get-caller-identity "${aws_profile_args[@]}" --output json)"; then
+  if ! identity_json="$("$AWS_CLI" sts get-caller-identity ${aws_profile_args[@]+"${aws_profile_args[@]}"} --output json)"; then
     return 1
   fi
   local account_status=0
@@ -408,8 +408,8 @@ resolve_builder_image() {
     profile_args=(--profile "$PROFILE")
   fi
   local account digest
-  account="$("$AWS_CLI" sts get-caller-identity "${profile_args[@]}" --query Account --output text)"
-  digest="$("$AWS_CLI" ecr describe-images "${profile_args[@]}" --region "$REGION" \
+  account="$("$AWS_CLI" sts get-caller-identity ${profile_args[@]+"${profile_args[@]}"} --query Account --output text)"
+  digest="$("$AWS_CLI" ecr describe-images ${profile_args[@]+"${profile_args[@]}"} --region "$REGION" \
     --repository-name "$BUILDER_IMAGE_REPOSITORY" \
     --image-ids "imageTag=$BUILDER_IMAGE_TAG" \
     --query 'imageDetails[0].imageDigest' --output text)"
@@ -430,7 +430,7 @@ resolve_spot_hourly_cost() {
   fi
   local price_json
   price_json="$("$AWS_CLI" ec2 describe-spot-price-history \
-    "${profile_args[@]}" --region "$REGION" --instance-types "${INSTANCE_TYPES[@]}" \
+    ${profile_args[@]+"${profile_args[@]}"} --region "$REGION" --instance-types "${INSTANCE_TYPES[@]}" \
     --product-descriptions Linux/UNIX --max-items 20 --output json)"
   ESTIMATED_HOURLY_COST_USD="$(python3 -c 'import json,sys; values=[float(x["SpotPrice"]) for x in json.load(sys.stdin).get("SpotPriceHistory",[])]; print(max(values) if values else "")' <<<"$price_json")"
   if [[ ! "$ESTIMATED_HOURLY_COST_USD" =~ ^[0-9]+([.][0-9]+)?$ ]]; then
@@ -480,21 +480,21 @@ PY
     echo "run_aws_spot_remote_validation_lane: retained proof cache identity mismatch" >&2
     return 1
   }
-  volume_state="$("$AWS_CLI" ec2 describe-volumes "${profile_args[@]}" --region "$REGION" \
+  volume_state="$("$AWS_CLI" ec2 describe-volumes ${profile_args[@]+"${profile_args[@]}"} --region "$REGION" \
     --volume-ids "$proof_volume_id" --query 'Volumes[0].State' --output text)"
-  volume_name="$("$AWS_CLI" ec2 describe-volumes "${profile_args[@]}" --region "$REGION" \
+  volume_name="$("$AWS_CLI" ec2 describe-volumes ${profile_args[@]+"${profile_args[@]}"} --region "$REGION" \
     --volume-ids "$proof_volume_id" --query 'Volumes[0].Tags[?Key==`Name`].Value|[0]' --output text)"
-  volume_az="$("$AWS_CLI" ec2 describe-volumes "${profile_args[@]}" --region "$REGION" \
+  volume_az="$("$AWS_CLI" ec2 describe-volumes ${profile_args[@]+"${profile_args[@]}"} --region "$REGION" \
     --volume-ids "$proof_volume_id" --query 'Volumes[0].AvailabilityZone' --output text)"
-  volume_size="$("$AWS_CLI" ec2 describe-volumes "${profile_args[@]}" --region "$REGION" \
+  volume_size="$("$AWS_CLI" ec2 describe-volumes ${profile_args[@]+"${profile_args[@]}"} --region "$REGION" \
     --volume-ids "$proof_volume_id" --query 'Volumes[0].Size' --output text)"
-  volume_type="$("$AWS_CLI" ec2 describe-volumes "${profile_args[@]}" --region "$REGION" \
+  volume_type="$("$AWS_CLI" ec2 describe-volumes ${profile_args[@]+"${profile_args[@]}"} --region "$REGION" \
     --volume-ids "$proof_volume_id" --query 'Volumes[0].VolumeType' --output text)"
-  volume_iops="$("$AWS_CLI" ec2 describe-volumes "${profile_args[@]}" --region "$REGION" \
+  volume_iops="$("$AWS_CLI" ec2 describe-volumes ${profile_args[@]+"${profile_args[@]}"} --region "$REGION" \
     --volume-ids "$proof_volume_id" --query 'Volumes[0].Iops' --output text)"
-  volume_throughput="$("$AWS_CLI" ec2 describe-volumes "${profile_args[@]}" --region "$REGION" \
+  volume_throughput="$("$AWS_CLI" ec2 describe-volumes ${profile_args[@]+"${profile_args[@]}"} --region "$REGION" \
     --volume-ids "$proof_volume_id" --query 'Volumes[0].Throughput' --output text)"
-  subnet_az="$("$AWS_CLI" ec2 describe-subnets "${profile_args[@]}" --region "$REGION" \
+  subnet_az="$("$AWS_CLI" ec2 describe-subnets ${profile_args[@]+"${profile_args[@]}"} --region "$REGION" \
     --subnet-ids "$SUBNET_ID" --query 'Subnets[0].AvailabilityZone' --output text)"
   [[ "$volume_state" == "available" ]] || {
     echo "run_aws_spot_remote_validation_lane: retained cache volume is not exclusively available" >&2
@@ -504,7 +504,7 @@ PY
     echo "run_aws_spot_remote_validation_lane: retained cache volume and subnet topology mismatch" >&2
     return 1
   }
-  matching_volume_count="$("$AWS_CLI" ec2 describe-volumes "${profile_args[@]}" --region "$REGION" \
+  matching_volume_count="$("$AWS_CLI" ec2 describe-volumes ${profile_args[@]+"${profile_args[@]}"} --region "$REGION" \
     --filters "Name=tag:Name,Values=$CACHE_VOLUME_NAME" "Name=availability-zone,Values=$volume_az" \
     --query 'length(Volumes)' --output text)"
   [[ "$matching_volume_count" == "1" ]] || {
@@ -517,7 +517,7 @@ PY
     return 1
   }
   if [[ -z "$AMI_ID" ]]; then
-    AMI_ID="$("$AWS_CLI" ssm get-parameter "${profile_args[@]}" --region "$REGION" \
+    AMI_ID="$("$AWS_CLI" ssm get-parameter ${profile_args[@]+"${profile_args[@]}"} --region "$REGION" \
       --name /aws/service/ami-amazon-linux-latest/al2023-ami-kernel-default-x86_64 \
       --query 'Parameter.Value' --output text)"
   fi
@@ -631,42 +631,49 @@ run_ssh_action() {
 run_stop_action() {
   check_account
   local status_path instance_id observed_run_id
-  status_path="$(private_command_status_path)"
-  [[ -f "$status_path" ]] || {
-    echo "run_aws_spot_remote_validation_lane: no private instance control state for $RUN_ID" >&2
-    return 1
-  }
-  instance_id="$(sed -nE 's/.*instance_id=(i-[0-9a-f]+).*/\1/p' "$status_path" | tail -n 1)"
-  [[ "$instance_id" =~ ^i-[0-9a-f]{8,17}$ ]] || {
-    echo "run_aws_spot_remote_validation_lane: invalid instance control state" >&2
-    return 1
-  }
   local profile_args=()
   if [[ "$PROFILE" != "env" && "$PROFILE" != "environment" ]]; then
     profile_args=(--profile "$PROFILE")
   fi
-  observed_run_id="$("$AWS_CLI" ec2 describe-instances "${profile_args[@]}" --region "$REGION" \
+  status_path="$(private_command_status_path)"
+  instance_id=""
+  if [[ -f "$status_path" ]]; then
+    instance_id="$(sed -nE 's/.*instance_id=(i-[0-9a-f]+).*/\1/p' "$status_path" | tail -n 1)"
+  fi
+  if [[ -z "$instance_id" ]]; then
+    instance_id="$("$AWS_CLI" ec2 describe-instances ${profile_args[@]+"${profile_args[@]}"} --region "$REGION" \
+      --filters "Name=tag:adl:run_id,Values=$RUN_ID" \
+        "Name=instance-state-name,Values=pending,running,stopping,stopped" \
+      --query 'Reservations[].Instances[].InstanceId' --output text)"
+  fi
+  if [[ -z "$instance_id" || "$instance_id" == "None" ]]; then
+    printf 'status=already_terminated run_id=%s retained_cache_preserved=true\n' "$RUN_ID"
+    return 0
+  fi
+  [[ "$instance_id" =~ ^i-[0-9a-f]{8,17}$ ]] || {
+    echo "run_aws_spot_remote_validation_lane: active instance state is invalid or ambiguous" >&2
+    return 1
+  }
+  observed_run_id="$("$AWS_CLI" ec2 describe-instances ${profile_args[@]+"${profile_args[@]}"} --region "$REGION" \
     --instance-ids "$instance_id" --query 'Reservations[0].Instances[0].Tags[?Key==`adl:run_id`].Value|[0]' --output text)"
   [[ "$observed_run_id" == "$RUN_ID" ]] || {
     echo "run_aws_spot_remote_validation_lane: instance run-id tag mismatch; refusing termination" >&2
     return 1
   }
-  "$AWS_CLI" ec2 terminate-instances "${profile_args[@]}" --region "$REGION" --instance-ids "$instance_id" >/dev/null
-  "$AWS_CLI" ec2 wait instance-terminated "${profile_args[@]}" --region "$REGION" --instance-ids "$instance_id"
+  "$AWS_CLI" ec2 terminate-instances ${profile_args[@]+"${profile_args[@]}"} --region "$REGION" --instance-ids "$instance_id" >/dev/null
+  "$AWS_CLI" ec2 wait instance-terminated ${profile_args[@]+"${profile_args[@]}"} --region "$REGION" --instance-ids "$instance_id"
   printf 'status=terminated run_id=%s retained_cache_preserved=true\n' "$RUN_ID"
 }
 
 run_cleanup_action() {
-  if manager_is_active; then
-    run_stop_action
-  fi
+  run_stop_action
   local profile_args=()
   if [[ "$PROFILE" != "env" && "$PROFILE" != "environment" ]]; then
     profile_args=(--profile "$PROFILE")
   fi
   check_account
   local volume_state
-  volume_state="$("$AWS_CLI" ec2 describe-volumes "${profile_args[@]}" --region "$REGION" \
+  volume_state="$("$AWS_CLI" ec2 describe-volumes ${profile_args[@]+"${profile_args[@]}"} --region "$REGION" \
     --filters "Name=tag:Name,Values=$CACHE_VOLUME_NAME" \
     --query 'Volumes[0].State' --output text)"
   [[ "$volume_state" == "available" || "$volume_state" == "in-use" ]] || {

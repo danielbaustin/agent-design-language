@@ -68,6 +68,16 @@ elif [[ "$1 $2" == "ec2 describe-volumes" ]]; then
   esac
 elif [[ "$1 $2" == "ec2 describe-subnets" ]]; then
   echo us-west-2a
+elif [[ "$1 $2" == "ec2 describe-instances" ]]; then
+  if [[ "$*" == *'Reservations[].Instances[].InstanceId'* ]]; then
+    printf '%s\n' "${ADL_FAKE_ACTIVE_INSTANCE_ID:-None}"
+  else
+    printf '%s\n' "${ADL_FAKE_RUN_ID:-fixture-orphan}"
+  fi
+elif [[ "$1 $2" == "ec2 terminate-instances" ]]; then
+  :
+elif [[ "$1 $2 $3" == "ec2 wait instance-terminated" ]]; then
+  :
 elif [[ "$1 $2" == "ssm get-parameter" ]]; then
   echo ami-0123456789abcdef0
 else
@@ -464,6 +474,19 @@ assert "123456789012" not in text
 assert "arn:aws:" not in text
 PY
 
+ADL_FAKE_ACTIVE_INSTANCE_ID=i-0123456789abcdef0 \
+ADL_FAKE_RUN_ID=fixture-orphan \
+ADL_AWS_CLI="$fake_bin/aws" \
+bash "$SCRIPT" cleanup \
+  --check-account \
+  --profile env \
+  --run-id fixture-orphan \
+  --expected-proof "$proof" \
+  --out "$TMP/orphan-summary.json" \
+  --artifact-dir "$TMP/orphan-artifacts" >"$TMP/orphan-cleanup.out"
+grep -F 'status=terminated run_id=fixture-orphan retained_cache_preserved=true' "$TMP/orphan-cleanup.out" >/dev/null
+grep -F 'status=clean retained_cache_preserved=true cache_state=available run_id=fixture-orphan' "$TMP/orphan-cleanup.out" >/dev/null
+
 if bash "$SCRIPT" --extra-arg --profile >"$TMP/extra.out" 2>"$TMP/extra.err"; then
   echo "expected --extra-arg to be rejected" >&2
   exit 1
@@ -496,6 +519,9 @@ grep -F -- "--profile env" "$WORKFLOW" >/dev/null
 grep -F -- "--check-account" "$WORKFLOW" >/dev/null
 grep -F -- "--json" "$WORKFLOW" >/dev/null
 grep -F -- "Verify Spot artifact redaction" "$WORKFLOW" >/dev/null
+grep -F 'SPOT_RUN_ID: adl-wp-${{ inputs.issue_number }}-gha-${{ github.run_id }}-${{ github.run_attempt }}' "$WORKFLOW" >/dev/null
+grep -F -- 'name: Ensure Spot compute cleanup' "$WORKFLOW" >/dev/null
+grep -F -- "--run-id \"\$SPOT_RUN_ID\"" "$WORKFLOW" >/dev/null
 grep -F -- "AWS_SPOT_REMOTE_VALIDATION_SSH_PRIVATE_KEY_B64" "$WORKFLOW" >/dev/null
 grep -F -- "ssh-keygen -y -P ''" "$WORKFLOW" >/dev/null
 grep -F -- "include-hidden-files: false" "$WORKFLOW" >/dev/null

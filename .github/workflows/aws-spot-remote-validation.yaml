@@ -63,6 +63,7 @@ jobs:
       ADL_AWS_REMOTE_VALIDATION_SSH_ALLOWED_CIDR: ${{ vars.ADL_AWS_REMOTE_VALIDATION_SSH_ALLOWED_CIDR }}
       AWS_SPOT_REMOTE_VALIDATION_SSH_PRIVATE_KEY_B64: ${{ secrets.AWS_SPOT_REMOTE_VALIDATION_SSH_PRIVATE_KEY_B64 }}
       ISSUE_NUMBER: ${{ inputs.issue_number }}
+      SPOT_RUN_ID: adl-wp-${{ inputs.issue_number }}-gha-${{ github.run_id }}-${{ github.run_attempt }}
     steps:
       - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4
         with:
@@ -174,6 +175,7 @@ jobs:
           bash adl/tools/run_aws_spot_remote_validation_lane.sh \
             --profile env \
             --issue "$ISSUE_NUMBER" \
+            --run-id "$SPOT_RUN_ID" \
             --region "$AWS_SPOT_REMOTE_VALIDATION_REGION" \
             --git-ref "$GIT_REF" \
             --command "$VALIDATION_COMMAND" \
@@ -208,6 +210,7 @@ jobs:
             --check-account \
             --profile env \
             --issue "$ISSUE_NUMBER" \
+            --run-id "$SPOT_RUN_ID" \
             --region "$AWS_SPOT_REMOTE_VALIDATION_REGION" \
             --git-ref "$GIT_REF" \
             --command "$VALIDATION_COMMAND" \
@@ -217,6 +220,17 @@ jobs:
             --out .adl/tmp/aws-spot-remote-validation/summary.json \
             --artifact-dir .adl/tmp/aws-spot-remote-validation/artifacts \
             --json
+
+      - name: Ensure Spot compute cleanup
+        if: always() && inputs.mode == 'start-run'
+        run: |
+          bash adl/tools/run_aws_spot_remote_validation_lane.sh cleanup \
+            --check-account \
+            --profile env \
+            --region "$AWS_SPOT_REMOTE_VALIDATION_REGION" \
+            --run-id "$SPOT_RUN_ID" \
+            --out .adl/tmp/aws-spot-remote-validation/summary.json \
+            --artifact-dir .adl/tmp/aws-spot-remote-validation/artifacts
 
       - name: Spot remote validation summary
         if: always()
