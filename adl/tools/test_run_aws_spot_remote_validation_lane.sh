@@ -373,7 +373,7 @@ assert parts[:2] == ["bash", "adl/tools/run_aws_spot_builder_image_validation.sh
 assert parts[parts.index("--image") + 1] == sys.argv[2]
 assert len(parts[parts.index("--expected-ref") + 1]) == 40
 assert parts[parts.index("--expected-architecture") + 1] == "x86_64"
-assert parts[parts.index("--min-cache-free-gib") + 1] == "20"
+assert parts[parts.index("--min-cache-free-gib") + 1] == "10"
 assert parts[parts.index("--command") + 1].startswith("cargo test")
 PY
 test -f "$TMP/summary.json"
