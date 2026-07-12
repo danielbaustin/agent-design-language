@@ -19,7 +19,7 @@ fi
 PROFILE="${AWS_PROFILE:-agent-logic-admin}"
 REGION="${AWS_REGION:-us-west-2}"
 ISSUE="5191"
-RUN_ID="adl-wp-5191-aws-spot-$(date -u +%Y%m%d%H%M%S)"
+RUN_ID=""
 COMMAND=""
 GIT_REF=""
 SOURCE_COMMIT=""
@@ -300,6 +300,10 @@ fi
 
 if [[ ${#INSTANCE_TYPES[@]} -eq 0 ]]; then
   INSTANCE_TYPES=("m7a.2xlarge" "c7a.2xlarge" "c7i.2xlarge")
+fi
+
+if [[ -z "$RUN_ID" ]]; then
+  RUN_ID="adl-wp-${ISSUE}-aws-spot-$(date -u +%Y%m%d%H%M%S)"
 fi
 
 if [[ -z "$PROFILE" ]]; then
