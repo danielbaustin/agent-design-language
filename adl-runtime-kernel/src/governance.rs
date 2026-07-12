@@ -167,6 +167,22 @@ pub struct ExecutionPermit {
     pub signature: String,
 }
 
+impl ExecutionPermit {
+    pub fn sign(mut self, key: &SigningKey) -> Result<Self, GovernanceError> {
+        self.signature.clear();
+        self.signature = sign_value(&self, key)?;
+        Ok(self)
+    }
+
+    pub fn verify(&self, key: &VerifyingKey) -> Result<(), GovernanceError> {
+        verify_signed(self, &self.signature, Some(key))
+    }
+
+    pub fn hash(&self) -> Result<String, GovernanceError> {
+        canonical_hash(self)
+    }
+}
+
 #[derive(Clone, Debug, Eq, PartialEq, Serialize, Deserialize)]
 pub struct RefusalEvidence {
     pub request_id: String,

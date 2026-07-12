@@ -1,0 +1,23 @@
+flowchart TB
+    C["Guardian-neutral child contract\nSIGTERM, classified exit, stdout/stderr, continuity"]
+    R["rustysd candidate\ncommon unit subset"]
+    H["Horust selected portable Unix guardian\nexecutable restart proof"]
+    S["systemd optional Linux adapter\ncgroup kill + hardening"]
+    K["Runtime v3 Tokio kernel\ncomponent supervision"]
+    E["Retained soak evidence\nfaults + continuity + footprint"]
+    D{"Reviewed disposition"}
+
+    R --> C
+    H --> C
+    S --> C
+    C --> K
+    K --> E
+    E --> D
+    D -->|"current"| I["Continue incubation\nRuntime v2 remains default"]
+
+    classDef guardian fill:#d9e8ff,stroke:#2474d2,color:#061d3a;
+    classDef runtime fill:#d9f5f6,stroke:#00a4b7,color:#07343a;
+    classDef decision fill:#f9dcf8,stroke:#d637d6,color:#31102f;
+    class R,H,S,C guardian;
+    class K,E runtime;
+    class D,I decision;

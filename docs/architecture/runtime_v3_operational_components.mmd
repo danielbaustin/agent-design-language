@@ -1,0 +1,24 @@
+flowchart TB
+    K["Tokio kernel and supervisor"] --> C["Versioned component contracts"]
+    G["Freedom Gate and AEE"] --> P["Governed operational adapter"]
+    C --> P
+    P --> S["Semaphore + timeout + retry + LRU idempotency"]
+    S --> T["Chronosense"]
+    S --> R["Scheduler"]
+    S --> V["Provider"]
+    S --> N["ACIP / A2A"]
+    S --> B["Cloud bridge"]
+    S --> D["Checkpoint store / lifelog"]
+    V --> A["Resident agent"]
+    R --> A
+    D --> A
+    A --> H["Shepherd"]
+    N --> H
+    B --> H
+
+    classDef core fill:#d9e8ff,stroke:#2474d2,color:#061d3a;
+    classDef governed fill:#f9dcf8,stroke:#d637d6,color:#31102f;
+    classDef service fill:#d9f5f6,stroke:#00a4b7,color:#07343a;
+    class K,C,S core;
+    class G,P governed;
+    class T,R,V,N,B,D,A,H service;

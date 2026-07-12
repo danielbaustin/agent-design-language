@@ -24,6 +24,9 @@ tokio-util = { version = "0.7", features = ["rt"] }
 tracing = "0.1"
 uuid = { version = "1", features = ["v4"] }
 
+[target.'cfg(unix)'.dependencies]
+libc = "0.2"
+
 [dev-dependencies]
 tempfile = "3"
 tracing-subscriber = "0.3"
@@ -31,3 +34,7 @@ tracing-subscriber = "0.3"
 [[bin]]
 name = "adl-runtime-kernel"
 path = "src/bin/adl-runtime-kernel.rs"
+
+[[bin]]
+name = "adl-runtime-shadow-fixture"
+path = "src/bin/adl-runtime-shadow-fixture.rs"

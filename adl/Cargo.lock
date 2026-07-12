@@ -74,6 +74,7 @@ dependencies = [
  "base64 0.22.1",
  "fs2",
  "hmac",
+ "libc",
  "rand 0.8.5",
  "redb",
  "secrecy 0.8.0",

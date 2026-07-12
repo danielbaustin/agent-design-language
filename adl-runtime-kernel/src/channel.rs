@@ -183,6 +183,12 @@ impl<T> BoundedReceiver<T> {
         }
         value
     }
+
+    pub fn try_recv(&mut self) -> Result<T, mpsc::error::TryRecvError> {
+        let value = self.rx.try_recv()?;
+        self.metrics.record_dequeue();
+        Ok(value)
+    }
 }
 
 pub fn channel<T>(

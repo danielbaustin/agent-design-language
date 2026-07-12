@@ -1,0 +1,21 @@
+name = "adl-runtime-kernel"
+command = "${ADL_RUNTIME_BIN} serve ${ADL_RUNTIME_CAPSULE}"
+stdout = "STDOUT"
+stderr = "STDERR"
+
+[restart]
+strategy = "on-failure"
+backoff = "100ms"
+attempts = 3
+
+[failure]
+successful-exit-code = [0, 78]
+strategy = "ignore"
+
+[environment]
+keep-env = false
+re-export = ["ADL_RUNTIME_CONTROL_PUBLIC_KEY_HEX", "ADL_RUNTIME_CONTROL_KEY_ID", "ADL_RUNTIME_CONTROL_PRINCIPAL"]
+
+[termination]
+signal = "TERM"
+wait = "10s"

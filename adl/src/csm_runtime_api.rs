@@ -2487,6 +2487,29 @@ memory: {}
             serde_json::to_string_pretty(&curiosity).unwrap(),
         )
         .unwrap();
+        fs::write(
+            state.join("csm_typed_channel_state.json"),
+            serde_json::to_string_pretty(&json!({
+                "schema": "adl.csm.typed_channel_state.v1",
+                "runtime_owner": "csm",
+                "status": "ready",
+                "required_channel_not_ready": false,
+                "last_event": "test_fixture_ready",
+                "last_receipt": null,
+                "summary": {
+                    "channel_count": 0,
+                    "queue_depth": 0,
+                    "durable_spool_depth": 0,
+                    "blocked_count": 0,
+                    "throttled_count": 0,
+                    "shed_count": 0
+                },
+                "channels": [],
+                "updated_at": Utc::now()
+            }))
+            .unwrap(),
+        )
+        .unwrap();
         let options = CsmRuntimeApiOptions {
             spec_path: spec,
             bind: test_api_bind(SEQ.load(Ordering::SeqCst)),
@@ -2497,7 +2520,7 @@ memory: {}
             otel_log_path: None,
         };
         let response = runtime_api_response(&options, "/ready").unwrap();
-        assert_eq!(response["ready"], "ready");
+        assert_eq!(response["ready"], "ready", "response: {response}");
         assert!(response["blocking_reasons"].as_array().unwrap().is_empty());
     }
 

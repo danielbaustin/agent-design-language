@@ -55,6 +55,9 @@ cat >"$runtime_kernel" <<'EOF'
 A	adl-runtime-kernel/src/lib.rs
 A	adl-runtime-kernel/tests/kernel.rs
 A	infra/rustysd/adl-runtime-kernel.service
+A	infra/horust/adl-runtime-kernel.toml
+A	infra/horust/adl-runtime-kernel-bakeoff.toml
+A	infra/systemd/adl-runtime-kernel.service
 EOF
 bash "$SCRIPT" --changed-files "$runtime_kernel" >"$TMP/runtime-kernel.out"
 assert_has "$TMP/runtime-kernel.out" "aggregate_status=selected"
