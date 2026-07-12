@@ -1,0 +1,90 @@
+{
+  "schema": "adl.csdlc_v2.contracts_and_cots.v1",
+  "issue": 5228,
+  "clean_room": {
+    "forbidden_inputs": [
+      "existing_repository_implementation",
+      "existing_repository_schemas",
+      "existing_repository_templates",
+      "existing_repository_tests",
+      "existing_repository_fixtures",
+      "existing_repository_skills"
+    ],
+    "allowed_evidence": [
+      "documented_requirements",
+      "public_behavioral_contracts",
+      "black_box_command_outcomes",
+      "issue_and_pr_evidence",
+      "operator_decisions",
+      "third_party_crate_documentation"
+    ],
+    "required_module_provenance": true,
+    "required_fixture_provenance": true
+  },
+  "product_dependency_forbidden": ["adl", "adl-runtime", "adl-runtime-kernel"],
+  "cots": [
+    {"concern": "cli", "crate": "clap", "version_requirement": ">=4.5,<5", "features": ["derive"], "status": "selected", "compatibility_basis": "current ADL manifest and Rust 2021", "reason": "typed derive CLI and help"},
+    {"concern": "serialization", "crate": "serde", "version_requirement": ">=1,<2", "features": ["derive"], "status": "selected", "compatibility_basis": "Runtime v3 and current ADL manifests", "reason": "typed versioned records"},
+    {"concern": "json", "crate": "serde_json", "version_requirement": ">=1,<2", "features": [], "status": "selected", "compatibility_basis": "Runtime v3 and current ADL manifests", "reason": "machine contracts and evidence"},
+    {"concern": "schema_derivation", "crate": "schemars", "version_requirement": ">=0.8,<0.9", "features": [], "status": "selected", "compatibility_basis": "current ADL manifest; Gate 2 resolver proof required", "reason": "Rust-to-schema alignment"},
+    {"concern": "schema_validation", "crate": "jsonschema", "version_requirement": ">=0.17,<0.18", "features": [], "status": "selected", "compatibility_basis": "current ADL manifest; Gate 2 resolver proof required", "reason": "fail-closed external values"},
+    {"concern": "errors", "crate": "thiserror", "version_requirement": ">=1,<3", "features": [], "status": "selected", "compatibility_basis": "Runtime v3 uses current compatible major", "reason": "small typed error taxonomy"},
+    {"concern": "enum_contract", "crate": "strum", "version_requirement": ">=0.27,<0.28", "features": ["derive"], "status": "selected_pending_resolver", "compatibility_basis": "operator decision; independent Gate 2 cargo resolution required", "reason": "canonical display, parsing, iteration"},
+    {"concern": "markdown_ast", "crate": "markdown", "package_name": "markdown.rs", "version_requirement": ">=1.0,<2", "features": [], "status": "selected", "compatibility_basis": "current ADL manifest pins the 1.x API", "reason": "mdast parsing and structural validation"},
+    {"concern": "github", "crate": "octocrab", "version_requirement": ">=0.53,<0.54", "features": ["default-client", "jwt-rust-crypto", "rustls", "rustls-ring"], "default_features": false, "status": "selected", "compatibility_basis": "current ADL manifest and rustls transport", "reason": "typed GitHub transport without gh parsing"},
+    {"concern": "async_process", "crate": "tokio", "version_requirement": ">=1,<2", "features": ["fs", "macros", "process", "rt-multi-thread", "sync", "time"], "status": "selected", "compatibility_basis": "Runtime v3 uses Tokio 1.x", "reason": "bounded process, time, and synchronization"},
+    {"concern": "cancellation", "crate": "tokio-util", "version_requirement": ">=0.7,<0.8", "features": ["rt"], "status": "selected", "compatibility_basis": "Runtime v3 uses 0.7 with rt", "reason": "hierarchical bounded cancellation"},
+    {"concern": "observability", "crate": "tracing", "version_requirement": ">=0.1,<0.2", "features": [], "status": "selected", "compatibility_basis": "Runtime v3 and current ADL manifests", "reason": "structured diagnostics facade"},
+    {"concern": "file_locking", "crate": "fs2", "version_requirement": ">=0.4,<0.5", "features": [], "status": "candidate", "compatibility_basis": "adl-runtime manifest; Gate 2 atomic protocol proof required", "reason": "portable advisory locking; prove atomic protocol"},
+    {"concern": "temp_repositories", "crate": "tempfile", "version_requirement": ">=3,<4", "features": [], "status": "selected_dev", "compatibility_basis": "Runtime v3 dev dependency", "reason": "bounded integration fixtures"},
+    {"concern": "integrity_digest", "crate": "blake3", "version_requirement": ">=1,<2", "features": [], "status": "candidate", "compatibility_basis": "Runtime v3 dependency", "reason": "fast content identity; not authentication"},
+    {"concern": "state_machine", "crate": null, "version_requirement": null, "features": [], "status": "evaluate_in_gate_2", "compatibility_basis": "no qualified crate selected", "reason": "prefer readable typed transition table; reject macro-heavy magic"},
+    {"concern": "git", "crate": null, "version_requirement": null, "features": [], "status": "typed_subprocess", "compatibility_basis": "native Git worktree semantics", "reason": "preserve native worktree semantics unless COTS proves smaller"},
+    {"concern": "markdown_serialization", "crate": null, "version_requirement": null, "features": [], "status": "evaluate_in_gate_2", "compatibility_basis": "markdown.rs mdast parser selected; serializer unresolved", "reason": "must round-trip or render deterministically without text surgery"}
+  ],
+  "binaries": [
+    "csdlc-init",
+    "csdlc-doctor",
+    "csdlc-edit",
+    "csdlc-bind",
+    "csdlc-validate",
+    "csdlc-publish",
+    "csdlc-closeout"
+  ],
+  "skills": [
+    "csdlc-conductor",
+    "csdlc-issue-designer",
+    "csdlc-card-editor",
+    "csdlc-run",
+    "csdlc-validator",
+    "csdlc-review",
+    "csdlc-publish",
+    "csdlc-shepherd",
+    "csdlc-closeout"
+  ],
+  "card_operations": [
+    "set_field",
+    "append_reference",
+    "record_validation",
+    "record_finding",
+    "dispose_finding",
+    "advance_status",
+    "record_execution",
+    "record_closeout"
+  ],
+  "authority": {
+    "skills_mutate_state": false,
+    "rust_binaries_mutate_state": true,
+    "scheduler_executes": false,
+    "shepherd_edits_or_merges": false,
+    "publish_requires_current_review": true,
+    "human_or_explicit_operator_merge_authority": true
+  },
+  "deferred_overlap": [
+    {"surface": "shared_github_token_resolution", "disposition": "independently_implement_then_review_later_interface"},
+    {"surface": "shared_observability_event_shape", "disposition": "independently_implement_then_review_later_interface"},
+    {"surface": "prompt_publication_exports", "disposition": "defer_outside_v2_core"},
+    {"surface": "main_adl_command_aliases", "disposition": "delete_after_cutover"},
+    {"surface": "runtime_cross_product_validation", "disposition": "explicit_optional_pvf_lane"}
+  ]
+}

@@ -63,7 +63,12 @@ def main() -> None:
         "GET /ready",
         "GET /metrics",
         "GET /events",
+        "GET /chronosense",
+        "GET /shepherd",
+        "GET /curiosity",
+        "GET /reasoning",
         "GET /api-gateway-bridge",
+        "GET /persistence",
     ]:
         if route not in api.get("supported_route_keys", []) and "$default" not in api.get("supported_route_keys", []):
             fail(f"api_gateway.supported_route_keys missing {route}")

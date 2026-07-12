@@ -46,8 +46,9 @@ pub use adl_runtime::runtime_api::{
     CSM_RUNTIME_API_API_GATEWAY_BRIDGE_SCHEMA, CSM_RUNTIME_API_CHRONOSENSE_SCHEMA,
     CSM_RUNTIME_API_CURIOSITY_SCHEMA, CSM_RUNTIME_API_ENDPOINTS, CSM_RUNTIME_API_EVENTS_SCHEMA,
     CSM_RUNTIME_API_HEALTH_SCHEMA, CSM_RUNTIME_API_METRICS_SCHEMA,
-    CSM_RUNTIME_API_PERSISTENCE_SCHEMA, CSM_RUNTIME_API_READY_SCHEMA, CSM_RUNTIME_API_SCHEMA,
-    CSM_RUNTIME_API_SHEPHERD_SCHEMA, CSM_RUNTIME_API_STATUS_SCHEMA,
+    CSM_RUNTIME_API_PERSISTENCE_SCHEMA, CSM_RUNTIME_API_READY_SCHEMA,
+    CSM_RUNTIME_API_REASONING_SCHEMA, CSM_RUNTIME_API_SCHEMA, CSM_RUNTIME_API_SHEPHERD_SCHEMA,
+    CSM_RUNTIME_API_STATUS_SCHEMA,
 };
 pub use api_gateway_bridge::{prove_api_gateway_bridge, ApiGatewayBridgeOptions};
 const CSM_RUNTIME_API_BROWSER_DEMO_PORT: &str = "8765";
@@ -359,6 +360,7 @@ fn runtime_api_response_with_identity(
         "/chronosense" => chronosense_response(&loaded, options),
         "/shepherd" => shepherd_response(&loaded, options),
         "/curiosity" => curiosity_response(&loaded, options),
+        "/reasoning" => reasoning_response(&loaded),
         "/api-gateway-bridge" => api_gateway_bridge_response(&loaded, identity, gateway_identity),
         "/persistence" => persistence_response(&loaded),
         other => Ok(json!({
@@ -429,6 +431,7 @@ fn status_response(loaded: &LoadedAgentSpec, options: &CsmRuntimeApiOptions) -> 
     );
     let curiosity =
         curiosity_api_status(loaded, &agent_status, &daemon_status, &runtime_capabilities);
+    let reasoning = reasoning_api_status(loaded);
     let resident_agents = resident_agents_status(loaded);
     let persistence = persistence_response(loaded)?;
     let mut response = json!({
@@ -460,6 +463,7 @@ fn status_response(loaded: &LoadedAgentSpec, options: &CsmRuntimeApiOptions) -> 
         "resident_agents": resident_agents,
         "polis_shepherd_agent": shepherd,
         "curiosity_engine": curiosity,
+        "reasoning_runtime": reasoning,
         "checkpoint": checkpoint_freshness,
         "continuity": {
             "checkpoint": compact_artifact_status(&continuity_checkpoint, "continuity_checkpoint.json"),
@@ -570,6 +574,18 @@ fn curiosity_response(loaded: &LoadedAgentSpec, options: &CsmRuntimeApiOptions) 
         "agent_instance_id": loaded.spec.agent_instance_id,
         "runtime_api_path": "/curiosity",
         "component": status["curiosity_engine"]
+    });
+    assert_api_response_redacted(&response)?;
+    Ok(response)
+}
+
+fn reasoning_response(loaded: &LoadedAgentSpec) -> Result<Value> {
+    let response = json!({
+        "schema": CSM_RUNTIME_API_REASONING_SCHEMA,
+        "runtime_owner": "csm",
+        "agent_instance_id": loaded.spec.agent_instance_id,
+        "runtime_api_path": "/reasoning",
+        "component": reasoning_api_status(loaded)
     });
     assert_api_response_redacted(&response)?;
     Ok(response)
@@ -801,6 +817,23 @@ fn curiosity_api_status(
         daemon_state,
         &agent_state,
     )
+}
+
+fn reasoning_api_status(loaded: &LoadedAgentSpec) -> Value {
+    let artifact = read_json_artifact(&artifact_path(
+        loaded,
+        adl_runtime::reasoning_runtime::REASONING_RUNTIME_STATUS_REF,
+    ));
+    json!({
+        "status": artifact.get("status").cloned().unwrap_or_else(|| json!("missing")),
+        "ref": adl_runtime::reasoning_runtime::REASONING_RUNTIME_STATUS_REF,
+        "value": artifact.get("value").cloned().unwrap_or_else(|| json!({
+            "schema": adl_runtime::reasoning_runtime::REASONING_RUNTIME_STATUS_SCHEMA,
+            "component": adl_runtime::reasoning_runtime::REASONING_RUNTIME_COMPONENT,
+            "health": "stopped",
+            "reason_code": "status_artifact_missing"
+        }))
+    })
 }
 
 fn api_gateway_bridge_runtime_status(loaded: &LoadedAgentSpec) -> Value {
@@ -1400,6 +1433,26 @@ fn readiness_blockers(status: &Value) -> Vec<String> {
     {
         blockers.push("curiosity_engine_validation_failed".to_string());
     }
+    let reasoning_status = status.get("reasoning_runtime");
+    if reasoning_status
+        .and_then(|value| value.get("status"))
+        .and_then(Value::as_str)
+        != Some("serialized")
+    {
+        blockers.push("reasoning_runtime_missing".to_string());
+    } else {
+        match reasoning_status
+            .and_then(|value| value.pointer("/value/health"))
+            .and_then(Value::as_str)
+        {
+            Some("ready") => {}
+            Some("stopped") => blockers.push("reasoning_runtime_stopped".to_string()),
+            Some("degraded") => blockers.push("reasoning_runtime_degraded".to_string()),
+            Some("overloaded") => blockers.push("reasoning_runtime_overloaded".to_string()),
+            Some(other) => blockers.push(format!("reasoning_runtime_{other}")),
+            None => blockers.push("reasoning_runtime_health_missing".to_string()),
+        }
+    }
     blockers
 }
 
@@ -1818,12 +1871,42 @@ memory: {}
         spec
     }
 
-    fn write_ready_typed_channel_state(state_root: &Path) {
+    fn write_ready_runtime_gate_artifacts(state: &Path) {
         fs::write(
-            state_root.join("csm_typed_channel_state.json"),
+            state.join(adl_runtime::reasoning_runtime::REASONING_RUNTIME_STATUS_REF),
+            serde_json::to_string_pretty(&json!({
+                "schema": adl_runtime::reasoning_runtime::REASONING_RUNTIME_STATUS_SCHEMA,
+                "component": "reasoning_runtime",
+                "health": "ready",
+                "accepted": 0,
+                "completed": 0,
+                "quarantined": 0,
+                "saturation_count": 0,
+                "queue_capacity": 64,
+                "reason_code": "typed_channel_ready"
+            }))
+            .unwrap(),
+        )
+        .unwrap();
+        fs::write(
+            state.join("csm_typed_channel_state.json"),
             serde_json::to_string_pretty(&json!({
                 "schema": "adl.csm.typed_channel_state.v1",
-                "status": "ready"
+                "runtime_owner": "csm",
+                "status": "ready",
+                "required_channel_not_ready": false,
+                "last_event": "test_fixture_ready",
+                "last_receipt": null,
+                "summary": {
+                    "channel_count": 0,
+                    "queue_depth": 0,
+                    "durable_spool_depth": 0,
+                    "blocked_count": 0,
+                    "throttled_count": 0,
+                    "shed_count": 0
+                },
+                "channels": [],
+                "updated_at": Utc::now()
             }))
             .unwrap(),
         )
@@ -2503,6 +2586,22 @@ memory: {}
             serde_json::to_string_pretty(&curiosity).unwrap(),
         )
         .unwrap();
+        fs::write(
+            state.join(adl_runtime::reasoning_runtime::REASONING_RUNTIME_STATUS_REF),
+            serde_json::to_string_pretty(&json!({
+                "schema": adl_runtime::reasoning_runtime::REASONING_RUNTIME_STATUS_SCHEMA,
+                "component": "reasoning_runtime",
+                "health": "ready",
+                "accepted": 4,
+                "completed": 4,
+                "quarantined": 0,
+                "saturation_count": 1,
+                "queue_capacity": 64,
+                "reason_code": "typed_channel_ready"
+            }))
+            .unwrap(),
+        )
+        .unwrap();
         let options = CsmRuntimeApiOptions {
             spec_path: spec,
             bind: test_api_bind(SEQ.load(Ordering::SeqCst)),
@@ -2526,6 +2625,15 @@ memory: {}
         let curiosity = runtime_api_response(&options, "/curiosity").unwrap();
         assert_eq!(curiosity["schema"], CSM_RUNTIME_API_CURIOSITY_SCHEMA);
         assert_eq!(curiosity["component"]["component"], "curiosity_engine");
+        let reasoning = runtime_api_response(&options, "/reasoning").unwrap();
+        assert_eq!(reasoning["schema"], CSM_RUNTIME_API_REASONING_SCHEMA);
+        assert_eq!(reasoning["runtime_api_path"], "/reasoning");
+        assert_eq!(reasoning["component"]["status"], "serialized");
+        assert_eq!(reasoning["component"]["value"]["health"], "ready");
+        assert_eq!(
+            status["reasoning_runtime"]["value"]["component"],
+            "reasoning_runtime"
+        );
     }
 
     #[test]
@@ -2546,6 +2654,60 @@ memory: {}
             .as_array()
             .unwrap()
             .contains(&json!("curiosity_engine_not_ready")));
+        assert!(ready["blocking_reasons"]
+            .as_array()
+            .unwrap()
+            .contains(&json!("reasoning_runtime_missing")));
+    }
+
+    #[test]
+    fn runtime_api_ready_projects_reasoning_runtime_health() {
+        for (health, expected_blocker) in [
+            ("ready", None),
+            ("stopped", Some("reasoning_runtime_stopped")),
+            ("degraded", Some("reasoning_runtime_degraded")),
+            ("overloaded", Some("reasoning_runtime_overloaded")),
+        ] {
+            let root = temp_root(&format!("reasoning-{health}"));
+            let spec = write_spec(&root);
+            let state = root.join("state");
+            fs::create_dir_all(&state).unwrap();
+            fs::write(
+                state.join(adl_runtime::reasoning_runtime::REASONING_RUNTIME_STATUS_REF),
+                serde_json::to_string_pretty(&json!({
+                    "schema": adl_runtime::reasoning_runtime::REASONING_RUNTIME_STATUS_SCHEMA,
+                    "component": "reasoning_runtime",
+                    "health": health,
+                    "accepted": 0,
+                    "completed": 0,
+                    "quarantined": 0,
+                    "saturation_count": 0,
+                    "blocked_admissions": if health == "overloaded" { 1 } else { 0 },
+                    "queue_capacity": 64,
+                    "reason_code": format!("test_{health}")
+                }))
+                .unwrap(),
+            )
+            .unwrap();
+            let options = CsmRuntimeApiOptions {
+                spec_path: spec,
+                bind: test_api_bind(SEQ.load(Ordering::SeqCst)),
+                test_max_requests: Some(1),
+                idle_timeout_ms: None,
+                shutdown_file: None,
+                otel_status_path: None,
+                otel_log_path: None,
+            };
+            let ready = runtime_api_response(&options, "/ready").unwrap();
+            let blockers = ready["blocking_reasons"].as_array().unwrap();
+            if let Some(expected_blocker) = expected_blocker {
+                assert!(blockers.contains(&json!(expected_blocker)));
+            } else {
+                assert!(!blockers.iter().any(|blocker| blocker
+                    .as_str()
+                    .is_some_and(|value| value.starts_with("reasoning_runtime_"))));
+            }
+        }
     }
 
     #[test]
@@ -2717,7 +2879,7 @@ memory: {}
         let spec = write_spec(&root);
         let state = root.join("state");
         fs::create_dir_all(&state).unwrap();
-        write_ready_typed_channel_state(&state);
+        write_ready_runtime_gate_artifacts(&state);
         fs::write(
             state.join("status.json"),
             serde_json::to_string_pretty(&json!({
@@ -2789,29 +2951,7 @@ memory: {}
             serde_json::to_string_pretty(&curiosity).unwrap(),
         )
         .unwrap();
-        fs::write(
-            state.join("csm_typed_channel_state.json"),
-            serde_json::to_string_pretty(&json!({
-                "schema": "adl.csm.typed_channel_state.v1",
-                "runtime_owner": "csm",
-                "status": "ready",
-                "required_channel_not_ready": false,
-                "last_event": "test_fixture_ready",
-                "last_receipt": null,
-                "summary": {
-                    "channel_count": 0,
-                    "queue_depth": 0,
-                    "durable_spool_depth": 0,
-                    "blocked_count": 0,
-                    "throttled_count": 0,
-                    "shed_count": 0
-                },
-                "channels": [],
-                "updated_at": Utc::now()
-            }))
-            .unwrap(),
-        )
-        .unwrap();
+        write_ready_runtime_gate_artifacts(&state);
         let options = CsmRuntimeApiOptions {
             spec_path: spec,
             bind: test_api_bind(SEQ.load(Ordering::SeqCst)),
@@ -3218,7 +3358,7 @@ memory: {}
         let spec = write_spec(&root);
         let state = root.join("state");
         fs::create_dir_all(&state).unwrap();
-        write_ready_typed_channel_state(&state);
+        write_ready_runtime_gate_artifacts(&state);
         fs::write(
             state.join("daemon_status.json"),
             serde_json::to_string_pretty(&json!({
@@ -3280,6 +3420,7 @@ memory: {}
             serde_json::to_string_pretty(&curiosity).unwrap(),
         )
         .unwrap();
+        write_ready_runtime_gate_artifacts(&state);
         let options = CsmRuntimeApiOptions {
             spec_path: spec,
             bind: test_api_bind(SEQ.load(Ordering::SeqCst)),

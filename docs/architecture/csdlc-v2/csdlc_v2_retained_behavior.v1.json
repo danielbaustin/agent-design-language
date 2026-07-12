@@ -1,0 +1,162 @@
+{
+  "schema": "adl.csdlc_v2.retained_behavior.v1",
+  "issue": 5228,
+  "generation": "v2",
+  "rule": "v1 is black-box behavioral evidence, never implementation input",
+  "dispositions": [
+    {
+      "capability": "lifecycle_state_machine",
+      "v2_owner": "model",
+      "disposition": "retain_simplify",
+      "criterion": "typed guarded phases from initialized through closed_out",
+      "proof": "table-driven transition and invalid-transition fixtures"
+    },
+    {
+      "capability": "six_structured_prompts",
+      "v2_owner": "cards",
+      "disposition": "retain_rebuild",
+      "criterion": "SIP/STP/SPP/VPP/SRP/SOR are generated durable truth",
+      "proof": "typed-values render plus markdown.rs mdast contract fixture"
+    },
+    {
+      "capability": "card_construction_and_editing",
+      "v2_owner": "csdlc-edit",
+      "disposition": "replace",
+      "criterion": "semantic operations and atomic commits; no direct Markdown edits",
+      "proof": "stale-digest, ownership, AST, and atomicity fixtures"
+    },
+    {
+      "capability": "prompt_template_registry",
+      "v2_owner": "cards",
+      "disposition": "retain_rebuild",
+      "criterion": "new versioned v2 templates and schemas selected deterministically",
+      "proof": "template/schema compatibility fixtures"
+    },
+    {
+      "capability": "issue_design_and_diagram_gate",
+      "v2_owner": "doctor",
+      "disposition": "retain_strengthen",
+      "criterion": "every issue has current design, Mermaid source, references, and review",
+      "proof": "missing/stale/generic design rejection fixtures"
+    },
+    {
+      "capability": "branch_worktree_binding",
+      "v2_owner": "csdlc-bind",
+      "disposition": "retain_simplify",
+      "criterion": "idempotent issue-bound branch/worktree with clean-root guard",
+      "proof": "temporary Git repository integration scenarios"
+    },
+    {
+      "capability": "session_claims",
+      "v2_owner": "claims",
+      "disposition": "retain_strengthen",
+      "criterion": "leases, heartbeats, protected paths, CAS stale recovery",
+      "proof": "collision, expiry, recovery, and interruption fixtures"
+    },
+    {
+      "capability": "parallel_validation_fabric",
+      "v2_owner": "validation",
+      "disposition": "retain_simplify",
+      "criterion": "declared lanes form the smallest budgeted proof DAG",
+      "proof": "selection, dependency, concurrency, and convergence fixtures"
+    },
+    {
+      "capability": "scheduler",
+      "v2_owner": "scheduler",
+      "disposition": "retain_simplify",
+      "criterion": "pure deterministic eligibility without execution authority",
+      "proof": "state-table eligibility fixtures"
+    },
+    {
+      "capability": "shepherd",
+      "v2_owner": "shepherd",
+      "disposition": "retain_simplify",
+      "criterion": "observe and classify without editing or merge authority",
+      "proof": "waiting/retry/repair/operator classification fixtures"
+    },
+    {
+      "capability": "pre_publication_review",
+      "v2_owner": "review_contract",
+      "disposition": "retain_strengthen",
+      "criterion": "exact revision reviewed and actionable findings fixed before PR creation",
+      "proof": "missing/stale/unresolved review rejection fixtures"
+    },
+    {
+      "capability": "github_issue_pr_checks",
+      "v2_owner": "github_adapter",
+      "disposition": "retain_simplify",
+      "criterion": "typed Octocrab operations with idempotency and normalized state",
+      "proof": "fake HTTP lifecycle scenarios"
+    },
+    {
+      "capability": "publication",
+      "v2_owner": "csdlc-publish",
+      "disposition": "retain_simplify",
+      "criterion": "draft PR create/update after current review and base verification",
+      "proof": "publication resume and remote-failure fixtures"
+    },
+    {
+      "capability": "closeout",
+      "v2_owner": "csdlc-closeout",
+      "disposition": "retain_simplify",
+      "criterion": "remote terminal truth, SOR/index reconciliation, safe prune",
+      "proof": "idempotent closeout and dirty-worktree refusal fixtures"
+    },
+    {
+      "capability": "machine_json_and_observability",
+      "v2_owner": "output",
+      "disposition": "retain_strengthen",
+      "criterion": "JSON stdout, human stderr, redaction, typed exits",
+      "proof": "channel separation and secret-marker fixtures"
+    },
+    {
+      "capability": "pr_sh_execution_layer",
+      "v2_owner": null,
+      "disposition": "delete",
+      "criterion": "no shell lifecycle dispatcher remains after cutover",
+      "proof": "installed-command and repository residue scan"
+    },
+    {
+      "capability": "adl_pr_and_adl_csdlc_dispatch",
+      "v2_owner": null,
+      "disposition": "delete",
+      "criterion": "no main ADL command dependency remains",
+      "proof": "Cargo metadata and command-surface scan"
+    },
+    {
+      "capability": "thin_legacy_adl_pr_binaries",
+      "v2_owner": null,
+      "disposition": "delete",
+      "criterion": "seven v2 owner binaries replace forwarding wrappers",
+      "proof": "binary inventory and deletion report"
+    },
+    {
+      "capability": "hard_coded_product_validation_commands",
+      "v2_owner": "repository_policy",
+      "disposition": "move_to_repository_policy",
+      "criterion": "declarative executable-plus-argv PVF manifests",
+      "proof": "no product-name knowledge in C-SDLC source"
+    },
+    {
+      "capability": "legacy_card_import",
+      "v2_owner": "temporary_importer",
+      "disposition": "legacy_import_only",
+      "criterion": "one-way data import with 30-day post-cutover sunset",
+      "proof": "bounded import fixtures and removal deadline"
+    },
+    {
+      "capability": "browser_opening_and_ui_convenience",
+      "v2_owner": null,
+      "disposition": "delete",
+      "criterion": "core returns URLs and paths only",
+      "proof": "dependency and command scan"
+    },
+    {
+      "capability": "existing_adl_overlap_cleanup",
+      "v2_owner": null,
+      "disposition": "defer",
+      "criterion": "recorded follow-up; no v2 coupling or prerequisite",
+      "proof": "deferred-overlap register"
+    }
+  ]
+}
