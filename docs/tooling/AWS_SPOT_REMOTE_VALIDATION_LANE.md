@@ -269,6 +269,9 @@ already exist.
    it according to local artifact-retention policy.
 
 Never delete or recreate the retained cache as a recovery shortcut.
+When the retained EBS volume is expanded, the remote runner grows its ext4
+filesystem with `resize2fs` after mounting it. EBS size alone is not usable
+capacity until that filesystem-growth step succeeds.
 
 ## Focused Contract Tests
 

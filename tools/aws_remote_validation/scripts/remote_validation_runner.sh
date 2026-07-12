@@ -48,6 +48,7 @@ if [ "${ADL_CACHE_VOLUME_ENABLED:-0}" = "1" ]; then
     echo "UUID=$CACHE_UUID $CACHE_VOLUME_MOUNT_PATH ext4 defaults,nofail 0 2" | sudo tee -a /etc/fstab >/dev/null
   fi
   sudo mountpoint -q "$CACHE_VOLUME_MOUNT_PATH" || sudo mount "$CACHE_VOLUME_MOUNT_PATH"
+  sudo resize2fs "$CACHE_DEVICE" >/tmp/adl-cache-volume-resize.log 2>&1
   CACHE_OWNER_USER="$(id -un)"
   CACHE_OWNER_GROUP="$(id -gn)"
   sudo chown -R "$CACHE_OWNER_USER":"$CACHE_OWNER_GROUP" "$CACHE_VOLUME_MOUNT_PATH"
