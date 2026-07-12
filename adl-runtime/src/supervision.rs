@@ -36,6 +36,7 @@ pub enum ComponentId {
     Chronosense,
     Scheduler,
     Weather,
+    AcipCarrier,
     CuriosityEngine,
     FreedomGate,
     ReasoningRuntime,
@@ -47,11 +48,12 @@ pub enum ComponentId {
 }
 
 impl ComponentId {
-    pub const ALL: [ComponentId; 12] = [
+    pub const ALL: [ComponentId; 13] = [
         ComponentId::RuntimeApi,
         ComponentId::Chronosense,
         ComponentId::Scheduler,
         ComponentId::Weather,
+        ComponentId::AcipCarrier,
         ComponentId::CuriosityEngine,
         ComponentId::FreedomGate,
         ComponentId::ReasoningRuntime,
@@ -68,6 +70,7 @@ impl ComponentId {
             ComponentId::Chronosense => "chronosense",
             ComponentId::Scheduler => "scheduler",
             ComponentId::Weather => "weather",
+            ComponentId::AcipCarrier => "acip_carrier",
             ComponentId::CuriosityEngine => "curiosity_engine",
             ComponentId::FreedomGate => "freedom_gate",
             ComponentId::ReasoningRuntime => "reasoning_runtime",
@@ -215,6 +218,18 @@ pub fn default_component_supervision() -> Vec<ComponentSupervisionPolicy> {
             escalation_target: "checkpoint_continuity_and_operator_notice",
             readiness_impact: "ready_false_when_graceful_stop_required",
             critical_for_continuity: true,
+            telemetry_can_degrade: false,
+        },
+        ComponentSupervisionPolicy {
+            component: ComponentId::AcipCarrier,
+            restart_policy: ComponentRestartPolicy::RestartWithBackoff,
+            backoff_base_ms: 250,
+            backoff_cap_ms: 10_000,
+            escalation_interval_failures: 1,
+            degradation_behavior: "fail_closed_carrier_admission_without_stopping_core_runtime",
+            escalation_target: "runtime_api_auth_freedom_gate_cav_and_operator_notice",
+            readiness_impact: "ready_false_for_acip_admission",
+            critical_for_continuity: false,
             telemetry_can_degrade: false,
         },
         ComponentSupervisionPolicy {

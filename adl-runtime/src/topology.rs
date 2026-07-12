@@ -3,6 +3,7 @@
 use serde::Serialize;
 use serde_json::{json, Value};
 
+use crate::acip::{runtime_capability as acip_runtime_capability, CSM_ACIP_COMPONENT};
 use crate::supervision::{default_component_supervision, SUPERVISION_SCHEMA};
 
 pub const CSM_RUNTIME_STACK_SCHEMA: &str = "adl.csm.runtime_stack.v1";
@@ -77,6 +78,11 @@ pub fn runtime_components() -> Vec<RuntimeComponent> {
             id: "lifelog",
             plane: "continuity",
             role: "database-backed lifecycle journal",
+        },
+        RuntimeComponent {
+            id: CSM_ACIP_COMPONENT,
+            plane: "communications",
+            role: "governed ACIP/A2A JSON, protobuf, and WebSocket carrier",
         },
         RuntimeComponent {
             id: "cloud_bridge",
@@ -162,6 +168,7 @@ pub fn runtime_stack_json() -> Value {
             "lifecycle": "same_csm_supervision_checkpoint_lifelog_observability_path_for_privileged_and_ordinary_agents",
             "shepherd_model": "privileged_resident_agent_not_bespoke_model_path"
         },
+        "acip_carrier": acip_runtime_capability(),
         "curiosity_engine": {
             "schema": crate::curiosity::CSM_CURIOSITY_STATUS_SCHEMA,
             "component": crate::curiosity::CSM_CURIOSITY_COMPONENT,
@@ -207,6 +214,7 @@ mod tests {
         assert!(ids.contains(&"curiosity_engine"));
         assert!(ids.contains(&"resident_agents"));
         assert!(ids.contains(&"freedom_gate"));
+        assert!(ids.contains(&"acip_carrier"));
         assert!(ids.contains(&"observability"));
         assert!(ids.contains(&"cloud_bridge"));
     }

@@ -44,11 +44,12 @@ use adl_runtime::runtime_api_auth::{
 };
 
 pub use adl_runtime::runtime_api::{
-    CSM_RUNTIME_API_API_GATEWAY_BRIDGE_SCHEMA, CSM_RUNTIME_API_CHRONOSENSE_SCHEMA,
-    CSM_RUNTIME_API_CURIOSITY_SCHEMA, CSM_RUNTIME_API_ENDPOINTS, CSM_RUNTIME_API_EVENTS_SCHEMA,
-    CSM_RUNTIME_API_FREEDOM_GATE_SCHEMA, CSM_RUNTIME_API_HEALTH_SCHEMA,
-    CSM_RUNTIME_API_METRICS_SCHEMA, CSM_RUNTIME_API_PERSISTENCE_SCHEMA,
-    CSM_RUNTIME_API_READY_SCHEMA, CSM_RUNTIME_API_REASONING_SCHEMA, CSM_RUNTIME_API_SCHEMA,
+    CSM_RUNTIME_API_ACIP_SCHEMA, CSM_RUNTIME_API_API_GATEWAY_BRIDGE_SCHEMA,
+    CSM_RUNTIME_API_CHRONOSENSE_SCHEMA, CSM_RUNTIME_API_CURIOSITY_SCHEMA,
+    CSM_RUNTIME_API_ENDPOINTS, CSM_RUNTIME_API_EVENTS_SCHEMA, CSM_RUNTIME_API_FREEDOM_GATE_SCHEMA,
+    CSM_RUNTIME_API_HEALTH_SCHEMA, CSM_RUNTIME_API_METRICS_SCHEMA,
+    CSM_RUNTIME_API_PERSISTENCE_SCHEMA, CSM_RUNTIME_API_READY_SCHEMA,
+    CSM_RUNTIME_API_REASONING_SCHEMA, CSM_RUNTIME_API_SCHEMA,
     CSM_RUNTIME_API_SHEPHERD_SCHEMA, CSM_RUNTIME_API_STATUS_SCHEMA,
 };
 pub use api_gateway_bridge::{prove_api_gateway_bridge, ApiGatewayBridgeOptions};
@@ -361,6 +362,7 @@ fn runtime_api_response_with_identity(
         "/chronosense" => chronosense_response(&loaded, options),
         "/shepherd" => shepherd_response(&loaded, options),
         "/curiosity" => curiosity_response(&loaded, options),
+        "/acip" | "/acip/ws" => acip_response(&loaded, options, endpoint),
         "/freedom-gate" => freedom_gate_response(&loaded, options),
         "/reasoning" => reasoning_response(&loaded),
         "/api-gateway-bridge" => api_gateway_bridge_response(&loaded, identity, gateway_identity),
@@ -433,6 +435,7 @@ fn status_response(loaded: &LoadedAgentSpec, options: &CsmRuntimeApiOptions) -> 
     );
     let curiosity =
         curiosity_api_status(loaded, &agent_status, &daemon_status, &runtime_capabilities);
+    let acip_carrier = acip_api_status(loaded, &runtime_capabilities);
     let freedom_gate = freedom_gate_api_status(loaded, &runtime_capabilities);
     let reasoning = reasoning_api_status(loaded);
     let resident_agents = resident_agents_status(loaded);
@@ -466,6 +469,7 @@ fn status_response(loaded: &LoadedAgentSpec, options: &CsmRuntimeApiOptions) -> 
         "resident_agents": resident_agents,
         "polis_shepherd_agent": shepherd,
         "curiosity_engine": curiosity,
+        "acip_carrier": acip_carrier,
         "freedom_gate": freedom_gate,
         "reasoning_runtime": reasoning,
         "checkpoint": checkpoint_freshness,
@@ -619,6 +623,34 @@ fn shepherd_response(loaded: &LoadedAgentSpec, options: &CsmRuntimeApiOptions) -
         "agent_instance_id": loaded.spec.agent_instance_id,
         "runtime_api_path": "/shepherd",
         "component": status["polis_shepherd_agent"]
+    });
+    assert_api_response_redacted(&response)?;
+    Ok(response)
+}
+
+fn acip_response(
+    loaded: &LoadedAgentSpec,
+    options: &CsmRuntimeApiOptions,
+    endpoint: &str,
+) -> Result<Value> {
+    let status = status_response(loaded, options)?;
+    let response = json!({
+        "schema": CSM_RUNTIME_API_ACIP_SCHEMA,
+        "runtime_owner": "csm",
+        "agent_instance_id": loaded.spec.agent_instance_id,
+        "runtime_api_path": endpoint,
+        "component": status["acip_carrier"],
+        "auth": {
+            "required": true,
+            "surface": "same_runtime_api_auth_as_other_csm_routes",
+            "unauthorized_policy": "reject_before_sequence_reservation"
+        },
+        "transport": {
+            "json_projection": "canonical_serde_jcs_payload_projection",
+            "protobuf": "prost_envelope",
+            "websocket": "same_axum_runtime_api_listener_no_new_port",
+            "websocket_path": "/acip/ws"
+        }
     });
     assert_api_response_redacted(&response)?;
     Ok(response)
@@ -779,6 +811,7 @@ fn metrics_response(loaded: &LoadedAgentSpec, options: &CsmRuntimeApiOptions) ->
             "typed_channel_blocked_count": typed_channel_state.pointer("/value/summary/blocked_count").cloned().unwrap_or(Value::Null),
             "typed_channel_throttled_count": typed_channel_state.pointer("/value/summary/throttled_count").cloned().unwrap_or(Value::Null),
             "typed_channel_shed_count": typed_channel_state.pointer("/value/summary/shed_count").cloned().unwrap_or(Value::Null),
+            "acip_carrier_ready": status.pointer("/acip_carrier/readiness").cloned().unwrap_or(Value::Null),
             "storage_available_bytes": backpressure_state.pointer("/value/storage_pressure/available_bytes").cloned().unwrap_or(Value::Null),
             "storage_disk_floor_bytes": backpressure_state.pointer("/value/storage_pressure/disk_floor_bytes").cloned().unwrap_or(Value::Null)
         },
@@ -882,6 +915,22 @@ fn api_gateway_bridge_runtime_status(loaded: &LoadedAgentSpec) -> Value {
         "polis_id_hash": artifact.pointer("/value/polis_ingress/polis_id_hash").cloned().unwrap_or(Value::Null),
         "runtime_identity_verified": artifact.pointer("/value/polis_ingress/runtime_identity_verified").cloned().unwrap_or(Value::Null)
     })
+}
+
+fn acip_api_status(loaded: &LoadedAgentSpec, runtime_capabilities: &Value) -> Value {
+    let artifact = read_json_artifact(&artifact_path(
+        loaded,
+        adl_runtime::acip::CSM_ACIP_STATUS_REF,
+    ));
+    let runtime_capability = runtime_capabilities
+        .get("acip_carrier")
+        .cloned()
+        .unwrap_or_else(adl_runtime::acip::runtime_capability);
+    adl_runtime::acip::api_status(
+        &loaded.spec.agent_instance_id,
+        &artifact,
+        runtime_capability,
+    )
 }
 
 fn shepherd_api_status(
@@ -1465,6 +1514,20 @@ fn readiness_blockers(status: &Value) -> Vec<String> {
         != Some("passed")
     {
         blockers.push("curiosity_engine_validation_failed".to_string());
+    }
+    if status
+        .pointer("/acip_carrier/readiness")
+        .and_then(Value::as_str)
+        != Some("ready")
+    {
+        blockers.push("acip_carrier_not_ready".to_string());
+    }
+    if status
+        .pointer("/acip_carrier/validation/status")
+        .and_then(Value::as_str)
+        != Some("passed")
+    {
+        blockers.push("acip_carrier_validation_failed".to_string());
     }
     if status
         .pointer("/freedom_gate/retained_artifact_validation/status")
@@ -2940,6 +3003,7 @@ memory: {}
             .unwrap();
         drop(checkpoints);
         drop(lifelog);
+
         let options = CsmRuntimeApiOptions {
             spec_path: spec,
             bind: test_api_bind(SEQ.load(Ordering::SeqCst)),
@@ -2996,6 +3060,83 @@ memory: {}
             json!("not_initialized");
         assert!(!readiness_blockers(&checkpoint_failed)
             .contains(&"checkpoint_persistence_unhealthy".to_string()));
+    }
+
+    #[test]
+    fn runtime_api_surfaces_acip_carrier_component_and_routes() {
+        let root = temp_root("acip-carrier");
+        let spec = write_spec(&root);
+        let state = root.join("state");
+        fs::create_dir_all(&state).unwrap();
+        fs::write(
+            state.join(adl_runtime::acip::CSM_ACIP_STATUS_REF),
+            serde_json::to_string_pretty(
+                &adl_runtime::acip::CsmAcipCarrierStatus::runtime_default(),
+            )
+            .unwrap(),
+        )
+        .unwrap();
+        let options = CsmRuntimeApiOptions {
+            spec_path: spec,
+            bind: test_api_bind(SEQ.load(Ordering::SeqCst)),
+            test_max_requests: Some(1),
+            idle_timeout_ms: None,
+            shutdown_file: None,
+            otel_status_path: None,
+            otel_log_path: None,
+        };
+        let status = runtime_api_response(&options, "/status").unwrap();
+        assert_eq!(status["acip_carrier"]["component"], "acip_carrier");
+        assert_eq!(status["acip_carrier"]["readiness"], "ready");
+        assert_eq!(
+            status["acip_carrier"]["value"]["projection_profile"]["protobuf_crate"],
+            "prost"
+        );
+        assert_eq!(
+            status["runtime_stack"]["acip_carrier"]["websocket_path"],
+            "/acip/ws"
+        );
+
+        let acip = runtime_api_response(&options, "/acip").unwrap();
+        assert_eq!(acip["schema"], CSM_RUNTIME_API_ACIP_SCHEMA);
+        assert_eq!(acip["component"]["validation"]["status"], "passed");
+        assert_eq!(acip["auth"]["required"], true);
+
+        let acip_ws = runtime_api_response(&options, "/acip/ws").unwrap();
+        assert_eq!(acip_ws["schema"], CSM_RUNTIME_API_ACIP_SCHEMA);
+        assert_eq!(acip_ws["transport"]["websocket_path"], "/acip/ws");
+    }
+
+    #[test]
+    fn runtime_api_blocks_malformed_acip_retained_artifact() {
+        let root = temp_root("acip-carrier-malformed");
+        let spec = write_spec(&root);
+        let state = root.join("state");
+        fs::create_dir_all(&state).unwrap();
+        let mut status = adl_runtime::acip::CsmAcipCarrierStatus::runtime_default();
+        status.governance_hooks.cav_required = false;
+        fs::write(
+            state.join(adl_runtime::acip::CSM_ACIP_STATUS_REF),
+            serde_json::to_string_pretty(&status).unwrap(),
+        )
+        .unwrap();
+        let options = CsmRuntimeApiOptions {
+            spec_path: spec,
+            bind: test_api_bind(SEQ.load(Ordering::SeqCst)),
+            test_max_requests: Some(1),
+            idle_timeout_ms: None,
+            shutdown_file: None,
+            otel_status_path: None,
+            otel_log_path: None,
+        };
+        let ready = runtime_api_response(&options, "/ready").unwrap();
+        assert!(ready["blocking_reasons"]
+            .as_array()
+            .unwrap()
+            .contains(&json!("acip_carrier_validation_failed")));
+        let acip = runtime_api_response(&options, "/acip").unwrap();
+        assert_eq!(acip["component"]["status"], "blocked");
+        assert_eq!(acip["component"]["validation"]["status"], "fail_closed");
     }
 
     #[test]
