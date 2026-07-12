@@ -5,14 +5,22 @@ use std::process::Command;
 mod helpers;
 use helpers::unique_test_temp_dir;
 
+fn demo_test_command(exe: &str) -> Command {
+    let mut command = Command::new(exe);
+    command
+        .env("ADL_CSM_DISK_FLOOR_BYTES", "0")
+        .env("ADL_CSM_TEST_AVAILABLE_BYTES", "1073741824");
+    command
+}
+
 fn run_swarm(args: &[&str]) -> std::process::Output {
     let exe = env!("CARGO_BIN_EXE_adl");
-    Command::new(exe).args(args).output().unwrap()
+    demo_test_command(exe).args(args).output().unwrap()
 }
 
 fn run_swarm_with_ci(args: &[&str]) -> std::process::Output {
     let exe = env!("CARGO_BIN_EXE_adl");
-    Command::new(exe)
+    demo_test_command(exe)
         .env("CI", "1")
         .args(args)
         .output()
