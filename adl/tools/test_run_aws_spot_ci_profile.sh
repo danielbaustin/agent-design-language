@@ -8,7 +8,14 @@ DOCKERFILE="$ROOT/adl/docker/adl-builder/Dockerfile"
 SETUP="$ROOT/adl/tools/setup_aws_spot_remote_validation_github_resources.sh"
 
 bash -n "$SCRIPT"
-grep -F 'ADL_PR_FAST_ALLOW_FULL_NEXTEST=1' "$SCRIPT" >/dev/null
+if grep -F 'ADL_PR_FAST_ALLOW_FULL_NEXTEST=1' "$SCRIPT" >/dev/null; then
+  echo "Spot adl-ci must preserve hosted path-policy selection, not force full nextest" >&2
+  exit 1
+fi
+grep -F 'bash adl/tools/ci_path_policy.sh' "$SCRIPT" >/dev/null
+grep -F 'FULL_COVERAGE_REQUIRED="$(policy_value full_coverage_required)"' "$SCRIPT" >/dev/null
+grep -F 'if [[ "$RUST_REQUIRED" == true && "$FULL_COVERAGE_REQUIRED" != true ]]' "$SCRIPT" >/dev/null
+grep -F 'bash adl/tools/demo_smoke_v07_story.sh' "$SCRIPT" >/dev/null
 grep -F 'ADL_COVERAGE_BUILD_ROOT="$CARGO_TARGET_DIR/coverage"' "$SCRIPT" >/dev/null
 grep -F 'require_tool cargo-llvm-cov cargo llvm-cov --version' "$SCRIPT" >/dev/null
 grep -F 'ADL_SPOT_COVERAGE_SUMMARY_BEGIN' "$SCRIPT" >/dev/null

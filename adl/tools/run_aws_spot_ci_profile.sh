@@ -50,6 +50,11 @@ require_tool() {
   }
 }
 
+policy_value() {
+  local key="$1"
+  awk -F= -v key="$key" '$1 == key { print substr($0, length(key) + 2); exit }' "$POLICY_OUTPUT"
+}
+
 if [[ "$PROFILE" == "adl-ci" ]]; then
   command=(bash adl/tools/run_pr_fast_test_lane.sh --base "$BASE_COMMIT" --head "$HEAD_COMMIT")
 else
@@ -71,10 +76,39 @@ require_tool lld ld.lld --version
 
 started_at="$(date +%s)"
 if [[ "$PROFILE" == "adl-ci" ]]; then
-  cargo fmt --manifest-path adl/Cargo.toml --all -- --check
-  cargo clippy --manifest-path adl/Cargo.toml --workspace --all-targets --all-features -- -D warnings
-  ADL_PR_FAST_ALLOW_FULL_NEXTEST=1 "${command[@]}"
-  cargo test --manifest-path adl/Cargo.toml --doc
+  POLICY_OUTPUT="$(mktemp "${TMPDIR:-/tmp}/adl-spot-ci-policy.XXXXXX")"
+  trap 'rm -f "$POLICY_OUTPUT"' EXIT
+  bash adl/tools/ci_path_policy.sh \
+    --event-name pull_request \
+    --base "$BASE_COMMIT" \
+    --head "$HEAD_COMMIT" \
+    --ref "refs/heads/spot-shadow" \
+    --github-output "$POLICY_OUTPUT" >/dev/null
+  RUST_REQUIRED="$(policy_value rust_required)"
+  FULL_COVERAGE_REQUIRED="$(policy_value full_coverage_required)"
+  DEMO_SMOKE_REQUIRED="$(policy_value demo_smoke_required)"
+  V0913_PROOF_REQUIRED="$(policy_value v0913_proof_required)"
+  VALIDATION_ESCALATION_REQUIRED="$(policy_value validation_profile_escalation_required)"
+
+  printf 'ADL_SPOT_CI_POLICY rust_required=%s full_coverage_required=%s demo_smoke_required=%s v0913_proof_required=%s validation_escalation_required=%s\n' \
+    "$RUST_REQUIRED" "$FULL_COVERAGE_REQUIRED" "$DEMO_SMOKE_REQUIRED" "$V0913_PROOF_REQUIRED" "${VALIDATION_ESCALATION_REQUIRED:-false}"
+
+  if [[ "$RUST_REQUIRED" == true ]]; then
+    cargo fmt --manifest-path adl/Cargo.toml --all -- --check
+    cargo clippy --manifest-path adl/Cargo.toml --workspace --all-targets --all-features -- -D warnings
+  fi
+  if [[ "$RUST_REQUIRED" == true && "$FULL_COVERAGE_REQUIRED" != true ]]; then
+    if [[ "$VALIDATION_ESCALATION_REQUIRED" != true ]]; then
+      "${command[@]}"
+    fi
+    cargo test --manifest-path adl/Cargo.toml --doc
+  fi
+  if [[ "$DEMO_SMOKE_REQUIRED" == true ]]; then
+    bash adl/tools/demo_smoke_v07_story.sh
+  fi
+  if [[ "$V0913_PROOF_REQUIRED" == true ]]; then
+    bash adl/tools/run_v0913_proof_validation_lane.sh
+  fi
 else
   require_tool cargo-llvm-cov cargo llvm-cov --version
   rustup component list --installed | grep -E '^llvm-tools-' >/dev/null || {

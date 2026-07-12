@@ -54,8 +54,11 @@ custom command so the proof cannot silently run a cheaper substitute. Use
 `profile: custom` only for explicit operator diagnostics.
 
 The remote commands are owned by
-`adl/tools/run_aws_spot_ci_profile.sh`. `adl-ci` runs formatting, clippy,
-PR-fast/full-nextest selection, and doc tests. `adl-coverage` verifies the
+`adl/tools/run_aws_spot_ci_profile.sh`. `adl-ci` applies the same path policy as
+hosted CI, runs formatting and clippy when Rust is selected, runs focused tests
+and doc tests only when coverage has not taken ownership, and runs selected
+demo or tracked-proof lanes. It does not force full nextest when hosted CI
+would delegate that work to `adl-coverage`. `adl-coverage` verifies the
 preinstalled coverage toolchain and runs the authoritative coverage lane with
 its instrumented target rooted under retained EBS.
 
@@ -129,4 +132,3 @@ Use the Spot HOW-TO for status, live logs, SSH, stop, cleanup, cache recovery,
 image rollback, and alternate instance selection:
 
 - [AWS Spot Remote Execution HOW-TO](AWS_SPOT_REMOTE_EXECUTION_HOW_TO.md)
-
