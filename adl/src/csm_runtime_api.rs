@@ -1514,6 +1514,35 @@ memory: {}
         spec
     }
 
+    fn write_ready_runtime_gate_artifacts(state: &Path) {
+        fs::write(
+            state.join(adl_runtime::reasoning_runtime::REASONING_RUNTIME_STATUS_REF),
+            serde_json::to_string_pretty(&json!({
+                "schema": adl_runtime::reasoning_runtime::REASONING_RUNTIME_STATUS_SCHEMA,
+                "component": "reasoning_runtime",
+                "health": "ready",
+                "accepted": 0,
+                "completed": 0,
+                "quarantined": 0,
+                "saturation_count": 0,
+                "queue_capacity": 64,
+                "reason_code": "typed_channel_ready"
+            }))
+            .unwrap(),
+        )
+        .unwrap();
+        fs::write(
+            state.join("csm_typed_channel_state.json"),
+            serde_json::to_string_pretty(&json!({
+                "schema": "adl.csm.typed_channel_state.v1",
+                "status": "ready",
+                "required_channel_not_ready": false
+            }))
+            .unwrap(),
+        )
+        .unwrap();
+    }
+
     fn test_api_bind(offset: u64) -> String {
         let port = 19950 + (offset % 47);
         format!("127.0.0.1:{port}")
@@ -2195,6 +2224,7 @@ memory: {}
             serde_json::to_string_pretty(&curiosity).unwrap(),
         )
         .unwrap();
+        write_ready_runtime_gate_artifacts(&state);
         let options = CsmRuntimeApiOptions {
             spec_path: spec,
             bind: test_api_bind(SEQ.load(Ordering::SeqCst)),
@@ -2653,6 +2683,7 @@ memory: {}
             serde_json::to_string_pretty(&curiosity).unwrap(),
         )
         .unwrap();
+        write_ready_runtime_gate_artifacts(&state);
         let options = CsmRuntimeApiOptions {
             spec_path: spec,
             bind: test_api_bind(SEQ.load(Ordering::SeqCst)),
