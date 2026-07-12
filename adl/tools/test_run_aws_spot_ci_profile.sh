@@ -18,6 +18,10 @@ grep -F 'ResolveImmutableBuilderImage' "$SETUP" >/dev/null
 grep -F 'DescribeAdlBuilderImage' "$SETUP" >/dev/null
 grep -F 'ssm:GetParameter' "$SETUP" >/dev/null
 grep -F 'al2023-ami-kernel-default-x86_64' "$SETUP" >/dev/null
+grep -F 'ADLAwsRemoteValidationRole-*' "$SETUP" >/dev/null
+grep -F 'ADLAwsRemoteValidationProfile-*' "$SETUP" >/dev/null
+grep -F 'iam:AttachRolePolicy' "$SETUP" >/dev/null
+grep -F 'iam:DeleteRolePolicy' "$SETUP" >/dev/null
 
 ci_plan="$(bash "$SCRIPT" adl-ci --base HEAD --head HEAD --print-command)"
 coverage_plan="$(bash "$SCRIPT" adl-coverage --base HEAD --head HEAD --print-command)"
