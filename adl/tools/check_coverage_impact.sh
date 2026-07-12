@@ -370,7 +370,7 @@ nextest_expression_for_filter() {
       printf 'test(csmctl) or test(csm_service)'
       ;;
     csm_runtime_agent)
-      printf 'test(csm_cmd) or test(csm_runtime_api) or test(csm_godel_snapshot) or test(csm_shepherd_agent) or test(long_lived_agent) or test(csm_service)'
+      printf 'test(csm_cmd) or test(csm_runtime_api) or test(csm_freedom_gate) or test(csm_godel_snapshot) or test(csm_shepherd_agent) or test(long_lived_agent) or test(csm_service)'
       ;;
     long_lived_agent_storage)
       printf 'test(long_lived_agent::storage) or test(run_v0916_runtime_failure_injection)'
