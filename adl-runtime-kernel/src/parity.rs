@@ -955,7 +955,10 @@ fn capability_for_module(module: &str) -> &'static str {
         || path.contains("security_boundary")
     {
         "private_state.security"
-    } else if path.contains("reasoning_graph") || path.contains("loop_runtime") {
+    } else if path.contains("reasoning_graph")
+        || path.contains("loop_runtime")
+        || path.contains("reasoning_runtime")
+    {
         "reasoning.graphs_and_loops"
     } else if path.contains("learning") || path.contains("evaluation_selection") {
         "learning.adaptive_dag"
@@ -965,6 +968,7 @@ fn capability_for_module(module: &str) -> &'static str {
         || path.contains("observability")
         || path.contains("operator")
         || path.contains("feature_proof")
+        || path.contains("weather")
     {
         "control.health_observability"
     } else if path.contains("contract")
@@ -991,6 +995,8 @@ fn capability_for_module(module: &str) -> &'static str {
         || path.contains("quarantine")
         || path.contains("wake_continuity")
         || path.contains("determinism")
+        || path.contains("continuity_history")
+        || path.contains("shutdown")
     {
         "continuity.replay_recovery"
     } else if path.contains("agent_lifecycle") || path.contains("memory_identity") {
@@ -1034,6 +1040,10 @@ fn capability_for_module(module: &str) -> &'static str {
         "governance.freedom_gate_aee"
     } else if path.contains("minimal_integrated_runtime_path") {
         "migration.shadow_parity"
+    } else if path.contains("guardian") {
+        "guardian.packaging_soak"
+    } else if path.contains("runtime_api_auth") {
+        "private_state.security"
     } else if path.ends_with("/lib.rs")
         || path.ends_with("/mod.rs")
         || path.ends_with("/tests.rs")

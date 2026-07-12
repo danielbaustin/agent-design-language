@@ -372,7 +372,12 @@ fn every_retained_module_closes_to_a_declared_capability() {
         })
         .collect::<BTreeMap<_, _>>();
     let closure = close_baseline_modules(modules, &routes);
-    assert_eq!(closure.len(), 195);
+    assert_eq!(
+        closure.len(),
+        report["module_closure"]["baseline_modules"]
+            .as_u64()
+            .unwrap() as usize
+    );
     let unmapped = closure
         .iter()
         .filter(|entry| !capabilities.contains(entry.capability.as_str()))
@@ -939,7 +944,10 @@ fn retained_report_covers_matrix_and_refuses_cutover() {
     assert_eq!(report_ids, matrix_ids);
     assert_eq!(report["decision"], "continue_incubation");
     assert_eq!(report["cutover_eligible"], false);
-    assert_eq!(report["module_closure"]["routed_modules"], 195);
+    assert_eq!(
+        report["module_closure"]["routed_modules"],
+        report["module_closure"]["baseline_modules"]
+    );
     assert_eq!(report["schema"], "adl.runtime.shadow_parity_report.v1");
     assert!(report["footprint"]["measurement"]
         .as_str()
@@ -963,5 +971,103 @@ fn retained_report_covers_matrix_and_refuses_cutover() {
     assert_eq!(
         report["footprint"]["v3"]["fixture_runtime_median_micros"],
         guardian["parity_harness_adversarial_proof"]["sequential_live_fixture"]["v3_median_micros"]
+    );
+}
+
+#[test]
+fn live_black_box_parity_classification_covers_matrix_without_counting_blockers_as_passed() {
+    let classification: serde_json::Value = serde_json::from_str(include_str!(
+        "../../docs/architecture/runtime_v3_live_black_box_parity_5248.v1.json"
+    ))
+    .unwrap();
+    let matrix: serde_json::Value = serde_json::from_str(include_str!(
+        "../../docs/architecture/runtime_v3_parity_matrix.v1.json"
+    ))
+    .unwrap();
+    assert_eq!(
+        classification["schema"],
+        "adl.runtime_v3.live_black_box_parity.v1"
+    );
+    assert_eq!(classification["target_version"], "v0.91.7");
+    assert_eq!(classification["cutover_eligible"], false);
+    assert_eq!(
+        classification["classification_policy"]["blocked_or_deferred_counts_as_passed"],
+        false
+    );
+    assert_eq!(
+        classification["classification_policy"]["runtime_v2_internal_reuse_allowed"],
+        false
+    );
+
+    let allowed = classification["classification_policy"]["allowed_dispositions"]
+        .as_array()
+        .unwrap()
+        .iter()
+        .map(|value| value.as_str().unwrap())
+        .collect::<std::collections::BTreeSet<_>>();
+    let mut disposition_counts = std::collections::BTreeMap::<&str, usize>::new();
+    let classification_ids = classification["capabilities"]
+        .as_array()
+        .unwrap()
+        .iter()
+        .map(|entry| {
+            let disposition = entry["disposition"].as_str().unwrap();
+            *disposition_counts.entry(disposition).or_default() += 1;
+            assert!(
+                allowed.contains(disposition),
+                "unsupported disposition {disposition}"
+            );
+            if matches!(disposition, "blocker" | "deferred_non_cutover_surface") {
+                assert!(
+                    entry.get("blocking_issue").is_some(),
+                    "{:?} must route to a blocking issue",
+                    entry["id"]
+                );
+            }
+            entry["id"].as_str().unwrap()
+        })
+        .collect::<std::collections::BTreeSet<_>>();
+    let matrix_ids = matrix["capabilities"]
+        .as_array()
+        .unwrap()
+        .iter()
+        .map(|entry| entry["id"].as_str().unwrap())
+        .collect::<std::collections::BTreeSet<_>>();
+    assert_eq!(classification_ids, matrix_ids);
+    assert_eq!(
+        classification["summary"]["live_equivalent_fixture"].as_u64(),
+        Some(
+            *disposition_counts
+                .get("live_equivalent_fixture")
+                .unwrap_or(&0) as u64
+        )
+    );
+    assert_eq!(
+        classification["summary"]["accepted_intentional_divergence"].as_u64(),
+        Some(
+            *disposition_counts
+                .get("accepted_intentional_divergence")
+                .unwrap_or(&0) as u64
+        )
+    );
+    assert_eq!(
+        classification["summary"]["retained_v2_behavior_behind_adapter"].as_u64(),
+        Some(
+            *disposition_counts
+                .get("retained_v2_behavior_behind_adapter")
+                .unwrap_or(&0) as u64
+        )
+    );
+    assert_eq!(
+        classification["summary"]["deferred_non_cutover_surface"].as_u64(),
+        Some(
+            *disposition_counts
+                .get("deferred_non_cutover_surface")
+                .unwrap_or(&0) as u64
+        )
+    );
+    assert_eq!(
+        classification["summary"]["blocker"].as_u64(),
+        Some(*disposition_counts.get("blocker").unwrap_or(&0) as u64)
     );
 }

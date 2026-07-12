@@ -1,0 +1,140 @@
+{
+  "schema": "adl.runtime_v3.live_black_box_parity.v1",
+  "issue": 5248,
+  "target_version": "v0.91.7",
+  "created_at_utc": "2026-07-12T11:05:00Z",
+  "cutover_eligible": false,
+  "default_runtime_switch_authorized": false,
+  "classification_policy": {
+    "allowed_dispositions": [
+      "live_equivalent_fixture",
+      "accepted_intentional_divergence",
+      "retained_v2_behavior_behind_adapter",
+      "deferred_non_cutover_surface",
+      "blocker"
+    ],
+    "blocked_or_deferred_counts_as_passed": false,
+    "runtime_v2_internal_reuse_allowed": false
+  },
+  "capabilities": [
+    {
+      "id": "kernel.lifecycle",
+      "disposition": "blocker",
+      "proof": "Runtime v3 kernel fixture exists; shared live v2/v3 black-box fixture is still required.",
+      "blocking_issue": 5253
+    },
+    {
+      "id": "kernel.topology_and_backpressure",
+      "disposition": "blocker",
+      "proof": "Runtime v3 topology/backpressure fixture exists; shared live v2/v3 black-box fixture is still required.",
+      "blocking_issue": 5253
+    },
+    {
+      "id": "service.contracts_and_configuration",
+      "disposition": "blocker",
+      "proof": "Runtime v3 contract fixtures exist; shared live v2/v3 black-box contract/config fixture is still required.",
+      "blocking_issue": 5253
+    },
+    {
+      "id": "continuity.replay_recovery",
+      "disposition": "blocker",
+      "proof": "Runtime v3 continuity fixtures exist; shared live checkpoint/replay/recovery fixture is still required.",
+      "blocking_issue": 5253
+    },
+    {
+      "id": "private_state.security",
+      "disposition": "blocker",
+      "proof": "No Runtime v3 private-state equivalence proof exists yet.",
+      "blocking_issue": 5249
+    },
+    {
+      "id": "control.health_observability",
+      "disposition": "blocker",
+      "proof": "Runtime v3 control/weather fixtures exist; retained CloudWatch/Vector proof is still required.",
+      "blocking_issue": 5252
+    },
+    {
+      "id": "reasoning.graphs_and_loops",
+      "disposition": "live_equivalent_fixture",
+      "proof": "21-run live v2 loop-runtime and v3 reasoning-engine process comparison in adl-runtime-kernel/tests/parity.rs"
+    },
+    {
+      "id": "learning.adaptive_dag",
+      "disposition": "blocker",
+      "proof": "Runtime v3 adaptive fixture exists; shared live v2/v3 black-box adaptive fixture is still required.",
+      "blocking_issue": 5253
+    },
+    {
+      "id": "governance.freedom_gate_aee",
+      "disposition": "blocker",
+      "proof": "Runtime v3 governance fixture exists; shared live v2/v3 governed-execution fixture is still required.",
+      "blocking_issue": 5253
+    },
+    {
+      "id": "contracts.delegation_resources",
+      "disposition": "blocker",
+      "proof": "Runtime v3 governed-contract fixture exists; shared live v2/v3 delegation/resource fixture is still required.",
+      "blocking_issue": 5253
+    },
+    {
+      "id": "agents.providers_scheduler",
+      "disposition": "blocker",
+      "proof": "Runtime v3 operational fixture exists; shared live v2/v3 scheduler/provider fixture is still required.",
+      "blocking_issue": 5253
+    },
+    {
+      "id": "network.acip_a2a_cloud",
+      "disposition": "blocker",
+      "proof": "Runtime v3 network fixture exists; shared live v2/v3 adapter fixture is still required.",
+      "blocking_issue": 5253
+    },
+    {
+      "id": "clock.checkpoint_lifelog",
+      "disposition": "blocker",
+      "proof": "Runtime v3 checkpoint/lifelog fixture exists; shared live continuity fixture is still required.",
+      "blocking_issue": 5250
+    },
+    {
+      "id": "citizen.identity_memory",
+      "disposition": "blocker",
+      "proof": "Identity and memory-continuity adapter proof is required.",
+      "blocking_issue": 5250
+    },
+    {
+      "id": "moral_affect_wellbeing",
+      "disposition": "blocker",
+      "proof": "Governed cognition adapter proof is required.",
+      "blocking_issue": 5251
+    },
+    {
+      "id": "curiosity_intelligence_theory_of_mind",
+      "disposition": "blocker",
+      "proof": "Governed cognition adapter proof is required.",
+      "blocking_issue": 5251
+    },
+    {
+      "id": "migration.shadow_parity",
+      "disposition": "retained_v2_behavior_behind_adapter",
+      "proof": "Compatibility facade remains reversible and defaults to Runtime v2 until full cutover proof passes."
+    },
+    {
+      "id": "guardian.packaging_soak",
+      "disposition": "blocker",
+      "proof": "Guardian fallback exists; production-like soak and rollback proof is still required.",
+      "blocking_issue": 5253
+    }
+  ],
+  "summary": {
+    "live_equivalent_fixture": 1,
+    "accepted_intentional_divergence": 0,
+    "retained_v2_behavior_behind_adapter": 1,
+    "deferred_non_cutover_surface": 0,
+    "blocker": 16
+  },
+  "non_claims": [
+    "This packet does not authorize Runtime v3 as the default runtime.",
+    "This packet does not delete Runtime v2.",
+    "Blocker and deferred dispositions are not counted as passed parity.",
+    "This packet records that Runtime v2 internal reuse is not authorized for Runtime v3 parity credit; it does not independently prove implementation-boundary equivalence."
+  ]
+}

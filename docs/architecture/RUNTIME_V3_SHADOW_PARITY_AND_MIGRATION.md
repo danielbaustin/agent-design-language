@@ -29,7 +29,7 @@ The parity inventory contains 18 capability groups:
 - guardian packaging and the bounded 100-cycle soak are complete under `#5175`;
   post-fix aggregate review remains the decision gate.
 
-All 195 retained Runtime v2 and `adl-runtime` filenames route deterministically
+All 206 retained Runtime v2 and `adl-runtime` filenames route deterministically
 to one capability disposition and proof reference. This is ownership routing,
 not behavioral closure or a claim that every v2 behavior is equivalent.
 

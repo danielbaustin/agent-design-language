@@ -25,8 +25,8 @@
     {"id":"guardian.packaging_soak","disposition":"bounded_soak_complete_pending_review","proof":"adl-runtime-kernel/tests/guardian_soak.rs and docs/architecture/runtime_v3_guardian_soak_report.v1.json"}
   ],
   "module_closure": {
-    "baseline_modules": 195,
-    "routed_modules": 195,
+    "baseline_modules": 206,
+    "routed_modules": 206,
     "proof": "Each filename routes to a capability disposition and proof reference; this is ownership routing, not behavioral equivalence"
   },
   "footprint": {
