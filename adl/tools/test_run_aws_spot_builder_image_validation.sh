@@ -96,8 +96,20 @@ TOOLS
       echo "validation container did not preserve the known-good cache layout" >&2
       exit 2
     }
-    [[ "$args" == *"/adl-aws-remote-validation/shared/tmp:/tmp"* && "$args" == *"TMPDIR=/tmp"* ]] || {
-      echo "validation container did not mount EBS-backed temp space" >&2
+    [[ "$args" == *"/adl-aws-remote-validation/shared/tmp/"*":/tmp"* && "$args" == *"TMPDIR=/tmp"* ]] || {
+      echo "validation container did not mount isolated EBS-backed temp space" >&2
+      exit 2
+    }
+    tmp_mount=""
+    previous=""
+    for arg in "$@"; do
+      if [[ "$previous" == "--volume" && "$arg" == *:/tmp ]]; then
+        tmp_mount="${arg%:/tmp}"
+      fi
+      previous="$arg"
+    done
+    [[ -n "$tmp_mount" && ! -e "$tmp_mount/stale-sentinel" ]] || {
+      echo "validation container received stale per-run temp state" >&2
       exit 2
     }
     [[ "$args" == *"$ADL_SPOT_CONTROL_ROOT:/adl-control:ro"* && "$args" == *"ADL_SPOT_CONTROL_ROOT=/adl-control"* && "$args" == *"ADL_SPOT_SOURCE_ROOT=/workspace"* ]] || {
@@ -125,6 +137,11 @@ chmod +x "$FAKE_BIN"/*
 commit="$(git -C "$ROOT" rev-parse HEAD)"
 digest="sha256:$(printf 'a%.0s' {1..64})"
 image="123456789012.dkr.ecr.us-west-2.amazonaws.com/adl-builder@$digest"
+selected_tmp="$CACHE_MOUNT/adl-aws-remote-validation/shared/tmp/$(basename "$RUN_ROOT")"
+other_tmp="$CACHE_MOUNT/adl-aws-remote-validation/shared/tmp/other-run"
+mkdir -p "$selected_tmp" "$other_tmp"
+: >"$selected_tmp/stale-sentinel"
+: >"$other_tmp/preserve-sentinel"
 
 run_fixture() {
   local command="${1:-cargo nextest run --workspace}"
@@ -141,6 +158,8 @@ run_fixture() {
 
 run_fixture >"$TMP/pass.out" 2>"$TMP/pass.err"
 grep -F 'ADL_SPOT_BUILDER_PROOF=' "$TMP/pass.out" >/dev/null
+test ! -d "$CACHE_MOUNT/adl-aws-remote-validation/shared/tmp/$(basename "$RUN_ROOT")"
+test -f "$other_tmp/preserve-sentinel"
 python3 - "$RUN_ROOT/spot-builder-summary.json" "$commit" <<'PY'
 import json
 import sys
@@ -207,5 +226,6 @@ if ADL_FAKE_VALIDATION_EXIT=17 run_fixture >"$TMP/validation.out" 2>"$TMP/valida
   echo "expected validation failure to propagate" >&2
   exit 1
 fi
+test ! -d "$CACHE_MOUNT/adl-aws-remote-validation/shared/tmp/$(basename "$RUN_ROOT")"
 
 echo "PASS test_run_aws_spot_builder_image_validation"

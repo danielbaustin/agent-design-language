@@ -18,6 +18,39 @@ Roll out in four stages:
 The existing `.github/workflows/ci.yaml` remains the rollback path during this
 issue. Do not remove its hosted jobs.
 
+## Cutover Runbook
+
+Advance only when the current phase is green:
+
+1. **Image qualification.** Publish from a full 40-hex source commit, verify
+   CodeBuild resolved that exact commit, retain the ECR digest proof, and pass
+   the non-root Spot toolchain preflight.
+2. **Shadow qualification.** Run `adl-ci` against at least two existing issue
+   commits and run `adl-coverage` twice against one historically green commit.
+   Retain source SHA, image digest, cache state, validation/remote/total time,
+   cost estimate, test counts, cleanup, and hosted comparison.
+3. **Failure qualification.** Prove failed tests, cancellation, and Spot
+   interruption still terminate EC2, remove temporary IAM/network resources,
+   return the retained EBS volume to `available`, sanitize artifacts, and leave
+   stable checks red rather than skipped-success.
+4. **Canary route.** Set `ADL_HEAVY_CI_BACKEND=spot` for one controlled
+   same-repository PR and verify exactly one backend runs for each stable
+   `adl-ci` and `adl-coverage` context. Fork PRs and non-PR coverage must remain
+   hosted.
+5. **Broad route.** Keep the variable at `spot` for trusted same-repository PRs
+   only after two consecutive canary PRs complete without operator repair.
+   Monitor launch latency, workload time, interruption rate, cache headroom,
+   and cleanup residue.
+6. **Rollback rehearsal.** Set `ADL_HEAVY_CI_BACKEND=hosted`, rerun checks, and
+   verify the hosted graph owns both stable contexts. Deleting the variable
+   must produce the same fail-safe result.
+
+Stop the rollout and use hosted runners when source/image identity cannot be
+verified, the retained volume is not exclusively available, required tools are
+missing, cleanup is incomplete, artifact sanitization fails, or a stable check
+has no selected backend. Do not remove the hosted implementation during this
+milestone.
+
 ## AWS And GitHub Setup
 
 Configure a GitHub OIDC role in the Agent Logic account. Restrict trust to this

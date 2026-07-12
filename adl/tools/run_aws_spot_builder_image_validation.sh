@@ -110,7 +110,12 @@ CACHE_ROOT="$CACHE_MOUNT/adl-aws-remote-validation/shared"
 TARGET_DIR="$CACHE_ROOT/target"
 SCCACHE_DIR="$CACHE_ROOT/sccache"
 CARGO_HOME_DIR="$CACHE_ROOT/cargo-home"
-TMP_DIR="$CACHE_ROOT/tmp"
+RUN_TMP_KEY="$(basename "$ADL_RUN_ROOT")"
+[[ "$RUN_TMP_KEY" =~ ^[A-Za-z0-9._-]+$ ]] || {
+  echo "spot_builder_image_validation: run output directory name is unsafe for temp isolation" >&2
+  exit 1
+}
+TMP_DIR="$CACHE_ROOT/tmp/$RUN_TMP_KEY"
 CACHE_TARGET_PREEXISTING_ENTRIES=0
 CACHE_TARGET_PREEXISTING_BYTES=0
 if [[ -d "$TARGET_DIR" ]]; then
@@ -118,7 +123,9 @@ if [[ -d "$TARGET_DIR" ]]; then
   CACHE_TARGET_PREEXISTING_KIB="$(du -sk "$TARGET_DIR" 2>/dev/null | awk '{print $1}')"
   CACHE_TARGET_PREEXISTING_BYTES="$((CACHE_TARGET_PREEXISTING_KIB * 1024))"
 fi
-mkdir -p "$TARGET_DIR" "$SCCACHE_DIR" "$CARGO_HOME_DIR" "$TMP_DIR"
+mkdir -p "$TARGET_DIR" "$SCCACHE_DIR" "$CARGO_HOME_DIR"
+rm -rf "$TMP_DIR"
+mkdir -p "$TMP_DIR"
 
 CURRENT_STAGE="ensure_container_runtime"
 stage "$CURRENT_STAGE"
@@ -184,6 +191,7 @@ stage "$CURRENT_STAGE"
 VALIDATION_START="$(date +%s)"
 VALIDATION_UID="$(id -u)"
 VALIDATION_GID="$(id -g)"
+set +e
 "${DOCKER[@]}" run --rm \
   --user "$VALIDATION_UID:$VALIDATION_GID" \
   --workdir /workspace \
@@ -204,7 +212,13 @@ VALIDATION_GID="$(id -g)"
   --env ADL_SPOT_SOURCE_ROOT=/workspace \
   --entrypoint /bin/bash \
   "$IMAGE" -lc "set +e; $COMMAND; status=\$?; sccache --show-stats > /run-output/sccache-stats.log 2>&1 || true; exit \$status"
+VALIDATION_STATUS="$?"
+set -e
 VALIDATION_END="$(date +%s)"
+rm -rf "$TMP_DIR"
+if [[ "$VALIDATION_STATUS" -ne 0 ]]; then
+  exit "$VALIDATION_STATUS"
+fi
 
 CURRENT_STAGE="write_builder_summary"
 stage "$CURRENT_STAGE"

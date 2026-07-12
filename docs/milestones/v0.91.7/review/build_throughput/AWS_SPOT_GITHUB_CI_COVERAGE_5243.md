@@ -42,6 +42,7 @@ still disabled while coverage proof is incomplete.
 | `adl-ci` existing-PR shadow | `461f2cac` (PR `#5158`) | `v0.91.7-coverage-5243` | retained 500 GiB EBS | 305s | 406s | 501s | passed |
 | `adl-coverage` existing-PR shadow | `cd6aded` (`#5258`) | `v0.91.7-coverage-5243` | retained 500 GiB EBS | 1212s remote workload | 1212s | 1301s | failed on runtime fixture; `#5267` |
 | `adl-coverage` historical-green control | `9346f230` | `v0.91.7-coverage-5243` | retained 500 GiB EBS | 679s before fail-fast | 864s | 970s | failed because image lacked `gh`; 1777/1778 executed tests passed |
+| `adl-coverage` replacement-image control | `9346f230` | replacement `v0.91.7-coverage-5243` | retained 500 GiB EBS | 2.7s before fail-fast | 109s | 214s | image preflight passed; two tests exposed cross-run shared `TMPDIR` fixture collision |
 
 Both existing-PR CI shadows ran 54 focused tests, doc tests, and demo smoke
 successfully, with identical 42-second validation time. They used the exact source commit and merge base without modifying
@@ -63,6 +64,16 @@ cost was `$0.028738`. The instance terminated, the temporary security group,
 instance profile, and role were deleted, and the retained volume returned to
 `available`.
 
+The replacement image was published from exact source commit
+`8b678bd933bbd73aa8481f3dd4173b54761f0518`; the publisher verified
+CodeBuild's resolved source commit and retained a digest proof. Its first Spot
+control passed the real image toolchain gate including `gh`. Two
+`long_lived_agent` tests then observed prior fixture state because the retained
+cache also retained a shared container `TMPDIR`. Cargo target, Cargo home, and
+`sccache` remain shared, while temporary state is now isolated under a unique
+run-id directory. That directory is cleared before every attempt, including a
+retry after abrupt interruption, and removed after a completed container run.
+
 ## Control And Source Separation
 
 The launcher embeds compressed copies of the reviewed remote runner, immutable
@@ -82,6 +93,8 @@ scripts into that PR or invalidating its retained source/cache layout.
 - The historical-green control run terminated its instance, deleted its
   temporary IAM and security-group resources, and returned the retained cache
   after the missing-`gh` failure.
+- The replacement-image control also completed teardown and returned the
+  retained cache after detecting the shared-`TMPDIR` collision.
 - The always-run artifact step now sanitizes partial JSON, JSONL, and text
   evidence before independently failing closed on retained AWS identifiers.
   Artifact upload is conditional on the sanitizer step succeeding.
