@@ -1,0 +1,21 @@
+name = "adl-runtime-kernel-bakeoff"
+command = "${ADL_RUNTIME_BIN} fatal-once ${ADL_RUNTIME_CAPSULE}"
+stdout = "STDOUT"
+stderr = "STDERR"
+
+[restart]
+strategy = "on-failure"
+backoff = "100ms"
+attempts = 3
+
+[failure]
+successful-exit-code = [0]
+strategy = "ignore"
+
+[environment]
+keep-env = false
+re-export = []
+
+[termination]
+signal = "TERM"
+wait = "10s"

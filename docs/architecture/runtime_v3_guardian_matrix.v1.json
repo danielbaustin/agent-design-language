@@ -1,0 +1,62 @@
+{
+  "schema": "adl.runtime_v3.guardian_matrix.v1",
+  "issue": 5175,
+  "child_contract": {
+    "command": "adl-runtime-kernel",
+    "fatal_exit": 70,
+    "configuration_exit": 78,
+    "graceful_signals": ["SIGINT", "SIGTERM"],
+    "continuity": "generation advances after guardian restart",
+    "stdout_stderr": "guardian-owned capture",
+    "control_port": "127.0.0.1:20997"
+  },
+  "candidates": [
+    {
+      "id": "horust-0.1.13",
+      "configuration": "infra/horust/adl-runtime-kernel.toml",
+      "bakeoff_configuration": "infra/horust/adl-runtime-kernel-bakeoff.toml",
+      "build_platform": "Darwin arm64",
+      "build_result": "pass",
+      "native_restart_proof": "pass: one fatal child exit followed by successful restart and continuity generation 2",
+      "native_sigterm_proof": "pass: guardian forwarded SIGTERM, child checkpointed generation 1, and port 20997 closed",
+      "configuration_exit_proof": "pass: configuration exit 78 was classified as terminal and executed once",
+      "restart_backoff": "on-failure, 100ms, 3 attempts",
+      "signal_forwarding": "SIGTERM then bounded SIGKILL",
+      "child_reaping": "native supervisor; upstream documents macOS orphan-reaping limitations",
+      "output_capture": "STDOUT and STDERR",
+      "portability": "Linux; macOS development support",
+      "maintenance": "0.1.13 beta",
+      "security": "inherits launcher identity and limits; dedicated unprivileged account and host controls required",
+      "disposition": "selected_portable_unix_guardian"
+    },
+    {
+      "id": "rustysd-b200759c",
+      "configuration": "infra/rustysd/adl-runtime-kernel.service",
+      "build_platform": "Darwin arm64",
+      "build_result": "failed_platform_implementation_gaps",
+      "restart_backoff": "Restart=always with supported ExecStartPre delay",
+      "signal_forwarding": "process-group supervision",
+      "child_reaping": "subreaper and optional Linux cgroups",
+      "output_capture": "service-manager pipe capture",
+      "portability": "current source does not compile on macOS",
+      "maintenance": "upstream proof-of-concept warning",
+      "security": "optional Linux cgroups; no production hardening claim",
+      "disposition": "linux_only_proof_candidate"
+    },
+    {
+      "id": "systemd",
+      "configuration": "infra/systemd/adl-runtime-kernel.service",
+      "build_platform": "not_available_on_Darwin",
+      "build_result": "static_unit_validation_only",
+      "restart_backoff": "Restart=always, RestartSec=2s, config exit suppressed",
+      "signal_forwarding": "SIGTERM with cgroup kill",
+      "child_reaping": "native cgroup ownership",
+      "output_capture": "journal",
+      "portability": "Linux",
+      "maintenance": "platform standard",
+      "security": "DynamicUser, state directory, capability and resource bounds",
+      "disposition": "optional_linux_adapter_pending_linux_host_proof"
+    }
+  ],
+  "automatic_cutover": false
+}
