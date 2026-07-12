@@ -82,7 +82,7 @@
       "id": "parity.live_black_box",
       "status": "blocked_for_default_cutover",
       "evidence": "docs/architecture/runtime_v3_live_black_box_parity_5248.v1.json",
-      "claim": "Live black-box parity still reports cutover_eligible=false and nine blocker-class capability groups; #5220 closes as no-go for default cutover."
+      "claim": "Live black-box parity still reports cutover_eligible=false and eight blocker-class capability groups; #5220 closes as no-go for default cutover."
     }
   ],
   "child_issue_results": [

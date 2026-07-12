@@ -12,7 +12,7 @@ only through explicit opt-in selection, with Runtime v2 retained as the rollback
 target.
 
 This is a no-go decision for a default Runtime v3 switch. The retained parity
-packet still reports `cutover_eligible: false` and nine blocker-class
+packet still reports `cutover_eligible: false` and eight blocker-class
 capabilities. #5252 and #5253 resolved the weather/observability and
 soak/rollback prerequisites, but they did not convert the remaining
 capability-specific blockers into passed proof.
@@ -21,7 +21,7 @@ capability-specific blockers into passed proof.
 
 | Surface | Evidence | Decision input |
 |---|---|---|
-| Live black-box parity | `docs/architecture/runtime_v3_live_black_box_parity_5248.v1.json` | `cutover_eligible: false`; nine blocker-class capabilities remain. |
+| Live black-box parity | `docs/architecture/runtime_v3_live_black_box_parity_5248.v1.json` | `cutover_eligible: false`; eight blocker-class capabilities remain. |
 | Explicit selection and rollback | `docs/architecture/RUNTIME_V3_ENTRYPOINT_SWITCH.md` | Runtime v3 is explicit opt-in; Runtime v2 remains the default and rollback target. |
 | Weather and CloudWatch boundary | `docs/architecture/runtime_v3_weather_cloudwatch_5252.v1.json` | Local weather/resource proof exists; observed GPU telemetry remains a non-pass deferred surface. |
 | Soak and rollback | `docs/architecture/runtime_v3_soak_rollback_5253.v1.json` | Bounded production-like soak and rollback proof exists; remote multi-day and GPU lanes remain non-claims. |
@@ -39,7 +39,6 @@ authorization:
 - `learning.adaptive_dag`
 - `governance.freedom_gate_aee`
 - `contracts.delegation_resources`
-- `agents.providers_scheduler`
 - `network.acip_a2a_cloud`
 
 These blockers route forward to #5220 as release-gate truth. #5220 should close

@@ -10,9 +10,9 @@ use std::{
 use adl_runtime_kernel::{
     representative_dependencies, validate_contracts, validate_operational_dependencies,
     AdapterKind, AdapterPolicy, AuthorityMode, ComponentFactory, ComponentRegistry,
-    DeterminismClass, ExecutionPermit, ExecutorError, FailureClass, Kernel, OperationError,
-    OperationExecutor, OperationRequest, OperationalAdapter, OperationalFactory, RuntimeRecorder,
-    OPERATION_REQUEST_SCHEMA,
+    DeterminismClass, ExecutionPermit, ExecutorError, FailureClass, Kernel, KernelExit,
+    OperationError, OperationExecutor, OperationRequest, OperationalAdapter, OperationalFactory,
+    RuntimeRecorder, OPERATION_REQUEST_SCHEMA,
 };
 use async_trait::async_trait;
 use ed25519_dalek::SigningKey;
@@ -239,6 +239,188 @@ async fn supervised_shutdown_closes_admission_and_drains_active_work() {
         .await
         .unwrap();
     assert_eq!(active.await.unwrap().unwrap().payload, b"fixture");
+}
+
+#[tokio::test]
+async fn agent_provider_scheduler_topology_admits_work_and_closes_admission_on_shutdown() {
+    let agent_executor = Arc::new(FixtureExecutor {
+        calls: AtomicUsize::new(0),
+        failures: 0,
+        delay: Duration::ZERO,
+        class: FailureClass::Retryable,
+    });
+    let provider_executor = Arc::new(FixtureExecutor {
+        calls: AtomicUsize::new(0),
+        failures: 0,
+        delay: Duration::from_millis(30),
+        class: FailureClass::Retryable,
+    });
+    let scheduler_executor = Arc::new(FixtureExecutor {
+        calls: AtomicUsize::new(0),
+        failures: 0,
+        delay: Duration::ZERO,
+        class: FailureClass::Retryable,
+    });
+    let chronosense_executor = Arc::new(FixtureExecutor {
+        calls: AtomicUsize::new(0),
+        failures: 0,
+        delay: Duration::ZERO,
+        class: FailureClass::Retryable,
+    });
+    let lifelog_executor = Arc::new(FixtureExecutor {
+        calls: AtomicUsize::new(0),
+        failures: 0,
+        delay: Duration::ZERO,
+        class: FailureClass::Retryable,
+    });
+    let checkpoint_executor = Arc::new(FixtureExecutor {
+        calls: AtomicUsize::new(0),
+        failures: 0,
+        delay: Duration::ZERO,
+        class: FailureClass::Retryable,
+    });
+    let key = SigningKey::from_bytes(&[8; 32]);
+    let checkpoint = OperationalFactory::new(
+        adapter(
+            AdapterKind::CheckpointStore,
+            AuthorityMode::Internal,
+            checkpoint_executor,
+        ),
+        Vec::new(),
+    );
+    let lifelog = OperationalFactory::new(
+        adapter(
+            AdapterKind::Lifelog,
+            AuthorityMode::Internal,
+            lifelog_executor,
+        ),
+        vec![AdapterKind::CheckpointStore.service_name().into()],
+    );
+    let chronosense = OperationalFactory::new(
+        adapter(
+            AdapterKind::Chronosense,
+            AuthorityMode::Internal,
+            chronosense_executor,
+        ),
+        Vec::new(),
+    );
+    let scheduler = OperationalFactory::new(
+        adapter(
+            AdapterKind::Scheduler,
+            AuthorityMode::Internal,
+            scheduler_executor.clone(),
+        ),
+        vec![AdapterKind::Chronosense.service_name().into()],
+    );
+    let provider = OperationalFactory::new(
+        adapter(
+            AdapterKind::Provider,
+            AuthorityMode::Governed,
+            provider_executor.clone(),
+        ),
+        vec![AdapterKind::Scheduler.service_name().into()],
+    );
+    let agent = OperationalFactory::new(
+        adapter(
+            AdapterKind::Agent,
+            AuthorityMode::Internal,
+            agent_executor.clone(),
+        ),
+        vec![
+            AdapterKind::Provider.service_name().into(),
+            AdapterKind::Scheduler.service_name().into(),
+            AdapterKind::Lifelog.service_name().into(),
+        ],
+    );
+    let scheduler_client = scheduler.clone();
+    let provider_client = provider.clone();
+    let agent_client = agent.clone();
+    let mut components = ComponentRegistry::new();
+    components.register(agent);
+    components.register(provider);
+    components.register(scheduler);
+    components.register(chronosense);
+    components.register(lifelog);
+    components.register(checkpoint);
+    let topology = components.validate().unwrap();
+    let positions = topology
+        .startup_order()
+        .iter()
+        .enumerate()
+        .map(|(index, id)| (id.as_str(), index))
+        .collect::<BTreeMap<_, _>>();
+    assert!(
+        positions[AdapterKind::Chronosense.service_name()]
+            < positions[AdapterKind::Scheduler.service_name()]
+    );
+    assert!(
+        positions[AdapterKind::Scheduler.service_name()]
+            < positions[AdapterKind::Provider.service_name()]
+    );
+    assert!(
+        positions[AdapterKind::Provider.service_name()]
+            < positions[AdapterKind::Agent.service_name()]
+    );
+    assert!(
+        positions[AdapterKind::Scheduler.service_name()]
+            < positions[AdapterKind::Agent.service_name()]
+    );
+    assert!(
+        positions[AdapterKind::Lifelog.service_name()]
+            < positions[AdapterKind::Agent.service_name()]
+    );
+
+    let handle = Kernel::new(topology, RuntimeRecorder::new(16))
+        .start()
+        .await
+        .unwrap();
+    let scheduled = scheduler_client
+        .submit(request("scheduler-admission", None))
+        .await
+        .unwrap();
+    assert_eq!(scheduled.adapter, AdapterKind::Scheduler);
+    let agent_result = agent_client
+        .submit(request("agent-admission", None))
+        .await
+        .unwrap();
+    assert_eq!(agent_result.adapter, AdapterKind::Agent);
+    let active_key = key.clone();
+    let active = tokio::spawn({
+        let provider_client = provider_client.clone();
+        async move {
+            provider_client
+                .submit(request(
+                    "provider-component-admission",
+                    Some(signed_permit("provider-component-admission", &active_key)),
+                ))
+                .await
+        }
+    });
+    while provider_executor.calls.load(Ordering::SeqCst) == 0 {
+        tokio::task::yield_now().await;
+    }
+
+    assert_eq!(
+        handle
+            .control()
+            .shutdown(Duration::from_secs(1))
+            .await
+            .unwrap(),
+        KernelExit::Clean
+    );
+    assert_eq!(active.await.unwrap().unwrap().payload, b"fixture");
+    assert_eq!(scheduler_executor.calls.load(Ordering::SeqCst), 1);
+    assert_eq!(agent_executor.calls.load(Ordering::SeqCst), 1);
+    assert_eq!(
+        provider_client
+            .submit(request(
+                "after-shutdown",
+                Some(signed_permit("after-shutdown", &key)),
+            ))
+            .await
+            .unwrap_err(),
+        OperationError::AdmissionClosed
+    );
 }
 
 #[tokio::test]

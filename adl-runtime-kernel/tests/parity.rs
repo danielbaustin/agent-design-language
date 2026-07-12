@@ -1165,7 +1165,7 @@ fn release_proof_gate_closes_without_authorizing_default_cutover() {
     assert_eq!(decision["decision"], "keep_runtime_v2_default");
     assert_eq!(decision["default_runtime_switch_authorized"], false);
     assert_eq!(classification["cutover_eligible"], false);
-    assert_eq!(classification["summary"]["blocker"], 9);
+    assert_eq!(classification["summary"]["blocker"], 8);
 
     let child_results = gate["child_issue_results"].as_array().unwrap();
     let closed_children = child_results

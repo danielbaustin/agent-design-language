@@ -26,7 +26,7 @@
   },
   "input_summary": {
     "live_black_box_cutover_eligible": false,
-    "live_black_box_blockers": 9,
+    "live_black_box_blockers": 8,
     "accepted_intentional_divergence": 7,
     "retained_v2_behavior_behind_adapter": 1,
     "deferred_non_cutover_surface": 0
@@ -47,7 +47,6 @@
     "learning.adaptive_dag",
     "governance.freedom_gate_aee",
     "contracts.delegation_resources",
-    "agents.providers_scheduler",
     "network.acip_a2a_cloud"
   ],
   "next_gate": {
