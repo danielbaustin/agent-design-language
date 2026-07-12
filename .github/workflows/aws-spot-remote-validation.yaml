@@ -129,6 +129,7 @@ jobs:
             ~/.cargo/git
             tools/aws_remote_validation/target
           key: spot-launcher-${{ runner.os }}-${{ hashFiles('tools/aws_remote_validation/Cargo.lock') }}
+          save-always: true
 
       - name: Build Spot remote validation binary
         if: inputs.mode == 'start-run'
