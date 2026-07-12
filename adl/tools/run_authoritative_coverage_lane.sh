@@ -104,7 +104,6 @@ if [ "$MODE" = "full_authoritative_default_features" ]; then
   echo "Authoritative coverage linker mode: ${RUST_LINK_ACCEL:-default}"
   cargo llvm-cov nextest \
     --workspace \
-    --test-threads 1 \
     --no-report
 else
   echo "Authoritative coverage mode: bounded_policy_surface_pr"
@@ -112,7 +111,6 @@ else
   echo "Full authoritative default-feature proof remains reserved for push-to-main and mixed runtime policy changes."
   cargo llvm-cov nextest \
     --workspace \
-    --test-threads 1 \
     --no-report
 fi
 
