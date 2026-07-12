@@ -140,7 +140,11 @@ under:
 /mnt/adl-cache/adl-aws-remote-validation/shared/container-target
 /mnt/adl-cache/adl-aws-remote-validation/shared/container-sccache
 /mnt/adl-cache/adl-aws-remote-validation/shared/container-cargo-home
+/mnt/adl-cache/adl-aws-remote-validation/shared/container-tmp
 ```
+
+The container maps `container-tmp` to `/tmp`, preventing large builds and
+disk-sensitive tests from consuming the small ephemeral root filesystem.
 
 Historical AWS state contains two preserved volumes with the same Name tag in
 different availability zones. Do not select or delete either by name. The
