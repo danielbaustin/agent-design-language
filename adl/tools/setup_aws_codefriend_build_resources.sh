@@ -403,6 +403,10 @@ write(github_policy_path, {
             "codebuild:StopBuild",
         ],
         "Resource": f"arn:aws:codebuild:{region}:{account_id}:project/{project_name}",
+    }, {
+        "Effect": "Allow",
+        "Action": ["logs:DescribeLogStreams", "logs:GetLogEvents"],
+        "Resource": f"arn:aws:logs:{region}:{account_id}:log-group:/aws/codebuild/{project_name}:*",
     }],
 })
 

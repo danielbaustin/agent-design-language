@@ -49,6 +49,10 @@ if [ "$1" = "logs" ] && [ "$2" = "describe-log-streams" ]; then
   printf '1\n'
   exit 0
 fi
+if [ "$1" = "logs" ] && [ "$2" = "get-log-events" ]; then
+  printf '{"events":[],"nextForwardToken":"fixture-token"}\n'
+  exit 0
+fi
 if [ "$1" = "logs" ] && { [ "$2" = "create-log-group" ] || [ "$2" = "put-retention-policy" ]; }; then
   printf '{}\n'
   exit 0
@@ -382,7 +386,10 @@ assert_has "$SCRIPT" "--no-live-logs"
 assert_has "$SCRIPT" "aws_codefriend_live_logs_attached=true"
 assert_has "$SCRIPT" '"$AWS_CLI" logs tail "$LOG_GROUP"'
 assert_has "$SCRIPT" '"$AWS_CLI" logs describe-log-streams'
+assert_has "$SCRIPT" '"$AWS_CLI" logs get-log-events'
+assert_has "$SCRIPT" 'nextForwardToken'
 assert_has "$SCRIPT" '&& log_stream_exists'
+assert_not_has "$SCRIPT" '--follow'
 assert_has "$SCRIPT" '"retained_log_path"'
 assert_has "$SCRIPT" '"retained_log_redaction_verified"'
 assert_has "$SCRIPT" '"self_verification"'
@@ -401,6 +408,8 @@ assert_has "$WORKFLOW" "source_version must be a branch, tag, or SHA; HEAD is am
 assert_has "$WORKFLOW" '--source-version "$SOURCE_VERSION"'
 assert_has "$WORKFLOW" "--wait"
 assert_has "$WORKFLOW" "bash adl/tools/run_aws_codefriend_build_lane.sh"
+assert_has "$SETUP_SCRIPT" '"logs:GetLogEvents"'
+assert_has "$SETUP_SCRIPT" '"logs:DescribeLogStreams"'
 assert_has "$SCRIPT" 'PROJECT_NAME="${ADL_AWS_CODEFRIEND_CODEBUILD_PROJECT:-adl-codefriend-build}"'
 assert_has "$SCRIPT" "--full-nextest"
 assert_has "$SCRIPT" "cd adl && cargo nextest run --no-run"

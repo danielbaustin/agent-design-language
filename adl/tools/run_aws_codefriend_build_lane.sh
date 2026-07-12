@@ -117,6 +117,9 @@ stop_log_tail() {
     wait "$LOG_TAIL_PID" 2>/dev/null || true
     LOG_TAIL_PID=""
   fi
+  if [ -n "$LOG_PATH" ]; then
+    rm -f "${LOG_PATH}.events.json" "${LOG_PATH}.next-token"
+  fi
 }
 
 capture_final_log() {
@@ -152,6 +155,49 @@ log_stream_exists() {
     --query "length(logStreams[?logStreamName=='${LOG_STREAM}'])" \
     --output text 2>/dev/null || true)"
   [ "$count" = "1" ]
+}
+
+stream_log_events() {
+  local snapshot="${LOG_PATH}.events.json"
+  local token_file="${LOG_PATH}.next-token"
+  local next_token=""
+  while :; do
+    local token_args=()
+    if [ -n "$next_token" ]; then
+      token_args=(--next-token "$next_token")
+    fi
+    if "$AWS_CLI" logs get-log-events \
+      "${AWS_PROFILE_ARGS[@]+"${AWS_PROFILE_ARGS[@]}"}" \
+      --region "$AWS_REGION" \
+      --log-group-name "$LOG_GROUP" \
+      --log-stream-name "$LOG_STREAM" \
+      --start-from-head \
+      "${token_args[@]+"${token_args[@]}"}" \
+      --output json >"$snapshot" 2>/dev/null; then
+      python3 - "$snapshot" "$token_file" <<'PY' | redact_log_stream "$LOG_PATH" "true"
+import json
+import sys
+from pathlib import Path
+
+payload = json.loads(Path(sys.argv[1]).read_text())
+for event in payload.get("events") or []:
+    message = str(event.get("message") or "")
+    print(message, end="" if message.endswith("\n") else "\n")
+Path(sys.argv[2]).write_text(str(payload.get("nextForwardToken") or ""))
+PY
+      new_token="$(cat "$token_file" 2>/dev/null || true)"
+      if [ -n "$new_token" ]; then
+        if [ "$new_token" = "$next_token" ]; then
+          sleep 2
+        fi
+        next_token="$new_token"
+      else
+        sleep 2
+      fi
+    else
+      sleep 2
+    fi
+  done
 }
 
 trap stop_log_tail EXIT
@@ -408,19 +454,7 @@ PY
         )
         if [ -n "$LOG_GROUP" ] && [ -n "$LOG_STREAM" ] && log_stream_exists; then
           : >"$LOG_PATH"
-          (
-            set +e
-            while :; do
-              "$AWS_CLI" logs tail "$LOG_GROUP" \
-                "${AWS_PROFILE_ARGS[@]+"${AWS_PROFILE_ARGS[@]}"}" \
-                --region "$AWS_REGION" \
-                --log-stream-names "$LOG_STREAM" \
-                --follow \
-                --format short 2>&1 \
-                | redact_log_stream "$LOG_PATH" "true"
-              sleep 2
-            done
-          ) &
+          stream_log_events &
           LOG_TAIL_PID="$!"
           printf 'PASS aws_codefriend_live_logs_attached=true\n'
         fi

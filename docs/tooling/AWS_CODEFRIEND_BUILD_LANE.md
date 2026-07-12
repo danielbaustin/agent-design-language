@@ -158,8 +158,11 @@ bash adl/tools/run_aws_codefriend_build_lane.sh \
 
 Use `--no-live-logs` only for a caller that deliberately consumes retained
 status instead of terminal output. The wrapper waits until the exact CloudWatch
-stream exists before attaching its follow process, avoiding an early empty
-attachment while CodeBuild is still provisioning. A custom command remains available through
+stream exists, then advances through `GetLogEvents` forward tokens and emits
+only new messages through the redactor. This avoids both an early empty
+attachment and the buffering behavior of `aws logs tail --follow`. The GitHub
+starter role has read-only access to that project's streams for the same path.
+A custom command remains available through
 `--env`, but it is not the canonical broad proof:
 
 ```sh
