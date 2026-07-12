@@ -758,7 +758,7 @@ memory:
     .expect("write agent spec");
 
     let spec_str = spec.to_str().expect("utf8 path");
-    let disk_ready_env = [
+    let normal_storage_env = [
         ("ADL_CSM_DISK_FLOOR_BYTES", "0"),
         ("ADL_CSM_TEST_AVAILABLE_BYTES", "1073741824"),
     ];
@@ -773,7 +773,7 @@ memory:
             "--no-sleep",
             "--json",
         ],
-        &disk_ready_env,
+        &normal_storage_env,
     );
     assert!(
         first.status.success(),
@@ -785,7 +785,7 @@ memory:
 
     let restored = run_adl_with_env(
         &["agent", "status", "--spec", spec_str, "--json"],
-        &disk_ready_env,
+        &normal_storage_env,
     );
     assert!(
         restored.status.success(),
@@ -819,7 +819,7 @@ memory:
             "--no-sleep",
             "--json",
         ],
-        &disk_ready_env,
+        &normal_storage_env,
     );
     assert!(
         second.status.success(),
