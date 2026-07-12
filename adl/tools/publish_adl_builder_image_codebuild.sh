@@ -81,7 +81,7 @@ phases:
   build:
     commands:
       - docker build --platform linux/amd64 -f adl/docker/adl-builder/Dockerfile -t "$ADL_BUILDER_IMAGE_URI" .
-      - docker run --rm "$ADL_BUILDER_IMAGE_URI" 'cargo nextest --version && cargo llvm-cov --version && rustup component list --installed | grep -Fx llvm-tools-preview && sccache --version && ld.lld --version && aws --version'
+      - docker run --rm "$ADL_BUILDER_IMAGE_URI" 'cargo nextest --version && cargo llvm-cov --version && rustup component list --installed | grep -E "^llvm-tools-" && sccache --version && ld.lld --version && aws --version'
       - docker push "$ADL_BUILDER_IMAGE_URI"
   post_build:
     commands:

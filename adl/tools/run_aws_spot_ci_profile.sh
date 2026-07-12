@@ -77,7 +77,7 @@ if [[ "$PROFILE" == "adl-ci" ]]; then
   cargo test --manifest-path adl/Cargo.toml --doc
 else
   require_tool cargo-llvm-cov cargo llvm-cov --version
-  rustup component list --installed | grep -Fx 'llvm-tools-preview' >/dev/null || {
+  rustup component list --installed | grep -E '^llvm-tools-' >/dev/null || {
     echo "run_aws_spot_ci_profile: immutable builder image is missing llvm-tools-preview" >&2
     exit 1
   }

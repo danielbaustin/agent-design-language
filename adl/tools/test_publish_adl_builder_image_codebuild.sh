@@ -11,7 +11,7 @@ for token in \
   'adl/docker/adl-builder/Dockerfile' \
   'cargo nextest --version' \
   'cargo llvm-cov --version' \
-  'llvm-tools-preview' \
+  '^llvm-tools-' \
   'docker push' \
   'ecr:PutImage' \
   '/aws/codebuild/adl-codefriend-build' \

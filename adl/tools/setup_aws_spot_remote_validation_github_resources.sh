@@ -379,6 +379,16 @@ write(policy_path, {
             f"arn:aws:iam::{account_id}:instance-profile/adl-aws-remote-validation-*",
         ],
     }, {
+        "Sid": "ResolveImmutableBuilderImage",
+        "Effect": "Allow",
+        "Action": ["ecr:GetAuthorizationToken"],
+        "Resource": "*",
+    }, {
+        "Sid": "DescribeAdlBuilderImage",
+        "Effect": "Allow",
+        "Action": ["ecr:DescribeImages"],
+        "Resource": f"arn:aws:ecr:{region}:{account_id}:repository/adl-builder",
+    }, {
         "Sid": "RemoteValidationReadCostQuotaBudget",
         "Effect": "Allow",
         "Action": [
