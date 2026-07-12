@@ -1472,6 +1472,10 @@ fn loom_duplicate_activation_allows_only_one_cycle_start() {
 
 #[test]
 fn daemon_partial_checkpoint_preserves_recoverable_failure_reason() {
+    let _env = MultiEnvGuard::set_all(&[
+        ("ADL_CSM_DISK_FLOOR_BYTES", "0"),
+        ("ADL_CSM_TEST_AVAILABLE_BYTES", "1073741824"),
+    ]);
     let root = temp_dir("daemon-partial-failure-reason");
     let spec = write_spec_with_workflow_kind(&root, "unsupported_adapter");
     let loaded = load_spec(&spec).expect("load spec");
