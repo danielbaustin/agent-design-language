@@ -12,6 +12,7 @@ dependencies = [
  "ed25519-dalek",
  "futures",
  "hex",
+ "libc",
  "lru",
  "petgraph",
  "semver",

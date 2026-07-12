@@ -1,0 +1,32 @@
+[Unit]
+Description=ADL Runtime v3 supervised component kernel
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=simple
+DynamicUser=yes
+EnvironmentFile=/etc/adl/runtime-v3.env
+ExecStart=/usr/local/bin/adl-runtime-kernel serve /var/lib/adl/runtime-v3/continuity.json
+Restart=always
+RestartSec=2s
+RestartPreventExitStatus=78
+TimeoutStopSec=15s
+KillMode=control-group
+NoNewPrivileges=true
+PrivateTmp=true
+ProtectSystem=strict
+ProtectHome=true
+ReadWritePaths=/var/lib/adl/runtime-v3
+StateDirectory=adl/runtime-v3
+TasksMax=512
+MemoryMax=2G
+CapabilityBoundingSet=
+RestrictAddressFamilies=AF_INET AF_INET6 AF_UNIX
+PrivateDevices=true
+ProtectKernelTunables=true
+ProtectKernelModules=true
+ProtectControlGroups=true
+
+[Install]
+WantedBy=multi-user.target

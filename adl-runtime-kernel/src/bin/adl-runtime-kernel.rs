@@ -12,7 +12,8 @@ use adl_runtime_kernel::{
     serve_control_listener_until, verifying_key_from_hex, AdaptationState, ControlAuthority,
     ControlCapability, ControlService, KernelExit, LoopDefinition, LoopStatus, ReasoningEdge,
     ReasoningGraphDefinition, ReasoningNode, RecordedObservation, TrustedControlKey,
-    ValidatedReasoningGraph, DEFAULT_CONTROL_API_PORT, REASONING_GRAPH_SCHEMA,
+    ValidatedReasoningGraph, DEFAULT_CONTROL_API_PORT, MAX_SHADOW_FIXTURE_BYTES,
+    REASONING_GRAPH_SCHEMA,
 };
 use tokio_util::sync::CancellationToken;
 
@@ -34,7 +35,7 @@ async fn main() -> ExitCode {
                     return ExitCode::from(78);
                 }
             };
-            let public_key = match std::env::var("ADL_RUNTIME_V3_CONTROL_PUBLIC_KEY_HEX")
+            let public_key = match std::env::var("ADL_RUNTIME_CONTROL_PUBLIC_KEY_HEX")
                 .map_err(|_| ())
                 .and_then(|value| verifying_key_from_hex(&value).map_err(|_| ()))
             {
@@ -44,9 +45,9 @@ async fn main() -> ExitCode {
                     return ExitCode::from(78);
                 }
             };
-            let key_id = std::env::var("ADL_RUNTIME_V3_CONTROL_KEY_ID")
+            let key_id = std::env::var("ADL_RUNTIME_CONTROL_KEY_ID")
                 .unwrap_or_else(|_| "operator".to_owned());
-            let principal = std::env::var("ADL_RUNTIME_V3_CONTROL_PRINCIPAL")
+            let principal = std::env::var("ADL_RUNTIME_CONTROL_PRINCIPAL")
                 .unwrap_or_else(|_| "operator".to_owned());
             let authority = ControlAuthority::new(BTreeMap::from([(
                 key_id,
@@ -96,9 +97,12 @@ async fn main() -> ExitCode {
                 api_shutdown.clone().cancelled_owned(),
             ));
             tokio::select! {
-                signal = tokio::signal::ctrl_c() => {
+                signal = shutdown_signal() => {
                     if let Err(error) = signal {
                         eprintln!("runtime signal handler failed: {error}");
+                        api_shutdown.cancel();
+                        let _ = handle.shutdown(std::time::Duration::from_secs(10)).await;
+                        drain_control_api(&mut api).await;
                         return ExitCode::from(70);
                     }
                     api_shutdown.cancel();
@@ -122,6 +126,9 @@ async fn main() -> ExitCode {
                     },
                     Err(error) => {
                         eprintln!("runtime kernel task failed: {error}");
+                        api_shutdown.cancel();
+                        let _ = handle.shutdown(std::time::Duration::from_secs(10)).await;
+                        drain_control_api(&mut api).await;
                         ExitCode::from(70)
                     }
                 },
@@ -205,9 +212,40 @@ async fn main() -> ExitCode {
     }
 }
 
+async fn shutdown_signal() -> std::io::Result<()> {
+    #[cfg(unix)]
+    {
+        let mut terminate =
+            tokio::signal::unix::signal(tokio::signal::unix::SignalKind::terminate())?;
+        tokio::select! {
+            result = tokio::signal::ctrl_c() => result,
+            _ = terminate.recv() => Ok(()),
+        }
+    }
+    #[cfg(not(unix))]
+    {
+        tokio::signal::ctrl_c().await
+    }
+}
+
 async fn run_shadow_loop() -> Result<serde_json::Value, String> {
-    let fixture = std::env::var("ADL_SHADOW_FIXTURE_JSON")
-        .map_err(|_| "ADL_SHADOW_FIXTURE_JSON is required".to_owned())?;
+    let fixture = tokio::task::spawn_blocking(|| {
+        let mut fixture = String::new();
+        std::io::Read::read_to_string(
+            &mut std::io::Read::take(std::io::stdin(), (MAX_SHADOW_FIXTURE_BYTES + 1) as u64),
+            &mut fixture,
+        )?;
+        Ok::<_, std::io::Error>(fixture)
+    })
+    .await
+    .map_err(|error| error.to_string())?
+    .map_err(|error| error.to_string())?;
+    if fixture.len() > MAX_SHADOW_FIXTURE_BYTES {
+        return Err("shadow fixture JSON exceeds 1 MiB".to_owned());
+    }
+    if fixture.trim().is_empty() {
+        return Err("shadow fixture JSON is required on stdin".to_owned());
+    }
     let fixture: serde_json::Value =
         serde_json::from_str(&fixture).map_err(|error| error.to_string())?;
     let max_iterations = fixture["max_iterations"]
@@ -268,13 +306,16 @@ async fn run_shadow_loop() -> Result<serde_json::Value, String> {
     } else {
         None
     };
+    let state_hash = outcome.state.hash().map_err(|error| error.to_string())?;
     Ok(serde_json::json!({
         "schema": "adl.runtime.shadow_loop.v1",
         "status": outcome.status,
         "iterations": outcome.iterations,
         "terminal_node_id": terminal_node_id,
+        "exit_node_ids": graph.definition().exits,
         "replay": outcome.replay.iter().map(|event| event.sequence).collect::<Vec<_>>(),
-        "state_hash": outcome.state.hash().map_err(|error| error.to_string())?,
+        "state_hash": state_hash,
+        "state": outcome.state,
         "evidence": ["bounded_loop", "deterministic_replay"]
     }))
 }

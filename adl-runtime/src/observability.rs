@@ -197,10 +197,10 @@ impl ObservabilityRuntime {
 
     fn prepare_and_spawn(&mut self, config: &ObservabilityConfig) -> Result<(), String> {
         validate_otlp_endpoint(config.otlp_endpoint.as_deref())?;
-        self.verify_vector_binary(config)?;
         for relative in ["config", "ingress", "durable", "vector-data", "logs"] {
             fs::create_dir_all(self.root.join(relative)).map_err(|_| "state_root_unavailable")?;
         }
+        self.verify_vector_binary(config)?;
         let mut ingress = OpenOptions::new()
             .create(true)
             .append(true)
