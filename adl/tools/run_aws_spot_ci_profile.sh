@@ -95,7 +95,7 @@ if [[ "$PROFILE" == "adl-ci" ]]; then
 
   if [[ "$RUST_REQUIRED" == true ]]; then
     cargo fmt --manifest-path adl/Cargo.toml --all -- --check
-    cargo clippy --manifest-path adl/Cargo.toml --workspace --all-targets --all-features -- -D warnings
+    cargo clippy --manifest-path adl/Cargo.toml --all-targets -- -D warnings
   fi
   if [[ "$RUST_REQUIRED" == true && "$FULL_COVERAGE_REQUIRED" != true ]]; then
     if [[ "$VALIDATION_ESCALATION_REQUIRED" != true ]]; then

@@ -13,6 +13,11 @@ if grep -F 'ADL_PR_FAST_ALLOW_FULL_NEXTEST=1' "$SCRIPT" >/dev/null; then
   exit 1
 fi
 grep -F 'bash adl/tools/ci_path_policy.sh' "$SCRIPT" >/dev/null
+grep -F 'cargo clippy --manifest-path adl/Cargo.toml --all-targets -- -D warnings' "$SCRIPT" >/dev/null
+if grep -F -- '--all-features' "$SCRIPT" >/dev/null; then
+  echo "Spot adl-ci clippy must match the hosted command and must not force all features" >&2
+  exit 1
+fi
 grep -F 'FULL_COVERAGE_REQUIRED="$(policy_value full_coverage_required)"' "$SCRIPT" >/dev/null
 grep -F 'if [[ "$RUST_REQUIRED" == true && "$FULL_COVERAGE_REQUIRED" != true ]]' "$SCRIPT" >/dev/null
 grep -F 'bash adl/tools/demo_smoke_v07_story.sh' "$SCRIPT" >/dev/null
@@ -51,5 +56,10 @@ grep -F -- '--issue "$ISSUE_NUMBER"' "$WORKFLOW" >/dev/null
 grep -F -- '--builder-image-tag "$BUILDER_IMAGE_TAG"' "$WORKFLOW" >/dev/null
 grep -F 'group: aws-spot-remote-validation-ebs-cache' "$WORKFLOW" >/dev/null
 grep -F 'workflow_dispatch:' "$WORKFLOW" >/dev/null
+test "$(grep -Fc 'GIT_REF: ${{ github.ref_name }}' "$WORKFLOW")" -eq 2
+if grep -F 'GIT_REF: ${{ inputs.git_ref || github.sha }}' "$WORKFLOW" >/dev/null; then
+  echo "Spot workflow must clone an advertised branch ref, not a raw commit SHA" >&2
+  exit 1
+fi
 
 echo "PASS test_run_aws_spot_ci_profile"

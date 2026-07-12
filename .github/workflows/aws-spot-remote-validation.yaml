@@ -156,7 +156,7 @@ jobs:
       - name: Render Spot remote validation request
         if: inputs.mode == 'dry-run'
         env:
-          GIT_REF: ${{ inputs.git_ref || github.sha }}
+          GIT_REF: ${{ github.ref_name }}
           PROFILE: ${{ inputs.profile }}
           CUSTOM_COMMAND: ${{ inputs.validation_command }}
           BASE_REF: ${{ inputs.base_ref }}
@@ -186,7 +186,7 @@ jobs:
       - name: Start Spot remote validation
         if: inputs.mode == 'start-run'
         env:
-          GIT_REF: ${{ inputs.git_ref || github.sha }}
+          GIT_REF: ${{ github.ref_name }}
           PROFILE: ${{ inputs.profile }}
           CUSTOM_COMMAND: ${{ inputs.validation_command }}
           BASE_REF: ${{ inputs.base_ref }}
