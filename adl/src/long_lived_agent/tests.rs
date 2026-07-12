@@ -936,6 +936,10 @@ fn inspect_specific_cycle_and_rejects_unsafe_cycle_refs() {
 
 #[test]
 fn status_recovers_latest_cycle_from_ledger_when_status_file_is_missing() {
+    let _env = MultiEnvGuard::set_all(&[
+        ("ADL_CSM_DISK_FLOOR_BYTES", "0"),
+        ("ADL_CSM_TEST_AVAILABLE_BYTES", "1073741824"),
+    ]);
     let root = temp_dir("ledger-restart");
     let spec = write_spec(&root);
     run(
@@ -962,6 +966,10 @@ fn status_recovers_latest_cycle_from_ledger_when_status_file_is_missing() {
 
 #[test]
 fn status_refuses_checkpoint_recovery_when_godel_chain_is_corrupt() {
+    let _env = MultiEnvGuard::set_all(&[
+        ("ADL_CSM_DISK_FLOOR_BYTES", "0"),
+        ("ADL_CSM_TEST_AVAILABLE_BYTES", "1073741824"),
+    ]);
     let root = temp_dir("godel-corrupt-recovery");
     let spec = write_spec(&root);
     tick(&spec, TickOptions::default()).expect("tick writes checkpoint and Godel chain");
