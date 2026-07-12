@@ -22,6 +22,8 @@ grep -F 'ADLAwsRemoteValidationRole-*' "$SETUP" >/dev/null
 grep -F 'ADLAwsRemoteValidationProfile-*' "$SETUP" >/dev/null
 grep -F 'iam:AttachRolePolicy' "$SETUP" >/dev/null
 grep -F 'iam:DeleteRolePolicy' "$SETUP" >/dev/null
+grep -F 'ec2:AttachVolume' "$SETUP" >/dev/null
+grep -F 'ec2:DetachVolume' "$SETUP" >/dev/null
 
 ci_plan="$(bash "$SCRIPT" adl-ci --base HEAD --head HEAD --print-command)"
 coverage_plan="$(bash "$SCRIPT" adl-coverage --base HEAD --head HEAD --print-command)"

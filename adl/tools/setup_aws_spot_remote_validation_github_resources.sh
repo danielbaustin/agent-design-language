@@ -337,11 +337,13 @@ write(policy_path, {
         "Effect": "Allow",
         "Action": [
             "ec2:AuthorizeSecurityGroupIngress",
+            "ec2:AttachVolume",
             "ec2:CancelSpotInstanceRequests",
             "ec2:CreateSecurityGroup",
             "ec2:CreateTags",
             "ec2:DeleteSecurityGroup",
             "ec2:Describe*",
+            "ec2:DetachVolume",
             "ec2:RequestSpotInstances",
             "ec2:RevokeSecurityGroupIngress",
             "ec2:RunInstances",
