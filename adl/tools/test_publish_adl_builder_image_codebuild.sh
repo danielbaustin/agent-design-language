@@ -14,6 +14,7 @@ for token in \
   'llvm-tools-preview' \
   'docker push' \
   'ecr:PutImage' \
+  '/aws/codebuild/adl-codefriend-build' \
   'immutable_digest_verified=true'; do
   grep -F "$token" "$SCRIPT" >/dev/null
 done

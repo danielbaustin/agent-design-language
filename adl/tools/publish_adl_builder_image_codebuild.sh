@@ -108,6 +108,13 @@ payload = {
         ],
     },
     "serviceRole": role,
+    "logsConfig": {
+        "cloudWatchLogs": {
+            "status": "ENABLED",
+            "groupName": "/aws/codebuild/adl-codefriend-build",
+            "streamName": "adl-builder-image-build",
+        }
+    },
     "timeoutInMinutes": 60,
 }
 Path(path).write_text(json.dumps(payload, indent=2) + "\n")
