@@ -1831,7 +1831,7 @@ fn acquire_lease(
                 .unwrap_or_else(|| "operator stop requested".to_string());
             let status = stopped_status(loaded, reason.clone());
             write_status(loaded, &status)?;
-            write_continuity_restore_artifacts(
+            let _ = write_continuity_restore_artifacts(
                 loaded,
                 &status,
                 "stop_requested_during_activation",
@@ -2791,6 +2791,15 @@ fn persist_status(
     status: &StatusRecord,
     checkpoint_reason: &str,
 ) -> Result<()> {
+    let _ = persist_status_with_retention(loaded, status, checkpoint_reason)?;
+    Ok(())
+}
+
+fn persist_status_with_retention(
+    loaded: &LoadedAgentSpec,
+    status: &StatusRecord,
+    checkpoint_reason: &str,
+) -> Result<bool> {
     write_status(loaded, status)?;
     write_continuity_restore_artifacts(loaded, status, checkpoint_reason)
 }
@@ -3354,14 +3363,14 @@ fn safe_fail_trigger_model() -> Value {
         "schema": "adl.csm.safe_fail_trigger_model.v1",
         "supported_triggers": [
             "graceful_stop",
-            "daemon_partial_checkpoint",
+            "daemon_partial_checkpoint_degraded",
             "daemon_child_failed",
             "bounded_test_supervisor_failure",
             "restart_backoff",
             "daemon_heartbeat"
         ],
         "observability_exporter_failure_policy": "recorded_in_observability_status_when_exporter_reports_failure",
-        "checkpoint_failure_policy": "best_effort_fallback_refs_if_safe_fail_writer_cannot_complete",
+        "checkpoint_failure_policy": "ordinary_partial_checkpoints_do_not_emit_safe_fail; degraded_or_failed_partial_checkpoints_emit_safe_fail_with_fallback_refs",
         "unclaimed_triggers": [
             "kill_9",
             "host_power_loss_before_last_checkpoint_flush",
@@ -4357,7 +4366,19 @@ fn sleep_with_partial_checkpoints(
             current.state = AgentStatusState::Failed;
             current.last_error = Some(error);
         }
-        persist_status(loaded, &current, "daemon_partial_checkpoint")?;
+        let checkpoint_retained =
+            match persist_status_with_retention(loaded, &current, "daemon_partial_checkpoint") {
+                Ok(retained) => retained,
+                Err(err) => {
+                    emit_storage_degraded_event(
+                        loaded,
+                        "continuity_checkpoint_write",
+                        "daemon_partial_checkpoint",
+                        &err,
+                    );
+                    false
+                }
+            };
         *daemon_status = write_daemon_status(
             runtime_context,
             loaded,
@@ -4382,7 +4403,8 @@ fn sleep_with_partial_checkpoints(
                 "checkpoint_reason": "daemon_partial_checkpoint",
                 "checkpoint_ref": "continuity_checkpoint.json",
                 "status_ref": "status.json",
-                "trigger": sleep.event
+                "trigger": sleep.event,
+                "checkpoint_retained": checkpoint_retained
             }),
         )?;
         let agent_checkpoint_request = observe_agent_checkpoint_request(
@@ -4391,24 +4413,27 @@ fn sleep_with_partial_checkpoints(
             sleep.restart_count,
             last_checkpoint_at,
         )?;
-        let _ = record_safe_fail_event(
-            runtime_context,
-            loaded,
-            SafeFailRecord {
-                status: &current,
-                trigger: "daemon_partial_checkpoint",
-                restart_count: sleep.restart_count,
-                bounded_test_restart_limit: sleep.bounded_test_restart_limit,
-                last_child_exit: sleep.last_child_exit.clone(),
-                details: json!({
-                    "checkpoint_reason": "daemon_partial_checkpoint",
-                    "trigger": sleep.event,
-                    "checkpoint_ref": "continuity_checkpoint.json",
-                    "status_ref": "status.json",
-                    "agent_checkpoint_request": agent_checkpoint_request
-                }),
-            },
-        )?;
+        if sleep.recoverable_error.is_some() || !checkpoint_retained {
+            let _ = record_safe_fail_event(
+                runtime_context,
+                loaded,
+                SafeFailRecord {
+                    status: &current,
+                    trigger: "daemon_partial_checkpoint_degraded",
+                    restart_count: sleep.restart_count,
+                    bounded_test_restart_limit: sleep.bounded_test_restart_limit,
+                    last_child_exit: sleep.last_child_exit.clone(),
+                    details: json!({
+                        "checkpoint_reason": "daemon_partial_checkpoint",
+                        "trigger": sleep.event,
+                        "checkpoint_ref": "continuity_checkpoint.json",
+                        "status_ref": "status.json",
+                        "checkpoint_retained": checkpoint_retained,
+                        "agent_checkpoint_request": agent_checkpoint_request
+                    }),
+                },
+            )?;
+        }
         return Ok(false);
     }
 
@@ -4424,7 +4449,19 @@ fn sleep_with_partial_checkpoints(
             current.state = AgentStatusState::Failed;
             current.last_error = Some(error);
         }
-        persist_status(loaded, &current, "daemon_partial_checkpoint")?;
+        let checkpoint_retained =
+            match persist_status_with_retention(loaded, &current, "daemon_partial_checkpoint") {
+                Ok(retained) => retained,
+                Err(err) => {
+                    emit_storage_degraded_event(
+                        loaded,
+                        "continuity_checkpoint_write",
+                        "daemon_partial_checkpoint",
+                        &err,
+                    );
+                    false
+                }
+            };
         let next_backoff_secs = if sleep.event == "restart_backoff" {
             remaining
         } else {
@@ -4455,7 +4492,8 @@ fn sleep_with_partial_checkpoints(
                 "checkpoint_ref": "continuity_checkpoint.json",
                 "status_ref": "status.json",
                 "trigger": sleep.event,
-                "remaining_sleep_secs": remaining
+                "remaining_sleep_secs": remaining,
+                "checkpoint_retained": checkpoint_retained
             }),
         )?;
         let agent_checkpoint_request = observe_agent_checkpoint_request(
@@ -4464,25 +4502,28 @@ fn sleep_with_partial_checkpoints(
             sleep.restart_count,
             last_checkpoint_at,
         )?;
-        let _ = record_safe_fail_event(
-            runtime_context,
-            loaded,
-            SafeFailRecord {
-                status: &current,
-                trigger: "daemon_partial_checkpoint",
-                restart_count: sleep.restart_count,
-                bounded_test_restart_limit: sleep.bounded_test_restart_limit,
-                last_child_exit: sleep.last_child_exit.clone(),
-                details: json!({
-                    "checkpoint_reason": "daemon_partial_checkpoint",
-                    "trigger": sleep.event,
-                    "remaining_sleep_secs": remaining,
-                    "checkpoint_ref": "continuity_checkpoint.json",
-                    "status_ref": "status.json",
-                    "agent_checkpoint_request": agent_checkpoint_request
-                }),
-            },
-        )?;
+        if sleep.recoverable_error.is_some() || !checkpoint_retained {
+            let _ = record_safe_fail_event(
+                runtime_context,
+                loaded,
+                SafeFailRecord {
+                    status: &current,
+                    trigger: "daemon_partial_checkpoint_degraded",
+                    restart_count: sleep.restart_count,
+                    bounded_test_restart_limit: sleep.bounded_test_restart_limit,
+                    last_child_exit: sleep.last_child_exit.clone(),
+                    details: json!({
+                        "checkpoint_reason": "daemon_partial_checkpoint",
+                        "trigger": sleep.event,
+                        "remaining_sleep_secs": remaining,
+                        "checkpoint_ref": "continuity_checkpoint.json",
+                        "status_ref": "status.json",
+                        "checkpoint_retained": checkpoint_retained,
+                        "agent_checkpoint_request": agent_checkpoint_request
+                    }),
+                },
+            )?;
+        }
         if read_stop(loaded)?.is_some() {
             stop_observed = true;
             emit_daemon_event(
@@ -4983,7 +5024,7 @@ fn write_continuity_restore_artifacts(
     loaded: &LoadedAgentSpec,
     status: &StatusRecord,
     checkpoint_reason: &str,
-) -> Result<()> {
+) -> Result<bool> {
     let continuity: Value = read_json_required(&continuity_path(loaded))?;
     let ledger = ledger_cursor(loaded)?;
     let status_cycle_number = status
@@ -5076,7 +5117,7 @@ fn write_continuity_restore_artifacts(
             checkpoint_reason,
             &anyhow!("low disk preflight blocked Godel snapshot chain advancement"),
         );
-        return Ok(());
+        return Ok(false);
     }
 
     let godel_snapshot_diff = write_checkpoint_snapshot_diff(
@@ -5123,7 +5164,7 @@ fn write_continuity_restore_artifacts(
         ]
     });
     write_json_pretty(&replay_manifest_path, &replay_manifest)?;
-    Ok(())
+    Ok(true)
 }
 
 fn update_memory_index(loaded: &LoadedAgentSpec, cycle_id: &str) -> Result<()> {

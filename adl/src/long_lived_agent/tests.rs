@@ -2359,9 +2359,10 @@ fn continuity_checkpoint_low_disk_does_not_advance_godel_chain() {
         None,
     );
 
-    write_continuity_restore_artifacts(&loaded, &status, "low_disk_checkpoint")
+    let retained = write_continuity_restore_artifacts(&loaded, &status, "low_disk_checkpoint")
         .expect("low disk degrades without advancing chain");
 
+    assert!(!retained);
     assert!(!root.join("state/godel_snapshots").exists());
     assert!(root
         .join("state/csm_low_disk_recovery_manifest.json")
@@ -2623,6 +2624,56 @@ fn daemon_heartbeat_partial_checkpoint_does_not_report_backoff() {
 
     assert!(!stop_observed);
     assert_eq!(daemon_status.next_backoff_secs, 0);
+}
+
+#[test]
+fn daemon_healthy_partial_checkpoint_does_not_emit_safe_fail_bundle() {
+    let root = temp_dir("daemon-healthy-partial-no-safe-fail");
+    let spec = write_spec(&root);
+    let loaded = load_spec(&spec).expect("load spec");
+    ensure_state_root(&loaded).expect("state root");
+    let runtime_context = CsmRuntimeContext::new(&loaded).expect("csm runtime context");
+    let mut daemon_status = write_daemon_status(
+        &runtime_context,
+        &loaded,
+        DaemonStatusInput {
+            state: "running",
+            bounded_test_mode: true,
+            restart_count: 0,
+            bounded_test_restart_limit: Some(1),
+            checkpoint_interval_secs: 1,
+            last_event: "daemon_started",
+            last_child_exit: None,
+            next_backoff_secs: 0,
+        },
+    )
+    .expect("daemon status");
+
+    let stop_observed = sleep_with_partial_checkpoints(
+        &runtime_context,
+        &loaded,
+        &mut daemon_status,
+        PartialCheckpointSleep {
+            total_sleep_secs: 0,
+            checkpoint_interval_secs: 1,
+            restart_count: 0,
+            bounded_test_restart_limit: Some(1),
+            last_child_exit: None,
+            recoverable_error: None,
+            event: "daemon_heartbeat",
+            no_sleep: true,
+        },
+    )
+    .expect("healthy partial checkpoint");
+
+    assert!(!stop_observed);
+    assert!(continuity_checkpoint_path(&loaded).exists());
+    assert!(status_path(&loaded).exists());
+    assert!(!safe_fail_bundle_path(&loaded).exists());
+    assert!(!safe_fail_artifacts_dir(&loaded).exists());
+    let operator_events =
+        fs::read_to_string(operator_events_path(&loaded)).expect("operator events");
+    assert!(!operator_events.contains("\"event\":\"safe_fail_serialization\""));
 }
 
 #[test]
