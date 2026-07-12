@@ -386,6 +386,9 @@ fn status_response(loaded: &LoadedAgentSpec, options: &CsmRuntimeApiOptions) -> 
         read_json_artifact(&artifact_path(loaded, "csm_backpressure_state.json"));
     let typed_channel_state =
         read_json_artifact(&artifact_path(loaded, "csm_typed_channel_state.json"));
+    let shutdown_state = read_json_artifact(&artifact_path(loaded, "csm_shutdown_state.json"));
+    let shutdown_disposition =
+        read_json_artifact(&artifact_path(loaded, "csm_shutdown_disposition.json"));
     let otel_status_path = resolve_otel_status_path(loaded, options);
     let otel_log_path = resolve_otel_log_path(loaded, options);
     let otel_status = otel_status_path
@@ -474,6 +477,12 @@ fn status_response(loaded: &LoadedAgentSpec, options: &CsmRuntimeApiOptions) -> 
         "persistence": persistence,
         "backpressure": compact_artifact_status(&backpressure_state, "csm_backpressure_state.json"),
         "typed_channels": compact_typed_channel_status(&typed_channel_state),
+        "shutdown": {
+            "state": compact_artifact_status(&shutdown_state, "csm_shutdown_state.json"),
+            "disposition": compact_artifact_status(&shutdown_disposition, "csm_shutdown_disposition.json"),
+            "admission_quiesced": shutdown_state.pointer("/value/admission_quiesced").and_then(Value::as_bool).unwrap_or(false),
+            "active_phase": shutdown_state.pointer("/value/active_phase").cloned().unwrap_or(Value::Null)
+        },
         "api_gateway_bridge": api_gateway_bridge_runtime_status(loaded),
         "otel": {
             "status": compact_artifact_status(&otel_status, "ADL_OTEL_STATUS"),
@@ -1437,6 +1446,13 @@ fn readiness_blockers(status: &Value) -> Vec<String> {
         blockers.push("typed_channels_not_ready".to_string());
     }
     if status
+        .pointer("/shutdown/admission_quiesced")
+        .and_then(Value::as_bool)
+        == Some(true)
+    {
+        blockers.push("shutdown_admission_quiesced".to_string());
+    }
+    if status
         .pointer("/curiosity_engine/value/readiness")
         .and_then(Value::as_str)
         != Some("ready")
@@ -1645,6 +1661,15 @@ fn runtime_api_http_response(
 ) -> Result<RuntimeApiHttpResponse> {
     let mut headers = loopback_browser_access_headers(request.origin.as_deref());
     headers.push(("vary", "Origin".to_string()));
+    let admission_quiesced = runtime_admission_quiesced(options);
+    headers.push((
+        "x-csm-admission",
+        if admission_quiesced {
+            "quiesced".to_string()
+        } else {
+            "open".to_string()
+        },
+    ));
     match request.method.as_str() {
         "GET" => {
             let body = runtime_api_response(options, &request.path)?;
@@ -1664,6 +1689,16 @@ fn runtime_api_http_response(
             headers,
             body: None,
         }),
+        _ if admission_quiesced => Ok(RuntimeApiHttpResponse {
+            status: "503 Service Unavailable",
+            headers,
+            body: Some(json!({
+                "schema": CSM_RUNTIME_API_SCHEMA,
+                "status": "admission_quiesced",
+                "reason": "governed_shutdown_in_progress",
+                "allowed_methods": ["GET", "OPTIONS"]
+            })),
+        }),
         _ => Ok(RuntimeApiHttpResponse {
             status: "405 Method Not Allowed",
             headers,
@@ -1674,6 +1709,17 @@ fn runtime_api_http_response(
             })),
         }),
     }
+}
+
+fn runtime_admission_quiesced(options: &CsmRuntimeApiOptions) -> bool {
+    load_spec(&options.spec_path)
+        .ok()
+        .and_then(|loaded| {
+            read_json_artifact(&artifact_path(&loaded, "csm_shutdown_state.json"))
+                .pointer("/value/admission_quiesced")
+                .and_then(Value::as_bool)
+        })
+        .unwrap_or(false)
 }
 
 fn runtime_api_authenticated_http_response(
@@ -1693,6 +1739,7 @@ fn runtime_api_authenticated_http_response(
     }
     Ok(response)
 }
+
 fn runtime_api_internal_error_response(
     origin: Option<&str>,
     err: &anyhow::Error,
@@ -1751,6 +1798,7 @@ fn runtime_api_status_code(status: &str) -> StatusCode {
         "401 Unauthorized" => StatusCode::UNAUTHORIZED,
         "404 Not Found" => StatusCode::NOT_FOUND,
         "405 Method Not Allowed" => StatusCode::METHOD_NOT_ALLOWED,
+        "503 Service Unavailable" => StatusCode::SERVICE_UNAVAILABLE,
         "500 Internal Server Error" => StatusCode::INTERNAL_SERVER_ERROR,
         _ => StatusCode::INTERNAL_SERVER_ERROR,
     }
@@ -2191,6 +2239,38 @@ memory: {}
         assert!(retained.contains("gateway_identity_rejected"));
         assert!(!retained.contains(&first_token));
         assert!(!retained.contains(&second_token));
+    }
+
+    #[test]
+    fn runtime_api_rejects_mutating_admission_while_shutdown_is_quiesced() {
+        let root = temp_root("shutdown-quiesced");
+        let options = test_options(&root);
+        let state_root = root.join("state");
+        fs::create_dir_all(&state_root).unwrap();
+        fs::write(
+            state_root.join("csm_shutdown_state.json"),
+            serde_json::to_vec_pretty(&json!({
+                "schema": "adl.csm.shutdown_state.v1",
+                "admission_quiesced": true,
+                "active_phase": "drain_work"
+            }))
+            .unwrap(),
+        )
+        .unwrap();
+        let request = RuntimeApiRequest {
+            method: "POST".to_string(),
+            path: "/future-mutating-route".to_string(),
+            origin: None,
+            authorization: None,
+            gateway_identity: None,
+            gateway_signature: None,
+        };
+        let response = runtime_api_http_response(&options, &request).expect("response");
+        assert_eq!(response.status, "503 Service Unavailable");
+        assert_eq!(response.body.expect("body")["status"], "admission_quiesced");
+        assert!(response
+            .headers
+            .contains(&("x-csm-admission", "quiesced".to_string())));
     }
 
     #[test]
@@ -2953,6 +3033,7 @@ memory: {}
         let spec = write_spec(&root);
         let state = root.join("state");
         fs::create_dir_all(&state).unwrap();
+        write_ready_runtime_gate_artifacts(&state);
         fs::write(
             state.join("status.json"),
             serde_json::to_string_pretty(&json!({
@@ -3432,6 +3513,7 @@ memory: {}
         let spec = write_spec(&root);
         let state = root.join("state");
         fs::create_dir_all(&state).unwrap();
+        write_ready_runtime_gate_artifacts(&state);
         fs::write(
             state.join("daemon_status.json"),
             serde_json::to_string_pretty(&json!({

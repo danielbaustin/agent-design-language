@@ -294,6 +294,9 @@ candidate_filter_for_path() {
     adl/src/runtime_v2/godel_agent_runtime.rs)
       printf 'runtime_v2_godel_agent_runtime'
       ;;
+    adl/src/runtime_v2/shutdown_dag.rs)
+      printf 'runtime_v2_csm_shutdown_dag'
+      ;;
     adl/src/gws_live_capability_execution_surface.rs|adl/src/gws_live_content_card_roundtrip.rs|adl/src/gws_live_content_card_roundtrip/*.rs|adl/src/gws_live_safety_package.rs|adl/src/gws_live_test_support.rs)
       printf 'gws_live'
       ;;
@@ -370,10 +373,13 @@ nextest_expression_for_filter() {
       printf 'test(csmctl) or test(csm_service)'
       ;;
     csm_runtime_agent)
-      printf 'test(csm_cmd) or test(csm_runtime_api) or test(csm_freedom_gate) or test(csm_godel_snapshot) or test(csm_shepherd_agent) or test(long_lived_agent) or test(csm_service)'
+      printf 'binary_id(adl) and (test(csm_cmd) or test(csm_runtime_api) or test(csm_freedom_gate) or test(csm_godel_snapshot) or test(csm_shepherd_agent) or test(long_lived_agent) or test(csm_service))'
       ;;
     long_lived_agent_storage)
-      printf 'test(long_lived_agent::storage) or test(run_v0916_runtime_failure_injection)'
+      printf '(binary_id(adl) and test(long_lived_agent::storage)) or (binary_id(adl::bin/run_v0916_runtime_failure_injection) and test(run_v0916_runtime_failure_injection))'
+      ;;
+    runtime_v2_csm_shutdown_dag)
+      printf 'test(runtime_v2_csm_shutdown_dag) or (binary_id(adl::cli_smoke) and test(csm_governed_shutdown_retains_continuity_and_publish_failures_without_false_success))'
       ;;
     finish)
       printf 'binary_id(adl::bin/adl-pr-finish) and test(/^cli::pr_cmd::tests::finish::arg_render::/) or binary_id(adl::bin/adl-pr-finish) and test(/^cli::pr_cmd::finish_support::tests::/)'

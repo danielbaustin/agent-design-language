@@ -50,6 +50,25 @@ assert_has "$TMP/focused.out" "mode=focused"
 assert_has "$TMP/focused.out" "filter_expression=test(contract_schema)"
 assert_not_has "$TMP/focused.out" "runtime_owner_lane status=selected"
 
+focused_adl_runtime="$TMP/focused-adl-runtime.txt"
+cat >"$focused_adl_runtime" <<'EOF'
+M	adl-runtime/Cargo.toml
+M	adl-runtime/Cargo.lock
+M	adl-runtime/src/weather.rs
+EOF
+bash "$SCRIPT" --changed-files "$focused_adl_runtime" >"$TMP/focused-adl-runtime.out"
+assert_has "$TMP/focused-adl-runtime.out" "rust_pr_fast status=selected"
+assert_has "$TMP/focused-adl-runtime.out" "runtime_owner_lane status=selected"
+assert_has "$TMP/focused-adl-runtime.out" "mode=focused"
+assert_has "$TMP/focused-adl-runtime.out" "filter_expression=all()"
+
+focused_adl_runtime_example="$TMP/focused-adl-runtime-example.txt"
+printf 'M\tadl-runtime/examples/observability_vector_proof.rs\n' >"$focused_adl_runtime_example"
+bash "$SCRIPT" --changed-files "$focused_adl_runtime_example" >"$TMP/focused-adl-runtime-example.out"
+assert_has "$TMP/focused-adl-runtime-example.out" "rust_pr_fast status=selected"
+assert_has "$TMP/focused-adl-runtime-example.out" "runtime_owner_lane status=selected"
+assert_has "$TMP/focused-adl-runtime-example.out" "mode=focused"
+
 runtime_kernel="$TMP/runtime-kernel.txt"
 cat >"$runtime_kernel" <<'EOF'
 A	adl-runtime-kernel/src/lib.rs

@@ -55,6 +55,7 @@ pub fn usage() -> &'static str {
   adl runtime-v2 constructability-anchor-validator [--input <packet.json>] [--out <path>]
   adl runtime-v2 loop-runtime [--out <path>]
   adl runtime-v2 godel-agent-runtime [--agents <count>] [--out <path>]
+  adl runtime-v3 select [--runtime v2|v3] [--json]
   adl scheduler plan --input <bundle.json> [--out <path>] [--json]
   adl provider setup <family> [--model <provider_model_id>] [--out <dir>] [--force]
   adl pr create --title <title> [--slug <slug>] [--body <text> | --body-file <path>] [--labels <csv>] [--version <v>]
@@ -146,6 +147,7 @@ Examples:
   adl runtime-v2 constructability-anchor-validator --input artifacts/v0917/constructability-candidate.json --out artifacts/v0917/constructability-decision.json
   adl runtime-v2 loop-runtime --out artifacts/v0917/loop-runtime.json
   adl runtime-v2 godel-agent-runtime --agents 10 --out artifacts/v0917/godel-agent-runtime.json
+  adl runtime-v3 select --runtime v3 --json
   adl scheduler plan --input adl/tests/fixtures/scheduler/economics_inputs_v1.json --out artifacts/examples/scheduler-plan.json
   adl provider setup chatgpt
   adl provider setup claude

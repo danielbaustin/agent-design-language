@@ -41,7 +41,8 @@ for required_fragment in \
   "cargo llvm-cov report" \
   "--json" \
   "--summary-only" \
-  "--output-path coverage-summary.json"
+  "--output-path coverage-summary.json" \
+  'export ADL_CSM_DISK_FLOOR_BYTES="${ADL_CSM_DISK_FLOOR_BYTES:-0}"'
 do
   case "$script_text" in
     *"$required_fragment"*) ;;
@@ -58,7 +59,8 @@ case "$script_text" in
     ;;
 esac
 
-temp_root="$(mktemp -d)"
+mkdir -p "$ROOT_DIR/.adl/tmp"
+temp_root="$(mktemp -d "$ROOT_DIR/.adl/tmp/authoritative-coverage.XXXXXX")"
 trap 'rm -rf "$temp_root"; rm -f "$ROOT_DIR/adl/coverage-warm-cache.json"' EXIT
 bin_dir="$temp_root/bin"
 mkdir -p "$bin_dir"

@@ -23,6 +23,7 @@ mod run;
 pub(crate) mod run_artifacts;
 mod run_artifacts_types;
 mod runtime_v2_cmd;
+mod runtime_v3_cmd;
 mod scheduler_cmd;
 mod session_cmd;
 #[cfg(test)]
@@ -44,6 +45,7 @@ use process_cmd::real_process;
 use provider_cmd::real_provider;
 use run::{real_resume, run_workflow};
 use runtime_v2_cmd::real_runtime_v2;
+use runtime_v3_cmd::real_runtime_v3;
 use scheduler_cmd::real_scheduler;
 use session_cmd::real_session;
 use tooling_cmd::real_tooling;
@@ -194,6 +196,7 @@ fn dispatch_args(args: &[String]) -> Result<()> {
         Some("process") => real_process(&args[1..]),
         Some("provider") => real_provider(&args[1..]),
         Some("runtime-v2") => real_runtime_v2(&args[1..]),
+        Some("runtime-v3") => real_runtime_v3(&args[1..]),
         Some("scheduler") => real_scheduler(&args[1..]),
         Some("session") => real_session(&args[1..]),
         Some("pr") => real_pr(&args[1..]),
@@ -224,6 +227,7 @@ Usage:\n\
   adl-runtime instrument <graph|replay|replay-bundle|diff-plan|diff-trace|trace-schema|validate-trace-v1|provider-substrate|provider-substrate-schema> ...\n\
   adl-runtime learn export --format <jsonl|bundle-v1|trace-bundle-v2> ...\n\
   adl-runtime provider setup <family> [--model <provider_model_id>] [--out <dir>] [--force]\n\
+  adl-runtime runtime-v3 select [--runtime v2|v3] [--json]\n\
   adl-runtime keygen --out-dir <dir>\n\
   adl-runtime sign <adl.yaml> --key <private_key_path> [--key-id <id>] [--out <signed_file>]\n\
   adl-runtime verify <adl.yaml> [--key <public_key_path>]\n\
@@ -270,6 +274,7 @@ fn dispatch_runtime_args(args: &[String]) -> Result<()> {
         Some("learn") => real_learn(&args[1..]),
         Some("provider") => real_provider(&args[1..]),
         Some("runtime-v2") => real_runtime_v2(&args[1..]),
+        Some("runtime-v3") => real_runtime_v3(&args[1..]),
         Some("session") => Err(anyhow::anyhow!(
             "adl-runtime does not own polis/session coordination commands. Use adl session <status|claim|heartbeat|release>."
         )),
@@ -280,7 +285,7 @@ fn dispatch_runtime_args(args: &[String]) -> Result<()> {
             "adl-runtime does not own C-SDLC workflow commands. Use adl/tools/pr.sh run <issue> for issue work or adl-csdlc for C-SDLC compatibility surfaces."
         )),
         Some(other) => Err(anyhow::anyhow!(
-            "unknown adl-runtime command '{other}'. Expected run, resume, agent, artifact, scheduler, csm, demo, godel, identity, instrument, learn, provider, runtime-v2, keygen, sign, verify, help, or --version."
+            "unknown adl-runtime command '{other}'. Expected run, resume, agent, artifact, scheduler, csm, demo, godel, identity, instrument, learn, provider, runtime-v2, runtime-v3, keygen, sign, verify, help, or --version."
         )),
         None => Err(anyhow::anyhow!(
             "adl-runtime requires a command. Run `adl-runtime --help` for usage."
@@ -415,7 +420,7 @@ fn dispatch_review_args(args: &[String]) -> Result<()> {
         )),
         Some("run") | Some("resume") | Some("agent") | Some("artifact") | Some("csm")
         | Some("demo") | Some("godel") | Some("identity") | Some("instrument") | Some("learn")
-        | Some("provider") | Some("runtime-v2") | Some("keygen") | Some("sign")
+        | Some("provider") | Some("runtime-v2") | Some("runtime-v3") | Some("keygen") | Some("sign")
         | Some("verify") => Err(anyhow::anyhow!(
             "adl-review does not run ADL runtime commands. Use adl-runtime run <adl.yaml> for runtime workflows."
         )),

@@ -112,6 +112,7 @@ changed_rows() {
 is_relevant_fast_lane_surface() {
   local path="$1"
   case "$path" in
+    adl-runtime/src/*.rs|adl-runtime/tests/*.rs|adl-runtime/examples/*.rs|adl-runtime/Cargo.toml|adl-runtime/Cargo.lock|\
     adl/src/*.rs|adl/tests/*.rs|adl/build.rs|adl/Cargo.toml|adl/Cargo.lock|\
     docs/default_workflow.md|\
     docs/milestones/v0.90/milestone_compression/FINISH_VALIDATION_PROFILES_v0.90.md)
@@ -225,6 +226,10 @@ is_broad_rust_surface() {
 filter_token_for_path() {
   local path="$1"
   case "$path" in
+    adl-runtime/Cargo.toml|adl-runtime/Cargo.lock|adl-runtime/src/*.rs|adl-runtime/tests/*.rs|adl-runtime/examples/*.rs)
+      printf 'adl_runtime'
+      return 0
+      ;;
     adl/Cargo.toml|adl/Cargo.lock)
       printf 'manifest_support'
       return 0
@@ -474,6 +479,10 @@ filter_token_for_path() {
 family_token_for_path() {
   local path="$1"
   case "$path" in
+    adl-runtime/Cargo.toml|adl-runtime/Cargo.lock|adl-runtime/src/*.rs|adl-runtime/tests/*.rs|adl-runtime/examples/*.rs)
+      printf 'adl_runtime'
+      return 0
+      ;;
     adl/Cargo.toml|adl/Cargo.lock|\
     adl/src/bin/adl_pr_*.rs|\
     adl/src/cli/pr_cmd.rs|\
@@ -565,6 +574,7 @@ TOKEN_MAP = {
     "github_release_": 'test(/^cli::tooling_cmd::github_release::/)',
     "long_lived_agent": 'test(/^long_lived_agent::/)',
     "manifest_support": 'test(/^cli::pr_cmd::github::/) or test(/^cli::pr_cmd::github_client::/) or test(/^cli::tooling_cmd::github_release::/) or test(/^long_lived_agent::/)',
+    "adl_runtime": 'all()',
 }
 
 clauses = []
@@ -614,6 +624,9 @@ saw_tokio_bootstrap_related_surface=false
 saw_process_status_related_surface=false
 saw_scheduler_related_surface=false
 saw_csdlc_binary_taxonomy_surface=false
+saw_adl_crate_surface=false
+saw_adl_runtime_crate_surface=false
+saw_other_relevant_fast_lane_surface=false
 
 declare -a tokens=()
 declare -a family_tokens=()
@@ -661,6 +674,17 @@ while IFS= read -r path; do
   if ! is_relevant_fast_lane_surface "$path"; then
     continue
   fi
+  case "$path" in
+    adl-runtime/*)
+      saw_adl_runtime_crate_surface=true
+      ;;
+    adl/*)
+      saw_adl_crate_surface=true
+      ;;
+    *)
+      saw_other_relevant_fast_lane_surface=true
+      ;;
+  esac
   if [ "$path" = "docs/default_workflow.md" ] && [ "$saw_csdlc_binary_taxonomy_surface" = true ]; then
     continue
   fi
@@ -717,6 +741,9 @@ EOF
 
 if [ "$classification_locked" = true ]; then
   :
+elif [ "$saw_adl_runtime_crate_surface" = true ] && { [ "$saw_adl_crate_surface" = true ] || [ "$saw_other_relevant_fast_lane_surface" = true ]; }; then
+  mode="full"
+  reason="mixed_adl_runtime_with_other_fast_lane_surfaces_requires_full_nextest"
 elif is_manifest_only_rust_wave; then
   mode="focused"
   reason="manifest_only_rust_wave_runs_focused_nextest"
@@ -821,7 +848,13 @@ if [ "$mode" = "full" ] && [ "${ADL_PR_FAST_ALLOW_FULL_NEXTEST:-0}" != "1" ]; th
   exit 3
 fi
 
-cd "$ROOT_DIR/adl"
+selected_crate_dir="$ROOT_DIR/adl"
+if [ "$filter_tokens" = "adl_runtime" ]; then
+  selected_crate_dir="$ROOT_DIR/adl-runtime"
+  cd "$selected_crate_dir"
+else
+  cd "$selected_crate_dir"
+fi
 
 warm_cache_output_path="${ADL_PR_FAST_TEST_WARM_CACHE_OUTPUT:-}"
 warm_cache_temp_output=""
@@ -838,7 +871,7 @@ run_warm_cache() {
     warm_cache_output_path="$warm_cache_temp_output"
   fi
   ADL_RUST_WARM_CACHE_SOURCE_TARGET="${ADL_PR_FAST_TEST_WARM_SOURCE_TARGET:-}" \
-  ADL_RUST_WARM_CACHE_DEST_TARGET="${CARGO_TARGET_DIR:-$ROOT_DIR/adl/target}" \
+  ADL_RUST_WARM_CACHE_DEST_TARGET="${CARGO_TARGET_DIR:-$selected_crate_dir/target}" \
   ADL_RUST_WARM_CACHE_OUTPUT="$warm_cache_output_path" \
     bash "$ROOT_DIR/adl/tools/rust_validation_warm_cache.sh"
 }

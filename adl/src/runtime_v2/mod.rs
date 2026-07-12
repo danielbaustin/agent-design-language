@@ -74,6 +74,7 @@ mod recovery;
 mod resource_stewardship_bridge;
 mod runtime_inhabitant_integration;
 mod security;
+mod shutdown_dag;
 mod snapshot;
 mod standing;
 mod theory_of_mind_foundation;
@@ -225,6 +226,8 @@ pub use resource_stewardship_bridge::*;
 pub use runtime_inhabitant_integration::*;
 #[allow(unused_imports)]
 pub use security::*;
+#[allow(unused_imports)]
+pub use shutdown_dag::*;
 #[allow(unused_imports)]
 pub use snapshot::*;
 #[allow(unused_imports)]
