@@ -1,0 +1,139 @@
+{
+  "schema": "adl.csdlc_v2.public_contracts.v1",
+  "issue": 5228,
+  "status": "gate_1_draft",
+  "common_output": {
+    "stdout": "one versioned JSON result when --json is selected",
+    "stderr": "human diagnostics and tracing events",
+    "exit_classes": ["success", "blocked", "invalid_input", "conflict", "external_failure", "internal_failure"],
+    "redaction": "credentials and sensitive values never appear in either channel"
+  },
+  "enums": {
+    "implementation": "Rust enums with strum-derived canonical strings",
+    "serde_clap_schema_card_alignment": true,
+    "legacy_aliases": "import_only",
+    "unknown_policy": "fail_closed",
+    "lifecycle_phase": ["initialized", "ready", "bound", "implemented", "reviewed", "published", "merge_ready", "merged", "closed_out"],
+    "operation_result": ["ready", "waiting", "blocked", "failed", "deferred", "retryable", "repair_required", "operator_required"],
+    "card_kind": ["sip", "stp", "spp", "vpp", "srp", "sor"],
+    "card_operation": ["set_field", "append_reference", "record_validation", "record_finding", "dispose_finding", "advance_status", "record_execution", "record_closeout"]
+  },
+  "operational_index": {
+    "schema_versioned": true,
+    "narrative_authority": false,
+    "fields": [
+      "issue_repository_identity",
+      "generation_and_phase",
+      "branch_worktree",
+      "claim_and_protected_paths",
+      "card_template_schema_and_digests",
+      "design_diagram_and_review_refs",
+      "pvf_plan_and_results",
+      "review_and_findings",
+      "pr_and_checks",
+      "closeout",
+      "append_only_events"
+    ],
+    "write_protocol": "expected_generation compare-and-swap plus atomic replacement"
+  },
+  "card_transaction": {
+    "input": ["issue", "card_kind", "operation", "typed_values", "expected_digest", "actor", "claim", "reason"],
+    "pipeline": ["resolve_template_schema", "load_values", "authorize", "apply_typed_operation", "render_markdown", "parse_markdown_rs_mdast", "validate_ast_and_cross_card", "digest", "atomic_commit"],
+    "outputs": ["new_digest", "changed_fields", "rendered_path", "index_generation", "audit_event"],
+    "direct_markdown_edit": "digest_conflict",
+    "unknown_ast_node": "preserve_or_report_never_drop"
+  },
+  "claim": {
+    "fields": ["claim_id", "issue", "session", "owner", "generation", "purpose", "branch", "worktree", "protected_paths", "acquired_at", "heartbeat_at", "expires_at"],
+    "overlap": "fail_closed",
+    "stale_recovery": "explicit compare-and-swap retaining prior owner, expiry evidence, actor, and reason"
+  },
+  "pvf_lane": {
+    "fields": ["lane", "proof_role", "determinism", "resource_profile", "expected_cost", "network", "credentials", "release_gate", "dependencies", "parallel_group", "timeout", "argv", "evidence_policy"],
+    "shell_evaluation": false,
+    "selection": "smallest required DAG from changed scope and outcome",
+    "convergence": "typed local, ci_deferred, waiting, blocked, failed, passed, non_goal outcomes"
+  },
+  "scheduler": {
+    "input": ["phase", "card_readiness", "design_readiness", "dependencies", "claims", "protected_paths", "validation_budgets", "operator_policy"],
+    "output": "eligible next operation set with reasons",
+    "authority": ["no_claim", "no_execute", "no_publish", "no_merge", "no_close"]
+  },
+  "shepherd": {
+    "observes": ["claim_heartbeat", "pvf_lanes", "dependency_gates", "pr_checks", "conflicts", "reviews"],
+    "classifies": ["ready", "waiting", "retryable", "repair_required", "operator_required"],
+    "authority": ["no_implementation_edit", "no_scope_expansion", "no_merge", "no_waiting_as_failure"]
+  },
+  "design_readiness": {
+    "required": ["issue_specific_design", "mermaid_diagram", "spp_reference", "vpp_reference", "design_review_disposition"],
+    "doctor_rejects": ["missing", "generic", "stale", "invalid_mermaid", "unreferenced", "unreviewed"]
+  },
+  "binaries": {
+    "csdlc-init": {"mutates": true, "purpose": "initialize identity, index, design surfaces, and all six cards"},
+    "csdlc-doctor": {"mutates": false, "purpose": "local invariant/readiness diagnosis; remote refresh explicit"},
+    "csdlc-edit": {"mutates": true, "purpose": "sole general card transaction boundary"},
+    "csdlc-bind": {"mutates": true, "purpose": "bind branch, worktree, and claim"},
+    "csdlc-validate": {"mutates": true, "purpose": "execute PVF DAG and retain evidence"},
+    "csdlc-publish": {"mutates": true, "purpose": "publish exact reviewed revision and normalize remote state"},
+    "csdlc-closeout": {"mutates": true, "purpose": "reconcile terminal state and safely prune"}
+  },
+  "skill_boundary": {
+    "count": 9,
+    "may": ["gather_typed_intent", "inspect_json", "review", "route", "present_findings"],
+    "must_not": ["mutate_state", "patch_markdown", "reimplement_transitions", "hidden_fallback"],
+    "binary_contract_version_required": true
+  },
+  "skills": {
+    "csdlc-conductor": {"input": ["doctor_result", "policy"], "output": ["selected_skill", "reason", "continuation"], "stop": "after one route"},
+    "csdlc-issue-designer": {"input": ["issue_contract", "source_evidence"], "output": ["design", "mermaid", "cots_decisions", "review_request"], "stop": "before implementation"},
+    "csdlc-card-editor": {"input": ["issue", "card_kind", "operation", "typed_values", "expected_digest", "claim", "actor", "reason"], "output": ["csdlc-edit result"], "stop": "after one semantic transaction"},
+    "csdlc-run": {"input": ["ready_doctor", "issue", "claim_policy"], "output": ["binding", "execution_boundary"], "stop": "before publication"},
+    "csdlc-validator": {"input": ["vpp", "changed_scope", "budget"], "output": ["selected_dag", "validation_disposition"], "stop": "after retained proof"},
+    "csdlc-review": {"input": ["revision", "scope", "review_policy"], "output": ["findings", "dispositions", "residual_risk"], "stop": "before publication"},
+    "csdlc-publish": {"input": ["exact_reviewed_revision", "base", "head", "issue_linkage"], "output": ["pr_identity", "normalized_remote_state"], "stop": "after publication handoff"},
+    "csdlc-shepherd": {"input": ["claim", "pvf", "dependencies", "pr_state"], "output": ["ready_or_waiting_or_retryable_or_repair_or_operator"], "stop": "before edit or merge authority"},
+    "csdlc-closeout": {"input": ["terminal_remote_state", "sor", "index", "worktree"], "output": ["reconciled_closeout", "prune_disposition"], "stop": "after settled local/remote truth"}
+  },
+  "evidence_record": {
+    "schema": "adl.csdlc_v2.evidence.v1",
+    "required": ["evidence_id", "issue", "revision", "producer", "proof_role", "command_or_operation", "started_at", "completed_at", "outcome", "artifact_refs", "stdout_digest", "stderr_digest", "redaction_status"],
+    "outcome_enum": ["passed", "failed", "blocked", "waiting", "deferred", "skipped_non_goal"],
+    "claims": "an aggregate may claim passed only when every required child is passed",
+    "path_policy": "repository-relative except explicitly justified external evidence"
+  },
+  "normalized_parity_outcome": {
+    "schema": "adl.csdlc_v2.normalized_outcome.v1",
+    "fields": ["issue_identity", "phase", "operation", "terminal_result", "blocker_class", "branch", "worktree_binding", "claim_generation", "card_statuses", "selected_pvf_lanes", "validation_disposition", "review_revision", "finding_dispositions", "pr_identity", "pr_base", "pr_head", "remote_state", "closeout_disposition", "evidence_roles"],
+    "normalization": ["ordered lifecycle fields retain order", "set-like evidence roles sort canonically", "generation-specific raw hashes are not compared", "unknown required values fail comparison"],
+    "equality": "exact after schema validation and normalization"
+  },
+  "worked_examples": {
+    "pvf": {
+      "changed_scope": ["docs/architecture/example.md", "docs/architecture/example.mmd"],
+      "declared_outcome": "design_and_diagram",
+      "selected_dag": [
+        {"lane": "docs_diff_check", "depends_on": []},
+        {"lane": "mermaid_source", "depends_on": []},
+        {"lane": "design_contract", "depends_on": ["docs_diff_check", "mermaid_source"]}
+      ],
+      "not_selected": ["rust", "coverage", "runtime", "live", "release"],
+      "reason": "smallest deterministic proof for changed scope"
+    },
+    "scheduler": {
+      "input": {"phase": "ready", "cards_ready": true, "design_ready": true, "dependencies_ready": true, "claim": null},
+      "output": {"eligible": ["claim", "bind"], "not_authorized": ["execute", "publish", "merge"]}
+    },
+    "shepherd": {
+      "input": {"phase": "published", "claim_fresh": true, "checks": "pending", "conflict": false, "review": "complete"},
+      "output": {"classification": "waiting", "next_observation": "checks", "mutation": null}
+    }
+  },
+  "migration": {
+    "default_during_incubation": "v1",
+    "v2_opt_in": true,
+    "parity": "adl.csdlc_v2.normalized_outcome.v1",
+    "executable_rollback_days": 14,
+    "read_only_importer_days": 30,
+    "extension": "explicit reviewed decision before expiry"
+  }
+}
