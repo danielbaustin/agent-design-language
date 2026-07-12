@@ -1513,6 +1513,7 @@ fn csm_governed_shutdown_retains_continuity_and_publish_failures_without_false_s
 #[test]
 fn csm_continuity_capsule_captures_stages_and_rejects_unsafe_bundles() {
     let root = unique_test_temp_dir("csm-continuity-capsule");
+    let (api_probe, api_bind) = reserve_csm_test_port("continuity capsule API");
     let custody_p256_signing_private_key = "CQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQk=";
     let custody_trusted_public_key =
         custody_public_key_from_private_key(custody_p256_signing_private_key);
@@ -1549,25 +1550,54 @@ memory:
 "#,
     )
     .expect("write agent spec");
+    drop(api_probe);
 
-    let daemon = run_csm(&[
-        "daemon",
-        "--spec",
-        spec.to_str().expect("utf8 spec"),
-        "--test-supervisor-failure-after-restarts",
-        "1",
-        "--checkpoint-interval-secs",
-        "1",
-        "--no-sleep",
-        "--json",
-    ]);
+    let observability_log = root.join("daemon-observability.log");
+    let otel_log = root.join("daemon-otel.jsonl");
+    let otel_status = root.join("daemon-otel-status.json");
+    let (otel_endpoint, _captured_otel, otel_collector) = spawn_loopback_otlp_collector();
+    let daemon = run_csm_with_env(
+        &[
+            "daemon",
+            "--spec",
+            spec.to_str().expect("utf8 spec"),
+            "--test-supervisor-failure-after-restarts",
+            "1",
+            "--checkpoint-interval-secs",
+            "1",
+            "--api-bind",
+            &api_bind,
+            "--no-sleep",
+            "--json",
+        ],
+        &[
+            ("ADL_OBSERVABILITY_STDERR", "0"),
+            (
+                "ADL_OBSERVABILITY_LOG",
+                observability_log.to_str().expect("utf8 observability path"),
+            ),
+            ("ADL_OBSERVABILITY_HEARTBEAT_MS", "25"),
+            (
+                "ADL_OTEL_LOG",
+                otel_log.to_str().expect("utf8 otel log path"),
+            ),
+            (
+                "ADL_OTEL_STATUS",
+                otel_status.to_str().expect("utf8 otel status path"),
+            ),
+            ("ADL_OTEL_EXPORTER_OTLP_ENDPOINT", otel_endpoint.as_str()),
+            ("ADL_OTEL_EXPORTER_TIMEOUT_MS", "2000"),
+        ],
+    );
+    otel_collector
+        .join()
+        .expect("join continuity OTLP collector");
     assert!(
         daemon.status.success(),
         "expected daemon success, stderr:\n{}",
         String::from_utf8_lossy(&daemon.stderr)
     );
 
-    let observability_log = root.join("continuity-observability.log");
     let bundle = root.join("continuity-capsule");
     let capture = run_csm_with_env(
         &[
