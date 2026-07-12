@@ -16,6 +16,7 @@ use ::adl::csm_networking::{
     resolve_main_runtime_api_listener, CSM_MAIN_API_BIND, CSM_NETWORKING_SCHEMA,
 };
 use ::adl::long_lived_agent;
+use adl_runtime::runtime_api_auth::RuntimeApiCredentialStore;
 use anyhow::{anyhow, Context, Result};
 use chrono::{DateTime, Utc};
 use serde::{Deserialize, Serialize};
@@ -1136,9 +1137,11 @@ fn cycle_ledger_path(manifest: &ServiceManifest) -> PathBuf {
 }
 
 fn runtime_api_bind_observed(manifest: &ServiceManifest) -> bool {
-    let expected_agent_id = long_lived_agent::load_spec(&manifest.spec)
-        .ok()
-        .map(|loaded| loaded.spec.agent_instance_id);
+    let Ok(loaded) = long_lived_agent::load_spec(&manifest.spec) else {
+        return false;
+    };
+    let expected_agent_id = Some(loaded.spec.agent_instance_id.clone());
+    let credential_store = RuntimeApiCredentialStore::for_state_root(&loaded.state_root);
     let Ok(addr) = manifest.api_bind.parse::<SocketAddr>() else {
         return false;
     };
@@ -1149,11 +1152,14 @@ fn runtime_api_bind_observed(manifest: &ServiceManifest) -> bool {
         return false;
     };
     let _ = stream.set_write_timeout(Some(Duration::from_millis(200)));
-    let request = format!(
-        "GET /ready HTTP/1.1\r\nhost: {}\r\nconnection: close\r\n\r\n",
-        manifest.api_bind
-    );
-    if stream.write_all(request.as_bytes()).is_err() {
+    let request_sent = credential_store.with_bearer_token(|token| {
+        let request = format!(
+            "GET /ready HTTP/1.1\r\nhost: {}\r\nauthorization: Bearer {token}\r\nconnection: close\r\n\r\n",
+            manifest.api_bind
+        );
+        stream.write_all(request.as_bytes())
+    });
+    if !matches!(request_sent, Ok(Ok(()))) {
         return false;
     }
     let Some(body) = read_framed_http_body(&mut stream, Duration::from_secs(2)) else {

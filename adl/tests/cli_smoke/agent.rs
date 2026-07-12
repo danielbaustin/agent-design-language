@@ -128,38 +128,6 @@ fn assert_text_contains(haystack: &str, needle: &str, label: &str) {
     );
 }
 
-fn http_get_json(addr: &str, path: &str) -> serde_json::Value {
-    let started = std::time::Instant::now();
-    loop {
-        match std::net::TcpStream::connect(addr) {
-            Ok(mut stream) => {
-                stream
-                    .set_read_timeout(Some(std::time::Duration::from_secs(5)))
-                    .expect("set API read timeout");
-                write!(
-                    stream,
-                    "GET {path} HTTP/1.1\r\nhost: {addr}\r\nconnection: close\r\n\r\n"
-                )
-                .expect("write API request");
-                stream.flush().expect("flush API request");
-                let body = read_http_response_body(&mut stream);
-                if body.trim().is_empty() && started.elapsed() < std::time::Duration::from_secs(5) {
-                    std::thread::sleep(std::time::Duration::from_millis(25));
-                    continue;
-                }
-                return serde_json::from_str(&body).unwrap_or_else(|err| {
-                    panic!("parse API response for {path}: {err}; body:\n{body}")
-                });
-            }
-            Err(err) if started.elapsed() < std::time::Duration::from_secs(5) => {
-                let _ = err;
-                std::thread::sleep(std::time::Duration::from_millis(25));
-            }
-            Err(err) => panic!("connect to CSM API {addr} for {path}: {err}"),
-        }
-    }
-}
-
 fn http_get_json_authenticated(
     addr: &str,
     state_root: &std::path::Path,
@@ -3272,7 +3240,7 @@ memory:
         .as_str()
         .expect("runtime API bind")
         .to_string();
-    let ready = http_get_json(&api_bind, "/ready");
+    let ready = http_get_json_authenticated(&api_bind, &root.join("state"), "/ready");
     assert_eq!(ready["schema"], "adl.csm.runtime_api.ready.v1");
     assert_eq!(ready["runtime_owner"], "csm");
     assert_eq!(ready["agent_instance_id"], "service-local-agent");
@@ -3575,7 +3543,11 @@ memory:
     assert!(state.join("csm_governed_notice_latest.json").exists());
     assert_eq!(
         result["notice"]["typed_channel_delivery"]["status"],
-        "observer_command_defers_to_daemon_channel_owner"
+        "blocked_before_sequence_reservation"
+    );
+    assert_eq!(
+        result["notice"]["typed_channel_delivery"]["spool_sequence"],
+        serde_json::Value::Null
     );
     assert!(!state.join("aws_csm_governed_notice_mock.jsonl").exists());
     assert!(!state
@@ -4404,7 +4376,11 @@ memory:
             && attempt["status"] == "recorded"));
     assert_eq!(
         notice_latest["typed_channel_delivery"]["status"],
-        "durably_spooled_behind_unacknowledged_sequence"
+        "blocked_before_sequence_reservation"
+    );
+    assert_eq!(
+        notice_latest["typed_channel_delivery"]["spool_sequence"],
+        serde_json::Value::Null
     );
     assert_eq!(
         notice_latest["typed_channel_delivery"]["cursor_advanced"],
@@ -4418,28 +4394,23 @@ memory:
         .lines()
         .map(|line| serde_json::from_str::<serde_json::Value>(line).expect("notice ledger JSON"))
         .collect::<Vec<_>>();
-    let attempted_child_notice = ledger_entries
+    let blocked_child_notice = ledger_entries
         .iter()
         .rev()
-        .find(|entry| {
-            entry["trigger"] == "daemon_child_failed"
-                && entry["delivery_attempts"]
-                    .as_array()
-                    .is_some_and(|attempts| attempts.len() > 1)
-        })
-        .expect("failed-child notice with cloud delivery attempts");
-    let child_attempts = attempted_child_notice["delivery_attempts"]
+        .find(|entry| entry["trigger"] == "daemon_child_failed")
+        .expect("failed-child notice");
+    assert_eq!(
+        blocked_child_notice["publish_preflight"]["status"],
+        "blocked"
+    );
+    assert_eq!(
+        blocked_child_notice["typed_channel_delivery"]["status"],
+        "blocked_before_sequence_reservation"
+    );
+    let child_attempts = blocked_child_notice["delivery_attempts"]
         .as_array()
         .expect("failed-child delivery attempts");
-    assert!(child_attempts.iter().any(|attempt| {
-        attempt["channel"] == "cloudwatch_logs" && attempt["status"] == "not_configured"
-    }));
-    assert!(child_attempts.iter().any(|attempt| {
-        attempt["channel"] == "acip_sns" && attempt["status"] == "not_configured"
-    }));
-    assert!(child_attempts.iter().any(|attempt| {
-        attempt["channel"] == "cloudfront_control_plane"
-            && attempt["status"] == "not_configured"
-            && attempt["dependency"] == "#4915"
-    }));
+    assert_eq!(child_attempts.len(), 1);
+    assert_eq!(child_attempts[0]["channel"], "local_notice_ledger");
+    assert_eq!(child_attempts[0]["status"], "recorded");
 }
