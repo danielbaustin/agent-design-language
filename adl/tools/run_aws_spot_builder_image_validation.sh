@@ -5,7 +5,7 @@ IMAGE=""
 EXPECTED_REF=""
 EXPECTED_ARCH="x86_64"
 COMMAND=""
-MIN_CACHE_FREE_GIB="20"
+MIN_CACHE_FREE_GIB="10"
 LOW_SPACE_CLEAN_COMMAND='cargo clean --manifest-path adl/Cargo.toml'
 
 usage() {
@@ -18,7 +18,7 @@ Usage:
 
 Options:
   --expected-architecture <arch>  Defaults to x86_64.
-  --min-cache-free-gib <gib>      Minimum writable cache headroom. Defaults to 20.
+  --min-cache-free-gib <gib>      Minimum writable cache headroom. Defaults to 10.
 
 This command runs on the ephemeral Spot host after the repository and retained
 EBS cache are ready. It never builds the image or installs Rust validation

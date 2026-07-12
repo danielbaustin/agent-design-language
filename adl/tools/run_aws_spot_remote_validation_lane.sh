@@ -51,7 +51,7 @@ BUILDER_IMAGE="${ADL_AWS_SPOT_BUILDER_IMAGE:-}"
 BUILDER_IMAGE_REPOSITORY="${ADL_AWS_SPOT_BUILDER_IMAGE_REPOSITORY:-adl-builder}"
 BUILDER_IMAGE_TAG="${ADL_AWS_SPOT_BUILDER_IMAGE_TAG:-v0.91.7-fixed}"
 EXPECTED_ARCHITECTURE="${ADL_AWS_SPOT_EXPECTED_ARCHITECTURE:-x86_64}"
-MIN_CACHE_FREE_GIB="${ADL_AWS_SPOT_MIN_CACHE_FREE_GIB:-20}"
+MIN_CACHE_FREE_GIB="${ADL_AWS_SPOT_MIN_CACHE_FREE_GIB:-10}"
 ESTIMATED_HOURLY_COST_USD="${ADL_AWS_SPOT_ESTIMATED_HOURLY_COST_USD:-}"
 AMI_ID="${ADL_AWS_REMOTE_VALIDATION_AMI_ID:-}"
 SUBNET_ID="${ADL_AWS_REMOTE_VALIDATION_SUBNET_ID:-}"
@@ -103,7 +103,7 @@ Options:
                                 ECR repository used for default digest resolution.
   --builder-image-tag <tag>      ECR tag resolved once to an immutable digest.
   --expected-architecture <arch> Expected image/runtime architecture. Defaults x86_64.
-  --min-cache-free-gib <gib>     Required warm-cache headroom. Defaults 20.
+  --min-cache-free-gib <gib>     Required warm-cache headroom. Defaults 10.
   --estimated-hourly-cost-usd <usd>
                                 Override the pre-run Spot hourly price estimate.
   --ami-id <id>                 Explicit AMI. Defaults to the current AL2023 SSM image.

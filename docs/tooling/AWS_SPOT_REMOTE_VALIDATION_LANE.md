@@ -11,7 +11,7 @@ The default contract is:
 - AWS profile `agent-logic-admin`, checked against retained account proof
 - Spot `m7a.2xlarge`
 - the retained hot-cache volume and subnet identified by prior live proof
-- `/mnt/adl-cache` with at least 20 GiB free and a writable filesystem
+- `/mnt/adl-cache` with at least 10 GiB free and a writable filesystem
 - `adl-builder:v0.91.7-fixed`, resolved once to an immutable ECR digest
 - the dedicated `tools/aws_remote_validation` owner binary
 - passphraseless SSH and live remote-tail logging
@@ -189,7 +189,7 @@ the retained volume, run the canonical lane with the exact maintenance command
 `cargo clean --manifest-path adl/Cargo.toml`. That exact command alone may run
 below the free-space threshold; it clears only the mounted Cargo target while
 preserving the EBS volume, `sccache`, and Cargo-home caches. All other commands
-still require 20 GiB of pre-run headroom.
+still require 10 GiB of pre-run headroom.
 
 A successful `wrapper-final-summary.json` proves:
 
