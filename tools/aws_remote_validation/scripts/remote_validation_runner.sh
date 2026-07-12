@@ -66,6 +66,9 @@ if [ "${ADL_CACHE_VOLUME_ENABLED:-0}" = "1" ]; then
   if [ ! -d "$PERSISTENT_CHECKOUT/.git" ]; then
     git clone "$EPHEMERAL_CHECKOUT" "$PERSISTENT_CHECKOUT" >/tmp/adl-persistent-clone.log 2>&1
   fi
+  git -C "$PERSISTENT_CHECKOUT" fetch "$EPHEMERAL_CHECKOUT" \
+    '+refs/remotes/origin/*:refs/remotes/origin/*' \
+    >/tmp/adl-persistent-remote-refs-fetch.log 2>&1
   CURRENT_PERSISTENT_COMMIT="$(git -C "$PERSISTENT_CHECKOUT" rev-parse HEAD 2>/dev/null || true)"
   if [ "$CURRENT_PERSISTENT_COMMIT" != "$SOURCE_COMMIT" ]; then
     git -C "$PERSISTENT_CHECKOUT" fetch "$EPHEMERAL_CHECKOUT" "$SOURCE_COMMIT" \
