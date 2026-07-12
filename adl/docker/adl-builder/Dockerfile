@@ -50,7 +50,7 @@ RUN arch="$(uname -m)" \
 RUN curl -fsSL https://sh.rustup.rs -o /tmp/rustup-init.sh \
     && sh /tmp/rustup-init.sh -y --no-modify-path --profile minimal --default-toolchain "${RUST_TOOLCHAIN}" \
     && rm -f /tmp/rustup-init.sh \
-    && rustup component add rustfmt clippy
+    && rustup component add rustfmt clippy llvm-tools-preview
 
 RUN arch="$(uname -m)" \
     && case "$arch" in \
@@ -90,6 +90,24 @@ RUN printf '%s\n' \
       "lld=$(ld.lld --version | head -n 1)" \
       "aws=$(aws --version 2>&1)" \
       > /usr/local/share/adl-builder-toolchain.txt
+
+RUN arch="$(uname -m)" \
+    && case "$arch" in \
+      x86_64) llvm_cov_arch="x86_64-unknown-linux-musl" ;; \
+      aarch64|arm64) llvm_cov_arch="aarch64-unknown-linux-musl" ;; \
+      *) echo "unsupported cargo-llvm-cov arch: $arch" >&2; exit 2 ;; \
+    esac \
+    && llvm_cov_url="$(curl -fsSL https://api.github.com/repos/taiki-e/cargo-llvm-cov/releases/latest \
+      | python3 -c 'import json, sys; target = sys.argv[1]; data = json.load(sys.stdin); print(next((asset.get("browser_download_url", "") for asset in data.get("assets", []) if target in asset.get("browser_download_url", "") and asset.get("browser_download_url", "").endswith(".tar.gz")), ""))' "$llvm_cov_arch")" \
+    && test -n "$llvm_cov_url" \
+    && curl -fsSL "$llvm_cov_url" -o /tmp/cargo-llvm-cov.tar.gz \
+    && mkdir -p /tmp/cargo-llvm-cov \
+    && tar -xzf /tmp/cargo-llvm-cov.tar.gz -C /tmp/cargo-llvm-cov \
+    && llvm_cov_bin="$(find /tmp/cargo-llvm-cov -type f -name cargo-llvm-cov | head -n 1)" \
+    && test -n "$llvm_cov_bin" \
+    && install -m 0755 "$llvm_cov_bin" /usr/local/cargo/bin/cargo-llvm-cov \
+    && cargo llvm-cov --version \
+    && rm -rf /tmp/cargo-llvm-cov /tmp/cargo-llvm-cov.tar.gz
 
 WORKDIR /workspace
 
