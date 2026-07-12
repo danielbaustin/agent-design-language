@@ -64,6 +64,7 @@ def main() -> None:
         "GET /metrics",
         "GET /events",
         "GET /chronosense",
+        "GET /weather",
         "GET /shepherd",
         "GET /curiosity",
         "GET /acip",
@@ -82,6 +83,8 @@ def main() -> None:
         fail("api_gateway.planned_route_keys must retain planned /persistence route truth")
     if "GET /chronosense" not in api.get("planned_route_keys", []):
         fail("api_gateway.planned_route_keys must retain planned /chronosense route truth")
+    if "GET /weather" not in api.get("planned_route_keys", []):
+        fail("api_gateway.planned_route_keys must retain planned /weather route truth")
     if "GET /freedom-gate" not in api.get("planned_route_keys", []):
         fail("api_gateway.planned_route_keys must retain planned /freedom-gate route truth")
     if "GET /reasoning" not in api.get("planned_route_keys", []):
