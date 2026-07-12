@@ -120,6 +120,16 @@ jobs:
           chmod 600 "$SSH_KEY_PATH"
           ssh-keygen -y -P '' -f "$SSH_KEY_PATH" >/dev/null
 
+      - name: Restore Spot launcher build cache
+        if: inputs.mode == 'start-run'
+        uses: actions/cache@0057852bfaa89a56745cba8c7296529d2fc39830 # v4
+        with:
+          path: |
+            ~/.cargo/registry
+            ~/.cargo/git
+            tools/aws_remote_validation/target
+          key: spot-launcher-${{ runner.os }}-${{ hashFiles('tools/aws_remote_validation/Cargo.lock') }}
+
       - name: Build Spot remote validation binary
         if: inputs.mode == 'start-run'
         run: cargo build --manifest-path tools/aws_remote_validation/Cargo.toml --bin adl-aws-remote-validation
