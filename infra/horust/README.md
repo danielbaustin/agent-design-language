@@ -3,6 +3,11 @@
 Horust `0.1.13` is the selected portable Unix external guardian for
 Runtime v3. It is not linked into `adl-runtime-kernel`.
 
+The pinned source record is
+`infra/horust/horust-0.1.13.provenance.json`. It records the crates.io source,
+MIT license, Rust baseline, and SHA-256 of the published crate archive. Verify
+the archive checksum before installing with Cargo.
+
 Install the pinned guardian outside the repository build:
 
 ```sh
@@ -21,10 +26,15 @@ export ADL_RUNTIME_CONTROL_PRINCIPAL=operator
 horust --services-path infra/horust/adl-runtime-kernel.toml
 ```
 
-The service uses `on-failure` restart, 100ms incremental backoff, three startup
-attempts, direct stdout/stderr forwarding, and `SIGTERM` with a ten-second
-grace period. Configuration exit `78` is terminal and is not restarted.
-Platform-native managers remain optional adapters around the same child contract.
+The service currently uses Horust 0.1.13's `on-failure` strategy with 100ms
+incremental backoff. Native qualification found that this release does not
+enforce `restart.attempts` for repeated post-start crashes. The blocker is
+reported upstream as `FedericoPonzi/Horust#318`; this package must not claim a
+bounded crash-loop budget until a corrected upstream release is pinned and
+proved. Successful exits finish, configuration exit `78` is terminal, output
+is forwarded directly, and shutdown uses `SIGTERM` with a ten-second grace
+period. Platform-native managers remain optional adapters around the same child
+contract.
 
 Run Horust under a dedicated unprivileged host account. The service inherits
 the launcher's OS identity and resource limits; the optional systemd adapter

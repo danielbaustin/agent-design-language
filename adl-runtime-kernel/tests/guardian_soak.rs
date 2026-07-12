@@ -41,6 +41,18 @@ fn packaging_preserves_one_guardian_neutral_child_contract() {
     ))
     .unwrap();
     assert_eq!(matrix["candidates"].as_array().unwrap().len(), 3);
+    let provenance: serde_json::Value = serde_json::from_str(include_str!(
+        "../../infra/horust/horust-0.1.13.provenance.json"
+    ))
+    .unwrap();
+    assert_eq!(provenance["name"], "horust");
+    assert_eq!(provenance["version"], "0.1.13");
+    assert_eq!(provenance["license"], "MIT");
+    assert_eq!(
+        provenance["crate_sha256"],
+        "a1ee5cbfda91cd77652dfd8849f68ecb40af8d2359ccc91f96fbff3d5a3976a3"
+    );
+    assert_eq!(provenance["qualification"]["bounded_restart"], "blocked");
 }
 
 #[cfg(unix)]
@@ -97,6 +109,148 @@ fn horust_does_not_restart_configuration_failure() {
         1,
         "configuration failure must execute exactly once: {combined}"
     );
+}
+
+#[cfg(unix)]
+#[test]
+#[ignore = "requires ADL_HORUST_BIN and reproduces upstream Horust issue 318"]
+fn horust_qualification_detects_unbounded_restart_budget() {
+    let directory = tempfile::tempdir().unwrap();
+    let attempt_log = directory.path().join("attempts.log");
+    let child = directory.path().join("always-fail.sh");
+    write_executable(
+        &child,
+        "#!/bin/sh\nprintf 'run\\n' >> \"$ADL_ATTEMPT_LOG\"\nexit 70\n",
+    );
+    let service = directory.path().join("exhaustion.toml");
+    std::fs::write(
+        &service,
+        format!(
+            r#"name = "adl-runtime-kernel-exhaustion"
+command = "{}"
+stdout = "STDOUT"
+stderr = "STDERR"
+
+[restart]
+strategy = "on-failure"
+backoff = "50ms"
+attempts = 3
+
+[failure]
+successful-exit-code = [0]
+strategy = "ignore"
+
+[environment]
+keep-env = false
+re-export = ["ADL_ATTEMPT_LOG"]
+
+[termination]
+signal = "TERM"
+wait = "1s"
+"#,
+            toml_path(&child)
+        ),
+    )
+    .unwrap();
+
+    let mut guardian = Command::new(horust_binary())
+        .arg("--services-path")
+        .arg(&service)
+        .arg("--uds-folder-path")
+        .arg(directory.path().join("uds"))
+        .env("ADL_ATTEMPT_LOG", &attempt_log)
+        .stdout(Stdio::null())
+        .stderr(Stdio::null())
+        .spawn()
+        .unwrap();
+    let deadline = std::time::Instant::now() + Duration::from_secs(10);
+    let mut observed_attempts = 0;
+    let attempts = loop {
+        if let Ok(contents) = std::fs::read_to_string(&attempt_log) {
+            let attempts = contents.lines().count();
+            observed_attempts = attempts;
+            if attempts > 4 {
+                break attempts;
+            }
+        }
+        if let Some(status) = guardian.try_wait().unwrap() {
+            panic!("Horust unexpectedly exhausted the configured budget: {status}");
+        }
+        assert!(
+            std::time::Instant::now() < deadline,
+            "Horust did not reproduce the restart-budget defect before the deadline; observed {observed_attempts} launches"
+        );
+        std::thread::sleep(Duration::from_millis(20));
+    };
+    assert_eq!(
+        unsafe { libc::kill(guardian.id() as i32, libc::SIGTERM) },
+        0
+    );
+    assert!(guardian.wait().unwrap().success());
+    assert!(
+        attempts > 4,
+        "Horust unexpectedly respected attempts=3: observed {attempts} launches"
+    );
+}
+
+#[cfg(unix)]
+#[test]
+#[ignore = "requires ADL_HORUST_BIN and exercises native environment isolation"]
+fn horust_allowlists_child_environment() {
+    let directory = tempfile::tempdir().unwrap();
+    let environment_log = directory.path().join("environment.log");
+    let child = directory.path().join("capture-env.sh");
+    write_executable(&child, "#!/bin/sh\nenv > \"$ADL_ENV_OUT\"\n");
+    let service = directory.path().join("environment.toml");
+    std::fs::write(
+        &service,
+        format!(
+            r#"name = "adl-runtime-kernel-environment"
+command = "{}"
+stdout = "STDOUT"
+stderr = "STDERR"
+
+[restart]
+strategy = "never"
+backoff = "10ms"
+attempts = 1
+
+[failure]
+successful-exit-code = [0]
+strategy = "ignore"
+
+[environment]
+keep-env = false
+re-export = ["ADL_ENV_OUT", "ADL_ALLOWED_TEST"]
+
+[termination]
+signal = "TERM"
+wait = "1s"
+"#,
+            toml_path(&child)
+        ),
+    )
+    .unwrap();
+
+    let output = Command::new(horust_binary())
+        .arg("--services-path")
+        .arg(&service)
+        .arg("--uds-folder-path")
+        .arg(directory.path().join("uds"))
+        .env("ADL_ENV_OUT", &environment_log)
+        .env("ADL_ALLOWED_TEST", "visible")
+        .env("OPENAI_API_KEY", "must-not-leak")
+        .env("AWS_SECRET_ACCESS_KEY", "must-not-leak")
+        .output()
+        .unwrap();
+    assert!(output.status.success());
+    let captured = std::fs::read_to_string(environment_log).unwrap();
+    assert!(captured
+        .lines()
+        .any(|line| line == "ADL_ALLOWED_TEST=visible"));
+    assert!(!captured.contains("OPENAI_API_KEY"));
+    assert!(!captured.contains("AWS_SECRET_ACCESS_KEY"));
+    assert!(!captured.contains("must-not-leak"));
 }
 
 #[cfg(unix)]
@@ -165,6 +319,21 @@ fn repo_path(relative: &str) -> PathBuf {
         .parent()
         .unwrap()
         .join(relative)
+}
+
+#[cfg(unix)]
+fn write_executable(path: &Path, contents: &str) {
+    use std::os::unix::fs::PermissionsExt;
+
+    std::fs::write(path, contents).unwrap();
+    std::fs::set_permissions(path, std::fs::Permissions::from_mode(0o700)).unwrap();
+}
+
+#[cfg(unix)]
+fn toml_path(path: &Path) -> String {
+    let value = path.to_string_lossy();
+    assert!(!value.contains(['\n', '\r']));
+    value.replace('\\', "\\\\").replace('"', "\\\"")
 }
 
 #[cfg(unix)]

@@ -22,7 +22,7 @@ classifies fatal exits, and never embeds guardian-specific configuration.
 |---|---|---|---|---|---|
 | systemd | Native service and restart/backoff; cgroup ownership | `SIGTERM`, `KillMode=control-group`, journal capture | Linux only | Dynamic user, state directory, resource and capability bounds | Optional Linux adapter; Linux-host execution pending |
 | rustysd | Common unit subset supports `Restart=always`; fixed pre-start delay | Process supervision and output capture | Linux proof candidate; upstream describes itself as work in progress | Smaller surface, insufficient production hardening evidence | Retained proof candidate only |
-| Horust 0.1.13 | Executed `on-failure` restart with 100ms backoff and bounded attempts | `SIGTERM`, output forwarding, child supervision | Built on macOS and targets Unix hosts; upstream documents macOS orphan-reaping limitations | Inherits launcher identity and limits; dedicated unprivileged account required | Selected portable Unix guardian; executable restart proof passed |
+| Horust 0.1.13 | Executed `on-failure` restart with 100ms incremental backoff; configured attempts do not bound repeated post-start crashes | `SIGTERM`, output forwarding, child supervision | Built on macOS and targets Unix hosts; upstream documents macOS orphan-reaping limitations | Inherits launcher identity and limits; dedicated unprivileged account required | Selected portable Unix candidate; bounded-restart qualification blocked by upstream #318 |
 | launchd | KeepAlive and native process ownership | Native signal/log integration | Supported macOS platform service | Native service isolation controls | Compatible future adapter; not packaged here |
 
 `initd` remains out of scope because it is a PID 1 bootstrap layer rather than
@@ -32,6 +32,12 @@ The retained native Horust proof executes both sides of the guardian contract:
 one injected fatal child exit is restarted and restores continuity at generation
 2; terminating Horust forwards `SIGTERM`, lets the kernel checkpoint generation
 1, and leaves control port `20997` closed.
+
+Horust 0.1.13's `OnFailure` path does not apply the configured attempt limit,
+and its `Never` startup-failure counter resets when a child reaches `Started`.
+A native always-failing child therefore remains in a crash loop instead of
+exhausting the configured budget. This is retained as a cutover blocker and
+reported upstream at `https://github.com/FedericoPonzi/Horust/issues/318`.
 
 ## Packaging
 
