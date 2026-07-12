@@ -238,23 +238,7 @@ jobs:
 
       - name: Verify Spot artifact redaction
         if: always()
-        run: |
-          python3 - <<'PY'
-          import re
-          from pathlib import Path
-
-          root = Path(".adl/tmp/aws-spot-remote-validation")
-          patterns = [r"\b\d{12}\b", r"arn:aws:", r"\bi-[0-9a-f]{8,17}\b", r"\bvol-[0-9a-f]{8,17}\b"]
-          failures = []
-          for path in root.rglob("*"):
-              if not path.is_file() or ".private" in path.parts:
-                  continue
-              text = path.read_text(encoding="utf-8", errors="replace")
-              if any(re.search(pattern, text) for pattern in patterns):
-                  failures.append(str(path))
-          if failures:
-              raise SystemExit("unredacted Spot artifacts: " + ", ".join(failures))
-          PY
+        run: python3 adl/tools/aws_spot_artifact_redaction_verify.py .adl/tmp/aws-spot-remote-validation
 
       - name: Upload Spot remote validation artifacts
         if: always()

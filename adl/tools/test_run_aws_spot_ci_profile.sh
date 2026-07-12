@@ -6,6 +6,7 @@ SCRIPT="$ROOT/adl/tools/run_aws_spot_ci_profile.sh"
 WORKFLOW="$ROOT/.github/workflows/aws-spot-remote-validation.yaml"
 DOCKERFILE="$ROOT/adl/docker/adl-builder/Dockerfile"
 SETUP="$ROOT/adl/tools/setup_aws_spot_remote_validation_github_resources.sh"
+REDACTION_VERIFY="$ROOT/adl/tools/aws_spot_artifact_redaction_verify.py"
 
 bash -n "$SCRIPT"
 if grep -F 'ADL_PR_FAST_ALLOW_FULL_NEXTEST=1' "$SCRIPT" >/dev/null; then
@@ -56,9 +57,20 @@ grep -F -- '--issue "$ISSUE_NUMBER"' "$WORKFLOW" >/dev/null
 grep -F -- '--builder-image-tag "$BUILDER_IMAGE_TAG"' "$WORKFLOW" >/dev/null
 grep -F 'group: aws-spot-remote-validation-ebs-cache' "$WORKFLOW" >/dev/null
 grep -F 'workflow_dispatch:' "$WORKFLOW" >/dev/null
+grep -F 'python3 adl/tools/aws_spot_artifact_redaction_verify.py' "$WORKFLOW" >/dev/null
 test "$(grep -Fc 'GIT_REF: ${{ github.ref_name }}' "$WORKFLOW")" -eq 2
 if grep -F 'GIT_REF: ${{ inputs.git_ref || github.sha }}' "$WORKFLOW" >/dev/null; then
   echo "Spot workflow must clone an advertised branch ref, not a raw commit SHA" >&2
+  exit 1
+fi
+
+redaction_tmp="$(mktemp -d "${TMPDIR:-/tmp}/adl-spot-redaction.XXXXXX")"
+trap 'rm -rf "$redaction_tmp"' EXIT
+printf '{"cache_target_preexisting_bytes":123456789012}\n' >"$redaction_tmp/numeric-metric.json"
+python3 "$REDACTION_VERIFY" "$redaction_tmp"
+printf '{"account_id":"123456789012"}\n' >"$redaction_tmp/aws-identity.json"
+if python3 "$REDACTION_VERIFY" "$redaction_tmp" >/dev/null 2>&1; then
+  echo "Spot artifact verifier must reject AWS identifiers in JSON strings" >&2
   exit 1
 fi
 
