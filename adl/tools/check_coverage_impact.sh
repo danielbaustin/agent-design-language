@@ -124,9 +124,8 @@ changed_source_rows="$(
   changed_rows \
     | normalize_changed_path \
     | awk -F '\t' '
-        $2 ~ /^adl\/src\/.*\.rs$/ &&
-        $2 !~ /^adl\/src\/(.+\/)?tests\.rs$/ &&
-        $2 !~ /^adl\/src\/.*\/tests\/.*\.rs$/ {
+        (($2 ~ /^adl\/src\/.*\.rs$/ && $2 !~ /^adl\/src\/(.+\/)?tests\.rs$/ && $2 !~ /^adl\/src\/.*\/tests\/.*\.rs$/) ||
+         ($2 ~ /^adl-runtime\/src\/.*\.rs$/ && $2 !~ /^adl-runtime\/src\/(.+\/)?tests\.rs$/ && $2 !~ /^adl-runtime\/src\/.*\/tests\/.*\.rs$/)) {
           print $1 "\t" $2
         }
       '
@@ -237,6 +236,10 @@ candidate_filter_for_path() {
     adl/src/csm_runtime_api.rs|\
     adl/src/csm_shepherd_agent.rs|\
     adl/src/long_lived_agent.rs|\
+    adl-runtime/src/cav.rs|\
+    adl-runtime/src/runtime_api.rs|\
+    adl-runtime/src/supervision.rs|\
+    adl-runtime/src/topology.rs|\
     adl/src/long_lived_agent/types.rs)
       printf 'csm_runtime_agent'
       ;;

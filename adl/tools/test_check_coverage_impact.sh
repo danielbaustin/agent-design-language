@@ -145,6 +145,10 @@ M	adl/src/csm_runtime_api.rs
 M	adl/src/csm_shepherd_agent.rs
 M	adl/src/long_lived_agent.rs
 M	adl/src/long_lived_agent/types.rs
+A	adl-runtime/src/cav.rs
+M	adl-runtime/src/runtime_api.rs
+M	adl-runtime/src/supervision.rs
+M	adl-runtime/src/topology.rs
 EOF
 csm_runtime_agent_filters="$TMP/csm-runtime-agent-filters.txt"
 bash "$SCRIPT" --changed-files "$csm_runtime_agent_changed" --print-risk-filters >"$csm_runtime_agent_filters"
@@ -165,6 +169,10 @@ grep -F "test(/^long_lived_agent::/)" <<<"$csm_runtime_agent_expression" >/dev/n
 grep -F "test(/^cli::csm_service_cmd::/)" <<<"$csm_runtime_agent_expression" >/dev/null
 grep -F "test(/^cli::csm_cmd::tests::/)" <<<"$csm_runtime_agent_expression" >/dev/null
 grep -F "binary_id(adl::cli_smoke) and test(/^agent::csm_/)" <<<"$csm_runtime_agent_expression" >/dev/null
+if grep -F "binary_id(adl-runtime)" <<<"$csm_runtime_agent_expression" >/dev/null; then
+  echo "expected CSM runtime filter to avoid non-workspace adl-runtime binary IDs" >&2
+  exit 1
+fi
 if grep -F "test(long_lived_agent)" <<<"$csm_runtime_agent_expression" >/dev/null; then
   echo "expected CSM runtime filter to avoid unrelated tests that merely mention long_lived_agent" >&2
   exit 1
