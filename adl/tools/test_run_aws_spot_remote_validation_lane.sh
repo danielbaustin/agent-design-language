@@ -337,6 +337,8 @@ grep -Fx -- "--issue" "$TMP/args.txt" >/dev/null
 grep -Fx -- "5191" "$TMP/args.txt" >/dev/null
 grep -Fx -- "--instance-type" "$TMP/args.txt" >/dev/null
 grep -Fx -- "m7a.2xlarge" "$TMP/args.txt" >/dev/null
+grep -Fx -- "--spot-only" "$TMP/args.txt" >/dev/null
+grep -F 'INSTANCE_TYPES=("m7a.2xlarge" "c7a.2xlarge" "c7i.2xlarge")' "$SCRIPT" >/dev/null
 grep -Fx -- "--cache-volume-id" "$TMP/args.txt" >/dev/null
 grep -Fx -- "vol-0123456789abcdef0" "$TMP/args.txt" >/dev/null
 grep -Fx -- "--cache-volume-name" "$TMP/args.txt" >/dev/null

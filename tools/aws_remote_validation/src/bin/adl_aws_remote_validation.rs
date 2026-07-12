@@ -132,7 +132,7 @@ impl Drop for EnvVarGuard {
 }
 
 fn usage() -> &'static str {
-    "adl-aws-remote-validation run --issue <number> --command <shell-command> --ami-id <ami> --subnet-id <subnet> --security-group-id <sg> --instance-profile-name <name> --out <summary.json> [--artifact-dir <dir>] [--instance-type <type> ...] [--budget-name <name>] [--expected-max-cost-usd <usd>] [--repo-url <url>] [--git-ref <ref>] [--cache-bucket <bucket>] [--cache-prefix <prefix>] [--sccache-tarball-url <url>] [--nextest-tarball-url <url>] [--ssh-key-name <name>] [--ssh-private-key-path <path>] [--ssh-user <user>] [--ssh-allowed-cidr <cidr>] [--cache-volume-id <id>] [--cache-volume-name <name>] [--cache-volume-size-gib <gib>] [--cache-volume-type <type>] [--cache-volume-iops <iops>] [--cache-volume-throughput-mbps <mbps>] [--cache-volume-device-name <device>] [--cache-volume-mount-path <path>] [--command-timeout-seconds <seconds>] [--region <region>] [--profile <profile>] [--json]"
+    "adl-aws-remote-validation run --issue <number> --command <shell-command> --ami-id <ami> --subnet-id <subnet> --security-group-id <sg> --instance-profile-name <name> --out <summary.json> [--artifact-dir <dir>] [--instance-type <type> ...] [--spot-only] [--budget-name <name>] [--expected-max-cost-usd <usd>] [--repo-url <url>] [--git-ref <ref>] [--cache-bucket <bucket>] [--cache-prefix <prefix>] [--sccache-tarball-url <url>] [--nextest-tarball-url <url>] [--ssh-key-name <name>] [--ssh-private-key-path <path>] [--ssh-user <user>] [--ssh-allowed-cidr <cidr>] [--cache-volume-id <id>] [--cache-volume-name <name>] [--cache-volume-size-gib <gib>] [--cache-volume-type <type>] [--cache-volume-iops <iops>] [--cache-volume-throughput-mbps <mbps>] [--cache-volume-device-name <device>] [--cache-volume-mount-path <path>] [--command-timeout-seconds <seconds>] [--region <region>] [--profile <profile>] [--json]"
 }
 
 fn local_git_stdout(args: &[&str]) -> Option<String> {
@@ -242,6 +242,7 @@ fn parse_args(args: &[String]) -> Result<ParsedArgs> {
     let mut security_group_id = None;
     let mut instance_profile_name = None;
     let mut instance_types: Vec<String> = Vec::new();
+    let mut allow_on_demand_fallback = true;
     let mut budget_name = None;
     let mut expected_max_cost_usd = None;
     let mut command_timeout_seconds = None;
@@ -489,6 +490,7 @@ fn parse_args(args: &[String]) -> Result<ParsedArgs> {
                         .to_string(),
                 );
             }
+            "--spot-only" => allow_on_demand_fallback = false,
             "--budget-name" => {
                 i += 1;
                 budget_name = Some(
@@ -578,6 +580,7 @@ fn parse_args(args: &[String]) -> Result<ParsedArgs> {
             security_group_id: security_group_id.unwrap_or_default(),
             instance_profile_name: instance_profile_name.unwrap_or_default(),
             instance_types,
+            allow_on_demand_fallback,
             budget_name,
             expected_max_cost_usd,
             poll_interval_seconds: 15,
@@ -1023,12 +1026,14 @@ mod tests {
             "c7i.large",
             "--instance-type",
             "c7i.xlarge",
+            "--spot-only",
             "--json",
         ]);
         assert_eq!(
             parsed.config.instance_types,
             vec!["c7i.large".to_string(), "c7i.xlarge".to_string()]
         );
+        assert!(!parsed.config.allow_on_demand_fallback);
         assert_eq!(
             parsed.config.cache_bucket.as_deref(),
             Some("adl-aws-remote-tool-cache-agentlogic")

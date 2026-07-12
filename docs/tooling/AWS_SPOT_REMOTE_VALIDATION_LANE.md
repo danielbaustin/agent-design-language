@@ -175,6 +175,11 @@ validation failure is terminal and is never relaunched as an infrastructure
 retry. `stop` discovers the latest attempt control log and verifies the
 instance's `adl:run_id` tag before termination.
 
+The canonical wrapper is Spot-only and tries its ordered x86 builder pool in
+the retained cache volume's availability zone. It never falls back to
+on-demand implicitly. The lower-level owner binary retains an explicit
+compatibility path for callers that intentionally allow on-demand fallback.
+
 If target artifacts from an incompatible linker/toolchain generation exhaust
 the retained volume, run the canonical lane with the exact maintenance command
 `cargo clean --manifest-path adl/Cargo.toml`. That exact command alone may run

@@ -299,7 +299,7 @@ elif [[ "$ACTION" == "run" && "$RUN" != true ]]; then
 fi
 
 if [[ ${#INSTANCE_TYPES[@]} -eq 0 ]]; then
-  INSTANCE_TYPES=("m7a.2xlarge")
+  INSTANCE_TYPES=("m7a.2xlarge" "c7a.2xlarge" "c7i.2xlarge")
 fi
 
 if [[ -z "$PROFILE" ]]; then
@@ -424,10 +424,9 @@ resolve_spot_hourly_cost() {
   if [[ "$PROFILE" != "env" && "$PROFILE" != "environment" ]]; then
     profile_args=(--profile "$PROFILE")
   fi
-  local instance_type="${INSTANCE_TYPES[0]:-m7a.2xlarge}"
   local price_json
   price_json="$("$AWS_CLI" ec2 describe-spot-price-history \
-    "${profile_args[@]}" --region "$REGION" --instance-types "$instance_type" \
+    "${profile_args[@]}" --region "$REGION" --instance-types "${INSTANCE_TYPES[@]}" \
     --product-descriptions Linux/UNIX --max-items 20 --output json)"
   ESTIMATED_HOURLY_COST_USD="$(python3 -c 'import json,sys; values=[float(x["SpotPrice"]) for x in json.load(sys.stdin).get("SpotPriceHistory",[])]; print(max(values) if values else "")' <<<"$price_json")"
   if [[ ! "$ESTIMATED_HOURLY_COST_USD" =~ ^[0-9]+([.][0-9]+)?$ ]]; then
@@ -737,6 +736,7 @@ cmd=(
   --git-ref "$GIT_REF"
   --out "$OUT_PATH"
   --artifact-dir "$ARTIFACT_DIR"
+  --spot-only
   --cache-volume-id "$RETAINED_CACHE_VOLUME_ID"
   --cache-volume-name "$CACHE_VOLUME_NAME"
   --cache-volume-size-gib "$CACHE_VOLUME_SIZE_GIB"
