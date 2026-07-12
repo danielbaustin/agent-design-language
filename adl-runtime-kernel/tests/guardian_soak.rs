@@ -65,7 +65,7 @@ fn packaging_preserves_one_guardian_neutral_child_contract() {
     .unwrap();
     assert_eq!(
         evidence["tested_commit"],
-        "681445e614355bafa092998da45a6af792ad7f03"
+        "85326915d25bfedfa78e8cad7496126ca647921c"
     );
     assert_eq!(evidence["runs"].as_array().unwrap().len(), 4);
     assert_eq!(qualification["runtime_source_loc"], 8446);

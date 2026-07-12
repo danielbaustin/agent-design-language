@@ -1,7 +1,7 @@
 {
   "schema": "adl.runtime_v3.horust_qualification_evidence.v1",
   "issue": 5211,
-  "tested_commit": "681445e614355bafa092998da45a6af792ad7f03",
+  "tested_commit": "85326915d25bfedfa78e8cad7496126ca647921c",
   "artifact_policy": "remote and host artifacts remain local and ignored; this redacted index retains stable identifiers and hashes without credentials or account identifiers",
   "unit_sha256": "c344a70df9e7bb57911b2c675b5bb0f7d22ffb680fd72277d3f6c6b2655eff27",
   "horust_crate_provenance_sha256": "b0a9ae88756ba4ac9187b9844ccb5bfcb5503905e2dac199f094886a0bc6e9b1",
