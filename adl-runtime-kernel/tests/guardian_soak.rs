@@ -1,5 +1,6 @@
 use std::{
     future::pending,
+    io::Read,
     path::{Path, PathBuf},
     process::{Command, Stdio},
     sync::{
@@ -53,6 +54,42 @@ fn packaging_preserves_one_guardian_neutral_child_contract() {
         "a1ee5cbfda91cd77652dfd8849f68ecb40af8d2359ccc91f96fbff3d5a3976a3"
     );
     assert_eq!(provenance["qualification"]["bounded_restart"], "blocked");
+    let qualification: serde_json::Value = serde_json::from_str(include_str!(
+        "../../docs/architecture/runtime_v3_horust_qualification_report.v1.json"
+    ))
+    .unwrap();
+    assert_eq!(qualification["issue"], 5211);
+    let evidence: serde_json::Value = serde_json::from_str(include_str!(
+        "../../docs/architecture/runtime_v3_horust_qualification_evidence.v1.json"
+    ))
+    .unwrap();
+    assert_eq!(
+        evidence["tested_commit"],
+        "681445e614355bafa092998da45a6af792ad7f03"
+    );
+    assert_eq!(evidence["runs"].as_array().unwrap().len(), 4);
+    assert_eq!(qualification["runtime_source_loc"], 8446);
+    assert_eq!(
+        qualification["gates"]["macos_native_lifecycle"]["status"],
+        "passed"
+    );
+    assert_eq!(
+        qualification["gates"]["linux_native_lifecycle"]["status"],
+        "focused_pass"
+    );
+    assert_eq!(
+        qualification["gates"]["linux_systemd_containment"]["status"],
+        "passed"
+    );
+    assert_eq!(
+        qualification["gates"]["bounded_restart"]["status"],
+        "blocked"
+    );
+    assert_eq!(
+        qualification["gates"]["smallest_gpu_spot"]["status"],
+        "blocked_before_launch"
+    );
+    assert_eq!(qualification["cutover_authorized"], false);
 }
 
 #[cfg(unix)]
@@ -61,15 +98,15 @@ fn packaging_preserves_one_guardian_neutral_child_contract() {
 fn horust_restarts_once_and_restores_continuity() {
     let directory = tempfile::tempdir().unwrap();
     let capsule = directory.path().join("horust-restart.json");
-    let output = Command::new(horust_binary())
+    let mut command = Command::new(horust_binary());
+    command
         .arg("--services-path")
         .arg(repo_path("infra/horust/adl-runtime-kernel-bakeoff.toml"))
         .arg("--uds-folder-path")
         .arg(directory.path().join("uds"))
         .env("ADL_RUNTIME_BIN", env!("CARGO_BIN_EXE_adl-runtime-kernel"))
-        .env("ADL_RUNTIME_CAPSULE", &capsule)
-        .output()
-        .unwrap();
+        .env("ADL_RUNTIME_CAPSULE", &capsule);
+    let output = bounded_output(&mut command);
     assert!(
         output.status.success(),
         "Horust failed: stdout={} stderr={}",
@@ -87,15 +124,15 @@ fn horust_restarts_once_and_restores_continuity() {
 #[ignore = "requires ADL_HORUST_BIN and exercises native process supervision"]
 fn horust_does_not_restart_configuration_failure() {
     let directory = tempfile::tempdir().unwrap();
-    let output = Command::new(horust_binary())
+    let mut command = Command::new(horust_binary());
+    command
         .arg("--services-path")
         .arg(repo_path("infra/horust/adl-runtime-kernel.toml"))
         .arg("--uds-folder-path")
         .arg(directory.path().join("uds"))
         .env("ADL_RUNTIME_BIN", env!("CARGO_BIN_EXE_adl-runtime-kernel"))
-        .env("ADL_RUNTIME_CAPSULE", directory.path().join("config.json"))
-        .output()
-        .unwrap();
+        .env("ADL_RUNTIME_CAPSULE", directory.path().join("config.json"));
+    let output = bounded_output(&mut command);
     assert!(output.status.success());
     let combined = format!(
         "{}{}",
@@ -153,16 +190,20 @@ wait = "1s"
     )
     .unwrap();
 
-    let mut guardian = Command::new(horust_binary())
-        .arg("--services-path")
-        .arg(&service)
-        .arg("--uds-folder-path")
-        .arg(directory.path().join("uds"))
-        .env("ADL_ATTEMPT_LOG", &attempt_log)
-        .stdout(Stdio::null())
-        .stderr(Stdio::null())
-        .spawn()
-        .unwrap();
+    let mut guardian = ChildGuard::new({
+        let mut command = Command::new(horust_binary());
+        configure_process_group(&mut command);
+        command
+            .arg("--services-path")
+            .arg(&service)
+            .arg("--uds-folder-path")
+            .arg(directory.path().join("uds"))
+            .env("ADL_ATTEMPT_LOG", &attempt_log)
+            .stdout(Stdio::null())
+            .stderr(Stdio::null())
+            .spawn()
+            .unwrap()
+    });
     let deadline = std::time::Instant::now() + Duration::from_secs(10);
     let mut observed_attempts = 0;
     let attempts = loop {
@@ -173,7 +214,7 @@ wait = "1s"
                 break attempts;
             }
         }
-        if let Some(status) = guardian.try_wait().unwrap() {
+        if let Some(status) = guardian.0.as_mut().unwrap().try_wait().unwrap() {
             panic!("Horust unexpectedly exhausted the configured budget: {status}");
         }
         assert!(
@@ -183,10 +224,10 @@ wait = "1s"
         std::thread::sleep(Duration::from_millis(20));
     };
     assert_eq!(
-        unsafe { libc::kill(guardian.id() as i32, libc::SIGTERM) },
+        unsafe { libc::kill(guardian.0.as_ref().unwrap().id() as i32, libc::SIGTERM) },
         0
     );
-    assert!(guardian.wait().unwrap().success());
+    assert!(guardian.0.as_mut().unwrap().wait().unwrap().success());
     assert!(
         attempts > 4,
         "Horust unexpectedly respected attempts=3: observed {attempts} launches"
@@ -232,7 +273,8 @@ wait = "1s"
     )
     .unwrap();
 
-    let output = Command::new(horust_binary())
+    let mut command = Command::new(horust_binary());
+    command
         .arg("--services-path")
         .arg(&service)
         .arg("--uds-folder-path")
@@ -240,9 +282,8 @@ wait = "1s"
         .env("ADL_ENV_OUT", &environment_log)
         .env("ADL_ALLOWED_TEST", "visible")
         .env("OPENAI_API_KEY", "must-not-leak")
-        .env("AWS_SECRET_ACCESS_KEY", "must-not-leak")
-        .output()
-        .unwrap();
+        .env("AWS_SECRET_ACCESS_KEY", "must-not-leak");
+    let output = bounded_output(&mut command);
     assert!(output.status.success());
     let captured = std::fs::read_to_string(environment_log).unwrap();
     assert!(captured
@@ -262,30 +303,34 @@ fn horust_forwards_sigterm_and_runtime_checkpoints_cleanly() {
     let directory = tempfile::tempdir().unwrap();
     let capsule = directory.path().join("horust-sigterm.json");
     let verifying_key = SigningKey::from_bytes(&[19_u8; 32]).verifying_key();
-    let mut guardian = Command::new(horust_binary())
-        .arg("--services-path")
-        .arg(repo_path("infra/horust/adl-runtime-kernel.toml"))
-        .arg("--uds-folder-path")
-        .arg(directory.path().join("uds"))
-        .env("ADL_RUNTIME_BIN", env!("CARGO_BIN_EXE_adl-runtime-kernel"))
-        .env("ADL_RUNTIME_CAPSULE", &capsule)
-        .env(
-            "ADL_RUNTIME_CONTROL_PUBLIC_KEY_HEX",
-            hex::encode(verifying_key.as_bytes()),
-        )
-        .env("ADL_RUNTIME_CONTROL_KEY_ID", "guardian-test")
-        .env("ADL_RUNTIME_CONTROL_PRINCIPAL", "guardian-test")
-        .stdout(Stdio::null())
-        .stderr(Stdio::null())
-        .spawn()
-        .unwrap();
+    let mut command = Command::new(horust_binary());
+    configure_process_group(&mut command);
+    let mut guardian = ChildGuard::new(
+        command
+            .arg("--services-path")
+            .arg(repo_path("infra/horust/adl-runtime-kernel.toml"))
+            .arg("--uds-folder-path")
+            .arg(directory.path().join("uds"))
+            .env("ADL_RUNTIME_BIN", env!("CARGO_BIN_EXE_adl-runtime-kernel"))
+            .env("ADL_RUNTIME_CAPSULE", &capsule)
+            .env(
+                "ADL_RUNTIME_CONTROL_PUBLIC_KEY_HEX",
+                hex::encode(verifying_key.as_bytes()),
+            )
+            .env("ADL_RUNTIME_CONTROL_KEY_ID", "guardian-test")
+            .env("ADL_RUNTIME_CONTROL_PRINCIPAL", "guardian-test")
+            .stdout(Stdio::null())
+            .stderr(Stdio::null())
+            .spawn()
+            .unwrap(),
+    );
 
-    wait_for_control_port(&mut guardian);
+    wait_for_control_port(guardian.0.as_mut().unwrap());
     assert_eq!(
-        unsafe { libc::kill(guardian.id() as i32, libc::SIGTERM) },
+        unsafe { libc::kill(-(guardian.0.as_ref().unwrap().id() as i32), libc::SIGTERM) },
         0
     );
-    let status = guardian.wait().unwrap();
+    let status = guardian.0.as_mut().unwrap().wait().unwrap();
     assert!(status.success(), "Horust exited with {status}");
 
     let deadline = std::time::Instant::now() + Duration::from_secs(3);
@@ -311,6 +356,94 @@ fn horust_binary() -> PathBuf {
         configured
     } else {
         repo_path(configured.to_str().expect("Horust path must be UTF-8"))
+    }
+}
+
+#[cfg(unix)]
+struct ChildGuard(Option<std::process::Child>, i32);
+
+#[cfg(unix)]
+impl ChildGuard {
+    fn new(child: std::process::Child) -> Self {
+        let pgid = child.id() as i32;
+        Self(Some(child), pgid)
+    }
+}
+
+#[cfg(unix)]
+impl Drop for ChildGuard {
+    fn drop(&mut self) {
+        cleanup_process_group(self.1);
+        if let Some(child) = self.0.as_mut() {
+            if matches!(child.try_wait(), Ok(None)) {
+                let _ = child.kill();
+            }
+            let _ = child.wait();
+        }
+    }
+}
+
+#[cfg(unix)]
+fn bounded_output(command: &mut Command) -> std::process::Output {
+    configure_process_group(command);
+    command.stdout(Stdio::piped()).stderr(Stdio::piped());
+    let mut child = ChildGuard::new(command.spawn().unwrap());
+    let mut stdout = child.0.as_mut().unwrap().stdout.take().unwrap();
+    let mut stderr = child.0.as_mut().unwrap().stderr.take().unwrap();
+    let stdout_reader = std::thread::spawn(move || {
+        let mut bytes = Vec::new();
+        stdout.read_to_end(&mut bytes).unwrap();
+        bytes
+    });
+    let stderr_reader = std::thread::spawn(move || {
+        let mut bytes = Vec::new();
+        stderr.read_to_end(&mut bytes).unwrap();
+        bytes
+    });
+    let deadline = std::time::Instant::now() + Duration::from_secs(10);
+    loop {
+        if child.0.as_mut().unwrap().try_wait().unwrap().is_some() {
+            let status = child.0.as_mut().unwrap().wait().unwrap();
+            let output = std::process::Output {
+                status,
+                stdout: stdout_reader.join().unwrap(),
+                stderr: stderr_reader.join().unwrap(),
+            };
+            drop(child);
+            return output;
+        }
+        if std::time::Instant::now() >= deadline {
+            drop(child);
+            let _ = stdout_reader.join();
+            let _ = stderr_reader.join();
+            panic!("Horust did not terminate within the bounded test deadline");
+        }
+        std::thread::sleep(Duration::from_millis(20));
+    }
+}
+
+#[cfg(unix)]
+fn cleanup_process_group(pgid: i32) {
+    let signaled = unsafe { libc::kill(-pgid, libc::SIGTERM) == 0 };
+    if signaled {
+        std::thread::sleep(Duration::from_millis(100));
+        unsafe {
+            let _ = libc::kill(-pgid, libc::SIGKILL);
+        }
+    }
+}
+
+#[cfg(unix)]
+fn configure_process_group(command: &mut Command) {
+    use std::os::unix::process::CommandExt;
+
+    unsafe {
+        command.pre_exec(|| {
+            if libc::setpgid(0, 0) == -1 {
+                return Err(std::io::Error::last_os_error());
+            }
+            Ok(())
+        });
     }
 }
 

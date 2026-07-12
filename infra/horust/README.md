@@ -1,12 +1,17 @@
 # Runtime v3 Horust Guardian
 
-Horust `0.1.13` is the selected portable Unix external guardian for
-Runtime v3. It is not linked into `adl-runtime-kernel`.
+Horust `0.1.13` is the portable Unix external-guardian candidate for Runtime
+v3. It is not linked into `adl-runtime-kernel`, and it is not approved for
+production use while the qualification blocker below remains open.
 
 The pinned source record is
 `infra/horust/horust-0.1.13.provenance.json`. It records the crates.io source,
 MIT license, Rust baseline, and SHA-256 of the published crate archive. Verify
-the archive checksum before installing with Cargo.
+the archive checksum before installing with Cargo:
+
+```sh
+infra/horust/verify-provenance.sh /path/to/horust-0.1.13.crate
+```
 
 Install the pinned guardian outside the repository build:
 
@@ -40,8 +45,10 @@ Run Horust under a dedicated unprivileged host account. The service inherits
 the launcher's OS identity and resource limits; the optional systemd adapter
 adds Linux cgroup and service-account bounds. Use administrator-controlled,
 absolute binary and continuity paths without whitespace or quoting characters,
-because Horust parses the interpolated command string. Production packaging and
-cross-host qualification continue in `#5211`.
+because Horust parses the interpolated command string. Production adoption
+remains blocked by upstream issue 318. The qualification evidence and remaining
+provenance gap are recorded in
+`docs/architecture/runtime_v3_horust_qualification_evidence.v1.json`.
 
 `adl-runtime-kernel-bakeoff.toml` is test-only. It injects one classified fatal
 exit and proves that Horust restarts a fresh child which restores continuity.
