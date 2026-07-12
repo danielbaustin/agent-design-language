@@ -73,6 +73,16 @@ jobs:
         with:
           fetch-depth: 0
 
+      - name: Fetch selected advertised remote ref
+        if: inputs.remote_ref != ''
+        env:
+          REMOTE_REF: ${{ inputs.remote_ref }}
+        run: |
+          git check-ref-format --branch "$REMOTE_REF" >/dev/null
+          git fetch --no-tags origin \
+            "+refs/heads/$REMOTE_REF:refs/remotes/origin/$REMOTE_REF"
+          git rev-parse --verify "${REMOTE_REF}^{commit}" >/dev/null
+
       - name: Validate dispatch inputs
         run: |
           case "${{ inputs.mode }}" in

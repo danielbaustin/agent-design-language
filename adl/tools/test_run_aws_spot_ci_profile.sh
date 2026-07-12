@@ -57,6 +57,9 @@ grep -F -- '--issue "$ISSUE_NUMBER"' "$WORKFLOW" >/dev/null
 grep -F -- '--builder-image-tag "$BUILDER_IMAGE_TAG"' "$WORKFLOW" >/dev/null
 grep -F 'group: aws-spot-remote-validation-ebs-cache' "$WORKFLOW" >/dev/null
 grep -F 'workflow_dispatch:' "$WORKFLOW" >/dev/null
+grep -F 'name: Fetch selected advertised remote ref' "$WORKFLOW" >/dev/null
+grep -F 'git check-ref-format --branch "$REMOTE_REF"' "$WORKFLOW" >/dev/null
+grep -F '"+refs/heads/$REMOTE_REF:refs/remotes/origin/$REMOTE_REF"' "$WORKFLOW" >/dev/null
 grep -F 'python3 adl/tools/aws_spot_artifact_redaction_verify.py' "$WORKFLOW" >/dev/null
 test "$(grep -Fc 'GIT_REF: ${{ inputs.remote_ref || github.ref_name }}' "$WORKFLOW")" -eq 2
 if grep -F 'GIT_REF: ${{ inputs.git_ref || github.sha }}' "$WORKFLOW" >/dev/null; then
