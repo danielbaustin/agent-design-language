@@ -33,6 +33,8 @@ grep -F 'adl-ci' "$WORKFLOW" >/dev/null
 grep -F 'adl-coverage' "$WORKFLOW" >/dev/null
 grep -F 'validation_command is available only for the custom profile' "$WORKFLOW" >/dev/null
 grep -F 'builder_image_tag:' "$WORKFLOW" >/dev/null
+grep -F 'issue_number:' "$WORKFLOW" >/dev/null
+grep -F -- '--issue "$ISSUE_NUMBER"' "$WORKFLOW" >/dev/null
 grep -F -- '--builder-image-tag "$BUILDER_IMAGE_TAG"' "$WORKFLOW" >/dev/null
 grep -F 'group: aws-spot-remote-validation-ebs-cache' "$WORKFLOW" >/dev/null
 grep -F 'workflow_dispatch:' "$WORKFLOW" >/dev/null
