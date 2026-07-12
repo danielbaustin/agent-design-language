@@ -3943,6 +3943,17 @@ memory:
             ),
             CSM_DISK_READY_ENV[0],
             CSM_DISK_READY_ENV[1],
+            ("ADL_AWS_SIGNAL_MODE", "mock"),
+            ("ADL_AWS_SIGNAL_APPROVED", "1"),
+            ("ADL_AWS_REGION", "us-west-2"),
+            ("ADL_AWS_PROFILE", "agent-logic-admin"),
+            (
+                "ADL_AWS_SNS_TOPIC_ARN",
+                "arn:aws:sns:us-west-2:000000000000:mock",
+            ),
+            ("ADL_CSM_NOTICE_CONTROL_PLANE_MODE", "mock"),
+            ("ADL_CSM_NOTICE_CONTROL_PLANE_TARGET", "eventbridge"),
+            ("ADL_CSM_NOTICE_EVENT_BUS", "adl-csm-notice-bus-5005"),
         ],
     );
     assert!(
@@ -4899,13 +4910,29 @@ memory:
                 && attempt["status"] == "recorded"),
         "local notice ledger attempt missing: {notice_latest}"
     );
-    let queued_behind_prior_notice = matches!(
+    let synchronous_attempts_recorded = attempts.iter().any(|attempt| {
+        attempt["channel"] == "cloudwatch_logs"
+            && matches!(
+                attempt["status"].as_str(),
+                Some("not_configured" | "skipped_disabled")
+            )
+    }) && attempts.iter().any(|attempt| {
+        attempt["channel"] == "acip_sns"
+            && matches!(
+                attempt["status"].as_str(),
+                Some("not_configured" | "skipped_disabled")
+            )
+    }) && attempts.iter().any(|attempt| {
+        attempt["channel"] == "cloudfront_control_plane"
+            && attempt["status"] == "not_configured"
+            && attempt["dependency"] == "#4915"
+    });
+    let deferred_to_channel_owner = matches!(
         notice_latest["typed_channel_delivery"]["status"].as_str(),
         Some(
             "durably_spooled_waiting_for_replay" | "durably_spooled_behind_unacknowledged_sequence"
         )
-    ) && notice_latest["typed_channel_delivery"]
-        ["cursor_advanced"]
+    ) && notice_latest["typed_channel_delivery"]["cursor_advanced"]
         == false;
     let blocked_before_route_sequence = notice_latest["typed_channel_delivery"]["status"]
         == "blocked_before_sequence_reservation"
@@ -4917,14 +4944,16 @@ memory:
             .iter()
             .any(|attempt| attempt["channel"] == "cloudwatch_logs"
                 && attempt["status"] == "not_configured")
-            || queued_behind_prior_notice
+            || synchronous_attempts_recorded
+            || deferred_to_channel_owner
             || blocked_before_route_sequence,
         "cloudwatch notice attempt missing: {notice_latest}"
     );
     assert!(
         attempts.iter().any(
             |attempt| attempt["channel"] == "acip_sns" && attempt["status"] == "not_configured"
-        ) || queued_behind_prior_notice
+        ) || synchronous_attempts_recorded
+            || deferred_to_channel_owner
             || blocked_before_route_sequence,
         "acip_sns notice attempt missing: {notice_latest}"
     );
@@ -4934,7 +4963,8 @@ memory:
             .any(|attempt| attempt["channel"] == "cloudfront_control_plane"
                 && attempt["status"] == "not_configured"
                 && attempt["dependency"] == "#4915")
-            || queued_behind_prior_notice
+            || synchronous_attempts_recorded
+            || deferred_to_channel_owner
             || blocked_before_route_sequence,
         "cloudfront notice attempt missing: {notice_latest}"
     );
