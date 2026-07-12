@@ -67,10 +67,6 @@ fn run_csm(args: &[&str]) -> std::process::Output {
         .expect("run csm binary")
 }
 
-fn run_csm_without_aws_credentials(args: &[&str]) -> std::process::Output {
-    run_csm_with_env_without_aws_credentials(args, &[])
-}
-
 fn run_csm_with_env_without_aws_credentials(
     args: &[&str],
     envs: &[(&str, &str)],
