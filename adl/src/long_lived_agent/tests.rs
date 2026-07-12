@@ -2348,6 +2348,7 @@ fn continuity_checkpoint_low_disk_does_not_advance_godel_chain() {
         Err(err) if err.kind() == std::io::ErrorKind::NotFound => {}
         Err(err) => panic!("remove setup Godel chain: {err}"),
     }
+    assert!(!root.join("state/godel_snapshots").exists());
     let _env = MultiEnvGuard::set_all(&[
         ("ADL_CSM_DISK_FLOOR_BYTES", "4096"),
         ("ADL_CSM_TEST_AVAILABLE_BYTES", "1024"),

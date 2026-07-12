@@ -104,10 +104,12 @@ if [[ ! "$CACHE_FREE_BYTES" =~ ^[0-9]+$ ]] || [[ "$CACHE_FREE_BYTES" -lt "$MIN_C
 fi
 
 CACHE_ROOT="$CACHE_MOUNT/adl-aws-remote-validation/shared"
-TARGET_DIR="$CACHE_ROOT/container-target"
-SCCACHE_DIR="$CACHE_ROOT/container-sccache"
-CARGO_HOME_DIR="$CACHE_ROOT/container-cargo-home"
-TMP_DIR="$CACHE_ROOT/container-tmp"
+# Keep the original warm-EBS identity established by #4837. A container is an
+# execution environment, not a reason to fork Cargo's retained cache layout.
+TARGET_DIR="$CACHE_ROOT/target"
+SCCACHE_DIR="$CACHE_ROOT/sccache"
+CARGO_HOME_DIR="$CACHE_ROOT/cargo-home"
+TMP_DIR="$CACHE_ROOT/tmp"
 CACHE_TARGET_PREEXISTING_ENTRIES=0
 CACHE_TARGET_PREEXISTING_BYTES=0
 if [[ -d "$TARGET_DIR" ]]; then
@@ -184,12 +186,12 @@ VALIDATION_START="$(date +%s)"
   --volume "$CACHE_ROOT:/cache-root" \
   --volume "$TMP_DIR:/tmp" \
   --volume "$ADL_RUN_ROOT:/run-output" \
-  --env CARGO_HOME=/cache-root/container-cargo-home \
-  --env CARGO_TARGET_DIR=/cache-root/container-target \
-  --env SCCACHE_DIR=/cache-root/container-sccache \
+  --env CARGO_HOME=/cache-root/cargo-home \
+  --env CARGO_TARGET_DIR=/cache-root/target \
+  --env SCCACHE_DIR=/cache-root/sccache \
   --env TMPDIR=/tmp \
   --env RUSTC_WRAPPER=sccache \
-  --env 'RUSTFLAGS=-C link-arg=-fuse-ld=lld' \
+  --env RUSTFLAGS= \
   --env CARGO_INCREMENTAL=0 \
   --entrypoint /bin/bash \
   "$IMAGE" -lc "set +e; $COMMAND; status=\$?; sccache --show-stats > /run-output/sccache-stats.log 2>&1 || true; exit \$status"
