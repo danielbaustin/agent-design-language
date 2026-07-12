@@ -8,6 +8,8 @@ The image is defined at `adl/docker/adl-builder/Dockerfile` and includes:
 
 - Rust toolchain with `rustfmt` and `clippy`
 - `cargo-nextest` for PR-fast and nextest-backed Rust validation lanes
+- `cargo-llvm-cov` and `llvm-tools-preview` for authoritative coverage
+- GitHub CLI (`gh`) for lifecycle tests that exercise its process boundary
 - `sccache` 0.16
 - `clang` and `lld`
 - AWS CLI v2 for CodeBuild credential export and S3-backed `sccache`

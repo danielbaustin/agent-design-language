@@ -6,7 +6,7 @@ GitHub Actions remains the control plane. A small hosted runner authenticates
 to the Agent Logic AWS account with OIDC, launches the ADL Spot lane, receives
 logs and retained proof, publishes artifacts, and reports the check result.
 Rust build, test, and coverage work runs inside the immutable builder container
-on Spot with the retained EBS cache.
+on Spot with the retained 500 GiB EBS cache.
 
 Roll out in four stages:
 
@@ -28,9 +28,21 @@ repository and approved branches/environments. The workflow requires:
 - repository secret `AWS_SPOT_REMOTE_VALIDATION_ROLE_ARN`
 - repository variable `AWS_SPOT_REMOTE_VALIDATION_REGION` (defaults to
   `us-west-2`)
+- protected GitHub environment `adl-spot-ci`; configure it before cutover and
+  do not rely on GitHub's unprotected auto-created environment default
+
+Configure `adl-spot-ci` with **Selected branches and tags**, branch patterns
+`main` and `codex/*`, and no tag patterns. Do not add required reviewers to
+this CI environment because unattended required checks must not wait for a
+deployment approval. Fork pull requests still cannot match these repository
+branch rules and are explicitly routed to hosted runners by the workflow.
 
 Do not store AWS access keys in GitHub. The role needs the bounded EC2, EBS,
 SSM, IAM, ECR-read, and cleanup permissions already created for the Spot lane.
+Its OIDC trust includes the dedicated `adl-spot-ci` environment subject so
+automatic pull-request calls do not require a repository-wide
+`pull_request` subject. Keep environment deployment policy restricted to the
+trusted repository branches that may run Spot.
 
 This is a public repository. Keep privileged Spot dispatch on trusted
 `workflow_dispatch`, protected branches, or an approval-gated environment.
@@ -44,8 +56,11 @@ For CI:
 
 - `mode`: `start-run`
 - `profile`: `adl-ci`
-- `git_ref`: pushed branch or commit under test
+- `remote_ref`: pushed branch under test; blank uses the workflow branch
+- `git_ref`: exact immutable commit under test
 - `base_ref`: merge base or `origin/main`
+- `source_event_name`: event semantics to reproduce; use `pull_request` for a
+  PR shadow
 - `instance_type`: `m7a.2xlarge`
 - `validation_command`: blank
 
@@ -62,19 +77,50 @@ would delegate that work to `adl-coverage`. `adl-coverage` verifies the
 preinstalled coverage toolchain and runs the authoritative coverage lane with
 its instrumented target rooted under retained EBS.
 
+### Shadow An Existing Issue Without Affecting Its PR
+
+Dispatch this workflow from its trusted implementation branch, then set:
+
+- `remote_ref` to the existing issue's advertised branch name
+- `git_ref` to that branch's exact pushed commit SHA
+- `base_ref` to the exact base commit used for comparison
+- `issue_number` to the proof-owning issue number
+
+The workflow performs a narrow fetch of `remote_ref`, verifies `git_ref`, and
+requires the advertised branch tip to equal the requested immutable commit.
+The remote builder independently checks its `HEAD` against the same commit
+before mounting source into the container. A branch update during launch fails
+closed instead of validating one tree while reporting another SHA. The launcher
+embeds the reviewed Spot runner, image wrapper, and named-profile script as a
+trusted control bundle; the container mounts that bundle read-only at
+`/adl-control` and the selected source separately at `/workspace`. This allows
+an older target branch to run the current trusted lane without rewriting that
+branch or depending on helper scripts that are absent from it. It does not
+push, edit the target PR, publish a replacement required check, or change the
+target issue's lifecycle records. Results remain attached to the independent
+workflow-dispatch run. This makes it suitable for hosted-versus-Spot comparison
+before cutover.
+
+Do not dispatch untrusted fork code through this privileged path. A selected
+ref must be an advertised branch in this repository, and the immutable commit
+must resolve from that branch before EC2 launches.
+
 ## Image Gate
 
 Before the first coverage run, publish an immutable builder image containing:
 
 - `cargo-nextest`
 - `cargo-llvm-cov`
+- GitHub CLI (`gh`), because lifecycle tests exercise its process boundary
 - `llvm-tools-preview`
 - `sccache`
 - `lld`
 
 The profile fails if any required tool is absent. It never installs them during
-the paid validation run. Verify the new digest with a dry run and keep the
-previous digest available for rollback.
+the paid validation run. The operational default is
+`adl-builder:v0.91.7-coverage-5243`; every live run resolves the tag to an
+immutable digest before launch. Keep the previous digest available for
+rollback.
 
 ## Required Proof Before Cutover
 
@@ -89,13 +135,30 @@ For both profiles, retain two consecutive same-commit runs showing:
 - estimated compute cost
 
 Also prove cancellation or interruption cleanup and confirm the retained volume
-returns to `available`.
+returns to `available`. The workflow's always-run artifact step sanitizes
+partial JSON, JSONL, and text logs before fail-closed identifier verification,
+so cancellation cannot upload a raw AWS identifier merely because normal
+finalization was interrupted.
 
 ## Cutover And Required Checks
 
 Do not rename `adl-ci` or `adl-coverage`; branch protection depends on those
-stable contexts. Implement the final route as one explicit workflow/config
-switch whose alternate branch is the existing hosted job graph.
+stable contexts. The stable aggregators accept exactly one selected backend:
+the existing hosted job graph or the reusable Spot workflow. Repository
+variable `ADL_HEAVY_CI_BACKEND` is the route switch. Its absent/default value
+is `hosted`; set it to `spot` only after the proof gates below pass. Same-repo
+PR checks may use Spot. Push-to-main, schedule/nightly, and workflow-dispatch
+coverage remains hosted so LCOV and Codecov publication behavior is unchanged.
+Fork PRs always remain on
+the unprivileged hosted path even when the repository variable is `spot`. The
+reusable call forwards the original event name so pull-request, push, schedule,
+and workflow-dispatch policy remains aligned with the hosted lane.
+
+The aggregators verify backend selection instead of treating every skipped job
+as success. A selected Spot lane must succeed whenever path policy requires its
+work. On the hosted path, required Rust format/clippy and test jobs must each
+succeed, while required demo/proof work is checked independently. Success in
+one category cannot mask a skipped required category.
 
 Before enabling Spot by default:
 
@@ -120,6 +183,11 @@ artifact return, check reporting, or cleanup regresses:
 
 The fallback is not removed in this issue. Removing it requires later sustained
 operational evidence.
+
+The fastest rollback requires no source edit: set repository variable
+`ADL_HEAVY_CI_BACKEND=hosted`, then rerun the failed checks. The workflow also
+defaults to hosted when the variable is absent or has any value other than
+`spot`, so deleting the variable is fail-safe rollback.
 
 ## Concurrency And Operations
 

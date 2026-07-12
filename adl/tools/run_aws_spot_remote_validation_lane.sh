@@ -36,7 +36,7 @@ PRINT_COMMAND=false
 FOLLOW=false
 INSTANCE_TYPES=()
 CACHE_VOLUME_NAME="${ADL_AWS_REMOTE_VALIDATION_CACHE_VOLUME_NAME:-adl-aws-remote-validation-cache-volume}"
-CACHE_VOLUME_SIZE_GIB="${ADL_AWS_REMOTE_VALIDATION_CACHE_VOLUME_SIZE_GIB:-300}"
+CACHE_VOLUME_SIZE_GIB="${ADL_AWS_REMOTE_VALIDATION_CACHE_VOLUME_SIZE_GIB:-500}"
 CACHE_VOLUME_TYPE="${ADL_AWS_REMOTE_VALIDATION_CACHE_VOLUME_TYPE:-gp3}"
 CACHE_VOLUME_IOPS="${ADL_AWS_REMOTE_VALIDATION_CACHE_VOLUME_IOPS:-3000}"
 CACHE_VOLUME_THROUGHPUT_MBPS="${ADL_AWS_REMOTE_VALIDATION_CACHE_VOLUME_THROUGHPUT_MBPS:-125}"
@@ -49,7 +49,7 @@ SSH_ALLOWED_CIDR="${ADL_AWS_REMOTE_VALIDATION_SSH_ALLOWED_CIDR:-}"
 SSH_BIN="${ADL_SSH_BIN:-ssh}"
 BUILDER_IMAGE="${ADL_AWS_SPOT_BUILDER_IMAGE:-}"
 BUILDER_IMAGE_REPOSITORY="${ADL_AWS_SPOT_BUILDER_IMAGE_REPOSITORY:-adl-builder}"
-BUILDER_IMAGE_TAG="${ADL_AWS_SPOT_BUILDER_IMAGE_TAG:-v0.91.7-fixed}"
+BUILDER_IMAGE_TAG="${ADL_AWS_SPOT_BUILDER_IMAGE_TAG:-v0.91.7-coverage-5243}"
 EXPECTED_ARCHITECTURE="${ADL_AWS_SPOT_EXPECTED_ARCHITECTURE:-x86_64}"
 MIN_CACHE_FREE_GIB="${ADL_AWS_SPOT_MIN_CACHE_FREE_GIB:-10}"
 ESTIMATED_HOURLY_COST_USD="${ADL_AWS_SPOT_ESTIMATED_HOURLY_COST_USD:-}"
@@ -80,7 +80,7 @@ Options:
   --artifact-dir <dir>          Artifact root. Defaults beside --out.
   --instance-type <type>        Add an allowed EC2 instance type.
   --cache-volume-name <name>    Warm EBS cache volume name. Defaults to retained WP-06 cache.
-  --cache-volume-size-gib <gib> Cache volume size when created. Defaults to 100.
+  --cache-volume-size-gib <gib> Cache volume size when created. Defaults to 500.
   --cache-volume-type <type>    Cache volume type. Defaults to gp3.
   --cache-volume-iops <iops>    Cache volume IOPS. Defaults to 3000.
   --cache-volume-throughput-mbps <mbps>
@@ -98,7 +98,7 @@ Options:
   --ssh-user <user>              SSH user. Defaults to ec2-user.
   --ssh-allowed-cidr <cidr>      SSH source CIDR. Defaults to auto-detected operator IP.
   --builder-image <uri@digest>   Immutable builder image. Defaults to resolving
-                                adl-builder:v0.91.7-fixed in Agent Logic ECR.
+                                adl-builder:v0.91.7-coverage-5243 in Agent Logic ECR.
   --builder-image-repository <name>
                                 ECR repository used for default digest resolution.
   --builder-image-tag <tag>      ECR tag resolved once to an immutable digest.
@@ -328,8 +328,11 @@ fi
 if [[ -z "$GIT_REF" ]]; then
   GIT_REF="$(git -C "$ROOT" symbolic-ref --quiet --short HEAD 2>/dev/null || git -C "$ROOT" rev-parse HEAD)"
 fi
-SOURCE_COMMIT="$(git -C "$ROOT" rev-parse "${GIT_REF}^{commit}" 2>/dev/null || true)"
-if [[ "$RUN" == true && ! "$SOURCE_COMMIT" =~ ^[0-9a-f]{40}$ ]]; then
+SOURCE_COMMIT="$(git -C "$ROOT" rev-parse --verify "${GIT_REF}^{commit}" 2>/dev/null || true)"
+if [[ ! "$SOURCE_COMMIT" =~ ^[0-9a-f]{40}$ ]]; then
+  SOURCE_COMMIT="$(git -C "$ROOT" rev-parse --verify "refs/remotes/origin/${GIT_REF}^{commit}" 2>/dev/null || true)"
+fi
+if [[ ( "$RUN" == true || "$ACTION" == "preflight" ) && ! "$SOURCE_COMMIT" =~ ^[0-9a-f]{40}$ ]]; then
   echo "run_aws_spot_remote_validation_lane: --git-ref must resolve to a committed source revision" >&2
   exit 2
 fi
@@ -353,6 +356,28 @@ if [[ -z "$LANE_BIN" ]]; then
     LANE_BIN="$ROOT/tools/aws_remote_validation/target/debug/adl-aws-remote-validation"
   fi
 fi
+
+verify_lane_binary_compatibility() {
+  local capabilities_json
+  if [[ ! -x "$LANE_BIN" ]]; then
+    echo "run_aws_spot_remote_validation_lane: remote validation binary is unavailable: $LANE_BIN" >&2
+    return 1
+  fi
+  if ! capabilities_json="$("$LANE_BIN" capabilities 2>/dev/null)" || \
+      ! ADL_AWS_REMOTE_CAPABILITIES="$capabilities_json" python3 - <<'PY' >/dev/null 2>&1
+import json
+import os
+
+payload = json.loads(os.environ["ADL_AWS_REMOTE_CAPABILITIES"])
+assert payload.get("schema") == "adl.aws_remote_validation.capabilities.v1"
+assert "embedded_control_bundle_v1" in payload.get("capabilities", [])
+assert "spot_only_v1" in payload.get("capabilities", [])
+PY
+  then
+    echo "run_aws_spot_remote_validation_lane: remote validation binary is stale; install the current owner binary or set ADL_AWS_REMOTE_VALIDATION_BIN" >&2
+    return 1
+  fi
+}
 
 check_account() {
   local identity_json
@@ -691,6 +716,10 @@ case "$ACTION" in
   cleanup) run_cleanup_action; exit $? ;;
 esac
 
+if [[ "$RUN" == true || "$ACTION" == "preflight" ]]; then
+  verify_lane_binary_compatibility
+fi
+
 if [[ "$CHECK_ACCOUNT" == true || "$RUN" == true ]]; then
   check_account
 fi
@@ -771,12 +800,18 @@ fi
 
 if [[ -n "$COMMAND" ]]; then
   if [[ "$RUN" == true ]]; then
-    remote_command="bash adl/tools/run_aws_spot_builder_image_validation.sh"
+    validation_command="$COMMAND"
+    case "$validation_command" in
+      "bash adl/tools/run_aws_spot_ci_profile.sh "*)
+        validation_command='bash "${ADL_SPOT_CONTROL_ROOT:?}/adl/tools/run_aws_spot_ci_profile.sh" '"${validation_command#bash adl/tools/run_aws_spot_ci_profile.sh }"
+        ;;
+    esac
+    remote_command='bash "${ADL_SPOT_CONTROL_ROOT:?}/adl/tools/run_aws_spot_builder_image_validation.sh"'
     remote_command+=" --image $(shell_quote "$BUILDER_IMAGE")"
     remote_command+=" --expected-ref $(shell_quote "$SOURCE_COMMIT")"
     remote_command+=" --expected-architecture $(shell_quote "$EXPECTED_ARCHITECTURE")"
     remote_command+=" --min-cache-free-gib $(shell_quote "$MIN_CACHE_FREE_GIB")"
-    remote_command+=" --command $(shell_quote "$COMMAND")"
+    remote_command+=" --command $(shell_quote "$validation_command")"
     cmd+=(--command "$remote_command")
   else
     cmd+=(--command "$COMMAND")

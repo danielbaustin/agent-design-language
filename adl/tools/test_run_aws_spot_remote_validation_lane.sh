@@ -8,6 +8,7 @@ WORKFLOW="$ROOT/.github/workflows/aws-spot-remote-validation.yaml"
 
 grep -F 'stat -c '\''%a'\'' "$SSH_PRIVATE_KEY_PATH" 2>/dev/null || stat -f '\''%Lp'\''' "$SCRIPT" >/dev/null
 grep -F 'RUN_ID="adl-wp-${ISSUE}-aws-spot-$(date -u +%Y%m%d%H%M%S)"' "$SCRIPT" >/dev/null
+grep -F 'refs/remotes/origin/${GIT_REF}^{commit}' "$SCRIPT" >/dev/null
 grep -F "'+refs/remotes/origin/*:refs/remotes/origin/*'" "$ROOT/tools/aws_remote_validation/scripts/remote_validation_runner.sh" >/dev/null
 TMP_ROOT="${TMPDIR:-$ROOT/.adl/tmp}"
 mkdir -p "$TMP_ROOT"
@@ -59,7 +60,7 @@ elif [[ "$1 $2" == "ec2 describe-volumes" ]]; then
     *'Volumes[0].State'*) echo available ;;
     *'Volumes[0].Tags'*) echo adl-aws-remote-validation-cache-volume ;;
     *'Volumes[0].AvailabilityZone'*) echo us-west-2a ;;
-    *'Volumes[0].Size'*) echo 300 ;;
+    *'Volumes[0].Size'*) echo 500 ;;
     *'Volumes[0].VolumeType'*) echo gp3 ;;
     *'Volumes[0].Iops'*) echo 3000 ;;
     *'Volumes[0].Throughput'*) echo 125 ;;
@@ -89,6 +90,14 @@ EOF
 cat >"$fake_bin/adl-aws-remote-validation" <<'EOF'
 #!/usr/bin/env bash
 set -euo pipefail
+if [[ "${1:-}" == "help" ]]; then
+  echo 'adl-aws-remote-validation run [--spot-only]'
+  exit 0
+fi
+if [[ "${1:-}" == "capabilities" ]]; then
+  echo '{"schema":"adl.aws_remote_validation.capabilities.v1","capabilities":["embedded_control_bundle_v1","spot_only_v1"]}'
+  exit 0
+fi
 printf '%s\n' "$@" >"${ADL_FAKE_AWS_REMOTE_ARGS:?}"
 out=""
 artifact_dir=""
@@ -307,6 +316,7 @@ fi
 ADL_AWS_CLI="$fake_bin/aws" \
 bash "$SCRIPT" preflight \
   --expected-proof "$proof" \
+  --bin "$fake_bin/adl-aws-remote-validation" \
   --builder-image "$builder_image" \
   --estimated-hourly-cost-usd 0.15 \
   --ssh-private-key-path "$test_ssh_key" \
@@ -323,6 +333,35 @@ assert payload["retained_cache_available"] is True
 assert payload["ssh_recovery_configured"] is True
 assert payload["aws_resources_created"] is False
 PY
+
+cat >"$fake_bin/stale-adl-aws-remote-validation" <<'EOF'
+#!/usr/bin/env bash
+echo 'adl-aws-remote-validation run [--spot-only]'
+EOF
+chmod +x "$fake_bin/stale-adl-aws-remote-validation"
+if ADL_AWS_CLI="$fake_bin/aws" bash "$SCRIPT" preflight \
+    --expected-proof "$proof" \
+    --bin "$fake_bin/stale-adl-aws-remote-validation" \
+    --builder-image "$builder_image" \
+    --estimated-hourly-cost-usd 0.15 \
+    --ssh-private-key-path "$test_ssh_key" \
+    --git-ref origin/main >"$TMP/stale-preflight.out" 2>"$TMP/stale-preflight.err"; then
+  echo "expected stale remote validation binary to fail preflight" >&2
+  exit 1
+fi
+grep -F 'remote validation binary is stale' "$TMP/stale-preflight.err" >/dev/null
+
+if ADL_AWS_CLI="$fake_bin/aws" bash "$SCRIPT" preflight \
+    --expected-proof "$proof" \
+    --bin "$fake_bin/adl-aws-remote-validation" \
+    --builder-image "$builder_image" \
+    --estimated-hourly-cost-usd 0.15 \
+    --ssh-private-key-path "$test_ssh_key" \
+    --git-ref codex/nonexistent-proof-ref >"$TMP/missing-ref.out" 2>"$TMP/missing-ref.err"; then
+  echo "expected unresolved preflight ref to fail closed" >&2
+  exit 1
+fi
+grep -F -- '--git-ref must resolve to a committed source revision' "$TMP/missing-ref.err" >/dev/null
 
 ADL_FAKE_AWS_REMOTE_ARGS="$TMP/args.txt" \
 ADL_FAKE_EXPECTED_SOURCE="$(git -C "$ROOT" rev-parse origin/main)" \
@@ -360,7 +399,7 @@ grep -Fx -- "vol-0123456789abcdef0" "$TMP/args.txt" >/dev/null
 grep -Fx -- "--cache-volume-name" "$TMP/args.txt" >/dev/null
 grep -Fx -- "adl-aws-remote-validation-cache-volume" "$TMP/args.txt" >/dev/null
 grep -Fx -- "--cache-volume-size-gib" "$TMP/args.txt" >/dev/null
-grep -Fx -- "300" "$TMP/args.txt" >/dev/null
+grep -Fx -- "500" "$TMP/args.txt" >/dev/null
 grep -Fx -- "--cache-volume-type" "$TMP/args.txt" >/dev/null
 grep -Fx -- "gp3" "$TMP/args.txt" >/dev/null
 grep -Fx -- "--cache-volume-iops" "$TMP/args.txt" >/dev/null
@@ -385,7 +424,7 @@ import sys
 args = open(sys.argv[1], encoding="utf-8").read().splitlines()
 command = args[args.index("--command") + 1]
 parts = shlex.split(command)
-assert parts[:2] == ["bash", "adl/tools/run_aws_spot_builder_image_validation.sh"]
+assert parts[:2] == ["bash", "${ADL_SPOT_CONTROL_ROOT:?}/adl/tools/run_aws_spot_builder_image_validation.sh"]
 assert parts[parts.index("--image") + 1] == sys.argv[2]
 assert len(parts[parts.index("--expected-ref") + 1]) == 40
 assert parts[parts.index("--expected-architecture") + 1] == "x86_64"
@@ -518,7 +557,7 @@ grep -F -- "git_ref must be a branch, tag, or SHA; HEAD is ambiguous" "$WORKFLOW
 grep -F -- "--profile env" "$WORKFLOW" >/dev/null
 grep -F -- "--check-account" "$WORKFLOW" >/dev/null
 grep -F -- "--json" "$WORKFLOW" >/dev/null
-grep -F -- "Verify Spot artifact redaction" "$WORKFLOW" >/dev/null
+grep -F -- "Sanitize and verify Spot artifact redaction" "$WORKFLOW" >/dev/null
 grep -F 'SPOT_RUN_ID: adl-wp-${{ inputs.issue_number }}-gha-${{ github.run_id }}-${{ github.run_attempt }}' "$WORKFLOW" >/dev/null
 grep -F -- 'name: Ensure Spot compute cleanup' "$WORKFLOW" >/dev/null
 grep -F -- "--run-id \"\$SPOT_RUN_ID\"" "$WORKFLOW" >/dev/null
@@ -547,6 +586,11 @@ grep -F -- "AWS_SPOT_REMOTE_VALIDATION_REGION" "$SETUP_SCRIPT" >/dev/null
 grep -F -- "ADL_AWS_REMOTE_VALIDATION_SSH_ALLOWED_CIDR" "$SETUP_SCRIPT" >/dev/null
 grep -F -- "repo:{repo}:ref:refs/heads/main" "$SETUP_SCRIPT" >/dev/null
 grep -F -- "repo:{repo}:ref:refs/heads/codex/*" "$SETUP_SCRIPT" >/dev/null
+grep -F -- "repo:{repo}:environment:adl-spot-ci" "$SETUP_SCRIPT" >/dev/null
+if grep -F -- "repo:{repo}:pull_request" "$SETUP_SCRIPT" >/dev/null; then
+  echo "Spot OIDC trust must use the protected environment, not a repository-wide pull_request subject" >&2
+  exit 1
+fi
 grep -F -- "AdlAwsRemoteValidationBuilderImageEcrRead" "$ROOT/adl/src/aws_remote_validation.rs" >/dev/null
 grep -F -- "ecr:GetAuthorizationToken" "$ROOT/adl/src/aws_remote_validation.rs" >/dev/null
 grep -F -- "repository/adl-builder" "$ROOT/adl/src/aws_remote_validation.rs" >/dev/null

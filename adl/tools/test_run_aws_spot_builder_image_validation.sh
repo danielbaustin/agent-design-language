@@ -9,7 +9,9 @@ trap 'rm -rf "$TMP"' EXIT
 FAKE_BIN="$TMP/fake-bin"
 RUN_ROOT="$TMP/run"
 CACHE_MOUNT="$TMP/cache"
-mkdir -p "$FAKE_BIN" "$RUN_ROOT" "$CACHE_MOUNT"
+CONTROL_ROOT="$TMP/control"
+mkdir -p "$FAKE_BIN" "$RUN_ROOT" "$CACHE_MOUNT" "$CONTROL_ROOT/adl/tools"
+export ADL_SPOT_CONTROL_ROOT="$CONTROL_ROOT"
 
 cat >"$FAKE_BIN/mountpoint" <<'EOF'
 #!/usr/bin/env bash
@@ -75,6 +77,7 @@ case "$1" in
 rustc 1.96.0
 cargo 1.96.0
 cargo-nextest 0.9.140
+gh version 2.45.0
 sccache 0.16.0
 Ubuntu LLD 18.1.3
 aws-cli/2.35.15
@@ -95,6 +98,10 @@ TOOLS
     }
     [[ "$args" == *"/adl-aws-remote-validation/shared/tmp:/tmp"* && "$args" == *"TMPDIR=/tmp"* ]] || {
       echo "validation container did not mount EBS-backed temp space" >&2
+      exit 2
+    }
+    [[ "$args" == *"$ADL_SPOT_CONTROL_ROOT:/adl-control:ro"* && "$args" == *"ADL_SPOT_CONTROL_ROOT=/adl-control"* && "$args" == *"ADL_SPOT_SOURCE_ROOT=/workspace"* ]] || {
+      echo "validation container did not mount the trusted control bundle read-only" >&2
       exit 2
     }
     run_root=""

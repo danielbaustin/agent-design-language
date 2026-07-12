@@ -14,7 +14,7 @@ RUN=false
 usage() {
   cat <<'USAGE'
 Usage:
-  publish_adl_builder_image_codebuild.sh --tag <tag> --git-ref <pushed-ref> [--run]
+  publish_adl_builder_image_codebuild.sh --tag <tag> --git-ref <40-hex-pushed-commit> [--run]
 
 Creates or updates the purpose-specific CodeBuild image publisher. Without
   --run it prints a redacted plan. The publisher builds the ADL Dockerfile once,
@@ -41,8 +41,8 @@ done
   echo "publish_adl_builder_image_codebuild: --tag is required and must be an ECR tag" >&2
   exit 2
 }
-[[ -n "$GIT_REF" && "$GIT_REF" != HEAD ]] || {
-  echo "publish_adl_builder_image_codebuild: --git-ref must be a pushed branch, tag, or commit" >&2
+[[ "$GIT_REF" =~ ^[0-9a-f]{40}$ ]] || {
+  echo "publish_adl_builder_image_codebuild: --git-ref must be a full 40-hex pushed commit" >&2
   exit 2
 }
 
@@ -105,7 +105,7 @@ phases:
   build:
     commands:
       - docker build --platform linux/amd64 -f adl/docker/adl-builder/Dockerfile -t "$ADL_BUILDER_IMAGE_URI" .
-      - docker run --rm "$ADL_BUILDER_IMAGE_URI" 'cargo nextest --version && cargo llvm-cov --version && rustup component list --installed | grep -E "^llvm-tools-" && sccache --version && ld.lld --version && aws --version'
+      - docker run --rm "$ADL_BUILDER_IMAGE_URI" 'cargo nextest --version && cargo llvm-cov --version && rustup component list --installed | grep -E "^llvm-tools-" && gh --version && sccache --version && ld.lld --version && aws --version'
       - docker push "$ADL_BUILDER_IMAGE_URI"
   post_build:
     commands:
@@ -175,4 +175,29 @@ while true; do
 done
 digest="$(aws --profile "$PROFILE" --region "$REGION" ecr describe-images --repository-name "$REPOSITORY" --image-ids imageTag="$TAG" --query 'imageDetails[0].imageDigest' --output text)"
 [[ "$digest" =~ ^sha256:[0-9a-f]{64}$ ]]
-echo "PASS builder_image_published tag=$TAG immutable_digest_verified=true"
+resolved_source="$(aws --profile "$PROFILE" --region "$REGION" codebuild batch-get-builds --ids "$build_id" --query 'builds[0].resolvedSourceVersion' --output text)"
+[[ "$resolved_source" == "$GIT_REF" ]] || {
+  echo "publish_adl_builder_image_codebuild: CodeBuild resolved a different source commit" >&2
+  exit 1
+}
+proof="$ROOT/.adl/local-artifacts/builder-image/${TAG}.json"
+mkdir -p "$(dirname "$proof")"
+python3 - "$proof" "$TAG" "$GIT_REF" "$digest" <<'PY'
+import hashlib
+import json
+import sys
+from pathlib import Path
+
+path, tag, source_commit, digest = sys.argv[1:5]
+payload = {
+    "schema": "adl.builder_image_publication.v1",
+    "tag": tag,
+    "source_commit": source_commit,
+    "source_commit_verified": True,
+    "image_digest_sha256": hashlib.sha256(digest.encode()).hexdigest(),
+    "immutable_digest_verified": True,
+}
+Path(path).parent.mkdir(parents=True, exist_ok=True)
+Path(path).write_text(json.dumps(payload, indent=2, sort_keys=True) + "\n", encoding="utf-8")
+PY
+echo "PASS builder_image_published tag=$TAG source_commit_verified=true immutable_digest_verified=true"

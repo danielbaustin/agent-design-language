@@ -129,7 +129,7 @@ trap on_error ERR
 TOOL_INSTALL_POLICY="package_manager_or_prebuilt_only"
 CONTAINERIZED_VALIDATION=0
 case "$ADL_REMOTE_COMMAND" in
-  "bash adl/tools/run_aws_spot_builder_image_validation.sh "*)
+  *"run_aws_spot_builder_image_validation.sh"*)
     CONTAINERIZED_VALIDATION=1
     TOOL_INSTALL_POLICY="immutable_builder_image_only"
     ;;

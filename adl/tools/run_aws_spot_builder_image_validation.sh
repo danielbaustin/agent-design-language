@@ -58,6 +58,7 @@ fi
 
 : "${ADL_REMOTE_REPO_DIR:?ADL_REMOTE_REPO_DIR is required}"
 : "${ADL_RUN_ROOT:?ADL_RUN_ROOT is required}"
+: "${ADL_SPOT_CONTROL_ROOT:?ADL_SPOT_CONTROL_ROOT is required}"
 : "${ADL_CACHE_VOLUME_MOUNT_PATH:?ADL_CACHE_VOLUME_MOUNT_PATH is required}"
 
 stage() {
@@ -166,11 +167,12 @@ TOOLCHAIN_OUTPUT="$ADL_RUN_ROOT/builder-toolchain.log"
   rustc --version
   cargo --version
   cargo nextest --version
+  gh --version
   sccache --version
   ld.lld --version | head -n 1
   aws --version
 " >"$TOOLCHAIN_OUTPUT" 2>&1
-for required in rustc cargo cargo-nextest sccache LLD aws-cli; do
+for required in rustc cargo cargo-nextest 'gh version' sccache LLD aws-cli; do
   grep -F "$required" "$TOOLCHAIN_OUTPUT" >/dev/null || {
     echo "spot_builder_image_validation: builder toolchain verification missing $required" >&2
     exit 1
@@ -186,6 +188,7 @@ VALIDATION_GID="$(id -g)"
   --user "$VALIDATION_UID:$VALIDATION_GID" \
   --workdir /workspace \
   --volume "$ADL_REMOTE_REPO_DIR:/workspace" \
+  --volume "$ADL_SPOT_CONTROL_ROOT:/adl-control:ro" \
   --volume "$CACHE_ROOT:/cache-root" \
   --volume "$TMP_DIR:/tmp" \
   --volume "$ADL_RUN_ROOT:/run-output" \
@@ -197,6 +200,8 @@ VALIDATION_GID="$(id -g)"
   --env RUSTC_WRAPPER=sccache \
   --env RUSTFLAGS= \
   --env CARGO_INCREMENTAL=0 \
+  --env ADL_SPOT_CONTROL_ROOT=/adl-control \
+  --env ADL_SPOT_SOURCE_ROOT=/workspace \
   --entrypoint /bin/bash \
   "$IMAGE" -lc "set +e; $COMMAND; status=\$?; sccache --show-stats > /run-output/sccache-stats.log 2>&1 || true; exit \$status"
 VALIDATION_END="$(date +%s)"

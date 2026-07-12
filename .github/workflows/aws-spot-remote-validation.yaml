@@ -1,6 +1,43 @@
 name: aws-spot-remote-validation
 
 on:
+  workflow_call:
+    inputs:
+      mode:
+        required: true
+        type: string
+      profile:
+        required: true
+        type: string
+      git_ref:
+        required: true
+        type: string
+      remote_ref:
+        required: true
+        type: string
+      validation_command:
+        required: false
+        default: ""
+        type: string
+      base_ref:
+        required: true
+        type: string
+      source_event_name:
+        required: false
+        default: "pull_request"
+        type: string
+      instance_type:
+        required: false
+        default: "m7a.2xlarge"
+        type: string
+      builder_image_tag:
+        required: false
+        default: "v0.91.7-coverage-5243"
+        type: string
+      issue_number:
+        required: false
+        default: "5243"
+        type: string
   workflow_dispatch:
     inputs:
       mode:
@@ -36,14 +73,18 @@ on:
         description: "Base ref for named CI/coverage profiles"
         required: true
         default: "origin/main"
+      source_event_name:
+        description: "Hosted event semantics reproduced by the named profile"
+        required: true
+        default: "pull_request"
       instance_type:
         description: "Primary EC2 instance type"
         required: true
         default: "m7a.2xlarge"
       builder_image_tag:
-        description: "Candidate ECR image tag; keep v0.91.7-fixed until a new tag is verified"
+        description: "ECR image tag; the default contains the CI and coverage toolchains"
         required: true
-        default: "v0.91.7-fixed"
+        default: "v0.91.7-coverage-5243"
       issue_number:
         description: "Issue number used for AWS resource tags and retained proof"
         required: true
@@ -60,6 +101,7 @@ concurrency:
 jobs:
   spot-remote-validation:
     runs-on: ubuntu-latest
+    environment: adl-spot-ci
     timeout-minutes: 60
     env:
       AWS_SPOT_REMOTE_VALIDATION_REGION: ${{ vars.AWS_SPOT_REMOTE_VALIDATION_REGION || 'us-west-2' }}
@@ -67,7 +109,7 @@ jobs:
       ADL_AWS_REMOTE_VALIDATION_SSH_ALLOWED_CIDR: ${{ vars.ADL_AWS_REMOTE_VALIDATION_SSH_ALLOWED_CIDR }}
       AWS_SPOT_REMOTE_VALIDATION_SSH_PRIVATE_KEY_B64: ${{ secrets.AWS_SPOT_REMOTE_VALIDATION_SSH_PRIVATE_KEY_B64 }}
       ISSUE_NUMBER: ${{ inputs.issue_number }}
-      SPOT_RUN_ID: adl-wp-${{ inputs.issue_number }}-gha-${{ github.run_id }}-${{ github.run_attempt }}
+      SPOT_RUN_ID: adl-wp-${{ inputs.issue_number }}-gha-${{ github.run_id }}-${{ github.run_attempt }}-${{ inputs.profile }}
     steps:
       - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4
         with:
@@ -77,10 +119,13 @@ jobs:
         if: inputs.remote_ref != ''
         env:
           REMOTE_REF: ${{ inputs.remote_ref }}
+          REQUESTED_REF: ${{ inputs.git_ref || github.sha }}
         run: |
           git check-ref-format --branch "$REMOTE_REF" >/dev/null
           git fetch --no-tags origin \
             "+refs/heads/$REMOTE_REF:refs/remotes/origin/$REMOTE_REF"
+          bash adl/tools/verify_spot_advertised_ref.sh \
+            "$REMOTE_REF" "$REQUESTED_REF"
           git update-ref "refs/heads/$REMOTE_REF" \
             "refs/remotes/origin/$REMOTE_REF"
           git rev-parse --verify "${REMOTE_REF}^{commit}" >/dev/null
@@ -118,6 +163,10 @@ jobs:
               fi
               ;;
             *) echo "::error::unknown Spot shadow profile"; exit 2 ;;
+          esac
+          case "${{ inputs.source_event_name }}" in
+            pull_request|push|schedule|workflow_dispatch) ;;
+            *) echo "::error::unsupported source_event_name"; exit 2 ;;
           esac
           if [ "${{ inputs.profile }}" != "custom" ] && [ -n "${{ inputs.validation_command }}" ]; then
             echo "::error::validation_command is available only for the custom profile"
@@ -178,6 +227,7 @@ jobs:
           PROFILE: ${{ inputs.profile }}
           CUSTOM_COMMAND: ${{ inputs.validation_command }}
           BASE_REF: ${{ inputs.base_ref }}
+          SOURCE_EVENT_NAME: ${{ inputs.source_event_name }}
           HEAD_REF: ${{ inputs.git_ref || github.sha }}
           INSTANCE_TYPE: ${{ inputs.instance_type }}
           BUILDER_IMAGE_TAG: ${{ inputs.builder_image_tag }}
@@ -187,7 +237,7 @@ jobs:
           else
             BASE_COMMIT="$(git rev-parse --verify "${BASE_REF}^{commit}")"
             HEAD_COMMIT="$(git rev-parse --verify "${HEAD_REF}^{commit}")"
-            VALIDATION_COMMAND="bash adl/tools/run_aws_spot_ci_profile.sh $PROFILE --base $BASE_COMMIT --head $HEAD_COMMIT"
+            VALIDATION_COMMAND="bash adl/tools/run_aws_spot_ci_profile.sh $PROFILE --base $BASE_COMMIT --head $HEAD_COMMIT --event-name $SOURCE_EVENT_NAME"
           fi
           bash adl/tools/run_aws_spot_remote_validation_lane.sh \
             --profile env \
@@ -209,6 +259,7 @@ jobs:
           PROFILE: ${{ inputs.profile }}
           CUSTOM_COMMAND: ${{ inputs.validation_command }}
           BASE_REF: ${{ inputs.base_ref }}
+          SOURCE_EVENT_NAME: ${{ inputs.source_event_name }}
           HEAD_REF: ${{ inputs.git_ref || github.sha }}
           INSTANCE_TYPE: ${{ inputs.instance_type }}
           BUILDER_IMAGE_TAG: ${{ inputs.builder_image_tag }}
@@ -220,7 +271,7 @@ jobs:
           else
             BASE_COMMIT="$(git rev-parse --verify "${BASE_REF}^{commit}")"
             HEAD_COMMIT="$(git rev-parse --verify "${HEAD_REF}^{commit}")"
-            VALIDATION_COMMAND="bash adl/tools/run_aws_spot_ci_profile.sh $PROFILE --base $BASE_COMMIT --head $HEAD_COMMIT"
+            VALIDATION_COMMAND="bash adl/tools/run_aws_spot_ci_profile.sh $PROFILE --base $BASE_COMMIT --head $HEAD_COMMIT --event-name $SOURCE_EVENT_NAME"
           fi
           bash adl/tools/run_aws_spot_remote_validation_lane.sh \
             --run \
@@ -267,15 +318,16 @@ jobs:
             echo "| summary artifact | \`.adl/tmp/aws-spot-remote-validation/summary.json\` |"
           } >> "$GITHUB_STEP_SUMMARY"
 
-      - name: Verify Spot artifact redaction
+      - name: Sanitize and verify Spot artifact redaction
+        id: sanitize-artifacts
         if: always()
-        run: python3 adl/tools/aws_spot_artifact_redaction_verify.py .adl/tmp/aws-spot-remote-validation
+        run: python3 adl/tools/aws_spot_artifact_redaction_verify.py --sanitize .adl/tmp/aws-spot-remote-validation
 
       - name: Upload Spot remote validation artifacts
-        if: always()
+        if: always() && steps.sanitize-artifacts.outcome == 'success'
         uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
         with:
-          name: aws-spot-remote-validation-${{ github.run_id }}
+          name: aws-spot-remote-validation-${{ inputs.profile }}-${{ github.run_id }}
           path: .adl/tmp/aws-spot-remote-validation/
           if-no-files-found: warn
           retention-days: 14

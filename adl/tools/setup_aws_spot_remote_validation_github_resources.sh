@@ -324,6 +324,7 @@ write(trust_path, {
                 "token.actions.githubusercontent.com:sub": [
                     f"repo:{repo}:ref:refs/heads/main",
                     f"repo:{repo}:ref:refs/heads/codex/*",
+                    f"repo:{repo}:environment:adl-spot-ci",
                 ],
             },
         },

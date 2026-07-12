@@ -51,7 +51,7 @@ PY
 status=ssh_debug_ready instance_id=i-0123456789abcdef0 public_ip=192.0.2.10
 status=ssh_tail_started instance_id=i-0123456789abcdef0 public_ip=192.0.2.10
 LOG
-  echo 'account=123456789012 arn:aws:iam::123456789012:role/test i-0123456789abcdef0' >"$root/artifacts/events.jsonl"
+  echo 'account=123456789012 arn:aws:iam::123456789012:role/test i-0123456789abcdef0 temporary_key=ASIAABCDEFGHIJKLMNOP' >"$root/artifacts/events.jsonl"
 }
 
 run_finalizer() {
@@ -84,7 +84,7 @@ assert wrapper["self_verification"]["passed"] is True
 assert wrapper["cache_target_preexisting_entries"] == 42
 assert wrapper["cost"]["estimated_compute_cost_usd"] == 0.005
 PY
-if rg -n '123456789012|arn:aws:|i-0123456789abcdef0|192\.0\.2\.10' "$pass/artifacts" -g '!control-summary.json' >/dev/null; then
+if rg -n '123456789012|arn:aws:|i-0123456789abcdef0|192\.0\.2\.10|ASIAABCDEFGHIJKLMNOP' "$pass/artifacts" -g '!control-summary.json' >/dev/null; then
   echo "public artifact retained an AWS identity" >&2
   exit 1
 fi

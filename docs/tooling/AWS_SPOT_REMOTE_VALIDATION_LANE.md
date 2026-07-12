@@ -121,6 +121,8 @@ and verifies:
 - `rustc`
 - `cargo`
 - `cargo-nextest`
+- `cargo-llvm-cov`
+- GitHub CLI (`gh`)
 - `sccache`
 - `lld`
 - AWS CLI

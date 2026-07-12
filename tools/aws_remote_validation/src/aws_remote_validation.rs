@@ -9,7 +9,9 @@ use aws_sdk_iam as iam;
 use aws_sdk_servicequotas as servicequotas;
 use aws_sdk_ssm as ssm;
 use aws_sdk_sts as sts;
+use base64::{engine::general_purpose::STANDARD as BASE64_STANDARD, Engine as _};
 use chrono::{DateTime, Datelike, Duration as ChronoDuration, Timelike, Utc};
+use flate2::{write::GzEncoder, Compression};
 use once_cell::sync::Lazy;
 use serde::{Deserialize, Serialize};
 use sha2::{Digest, Sha256};
@@ -1533,6 +1535,15 @@ fn build_remote_command_script(config: &AwsRemoteValidationConfig) -> String {
         "/tmp/adl-aws-remote-bootstrap/{}/agent-design-language",
         config.run_id
     ));
+    let escaped_control_root =
+        shell_single_quote(&format!("/tmp/adl-aws-remote-control/{}", config.run_id));
+    let remote_runner_bundle = gzip_base64(include_str!("../scripts/remote_validation_runner.sh"));
+    let builder_validation_bundle = gzip_base64(include_str!(
+        "../../../adl/tools/run_aws_spot_builder_image_validation.sh"
+    ));
+    let ci_profile_bundle = gzip_base64(include_str!(
+        "../../../adl/tools/run_aws_spot_ci_profile.sh"
+    ));
     let needs_nextest = if config.command.contains("nextest") {
         "1"
     } else {
@@ -1547,7 +1558,24 @@ fn build_remote_command_script(config: &AwsRemoteValidationConfig) -> String {
         r#"set -euo pipefail
 RUN_ROOT={run_root}
 CHECKOUT_DIR={checkout_root}
-mkdir -p "$RUN_ROOT" "$CHECKOUT_DIR"
+CONTROL_ROOT={control_root}
+mkdir -p "$RUN_ROOT" "$CHECKOUT_DIR" \
+  "$CONTROL_ROOT/tools/aws_remote_validation/scripts" \
+  "$CONTROL_ROOT/adl/tools"
+
+materialize_control_file() {{
+  local encoded="$1"
+  local destination="$2"
+  printf '%s' "$encoded" | base64 --decode | gzip -dc >"$destination"
+  chmod 0755 "$destination"
+}}
+
+materialize_control_file {remote_runner_bundle} \
+  "$CONTROL_ROOT/tools/aws_remote_validation/scripts/remote_validation_runner.sh"
+materialize_control_file {builder_validation_bundle} \
+  "$CONTROL_ROOT/adl/tools/run_aws_spot_builder_image_validation.sh"
+materialize_control_file {ci_profile_bundle} \
+  "$CONTROL_ROOT/adl/tools/run_aws_spot_ci_profile.sh"
 
 log_progress() {{
   local message="$1"
@@ -1583,6 +1611,7 @@ export ADL_RUN_ID={run_id}
 export ADL_RUN_ROOT="$RUN_ROOT"
 export ADL_PROGRESS_ROOT="$RUN_ROOT"
 export ADL_REMOTE_REPO_DIR="$CHECKOUT_DIR"
+export ADL_SPOT_CONTROL_ROOT="$CONTROL_ROOT"
 export ADL_REMOTE_COMMAND={command}
 export ADL_CACHE_BUCKET={cache_bucket}
 export ADL_CACHE_PREFIX={cache_prefix}
@@ -1596,9 +1625,13 @@ export ADL_REGION={region}
 
 CURRENT_STAGE="tracked_remote_runner"
 log_progress "stage=tracked_remote_runner"
-bash "$CHECKOUT_DIR/tools/aws_remote_validation/scripts/remote_validation_runner.sh""#,
+bash "$CONTROL_ROOT/tools/aws_remote_validation/scripts/remote_validation_runner.sh""#,
         run_root = escaped_run_root,
         checkout_root = escaped_checkout_root,
+        control_root = escaped_control_root,
+        remote_runner_bundle = shell_single_quote(&remote_runner_bundle),
+        builder_validation_bundle = shell_single_quote(&builder_validation_bundle),
+        ci_profile_bundle = shell_single_quote(&ci_profile_bundle),
         repo_url = escaped_repo_url,
         git_ref = escaped_git_ref,
         run_id = shell_single_quote(&config.run_id),
@@ -1612,6 +1645,18 @@ bash "$CHECKOUT_DIR/tools/aws_remote_validation/scripts/remote_validation_runner
         needs_nextest = needs_nextest,
         command = escaped_command,
         region = shell_single_quote(&config.region),
+    )
+}
+
+fn gzip_base64(value: &str) -> String {
+    let mut encoder = GzEncoder::new(Vec::new(), Compression::best());
+    encoder
+        .write_all(value.as_bytes())
+        .expect("writing to an in-memory gzip encoder cannot fail");
+    BASE64_STANDARD.encode(
+        encoder
+            .finish()
+            .expect("finishing an in-memory gzip encoder cannot fail"),
     )
 }
 
@@ -4054,7 +4099,19 @@ mod tests {
             "export ADL_REMOTE_COMMAND='cargo test --manifest-path tools/aws_remote_validation/Cargo.toml --bin adl-aws-remote-validation -- --nocapture'"
         ));
         assert!(script.contains("CURRENT_STAGE=\"tracked_remote_runner\""));
-        assert!(script.contains("remote_validation_runner.sh"));
+        assert!(script.contains("ADL_SPOT_CONTROL_ROOT"));
+        assert!(script.contains(
+            "$CONTROL_ROOT/tools/aws_remote_validation/scripts/remote_validation_runner.sh"
+        ));
+        assert!(script.contains("$CONTROL_ROOT/adl/tools/run_aws_spot_builder_image_validation.sh"));
+        assert!(script.contains("$CONTROL_ROOT/adl/tools/run_aws_spot_ci_profile.sh"));
+        assert!(!script.contains(
+            "$CHECKOUT_DIR/tools/aws_remote_validation/scripts/remote_validation_runner.sh"
+        ));
+        assert!(
+            script.len() < 24_000,
+            "SSM command exceeds the safe size budget"
+        );
 
         let tracked_runner = include_str!("../scripts/remote_validation_runner.sh");
         assert!(tracked_runner.contains("os.environ[\"COMMAND_EXIT\"]"));
@@ -4083,8 +4140,9 @@ mod tests {
         assert!(tracked_runner.contains("immutable_builder_image_only"));
         assert!(tracked_runner
             .contains("PERSISTENT_CHECKOUT=\"$TOOLCHAIN_ROOT/source/agent-design-language\""));
-        assert!(tracked_runner
-            .contains("if [ \"$CURRENT_PERSISTENT_COMMIT\" != \"$SOURCE_COMMIT\" ]"));
+        assert!(
+            tracked_runner.contains("if [ \"$CURRENT_PERSISTENT_COMMIT\" != \"$SOURCE_COMMIT\" ]")
+        );
     }
 
     #[test]

@@ -36,6 +36,7 @@ assert_not_latest
 assert_has "$DOCKERFILE" "sha256sum -c -"
 assert_has "$DOCKERFILE" "cargo nextest --version"
 assert_has "$DOCKERFILE" "/usr/local/share/adl-builder-toolchain.txt"
+assert_has "$DOCKERFILE" "gh --version"
 assert_has "$DOCKERFILE" "RUSTC_WRAPPER=sccache"
 assert_has "$DOCKERFILE" "CARGO_INCREMENTAL=0"
 assert_has "$DOCKERFILE" "ENTRYPOINT [\"/bin/bash\", \"-lc\"]"

@@ -1,18 +1,19 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-ROOT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)"
+ROOT_DIR="${ADL_SPOT_SOURCE_ROOT:-$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)}"
 PROFILE="${1:-}"
 shift || true
 BASE_REF=""
 HEAD_REF=""
 PRINT_COMMAND=false
+EVENT_NAME="pull_request"
 
 usage() {
   cat <<'USAGE'
 Usage:
-  run_aws_spot_ci_profile.sh adl-ci --base <ref> --head <ref> [--print-command]
-  run_aws_spot_ci_profile.sh adl-coverage --base <ref> --head <ref> [--print-command]
+  run_aws_spot_ci_profile.sh adl-ci --base <ref> --head <ref> [--event-name <event>] [--print-command]
+  run_aws_spot_ci_profile.sh adl-coverage --base <ref> --head <ref> [--event-name <event>] [--print-command]
 
 Runs one named GitHub shadow-check workload inside the immutable ADL builder
 container. It does not launch EC2 and does not install validation tools.
@@ -23,6 +24,7 @@ while [[ $# -gt 0 ]]; do
   case "$1" in
     --base) BASE_REF="${2:-}"; shift 2 ;;
     --head) HEAD_REF="${2:-}"; shift 2 ;;
+    --event-name) EVENT_NAME="${2:-}"; shift 2 ;;
     --print-command) PRINT_COMMAND=true; shift ;;
     -h|--help) usage; exit 0 ;;
     *) echo "run_aws_spot_ci_profile: unknown argument: $1" >&2; exit 2 ;;
@@ -37,6 +39,10 @@ esac
   echo "run_aws_spot_ci_profile: --base and --head are required" >&2
   exit 2
 }
+case "$EVENT_NAME" in
+  pull_request|push|schedule|workflow_dispatch) ;;
+  *) echo "run_aws_spot_ci_profile: unsupported --event-name: $EVENT_NAME" >&2; exit 2 ;;
+esac
 
 BASE_COMMIT="$(git -C "$ROOT_DIR" rev-parse --verify "${BASE_REF}^{commit}")"
 HEAD_COMMIT="$(git -C "$ROOT_DIR" rev-parse --verify "${HEAD_REF}^{commit}")"
@@ -58,7 +64,7 @@ policy_value() {
 if [[ "$PROFILE" == "adl-ci" ]]; then
   command=(bash adl/tools/run_pr_fast_test_lane.sh --base "$BASE_COMMIT" --head "$HEAD_COMMIT")
 else
-  command=(bash adl/tools/run_authoritative_coverage_lane.sh --authority fail_closed --event-name workflow_dispatch)
+  command=(bash adl/tools/run_authoritative_coverage_lane.sh --authority fail_closed --event-name "$EVENT_NAME")
 fi
 
 if [[ "$PRINT_COMMAND" == true ]]; then
@@ -79,7 +85,7 @@ if [[ "$PROFILE" == "adl-ci" ]]; then
   POLICY_OUTPUT="$(mktemp "${TMPDIR:-/tmp}/adl-spot-ci-policy.XXXXXX")"
   trap 'rm -f "$POLICY_OUTPUT"' EXIT
   bash adl/tools/ci_path_policy.sh \
-    --event-name pull_request \
+    --event-name "$EVENT_NAME" \
     --base "$BASE_COMMIT" \
     --head "$HEAD_COMMIT" \
     --ref "refs/heads/spot-shadow" \

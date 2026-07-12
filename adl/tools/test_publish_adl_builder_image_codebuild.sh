@@ -11,10 +11,15 @@ for token in \
   'adl/docker/adl-builder/Dockerfile' \
   'cargo nextest --version' \
   'cargo llvm-cov --version' \
+  'gh --version' \
   '^llvm-tools-' \
   'docker push' \
   'ecr:PutImage' \
   'account_matches_retained_proof=true' \
+  'full 40-hex pushed commit' \
+  'resolvedSourceVersion' \
+  'adl.builder_image_publication.v1' \
+  'source_commit_verified=true' \
   'AWS profile account does not match retained Agent Logic proof' \
   '/aws/codebuild/adl-codefriend-build' \
   'immutable_digest_verified=true'; do

@@ -24,6 +24,7 @@ RUN apt-get update -y \
       clang \
       curl \
       git \
+      gh \
       jq \
       lld \
       openssh-client \
@@ -107,6 +108,8 @@ RUN arch="$(uname -m)" \
     && install -m 0755 "$llvm_cov_bin" /usr/local/cargo/bin/cargo-llvm-cov \
     && cargo llvm-cov --version \
     && rm -rf /tmp/cargo-llvm-cov /tmp/cargo-llvm-cov.tar.gz
+
+RUN gh --version
 
 WORKDIR /workspace
 

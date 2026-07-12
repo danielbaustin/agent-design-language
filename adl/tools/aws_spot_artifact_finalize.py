@@ -42,7 +42,7 @@ def redact_text(value: str) -> str:
         (r"\bi-[0-9a-f]{8,17}\b", "<ec2-instance-id-redacted>"),
         (r"\bvol-[0-9a-f]{8,17}\b", "<ebs-volume-id-redacted>"),
         (r"\b(?:vpc|subnet|sg|sir)-[0-9a-f]{8,17}\b", "<aws-resource-id-redacted>"),
-        (r"\bAKIA[0-9A-Z]{16}\b", "<aws-access-key-redacted>"),
+        (r"\b(?:AKIA|ASIA)[0-9A-Z]{16}\b", "<aws-access-key-redacted>"),
         (r"(?i)\b(Bearer|Basic)\s+[A-Za-z0-9._~+/=-]+", r"\1 <credential-redacted>"),
         (r"\b(?:\d{1,3}\.){3}\d{1,3}\b", "<ip-address-redacted>"),
     )

@@ -7,10 +7,10 @@ ephemeral EC2 instance. The host runs a pinned ADL builder container and mounts
 the retained EBS cache. The command verifies the Agent Logic account, source
 commit, image digest, cache identity, SSH recovery, live logs, and cleanup.
 
-The proven baseline is `m7a.2xlarge` in `us-west-2a` with the retained 300 GiB
+The proven baseline is `m7a.2xlarge` in `us-west-2a` with the retained 500 GiB
 cache. Another instance type is allowed only when it is available in the same
 cache-volume availability zone and its architecture matches the selected image.
-The currently published `adl-builder:v0.91.7-fixed` image is amd64.
+The current CI-and-coverage image, `adl-builder:v0.91.7-coverage-5243`, is amd64.
 
 ## Safety Rules
 
@@ -29,13 +29,16 @@ bash adl/tools/run_aws_spot_remote_validation_lane.sh preflight \
   --profile agent-logic-admin \
   --git-ref <pushed-branch-or-tag> \
   --instance-type m7a.2xlarge \
-  --cache-volume-size-gib 300 \
+  --cache-volume-size-gib 500 \
   --command 'bash adl/tools/run_pr_fast_test_lane.sh'
 ```
 
 Preflight does not create EC2 resources. Confirm that it reports the business
 account match, retained cache availability, immutable image, SSH recovery, and
-the expected source commit.
+the expected source commit. It also requires the machine-readable
+`embedded_control_bundle_v1` and `spot_only_v1` binary capabilities before any
+paid launch. Install the current owner binary, or select a reviewed issue-owned
+binary with `ADL_AWS_REMOTE_VALIDATION_BIN`, when that guard fires.
 
 ## Run
 
@@ -48,7 +51,7 @@ bash adl/tools/run_aws_spot_remote_validation_lane.sh run \
   --profile agent-logic-admin \
   --git-ref <pushed-branch-or-tag> \
   --instance-type m7a.2xlarge \
-  --cache-volume-size-gib 300 \
+  --cache-volume-size-gib 500 \
   --command 'bash adl/tools/run_pr_fast_test_lane.sh' \
   --out ".adl/local-artifacts/$RUN_ID/summary.json" \
   --artifact-dir ".adl/local-artifacts/$RUN_ID/artifacts" \
@@ -133,4 +136,3 @@ Retain the wrapper summary and confirm:
 - build/test command passed
 - final instance state is `terminated`
 - estimated cost and all phase timings are present
-
