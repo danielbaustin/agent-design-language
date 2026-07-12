@@ -9,10 +9,14 @@ use serde_json::{json, Value};
 use sha2::{Digest, Sha256};
 use std::fs;
 use std::io::Write;
-use std::path::{Path, PathBuf};
+#[cfg(test)]
+use std::path::Path;
+use std::path::PathBuf;
 use std::process::{Command, Stdio};
+#[cfg(test)]
 use std::time::{SystemTime, UNIX_EPOCH};
 
+#[cfg(test)]
 use adl_runtime::runtime_api_auth::{
     RuntimeApiCredentialStore, RuntimeApiGatewayIdentityClaims,
     CSM_RUNTIME_API_GATEWAY_IDENTITY_AUDIENCE, CSM_RUNTIME_API_GATEWAY_IDENTITY_SCHEMA,
@@ -22,11 +26,13 @@ const SCHEMA: &str = "adl.csm.api_gateway_bridge_proof.v1";
 const EVENT_SCHEMA: &str = "adl.csm.api_gateway_bridge.event.v1";
 
 #[derive(Debug, Clone, PartialEq, Eq)]
+#[cfg(test)]
 pub(crate) struct RuntimeGatewayIdentityHeaders {
     pub identity: String,
     pub signature: String,
 }
 
+#[cfg(test)]
 pub(crate) fn prepare_runtime_gateway_identity_headers(
     state_root: &Path,
     authorizer_principal: &str,
