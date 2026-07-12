@@ -117,6 +117,7 @@ pub struct AwsRemoteValidationConfig {
     pub security_group_id: String,
     pub instance_profile_name: String,
     pub instance_types: Vec<String>,
+    pub allow_on_demand_fallback: bool,
     pub budget_name: Option<String>,
     pub expected_max_cost_usd: Option<f64>,
     pub poll_interval_seconds: u64,
@@ -921,6 +922,9 @@ pub async fn run_aws_remote_validation<A: AwsRemoteValidationAdapter>(
             }
         }
 
+        if !config.allow_on_demand_fallback {
+            continue 'launch;
+        }
         let on_demand_spec = LaunchSpec {
             purchase_option: PurchaseOption::OnDemand,
             ..spot_spec
@@ -3564,6 +3568,7 @@ mod tests {
             security_group_id: "sg-test".to_string(),
             instance_profile_name: "profile-test".to_string(),
             instance_types: vec!["c7i.large".to_string()],
+            allow_on_demand_fallback: true,
             budget_name: Some("Agent Logic Monthly".to_string()),
             expected_max_cost_usd: Some(20.0),
             poll_interval_seconds: 1,
