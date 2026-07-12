@@ -77,6 +77,7 @@ struct ParsedStatus {
 
 enum CommandMode {
     Parse,
+    Collect,
     Watch,
 }
 
@@ -106,6 +107,12 @@ pub(crate) fn real_codex_usage_watch(args: &[String]) -> Result<()> {
             print_report(&report, args.json_output)?;
             ensure_report_ready(&report)?;
         }
+        CommandMode::Collect => {
+            let source = load_status_text(&args)?;
+            let report = report_from_collected_source(source.as_deref(), args.input.as_deref());
+            print_report(&report, args.json_output)?;
+            ensure_report_ready(&report)?;
+        }
         CommandMode::Watch => {
             run_watch(&args)?;
         }
@@ -118,12 +125,18 @@ pub(crate) fn run_parse_status_text(text: &str) -> Result<CodexUsageReport> {
     Ok(report_from_source(Some(text), None))
 }
 
+#[cfg(test)]
+pub(crate) fn run_collect_status_text(text: &str) -> CodexUsageReport {
+    report_from_collected_source(Some(text), None)
+}
+
 fn parse_args(args: &[String]) -> Result<CommandArgs> {
     let Some(mode) = args.first().map(|arg| arg.as_str()) else {
         bail!("{}", usage());
     };
     let mode = match mode {
         "parse" => CommandMode::Parse,
+        "collect" => CommandMode::Collect,
         "watch" => CommandMode::Watch,
         "--help" | "-h" | "help" => {
             println!("{}", usage());
@@ -185,6 +198,7 @@ fn parse_args(args: &[String]) -> Result<CommandArgs> {
                 bail!("codex-usage-watch parse requires --input <path> or --text <status>");
             }
         }
+        CommandMode::Collect => {}
         CommandMode::Watch => {
             if input.is_none() {
                 bail!("codex-usage-watch watch requires --input <path>");
@@ -206,6 +220,7 @@ fn parse_args(args: &[String]) -> Result<CommandArgs> {
 fn usage() -> &'static str {
     "adl tooling codex-usage-watch parse --input <status.txt> [--json]\n\
 adl tooling codex-usage-watch parse --text \"Context: ...\" [--json]\n\
+adl tooling codex-usage-watch collect [--input <status-panel.txt> | --text \"Status...\"] [--json]\n\
 adl tooling codex-usage-watch watch --input <status.txt> [--interval-seconds <n>] [--iterations <n>] [--history-root <dir>] [--json]"
 }
 
@@ -293,6 +308,55 @@ fn report_from_source(source: Option<&str>, input_path: Option<&Path>) -> CodexU
             sampled_at,
             source_ref,
             "status input missing; mode forced to usage_unknown".to_string(),
+        ),
+    }
+}
+
+fn report_from_collected_source(
+    source: Option<&str>,
+    input_path: Option<&Path>,
+) -> CodexUsageReport {
+    let sampled_at = Utc::now().to_rfc3339();
+    let source_ref = input_path.map(repo_relative_or_filename);
+    match source {
+        Some(text) => match normalize_collected_status_text(text) {
+            Ok(normalized) => match parse_status_text(&normalized) {
+                Ok(parsed) => {
+                    let mode = classify_mode(&parsed);
+                    let warnings = warnings_for_mode(&mode, &parsed);
+                    for warning in &warnings {
+                        eprintln!("{warning}");
+                    }
+                    CodexUsageReport {
+                        schema_version: "adl.codex_usage_watch.v1".to_string(),
+                        mode,
+                        parse_ok: true,
+                        sampled_at,
+                        source_ref,
+                        context: Some(parsed.context),
+                        limit_5h: Some(parsed.limit_5h),
+                        limit_7d: Some(parsed.limit_7d),
+                        warnings,
+                        error: None,
+                        history_ref: None,
+                    }
+                }
+                Err(err) => unknown_report(
+                    sampled_at,
+                    source_ref,
+                    format!("failed to parse collected status text: {err}"),
+                ),
+            },
+            Err(err) => unknown_report(
+                sampled_at,
+                source_ref,
+                format!("failed to collect Codex status text: {err}"),
+            ),
+        },
+        None => unknown_report(
+            sampled_at,
+            source_ref,
+            "Codex status collection input missing; live UI collection is not available in this command, pass --input or --text from the app /status panel".to_string(),
         ),
     }
 }
@@ -404,6 +468,28 @@ fn parse_status_text(text: &str) -> Result<ParsedStatus> {
         limit_5h: parse_limit_line(five_hour_line, "5h limit:")?,
         limit_7d: parse_limit_line(seven_day_line, "7d limit:")?,
     })
+}
+
+fn normalize_collected_status_text(text: &str) -> Result<String> {
+    let context_line = find_line(text, "Context:")
+        .ok_or_else(|| anyhow!("missing 'Context:' line in collected status text"))?;
+    let five_hour_line = find_line(text, "5h limit:")
+        .ok_or_else(|| anyhow!("missing '5h limit:' line in collected status text"))?;
+    let seven_day_line = find_line(text, "7d limit:")
+        .ok_or_else(|| anyhow!("missing '7d limit:' line in collected status text"))?;
+
+    let normalized = [
+        normalize_status_line(context_line),
+        normalize_status_line(five_hour_line),
+        normalize_status_line(seven_day_line),
+    ]
+    .join("\n");
+
+    Ok(format!("{normalized}\n"))
+}
+
+fn normalize_status_line(line: &str) -> String {
+    line.split_whitespace().collect::<Vec<_>>().join(" ")
 }
 
 fn find_line<'a>(text: &'a str, prefix: &str) -> Option<&'a str> {

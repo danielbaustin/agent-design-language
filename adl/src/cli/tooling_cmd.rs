@@ -119,6 +119,7 @@ adl tooling ci-log-archive summarize --logs-dir <dir> --out <manifest.json> --s3
 adl tooling code-review --out <dir> [--backend fixture|ollama] [--visibility packet-only|read-only-repo] [--base <ref>] [--head <ref>] [--issue <number>] [--writer-session <id>] [--reviewer-session <id>] [--model <name>] [--allow-live-ollama] [--ollama-url <url>] [--timeout-secs <n>] [--include-working-tree] [--file <path> ...] [--fixture-case clean|blocked]\n\
 adl tooling codex-usage-watch parse --input <status.txt> [--json]\n\
 adl tooling codex-usage-watch parse --text \"Context: ...\" [--json]\n\
+adl tooling codex-usage-watch collect [--input <status-panel.txt> | --text \"Status...\"] [--json]\n\
 adl tooling codex-usage-watch watch --input <status.txt> [--interval-seconds <n>] [--iterations <n>] [--history-root <dir>] [--json]\n\
 adl tooling csdlc-prompt-editor [--repo-root <path>] [--emit-model-js <path>] [--render-samples <dir>]\n\
 adl tooling generate-wp-issue-wave --version <version> [--wbs <path>] [--sprint <path>] [--out <path>]\n\

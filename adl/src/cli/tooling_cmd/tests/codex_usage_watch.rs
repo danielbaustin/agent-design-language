@@ -1,6 +1,8 @@
 use super::support::*;
 use super::*;
-use crate::cli::tooling_cmd::codex_usage_watch::{run_parse_status_text, CodexUsageMode};
+use crate::cli::tooling_cmd::codex_usage_watch::{
+    run_collect_status_text, run_parse_status_text, CodexUsageMode,
+};
 use serde_json::json;
 use serde_json::Value;
 
@@ -88,6 +90,54 @@ fn codex_usage_watch_parse_text_path_succeeds() {
         "--json".to_string(),
     ])
     .expect("parse --text dispatch should succeed");
+}
+
+#[test]
+fn codex_usage_watch_collect_accepts_copied_status_panel_text() {
+    real_tooling(&[
+        "codex-usage-watch".to_string(),
+        "collect".to_string(),
+        "--text".to_string(),
+        "Status\nSession: 019f3d65-2216-7832-804a-26339473b27d\nContext:   58%   left   (109,629 used / 258K)\n5h limit: 93% left (resets 9:45 AM)\n7d limit: 99% left (resets Jul 19)\nClose\n".to_string(),
+        "--json".to_string(),
+    ])
+    .expect("collect --text dispatch should succeed for copied status panel");
+
+    let report = run_collect_status_text(
+        "Status\nSession: 019f3d65-2216-7832-804a-26339473b27d\nContext:   58%   left   (109,629 used / 258K)\n5h limit: 93% left (resets 9:45 AM)\n7d limit: 99% left (resets Jul 19)\nClose\n",
+    );
+    assert_eq!(report.mode, CodexUsageMode::Normal);
+    assert!(report.parse_ok);
+    assert_eq!(report.context.as_ref().unwrap().used_tokens, Some(109_629));
+    assert_eq!(
+        report.limit_7d.as_ref().unwrap().resets_at.as_deref(),
+        Some("Jul 19")
+    );
+}
+
+#[test]
+fn codex_usage_watch_collect_fails_closed_without_live_input_or_required_limits() {
+    let missing_err = real_tooling(&[
+        "codex-usage-watch".to_string(),
+        "collect".to_string(),
+        "--json".to_string(),
+    ])
+    .expect_err("collect without status text should fail closed");
+    assert!(missing_err
+        .to_string()
+        .contains("Codex status collection input missing"));
+
+    let missing_5h_err = real_tooling(&[
+        "codex-usage-watch".to_string(),
+        "collect".to_string(),
+        "--text".to_string(),
+        "Status\nContext: 58% left (109,629 used / 258K)\n7d limit: 99% left (resets Jul 19)\n"
+            .to_string(),
+    ])
+    .expect_err("collect without 5h limit should fail closed");
+    assert!(missing_5h_err
+        .to_string()
+        .contains("missing '5h limit:' line"));
 }
 
 #[test]
