@@ -16,6 +16,7 @@ use ::adl::csm_networking::{
     resolve_main_runtime_api_listener, CSM_MAIN_API_BIND, CSM_NETWORKING_SCHEMA,
 };
 use ::adl::long_lived_agent;
+use adl_runtime::runtime_api_auth::RuntimeApiCredentialStore;
 use anyhow::{anyhow, Context, Result};
 use chrono::{DateTime, Utc};
 use serde::{Deserialize, Serialize};
@@ -1136,39 +1137,121 @@ fn cycle_ledger_path(manifest: &ServiceManifest) -> PathBuf {
 }
 
 fn runtime_api_bind_observed(manifest: &ServiceManifest) -> bool {
-    let expected_agent_id = long_lived_agent::load_spec(&manifest.spec)
-        .ok()
-        .map(|loaded| loaded.spec.agent_instance_id);
+    let loaded = long_lived_agent::load_spec(&manifest.spec).ok();
+    let expected_agent_id = loaded
+        .as_ref()
+        .map(|loaded| loaded.spec.agent_instance_id.as_str());
     let Ok(addr) = manifest.api_bind.parse::<SocketAddr>() else {
         return false;
     };
     if !addr.ip().is_loopback() {
         return false;
     }
+    if let (Some(loaded), Some(expected_agent_id)) = (loaded.as_ref(), expected_agent_id) {
+        let store = RuntimeApiCredentialStore::for_state_root(&loaded.state_root);
+        let url = format!("http://{}/ready", manifest.api_bind);
+        let client = match reqwest::blocking::Client::builder()
+            .connect_timeout(Duration::from_millis(200))
+            .timeout(Duration::from_secs(2))
+            .build()
+        {
+            Ok(client) => client,
+            Err(_) => return false,
+        };
+        return store
+            .with_bearer_token(|token| {
+                client
+                    .get(&url)
+                    .bearer_auth(token)
+                    .send()
+                    .ok()
+                    .filter(|response| response.status().is_success())
+                    .and_then(|response| response.json::<Value>().ok())
+                    .is_some_and(|value| {
+                        value.get("schema").and_then(Value::as_str)
+                            == Some("adl.csm.runtime_api.ready.v1")
+                            && value.get("agent_instance_id").and_then(Value::as_str)
+                                == Some(expected_agent_id)
+                    })
+            })
+            .unwrap_or(false);
+    }
     let Ok(mut stream) = TcpStream::connect_timeout(&addr, Duration::from_millis(100)) else {
         return false;
     };
     let _ = stream.set_read_timeout(Some(Duration::from_millis(200)));
     let _ = stream.set_write_timeout(Some(Duration::from_millis(200)));
-    let request = format!(
-        "GET /ready HTTP/1.1\r\nhost: {}\r\nconnection: close\r\n\r\n",
-        manifest.api_bind
-    );
+    let mut request = format!("GET /ready HTTP/1.1\r\nhost: {}\r\n", manifest.api_bind);
+    request.push_str("connection: close\r\n\r\n");
     if stream.write_all(request.as_bytes()).is_err() {
         return false;
     }
-    let mut response = String::new();
-    if stream.read_to_string(&mut response).is_err() {
+    let Some(response) = read_http_response(&mut stream) else {
         return false;
+    };
+    runtime_api_probe_response_observed(&response, expected_agent_id, false)
+}
+
+fn read_http_response(stream: &mut TcpStream) -> Option<String> {
+    let mut buf = Vec::new();
+    let mut temp = [0_u8; 4096];
+    loop {
+        let n = match stream.read(&mut temp) {
+            Ok(n) => n,
+            Err(err) if err.kind() == std::io::ErrorKind::ConnectionReset => break,
+            Err(_) => return None,
+        };
+        if n == 0 {
+            break;
+        }
+        buf.extend_from_slice(&temp[..n]);
+        if let Some(header_end) = find_http_header_end(&buf) {
+            let content_length = http_content_length(&buf[..header_end]).unwrap_or(0);
+            if buf.len() >= header_end + 4 + content_length {
+                break;
+            }
+        }
     }
-    let Some((_, body)) = response.split_once("\r\n\r\n") else {
+    String::from_utf8(buf).ok()
+}
+
+fn find_http_header_end(buf: &[u8]) -> Option<usize> {
+    buf.windows(4).position(|window| window == b"\r\n\r\n")
+}
+
+fn http_content_length(headers: &[u8]) -> Option<usize> {
+    String::from_utf8_lossy(headers).lines().find_map(|line| {
+        let (name, value) = line.split_once(':')?;
+        name.eq_ignore_ascii_case("content-length")
+            .then(|| value.trim().parse::<usize>().ok())
+            .flatten()
+    })
+}
+
+fn runtime_api_probe_response_observed(
+    response: &str,
+    expected_agent_id: Option<&str>,
+    auth_used: bool,
+) -> bool {
+    let Some((headers, body)) = response.split_once("\r\n\r\n") else {
         return false;
     };
     let Ok(value) = serde_json::from_str::<Value>(body) else {
         return false;
     };
+    if headers.starts_with("HTTP/1.1 401") {
+        if auth_used || expected_agent_id.is_some() {
+            return false;
+        }
+        return value.get("schema").and_then(Value::as_str) == Some("adl.csm.runtime_api.v1")
+            && value.get("reason").and_then(Value::as_str) == Some("missing_bearer_token")
+            && value
+                .get("credential_material_retained")
+                .and_then(Value::as_bool)
+                == Some(false);
+    }
     value.get("schema").and_then(Value::as_str) == Some("adl.csm.runtime_api.ready.v1")
-        && expected_agent_id.as_deref().is_some_and(|agent_id| {
+        && expected_agent_id.is_some_and(|agent_id| {
             value.get("agent_instance_id").and_then(Value::as_str) == Some(agent_id)
         })
 }
@@ -1933,7 +2016,7 @@ Semantics:
 
 #[cfg(test)]
 mod tests {
-    use super::{classify_startup, StartupEvidence};
+    use super::{classify_startup, runtime_api_probe_response_observed, StartupEvidence};
 
     fn bounded_restart_evidence(
         bounded_test_daemon_completed_observed: bool,
@@ -1979,5 +2062,63 @@ mod tests {
 
             assert_eq!(classification, "startup_waiting_for_runtime_ready");
         }
+    }
+
+    #[test]
+    fn runtime_api_probe_treats_authenticated_challenge_as_listener_observed() {
+        let response = concat!(
+            "HTTP/1.1 401 Unauthorized\r\n",
+            "content-type: application/json\r\n",
+            "www-authenticate: Bearer realm=\"csm-runtime-api\"\r\n",
+            "\r\n",
+            "{\"credential_material_retained\":false,",
+            "\"reason\":\"missing_bearer_token\",",
+            "\"schema\":\"adl.csm.runtime_api.v1\",",
+            "\"status\":\"unauthorized\"}"
+        );
+
+        assert!(runtime_api_probe_response_observed(response, None, false));
+        assert!(!runtime_api_probe_response_observed(
+            response,
+            Some("main-csm"),
+            false
+        ));
+        assert!(!runtime_api_probe_response_observed(response, None, true));
+    }
+
+    #[test]
+    fn runtime_api_probe_still_accepts_ready_payload_for_expected_agent() {
+        let response = concat!(
+            "HTTP/1.1 200 OK\r\n",
+            "content-type: application/json\r\n",
+            "\r\n",
+            "{\"agent_instance_id\":\"main-csm\",",
+            "\"schema\":\"adl.csm.runtime_api.ready.v1\",",
+            "\"status\":\"ready\"}"
+        );
+
+        assert!(runtime_api_probe_response_observed(
+            response,
+            Some("main-csm"),
+            true
+        ));
+    }
+
+    #[test]
+    fn runtime_api_probe_rejects_ready_payload_for_wrong_agent() {
+        let response = concat!(
+            "HTTP/1.1 200 OK\r\n",
+            "content-type: application/json\r\n",
+            "\r\n",
+            "{\"agent_instance_id\":\"other\",",
+            "\"schema\":\"adl.csm.runtime_api.ready.v1\",",
+            "\"status\":\"ready\"}"
+        );
+
+        assert!(!runtime_api_probe_response_observed(
+            response,
+            Some("main-csm"),
+            true
+        ));
     }
 }
