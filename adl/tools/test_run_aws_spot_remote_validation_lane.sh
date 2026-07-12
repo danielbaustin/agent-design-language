@@ -5,6 +5,8 @@ ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)"
 SCRIPT="$ROOT/adl/tools/run_aws_spot_remote_validation_lane.sh"
 SETUP_SCRIPT="$ROOT/adl/tools/setup_aws_spot_remote_validation_github_resources.sh"
 WORKFLOW="$ROOT/.github/workflows/aws-spot-remote-validation.yaml"
+
+grep -F 'stat -c '\''%a'\'' "$SSH_PRIVATE_KEY_PATH" 2>/dev/null || stat -f '\''%Lp'\''' "$SCRIPT" >/dev/null
 TMP="$(mktemp -d)"
 trap 'rm -rf "$TMP"' EXIT
 

@@ -533,7 +533,7 @@ verify_ssh_recovery_key() {
     echo "run_aws_spot_remote_validation_lane: SSH recovery key is not configured" >&2
     return 1
   }
-  key_mode="$(stat -f '%Lp' "$SSH_PRIVATE_KEY_PATH" 2>/dev/null || stat -c '%a' "$SSH_PRIVATE_KEY_PATH")"
+  key_mode="$(stat -c '%a' "$SSH_PRIVATE_KEY_PATH" 2>/dev/null || stat -f '%Lp' "$SSH_PRIVATE_KEY_PATH")"
   [[ "$key_mode" == "600" || "$key_mode" == "400" ]] || {
     echo "run_aws_spot_remote_validation_lane: SSH private key permissions must be 600 or 400" >&2
     return 1
