@@ -66,14 +66,26 @@ def main() -> None:
         "GET /chronosense",
         "GET /shepherd",
         "GET /curiosity",
+        "GET /acip",
+        "GET /freedom-gate",
         "GET /reasoning",
         "GET /api-gateway-bridge",
         "GET /persistence",
     ]:
         if route not in api.get("supported_route_keys", []) and "$default" not in api.get("supported_route_keys", []):
             fail(f"api_gateway.supported_route_keys missing {route}")
+    if "GET /acip" not in api.get("planned_route_keys", []):
+        fail("api_gateway.planned_route_keys must retain planned /acip route truth")
+    if "GET /acip/ws" in api.get("planned_route_keys", []):
+        fail("api_gateway.planned_route_keys must not claim inactive /acip/ws Gateway routing")
+    if "GET /persistence" not in api.get("planned_route_keys", []):
+        fail("api_gateway.planned_route_keys must retain planned /persistence route truth")
     if "GET /chronosense" not in api.get("planned_route_keys", []):
         fail("api_gateway.planned_route_keys must retain planned /chronosense route truth")
+    if "GET /freedom-gate" not in api.get("planned_route_keys", []):
+        fail("api_gateway.planned_route_keys must retain planned /freedom-gate route truth")
+    if "GET /reasoning" not in api.get("planned_route_keys", []):
+        fail("api_gateway.planned_route_keys must retain planned /reasoning route truth")
     if int(api.get("route_target_count", 0)) < 1:
         fail("api_gateway.route_target_count must prove API Gateway route targets")
     if int(api.get("integration_count", 0)) < 1:
