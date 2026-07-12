@@ -406,6 +406,12 @@ assert_has "$SCRIPT" "--full-nextest"
 assert_has "$SCRIPT" "cd adl && cargo nextest run --no-run"
 assert_has "$SCRIPT" "cd adl && cargo nextest run --test-threads 18 --no-fail-fast --status-level all --final-status-level slow"
 assert_has "$ROOT/adl/.config/nextest.toml" 'nextest-version = "0.9.133"'
+nextest_install_count="$(grep -Ec '^[[:space:]]+tool: nextest(@[^[:space:]]+)?[[:space:]]*$' "$ROOT/.github/workflows/ci.yaml")"
+nextest_pinned_count="$(grep -Ec '^[[:space:]]+tool: nextest@0\.9\.140[[:space:]]*$' "$ROOT/.github/workflows/ci.yaml")"
+if [ "$nextest_install_count" -ne 4 ] || [ "$nextest_pinned_count" -ne "$nextest_install_count" ]; then
+  echo "all CI nextest installs must pin the builder-compatible nextest 0.9.140 toolchain" >&2
+  exit 1
+fi
 assert_has "$ROOT/adl/.config/nextest.toml" 'retries = 0'
 assert_has "$ROOT/adl/.config/nextest.toml" 'slow-timeout = { period = "90s", terminate-after = 2 }'
 assert_has "$SCRIPT" "--run requires an explicit --source-version"
