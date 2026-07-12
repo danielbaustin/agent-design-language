@@ -70,7 +70,7 @@ export FAKE_AWS_LOG="$TMP/aws.log"
 export FAKE_CURL_LOG="$TMP/curl.log"
 export AWS_BIN="$BIN/aws"
 export CURL_BIN="$BIN/curl"
-export REAL_CSM="$ROOT/adl/target/debug/csm"
+export REAL_CSM="${CARGO_TARGET_DIR:-$ROOT/adl/target}/debug/csm"
 printf '%s\n' "fixture-token" >"$TMP/operator-token"
 
 cargo build --manifest-path "$ROOT/adl/Cargo.toml" --bin csm >/dev/null
@@ -110,6 +110,8 @@ assert summary["polis_ingress"]["route_target"] == "authorized_api_gateway_to_cs
 assert summary["polis_ingress"]["per_polis_api"] is True
 assert summary["polis_ingress"]["runtime_identity_verified"] is True
 assert summary["api_gateway"]["route_target_count"] >= 7
+assert "GET /reasoning" in summary["api_gateway"]["supported_route_keys"]
+assert "GET /reasoning" in summary["api_gateway"]["planned_route_keys"]
 assert "GET /acip" in summary["api_gateway"]["supported_route_keys"]
 assert "GET /acip" in summary["api_gateway"]["planned_route_keys"]
 assert "GET /persistence" in summary["api_gateway"]["supported_route_keys"]

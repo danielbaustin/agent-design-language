@@ -25,6 +25,7 @@ use adl_runtime::runtime_api_auth::{
 const SCHEMA: &str = "adl.csm.api_gateway_bridge_proof.v1";
 const EVENT_SCHEMA: &str = "adl.csm.api_gateway_bridge.event.v1";
 const API_GATEWAY_EXCLUDED_RUNTIME_ROUTES: [&str; 1] = ["/acip/ws"];
+const API_GATEWAY_ADDITIONAL_RUNTIME_ROUTES: [&str; 1] = ["/reasoning"];
 
 #[derive(Debug, Clone, PartialEq, Eq)]
 #[cfg(test)]
@@ -660,11 +661,17 @@ fn public_route_keys(routes: &[String]) -> Vec<String> {
 }
 
 fn api_gateway_required_runtime_routes() -> Vec<&'static str> {
-    CSM_RUNTIME_API_ENDPOINTS
+    let mut routes: Vec<_> = CSM_RUNTIME_API_ENDPOINTS
         .iter()
         .copied()
         .filter(|endpoint| !API_GATEWAY_EXCLUDED_RUNTIME_ROUTES.contains(endpoint))
-        .collect()
+        .collect();
+    for endpoint in API_GATEWAY_ADDITIONAL_RUNTIME_ROUTES {
+        if !routes.contains(&endpoint) {
+            routes.push(endpoint);
+        }
+    }
+    routes
 }
 
 #[derive(Debug)]

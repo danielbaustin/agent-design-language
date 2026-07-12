@@ -49,8 +49,8 @@ pub use adl_runtime::runtime_api::{
     CSM_RUNTIME_API_ENDPOINTS, CSM_RUNTIME_API_EVENTS_SCHEMA, CSM_RUNTIME_API_FREEDOM_GATE_SCHEMA,
     CSM_RUNTIME_API_HEALTH_SCHEMA, CSM_RUNTIME_API_METRICS_SCHEMA,
     CSM_RUNTIME_API_PERSISTENCE_SCHEMA, CSM_RUNTIME_API_READY_SCHEMA,
-    CSM_RUNTIME_API_REASONING_SCHEMA, CSM_RUNTIME_API_SCHEMA,
-    CSM_RUNTIME_API_SHEPHERD_SCHEMA, CSM_RUNTIME_API_STATUS_SCHEMA,
+    CSM_RUNTIME_API_REASONING_SCHEMA, CSM_RUNTIME_API_SCHEMA, CSM_RUNTIME_API_SHEPHERD_SCHEMA,
+    CSM_RUNTIME_API_STATUS_SCHEMA,
 };
 pub use api_gateway_bridge::{prove_api_gateway_bridge, ApiGatewayBridgeOptions};
 const CSM_RUNTIME_API_BROWSER_DEMO_PORT: &str = "8765";
@@ -2368,6 +2368,7 @@ memory: {}
             method: "POST".to_string(),
             path: "/future-mutating-route".to_string(),
             origin: None,
+            upgrade: false,
             authorization: None,
             gateway_identity: None,
             gateway_signature: None,
