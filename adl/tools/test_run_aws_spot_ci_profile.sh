@@ -34,6 +34,8 @@ grep -F 'profile:' "$WORKFLOW" >/dev/null
 grep -F 'adl-ci' "$WORKFLOW" >/dev/null
 grep -F 'adl-coverage' "$WORKFLOW" >/dev/null
 grep -F 'validation_command is available only for the custom profile' "$WORKFLOW" >/dev/null
+test "$(grep -Fc 'BASE_COMMIT="$(git rev-parse --verify "${BASE_REF}^{commit}")"' "$WORKFLOW")" -eq 2
+test "$(grep -Fc -- '--base $BASE_COMMIT --head $HEAD_COMMIT' "$WORKFLOW")" -eq 2
 grep -F 'builder_image_tag:' "$WORKFLOW" >/dev/null
 grep -F 'issue_number:' "$WORKFLOW" >/dev/null
 grep -F -- '--issue "$ISSUE_NUMBER"' "$WORKFLOW" >/dev/null
