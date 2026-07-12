@@ -119,6 +119,22 @@ pub fn runtime_stack_json() -> Value {
             "status": "integrated",
             "source": "/chronosense"
         },
+        "persistence_domains": {
+            "schema": crate::continuity_history::PERSISTENCE_DOMAINS_SCHEMA,
+            "checkpoint_continuity": {
+                "schema": crate::continuity_history::CHECKPOINT_SCHEMA_V1,
+                "store": "checkpoint.redb",
+                "lifecycle": "write_validate_restore_or_fail_closed",
+                "restore_authority": true
+            },
+            "autobiographical_lifelog": {
+                "schema": crate::continuity_history::LIFELOG_SCHEMA_V1,
+                "store": "lifelog.redb",
+                "lifecycle": "append_query_retain_independently",
+                "restore_authority": false
+            },
+            "cross_reference": "typed_identifier_only_no_shared_payload_or_transaction"
+        },
         "observability_pipeline": {
             "pipeline": "vector",
             "status": "planned_csm_managed_runtime_component",

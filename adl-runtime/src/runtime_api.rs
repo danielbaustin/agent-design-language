@@ -12,8 +12,9 @@ pub const CSM_RUNTIME_API_CURIOSITY_SCHEMA: &str = "adl.csm.runtime_api.curiosit
 pub const CSM_RUNTIME_API_FREEDOM_GATE_SCHEMA: &str = "adl.csm.runtime_api.freedom_gate.v1";
 pub const CSM_RUNTIME_API_API_GATEWAY_BRIDGE_SCHEMA: &str =
     "adl.csm.runtime_api.api_gateway_bridge.v1";
+pub const CSM_RUNTIME_API_PERSISTENCE_SCHEMA: &str = "adl.csm.runtime_api.persistence.v1";
 
-pub const CSM_RUNTIME_API_ENDPOINTS: [&str; 10] = [
+pub const CSM_RUNTIME_API_ENDPOINTS: [&str; 11] = [
     "/status",
     "/health",
     "/ready",
@@ -24,7 +25,21 @@ pub const CSM_RUNTIME_API_ENDPOINTS: [&str; 10] = [
     "/curiosity",
     "/freedom-gate",
     "/api-gateway-bridge",
+    "/persistence",
 ];
+
+pub fn persistence_health(
+    checkpoint: crate::continuity_history::DomainHealth,
+    lifelog: crate::continuity_history::DomainHealth,
+) -> serde_json::Value {
+    serde_json::json!({
+        "schema": CSM_RUNTIME_API_PERSISTENCE_SCHEMA,
+        "checkpoint_continuity": checkpoint,
+        "autobiographical_lifelog": lifelog,
+        "restore_authority": "checkpoint_continuity_only",
+        "failure_isolation": "independent_stores_and_lifecycle"
+    })
+}
 
 #[cfg(test)]
 mod tests {
