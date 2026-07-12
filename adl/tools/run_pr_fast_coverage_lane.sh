@@ -66,6 +66,24 @@ else
 fi
 CARGO_INCREMENTAL=0 cargo "${coverage_args[@]}"
 
+if grep -Fq 'test(/^csm_cav::/)' <<<"$FILTER_EXPRESSION"; then
+  RUNTIME_MANIFEST="$(cd "$ADL_DIR/../adl-runtime" && pwd)/Cargo.toml"
+  runtime_coverage_args=(
+    llvm-cov nextest
+    --manifest-path "$RUNTIME_MANIFEST"
+    --status-level all
+    --final-status-level slow
+    --no-report
+    --no-clean
+    -E 'test(/^cav::/) or test(/^runtime_api::/) or test(/^supervision::/) or test(/^topology::/)'
+  )
+  if [ -n "$TEST_THREADS" ]; then
+    runtime_coverage_args+=(--test-threads "$TEST_THREADS")
+  fi
+  printf 'PR-fast coverage companion: adl-runtime CAV tests\n'
+  CARGO_INCREMENTAL=0 cargo "${runtime_coverage_args[@]}"
+fi
+
 mkdir -p target
 cargo llvm-cov report \
   --json \
