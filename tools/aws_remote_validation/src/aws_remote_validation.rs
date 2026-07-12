@@ -4104,6 +4104,7 @@ mod tests {
         assert!(tracked_runner.contains("source compilation is disabled"));
         assert!(tracked_runner.contains("adl-aws-remote-validation/shared"));
         assert!(tracked_runner.contains("resize2fs \"$CACHE_DEVICE\""));
+        assert!(!tracked_runner.contains("chown -R"));
         assert!(tracked_runner.contains("CARGO_HOME_DIR=\"$TOOLCHAIN_ROOT/cargo-home\""));
         assert!(tracked_runner.contains("RUSTUP_HOME_DIR=\"$TOOLCHAIN_ROOT/rustup-home\""));
         assert!(tracked_runner.contains("CARGO_BIN_DIR=\"$CARGO_HOME_DIR/bin\""));

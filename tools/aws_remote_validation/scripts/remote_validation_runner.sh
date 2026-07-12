@@ -51,7 +51,7 @@ if [ "${ADL_CACHE_VOLUME_ENABLED:-0}" = "1" ]; then
   sudo resize2fs "$CACHE_DEVICE" >/tmp/adl-cache-volume-resize.log 2>&1
   CACHE_OWNER_USER="$(id -un)"
   CACHE_OWNER_GROUP="$(id -gn)"
-  sudo chown -R "$CACHE_OWNER_USER":"$CACHE_OWNER_GROUP" "$CACHE_VOLUME_MOUNT_PATH"
+  sudo chown "$CACHE_OWNER_USER":"$CACHE_OWNER_GROUP" "$CACHE_VOLUME_MOUNT_PATH"
   TOOLCHAIN_ROOT="$CACHE_VOLUME_MOUNT_PATH/adl-aws-remote-validation/shared"
   WORK_ROOT="$CACHE_VOLUME_MOUNT_PATH/adl-aws-remote-validation/runs/${ADL_RUN_ID}"
   TARGET_DIR="$TOOLCHAIN_ROOT/target"
