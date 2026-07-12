@@ -4225,7 +4225,7 @@ memory:
                 last_supervisor_status = supervisor_status;
             }
         }
-        std::thread::sleep(std::time::Duration::from_millis(200));
+        std::thread::sleep(std::time::Duration::from_millis(300));
     }
     assert!(
         observed_restart,

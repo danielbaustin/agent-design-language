@@ -73,7 +73,6 @@ if grep -Fq 'test(/^csm_cav::/)' <<<"$FILTER_EXPRESSION"; then
     --manifest-path "$RUNTIME_MANIFEST"
     --status-level all
     --final-status-level slow
-    --no-report
     --no-clean
     -E 'test(/^cav::/) or test(/^runtime_api::/) or test(/^supervision::/) or test(/^topology::/)'
   )

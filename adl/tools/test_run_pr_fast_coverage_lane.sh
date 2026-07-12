@@ -73,7 +73,7 @@ ADL_PR_FAST_COVERAGE_BUILD_ROOT="$scratch_root-csm-cav" \
   bash "$SCRIPT" --filter-expression "$csm_cav_expression" >"$temp_root/pr-fast-coverage-csm-cav-run.out"
 
 grep -F "PR-fast coverage companion: adl-runtime CAV tests" "$temp_root/pr-fast-coverage-csm-cav-run.out" >/dev/null
-runtime_companion_token="cmd=llvm-cov nextest --manifest-path $ROOT_DIR/adl-runtime/Cargo.toml --status-level all --final-status-level slow --no-report --no-clean -E test(/^cav::/) or test(/^runtime_api::/) or test(/^supervision::/) or test(/^topology::/)"
+runtime_companion_token="cmd=llvm-cov nextest --manifest-path $ROOT_DIR/adl-runtime/Cargo.toml --status-level all --final-status-level slow --no-clean -E test(/^cav::/) or test(/^runtime_api::/) or test(/^supervision::/) or test(/^topology::/)"
 if ! grep -F "$runtime_companion_token" "$csm_cav_cargo_log" >/dev/null; then
   echo "missing PR-fast coverage runtime companion token: $runtime_companion_token" >&2
   cat "$csm_cav_cargo_log" >&2
