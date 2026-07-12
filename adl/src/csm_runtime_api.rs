@@ -1816,6 +1816,18 @@ memory: {}
         )
         .await;
         assert_eq!(valid.status(), StatusCode::OK);
+        let ready = runtime_api_axum_handler(
+            State(state.clone()),
+            Method::GET,
+            Uri::from_static("/ready"),
+            valid_headers.clone(),
+        )
+        .await;
+        assert_eq!(ready.status(), StatusCode::OK);
+        let ready_body = to_bytes(ready.into_body(), 64 * 1024).await.unwrap();
+        let ready: Value = serde_json::from_slice(&ready_body).unwrap();
+        assert_eq!(ready["schema"], CSM_RUNTIME_API_READY_SCHEMA);
+        assert_eq!(ready["agent_instance_id"], loaded.spec.agent_instance_id);
         for endpoint in CSM_RUNTIME_API_ENDPOINTS {
             let authorized = runtime_api_axum_handler(
                 State(state.clone()),

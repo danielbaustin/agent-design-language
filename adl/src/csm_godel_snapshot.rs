@@ -200,7 +200,14 @@ pub fn write_checkpoint_snapshot_diff(
 
     let chain_path = pointer_path(loaded);
     let result = if chain_path.exists() {
-        write_diff(loaded, status, checkpoint_reason, checkpoint_interval_secs)?
+        match write_diff(loaded, status, checkpoint_reason, checkpoint_interval_secs) {
+            Ok(result) => result,
+            Err(err) if is_godel_chain_integrity_error(&err) => {
+                quarantine_corrupt_chain(loaded, &err)?;
+                write_base_snapshot(loaded, status, checkpoint_reason, checkpoint_interval_secs)?
+            }
+            Err(err) => return Err(err),
+        }
     } else {
         write_base_snapshot(loaded, status, checkpoint_reason, checkpoint_interval_secs)?
     };
@@ -467,6 +474,62 @@ fn write_base_snapshot(
     );
     write_json_atomic(&pointer_path(loaded), &chain)?;
     Ok(write_result("base_snapshot", snapshot_ref, &chain))
+}
+
+fn is_godel_chain_integrity_error(err: &anyhow::Error) -> bool {
+    let message = format!("{err:#}");
+    (message.contains("Godel ")
+        && (message.contains("mismatch")
+            || message.contains("unsupported")
+            || message.contains("missing")
+            || message.contains("parse")))
+        || ((message.contains("read ") || message.contains("parse "))
+            && (message.contains(POINTER_REF)
+                || message.contains(SNAPSHOT_DIR_REF)
+                || message.contains(DIFF_DIR_REF)))
+}
+
+fn quarantine_corrupt_chain(loaded: &LoadedAgentSpec, err: &anyhow::Error) -> Result<()> {
+    let root = snapshot_root(loaded);
+    fs::create_dir_all(&root)?;
+    let nonce = Utc::now()
+        .to_rfc3339_opts(chrono::SecondsFormat::Micros, true)
+        .replace([':', '.'], "-");
+    let quarantine_ref = format!("quarantine/recovered-{nonce}");
+    let quarantine_dir = root.join(&quarantine_ref);
+    fs::create_dir_all(&quarantine_dir)?;
+
+    let mut preserved_refs = Vec::new();
+    for name in ["godel_agent_snapshot_chain.json", "snapshots", "diffs"] {
+        let src = root.join(name);
+        if src.exists() {
+            let dst = quarantine_dir.join(name);
+            fs::rename(&src, &dst).with_context(|| {
+                format!(
+                    "quarantine corrupt Godel snapshot chain {} -> {}",
+                    src.display(),
+                    dst.display()
+                )
+            })?;
+            preserved_refs.push(format!("godel_snapshots/{quarantine_ref}/{name}"));
+        }
+    }
+
+    let manifest = json!({
+        "schema": "adl.csm.godel_snapshot_quarantine.v1",
+        "agent_instance_id": loaded.spec.agent_instance_id,
+        "quarantined_at": Utc::now(),
+        "reason": format!("{err:#}"),
+        "action": "preserve_corrupt_chain_and_start_fresh_base_snapshot",
+        "preserved_refs": preserved_refs,
+        "new_chain_policy": "next_checkpoint_writes_base_snapshot",
+        "non_claims": [
+            "does_not_delete_corrupt_chain_evidence",
+            "does_not_treat_corrupt_snapshot_as_recovered_state"
+        ]
+    });
+    write_json_atomic(&quarantine_dir.join("quarantine_manifest.json"), &manifest)?;
+    Ok(())
 }
 
 fn write_diff(
@@ -1130,6 +1193,110 @@ mod tests {
         assert_eq!(diff.write_kind, "diff");
         let recovery = validate_recovery_read(&loaded.state_root).expect("recovery");
         assert_eq!(recovery["status"], "validated_last_known_good");
+    }
+
+    #[test]
+    fn csm_godel_snapshot_quarantines_corrupt_chain_before_fresh_base() {
+        let out = temp_dir("quarantine-corrupt");
+        let spec = write_fixture_spec(&out).expect("fixture spec");
+        let loaded = load_spec(&spec).expect("load spec");
+        fs::create_dir_all(&loaded.state_root).expect("state root");
+        let first = status_record(
+            &loaded,
+            AgentStatusState::RunningCycle,
+            Some("cycle-000001"),
+            1,
+        );
+        write_checkpoint_snapshot_diff(&loaded, &first, "test_base", 3).expect("base");
+        let snapshot_path = loaded
+            .state_root
+            .join("godel_snapshots/snapshots")
+            .join(format!(
+                "{}-snapshot-000001.json",
+                loaded.spec.agent_instance_id
+            ));
+        let mut snapshot: Value =
+            serde_json::from_str(&fs::read_to_string(&snapshot_path).expect("read snapshot"))
+                .expect("parse snapshot");
+        snapshot["state_projection"]["local_deltas"] = json!(["tampered_after_hash"]);
+        fs::write(
+            &snapshot_path,
+            serde_json::to_vec_pretty(&snapshot).expect("encode snapshot"),
+        )
+        .expect("tamper snapshot");
+
+        let second = status_record(&loaded, AgentStatusState::Idle, Some("cycle-000002"), 2);
+        let recovered =
+            write_checkpoint_snapshot_diff(&loaded, &second, "recover_after_corruption", 3)
+                .expect("quarantine and fresh base");
+
+        assert_eq!(recovered.write_kind, "base_snapshot");
+        let chain = read_chain(&loaded.state_root).expect("fresh chain");
+        assert_eq!(chain.chain_length, 1);
+        assert!(loaded
+            .state_root
+            .join("godel_snapshots/quarantine")
+            .read_dir()
+            .expect("quarantine dir exists")
+            .any(|entry| entry
+                .expect("quarantine entry")
+                .path()
+                .join("quarantine_manifest.json")
+                .exists()));
+        validate_recovery_read(&loaded.state_root).expect("fresh chain validates");
+    }
+
+    #[test]
+    fn csm_godel_snapshot_quarantines_malformed_pointer_before_fresh_base() {
+        let out = temp_dir("quarantine-malformed-pointer");
+        let spec = write_fixture_spec(&out).expect("fixture spec");
+        let loaded = load_spec(&spec).expect("load spec");
+        fs::create_dir_all(&loaded.state_root).expect("state root");
+        let first = status_record(
+            &loaded,
+            AgentStatusState::RunningCycle,
+            Some("cycle-000001"),
+            1,
+        );
+        write_checkpoint_snapshot_diff(&loaded, &first, "test_base", 3).expect("base");
+        fs::write(pointer_path(&loaded), "{").expect("malform pointer");
+
+        let second = status_record(&loaded, AgentStatusState::Idle, Some("cycle-000002"), 2);
+        let recovered =
+            write_checkpoint_snapshot_diff(&loaded, &second, "recover_after_malformed_pointer", 3)
+                .expect("quarantine and fresh base");
+
+        assert_eq!(recovered.write_kind, "base_snapshot");
+        let chain = read_chain(&loaded.state_root).expect("fresh chain");
+        assert_eq!(chain.chain_length, 1);
+        validate_recovery_read(&loaded.state_root).expect("fresh chain validates");
+    }
+
+    #[test]
+    fn csm_godel_snapshot_quarantines_missing_base_before_fresh_base() {
+        let out = temp_dir("quarantine-missing-base");
+        let spec = write_fixture_spec(&out).expect("fixture spec");
+        let loaded = load_spec(&spec).expect("load spec");
+        fs::create_dir_all(&loaded.state_root).expect("state root");
+        let first = status_record(
+            &loaded,
+            AgentStatusState::RunningCycle,
+            Some("cycle-000001"),
+            1,
+        );
+        write_checkpoint_snapshot_diff(&loaded, &first, "test_base", 3).expect("base");
+        let chain = read_chain(&loaded.state_root).expect("seed chain");
+        fs::remove_file(loaded.state_root.join(chain.base_snapshot_ref)).expect("remove base");
+
+        let second = status_record(&loaded, AgentStatusState::Idle, Some("cycle-000002"), 2);
+        let recovered =
+            write_checkpoint_snapshot_diff(&loaded, &second, "recover_after_missing_base", 3)
+                .expect("quarantine and fresh base");
+
+        assert_eq!(recovered.write_kind, "base_snapshot");
+        let chain = read_chain(&loaded.state_root).expect("fresh chain");
+        assert_eq!(chain.chain_length, 1);
+        validate_recovery_read(&loaded.state_root).expect("fresh chain validates");
     }
 
     #[test]

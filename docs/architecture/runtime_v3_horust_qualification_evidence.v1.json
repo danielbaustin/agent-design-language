@@ -1,0 +1,73 @@
+{
+  "schema": "adl.runtime_v3.horust_qualification_evidence.v1",
+  "issue": 5211,
+  "tested_commit": "85326915d25bfedfa78e8cad7496126ca647921c",
+  "artifact_policy": "remote and host artifacts remain local and ignored; this redacted index retains stable identifiers and hashes without credentials or account identifiers",
+  "unit_sha256": "c344a70df9e7bb57911b2c675b5bb0f7d22ffb680fd72277d3f6c6b2655eff27",
+  "horust_crate_provenance_sha256": "2e59a679087e227438c72b4cdef44815406ff2d118cf5b4134ae06780c90e5b2",
+  "local_horust_binary_sha256": "707940ff4e569f416f2b3cb42801b1d9e5af8a6ea1ec842abf32b01b91f7cb9f",
+  "runs": [
+    {
+      "surface": "macos",
+      "artifact": ".adl/local-artifacts/issue-5211/macos/guardian-tests-final.log",
+      "artifact_sha256": "69d6a759ebcd35191bd0a58013ea785c021d2b5cad48a1ce71e407c0763d2cea",
+      "command_summary": "ADL_HORUST_BIN=... cargo test guardian_soak qualification suite",
+      "status": "passed",
+      "tests": 7,
+      "horust_tests": 5,
+      "runtime_soak_cycles": 100
+    },
+    {
+      "surface": "nessus-linux",
+      "run_id": "issue-5211-horust-linux-retry",
+      "artifact": ".adl/local-artifacts/issue-5211/nessus/summary.json",
+      "artifact_sha256": "4c174fd4bf73f6ca6edcbc6331be9e3866663ed6ee2eed0a4546aec2f24d7b10",
+      "started_at": "2026-07-12T03:37:51Z",
+      "finished_at": "2026-07-12T03:39:45Z",
+      "command_summary": "nvidia-smi; cargo install --locked horust 0.1.13; focused guardian_soak tests",
+      "status": "passed",
+      "scope": ["packaging", "restart-budget-reproduction", "environment-isolation", "restart-continuity", "configuration-failure"]
+    },
+    {
+      "surface": "aws-systemd-linux",
+      "run_id": "issue-5211-systemd-containment",
+      "artifact": ".adl/local-artifacts/issue-5211/aws-systemd/summary.json",
+      "artifact_sha256": "c1fc86430749bc9dc754b518eaff9be16c8ff1b9d1167035cc52ab895123dfa7",
+      "started_at": "2026-07-12T03:46:11Z",
+      "finished_at": "2026-07-12T03:49:01Z",
+      "command_summary": "install fixture; systemd-analyze verify; systemctl start/show/stop; cgroup inspection",
+      "status": "passed",
+      "scope": ["systemd-unit-verification", "cgroup-containment", "resource-bounds", "clean-stop", "instance-termination"]
+    },
+    {
+      "surface": "aws-gpu-spot",
+      "artifacts": [
+        ".adl/local-artifacts/issue-5211/aws-gpu-smallest/summary.json",
+        ".adl/local-artifacts/issue-5211/aws-gpu-v100-smallest/summary.json",
+        ".adl/local-artifacts/issue-5211/aws-gpu-v100-smallest-ubuntu/summary.json",
+        ".adl/local-artifacts/issue-5211/aws-gpu-v100-available/summary.json"
+      ],
+      "artifact_sha256": [
+        "6b19d6d6a1dbf018c896f06fcf7ec27e1dfd8d6fadcf8091bb31fc3f9ae41822",
+        "cf8baf9e366f02f245f797676f7ae31536c1b04ef14f351e9e49d6263e99a113",
+        "f7a1474cd14890499cd44ce0e8d1aec94db17fca32fdddace0fbfd4cb6678142",
+        "94c0517070848888f6702c37ae7addc1e685b8b5ca7542c9ff2ba0d2af2f5bf4"
+      ],
+      "attempts": [
+        {"run_id": "issue-5211-gpu-smallest", "started_at": "2026-07-12T03:51:16Z", "finished_at": "2026-07-12T03:51:20Z", "reason": "G/VT Spot quota 0"},
+        {"run_id": "issue-5211-gpu-v100-smallest", "started_at": "2026-07-12T03:53:11Z", "finished_at": "2026-07-12T03:53:13Z", "reason": "p3.2xlarge unavailable"},
+        {"run_id": "issue-5211-gpu-v100-smallest-ubuntu", "started_at": "2026-07-12T03:54:35Z", "finished_at": "2026-07-12T03:54:39Z", "reason": "p3.2xlarge unavailable"},
+        {"run_id": "issue-5211-gpu-v100-available", "started_at": "2026-07-12T03:57:54Z", "finished_at": "2026-07-12T03:57:57Z", "reason": "p3dn.24xlarge exceeds P Spot quota"}
+      ],
+      "command_summary": "nvidia-smi probe and focused guardian test; all attempts stopped before instance launch",
+      "status": "blocked_before_launch",
+      "scope": ["g4dn.xlarge", "p3.2xlarge", "p3dn.24xlarge"],
+      "claim": "no GPU runtime qualification"
+    }
+  ],
+  "non_claims": [
+    "Linux native lifecycle is focused coverage, not a complete soak or signal-forwarding qualification.",
+    "The local Horust binary hash does not by itself prove the remote binary hash; remote binary provenance remains a follow-up evidence gap.",
+    "The AWS GPU attempts launched no instance and produced no GPU-runtime result."
+  ]
+}
