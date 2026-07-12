@@ -216,9 +216,28 @@ pub(super) fn fetch_origin_main_with_fallback() -> Result<()> {
 
 pub(super) fn ensure_git_metadata_writable() -> Result<()> {
     let git_dir = run_capture("git", &["rev-parse", "--git-common-dir"])?;
-    ensure_git_metadata_writable_with(Path::new(git_dir.trim()), |path| fs::create_dir(path))
+    let git_dir = git_dir.trim();
+    let probe_dir = Path::new(git_dir).join(format!(
+        "adl-git-write-probe-{}-{}",
+        std::process::id(),
+        std::time::SystemTime::now()
+            .duration_since(std::time::UNIX_EPOCH)
+            .unwrap_or_default()
+            .as_nanos()
+    ));
+    match fs::create_dir(&probe_dir) {
+        Ok(()) => {
+            let _ = fs::remove_dir(&probe_dir);
+            Ok(())
+        }
+        Err(err) => bail!(
+            "start: git metadata directory '{}' is not writable, so branch/worktree creation cannot proceed. Remediation: restore write access to git metadata before rerunning. ({err})",
+            git_dir
+        ),
+    }
 }
 
+#[cfg(test)]
 pub(super) fn ensure_git_metadata_writable_with<F>(git_dir: &Path, create_probe: F) -> Result<()>
 where
     F: FnOnce(&Path) -> std::io::Result<()>,
