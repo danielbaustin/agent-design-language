@@ -11,6 +11,24 @@ use std::time::{Duration, Instant};
 
 static TEMP_SEQ: AtomicU64 = AtomicU64::new(0);
 
+#[test]
+fn observability_replay_preserves_every_typed_priority_label() {
+    let cases = [
+        (
+            ChannelPriority::LowPriorityObservability,
+            "low_priority_observability",
+        ),
+        (ChannelPriority::Audit, "audit"),
+        (ChannelPriority::Evidence, "evidence"),
+        (ChannelPriority::GovernedExecution, "governed_execution"),
+        (ChannelPriority::CriticalContinuity, "critical_continuity"),
+        (ChannelPriority::ControlPlane, "control_plane"),
+    ];
+    for (priority, expected) in cases {
+        assert_eq!(observability_priority_label(priority), expected);
+    }
+}
+
 fn temp_dir(prefix: &str) -> PathBuf {
     let dir = std::env::temp_dir().join(format!(
         "adl-long-lived-agent-{prefix}-{}-{}",

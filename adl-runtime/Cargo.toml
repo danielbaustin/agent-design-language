@@ -18,6 +18,7 @@ sha2 = "0.10"
 serde_jcs = "0.2"
 tokio = { version = "1", features = ["fs", "macros", "rt", "rt-multi-thread", "sync", "time"] }
 tokio-util = { version = "0.7", features = ["rt"] }
+libc = "0.2"
 
 [dev-dependencies]
 tempfile = "3"
