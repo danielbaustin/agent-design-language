@@ -1,0 +1,119 @@
+{
+  "schema": "adl.runtime_v3.guardian_fallback_matrix.v1",
+  "issue": 5224,
+  "decision_date": "2026-07-12",
+  "child_contract": {
+    "command": "adl-runtime-kernel serve <continuity-path>",
+    "control_port": "127.0.0.1:20997",
+    "guardian_responsibilities": [
+      "environment_injection",
+      "stdout_stderr_capture",
+      "signal_delivery",
+      "child_reaping",
+      "restart_delay",
+      "bounded_process_restart"
+    ],
+    "child_responsibilities": [
+      "component_supervision",
+      "typed_channels",
+      "readiness",
+      "continuity",
+      "graceful_shutdown",
+      "serialization"
+    ]
+  },
+  "candidates": [
+    {
+      "id": "horust-0.1.13",
+      "source": "docs/architecture/RUNTIME_V3_GUARDIAN_AND_SOAK.md",
+      "direct_external_process_guardian": true,
+      "cross_platform_default_fit": "blocked",
+      "useful_capabilities": [
+        "portable_unix_process_supervision",
+        "signal_forwarding",
+        "restart_delay"
+      ],
+      "blocking_evidence": "Horust 0.1.13 does not enforce bounded on-failure restart attempts for repeated post-start crashes.",
+      "disposition": "retain_selected_candidate_pending_fixed_release"
+    },
+    {
+      "id": "rustysd-b200759c",
+      "source": "docs/architecture/runtime_v3_guardian_matrix.v1.json",
+      "direct_external_process_guardian": true,
+      "cross_platform_default_fit": "no",
+      "useful_capabilities": [
+        "systemd_style_units",
+        "linux_service_manager_model",
+        "restart_always_fixture"
+      ],
+      "blocking_evidence": "Prior matrix records macOS build gaps and proof-of-concept maintenance status.",
+      "disposition": "retain_linux_only_proof_candidate"
+    },
+    {
+      "id": "systemd",
+      "source": "infra/systemd/adl-runtime-kernel.service",
+      "direct_external_process_guardian": true,
+      "cross_platform_default_fit": "no",
+      "useful_capabilities": [
+        "cgroup_ownership",
+        "dynamic_user",
+        "resource_bounds",
+        "journal_capture"
+      ],
+      "blocking_evidence": "Linux-only platform service.",
+      "disposition": "retain_optional_linux_containment_adapter"
+    },
+    {
+      "id": "rust_supervisor-0.2.0",
+      "source": "https://crates.io/crates/rust_supervisor/0.2.0",
+      "docs": "https://docs.rs/rust_supervisor/0.2.0",
+      "repository": "https://github.com/roquess/rust_supervisor",
+      "direct_external_process_guardian": false,
+      "cross_platform_default_fit": "no",
+      "useful_capabilities": [
+        "supervision_tree_concepts",
+        "restart_strategy_vocabulary",
+        "graceful_shutdown_callbacks"
+      ],
+      "blocking_evidence": "The child model is thread factory supervision rather than OS process supervision.",
+      "disposition": "do_not_adopt_as_runtime_v3_guardian"
+    },
+    {
+      "id": "rust-tokio-supervisor-0.1.4",
+      "source": "developerworks/rust-supervisor@66d6f691f5679d5253682473d50eb912ef003997",
+      "direct_external_process_guardian": false,
+      "cross_platform_default_fit": "no",
+      "useful_capabilities": [
+        "restart_budget_tracker",
+        "restart_limit_state",
+        "typed_control_commands",
+        "health_and_readiness_state",
+        "role_defaults",
+        "graceful_shutdown_model"
+      ],
+      "blocking_evidence": "The checked child runner builds a task factory and runs it with tokio::spawn(factory.build(ctx)); no direct tokio::process::Command guardian was found.",
+      "disposition": "try_wrapper_task_adoption_in_issue_5225"
+    },
+    {
+      "id": "launchd",
+      "source": "docs/architecture/RUNTIME_V3_GUARDIAN_AND_SOAK.md",
+      "direct_external_process_guardian": true,
+      "cross_platform_default_fit": "no",
+      "useful_capabilities": [
+        "native_macos_process_ownership",
+        "native_macos_log_integration"
+      ],
+      "blocking_evidence": "macOS-only platform service.",
+      "disposition": "retain_future_platform_adapter_candidate"
+    }
+  ],
+  "selected_drop_in_replacement": null,
+  "recommended_follow_on": {
+    "needed": true,
+    "issue": 5225,
+    "url": "https://github.com/danielbaustin/agent-design-language/issues/5225",
+    "condition": "Horust fixed release remains blocked or fails requalification.",
+    "shape": "First test whether rust-tokio-supervisor can supervise a narrow wrapper task whose job is to own the runtime kernel as a tokio::process child; otherwise build the smallest ADL-owned Tokio process guardian shim using COTS crates for policy, telemetry, serialization, and configuration while preserving the existing external child contract."
+  },
+  "automatic_cutover": false
+}

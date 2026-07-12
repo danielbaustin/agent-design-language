@@ -27,7 +27,8 @@
     {"issue": 5183, "state": "closed", "role": "operations_integrations", "cutover_effect": "required_input_present"},
     {"issue": 5211, "state": "open", "role": "horust_adoption_qualification", "cutover_effect": "blocked_by_unreleased_restart_budget_fix"},
     {"issue": 5221, "state": "open", "role": "fixed_horust_release_rollout", "cutover_effect": "required_before_guardian_cutover"},
-    {"issue": 5222, "state": "open", "role": "weather_gpu_qualification", "cutover_effect": "gpu_proof_deferred"}
+    {"issue": 5222, "state": "open", "role": "weather_gpu_qualification", "cutover_effect": "gpu_proof_deferred"},
+    {"issue": 5224, "state": "open", "role": "guardian_fallback_review", "cutover_effect": "no_drop_in_cots_replacement_identified"}
   ],
   "gates": [
     {
@@ -60,6 +61,12 @@
       "status": "deferred",
       "source": "#5222",
       "reason": "GPU proof deferred to #5222; no GPU-runtime claim is made by #5211 or #5218."
+    },
+    {
+      "id": "guardian.fallback",
+      "status": "routed_follow_on",
+      "source": "#5224",
+      "reason": "No reviewed COTS candidate is a drop-in cross-platform external guardian replacement; #5225 tests rust-tokio-supervisor wrapper-task adoption before a tiny custom shim."
     }
   ],
   "non_claims": [
