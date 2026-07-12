@@ -1499,7 +1499,6 @@ memory:
         );
         assert!(!raw.contains("Bearer "), "leaked bearer token:\n{raw}");
     }
-
 }
 
 #[test]
