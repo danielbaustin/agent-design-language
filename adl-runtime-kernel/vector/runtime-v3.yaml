@@ -14,12 +14,30 @@ transforms:
       fields = parse_key_value!(slice!(.message, 10))
       . = merge(., fields)
       .service = "adl-runtime-v3"
+  runtime_v3_cloudwatch_emf:
+    type: remap
+    inputs:
+      - runtime_v3_events
+    source: |
+      .cloudwatch_namespace = "ADL/RuntimeV3"
+      .cloudwatch_log_group = "/adl/runtime-v3"
+      .cloudwatch_route = "vector.runtime_v3_cloudwatch_emf"
+      .runtime_event_count = 1
+      ._aws = {
+        "CloudWatchMetrics": [{
+          "Namespace": .cloudwatch_namespace,
+          "Dimensions": [["service", "schema"]],
+          "Metrics": [
+            {"Name": "runtime_event_count", "Unit": "Count"}
+          ]
+        }]
+      }
 
 sinks:
   runtime_v3_local:
     type: console
     inputs:
-      - runtime_v3_events
+      - runtime_v3_cloudwatch_emf
     target: stdout
     encoding:
       codec: json

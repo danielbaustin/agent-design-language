@@ -84,6 +84,7 @@ Claude family note:
 
 Fable 5 UTS acceptance note:
 - use `adl/tools/run_fable5_uts_acceptance.sh` to run Claude Fable 5 through the ADL provider adapter and the sibling UTS benchmark runner
+- use `docs/tooling/CALL_CLAUDE_FABLE_5.md` for a bounded diagnostic or review call with retained provider artifacts
 - the script writes an ad-hoc selector for `hosted:adl-anthropic:claude-fable-5`, injects a portable `max_output_tokens` budget through `adl/tools/adl_provider_adapter_with_budget.py`, runs the UTS deterministic self-check, runs an optional hosted probe, and then runs the `regular,uts_only` lanes
 - provide credentials with `--key-file "$HOME/keys/claude2.key"` or an already-set `ANTHROPIC_API_KEY`; the script must not print or retain the key value
 - proof for issue #5044 is recorded in `docs/milestones/v0.91.7/review/provider/FABLE5_UTS_ACCEPTANCE_5044.md`

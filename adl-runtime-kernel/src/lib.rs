@@ -1,14 +1,17 @@
 //! Independent, additive runtime-kernel proof for ADL issue #5170.
 
 pub mod channel;
+pub mod cognition;
 pub mod component;
 pub mod config;
 pub mod continuity;
 pub mod contract;
 pub mod control;
 pub mod governance;
+pub mod identity_memory;
 pub mod operations;
 pub mod parity;
+pub mod private_state;
 pub mod proof;
 pub mod reasoning;
 pub mod supervisor;
@@ -17,6 +20,7 @@ pub mod topology;
 pub mod weather;
 
 pub use channel::{channel, BoundedReceiver, BoundedSender, ChannelFullPolicy, SendError};
+pub use cognition::*;
 pub use component::{
     Component, ComponentContext, ComponentError, ComponentFactory, ComponentId, ComponentSpec,
     FailurePolicy, PortSpec, RunningState,
@@ -26,8 +30,10 @@ pub use continuity::*;
 pub use contract::*;
 pub use control::*;
 pub use governance::*;
+pub use identity_memory::*;
 pub use operations::*;
 pub use parity::*;
+pub use private_state::*;
 pub use reasoning::*;
 pub use supervisor::{Kernel, KernelControl, KernelError, KernelExit, KernelHandle};
 pub use telemetry::*;

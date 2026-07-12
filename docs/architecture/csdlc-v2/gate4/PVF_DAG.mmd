@@ -1,0 +1,12 @@
+flowchart LR
+  M["Typed PVF manifest"] --> V["Fail-closed schema and policy validation"]
+  V --> S["Deterministic dependency selection"]
+  S --> W1["Wave 1: independent lanes"]
+  W1 --> B["Concurrency and resource budgets"]
+  B --> L1["Lane A argv process"]
+  B --> L2["Lane B argv process"]
+  L1 --> W2["Wave 2: dependent lanes"]
+  L2 --> W2
+  W2 --> E["Bounded redacted evidence"]
+  E --> C["Typed convergence disposition"]
+  V -->|"invalid/cycle/authority gap"| F["Fail closed before execution"]

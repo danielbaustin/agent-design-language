@@ -76,6 +76,25 @@
   },
   "lanes": [
     {
+      "id": "csdlc_v2_standalone",
+      "lane_class": "rust_unit",
+      "default_surface": "tooling",
+      "owner": "csdlc-v2",
+      "proof_role": "standalone_regression",
+      "requirement_ids": [
+        "csdlc_v2_standalone"
+      ],
+      "path_selectors": [
+        "csdlc-v2/**"
+      ],
+      "path_hints": [
+        "csdlc-v2/**"
+      ],
+      "command": "cargo test --manifest-path csdlc-v2/Cargo.toml",
+      "run_command": "cargo test --manifest-path csdlc-v2/Cargo.toml",
+      "reason": "standalone_csdlc_v2_surface_requires_only_its_independent_focused_suite"
+    },
+    {
       "id": "prompt_template_contracts",
       "lane_class": "cli_workflow",
       "default_surface": "tooling",

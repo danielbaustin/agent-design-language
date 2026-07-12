@@ -1,0 +1,20 @@
+stateDiagram-v2
+  [*] --> initialized
+  initialized --> ready
+  ready --> bound
+  bound --> implemented
+  implemented --> reviewed
+  reviewed --> published
+  published --> merge_ready
+  merge_ready --> merged
+  merged --> closed_out
+
+  note right of initialized
+    All six cards exist.
+    Design/diagram may still block ready.
+  end note
+  note right of reviewed
+    Exact-revision review truth
+    is implemented in Gate 5.
+  end note
+

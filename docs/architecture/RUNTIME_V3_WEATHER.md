@@ -1,12 +1,12 @@
 # Runtime V3 Weather
 
 Runtime v3 now has a small host-resource weather report in
-`adl-runtime/src/weather.rs`.
+`adl-runtime-kernel/src/weather.rs`.
 
 The weather surface uses the `sysinfo` crate for CPU, memory, and disk readings.
 It does not implement a custom monitoring backend. CloudWatch delivery remains
-owned by the Vector observability component; the weather module only emits a
-bounded CloudWatch EMF-compatible JSON event for that pipeline.
+owned by the Vector observability component; the weather health report names
+the `vector.runtime_v3_cloudwatch_emf` route for that pipeline.
 
 The proof surface is the runtime module and its focused contract tests. There
 is no standalone daemon or separate monitoring process.
@@ -30,3 +30,6 @@ Local GPU telemetry is reported as `deferred` when no approved GPU host is
 available. That is an explicit proof state, not a pass. A later GPU-host run can
 replace the deferred state with observed GPU telemetry without changing the CPU,
 memory, disk, CloudWatch-shape, or serialization contracts.
+
+#5252 retains the detailed proof packet in
+`docs/architecture/runtime_v3_weather_cloudwatch_5252.v1.json`.

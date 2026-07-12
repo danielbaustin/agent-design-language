@@ -912,41 +912,16 @@ fn bootstrap_stub_reason_detects_issue_prompt_and_sip_templates() {
 #[cfg(unix)]
 #[test]
 fn ensure_git_metadata_writable_rejects_unwritable_git_dir() {
-    use std::os::unix::fs::PermissionsExt;
+    let git_dir = Path::new("fixture-git-common-dir");
+    let err = crate::cli::pr_cmd::git_support::ensure_git_metadata_writable_with(git_dir, |_| {
+        Err(std::io::Error::new(
+            std::io::ErrorKind::PermissionDenied,
+            "fixture permission denied",
+        ))
+    })
+    .expect_err("unwritable git dir should fail");
 
-    let _guard = env_lock();
-    let repo = unique_temp_dir("adl-pr-git-metadata-write");
-    init_git_repo(&repo);
-    let prev_dir = env::current_dir().expect("cwd");
-    env::set_current_dir(&repo).expect("chdir");
-
-    let git_dir = repo.join(".git");
-    let refs_dir = git_dir.join("refs");
-    let heads_dir = refs_dir.join("heads");
-    let git_mode = fs::metadata(&git_dir)
-        .expect("git metadata")
-        .permissions()
-        .mode();
-    let refs_mode = fs::metadata(&refs_dir)
-        .expect("refs metadata")
-        .permissions()
-        .mode();
-    let heads_mode = fs::metadata(&heads_dir)
-        .expect("heads metadata")
-        .permissions()
-        .mode();
-
-    fs::set_permissions(&git_dir, fs::Permissions::from_mode(0o555)).expect("chmod git");
-    fs::set_permissions(&refs_dir, fs::Permissions::from_mode(0o555)).expect("chmod refs");
-    fs::set_permissions(&heads_dir, fs::Permissions::from_mode(0o555)).expect("chmod heads");
-
-    let err = ensure_git_metadata_writable().expect_err("unwritable git dir should fail");
-
-    fs::set_permissions(&heads_dir, fs::Permissions::from_mode(heads_mode)).expect("restore heads");
-    fs::set_permissions(&refs_dir, fs::Permissions::from_mode(refs_mode)).expect("restore refs");
-    fs::set_permissions(&git_dir, fs::Permissions::from_mode(git_mode)).expect("restore git");
-    env::set_current_dir(prev_dir).expect("restore cwd");
-
+    assert!(err.to_string().contains("fixture-git-common-dir"));
     assert!(err.to_string().contains("git metadata directory"));
     assert!(err
         .to_string()

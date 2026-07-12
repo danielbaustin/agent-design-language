@@ -1,0 +1,9 @@
+flowchart LR
+    Legacy["Legacy Markdown data"] --> AST["markdown.rs mdast"]
+    AST --> Guard{"Supported and unambiguous?"}
+    Guard -->|no| Diagnostics["No-write migration report"]
+    Guard -->|yes| V2["Independent v2 cards + index"]
+    V2 --> Compat["Generated compatibility view"]
+    LegacyDoctor["Normalized legacy doctor"] --> Compare["Outcome parity"]
+    V2 --> Compare
+    Compare --> Result["Equivalent or exact field differences"]

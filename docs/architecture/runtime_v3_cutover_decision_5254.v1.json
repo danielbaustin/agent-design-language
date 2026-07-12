@@ -1,0 +1,71 @@
+{
+  "schema": "adl.runtime_v3.cutover_decision.v1",
+  "issue": 5254,
+  "target_version": "v0.91.7",
+  "created_at_utc": "2026-07-12T13:55:00Z",
+  "decision": "keep_runtime_v2_default",
+  "cutover_authorized": false,
+  "default_runtime": "v2",
+  "runtime_v3_selection": "explicit_opt_in_only",
+  "default_runtime_switch_authorized": false,
+  "runtime_v2_decommission_authorized": false,
+  "runtime_v2_deletion_authorized": false,
+  "rollback_target": "v2",
+  "rollback_policy": {
+    "default_backend": "v2",
+    "runtime_v3_opt_in": "ADL_RUNTIME_SELECTION=v3 or explicit --runtime v3 only",
+    "rollback_action": "remove explicit Runtime v3 selection or select --runtime v2",
+    "state_mutation_claim": "runtime selection rollback does not rewrite retained runtime state"
+  },
+  "inputs": {
+    "live_black_box_parity": "docs/architecture/runtime_v3_live_black_box_parity_5248.v1.json",
+    "shadow_parity": "docs/architecture/runtime_v3_shadow_parity_report.v1.json",
+    "soak_rollback": "docs/architecture/runtime_v3_soak_rollback_5253.v1.json",
+    "weather_cloudwatch": "docs/architecture/runtime_v3_weather_cloudwatch_5252.v1.json",
+    "entrypoint_switch": "docs/architecture/RUNTIME_V3_ENTRYPOINT_SWITCH.md"
+  },
+  "input_summary": {
+    "live_black_box_cutover_eligible": false,
+    "live_black_box_blockers": 9,
+    "accepted_intentional_divergence": 7,
+    "retained_v2_behavior_behind_adapter": 1,
+    "deferred_non_cutover_surface": 0
+  },
+  "dependency_state": [
+    {"issue": 5248, "state": "closed", "role": "live black-box parity classification"},
+    {"issue": 5249, "state": "closed", "role": "private-state security proof"},
+    {"issue": 5250, "state": "closed", "role": "identity and memory continuity proof"},
+    {"issue": 5251, "state": "closed", "role": "governed cognition proof"},
+    {"issue": 5252, "state": "closed", "role": "weather, GPU disposition, and CloudWatch boundary proof"},
+    {"issue": 5253, "state": "closed", "role": "production-like soak and rollback proof"}
+  ],
+  "blocking_surfaces": [
+    "kernel.lifecycle",
+    "kernel.topology_and_backpressure",
+    "service.contracts_and_configuration",
+    "continuity.replay_recovery",
+    "learning.adaptive_dag",
+    "governance.freedom_gate_aee",
+    "contracts.delegation_resources",
+    "agents.providers_scheduler",
+    "network.acip_a2a_cloud"
+  ],
+  "next_gate": {
+    "issue": 5220,
+    "role": "release proof gate",
+    "required_decision": "close v0.91.7 with Runtime v2 default unless a later reviewed packet proves cutover eligibility"
+  },
+  "required_before_reconsidering_default_switch": [
+    "Every live black-box parity blocker must be resolved or explicitly accepted by a reviewed release decision.",
+    "Runtime v3 must remain reversible with Runtime v2 as rollback target.",
+    "Deferred GPU, remote, and guardian qualification lanes must stay non-pass unless separately proven.",
+    "Runtime v2 decommission must be a separate reviewed step."
+  ],
+  "non_claims": [
+    "This packet does not authorize Runtime v3 as the default runtime.",
+    "This packet does not delete or decommission Runtime v2.",
+    "This packet does not count blocked or deferred lanes as passed proof.",
+    "This packet does not claim observed GPU telemetry or remote multi-day soak proof.",
+    "This packet does not claim full Runtime v2 behavioral equivalence."
+  ]
+}

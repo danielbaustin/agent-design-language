@@ -1,0 +1,83 @@
+[package]
+name = "csdlc-v2"
+version = "0.1.0"
+edition = "2021"
+rust-version = "1.85"
+license = "Apache-2.0"
+publish = false
+
+[lib]
+name = "csdlc_v2"
+path = "src/lib.rs"
+
+[[bin]]
+name = "csdlc-edit"
+path = "src/bin/csdlc-edit.rs"
+
+[[bin]]
+name = "csdlc-doctor"
+path = "src/bin/csdlc-doctor.rs"
+
+[[bin]]
+name = "csdlc-init"
+path = "src/bin/csdlc-init.rs"
+
+[[bin]]
+name = "csdlc-bind"
+path = "src/bin/csdlc-bind.rs"
+
+[[bin]]
+name = "csdlc-validate"
+path = "src/bin/csdlc-validate.rs"
+
+[[bin]]
+name = "csdlc-schedule"
+path = "src/bin/csdlc-schedule.rs"
+
+[[bin]]
+name = "csdlc-shepherd"
+path = "src/bin/csdlc-shepherd.rs"
+
+[[bin]]
+name = "csdlc-review"
+path = "src/bin/csdlc-review.rs"
+
+[[bin]]
+name = "csdlc-publish"
+path = "src/bin/csdlc-publish.rs"
+
+[[bin]]
+name = "csdlc-closeout"
+path = "src/bin/csdlc-closeout.rs"
+
+[[bin]]
+name = "csdlc-import"
+path = "src/bin/csdlc-import.rs"
+
+[[bin]]
+name = "csdlc-shadow"
+path = "src/bin/csdlc-shadow.rs"
+
+[dependencies]
+blake3 = "1"
+clap = { version = "4.5", features = ["derive"] }
+fs2 = "0.4"
+markdown = "1.0.0"
+schemars = "0.8"
+serde = { version = "1", features = ["derive"] }
+serde_json = "1"
+strum = { version = "0.27", features = ["derive"] }
+thiserror = "2"
+libc = "0.2"
+octocrab = { version = "0.53", default-features = false, features = ["default-client", "jwt-rust-crypto", "rustls", "rustls-ring"] }
+tokio = { version = "1", features = ["macros", "rt-multi-thread"] }
+url = "2"
+
+[dev-dependencies]
+tempfile = "3"
+
+[profile.release]
+strip = true
+lto = "thin"
+codegen-units = 1
+panic = "abort"

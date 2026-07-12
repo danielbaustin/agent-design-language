@@ -1,0 +1,123 @@
+{
+  "schema": "adl.runtime_v3.release_proof_gate.v1",
+  "issue": 5220,
+  "sprint_issue": 5227,
+  "target_version": "v0.91.7",
+  "created_at_utc": "2026-07-12T14:20:00Z",
+  "release_gate_result": "complete_no_default_cutover",
+  "default_cutover_authorized": false,
+  "default_runtime": "v2",
+  "runtime_v3_selection": "explicit_opt_in_only",
+  "runtime_v2_deletion_authorized": false,
+  "runtime_v2_decommission_authorized": false,
+  "rollback_target": "v2",
+  "evidence": {
+    "entrypoint_switch": "docs/architecture/RUNTIME_V3_ENTRYPOINT_SWITCH.md",
+    "cutover_decision": "docs/architecture/runtime_v3_cutover_decision_5254.v1.json",
+    "live_black_box_parity": "docs/architecture/runtime_v3_live_black_box_parity_5248.v1.json",
+    "shadow_parity_report": "docs/architecture/runtime_v3_shadow_parity_report.v1.json",
+    "soak_rollback": "docs/architecture/runtime_v3_soak_rollback_5253.v1.json",
+    "weather_cloudwatch": "docs/architecture/runtime_v3_weather_cloudwatch_5252.v1.json",
+    "guardian_fallback_decision": "docs/architecture/RUNTIME_V3_GUARDIAN_FALLBACK_DECISION.md",
+    "cutover_checklist": "docs/architecture/runtime_v3_cutover_checklist.v1.json"
+  },
+  "footprint": {
+    "runtime_v3_raw_rust_loc_prior_count": 10324,
+    "runtime_v3_rust_files_prior_count": 17,
+    "runtime_v3_test_functions_prior_count": 103,
+    "runtime_v2_raw_rust_loc_prior_count": 79239,
+    "runtime_v2_test_functions_prior_count": 546,
+    "note": "Prior counts are retained from the earlier Runtime v3 gate packet; #5220 does not make a new LoC reduction claim."
+  },
+  "gates": [
+    {
+      "id": "entrypoint.explicit_switch",
+      "status": "passed",
+      "evidence": "docs/architecture/RUNTIME_V3_ENTRYPOINT_SWITCH.md",
+      "claim": "Runtime v3 can be selected explicitly without changing default behavior."
+    },
+    {
+      "id": "default_runtime",
+      "status": "not_authorized",
+      "evidence": "docs/architecture/runtime_v3_cutover_decision_5254.v1.json",
+      "claim": "Runtime v2 remains the default for v0.91.7."
+    },
+    {
+      "id": "runtime_v2_decommission",
+      "status": "not_authorized",
+      "evidence": "docs/architecture/runtime_v3_cutover_decision_5254.v1.json",
+      "claim": "Runtime v2 deletion or decommission remains out of scope."
+    },
+    {
+      "id": "guardian.fallback",
+      "status": "passed_selected_scope",
+      "evidence": "docs/architecture/RUNTIME_V3_GUARDIAN_FALLBACK_DECISION.md",
+      "claim": "The selected fallback scope uses the small ADL Tokio child-process guardian; Horust/native lanes remain non-pass unless separately qualified."
+    },
+    {
+      "id": "weather.cpu_memory_disk",
+      "status": "passed",
+      "evidence": "docs/architecture/runtime_v3_weather_cloudwatch_5252.v1.json",
+      "claim": "CPU, memory, disk, CloudWatch-shape event, and graceful-stop policy are retained."
+    },
+    {
+      "id": "weather.gpu",
+      "status": "deferred_non_cutover_surface",
+      "evidence": "docs/architecture/runtime_v3_weather_cloudwatch_5252.v1.json",
+      "claim": "Observed GPU telemetry remains deferred and is not counted as passed proof."
+    },
+    {
+      "id": "api.control_port",
+      "status": "passed_by_contract",
+      "evidence": "docs/architecture/RUNTIME_V3_ENTRYPOINT_SWITCH.md",
+      "claim": "Runtime v3 control API policy remains 127.0.0.1:20997."
+    },
+    {
+      "id": "soak.rollback",
+      "status": "passed_bounded_scope",
+      "evidence": "docs/architecture/runtime_v3_soak_rollback_5253.v1.json",
+      "claim": "Bounded production-like soak and Runtime v2 rollback/default preservation are retained."
+    },
+    {
+      "id": "parity.live_black_box",
+      "status": "blocked_for_default_cutover",
+      "evidence": "docs/architecture/runtime_v3_live_black_box_parity_5248.v1.json",
+      "claim": "Live black-box parity still reports cutover_eligible=false and nine blocker-class capability groups; #5220 closes as no-go for default cutover."
+    }
+  ],
+  "child_issue_results": [
+    {"issue": 5247, "state": "closed", "role": "runtime_v3_cutover_readiness_umbrella", "blocks_5220_closeout": false},
+    {"issue": 5248, "state": "closed", "role": "live_black_box_parity_fixtures", "blocks_5220_closeout": false},
+    {"issue": 5249, "state": "closed", "role": "private_state_security_equivalence", "blocks_5220_closeout": false},
+    {"issue": 5250, "state": "closed", "role": "citizen_identity_memory_adapters", "blocks_5220_closeout": false},
+    {"issue": 5251, "state": "closed", "role": "governed_cognition_adapters_or_non_cutover_dispositions", "blocks_5220_closeout": false},
+    {"issue": 5252, "state": "closed", "role": "gpu_weather_cloudwatch_retained_proof", "blocks_5220_closeout": false},
+    {"issue": 5253, "state": "closed", "role": "production_like_soak_and_rollback", "blocks_5220_closeout": false},
+    {"issue": 5254, "state": "closed", "role": "default_switch_and_runtime_v2_decommission_decision", "blocks_5220_closeout": false}
+  ],
+  "local_validation": [
+    "python3 -m json.tool docs/architecture/runtime_v3_release_proof_gate_5220.v1.json",
+    "python3 -m json.tool docs/architecture/runtime_v3_cutover_checklist.v1.json",
+    "cargo fmt --manifest-path adl-runtime-kernel/Cargo.toml --check",
+    "cargo test --manifest-path adl-runtime-kernel/Cargo.toml --test parity -- release_proof_gate_closes_without_authorizing_default_cutover final_cutover_decision_keeps_v2_default_until_parity_blockers_clear --nocapture",
+    "cargo test --manifest-path adl-runtime-kernel/Cargo.toml --test guardian_soak -- production_like_soak_rollback_packet_retains_cutover_boundaries packaging_preserves_one_guardian_neutral_child_contract --nocapture",
+    "cargo clippy --manifest-path adl-runtime-kernel/Cargo.toml --all-targets -- -D warnings",
+    "cargo test --manifest-path adl-runtime-kernel/Cargo.toml"
+  ],
+  "required_github_checks": [
+    "adl-path-policy",
+    "adl-coverage",
+    "adl-tooling-contracts",
+    "adl-rust-fmt-clippy",
+    "adl-rust-tests",
+    "adl-demo-proof",
+    "adl-ci"
+  ],
+  "non_claims": [
+    "No default Runtime v3 cutover is authorized.",
+    "No Runtime v2 deletion or decommission is authorized.",
+    "Full Runtime v2 behavioral equivalence is not claimed.",
+    "GPU, remote multi-day, and Horust/native deferred lanes are not counted as passed proof.",
+    "This packet closes #5220 as a v0.91.7 no-go default-switch release gate, not as Runtime v3 production cutover."
+  ]
+}

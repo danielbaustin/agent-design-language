@@ -5,8 +5,8 @@ use adl_runtime_kernel::{
     ComponentContext, ComponentError, ComponentFactory, ComponentId, ComponentSpec, ConfigError,
     DeterminismClass, DiskWeather, FactoryRegistration, FactoryRegistry, FailurePolicy, GpuWeather,
     LifecycleGuarantees, Observation, PortSpec, ResourceState, RuntimeConfig, ServiceContract,
-    SysinfoWeatherObserver, TopologyError, WeatherConfig, WeatherObserver, WeatherSample,
-    RUNTIME_CONFIG_SCHEMA, SERVICE_CONTRACT_SCHEMA,
+    ShutdownDecision, SysinfoWeatherObserver, TopologyError, WeatherConfig, WeatherHealthReport,
+    WeatherObserver, WeatherSample, RUNTIME_CONFIG_SCHEMA, SERVICE_CONTRACT_SCHEMA,
 };
 use async_trait::async_trait;
 use semver::{Version, VersionReq};
@@ -351,4 +351,43 @@ fn sysinfo_observer_reports_portable_core_metrics_and_explicit_gpu_absence() {
     assert_eq!(sample.disks.source, "sysinfo");
     assert_eq!(sample.gpus.value, None);
     assert_eq!(sample.gpus.source, "optional_platform_adapter");
+}
+
+#[test]
+fn weather_health_report_serializes_stop_policy_and_gpu_non_pass_state() {
+    let config = WeatherConfig {
+        disk_stop_free_bytes: 20,
+        disk_warning_free_bytes: 40,
+        disk_recover_free_bytes: 60,
+        ..WeatherConfig::default()
+    };
+    let report =
+        WeatherHealthReport::from_sample(&config, sample(0, 0, 15), ResourceState::Healthy);
+
+    assert_eq!(report.resource_state, ResourceState::StopRequired);
+    assert_eq!(
+        report.shutdown_decision,
+        ShutdownDecision::SerializeStateThenStop
+    );
+    assert_eq!(
+        serde_json::to_value(&report).unwrap()["gpu_proof_state"],
+        "unavailable_not_pass"
+    );
+    assert_eq!(
+        serde_json::to_value(&report).unwrap()["cloudwatch_route"],
+        "vector.runtime_v3_cloudwatch_emf"
+    );
+}
+
+#[test]
+fn vector_boundary_declares_cloudwatch_emf_route_without_kernel_exporter() {
+    let vector_config = include_str!("../vector/runtime-v3.yaml");
+
+    assert!(vector_config.contains("runtime_v3_cloudwatch_emf"));
+    assert!(vector_config.contains("ADL/RuntimeV3"));
+    assert!(vector_config.contains("CloudWatchMetrics"));
+    assert!(vector_config.contains(".runtime_event_count = 1"));
+    assert!(vector_config.contains("\"Name\": \"runtime_event_count\""));
+    assert!(!vector_config.contains("aws_access_key_id"));
+    assert!(!vector_config.contains("aws_secret_access_key"));
 }

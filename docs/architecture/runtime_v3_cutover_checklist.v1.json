@@ -7,15 +7,17 @@
   "default_runtime_switch_authorized": false,
   "runtime_v2_deletion_authorized": false,
   "created_at_utc": "2026-07-12T05:40:00Z",
+  "updated_at_utc": "2026-07-12T14:20:00Z",
   "evidence": {
     "parity_matrix": "docs/architecture/runtime_v3_parity_matrix.v1.json",
     "shadow_parity_report": "docs/architecture/runtime_v3_shadow_parity_report.v1.json",
     "guardian_soak_report": "docs/architecture/runtime_v3_guardian_soak_report.v1.json",
     "horust_qualification_report": "docs/architecture/runtime_v3_horust_qualification_report.v1.json",
-    "final_review": "docs/architecture/RUNTIME_V3_FINAL_REVIEW_5175.md"
+    "final_review": "docs/architecture/RUNTIME_V3_FINAL_REVIEW_5175.md",
+    "release_proof_gate": "docs/architecture/runtime_v3_release_proof_gate_5220.v1.json"
   },
   "issue_states": [
-    {"issue": 5174, "state": "open", "role": "runtime_v3_sprint_umbrella", "cutover_effect": "blocks_final_sprint_closeout"},
+    {"issue": 5174, "state": "closed", "role": "runtime_v3_sprint_umbrella", "cutover_effect": "input_sprint_closed"},
     {"issue": 5175, "state": "closed", "role": "guardian_packaging_soak", "cutover_effect": "evidence_supports_incubation"},
     {"issue": 5176, "state": "closed", "role": "parity_inventory_contracts", "cutover_effect": "required_input_present"},
     {"issue": 5177, "state": "closed", "role": "control_observability", "cutover_effect": "required_input_present"},
@@ -25,10 +27,20 @@
     {"issue": 5181, "state": "closed", "role": "continuity_recovery", "cutover_effect": "required_input_present"},
     {"issue": 5182, "state": "closed", "role": "configuration_topology", "cutover_effect": "required_input_present"},
     {"issue": 5183, "state": "closed", "role": "operations_integrations", "cutover_effect": "required_input_present"},
-    {"issue": 5211, "state": "open", "role": "horust_adoption_qualification", "cutover_effect": "blocked_by_unreleased_restart_budget_fix"},
-    {"issue": 5221, "state": "open", "role": "fixed_horust_release_rollout", "cutover_effect": "required_before_guardian_cutover"},
-    {"issue": 5222, "state": "open", "role": "weather_gpu_qualification", "cutover_effect": "gpu_proof_deferred"},
-    {"issue": 5224, "state": "open", "role": "guardian_fallback_review", "cutover_effect": "no_drop_in_cots_replacement_identified"}
+    {"issue": 5211, "state": "closed", "role": "horust_adoption_qualification", "cutover_effect": "historical_candidate_evidence"},
+    {"issue": 5221, "state": "closed", "role": "fixed_horust_release_rollout", "cutover_effect": "closed_before_selected_fallback_scope"},
+    {"issue": 5222, "state": "closed", "role": "weather_gpu_qualification", "cutover_effect": "cpu_memory_disk_weather_passed_gpu_deferred_to_5252"},
+    {"issue": 5224, "state": "closed", "role": "guardian_fallback_review", "cutover_effect": "no_drop_in_cots_replacement_identified"},
+    {"issue": 5225, "state": "closed", "role": "guardian_fallback_implementation", "cutover_effect": "selected_small_tokio_child_process_fallback"},
+    {"issue": 5227, "state": "open", "role": "v0_91_7_cutover_sprint_umbrella", "cutover_effect": "awaits_5220_closeout"},
+    {"issue": 5247, "state": "closed", "role": "v0_91_7_cutover_readiness_umbrella", "cutover_effect": "child_wave_complete"},
+    {"issue": 5248, "state": "closed", "role": "live_black_box_parity", "cutover_effect": "retained_cutover_eligible_false_with_nine_blockers"},
+    {"issue": 5249, "state": "closed", "role": "private_state_security_equivalence", "cutover_effect": "accepted_intentional_divergence_no_raw_v2_format_claim"},
+    {"issue": 5250, "state": "closed", "role": "identity_memory_adapters", "cutover_effect": "accepted_intentional_divergence_no_raw_v2_wire_format_claim"},
+    {"issue": 5251, "state": "closed", "role": "governed_cognition_adapters", "cutover_effect": "accepted_intentional_divergence_no_subjective_cognition_claim"},
+    {"issue": 5252, "state": "closed", "role": "gpu_weather_retained_proof", "cutover_effect": "cpu_memory_disk_weather_passed_observed_gpu_deferred_non_cutover"},
+    {"issue": 5253, "state": "closed", "role": "production_like_soak_rollback", "cutover_effect": "bounded_soak_and_v2_rollback_preserved"},
+    {"issue": 5254, "state": "closed", "role": "default_switch_decision", "cutover_effect": "no_go_default_switch_runtime_v2_remains_default"}
   ],
   "gates": [
     {
@@ -46,34 +58,58 @@
     },
     {
       "id": "release.proof_gate",
-      "status": "pending",
-      "source": "#5220",
-      "reason": "Release proof gate has not run for the selected cutover scope."
+      "status": "complete_no_default_cutover",
+      "source": "docs/architecture/runtime_v3_release_proof_gate_5220.v1.json",
+      "reason": "Release proof gate records explicit opt-in readiness and closes #5220 as no-go for default cutover after #5247 through #5254 completed."
     },
     {
       "id": "entrypoint.explicit_switch",
-      "status": "pending",
+      "status": "passed",
       "source": "#5219",
-      "reason": "Default behavior must not change until an explicit reversible switch exists and is reviewed."
+      "reason": "Explicit reversible Runtime v3 selection exists; default behavior remains Runtime v2."
     },
     {
       "id": "weather.gpu",
       "status": "deferred",
-      "source": "#5222",
-      "reason": "GPU proof deferred to #5222; no GPU-runtime claim is made by #5211 or #5218."
+      "source": "#5252",
+      "reason": "CPU, memory, and disk weather proof exists; retained GPU proof is routed to v0.91.7 issue #5252."
     },
     {
       "id": "guardian.fallback",
-      "status": "routed_follow_on",
-      "source": "#5224",
-      "reason": "No reviewed COTS candidate is a drop-in cross-platform external guardian replacement; #5225 tests rust-tokio-supervisor wrapper-task adoption before a tiny custom shim."
+      "status": "passed_selected_scope",
+      "source": "#5225",
+      "reason": "Selected fallback scope uses the small ADL Tokio child-process guardian; default cutover still depends on v0.91.7 parity and soak gates."
+    },
+    {
+      "id": "parity.live_black_box",
+      "status": "blocked_for_default_cutover",
+      "source": "#5248",
+      "reason": "Live black-box parity remains cutover_eligible=false with nine blocker-class capability groups; this blocks default replacement but not #5220 no-go closeout."
+    },
+    {
+      "id": "domain_adapters.private_identity_cognition",
+      "status": "accepted_intentional_divergence",
+      "source": "#5249 #5250 #5251",
+      "reason": "Private-state/security, identity/memory, and governed cognition adapters are retained as reviewed intentional divergences without raw Runtime v2 wire-format or subjective-cognition claims."
+    },
+    {
+      "id": "soak.rollback",
+      "status": "passed_bounded_scope",
+      "source": "#5253",
+      "reason": "Production-like soak and rollback proof is retained for bounded explicit-opt-in scope."
+    },
+    {
+      "id": "default_switch_decision",
+      "status": "complete_no_default_cutover",
+      "source": "#5254",
+      "reason": "Final v0.91.7 decision keeps Runtime v2 default, keeps Runtime v3 explicit opt-in only, and does not authorize Runtime v2 decommission."
     }
   ],
   "non_claims": [
     "No Runtime v3 production cutover is authorized.",
     "No Runtime v2 deletion is authorized.",
     "No Horust 0.1.13 bounded-restart guarantee is claimed.",
-    "No GPU monitoring or GPU runtime qualification is claimed.",
+    "Observed GPU telemetry and GPU runtime qualification are not claimed.",
     "Capability routing is not full Runtime v2 behavioral equivalence."
   ]
 }

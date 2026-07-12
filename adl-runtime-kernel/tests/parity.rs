@@ -372,7 +372,12 @@ fn every_retained_module_closes_to_a_declared_capability() {
         })
         .collect::<BTreeMap<_, _>>();
     let closure = close_baseline_modules(modules, &routes);
-    assert_eq!(closure.len(), 195);
+    assert_eq!(
+        closure.len(),
+        report["module_closure"]["baseline_modules"]
+            .as_u64()
+            .unwrap() as usize
+    );
     let unmapped = closure
         .iter()
         .filter(|entry| !capabilities.contains(entry.capability.as_str()))
@@ -939,7 +944,10 @@ fn retained_report_covers_matrix_and_refuses_cutover() {
     assert_eq!(report_ids, matrix_ids);
     assert_eq!(report["decision"], "continue_incubation");
     assert_eq!(report["cutover_eligible"], false);
-    assert_eq!(report["module_closure"]["routed_modules"], 195);
+    assert_eq!(
+        report["module_closure"]["routed_modules"],
+        report["module_closure"]["baseline_modules"]
+    );
     assert_eq!(report["schema"], "adl.runtime.shadow_parity_report.v1");
     assert!(report["footprint"]["measurement"]
         .as_str()
@@ -964,4 +972,231 @@ fn retained_report_covers_matrix_and_refuses_cutover() {
         report["footprint"]["v3"]["fixture_runtime_median_micros"],
         guardian["parity_harness_adversarial_proof"]["sequential_live_fixture"]["v3_median_micros"]
     );
+}
+
+#[test]
+fn live_black_box_parity_classification_covers_matrix_without_counting_blockers_as_passed() {
+    let classification: serde_json::Value = serde_json::from_str(include_str!(
+        "../../docs/architecture/runtime_v3_live_black_box_parity_5248.v1.json"
+    ))
+    .unwrap();
+    let matrix: serde_json::Value = serde_json::from_str(include_str!(
+        "../../docs/architecture/runtime_v3_parity_matrix.v1.json"
+    ))
+    .unwrap();
+    assert_eq!(
+        classification["schema"],
+        "adl.runtime_v3.live_black_box_parity.v1"
+    );
+    assert_eq!(classification["target_version"], "v0.91.7");
+    assert_eq!(classification["cutover_eligible"], false);
+    assert_eq!(
+        classification["classification_policy"]["blocked_or_deferred_counts_as_passed"],
+        false
+    );
+    assert_eq!(
+        classification["classification_policy"]["runtime_v2_internal_reuse_allowed"],
+        false
+    );
+
+    let allowed = classification["classification_policy"]["allowed_dispositions"]
+        .as_array()
+        .unwrap()
+        .iter()
+        .map(|value| value.as_str().unwrap())
+        .collect::<std::collections::BTreeSet<_>>();
+    let mut disposition_counts = std::collections::BTreeMap::<&str, usize>::new();
+    let classification_ids = classification["capabilities"]
+        .as_array()
+        .unwrap()
+        .iter()
+        .map(|entry| {
+            let disposition = entry["disposition"].as_str().unwrap();
+            *disposition_counts.entry(disposition).or_default() += 1;
+            assert!(
+                allowed.contains(disposition),
+                "unsupported disposition {disposition}"
+            );
+            if matches!(disposition, "blocker" | "deferred_non_cutover_surface") {
+                assert!(
+                    entry.get("blocking_issue").is_some(),
+                    "{:?} must route to a blocking issue",
+                    entry["id"]
+                );
+            }
+            entry["id"].as_str().unwrap()
+        })
+        .collect::<std::collections::BTreeSet<_>>();
+    let matrix_ids = matrix["capabilities"]
+        .as_array()
+        .unwrap()
+        .iter()
+        .map(|entry| entry["id"].as_str().unwrap())
+        .collect::<std::collections::BTreeSet<_>>();
+    assert_eq!(classification_ids, matrix_ids);
+    assert_eq!(
+        classification["summary"]["live_equivalent_fixture"].as_u64(),
+        Some(
+            *disposition_counts
+                .get("live_equivalent_fixture")
+                .unwrap_or(&0) as u64
+        )
+    );
+    assert_eq!(
+        classification["summary"]["accepted_intentional_divergence"].as_u64(),
+        Some(
+            *disposition_counts
+                .get("accepted_intentional_divergence")
+                .unwrap_or(&0) as u64
+        )
+    );
+    assert_eq!(
+        classification["summary"]["retained_v2_behavior_behind_adapter"].as_u64(),
+        Some(
+            *disposition_counts
+                .get("retained_v2_behavior_behind_adapter")
+                .unwrap_or(&0) as u64
+        )
+    );
+    assert_eq!(
+        classification["summary"]["deferred_non_cutover_surface"].as_u64(),
+        Some(
+            *disposition_counts
+                .get("deferred_non_cutover_surface")
+                .unwrap_or(&0) as u64
+        )
+    );
+    assert_eq!(
+        classification["summary"]["blocker"].as_u64(),
+        Some(*disposition_counts.get("blocker").unwrap_or(&0) as u64)
+    );
+}
+
+#[test]
+fn final_cutover_decision_keeps_v2_default_until_parity_blockers_clear() {
+    let decision: serde_json::Value = serde_json::from_str(include_str!(
+        "../../docs/architecture/runtime_v3_cutover_decision_5254.v1.json"
+    ))
+    .unwrap();
+    let classification: serde_json::Value = serde_json::from_str(include_str!(
+        "../../docs/architecture/runtime_v3_live_black_box_parity_5248.v1.json"
+    ))
+    .unwrap();
+
+    assert_eq!(decision["schema"], "adl.runtime_v3.cutover_decision.v1");
+    assert_eq!(decision["issue"], 5254);
+    assert_eq!(decision["target_version"], "v0.91.7");
+    assert_eq!(decision["decision"], "keep_runtime_v2_default");
+    assert_eq!(decision["cutover_authorized"], false);
+    assert_eq!(decision["default_runtime"], "v2");
+    assert_eq!(decision["runtime_v3_selection"], "explicit_opt_in_only");
+    assert_eq!(decision["default_runtime_switch_authorized"], false);
+    assert_eq!(decision["runtime_v2_decommission_authorized"], false);
+    assert_eq!(decision["runtime_v2_deletion_authorized"], false);
+    assert_eq!(decision["rollback_target"], "v2");
+    assert_eq!(decision["next_gate"]["issue"], 5220);
+
+    assert_eq!(classification["cutover_eligible"], false);
+    assert_eq!(classification["default_runtime_switch_authorized"], false);
+    assert_eq!(
+        decision["input_summary"]["live_black_box_cutover_eligible"],
+        classification["cutover_eligible"]
+    );
+    assert_eq!(
+        decision["input_summary"]["live_black_box_blockers"],
+        classification["summary"]["blocker"]
+    );
+    assert_eq!(
+        decision["input_summary"]["accepted_intentional_divergence"],
+        classification["summary"]["accepted_intentional_divergence"]
+    );
+
+    let blockers = classification["capabilities"]
+        .as_array()
+        .unwrap()
+        .iter()
+        .filter(|entry| entry["disposition"] == "blocker")
+        .map(|entry| entry["id"].as_str().unwrap())
+        .collect::<std::collections::BTreeSet<_>>();
+    let decision_blockers = decision["blocking_surfaces"]
+        .as_array()
+        .unwrap()
+        .iter()
+        .map(|entry| entry.as_str().unwrap())
+        .collect::<std::collections::BTreeSet<_>>();
+    assert_eq!(decision_blockers, blockers);
+    for capability in classification["capabilities"].as_array().unwrap() {
+        if capability["disposition"] == "blocker" {
+            assert_eq!(capability["blocking_issue"], 5220);
+        }
+    }
+}
+
+#[test]
+fn release_proof_gate_closes_without_authorizing_default_cutover() {
+    let gate: serde_json::Value = serde_json::from_str(include_str!(
+        "../../docs/architecture/runtime_v3_release_proof_gate_5220.v1.json"
+    ))
+    .unwrap();
+    let checklist: serde_json::Value = serde_json::from_str(include_str!(
+        "../../docs/architecture/runtime_v3_cutover_checklist.v1.json"
+    ))
+    .unwrap();
+    let decision: serde_json::Value = serde_json::from_str(include_str!(
+        "../../docs/architecture/runtime_v3_cutover_decision_5254.v1.json"
+    ))
+    .unwrap();
+    let classification: serde_json::Value = serde_json::from_str(include_str!(
+        "../../docs/architecture/runtime_v3_live_black_box_parity_5248.v1.json"
+    ))
+    .unwrap();
+
+    assert_eq!(gate["schema"], "adl.runtime_v3.release_proof_gate.v1");
+    assert_eq!(gate["issue"], 5220);
+    assert_eq!(gate["target_version"], "v0.91.7");
+    assert_eq!(gate["release_gate_result"], "complete_no_default_cutover");
+    assert_eq!(gate["default_cutover_authorized"], false);
+    assert_eq!(gate["default_runtime"], "v2");
+    assert_eq!(gate["runtime_v3_selection"], "explicit_opt_in_only");
+    assert_eq!(gate["runtime_v2_deletion_authorized"], false);
+    assert_eq!(gate["runtime_v2_decommission_authorized"], false);
+    assert_eq!(gate["rollback_target"], "v2");
+
+    assert_eq!(decision["decision"], "keep_runtime_v2_default");
+    assert_eq!(decision["default_runtime_switch_authorized"], false);
+    assert_eq!(classification["cutover_eligible"], false);
+    assert_eq!(classification["summary"]["blocker"], 9);
+
+    let child_results = gate["child_issue_results"].as_array().unwrap();
+    let closed_children = child_results
+        .iter()
+        .map(|entry| {
+            assert_eq!(entry["state"], "closed");
+            assert_eq!(entry["blocks_5220_closeout"], false);
+            entry["issue"].as_u64().unwrap()
+        })
+        .collect::<std::collections::BTreeSet<_>>();
+    assert_eq!(
+        closed_children,
+        [5247, 5248, 5249, 5250, 5251, 5252, 5253, 5254]
+            .into_iter()
+            .collect()
+    );
+
+    let checklist_gate = checklist["gates"]
+        .as_array()
+        .unwrap()
+        .iter()
+        .find(|entry| entry["id"] == "release.proof_gate")
+        .unwrap();
+    assert_eq!(checklist_gate["status"], "complete_no_default_cutover");
+    for issue in 5247..=5254 {
+        let issue_state = checklist["issue_states"]
+            .as_array()
+            .unwrap()
+            .iter()
+            .find(|entry| entry["issue"] == issue)
+            .unwrap();
+        assert_eq!(issue_state["state"], "closed");
+    }
 }

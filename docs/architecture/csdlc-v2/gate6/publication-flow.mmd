@@ -1,0 +1,7 @@
+flowchart LR
+    Request["Publication request"] --> Guard["Claim + exact review + topology guard"]
+    Guard --> Intent["Durable intent"] --> Push["Typed Git push"] --> Observe["Octocrab observe"]
+    Observe -->|"none"| Create["Create draft"] --> Reobserve["Reconcile"]
+    Observe -->|"one"| Update["Normalize same PR"] --> Reobserve
+    Observe -->|"ambiguous"| Stop["Fail closed"]
+    Reobserve --> Commit["Atomic record + SOR"] --> Handoff["Published handoff"]

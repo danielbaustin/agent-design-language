@@ -1,0 +1,7 @@
+flowchart TB
+  E["Review evidence for revision A"] --> C{"Current revision"}
+  C -->|"A"| V["Evidence remains current"]
+  C -->|"B"| N{"Metadata-only proof"}
+  N -->|"narrow paths + unchanged substantive digest"| V
+  N -->|"missing or substantive"| S["Stale: assign and review B"]
+  S --> E2["New evidence replaces prior current review"]

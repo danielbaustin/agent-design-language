@@ -1,0 +1,10 @@
+stateDiagram-v2
+  [*] --> Waiting: dependency or proof pending
+  Waiting --> Ready: dependencies and proof settle
+  Waiting --> Retryable: transient failure
+  Retryable --> Waiting: retry observed
+  Waiting --> RepairRequired: deterministic defect
+  RepairRequired --> Waiting: repair observed
+  Waiting --> OperatorRequired: authority or policy decision
+  OperatorRequired --> Waiting: operator disposition observed
+  Ready --> [*]

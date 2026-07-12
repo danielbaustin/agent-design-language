@@ -4218,6 +4218,36 @@ fn write_daemon_status(
     if let Err(err) = write_json_pretty(
         &loaded
             .state_root
+            .join(adl_runtime::reasoning_runtime::REASONING_RUNTIME_STATUS_REF),
+        &json!({
+            "schema": adl_runtime::reasoning_runtime::REASONING_RUNTIME_STATUS_SCHEMA,
+            "component": adl_runtime::reasoning_runtime::REASONING_RUNTIME_COMPONENT,
+            "health": "ready",
+            "accepted": 0,
+            "completed": 0,
+            "quarantined": 0,
+            "saturation_count": 0,
+            "blocked_admissions": 0,
+            "queue_capacity": 1,
+            "reason_code": "typed_channel_ready"
+        }),
+    ) {
+        let _ = append_operator_event(
+            loaded,
+            "csm_reasoning_runtime_status_write_failed",
+            json!({
+                "schema": "adl.csm.reasoning_runtime.write_failure.v1",
+                "runtime_owner": "csm",
+                "component": "reasoning_runtime",
+                "status": "degraded_nonfatal",
+                "reason": err.to_string(),
+                "recovery_policy": "continue_runtime_and_fail_closed_for_reasoning_runtime_readiness"
+            }),
+        );
+    }
+    if let Err(err) = write_json_pretty(
+        &loaded
+            .state_root
             .join(csm_resident_agents::CSM_RESIDENT_AGENTS_STATUS_REF),
         &resident_agents_status,
     ) {

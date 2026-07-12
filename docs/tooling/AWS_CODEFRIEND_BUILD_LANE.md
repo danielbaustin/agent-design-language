@@ -2,9 +2,9 @@
 
 ## Status
 
-Implemented for issue `#4838` as a manual GitHub Actions plus AWS CodeBuild
-lane. The lane is intentionally separate from the AWS Spot EC2 remote validation
-lane.
+Implemented for issue `#4838` and operationally hardened by `#5164` as a
+manual GitHub Actions plus AWS CodeBuild lane. The lane is intentionally
+separate from the AWS Spot EC2 remote validation lane.
 
 ## Entry Points
 
@@ -29,32 +29,36 @@ bash adl/tools/setup_aws_codefriend_build_resources.sh \
 ```
 
 Create or update the CodeBuild project, service role, and GitHub OIDC start
-role. The project includes an S3 cache for cargo/rustup state, uses native S3
-`sccache` for compiler artifacts, installs `sccache` 0.16 from a pinned
-prebuilt release, enables `lld`, disables incremental compilation, and
-normalizes the checkout through `/workspace` for stable compiler-cache keys. The
-buildspec exports CodeBuild credentials for `sccache` through an in-memory
-`aws configure export-credentials` evaluation and does not write credential
-material to a temp file:
+role. The helper also creates the project CloudWatch log group when absent and
+applies a 30-day retention policy by default. The helper resolves the approved
+ECR tag to an immutable digest before it updates the project. The image must
+already contain Rust, `cargo-nextest`,
+`sccache`, `lld`, `zstd`, AWS CLI, and Git; jobs never install those tools. The
+build uses 18 Cargo jobs and 18 nextest workers on XLARGE, native S3
+`sccache`, and a compatibility-keyed S3 target archive. Both build phases put
+`127.0.0.1` and `localhost` in upper- and lowercase proxy-bypass variables so
+runtime API and OTLP loopback tests never route through an external proxy. It
+exports short-lived CodeBuild credentials in memory and never writes credential
+material to a file:
+
+The validation profile sets `CARGO_PROFILE_TEST_DEBUG=0`: it remains an
+unoptimized test build, but omits debugger symbol payload that is not consumed
+by the lane. The setting is part of the target-cache compatibility hash so it
+cannot restore artifacts built under a different symbol posture.
+
+After copying the checkout to `/codebuild/adl-source`, the build normalizes
+every tracked file mtime to the resolved commit epoch. This prevents a fresh
+CodeBuild checkout timestamp from making Cargo relink otherwise valid artifacts
+restored for the same exact source SHA.
 
 ```sh
 ADL_AWS_PROFILE=agent-logic-admin \
 bash adl/tools/setup_aws_codefriend_build_resources.sh \
   --apply \
   --project-name adl-codefriend-build \
-  --compute-type BUILD_GENERAL1_LARGE \
+  --compute-type BUILD_GENERAL1_XLARGE \
   --cache-bucket adl-codefriend-build-cache \
   --cache-prefix codebuild/cache
-```
-
-For xlarge comparison runs, update the project deliberately:
-
-```sh
-ADL_AWS_PROFILE=agent-logic-admin \
-bash adl/tools/setup_aws_codefriend_build_resources.sh \
-  --apply \
-  --project-name adl-codefriend-build \
-  --compute-type BUILD_GENERAL1_XLARGE
 ```
 
 As of the later WP-06 proof pass on 2026-07-04, the Linux/XLarge quota was
@@ -65,7 +69,7 @@ testing the smaller/cheaper fallback.
 The setup helper writes the GitHub variable/secret values to:
 
 ```text
-.adl/tmp/aws-codefriend-build-resource-setup/github-actions-config.env
+.adl/local-artifacts/aws-codefriend-build-resource-setup/github-actions-config.env
 ```
 
 That file is local operator material and must not be committed.
@@ -131,30 +135,19 @@ bash adl/tools/run_aws_codefriend_build_lane.sh \
   --project-name adl-codefriend-build \
   --source-version HEAD \
   --env ADL_CODEFRIEND_BUILD_COMMAND='bash adl/tools/run_pr_fast_test_lane.sh' \
-  --out .adl/tmp/aws-codefriend-build/summary.json \
-  --artifact-dir .adl/tmp/aws-codefriend-build \
+  --out .adl/local-artifacts/aws-codefriend-build/summary.json \
+  --artifact-dir .adl/local-artifacts/aws-codefriend-build \
   --print-command
 ```
 
-## Live Start-Build Boundary
+## Canonical Broad Nextest Run
 
 Live execution may incur AWS CodeBuild charges and requires the Agent Logic
-business account:
-
-```sh
-ADL_AWS_PROFILE=agent-logic-admin \
-bash adl/tools/run_aws_codefriend_build_lane.sh \
-  --run \
-  --check-account \
-  --project-name "$ADL_AWS_CODEFRIEND_CODEBUILD_PROJECT" \
-  --source-version HEAD \
-  --env ADL_CODEFRIEND_BUILD_COMMAND='bash adl/tools/run_pr_fast_test_lane.sh' \
-  --out .adl/tmp/aws-codefriend-build/summary.json \
-  --artifact-dir .adl/tmp/aws-codefriend-build
-```
-
-Use `--wait` to make the local wrapper block until CodeBuild reaches a terminal
-state and to retain a redacted status artifact:
+business account. Use an explicit 40-character commit SHA so preflight verifies
+that CodeBuild checked out the requested revision. `--wait` streams redacted
+CloudWatch logs by default and retains phase timings in the summary. The
+canonical XLARGE lane uses 18 Cargo build jobs and 18 nextest workers. It
+disables fail-fast so a paid broad run retains the complete failure set.
 
 ```sh
 ADL_AWS_PROFILE=agent-logic-admin \
@@ -163,27 +156,71 @@ bash adl/tools/run_aws_codefriend_build_lane.sh \
   --check-account \
   --wait \
   --project-name adl-codefriend-build \
-  --source-version <branch-or-ref> \
-  --env ADL_CODEFRIEND_BUILD_COMMAND='bash adl/tools/run_build_platform_benchmark.sh --platform codebuild --cache-posture codebuild_xlarge_no_persistent_cache --out .adl/tmp/build-platform-benchmark/codebuild-xlarge/summary.json --artifact-dir .adl/tmp/build-platform-benchmark/codebuild-xlarge' \
-  --out .adl/tmp/aws-codefriend-build/<run-id>/summary.json \
-  --artifact-dir .adl/tmp/aws-codefriend-build/<run-id>
+  --source-version <40-character-commit-sha> \
+  --full-nextest \
+  --out .adl/local-artifacts/aws-codefriend-build/summary.json \
+  --artifact-dir .adl/local-artifacts/aws-codefriend-build
+```
+
+Use `--no-live-logs` only for a caller that deliberately consumes retained
+status instead of terminal output. The wrapper waits until the exact CloudWatch
+stream exists, then advances through `GetLogEvents` forward tokens and emits
+only new messages through the redactor. This avoids both an early empty
+attachment and the buffering behavior of `aws logs tail --follow`. The GitHub
+starter role has read-only access to that project's streams for the same path.
+Terminal capture drains the same stream to a stable forward token before
+self-verification, rather than switching to a broader CloudWatch API.
+A custom command remains available through
+`--env`, but it is not the canonical broad proof:
+
+```sh
+ADL_AWS_PROFILE=agent-logic-admin \
+bash adl/tools/run_aws_codefriend_build_lane.sh \
+  --run \
+  --check-account \
+  --wait \
+  --project-name adl-codefriend-build \
+  --source-version <40-character-commit-sha> \
+  --env ADL_CODEFRIEND_BUILD_COMMAND='bash adl/tools/run_build_platform_benchmark.sh --platform codebuild --cache-posture codebuild_xlarge_s3_target_and_sccache --out .adl/local-artifacts/build-platform-benchmark/codebuild-xlarge/summary.json --artifact-dir .adl/local-artifacts/build-platform-benchmark/codebuild-xlarge' \
+  --out .adl/local-artifacts/aws-codefriend-build/<run-id>/summary.json \
+  --artifact-dir .adl/local-artifacts/aws-codefriend-build/<run-id>
 ```
 
 If `--wait` times out, the wrapper requests `codebuild stop-build` before
 returning failure. The GitHub Actions starter role includes `codebuild:StopBuild`
 for that cleanup path.
 
-The current lane uses native S3 `sccache` for compiler artifacts. It
-intentionally does not cache the full `target/` tree through CodeBuild's S3
-cache because that made post-build cache upload slower than the build work.
-CodeBuild's S3 cache is limited to reusable toolchain state:
+The current lane uses native S3 `sccache` for compiler artifacts and an S3
+`.tar.zst` target archive for repeated exact-revision builds. The target-cache
+key includes the resolved source SHA, Cargo lock hash, immutable image digest,
+Rust version, linker flags, and incremental posture. The canonical broad lane
+first runs `cargo nextest run --no-run`, publishes the resulting target archive,
+and then runs the tests. A test failure therefore retains successful compilation
+work. Archive publication writes a SHA-256 metadata field on a temporary S3
+object and then server-side copies that single object to the stable key; restore
+requires the object metadata to match the downloaded archive before extraction.
+Promotion copies metadata but deliberately does not copy S3 object tags, so the
+runtime role does not need tagging authority.
+The service role includes the object-scoped multipart upload/copy permissions
+required for target archives larger than S3's single-copy limit, and cache-stage
+failures emit their bounded AWS diagnostic before the job exits.
+CodeBuild's local cache is limited to dependency indexes:
 
 ```text
 /root/.cargo/registry/**/*
 /root/.cargo/git/**/*
-/root/.cargo/bin/**/*
-/root/.rustup/**/*
 ```
+
+Do not add `/root/.cargo/bin`, `/root/.rustup`, or `/codebuild/adl-target` to
+CodeBuild local custom-cache paths. Those paths can shadow the immutable image
+toolchain or restore incompatible linker artifacts.
+
+The run summary records `self_verification` booleans for image preflight,
+prebuilt-toolchain use, compile preparation, build-command completion, and
+verified target-cache restore/save. It also records whether the retained log
+passed a post-capture scan for raw AWS account IDs, ARNs, and access-key forms.
+Treat a missing or false required marker as failed proof even when CodeBuild
+reports a terminal success.
 
 Compiler artifacts are stored by `sccache` itself under:
 
@@ -228,6 +265,17 @@ slightly faster:
 ADL_BUILD_PLATFORM_BENCHMARK platform=codebuild build_seconds=96 test_seconds=75 total_seconds=171 status=passed
 ```
 
+Issue `#5164` adds the canonical full-repository proof on the hardened lane.
+Two consecutive exact-SHA broad runs restored and verified the S3 target,
+performed zero compile requests, and passed all `22,609` selected tests:
+
+| Run | BUILD phase | Nextest time | Result |
+|---|---:|---:|---|
+| Broad 1 | 344s | 263.269s | 22,609 passed; 18 skipped |
+| Broad 2 | 352s | 262.689s | 22,609 passed; 18 skipped |
+
+See `docs/milestones/v0.91.7/review/build_throughput/CODEBUILD_DETERMINISTIC_VALIDATION_5164.md`.
+
 That run reported Rust cache hit rate `99.73%` with zero cache read/write
 errors. CodeBuild wall-clock from start to end was `310s`, including source
 download, install/setup, benchmark execution, post-build sccache stats, and S3
@@ -251,6 +299,9 @@ The lane fails closed when:
 - live mode is requested without the OIDC role secret or account-hash secret
 - STS resolves to the wrong account hash
 - `aws codebuild start-build` fails
+- the image is not digest-pinned or a required preinstalled tool is missing
+- the resolved source SHA differs from the requested SHA
+- the target archive cannot be extracted safely
 - artifact upload cannot find generated artifacts
 
 The resulting summary and request/response JSON are retained as workflow

@@ -1,0 +1,79 @@
+{
+  "schema": "adl.runtime_v3.soak_rollback_proof.v1",
+  "issue": 5253,
+  "target_version": "v0.91.7",
+  "created_at_utc": "2026-07-12T13:35:00Z",
+  "explicit_runtime_v3_selection": true,
+  "default_runtime_changed": false,
+  "runtime_v2_deleted": false,
+  "cutover_authorized": false,
+  "control_api": {
+    "host": "127.0.0.1",
+    "port": 20997,
+    "policy": "signed local control commands only"
+  },
+  "soak": {
+    "source": "docs/architecture/runtime_v3_guardian_soak_report.v1.json",
+    "cycles": 100,
+    "items_per_cycle": 16,
+    "retained_result": "pass",
+    "proof_role": "bounded production-like engineering soak, not multi-day production endurance"
+  },
+  "failure_injection": {
+    "child_exit": "adl-runtime-kernel fatal-once classifies first generation as fatal and recovers on the second generation",
+    "restart_budget": "Horust 0.1.13 restart-budget defect remains blocked; Runtime v3 cutover must not depend on Horust bounded restart until fixed release qualification exists",
+    "graceful_pressure_stop": "continuity graceful-stop fixture proves shutdown returns even when checkpoint deadline expires; weather proof maps stop pressure to serialize_state_then_stop",
+    "corrupt_continuity": "corrupt continuity is preserved and quarantined rather than overwritten",
+    "shutdown_deadline": "non-cooperative component is force-aborted under bounded shutdown deadline"
+  },
+  "rollback": {
+    "source": "adl-runtime-kernel/tests/parity.rs",
+    "default_backend": "v2",
+    "explicit_v3_opt_in_requires_cutover_eligible_report": true,
+    "rollback_target": "v2",
+    "state_corruption_claim": "rollback changes selection only; retained state is not rewritten by rollback selection"
+  },
+  "observability": {
+    "stdout": "machine-readable payloads only",
+    "stderr": "human adl_event observability",
+    "remote_delivery": "deployment overlay responsibility; not claimed by this packet"
+  },
+  "deferred_lanes": {
+    "gpu": "deferred_non_cutover_surface; no approved GPU host was available in this issue lane",
+    "remote_multi_day_soak": "deferred_non_cutover_surface; this packet retains bounded local production-like soak only"
+  },
+  "parity_routing": {
+    "resolved_here": [
+      "guardian.packaging_soak"
+    ],
+    "routed_to_final_decision": [
+      "kernel.lifecycle",
+      "kernel.topology_and_backpressure",
+      "service.contracts_and_configuration",
+      "continuity.replay_recovery",
+      "learning.adaptive_dag",
+      "governance.freedom_gate_aee",
+      "contracts.delegation_resources",
+      "agents.providers_scheduler",
+      "network.acip_a2a_cloud"
+    ]
+  },
+  "validation": {
+    "planned_local_commands": [
+      "cargo fmt --manifest-path adl-runtime-kernel/Cargo.toml --check",
+      "cargo test --manifest-path adl-runtime-kernel/Cargo.toml --test guardian_soak -- production_like_soak_rollback_packet_retains_cutover_boundaries --nocapture",
+      "cargo test --manifest-path adl-runtime-kernel/Cargo.toml --test guardian_soak -- packaging_preserves_one_guardian_neutral_child_contract --nocapture",
+      "cargo test --manifest-path adl-runtime-kernel/Cargo.toml --test continuity -- graceful_stop_shuts_down_even_when_checkpoint_deadline_expires --nocapture",
+      "cargo test --manifest-path adl-runtime-kernel/Cargo.toml --test parity -- --nocapture",
+      "cargo clippy --manifest-path adl-runtime-kernel/Cargo.toml --all-targets -- -D warnings",
+      "cargo test --manifest-path adl-runtime-kernel/Cargo.toml"
+    ]
+  },
+  "non_claims": [
+    "This packet does not authorize Runtime v3 as the default runtime.",
+    "This packet does not delete or decommission Runtime v2.",
+    "This packet does not claim observed GPU telemetry.",
+    "This packet does not claim a fixed Horust release.",
+    "This packet does not count deferred remote or GPU lanes as passed proof."
+  ]
+}

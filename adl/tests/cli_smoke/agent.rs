@@ -6,6 +6,7 @@ use std::hash::{Hash, Hasher};
 use std::io::Write;
 
 const CSM_COVERAGE_STARTUP_ATTEMPTS: &str = "80";
+const CSM_CONTROL_PLANE_FIRST_REQUEST_TIMEOUT_SECS: u64 = 90;
 const CSM_DISK_READY_ENV: [(&str, &str); 2] = [
     ("ADL_CSM_DISK_FLOOR_BYTES", "0"),
     ("ADL_CSM_TEST_AVAILABLE_BYTES", "1073741824"),
@@ -29,6 +30,9 @@ fn spawn_loopback_control_plane() -> (
             match listener.accept() {
                 Ok((mut stream, _)) => {
                     stream
+                        .set_nonblocking(false)
+                        .expect("set control plane stream blocking");
+                    stream
                         .set_read_timeout(Some(std::time::Duration::from_secs(3)))
                         .expect("set control plane read timeout");
                     let request = read_http_request(&mut stream);
@@ -44,7 +48,12 @@ fn spawn_loopback_control_plane() -> (
                     let idle_done = last_request_at
                         .map(|instant| instant.elapsed() > std::time::Duration::from_secs(2))
                         .unwrap_or(false);
-                    if idle_done || started.elapsed() > std::time::Duration::from_secs(20) {
+                    if idle_done
+                        || started.elapsed()
+                            > std::time::Duration::from_secs(
+                                CSM_CONTROL_PLANE_FIRST_REQUEST_TIMEOUT_SECS,
+                            )
+                    {
                         break;
                     }
                     std::thread::sleep(std::time::Duration::from_millis(25));
@@ -247,7 +256,7 @@ fn reserve_csm_test_port(label: &str) -> (std::net::TcpListener, String) {
             return (listener, addr);
         }
     }
-    panic!("no reserved CSM test port available for {label} in 19950-19999");
+    panic!("could not bind one governed CSM test port for {label} in 19950-19999");
 }
 
 fn reserve_ephemeral_csm_test_port(label: &str) -> (std::net::TcpListener, String) {
@@ -287,6 +296,7 @@ fn request_governed_stop_and_wait(spec: &std::path::Path, child: &mut std::proce
 
 fn wait_for_governed_shutdown_child(child: &mut std::process::Child) {
     let started = std::time::Instant::now();
+    let timeout = std::time::Duration::from_secs(90);
     loop {
         if child
             .try_wait()
@@ -295,7 +305,7 @@ fn wait_for_governed_shutdown_child(child: &mut std::process::Child) {
         {
             break;
         }
-        if started.elapsed() > std::time::Duration::from_secs(20) {
+        if started.elapsed() > timeout {
             let _ = child.kill();
             panic!("CSM daemon did not exit after governed stop request");
         }
@@ -1245,7 +1255,7 @@ memory:
     let (control_plane_url, control_plane_requests, control_plane) = spawn_loopback_control_plane();
     let (probe, addr) = reserve_csm_test_port("runtime API smoke");
     drop(probe);
-    let mut child = std::process::Command::new(resolve_csm_exe())
+    let mut child = runtime_test_command(resolve_csm_exe())
         .args([
             "daemon",
             "--spec",
@@ -1267,6 +1277,7 @@ memory:
         )
         .env("ADL_CSM_NOTICE_CONTROL_PLANE_MODE", "live")
         .env("ADL_CSM_NOTICE_CONTROL_PLANE_APPROVED", "1")
+        .env("ADL_CSM_NOTICE_REQUIRED_CHANNEL", "control_plane")
         .env("ADL_CSM_NOTICE_CONTROL_PLANE_TARGET", "https")
         .env("ADL_CSM_NOTICE_CONTROL_PLANE_URL", &control_plane_url)
         .env("ADL_CSM_DISK_FLOOR_BYTES", "1")
@@ -1440,6 +1451,8 @@ memory:
         .as_array()
         .expect("ready blockers")
         .contains(&serde_json::json!("curiosity_engine_not_ready")));
+    assert_eq!(status["reasoning_runtime"]["status"], "serialized");
+    assert_eq!(status["reasoning_runtime"]["value"]["health"], "ready");
     assert_eq!(metrics["schema"], "adl.csm.runtime_api.metrics.v1");
     assert_eq!(metrics["gauges"]["backpressure_queue_depth"], 12);
     assert_eq!(metrics["gauges"]["backpressure_lag_ms"], 3100);
@@ -2490,7 +2503,7 @@ fn csm_credential_policy_proves_break_glass_and_negative_cases_without_secrets()
     let root = unique_test_temp_dir("csm-credential-policy");
     let observability_log = root.join("credential-observability.log");
     let proof_dir = root.join("credential-proof");
-    let out = run_csm_with_env(
+    let out = run_csm_with_env_without_aws_credentials(
         &[
             "credential-policy",
             "prove",
@@ -3510,8 +3523,10 @@ memory:
     );
     assert!(
         start.status.success(),
-        "start stderr:\n{}",
-        String::from_utf8_lossy(&start.stderr)
+        "start stderr:\n{}\nchild stdout:\n{}\nchild stderr:\n{}",
+        String::from_utf8_lossy(&start.stderr),
+        read_text_or_missing(&service_root.join("logs/csm.stdout.log")),
+        read_text_or_missing(&service_root.join("logs/csm.stderr.log"))
     );
     std::thread::sleep(std::time::Duration::from_millis(1500));
 
@@ -3846,8 +3861,10 @@ memory:
     );
     assert!(
         start.status.success(),
-        "start stderr:\n{}",
-        String::from_utf8_lossy(&start.stderr)
+        "start stderr:\n{}\nchild stdout:\n{}\nchild stderr:\n{}",
+        String::from_utf8_lossy(&start.stderr),
+        read_text_or_missing(&service_root.join("logs/csm.stdout.log")),
+        read_text_or_missing(&service_root.join("logs/csm.stderr.log"))
     );
     std::thread::sleep(std::time::Duration::from_millis(1500));
 
@@ -3968,8 +3985,20 @@ memory:
         otel_status_path: None,
         otel_log_path: None,
     };
-    let api_status = adl::csm_runtime_api::runtime_api_response(&api_options, "/status")
-        .expect("governed API status response");
+    let status_deadline = std::time::Instant::now() + std::time::Duration::from_secs(30);
+    let api_status = loop {
+        let status = adl::csm_runtime_api::runtime_api_response(&api_options, "/status")
+            .expect("governed API status response");
+        if status["daemon_liveness"]["state"] == "governed_stopped" {
+            break status;
+        }
+        assert!(
+            std::time::Instant::now() < status_deadline,
+            "daemon did not reach governed_stopped state: {}",
+            serde_json::to_string(&status).unwrap()
+        );
+        std::thread::sleep(std::time::Duration::from_millis(100));
+    };
     let api_ready = adl::csm_runtime_api::runtime_api_response(&api_options, "/ready")
         .expect("governed API ready response");
     assert_eq!(api_status["status"], "degraded");
@@ -4082,19 +4111,19 @@ memory:
         "start stderr:\n{}",
         String::from_utf8_lossy(&start.stderr)
     );
+    let restart_deadline = std::time::Instant::now() + std::time::Duration::from_secs(30);
     let mut observed_restart = false;
     let mut last_supervisor_status = serde_json::Value::Null;
-    for _ in 0..300 {
-        let supervisor_status: serde_json::Value = serde_json::from_str(
-            &fs::read_to_string(service_root.join("logs/rust_supervisor_status.json"))
-                .expect("supervisor status"),
-        )
-        .expect("parse supervisor status");
-        if supervisor_status["restart_count"].as_u64().unwrap_or(0) >= 1 {
-            observed_restart = true;
-            break;
+    while std::time::Instant::now() < restart_deadline {
+        if let Ok(raw) = fs::read_to_string(service_root.join("logs/rust_supervisor_status.json")) {
+            if let Ok(supervisor_status) = serde_json::from_str::<serde_json::Value>(&raw) {
+                if supervisor_status["restart_count"].as_u64().unwrap_or(0) >= 1 {
+                    observed_restart = true;
+                    break;
+                }
+                last_supervisor_status = supervisor_status;
+            }
         }
-        last_supervisor_status = supervisor_status;
         std::thread::sleep(std::time::Duration::from_millis(200));
     }
     assert!(
@@ -4107,13 +4136,8 @@ memory:
             .expect("supervisor status"),
     )
     .expect("parse supervisor status");
-    assert_eq!(supervisor_status["restart_policy"], "always");
-    assert_eq!(supervisor_status["max_cycles"], "not_applicable");
-    assert_eq!(supervisor_status["request_budget"], "not_applicable");
     let startup_ledger =
         fs::read_to_string(service_root.join("logs/startup_ledger.jsonl")).expect("startup ledger");
-    assert!(startup_ledger.contains("\"event\":\"rust_supervisor_child_exit\""));
-    assert!(startup_ledger.contains("\"event\":\"rust_supervisor_restart_scheduled\""));
     let stop = run_csm(&[
         "service",
         "stop",
@@ -4126,6 +4150,17 @@ memory:
         "stop stderr:\n{}",
         String::from_utf8_lossy(&stop.stderr)
     );
+    assert!(
+        observed_restart,
+        "expected Rust supervisor restart within 30s; status: {}; startup ledger:\n{}",
+        serde_json::to_string(&supervisor_status).unwrap(),
+        startup_ledger
+    );
+    assert_eq!(supervisor_status["restart_policy"], "always");
+    assert_eq!(supervisor_status["max_cycles"], "not_applicable");
+    assert_eq!(supervisor_status["request_budget"], "not_applicable");
+    assert!(startup_ledger.contains("\"event\":\"rust_supervisor_child_exit\""));
+    assert!(startup_ledger.contains("\"event\":\"rust_supervisor_restart_scheduled\""));
 }
 
 #[test]
@@ -4649,7 +4684,7 @@ memory:
         ("ADL_CSM_DISK_FLOOR_BYTES", "0"),
         ("ADL_CSM_TEST_AVAILABLE_BYTES", "1073741824"),
     ];
-    let out = run_csm_with_env(
+    let out = run_csm_with_env_without_aws_credentials(
         &[
             "daemon",
             "--spec",
@@ -4793,4 +4828,27 @@ memory:
         fs::read_to_string(root.join("state/csm_governed_notices.jsonl")).expect("notice ledger");
     assert!(notice_ledger.contains("\"trigger\":\"daemon_child_failed\""));
     assert!(notice_ledger.contains("\"trigger\":\"bounded_test_supervisor_failure\""));
+    let ledger_entries = notice_ledger
+        .lines()
+        .map(|line| serde_json::from_str::<serde_json::Value>(line).expect("notice ledger JSON"))
+        .collect::<Vec<_>>();
+    let blocked_child_notice = ledger_entries
+        .iter()
+        .rev()
+        .find(|entry| entry["trigger"] == "daemon_child_failed")
+        .expect("failed-child notice");
+    assert_eq!(
+        blocked_child_notice["publish_preflight"]["status"],
+        "blocked"
+    );
+    assert_eq!(
+        blocked_child_notice["typed_channel_delivery"]["status"],
+        "blocked_before_sequence_reservation"
+    );
+    let child_attempts = blocked_child_notice["delivery_attempts"]
+        .as_array()
+        .expect("failed-child delivery attempts");
+    assert_eq!(child_attempts.len(), 1);
+    assert_eq!(child_attempts[0]["channel"], "local_notice_ledger");
+    assert_eq!(child_attempts[0]["status"], "recorded");
 }

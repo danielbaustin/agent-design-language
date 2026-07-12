@@ -24,8 +24,16 @@ fn write_temp_adl_yaml() -> PathBuf {
     p
 }
 
+fn runtime_test_command(executable: PathBuf) -> Command {
+    let mut command = Command::new(executable);
+    command
+        .env("ADL_CSM_DISK_FLOOR_BYTES", "0")
+        .env("ADL_CSM_TEST_AVAILABLE_BYTES", "1073741824");
+    command
+}
+
 fn run_adl(args: &[&str]) -> std::process::Output {
-    Command::new(resolve_adl_exe())
+    runtime_test_command(resolve_adl_exe())
         .args(args)
         .output()
         .expect("run adl binary")
@@ -46,17 +54,57 @@ fn run_csdlc(args: &[&str]) -> std::process::Output {
 }
 
 fn run_adl_runtime(args: &[&str]) -> std::process::Output {
-    Command::new(resolve_adl_runtime_exe())
+    runtime_test_command(resolve_adl_runtime_exe())
         .args(args)
         .output()
         .expect("run adl-runtime binary")
 }
 
 fn run_csm(args: &[&str]) -> std::process::Output {
-    Command::new(resolve_csm_exe())
+    runtime_test_command(resolve_csm_exe())
         .args(args)
         .output()
         .expect("run csm binary")
+}
+
+fn run_csm_with_env_without_aws_credentials(
+    args: &[&str],
+    envs: &[(&str, &str)],
+) -> std::process::Output {
+    const AWS_CREDENTIAL_ENV: &[&str] = &[
+        "AWS_ACCESS_KEY_ID",
+        "AWS_SECRET_ACCESS_KEY",
+        "AWS_SESSION_TOKEN",
+        "AWS_PROFILE",
+        "AWS_DEFAULT_PROFILE",
+        "AWS_REGION",
+        "AWS_DEFAULT_REGION",
+        "AWS_CONTAINER_CREDENTIALS_RELATIVE_URI",
+        "AWS_CONTAINER_CREDENTIALS_FULL_URI",
+        "AWS_WEB_IDENTITY_TOKEN_FILE",
+        "AWS_ROLE_ARN",
+        "AWS_CONFIG_FILE",
+        "AWS_SHARED_CREDENTIALS_FILE",
+        "AWS_SDK_LOAD_CONFIG",
+        "ADL_AWS_PROFILE",
+        "ADL_AWS_REGION",
+        "ADL_AWS_SIGNAL_MODE",
+        "ADL_AWS_SIGNAL_APPROVED",
+        "ADL_AWS_HEARTBEAT_LOG_GROUP",
+        "ADL_AWS_HEARTBEAT_LOG_STREAM",
+        "ADL_AWS_SNS_TOPIC_ARN",
+    ];
+    let mut command = runtime_test_command(resolve_csm_exe());
+    command.args(args).env("AWS_EC2_METADATA_DISABLED", "true");
+    for (key, value) in envs {
+        command.env(key, value);
+    }
+    for name in AWS_CREDENTIAL_ENV {
+        command.env_remove(name);
+    }
+    command
+        .output()
+        .expect("run csm binary without AWS credentials")
 }
 
 fn run_csmctl(args: &[&str]) -> std::process::Output {
@@ -74,7 +122,7 @@ fn run_adl_review(args: &[&str]) -> std::process::Output {
 }
 
 fn run_adl_runtime_with_env(args: &[&str], envs: &[(&str, &str)]) -> std::process::Output {
-    let mut cmd = Command::new(resolve_adl_runtime_exe());
+    let mut cmd = runtime_test_command(resolve_adl_runtime_exe());
     cmd.args(args);
     for (k, v) in envs {
         cmd.env(k, v);
@@ -83,7 +131,7 @@ fn run_adl_runtime_with_env(args: &[&str], envs: &[(&str, &str)]) -> std::proces
 }
 
 fn run_csm_with_env(args: &[&str], envs: &[(&str, &str)]) -> std::process::Output {
-    let mut cmd = Command::new(resolve_csm_exe());
+    let mut cmd = runtime_test_command(resolve_csm_exe());
     cmd.args(args);
     for (k, v) in envs {
         cmd.env(k, v);
@@ -92,7 +140,7 @@ fn run_csm_with_env(args: &[&str], envs: &[(&str, &str)]) -> std::process::Outpu
 }
 
 fn run_adl_with_env(args: &[&str], envs: &[(&str, &str)]) -> std::process::Output {
-    let mut cmd = Command::new(resolve_adl_exe());
+    let mut cmd = runtime_test_command(resolve_adl_exe());
     cmd.args(args);
     for (k, v) in envs {
         cmd.env(k, v);

@@ -3685,6 +3685,7 @@ fn registered_validation_atom_supported(command: &str) -> bool {
             true
         }
         ["cargo", "test", "--manifest-path", "adl-runtime-kernel/Cargo.toml"] => true,
+        ["cargo", "test", "--manifest-path", "csdlc-v2/Cargo.toml"] => true,
         ["cargo", "clippy", "--manifest-path", "adl-runtime-kernel/Cargo.toml", "--all-targets", "--", "-D", "warnings"] => {
             true
         }
@@ -3799,7 +3800,11 @@ fn execute_registered_validation_atom(repo_root: &Path, command: &str) -> Result
 }
 
 fn finish_registered_validation_arg(repo_root: &Path, arg: &str) -> Result<String> {
-    if arg.starts_with("adl/") || arg.starts_with("docs/") || arg.starts_with("infra/") {
+    if arg.starts_with("adl/")
+        || arg.starts_with("csdlc-v2/")
+        || arg.starts_with("docs/")
+        || arg.starts_with("infra/")
+    {
         return Ok(path_str(&repo_root.join(arg))?.to_string());
     }
     Ok(arg.to_string())

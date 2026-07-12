@@ -3,6 +3,8 @@ use sysinfo::{Components, Disks, Networks, System};
 
 use crate::WeatherConfig;
 
+pub const WEATHER_HEALTH_SCHEMA: &str = "adl.runtime.weather_health.v1";
+
 #[derive(Clone, Debug, Eq, PartialEq, Serialize, Deserialize)]
 pub struct Observation<T> {
     pub value: Option<T>,
@@ -167,6 +169,58 @@ pub enum ResourceState {
     Healthy,
     Warning,
     StopRequired,
+}
+
+#[derive(Clone, Copy, Debug, Eq, PartialEq, Serialize, Deserialize)]
+#[serde(rename_all = "snake_case")]
+pub enum ShutdownDecision {
+    Continue,
+    SerializeStateThenStop,
+}
+
+#[derive(Clone, Copy, Debug, Eq, PartialEq, Serialize, Deserialize)]
+#[serde(rename_all = "snake_case")]
+pub enum GpuProofState {
+    Observed,
+    UnavailableNotPass,
+}
+
+#[derive(Clone, Debug, Eq, PartialEq, Serialize, Deserialize)]
+pub struct WeatherHealthReport {
+    pub schema: String,
+    pub resource_state: ResourceState,
+    pub shutdown_decision: ShutdownDecision,
+    pub gpu_proof_state: GpuProofState,
+    pub cloudwatch_route: String,
+    pub sample: WeatherSample,
+}
+
+impl WeatherHealthReport {
+    pub fn from_sample(
+        config: &WeatherConfig,
+        sample: WeatherSample,
+        previous: ResourceState,
+    ) -> Self {
+        let resource_state = resource_state(config, &sample, previous);
+        let shutdown_decision = if resource_state == ResourceState::StopRequired {
+            ShutdownDecision::SerializeStateThenStop
+        } else {
+            ShutdownDecision::Continue
+        };
+        let gpu_proof_state = match sample.gpus.value.as_ref() {
+            Some(gpus) if !gpus.is_empty() => GpuProofState::Observed,
+            _ => GpuProofState::UnavailableNotPass,
+        };
+
+        Self {
+            schema: WEATHER_HEALTH_SCHEMA.to_owned(),
+            resource_state,
+            shutdown_decision,
+            gpu_proof_state,
+            cloudwatch_route: "vector.runtime_v3_cloudwatch_emf".to_owned(),
+            sample,
+        }
+    }
 }
 
 pub fn resource_state(

@@ -1,0 +1,47 @@
+{
+  "schema": "adl.runtime_v3.private_state_security.v1",
+  "issue": 5249,
+  "target_version": "v0.91.7",
+  "created_at_utc": "2026-07-12T11:45:00Z",
+  "capability": "private_state.security",
+  "cutover_disposition": "accepted_intentional_divergence",
+  "raw_runtime_v2_format_equivalence": false,
+  "runtime_v2_internal_reuse": false,
+  "security_invariants": {
+    "visibility": "redacted projection only; raw export fails closed",
+    "sealing": "private payload is represented by a BLAKE3 sealed payload hash, not projected bytes",
+    "lineage": "signed records must append to the current lineage head and exact next sequence",
+    "anti_equivocation": "same lineage and sequence with divergent content fails closed",
+    "sanctuary": "sanctuary level must be within the caller policy",
+    "authorization": "projection principals must be explicitly allowed"
+  },
+  "cryptography": {
+    "signature_crate": "ed25519-dalek",
+    "digest_crate": "blake3",
+    "custom_crypto": false
+  },
+  "proof_surfaces": [
+    "adl-runtime-kernel/src/private_state.rs",
+    "adl-runtime-kernel/tests/private_state.rs"
+  ],
+  "negative_tests": [
+    "forged lineage/signature",
+    "discontinuous lineage",
+    "same-position equivocation",
+    "skipped sequence with current lineage head",
+    "projection record-hash forgery",
+    "unauthorized projection",
+    "raw export",
+    "sanctuary policy violation"
+  ],
+  "validation": [
+    "cargo fmt --manifest-path adl-runtime-kernel/Cargo.toml --check",
+    "cargo test --manifest-path adl-runtime-kernel/Cargo.toml --test private_state -- --nocapture",
+    "cargo clippy --manifest-path adl-runtime-kernel/Cargo.toml --test private_state -- -D warnings"
+  ],
+  "residual_risks": [
+    "This proof does not claim Runtime v2 raw private-state wire-format compatibility.",
+    "This proof does not authorize Runtime v3 default cutover by itself.",
+    "Production key custody, rotation, and storage hardening remain deployment concerns outside this issue-local invariant proof."
+  ]
+}

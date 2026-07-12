@@ -38,6 +38,12 @@ for required_fragment in \
   "cargo llvm-cov nextest" \
   "--workspace" \
   "--no-report" \
+  "--no-fail-fast" \
+  "--no-tests pass" \
+  "--test-threads" \
+  "ADL_AUTHORITATIVE_COVERAGE_TEST_THREADS" \
+  "ADL_AUTHORITATIVE_COVERAGE_SKIP_PATTERN" \
+  "-- --skip" \
   "cargo llvm-cov report" \
   "--json" \
   "--summary-only" \
@@ -91,12 +97,14 @@ for required_dir in "$scratch_root/target" "$scratch_root/target/llvm-cov-target
 done
 
 for required in \
-  "cmd=llvm-cov nextest --workspace --no-report" \
+  "cmd=llvm-cov nextest --workspace --no-report --no-fail-fast --no-tests pass" \
+  "--test-threads 4" \
+  "-- --skip real_pr_" \
   "cmd=llvm-cov report --json --summary-only --output-path coverage-summary.json" \
   "target=$scratch_root/target" \
   "llvm_cov_target=$scratch_root/target/llvm-cov-target"
 do
-  if ! grep -F "$required" "$cargo_log" >/dev/null 2>&1; then
+  if ! grep -F -- "$required" "$cargo_log" >/dev/null 2>&1; then
     echo "missing authoritative coverage execution token: $required" >&2
     cat "$cargo_log" >&2
     exit 1
@@ -108,12 +116,16 @@ PATH="$bin_dir:$PATH" \
 AUTHORITATIVE_CARGO_LOG="$lld_cargo_log" \
 ADL_COVERAGE_BUILD_ROOT="$scratch_root" \
 RUST_LINK_ACCEL="lld" \
+ADL_AUTHORITATIVE_COVERAGE_TEST_THREADS="2" \
+ADL_AUTHORITATIVE_COVERAGE_SKIP_PATTERN="live_pr_fixture_" \
   bash "$SCRIPT"
 
 for required in \
-  "link_accel=lld"
+  "link_accel=lld" \
+  "--test-threads 2" \
+  "-- --skip live_pr_fixture_"
 do
-  if ! grep -F "$required" "$lld_cargo_log" >/dev/null 2>&1; then
+  if ! grep -F -- "$required" "$lld_cargo_log" >/dev/null 2>&1; then
     echo "missing authoritative coverage concurrency token: $required" >&2
     cat "$lld_cargo_log" >&2
     exit 1

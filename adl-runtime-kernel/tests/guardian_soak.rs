@@ -92,6 +92,60 @@ fn packaging_preserves_one_guardian_neutral_child_contract() {
     assert_eq!(qualification["cutover_authorized"], false);
 }
 
+#[test]
+fn production_like_soak_rollback_packet_retains_cutover_boundaries() {
+    let packet: serde_json::Value = serde_json::from_str(include_str!(
+        "../../docs/architecture/runtime_v3_soak_rollback_5253.v1.json"
+    ))
+    .unwrap();
+    assert_eq!(packet["schema"], "adl.runtime_v3.soak_rollback_proof.v1");
+    assert_eq!(packet["issue"], 5253);
+    assert_eq!(packet["explicit_runtime_v3_selection"], true);
+    assert_eq!(packet["default_runtime_changed"], false);
+    assert_eq!(packet["runtime_v2_deleted"], false);
+    assert_eq!(packet["cutover_authorized"], false);
+    assert_eq!(packet["control_api"]["port"], 20997);
+    assert_eq!(packet["soak"]["cycles"], 100);
+    assert_eq!(packet["rollback"]["default_backend"], "v2");
+    assert_eq!(packet["rollback"]["rollback_target"], "v2");
+    assert_eq!(
+        packet["deferred_lanes"]["gpu"],
+        "deferred_non_cutover_surface; no approved GPU host was available in this issue lane"
+    );
+    assert!(packet["non_claims"]
+        .as_array()
+        .unwrap()
+        .iter()
+        .any(|claim| claim == "This packet does not claim a fixed Horust release."));
+
+    let resolved = packet["parity_routing"]["resolved_here"]
+        .as_array()
+        .unwrap();
+    assert_eq!(resolved, &[serde_json::json!("guardian.packaging_soak")]);
+
+    let classification: serde_json::Value = serde_json::from_str(include_str!(
+        "../../docs/architecture/runtime_v3_live_black_box_parity_5248.v1.json"
+    ))
+    .unwrap();
+    let guardian = classification["capabilities"]
+        .as_array()
+        .unwrap()
+        .iter()
+        .find(|capability| capability["id"] == "guardian.packaging_soak")
+        .unwrap();
+    assert_eq!(guardian["disposition"], "accepted_intentional_divergence");
+    assert!(guardian["proof"].as_str().unwrap().contains("#5253"));
+    assert!(
+        classification["capabilities"]
+            .as_array()
+            .unwrap()
+            .iter()
+            .filter(|capability| capability.get("blocking_issue") == Some(&serde_json::json!(5253)))
+            .count()
+            == 0
+    );
+}
+
 #[cfg(unix)]
 #[test]
 #[ignore = "requires ADL_HORUST_BIN and exercises native process supervision"]

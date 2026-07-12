@@ -1,0 +1,50 @@
+{
+  "schema": "adl.runtime_v3.weather_cloudwatch_proof.v1",
+  "issue": 5252,
+  "target_version": "v0.91.7",
+  "created_at_utc": "2026-07-12T13:20:00Z",
+  "cutover_disposition": "accepted_intentional_divergence",
+  "runtime_v2_internal_reuse_allowed": false,
+  "surfaces": {
+    "weather_module": {
+      "status": "retained",
+      "source": "adl-runtime-kernel/src/weather.rs",
+      "proof": [
+        "WeatherSample records CPU, per-core CPU, memory, disk, network, temperature, and GPU observations with source and availability.",
+        "WeatherHealthReport records resource_state, shutdown_decision, gpu_proof_state, and the Vector CloudWatch route.",
+        "Stop-required resource state maps to serialize_state_then_stop."
+      ]
+    },
+    "gpu": {
+      "status": "deferred_non_cutover_surface",
+      "proof": "No approved GPU host was available in this issue lane. Runtime v3 records GPU absence as unavailable_not_pass rather than zero telemetry or passed proof.",
+      "replacement_required_for_full_gpu_claim": true
+    },
+    "cloudwatch": {
+      "status": "retained_boundary",
+      "source": "adl-runtime-kernel/vector/runtime-v3.yaml",
+      "proof": "The checked-in Runtime v3 Vector config proves local parsing and transformation into an EMF-compatible stream named vector.runtime_v3_cloudwatch_emf without embedding a custom exporter in the kernel. Deployment overlays, not this packet, own managed CloudWatch sinks, credentials, buffering, retry, delivery, and retention policy."
+    },
+    "graceful_stop": {
+      "status": "retained",
+      "proof": "Resource policy requires serialize_state_then_stop when disk, memory, or CPU crosses stop thresholds; hysteresis prevents recovery without positive healthy evidence."
+    }
+  },
+  "validation": {
+    "local_commands": [
+      "cargo fmt --manifest-path adl-runtime-kernel/Cargo.toml --check",
+      "cargo test --manifest-path adl-runtime-kernel/Cargo.toml --test configuration -- sysinfo_observer_reports_portable_core_metrics_and_explicit_gpu_absence --nocapture",
+      "cargo test --manifest-path adl-runtime-kernel/Cargo.toml --test configuration -- weather_health_report_serializes_stop_policy_and_gpu_non_pass_state --nocapture",
+      "cargo test --manifest-path adl-runtime-kernel/Cargo.toml --test parity -- --nocapture",
+      "cargo clippy --manifest-path adl-runtime-kernel/Cargo.toml --all-targets -- -D warnings",
+      "cargo test --manifest-path adl-runtime-kernel/Cargo.toml"
+    ],
+    "gpu_command": "deferred; run on an approved GPU host before claiming observed Runtime v3 GPU telemetry"
+  },
+  "non_claims": [
+    "This packet does not claim observed GPU telemetry.",
+    "This packet does not authorize Runtime v3 as the default runtime.",
+    "This packet does not embed CloudWatch, OpenTelemetry, or remote sink retry logic in the kernel.",
+    "This packet does not count GPU absence as passed proof."
+  ]
+}

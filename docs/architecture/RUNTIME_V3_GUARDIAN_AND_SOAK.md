@@ -104,6 +104,14 @@ engineering soak, not a claim of multi-day production endurance. A later
 deployment qualification must add host-specific duration, telemetry delivery,
 and operational SLO evidence.
 
+Issue `#5253` retains the v0.91.7 cutover-prerequisite soak and rollback
+packet at `docs/architecture/runtime_v3_soak_rollback_5253.v1.json`. That
+packet preserves the same bounded-soak evidence while making the cutover
+boundary explicit: Runtime v3 selection is opt-in, Runtime v2 remains the
+default and rollback target, remote multi-day soak and GPU telemetry are
+deferred non-cutover lanes, and Horust bounded restart remains blocked until a
+fixed release is qualified.
+
 ## Current Disposition
 
 The pre-soak Fable 5 architecture review recommended **continue incubation**

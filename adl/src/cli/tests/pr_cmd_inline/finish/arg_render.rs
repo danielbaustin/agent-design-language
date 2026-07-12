@@ -5831,6 +5831,49 @@ fn finish_validation_profile_fails_closed_when_ready_profile_command_is_not_publ
 }
 
 #[test]
+fn finish_validation_profile_accepts_registered_csdlc_v2_command() {
+    let _guard = env_lock();
+    let temp = unique_temp_dir("adl-pr-finish-csdlc-v2-command");
+    let repo = temp.join("repo");
+    fs::create_dir_all(repo.join("adl/config")).expect("adl config dir");
+    fs::create_dir_all(repo.join("csdlc-v2")).expect("csdlc v2 dir");
+    let command = "cargo test --manifest-path csdlc-v2/Cargo.toml";
+    fs::write(
+        repo.join("adl/config/validation_lane_selector.v0.91.6.json"),
+        format!(
+            r#"{{"schema_version":"adl.validation_lane_selector.v1","lanes":[{{"id":"csdlc_v2_standalone","run_command":"{command}"}}]}}"#
+        ),
+    )
+    .expect("validation manifest");
+    let profile = FinishValidationProfile {
+        selected_profile: "csdlc_v2_standalone".to_string(),
+        status: "ready_to_run".to_string(),
+        pr_publication_sufficient: true,
+        validation_split: None,
+        run: vec![FinishValidationProfileRunItem {
+            lane_id: "csdlc_v2_standalone".to_string(),
+            command: command.to_string(),
+            reason: "fixture".to_string(),
+            matched_paths: vec!["csdlc-v2/src/lib.rs".to_string()],
+            vpp_record: None,
+        }],
+        not_run: Vec::new(),
+        deferred: Vec::new(),
+        escalation: FinishValidationProfileEscalation {
+            required: false,
+            reasons: Vec::new(),
+        },
+    };
+
+    ensure_finish_validation_profile_is_runnable(
+        &repo,
+        &profile,
+        &["csdlc-v2/src/lib.rs".to_string()],
+    )
+    .expect("registered C-SDLC v2 command should be publishable");
+}
+
+#[test]
 fn finish_validation_profile_accepts_registered_runtime_kernel_commands() {
     let _guard = env_lock();
     let temp = unique_temp_dir("adl-pr-finish-runtime-kernel-command");

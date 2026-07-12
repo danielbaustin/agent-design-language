@@ -67,6 +67,18 @@ if [ "$SOURCE_REAL" = "$DEST_REAL" ]; then
   exit 0
 fi
 
+if ! python3 - "$SOURCE_REAL" "$DEST_REAL" <<'PY'
+import os
+import sys
+
+source, dest = sys.argv[1], sys.argv[2]
+raise SystemExit(0 if os.stat(source).st_dev == os.stat(dest).st_dev else 1)
+PY
+then
+  skip "source and destination target are on different filesystems; hardlink warm cache skipped"
+  exit 0
+fi
+
 args=(
   python3 "$ADL_DIR/tools/warm_rust_dependency_cache.py"
   --source-target "$SOURCE_REAL"

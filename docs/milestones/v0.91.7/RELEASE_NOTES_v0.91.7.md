@@ -38,6 +38,10 @@ feature docs so `v0.92` can proceed from reviewed evidence.
 
 - These notes do not claim shipped runtime behavior yet.
 - `v0.92` activation remains blocked until implementation/proof truth is reviewed.
+- Runtime v3 is not the default runtime in v0.91.7. #5254 records a no-go
+  default-switch decision: Runtime v2 remains default and Runtime v3 remains
+  explicit opt-in only until a later reviewed release gate proves cutover
+  eligibility.
 - Public affect, wellbeing, and cognitive claims remain bounded by safe tests
   and public claim boundaries.
 - Paper/publication surfaces are not shipped artifacts in this milestone.

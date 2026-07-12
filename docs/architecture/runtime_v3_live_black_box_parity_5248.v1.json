@@ -1,0 +1,133 @@
+{
+  "schema": "adl.runtime_v3.live_black_box_parity.v1",
+  "issue": 5248,
+  "target_version": "v0.91.7",
+  "created_at_utc": "2026-07-12T11:05:00Z",
+  "cutover_eligible": false,
+  "default_runtime_switch_authorized": false,
+  "classification_policy": {
+    "allowed_dispositions": [
+      "live_equivalent_fixture",
+      "accepted_intentional_divergence",
+      "retained_v2_behavior_behind_adapter",
+      "deferred_non_cutover_surface",
+      "blocker"
+    ],
+    "blocked_or_deferred_counts_as_passed": false,
+    "runtime_v2_internal_reuse_allowed": false
+  },
+  "capabilities": [
+    {
+      "id": "kernel.lifecycle",
+      "disposition": "blocker",
+      "proof": "Runtime v3 kernel fixture exists; #5253 retained production-like soak and rollback proof, and #5254 records a no-go default-switch decision. Release-gate closure routes through #5220.",
+      "blocking_issue": 5220
+    },
+    {
+      "id": "kernel.topology_and_backpressure",
+      "disposition": "blocker",
+      "proof": "Runtime v3 topology/backpressure fixture exists; #5253 retained production-like soak and rollback proof, and #5254 records a no-go default-switch decision. Release-gate closure routes through #5220.",
+      "blocking_issue": 5220
+    },
+    {
+      "id": "service.contracts_and_configuration",
+      "disposition": "blocker",
+      "proof": "Runtime v3 contract fixtures exist; #5253 retained production-like soak and rollback proof, and #5254 records a no-go default-switch decision. Release-gate closure routes through #5220.",
+      "blocking_issue": 5220
+    },
+    {
+      "id": "continuity.replay_recovery",
+      "disposition": "blocker",
+      "proof": "Runtime v3 continuity fixtures exist; #5253 retained production-like soak and rollback proof, and #5254 records a no-go default-switch decision. Release-gate closure routes through #5220.",
+      "blocking_issue": 5220
+    },
+    {
+      "id": "private_state.security",
+      "disposition": "accepted_intentional_divergence",
+      "proof": "#5249 implements Runtime v3 private-state security invariants with signed lineage, redacted projection, anti-equivocation, sanctuary policy, and authorization; raw Runtime v2 format equivalence is intentionally not claimed."
+    },
+    {
+      "id": "control.health_observability",
+      "disposition": "accepted_intentional_divergence",
+      "proof": "#5252 retains Runtime v3 weather and CloudWatch boundary proof: sysinfo-backed CPU, memory, disk, network, and temperature observations; explicit GPU unavailable_not_pass state when no approved GPU host exists; serialize_state_then_stop resource policy; and Vector-owned EMF-compatible CloudWatch route. Observed GPU telemetry remains a deferred non-cutover claim and is not counted as passed proof."
+    },
+    {
+      "id": "reasoning.graphs_and_loops",
+      "disposition": "live_equivalent_fixture",
+      "proof": "21-run live v2 loop-runtime and v3 reasoning-engine process comparison in adl-runtime-kernel/tests/parity.rs"
+    },
+    {
+      "id": "learning.adaptive_dag",
+      "disposition": "blocker",
+      "proof": "Runtime v3 adaptive fixture exists; #5253 retained production-like soak and rollback proof, and #5254 records a no-go default-switch decision. Release-gate closure routes through #5220.",
+      "blocking_issue": 5220
+    },
+    {
+      "id": "governance.freedom_gate_aee",
+      "disposition": "blocker",
+      "proof": "Runtime v3 governance fixture exists; #5253 retained production-like soak and rollback proof, and #5254 records a no-go default-switch decision. Release-gate closure routes through #5220.",
+      "blocking_issue": 5220
+    },
+    {
+      "id": "contracts.delegation_resources",
+      "disposition": "blocker",
+      "proof": "Runtime v3 governed-contract fixture exists; #5253 retained production-like soak and rollback proof, and #5254 records a no-go default-switch decision. Release-gate closure routes through #5220.",
+      "blocking_issue": 5220
+    },
+    {
+      "id": "agents.providers_scheduler",
+      "disposition": "blocker",
+      "proof": "Runtime v3 operational fixture exists; #5253 retained production-like soak and rollback proof, and #5254 records a no-go default-switch decision. Release-gate closure routes through #5220.",
+      "blocking_issue": 5220
+    },
+    {
+      "id": "network.acip_a2a_cloud",
+      "disposition": "blocker",
+      "proof": "Runtime v3 network fixture exists; #5253 retained production-like soak and rollback proof, and #5254 records a no-go default-switch decision. Release-gate closure routes through #5220.",
+      "blocking_issue": 5220
+    },
+    {
+      "id": "clock.checkpoint_lifelog",
+      "disposition": "accepted_intentional_divergence",
+      "proof": "#5250 implements Runtime v3 checkpoint/lifelog continuity invariants with signed identity verification on read/recovery paths, accepted-through checkpoint summaries, redacted lifelog projections, restored-summary preservation, and post-restore head checks; raw Runtime v2 identity/memory wire-format equivalence is intentionally not claimed."
+    },
+    {
+      "id": "citizen.identity_memory",
+      "disposition": "accepted_intentional_divergence",
+      "proof": "#5250 implements Runtime v3 citizen identity and memory-continuity adapters with signed bindings, continuity owner binding across citizen/runtime/signing-key identity, append-only memory events, private-state reference validation, and mismatched-citizen/runtime restore refusal; raw Runtime v2 identity/memory wire-format equivalence is intentionally not claimed."
+    },
+    {
+      "id": "moral_affect_wellbeing",
+      "disposition": "accepted_intentional_divergence",
+      "proof": "#5251 implements Runtime v3 moral/affect/wellbeing governed cognition adapters with deterministic service contracts, bounded score policy, policy-hash binding, review-required disposition, and review-record validation; subjective cognition and Runtime v2 raw cognition wire-format equivalence are intentionally not claimed."
+    },
+    {
+      "id": "curiosity_intelligence_theory_of_mind",
+      "disposition": "accepted_intentional_divergence",
+      "proof": "#5251 implements Runtime v3 curiosity/intelligence/theory-of-mind governed cognition adapters with deterministic service contracts, bounded confidence policy, policy-hash binding, review-required disposition, and review-record validation; subjective cognition and Runtime v2 raw cognition wire-format equivalence are intentionally not claimed."
+    },
+    {
+      "id": "migration.shadow_parity",
+      "disposition": "retained_v2_behavior_behind_adapter",
+      "proof": "Compatibility facade remains reversible and defaults to Runtime v2 until full cutover proof passes."
+    },
+    {
+      "id": "guardian.packaging_soak",
+      "disposition": "accepted_intentional_divergence",
+      "proof": "#5253 retains production-like Runtime v3 soak and rollback proof with explicit v3 selection, Runtime v2 rollback/default preservation, control port 20997 boundary, stdout/stderr contract truth, graceful pressure-stop evidence, and deferred non-cutover remote/GPU lanes; raw Runtime v2 packaging equivalence is intentionally not claimed."
+    }
+  ],
+  "summary": {
+    "live_equivalent_fixture": 1,
+    "accepted_intentional_divergence": 7,
+    "retained_v2_behavior_behind_adapter": 1,
+    "deferred_non_cutover_surface": 0,
+    "blocker": 9
+  },
+  "non_claims": [
+    "This packet does not authorize Runtime v3 as the default runtime.",
+    "This packet does not delete Runtime v2.",
+    "Blocker and deferred dispositions are not counted as passed parity.",
+    "This packet records that Runtime v2 internal reuse is not authorized for Runtime v3 parity credit; it does not independently prove implementation-boundary equivalence."
+  ]
+}

@@ -5,6 +5,11 @@ Sprint: #5174
 Decision date: 2026-07-12
 cutover_authorized: false
 
+> Supersession note: #5254 is the final v0.91.7 default-switch/decommission
+> decision packet. It keeps Runtime v2 as the default runtime, retains Runtime
+> v3 as explicit opt-in only, and routes release-gate closure through #5220.
+> See `docs/architecture/RUNTIME_V3_CUTOVER_DECISION_5254.md`.
+
 ## Decision
 
 Runtime v3 remains in incubation. Do not switch default runtime behavior yet.

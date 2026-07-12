@@ -1,0 +1,14 @@
+flowchart LR
+  I["Typed init request"] --> V["Validate identity, design, diagram, claim"]
+  V --> A["Atomic issue record + six cards"]
+  B["Typed bind request"] --> P["Check base, paths, claims, Git topology"]
+  P -->|"new and safe"| G["git worktree add via argv"]
+  P -->|"exact match"| R["Idempotent reuse"]
+  P -->|"collision or main"| F["Fail closed"]
+  G --> C["Canonical claim truth"]
+  R --> C
+
+  H["Heartbeat CAS"] -->|"id + generation + live lease"| C
+  X["Recovery CAS"] -->|"id + generation + expired lease"| E["Recovery evidence"]
+  X -->|"missed heartbeat only"| F
+  E --> C

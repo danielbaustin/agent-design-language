@@ -41,6 +41,28 @@ fi
 if [ "$1" = "s3api" ] && [ "$2" = "head-bucket" ]; then
   exit 0
 fi
+if [ "$1" = "logs" ] && [ "$2" = "describe-log-groups" ]; then
+  printf 'None\n'
+  exit 0
+fi
+if [ "$1" = "logs" ] && [ "$2" = "describe-log-streams" ]; then
+  printf '1\n'
+  exit 0
+fi
+if [ "$1" = "logs" ] && [ "$2" = "get-log-events" ]; then
+  if [ "${FAKE_AWS_MISSING_MARKERS:-false}" = "true" ]; then
+    printf '{"events":[{"message":"fixture log without verification markers\\n"}],"nextForwardToken":"fixture-token"}\n'
+    exit 0
+  fi
+  cat <<'JSON'
+{"events":[{"message":"fixture build log account=000000000000 arn=arn:aws:codebuild:us-west-2:000000000000:build/example key=AKIA1234567890ABCDEF\nAuthorization: Bearer provider-token-value\n{\"token\":\"json-token-value\",\"api_key\":\"json-api-key-value\"}\nADL_CODEFRIEND_TOOLCHAIN_SOURCE image=prebuilt per_job_install=false\nADL_CODEFRIEND_PREFLIGHT status=passed image_digest_pinned=true source_sha_verified=true\nADL_CODEFRIEND_SOURCE_MTIME status=normalized source_epoch=1\nADL_CODEFRIEND_TARGET_CACHE_RESTORE status=hit checksum=verified\nADL_CODEFRIEND_BUILD_PREPARE status=completed\nADL_CODEFRIEND_TARGET_CACHE_SAVE status=uploaded checksum=verified atomic=true source=prepare\nADL_CODEFRIEND_BUILD_COMMAND status=completed exit_code=0\n"}],"nextForwardToken":"fixture-token"}
+JSON
+  exit 0
+fi
+if [ "$1" = "logs" ] && { [ "$2" = "create-log-group" ] || [ "$2" = "put-retention-policy" ]; }; then
+  printf '{}\n'
+  exit 0
+fi
 if [ "$1" = "iam" ] && [ "$2" = "list-open-id-connect-providers" ]; then
   printf 'arn:aws:iam::000000000000:oidc-provider/token.actions.githubusercontent.com\n'
   exit 0
@@ -123,6 +145,7 @@ bash "$SCRIPT" \
   --profile env \
   --expected-account-sha256 f7b11509f4d675c3c44f0dd37ca830bb02e8cfa58f04c46283c4bfcbdce1ff45 \
   --project-name adl-codefriend-build \
+  --source-version refs/heads/codex/example \
   --out "$TMP/env-summary.json" \
   --artifact-dir "$TMP/env-artifacts" >"$TMP/env.out"
 assert_has "$TMP/env.out" "PASS account_profile_resolved profile=env account_matches_retained_proof=true"
@@ -142,6 +165,7 @@ assert summary["mode"] == "run"
 assert summary["account_hash_matched"] == "true"
 assert summary["build_id_present"] is True
 assert summary["aws_response_redacted"] is True
+assert summary["retained_log_redaction_verified"] == "not_applicable"
 assert request["projectName"] == "adl-codefriend-build"
 assert request["sourceVersion"] == "refs/heads/codex/example"
 assert request["environmentVariablesOverride"][0]["name"] == "ADL_CODEFRIEND_BUILD_COMMAND"
@@ -156,10 +180,50 @@ bash "$SCRIPT" \
   --poll-seconds 1 \
   --expected-account-sha256 f7b11509f4d675c3c44f0dd37ca830bb02e8cfa58f04c46283c4bfcbdce1ff45 \
   --project-name adl-codefriend-build \
+  --source-version refs/heads/codex/example \
   --out "$TMP/wait-summary.json" \
   --artifact-dir "$TMP/wait-artifacts" >"$TMP/wait.out"
 assert_has "$TMP/wait.out" "PASS aws_codefriend_build_completed project=adl-codefriend-build region=us-west-2 profile=agent-logic-admin status=SUCCEEDED"
 assert_has "$TMP/aws-wait-args.log" "codebuild batch-get-builds --profile agent-logic-admin --region us-west-2 --ids codefriend-build:1234 --query"
+assert_has "$TMP/wait-artifacts/codebuild-live.log" "[redacted-account]"
+assert_has "$TMP/wait-artifacts/codebuild-live.log" "[redacted-arn]"
+assert_has "$TMP/wait-artifacts/codebuild-live.log" "[redacted-access-key]"
+assert_has "$TMP/wait-artifacts/codebuild-live.log" "Authorization: [redacted]"
+assert_has "$TMP/wait-artifacts/codebuild-live.log" '"token":[redacted]'
+assert_not_has "$TMP/wait-artifacts/codebuild-live.log" "000000000000"
+assert_not_has "$TMP/wait-artifacts/codebuild-live.log" "AKIA1234567890ABCDEF"
+assert_not_has "$TMP/wait-artifacts/codebuild-live.log" "provider-token-value"
+assert_not_has "$TMP/wait-artifacts/codebuild-live.log" "json-token-value"
+assert_not_has "$TMP/wait-artifacts/codebuild-live.log" "json-api-key-value"
+python3 - <<'PY' "$TMP/wait-summary.json"
+import json
+import sys
+from pathlib import Path
+
+summary = json.loads(Path(sys.argv[1]).read_text())
+assert summary["retained_log_redaction_verified"] == "true"
+assert all(summary["self_verification"].values())
+assert summary["self_verification_passed"] is True
+PY
+
+if FAKE_AWS_ARGS_LOG="$TMP/aws-missing-markers-args.log" \
+  FAKE_AWS_MISSING_MARKERS=true \
+  ADL_AWS_CLI="$TMP/aws" \
+  bash "$SCRIPT" \
+    --run \
+    --check-account \
+    --wait \
+    --full-nextest \
+    --poll-seconds 1 \
+    --expected-account-sha256 f7b11509f4d675c3c44f0dd37ca830bb02e8cfa58f04c46283c4bfcbdce1ff45 \
+    --project-name adl-codefriend-build \
+    --source-version 0123456789abcdef0123456789abcdef01234567 \
+    --out "$TMP/missing-markers-summary.json" \
+    --artifact-dir "$TMP/missing-markers-artifacts" >"$TMP/missing-markers.out" 2>"$TMP/missing-markers.err"; then
+  echo "expected missing self-verification markers to fail" >&2
+  exit 1
+fi
+assert_has "$TMP/missing-markers.err" "CodeBuild succeeded but required self-verification markers were missing"
 
 FAKE_AWS_ARGS_LOG="$TMP/aws-dry-args.log" \
 ADL_AWS_CLI="$TMP/aws" \
@@ -170,6 +234,27 @@ bash "$SCRIPT" \
   --artifact-dir "$TMP/dry-artifacts" >"$TMP/dry.out"
 assert_has "$TMP/dry.out" "PASS aws_codefriend_build_dry_run"
 [ ! -s "$TMP/aws-dry-args.log" ]
+
+FAKE_AWS_ARGS_LOG="$TMP/aws-full-nextest-args.log" \
+ADL_AWS_CLI="$TMP/aws" \
+bash "$SCRIPT" \
+  --dry-run \
+  --full-nextest \
+  --source-version 0123456789abcdef0123456789abcdef01234567 \
+  --project-name adl-codefriend-build \
+  --out "$TMP/full-nextest-summary.json" \
+  --artifact-dir "$TMP/full-nextest-artifacts" >"$TMP/full-nextest.out"
+python3 - <<'PY' "$TMP/full-nextest-artifacts/codebuild-request.json"
+import json
+import sys
+from pathlib import Path
+
+request = json.loads(Path(sys.argv[1]).read_text())
+env = {item["name"]: item["value"] for item in request["environmentVariablesOverride"]}
+assert env["ADL_CODEFRIEND_BUILD_PREPARE_COMMAND"] == "cd adl && cargo nextest run --no-run"
+assert env["ADL_CODEFRIEND_BUILD_COMMAND"].startswith("cd adl && cargo nextest run --test-threads 18 --no-fail-fast")
+assert env["ADL_CODEFRIEND_EXPECTED_SOURCE_SHA"] == "0123456789abcdef0123456789abcdef01234567"
+PY
 
 if FAKE_AWS_ARGS_LOG="$TMP/aws-no-check.log" \
   ADL_AWS_CLI="$TMP/aws" \
@@ -190,6 +275,7 @@ if FAKE_AWS_ARGS_LOG="$TMP/aws-mismatch.log" \
     --check-account \
     --expected-account-sha256 deadbeef \
     --project-name adl-codefriend-build \
+    --source-version refs/heads/codex/example \
     --out "$TMP/mismatch.json" \
     --artifact-dir "$TMP/mismatch-artifacts" >"$TMP/mismatch.out" 2>"$TMP/mismatch.err"; then
   echo "expected account mismatch to fail" >&2
@@ -203,23 +289,36 @@ assert_has "$SETUP_SCRIPT" "--compute-type <type>"
 assert_has "$SETUP_SCRIPT" "--image-uri <uri>"
 assert_has "$SETUP_SCRIPT" "--cache-bucket <bucket>"
 assert_has "$SETUP_SCRIPT" 'CACHE_BUCKET="${ADL_AWS_CODEFRIEND_CACHE_BUCKET:-adl-codefriend-build-cache}"'
+assert_has "$SETUP_SCRIPT" 'LOG_GROUP="/aws/codebuild/${PROJECT_NAME}"'
+assert_has "$SETUP_SCRIPT" 'LOG_RETENTION_DAYS="${ADL_AWS_CODEFRIEND_LOG_RETENTION_DAYS:-30}"'
 assert_has "$SETUP_SCRIPT" 'IMAGE_URI="${ADL_AWS_CODEFRIEND_IMAGE:-adl-builder:v0.91.7-fixed}"'
-assert_has "$SETUP_SCRIPT" 'COMPUTE_TYPE="${ADL_AWS_CODEFRIEND_COMPUTE_TYPE:-BUILD_GENERAL1_LARGE}"'
+assert_has "$SETUP_SCRIPT" 'COMPUTE_TYPE="${ADL_AWS_CODEFRIEND_COMPUTE_TYPE:-BUILD_GENERAL1_XLARGE}"'
 assert_has "$SETUP_SCRIPT" '"computeType": compute_type'
 assert_has "$SETUP_SCRIPT" '"image": image_uri'
 assert_has "$SETUP_SCRIPT" '"imagePullCredentialsType": image_pull_credentials_type'
 assert_has "$SETUP_SCRIPT" '"type": "LOCAL"'
 assert_has "$SETUP_SCRIPT" '"modes": ["LOCAL_SOURCE_CACHE", "LOCAL_CUSTOM_CACHE"]'
-assert_has "$SETUP_SCRIPT" 'SCCACHE_VERSION="${SCCACHE_VERSION:-v0.16.0}"'
-assert_has "$SETUP_SCRIPT" 'sccache --version | grep -F "${SCCACHE_VERSION#v}"'
-assert_has "$SETUP_SCRIPT" "https://github.com/mozilla/sccache/releases/download/"
+assert_has "$SETUP_SCRIPT" 'export PATH="/usr/local/cargo/bin:/usr/local/bin:/usr/bin:/bin"'
+assert_has "$SETUP_SCRIPT" 'export NO_PROXY="127.0.0.1,localhost,${NO_PROXY:-}"'
+assert_has "$SETUP_SCRIPT" 'export no_proxy="127.0.0.1,localhost,${no_proxy:-}"'
+assert_has "$SETUP_SCRIPT" 'for tool in rustc cargo cargo-nextest sccache ld.lld zstd aws git'
+assert_has "$SETUP_SCRIPT" 'classification=missing_tool'
+assert_has "$SETUP_SCRIPT" 'classification=wrong_image'
+assert_has "$SETUP_SCRIPT" 'classification=wrong_ref'
+assert_has "$SETUP_SCRIPT" 'classification=cache_configuration'
+assert_has "$SETUP_SCRIPT" 'ADL_CODEFRIEND_EXPECTED_IMAGE'
+assert_not_has "$SETUP_SCRIPT" "https://github.com/mozilla/sccache/releases/download/"
 assert_not_has "$SETUP_SCRIPT" "cargo install sccache --locked"
-assert_has "$SETUP_SCRIPT" "'/root/.cargo/bin/**/*'"
+assert_not_has "$SETUP_SCRIPT" "'/root/.cargo/bin/**/*'"
+assert_not_has "$SETUP_SCRIPT" "'/root/.rustup/**/*'"
 assert_not_has "$SETUP_SCRIPT" "'/root/.cache/sccache/**/*'"
 assert_not_has "$SETUP_SCRIPT" 'ln -sfn "$CODEBUILD_SRC_DIR" /workspace'
 assert_has "$SETUP_SCRIPT" "tar -C \"\$CODEBUILD_SRC_DIR\" -cf - . | tar -C /codebuild/adl-source -xf -"
 assert_has "$SETUP_SCRIPT" "cd /codebuild/adl-source"
+assert_has "$SETUP_SCRIPT" 'git ls-files -z --recurse-submodules | xargs -0r touch -h -d "@${source_epoch}" --'
+assert_has "$SETUP_SCRIPT" 'ADL_CODEFRIEND_SOURCE_MTIME status=normalized'
 assert_has "$SETUP_SCRIPT" 'export CARGO_TARGET_DIR="/codebuild/adl-target"'
+assert_has "$SETUP_SCRIPT" 'export CARGO_BUILD_JOBS="${CARGO_BUILD_JOBS:-18}"'
 assert_has "$SETUP_SCRIPT" 'export SCCACHE_BUCKET="__SCCACHE_BUCKET__"'
 assert_has "$SETUP_SCRIPT" 'export SCCACHE_REGION="__SCCACHE_REGION__"'
 assert_has "$SETUP_SCRIPT" 'export SCCACHE_S3_KEY_PREFIX="__SCCACHE_PREFIX__/sccache/x86_64-unknown-linux-gnu"'
@@ -227,31 +326,66 @@ assert_has "$SETUP_SCRIPT" '.replace("__SCCACHE_BUCKET__", cache_bucket)'
 assert_has "$SETUP_SCRIPT" 'eval "$(aws configure export-credentials --format env)"'
 assert_not_has "$SETUP_SCRIPT" "codebuild-aws-credentials.env"
 assert_has "$SETUP_SCRIPT" "export CARGO_INCREMENTAL=0"
-assert_has "$SETUP_SCRIPT" "apt-get install -y lld clang zstd"
+assert_has "$SETUP_SCRIPT" "export CARGO_PROFILE_TEST_DEBUG=0"
+assert_not_has "$SETUP_SCRIPT" "apt-get install -y lld clang zstd"
 assert_has "$SETUP_SCRIPT" "ld.lld --version"
 assert_has "$SETUP_SCRIPT" "zstd --version"
-assert_has "$SETUP_SCRIPT" 'export RUSTFLAGS="${RUSTFLAGS:-} -C link-arg=-fuse-ld=lld --remap-path-prefix=/codebuild/adl-source=/workspace --remap-path-prefix=/root=/home"'
+assert_has "$SETUP_SCRIPT" 'export RUSTFLAGS="-C link-arg=-fuse-ld=lld --remap-path-prefix=/codebuild/adl-source=/workspace --remap-path-prefix=/root=/home"'
 assert_has "$SETUP_SCRIPT" "bash adl/tools/rust_cache_env.sh write-shell-env /tmp/adl-rust-cache-env.sh"
 assert_has "$SETUP_SCRIPT" ". /tmp/adl-rust-cache-env.sh"
-assert_has "$SETUP_SCRIPT" 'export ADL_CODEFRIEND_TARGET_CACHE_MODE="${ADL_CODEFRIEND_TARGET_CACHE_MODE:-local}"'
+assert_has "$SETUP_SCRIPT" 'export ADL_CODEFRIEND_TARGET_CACHE_MODE="${ADL_CODEFRIEND_TARGET_CACHE_MODE:-s3-tar}"'
 assert_has "$SETUP_SCRIPT" 'export ADL_CODEFRIEND_TARGET_CACHE_BUCKET="${ADL_CODEFRIEND_TARGET_CACHE_BUCKET:-__SCCACHE_BUCKET__}"'
 assert_has "$SETUP_SCRIPT" 'export ADL_CODEFRIEND_TARGET_CACHE_PREFIX="${ADL_CODEFRIEND_TARGET_CACHE_PREFIX:-__SCCACHE_PREFIX__/target/x86_64-unknown-linux-gnu}"'
 assert_has "$SETUP_SCRIPT" 'ADL_CODEFRIEND_TARGET_CACHE_URI="s3://${ADL_CODEFRIEND_TARGET_CACHE_BUCKET}/${ADL_CODEFRIEND_TARGET_CACHE_PREFIX}/${ADL_CODEFRIEND_TARGET_CACHE_KEY}.tar.zst"'
+assert_has "$SETUP_SCRIPT" 'ADL_CODEFRIEND_TARGET_CACHE_OBJECT_KEY="${ADL_CODEFRIEND_TARGET_CACHE_PREFIX}/${ADL_CODEFRIEND_TARGET_CACHE_KEY}.tar.zst"'
+assert_has "$SETUP_SCRIPT" 'aws s3api get-object --bucket "$ADL_CODEFRIEND_TARGET_CACHE_BUCKET" --key "$ADL_CODEFRIEND_TARGET_CACHE_OBJECT_KEY"'
+assert_has "$SETUP_SCRIPT" "target_cache_checksum_failed"
+assert_has "$SETUP_SCRIPT" 'cache_upload_uri="${ADL_CODEFRIEND_TARGET_CACHE_URI}.upload-${cache_upload_suffix}"'
+assert_has "$SETUP_SCRIPT" '--metadata "sha256=${cache_checksum}"'
+assert_has "$SETUP_SCRIPT" 'aws s3 cp "$cache_upload_uri" "$ADL_CODEFRIEND_TARGET_CACHE_URI"'
+assert_has "$SETUP_SCRIPT" '--copy-props metadata-directive'
+assert_has "$SETUP_SCRIPT" 'aws s3 rm "$cache_upload_uri"'
 assert_has "$SETUP_SCRIPT" "ADL_CODEFRIEND_TARGET_CACHE_RESTORE status=hit"
 assert_has "$SETUP_SCRIPT" "ADL_CODEFRIEND_TARGET_CACHE_RESTORE status=miss"
 assert_has "$SETUP_SCRIPT" "ADL_CODEFRIEND_TARGET_CACHE_RESTORE status=local-cache"
 assert_has "$SETUP_SCRIPT" "ADL_CODEFRIEND_TARGET_CACHE_SAVE status=uploaded"
 assert_has "$SETUP_SCRIPT" "ADL_CODEFRIEND_TARGET_CACHE_SAVE status=local-cache"
-assert_has "$SETUP_SCRIPT" "tar --zstd -xf /tmp/adl-codefriend-target-cache.tar.zst -C /codebuild"
-assert_has "$SETUP_SCRIPT" "tar --zstd -cf /tmp/adl-codefriend-target-cache.tar.zst -C /codebuild adl-target"
-assert_has "$SETUP_SCRIPT" "'/codebuild/adl-target/**/*'"
+assert_has "$SETUP_SCRIPT" 'source_key="${CODEBUILD_RESOLVED_SOURCE_VERSION}"'
+assert_has "$SETUP_SCRIPT" 'compatibility_hash="$(printf'
+assert_has "$SETUP_SCRIPT" 'ADL_CODEFRIEND_TARGET_CACHE_KEY="v2-${source_key}-${lock_hash}-${compatibility_hash}"'
+assert_has "$SETUP_SCRIPT" "tar -I 'zstd -d -T0' -xf /tmp/adl-codefriend-target-cache.tar.zst -C /codebuild"
+assert_has "$SETUP_SCRIPT" "tar -I 'zstd -T0 -1' -cf /tmp/adl-codefriend-target-cache.tar.zst -C /codebuild adl-target"
+assert_has "$SETUP_SCRIPT" 'ADL_CODEFRIEND_TARGET_CACHE_SAVE status=skipped-command-failed'
+assert_not_has "$SETUP_SCRIPT" "'/codebuild/adl-target/**/*'"
 assert_has "$SETUP_SCRIPT" 'aws_codefriend_cache_bucket_exists='
 assert_has "$SETUP_SCRIPT" 'compute_type=%s'
 assert_has "$SETUP_SCRIPT" "codebuild:StopBuild"
+assert_has "$SETUP_SCRIPT" '"s3:DeleteObject"'
+assert_has "$SETUP_SCRIPT" '"s3:AbortMultipartUpload"'
+assert_has "$SETUP_SCRIPT" '"s3:ListMultipartUploadParts"'
+assert_has "$SETUP_SCRIPT" '"s3:ListBucketMultipartUploads"'
+assert_has "$SETUP_SCRIPT" 'status=failed stage=upload-temp'
+assert_has "$SETUP_SCRIPT" 'status=failed stage=promote'
+assert_has "$SETUP_SCRIPT" 'ADL_CODEFRIEND_TARGET_CACHE_CLEANUP status=completed after=promote-failure'
+assert_has "$SETUP_SCRIPT" 'status=failed stage=cleanup-temp'
 assert_has "$SETUP_SCRIPT" "repo:{repo}:ref:refs/heads/main"
 assert_has "$SETUP_SCRIPT" "repo:{repo}:ref:refs/heads/codex/*"
 assert_has "$SCRIPT" "codebuild stop-build"
 assert_has "$SCRIPT" "timed out waiting for CodeBuild build to complete; stop-build requested"
+assert_has "$SCRIPT" "--live-logs"
+assert_has "$SCRIPT" "--no-live-logs"
+assert_has "$SCRIPT" "aws_codefriend_live_logs_attached=true"
+assert_not_has "$SCRIPT" '"$AWS_CLI" logs tail "$LOG_GROUP"'
+assert_has "$SCRIPT" '"$AWS_CLI" logs describe-log-streams'
+assert_has "$SCRIPT" '"$AWS_CLI" logs get-log-events'
+assert_has "$SCRIPT" 'nextForwardToken'
+assert_has "$SCRIPT" '&& log_stream_exists'
+assert_not_has "$SCRIPT" '--follow'
+assert_has "$SCRIPT" '"retained_log_path"'
+assert_has "$SCRIPT" '"retained_log_redaction_verified"'
+assert_has "$SCRIPT" '"self_verification"'
+assert_has "$SCRIPT" "[redacted-account]"
+assert_has "$SCRIPT" "[redacted-arn]"
 assert_has "$WORKFLOW" "workflow_dispatch:"
 assert_has "$WORKFLOW" "id-token: write"
 assert_has "$WORKFLOW" "aws-actions/configure-aws-credentials@7474bc4690e29a8392af63c5b98e7449536d5c3a"
@@ -265,6 +399,22 @@ assert_has "$WORKFLOW" "source_version must be a branch, tag, or SHA; HEAD is am
 assert_has "$WORKFLOW" '--source-version "$SOURCE_VERSION"'
 assert_has "$WORKFLOW" "--wait"
 assert_has "$WORKFLOW" "bash adl/tools/run_aws_codefriend_build_lane.sh"
+assert_has "$SETUP_SCRIPT" '"logs:GetLogEvents"'
+assert_has "$SETUP_SCRIPT" '"logs:DescribeLogStreams"'
+assert_has "$SCRIPT" 'PROJECT_NAME="${ADL_AWS_CODEFRIEND_CODEBUILD_PROJECT:-adl-codefriend-build}"'
+assert_has "$SCRIPT" "--full-nextest"
+assert_has "$SCRIPT" "cd adl && cargo nextest run --no-run"
+assert_has "$SCRIPT" "cd adl && cargo nextest run --test-threads 18 --no-fail-fast --status-level all --final-status-level slow"
+assert_has "$ROOT/adl/.config/nextest.toml" 'nextest-version = "0.9.133"'
+nextest_install_count="$(grep -Ec '^[[:space:]]+tool: nextest(@[^[:space:]]+)?[[:space:]]*$' "$ROOT/.github/workflows/ci.yaml")"
+nextest_pinned_count="$(grep -Ec '^[[:space:]]+tool: nextest@0\.9\.140[[:space:]]*$' "$ROOT/.github/workflows/ci.yaml")"
+if [ "$nextest_install_count" -ne 4 ] || [ "$nextest_pinned_count" -ne "$nextest_install_count" ]; then
+  echo "all CI nextest installs must pin the builder-compatible nextest 0.9.140 toolchain" >&2
+  exit 1
+fi
+assert_has "$ROOT/adl/.config/nextest.toml" 'retries = 0'
+assert_has "$ROOT/adl/.config/nextest.toml" 'slow-timeout = { period = "90s", terminate-after = 2 }'
+assert_has "$SCRIPT" "--run requires an explicit --source-version"
 assert_not_has "$WORKFLOW" "pull_request:"
 assert_not_has "$WORKFLOW" "push:"
 assert_has "$WORKFLOW" "if-no-files-found: error"
@@ -282,7 +432,10 @@ bash "$SETUP_SCRIPT" \
   --cache-prefix codebuild/cache \
   --artifact-dir "$TMP/setup-artifacts" >"$TMP/setup.out"
 assert_has "$TMP/setup.out" "PASS aws_codefriend_resources_ready project=adl-codefriend-build region=us-west-2 profile=agent-logic-admin compute_type=BUILD_GENERAL1_XLARGE cache_bucket=adl-codefriend-build-cache cache_prefix=codebuild/cache"
+assert_has "$TMP/setup.out" "aws_codefriend_log_group_exists=true retention_days=30"
 assert_has "$TMP/aws-setup-args.log" "codebuild update-project --profile agent-logic-admin --region us-west-2 --cli-input-json file://$TMP/setup-artifacts/codebuild-project.json"
+assert_has "$TMP/aws-setup-args.log" "logs create-log-group --profile agent-logic-admin --region us-west-2 --log-group-name /aws/codebuild/adl-codefriend-build"
+assert_has "$TMP/aws-setup-args.log" "logs put-retention-policy --profile agent-logic-admin --region us-west-2 --log-group-name /aws/codebuild/adl-codefriend-build --retention-in-days 30"
 
 python3 - <<'PY' "$TMP/setup-artifacts/codebuild-project.json"
 import json
@@ -306,12 +459,28 @@ assert 'export SCCACHE_S3_KEY_PREFIX="codebuild/cache/sccache/x86_64-unknown-lin
 assert 'eval "$(aws configure export-credentials --format env)"' in buildspec
 assert "codebuild-aws-credentials.env" not in buildspec
 assert 'export CARGO_TARGET_DIR="/codebuild/adl-target"' in buildspec
+assert 'export CARGO_BUILD_JOBS="${CARGO_BUILD_JOBS:-18}"' in buildspec
+assert 'export ADL_CODEFRIEND_TARGET_CACHE_MODE="${ADL_CODEFRIEND_TARGET_CACHE_MODE:-s3-tar}"' in buildspec
 assert "tar -C \"$CODEBUILD_SRC_DIR\" -cf - . | tar -C /codebuild/adl-source -xf -" in buildspec
 assert "cd /codebuild/adl-source" in buildspec
-assert "apt-get install -y lld clang zstd" in buildspec
+assert 'git ls-files -z --recurse-submodules | xargs -0r touch -h -d "@${source_epoch}" --' in buildspec
+assert "ADL_CODEFRIEND_SOURCE_MTIME status=normalized" in buildspec
+assert "apt-get install -y lld clang zstd" not in buildspec
+assert "https://sh.rustup.rs" not in buildspec
+assert "github.com/mozilla/sccache/releases" not in buildspec
+assert 'export PATH="/usr/local/cargo/bin:/usr/local/bin:/usr/bin:/bin"' in buildspec
+assert 'export NO_PROXY="127.0.0.1,localhost,${NO_PROXY:-}"' in buildspec
+assert 'export no_proxy="127.0.0.1,localhost,${no_proxy:-}"' in buildspec
+assert "cargo-nextest" in buildspec
+assert "ADL_CODEFRIEND_TOOLCHAIN_SOURCE image=prebuilt per_job_install=false" in buildspec
+assert "classification=missing_tool" in buildspec
+assert "classification=wrong_image" in buildspec
+assert "classification=wrong_ref" in buildspec
+assert "classification=cache_configuration" in buildspec
 assert "ld.lld --version" in buildspec
 assert "zstd --version" in buildspec
 assert "CARGO_INCREMENTAL=0" in buildspec
+assert "CARGO_PROFILE_TEST_DEBUG=0" in buildspec
 assert "-C link-arg=-fuse-ld=lld" in buildspec
 assert "--remap-path-prefix=/codebuild/adl-source=/workspace" in buildspec
 assert "--remap-path-prefix=/root=/home" in buildspec
@@ -320,13 +489,32 @@ assert 'export ADL_CODEFRIEND_TARGET_CACHE_PREFIX="${ADL_CODEFRIEND_TARGET_CACHE
 assert 'ADL_CODEFRIEND_TARGET_CACHE_RESTORE status=hit' in buildspec
 assert 'ADL_CODEFRIEND_TARGET_CACHE_RESTORE status=local-cache' in buildspec
 assert 'ADL_CODEFRIEND_TARGET_CACHE_SAVE status=uploaded' in buildspec
+assert 'ADL_CODEFRIEND_BUILD_PREPARE status=completed' in buildspec
+assert 'ADL_CODEFRIEND_BUILD_COMMAND status=completed exit_code=${command_status}' in buildspec
 assert 'ADL_CODEFRIEND_TARGET_CACHE_SAVE status=local-cache' in buildspec
-assert "tar --zstd -xf /tmp/adl-codefriend-target-cache.tar.zst -C /codebuild" in buildspec
-assert "tar --zstd -cf /tmp/adl-codefriend-target-cache.tar.zst -C /codebuild adl-target" in buildspec
-assert "'/codebuild/adl-target/**/*'" in buildspec
+assert 'ADL_CODEFRIEND_TARGET_CACHE_OBJECT_KEY="${ADL_CODEFRIEND_TARGET_CACHE_PREFIX}/${ADL_CODEFRIEND_TARGET_CACHE_KEY}.tar.zst"' in buildspec
+assert 'aws s3api get-object --bucket "$ADL_CODEFRIEND_TARGET_CACHE_BUCKET" --key "$ADL_CODEFRIEND_TARGET_CACHE_OBJECT_KEY"' in buildspec
+assert "target_cache_checksum_failed" in buildspec
+assert 'cache_upload_uri="${ADL_CODEFRIEND_TARGET_CACHE_URI}.upload-${cache_upload_suffix}"' in buildspec
+assert '--metadata "sha256=${cache_checksum}"' in buildspec
+assert 'aws s3 cp "$cache_upload_uri" "$ADL_CODEFRIEND_TARGET_CACHE_URI"' in buildspec
+assert 'aws s3 rm "$cache_upload_uri"' in buildspec
+assert 'source_key="${CODEBUILD_RESOLVED_SOURCE_VERSION}"' in buildspec
+assert 'ADL_CODEFRIEND_TARGET_CACHE_KEY="v2-${source_key}-${lock_hash}-${compatibility_hash}"' in buildspec
+assert "tar -I 'zstd -d -T0' -xf /tmp/adl-codefriend-target-cache.tar.zst -C /codebuild" in buildspec
+assert "tar -I 'zstd -T0 -1' -cf /tmp/adl-codefriend-target-cache.tar.zst -C /codebuild adl-target" in buildspec
+assert 'ADL_CODEFRIEND_TARGET_CACHE_SAVE status=skipped-command-failed' in buildspec
+assert "'/codebuild/adl-target/**/*'" not in buildspec
+assert "'/root/.cargo/bin/**/*'" not in buildspec
+assert "'/root/.rustup/**/*'" not in buildspec
 assert "AWS_SECRET_ACCESS_KEY" not in buildspec
 assert "AWS_SESSION_TOKEN" not in buildspec
 PY
+
+ruby -rjson -ryaml -e '
+project = JSON.parse(File.read(ARGV.fetch(0)))
+YAML.safe_load(project.fetch("source").fetch("buildspec"), aliases: false)
+' "$TMP/setup-artifacts/codebuild-project.json"
 
 FAKE_AWS_ARGS_LOG="$TMP/aws-setup-ecr-args.log" \
 ADL_AWS_CLI="$TMP/aws" \
@@ -336,7 +524,7 @@ bash "$SETUP_SCRIPT" \
   --region us-west-2 \
   --project-name adl-codefriend-build \
   --compute-type BUILD_GENERAL1_XLARGE \
-  --image-uri 000000000000.dkr.ecr.us-west-2.amazonaws.com/adl-builder:v0.91.7-fixed \
+  --image-uri 000000000000.dkr.ecr.us-west-2.amazonaws.com/adl-builder@sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa \
   --cache-bucket adl-codefriend-build-cache \
   --cache-prefix codebuild/cache \
   --artifact-dir "$TMP/setup-ecr-artifacts" >"$TMP/setup-ecr.out"
@@ -349,7 +537,7 @@ from pathlib import Path
 
 project = json.loads(Path(sys.argv[1]).read_text())
 policy = json.loads(Path(sys.argv[2]).read_text())
-assert project["environment"]["image"] == "000000000000.dkr.ecr.us-west-2.amazonaws.com/adl-builder:v0.91.7-fixed"
+assert project["environment"]["image"] == "000000000000.dkr.ecr.us-west-2.amazonaws.com/adl-builder@sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
 assert project["environment"]["imagePullCredentialsType"] == "SERVICE_ROLE"
 actions = {
     action

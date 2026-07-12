@@ -9,24 +9,24 @@
     {"id":"kernel.topology_and_backpressure","disposition":"blocked_shared_fixture","proof":"Runtime v3 topology fixture exists; no equivalent live v2 adapter fixture"},
     {"id":"service.contracts_and_configuration","disposition":"blocked_shared_fixture","proof":"Runtime v3 contract fixtures exist; no equivalent live v2 adapter fixture"},
     {"id":"continuity.replay_recovery","disposition":"blocked_shared_fixture","proof":"Runtime v3 continuity fixtures exist; no equivalent live v2 adapter fixture"},
-    {"id":"private_state.security","disposition":"unsupported","proof":"No v3 private-state service; cutover remains blocked"},
-    {"id":"control.health_observability","disposition":"blocked_shared_fixture","proof":"Runtime v3 control fixtures exist; no equivalent live v2 adapter fixture"},
+    {"id":"private_state.security","disposition":"accepted_intentional_divergence","proof":"#5249 Runtime v3 private-state security invariants: signed lineage, redacted projection, anti-equivocation, sanctuary policy, and authorization; raw Runtime v2 format equivalence is intentionally not claimed"},
+    {"id":"control.health_observability","disposition":"accepted_intentional_divergence","proof":"#5252 Runtime v3 weather/CloudWatch boundary proof: sysinfo-backed CPU, memory, disk, network, and temperature observations; explicit GPU unavailable_not_pass state when no approved GPU host exists; serialize_state_then_stop resource policy; and Vector-owned EMF-compatible CloudWatch route. Observed GPU telemetry remains deferred and is not claimed as passed proof"},
     {"id":"reasoning.graphs_and_loops","disposition":"equivalent_live_fixture","proof":"21-run live v2 loop-runtime and v3 reasoning-engine process comparison in parity.rs"},
     {"id":"learning.adaptive_dag","disposition":"blocked_shared_fixture","proof":"Runtime v3 adaptive fixtures exist; no equivalent live v2 adapter fixture"},
     {"id":"governance.freedom_gate_aee","disposition":"blocked_shared_fixture","proof":"Runtime v3 governance fixtures exist; no equivalent live v2 adapter fixture"},
     {"id":"contracts.delegation_resources","disposition":"blocked_shared_fixture","proof":"Runtime v3 governed-contract fixtures exist; no equivalent live v2 adapter fixture"},
     {"id":"agents.providers_scheduler","disposition":"blocked_shared_fixture","proof":"Runtime v3 operational fixtures exist; no equivalent live v2 adapter fixture"},
     {"id":"network.acip_a2a_cloud","disposition":"blocked_shared_fixture","proof":"Runtime v3 network adapter fixtures exist; no equivalent live v2 adapter fixture"},
-    {"id":"clock.checkpoint_lifelog","disposition":"blocked_shared_fixture","proof":"Runtime v3 clock/continuity fixtures exist; no equivalent live v2 adapter fixture"},
-    {"id":"citizen.identity_memory","disposition":"unsupported","proof":"Domain adapter deferred; no cutover claim"},
-    {"id":"moral_affect_wellbeing","disposition":"unsupported","proof":"Domain adapter deferred; no cutover claim"},
-    {"id":"curiosity_intelligence_theory_of_mind","disposition":"unsupported","proof":"Domain adapter deferred; no cutover claim"},
+    {"id":"clock.checkpoint_lifelog","disposition":"accepted_intentional_divergence","proof":"#5250 Runtime v3 checkpoint/lifelog invariants: signed identity verification on read/recovery paths, accepted-through checkpoints, redacted lifelog projections, restored-summary preservation, and post-restore head checks; raw Runtime v2 identity/memory wire-format equivalence is intentionally not claimed"},
+    {"id":"citizen.identity_memory","disposition":"accepted_intentional_divergence","proof":"#5250 Runtime v3 citizen identity and memory-continuity adapters: signed bindings, continuity owner binding across citizen/runtime/signing-key identity, append-only memory events, private-state reference validation, and mismatched-citizen/runtime restore refusal; raw Runtime v2 identity/memory wire-format equivalence is intentionally not claimed"},
+    {"id":"moral_affect_wellbeing","disposition":"accepted_intentional_divergence","proof":"#5251 Runtime v3 governed cognition adapters: deterministic service contracts, bounded moral/affect/wellbeing policy, policy-hash binding, review-required disposition, and review-record validation; subjective cognition and Runtime v2 raw cognition wire-format equivalence are intentionally not claimed"},
+    {"id":"curiosity_intelligence_theory_of_mind","disposition":"accepted_intentional_divergence","proof":"#5251 Runtime v3 governed cognition adapters: deterministic service contracts, bounded curiosity/intelligence/theory-of-mind confidence policy, policy-hash binding, review-required disposition, and review-record validation; subjective cognition and Runtime v2 raw cognition wire-format equivalence are intentionally not claimed"},
     {"id":"migration.shadow_parity","disposition":"live_shadow_fixture","proof":"adl-runtime-kernel/tests/parity.rs live v2/v3 process backends and reversible forwarding facade"},
-    {"id":"guardian.packaging_soak","disposition":"bounded_soak_complete_pending_review","proof":"adl-runtime-kernel/tests/guardian_soak.rs and docs/architecture/runtime_v3_guardian_soak_report.v1.json"}
+    {"id":"guardian.packaging_soak","disposition":"accepted_intentional_divergence","proof":"#5253 Runtime v3 production-like soak and rollback proof: explicit v3 selection, Runtime v2 rollback/default preservation, control port 20997 boundary, stdout/stderr contract truth, graceful pressure-stop evidence, and deferred non-cutover remote/GPU lanes; raw Runtime v2 packaging equivalence is intentionally not claimed"}
   ],
   "module_closure": {
-    "baseline_modules": 195,
-    "routed_modules": 195,
+    "baseline_modules": 206,
+    "routed_modules": 206,
     "proof": "Each filename routes to a capability disposition and proof reference; this is ownership routing, not behavioral equivalence"
   },
   "footprint": {

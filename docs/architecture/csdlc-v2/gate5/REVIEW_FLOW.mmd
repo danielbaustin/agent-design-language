@@ -1,0 +1,8 @@
+flowchart LR
+  I["Implemented exact revision"] --> A["Assign bounded reviewer + scope"]
+  A --> R["Subagent reviews exact revision"]
+  R --> F["Record findings, fixes, routes, residual risk"]
+  F --> G["Publication review guard"]
+  G -->|"complete + current + resolved"| P["Review-ready for later publisher"]
+  G -->|"missing, stale, unresolved, unrouted"| X["Fail closed"]
+  P -. "no publication authority" .-> Y["Gate 6 publisher"]

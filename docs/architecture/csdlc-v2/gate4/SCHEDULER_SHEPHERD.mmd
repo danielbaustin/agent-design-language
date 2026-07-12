@@ -1,0 +1,12 @@
+flowchart TB
+  T["Canonical issue/card/claim/PVF truth"] --> Q["Scheduler classifier"]
+  Q --> O["Eligible operations + blockers"]
+  O -. "report only" .-> X["Authorized lifecycle binary"]
+  T --> H["Shepherd observer"]
+  H --> R["ready"]
+  H --> W["waiting"]
+  H --> Y["retryable"]
+  H --> P["repair required"]
+  H --> U["operator required"]
+  Q --> N["No claim, execute, publish, merge, close"]
+  H --> N2["No edit, execute, publish, merge, close"]

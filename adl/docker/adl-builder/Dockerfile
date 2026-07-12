@@ -2,6 +2,9 @@ FROM ubuntu:24.04
 
 ARG RUST_TOOLCHAIN=stable
 ARG SCCACHE_VERSION=v0.16.0
+ARG CARGO_NEXTEST_VERSION=0.9.140
+ARG CARGO_NEXTEST_X86_64_SHA256=4ee9aaa0d0171a985a5d0eb735b87355894c1c455972e9674fb9fdbd1387c9a3
+ARG CARGO_NEXTEST_AARCH64_SHA256=8b3f4d4560b6b0f83774fecc6be07e47716dbad0eb0bb6c3890f478f4affe4b6
 
 ENV DEBIAN_FRONTEND=noninteractive
 ENV CARGO_HOME=/usr/local/cargo
@@ -63,21 +66,30 @@ RUN arch="$(uname -m)" \
 
 RUN arch="$(uname -m)" \
     && case "$arch" in \
-      x86_64) nextest_arch="x86_64-unknown-linux-gnu" ;; \
-      aarch64|arm64) nextest_arch="aarch64-unknown-linux-gnu" ;; \
+      x86_64) nextest_arch="x86_64-unknown-linux-gnu"; nextest_sha256="$CARGO_NEXTEST_X86_64_SHA256" ;; \
+      aarch64|arm64) nextest_arch="aarch64-unknown-linux-gnu"; nextest_sha256="$CARGO_NEXTEST_AARCH64_SHA256" ;; \
       *) echo "unsupported cargo-nextest arch: $arch" >&2; exit 2 ;; \
     esac \
-    && nextest_url="$(curl -fsSL https://api.github.com/repos/nextest-rs/nextest/releases/latest \
-      | python3 -c 'import json, sys; target = sys.argv[1]; data = json.load(sys.stdin); print(next((asset.get("browser_download_url", "") for asset in data.get("assets", []) if "cargo-nextest" in asset.get("browser_download_url", "") and target in asset.get("browser_download_url", "") and asset.get("browser_download_url", "").endswith(".tar.gz")), ""))' "$nextest_arch")" \
-    && test -n "$nextest_url" \
-    && curl -fsSL "$nextest_url" -o /tmp/cargo-nextest.tar.gz \
+    && nextest_archive="cargo-nextest-${CARGO_NEXTEST_VERSION}-${nextest_arch}.tar.gz" \
+    && nextest_url="https://github.com/nextest-rs/nextest/releases/download/cargo-nextest-${CARGO_NEXTEST_VERSION}/${nextest_archive}" \
+    && curl -fsSL "$nextest_url" -o "/tmp/${nextest_archive}" \
+    && printf '%s  %s\n' "$nextest_sha256" "/tmp/${nextest_archive}" | sha256sum -c - \
     && mkdir -p /tmp/cargo-nextest \
-    && tar -xzf /tmp/cargo-nextest.tar.gz -C /tmp/cargo-nextest \
+    && tar -xzf "/tmp/${nextest_archive}" -C /tmp/cargo-nextest \
     && nextest_bin="$(find /tmp/cargo-nextest -type f -name cargo-nextest | head -n 1)" \
     && test -n "$nextest_bin" \
     && install -m 0755 "$nextest_bin" /usr/local/cargo/bin/cargo-nextest \
     && cargo nextest --version \
-    && rm -rf /tmp/cargo-nextest /tmp/cargo-nextest.tar.gz
+    && rm -rf /tmp/cargo-nextest "/tmp/${nextest_archive}"
+
+RUN printf '%s\n' \
+      "rustc=$(rustc --version)" \
+      "cargo=$(cargo --version)" \
+      "cargo-nextest=$(cargo nextest --version)" \
+      "sccache=$(sccache --version)" \
+      "lld=$(ld.lld --version | head -n 1)" \
+      "aws=$(aws --version 2>&1)" \
+      > /usr/local/share/adl-builder-toolchain.txt
 
 WORKDIR /workspace
 

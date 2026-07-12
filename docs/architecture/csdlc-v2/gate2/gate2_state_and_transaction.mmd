@@ -1,0 +1,39 @@
+flowchart TB
+  subgraph Inputs["Typed inputs"]
+    OP["Semantic operation"]
+    EXPECT["Expected generation + digest"]
+    CLAIM["Live claim"]
+    DESIGN["Design + diagram + review"]
+  end
+
+  subgraph Engine["Standalone csdlc-v2 library"]
+    GUARD["Transition / owner / claim guards"]
+    VALUES["Six typed card values"]
+    RENDER["Deterministic renderer"]
+    MDAST["markdown.rs mdast validation"]
+    DIGEST["Values + AST + render digests"]
+    TXN["Whole-record atomic transaction"]
+  end
+
+  subgraph Record[".csdlc/issues/<n>"]
+    INDEX["index.json"]
+    CARDS["SIP STP SPP VPP SRP SOR"]
+    AUDIT["audit.jsonl"]
+    BACKUP["Complete recovery generation"]
+  end
+
+  OP --> GUARD
+  EXPECT --> GUARD
+  CLAIM --> GUARD
+  DESIGN --> GUARD
+  GUARD --> VALUES --> RENDER --> MDAST --> DIGEST --> TXN
+  TXN --> INDEX
+  TXN --> CARDS
+  TXN --> AUDIT
+  TXN -. "interruption retains" .-> BACKUP
+  BACKUP -. "next writer recovers" .-> TXN
+
+  DOCTOR["csdlc-doctor (read-only)"] --> INDEX
+  DOCTOR --> CARDS
+  DOCTOR --> DESIGN
+  DOCTOR --> OUT["Stable readiness/corruption JSON"]

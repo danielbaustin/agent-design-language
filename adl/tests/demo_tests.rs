@@ -10,14 +10,22 @@ const CSM_DISK_READY_ENV: [(&str, &str); 2] = [
     ("ADL_CSM_TEST_AVAILABLE_BYTES", "1073741824"),
 ];
 
+fn demo_test_command(exe: &str) -> Command {
+    let mut command = Command::new(exe);
+    for (key, value) in CSM_DISK_READY_ENV {
+        command.env(key, value);
+    }
+    command
+}
+
 fn run_swarm(args: &[&str]) -> std::process::Output {
     let exe = env!("CARGO_BIN_EXE_adl");
-    Command::new(exe).args(args).output().unwrap()
+    demo_test_command(exe).args(args).output().unwrap()
 }
 
 fn run_swarm_with_env(args: &[&str], envs: &[(&str, &str)]) -> std::process::Output {
     let exe = env!("CARGO_BIN_EXE_adl");
-    let mut cmd = Command::new(exe);
+    let mut cmd = demo_test_command(exe);
     cmd.args(args);
     for (key, value) in envs {
         cmd.env(key, value);
@@ -27,7 +35,7 @@ fn run_swarm_with_env(args: &[&str], envs: &[(&str, &str)]) -> std::process::Out
 
 fn run_swarm_with_ci(args: &[&str]) -> std::process::Output {
     let exe = env!("CARGO_BIN_EXE_adl");
-    Command::new(exe)
+    demo_test_command(exe)
         .env("CI", "1")
         .args(args)
         .output()

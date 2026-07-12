@@ -1,0 +1,10 @@
+flowchart LR
+    Observe["Octocrab observations"] --> Normalize["Typed readiness truth"]
+    Normalize --> Ready{"Checks + review + conflict + findings"}
+    Ready -->|green| MergeReady["MergeReady handoff"]
+    Ready -->|not green| Wait["Waiting/blocked"]
+    MergeReady --> External["Separately authorized merge/close"]
+    External --> Verify["Verify terminal GitHub state"]
+    Verify --> Commit["Atomic SOR/index + claim release"]
+    Commit --> Guard["Topology + clean-worktree guard"]
+    Guard --> Eligible["Prune eligible"]

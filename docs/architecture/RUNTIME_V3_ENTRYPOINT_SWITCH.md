@@ -55,3 +55,10 @@ This issue does not:
 
 Runtime v2 decommission remains gated by the aggregate Runtime v3 cutover proof
 and an explicit default-switch decision.
+
+## v0.91.7 Decision
+
+#5254 records the final v0.91.7 default-switch decision: Runtime v2 remains the
+default runtime, Runtime v3 remains explicit opt-in only, and Runtime v2
+decommission is not authorized. See
+`docs/architecture/RUNTIME_V3_CUTOVER_DECISION_5254.md`.
