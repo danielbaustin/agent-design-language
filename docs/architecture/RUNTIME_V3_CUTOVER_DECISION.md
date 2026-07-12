@@ -36,6 +36,7 @@ guardian cutover blocker for #5211, and it is not counted as passed proof here.
 | Horust adoption and qualification | #5211 | open | Evidence merged; adoption blocked by Horust 0.1.13 restart-budget defect. |
 | Fixed Horust rollout | #5221 | open | Required successor before guardian cutover can be reconsidered. |
 | Weather/GPU qualification | #5222 | open | GPU proof deferred to #5222; no GPU-runtime claim is made here. |
+| Guardian fallback review | #5224 | open | No reviewed COTS candidate is a drop-in cross-platform external guardian replacement. |
 
 ## Go / No-Go
 
@@ -70,4 +71,4 @@ Required before reconsidering:
 - #5220: run release proof gate.
 - #5221: pin fixed Horust release and rollout guardian.
 - #5222: qualify resource and GPU monitoring.
-
+- #5224: review guardian fallback candidates while fixed Horust remains blocked.
