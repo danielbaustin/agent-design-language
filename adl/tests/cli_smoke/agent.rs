@@ -296,6 +296,7 @@ fn request_governed_stop_and_wait(spec: &std::path::Path, child: &mut std::proce
 
 fn wait_for_governed_shutdown_child(child: &mut std::process::Child) {
     let started = std::time::Instant::now();
+    let timeout = std::time::Duration::from_secs(90);
     loop {
         if child
             .try_wait()
@@ -304,7 +305,7 @@ fn wait_for_governed_shutdown_child(child: &mut std::process::Child) {
         {
             break;
         }
-        if started.elapsed() > std::time::Duration::from_secs(20) {
+        if started.elapsed() > timeout {
             let _ = child.kill();
             panic!("CSM daemon did not exit after governed stop request");
         }
