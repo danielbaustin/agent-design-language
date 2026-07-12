@@ -5,6 +5,7 @@ ARG SCCACHE_VERSION=v0.16.0
 ARG CARGO_NEXTEST_VERSION=0.9.140
 ARG CARGO_NEXTEST_X86_64_SHA256=4ee9aaa0d0171a985a5d0eb735b87355894c1c455972e9674fb9fdbd1387c9a3
 ARG CARGO_NEXTEST_AARCH64_SHA256=8b3f4d4560b6b0f83774fecc6be07e47716dbad0eb0bb6c3890f478f4affe4b6
+ARG CARGO_LLVM_COV_VERSION=0.8.7
 
 ENV DEBIAN_FRONTEND=noninteractive
 ENV CARGO_HOME=/usr/local/cargo
@@ -97,9 +98,7 @@ RUN arch="$(uname -m)" \
       aarch64|arm64) llvm_cov_arch="aarch64-unknown-linux-musl" ;; \
       *) echo "unsupported cargo-llvm-cov arch: $arch" >&2; exit 2 ;; \
     esac \
-    && llvm_cov_url="$(curl -fsSL https://api.github.com/repos/taiki-e/cargo-llvm-cov/releases/latest \
-      | python3 -c 'import json, sys; target = sys.argv[1]; data = json.load(sys.stdin); print(next((asset.get("browser_download_url", "") for asset in data.get("assets", []) if target in asset.get("browser_download_url", "") and asset.get("browser_download_url", "").endswith(".tar.gz")), ""))' "$llvm_cov_arch")" \
-    && test -n "$llvm_cov_url" \
+    && llvm_cov_url="https://github.com/taiki-e/cargo-llvm-cov/releases/download/v${CARGO_LLVM_COV_VERSION}/cargo-llvm-cov-${llvm_cov_arch}.tar.gz" \
     && curl -fsSL "$llvm_cov_url" -o /tmp/cargo-llvm-cov.tar.gz \
     && mkdir -p /tmp/cargo-llvm-cov \
     && tar -xzf /tmp/cargo-llvm-cov.tar.gz -C /tmp/cargo-llvm-cov \
