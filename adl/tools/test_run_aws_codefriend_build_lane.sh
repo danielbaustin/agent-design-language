@@ -50,7 +50,13 @@ if [ "$1" = "logs" ] && [ "$2" = "describe-log-streams" ]; then
   exit 0
 fi
 if [ "$1" = "logs" ] && [ "$2" = "get-log-events" ]; then
-  printf '{"events":[],"nextForwardToken":"fixture-token"}\n'
+  if [ "${FAKE_AWS_MISSING_MARKERS:-false}" = "true" ]; then
+    printf '{"events":[{"message":"fixture log without verification markers\\n"}],"nextForwardToken":"fixture-token"}\n'
+    exit 0
+  fi
+  cat <<'JSON'
+{"events":[{"message":"fixture build log account=000000000000 arn=arn:aws:codebuild:us-west-2:000000000000:build/example key=AKIA1234567890ABCDEF\nAuthorization: Bearer provider-token-value\n{\"token\":\"json-token-value\",\"api_key\":\"json-api-key-value\"}\nADL_CODEFRIEND_TOOLCHAIN_SOURCE image=prebuilt per_job_install=false\nADL_CODEFRIEND_PREFLIGHT status=passed image_digest_pinned=true source_sha_verified=true\nADL_CODEFRIEND_TARGET_CACHE_RESTORE status=hit checksum=verified\nADL_CODEFRIEND_BUILD_PREPARE status=completed\nADL_CODEFRIEND_TARGET_CACHE_SAVE status=uploaded checksum=verified atomic=true source=prepare\nADL_CODEFRIEND_BUILD_COMMAND status=completed exit_code=0\n"}],"nextForwardToken":"fixture-token"}
+JSON
   exit 0
 fi
 if [ "$1" = "logs" ] && { [ "$2" = "create-log-group" ] || [ "$2" = "put-retention-policy" ]; }; then
@@ -103,24 +109,6 @@ if [ "$1" = "codebuild" ] && [ "$2" = "stop-build" ]; then
   cat <<JSON
 {"build":{"id":"codefriend-build:1234","buildStatus":"STOPPED","currentPhase":"COMPLETED"}}
 JSON
-  exit 0
-fi
-if [ "$1" = "logs" ] && [ "$2" = "tail" ]; then
-  if [ "${FAKE_AWS_MISSING_MARKERS:-false}" = "true" ]; then
-    printf 'fixture log without verification markers\n'
-    exit 0
-  fi
-  cat <<'LOG'
-fixture build log account=000000000000 arn=arn:aws:codebuild:us-west-2:000000000000:build/example key=AKIA1234567890ABCDEF
-Authorization: Bearer provider-token-value
-{"token":"json-token-value","api_key":"json-api-key-value"}
-ADL_CODEFRIEND_TOOLCHAIN_SOURCE image=prebuilt per_job_install=false
-ADL_CODEFRIEND_PREFLIGHT status=passed image_digest_pinned=true source_sha_verified=true
-ADL_CODEFRIEND_TARGET_CACHE_RESTORE status=hit checksum=verified
-ADL_CODEFRIEND_BUILD_PREPARE status=completed
-ADL_CODEFRIEND_TARGET_CACHE_SAVE status=uploaded checksum=verified atomic=true source=prepare
-ADL_CODEFRIEND_BUILD_COMMAND status=completed exit_code=0
-LOG
   exit 0
 fi
 echo "unexpected fake aws args: $*" >&2
@@ -353,6 +341,7 @@ assert_has "$SETUP_SCRIPT" "target_cache_checksum_failed"
 assert_has "$SETUP_SCRIPT" 'cache_upload_uri="${ADL_CODEFRIEND_TARGET_CACHE_URI}.upload-${cache_upload_suffix}"'
 assert_has "$SETUP_SCRIPT" '--metadata "sha256=${cache_checksum}"'
 assert_has "$SETUP_SCRIPT" 'aws s3 cp "$cache_upload_uri" "$ADL_CODEFRIEND_TARGET_CACHE_URI"'
+assert_has "$SETUP_SCRIPT" '--copy-props metadata-directive'
 assert_has "$SETUP_SCRIPT" 'aws s3 rm "$cache_upload_uri"'
 assert_has "$SETUP_SCRIPT" "ADL_CODEFRIEND_TARGET_CACHE_RESTORE status=hit"
 assert_has "$SETUP_SCRIPT" "ADL_CODEFRIEND_TARGET_CACHE_RESTORE status=miss"
@@ -384,7 +373,7 @@ assert_has "$SCRIPT" "timed out waiting for CodeBuild build to complete; stop-bu
 assert_has "$SCRIPT" "--live-logs"
 assert_has "$SCRIPT" "--no-live-logs"
 assert_has "$SCRIPT" "aws_codefriend_live_logs_attached=true"
-assert_has "$SCRIPT" '"$AWS_CLI" logs tail "$LOG_GROUP"'
+assert_not_has "$SCRIPT" '"$AWS_CLI" logs tail "$LOG_GROUP"'
 assert_has "$SCRIPT" '"$AWS_CLI" logs describe-log-streams'
 assert_has "$SCRIPT" '"$AWS_CLI" logs get-log-events'
 assert_has "$SCRIPT" 'nextForwardToken'

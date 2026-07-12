@@ -162,6 +162,8 @@ stream exists, then advances through `GetLogEvents` forward tokens and emits
 only new messages through the redactor. This avoids both an early empty
 attachment and the buffering behavior of `aws logs tail --follow`. The GitHub
 starter role has read-only access to that project's streams for the same path.
+Terminal capture drains the same stream to a stable forward token before
+self-verification, rather than switching to a broader CloudWatch API.
 A custom command remains available through
 `--env`, but it is not the canonical broad proof:
 
@@ -191,6 +193,8 @@ and then runs the tests. A test failure therefore retains successful compilation
 work. Archive publication writes a SHA-256 metadata field on a temporary S3
 object and then server-side copies that single object to the stable key; restore
 requires the object metadata to match the downloaded archive before extraction.
+Promotion copies metadata but deliberately does not copy S3 object tags, so the
+runtime role does not need tagging authority.
 The service role includes the object-scoped multipart upload/copy permissions
 required for target archives larger than S3's single-copy limit, and cache-stage
 failures emit their bounded AWS diagnostic before the job exits.

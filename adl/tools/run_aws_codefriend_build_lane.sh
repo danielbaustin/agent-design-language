@@ -118,7 +118,8 @@ stop_log_tail() {
     LOG_TAIL_PID=""
   fi
   if [ -n "$LOG_PATH" ]; then
-    rm -f "${LOG_PATH}.events.json" "${LOG_PATH}.next-token"
+    rm -f "${LOG_PATH}.events.json" "${LOG_PATH}.next-token" \
+      "${LOG_PATH}.final-page.json" "${LOG_PATH}.final-token"
   fi
 }
 
@@ -127,16 +128,46 @@ capture_final_log() {
   [ -n "$LOG_GROUP" ] || return 0
   [ -n "$LOG_STREAM" ] || return 0
   local snapshot="${LOG_PATH}.snapshot"
+  local page="${LOG_PATH}.final-page.json"
+  local token_file="${LOG_PATH}.final-token"
+  local next_token=""
   : >"$snapshot"
-  set +e
-  "$AWS_CLI" logs tail "$LOG_GROUP" \
-    "${AWS_PROFILE_ARGS[@]+"${AWS_PROFILE_ARGS[@]}"}" \
-    --region "$AWS_REGION" \
-    --log-stream-names "$LOG_STREAM" \
-    --format short 2>&1 | redact_log_stream "$snapshot" "false"
-  local aws_status="${PIPESTATUS[0]}"
-  set -e
-  if [ "$aws_status" -eq 0 ] && [ -s "$snapshot" ]; then
+  local capture_status=0
+  while :; do
+    local token_args=()
+    if [ -n "$next_token" ]; then
+      token_args=(--next-token "$next_token")
+    fi
+    if ! "$AWS_CLI" logs get-log-events \
+      "${AWS_PROFILE_ARGS[@]+"${AWS_PROFILE_ARGS[@]}"}" \
+      --region "$AWS_REGION" \
+      --log-group-name "$LOG_GROUP" \
+      --log-stream-name "$LOG_STREAM" \
+      --start-from-head \
+      "${token_args[@]+"${token_args[@]}"}" \
+      --output json >"$page" 2>/dev/null; then
+      capture_status=1
+      break
+    fi
+    python3 - "$page" "$token_file" <<'PY' | redact_log_stream "$snapshot" "false"
+import json
+import sys
+from pathlib import Path
+
+payload = json.loads(Path(sys.argv[1]).read_text())
+for event in payload.get("events") or []:
+    message = str(event.get("message") or "")
+    print(message, end="" if message.endswith("\n") else "\n")
+Path(sys.argv[2]).write_text(str(payload.get("nextForwardToken") or ""))
+PY
+    new_token="$(cat "$token_file" 2>/dev/null || true)"
+    if [ -z "$new_token" ] || [ "$new_token" = "$next_token" ]; then
+      break
+    fi
+    next_token="$new_token"
+  done
+  rm -f "$page" "$token_file"
+  if [ "$capture_status" -eq 0 ] && [ -s "$snapshot" ]; then
     mv "$snapshot" "$LOG_PATH"
   else
     rm -f "$snapshot"

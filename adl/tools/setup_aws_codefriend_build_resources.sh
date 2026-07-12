@@ -558,7 +558,7 @@ phases:
               tail -n 20 /tmp/adl-codefriend-target-cache-save.log >&2
               return 46
             fi
-            if ! aws s3 cp "$cache_upload_uri" "$ADL_CODEFRIEND_TARGET_CACHE_URI" >>/tmp/adl-codefriend-target-cache-save.log 2>&1; then
+            if ! aws s3 cp "$cache_upload_uri" "$ADL_CODEFRIEND_TARGET_CACHE_URI" --copy-props metadata-directive >>/tmp/adl-codefriend-target-cache-save.log 2>&1; then
               echo "ADL_CODEFRIEND_TARGET_CACHE_SAVE status=failed stage=promote" >&2
               tail -n 20 /tmp/adl-codefriend-target-cache-save.log >&2
               if aws s3 rm "$cache_upload_uri" >>/tmp/adl-codefriend-target-cache-save.log 2>&1; then
