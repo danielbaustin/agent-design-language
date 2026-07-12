@@ -279,6 +279,9 @@ Never delete or recreate the retained cache as a recovery shortcut.
 When the retained EBS volume is expanded, the remote runner grows its ext4
 filesystem with `resize2fs` after mounting it. EBS size alone is not usable
 capacity until that filesystem-growth step succeeds.
+The runner changes ownership only on the mount root. It must not recursively
+walk the retained target on every launch; cache contents are written by the
+same non-root UID/GID used for validation.
 
 ## Focused Contract Tests
 
