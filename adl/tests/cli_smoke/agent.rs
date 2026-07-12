@@ -4608,8 +4608,16 @@ memory:
             "durably_spooled_waiting_for_replay" | "durably_spooled_behind_unacknowledged_sequence"
         )
     );
+    let blocked_before_sequence_reservation = notice_latest["typed_channel_delivery"]["status"]
+        == "blocked_before_sequence_reservation"
+        && notice_latest["typed_channel_delivery"]["cursor_advanced"] == false
+        && notice_latest["typed_channel_delivery"]["spool_sequence"].is_null()
+        && notice_latest["typed_channel_delivery"]["preflight"]["failure_class"]
+            == "csm_notice_route_not_configured";
     assert!(
-        synchronous_attempts_recorded || deferred_to_channel_owner,
+        synchronous_attempts_recorded
+            || deferred_to_channel_owner
+            || blocked_before_sequence_reservation,
         "unexpected governed notice delivery state: attempts={attempts:?}, typed_channel_delivery={}",
         notice_latest["typed_channel_delivery"]
     );
