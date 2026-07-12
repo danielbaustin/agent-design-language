@@ -89,15 +89,13 @@
     },
     {
       "id": "clock.checkpoint_lifelog",
-      "disposition": "blocker",
-      "proof": "Runtime v3 checkpoint/lifelog fixture exists; shared live continuity fixture is still required.",
-      "blocking_issue": 5250
+      "disposition": "accepted_intentional_divergence",
+      "proof": "#5250 implements Runtime v3 checkpoint/lifelog continuity invariants with signed identity verification on read/recovery paths, accepted-through checkpoint summaries, redacted lifelog projections, restored-summary preservation, and post-restore head checks; raw Runtime v2 identity/memory wire-format equivalence is intentionally not claimed."
     },
     {
       "id": "citizen.identity_memory",
-      "disposition": "blocker",
-      "proof": "Identity and memory-continuity adapter proof is required.",
-      "blocking_issue": 5250
+      "disposition": "accepted_intentional_divergence",
+      "proof": "#5250 implements Runtime v3 citizen identity and memory-continuity adapters with signed bindings, continuity owner binding across citizen/runtime/signing-key identity, append-only memory events, private-state reference validation, and mismatched-citizen/runtime restore refusal; raw Runtime v2 identity/memory wire-format equivalence is intentionally not claimed."
     },
     {
       "id": "moral_affect_wellbeing",
@@ -125,10 +123,10 @@
   ],
   "summary": {
     "live_equivalent_fixture": 1,
-    "accepted_intentional_divergence": 1,
+    "accepted_intentional_divergence": 3,
     "retained_v2_behavior_behind_adapter": 1,
     "deferred_non_cutover_surface": 0,
-    "blocker": 15
+    "blocker": 13
   },
   "non_claims": [
     "This packet does not authorize Runtime v3 as the default runtime.",

@@ -1,0 +1,51 @@
+{
+  "schema": "adl.runtime_v3.identity_memory.v1",
+  "issue": 5250,
+  "target_version": "v0.91.7",
+  "created_at_utc": "2026-07-12T12:20:00Z",
+  "capabilities": [
+    "clock.checkpoint_lifelog",
+    "citizen.identity_memory"
+  ],
+  "cutover_disposition": "accepted_intentional_divergence",
+  "runtime_v2_internal_reuse": false,
+  "raw_runtime_v2_format_equivalence": false,
+  "invariants": {
+    "identity": "citizen identity is bound to runtime and continuity ids by an ed25519-signed identity binding; append, checkpoint, lifelog, and restore paths verify the binding before access",
+    "memory_append": "memory events append to the bound continuity id with exact next sequence and predecessor hash",
+    "continuity_owner": "each continuity id is owned by one signed citizen/runtime/signing-key tuple and fails closed on same-continuity owner substitution",
+    "checkpoint": "checkpoint snapshots retain accepted-through, head hash, public fact summary, and private-state reference ids",
+    "lifelog": "lifelog projections expose only allowed visible fields and event hashes; private-state refs are redacted",
+    "recovery": "restored ledgers refuse mismatched citizen/runtime/continuity identities, preserve checkpoint summaries across the next checkpoint, and require the expected head before continuing"
+  },
+  "cryptography": {
+    "signature_crate": "ed25519-dalek",
+    "digest_crate": "blake3",
+    "custom_crypto": false
+  },
+  "proof_surfaces": [
+    "adl-runtime-kernel/src/identity_memory.rs",
+    "adl-runtime-kernel/tests/identity_memory.rs"
+  ],
+  "negative_tests": [
+    "forged identity binding rejected before memory append",
+    "forged identity binding rejected before checkpoint, lifelog, and restore",
+    "same-continuity different-citizen or different-runtime owner substitution rejected",
+    "invalid private-state reference rejected",
+    "restore refuses mismatched checkpoint citizen",
+    "post-restore append refuses unexpected head",
+    "restored checkpoint summary is preserved across the next checkpoint"
+  ],
+  "validation": [
+    "cargo fmt --manifest-path adl-runtime-kernel/Cargo.toml --check",
+    "cargo test --manifest-path adl-runtime-kernel/Cargo.toml --test identity_memory -- --nocapture",
+    "cargo clippy --manifest-path adl-runtime-kernel/Cargo.toml --test identity_memory -- -D warnings",
+    "cargo test --manifest-path adl-runtime-kernel/Cargo.toml --test parity -- --nocapture"
+  ],
+  "residual_risks": [
+    "This proof does not authorize Runtime v3 as the default runtime.",
+    "This proof does not delete Runtime v2.",
+    "This proof does not claim Runtime v2 raw identity or memory wire-format compatibility.",
+    "Broader production-like soak and shared live fixture expansion remain routed through #5253."
+  ]
+}

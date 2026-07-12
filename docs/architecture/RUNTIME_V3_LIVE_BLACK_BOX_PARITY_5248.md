@@ -15,8 +15,8 @@ cutover gate until the prerequisite issues resolve them.
 
 - `live_equivalent_fixture`: 1 capability.
 - `retained_v2_behavior_behind_adapter`: 1 capability.
-- `blocker`: 16 capabilities.
-- `accepted_intentional_divergence`: 0 capabilities.
+- `blocker`: 13 capabilities.
+- `accepted_intentional_divergence`: 3 capabilities.
 - `deferred_non_cutover_surface`: 0 capabilities.
 
 The retained machine-readable packet is:
@@ -30,7 +30,6 @@ docs/architecture/runtime_v3_live_black_box_parity_5248.v1.json
 | Issue | Blocking Surface |
 |---:|---|
 | #5249 | Private-state and security equivalence. |
-| #5250 | Citizen identity, memory continuity, clock/checkpoint/lifelog proof. |
 | #5251 | Governed cognition adapters. |
 | #5252 | Weather/GPU/CloudWatch retained proof. |
 | #5253 | Production-like soak, rollback, and shared live fixture expansion. |
