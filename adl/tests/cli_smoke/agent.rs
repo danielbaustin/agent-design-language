@@ -432,16 +432,23 @@ memory:
     .expect("write agent spec");
 
     let spec_str = spec.to_str().expect("utf8 path");
-    let out = run_adl(&[
-        "agent",
-        "run",
-        "--spec",
-        spec_str,
-        "--max-cycles",
-        "3",
-        "--no-sleep",
-        "--json",
-    ]);
+    let disk_ready_env = [
+        ("ADL_CSM_DISK_FLOOR_BYTES", "0"),
+        ("ADL_CSM_TEST_AVAILABLE_BYTES", "1073741824"),
+    ];
+    let out = run_adl_with_env(
+        &[
+            "agent",
+            "run",
+            "--spec",
+            spec_str,
+            "--max-cycles",
+            "3",
+            "--no-sleep",
+            "--json",
+        ],
+        &disk_ready_env,
+    );
     assert!(
         out.status.success(),
         "expected agent run success, stderr:\n{}",
