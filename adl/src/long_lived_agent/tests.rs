@@ -2051,6 +2051,10 @@ fn governed_notice_retains_spool_and_cursor_for_ambiguous_timeout() {
 
 #[test]
 fn safe_fail_bundle_preserves_malformed_artifacts_and_quarantines_active_lease() {
+    let _env = MultiEnvGuard::set_all(&[
+        ("ADL_CSM_DISK_FLOOR_BYTES", "0"),
+        ("ADL_CSM_TEST_AVAILABLE_BYTES", "1073741824"),
+    ]);
     let root = temp_dir("safe-fail-malformed-quarantine");
     let spec = write_spec(&root);
     let loaded = load_spec(&spec).expect("load spec");
