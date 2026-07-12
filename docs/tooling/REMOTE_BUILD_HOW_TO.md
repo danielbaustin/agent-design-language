@@ -105,27 +105,22 @@ Record:
 
 ## 4. AWS Spot
 
-Dry-run/account check:
+No-cost, self-verifying preflight:
 
 ```sh
-bash adl/tools/run_aws_spot_remote_validation_lane.sh \
-  --check-account \
-  --git-ref <branch-or-commit> \
-  --command 'bash adl/tools/run_build_platform_benchmark.sh --platform aws_spot --cache-posture fixed_builder_image_warm_ebs_cache --out .adl/local-artifacts/build-platform/aws-spot-summary.json --artifact-dir .adl/local-artifacts/build-platform/aws-spot' \
-  --out "$ADL_ARTIFACT_DIR/aws-spot-dry-run-summary.json" \
-  --artifact-dir "$ADL_ARTIFACT_DIR/aws-spot-dry-run"
+bash adl/tools/run_aws_spot_remote_validation_lane.sh preflight \
+  --git-ref <pushed-branch-or-commit>
 ```
 
-Live run:
+Asynchronous live run:
 
 ```sh
-bash adl/tools/run_aws_spot_remote_validation_lane.sh \
-  --run \
-  --check-account \
-  --git-ref <branch-or-commit> \
+RUN_ID="adl-spot-$(date -u +%Y%m%d%H%M%S)"
+
+bash adl/tools/run_aws_spot_remote_validation_lane.sh launch \
+  --run-id "$RUN_ID" \
+  --git-ref <pushed-branch-or-commit> \
   --command 'bash adl/tools/run_build_platform_benchmark.sh --platform aws_spot --cache-posture fixed_builder_image_warm_ebs_cache --out .adl/local-artifacts/build-platform/aws-spot-summary.json --artifact-dir .adl/local-artifacts/build-platform/aws-spot' \
-  --out "$ADL_ARTIFACT_DIR/aws-spot-summary.json" \
-  --artifact-dir "$ADL_ARTIFACT_DIR/aws-spot" \
   --instance-type m7a.2xlarge
 ```
 
@@ -137,25 +132,34 @@ compile and then failed with `sccache: Compiler killed by signal 9` while
 compiling `aws-sdk-ec2`. Smaller or cheaper Spot shapes count only after a
 retained successful run for the same class of workload.
 
-For a fixed-builder-image Spot claim, make the remote command explicitly use
-the published `ADL_AWS_SPOT_BUILDER_IMAGE` on the instance, or cite retained
-proof that the command did so. The wrapper always forwards the retained warm
-EBS cache posture by default, but the cache alone is not proof that the builder
-image was used.
+The wrapper resolves `adl-builder:v0.91.7-fixed` to an immutable digest and
+runs the validation inside it. Mutable image references are rejected. The
+retained hot-cache proof pins the intended subnet and EBS identity; do not pick
+one of the duplicated historical Name tags manually.
+
+Operate the run with:
+
+```sh
+bash adl/tools/run_aws_spot_remote_validation_lane.sh status --run-id "$RUN_ID"
+bash adl/tools/run_aws_spot_remote_validation_lane.sh logs --follow --run-id "$RUN_ID"
+bash adl/tools/run_aws_spot_remote_validation_lane.sh ssh --run-id "$RUN_ID"
+bash adl/tools/run_aws_spot_remote_validation_lane.sh stop --run-id "$RUN_ID"
+bash adl/tools/run_aws_spot_remote_validation_lane.sh cleanup --run-id "$RUN_ID"
+```
 
 Record:
 
 - account check passed
 - advertised git ref
 - selected instance type and why it is appropriate for the workload
-- builder image tag
-- retained EBS cache attached
+- immutable builder image digest hash and verified toolchain
+- retained EBS identity, attachment, mount health, free space, and preexisting target entries
 - benchmark line
 - cleanup/termination completed
 - `resume-state.json` with interrupted attempts when Spot is reclaimed
-- `wrapper-final-summary.json` with `passed`, `failed`, `interrupted_by_aws`,
-  or `resumed_after_interruption`
-- redacted logs/artifacts
+- `wrapper-final-summary.json` with final self-verification status plus explicit
+  interruption and resume counts
+- redacted logs/artifacts and excluded mode-600 `.private` recovery state
 
 Do not call a Spot row warm unless the retained EBS cache is attached in the
 AWS-side summary.

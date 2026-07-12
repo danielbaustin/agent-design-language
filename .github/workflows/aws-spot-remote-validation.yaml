@@ -40,6 +40,7 @@ jobs:
       AWS_SPOT_REMOTE_VALIDATION_REGION: ${{ vars.AWS_SPOT_REMOTE_VALIDATION_REGION || 'us-west-2' }}
       AWS_SPOT_REMOTE_VALIDATION_ROLE_ARN: ${{ secrets.AWS_SPOT_REMOTE_VALIDATION_ROLE_ARN }}
       ADL_AWS_REMOTE_VALIDATION_SSH_ALLOWED_CIDR: ${{ vars.ADL_AWS_REMOTE_VALIDATION_SSH_ALLOWED_CIDR }}
+      AWS_SPOT_REMOTE_VALIDATION_SSH_PRIVATE_KEY_B64: ${{ secrets.AWS_SPOT_REMOTE_VALIDATION_SSH_PRIVATE_KEY_B64 }}
     steps:
       - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4
         with:
@@ -58,6 +59,10 @@ jobs:
             echo "::error::AWS_SPOT_REMOTE_VALIDATION_ROLE_ARN secret is required for live Spot runs"
             exit 2
           fi
+          if [ "${{ inputs.mode }}" = "start-run" ] && [ -z "$AWS_SPOT_REMOTE_VALIDATION_SSH_PRIVATE_KEY_B64" ]; then
+            echo "::error::AWS_SPOT_REMOTE_VALIDATION_SSH_PRIVATE_KEY_B64 secret is required for live Spot runs"
+            exit 2
+          fi
           if [ "${{ inputs.git_ref }}" = "HEAD" ]; then
             echo "::error::git_ref must be a branch, tag, or SHA; HEAD is ambiguous"
             exit 2
@@ -74,9 +79,19 @@ jobs:
       - name: Prepare artifact directory
         run: mkdir -p .adl/tmp/aws-spot-remote-validation
 
+      - name: Prepare passphraseless SSH recovery key
+        if: inputs.mode == 'start-run'
+        env:
+          SSH_KEY_PATH: ${{ runner.temp }}/adl-spot-remote-validation.pem
+        run: |
+          umask 077
+          printf '%s' "$AWS_SPOT_REMOTE_VALIDATION_SSH_PRIVATE_KEY_B64" | base64 --decode > "$SSH_KEY_PATH"
+          chmod 600 "$SSH_KEY_PATH"
+          ssh-keygen -y -P '' -f "$SSH_KEY_PATH" >/dev/null
+
       - name: Build Spot remote validation binary
         if: inputs.mode == 'start-run'
-        run: cargo build --manifest-path adl/Cargo.toml --bin adl-aws-remote-validation
+        run: cargo build --manifest-path tools/aws_remote_validation/Cargo.toml --bin adl-aws-remote-validation
 
       - name: Render Spot remote validation request
         if: inputs.mode == 'dry-run'
@@ -101,7 +116,8 @@ jobs:
           GIT_REF: ${{ inputs.git_ref || github.sha }}
           VALIDATION_COMMAND: ${{ inputs.validation_command }}
           INSTANCE_TYPE: ${{ inputs.instance_type }}
-          ADL_AWS_REMOTE_VALIDATION_BIN: ${{ github.workspace }}/adl/target/debug/adl-aws-remote-validation
+          ADL_AWS_REMOTE_VALIDATION_BIN: ${{ github.workspace }}/tools/aws_remote_validation/target/debug/adl-aws-remote-validation
+          SSH_KEY_PATH: ${{ runner.temp }}/adl-spot-remote-validation.pem
         run: |
           bash adl/tools/run_aws_spot_remote_validation_lane.sh \
             --run \
@@ -111,6 +127,7 @@ jobs:
             --git-ref "$GIT_REF" \
             --command "$VALIDATION_COMMAND" \
             --instance-type "$INSTANCE_TYPE" \
+            --ssh-private-key-path "$SSH_KEY_PATH" \
             --out .adl/tmp/aws-spot-remote-validation/summary.json \
             --artifact-dir .adl/tmp/aws-spot-remote-validation/artifacts \
             --json
@@ -130,25 +147,24 @@ jobs:
             echo "| summary artifact | \`.adl/tmp/aws-spot-remote-validation/summary.json\` |"
           } >> "$GITHUB_STEP_SUMMARY"
 
-      - name: Redact Spot artifact identities
+      - name: Verify Spot artifact redaction
         if: always()
         run: |
           python3 - <<'PY'
-          import json
+          import re
           from pathlib import Path
 
           root = Path(".adl/tmp/aws-spot-remote-validation")
-          for path in root.rglob("*.json"):
-              try:
-                  payload = json.loads(path.read_text(encoding="utf-8"))
-              except Exception:
+          patterns = [r"\b\d{12}\b", r"arn:aws:", r"\bi-[0-9a-f]{8,17}\b", r"\bvol-[0-9a-f]{8,17}\b"]
+          failures = []
+          for path in root.rglob("*"):
+              if not path.is_file() or ".private" in path.parts:
                   continue
-              identity = payload.get("account_identity") if isinstance(payload, dict) else None
-              if isinstance(identity, dict):
-                  for key in ("account_id", "arn", "user_id"):
-                      if key in identity:
-                          identity[key] = "<redacted>"
-                  path.write_text(json.dumps(payload, indent=2, sort_keys=False) + "\n", encoding="utf-8")
+              text = path.read_text(encoding="utf-8", errors="replace")
+              if any(re.search(pattern, text) for pattern in patterns):
+                  failures.append(str(path))
+          if failures:
+              raise SystemExit("unredacted Spot artifacts: " + ", ".join(failures))
           PY
 
       - name: Upload Spot remote validation artifacts
@@ -159,3 +175,4 @@ jobs:
           path: .adl/tmp/aws-spot-remote-validation/
           if-no-files-found: warn
           retention-days: 14
+          include-hidden-files: false

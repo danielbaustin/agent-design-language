@@ -101,6 +101,7 @@ pub struct AwsRemoteValidationConfig {
     pub ssh_private_key_path: Option<PathBuf>,
     pub ssh_user: Option<String>,
     pub ssh_allowed_cidr: Option<String>,
+    pub cache_volume_id: Option<String>,
     pub cache_volume_name: Option<String>,
     pub cache_volume_size_gib: Option<i32>,
     pub cache_volume_type: Option<String>,
@@ -139,7 +140,8 @@ impl AwsRemoteValidationConfig {
         if self.instance_types.is_empty() {
             return Err(anyhow!("at least one --instance-type is required"));
         }
-        let cache_volume_enabled = self.cache_volume_name.is_some()
+        let cache_volume_enabled = self.cache_volume_id.is_some()
+            || self.cache_volume_name.is_some()
             || self.cache_volume_size_gib.is_some()
             || self.cache_volume_type.is_some()
             || self.cache_volume_iops.is_some()
@@ -265,6 +267,7 @@ pub struct LaunchSurfaceRecord {
 
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
 pub struct CacheVolumeRequest {
+    pub volume_id: Option<String>,
     pub name: String,
     pub size_gib: i32,
     pub volume_type: String,
@@ -1467,6 +1470,7 @@ fn build_cache_volume_request(config: &AwsRemoteValidationConfig) -> Option<Cach
         return None;
     }
     Some(CacheVolumeRequest {
+        volume_id: config.cache_volume_id.clone(),
         name: name.to_string(),
         size_gib: config.cache_volume_size_gib.unwrap_or(200),
         volume_type: config
@@ -1736,26 +1740,41 @@ impl LiveAwsRemoteValidationAdapter {
         request: &CacheVolumeRequest,
         availability_zone: &str,
     ) -> std::result::Result<CacheVolumeRecord, AwsAdapterError> {
-        let describe = self
-            .ec2
-            .describe_volumes()
-            .filters(
-                ec2::types::Filter::builder()
-                    .name("tag:Name")
-                    .values(request.name.clone())
-                    .build(),
-            )
-            .filters(
-                ec2::types::Filter::builder()
-                    .name("availability-zone")
-                    .values(availability_zone.to_string())
-                    .build(),
-            )
-            .send()
-            .await
-            .map_err(classify_ec2_error)?;
+        let mut describe_request = self.ec2.describe_volumes();
+        if let Some(volume_id) = request.volume_id.as_deref() {
+            describe_request = describe_request.volume_ids(volume_id);
+        } else {
+            describe_request = describe_request
+                .filters(
+                    ec2::types::Filter::builder()
+                        .name("tag:Name")
+                        .values(request.name.clone())
+                        .build(),
+                )
+                .filters(
+                    ec2::types::Filter::builder()
+                        .name("availability-zone")
+                        .values(availability_zone.to_string())
+                        .build(),
+                );
+        }
+        let describe = describe_request.send().await.map_err(classify_ec2_error)?;
         if let Some(volume) = describe.volumes().first() {
             let volume_id = volume.volume_id().unwrap_or_default().to_string();
+            let volume_az = volume.availability_zone().unwrap_or_default();
+            let volume_name = volume
+                .tags()
+                .iter()
+                .find(|tag| tag.key() == Some("Name"))
+                .and_then(|tag| tag.value())
+                .unwrap_or_default();
+            if volume_az != availability_zone || volume_name != request.name {
+                return Err(AwsAdapterError {
+                    code: Some("CacheVolumeIdentityMismatch".to_string()),
+                    message: "retained cache volume name or availability zone did not match the launch request".to_string(),
+                    spot_fallback_permitted: false,
+                });
+            }
             let state = volume
                 .state()
                 .map(|value| value.as_str().to_string())
@@ -1785,6 +1804,14 @@ impl LiveAwsRemoteValidationAdapter {
                 mount_path: request.mount_path.clone(),
                 created: false,
                 attachment_state: state,
+            });
+        }
+
+        if request.volume_id.is_some() {
+            return Err(AwsAdapterError {
+                code: Some("RetainedCacheVolumeMissing".to_string()),
+                message: "the explicitly selected retained cache volume was not found".to_string(),
+                spot_fallback_permitted: false,
             });
         }
 
@@ -3491,6 +3518,7 @@ mod tests {
             ssh_private_key_path: None,
             ssh_user: None,
             ssh_allowed_cidr: None,
+            cache_volume_id: None,
             cache_volume_name: None,
             cache_volume_size_gib: None,
             cache_volume_type: None,
@@ -4016,7 +4044,10 @@ mod tests {
         assert!(!script.contains("[[ \"bash -lc"));
 
         let tracked_runner = include_str!("../scripts/remote_validation_runner.sh");
-        assert!(tracked_runner.contains("if [ \"$NEEDS_NEXTEST\" = \"1\" ]"));
+        assert!(tracked_runner.contains(
+            "if [ \"$CONTAINERIZED_VALIDATION\" = \"0\" ] && [ \"$NEEDS_NEXTEST\" = \"1\" ]"
+        ));
+        assert!(tracked_runner.contains("immutable_builder_image_only"));
     }
 
     #[test]
