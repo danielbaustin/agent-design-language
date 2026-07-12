@@ -45,6 +45,10 @@ if [ "$1" = "logs" ] && [ "$2" = "describe-log-groups" ]; then
   printf 'None\n'
   exit 0
 fi
+if [ "$1" = "logs" ] && [ "$2" = "describe-log-streams" ]; then
+  printf '1\n'
+  exit 0
+fi
 if [ "$1" = "logs" ] && { [ "$2" = "create-log-group" ] || [ "$2" = "put-retention-policy" ]; }; then
   printf '{}\n'
   exit 0
@@ -328,6 +332,7 @@ assert_has "$SETUP_SCRIPT" '.replace("__SCCACHE_BUCKET__", cache_bucket)'
 assert_has "$SETUP_SCRIPT" 'eval "$(aws configure export-credentials --format env)"'
 assert_not_has "$SETUP_SCRIPT" "codebuild-aws-credentials.env"
 assert_has "$SETUP_SCRIPT" "export CARGO_INCREMENTAL=0"
+assert_has "$SETUP_SCRIPT" "export CARGO_PROFILE_TEST_DEBUG=0"
 assert_not_has "$SETUP_SCRIPT" "apt-get install -y lld clang zstd"
 assert_has "$SETUP_SCRIPT" "ld.lld --version"
 assert_has "$SETUP_SCRIPT" "zstd --version"
@@ -361,6 +366,13 @@ assert_has "$SETUP_SCRIPT" 'aws_codefriend_cache_bucket_exists='
 assert_has "$SETUP_SCRIPT" 'compute_type=%s'
 assert_has "$SETUP_SCRIPT" "codebuild:StopBuild"
 assert_has "$SETUP_SCRIPT" '"s3:DeleteObject"'
+assert_has "$SETUP_SCRIPT" '"s3:AbortMultipartUpload"'
+assert_has "$SETUP_SCRIPT" '"s3:ListMultipartUploadParts"'
+assert_has "$SETUP_SCRIPT" '"s3:ListBucketMultipartUploads"'
+assert_has "$SETUP_SCRIPT" 'status=failed stage=upload-temp'
+assert_has "$SETUP_SCRIPT" 'status=failed stage=promote'
+assert_has "$SETUP_SCRIPT" 'ADL_CODEFRIEND_TARGET_CACHE_CLEANUP status=completed after=promote-failure'
+assert_has "$SETUP_SCRIPT" 'status=failed stage=cleanup-temp'
 assert_has "$SETUP_SCRIPT" "repo:{repo}:ref:refs/heads/main"
 assert_has "$SETUP_SCRIPT" "repo:{repo}:ref:refs/heads/codex/*"
 assert_has "$SCRIPT" "codebuild stop-build"
@@ -369,6 +381,8 @@ assert_has "$SCRIPT" "--live-logs"
 assert_has "$SCRIPT" "--no-live-logs"
 assert_has "$SCRIPT" "aws_codefriend_live_logs_attached=true"
 assert_has "$SCRIPT" '"$AWS_CLI" logs tail "$LOG_GROUP"'
+assert_has "$SCRIPT" '"$AWS_CLI" logs describe-log-streams'
+assert_has "$SCRIPT" '&& log_stream_exists'
 assert_has "$SCRIPT" '"retained_log_path"'
 assert_has "$SCRIPT" '"retained_log_redaction_verified"'
 assert_has "$SCRIPT" '"self_verification"'
@@ -458,6 +472,7 @@ assert "classification=cache_configuration" in buildspec
 assert "ld.lld --version" in buildspec
 assert "zstd --version" in buildspec
 assert "CARGO_INCREMENTAL=0" in buildspec
+assert "CARGO_PROFILE_TEST_DEBUG=0" in buildspec
 assert "-C link-arg=-fuse-ld=lld" in buildspec
 assert "--remap-path-prefix=/codebuild/adl-source=/workspace" in buildspec
 assert "--remap-path-prefix=/root=/home" in buildspec

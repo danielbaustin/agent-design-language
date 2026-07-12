@@ -319,11 +319,18 @@ service_policy_statements = [{
     ],
 }, {
     "Effect": "Allow",
-    "Action": ["s3:GetObject", "s3:PutObject", "s3:DeleteObject", "s3:GetObjectVersion"],
+    "Action": [
+        "s3:GetObject",
+        "s3:PutObject",
+        "s3:DeleteObject",
+        "s3:GetObjectVersion",
+        "s3:AbortMultipartUpload",
+        "s3:ListMultipartUploadParts",
+    ],
     "Resource": f"arn:aws:s3:::{cache_bucket}/{cache_prefix}/*",
 }, {
     "Effect": "Allow",
-    "Action": ["s3:ListBucket", "s3:GetBucketLocation"],
+    "Action": ["s3:ListBucket", "s3:GetBucketLocation", "s3:ListBucketMultipartUploads"],
     "Resource": f"arn:aws:s3:::{cache_bucket}",
     "Condition": {"StringLike": {"s3:prefix": [cache_prefix, f"{cache_prefix}/*"]}},
 }]
@@ -465,6 +472,7 @@ phases:
       - export ADL_CODEFRIEND_TARGET_CACHE_PREFIX="${ADL_CODEFRIEND_TARGET_CACHE_PREFIX:-__SCCACHE_PREFIX__/target/x86_64-unknown-linux-gnu}"
       - eval "$(aws configure export-credentials --format env)"
       - export CARGO_INCREMENTAL=0
+      - export CARGO_PROFILE_TEST_DEBUG=0
       - export RUSTFLAGS="-C link-arg=-fuse-ld=lld --remap-path-prefix=/codebuild/adl-source=/workspace --remap-path-prefix=/root=/home"
       - export RUSTC_WRAPPER=sccache
       - ADL_RUST_CACHE_TARGET_DIR="/codebuild/adl-target" ADL_RUST_CACHE_SCCACHE_DIR="${SCCACHE_DIR:-$HOME/.cache/sccache}" ADL_RUST_CACHE_SCCACHE_SIZE="${SCCACHE_CACHE_SIZE:-20G}" ADL_RUST_CACHE_REQUIRE_SCCACHE=1 ADL_RUST_CACHE_REQUIRE_LLD=1 ADL_RUST_CACHE_USE_LLD=1 bash adl/tools/rust_cache_env.sh write-shell-env /tmp/adl-rust-cache-env.sh
@@ -489,6 +497,7 @@ phases:
       - export ADL_CODEFRIEND_TARGET_CACHE_PREFIX="${ADL_CODEFRIEND_TARGET_CACHE_PREFIX:-__SCCACHE_PREFIX__/target/x86_64-unknown-linux-gnu}"
       - eval "$(aws configure export-credentials --format env)"
       - export CARGO_INCREMENTAL=0
+      - export CARGO_PROFILE_TEST_DEBUG=0
       - export RUSTFLAGS="-C link-arg=-fuse-ld=lld --remap-path-prefix=/codebuild/adl-source=/workspace --remap-path-prefix=/root=/home"
       - export RUSTC_WRAPPER=sccache
       - ADL_RUST_CACHE_TARGET_DIR="/codebuild/adl-target" ADL_RUST_CACHE_SCCACHE_DIR="${SCCACHE_DIR:-$HOME/.cache/sccache}" ADL_RUST_CACHE_SCCACHE_SIZE="${SCCACHE_CACHE_SIZE:-20G}" ADL_RUST_CACHE_REQUIRE_SCCACHE=1 ADL_RUST_CACHE_REQUIRE_LLD=1 ADL_RUST_CACHE_USE_LLD=1 bash adl/tools/rust_cache_env.sh write-shell-env /tmp/adl-rust-cache-env.sh
@@ -498,7 +507,7 @@ phases:
         if [ -z "${ADL_CODEFRIEND_TARGET_CACHE_KEY:-}" ]; then
           lock_hash="$(sha256sum adl/Cargo.lock | awk '{print $1}')"
           source_key="${CODEBUILD_RESOLVED_SOURCE_VERSION}"
-          compatibility_hash="$(printf '%s\\n' "${ADL_CODEFRIEND_EXPECTED_IMAGE}" "$(rustc --version)" "${RUSTFLAGS}" "${CARGO_INCREMENTAL}" | sha256sum | awk '{print $1}')"
+          compatibility_hash="$(printf '%s\\n' "${ADL_CODEFRIEND_EXPECTED_IMAGE}" "$(rustc --version)" "${RUSTFLAGS}" "${CARGO_INCREMENTAL}" "${CARGO_PROFILE_TEST_DEBUG}" | sha256sum | awk '{print $1}')"
           ADL_CODEFRIEND_TARGET_CACHE_KEY="v2-${source_key}-${lock_hash}-${compatibility_hash}"
           export ADL_CODEFRIEND_TARGET_CACHE_KEY
         fi
@@ -540,9 +549,26 @@ phases:
             cache_upload_uri="${ADL_CODEFRIEND_TARGET_CACHE_URI}.upload-${cache_upload_suffix}"
             tar -I 'zstd -T0 -1' -cf /tmp/adl-codefriend-target-cache.tar.zst -C /codebuild adl-target
             cache_checksum="$(sha256sum /tmp/adl-codefriend-target-cache.tar.zst | awk '{print $1}')"
-            aws s3 cp /tmp/adl-codefriend-target-cache.tar.zst "$cache_upload_uri" --metadata "sha256=${cache_checksum}" >/tmp/adl-codefriend-target-cache-save.log
-            aws s3 cp "$cache_upload_uri" "$ADL_CODEFRIEND_TARGET_CACHE_URI" >>/tmp/adl-codefriend-target-cache-save.log
-            aws s3 rm "$cache_upload_uri" >>/tmp/adl-codefriend-target-cache-save.log
+            if ! aws s3 cp /tmp/adl-codefriend-target-cache.tar.zst "$cache_upload_uri" --metadata "sha256=${cache_checksum}" >/tmp/adl-codefriend-target-cache-save.log 2>&1; then
+              echo "ADL_CODEFRIEND_TARGET_CACHE_SAVE status=failed stage=upload-temp" >&2
+              tail -n 20 /tmp/adl-codefriend-target-cache-save.log >&2
+              return 46
+            fi
+            if ! aws s3 cp "$cache_upload_uri" "$ADL_CODEFRIEND_TARGET_CACHE_URI" >>/tmp/adl-codefriend-target-cache-save.log 2>&1; then
+              echo "ADL_CODEFRIEND_TARGET_CACHE_SAVE status=failed stage=promote" >&2
+              tail -n 20 /tmp/adl-codefriend-target-cache-save.log >&2
+              if aws s3 rm "$cache_upload_uri" >>/tmp/adl-codefriend-target-cache-save.log 2>&1; then
+                echo "ADL_CODEFRIEND_TARGET_CACHE_CLEANUP status=completed after=promote-failure" >&2
+              else
+                echo "ADL_CODEFRIEND_TARGET_CACHE_CLEANUP status=failed after=promote-failure" >&2
+              fi
+              return 46
+            fi
+            if ! aws s3 rm "$cache_upload_uri" >>/tmp/adl-codefriend-target-cache-save.log 2>&1; then
+              echo "ADL_CODEFRIEND_TARGET_CACHE_SAVE status=failed stage=cleanup-temp" >&2
+              tail -n 20 /tmp/adl-codefriend-target-cache-save.log >&2
+              return 46
+            fi
             echo "ADL_CODEFRIEND_TARGET_CACHE_SAVE status=uploaded checksum=verified atomic=true source=${source}"
           elif [ "${ADL_CODEFRIEND_TARGET_CACHE_MODE}" = "local" ]; then
             echo "ADL_CODEFRIEND_TARGET_CACHE_SAVE status=local-cache source=${source}"

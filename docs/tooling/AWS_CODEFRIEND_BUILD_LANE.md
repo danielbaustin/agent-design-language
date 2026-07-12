@@ -40,6 +40,11 @@ runtime API and OTLP loopback tests never route through an external proxy. It
 exports short-lived CodeBuild credentials in memory and never writes credential
 material to a file:
 
+The validation profile sets `CARGO_PROFILE_TEST_DEBUG=0`: it remains an
+unoptimized test build, but omits debugger symbol payload that is not consumed
+by the lane. The setting is part of the target-cache compatibility hash so it
+cannot restore artifacts built under a different symbol posture.
+
 ```sh
 ADL_AWS_PROFILE=agent-logic-admin \
 bash adl/tools/setup_aws_codefriend_build_resources.sh \
@@ -152,7 +157,9 @@ bash adl/tools/run_aws_codefriend_build_lane.sh \
 ```
 
 Use `--no-live-logs` only for a caller that deliberately consumes retained
-status instead of terminal output. A custom command remains available through
+status instead of terminal output. The wrapper waits until the exact CloudWatch
+stream exists before attaching its follow process, avoiding an early empty
+attachment while CodeBuild is still provisioning. A custom command remains available through
 `--env`, but it is not the canonical broad proof:
 
 ```sh
@@ -181,6 +188,9 @@ and then runs the tests. A test failure therefore retains successful compilation
 work. Archive publication writes a SHA-256 metadata field on a temporary S3
 object and then server-side copies that single object to the stable key; restore
 requires the object metadata to match the downloaded archive before extraction.
+The service role includes the object-scoped multipart upload/copy permissions
+required for target archives larger than S3's single-copy limit, and cache-stage
+failures emit their bounded AWS diagnostic before the job exits.
 CodeBuild's local cache is limited to dependency indexes:
 
 ```text

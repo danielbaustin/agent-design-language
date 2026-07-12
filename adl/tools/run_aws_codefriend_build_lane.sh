@@ -140,6 +140,20 @@ capture_final_log() {
   fi
 }
 
+log_stream_exists() {
+  [ -n "$LOG_GROUP" ] || return 1
+  [ -n "$LOG_STREAM" ] || return 1
+  local count
+  count="$("$AWS_CLI" logs describe-log-streams \
+    "${AWS_PROFILE_ARGS[@]+"${AWS_PROFILE_ARGS[@]}"}" \
+    --region "$AWS_REGION" \
+    --log-group-name "$LOG_GROUP" \
+    --log-stream-name-prefix "$LOG_STREAM" \
+    --query "length(logStreams[?logStreamName=='${LOG_STREAM}'])" \
+    --output text 2>/dev/null || true)"
+  [ "$count" = "1" ]
+}
+
 trap stop_log_tail EXIT
 
 while [ "$#" -gt 0 ]; do
@@ -392,7 +406,7 @@ logs = data.get("logs") or {}
 print(logs.get("groupName", ""), logs.get("streamName", ""))
 PY
         )
-        if [ -n "$LOG_GROUP" ] && [ -n "$LOG_STREAM" ]; then
+        if [ -n "$LOG_GROUP" ] && [ -n "$LOG_STREAM" ] && log_stream_exists; then
           : >"$LOG_PATH"
           (
             set +e
