@@ -1,4 +1,7 @@
-use std::{collections::BTreeMap, sync::Arc};
+use std::{
+    collections::{BTreeMap, BTreeSet},
+    sync::Arc,
+};
 
 use petgraph::{
     algo::toposort,
@@ -7,10 +10,37 @@ use petgraph::{
 };
 use thiserror::Error;
 
-use crate::{ComponentFactory, ComponentId, ComponentSpec};
+use crate::{
+    validate_contracts, ComponentConfig, ComponentFactory, ComponentId, ComponentSpec, ConfigError,
+    ContractError, RuntimeConfig, ServiceContract, ValidatedContracts,
+};
 
 #[derive(Debug, Error, Eq, PartialEq)]
 pub enum TopologyError {
+    #[error(transparent)]
+    Config(#[from] ConfigError),
+    #[error(transparent)]
+    Contract(#[from] ContractError),
+    #[error("duplicate configured factory: {0}")]
+    DuplicateFactory(String),
+    #[error("configured component {component} references missing factory {factory}")]
+    MissingFactory {
+        component: ComponentId,
+        factory: String,
+    },
+    #[error("factory {factory} could not construct {component}: {message}")]
+    FactoryBuild {
+        component: ComponentId,
+        factory: String,
+        message: String,
+    },
+    #[error("factory produced component {actual} for configured identity {configured}")]
+    FactoryIdentity {
+        configured: ComponentId,
+        actual: ComponentId,
+    },
+    #[error("factory dependencies do not match configuration for {0}")]
+    FactoryDependencies(ComponentId),
     #[error("duplicate component id: {0}")]
     Duplicate(ComponentId),
     #[error("component {component} depends on missing component {dependency}")]
@@ -28,6 +58,88 @@ pub enum TopologyError {
         port: String,
         message_type: String,
     },
+}
+
+pub struct FactoryRegistration {
+    pub factory: Arc<dyn ComponentFactory>,
+    pub contract: ServiceContract,
+}
+
+type ConfiguredBuilder =
+    dyn Fn(&ComponentConfig) -> Result<FactoryRegistration, String> + Send + Sync;
+
+#[derive(Default)]
+pub struct FactoryRegistry {
+    builders: BTreeMap<String, Arc<ConfiguredBuilder>>,
+    duplicate: Option<String>,
+}
+
+impl FactoryRegistry {
+    pub fn new() -> Self {
+        Self::default()
+    }
+
+    pub fn register<F>(&mut self, name: impl Into<String>, builder: F) -> &mut Self
+    where
+        F: Fn(&ComponentConfig) -> Result<FactoryRegistration, String> + Send + Sync + 'static,
+    {
+        let name = name.into();
+        if self
+            .builders
+            .insert(name.clone(), Arc::new(builder))
+            .is_some()
+        {
+            self.duplicate = Some(name);
+        }
+        self
+    }
+
+    pub fn construct(&self, config: &RuntimeConfig) -> Result<ConfiguredTopology, TopologyError> {
+        config.validate()?;
+        if let Some(duplicate) = &self.duplicate {
+            return Err(TopologyError::DuplicateFactory(duplicate.clone()));
+        }
+
+        let mut components = ComponentRegistry::new();
+        let mut contracts = Vec::with_capacity(config.components.len());
+        for configured in &config.components {
+            let Some(builder) = self.builders.get(&configured.factory) else {
+                return Err(TopologyError::MissingFactory {
+                    component: configured.id.clone(),
+                    factory: configured.factory.clone(),
+                });
+            };
+            let registration =
+                builder(configured).map_err(|message| TopologyError::FactoryBuild {
+                    component: configured.id.clone(),
+                    factory: configured.factory.clone(),
+                    message,
+                })?;
+            let spec = registration.factory.spec();
+            if spec.id != configured.id {
+                return Err(TopologyError::FactoryIdentity {
+                    configured: configured.id.clone(),
+                    actual: spec.id,
+                });
+            }
+            let actual = spec.dependencies.iter().collect::<BTreeSet<_>>();
+            let expected = configured.dependencies.iter().collect::<BTreeSet<_>>();
+            if actual != expected {
+                return Err(TopologyError::FactoryDependencies(configured.id.clone()));
+            }
+            registration.contract.validate_component(&spec)?;
+            contracts.push(registration.contract);
+            components.register(registration.factory);
+        }
+
+        let contracts = validate_contracts(contracts)?;
+        let topology = components.validate()?;
+        Ok(ConfiguredTopology {
+            topology,
+            contracts,
+            effective_json: config.canonical_json()?,
+        })
+    }
 }
 
 #[derive(Default)]
@@ -116,6 +228,30 @@ pub struct ValidatedTopology {
     pub(crate) factories: BTreeMap<ComponentId, Arc<dyn ComponentFactory>>,
     startup_order: Vec<ComponentId>,
     shutdown_order: Vec<ComponentId>,
+}
+
+pub struct ConfiguredTopology {
+    topology: ValidatedTopology,
+    contracts: ValidatedContracts,
+    effective_json: String,
+}
+
+impl ConfiguredTopology {
+    pub fn topology(&self) -> &ValidatedTopology {
+        &self.topology
+    }
+
+    pub fn contracts(&self) -> &ValidatedContracts {
+        &self.contracts
+    }
+
+    pub fn effective_json(&self) -> &str {
+        &self.effective_json
+    }
+
+    pub fn into_topology(self) -> ValidatedTopology {
+        self.topology
+    }
 }
 
 impl ValidatedTopology {

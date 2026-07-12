@@ -1,0 +1,16 @@
+flowchart TB
+  W["SystemWeather<br/>stop_required"]
+  A["Close admission"]
+  Q["Global quiesce barrier"]
+  P["Bounded parallel snapshots<br/>Futures over Tokio"]
+  B["Independent synced blobs"]
+  M["BLAKE3 blobs + Ed25519 signed manifest"]
+  C["Atomic generation commit"]
+  K["Normal kernel shutdown"]
+  G["External guardian<br/>resource-stop classification"]
+  R["Governed recovery<br/>restart / rehydrate / quarantine / refuse"]
+  L["Separate lifelog store"]
+
+  W --> A --> Q --> P --> B --> M --> C --> K --> G
+  C --> R
+  L -. disjoint .- C

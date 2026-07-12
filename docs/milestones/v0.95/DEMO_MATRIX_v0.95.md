@@ -12,7 +12,7 @@ Candidate demo planning only.
 | D2 | Dashboard and compression review path | Dashboard/reporting surfaces truthfully summarize milestone state without becoming release authority. | HTML dashboard/report pair | Planned candidate |
 | D3 | Distributed execution integration proof | Distributed execution remains bounded, reviewable, and subordinate to secure execution. | integration packet plus boundary report | Planned candidate |
 | D4 | Capability-evidence proof | Shepherd/Gemma and capability-testing evidence surfaces are evidence-backed rather than narrative-only; Aptitude Atlas productization is out of MVP scope. | evaluator/report bundle | Planned candidate |
-| D4b | CodeFriend external-repo proof | CodeFriend v1 and adapter v2 can run a bounded external-repo review through ADL with redaction and manifest evidence. | CodeFriend proof packet | Planned candidate |
+| D4b | CodeFriend external-repo proof | CodeFriend v1 and adapter v2 can run a bounded external-repo review through ADL with redaction and manifest evidence, consuming the complete v1 build plan and pre-v0.92 obligation boundary from `#4756`. | CodeFriend proof packet plus `CODEFRIEND_V1_BUILD_PLAN.md` and `runtime_v2.codefriend_adapter_obligations.v1` handoff | Planned candidate |
 | D5 | Editor boundary proof | Web editor baseline works with the validated lifecycle and the Zed decision is explicit. | editor integration packet and decision note | Planned candidate |
 
 ## Coverage Rules

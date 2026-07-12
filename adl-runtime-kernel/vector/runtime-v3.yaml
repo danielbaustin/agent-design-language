@@ -1,0 +1,25 @@
+# The guardian pipes the kernel's stderr into this source. Deployment overlays
+# add managed OTLP or CloudWatch sinks; Vector owns buffering and retry policy.
+sources:
+  runtime_v3_stderr:
+    type: stdin
+
+transforms:
+  runtime_v3_events:
+    type: remap
+    inputs:
+      - runtime_v3_stderr
+    source: |
+      if !starts_with!(.message, "adl_event ") { abort }
+      fields = parse_key_value!(slice!(.message, 10))
+      . = merge(., fields)
+      .service = "adl-runtime-v3"
+
+sinks:
+  runtime_v3_local:
+    type: console
+    inputs:
+      - runtime_v3_events
+    target: stdout
+    encoding:
+      codec: json

@@ -234,7 +234,15 @@ work_packages:
     deliverables:
       - "Boundary decision packet"
       - "MVP-scope CodeFriend/guild proof or blocker entries"
-      - "Operator-approved publication boundary entries"
+      - "Issue-bound publication boundary entries"
+    status_notes:
+      - "#4752 records the affect/happiness safe-test and public-claim boundary."
+      - "#4753 records the Godel/constructability claim boundary."
+      - "#4754 records the economics/civilization context-only boundary."
+      - "#4755 records the MVP guild foundation handoff boundary."
+      - "#4756 records CodeFriend v1 / adapter v2 handoff obligations."
+      - "#4757 records paper/publication non-claims and promotion gates."
+      - "#4640 parent closeout is recorded in docs/milestones/v0.91.7/review/wp13_closeout_4640.md."
   - wp: WP-14
     title: Launch and v0.92 birthday handoff
     outcome: Align July launch planning, v0.92 activation refresh, Memory Palace/context, capability envelope, birth witnesses/receipt, first birthday docs, and external-facing public claim boundaries.

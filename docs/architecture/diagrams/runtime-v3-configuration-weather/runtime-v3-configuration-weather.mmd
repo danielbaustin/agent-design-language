@@ -1,0 +1,17 @@
+flowchart TB
+  G["External guardian"]
+  K["Tokio kernel supervisor"]
+  C["Versioned RuntimeConfig<br/>canonical; no credential fields"]
+  R["FactoryRegistry<br/>configured adapter boundary"]
+  V["Contract + topology gate<br/>mandatory before spawn"]
+  S["Supervised typed services"]
+  W["SystemWeather<br/>sysinfo common observer"]
+  P["Optional platform probes<br/>Linux PSI / macOS GPU"]
+  X["#5181 continuity<br/>checkpoint and intentional stop"]
+  O["#5177 observability"]
+  A["#5183 CloudWatch adapter"]
+
+  G --> K
+  C --> R --> V --> K --> S
+  P --> W --> O --> A
+  W --> X

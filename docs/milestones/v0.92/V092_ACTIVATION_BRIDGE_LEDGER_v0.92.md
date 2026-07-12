@@ -98,6 +98,7 @@ completion proof by themselves.
 | Affect, happiness, humor, and wellbeing claims | integrated_proven for operational reasoning-control; subjective affect not_claimed | `v0.91.7` WP-13 `#4752`; `docs/milestones/v0.91.7/features/AFFECT_HAPPINESS_BRIDGE_v0.91.7.md`; `docs/milestones/v0.91.7/review/wp13_affect_happiness_boundary_4752.md` | Public birthday evidence may cite bounded affect-like reasoning-control signals and safe-test language only. It must not imply hidden emotion, subjective happiness, wellbeing, suffering, consciousness, scalar happiness scores, reward channels, or public reputation. |
 | Godel mechanics | integrated_proven for CSM-supervised launch admission and claim-boundary consumption; live hosted invocation and adaptive DAG completion not_claimed | `v0.91.7` WP-13 and `v0.92` birthday docs | The first true Godel-agent birthday may consume only the Runtime v2 Godel/constructability boundary: retained Godel runtime evidence, CSM-supervised launch-plan provider-request admission, constructability anchors, validator pass, and operator review. |
 | Economics context | operator_scoped_out | `v0.91.7` WP-13 | Economics is context-only for `v0.92` unless a reviewed decision reopens explicit activation tests; that scoped-out posture requires retained evidence, risk, and operator approval. |
+| Guild foundation | integrated_proven for governance handoff context; v0.93 governance not_claimed | `v0.91.7` WP-13 `#4755` | `v0.92` may consume the Runtime v2 guild foundation boundary for birthday governance context, identity witness evidence routing, community-memory boundary language, and future governance issue inputs only. It may not claim constitutional citizenship, polis authority, delegated governance authority, binding collective decision-making, public guild product readiness, or governance completion. |
 
 ## Birthday Contract Refresh
 
@@ -178,6 +179,7 @@ sprint surface rather than reconstructing state from individual issue histories.
   subjective affect, happiness, wellbeing, or consciousness claim
 - Godel mechanics
 - economics-context decision
+- guild foundation boundary as handoff context, not completed governance
 - integrated logging/OTel consumption from closed `#4718`
 - resilience integration from `#4778` and `#4780`-`#4783`
 - Rust simplification and third-party-library adoption through `#4651` and

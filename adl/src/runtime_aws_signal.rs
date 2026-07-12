@@ -76,6 +76,7 @@ struct ControlPlaneNoticeConfig {
     endpoint: Option<String>,
     lambda_function: Option<String>,
     event_bus: Option<String>,
+    http_timeout: Duration,
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
@@ -91,6 +92,19 @@ pub struct PublishOutcome {
     pub disposition: PublishDisposition,
     pub failure_class: Option<String>,
     pub provider_message_id: Option<String>,
+}
+
+#[derive(Debug, Clone, Serialize)]
+pub(crate) struct CsmCloudPublishPreflight {
+    pub schema: &'static str,
+    pub status: &'static str,
+    pub required_channel: Option<String>,
+    pub route_kind: Option<String>,
+    pub route_class: Option<String>,
+    pub idempotency_key: Option<String>,
+    pub target_sha256: Option<String>,
+    pub failure_class: Option<String>,
+    pub cursor_may_advance: bool,
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
@@ -358,6 +372,12 @@ impl ControlPlaneNoticeConfig {
             .ok()
             .map(|value| value.trim().to_string())
             .filter(|value| !value.is_empty());
+        let http_timeout = env::var("ADL_CSM_NOTICE_HTTP_TIMEOUT_MS")
+            .ok()
+            .and_then(|value| value.trim().parse::<u64>().ok())
+            .map(|value| value.clamp(1, 60_000))
+            .map(Duration::from_millis)
+            .unwrap_or_else(|| Duration::from_secs(10));
         let mode = match mode_env
             .as_deref()
             .map(str::trim)
@@ -387,6 +407,7 @@ impl ControlPlaneNoticeConfig {
             endpoint,
             lambda_function,
             event_bus,
+            http_timeout,
         }
     }
 
@@ -468,6 +489,7 @@ fn heartbeat_cursor_path(loaded: &LoadedAgentSpec) -> PathBuf {
     loaded.state_root.join(HEARTBEAT_CURSOR_ARTIFACT)
 }
 
+#[cfg(test)]
 pub(crate) fn publish_csm_governed_notice_signal(
     loaded: &LoadedAgentSpec,
     notice: &serde_json::Value,
@@ -477,6 +499,186 @@ pub(crate) fn publish_csm_governed_notice_signal(
         publish_csm_notice_sns(loaded, notice),
         publish_csm_notice_control_plane(loaded, notice),
     ]
+}
+
+pub(crate) fn publish_csm_governed_notice_signal_for_channel(
+    loaded: &LoadedAgentSpec,
+    notice: &serde_json::Value,
+    required_channel: &str,
+) -> serde_json::Value {
+    match required_channel {
+        "cloudwatch_logs" => publish_csm_notice_cloudwatch(loaded, notice),
+        "acip_sns" => publish_csm_notice_sns(loaded, notice),
+        "cloudfront_control_plane" => publish_csm_notice_control_plane(loaded, notice),
+        _ => csm_notice_attempt(
+            csm_notice_attempt_base(required_channel, "blocked"),
+            "blocked",
+            Some("csm_notice_required_channel_unsupported".to_string()),
+            None,
+        ),
+    }
+}
+
+pub(crate) fn preflight_csm_governed_notice_signal(
+    notice: &serde_json::Value,
+) -> CsmCloudPublishPreflight {
+    let blocked = |failure_class: &str| CsmCloudPublishPreflight {
+        schema: "adl.csm.cloud_publish_preflight.v1",
+        status: "blocked",
+        required_channel: None,
+        route_kind: None,
+        route_class: None,
+        idempotency_key: notice
+            .get("notice_id")
+            .and_then(serde_json::Value::as_str)
+            .map(str::to_string),
+        target_sha256: None,
+        failure_class: Some(failure_class.to_string()),
+        cursor_may_advance: false,
+    };
+    let Some(notice_id) = notice
+        .get("notice_id")
+        .and_then(serde_json::Value::as_str)
+        .map(str::trim)
+        .filter(|value| !value.is_empty())
+    else {
+        return blocked("csm_notice_id_missing");
+    };
+    if notice_contains_unredacted_secret(notice) {
+        return blocked("csm_notice_redaction_failed");
+    }
+
+    let control = ControlPlaneNoticeConfig::from_env();
+    let sns = AcipProjectionPublisherConfig::from_env();
+    let cloudwatch = HeartbeatPublisherConfig::from_env();
+    let selected = env::var("ADL_CSM_NOTICE_REQUIRED_CHANNEL")
+        .ok()
+        .map(|value| value.trim().to_ascii_lowercase())
+        .filter(|value| !value.is_empty())
+        .or_else(|| control.configured.then(|| "control_plane".to_string()))
+        .or_else(|| sns.topic_configured.then(|| "sns".to_string()))
+        .or_else(|| cloudwatch.configured.then(|| "cloudwatch".to_string()));
+
+    let (required_channel, route_kind, route_class, target_sha256, failure_class) = match selected
+        .as_deref()
+    {
+        Some(requested @ ("control_plane" | "eventbridge" | "https" | "lambda")) => {
+            if requested != "control_plane" && control.target != requested {
+                return blocked("csm_notice_control_plane_target_mismatch");
+            }
+            let route_class = if control.target == "eventbridge" {
+                Some(
+                    env::var("ADL_CSM_NOTICE_EVENTBRIDGE_ROUTE_CLASS")
+                        .map(|value| value.trim().to_ascii_lowercase())
+                        .ok()
+                        .filter(|value| !value.is_empty())
+                        .unwrap_or_else(|| "native_event_bus".to_string()),
+                )
+            } else {
+                None
+            };
+            if route_class.as_deref().is_some_and(|value| {
+                !matches!(
+                    value,
+                    "native_event_bus" | "sqs" | "sns" | "cloudwatch" | "api_gateway" | "lambda"
+                )
+            }) {
+                return blocked("csm_notice_eventbridge_route_class_unsupported");
+            }
+            let failure = control.live_block_reason();
+            let ready = matches!(control.mode, AwsSignalMode::Live)
+                && matches!(
+                    failure,
+                    "control_plane_http_transport_failed"
+                        | "control_plane_lambda_invoke_failed"
+                        | "control_plane_eventbridge_put_failed"
+                );
+            (
+                "cloudfront_control_plane",
+                control.target.clone(),
+                route_class,
+                control.target_hash(),
+                (!ready).then(|| failure.to_string()),
+            )
+        }
+        Some("sns") => {
+            let failure = sns.live_block_reason();
+            let ready =
+                matches!(sns.mode, AwsSignalMode::Live) && failure == "aws_acip_sns_publish_failed";
+            (
+                "acip_sns",
+                "sns".to_string(),
+                None,
+                sns.topic_arn.as_ref().map(|target| sha256_text(target)),
+                (!ready).then(|| failure.to_string()),
+            )
+        }
+        Some("cloudwatch") => {
+            let failure = cloudwatch.live_block_reason();
+            let ready = matches!(cloudwatch.mode, AwsSignalMode::Live)
+                && failure == "aws_signal_live_publish_failed";
+            (
+                "cloudwatch_logs",
+                "cloudwatch_logs".to_string(),
+                None,
+                cloudwatch
+                    .log_group
+                    .as_ref()
+                    .map(|target| sha256_text(target)),
+                (!ready).then(|| failure.to_string()),
+            )
+        }
+        Some(_) => return blocked("csm_notice_required_channel_unsupported"),
+        None => return blocked("csm_notice_route_not_configured"),
+    };
+
+    if let Some(failure_class) = failure_class {
+        return CsmCloudPublishPreflight {
+            required_channel: Some(required_channel.to_string()),
+            route_kind: Some(route_kind),
+            route_class,
+            target_sha256,
+            failure_class: Some(failure_class),
+            ..blocked("csm_notice_preflight_blocked")
+        };
+    }
+    CsmCloudPublishPreflight {
+        schema: "adl.csm.cloud_publish_preflight.v1",
+        status: "publishable",
+        required_channel: Some(required_channel.to_string()),
+        route_kind: Some(route_kind),
+        route_class,
+        idempotency_key: Some(notice_id.to_string()),
+        target_sha256,
+        failure_class: None,
+        cursor_may_advance: false,
+    }
+}
+
+fn sha256_text(value: &str) -> String {
+    let mut hasher = Sha256::new();
+    hasher.update(value.as_bytes());
+    format!("{:x}", hasher.finalize())
+}
+
+fn notice_contains_unredacted_secret(value: &serde_json::Value) -> bool {
+    match value {
+        serde_json::Value::Object(object) => object.iter().any(|(key, value)| {
+            let key = key.to_ascii_lowercase();
+            let sensitive = ["secret", "password", "credential", "authorization", "token"]
+                .iter()
+                .any(|needle| key.contains(needle));
+            let contains_secret_material = matches!(value, serde_json::Value::String(value) if !value.trim().is_empty())
+                || matches!(value, serde_json::Value::Number(_) | serde_json::Value::Bool(_));
+            (sensitive
+                && contains_secret_material
+                && !key.ends_with("_ref")
+                && !key.ends_with("_sha256"))
+                || notice_contains_unredacted_secret(value)
+        }),
+        serde_json::Value::Array(values) => values.iter().any(notice_contains_unredacted_secret),
+        _ => false,
+    }
 }
 
 pub(crate) fn publish_runtime_heartbeat_signal(
@@ -982,7 +1184,7 @@ fn publish_csm_notice_control_plane(
                 .unwrap_or("csm-notice")
                 .to_string();
             match reqwest::blocking::Client::builder()
-                .timeout(Duration::from_secs(10))
+                .timeout(config.http_timeout)
                 .build()
                 .and_then(|client| {
                     client
@@ -1007,21 +1209,26 @@ fn publish_csm_notice_control_plane(
                         });
                     csm_notice_attempt(base, "published_live", None, Some(provider_receipt_id))
                 }
-                Ok(response) => csm_notice_attempt(
-                    base,
-                    "failed",
-                    Some(format!(
-                        "control_plane_http_status_{}",
-                        response.status().as_u16()
-                    )),
-                    None,
-                ),
-                Err(_) => csm_notice_attempt(
-                    base,
-                    "failed",
-                    Some("control_plane_http_transport_failed".to_string()),
-                    None,
-                ),
+                Ok(response) => {
+                    let status = response.status().as_u16();
+                    let failure_class = match status {
+                        401 | 403 => format!("control_plane_http_access_denied_{status}"),
+                        408 | 504 => format!("control_plane_http_timeout_ambiguous_{status}"),
+                        429 => "control_plane_http_throttled_429".to_string(),
+                        _ => format!("control_plane_http_status_{status}"),
+                    };
+                    csm_notice_attempt(base, "failed", Some(failure_class), None)
+                }
+                Err(error) => {
+                    let failure_class = if error.is_timeout() {
+                        "control_plane_http_timeout_ambiguous"
+                    } else if error.is_connect() {
+                        "control_plane_http_unreachable"
+                    } else {
+                        "control_plane_http_transport_ambiguous"
+                    };
+                    csm_notice_attempt(base, "failed", Some(failure_class.to_string()), None)
+                }
             }
         }
     }
@@ -1920,6 +2127,9 @@ mod tests {
                 "ADL_CSM_NOTICE_CONTROL_PLANE_URL",
                 "ADL_CSM_NOTICE_LAMBDA_FUNCTION",
                 "ADL_CSM_NOTICE_EVENT_BUS",
+                "ADL_CSM_NOTICE_REQUIRED_CHANNEL",
+                "ADL_CSM_NOTICE_EVENTBRIDGE_ROUTE_CLASS",
+                "ADL_CSM_NOTICE_HTTP_TIMEOUT_MS",
             ];
             let mut saved = Vec::with_capacity(tracked.len());
             for key in tracked {
@@ -2060,6 +2270,151 @@ mod tests {
                 "bounded_test_restart_limit": 1
             }
         })
+    }
+
+    #[test]
+    fn csm_notice_preflight_requires_a_live_publishable_route() {
+        let _guard = MultiEnvGuard::set_all(&[]);
+        let preflight = preflight_csm_governed_notice_signal(&sample_csm_notice());
+        assert_eq!(preflight.status, "blocked");
+        assert_eq!(
+            preflight.failure_class.as_deref(),
+            Some("csm_notice_route_not_configured")
+        );
+        assert!(!preflight.cursor_may_advance);
+    }
+
+    #[test]
+    fn csm_notice_preflight_retains_stable_identity_for_live_eventbridge_sqs_route() {
+        let _guard = MultiEnvGuard::set_all(&[
+            ("ADL_CSM_NOTICE_REQUIRED_CHANNEL", "eventbridge"),
+            ("ADL_CSM_NOTICE_CONTROL_PLANE_MODE", "live"),
+            ("ADL_CSM_NOTICE_CONTROL_PLANE_APPROVED", "1"),
+            ("ADL_CSM_NOTICE_CONTROL_PLANE_TARGET", "eventbridge"),
+            ("ADL_CSM_NOTICE_EVENT_BUS", "adl-csm-runtime-events"),
+            ("ADL_CSM_NOTICE_EVENTBRIDGE_ROUTE_CLASS", "sqs"),
+            ("ADL_AWS_REGION", "us-west-2"),
+            ("ADL_AWS_PROFILE", "agent-logic-admin"),
+        ]);
+        let first = preflight_csm_governed_notice_signal(&sample_csm_notice());
+        let second = preflight_csm_governed_notice_signal(&sample_csm_notice());
+        assert_eq!(first.status, "publishable");
+        assert_eq!(
+            first.required_channel.as_deref(),
+            Some("cloudfront_control_plane")
+        );
+        assert_eq!(first.route_kind.as_deref(), Some("eventbridge"));
+        assert_eq!(first.route_class.as_deref(), Some("sqs"));
+        assert_eq!(first.idempotency_key, second.idempotency_key);
+        assert_eq!(first.target_sha256.as_deref().map(str::len), Some(64));
+        assert!(!first.cursor_may_advance);
+    }
+
+    #[test]
+    fn csm_notice_preflight_supports_live_sns_adapter_boundary() {
+        let _guard = MultiEnvGuard::set_all(&[
+            ("ADL_CSM_NOTICE_REQUIRED_CHANNEL", "sns"),
+            ("ADL_AWS_SIGNAL_MODE", "live"),
+            ("ADL_AWS_SIGNAL_APPROVED", "1"),
+            (
+                "ADL_AWS_SNS_TOPIC_ARN",
+                "arn:aws:sns:us-west-2:000000000000:adl-csm-runtime-events",
+            ),
+            ("ADL_AWS_REGION", "us-west-2"),
+            ("ADL_AWS_PROFILE", "agent-logic-admin"),
+        ]);
+        let preflight = preflight_csm_governed_notice_signal(&sample_csm_notice());
+        assert_eq!(preflight.status, "publishable");
+        assert_eq!(preflight.required_channel.as_deref(), Some("acip_sns"));
+        assert_eq!(preflight.route_kind.as_deref(), Some("sns"));
+        assert_eq!(preflight.target_sha256.as_deref().map(str::len), Some(64));
+        assert!(!preflight.cursor_may_advance);
+    }
+
+    #[test]
+    fn csm_notice_preflight_supports_eventbridge_to_sns_route_class() {
+        let _guard = MultiEnvGuard::set_all(&[
+            ("ADL_CSM_NOTICE_REQUIRED_CHANNEL", "eventbridge"),
+            ("ADL_CSM_NOTICE_CONTROL_PLANE_MODE", "live"),
+            ("ADL_CSM_NOTICE_CONTROL_PLANE_APPROVED", "1"),
+            ("ADL_CSM_NOTICE_CONTROL_PLANE_TARGET", "eventbridge"),
+            ("ADL_CSM_NOTICE_EVENT_BUS", "adl-csm-runtime-events"),
+            ("ADL_CSM_NOTICE_EVENTBRIDGE_ROUTE_CLASS", "sns"),
+            ("ADL_AWS_REGION", "us-west-2"),
+            ("ADL_AWS_PROFILE", "agent-logic-admin"),
+        ]);
+        let preflight = preflight_csm_governed_notice_signal(&sample_csm_notice());
+        assert_eq!(preflight.status, "publishable");
+        assert_eq!(preflight.route_kind.as_deref(), Some("eventbridge"));
+        assert_eq!(preflight.route_class.as_deref(), Some("sns"));
+    }
+
+    #[test]
+    fn csm_notice_preflight_rejects_raw_secrets_but_allows_policy_and_refs() {
+        let _guard = MultiEnvGuard::set_all(&[
+            ("ADL_CSM_NOTICE_REQUIRED_CHANNEL", "eventbridge"),
+            ("ADL_CSM_NOTICE_CONTROL_PLANE_MODE", "live"),
+            ("ADL_CSM_NOTICE_CONTROL_PLANE_APPROVED", "1"),
+            ("ADL_CSM_NOTICE_CONTROL_PLANE_TARGET", "eventbridge"),
+            ("ADL_CSM_NOTICE_EVENT_BUS", "adl-csm-runtime-events"),
+            ("ADL_AWS_REGION", "us-west-2"),
+            ("ADL_AWS_PROFILE", "agent-logic-admin"),
+        ]);
+        let mut safe = sample_csm_notice();
+        safe["details"]["authorization_policy"] = json!({"decision": "allow"});
+        safe["details"]["credential_ref"] = json!("aws-profile:agent-logic-admin");
+        assert_eq!(
+            preflight_csm_governed_notice_signal(&safe).status,
+            "publishable"
+        );
+
+        safe["details"]["authorization"] = json!("Bearer not-retained");
+        let blocked = preflight_csm_governed_notice_signal(&safe);
+        assert_eq!(blocked.status, "blocked");
+        assert_eq!(
+            blocked.failure_class.as_deref(),
+            Some("csm_notice_redaction_failed")
+        );
+    }
+
+    #[test]
+    fn csm_notice_preflight_rejects_unknown_eventbridge_route_class() {
+        let _guard = MultiEnvGuard::set_all(&[
+            ("ADL_CSM_NOTICE_REQUIRED_CHANNEL", "eventbridge"),
+            ("ADL_CSM_NOTICE_CONTROL_PLANE_MODE", "live"),
+            ("ADL_CSM_NOTICE_CONTROL_PLANE_APPROVED", "1"),
+            ("ADL_CSM_NOTICE_CONTROL_PLANE_TARGET", "eventbridge"),
+            ("ADL_CSM_NOTICE_EVENT_BUS", "adl-csm-runtime-events"),
+            ("ADL_CSM_NOTICE_EVENTBRIDGE_ROUTE_CLASS", "unknown"),
+            ("ADL_AWS_REGION", "us-west-2"),
+            ("ADL_AWS_PROFILE", "agent-logic-admin"),
+        ]);
+        let blocked = preflight_csm_governed_notice_signal(&sample_csm_notice());
+        assert_eq!(blocked.status, "blocked");
+        assert_eq!(
+            blocked.failure_class.as_deref(),
+            Some("csm_notice_eventbridge_route_class_unsupported")
+        );
+    }
+
+    #[test]
+    fn csm_notice_preflight_rejects_required_route_target_mismatch() {
+        let _guard = MultiEnvGuard::set_all(&[
+            ("ADL_CSM_NOTICE_REQUIRED_CHANNEL", "eventbridge"),
+            ("ADL_CSM_NOTICE_CONTROL_PLANE_MODE", "live"),
+            ("ADL_CSM_NOTICE_CONTROL_PLANE_APPROVED", "1"),
+            ("ADL_CSM_NOTICE_CONTROL_PLANE_TARGET", "https"),
+            (
+                "ADL_CSM_NOTICE_CONTROL_PLANE_URL",
+                "https://example.invalid/runtime",
+            ),
+        ]);
+        let blocked = preflight_csm_governed_notice_signal(&sample_csm_notice());
+        assert_eq!(blocked.status, "blocked");
+        assert_eq!(
+            blocked.failure_class.as_deref(),
+            Some("csm_notice_control_plane_target_mismatch")
+        );
     }
 
     #[test]
@@ -2961,6 +3316,7 @@ mod tests {
             endpoint: None,
             lambda_function: None,
             event_bus: None,
+            http_timeout: Duration::from_secs(10),
         };
         let csm_envelope = csm_notice_envelope(
             &loaded,
@@ -2982,6 +3338,7 @@ mod tests {
             endpoint: None,
             lambda_function: None,
             event_bus: None,
+            http_timeout: Duration::from_secs(10),
         };
         let eventbridge_missing_region =
             put_csm_notice_eventbridge(&eventbridge_config, &csm_envelope)

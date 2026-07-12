@@ -1,0 +1,19 @@
+flowchart TD
+    Client["Operator or guardian adapter<br/>control port 20997"]
+    Auth["Ed25519 authentication<br/>capability authorization"]
+    Idem["Bounded idempotency records"]
+    Supervisor["Kernel supervisor<br/>sole lifecycle authority"]
+    State["Revisioned RuntimeRecorder state"]
+    Payload["Machine JSON payload<br/>stdout / response body"]
+    Events["Bounded adl_event fields<br/>stderr + tracing"]
+    Vector["Vector service<br/>parse + buffer + retry + export"]
+    Sinks["Deployment sinks<br/>OTLP / CloudWatch"]
+    Inputs["Components + queues + clock<br/>continuity head"]
+
+    Client --> Auth --> Idem --> Supervisor
+    Supervisor --> State
+    Inputs --> State
+    State --> Payload
+    Supervisor --> Events
+    State --> Events
+    Events --> Vector --> Sinks

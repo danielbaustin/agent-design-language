@@ -21,6 +21,8 @@ planning package does not publish a release by itself.
 - [ ] Security and ACIP/A2A implementation/blocker status recorded.
 - [ ] Curiosity and Constructability proof or blocker status recorded.
 - [ ] Reasoning graph / `adl.skill.v1` proof or blocker status recorded.
+- [ ] Paper/publication boundary recorded through #4757 before release notes,
+  launch copy, reports, or website copy imply external publication readiness.
 
 ## 1. Release Readiness
 
@@ -41,6 +43,9 @@ planning package does not publish a release by itself.
 - [ ] Release body populated from approved notes.
 - [ ] Links to key PRs/issues included.
 - [ ] Release visibility confirmed.
+- [ ] Any publication-facing copy cites retained proof packets and passes the
+  #4757 redaction/public-claim/human-approval promotion gates before external
+  publication.
 
 ## 4. Verification
 

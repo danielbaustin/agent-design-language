@@ -146,9 +146,11 @@ bounded implementation proof.
 | Errors | thiserror | ADL-specific error taxonomy |
 | Records and continuity | serde / serde_json / BLAKE3 | schemas, corruption detection, atomic replacement |
 | Instrumentation facade | tracing | bootstrap stderr and retained-event policy |
+| Trace correlation bridge | opentelemetry / tracing-opentelemetry | bounded correlation and truthful exporter non-claims |
 
-The continuity digest detects accidental corruption; it is not a signature and
-does not authenticate a capsule against a malicious writer.
+The original proof capsule digest detects accidental corruption and is not a
+signature. The #5181 Runtime v3 checkpoint manifest separately adds Ed25519
+authentication against externally supplied trusted public keys.
 
 The crate does not implement an executor, graph algorithm, SNTP protocol,
 telemetry SDK, durable queue, or service manager.
@@ -178,10 +180,11 @@ This proof does not establish:
 
 - migration or replacement of the current ADL runtime;
 - production rustysd suitability;
-- live SNTP, ntpd-rs, OpenTelemetry, cloud, ACIP, or provider integration;
+- live SNTP, ntpd-rs, OpenTelemetry exporter delivery, cloud, ACIP, or provider integration;
 - dynamic topology reload or distributed supervision;
 - durable queue or production persistence semantics;
-- full Freedom Gate, reasoning runtime, AEE, or adaptive-learning behavior;
+- full constitutional policy authoring, production provider integration, or
+  distributed authority behavior;
 - release readiness for v0.92.
 
 Related issues #5111 through #5120 retain ownership of their existing runtime
@@ -195,3 +198,30 @@ design-by-contract layer while preserving the architecture above. See
 contract and baseline-comparison diagrams, and
 `docs/architecture/runtime_v3_parity_matrix.v1.json` for the machine-readable
 parity inventory and cumulative LoC/test targets.
+
+Issue #5182 adds declarative configuration, mandatory contract-checked factory
+construction, canonical effective topology, and a compact sysinfo-backed
+system-weather foundation. See
+`docs/architecture/RUNTIME_V3_CONFIGURATION_WEATHER_ARCHITECTURE.md`.
+
+Issue #5181 adds bounded-parallel checkpointing, canonical hash-chained replay,
+governed recovery disposition, storage separation, and graceful resource-stop
+integration. See
+`docs/architecture/RUNTIME_V3_CONTINUITY_RECOVERY_ARCHITECTURE.md`.
+
+Issue #5177 adds one coherent revisioned health snapshot, Ed25519-authenticated
+and capability-authorized lifecycle commands, bounded idempotency, queue
+saturation evidence, stdout/stderr separation, and bounded tracing events for
+external Vector collection without claiming exporter delivery. See
+`docs/architecture/RUNTIME_V3_CONTROL_OBSERVABILITY_ARCHITECTURE.md`.
+
+Issue #5180 adds validated reasoning DAGs, bounded recurrent execution, typed
+evaluation and feedback, checkpointable adaptation state, deterministic
+replay/resume, and signed copy-validated graph mutation with rollback evidence.
+See `docs/architecture/RUNTIME_V3_ADAPTIVE_REASONING_ARCHITECTURE.md`.
+
+Issue #5178 adds signed commitment and authority mediation, attenuating
+delegation, resource admission, one-shot execution permits, governed AEE shell
+actuation, refusal/quarantine/appeal evidence, audit chains, and checkpoint
+recovery. See
+`docs/architecture/RUNTIME_V3_GOVERNED_EXECUTION_ARCHITECTURE.md`.

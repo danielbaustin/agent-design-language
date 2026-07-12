@@ -1,0 +1,114 @@
+{
+  "schema": "adl.wp13.closeout_packet.v1",
+  "issue": 4640,
+  "work_package": "WP-13",
+  "version": "v0.91.7",
+  "status": "ready_for_parent_closeout",
+  "primary_artifact": "docs/milestones/v0.91.7/review/wp13_closeout_4640.md",
+  "children": [
+    {
+      "issue": 4752,
+      "state": "closed",
+      "surface": "affect_happiness",
+      "evidence": "docs/milestones/v0.91.7/review/wp13_affect_happiness_boundary_4752.md",
+      "parent_disposition": "integrated_proven_operational_reasoning_control",
+      "non_claims": [
+        "subjective_affect",
+        "happiness",
+        "wellbeing",
+        "suffering",
+        "consciousness"
+      ]
+    },
+    {
+      "issue": 4753,
+      "state": "closed",
+      "surface": "godel_constructability",
+      "evidence": "docs/milestones/v0.91.7/review/wp13_godel_constructability_boundary_4753.md",
+      "parent_disposition": "integrated_proven_launch_admission_boundary",
+      "non_claims": [
+        "live_hosted_invocation",
+        "unbounded_recursive_self_improvement",
+        "adaptive_dag_completion"
+      ]
+    },
+    {
+      "issue": 4754,
+      "state": "closed",
+      "surface": "economics_civilization",
+      "evidence": "docs/milestones/v0.91.7/review/wp13_economics_civilization_boundary_4754.md",
+      "parent_disposition": "operator_scoped_out_context_only_for_v0_92",
+      "non_claims": [
+        "payments",
+        "settlement",
+        "markets",
+        "autonomous_economy",
+        "civilization_runtime"
+      ]
+    },
+    {
+      "issue": 4755,
+      "state": "closed",
+      "surface": "guild_foundation",
+      "evidence": "docs/milestones/v0.91.7/review/wp13_guild_foundation_boundary_4755.md",
+      "parent_disposition": "integrated_proven_governance_handoff_context",
+      "non_claims": [
+        "constitutional_citizenship",
+        "polis_authority",
+        "delegated_governance_authority",
+        "public_guild_product_readiness",
+        "completed_governance"
+      ]
+    },
+    {
+      "issue": 4756,
+      "state": "closed",
+      "surface": "codefriend_adapter_obligations",
+      "evidence": "docs/milestones/v0.91.7/review/wp13_codefriend_adapter_obligations_4756.md",
+      "parent_disposition": "bounded_handoff_truth_future_product_work",
+      "non_claims": [
+        "codefriend_v1_product_completion",
+        "adapter_v2_implementation",
+        "external_repo_execution_proof",
+        "autonomous_review_authority",
+        "customer_readiness",
+        "public_report_readiness"
+      ]
+    },
+    {
+      "issue": 4757,
+      "state": "closed",
+      "surface": "publication_paper_boundary",
+      "evidence": "docs/milestones/v0.91.7/review/wp13_publication_boundary_4757.md",
+      "parent_disposition": "scoped_out_for_v0_92_birthday_activation",
+      "non_claims": [
+        "paper_publication",
+        "public_launch_approval",
+        "publication_facing_customer_claims"
+      ]
+    }
+  ],
+  "v0_92_may_consume": [
+    "operational_affect_reasoning_control_boundary",
+    "godel_constructability_launch_admission_boundary",
+    "economics_context_only_non_claim_posture",
+    "guild_foundation_handoff_context",
+    "codefriend_adapter_obligation_handoff_truth",
+    "publication_non_claim_and_promotion_gate_truth"
+  ],
+  "v0_92_may_not_consume": [
+    "subjective_affect_or_consciousness",
+    "live_hosted_godel_invocation",
+    "payments_or_autonomous_economy",
+    "completed_governance",
+    "codefriend_product_readiness",
+    "paper_publication_or_public_launch_approval"
+  ],
+  "consuming_surfaces": [
+    "docs/milestones/v0.91.7/WBS_v0.91.7.md",
+    "docs/milestones/v0.91.7/WP_ISSUE_WAVE_v0.91.7.yaml",
+    "docs/milestones/v0.91.7/MILESTONE_CHECKLIST_v0.91.7.md",
+    "docs/milestones/v0.91.7/V092_HANDOFF_v0.91.7.md",
+    "docs/milestones/v0.91.7/FEATURE_DOCS_v0.91.7.md"
+  ]
+}

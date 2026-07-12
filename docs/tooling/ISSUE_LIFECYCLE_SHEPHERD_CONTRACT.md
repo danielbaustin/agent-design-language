@@ -86,6 +86,10 @@ The canonical issue-lifecycle shepherd states are:
 6. `merged_needs_closeout`
    - The PR outcome is settled, but local closeout truth is not yet finalized.
    - Typical owner: `pr-closeout`.
+   - `adl pr shepherd` may run repo-native closeout for this state. Clean issue
+     worktrees are removed with `git worktree remove`; dirty worktrees are
+     retained and must be named in closeout diagnostics instead of being
+     force-deleted.
 7. `closed_no_pr`
    - The issue settled without PR merge, for example duplicate, superseded, or
      other explicit no-PR closeout.
@@ -119,7 +123,8 @@ The canonical issue-lifecycle shepherd states are:
 - `janitor_active -> merged_needs_closeout`
   - triggered when the PR merges after remediation
 - `merged_needs_closeout -> settled`
-  - requires truthful local closeout completion
+  - requires truthful local closeout completion, including issue worktree
+    absence or an explicit dirty-retention reason in the SOR
 - `closed_no_pr -> settled`
   - requires truthful local closeout completion with explicit no-PR rationale
 - `any_state -> blocked`

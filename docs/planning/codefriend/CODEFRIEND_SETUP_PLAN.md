@@ -275,6 +275,11 @@ The remaining feature set should be planned after the alpha milestone as
 separate roadmap bands for structural intelligence, executable governance,
 architectural memory, and product delivery.
 
+The complete CodeFriend v1 product build path is now captured in
+`CODEFRIEND_V1_BUILD_PLAN.md`. That plan expands the alpha and post-alpha bands
+into a full v1 feature set, implementation sequence, validation strategy, and
+release-gate checklist.
+
 ### 6. Product Setup Sequence
 
 The likely setup sequence is:

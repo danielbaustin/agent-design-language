@@ -16,6 +16,7 @@ mod boot_admission;
 mod challenge;
 mod citizen;
 mod citizen_state_substrate;
+mod codefriend_adapter_obligations;
 mod cognitive_being_flagship_demo;
 mod constructability_anchor_validator;
 mod contract_lifecycle_state;
@@ -36,6 +37,7 @@ mod godel_constructability_boundary;
 mod governed_episode;
 mod governed_learning_substrate;
 mod governed_tools_flagship_demo;
+mod guild_foundation_boundary;
 mod hardening;
 mod humor_and_absurdity;
 mod integrated_csm_run;
@@ -107,6 +109,8 @@ pub use citizen::*;
 #[allow(unused_imports)]
 pub use citizen_state_substrate::*;
 #[allow(unused_imports)]
+pub use codefriend_adapter_obligations::*;
+#[allow(unused_imports)]
 pub use cognitive_being_flagship_demo::*;
 #[allow(unused_imports)]
 pub use constructability_anchor_validator::*;
@@ -146,6 +150,8 @@ pub use governed_episode::*;
 pub use governed_learning_substrate::*;
 #[allow(unused_imports)]
 pub use governed_tools_flagship_demo::*;
+#[allow(unused_imports)]
+pub use guild_foundation_boundary::*;
 #[allow(unused_imports)]
 pub use hardening::*;
 #[allow(unused_imports)]

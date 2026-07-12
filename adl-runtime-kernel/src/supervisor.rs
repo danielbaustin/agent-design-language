@@ -10,8 +10,8 @@ use tokio::{
 use tokio_util::sync::CancellationToken;
 
 use crate::{
-    ComponentContext, ComponentFactory, ComponentId, FailurePolicy, RunningState, RuntimeRecorder,
-    ValidatedTopology,
+    ComponentContext, ComponentFactory, ComponentId, FailurePolicy, LifecycleState, RunningState,
+    RuntimeEvent, RuntimeRecorder, ValidatedTopology,
 };
 
 #[derive(Debug, Error)]
@@ -65,13 +65,14 @@ impl Kernel {
     pub async fn start(self) -> Result<KernelHandle, KernelError> {
         let (command_tx, command_rx) = mpsc::channel(4);
         let recorder = self.recorder.clone();
+        recorder.set_lifecycle(LifecycleState::Starting);
         let (started_tx, started_rx) = oneshot::channel();
         let task = tokio::spawn(async move { self.run(command_rx, started_tx).await });
         started_rx
             .await
             .map_err(|_| KernelError::CommandChannelClosed)??;
         Ok(KernelHandle {
-            command_tx,
+            control: KernelControl { command_tx },
             recorder,
             task: Some(task),
         })
@@ -108,6 +109,7 @@ impl Kernel {
                     .recorder
                     .set_component_state(id.clone(), RunningState::Running),
                 _ => {
+                    self.recorder.set_lifecycle(LifecycleState::Failed);
                     let error = KernelError::Readiness(id.clone());
                     let _ = started.send(Err(KernelError::Readiness(id.clone())));
                     cancel_all(&cancellations, self.topology.shutdown_order());
@@ -115,6 +117,7 @@ impl Kernel {
                 }
             }
         }
+        self.recorder.set_lifecycle(LifecycleState::Running);
         let _ = started.send(Ok(()));
 
         loop {
@@ -124,6 +127,7 @@ impl Kernel {
                         cancel_all(&cancellations, self.topology.shutdown_order());
                         return Ok(KernelExit::Clean);
                     };
+                    self.recorder.set_lifecycle(LifecycleState::Stopping);
                     let exit = shutdown(
                         &mut tasks,
                         &cancellations,
@@ -131,6 +135,10 @@ impl Kernel {
                         &self.recorder,
                         grace,
                     ).await;
+                    self.recorder.set_lifecycle(match &exit {
+                        KernelExit::Clean => LifecycleState::Stopped,
+                        _ => LifecycleState::Failed,
+                    });
                     let _ = response.send(exit.clone());
                     return Ok(exit);
                 }
@@ -156,6 +164,7 @@ impl Kernel {
                     if ready {
                         self.recorder.set_component_state(id, RunningState::Running);
                     } else {
+                        self.recorder.set_lifecycle(LifecycleState::Failed);
                         self.recorder.set_component_state(id.clone(), RunningState::Failed);
                         cancel_all(&cancellations, self.topology.shutdown_order());
                         return Ok(KernelExit::Fatal { component: id });
@@ -172,26 +181,29 @@ impl Kernel {
                         self.recorder.set_component_state(id, RunningState::Stopped);
                         continue;
                     }
-                    if let Some(message) = completion.error {
+                    if completion.error.is_some() {
                         let factory = self.topology.factories[&id].clone();
                         match factory.spec().failure_policy {
                             FailurePolicy::Fatal => {
+                                self.recorder.set_lifecycle(LifecycleState::Failed);
                                 self.recorder.set_component_state(id.clone(), RunningState::Failed);
                                 cancel_all(&cancellations, self.topology.shutdown_order());
                                 return Ok(KernelExit::Fatal { component: id });
                             }
                             FailurePolicy::Degrade => {
-                                self.recorder.emit(Some(id.clone()), format!("degraded:{message}"));
+                                self.recorder.emit(Some(id.clone()), RuntimeEvent::ComponentDegraded);
                                 self.recorder.set_component_state(id, RunningState::Degraded);
                             }
                             FailurePolicy::Restart { max_restarts, backoff_millis } => {
                                 let count = restarts.entry(id.clone()).or_default();
                                 if *count >= max_restarts {
+                                    self.recorder.set_lifecycle(LifecycleState::Failed);
                                     self.recorder.set_component_state(id.clone(), RunningState::Failed);
                                     cancel_all(&cancellations, self.topology.shutdown_order());
                                     return Ok(KernelExit::Fatal { component: id });
                                 }
                                 *count += 1;
+                                self.recorder.set_restart_count(id.clone(), *count);
                                 self.recorder.set_component_state(id.clone(), RunningState::Restarting);
                                 let restart_tx = restart_tx.clone();
                                 tokio::spawn(async move {
@@ -209,18 +221,13 @@ impl Kernel {
     }
 }
 
-pub struct KernelHandle {
+#[derive(Clone)]
+pub struct KernelControl {
     command_tx: mpsc::Sender<KernelCommand>,
-    recorder: RuntimeRecorder,
-    task: Option<tokio::task::JoinHandle<Result<KernelExit, KernelError>>>,
 }
 
-impl KernelHandle {
-    pub fn recorder(&self) -> &RuntimeRecorder {
-        &self.recorder
-    }
-
-    pub async fn shutdown(mut self, grace: Duration) -> Result<KernelExit, KernelError> {
+impl KernelControl {
+    pub async fn shutdown(&self, grace: Duration) -> Result<KernelExit, KernelError> {
         let (response_tx, response_rx) = oneshot::channel();
         self.command_tx
             .send(KernelCommand::Shutdown {
@@ -229,9 +236,29 @@ impl KernelHandle {
             })
             .await
             .map_err(|_| KernelError::CommandChannelClosed)?;
-        let response = response_rx
+        response_rx
             .await
-            .map_err(|_| KernelError::CommandChannelClosed)?;
+            .map_err(|_| KernelError::CommandChannelClosed)
+    }
+}
+
+pub struct KernelHandle {
+    control: KernelControl,
+    recorder: RuntimeRecorder,
+    task: Option<tokio::task::JoinHandle<Result<KernelExit, KernelError>>>,
+}
+
+impl KernelHandle {
+    pub fn control(&self) -> KernelControl {
+        self.control.clone()
+    }
+
+    pub fn recorder(&self) -> &RuntimeRecorder {
+        &self.recorder
+    }
+
+    pub async fn shutdown(mut self, grace: Duration) -> Result<KernelExit, KernelError> {
+        let response = self.control.shutdown(grace).await?;
         if let Some(task) = self.task.take() {
             task.await.map_err(|error| KernelError::ComponentFailed {
                 component: ComponentId::new("kernel"),
