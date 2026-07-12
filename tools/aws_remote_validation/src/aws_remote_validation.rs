@@ -4081,6 +4081,8 @@ mod tests {
             "if [ \"$CONTAINERIZED_VALIDATION\" = \"0\" ] && [ \"$NEEDS_NEXTEST\" = \"1\" ]"
         ));
         assert!(tracked_runner.contains("immutable_builder_image_only"));
+        assert!(tracked_runner.contains("PERSISTENT_CHECKOUT=\"$TOOLCHAIN_ROOT/source/agent-design-language\""));
+        assert!(tracked_runner.contains("if [ \"$CURRENT_PERSISTENT_COMMIT\" != \"$SOURCE_COMMIT\" ]"));
     }
 
     #[test]
