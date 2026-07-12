@@ -3943,6 +3943,17 @@ memory:
             ),
             CSM_DISK_READY_ENV[0],
             CSM_DISK_READY_ENV[1],
+            ("ADL_AWS_SIGNAL_MODE", "mock"),
+            ("ADL_AWS_SIGNAL_APPROVED", "1"),
+            ("ADL_AWS_REGION", "us-west-2"),
+            ("ADL_AWS_PROFILE", "agent-logic-admin"),
+            (
+                "ADL_AWS_SNS_TOPIC_ARN",
+                "arn:aws:sns:us-west-2:000000000000:mock",
+            ),
+            ("ADL_CSM_NOTICE_CONTROL_PLANE_MODE", "mock"),
+            ("ADL_CSM_NOTICE_CONTROL_PLANE_TARGET", "eventbridge"),
+            ("ADL_CSM_NOTICE_EVENT_BUS", "adl-csm-notice-bus-5005"),
         ],
     );
     assert!(
