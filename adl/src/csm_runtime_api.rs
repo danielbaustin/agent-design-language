@@ -3457,6 +3457,7 @@ memory: {}
         .unwrap();
         write_freedom_gate_status(&state);
         write_ready_runtime_gate_artifacts(&state);
+        write_active_constructability_status(&state);
         let options = CsmRuntimeApiOptions {
             spec_path: spec,
             bind: test_api_bind(SEQ.load(Ordering::SeqCst)),
@@ -3634,6 +3635,7 @@ memory: {}
             .unwrap(),
         )
         .unwrap();
+        write_active_constructability_status(&state);
         fs::write(
             service_logs.join("otel_status.json"),
             serde_json::to_string_pretty(&json!({
@@ -3927,6 +3929,7 @@ memory: {}
         .unwrap();
         write_freedom_gate_status(&state);
         write_ready_runtime_gate_artifacts(&state);
+        write_active_constructability_status(&state);
         let options = CsmRuntimeApiOptions {
             spec_path: spec,
             bind: test_api_bind(SEQ.load(Ordering::SeqCst)),
