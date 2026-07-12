@@ -855,7 +855,22 @@ for container_key in ("command",):
 print(json.dumps(payload, indent=2, sort_keys=False))
 PY
 
-  cat "$runner_stderr" >&2
+  python3 - <<'PY' "$ROOT" "$runner_stderr" >&2
+import importlib.util
+import sys
+from pathlib import Path
+
+root = Path(sys.argv[1])
+path = Path(sys.argv[2])
+spec = importlib.util.spec_from_file_location(
+    "aws_spot_artifact_finalize",
+    root / "adl" / "tools" / "aws_spot_artifact_finalize.py",
+)
+module = importlib.util.module_from_spec(spec)
+assert spec.loader is not None
+spec.loader.exec_module(module)
+print(module.redact_text(path.read_text(encoding="utf-8", errors="replace")), end="")
+PY
   cat "$ARTIFACT_DIR/finalize.err" >&2
   printf 'aws_spot_remote_validation_wrapper_summary=%s\n' "$wrapper_summary" >&2
   if [[ "$runner_status" -ne 0 ]]; then

@@ -9,7 +9,9 @@ WORKFLOW="$ROOT/.github/workflows/aws-spot-remote-validation.yaml"
 grep -F 'stat -c '\''%a'\'' "$SSH_PRIVATE_KEY_PATH" 2>/dev/null || stat -f '\''%Lp'\''' "$SCRIPT" >/dev/null
 grep -F 'RUN_ID="adl-wp-${ISSUE}-aws-spot-$(date -u +%Y%m%d%H%M%S)"' "$SCRIPT" >/dev/null
 grep -F "'+refs/remotes/origin/*:refs/remotes/origin/*'" "$ROOT/tools/aws_remote_validation/scripts/remote_validation_runner.sh" >/dev/null
-TMP="$(mktemp -d)"
+TMP_ROOT="${TMPDIR:-$ROOT/.adl/tmp}"
+mkdir -p "$TMP_ROOT"
+TMP="$(mktemp -d "$TMP_ROOT/aws-spot-remote-validation-test.XXXXXX")"
 trap 'rm -rf "$TMP"' EXIT
 
 account="123456789012"

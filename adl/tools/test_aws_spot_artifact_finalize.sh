@@ -3,7 +3,9 @@ set -euo pipefail
 
 ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)"
 FINALIZER="$ROOT/adl/tools/aws_spot_artifact_finalize.py"
-TMP="$(mktemp -d)"
+TMP_ROOT="${TMPDIR:-$ROOT/.adl/tmp}"
+mkdir -p "$TMP_ROOT"
+TMP="$(mktemp -d "$TMP_ROOT/aws-spot-artifact-finalize-test.XXXXXX")"
 trap 'rm -rf "$TMP"' EXIT
 
 source_commit="$(git -C "$ROOT" rev-parse HEAD)"

@@ -14,6 +14,8 @@ for token in \
   '^llvm-tools-' \
   'docker push' \
   'ecr:PutImage' \
+  'account_matches_retained_proof=true' \
+  'AWS profile account does not match retained Agent Logic proof' \
   '/aws/codebuild/adl-codefriend-build' \
   'immutable_digest_verified=true'; do
   grep -F "$token" "$SCRIPT" >/dev/null
