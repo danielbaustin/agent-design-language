@@ -365,11 +365,7 @@ fn status_response(loaded: &LoadedAgentSpec, options: &CsmRuntimeApiOptions) -> 
             "cloud_account_identifiers": "not_returned"
         }
     });
-    if response
-        .pointer("/persistence/checkpoint_continuity/status")
-        .and_then(Value::as_str)
-        != Some("healthy")
-    {
+    if checkpoint_persistence_blocks_readiness(&response) {
         response["status"] = json!("degraded");
     }
     if !readiness_blockers(&response).is_empty() {
@@ -1186,11 +1182,7 @@ fn readiness_blockers(status: &Value) -> Vec<String> {
     {
         blockers.push("continuity_checkpoint_missing".to_string());
     }
-    if status
-        .pointer("/persistence/checkpoint_continuity/status")
-        .and_then(Value::as_str)
-        != Some("healthy")
-    {
+    if checkpoint_persistence_blocks_readiness(status) {
         blockers.push("checkpoint_persistence_unhealthy".to_string());
     }
     if status
@@ -1267,6 +1259,15 @@ fn readiness_blockers(status: &Value) -> Vec<String> {
         blockers.push("curiosity_engine_validation_failed".to_string());
     }
     blockers
+}
+
+fn checkpoint_persistence_blocks_readiness(status: &Value) -> bool {
+    matches!(
+        status
+            .pointer("/persistence/checkpoint_continuity/status")
+            .and_then(Value::as_str),
+        Some("corrupt_or_unavailable") | None
+    )
 }
 
 fn time_sync_value_blocks_ready(value: &Value) -> bool {
@@ -2149,7 +2150,7 @@ memory: {}
             .contains(&"checkpoint_persistence_unhealthy".to_string()));
         checkpoint_failed["persistence"]["checkpoint_continuity"]["status"] =
             json!("not_initialized");
-        assert!(readiness_blockers(&checkpoint_failed)
+        assert!(!readiness_blockers(&checkpoint_failed)
             .contains(&"checkpoint_persistence_unhealthy".to_string()));
     }
 
@@ -2235,6 +2236,15 @@ memory: {}
             state.join("continuity_checkpoint.json"),
             serde_json::to_string_pretty(&json!({
                 "schema": "adl.csm.continuity_checkpoint.v1"
+            }))
+            .unwrap(),
+        )
+        .unwrap();
+        fs::write(
+            state.join("csm_typed_channel_state.json"),
+            serde_json::to_string_pretty(&json!({
+                "schema": "adl.csm.typed_channel_state.v1",
+                "status": "ready"
             }))
             .unwrap(),
         )
@@ -2697,6 +2707,15 @@ memory: {}
             state.join("continuity_checkpoint.json"),
             serde_json::to_string_pretty(&json!({
                 "schema": "adl.long_lived_agent_continuity_checkpoint.v1"
+            }))
+            .unwrap(),
+        )
+        .unwrap();
+        fs::write(
+            state.join("csm_typed_channel_state.json"),
+            serde_json::to_string_pretty(&json!({
+                "schema": "adl.csm.typed_channel_state.v1",
+                "status": "ready"
             }))
             .unwrap(),
         )
