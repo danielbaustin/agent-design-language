@@ -60,6 +60,11 @@ pub fn runtime_components() -> Vec<RuntimeComponent> {
             role: "lawful execution and commitment mediation gate",
         },
         RuntimeComponent {
+            id: "constructability_gate",
+            plane: "governance",
+            role: "evidence-bound feasibility and shared-reality admission gate",
+        },
+        RuntimeComponent {
             id: "aee",
             plane: "execution",
             role: "governed execution with actuation boundaries",
@@ -184,6 +189,16 @@ pub fn runtime_stack_json() -> Value {
             "executor_requires_gate_decision": true,
             "unmediated_execution_allowed": false
         },
+        "constructability_gate": {
+            "schema": crate::constructability::CSM_CONSTRUCTABILITY_STATUS_SCHEMA,
+            "status": "integrated",
+            "component": crate::constructability::CSM_CONSTRUCTABILITY_COMPONENT,
+            "process_model": "embedded_csm_runtime_component",
+            "retained_status_ref": crate::constructability::CSM_CONSTRUCTABILITY_STATUS_REF,
+            "retained_decisions_ref": crate::constructability::CSM_CONSTRUCTABILITY_DECISIONS_REF,
+            "missing_evidence_policy": "fail_closed",
+            "typed_channels": crate::constructability::CsmConstructabilityChannels::bounded()
+        },
         "reasoning_runtime": {
             "schema": crate::reasoning_runtime::REASONING_RUNTIME_SCHEMA,
             "component": crate::reasoning_runtime::REASONING_RUNTIME_COMPONENT,
@@ -215,6 +230,7 @@ mod tests {
         assert!(ids.contains(&"resident_agents"));
         assert!(ids.contains(&"freedom_gate"));
         assert!(ids.contains(&"acip_carrier"));
+        assert!(ids.contains(&"constructability_gate"));
         assert!(ids.contains(&"observability"));
         assert!(ids.contains(&"cloud_bridge"));
     }

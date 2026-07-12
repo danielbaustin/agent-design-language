@@ -24,6 +24,7 @@ use std::time::{Duration, Instant};
 use tokio::sync::Notify;
 use tower::ServiceBuilder;
 
+use crate::csm_constructability_gate;
 use crate::csm_curiosity_engine;
 use crate::csm_networking::{
     csm_connection_pooling_plan, csm_listener_registry_json, csm_runtime_connection_pool_status,
@@ -45,12 +46,12 @@ use adl_runtime::runtime_api_auth::{
 
 pub use adl_runtime::runtime_api::{
     CSM_RUNTIME_API_ACIP_SCHEMA, CSM_RUNTIME_API_API_GATEWAY_BRIDGE_SCHEMA,
-    CSM_RUNTIME_API_CHRONOSENSE_SCHEMA, CSM_RUNTIME_API_CURIOSITY_SCHEMA,
-    CSM_RUNTIME_API_ENDPOINTS, CSM_RUNTIME_API_EVENTS_SCHEMA, CSM_RUNTIME_API_FREEDOM_GATE_SCHEMA,
-    CSM_RUNTIME_API_HEALTH_SCHEMA, CSM_RUNTIME_API_METRICS_SCHEMA,
-    CSM_RUNTIME_API_PERSISTENCE_SCHEMA, CSM_RUNTIME_API_READY_SCHEMA,
-    CSM_RUNTIME_API_REASONING_SCHEMA, CSM_RUNTIME_API_SCHEMA, CSM_RUNTIME_API_SHEPHERD_SCHEMA,
-    CSM_RUNTIME_API_STATUS_SCHEMA,
+    CSM_RUNTIME_API_CHRONOSENSE_SCHEMA, CSM_RUNTIME_API_CONSTRUCTABILITY_SCHEMA,
+    CSM_RUNTIME_API_CURIOSITY_SCHEMA, CSM_RUNTIME_API_ENDPOINTS, CSM_RUNTIME_API_EVENTS_SCHEMA,
+    CSM_RUNTIME_API_FREEDOM_GATE_SCHEMA, CSM_RUNTIME_API_HEALTH_SCHEMA,
+    CSM_RUNTIME_API_METRICS_SCHEMA, CSM_RUNTIME_API_PERSISTENCE_SCHEMA,
+    CSM_RUNTIME_API_READY_SCHEMA, CSM_RUNTIME_API_REASONING_SCHEMA, CSM_RUNTIME_API_SCHEMA,
+    CSM_RUNTIME_API_SHEPHERD_SCHEMA, CSM_RUNTIME_API_STATUS_SCHEMA,
 };
 pub use api_gateway_bridge::{prove_api_gateway_bridge, ApiGatewayBridgeOptions};
 const CSM_RUNTIME_API_BROWSER_DEMO_PORT: &str = "8765";
@@ -366,6 +367,7 @@ fn runtime_api_response_with_identity(
         "/freedom-gate" => freedom_gate_response(&loaded, options),
         "/reasoning" => reasoning_response(&loaded),
         "/api-gateway-bridge" => api_gateway_bridge_response(&loaded, identity, gateway_identity),
+        "/constructability" => constructability_response(&loaded, options),
         "/persistence" => persistence_response(&loaded),
         other => Ok(json!({
             "schema": CSM_RUNTIME_API_SCHEMA,
@@ -404,7 +406,7 @@ fn status_response(loaded: &LoadedAgentSpec, options: &CsmRuntimeApiOptions) -> 
     let checkpoint_freshness = checkpoint_freshness(&daemon_status, &continuity_checkpoint);
     let daemon_state = daemon_lifecycle_state(&daemon_status);
     let daemon_pid_liveness = daemon_supervisor_pid_liveness(&daemon_status);
-    let health = classify_health(
+    let base_health = classify_health(
         &agent_status.state,
         &daemon_status,
         &checkpoint_freshness,
@@ -412,7 +414,7 @@ fn status_response(loaded: &LoadedAgentSpec, options: &CsmRuntimeApiOptions) -> 
         daemon_pid_liveness.as_deref(),
         &backpressure_state,
     );
-    let ready = classify_ready(
+    let base_ready = classify_ready(
         &agent_status.state,
         &daemon_status,
         &continuity_checkpoint,
@@ -439,6 +441,25 @@ fn status_response(loaded: &LoadedAgentSpec, options: &CsmRuntimeApiOptions) -> 
     let freedom_gate = freedom_gate_api_status(loaded, &runtime_capabilities);
     let reasoning = reasoning_api_status(loaded);
     let resident_agents = resident_agents_status(loaded);
+    let constructability = constructability_api_status(loaded, &runtime_capabilities);
+    let constructability_ready = constructability
+        .pointer("/value/readiness")
+        .and_then(Value::as_str)
+        == Some("active")
+        && constructability
+            .pointer("/validation/status")
+            .and_then(Value::as_str)
+            == Some("passed");
+    let health = if base_health == "healthy" && constructability_ready {
+        "healthy"
+    } else {
+        "degraded"
+    };
+    let ready = if base_ready == "ready" && constructability_ready {
+        "ready"
+    } else {
+        "not_ready"
+    };
     let persistence = persistence_response(loaded)?;
     let mut response = json!({
         "schema": CSM_RUNTIME_API_STATUS_SCHEMA,
@@ -472,6 +493,7 @@ fn status_response(loaded: &LoadedAgentSpec, options: &CsmRuntimeApiOptions) -> 
         "acip_carrier": acip_carrier,
         "freedom_gate": freedom_gate,
         "reasoning_runtime": reasoning,
+        "constructability_gate": constructability,
         "checkpoint": checkpoint_freshness,
         "continuity": {
             "checkpoint": compact_artifact_status(&continuity_checkpoint, "continuity_checkpoint.json"),
@@ -653,6 +675,22 @@ fn acip_response(
             "activation_status": "not_activated",
             "activation_policy": "fail_closed_until_runtime_upgrade_handler_is_integrated"
         }
+    });
+    assert_api_response_redacted(&response)?;
+    Ok(response)
+}
+
+fn constructability_response(
+    loaded: &LoadedAgentSpec,
+    options: &CsmRuntimeApiOptions,
+) -> Result<Value> {
+    let status = status_response(loaded, options)?;
+    let response = json!({
+        "schema": CSM_RUNTIME_API_CONSTRUCTABILITY_SCHEMA,
+        "runtime_owner": "csm",
+        "agent_instance_id": loaded.spec.agent_instance_id,
+        "runtime_api_path": "/constructability",
+        "component": status["constructability_gate"]
     });
     assert_api_response_redacted(&response)?;
     Ok(response)
@@ -907,6 +945,18 @@ fn reasoning_api_status(loaded: &LoadedAgentSpec) -> Value {
             "reason_code": "status_artifact_missing"
         }))
     })
+}
+
+fn constructability_api_status(loaded: &LoadedAgentSpec, runtime_capabilities: &Value) -> Value {
+    let artifact = read_json_artifact(&artifact_path(
+        loaded,
+        adl_runtime::constructability::CSM_CONSTRUCTABILITY_STATUS_REF,
+    ));
+    let capability = runtime_capabilities
+        .get("constructability_gate")
+        .cloned()
+        .unwrap_or_else(csm_constructability_gate::runtime_capability);
+    csm_constructability_gate::api_status(&loaded.spec.agent_instance_id, &artifact, capability)
 }
 
 fn api_gateway_bridge_runtime_status(loaded: &LoadedAgentSpec) -> Value {
@@ -1582,6 +1632,25 @@ fn readiness_blockers(status: &Value) -> Vec<String> {
             None => blockers.push("reasoning_runtime_health_missing".to_string()),
         }
     }
+    match status
+        .pointer("/constructability_gate/value/readiness")
+        .and_then(Value::as_str)
+    {
+        Some("active") => {}
+        Some("degraded") => blockers.push("constructability_gate_degraded".to_string()),
+        Some("blocked") => blockers.push("constructability_gate_blocked".to_string()),
+        Some("no_evidence") => blockers.push("constructability_gate_no_evidence".to_string()),
+        Some("unavailable") => blockers.push("constructability_gate_unavailable".to_string()),
+        Some(other) => blockers.push(format!("constructability_gate_{other}")),
+        None => blockers.push("constructability_gate_missing".to_string()),
+    }
+    if status
+        .pointer("/constructability_gate/validation/status")
+        .and_then(Value::as_str)
+        != Some("passed")
+    {
+        blockers.push("constructability_gate_validation_failed".to_string());
+    }
     blockers
 }
 
@@ -1995,6 +2064,14 @@ pub fn assert_api_response_redacted(value: &Value) -> Result<()> {
 #[cfg(test)]
 mod tests {
     use super::*;
+    use adl_runtime::constructability::{
+        CsmConstructabilityEvidence, CsmConstructabilityEvidenceKind,
+        CsmConstructabilityEvidenceMode, CsmConstructabilityEvidenceState,
+        CsmConstructabilityGateInputs, CsmConstructabilityGateState,
+        CsmConstructabilityPublicationScope, CsmConstructabilityRequest,
+        CSM_CONSTRUCTABILITY_EVIDENCE_SCHEMA, CSM_CONSTRUCTABILITY_REQUEST_SCHEMA,
+        CSM_CONSTRUCTABILITY_STATUS_REF,
+    };
     use axum::body::to_bytes;
     use std::sync::atomic::{AtomicU64, Ordering};
 
@@ -2029,6 +2106,7 @@ memory: {}
     }
 
     fn write_ready_runtime_gate_artifacts(state: &Path) {
+        fs::create_dir_all(state).unwrap();
         fs::write(
             state.join(adl_runtime::reasoning_runtime::REASONING_RUNTIME_STATUS_REF),
             serde_json::to_string_pretty(&json!({
@@ -2065,6 +2143,46 @@ memory: {}
                 "channels": [],
                 "updated_at": Utc::now()
             }))
+            .unwrap(),
+        )
+        .unwrap();
+    }
+
+    fn write_active_constructability_status(state: &Path) {
+        let request = CsmConstructabilityRequest {
+            schema: CSM_CONSTRUCTABILITY_REQUEST_SCHEMA.to_string(),
+            request_id: "request-api-proof".to_string(),
+            proposal_id: "proposal-api-proof".to_string(),
+            source_component: "curiosity_engine".to_string(),
+            source_ref: "runtime_v2/curiosity_engine/api-proof.json".to_string(),
+            proposed_action: "Publish a retained constructability API proof.".to_string(),
+            evidence_mode: CsmConstructabilityEvidenceMode::Live,
+            publication_scope: CsmConstructabilityPublicationScope::ReviewPacket,
+            required_evidence_kinds: vec![CsmConstructabilityEvidenceKind::RetainedArtifact],
+            evidence: vec![CsmConstructabilityEvidence {
+                schema: CSM_CONSTRUCTABILITY_EVIDENCE_SCHEMA.to_string(),
+                evidence_id: "anchor-api-proof".to_string(),
+                kind: CsmConstructabilityEvidenceKind::RetainedArtifact,
+                state: CsmConstructabilityEvidenceState::Available,
+                source_ref: "runtime_v2/curiosity_engine/api-proof.json".to_string(),
+                summary: "Retained API proof input.".to_string(),
+                retryable: false,
+            }],
+            gates: CsmConstructabilityGateInputs {
+                freedom_gate: CsmConstructabilityGateState::Allow,
+                cav: CsmConstructabilityGateState::Allow,
+                curiosity: CsmConstructabilityGateState::Allow,
+                missing_gate_policy: "fail_closed".to_string(),
+            },
+            acip_publication_requested: true,
+        };
+        fs::create_dir_all(state).unwrap();
+        fs::write(
+            state.join(CSM_CONSTRUCTABILITY_STATUS_REF),
+            serde_json::to_vec_pretty(&csm_constructability_gate::build_status_snapshot(
+                "api-agent",
+                &request,
+            ))
             .unwrap(),
         )
         .unwrap();
@@ -4002,5 +4120,48 @@ memory: {}
             .as_array()
             .unwrap()
             .contains(&json!("chronosense_time_sync_unavailable")));
+    }
+
+    #[test]
+    fn runtime_api_surfaces_active_constructability_component_and_route() {
+        let root = temp_root("constructability-active");
+        let options = test_options(&root);
+        let state = root.join("state");
+        write_ready_runtime_gate_artifacts(&state);
+        write_active_constructability_status(&state);
+
+        let status = runtime_api_response(&options, "/status").unwrap();
+        assert_eq!(
+            status["constructability_gate"]["value"]["readiness"],
+            "active"
+        );
+        assert_eq!(
+            status["constructability_gate"]["validation"]["status"],
+            "passed"
+        );
+        assert_eq!(
+            status["constructability_gate"]["value"]["last_decision"]["anchor_validator_outcome"],
+            "pass"
+        );
+
+        let endpoint = runtime_api_response(&options, "/constructability").unwrap();
+        assert_eq!(endpoint["schema"], CSM_RUNTIME_API_CONSTRUCTABILITY_SCHEMA);
+        assert_eq!(endpoint["runtime_api_path"], "/constructability");
+        assert_eq!(endpoint["component"]["value"]["readiness"], "active");
+    }
+
+    #[test]
+    fn runtime_api_readiness_fails_closed_without_constructability_status() {
+        let root = temp_root("constructability-missing");
+        let options = test_options(&root);
+        let state = root.join("state");
+        write_ready_runtime_gate_artifacts(&state);
+
+        let response = runtime_api_response(&options, "/ready").unwrap();
+
+        assert_eq!(response["ready"], "not_ready");
+        let blockers = response["blocking_reasons"].as_array().unwrap();
+        assert!(blockers.contains(&json!("constructability_gate_unavailable")));
+        assert!(blockers.contains(&json!("constructability_gate_validation_failed")));
     }
 }

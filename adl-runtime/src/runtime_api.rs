@@ -15,9 +15,10 @@ pub const CSM_RUNTIME_API_REASONING_SCHEMA: &str = "adl.csm.runtime_api.reasonin
 pub const CSM_RUNTIME_API_WEATHER_SCHEMA: &str = "adl.csm.runtime_api.weather.v1";
 pub const CSM_RUNTIME_API_API_GATEWAY_BRIDGE_SCHEMA: &str =
     "adl.csm.runtime_api.api_gateway_bridge.v1";
+pub const CSM_RUNTIME_API_CONSTRUCTABILITY_SCHEMA: &str = "adl.csm.runtime_api.constructability.v1";
 pub const CSM_RUNTIME_API_PERSISTENCE_SCHEMA: &str = "adl.csm.runtime_api.persistence.v1";
 
-pub const CSM_RUNTIME_API_ENDPOINTS: [&str; 15] = [
+pub const CSM_RUNTIME_API_ENDPOINTS: [&str; 16] = [
     "/status",
     "/health",
     "/ready",
@@ -32,6 +33,7 @@ pub const CSM_RUNTIME_API_ENDPOINTS: [&str; 15] = [
     "/freedom-gate",
     "/reasoning",
     "/api-gateway-bridge",
+    "/constructability",
     "/persistence",
 ];
 
@@ -64,6 +66,7 @@ mod tests {
         assert!(CSM_RUNTIME_API_ENDPOINTS.contains(&"/freedom-gate"));
         assert!(CSM_RUNTIME_API_ENDPOINTS.contains(&"/reasoning"));
         assert!(CSM_RUNTIME_API_ENDPOINTS.contains(&"/api-gateway-bridge"));
+        assert!(CSM_RUNTIME_API_ENDPOINTS.contains(&"/constructability"));
         assert_eq!(
             CSM_RUNTIME_API_STATUS_SCHEMA,
             "adl.csm.runtime_api.status.v1"

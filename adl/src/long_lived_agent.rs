@@ -28,6 +28,7 @@ use crate::chronosense::{
     capture_runtime_time_sync_status, start_runtime_time_observation, ChronosenseRuntimeService,
     ChronosenseRuntimeServiceConfig,
 };
+use crate::csm_constructability_gate;
 use crate::csm_curiosity_engine;
 use crate::csm_freedom_gate;
 use crate::csm_godel_snapshot::{validate_recovery_read, write_checkpoint_snapshot_diff};
@@ -3622,6 +3623,20 @@ fn safe_fail_serialized_refs(loaded: &LoadedAgentSpec) -> Vec<Value> {
             "operator_events.jsonl",
             operator_events_path(loaded),
         ),
+        (
+            "constructability_status",
+            adl_runtime::constructability::CSM_CONSTRUCTABILITY_STATUS_REF,
+            loaded
+                .state_root
+                .join(adl_runtime::constructability::CSM_CONSTRUCTABILITY_STATUS_REF),
+        ),
+        (
+            "constructability_decision_ledger",
+            adl_runtime::constructability::CSM_CONSTRUCTABILITY_DECISIONS_REF,
+            loaded
+                .state_root
+                .join(adl_runtime::constructability::CSM_CONSTRUCTABILITY_DECISIONS_REF),
+        ),
     ]
     .into_iter()
     .map(|(role, reference, path)| {
@@ -3645,7 +3660,18 @@ fn safe_fail_serialized_state(loaded: &LoadedAgentSpec) -> Value {
         "stop": read_json_artifact_value(&stop_path(loaded)),
         "cycle_ledger_tail": read_jsonl_tail_artifact(&cycle_ledger_path(loaded), 20),
         "operator_event_tail": read_jsonl_tail_artifact(&operator_events_path(loaded), 40),
-        "provider_binding_tail": read_jsonl_tail_artifact(&provider_binding_history_path(loaded), 20)
+        "provider_binding_tail": read_jsonl_tail_artifact(&provider_binding_history_path(loaded), 20),
+        "constructability_status": read_json_artifact_value(
+            &loaded
+                .state_root
+                .join(adl_runtime::constructability::CSM_CONSTRUCTABILITY_STATUS_REF)
+        ),
+        "constructability_decision_tail": read_jsonl_tail_artifact(
+            &loaded
+                .state_root
+                .join(adl_runtime::constructability::CSM_CONSTRUCTABILITY_DECISIONS_REF),
+            20
+        )
     })
 }
 
@@ -4215,6 +4241,56 @@ fn write_daemon_status(
             }),
         );
     }
+    match csm_constructability_gate::write_status_snapshot(
+        &loaded.state_root,
+        &loaded.spec.agent_instance_id,
+        effective_state,
+        checkpoint_observed,
+    ) {
+        Ok(snapshot) => {
+            let decision = snapshot
+                .get("last_decision")
+                .cloned()
+                .unwrap_or(Value::Null);
+            let _ = append_operator_event(
+                loaded,
+                csm_constructability_gate::CSM_CONSTRUCTABILITY_LIFELOG_EVENT,
+                json!({
+                    "schema": "adl.csm.constructability.observability_event.v1",
+                    "runtime_owner": "csm",
+                    "component": "constructability_gate",
+                    "status_ref": adl_runtime::constructability::CSM_CONSTRUCTABILITY_STATUS_REF,
+                    "decision_ledger_ref": adl_runtime::constructability::CSM_CONSTRUCTABILITY_DECISIONS_REF,
+                    "decision": decision
+                }),
+            );
+            let _ = record_lifecycle_lifelog(
+                loaded,
+                csm_constructability_gate::CSM_CONSTRUCTABILITY_LIFELOG_EVENT,
+                &format!("constructability-{}", now.timestamp_millis()),
+                &json!({
+                    "status_ref": adl_runtime::constructability::CSM_CONSTRUCTABILITY_STATUS_REF,
+                    "decision_ledger_ref": adl_runtime::constructability::CSM_CONSTRUCTABILITY_DECISIONS_REF,
+                    "readiness": snapshot.get("readiness").cloned().unwrap_or(Value::Null),
+                    "decision": snapshot.get("last_decision").cloned().unwrap_or(Value::Null)
+                }),
+            );
+        }
+        Err(err) => {
+            let _ = append_operator_event(
+                loaded,
+                "csm_constructability_status_write_failed",
+                json!({
+                    "schema": "adl.csm.constructability.write_failure.v1",
+                    "runtime_owner": "csm",
+                    "component": "constructability_gate",
+                    "status": "fail_closed_nonfatal",
+                    "reason": err.to_string(),
+                    "recovery_policy": "continue_runtime_but_block_readiness_and_publication"
+                }),
+            );
+        }
+    }
     if let Err(err) = write_json_pretty(
         &loaded
             .state_root
@@ -4568,6 +4644,7 @@ fn csm_runtime_capabilities_with_resident_agents(
         "polis_shepherd_agent": csm_shepherd_agent::runtime_capability(),
         "curiosity_engine": csm_curiosity_engine::runtime_capability(),
         "freedom_gate": csm_freedom_gate::runtime_capability(),
+        "constructability_gate": csm_constructability_gate::runtime_capability(),
         "observability": observability_status,
         "governed_shutdown_notices": {
             "status": "integrated",
@@ -4965,6 +5042,21 @@ fn write_continuity_restore_artifacts(
             "ledger_entry_count": ledger.count,
             "max_cycle_number": ledger.max_cycle_number,
             "expected_next_cycle_id": format!("cycle-{next_cycle_number:06}")
+        },
+        "runtime_component_snapshots": {
+            "constructability_gate": {
+                "status_ref": adl_runtime::constructability::CSM_CONSTRUCTABILITY_STATUS_REF,
+                "decision_ledger_ref": adl_runtime::constructability::CSM_CONSTRUCTABILITY_DECISIONS_REF,
+                "status": if loaded
+                    .state_root
+                    .join(adl_runtime::constructability::CSM_CONSTRUCTABILITY_STATUS_REF)
+                    .exists()
+                {
+                    "retained"
+                } else {
+                    "missing"
+                }
+            }
         }
     });
     let checkpoint_path = continuity_checkpoint_path(loaded);
