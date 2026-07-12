@@ -1579,7 +1579,7 @@ fn continuity_checkpoint_low_disk_does_not_advance_godel_chain() {
     let spec = write_spec(&root);
     let loaded = load_spec(&spec).expect("load spec");
     ensure_state_root(&loaded).expect("state root");
-    fs::remove_dir_all(root.join("state/godel_snapshots")).expect("remove setup Godel chain");
+    let _ = fs::remove_dir_all(root.join("state/godel_snapshots"));
     let _env = MultiEnvGuard::set_all(&[
         ("ADL_CSM_DISK_FLOOR_BYTES", "4096"),
         ("ADL_CSM_TEST_AVAILABLE_BYTES", "1024"),
