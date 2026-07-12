@@ -19,6 +19,8 @@ default_coverage_build_root() {
 }
 
 COVERAGE_BUILD_ROOT="${ADL_COVERAGE_BUILD_ROOT:-$(default_coverage_build_root)}"
+TEST_THREADS="${ADL_AUTHORITATIVE_COVERAGE_TEST_THREADS:-4}"
+SKIP_PATTERN="${ADL_AUTHORITATIVE_COVERAGE_SKIP_PATTERN:-real_pr_}"
 
 usage() {
   cat <<'USAGE'
@@ -68,6 +70,8 @@ if [ "$PRINT_PLAN" = true ]; then
   printf 'event_name=%s\n' "$EVENT_NAME"
   printf 'mode=%s\n' "$MODE"
   printf 'build_root=%s\n' "$COVERAGE_BUILD_ROOT"
+  printf 'test_threads=%s\n' "$TEST_THREADS"
+  printf 'skip_pattern=%s\n' "$SKIP_PATTERN"
   if [ "$MODE" = "full_authoritative_default_features" ]; then
     printf 'features=default\n'
     printf 'workspace=full\n'
@@ -99,18 +103,28 @@ if [ "$MODE" = "full_authoritative_default_features" ]; then
   echo "Authoritative coverage mode: full_authoritative_default_features"
   echo "Features: default"
   echo "Authoritative coverage linker mode: ${RUST_LINK_ACCEL:-default}"
+  echo "Authoritative coverage test threads: $TEST_THREADS"
+  echo "Authoritative coverage skip pattern: $SKIP_PATTERN"
   cargo llvm-cov nextest \
     --workspace \
     --no-report \
-    --no-fail-fast
+    --no-fail-fast \
+    --no-tests pass \
+    --test-threads "$TEST_THREADS" \
+    -- --skip "$SKIP_PATTERN"
 else
   echo "Authoritative coverage mode: bounded_policy_surface_pr"
   echo "Features: default"
   echo "Full authoritative default-feature proof remains reserved for push-to-main and mixed runtime policy changes."
+  echo "Authoritative coverage test threads: $TEST_THREADS"
+  echo "Authoritative coverage skip pattern: $SKIP_PATTERN"
   cargo llvm-cov nextest \
     --workspace \
     --no-report \
-    --no-fail-fast
+    --no-fail-fast \
+    --no-tests pass \
+    --test-threads "$TEST_THREADS" \
+    -- --skip "$SKIP_PATTERN"
 fi
 
 cargo llvm-cov report \

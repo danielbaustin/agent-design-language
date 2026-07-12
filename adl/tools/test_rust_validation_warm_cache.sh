@@ -37,6 +37,28 @@ ADL_RUST_WARM_CACHE_OUTPUT="$same_out" \
 assert_json_field "$same_out" 'payload["status"] == "skipped"'
 assert_json_field "$same_out" 'payload["reason"] == "source target is destination target"'
 
+cross_device_dest_parent="${ADL_WARM_CACHE_CROSS_DEVICE_DEST_PARENT:-/Volumes/FastWork}"
+if [ -d "$cross_device_dest_parent" ] && python3 - "$TMP" "$cross_device_dest_parent" <<'PY'
+import os
+import sys
+
+source, dest = sys.argv[1], sys.argv[2]
+raise SystemExit(0 if os.stat(source).st_dev != os.stat(dest).st_dev else 1)
+PY
+then
+  cross_source="$TMP/cross-source"
+  cross_dest="$cross_device_dest_parent/adl-warm-cache-cross-device-test"
+  cross_out="$TMP/cross-device.json"
+  mkdir -p "$cross_source/debug/deps" "$cross_dest"
+  ADL_RUST_WARM_CACHE_SOURCE_TARGET="$cross_source" \
+  ADL_RUST_WARM_CACHE_DEST_TARGET="$cross_dest" \
+  ADL_RUST_WARM_CACHE_OUTPUT="$cross_out" \
+    bash "$HELPER" >/dev/null
+  assert_json_field "$cross_out" 'payload["status"] == "skipped"'
+  assert_json_field "$cross_out" 'payload["reason"] == "source and destination target are on different filesystems; hardlink warm cache skipped"'
+  rm -rf "$cross_dest"
+fi
+
 if ! grep -Fq '*/.worktrees/adl-wp-*)' "$HELPER"; then
   echo "expected helper to detect ADL issue worktrees for primary-checkout warm source discovery" >&2
   exit 1
