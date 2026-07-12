@@ -89,6 +89,10 @@ TOOLS
       echo "validation container did not mount the cache root" >&2
       exit 2
     }
+    [[ "$args" == *"container-tmp:/tmp"* && "$args" == *"TMPDIR=/tmp"* ]] || {
+      echo "validation container did not mount EBS-backed temp space" >&2
+      exit 2
+    }
     run_root=""
     previous=""
     for arg in "$@"; do

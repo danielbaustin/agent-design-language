@@ -107,6 +107,7 @@ CACHE_ROOT="$CACHE_MOUNT/adl-aws-remote-validation/shared"
 TARGET_DIR="$CACHE_ROOT/container-target"
 SCCACHE_DIR="$CACHE_ROOT/container-sccache"
 CARGO_HOME_DIR="$CACHE_ROOT/container-cargo-home"
+TMP_DIR="$CACHE_ROOT/container-tmp"
 CACHE_TARGET_PREEXISTING_ENTRIES=0
 CACHE_TARGET_PREEXISTING_BYTES=0
 if [[ -d "$TARGET_DIR" ]]; then
@@ -114,7 +115,7 @@ if [[ -d "$TARGET_DIR" ]]; then
   CACHE_TARGET_PREEXISTING_KIB="$(du -sk "$TARGET_DIR" 2>/dev/null | awk '{print $1}')"
   CACHE_TARGET_PREEXISTING_BYTES="$((CACHE_TARGET_PREEXISTING_KIB * 1024))"
 fi
-mkdir -p "$TARGET_DIR" "$SCCACHE_DIR" "$CARGO_HOME_DIR"
+mkdir -p "$TARGET_DIR" "$SCCACHE_DIR" "$CARGO_HOME_DIR" "$TMP_DIR"
 
 CURRENT_STAGE="ensure_container_runtime"
 stage "$CURRENT_STAGE"
@@ -181,10 +182,12 @@ VALIDATION_START="$(date +%s)"
   --workdir /workspace \
   --volume "$ADL_REMOTE_REPO_DIR:/workspace" \
   --volume "$CACHE_ROOT:/cache-root" \
+  --volume "$TMP_DIR:/tmp" \
   --volume "$ADL_RUN_ROOT:/run-output" \
   --env CARGO_HOME=/cache-root/container-cargo-home \
   --env CARGO_TARGET_DIR=/cache-root/container-target \
   --env SCCACHE_DIR=/cache-root/container-sccache \
+  --env TMPDIR=/tmp \
   --env RUSTC_WRAPPER=sccache \
   --env 'RUSTFLAGS=-C link-arg=-fuse-ld=lld' \
   --env CARGO_INCREMENTAL=0 \
