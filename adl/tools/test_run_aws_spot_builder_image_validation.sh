@@ -108,6 +108,7 @@ digest="sha256:$(printf 'a%.0s' {1..64})"
 image="123456789012.dkr.ecr.us-west-2.amazonaws.com/adl-builder@$digest"
 
 run_fixture() {
+  local command="${1:-cargo nextest run --workspace}"
   PATH="$FAKE_BIN:$PATH" \
   ADL_REMOTE_REPO_DIR="$ROOT" \
   ADL_RUN_ROOT="$RUN_ROOT" \
@@ -116,7 +117,7 @@ run_fixture() {
   bash "$SCRIPT" \
     --image "$image" \
     --expected-ref "$commit" \
-    --command 'cargo nextest run --workspace'
+    --command "$command"
 }
 
 run_fixture >"$TMP/pass.out" 2>"$TMP/pass.err"
@@ -165,6 +166,11 @@ if ADL_FAKE_CACHE_FREE_BYTES=1024 run_fixture >"$TMP/space.out" 2>"$TMP/space.er
   exit 1
 fi
 grep -F 'insufficient free space' "$TMP/space.err" >/dev/null
+
+ADL_FAKE_CACHE_FREE_BYTES=1024 run_fixture \
+  'cargo clean --manifest-path adl/Cargo.toml' \
+  >"$TMP/clean.out" 2>"$TMP/clean.err"
+grep -F 'low-space target cleanup recovery authorized' "$TMP/clean.err" >/dev/null
 
 if ADL_FAKE_TOOLCHAIN_OK=0 run_fixture >"$TMP/tool.out" 2>"$TMP/tool.err"; then
   echo "expected missing builder tool to fail" >&2

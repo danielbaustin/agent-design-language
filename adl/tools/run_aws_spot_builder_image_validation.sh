@@ -5,7 +5,8 @@ IMAGE=""
 EXPECTED_REF=""
 EXPECTED_ARCH="x86_64"
 COMMAND=""
-MIN_CACHE_FREE_GIB="10"
+MIN_CACHE_FREE_GIB="20"
+LOW_SPACE_CLEAN_COMMAND='cargo clean --manifest-path adl/Cargo.toml'
 
 usage() {
   cat <<'USAGE'
@@ -17,7 +18,7 @@ Usage:
 
 Options:
   --expected-architecture <arch>  Defaults to x86_64.
-  --min-cache-free-gib <gib>      Minimum writable cache headroom. Defaults to 10.
+  --min-cache-free-gib <gib>      Minimum writable cache headroom. Defaults to 20.
 
 This command runs on the ephemeral Spot host after the repository and retained
 EBS cache are ready. It never builds the image or installs Rust validation
@@ -91,9 +92,15 @@ umask 077
 rm -f "$PROBE"
 CACHE_FREE_BYTES="$(df -PB1 "$CACHE_MOUNT" | awk 'NR==2 {print $4}')"
 MIN_CACHE_FREE_BYTES="$((MIN_CACHE_FREE_GIB * 1024 * 1024 * 1024))"
+CACHE_LOW_SPACE_RECOVERY=false
 if [[ ! "$CACHE_FREE_BYTES" =~ ^[0-9]+$ ]] || [[ "$CACHE_FREE_BYTES" -lt "$MIN_CACHE_FREE_BYTES" ]]; then
-  echo "spot_builder_image_validation: retained cache has insufficient free space" >&2
-  exit 1
+  if [[ "$COMMAND" == "$LOW_SPACE_CLEAN_COMMAND" ]]; then
+    CACHE_LOW_SPACE_RECOVERY=true
+    echo "spot_builder_image_validation: low-space target cleanup recovery authorized" >&2
+  else
+    echo "spot_builder_image_validation: retained cache has insufficient free space" >&2
+    exit 1
+  fi
 fi
 
 CACHE_ROOT="$CACHE_MOUNT/adl-aws-remote-validation/shared"
@@ -193,6 +200,7 @@ IMAGE_DIGEST="${IMAGE##*@}"
 export RESOLVED_REF IMAGE_DIGEST IMAGE_ARCH CACHE_SOURCE CACHE_FREE_BYTES
 export VALIDATION_START VALIDATION_END
 export CACHE_TARGET_PREEXISTING_ENTRIES CACHE_TARGET_PREEXISTING_BYTES
+export CACHE_LOW_SPACE_RECOVERY
 python3 - "$ADL_RUN_ROOT/spot-builder-summary.json" <<'PY'
 import hashlib
 import json
@@ -215,6 +223,7 @@ payload = {
     "cache_free_bytes": int(os.environ["CACHE_FREE_BYTES"]),
     "cache_target_preexisting_entries": int(os.environ["CACHE_TARGET_PREEXISTING_ENTRIES"]),
     "cache_target_preexisting_bytes": int(os.environ["CACHE_TARGET_PREEXISTING_BYTES"]),
+    "cache_low_space_recovery": os.environ["CACHE_LOW_SPACE_RECOVERY"] == "true",
     "validation_seconds": int(os.environ["VALIDATION_END"]) - int(os.environ["VALIDATION_START"]),
     "host_validation_tools_installed": False,
 }
