@@ -129,27 +129,44 @@ and verifies:
 Rust validation tools are not installed on the ephemeral host. Docker and AWS
 CLI are host transport dependencies and may be installed when the selected AMI
 does not already provide them. The builder image itself is never rebuilt by a
-validation run. Container validation sets
-`RUSTFLAGS=-C link-arg=-fuse-ld=lld`, so verifying `lld` also means the Rust
-link path actually selects it.
+validation run. The image includes `lld`, but the Spot lane leaves `RUSTFLAGS`
+empty to preserve compatibility with the established warm-EBS Cargo target.
+Changing compiler flags creates a different Cargo cache identity and requires
+separate, explicit migration proof.
 
 The retained cache is mounted at `/mnt/adl-cache`. Container-backed state is
 under:
 
 ```text
-/mnt/adl-cache/adl-aws-remote-validation/shared/container-target
-/mnt/adl-cache/adl-aws-remote-validation/shared/container-sccache
-/mnt/adl-cache/adl-aws-remote-validation/shared/container-cargo-home
-/mnt/adl-cache/adl-aws-remote-validation/shared/container-tmp
+/mnt/adl-cache/adl-aws-remote-validation/shared/target
+/mnt/adl-cache/adl-aws-remote-validation/shared/sccache
+/mnt/adl-cache/adl-aws-remote-validation/shared/cargo-home
+/mnt/adl-cache/adl-aws-remote-validation/shared/tmp
 /mnt/adl-cache/adl-aws-remote-validation/shared/source/agent-design-language
 ```
 
-The container maps `container-tmp` to `/tmp`, preventing large builds and
+The container maps the retained `tmp` directory to `/tmp`, preventing large builds and
 disk-sensitive tests from consuming the small ephemeral root filesystem.
-The runner also reuses the EBS-backed tracked checkout. It fetches/checks out
-only when the requested commit changes, so same-commit runs preserve source
-mtimes and can reuse Cargo target fingerprints instead of relinking every test
-binary after each ephemeral instance starts.
+These are the original warm-cache directories established by `#4837`; the
+builder image must reuse them rather than create a parallel container-specific
+target namespace. The runner also reuses the EBS-backed tracked checkout. It
+fetches and checks out only when the requested commit changes, so same-commit
+runs preserve source paths and mtimes while still verifying the exact commit
+before execution.
+
+The immutable builder image owns `rustc`, Cargo, nextest, sccache, and `lld`.
+Do not set `RUSTUP_HOME` to the retained volume: doing so would make toolchain
+provenance mutable and could invalidate Cargo fingerprints. After changing any
+cache identity, treat the first successful run as migration evidence, not warm
+proof. Warm proof requires a second same-commit run with no unexpected
+compilation and materially reused target artifacts; nonzero preexisting bytes
+alone are not sufficient.
+
+Older experiments may leave `container-target`, `container-sccache`,
+`container-cargo-home`, or `container-tmp` beside the canonical directories.
+They are not consumed by this lane and are preserved until a separately
+verified maintenance operation removes them. Do not delete retained EBS paths
+as part of an ordinary validation run.
 
 Historical AWS state contains two preserved volumes with the same Name tag in
 different availability zones. Do not select or delete either by name. The

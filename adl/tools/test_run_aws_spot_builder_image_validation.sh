@@ -81,15 +81,15 @@ aws-cli/2.35.15
 TOOLS
       exit 0
     fi
-    [[ "$args" == *"RUSTFLAGS=-C link-arg=-fuse-ld=lld"* ]] || {
-      echo "validation container did not select lld" >&2
+    [[ "$args" == *"--env RUSTFLAGS= --env CARGO_INCREMENTAL=0"* ]] || {
+      echo "validation container did not preserve the known-good Rust flags" >&2
       exit 2
     }
-    [[ "$args" == *":/cache-root"* && "$args" == *"CARGO_TARGET_DIR=/cache-root/container-target"* ]] || {
-      echo "validation container did not mount the cache root" >&2
+    [[ "$args" == *":/cache-root"* && "$args" == *"CARGO_TARGET_DIR=/cache-root/target"* && "$args" == *"SCCACHE_DIR=/cache-root/sccache"* && "$args" == *"CARGO_HOME=/cache-root/cargo-home"* ]] || {
+      echo "validation container did not preserve the known-good cache layout" >&2
       exit 2
     }
-    [[ "$args" == *"container-tmp:/tmp"* && "$args" == *"TMPDIR=/tmp"* ]] || {
+    [[ "$args" == *"/adl-aws-remote-validation/shared/tmp:/tmp"* && "$args" == *"TMPDIR=/tmp"* ]] || {
       echo "validation container did not mount EBS-backed temp space" >&2
       exit 2
     }
