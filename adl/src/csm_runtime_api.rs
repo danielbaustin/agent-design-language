@@ -1530,6 +1530,41 @@ memory: {}
         }
     }
 
+    fn write_freedom_gate_status(state: &Path) {
+        fs::write(
+            state.join(CSM_FREEDOM_GATE_STATUS_REF),
+            serde_json::to_string_pretty(&csm_freedom_gate::build_status_snapshot("api-agent"))
+                .unwrap(),
+        )
+        .unwrap();
+    }
+
+    fn write_typed_channel_ready_state(state: &Path) {
+        fs::write(
+            state.join("csm_typed_channel_state.json"),
+            serde_json::to_string_pretty(&json!({
+                "schema": "adl.csm.typed_channel_state.v1",
+                "runtime_owner": "csm",
+                "status": "ready",
+                "required_channel_not_ready": false,
+                "last_event": "test_ready_fixture",
+                "last_receipt": null,
+                "summary": {
+                    "channel_count": 0,
+                    "queue_depth": 0,
+                    "durable_spool_depth": 0,
+                    "blocked_count": 0,
+                    "throttled_count": 0,
+                    "shed_count": 0
+                },
+                "channels": [],
+                "updated_at": Utc::now()
+            }))
+            .unwrap(),
+        )
+        .unwrap();
+    }
+
     #[test]
     fn runtime_api_uses_axum_request_parts_for_method_path_and_origin() {
         let mut headers = HeaderMap::new();
@@ -2019,6 +2054,8 @@ memory: {}
             serde_json::to_string_pretty(&curiosity).unwrap(),
         )
         .unwrap();
+        write_freedom_gate_status(&state);
+        write_typed_channel_ready_state(&state);
         let options = CsmRuntimeApiOptions {
             spec_path: spec,
             bind: test_api_bind(SEQ.load(Ordering::SeqCst)),
@@ -2082,6 +2119,8 @@ memory: {}
             serde_json::to_string_pretty(&curiosity).unwrap(),
         )
         .unwrap();
+        write_freedom_gate_status(&state);
+        write_typed_channel_ready_state(&state);
         let options = CsmRuntimeApiOptions {
             spec_path: spec,
             bind: test_api_bind(SEQ.load(Ordering::SeqCst)),
@@ -2195,6 +2234,8 @@ memory: {}
             serde_json::to_string_pretty(&curiosity).unwrap(),
         )
         .unwrap();
+        write_freedom_gate_status(&state);
+        write_typed_channel_ready_state(&state);
         let options = CsmRuntimeApiOptions {
             spec_path: spec,
             bind: test_api_bind(SEQ.load(Ordering::SeqCst)),
@@ -2653,6 +2694,8 @@ memory: {}
             serde_json::to_string_pretty(&curiosity).unwrap(),
         )
         .unwrap();
+        write_freedom_gate_status(&state);
+        write_typed_channel_ready_state(&state);
         let options = CsmRuntimeApiOptions {
             spec_path: spec,
             bind: test_api_bind(SEQ.load(Ordering::SeqCst)),
