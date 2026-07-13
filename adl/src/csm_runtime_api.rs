@@ -2116,6 +2116,7 @@ mod tests {
     use std::cell::RefCell;
     use std::net::TcpListener;
     use std::sync::atomic::{AtomicU64, Ordering};
+    use std::time::{SystemTime, UNIX_EPOCH};
 
     static SEQ: AtomicU64 = AtomicU64::new(0);
 
@@ -2136,7 +2137,13 @@ mod tests {
 
     fn temp_root(name: &str) -> PathBuf {
         let id = SEQ.fetch_add(1, Ordering::SeqCst);
-        let root = std::env::temp_dir().join(format!("adl-csm-runtime-api-{name}-{id}"));
+        let pid = std::process::id();
+        let nonce = SystemTime::now()
+            .duration_since(UNIX_EPOCH)
+            .expect("runtime API test clock is before UNIX_EPOCH")
+            .as_nanos();
+        let root =
+            std::env::temp_dir().join(format!("adl-csm-runtime-api-{name}-{pid}-{nonce}-{id}"));
         let _ = fs::remove_dir_all(&root);
         fs::create_dir_all(&root).unwrap();
         root
