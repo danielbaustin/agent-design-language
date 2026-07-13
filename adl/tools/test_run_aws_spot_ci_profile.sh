@@ -33,7 +33,7 @@ grep -F 'adl.aws_spot_coverage_summary.v1' "$SCRIPT" >/dev/null
 grep -F 'rustup component add rustfmt clippy llvm-tools-preview' "$DOCKERFILE" >/dev/null
 grep -F 'cargo llvm-cov --version' "$DOCKERFILE" >/dev/null
 grep -F 'gh --version' "$DOCKERFILE" >/dev/null
-grep -F "for required in rustc cargo cargo-nextest 'gh version' sccache LLD aws-cli" \
+grep -F "for required in 'CapEff=0 NoNewPrivs=1 permission-probe=denied' rustc cargo cargo-nextest 'gh version' sccache LLD aws-cli" \
   "$ROOT/adl/tools/run_aws_spot_builder_image_validation.sh" >/dev/null
 grep -F "grep -E '^llvm-tools-'" "$SCRIPT" >/dev/null
 grep -F 'ResolveImmutableBuilderImage' "$SETUP" >/dev/null

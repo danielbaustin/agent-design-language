@@ -69,11 +69,16 @@ case "$1" in
   run)
     args="$*"
     if [[ "$args" == *"rustc --version"* ]]; then
+      [[ "$args" == *"--cap-drop ALL"* && "$args" == *"--security-opt no-new-privileges"* ]] || {
+        echo "toolchain preflight did not constrain container privileges" >&2
+        exit 2
+      }
       if [[ "${ADL_FAKE_TOOLCHAIN_OK:-1}" != "1" ]]; then
         echo "rustc 1.96.0"
         exit 0
       fi
       cat <<'TOOLS'
+CapEff=0 NoNewPrivs=1 permission-probe=denied
 rustc 1.96.0
 cargo 1.96.0
 cargo-nextest 0.9.140
@@ -88,8 +93,8 @@ TOOLS
       echo "validation container did not preserve the known-good Rust flags" >&2
       exit 2
     }
-    [[ "$args" == *"--user "* && "$args" == *"AWS_EC2_METADATA_DISABLED=true"* ]] || {
-      echo "validation container did not isolate root permissions and EC2 role discovery" >&2
+    [[ "$args" == *"--user "* && "$args" == *"--cap-drop ALL"* && "$args" == *"--security-opt no-new-privileges"* && "$args" == *"AWS_EC2_METADATA_DISABLED=true"* ]] || {
+      echo "validation container did not constrain permissions and EC2 role discovery" >&2
       exit 2
     }
     [[ "$args" == *":/cache-root"* && "$args" == *"CARGO_TARGET_DIR=/cache-root/target"* && "$args" == *"SCCACHE_DIR=/cache-root/sccache"* && "$args" == *"CARGO_HOME=/cache-root/cargo-home"* ]] || {

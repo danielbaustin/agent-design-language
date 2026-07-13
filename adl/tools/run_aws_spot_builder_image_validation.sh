@@ -168,9 +168,23 @@ fi
 CURRENT_STAGE="verify_builder_toolchain"
 stage "$CURRENT_STAGE"
 TOOLCHAIN_OUTPUT="$ADL_RUN_ROOT/builder-toolchain.log"
-"${DOCKER[@]}" run --rm --entrypoint /bin/bash "$IMAGE" -lc "
+"${DOCKER[@]}" run --rm \
+  --cap-drop ALL \
+  --security-opt no-new-privileges \
+  --entrypoint /bin/bash "$IMAGE" -lc "
   set -euo pipefail
   test \"\$(uname -m)\" = '$EXPECTED_UNAME_ARCH'
+  test \"\$(awk '/^CapEff:/ {print \$2}' /proc/self/status)\" = '0000000000000000'
+  test \"\$(awk '/^NoNewPrivs:/ {print \$2}' /proc/self/status)\" = '1'
+  permission_probe=\"\$(mktemp -d)\"
+  chmod 0555 \"\$permission_probe\"
+  if touch \"\$permission_probe/should-fail\" 2>/dev/null; then
+    echo 'permission probe unexpectedly succeeded' >&2
+    exit 1
+  fi
+  chmod 0755 \"\$permission_probe\"
+  rmdir \"\$permission_probe\"
+  echo 'CapEff=0 NoNewPrivs=1 permission-probe=denied'
   rustc --version
   cargo --version
   cargo nextest --version
@@ -179,7 +193,7 @@ TOOLCHAIN_OUTPUT="$ADL_RUN_ROOT/builder-toolchain.log"
   ld.lld --version | head -n 1
   aws --version
 " >"$TOOLCHAIN_OUTPUT" 2>&1
-for required in rustc cargo cargo-nextest 'gh version' sccache LLD aws-cli; do
+for required in 'CapEff=0 NoNewPrivs=1 permission-probe=denied' rustc cargo cargo-nextest 'gh version' sccache LLD aws-cli; do
   grep -F "$required" "$TOOLCHAIN_OUTPUT" >/dev/null || {
     echo "spot_builder_image_validation: builder toolchain verification missing $required" >&2
     exit 1
@@ -194,6 +208,8 @@ VALIDATION_GID="$(id -g)"
 set +e
 "${DOCKER[@]}" run --rm \
   --user "$VALIDATION_UID:$VALIDATION_GID" \
+  --cap-drop ALL \
+  --security-opt no-new-privileges \
   --workdir /workspace \
   --volume "$ADL_REMOTE_REPO_DIR:/workspace" \
   --volume "$ADL_SPOT_CONTROL_ROOT:/adl-control:ro" \
