@@ -11,8 +11,9 @@ use adl_runtime_kernel::{
     proof::{build_proof_runtime, load_capsule, run_proof},
     serve_control_listener_until, verifying_key_from_hex, AdaptationState, ControlAuthority,
     ControlCapability, ControlService, KernelExit, LoopDefinition, LoopStatus, ReasoningEdge,
-    ReasoningGraphDefinition, ReasoningNode, RecordedObservation, TrustedControlKey,
-    ValidatedReasoningGraph, DEFAULT_CONTROL_API_PORT, MAX_SHADOW_FIXTURE_BYTES,
+    ReasoningGraphDefinition, ReasoningNode, RecordedObservation, ResourceState,
+    SysinfoWeatherObserver, TrustedControlKey, ValidatedReasoningGraph, WeatherConfig,
+    WeatherHealthReport, WeatherObserver, DEFAULT_CONTROL_API_PORT, MAX_SHADOW_FIXTURE_BYTES,
     REASONING_GRAPH_SCHEMA,
 };
 use tokio_util::sync::CancellationToken;
@@ -89,6 +90,12 @@ async fn main() -> ExitCode {
                 handle.control(),
                 authority,
                 1024,
+            ));
+            let mut weather_observer = SysinfoWeatherObserver::default();
+            service.set_weather_report(WeatherHealthReport::from_sample(
+                &WeatherConfig::default(),
+                weather_observer.sample(),
+                ResourceState::Healthy,
             ));
             let api_shutdown = tokio_util::sync::CancellationToken::new();
             let mut api = tokio::spawn(serve_control_listener_until(

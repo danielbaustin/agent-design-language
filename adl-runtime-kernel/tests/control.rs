@@ -11,8 +11,10 @@ use adl_runtime_kernel::{
     channel, serve_control_listener, serve_control_listener_until, write_observability_event,
     write_payload, ClockAuthority, ComponentId, ComponentRegistry, ContinuityHead, ControlAction,
     ControlAuthority, ControlCapability, ControlError, ControlExit, ControlObservabilityEvent,
-    ControlOutcome, ControlService, Kernel, KernelExit, LifecycleControl, ObservabilityDegradation,
-    ObservabilityHealth, RuntimeEvent, RuntimeRecorder, SignedControlCommand, TrustedControlKey,
+    ControlOutcome, ControlService, DiskWeather, Kernel, KernelExit, LifecycleControl,
+    ObservabilityDegradation, ObservabilityHealth, Observation, ResourceState, RuntimeEvent,
+    RuntimeRecorder, ShutdownDecision, SignedControlCommand, TrustedControlKey, WeatherConfig,
+    WeatherHealthReport, WeatherSample,
 };
 use async_trait::async_trait;
 use ed25519_dalek::SigningKey;
@@ -323,6 +325,120 @@ async fn axum_adapter_serves_signed_control_payloads() {
     let response = String::from_utf8(bytes).unwrap();
     assert!(response.starts_with("HTTP/1.1 400 Bad Request"));
     assert!(response.contains("adl.runtime.control_error.v1"));
+    server.abort();
+}
+
+#[tokio::test]
+async fn observatory_feed_serves_runtime_owned_read_projection_without_mutation_authority() {
+    let key = SigningKey::from_bytes(&[12; 32]);
+    let recorder = RuntimeRecorder::new(8);
+    recorder.set_topology_generation(11);
+    recorder.set_component_state(
+        ComponentId::new("runtime_api"),
+        adl_runtime_kernel::RunningState::Running,
+    );
+    recorder.set_clock_authority(ClockAuthority::Authoritative {
+        source: "sntp".to_owned(),
+        unix_millis: 1_789_000_000,
+    });
+    recorder.set_continuity_head(ContinuityHead {
+        generation: 3,
+        accepted_through: 99,
+        topology_hash: "topology-hash".to_owned(),
+        config_hash: "config-hash".to_owned(),
+        integrity: "snapshot-hash".to_owned(),
+    });
+    recorder.promote_observability();
+    let service = Arc::new(ControlService::new(
+        "instance-1",
+        recorder,
+        FakeLifecycle {
+            calls: Arc::new(AtomicUsize::new(0)),
+        },
+        authority(&key, [ControlCapability::Read]),
+        4,
+    ));
+    let weather_config = WeatherConfig {
+        disk_stop_free_bytes: 256,
+        disk_warning_free_bytes: 512,
+        disk_recover_free_bytes: 1024,
+        ..WeatherConfig::default()
+    };
+    let weather = WeatherHealthReport::from_sample(
+        &weather_config,
+        WeatherSample {
+            platform: "test".to_owned(),
+            cpu_basis_points: Observation {
+                value: Some(250),
+                source: "fixture".to_owned(),
+            },
+            per_core_basis_points: Observation {
+                value: Some(vec![250]),
+                source: "fixture".to_owned(),
+            },
+            memory_total_bytes: Observation {
+                value: Some(1024),
+                source: "fixture".to_owned(),
+            },
+            memory_available_bytes: Observation {
+                value: Some(768),
+                source: "fixture".to_owned(),
+            },
+            disks: Observation {
+                value: Some(vec![DiskWeather {
+                    mount: "/".to_owned(),
+                    total_bytes: 4096,
+                    available_bytes: 2048,
+                }]),
+                source: "fixture".to_owned(),
+            },
+            network_received_bytes: Observation {
+                value: Some(13),
+                source: "fixture".to_owned(),
+            },
+            network_transmitted_bytes: Observation {
+                value: Some(21),
+                source: "fixture".to_owned(),
+            },
+            max_temperature_millicelsius: Observation {
+                value: Some(42_000),
+                source: "fixture".to_owned(),
+            },
+            gpus: Observation {
+                value: Some(Vec::new()),
+                source: "fixture".to_owned(),
+            },
+        },
+        ResourceState::Healthy,
+    );
+    assert_eq!(weather.shutdown_decision, ShutdownDecision::Continue);
+    service.set_weather_report(weather);
+
+    let listener = tokio::net::TcpListener::bind(("127.0.0.1", 0))
+        .await
+        .unwrap();
+    let address = listener.local_addr().unwrap();
+    let server = tokio::spawn(serve_control_listener(service, listener));
+    let mut stream = tokio::net::TcpStream::connect(address).await.unwrap();
+    stream
+        .write_all(b"GET /v1/observatory HTTP/1.1\r\nHost: localhost\r\nConnection: close\r\n\r\n")
+        .await
+        .unwrap();
+    let mut bytes = Vec::new();
+    stream.read_to_end(&mut bytes).await.unwrap();
+    let response = String::from_utf8(bytes).unwrap();
+    assert!(response.starts_with("HTTP/1.1 200 OK"));
+    assert!(response.contains("access-control-allow-origin: http://127.0.0.1:8765"));
+    assert!(response.contains(adl_runtime_kernel::OBSERVATORY_FEED_SCHEMA));
+    assert!(response.contains("\"runtime_selection\":\"runtime_v3_explicit_opt_in\""));
+    assert!(response.contains("\"signed_commands_required_for_mutation\":true"));
+    assert!(response.contains("\"browser_mutation_authority\":false"));
+    assert!(response.contains("\"port\":20997"));
+    assert!(response.contains("\"event\":\"state:Running\""));
+    assert!(response.contains("\"event\":\"clock_authority_updated\""));
+    assert!(response.contains("\"accepted_through\":99"));
+    assert!(response.contains("\"cloudwatch_route\":\"vector.runtime_v3_cloudwatch_emf\""));
+    assert!(response.contains("\"runtime_v2_decommission_authorized\":false"));
     server.abort();
 }
 

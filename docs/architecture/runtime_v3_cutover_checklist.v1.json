@@ -14,7 +14,8 @@
     "guardian_soak_report": "docs/architecture/runtime_v3_guardian_soak_report.v1.json",
     "horust_qualification_report": "docs/architecture/runtime_v3_horust_qualification_report.v1.json",
     "final_review": "docs/architecture/RUNTIME_V3_FINAL_REVIEW_5175.md",
-    "release_proof_gate": "docs/architecture/runtime_v3_release_proof_gate_5220.v1.json"
+        "release_proof_gate": "docs/architecture/runtime_v3_release_proof_gate_5220.v1.json",
+        "observatory_consumption": "docs/architecture/runtime_v3_observatory_consumption_5286.v1.json"
   },
   "issue_states": [
     {"issue": 5174, "state": "closed", "role": "runtime_v3_sprint_umbrella", "cutover_effect": "input_sprint_closed"},
@@ -84,8 +85,14 @@
       "id": "parity.live_black_box",
       "status": "passed_no_default_cutover",
       "source": "#5248",
-      "reason": "Live black-box parity reports cutover_eligible=true with zero remaining blocker-class capability groups after #5277, #5278, #5279, #5280, #5281, #5282, #5283, #5284, and #5285; default replacement still requires a separate reviewed decision and Observatory truth."
-    },
+            "reason": "Live black-box parity reports cutover_eligible=true with zero remaining blocker-class capability groups after #5277, #5278, #5279, #5280, #5281, #5282, #5283, #5284, and #5285; Observatory truth is recorded by #5286, and default replacement still requires a separate reviewed decision."
+        },
+        {
+            "id": "observatory.live_runtime_v3_consumption",
+            "status": "passed_explicit_opt_in_no_default_cutover",
+            "source": "#5286",
+            "reason": "Runtime v3 exposes a runtime-owned loopback read feed at GET /v1/observatory on port 20997, HTML Observatory can consume it only by explicit Runtime v3 opt-in, retained Runtime v2/CSM evidence remains the default mirror, and Unity remains proven-limited while #4739 and #4741 are open."
+        },
     {
       "id": "domain_adapters.private_identity_cognition",
       "status": "accepted_intentional_divergence",

@@ -32,6 +32,7 @@ CSM_HEALTH_REF = "../../../docs/milestones/v0.91.7/review/runtime/csm_liveness_4
 CSM_READY_REF = "../../../docs/milestones/v0.91.7/review/runtime/csm_liveness_4976/published/api/ready.json"
 CSM_METRICS_REF = "../../../docs/milestones/v0.91.7/review/runtime/csm_liveness_4976/published/api/metrics.json"
 CSM_EVENTS_REF = "../../../docs/milestones/v0.91.7/review/runtime/csm_liveness_4976/published/api/events.json"
+RUNTIME_V3_OBSERVATORY_ENDPOINT = "http://127.0.0.1:20997/v1/observatory"
 
 
 def fail(message: str) -> None:
@@ -95,12 +96,72 @@ def run_js_view_model(
           [retainedRefs.metricsRef, fs.readFileSync(retainedRefs.metricsRef, "utf8")],
           [retainedRefs.eventsRef, fs.readFileSync(retainedRefs.eventsRef, "utf8")]
         ]);
+        const runtimeV3Feed = JSON.stringify({{
+          schema: "adl.runtime_v3.observatory_feed.v1",
+          runtime_instance_id: "runtime-v3-test",
+          default_runtime_changed: false,
+          runtime_selection: "runtime_v3_explicit_opt_in",
+          control: {{
+            port: 20997,
+            read_endpoint: "/v1/observatory",
+            signed_command_endpoint: "/v1/control",
+            signed_commands_required_for_mutation: true,
+            browser_mutation_authority: false
+          }},
+          health: {{
+            observability_ready: true,
+            snapshot: {{
+              schema: "adl.runtime.control_snapshot.v1",
+              revision: 7,
+              topology_generation: 3,
+              components: {{ runtime_api: "running", checkpoint: "running" }},
+              restart_counts: {{}},
+              queues: {{}},
+              clock: {{ status: "authoritative", source: "sntp", unix_millis: 1789000000 }},
+              continuity_head: {{ generation: 2, accepted_through: 19, topology_hash: "topology", config_hash: "config", integrity: "snapshot" }},
+              lifecycle: "running",
+              event_count: 2,
+              observability: {{ status: "ready" }},
+              observability_ready: true
+            }}
+          }},
+          weather: {{
+            schema: "adl.runtime.weather_health.v1",
+            resource_state: "healthy",
+            shutdown_decision: "continue",
+            gpu_proof_state: "unavailable_not_pass",
+            cloudwatch_route: "vector.runtime_v3_cloudwatch_emf",
+            sample: {{
+              platform: "test",
+              cpu_basis_points: {{ value: 250, source: "fixture" }},
+              per_core_basis_points: {{ value: [250], source: "fixture" }},
+              memory_total_bytes: {{ value: 1024, source: "fixture" }},
+              memory_available_bytes: {{ value: 768, source: "fixture" }},
+              disks: {{ value: [], source: "fixture" }},
+              network_received_bytes: {{ value: 13, source: "fixture" }},
+              network_transmitted_bytes: {{ value: 21, source: "fixture" }},
+              max_temperature_millicelsius: {{ value: 42000, source: "fixture" }},
+              gpus: {{ value: [], source: "optional_platform_adapter" }}
+            }}
+          }},
+          continuity: {{ checkpoint: {{ generation: 2, accepted_through: 19, topology_hash: "topology", config_hash: "config", integrity: "snapshot" }} }},
+          proof: {{
+            default_runtime_switch_authorized: false,
+            runtime_v2_decommission_authorized: false,
+            sidecar_required: false,
+            vector_cloudwatch_route: "vector.runtime_v3_cloudwatch_emf"
+          }},
+          events: [
+            {{ sequence: 1, monotonic_millis: 5, component: "runtime_api", event: "components_ready", correlation_id: null }}
+          ]
+        }});
         const livePayloads = new Map([
           ["http://127.0.0.1:49210/status", retainedFiles.get(retainedRefs.statusRef)],
           ["http://127.0.0.1:49210/health", retainedFiles.get(retainedRefs.healthRef)],
           ["http://127.0.0.1:49210/ready", retainedFiles.get(retainedRefs.readyRef)],
           ["http://127.0.0.1:49210/metrics", retainedFiles.get(retainedRefs.metricsRef)],
-          ["http://127.0.0.1:49210/events", retainedFiles.get(retainedRefs.eventsRef)]
+          ["http://127.0.0.1:49210/events", retainedFiles.get(retainedRefs.eventsRef)],
+          ["http://127.0.0.1:20997/v1/observatory", runtimeV3Feed]
         ]);
         const textWrites = [];
         const datasetWrites = [];
@@ -281,6 +342,16 @@ def run_js_view_model(
         const retainedFetchPanopticon = context.AdlHtmlObservatory.buildPanopticonViewModel(retainedSnapshot, packet);
         const liveSnapshot = await context.AdlHtmlObservatory.fetchRuntimeSnapshot("http://127.0.0.1:49210");
         const liveFetchPanopticon = context.AdlHtmlObservatory.buildPanopticonViewModel(liveSnapshot, packet);
+        let runtimeV3PortOnlyRejected = false;
+        try {{
+          await context.AdlHtmlObservatory.fetchRuntimeSnapshot("http://127.0.0.1:20997");
+        }} catch (_error) {{
+          runtimeV3PortOnlyRejected = true;
+        }}
+        mockLocation.search = "?runtime=v3&runtimeApiBase=http://127.0.0.1:20997";
+        const runtimeV3Snapshot = await context.AdlHtmlObservatory.fetchRuntimeSnapshot("http://127.0.0.1:20997");
+        const runtimeV3Panopticon = context.AdlHtmlObservatory.buildPanopticonViewModel(runtimeV3Snapshot, packet);
+        mockLocation.search = "?csmApiBase=http://127.0.0.1:49210";
         context.AdlHtmlObservatory.bindLivePanopticon(packet);
         await new Promise((resolve) => setImmediate(resolve));
         const blockedCloudwatchViewModel = context.AdlHtmlObservatory.buildIntegrationViewModel({{
@@ -348,6 +419,20 @@ def run_js_view_model(
             metricCount: liveFetchPanopticon.metrics.length,
             readyState: liveFetchPanopticon.readyState,
             errorCount: Object.keys(liveSnapshot.errors || {{}}).length
+          }},
+          runtimeV3Panopticon: {{
+            mode: runtimeV3Panopticon.mode,
+            runtimeSelection: runtimeV3Snapshot.runtimeSelection,
+            portOnlyRejected: runtimeV3PortOnlyRejected,
+            agentLabels: runtimeV3Panopticon.agents.map((agent) => agent.label),
+            eventCount: runtimeV3Panopticon.events.length,
+            metricCount: runtimeV3Panopticon.metrics.length,
+            readyState: runtimeV3Panopticon.readyState,
+            controlPort: runtimeV3Snapshot.status.control.port,
+            mutationAuthority: runtimeV3Snapshot.status.control.browser_mutation_authority,
+            decommissionAuthorized: runtimeV3Snapshot.proof.runtime_v2_decommission_authorized,
+            defaultSwitchAuthorized: runtimeV3Snapshot.proof.default_runtime_switch_authorized,
+            sidecarRequired: runtimeV3Snapshot.proof.sidecar_required
           }},
           dashboardMirrors: {{
             heroCloudwatchOkLabel: integrationViewModel.cloudwatchSummary.status === "passed" ? "CloudWatch Proven" : context.AdlHtmlObservatory.formatLabel(integrationViewModel.cloudwatchSummary.status || "pending"),
@@ -472,11 +557,14 @@ def main() -> int:
     assert_contains("HTML dashboard real runtime connect", html, 'id="dashboard-connect-live"')
     assert_contains("HTML dashboard real runtime refresh", html, 'id="dashboard-refresh-live"')
     assert_contains("HTML dashboard real runtime stop", html, 'id="dashboard-stop-live"')
+    assert_contains("HTML Runtime v3 opt-in port", html, "20997")
+    assert_contains("HTML Runtime v3 explicit opt-in query", html, "runtime=v3&runtimeApiBase=http://127.0.0.1:20997")
     assert_contains("HTML dashboard communication inspector", html, 'id="hero-communication-status"')
     assert_contains("HTML dashboard status bar", html, 'class="dashboard-statusbar"')
     assert_contains("HTML topbar capture time field", html, "Capture Time")
     assert_contains("HTML statusbar last update field", html, 'Last Update <strong id="statusbar-updated">pending</strong>')
     assert_contains("HTML statusbar state indicator", html, 'id="statusbar-indicator"')
+    assert_contains("HTML statusbar Runtime v3 opt-in source", html, "Runtime v3 opt-in + CSM Runtime + AWS CloudWatch + ACIP/SNS")
     assert_contains("HTML source-driven capture readout", html, 'id="hero-uptime">pending</strong>')
     assert_contains("HTML source-driven rail capture", html, 'id="rail-capture-time">pending</strong>')
     assert_contains("HTML source-driven gauge agents", html, 'id="hero-gauge-agents"')
@@ -548,6 +636,10 @@ def main() -> int:
     assert_contains("JS SNS projection envelope", js, 'live_publish_claimed: false')
     assert_contains("JS events endpoint check", js, "checkEventsEndpoint")
     assert_contains("JS runtime snapshot polling", js, "fetchRuntimeSnapshot")
+    assert_contains("JS Runtime v3 observatory feed polling", js, "fetchRuntimeV3ObservatorySnapshot")
+    assert_contains("JS Runtime v3 observatory endpoint", js, 'RUNTIME_V3_OBSERVATORY_ENDPOINT = "/v1/observatory"')
+    assert_contains("JS Runtime v3 control port", js, 'RUNTIME_V3_CONTROL_PORT = "20997"')
+    assert_contains("JS Runtime v3 explicit opt-in selection", js, "runtime_v3_explicit_opt_in")
     assert_contains("JS runtime query base bootstrap", js, "getQueryApiBase")
     assert_contains("JS runtime auto-connect gate", js, "shouldAutoConnectLive")
     assert_contains("JS dashboard runtime status mirror", js, 'setText("dashboard-live-test-status"')
@@ -765,6 +857,29 @@ def main() -> int:
       fail(f"live binding did not preserve proved loopback status: {live_binding!r}")
     if live_binding.get("statusbarMode") != "Live Loopback":
       fail(f"live binding did not preserve statusbar live mode: {live_binding!r}")
+    runtime_v3_panopticon = smoke["runtimeV3Panopticon"]
+    if runtime_v3_panopticon.get("mode") != "live":
+      fail(f"Runtime v3 observatory feed did not preserve live mode: {runtime_v3_panopticon!r}")
+    if runtime_v3_panopticon.get("runtimeSelection") != "runtime_v3_explicit_opt_in":
+      fail(f"Runtime v3 observatory feed did not preserve explicit opt-in selection: {runtime_v3_panopticon!r}")
+    if runtime_v3_panopticon.get("portOnlyRejected") is not True:
+      fail("Runtime v3 Observatory accepted port 20997 without explicit runtime=v3 selection")
+    if runtime_v3_panopticon.get("controlPort") != 20997:
+      fail(f"Runtime v3 observatory feed did not preserve control port 20997: {runtime_v3_panopticon!r}")
+    if runtime_v3_panopticon.get("mutationAuthority") is not False:
+      fail("Runtime v3 Observatory browser path overclaims mutation authority")
+    if runtime_v3_panopticon.get("defaultSwitchAuthorized") is not False:
+      fail("Runtime v3 Observatory browser path overclaims default switch authorization")
+    if runtime_v3_panopticon.get("decommissionAuthorized") is not False:
+      fail("Runtime v3 Observatory browser path overclaims Runtime v2 decommission")
+    if runtime_v3_panopticon.get("sidecarRequired") is not False:
+      fail("Runtime v3 Observatory browser path introduced a sidecar requirement")
+    if runtime_v3_panopticon.get("eventCount", 0) < 1:
+      fail("Runtime v3 observatory feed did not expose operator-visible events")
+    if runtime_v3_panopticon.get("metricCount", 0) < 4:
+      fail("Runtime v3 observatory feed did not expose health/weather metrics")
+    if runtime_v3_panopticon.get("readyState") != "ready":
+      fail("Runtime v3 observatory feed readiness state mismatch")
 
     secret_pattern = re.compile(
         r"/Users/|/private/var/|localhost:[0-9]|192\\.168\\.|"

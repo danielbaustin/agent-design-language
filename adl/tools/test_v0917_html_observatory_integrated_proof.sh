@@ -63,11 +63,14 @@ require_readme "bounded runtime capture"
 require_readme "CSM API"
 require_readme "CloudWatch"
 require_readme "ACIP-SNS"
+require_readme "Runtime v3"
+require_readme "/v1/observatory"
+require_readme "20997"
 require_readme "browser-owned AWS publish authority"
 require_readme "WP-08"
 require_readme "communication rail"
-grep -Fq "CSM Runtime + AWS CloudWatch + ACIP/SNS" "${HTML}" || {
-  echo "HTML Observatory status bar must name the ACIP/SNS data source" >&2
+grep -Fq "Runtime v3 opt-in + CSM Runtime + AWS CloudWatch + ACIP/SNS" "${HTML}" || {
+  echo "HTML Observatory status bar must name the Runtime v3 opt-in and ACIP/SNS data source" >&2
   exit 1
 }
 grep -Fq "retained_proof_status: acipSnsSummary.status || \"unknown\"" "${JS}" || {

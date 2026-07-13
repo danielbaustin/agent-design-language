@@ -76,6 +76,8 @@ let retainedPollTimer = null;
 const OBSERVATORY_VERSION = "v0.91.7";
 const OBSERVATORY_MANIFOLD_LABEL = `${OBSERVATORY_VERSION} CSM runtime mirror`;
 const OBSERVATORY_PACKET_LABEL = `${OBSERVATORY_VERSION} Observatory proof packet`;
+const RUNTIME_V3_CONTROL_PORT = "20997";
+const RUNTIME_V3_OBSERVATORY_ENDPOINT = "/v1/observatory";
 
 const AWS_LINKAGES = [
   {
@@ -520,9 +522,24 @@ function isLoopbackApiBase(value) {
 
 function getQueryApiBase() {
   const params = new URLSearchParams(window.location.search);
-  const candidate = params.get("csmApiBase") || params.get("apiBase") || params.get("runtimeApiBase") || "";
+  const candidate = params.get("runtimeApiBase") || params.get("csmApiBase") || params.get("apiBase") || "";
   const normalized = normalizeApiBase(candidate);
   return isLoopbackApiBase(normalized) ? normalized : "";
+}
+
+function requestedRuntimeSelection() {
+  const params = new URLSearchParams(window.location.search);
+  return String(params.get("runtime") || params.get("runtimeSelection") || "v2").toLowerCase();
+}
+
+function isRuntimeV3ApiBase(value) {
+  const base = normalizeApiBase(value);
+  try {
+    const parsed = new URL(base);
+    return isLoopbackApiBase(base) && parsed.port === RUNTIME_V3_CONTROL_PORT;
+  } catch (_error) {
+    return false;
+  }
 }
 
 function shouldAutoConnectLive() {
@@ -561,6 +578,15 @@ async function fetchRuntimeEndpoint(apiBase, endpoint) {
 }
 
 async function fetchRuntimeSnapshot(apiBase) {
+  if (requestedRuntimeSelection() === "v3") {
+    if (!isRuntimeV3ApiBase(apiBase)) {
+      throw new Error("Runtime v3 selection requires loopback port 20997.");
+    }
+    return fetchRuntimeV3ObservatorySnapshot(apiBase);
+  }
+  if (isRuntimeV3ApiBase(apiBase)) {
+    throw new Error("Port 20997 requires explicit runtime=v3 selection.");
+  }
   const endpoints = ["/status", "/health", "/ready", "/metrics", "/events"];
   const settled = await Promise.allSettled(
     endpoints.map((endpoint) => fetchRuntimeEndpoint(apiBase, endpoint))
@@ -580,6 +606,59 @@ async function fetchRuntimeSnapshot(apiBase) {
     }
   });
   return snapshot;
+}
+
+async function fetchRuntimeV3ObservatorySnapshot(apiBase) {
+  const feed = await fetchRuntimeEndpoint(apiBase, RUNTIME_V3_OBSERVATORY_ENDPOINT);
+  const snapshot = feed.health?.snapshot || {};
+  const weather = feed.weather || {};
+  const events = asArray(feed.events);
+  return {
+    mode: "live",
+    runtimeSelection: feed.runtime_selection || "runtime_v3_explicit_opt_in",
+    fetchedAt: new Date().toISOString(),
+    status: {
+      schema: feed.schema,
+      runtime_owner: "runtime-v3",
+      runtime_id: feed.runtime_instance_id,
+      agent_instance_id: feed.runtime_instance_id,
+      status: snapshot.lifecycle || "unknown",
+      observability: snapshot.observability,
+      topology_generation: snapshot.topology_generation,
+      control: feed.control,
+      proof: feed.proof
+    },
+    health: {
+      status: feed.health?.observability_ready ? "healthy" : "pending",
+      summary: "Runtime v3 observatory feed",
+      components: snapshot.components || {},
+      queues: snapshot.queues || {}
+    },
+    ready: {
+      status: snapshot.observability_ready ? "ready" : "pending",
+      blocking_reasons: snapshot.observability_ready ? [] : ["observability_not_ready"]
+    },
+    metrics: {
+      gauges: {
+        event_count: snapshot.event_count || events.length,
+        component_count: Object.keys(snapshot.components || {}).length,
+        queue_count: Object.keys(snapshot.queues || {}).length,
+        weather_cpu_basis_points: weather.sample?.cpu_basis_points?.value ?? null,
+        network_received_bytes: weather.sample?.network_received_bytes?.value ?? null,
+        network_transmitted_bytes: weather.sample?.network_transmitted_bytes?.value ?? null
+      },
+      states: {
+        lifecycle: snapshot.lifecycle || "unknown",
+        resource_state: weather.resource_state || "unknown",
+        shutdown_decision: weather.shutdown_decision || "unknown",
+        gpu_proof_state: weather.gpu_proof_state || "unknown"
+      }
+    },
+    events: { events },
+    continuity: feed.continuity,
+    proof: feed.proof,
+    errors: {}
+  };
 }
 
 async function fetchRetainedRuntimeSnapshot(refs = {}) {
@@ -1297,7 +1376,8 @@ function bindLivePanopticon(packet = FALLBACK_PACKET) {
       renderPanopticon(snapshot, packet);
       const status = Object.keys(snapshot.errors || {}).length ? "live partial" : "live loopback";
       setText("live-status", status);
-      setRuntimeTestStatus(status, Object.keys(snapshot.errors || {}).length ? "Runtime reached, but one or more CSM endpoints failed." : "Runtime API endpoints responded from the loopback CSM server.");
+      const runtimeKind = snapshot.runtimeSelection === "runtime_v3_explicit_opt_in" ? "Runtime v3 observatory feed" : "loopback CSM server";
+      setRuntimeTestStatus(status, Object.keys(snapshot.errors || {}).length ? "Runtime reached, but one or more endpoints failed." : `Runtime API endpoints responded from the ${runtimeKind}.`);
     } catch (error) {
       await renderLiveError(error);
     }
@@ -1413,7 +1493,10 @@ globalThis.AdlHtmlObservatory = {
   isLoopbackApiBase,
   getQueryApiBase,
   fetchRuntimeSnapshot,
+  fetchRuntimeV3ObservatorySnapshot,
   fetchRetainedRuntimeSnapshot,
+  requestedRuntimeSelection,
+  isRuntimeV3ApiBase,
   buildRuntimeAgentRows,
   buildViewModel,
   buildIntegrationViewModel,

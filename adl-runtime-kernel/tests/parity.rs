@@ -1682,3 +1682,129 @@ fn release_proof_gate_closes_without_authorizing_default_cutover() {
         assert_eq!(issue_state["state"], "closed");
     }
 }
+
+#[test]
+fn observatory_consumes_runtime_v3_only_by_explicit_opt_in() {
+    let proof: serde_json::Value = serde_json::from_str(include_str!(
+        "../../docs/architecture/runtime_v3_observatory_consumption_5286.v1.json"
+    ))
+    .unwrap();
+    let gate: serde_json::Value = serde_json::from_str(include_str!(
+        "../../docs/architecture/runtime_v3_release_proof_gate_5220.v1.json"
+    ))
+    .unwrap();
+    let checklist: serde_json::Value = serde_json::from_str(include_str!(
+        "../../docs/architecture/runtime_v3_cutover_checklist.v1.json"
+    ))
+    .unwrap();
+
+    assert_eq!(
+        proof["schema"],
+        "adl.runtime_v3.observatory_consumption_proof.v1"
+    );
+    assert_eq!(proof["issue"], 5286);
+    assert_eq!(proof["sprint_issue"], 5276);
+    assert_eq!(
+        proof["capability"],
+        "observatory.live_runtime_v3_consumption"
+    );
+    assert_eq!(
+        proof["disposition"],
+        "proved_with_runtime_v3_explicit_opt_in"
+    );
+    assert_eq!(proof["default_runtime"], "v2");
+    assert_eq!(proof["runtime_v3_selection"], "explicit_opt_in_only");
+    assert_eq!(proof["control_port"], 20997);
+    assert_eq!(proof["runtime_v3_feed"]["endpoint"], "GET /v1/observatory");
+    assert_eq!(proof["runtime_v3_feed"]["owner"], "adl-runtime-kernel");
+    assert_eq!(proof["runtime_v3_feed"]["sidecar_required"], false);
+    assert_eq!(
+        proof["runtime_v3_feed"]["browser_mutation_authority"],
+        false
+    );
+    assert!(proof["runtime_v3_feed"]["weather_population"]
+        .as_str()
+        .unwrap()
+        .contains("SysinfoWeatherObserver"));
+    assert_eq!(
+        proof["runtime_v3_feed"]["signed_commands_required_for_mutation"],
+        true
+    );
+    for section in [
+        "control",
+        "health",
+        "weather",
+        "continuity",
+        "proof",
+        "events",
+    ] {
+        assert!(
+            proof["runtime_v3_feed"]["sections"]
+                .as_array()
+                .unwrap()
+                .iter()
+                .any(|value| value == section),
+            "missing Runtime v3 Observatory feed section {section}"
+        );
+    }
+    assert_eq!(
+        proof["html_observatory"]["runtime_v3_opt_in_url"],
+        "demos/v0.91.7/html-observatory/?runtime=v3&runtimeApiBase=http://127.0.0.1:20997&live=1"
+    );
+    assert_eq!(
+        proof["html_observatory"]["runtime_v3_read_feed_consumed"],
+        true
+    );
+    assert_eq!(
+        proof["html_observatory"]["runtime_v3_default_claimed"],
+        false
+    );
+    assert_eq!(
+        proof["unity_observatory"]["disposition"],
+        "proven_limited_retained_evidence_only"
+    );
+    assert_eq!(
+        proof["unity_observatory"]["open_tooling_issues"]
+            .as_array()
+            .unwrap()
+            .iter()
+            .map(|value| value.as_u64().unwrap())
+            .collect::<std::collections::BTreeSet<_>>(),
+        [4739, 4741].into_iter().collect()
+    );
+    assert_eq!(
+        proof["unity_observatory"]["live_runtime_v3_consumption_claimed"],
+        false
+    );
+    assert_eq!(
+        proof["acceptance"]["default_runtime_v3_cutover_claimed"],
+        false
+    );
+
+    let gate_entry = gate["gates"]
+        .as_array()
+        .unwrap()
+        .iter()
+        .find(|entry| entry["id"] == "observatory.live_runtime_v3_consumption")
+        .unwrap();
+    assert_eq!(
+        gate_entry["status"],
+        "passed_explicit_opt_in_no_default_cutover"
+    );
+    assert_eq!(
+        gate_entry["evidence"],
+        "docs/architecture/runtime_v3_observatory_consumption_5286.v1.json"
+    );
+
+    let checklist_entry = checklist["gates"]
+        .as_array()
+        .unwrap()
+        .iter()
+        .find(|entry| entry["id"] == "observatory.live_runtime_v3_consumption")
+        .unwrap();
+    assert_eq!(
+        checklist_entry["status"],
+        "passed_explicit_opt_in_no_default_cutover"
+    );
+    assert_eq!(checklist_entry["source"], "#5286");
+}

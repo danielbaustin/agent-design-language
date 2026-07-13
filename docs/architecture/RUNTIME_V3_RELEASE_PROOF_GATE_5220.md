@@ -17,8 +17,9 @@ API and observability contracts, weather/resource monitoring, bounded
 soak/rollback, private-state security, identity/memory continuity, and governed
 cognition adapters. The live black-box parity packet now reports
 `cutover_eligible: true` with zero remaining blocker-class capability groups
-after #5277, #5278, #5279, #5280, #5281, #5282, #5283, #5284, and #5285, but Runtime v2 remains the default
-runtime and rollback target.
+after #5277, #5278, #5279, #5280, #5281, #5282, #5283, #5284, and #5285.
+#5286 records Observatory consumption truth for Runtime v3 explicit opt-in.
+Runtime v2 remains the default runtime and rollback target.
 
 ## Selected Scope
 
@@ -42,6 +43,7 @@ This release gate covers the selected v0.91.7 Runtime v3 cutover scope:
 | Cutover decision | `docs/architecture/runtime_v3_cutover_decision_5254.v1.json` | #5254 records no-go for default switch and no Runtime v2 decommission. |
 | Live black-box parity | `docs/architecture/runtime_v3_live_black_box_parity_5248.v1.json` | `cutover_eligible: true`; zero blockers remain for live black-box parity after #5277, #5278, #5279, #5280, #5281, #5282, #5283, #5284, and #5285. |
 | Weather/resource monitoring | `docs/architecture/runtime_v3_weather_cloudwatch_5252.v1.json` | CPU, memory, disk, CloudWatch-shape event, and graceful-stop policy are retained; observed GPU telemetry is deferred. |
+| Observatory consumption | `docs/architecture/runtime_v3_observatory_consumption_5286.v1.json` | Runtime v3 owns a loopback read feed at `GET /v1/observatory` on port `20997`; HTML Observatory consumes it only by explicit opt-in, retained Runtime v2/CSM evidence remains the default mirror, and Unity remains proven-limited while #4739/#4741 are open. |
 | Soak and rollback | `docs/architecture/runtime_v3_soak_rollback_5253.v1.json` | Bounded production-like soak and Runtime v2 rollback/default preservation are retained. |
 | Shadow parity | `docs/architecture/runtime_v3_shadow_parity_report.v1.json` | Runtime v2 remains default and Runtime v3 stays opt-in. |
 | Cutover checklist | `docs/architecture/runtime_v3_cutover_checklist.v1.json` | Current gate state remains no default cutover. |
@@ -56,6 +58,7 @@ This release gate covers the selected v0.91.7 Runtime v3 cutover scope:
 | Guardian fallback | passed for selected fallback scope | Tiny Tokio child-process fallback is retained; Horust/native lanes remain non-pass unless separately qualified. |
 | Weather/resource monitoring | passed with GPU deferral | CPU, memory, disk, CloudWatch-shape event, and graceful-stop policy are retained; observed GPU telemetry is deferred. |
 | API health and port policy | passed by contract | Runtime v3 control endpoint remains `127.0.0.1:20997`. |
+| Observatory live consumption | passed explicit opt-in | Runtime v3 exposes a runtime-owned read feed at `GET /v1/observatory`; browser mutation authority remains false and signed commands remain required for control mutation. |
 | Observability contract | passed by contract | Machine-readable output and human `adl_event` streams remain separated by existing policy. |
 | Soak and rollback | passed bounded scope | #5253 retained bounded production-like soak and Runtime v2 rollback/default preservation. |
 | Live black-box parity | passed without default cutover | #5248 now reports `cutover_eligible: true` with zero blocker-class capability groups; #5220 still closes as no-go for default cutover until a later reviewed decision authorizes a default switch. |
@@ -75,8 +78,9 @@ This release gate covers the selected v0.91.7 Runtime v3 cutover scope:
 
 ## Residual Risks
 
-- Runtime v3 live black-box parity blockers are clear, but default cutover still
-  requires a separate reviewed decision and Observatory consumption truth.
+- Runtime v3 live black-box parity blockers and Observatory opt-in consumption
+  truth are recorded, but default cutover still requires a separate reviewed
+  decision.
 - Observed GPU telemetry remains deferred until an approved GPU host run is
   retained.
 - Remote multi-day soak and Horust/native guardian qualification are not counted
@@ -90,7 +94,10 @@ The retained local proof surface for this release gate is:
 ```text
 python3 -m json.tool docs/architecture/runtime_v3_release_proof_gate_5220.v1.json
 python3 -m json.tool docs/architecture/runtime_v3_cutover_checklist.v1.json
+python3 -m json.tool docs/architecture/runtime_v3_observatory_consumption_5286.v1.json
 cargo fmt --manifest-path adl-runtime-kernel/Cargo.toml --check
+cargo test --manifest-path adl-runtime-kernel/Cargo.toml --test control -- observatory_feed_serves_runtime_owned_read_projection_without_mutation_authority --nocapture
+bash adl/tools/test_v0917_html_observatory_integrated_proof.sh
 cargo test --manifest-path adl-runtime-kernel/Cargo.toml --test parity -- release_proof_gate_closes_without_authorizing_default_cutover final_cutover_decision_keeps_v2_default_after_live_parity_clear kernel_lifecycle_proof_resolves_only_kernel_lifecycle_blocker topology_backpressure_proof_resolves_only_topology_backpressure_blocker service_contracts_configuration_proof_resolves_only_service_contracts_blocker continuity_replay_recovery_proof_resolves_only_continuity_blocker adaptive_learning_dag_proof_resolves_only_learning_blocker governance_freedom_gate_aee_proof_resolves_only_governance_blocker delegation_resources_proof_resolves_only_delegation_blocker acip_a2a_cloud_network_proof_resolves_final_live_black_box_blocker --nocapture
 cargo test --manifest-path adl-runtime-kernel/Cargo.toml --test guardian_soak -- production_like_soak_rollback_packet_retains_cutover_boundaries packaging_preserves_one_guardian_neutral_child_contract --nocapture
 cargo clippy --manifest-path adl-runtime-kernel/Cargo.toml --all-targets -- -D warnings

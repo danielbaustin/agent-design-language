@@ -1,0 +1,73 @@
+{
+  "schema": "adl.runtime_v3.observatory_consumption_proof.v1",
+  "issue": 5286,
+  "sprint_issue": 5276,
+  "target_version": "v0.91.7",
+  "created_at_utc": "2026-07-13T04:20:00Z",
+  "capability": "observatory.live_runtime_v3_consumption",
+  "disposition": "proved_with_runtime_v3_explicit_opt_in",
+  "default_runtime": "v2",
+  "runtime_v3_selection": "explicit_opt_in_only",
+  "control_port": 20997,
+  "runtime_v3_feed": {
+    "schema": "adl.runtime_v3.observatory_feed.v1",
+    "endpoint": "GET /v1/observatory",
+    "owner": "adl-runtime-kernel",
+    "sidecar_required": false,
+    "browser_mutation_authority": false,
+    "weather_population": "adl-runtime-kernel serve samples SysinfoWeatherObserver at startup and attaches the WeatherHealthReport to the runtime-owned feed.",
+    "sections": [
+      "control",
+      "health",
+      "weather",
+      "continuity",
+      "proof",
+      "events"
+    ],
+    "signed_mutation_endpoint": "POST /v1/control",
+    "signed_commands_required_for_mutation": true
+  },
+  "html_observatory": {
+    "path": "demos/v0.91.7/html-observatory/",
+    "default_consumption": "retained_runtime_v2_csm_mirror",
+    "runtime_v3_opt_in_url": "demos/v0.91.7/html-observatory/?runtime=v3&runtimeApiBase=http://127.0.0.1:20997&live=1",
+    "runtime_v3_read_feed_consumed": true,
+    "runtime_v3_default_claimed": false,
+    "retained_evidence_still_available": true
+  },
+  "unity_observatory": {
+    "disposition": "proven_limited_retained_evidence_only",
+    "open_tooling_issues": [
+      4739,
+      4741
+    ],
+    "live_runtime_v3_consumption_claimed": false,
+    "evidence": [
+      "docs/milestones/v0.91.7/review/unity_observatory_4652/4652-unity-shell-proof-summary.md",
+      "docs/milestones/v0.91.7/review/unity_observatory_4703/4703-flagship-observatory-stage-proof.md",
+      "docs/milestones/v0.91.7/review/unity_observatory_4704/4704-unity-mcp-proof-summary.md"
+    ]
+  },
+  "acceptance": {
+    "distinguishes_runtime_v2_default": true,
+    "distinguishes_runtime_v3_explicit_opt_in": true,
+    "distinguishes_retained_offline_evidence": true,
+    "runtime_v3_control_port_20997_respected": true,
+    "hidden_sidecar_introduced": false,
+    "feeds_come_from_runtime_owned_surfaces_or_retained_artifacts": true,
+    "unity_remains_proven_limited": true,
+    "default_runtime_v3_cutover_claimed": false
+  },
+  "validation": [
+    "cargo test --manifest-path adl-runtime-kernel/Cargo.toml --test control -- observatory_feed_serves_runtime_owned_read_projection_without_mutation_authority --nocapture",
+    "bash adl/tools/test_v0917_html_observatory_integrated_proof.sh",
+    "python3 -m json.tool docs/architecture/runtime_v3_observatory_consumption_5286.v1.json"
+  ],
+  "non_claims": [
+    "No default Runtime v3 cutover is authorized.",
+    "No Runtime v2 deletion or decommission is authorized.",
+    "No browser-owned runtime mutation or AWS publish authority is authorized.",
+    "No hidden sidecar is introduced.",
+    "Unity live Runtime v3 consumption is not claimed while #4739 and #4741 remain open."
+  ]
+}

@@ -12,9 +12,9 @@ use async_trait::async_trait;
 use axum::{
     body::Bytes,
     extract::State,
-    http::StatusCode,
+    http::{header, HeaderValue, StatusCode},
     response::{IntoResponse, Response},
-    routing::post,
+    routing::{get, post},
     Json, Router,
 };
 use ed25519_dalek::{Signature, Signer, SigningKey, Verifier, VerifyingKey};
@@ -23,10 +23,14 @@ use serde::{Deserialize, Serialize};
 use thiserror::Error;
 use tracing::Instrument;
 
-use crate::{KernelControl, KernelExit, ObservabilityHealth, RuntimeRecorder, RuntimeSnapshot};
+use crate::{
+    BootstrapEvent, KernelControl, KernelExit, ObservabilityHealth, RuntimeRecorder,
+    RuntimeSnapshot, WeatherHealthReport,
+};
 
 pub const CONTROL_COMMAND_SCHEMA: &str = "adl.runtime.control_command.v1";
 pub const CONTROL_RESPONSE_SCHEMA: &str = "adl.runtime.control_response.v1";
+pub const OBSERVATORY_FEED_SCHEMA: &str = "adl.runtime_v3.observatory_feed.v1";
 pub const DEFAULT_CONTROL_API_PORT: u16 = 20_997;
 pub const MAX_SHUTDOWN_GRACE_MILLIS: u64 = 60_000;
 
@@ -231,6 +235,7 @@ pub struct ControlService<C> {
     authority: ControlAuthority,
     max_records: usize,
     idempotency: Mutex<IdempotencyState>,
+    weather: Mutex<Option<WeatherHealthReport>>,
 }
 
 impl<C: LifecycleControl + 'static> ControlService<C> {
@@ -257,6 +262,7 @@ impl<C: LifecycleControl + 'static> ControlService<C> {
                 records: LruCache::unbounded(),
                 terminal_action: None,
             }),
+            weather: Mutex::new(None),
         }
     }
 
@@ -269,6 +275,46 @@ impl<C: LifecycleControl + 'static> ControlService<C> {
 
     pub fn instance_id(&self) -> &str {
         &self.instance_id
+    }
+
+    pub fn set_weather_report(&self, report: WeatherHealthReport) {
+        *self.weather.lock().expect("weather mutex poisoned") = Some(report);
+    }
+
+    pub fn observatory_feed(&self) -> ObservatoryFeed {
+        let snapshot = self.recorder.snapshot();
+        let observability_ready = !matches!(snapshot.observability, ObservabilityHealth::Pending);
+        let continuity_head = snapshot.continuity_head.clone();
+        let events = self.recorder.events();
+        let weather = self.weather.lock().expect("weather mutex poisoned").clone();
+        ObservatoryFeed {
+            schema: OBSERVATORY_FEED_SCHEMA.to_owned(),
+            runtime_instance_id: self.instance_id.clone(),
+            default_runtime_changed: false,
+            runtime_selection: "runtime_v3_explicit_opt_in".to_owned(),
+            control: ObservatoryControlFeed {
+                port: DEFAULT_CONTROL_API_PORT,
+                read_endpoint: "/v1/observatory".to_owned(),
+                signed_command_endpoint: "/v1/control".to_owned(),
+                signed_commands_required_for_mutation: true,
+                browser_mutation_authority: false,
+            },
+            health: ObservatoryHealthFeed {
+                snapshot,
+                observability_ready,
+            },
+            weather,
+            continuity: ObservatoryContinuityFeed {
+                checkpoint: continuity_head,
+            },
+            proof: ObservatoryProofFeed {
+                default_runtime_switch_authorized: false,
+                runtime_v2_decommission_authorized: false,
+                sidecar_required: false,
+                vector_cloudwatch_route: "vector.runtime_v3_cloudwatch_emf".to_owned(),
+            },
+            events,
+        }
     }
 
     pub async fn execute(
@@ -372,6 +418,48 @@ impl<C: LifecycleControl + 'static> ControlService<C> {
     }
 }
 
+#[derive(Clone, Debug, Eq, PartialEq, Serialize, Deserialize)]
+pub struct ObservatoryControlFeed {
+    pub port: u16,
+    pub read_endpoint: String,
+    pub signed_command_endpoint: String,
+    pub signed_commands_required_for_mutation: bool,
+    pub browser_mutation_authority: bool,
+}
+
+#[derive(Clone, Debug, Eq, PartialEq, Serialize, Deserialize)]
+pub struct ObservatoryHealthFeed {
+    pub snapshot: RuntimeSnapshot,
+    pub observability_ready: bool,
+}
+
+#[derive(Clone, Debug, Eq, PartialEq, Serialize, Deserialize)]
+pub struct ObservatoryContinuityFeed {
+    pub checkpoint: Option<crate::ContinuityHead>,
+}
+
+#[derive(Clone, Debug, Eq, PartialEq, Serialize, Deserialize)]
+pub struct ObservatoryProofFeed {
+    pub default_runtime_switch_authorized: bool,
+    pub runtime_v2_decommission_authorized: bool,
+    pub sidecar_required: bool,
+    pub vector_cloudwatch_route: String,
+}
+
+#[derive(Clone, Debug, Eq, PartialEq, Serialize, Deserialize)]
+pub struct ObservatoryFeed {
+    pub schema: String,
+    pub runtime_instance_id: String,
+    pub default_runtime_changed: bool,
+    pub runtime_selection: String,
+    pub control: ObservatoryControlFeed,
+    pub health: ObservatoryHealthFeed,
+    pub weather: Option<WeatherHealthReport>,
+    pub continuity: ObservatoryContinuityFeed,
+    pub proof: ObservatoryProofFeed,
+    pub events: Vec<BootstrapEvent>,
+}
+
 pub async fn serve_control_api<C: LifecycleControl + 'static>(
     service: Arc<ControlService<C>>,
     bind_ip: IpAddr,
@@ -399,12 +487,19 @@ where
     F: Future<Output = ()> + Send + 'static,
 {
     let router = Router::new()
+        .route("/v1/observatory", get(observatory_feed_handler::<C>))
         .route("/v1/control", post(control_handler::<C>))
         .with_state(service);
     axum::serve(listener, router)
         .with_graceful_shutdown(shutdown)
         .await
         .map_err(|error| ControlApiError::Serve(error.to_string()))
+}
+
+async fn observatory_feed_handler<C: LifecycleControl + 'static>(
+    State(service): State<Arc<ControlService<C>>>,
+) -> Response {
+    cors_json(StatusCode::OK, service.observatory_feed())
 }
 
 async fn control_handler<C: LifecycleControl + 'static>(
@@ -445,7 +540,19 @@ fn control_error_response(error: ControlError) -> Response {
             _ => "invalid_request",
         },
     };
-    (status, Json(payload)).into_response()
+    cors_json(status, payload)
+}
+
+fn cors_json<T: Serialize>(status: StatusCode, payload: T) -> Response {
+    let mut response = (status, Json(payload)).into_response();
+    response.headers_mut().insert(
+        header::ACCESS_CONTROL_ALLOW_ORIGIN,
+        HeaderValue::from_static("http://127.0.0.1:8765"),
+    );
+    response
+        .headers_mut()
+        .insert(header::VARY, HeaderValue::from_static("Origin"));
+    response
 }
 
 #[derive(Serialize)]

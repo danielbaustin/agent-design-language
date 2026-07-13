@@ -43,11 +43,16 @@ importing external template assets.
 The CSM polis panopticon presents an auto-refreshing agent map, agent roster,
 health, readiness, metrics, and operator event stream from the retained CSM API
 mirror by default. When a loopback API base is supplied, it polls the running
-CSM API directly. The CSM API panel intentionally presents the standalone `csm`
-runtime ownership boundary from #4929. The CloudWatch panel presents the
-retained live heartbeat proof from WP-08 #4684. The AWS linkage lane includes
-#4684 through #4688 so closed heartbeat, ACIP-SNS, and SSM lanes remain distinct
-from open full-bridge and S3 archive work. The communication rail can prepare an
+CSM API directly. For Runtime v3, the explicit opt-in path is
+`?runtime=v3&runtimeApiBase=http://127.0.0.1:20997`, which consumes the
+runtime-owned `/v1/observatory` read feed. Runtime v3 control mutation remains
+signed-command-only through `/v1/control`; the browser has no shutdown,
+mutation, CloudWatch, SNS, or state authority. The CSM API panel intentionally
+presents the standalone `csm` runtime ownership boundary from #4929 when the
+retained/default mirror is selected. The CloudWatch panel presents the retained
+live heartbeat proof from WP-08 #4684. The AWS linkage lane includes #4684
+through #4688 so closed heartbeat, ACIP-SNS, and SSM lanes remain distinct from
+open full-bridge and S3 archive work. The communication rail can prepare an
 ACIP-shaped operator message envelope, mirror the retained #4685 ACIP-SNS proof,
 and check a live loopback CSM `/events` endpoint when an operator supplies the
 API base. Live SNS/SQS mutation remains runtime/tool-owned and is not performed
@@ -83,6 +88,21 @@ adl/target/debug/csm api serve \
 http://127.0.0.1:8765/demos/v0.91.7/html-observatory/?csmApiBase=http://127.0.0.1:24645&live=1
 ```
 
+For the Runtime v3 opt-in path, start the Runtime v3 kernel control API and
+point the dashboard at port `20997`:
+
+```sh
+adl-runtime-kernel serve
+```
+
+```text
+http://127.0.0.1:8765/demos/v0.91.7/html-observatory/?runtime=v3&runtimeApiBase=http://127.0.0.1:20997&live=1
+```
+
+The Runtime v3 browser path consumes only the runtime-owned read feed at
+`/v1/observatory`. It does not send signed control commands, does not change the
+default runtime, and does not authorize Runtime v2 decommission.
+
 The current browser-served dashboard keeps the same loopback-only policy as the
 runtime API. If the CSM API is reachable by curl but the browser refuses the
 cross-port fetch, the dashboard stays on the retained mirror and reports the
@@ -102,10 +122,12 @@ bash adl/tools/test_v0917_html_observatory_integrated_proof.sh
 
 This proves that the HTML Observatory can render an auto-refreshing CSM
 panopticon over retained publishable runtime API responses, and can upgrade to a
-live loopback CSM panopticon when the running API base is supplied. It also
-renders the retained bounded runtime capture through a polished investor-facing
-operator UI, while exposing CSM API, CSM service, CloudWatch heartbeat, ACIP-SNS
-projection proof, and WP-08 linkage status. It does not claim direct runtime
+live loopback CSM panopticon when the running CSM API base is supplied. It can
+also consume the Runtime v3 `/v1/observatory` read feed when Runtime v3 is
+selected explicitly on loopback port `20997`. It renders the retained
+bounded runtime capture through a polished investor-facing operator UI, while exposing
+CSM API, CSM service, CloudWatch heartbeat, ACIP-SNS projection proof, Runtime
+v3 opt-in status, and WP-08 linkage status. It does not claim direct runtime
 mutation, browser-owned AWS publish authority, public/remote API exposure, Unity
-completion, full AWS signal bridge completion, S3 ObsMem archive completion, or
-v0.92 runtime completion.
+completion, default Runtime v3 cutover, Runtime v2 decommission, full AWS signal
+bridge completion, S3 ObsMem archive completion, or v0.92 runtime completion.

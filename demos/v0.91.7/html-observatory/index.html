@@ -259,20 +259,20 @@
             <article>
               <span class="row-kicker">CSM API</span>
               <strong id="hero-csm-api-status">pending</strong>
-              <p class="row-detail">Loopback connection upgrades the retained mirror when available.</p>
+              <p class="row-detail">Loopback connection can select Runtime v3 on port 20997 without changing the default mirror.</p>
               <div class="api-mini-list" id="hero-api-list" aria-label="CSM API endpoint status"></div>
             </article>
             <article class="runtime-test-card">
               <span class="row-kicker">Real Runtime Test</span>
               <strong id="dashboard-live-test-status">retained mirror</strong>
               <label class="compact-field" for="dashboard-live-api-base">Loopback API base</label>
-              <input id="dashboard-live-api-base" type="url" inputmode="url" placeholder="http://127.0.0.1:24645">
+              <input id="dashboard-live-api-base" type="url" inputmode="url" placeholder="http://127.0.0.1:20997">
               <div class="runtime-test-actions" aria-label="Runtime test controls">
                 <button class="button button-primary" type="button" id="dashboard-connect-live">Connect</button>
                 <button class="button button-secondary" type="button" id="dashboard-refresh-live">Refresh</button>
                 <button class="button button-secondary" type="button" id="dashboard-stop-live">Stop</button>
               </div>
-              <p class="row-detail" id="dashboard-live-test-detail">Supply the local `csm api serve` base or pass `?csmApiBase=http://127.0.0.1:24645`.</p>
+              <p class="row-detail" id="dashboard-live-test-detail">Supply `?runtime=v3&runtimeApiBase=http://127.0.0.1:20997` for explicit Runtime v3, or a local CSM API base for the retained mirror.</p>
             </article>
             <article>
               <span class="row-kicker">Operator Channel</span>
@@ -326,7 +326,7 @@
         <div class="live-control-strip">
           <label class="field">
             <span class="row-kicker">Loopback CSM API base</span>
-            <input id="live-api-base" type="url" inputmode="url" placeholder="Optional loopback CSM API base">
+              <input id="live-api-base" type="url" inputmode="url" placeholder="Optional loopback Runtime v3 or CSM API base">
           </label>
           <div class="live-actions">
             <button class="button button-primary" type="button" id="connect-live">Connect live</button>
@@ -443,8 +443,8 @@
           </div>
           <div class="communication-grid">
             <label class="field">
-              <span class="row-kicker">Live CSM API base</span>
-              <input id="runtime-api-base" type="url" inputmode="url" placeholder="Loopback CSM API base">
+              <span class="row-kicker">Live runtime API base</span>
+              <input id="runtime-api-base" type="url" inputmode="url" placeholder="Loopback Runtime v3 or CSM API base">
             </label>
             <label class="field">
               <span class="row-kicker">Channel</span>
@@ -548,7 +548,7 @@
         <span id="statusbar-source">retained packet</span>
         <span>WebSocket <strong>not claimed</strong></span>
         <span>Last Update <strong id="statusbar-updated">pending</strong></span>
-        <span>Data Source <strong>CSM Runtime + AWS CloudWatch + ACIP/SNS</strong></span>
+        <span>Data Source <strong>Runtime v3 opt-in + CSM Runtime + AWS CloudWatch + ACIP/SNS</strong></span>
         <span>Mode <strong id="statusbar-mode">Retained Mirror</strong></span>
       </footer>
     </main>

@@ -18,6 +18,7 @@
     "shadow_parity_report": "docs/architecture/runtime_v3_shadow_parity_report.v1.json",
     "soak_rollback": "docs/architecture/runtime_v3_soak_rollback_5253.v1.json",
     "weather_cloudwatch": "docs/architecture/runtime_v3_weather_cloudwatch_5252.v1.json",
+    "observatory_consumption": "docs/architecture/runtime_v3_observatory_consumption_5286.v1.json",
     "guardian_fallback_decision": "docs/architecture/RUNTIME_V3_GUARDIAN_FALLBACK_DECISION.md",
     "cutover_checklist": "docs/architecture/runtime_v3_cutover_checklist.v1.json"
   },
@@ -83,6 +84,12 @@
       "status": "passed_no_default_cutover",
       "evidence": "docs/architecture/runtime_v3_live_black_box_parity_5248.v1.json",
       "claim": "Live black-box parity reports cutover_eligible=true with zero remaining blocker-class capability groups after #5277 resolves kernel.lifecycle, #5278 resolves kernel.topology_and_backpressure, #5279 resolves service.contracts_and_configuration, #5280 resolves continuity.replay_recovery, #5281 resolves learning.adaptive_dag, #5282 resolves governance.freedom_gate_aee, #5283 resolves contracts.delegation_resources, #5284 resolves agents.providers_scheduler, and #5285 resolves network.acip_a2a_cloud; #5220 remains a no-go default-cutover gate until a later reviewed decision authorizes a default switch."
+    },
+    {
+      "id": "observatory.live_runtime_v3_consumption",
+      "status": "passed_explicit_opt_in_no_default_cutover",
+      "evidence": "docs/architecture/runtime_v3_observatory_consumption_5286.v1.json",
+      "claim": "Runtime v3 exposes a runtime-owned loopback read feed at GET /v1/observatory on port 20997, HTML Observatory can consume it only through explicit Runtime v3 selection, retained Runtime v2/CSM evidence remains the default mirror, Unity remains proven-limited while #4739 and #4741 are open, and no default switch or browser mutation authority is claimed."
     }
   ],
   "child_issue_results": [
@@ -100,6 +107,9 @@
     "python3 -m json.tool docs/architecture/runtime_v3_cutover_checklist.v1.json",
     "cargo fmt --manifest-path adl-runtime-kernel/Cargo.toml --check",
     "cargo test --manifest-path adl-runtime-kernel/Cargo.toml --test parity -- release_proof_gate_closes_without_authorizing_default_cutover final_cutover_decision_keeps_v2_default_after_live_parity_clear kernel_lifecycle_proof_resolves_only_kernel_lifecycle_blocker topology_backpressure_proof_resolves_only_topology_backpressure_blocker service_contracts_configuration_proof_resolves_only_service_contracts_blocker continuity_replay_recovery_proof_resolves_only_continuity_blocker adaptive_learning_dag_proof_resolves_only_learning_blocker governance_freedom_gate_aee_proof_resolves_only_governance_blocker delegation_resources_proof_resolves_only_delegation_blocker acip_a2a_cloud_network_proof_resolves_final_live_black_box_blocker --nocapture",
+    "cargo test --manifest-path adl-runtime-kernel/Cargo.toml --test control -- observatory_feed_serves_runtime_owned_read_projection_without_mutation_authority --nocapture",
+    "bash adl/tools/test_v0917_html_observatory_integrated_proof.sh",
+    "python3 -m json.tool docs/architecture/runtime_v3_observatory_consumption_5286.v1.json",
     "cargo test --manifest-path adl-runtime-kernel/Cargo.toml --test guardian_soak -- production_like_soak_rollback_packet_retains_cutover_boundaries packaging_preserves_one_guardian_neutral_child_contract --nocapture",
     "cargo clippy --manifest-path adl-runtime-kernel/Cargo.toml --all-targets -- -D warnings",
     "cargo test --manifest-path adl-runtime-kernel/Cargo.toml"
