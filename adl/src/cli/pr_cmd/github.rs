@@ -168,6 +168,9 @@ pub(super) struct PrValidationReport {
     pub(super) is_draft: bool,
     pub(super) disposition: String,
     pub(super) projection_status: String,
+    pub(super) wait_reason: String,
+    pub(super) wait_classification: String,
+    pub(super) next_action: String,
     pub(super) checks: Vec<PrValidationCheckReport>,
     pub(super) failed_checks: Vec<PrValidationCheckReport>,
     pub(super) pending_checks: Vec<PrValidationCheckReport>,
@@ -722,6 +725,17 @@ pub(crate) fn build_issue_watch_report(
                 "pr-janitor",
                 "action_required",
                 "linked_pr_checks_green_but_draft",
+            )
+        } else if validation.disposition == "timed_out"
+            && validation.wait_classification == "checks_not_reported_timed_out"
+        {
+            (
+                "checks_not_reported_timeout",
+                "pr-janitor",
+                "janitor_owned_checks_not_reported_timeout",
+                "pr-janitor",
+                "action_required",
+                "linked_pr_checks_not_reported_timeout",
             )
         } else if matches!(
             validation.disposition.as_str(),

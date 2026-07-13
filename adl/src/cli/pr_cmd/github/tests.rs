@@ -456,6 +456,31 @@ fn pr_validation_graphql_response(
     pr_validation_graphql_response_page(status, conclusion, check_name, false, None)
 }
 
+fn pr_validation_empty_graphql_response() -> String {
+    serde_json::json!({
+        "data": {
+            "repository": {
+                "pullRequest": {
+                    "number": 1159,
+                    "headRefOid": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+                    "state": "OPEN",
+                    "isDraft": false,
+                    "statusCheckRollup": {
+                        "contexts": {
+                            "nodes": [],
+                            "pageInfo": {
+                                "hasNextPage": false,
+                                "endCursor": null
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    })
+    .to_string()
+}
+
 fn pr_validation_graphql_response_page(
     status: &str,
     conclusion: Option<&str>,
@@ -498,6 +523,27 @@ fn pr_validation_graphql_response_page(
         }
     })
     .to_string()
+}
+
+fn spawn_validation_status_empty_server() -> (String, thread::JoinHandle<Vec<String>>) {
+    let (base_uri, server) = bind_test_http_server("bind validation status empty server");
+    let handle = thread::spawn(move || {
+        let mut seen = Vec::new();
+        let Some(mut request) = server
+            .recv_timeout(Duration::from_secs(5))
+            .expect("validation empty server receive")
+        else {
+            return seen;
+        };
+        let method = request.method().as_str().to_string();
+        let url = request.url().to_string();
+        let mut body = String::new();
+        let _ = request.as_reader().read_to_string(&mut body);
+        seen.push(format!("{method} {url} {body}"));
+        let _ = request.respond(json_response(pr_validation_empty_graphql_response()));
+        seen
+    });
+    (base_uri, handle)
 }
 
 fn spawn_validation_status_paginated_server() -> (String, thread::JoinHandle<Vec<String>>) {

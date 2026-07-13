@@ -1490,6 +1490,11 @@ pub(super) fn pr_validation_report_from_snapshot_with_disposition(
         .filter(|check| validation_check_is_pending(&check.status, &check.conclusion))
         .map(|check| pr_validation_check_report_with_wait_reason(check, pending_wait_reason))
         .collect::<Vec<_>>();
+    let wait_reason = pr_validation_wait_reason(snapshot, disposition, "aggregate").to_string();
+    let wait_classification =
+        pr_validation_wait_classification(snapshot, disposition, "aggregate", Duration::ZERO)
+            .to_string();
+    let next_action = pr_validation_wait_next_action(&wait_classification).to_string();
     PrValidationReport {
         pr_number: snapshot.pr_number,
         commit_sha: snapshot.commit_sha.clone(),
@@ -1502,6 +1507,9 @@ pub(super) fn pr_validation_report_from_snapshot_with_disposition(
             disposition.as_event_result(),
         )
         .to_string(),
+        wait_reason,
+        wait_classification,
+        next_action,
         checks,
         failed_checks,
         pending_checks,
@@ -1538,6 +1546,11 @@ pub(super) fn pr_validation_effective_report_from_snapshot_with_disposition(
         .filter(|check| validation_check_is_pending(&check.status, &check.conclusion))
         .map(|check| pr_validation_check_report_with_wait_reason(check, pending_wait_reason))
         .collect::<Vec<_>>();
+    let wait_reason = pr_validation_wait_reason(snapshot, disposition, "aggregate").to_string();
+    let wait_classification =
+        pr_validation_wait_classification(snapshot, disposition, "aggregate", Duration::ZERO)
+            .to_string();
+    let next_action = pr_validation_wait_next_action(&wait_classification).to_string();
     PrValidationReport {
         pr_number: snapshot.pr_number,
         commit_sha: snapshot.commit_sha.clone(),
@@ -1550,6 +1563,9 @@ pub(super) fn pr_validation_effective_report_from_snapshot_with_disposition(
             disposition.as_event_result(),
         )
         .to_string(),
+        wait_reason,
+        wait_classification,
+        next_action,
         checks,
         failed_checks,
         pending_checks,
@@ -1711,6 +1727,8 @@ fn pr_validation_wait_reason(
         "pr_draft"
     } else if snapshot.checks.is_empty() && disposition == PrValidationDisposition::Pending {
         "checks_not_reported"
+    } else if snapshot.checks.is_empty() && disposition == PrValidationDisposition::TimedOut {
+        "checks_not_reported_timeout"
     } else if check_name == "aggregate" {
         "aggregate"
     } else {
@@ -1728,6 +1746,8 @@ fn pr_validation_wait_classification(
         "pr_draft_gate"
     } else if snapshot.checks.is_empty() && disposition == PrValidationDisposition::Pending {
         "checks_not_reported"
+    } else if snapshot.checks.is_empty() && disposition == PrValidationDisposition::TimedOut {
+        "checks_not_reported_timed_out"
     } else if check_name == "adl-coverage"
         && disposition == PrValidationDisposition::Pending
         && elapsed >= pr_validation_anomaly_threshold()
@@ -1747,6 +1767,7 @@ fn pr_validation_wait_next_action(wait_classification: &str) -> &'static str {
         "long_running_required_coverage" => "continue_waiting_and_inspect_coverage_job",
         "required_coverage_wait" => "continue_waiting_required_check",
         "checks_not_reported" => "continue_polling_until_checks_report_or_timeout",
+        "checks_not_reported_timed_out" => "inspect_missing_workflow_trigger_or_required_checks",
         "pr_draft_gate" => "promote_ready_when_draft_gate_is_cleared",
         "aggregate" => "use_check_level_events_for_next_action",
         _ => "continue_waiting_required_check",

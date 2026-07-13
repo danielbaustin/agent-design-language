@@ -336,6 +336,9 @@ fn validation_report(disposition: &str, is_draft: bool) -> PrValidationReport {
         disposition: disposition.to_string(),
         projection_status: pr_validation_projection_status("OPEN", is_draft, disposition)
             .to_string(),
+        wait_reason: "aggregate".to_string(),
+        wait_classification: "aggregate".to_string(),
+        next_action: "use_check_level_events_for_next_action".to_string(),
         checks: failed_checks
             .iter()
             .chain(pending_checks.iter())
@@ -354,6 +357,9 @@ fn merged_validation_report() -> PrValidationReport {
         is_draft: false,
         disposition: "success".to_string(),
         projection_status: "merged".to_string(),
+        wait_reason: "aggregate".to_string(),
+        wait_classification: "aggregate".to_string(),
+        next_action: "use_check_level_events_for_next_action".to_string(),
         checks: vec![],
         failed_checks: vec![],
         pending_checks: vec![],
@@ -496,6 +502,32 @@ fn issue_watch_routes_failed_draft_checks_to_pr_janitor() {
     assert_eq!(report.next_skill, "pr-janitor");
     assert_eq!(report.continuation, "action_required");
     assert_eq!(report.reason, "linked_pr_checks_failed");
+}
+
+#[test]
+fn issue_watch_routes_empty_check_timeout_to_pr_janitor_with_distinct_state() {
+    let pr = linked_pr(77, false);
+    let mut validation = validation_report("timed_out", false);
+    validation.wait_reason = "checks_not_reported_timeout".to_string();
+    validation.wait_classification = "checks_not_reported_timed_out".to_string();
+    validation.next_action = "inspect_missing_workflow_trigger_or_required_checks".to_string();
+
+    let report = build_issue_watch_report(
+        &open_issue(4397),
+        false,
+        false,
+        readiness_ready(),
+        Some((pr, validation)),
+    );
+    assert_eq!(report.classification, "checks_not_reported_timeout");
+    assert_eq!(report.tail_owner, "pr-janitor");
+    assert_eq!(
+        report.shepherd_state,
+        "janitor_owned_checks_not_reported_timeout"
+    );
+    assert_eq!(report.next_skill, "pr-janitor");
+    assert_eq!(report.continuation, "action_required");
+    assert_eq!(report.reason, "linked_pr_checks_not_reported_timeout");
 }
 
 #[test]

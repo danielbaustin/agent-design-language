@@ -751,6 +751,69 @@ fn pr_validation_wait_attempt_log_records_timeout_once_for_one_poll() {
 }
 
 #[test]
+fn pr_validation_wait_attempt_log_distinguishes_empty_check_timeout() {
+    let _guard = env_lock();
+    let policy_env = clear_github_policy_env();
+    let temp = unique_temp_dir("adl-pr-validation-attempt-log-empty-timeout");
+    let attempt_log = temp.join("attempts.jsonl");
+    let (base_uri, server) = spawn_validation_status_empty_server();
+    unsafe {
+        std::env::set_var("ADL_GITHUB_CLIENT", "octocrab");
+        std::env::set_var("GITHUB_TOKEN", "test-token");
+        std::env::set_var("ADL_GITHUB_OCTOCRAB_BASE_URI", &base_uri);
+        std::env::set_var("ADL_PR_VALIDATION_WAIT_TIMEOUT_MS", "0");
+        std::env::set_var("ADL_PR_VALIDATION_WAIT_POLL_MS", "1");
+        std::env::set_var("ADL_PR_VALIDATION_ATTEMPT_LOG", &attempt_log);
+    }
+
+    let report =
+        wait_for_pr_validation_report("owner/repo", "1159").expect("timeout report returned");
+    assert_eq!(report.disposition, "timed_out");
+    assert_eq!(report.wait_reason, "checks_not_reported_timeout");
+    assert_eq!(report.wait_classification, "checks_not_reported_timed_out");
+    assert_eq!(
+        report.next_action,
+        "inspect_missing_workflow_trigger_or_required_checks"
+    );
+    assert!(report.checks.is_empty());
+    assert!(report.pending_checks.is_empty());
+    assert!(report.failed_checks.is_empty());
+
+    let log = fs::read_to_string(&attempt_log).expect("read attempt log");
+    let records = log
+        .lines()
+        .map(|line| serde_json::from_str::<serde_json::Value>(line).expect("attempt record json"))
+        .collect::<Vec<_>>();
+    assert_eq!(records.len(), 1);
+    assert_eq!(records[0]["disposition"], "timed_out");
+    assert_eq!(records[0]["wait_reason"], "checks_not_reported_timeout");
+    assert_eq!(
+        records[0]["wait_classification"],
+        "checks_not_reported_timed_out"
+    );
+    assert_eq!(
+        records[0]["next_action"],
+        "inspect_missing_workflow_trigger_or_required_checks"
+    );
+    assert_eq!(
+        records[0]["checks"].as_array().expect("checks array").len(),
+        0
+    );
+    assert_eq!(records[0]["terminal"], true);
+
+    let seen = server.join().expect("server join");
+    assert_eq!(seen.len(), 1);
+
+    unsafe {
+        std::env::remove_var("ADL_GITHUB_OCTOCRAB_BASE_URI");
+        std::env::remove_var("ADL_PR_VALIDATION_WAIT_TIMEOUT_MS");
+        std::env::remove_var("ADL_PR_VALIDATION_WAIT_POLL_MS");
+        std::env::remove_var("ADL_PR_VALIDATION_ATTEMPT_LOG");
+    }
+    restore_github_policy_env(policy_env);
+}
+
+#[test]
 fn pr_validation_wait_attempt_log_failure_event_omits_raw_sink_path() {
     let _guard = env_lock();
     let policy_env = clear_github_policy_env();
