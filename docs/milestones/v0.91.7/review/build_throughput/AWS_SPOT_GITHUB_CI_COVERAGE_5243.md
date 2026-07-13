@@ -43,6 +43,7 @@ still disabled while coverage proof is incomplete.
 | `adl-coverage` existing-PR shadow | `cd6aded` (`#5258`) | `v0.91.7-coverage-5243` | retained 500 GiB EBS | 1212s remote workload | 1212s | 1301s | failed on runtime fixture; `#5267` |
 | `adl-coverage` historical-green control | `9346f230` | `v0.91.7-coverage-5243` | retained 500 GiB EBS | 679s before fail-fast | 864s | 970s | failed because image lacked `gh`; 1777/1778 executed tests passed |
 | `adl-coverage` replacement-image control | `9346f230` | replacement `v0.91.7-coverage-5243` | retained 500 GiB EBS | 2.7s before fail-fast | 109s | 214s | image preflight passed; two tests exposed cross-run shared `TMPDIR` fixture collision |
+| `adl-ci` current open-PR shadow | `ab166ff0` (PR `#5158`) | replacement `v0.91.7-coverage-5243` | retained 500 GiB EBS | 311s | 415s | 473s | passed; exact current head/base, image, source, cache, and toolchain verified |
 
 Both existing-PR CI shadows ran 54 focused tests, doc tests, and demo smoke
 successfully, with identical 42-second validation time. They used the exact source commit and merge base without modifying
@@ -73,6 +74,17 @@ cache also retained a shared container `TMPDIR`. Cargo target, Cargo home, and
 `sccache` remain shared, while temporary state is now isolated under a unique
 run-id directory. That directory is cleared before every attempt, including a
 retry after abrupt interruption, and removed after a completed container run.
+
+The current open-PR shadow used exact head
+`ab166ff0bf31366f80cd03e25a9de4ce4523c9c8` and base
+`a193ea7c7a4dbd841c5b86dacffb7045c017566a`. It completed the selected
+`adl-ci` path policy, including format/clippy, doc tests, and five demo-smoke
+cases. Validation took 311 seconds, the remote command took 415 seconds, and
+launch-through-cleanup took 473 seconds. The retained target had 47,587
+pre-existing entries and 324,113,203,200 bytes, with 90,875,449,344 bytes
+free. Estimated Spot compute cost was approximately `$0.027` at the observed
+`$0.2065/hour` estimate. The instance terminated and the retained volume
+detached successfully.
 
 ## Control And Source Separation
 
@@ -146,12 +158,14 @@ the variable and rerunning the checks.
 
 ## Remaining Proof Before Cutover
 
-1. Publish and resolve a replacement immutable image that passes the expanded
-   toolchain preflight, including `gh`.
-2. Run two consecutive same-commit green `adl-coverage` shadows against the
+1. Run two consecutive same-commit green `adl-coverage` shadows against the
    historical-green control commit; `#5267` remains independent product work.
-3. Run the production routing switch in Spot mode and verify stable check names.
-4. Run an environment-backed workflow shadow and verify the constrained OIDC
-   subject is accepted end to end.
-5. Rehearse variable-only rollback to hosted checks.
-6. Retain redacted artifacts and final cost/timing comparison.
+2. Run the reusable workflow through `adl-spot-ci` and verify the constrained
+   OIDC subject, exact source binding, live logs, sanitized artifacts, and EBS
+   detach behavior end to end.
+3. Set `ADL_HEAVY_CI_BACKEND=spot` and verify stable `adl-ci` and
+   `adl-coverage` checks on one real same-repository PR.
+4. Rehearse rollback by setting the variable to `hosted`, rerunning the same
+   checks, and confirming no Spot launch occurs.
+5. Retain redacted artifacts and final cost/timing comparison before making
+   Spot the default for the repository.
