@@ -3789,6 +3789,11 @@ memory: {}
             .unwrap(),
         )
         .unwrap();
+        fs::write(
+            state.join(CSM_CAV_STATUS_REF),
+            serde_json::to_string_pretty(&csm_cav::build_status_snapshot("api-agent")).unwrap(),
+        )
+        .unwrap();
         write_active_constructability_status(&state);
         fs::write(
             service_logs.join("otel_status.json"),
