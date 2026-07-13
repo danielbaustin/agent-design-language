@@ -140,6 +140,7 @@ lld_cargo_log="$temp_root/lld-cargo.log"
 PATH="$bin_dir:$PATH" \
 AUTHORITATIVE_CARGO_LOG="$lld_cargo_log" \
 ADL_COVERAGE_BUILD_ROOT="$scratch_root" \
+ADL_COVERAGE_TEST_THREADS=18 \
 RUST_LINK_ACCEL="lld" \
 ADL_AUTHORITATIVE_COVERAGE_TEST_THREADS="2" \
 ADL_AUTHORITATIVE_COVERAGE_SKIP_PATTERN="live_pr_fixture_" \

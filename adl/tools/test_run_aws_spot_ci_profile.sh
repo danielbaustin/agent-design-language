@@ -51,7 +51,8 @@ ci_plan="$(bash "$SCRIPT" adl-ci --base HEAD --head HEAD --print-command)"
 coverage_plan="$(bash "$SCRIPT" adl-coverage --base HEAD --head HEAD --print-command)"
 coverage_push_plan="$(bash "$SCRIPT" adl-coverage --base HEAD --head HEAD --event-name push --print-command)"
 [[ "$ci_plan" == *run_pr_fast_test_lane.sh* ]]
-[[ "$coverage_plan" == *run_authoritative_coverage_lane.sh* ]]
+[[ "$coverage_plan" == *'cargo llvm-cov nextest'* ]]
+grep -F 'coverage_command=("${command[@]}" --test-threads "$ADL_COVERAGE_TEST_THREADS")' "$SCRIPT" >/dev/null
 [[ "$coverage_push_plan" == *'--event-name push'* ]]
 
 grep -F 'profile:' "$WORKFLOW" >/dev/null

@@ -64,7 +64,7 @@ policy_value() {
 if [[ "$PROFILE" == "adl-ci" ]]; then
   command=(bash adl/tools/run_pr_fast_test_lane.sh --base "$BASE_COMMIT" --head "$HEAD_COMMIT")
 else
-  command=(bash adl/tools/run_authoritative_coverage_lane.sh --authority fail_closed --event-name "$EVENT_NAME")
+  command=(cargo llvm-cov nextest --workspace --no-report)
 fi
 
 if [[ "$PRINT_COMMAND" == true ]]; then
@@ -122,11 +122,20 @@ else
     exit 1
   }
   : "${CARGO_TARGET_DIR:?CARGO_TARGET_DIR is required for retained EBS coverage}"
+  export ADL_COVERAGE_TEST_THREADS="${ADL_COVERAGE_TEST_THREADS:-18}"
   export ADL_COVERAGE_BUILD_ROOT="$CARGO_TARGET_DIR/coverage"
   export ADL_COVERAGE_WARM_SOURCE_TARGET="$CARGO_TARGET_DIR"
-  "${command[@]}"
-  test -s adl/coverage-summary.json
-  python3 - <<'PY' adl/coverage-summary.json "$HEAD_COMMIT"
+  mkdir -p "$ADL_COVERAGE_BUILD_ROOT/target" "$ADL_COVERAGE_BUILD_ROOT/target/llvm-cov-target"
+  export CARGO_TARGET_DIR="$ADL_COVERAGE_BUILD_ROOT/target"
+  export CARGO_LLVM_COV_TARGET_DIR="$ADL_COVERAGE_BUILD_ROOT/target/llvm-cov-target"
+  export ADL_CSM_DISK_FLOOR_BYTES="${ADL_CSM_DISK_FLOOR_BYTES:-0}"
+  cd "$ROOT_DIR/adl"
+  bash "$ROOT_DIR/adl/tools/rust_validation_warm_cache.sh"
+  coverage_command=("${command[@]}" --test-threads "$ADL_COVERAGE_TEST_THREADS")
+  "${coverage_command[@]}"
+  test -s coverage-summary.json
+  cargo llvm-cov report --json --summary-only --output-path coverage-summary.json
+  python3 - <<'PY' coverage-summary.json "$HEAD_COMMIT"
 import json
 import sys
 from pathlib import Path
