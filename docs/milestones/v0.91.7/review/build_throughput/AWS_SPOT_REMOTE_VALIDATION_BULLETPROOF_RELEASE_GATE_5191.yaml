@@ -1,0 +1,31 @@
+schema_version: adl.release_gate_disposition.v1
+issue: 5191
+decision: approved_for_pr_publication_with_residual_live_spot_proof
+disposition: approved_for_pr_publication_with_residual_live_spot_proof
+changed_release_gate_surfaces:
+  - .github/workflows/aws-spot-remote-validation.yaml
+reviewer_or_review_mode: bounded pre-PR review plus focused local release-gate validation
+focused_validation_run: >
+  Focused local proof passed after rebase: bash
+  adl/tools/test_run_aws_spot_remote_validation_lane.sh; bash
+  adl/tools/test_aws_spot_artifact_finalize.sh; bash
+  adl/tools/test_aws_spot_lifecycle_controls.sh; bash
+  adl/tools/test_run_aws_spot_builder_image_validation.sh; cargo fmt
+  --manifest-path adl/Cargo.toml --all --check; cargo test --manifest-path
+  tools/aws_remote_validation/Cargo.toml --bin adl-aws-remote-validation --
+  --nocapture; and git diff --check.
+residual_ci_proof_required_before_merge: required
+residual_live_proof_required_before_completion: >
+  Two consecutive live Agent Logic Spot runs at one committed SHA remain required
+  before #5191 can claim full operational completion. GitHub workflow/OIDC,
+  EC2/EBS/SSM/ECR behavior, IAM propagation, retained warm-cache reuse, teardown,
+  redaction, timing, and cost evidence must be proven by the live lane artifacts.
+publication_scope: >
+  This disposition allows PR publication for the manual Spot validation workflow
+  and related wrapper/docs/tests. It does not replace required CI checks or live
+  Spot proof before merge/completion.
+notes:
+  - The workflow remains an explicit operator-triggered validation lane, not ordinary push/PR CI.
+  - The branch uses the fixed builder image path and immutable digest verification.
+  - Local tests use fake account data and do not expose credentials, account ids, or raw ARNs.
+  - The retained warm EBS cache must not be deleted or recreated without explicit operator approval.
