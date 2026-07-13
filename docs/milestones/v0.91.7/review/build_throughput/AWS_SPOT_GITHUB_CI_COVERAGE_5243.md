@@ -16,8 +16,9 @@ green. The first full run found a runtime fixture baseline defect tracked by
 `#5267`; a separate run against a historically green commit then proved that
 the immutable builder image lacked `gh`, which a lifecycle test executes. The
 image contract now requires and verifies `gh`, but a replacement immutable
-digest and two same-commit coverage repeats are still required. No
-required-check cutover claim is made.
+digest is verified and two same-commit coverage repeats are green. No
+required-check cutover claim is made until the environment-backed workflow
+and rollback rehearsal complete.
 
 The `adl-spot-ci` GitHub environment is configured with selected-branch rules
 for `main` and `codex/*`, no environment secrets, no manual approval gate, and
@@ -44,6 +45,8 @@ still disabled while coverage proof is incomplete.
 | `adl-coverage` historical-green control | `9346f230` | `v0.91.7-coverage-5243` | retained 500 GiB EBS | 679s before fail-fast | 864s | 970s | failed because image lacked `gh`; 1777/1778 executed tests passed |
 | `adl-coverage` replacement-image control | `9346f230` | replacement `v0.91.7-coverage-5243` | retained 500 GiB EBS | 2.7s before fail-fast | 109s | 214s | image preflight passed; two tests exposed cross-run shared `TMPDIR` fixture collision |
 | `adl-ci` current open-PR shadow | `ab166ff0` (PR `#5158`) | replacement `v0.91.7-coverage-5243` | retained 500 GiB EBS | 311s | 415s | 473s | passed; exact current head/base, image, source, cache, and toolchain verified |
+| `adl-coverage` same-commit repeat 1 | `9346f230` | replacement `v0.91.7-coverage-5243` | retained 500 GiB EBS | 736s | 835s | 912s | passed; 2165/2165 tests, 2 skipped |
+| `adl-coverage` same-commit repeat 2 | `9346f230` | replacement `v0.91.7-coverage-5243` | retained 500 GiB EBS | 767s | 862s | 919s | passed; 2108/2108 tests, 2 skipped |
 
 Both existing-PR CI shadows ran 54 focused tests, doc tests, and demo smoke
 successfully, with identical 42-second validation time. They used the exact source commit and merge base without modifying
@@ -74,6 +77,15 @@ cache also retained a shared container `TMPDIR`. Cargo target, Cargo home, and
 `sccache` remain shared, while temporary state is now isolated under a unique
 run-id directory. That directory is cleared before every attempt, including a
 retry after abrupt interruption, and removed after a completed container run.
+
+The two green coverage repeats used exact head
+`9346f230c96053dd90fdb60cbf6e04fcc3ffcff8` and base
+`363e3f0e8afefbc845408bca3f7ca2a4ccba2e51`. Repeat 1 ran 2,165 tests with a
+657.5-second nextest summary and 736-second validation time. Repeat 2 ran
+2,108 tests with a 657.5-second nextest summary and 767-second validation
+time. Full launch-through-cleanup totals were 912 and 919 seconds. Both runs
+verified the same immutable image, source commit, 500 GiB EBS identity, and
+per-run temporary directory isolation; both instances terminated cleanly.
 
 The current open-PR shadow used exact head
 `ab166ff0bf31366f80cd03e25a9de4ce4523c9c8` and base
@@ -158,14 +170,12 @@ the variable and rerunning the checks.
 
 ## Remaining Proof Before Cutover
 
-1. Run two consecutive same-commit green `adl-coverage` shadows against the
-   historical-green control commit; `#5267` remains independent product work.
-2. Run the reusable workflow through `adl-spot-ci` and verify the constrained
+1. Run the reusable workflow through `adl-spot-ci` and verify the constrained
    OIDC subject, exact source binding, live logs, sanitized artifacts, and EBS
    detach behavior end to end.
-3. Set `ADL_HEAVY_CI_BACKEND=spot` and verify stable `adl-ci` and
+2. Set `ADL_HEAVY_CI_BACKEND=spot` and verify stable `adl-ci` and
    `adl-coverage` checks on one real same-repository PR.
-4. Rehearse rollback by setting the variable to `hosted`, rerunning the same
+3. Rehearse rollback by setting the variable to `hosted`, rerunning the same
    checks, and confirming no Spot launch occurs.
-5. Retain redacted artifacts and final cost/timing comparison before making
+4. Retain redacted artifacts and final cost/timing comparison before making
    Spot the default for the repository.
