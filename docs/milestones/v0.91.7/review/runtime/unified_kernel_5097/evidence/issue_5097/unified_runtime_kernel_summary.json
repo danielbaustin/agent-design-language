@@ -1,0 +1,143 @@
+{
+  "schema_version": "runtime_v2.unified_runtime_kernel.v1",
+  "issue": 5097,
+  "milestone": "v0.91.7",
+  "proof_id": "issue-5097-unified-runtime-kernel-0001",
+  "entrypoint": "adl runtime-v2 unified-runtime-kernel --out docs/milestones/v0.91.7/review/runtime/unified_kernel_5097/evidence",
+  "kernel_boundary": "CSM daemon/tick owns the authoritative runtime flow; Runtime v2 contracts are consumed as typed services and proof obligations instead of parallel architecture.",
+  "deterministic_boundary": "deterministic core records scheduler/provider, lifecycle/standing, memory, ACIP, resilience, and observability decisions; cloud/provider transports remain explicit nondeterministic shell inputs unless configured.",
+  "live_runtime_refs": [
+    "issue_5097/current_runtime/agent.yaml",
+    "issue_5097/current_runtime/initial_status.json",
+    "issue_5097/current_runtime/run_status.json",
+    "issue_5097/current_runtime/stop_status.json",
+    "issue_5097/current_runtime/final_status.json"
+  ],
+  "runtime_v2_contract_refs": [
+    "runtime_v2/csm_run/integrated_first_run_proof_packet.json",
+    "runtime_v2/standing/standing_policy.json",
+    "issue_4697/aee_obsmem_pvf_trace_handoff_packet.json",
+    "runtime_v2/acip/acip_hardening_packet.json",
+    "runtime_v2/memory_identity/memory_identity_architecture.json",
+    "runtime_v2/godel_agent_runtime/godel_agent_runtime.json"
+  ],
+  "participants": [
+    {
+      "participant_id": "daemon_tick",
+      "boundary": "CSM daemon/tick current-runtime substrate",
+      "authority": "live current runtime owns bounded tick execution",
+      "artifact_refs": [
+        "issue_5097/current_runtime/run_status.json",
+        "issue_5097/current_runtime/final_status.json"
+      ],
+      "correlation_id": "corr-issue-5097-daemon_tick",
+      "local_proof_status": "local_executed"
+    },
+    {
+      "participant_id": "lifecycle_standing",
+      "boundary": "Runtime v2 lifecycle and standing policy visible to the live path",
+      "authority": "standing policy gates rights and lifecycle transitions",
+      "artifact_refs": [
+        "runtime_v2/standing/standing_policy.json",
+        "runtime_v2/standing/standing_negative_cases.json"
+      ],
+      "correlation_id": "corr-issue-5097-lifecycle_standing",
+      "local_proof_status": "contract_consumed"
+    },
+    {
+      "participant_id": "scheduler_provider",
+      "boundary": "scheduler/provider/local-agent selection",
+      "authority": "Godel runtime provider registry and launch plan bind scheduler authority",
+      "artifact_refs": [
+        "runtime_v2/godel_agent_runtime/godel_agent_runtime.json",
+        "runtime_v2/csm_run/scheduling_decision.json"
+      ],
+      "correlation_id": "corr-issue-5097-scheduler_provider",
+      "local_proof_status": "contract_consumed"
+    },
+    {
+      "participant_id": "memory_obsmem",
+      "boundary": "AEE observation to ObsMem write and retrieval",
+      "authority": "AEE emits reviewable trace handoff; ObsMem adapter owns persisted memory write",
+      "artifact_refs": [
+        "issue_4697/obsmem_memory_write_request.json",
+        "issue_4697/obsmem_memory_write_ack.json",
+        "issue_4697/obsmem_retrieval_result.json",
+        "runtime_v2/memory_identity/memory_identity_architecture.json"
+      ],
+      "correlation_id": "corr-issue-5097-memory_obsmem",
+      "local_proof_status": "contract_consumed"
+    },
+    {
+      "participant_id": "acip_boundary",
+      "boundary": "ACIP runtime stream readiness",
+      "authority": "ACIP hardening packet owns authenticated communication boundary",
+      "artifact_refs": [
+        "runtime_v2/acip/acip_hardening_packet.json"
+      ],
+      "correlation_id": "corr-issue-5097-acip_boundary",
+      "local_proof_status": "contract_consumed"
+    },
+    {
+      "participant_id": "resilience_continuity",
+      "boundary": "stop, lease, failed-cycle, checkpoint, recovery, replay",
+      "authority": "integrated run owns resilience, continuity, recovery, quarantine, and hardening proof refs",
+      "artifact_refs": [
+        "runtime_v2/csm_run/wake_continuity_proof.json",
+        "runtime_v2/recovery/safe_resume_decision.json",
+        "runtime_v2/quarantine/quarantine_artifact.json",
+        "runtime_v2/hardening/hardening_proof_packet.json"
+      ],
+      "correlation_id": "corr-issue-5097-resilience_continuity",
+      "local_proof_status": "contract_consumed"
+    },
+    {
+      "participant_id": "observability",
+      "boundary": "synthetic runtime observability correlation index",
+      "authority": "unified kernel records one correlation id per participant and links each id to the participant's first retained evidence reference",
+      "artifact_refs": [
+        "issue_5097/unified_runtime_kernel_events.jsonl",
+        "runtime_v2/observatory/visibility_packet.json"
+      ],
+      "correlation_id": "corr-issue-5097-observability",
+      "local_proof_status": "contract_consumed"
+    },
+    {
+      "participant_id": "external_signals",
+      "boundary": "AWS signal shell boundary",
+      "authority": "disabled local config is recorded fail-closed; live cloud publish is not claimed",
+      "artifact_refs": [
+        "issue_5097/aws_signal_config_disabled.json"
+      ],
+      "correlation_id": "corr-issue-5097-external_signals",
+      "local_proof_status": "local_disabled_recorded"
+    }
+  ],
+  "retained_evidence_refs": [
+    "issue_5097/unified_runtime_kernel_summary.json",
+    "issue_5097/unified_runtime_kernel_events.jsonl",
+    "issue_5097/unified_runtime_kernel_negative_cases.json",
+    "issue_5097/aws_signal_config_disabled.json",
+    "runtime_v2/csm_run/integrated_first_run_proof_packet.json",
+    "runtime_v2/csm_run/integrated_first_run_transcript.jsonl",
+    "runtime_v2/recovery/safe_resume_decision.json",
+    "runtime_v2/standing/standing_policy.json",
+    "runtime_v2/standing/standing_negative_cases.json",
+    "issue_4697/obsmem_memory_write_request.json",
+    "issue_4697/obsmem_memory_write_ack.json",
+    "issue_4697/obsmem_retrieval_result.json",
+    "runtime_v2/acip/acip_hardening_packet.json",
+    "runtime_v2/memory_identity/memory_identity_architecture.json",
+    "runtime_v2/godel_agent_runtime/godel_agent_runtime.json"
+  ],
+  "negative_case_refs": [
+    "issue_5097/unified_runtime_kernel_negative_cases.json"
+  ],
+  "validation_commands": [
+    "cargo test --manifest-path adl/Cargo.toml runtime_v2_unified_runtime_kernel -- --nocapture",
+    "cargo run --manifest-path adl/Cargo.toml -- runtime-v2 unified-runtime-kernel --out docs/milestones/v0.91.7/review/runtime/unified_kernel_5097/evidence",
+    "git diff --check"
+  ],
+  "local_vs_external_claim": "This proof runs a bounded local current-runtime tick and materializes local contract evidence. It does not require or claim live AWS credentials, paid cloud resources, remote providers, or long soak completion.",
+  "downstream_consumer": "#5096 can consume the scheduler/provider, reasoning/loop, lifecycle/standing, and continuity boundaries without redefining runtime architecture."
+}

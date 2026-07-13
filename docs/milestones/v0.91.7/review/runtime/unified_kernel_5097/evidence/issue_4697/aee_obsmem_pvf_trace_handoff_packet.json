@@ -1,0 +1,39 @@
+{
+  "schema_version": "runtime_v2.aee_obsmem_pvf_trace_handoff.v1",
+  "issue": 4697,
+  "milestone": "v0.91.7",
+  "proof_id": "issue-4697-aee-obsmem-pvf-trace-handoff-0001",
+  "runtime_boundary": "Runtime v2 governed trace -> AEE observation summary -> ObsMem adapter write -> PVF runtime lane handoff",
+  "trace_manifest_ref": "issue_4697/aee_obsmem_pvf_trace_manifest.json",
+  "activation_log_ref": "artifacts/runtime-v2-aee-obsmem-pvf-handoff/logs/activation_log.json",
+  "obsmem_store_ref": "issue_4697/obsmem_store.v1.json",
+  "obsmem_write_ref": "issue_4697/obsmem_memory_write_request.json",
+  "obsmem_ack_ref": "issue_4697/obsmem_memory_write_ack.json",
+  "obsmem_retrieval_ref": "issue_4697/obsmem_retrieval_result.json",
+  "pvf_lane": "runtime",
+  "pvf_trace_handoff_refs": [
+    "pvf://v0.91.7/issue-4697/runtime/aee-obsmem-trace-handoff",
+    "pvf://v0.91.7/issue-4697/runtime/obsmem-retrieval-proof"
+  ],
+  "retained_evidence_refs": [
+    "issue_4697/aee_obsmem_pvf_trace_handoff_packet.json",
+    "issue_4697/aee_obsmem_pvf_trace_manifest.json",
+    "artifacts/runtime-v2-aee-obsmem-pvf-handoff/logs/activation_log.json",
+    "issue_4697/obsmem_memory_write_request.json",
+    "issue_4697/obsmem_memory_write_ack.json",
+    "issue_4697/obsmem_retrieval_result.json",
+    "issue_4697/obsmem_store.v1.json"
+  ],
+  "validation_commands": [
+    "cargo test --manifest-path adl/Cargo.toml runtime_v2_aee_obsmem_pvf_trace_handoff -- --nocapture",
+    "cargo test --manifest-path adl/Cargo.toml --lib --features slow-proof-runtime runtime_v2_aee_obsmem_pvf_trace_handoff_writes_retained_evidence -- --nocapture",
+    "cargo run --manifest-path adl/Cargo.toml -- runtime-v2 aee-obsmem-pvf-handoff --out artifacts/v0917/issue-4697-aee-obsmem-pvf-handoff",
+    "git diff --check"
+  ],
+  "integration_summary": "Issue #4697 materializes the AEE/ObsMem/PVF boundary by emitting a governed Runtime v2 trace, deriving an AEE observation handoff manifest, writing it through the ObsMem adapter into a file-backed store, and querying that store with runtime PVF tags while retaining every trace and memory artifact.",
+  "non_claims": [
+    "does not claim sibling WP-11 loop runtime or adl.skill.v1 completion",
+    "does not claim complete v0.92 birthday readiness",
+    "does not replace the broader Soak #2 runtime proof owned outside #4697"
+  ]
+}

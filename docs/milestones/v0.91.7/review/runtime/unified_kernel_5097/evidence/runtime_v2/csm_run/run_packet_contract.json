@@ -1,0 +1,463 @@
+{
+  "schema_version": "runtime_v2.csm_run_packet_contract.v1",
+  "contract_id": "runtime-v2-csm-run-packet-contract-0001",
+  "demo_id": "D2",
+  "manifold_id": "proto-csm-01",
+  "artifact_path": "runtime_v2/csm_run/run_packet_contract.json",
+  "generated_at_utc": "2026-04-20T00:00:00Z",
+  "source_refs": [
+    "docs/milestones/v0.90.2/WBS_v0.90.2.md",
+    "docs/milestones/v0.90.2/DEMO_MATRIX_v0.90.2.md",
+    "docs/milestones/v0.90.2/RUNTIME_V2_INHERITANCE_AND_COMPRESSION_AUDIT_v0.90.2.md",
+    "runtime_v2/manifold.json",
+    "runtime_v2/kernel/service_registry.json",
+    "runtime_v2/kernel/service_state.json",
+    "runtime_v2/citizens/active_index.json",
+    "runtime_v2/citizens/pending_index.json"
+  ],
+  "artifact_requirements": [
+    {
+      "artifact_id": "run_packet_contract",
+      "artifact_kind": "contract",
+      "path": "runtime_v2/csm_run/run_packet_contract.json",
+      "owner_wp": "WP-03",
+      "required_by_wp": "WP-04",
+      "must_exist_before_live_run": true,
+      "purpose": "stable contract for the first bounded CSM run packet"
+    },
+    {
+      "artifact_id": "run_packet_fixture",
+      "artifact_kind": "fixture",
+      "path": "runtime_v2/csm_run/proto-csm-01-run-packet.json",
+      "owner_wp": "WP-03",
+      "required_by_wp": "WP-05",
+      "must_exist_before_live_run": true,
+      "purpose": "fixture definition for the first live proto-csm-01 run"
+    },
+    {
+      "artifact_id": "invariant_map",
+      "artifact_kind": "invariant_map",
+      "path": "runtime_v2/invariants/csm_run_invariant_map.json",
+      "owner_wp": "WP-04",
+      "required_by_wp": "WP-05",
+      "must_exist_before_live_run": true,
+      "purpose": "expanded invariant map before runtime work widens"
+    },
+    {
+      "artifact_id": "violation_schema",
+      "artifact_kind": "violation_schema",
+      "path": "runtime_v2/violations/violation_artifact_schema.json",
+      "owner_wp": "WP-04",
+      "required_by_wp": "WP-08",
+      "must_exist_before_live_run": true,
+      "purpose": "stable negative-path artifact shape for invalid action rejection"
+    },
+    {
+      "artifact_id": "boot_manifest",
+      "artifact_kind": "runtime_artifact",
+      "path": "runtime_v2/csm_run/boot_manifest.json",
+      "owner_wp": "WP-05",
+      "required_by_wp": "WP-14",
+      "must_exist_before_live_run": false,
+      "purpose": "live manifold boot evidence for the integrated proof"
+    },
+    {
+      "artifact_id": "first_run_trace",
+      "artifact_kind": "trace",
+      "path": "runtime_v2/csm_run/first_run_trace.jsonl",
+      "owner_wp": "WP-06",
+      "required_by_wp": "WP-14",
+      "must_exist_before_live_run": false,
+      "purpose": "ordered trace spine for scheduling, mediation, rejection, and wake continuity"
+    },
+    {
+      "artifact_id": "resource_pressure_fixture",
+      "artifact_kind": "runtime_artifact",
+      "path": "runtime_v2/csm_run/resource_pressure_fixture.json",
+      "owner_wp": "WP-06",
+      "required_by_wp": "WP-14",
+      "must_exist_before_live_run": false,
+      "purpose": "bounded resource-pressure input for the governed episode scheduler"
+    },
+    {
+      "artifact_id": "scheduling_decision",
+      "artifact_kind": "runtime_artifact",
+      "path": "runtime_v2/csm_run/scheduling_decision.json",
+      "owner_wp": "WP-06",
+      "required_by_wp": "WP-07",
+      "must_exist_before_live_run": false,
+      "purpose": "reviewable scheduler choice before Freedom Gate mediation"
+    },
+    {
+      "artifact_id": "citizen_action_fixture",
+      "artifact_kind": "runtime_artifact",
+      "path": "runtime_v2/csm_run/citizen_action_fixture.json",
+      "owner_wp": "WP-07",
+      "required_by_wp": "WP-08",
+      "must_exist_before_live_run": false,
+      "purpose": "scheduled non-trivial citizen action routed through the Freedom Gate"
+    },
+    {
+      "artifact_id": "freedom_gate_decision",
+      "artifact_kind": "runtime_artifact",
+      "path": "runtime_v2/csm_run/freedom_gate_decision.json",
+      "owner_wp": "WP-07",
+      "required_by_wp": "WP-08",
+      "must_exist_before_live_run": false,
+      "purpose": "bounded Freedom Gate mediation decision for the scheduled action"
+    },
+    {
+      "artifact_id": "invalid_action_fixture",
+      "artifact_kind": "runtime_artifact",
+      "path": "runtime_v2/csm_run/invalid_action_fixture.json",
+      "owner_wp": "WP-08",
+      "required_by_wp": "WP-11",
+      "must_exist_before_live_run": false,
+      "purpose": "invalid action input that must be rejected before commit"
+    },
+    {
+      "artifact_id": "invalid_action_violation",
+      "artifact_kind": "violation_packet",
+      "path": "runtime_v2/csm_run/invalid_action_violation.json",
+      "owner_wp": "WP-08",
+      "required_by_wp": "WP-11",
+      "must_exist_before_live_run": false,
+      "purpose": "stable violation packet proving invalid action rejection without side effects"
+    },
+    {
+      "artifact_id": "snapshot_manifest",
+      "artifact_kind": "snapshot",
+      "path": "runtime_v2/snapshots/snapshot-0001.json",
+      "owner_wp": "WP-09",
+      "required_by_wp": "WP-10",
+      "must_exist_before_live_run": false,
+      "purpose": "captured manifold snapshot used by the D6 wake-continuity proof"
+    },
+    {
+      "artifact_id": "rehydration_report",
+      "artifact_kind": "rehydration_report",
+      "path": "runtime_v2/rehydration_report.json",
+      "owner_wp": "WP-09",
+      "required_by_wp": "WP-10",
+      "must_exist_before_live_run": false,
+      "purpose": "validated restore report proving invariants ran before wake"
+    },
+    {
+      "artifact_id": "wake_continuity_proof",
+      "artifact_kind": "continuity_proof",
+      "path": "runtime_v2/csm_run/wake_continuity_proof.json",
+      "owner_wp": "WP-09",
+      "required_by_wp": "WP-14",
+      "must_exist_before_live_run": false,
+      "purpose": "D6 proof that wake resumes one unique active citizen head"
+    },
+    {
+      "artifact_id": "observatory_packet",
+      "artifact_kind": "observatory",
+      "path": "runtime_v2/observatory/visibility_packet.json",
+      "owner_wp": "WP-10",
+      "required_by_wp": "WP-14",
+      "must_exist_before_live_run": false,
+      "purpose": "operator-visible projection of the completed bounded run"
+    },
+    {
+      "artifact_id": "operator_report",
+      "artifact_kind": "operator_report",
+      "path": "runtime_v2/observatory/operator_report.md",
+      "owner_wp": "WP-10",
+      "required_by_wp": "WP-14",
+      "must_exist_before_live_run": false,
+      "purpose": "human-readable operator report rendered from the WP-10 visibility packet"
+    },
+    {
+      "artifact_id": "recovery_eligibility_model",
+      "artifact_kind": "recovery_model",
+      "path": "runtime_v2/recovery/eligibility_model.json",
+      "owner_wp": "WP-11",
+      "required_by_wp": "WP-12",
+      "must_exist_before_live_run": false,
+      "purpose": "D8 eligibility rules distinguishing safe resume from required quarantine"
+    },
+    {
+      "artifact_id": "safe_resume_decision",
+      "artifact_kind": "recovery_decision",
+      "path": "runtime_v2/recovery/safe_resume_decision.json",
+      "owner_wp": "WP-11",
+      "required_by_wp": "WP-14",
+      "must_exist_before_live_run": false,
+      "purpose": "D8 positive recovery decision proving validated wake can resume safely"
+    },
+    {
+      "artifact_id": "quarantine_required_decision",
+      "artifact_kind": "recovery_decision",
+      "path": "runtime_v2/recovery/quarantine_required_decision.json",
+      "owner_wp": "WP-11",
+      "required_by_wp": "WP-12",
+      "must_exist_before_live_run": false,
+      "purpose": "D8 negative recovery decision handing unsafe resume to WP-12 quarantine"
+    },
+    {
+      "artifact_id": "unsafe_recovery_fixture",
+      "artifact_kind": "quarantine_fixture",
+      "path": "runtime_v2/quarantine/unsafe_recovery_fixture.json",
+      "owner_wp": "WP-12",
+      "required_by_wp": "WP-13",
+      "must_exist_before_live_run": false,
+      "purpose": "D8 unsafe recovery input consumed by the quarantine state machine"
+    },
+    {
+      "artifact_id": "quarantine_artifact",
+      "artifact_kind": "quarantine_artifact",
+      "path": "runtime_v2/quarantine/quarantine_artifact.json",
+      "owner_wp": "WP-12",
+      "required_by_wp": "WP-13",
+      "must_exist_before_live_run": false,
+      "purpose": "D8 state machine artifact blocking unsafe recovery pending review"
+    },
+    {
+      "artifact_id": "quarantine_evidence_preservation",
+      "artifact_kind": "quarantine_evidence",
+      "path": "runtime_v2/quarantine/evidence_preservation_artifact.json",
+      "owner_wp": "WP-12",
+      "required_by_wp": "WP-14",
+      "must_exist_before_live_run": false,
+      "purpose": "D8 evidence hold proving unsafe recovery artifacts are retained"
+    },
+    {
+      "artifact_id": "adversarial_rules",
+      "artifact_kind": "hardening_rules",
+      "path": "runtime_v2/hardening/rules_of_engagement.json",
+      "owner_wp": "WP-13",
+      "required_by_wp": "WP-14",
+      "must_exist_before_live_run": false,
+      "purpose": "D9 rules of engagement for the governed adversarial hook"
+    },
+    {
+      "artifact_id": "adversarial_hook_packet",
+      "artifact_kind": "hardening_hook",
+      "path": "runtime_v2/hardening/adversarial_hook_packet.json",
+      "owner_wp": "WP-13",
+      "required_by_wp": "WP-14",
+      "must_exist_before_live_run": false,
+      "purpose": "D9 bounded adversarial hook proving quarantine containment under rules"
+    },
+    {
+      "artifact_id": "duplicate_activation_probe",
+      "artifact_kind": "hardening_probe",
+      "path": "runtime_v2/hardening/duplicate_activation_probe.json",
+      "owner_wp": "WP-13",
+      "required_by_wp": "WP-14",
+      "must_exist_before_live_run": false,
+      "purpose": "D9 negative probe for duplicate active citizen activation"
+    },
+    {
+      "artifact_id": "snapshot_integrity_probe",
+      "artifact_kind": "hardening_probe",
+      "path": "runtime_v2/hardening/snapshot_integrity_probe.json",
+      "owner_wp": "WP-13",
+      "required_by_wp": "WP-14",
+      "must_exist_before_live_run": false,
+      "purpose": "D9 negative probe for snapshot integrity before active wake"
+    },
+    {
+      "artifact_id": "trace_replay_gap_probe",
+      "artifact_kind": "hardening_probe",
+      "path": "runtime_v2/hardening/trace_replay_gap_probe.json",
+      "owner_wp": "WP-13",
+      "required_by_wp": "WP-14",
+      "must_exist_before_live_run": false,
+      "purpose": "D9 negative probe for replay gaps in the trace spine"
+    },
+    {
+      "artifact_id": "hardening_proof_packet",
+      "artifact_kind": "hardening_proof",
+      "path": "runtime_v2/hardening/hardening_proof_packet.json",
+      "owner_wp": "WP-13",
+      "required_by_wp": "WP-14",
+      "must_exist_before_live_run": false,
+      "purpose": "D9 summary proof packet consumed by the integrated first-run demo"
+    },
+    {
+      "artifact_id": "integrated_first_run_transcript",
+      "artifact_kind": "execution_transcript",
+      "path": "runtime_v2/csm_run/integrated_first_run_transcript.jsonl",
+      "owner_wp": "WP-14",
+      "required_by_wp": "WP-14A",
+      "must_exist_before_live_run": false,
+      "purpose": "D10 deterministic stage transcript proving the flagship demo actually ran"
+    },
+    {
+      "artifact_id": "integrated_first_run_proof_packet",
+      "artifact_kind": "integrated_proof",
+      "path": "runtime_v2/csm_run/integrated_first_run_proof_packet.json",
+      "owner_wp": "WP-14",
+      "required_by_wp": "WP-14A",
+      "must_exist_before_live_run": false,
+      "purpose": "D10 integrated first-run proof packet tying WP-05 through WP-13 evidence together"
+    }
+  ],
+  "stages": [
+    {
+      "stage_id": "contract_and_fixture",
+      "sequence": 1,
+      "owner_wp": "WP-03",
+      "entry_artifact_ref": "runtime_v2/manifold.json",
+      "exit_artifact_ref": "runtime_v2/csm_run/run_packet_contract.json",
+      "required_invariants": [
+        "single_active_manifold_instance",
+        "no_duplicate_active_citizen_instance"
+      ],
+      "status_before_wp": "landed_by_wp03",
+      "proof_obligation": "D2 has a code-backed packet contract before runtime execution widens"
+    },
+    {
+      "stage_id": "invariant_and_violation_contract",
+      "sequence": 2,
+      "owner_wp": "WP-04",
+      "entry_artifact_ref": "runtime_v2/csm_run/run_packet_contract.json",
+      "exit_artifact_ref": "runtime_v2/invariants/csm_run_invariant_map.json",
+      "required_invariants": [
+        "trace_sequence_must_advance_monotonically",
+        "snapshot_restore_must_validate_before_active_state"
+      ],
+      "status_before_wp": "landed_by_wp04",
+      "proof_obligation": "D2 gains invariant map and violation schema before WP-05 starts"
+    },
+    {
+      "stage_id": "boot_and_admission",
+      "sequence": 3,
+      "owner_wp": "WP-05",
+      "entry_artifact_ref": "runtime_v2/csm_run/proto-csm-01-run-packet.json",
+      "exit_artifact_ref": "runtime_v2/csm_run/boot_manifest.json",
+      "required_invariants": [
+        "single_active_manifold_instance",
+        "no_duplicate_active_citizen_instance"
+      ],
+      "status_before_wp": "landed_by_wp05",
+      "proof_obligation": "proto-csm-01 boots and admits workers only after contract gates pass"
+    },
+    {
+      "stage_id": "governed_episode_and_rejection",
+      "sequence": 4,
+      "owner_wp": "WP-06-WP-08",
+      "entry_artifact_ref": "runtime_v2/csm_run/boot_manifest.json",
+      "exit_artifact_ref": "runtime_v2/csm_run/first_run_trace.jsonl",
+      "required_invariants": [
+        "trace_sequence_must_advance_monotonically",
+        "invalid_action_must_be_refused_before_commit"
+      ],
+      "status_before_wp": "wp08_invalid_action_rejection_landed",
+      "proof_obligation": "one resource-pressure episode and one invalid action rejection share the same trace spine"
+    },
+    {
+      "stage_id": "snapshot_wake_and_observatory",
+      "sequence": 5,
+      "owner_wp": "WP-09-WP-10",
+      "entry_artifact_ref": "runtime_v2/csm_run/first_run_trace.jsonl",
+      "exit_artifact_ref": "runtime_v2/observatory/visibility_packet.json",
+      "required_invariants": [
+        "snapshot_restore_must_validate_before_active_state",
+        "no_duplicate_active_citizen_instance"
+      ],
+      "status_before_wp": "wp09_wake_continuity_landed",
+      "proof_obligation": "wake continuity and operator visibility are tied to the same bounded run"
+    },
+    {
+      "stage_id": "governed_adversarial_hardening",
+      "sequence": 6,
+      "owner_wp": "WP-11-WP-13",
+      "entry_artifact_ref": "runtime_v2/quarantine/quarantine_artifact.json",
+      "exit_artifact_ref": "runtime_v2/hardening/hardening_proof_packet.json",
+      "required_invariants": [
+        "no_duplicate_active_citizen_instance",
+        "snapshot_restore_must_validate_before_active_state",
+        "trace_sequence_must_advance_monotonically"
+      ],
+      "status_before_wp": "wp13_hardening_landed",
+      "proof_obligation": "one governed adversarial hook and three negative probes preserve quarantine and fail closed before integration"
+    },
+    {
+      "stage_id": "integrated_first_run_proof",
+      "sequence": 7,
+      "owner_wp": "WP-14",
+      "entry_artifact_ref": "runtime_v2/hardening/hardening_proof_packet.json",
+      "exit_artifact_ref": "runtime_v2/csm_run/integrated_first_run_proof_packet.json",
+      "required_invariants": [
+        "trace_sequence_must_advance_monotonically",
+        "invalid_action_must_be_refused_before_commit",
+        "snapshot_restore_must_validate_before_active_state",
+        "no_duplicate_active_citizen_instance"
+      ],
+      "status_before_wp": "wp14_integrated_first_run_ready",
+      "proof_obligation": "D10 integrates first-run, recovery, quarantine, observatory, and hardening evidence without widening into unbounded live execution"
+    }
+  ],
+  "review_target": {
+    "reviewer_entrypoint": "docs/milestones/v0.90.2/CSM_RUN_PACKET_CONTRACT_v0.90.2.md",
+    "required_artifacts": [
+      "runtime_v2/csm_run/run_packet_contract.json",
+      "runtime_v2/csm_run/proto-csm-01-run-packet.json",
+      "runtime_v2/invariants/csm_run_invariant_map.json",
+      "runtime_v2/violations/violation_artifact_schema.json",
+      "runtime_v2/csm_run/resource_pressure_fixture.json",
+      "runtime_v2/csm_run/scheduling_decision.json",
+      "runtime_v2/csm_run/citizen_action_fixture.json",
+      "runtime_v2/csm_run/freedom_gate_decision.json",
+      "runtime_v2/csm_run/invalid_action_fixture.json",
+      "runtime_v2/csm_run/invalid_action_violation.json",
+      "runtime_v2/snapshots/snapshot-0001.json",
+      "runtime_v2/rehydration_report.json",
+      "runtime_v2/csm_run/wake_continuity_proof.json",
+      "runtime_v2/csm_run/first_run_trace.jsonl",
+      "runtime_v2/observatory/visibility_packet.json",
+      "runtime_v2/observatory/operator_report.md",
+      "runtime_v2/recovery/eligibility_model.json",
+      "runtime_v2/recovery/safe_resume_decision.json",
+      "runtime_v2/recovery/quarantine_required_decision.json",
+      "runtime_v2/quarantine/unsafe_recovery_fixture.json",
+      "runtime_v2/quarantine/quarantine_artifact.json",
+      "runtime_v2/quarantine/evidence_preservation_artifact.json",
+      "runtime_v2/hardening/rules_of_engagement.json",
+      "runtime_v2/hardening/adversarial_hook_packet.json",
+      "runtime_v2/hardening/duplicate_activation_probe.json",
+      "runtime_v2/hardening/snapshot_integrity_probe.json",
+      "runtime_v2/hardening/trace_replay_gap_probe.json",
+      "runtime_v2/hardening/hardening_proof_packet.json",
+      "runtime_v2/csm_run/integrated_first_run_transcript.jsonl",
+      "runtime_v2/csm_run/integrated_first_run_proof_packet.json"
+    ],
+    "validation_commands": [
+      "cargo test --manifest-path adl/Cargo.toml runtime_v2_csm_run_packet_contract -- --nocapture",
+      "cargo test --manifest-path adl/Cargo.toml runtime_v2_invariant_and_violation_contract -- --nocapture",
+      "cargo test --manifest-path adl/Cargo.toml runtime_v2_csm_boot_admission -- --nocapture",
+      "cargo test --manifest-path adl/Cargo.toml runtime_v2_csm_governed_episode -- --nocapture",
+      "cargo test --manifest-path adl/Cargo.toml runtime_v2_csm_freedom_gate_mediation -- --nocapture",
+      "cargo test --manifest-path adl/Cargo.toml runtime_v2_csm_invalid_action_rejection -- --nocapture",
+      "cargo test --manifest-path adl/Cargo.toml runtime_v2_csm_wake_continuity -- --nocapture",
+      "cargo test --manifest-path adl/Cargo.toml runtime_v2_csm_observatory -- --nocapture",
+      "cargo test --manifest-path adl/Cargo.toml runtime_v2_csm_recovery_eligibility -- --nocapture",
+      "cargo test --manifest-path adl/Cargo.toml runtime_v2_csm_quarantine -- --nocapture",
+      "cargo test --manifest-path adl/Cargo.toml runtime_v2_csm_hardening -- --nocapture",
+      "cargo test --manifest-path adl/Cargo.toml runtime_v2_csm_integrated_run -- --nocapture",
+      "adl runtime-v2 integrated-csm-run-demo --out artifacts/v0902/demo-d10-integrated-csm-run",
+      "git diff --check"
+    ],
+    "non_claims": [
+      "does not execute a live CSM run",
+      "does not claim first true Godel-agent birth",
+      "does not implement v0.91 moral or emotional civilization scope",
+      "does not implement v0.92 identity or migration semantics"
+    ]
+  },
+  "downstream_consumers": [
+    "WP-04 invariant and violation artifact contract",
+    "WP-05 manifold boot and citizen admission",
+    "WP-10 Observatory packet and operator report integration",
+    "WP-11 recovery eligibility decisions",
+    "WP-12 quarantine state machine",
+    "WP-13 governed adversarial hardening proof",
+    "WP-14 integrated first CSM run demo",
+    "WP-14A demo matrix and feature proof coverage"
+  ],
+  "claim_boundary": "This contract fixes the first bounded CSM run packet shape and review target; it is not a live Runtime v2 execution artifact."
+}

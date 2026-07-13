@@ -80,6 +80,7 @@ mod standing;
 mod theory_of_mind_foundation;
 mod transition_authority;
 mod types;
+mod unified_runtime_kernel;
 mod validators;
 mod wellbeing_metrics;
 
@@ -238,6 +239,8 @@ pub use theory_of_mind_foundation::*;
 pub use transition_authority::*;
 #[allow(unused_imports)]
 pub use types::*;
+#[allow(unused_imports)]
+pub use unified_runtime_kernel::*;
 #[allow(unused_imports)]
 pub(crate) use validators::*;
 #[allow(unused_imports)]

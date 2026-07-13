@@ -1,0 +1,17 @@
+{
+  "schema_version": "runtime_v2.csm_invalid_action_fixture.v1",
+  "invalid_action_id": "proto-csm-01-invalid-action-0001",
+  "demo_id": "D5",
+  "manifold_id": "proto-csm-01",
+  "artifact_path": "runtime_v2/csm_run/invalid_action_fixture.json",
+  "freedom_gate_decision_ref": "runtime_v2/csm_run/freedom_gate_decision.json",
+  "episode_id": "episode-0001",
+  "citizen_id": "proto-citizen-alpha",
+  "actor": "proto_citizen_alpha",
+  "attempted_action": "commit_unmediated_action_after_freedom_gate",
+  "attempted_state": "post_gate_unreviewed_state_mutation",
+  "invalid_reason": "action attempts to bypass the mediated Freedom Gate decision before commit",
+  "required_invariant": "invalid_action_must_be_refused_before_commit",
+  "expected_result": "transition_refused_state_unchanged",
+  "claim_boundary": "This fixture proves WP-08 invalid-action input only; it does not execute a live CSM run, snapshot wake continuity, or first true Godel-agent birth."
+}

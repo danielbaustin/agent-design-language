@@ -1,0 +1,10 @@
+{"sequence":1,"stage_id":"run_packet_loaded","status":"PASS","artifact_ref":"runtime_v2/csm_run/run_packet_contract.json","observatory_note":"Reviewer target and stage spine loaded."}
+{"sequence":2,"stage_id":"boot_admission_validated","status":"PASS","artifact_ref":"runtime_v2/csm_run/boot_manifest.json","observatory_note":"Citizens admitted before execution evidence is accepted."}
+{"sequence":3,"stage_id":"governed_episode_projected","status":"PASS","artifact_ref":"runtime_v2/csm_run/first_run_trace.jsonl","observatory_note":"Bounded first-run trace reaches event sequence 9."}
+{"sequence":4,"stage_id":"freedom_gate_mediated","status":"PASS","artifact_ref":"runtime_v2/csm_run/freedom_gate_decision.json","observatory_note":"Allow/refuse decisions are visible before commit."}
+{"sequence":5,"stage_id":"invalid_action_refused","status":"PASS","artifact_ref":"runtime_v2/csm_run/invalid_action_violation.json","observatory_note":"Unsafe mutation is rejected before state commit."}
+{"sequence":6,"stage_id":"wake_continuity_proved","status":"PASS","artifact_ref":"runtime_v2/csm_run/wake_continuity_proof.json","observatory_note":"Wake has one active successor head."}
+{"sequence":7,"stage_id":"observatory_rendered","status":"PASS","artifact_ref":"runtime_v2/observatory/operator_report.md","observatory_note":"Operator can inspect the run through the Observatory report."}
+{"sequence":8,"stage_id":"recovery_quarantine_checked","status":"PASS","artifact_ref":"runtime_v2/recovery/safe_resume_decision.json","observatory_note":"Safe resume and quarantine-required paths are both reviewable."}
+{"sequence":9,"stage_id":"hardening_probes_passed","status":"PASS","artifact_ref":"runtime_v2/hardening/hardening_proof_packet.json","observatory_note":"Duplicate activation, snapshot tamper, and trace replay probes are bounded."}
+{"sequence":10,"stage_id":"integrated_proof_emitted","status":"PASS","artifact_ref":"runtime_v2/csm_run/integrated_first_run_proof_packet.json","observatory_note":"D10 flagship evidence bundle is ready for review."}

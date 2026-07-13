@@ -1,0 +1,9 @@
+{
+  "aws_signal_status": "disabled_for_local_deterministic_proof",
+  "cloudwatch": "not_configured",
+  "eventbridge": "not_configured",
+  "expected_behavior": "runtime records disabled external signal configuration without attempting live cloud publish",
+  "negative_case_ref": "missing_disabled_external_signal_config",
+  "schema_version": "runtime_v2.unified_runtime_kernel.external_signal_config.v1",
+  "sns_sqs": "not_configured"
+}

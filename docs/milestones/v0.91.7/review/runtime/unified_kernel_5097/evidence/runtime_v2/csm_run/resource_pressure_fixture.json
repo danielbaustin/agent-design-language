@@ -1,0 +1,42 @@
+{
+  "schema_version": "runtime_v2.csm_resource_pressure_fixture.v1",
+  "fixture_id": "proto-csm-01-resource-pressure-0001",
+  "demo_id": "D4",
+  "manifold_id": "proto-csm-01",
+  "artifact_path": "runtime_v2/csm_run/resource_pressure_fixture.json",
+  "boot_manifest_ref": "runtime_v2/csm_run/boot_manifest.json",
+  "citizen_roster_ref": "runtime_v2/csm_run/citizen_roster.json",
+  "pressure_kind": "single_episode_compute_budget",
+  "available_compute_tokens": 700,
+  "requested_compute_tokens": 1060,
+  "available_wall_clock_ms": 500,
+  "requested_wall_clock_ms": 700,
+  "scheduler_policy": "choose_highest_priority_executable_episode_within_budget",
+  "candidates": [
+    {
+      "episode_id": "episode-0001",
+      "citizen_id": "proto-citizen-alpha",
+      "identity_handle": "runtime-v2://proto-csm-01/citizens/proto-citizen-alpha",
+      "requested_action": "answer_operator_prompt_under_resource_pressure",
+      "priority": 10,
+      "estimated_compute_tokens": 640,
+      "estimated_wall_clock_ms": 400,
+      "safety_class": "bounded_reviewable",
+      "admission_ref": "runtime_v2/citizens/proto-citizen-alpha.json",
+      "can_execute_episodes": true
+    },
+    {
+      "episode_id": "episode-0002",
+      "citizen_id": "proto-citizen-beta",
+      "identity_handle": "runtime-v2://proto-csm-01/citizens/proto-citizen-beta",
+      "requested_action": "observe_without_execution_budget",
+      "priority": 3,
+      "estimated_compute_tokens": 420,
+      "estimated_wall_clock_ms": 300,
+      "safety_class": "bounded_reviewable",
+      "admission_ref": "runtime_v2/citizens/proto-citizen-beta.json",
+      "can_execute_episodes": false
+    }
+  ],
+  "claim_boundary": "This fixture proves bounded resource-pressure scheduling evidence; it does not execute Freedom Gate mediation, invalid-action rejection, or first true Godel-agent birth."
+}

@@ -1,0 +1,17 @@
+{
+  "agent_instance_id": "issue-5097-unified-runtime-kernel",
+  "cycle_id": "cycle-000001",
+  "decision": {
+    "action": "record_cycle",
+    "paper_only": true,
+    "summary": "Bounded long-lived agent cycle completed under the v0.90 artifact contract.",
+    "workflow_ref": "unified_runtime_kernel_local_tick"
+  },
+  "not_financial_advice": true,
+  "provider": {
+    "model": "bounded-local-proof",
+    "source": "local_deterministic"
+  },
+  "schema": "adl.long_lived_agent_decision_result.v1",
+  "status": "accepted"
+}

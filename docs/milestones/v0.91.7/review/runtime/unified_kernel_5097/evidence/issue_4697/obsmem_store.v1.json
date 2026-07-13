@@ -1,0 +1,52 @@
+{
+  "schema_name": "obsmem_store.v1",
+  "schema_version": 1,
+  "entries": [
+    {
+      "contract_version": 1,
+      "run_id": "issue-4697-aee-obsmem-pvf-handoff",
+      "workflow_id": "runtime_v2.aee_obsmem_pvf_trace_handoff",
+      "trace_bundle_rel_path": "issue_4697/aee_obsmem_pvf_trace_manifest.json",
+      "activation_log_rel_path": "artifacts/runtime-v2-aee-obsmem-pvf-handoff/logs/activation_log.json",
+      "failure_code": null,
+      "summary": "AEE observed the governed Runtime v2 action, handed retained trace refs to ObsMem, and exposed runtime PVF handoff refs for validation consumption.",
+      "tags": [
+        "aee:observation",
+        "issue:4697",
+        "obsmem:write-through-adapter",
+        "pvf:runtime",
+        "runtime-v2:aee-obsmem-pvf"
+      ],
+      "citations": [
+        {
+          "path": "artifacts/runtime-v2-aee-obsmem-pvf-handoff/logs/activation_log.json",
+          "hash": "sha256:5381bbc1c6284a251f8601bcb39980088ae1824f01e707384096aa16362bbd2f"
+        },
+        {
+          "path": "issue_4697/aee_obsmem_pvf_trace_manifest.json",
+          "hash": "sha256:8acb7cf69ff4b731236ab8c814b205fe9950c00d838072a8b747bd9d3f1bd6f3"
+        }
+      ],
+      "trace_event_refs": [
+        {
+          "event_sequence": 7,
+          "event_kind": "governed_action_selected",
+          "step_id": "aee_obsmem_pvf_handoff",
+          "delegation_id": null
+        },
+        {
+          "event_sequence": 8,
+          "event_kind": "governed_execution_result_recorded",
+          "step_id": "aee_obsmem_pvf_handoff",
+          "delegation_id": null
+        }
+      ],
+      "temporal_anchor": null,
+      "review_findings": [],
+      "residual_risks": [
+        "Broader Soak #2 memory consumption remains outside issue #4697."
+      ],
+      "follow_on_refs": []
+    }
+  ]
+}

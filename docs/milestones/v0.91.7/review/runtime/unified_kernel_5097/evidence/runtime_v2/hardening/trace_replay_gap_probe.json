@@ -1,0 +1,19 @@
+{
+  "schema_version": "runtime_v2.csm_hardening_probe.v1",
+  "probe_id": "proto-csm-01-trace_replay_gap_probe-0001",
+  "demo_id": "D9",
+  "invariant_id": "trace_sequence_must_advance_monotonically",
+  "probe_kind": "trace_replay_gap",
+  "artifact_path": "runtime_v2/hardening/trace_replay_gap_probe.json",
+  "source_artifact_ref": "runtime_v2/csm_run/first_run_trace.jsonl",
+  "attempted_failure": "attempt_replay_with_missing_trace_sequence",
+  "expected_detection": "replay_gap_rejected_and_gap_evidence_preserved",
+  "actual_result": "trace_replay_gap_refused",
+  "blocked_before_commit": true,
+  "preserved_evidence_refs": [
+    "runtime_v2/csm_run/first_run_trace.jsonl",
+    "runtime_v2/quarantine/evidence_preservation_artifact.json"
+  ],
+  "next_action": "preserve_trace_gap_and_require_operator_review",
+  "claim_boundary": "This probe proves one bounded D9 negative path; it does not implement live Runtime v2 execution, first true Godel-agent birth, a complete security ecology, or v0.92 identity rebinding."
+}

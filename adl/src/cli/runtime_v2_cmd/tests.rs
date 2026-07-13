@@ -10,7 +10,8 @@ use crate::cli::runtime_v2_cmd::{
 };
 use adl::runtime_v2::{
     runtime_v2_constructability_anchor_validator_contract, runtime_v2_csm_integrated_run_contract,
-    RuntimeV2ConstructabilityOutcome,
+    RuntimeV2ConstructabilityOutcome, RUNTIME_V2_AEE_OBSMEM_PVF_HANDOFF_PACKET,
+    RUNTIME_V2_AEE_OBSMEM_PVF_MEMORY_ACK, RUNTIME_V2_AEE_OBSMEM_PVF_RETRIEVAL,
 };
 use std::{
     fs,
@@ -33,6 +34,10 @@ const RUNTIME_V2_CLI_REGRESSION_SMOKES: &[&str] = &[
     "integrated-csm-run-demo:arg-validation",
     "minimal-integrated-runtime-path:write-bundle",
     "minimal-integrated-runtime-path:arg-validation",
+    "aee-obsmem-pvf-handoff:write-bundle",
+    "aee-obsmem-pvf-handoff:arg-validation",
+    "unified-runtime-kernel:write-bundle",
+    "unified-runtime-kernel:arg-validation",
     "observatory-flagship-demo:write-bundle",
     "observatory-flagship-demo:arg-validation",
     "cognitive-being-flagship-demo:write-bundle",
@@ -130,7 +135,7 @@ fn trace_runtime_v2_dispatch_covers_help_and_subcommand_errors() {
     let err = real_runtime_v2_in_repo(&[], &repo).expect_err("missing subcommand should fail");
     assert!(err
         .to_string()
-        .contains("runtime-v2 requires a subcommand: operator-controls, security-boundary, foundation-demo, integrated-csm-run-demo, minimal-integrated-runtime-path, aee-obsmem-pvf-handoff, observatory-flagship-demo, cognitive-being-flagship-demo, contract-market-demo, governed-tools-flagship-demo, feature-proof-coverage, reasoning-graph, curiosity-engine, constructability-anchor-validator, loop-runtime, or godel-agent-runtime"));
+        .contains("runtime-v2 requires a subcommand: operator-controls, security-boundary, foundation-demo, integrated-csm-run-demo, minimal-integrated-runtime-path, aee-obsmem-pvf-handoff, unified-runtime-kernel, observatory-flagship-demo, cognitive-being-flagship-demo, contract-market-demo, governed-tools-flagship-demo, feature-proof-coverage, reasoning-graph, curiosity-engine, constructability-anchor-validator, loop-runtime, or godel-agent-runtime"));
 
     let err = real_runtime_v2_in_repo(&["bogus".to_string()], &repo)
         .expect_err("unknown subcommand should fail");
@@ -1515,6 +1520,155 @@ fn trace_runtime_v2_godel_agent_runtime_validates_stdout_help_and_output_path_ru
 }
 
 #[test]
+fn trace_runtime_v2_aee_obsmem_pvf_handoff_writes_proof_bundle() {
+    let repo = temp_repo("aee-obsmem-pvf-handoff");
+    let out_dir = repo.join("out/aee-obsmem-pvf-handoff");
+
+    real_runtime_v2_in_repo(
+        &[
+            "aee-obsmem-pvf-handoff".to_string(),
+            "--out".to_string(),
+            "out/aee-obsmem-pvf-handoff".to_string(),
+        ],
+        &repo,
+    )
+    .expect("AEE ObsMem PVF handoff");
+
+    assert!(out_dir
+        .join(RUNTIME_V2_AEE_OBSMEM_PVF_HANDOFF_PACKET)
+        .is_file());
+    assert!(out_dir.join(RUNTIME_V2_AEE_OBSMEM_PVF_MEMORY_ACK).is_file());
+    assert!(out_dir.join(RUNTIME_V2_AEE_OBSMEM_PVF_RETRIEVAL).is_file());
+
+    fs::remove_dir_all(repo).ok();
+}
+
+#[test]
+fn trace_runtime_v2_aee_obsmem_pvf_handoff_validates_stdout_help_and_output_path_rules() {
+    let repo = temp_repo("aee-obsmem-pvf-handoff-branches");
+
+    real_runtime_v2_in_repo(&["aee-obsmem-pvf-handoff".to_string()], &repo)
+        .expect("stdout AEE ObsMem PVF handoff packet");
+    real_runtime_v2_in_repo(
+        &["aee-obsmem-pvf-handoff".to_string(), "--help".to_string()],
+        &repo,
+    )
+    .expect("AEE ObsMem PVF handoff help");
+    let err = real_runtime_v2_in_repo(
+        &[
+            "aee-obsmem-pvf-handoff".to_string(),
+            "--out".to_string(),
+            repo.join("absolute/aee-obsmem-pvf-handoff")
+                .to_string_lossy()
+                .to_string(),
+        ],
+        &repo,
+    )
+    .expect_err("absolute output path should fail");
+    assert!(err
+        .to_string()
+        .contains("runtime-v2 aee-obsmem-pvf-handoff --out path must be repository-relative"));
+
+    let err = real_runtime_v2_in_repo(
+        &["aee-obsmem-pvf-handoff".to_string(), "--bogus".to_string()],
+        &repo,
+    )
+    .expect_err("unknown arg should fail");
+    assert!(err
+        .to_string()
+        .contains("unknown arg for runtime-v2 aee-obsmem-pvf-handoff: --bogus"));
+
+    let err = real_runtime_v2_in_repo(
+        &["aee-obsmem-pvf-handoff".to_string(), "--out".to_string()],
+        &repo,
+    )
+    .expect_err("missing out value should fail");
+    assert!(err
+        .to_string()
+        .contains("runtime-v2 aee-obsmem-pvf-handoff requires --out <dir>"));
+
+    fs::remove_dir_all(repo).ok();
+}
+
+#[test]
+fn trace_runtime_v2_unified_runtime_kernel_writes_proof_bundle() {
+    let repo = temp_repo("unified-runtime-kernel");
+    let out_dir = repo.join("out/unified-runtime-kernel");
+
+    real_runtime_v2_in_repo(
+        &[
+            "unified-runtime-kernel".to_string(),
+            "--out".to_string(),
+            "out/unified-runtime-kernel".to_string(),
+        ],
+        &repo,
+    )
+    .expect("unified runtime kernel");
+
+    assert!(out_dir
+        .join("issue_5097/unified_runtime_kernel_summary.json")
+        .is_file());
+    assert!(out_dir
+        .join("issue_5097/unified_runtime_kernel_events.jsonl")
+        .is_file());
+    assert!(out_dir
+        .join("issue_5097/unified_runtime_kernel_negative_cases.json")
+        .is_file());
+    assert!(out_dir
+        .join("issue_5097/current_runtime/final_status.json")
+        .is_file());
+
+    fs::remove_dir_all(repo).ok();
+}
+
+#[test]
+fn trace_runtime_v2_unified_runtime_kernel_validates_stdout_help_and_output_path_rules() {
+    let repo = temp_repo("unified-runtime-kernel-branches");
+
+    real_runtime_v2_in_repo(&["unified-runtime-kernel".to_string()], &repo)
+        .expect("stdout unified runtime kernel summary");
+    real_runtime_v2_in_repo(
+        &["unified-runtime-kernel".to_string(), "--help".to_string()],
+        &repo,
+    )
+    .expect("unified runtime kernel help");
+    let err = real_runtime_v2_in_repo(
+        &[
+            "unified-runtime-kernel".to_string(),
+            "--out".to_string(),
+            repo.join("absolute/unified-runtime-kernel")
+                .to_string_lossy()
+                .to_string(),
+        ],
+        &repo,
+    )
+    .expect_err("absolute output path should fail");
+    assert!(err
+        .to_string()
+        .contains("runtime-v2 unified-runtime-kernel --out path must be repository-relative"));
+
+    let err = real_runtime_v2_in_repo(
+        &["unified-runtime-kernel".to_string(), "--bogus".to_string()],
+        &repo,
+    )
+    .expect_err("unknown arg should fail");
+    assert!(err
+        .to_string()
+        .contains("unknown arg for runtime-v2 unified-runtime-kernel: --bogus"));
+
+    let err = real_runtime_v2_in_repo(
+        &["unified-runtime-kernel".to_string(), "--out".to_string()],
+        &repo,
+    )
+    .expect_err("missing out value should fail");
+    assert!(err
+        .to_string()
+        .contains("runtime-v2 unified-runtime-kernel requires --out <dir>"));
+
+    fs::remove_dir_all(repo).ok();
+}
+
+#[test]
 fn trace_runtime_v2_feature_proof_coverage_validates_runtime_v2_cli_regression_registry() {
     let proof_surfaces: &[fn()] = &[
         trace_runtime_v2_operator_controls_writes_report_json,
@@ -1531,6 +1685,10 @@ fn trace_runtime_v2_feature_proof_coverage_validates_runtime_v2_cli_regression_r
         trace_runtime_v2_integrated_csm_run_demo_validates_stdout_help_and_output_path_rules,
         trace_runtime_v2_minimal_integrated_runtime_path_writes_retained_evidence,
         trace_runtime_v2_minimal_integrated_runtime_path_validates_stdout_help_and_output_path_rules,
+        trace_runtime_v2_aee_obsmem_pvf_handoff_writes_proof_bundle,
+        trace_runtime_v2_aee_obsmem_pvf_handoff_validates_stdout_help_and_output_path_rules,
+        trace_runtime_v2_unified_runtime_kernel_writes_proof_bundle,
+        trace_runtime_v2_unified_runtime_kernel_validates_stdout_help_and_output_path_rules,
         trace_runtime_v2_observatory_flagship_demo_writes_proof_bundle,
         trace_runtime_v2_observatory_flagship_demo_validates_stdout_help_and_output_path_rules,
         trace_runtime_v2_cognitive_being_flagship_demo_writes_proof_bundle,

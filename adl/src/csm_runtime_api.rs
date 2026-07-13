@@ -2113,9 +2113,26 @@ mod tests {
         CSM_CONSTRUCTABILITY_STATUS_REF,
     };
     use axum::body::to_bytes;
+    use std::cell::RefCell;
+    use std::net::TcpListener;
     use std::sync::atomic::{AtomicU64, Ordering};
 
     static SEQ: AtomicU64 = AtomicU64::new(0);
+
+    thread_local! {
+        static GOVERNED_CSM_TEST_PORT_LOCKS: RefCell<Vec<GovernedCsmTestPortLock>> =
+            const { RefCell::new(Vec::new()) };
+    }
+
+    struct GovernedCsmTestPortLock {
+        lock_dir: PathBuf,
+    }
+
+    impl Drop for GovernedCsmTestPortLock {
+        fn drop(&mut self) {
+            let _ = fs::remove_dir(&self.lock_dir);
+        }
+    }
 
     fn temp_root(name: &str) -> PathBuf {
         let id = SEQ.fetch_add(1, Ordering::SeqCst);
@@ -2229,8 +2246,38 @@ memory: {}
     }
 
     fn test_api_bind(offset: u64) -> String {
-        let port = 19950 + (offset % 47);
-        format!("127.0.0.1:{port}")
+        let lock_root = std::env::current_dir()
+            .expect("resolve current test directory")
+            .join(".adl")
+            .join("test-port-locks")
+            .join("csm");
+        fs::create_dir_all(&lock_root).expect("create governed CSM test port lock root");
+        for attempt in 0..50 {
+            let port = 19_950 + ((offset + attempt) % 50) as u16;
+            let lock_dir = lock_root.join(format!("port-{port}.lock"));
+            if fs::create_dir(&lock_dir).is_err() {
+                continue;
+            }
+            let addr: std::net::SocketAddr = format!("127.0.0.1:{port}")
+                .parse()
+                .expect("parse governed CSM test port");
+            match TcpListener::bind(addr) {
+                Ok(listener) => {
+                    let bind = listener.local_addr().expect("read governed CSM test port");
+                    drop(listener);
+                    GOVERNED_CSM_TEST_PORT_LOCKS.with(|locks| {
+                        locks
+                            .borrow_mut()
+                            .push(GovernedCsmTestPortLock { lock_dir });
+                    });
+                    return bind.to_string();
+                }
+                Err(_) => {
+                    let _ = fs::remove_dir(&lock_dir);
+                }
+            }
+        }
+        panic!("could not bind one governed CSM test port in 19950-19999");
     }
 
     fn test_options(root: &Path) -> CsmRuntimeApiOptions {

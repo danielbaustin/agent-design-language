@@ -1,0 +1,354 @@
+{
+  "schema_version": "runtime_v2.acip_hardening_packet.v1",
+  "packet_id": "acip-hardening-v0-91-1-wp-13",
+  "milestone": "v0.91.1",
+  "wp": "WP-13",
+  "artifact_path": "runtime_v2/acip/acip_hardening_packet.json",
+  "source_feature_doc": "docs/milestones/v0.91.1/features/ACIP_HARDENING.md",
+  "lifecycle_state_contract_ref": "runtime_v2/agent_lifecycle/state_contract.json",
+  "lifecycle_transition_matrix_ref": "runtime_v2/agent_lifecycle/transition_matrix.json",
+  "citizen_state_ref": "runtime_v2/citizen_state/citizen_state_substrate.json",
+  "envelope_profile": {
+    "profile_id": "local-intra-polis-authenticated-envelope",
+    "channel_scope": "local_intra_polis_only",
+    "authentication_mode": "required_identity_bound_sender_and_recipient",
+    "signature_policy": "unsigned_or_unattested_messages_fail_closed",
+    "encryption_mode": "authenticated_local_envelope_or_encryption_ready_only",
+    "redaction_mode": "deterministic_redaction_before_public_or_operator_projection",
+    "external_transport_policy": "forbidden_without_tls_or_mutual_tls_equivalent_protection",
+    "authority_gate_refs": [
+      "runtime_v2/access_control/authority_matrix.json",
+      "runtime_v2/access_control/access_events.json",
+      "runtime_v2/observatory/private_state_redaction_policy.json"
+    ],
+    "allowed_key_sources": [
+      "runtime_local_keystore",
+      "operator_reviewed_recovery_bundle"
+    ],
+    "non_exportable_keys_required": true,
+    "evidence_trace_required": true,
+    "claim_boundary": "This profile proves local authenticated-envelope policy only; it does not claim remote transport safety or a complete cryptographic implementation."
+  },
+  "negative_cases": [
+    {
+      "case_id": "malformed_local_envelope",
+      "rejection_class": "malformed",
+      "source_fixture_name": "malformed_payload_refs",
+      "expected_error_substring": "content_sha256 must be a 64-character hexadecimal sha256",
+      "proves": "Malformed local ACIP envelopes fail closed before invocation, persistence, or trace ambiguity.",
+      "evidence_refs": [
+        "adl/src/agent_comms/orchestrate/conformance.inc"
+      ]
+    },
+    {
+      "case_id": "unsigned_local_message",
+      "rejection_class": "unsigned",
+      "source_fixture_name": "signature_policy",
+      "expected_error_substring": "unsigned_local_message",
+      "proves": "Unsigned or unattested local ACIP messages are rejected before state routing or wake eligibility is considered.",
+      "evidence_refs": [
+        "adl/src/runtime_v2/acip_hardening.rs",
+        "docs/milestones/v0.91.1/features/ACIP_HARDENING.md"
+      ]
+    },
+    {
+      "case_id": "unauthorized_invocation_attempt",
+      "rejection_class": "unauthorized",
+      "source_fixture_name": "authority_escalation",
+      "expected_error_substring": "message intent 'consultation' must not claim authority action 'delegate'",
+      "proves": "Authority-escalating or gate-missing invocation attempts are rejected before any state can smuggle agency.",
+      "evidence_refs": [
+        "adl/src/agent_comms/orchestrate/conformance.inc"
+      ]
+    },
+    {
+      "case_id": "overexposed_projection_attempt",
+      "rejection_class": "overexposed",
+      "source_fixture_name": "observatory_redaction_policy",
+      "expected_error_substring": "projection must match redaction policy",
+      "proves": "Overexposed public or operator projections are rejected before raw private-state leakage can occur.",
+      "evidence_refs": [
+        "runtime_v2/observatory/private_state_redaction_policy.json",
+        "adl/src/runtime_v2/private_state_observatory.rs"
+      ]
+    }
+  ],
+  "state_cases": [
+    {
+      "case_id": "active-acip-routing",
+      "state": "ACTIVE",
+      "fixture_basis": "active-governed-invocation",
+      "receipt_policy": "receive_and_process",
+      "invocation_policy": "allowed_via_active_agency_path",
+      "authorized_wake_trigger": "not_required_for_active_processing",
+      "queue_or_custody_policy": "process_immediately_under_freedom_gate_and_acc",
+      "redaction_view": "projection_safe",
+      "external_commitment_allowed": true,
+      "allowed_message_kinds": [
+        "authenticated_work_request",
+        "review_request",
+        "governed_invocation_contract"
+      ],
+      "blocked_message_kinds": [
+        "unsigned_local_message",
+        "unauthorized_invocation_attempt"
+      ],
+      "evidence_refs": [
+        "runtime_v2/csm_run/proto-csm-01-run-packet.json",
+        "runtime_v2/csm_run/first_run_trace.jsonl"
+      ]
+    },
+    {
+      "case_id": "quiescent-acip-routing",
+      "state": "QUIESCENT",
+      "fixture_basis": "quiescent-queues-ordinary-work",
+      "receipt_policy": "receive_classify_or_queue",
+      "invocation_policy": "requires_transition_to_active",
+      "authorized_wake_trigger": "authorized_wake_trigger_required_for_live_execution",
+      "queue_or_custody_policy": "queue_or_require_transition_to_active",
+      "redaction_view": "projection_safe",
+      "external_commitment_allowed": false,
+      "allowed_message_kinds": [
+        "authenticated_work_request",
+        "authorized_wake_trigger"
+      ],
+      "blocked_message_kinds": [
+        "unsigned_local_message",
+        "unauthorized_invocation_attempt"
+      ],
+      "evidence_refs": [
+        "runtime_v2/observatory/visibility_packet.json"
+      ]
+    },
+    {
+      "case_id": "suspended-acip-routing",
+      "state": "SUSPENDED",
+      "fixture_basis": "suspended-wake-only",
+      "receipt_policy": "control_or_wake_only",
+      "invocation_policy": "forbidden_until_authorized_wake",
+      "authorized_wake_trigger": "authorized_wake_trigger_required",
+      "queue_or_custody_policy": "control_or_wake_only",
+      "redaction_view": "redacted_projection",
+      "external_commitment_allowed": false,
+      "allowed_message_kinds": [
+        "wake_control_message",
+        "authorized_wake_trigger"
+      ],
+      "blocked_message_kinds": [
+        "authenticated_work_request",
+        "governed_invocation_contract"
+      ],
+      "evidence_refs": [
+        "runtime_v2/rehydration_report.json"
+      ]
+    },
+    {
+      "case_id": "dormant-acip-routing",
+      "state": "DORMANT",
+      "fixture_basis": "dormant-preserves-continuity",
+      "receipt_policy": "no_live_receipt_queue_or_reject_externally",
+      "invocation_policy": "forbidden",
+      "authorized_wake_trigger": "rehydration_validation_required_before_any_wake",
+      "queue_or_custody_policy": "queue_until_rehydration_or_reject_externally",
+      "redaction_view": "redacted_projection",
+      "external_commitment_allowed": false,
+      "allowed_message_kinds": [
+        "authorized_wake_trigger"
+      ],
+      "blocked_message_kinds": [
+        "authenticated_work_request",
+        "governed_invocation_contract"
+      ],
+      "evidence_refs": [
+        "runtime_v2/snapshots/snapshot-0001.json",
+        "runtime_v2/rehydration_report.json"
+      ]
+    },
+    {
+      "case_id": "simulation-acip-routing",
+      "state": "SIMULATION",
+      "fixture_basis": "simulation-no-external-action",
+      "receipt_policy": "sealed_internal_replay_only",
+      "invocation_policy": "forbidden",
+      "authorized_wake_trigger": "no_wake_trigger_from_external_message",
+      "queue_or_custody_policy": "sealed_internal_replay_only",
+      "redaction_view": "projection_safe",
+      "external_commitment_allowed": false,
+      "allowed_message_kinds": [
+        "sealed_internal_replay_notice"
+      ],
+      "blocked_message_kinds": [
+        "authenticated_work_request",
+        "external_action_request"
+      ],
+      "evidence_refs": [
+        "runtime_v2/csm_run/integrated_first_run_proof_packet.json"
+      ]
+    },
+    {
+      "case_id": "in_transit-acip-routing",
+      "state": "IN_TRANSIT",
+      "fixture_basis": "in-transit-no-agency",
+      "receipt_policy": "custody_validation_only",
+      "invocation_policy": "forbidden",
+      "authorized_wake_trigger": "destination_validation_required_before_wake",
+      "queue_or_custody_policy": "custody_only_until_destination_validation",
+      "redaction_view": "custody_only",
+      "external_commitment_allowed": false,
+      "allowed_message_kinds": [
+        "custody_validation_message"
+      ],
+      "blocked_message_kinds": [
+        "authenticated_work_request",
+        "authorized_wake_trigger"
+      ],
+      "evidence_refs": [
+        "runtime_v2/snapshots/snapshot-0001.json"
+      ]
+    },
+    {
+      "case_id": "bootstrap-acip-routing",
+      "state": "BOOTSTRAP",
+      "fixture_basis": "bootstrap-state-contract",
+      "receipt_policy": "bootstrap_validation_or_custody_only",
+      "invocation_policy": "forbidden_until_active",
+      "authorized_wake_trigger": "bootstrap_admission_path_only",
+      "queue_or_custody_policy": "bootstrap_validation_or_custody_only",
+      "redaction_view": "projection_safe",
+      "external_commitment_allowed": false,
+      "allowed_message_kinds": [
+        "bootstrap_admission_message",
+        "bootstrap_validation_message"
+      ],
+      "blocked_message_kinds": [
+        "authenticated_work_request",
+        "governed_invocation_contract"
+      ],
+      "evidence_refs": [
+        "runtime_v2/csm_run/boot_manifest.json"
+      ]
+    },
+    {
+      "case_id": "shutdown-acip-routing",
+      "state": "SHUTDOWN",
+      "fixture_basis": "shutdown-state-contract",
+      "receipt_policy": "cancellation_custody_or_emergency_only",
+      "invocation_policy": "forbidden",
+      "authorized_wake_trigger": "no_reactivation_via_message_in_shutdown",
+      "queue_or_custody_policy": "cancellation_custody_or_emergency_only",
+      "redaction_view": "projection_safe",
+      "external_commitment_allowed": false,
+      "allowed_message_kinds": [
+        "cancellation_notice",
+        "emergency_custody_message"
+      ],
+      "blocked_message_kinds": [
+        "authenticated_work_request",
+        "authorized_wake_trigger"
+      ],
+      "evidence_refs": [
+        "runtime_v2/observatory/operator_report.md"
+      ]
+    },
+    {
+      "case_id": "forced_suspension-acip-routing",
+      "state": "FORCED_SUSPENSION",
+      "fixture_basis": "forced-suspension-failure-mode",
+      "receipt_policy": "recovery_quarantine_or_control_only",
+      "invocation_policy": "forbidden",
+      "authorized_wake_trigger": "operator_or_recovery_review_only",
+      "queue_or_custody_policy": "recovery_or_quarantine_only",
+      "redaction_view": "redacted_projection",
+      "external_commitment_allowed": false,
+      "allowed_message_kinds": [
+        "recovery_review_message",
+        "control_message"
+      ],
+      "blocked_message_kinds": [
+        "authenticated_work_request",
+        "authorized_wake_trigger"
+      ],
+      "evidence_refs": [
+        "runtime_v2/quarantine/unsafe_recovery_fixture.json"
+      ]
+    },
+    {
+      "case_id": "quarantined-acip-routing",
+      "state": "QUARANTINED",
+      "fixture_basis": "quarantined-recovery-only",
+      "receipt_policy": "reviewer_recovery_or_custody_only",
+      "invocation_policy": "forbidden",
+      "authorized_wake_trigger": "explicit_remediation_required_before_wake",
+      "queue_or_custody_policy": "custody_review_only",
+      "redaction_view": "custody_only",
+      "external_commitment_allowed": false,
+      "allowed_message_kinds": [
+        "recovery_review_message",
+        "custody_message"
+      ],
+      "blocked_message_kinds": [
+        "authenticated_work_request",
+        "authorized_wake_trigger"
+      ],
+      "evidence_refs": [
+        "runtime_v2/quarantine/quarantine_artifact.json",
+        "runtime_v2/quarantine/evidence_preservation.json"
+      ]
+    },
+    {
+      "case_id": "rejected-acip-routing",
+      "state": "REJECTED",
+      "fixture_basis": "rejected-no-operational-receipt",
+      "receipt_policy": "no_operational_receipt",
+      "invocation_policy": "forbidden",
+      "authorized_wake_trigger": "no_wake_trigger_for_rejected_identity",
+      "queue_or_custody_policy": "reject_and_preserve_evidence",
+      "redaction_view": "custody_only",
+      "external_commitment_allowed": false,
+      "allowed_message_kinds": [
+        "evidence_preservation_notice"
+      ],
+      "blocked_message_kinds": [
+        "authenticated_work_request",
+        "authorized_wake_trigger"
+      ],
+      "evidence_refs": [
+        "runtime_v2/csm_run/boot_admission_trace.jsonl"
+      ]
+    },
+    {
+      "case_id": "orphaned-acip-routing",
+      "state": "ORPHANED",
+      "fixture_basis": "orphaned-custody-recovery-only",
+      "receipt_policy": "custody_recovery_only",
+      "invocation_policy": "forbidden",
+      "authorized_wake_trigger": "custody_recovery_decision_required_before_wake",
+      "queue_or_custody_policy": "custody_recovery_only",
+      "redaction_view": "custody_only",
+      "external_commitment_allowed": false,
+      "allowed_message_kinds": [
+        "custody_recovery_message"
+      ],
+      "blocked_message_kinds": [
+        "authenticated_work_request",
+        "authorized_wake_trigger"
+      ],
+      "evidence_refs": [
+        "runtime_v2/quarantine/evidence_preservation.json"
+      ]
+    }
+  ],
+  "validation_commands": [
+    "cargo test --manifest-path adl/Cargo.toml runtime_v2_acip_hardening -- --nocapture",
+    "cargo test --manifest-path adl/Cargo.toml runtime_v2_agent_lifecycle_state -- --nocapture",
+    "cargo test --manifest-path adl/Cargo.toml acip_conformance_report -- --nocapture",
+    "git diff --check"
+  ],
+  "non_claims": [
+    "does not prove cross-polis or external transport security",
+    "does not implement live TLS, mutual-TLS, or remote key exchange",
+    "does not bypass lifecycle, Freedom Gate, ACC, trace, or redaction boundaries",
+    "does not prove v0.92 federation, identity rebinding, or birthday completion"
+  ],
+  "claim_boundary": "WP-13 proves one bounded local ACIP hardening packet over the landed lifecycle, citizen-state, access-control, observatory, and ACIP conformance surfaces. It proves authenticated local envelope policy, fail-closed rejection classes, and state-specific routing semantics for intra-polis communication only. It does not prove external transport, live cryptographic exchange, federation, or v0.92 identity semantics."
+}

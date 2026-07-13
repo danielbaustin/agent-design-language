@@ -1,0 +1,24 @@
+{
+  "schema_version": "runtime_v2.csm_freedom_gate_decision.v1",
+  "decision_id": "proto-csm-01-freedom-gate-decision-0001",
+  "demo_id": "D4",
+  "manifold_id": "proto-csm-01",
+  "artifact_path": "runtime_v2/csm_run/freedom_gate_decision.json",
+  "citizen_action_ref": "runtime_v2/csm_run/citizen_action_fixture.json",
+  "scheduling_decision_ref": "runtime_v2/csm_run/scheduling_decision.json",
+  "episode_id": "episode-0001",
+  "citizen_id": "proto-citizen-alpha",
+  "gate_id": "freedom_gate",
+  "gate_policy": "bounded_consent_and_resource_review",
+  "decision_outcome": "allowed_with_mediation",
+  "mediated_action": "answer_operator_prompt_with_bounded_summary",
+  "decision_reason": "scheduled action is admitted, resource-bounded, reviewable, and mediated before execution",
+  "checked_invariants": [
+    "trace_sequence_must_advance_monotonically",
+    "no_duplicate_active_citizen_instance",
+    "scheduled_episode_must_match_gate_action"
+  ],
+  "trace_ref": "runtime_v2/csm_run/first_run_trace.jsonl",
+  "downstream_boundary": "WP-08 owns invalid-action rejection and violation packet emission",
+  "claim_boundary": "This decision proves WP-07 Freedom Gate mediation for one scheduled allowed action; it does not prove WP-08 invalid-action rejection, snapshot wake continuity, or true Godel-agent birth."
+}

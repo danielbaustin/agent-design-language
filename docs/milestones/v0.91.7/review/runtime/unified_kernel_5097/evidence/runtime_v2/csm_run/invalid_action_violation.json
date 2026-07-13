@@ -1,0 +1,38 @@
+{
+  "schema_version": "runtime_v2.invariant_violation.v1",
+  "violation_id": "invalid-action-violation-0001",
+  "manifold_id": "proto-csm-01",
+  "artifact_path": "runtime_v2/csm_run/invalid_action_violation.json",
+  "detected_at_utc": "not_started",
+  "severity": "blocking",
+  "invariant_id": "invalid_action_must_be_refused_before_commit",
+  "invariant_owner_service_id": "operator_control_interface",
+  "policy_enforcement_mode": "fail_closed_before_activation",
+  "attempted_transition": {
+    "actor": "proto_citizen_alpha",
+    "attempted_action": "commit_unmediated_action_after_freedom_gate",
+    "attempted_state": "post_gate_unreviewed_state_mutation",
+    "source_artifact_ref": "runtime_v2/csm_run/invalid_action_fixture.json"
+  },
+  "evaluated_refs": [
+    {
+      "ref_kind": "freedom_gate_decision",
+      "artifact_ref": "runtime_v2/csm_run/freedom_gate_decision.json"
+    },
+    {
+      "ref_kind": "invalid_action_fixture",
+      "artifact_ref": "runtime_v2/csm_run/invalid_action_fixture.json"
+    }
+  ],
+  "affected_citizens": [
+    "proto-citizen-alpha"
+  ],
+  "refusal_reason": "invalid action refused before commit because it bypasses the mediated gate result",
+  "source_error": "invalid_action_must_be_refused_before_commit rejected post_gate_unreviewed_state_mutation",
+  "result": {
+    "resulting_state": "transition_refused_state_unchanged",
+    "blocked_before_commit": true,
+    "recovery_action": "retain_freedom_gate_mediated_state_and_record_violation",
+    "trace_ref": "runtime_v2/csm_run/first_run_trace.jsonl"
+  }
+}

@@ -1,0 +1,22 @@
+{
+  "schema": "adl.csm.godel_agent_snapshot_chain.v1",
+  "format_version": "godel-agent-state.v1",
+  "agent_instance_id": "issue-5097-unified-runtime-kernel",
+  "updated_at": "2026-07-13T04:16:49.513929Z",
+  "base_snapshot_ref": "godel_snapshots/snapshots/issue-5097-unified-runtime-kernel-snapshot-000001.json",
+  "last_diff_ref": "godel_snapshots/diffs/issue-5097-unified-runtime-kernel-diff-000007.json",
+  "last_known_good_ref": "godel_snapshots/diffs/issue-5097-unified-runtime-kernel-diff-000007.json",
+  "last_known_good_sha256": "ce30ee04e78e8690d86fbbeef87cc2ca0dea8b9430530d3ad913b44c49b6acaf",
+  "chain_length": 8,
+  "compaction_policy": "compact by writing a fresh base snapshot after 64 diffs or before schema migration",
+  "compacted_through_diff_ref": null,
+  "recovery_relevance": "CSM recovery readers use last_known_good_ref after validating the hash chain",
+  "observability": {
+    "cadence_state": "on_checkpoint_cadence",
+    "snapshot_lag_secs": 0,
+    "failure_count": 0,
+    "last_write_kind": "diff",
+    "last_write_ref": "godel_snapshots/diffs/issue-5097-unified-runtime-kernel-diff-000007.json",
+    "backpressure_queue": "snapshot_diff"
+  }
+}

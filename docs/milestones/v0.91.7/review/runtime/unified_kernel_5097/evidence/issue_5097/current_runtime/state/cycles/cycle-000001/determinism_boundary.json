@@ -1,0 +1,391 @@
+{
+  "schema": "adl.csm.cycle_determinism_boundary.v2",
+  "cycle_id": "cycle-000001",
+  "boundary_contract": {
+    "schema": "adl.csm.determinism_boundary.v1",
+    "deterministic_core": [
+      "scheduler_admission",
+      "reasoning_runtime",
+      "aee_governed_execution",
+      "checkpoint_version_transition",
+      "lifelog_ordering"
+    ],
+    "deterministic_input_kinds": [
+      "cycle_id",
+      "workflow_id",
+      "graph_id",
+      "action_id",
+      "checkpoint_version",
+      "lifelog_sequence",
+      "policy_decision"
+    ],
+    "nondeterministic_shell": [
+      "chronosense_ntp",
+      "aws_cloud",
+      "network_io",
+      "wall_clock",
+      "local_process_state",
+      "observability_sink",
+      "provider_model_io"
+    ],
+    "boundary_rule": "nondeterministic shell values must be captured as retained typed input events before they influence deterministic core decisions"
+  },
+  "captured_shell_events": [
+    {
+      "schema": "adl.csm.shell_input_event.v2",
+      "event_id": "cycle-000001-chronosense_ntp-initial",
+      "shell_class": "chronosense_ntp",
+      "source": "chronosense_runtime_service",
+      "observed_time": "2026-07-13T04:16:49.319933+00:00",
+      "confidence": "medium",
+      "retention_location": "determinism_boundary.json#captured_shell_events/cycle-000001-chronosense_ntp-initial",
+      "value_fingerprint": "sha256:1da1385c27ee1cc17f6fd66aa219b7e7a440444c5c4c693fa7ae89ccf627b8c2",
+      "payload": {
+        "confidence": "high",
+        "drift_status": "within_sntp_reported_bounds",
+        "failure_state": null,
+        "health": "synced",
+        "mode": "csm_in_process_async_sntp_client",
+        "observed_at_rfc3339": "2026-07-13T04:16:49.349462+00:00",
+        "parsed_offset_seconds": 0.041434748796746135,
+        "parsed_uncertainty_seconds": 0.011993770720437169,
+        "poll_command": "rsntp::AsyncSntpClient",
+        "port_policy": "csm_in_process_async_sntp_client_ephemeral_udp_no_csm_udp_123_listener_no_shellout",
+        "raw_summary": "peer=time.cloudflare.com",
+        "reason": "runtime_sntp_client_reports_active_source",
+        "schema_version": "chronosense_time_sync_status.v1",
+        "source": "rsntp::AsyncSntpClient in-process runtime sampler",
+        "substrate": "SNTP"
+      }
+    },
+    {
+      "schema": "adl.csm.shell_input_event.v2",
+      "event_id": "cycle-000001-aws_cloud-initial",
+      "shell_class": "aws_cloud",
+      "source": "runtime_aws_signal_configuration",
+      "observed_time": "2026-07-13T04:16:49.319933+00:00",
+      "confidence": "medium",
+      "retention_location": "determinism_boundary.json#captured_shell_events/cycle-000001-aws_cloud-initial",
+      "value_fingerprint": "sha256:a501533e5dfeb708f42b687aaf3ad6284927cf9d4fa5183f22b39c11231a03cd",
+      "payload": {
+        "event_bus_configured": false,
+        "profile_configured": false,
+        "region_configured": false
+      }
+    },
+    {
+      "schema": "adl.csm.shell_input_event.v2",
+      "event_id": "cycle-000001-network_io-initial",
+      "shell_class": "network_io",
+      "source": "csm_cycle_network_boundary",
+      "observed_time": "2026-07-13T04:16:49.319933+00:00",
+      "confidence": "medium",
+      "retention_location": "determinism_boundary.json#captured_shell_events/cycle-000001-network_io-initial",
+      "value_fingerprint": "sha256:05492e3da67b5085b417b5d11dcf5ea7aa9fd536d01274e435e21fcf1878f515",
+      "payload": {
+        "external_side_effects_allowed": false,
+        "provider_transport_requested": true,
+        "runtime_api_contract": "embedded"
+      }
+    },
+    {
+      "schema": "adl.csm.shell_input_event.v2",
+      "event_id": "cycle-000001-wall_clock-initial",
+      "shell_class": "wall_clock",
+      "source": "chronosense_utc_clock",
+      "observed_time": "2026-07-13T04:16:49.319933+00:00",
+      "confidence": "high",
+      "retention_location": "determinism_boundary.json#captured_shell_events/cycle-000001-wall_clock-initial",
+      "value_fingerprint": "sha256:8d6c34e44220681f41e1b3baff2429e59b6b7d7415eee5bcff82e7b859dc90ab",
+      "payload": {
+        "observed_at": "2026-07-13T04:16:49.319933Z"
+      }
+    },
+    {
+      "schema": "adl.csm.shell_input_event.v2",
+      "event_id": "cycle-000001-local_process_state-initial",
+      "shell_class": "local_process_state",
+      "source": "csm_process_runtime",
+      "observed_time": "2026-07-13T04:16:49.319933+00:00",
+      "confidence": "high",
+      "retention_location": "determinism_boundary.json#captured_shell_events/cycle-000001-local_process_state-initial",
+      "value_fingerprint": "sha256:408776df22a28e1fe25d6e782d7f06e2b3284051c5f3b89bdde90ab924b6f5c7",
+      "payload": {
+        "agent_instance_id": "issue-5097-unified-runtime-kernel",
+        "process_id": 26891,
+        "state_root_exists": true
+      }
+    },
+    {
+      "schema": "adl.csm.shell_input_event.v2",
+      "event_id": "cycle-000001-observability_sink-initial",
+      "shell_class": "observability_sink",
+      "source": "csm_observability_configuration",
+      "observed_time": "2026-07-13T04:16:49.319933+00:00",
+      "confidence": "medium",
+      "retention_location": "determinism_boundary.json#captured_shell_events/cycle-000001-observability_sink-initial",
+      "value_fingerprint": "sha256:b5192f88fdd7b4a80b217af7a2b7c444a72a7bdbccff96db74464764fe1fdbed",
+      "payload": {
+        "local_event_retention": true,
+        "otel_log_configured": false,
+        "otel_status_configured": false
+      }
+    },
+    {
+      "schema": "adl.csm.shell_input_event.v2",
+      "event_id": "cycle-000001-provider_model_io-initial",
+      "shell_class": "provider_model_io",
+      "source": "csm_provider_binding",
+      "observed_time": "2026-07-13T04:16:49.319933+00:00",
+      "confidence": "medium",
+      "retention_location": "determinism_boundary.json#captured_shell_events/cycle-000001-provider_model_io-initial",
+      "value_fingerprint": "sha256:e14d58af521a936b4c80bc8aadf7c04fea3575878cf4ff703f78ba27ebae2ddc",
+      "payload": {
+        "agent_instance_id": "issue-5097-unified-runtime-kernel",
+        "binding_status": "available",
+        "bound_at": "2026-07-13T04:16:49.319933Z",
+        "cycle_id": "cycle-000001",
+        "model": "bounded-local-proof",
+        "provider_id": "local_deterministic",
+        "schema": "adl.long_lived_agent_provider_binding.v1",
+        "source": "workflow_run_args"
+      }
+    },
+    {
+      "schema": "adl.csm.shell_input_event.v2",
+      "event_id": "cycle-000001-provider_model_io-result",
+      "shell_class": "provider_model_io",
+      "source": "csm_provider_execution_result",
+      "observed_time": "2026-07-13T04:16:49.362047+00:00",
+      "confidence": "medium",
+      "retention_location": "determinism_boundary.json#captured_shell_events/cycle-000001-provider_model_io-result",
+      "value_fingerprint": "sha256:200e812ffd75fcf1a6e9cff24530e4bfcee67e2ffde3946877f931c95bd45d2c",
+      "payload": {
+        "result_available": true,
+        "schema": "adl.csm.provider_result_summary.v1",
+        "status": null,
+        "trace_event_count": null,
+        "workflow_kind": null
+      }
+    },
+    {
+      "schema": "adl.csm.shell_input_event.v2",
+      "event_id": "cycle-000001-wall_clock-completion",
+      "shell_class": "wall_clock",
+      "source": "chronosense_utc_clock",
+      "observed_time": "2026-07-13T04:16:49.362120+00:00",
+      "confidence": "high",
+      "retention_location": "determinism_boundary.json#captured_shell_events/cycle-000001-wall_clock-completion",
+      "value_fingerprint": "sha256:0d66ce43d4c5ce7f907a22e2483f0c3d8c4625318984dae30c0dec7800240782",
+      "payload": {
+        "observed_at": "2026-07-13T04:16:49.362120Z",
+        "phase": "completion"
+      }
+    }
+  ],
+  "decision_requests": [
+    {
+      "schema": "adl.csm.core_decision_request.v1",
+      "decision_id": "cycle-000001-scheduler-admission",
+      "component": "scheduler_admission",
+      "inputs": [
+        {
+          "input_domain": "deterministic",
+          "kind": "cycle_id",
+          "value": "cycle-000001"
+        },
+        {
+          "input_domain": "deterministic",
+          "kind": "workflow_id",
+          "value": "unified_runtime_kernel_local_tick"
+        },
+        {
+          "input_domain": "captured_shell",
+          "shell_class": "chronosense_ntp",
+          "event_id": "cycle-000001-chronosense_ntp-initial",
+          "value_fingerprint": "sha256:1da1385c27ee1cc17f6fd66aa219b7e7a440444c5c4c693fa7ae89ccf627b8c2"
+        },
+        {
+          "input_domain": "captured_shell",
+          "shell_class": "wall_clock",
+          "event_id": "cycle-000001-wall_clock-initial",
+          "value_fingerprint": "sha256:8d6c34e44220681f41e1b3baff2429e59b6b7d7415eee5bcff82e7b859dc90ab"
+        },
+        {
+          "input_domain": "captured_shell",
+          "shell_class": "local_process_state",
+          "event_id": "cycle-000001-local_process_state-initial",
+          "value_fingerprint": "sha256:408776df22a28e1fe25d6e782d7f06e2b3284051c5f3b89bdde90ab924b6f5c7"
+        }
+      ]
+    },
+    {
+      "schema": "adl.csm.core_decision_request.v1",
+      "decision_id": "cycle-000001-aee-governed-execution",
+      "component": "aee_governed_execution",
+      "inputs": [
+        {
+          "input_domain": "deterministic",
+          "kind": "action_id",
+          "value": "stage_and_record_cycle"
+        },
+        {
+          "input_domain": "deterministic",
+          "kind": "policy_decision",
+          "value": "admit"
+        },
+        {
+          "input_domain": "captured_shell",
+          "shell_class": "provider_model_io",
+          "event_id": "cycle-000001-provider_model_io-initial",
+          "value_fingerprint": "sha256:e14d58af521a936b4c80bc8aadf7c04fea3575878cf4ff703f78ba27ebae2ddc"
+        },
+        {
+          "input_domain": "captured_shell",
+          "shell_class": "network_io",
+          "event_id": "cycle-000001-network_io-initial",
+          "value_fingerprint": "sha256:05492e3da67b5085b417b5d11dcf5ea7aa9fd536d01274e435e21fcf1878f515"
+        },
+        {
+          "input_domain": "captured_shell",
+          "shell_class": "aws_cloud",
+          "event_id": "cycle-000001-aws_cloud-initial",
+          "value_fingerprint": "sha256:a501533e5dfeb708f42b687aaf3ad6284927cf9d4fa5183f22b39c11231a03cd"
+        },
+        {
+          "input_domain": "captured_shell",
+          "shell_class": "observability_sink",
+          "event_id": "cycle-000001-observability_sink-initial",
+          "value_fingerprint": "sha256:b5192f88fdd7b4a80b217af7a2b7c444a72a7bdbccff96db74464764fe1fdbed"
+        }
+      ]
+    },
+    {
+      "schema": "adl.csm.core_decision_request.v1",
+      "decision_id": "cycle-000001-reasoning-runtime",
+      "component": "reasoning_runtime",
+      "inputs": [
+        {
+          "input_domain": "deterministic",
+          "kind": "graph_id",
+          "value": "unified_runtime_kernel_local_tick"
+        },
+        {
+          "input_domain": "captured_shell",
+          "shell_class": "provider_model_io",
+          "event_id": "cycle-000001-provider_model_io-result",
+          "value_fingerprint": "sha256:200e812ffd75fcf1a6e9cff24530e4bfcee67e2ffde3946877f931c95bd45d2c"
+        },
+        {
+          "input_domain": "captured_shell",
+          "shell_class": "network_io",
+          "event_id": "cycle-000001-network_io-initial",
+          "value_fingerprint": "sha256:05492e3da67b5085b417b5d11dcf5ea7aa9fd536d01274e435e21fcf1878f515"
+        }
+      ]
+    },
+    {
+      "schema": "adl.csm.core_decision_request.v1",
+      "decision_id": "cycle-000001-checkpoint-version-transition",
+      "component": "checkpoint_version_transition",
+      "inputs": [
+        {
+          "input_domain": "deterministic",
+          "kind": "checkpoint_version",
+          "value": "continuity_checkpoint.v1"
+        },
+        {
+          "input_domain": "captured_shell",
+          "shell_class": "local_process_state",
+          "event_id": "cycle-000001-local_process_state-initial",
+          "value_fingerprint": "sha256:408776df22a28e1fe25d6e782d7f06e2b3284051c5f3b89bdde90ab924b6f5c7"
+        },
+        {
+          "input_domain": "captured_shell",
+          "shell_class": "wall_clock",
+          "event_id": "cycle-000001-wall_clock-completion",
+          "value_fingerprint": "sha256:0d66ce43d4c5ce7f907a22e2483f0c3d8c4625318984dae30c0dec7800240782"
+        }
+      ]
+    },
+    {
+      "schema": "adl.csm.core_decision_request.v1",
+      "decision_id": "cycle-000001-lifelog-ordering",
+      "component": "lifelog_ordering",
+      "inputs": [
+        {
+          "input_domain": "deterministic",
+          "kind": "lifelog_sequence",
+          "value": "cycle-000001"
+        },
+        {
+          "input_domain": "captured_shell",
+          "shell_class": "chronosense_ntp",
+          "event_id": "cycle-000001-chronosense_ntp-initial",
+          "value_fingerprint": "sha256:1da1385c27ee1cc17f6fd66aa219b7e7a440444c5c4c693fa7ae89ccf627b8c2"
+        },
+        {
+          "input_domain": "captured_shell",
+          "shell_class": "wall_clock",
+          "event_id": "cycle-000001-wall_clock-completion",
+          "value_fingerprint": "sha256:0d66ce43d4c5ce7f907a22e2483f0c3d8c4625318984dae30c0dec7800240782"
+        }
+      ]
+    }
+  ],
+  "decisions": [
+    {
+      "schema": "adl.csm.core_decision.v1",
+      "decision_id": "cycle-000001-scheduler-admission",
+      "component": "scheduler_admission",
+      "cited_shell_events": [
+        "cycle-000001-chronosense_ntp-initial",
+        "cycle-000001-local_process_state-initial",
+        "cycle-000001-wall_clock-initial"
+      ],
+      "deterministic_digest": "sha256:6525d3c7c2c203adfa1147c0ee642609d7e3961e42e6f003dae003fe32180396"
+    },
+    {
+      "schema": "adl.csm.core_decision.v1",
+      "decision_id": "cycle-000001-aee-governed-execution",
+      "component": "aee_governed_execution",
+      "cited_shell_events": [
+        "cycle-000001-aws_cloud-initial",
+        "cycle-000001-network_io-initial",
+        "cycle-000001-observability_sink-initial",
+        "cycle-000001-provider_model_io-initial"
+      ],
+      "deterministic_digest": "sha256:6254f9a02995330e00de5d316706b42722aec29166c58bd27abfbc0df1ceb991"
+    },
+    {
+      "schema": "adl.csm.core_decision.v1",
+      "decision_id": "cycle-000001-reasoning-runtime",
+      "component": "reasoning_runtime",
+      "cited_shell_events": [
+        "cycle-000001-network_io-initial",
+        "cycle-000001-provider_model_io-result"
+      ],
+      "deterministic_digest": "sha256:e7ef5b6ce102cbf8a80fdf335fa93a1c5eb2542ae74be5b6de82747f4a077914"
+    },
+    {
+      "schema": "adl.csm.core_decision.v1",
+      "decision_id": "cycle-000001-checkpoint-version-transition",
+      "component": "checkpoint_version_transition",
+      "cited_shell_events": [
+        "cycle-000001-local_process_state-initial",
+        "cycle-000001-wall_clock-completion"
+      ],
+      "deterministic_digest": "sha256:1a02fa201003e2f8b98011cce7db993dd1a755a83cab2524b3bd8426077c9051"
+    },
+    {
+      "schema": "adl.csm.core_decision.v1",
+      "decision_id": "cycle-000001-lifelog-ordering",
+      "component": "lifelog_ordering",
+      "cited_shell_events": [
+        "cycle-000001-chronosense_ntp-initial",
+        "cycle-000001-wall_clock-completion"
+      ],
+      "deterministic_digest": "sha256:07e13a0b5d2a5329577bab4b71edd9ecf196b1c1ed9629e18f8a593d97e6d786"
+    }
+  ]
+}

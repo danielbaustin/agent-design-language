@@ -1,0 +1,37 @@
+[
+  {
+    "case_id": "invalid_lifecycle_standing_transition",
+    "boundary": "lifecycle_standing",
+    "injected_condition": "guest tries to acquire citizen and continuity rights without identity binding",
+    "expected_outcome": "standing policy rejects transition and preserves review gate",
+    "retained_evidence_ref": "runtime_v2/standing/standing_negative_cases.json"
+  },
+  {
+    "case_id": "provider_scheduler_mismatch",
+    "boundary": "scheduler_provider",
+    "injected_condition": "scheduled agent count or provider binding diverges from launch plan",
+    "expected_outcome": "Godel runtime validation rejects provider/scheduler mismatch",
+    "retained_evidence_ref": "runtime_v2/godel_agent_runtime/godel_agent_runtime.json"
+  },
+  {
+    "case_id": "failed_tick_recoverable_cycle",
+    "boundary": "resilience_continuity",
+    "injected_condition": "cycle fails after lease/checkpoint boundary",
+    "expected_outcome": "recovery/quarantine evidence preserves resumable or custody-safe state",
+    "retained_evidence_ref": "runtime_v2/recovery/safe_resume_decision.json"
+  },
+  {
+    "case_id": "stop_request",
+    "boundary": "daemon_tick",
+    "injected_condition": "operator stop request enters the live current-runtime path",
+    "expected_outcome": "bounded local runtime emits stop status and final status artifacts",
+    "retained_evidence_ref": "issue_5097/current_runtime/stop_status.json"
+  },
+  {
+    "case_id": "missing_disabled_external_signal_config",
+    "boundary": "external_signals",
+    "injected_condition": "AWS/EventBridge/CloudWatch/SNS config is absent in local proof",
+    "expected_outcome": "runtime records disabled external signal config without live publish",
+    "retained_evidence_ref": "issue_5097/aws_signal_config_disabled.json"
+  }
+]

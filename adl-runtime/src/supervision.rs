@@ -1490,7 +1490,7 @@ mod tests {
     fn cav_policy_is_security_critical_and_not_telemetry_only() {
         let cav = default_component_supervision()
             .into_iter()
-            .find(|policy| policy.component == "cav")
+            .find(|policy| policy.component == ComponentId::Cav)
             .expect("cav policy");
         assert!(cav.critical_for_continuity);
         assert!(!cav.telemetry_can_degrade);

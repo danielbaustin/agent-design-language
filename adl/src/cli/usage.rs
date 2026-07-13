@@ -45,6 +45,7 @@ pub fn usage() -> &'static str {
   adl runtime-v2 integrated-csm-run-demo [--out <dir>]
   adl runtime-v2 minimal-integrated-runtime-path [--out <dir>]
   adl runtime-v2 aee-obsmem-pvf-handoff [--out <dir>]
+  adl runtime-v2 unified-runtime-kernel [--out <dir>]
   adl runtime-v2 observatory-flagship-demo [--out <dir>]
   adl runtime-v2 cognitive-being-flagship-demo [--out <dir>]
   adl runtime-v2 contract-market-demo [--out <dir>]
@@ -137,6 +138,7 @@ Examples:
   adl runtime-v2 integrated-csm-run-demo --out artifacts/v0902/demo-d10-integrated-csm-run
   adl runtime-v2 minimal-integrated-runtime-path --out artifacts/v0917/issue-4681-minimal-integrated-runtime-path
   adl runtime-v2 aee-obsmem-pvf-handoff --out artifacts/v0917/issue-4697-aee-obsmem-pvf-handoff
+  adl runtime-v2 unified-runtime-kernel --out artifacts/v0917/issue-5097-unified-runtime-kernel
   adl runtime-v2 observatory-flagship-demo --out artifacts/v0903/demo-d12-observatory-flagship
   adl runtime-v2 cognitive-being-flagship-demo --out artifacts/v091/demo-d13-cognitive-being-flagship
   adl runtime-v2 contract-market-demo --out artifacts/v0904/demo-d12-contract-market

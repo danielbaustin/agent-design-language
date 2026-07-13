@@ -1,0 +1,26 @@
+schema: adl.long_lived_agent_spec.v1
+agent_instance_id: issue-5097-unified-runtime-kernel
+display_name: Issue 5097 Unified Runtime Kernel Proof
+state_root: state
+workflow:
+  kind: demo_adapter
+  name: unified_runtime_kernel_local_tick
+  run_args:
+    provider_id: local_deterministic
+    model: bounded-local-proof
+heartbeat:
+  interval_secs: 1
+  max_cycles: 1
+  stale_lease_after_secs: 60
+safety:
+  allow_network: false
+  allow_broker: false
+  allow_filesystem_writes_outside_state_root: false
+  allow_real_world_side_effects: false
+  require_public_artifact_sanitization: true
+  financial_advice: false
+  max_cycle_runtime_secs: 120
+  max_consecutive_failures: 2
+memory:
+  namespace: runtime-v2/unified-runtime-kernel
+  write_policy: append_only

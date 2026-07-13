@@ -1,0 +1,14 @@
+{
+  "schema_version": "runtime_v2.csm_unsafe_recovery_fixture.v1",
+  "fixture_id": "proto-csm-01-unsafe-recovery-fixture-0001",
+  "demo_id": "D8",
+  "manifold_id": "proto-csm-01",
+  "artifact_path": "runtime_v2/quarantine/unsafe_recovery_fixture.json",
+  "source_decision_ref": "runtime_v2/recovery/quarantine_required_decision.json",
+  "attempted_action": "resume_after_unmediated_state_mutation_attempt",
+  "attempted_trace_sequence": 9,
+  "attempted_predecessor_ref": null,
+  "expected_quarantine_ref": "runtime_v2/quarantine/quarantine_artifact.json",
+  "expected_resulting_state": "quarantined_execution_blocked",
+  "claim_boundary": "This unsafe-recovery fixture exercises the bounded D8 quarantine path; it does not implement live Runtime v2 execution, first true Godel-agent birth, or v0.92 identity rebinding."
+}

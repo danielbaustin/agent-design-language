@@ -1,0 +1,18 @@
+{
+  "schema_version": "runtime_v2.rehydration_report.v1",
+  "snapshot_id": "snapshot-0001",
+  "manifold_id": "proto-csm-01",
+  "report_path": "runtime_v2/rehydration_report.json",
+  "restored_manifold_id": "proto-csm-01",
+  "restored_lifecycle_state": "active",
+  "trace_resume_sequence": 9,
+  "invariant_checks_ran_before_resume": true,
+  "duplicate_active_citizen_detected": false,
+  "restored_active_citizens": [
+    "proto-citizen-alpha"
+  ],
+  "wake_allowed": true,
+  "wake_refused_reason": null,
+  "snapshot_checksum": "fnv1a64:3d7698db0accb4f7",
+  "rehydrated_at_utc": "not_started"
+}

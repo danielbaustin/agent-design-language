@@ -1,0 +1,9 @@
+{
+  "schema": "adl.long_lived_agent_stop.v1",
+  "agent_instance_id": "issue-5097-unified-runtime-kernel",
+  "reason": "bounded #5097 unified runtime kernel local proof stop request",
+  "requested_by": "operator",
+  "classification": "operator_stop_requested",
+  "mode": "stop_before_next_cycle",
+  "requested_at": "2026-07-13T04:16:49.461804Z"
+}

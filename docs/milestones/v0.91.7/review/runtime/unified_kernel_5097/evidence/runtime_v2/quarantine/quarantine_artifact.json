@@ -1,0 +1,64 @@
+{
+  "schema_version": "runtime_v2.csm_quarantine_artifact.v1",
+  "quarantine_id": "proto-csm-01-quarantine-0001",
+  "demo_id": "D8",
+  "manifold_id": "proto-csm-01",
+  "artifact_path": "runtime_v2/quarantine/quarantine_artifact.json",
+  "source_fixture_ref": "runtime_v2/quarantine/unsafe_recovery_fixture.json",
+  "source_decision_ref": "runtime_v2/recovery/quarantine_required_decision.json",
+  "evidence_preservation_ref": "runtime_v2/quarantine/evidence_preservation_artifact.json",
+  "quarantine_state": "execution_blocked_pending_operator_review",
+  "triggers": [
+    {
+      "trigger_id": "quarantine_trigger_wake_continuity_unique_active_head",
+      "source_condition_id": "wake_continuity_unique_active_head",
+      "source_decision_ref": "runtime_v2/recovery/quarantine_required_decision.json",
+      "rationale": "attempt requests a duplicate active head outside the accepted wake proof"
+    },
+    {
+      "trigger_id": "quarantine_trigger_predecessor_linkage_unambiguous",
+      "source_condition_id": "predecessor_linkage_unambiguous",
+      "source_decision_ref": "runtime_v2/recovery/quarantine_required_decision.json",
+      "rationale": "attempt lacks an unambiguous declared predecessor for recovery"
+    }
+  ],
+  "blocked_actions": [
+    "resume_without_operator_review",
+    "mutate_quarantined_state",
+    "prune_evidence_before_review"
+  ],
+  "state_machine": [
+    {
+      "sequence": 1,
+      "from_state": "unsafe_recovery_detected",
+      "event": "quarantine_required_decision_accepted",
+      "to_state": "quarantine_entered",
+      "guard": "decision_must_refuse_resume",
+      "evidence_ref": "runtime_v2/recovery/quarantine_required_decision.json"
+    },
+    {
+      "sequence": 2,
+      "from_state": "quarantine_entered",
+      "event": "preserve_evidence",
+      "to_state": "evidence_preserved",
+      "guard": "all_source_refs_must_be_retained",
+      "evidence_ref": "runtime_v2/quarantine/evidence_preservation_artifact.json"
+    },
+    {
+      "sequence": 3,
+      "from_state": "evidence_preserved",
+      "event": "block_execution",
+      "to_state": "execution_blocked_pending_operator_review",
+      "guard": "no_resume_until_operator_review_and_new_recovery_decision",
+      "evidence_ref": "runtime_v2/recovery/quarantine_required_decision.json"
+    }
+  ],
+  "operator_review_state": "required_before_resume_or_prune",
+  "release_requirements": [
+    "operator_review_record",
+    "new_recovery_eligibility_decision",
+    "evidence_preservation_verified"
+  ],
+  "next_owner_wp": "WP-13",
+  "claim_boundary": "This artifact implements the bounded D8 quarantine state machine and evidence hold for unsafe recovery; it does not implement live Runtime v2 execution, first true Godel-agent birth, or v0.92 identity rebinding."
+}

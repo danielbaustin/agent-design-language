@@ -375,6 +375,50 @@ safety:
         spec
     }
 
+    struct GovernedCsmTestPort {
+        bind: String,
+        lock_dir: PathBuf,
+    }
+
+    impl Drop for GovernedCsmTestPort {
+        fn drop(&mut self) {
+            let _ = fs::remove_dir(&self.lock_dir);
+        }
+    }
+
+    fn reserve_governed_csm_test_port(label: &str) -> GovernedCsmTestPort {
+        let start = ((std::process::id() as u64)
+            .wrapping_add(TEMP_SEQ.fetch_add(1, Ordering::SeqCst)))
+            % 50;
+        let lock_root = std::env::current_dir()
+            .expect("resolve current test directory")
+            .join(".adl")
+            .join("test-port-locks")
+            .join("csm");
+        fs::create_dir_all(&lock_root).expect("create governed CSM test port lock root");
+        for offset in 0..50 {
+            let port = 19_950 + ((start + offset) % 50) as u16;
+            let lock_dir = lock_root.join(format!("port-{port}.lock"));
+            if fs::create_dir(&lock_dir).is_err() {
+                continue;
+            }
+            match TcpListener::bind(("127.0.0.1", port)) {
+                Ok(listener) => {
+                    let bind = listener.local_addr().expect("read governed CSM test port");
+                    drop(listener);
+                    return GovernedCsmTestPort {
+                        bind: bind.to_string(),
+                        lock_dir,
+                    };
+                }
+                Err(_) => {
+                    let _ = fs::remove_dir(&lock_dir);
+                }
+            }
+        }
+        panic!("could not bind one governed CSM test port for {label} in 19950-19999");
+    }
+
     fn assert_err_contains(result: anyhow::Result<()>, needle: &str) {
         let err = result.expect_err("expected error");
         assert!(
@@ -401,11 +445,8 @@ safety:
     fn csmctl_authenticated_api_client_uses_runtime_owned_credential() {
         let root = temp_root("api-client");
         let spec = write_spec(&root);
-        let reservation = (19_950..20_000)
-            .find_map(|port| TcpListener::bind(("127.0.0.1", port)).ok())
-            .expect("available governed CSM test port");
-        let bind = reservation.local_addr().unwrap().to_string();
-        drop(reservation);
+        let port = reserve_governed_csm_test_port("api-client");
+        let bind = port.bind.clone();
         let server_spec = spec.clone();
         let server_bind = bind.clone();
         let server = std::thread::spawn(move || {

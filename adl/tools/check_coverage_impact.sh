@@ -301,6 +301,9 @@ candidate_filter_for_path() {
     adl/src/runtime_v2/godel_agent_runtime.rs)
       printf 'runtime_v2_godel_agent_runtime'
       ;;
+    adl/src/runtime_v2/unified_runtime_kernel.rs)
+      printf 'runtime_v2_unified_runtime_kernel'
+      ;;
     adl/src/runtime_v2/shutdown_dag.rs)
       printf 'runtime_v2_csm_shutdown_dag'
       ;;
@@ -387,6 +390,9 @@ nextest_expression_for_filter() {
       ;;
     runtime_v2_csm_shutdown_dag)
       printf 'test(runtime_v2_csm_shutdown_dag) or (binary_id(adl::cli_smoke) and test(csm_governed_shutdown_retains_continuity_and_publish_failures_without_false_success))'
+      ;;
+    runtime_v2_unified_runtime_kernel)
+      printf 'test(runtime_v2_unified_runtime_kernel)'
       ;;
     finish)
       printf 'binary_id(adl::bin/adl-pr-finish) and test(/^cli::pr_cmd::tests::finish::arg_render::/) or binary_id(adl::bin/adl-pr-finish) and test(/^cli::pr_cmd::finish_support::tests::/)'

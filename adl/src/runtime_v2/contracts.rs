@@ -145,6 +145,11 @@ pub fn runtime_v2_minimal_integrated_runtime_path_contract(
     RuntimeV2MinimalIntegratedRuntimePathArtifacts::prototype()
 }
 
+pub fn runtime_v2_unified_runtime_kernel_contract() -> Result<RuntimeV2UnifiedRuntimeKernelArtifacts>
+{
+    RuntimeV2UnifiedRuntimeKernelArtifacts::prototype()
+}
+
 pub fn runtime_v2_feature_proof_coverage_contract() -> Result<RuntimeV2FeatureProofCoveragePacket> {
     static PACKET: OnceCell<RuntimeV2FeatureProofCoveragePacket> = OnceCell::new();
     cached_contract(&PACKET, RuntimeV2FeatureProofCoveragePacket::prototype)

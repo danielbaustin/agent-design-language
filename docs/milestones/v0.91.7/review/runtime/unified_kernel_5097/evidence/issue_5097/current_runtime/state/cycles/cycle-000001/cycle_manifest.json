@@ -1,0 +1,36 @@
+{
+  "agent_instance_id": "issue-5097-unified-runtime-kernel",
+  "artifacts": {
+    "csm_adl_run_status": null,
+    "cycle_summary": "cycle_summary.md",
+    "decision_request": "decision_request.json",
+    "decision_result": "decision_result.json",
+    "determinism_boundary": "determinism_boundary.json",
+    "guardrail_report": "guardrail_report.json",
+    "memory_writes": "memory_writes.jsonl",
+    "observations": "observations.json",
+    "run_ref": "run_ref.json"
+  },
+  "completed_at": "2026-07-13T04:16:49.362120Z",
+  "csm_runtime": {
+    "adl_role": "tooling_control_plane",
+    "aee": "integrated",
+    "chronosense": "integrated",
+    "determinism_boundary": "typed_capture_and_fail_closed_quarantine",
+    "resilience_middleware": "integrated",
+    "runtime_owner": "csm",
+    "scheduler_watcher": "integrated"
+  },
+  "cycle_id": "cycle-000001",
+  "determinism_boundary_digest": "sha256:3b0dbe7396c69509eb45ae68771252b793446149459a35321f5cb811c98a017b",
+  "input_hash": "sha256:48e7b0706a45bcf35a99927f78f4dbb4b0a743c5800eea3415589077109ccc2f",
+  "next_cycle_hint": "sleep_until_next_heartbeat",
+  "not_financial_advice": true,
+  "output_hash": "sha256:e0f8c3caa170bae063aa11a540b68161940b595ad26f96beb17413267b98da18",
+  "previous_cycle_id": null,
+  "schema": "adl.long_lived_agent_cycle_manifest.v1",
+  "started_at": "2026-07-13T04:16:49.319933Z",
+  "status": "success",
+  "workflow_kind": "demo_adapter",
+  "workflow_ref": "unified_runtime_kernel_local_tick"
+}

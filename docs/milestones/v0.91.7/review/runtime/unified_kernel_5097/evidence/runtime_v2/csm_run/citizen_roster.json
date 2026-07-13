@@ -1,0 +1,33 @@
+{
+  "schema_version": "runtime_v2.csm_citizen_roster.v1",
+  "roster_id": "proto-csm-01-worker-roster-0001",
+  "demo_id": "D3",
+  "manifold_id": "proto-csm-01",
+  "artifact_path": "runtime_v2/csm_run/citizen_roster.json",
+  "boot_manifest_ref": "runtime_v2/csm_run/boot_manifest.json",
+  "entries": [
+    {
+      "citizen_id": "proto-citizen-alpha",
+      "display_name": "Prototype Citizen Alpha",
+      "role": "worker",
+      "lifecycle_state_at_boot": "active",
+      "identity_handle": "runtime-v2://proto-csm-01/citizens/proto-citizen-alpha",
+      "record_ref": "runtime_v2/citizens/proto-citizen-alpha.json",
+      "memory_root_ref": "runtime_v2/citizens/proto-citizen-alpha/memory",
+      "policy_ref": "runtime_v2/citizens/proto-citizen-alpha/policy.json",
+      "admission_trace_ref": "runtime_v2/traces/admission/proto-citizen-alpha.json"
+    },
+    {
+      "citizen_id": "proto-citizen-beta",
+      "display_name": "Prototype Citizen Beta",
+      "role": "worker",
+      "lifecycle_state_at_boot": "proposed",
+      "identity_handle": "runtime-v2://proto-csm-01/citizens/proto-citizen-beta",
+      "record_ref": "runtime_v2/citizens/proto-citizen-beta.json",
+      "memory_root_ref": "runtime_v2/citizens/proto-citizen-beta/memory",
+      "policy_ref": "runtime_v2/citizens/proto-citizen-beta/policy.json",
+      "admission_trace_ref": "runtime_v2/traces/admission/proto-citizen-beta.json"
+    }
+  ],
+  "provisional_boundary": "workers are admitted for the bounded v0.90.2 CSM run; this does not promote them to v0.92 citizen continuity or birthday semantics"
+}

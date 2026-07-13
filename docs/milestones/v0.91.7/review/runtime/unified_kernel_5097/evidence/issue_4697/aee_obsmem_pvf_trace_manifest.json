@@ -1,0 +1,28 @@
+{
+  "schema_version": "runtime_v2.aee_obsmem_pvf_trace_manifest.v1",
+  "issue": 4697,
+  "run_id": "issue-4697-aee-obsmem-pvf-handoff",
+  "workflow_id": "runtime_v2.aee_obsmem_pvf_trace_handoff",
+  "activation_log_ref": "artifacts/runtime-v2-aee-obsmem-pvf-handoff/logs/activation_log.json",
+  "aee_boundary": "AEE observes governed runtime outcome and records bounded adaptation context",
+  "obsmem_boundary": "ObsMem adapter receives a validated MemoryWriteRequest with trace refs",
+  "pvf_lane": "runtime",
+  "pvf_trace_handoff_refs": [
+    "pvf://v0.91.7/issue-4697/runtime/aee-obsmem-trace-handoff",
+    "pvf://v0.91.7/issue-4697/runtime/obsmem-retrieval-proof"
+  ],
+  "retained_trace_event_refs": [
+    {
+      "event_sequence": 7,
+      "event_kind": "governed_action_selected",
+      "step_id": "aee_obsmem_pvf_handoff",
+      "delegation_id": null
+    },
+    {
+      "event_sequence": 8,
+      "event_kind": "governed_execution_result_recorded",
+      "step_id": "aee_obsmem_pvf_handoff",
+      "delegation_id": null
+    }
+  ]
+}

@@ -1,0 +1,59 @@
+{
+  "schema_version": "runtime_v2.csm_integrated_run_proof_packet.v1",
+  "proof_id": "proto-csm-01-integrated-first-run-proof-0001",
+  "demo_id": "D10",
+  "manifold_id": "proto-csm-01",
+  "artifact_path": "runtime_v2/csm_run/integrated_first_run_proof_packet.json",
+  "run_packet_ref": "runtime_v2/csm_run/proto-csm-01-run-packet.json",
+  "trace_ref": "runtime_v2/csm_run/first_run_trace.jsonl",
+  "execution_transcript_ref": "runtime_v2/csm_run/integrated_first_run_transcript.jsonl",
+  "observatory_packet_ref": "runtime_v2/observatory/visibility_packet.json",
+  "operator_report_ref": "runtime_v2/observatory/operator_report.md",
+  "recovery_refs": [
+    "runtime_v2/recovery/eligibility_model.json",
+    "runtime_v2/recovery/safe_resume_decision.json",
+    "runtime_v2/recovery/quarantine_required_decision.json"
+  ],
+  "quarantine_refs": [
+    "runtime_v2/quarantine/unsafe_recovery_fixture.json",
+    "runtime_v2/quarantine/quarantine_artifact.json",
+    "runtime_v2/quarantine/evidence_preservation_artifact.json"
+  ],
+  "hardening_refs": [
+    "runtime_v2/hardening/rules_of_engagement.json",
+    "runtime_v2/hardening/adversarial_hook_packet.json",
+    "runtime_v2/hardening/duplicate_activation_probe.json",
+    "runtime_v2/hardening/snapshot_integrity_probe.json",
+    "runtime_v2/hardening/trace_replay_gap_probe.json",
+    "runtime_v2/hardening/hardening_proof_packet.json"
+  ],
+  "integrated_stage_refs": [
+    "runtime_v2/csm_run/run_packet_contract.json",
+    "runtime_v2/invariants/csm_run_invariant_map.json",
+    "runtime_v2/csm_run/boot_manifest.json",
+    "runtime_v2/csm_run/first_run_trace.jsonl",
+    "runtime_v2/csm_run/freedom_gate_decision.json",
+    "runtime_v2/csm_run/invalid_action_violation.json",
+    "runtime_v2/csm_run/wake_continuity_proof.json",
+    "runtime_v2/observatory/visibility_packet.json",
+    "runtime_v2/recovery/safe_resume_decision.json",
+    "runtime_v2/quarantine/quarantine_artifact.json",
+    "runtime_v2/hardening/hardening_proof_packet.json"
+  ],
+  "proof_summary": "D10 integrates WP-05 through WP-13 into one bounded first CSM run proof packet: boot/admission, governed scheduling, Freedom Gate mediation, invalid-action refusal, snapshot wake continuity, Observatory visibility, recovery/quarantine, and governed hardening.",
+  "proof_classification": "proving",
+  "reviewer_entrypoint": "docs/milestones/v0.90.2/CSM_RUN_PACKET_CONTRACT_v0.90.2.md",
+  "validation_commands": [
+    "cargo test --manifest-path adl/Cargo.toml runtime_v2_csm_integrated_run -- --nocapture",
+    "adl runtime-v2 integrated-csm-run-demo --out artifacts/v0902/demo-d10-integrated-csm-run",
+    "git diff --check"
+  ],
+  "non_claims": [
+    "does not execute an unbounded live CSM run",
+    "does not claim first true Godel-agent birth",
+    "does not implement v0.91 moral or emotional civilization scope",
+    "does not implement v0.92 identity or migration semantics",
+    "does not implement a complete red/blue/purple security ecology"
+  ],
+  "claim_boundary": "This packet proves the bounded D10 integrated first-run evidence package; it does not prove first true Godel-agent birth, unbounded live Runtime v2 execution, v0.91 civic substrate, v0.92 identity rebinding, or a complete security ecology."
+}

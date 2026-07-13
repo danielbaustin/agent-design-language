@@ -1,0 +1,42 @@
+{
+  "schema_version": "runtime_v2.csm_boot_manifest.v1",
+  "boot_id": "proto-csm-01-boot-0001",
+  "demo_id": "D3",
+  "manifold_id": "proto-csm-01",
+  "artifact_path": "runtime_v2/csm_run/boot_manifest.json",
+  "generated_at_utc": "2026-04-20T00:00:00Z",
+  "run_packet_ref": "runtime_v2/csm_run/run_packet_contract.json",
+  "invariant_map_ref": "runtime_v2/invariants/csm_run_invariant_map.json",
+  "violation_schema_ref": "runtime_v2/violations/violation_artifact_schema.json",
+  "citizen_roster_ref": "runtime_v2/csm_run/citizen_roster.json",
+  "admission_trace_ref": "runtime_v2/csm_run/boot_admission_trace.jsonl",
+  "boot_state": "booted_bounded",
+  "admitted_citizens": [
+    {
+      "citizen_id": "proto-citizen-alpha",
+      "role": "worker",
+      "identity_handle": "runtime-v2://proto-csm-01/citizens/proto-citizen-alpha",
+      "source_record_ref": "runtime_v2/citizens/proto-citizen-alpha.json",
+      "admission_trace_ref": "runtime_v2/traces/admission/proto-citizen-alpha.json",
+      "admission_status": "admitted_for_bounded_run",
+      "can_execute_episodes": true,
+      "boundary_note": "provisional admission for v0.90.2 D3; not a true Godel-agent birthday"
+    },
+    {
+      "citizen_id": "proto-citizen-beta",
+      "role": "worker",
+      "identity_handle": "runtime-v2://proto-csm-01/citizens/proto-citizen-beta",
+      "source_record_ref": "runtime_v2/citizens/proto-citizen-beta.json",
+      "admission_trace_ref": "runtime_v2/traces/admission/proto-citizen-beta.json",
+      "admission_status": "admitted_for_bounded_run",
+      "can_execute_episodes": false,
+      "boundary_note": "provisional admission for v0.90.2 D3; not a true Godel-agent birthday"
+    }
+  ],
+  "required_before_next_stage": [
+    "runtime_v2/csm_run/boot_manifest.json",
+    "runtime_v2/csm_run/citizen_roster.json",
+    "runtime_v2/csm_run/boot_admission_trace.jsonl"
+  ],
+  "claim_boundary": "This boot manifest proves bounded D3 boot/admission evidence; it is not a live governed episode and not a true Godel-agent birthday."
+}

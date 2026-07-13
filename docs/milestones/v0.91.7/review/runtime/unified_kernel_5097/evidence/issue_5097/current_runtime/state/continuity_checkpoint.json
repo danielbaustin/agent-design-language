@@ -1,0 +1,38 @@
+{
+  "agent_instance_id": "issue-5097-unified-runtime-kernel",
+  "captured_at": "2026-07-13T04:16:49.511Z",
+  "checkpoint_reason": "status_refreshed",
+  "completed_cycle_count": 1,
+  "consecutive_failure_count": 0,
+  "continuity_kind": "pre_v0_92_handle",
+  "continuity_ref": "continuity.json",
+  "cycle_ledger_ref": "cycle_ledger.jsonl",
+  "godel_agent_snapshot_diff": {
+    "artifact_ref": "godel_snapshots/diffs/issue-5097-unified-runtime-kernel-diff-000007.json",
+    "chain_ref": "godel_snapshots/godel_agent_snapshot_chain.json",
+    "last_known_good_ref": "godel_snapshots/diffs/issue-5097-unified-runtime-kernel-diff-000007.json",
+    "last_known_good_sha256": "ce30ee04e78e8690d86fbbeef87cc2ca0dea8b9430530d3ad913b44c49b6acaf",
+    "validation_status": "passed",
+    "write_kind": "diff"
+  },
+  "latest_cycle_id": "cycle-000001",
+  "latest_cycle_status": "success",
+  "lease_ref": null,
+  "lease_state": "clear",
+  "restore_basis": {
+    "expected_next_cycle_id": "cycle-000002",
+    "ledger_entry_count": 1,
+    "max_cycle_number": 1
+  },
+  "runtime_component_snapshots": {
+    "constructability_gate": {
+      "decision_ledger_ref": "csm_constructability_decisions.jsonl",
+      "status": "missing",
+      "status_ref": "csm_constructability_status.json"
+    }
+  },
+  "schema": "adl.long_lived_agent_continuity_checkpoint.v1",
+  "state": "stopped",
+  "status_ref": "status.json",
+  "stop_requested": true
+}

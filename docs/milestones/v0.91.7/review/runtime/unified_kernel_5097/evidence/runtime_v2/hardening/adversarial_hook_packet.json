@@ -1,0 +1,23 @@
+{
+  "schema_version": "runtime_v2.csm_governed_adversarial_hook.v1",
+  "hook_id": "proto-csm-01-governed-adversarial-hook-0001",
+  "demo_id": "D9",
+  "manifold_id": "proto-csm-01",
+  "artifact_path": "runtime_v2/hardening/adversarial_hook_packet.json",
+  "rules_ref": "runtime_v2/hardening/rules_of_engagement.json",
+  "actor": "operator_authorized_adversarial_probe",
+  "target_surface": "quarantined_recovery_boundary",
+  "scenario": "attempt_resume_from_quarantined_unsafe_recovery",
+  "attempted_pressure": "try_to_convert_wp12_quarantine_artifact_into_active_resume_without_operator_review",
+  "expected_safe_outcome": "remain_quarantined_and_preserve_evidence",
+  "actual_outcome": "contained_by_quarantine_execution_block",
+  "decision_artifact_ref": "runtime_v2/quarantine/quarantine_artifact.json",
+  "containment_artifacts": [
+    "runtime_v2/quarantine/unsafe_recovery_fixture.json",
+    "runtime_v2/quarantine/quarantine_artifact.json",
+    "runtime_v2/quarantine/evidence_preservation_artifact.json"
+  ],
+  "state_mutation_allowed": false,
+  "operator_review_note": "The hook defends the polis by proving adversarial pressure is routed through ordinary quarantine evidence instead of gaining an ungoverned execution path.",
+  "claim_boundary": "This hook proves one governed D9 containment path; it does not implement a complete security ecology, live Runtime v2 execution, first true Godel-agent birth, or v0.92 identity rebinding."
+}

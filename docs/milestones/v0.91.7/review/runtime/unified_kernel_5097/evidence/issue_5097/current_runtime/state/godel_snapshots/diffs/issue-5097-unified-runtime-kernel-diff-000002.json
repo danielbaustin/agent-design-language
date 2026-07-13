@@ -1,0 +1,73 @@
+{
+  "schema": "adl.csm.godel_agent_diff.v1",
+  "format_version": "godel-agent-state.v1",
+  "agent_instance_id": "issue-5097-unified-runtime-kernel",
+  "diff_id": "issue-5097-unified-runtime-kernel-diff-000002",
+  "diff_ref": "godel_snapshots/diffs/issue-5097-unified-runtime-kernel-diff-000002.json",
+  "base_snapshot_ref": "godel_snapshots/snapshots/issue-5097-unified-runtime-kernel-snapshot-000001.json",
+  "base_snapshot_sha256": "3cc42a8e794d0eed8e3b81aa36419d5e739d454c504eadb647da0da375f5cd1a",
+  "previous_diff_ref": "godel_snapshots/diffs/issue-5097-unified-runtime-kernel-diff-000001.json",
+  "previous_diff_sha256": "cac6414fe76be56229e6a7b9f0032c62124d238068000410dff5107330a6c9e4",
+  "captured_at": "2026-07-13T04:16:49.275999Z",
+  "protocol": {
+    "format_version": "godel-agent-state.v1",
+    "compatible_read_versions": [
+      "godel-agent-state.v1"
+    ],
+    "migration_policy": "same-major v1 readers are compatible; v2+ requires explicit migration before recovery",
+    "cadence_policy": {
+      "trigger": "csm_continuity_checkpoint",
+      "checkpoint_interval_secs": 1,
+      "min_agent_request_interval_secs": 30,
+      "writes_base_snapshot_when_chain_missing": true,
+      "writes_diff_after_valid_base": true
+    },
+    "backpressure_policy": {
+      "csm_queue": "snapshot_diff",
+      "policy": "defer_latest_only_under_backpressure",
+      "failure_mode": "fail_checkpoint_validation_if_chain_cannot_validate",
+      "low_disk_behavior": "preserve last-known-good pointer; do not advance chain on interrupted write"
+    }
+  },
+  "state_projection": {
+    "agent_instance_id": "issue-5097-unified-runtime-kernel",
+    "display_name": "Issue 5097 Unified Runtime Kernel Proof",
+    "workflow_kind": "demo_adapter",
+    "workflow_name": "unified_runtime_kernel_local_tick",
+    "workflow_path_ref": null,
+    "declared_capabilities": [
+      "csm_continuity_checkpoint",
+      "godel_snapshot_diff_v1",
+      "workflow_kind:demo_adapter",
+      "memory_refs_projected_without_payloads"
+    ],
+    "active_run_position": {
+      "state": "not_started",
+      "latest_cycle_id": null,
+      "latest_cycle_status": null,
+      "completed_cycle_count": 0,
+      "consecutive_failure_count": 0,
+      "stop_requested": false,
+      "lease_state": "clear"
+    },
+    "memory_refs": [
+      "runtime-v2/unified-runtime-kernel"
+    ],
+    "local_deltas": [
+      "checkpoint_reason:status_refreshed",
+      "status_state:NotStarted"
+    ],
+    "recovery_hints": [
+      "resume_from_validated_last_known_good_pointer"
+    ]
+  },
+  "delta_summary": [
+    "checkpoint_reason:status_refreshed",
+    "latest_cycle_id:none",
+    "latest_cycle_status:none",
+    "completed_cycle_count:0"
+  ],
+  "continuity_checkpoint_ref": "continuity_checkpoint.json",
+  "continuity_replay_manifest_ref": "continuity_replay_manifest.json",
+  "content_sha256": "a7e064408aa8333480d6f1fa373b1c4f6ab461125e3ebfaf1f045aad58d07ea8"
+}

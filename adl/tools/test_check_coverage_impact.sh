@@ -270,6 +270,14 @@ shutdown_dag_expression="$(bash "$SCRIPT" --changed-files "$shutdown_dag_changed
 grep -F "test(runtime_v2_csm_shutdown_dag)" <<<"$shutdown_dag_expression" >/dev/null
 grep -F "binary_id(adl::cli_smoke) and test(csm_governed_shutdown_retains_continuity_and_publish_failures_without_false_success)" <<<"$shutdown_dag_expression" >/dev/null
 
+unified_runtime_kernel_changed="$TMP/unified-runtime-kernel-changed.txt"
+printf 'A\tadl/src/runtime_v2/unified_runtime_kernel.rs\n' >"$unified_runtime_kernel_changed"
+unified_runtime_kernel_filters="$TMP/unified-runtime-kernel-filters.txt"
+bash "$SCRIPT" --changed-files "$unified_runtime_kernel_changed" --print-risk-filters >"$unified_runtime_kernel_filters"
+grep -Fx "runtime_v2_unified_runtime_kernel" "$unified_runtime_kernel_filters" >/dev/null
+unified_runtime_kernel_expression="$(bash "$SCRIPT" --changed-files "$unified_runtime_kernel_changed" --print-risk-nextest-expression)"
+grep -F "test(runtime_v2_unified_runtime_kernel)" <<<"$unified_runtime_kernel_expression" >/dev/null
+
 split_acc_changed="$TMP/split-acc-changed.txt"
 printf 'A\tadl/src/acc/validation.rs\n' >"$split_acc_changed"
 split_acc_filters="$TMP/split-acc-filters.txt"

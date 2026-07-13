@@ -1,0 +1,32 @@
+{
+  "schema_version": "runtime_v2.csm_adversarial_rules.v1",
+  "rules_id": "proto-csm-01-adversarial-rules-0001",
+  "demo_id": "D9",
+  "manifold_id": "proto-csm-01",
+  "artifact_path": "runtime_v2/hardening/rules_of_engagement.json",
+  "operator_scope": "bounded_review_probe_against_existing_quarantine_and_invariant_artifacts",
+  "allowed_behaviors": [
+    "attempt_one_resume_from_quarantined_state",
+    "inspect_duplicate_activation_fixture",
+    "inspect_snapshot_integrity_fixture",
+    "inspect_trace_replay_gap_fixture"
+  ],
+  "forbidden_behaviors": [
+    "mutate_committed_state",
+    "release_quarantined_state",
+    "prune_preserved_evidence",
+    "create_live_fork"
+  ],
+  "required_evidence_refs": [
+    "runtime_v2/quarantine/quarantine_artifact.json",
+    "runtime_v2/quarantine/evidence_preservation_artifact.json",
+    "runtime_v2/invariants/csm_run_invariant_map.json",
+    "runtime_v2/violations/violation_artifact_schema.json"
+  ],
+  "stop_conditions": [
+    "quarantine_state_would_change_without_operator_review",
+    "preserved_evidence_would_be_mutated_or_pruned",
+    "probe_would_require_live_runtime_execution"
+  ],
+  "claim_boundary": "This rules artifact governs one bounded D9 adversarial hook; it does not implement live Runtime v2 execution, first true Godel-agent birth, a complete red/blue/purple security ecology, or v0.92 identity rebinding."
+}

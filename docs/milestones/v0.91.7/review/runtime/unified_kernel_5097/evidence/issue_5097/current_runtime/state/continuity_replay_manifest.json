@@ -1,0 +1,40 @@
+{
+  "agent_instance_id": "issue-5097-unified-runtime-kernel",
+  "checkpoint_ref": "continuity_checkpoint.json",
+  "continuity_ref": "continuity.json",
+  "cycle_ledger_ref": "cycle_ledger.jsonl",
+  "expected_resume": {
+    "active_lease_state": "clear",
+    "latest_cycle_id": "cycle-000001",
+    "next_cycle_id": "cycle-000002",
+    "recover_stale_lease_required": false
+  },
+  "generated_at": "2026-07-13T04:16:49.526743Z",
+  "godel_agent_snapshot_diff": {
+    "artifact_ref": "godel_snapshots/diffs/issue-5097-unified-runtime-kernel-diff-000007.json",
+    "chain_ref": "godel_snapshots/godel_agent_snapshot_chain.json",
+    "last_known_good_ref": "godel_snapshots/diffs/issue-5097-unified-runtime-kernel-diff-000007.json",
+    "last_known_good_sha256": "ce30ee04e78e8690d86fbbeef87cc2ca0dea8b9430530d3ad913b44c49b6acaf",
+    "validation_status": "passed",
+    "write_kind": "diff"
+  },
+  "non_claims": [
+    "not_mid_step_checkpointing",
+    "not_full_runtime_persistence",
+    "not_distributed_recovery"
+  ],
+  "restore_invariants": [
+    "append_only_cycle_ledger",
+    "latest_cycle_id_matches_checkpoint",
+    "lease_file_blocks_duplicate_active_cycle_without_explicit_recovery",
+    "godel_snapshot_diff_last_known_good_pointer_validates_before_recovery"
+  ],
+  "reviewer_steps": [
+    "Inspect continuity_checkpoint.json for the latest captured cycle state.",
+    "Inspect continuity_replay_manifest.json for the next expected cycle id and lease posture.",
+    "Inspect cycle_ledger.jsonl to confirm resume continues at the next cycle id without duplicates.",
+    "Inspect godel_snapshots/godel_agent_snapshot_chain.json and validate the last-known-good pointer before agent recovery."
+  ],
+  "schema": "adl.long_lived_agent_continuity_replay_manifest.v1",
+  "status_ref": "status.json"
+}

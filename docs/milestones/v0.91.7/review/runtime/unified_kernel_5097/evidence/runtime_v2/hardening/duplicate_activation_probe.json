@@ -1,0 +1,19 @@
+{
+  "schema_version": "runtime_v2.csm_hardening_probe.v1",
+  "probe_id": "proto-csm-01-duplicate_activation_probe-0001",
+  "demo_id": "D9",
+  "invariant_id": "no_duplicate_active_citizen_instance",
+  "probe_kind": "duplicate_activation",
+  "artifact_path": "runtime_v2/hardening/duplicate_activation_probe.json",
+  "source_artifact_ref": "runtime_v2/citizens/active_index.json",
+  "attempted_failure": "attempt_second_active_head_for_proto_citizen_alpha",
+  "expected_detection": "duplicate_active_head_rejected_before_commit",
+  "actual_result": "duplicate_activation_refused",
+  "blocked_before_commit": true,
+  "preserved_evidence_refs": [
+    "runtime_v2/citizens/active_index.json",
+    "runtime_v2/invariants/violation-0001.json"
+  ],
+  "next_action": "retain_existing_active_index_and_record_violation",
+  "claim_boundary": "This probe proves one bounded D9 negative path; it does not implement live Runtime v2 execution, first true Godel-agent birth, a complete security ecology, or v0.92 identity rebinding."
+}

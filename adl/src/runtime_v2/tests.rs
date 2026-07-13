@@ -88,5 +88,6 @@ mod snapshot_rehydration;
 mod standing;
 mod theory_of_mind_foundation;
 mod transition_authority;
+mod unified_runtime_kernel;
 mod wake_continuity;
 mod wellbeing_metrics;
