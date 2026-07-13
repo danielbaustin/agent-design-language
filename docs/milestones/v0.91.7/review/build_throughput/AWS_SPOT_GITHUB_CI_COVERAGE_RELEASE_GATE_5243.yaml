@@ -1,0 +1,31 @@
+schema_version: adl.release_gate_disposition.v1
+issue: 5243
+decision: publish_draft_with_hosted_rollback_preserved
+reviewer_or_review_mode: pre_pr_subagent_review_plus_live_spot_canary_plus_local_release_gate_validation
+changed_release_gate_surfaces:
+  - .github/workflows/aws-spot-remote-validation.yaml
+  - .github/workflows/ci.yaml
+focused_validation_run: >
+  Focused contract proof passed: builder image, Spot builder validation, named
+  CI profiles, authoritative coverage command construction, remote wrapper
+  lifecycle, artifact finalization, CodeBuild image publication, and git
+  diff hygiene. A live Agent Logic Spot m7a.2xlarge canary also passed the
+  Rust adl-ci path and demo smoke with the immutable builder image, retained
+  500 GiB EBS cache, live SSH logs, exact source binding, and cleanup.
+post_merge_disposition: >
+  The release-gate surfaces are safe to publish as a draft PR. The hosted
+  runner remains the default and immediate rollback backend. Spot cutover is
+  limited to trusted same-repository pull requests after one additional
+  environment-backed canary and a hosted rollback rehearsal.
+residual_operational_requirements: >
+  Before repository-wide Spot default routing, run the reusable GitHub workflow
+  through the protected adl-spot-ci environment, verify OIDC and sanitized
+  artifacts, run one same-repository canary, then set the backend back to
+  hosted and confirm no Spot launch occurs. Fork pull requests, pushes,
+  schedules, and workflow dispatch remain hosted during this transition.
+notes:
+  - The stable adl-ci and adl-coverage check names remain unchanged.
+  - The live canary used Agent Logic profile agent-logic-admin in us-west-2.
+  - The canary passed in 493 seconds end to end, including 316 seconds of builder validation.
+  - The retained cache remained available after teardown; temporary IAM and security-group resources were deleted.
+  - The builder image remained immutable and the source commit was verified before execution.
