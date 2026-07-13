@@ -2628,6 +2628,10 @@ fn daemon_heartbeat_partial_checkpoint_does_not_report_backoff() {
 
 #[test]
 fn daemon_healthy_partial_checkpoint_does_not_emit_safe_fail_bundle() {
+    let _env = MultiEnvGuard::set_all(&[
+        ("ADL_CSM_DISK_FLOOR_BYTES", "0"),
+        ("ADL_CSM_TEST_AVAILABLE_BYTES", "1073741824"),
+    ]);
     let root = temp_dir("daemon-healthy-partial-no-safe-fail");
     let spec = write_spec(&root);
     let loaded = load_spec(&spec).expect("load spec");
