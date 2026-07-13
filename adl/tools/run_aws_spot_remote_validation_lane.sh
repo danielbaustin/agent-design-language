@@ -5,6 +5,8 @@ ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)"
 COMMON_GIT_DIR="$(git -C "$ROOT" rev-parse --path-format=absolute --git-common-dir 2>/dev/null || true)"
 PRIMARY_ROOT="${COMMON_GIT_DIR:+$(dirname "$COMMON_GIT_DIR")}"
 PROCESS_BIN="${ADL_PROCESS_BIN:-${PRIMARY_ROOT:-$ROOT}/adl/target/debug/adl}"
+SCRIPT_PATH="$ROOT/adl/tools/run_aws_spot_remote_validation_lane.sh"
+ORIGINAL_ARGS=("$@")
 
 ACTION="plan"
 if [[ $# -gt 0 ]]; then
@@ -36,7 +38,7 @@ PRINT_COMMAND=false
 FOLLOW=false
 INSTANCE_TYPES=()
 CACHE_VOLUME_NAME="${ADL_AWS_REMOTE_VALIDATION_CACHE_VOLUME_NAME:-adl-aws-remote-validation-cache-volume}"
-CACHE_VOLUME_SIZE_GIB="${ADL_AWS_REMOTE_VALIDATION_CACHE_VOLUME_SIZE_GIB:-100}"
+CACHE_VOLUME_SIZE_GIB="${ADL_AWS_REMOTE_VALIDATION_CACHE_VOLUME_SIZE_GIB:-500}"
 CACHE_VOLUME_TYPE="${ADL_AWS_REMOTE_VALIDATION_CACHE_VOLUME_TYPE:-gp3}"
 CACHE_VOLUME_IOPS="${ADL_AWS_REMOTE_VALIDATION_CACHE_VOLUME_IOPS:-3000}"
 CACHE_VOLUME_THROUGHPUT_MBPS="${ADL_AWS_REMOTE_VALIDATION_CACHE_VOLUME_THROUGHPUT_MBPS:-125}"
@@ -80,7 +82,7 @@ Options:
   --artifact-dir <dir>          Artifact root. Defaults beside --out.
   --instance-type <type>        Add an allowed EC2 instance type.
   --cache-volume-name <name>    Warm EBS cache volume name. Defaults to retained WP-06 cache.
-  --cache-volume-size-gib <gib> Cache volume size when created. Defaults to 100.
+  --cache-volume-size-gib <gib> Cache volume size when created. Defaults to 500.
   --cache-volume-type <type>    Cache volume type. Defaults to gp3.
   --cache-volume-iops <iops>    Cache volume IOPS. Defaults to 3000.
   --cache-volume-throughput-mbps <mbps>
@@ -339,10 +341,10 @@ if [[ -z "$ARTIFACT_DIR" ]]; then
 fi
 
 if [[ -z "$LANE_BIN" ]]; then
-  if [[ -x "${PRIMARY_ROOT:-$ROOT}/.adl/bin/adl-aws-remote-validation" ]]; then
-    LANE_BIN="${PRIMARY_ROOT:-$ROOT}/.adl/bin/adl-aws-remote-validation"
-  elif [[ -x "$ROOT/tools/aws_remote_validation/target/debug/adl-aws-remote-validation" ]]; then
+  if [[ -x "$ROOT/tools/aws_remote_validation/target/debug/adl-aws-remote-validation" ]]; then
     LANE_BIN="$ROOT/tools/aws_remote_validation/target/debug/adl-aws-remote-validation"
+  elif [[ -x "${PRIMARY_ROOT:-$ROOT}/.adl/bin/adl-aws-remote-validation" ]]; then
+    LANE_BIN="${PRIMARY_ROOT:-$ROOT}/.adl/bin/adl-aws-remote-validation"
   elif [[ -x "$ROOT/adl/target/debug/adl-aws-remote-validation" ]]; then
     LANE_BIN="$ROOT/adl/target/debug/adl-aws-remote-validation"
   else
@@ -864,12 +866,44 @@ PY
 
 if [[ "$ACTION" == "launch" ]]; then
   mkdir -p "$(dirname "$OUT_PATH")" "$ARTIFACT_DIR"
-  (
-    trap '' HUP
-    execute_run >"$ARTIFACT_DIR/manager.stdout.log" 2>"$ARTIFACT_DIR/manager.stderr.log"
-  ) &
+  launch_args=("${ORIGINAL_ARGS[@]}")
+  if [[ "${launch_args[0]:-}" == "launch" ]]; then
+    launch_args[0]="run"
+  else
+    launch_args=("run" "${launch_args[@]}")
+  fi
+  launch_args+=("--run")
+  python3 - "$ARTIFACT_DIR/launch-state.json" "$RUN_ID" <<'PY'
+import json
+import sys
+from pathlib import Path
+
+Path(sys.argv[1]).write_text(json.dumps({
+    "schema": "adl.aws_spot_launch_state.v1",
+    "status": "launching",
+    "run_id": sys.argv[2],
+}, indent=2, sort_keys=True) + "\n", encoding="utf-8")
+PY
+  nohup "${BASH:-bash}" "$SCRIPT_PATH" "${launch_args[@]}" \
+    >"$ARTIFACT_DIR/manager.stdout.log" \
+    2>"$ARTIFACT_DIR/manager.stderr.log" \
+    </dev/null &
   manager_pid="$!"
   printf '%s\n' "$manager_pid" >"$ARTIFACT_DIR/manager.pid"
+  python3 - "$ARTIFACT_DIR/launch-state.json" "$RUN_ID" "$manager_pid" <<'PY'
+import json
+import sys
+from pathlib import Path
+
+path = Path(sys.argv[1])
+payload = {
+    "schema": "adl.aws_spot_launch_state.v1",
+    "status": "launched",
+    "run_id": sys.argv[2],
+    "manager_pid": int(sys.argv[3]),
+}
+path.write_text(json.dumps(payload, indent=2, sort_keys=True) + "\n", encoding="utf-8")
+PY
   printf 'status=launched run_id=%s pid=%s\n' "$RUN_ID" "$manager_pid"
   printf 'next_status=bash adl/tools/run_aws_spot_remote_validation_lane.sh status --run-id %q\n' "$RUN_ID"
   exit 0

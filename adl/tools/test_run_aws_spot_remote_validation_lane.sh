@@ -55,7 +55,7 @@ elif [[ "$1 $2" == "ec2 describe-volumes" ]]; then
     *'Volumes[0].State'*) echo available ;;
     *'Volumes[0].Tags'*) echo adl-aws-remote-validation-cache-volume ;;
     *'Volumes[0].AvailabilityZone'*) echo us-west-2a ;;
-    *'Volumes[0].Size'*) echo 100 ;;
+    *'Volumes[0].Size'*) echo 500 ;;
     *'Volumes[0].VolumeType'*) echo gp3 ;;
     *'Volumes[0].Iops'*) echo 3000 ;;
     *'Volumes[0].Throughput'*) echo 125 ;;
@@ -346,7 +346,7 @@ grep -Fx -- "vol-0123456789abcdef0" "$TMP/args.txt" >/dev/null
 grep -Fx -- "--cache-volume-name" "$TMP/args.txt" >/dev/null
 grep -Fx -- "adl-aws-remote-validation-cache-volume" "$TMP/args.txt" >/dev/null
 grep -Fx -- "--cache-volume-size-gib" "$TMP/args.txt" >/dev/null
-grep -Fx -- "100" "$TMP/args.txt" >/dev/null
+grep -Fx -- "500" "$TMP/args.txt" >/dev/null
 grep -Fx -- "--cache-volume-type" "$TMP/args.txt" >/dev/null
 grep -Fx -- "gp3" "$TMP/args.txt" >/dev/null
 grep -Fx -- "--cache-volume-iops" "$TMP/args.txt" >/dev/null
