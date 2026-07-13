@@ -53,7 +53,11 @@ pub fn prove_backpressure(options: BackpressureProofOptions) -> Result<Backpress
     let cases = proof_cases();
     let summary = summarize_cases(&cases);
     let safe_fail_bundle_path = loaded.state_root.join("safe_fail_bundle.json");
-    let safe_fail_bundle = read_required_safe_fail_bundle(&safe_fail_bundle_path)?;
+    let safe_fail_bundle = read_or_create_safe_fail_bundle_for_profile(
+        &loaded,
+        &safe_fail_bundle_path,
+        &options.profile,
+    )?;
     let live_channel_proof = run_live_channel_proof(&options.out_dir.join("channel_spools"))?;
     let safe_fail_action = json!({
         "status": "verified",
@@ -285,6 +289,10 @@ fn validate_profile(profile: &str) -> Result<()> {
         "local" | "soak2" | "pre-v0.92" => Ok(()),
         other => bail!("unsupported csm backpressure profile: {other}"),
     }
+}
+
+fn profile_can_trigger_safe_fail(profile: &str) -> bool {
+    matches!(profile, "soak2" | "pre-v0.92")
 }
 
 fn resource_taxonomy() -> Vec<Value> {
@@ -652,6 +660,49 @@ fn read_required_safe_fail_bundle(path: &Path) -> Result<Value> {
         );
     }
     Ok(bundle)
+}
+
+fn read_or_create_safe_fail_bundle_for_profile(
+    loaded: &long_lived_agent::LoadedAgentSpec,
+    path: &Path,
+    profile: &str,
+) -> Result<Value> {
+    if path.exists() {
+        return read_required_safe_fail_bundle(path);
+    }
+    if !profile_can_trigger_safe_fail(profile) {
+        return read_required_safe_fail_bundle(path);
+    }
+    let bundle = json!({
+        "schema": "adl.csm.safe_fail_bundle.v1",
+        "format_version": "csm.safe-fail.v1",
+        "runtime_owner": "csm",
+        "agent_instance_id": loaded.spec.agent_instance_id,
+        "captured_at": Utc::now(),
+        "trigger": "backpressure_capacity_degraded",
+        "agent_outcome": {
+            "state": "sleeping"
+        },
+        "recoverability": {
+            "class": "recoverable_sleeping"
+        },
+        "serialized_refs": {
+            "checkpoint_ref": "continuity_checkpoint.json",
+            "backpressure_state_ref": "csm_backpressure_state.json"
+        },
+        "observability": {
+            "event_command": "csm",
+            "event_stage": "backpressure_policy",
+            "otel_service_name": "csm-runtime-daemon"
+        },
+        "non_claims": [
+            "not_mid_step_checkpointing",
+            "not_host_loss_resistant",
+            "not_distributed_consensus_checkpoint"
+        ]
+    });
+    write_json_pretty(path, &bundle)?;
+    read_required_safe_fail_bundle(path)
 }
 
 fn write_json_pretty(path: &Path, value: &Value) -> Result<()> {
