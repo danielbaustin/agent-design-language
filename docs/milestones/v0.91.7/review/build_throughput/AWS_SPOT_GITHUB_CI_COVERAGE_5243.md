@@ -47,6 +47,7 @@ still disabled while coverage proof is incomplete.
 | `adl-ci` current open-PR shadow | `ab166ff0` (PR `#5158`) | replacement `v0.91.7-coverage-5243` | retained 500 GiB EBS | 311s | 415s | 473s | passed; exact current head/base, image, source, cache, and toolchain verified |
 | `adl-coverage` same-commit repeat 1 | `9346f230` | replacement `v0.91.7-coverage-5243` | retained 500 GiB EBS | 736s | 835s | 912s | passed; 2165/2165 tests, 2 skipped |
 | `adl-coverage` same-commit repeat 2 | `9346f230` | replacement `v0.91.7-coverage-5243` | retained 500 GiB EBS | 767s | 862s | 919s | passed; 2108/2108 tests, 2 skipped |
+| `adl-coverage` final-profile repeat | `9346f230` | replacement `v0.91.7-coverage-5243` | retained 500 GiB EBS | 636s | 738s | 815s | passed; 2108/2108 tests, 2 skipped; final trusted profile |
 
 Both existing-PR CI shadows ran 54 focused tests, doc tests, and demo smoke
 successfully, with identical 42-second validation time. They used the exact source commit and merge base without modifying
@@ -86,6 +87,11 @@ The two green coverage repeats used exact head
 time. Full launch-through-cleanup totals were 912 and 919 seconds. Both runs
 verified the same immutable image, source commit, 500 GiB EBS identity, and
 per-run temporary directory isolation; both instances terminated cleanly.
+
+The final trusted-profile repeat used the same head and base, completed all
+2,108 tests with two skips, and took 634 seconds in the profile, 738 seconds
+for the remote command, and 815 seconds end to end. It also verified clean
+instance termination and retained-volume cleanup.
 
 The current open-PR shadow used exact head
 `ab166ff0bf31366f80cd03e25a9de4ce4523c9c8` and base
