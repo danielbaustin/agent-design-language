@@ -34,7 +34,7 @@
     {"issue": 5225, "state": "closed", "role": "guardian_fallback_implementation", "cutover_effect": "selected_small_tokio_child_process_fallback"},
     {"issue": 5227, "state": "open", "role": "v0_91_7_cutover_sprint_umbrella", "cutover_effect": "awaits_5220_closeout"},
     {"issue": 5247, "state": "closed", "role": "v0_91_7_cutover_readiness_umbrella", "cutover_effect": "child_wave_complete"},
-    {"issue": 5248, "state": "closed", "role": "live_black_box_parity", "cutover_effect": "retained_cutover_eligible_false_with_one_remaining_blocker_after_5277_5278_5279_5280_5281_5282_5283_5284"},
+    {"issue": 5248, "state": "closed", "role": "live_black_box_parity", "cutover_effect": "retained_cutover_eligible_true_with_zero_remaining_blockers_after_5277_5278_5279_5280_5281_5282_5283_5284_5285"},
     {"issue": 5249, "state": "closed", "role": "private_state_security_equivalence", "cutover_effect": "accepted_intentional_divergence_no_raw_v2_format_claim"},
     {"issue": 5250, "state": "closed", "role": "identity_memory_adapters", "cutover_effect": "accepted_intentional_divergence_no_raw_v2_wire_format_claim"},
     {"issue": 5251, "state": "closed", "role": "governed_cognition_adapters", "cutover_effect": "accepted_intentional_divergence_no_subjective_cognition_claim"},
@@ -82,9 +82,9 @@
     },
     {
       "id": "parity.live_black_box",
-      "status": "blocked_for_default_cutover",
+      "status": "passed_no_default_cutover",
       "source": "#5248",
-      "reason": "Live black-box parity remains cutover_eligible=false with one remaining blocker-class capability group after #5277, #5278, #5279, #5280, #5281, #5282, #5283, and #5284; this blocks default replacement but not #5220 no-go closeout."
+      "reason": "Live black-box parity reports cutover_eligible=true with zero remaining blocker-class capability groups after #5277, #5278, #5279, #5280, #5281, #5282, #5283, #5284, and #5285; default replacement still requires a separate reviewed decision and Observatory truth."
     },
     {
       "id": "domain_adapters.private_identity_cognition",

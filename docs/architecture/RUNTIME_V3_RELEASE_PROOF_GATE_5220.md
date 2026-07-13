@@ -15,9 +15,9 @@ no-go for default Runtime v3 cutover.
 Runtime v3 has retained proof for explicit opt-in selection, selected control
 API and observability contracts, weather/resource monitoring, bounded
 soak/rollback, private-state security, identity/memory continuity, and governed
-cognition adapters. The live black-box parity packet still reports
-`cutover_eligible: false` with one remaining blocker-class capability group
-after #5277, #5278, #5279, #5280, #5281, #5282, #5283, and #5284, so Runtime v2 remains the default
+cognition adapters. The live black-box parity packet now reports
+`cutover_eligible: true` with zero remaining blocker-class capability groups
+after #5277, #5278, #5279, #5280, #5281, #5282, #5283, #5284, and #5285, but Runtime v2 remains the default
 runtime and rollback target.
 
 ## Selected Scope
@@ -40,7 +40,7 @@ This release gate covers the selected v0.91.7 Runtime v3 cutover scope:
 |---|---|---|
 | Entrypoint switch | `docs/architecture/RUNTIME_V3_ENTRYPOINT_SWITCH.md` | Explicit selection only; Runtime v2 remains default. |
 | Cutover decision | `docs/architecture/runtime_v3_cutover_decision_5254.v1.json` | #5254 records no-go for default switch and no Runtime v2 decommission. |
-| Live black-box parity | `docs/architecture/runtime_v3_live_black_box_parity_5248.v1.json` | `cutover_eligible: false`; one blocker remains for default replacement after #5277, #5278, #5279, #5280, #5281, #5282, #5283, and #5284. |
+| Live black-box parity | `docs/architecture/runtime_v3_live_black_box_parity_5248.v1.json` | `cutover_eligible: true`; zero blockers remain for live black-box parity after #5277, #5278, #5279, #5280, #5281, #5282, #5283, #5284, and #5285. |
 | Weather/resource monitoring | `docs/architecture/runtime_v3_weather_cloudwatch_5252.v1.json` | CPU, memory, disk, CloudWatch-shape event, and graceful-stop policy are retained; observed GPU telemetry is deferred. |
 | Soak and rollback | `docs/architecture/runtime_v3_soak_rollback_5253.v1.json` | Bounded production-like soak and Runtime v2 rollback/default preservation are retained. |
 | Shadow parity | `docs/architecture/runtime_v3_shadow_parity_report.v1.json` | Runtime v2 remains default and Runtime v3 stays opt-in. |
@@ -58,7 +58,7 @@ This release gate covers the selected v0.91.7 Runtime v3 cutover scope:
 | API health and port policy | passed by contract | Runtime v3 control endpoint remains `127.0.0.1:20997`. |
 | Observability contract | passed by contract | Machine-readable output and human `adl_event` streams remain separated by existing policy. |
 | Soak and rollback | passed bounded scope | #5253 retained bounded production-like soak and Runtime v2 rollback/default preservation. |
-| Live black-box parity | blocked for default cutover | #5248 remains `cutover_eligible: false`; #5220 closes as no-go for default cutover. |
+| Live black-box parity | passed without default cutover | #5248 now reports `cutover_eligible: true` with zero blocker-class capability groups; #5220 still closes as no-go for default cutover until a later reviewed decision authorizes a default switch. |
 
 ## Child Issue Results
 
@@ -75,8 +75,8 @@ This release gate covers the selected v0.91.7 Runtime v3 cutover scope:
 
 ## Residual Risks
 
-- Runtime v3 is not full default-cutover-ready behavioral parity; one
-  capability group remains blocker-class for default replacement.
+- Runtime v3 live black-box parity blockers are clear, but default cutover still
+  requires a separate reviewed decision and Observatory consumption truth.
 - Observed GPU telemetry remains deferred until an approved GPU host run is
   retained.
 - Remote multi-day soak and Horust/native guardian qualification are not counted
@@ -91,7 +91,7 @@ The retained local proof surface for this release gate is:
 python3 -m json.tool docs/architecture/runtime_v3_release_proof_gate_5220.v1.json
 python3 -m json.tool docs/architecture/runtime_v3_cutover_checklist.v1.json
 cargo fmt --manifest-path adl-runtime-kernel/Cargo.toml --check
-cargo test --manifest-path adl-runtime-kernel/Cargo.toml --test parity -- release_proof_gate_closes_without_authorizing_default_cutover final_cutover_decision_keeps_v2_default_until_parity_blockers_clear kernel_lifecycle_proof_resolves_only_kernel_lifecycle_blocker topology_backpressure_proof_resolves_only_topology_backpressure_blocker service_contracts_configuration_proof_resolves_only_service_contracts_blocker continuity_replay_recovery_proof_resolves_only_continuity_blocker adaptive_learning_dag_proof_resolves_only_learning_blocker governance_freedom_gate_aee_proof_resolves_only_governance_blocker delegation_resources_proof_resolves_only_delegation_blocker --nocapture
+cargo test --manifest-path adl-runtime-kernel/Cargo.toml --test parity -- release_proof_gate_closes_without_authorizing_default_cutover final_cutover_decision_keeps_v2_default_after_live_parity_clear kernel_lifecycle_proof_resolves_only_kernel_lifecycle_blocker topology_backpressure_proof_resolves_only_topology_backpressure_blocker service_contracts_configuration_proof_resolves_only_service_contracts_blocker continuity_replay_recovery_proof_resolves_only_continuity_blocker adaptive_learning_dag_proof_resolves_only_learning_blocker governance_freedom_gate_aee_proof_resolves_only_governance_blocker delegation_resources_proof_resolves_only_delegation_blocker acip_a2a_cloud_network_proof_resolves_final_live_black_box_blocker --nocapture
 cargo test --manifest-path adl-runtime-kernel/Cargo.toml --test guardian_soak -- production_like_soak_rollback_packet_retains_cutover_boundaries packaging_preserves_one_guardian_neutral_child_contract --nocapture
 cargo clippy --manifest-path adl-runtime-kernel/Cargo.toml --all-targets -- -D warnings
 cargo test --manifest-path adl-runtime-kernel/Cargo.toml

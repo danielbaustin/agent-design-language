@@ -25,8 +25,8 @@
     "entrypoint_switch": "docs/architecture/RUNTIME_V3_ENTRYPOINT_SWITCH.md"
   },
   "input_summary": {
-    "live_black_box_cutover_eligible": false,
-    "live_black_box_blockers": 1,
+    "live_black_box_cutover_eligible": true,
+    "live_black_box_blockers": 0,
     "accepted_intentional_divergence": 7,
     "retained_v2_behavior_behind_adapter": 1,
     "deferred_non_cutover_surface": 0
@@ -44,19 +44,18 @@
     {"issue": 5280, "state": "closed", "role": "continuity.replay_recovery live Runtime v3 proof"},
     {"issue": 5281, "state": "closed", "role": "learning.adaptive_dag live Runtime v3 proof"},
     {"issue": 5282, "state": "closed", "role": "governance.freedom_gate_aee live Runtime v3 proof"},
-    {"issue": 5283, "state": "in_review", "role": "contracts.delegation_resources live Runtime v3 proof"},
-    {"issue": 5284, "state": "closed", "role": "agents.providers_scheduler live Runtime v3 proof"}
+    {"issue": 5283, "state": "closed", "role": "contracts.delegation_resources live Runtime v3 proof"},
+    {"issue": 5284, "state": "closed", "role": "agents.providers_scheduler live Runtime v3 proof"},
+    {"issue": 5285, "state": "in_review", "role": "network.acip_a2a_cloud live Runtime v3 proof"}
   ],
-  "blocking_surfaces": [
-    "network.acip_a2a_cloud"
-  ],
+  "blocking_surfaces": [],
   "next_gate": {
     "issue": 5220,
     "role": "release proof gate",
-    "required_decision": "close v0.91.7 with Runtime v2 default unless a later reviewed packet proves cutover eligibility"
+    "required_decision": "close v0.91.7 with Runtime v2 default unless a later reviewed release decision authorizes the default switch after Observatory consumption truth is recorded"
   },
   "required_before_reconsidering_default_switch": [
-    "Every live black-box parity blocker must be resolved or explicitly accepted by a reviewed release decision.",
+    "Live black-box parity blockers are resolved, but default switch still requires a separate reviewed release decision after Observatory consumption truth is recorded.",
     "Runtime v3 must remain reversible with Runtime v2 as rollback target.",
     "Deferred GPU, remote, and guardian qualification lanes must stay non-pass unless separately proven.",
     "Runtime v2 decommission must be a separate reviewed step."

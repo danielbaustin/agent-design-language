@@ -1,0 +1,85 @@
+{
+  "schema": "adl.runtime_v3.acip_a2a_cloud_network_proof.v1",
+  "issue": 5285,
+  "sprint_issue": 5276,
+  "target_version": "v0.91.7",
+  "created_at_utc": "2026-07-13T03:55:00Z",
+  "capability": "network.acip_a2a_cloud",
+  "disposition": "live_equivalent_fixture",
+  "cutover_eligible": true,
+  "default_runtime_switch_authorized": false,
+  "runtime_v2_internal_reuse": false,
+  "runtime_v2_default_preserved": true,
+  "proof_surface": {
+    "runtime_sources": [
+      "adl-runtime-kernel/src/control.rs",
+      "adl-runtime-kernel/src/telemetry.rs",
+      "adl-runtime-kernel/src/weather.rs",
+      "adl-runtime-kernel/src/config.rs"
+    ],
+    "runtime_tests": [
+      "adl-runtime-kernel/tests/control.rs::axum_adapter_serves_signed_control_payloads",
+      "adl-runtime-kernel/tests/control.rs::graceful_api_shutdown_drains_an_active_control_response",
+      "adl-runtime-kernel/tests/control.rs::payload_and_human_observability_use_separate_redacted_channels",
+      "adl-runtime-kernel/tests/control.rs::forged_and_unauthorized_commands_never_reach_lifecycle_authority",
+      "adl-runtime-kernel/tests/control.rs::runtime_identity_and_shutdown_bounds_are_owned_by_standard_crates",
+      "adl-runtime-kernel/tests/configuration.rs::vector_boundary_declares_cloudwatch_emf_route_without_kernel_exporter",
+      "adl-runtime-kernel/tests/configuration.rs::weather_health_report_serializes_stop_policy_and_gpu_non_pass_state",
+      "adl-runtime-kernel/tests/configuration.rs::sysinfo_observer_reports_portable_core_metrics_and_explicit_gpu_absence",
+      "adl-runtime-kernel/tests/configuration.rs::runtime_configuration_rejects_version_shape_identity_and_secrets"
+    ]
+  },
+  "behaviors": {
+    "local_control_api_isolation": {
+      "status": "proved",
+      "evidence": "axum_adapter_serves_signed_control_payloads exercises the Runtime v3 HTTP control adapter through a local listener and control route without introducing an external sidecar."
+    },
+    "signed_control_route": {
+      "status": "proved",
+      "evidence": "forged_and_unauthorized_commands_never_reach_lifecycle_authority and axum_adapter_serves_signed_control_payloads prove signed control payloads are accepted and forged or malformed payloads fail closed."
+    },
+    "control_port_contract": {
+      "status": "proved",
+      "evidence": "payload_and_human_observability_use_separate_redacted_channels asserts DEFAULT_CONTROL_API_PORT is 20997."
+    },
+    "graceful_network_shutdown": {
+      "status": "proved",
+      "evidence": "graceful_api_shutdown_drains_an_active_control_response proves the Runtime v3 control API drains an active response during graceful shutdown."
+    },
+    "stdout_stderr_observability_separation": {
+      "status": "proved",
+      "evidence": "payload_and_human_observability_use_separate_redacted_channels proves machine payloads and human adl_event observability are separated and redacted."
+    },
+    "cloudwatch_vector_boundary": {
+      "status": "proved",
+      "evidence": "vector_boundary_declares_cloudwatch_emf_route_without_kernel_exporter and WeatherHealthReport::from_sample retain the Vector-owned CloudWatch EMF route without embedding a kernel exporter."
+    },
+    "network_weather_counters": {
+      "status": "proved",
+      "evidence": "sysinfo_observer_reports_portable_core_metrics_and_explicit_gpu_absence and WeatherSample include network_received_bytes and network_transmitted_bytes observations from sysinfo."
+    },
+    "safe_cloud_non_claims": {
+      "status": "proved",
+      "evidence": "runtime_configuration_rejects_version_shape_identity_and_secrets keeps provider credentials out of canonical runtime configuration; this packet claims route contracts and retained boundary shape, not live external cloud delivery."
+    },
+    "gpu_and_remote_lanes_not_counted_as_network_pass": {
+      "status": "proved",
+      "evidence": "weather_health_report_serializes_stop_policy_and_gpu_non_pass_state preserves explicit GPU unavailable_not_pass truth; remote multi-day and observed cloud delivery remain non-claims."
+    }
+  },
+  "acceptance": {
+    "direct_runtime_v3_proof": true,
+    "blocked_or_deferred_counts_as_passed": false,
+    "default_runtime_switch_authorized": false,
+    "runtime_v2_decommission_authorized": false,
+    "runtime_v2_internal_reuse_allowed": false,
+    "small_loc_growth": true
+  },
+  "non_claims": [
+    "This packet does not authorize Runtime v3 as the default runtime.",
+    "This packet does not delete or decommission Runtime v2.",
+    "This packet does not claim live external ACIP/A2A/cloud delivery to third-party services.",
+    "This packet does not introduce hidden sidecars or provider credentials.",
+    "This packet does not count GPU, remote multi-day, or live cloud-delivery lanes as passed proof."
+  ]
+}

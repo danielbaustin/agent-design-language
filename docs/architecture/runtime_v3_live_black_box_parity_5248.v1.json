@@ -3,7 +3,7 @@
   "issue": 5248,
   "target_version": "v0.91.7",
   "created_at_utc": "2026-07-12T11:05:00Z",
-  "cutover_eligible": false,
+  "cutover_eligible": true,
   "default_runtime_switch_authorized": false,
   "classification_policy": {
     "allowed_dispositions": [
@@ -74,9 +74,8 @@
     },
     {
       "id": "network.acip_a2a_cloud",
-      "disposition": "blocker",
-      "proof": "Runtime v3 network fixture exists; #5253 retained production-like soak and rollback proof, and #5254 records a no-go default-switch decision. Release-gate closure routes through #5220.",
-      "blocking_issue": 5220
+      "disposition": "live_equivalent_fixture",
+      "proof": "#5285 records direct Runtime v3 ACIP/A2A/cloud network-boundary proof covering local signed control API isolation, control port 20997, graceful API shutdown drain, stdout/stderr observability separation, Vector-owned CloudWatch EMF route shape, sysinfo network weather counters, credential-free configuration, and safe non-claims for live external cloud delivery in docs/architecture/runtime_v3_acip_a2a_cloud_network_5285.v1.json."
     },
     {
       "id": "clock.checkpoint_lifelog",
@@ -110,11 +109,11 @@
     }
   ],
   "summary": {
-    "live_equivalent_fixture": 9,
+    "live_equivalent_fixture": 10,
     "accepted_intentional_divergence": 7,
     "retained_v2_behavior_behind_adapter": 1,
     "deferred_non_cutover_surface": 0,
-    "blocker": 1
+    "blocker": 0
   },
   "non_claims": [
     "This packet does not authorize Runtime v3 as the default runtime.",

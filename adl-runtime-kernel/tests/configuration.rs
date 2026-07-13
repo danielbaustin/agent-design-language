@@ -349,6 +349,10 @@ fn sysinfo_observer_reports_portable_core_metrics_and_explicit_gpu_absence() {
     assert_eq!(sample.cpu_basis_points.source, "sysinfo");
     assert_eq!(sample.memory_total_bytes.source, "sysinfo");
     assert_eq!(sample.disks.source, "sysinfo");
+    assert_eq!(sample.network_received_bytes.source, "sysinfo");
+    assert!(sample.network_received_bytes.value.is_some());
+    assert_eq!(sample.network_transmitted_bytes.source, "sysinfo");
+    assert!(sample.network_transmitted_bytes.value.is_some());
     assert_eq!(sample.gpus.value, None);
     assert_eq!(sample.gpus.source, "optional_platform_adapter");
 }
