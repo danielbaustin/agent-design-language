@@ -511,7 +511,7 @@ fn real_pr_shepherd(args: &[String]) -> Result<()> {
     };
     let mut snapshot = build_issue_lifecycle_snapshot(&watch_args)?;
     if snapshot.watch_report.classification == "merged_pending_closeout" {
-        let issue = parse_issue_ref_number("shepherd", &parsed.issue_ref)?;
+        let issue = shepherd_closeout_issue(&snapshot, &parsed)?;
         let repo = parsed
             .repo
             .clone()
@@ -531,6 +531,17 @@ fn real_pr_shepherd(args: &[String]) -> Result<()> {
         print_issue_lifecycle_shepherd_report(&report);
     }
     Ok(())
+}
+
+fn shepherd_closeout_issue(
+    snapshot: &IssueLifecycleSnapshot,
+    parsed: &ShepherdArgs,
+) -> Result<u32> {
+    let requested = parse_issue_ref_number("shepherd", &parsed.issue_ref)?;
+    if snapshot.issue != requested {
+        return Ok(snapshot.issue);
+    }
+    Ok(requested)
 }
 
 fn real_pr_closing_linkage(args: &[String]) -> Result<()> {
@@ -890,6 +901,7 @@ struct IssueLabelEnsureResult {
 }
 
 struct IssueLifecycleSnapshot {
+    issue: u32,
     watch_report: github::IssueWatchReport,
     ready_lifecycle_state: &'static str,
     pr_finish_readiness: &'static str,
@@ -1030,6 +1042,7 @@ fn build_issue_lifecycle_snapshot(parsed: &WatchArgs) -> Result<IssueLifecycleSn
         linked_pr,
     );
     Ok(IssueLifecycleSnapshot {
+        issue,
         watch_report,
         ready_lifecycle_state,
         pr_finish_readiness,
@@ -2383,9 +2396,11 @@ fn bootstrap_ready_status_label(status: &str) -> &str {
 
 #[cfg(test)]
 mod bootstrap_output_tests {
+    use super::github::{IssueWatchLocalReadinessReport, IssueWatchReport};
+    use super::ShepherdArgs;
     use super::{
         bootstrap_ready_status_label, doctor_ready_command, issue_watch_needs_local_readiness,
-        read_issue_goal_metric_refs,
+        read_issue_goal_metric_refs, shepherd_closeout_issue, IssueLifecycleSnapshot,
     };
     use ::adl::control_plane::IssueRef;
     use std::fs;
@@ -2432,6 +2447,67 @@ mod bootstrap_output_tests {
             !issue_watch_needs_local_readiness("not_planned", false),
             "non-open issue states should avoid extra readiness work"
         );
+    }
+
+    fn shepherd_snapshot(issue: u32) -> IssueLifecycleSnapshot {
+        IssueLifecycleSnapshot {
+            issue,
+            watch_report: IssueWatchReport {
+                schema: "adl.pr.watch.v1",
+                issue,
+                issue_state: "CLOSED".to_string(),
+                authoritative_classifier: "adl",
+                advisory_agent_mode: "local_agent_advisory_only",
+                classification: "merged_pending_closeout".to_string(),
+                tail_owner: "pr-closeout".to_string(),
+                shepherd_state: "merged_pending_closeout".to_string(),
+                next_skill: "pr-closeout".to_string(),
+                continuation: "action_required".to_string(),
+                reason: "linked_pr_merged_closeout_pending".to_string(),
+                local_readiness: IssueWatchLocalReadinessReport {
+                    status: "skipped".to_string(),
+                    pr_run_readiness: "not_applicable".to_string(),
+                    reason: "test".to_string(),
+                    check: "doctor_ready".to_string(),
+                    command: "adl pr doctor 5116 --mode ready --json".to_string(),
+                },
+                linked_pr: None,
+            },
+            ready_lifecycle_state: "unknown",
+            pr_finish_readiness: "unknown",
+        }
+    }
+
+    #[test]
+    fn shepherd_closeout_uses_resolved_issue_when_invoked_with_pr_number() {
+        let parsed = ShepherdArgs {
+            issue_ref: "5204".to_string(),
+            repo: None,
+            slug: None,
+            version: Some("v0.91.7".to_string()),
+            json: true,
+        };
+
+        let issue = shepherd_closeout_issue(&shepherd_snapshot(5116), &parsed)
+            .expect("resolved linked issue should drive closeout");
+
+        assert_eq!(issue, 5116);
+    }
+
+    #[test]
+    fn shepherd_closeout_keeps_issue_number_for_issue_invocation() {
+        let parsed = ShepherdArgs {
+            issue_ref: "5116".to_string(),
+            repo: None,
+            slug: None,
+            version: Some("v0.91.7".to_string()),
+            json: true,
+        };
+
+        let issue = shepherd_closeout_issue(&shepherd_snapshot(5116), &parsed)
+            .expect("issue invocation should preserve issue identity");
+
+        assert_eq!(issue, 5116);
     }
 
     #[test]
