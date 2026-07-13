@@ -3941,9 +3941,10 @@ fn finish_validation_profile_keeps_validation_policy_repairs_broader_but_not_ful
     .expect("validation-policy repair plan");
 
     assert_eq!(plan.mode, FinishValidationMode::LargerBinaryFocused);
-    assert!(plan
-        .commands
-        .contains(&"bash adl/tools/test_check_coverage_impact.sh".to_string()));
+    assert!(plan.commands.contains(
+        &"bash adl/tools/test_check_coverage_impact.sh && bash adl/tools/test_run_authoritative_coverage_lane.sh && bash adl/tools/test_run_local_authoritative_coverage_gate.sh"
+            .to_string()
+    ));
     assert!(plan
         .commands
         .contains(&"cargo fmt --manifest-path adl/Cargo.toml --all --check".to_string()));
@@ -3951,9 +3952,7 @@ fn finish_validation_profile_keeps_validation_policy_repairs_broader_but_not_ful
         command.starts_with("bash adl/tools/run_pr_fast_test_lane.sh --changed-files ")
     }));
     assert!(!plan.commands.iter().any(|command| {
-        command.contains("run_authoritative_coverage_lane.sh")
-            || command.contains("llvm-cov")
-            || command.contains("coverage_release_gate")
+        command.contains("llvm-cov") || command.contains("coverage_release_gate")
     }));
 }
 
@@ -4286,9 +4285,10 @@ fn finish_validation_profile_classifies_locked_cargo_fallback_slice() {
     assert!(unrelated_plan
         .commands
         .contains(&"bash adl/tools/test_ci_path_policy.sh && bash adl/tools/test_ci_runtime_contracts.sh && bash adl/tools/test_select_validation_lanes.sh && bash adl/tools/test_validation_manager.sh && bash adl/tools/test_run_nessus_remote_validation.sh && bash adl/tools/test_run_validation_manager_nessus_lane.sh".to_string()));
-    assert!(unrelated_plan
-        .commands
-        .contains(&"bash adl/tools/test_check_coverage_impact.sh".to_string()));
+    assert!(unrelated_plan.commands.contains(
+        &"bash adl/tools/test_check_coverage_impact.sh && bash adl/tools/test_run_authoritative_coverage_lane.sh && bash adl/tools/test_run_local_authoritative_coverage_gate.sh"
+            .to_string()
+    ));
     assert!(unrelated_plan
         .commands
         .contains(&"bash adl/tools/run_owner_validation_lane.sh csdlc".to_string()));

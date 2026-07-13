@@ -2762,14 +2762,14 @@ fn load_finish_validation_profile_with_retention(
     let output = match output {
         Ok(output) => output,
         Err(err) => {
-            let _ = fs::remove_file(&changed_file_path);
+            cleanup_retained_changed_file_manifest(&changed_file_path);
             return Err(err).context("finish: failed to load validation manager profile");
         }
     };
     let mut profile = match serde_json::from_str::<FinishValidationProfile>(&output) {
         Ok(profile) => profile,
         Err(err) => {
-            let _ = fs::remove_file(&changed_file_path);
+            cleanup_retained_changed_file_manifest(&changed_file_path);
             return Err(err).context("finish: validation manager returned invalid profile JSON");
         }
     };
@@ -2777,7 +2777,7 @@ fn load_finish_validation_profile_with_retention(
         if let Err(err) =
             validate_manager_backed_retained_changed_file(&profile, &changed_file_path_str)
         {
-            let _ = fs::remove_file(&changed_file_path);
+            cleanup_retained_changed_file_manifest(&changed_file_path);
             return Err(err);
         }
     }
@@ -2791,7 +2791,7 @@ fn load_finish_validation_profile_with_retention(
         .iter()
         .any(|item| item.command.contains(&changed_file_path_str));
     if !retain_changed_file_for_execution || !profile_needs_changed_file {
-        let _ = fs::remove_file(&changed_file_path);
+        cleanup_retained_changed_file_manifest(&changed_file_path);
     }
     Ok(profile)
 }
@@ -2820,6 +2820,19 @@ fn validate_manager_backed_retained_changed_file(
         }
     }
     Ok(())
+}
+
+fn cleanup_retained_changed_file_manifest(path: &Path) {
+    let _ = fs::remove_file(path);
+    if let Some(parent) = path.parent() {
+        if parent
+            .file_name()
+            .and_then(|name| name.to_str())
+            .is_some_and(|name| name.starts_with("adl-finish-validation-profile-"))
+        {
+            let _ = fs::remove_dir(parent);
+        }
+    }
 }
 
 #[allow(dead_code)]
@@ -3635,6 +3648,7 @@ fn registered_validation_atom_supported(command: &str) -> bool {
                 | "adl/tools/test_run_validation_manager_nessus_lane.sh"
                 | "adl/tools/test_rust_validation_warm_cache.sh"
                 | "adl/tools/test_run_authoritative_coverage_lane.sh"
+                | "adl/tools/test_run_local_authoritative_coverage_gate.sh"
                 | "adl/tools/test_run_pr_fast_test_lane.sh"
                 | "adl/tools/test_check_coverage_impact.sh"
                 | "adl/tools/test_demo_v0904_csm_observatory_governed_prototype.sh"
@@ -3738,7 +3752,7 @@ fn execute_registered_validation_atom(repo_root: &Path, command: &str) -> Result
             "bash",
             &[path_str(&script)?, "--changed-files", &changed_files],
         );
-        let _ = fs::remove_file(&changed_files);
+        cleanup_retained_changed_file_manifest(Path::new(&changed_files));
         return result;
     }
     let parts = command.split_whitespace().collect::<Vec<_>>();
@@ -6403,6 +6417,17 @@ pub(super) fn run_finish_validation_rust(
                     let script = repo_root.join("adl/tools/test_check_coverage_impact.sh");
                     run_finish_validation_status("bash", &[path_str(&script)?])?;
                 }
+                "bash adl/tools/test_check_coverage_impact.sh && bash adl/tools/test_run_authoritative_coverage_lane.sh && bash adl/tools/test_run_local_authoritative_coverage_gate.sh" => {
+                    let coverage_impact =
+                        repo_root.join("adl/tools/test_check_coverage_impact.sh");
+                    run_finish_validation_status("bash", &[path_str(&coverage_impact)?])?;
+                    let authoritative_lane =
+                        repo_root.join("adl/tools/test_run_authoritative_coverage_lane.sh");
+                    run_finish_validation_status("bash", &[path_str(&authoritative_lane)?])?;
+                    let local_gate = repo_root
+                        .join("adl/tools/test_run_local_authoritative_coverage_gate.sh");
+                    run_finish_validation_status("bash", &[path_str(&local_gate)?])?;
+                }
                 "bash adl/tools/test_ci_path_policy.sh" => {
                     let script = repo_root.join("adl/tools/test_ci_path_policy.sh");
                     run_finish_validation_status("bash", &[path_str(&script)?])?;
@@ -7648,6 +7673,10 @@ fn write_temp_text(prefix: &str, extension: &str, body: &str) -> Result<PathBuf>
         .duration_since(std::time::UNIX_EPOCH)
         .expect("time")
         .as_nanos();
+    if prefix == "finish-validation-profile" {
+        path.push(format!("adl-{prefix}-{nanos}"));
+        fs::create_dir_all(&path)?;
+    }
     path.push(format!("{prefix}-{nanos}.{extension}"));
     fs::write(&path, body)?;
     Ok(path)
