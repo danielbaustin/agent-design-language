@@ -1,0 +1,27 @@
+{
+  "schema": "csdlc.deletion_eligibility.v1",
+  "issue": 5305,
+  "code_revision": "71d416635284c8a04358c6ee004dc80b57bbf587",
+  "evaluated_at": "2026-07-13T03:27:15.620452Z",
+  "baseline_revision": "020bba17deb9f172e91a2ec5c0599cf42e4defe9",
+  "baseline_files": 95,
+  "baseline_lines": 49979,
+  "rust_list_sha256": "c3118c1f3766b5f4a3e549c9073b33fb83164b3006175785b4c08f84c898558f",
+  "shell_list_sha256": "7160399a788e467ebd934309a99f9777fb0f14d4270989e5114c73b63fa3d8cc",
+  "phase_b_blake3": "a313881ce6429217dc8247de7919882d3fba0312fa75d553fe61fe14e175a54f",
+  "phase_c_blake3": "a2ffa533296e64f84b58c76970d0d97e961bfa34f40c085741a6559f25bd04ce",
+  "selector_blake3": "5e62eee86234b93363b356a60b83d658d8138109ddc31bdc2309dbe9d8088bb5",
+  "manifest_blake3": "058a2a10361827ce023457572b68b07fbc0a048ab54641b385bd49de48538084",
+  "removed_lines": 0,
+  "retained_lines": 49979,
+  "removal_basis_points": 0,
+  "target_met": false,
+  "eligible": false,
+  "reasons": [
+    "missing_approval",
+    "rollback_window_active",
+    "importer_window_active",
+    "below_minimum_removal"
+  ],
+  "deletion_executed": false
+}

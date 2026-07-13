@@ -1,6 +1,7 @@
 pub mod cards;
 pub mod cutover;
 pub mod doctor;
+pub mod eligibility;
 pub mod error;
 pub mod git;
 pub mod lifecycle;
@@ -21,6 +22,10 @@ pub use cards::{
 };
 pub use cutover::{run_cutover, CutoverEvidence, CutoverRequest};
 pub use doctor::{diagnose, DoctorReport};
+pub use eligibility::{
+    eligibility_schema_bundle, evaluate_deletion_eligibility, DeletionApproval, DeletionDecision,
+    DeletionEligibilityRequest, DeletionEntry, DeletionManifest, DeletionReason, EntryDisposition,
+};
 pub use error::{ErrorCode, Result, V2Error};
 pub use lifecycle::{
     bind_issue, heartbeat_claim, initialize_issue, recover_claim, BindRequest, BindResult,

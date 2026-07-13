@@ -40,5 +40,6 @@ pub fn public_schema_bundle() -> Value {
         "legacy_import_report": schemars::schema_for!(ImportReport),
         "normalized_outcome": schemars::schema_for!(NormalizedOutcome),
         "shadow_comparison": schemars::schema_for!(ShadowComparison),
+        "deletion_eligibility": crate::eligibility::eligibility_schema_bundle(),
     })
 }

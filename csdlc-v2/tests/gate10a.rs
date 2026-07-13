@@ -44,7 +44,7 @@ fn installer_records_provenance_without_replacing_other_files() {
     }
     fs::write(destination_parent.path().join("v1-stays"), b"v1").unwrap();
     let receipt = install_binaries(source.path(), &destination).unwrap();
-    assert_eq!(receipt.binaries.len(), 10);
+    assert_eq!(receipt.binaries.len(), 11);
     assert_eq!(
         fs::read(destination_parent.path().join("v1-stays")).unwrap(),
         b"v1"

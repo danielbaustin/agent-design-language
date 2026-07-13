@@ -1,0 +1,10 @@
+flowchart TD
+  E["Gate A-C exact-revision evidence"] --> V["csdlc-eligibility"]
+  A["Typed digest-bound approval"] --> V
+  T["Protected not-before times"] --> V
+  M["Removed + retained line partition"] --> V
+  B["Pinned 49,979-line denominator"] --> V
+  V --> Q{"Current, green, approved, and eligible?"}
+  Q -->|"no / unknown"| N["eligible=false; deletion_executed=false"]
+  Q -->|"yes"| Y["eligible=true manifest evidence only"]
+  Y --> G["Separate #5306 execution authority"]

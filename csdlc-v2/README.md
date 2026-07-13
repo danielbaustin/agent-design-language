@@ -47,6 +47,14 @@ coexistence inventory. Gate 10A left v1 as the default; the tracked generation
 selector remains the current authority, and later cutover never deletes or
 disables any v1 surface.
 
+Gate 10D1 adds `csdlc-eligibility`, a non-mutating decision and proposed-
+manifest binary. It derives the exact Gate 1 inventory from its pinned Git
+revision, binds operator approval to Phase B, Phase C, selector, manifest, and
+code-revision digests, enforces the reviewed 90/80-percent thresholds and both
+mandatory sunset windows, and always reports `deletion_executed: false` on
+stdout. Its `schema` subcommand publishes the versioned JSON contracts. Actual
+removal belongs to a separate approval-gated issue.
+
 Markdown files are generated projections. The engine renders deterministic
 Markdown from typed values, parses it with `markdown.rs`, validates semantic
 anchors, and records values/rendered/AST digests. Direct Markdown edits fail
