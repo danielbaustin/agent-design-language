@@ -64,9 +64,8 @@
     },
     {
       "id": "contracts.delegation_resources",
-      "disposition": "blocker",
-      "proof": "Runtime v3 governed-contract fixture exists; #5253 retained production-like soak and rollback proof, and #5254 records a no-go default-switch decision. Release-gate closure routes through #5220.",
-      "blocking_issue": 5220
+      "disposition": "live_equivalent_fixture",
+      "proof": "#5283 records direct Runtime v3 delegation/resource contract proof covering signed attenuating delegation, remaining-depth enforcement, resource exhaustion and revocation refusal evidence, cancellation permit cleanup, checkpointed contract-history recovery, fail-closed policy/dependency admission, one contract/lifecycle model, bounded inbox and resource backpressure, idempotency/retry bounds, governed shutdown drain, and bounded timeout/failure classes in docs/architecture/runtime_v3_delegation_resources_5283.v1.json."
     },
     {
       "id": "agents.providers_scheduler",
@@ -111,11 +110,11 @@
     }
   ],
   "summary": {
-    "live_equivalent_fixture": 8,
+    "live_equivalent_fixture": 9,
     "accepted_intentional_divergence": 7,
     "retained_v2_behavior_behind_adapter": 1,
     "deferred_non_cutover_surface": 0,
-    "blocker": 2
+    "blocker": 1
   },
   "non_claims": [
     "This packet does not authorize Runtime v3 as the default runtime.",

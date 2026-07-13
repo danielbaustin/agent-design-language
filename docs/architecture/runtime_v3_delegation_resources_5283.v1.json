@@ -1,0 +1,102 @@
+{
+  "schema": "adl.runtime_v3.delegation_resources_proof.v1",
+  "issue": 5283,
+  "sprint_issue": 5276,
+  "target_version": "v0.91.7",
+  "created_at_utc": "2026-07-13T03:35:00Z",
+  "capability": "contracts.delegation_resources",
+  "disposition": "live_equivalent_fixture",
+  "cutover_eligible": false,
+  "default_runtime_switch_authorized": false,
+  "runtime_v2_internal_reuse": false,
+  "runtime_v2_default_preserved": true,
+  "proof_surface": {
+    "runtime_sources": [
+      "adl-runtime-kernel/src/governance.rs",
+      "adl-runtime-kernel/src/operations.rs",
+      "adl-runtime-kernel/src/contract.rs",
+      "adl-runtime-kernel/src/component.rs",
+      "adl-runtime-kernel/src/topology.rs"
+    ],
+    "runtime_tests": [
+      "adl-runtime-kernel/tests/governance.rs::delegation_is_signed_linked_and_strictly_attenuating",
+      "adl-runtime-kernel/tests/governance.rs::multi_hop_delegation_uses_remaining_depth_not_absolute_depth",
+      "adl-runtime-kernel/tests/governance.rs::resource_exhaustion_and_revocation_preserve_refusal_evidence",
+      "adl-runtime-kernel/tests/governance.rs::cancelled_shell_marks_permit_abandoned_without_blocking_checkpoint",
+      "adl-runtime-kernel/tests/governance.rs::checkpoint_recovery_preserves_replay_revocation_and_result_history",
+      "adl-runtime-kernel/tests/operations.rs::policies_and_missing_dependencies_fail_closed",
+      "adl-runtime-kernel/tests/operations.rs::representative_topology_uses_one_contract_and_lifecycle_model",
+      "adl-runtime-kernel/tests/operations.rs::supervised_component_consumes_its_bounded_inbox",
+      "adl-runtime-kernel/tests/operations.rs::governed_provider_retries_and_deduplicates_without_live_credentials",
+      "adl-runtime-kernel/tests/operations.rs::concurrent_idempotency_is_single_flight_and_conflicts_fail_closed",
+      "adl-runtime-kernel/tests/operations.rs::semaphore_rejects_hidden_unbounded_work",
+      "adl-runtime-kernel/tests/operations.rs::supervised_shutdown_closes_admission_and_drains_active_work",
+      "adl-runtime-kernel/tests/operations.rs::agent_provider_scheduler_topology_admits_work_and_closes_admission_on_shutdown",
+      "adl-runtime-kernel/tests/operations.rs::timeout_and_failure_classes_remain_bounded"
+    ]
+  },
+  "behaviors": {
+    "signed_attenuating_delegation": {
+      "status": "proved",
+      "evidence": "delegation_is_signed_linked_and_strictly_attenuating proves signed delegation links, parent/child continuity, and strict attenuation of authorized action scope."
+    },
+    "remaining_depth_enforcement": {
+      "status": "proved",
+      "evidence": "multi_hop_delegation_uses_remaining_depth_not_absolute_depth proves delegated authority is bounded by remaining chain depth instead of reset absolute depth."
+    },
+    "resource_exhaustion_refusal_evidence": {
+      "status": "proved",
+      "evidence": "resource_exhaustion_and_revocation_preserve_refusal_evidence proves resource exhaustion refuses fail-closed while retaining bounded refusal evidence."
+    },
+    "revocation_refusal_evidence": {
+      "status": "proved",
+      "evidence": "resource_exhaustion_and_revocation_preserve_refusal_evidence proves revoked commitments refuse before actuation and preserve auditable refusal evidence."
+    },
+    "cancellation_does_not_leak_permits": {
+      "status": "proved",
+      "evidence": "cancelled_shell_marks_permit_abandoned_without_blocking_checkpoint proves cancelled governed work abandons its permit without blocking checkpoint continuity."
+    },
+    "checkpoint_recovery_preserves_contract_history": {
+      "status": "proved",
+      "evidence": "checkpoint_recovery_preserves_replay_revocation_and_result_history proves recovered governance state preserves replay, revocation, and result history."
+    },
+    "policy_and_dependency_fail_closed": {
+      "status": "proved",
+      "evidence": "policies_and_missing_dependencies_fail_closed proves runtime admission refuses missing policy and dependency state instead of degrading into hidden work."
+    },
+    "single_contract_lifecycle_model": {
+      "status": "proved",
+      "evidence": "representative_topology_uses_one_contract_and_lifecycle_model proves representative runtime services use one component contract and lifecycle model."
+    },
+    "bounded_inbox_and_backpressure": {
+      "status": "proved",
+      "evidence": "supervised_component_consumes_its_bounded_inbox and semaphore_rejects_hidden_unbounded_work prove bounded component inboxes and no hidden unbounded work admission."
+    },
+    "idempotency_and_retry_bounds": {
+      "status": "proved",
+      "evidence": "governed_provider_retries_and_deduplicates_without_live_credentials and concurrent_idempotency_is_single_flight_and_conflicts_fail_closed prove bounded retry, dedupe, and conflict refusal."
+    },
+    "shutdown_drains_active_resources": {
+      "status": "proved",
+      "evidence": "supervised_shutdown_closes_admission_and_drains_active_work and agent_provider_scheduler_topology_admits_work_and_closes_admission_on_shutdown prove shutdown closes admission and drains active work."
+    },
+    "bounded_timeout_failure_classes": {
+      "status": "proved",
+      "evidence": "timeout_and_failure_classes_remain_bounded proves timeout and failure classes remain bounded and typed."
+    }
+  },
+  "acceptance": {
+    "direct_runtime_v3_proof": true,
+    "blocked_or_deferred_counts_as_passed": false,
+    "default_runtime_switch_authorized": false,
+    "runtime_v2_decommission_authorized": false,
+    "runtime_v2_internal_reuse_allowed": false,
+    "small_loc_growth": true
+  },
+  "non_claims": [
+    "This packet does not authorize Runtime v3 as the default runtime.",
+    "This packet does not delete or decommission Runtime v2.",
+    "This packet does not claim raw Runtime v2 contract wire-format equivalence.",
+    "This packet does not count blocker or deferred dispositions as passed parity."
+  ]
+}
