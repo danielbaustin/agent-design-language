@@ -5,7 +5,9 @@ ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)"
 SCRIPT="$ROOT/adl/tools/run_aws_spot_remote_validation_lane.sh"
 SETUP_SCRIPT="$ROOT/adl/tools/setup_aws_spot_remote_validation_github_resources.sh"
 WORKFLOW="$ROOT/.github/workflows/aws-spot-remote-validation.yaml"
-TMP="$(mktemp -d)"
+TMP_PARENT="$ROOT/.adl/tmp/aws-spot-remote-validation-tests"
+mkdir -p "$TMP_PARENT"
+TMP="$(mktemp -d "$TMP_PARENT/test.XXXXXX")"
 trap 'rm -rf "$TMP"' EXIT
 
 account="123456789012"
