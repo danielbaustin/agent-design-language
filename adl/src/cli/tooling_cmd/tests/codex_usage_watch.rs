@@ -1,7 +1,9 @@
 use super::support::*;
 use super::*;
 use crate::cli::tooling_cmd::codex_usage_watch::{
-    run_collect_status_text, run_parse_status_text, CodexUsageMode,
+    run_collect_status_text, run_guard_status_input_with_policy, run_guard_status_text,
+    run_guard_status_text_with_policy, run_parse_status_text, CodexUsageGuardAction,
+    CodexUsageGuardPolicy, CodexUsageMode,
 };
 use serde_json::json;
 use serde_json::Value;
@@ -138,6 +140,121 @@ fn codex_usage_watch_collect_fails_closed_without_live_input_or_required_limits(
     assert!(missing_5h_err
         .to_string()
         .contains("missing '5h limit:' line"));
+}
+
+#[test]
+fn codex_usage_watch_guard_emits_shareable_policy_decisions() {
+    real_tooling(&[
+        "codex-usage-watch".to_string(),
+        "guard".to_string(),
+        "--text".to_string(),
+        "Status\nContext: 58% left (109,629 used / 258K)\n5h limit: 93% left (resets 9:45 AM)\n7d limit: 99% left (resets Jul 19)\n"
+            .to_string(),
+        "--json".to_string(),
+    ])
+    .expect("guard --text dispatch should succeed for copied status panel");
+
+    let normal = run_guard_status_text(
+        "Status\nContext: 58% left (109,629 used / 258K)\n5h limit: 93% left (resets 9:45 AM)\n7d limit: 99% left (resets Jul 19)\n",
+    )
+    .expect("normal guard decision");
+    assert_eq!(normal.schema_version, "adl.codex_usage_guard.v1");
+    assert_eq!(normal.action, CodexUsageGuardAction::Continue);
+    assert_eq!(normal.mode, CodexUsageMode::Normal);
+    assert!(normal.usage.parse_ok);
+
+    let pause = run_guard_status_text(
+        "Status\nContext: 58% left (109,629 used / 258K)\n5h limit: 4% left (resets 9:45 AM)\n7d limit: 99% left (resets Jul 19)\n",
+    )
+    .expect("pause guard decision");
+    assert_eq!(pause.action, CodexUsageGuardAction::Pause);
+    assert_eq!(pause.mode, CodexUsageMode::Emergency);
+
+    let reset_ready = run_guard_status_text(
+        "Status\nContext: 58% left (109,629 used / 258K)\n5h limit: 0.9% left (resets 9:45 AM)\n7d limit: 99% left (resets Jul 19)\n",
+    )
+    .expect("reset-ready guard decision");
+    assert_eq!(reset_ready.action, CodexUsageGuardAction::ResetReady);
+}
+
+#[test]
+fn codex_usage_watch_guard_supports_custom_thresholds_and_fails_closed() {
+    real_tooling(&[
+        "codex-usage-watch".to_string(),
+        "guard".to_string(),
+        "--text".to_string(),
+        "Status\nContext: 58% left (109,629 used / 258K)\n5h limit: 25% left (resets 9:45 AM)\n7d limit: 99% left (resets Jul 19)\n"
+            .to_string(),
+        "--conserve-limit-percent".to_string(),
+        "30".to_string(),
+        "--pause-limit-percent".to_string(),
+        "10".to_string(),
+        "--reset-ready-limit-percent".to_string(),
+        "2".to_string(),
+        "--json".to_string(),
+    ])
+    .expect("custom guard policy should accept ordered thresholds");
+    let conserve = run_guard_status_text_with_policy(
+        "Status\nContext: 58% left (109,629 used / 258K)\n5h limit: 25% left (resets 9:45 AM)\n7d limit: 99% left (resets Jul 19)\n",
+        CodexUsageGuardPolicy {
+            conserve_limit_percent: 30.0,
+            pause_limit_percent: 10.0,
+            reset_ready_limit_percent: 2.0,
+            ..CodexUsageGuardPolicy::default()
+        },
+    )
+    .expect("custom guard policy should classify the copied status");
+    assert_eq!(conserve.action, CodexUsageGuardAction::Conserve);
+
+    let missing_err = real_tooling(&[
+        "codex-usage-watch".to_string(),
+        "guard".to_string(),
+        "--json".to_string(),
+    ])
+    .expect_err("guard without status text should fail closed");
+    assert!(missing_err
+        .to_string()
+        .contains("Codex status collection input missing"));
+}
+
+#[test]
+fn codex_usage_watch_guard_fails_closed_for_stale_file_input() {
+    let repo = TempRepo::new("codex-usage-guard-stale");
+    let status = repo.write_rel(
+        ".tmp/tooling_cmd_tests/status.txt",
+        "Status\nContext: 58% left (109,629 used / 258K)\n5h limit: 93% left (resets 9:45 AM)\n7d limit: 99% left (resets Jul 19)\n",
+    );
+    std::thread::sleep(std::time::Duration::from_secs(1));
+
+    let err = real_tooling(&[
+        "codex-usage-watch".to_string(),
+        "guard".to_string(),
+        "--input".to_string(),
+        status.to_string_lossy().to_string(),
+        "--max-input-age-seconds".to_string(),
+        "0".to_string(),
+        "--json".to_string(),
+    ])
+    .expect_err("stale input should fail closed");
+    assert!(err.to_string().contains("status input stale"));
+
+    let decision = run_guard_status_input_with_policy(
+        status,
+        CodexUsageGuardPolicy {
+            max_input_age_seconds: Some(0),
+            ..CodexUsageGuardPolicy::default()
+        },
+    )
+    .expect("stale input still returns the machine-readable decision");
+    assert_eq!(decision.schema_version, "adl.codex_usage_guard.v1");
+    assert_eq!(decision.action, CodexUsageGuardAction::Unknown);
+    assert_eq!(decision.mode, CodexUsageMode::UsageUnknown);
+    assert!(!decision.usage.parse_ok);
+    assert!(decision
+        .error
+        .as_deref()
+        .expect("stale decision should include error")
+        .contains("status input stale"));
 }
 
 #[test]

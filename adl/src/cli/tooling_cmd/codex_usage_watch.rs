@@ -5,12 +5,16 @@ use std::fs::{self, OpenOptions};
 use std::io::Write;
 use std::path::{Path, PathBuf};
 use std::thread;
-use std::time::Duration;
+use std::time::{Duration, SystemTime};
 
 const DEFAULT_INTERVAL_SECONDS: f64 = 60.0;
 const DEFAULT_ITERATIONS: u32 = 1;
 const DEFAULT_HISTORY_ROOT: &str = ".adl/runs/codex_usage_watch";
 const HISTORY_FILE: &str = "history.jsonl";
+const DEFAULT_GUARD_CONTEXT_CONSERVE_PERCENT: f64 = 20.0;
+const DEFAULT_GUARD_LIMIT_CONSERVE_PERCENT: f64 = 15.0;
+const DEFAULT_GUARD_LIMIT_PAUSE_PERCENT: f64 = 5.0;
+const DEFAULT_GUARD_LIMIT_RESET_READY_PERCENT: f64 = 1.0;
 
 #[derive(Debug, Clone, Serialize, PartialEq)]
 #[serde(rename_all = "snake_case")]
@@ -75,9 +79,69 @@ struct ParsedStatus {
     limit_7d: UsageDimension,
 }
 
+#[derive(Debug, Clone, Serialize, PartialEq)]
+#[serde(rename_all = "snake_case")]
+pub(crate) enum CodexUsageGuardAction {
+    Continue,
+    Conserve,
+    Pause,
+    ResetReady,
+    Unknown,
+}
+
+impl CodexUsageGuardAction {
+    fn as_str(&self) -> &'static str {
+        match self {
+            Self::Continue => "continue",
+            Self::Conserve => "conserve",
+            Self::Pause => "pause",
+            Self::ResetReady => "reset_ready",
+            Self::Unknown => "unknown",
+        }
+    }
+}
+
+#[derive(Debug, Clone, Serialize, PartialEq)]
+pub(crate) struct CodexUsageGuardPolicy {
+    pub conserve_context_percent: f64,
+    pub conserve_limit_percent: f64,
+    pub pause_limit_percent: f64,
+    pub reset_ready_limit_percent: f64,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub max_input_age_seconds: Option<u64>,
+}
+
+impl Default for CodexUsageGuardPolicy {
+    fn default() -> Self {
+        Self {
+            conserve_context_percent: DEFAULT_GUARD_CONTEXT_CONSERVE_PERCENT,
+            conserve_limit_percent: DEFAULT_GUARD_LIMIT_CONSERVE_PERCENT,
+            pause_limit_percent: DEFAULT_GUARD_LIMIT_PAUSE_PERCENT,
+            reset_ready_limit_percent: DEFAULT_GUARD_LIMIT_RESET_READY_PERCENT,
+            max_input_age_seconds: None,
+        }
+    }
+}
+
+#[derive(Debug, Clone, Serialize, PartialEq)]
+pub(crate) struct CodexUsageGuardDecision {
+    pub schema_version: String,
+    pub action: CodexUsageGuardAction,
+    pub mode: CodexUsageMode,
+    pub sampled_at: String,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub source_ref: Option<String>,
+    pub policy: CodexUsageGuardPolicy,
+    pub usage: CodexUsageReport,
+    pub warnings: Vec<String>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub error: Option<String>,
+}
+
 enum CommandMode {
     Parse,
     Collect,
+    Guard,
     Watch,
 }
 
@@ -89,6 +153,7 @@ struct CommandArgs {
     interval_seconds: f64,
     iterations: u32,
     history_root: PathBuf,
+    guard_policy: CodexUsageGuardPolicy,
 }
 
 pub(crate) fn real_codex_usage_watch(args: &[String]) -> Result<()> {
@@ -113,6 +178,11 @@ pub(crate) fn real_codex_usage_watch(args: &[String]) -> Result<()> {
             print_report(&report, args.json_output)?;
             ensure_report_ready(&report)?;
         }
+        CommandMode::Guard => {
+            let decision = guard_decision(&args)?;
+            print_guard_decision(&decision, args.json_output)?;
+            ensure_guard_decision_ready(&decision)?;
+        }
         CommandMode::Watch => {
             run_watch(&args)?;
         }
@@ -130,6 +200,47 @@ pub(crate) fn run_collect_status_text(text: &str) -> CodexUsageReport {
     report_from_collected_source(Some(text), None)
 }
 
+#[cfg(test)]
+pub(crate) fn run_guard_status_text(text: &str) -> Result<CodexUsageGuardDecision> {
+    run_guard_status_text_with_policy(text, CodexUsageGuardPolicy::default())
+}
+
+#[cfg(test)]
+pub(crate) fn run_guard_status_text_with_policy(
+    text: &str,
+    guard_policy: CodexUsageGuardPolicy,
+) -> Result<CodexUsageGuardDecision> {
+    let args = CommandArgs {
+        mode: CommandMode::Guard,
+        input: None,
+        text: Some(text.to_string()),
+        json_output: true,
+        interval_seconds: DEFAULT_INTERVAL_SECONDS,
+        iterations: DEFAULT_ITERATIONS,
+        history_root: PathBuf::from(DEFAULT_HISTORY_ROOT),
+        guard_policy,
+    };
+    guard_decision(&args)
+}
+
+#[cfg(test)]
+pub(crate) fn run_guard_status_input_with_policy(
+    input: PathBuf,
+    guard_policy: CodexUsageGuardPolicy,
+) -> Result<CodexUsageGuardDecision> {
+    let args = CommandArgs {
+        mode: CommandMode::Guard,
+        input: Some(input),
+        text: None,
+        json_output: true,
+        interval_seconds: DEFAULT_INTERVAL_SECONDS,
+        iterations: DEFAULT_ITERATIONS,
+        history_root: PathBuf::from(DEFAULT_HISTORY_ROOT),
+        guard_policy,
+    };
+    guard_decision(&args)
+}
+
 fn parse_args(args: &[String]) -> Result<CommandArgs> {
     let Some(mode) = args.first().map(|arg| arg.as_str()) else {
         bail!("{}", usage());
@@ -137,6 +248,7 @@ fn parse_args(args: &[String]) -> Result<CommandArgs> {
     let mode = match mode {
         "parse" => CommandMode::Parse,
         "collect" => CommandMode::Collect,
+        "guard" => CommandMode::Guard,
         "watch" => CommandMode::Watch,
         "--help" | "-h" | "help" => {
             println!("{}", usage());
@@ -151,6 +263,7 @@ fn parse_args(args: &[String]) -> Result<CommandArgs> {
     let mut interval_seconds = DEFAULT_INTERVAL_SECONDS;
     let mut iterations = DEFAULT_ITERATIONS;
     let mut history_root = PathBuf::from(DEFAULT_HISTORY_ROOT);
+    let mut guard_policy = CodexUsageGuardPolicy::default();
 
     let mut i = 1usize;
     while i < args.len() {
@@ -179,6 +292,30 @@ fn parse_args(args: &[String]) -> Result<CommandArgs> {
             "--history-root" => {
                 history_root = PathBuf::from(require_value(args, &mut i, "--history-root")?)
             }
+            "--conserve-context-percent" => {
+                guard_policy.conserve_context_percent =
+                    parse_percent_flag(args, &mut i, "--conserve-context-percent")?
+            }
+            "--conserve-limit-percent" => {
+                guard_policy.conserve_limit_percent =
+                    parse_percent_flag(args, &mut i, "--conserve-limit-percent")?
+            }
+            "--pause-limit-percent" => {
+                guard_policy.pause_limit_percent =
+                    parse_percent_flag(args, &mut i, "--pause-limit-percent")?
+            }
+            "--reset-ready-limit-percent" => {
+                guard_policy.reset_ready_limit_percent =
+                    parse_percent_flag(args, &mut i, "--reset-ready-limit-percent")?
+            }
+            "--max-input-age-seconds" => {
+                let value = require_value(args, &mut i, "--max-input-age-seconds")?;
+                guard_policy.max_input_age_seconds = Some(
+                    value
+                        .parse::<u64>()
+                        .with_context(|| format!("invalid --max-input-age-seconds '{value}'"))?,
+                );
+            }
             "--help" | "-h" => {
                 println!("{}", usage());
                 return Err(anyhow!("help requested"));
@@ -187,6 +324,8 @@ fn parse_args(args: &[String]) -> Result<CommandArgs> {
         }
         i += 1;
     }
+
+    validate_guard_policy(&guard_policy)?;
 
     if input.is_some() && text.is_some() {
         bail!("pass only one of --input or --text");
@@ -199,6 +338,7 @@ fn parse_args(args: &[String]) -> Result<CommandArgs> {
             }
         }
         CommandMode::Collect => {}
+        CommandMode::Guard => {}
         CommandMode::Watch => {
             if input.is_none() {
                 bail!("codex-usage-watch watch requires --input <path>");
@@ -214,6 +354,7 @@ fn parse_args(args: &[String]) -> Result<CommandArgs> {
         interval_seconds,
         iterations,
         history_root,
+        guard_policy,
     })
 }
 
@@ -221,6 +362,7 @@ fn usage() -> &'static str {
     "adl tooling codex-usage-watch parse --input <status.txt> [--json]\n\
 adl tooling codex-usage-watch parse --text \"Context: ...\" [--json]\n\
 adl tooling codex-usage-watch collect [--input <status-panel.txt> | --text \"Status...\"] [--json]\n\
+adl tooling codex-usage-watch guard [--input <status-panel.txt> | --text \"Status...\"] [--max-input-age-seconds <n>] [--conserve-context-percent <n>] [--conserve-limit-percent <n>] [--pause-limit-percent <n>] [--reset-ready-limit-percent <n>] [--json]\n\
 adl tooling codex-usage-watch watch --input <status.txt> [--interval-seconds <n>] [--iterations <n>] [--history-root <dir>] [--json]"
 }
 
@@ -230,6 +372,27 @@ fn require_value(args: &[String], i: &mut usize, flag: &str) -> Result<String> {
         .filter(|value| !value.trim().is_empty())
         .cloned()
         .ok_or_else(|| anyhow!("{flag} requires a non-empty value"))
+}
+
+fn parse_percent_flag(args: &[String], i: &mut usize, flag: &str) -> Result<f64> {
+    let value = require_value(args, i, flag)?;
+    let parsed = value
+        .parse::<f64>()
+        .with_context(|| format!("invalid {flag} '{value}'"))?;
+    if !(0.0..=100.0).contains(&parsed) {
+        bail!("{flag} must be between 0 and 100");
+    }
+    Ok(parsed)
+}
+
+fn validate_guard_policy(policy: &CodexUsageGuardPolicy) -> Result<()> {
+    if policy.reset_ready_limit_percent > policy.pause_limit_percent {
+        bail!("--reset-ready-limit-percent must be <= --pause-limit-percent");
+    }
+    if policy.pause_limit_percent > policy.conserve_limit_percent {
+        bail!("--pause-limit-percent must be <= --conserve-limit-percent");
+    }
+    Ok(())
 }
 
 fn run_watch(args: &CommandArgs) -> Result<()> {
@@ -252,6 +415,149 @@ fn run_watch(args: &CommandArgs) -> Result<()> {
         }
     }
     Ok(())
+}
+
+fn guard_decision(args: &CommandArgs) -> Result<CodexUsageGuardDecision> {
+    if let Some(stale_error) = stale_input_error(args)? {
+        let sampled_at = Utc::now().to_rfc3339();
+        let source_ref = args.input.as_deref().map(repo_relative_or_filename);
+        let usage = unknown_report(sampled_at, source_ref, stale_error);
+        return Ok(decision_from_report(usage, &args.guard_policy));
+    }
+
+    let source = load_status_text(args)?;
+    let usage = report_from_collected_source(source.as_deref(), args.input.as_deref());
+    Ok(decision_from_report(usage, &args.guard_policy))
+}
+
+fn stale_input_error(args: &CommandArgs) -> Result<Option<String>> {
+    let Some(max_age_seconds) = args.guard_policy.max_input_age_seconds else {
+        return Ok(None);
+    };
+    let Some(input) = args.input.as_ref() else {
+        return Ok(None);
+    };
+    let metadata = match fs::metadata(input) {
+        Ok(metadata) => metadata,
+        Err(err) if err.kind() == std::io::ErrorKind::NotFound => return Ok(None),
+        Err(err) => {
+            return Err(anyhow!(
+                "failed to stat status input '{}': {err}",
+                input.display()
+            ));
+        }
+    };
+    let modified = metadata
+        .modified()
+        .with_context(|| format!("failed to read modification time for '{}'", input.display()))?;
+    let age = SystemTime::now()
+        .duration_since(modified)
+        .unwrap_or_else(|_| Duration::from_secs(0));
+    if age.as_secs() > max_age_seconds {
+        return Ok(Some(format!(
+            "status input stale: age={}s exceeds max_input_age_seconds={}s",
+            age.as_secs(),
+            max_age_seconds
+        )));
+    }
+    Ok(None)
+}
+
+fn decision_from_report(
+    usage: CodexUsageReport,
+    policy: &CodexUsageGuardPolicy,
+) -> CodexUsageGuardDecision {
+    let action = classify_guard_action(&usage, policy);
+    let mut warnings = usage.warnings.clone();
+    match action {
+        CodexUsageGuardAction::Continue => {}
+        CodexUsageGuardAction::Conserve => warnings.push(
+            "guard_conserve: avoid broad validation, long reviews, and speculative work"
+                .to_string(),
+        ),
+        CodexUsageGuardAction::Pause => warnings.push(
+            "guard_pause: pause expensive work until fresh capacity is available".to_string(),
+        ),
+        CodexUsageGuardAction::ResetReady => warnings.push(
+            "guard_reset_ready: capacity is critically low; prepare manual reset or handoff"
+                .to_string(),
+        ),
+        CodexUsageGuardAction::Unknown => warnings.push(
+            "guard_unknown: usage state unavailable; fail closed and ask for /status".to_string(),
+        ),
+    }
+
+    CodexUsageGuardDecision {
+        schema_version: "adl.codex_usage_guard.v1".to_string(),
+        action,
+        mode: usage.mode.clone(),
+        sampled_at: usage.sampled_at.clone(),
+        source_ref: usage.source_ref.clone(),
+        policy: policy.clone(),
+        error: usage.error.clone(),
+        usage,
+        warnings,
+    }
+}
+
+fn classify_guard_action(
+    usage: &CodexUsageReport,
+    policy: &CodexUsageGuardPolicy,
+) -> CodexUsageGuardAction {
+    if !usage.parse_ok {
+        return CodexUsageGuardAction::Unknown;
+    }
+    let Some(context) = usage.context.as_ref() else {
+        return CodexUsageGuardAction::Unknown;
+    };
+    let Some(limit_5h) = usage.limit_5h.as_ref() else {
+        return CodexUsageGuardAction::Unknown;
+    };
+    let Some(limit_7d) = usage.limit_7d.as_ref() else {
+        return CodexUsageGuardAction::Unknown;
+    };
+
+    let min_limit = limit_5h.percent_left.min(limit_7d.percent_left);
+    if min_limit <= policy.reset_ready_limit_percent {
+        CodexUsageGuardAction::ResetReady
+    } else if min_limit <= policy.pause_limit_percent {
+        CodexUsageGuardAction::Pause
+    } else if min_limit <= policy.conserve_limit_percent
+        || context.percent_left <= policy.conserve_context_percent
+    {
+        CodexUsageGuardAction::Conserve
+    } else {
+        CodexUsageGuardAction::Continue
+    }
+}
+
+fn print_guard_decision(decision: &CodexUsageGuardDecision, json_output: bool) -> Result<()> {
+    if json_output {
+        println!("{}", serde_json::to_string_pretty(decision)?);
+        return Ok(());
+    }
+    println!("action: {}", decision.action.as_str());
+    println!("mode: {}", decision.mode.as_str());
+    for warning in &decision.warnings {
+        eprintln!("{warning}");
+    }
+    if let Some(error) = decision.error.as_ref() {
+        println!("error: {error}");
+    }
+    Ok(())
+}
+
+fn ensure_guard_decision_ready(decision: &CodexUsageGuardDecision) -> Result<()> {
+    if decision.action != CodexUsageGuardAction::Unknown {
+        return Ok(());
+    }
+    bail!(
+        "{}",
+        decision
+            .error
+            .as_deref()
+            .unwrap_or("codex usage guard could not determine usage state")
+    )
 }
 
 fn load_status_text(args: &CommandArgs) -> Result<Option<String>> {

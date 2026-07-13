@@ -120,6 +120,7 @@ adl tooling code-review --out <dir> [--backend fixture|ollama] [--visibility pac
 adl tooling codex-usage-watch parse --input <status.txt> [--json]\n\
 adl tooling codex-usage-watch parse --text \"Context: ...\" [--json]\n\
 adl tooling codex-usage-watch collect [--input <status-panel.txt> | --text \"Status...\"] [--json]\n\
+adl tooling codex-usage-watch guard [--input <status-panel.txt> | --text \"Status...\"] [--max-input-age-seconds <n>] [--conserve-context-percent <n>] [--conserve-limit-percent <n>] [--pause-limit-percent <n>] [--reset-ready-limit-percent <n>] [--json]\n\
 adl tooling codex-usage-watch watch --input <status.txt> [--interval-seconds <n>] [--iterations <n>] [--history-root <dir>] [--json]\n\
 adl tooling csdlc-prompt-editor [--repo-root <path>] [--emit-model-js <path>] [--render-samples <dir>]\n\
 adl tooling generate-wp-issue-wave --version <version> [--wbs <path>] [--sprint <path>] [--out <path>]\n\
