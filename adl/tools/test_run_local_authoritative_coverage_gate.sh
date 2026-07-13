@@ -88,4 +88,64 @@ do
   fi
 done
 
+runtime_low_summary="$TMP_DIR/runtime-low-coverage.json"
+cat >"$runtime_low_summary" <<'JSON'
+{
+  "data": [
+    {
+      "files": [
+        {
+          "filename": "/repo/adl/src/lib.rs",
+          "summary": {
+            "lines": {
+              "covered": 95,
+              "count": 100,
+              "percent": 95.0
+            }
+          }
+        },
+        {
+          "filename": "/repo/adl-runtime/src/cav.rs",
+          "summary": {
+            "lines": {
+              "covered": 79,
+              "count": 100,
+              "percent": 79.0
+            }
+          }
+        }
+      ]
+    }
+  ]
+}
+JSON
+
+set +e
+runtime_low_output="$(
+  WORKSPACE_LINE_THRESHOLD=1 \
+  PER_FILE_LINE_THRESHOLD=80 \
+  bash "$ROOT_DIR/adl/tools/enforce_coverage_gates.sh" "$runtime_low_summary" 2>&1
+)"
+runtime_low_status=$?
+set -e
+
+if [[ $runtime_low_status -eq 0 ]]; then
+  echo "expected runtime per-file coverage below threshold to fail" >&2
+  exit 1
+fi
+
+if ! grep -F "/repo/adl-runtime/src/cav.rs" <<<"$runtime_low_output" >/dev/null 2>&1; then
+  echo "expected runtime per-file gate failure to name adl-runtime/src/cav.rs" >&2
+  echo "$runtime_low_output" >&2
+  exit 1
+fi
+
+runtime_ok_summary="$TMP_DIR/runtime-ok-coverage.json"
+sed 's/"covered": 79/"covered": 81/; s/"percent": 79.0/"percent": 81.0/' \
+  "$runtime_low_summary" >"$runtime_ok_summary"
+
+WORKSPACE_LINE_THRESHOLD=1 \
+PER_FILE_LINE_THRESHOLD=80 \
+bash "$ROOT_DIR/adl/tools/enforce_coverage_gates.sh" "$runtime_ok_summary" >/dev/null
+
 echo "PASS test_run_local_authoritative_coverage_gate"

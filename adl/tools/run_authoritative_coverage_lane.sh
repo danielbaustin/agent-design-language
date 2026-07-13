@@ -3,6 +3,9 @@ set -euo pipefail
 
 ROOT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)"
 ADL_DIR="$ROOT_DIR/adl"
+ADL_RUNTIME_MANIFEST="$ROOT_DIR/adl-runtime/Cargo.toml"
+ADL_SUMMARY_PATH="$ADL_DIR/coverage-summary.adl.json"
+ADL_RUNTIME_SUMMARY_PATH="$ADL_DIR/coverage-summary.adl-runtime.json"
 PRINT_PLAN=false
 AUTHORITY="push_main"
 EVENT_NAME="push"
@@ -76,10 +79,12 @@ if [ "$PRINT_PLAN" = true ]; then
     printf 'features=default\n'
     printf 'workspace=full\n'
     printf 'targets=workspace\n'
+    printf 'companion_adl_runtime=enabled\n'
   else
     printf 'features=default\n'
     printf 'workspace=bounded_policy_surface\n'
     printf 'targets=workspace\n'
+    printf 'companion_adl_runtime=enabled\n'
   fi
   exit 0
 fi
@@ -133,4 +138,53 @@ fi
 cargo llvm-cov report \
   --json \
   --summary-only \
-  --output-path coverage-summary.json
+  --output-path "$ADL_SUMMARY_PATH"
+
+if [ -f "$ADL_RUNTIME_MANIFEST" ]; then
+  echo "Authoritative coverage companion: adl-runtime"
+  cargo llvm-cov nextest \
+    --manifest-path "$ADL_RUNTIME_MANIFEST" \
+    --no-report \
+    --no-fail-fast \
+    --no-tests pass \
+    --test-threads "$TEST_THREADS" \
+    -- --skip "$SKIP_PATTERN"
+  cargo llvm-cov report \
+    --manifest-path "$ADL_RUNTIME_MANIFEST" \
+    --json \
+    --summary-only \
+    --output-path "$ADL_RUNTIME_SUMMARY_PATH"
+  jq -s '
+    . as $docs
+    |
+    def metric($name):
+      (
+        [$docs[].data[0].totals[$name].count // 0] | add
+      ) as $count
+      | (
+        [$docs[].data[0].totals[$name].covered // 0] | add
+      ) as $covered
+      | {
+          count: $count,
+          covered: $covered,
+          percent: (if $count == 0 then 0 else (($covered * 100) / $count) end)
+        }
+      | if $name == "branches" or $name == "mcdc" or $name == "regions" then
+          . + {notcovered: ($count - $covered)}
+        else
+          .
+        end;
+    $docs[0]
+    | .data[0].files = ([$docs[].data[0].files[]])
+    | .data[0].totals = {
+        branches: metric("branches"),
+        mcdc: metric("mcdc"),
+        functions: metric("functions"),
+        instantiations: metric("instantiations"),
+        lines: metric("lines"),
+        regions: metric("regions")
+      }
+  ' "$ADL_SUMMARY_PATH" "$ADL_RUNTIME_SUMMARY_PATH" > coverage-summary.json
+else
+  cp "$ADL_SUMMARY_PATH" coverage-summary.json
+fi

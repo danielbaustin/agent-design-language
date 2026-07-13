@@ -42,7 +42,7 @@ awk -v pct="$workspace_pct" -v threshold="$WORKSPACE_THRESHOLD" '
 
 per_file_rows="$(jq -r '
   [.data[].files[]
-    | select(.filename | contains("/adl/src/"))
+    | select((.filename | contains("/adl/src/")) or (.filename | contains("/adl-runtime/src/")))
     | {
         f:(
           .filename
@@ -68,7 +68,7 @@ per_file_rows="$(jq -r '
 ' "$SUMMARY_JSON")"
 
 if [ -z "$per_file_rows" ]; then
-  echo "No per-file rows found for /adl/src in $SUMMARY_JSON"
+  echo "No per-file rows found for /adl/src or /adl-runtime/src in $SUMMARY_JSON"
   exit 1
 fi
 

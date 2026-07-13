@@ -21,6 +21,14 @@ case "$plan" in
     exit 1
     ;;
 esac
+case "$plan" in
+  *"companion_adl_runtime=enabled"*) ;;
+  *)
+    echo "expected authoritative coverage plan to include adl-runtime companion coverage" >&2
+    echo "$plan" >&2
+    exit 1
+    ;;
+esac
 
 custom_root="$ROOT_DIR/adl/target/custom-coverage-root"
 custom_plan="$(ADL_COVERAGE_BUILD_ROOT="$custom_root" "$SCRIPT" --print-plan)"
@@ -47,7 +55,9 @@ for required_fragment in \
   "cargo llvm-cov report" \
   "--json" \
   "--summary-only" \
-  "--output-path coverage-summary.json" \
+  "coverage-summary.adl.json" \
+  "coverage-summary.adl-runtime.json" \
+  "> coverage-summary.json" \
   'export ADL_CSM_DISK_FLOOR_BYTES="${ADL_CSM_DISK_FLOOR_BYTES:-0}"'
 do
   case "$script_text" in
@@ -80,6 +90,19 @@ printf 'target=%s\n' "${CARGO_TARGET_DIR:-}" >> "$AUTHORITATIVE_CARGO_LOG"
 printf 'llvm_cov_target=%s\n' "${CARGO_LLVM_COV_TARGET_DIR:-}" >> "$AUTHORITATIVE_CARGO_LOG"
 printf 'build_jobs=%s\n' "${CARGO_BUILD_JOBS:-}" >> "$AUTHORITATIVE_CARGO_LOG"
 printf 'link_accel=%s\n' "${RUST_LINK_ACCEL:-}" >> "$AUTHORITATIVE_CARGO_LOG"
+out_path=""
+prev=""
+for arg in "$@"; do
+  if [ "$prev" = "--output-path" ]; then
+    out_path="$arg"
+    break
+  fi
+  prev="$arg"
+done
+if [ -n "$out_path" ]; then
+  mkdir -p "$(dirname "$out_path")"
+  printf '{"data":[{"files":[],"totals":{"branches":{"count":0,"covered":0,"notcovered":0,"percent":0.0},"mcdc":{"count":0,"covered":0,"notcovered":0,"percent":0.0},"functions":{"count":0,"covered":0,"percent":0.0},"instantiations":{"count":0,"covered":0,"percent":0.0},"lines":{"count":0,"covered":0,"percent":0.0},"regions":{"count":0,"covered":0,"notcovered":0,"percent":0.0}}}]}\n' > "$out_path"
+fi
 exit 0
 EOF
 chmod +x "$bin_dir/cargo"
@@ -100,7 +123,9 @@ for required in \
   "cmd=llvm-cov nextest --workspace --no-report --no-fail-fast --no-tests pass" \
   "--test-threads 4" \
   "-- --skip real_pr_" \
-  "cmd=llvm-cov report --json --summary-only --output-path coverage-summary.json" \
+  "cmd=llvm-cov nextest --manifest-path $ROOT_DIR/adl-runtime/Cargo.toml --no-report --no-fail-fast --no-tests pass" \
+  "cmd=llvm-cov report --json --summary-only --output-path $ROOT_DIR/adl/coverage-summary.adl.json" \
+  "cmd=llvm-cov report --manifest-path $ROOT_DIR/adl-runtime/Cargo.toml --json --summary-only --output-path $ROOT_DIR/adl/coverage-summary.adl-runtime.json" \
   "target=$scratch_root/target" \
   "llvm_cov_target=$scratch_root/target/llvm-cov-target"
 do
@@ -123,7 +148,8 @@ ADL_AUTHORITATIVE_COVERAGE_SKIP_PATTERN="live_pr_fixture_" \
 for required in \
   "link_accel=lld" \
   "--test-threads 2" \
-  "-- --skip live_pr_fixture_"
+  "-- --skip live_pr_fixture_" \
+  "cmd=llvm-cov nextest --manifest-path $ROOT_DIR/adl-runtime/Cargo.toml --no-report --no-fail-fast --no-tests pass"
 do
   if ! grep -F -- "$required" "$lld_cargo_log" >/dev/null 2>&1; then
     echo "missing authoritative coverage concurrency token: $required" >&2

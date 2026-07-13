@@ -441,7 +441,9 @@ for required_fragment in (
     "cargo llvm-cov report \\",
     "--json \\",
     "--summary-only \\",
-    "--output-path coverage-summary.json",
+    '--output-path "$ADL_SUMMARY_PATH"',
+    'coverage-summary.adl-runtime.json',
+    "> coverage-summary.json",
 ):
     if required_fragment not in runner_script_text:
         raise SystemExit(
