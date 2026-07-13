@@ -137,8 +137,8 @@ else
   fi
   coverage_command=("${command[@]}" --test-threads "$ADL_COVERAGE_TEST_THREADS")
   "${coverage_command[@]}"
-  test -s coverage-summary.json
   cargo llvm-cov report --json --summary-only --output-path coverage-summary.json
+  test -s coverage-summary.json
   python3 - <<'PY' coverage-summary.json "$HEAD_COMMIT"
 import json
 import sys
