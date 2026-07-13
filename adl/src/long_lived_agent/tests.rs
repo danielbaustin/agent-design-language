@@ -2492,7 +2492,7 @@ fn daemon_status_records_nonfatal_cav_snapshot_write_failure() {
     ensure_state_root(&loaded).expect("state root");
     fs::create_dir(loaded.state_root.join(csm_cav::CSM_CAV_STATUS_REF))
         .expect("block CAV status file with directory");
-    let runtime_context = CsmRuntimeContext::new().expect("csm runtime context");
+    let runtime_context = CsmRuntimeContext::new(&loaded).expect("csm runtime context");
 
     let status = write_daemon_status(
         &runtime_context,

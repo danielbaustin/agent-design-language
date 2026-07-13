@@ -193,63 +193,6 @@ fn assert_text_contains(haystack: &str, needle: &str, label: &str) {
     );
 }
 
-fn run_csm_with_unconfigured_cloud_notice_env(args: &[&str]) -> std::process::Output {
-    let mut command = std::process::Command::new(resolve_csm_exe());
-    command.args(args);
-    for key in [
-        "ADL_AWS_SIGNAL_MODE",
-        "ADL_AWS_SIGNAL_APPROVED",
-        "ADL_AWS_REGION",
-        "ADL_AWS_PROFILE",
-        "AWS_PROFILE",
-        "ADL_AWS_HEARTBEAT_TARGET",
-        "ADL_AWS_HEARTBEAT_LOG_GROUP",
-        "ADL_AWS_HEARTBEAT_LOG_STREAM",
-        "ADL_AWS_SNS_TOPIC_ARN",
-        "ADL_CSM_NOTICE_CONTROL_PLANE_MODE",
-        "ADL_CSM_NOTICE_CONTROL_PLANE_APPROVED",
-        "ADL_CSM_NOTICE_CONTROL_PLANE_TARGET",
-        "ADL_CSM_NOTICE_CONTROL_PLANE_URL",
-        "ADL_CSM_NOTICE_LAMBDA_FUNCTION",
-        "ADL_CSM_NOTICE_EVENT_BUS",
-    ] {
-        command.env_remove(key);
-    }
-    command.output().expect("run csm binary")
-}
-
-fn http_get_json(addr: &str, path: &str) -> serde_json::Value {
-    let started = std::time::Instant::now();
-    loop {
-        match std::net::TcpStream::connect(addr) {
-            Ok(mut stream) => {
-                stream
-                    .set_read_timeout(Some(std::time::Duration::from_secs(5)))
-                    .expect("set API read timeout");
-                write!(
-                    stream,
-                    "GET {path} HTTP/1.1\r\nhost: {addr}\r\nconnection: close\r\n\r\n"
-                )
-                .expect("write API request");
-                stream.flush().expect("flush API request");
-                let body = read_http_response_body(&mut stream);
-                if body.trim().is_empty() && started.elapsed() < std::time::Duration::from_secs(5) {
-                    std::thread::sleep(std::time::Duration::from_millis(25));
-                    continue;
-                }
-                return serde_json::from_str(&body).unwrap_or_else(|err| {
-                    panic!("parse API response for {path}: {err}; body:\n{body}")
-                });
-            }
-            Err(err) if started.elapsed() < std::time::Duration::from_secs(5) => {
-                let _ = err;
-                std::thread::sleep(std::time::Duration::from_millis(25));
-            }
-            Err(err) => panic!("connect to CSM API {addr} for {path}: {err}"),
-        }
-    }
-}
-
 fn http_get_json_authenticated(
     addr: &str,
     state_root: &std::path::Path,
@@ -4901,9 +4844,12 @@ memory:
     );
     let queued_behind_prior_notice = matches!(
         notice_latest["typed_channel_delivery"]["status"].as_str(),
-        Some("durably_spooled_waiting_for_replay" | "durably_spooled_behind_unacknowledged_sequence")
-    )
-        && notice_latest["typed_channel_delivery"]["cursor_advanced"] == false;
+        Some(
+            "durably_spooled_waiting_for_replay" | "durably_spooled_behind_unacknowledged_sequence"
+        )
+    ) && notice_latest["typed_channel_delivery"]
+        ["cursor_advanced"]
+        == false;
     let blocked_before_route_sequence = notice_latest["typed_channel_delivery"]["status"]
         == "blocked_before_sequence_reservation"
         && notice_latest["typed_channel_delivery"]["cursor_advanced"] == false
