@@ -130,7 +130,11 @@ else
   export CARGO_LLVM_COV_TARGET_DIR="$ADL_COVERAGE_BUILD_ROOT/target/llvm-cov-target"
   export ADL_CSM_DISK_FLOOR_BYTES="${ADL_CSM_DISK_FLOOR_BYTES:-0}"
   cd "$ROOT_DIR/adl"
-  bash "$ROOT_DIR/adl/tools/rust_validation_warm_cache.sh"
+  if [[ -x "$ROOT_DIR/adl/tools/rust_validation_warm_cache.sh" ]]; then
+    bash "$ROOT_DIR/adl/tools/rust_validation_warm_cache.sh"
+  else
+    echo "run_aws_spot_ci_profile: source revision has no warm-cache helper; using retained target directly"
+  fi
   coverage_command=("${command[@]}" --test-threads "$ADL_COVERAGE_TEST_THREADS")
   "${coverage_command[@]}"
   test -s coverage-summary.json
