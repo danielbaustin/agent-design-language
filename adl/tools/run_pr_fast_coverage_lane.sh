@@ -13,6 +13,7 @@ USAGE
 
 FILTER_EXPRESSION=""
 TEST_THREADS="${ADL_PR_FAST_COVERAGE_TEST_THREADS:-}"
+PACKAGE="${ADL_PR_FAST_COVERAGE_PACKAGE:-}"
 while [ "$#" -gt 0 ]; do
   case "$1" in
     --filter-expression)
@@ -55,7 +56,14 @@ printf 'PR-fast coverage expression: %s\n' "$FILTER_EXPRESSION"
 printf 'PR-fast coverage target: %s\n' "$CARGO_TARGET_DIR"
 coverage_args=(
   llvm-cov nextest
-  --workspace
+)
+if [ -n "$PACKAGE" ]; then
+  coverage_args+=(--package "$PACKAGE")
+  printf 'PR-fast coverage package: %s\n' "$PACKAGE"
+else
+  coverage_args+=(--workspace)
+fi
+coverage_args+=(
   --status-level all
   --final-status-level slow
   --no-report

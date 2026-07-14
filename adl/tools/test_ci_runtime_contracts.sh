@@ -438,7 +438,7 @@ if "--test-threads 1" in pr_fast_runner_text:
 for required_fragment in (
     "cargo llvm-cov nextest \\",
     "    --workspace \\",
-    "    --no-report",
+    "    --no-clean",
     "cargo llvm-cov report \\",
     "--json \\",
     "--summary-only \\",

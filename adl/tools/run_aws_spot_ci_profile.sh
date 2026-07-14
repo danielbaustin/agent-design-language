@@ -66,19 +66,25 @@ policy_value() {
 ci_command=(bash adl/tools/run_pr_fast_test_lane.sh --base "$BASE_COMMIT" --head "$HEAD_COMMIT")
 coverage_command=(cargo llvm-cov nextest --workspace --no-report --no-fail-fast --no-tests pass --test-threads 16 -- --skip real_pr_)
 
+print_coverage_command() {
+  if [[ "$EVENT_NAME" == pull_request ]]; then
+    printf 'policy-selected: bash adl/tools/run_pr_fast_coverage_lane.sh --filter-expression <coverage-impact-expression>\n'
+  else
+    printf 'policy-selected: bash adl/tools/run_authoritative_coverage_lane.sh --authority <coverage-authority> --event-name %q\n' "$EVENT_NAME"
+  fi
+}
+
 if [[ "$PRINT_COMMAND" == true ]]; then
   if [[ "$PROFILE" == "adl-ci-and-coverage" ]]; then
     printf 'adl-ci: '
     printf '%q ' "${ci_command[@]}"
     printf '\nadl-coverage: '
-    printf '%q ' "${coverage_command[@]}"
-    printf '\n'
+    print_coverage_command
   elif [[ "$PROFILE" == "adl-ci" ]]; then
     printf '%q ' "${ci_command[@]}"
     printf '\n'
   else
-    printf '%q ' "${coverage_command[@]}"
-    printf '\n'
+    print_coverage_command
   fi
   exit 0
 fi
@@ -189,6 +195,7 @@ run_adl_coverage() {
       ADL_PR_FAST_COVERAGE_BUILD_ROOT="$ADL_COVERAGE_BUILD_ROOT/target" \
       ADL_PR_FAST_COVERAGE_WARM_SOURCE_TARGET="$WARM_SOURCE_TARGET" \
       ADL_PR_FAST_COVERAGE_TEST_THREADS="$ADL_COVERAGE_TEST_THREADS" \
+      ADL_PR_FAST_COVERAGE_PACKAGE="${ADL_PR_FAST_COVERAGE_PACKAGE:-adl}" \
         bash "$ROOT_DIR/adl/tools/run_pr_fast_coverage_lane.sh" \
           --filter-expression "$coverage_filter"
       cp "$ROOT_DIR/adl/target/coverage-impact-summary.json" coverage-summary.json

@@ -64,10 +64,10 @@ coverage_plan="$(bash "$SCRIPT" adl-coverage --base HEAD --head HEAD --print-com
 combined_plan="$(bash "$SCRIPT" adl-ci-and-coverage --base HEAD --head HEAD --print-command)"
 coverage_push_plan="$(bash "$SCRIPT" adl-coverage --base HEAD --head HEAD --event-name push --print-command)"
 [[ "$ci_plan" == *run_pr_fast_test_lane.sh* ]]
-[[ "$coverage_plan" == *'cargo llvm-cov nextest'* ]]
+[[ "$coverage_plan" == *'policy-selected: bash adl/tools/run_pr_fast_coverage_lane.sh'* ]]
 [[ "$combined_plan" == *'adl-ci:'*'adl-coverage:'* ]]
 [[ "$combined_plan" == *run_pr_fast_test_lane.sh* ]]
-[[ "$combined_plan" == *'cargo llvm-cov nextest'* ]]
+[[ "$combined_plan" == *'policy-selected: bash adl/tools/run_pr_fast_coverage_lane.sh'* ]]
 grep -F 'coverage_command=(cargo llvm-cov nextest --workspace --no-report --no-fail-fast --no-tests pass --test-threads 16 -- --skip real_pr_)' "$SCRIPT" >/dev/null
 grep -F 'FULL_COVERAGE_REQUIRED" == true && "$EVENT_NAME" != pull_request' "$SCRIPT" >/dev/null
 grep -F 'ADL_SPOT_COVERAGE_PLAN mode=pr-fast-sla full_policy=true' "$SCRIPT" >/dev/null
@@ -83,7 +83,7 @@ combined_log="$combined_tmp/execution.log"
 combined_output_dir="$combined_tmp/profile-output"
 mkdir -p "$combined_root/adl/tools" "$combined_root/adl/target" "$fake_bin" "$combined_root/cache/target" "$combined_output_dir"
 cp "$SCRIPT" "$combined_root/adl/tools/run_aws_spot_ci_profile.sh"
-printf '#!/usr/bin/env bash\nset -euo pipefail\nprintf "ci-policy\\n" >>"$ADL_TEST_LOG"\nout=""\nwhile [[ $# -gt 0 ]]; do\n  if [[ "$1" == "--github-output" ]]; then out="$2"; shift 2; continue; fi\n  shift\ndone\nprintf "rust_required=true\\nfull_coverage_required=false\\ndemo_smoke_required=false\\nv0913_proof_required=false\\nvalidation_profile_escalation_required=false\\n" >"$out"\n' >"$combined_root/adl/tools/ci_path_policy.sh"
+printf '#!/usr/bin/env bash\nset -euo pipefail\nprintf "ci-policy\\n" >>"$ADL_TEST_LOG"\nout=""\nwhile [[ $# -gt 0 ]]; do\n  if [[ "$1" == "--github-output" ]]; then out="$2"; shift 2; continue; fi\n  shift\ndone\nfull=false\nif [[ "${ADL_TEST_FULL_POLICY:-false}" == true ]]; then full=true; fi\nprintf "rust_required=true\\nfull_coverage_required=%%s\\ndemo_smoke_required=false\\nv0913_proof_required=false\\nvalidation_profile_escalation_required=false\\ncoverage_authority=test-policy\\n" "$full" >"$out"\n' >"$combined_root/adl/tools/ci_path_policy.sh"
 printf '#!/usr/bin/env bash\nprintf "ci-lane\\n" >>"$ADL_TEST_LOG"\n' >"$combined_root/adl/tools/run_pr_fast_test_lane.sh"
 printf '#!/usr/bin/env bash\nprintf "process_status\\n"\n' >"$combined_root/adl/tools/check_coverage_impact.sh"
 printf '#!/usr/bin/env bash\nprintf "cargo llvm-cov nextest\\n" >>"$ADL_TEST_LOG"\nprintf "{\\"data\\":[{\\"totals\\":{}}]}\\n" >"$ADL_SPOT_SOURCE_ROOT/adl/target/coverage-impact-summary.json"\n' >"$combined_root/adl/tools/run_pr_fast_coverage_lane.sh"
@@ -111,6 +111,15 @@ test -s "$combined_output_dir/adl-ci.log"
 test -s "$combined_output_dir/adl-coverage.log"
 if printf '%s\n' "$combined_output" | grep -F 'parallel profile failed' >/dev/null; then
   echo "combined profile unexpectedly reported a parallel failure" >&2
+  exit 1
+fi
+
+# Full-policy pull requests must still use the bounded PR-fast coverage route.
+full_policy_log="$combined_tmp/full-policy.log"
+full_policy_output="$(ADL_SPOT_SOURCE_ROOT="$combined_root" CARGO_TARGET_DIR="$combined_root/cache/target" ADL_TEST_FULL_POLICY=true ADL_TEST_LOG="$full_policy_log" PATH="$fake_bin:$PATH" bash "$combined_root/adl/tools/run_aws_spot_ci_profile.sh" adl-coverage --base HEAD --head HEAD --event-name pull_request)"
+grep -F 'ADL_SPOT_COVERAGE_PLAN mode=pr-fast-sla full_policy=true authority=test-policy' <<<"$full_policy_output" >/dev/null
+if grep -F 'mode=full-authoritative' <<<"$full_policy_output" >/dev/null; then
+  echo "full-policy pull request unexpectedly selected authoritative coverage" >&2
   exit 1
 fi
 rm -rf "$combined_tmp"

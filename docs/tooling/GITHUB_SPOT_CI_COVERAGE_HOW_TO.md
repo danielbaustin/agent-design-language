@@ -139,7 +139,8 @@ would delegate that work to `adl-coverage`. `adl-coverage` verifies the
 preinstalled coverage toolchain and runs the focused coverage-impact lane for
 pull requests, including when path policy marks full coverage as required.
 The plan records `mode=pr-fast-sla full_policy=true`; this is the bounded PR
-proof that fits the Spot SLA. Full authoritative coverage remains required for
+proof intended to fit the Spot SLA. The 300-second wall-time target remains an
+acceptance gate until a live combined proof passes. Full authoritative coverage remains required for
 push/main and non-PR evidence events. The full lane uses two concurrent
 nextest partitions by default, with 16 test threads per partition on the
 32-vCPU `m7a.8xlarge` builder. Both partitions must pass before the single

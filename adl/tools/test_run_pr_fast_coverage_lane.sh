@@ -66,6 +66,16 @@ do
   fi
 done
 
+package_cargo_log="$temp_root/cargo-package.log"
+PATH="$bin_dir:$PATH" \
+PR_FAST_COVERAGE_CARGO_LOG="$package_cargo_log" \
+ADL_RUST_WARM_CACHE=0 \
+ADL_PR_FAST_COVERAGE_BUILD_ROOT="$scratch_root-package" \
+ADL_PR_FAST_COVERAGE_PACKAGE=adl \
+  bash "$SCRIPT" --filter-expression "$expression" >"$temp_root/pr-fast-coverage-package-run.out"
+grep -F "PR-fast coverage package: adl" "$temp_root/pr-fast-coverage-package-run.out" >/dev/null
+grep -F "cmd=llvm-cov nextest --package adl --status-level all --final-status-level slow --no-report -E $expression" "$package_cargo_log" >/dev/null
+
 threads_cargo_log="$temp_root/cargo-threads.log"
 PATH="$bin_dir:$PATH" \
 PR_FAST_COVERAGE_CARGO_LOG="$threads_cargo_log" \
