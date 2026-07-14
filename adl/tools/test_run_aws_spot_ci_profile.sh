@@ -50,6 +50,8 @@ grep -F 'ec2:AttachVolume' "$SETUP" >/dev/null
 grep -F 'ec2:DetachVolume' "$SETUP" >/dev/null
 grep -F 'SSH_ALLOWED_CIDR="${ADL_AWS_REMOTE_VALIDATION_SSH_ALLOWED_CIDR:-}"' "$ROOT/adl/tools/run_aws_spot_remote_validation_lane.sh" >/dev/null
 grep -F 'https://checkip.amazonaws.com' "$ROOT/tools/aws_remote_validation/src/aws_remote_validation.rs" >/dev/null
+grep -F 'AWS_SPOT_REMOTE_VALIDATION_SSH_ALLOWED_CIDR' "$WORKFLOW" >/dev/null
+grep -F -- '--ssh-allowed-cidr "$AWS_SPOT_REMOTE_VALIDATION_SSH_ALLOWED_CIDR"' "$WORKFLOW" >/dev/null
 
 ci_plan="$(bash "$SCRIPT" adl-ci --base HEAD --head HEAD --print-command)"
 coverage_plan="$(bash "$SCRIPT" adl-coverage --base HEAD --head HEAD --print-command)"

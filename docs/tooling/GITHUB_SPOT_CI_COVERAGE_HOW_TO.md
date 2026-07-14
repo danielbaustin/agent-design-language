@@ -63,6 +63,8 @@ repository and approved branches/environments. The workflow requires:
 - repository secret `AWS_SPOT_REMOTE_VALIDATION_ROLE_ARN`
 - repository variable `AWS_SPOT_REMOTE_VALIDATION_REGION` (defaults to
   `us-west-2`)
+- repository variable `AWS_SPOT_REMOTE_VALIDATION_SSH_ALLOWED_CIDR`, set to the
+  operator's current public `/32` address
 - protected GitHub environment `adl-spot-ci`; configure it before cutover and
   do not rely on GitHub's unprotected auto-created environment default
 
@@ -78,6 +80,12 @@ Its OIDC trust includes the dedicated `adl-spot-ci` environment subject so
 automatic pull-request calls do not require a repository-wide
 `pull_request` subject. Keep environment deployment policy restricted to the
 trusted repository branches that may run Spot.
+
+The live workflow always enables port 22 using the configured operator CIDR;
+it does not fall back to the ephemeral GitHub runner address. The retained
+passphraseless key is the same key used by the local SSH recovery command.
+GitHub-side execution uses SSM as a second, retained log channel when the
+operator-only SSH ingress is not reachable from the hosted runner.
 
 This is a public repository. Keep privileged Spot dispatch on trusted
 `workflow_dispatch`, protected branches, or an approval-gated environment.

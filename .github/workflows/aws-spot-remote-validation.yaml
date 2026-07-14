@@ -109,6 +109,7 @@ jobs:
       AWS_SPOT_REMOTE_VALIDATION_ROLE_ARN: ${{ secrets.AWS_SPOT_REMOTE_VALIDATION_ROLE_ARN }}
       ADL_AWS_REMOTE_VALIDATION_SSH_ALLOWED_CIDR: ${{ vars.ADL_AWS_REMOTE_VALIDATION_SSH_ALLOWED_CIDR }}
       AWS_SPOT_REMOTE_VALIDATION_SSH_PRIVATE_KEY_B64: ${{ secrets.AWS_SPOT_REMOTE_VALIDATION_SSH_PRIVATE_KEY_B64 }}
+      AWS_SPOT_REMOTE_VALIDATION_SSH_ALLOWED_CIDR: ${{ vars.AWS_SPOT_REMOTE_VALIDATION_SSH_ALLOWED_CIDR }}
       ISSUE_NUMBER: ${{ inputs.issue_number }}
       SPOT_RUN_ID: adl-wp-${{ inputs.issue_number }}-gha-${{ github.run_id }}-${{ github.run_attempt }}-${{ inputs.profile }}
     steps:
@@ -146,6 +147,10 @@ jobs:
           fi
           if [ "${{ inputs.mode }}" = "start-run" ] && [ -z "$AWS_SPOT_REMOTE_VALIDATION_SSH_PRIVATE_KEY_B64" ]; then
             echo "::error::AWS_SPOT_REMOTE_VALIDATION_SSH_PRIVATE_KEY_B64 secret is required for live Spot runs"
+            exit 2
+          fi
+          if [ "${{ inputs.mode }}" = "start-run" ] && [ -z "$AWS_SPOT_REMOTE_VALIDATION_SSH_ALLOWED_CIDR" ]; then
+            echo "::error::AWS_SPOT_REMOTE_VALIDATION_SSH_ALLOWED_CIDR repository variable is required for live Spot runs"
             exit 2
           fi
           if [ "${{ inputs.git_ref }}" = "HEAD" ]; then
@@ -286,6 +291,7 @@ jobs:
             --instance-type "$INSTANCE_TYPE" \
             --builder-image-tag "$BUILDER_IMAGE_TAG" \
             --ssh-private-key-path "$SSH_KEY_PATH" \
+            --ssh-allowed-cidr "$AWS_SPOT_REMOTE_VALIDATION_SSH_ALLOWED_CIDR" \
             --out .adl/tmp/aws-spot-remote-validation/summary.json \
             --artifact-dir .adl/tmp/aws-spot-remote-validation/artifacts \
             --json
