@@ -11,7 +11,8 @@ on Spot with the retained 500 GiB EBS cache.
 Roll out in four stages:
 
 1. Run manual `adl-ci-and-coverage` as the operational shadow: both profiles
-   execute inside one Spot launch, one retained cache, and one cleanup scope.
+   execute concurrently inside one Spot launch, one retained cache, and one
+   cleanup scope.
 2. Use the individual `adl-ci` and `adl-coverage` profiles only for bounded
    diagnosis. The GitHub cutover path uses exactly one Spot job,
    `adl-ci-and-coverage`, for both stable checks.

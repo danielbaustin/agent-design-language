@@ -66,7 +66,8 @@ grep -F 'coverage_command+=(--test-threads "$ADL_COVERAGE_TEST_THREADS")' "$SCRI
 [[ "$coverage_push_plan" == *'--event-name push'* ]]
 
 # Execute the combined orchestration locally with fake toolchain commands. This
-# proves sequencing and evidence emission without launching paid AWS compute.
+# proves one-container parallel orchestration and evidence emission without
+# launching paid AWS compute.
 combined_tmp="$(mktemp -d "${TMPDIR:-/tmp}/adl-spot-combined-profile.XXXXXX")"
 combined_root="$combined_tmp/repo"
 fake_bin="$combined_tmp/bin"
@@ -93,9 +94,12 @@ ci_record_line="$(printf '%s\n' "$combined_output" | grep -n 'profile=adl-ci bas
 coverage_record_line="$(printf '%s\n' "$combined_output" | grep -n 'profile=adl-coverage base=' | head -1 | cut -d: -f1)"
 total_record_line="$(printf '%s\n' "$combined_output" | grep -n 'profile=adl-ci-and-coverage base=' | head -1 | cut -d: -f1)"
 [[ -n "$ci_record_line" && -n "$coverage_record_line" && -n "$total_record_line" ]]
-(( ci_record_line < coverage_record_line ))
 grep -F 'ci-lane' "$combined_log" >/dev/null
 grep -F 'cargo llvm-cov nextest' "$combined_log" >/dev/null
+if printf '%s\n' "$combined_output" | grep -F 'parallel profile failed' >/dev/null; then
+  echo "combined profile unexpectedly reported a parallel failure" >&2
+  exit 1
+fi
 rm -rf "$combined_tmp"
 
 grep -F 'profile:' "$WORKFLOW" >/dev/null

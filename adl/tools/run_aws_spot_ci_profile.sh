@@ -17,7 +17,8 @@ Usage:
   run_aws_spot_ci_profile.sh adl-ci-and-coverage --base <ref> --head <ref> [--event-name <event>] [--print-command]
 
 Runs one named GitHub shadow-check workload inside the immutable ADL builder
-container. It does not launch EC2 and does not install validation tools.
+container. The combined profile runs CI and coverage concurrently inside one
+container and one retained cache. It does not launch EC2 or install tools.
 USAGE
 }
 
@@ -195,8 +196,23 @@ case "$PROFILE" in
   adl-ci) run_adl_ci ;;
   adl-coverage) run_adl_coverage ;;
   adl-ci-and-coverage)
-    run_adl_ci
-    run_adl_coverage
+    profile_log_dir="$(mktemp -d "${TMPDIR:-/tmp}/adl-spot-ci-parallel.XXXXXX")"
+    ci_log="$profile_log_dir/adl-ci.log"
+    coverage_log="$profile_log_dir/adl-coverage.log"
+    run_adl_ci >"$ci_log" 2>&1 &
+    ci_pid=$!
+    run_adl_coverage >"$coverage_log" 2>&1 &
+    coverage_pid=$!
+    ci_status=0
+    coverage_status=0
+    wait "$ci_pid" || ci_status=$?
+    wait "$coverage_pid" || coverage_status=$?
+    cat "$ci_log" "$coverage_log"
+    rm -rf "$profile_log_dir"
+    if (( ci_status != 0 || coverage_status != 0 )); then
+      echo "run_aws_spot_ci_profile: parallel profile failed ci_status=$ci_status coverage_status=$coverage_status" >&2
+      exit 1
+    fi
     ;;
 esac
 finished_at="$(date +%s)"

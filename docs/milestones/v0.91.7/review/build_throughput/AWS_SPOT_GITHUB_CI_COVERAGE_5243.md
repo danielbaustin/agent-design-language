@@ -185,7 +185,7 @@ Repository variable `ADL_HEAVY_CI_BACKEND` controls the heavy backend:
 
 - absent, `hosted`, or any value other than `spot`: existing hosted lanes
 - `spot`: one reusable Spot `adl-ci-and-coverage` lane for trusted same-repo
-  pull requests; it runs CI and coverage sequentially on one warm host
+  pull requests; it runs CI and coverage concurrently on one warm host
 - fork pull requests: hosted lanes regardless of the variable
 
 Push-to-main, schedule/nightly, and workflow-dispatch coverage remains hosted
