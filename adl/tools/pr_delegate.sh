@@ -250,6 +250,70 @@ rust_pr_subcommand_stable_bin() {
   printf '%s\n' "$candidate"
 }
 
+rust_pr_subcommand_stable_candidate_bin() {
+  declare -F adl_owner_stable_bin_dirs >/dev/null || return 1
+  local subcommand="$1"
+  local root primary_root binary_name bin_dir candidate
+  root="$(rust_pr_delegate_root)"
+  primary_root="$(rust_pr_delegate_primary_root)"
+  binary_name="$(rust_pr_subcommand_binary_name "$subcommand" || true)"
+  [[ -n "$binary_name" ]] || return 1
+  while IFS= read -r bin_dir; do
+    [[ -n "$bin_dir" ]] || continue
+    candidate="$bin_dir/$binary_name"
+    [[ -x "$candidate" ]] || continue
+    printf '%s\n' "$candidate"
+    return 0
+  done < <(adl_owner_stable_bin_dirs "$root" "$primary_root")
+  return 1
+}
+
+rust_pr_subcommand_blocks_stale_target_fallback() {
+  case "${1:-}" in
+    finish|issue)
+      rust_pr_subcommand_stable_candidate_bin "$1" >/dev/null
+      ;;
+    *)
+      return 1
+      ;;
+  esac
+}
+
+rust_pr_subcommand_has_stale_stable_candidate() {
+  rust_pr_subcommand_blocks_stale_target_fallback "$1" || return 1
+  ! rust_pr_subcommand_stable_bin "$1" >/dev/null
+}
+
+rust_pr_report_stale_stable_owner_binary() {
+  local subcommand="$1" root="$2"
+  local direct_bin override_var candidate
+  direct_bin="$(rust_pr_subcommand_binary_name "$subcommand" || true)"
+  override_var="$(rust_pr_subcommand_override_var_name "$subcommand" || true)"
+  candidate="$(rust_pr_subcommand_stable_candidate_bin "$subcommand" || true)"
+  adl_obs_event "pr.sh" "rust_delegate" "failed" \
+    "subcommand" "$subcommand" \
+    "reason_code" "stable_owner_binary_not_current" \
+    "cargo_fallback" "disabled" \
+    "candidate" "${candidate:-unknown}"
+  cat >&2 <<EOF
+ERROR: installed ADL PR owner binary for subcommand '$subcommand' is present but not current.
+Refusing to fall back to a stale Cargo target binary while an installed owner binary exists.
+candidate=${candidate:-unknown}
+EOF
+  if [[ -n "$direct_bin" ]]; then
+    cat >&2 <<EOF
+Repair with: bash adl/tools/install_owner_binaries.sh
+EOF
+  fi
+  if [[ -n "$override_var" ]]; then
+    printf '%s\n' "Override intentionally with: $override_var=<absolute-path-to-$direct_bin>" >&2
+  fi
+  cat >&2 <<EOF
+Set ADL_PR_RUST_ALLOW_CARGO_FALLBACK=1 only for explicit bootstrap/debug use.
+root=$root
+EOF
+}
+
 rust_pr_delegate_stable_bin() {
   declare -F adl_owner_stable_binary_if_fresh >/dev/null || return 1
   local root primary_root candidate
@@ -312,6 +376,7 @@ rust_pr_subcommand_override_bin() {
 }
 
 rust_pr_subcommand_cached_bin() {
+  rust_pr_subcommand_has_stale_stable_candidate "$1" && return 1
   local root binary_name candidate
   root="$(rust_pr_delegate_root)"
   binary_name="$(rust_pr_subcommand_binary_name "$1" || true)"
@@ -324,11 +389,16 @@ rust_pr_subcommand_cached_bin() {
 
 rust_pr_preferred_worktree_cached_bin() {
   [[ "${1:-}" == "finish" ]] || return 1
-  local root primary_root
+  local root primary_root binary_name candidate
   root="$(rust_pr_delegate_root)"
   primary_root="$(rust_pr_delegate_primary_root)"
   [[ "$root" != "$primary_root" ]] || return 1
-  rust_pr_subcommand_cached_bin "$1"
+  binary_name="$(rust_pr_subcommand_binary_name "$1" || true)"
+  [[ -n "$binary_name" ]] || return 1
+  candidate="$root/adl/target/debug/$binary_name"
+  [[ -x "$candidate" ]] || return 1
+  rust_pr_delegate_bin_is_fresh "$root" "$candidate" || return 1
+  printf '%s\n' "$candidate"
 }
 
 rust_pr_finish_worktree_requires_repair() {
@@ -357,6 +427,7 @@ EOF
 
 rust_pr_issue_stale_cached_bin() {
   [[ "${1:-}" == "issue" ]] || return 1
+  rust_pr_subcommand_has_stale_stable_candidate "$1" && return 1
   local root candidate
   root="$(rust_pr_delegate_root)"
   candidate="$root/adl/target/debug/adl-issue"
@@ -366,6 +437,7 @@ rust_pr_issue_stale_cached_bin() {
 
 rust_pr_subcommand_primary_cached_bin() {
   local subcommand="$1"
+  rust_pr_subcommand_has_stale_stable_candidate "$subcommand" && return 1
   local root primary_root binary_name candidate
   root="$(rust_pr_delegate_root)"
   primary_root="$(rust_pr_delegate_primary_root)"
@@ -383,6 +455,7 @@ rust_pr_subcommand_primary_cached_bin() {
 
 rust_pr_issue_stale_primary_cached_bin() {
   [[ "${1:-}" == "issue" ]] || return 1
+  rust_pr_subcommand_has_stale_stable_candidate "$1" && return 1
   local root primary_root candidate
   root="$(rust_pr_delegate_root)"
   primary_root="$(rust_pr_delegate_primary_root)"
@@ -399,6 +472,7 @@ rust_pr_subcommand_primary_cached_bin_stale_last_resort() {
   # Rust control-plane edits are represented by the binary being executed.
   rust_pr_cargo_fallback_allowed && return 1
   local subcommand="${1:-}"
+  rust_pr_subcommand_has_stale_stable_candidate "$subcommand" && return 1
   local root primary_root binary_name candidate
   root="$(rust_pr_delegate_root)"
   primary_root="$(rust_pr_delegate_primary_root)"
@@ -412,6 +486,7 @@ rust_pr_subcommand_primary_cached_bin_stale_last_resort() {
 
 rust_pr_subcommand_path_bin() {
   [[ "${ADL_PR_RUST_DISABLE_PATH_LOOKUP:-0}" != "1" ]] || return 1
+  rust_pr_subcommand_has_stale_stable_candidate "$1" && return 1
   local binary_name candidate
   binary_name="$(rust_pr_subcommand_binary_name "$1" || true)"
   [[ -n "$binary_name" ]] || return 1
@@ -696,6 +771,28 @@ EOF
   return "$status"
 }
 
+run_rust_pr_subcommand_cargo_delegate() {
+  local subcommand="$1" manifest="$2" root="$3"
+  shift 3
+  local build_lock_dir direct_bin status
+  build_lock_dir="${ADL_PR_CARGO_DELEGATE_BUILD_LOCK_DIR:-$root/adl/target/.adl-pr-rust-delegate-build.lock}"
+  mkdir -p "$(dirname "$build_lock_dir")"
+  ADL_PR_RUST_DELEGATE_BUILD_LOCK_HELD=""
+  direct_bin="$(rust_pr_subcommand_binary_name "$subcommand" || true)"
+  [[ -n "$direct_bin" ]] || return 1
+  adl_obs_event "pr.sh" "rust_delegate" "exec" "subcommand" "$subcommand" "delegate" "cargo" "manifest" "$manifest" "bin" "$direct_bin" "lock_mode" "locked"
+  acquire_rust_pr_delegate_build_lock "$build_lock_dir" "$subcommand" "$direct_bin" || exit "$?"
+  trap 'if [[ -n "${ADL_PR_RUST_DELEGATE_BUILD_LOCK_HELD:-}" ]]; then rust_pr_delegate_build_lock_cleanup "$ADL_PR_RUST_DELEGATE_BUILD_LOCK_HELD"; fi' EXIT
+  set +e
+  run_rust_pr_delegate_with_liveness "$subcommand" "$manifest" "$direct_bin" "$@"
+  status="$?"
+  set -e
+  rust_pr_delegate_build_lock_cleanup "$build_lock_dir"
+  ADL_PR_RUST_DELEGATE_BUILD_LOCK_HELD=""
+  trap - EXIT
+  exit "$status"
+}
+
 delegate_pr_command_to_rust() {
   local subcommand="$1"; shift || true
   local root manifest cached_bin override_bin direct_bin build_lock_dir
@@ -719,9 +816,12 @@ delegate_pr_command_to_rust() {
     adl_obs_event "pr.sh" "rust_delegate" "exec" "subcommand" "$subcommand" "delegate" "$direct_bin" "source" "current_worktree_owner_bin"
     exec "$direct_bin" "$@"
   fi
-  if rust_pr_finish_worktree_requires_repair "$subcommand"; then
+  if rust_pr_finish_worktree_requires_repair "$subcommand" && ! rust_pr_cargo_fallback_allowed; then
     rust_pr_report_finish_worktree_repair "$root"
     exit 75
+  fi
+  if rust_pr_finish_worktree_requires_repair "$subcommand" && rust_pr_cargo_fallback_allowed; then
+    run_rust_pr_subcommand_cargo_delegate "$subcommand" "$manifest" "$root" "$@"
   fi
   direct_bin="$(rust_pr_subcommand_stable_bin "$subcommand" || true)"
   if [[ -n "$direct_bin" ]]; then
@@ -742,6 +842,10 @@ delegate_pr_command_to_rust() {
   if [[ -n "$direct_bin" ]]; then
     adl_obs_event "pr.sh" "rust_delegate" "exec" "subcommand" "$subcommand" "delegate" "$direct_bin"
     exec "$direct_bin" "$@"
+  fi
+  if rust_pr_subcommand_blocks_stale_target_fallback "$subcommand" && ! rust_pr_cargo_fallback_allowed; then
+    rust_pr_report_stale_stable_owner_binary "$subcommand" "$root"
+    exit 75
   fi
   direct_bin="$(rust_pr_issue_stale_cached_bin "$subcommand" || true)"
   if [[ -n "$direct_bin" ]]; then
@@ -876,6 +980,14 @@ delegate_pr_command_to_rust() {
 
 require_rust_pr_delegate() {
   rust_pr_delegate_available "${1:-}" && return 0
+  if rust_pr_finish_worktree_requires_repair "${1:-}" && ! rust_pr_cargo_fallback_allowed; then
+    rust_pr_report_finish_worktree_repair "$(rust_pr_delegate_root)"
+    exit 75
+  fi
+  if rust_pr_subcommand_has_stale_stable_candidate "${1:-}" && ! rust_pr_cargo_fallback_allowed; then
+    rust_pr_report_stale_stable_owner_binary "${1:-unknown}" "$(rust_pr_delegate_root)"
+    exit 75
+  fi
   if [[ "${ADL_PR_RUST_DISABLE:-0}" != "1" ]] && ! rust_pr_cargo_fallback_allowed; then
     rust_pr_report_missing_owner_binary "${1:-unknown}" "$(rust_pr_delegate_root)"
     exit 75
