@@ -12,9 +12,14 @@ ssh_user="$3"
 host="$4"
 shift 4
 
+known_hosts_file="${ADL_SSH_KNOWN_HOSTS_FILE:-${HOME}/.ssh/known_hosts}"
+mkdir -p "$(dirname "$known_hosts_file")"
+touch "$known_hosts_file"
+chmod 600 "$known_hosts_file"
+
 ssh_args=(
-  -o StrictHostKeyChecking=no
-  -o UserKnownHostsFile=/dev/null
+  -o StrictHostKeyChecking=accept-new
+  -o UserKnownHostsFile="$known_hosts_file"
   -o ConnectTimeout=10
   -o ServerAliveInterval=5
   -o ServerAliveCountMax=1

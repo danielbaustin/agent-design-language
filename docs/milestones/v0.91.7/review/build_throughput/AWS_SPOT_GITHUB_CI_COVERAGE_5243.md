@@ -9,16 +9,16 @@ immediate rollback backend until all live gates below pass.
 
 ## Current Disposition
 
-Status: `shadow_proof_in_progress`
+Status: `live_combined_profile_proven; cutover_pending`
 
-The Spot CI lane is live-proven. The authoritative coverage lane is not yet
-green. The first full run found a runtime fixture baseline defect tracked by
-`#5267`; a separate run against a historically green commit then proved that
-the immutable builder image lacked `gh`, which a lifecycle test executes. The
-image contract now requires and verifies `gh`, but a replacement immutable
-digest is verified and two same-commit coverage repeats are green. No
-required-check cutover claim is made until the environment-backed workflow
-and rollback rehearsal complete.
+The Spot CI lane and the combined `adl-ci-and-coverage` profile are
+live-proven. The first full run found a runtime fixture baseline defect tracked
+by `#5267`; this issue does not modify that separate failure. A historically
+green control then exposed a missing `gh` tool in the builder image, which was
+fixed by the replacement immutable image. The final combined run below passed
+both profiles in one lifecycle, with SSH reachable from the operator `/32`,
+incremental SSM output, retained EBS cache proof, and clean instance/cache
+cleanup. Required-check cutover remains a separate deliberate rollout step.
 
 The `adl-spot-ci` GitHub environment is configured with selected-branch rules
 for `main` and `codex/*`, no environment secrets, no manual approval gate, and
@@ -50,6 +50,8 @@ still disabled while coverage proof is incomplete.
 | `adl-coverage` final-profile repeat | `9346f230` | replacement `v0.91.7-coverage-5243` | retained 500 GiB EBS | 636s | 738s | 815s | passed; 2108/2108 tests, 2 skipped; final trusted profile |
 | `adl-ci` GitHub workflow run 30 | `bc76182c` | immutable digest `sha256:20831e3...` | retained 500 GiB EBS | 249s | 304s | 03:20-03:27Z | passed; 135 requests, 100% Rust cache hits, 343 GB pre-existing target |
 | `adl-coverage` GitHub workflow run 31 | `bc76182c` | immutable digest `sha256:20831e3...` | retained 500 GiB EBS | not run | not run | canceled before launch | superseded; operational proof must run both profiles in one lifecycle |
+| `adl-ci-and-coverage` GitHub workflow run 32 | `d3adb15f` | immutable digest `sha256:20831e358...` | retained 500 GiB EBS | failed in coverage | failed | failed | stopped on separate `#5267` runtime fixture defect; instance and cache cleanup passed |
+| `adl-ci-and-coverage` GitHub workflow run 33 | `9346f230` | immutable digest `sha256:20831e358...` | retained 500 GiB EBS | 728s | 785s | passed | `adl-ci` and `adl-coverage` passed in one lifecycle; 2108/2108 tests, 2 skipped; instance terminated and volume available |
 
 Both existing-PR CI shadows ran 54 focused tests, doc tests, and demo smoke
 successfully, with identical 42-second validation time. They used the exact source commit and merge base without modifying
@@ -105,6 +107,23 @@ pre-existing entries and 324,113,203,200 bytes, with 90,875,449,344 bytes
 free. Estimated Spot compute cost was approximately `$0.027` at the observed
 `$0.2065/hour` estimate. The instance terminated and the retained volume
 detached successfully.
+
+The final GitHub combined-profile control used exact head
+`9346f230c96053dd90fdb60cbf6e04fcc3ffcff8` and base
+`363e3f0e8afefbc845408bca3f7ca2a4ccba2e51` on `m7a.2xlarge`. The immutable
+builder proof reported 344,309,071,872 pre-existing target bytes, 66,262
+pre-existing entries, 69,869,932,544 free cache bytes, a writable verified
+mount, and `sccache` at 100% Rust cache hit rate (84 hits, 0 misses, 0 cache
+errors). The combined profile recorded `adl-ci=0s` from the retained cache and
+`adl-coverage=727s`; the remote command took 785s and the launch-through-
+cleanup workflow completed successfully. Coverage ran 2,108 tests with two
+skips, and the instance terminated with both retained volumes available.
+
+The workflow's operator-only SSH ingress was verified from the configured
+`47.146.81.109/32` source. The operator SSH key matched the EC2 key pair and
+live progress/test output was readable during execution. The GitHub runner
+used SSM for the control path; future runs stream incremental SSM output into
+the retained `remote-tail.log` while preserving the direct operator SSH path.
 
 ## Control And Source Separation
 
@@ -178,10 +197,9 @@ the variable and rerunning the checks.
 
 ## Remaining Proof Before Cutover
 
-1. Run the reusable workflow through `adl-spot-ci` with
-   `profile: adl-ci-and-coverage` and verify the constrained
+1. Verify the successful run-33 artifacts are retained and the constrained
    OIDC subject, exact source binding, live logs, sanitized artifacts, and EBS
-   detach behavior end to end.
+   detach behavior remain green in CI.
 2. Set `ADL_HEAVY_CI_BACKEND=spot` and verify stable `adl-ci` and
    `adl-coverage` checks on one real same-repository PR.
 3. Rehearse rollback by setting the variable to `hosted`, rerunning the same

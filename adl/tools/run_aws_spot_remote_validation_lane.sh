@@ -346,6 +346,7 @@ fi
 if [[ -z "$ARTIFACT_DIR" ]]; then
   ARTIFACT_DIR="$(dirname "$OUT_PATH")/artifacts"
 fi
+export ADL_SSH_KNOWN_HOSTS_FILE="$ARTIFACT_DIR/ssh-known-hosts"
 
 if [[ -z "$LANE_BIN" ]]; then
   if [[ -x "${PRIMARY_ROOT:-$ROOT}/.adl/bin/adl-aws-remote-validation" ]]; then
@@ -650,7 +651,7 @@ run_ssh_action() {
     return 1
   }
   verify_ssh_recovery_key
-  exec "$SSH_BIN" -o BatchMode=yes -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null \
+  exec "$SSH_BIN" -o BatchMode=yes -o StrictHostKeyChecking=accept-new -o UserKnownHostsFile="$ADL_SSH_KNOWN_HOSTS_FILE" \
     -o ServerAliveInterval=5 -o ServerAliveCountMax=2 \
     -i "$SSH_PRIVATE_KEY_PATH" "$SSH_USER@$public_ip"
 }

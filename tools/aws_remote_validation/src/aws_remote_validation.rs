@@ -18,6 +18,7 @@ use sha2::{Digest, Sha256};
 use std::fmt;
 use std::fs::OpenOptions;
 use std::io::Write;
+use std::net::{IpAddr, Ipv4Addr};
 use std::path::{Path, PathBuf};
 use std::process::Command as StdCommand;
 use std::sync::{Arc, Mutex};
@@ -133,6 +134,7 @@ struct SshDebugConfig {
     private_key_path: PathBuf,
     user: String,
     allowed_cidr: String,
+    probe_enabled: bool,
 }
 
 impl AwsRemoteValidationConfig {
@@ -1428,6 +1430,43 @@ fn append_command_status_line(status: &str, detail: impl Into<String>) {
     let _ = writeln!(file, "{timestamp} status={status} {}", detail.into());
 }
 
+fn append_live_command_output(channel: &str, content: &str, offset: &mut usize) {
+    if content.len() <= *offset {
+        return;
+    }
+    let Some(chunk) = content.get(*offset..) else {
+        *offset = content.len();
+        return;
+    };
+    let Some(status_path) = LIVE_COMMAND_STATUS_LOG_PATH
+        .lock()
+        .ok()
+        .and_then(|guard| guard.clone())
+    else {
+        return;
+    };
+    let output_path = status_path
+        .parent()
+        .unwrap_or_else(|| Path::new("."))
+        .join("remote-tail.log");
+    if let Ok(mut file) = OpenOptions::new()
+        .create(true)
+        .append(true)
+        .open(output_path)
+    {
+        let _ = writeln!(file, "{} channel={channel}", Utc::now().to_rfc3339());
+        let _ = file.write_all(chunk.as_bytes());
+        if !chunk.ends_with('\n') {
+            let _ = writeln!(file);
+        }
+    }
+    append_command_status_line(
+        "ssm_output",
+        format!("channel={channel} bytes={}", chunk.len()),
+    );
+    *offset = content.len();
+}
+
 fn sha256_hex(value: &str) -> String {
     let mut hasher = Sha256::new();
     hasher.update(value.as_bytes());
@@ -1436,6 +1475,28 @@ fn sha256_hex(value: &str) -> String {
 
 fn preview(text: &str) -> String {
     text.lines().take(8).collect::<Vec<_>>().join(" | ")
+}
+
+fn validate_ssh_allowed_cidr(value: &str) -> Result<String> {
+    let (ip_text, prefix) = value
+        .trim()
+        .split_once('/')
+        .ok_or_else(|| anyhow!("SSH allowed CIDR must be an IPv4 /32"))?;
+    if prefix != "32" {
+        return Err(anyhow!("SSH allowed CIDR must use an exact /32 source"));
+    }
+    let ip = ip_text
+        .parse::<IpAddr>()
+        .context("SSH allowed CIDR must contain a valid IPv4 address")?;
+    let IpAddr::V4(ip) = ip else {
+        return Err(anyhow!("SSH allowed CIDR must contain an IPv4 address"));
+    };
+    if ip == Ipv4Addr::UNSPECIFIED || ip.is_loopback() || ip.is_multicast() {
+        return Err(anyhow!(
+            "SSH allowed CIDR must contain a reachable public IPv4 address"
+        ));
+    }
+    Ok(format!("{ip}/32"))
 }
 
 fn build_ssh_debug_config(config: &AwsRemoteValidationConfig) -> Result<Option<SshDebugConfig>> {
@@ -1450,8 +1511,9 @@ fn build_ssh_debug_config(config: &AwsRemoteValidationConfig) -> Result<Option<S
         .ssh_user
         .clone()
         .unwrap_or_else(|| "ec2-user".to_string());
+    let probe_enabled = config.ssh_allowed_cidr.is_none();
     let allowed_cidr = match config.ssh_allowed_cidr.clone() {
-        Some(value) => value,
+        Some(value) => validate_ssh_allowed_cidr(&value)?,
         None => {
             let output = StdCommand::new("curl")
                 .args(["-fsSL", "https://checkip.amazonaws.com"])
@@ -1462,13 +1524,14 @@ fn build_ssh_debug_config(config: &AwsRemoteValidationConfig) -> Result<Option<S
             }
             let ip = String::from_utf8(output.stdout)
                 .context("failed to decode public IP response for SSH debug mode")?;
-            format!("{}/32", ip.trim())
+            validate_ssh_allowed_cidr(&format!("{}/32", ip.trim()))?
         }
     };
     Ok(Some(SshDebugConfig {
         private_key_path,
         user,
         allowed_cidr,
+        probe_enabled,
     }))
 }
 
@@ -3028,7 +3091,20 @@ impl AwsRemoteValidationAdapter for LiveAwsRemoteValidationAdapter {
         poll_interval: Duration,
     ) -> std::result::Result<CommandExecutionResult, AwsAdapterError> {
         let run_root = extract_run_root(command);
-        let ssh_tail_ready = if run_root.is_some() && self.ssh_debug.is_some() {
+        if run_root.is_some()
+            && self
+                .ssh_debug
+                .as_ref()
+                .is_some_and(|ssh_debug| !ssh_debug.probe_enabled)
+        {
+            append_command_status_line("ssh_debug_skip", "reason=operator_allowlist_ssm_fallback");
+        }
+        let ssh_tail_ready = if run_root.is_some()
+            && self
+                .ssh_debug
+                .as_ref()
+                .is_some_and(|ssh_debug| ssh_debug.probe_enabled)
+        {
             match self
                 .wait_for_ssh_debug_ready(instance_id, Duration::from_secs(90), poll_interval)
                 .await
@@ -3088,6 +3164,8 @@ impl AwsRemoteValidationAdapter for LiveAwsRemoteValidationAdapter {
             format!("instance_id={instance_id} command_id={command_id}"),
         );
         let start = Instant::now();
+        let mut stdout_offset = 0_usize;
+        let mut stderr_offset = 0_usize;
         loop {
             let invocation = match self
                 .ssm
@@ -3119,6 +3197,10 @@ impl AwsRemoteValidationAdapter for LiveAwsRemoteValidationAdapter {
                 .or_else(|| invocation.status().map(|value| value.as_str()))
                 .unwrap_or("Unknown")
                 .to_string();
+            let stdout = invocation.standard_output_content().unwrap_or_default();
+            let stderr = invocation.standard_error_content().unwrap_or_default();
+            append_live_command_output("stdout", stdout, &mut stdout_offset);
+            append_live_command_output("stderr", stderr, &mut stderr_offset);
             append_command_status_line(
                 "command_poll",
                 format!(
@@ -3139,14 +3221,8 @@ impl AwsRemoteValidationAdapter for LiveAwsRemoteValidationAdapter {
                     command_id,
                     status,
                     response_code: Some(invocation.response_code()),
-                    stdout: invocation
-                        .standard_output_content()
-                        .unwrap_or_default()
-                        .to_string(),
-                    stderr: invocation
-                        .standard_error_content()
-                        .unwrap_or_default()
-                        .to_string(),
+                    stdout: stdout.to_string(),
+                    stderr: stderr.to_string(),
                 });
             }
             let instance_state = self.instance_state(instance_id).await?;
@@ -4179,6 +4255,20 @@ mod tests {
             shell_single_quote("it's complicated"),
             "'it'\"'\"'s complicated'"
         );
+    }
+
+    #[test]
+    fn ssh_allowed_cidr_requires_one_reachable_ipv4_address() {
+        assert_eq!(
+            validate_ssh_allowed_cidr("47.146.81.109/32").expect("valid CIDR"),
+            "47.146.81.109/32"
+        );
+        for value in ["47.146.81.109/24", "0.0.0.0/0", "::1/128"] {
+            assert!(
+                validate_ssh_allowed_cidr(value).is_err(),
+                "accepted {value}"
+            );
+        }
     }
 
     #[test]

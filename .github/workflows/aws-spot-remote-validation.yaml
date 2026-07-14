@@ -153,6 +153,10 @@ jobs:
             echo "::error::AWS_SPOT_REMOTE_VALIDATION_SSH_ALLOWED_CIDR repository variable is required for live Spot runs"
             exit 2
           fi
+          if [ "${{ inputs.mode }}" = "start-run" ] && [[ ! "$AWS_SPOT_REMOTE_VALIDATION_SSH_ALLOWED_CIDR" =~ ^([0-9]{1,3}[.]){3}[0-9]{1,3}/32$ ]]; then
+            echo "::error::AWS_SPOT_REMOTE_VALIDATION_SSH_ALLOWED_CIDR must be one IPv4 /32"
+            exit 2
+          fi
           if [ "${{ inputs.git_ref }}" = "HEAD" ]; then
             echo "::error::git_ref must be a branch, tag, or SHA; HEAD is ambiguous"
             exit 2
