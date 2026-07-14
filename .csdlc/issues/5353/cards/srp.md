@@ -12,7 +12,9 @@ Status: pre_phase
 
 ## Scope
 
-Exact implementation revision before publication.
+csdlc-v2/src/lifecycle.rs
+csdlc-v2/src/store.rs
+csdlc-v2/tests/gate2.rs
 
 ## Prompts
 
@@ -34,8 +36,8 @@ Every actionable finding requires a terminal disposition.
 
 ## Review Result
 
-Revision: None
+Revision: Some("git-blake3:445608da09701fd594851196ef891dfbab424671:3bc51cc26064257bf5414f455894263db3e70b962c7853a63ac1fbc30a13dd2d")
 
-Reviewer: None
+Reviewer: Some("subagent-reviewer")
 
-Result: pre_review
+Result: pass

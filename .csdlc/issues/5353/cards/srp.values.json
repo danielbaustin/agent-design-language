@@ -7,15 +7,15 @@
     "title": "[v0.91.8][WP-01][csdlc-v2] Make init and design approval safe for issue-local design paths",
     "slug": "v0-91-8-wp01-csdlc-v2-init-design-approval-safety",
     "version": "v0.91.8",
-    "generation": 1
+    "generation": 7
   },
   "status": "pre_phase",
   "content": {
     "card_kind": "srp",
     "values": {
-      "review_scope": "Exact implementation revision before publication.",
-      "review_revision": null,
-      "reviewer": null,
+      "review_scope": "csdlc-v2/src/lifecycle.rs\ncsdlc-v2/src/store.rs\ncsdlc-v2/tests/gate2.rs",
+      "review_revision": "git-blake3:445608da09701fd594851196ef891dfbab424671:3bc51cc26064257bf5414f455894263db3e70b962c7853a63ac1fbc30a13dd2d",
+      "reviewer": "subagent-reviewer",
       "review_prompts": [
         "Verify issue-local paths cannot create a false existing-record condition.",
         "Verify both design and diagram digests refresh atomically.",
@@ -23,7 +23,7 @@
       ],
       "findings": [],
       "residual_risk": [],
-      "review_result": "pre_review"
+      "review_result": "pass"
     }
   }
 }
