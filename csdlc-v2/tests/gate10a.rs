@@ -69,6 +69,14 @@ fn installer_records_provenance_without_replacing_other_files() {
             .unwrap()
             .pass
     );
+    fs::create_dir_all(repo.join("adl/tools")).unwrap();
+    fs::write(repo.join("adl/tools/pr.sh"), b"legacy").unwrap();
+    let forbidden = verify_coexistence(&repo, &destination, &inventory).unwrap();
+    assert!(!forbidden.pass);
+    assert!(forbidden
+        .present_forbidden_v1_paths
+        .contains(&"adl/tools/pr.sh".into()));
+    fs::remove_file(repo.join("adl/tools/pr.sh")).unwrap();
     fs::write(destination.join("csdlc-init"), b"tampered").unwrap();
     let tampered = verify_coexistence(&repo, &destination, &inventory).unwrap();
     assert!(!tampered.pass);

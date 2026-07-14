@@ -211,11 +211,7 @@ candidate_filter_for_path() {
       printf 'acc'
       ;;
     adl/src/cli/mod.rs)
-      if [ "$saw_tokio_bootstrap_related_surface" = true ]; then
-        printf 'tokio_bootstrap'
-      else
-        printf 'cli_basics'
-      fi
+      printf 'cli_surface'
       ;;
     adl/src/cli/tests.rs|adl/src/cli/usage.rs)
       printf 'cli_basics'
@@ -331,6 +327,12 @@ candidate_filter_for_path() {
     adl/src/cli/run_artifacts/runtime/*.rs)
       printf 'run_state'
       ;;
+    adl/src/cli/run_artifacts/cognitive/state_artifacts.rs)
+      printf 'cli_surface'
+      ;;
+    adl/src/cli/run_artifacts/mod.rs)
+      printf 'cli_surface'
+      ;;
     *)
       return 1
       ;;
@@ -348,6 +350,9 @@ nextest_expression_for_filter() {
       ;;
     cli_basics)
       printf 'binary_id(adl::cli_smoke) and test(/^basics::/)'
+      ;;
+    cli_surface)
+      printf 'binary_id(adl::bin/adl) and test(/^cli::/)'
       ;;
     tokio_bootstrap)
       printf 'test(/^cli::pr_cmd::github::/) or test(/^cli::pr_cmd::github_client::/) or test(/^cli::tooling_cmd::github_release::/)'
@@ -565,7 +570,7 @@ print_candidate_filters_fail_closed() {
 
   while IFS=$'\t' read -r status path; do
     [ -n "$path" ] || continue
-    if file_is_structural_module_barrel "$path" || file_has_no_executable_surface "$path" || file_is_tokio_bootstrap_companion_surface "$path" || file_is_aee_obsmem_pvf_handoff_companion_surface "$path" || file_is_loop_runtime_companion_surface "$path" || file_is_godel_agent_runtime_companion_surface "$path" || file_is_csm_runtime_cli_companion_surface "$path" || file_is_live_runtime_boundary_surface "$path"; then
+    if file_is_structural_module_barrel "$path" || file_has_no_executable_surface "$path" || file_is_removed_v1_dispatch_surface "$path" || file_is_tokio_bootstrap_companion_surface "$path" || file_is_aee_obsmem_pvf_handoff_companion_surface "$path" || file_is_loop_runtime_companion_surface "$path" || file_is_godel_agent_runtime_companion_surface "$path" || file_is_csm_runtime_cli_companion_surface "$path" || file_is_live_runtime_boundary_surface "$path"; then
       continue
     fi
     if path_has_companion_cli_dispatch_change "$path"; then
@@ -587,6 +592,12 @@ EOF
   fi
 
   printf '%s' "$filters" | awk 'NF && !seen[$0]++'
+}
+
+file_is_removed_v1_dispatch_surface() {
+  local path="$1"
+  [ "$path" = "adl/src/cli/mod.rs" ] || return 1
+  grep -Fq "v1 lifecycle commands were removed" "$ROOT/$path"
 }
 
 file_is_structural_module_barrel() {
@@ -678,6 +689,9 @@ if [ -n "$SUMMARY" ] && [ -s "$SUMMARY" ]; then
   guidance=""
   while IFS=$'\t' read -r _status path; do
     [ -n "$path" ] || continue
+    if file_is_removed_v1_dispatch_surface "$path"; then
+      continue
+    fi
     if file_is_tokio_bootstrap_companion_surface "$path"; then
       continue
     fi
@@ -724,7 +738,7 @@ if [ -n "$SUMMARY" ] && [ -s "$SUMMARY" ]; then
         end
     ' "$SUMMARY")"
     if [ -z "$row" ]; then
-      if file_is_structural_module_barrel "$path" || file_has_no_executable_surface "$path" || file_is_tokio_bootstrap_companion_surface "$path" || file_is_aee_obsmem_pvf_handoff_companion_surface "$path" || file_is_loop_runtime_companion_surface "$path" || file_is_godel_agent_runtime_companion_surface "$path" || file_is_csm_runtime_cli_companion_surface "$path" || file_is_live_runtime_boundary_surface "$path"; then
+      if file_is_structural_module_barrel "$path" || file_has_no_executable_surface "$path" || file_is_removed_v1_dispatch_surface "$path" || file_is_tokio_bootstrap_companion_surface "$path" || file_is_aee_obsmem_pvf_handoff_companion_surface "$path" || file_is_loop_runtime_companion_surface "$path" || file_is_godel_agent_runtime_companion_surface "$path" || file_is_csm_runtime_cli_companion_surface "$path" || file_is_live_runtime_boundary_surface "$path"; then
         continue
       fi
       if path_has_companion_cli_dispatch_change "$path"; then

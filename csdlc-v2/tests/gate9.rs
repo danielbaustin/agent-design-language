@@ -265,3 +265,34 @@ fn representative_samples_reopen_persisted_store_between_lifecycle_phases() {
         assert!(comparison.differences.is_empty());
     }
 }
+
+#[test]
+fn every_retained_behavior_has_current_parity_proof() {
+    let registry: serde_json::Value = serde_json::from_slice(include_bytes!(
+        "../../docs/architecture/csdlc-v2/csdlc_v2_retained_behavior.v1.json"
+    ))
+    .unwrap();
+    let evidence: serde_json::Value = serde_json::from_slice(include_bytes!(
+        "../../docs/architecture/csdlc-v2/gate10d2/PARITY_EVIDENCE.json"
+    ))
+    .unwrap();
+    let required = registry["dispositions"]
+        .as_array()
+        .unwrap()
+        .iter()
+        .filter(|entry| !matches!(entry["disposition"].as_str(), Some("delete" | "defer")))
+        .map(|entry| entry["capability"].as_str().unwrap().to_owned())
+        .collect::<BTreeSet<_>>();
+    let proven = evidence["capabilities"]
+        .as_array()
+        .unwrap()
+        .iter()
+        .map(|entry| {
+            assert!(!entry["proof_refs"].as_array().unwrap().is_empty());
+            entry["capability"].as_str().unwrap().to_owned()
+        })
+        .collect::<BTreeSet<_>>();
+    assert_eq!(proven, required);
+    assert_eq!(evidence["coverage_basis_points"], 10_000);
+    assert_eq!(evidence["critical_differences"], 0);
+}

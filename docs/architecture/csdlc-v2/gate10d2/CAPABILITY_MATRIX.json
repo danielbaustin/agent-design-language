@@ -1,0 +1,39 @@
+{
+  "schema": "csdlc.retained_behavior_capability_matrix.v1",
+  "issue": 5306,
+  "baseline_inventory": {
+    "revision": "020bba17deb9f172e91a2ec5c0599cf42e4defe9",
+    "files": 95,
+    "lines": 49979,
+    "rust_inventory_sha256": "c3118c1f3766b5f4a3e549c9073b33fb83164b3006175785b4c08f84c898558f",
+    "shell_inventory_sha256": "7160399a788e467ebd934309a99f9777fb0f14d4270989e5114c73b63fa3d8cc"
+  },
+  "disposition_counts": {
+    "removed_control_plane_entrypoints": 94,
+    "retained_session_invariant": 1,
+    "removed_importer_entrypoint": 1,
+    "retained_behavior_capabilities": 17
+  },
+  "capability_mapping": [
+    {"capability":"issue initialization and six-card construction","proof":"gate2::bootstrap_constructs_all_six_cards_and_ready_doctor","disposition":"retained_v2"},
+    {"capability":"AST semantic card edit","proof":"gate2::semantic_edit_updates_one_owned_projection_atomically","disposition":"retained_v2"},
+    {"capability":"session claims and stale recovery","proof":"gate2::heartbeat_and_expired_recovery_record_positive_evidence","disposition":"retained_shared_invariant"},
+    {"capability":"PVF validation","proof":"gate4::independent_lanes_run_concurrently_and_converge_with_typed_evidence","disposition":"retained_v2"},
+    {"capability":"scheduler and shepherd classification","proof":"gate4::scheduler_and_shepherd_are_read_only_classifiers","disposition":"retained_v2"},
+    {"capability":"review assignment and disposition","proof":"gate5::exact_completed_review_with_resolved_findings_is_publishable","disposition":"retained_v2"},
+    {"capability":"publication reconciliation","proof":"gate6::ambiguous_create_outage_is_reconciled_by_observation_before_retry","disposition":"retained_v2"},
+    {"capability":"readiness and terminal observation","proof":"gate7::false_terminal_observations_fail_before_store_mutation","disposition":"retained_v2"},
+    {"capability":"one-way legacy compatibility view","proof":"gate8::one_way_ast_import_retains_every_authored_section_and_generates_view","disposition":"internal_test_only_sunset"},
+    {"capability":"normalized parity comparison","proof":"gate8::shadow_parity_compares_normalized_outcomes_not_markdown_bytes","disposition":"retained_v2"},
+    {"capability":"persisted lifecycle reopen","proof":"gate9::representative_samples_reopen_persisted_store_between_lifecycle_phases","disposition":"retained_v2"},
+    {"capability":"100% retained behavior registry","proof":"gate9::every_retained_behavior_has_current_parity_proof","disposition":"retained_v2"},
+    {"capability":"generation selector and installation provenance","proof":"gate10a::installer_records_provenance_without_replacing_other_files","disposition":"retained_v2"},
+    {"capability":"final v1 absence guard","proof":"gate10a::installer_records_provenance_without_replacing_other_files forbidden-path assertion","disposition":"retained_v2"},
+    {"capability":"rollback transaction safety","proof":"cutover::tests::every_failed_smoke_restores_exact_original_selector_bytes","disposition":"historical_proof_preserved"},
+    {"capability":"exact deletion eligibility","proof":"eligibility::tests::exact_operator_approval_can_accelerate_protection_windows","disposition":"retained_v2"},
+    {"capability":"independent Rust validation","proof":"cargo test and strict cargo clippy on csdlc-v2","disposition":"retained_v2"}
+  ],
+  "coverage_basis_points": 10000,
+  "critical_differences": 0,
+  "unmapped_deleted_entrypoints": 0
+}

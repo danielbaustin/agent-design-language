@@ -1,0 +1,26 @@
+{
+  "schema": "csdlc.parity_completeness.v1",
+  "issue": 5306,
+  "capability_matrix":"docs/architecture/csdlc-v2/gate10d2/CAPABILITY_MATRIX.json",
+  "coverage_basis_points": 10000,
+  "critical_differences": 0,
+  "capabilities": [
+    {"capability":"lifecycle_state_machine","proof_refs":["csdlc-v2/tests/gate7_lifecycle.rs::readiness_regression_and_exact_terminal_closeout_are_atomic_and_idempotent"]},
+    {"capability":"six_structured_prompts","proof_refs":["csdlc-v2/tests/gate2.rs::bootstrap_constructs_all_six_cards_and_ready_doctor"]},
+    {"capability":"card_construction_and_editing","proof_refs":["csdlc-v2/tests/gate2.rs::semantic_edit_updates_one_owned_projection_atomically"]},
+    {"capability":"prompt_template_registry","proof_refs":["csdlc-v2/tests/gate9.rs::sample_generation_is_idempotent_and_builds_six_ast_validated_cards_each"]},
+    {"capability":"issue_design_and_diagram_gate","proof_refs":["csdlc-v2/tests/gate2.rs::missing_design_or_diagram_blocks_readiness"]},
+    {"capability":"branch_worktree_binding","proof_refs":["csdlc-v2/tests/gate2.rs::bind_creates_and_idempotently_reuses_typed_worktree"]},
+    {"capability":"session_claims","proof_refs":["csdlc-v2/tests/gate2.rs::heartbeat_and_expired_recovery_record_positive_evidence"]},
+    {"capability":"parallel_validation_fabric","proof_refs":["csdlc-v2/tests/gate4.rs::independent_lanes_run_concurrently_and_converge_with_typed_evidence"]},
+    {"capability":"scheduler","proof_refs":["csdlc-v2/tests/gate4.rs::scheduler_and_shepherd_are_read_only_classifiers"]},
+    {"capability":"shepherd","proof_refs":["csdlc-v2/tests/gate4.rs::scheduler_and_shepherd_are_read_only_classifiers"]},
+    {"capability":"pre_publication_review","proof_refs":["csdlc-v2/tests/gate5.rs::missing_incomplete_stale_and_unresolved_review_fail_closed","csdlc-v2/tests/gate5.rs::exact_completed_review_with_resolved_findings_is_publishable"]},
+    {"capability":"github_issue_pr_checks","proof_refs":["csdlc-v2/tests/gate6.rs::ambiguous_create_outage_is_reconciled_by_observation_before_retry","csdlc-v2/tests/gate7.rs::pending_failed_and_unobserved_required_checks_are_distinct"]},
+    {"capability":"publication","proof_refs":["csdlc-v2/tests/gate6.rs::drifted_mutable_fields_update_same_pr"]},
+    {"capability":"closeout","proof_refs":["csdlc-v2/tests/gate7_lifecycle.rs::readiness_regression_and_exact_terminal_closeout_are_atomic_and_idempotent"]},
+    {"capability":"machine_json_and_observability","proof_refs":["csdlc-v2/tests/gate4.rs::validate_cli_redacts_machine_readable_command"]},
+    {"capability":"hard_coded_product_validation_commands","proof_refs":["csdlc-v2/tests/gate4.rs::invalid_cycle_network_credentials_and_budget_fail_closed"]},
+    {"capability":"legacy_card_import","proof_refs":["csdlc-v2/tests/gate8.rs::one_way_ast_import_retains_every_authored_section_and_generates_view"]}
+  ]
+}

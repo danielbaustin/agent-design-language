@@ -27,7 +27,6 @@ pub mod chronosense;
 pub mod cognitive_transition_schema;
 pub mod continuous_verification_self_attack;
 pub mod control_plane;
-pub mod csdlc_prompt_editor;
 pub mod csm_backpressure;
 pub mod csm_cav;
 pub mod csm_cav_red_blue;
@@ -100,6 +99,8 @@ pub mod rust_native_gws_adapter_boundary;
 pub mod sandbox;
 pub mod scheduler;
 pub mod schema;
+// Session ownership remains a shared lifecycle invariant while the v1 command
+// wrappers are retired; C-SDLC v2 owns the control-plane binaries.
 pub mod session_ledger;
 pub mod signing;
 pub mod skill_composition_model;

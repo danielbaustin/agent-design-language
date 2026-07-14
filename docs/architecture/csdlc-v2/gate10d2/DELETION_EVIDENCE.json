@@ -1,0 +1,39 @@
+{
+  "schema": "csdlc.v1_sunset_deletion_evidence.v1",
+  "issue": 5306,
+  "status": "complete",
+  "source_manifest": "csdlc-v2/operator/eligibility-request.json",
+  "eligibility_decision": "docs/architecture/csdlc-v2/gate10d2/ELIGIBILITY_DECISION.json",
+  "parity_evidence": "docs/architecture/csdlc-v2/gate10d2/PARITY_EVIDENCE.json",
+  "legacy_control_plane": {
+    "pinned_files": 95,
+    "deleted_files": 94,
+    "pinned_lines": 49979,
+    "deleted_lines": 48966,
+    "coverage_basis_points": 9797
+  },
+  "sunset_slices": [
+    "adl pr and adl-csdlc command wrappers",
+    "shell lifecycle wrappers and prompt validators",
+    "legacy prompt-template and structured-prompt binaries",
+    "csdlc-import binary"
+  ],
+  "retained_invariants": [
+    "session ownership and stale-claim recovery ledger",
+    "runtime v3 remains separate from C-SDLC v2",
+    "typed Rust v2 binaries, AST/card validation, PVF, scheduler, shepherd, review, publication, and closeout"
+  ],
+  "validation": {
+    "csdlc_v2_cargo_test_locked": "passed",
+    "csdlc_v2_gate10a": "passed",
+    "adl_cargo_check_locked": "passed",
+    "strict_clippy": "required-before-publication"
+  },
+  "historical_gate10c_evidence_unchanged": true,
+  "deletion_authorized_by_exact_typed_approval": true,
+  "retained_replacement_accounting": {
+    "path": "adl/src/session_ledger.rs",
+    "baseline_lines_excluded": 1013,
+    "reason": "session ownership, leases, protected paths, and stale-claim recovery are retained lifecycle invariants"
+  }
+}
