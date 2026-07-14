@@ -1,5 +1,5 @@
 name = "adl-runtime-kernel"
-command = "${ADL_RUNTIME_BIN} serve ${ADL_RUNTIME_CAPSULE}"
+command = "${ADL_RUNTIME_BIN} serve --init ${ADL_RUNTIME_INIT} --capsule ${ADL_RUNTIME_CAPSULE}"
 stdout = "STDOUT"
 stderr = "STDERR"
 
@@ -9,7 +9,7 @@ backoff = "100ms"
 attempts = 3
 
 [failure]
-successful-exit-code = [0, 78]
+successful-exit-code = [0]
 strategy = "ignore"
 
 [environment]

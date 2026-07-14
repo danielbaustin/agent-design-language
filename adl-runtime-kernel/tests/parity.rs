@@ -1749,7 +1749,7 @@ fn observatory_consumes_runtime_v3_only_by_explicit_opt_in() {
     }
     assert_eq!(
         proof["html_observatory"]["runtime_v3_opt_in_url"],
-        "demos/v0.91.7/html-observatory/?runtime=v3&runtimeApiBase=http://127.0.0.1:20997&live=1"
+        "demos/v0.91.7/html-observatory/?runtime=v3&runtimeApiBase=https://<runtime-gateway-host>&live=1"
     );
     assert_eq!(
         proof["html_observatory"]["runtime_v3_read_feed_consumed"],

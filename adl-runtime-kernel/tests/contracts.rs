@@ -5,6 +5,7 @@ use adl_runtime_kernel::{
 };
 use semver::{Version, VersionReq};
 use serde_json::Value;
+use toml::value::Table;
 
 fn contract(service: &str, capability: &str) -> ServiceContract {
     ServiceContract {
@@ -220,40 +221,69 @@ fn parity_matrix_is_machine_readable_and_routes_every_capability() {
 }
 
 #[test]
-fn parity_baseline_manifest_covers_every_current_runtime_module() {
+fn runtime_kernel_manifest_has_no_repo_local_path_dependencies() {
+    let manifest: toml::Value = toml::from_str(include_str!("../Cargo.toml")).unwrap();
+    let root = manifest.as_table().unwrap();
+
+    for table in ["dependencies", "dev-dependencies", "build-dependencies"] {
+        if let Some(dependencies) = root.get(table).and_then(toml::Value::as_table) {
+            assert_manifest_dependencies_are_external(dependencies);
+        }
+    }
+
+    if let Some(targets) = root.get("target").and_then(toml::Value::as_table) {
+        for target in targets.values().filter_map(toml::Value::as_table) {
+            if let Some(dependencies) = target.get("dependencies").and_then(toml::Value::as_table) {
+                assert_manifest_dependencies_are_external(dependencies);
+            }
+            if let Some(dependencies) = target
+                .get("dev-dependencies")
+                .and_then(toml::Value::as_table)
+            {
+                assert_manifest_dependencies_are_external(dependencies);
+            }
+            if let Some(dependencies) = target
+                .get("build-dependencies")
+                .and_then(toml::Value::as_table)
+            {
+                assert_manifest_dependencies_are_external(dependencies);
+            }
+        }
+    }
+}
+
+#[test]
+fn parity_baseline_manifest_is_a_captured_inventory_not_a_live_repo_dependency() {
     let manifest: Value = serde_json::from_str(include_str!(
         "../../docs/architecture/runtime_v3_baseline_modules.v1.json"
     ))
     .unwrap();
+    assert_eq!(manifest["schema"], "adl.runtime_v3.baseline_modules.v1");
+    assert_eq!(
+        manifest["roots"],
+        serde_json::json!(["adl-runtime/src", "adl/src/runtime_v2"])
+    );
     let declared = manifest["modules"]
         .as_array()
         .unwrap()
         .iter()
         .map(|value| value.as_str().unwrap())
         .collect::<std::collections::BTreeSet<_>>();
-    let repo = std::path::Path::new(env!("CARGO_MANIFEST_DIR"))
-        .parent()
-        .unwrap();
-    let mut observed = std::collections::BTreeSet::new();
-    for root in ["adl-runtime/src", "adl/src/runtime_v2"] {
-        let mut pending = vec![repo.join(root)];
-        while let Some(directory) = pending.pop() {
-            for entry in std::fs::read_dir(directory).unwrap() {
-                let path = entry.unwrap().path();
-                if path.is_dir() {
-                    pending.push(path);
-                } else if path.extension().is_some_and(|extension| extension == "rs") {
-                    observed.insert(
-                        path.strip_prefix(repo)
-                            .unwrap()
-                            .to_str()
-                            .unwrap()
-                            .to_owned(),
-                    );
-                }
-            }
-        }
+    assert!(declared.len() >= 190);
+    assert!(declared.iter().all(|path| path.ends_with(".rs")));
+    assert!(declared.contains("adl-runtime/src/lib.rs"));
+    assert!(declared.contains("adl/src/runtime_v2/kernel_loop.rs"));
+}
+
+fn assert_manifest_dependencies_are_external(dependencies: &Table) {
+    for (name, value) in dependencies {
+        assert!(
+            value.get("path").is_none(),
+            "{name} must use crates.io or std, not a repo-local path dependency"
+        );
+        assert!(
+            value.get("workspace").is_none(),
+            "{name} must be explicit here; workspace dependency inheritance would couple Runtime v3 to repo metadata"
+        );
     }
-    assert_eq!(declared.len(), observed.len());
-    assert!(observed.iter().all(|path| declared.contains(path.as_str())));
 }
