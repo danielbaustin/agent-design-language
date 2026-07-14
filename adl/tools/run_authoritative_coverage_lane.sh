@@ -118,7 +118,7 @@ if [ "$MODE" = "full_authoritative_default_features" ]; then
   echo "Authoritative coverage skip pattern: $SKIP_PATTERN"
   coverage_command=(cargo llvm-cov nextest \
     --workspace \
-    --no-report \
+    --no-clean \
     --no-fail-fast \
     --no-tests pass \
     --test-threads "$TEST_THREADS")
@@ -130,7 +130,7 @@ else
   echo "Authoritative coverage skip pattern: $SKIP_PATTERN"
   coverage_command=(cargo llvm-cov nextest \
     --workspace \
-    --no-report \
+    --no-clean \
     --no-fail-fast \
     --no-tests pass \
     --test-threads "$TEST_THREADS")
@@ -147,17 +147,14 @@ if [[ ! "$PARTITION_COUNT" =~ ^[1-9][0-9]*$ ]]; then
 fi
 
 run_workspace_coverage_partitions() {
-  local partition_root="$CARGO_LLVM_COV_TARGET_DIR/partitions/${coverage_profile_namespace}-${COVERAGE_RUN_ID}"
   local partition_logs="$COVERAGE_BUILD_ROOT/partition-logs/${coverage_profile_namespace}-${COVERAGE_RUN_ID}"
-  local partition partition_target pids=() statuses=()
+  local partition pids=() statuses=()
   mkdir -p "$partition_logs"
+  find "$CARGO_LLVM_COV_TARGET_DIR" -type f -name '*.profraw' -delete
 
   for ((partition = 1; partition <= PARTITION_COUNT; partition++)); do
-    partition_target="$partition_root/partition-${partition}"
-    mkdir -p "$partition_target"
     (
-      CARGO_LLVM_COV_TARGET_DIR="$partition_target" \
-      LLVM_PROFILE_FILE="$partition_target/${coverage_profile_namespace}-partition-${partition}-%p.profraw" \
+      LLVM_PROFILE_FILE="$CARGO_LLVM_COV_TARGET_DIR/${coverage_profile_namespace}-${COVERAGE_RUN_ID}-partition-${partition}-%p.profraw" \
         "${coverage_command[@]}" \
         --partition "count:${partition}/${PARTITION_COUNT}" \
         -- --skip "$SKIP_PATTERN" \
@@ -179,11 +176,6 @@ run_workspace_coverage_partitions() {
   for ((partition = 1; partition <= PARTITION_COUNT; partition++)); do
     cat "$partition_logs/partition-${partition}.log"
   done
-  local report_target="$partition_root/partition-1"
-  for ((partition = 2; partition <= PARTITION_COUNT; partition++)); do
-    find "$partition_root/partition-${partition}" -type f -name '*.profraw' -exec cp '{}' "$report_target/" \;
-  done
-  export CARGO_LLVM_COV_TARGET_DIR="$report_target"
   return "$status"
 }
 
@@ -194,12 +186,13 @@ cargo llvm-cov report \
   --json \
   --summary-only \
   --output-path "$ADL_SUMMARY_PATH"
+find "$CARGO_LLVM_COV_TARGET_DIR" -type f -name 'workspace-*.profraw' -delete
 
 if [ -f "$ADL_RUNTIME_MANIFEST" ]; then
   echo "Authoritative coverage companion: adl-runtime"
   runtime_coverage_command=(cargo llvm-cov nextest \
     --manifest-path "$ADL_RUNTIME_MANIFEST" \
-    --no-report \
+    --no-clean \
     --no-fail-fast \
     --no-tests pass \
     --test-threads "$TEST_THREADS")

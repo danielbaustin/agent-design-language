@@ -45,7 +45,7 @@ script_text="$(cat "$SCRIPT")"
 for required_fragment in \
   "cargo llvm-cov nextest" \
   "--workspace" \
-  "--no-report" \
+  "--no-clean" \
   "--no-fail-fast" \
   "--no-tests pass" \
   "--test-threads" \
@@ -124,12 +124,12 @@ for required_dir in "$scratch_root/target" "$scratch_root/target/llvm-cov-target
 done
 
 for required in \
-  "cmd=llvm-cov nextest --workspace --no-report --no-fail-fast --no-tests pass" \
+  "cmd=llvm-cov nextest --workspace --no-clean --no-fail-fast --no-tests pass" \
   "--test-threads 4" \
   "--partition count:1/2" \
   "--partition count:2/2" \
   "-- --skip real_pr_" \
-  "cmd=llvm-cov nextest --manifest-path $ROOT_DIR/adl-runtime/Cargo.toml --no-report --no-fail-fast --no-tests pass" \
+  "cmd=llvm-cov nextest --manifest-path $ROOT_DIR/adl-runtime/Cargo.toml --no-clean --no-fail-fast --no-tests pass" \
   "cmd=llvm-cov report --json --summary-only --output-path $ROOT_DIR/adl/coverage-summary.adl.json" \
   "cmd=llvm-cov report --manifest-path $ROOT_DIR/adl-runtime/Cargo.toml --json --summary-only --output-path $ROOT_DIR/adl/coverage-summary.adl-runtime.json" \
   "target=$scratch_root/target" \
@@ -156,7 +156,7 @@ for required in \
   "link_accel=lld" \
   "--test-threads 2" \
   "-- --skip live_pr_fixture_" \
-  "cmd=llvm-cov nextest --manifest-path $ROOT_DIR/adl-runtime/Cargo.toml --no-report --no-fail-fast --no-tests pass"
+  "cmd=llvm-cov nextest --manifest-path $ROOT_DIR/adl-runtime/Cargo.toml --no-clean --no-fail-fast --no-tests pass"
 do
   if ! grep -F -- "$required" "$lld_cargo_log" >/dev/null 2>&1; then
     echo "missing authoritative coverage concurrency token: $required" >&2
