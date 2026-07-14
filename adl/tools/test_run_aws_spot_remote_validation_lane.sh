@@ -411,6 +411,16 @@ grep -Fx -- "--cache-volume-device-name" "$TMP/args.txt" >/dev/null
 grep -Fx -- "/dev/sdf" "$TMP/args.txt" >/dev/null
 grep -Fx -- "--cache-volume-mount-path" "$TMP/args.txt" >/dev/null
 grep -Fx -- "/mnt/adl-cache" "$TMP/args.txt" >/dev/null
+grep -Fx -- "--command-timeout-seconds" "$TMP/args.txt" >/dev/null
+grep -Fx -- "300" "$TMP/args.txt" >/dev/null
+if ADL_AWS_REMOTE_VALIDATION_COMMAND_TIMEOUT_SECONDS=301 \
+  bash "$SCRIPT" preflight --expected-proof "$proof" --bin "$fake_bin/adl-aws-remote-validation" \
+    --run-id fixture-run --builder-image "$builder_image" --git-ref origin/main \
+    --estimated-hourly-cost-usd 0.15 >/dev/null 2>"$TMP/timeout.err"; then
+  echo "expected timeout override above 300 seconds to fail closed" >&2
+  exit 1
+fi
+grep -F "command timeout must be between 1 and 300 seconds" "$TMP/timeout.err" >/dev/null
 grep -Fx -- "--ssh-key-name" "$TMP/args.txt" >/dev/null
 grep -Fx -- "adl-wp06-spot-ssh-debug-20260704" "$TMP/args.txt" >/dev/null
 grep -Fx -- "--ssh-private-key-path" "$TMP/args.txt" >/dev/null

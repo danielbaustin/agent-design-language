@@ -263,3 +263,8 @@ Use the Spot HOW-TO for status, live logs, SSH, stop, cleanup, cache recovery,
 image rollback, and alternate instance selection:
 
 - [AWS Spot Remote Execution HOW-TO](AWS_SPOT_REMOTE_EXECUTION_HOW_TO.md)
+
+The Spot wrapper enforces a 300-second remote-command deadline. On timeout or
+instance loss it requests SSM `CancelCommand` before terminating the builder,
+so a canceled GitHub job does not leave a validation command running during
+teardown. The timeout override is constrained to the same 300-second maximum.

@@ -26,7 +26,7 @@ use std::time::{Duration, Instant};
 use tokio::fs;
 use tokio::io::{AsyncBufReadExt, BufReader};
 use tokio::process::{Child, Command as TokioCommand};
-use tokio::time::sleep;
+use tokio::time::{sleep, timeout as tokio_timeout};
 
 const SPOT_QUOTA_NAME: &str = "All Standard (A, C, D, H, I, M, R, T, Z) Spot Instance Requests";
 const SSM_OUTPUT_CONTENT_LIMIT_BYTES: usize = 24 * 1024;
@@ -720,6 +720,17 @@ impl fmt::Display for AwsAdapterError {
 }
 
 impl std::error::Error for AwsAdapterError {}
+
+fn command_timeout_error(command_id: &str, timeout: Duration) -> AwsAdapterError {
+    AwsAdapterError {
+        code: Some("CommandTimedOut".to_string()),
+        message: format!(
+            "command {command_id} did not reach terminal state within {:?}",
+            timeout
+        ),
+        spot_fallback_permitted: false,
+    }
+}
 
 #[async_trait]
 pub trait AwsRemoteValidationAdapter {
@@ -1839,6 +1850,29 @@ impl LiveAwsRemoteValidationAdapter {
             .and_then(|reservation| reservation.instances().first())
             .and_then(|instance| instance.public_ip_address())
             .map(ToOwned::to_owned))
+    }
+
+    async fn cancel_remote_command(&self, instance_id: &str, command_id: &str) {
+        let cancel = self
+            .ssm
+            .cancel_command()
+            .command_id(command_id)
+            .instance_ids(instance_id)
+            .send();
+        match tokio_timeout(Duration::from_secs(10), cancel).await {
+            Ok(Ok(_)) => append_command_status_line(
+                "command_cancel_requested",
+                format!("instance_id={instance_id} command_id={command_id}"),
+            ),
+            Ok(Err(err)) => append_command_status_line(
+                "command_cancel_failed",
+                format!("instance_id={instance_id} command_id={command_id} detail={err}"),
+            ),
+            Err(_) => append_command_status_line(
+                "command_cancel_failed",
+                format!("instance_id={instance_id} command_id={command_id} detail=cancel_timeout"),
+            ),
+        }
     }
 
     async fn subnet_availability_zone(&self, subnet_id: &str) -> Result<String> {
@@ -3190,14 +3224,31 @@ impl AwsRemoteValidationAdapter for LiveAwsRemoteValidationAdapter {
         let mut stdout_truncation_reported = false;
         let mut stderr_truncation_reported = false;
         loop {
-            let invocation = match self
+            let invocation_request = self
                 .ssm
                 .get_command_invocation()
                 .command_id(&command_id)
                 .instance_id(instance_id)
-                .send()
-                .await
-            {
+                .send();
+            let invocation_result = if let Some(timeout) = timeout {
+                let remaining = timeout.saturating_sub(start.elapsed());
+                if remaining.is_zero() {
+                    self.cancel_remote_command(instance_id, &command_id).await;
+                    Self::stop_ssh_tail(&mut ssh_tail_child).await;
+                    return Err(command_timeout_error(&command_id, timeout));
+                }
+                match tokio_timeout(remaining, invocation_request).await {
+                    Ok(result) => result,
+                    Err(_) => {
+                        self.cancel_remote_command(instance_id, &command_id).await;
+                        Self::stop_ssh_tail(&mut ssh_tail_child).await;
+                        return Err(command_timeout_error(&command_id, timeout));
+                    }
+                }
+            } else {
+                invocation_request.await
+            };
+            let invocation = match invocation_result {
                 Ok(invocation) => invocation,
                 Err(err) => {
                     let detail = err.to_string();
@@ -3212,6 +3263,7 @@ impl AwsRemoteValidationAdapter for LiveAwsRemoteValidationAdapter {
                         sleep(poll_interval).await;
                         continue;
                     }
+                    self.cancel_remote_command(instance_id, &command_id).await;
                     Self::stop_ssh_tail(&mut ssh_tail_child).await;
                     return Err(classify_ssm_error(err));
                 }
@@ -3263,11 +3315,29 @@ impl AwsRemoteValidationAdapter for LiveAwsRemoteValidationAdapter {
                     stderr: stderr.to_string(),
                 });
             }
-            let instance_state = self.instance_state(instance_id).await?;
+            let instance_state = if let Some(timeout) = timeout {
+                let remaining = timeout.saturating_sub(start.elapsed());
+                if remaining.is_zero() {
+                    self.cancel_remote_command(instance_id, &command_id).await;
+                    Self::stop_ssh_tail(&mut ssh_tail_child).await;
+                    return Err(command_timeout_error(&command_id, timeout));
+                }
+                match tokio_timeout(remaining, self.instance_state(instance_id)).await {
+                    Ok(state) => state?,
+                    Err(_) => {
+                        self.cancel_remote_command(instance_id, &command_id).await;
+                        Self::stop_ssh_tail(&mut ssh_tail_child).await;
+                        return Err(command_timeout_error(&command_id, timeout));
+                    }
+                }
+            } else {
+                self.instance_state(instance_id).await?
+            };
             if matches!(
                 instance_state.as_deref(),
                 Some("shutting-down") | Some("terminated") | Some("stopping") | Some("stopped")
             ) {
+                self.cancel_remote_command(instance_id, &command_id).await;
                 if let Some(child) = ssh_tail_child.as_mut() {
                     let _ = child.start_kill();
                 }
@@ -3282,17 +3352,11 @@ impl AwsRemoteValidationAdapter for LiveAwsRemoteValidationAdapter {
             }
             if let Some(timeout) = timeout {
                 if start.elapsed() >= timeout {
+                    self.cancel_remote_command(instance_id, &command_id).await;
                     if let Some(child) = ssh_tail_child.as_mut() {
                         let _ = child.start_kill();
                     }
-                    return Err(AwsAdapterError {
-                        code: Some("CommandTimedOut".to_string()),
-                        message: format!(
-                            "command {command_id} did not reach terminal state within {:?}",
-                            timeout
-                        ),
-                        spot_fallback_permitted: false,
-                    });
+                    return Err(command_timeout_error(&command_id, timeout));
                 }
             }
             sleep(poll_interval).await;

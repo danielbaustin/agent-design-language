@@ -7,7 +7,7 @@ ephemeral EC2 instance. The host runs a pinned ADL builder container and mounts
 the retained EBS cache. The command verifies the Agent Logic account, source
 commit, image digest, cache identity, SSH recovery, live logs, and cleanup.
 
-The proven baseline is `m7a.2xlarge` in `us-west-2a` with the retained 500 GiB
+The current operational baseline is `m7a.2xlarge` in `us-west-2a` with the retained 1000 GiB
 cache. Another instance type is allowed only when it is available in the same
 cache-volume availability zone and its architecture matches the selected image.
 The current CI-and-coverage image, `adl-builder:v0.91.7-coverage-5243`, is amd64.
@@ -32,7 +32,7 @@ bash adl/tools/run_aws_spot_remote_validation_lane.sh preflight \
   --profile agent-logic-admin \
   --git-ref <pushed-branch-or-tag> \
   --instance-type m7a.2xlarge \
-  --cache-volume-size-gib 500 \
+  --cache-volume-size-gib 1000 \
   --command 'bash adl/tools/run_pr_fast_test_lane.sh'
 ```
 
@@ -54,7 +54,7 @@ bash adl/tools/run_aws_spot_remote_validation_lane.sh run \
   --profile agent-logic-admin \
   --git-ref <pushed-branch-or-tag> \
   --instance-type m7a.2xlarge \
-  --cache-volume-size-gib 500 \
+  --cache-volume-size-gib 1000 \
   --command 'bash adl/tools/run_pr_fast_test_lane.sh' \
   --out ".adl/local-artifacts/$RUN_ID/summary.json" \
   --artifact-dir ".adl/local-artifacts/$RUN_ID/artifacts" \
