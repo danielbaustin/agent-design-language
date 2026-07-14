@@ -42,6 +42,7 @@ ADL_SUMMARY_PATH="$ADL_DIR/target/coverage-impact-summary.adl.json"
 ADL_RUNTIME_SUMMARY_PATH="$ADL_DIR/target/coverage-impact-summary.adl-runtime.json"
 COMBINED_SUMMARY_PATH="$ADL_DIR/target/coverage-impact-summary.json"
 cd "$ADL_DIR"
+mkdir -p "$ADL_DIR/target"
 
 COVERAGE_BUILD_ROOT="${ADL_PR_FAST_COVERAGE_BUILD_ROOT:-$ADL_DIR/target/pr-fast-coverage}"
 mkdir -p "$COVERAGE_BUILD_ROOT" "$COVERAGE_BUILD_ROOT/llvm-cov-target"
