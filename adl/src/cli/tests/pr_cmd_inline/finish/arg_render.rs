@@ -6699,7 +6699,8 @@ fn finish_runner_executes_registered_cargo_validation_commands() {
     assert!(cargo_calls.contains("cli::runtime_v2_cmd -- --nocapture"));
     assert!(cargo_calls.contains("metadata --manifest-path"));
     assert!(cargo_calls.contains("adl-issue tests::adl_issue_forwards_args_to_dispatch"));
-    assert!(cargo_calls.contains("finish_validation_profile_classifies_wp08_aws_signal_integration_slice"));
+    assert!(cargo_calls
+        .contains("finish_validation_profile_classifies_wp08_aws_signal_integration_slice"));
 }
 
 #[test]
