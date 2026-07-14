@@ -162,6 +162,9 @@ jobs:
       - name: guardrail contract (issue PR closing linkage)
         run: bash adl/tools/test_pr_closing_linkage.sh
 
+      - name: guardrail contract (final merge gate)
+        run: bash adl/tools/test_ensure_final_merge_gate.sh
+
       - name: guardrail (issue PR closing linkage)
         env:
           GH_TOKEN: ${{ github.token }}

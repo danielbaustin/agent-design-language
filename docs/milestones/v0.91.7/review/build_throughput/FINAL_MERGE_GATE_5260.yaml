@@ -1,0 +1,55 @@
+schema: adl.final_merge_gate.evidence.v1
+issue: 5260
+title: "Final base-plus-head merge gate for main"
+captured_at: "2026-07-14T08:05:00Z"
+repo: "danielbaustin/agent-design-language"
+branch: "main"
+live_gate:
+  mechanism: "repository_ruleset"
+  ruleset_id: 13419813
+  ruleset_name: "main-protection"
+  enforcement: "active"
+  required_contexts:
+    - "adl-ci"
+    - "adl-coverage"
+  strict_required_status_checks_policy_before: false
+  strict_required_status_checks_policy_after: true
+  final_inspect:
+    schema: "adl.final_merge_gate.v1"
+    gate: "repository_ruleset"
+    strict: true
+    compliant: true
+    missing_contexts: []
+    observed_contexts:
+      - "adl-ci"
+      - "adl-coverage"
+proof:
+  local_negative_fixture:
+    command: "bash adl/tools/test_ensure_final_merge_gate.sh"
+    result: "PASS"
+    covers:
+      - "non-strict required checks fail closed"
+      - "missing adl-coverage fails closed"
+      - "branch-aware repository-ruleset selection skips a non-main decoy ruleset"
+      - "repository-ruleset inspect, apply, rollback, and reporting paths"
+      - "token value is not printed in diagnostics or fake curl argv"
+      - "apply mode sets strict required checks on the selected ruleset"
+      - "rollback mode can disable strictness on the selected ruleset if operator recovery is required"
+  syntax_check:
+    command: "bash -n adl/tools/ensure_final_merge_gate.sh adl/tools/test_ensure_final_merge_gate.sh"
+    result: "PASS"
+  live_apply:
+    command: "ADL_GITHUB_TOKEN_FILE=$HOME/keys/github.token bash adl/tools/ensure_final_merge_gate.sh apply --repo danielbaustin/agent-design-language --branch main --json"
+    result: "PASS"
+    secret_handling: "Token file path only; token value not printed or retained. The tool sends headers through a restrictive temporary curl config rather than curl argv."
+  live_post_apply_inspect:
+    command: "ADL_GITHUB_TOKEN_FILE=$HOME/keys/github.token bash adl/tools/ensure_final_merge_gate.sh inspect --repo danielbaustin/agent-design-language --branch main --json"
+    result: "PASS"
+rollback:
+  command: "ADL_GITHUB_TOKEN_FILE=$HOME/keys/github.token bash adl/tools/ensure_final_merge_gate.sh rollback --repo danielbaustin/agent-design-language --branch main --json"
+  rehearsal: "Covered by local fake GitHub API regression; not run against live GitHub because the live gate is the desired final state."
+  effect: "Sets the same required status check list with strict=false while preserving adl-ci and adl-coverage."
+notes:
+  - "The legacy branch-protection required-status-checks endpoint returned 404 before ruleset inspection."
+  - "The active repository ruleset already required adl-ci and adl-coverage but did not require strict/up-to-date checks."
+  - "The implemented prevention closes the stale-base escape by requiring checks against the current base-plus-head result before merge."
