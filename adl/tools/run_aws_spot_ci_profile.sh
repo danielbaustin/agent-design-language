@@ -90,23 +90,24 @@ require_tool cargo-nextest cargo nextest --version
 require_tool sccache sccache --version
 require_tool lld ld.lld --version
 
+POLICY_OUTPUT="$(mktemp "${TMPDIR:-/tmp}/adl-spot-ci-policy.XXXXXX")"
+trap 'rm -f "$POLICY_OUTPUT"' EXIT
+bash adl/tools/ci_path_policy.sh \
+  --event-name "$EVENT_NAME" \
+  --base "$BASE_COMMIT" \
+  --head "$HEAD_COMMIT" \
+  --ref "refs/heads/spot-shadow" \
+  --github-output "$POLICY_OUTPUT" >/dev/null
+RUST_REQUIRED="$(policy_value rust_required)"
+FULL_COVERAGE_REQUIRED="$(policy_value full_coverage_required)"
+DEMO_SMOKE_REQUIRED="$(policy_value demo_smoke_required)"
+V0913_PROOF_REQUIRED="$(policy_value v0913_proof_required)"
+VALIDATION_ESCALATION_REQUIRED="$(policy_value validation_profile_escalation_required)"
+
 started_at="$(date +%s)"
 run_adl_ci() {
   local profile_started_at profile_finished_at
   profile_started_at="$(date +%s)"
-  POLICY_OUTPUT="$(mktemp "${TMPDIR:-/tmp}/adl-spot-ci-policy.XXXXXX")"
-  trap 'rm -f "$POLICY_OUTPUT"' RETURN
-  bash adl/tools/ci_path_policy.sh \
-    --event-name "$EVENT_NAME" \
-    --base "$BASE_COMMIT" \
-    --head "$HEAD_COMMIT" \
-    --ref "refs/heads/spot-shadow" \
-    --github-output "$POLICY_OUTPUT" >/dev/null
-  RUST_REQUIRED="$(policy_value rust_required)"
-  FULL_COVERAGE_REQUIRED="$(policy_value full_coverage_required)"
-  DEMO_SMOKE_REQUIRED="$(policy_value demo_smoke_required)"
-  V0913_PROOF_REQUIRED="$(policy_value v0913_proof_required)"
-  VALIDATION_ESCALATION_REQUIRED="$(policy_value validation_profile_escalation_required)"
 
   printf 'ADL_SPOT_CI_POLICY rust_required=%s full_coverage_required=%s demo_smoke_required=%s v0913_proof_required=%s validation_escalation_required=%s\n' \
     "$RUST_REQUIRED" "$FULL_COVERAGE_REQUIRED" "$DEMO_SMOKE_REQUIRED" "$V0913_PROOF_REQUIRED" "${VALIDATION_ESCALATION_REQUIRED:-false}"
@@ -148,11 +149,11 @@ run_adl_coverage() {
   WARM_SOURCE_TARGET="$CARGO_TARGET_DIR"
   export ADL_COVERAGE_WARM_SOURCE_TARGET="$WARM_SOURCE_TARGET"
   export ADL_RUST_WARM_CACHE_SOURCE_TARGET="$WARM_SOURCE_TARGET"
-  export ADL_RUST_WARM_CACHE_DEST_TARGET="$ADL_COVERAGE_BUILD_ROOT/target"
+  export ADL_RUST_WARM_CACHE_DEST_TARGET="$ADL_COVERAGE_BUILD_ROOT"
   export ADL_RUST_WARM_CACHE_MANIFEST_PATH="$ROOT_DIR/adl/Cargo.toml"
-  mkdir -p "$ADL_COVERAGE_BUILD_ROOT/target" "$ADL_COVERAGE_BUILD_ROOT/target/llvm-cov-target"
-  export CARGO_TARGET_DIR="$ADL_COVERAGE_BUILD_ROOT/target"
-  export CARGO_LLVM_COV_TARGET_DIR="$ADL_COVERAGE_BUILD_ROOT/target/llvm-cov-target"
+  mkdir -p "$ADL_COVERAGE_BUILD_ROOT" "$ADL_COVERAGE_BUILD_ROOT/llvm-cov-target"
+  export CARGO_TARGET_DIR="$ADL_COVERAGE_BUILD_ROOT"
+  export CARGO_LLVM_COV_TARGET_DIR="$ADL_COVERAGE_BUILD_ROOT/llvm-cov-target"
   export ADL_CSM_DISK_FLOOR_BYTES="${ADL_CSM_DISK_FLOOR_BYTES:-0}"
   cd "$ROOT_DIR/adl"
   if [[ -x "$ROOT_DIR/adl/tools/rust_validation_warm_cache.sh" ]]; then
@@ -160,9 +161,29 @@ run_adl_coverage() {
   else
     echo "run_aws_spot_ci_profile: source revision has no warm-cache helper; using retained target directly"
   fi
-  coverage_command+=(--test-threads "$ADL_COVERAGE_TEST_THREADS")
-  "${coverage_command[@]}"
-  cargo llvm-cov report --json --summary-only --output-path coverage-summary.json
+  if [[ "$FULL_COVERAGE_REQUIRED" == true ]]; then
+    printf 'ADL_SPOT_COVERAGE_PLAN mode=full-authoritative\n'
+    coverage_command+=(--test-threads "$ADL_COVERAGE_TEST_THREADS")
+    "${coverage_command[@]}"
+    cargo llvm-cov report --json --summary-only --output-path coverage-summary.json
+  else
+    coverage_filter="$(bash "$ROOT_DIR/adl/tools/check_coverage_impact.sh" \
+      --base "$BASE_COMMIT" \
+      --head "$HEAD_COMMIT" \
+      --print-risk-nextest-expression)"
+    if [[ -z "$coverage_filter" ]]; then
+      printf 'ADL_SPOT_COVERAGE_PLAN mode=pr-fast status=skipped reason=no-risky-production-rust-changes\n'
+      printf '{"data":[{"totals":{}}]}\n' >coverage-summary.json
+    else
+      printf 'ADL_SPOT_COVERAGE_PLAN mode=pr-fast filter=%s\n' "$coverage_filter"
+      ADL_PR_FAST_COVERAGE_BUILD_ROOT="$ADL_COVERAGE_BUILD_ROOT" \
+      ADL_PR_FAST_COVERAGE_WARM_SOURCE_TARGET="$WARM_SOURCE_TARGET" \
+      ADL_PR_FAST_COVERAGE_TEST_THREADS="$ADL_COVERAGE_TEST_THREADS" \
+        bash "$ROOT_DIR/adl/tools/run_pr_fast_coverage_lane.sh" \
+          --filter-expression "$coverage_filter"
+      cp "$ROOT_DIR/adl/target/coverage-impact-summary.json" coverage-summary.json
+    fi
+  fi
   test -s coverage-summary.json
   python3 - <<'PY' coverage-summary.json "$HEAD_COMMIT"
 import json

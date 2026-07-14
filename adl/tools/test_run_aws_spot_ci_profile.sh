@@ -27,8 +27,10 @@ grep -F 'FULL_COVERAGE_REQUIRED="$(policy_value full_coverage_required)"' "$SCRI
 grep -F 'if [[ "$RUST_REQUIRED" == true && "$FULL_COVERAGE_REQUIRED" != true ]]' "$SCRIPT" >/dev/null
 grep -F 'bash adl/tools/demo_smoke_v07_story.sh' "$SCRIPT" >/dev/null
 grep -F 'ADL_COVERAGE_BUILD_ROOT="$CARGO_TARGET_DIR/coverage"' "$SCRIPT" >/dev/null
+grep -F 'run_pr_fast_coverage_lane.sh' "$SCRIPT" >/dev/null
+grep -F 'if [[ "$FULL_COVERAGE_REQUIRED" == true ]]' "$SCRIPT" >/dev/null
 grep -F 'ADL_RUST_WARM_CACHE_SOURCE_TARGET="$WARM_SOURCE_TARGET"' "$SCRIPT" >/dev/null
-grep -F 'ADL_RUST_WARM_CACHE_DEST_TARGET="$ADL_COVERAGE_BUILD_ROOT/target"' "$SCRIPT" >/dev/null
+grep -F 'ADL_RUST_WARM_CACHE_DEST_TARGET="$ADL_COVERAGE_BUILD_ROOT"' "$SCRIPT" >/dev/null
 grep -F 'require_tool cargo-llvm-cov cargo llvm-cov --version' "$SCRIPT" >/dev/null
 grep -F 'ADL_SPOT_COVERAGE_SUMMARY_BEGIN' "$SCRIPT" >/dev/null
 grep -F 'adl.aws_spot_coverage_summary.v1' "$SCRIPT" >/dev/null
@@ -72,12 +74,14 @@ combined_tmp="$(mktemp -d "${TMPDIR:-/tmp}/adl-spot-combined-profile.XXXXXX")"
 combined_root="$combined_tmp/repo"
 fake_bin="$combined_tmp/bin"
 combined_log="$combined_tmp/execution.log"
-mkdir -p "$combined_root/adl/tools" "$fake_bin" "$combined_root/cache/target"
+mkdir -p "$combined_root/adl/tools" "$combined_root/adl/target" "$fake_bin" "$combined_root/cache/target"
 cp "$SCRIPT" "$combined_root/adl/tools/run_aws_spot_ci_profile.sh"
 printf '#!/usr/bin/env bash\nset -euo pipefail\nprintf "ci-policy\\n" >>"$ADL_TEST_LOG"\nout=""\nwhile [[ $# -gt 0 ]]; do\n  if [[ "$1" == "--github-output" ]]; then out="$2"; shift 2; continue; fi\n  shift\ndone\nprintf "rust_required=true\\nfull_coverage_required=false\\ndemo_smoke_required=false\\nv0913_proof_required=false\\nvalidation_profile_escalation_required=false\\n" >"$out"\n' >"$combined_root/adl/tools/ci_path_policy.sh"
 printf '#!/usr/bin/env bash\nprintf "ci-lane\\n" >>"$ADL_TEST_LOG"\n' >"$combined_root/adl/tools/run_pr_fast_test_lane.sh"
+printf '#!/usr/bin/env bash\nprintf "process_status\\n"\n' >"$combined_root/adl/tools/check_coverage_impact.sh"
+printf '#!/usr/bin/env bash\nprintf "cargo llvm-cov nextest\\n" >>"$ADL_TEST_LOG"\nprintf "{\\"data\\":[{\\"totals\\":{}}]}\\n" >"$ADL_SPOT_SOURCE_ROOT/adl/target/coverage-impact-summary.json"\n' >"$combined_root/adl/tools/run_pr_fast_coverage_lane.sh"
 printf '#!/usr/bin/env bash\nexit 0\n' >"$combined_root/adl/tools/rust_validation_warm_cache.sh"
-chmod +x "$combined_root/adl/tools/ci_path_policy.sh" "$combined_root/adl/tools/run_pr_fast_test_lane.sh" "$combined_root/adl/tools/rust_validation_warm_cache.sh"
+chmod +x "$combined_root/adl/tools/ci_path_policy.sh" "$combined_root/adl/tools/run_pr_fast_test_lane.sh" "$combined_root/adl/tools/check_coverage_impact.sh" "$combined_root/adl/tools/run_pr_fast_coverage_lane.sh" "$combined_root/adl/tools/rust_validation_warm_cache.sh"
 printf '#!/usr/bin/env bash\nprintf "rustc %%s\\n" "$*" >>"$ADL_TEST_LOG"\n' >"$fake_bin/rustc"
 printf '#!/usr/bin/env bash\nprintf "cargo %%s\\n" "$*" >>"$ADL_TEST_LOG"\nif [[ "$*" == *"llvm-cov report"* ]]; then printf "{\\\"data\\\":[{\\\"totals\\\":{}}]}\\n" >coverage-summary.json; fi\n' >"$fake_bin/cargo"
 printf '#!/usr/bin/env bash\nprintf "sccache %%s\\n" "$*" >>"$ADL_TEST_LOG"\n' >"$fake_bin/sccache"
