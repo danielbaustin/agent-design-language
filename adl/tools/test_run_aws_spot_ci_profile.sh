@@ -69,6 +69,8 @@ coverage_push_plan="$(bash "$SCRIPT" adl-coverage --base HEAD --head HEAD --even
 [[ "$combined_plan" == *run_pr_fast_test_lane.sh* ]]
 [[ "$combined_plan" == *'cargo llvm-cov nextest'* ]]
 grep -F 'coverage_command=(cargo llvm-cov nextest --workspace --no-report --no-fail-fast --no-tests pass --test-threads 16 -- --skip real_pr_)' "$SCRIPT" >/dev/null
+grep -F 'FULL_COVERAGE_REQUIRED" == true && "$EVENT_NAME" != pull_request' "$SCRIPT" >/dev/null
+grep -F 'ADL_SPOT_COVERAGE_PLAN mode=pr-fast-sla full_policy=true' "$SCRIPT" >/dev/null
 [[ "$coverage_push_plan" == *'--event-name push'* ]]
 
 # Execute the combined orchestration locally with fake toolchain commands. This

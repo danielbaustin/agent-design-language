@@ -9,7 +9,7 @@ immediate rollback backend until all live gates below pass.
 
 ## Current Disposition
 
-Status: `live_combined_profile_not_yet_proven; partition_argument_fix_pending_live_reproof`
+Status: `live_combined_profile_not_yet_proven; PR-fast-SLA-routing-pending-live-proof`
 
 The Spot CI lane is live-proven, but the current combined parallel profile is
 not yet proven under the 300-second ceiling. A prior sequential combined run
@@ -45,6 +45,17 @@ command and exit status 96. The instance terminated and the retained volume
 returned to `available`. The fix moves the partition option before the
 separator; a fresh live run is required.
 
+Two subsequent live attempts proved the corrected partition command reached
+the real workload but did not finish before the 300-second SSM deadline on the
+32-vCPU builder: the isolated-target attempt took 380 seconds end to end, and
+the shared-warm-target attempt took 379 seconds end to end. Both terminated
+cleanly and preserved the retained EBS volume. A 64-vCPU preflight was clean,
+but its Spot launch was rejected before compute by `MaxSpotInstanceCountExceeded`.
+The PR Spot profile therefore routes pull-request coverage to the existing
+focused coverage-impact lane, records `mode=pr-fast-sla full_policy=true`, and
+retains full authoritative coverage for push/main evidence. A fresh live PR
+proof of that explicit routing is still required.
+
 ## Live Runs
 
 | Surface | Source | Image | Cache | Validation | Remote | Total | Result |
@@ -70,6 +81,10 @@ separator; a fresh live run is required.
 | `adl-ci-and-coverage` GitHub workflow run 40 | `f511f52a` | immutable digest `sha256:20831e358...` | retained 1000 GiB EBS | >300s | canceled | failed target | warm repeat reached parallel full-coverage compilation but did not finish before the 300s ceiling; Spot cleanup passed |
 | `adl-ci-and-coverage` GitHub workflow run 41 (`29323862776`) | `5e240483` | immutable digest `sha256:20831e358...` | retained 1000 GiB EBS | CI 28s; coverage failed at 195s | 166s | 225s | post-resize Spot launch, SSM, retained-cache mount, and cleanup passed; coverage returned exit 1 and its preserved profile log is required for diagnosis |
 | `adl-ci-and-coverage` direct Spot run (`adl-wp-5243-direct-4e5465af6`) | `4e5465af` | immutable digest `sha256:20831e358...` | retained 1000 GiB EBS | CI 26s; coverage argument error | 138s | 241s | Spot launch, SSH/SSM, cache/image/toolchain checks, and cleanup passed; coverage exited 96 before tests because partition placement was wrong; retained cache preserved |
+| `adl-ci-and-coverage` direct Spot run (`adl-wp-5243-direct-94a3d8f7`) | `94a3d8f7` | immutable digest `sha256:20831e358...` | retained 1000 GiB EBS | CI 27s; coverage tool-option error | 139s | 195s | Spot launch and cleanup passed; `cargo llvm-cov` rejected incompatible `--no-report` plus `--no-clean`; no coverage tests ran |
+| `adl-ci-and-coverage` direct Spot run (`adl-wp-5243-direct-ee2d02ae`) | `ee2d02ae` | immutable digest `sha256:20831e358...` | retained 1000 GiB EBS | CI passed; isolated coverage timed out | n/a | 380s | Spot launch, SSH/SSM, image, cache, and cleanup passed; duplicated instrumented targets exceeded the 300s remote deadline |
+| `adl-ci-and-coverage` direct Spot run (`adl-wp-5243-direct-f4531680`) | `f4531680` | immutable digest `sha256:20831e358...` | retained 1000 GiB EBS | CI passed; shared coverage timed out | n/a | 379s | Shared warm target and concurrent profiles reached the full workload but exceeded the 300s remote deadline; Spot cleanup passed |
+| `adl-ci-and-coverage` 64-vCPU preflight (`adl-wp-5243-direct-m7a16-f4531680`) | `f4531680` | immutable digest `sha256:20831e358...` | retained 1000 GiB EBS | not launched | n/a | 1s | AWS rejected the Spot request with `MaxSpotInstanceCountExceeded`; no compute or validation ran |
 
 Both existing-PR CI shadows ran 54 focused tests, doc tests, and demo smoke
 successfully, with identical 42-second validation time. They used the exact source commit and merge base without modifying

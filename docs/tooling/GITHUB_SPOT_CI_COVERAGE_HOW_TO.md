@@ -136,13 +136,16 @@ hosted CI, runs formatting and clippy when Rust is selected, runs focused tests
 and doc tests only when coverage has not taken ownership, and runs selected
 demo or tracked-proof lanes. It does not force full nextest when hosted CI
 would delegate that work to `adl-coverage`. `adl-coverage` verifies the
-preinstalled coverage toolchain and runs the authoritative coverage lane with
-its instrumented target rooted under retained EBS. Full authoritative coverage
-is partitioned into two concurrent nextest partitions by default, with 16 test
-threads per partition on the 32-vCPU `m7a.8xlarge` builder. Both partitions
-must pass before the single coverage result is emitted; override
-`ADL_AUTHORITATIVE_COVERAGE_PARTITIONS` and
-`ADL_AUTHORITATIVE_COVERAGE_TEST_THREADS` only for a measured builder shape.
+preinstalled coverage toolchain and runs the focused coverage-impact lane for
+pull requests, including when path policy marks full coverage as required.
+The plan records `mode=pr-fast-sla full_policy=true`; this is the bounded PR
+proof that fits the Spot SLA. Full authoritative coverage remains required for
+push/main and non-PR evidence events. The full lane uses two concurrent
+nextest partitions by default, with 16 test threads per partition on the
+32-vCPU `m7a.8xlarge` builder. Both partitions must pass before the single
+coverage result is emitted; override `ADL_AUTHORITATIVE_COVERAGE_PARTITIONS`
+and `ADL_AUTHORITATIVE_COVERAGE_TEST_THREADS` only for a measured builder
+shape.
 
 ### Shadow An Existing Issue Without Affecting Its PR
 

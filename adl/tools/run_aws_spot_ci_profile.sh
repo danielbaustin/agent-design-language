@@ -164,7 +164,7 @@ run_adl_coverage() {
   else
     echo "run_aws_spot_ci_profile: source revision has no warm-cache helper; using retained target directly"
   fi
-  if [[ "$FULL_COVERAGE_REQUIRED" == true ]]; then
+  if [[ "$FULL_COVERAGE_REQUIRED" == true && "$EVENT_NAME" != pull_request ]]; then
     if [[ -z "$COVERAGE_AUTHORITY" ]]; then
       echo "run_aws_spot_ci_profile: full coverage policy did not declare coverage_authority" >&2
       exit 1
@@ -174,6 +174,9 @@ run_adl_coverage() {
       --authority "$COVERAGE_AUTHORITY" \
       --event-name "$EVENT_NAME"
   else
+    if [[ "$FULL_COVERAGE_REQUIRED" == true ]]; then
+      printf 'ADL_SPOT_COVERAGE_PLAN mode=pr-fast-sla full_policy=true authority=%s\n' "$COVERAGE_AUTHORITY"
+    fi
     coverage_filter="$(bash "$ROOT_DIR/adl/tools/check_coverage_impact.sh" \
       --base "$BASE_COMMIT" \
       --head "$HEAD_COMMIT" \
