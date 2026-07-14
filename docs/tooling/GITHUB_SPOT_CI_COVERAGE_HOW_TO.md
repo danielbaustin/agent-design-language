@@ -87,10 +87,14 @@ automatic pull-request calls do not require a repository-wide
 workflow's same-repository guard; do not remove that guard.
 
 The live workflow always enables port 22 using the configured operator CIDR;
-it does not fall back to the ephemeral GitHub runner address. The retained
+it does not widen ingress to the ephemeral GitHub runner address. The retained
 passphraseless key is the same key used by the local SSH recovery command.
-GitHub-side execution uses SSM as a second, retained log channel when the
-operator-only SSH ingress is not reachable from the hosted runner.
+GitHub-side execution uses SSM as a second, retained log channel because the
+operator-only SSH ingress is intentionally not reachable from the hosted
+runner. The finalizer requires either a successful SSH probe and tail (the
+local/operator path) or the explicit operator-allowlist SSM fallback with
+both stdout and stderr records (the GitHub path). This keeps SSH recovery
+available to the operator without weakening the security group.
 
 This is a public repository. Keep privileged Spot dispatch on trusted
 `workflow_dispatch`, protected branches, or an approval-gated environment.

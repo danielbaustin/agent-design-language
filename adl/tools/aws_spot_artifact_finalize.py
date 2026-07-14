@@ -5,6 +5,7 @@ from __future__ import annotations
 
 import argparse
 import hashlib
+import ipaddress
 import json
 import os
 from pathlib import Path
@@ -205,8 +206,30 @@ def main() -> int:
     require(cleanup.get("final_instance_state") == "terminated", failures, "compute_not_terminated")
     require(not cleanup.get("termination_error"), failures, "compute_termination_error")
     require(launch_surface.get("ssh_debug_enabled") is True, failures, "ssh_debug_not_enabled")
-    require("status=ssh_debug_ready" in command_status, failures, "ssh_recovery_not_proven")
-    require("status=ssh_tail_started" in command_status, failures, "live_ssh_tail_not_proven")
+    ssh_recovery_proven = "status=ssh_debug_ready" in command_status
+    ssm_fallback_used = (
+        "status=ssh_debug_skip reason=operator_allowlist_ssm_fallback" in command_status
+        and "status=ssm_output channel=stdout" in command_status
+        and "status=ssm_output channel=stderr" in command_status
+    )
+    operator_allowlist = launch_surface.get("ssh_allowed_cidr")
+    try:
+        operator_allowlist_configured = (
+            isinstance(operator_allowlist, str)
+            and ipaddress.ip_interface(operator_allowlist).version == 4
+            and ipaddress.ip_interface(operator_allowlist).network.prefixlen == 32
+            and ipaddress.ip_interface(operator_allowlist).ip.is_global
+        )
+    except ValueError:
+        operator_allowlist_configured = False
+    if ssm_fallback_used:
+        require(operator_allowlist_configured, failures, "ssh_operator_allowlist_not_proven")
+    require(ssh_recovery_proven or ssm_fallback_used, failures, "ssh_recovery_not_proven")
+    require(
+        "status=ssh_tail_started" in command_status or ssm_fallback_used,
+        failures,
+        "live_ssh_tail_not_proven",
+    )
     require(builder.get("builder_image_immutable") is True, failures, "builder_image_not_immutable")
     require(builder.get("builder_image_digest_sha256") == expected_digest_hash, failures, "builder_image_digest_mismatch")
     require(builder.get("toolchain_verified") is True, failures, "builder_toolchain_not_verified")
@@ -229,8 +252,10 @@ def main() -> int:
         "retained_cache_verified": cache.get("created") is False and cache.get("attachment_state") == "attached",
         "retained_cache_identity_verified": sha256(cache_volume_id) == args.expected_cache_volume_id_sha256,
         "cache_mount_health_verified": builder.get("cache_mount_verified") is True and builder.get("cache_writable") is True,
-        "ssh_recovery_verified": "status=ssh_debug_ready" in command_status,
-        "live_logs_verified": "status=ssh_tail_started" in command_status,
+        "ssh_recovery_verified": ssh_recovery_proven,
+        "live_logs_verified": "status=ssh_tail_started" in command_status or ssm_fallback_used,
+        "live_ssh_tail_verified": "status=ssh_tail_started" in command_status,
+        "ssm_live_logs_verified": ssm_fallback_used,
         "compute_teardown_verified": cleanup.get("final_instance_state") == "terminated" and not cleanup.get("termination_error"),
         "host_validation_tools_installed": builder.get("host_validation_tools_installed"),
     }

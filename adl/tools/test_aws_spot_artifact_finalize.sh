@@ -27,7 +27,7 @@ payload = {
   "launch": {"purchase_option": "spot", "instance_id": "i-0123456789abcdef0"},
   "cache_volume": {"created": False, "attachment_state": "attached", "mount_path": "/mnt/adl-cache", "volume_id": "vol-0123456789abcdef0"},
   "cleanup": {"termination_attempted": True, "final_instance_state": "terminated", "termination_error": None},
-  "launch_surface": {"ssh_debug_enabled": True, "vpc_id": "vpc-0123456789abcdef0", "subnet_id": "subnet-0123456789abcdef0", "security_group_id": "sg-0123456789abcdef0"},
+  "launch_surface": {"ssh_debug_enabled": True, "ssh_allowed_cidr": "47.146.81.109/32", "vpc_id": "vpc-0123456789abcdef0", "subnet_id": "subnet-0123456789abcdef0", "security_group_id": "sg-0123456789abcdef0"},
   "timings": {"total_seconds": 120, "launch_seconds": 20, "ssm_ready_seconds": 10, "remote_command_seconds": 80, "teardown_seconds": 10},
   "remote_summary": {"builder_proof": {
     "builder_image_immutable": True,
@@ -112,6 +112,43 @@ if run_finalizer "$ssh_failure" >"$ssh_failure/out" 2>"$ssh_failure/err"; then
   exit 1
 fi
 grep -F 'ssh_recovery_not_proven' "$ssh_failure/err" >/dev/null
+
+ssm_fallback="$TMP/ssm-fallback"
+make_fixture "$ssm_fallback"
+cat >"$ssm_fallback/artifacts/command-status.log" <<'LOG'
+status=ssh_debug_skip reason=operator_allowlist_ssm_fallback
+status=ssm_output channel=stdout bytes=123
+status=ssm_output channel=stderr bytes=45
+LOG
+run_finalizer "$ssm_fallback" >"$ssm_fallback/finalize.out"
+python3 - "$ssm_fallback/artifacts/wrapper-final-summary.json" <<'PY'
+import json, sys
+verification = json.load(open(sys.argv[1], encoding="utf-8"))["self_verification"]
+assert verification["passed"] is True
+assert verification["live_logs_verified"] is True
+assert verification["live_ssh_tail_verified"] is False
+assert verification["ssm_live_logs_verified"] is True
+PY
+
+ssm_missing_allowlist="$TMP/ssm-missing-allowlist"
+make_fixture "$ssm_missing_allowlist"
+python3 - "$ssm_missing_allowlist/summary.json" <<'PY'
+import json, sys
+path = sys.argv[1]
+data = json.load(open(path, encoding="utf-8"))
+data["launch_surface"].pop("ssh_allowed_cidr")
+open(path, "w", encoding="utf-8").write(json.dumps(data) + "\n")
+PY
+cat >"$ssm_missing_allowlist/artifacts/command-status.log" <<'LOG'
+status=ssh_debug_skip reason=operator_allowlist_ssm_fallback
+status=ssm_output channel=stdout bytes=123
+status=ssm_output channel=stderr bytes=45
+LOG
+if run_finalizer "$ssm_missing_allowlist" >"$ssm_missing_allowlist/out" 2>"$ssm_missing_allowlist/err"; then
+  echo "expected missing operator allowlist proof to fail closed" >&2
+  exit 1
+fi
+grep -F 'ssh_operator_allowlist_not_proven' "$ssm_missing_allowlist/err" >/dev/null
 
 missing_builder="$TMP/builder"
 make_fixture "$missing_builder"
