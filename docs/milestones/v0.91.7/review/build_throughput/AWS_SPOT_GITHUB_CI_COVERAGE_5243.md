@@ -9,15 +9,17 @@ immediate rollback backend until all live gates below pass.
 
 ## Current Disposition
 
-Status: `live_combined_profile_not_yet_proven; cache_capacity_repair_pending`
+Status: `live_combined_profile_not_yet_proven; coverage_failure_diagnosis_pending`
 
 The Spot CI lane is live-proven, but the current combined parallel profile is
 not yet proven under the 300-second ceiling. A prior sequential combined run
 passed both profiles in one lifecycle; the first scaled parallel attempt was
 stopped after exceeding the ceiling, and the next attempt failed safely before
 validation because the retained 500 GiB cache was below its free-space floor.
-The retained cache has now been expanded to 1000 GiB and must be re-proven
-after the resize completes. Required-check cutover remains pending.
+The retained cache has now been expanded to 1000 GiB. The first post-resize
+combined run mounted the retained cache and completed the CI half in 28 seconds,
+but authoritative coverage failed after 195 seconds; the retained per-profile
+logs are now preserved for diagnosis. Required-check cutover remains pending.
 
 The `adl-spot-ci` GitHub environment is configured with selected-branch rules
 for `main` and `codex/*`, no environment secrets, no manual approval gate, and
@@ -54,6 +56,7 @@ still disabled while coverage proof is incomplete.
 | `adl-ci-and-coverage` GitHub workflow run 38 | `bf79a69d` | immutable digest `sha256:20831e358...` | retained 500 GiB EBS | >300s | canceled | failed target | one `m7a.8xlarge` host; CI and coverage processes were concurrent; stopped at the 300s ceiling |
 | `adl-ci-and-coverage` GitHub workflow run 39 | `ca1cb62c` | immutable digest `sha256:20831e358...` | retained 1000 GiB EBS resize | preflight | 45s | failed before validation because the retained filesystem was below the 10 GiB floor; Spot cleanup passed |
 | `adl-ci-and-coverage` GitHub workflow run 40 | `f511f52a` | immutable digest `sha256:20831e358...` | retained 1000 GiB EBS | >300s | canceled | failed target | warm repeat reached parallel full-coverage compilation but did not finish before the 300s ceiling; Spot cleanup passed |
+| `adl-ci-and-coverage` GitHub workflow run 41 (`29323862776`) | `5e240483` | immutable digest `sha256:20831e358...` | retained 1000 GiB EBS | CI 28s; coverage failed at 195s | 166s | 225s | post-resize Spot launch, SSM, retained-cache mount, and cleanup passed; coverage returned exit 1 and its preserved profile log is required for diagnosis |
 
 Both existing-PR CI shadows ran 54 focused tests, doc tests, and demo smoke
 successfully, with identical 42-second validation time. They used the exact source commit and merge base without modifying
@@ -200,8 +203,9 @@ the variable and rerunning the checks.
 
 ## Remaining Proof Before Cutover
 
-1. Re-run the combined profile after the 1000 GiB resize completes and prove
-   both concurrent profiles, cleanup, live logs, and total elapsed time <=300s.
+1. Diagnose and repair the authoritative coverage failure from run 41 using
+   the retained `adl-coverage.log`, then prove both concurrent profiles,
+   cleanup, live logs, and total elapsed time <=300s on one exact-commit run.
 2. Verify the constrained OIDC subject, exact source binding, sanitized
    artifacts, and EBS detach behavior remain green in that run.
 3. Retain the redacted artifact and final cost/timing comparison before making
