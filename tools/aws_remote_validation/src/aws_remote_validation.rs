@@ -29,6 +29,7 @@ use tokio::process::{Child, Command as TokioCommand};
 use tokio::time::sleep;
 
 const SPOT_QUOTA_NAME: &str = "All Standard (A, C, D, H, I, M, R, T, Z) Spot Instance Requests";
+const SSM_OUTPUT_CONTENT_LIMIT_BYTES: usize = 24 * 1024;
 const ON_DEMAND_QUOTA_NAME: &str =
     "Running On-Demand Standard (A, C, D, H, I, M, R, T, Z) instances";
 const CACHE_ROLE_POLICY_NAME: &str = "AdlAwsRemoteValidationCacheAccess";
@@ -1491,7 +1492,13 @@ fn validate_ssh_allowed_cidr(value: &str) -> Result<String> {
     let IpAddr::V4(ip) = ip else {
         return Err(anyhow!("SSH allowed CIDR must contain an IPv4 address"));
     };
-    if ip == Ipv4Addr::UNSPECIFIED || ip.is_loopback() || ip.is_multicast() {
+    if ip == Ipv4Addr::UNSPECIFIED
+        || ip.is_loopback()
+        || ip.is_multicast()
+        || ip.is_private()
+        || ip.is_link_local()
+        || ip == Ipv4Addr::BROADCAST
+    {
         return Err(anyhow!(
             "SSH allowed CIDR must contain a reachable public IPv4 address"
         ));
@@ -2273,6 +2280,14 @@ impl LiveAwsRemoteValidationAdapter {
             ),
         );
         Ok(Some(child))
+    }
+
+    async fn stop_ssh_tail(child: &mut Option<Child>) {
+        if let Some(process) = child.as_mut() {
+            let _ = process.start_kill();
+            let _ = process.wait().await;
+        }
+        *child = None;
     }
 
     pub async fn prepare_launch_surface(
@@ -3139,7 +3154,7 @@ impl AwsRemoteValidationAdapter for LiveAwsRemoteValidationAdapter {
         } else {
             None
         };
-        let output = self
+        let output = match self
             .ssm
             .send_command()
             .document_name("AWS-RunShellScript")
@@ -3153,7 +3168,13 @@ impl AwsRemoteValidationAdapter for LiveAwsRemoteValidationAdapter {
             )
             .send()
             .await
-            .map_err(classify_ssm_error)?;
+        {
+            Ok(output) => output,
+            Err(err) => {
+                Self::stop_ssh_tail(&mut ssh_tail_child).await;
+                return Err(classify_ssm_error(err));
+            }
+        };
         let command_id = output
             .command()
             .and_then(|command| command.command_id())
@@ -3166,6 +3187,8 @@ impl AwsRemoteValidationAdapter for LiveAwsRemoteValidationAdapter {
         let start = Instant::now();
         let mut stdout_offset = 0_usize;
         let mut stderr_offset = 0_usize;
+        let mut stdout_truncation_reported = false;
+        let mut stderr_truncation_reported = false;
         loop {
             let invocation = match self
                 .ssm
@@ -3189,6 +3212,7 @@ impl AwsRemoteValidationAdapter for LiveAwsRemoteValidationAdapter {
                         sleep(poll_interval).await;
                         continue;
                     }
+                    Self::stop_ssh_tail(&mut ssh_tail_child).await;
                     return Err(classify_ssm_error(err));
                 }
             };
@@ -3201,6 +3225,20 @@ impl AwsRemoteValidationAdapter for LiveAwsRemoteValidationAdapter {
             let stderr = invocation.standard_error_content().unwrap_or_default();
             append_live_command_output("stdout", stdout, &mut stdout_offset);
             append_live_command_output("stderr", stderr, &mut stderr_offset);
+            if stdout.len() >= SSM_OUTPUT_CONTENT_LIMIT_BYTES && !stdout_truncation_reported {
+                append_command_status_line(
+                    "ssm_output_truncated",
+                    format!("channel=stdout limit_bytes={SSM_OUTPUT_CONTENT_LIMIT_BYTES}"),
+                );
+                stdout_truncation_reported = true;
+            }
+            if stderr.len() >= SSM_OUTPUT_CONTENT_LIMIT_BYTES && !stderr_truncation_reported {
+                append_command_status_line(
+                    "ssm_output_truncated",
+                    format!("channel=stderr limit_bytes={SSM_OUTPUT_CONTENT_LIMIT_BYTES}"),
+                );
+                stderr_truncation_reported = true;
+            }
             append_command_status_line(
                 "command_poll",
                 format!(
@@ -4263,7 +4301,13 @@ mod tests {
             validate_ssh_allowed_cidr("47.146.81.109/32").expect("valid CIDR"),
             "47.146.81.109/32"
         );
-        for value in ["47.146.81.109/24", "0.0.0.0/0", "::1/128"] {
+        for value in [
+            "47.146.81.109/24",
+            "0.0.0.0/0",
+            "10.0.0.1/32",
+            "999.999.999.999/32",
+            "::1/128",
+        ] {
             assert!(
                 validate_ssh_allowed_cidr(value).is_err(),
                 "accepted {value}"

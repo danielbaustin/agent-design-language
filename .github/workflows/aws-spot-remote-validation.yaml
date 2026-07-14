@@ -157,6 +157,19 @@ jobs:
             echo "::error::AWS_SPOT_REMOTE_VALIDATION_SSH_ALLOWED_CIDR must be one IPv4 /32"
             exit 2
           fi
+          if [ "${{ inputs.mode }}" = "start-run" ]; then
+            python3 - "$AWS_SPOT_REMOTE_VALIDATION_SSH_ALLOWED_CIDR" <<'PY'
+          import ipaddress
+          import sys
+
+          try:
+              interface = ipaddress.ip_interface(sys.argv[1])
+          except ValueError as exc:
+              raise SystemExit(f"invalid SSH source CIDR: {exc}")
+          if interface.version != 4 or interface.network.prefixlen != 32 or not interface.ip.is_global:
+              raise SystemExit("SSH source CIDR must be one globally routable IPv4 /32")
+          PY
+          fi
           if [ "${{ inputs.git_ref }}" = "HEAD" ]; then
             echo "::error::git_ref must be a branch, tag, or SHA; HEAD is ambiguous"
             exit 2
