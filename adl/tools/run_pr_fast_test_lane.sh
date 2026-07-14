@@ -342,6 +342,10 @@ filter_token_for_path() {
       printf 'pr_cmd_finish'
       return 0
       ;;
+    adl/src/cli/pr_cmd/git_support.rs)
+      printf 'pr_cmd_git_support'
+      return 0
+      ;;
     adl/src/cli/pr_cmd.rs|\
     adl/src/cli/pr_cmd/lifecycle.rs|\
     adl/src/cli/pr_cmd/lifecycle/reconciliation.rs|\
@@ -562,6 +566,7 @@ TOKEN_MAP = {
     "pr_control_plane": 'test(/^cli::pr_cmd::/)',
     "pr_cmd_watch": 'binary_id(adl::bin/adl) and test(/^cli::pr_cmd::(github::tests::watch|lifecycle::reconciliation|lifecycle::tests)::/)',
     "pr_cmd_finish": 'binary_id(adl::bin/adl-pr-finish) and test(/^cli::pr_cmd::tests::finish::arg_render::/) or binary_id(adl::bin/adl-pr-finish) and test(/^cli::pr_cmd::finish_support::tests::/)',
+    "pr_cmd_git_support": 'binary_id(adl::bin/adl) and test(/^cli::pr_cmd::tests::repo_helpers::(bootstrap|context)::/) or binary_id(adl::bin/adl) and test(/^cli::pr_cmd::tests::basics::infer_repo_from_remote_supports_https_and_ssh$/) or binary_id(adl::bin/adl-pr-finish) and test(/^cli::pr_cmd::tests::finish::arg_render::/) or binary_id(adl::bin/adl-pr-finish) and test(/^cli::pr_cmd::finish_support::tests::/)',
     "pr_cmd::github": 'test(/^cli::pr_cmd::github::/) or test(/^cli::pr_cmd::github_client::/)',
     "github_release_": 'test(/^cli::tooling_cmd::github_release::/)',
     "long_lived_agent": 'test(/^long_lived_agent::/)',

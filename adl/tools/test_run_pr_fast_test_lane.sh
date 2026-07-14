@@ -497,6 +497,24 @@ assert_has "$finish_only_output" "reason=bounded_rust_surface_runs_focused_nexte
 assert_has "$finish_only_output" "filter_tokens=pr_cmd_finish"
 assert_has "$finish_only_output" "filter_expression=binary_id(adl::bin/adl-pr-finish) and test(/^cli::pr_cmd::tests::finish::arg_render::/) or binary_id(adl::bin/adl-pr-finish) and test(/^cli::pr_cmd::finish_support::tests::/)"
 
+spot_tooling_mixed="$TMP/spot-tooling-mixed.txt"
+cat >"$spot_tooling_mixed" <<'EOF'
+M	.github/workflows/aws-spot-remote-validation.yaml
+M	adl/config/validation_lane_selector.v0.91.6.json
+M	adl/src/cli/pr_cmd/finish_support.rs
+M	adl/src/cli/pr_cmd/git_support.rs
+M	adl/src/cli/tests/pr_cmd_inline/finish/arg_render.rs
+M	adl/src/long_lived_agent/tests.rs
+M	adl/tests/cli_smoke/agent.rs
+EOF
+spot_tooling_mixed_output="$(bash "$SCRIPT" --changed-files "$spot_tooling_mixed" --print-plan)"
+assert_has "$spot_tooling_mixed_output" "mode=focused"
+assert_has "$spot_tooling_mixed_output" "reason=bounded_rust_surface_runs_focused_nextest"
+assert_has "$spot_tooling_mixed_output" "filter_tokens=pr_cmd_finish,pr_cmd_git_support,long_lived_agent,agent_cli_smoke"
+assert_has "$spot_tooling_mixed_output" "filter_expression=binary_id(adl::bin/adl-pr-finish) and test(/^cli::pr_cmd::tests::finish::arg_render::/) or binary_id(adl::bin/adl-pr-finish) and test(/^cli::pr_cmd::finish_support::tests::/) or binary_id(adl::bin/adl) and test(/^cli::pr_cmd::tests::repo_helpers::(bootstrap|context)::/) or binary_id(adl::bin/adl) and test(/^cli::pr_cmd::tests::basics::infer_repo_from_remote_supports_https_and_ssh$/) or binary_id(adl::bin/adl-pr-finish) and test(/^cli::pr_cmd::tests::finish::arg_render::/) or binary_id(adl::bin/adl-pr-finish) and test(/^cli::pr_cmd::finish_support::tests::/) or test(/^long_lived_agent::/) or binary_id(adl::cli_smoke) and test(/^agent::/)"
+assert_not_has "$spot_tooling_mixed_output" "filter_tokens=pr_cmd_finish,pr_cmd,long_lived_agent,agent_cli_smoke"
+assert_not_has "$spot_tooling_mixed_output" "binary_id(adl::bin/adl) and test(/^cli::pr_cmd::/)"
+
 slow_pr_cmd_e2e_guardrail="$TMP/slow-pr-cmd-e2e-guardrail.txt"
 printf 'M\tadl/src/cli/tests/pr_cmd_inline/finish/guardrails.rs\n' >"$slow_pr_cmd_e2e_guardrail"
 slow_pr_cmd_e2e_guardrail_output="$(bash "$SCRIPT" --changed-files "$slow_pr_cmd_e2e_guardrail" --print-plan)"
