@@ -43,6 +43,8 @@ chmod +x "$bin_dir/cargo"
 
 scratch_root="$temp_root/pr-fast-target"
 expression='binary_id(adl::bin/adl) and test(/^cli::tooling_cmd::tests::structured_prompt::/)'
+mkdir -p "$scratch_root/llvm-cov-target"
+: >"$scratch_root/llvm-cov-target/stale.profraw"
 PATH="$bin_dir:$PATH" \
 PR_FAST_COVERAGE_CARGO_LOG="$cargo_log" \
 ADL_RUST_WARM_CACHE=0 \
@@ -52,6 +54,8 @@ ADL_PR_FAST_COVERAGE_BUILD_ROOT="$scratch_root" \
 grep -F "PR-fast coverage expression: $expression" "$temp_root/pr-fast-coverage-run.out" >/dev/null
 grep -F "PR-fast coverage target: $scratch_root" "$temp_root/pr-fast-coverage-run.out" >/dev/null
 grep -F "PR-fast coverage test threads: nextest-default" "$temp_root/pr-fast-coverage-run.out" >/dev/null
+grep -F "PR-fast coverage report: complete" "$temp_root/pr-fast-coverage-run.out" >/dev/null
+test ! -e "$scratch_root/llvm-cov-target/stale.profraw"
 
 for required in \
   "cmd=llvm-cov nextest --workspace --status-level all --final-status-level slow --no-report -E $expression" \

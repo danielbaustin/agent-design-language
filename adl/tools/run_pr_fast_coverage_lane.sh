@@ -48,6 +48,8 @@ COVERAGE_BUILD_ROOT="${ADL_PR_FAST_COVERAGE_BUILD_ROOT:-$ADL_DIR/target/pr-fast-
 mkdir -p "$COVERAGE_BUILD_ROOT" "$COVERAGE_BUILD_ROOT/llvm-cov-target"
 export CARGO_TARGET_DIR="$COVERAGE_BUILD_ROOT"
 export CARGO_LLVM_COV_TARGET_DIR="$COVERAGE_BUILD_ROOT/llvm-cov-target"
+find "$CARGO_LLVM_COV_TARGET_DIR" -type f -name '*.profraw' -delete
+export LLVM_PROFILE_FILE="$CARGO_LLVM_COV_TARGET_DIR/%m-%p.profraw"
 ADL_RUST_WARM_CACHE_SOURCE_TARGET="${ADL_PR_FAST_COVERAGE_WARM_SOURCE_TARGET:-}" \
 ADL_RUST_WARM_CACHE_DEST_TARGET="$CARGO_TARGET_DIR" \
 ADL_RUST_WARM_CACHE_OUTPUT="${ADL_PR_FAST_COVERAGE_WARM_CACHE_OUTPUT:-$ADL_DIR/pr-fast-coverage-warm-cache.json}" \
@@ -134,8 +136,11 @@ if grep -Fq 'test(/^csm_cav::/)' <<<"$FILTER_EXPRESSION"; then
       }
   ' "$ADL_SUMMARY_PATH" "$ADL_RUNTIME_SUMMARY_PATH" > "$COMBINED_SUMMARY_PATH"
 else
+  printf 'PR-fast coverage report: start\n'
   cargo llvm-cov report \
     --json \
     --summary-only \
     --output-path "$COMBINED_SUMMARY_PATH"
+  printf 'PR-fast coverage report: complete\n'
 fi
+find "$CARGO_LLVM_COV_TARGET_DIR" -type f -name '*.profraw' -delete
