@@ -451,7 +451,7 @@ jobs:
     uses: ./.github/workflows/aws-spot-remote-validation.yaml
     with:
       mode: start-run
-      profile: adl-ci-and-coverage
+      profile: ${{ needs.adl_path_policy.outputs.coverage_required == 'true' && 'adl-ci-and-coverage' || 'adl-ci' }}
       remote_ref: ${{ github.head_ref || github.ref_name }}
       git_ref: ${{ github.event.pull_request.head.sha || github.sha }}
       base_ref: ${{ github.event.pull_request.base.sha || github.event.before || github.sha }}

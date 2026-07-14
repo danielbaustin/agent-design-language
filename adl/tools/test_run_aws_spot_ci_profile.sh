@@ -141,8 +141,8 @@ grep -F '"adl_spot_ci_and_coverage:${{ needs.adl_spot_ci_and_coverage.result }}"
 test "$(grep -Fc 'builder_image_tag: v0.91.7-coverage-5243' "$CI_WORKFLOW")" -eq 1
 test "$(grep -Fc 'source_event_name: ${{ github.event_name }}' "$CI_WORKFLOW")" -eq 1
 test "$(grep -Fc 'python3 adl/tools/verify_ci_backend_route.py' "$CI_WORKFLOW")" -eq 2
-test "$(grep -Fc 'profile: adl-ci-and-coverage' "$CI_WORKFLOW")" -eq 1
 test "$(grep -Fc 'name: adl-spot-ci-and-coverage' "$CI_WORKFLOW")" -eq 1
+grep -F "profile: \${{ needs.adl_path_policy.outputs.coverage_required == 'true' && 'adl-ci-and-coverage' || 'adl-ci' }}" "$CI_WORKFLOW" >/dev/null
 if grep -E 'name: adl-spot-(ci|coverage)$' "$CI_WORKFLOW" >/dev/null; then
   echo "Spot CI and coverage must share one lifecycle" >&2
   exit 1
