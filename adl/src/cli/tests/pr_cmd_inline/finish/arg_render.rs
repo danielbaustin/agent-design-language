@@ -5323,6 +5323,8 @@ fn finish_helper_selector_covers_additional_policy_helper_branches() {
         "adl/config/slow_proof_families.v0.91.6.json,\
          adl/tools/test_v0916_unity_observatory_baseline.sh,\
          adl/tools/observability.sh,\
+         adl/src/cli/tokio_runtime.rs,\
+         adl/src/continuous_verification_self_attack.rs,\
          adl/src/agent_comms.rs,\
          adl/src/provider_adapter.rs,\
          adl/src/provider_communication.rs,\
@@ -5342,6 +5344,24 @@ fn finish_helper_selector_covers_additional_policy_helper_branches() {
         .contains(&"bash adl/tools/test_pr_small_binary_delegation.sh".to_string()));
     assert!(plan.commands.contains(
         &"cargo test --manifest-path adl/Cargo.toml agent_comms --lib -- --nocapture".to_string()
+    ));
+    assert!(plan
+        .commands
+        .contains(&"cargo test --manifest-path adl/Cargo.toml pr_cmd::github".to_string()));
+    assert!(plan.commands.contains(
+        &"cargo test --manifest-path adl/Cargo.toml --bin adl github_release_".to_string()
+    ));
+    assert!(plan.commands.contains(
+        &"cargo test --manifest-path adl/Cargo.toml --bin adl octocrab_transport_".to_string()
+    ));
+    assert!(plan.commands.contains(
+        &"cargo test --manifest-path adl/Cargo.toml continuous_verification_contract_covers_cadence_lifecycle_and_artifacts".to_string()
+    ));
+    assert!(plan.commands.contains(
+        &"cargo test --manifest-path adl/Cargo.toml self_attack_contract_is_policy_bounded_and_reviewable".to_string()
+    ));
+    assert!(plan.commands.contains(
+        &"cargo test --manifest-path adl/Cargo.toml identity_continuous_verification_writes_contract_json".to_string()
     ));
     assert!(plan
         .commands
