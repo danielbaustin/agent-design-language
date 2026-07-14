@@ -9,7 +9,7 @@ immediate rollback backend until all live gates below pass.
 
 ## Current Disposition
 
-Status: `live_combined_profile_proven; publication-pending-review`
+Status: `live_combined_profile_proven; pr-open-environment-recheck-pending`
 
 Earlier scaled attempts exceeded the ceiling or failed safely before validation
 because the retained cache was below its free-space floor. The retained cache
@@ -20,8 +20,9 @@ logs were observed, and the full launch-through-cleanup lifecycle completed in
 257 seconds. Full authoritative coverage remains reserved for push/main.
 
 The `adl-spot-ci` GitHub environment is configured with selected-branch rules
-for `main` and `codex/*`, no environment secrets, no manual approval gate, and
-no tag rule. The Agent Logic OIDC role trust was then applied and independently
+for `main`, `codex/*`, and `pull/*`, no environment secrets, no manual approval
+gate, and no tag rule. `pull/*` is required because GitHub evaluates a
+pull-request deployment as `refs/pull/<number>/merge`. The Agent Logic OIDC role trust was then applied and independently
 read back with exactly these subjects:
 
 - `repo:danielbaustin/agent-design-language:ref:refs/heads/main`
@@ -29,8 +30,9 @@ read back with exactly these subjects:
 - `repo:danielbaustin/agent-design-language:environment:adl-spot-ci`
 
 No repository-wide `pull_request` subject is present. Production routing remains
-hosted until the reviewed PR is published; the immediate rollback is the
-existing `ADL_HEAVY_CI_BACKEND=hosted` setting.
+Spot-selected but the PR must pass its environment recheck before required-check
+cutover is considered complete; the immediate rollback is the existing
+`ADL_HEAVY_CI_BACKEND=hosted` setting.
 
 The first live run of the partitioned profile on commit `4e5465af` completed
 Spot launch, SSH/SSM, immutable image, retained-cache, toolchain, CI, and

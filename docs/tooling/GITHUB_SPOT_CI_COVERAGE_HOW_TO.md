@@ -71,10 +71,13 @@ repository and approved branches/environments. The workflow requires:
   do not rely on GitHub's unprotected auto-created environment default
 
 Configure `adl-spot-ci` with **Selected branches and tags**, branch patterns
-`main` and `codex/*`, and no tag patterns. Do not add required reviewers to
-this CI environment because unattended required checks must not wait for a
-deployment approval. Fork pull requests still cannot match these repository
-branch rules and are explicitly routed to hosted runners by the workflow.
+`main`, `codex/*`, and `pull/*`, and no tag patterns. The `pull/*` pattern is
+required because GitHub evaluates a pull-request deployment as
+`refs/pull/<number>/merge`, not as the source branch name. Do not add required
+reviewers to this CI environment because unattended required checks must not
+wait for a deployment approval. Fork pull requests still cannot enter the Spot
+job because the workflow requires a same-repository head and explicitly routes
+forks to hosted runners.
 
 Do not store AWS access keys in GitHub. The role needs the bounded EC2, EBS,
 SSM, IAM, ECR-read, and cleanup permissions already created for the Spot lane.
