@@ -10,8 +10,10 @@ on Spot with the retained 500 GiB EBS cache.
 
 Roll out in four stages:
 
-1. Run manual `adl-ci` and `adl-coverage` shadow profiles independently.
-2. Run each profile twice at one commit and compare artifacts with hosted CI.
+1. Run manual `adl-ci-and-coverage` as the operational shadow: both profiles
+   execute inside one Spot launch, one retained cache, and one cleanup scope.
+2. Use the individual `adl-ci` and `adl-coverage` profiles only for bounded
+   diagnosis, then compare the combined artifact with hosted CI.
 3. Rehearse failure, cancellation, interruption, and hosted rollback.
 4. Change the required workflow routing only after all prior gates pass.
 
@@ -85,7 +87,23 @@ Never run privileged self-hosted work directly for untrusted fork PR code.
 
 Open **Actions -> aws-spot-remote-validation -> Run workflow**.
 
-For CI:
+For the operational apples-to-apples run:
+
+- `mode`: `start-run`
+- `profile`: `adl-ci-and-coverage`
+- `remote_ref`: pushed branch under test; blank uses the workflow branch
+- `git_ref`: exact immutable commit under test
+- `base_ref`: merge base or `origin/main`
+- `source_event_name`: `pull_request` for a PR shadow
+- `instance_type`: `m7a.2xlarge`
+- `validation_command`: blank
+
+The combined profile runs path-policy `adl-ci` first and authoritative
+`adl-coverage` second on the same host and retained target. It emits separate
+profile timings and pass records, then one total run timing. A successful CI
+only run or coverage-only run is not a substitute for this combined proof.
+
+For CI-only diagnostics:
 
 - `mode`: `start-run`
 - `profile`: `adl-ci`
@@ -97,8 +115,8 @@ For CI:
 - `instance_type`: `m7a.2xlarge`
 - `validation_command`: blank
 
-For coverage, repeat with `profile: adl-coverage`. The named profiles reject a
-custom command so the proof cannot silently run a cheaper substitute. Use
+For coverage-only diagnostics, use `profile: adl-coverage`. The named profiles
+reject a custom command so the proof cannot silently run a cheaper substitute. Use
 `profile: custom` only for explicit operator diagnostics.
 
 The remote commands are owned by
@@ -157,12 +175,13 @@ rollback.
 
 ## Required Proof Before Cutover
 
-For both profiles, retain two consecutive same-commit runs showing:
+For the combined profile, retain two consecutive same-commit runs showing:
 
 - exact source commit and image digest
 - cache target pre-existing size and free space
 - command, launch, SSM, validation, teardown, and total timings
-- build/test or coverage success
+- separate `adl-ci` build/test success and `adl-coverage` success in the same
+  Spot lifecycle
 - returned logs and coverage summary evidence
 - instance termination and temporary-resource cleanup
 - estimated compute cost

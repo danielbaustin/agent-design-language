@@ -53,11 +53,48 @@ grep -F 'https://checkip.amazonaws.com' "$ROOT/tools/aws_remote_validation/src/a
 
 ci_plan="$(bash "$SCRIPT" adl-ci --base HEAD --head HEAD --print-command)"
 coverage_plan="$(bash "$SCRIPT" adl-coverage --base HEAD --head HEAD --print-command)"
+combined_plan="$(bash "$SCRIPT" adl-ci-and-coverage --base HEAD --head HEAD --print-command)"
 coverage_push_plan="$(bash "$SCRIPT" adl-coverage --base HEAD --head HEAD --event-name push --print-command)"
 [[ "$ci_plan" == *run_pr_fast_test_lane.sh* ]]
 [[ "$coverage_plan" == *'cargo llvm-cov nextest'* ]]
-grep -F 'coverage_command=("${command[@]}" --test-threads "$ADL_COVERAGE_TEST_THREADS")' "$SCRIPT" >/dev/null
+[[ "$combined_plan" == *'adl-ci:'*'adl-coverage:'* ]]
+[[ "$combined_plan" == *run_pr_fast_test_lane.sh* ]]
+[[ "$combined_plan" == *'cargo llvm-cov nextest'* ]]
+grep -F 'coverage_command+=(--test-threads "$ADL_COVERAGE_TEST_THREADS")' "$SCRIPT" >/dev/null
 [[ "$coverage_push_plan" == *'--event-name push'* ]]
+
+# Execute the combined orchestration locally with fake toolchain commands. This
+# proves sequencing and evidence emission without launching paid AWS compute.
+combined_tmp="$(mktemp -d "${TMPDIR:-/tmp}/adl-spot-combined-profile.XXXXXX")"
+combined_root="$combined_tmp/repo"
+fake_bin="$combined_tmp/bin"
+combined_log="$combined_tmp/execution.log"
+mkdir -p "$combined_root/adl/tools" "$fake_bin" "$combined_root/cache/target"
+cp "$SCRIPT" "$combined_root/adl/tools/run_aws_spot_ci_profile.sh"
+printf '#!/usr/bin/env bash\nset -euo pipefail\nprintf "ci-policy\\n" >>"$ADL_TEST_LOG"\nout=""\nwhile [[ $# -gt 0 ]]; do\n  if [[ "$1" == "--github-output" ]]; then out="$2"; shift 2; continue; fi\n  shift\ndone\nprintf "rust_required=true\\nfull_coverage_required=false\\ndemo_smoke_required=false\\nv0913_proof_required=false\\nvalidation_profile_escalation_required=false\\n" >"$out"\n' >"$combined_root/adl/tools/ci_path_policy.sh"
+printf '#!/usr/bin/env bash\nprintf "ci-lane\\n" >>"$ADL_TEST_LOG"\n' >"$combined_root/adl/tools/run_pr_fast_test_lane.sh"
+printf '#!/usr/bin/env bash\nexit 0\n' >"$combined_root/adl/tools/rust_validation_warm_cache.sh"
+chmod +x "$combined_root/adl/tools/ci_path_policy.sh" "$combined_root/adl/tools/run_pr_fast_test_lane.sh" "$combined_root/adl/tools/rust_validation_warm_cache.sh"
+printf '#!/usr/bin/env bash\nprintf "rustc %%s\\n" "$*" >>"$ADL_TEST_LOG"\n' >"$fake_bin/rustc"
+printf '#!/usr/bin/env bash\nprintf "cargo %%s\\n" "$*" >>"$ADL_TEST_LOG"\nif [[ "$*" == *"llvm-cov report"* ]]; then printf "{\\\"data\\\":[{\\\"totals\\\":{}}]}\\n" >coverage-summary.json; fi\n' >"$fake_bin/cargo"
+printf '#!/usr/bin/env bash\nprintf "sccache %%s\\n" "$*" >>"$ADL_TEST_LOG"\n' >"$fake_bin/sccache"
+printf '#!/usr/bin/env bash\nprintf "ld.lld %%s\\n" "$*" >>"$ADL_TEST_LOG"\n' >"$fake_bin/ld.lld"
+printf '#!/usr/bin/env bash\nif [[ "$*" == *"component list --installed"* ]]; then printf '\''llvm-tools-preview (installed)\\n'\''; fi\n' >"$fake_bin/rustup"
+chmod +x "$fake_bin/rustc" "$fake_bin/cargo" "$fake_bin/sccache" "$fake_bin/ld.lld" "$fake_bin/rustup"
+git -C "$combined_root" init -q
+git -C "$combined_root" config user.name adl-test
+git -C "$combined_root" config user.email adl-test@example.invalid
+git -C "$combined_root" add .
+git -C "$combined_root" commit -qm combined-profile-test
+combined_output="$(ADL_SPOT_SOURCE_ROOT="$combined_root" CARGO_TARGET_DIR="$combined_root/cache/target" ADL_TEST_LOG="$combined_log" PATH="$fake_bin:$PATH" bash "$combined_root/adl/tools/run_aws_spot_ci_profile.sh" adl-ci-and-coverage --base HEAD --head HEAD)"
+ci_record_line="$(printf '%s\n' "$combined_output" | grep -n 'profile=adl-ci base=' | head -1 | cut -d: -f1)"
+coverage_record_line="$(printf '%s\n' "$combined_output" | grep -n 'profile=adl-coverage base=' | head -1 | cut -d: -f1)"
+total_record_line="$(printf '%s\n' "$combined_output" | grep -n 'profile=adl-ci-and-coverage base=' | head -1 | cut -d: -f1)"
+[[ -n "$ci_record_line" && -n "$coverage_record_line" && -n "$total_record_line" ]]
+(( ci_record_line < coverage_record_line ))
+grep -F 'ci-lane' "$combined_log" >/dev/null
+grep -F 'cargo llvm-cov nextest' "$combined_log" >/dev/null
+rm -rf "$combined_tmp"
 
 grep -F 'profile:' "$WORKFLOW" >/dev/null
 grep -F 'adl-ci' "$WORKFLOW" >/dev/null

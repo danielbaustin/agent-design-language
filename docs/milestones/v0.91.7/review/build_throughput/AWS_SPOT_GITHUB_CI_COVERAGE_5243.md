@@ -48,6 +48,8 @@ still disabled while coverage proof is incomplete.
 | `adl-coverage` same-commit repeat 1 | `9346f230` | replacement `v0.91.7-coverage-5243` | retained 500 GiB EBS | 736s | 835s | 912s | passed; 2165/2165 tests, 2 skipped |
 | `adl-coverage` same-commit repeat 2 | `9346f230` | replacement `v0.91.7-coverage-5243` | retained 500 GiB EBS | 767s | 862s | 919s | passed; 2108/2108 tests, 2 skipped |
 | `adl-coverage` final-profile repeat | `9346f230` | replacement `v0.91.7-coverage-5243` | retained 500 GiB EBS | 636s | 738s | 815s | passed; 2108/2108 tests, 2 skipped; final trusted profile |
+| `adl-ci` GitHub workflow run 30 | `bc76182c` | immutable digest `sha256:20831e3...` | retained 500 GiB EBS | 249s | 304s | 03:20-03:27Z | passed; 135 requests, 100% Rust cache hits, 343 GB pre-existing target |
+| `adl-coverage` GitHub workflow run 31 | `bc76182c` | immutable digest `sha256:20831e3...` | retained 500 GiB EBS | not run | not run | canceled before launch | superseded; operational proof must run both profiles in one lifecycle |
 
 Both existing-PR CI shadows ran 54 focused tests, doc tests, and demo smoke
 successfully, with identical 42-second validation time. They used the exact source commit and merge base without modifying
@@ -176,7 +178,8 @@ the variable and rerunning the checks.
 
 ## Remaining Proof Before Cutover
 
-1. Run the reusable workflow through `adl-spot-ci` and verify the constrained
+1. Run the reusable workflow through `adl-spot-ci` with
+   `profile: adl-ci-and-coverage` and verify the constrained
    OIDC subject, exact source binding, live logs, sanitized artifacts, and EBS
    detach behavior end to end.
 2. Set `ADL_HEAVY_CI_BACKEND=spot` and verify stable `adl-ci` and

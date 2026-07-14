@@ -14,6 +14,7 @@ usage() {
 Usage:
   run_aws_spot_ci_profile.sh adl-ci --base <ref> --head <ref> [--event-name <event>] [--print-command]
   run_aws_spot_ci_profile.sh adl-coverage --base <ref> --head <ref> [--event-name <event>] [--print-command]
+  run_aws_spot_ci_profile.sh adl-ci-and-coverage --base <ref> --head <ref> [--event-name <event>] [--print-command]
 
 Runs one named GitHub shadow-check workload inside the immutable ADL builder
 container. It does not launch EC2 and does not install validation tools.
@@ -32,8 +33,8 @@ while [[ $# -gt 0 ]]; do
 done
 
 case "$PROFILE" in
-  adl-ci|adl-coverage) ;;
-  *) echo "run_aws_spot_ci_profile: profile must be adl-ci or adl-coverage" >&2; exit 2 ;;
+  adl-ci|adl-coverage|adl-ci-and-coverage) ;;
+  *) echo "run_aws_spot_ci_profile: profile must be adl-ci, adl-coverage, or adl-ci-and-coverage" >&2; exit 2 ;;
 esac
 [[ -n "$BASE_REF" && -n "$HEAD_REF" ]] || {
   echo "run_aws_spot_ci_profile: --base and --head are required" >&2
@@ -61,15 +62,23 @@ policy_value() {
   awk -F= -v key="$key" '$1 == key { print substr($0, length(key) + 2); exit }' "$POLICY_OUTPUT"
 }
 
-if [[ "$PROFILE" == "adl-ci" ]]; then
-  command=(bash adl/tools/run_pr_fast_test_lane.sh --base "$BASE_COMMIT" --head "$HEAD_COMMIT")
-else
-  command=(cargo llvm-cov nextest --workspace --no-report)
-fi
+ci_command=(bash adl/tools/run_pr_fast_test_lane.sh --base "$BASE_COMMIT" --head "$HEAD_COMMIT")
+coverage_command=(cargo llvm-cov nextest --workspace --no-report)
 
 if [[ "$PRINT_COMMAND" == true ]]; then
-  printf '%q ' "${command[@]}"
-  printf '\n'
+  if [[ "$PROFILE" == "adl-ci-and-coverage" ]]; then
+    printf 'adl-ci: '
+    printf '%q ' "${ci_command[@]}"
+    printf '\nadl-coverage: '
+    printf '%q ' "${coverage_command[@]}"
+    printf '\n'
+  elif [[ "$PROFILE" == "adl-ci" ]]; then
+    printf '%q ' "${ci_command[@]}"
+    printf '\n'
+  else
+    printf '%q ' "${coverage_command[@]}"
+    printf '\n'
+  fi
   exit 0
 fi
 
@@ -81,9 +90,11 @@ require_tool sccache sccache --version
 require_tool lld ld.lld --version
 
 started_at="$(date +%s)"
-if [[ "$PROFILE" == "adl-ci" ]]; then
+run_adl_ci() {
+  local profile_started_at profile_finished_at
+  profile_started_at="$(date +%s)"
   POLICY_OUTPUT="$(mktemp "${TMPDIR:-/tmp}/adl-spot-ci-policy.XXXXXX")"
-  trap 'rm -f "$POLICY_OUTPUT"' EXIT
+  trap 'rm -f "$POLICY_OUTPUT"' RETURN
   bash adl/tools/ci_path_policy.sh \
     --event-name "$EVENT_NAME" \
     --base "$BASE_COMMIT" \
@@ -105,7 +116,7 @@ if [[ "$PROFILE" == "adl-ci" ]]; then
   fi
   if [[ "$RUST_REQUIRED" == true && "$FULL_COVERAGE_REQUIRED" != true ]]; then
     if [[ "$VALIDATION_ESCALATION_REQUIRED" != true ]]; then
-      "${command[@]}"
+      "${ci_command[@]}"
     fi
     cargo test --manifest-path adl/Cargo.toml --doc
   fi
@@ -115,7 +126,16 @@ if [[ "$PROFILE" == "adl-ci" ]]; then
   if [[ "$V0913_PROOF_REQUIRED" == true ]]; then
     bash adl/tools/run_v0913_proof_validation_lane.sh
   fi
-else
+  if [[ "$PROFILE" == "adl-ci-and-coverage" ]]; then
+    profile_finished_at="$(date +%s)"
+    printf 'ADL_SPOT_CI_PROFILE profile=adl-ci base=%s head=%s elapsed_seconds=%s status=passed\n' \
+      "$BASE_COMMIT" "$HEAD_COMMIT" "$((profile_finished_at - profile_started_at))"
+  fi
+}
+
+run_adl_coverage() {
+  local profile_started_at profile_finished_at
+  profile_started_at="$(date +%s)"
   require_tool cargo-llvm-cov cargo llvm-cov --version
   rustup component list --installed | grep -E '^llvm-tools-' >/dev/null || {
     echo "run_aws_spot_ci_profile: immutable builder image is missing llvm-tools-preview" >&2
@@ -139,7 +159,7 @@ else
   else
     echo "run_aws_spot_ci_profile: source revision has no warm-cache helper; using retained target directly"
   fi
-  coverage_command=("${command[@]}" --test-threads "$ADL_COVERAGE_TEST_THREADS")
+  coverage_command+=(--test-threads "$ADL_COVERAGE_TEST_THREADS")
   "${coverage_command[@]}"
   cargo llvm-cov report --json --summary-only --output-path coverage-summary.json
   test -s coverage-summary.json
@@ -164,7 +184,21 @@ print("ADL_SPOT_COVERAGE_SUMMARY_BEGIN")
 print(json.dumps(payload, sort_keys=True, separators=(",", ":")))
 print("ADL_SPOT_COVERAGE_SUMMARY_END")
 PY
-fi
+  if [[ "$PROFILE" == "adl-ci-and-coverage" ]]; then
+    profile_finished_at="$(date +%s)"
+    printf 'ADL_SPOT_CI_PROFILE profile=adl-coverage base=%s head=%s elapsed_seconds=%s status=passed\n' \
+      "$BASE_COMMIT" "$HEAD_COMMIT" "$((profile_finished_at - profile_started_at))"
+  fi
+}
+
+case "$PROFILE" in
+  adl-ci) run_adl_ci ;;
+  adl-coverage) run_adl_coverage ;;
+  adl-ci-and-coverage)
+    run_adl_ci
+    run_adl_coverage
+    ;;
+esac
 finished_at="$(date +%s)"
 
 printf 'ADL_SPOT_CI_PROFILE profile=%s base=%s head=%s elapsed_seconds=%s status=passed\n' \

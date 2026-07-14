@@ -56,6 +56,7 @@ on:
         options:
           - adl-ci
           - adl-coverage
+          - adl-ci-and-coverage
           - custom
       git_ref:
         description: "Immutable commit used as the named profile head; blank uses this workflow run SHA"
@@ -155,7 +156,7 @@ jobs:
             ''|*[!0-9]*) echo "::error::issue_number must be numeric"; exit 2 ;;
           esac
           case "${{ inputs.profile }}" in
-            adl-ci|adl-coverage) ;;
+            adl-ci|adl-coverage|adl-ci-and-coverage) ;;
             custom)
               if [ -z "${{ inputs.validation_command }}" ]; then
                 echo "::error::validation_command is required for the custom profile"
