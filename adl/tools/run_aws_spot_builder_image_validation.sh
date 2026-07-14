@@ -134,6 +134,7 @@ if ! command -v docker >/dev/null 2>&1; then
     || sudo yum install -y docker >/tmp/adl-docker-install.log 2>&1
 fi
 sudo systemctl enable --now docker >/tmp/adl-docker-service.log 2>&1
+sudo systemctl restart docker >/tmp/adl-docker-restart.log 2>&1
 DOCKER=(sudo docker)
 
 if ! command -v aws >/dev/null 2>&1; then
@@ -164,6 +165,15 @@ if [[ "$IMAGE_ID" != sha256:* ]]; then
   echo "spot_builder_image_validation: pulled image did not resolve to a content digest" >&2
   exit 1
 fi
+
+CURRENT_STAGE="probe_builder_container"
+stage "$CURRENT_STAGE"
+timeout 60s "${DOCKER[@]}" run --rm \
+  --network none \
+  --cap-drop ALL \
+  --security-opt no-new-privileges \
+  --entrypoint /bin/true \
+  "$IMAGE"
 
 CURRENT_STAGE="verify_builder_toolchain"
 stage "$CURRENT_STAGE"
@@ -207,6 +217,7 @@ VALIDATION_UID="$(id -u)"
 VALIDATION_GID="$(id -g)"
 set +e
 "${DOCKER[@]}" run --rm \
+  --init \
   --user "$VALIDATION_UID:$VALIDATION_GID" \
   --cap-drop ALL \
   --security-opt no-new-privileges \

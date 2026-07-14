@@ -42,6 +42,12 @@ cat >"$FAKE_BIN/sudo" <<'EOF'
 exec "$@"
 EOF
 
+cat >"$FAKE_BIN/timeout" <<'EOF'
+#!/usr/bin/env bash
+shift
+exec "$@"
+EOF
+
 cat >"$FAKE_BIN/aws" <<'EOF'
 #!/usr/bin/env bash
 if [[ "$1 $2" == "ecr get-login-password" ]]; then
@@ -68,6 +74,9 @@ case "$1" in
     ;;
   run)
     args="$*"
+    if [[ "$args" == *"--entrypoint /bin/true"* ]]; then
+      exit 0
+    fi
     if [[ "$args" == *"rustc --version"* ]]; then
       [[ "$args" == *"--cap-drop ALL"* && "$args" == *"--security-opt no-new-privileges"* ]] || {
         echo "toolchain preflight did not constrain container privileges" >&2
@@ -93,7 +102,7 @@ TOOLS
       echo "validation container did not preserve the known-good Rust flags" >&2
       exit 2
     }
-    [[ "$args" == *"--user "* && "$args" == *"--cap-drop ALL"* && "$args" == *"--security-opt no-new-privileges"* && "$args" == *"AWS_EC2_METADATA_DISABLED=true"* ]] || {
+    [[ "$args" == *"--init"* && "$args" == *"--user "* && "$args" == *"--cap-drop ALL"* && "$args" == *"--security-opt no-new-privileges"* && "$args" == *"AWS_EC2_METADATA_DISABLED=true"* ]] || {
       echo "validation container did not constrain permissions and EC2 role discovery" >&2
       exit 2
     }
