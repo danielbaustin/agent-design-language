@@ -19,6 +19,9 @@ use adl_runtime_kernel::{
 };
 use async_trait::async_trait;
 
+const CONTROL_TEST_HOST: &str = "localhost";
+const CONTROL_TEST_PORT: u16 = 20_997;
+
 #[test]
 fn packaging_preserves_one_guardian_neutral_child_contract() {
     let rustysd = include_str!("../../infra/rustysd/adl-runtime-kernel.service");
@@ -33,7 +36,7 @@ fn packaging_preserves_one_guardian_neutral_child_contract() {
     assert!(systemd.contains("RestartPreventExitStatus=78"));
     assert!(systemd.contains("DynamicUser=yes"));
     assert!(horust.contains("strategy = \"on-failure\""));
-    assert!(horust.contains("successful-exit-code = [0, 78]"));
+    assert!(horust.contains("successful-exit-code = [0]"));
     assert!(horust.contains("signal = \"TERM\""));
     assert!(horust.contains(" serve "));
     assert!(horust_bakeoff.contains(" fatal-once "));
@@ -185,6 +188,7 @@ fn horust_does_not_restart_configuration_failure() {
         .arg("--uds-folder-path")
         .arg(directory.path().join("uds"))
         .env("ADL_RUNTIME_BIN", env!("CARGO_BIN_EXE_adl-runtime-kernel"))
+        .env("ADL_RUNTIME_INIT", runtime_init_path())
         .env("ADL_RUNTIME_CAPSULE", directory.path().join("config.json"));
     let output = bounded_output(&mut command);
     assert!(output.status.success());
@@ -350,7 +354,7 @@ wait = "1s"
 
 #[cfg(unix)]
 #[test]
-#[ignore = "requires ADL_HORUST_BIN and binds Runtime v3 control port 20997"]
+#[ignore = "requires ADL_HORUST_BIN and binds Runtime v3 control test port"]
 fn horust_forwards_sigterm_and_runtime_checkpoints_cleanly() {
     use ed25519_dalek::SigningKey;
 
@@ -366,6 +370,7 @@ fn horust_forwards_sigterm_and_runtime_checkpoints_cleanly() {
             .arg("--uds-folder-path")
             .arg(directory.path().join("uds"))
             .env("ADL_RUNTIME_BIN", env!("CARGO_BIN_EXE_adl-runtime-kernel"))
+            .env("ADL_RUNTIME_INIT", runtime_init_path())
             .env("ADL_RUNTIME_CAPSULE", &capsule)
             .env(
                 "ADL_RUNTIME_CONTROL_PUBLIC_KEY_HEX",
@@ -388,7 +393,7 @@ fn horust_forwards_sigterm_and_runtime_checkpoints_cleanly() {
     assert!(status.success(), "Horust exited with {status}");
 
     let deadline = std::time::Instant::now() + Duration::from_secs(3);
-    while std::net::TcpStream::connect("127.0.0.1:20997").is_ok() {
+    while std::net::TcpStream::connect(control_test_addr()).is_ok() {
         assert!(
             std::time::Instant::now() < deadline,
             "Runtime v3 remained live after guardian termination"
@@ -508,6 +513,15 @@ fn repo_path(relative: &str) -> PathBuf {
         .join(relative)
 }
 
+fn control_test_addr() -> String {
+    format!("{CONTROL_TEST_HOST}:{CONTROL_TEST_PORT}")
+}
+
+#[cfg(unix)]
+fn runtime_init_path() -> PathBuf {
+    repo_path("infra/runtime-v3/runtime-init.toml")
+}
+
 #[cfg(unix)]
 fn write_executable(path: &Path, contents: &str) {
     use std::os::unix::fs::PermissionsExt;
@@ -527,7 +541,7 @@ fn toml_path(path: &Path) -> String {
 fn wait_for_control_port(guardian: &mut std::process::Child) {
     let deadline = std::time::Instant::now() + Duration::from_secs(5);
     loop {
-        if std::net::TcpStream::connect("127.0.0.1:20997").is_ok() {
+        if std::net::TcpStream::connect(control_test_addr()).is_ok() {
             return;
         }
         if let Some(status) = guardian.try_wait().unwrap() {
@@ -543,7 +557,7 @@ fn wait_for_control_port(guardian: &mut std::process::Child) {
 
 #[cfg(unix)]
 #[test]
-#[ignore = "binds the fixed Runtime v3 control port 20997"]
+#[ignore = "binds the Runtime v3 control test port"]
 fn serve_handles_guardian_sigterm_with_a_clean_checkpointed_exit() {
     use ed25519_dalek::SigningKey;
 
@@ -562,7 +576,7 @@ fn serve_handles_guardian_sigterm_with_a_clean_checkpointed_exit() {
         .spawn()
         .unwrap();
     let deadline = std::time::Instant::now() + Duration::from_secs(3);
-    while std::net::TcpStream::connect("127.0.0.1:20997").is_err() {
+    while std::net::TcpStream::connect(control_test_addr()).is_err() {
         assert!(
             std::time::Instant::now() < deadline,
             "serve did not become ready"

@@ -183,6 +183,130 @@ fn configuration_keeps_runtime_bindings_outside_canonical_projection() {
 }
 
 #[test]
+fn runtime_init_file_defines_local_and_remote_access_intent() {
+    let init = adl_runtime_kernel::RuntimeInitConfig::from_toml_str(
+        r#"
+schema = "adl.runtime_v3.init.v1"
+
+[api]
+address = "localhost:20997"
+public_base_url = "https://runtime-gateway.example.test/prod"
+
+[observatory]
+allowed_origins = ["https://localhost:8765", "https://observatory.example.test"]
+
+[agents]
+count = 10000
+sample_limit = 6
+"#,
+    )
+    .unwrap();
+
+    assert_eq!(
+        init.observatory_allowed_origins(),
+        vec![
+            "https://localhost:8765".to_owned(),
+            "https://observatory.example.test".to_owned()
+        ]
+    );
+    assert_eq!(init.api.address.as_deref(), Some("localhost:20997"));
+    assert_eq!(
+        init.api.public_base_url,
+        "https://runtime-gateway.example.test/prod"
+    );
+    let agents = init.agent_population();
+    assert_eq!(agents.total_count, 10_000);
+    assert_eq!(agents.rendered_sample_count, 6);
+    assert_eq!(agents.sample[0].id, "agent-00001");
+    assert!(!init.socket_addrs().unwrap().is_empty());
+}
+
+#[test]
+fn runtime_init_rejects_wildcard_duplicate_and_path_origins() {
+    let cases = [
+        r#"
+schema = "adl.runtime_v3.init.v1"
+
+[observatory]
+allowed_origins = ["*"]
+"#,
+        r#"
+schema = "adl.runtime_v3.init.v1"
+
+[observatory]
+allowed_origins = ["https://localhost:8765", "https://localhost:8765"]
+"#,
+        r#"
+schema = "adl.runtime_v3.init.v1"
+
+[observatory]
+allowed_origins = ["https://localhost:8765/path"]
+"#,
+        r#"
+schema = "adl.runtime_v3.init.v1"
+
+[observatory]
+allowed_origins = ["http://localhost:8765"]
+"#,
+    ];
+
+    for case in cases {
+        assert!(adl_runtime_kernel::RuntimeInitConfig::from_toml_str(case).is_err());
+    }
+}
+
+#[test]
+fn runtime_init_rejects_invalid_agent_population_bounds() {
+    let cases = [
+        r#"
+schema = "adl.runtime_v3.init.v1"
+
+[agents]
+count = 0
+"#,
+        r#"
+schema = "adl.runtime_v3.init.v1"
+
+[agents]
+sample_limit = 0
+"#,
+        r#"
+schema = "adl.runtime_v3.init.v1"
+
+[agents]
+count = 10000
+sample_limit = 101
+"#,
+    ];
+
+    for case in cases {
+        assert!(adl_runtime_kernel::RuntimeInitConfig::from_toml_str(case).is_err());
+    }
+}
+
+#[test]
+fn runtime_init_rejects_invalid_public_api_base() {
+    let cases = [
+        r#"
+schema = "adl.runtime_v3.init.v1"
+
+[api]
+public_base_url = "http://runtime-gateway.example.test"
+"#,
+        r#"
+schema = "adl.runtime_v3.init.v1"
+
+[api]
+public_base_url = "https://runtime-gateway.example.test?debug=1"
+"#,
+    ];
+
+    for case in cases {
+        assert!(adl_runtime_kernel::RuntimeInitConfig::from_toml_str(case).is_err());
+    }
+}
+
+#[test]
 fn configured_registry_fails_closed_for_factory_and_surface_drift() {
     let missing = config(vec![component("weather", "missing", &[])]);
     assert!(matches!(

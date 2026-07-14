@@ -23,6 +23,8 @@ use tokio::{
     sync::Notify,
 };
 
+const TEST_BIND_HOST: &str = "localhost";
+
 struct FakeLifecycle {
     calls: Arc<AtomicUsize>,
 }
@@ -294,7 +296,7 @@ async fn axum_adapter_serves_signed_control_payloads() {
         authority(&key, [ControlCapability::Read]),
         4,
     ));
-    let listener = tokio::net::TcpListener::bind(("127.0.0.1", 0))
+    let listener = tokio::net::TcpListener::bind((TEST_BIND_HOST, 0))
         .await
         .unwrap();
     let address = listener.local_addr().unwrap();
@@ -414,21 +416,21 @@ async fn observatory_feed_serves_runtime_owned_read_projection_without_mutation_
     assert_eq!(weather.shutdown_decision, ShutdownDecision::Continue);
     service.set_weather_report(weather);
 
-    let listener = tokio::net::TcpListener::bind(("127.0.0.1", 0))
+    let listener = tokio::net::TcpListener::bind((TEST_BIND_HOST, 0))
         .await
         .unwrap();
     let address = listener.local_addr().unwrap();
     let server = tokio::spawn(serve_control_listener(service, listener));
     let mut stream = tokio::net::TcpStream::connect(address).await.unwrap();
     stream
-        .write_all(b"GET /v1/observatory HTTP/1.1\r\nHost: localhost\r\nConnection: close\r\n\r\n")
+        .write_all(b"GET /v1/observatory HTTP/1.1\r\nHost: localhost\r\nOrigin: https://localhost:8765\r\nConnection: close\r\n\r\n")
         .await
         .unwrap();
     let mut bytes = Vec::new();
     stream.read_to_end(&mut bytes).await.unwrap();
     let response = String::from_utf8(bytes).unwrap();
     assert!(response.starts_with("HTTP/1.1 200 OK"));
-    assert!(response.contains("access-control-allow-origin: http://127.0.0.1:8765"));
+    assert!(response.contains("access-control-allow-origin: https://localhost:8765"));
     assert!(response.contains(adl_runtime_kernel::OBSERVATORY_FEED_SCHEMA));
     assert!(response.contains("\"runtime_selection\":\"runtime_v3_explicit_opt_in\""));
     assert!(response.contains("\"signed_commands_required_for_mutation\":true"));
@@ -439,6 +441,93 @@ async fn observatory_feed_serves_runtime_owned_read_projection_without_mutation_
     assert!(response.contains("\"accepted_through\":99"));
     assert!(response.contains("\"cloudwatch_route\":\"vector.runtime_v3_cloudwatch_emf\""));
     assert!(response.contains("\"runtime_v2_decommission_authorized\":false"));
+    assert!(response.contains("\"total_count\":1"));
+    assert!(response.contains("\"id\":\"agent-0001\""));
+    server.abort();
+}
+
+#[tokio::test]
+async fn observatory_feed_reports_large_agent_population_as_bounded_sample() {
+    let key = SigningKey::from_bytes(&[14; 32]);
+    let service = Arc::new(ControlService::new_with_observatory_config_and_agents(
+        "instance-1",
+        RuntimeRecorder::new(4),
+        FakeLifecycle {
+            calls: Arc::new(AtomicUsize::new(0)),
+        },
+        authority(&key, [ControlCapability::Read]),
+        4,
+        ["https://observatory.example.test".to_owned()],
+        adl_runtime_kernel::AgentPopulationFeed {
+            total_count: 10_000,
+            rendered_sample_count: 2,
+            sample: vec![
+                adl_runtime_kernel::AgentSample {
+                    id: "agent-00001".to_owned(),
+                    label: "Runtime agent 1".to_owned(),
+                    role: "runtime agent".to_owned(),
+                    state: "running".to_owned(),
+                    detail: "sample 1 of 10000".to_owned(),
+                },
+                adl_runtime_kernel::AgentSample {
+                    id: "agent-00002".to_owned(),
+                    label: "Runtime agent 2".to_owned(),
+                    role: "runtime agent".to_owned(),
+                    state: "running".to_owned(),
+                    detail: "sample 2 of 10000".to_owned(),
+                },
+            ],
+        },
+    ));
+    let feed = service.observatory_feed();
+    assert_eq!(feed.agents.total_count, 10_000);
+    assert_eq!(feed.agents.rendered_sample_count, 2);
+    assert_eq!(feed.agents.sample.len(), 2);
+    assert_eq!(feed.agents.sample[1].id, "agent-00002");
+}
+
+#[tokio::test]
+async fn observatory_cors_allows_only_configured_origins_and_reports_canonical_port() {
+    let key = SigningKey::from_bytes(&[13; 32]);
+    let service = Arc::new(ControlService::new_with_observatory_config(
+        "instance-1",
+        RuntimeRecorder::new(4),
+        FakeLifecycle {
+            calls: Arc::new(AtomicUsize::new(0)),
+        },
+        authority(&key, [ControlCapability::Read]),
+        4,
+        ["https://observatory.example.test".to_owned()],
+    ));
+    let listener = tokio::net::TcpListener::bind((TEST_BIND_HOST, 0))
+        .await
+        .unwrap();
+    let address = listener.local_addr().unwrap();
+    let server = tokio::spawn(serve_control_listener(service, listener));
+
+    let mut stream = tokio::net::TcpStream::connect(address).await.unwrap();
+    stream
+        .write_all(b"GET /v1/observatory HTTP/1.1\r\nHost: localhost\r\nOrigin: https://observatory.example.test\r\nConnection: close\r\n\r\n")
+        .await
+        .unwrap();
+    let mut bytes = Vec::new();
+    stream.read_to_end(&mut bytes).await.unwrap();
+    let response = String::from_utf8(bytes).unwrap();
+    assert!(response.starts_with("HTTP/1.1 200 OK"));
+    assert!(response.contains("access-control-allow-origin: https://observatory.example.test"));
+    assert!(response.contains("\"port\":20997"));
+
+    let mut stream = tokio::net::TcpStream::connect(address).await.unwrap();
+    stream
+        .write_all(b"GET /v1/observatory HTTP/1.1\r\nHost: localhost\r\nOrigin: https://other.example.test\r\nConnection: close\r\n\r\n")
+        .await
+        .unwrap();
+    let mut bytes = Vec::new();
+    stream.read_to_end(&mut bytes).await.unwrap();
+    let response = String::from_utf8(bytes).unwrap();
+    assert!(response.starts_with("HTTP/1.1 200 OK"));
+    assert!(!response.contains("access-control-allow-origin"));
+
     server.abort();
 }
 
@@ -458,7 +547,7 @@ async fn graceful_api_shutdown_drains_an_active_control_response() {
         authority(&key, [ControlCapability::Stop]),
         4,
     ));
-    let listener = tokio::net::TcpListener::bind(("127.0.0.1", 0))
+    let listener = tokio::net::TcpListener::bind((TEST_BIND_HOST, 0))
         .await
         .unwrap();
     let address = listener.local_addr().unwrap();

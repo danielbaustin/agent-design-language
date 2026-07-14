@@ -1228,12 +1228,14 @@
         "adl-runtime-kernel/**",
         "infra/rustysd/**",
         "infra/horust/**",
+        "infra/runtime-v3/**",
         "infra/systemd/adl-runtime-kernel.service"
       ],
       "path_hints": [
         "adl-runtime-kernel/**",
         "infra/rustysd/**",
         "infra/horust/**",
+        "infra/runtime-v3/**",
         "infra/systemd/adl-runtime-kernel.service"
       ],
       "command": "cargo test --manifest-path adl-runtime-kernel/Cargo.toml && cargo clippy --manifest-path adl-runtime-kernel/Cargo.toml --all-targets -- -D warnings",

@@ -12,7 +12,7 @@ use async_trait::async_trait;
 use axum::{
     body::Bytes,
     extract::State,
-    http::{header, HeaderValue, StatusCode},
+    http::{header, HeaderMap, HeaderValue, StatusCode},
     response::{IntoResponse, Response},
     routing::{get, post},
     Json, Router,
@@ -236,6 +236,8 @@ pub struct ControlService<C> {
     max_records: usize,
     idempotency: Mutex<IdempotencyState>,
     weather: Mutex<Option<WeatherHealthReport>>,
+    observatory_allowed_origins: BTreeSet<String>,
+    agent_population: AgentPopulationFeed,
 }
 
 impl<C: LifecycleControl + 'static> ControlService<C> {
@@ -246,12 +248,52 @@ impl<C: LifecycleControl + 'static> ControlService<C> {
         authority: ControlAuthority,
         max_records: usize,
     ) -> Self {
+        Self::new_with_observatory_config_and_agents(
+            instance_id,
+            recorder,
+            lifecycle,
+            authority,
+            max_records,
+            ["https://localhost:8765".to_owned()],
+            AgentPopulationFeed::single(),
+        )
+    }
+
+    pub fn new_with_observatory_config(
+        instance_id: impl Into<String>,
+        recorder: RuntimeRecorder,
+        lifecycle: C,
+        authority: ControlAuthority,
+        max_records: usize,
+        observatory_allowed_origins: impl IntoIterator<Item = String>,
+    ) -> Self {
+        Self::new_with_observatory_config_and_agents(
+            instance_id,
+            recorder,
+            lifecycle,
+            authority,
+            max_records,
+            observatory_allowed_origins,
+            AgentPopulationFeed::single(),
+        )
+    }
+
+    pub fn new_with_observatory_config_and_agents(
+        instance_id: impl Into<String>,
+        recorder: RuntimeRecorder,
+        lifecycle: C,
+        authority: ControlAuthority,
+        max_records: usize,
+        observatory_allowed_origins: impl IntoIterator<Item = String>,
+        agent_population: AgentPopulationFeed,
+    ) -> Self {
         assert!(max_records > 0, "idempotency capacity must be non-zero");
         let instance_id = instance_id.into();
         assert!(
             is_safe_identifier(&instance_id),
             "runtime instance id must be bounded"
         );
+        let observatory_allowed_origins = observatory_allowed_origins.into_iter().collect();
         Self {
             instance_id,
             recorder,
@@ -263,6 +305,8 @@ impl<C: LifecycleControl + 'static> ControlService<C> {
                 terminal_action: None,
             }),
             weather: Mutex::new(None),
+            observatory_allowed_origins,
+            agent_population,
         }
     }
 
@@ -307,6 +351,7 @@ impl<C: LifecycleControl + 'static> ControlService<C> {
             continuity: ObservatoryContinuityFeed {
                 checkpoint: continuity_head,
             },
+            agents: self.agent_population.clone(),
             proof: ObservatoryProofFeed {
                 default_runtime_switch_authorized: false,
                 runtime_v2_decommission_authorized: false,
@@ -439,6 +484,38 @@ pub struct ObservatoryContinuityFeed {
 }
 
 #[derive(Clone, Debug, Eq, PartialEq, Serialize, Deserialize)]
+pub struct AgentPopulationFeed {
+    pub total_count: u64,
+    pub rendered_sample_count: u64,
+    pub sample: Vec<AgentSample>,
+}
+
+impl AgentPopulationFeed {
+    pub fn single() -> Self {
+        Self {
+            total_count: 1,
+            rendered_sample_count: 1,
+            sample: vec![AgentSample {
+                id: "agent-0001".to_owned(),
+                label: "Runtime agent 1".to_owned(),
+                role: "runtime agent".to_owned(),
+                state: "running".to_owned(),
+                detail: "sample 1 of 1".to_owned(),
+            }],
+        }
+    }
+}
+
+#[derive(Clone, Debug, Eq, PartialEq, Serialize, Deserialize)]
+pub struct AgentSample {
+    pub id: String,
+    pub label: String,
+    pub role: String,
+    pub state: String,
+    pub detail: String,
+}
+
+#[derive(Clone, Debug, Eq, PartialEq, Serialize, Deserialize)]
 pub struct ObservatoryProofFeed {
     pub default_runtime_switch_authorized: bool,
     pub runtime_v2_decommission_authorized: bool,
@@ -456,6 +533,7 @@ pub struct ObservatoryFeed {
     pub health: ObservatoryHealthFeed,
     pub weather: Option<WeatherHealthReport>,
     pub continuity: ObservatoryContinuityFeed,
+    pub agents: AgentPopulationFeed,
     pub proof: ObservatoryProofFeed,
     pub events: Vec<BootstrapEvent>,
 }
@@ -498,8 +576,10 @@ where
 
 async fn observatory_feed_handler<C: LifecycleControl + 'static>(
     State(service): State<Arc<ControlService<C>>>,
+    headers: HeaderMap,
 ) -> Response {
-    cors_json(StatusCode::OK, service.observatory_feed())
+    let allowed_origin = allowed_origin(&service, &headers);
+    cors_json(StatusCode::OK, service.observatory_feed(), allowed_origin)
 }
 
 async fn control_handler<C: LifecycleControl + 'static>(
@@ -540,15 +620,34 @@ fn control_error_response(error: ControlError) -> Response {
             _ => "invalid_request",
         },
     };
-    cors_json(status, payload)
+    cors_json(status, payload, None)
 }
 
-fn cors_json<T: Serialize>(status: StatusCode, payload: T) -> Response {
+fn allowed_origin<C: LifecycleControl + 'static>(
+    service: &ControlService<C>,
+    headers: &HeaderMap,
+) -> Option<HeaderValue> {
+    let origin = headers
+        .get(header::ORIGIN)
+        .and_then(|value| value.to_str().ok())?;
+    service
+        .observatory_allowed_origins
+        .contains(origin)
+        .then(|| HeaderValue::from_str(origin).ok())
+        .flatten()
+}
+
+fn cors_json<T: Serialize>(
+    status: StatusCode,
+    payload: T,
+    allowed_origin: Option<HeaderValue>,
+) -> Response {
     let mut response = (status, Json(payload)).into_response();
-    response.headers_mut().insert(
-        header::ACCESS_CONTROL_ALLOW_ORIGIN,
-        HeaderValue::from_static("http://127.0.0.1:8765"),
-    );
+    if let Some(origin) = allowed_origin {
+        response
+            .headers_mut()
+            .insert(header::ACCESS_CONTROL_ALLOW_ORIGIN, origin);
+    }
     response
         .headers_mut()
         .insert(header::VARY, HeaderValue::from_static("Origin"));

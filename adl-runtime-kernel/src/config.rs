@@ -1,4 +1,8 @@
-use std::collections::{BTreeMap, BTreeSet};
+use std::{
+    collections::{BTreeMap, BTreeSet},
+    net::{SocketAddr, ToSocketAddrs},
+    path::PathBuf,
+};
 
 use serde::{Deserialize, Serialize};
 use thiserror::Error;
@@ -6,6 +10,7 @@ use thiserror::Error;
 use crate::ComponentId;
 
 pub const RUNTIME_CONFIG_SCHEMA: &str = "adl.runtime.config.v1";
+pub const RUNTIME_INIT_SCHEMA: &str = "adl.runtime_v3.init.v1";
 
 #[derive(Clone, Debug, Eq, PartialEq, Serialize, Deserialize)]
 #[serde(untagged)]
@@ -199,4 +204,285 @@ pub enum ConfigError {
     ThresholdOrder(&'static str),
     #[error("sampling, history, checkpoint, and concurrency bounds must be non-zero")]
     ZeroBound,
+}
+
+#[derive(Clone, Debug, Eq, PartialEq, Serialize, Deserialize)]
+#[serde(deny_unknown_fields)]
+pub struct RuntimeInitConfig {
+    pub schema: String,
+    #[serde(default)]
+    pub api: RuntimeApiInitConfig,
+    #[serde(default)]
+    pub observatory: ObservatoryInitConfig,
+    #[serde(default)]
+    pub agents: RuntimeAgentsInitConfig,
+}
+
+impl RuntimeInitConfig {
+    pub fn local_development_default() -> Self {
+        Self {
+            schema: RUNTIME_INIT_SCHEMA.to_owned(),
+            api: RuntimeApiInitConfig {
+                address: default_runtime_api_address_option(),
+                public_base_url: default_runtime_public_base_url(),
+            },
+            observatory: ObservatoryInitConfig {
+                allowed_origins: default_local_observatory_origins(),
+            },
+            agents: RuntimeAgentsInitConfig::default(),
+        }
+    }
+
+    pub fn load(path: Option<PathBuf>) -> Result<Self, RuntimeInitError> {
+        if let Some(path) = path {
+            return Self::from_path(path);
+        }
+        let config = Self::local_development_default();
+        config.validate()?;
+        Ok(config)
+    }
+
+    pub fn from_path(path: PathBuf) -> Result<Self, RuntimeInitError> {
+        let text = std::fs::read_to_string(&path)
+            .map_err(|error| RuntimeInitError::Read(path.clone(), error.to_string()))?;
+        Self::from_toml_str(&text)
+    }
+
+    pub fn from_toml_str(text: &str) -> Result<Self, RuntimeInitError> {
+        let config: Self =
+            toml::from_str(text).map_err(|error| RuntimeInitError::Toml(error.to_string()))?;
+        config.validate()?;
+        Ok(config)
+    }
+
+    pub fn validate(&self) -> Result<(), RuntimeInitError> {
+        if self.schema != RUNTIME_INIT_SCHEMA {
+            return Err(RuntimeInitError::UnsupportedSchema(self.schema.clone()));
+        }
+        self.api.validate()?;
+        self.observatory.validate()?;
+        self.agents.validate()?;
+        Ok(())
+    }
+
+    pub fn socket_addrs(&self) -> Result<Vec<SocketAddr>, RuntimeInitError> {
+        let address = self
+            .api
+            .address
+            .as_deref()
+            .unwrap_or(default_runtime_api_address());
+        address
+            .to_socket_addrs()
+            .map(|addrs| addrs.collect::<Vec<_>>())
+            .map_err(|error| RuntimeInitError::BindAddress(error.to_string()))
+            .and_then(|addrs| {
+                if addrs.is_empty() {
+                    Err(RuntimeInitError::BindAddress(
+                        "no socket addresses resolved".to_owned(),
+                    ))
+                } else {
+                    Ok(addrs)
+                }
+            })
+    }
+
+    pub fn observatory_allowed_origins(&self) -> Vec<String> {
+        self.observatory.allowed_origins.clone()
+    }
+
+    pub fn agent_population(&self) -> crate::AgentPopulationFeed {
+        let sample_count = self.agents.count.min(self.agents.sample_limit);
+        let width = self.agents.count.max(1).to_string().len().max(4);
+        let sample = (1..=sample_count)
+            .map(|index| crate::AgentSample {
+                id: format!("agent-{index:0width$}"),
+                label: format!("Runtime agent {index}"),
+                role: "runtime agent".to_owned(),
+                state: "running".to_owned(),
+                detail: format!("sample {index} of {}", self.agents.count),
+            })
+            .collect();
+        crate::AgentPopulationFeed {
+            total_count: self.agents.count,
+            rendered_sample_count: sample_count,
+            sample,
+        }
+    }
+}
+
+#[derive(Clone, Debug, Eq, PartialEq, Serialize, Deserialize)]
+#[serde(deny_unknown_fields)]
+pub struct RuntimeAgentsInitConfig {
+    #[serde(default = "default_runtime_agent_count")]
+    pub count: u64,
+    #[serde(default = "default_runtime_agent_sample_limit")]
+    pub sample_limit: u64,
+}
+
+impl Default for RuntimeAgentsInitConfig {
+    fn default() -> Self {
+        Self {
+            count: default_runtime_agent_count(),
+            sample_limit: default_runtime_agent_sample_limit(),
+        }
+    }
+}
+
+impl RuntimeAgentsInitConfig {
+    fn validate(&self) -> Result<(), RuntimeInitError> {
+        if self.count == 0 || self.sample_limit == 0 || self.sample_limit > 100 {
+            return Err(RuntimeInitError::InvalidAgentPopulation);
+        }
+        Ok(())
+    }
+}
+
+#[derive(Clone, Debug, Eq, PartialEq, Serialize, Deserialize)]
+#[serde(deny_unknown_fields)]
+pub struct RuntimeApiInitConfig {
+    #[serde(default = "default_runtime_api_address_option")]
+    pub address: Option<String>,
+    #[serde(default = "default_runtime_public_base_url")]
+    pub public_base_url: String,
+}
+
+impl Default for RuntimeApiInitConfig {
+    fn default() -> Self {
+        Self {
+            address: default_runtime_api_address_option(),
+            public_base_url: default_runtime_public_base_url(),
+        }
+    }
+}
+
+impl RuntimeApiInitConfig {
+    fn validate(&self) -> Result<(), RuntimeInitError> {
+        validate_https_base_url("api.public_base_url", &self.public_base_url)?;
+        Ok(())
+    }
+}
+
+#[derive(Clone, Debug, Eq, PartialEq, Serialize, Deserialize)]
+#[serde(deny_unknown_fields)]
+pub struct ObservatoryInitConfig {
+    #[serde(default = "default_local_observatory_origins")]
+    pub allowed_origins: Vec<String>,
+}
+
+impl Default for ObservatoryInitConfig {
+    fn default() -> Self {
+        Self {
+            allowed_origins: default_local_observatory_origins(),
+        }
+    }
+}
+
+impl ObservatoryInitConfig {
+    fn validate(&self) -> Result<(), RuntimeInitError> {
+        validate_origin_list("observatory.allowed_origins", &self.allowed_origins)
+    }
+}
+
+fn default_runtime_api_address() -> &'static str {
+    "localhost:20997"
+}
+
+fn default_runtime_api_address_option() -> Option<String> {
+    Some(default_runtime_api_address().to_owned())
+}
+
+fn default_runtime_public_base_url() -> String {
+    "https://runtime-gateway-host".to_owned()
+}
+
+fn default_local_observatory_origins() -> Vec<String> {
+    vec!["https://localhost:8765".to_owned()]
+}
+
+fn default_runtime_agent_count() -> u64 {
+    1
+}
+
+fn default_runtime_agent_sample_limit() -> u64 {
+    6
+}
+
+fn validate_https_base_url(field: &'static str, value: &str) -> Result<(), RuntimeInitError> {
+    let uri = parse_http_uri(value)?;
+    if uri.scheme_str() != Some("https") {
+        return Err(RuntimeInitError::InvalidHttpsBaseUrl {
+            field,
+            value: value.to_owned(),
+        });
+    }
+    if uri.query().is_some() {
+        return Err(RuntimeInitError::InvalidHttpsBaseUrl {
+            field,
+            value: value.to_owned(),
+        });
+    }
+    Ok(())
+}
+
+fn validate_origin_list(field: &'static str, origins: &[String]) -> Result<(), RuntimeInitError> {
+    if origins.is_empty() {
+        return Err(RuntimeInitError::NoAllowedOrigins(field));
+    }
+    let mut seen = BTreeSet::new();
+    for origin in origins {
+        if !seen.insert(origin.clone()) {
+            return Err(RuntimeInitError::DuplicateOrigin(origin.clone()));
+        }
+        validate_origin(origin)?;
+    }
+    Ok(())
+}
+
+fn validate_origin(value: &str) -> Result<(), RuntimeInitError> {
+    if value == "*" || value.len() > 512 || value.bytes().any(|byte| byte.is_ascii_control()) {
+        return Err(RuntimeInitError::InvalidOrigin(value.to_owned()));
+    }
+    let uri = parse_http_uri(value)?;
+    if uri.scheme_str() != Some("https") || uri.path() != "/" || uri.query().is_some() {
+        return Err(RuntimeInitError::InvalidOrigin(value.to_owned()));
+    }
+    Ok(())
+}
+
+fn parse_http_uri(value: &str) -> Result<axum::http::Uri, RuntimeInitError> {
+    let uri = value
+        .parse::<axum::http::Uri>()
+        .map_err(|_| RuntimeInitError::InvalidOrigin(value.to_owned()))?;
+    let Some(scheme) = uri.scheme_str() else {
+        return Err(RuntimeInitError::InvalidOrigin(value.to_owned()));
+    };
+    if scheme != "http" && scheme != "https" {
+        return Err(RuntimeInitError::InvalidOrigin(value.to_owned()));
+    }
+    if uri.authority().is_none() {
+        return Err(RuntimeInitError::InvalidOrigin(value.to_owned()));
+    }
+    Ok(uri)
+}
+
+#[derive(Debug, Error, Eq, PartialEq)]
+pub enum RuntimeInitError {
+    #[error("runtime init file could not be read at {0}: {1}")]
+    Read(PathBuf, String),
+    #[error("invalid runtime init TOML: {0}")]
+    Toml(String),
+    #[error("unsupported runtime init schema: {0}")]
+    UnsupportedSchema(String),
+    #[error("runtime init {0} must not be empty")]
+    NoAllowedOrigins(&'static str),
+    #[error("runtime init {field} must be an HTTPS origin/base URL: {value}")]
+    InvalidHttpsBaseUrl { field: &'static str, value: String },
+    #[error("runtime init contains a duplicate observatory origin: {0}")]
+    DuplicateOrigin(String),
+    #[error("runtime init observatory origin is invalid: {0}")]
+    InvalidOrigin(String),
+    #[error("runtime init bind address did not resolve: {0}")]
+    BindAddress(String),
+    #[error("runtime init agents.count and agents.sample_limit must be positive, with sample_limit <= 100")]
+    InvalidAgentPopulation,
 }
