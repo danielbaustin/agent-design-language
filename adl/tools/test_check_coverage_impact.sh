@@ -205,27 +205,36 @@ cat >"$csm_runtime_cli_companion_summary" <<'EOF'
   ]
 }
 EOF
-bash "$SCRIPT" --changed-files "$csm_runtime_cli_companion_changed" --summary "$csm_runtime_cli_companion_summary" >/tmp/coverage-impact-csm-runtime-cli-companion-pass.out
-grep -F "Coverage-impact preflight passed" /tmp/coverage-impact-csm-runtime-cli-companion-pass.out >/dev/null
+csm_runtime_cli_companion_out="$TMP/coverage-impact-csm-runtime-cli-companion-pass.out"
+bash "$SCRIPT" --changed-files "$csm_runtime_cli_companion_changed" --summary "$csm_runtime_cli_companion_summary" >"$csm_runtime_cli_companion_out"
+grep -F "Coverage-impact preflight passed" "$csm_runtime_cli_companion_out" >/dev/null
 
 csm_cmd_alone_changed="$TMP/csm-cmd-alone-changed.txt"
 printf 'M\tadl/src/cli/csm_cmd.rs\t2\n' >"$csm_cmd_alone_changed"
-if bash "$SCRIPT" --changed-files "$csm_cmd_alone_changed" --summary "$csm_runtime_cli_companion_summary" >/tmp/coverage-impact-csm-cmd-alone.out 2>&1; then
+csm_cmd_alone_out="$TMP/coverage-impact-csm-cmd-alone.out"
+if bash "$SCRIPT" --changed-files "$csm_cmd_alone_changed" --summary "$csm_runtime_cli_companion_summary" >"$csm_cmd_alone_out" 2>&1; then
   echo "expected standalone csm_cmd change to stay threshold-gated" >&2
   exit 1
 fi
-grep -F "adl/src/cli/csm_cmd.rs (no coverage row" /tmp/coverage-impact-csm-cmd-alone.out >/dev/null
+grep -F "adl/src/cli/csm_cmd.rs (no coverage row" "$csm_cmd_alone_out" >/dev/null
 
 csm_runtime_cli_substantial_changed="$TMP/csm-runtime-cli-substantial-changed.txt"
 cat >"$csm_runtime_cli_substantial_changed" <<'EOF'
 M	adl/src/cli/csm_cmd.rs	21
 A	adl/src/csm_cav.rs	349
 EOF
-if bash "$SCRIPT" --changed-files "$csm_runtime_cli_substantial_changed" --summary "$csm_runtime_cli_companion_summary" >/tmp/coverage-impact-csm-runtime-cli-substantial.out 2>&1; then
+csm_runtime_cli_substantial_out="$TMP/coverage-impact-csm-runtime-cli-substantial.out"
+if bash "$SCRIPT" --changed-files "$csm_runtime_cli_substantial_changed" --summary "$csm_runtime_cli_companion_summary" >"$csm_runtime_cli_substantial_out" 2>&1; then
   echo "expected substantial csm_cmd companion change to stay threshold-gated" >&2
   exit 1
 fi
-grep -F "adl/src/cli/csm_cmd.rs (no coverage row" /tmp/coverage-impact-csm-runtime-cli-substantial.out >/dev/null
+grep -F "adl/src/cli/csm_cmd.rs (no coverage row" "$csm_runtime_cli_substantial_out" >/dev/null
+
+ADL_COVERAGE_CONTRACT_NESTED="${ADL_COVERAGE_CONTRACT_NESTED:-0}"
+if [ "$ADL_COVERAGE_CONTRACT_NESTED" != "1" ]; then
+  ADL_COVERAGE_CONTRACT_NESTED=1 bash "$ROOT/adl/tools/test_run_authoritative_coverage_lane.sh"
+  ADL_COVERAGE_CONTRACT_NESTED=1 bash "$ROOT/adl/tools/test_run_local_authoritative_coverage_gate.sh"
+fi
 
 cli_mod_changed="$TMP/cli-mod-changed.txt"
 printf 'A\tadl/src/cli/mod.rs\n' >"$cli_mod_changed"

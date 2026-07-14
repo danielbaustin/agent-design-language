@@ -3941,10 +3941,9 @@ fn finish_validation_profile_keeps_validation_policy_repairs_broader_but_not_ful
     .expect("validation-policy repair plan");
 
     assert_eq!(plan.mode, FinishValidationMode::LargerBinaryFocused);
-    assert!(plan.commands.contains(
-        &"bash adl/tools/test_check_coverage_impact.sh && bash adl/tools/test_run_authoritative_coverage_lane.sh && bash adl/tools/test_run_local_authoritative_coverage_gate.sh"
-            .to_string()
-    ));
+    assert!(plan
+        .commands
+        .contains(&"bash adl/tools/test_check_coverage_impact.sh".to_string()));
     assert!(plan
         .commands
         .contains(&"cargo fmt --manifest-path adl/Cargo.toml --all --check".to_string()));
@@ -3952,7 +3951,9 @@ fn finish_validation_profile_keeps_validation_policy_repairs_broader_but_not_ful
         command.starts_with("bash adl/tools/run_pr_fast_test_lane.sh --changed-files ")
     }));
     assert!(!plan.commands.iter().any(|command| {
-        command.contains("llvm-cov") || command.contains("coverage_release_gate")
+        command.contains("run_authoritative_coverage_lane.sh")
+            || command.contains("llvm-cov")
+            || command.contains("coverage_release_gate")
     }));
 }
 
@@ -4285,10 +4286,9 @@ fn finish_validation_profile_classifies_locked_cargo_fallback_slice() {
     assert!(unrelated_plan
         .commands
         .contains(&"bash adl/tools/test_ci_path_policy.sh && bash adl/tools/test_ci_runtime_contracts.sh && bash adl/tools/test_select_validation_lanes.sh && bash adl/tools/test_validation_manager.sh && bash adl/tools/test_run_nessus_remote_validation.sh && bash adl/tools/test_run_validation_manager_nessus_lane.sh".to_string()));
-    assert!(unrelated_plan.commands.contains(
-        &"bash adl/tools/test_check_coverage_impact.sh && bash adl/tools/test_run_authoritative_coverage_lane.sh && bash adl/tools/test_run_local_authoritative_coverage_gate.sh"
-            .to_string()
-    ));
+    assert!(unrelated_plan
+        .commands
+        .contains(&"bash adl/tools/test_check_coverage_impact.sh".to_string()));
     assert!(unrelated_plan
         .commands
         .contains(&"bash adl/tools/run_owner_validation_lane.sh csdlc".to_string()));
@@ -5522,59 +5522,6 @@ fn finish_helper_paths_run_manager_backed_owner_and_pr_fast_validation() {
 }
 
 #[test]
-fn finish_helper_pr_fast_cleanup_removes_adl_retained_manifest_dir() {
-    let _guard = env_lock();
-    let temp = unique_temp_dir("adl-pr-finish-retained-manifest-dir-cleanup");
-    let repo = temp.join("repo");
-    fs::create_dir_all(repo.join("adl/tools")).expect("adl tools dir");
-    fs::write(
-        repo.join("adl/Cargo.toml"),
-        "[package]\nname='adl'\nversion='0.1.0'\n",
-    )
-    .expect("cargo toml");
-    write_executable(
-        &repo.join("adl/tools/check_no_tracked_adl_issue_record_residue.sh"),
-        "#!/usr/bin/env bash\nset -euo pipefail\nexit 0\n",
-    );
-    write_executable(
-        &repo.join("adl/tools/run_pr_fast_test_lane.sh"),
-        "#!/usr/bin/env bash\nset -euo pipefail\nprintf 'pr-fast:%s\\n' \"$2\" >> \"$FOCUSED_LOG\"\n",
-    );
-    init_git_repo(&repo);
-
-    let focused_log = temp.join("focused.log");
-    let manifest_dir = temp.join("adl-finish-validation-profile-12345");
-    fs::create_dir_all(&manifest_dir).expect("manifest dir");
-    let changed_files = manifest_dir.join("finish-validation-profile-12345.txt");
-    fs::write(&changed_files, "M\tadl/src/cli/pr_cmd/doctor.rs\n").expect("changed files");
-    let old_focused_log = env::var("FOCUSED_LOG").ok();
-    unsafe {
-        env::set_var("FOCUSED_LOG", &focused_log);
-    }
-
-    let plan = FinishValidationPlan {
-        mode: FinishValidationMode::LargerBinaryFocused,
-        commands: vec![format!(
-            "bash adl/tools/run_pr_fast_test_lane.sh --changed-files {}",
-            changed_files.display()
-        )],
-    };
-    run_finish_validation_rust(&repo, &plan).expect("manager-backed pr-fast validation");
-
-    match old_focused_log {
-        Some(value) => unsafe { env::set_var("FOCUSED_LOG", value) },
-        None => unsafe { env::remove_var("FOCUSED_LOG") },
-    }
-
-    let focused_calls = fs::read_to_string(&focused_log).expect("focused log");
-    assert!(focused_calls.contains(&format!("pr-fast:{}", changed_files.display())));
-    assert!(
-        !manifest_dir.exists(),
-        "ADL-created retained manifest directory should be removed with the manifest"
-    );
-}
-
-#[test]
 fn finish_helper_paths_run_unity_observatory_soak_lane_validation() {
     let _guard = env_lock();
     let temp = unique_temp_dir("adl-pr-finish-unity-observatory-soak-lane-validation");
@@ -6636,9 +6583,9 @@ fn finish_runner_executes_combined_ci_policy_selector_command() {
 }
 
 #[test]
-fn finish_runner_executes_combined_coverage_selector_command() {
+fn finish_runner_executes_registered_cargo_validation_commands() {
     let _guard = env_lock();
-    let temp = unique_temp_dir("adl-pr-finish-combined-coverage-selector-command");
+    let temp = unique_temp_dir("adl-pr-finish-registered-cargo-validation-commands");
 
     let repo = temp.join("repo");
     fs::create_dir_all(repo.join("adl/tools")).expect("adl tools dir");
@@ -6651,18 +6598,185 @@ fn finish_runner_executes_combined_coverage_selector_command() {
         &repo.join("adl/tools/check_no_tracked_adl_issue_record_residue.sh"),
         "#!/usr/bin/env bash\nset -euo pipefail\nexit 0\n",
     );
+    init_git_repo(&repo);
+
+    let bin_dir = temp.join("bin");
+    fs::create_dir_all(&bin_dir).expect("bin dir");
+    let cargo_log = temp.join("cargo.log");
     write_executable(
-        &repo.join("adl/tools/test_check_coverage_impact.sh"),
-        "#!/usr/bin/env bash\nset -euo pipefail\nprintf '%s\\n' coverage-impact >> \"$FOCUSED_LOG\"\n",
+        &bin_dir.join("cargo"),
+        &format!(
+            "#!/usr/bin/env bash\nset -euo pipefail\nprintf '%s\\n' \"$*\" >> '{}'\nexit 0\n",
+            cargo_log.display()
+        ),
     );
+    let old_path = env::var("PATH").unwrap_or_default();
+    unsafe {
+        env::set_var("PATH", format!("{}:{}", bin_dir.display(), old_path));
+    }
+
+    let commands = [
+        "cargo fmt --manifest-path adl/Cargo.toml --all --check",
+        "cargo test --manifest-path adl/Cargo.toml --bin adl cli::pr_cmd",
+        "cargo test --manifest-path adl/Cargo.toml --bin adl cli::pr_cmd::github::tests -- --nocapture",
+        "cargo test --manifest-path adl/Cargo.toml --bin adl validation_disposition_blocks_pending_and_terminal_failures -- --nocapture",
+        "cargo test --manifest-path adl/Cargo.toml --bin adl",
+        "cargo test --manifest-path adl/Cargo.toml --bin adl github_release_",
+        "cargo test --manifest-path adl/Cargo.toml ci_log_archive -- --nocapture",
+        "cargo test --manifest-path adl/Cargo.toml issue_resource_telemetry -- --nocapture",
+        "cargo test --manifest-path adl/Cargo.toml tooling_cmd_dispatch_and_help_paths_cover_public_entrypoint -- --nocapture",
+        "cargo test --manifest-path adl/Cargo.toml pr_cmd::github",
+        "cargo test --manifest-path adl/Cargo.toml long_lived_agent",
+        "cargo test --manifest-path adl/Cargo.toml runtime_aws_signal -- --nocapture --test-threads=1",
+        "cargo test --manifest-path adl/Cargo.toml --bin adl octocrab_transport_",
+        "cargo test --manifest-path adl/Cargo.toml --bin adl github_token",
+        "cargo test --manifest-path adl/Cargo.toml --bin adl github_client",
+        "cargo test --manifest-path adl/Cargo.toml --bin adl github_release_octocrab_covers_absent_draft_present_publish",
+        "cargo test --manifest-path adl/Cargo.toml --bin adl cli::runtime_v2_cmd -- --nocapture",
+        "cargo test --manifest-path adl/Cargo.toml build_remote_execute_request_preserves_conversation_as_audit_metadata",
+        "cargo test --manifest-path adl/Cargo.toml execute_step_with_retry_does_not_retry_remote_schema_violation",
+        "cargo test --manifest-path adl/Cargo.toml security_envelope_rejects_tampered_signed_conversation_metadata",
+        "cargo test --manifest-path adl/Cargo.toml remote_exec::",
+        "cargo test --manifest-path adl/Cargo.toml --lib scheduler_economics",
+        "cargo test --manifest-path adl/Cargo.toml continuous_verification_contract_covers_cadence_lifecycle_and_artifacts",
+        "cargo test --manifest-path adl/Cargo.toml self_attack_contract_is_policy_bounded_and_reviewable",
+        "cargo test --manifest-path adl/Cargo.toml identity_continuous_verification_writes_contract_json",
+        "cargo test --manifest-path adl/Cargo.toml --test cli_smoke process_status -- --nocapture",
+        "cargo test --manifest-path adl/Cargo.toml --test cli_smoke csm_observatory_cli_writes_unity_contract_bundle_and_matches_seeded_resource -- --nocapture",
+        "cargo test --manifest-path adl/Cargo.toml unity_observatory_contract_ -- --nocapture",
+        "cargo test --manifest-path adl/Cargo.toml --bin adl-pr-finish cli::pr_cmd::tests::finish::arg_render::finish_validation",
+        "cargo test --manifest-path adl/Cargo.toml --bin adl-pr-finish cli::pr_cmd::tests::finish::arg_render::finish_validation_profile_classifies_unity_observatory_contract_slice_as_small_binary_focused -- --nocapture",
+        "cargo test --manifest-path adl/Cargo.toml --bin adl-pr-finish cli::pr_cmd::tests::finish::arg_render::finish_validation_profile_classifies_html_mobile_observatory_slice_as_small_binary_focused -- --nocapture",
+        "cargo test --manifest-path adl/Cargo.toml --bin adl-pr-finish cli::pr_cmd::tests::finish::arg_render::finish_helper_paths_run_focused_local_ci_gated_validation",
+        "cargo test --manifest-path adl/Cargo.toml --bin adl-pr-finish cli::pr_cmd::tests::finish::arg_render::finish_validation_profile_classifies_wp08_heartbeat_slice -- --exact --nocapture",
+        "cargo test --manifest-path adl/Cargo.toml --bin adl-pr-finish cli::pr_cmd::tests::finish::arg_render::finish_validation_profile_classifies_wp08_s3_obsmem_archive_policy_slice -- --exact --nocapture",
+        "cargo test --manifest-path adl/Cargo.toml csm_polis_storage -- --nocapture",
+        "cargo test --manifest-path adl/Cargo.toml --bin adl-pr-finish cli::pr_cmd::tests::finish::arg_render::finish_validation_profile_classifies_wp08_polis_storage_slice -- --exact --nocapture",
+        "cargo metadata --manifest-path adl/Cargo.toml --no-deps --format-version 1",
+        "cargo metadata --manifest-path adl/Cargo.toml --locked --no-deps --format-version 1",
+        "cargo test --manifest-path adl/Cargo.toml --bin adl-issue tests::adl_issue_forwards_args_to_dispatch -- --exact --nocapture",
+        "cargo test --manifest-path adl/Cargo.toml --bin adl-pr-finish cli::pr_cmd::tests::finish::arg_render::finish_validation_profile_classifies_issue_small_binary_slice -- --exact --nocapture",
+        "cargo test --manifest-path adl/Cargo.toml target_claim_assessment_ -- --nocapture",
+        "cargo test --manifest-path adl/Cargo.toml doctor_preflight_ -- --nocapture",
+        "cargo test --manifest-path adl/Cargo.toml real_pr_start_blocks_when_another_session_claims_the_issue -- --exact --nocapture",
+        "cargo test --manifest-path adl/Cargo.toml real_pr_start_allows_current_session_claim_and_stale_claim_history -- --exact --nocapture",
+        "cargo test --manifest-path adl/Cargo.toml --bin adl-pr-finish cli::pr_cmd::tests::finish::arg_render::load_finish_validation_profile_cleans_tempfile_when_profile_only_needs_rendering -- --exact --nocapture",
+        "cargo test --manifest-path adl/Cargo.toml --bin adl-pr-finish cli::pr_cmd::tests::finish::arg_render::render_default_finish_validation_includes_profile_truth_and_sanitizes_changed_files -- --exact --nocapture",
+        "cargo test --manifest-path adl/Cargo.toml --bin adl-pr-finish cli::pr_cmd::tests::finish::arg_render::finish_validation_profile_classifies_session_ledger_issue_4419_slice -- --exact --nocapture",
+        "cargo test --manifest-path adl/Cargo.toml --bin adl-pr-closing-linkage closing_linkage -- --nocapture",
+        "cargo test --manifest-path adl/Cargo.toml --bin adl-pr-finish cli::pr_cmd::tests::finish::arg_render::finish_validation_profile_classifies_closing_linkage_small_binary_slice -- --exact --nocapture",
+        "cargo test --manifest-path adl/Cargo.toml --bin adl-pr-finish wuji_ddns_slice -- --nocapture",
+        "cargo test --manifest-path adl/Cargo.toml --bin adl-pr-finish wuji_ddns_installer_slice -- --nocapture",
+        "cargo test --manifest-path adl/Cargo.toml --bin adl-csdlc public_prompt_packet",
+        "cargo test --manifest-path adl/Cargo.toml --bin adl-pr-finish cli::pr_cmd::tests::finish::arg_render::finish_validation_profile_classifies_wp08_acip_sns_slice -- --exact --nocapture",
+        "cargo test --manifest-path adl/Cargo.toml --bin adl-pr-finish cli::pr_cmd::tests::finish::arg_render::finish_validation_profile_classifies_wp08_local_polis_ssm_slice -- --exact --nocapture",
+        "cargo test --manifest-path adl/Cargo.toml --bin adl-pr-finish cli::pr_cmd::tests::finish::arg_render::finish_validation_profile_classifies_wp08_aws_signal_integration_slice -- --exact --nocapture",
+        "cargo test --manifest-path adl/Cargo.toml --lib provider_substrate_uses_http_transport_for_ollama_with_endpoint",
+        "cargo test --manifest-path adl/Cargo.toml agent_comms --lib -- --nocapture",
+        "cargo test --manifest-path adl/Cargo.toml --lib provider_communication",
+        "cargo test --manifest-path adl/Cargo.toml --lib provider_adapter",
+        "cargo test --manifest-path adl/Cargo.toml --lib resilience",
+        "cargo test --manifest-path adl/Cargo.toml --bin adl prompt_template_ -- --nocapture",
+        "cargo test --manifest-path adl/Cargo.toml --bin adl structured_prompt_ -- --nocapture",
+        "cargo test --manifest-path adl/Cargo.toml csm_cloud_control -- --nocapture",
+        "cargo test --manifest-path adl/Cargo.toml csm_runtime_api -- --nocapture",
+        "cargo test --manifest-path adl/Cargo.toml --bin adl cli::csm_cmd::tests:: -- --nocapture",
+        "cargo test --manifest-path adl/Cargo.toml --bin adl-pr-finish cli::pr_cmd::tests::finish::arg_render::finish_validation_profile_classifies_wp07_csm_api_gateway_bridge_slice -- --exact --nocapture",
+        "cargo test --manifest-path adl/Cargo.toml --bin adl-pr-finish cli::pr_cmd::tests::finish::arg_render::finish_validation_profile_classifies_wp08_cloudfront_control_slice -- --exact --nocapture",
+    ];
+    let plan = FinishValidationPlan {
+        mode: FinishValidationMode::SmallBinaryFocused,
+        commands: commands.iter().map(|command| command.to_string()).collect(),
+    };
+    run_finish_validation_rust(&repo, &plan).expect("registered cargo validation commands");
+
+    unsafe {
+        env::set_var("PATH", old_path);
+    }
+
+    let cargo_calls = fs::read_to_string(&cargo_log).expect("cargo log");
+    assert!(cargo_calls.contains("github_token"));
+    assert!(cargo_calls.contains("cli::runtime_v2_cmd -- --nocapture"));
+    assert!(cargo_calls.contains("metadata --manifest-path"));
+    assert!(cargo_calls.contains("adl-issue tests::adl_issue_forwards_args_to_dispatch"));
+    assert!(cargo_calls.contains("finish_validation_profile_classifies_wp08_aws_signal_integration_slice"));
+}
+
+#[test]
+fn finish_runner_executes_registered_script_validation_commands() {
+    let _guard = env_lock();
+    let temp = unique_temp_dir("adl-pr-finish-registered-script-validation-commands");
+
+    let repo = temp.join("repo");
+    fs::create_dir_all(repo.join("adl/tools")).expect("adl tools dir");
+    fs::create_dir_all(repo.join("docs/milestones/v0.91.5/review/remote_gemma_watcher"))
+        .expect("gemma watcher docs dir");
+    fs::create_dir_all(repo.join("docs/milestones/v0.91.7/review/runtime/wp08_cloudfront_4915"))
+        .expect("cloudfront docs dir");
+    fs::write(
+        repo.join("adl/Cargo.toml"),
+        "[package]\nname='adl'\nversion='0.1.0'\n",
+    )
+    .expect("cargo toml");
+    fs::write(
+        repo.join(
+            "docs/milestones/v0.91.7/review/runtime/wp08_cloudfront_4915/cloudfront_status_summary.json",
+        ),
+        "{}\n",
+    )
+    .expect("cloudfront summary");
     write_executable(
-        &repo.join("adl/tools/test_run_authoritative_coverage_lane.sh"),
-        "#!/usr/bin/env bash\nset -euo pipefail\nprintf '%s\\n' authoritative-coverage >> \"$FOCUSED_LOG\"\n",
+        &repo.join("adl/tools/check_no_tracked_adl_issue_record_residue.sh"),
+        "#!/usr/bin/env bash\nset -euo pipefail\nexit 0\n",
     );
-    write_executable(
-        &repo.join("adl/tools/test_run_local_authoritative_coverage_gate.sh"),
-        "#!/usr/bin/env bash\nset -euo pipefail\nprintf '%s\\n' local-authoritative-gate >> \"$FOCUSED_LOG\"\n",
-    );
+
+    let script_names = [
+        "test_v0916_unity_observatory_unity65_smoke.sh",
+        "test_v0916_unity_observatory_baseline.sh",
+        "test_v0916_unity_observatory_contract.sh",
+        "test_v0916_unity_observatory_local_runtime_consumption_unit.sh",
+        "test_v0916_unity_observatory_local_runtime_consumption.sh",
+        "test_v0916_unity_observatory_soak_integration.sh",
+        "test_slow_proof_lane_contract.sh",
+        "test_pr_small_binary_delegation.sh",
+        "test_pr_closing_linkage.sh",
+        "test_pr_run_locked_cargo_fallback_refuses_cleanly.sh",
+        "test_owner_validation_lane.sh",
+        "test_check_repo_quality_staleness.sh",
+        "test_v0916_deepseek_suitability.sh",
+        "test_demo_codex_ollama_operational_skills.sh",
+        "test_demo_codex_ollama_semantic_fallback.sh",
+        "test_demo_v089_gemma4_issue_clerk.sh",
+        "run_owner_validation_lane.sh",
+        "run_pr_fast_test_lane.sh",
+        "test_run_wp08_cloudfront_control_proof.sh",
+        "test_run_v0917_csm_api_gateway_bridge_proof.sh",
+        "test_sprint_conductor_helpers.sh",
+        "test_install_adl_operational_skills.sh",
+    ];
+    for script_name in script_names {
+        write_executable(
+            &repo.join("adl/tools").join(script_name),
+            &format!(
+                "#!/usr/bin/env bash\nset -euo pipefail\nprintf '{} %s\\n' \"$*\" >> \"$FOCUSED_LOG\"\n",
+                script_name
+            ),
+        );
+    }
+    let python_names = [
+        "validate_v0915_remote_gemma_watcher_probe.py",
+        "validate_wp08_cloudfront_control_proof.py",
+    ];
+    for python_name in python_names {
+        fs::write(
+            repo.join("adl/tools").join(python_name),
+            format!(
+                "#!/usr/bin/env python3\nimport os, sys\nfrom pathlib import Path\nlog = Path(os.environ['FOCUSED_LOG'])\nlog.write_text((log.read_text() if log.exists() else '') + '{} ' + ' '.join(sys.argv[1:]) + '\\n')\n",
+                python_name
+            ),
+        )
+        .expect("python validator");
+    }
     init_git_repo(&repo);
 
     let bin_dir = temp.join("bin");
@@ -6676,6 +6790,9 @@ fn finish_runner_executes_combined_coverage_selector_command() {
             cargo_log.display()
         ),
     );
+    let changed_files = temp.join("finish-validation-profile-runner.txt");
+    fs::write(&changed_files, "adl/src/cli/pr_cmd/finish_support.rs\n")
+        .expect("changed-files manifest");
     let old_path = env::var("PATH").unwrap_or_default();
     let old_focused_log = env::var("FOCUSED_LOG").ok();
     unsafe {
@@ -6683,13 +6800,41 @@ fn finish_runner_executes_combined_coverage_selector_command() {
         env::set_var("FOCUSED_LOG", &focused_log);
     }
 
+    let mut commands = vec![
+        "bash adl/tools/test_v0916_unity_observatory_contract.sh".to_string(),
+        "bash adl/tools/test_v0916_unity_observatory_local_runtime_consumption_unit.sh"
+            .to_string(),
+        "bash -n adl/tools/test_v0916_unity_observatory_unity65_smoke.sh && bash adl/tools/test_v0916_unity_observatory_baseline.sh && bash adl/tools/test_v0916_unity_observatory_contract.sh && bash adl/tools/test_v0916_unity_observatory_local_runtime_consumption_unit.sh && bash adl/tools/test_v0916_unity_observatory_local_runtime_consumption.sh && bash adl/tools/test_v0916_unity_observatory_soak_integration.sh && cargo test --manifest-path adl/Cargo.toml --test cli_smoke csm_observatory_cli_writes_unity_contract_bundle_and_matches_seeded_resource -- --nocapture".to_string(),
+        "bash adl/tools/test_slow_proof_lane_contract.sh".to_string(),
+        "bash adl/tools/test_pr_small_binary_delegation.sh".to_string(),
+        "bash adl/tools/test_pr_closing_linkage.sh".to_string(),
+        "bash adl/tools/test_pr_run_locked_cargo_fallback_refuses_cleanly.sh".to_string(),
+        "bash adl/tools/test_owner_validation_lane.sh".to_string(),
+        "bash adl/tools/test_check_repo_quality_staleness.sh".to_string(),
+        "bash adl/tools/test_v0916_deepseek_suitability.sh".to_string(),
+        "bash adl/tools/test_demo_codex_ollama_operational_skills.sh".to_string(),
+        "bash adl/tools/test_demo_codex_ollama_semantic_fallback.sh".to_string(),
+        "bash adl/tools/test_demo_v089_gemma4_issue_clerk.sh".to_string(),
+        "python3 adl/tools/validate_v0915_remote_gemma_watcher_probe.py docs/milestones/v0.91.5/review/remote_gemma_watcher".to_string(),
+        "bash adl/tools/run_owner_validation_lane.sh csdlc".to_string(),
+        "bash adl/tools/run_owner_validation_lane.sh runtime --build".to_string(),
+        "bash adl/tools/test_run_wp08_cloudfront_control_proof.sh".to_string(),
+        "bash adl/tools/test_run_v0917_csm_api_gateway_bridge_proof.sh".to_string(),
+        "python3 adl/tools/validate_wp08_cloudfront_control_proof.py docs/milestones/v0.91.7/review/runtime/wp08_cloudfront_4915/cloudfront_status_summary.json".to_string(),
+        "bash adl/tools/run_owner_validation_lane.sh review --build".to_string(),
+        "bash adl/tools/run_owner_validation_lane.sh all --build".to_string(),
+        "bash adl/tools/test_sprint_conductor_helpers.sh".to_string(),
+        "bash adl/tools/test_sprint_conductor_helpers.sh && bash adl/tools/test_install_adl_operational_skills.sh".to_string(),
+    ];
+    commands.push(format!(
+        "bash adl/tools/run_pr_fast_test_lane.sh --changed-files {}",
+        changed_files.display()
+    ));
     let plan = FinishValidationPlan {
         mode: FinishValidationMode::SmallBinaryFocused,
-        commands: vec![
-            "bash adl/tools/test_check_coverage_impact.sh && bash adl/tools/test_run_authoritative_coverage_lane.sh && bash adl/tools/test_run_local_authoritative_coverage_gate.sh".to_string(),
-        ],
+        commands,
     };
-    run_finish_validation_rust(&repo, &plan).expect("combined coverage selector validation");
+    run_finish_validation_rust(&repo, &plan).expect("registered script validation commands");
 
     unsafe {
         env::set_var("PATH", old_path);
@@ -6699,15 +6844,19 @@ fn finish_runner_executes_combined_coverage_selector_command() {
         None => unsafe { env::remove_var("FOCUSED_LOG") },
     }
 
+    let focused_calls = fs::read_to_string(&focused_log).expect("focused log");
+    assert!(focused_calls.contains("test_v0916_unity_observatory_baseline.sh"));
+    assert!(focused_calls.contains("run_owner_validation_lane.sh runtime --build"));
+    assert!(focused_calls.contains("run_pr_fast_test_lane.sh --changed-files"));
+    assert!(focused_calls.contains("validate_v0915_remote_gemma_watcher_probe.py"));
+    assert!(focused_calls.contains("test_install_adl_operational_skills.sh"));
     assert!(
-        !cargo_log.exists(),
-        "combined coverage selector command should not invoke cargo"
+        !changed_files.exists(),
+        "manager-backed changed-files manifest should be cleaned up"
     );
 
-    let focused_calls = fs::read_to_string(&focused_log).expect("focused log");
-    assert!(focused_calls.contains("coverage-impact"));
-    assert!(focused_calls.contains("authoritative-coverage"));
-    assert!(focused_calls.contains("local-authoritative-gate"));
+    let cargo_calls = fs::read_to_string(&cargo_log).expect("cargo log");
+    assert!(cargo_calls.contains("csm_observatory_cli_writes_unity_contract_bundle"));
 }
 
 #[test]

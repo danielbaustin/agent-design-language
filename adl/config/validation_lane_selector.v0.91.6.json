@@ -276,8 +276,8 @@
         "adl/tools/test_run_authoritative_coverage_lane.sh",
         "adl/tools/test_run_local_authoritative_coverage_gate.sh"
       ],
-      "command": "bash adl/tools/test_check_coverage_impact.sh && bash adl/tools/test_run_authoritative_coverage_lane.sh && bash adl/tools/test_run_local_authoritative_coverage_gate.sh",
-      "run_command": "bash adl/tools/test_check_coverage_impact.sh && bash adl/tools/test_run_authoritative_coverage_lane.sh && bash adl/tools/test_run_local_authoritative_coverage_gate.sh",
+      "command": "bash adl/tools/test_check_coverage_impact.sh",
+      "run_command": "bash adl/tools/test_check_coverage_impact.sh",
       "reason": "coverage_impact_surface_requires_coverage_impact_contract_checks"
     },
     {

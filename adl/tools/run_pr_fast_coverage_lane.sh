@@ -37,6 +37,9 @@ if [ -z "$FILTER_EXPRESSION" ]; then
 fi
 
 ADL_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
+ADL_SUMMARY_PATH="$ADL_DIR/target/coverage-impact-summary.adl.json"
+ADL_RUNTIME_SUMMARY_PATH="$ADL_DIR/target/coverage-impact-summary.adl-runtime.json"
+COMBINED_SUMMARY_PATH="$ADL_DIR/target/coverage-impact-summary.json"
 cd "$ADL_DIR"
 
 COVERAGE_BUILD_ROOT="${ADL_PR_FAST_COVERAGE_BUILD_ROOT:-$ADL_DIR/target/pr-fast-coverage}"
@@ -81,10 +84,49 @@ if grep -Fq 'test(/^csm_cav::/)' <<<"$FILTER_EXPRESSION"; then
   fi
   printf 'PR-fast coverage companion: adl-runtime CAV tests\n'
   CARGO_INCREMENTAL=0 cargo "${runtime_coverage_args[@]}"
+  cargo llvm-cov report \
+    --json \
+    --summary-only \
+    --output-path "$ADL_SUMMARY_PATH"
+  cargo llvm-cov report \
+    --manifest-path "$RUNTIME_MANIFEST" \
+    --json \
+    --summary-only \
+    --output-path "$ADL_RUNTIME_SUMMARY_PATH"
+  jq -s '
+    . as $docs
+    |
+    def metric($name):
+      (
+        [$docs[].data[0].totals[$name].count // 0] | add
+      ) as $count
+      | (
+        [$docs[].data[0].totals[$name].covered // 0] | add
+      ) as $covered
+      | {
+          count: $count,
+          covered: $covered,
+          percent: (if $count == 0 then 0 else (($covered * 100) / $count) end)
+        }
+      | if $name == "branches" or $name == "mcdc" or $name == "regions" then
+          . + {notcovered: ($count - $covered)}
+        else
+          .
+        end;
+    $docs[0]
+    | .data[0].files = ([$docs[].data[0].files[]])
+    | .data[0].totals = {
+        branches: metric("branches"),
+        mcdc: metric("mcdc"),
+        functions: metric("functions"),
+        instantiations: metric("instantiations"),
+        lines: metric("lines"),
+        regions: metric("regions")
+      }
+  ' "$ADL_SUMMARY_PATH" "$ADL_RUNTIME_SUMMARY_PATH" > "$COMBINED_SUMMARY_PATH"
+else
+  cargo llvm-cov report \
+    --json \
+    --summary-only \
+    --output-path "$COMBINED_SUMMARY_PATH"
 fi
-
-mkdir -p target
-cargo llvm-cov report \
-  --json \
-  --summary-only \
-  --output-path target/coverage-impact-summary.json
