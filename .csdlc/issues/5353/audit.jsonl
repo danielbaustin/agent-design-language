@@ -1,0 +1,2 @@
+{"sequence":1,"generation":0,"actor":"codex","reason":"initialize issue record and all six cards","operation":"bootstrap"}
+{"sequence":2,"generation":1,"actor":"wp01-design-review","reason":"approve completed issue design","operation":"approve_design"}

@@ -1,0 +1,76 @@
+{
+  "identity": {
+    "schema_version": "1.0.0",
+    "template_version": "1.0.0",
+    "issue": 5353,
+    "repository": "danielbaustin/agent-design-language",
+    "title": "[v0.91.8][WP-01][csdlc-v2] Make init and design approval safe for issue-local design paths",
+    "slug": "v0-91-8-wp01-csdlc-v2-init-design-approval-safety",
+    "version": "v0.91.8",
+    "generation": 1
+  },
+  "status": "ready",
+  "content": {
+    "card_kind": "spp",
+    "values": {
+      "plan_revision": 1,
+      "summary": "Reproduce both defects, repair atomically, add focused tests, then validate and review.",
+      "steps": [
+        {
+          "id": "step-1",
+          "action": "Reproduce issue-local initialization and stale diagram digest defects",
+          "acceptance_ids": [
+            "AC-1",
+            "AC-2",
+            "AC-3"
+          ],
+          "status": "pending"
+        },
+        {
+          "id": "step-2",
+          "action": "Implement typed atomic initialization and complete digest refresh",
+          "acceptance_ids": [
+            "AC-1",
+            "AC-2",
+            "AC-3"
+          ],
+          "status": "pending"
+        },
+        {
+          "id": "step-3",
+          "action": "Run focused tests, doctor, review, and closeout proof",
+          "acceptance_ids": [
+            "AC-4"
+          ],
+          "status": "pending"
+        }
+      ],
+      "affected_areas": [],
+      "invariants": [
+        "no orphan issue directory is mistaken for a record",
+        "design and diagram digests change together",
+        "failed mutation leaves recoverable typed state"
+      ],
+      "risks": [
+        "partial filesystem mutation",
+        "stale projection references",
+        "overbroad lifecycle changes"
+      ],
+      "execution_estimates": {
+        "elapsed_seconds": 7200,
+        "total_tokens": 40000,
+        "validation_seconds": 1200
+      },
+      "stop_conditions": [
+        "typed atomicity cannot be preserved",
+        "doctor remains stale",
+        "scope widens beyond v2 lifecycle"
+      ],
+      "replan_triggers": [],
+      "design_ref": "docs/architecture/csdlc-v2/wp01/5353/DESIGN.md",
+      "design_digest": "d4825727db87bfa198188d8e1f557fef4cf939978a48547f80c0e7b15ce39aee",
+      "diagram_ref": "docs/architecture/csdlc-v2/wp01/5353/DIAGRAM.mmd",
+      "diagram_digest": "fae5cc41fad9c10ef7885ca424e288ad22602253d3aa17e3cf51155575136933"
+    }
+  }
+}

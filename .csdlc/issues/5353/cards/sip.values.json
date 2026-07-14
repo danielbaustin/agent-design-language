@@ -1,0 +1,33 @@
+{
+  "identity": {
+    "schema_version": "1.0.0",
+    "template_version": "1.0.0",
+    "issue": 5353,
+    "repository": "danielbaustin/agent-design-language",
+    "title": "[v0.91.8][WP-01][csdlc-v2] Make init and design approval safe for issue-local design paths",
+    "slug": "v0-91-8-wp01-csdlc-v2-init-design-approval-safety",
+    "version": "v0.91.8",
+    "generation": 1
+  },
+  "status": "ready",
+  "content": {
+    "card_kind": "sip",
+    "values": {
+      "goal": "Make typed initialization and design approval atomic and digest-complete.",
+      "required_outcome": "Issue-local design paths initialize without partial-record confusion, and approval refreshes both design and diagram digests.",
+      "declared_scope": [
+        "csdlc-v2/src/lifecycle.rs",
+        "csdlc-v2/src/store.rs",
+        "csdlc-v2/src/cards.rs",
+        "csdlc-v2/tests"
+      ],
+      "authority_boundary": [
+        "typed Rust v2 only",
+        "no v1 wrappers",
+        "no ADL core rearchitecture"
+      ],
+      "initial_assumptions": [],
+      "operator_constraints": []
+    }
+  }
+}

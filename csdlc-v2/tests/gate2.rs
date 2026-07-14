@@ -575,6 +575,24 @@ fn placeholder_design_is_pending_then_can_be_completed_approved_and_bound() {
     assert!(
         matches!(approved.design_review, csdlc_v2::DesignReview::Approved { reviewer, .. } if reviewer == "architect")
     );
+    let cards = store.load_cards(42).expect("approved cards");
+    let design_digest =
+        csdlc_v2::cards::digest(&fs::read(temp.path().join("docs/design.md")).expect("design"));
+    let diagram_digest =
+        csdlc_v2::cards::digest(&fs::read(temp.path().join("docs/diagram.mmd")).expect("diagram"));
+    for kind in [CardKind::Spp, CardKind::Vpp] {
+        match &cards[&kind].content {
+            csdlc_v2::cards::CardContent::Spp(values) => {
+                assert_eq!(values.design_digest, design_digest);
+                assert_eq!(values.diagram_digest, diagram_digest);
+            }
+            csdlc_v2::cards::CardContent::Vpp(values) => {
+                assert_eq!(values.design_digest, design_digest);
+                assert_eq!(values.diagram_digest, diagram_digest);
+            }
+            _ => unreachable!("design-bearing card"),
+        }
+    }
     assert!(diagnose(&store, 42).ready);
     git(temp.path(), &["init", "-b", "main"]);
     git(
@@ -600,6 +618,41 @@ fn placeholder_design_is_pending_then_can_be_completed_approved_and_bound() {
         store.load_record(42).expect("record").phase,
         csdlc_v2::LifecyclePhase::Bound
     );
+}
+
+#[test]
+fn issue_local_design_paths_do_not_look_like_existing_records() {
+    let temp = tempfile::tempdir().expect("tempdir");
+    let store = Store::new(temp.path());
+    let mut bootstrap = request();
+    bootstrap.design_path = ".csdlc/issues/42/design.md".into();
+    bootstrap.diagram_path = ".csdlc/issues/42/diagram.mmd".into();
+    bootstrap.design_approved = false;
+
+    let record = csdlc_v2::initialize_issue(&store, bootstrap).expect("issue-local init");
+    assert_eq!(record.issue, 42);
+    assert!(store.issue_dir(42).join("index.json").exists());
+    assert!(store.issue_dir(42).join("design.md").exists());
+    assert!(store.issue_dir(42).join("diagram.mmd").exists());
+    assert!(!matches!(
+        diagnose(&store, 42).status,
+        csdlc_v2::doctor::DoctorStatus::Corrupt
+    ));
+}
+
+#[test]
+fn invalid_issue_local_init_fails_before_creating_artifacts() {
+    let temp = tempfile::tempdir().expect("tempdir");
+    let store = Store::new(temp.path());
+    let mut bootstrap = request();
+    bootstrap.issue = 43;
+    bootstrap.claim.owner.clear();
+    bootstrap.design_path = ".csdlc/issues/43/design.md".into();
+    bootstrap.diagram_path = ".csdlc/issues/43/diagram.mmd".into();
+
+    let error = csdlc_v2::initialize_issue(&store, bootstrap).expect_err("invalid claim");
+    assert!(matches!(error.code, ErrorCode::InvalidInput));
+    assert!(!store.issue_dir(43).exists());
 }
 
 #[test]

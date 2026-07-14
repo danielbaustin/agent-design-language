@@ -1,0 +1,72 @@
+{
+  "identity": {
+    "schema_version": "1.0.0",
+    "template_version": "1.0.0",
+    "issue": 5353,
+    "repository": "danielbaustin/agent-design-language",
+    "title": "[v0.91.8][WP-01][csdlc-v2] Make init and design approval safe for issue-local design paths",
+    "slug": "v0-91-8-wp01-csdlc-v2-init-design-approval-safety",
+    "version": "v0.91.8",
+    "generation": 1
+  },
+  "status": "ready",
+  "content": {
+    "card_kind": "vpp",
+    "values": {
+      "summary": "Execute the smallest proving validation DAG.",
+      "lanes": [
+        {
+          "lane": "focused-regression",
+          "proof_role": "Prove issue-local init and dual digest refresh behavior",
+          "acceptance_ids": [
+            "AC-1",
+            "AC-2",
+            "AC-3"
+          ],
+          "deterministic": true,
+          "resource_profile": "small",
+          "budget_seconds": 120,
+          "budget_tokens": 2000,
+          "argv": [
+            "cargo",
+            "test",
+            "--locked",
+            "--manifest-path",
+            "csdlc-v2/Cargo.toml",
+            "gate2",
+            "gate7"
+          ],
+          "parallel_group": "local",
+          "defer_reason": null
+        },
+        {
+          "lane": "v2-suite",
+          "proof_role": "Prove the independent v2 workspace remains green",
+          "acceptance_ids": [
+            "AC-4"
+          ],
+          "deterministic": true,
+          "resource_profile": "small",
+          "budget_seconds": 300,
+          "budget_tokens": 4000,
+          "argv": [
+            "cargo",
+            "test",
+            "--locked",
+            "--manifest-path",
+            "csdlc-v2/Cargo.toml"
+          ],
+          "parallel_group": "local",
+          "defer_reason": null
+        }
+      ],
+      "planned_validation_seconds": 1200,
+      "planned_validation_tokens": 10000,
+      "failure_policy": "Fail closed with typed error and no publication when initialization or digest truth is incomplete.",
+      "design_ref": "docs/architecture/csdlc-v2/wp01/5353/DESIGN.md",
+      "design_digest": "d4825727db87bfa198188d8e1f557fef4cf939978a48547f80c0e7b15ce39aee",
+      "diagram_ref": "docs/architecture/csdlc-v2/wp01/5353/DIAGRAM.mmd",
+      "diagram_digest": "fae5cc41fad9c10ef7885ca424e288ad22602253d3aa17e3cf51155575136933"
+    }
+  }
+}

@@ -122,6 +122,20 @@ impl Store {
             fs::remove_dir_all(&backup)?;
         }
         write_complete(&staging, record, cards)?;
+        // Preserve authored design artifacts when they live inside the issue
+        // directory. The atomic directory swap must not discard them.
+        for authored_path in [&record.design_path, &record.diagram_path] {
+            let source = self.root.join(authored_path);
+            if let Ok(relative) = source.strip_prefix(&current) {
+                if source.is_file() {
+                    let destination = staging.join(relative);
+                    if let Some(parent) = destination.parent() {
+                        fs::create_dir_all(parent)?;
+                    }
+                    fs::copy(source, destination)?;
+                }
+            }
+        }
         if current.exists() {
             fs::rename(&current, &backup)?;
             sync_dir(current.parent().expect("issue parent"))?;
@@ -705,10 +719,17 @@ pub fn approve_design(store: &Store, request: ApproveDesignRequest) -> Result<Is
     let mut cards = store.load_cards(request.issue)?;
     verify_record(&record)?;
     let design_digest = digest(&fs::read(store.root.join(&record.design_path))?);
+    let diagram_digest = digest(&fs::read(store.root.join(&record.diagram_path))?);
     for kind in [CardKind::Spp, CardKind::Vpp] {
         match &mut cards.get_mut(&kind).expect("card").content {
-            CardContent::Spp(values) => values.design_digest = design_digest.clone(),
-            CardContent::Vpp(values) => values.design_digest = design_digest.clone(),
+            CardContent::Spp(values) => {
+                values.design_digest = design_digest.clone();
+                values.diagram_digest = diagram_digest.clone();
+            }
+            CardContent::Vpp(values) => {
+                values.design_digest = design_digest.clone();
+                values.diagram_digest = diagram_digest.clone();
+            }
             _ => unreachable!("design-bearing card"),
         }
     }
@@ -737,34 +758,12 @@ pub fn approve_design(store: &Store, request: ApproveDesignRequest) -> Result<Is
 }
 
 pub fn bootstrap_issue(store: &Store, request: BootstrapRequest) -> Result<IssueRecord> {
-    if request.issue == 0 || request.repository.trim().is_empty() {
-        return Err(V2Error::new(
-            ErrorCode::InvalidInput,
-            "issue and repository are required",
-        ));
-    }
-    let now = now_seconds()?;
-    if (request.design_approved && request.design_reviewer.trim().is_empty())
-        || request.claim.id.trim().is_empty()
-        || request.claim.owner.trim().is_empty()
-        || request.claim.purpose.trim().is_empty()
-        || request.claim.branch.trim().is_empty()
-        || request.claim.worktree.trim().is_empty()
-        || request.claim.generation != 0
-        || request.claim.protected_paths.is_empty()
-        || request.claim.heartbeat_unix_seconds < request.claim.acquired_unix_seconds
-        || request.claim.expires_unix_seconds <= request.claim.heartbeat_unix_seconds
-    {
-        return Err(V2Error::new(
-            ErrorCode::InvalidInput,
-            "bootstrap claim/reviewer invariants are incomplete",
-        ));
-    }
-    request.claim.validate(&request.claim.id, now)?;
+    validate_bootstrap_request(&request)?;
     let initialization_digest = digest(&serde_json::to_vec(&request)?);
     let _lock = store.lock(request.issue)?;
     store.recover_if_needed(request.issue)?;
-    if store.issue_dir(request.issue).exists() {
+    let index_path = store.issue_dir(request.issue).join("index.json");
+    if index_path.exists() {
         let existing = store.load_record(request.issue)?;
         verify_cards(store, &existing, &store.load_cards(request.issue)?)?;
         if existing.initialization_digest == initialization_digest {
@@ -826,6 +825,34 @@ pub fn bootstrap_issue(store: &Store, request: BootstrapRequest) -> Result<Issue
     record.digest = record_digest(&record)?;
     store.commit(request.issue, &record, &cards, false)?;
     Ok(record)
+}
+
+pub(crate) fn validate_bootstrap_request(request: &BootstrapRequest) -> Result<()> {
+    if request.issue == 0 || request.repository.trim().is_empty() {
+        return Err(V2Error::new(
+            ErrorCode::InvalidInput,
+            "issue and repository are required",
+        ));
+    }
+    let now = now_seconds()?;
+    if (request.design_approved && request.design_reviewer.trim().is_empty())
+        || request.claim.id.trim().is_empty()
+        || request.claim.owner.trim().is_empty()
+        || request.claim.purpose.trim().is_empty()
+        || request.claim.branch.trim().is_empty()
+        || request.claim.worktree.trim().is_empty()
+        || request.claim.generation != 0
+        || request.claim.protected_paths.is_empty()
+        || request.claim.heartbeat_unix_seconds < request.claim.acquired_unix_seconds
+        || request.claim.expires_unix_seconds <= request.claim.heartbeat_unix_seconds
+    {
+        return Err(V2Error::new(
+            ErrorCode::InvalidInput,
+            "bootstrap claim/reviewer invariants are incomplete",
+        ));
+    }
+    request.claim.validate(&request.claim.id, now)?;
+    Ok(())
 }
 
 pub fn edit_issue(store: &Store, request: EditRequest) -> Result<IssueRecord> {

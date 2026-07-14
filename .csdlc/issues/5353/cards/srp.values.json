@@ -1,0 +1,29 @@
+{
+  "identity": {
+    "schema_version": "1.0.0",
+    "template_version": "1.0.0",
+    "issue": 5353,
+    "repository": "danielbaustin/agent-design-language",
+    "title": "[v0.91.8][WP-01][csdlc-v2] Make init and design approval safe for issue-local design paths",
+    "slug": "v0-91-8-wp01-csdlc-v2-init-design-approval-safety",
+    "version": "v0.91.8",
+    "generation": 1
+  },
+  "status": "pre_phase",
+  "content": {
+    "card_kind": "srp",
+    "values": {
+      "review_scope": "Exact implementation revision before publication.",
+      "review_revision": null,
+      "reviewer": null,
+      "review_prompts": [
+        "Verify issue-local paths cannot create a false existing-record condition.",
+        "Verify both design and diagram digests refresh atomically.",
+        "Verify tests do not widen into ADL or Runtime code."
+      ],
+      "findings": [],
+      "residual_risk": [],
+      "review_result": "pre_review"
+    }
+  }
+}
