@@ -1,0 +1,23 @@
+schema_version: adl.release_gate_disposition.v1
+issue: 5267
+decision: approved_with_green_ci_and_focused_local_proof
+reviewer_or_review_mode: bounded_pre_pr_subagent_review_plus_release_gate_policy_review
+changed_release_gate_surfaces:
+  - .github/workflows/aws-spot-remote-validation.yaml
+focused_validation_run: >
+  Focused local proof passed for the Spot setup helper and CSM readiness repair:
+  bash adl/tools/test_run_aws_spot_remote_validation_lane.sh; git diff --check;
+  and CARGO_TARGET_DIR=/Volumes/FastWork/adl-target-5267 cargo test
+  --manifest-path adl/Cargo.toml --test cli_smoke
+  agent::csm_service_local_start_stop_retains_status_checkpoint_and_observability
+  -- --nocapture.
+residual_ci_proof_required_before_merge: >
+  Required GitHub checks for PR #5300 must remain green before merge. The latest
+  validation showed adl-path-policy, adl-coverage, adl-tooling-contracts,
+  adl-rust-fmt-clippy, adl-rust-tests, adl-demo-proof, and adl-ci successful,
+  with adl-slow-proof skipped.
+notes:
+  - The workflow change only wires the existing SSH allowlist repository variable into the Spot validation job environment.
+  - The setup helper now configures the Spot validation region and SSH allowlist repository variables idempotently.
+  - Token-backed GitHub API setup uses curl config files rather than placing bearer tokens in argv.
+  - Paid live Spot execution remains operator-triggered and is not implied by this disposition.

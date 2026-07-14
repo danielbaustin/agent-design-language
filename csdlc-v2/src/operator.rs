@@ -29,7 +29,9 @@ pub struct SkillRoute {
 #[serde(deny_unknown_fields)]
 pub struct CoexistenceInventory {
     pub schema: String,
+    pub v1_sunset: bool,
     pub required_v1_paths: Vec<RequiredPath>,
+    pub forbidden_v1_paths: Vec<PathBuf>,
     pub required_v2_binaries: Vec<String>,
 }
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
@@ -44,6 +46,7 @@ pub struct CoexistenceReport {
     pub pass: bool,
     pub default_generation: Generation,
     pub missing_v1_paths: Vec<PathBuf>,
+    pub present_forbidden_v1_paths: Vec<PathBuf>,
     pub missing_v2_binaries: Vec<String>,
     pub skill_count: usize,
 }
@@ -141,10 +144,10 @@ pub fn verify_coexistence(
             "coexistence input must exactly match the embedded reviewed inventory",
         ));
     }
-    if inventory.schema != "csdlc.coexistence_inventory.v1" {
+    if inventory.schema != "csdlc.coexistence_inventory.v2" || !inventory.v1_sunset {
         return Err(V2Error::new(
             ErrorCode::InvalidManifest,
-            "coexistence requires schema v1",
+            "final v2 installation requires the reviewed v1-sunset inventory",
         ));
     }
     let selector_path = checked_repo_path(repo, Path::new(&manifest.generation_selector))?;
@@ -157,18 +160,35 @@ pub fn verify_coexistence(
     let selector: GenerationSelector =
         serde_json::from_slice(&fs::read(&selector_path).map_err(io_error)?)?;
     select_generation(&selector, 0, None)?;
-    let missing_v1_paths = inventory
-        .required_v1_paths
+    let missing_v1_paths = if inventory.v1_sunset {
+        Vec::new()
+    } else {
+        inventory
+            .required_v1_paths
+            .iter()
+            .filter_map(|required| match checked_repo_path(repo, &required.path) {
+                Ok(path)
+                    if is_regular_file(&path) && (!required.executable || is_executable(&path)) =>
+                {
+                    None
+                }
+                _ => Some(required.path.clone()),
+            })
+            .collect::<Vec<_>>()
+    };
+    let mut present_forbidden_v1_paths = inventory
+        .forbidden_v1_paths
         .iter()
-        .filter_map(|required| match checked_repo_path(repo, &required.path) {
-            Ok(path)
-                if is_regular_file(&path) && (!required.executable || is_executable(&path)) =>
-            {
-                None
-            }
-            _ => Some(required.path.clone()),
+        .filter(|path| {
+            checked_repo_path(repo, path).is_ok_and(|path| fs::symlink_metadata(path).is_ok())
         })
+        .cloned()
         .collect::<Vec<_>>();
+    for path in discover_forbidden_v1_paths(repo)? {
+        if !present_forbidden_v1_paths.contains(&path) {
+            present_forbidden_v1_paths.push(path);
+        }
+    }
     let missing_v2_binaries = inventory
         .required_v2_binaries
         .iter()
@@ -181,13 +201,71 @@ pub fn verify_coexistence(
     let mut missing_v2_binaries = missing_v2_binaries;
     missing_v2_binaries.extend(verify_install_receipt(bin_dir, &manifest)?);
     Ok(CoexistenceReport {
-        schema: "csdlc.coexistence_report.v1".into(),
-        pass: missing_v1_paths.is_empty() && missing_v2_binaries.is_empty(),
+        schema: "csdlc.coexistence_report.v2".into(),
+        pass: missing_v1_paths.is_empty()
+            && present_forbidden_v1_paths.is_empty()
+            && missing_v2_binaries.is_empty(),
         default_generation: selector.default_generation,
         missing_v1_paths,
+        present_forbidden_v1_paths,
         missing_v2_binaries: missing_v2_binaries.into_iter().collect(),
         skill_count: manifest.skills.len(),
     })
+}
+
+fn discover_forbidden_v1_paths(repo: &Path) -> Result<Vec<PathBuf>> {
+    let mut found = Vec::new();
+    let roots = [
+        repo.join("adl/tools"),
+        repo.join("adl/src/cli"),
+        repo.join("adl/src/bin"),
+    ];
+    for root in roots {
+        if !root.exists() {
+            continue;
+        }
+        let mut stack = vec![root];
+        while let Some(path) = stack.pop() {
+            for entry in fs::read_dir(&path).map_err(io_error)? {
+                let entry = entry.map_err(io_error)?;
+                let candidate = entry.path();
+                let relative = candidate.strip_prefix(repo).unwrap_or(&candidate);
+                if candidate.is_dir() {
+                    stack.push(candidate);
+                    continue;
+                }
+                let text = relative.to_string_lossy();
+                let forbidden = (text.starts_with("adl/tools/")
+                    && (text.ends_with("/pr.sh")
+                        || text.contains("/check_pr_")
+                        || text.contains("/test_pr_")
+                        || (text.contains("/test_prompt_template") && text.ends_with(".sh"))
+                        || text.ends_with("/prompt_template.sh")
+                        || text.ends_with("/validate_structured_prompt.sh")
+                        || text.ends_with("/card_paths.sh")
+                        || text.ends_with("/pr_cards.sh")
+                        || text.ends_with("/pr_delegate.sh")
+                        || text.ends_with("/pr_usage.sh")))
+                    || text.starts_with("adl/src/cli/pr_cmd")
+                    || text == "adl/src/csdlc_prompt_editor.rs"
+                    || text == "adl/src/pr_dispatch_support.rs"
+                    || (text.starts_with("adl/src/bin/")
+                        && (text.contains("/adl_pr_")
+                            || matches!(
+                                text.as_ref(),
+                                "adl/src/bin/adl_csdlc.rs"
+                                    | "adl/src/bin/csdlc.rs"
+                                    | "adl/src/bin/adl_issue.rs"
+                                    | "adl/src/bin/adl_session.rs"
+                            )))
+                    || text == "csdlc-v2/src/bin/csdlc-import.rs";
+                if forbidden {
+                    found.push(relative.to_path_buf());
+                }
+            }
+        }
+    }
+    Ok(found)
 }
 
 pub fn resolve_operator_generation(

@@ -1,0 +1,29 @@
+{
+  "identity": {
+    "schema_version": "1.0.0",
+    "template_version": "1.0.0",
+    "issue": 5306,
+    "repository": "danielbaustin/agent-design-language",
+    "title": "[v0.91.7][csdlc-v2] Gate 10D2: approved bounded v1 deletion wave",
+    "slug": "v0-91-7-csdlc-v2-gate-10d2-approved-bounded-v1-deletion-wave",
+    "version": "v0.91.7",
+    "generation": 0
+  },
+  "status": "pre_phase",
+  "content": {
+    "card_kind": "srp",
+    "values": {
+      "review_scope": "Exact implementation revision before publication.",
+      "review_revision": null,
+      "reviewer": null,
+      "review_prompts": [
+        "Verify every removed path is in the approved exact manifest.",
+        "Verify useful retained code and both sunset surfaces remain.",
+        "Verify LoC/test claims are measured rather than budget-driven."
+      ],
+      "findings": [],
+      "residual_risk": [],
+      "review_result": "pre_review"
+    }
+  }
+}

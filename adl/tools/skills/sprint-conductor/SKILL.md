@@ -329,7 +329,9 @@ Bounded review-subagent exception:
   explicit model override in the forked review-subagent handoff
 - if the exception is disabled, the sprint review must remain local and record
   that no review subagent was used
-- the bundle should validate this boundary mechanically before review execution
+- the bundle should validate this boundary mechanically before review execution,
+  including `--require-responses-auth` when a Codex Responses API-backed review
+  subagent will be launched
 
 The sprint review must not claim that docs/cards alone are sufficient when the
 sprint changed implementation code.

@@ -1,0 +1,13 @@
+{
+  "schema": "csdlc.size_evidence.v1",
+  "issue": 5306,
+  "measurement_basis": "find csdlc-v2/src -name '*.rs' | wc -l",
+  "v2_rust_production_lines": 10544,
+  "v2_rust_and_manifest_lines": 13885,
+  "legacy_deletion_denominator_lines": 49979,
+  "legacy_deletion_denominator_files": 95,
+  "annotated_test_functions": 100,
+  "tests_are_not_a_budget": true,
+  "loc_budget_is_reviewable": true,
+  "useful_code_retained_when_required_for_lifecycle_invariants": true
+}

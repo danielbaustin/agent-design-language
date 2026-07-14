@@ -1,12 +1,18 @@
 {
-  "schema":"csdlc.coexistence_inventory.v1",
-  "required_v1_paths":[
-    {"path":"adl/tools/pr.sh","executable":true},
-    {"path":"adl/tools/install_owner_binaries.sh","executable":true},
-    {"path":"adl/src/bin/adl_csdlc.rs","executable":false},
-    {"path":"adl/src/cli/pr_cmd.rs","executable":false},
-    {"path":"adl/src/cli/tests/pr_cmd_inline/basics.rs","executable":false},
-    {"path":"docs/tooling/SESSION_COORDINATION_AND_ROOT_CHECKOUT_POLICY.md","executable":false}
+  "schema":"csdlc.coexistence_inventory.v2",
+  "v1_sunset":true,
+  "required_v1_paths":[],
+  "forbidden_v1_paths":[
+    "adl/tools/pr.sh",
+    "adl/src/bin/adl_csdlc.rs",
+    "adl/src/bin/csdlc.rs",
+    "adl/src/cli/pr_cmd.rs",
+    "adl/src/cli/pr_cmd_args.rs",
+    "adl/src/cli/pr_cmd_cards.rs",
+    "adl/src/cli/pr_cmd_prompt.rs",
+    "adl/src/cli/pr_cmd_validate.rs",
+    "adl/src/csdlc_prompt_editor.rs",
+    "csdlc-v2/src/bin/csdlc-import.rs"
   ],
   "required_v2_binaries":["csdlc-init","csdlc-bind","csdlc-edit","csdlc-validate","csdlc-schedule","csdlc-review","csdlc-publish","csdlc-shepherd","csdlc-closeout","csdlc-doctor"]
 }

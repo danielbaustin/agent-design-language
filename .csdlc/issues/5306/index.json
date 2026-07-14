@@ -1,0 +1,88 @@
+{
+  "schema": "csdlc.issue.index.v1",
+  "issue": 5306,
+  "repository": "danielbaustin/agent-design-language",
+  "initialization_digest": "4bd749716a1a708d0d72d50211d181af01748a6f3f95dd32db38053c25345d71",
+  "phase": "initialized",
+  "generation": 0,
+  "digest": "91800f11bbf0e869d1a8b5313c4943bcf0c661017b95747bc8ba523f75805c9d",
+  "claim": {
+    "id": "csdlc-v2-prepared-5306-v1",
+    "owner": "gate10d-preparation",
+    "generation": 0,
+    "acquired_unix_seconds": 1783999049,
+    "expires_unix_seconds": 1787209200,
+    "heartbeat_unix_seconds": 1783999049,
+    "branch": "codex/5306-v0-91-7-csdlc-v2-gate-10d2-approved-bounded-v1-deletion-wave",
+    "worktree": ".worktrees/adl-wp-5306",
+    "protected_paths": [
+      "adl/src/cli/pr_cmd",
+      "adl/src/cli/pr_cmd.rs",
+      "adl/src/cli/pr_cmd_args.rs",
+      "adl/src/cli/pr_cmd_cards.rs",
+      "adl/src/cli/pr_cmd_prompt.rs",
+      "adl/src/cli/pr_cmd_validate.rs",
+      "adl/tools/pr.sh",
+      "adl/tools/pr_cards.sh",
+      "adl/tools/pr_delegate.sh",
+      "adl/tools/pr_usage.sh"
+    ],
+    "purpose": "Reserve bounded incumbent deletion surfaces; no binding or deletion before current D1 eligibility and explicit approval."
+  },
+  "review_assignment": null,
+  "review": null,
+  "publication": null,
+  "readiness": null,
+  "terminal": null,
+  "migration": null,
+  "design_path": "docs/architecture/csdlc-v2/gate10d2/DESIGN.md",
+  "diagram_path": "docs/architecture/csdlc-v2/gate10d2/DIAGRAM.mmd",
+  "design_review": {
+    "approved": {
+      "reviewer": "operator-approved-gate10d-plan",
+      "revision": "9b7c6ff1029d318ff44bdf91b6cfa939f69a4be9396b0a711361937bf68812d1"
+    }
+  },
+  "cards": {
+    "sip": {
+      "values_digest": "ddf51dc2ce60db386716ec39337d41a19e1a129fe6897a8101f0eed87fbd8cbb",
+      "rendered_digest": "5f68a6edc304e97df0cf21bf952a2319719e2bdf0016a94ef60cbec70dc599ab",
+      "ast_digest": "2d2553100a89e6a676cf233bab0b7599bedd4e1fcc1022a34abad8132250a839"
+    },
+    "stp": {
+      "values_digest": "210346820b40c4cd3e85eba470b6d82668bee05bc0ef6672835cf725f542aa4b",
+      "rendered_digest": "6af4c123ce832030be3be188e7dd78d048bbbc14ed5714b5118a3e023417e936",
+      "ast_digest": "a3b1bbec6a0e3b3fd070bbd61c8d5794ab1747c3886d088f6816806aca30b9ed"
+    },
+    "spp": {
+      "values_digest": "4799a0539dbaccd5da661aa131ac30c3bb662d2391637eeb7726e808d83d5d08",
+      "rendered_digest": "8d08b388204b99368c2c0dd5cbd9cc53f1a883f26b1fa4bbe3f63ed062c6f41d",
+      "ast_digest": "64a1e2aaa10fa0f58d2dc2521e380695f2f205b713b636651fc180369ca18d4d"
+    },
+    "vpp": {
+      "values_digest": "46d3ab340938ade6ba249ac6146ba2aff6a4b84cd4b00b0f8a181dbcc0d4a64f",
+      "rendered_digest": "38f9153b12bf7fd38c2d4b9121157b3e9131cc8109b1cf25257776918f349a33",
+      "ast_digest": "18cc2151db2f0cc6b3afd5b2941506fa1a946c56a1c1280c769be007e755d465"
+    },
+    "srp": {
+      "values_digest": "6033f7aaae80b6ac928201e9f2766e166e3f45dba104d26d50e5da47ac4be4ae",
+      "rendered_digest": "99e4934441db3f6391f4eed3d7f6c8155105f986215c95a368d930cf5957bce4",
+      "ast_digest": "32a889ceb8537703298ec528fe98b8d2d6c0ab22508604ba07b25d6c83d2271d"
+    },
+    "sor": {
+      "values_digest": "12bc18fde3cb638255d57bd922e89abfe85d0947ca6f4c79a3ef76ca2895dff0",
+      "rendered_digest": "51436be732edc1148c74600701b699a40e2c26783ee0a9afaedf8ebc2f655357",
+      "ast_digest": "efe710aec70ec7c0ad0378b0fe43ebdfe14867a607f901a89607423e3a3ba8e7"
+    }
+  },
+  "transitions": [],
+  "audit": [
+    {
+      "sequence": 1,
+      "generation": 0,
+      "actor": "gate10d-preparation",
+      "reason": "initialize issue record and all six cards",
+      "operation": "bootstrap"
+    }
+  ]
+}

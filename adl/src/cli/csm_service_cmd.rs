@@ -129,6 +129,8 @@ struct ServiceManifest {
     connection_pool_status: Value,
     daemon_status: PathBuf,
     continuity_checkpoint: PathBuf,
+    #[serde(default)]
+    safe_fail_bundle: PathBuf,
     continuity_replay_manifest: PathBuf,
     operator_events: PathBuf,
     checkpoint_interval_secs: u64,
@@ -159,6 +161,7 @@ struct ServiceStatus {
     plist_ref: String,
     daemon_status_ref: String,
     continuity_checkpoint_ref: String,
+    safe_fail_bundle_ref: String,
     observability_log_ref: String,
     otel_log_ref: String,
     otel_status_ref: String,
@@ -169,6 +172,7 @@ struct ServiceStatus {
     startup_classification: String,
     first_daemon_record_observed: bool,
     continuity_checkpoint_observed: bool,
+    safe_fail_bundle_observed: bool,
     cycle_ledger_observed: bool,
     runtime_api_observed: bool,
     otlp_exporter_configured: bool,
@@ -328,6 +332,7 @@ fn stop(args: &[String]) -> Result<()> {
     let parsed = parse_service_args(args, false)?;
     let service_root = absolutize(&parsed.service_root)?;
     let manifest = read_manifest(&service_root)?;
+    record_service_governed_stop(&manifest)?;
     match manifest.manager {
         ServiceManager::Local => stop_local(&manifest)?,
         ServiceManager::Launchd => run_launchctl(&[
@@ -600,6 +605,7 @@ fn build_manifest(
         connection_pool_status: csm_runtime_connection_pool_status(),
         daemon_status: state_root.join("daemon_status.json"),
         continuity_checkpoint: state_root.join("continuity_checkpoint.json"),
+        safe_fail_bundle: state_root.join("safe_fail_bundle.json"),
         continuity_replay_manifest: state_root.join("continuity_replay_manifest.json"),
         operator_events: state_root.join("operator_events.jsonl"),
         checkpoint_interval_secs: parsed.checkpoint_interval_secs,
@@ -819,7 +825,6 @@ fn configure_local_service_process(command: &mut Command) {
 fn configure_local_service_process(_command: &mut Command) {}
 
 fn stop_local(manifest: &ServiceManifest) -> Result<()> {
-    let _ = long_lived_agent::stop(&manifest.spec, "csm service stop requested");
     if !manifest.pid_file.exists() {
         return Ok(());
     }
@@ -836,6 +841,20 @@ fn stop_local(manifest: &ServiceManifest) -> Result<()> {
         let _ = fs::remove_file(&manifest.pid_file);
     }
     Ok(())
+}
+
+fn record_service_governed_stop(manifest: &ServiceManifest) -> Result<()> {
+    long_lived_agent::governed_stop(
+        &manifest.spec,
+        long_lived_agent::GovernedStopRequest {
+            reason: "csm service stop requested".to_string(),
+            operator_identity: "csm-service".to_string(),
+            authorization: "csm-service-stop".to_string(),
+            intent: "recoverability_drill".to_string(),
+            requested_at: Utc::now(),
+        },
+    )
+    .map(|_| ())
 }
 
 fn record_supervisor_status(
@@ -927,6 +946,7 @@ fn service_status(
         plist_ref: ref_for(&manifest.service_root, &manifest.plist),
         daemon_status_ref: ref_for(&manifest.service_root, &manifest.daemon_status),
         continuity_checkpoint_ref: ref_for(&manifest.service_root, &manifest.continuity_checkpoint),
+        safe_fail_bundle_ref: ref_for(&manifest.service_root, &manifest.safe_fail_bundle),
         observability_log_ref: ref_for(&manifest.service_root, &manifest.observability_log),
         otel_log_ref: ref_for(&manifest.service_root, &manifest.otel_log),
         otel_status_ref: ref_for(&manifest.service_root, &manifest.otel_status),
@@ -937,6 +957,7 @@ fn service_status(
         startup_classification,
         first_daemon_record_observed,
         continuity_checkpoint_observed: manifest.continuity_checkpoint.exists(),
+        safe_fail_bundle_observed: manifest.safe_fail_bundle.exists(),
         cycle_ledger_observed: cycle_ledger_path(manifest).exists(),
         runtime_api_observed,
         otlp_exporter_configured: manifest.otlp_endpoint.is_some(),
@@ -1582,6 +1603,7 @@ fn append_startup_ledger(
         "pid": pid,
         "daemon_status_ref": ref_for(&manifest.service_root, &manifest.daemon_status),
         "continuity_checkpoint_ref": ref_for(&manifest.service_root, &manifest.continuity_checkpoint),
+        "safe_fail_bundle_ref": ref_for(&manifest.service_root, &manifest.safe_fail_bundle),
         "cycle_ledger_ref": ref_for(&manifest.service_root, &cycle_ledger_path(manifest)),
         "details": details.unwrap_or_else(|| json!({})),
         "updated_at": Utc::now().to_rfc3339()
@@ -1969,6 +1991,13 @@ fn normalize_service_manifest_metadata(mut manifest: ServiceManifest) -> Service
     }
     if manifest.api_bind.trim().is_empty() {
         manifest.api_bind = DEFAULT_API_BIND.to_string();
+    }
+    if manifest.safe_fail_bundle.as_os_str().is_empty() {
+        manifest.safe_fail_bundle = manifest
+            .continuity_checkpoint
+            .parent()
+            .unwrap_or(manifest.service_root.as_path())
+            .join("safe_fail_bundle.json");
     }
     manifest
 }

@@ -187,7 +187,7 @@ Bounded review-subagent exception:
   explicit model override in forked review-subagent handoffs
 - if disabled, record that no review subagent was used
 - validate the declared reviewer-subagent set before review execution:
-  - `python3 adl/tools/skills/sprint-conductor/scripts/validate_review_subagent_policy.py --allow-review-subagent-exception <bool> --max-review-subagents 1`
+  - `python3 adl/tools/skills/sprint-conductor/scripts/validate_review_subagent_policy.py --allow-review-subagent-exception <bool> --max-review-subagents 1 --require-responses-auth`
 
 ## Closeout Phase
 

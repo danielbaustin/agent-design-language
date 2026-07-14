@@ -1,0 +1,71 @@
+{
+  "identity": {
+    "schema_version": "1.0.0",
+    "template_version": "1.0.0",
+    "issue": 5306,
+    "repository": "danielbaustin/agent-design-language",
+    "title": "[v0.91.7][csdlc-v2] Gate 10D2: approved bounded v1 deletion wave",
+    "slug": "v0-91-7-csdlc-v2-gate-10d2-approved-bounded-v1-deletion-wave",
+    "version": "v0.91.7",
+    "generation": 0
+  },
+  "status": "ready",
+  "content": {
+    "card_kind": "vpp",
+    "values": {
+      "summary": "Execute the smallest proving validation DAG.",
+      "lanes": [
+        {
+          "lane": "csdlc-v2-full",
+          "proof_role": "Prove independent v2 remains green after each deletion slice",
+          "acceptance_ids": [
+            "AC-3",
+            "AC-4"
+          ],
+          "deterministic": true,
+          "resource_profile": "large",
+          "budget_seconds": 6000,
+          "budget_tokens": 30000,
+          "argv": [
+            "cargo",
+            "test",
+            "--manifest-path",
+            "csdlc-v2/Cargo.toml"
+          ],
+          "parallel_group": "local-rust",
+          "defer_reason": null
+        },
+        {
+          "lane": "eligibility-recompute",
+          "proof_role": "Recompute exact removal and retained-surface truth",
+          "acceptance_ids": [
+            "AC-1",
+            "AC-2",
+            "AC-5"
+          ],
+          "deterministic": true,
+          "resource_profile": "small",
+          "budget_seconds": 1200,
+          "budget_tokens": 5000,
+          "argv": [
+            "csdlc-eligibility",
+            "evaluate",
+            "--repo",
+            ".",
+            "--request",
+            "csdlc-v2/operator/eligibility-request.json"
+          ],
+          "parallel_group": "authority",
+          "defer_reason": null
+        }
+      ],
+      "planned_validation_seconds": 7200,
+      "planned_validation_tokens": 50000,
+      "failure_policy": "Fail closed with zero additional deletion; restore or repair only the current bounded slice.",
+      "design_ref": "docs/architecture/csdlc-v2/gate10d2/DESIGN.md",
+      "design_digest": "9b7c6ff1029d318ff44bdf91b6cfa939f69a4be9396b0a711361937bf68812d1",
+      "diagram_ref": "docs/architecture/csdlc-v2/gate10d2/DIAGRAM.mmd",
+      "diagram_digest": "dda9acbc40f48002da88859feb8fe7f7162f9a6a3ea08db58d8e4f631fd95b07"
+    }
+  }
+}

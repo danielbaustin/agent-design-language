@@ -14,14 +14,13 @@ const REQUIRED_STEPS: [&str; 5] = [
     "full_suite",
     "samples_parity",
     "quality",
-    "v1_smoke",
+    "v2_install_verify",
 ];
-const BINARY_NAMES: [&str; 15] = [
+const BINARY_NAMES: [&str; 14] = [
     "csdlc-bind",
     "csdlc-closeout",
     "csdlc-doctor",
     "csdlc-edit",
-    "csdlc-import",
     "csdlc-init",
     "csdlc-install",
     "csdlc-proof",
@@ -144,7 +143,9 @@ pub fn run_pre_switch_proof(repo: &Path, manifest: &ProofManifest) -> Result<Pre
         select_generation(&selector, manifest.issue, Some(Generation::V2))? == Generation::V2;
     let rollback_to_v1_selected =
         select_generation(&selector, manifest.issue, None)? == Generation::V1;
-    let v1_paths_before = required_v1_paths_exist(repo);
+    // Historical Gate 10B proof only: this pre-switch lane is never the final
+    // v1-sunset validation path and intentionally records incumbent presence.
+    let v1_paths_before = historical_v1_paths_exist(repo);
     let revision = command_text(repo, "git", &["rev-parse", "HEAD"])?;
     let mut steps = Vec::new();
     for step in &manifest.steps {
@@ -167,7 +168,7 @@ pub fn run_pre_switch_proof(repo: &Path, manifest: &ProofManifest) -> Result<Pre
     }
     let selector_after = read_selector(repo, &manifest.generation_selector)?;
     let default_after = select_generation(&selector_after, manifest.issue, None)?;
-    let v1_paths_after = required_v1_paths_exist(repo);
+    let v1_paths_after = historical_v1_paths_exist(repo);
     require_clean_revision(repo)?;
     let measurements = measure(repo, &steps)?;
     let passed = default_before == Generation::V1
@@ -237,7 +238,7 @@ pub fn write_evidence_atomic(path: &Path, evidence: &PreSwitchEvidence) -> Resul
     Ok(())
 }
 
-fn required_v1_paths_exist(repo: &Path) -> bool {
+fn historical_v1_paths_exist(repo: &Path) -> bool {
     [
         ("adl/tools/pr.sh", true),
         ("adl/tools/install_owner_binaries.sh", true),
@@ -271,7 +272,7 @@ fn expected_command(id: &str) -> Option<(&'static str, Vec<String>)> {
             "-D",
             "warnings",
         ],
-        "v1_smoke" => return Some(("adl/tools/pr.sh", vec!["help".into()])),
+        "v2_install_verify" => return Some(("csdlc-install", vec!["verify".into()])),
         _ => return None,
     };
     Some((

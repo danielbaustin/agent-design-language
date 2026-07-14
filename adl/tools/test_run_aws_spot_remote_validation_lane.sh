@@ -129,7 +129,99 @@ cat >"$artifact_dir/events.jsonl" <<'JSONL'
 JSONL
 echo "fixture remote validation passed"
 EOF
-chmod +x "$fake_bin/aws" "$fake_bin/adl-aws-remote-validation"
+
+cat >"$fake_bin/curl" <<'EOF'
+#!/usr/bin/env bash
+set -euo pipefail
+method="GET"
+out=""
+data=""
+url=""
+while [[ $# -gt 0 ]]; do
+  case "$1" in
+    -X)
+      method="${2:-}"
+      shift 2
+      ;;
+    -o)
+      out="${2:-}"
+      shift 2
+      ;;
+    --data-binary)
+      data="${2:-}"
+      shift 2
+      ;;
+    -H|-w)
+      shift 2
+      ;;
+    --config)
+      shift 2
+      ;;
+    -sS)
+      shift
+      ;;
+    http://*|https://*)
+      url="$1"
+      shift
+      ;;
+    *)
+      shift
+      ;;
+  esac
+done
+mkdir -p "$(dirname "${ADL_FAKE_GITHUB_API_LOG:?}")"
+printf 'method=%s url=%s data=%s\n' "$method" "$url" "$data" >>"$ADL_FAKE_GITHUB_API_LOG"
+if [[ -n "$out" ]]; then
+  printf '{}\n' >"$out"
+fi
+case "$method" in
+  GET)
+    if [[ "$url" == *"/actions/variables/ADL_AWS_REMOTE_VALIDATION_SSH_ALLOWED_CIDR" ]]; then
+      printf '200'
+    else
+      printf '404'
+    fi
+    ;;
+  POST)
+    printf '201'
+    ;;
+  PATCH)
+    printf '204'
+    ;;
+  *)
+    printf '500'
+    ;;
+esac
+EOF
+chmod +x "$fake_bin/aws" "$fake_bin/adl-aws-remote-validation" "$fake_bin/curl"
+
+ADL_FAKE_GITHUB_API_LOG="$TMP/github-api.log" \
+ADL_GITHUB_API_BIN="$fake_bin/curl" \
+ADL_GITHUB_API_URL="https://api.github.test" \
+GITHUB_TOKEN="test-token" \
+bash "$SETUP_SCRIPT" \
+  --apply \
+  --github-vars-only \
+  --region us-west-2 \
+  --repo danielbaustin/agent-design-language \
+  --ssh-allowed-cidr 203.0.113.10/32 \
+  --artifact-dir "$TMP/github-setup" >"$TMP/github-setup.out"
+
+grep -F "PASS github_repository_variable name=AWS_SPOT_REMOTE_VALIDATION_REGION configured=true action=POST" "$TMP/github-setup.out" >/dev/null
+grep -F "PASS github_repository_variable name=ADL_AWS_REMOTE_VALIDATION_SSH_ALLOWED_CIDR configured=true action=PATCH" "$TMP/github-setup.out" >/dev/null
+grep -F "url=https://api.github.test/repos/danielbaustin/agent-design-language/actions/variables/AWS_SPOT_REMOTE_VALIDATION_REGION" "$TMP/github-api.log" >/dev/null
+grep -F "url=https://api.github.test/repos/danielbaustin/agent-design-language/actions/variables/ADL_AWS_REMOTE_VALIDATION_SSH_ALLOWED_CIDR" "$TMP/github-api.log" >/dev/null
+grep -F "url=https://api.github.test/repos/danielbaustin/agent-design-language/actions/variables data=@$TMP/github-setup/github-variable-AWS_SPOT_REMOTE_VALIDATION_REGION.json" "$TMP/github-api.log" >/dev/null
+grep -F "method=PATCH url=https://api.github.test/repos/danielbaustin/agent-design-language/actions/variables/ADL_AWS_REMOTE_VALIDATION_SSH_ALLOWED_CIDR data=@$TMP/github-setup/github-variable-ADL_AWS_REMOTE_VALIDATION_SSH_ALLOWED_CIDR.json" "$TMP/github-api.log" >/dev/null
+python3 - "$TMP/github-setup/github-variable-ADL_AWS_REMOTE_VALIDATION_SSH_ALLOWED_CIDR.json" <<'PY'
+import json
+import sys
+payload = json.load(open(sys.argv[1], encoding="utf-8"))
+assert payload == {
+    "name": "ADL_AWS_REMOTE_VALIDATION_SSH_ALLOWED_CIDR",
+    "value": "203.0.113.10/32",
+}
+PY
 
 ADL_AWS_CLI="$fake_bin/aws" \
 bash "$SCRIPT" \
@@ -278,12 +370,15 @@ grep -F -- "Redact Spot artifact identities" "$WORKFLOW" >/dev/null
 grep -F -- "Build Spot remote validation binary" "$WORKFLOW" >/dev/null
 grep -F -- "adl-aws-remote-validation-cache-volume:/mnt/adl-cache" "$WORKFLOW" >/dev/null
 grep -F -- "ssh tail" "$WORKFLOW" >/dev/null
+grep -F -- "ADL_AWS_REMOTE_VALIDATION_SSH_ALLOWED_CIDR" "$WORKFLOW" >/dev/null
 grep -F -- "if-no-files-found: warn" "$WORKFLOW" >/dev/null
 grep -F -- "ec2:RunInstances" "$SETUP_SCRIPT" >/dev/null
 grep -F -- "ec2:CreateVolume" "$SETUP_SCRIPT" >/dev/null
 grep -F -- "ssm:SendCommand" "$SETUP_SCRIPT" >/dev/null
 grep -F -- "iam:PassRole" "$SETUP_SCRIPT" >/dev/null
 grep -F -- "AWS_SPOT_REMOTE_VALIDATION_ROLE_ARN" "$SETUP_SCRIPT" >/dev/null
+grep -F -- "AWS_SPOT_REMOTE_VALIDATION_REGION" "$SETUP_SCRIPT" >/dev/null
+grep -F -- "ADL_AWS_REMOTE_VALIDATION_SSH_ALLOWED_CIDR" "$SETUP_SCRIPT" >/dev/null
 grep -F -- "repo:{repo}:ref:refs/heads/main" "$SETUP_SCRIPT" >/dev/null
 grep -F -- "repo:{repo}:ref:refs/heads/codex/*" "$SETUP_SCRIPT" >/dev/null
 grep -F -- "AdlAwsRemoteValidationBuilderImageEcrRead" "$ROOT/adl/src/aws_remote_validation.rs" >/dev/null

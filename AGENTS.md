@@ -1,5 +1,17 @@
 # ADL Agent Guidelines
 
+## Final C-SDLC v2 authority (Gate 10D2)
+
+The v1 C-SDLC command wrappers, `pr.sh` lifecycle wrappers, prompt-template
+wrappers, and `csdlc-import` binary are sunset. For C-SDLC work, the sole
+operational authority is the independent Rust v2 binary set under
+`csdlc-v2/`, routed through the typed skills in `csdlc-v2/operator/skills/`.
+Use the typed v2 binaries and do not invoke the removed v1 wrappers. The final
+coexistence inventory explicitly records `v1_sunset`; historical Gate 10A-C
+records remain immutable evidence and are not an instruction to retain deleted
+binaries. Session ownership and stale-claim recovery remain required
+invariants, retained in the shared ledger until a later ADL overlap cleanup.
+
 This file is the repository-local operating contract for coding agents working
 in ADL.
 
@@ -28,9 +40,9 @@ These are the four behavioral principles at the center of this file.
 
 These rules are mandatory for ADL issue work.
 
-1. Use `workflow-conductor` for every issue and lifecycle stage.
-   - Do not bypass the conductor for issue execution, review routing,
-     publication, janitor work, or closeout.
+1. Use the typed v2 C-SDLC route for C-SDLC issues and lifecycle stages.
+   - `workflow-conductor` and repo-native `pr.sh` are historical v1 routes and
+     are not valid C-SDLC v2 lifecycle commands.
    - GitHub operations should use the shared token resolver. When an explicit
      token-file source is needed, use
      `ADL_GITHUB_TOKEN_FILE=$HOME/keys/github.token`. Never print, copy,
@@ -66,17 +78,15 @@ These rules are mandatory for ADL issue work.
    - The current prompt-template registry is `docs/templates/prompts/current.json`;
      use it rather than hard-coding a template version unless an issue
      explicitly requires a compatibility path.
-   - For new or fully re-rendered cards, prefer the deterministic
-     prompt-template values renderer over direct Markdown structure edits:
-     `adl-csdlc tooling prompt-template validate-values`, `edit-values`,
-     `render`, `render-all`, `validate-structure`, and `validate-schemas`.
-   - For supported field-level card updates, edit the values object first with
-     `adl-csdlc tooling prompt-template edit-values --kind <kind> --values <path> --set <field=value>`,
-     then render and validate structure. Do not patch the rendered Markdown
-     when a declared values-field edit is sufficient.
-   - When starting from an existing rendered card, test representability first
-     with `adl-csdlc tooling prompt-template import-values --kind <kind> --input <card.md> --out <values.yaml>`,
-     then validate the imported values and re-render before accepting a rewrite.
+   - For new or fully re-rendered cards, use the independent v2
+     `csdlc-edit` and `csdlc-validate` typed routes over direct Markdown/state
+     edits. The v1 prompt-template wrappers are historical and sunset.
+   - For supported field-level card updates, send a typed `csdlc-edit apply`
+     request, then run `csdlc-validate`. Do not patch rendered Markdown when a
+     declared semantic field edit is sufficient.
+   - When starting from an existing rendered card, use the v2 markdown.rs AST
+     importer through a typed edit request and validate before accepting a
+     rewrite.
    - Treat the tracked structure schemas under
      `docs/templates/prompts/<version>/schemas/` as the template-shape
      authority. If a rendered card fails structure validation, fix the values or
@@ -84,7 +94,7 @@ These rules are mandatory for ADL issue work.
      template prose by hand.
 3. Always work in a bound worktree on a specific branch.
    - Never do tracked issue work on `main`.
-   - Use the repo-native issue-mode `pr run` flow to bind execution context.
+   - Use the v2 `csdlc-bind` flow to bind execution context.
    - Keep the primary checkout clean on `main` for inspection, bootstrap,
      doctor/readiness, and issue-mode binding only. After binding, tracked
      implementation, janitor, finish, and repair edits happen in the issue
@@ -122,11 +132,10 @@ These rules are mandatory for ADL issue work.
 
 ### C-SDLC v2 coexistence (Gate 10A)
 
-- Generation authority is `csdlc-v2/operator/generation-selector.json`. Gate 10A began with v1 as default; after reviewed Gate 10C cutover the selector may name v2 while an explicit v1 override remains mandatory during the rollback window.
+- Generation authority is `csdlc-v2/operator/generation-selector.json`. Gate 10A-C records are historical; Gate 10D2 is the current final `v1_sunset` authority.
 - Explicit v2 work routes through the nine typed contracts under `csdlc-v2/operator/skills/`; those skills delegate to Rust binaries and never mutate Markdown/state directly.
-- Resolve every lifecycle route through `csdlc-install resolve`, which reads that selector as the sole authority: v1 is the default before cutover, v2 is the default after cutover, and an explicit v1 override remains valid throughout rollback.
-- Install v2 only into the dedicated `.adl/bin/csdlc-v2/` generation directory with `csdlc-install`; the shared v1 `.adl/bin/` directory is forbidden. Verification must prove the v1 workflow, installer, tests, and recovery policy remain present regardless of the selected default.
-- A v2 opt-in or default switch never authorizes v1 deletion. Deletion remains a separate explicitly approved phase after post-switch proof.
+- Resolve every current lifecycle route through `csdlc-install resolve`, which reads that selector as the sole authority. Install v2 only into the dedicated `.adl/bin/csdlc-v2/` generation directory; the final verifier also fails if forbidden v1 paths reappear.
+- Historical rollback and recovery proofs remain immutable evidence. The exact D2 approval authorizes the completed v1 command-surface sunset; retained session ownership remains a shared invariant.
 
 - ADL is deterministic by design. Do not introduce hidden state, undeclared
   side effects, or review-hostile magic.
@@ -192,14 +201,14 @@ These rules are mandatory for ADL issue work.
 For a normal tracked issue:
 
 1. read the source issue prompt and current task bundle
-2. route through `workflow-conductor`
+2. route through the typed v2 C-SDLC skill and binary for C-SDLC issues
 3. confirm the primary checkout is clean on `main`, inspect active worktrees,
    and preserve any session handoff or collision evidence before binding work
 4. confirm all six C-SDLC cards exist and came from the active prompt-template
    registry
 5. make sure `SIP`, `STP`, and `SPP` are issue-specific and design-time ready
 6. follow the conductor-selected lifecycle step
-7. if the issue is ready for execution binding, use `adl/tools/pr.sh run <issue>`
+7. if the issue is ready for execution binding, use `csdlc-bind --root . --request <request.json>`
 8. call `create_goal` for the bound tracked issue session before implementation
    starts
 9. make the bounded change in the issue worktree, never on `main`
@@ -209,7 +218,7 @@ For a normal tracked issue:
    `docs/tooling/HARDLINKED_RUST_DEPENDENCY_CACHE.md`
 11. run the smallest meaningful validation for the touched surface
 12. run a pre-PR subagent review and fix findings
-13. verify PR base/stack topology, then publish through the normal PR workflow
+13. run `csdlc-review` before `csdlc-publish`; publication must fail closed without current review truth
 14. use `update_goal` for truthful terminal session state, then perform closeout
    after merge/closure
 

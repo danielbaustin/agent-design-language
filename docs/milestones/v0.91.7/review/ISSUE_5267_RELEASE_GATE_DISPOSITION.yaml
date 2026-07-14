@@ -1,0 +1,26 @@
+schema_version: adl.release_gate_disposition.v1
+issue: 5267
+decision: publishable_with_green_pr_checks_and_required_ci_before_merge
+reviewer_or_review_mode: pre_pr_subagent_review_plus_focused_local_and_github_pr_validation
+changed_release_gate_surfaces:
+  - .github/workflows/aws-spot-remote-validation.yaml
+  - adl/src/cli/csm_service_cmd.rs
+  - adl/tests/cli_smoke/agent.rs
+  - adl/tools/setup_aws_spot_remote_validation_github_resources.sh
+  - adl/tools/test_run_aws_spot_remote_validation_lane.sh
+focused_validation_run: >
+  Local focused proof recorded in the #5267 SOR passed for git diff hygiene,
+  Rust formatting, the CSM service readiness smoke test with
+  CARGO_TARGET_DIR=/Volumes/FastWork/adl-builds/cargo-targets/issue-5267, and
+  the VPP-selected PR-fast lane. Current GitHub PR validation for PR #5300 at
+  commit 8b8d88b278c8cdf53e2c919b54cbc9e188a17ef1 reports success for
+  adl-path-policy, adl-coverage, adl-tooling-contracts, adl-rust-fmt-clippy,
+  adl-rust-tests, adl-demo-proof, and adl-ci, with adl-slow-proof skipped by
+  policy.
+residual_ci_proof_required_before_merge: >
+  PR #5300 must remain green at the merge head. If any required GitHub check is
+  rerun, cancelled, or fails before merge, keep the issue watcher attached and
+  route the failure through the repo-native janitor path before closeout.
+notes:
+  - This disposition is limited to issue #5267 and PR #5300 current head 8b8d88b278c8cdf53e2c919b54cbc9e188a17ef1.
+  - It does not convert release-gate-sensitive workflow or Spot validation script changes into release proof beyond the focused local proof and green PR checks recorded above.

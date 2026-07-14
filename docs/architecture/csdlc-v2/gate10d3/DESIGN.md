@@ -7,6 +7,11 @@ Remove only the executable v1 rollback surface after
 health, and the exact protected-path inventory are typed inputs. Any missing,
 ambiguous, or early input yields zero mutation.
 
+The timestamp is the historical Gate 10C default. The 2026-07-14 accelerated
+operator decision may waive it through an exact
+`csdlc.deletion_approval.v2` record after 100% parity, independent validation,
+and review pass; prose or an unbound boolean cannot waive it.
+
 ## Invariants
 
 - The importer remains untouched.

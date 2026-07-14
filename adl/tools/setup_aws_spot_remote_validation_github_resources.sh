@@ -13,6 +13,8 @@ Options:
   --region <region>               AWS region. Default: us-west-2.
   --repo <owner/name>             GitHub repository. Default: danielbaustin/agent-design-language.
   --github-role-name <name>       OIDC role for GitHub Actions.
+  --ssh-allowed-cidr <cidr>       Optional SSH debug source CIDR repository variable.
+  --github-vars-only              Only create/update GitHub repository variables.
   --artifact-dir <path>           Local setup artifact directory.
   -h, --help                      Show this help.
 
@@ -28,12 +30,16 @@ die() {
 }
 
 AWS_CLI="${ADL_AWS_CLI:-aws}"
+GITHUB_API_BIN="${ADL_GITHUB_API_BIN:-curl}"
+GITHUB_API_URL="${ADL_GITHUB_API_URL:-https://api.github.com}"
 PROFILE="${ADL_AWS_PROFILE:-agent-logic-admin}"
 REGION="${ADL_AWS_REGION:-us-west-2}"
 REPO="danielbaustin/agent-design-language"
 GITHUB_ROLE_NAME="adl-spot-remote-validation-github-actions-role"
+SSH_ALLOWED_CIDR="${ADL_AWS_REMOTE_VALIDATION_SSH_ALLOWED_CIDR:-}"
 ARTIFACT_DIR=".adl/tmp/aws-spot-remote-validation-github-setup"
 MODE="check"
+GITHUB_VARS_ONLY=false
 
 while [ "$#" -gt 0 ]; do
   case "$1" in
@@ -65,6 +71,15 @@ while [ "$#" -gt 0 ]; do
       GITHUB_ROLE_NAME="$2"
       shift 2
       ;;
+    --ssh-allowed-cidr)
+      [ "$#" -ge 2 ] || die "--ssh-allowed-cidr requires a value"
+      SSH_ALLOWED_CIDR="$2"
+      shift 2
+      ;;
+    --github-vars-only)
+      GITHUB_VARS_ONLY=true
+      shift
+      ;;
     --artifact-dir)
       [ "$#" -ge 2 ] || die "--artifact-dir requires a value"
       ARTIFACT_DIR="$2"
@@ -87,6 +102,141 @@ esac
 
 mkdir -p "$ARTIFACT_DIR"
 aws_args=(--profile "$PROFILE")
+
+github_token() {
+  if [ -n "${GITHUB_TOKEN:-}" ]; then
+    printf '%s' "$GITHUB_TOKEN"
+    return 0
+  fi
+  if [ -n "${GH_TOKEN:-}" ]; then
+    printf '%s' "$GH_TOKEN"
+    return 0
+  fi
+  if [ -n "${ADL_GITHUB_TOKEN_FILE:-}" ] && [ -r "$ADL_GITHUB_TOKEN_FILE" ]; then
+    sed -n '1p' "$ADL_GITHUB_TOKEN_FILE"
+    return 0
+  fi
+  if [ -r "$HOME/keys/github.token" ]; then
+    sed -n '1p' "$HOME/keys/github.token"
+    return 0
+  fi
+  return 1
+}
+
+github_variable_status() {
+  variable_name="$1"
+  token="$2"
+  status_path="$ARTIFACT_DIR/github-variable-${variable_name}.status"
+  body_path="$ARTIFACT_DIR/github-variable-${variable_name}.body"
+  curl_config_path="$(github_curl_config "$variable_name" "lookup" "$token")"
+  "$GITHUB_API_BIN" \
+    --config "$curl_config_path" \
+    -sS \
+    -o "$body_path" \
+    -w '%{http_code}' \
+    "$GITHUB_API_URL/repos/$REPO/actions/variables/$variable_name" >"$status_path"
+  sed -n '1p' "$status_path"
+}
+
+github_curl_config() {
+  variable_name="$1"
+  purpose="$2"
+  token="$3"
+  config_path="$ARTIFACT_DIR/github-variable-${variable_name}-${purpose}.curl"
+  python3 - <<'PY' "$config_path" "$token"
+import os
+import sys
+from pathlib import Path
+
+path, token = sys.argv[1:3]
+Path(path).write_text(
+    "\n".join([
+        'header = "Accept: application/vnd.github+json"',
+        f'header = "Authorization: Bearer {token}"',
+        'header = "X-GitHub-Api-Version: 2022-11-28"',
+        "",
+    ]),
+    encoding="utf-8",
+)
+os.chmod(path, 0o600)
+PY
+  printf '%s' "$config_path"
+}
+
+github_variable_payload() {
+  variable_name="$1"
+  variable_value="$2"
+  payload_path="$ARTIFACT_DIR/github-variable-${variable_name}.json"
+  python3 - <<'PY' "$payload_path" "$variable_name" "$variable_value"
+import json
+import sys
+from pathlib import Path
+
+path, name, value = sys.argv[1:4]
+Path(path).write_text(json.dumps({"name": name, "value": value}, separators=(",", ":")) + "\n")
+PY
+  printf '%s' "$payload_path"
+}
+
+upsert_github_variable() {
+  variable_name="$1"
+  variable_value="$2"
+  if [ -z "$variable_value" ]; then
+    printf 'SKIP github_repository_variable name=%s reason=empty_value\n' "$variable_name"
+    return 0
+  fi
+  token="$(github_token || true)"
+  if [ -z "$token" ]; then
+    printf 'WARN github_repository_variable name=%s configured=false reason=missing_github_token\n' "$variable_name" >&2
+    return 0
+  fi
+
+  status="$(github_variable_status "$variable_name" "$token")"
+  payload_path="$(github_variable_payload "$variable_name" "$variable_value")"
+  response_path="$ARTIFACT_DIR/github-variable-${variable_name}-upsert.response"
+  case "$status" in
+    200)
+      method="PATCH"
+      url="$GITHUB_API_URL/repos/$REPO/actions/variables/$variable_name"
+      ;;
+    404)
+      method="POST"
+      url="$GITHUB_API_URL/repos/$REPO/actions/variables"
+      ;;
+    *)
+      die "GitHub repository variable lookup failed for $variable_name with HTTP $status"
+      ;;
+  esac
+  curl_config_path="$(github_curl_config "$variable_name" "upsert" "$token")"
+  upsert_status="$("$GITHUB_API_BIN" \
+    --config "$curl_config_path" \
+    -sS \
+    -o "$response_path" \
+    -w '%{http_code}' \
+    -X "$method" \
+    -H "Content-Type: application/json" \
+    --data-binary "@$payload_path" \
+    "$url")"
+  case "$method:$upsert_status" in
+    PATCH:204|POST:201)
+      printf 'PASS github_repository_variable name=%s configured=true action=%s\n' "$variable_name" "$method"
+      ;;
+    *)
+      die "GitHub repository variable upsert failed for $variable_name with HTTP $upsert_status"
+      ;;
+  esac
+}
+
+configure_github_variables() {
+  upsert_github_variable "AWS_SPOT_REMOTE_VALIDATION_REGION" "$REGION"
+  upsert_github_variable "ADL_AWS_REMOTE_VALIDATION_SSH_ALLOWED_CIDR" "$SSH_ALLOWED_CIDR"
+}
+
+if [ "$GITHUB_VARS_ONLY" = "true" ]; then
+  [ "$MODE" = "apply" ] || die "--github-vars-only requires --apply"
+  configure_github_variables
+  exit 0
+fi
 
 identity_json="$("$AWS_CLI" sts get-caller-identity "${aws_args[@]}" --output json)"
 account_hash="$(
@@ -284,6 +434,7 @@ Path(path).write_text(
 )
 PY
 chmod 600 "$github_config"
+configure_github_variables
 
 printf 'PASS aws_spot_remote_validation_github_resources_ready region=%s profile=%s role_configured=true\n' "$REGION" "$PROFILE"
 printf 'github_actions_config_path=%s\n' "$github_config"
