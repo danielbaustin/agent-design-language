@@ -25,6 +25,7 @@ COVERAGE_BUILD_ROOT="${ADL_COVERAGE_BUILD_ROOT:-$(default_coverage_build_root)}"
 TEST_THREADS="${ADL_AUTHORITATIVE_COVERAGE_TEST_THREADS:-${ADL_COVERAGE_TEST_THREADS:-4}}"
 PARTITION_COUNT="${ADL_AUTHORITATIVE_COVERAGE_PARTITIONS:-2}"
 SKIP_PATTERN="${ADL_AUTHORITATIVE_COVERAGE_SKIP_PATTERN:-real_pr_}"
+COVERAGE_RUN_ID="${ADL_COVERAGE_RUN_ID:-${GITHUB_RUN_ID:-local}-$$}"
 
 usage() {
   cat <<'USAGE'
@@ -118,6 +119,7 @@ if [ "$MODE" = "full_authoritative_default_features" ]; then
   coverage_command=(cargo llvm-cov nextest \
     --workspace \
     --no-report \
+    --no-clean \
     --no-fail-fast \
     --no-tests pass \
     --test-threads "$TEST_THREADS")
@@ -130,6 +132,7 @@ else
   coverage_command=(cargo llvm-cov nextest \
     --workspace \
     --no-report \
+    --no-clean \
     --no-fail-fast \
     --no-tests pass \
     --test-threads "$TEST_THREADS")
@@ -146,12 +149,14 @@ if [[ ! "$PARTITION_COUNT" =~ ^[1-9][0-9]*$ ]]; then
 fi
 
 run_workspace_coverage_partitions() {
-  local partition_logs="$COVERAGE_BUILD_ROOT/partition-logs/workspace"
+  local partition_logs="$COVERAGE_BUILD_ROOT/partition-logs/${coverage_profile_namespace}-${COVERAGE_RUN_ID}"
   local partition pids=() statuses=()
   mkdir -p "$partition_logs"
+  find "$CARGO_LLVM_COV_TARGET_DIR" -type f \( -name '*.profraw' -o -name '*.profdata' \) -delete
 
   for ((partition = 1; partition <= PARTITION_COUNT; partition++)); do
     (
+      LLVM_PROFILE_FILE="$CARGO_LLVM_COV_TARGET_DIR/${coverage_profile_namespace}-partition-${partition}-%p.profraw" \
       "${coverage_command[@]}" \
         --partition "count:${partition}/${PARTITION_COUNT}" \
         -- --skip "$SKIP_PATTERN" \
@@ -176,6 +181,7 @@ run_workspace_coverage_partitions() {
   return "$status"
 }
 
+coverage_profile_namespace=workspace
 run_workspace_coverage_partitions
 
 cargo llvm-cov report \
@@ -188,10 +194,12 @@ if [ -f "$ADL_RUNTIME_MANIFEST" ]; then
   runtime_coverage_command=(cargo llvm-cov nextest \
     --manifest-path "$ADL_RUNTIME_MANIFEST" \
     --no-report \
+    --no-clean \
     --no-fail-fast \
     --no-tests pass \
     --test-threads "$TEST_THREADS")
   coverage_command=("${runtime_coverage_command[@]}")
+  coverage_profile_namespace=adl-runtime
   run_workspace_coverage_partitions
   cargo llvm-cov report \
     --manifest-path "$ADL_RUNTIME_MANIFEST" \
