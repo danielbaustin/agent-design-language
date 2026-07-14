@@ -64,7 +64,7 @@ policy_value() {
 }
 
 ci_command=(bash adl/tools/run_pr_fast_test_lane.sh --base "$BASE_COMMIT" --head "$HEAD_COMMIT")
-coverage_command=(cargo llvm-cov nextest --workspace --no-report)
+coverage_command=(cargo llvm-cov nextest --workspace --no-report --no-fail-fast --no-tests pass --test-threads 18 -- --skip real_pr_)
 
 if [[ "$PRINT_COMMAND" == true ]]; then
   if [[ "$PROFILE" == "adl-ci-and-coverage" ]]; then
@@ -103,6 +103,7 @@ FULL_COVERAGE_REQUIRED="$(policy_value full_coverage_required)"
 DEMO_SMOKE_REQUIRED="$(policy_value demo_smoke_required)"
 V0913_PROOF_REQUIRED="$(policy_value v0913_proof_required)"
 VALIDATION_ESCALATION_REQUIRED="$(policy_value validation_profile_escalation_required)"
+COVERAGE_AUTHORITY="$(policy_value coverage_authority)"
 
 started_at="$(date +%s)"
 run_adl_ci() {
@@ -163,9 +164,9 @@ run_adl_coverage() {
   fi
   if [[ "$FULL_COVERAGE_REQUIRED" == true ]]; then
     printf 'ADL_SPOT_COVERAGE_PLAN mode=full-authoritative\n'
-    coverage_command+=(--test-threads "$ADL_COVERAGE_TEST_THREADS")
-    "${coverage_command[@]}"
-    cargo llvm-cov report --json --summary-only --output-path coverage-summary.json
+    bash "$ROOT_DIR/adl/tools/run_authoritative_coverage_lane.sh" \
+      --authority "$COVERAGE_AUTHORITY" \
+      --event-name "$EVENT_NAME"
   else
     coverage_filter="$(bash "$ROOT_DIR/adl/tools/check_coverage_impact.sh" \
       --base "$BASE_COMMIT" \

@@ -24,6 +24,9 @@ if grep -F -- '--all-features' "$SCRIPT" >/dev/null; then
   exit 1
 fi
 grep -F 'FULL_COVERAGE_REQUIRED="$(policy_value full_coverage_required)"' "$SCRIPT" >/dev/null
+grep -F 'COVERAGE_AUTHORITY="$(policy_value coverage_authority)"' "$SCRIPT" >/dev/null
+grep -F 'run_authoritative_coverage_lane.sh' "$SCRIPT" >/dev/null
+grep -F -- '--no-fail-fast' "$SCRIPT" >/dev/null
 grep -F 'if [[ "$RUST_REQUIRED" == true && "$FULL_COVERAGE_REQUIRED" != true ]]' "$SCRIPT" >/dev/null
 grep -F 'bash adl/tools/demo_smoke_v07_story.sh' "$SCRIPT" >/dev/null
 grep -F 'ADL_COVERAGE_BUILD_ROOT="$CARGO_TARGET_DIR/coverage"' "$SCRIPT" >/dev/null
@@ -64,7 +67,7 @@ coverage_push_plan="$(bash "$SCRIPT" adl-coverage --base HEAD --head HEAD --even
 [[ "$combined_plan" == *'adl-ci:'*'adl-coverage:'* ]]
 [[ "$combined_plan" == *run_pr_fast_test_lane.sh* ]]
 [[ "$combined_plan" == *'cargo llvm-cov nextest'* ]]
-grep -F 'coverage_command+=(--test-threads "$ADL_COVERAGE_TEST_THREADS")' "$SCRIPT" >/dev/null
+grep -F 'coverage_command=(cargo llvm-cov nextest --workspace --no-report --no-fail-fast --no-tests pass --test-threads 18 -- --skip real_pr_)' "$SCRIPT" >/dev/null
 [[ "$coverage_push_plan" == *'--event-name push'* ]]
 
 # Execute the combined orchestration locally with fake toolchain commands. This
