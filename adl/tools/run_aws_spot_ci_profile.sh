@@ -64,7 +64,7 @@ policy_value() {
 }
 
 ci_command=(bash adl/tools/run_pr_fast_test_lane.sh --base "$BASE_COMMIT" --head "$HEAD_COMMIT")
-coverage_command=(cargo llvm-cov nextest --workspace --no-report --no-fail-fast --no-tests pass --test-threads 18 -- --skip real_pr_)
+coverage_command=(cargo llvm-cov nextest --workspace --no-report --no-fail-fast --no-tests pass --test-threads 16 -- --skip real_pr_)
 
 if [[ "$PRINT_COMMAND" == true ]]; then
   if [[ "$PROFILE" == "adl-ci-and-coverage" ]]; then
@@ -146,6 +146,8 @@ run_adl_coverage() {
   }
   : "${CARGO_TARGET_DIR:?CARGO_TARGET_DIR is required for retained EBS coverage}"
   export ADL_COVERAGE_TEST_THREADS="${ADL_COVERAGE_TEST_THREADS:-18}"
+  export ADL_AUTHORITATIVE_COVERAGE_TEST_THREADS="${ADL_AUTHORITATIVE_COVERAGE_TEST_THREADS:-16}"
+  export ADL_AUTHORITATIVE_COVERAGE_PARTITIONS="${ADL_AUTHORITATIVE_COVERAGE_PARTITIONS:-2}"
   export ADL_COVERAGE_BUILD_ROOT="$CARGO_TARGET_DIR/coverage"
   WARM_SOURCE_TARGET="$CARGO_TARGET_DIR"
   export ADL_COVERAGE_WARM_SOURCE_TARGET="$WARM_SOURCE_TARGET"

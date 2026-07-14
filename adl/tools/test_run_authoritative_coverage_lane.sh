@@ -50,7 +50,10 @@ for required_fragment in \
   "--no-tests pass" \
   "--test-threads" \
   "ADL_AUTHORITATIVE_COVERAGE_TEST_THREADS" \
+  "ADL_AUTHORITATIVE_COVERAGE_PARTITIONS" \
   "ADL_AUTHORITATIVE_COVERAGE_SKIP_PATTERN" \
+  "--partition" \
+  "partition-logs" \
   "-- --skip" \
   "cargo llvm-cov report" \
   "--json" \
@@ -122,6 +125,8 @@ done
 for required in \
   "cmd=llvm-cov nextest --workspace --no-report --no-fail-fast --no-tests pass" \
   "--test-threads 4" \
+  "--partition count:1/2" \
+  "--partition count:2/2" \
   "-- --skip real_pr_" \
   "cmd=llvm-cov nextest --manifest-path $ROOT_DIR/adl-runtime/Cargo.toml --no-report --no-fail-fast --no-tests pass" \
   "cmd=llvm-cov report --json --summary-only --output-path $ROOT_DIR/adl/coverage-summary.adl.json" \

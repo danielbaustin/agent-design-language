@@ -19,7 +19,10 @@ validation because the retained 500 GiB cache was below its free-space floor.
 The retained cache has now been expanded to 1000 GiB. The first post-resize
 combined run mounted the retained cache and completed the CI half in 28 seconds,
 but authoritative coverage failed after 195 seconds; the retained per-profile
-logs are now preserved for diagnosis. Required-check cutover remains pending.
+logs are now preserved for diagnosis. The corrected authoritative lane now
+keeps the full suite and runs two concurrent nextest partitions, 16 test
+threads each, on the 32-vCPU builder. Required-check cutover remains pending
+until that exact combined profile passes under 300 seconds.
 
 The `adl-spot-ci` GitHub environment is configured with selected-branch rules
 for `main` and `codex/*`, no environment secrets, no manual approval gate, and

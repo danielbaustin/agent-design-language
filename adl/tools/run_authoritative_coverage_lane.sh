@@ -23,6 +23,7 @@ default_coverage_build_root() {
 
 COVERAGE_BUILD_ROOT="${ADL_COVERAGE_BUILD_ROOT:-$(default_coverage_build_root)}"
 TEST_THREADS="${ADL_AUTHORITATIVE_COVERAGE_TEST_THREADS:-${ADL_COVERAGE_TEST_THREADS:-4}}"
+PARTITION_COUNT="${ADL_AUTHORITATIVE_COVERAGE_PARTITIONS:-2}"
 SKIP_PATTERN="${ADL_AUTHORITATIVE_COVERAGE_SKIP_PATTERN:-real_pr_}"
 
 usage() {
@@ -74,6 +75,7 @@ if [ "$PRINT_PLAN" = true ]; then
   printf 'mode=%s\n' "$MODE"
   printf 'build_root=%s\n' "$COVERAGE_BUILD_ROOT"
   printf 'test_threads=%s\n' "$TEST_THREADS"
+  printf 'partitions=%s\n' "$PARTITION_COUNT"
   printf 'skip_pattern=%s\n' "$SKIP_PATTERN"
   if [ "$MODE" = "full_authoritative_default_features" ]; then
     printf 'features=default\n'
@@ -140,7 +142,42 @@ if [[ ! "$TEST_THREADS" =~ ^[1-9][0-9]*$ ]]; then
     exit 2
 fi
 
-"${coverage_command[@]}"
+if [[ ! "$PARTITION_COUNT" =~ ^[1-9][0-9]*$ ]]; then
+    echo "invalid coverage partition count: $PARTITION_COUNT" >&2
+    exit 2
+fi
+
+run_workspace_coverage_partitions() {
+  local partition_logs="$COVERAGE_BUILD_ROOT/partition-logs/workspace"
+  local partition pids=() statuses=()
+  mkdir -p "$partition_logs"
+
+  for ((partition = 1; partition <= PARTITION_COUNT; partition++)); do
+    (
+      "${coverage_command[@]}" \
+        --partition "count:${partition}/${PARTITION_COUNT}" \
+        >"$partition_logs/partition-${partition}.log" 2>&1
+    ) &
+    pids+=("$!")
+  done
+
+  local status=0 pid partition_status
+  for pid in "${pids[@]}"; do
+    partition_status=0
+    wait "$pid" || partition_status=$?
+    statuses+=("$partition_status")
+    if (( partition_status != 0 )); then
+      status="$partition_status"
+    fi
+  done
+
+  for ((partition = 1; partition <= PARTITION_COUNT; partition++)); do
+    cat "$partition_logs/partition-${partition}.log"
+  done
+  return "$status"
+}
+
+run_workspace_coverage_partitions
 
 cargo llvm-cov report \
   --json \
@@ -149,13 +186,15 @@ cargo llvm-cov report \
 
 if [ -f "$ADL_RUNTIME_MANIFEST" ]; then
   echo "Authoritative coverage companion: adl-runtime"
-  cargo llvm-cov nextest \
+  runtime_coverage_command=(cargo llvm-cov nextest \
     --manifest-path "$ADL_RUNTIME_MANIFEST" \
     --no-report \
     --no-fail-fast \
     --no-tests pass \
     --test-threads "$TEST_THREADS" \
-    -- --skip "$SKIP_PATTERN"
+    -- --skip "$SKIP_PATTERN")
+  coverage_command=("${runtime_coverage_command[@]}")
+  run_workspace_coverage_partitions
   cargo llvm-cov report \
     --manifest-path "$ADL_RUNTIME_MANIFEST" \
     --json \
