@@ -9,7 +9,7 @@ immediate rollback backend until all live gates below pass.
 
 ## Current Disposition
 
-Status: `live_combined_profile_not_yet_proven; coverage_failure_diagnosis_pending`
+Status: `live_combined_profile_not_yet_proven; partition_argument_fix_pending_live_reproof`
 
 The Spot CI lane is live-proven, but the current combined parallel profile is
 not yet proven under the 300-second ceiling. A prior sequential combined run
@@ -36,6 +36,15 @@ read back with exactly these subjects:
 No repository-wide `pull_request` subject is present. Production routing is
 still disabled while coverage proof is incomplete.
 
+The first live run of the partitioned profile on commit `4e5465af` completed
+Spot launch, SSH/SSM, immutable image, retained-cache, toolchain, CI, and
+cleanup proof in 241 seconds. CI passed in 26 seconds. Coverage failed
+immediately because the initial implementation placed `--partition` after
+nextest's `--` test-binary separator; the remote logs retained the exact
+command and exit status 96. The instance terminated and the retained volume
+returned to `available`. The fix moves the partition option before the
+separator; a fresh live run is required.
+
 ## Live Runs
 
 | Surface | Source | Image | Cache | Validation | Remote | Total | Result |
@@ -60,6 +69,7 @@ still disabled while coverage proof is incomplete.
 | `adl-ci-and-coverage` GitHub workflow run 39 | `ca1cb62c` | immutable digest `sha256:20831e358...` | retained 1000 GiB EBS resize | preflight | 45s | failed before validation because the retained filesystem was below the 10 GiB floor; Spot cleanup passed |
 | `adl-ci-and-coverage` GitHub workflow run 40 | `f511f52a` | immutable digest `sha256:20831e358...` | retained 1000 GiB EBS | >300s | canceled | failed target | warm repeat reached parallel full-coverage compilation but did not finish before the 300s ceiling; Spot cleanup passed |
 | `adl-ci-and-coverage` GitHub workflow run 41 (`29323862776`) | `5e240483` | immutable digest `sha256:20831e358...` | retained 1000 GiB EBS | CI 28s; coverage failed at 195s | 166s | 225s | post-resize Spot launch, SSM, retained-cache mount, and cleanup passed; coverage returned exit 1 and its preserved profile log is required for diagnosis |
+| `adl-ci-and-coverage` direct Spot run (`adl-wp-5243-direct-4e5465af6`) | `4e5465af` | immutable digest `sha256:20831e358...` | retained 1000 GiB EBS | CI 26s; coverage argument error | 138s | 241s | Spot launch, SSH/SSM, cache/image/toolchain checks, and cleanup passed; coverage exited 96 before tests because partition placement was wrong; retained cache preserved |
 
 Both existing-PR CI shadows ran 54 focused tests, doc tests, and demo smoke
 successfully, with identical 42-second validation time. They used the exact source commit and merge base without modifying

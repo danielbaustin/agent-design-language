@@ -120,8 +120,7 @@ if [ "$MODE" = "full_authoritative_default_features" ]; then
     --no-report \
     --no-fail-fast \
     --no-tests pass \
-    --test-threads "$TEST_THREADS" \
-    -- --skip "$SKIP_PATTERN")
+    --test-threads "$TEST_THREADS")
 else
   echo "Authoritative coverage mode: bounded_policy_surface_pr"
   echo "Features: default"
@@ -133,8 +132,7 @@ else
     --no-report \
     --no-fail-fast \
     --no-tests pass \
-    --test-threads "$TEST_THREADS" \
-    -- --skip "$SKIP_PATTERN")
+    --test-threads "$TEST_THREADS")
 fi
 
 if [[ ! "$TEST_THREADS" =~ ^[1-9][0-9]*$ ]]; then
@@ -156,6 +154,7 @@ run_workspace_coverage_partitions() {
     (
       "${coverage_command[@]}" \
         --partition "count:${partition}/${PARTITION_COUNT}" \
+        -- --skip "$SKIP_PATTERN" \
         >"$partition_logs/partition-${partition}.log" 2>&1
     ) &
     pids+=("$!")
@@ -191,8 +190,7 @@ if [ -f "$ADL_RUNTIME_MANIFEST" ]; then
     --no-report \
     --no-fail-fast \
     --no-tests pass \
-    --test-threads "$TEST_THREADS" \
-    -- --skip "$SKIP_PATTERN")
+    --test-threads "$TEST_THREADS")
   coverage_command=("${runtime_coverage_command[@]}")
   run_workspace_coverage_partitions
   cargo llvm-cov report \
