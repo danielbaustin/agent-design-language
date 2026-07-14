@@ -76,7 +76,6 @@ let retainedPollTimer = null;
 const OBSERVATORY_VERSION = "v0.91.7";
 const OBSERVATORY_MANIFOLD_LABEL = `${OBSERVATORY_VERSION} CSM runtime mirror`;
 const OBSERVATORY_PACKET_LABEL = `${OBSERVATORY_VERSION} Observatory proof packet`;
-const RUNTIME_V3_CONTROL_PORT = "20997";
 const RUNTIME_V3_OBSERVATORY_ENDPOINT = "/v1/observatory";
 
 const AWS_LINKAGES = [
@@ -513,7 +512,7 @@ function isLoopbackApiBase(value) {
     const parsed = new URL(base);
     return (
       ["http:", "https:"].includes(parsed.protocol) &&
-      ["127.0.0.1", "localhost", "[::1]", "::1"].includes(parsed.hostname)
+      parsed.hostname === "localhost"
     );
   } catch (_error) {
     return false;
@@ -524,6 +523,9 @@ function getQueryApiBase() {
   const params = new URLSearchParams(window.location.search);
   const candidate = params.get("runtimeApiBase") || params.get("csmApiBase") || params.get("apiBase") || "";
   const normalized = normalizeApiBase(candidate);
+  if (requestedRuntimeSelection() === "v3") {
+    return isRuntimeV3ApiBase(normalized) ? normalized : "";
+  }
   return isLoopbackApiBase(normalized) ? normalized : "";
 }
 
@@ -533,10 +535,8 @@ function requestedRuntimeSelection() {
 }
 
 function isRuntimeV3ApiBase(value) {
-  const base = normalizeApiBase(value);
   try {
-    const parsed = new URL(base);
-    return isLoopbackApiBase(base) && parsed.port === RUNTIME_V3_CONTROL_PORT;
+    return new URL(normalizeApiBase(value)).protocol === "https:";
   } catch (_error) {
     return false;
   }
@@ -580,12 +580,9 @@ async function fetchRuntimeEndpoint(apiBase, endpoint) {
 async function fetchRuntimeSnapshot(apiBase) {
   if (requestedRuntimeSelection() === "v3") {
     if (!isRuntimeV3ApiBase(apiBase)) {
-      throw new Error("Runtime v3 selection requires loopback port 20997.");
+      throw new Error("Runtime v3 selection requires a configured HTTPS API Gateway base.");
     }
     return fetchRuntimeV3ObservatorySnapshot(apiBase);
-  }
-  if (isRuntimeV3ApiBase(apiBase)) {
-    throw new Error("Port 20997 requires explicit runtime=v3 selection.");
   }
   const endpoints = ["/status", "/health", "/ready", "/metrics", "/events"];
   const settled = await Promise.allSettled(
@@ -609,7 +606,15 @@ async function fetchRuntimeSnapshot(apiBase) {
 }
 
 async function fetchRuntimeV3ObservatorySnapshot(apiBase) {
-  const feed = await fetchRuntimeEndpoint(apiBase, RUNTIME_V3_OBSERVATORY_ENDPOINT);
+  const base = normalizeApiBase(apiBase);
+  if (!isRuntimeV3ApiBase(base)) {
+    throw new Error("Runtime v3 selection requires a configured HTTPS API Gateway base.");
+  }
+  const response = await fetch(`${base}${RUNTIME_V3_OBSERVATORY_ENDPOINT}`, { method: "GET" });
+  if (!response.ok) {
+    throw new Error(`${RUNTIME_V3_OBSERVATORY_ENDPOINT} returned ${response.status}`);
+  }
+  const feed = await response.json();
   const snapshot = feed.health?.snapshot || {};
   const weather = feed.weather || {};
   const events = asArray(feed.events);
@@ -622,6 +627,7 @@ async function fetchRuntimeV3ObservatorySnapshot(apiBase) {
       runtime_owner: "runtime-v3",
       runtime_id: feed.runtime_instance_id,
       agent_instance_id: feed.runtime_instance_id,
+      agent_population: feed.agents,
       status: snapshot.lifecycle || "unknown",
       observability: snapshot.observability,
       topology_generation: snapshot.topology_generation,
@@ -642,6 +648,8 @@ async function fetchRuntimeV3ObservatorySnapshot(apiBase) {
       gauges: {
         event_count: snapshot.event_count || events.length,
         component_count: Object.keys(snapshot.components || {}).length,
+        agent_count: feed.agents?.total_count ?? null,
+        agent_sample_count: feed.agents?.rendered_sample_count ?? null,
         queue_count: Object.keys(snapshot.queues || {}).length,
         weather_cpu_basis_points: weather.sample?.cpu_basis_points?.value ?? null,
         network_received_bytes: weather.sample?.network_received_bytes?.value ?? null,
@@ -825,6 +833,8 @@ function buildRuntimeAgentRows({ status = {}, health = {}, ready = {}, metrics =
     health.status ||
     packet.manifold?.state ||
     "unknown";
+  const agentPopulation = status.agent_population || {};
+  const agentSample = asArray(agentPopulation.sample);
 
   if (!hasApiStatus) {
     return retainedCitizens.map((citizen) => ({
@@ -834,6 +844,16 @@ function buildRuntimeAgentRows({ status = {}, health = {}, ready = {}, metrics =
       state: citizen.lifecycle_state || citizen.continuity_status,
       detail: citizen.continuity_status || "retained citizen lane"
     })).slice(0, 6);
+  }
+
+  if (agentSample.length) {
+    return agentSample.slice(0, 12).map((agent) => ({
+      id: agent.id,
+      label: agent.label || agent.id,
+      role: agent.role || "runtime agent",
+      state: agent.state || primaryState,
+      detail: agent.detail || `${agentPopulation.total_count || agentSample.length} configured agents`
+    }));
   }
 
   return [
@@ -891,6 +911,7 @@ function buildPanopticonViewModel(snapshot = {}, packet = FALLBACK_PACKET) {
   const events = normalizeEventEntries(eventEnvelope).map(eventMessageToObject);
   const statusRows = flattenStatusRows(status);
   const liveAgents = buildRuntimeAgentRows({ status, health, ready, metrics, events, packet });
+  const agentTotal = Number(status.agent_population?.total_count ?? metrics.gauges?.agent_count ?? liveAgents.length);
 
   const signalRows = [
     {
@@ -919,6 +940,7 @@ function buildPanopticonViewModel(snapshot = {}, packet = FALLBACK_PACKET) {
     mode: snapshot.mode || "retained",
     fetchedAt: snapshot.fetchedAt || "",
     agents: liveAgents,
+    agentTotal,
     signals: signalRows,
     metrics: normalizeMetricRows(metrics),
     events,
@@ -940,15 +962,15 @@ function renderPanopticon(snapshot = {}, packet = FALLBACK_PACKET) {
   }
   setText("statusbar-updated", vm.mode === "live" ? formatTimestampLabel(vm.fetchedAt) : formatCurrentTimestampLabel());
   setDataset("statusbar-indicator", "state", vm.mode === "live" ? "live" : vm.mode === "published" ? "published" : "fallback");
-  setText("agent-count", `${vm.agents.length} agents`);
-  setText("hero-agent-count", `${vm.agents.length} Agents`);
+  setText("agent-count", `${vm.agentTotal.toLocaleString()} agents`);
+  setText("hero-agent-count", `${vm.agentTotal.toLocaleString()} Agents`);
   setText("live-readiness", formatLabel(vm.readyState));
   setText("hero-ready-state", formatLabel(vm.readyState));
   setDataset("hero-agent-map", "state", formatLabel(vm.readyState));
   setText("live-updated", vm.fetchedAt ? new Date(vm.fetchedAt).toLocaleTimeString() : "not connected");
   setText("live-event-count", `${vm.events.length} events`);
   setText("hero-event-count", `${vm.events.length} Events`);
-  setText("hero-gauge-agents", String(vm.agents.length));
+  setText("hero-gauge-agents", vm.agentTotal.toLocaleString());
   setText("hero-gauge-events", String(vm.events.length));
   setText("hero-gauge-metrics", String(vm.metrics.length));
   setText("hero-gauge-ready", formatLabel(vm.readyState));

@@ -30,7 +30,7 @@
   "html_observatory": {
     "path": "demos/v0.91.7/html-observatory/",
     "default_consumption": "retained_runtime_v2_csm_mirror",
-    "runtime_v3_opt_in_url": "demos/v0.91.7/html-observatory/?runtime=v3&runtimeApiBase=http://127.0.0.1:20997&live=1",
+    "runtime_v3_opt_in_url": "demos/v0.91.7/html-observatory/?runtime=v3&runtimeApiBase=https://<runtime-gateway-host>&live=1",
     "runtime_v3_read_feed_consumed": true,
     "runtime_v3_default_claimed": false,
     "retained_evidence_still_available": true

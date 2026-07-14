@@ -13,9 +13,11 @@ first dashboard viewport. It auto-refreshes the retained publishable CSM API
 response artifacts from #4976 as a runtime mirror, and upgrades to live loopback
 polling when an operator supplies the currently running CSM API base. The
 retained runtime packet remains the fallback proof surface if the CSM API mirror
-cannot load. The page also consumes the retained CSM runtime Observatory packet
-and operator report from the v0.91.7 Soak 2 evidence root, plus the current CSM
-runtime administration and AWS linkage evidence.
+cannot load. The page can also consume a configured Runtime v3 Observatory read
+feed when the operator supplies the runtime API base from the Runtime v3 init
+file. It also consumes the retained CSM runtime Observatory packet and operator
+report from the v0.91.7 Soak 2 evidence root, plus the current CSM runtime
+administration and AWS linkage evidence.
 
 The primary dashboard is intentionally fixed to the viewport: the page itself
 does not scroll, while the event stream and inspector areas own bounded internal
@@ -44,7 +46,9 @@ The CSM polis panopticon presents an auto-refreshing agent map, agent roster,
 health, readiness, metrics, and operator event stream from the retained CSM API
 mirror by default. When a loopback API base is supplied, it polls the running
 CSM API directly. For Runtime v3, the explicit opt-in path is
-`?runtime=v3&runtimeApiBase=http://127.0.0.1:20997`, which consumes the
+`?runtime=v3&runtimeApiBase=<runtime-api-base>&live=1`, where
+`<runtime-api-base>` must match the configured Runtime v3 control API host,
+port, and Observatory allowed-origin policy. That path consumes the
 runtime-owned `/v1/observatory` read feed. Runtime v3 control mutation remains
 signed-command-only through `/v1/control`; the browser has no shutdown,
 mutation, CloudWatch, SNS, or state authority. The CSM API panel intentionally
@@ -69,7 +73,7 @@ python3 -m http.server 8765
 Then open:
 
 ```text
-http://127.0.0.1:8765/demos/v0.91.7/html-observatory/
+http://localhost:8765/demos/v0.91.7/html-observatory/
 ```
 
 For the v0.91.7 real-runtime test path, start the existing repo `csm` binary in
@@ -78,35 +82,52 @@ a separate terminal and point the dashboard at that loopback base:
 ```sh
 adl/target/debug/csm api serve \
   --spec docs/milestones/v0.91.7/review/runtime/csm_liveness_4976/full/agent.yaml \
-  --bind 127.0.0.1:24645 \
+  --bind localhost:24645 \
   --max-requests 25 \
   --idle-timeout-ms 60000 \
   --json
 ```
 
 ```text
-http://127.0.0.1:8765/demos/v0.91.7/html-observatory/?csmApiBase=http://127.0.0.1:24645&live=1
+http://localhost:8765/demos/v0.91.7/html-observatory/?csmApiBase=http://localhost:24645&live=1
 ```
 
-For the Runtime v3 opt-in path, start the Runtime v3 kernel control API and
-point the dashboard at port `20997`:
+For the Runtime v3 opt-in path, start the Runtime v3 kernel control API with
+the repo default init file:
 
 ```sh
-adl-runtime-kernel serve
+adl-runtime-kernel serve --init infra/runtime-v3/runtime-init.toml
 ```
 
+The default init file keeps the Runtime v3 listener on `localhost:20997`.
+Runtime v3 browser/API access is HTTPS-only through the configured API Gateway
+base URL.
+
+The default init file also configures a high-cardinality Runtime v3 agent
+population with `count = 10000` and a bounded sample. The Observatory shows the
+true total while rendering only the sample, so live polis-scale demos do not
+create 10,000 DOM nodes.
+
+For an externally reachable polis, copy that init file to an operator-local
+path, set `[api].address` to the runtime host interface, set
+`[api].public_base_url` to the HTTPS API Gateway route, and add the dashboard
+origin to `[observatory].allowed_origins`. Public routing is provided by the
+operator's ingress layer, such as an Elastic IP or API Gateway route, not by
+hardcoded Runtime v3 source addresses.
+
 ```text
-http://127.0.0.1:8765/demos/v0.91.7/html-observatory/?runtime=v3&runtimeApiBase=http://127.0.0.1:20997&live=1
+https://<observatory-host>/demos/v0.91.7/html-observatory/?runtime=v3&runtimeApiBase=https://<runtime-gateway-host>&live=1
 ```
 
 The Runtime v3 browser path consumes only the runtime-owned read feed at
 `/v1/observatory`. It does not send signed control commands, does not change the
 default runtime, and does not authorize Runtime v2 decommission.
 
-The current browser-served dashboard keeps the same loopback-only policy as the
-runtime API. If the CSM API is reachable by curl but the browser refuses the
-cross-port fetch, the dashboard stays on the retained mirror and reports the
-live loopback failure instead of claiming a live WebSocket or remote API path.
+The browser-served dashboard only receives CORS permission when its origin is
+listed in `[observatory].allowed_origins`. If the Runtime v3 API is reachable by
+curl but the browser refuses the cross-origin fetch, the dashboard stays on the
+retained mirror and reports the live fetch failure instead of claiming a live
+Runtime v3 path.
 
 Opening `index.html` directly may show the fallback shell in browsers that block
 local `fetch()` for files. The retained proof is the local-server path plus the
@@ -124,7 +145,7 @@ This proves that the HTML Observatory can render an auto-refreshing CSM
 panopticon over retained publishable runtime API responses, and can upgrade to a
 live loopback CSM panopticon when the running CSM API base is supplied. It can
 also consume the Runtime v3 `/v1/observatory` read feed when Runtime v3 is
-selected explicitly on loopback port `20997`. It renders the retained
+selected explicitly with a configured runtime API base. It renders the retained
 bounded runtime capture through a polished investor-facing operator UI, while exposing
 CSM API, CSM service, CloudWatch heartbeat, ACIP-SNS projection proof, Runtime
 v3 opt-in status, and WP-08 linkage status. It does not claim direct runtime
