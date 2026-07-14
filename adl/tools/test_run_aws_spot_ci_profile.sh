@@ -30,7 +30,7 @@ grep -F 'ADL_COVERAGE_BUILD_ROOT="$CARGO_TARGET_DIR/coverage"' "$SCRIPT" >/dev/n
 grep -F 'run_pr_fast_coverage_lane.sh' "$SCRIPT" >/dev/null
 grep -F 'if [[ "$FULL_COVERAGE_REQUIRED" == true ]]' "$SCRIPT" >/dev/null
 grep -F 'ADL_RUST_WARM_CACHE_SOURCE_TARGET="$WARM_SOURCE_TARGET"' "$SCRIPT" >/dev/null
-grep -F 'ADL_RUST_WARM_CACHE_DEST_TARGET="$ADL_COVERAGE_BUILD_ROOT"' "$SCRIPT" >/dev/null
+grep -F 'ADL_RUST_WARM_CACHE_DEST_TARGET="$ADL_COVERAGE_BUILD_ROOT/target"' "$SCRIPT" >/dev/null
 grep -F 'require_tool cargo-llvm-cov cargo llvm-cov --version' "$SCRIPT" >/dev/null
 grep -F 'ADL_SPOT_COVERAGE_SUMMARY_BEGIN' "$SCRIPT" >/dev/null
 grep -F 'adl.aws_spot_coverage_summary.v1' "$SCRIPT" >/dev/null

@@ -149,11 +149,11 @@ run_adl_coverage() {
   WARM_SOURCE_TARGET="$CARGO_TARGET_DIR"
   export ADL_COVERAGE_WARM_SOURCE_TARGET="$WARM_SOURCE_TARGET"
   export ADL_RUST_WARM_CACHE_SOURCE_TARGET="$WARM_SOURCE_TARGET"
-  export ADL_RUST_WARM_CACHE_DEST_TARGET="$ADL_COVERAGE_BUILD_ROOT"
+  export ADL_RUST_WARM_CACHE_DEST_TARGET="$ADL_COVERAGE_BUILD_ROOT/target"
   export ADL_RUST_WARM_CACHE_MANIFEST_PATH="$ROOT_DIR/adl/Cargo.toml"
-  mkdir -p "$ADL_COVERAGE_BUILD_ROOT" "$ADL_COVERAGE_BUILD_ROOT/llvm-cov-target"
-  export CARGO_TARGET_DIR="$ADL_COVERAGE_BUILD_ROOT"
-  export CARGO_LLVM_COV_TARGET_DIR="$ADL_COVERAGE_BUILD_ROOT/llvm-cov-target"
+  mkdir -p "$ADL_COVERAGE_BUILD_ROOT/target" "$ADL_COVERAGE_BUILD_ROOT/target/llvm-cov-target"
+  export CARGO_TARGET_DIR="$ADL_COVERAGE_BUILD_ROOT/target"
+  export CARGO_LLVM_COV_TARGET_DIR="$ADL_COVERAGE_BUILD_ROOT/target/llvm-cov-target"
   export ADL_CSM_DISK_FLOOR_BYTES="${ADL_CSM_DISK_FLOOR_BYTES:-0}"
   cd "$ROOT_DIR/adl"
   if [[ -x "$ROOT_DIR/adl/tools/rust_validation_warm_cache.sh" ]]; then
@@ -176,7 +176,7 @@ run_adl_coverage() {
       printf '{"data":[{"totals":{}}]}\n' >coverage-summary.json
     else
       printf 'ADL_SPOT_COVERAGE_PLAN mode=pr-fast filter=%s\n' "$coverage_filter"
-      ADL_PR_FAST_COVERAGE_BUILD_ROOT="$ADL_COVERAGE_BUILD_ROOT" \
+      ADL_PR_FAST_COVERAGE_BUILD_ROOT="$ADL_COVERAGE_BUILD_ROOT/target" \
       ADL_PR_FAST_COVERAGE_WARM_SOURCE_TARGET="$WARM_SOURCE_TARGET" \
       ADL_PR_FAST_COVERAGE_TEST_THREADS="$ADL_COVERAGE_TEST_THREADS" \
         bash "$ROOT_DIR/adl/tools/run_pr_fast_coverage_lane.sh" \
