@@ -47,7 +47,9 @@ CACHE_VOLUME_MOUNT_PATH="${ADL_AWS_REMOTE_VALIDATION_CACHE_VOLUME_MOUNT_PATH:-/m
 SSH_KEY_NAME="${ADL_AWS_REMOTE_VALIDATION_SSH_KEY_NAME:-adl-wp06-spot-ssh-debug-20260704}"
 SSH_PRIVATE_KEY_PATH="${ADL_AWS_REMOTE_VALIDATION_SSH_PRIVATE_KEY_PATH:-$HOME/.ssh/adl-4603-ssh-debug-20260701.pem}"
 SSH_USER="${ADL_AWS_REMOTE_VALIDATION_SSH_USER:-ec2-user}"
-SSH_ALLOWED_CIDR="${ADL_AWS_REMOTE_VALIDATION_SSH_ALLOWED_CIDR:-}"
+# Operator recovery SSH is intentionally always reachable; authentication is
+# provided by the passphraseless debug key and the instance is ephemeral.
+SSH_ALLOWED_CIDR="${ADL_AWS_REMOTE_VALIDATION_SSH_ALLOWED_CIDR:-0.0.0.0/0}"
 SSH_BIN="${ADL_SSH_BIN:-ssh}"
 BUILDER_IMAGE="${ADL_AWS_SPOT_BUILDER_IMAGE:-}"
 BUILDER_IMAGE_REPOSITORY="${ADL_AWS_SPOT_BUILDER_IMAGE_REPOSITORY:-adl-builder}"
@@ -98,7 +100,7 @@ Options:
                                 Defaults to retained Agent Logic debug key.
   --ssh-private-key-path <path>  Private key for live remote-tail logging.
   --ssh-user <user>              SSH user. Defaults to ec2-user.
-  --ssh-allowed-cidr <cidr>      SSH source CIDR. Defaults to auto-detected operator IP.
+  --ssh-allowed-cidr <cidr>      SSH source CIDR. Defaults to 0.0.0.0/0 so operator recovery is always available.
   --builder-image <uri@digest>   Immutable builder image. Defaults to resolving
                                 adl-builder:v0.91.7-coverage-5243 in Agent Logic ECR.
   --builder-image-repository <name>

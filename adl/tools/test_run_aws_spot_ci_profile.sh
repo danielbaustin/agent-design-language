@@ -27,6 +27,8 @@ grep -F 'FULL_COVERAGE_REQUIRED="$(policy_value full_coverage_required)"' "$SCRI
 grep -F 'if [[ "$RUST_REQUIRED" == true && "$FULL_COVERAGE_REQUIRED" != true ]]' "$SCRIPT" >/dev/null
 grep -F 'bash adl/tools/demo_smoke_v07_story.sh' "$SCRIPT" >/dev/null
 grep -F 'ADL_COVERAGE_BUILD_ROOT="$CARGO_TARGET_DIR/coverage"' "$SCRIPT" >/dev/null
+grep -F 'ADL_RUST_WARM_CACHE_SOURCE_TARGET="$WARM_SOURCE_TARGET"' "$SCRIPT" >/dev/null
+grep -F 'ADL_RUST_WARM_CACHE_DEST_TARGET="$ADL_COVERAGE_BUILD_ROOT/target"' "$SCRIPT" >/dev/null
 grep -F 'require_tool cargo-llvm-cov cargo llvm-cov --version' "$SCRIPT" >/dev/null
 grep -F 'ADL_SPOT_COVERAGE_SUMMARY_BEGIN' "$SCRIPT" >/dev/null
 grep -F 'adl.aws_spot_coverage_summary.v1' "$SCRIPT" >/dev/null
@@ -46,6 +48,8 @@ grep -F 'iam:AttachRolePolicy' "$SETUP" >/dev/null
 grep -F 'iam:DeleteRolePolicy' "$SETUP" >/dev/null
 grep -F 'ec2:AttachVolume' "$SETUP" >/dev/null
 grep -F 'ec2:DetachVolume' "$SETUP" >/dev/null
+grep -F 'SSH_ALLOWED_CIDR="${ADL_AWS_REMOTE_VALIDATION_SSH_ALLOWED_CIDR:-0.0.0.0/0}"' "$ROOT/adl/tools/run_aws_spot_remote_validation_lane.sh" >/dev/null
+grep -F 'unwrap_or_else(|| "0.0.0.0/0".to_string())' "$ROOT/tools/aws_remote_validation/src/aws_remote_validation.rs" >/dev/null
 
 ci_plan="$(bash "$SCRIPT" adl-ci --base HEAD --head HEAD --print-command)"
 coverage_plan="$(bash "$SCRIPT" adl-coverage --base HEAD --head HEAD --print-command)"

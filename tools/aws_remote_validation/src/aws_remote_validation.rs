@@ -1450,21 +1450,10 @@ fn build_ssh_debug_config(config: &AwsRemoteValidationConfig) -> Result<Option<S
         .ssh_user
         .clone()
         .unwrap_or_else(|| "ec2-user".to_string());
-    let allowed_cidr = match config.ssh_allowed_cidr.clone() {
-        Some(value) => value,
-        None => {
-            let output = StdCommand::new("curl")
-                .args(["-fsSL", "https://checkip.amazonaws.com"])
-                .output()
-                .context("failed to detect public IP for SSH debug mode")?;
-            if !output.status.success() {
-                return Err(anyhow!("failed to detect public IP for SSH debug mode"));
-            }
-            let ip = String::from_utf8(output.stdout)
-                .context("failed to decode public IP response for SSH debug mode")?;
-            format!("{}/32", ip.trim())
-        }
-    };
+    let allowed_cidr = config
+        .ssh_allowed_cidr
+        .clone()
+        .unwrap_or_else(|| "0.0.0.0/0".to_string());
     Ok(Some(SshDebugConfig {
         private_key_path,
         user,
