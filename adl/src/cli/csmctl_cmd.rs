@@ -86,6 +86,9 @@ Notes:\n\
 }
 
 fn csmctl_api_get(args: &[String]) -> Result<()> {
+    const CONNECT_RETRY_ATTEMPTS: usize = 200;
+    const CONNECT_RETRY_DELAY: Duration = Duration::from_millis(25);
+
     let spec = required_path_arg(args, "--spec")?;
     let bind = optional_arg(args, "--bind").unwrap_or("127.0.0.1:19997");
     let path = optional_arg(args, "--path").unwrap_or("/status");
@@ -110,11 +113,11 @@ fn csmctl_api_get(args: &[String]) -> Result<()> {
         .context("build csmctl runtime API client")?;
     let response = store
         .with_bearer_token(|token| {
-            for attempt in 0..20 {
+            for attempt in 0..CONNECT_RETRY_ATTEMPTS {
                 match client.get(&url).bearer_auth(token).send() {
                     Ok(response) => return Ok(response),
-                    Err(err) if err.is_connect() && attempt < 19 => {
-                        std::thread::sleep(Duration::from_millis(25));
+                    Err(err) if err.is_connect() && attempt + 1 < CONNECT_RETRY_ATTEMPTS => {
+                        std::thread::sleep(CONNECT_RETRY_DELAY);
                     }
                     Err(err) => return Err(err),
                 }
