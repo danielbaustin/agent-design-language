@@ -6,7 +6,7 @@ GitHub Actions remains the control plane. A small hosted runner authenticates
 to the Agent Logic AWS account with OIDC, launches the ADL Spot lane, receives
 logs and retained proof, publishes artifacts, and reports the check result.
 Rust build, test, and coverage work runs inside the immutable builder container
-on Spot with the retained 500 GiB EBS cache.
+on Spot with the retained 1000 GiB EBS cache.
 
 Roll out in four stages:
 
@@ -108,10 +108,11 @@ For the operational apples-to-apples run:
 - `instance_type`: `m7a.8xlarge` (32 vCPUs; the production parallel profile)
 - `validation_command`: blank
 
-The combined profile runs path-policy `adl-ci` first and authoritative
-`adl-coverage` second on the same host and retained target. It emits separate
-profile timings and pass records, then one total run timing. A successful CI
-only run or coverage-only run is not a substitute for this combined proof.
+The combined profile starts path-policy `adl-ci` and policy-selected
+`adl-coverage` concurrently on the same host and retained target. It emits
+separate profile timings and pass records, then one total run timing. A
+successful CI-only run or coverage-only run is not a substitute for this
+combined proof.
 
 For CI-only diagnostics:
 

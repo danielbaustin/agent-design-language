@@ -9,16 +9,15 @@ immediate rollback backend until all live gates below pass.
 
 ## Current Disposition
 
-Status: `live_combined_profile_proven; cutover_pending`
+Status: `live_combined_profile_not_yet_proven; cache_capacity_repair_pending`
 
-The Spot CI lane and the combined `adl-ci-and-coverage` profile are
-live-proven. The first full run found a runtime fixture baseline defect tracked
-by `#5267`; this issue does not modify that separate failure. A historically
-green control then exposed a missing `gh` tool in the builder image, which was
-fixed by the replacement immutable image. The final combined run below passed
-both profiles in one lifecycle, with SSH reachable from the operator `/32`,
-incremental SSM output, retained EBS cache proof, and clean instance/cache
-cleanup. Required-check cutover remains a separate deliberate rollout step.
+The Spot CI lane is live-proven, but the current combined parallel profile is
+not yet proven under the 300-second ceiling. A prior sequential combined run
+passed both profiles in one lifecycle; the first scaled parallel attempt was
+stopped after exceeding the ceiling, and the next attempt failed safely before
+validation because the retained 500 GiB cache was below its free-space floor.
+The retained cache has now been expanded to 1000 GiB and must be re-proven
+after the resize completes. Required-check cutover remains pending.
 
 The `adl-spot-ci` GitHub environment is configured with selected-branch rules
 for `main` and `codex/*`, no environment secrets, no manual approval gate, and
@@ -52,6 +51,8 @@ still disabled while coverage proof is incomplete.
 | `adl-coverage` GitHub workflow run 31 | `bc76182c` | immutable digest `sha256:20831e3...` | retained 500 GiB EBS | not run | not run | canceled before launch | superseded; operational proof must run both profiles in one lifecycle |
 | `adl-ci-and-coverage` GitHub workflow run 32 | `d3adb15f` | immutable digest `sha256:20831e358...` | retained 500 GiB EBS | failed in coverage | failed | failed | stopped on separate `#5267` runtime fixture defect; instance and cache cleanup passed |
 | `adl-ci-and-coverage` GitHub workflow run 33 | `9346f230` | immutable digest `sha256:20831e358...` | retained 500 GiB EBS | 728s | 785s | passed | `adl-ci` and `adl-coverage` passed in one lifecycle; 2108/2108 tests, 2 skipped; instance terminated and volume available |
+| `adl-ci-and-coverage` GitHub workflow run 38 | `bf79a69d` | immutable digest `sha256:20831e358...` | retained 500 GiB EBS | >300s | canceled | failed target | one `m7a.8xlarge` host; CI and coverage processes were concurrent; stopped at the 300s ceiling |
+| `adl-ci-and-coverage` GitHub workflow run 39 | `ca1cb62c` | immutable digest `sha256:20831e358...` | retained 1000 GiB EBS resize | preflight | 45s | failed before validation because the retained filesystem was below the 10 GiB floor; Spot cleanup passed |
 
 Both existing-PR CI shadows ran 54 focused tests, doc tests, and demo smoke
 successfully, with identical 42-second validation time. They used the exact source commit and merge base without modifying
@@ -198,12 +199,9 @@ the variable and rerunning the checks.
 
 ## Remaining Proof Before Cutover
 
-1. Verify the successful run-33 artifacts are retained and the constrained
-   OIDC subject, exact source binding, live logs, sanitized artifacts, and EBS
-   detach behavior remain green in CI.
-2. Set `ADL_HEAVY_CI_BACKEND=spot` and verify stable `adl-ci` and
-   `adl-coverage` checks on one real same-repository PR.
-3. Rehearse rollback by setting the variable to `hosted`, rerunning the same
-   checks, and confirming no Spot launch occurs.
-4. Retain redacted artifacts and final cost/timing comparison before making
-   Spot the default for the repository.
+1. Re-run the combined profile after the 1000 GiB resize completes and prove
+   both concurrent profiles, cleanup, live logs, and total elapsed time <=300s.
+2. Verify the constrained OIDC subject, exact source binding, sanitized
+   artifacts, and EBS detach behavior remain green in that run.
+3. Retain the redacted artifact and final cost/timing comparison before making
+   Spot the required-check backend.

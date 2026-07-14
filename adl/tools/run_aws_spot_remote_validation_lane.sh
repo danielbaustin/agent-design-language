@@ -38,7 +38,7 @@ PRINT_COMMAND=false
 FOLLOW=false
 INSTANCE_TYPES=()
 CACHE_VOLUME_NAME="${ADL_AWS_REMOTE_VALIDATION_CACHE_VOLUME_NAME:-adl-aws-remote-validation-cache-volume}"
-CACHE_VOLUME_SIZE_GIB="${ADL_AWS_REMOTE_VALIDATION_CACHE_VOLUME_SIZE_GIB:-500}"
+CACHE_VOLUME_SIZE_GIB="${ADL_AWS_REMOTE_VALIDATION_CACHE_VOLUME_SIZE_GIB:-1000}"
 CACHE_VOLUME_TYPE="${ADL_AWS_REMOTE_VALIDATION_CACHE_VOLUME_TYPE:-gp3}"
 CACHE_VOLUME_IOPS="${ADL_AWS_REMOTE_VALIDATION_CACHE_VOLUME_IOPS:-3000}"
 CACHE_VOLUME_THROUGHPUT_MBPS="${ADL_AWS_REMOTE_VALIDATION_CACHE_VOLUME_THROUGHPUT_MBPS:-125}"
@@ -82,7 +82,7 @@ Options:
   --artifact-dir <dir>          Artifact root. Defaults beside --out.
   --instance-type <type>        Add an allowed EC2 instance type.
   --cache-volume-name <name>    Warm EBS cache volume name. Defaults to retained WP-06 cache.
-  --cache-volume-size-gib <gib> Cache volume size when created. Defaults to 500.
+  --cache-volume-size-gib <gib> Cache volume size when created. Defaults to 1000.
   --cache-volume-type <type>    Cache volume type. Defaults to gp3.
   --cache-volume-iops <iops>    Cache volume IOPS. Defaults to 3000.
   --cache-volume-throughput-mbps <mbps>
