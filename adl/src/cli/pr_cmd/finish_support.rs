@@ -6788,7 +6788,7 @@ pub(super) fn run_finish_validation_rust(
                         "bash",
                         &[path_str(&script)?, "--changed-files", &changed_files],
                     );
-                    let _ = fs::remove_file(&changed_files);
+                    cleanup_retained_changed_file_manifest(Path::new(&changed_files));
                     result?;
                 }
                 "cargo test --manifest-path adl/Cargo.toml agent_comms --lib -- --nocapture" => {

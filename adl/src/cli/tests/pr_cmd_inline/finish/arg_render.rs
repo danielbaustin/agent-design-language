@@ -5318,6 +5318,46 @@ fn finish_helper_paths_run_pr_fast_lane_validation() {
 }
 
 #[test]
+fn finish_helper_selector_covers_additional_policy_helper_branches() {
+    let plan = select_finish_validation_plan(
+        "adl/config/slow_proof_families.v0.91.6.json,\
+         adl/tools/test_v0916_unity_observatory_baseline.sh,\
+         adl/tools/observability.sh,\
+         adl/src/agent_comms.rs,\
+         adl/src/provider_adapter.rs,\
+         adl/src/provider_communication.rs,\
+         adl/src/resilience.rs",
+    )
+    .expect("policy helper branch plan");
+
+    assert_eq!(plan.mode, FinishValidationMode::LargerBinaryFocused);
+    assert!(plan
+        .commands
+        .contains(&"bash adl/tools/test_slow_proof_lane_contract.sh".to_string()));
+    assert!(plan
+        .commands
+        .contains(&"bash adl/tools/test_v0916_unity_observatory_baseline.sh".to_string()));
+    assert!(plan
+        .commands
+        .contains(&"bash adl/tools/test_pr_small_binary_delegation.sh".to_string()));
+    assert!(plan.commands.contains(
+        &"cargo test --manifest-path adl/Cargo.toml agent_comms --lib -- --nocapture".to_string()
+    ));
+    assert!(plan
+        .commands
+        .contains(&"cargo test --manifest-path adl/Cargo.toml --lib provider_adapter".to_string()));
+    assert!(plan.commands.contains(
+        &"cargo test --manifest-path adl/Cargo.toml --lib provider_communication".to_string()
+    ));
+    assert!(plan
+        .commands
+        .contains(&"cargo test --manifest-path adl/Cargo.toml --lib resilience".to_string()));
+    assert!(plan
+        .commands
+        .contains(&"bash adl/tools/run_owner_validation_lane.sh runtime --build".to_string()));
+}
+
+#[test]
 fn finish_helper_paths_run_validation_selector_validation() {
     let _guard = env_lock();
     let temp = unique_temp_dir("adl-pr-finish-validation-selector-validation");
@@ -5458,6 +5498,59 @@ fn finish_helper_paths_run_manager_backed_owner_and_pr_fast_validation() {
     assert!(
         !changed_files.exists(),
         "manager-backed pr-fast helper execution should clean up the changed-file manifest"
+    );
+}
+
+#[test]
+fn finish_helper_pr_fast_cleanup_removes_adl_retained_manifest_dir() {
+    let _guard = env_lock();
+    let temp = unique_temp_dir("adl-pr-finish-retained-manifest-dir-cleanup");
+    let repo = temp.join("repo");
+    fs::create_dir_all(repo.join("adl/tools")).expect("adl tools dir");
+    fs::write(
+        repo.join("adl/Cargo.toml"),
+        "[package]\nname='adl'\nversion='0.1.0'\n",
+    )
+    .expect("cargo toml");
+    write_executable(
+        &repo.join("adl/tools/check_no_tracked_adl_issue_record_residue.sh"),
+        "#!/usr/bin/env bash\nset -euo pipefail\nexit 0\n",
+    );
+    write_executable(
+        &repo.join("adl/tools/run_pr_fast_test_lane.sh"),
+        "#!/usr/bin/env bash\nset -euo pipefail\nprintf 'pr-fast:%s\\n' \"$2\" >> \"$FOCUSED_LOG\"\n",
+    );
+    init_git_repo(&repo);
+
+    let focused_log = temp.join("focused.log");
+    let manifest_dir = temp.join("adl-finish-validation-profile-12345");
+    fs::create_dir_all(&manifest_dir).expect("manifest dir");
+    let changed_files = manifest_dir.join("finish-validation-profile-12345.txt");
+    fs::write(&changed_files, "M\tadl/src/cli/pr_cmd/doctor.rs\n").expect("changed files");
+    let old_focused_log = env::var("FOCUSED_LOG").ok();
+    unsafe {
+        env::set_var("FOCUSED_LOG", &focused_log);
+    }
+
+    let plan = FinishValidationPlan {
+        mode: FinishValidationMode::LargerBinaryFocused,
+        commands: vec![format!(
+            "bash adl/tools/run_pr_fast_test_lane.sh --changed-files {}",
+            changed_files.display()
+        )],
+    };
+    run_finish_validation_rust(&repo, &plan).expect("manager-backed pr-fast validation");
+
+    match old_focused_log {
+        Some(value) => unsafe { env::set_var("FOCUSED_LOG", value) },
+        None => unsafe { env::remove_var("FOCUSED_LOG") },
+    }
+
+    let focused_calls = fs::read_to_string(&focused_log).expect("focused log");
+    assert!(focused_calls.contains(&format!("pr-fast:{}", changed_files.display())));
+    assert!(
+        !manifest_dir.exists(),
+        "ADL-created retained manifest directory should be removed with the manifest"
     );
 }
 
@@ -6520,6 +6613,81 @@ fn finish_runner_executes_combined_ci_policy_selector_command() {
     assert!(focused_calls.contains("validation-manager"));
     assert!(focused_calls.contains("nessus-remote-runner"));
     assert!(focused_calls.contains("validation-manager-nessus-lane"));
+}
+
+#[test]
+fn finish_runner_executes_combined_coverage_selector_command() {
+    let _guard = env_lock();
+    let temp = unique_temp_dir("adl-pr-finish-combined-coverage-selector-command");
+
+    let repo = temp.join("repo");
+    fs::create_dir_all(repo.join("adl/tools")).expect("adl tools dir");
+    fs::write(
+        repo.join("adl/Cargo.toml"),
+        "[package]\nname='adl'\nversion='0.1.0'\n",
+    )
+    .expect("cargo toml");
+    write_executable(
+        &repo.join("adl/tools/check_no_tracked_adl_issue_record_residue.sh"),
+        "#!/usr/bin/env bash\nset -euo pipefail\nexit 0\n",
+    );
+    write_executable(
+        &repo.join("adl/tools/test_check_coverage_impact.sh"),
+        "#!/usr/bin/env bash\nset -euo pipefail\nprintf '%s\\n' coverage-impact >> \"$FOCUSED_LOG\"\n",
+    );
+    write_executable(
+        &repo.join("adl/tools/test_run_authoritative_coverage_lane.sh"),
+        "#!/usr/bin/env bash\nset -euo pipefail\nprintf '%s\\n' authoritative-coverage >> \"$FOCUSED_LOG\"\n",
+    );
+    write_executable(
+        &repo.join("adl/tools/test_run_local_authoritative_coverage_gate.sh"),
+        "#!/usr/bin/env bash\nset -euo pipefail\nprintf '%s\\n' local-authoritative-gate >> \"$FOCUSED_LOG\"\n",
+    );
+    init_git_repo(&repo);
+
+    let bin_dir = temp.join("bin");
+    fs::create_dir_all(&bin_dir).expect("bin dir");
+    let cargo_log = temp.join("cargo.log");
+    let focused_log = temp.join("focused.log");
+    write_executable(
+        &bin_dir.join("cargo"),
+        &format!(
+            "#!/usr/bin/env bash\nset -euo pipefail\nprintf '%s\\n' \"$*\" >> '{}'\nexit 0\n",
+            cargo_log.display()
+        ),
+    );
+    let old_path = env::var("PATH").unwrap_or_default();
+    let old_focused_log = env::var("FOCUSED_LOG").ok();
+    unsafe {
+        env::set_var("PATH", format!("{}:{}", bin_dir.display(), old_path));
+        env::set_var("FOCUSED_LOG", &focused_log);
+    }
+
+    let plan = FinishValidationPlan {
+        mode: FinishValidationMode::SmallBinaryFocused,
+        commands: vec![
+            "bash adl/tools/test_check_coverage_impact.sh && bash adl/tools/test_run_authoritative_coverage_lane.sh && bash adl/tools/test_run_local_authoritative_coverage_gate.sh".to_string(),
+        ],
+    };
+    run_finish_validation_rust(&repo, &plan).expect("combined coverage selector validation");
+
+    unsafe {
+        env::set_var("PATH", old_path);
+    }
+    match old_focused_log {
+        Some(value) => unsafe { env::set_var("FOCUSED_LOG", value) },
+        None => unsafe { env::remove_var("FOCUSED_LOG") },
+    }
+
+    assert!(
+        !cargo_log.exists(),
+        "combined coverage selector command should not invoke cargo"
+    );
+
+    let focused_calls = fs::read_to_string(&focused_log).expect("focused log");
+    assert!(focused_calls.contains("coverage-impact"));
+    assert!(focused_calls.contains("authoritative-coverage"));
+    assert!(focused_calls.contains("local-authoritative-gate"));
 }
 
 #[test]
