@@ -28,7 +28,7 @@ on:
         type: string
       instance_type:
         required: false
-        default: "m7a.8xlarge"
+        default: "c7a.8xlarge"
         type: string
       builder_image_tag:
         required: false
@@ -81,7 +81,7 @@ on:
       instance_type:
         description: "Primary EC2 instance type"
         required: true
-        default: "m7a.8xlarge"
+        default: "c7a.8xlarge"
       builder_image_tag:
         description: "ECR image tag; the default contains the CI and coverage toolchains"
         required: true

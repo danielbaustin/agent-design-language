@@ -9,20 +9,15 @@ immediate rollback backend until all live gates below pass.
 
 ## Current Disposition
 
-Status: `live_combined_profile_not_yet_proven; PR-fast-SLA-routing-pending-live-proof`
+Status: `live_combined_profile_proven; publication-pending-review`
 
-The Spot CI lane is live-proven, but the current combined parallel profile is
-not yet proven under the 300-second ceiling. A prior sequential combined run
-passed both profiles in one lifecycle; the first scaled parallel attempt was
-stopped after exceeding the ceiling, and the next attempt failed safely before
-validation because the retained 500 GiB cache was below its free-space floor.
-The retained cache has now been expanded to 1000 GiB. The first post-resize
-combined run mounted the retained cache and completed the CI half in 28 seconds,
-but authoritative coverage failed after 195 seconds; the retained per-profile
-logs are now preserved for diagnosis. The corrected authoritative lane now
-keeps the full suite and runs two concurrent nextest partitions, 16 test
-threads each, on the 32-vCPU builder. Required-check cutover remains pending
-until that exact combined profile passes under 300 seconds.
+Earlier scaled attempts exceeded the ceiling or failed safely before validation
+because the retained cache was below its free-space floor. The retained cache
+has now been expanded to 1000 GiB. The PR-fast combined
+profile is live-proven on `c7a.8xlarge`: CI and focused coverage ran in parallel,
+all 1238 selected coverage tests passed, the JSON report completed, live SSH/SSM
+logs were observed, and the full launch-through-cleanup lifecycle completed in
+257 seconds. Full authoritative coverage remains reserved for push/main.
 
 The `adl-spot-ci` GitHub environment is configured with selected-branch rules
 for `main` and `codex/*`, no environment secrets, no manual approval gate, and
@@ -33,8 +28,9 @@ read back with exactly these subjects:
 - `repo:danielbaustin/agent-design-language:ref:refs/heads/codex/*`
 - `repo:danielbaustin/agent-design-language:environment:adl-spot-ci`
 
-No repository-wide `pull_request` subject is present. Production routing is
-still disabled while coverage proof is incomplete.
+No repository-wide `pull_request` subject is present. Production routing remains
+hosted until the reviewed PR is published; the immediate rollback is the
+existing `ADL_HEAVY_CI_BACKEND=hosted` setting.
 
 The first live run of the partitioned profile on commit `4e5465af` completed
 Spot launch, SSH/SSM, immutable image, retained-cache, toolchain, CI, and
@@ -51,10 +47,10 @@ the real workload but did not finish before the 300-second SSM deadline on the
 the shared-warm-target attempt took 379 seconds end to end. Both terminated
 cleanly and preserved the retained EBS volume. A 64-vCPU preflight was clean,
 but its Spot launch was rejected before compute by `MaxSpotInstanceCountExceeded`.
-The PR Spot profile therefore routes pull-request coverage to the existing
-focused coverage-impact lane, records `mode=pr-fast-sla full_policy=true`, and
-retains full authoritative coverage for push/main evidence. A fresh live PR
-proof of that explicit routing is still required.
+The PR Spot profile routes pull-request coverage to the existing focused
+coverage-impact lane, records `mode=pr-fast-sla full_policy=true`, and retains
+full authoritative coverage for push/main evidence. That explicit routing is
+live-proven by the `c7a.8xlarge` run below.
 
 ## Live Runs
 
@@ -87,6 +83,7 @@ proof of that explicit routing is still required.
 | `adl-ci-and-coverage` direct Spot run (`5243-prfast-bcb316f43`) | `bcb316f43` | immutable digest `sha256:20831e358...` | retained 1000 GiB EBS | CI passed; 1238 focused coverage tests passed; report path failed | 108s | 165s | Container checkout was `/workspace`, not `/mnt/adl-source`; cleanup passed; no combined pass claim |
 | `adl-ci-and-coverage` direct Spot run (`5243-prfast-6969fcaec`) | `6969fcaec` | immutable digest `sha256:20831e358...` | retained 1000 GiB EBS | no terminal validation output | >300s | 394s | Report-directory fix was deployed; SSM timed out before validation output; cleanup passed; no combined pass claim |
 | `adl-ci-and-coverage` direct Spot run (`5243-prfast-6969fcaec-warm`) | `6969fcaec` | immutable digest `sha256:20831e358...` | retained 1000 GiB EBS; warm path | no terminal validation output | >300s | 409s | `ADL_RUST_WARM_CACHE=0` removed relink work; SSH stopped responding during container validation; cleanup passed; no combined pass claim |
+| `adl-ci-and-coverage` direct Spot run (`5243-prfast-86fabf9a6-c7a`) | `86fabf9a6` | immutable digest `sha256:20831e358...` | retained 1000 GiB EBS; warm path | CI passed; 1238/1238 focused coverage tests; report passed | 155s | 257s | `c7a.8xlarge`; live logs, immutable image, source binding, SSH recovery, Spot purchase, and cleanup all verified |
 | `adl-ci-and-coverage` 64-vCPU preflight (`adl-wp-5243-direct-m7a16-f4531680`) | `f4531680` | immutable digest `sha256:20831e358...` | retained 1000 GiB EBS | not launched | n/a | 1s | AWS rejected the Spot request with `MaxSpotInstanceCountExceeded`; no compute or validation ran |
 
 Both existing-PR CI shadows ran 54 focused tests, doc tests, and demo smoke
@@ -222,8 +219,8 @@ Repository variable `ADL_HEAVY_CI_BACKEND` controls the heavy backend:
 - absent, `hosted`, or any value other than `spot`: existing hosted lanes
 - `spot`: one reusable Spot `adl-ci-and-coverage` lane for trusted same-repo
   pull requests; it runs CI and coverage concurrently on one warm
-  `m7a.8xlarge` host with a 300-second wall-time acceptance target. This is not
-  yet a live-proven result.
+  `c7a.8xlarge` host with a 300-second wall-time target; the retained proof
+  completed in 257 seconds.
 - fork pull requests: hosted lanes regardless of the variable
 
 Push-to-main, schedule/nightly, and workflow-dispatch coverage remains hosted
@@ -233,12 +230,9 @@ Stable `adl-ci` and `adl-coverage` aggregators preserve branch-protection check
 names. Immediate rollback is setting `ADL_HEAVY_CI_BACKEND=hosted` or deleting
 the variable and rerunning the checks.
 
-## Remaining Proof Before Cutover
+## Publication Gate
 
-1. Diagnose and repair the authoritative coverage failure from run 41 using
-   the retained `adl-coverage.log`, then prove both concurrent profiles,
-   cleanup, live logs, and total elapsed time <=300s on one exact-commit run.
-2. Verify the constrained OIDC subject, exact source binding, sanitized
-   artifacts, and EBS detach behavior remain green in that run.
-3. Retain the redacted artifact and final cost/timing comparison before making
-   Spot the required-check backend.
+The live PR-fast proof is complete. Publication still requires the bounded
+pre-PR review, a draft PR with the exact pushed source ref, and repository
+variable cutover to `spot` only after the draft checks are routed to Spot.
+Setting `ADL_HEAVY_CI_BACKEND=hosted` remains the immediate rollback path.

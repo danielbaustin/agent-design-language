@@ -105,7 +105,7 @@ For the operational apples-to-apples run:
 - `git_ref`: exact immutable commit under test
 - `base_ref`: merge base or `origin/main`
 - `source_event_name`: `pull_request` for a PR shadow
-- `instance_type`: `m7a.8xlarge` (32 vCPUs; the production parallel profile)
+- `instance_type`: `c7a.8xlarge` (36 vCPUs; the production parallel profile)
 - `validation_command`: blank
 
 The combined profile starts path-policy `adl-ci` and policy-selected
@@ -123,7 +123,7 @@ For CI-only diagnostics:
 - `base_ref`: merge base or `origin/main`
 - `source_event_name`: event semantics to reproduce; use `pull_request` for a
   PR shadow
-- `instance_type`: `m7a.8xlarge`
+- `instance_type`: `c7a.8xlarge`
 - `validation_command`: blank
 
 For coverage-only diagnostics, use `profile: adl-coverage`. The named profiles
@@ -139,11 +139,11 @@ would delegate that work to `adl-coverage`. `adl-coverage` verifies the
 preinstalled coverage toolchain and runs the focused coverage-impact lane for
 pull requests, including when path policy marks full coverage as required.
 The plan records `mode=pr-fast-sla full_policy=true`; this is the bounded PR
-proof intended to fit the Spot SLA. The 300-second wall-time target remains an
-acceptance gate until a live combined proof passes. Full authoritative coverage remains required for
+proof proven on `c7a.8xlarge` in 257 seconds with CI and 1238/1238 focused
+coverage tests passing. Full authoritative coverage remains required for
 push/main and non-PR evidence events. The full lane uses two concurrent
-nextest partitions by default, with 16 test threads per partition on the
-32-vCPU `m7a.8xlarge` builder. Both partitions must pass before the single
+nextest partitions by default, with 18 test threads per partition on the
+36-vCPU `c7a.8xlarge` builder. Both partitions must pass before the single
 coverage result is emitted; override `ADL_AUTHORITATIVE_COVERAGE_PARTITIONS`
 and `ADL_AUTHORITATIVE_COVERAGE_TEST_THREADS` only for a measured builder
 shape.
