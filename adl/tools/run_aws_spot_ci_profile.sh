@@ -163,6 +163,10 @@ run_adl_coverage() {
     echo "run_aws_spot_ci_profile: source revision has no warm-cache helper; using retained target directly"
   fi
   if [[ "$FULL_COVERAGE_REQUIRED" == true ]]; then
+    if [[ -z "$COVERAGE_AUTHORITY" ]]; then
+      echo "run_aws_spot_ci_profile: full coverage policy did not declare coverage_authority" >&2
+      exit 1
+    fi
     printf 'ADL_SPOT_COVERAGE_PLAN mode=full-authoritative\n'
     bash "$ROOT_DIR/adl/tools/run_authoritative_coverage_lane.sh" \
       --authority "$COVERAGE_AUTHORITY" \

@@ -27,6 +27,7 @@ grep -F 'FULL_COVERAGE_REQUIRED="$(policy_value full_coverage_required)"' "$SCRI
 grep -F 'COVERAGE_AUTHORITY="$(policy_value coverage_authority)"' "$SCRIPT" >/dev/null
 grep -F 'run_authoritative_coverage_lane.sh' "$SCRIPT" >/dev/null
 grep -F -- '--no-fail-fast' "$SCRIPT" >/dev/null
+grep -F 'full coverage policy did not declare coverage_authority' "$SCRIPT" >/dev/null
 grep -F 'if [[ "$RUST_REQUIRED" == true && "$FULL_COVERAGE_REQUIRED" != true ]]' "$SCRIPT" >/dev/null
 grep -F 'bash adl/tools/demo_smoke_v07_story.sh' "$SCRIPT" >/dev/null
 grep -F 'ADL_COVERAGE_BUILD_ROOT="$CARGO_TARGET_DIR/coverage"' "$SCRIPT" >/dev/null
