@@ -118,6 +118,8 @@ fi
 full_policy_log="$combined_tmp/full-policy.log"
 full_policy_output="$(ADL_SPOT_SOURCE_ROOT="$combined_root" CARGO_TARGET_DIR="$combined_root/cache/target" ADL_TEST_FULL_POLICY=true ADL_TEST_LOG="$full_policy_log" PATH="$fake_bin:$PATH" bash "$combined_root/adl/tools/run_aws_spot_ci_profile.sh" adl-coverage --base HEAD --head HEAD --event-name pull_request)"
 grep -F 'ADL_SPOT_COVERAGE_PLAN mode=pr-fast-sla full_policy=true authority=test-policy' <<<"$full_policy_output" >/dev/null
+grep -F 'cargo llvm-cov nextest' "$full_policy_log" >/dev/null
+grep -F 'ADL_SPOT_COVERAGE_SUMMARY_BEGIN' <<<"$full_policy_output" >/dev/null
 if grep -F 'mode=full-authoritative' <<<"$full_policy_output" >/dev/null; then
   echo "full-policy pull request unexpectedly selected authoritative coverage" >&2
   exit 1
