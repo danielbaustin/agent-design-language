@@ -105,7 +105,7 @@ For the operational apples-to-apples run:
 - `git_ref`: exact immutable commit under test
 - `base_ref`: merge base or `origin/main`
 - `source_event_name`: `pull_request` for a PR shadow
-- `instance_type`: `m7a.2xlarge`
+- `instance_type`: `m7a.8xlarge` (32 vCPUs; the production parallel profile)
 - `validation_command`: blank
 
 The combined profile runs path-policy `adl-ci` first and authoritative
@@ -122,7 +122,7 @@ For CI-only diagnostics:
 - `base_ref`: merge base or `origin/main`
 - `source_event_name`: event semantics to reproduce; use `pull_request` for a
   PR shadow
-- `instance_type`: `m7a.2xlarge`
+- `instance_type`: `m7a.8xlarge`
 - `validation_command`: blank
 
 For coverage-only diagnostics, use `profile: adl-coverage`. The named profiles
