@@ -13,7 +13,8 @@ Roll out in four stages:
 1. Run manual `adl-ci-and-coverage` as the operational shadow: both profiles
    execute inside one Spot launch, one retained cache, and one cleanup scope.
 2. Use the individual `adl-ci` and `adl-coverage` profiles only for bounded
-   diagnosis, then compare the combined artifact with hosted CI.
+   diagnosis. The GitHub cutover path uses exactly one Spot job,
+   `adl-ci-and-coverage`, for both stable checks.
 3. Rehearse failure, cancellation, interruption, and hosted rollback.
 4. Change the required workflow routing only after all prior gates pass.
 
@@ -36,9 +37,9 @@ Advance only when the current phase is green:
    return the retained EBS volume to `available`, sanitize artifacts, and leave
    stable checks red rather than skipped-success.
 4. **Canary route.** Set `ADL_HEAVY_CI_BACKEND=spot` for one controlled
-   same-repository PR and verify exactly one backend runs for each stable
-   `adl-ci` and `adl-coverage` context. Fork PRs and non-PR coverage must remain
-   hosted.
+   same-repository PR and verify exactly one Spot launch runs both profiles;
+   the stable `adl-ci` and `adl-coverage` contexts aggregate that same result.
+   Fork PRs and non-PR coverage must remain hosted.
 5. **Broad route.** Keep the variable at `spot` for trusted same-repository PRs
    only after two consecutive canary PRs complete without operator repair.
    Monitor launch latency, workload time, interruption rate, cache headroom,

@@ -137,10 +137,16 @@ grep -F 'name: Aggregate hosted or Spot coverage lane' "$CI_WORKFLOW" >/dev/null
 grep -F 'name: adl-coverage' "$CI_WORKFLOW" >/dev/null
 grep -F 'name: adl-ci' "$CI_WORKFLOW" >/dev/null
 grep -F '"adl_demo_proof:${{ needs.adl_demo_proof.result }}" \' "$CI_WORKFLOW" >/dev/null
-grep -F '"adl_spot_ci:${{ needs.adl_spot_ci.result }}"' "$CI_WORKFLOW" >/dev/null
-test "$(grep -Fc 'builder_image_tag: v0.91.7-coverage-5243' "$CI_WORKFLOW")" -eq 2
-test "$(grep -Fc 'source_event_name: ${{ github.event_name }}' "$CI_WORKFLOW")" -eq 2
+grep -F '"adl_spot_ci_and_coverage:${{ needs.adl_spot_ci_and_coverage.result }}"' "$CI_WORKFLOW" >/dev/null
+test "$(grep -Fc 'builder_image_tag: v0.91.7-coverage-5243' "$CI_WORKFLOW")" -eq 1
+test "$(grep -Fc 'source_event_name: ${{ github.event_name }}' "$CI_WORKFLOW")" -eq 1
 test "$(grep -Fc 'python3 adl/tools/verify_ci_backend_route.py' "$CI_WORKFLOW")" -eq 2
+test "$(grep -Fc 'profile: adl-ci-and-coverage' "$CI_WORKFLOW")" -eq 1
+test "$(grep -Fc 'name: adl-spot-ci-and-coverage' "$CI_WORKFLOW")" -eq 1
+if grep -E 'name: adl-spot-(ci|coverage)$' "$CI_WORKFLOW" >/dev/null; then
+  echo "Spot CI and coverage must share one lifecycle" >&2
+  exit 1
+fi
 
 binding_tmp="$(mktemp -d "${TMPDIR:-/tmp}/adl-spot-ref-binding.XXXXXX")"
 git -C "$binding_tmp" init -q

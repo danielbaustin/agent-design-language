@@ -441,17 +441,17 @@ jobs:
           echo "Policy reason: ${{ needs.adl_path_policy.outputs.reason }}"
           echo "Proof validation scope: ${{ needs.adl_path_policy.outputs.proof_validation_scope }}"
 
-  adl_spot_ci:
-    name: adl-spot-ci
+  adl_spot_ci_and_coverage:
+    name: adl-spot-ci-and-coverage
     needs: adl_path_policy
-    if: (vars.ADL_HEAVY_CI_BACKEND || 'hosted') == 'spot' && github.event_name == 'pull_request' && github.event.pull_request.head.repo.full_name == github.repository && (needs.adl_path_policy.outputs.rust_required == 'true' || needs.adl_path_policy.outputs.demo_smoke_required == 'true' || needs.adl_path_policy.outputs.v0913_proof_required == 'true')
+    if: (vars.ADL_HEAVY_CI_BACKEND || 'hosted') == 'spot' && github.event_name == 'pull_request' && github.event.pull_request.head.repo.full_name == github.repository && (needs.adl_path_policy.outputs.rust_required == 'true' || needs.adl_path_policy.outputs.demo_smoke_required == 'true' || needs.adl_path_policy.outputs.v0913_proof_required == 'true' || needs.adl_path_policy.outputs.coverage_required == 'true')
     permissions:
       contents: read
       id-token: write
     uses: ./.github/workflows/aws-spot-remote-validation.yaml
     with:
       mode: start-run
-      profile: adl-ci
+      profile: adl-ci-and-coverage
       remote_ref: ${{ github.head_ref || github.ref_name }}
       git_ref: ${{ github.event.pull_request.head.sha || github.sha }}
       base_ref: ${{ github.event.pull_request.base.sha || github.event.before || github.sha }}
@@ -469,7 +469,7 @@ jobs:
       - adl_rust_fmt_clippy
       - adl_rust_tests
       - adl_demo_proof
-      - adl_spot_ci
+      - adl_spot_ci_and_coverage
     if: always()
     runs-on: ubuntu-latest
     permissions:
@@ -496,7 +496,7 @@ jobs:
             --rust-required "$RUST_REQUIRED" \
             --demo-required "$DEMO_REQUIRED" \
             --path-policy-result "${{ needs.adl_path_policy.result }}" \
-            --spot-result "${{ needs.adl_spot_ci.result }}" \
+            --spot-result "${{ needs.adl_spot_ci_and_coverage.result }}" \
             --hosted-result "rust-fmt-clippy=${{ needs.adl_rust_fmt_clippy.result }}" \
             --hosted-result "rust-tests=${{ needs.adl_rust_tests.result }}" \
             --hosted-result "demo-proof=${{ needs.adl_demo_proof.result }}"
@@ -507,7 +507,7 @@ jobs:
             "adl_rust_fmt_clippy:${{ needs.adl_rust_fmt_clippy.result }}" \
             "adl_rust_tests:${{ needs.adl_rust_tests.result }}" \
             "adl_demo_proof:${{ needs.adl_demo_proof.result }}" \
-            "adl_spot_ci:${{ needs.adl_spot_ci.result }}"
+            "adl_spot_ci_and_coverage:${{ needs.adl_spot_ci_and_coverage.result }}"
           do
             name="${lane%%:*}"
             result="${lane#*:}"
@@ -530,7 +530,7 @@ jobs:
             echo "| adl_rust_fmt_clippy | \`${{ needs.adl_rust_fmt_clippy.result }}\` |"
             echo "| adl_rust_tests | \`${{ needs.adl_rust_tests.result }}\` |"
             echo "| adl_demo_proof | \`${{ needs.adl_demo_proof.result }}\` |"
-            echo "| adl_spot_ci | \`${{ needs.adl_spot_ci.result }}\` |"
+            echo "| adl_spot_ci_and_coverage | \`${{ needs.adl_spot_ci_and_coverage.result }}\` |"
             echo
             echo "Stable required check \`adl-ci\` is an aggregator over parallel lanes."
           } >> "$GITHUB_STEP_SUMMARY"
@@ -873,32 +873,12 @@ jobs:
         run: bash adl/tools/setup_required_coverage_toolchain.sh stats
         working-directory: .
 
-  adl_spot_coverage:
-    name: adl-spot-coverage
-    needs: adl_path_policy
-    if: (vars.ADL_HEAVY_CI_BACKEND || 'hosted') == 'spot' && github.event_name == 'pull_request' && github.event.pull_request.head.repo.full_name == github.repository && needs.adl_path_policy.outputs.coverage_required == 'true'
-    permissions:
-      contents: read
-      id-token: write
-    uses: ./.github/workflows/aws-spot-remote-validation.yaml
-    with:
-      mode: start-run
-      profile: adl-coverage
-      remote_ref: ${{ github.head_ref || github.ref_name }}
-      git_ref: ${{ github.event.pull_request.head.sha || github.sha }}
-      base_ref: ${{ github.event.pull_request.base.sha || github.event.before || github.sha }}
-      source_event_name: ${{ github.event_name }}
-      instance_type: m7a.2xlarge
-      builder_image_tag: v0.91.7-coverage-5243
-      issue_number: ${{ github.event.pull_request.number }}
-    secrets: inherit
-
   adl-coverage:
     name: adl-coverage
     needs:
       - adl_path_policy
       - adl_coverage_hosted
-      - adl_spot_coverage
+      - adl_spot_ci_and_coverage
     if: always()
     runs-on: ubuntu-latest
     permissions:
@@ -921,13 +901,13 @@ jobs:
             --same-repo-pr "$SAME_REPO_PR" \
             --work-required "$WORK_REQUIRED" \
             --path-policy-result "${{ needs.adl_path_policy.result }}" \
-            --spot-result "${{ needs.adl_spot_coverage.result }}" \
+            --spot-result "${{ needs.adl_spot_ci_and_coverage.result }}" \
             --hosted-result "coverage=${{ needs.adl_coverage_hosted.result }}"
           failed=""
           for lane in \
             "adl_path_policy:${{ needs.adl_path_policy.result }}" \
             "adl_coverage_hosted:${{ needs.adl_coverage_hosted.result }}" \
-            "adl_spot_coverage:${{ needs.adl_spot_coverage.result }}"
+            "adl_spot_ci_and_coverage:${{ needs.adl_spot_ci_and_coverage.result }}"
           do
             name="${lane%%:*}"
             result="${lane#*:}"
