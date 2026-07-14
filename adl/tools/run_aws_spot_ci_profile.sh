@@ -244,14 +244,22 @@ case "$PROFILE" in
     fi
     ci_log="$profile_log_dir/adl-ci.log"
     coverage_log="$profile_log_dir/adl-coverage.log"
+    : >"$ci_log"
+    : >"$coverage_log"
     run_adl_ci >"$ci_log" 2>&1 &
     ci_pid=$!
     run_adl_coverage >"$coverage_log" 2>&1 &
     coverage_pid=$!
+    tail -n +1 -f "$ci_log" &
+    ci_tail_pid=$!
+    tail -n +1 -f "$coverage_log" &
+    coverage_tail_pid=$!
     ci_status=0
     coverage_status=0
     wait "$ci_pid" || ci_status=$?
     wait "$coverage_pid" || coverage_status=$?
+    kill "$ci_tail_pid" "$coverage_tail_pid" 2>/dev/null || true
+    wait "$ci_tail_pid" "$coverage_tail_pid" 2>/dev/null || true
     cat "$ci_log" "$coverage_log"
     if [[ "$remove_profile_log_dir" == true ]]; then
       rm -rf "$profile_log_dir"
