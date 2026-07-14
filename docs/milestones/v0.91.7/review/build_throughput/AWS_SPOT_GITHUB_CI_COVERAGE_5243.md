@@ -53,6 +53,7 @@ still disabled while coverage proof is incomplete.
 | `adl-ci-and-coverage` GitHub workflow run 33 | `9346f230` | immutable digest `sha256:20831e358...` | retained 500 GiB EBS | 728s | 785s | passed | `adl-ci` and `adl-coverage` passed in one lifecycle; 2108/2108 tests, 2 skipped; instance terminated and volume available |
 | `adl-ci-and-coverage` GitHub workflow run 38 | `bf79a69d` | immutable digest `sha256:20831e358...` | retained 500 GiB EBS | >300s | canceled | failed target | one `m7a.8xlarge` host; CI and coverage processes were concurrent; stopped at the 300s ceiling |
 | `adl-ci-and-coverage` GitHub workflow run 39 | `ca1cb62c` | immutable digest `sha256:20831e358...` | retained 1000 GiB EBS resize | preflight | 45s | failed before validation because the retained filesystem was below the 10 GiB floor; Spot cleanup passed |
+| `adl-ci-and-coverage` GitHub workflow run 40 | `f511f52a` | immutable digest `sha256:20831e358...` | retained 1000 GiB EBS | >300s | canceled | failed target | warm repeat reached parallel full-coverage compilation but did not finish before the 300s ceiling; Spot cleanup passed |
 
 Both existing-PR CI shadows ran 54 focused tests, doc tests, and demo smoke
 successfully, with identical 42-second validation time. They used the exact source commit and merge base without modifying
