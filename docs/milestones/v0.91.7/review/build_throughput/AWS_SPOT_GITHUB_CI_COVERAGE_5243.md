@@ -19,10 +19,11 @@ all 1238 selected coverage tests passed, the JSON report completed, live SSH/SSM
 logs were observed, and the full launch-through-cleanup lifecycle completed in
 257 seconds. Full authoritative coverage remains reserved for push/main.
 
-The `adl-spot-ci` GitHub environment is configured with selected-branch rules
-for `main`, `codex/*`, and `pull/*`, no environment secrets, no manual approval
-gate, and no tag rule. `pull/*` is required because GitHub evaluates a
-pull-request deployment as `refs/pull/<number>/merge`. The Agent Logic OIDC role trust was then applied and independently
+The `adl-spot-ci` GitHub environment is configured with no deployment branch
+policy (`deployment_branch_policy: null`), no environment secrets, no manual
+approval gate, and no tag rule. GitHub's selected-branch mode rejects a
+pull-request deployment represented as `refs/pull/<number>/merge`; no-policy
+mode is required for this trusted same-repository workflow. The Agent Logic OIDC role trust was then applied and independently
 read back with exactly these subjects:
 
 - `repo:danielbaustin/agent-design-language:ref:refs/heads/main`

@@ -70,21 +70,21 @@ repository and approved branches/environments. The workflow requires:
 - protected GitHub environment `adl-spot-ci`; configure it before cutover and
   do not rely on GitHub's unprotected auto-created environment default
 
-Configure `adl-spot-ci` with **Selected branches and tags**, branch patterns
-`main`, `codex/*`, and `pull/*`, and no tag patterns. The `pull/*` pattern is
-required because GitHub evaluates a pull-request deployment as
-`refs/pull/<number>/merge`, not as the source branch name. Do not add required
-reviewers to this CI environment because unattended required checks must not
-wait for a deployment approval. Fork pull requests still cannot enter the Spot
-job because the workflow requires a same-repository head and explicitly routes
-forks to hosted runners.
+Configure `adl-spot-ci` with no deployment branch policy (GitHub API:
+`deployment_branch_policy: null`). GitHub's branch-pattern mode evaluates the
+PR deployment as `refs/pull/<number>/merge` and rejects it even when the source
+branch is `codex/*`; no-policy mode is required for PR merge refs. Do not add
+required reviewers to this CI environment because unattended required checks
+must not wait for a deployment approval. The workflow still requires a
+same-repository PR head and explicitly routes fork pull requests to hosted
+runners, so no untrusted fork code can enter the Spot job.
 
 Do not store AWS access keys in GitHub. The role needs the bounded EC2, EBS,
 SSM, IAM, ECR-read, and cleanup permissions already created for the Spot lane.
 Its OIDC trust includes the dedicated `adl-spot-ci` environment subject so
 automatic pull-request calls do not require a repository-wide
-`pull_request` subject. Keep environment deployment policy restricted to the
-trusted repository branches that may run Spot.
+`pull_request` subject. Keep the no-policy environment setting paired with the
+workflow's same-repository guard; do not remove that guard.
 
 The live workflow always enables port 22 using the configured operator CIDR;
 it does not fall back to the ephemeral GitHub runner address. The retained
