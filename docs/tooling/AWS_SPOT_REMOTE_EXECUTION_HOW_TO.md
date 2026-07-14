@@ -18,7 +18,8 @@ The current CI-and-coverage image, `adl-builder:v0.91.7-coverage-5243`, is amd64
 - Run `preflight` before every paid run.
 - Use a pushed branch, tag, or advertised remote ref. Do not use `HEAD`.
 - SSH recovery is always enabled on port 22 with the configured passphraseless
-  debug key; do not rely on the hosted runner as the only observation path.
+  debug key and restricted to the current public source IP; do not rely on the
+  hosted runner as the only observation path.
 - Keep the image pinned by digest. A tag is resolved once before launch.
 - Never delete or recreate the retained EBS volume during routine cleanup.
 - Do not launch two jobs against the retained volume concurrently.
