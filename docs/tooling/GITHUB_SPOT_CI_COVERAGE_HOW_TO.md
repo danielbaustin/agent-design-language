@@ -196,6 +196,27 @@ the paid validation run. The operational default is
 immutable digest before launch. Keep the previous digest available for
 rollback.
 
+## Retained Cache Policy
+
+The EBS cache is retained for the value that actually accelerates repeated
+Rust work:
+
+- `/cache-root/target` keeps the normal Cargo target and fingerprints.
+- `/cache-root/sccache` keeps compiler artifacts.
+- `/cache-root/cargo-home` keeps the Cargo registry and Git checkouts.
+
+The immutable builder image also sets `SCCACHE_CACHE_SIZE=20G`, so compiler
+cache eviction is handled by `sccache` rather than by deleting the cache root.
+
+The derived `/cache-root/target/coverage` tree is reset at the start of each
+coverage lane. It contains instrumented and LLVM coverage outputs, so retaining
+it alongside the normal target causes duplicate artifacts and unbounded cache
+growth without improving the next normal build. The reset emits an
+`ADL_SPOT_CACHE_PRUNE` record with the removed byte count and explicitly names
+the three preserved cache roots. `.profraw` files are also removed by the
+coverage lane's existing cleanup trap. This policy preserves warm compilation
+value while making repeated CI-plus-coverage runs disk-bounded.
+
 ## Required Proof Before Cutover
 
 For the combined profile, retain two consecutive same-commit runs showing:
@@ -276,7 +297,10 @@ image rollback, and alternate instance selection:
 
 - [AWS Spot Remote Execution HOW-TO](AWS_SPOT_REMOTE_EXECUTION_HOW_TO.md)
 
-The Spot wrapper enforces a 300-second remote-command deadline. On timeout or
-instance loss it requests SSM `CancelCommand` before terminating the builder,
-so a canceled GitHub job does not leave a validation command running during
-teardown. The timeout override is constrained to the same 300-second maximum.
+The Spot wrapper enforces a 600-second remote-command deadline. The operational
+performance target remains 300 seconds, but the larger kill threshold allows a
+warm-cache GitHub run to finish and report its actual timing instead of being
+cut off at the end of the target window. On timeout or instance loss it
+requests SSM `CancelCommand` before terminating the builder, so a canceled
+GitHub job does not leave a validation command running during teardown. The
+timeout override is constrained to the same 600-second maximum.

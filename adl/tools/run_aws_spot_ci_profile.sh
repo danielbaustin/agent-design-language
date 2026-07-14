@@ -156,6 +156,19 @@ run_adl_coverage() {
   export ADL_AUTHORITATIVE_COVERAGE_PARTITIONS="${ADL_AUTHORITATIVE_COVERAGE_PARTITIONS:-2}"
   export ADL_COVERAGE_BUILD_ROOT="$CARGO_TARGET_DIR/coverage"
   WARM_SOURCE_TARGET="$CARGO_TARGET_DIR"
+  # The instrumented target is derived from the retained main target and is
+  # deliberately disposable. Keep the main target, Cargo home, and sccache
+  # warm while removing stale coverage fingerprints and LLVM artifacts before
+  # each run so repeated coverage cannot grow the EBS cache without bound.
+  if [[ "${ADL_SPOT_RESET_COVERAGE_CACHE:-1}" == 1 ]]; then
+    coverage_cache_before_bytes=0
+    if [[ -d "$ADL_COVERAGE_BUILD_ROOT" ]]; then
+      coverage_cache_before_bytes="$(du -sk "$ADL_COVERAGE_BUILD_ROOT" 2>/dev/null | awk '{print $1 * 1024}' || printf '0')"
+    fi
+    rm -rf -- "$ADL_COVERAGE_BUILD_ROOT"
+    printf 'ADL_SPOT_CACHE_PRUNE scope=coverage root=%s before_bytes=%s after_bytes=0 preserved=main-target,sccache,cargo-home\n' \
+      "$ADL_COVERAGE_BUILD_ROOT" "$coverage_cache_before_bytes"
+  fi
   export ADL_COVERAGE_WARM_SOURCE_TARGET="$WARM_SOURCE_TARGET"
   export ADL_RUST_WARM_CACHE_SOURCE_TARGET="$WARM_SOURCE_TARGET"
   export ADL_RUST_WARM_CACHE_DEST_TARGET="$ADL_COVERAGE_BUILD_ROOT/target"

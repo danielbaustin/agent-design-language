@@ -31,6 +31,9 @@ grep -F 'full coverage policy did not declare coverage_authority' "$SCRIPT" >/de
 grep -F 'if [[ "$RUST_REQUIRED" == true && "$FULL_COVERAGE_REQUIRED" != true ]]' "$SCRIPT" >/dev/null
 grep -F 'bash adl/tools/demo_smoke_v07_story.sh' "$SCRIPT" >/dev/null
 grep -F 'ADL_COVERAGE_BUILD_ROOT="$CARGO_TARGET_DIR/coverage"' "$SCRIPT" >/dev/null
+grep -F 'ADL_SPOT_RESET_COVERAGE_CACHE:-1' "$SCRIPT" >/dev/null
+grep -F 'ADL_SPOT_CACHE_PRUNE scope=coverage' "$SCRIPT" >/dev/null
+grep -F 'preserved=main-target,sccache,cargo-home' "$SCRIPT" >/dev/null
 grep -F 'run_pr_fast_coverage_lane.sh' "$SCRIPT" >/dev/null
 grep -F 'if [[ "$FULL_COVERAGE_REQUIRED" == true ]]' "$SCRIPT" >/dev/null
 grep -F 'ADL_RUST_WARM_CACHE_SOURCE_TARGET="$WARM_SOURCE_TARGET"' "$SCRIPT" >/dev/null
@@ -82,6 +85,11 @@ fake_bin="$combined_tmp/bin"
 combined_log="$combined_tmp/execution.log"
 combined_output_dir="$combined_tmp/profile-output"
 mkdir -p "$combined_root/adl/tools" "$combined_root/adl/target" "$fake_bin" "$combined_root/cache/target" "$combined_output_dir"
+mkdir -p "$combined_root/cache/target/coverage/target" "$combined_root/cache/sccache" "$combined_root/cache/cargo-home"
+printf 'stale coverage artifact\n' >"$combined_root/cache/target/coverage/target/stale.txt"
+printf 'warm target artifact\n' >"$combined_root/cache/target/warm.txt"
+printf 'sccache artifact\n' >"$combined_root/cache/sccache/warm.bin"
+printf 'cargo registry artifact\n' >"$combined_root/cache/cargo-home/warm.crate"
 cp "$SCRIPT" "$combined_root/adl/tools/run_aws_spot_ci_profile.sh"
 printf '#!/usr/bin/env bash\nset -euo pipefail\nprintf "ci-policy\\n" >>"$ADL_TEST_LOG"\nout=""\nwhile [[ $# -gt 0 ]]; do\n  if [[ "$1" == "--github-output" ]]; then out="$2"; shift 2; continue; fi\n  shift\ndone\nfull=false\nif [[ "${ADL_TEST_FULL_POLICY:-false}" == true ]]; then full=true; fi\nprintf "rust_required=true\\nfull_coverage_required=%%s\\ndemo_smoke_required=false\\nv0913_proof_required=false\\nvalidation_profile_escalation_required=false\\ncoverage_authority=test-policy\\n" "$full" >"$out"\n' >"$combined_root/adl/tools/ci_path_policy.sh"
 printf '#!/usr/bin/env bash\nprintf "ci-lane\\n" >>"$ADL_TEST_LOG"\n' >"$combined_root/adl/tools/run_pr_fast_test_lane.sh"
@@ -107,6 +115,11 @@ total_record_line="$(printf '%s\n' "$combined_output" | grep -n 'profile=adl-ci-
 [[ -n "$ci_record_line" && -n "$coverage_record_line" && -n "$total_record_line" ]]
 grep -F 'ci-lane' "$combined_log" >/dev/null
 grep -F 'cargo llvm-cov nextest' "$combined_log" >/dev/null
+grep -F 'ADL_SPOT_CACHE_PRUNE scope=coverage' <<<"$combined_output" >/dev/null
+test ! -e "$combined_root/cache/target/coverage/target/stale.txt"
+test -e "$combined_root/cache/target/warm.txt"
+test -e "$combined_root/cache/sccache/warm.bin"
+test -e "$combined_root/cache/cargo-home/warm.crate"
 test -s "$combined_output_dir/adl-ci.log"
 test -s "$combined_output_dir/adl-coverage.log"
 if printf '%s\n' "$combined_output" | grep -F 'parallel profile failed' >/dev/null; then
