@@ -475,6 +475,8 @@ jobs:
     permissions:
       contents: read
     steps:
+      - name: Check out repository for route verification
+        uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4
       - name: Aggregate split adl-ci lanes
         env:
           BACKEND: ${{ vars.ADL_HEAVY_CI_BACKEND || 'hosted' }}
@@ -902,6 +904,8 @@ jobs:
     permissions:
       contents: read
     steps:
+      - name: Check out repository for route verification
+        uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4
       - name: Aggregate hosted or Spot coverage lane
         env:
           BACKEND: ${{ vars.ADL_HEAVY_CI_BACKEND || 'hosted' }}
