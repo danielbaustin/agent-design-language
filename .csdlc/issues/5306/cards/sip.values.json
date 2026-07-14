@@ -1,0 +1,31 @@
+{
+  "identity": {
+    "schema_version": "1.0.0",
+    "template_version": "1.0.0",
+    "issue": 5306,
+    "repository": "danielbaustin/agent-design-language",
+    "title": "[v0.91.7][csdlc-v2] Gate 10D2: approved bounded v1 deletion wave",
+    "slug": "v0-91-7-csdlc-v2-gate-10d2-approved-bounded-v1-deletion-wave",
+    "version": "v0.91.7",
+    "generation": 0
+  },
+  "status": "ready",
+  "content": {
+    "card_kind": "sip",
+    "values": {
+      "goal": "Remove only approved obsolete incumbent C-SDLC surfaces in bounded reviewed slices.",
+      "required_outcome": "A measured deletion wave reaches the reviewed target without removing useful code or protected rollback/importer surfaces.",
+      "declared_scope": [
+        "Exact D1 manifest paths approved for deletion",
+        "Retained-surface ownership and LoC/test accounting"
+      ],
+      "authority_boundary": [
+        "No mutation until D1 reports eligible=true for current evidence",
+        "Explicit operator deletion approval is independently required",
+        "Rollback and importer paths are excluded"
+      ],
+      "initial_assumptions": [],
+      "operator_constraints": []
+    }
+  }
+}

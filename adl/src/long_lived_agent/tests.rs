@@ -35,6 +35,9 @@ fn temp_dir(prefix: &str) -> PathBuf {
         std::process::id(),
         TEMP_SEQ.fetch_add(1, Ordering::Relaxed)
     ));
+    // A rerun can reuse a process id and sequence after a prior test process;
+    // start from a clean fixture so cycle numbering is deterministic.
+    let _ = fs::remove_dir_all(&dir);
     fs::create_dir_all(&dir).expect("create temp dir");
     dir
 }

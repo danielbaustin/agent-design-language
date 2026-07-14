@@ -1,0 +1,31 @@
+{
+  "schema": "csdlc.deletion_eligibility_decision.v2",
+  "issue": 5306,
+  "evaluated_at": "2026-07-14T06:57:01.576841Z",
+  "approval": {
+    "schema": "csdlc.deletion_approval.v2",
+    "approved_by": "operator-daniel",
+    "approved_at": "2026-07-14T06:56:30Z",
+    "allow_qualified_80_to_89": false,
+    "waive_protection_windows": true,
+    "operator_instruction": "Finish parity, full cutover, deletion, rollback, and importer sunset tonight.",
+    "phase_b_manifest_sha256": "a313881ce6429217dc8247de7919882d3fba0312fa75d553fe61fe14e175a54f",
+    "phase_c_manifest_sha256": "a2ffa533296e64f84b58c76970d0d97e961bfa34f40c085741a6559f25bd04ce",
+    "selector_sha256": "5e62eee86234b93363b356a60b83d658d8138109ddc31bdc2309dbe9d8088bb5",
+    "coexistence_manifest_sha256": "c1917f2c1ff6f6a764c66f662ab7882bc7eb4112f1964fe283c7c78291c216b3",
+    "code_revision": "595a7f38347e4337b84addbd28f247cdeefa282f"
+  },
+  "baseline_files": 95,
+  "baseline_lines": 49979,
+  "removed_files": 94,
+  "removed_lines": 48966,
+  "removal_basis_points": 9797,
+  "target_met": true,
+  "eligible": true,
+  "deletion_executed": true,
+  "remaining_v1_control_plane": ["adl/src/session_ledger.rs"],
+  "remaining_v1_control_plane_reason": "Retained because session ownership, leases, protected paths, and stale-claim recovery are lifecycle invariants; v2 remains the sole C-SDLC command authority.",
+  "importer_binary_removed": true,
+  "protection_window_override": "exact-approval-only",
+  "reasons": []
+}

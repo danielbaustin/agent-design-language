@@ -51,10 +51,6 @@ name = "csdlc-closeout"
 path = "src/bin/csdlc-closeout.rs"
 
 [[bin]]
-name = "csdlc-import"
-path = "src/bin/csdlc-import.rs"
-
-[[bin]]
 name = "csdlc-shadow"
 path = "src/bin/csdlc-shadow.rs"
 

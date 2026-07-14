@@ -7,29 +7,24 @@ mod csm_cmd;
 mod csm_service_cmd;
 mod csmctl_cmd;
 mod demo_cmd;
+#[allow(dead_code)]
 mod github_token;
 mod godel_cmd;
 mod identity_cmd;
 mod observability;
 mod open;
-pub(crate) mod pr_cmd;
-mod pr_cmd_args;
-mod pr_cmd_cards;
-mod pr_cmd_prompt;
-mod pr_cmd_validate;
 mod process_cmd;
 mod provider_cmd;
 mod run;
 pub(crate) mod run_artifacts;
+#[allow(dead_code)]
 mod run_artifacts_types;
 mod runtime_v2_cmd;
 mod runtime_v3_cmd;
 mod scheduler_cmd;
 mod session_cmd;
-#[cfg(test)]
-mod tests;
+#[allow(dead_code)]
 mod tokio_runtime;
-mod tooling_cmd;
 mod usage;
 
 use agent_cmd::real_agent;
@@ -40,7 +35,6 @@ use csmctl_cmd::real_csmctl;
 use demo_cmd::real_demo;
 use godel_cmd::real_godel;
 use identity_cmd::real_identity;
-use pr_cmd::real_pr;
 use process_cmd::real_process;
 use provider_cmd::real_provider;
 use run::{real_resume, run_workflow};
@@ -48,7 +42,6 @@ use runtime_v2_cmd::real_runtime_v2;
 use runtime_v3_cmd::real_runtime_v3;
 use scheduler_cmd::real_scheduler;
 use session_cmd::real_session;
-use tooling_cmd::real_tooling;
 
 fn usage() -> &'static str {
     usage::usage()
@@ -60,6 +53,12 @@ fn resume_usage() -> &'static str {
 
 fn version_text() -> &'static str {
     env!("CARGO_PKG_VERSION")
+}
+
+fn real_tooling(_args: &[String]) -> Result<()> {
+    Err(anyhow::anyhow!(
+        "the v1 tooling multiplexer was removed; use the independent C-SDLC v2 binaries"
+    ))
 }
 
 fn print_error_chain(err: &anyhow::Error) {
@@ -199,12 +198,16 @@ fn dispatch_args(args: &[String]) -> Result<()> {
         Some("runtime-v3") => real_runtime_v3(&args[1..]),
         Some("scheduler") => real_scheduler(&args[1..]),
         Some("session") => real_session(&args[1..]),
-        Some("pr") => real_pr(&args[1..]),
+        Some("pr") => Err(anyhow::anyhow!(
+            "the v1 `adl pr` control plane was removed; use the independent C-SDLC v2 binaries"
+        )),
         Some("keygen") => real_keygen(&args[1..]),
         Some("sign") => real_sign(&args[1..]),
         Some("instrument") => real_instrument(&args[1..]),
         Some("learn") => real_learn(&args[1..]),
-        Some("tooling") => real_tooling(&args[1..]),
+        Some("tooling") => Err(anyhow::anyhow!(
+            "the v1 tooling multiplexer was removed; use the independent C-SDLC v2 binaries"
+        )),
         Some("verify") => real_verify(&args[1..]),
         Some("resume") => real_resume(&args[1..]),
         _ => run_workflow(args),
@@ -510,11 +513,9 @@ fn dispatch_csdlc_args_for(binary_name: &'static str, args: &[String]) -> Result
     );
 
     match args.first().map(|s| s.as_str()) {
-        Some("pr") => {
-            reject_csdlc_runtime_run(&format!("{binary_name} pr"), &args[1..])?;
-            real_pr(&args[1..])
-        }
-        Some("issue") => real_csdlc_issue(binary_name, &args[1..]),
+        Some("pr") | Some("issue") => Err(anyhow::anyhow!(
+            "{binary_name} v1 lifecycle commands were removed; use the independent C-SDLC v2 binaries"
+        )),
         Some("tooling") => real_tooling(&args[1..]),
         Some("run") => Err(anyhow::anyhow!(
             "{binary_name} does not run ADL workflow YAML. Use adl-runtime run <adl.yaml> for runtime workflows or {binary_name} issue run <issue> for C-SDLC issue execution."
@@ -528,61 +529,14 @@ fn dispatch_csdlc_args_for(binary_name: &'static str, args: &[String]) -> Result
     }
 }
 
-#[allow(dead_code)]
-fn real_csdlc_issue(binary_name: &'static str, args: &[String]) -> Result<()> {
-    let pr_args = csdlc_issue_to_pr_args_for(binary_name, args)?;
-    real_pr(&pr_args)
-}
+#[cfg(test)]
+mod tests {
+    use std::sync::{Mutex, MutexGuard, OnceLock};
 
-#[allow(dead_code)]
-fn csdlc_issue_to_pr_args(args: &[String]) -> Result<Vec<String>> {
-    csdlc_issue_to_pr_args_for("adl-csdlc", args)
-}
-
-#[allow(dead_code)]
-fn csdlc_issue_to_pr_args_for(binary_name: &'static str, args: &[String]) -> Result<Vec<String>> {
-    reject_csdlc_runtime_run(&format!("{binary_name} issue"), args)?;
-    let Some(subcommand) = args.first().map(|s| s.as_str()) else {
-        return Err(anyhow::anyhow!(
-            "{binary_name} issue requires a pr-compatible subcommand such as run, doctor, finish, or closeout."
-        ));
-    };
-    if subcommand == "run" {
-        let Some(issue) = args.get(1) else {
-            return Err(anyhow::anyhow!(
-                "{binary_name} issue run requires a numeric issue id."
-            ));
-        };
-        if !issue.chars().all(|ch| ch.is_ascii_digit()) {
-            return Err(anyhow::anyhow!(
-                "{binary_name} issue run expects a numeric issue id, got '{issue}'. Runtime workflow YAML belongs to adl-runtime run <adl.yaml>."
-            ));
-        }
-        let mut mapped = Vec::with_capacity(args.len());
-        mapped.push("start".to_string());
-        mapped.extend(args[1..].iter().cloned());
-        return Ok(mapped);
+    pub fn env_lock() -> MutexGuard<'static, ()> {
+        static LOCK: OnceLock<Mutex<()>> = OnceLock::new();
+        LOCK.get_or_init(|| Mutex::new(()))
+            .lock()
+            .expect("environment lock")
     }
-    Ok(args.to_vec())
-}
-
-#[allow(dead_code)]
-fn reject_csdlc_runtime_run(context: &str, args: &[String]) -> Result<()> {
-    if args.first().map(|s| s.as_str()) != Some("run") {
-        return Ok(());
-    }
-    let Some(operand) = args.get(1) else {
-        return Ok(());
-    };
-    if looks_like_adl_workflow_path(operand) {
-        return Err(anyhow::anyhow!(
-            "{context} run cannot execute ADL workflow YAML '{operand}'. Use adl-runtime run <adl.yaml> for runtime workflows."
-        ));
-    }
-    Ok(())
-}
-
-#[allow(dead_code)]
-fn looks_like_adl_workflow_path(value: &str) -> bool {
-    value.ends_with(".adl.yaml") || value.ends_with(".adl.yml")
 }

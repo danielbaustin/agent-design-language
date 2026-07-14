@@ -1,0 +1,20 @@
+{
+  "schema": "csdlc.deletion_eligibility_recheck.v1",
+  "issue": 5306,
+  "evaluated_at": "2026-07-14T10:25:55.070215Z",
+  "code_revision": "e0f25d5a9c89a62cc4e3437156dca04bb85b7a19",
+  "source_request": "csdlc-v2/operator/eligibility-request.json",
+  "eligible": true,
+  "reasons": [],
+  "baseline_files": 95,
+  "baseline_lines": 49979,
+  "removed_lines": 48966,
+  "retained_lines": 1013,
+  "removal_basis_points": 9797,
+  "target_met": true,
+  "phase_b_blake3": "a313881ce6429217dc8247de7919882d3fba0312fa75d553fe61fe14e175a54f",
+  "phase_c_blake3": "a2ffa533296e64f84b58c76970d0d97e961bfa34f40c085741a6559f25bd04ce",
+  "selector_blake3": "5e62eee86234b93363b356a60b83d658d8138109ddc31bdc2309dbe9d8088bb5",
+  "manifest_blake3": "c1917f2c1ff6f6a764c66f662ab7882bc7eb4112f1964fe283c7c78291c216b3",
+  "deletion_executed": true
+}

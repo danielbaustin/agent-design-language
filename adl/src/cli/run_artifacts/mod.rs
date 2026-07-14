@@ -7,6 +7,7 @@ use ::adl::{artifacts, execute, failure_taxonomy, instrumentation, resolve, trac
 
 pub(crate) use super::run_artifacts_types::*;
 
+#[allow(dead_code)]
 mod cognitive;
 mod runtime;
 mod summary;

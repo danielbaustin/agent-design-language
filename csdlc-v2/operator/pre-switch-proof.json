@@ -9,6 +9,6 @@
     {"id":"full_suite","executable":"cargo","args":["test","--manifest-path","csdlc-v2/Cargo.toml"]},
     {"id":"samples_parity","executable":"cargo","args":["test","--manifest-path","csdlc-v2/Cargo.toml","--test","gate9"]},
     {"id":"quality","executable":"cargo","args":["clippy","--manifest-path","csdlc-v2/Cargo.toml","--all-targets","--","-D","warnings"]},
-    {"id":"v1_smoke","executable":"adl/tools/pr.sh","args":["help"]}
+    {"id":"v2_install_verify","executable":"csdlc-install","args":["verify"]}
   ]
 }

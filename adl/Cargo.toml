@@ -15,14 +15,6 @@ name = "adl"
 path = "src/main.rs"
 
 [[bin]]
-name = "adl-csdlc"
-path = "src/bin/adl_csdlc.rs"
-
-[[bin]]
-name = "csdlc"
-path = "src/bin/csdlc.rs"
-
-[[bin]]
 name = "adl-runtime"
 path = "src/bin/adl_runtime.rs"
 
@@ -37,78 +29,6 @@ path = "src/bin/csmctl.rs"
 [[bin]]
 name = "adl-review"
 path = "src/bin/adl_review.rs"
-
-[[bin]]
-name = "adl-validate-structured-prompt"
-path = "src/bin/adl_validate_structured_prompt.rs"
-
-[[bin]]
-name = "adl-lint-prompt-spec"
-path = "src/bin/adl_lint_prompt_spec.rs"
-
-[[bin]]
-name = "adl-prompt-template"
-path = "src/bin/adl_prompt_template.rs"
-
-[[bin]]
-name = "adl-pr-create"
-path = "src/bin/adl_pr_create.rs"
-
-[[bin]]
-name = "adl-pr-init"
-path = "src/bin/adl_pr_init.rs"
-
-[[bin]]
-name = "adl-pr-repair-issue-body"
-path = "src/bin/adl_pr_repair_issue_body.rs"
-
-[[bin]]
-name = "adl-pr-run"
-path = "src/bin/adl_pr_run.rs"
-
-[[bin]]
-name = "adl-pr-doctor"
-path = "src/bin/adl_pr_doctor.rs"
-
-[[bin]]
-name = "adl-pr-ready"
-path = "src/bin/adl_pr_ready.rs"
-
-[[bin]]
-name = "adl-pr-preflight"
-path = "src/bin/adl_pr_preflight.rs"
-
-[[bin]]
-name = "adl-pr-finish"
-path = "src/bin/adl_pr_finish.rs"
-
-[[bin]]
-name = "adl-pr-validation"
-path = "src/bin/adl_pr_validation.rs"
-
-[[bin]]
-name = "adl-pr-inventory"
-path = "src/bin/adl_pr_inventory.rs"
-
-[[bin]]
-name = "adl-pr-shepherd"
-path = "src/bin/adl_pr_shepherd.rs"
-
-[[bin]]
-name = "adl-pr-closing-linkage"
-path = "src/bin/adl_pr_closing_linkage.rs"
-
-[[bin]]
-name = "adl-issue"
-path = "src/bin/adl_issue.rs"
-
-[[bin]]
-name = "adl-pr-closeout"
-path = "src/bin/adl_pr_closeout.rs"
-
-[[bin]]
-name = "adl-session"
-path = "src/bin/adl_session.rs"
 
 [[bin]]
 name = "adl-process"

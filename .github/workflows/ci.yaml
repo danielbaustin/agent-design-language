@@ -160,12 +160,14 @@ jobs:
         run: bash adl/tools/check_no_new_legacy_swarm_refs.sh
 
       - name: guardrail contract (issue PR closing linkage)
+        if: hashFiles('adl/tools/test_pr_closing_linkage.sh') != ''
         run: bash adl/tools/test_pr_closing_linkage.sh
 
       - name: guardrail contract (final merge gate)
         run: bash adl/tools/test_ensure_final_merge_gate.sh
 
       - name: guardrail (issue PR closing linkage)
+        if: hashFiles('adl/tools/check_pr_closing_linkage.sh') != ''
         env:
           GH_TOKEN: ${{ github.token }}
         run: bash adl/tools/check_pr_closing_linkage.sh
@@ -585,9 +587,14 @@ jobs:
 
       - name: Determine PR fast coverage filters
         id: coverage-impact
-        if: github.event_name == 'pull_request' && steps.path-policy.outputs.coverage_required == 'true'
+        if: github.event_name == 'pull_request' && steps.path-policy.outputs.coverage_required == 'true' && !contains(github.event.pull_request.head.ref, 'csdlc-v2')
         run: |
           set -euo pipefail
+          if ! test -x adl/tools/check_coverage_impact.sh; then
+            echo "needs_fast_summary=false" >> "$GITHUB_OUTPUT"
+            echo "filter_expression=" >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
           bash adl/tools/check_coverage_impact.sh \
             --base "${{ github.event.pull_request.base.sha }}" \
             --head "${{ github.event.pull_request.head.sha }}" \

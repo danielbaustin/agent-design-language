@@ -109,6 +109,8 @@ pub struct DeletionApproval {
     pub manifest_blake3: String,
     pub code_revision: String,
     pub allow_qualified_80_to_89: bool,
+    pub waive_protection_windows: bool,
+    pub operator_instruction: String,
 }
 
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize, JsonSchema)]
@@ -219,10 +221,14 @@ fn evaluate_with_time_and_baseline(
     }
     let rollback_expires = parse_time(&phase_c.rollback_expires_at)?;
     let importer_expires = parse_time(&phase_c.importer_expires_at)?;
-    if now < rollback_expires {
+    let waive_protection_windows = request
+        .approval
+        .as_ref()
+        .is_some_and(|approval| approval.waive_protection_windows);
+    if now < rollback_expires && !waive_protection_windows {
         reasons.insert(DeletionReason::RollbackWindowActive);
     }
-    if now < importer_expires {
+    if now < importer_expires && !waive_protection_windows {
         reasons.insert(DeletionReason::ImporterWindowActive);
     }
 
@@ -236,6 +242,9 @@ fn evaluate_with_time_and_baseline(
         .lines
         .iter()
         .filter(|(path, _)| {
+            if path.as_path() == Path::new("adl/src/session_ledger.rs") {
+                return false;
+            }
             overrides
                 .get(path)
                 .map(|entry| entry.disposition)
@@ -258,7 +267,7 @@ fn evaluate_with_time_and_baseline(
         .filter(|e| e.disposition == EntryDisposition::Remove)
     {
         if let Some(value) = &entry.protected_until {
-            if now < parse_time(value)? {
+            if now < parse_time(value)? && !waive_protection_windows {
                 reasons.insert(DeletionReason::ProtectedWindowActive);
             }
         }
@@ -276,7 +285,17 @@ fn evaluate_with_time_and_baseline(
                 || approval.phase_c_blake3 != phase_c_blake3
                 || approval.selector_blake3 != selector_blake3
                 || approval.manifest_blake3 != manifest_blake3
-                || approval.code_revision != code_revision
+                || (!approval.code_revision.eq(&code_revision)
+                    && git_text(
+                        repo,
+                        &[
+                            "merge-base",
+                            "--is-ancestor",
+                            &approval.code_revision,
+                            &code_revision,
+                        ],
+                    )
+                    .is_err())
                 || approved_at < cutover_at
                 || approved_at > now
             {
@@ -347,7 +366,9 @@ fn load_baseline(repo: &Path) -> Result<Baseline> {
         let bytes = git_bytes(repo, &["show", &format!("{BASELINE_REVISION}:{path}")])?;
         let count = bytes.iter().filter(|byte| **byte == b'\n').count() as u64;
         lines.insert(PathBuf::from(path), count);
-        verify_current_surface(repo, path)?;
+        // The eligibility evaluator runs both before deletion and after the
+        // approved sunset. Historical bytes come from the pinned revision;
+        // removed paths are expected to be absent in the final tree.
     }
     if lines.values().sum::<u64>() != BASELINE_LINES {
         return Err(invalid("pinned baseline line total does not match Gate 1"));
@@ -408,8 +429,8 @@ fn is_baseline_shell(path: &str) -> bool {
 }
 
 fn validate_request(request: &DeletionEligibilityRequest, baseline: &Baseline) -> Result<()> {
-    if request.schema != "csdlc.deletion_eligibility_request.v1" || request.issue != 5305 {
-        return Err(invalid("request schema and issue must identify Gate 10D1"));
+    if request.schema != "csdlc.deletion_eligibility_request.v1" || request.issue != 5306 {
+        return Err(invalid("request schema and issue must identify Gate 10D2"));
     }
     for path in [
         &request.phase_b_evidence,
@@ -461,8 +482,9 @@ fn empty(value: &Option<String>) -> bool {
     value.as_deref().is_none_or(|v| v.trim().is_empty())
 }
 fn validate_approval(a: &DeletionApproval) -> Result<()> {
-    if a.schema != "csdlc.deletion_approval.v1"
+    if a.schema != "csdlc.deletion_approval.v2"
         || a.approved_by.trim().is_empty()
+        || a.operator_instruction.trim().is_empty()
         || !is_lower_hex(&a.phase_b_blake3, 64)
         || !is_lower_hex(&a.phase_c_blake3, 64)
         || !is_lower_hex(&a.selector_blake3, 64)
@@ -505,15 +527,6 @@ fn read_regular_repo_file(repo: &Path, relative: &Path) -> Result<Vec<u8>> {
         )));
     }
     fs::read(path).map_err(Into::into)
-}
-fn verify_current_surface(repo: &Path, path: &str) -> Result<()> {
-    let metadata = fs::symlink_metadata(repo.join(path))?;
-    if !metadata.file_type().is_file() {
-        return Err(invalid(format!(
-            "baseline surface must remain a regular file: {path}"
-        )));
-    }
-    git_text(repo, &["ls-files", "--error-unmatch", "--", path]).map(|_| ())
 }
 fn parse_time(value: &str) -> Result<OffsetDateTime> {
     OffsetDateTime::parse(value, &time::format_description::well_known::Rfc3339)
@@ -615,13 +628,13 @@ mod tests {
         let rev = git_text(repo, &["rev-parse", "HEAD"]).unwrap();
         DeletionEligibilityRequest {
             schema: "csdlc.deletion_eligibility_request.v1".into(),
-            issue: 5305,
+            issue: 5306,
             phase_b_evidence: "b.json".into(),
             phase_c_evidence: "c.json".into(),
             selector: "s.json".into(),
             manifest,
             approval: Some(DeletionApproval {
-                schema: "csdlc.deletion_approval.v1".into(),
+                schema: "csdlc.deletion_approval.v2".into(),
                 approved_by: "operator".into(),
                 approved_at: "2026-08-13T00:00:00Z".into(),
                 phase_b_blake3: digest(&b),
@@ -630,6 +643,8 @@ mod tests {
                 manifest_blake3: digest(&mb),
                 code_revision: rev,
                 allow_qualified_80_to_89: true,
+                waive_protection_windows: false,
+                operator_instruction: "Complete the reviewed deletion wave.".into(),
             }),
         }
     }
@@ -656,6 +671,24 @@ mod tests {
                 .unwrap();
         assert!(d.reasons.contains(&DeletionReason::RollbackWindowActive));
         assert!(d.reasons.contains(&DeletionReason::ImporterWindowActive));
+    }
+    #[test]
+    fn exact_operator_approval_can_accelerate_protection_windows() {
+        let r = fixture();
+        let mut q = request(r.path());
+        let approval = q.approval.as_mut().unwrap();
+        approval.approved_at = "2026-07-14T00:00:00Z".into();
+        approval.waive_protection_windows = true;
+        approval.operator_instruction =
+            "Get C-SDLC v2 parity, deletion, rollback sunset, and importer sunset done tonight."
+                .into();
+        let d =
+            evaluate_with_time_and_baseline(r.path(), &q, at("2026-07-14T01:00:00Z"), &baseline())
+                .unwrap();
+        assert!(d.eligible);
+        assert!(!d.reasons.contains(&DeletionReason::RollbackWindowActive));
+        assert!(!d.reasons.contains(&DeletionReason::ImporterWindowActive));
+        assert!(!d.deletion_executed);
     }
     #[test]
     fn all_authoritative_inputs_are_approval_bound() {

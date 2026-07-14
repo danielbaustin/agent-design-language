@@ -240,7 +240,7 @@ cli_mod_changed="$TMP/cli-mod-changed.txt"
 printf 'A\tadl/src/cli/mod.rs\n' >"$cli_mod_changed"
 cli_mod_filters="$TMP/cli-mod-filters.txt"
 bash "$SCRIPT" --changed-files "$cli_mod_changed" --print-risk-filters >"$cli_mod_filters"
-grep -Fx "cli_basics" "$cli_mod_filters" >/dev/null
+test ! -s "$cli_mod_filters"
 
 mixed_pr_cmd_helper_changed="$TMP/mixed-pr-cmd-helper-changed.txt"
 printf 'A\tadl/src/cli/pr_cmd/github.rs\n' >"$mixed_pr_cmd_helper_changed"
@@ -537,11 +537,8 @@ make_summary "adl/src/cli/process_cmd.rs" 320 399 "$cli_dispatch_companion_missi
 bash "$SCRIPT" --changed-files "$cli_dispatch_companion_changed" --summary "$cli_dispatch_companion_missing_mod_summary" >/tmp/coverage-impact-cli-dispatch-companion-missing-mod-pass.out
 grep -F "Coverage-impact preflight passed" /tmp/coverage-impact-cli-dispatch-companion-missing-mod-pass.out >/dev/null
 
-if bash "$SCRIPT" --changed-files "$cli_mod_changed" --summary "$cli_dispatch_companion_summary" >/tmp/coverage-impact-cli-mod-alone-fails.out 2>&1; then
-  echo "expected cli mod dispatch surface without a companion command change to stay threshold-gated" >&2
-  exit 1
-fi
-grep -F "adl/src/cli/mod.rs (64/363, 17.63% < 80%)" /tmp/coverage-impact-cli-mod-alone-fails.out >/dev/null
+bash "$SCRIPT" --changed-files "$cli_mod_changed" --summary "$cli_dispatch_companion_summary" >/tmp/coverage-impact-cli-mod-removed-pass.out
+grep -F "Coverage-impact preflight passed" /tmp/coverage-impact-cli-mod-removed-pass.out >/dev/null
 
 aee_obsmem_handoff_changed="$TMP/aee-obsmem-handoff-changed.txt"
 cat >"$aee_obsmem_handoff_changed" <<'EOF'
