@@ -226,6 +226,7 @@ set +e
   --env CARGO_INCREMENTAL=0 \
   --env ADL_SPOT_CONTROL_ROOT=/adl-control \
   --env ADL_SPOT_SOURCE_ROOT=/workspace \
+  --env ADL_SPOT_RUN_OUTPUT=/run-output \
   --entrypoint /bin/bash \
   "$IMAGE" -lc "set +e; $COMMAND; status=\$?; sccache --show-stats > /run-output/sccache-stats.log 2>&1 || true; exit \$status"
 VALIDATION_STATUS="$?"

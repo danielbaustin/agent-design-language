@@ -217,7 +217,14 @@ case "$PROFILE" in
   adl-ci) run_adl_ci ;;
   adl-coverage) run_adl_coverage ;;
   adl-ci-and-coverage)
-    profile_log_dir="$(mktemp -d "${TMPDIR:-/tmp}/adl-spot-ci-parallel.XXXXXX")"
+    profile_log_dir="${ADL_SPOT_RUN_OUTPUT:-}"
+    remove_profile_log_dir=false
+    if [[ -z "$profile_log_dir" ]]; then
+      profile_log_dir="$(mktemp -d "${TMPDIR:-/tmp}/adl-spot-ci-parallel.XXXXXX")"
+      remove_profile_log_dir=true
+    else
+      mkdir -p "$profile_log_dir"
+    fi
     ci_log="$profile_log_dir/adl-ci.log"
     coverage_log="$profile_log_dir/adl-coverage.log"
     run_adl_ci >"$ci_log" 2>&1 &
@@ -229,7 +236,9 @@ case "$PROFILE" in
     wait "$ci_pid" || ci_status=$?
     wait "$coverage_pid" || coverage_status=$?
     cat "$ci_log" "$coverage_log"
-    rm -rf "$profile_log_dir"
+    if [[ "$remove_profile_log_dir" == true ]]; then
+      rm -rf "$profile_log_dir"
+    fi
     if (( ci_status != 0 || coverage_status != 0 )); then
       echo "run_aws_spot_ci_profile: parallel profile failed ci_status=$ci_status coverage_status=$coverage_status" >&2
       exit 1

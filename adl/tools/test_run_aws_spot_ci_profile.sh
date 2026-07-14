@@ -74,7 +74,8 @@ combined_tmp="$(mktemp -d "${TMPDIR:-/tmp}/adl-spot-combined-profile.XXXXXX")"
 combined_root="$combined_tmp/repo"
 fake_bin="$combined_tmp/bin"
 combined_log="$combined_tmp/execution.log"
-mkdir -p "$combined_root/adl/tools" "$combined_root/adl/target" "$fake_bin" "$combined_root/cache/target"
+combined_output_dir="$combined_tmp/profile-output"
+mkdir -p "$combined_root/adl/tools" "$combined_root/adl/target" "$fake_bin" "$combined_root/cache/target" "$combined_output_dir"
 cp "$SCRIPT" "$combined_root/adl/tools/run_aws_spot_ci_profile.sh"
 printf '#!/usr/bin/env bash\nset -euo pipefail\nprintf "ci-policy\\n" >>"$ADL_TEST_LOG"\nout=""\nwhile [[ $# -gt 0 ]]; do\n  if [[ "$1" == "--github-output" ]]; then out="$2"; shift 2; continue; fi\n  shift\ndone\nprintf "rust_required=true\\nfull_coverage_required=false\\ndemo_smoke_required=false\\nv0913_proof_required=false\\nvalidation_profile_escalation_required=false\\n" >"$out"\n' >"$combined_root/adl/tools/ci_path_policy.sh"
 printf '#!/usr/bin/env bash\nprintf "ci-lane\\n" >>"$ADL_TEST_LOG"\n' >"$combined_root/adl/tools/run_pr_fast_test_lane.sh"
@@ -93,13 +94,15 @@ git -C "$combined_root" config user.name adl-test
 git -C "$combined_root" config user.email adl-test@example.invalid
 git -C "$combined_root" add .
 git -C "$combined_root" commit -qm combined-profile-test
-combined_output="$(ADL_SPOT_SOURCE_ROOT="$combined_root" CARGO_TARGET_DIR="$combined_root/cache/target" ADL_TEST_LOG="$combined_log" PATH="$fake_bin:$PATH" bash "$combined_root/adl/tools/run_aws_spot_ci_profile.sh" adl-ci-and-coverage --base HEAD --head HEAD)"
+combined_output="$(ADL_SPOT_SOURCE_ROOT="$combined_root" CARGO_TARGET_DIR="$combined_root/cache/target" ADL_SPOT_RUN_OUTPUT="$combined_output_dir" ADL_TEST_LOG="$combined_log" PATH="$fake_bin:$PATH" bash "$combined_root/adl/tools/run_aws_spot_ci_profile.sh" adl-ci-and-coverage --base HEAD --head HEAD)"
 ci_record_line="$(printf '%s\n' "$combined_output" | grep -n 'profile=adl-ci base=' | head -1 | cut -d: -f1)"
 coverage_record_line="$(printf '%s\n' "$combined_output" | grep -n 'profile=adl-coverage base=' | head -1 | cut -d: -f1)"
 total_record_line="$(printf '%s\n' "$combined_output" | grep -n 'profile=adl-ci-and-coverage base=' | head -1 | cut -d: -f1)"
 [[ -n "$ci_record_line" && -n "$coverage_record_line" && -n "$total_record_line" ]]
 grep -F 'ci-lane' "$combined_log" >/dev/null
 grep -F 'cargo llvm-cov nextest' "$combined_log" >/dev/null
+test -s "$combined_output_dir/adl-ci.log"
+test -s "$combined_output_dir/adl-coverage.log"
 if printf '%s\n' "$combined_output" | grep -F 'parallel profile failed' >/dev/null; then
   echo "combined profile unexpectedly reported a parallel failure" >&2
   exit 1
