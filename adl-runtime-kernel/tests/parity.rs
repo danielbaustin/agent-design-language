@@ -1569,6 +1569,22 @@ fn final_cutover_decision_keeps_v2_default_after_live_parity_clear() {
     assert_eq!(decision["runtime_v2_deletion_authorized"], false);
     assert_eq!(decision["rollback_target"], "v2");
     assert_eq!(decision["next_gate"]["issue"], 5220);
+    assert_eq!(
+        decision["evidence_temporality"]["kind"],
+        "decision_time_snapshot"
+    );
+    assert_eq!(decision["post_decision_state_updates"][0]["issue"], 5285);
+    assert_eq!(
+        decision["post_decision_state_updates"][0]["state"],
+        "closed"
+    );
+    let network_dependency = decision["dependency_state"]
+        .as_array()
+        .unwrap()
+        .iter()
+        .find(|entry| entry["issue"] == 5285)
+        .unwrap();
+    assert_eq!(network_dependency["state"], "in_review");
 
     assert_eq!(classification["cutover_eligible"], true);
     assert_eq!(classification["default_runtime_switch_authorized"], false);
@@ -1632,6 +1648,10 @@ fn release_proof_gate_closes_without_authorizing_default_cutover() {
         "../../docs/architecture/runtime_v3_live_black_box_parity_5248.v1.json"
     ))
     .unwrap();
+    let closeout: serde_json::Value = serde_json::from_str(include_str!(
+        "../../docs/architecture/runtime_v3_closeout_truth_5385.v1.json"
+    ))
+    .unwrap();
 
     assert_eq!(gate["schema"], "adl.runtime_v3.release_proof_gate.v1");
     assert_eq!(gate["issue"], 5220);
@@ -1648,6 +1668,62 @@ fn release_proof_gate_closes_without_authorizing_default_cutover() {
     assert_eq!(decision["default_runtime_switch_authorized"], false);
     assert_eq!(classification["cutover_eligible"], true);
     assert_eq!(classification["summary"]["blocker"], 0);
+    assert_eq!(
+        closeout["release_truth"]["live_black_box_blocker_groups"],
+        0
+    );
+    assert_eq!(closeout["release_truth"]["default_runtime"], "v2");
+    assert_eq!(
+        closeout["release_truth"]["runtime_v3_selection"],
+        "explicit_opt_in_only"
+    );
+    assert_eq!(
+        closeout["release_truth"]["runtime_v2_deletion_authorized"],
+        false
+    );
+    assert_eq!(
+        closeout["release_truth"]["runtime_v2_decommission_authorized"],
+        false
+    );
+    assert_eq!(closeout["release_truth"]["rollback_target"], "v2");
+    assert_eq!(
+        closeout["release_truth"]["later_reviewed_default_switch_required"],
+        true
+    );
+    let deferred = closeout["release_truth"]["deferred_non_cutover_surfaces"]
+        .as_array()
+        .unwrap()
+        .iter()
+        .map(|entry| entry.as_str().unwrap())
+        .collect::<std::collections::BTreeSet<_>>();
+    assert_eq!(
+        deferred,
+        [
+            "observed GPU telemetry and GPU runtime qualification",
+            "remote multi-day qualification",
+            "Horust/native guardian qualification",
+        ]
+        .into_iter()
+        .collect()
+    );
+    let sprint_projection = closeout["finding_dispositions"]
+        .as_array()
+        .unwrap()
+        .iter()
+        .find(|entry| entry["finding"] == "issue_5174_legacy_lifecycle_projection_stale")
+        .unwrap();
+    assert_eq!(
+        sprint_projection["truth"]["original_pre_close_review"],
+        "not_reconstructable_from_tracked_evidence"
+    );
+    assert!(closeout["non_claims"]
+        .as_array()
+        .unwrap()
+        .iter()
+        .any(|entry| entry
+            .as_str()
+            .unwrap()
+            .contains("does not invent an original #5174 review")));
 
     let child_results = gate["child_issue_results"].as_array().unwrap();
     let closed_children = child_results
@@ -1681,6 +1757,13 @@ fn release_proof_gate_closes_without_authorizing_default_cutover() {
             .unwrap();
         assert_eq!(issue_state["state"], "closed");
     }
+    let sprint_state = checklist["issue_states"]
+        .as_array()
+        .unwrap()
+        .iter()
+        .find(|entry| entry["issue"] == 5227)
+        .unwrap();
+    assert_eq!(sprint_state["state"], "closed");
 }
 
 #[test]

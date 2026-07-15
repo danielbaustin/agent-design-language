@@ -3,6 +3,13 @@
   "issue": 5254,
   "target_version": "v0.91.7",
   "created_at_utc": "2026-07-12T13:55:00Z",
+  "evidence_temporality": {
+    "kind": "decision_time_snapshot",
+    "observed_at_utc": "2026-07-12T13:55:00Z",
+    "dependency_state_semantics": "state observed when the decision packet was created; not current live issue state",
+    "current_release_authority": "docs/architecture/runtime_v3_release_proof_gate_5220.v1.json",
+    "current_issue_state_reconciliation": "docs/architecture/runtime_v3_closeout_truth_5385.v1.json"
+  },
   "decision": "keep_runtime_v2_default",
   "cutover_authorized": false,
   "default_runtime": "v2",
@@ -47,6 +54,15 @@
     {"issue": 5283, "state": "closed", "role": "contracts.delegation_resources live Runtime v3 proof"},
     {"issue": 5284, "state": "closed", "role": "agents.providers_scheduler live Runtime v3 proof"},
     {"issue": 5285, "state": "in_review", "role": "network.acip_a2a_cloud live Runtime v3 proof"}
+  ],
+  "post_decision_state_updates": [
+    {
+      "issue": 5285,
+      "state": "closed",
+      "closed_at_utc": "2026-07-13T04:05:47Z",
+      "source": "live GitHub issue state verified by #5385",
+      "decision_effect": "none; the reviewed no-go default-switch decision remains unchanged"
+    }
   ],
   "blocking_surfaces": [],
   "next_gate": {
