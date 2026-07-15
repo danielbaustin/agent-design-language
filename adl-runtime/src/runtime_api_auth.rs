@@ -17,6 +17,7 @@ pub const CSM_RUNTIME_API_AUTH_SCHEMA: &str = "adl.csm.runtime_api.auth.v1";
 pub const CSM_RUNTIME_API_AUTH_FILE: &str = "runtime_api_auth.json";
 pub const CSM_RUNTIME_API_AUTH_EVENTS_FILE: &str = "runtime_api_auth_events.jsonl";
 pub const CSM_RUNTIME_API_CREDENTIAL_TTL_SECS: u64 = 24 * 60 * 60;
+pub const CSM_RUNTIME_API_CREDENTIAL_RENEWAL_WINDOW_SECS: u64 = 15 * 60;
 pub const CSM_RUNTIME_API_GATEWAY_IDENTITY_SCHEMA: &str = "adl.csm.runtime_api.gateway_identity.v1";
 pub const CSM_RUNTIME_API_GATEWAY_IDENTITY_AUDIENCE: &str = "csm-runtime-api";
 pub const CSM_RUNTIME_API_GATEWAY_IDENTITY_MAX_TTL_SECS: u64 = 300;
@@ -102,7 +103,16 @@ impl RuntimeApiCredentialStore {
 
     pub fn ensure(&self) -> Result<RuntimeApiCredentialMetadata, String> {
         if self.path.exists() {
-            return self.load().map(|(_, metadata)| metadata);
+            let (_, metadata) = self.load()?;
+            let renew = metadata.expires_at_epoch_secs.is_some_and(|expires| {
+                now_epoch_secs().is_ok_and(|now| {
+                    expires <= now.saturating_add(CSM_RUNTIME_API_CREDENTIAL_RENEWAL_WINDOW_SECS)
+                })
+            });
+            if renew || metadata.revoked {
+                return self.rotate();
+            }
+            return Ok(metadata);
         }
         self.write_new(1)
     }
@@ -511,6 +521,26 @@ mod tests {
             store.with_bearer_token(str::to_string).unwrap_err(),
             "runtime API credential is expired"
         );
+    }
+
+    #[test]
+    fn credential_store_renews_before_expiry() {
+        let root = tempdir().unwrap();
+        let store = RuntimeApiCredentialStore::for_state_root(root.path());
+        let first = store.ensure().unwrap();
+        let (token, metadata) = store.load().unwrap();
+        let near_expiry = StoredCredential {
+            schema: CSM_RUNTIME_API_AUTH_SCHEMA.to_string(),
+            generation: metadata.generation,
+            token: token.expose_secret().to_string(),
+            created_at_epoch_secs: metadata.created_at_epoch_secs,
+            expires_at_epoch_secs: Some(now_epoch_secs().unwrap() + 60),
+            revoked: false,
+        };
+        write_private_json_atomic(store.path(), &near_expiry).unwrap();
+        let renewed = store.ensure().unwrap();
+        assert_eq!(renewed.generation, first.generation + 1);
+        assert!(renewed.expires_at_epoch_secs.unwrap() > now_epoch_secs().unwrap() + 60);
     }
 
     #[cfg(unix)]
