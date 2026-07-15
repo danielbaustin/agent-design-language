@@ -8,6 +8,8 @@ The `csm governed-stop` command now fails closed unless both conditions hold:
   supplied authorization value.
 - The supplied operator identity is listed in the comma-separated
   `ADL_CSM_GOVERNED_STOP_OPERATORS` allowlist.
+- The supplied operator identity matches the authenticated process OS identity
+  from `USER` or `USERNAME`.
 
 The raw authorization value is never retained. The stop artifact records only
 its SHA-256 reference and records that authorization and operator verification
@@ -33,6 +35,7 @@ status is `bounded_smoke`, not `passed`.
 - Focused governed-stop CLI coverage must provide the two authority environment
   variables and includes forged-authority and missing-operator negatives.
 
-The final CSM coherence gate remains owned by the broad milestone review lock;
+The authority and allowlist variables are supervisor-owned process configuration,
+not caller-supplied request fields. The final CSM coherence gate remains owned by the broad milestone review lock;
 this issue records the executable hardening/proof repair without claiming that
 the locked release gate has been closed.

@@ -1335,7 +1335,8 @@ pub fn governed_stop(spec_path: &Path, request: GovernedStopRequest) -> Result<V
             "authority_source_ref": GOVERNED_STOP_AUTHORITY_ENV,
             "operator_allowlist_source": GOVERNED_STOP_OPERATORS_ENV,
             "authorization_verified": true,
-            "operator_identity_verified": true
+            "operator_identity_verified": true,
+            "os_identity_verified": true
         }
     });
     write_json_pretty(&governed_stop_path(&loaded), &governed_stop)?;
@@ -1496,6 +1497,14 @@ fn validate_governed_stop_request(request: &GovernedStopRequest) -> Result<()> {
     if !operator_allowed {
         return Err(anyhow!(
             "csm governed-stop operator is not present in {GOVERNED_STOP_OPERATORS_ENV}"
+        ));
+    }
+    let os_identity = env::var("USER")
+        .or_else(|_| env::var("USERNAME"))
+        .unwrap_or_default();
+    if os_identity.trim().is_empty() || os_identity.trim() != request.operator_identity.trim() {
+        return Err(anyhow!(
+            "csm governed-stop operator does not match the authenticated OS identity"
         ));
     }
     Ok(())

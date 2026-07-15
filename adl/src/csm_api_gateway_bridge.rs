@@ -301,6 +301,7 @@ pub fn prove_api_gateway_bridge(
     let route_targets = route_targets(&routes);
     let integration_targets = integration_targets(&integrations);
     validate_required_route_targets(&route_targets, &integration_targets)?;
+    validate_named_route_targets(&routes, &integration_targets)?;
 
     let correlation_id = format!("csm-5039-{}", short_hash(&options.run_id));
     let positive = http_json(
@@ -614,6 +615,35 @@ fn validate_required_route_targets(
     Ok(())
 }
 
+fn validate_named_route_targets(routes: &Value, integration_targets: &[String]) -> Result<()> {
+    for endpoint in api_gateway_required_runtime_routes() {
+        let route_key = format!("GET {endpoint}");
+        let Some(route) = routes
+            .get("Items")
+            .and_then(Value::as_array)
+            .into_iter()
+            .flatten()
+            .find(|route| route.get("RouteKey").and_then(Value::as_str) == Some(&route_key))
+        else {
+            continue;
+        };
+        let target = route
+            .get("Target")
+            .and_then(Value::as_str)
+            .filter(|target| !target.trim().is_empty())
+            .with_context(|| {
+                format!("API Gateway named route {route_key} has no integration target")
+            })?;
+        if !integration_targets
+            .iter()
+            .any(|candidate| candidate == target)
+        {
+            bail!("API Gateway named route {route_key} targets an unknown integration");
+        }
+    }
+    Ok(())
+}
+
 fn validate_polis_ingress_response(body: &Value, expected_polis_id: &str) -> Result<()> {
     if body
         .pointer("/polis_ingress/polis_id")
@@ -814,6 +844,12 @@ fn run_negative_cases(options: &ApiGatewayBridgeOptions, correlation_id: &str) -
             malformed.status_code
         );
     }
+    if malformed.body.get("schema").and_then(Value::as_str)
+        != Some("adl.csm.api_gateway_bridge.denied.v1")
+    {
+        bail!("API Gateway malformed-token negative case returned an unexpected denial schema");
+    }
+    assert_api_response_redacted(&malformed.body)?;
     Ok(json!({
         "missing_token": missing_token["missing_token"],
         "missing_token_http_status": missing_token["http_status"],
