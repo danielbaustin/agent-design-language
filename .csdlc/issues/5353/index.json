@@ -1,0 +1,181 @@
+{
+  "schema": "csdlc.issue.index.v1",
+  "issue": 5353,
+  "repository": "danielbaustin/agent-design-language",
+  "initialization_digest": "404ad9845d55cf189416e19f7553915074e73a88adb8b0168d0b7e4781f60ddf",
+  "phase": "implemented",
+  "generation": 7,
+  "digest": "dd80126e45af9c9ae80684484047b657eea72328a63a95208028a4a83bde710c",
+  "claim": {
+    "id": "csdlc-v2-5353-wp01",
+    "owner": "codex",
+    "generation": 7,
+    "acquired_unix_seconds": 1784053673,
+    "expires_unix_seconds": 1784140073,
+    "heartbeat_unix_seconds": 1784053673,
+    "branch": "codex/5353-v0-91-8-csdlc-v2-wp01-init-design-approval-safety",
+    "worktree": ".worktrees/adl-wp-5353",
+    "protected_paths": [
+      "csdlc-v2/src/lifecycle.rs",
+      "csdlc-v2/src/store.rs",
+      "csdlc-v2/src/cards.rs",
+      "csdlc-v2/tests"
+    ],
+    "purpose": "WP-01 regression and atomicity repair for issue-local design initialization and design approval digests"
+  },
+  "review_assignment": {
+    "reviewer": "subagent-reviewer",
+    "assigned_by": "codex",
+    "revision": "git-blake3:445608da09701fd594851196ef891dfbab424671:3bc51cc26064257bf5414f455894263db3e70b962c7853a63ac1fbc30a13dd2d",
+    "scope": [
+      "csdlc-v2/src/lifecycle.rs",
+      "csdlc-v2/src/store.rs",
+      "csdlc-v2/tests/gate2.rs"
+    ]
+  },
+  "review": {
+    "reviewer": "subagent-reviewer",
+    "scope": [
+      "csdlc-v2/src/lifecycle.rs",
+      "csdlc-v2/src/store.rs",
+      "csdlc-v2/tests/gate2.rs"
+    ],
+    "reviewed_revision": "git-blake3:445608da09701fd594851196ef891dfbab424671:3bc51cc26064257bf5414f455894263db3e70b962c7853a63ac1fbc30a13dd2d",
+    "findings": [],
+    "residual_risks": [],
+    "completed": true,
+    "non_substantive_proof": null
+  },
+  "publication": null,
+  "readiness": null,
+  "terminal": null,
+  "migration": null,
+  "design_path": "docs/architecture/csdlc-v2/wp01/5353/DESIGN.md",
+  "diagram_path": "docs/architecture/csdlc-v2/wp01/5353/DIAGRAM.mmd",
+  "design_review": {
+    "approved": {
+      "reviewer": "wp01-design-review",
+      "revision": "d4825727db87bfa198188d8e1f557fef4cf939978a48547f80c0e7b15ce39aee"
+    }
+  },
+  "cards": {
+    "sip": {
+      "values_digest": "387be3211139003260a440dbc49b3b3f6dc6daed4ca9eb760ec156afa683d633",
+      "rendered_digest": "09584eaac2c1ae475b3422c344c58d984ee9565cc09293db1149a84175e26de5",
+      "ast_digest": "d4684cf547a9c50d22ab8e1e4b2cd112b98a73128406c651c209b0d81aed69ee"
+    },
+    "stp": {
+      "values_digest": "7eaebb2b72f09f5f70ba7023f3364e19ac4444e4f245c7b6aa8f8d17aefec3d7",
+      "rendered_digest": "6e2f28697e49ec9cfd218f0b77e684d88eee857041de05913dfd572190d79b24",
+      "ast_digest": "39dc2a5822da1ee0fa69e7153fea05bc821a67ca005324a29d54f05a635929b3"
+    },
+    "spp": {
+      "values_digest": "2f57703f8981546ca9d7230a43af5ae4b95d88f6db3e09951ae54f36f07634d2",
+      "rendered_digest": "3ca9ea198a3691822447ad812b93824a8e4a6e7e433c87d7c3aac4cc004f6c6c",
+      "ast_digest": "7f6d0becbc3be143827fdda88374d54b176b3886ecaf32b066a2325ff90f9274"
+    },
+    "vpp": {
+      "values_digest": "fb17d52fb2970c7cc9096a88d08c0d807aac0739f132906a6190d1411348ad56",
+      "rendered_digest": "8f5a93315de38fc11cf6f419a9804114cf4bb07d5b187a49fc479e7aa6d8a80e",
+      "ast_digest": "c8d0f923f17fd2ac5e04bf92502841aded7bf1eef4600e5b632e909ab86d6b18"
+    },
+    "srp": {
+      "values_digest": "1cb554ab18541bc84d2a8a6b36420b8ee95c7c019d50c24ecd0c54fd8a67d4b5",
+      "rendered_digest": "27eda3d8684c16202088e81294fc99dc3af14a594a41b12cf87a605ba82859d2",
+      "ast_digest": "813c249bdccfde59cd57fe18472e0436667060b7d4ecc8c15f5fc7c73ef45e66"
+    },
+    "sor": {
+      "values_digest": "bb78359af6431e336eeb248990461238d7e75ce90d911f48dcf667da0a8382f8",
+      "rendered_digest": "484bdcb636e19afca3708752c939cffd38814314d8ca427908155e7618e72bd3",
+      "ast_digest": "77ced718bd273d3ab06b08dc29e0ec677fccda8cbd475f634342e67e37ea12f3"
+    }
+  },
+  "transitions": [
+    {
+      "sequence": 1,
+      "from": "initialized",
+      "to": "ready",
+      "actor": "codex",
+      "reason": "all design cards validated and implementation worktree prepared"
+    },
+    {
+      "sequence": 2,
+      "from": "ready",
+      "to": "bound",
+      "actor": "codex",
+      "reason": "bound worktree claim is present"
+    },
+    {
+      "sequence": 3,
+      "from": "bound",
+      "to": "implemented",
+      "actor": "codex",
+      "reason": "implementation and validation evidence recorded"
+    }
+  ],
+  "audit": [
+    {
+      "sequence": 1,
+      "generation": 0,
+      "actor": "codex",
+      "reason": "initialize issue record and all six cards",
+      "operation": "bootstrap"
+    },
+    {
+      "sequence": 2,
+      "generation": 1,
+      "actor": "wp01-design-review",
+      "reason": "approve completed issue design",
+      "operation": "approve_design"
+    },
+    {
+      "sequence": 3,
+      "generation": 2,
+      "actor": "codex",
+      "reason": "all design cards validated and implementation worktree prepared",
+      "operation": "{\"operation\":\"advance_phase\",\"phase\":\"ready\"}"
+    },
+    {
+      "sequence": 4,
+      "generation": 3,
+      "actor": "codex",
+      "reason": "bound worktree claim is present",
+      "operation": "{\"operation\":\"advance_phase\",\"phase\":\"bound\"}"
+    },
+    {
+      "sequence": 5,
+      "generation": 4,
+      "actor": "codex",
+      "reason": "implemented WP-01 atomicity and digest refresh repairs",
+      "operation": "{\"operation\":\"record_execution\",\"summary\":\"Repaired issue-local initialization atomicity and complete design/diagram digest refresh.\",\"changes\":[\"Preflight bootstrap validation and reject reserved control paths before mutation\",\"Preserve issue-local design and diagram files across atomic record swaps\",\"Refresh SPP and VPP design and diagram digests during approval\"],\"artifacts\":[\"csdlc-v2/src/lifecycle.rs\",\"csdlc-v2/src/store.rs\",\"csdlc-v2/tests/gate2.rs\"]}"
+    },
+    {
+      "sequence": 6,
+      "generation": 5,
+      "actor": "codex",
+      "reason": "record focused and full v2 validation evidence",
+      "operation": "{\"operation\":\"record_validation\",\"result\":{\"command\":[\"cargo\",\"test\",\"--locked\",\"--manifest-path\",\"csdlc-v2/Cargo.toml\"],\"purpose\":\"Run complete C-SDLC v2 regression suite\",\"outcome\":\"passed\",\"evidence_ref\":\"local:cargo-test-csdlc-v2\"}}"
+    },
+    {
+      "sequence": 7,
+      "generation": 6,
+      "actor": "codex",
+      "reason": "implementation and validation evidence recorded",
+      "operation": "{\"operation\":\"advance_phase\",\"phase\":\"implemented\"}"
+    },
+    {
+      "sequence": 8,
+      "generation": 6,
+      "actor": "codex",
+      "reason": "assign bounded exact-revision review",
+      "operation": "assign_review"
+    },
+    {
+      "sequence": 9,
+      "generation": 7,
+      "actor": "subagent-reviewer",
+      "reason": "atomically record review evidence and SRP projection",
+      "operation": "record_review"
+    }
+  ]
+}

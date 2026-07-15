@@ -1,0 +1,9 @@
+flowchart LR
+  R["Typed bootstrap request"] --> P{"Preflight paths and existing state"}
+  P -->|"safe"| S["Stage design and diagram"]
+  S --> C["Atomic issue record + six cards"]
+  P -->|"orphan / invalid"| E["Typed error; recoverable no-success state"]
+  C --> A["approve-design under issue lock"]
+  A --> H["Hash design + diagram together"]
+  H --> U["Refresh SPP/VPP projections"]
+  U --> D["Doctor: matching digests and ready design"]

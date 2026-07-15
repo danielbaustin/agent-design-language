@@ -7,7 +7,7 @@ use serde::{Deserialize, Serialize};
 use crate::error::{ErrorCode, Result, V2Error};
 use crate::git;
 use crate::model::{AuditEvent, Claim, ClaimRecovery};
-use crate::store::{bootstrap_issue, BootstrapRequest, Store};
+use crate::store::{bootstrap_issue, validate_bootstrap_request, BootstrapRequest, Store};
 
 #[derive(Debug, Clone, Serialize, Deserialize, JsonSchema)]
 pub struct BindRequest {
@@ -59,6 +59,20 @@ pub fn initialize_issue(
             ErrorCode::InvalidInput,
             "design and diagram paths must be repository-relative",
         ));
+    }
+    validate_bootstrap_request(&request)?;
+    let issue_dir = store.issue_dir(request.issue);
+    for authored_path in [&request.design_path, &request.diagram_path] {
+        let path = store.root().join(authored_path);
+        if path == issue_dir.join("index.json")
+            || path == issue_dir.join("audit.jsonl")
+            || path.starts_with(issue_dir.join("cards"))
+        {
+            return Err(V2Error::new(
+                ErrorCode::InvalidInput,
+                "design and diagram paths cannot target issue control files",
+            ));
+        }
     }
     let _binding_lock = store.binding_lock()?;
     let issues = store.root().join(".csdlc/issues");

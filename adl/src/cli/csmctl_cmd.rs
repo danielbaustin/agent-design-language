@@ -86,6 +86,9 @@ Notes:\n\
 }
 
 fn csmctl_api_get(args: &[String]) -> Result<()> {
+    const CONNECT_RETRY_ATTEMPTS: usize = 200;
+    const CONNECT_RETRY_DELAY: Duration = Duration::from_millis(25);
+
     let spec = required_path_arg(args, "--spec")?;
     let bind = optional_arg(args, "--bind").unwrap_or("127.0.0.1:19997");
     let path = optional_arg(args, "--path").unwrap_or("/status");
@@ -110,11 +113,11 @@ fn csmctl_api_get(args: &[String]) -> Result<()> {
         .context("build csmctl runtime API client")?;
     let response = store
         .with_bearer_token(|token| {
-            for attempt in 0..20 {
+            for attempt in 0..CONNECT_RETRY_ATTEMPTS {
                 match client.get(&url).bearer_auth(token).send() {
                     Ok(response) => return Ok(response),
-                    Err(err) if err.is_connect() && attempt < 19 => {
-                        std::thread::sleep(Duration::from_millis(25));
+                    Err(err) if err.is_connect() && attempt + 1 < CONNECT_RETRY_ATTEMPTS => {
+                        std::thread::sleep(CONNECT_RETRY_DELAY);
                     }
                     Err(err) => return Err(err),
                 }
@@ -478,6 +481,49 @@ safety:
         ])
         .expect("csmctl authenticated API request");
         let result = server.join().unwrap().unwrap();
+        assert_eq!(result.served_requests, 1);
+    }
+
+    #[test]
+    fn csmctl_authenticated_api_client_waits_for_slow_listener_startup() {
+        let root = temp_root("api-client-slow-listener");
+        let spec = write_spec(&root);
+        let port = reserve_governed_csm_test_port("api-client-slow-listener");
+        let bind = port.bind.clone();
+        let loaded = adl::long_lived_agent::load_spec(&spec).unwrap();
+        RuntimeApiCredentialStore::for_state_root(&loaded.state_root)
+            .ensure()
+            .expect("pre-create runtime API credential");
+
+        let client_spec = spec.clone();
+        let client_bind = bind.clone();
+        let client = std::thread::spawn(move || {
+            csmctl_api_get(&[
+                "--spec".to_string(),
+                client_spec.display().to_string(),
+                "--bind".to_string(),
+                client_bind,
+                "--path".to_string(),
+                "/status".to_string(),
+            ])
+        });
+
+        std::thread::sleep(std::time::Duration::from_millis(750));
+        let result = serve_runtime_api(CsmRuntimeApiOptions {
+            spec_path: spec,
+            bind,
+            test_max_requests: Some(1),
+            idle_timeout_ms: Some(5_000),
+            shutdown_file: None,
+            otel_status_path: None,
+            otel_log_path: None,
+        })
+        .expect("serve delayed runtime API request");
+
+        client
+            .join()
+            .expect("join delayed csmctl API client")
+            .expect("csmctl API client waits for listener startup");
         assert_eq!(result.served_requests, 1);
     }
 
