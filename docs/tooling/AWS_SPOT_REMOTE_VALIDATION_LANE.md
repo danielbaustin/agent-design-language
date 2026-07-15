@@ -121,8 +121,6 @@ and verifies:
 - `rustc`
 - `cargo`
 - `cargo-nextest`
-- `cargo-llvm-cov`
-- GitHub CLI (`gh`)
 - `sccache`
 - `lld`
 - AWS CLI
@@ -136,11 +134,6 @@ empty to preserve compatibility with the established warm-EBS Cargo target.
 Changing compiler flags creates a different Cargo cache identity and requires
 separate, explicit migration proof.
 
-The validation container drops all Linux capabilities and enables
-`no-new-privileges`. This preserves the established retained-cache ownership
-while preventing UID 0 in the SSM host context from bypassing permission-based
-negative tests that run unprivileged on GitHub-hosted runners.
-
 The retained cache is mounted at `/mnt/adl-cache`. Container-backed state is
 under:
 
@@ -148,7 +141,7 @@ under:
 /mnt/adl-cache/adl-aws-remote-validation/shared/target
 /mnt/adl-cache/adl-aws-remote-validation/shared/sccache
 /mnt/adl-cache/adl-aws-remote-validation/shared/cargo-home
-/mnt/adl-cache/adl-aws-remote-validation/shared/tmp/<run-id>
+/mnt/adl-cache/adl-aws-remote-validation/shared/tmp
 /mnt/adl-cache/adl-aws-remote-validation/shared/source/agent-design-language
 ```
 
@@ -169,12 +162,8 @@ proof. Warm proof requires a second same-commit run with no unexpected
 compilation and materially reused target artifacts; nonzero preexisting bytes
 alone are not sufficient.
 
-Validation retains the remote host's cache-owning UID/GID. In the SSM path
-that identity is UID 0, but all Linux capabilities are dropped and
-`no-new-privileges` is enforced, so DAC permission-negative tests remain
-meaningful without recursively changing ownership of the warm cache. This is
-capability-constrained execution, not a claim of non-root identity. The
-container also sets
+Validation runs as the remote host's non-root UID/GID so permission-negative
+tests remain meaningful. The container also sets
 `AWS_EC2_METADATA_DISABLED=true`: AWS launch, EBS, SSM, ECR, logging, and
 teardown stay on the host control path, while ordinary Rust tests cannot
 silently discover the disposable instance role and turn unit tests into live
@@ -291,9 +280,8 @@ When the retained EBS volume is expanded, the remote runner grows its ext4
 filesystem with `resize2fs` after mounting it. EBS size alone is not usable
 capacity until that filesystem-growth step succeeds.
 The runner changes ownership only on the mount root. It must not recursively
-walk the retained target on every launch; cache contents retain the established
-host ownership and validation runs with that identity under the capability
-constraints described above.
+walk the retained target on every launch; cache contents are written by the
+same non-root UID/GID used for validation.
 
 ## Focused Contract Tests
 

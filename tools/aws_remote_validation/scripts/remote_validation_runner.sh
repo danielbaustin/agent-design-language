@@ -66,9 +66,6 @@ if [ "${ADL_CACHE_VOLUME_ENABLED:-0}" = "1" ]; then
   if [ ! -d "$PERSISTENT_CHECKOUT/.git" ]; then
     git clone "$EPHEMERAL_CHECKOUT" "$PERSISTENT_CHECKOUT" >/tmp/adl-persistent-clone.log 2>&1
   fi
-  git -C "$PERSISTENT_CHECKOUT" fetch "$EPHEMERAL_CHECKOUT" \
-    '+refs/remotes/origin/*:refs/remotes/origin/*' \
-    >/tmp/adl-persistent-remote-refs-fetch.log 2>&1
   CURRENT_PERSISTENT_COMMIT="$(git -C "$PERSISTENT_CHECKOUT" rev-parse HEAD 2>/dev/null || true)"
   if [ "$CURRENT_PERSISTENT_COMMIT" != "$SOURCE_COMMIT" ]; then
     git -C "$PERSISTENT_CHECKOUT" fetch "$EPHEMERAL_CHECKOUT" "$SOURCE_COMMIT" \
@@ -129,7 +126,7 @@ trap on_error ERR
 TOOL_INSTALL_POLICY="package_manager_or_prebuilt_only"
 CONTAINERIZED_VALIDATION=0
 case "$ADL_REMOTE_COMMAND" in
-  *"run_aws_spot_builder_image_validation.sh"*)
+  "bash adl/tools/run_aws_spot_builder_image_validation.sh "*)
     CONTAINERIZED_VALIDATION=1
     TOOL_INSTALL_POLICY="immutable_builder_image_only"
     ;;

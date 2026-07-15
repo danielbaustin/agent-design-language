@@ -132,17 +132,7 @@ impl Drop for EnvVarGuard {
 }
 
 fn usage() -> &'static str {
-    "adl-aws-remote-validation capabilities\nadl-aws-remote-validation run --issue <number> --command <shell-command> --ami-id <ami> --subnet-id <subnet> --security-group-id <sg> --instance-profile-name <name> --out <summary.json> [--artifact-dir <dir>] [--instance-type <type> ...] [--spot-only] [--budget-name <name>] [--expected-max-cost-usd <usd>] [--repo-url <url>] [--git-ref <ref>] [--cache-bucket <bucket>] [--cache-prefix <prefix>] [--sccache-tarball-url <url>] [--nextest-tarball-url <url>] [--ssh-key-name <name>] [--ssh-private-key-path <path>] [--ssh-user <user>] [--ssh-allowed-cidr <cidr>] [--cache-volume-id <id>] [--cache-volume-name <name>] [--cache-volume-size-gib <gib>] [--cache-volume-type <type>] [--cache-volume-iops <iops>] [--cache-volume-throughput-mbps <mbps>] [--cache-volume-device-name <device>] [--cache-volume-mount-path <path>] [--command-timeout-seconds <seconds>] [--region <region>] [--profile <profile>] [--json]"
-}
-
-fn capabilities() -> serde_json::Value {
-    serde_json::json!({
-        "schema": "adl.aws_remote_validation.capabilities.v1",
-        "capabilities": [
-            "embedded_control_bundle_v1",
-            "spot_only_v1",
-        ],
-    })
+    "adl-aws-remote-validation run --issue <number> --command <shell-command> --ami-id <ami> --subnet-id <subnet> --security-group-id <sg> --instance-profile-name <name> --out <summary.json> [--artifact-dir <dir>] [--instance-type <type> ...] [--spot-only] [--budget-name <name>] [--expected-max-cost-usd <usd>] [--repo-url <url>] [--git-ref <ref>] [--cache-bucket <bucket>] [--cache-prefix <prefix>] [--sccache-tarball-url <url>] [--nextest-tarball-url <url>] [--ssh-key-name <name>] [--ssh-private-key-path <path>] [--ssh-user <user>] [--ssh-allowed-cidr <cidr>] [--cache-volume-id <id>] [--cache-volume-name <name>] [--cache-volume-size-gib <gib>] [--cache-volume-type <type>] [--cache-volume-iops <iops>] [--cache-volume-throughput-mbps <mbps>] [--cache-volume-device-name <device>] [--cache-volume-mount-path <path>] [--command-timeout-seconds <seconds>] [--region <region>] [--profile <profile>] [--json]"
 }
 
 fn local_git_stdout(args: &[&str]) -> Option<String> {
@@ -613,13 +603,6 @@ async fn write_resume_state(path: &Path, state: &ResumeState) -> Result<()> {
 
 fn main() -> Result<()> {
     let raw_args: Vec<String> = env::args().skip(1).collect();
-    if matches!(
-        raw_args.first().map(|value| value.as_str()),
-        Some("capabilities")
-    ) {
-        println!("{}", serde_json::to_string(&capabilities())?);
-        return Ok(());
-    }
     if raw_args.is_empty()
         || matches!(
             raw_args.first().map(|value| value.as_str()),
@@ -962,20 +945,6 @@ mod tests {
             remote_status_label(&RemoteRunStatus::ResumedAfterInterruption),
             "resumed_after_interruption"
         );
-    }
-
-    #[test]
-    fn capabilities_advertise_embedded_control_bundle_protocol() {
-        let value = capabilities();
-        assert_eq!(
-            value.get("schema").and_then(serde_json::Value::as_str),
-            Some("adl.aws_remote_validation.capabilities.v1")
-        );
-        assert!(value["capabilities"]
-            .as_array()
-            .expect("capabilities")
-            .iter()
-            .any(|value| value == "embedded_control_bundle_v1"));
     }
 
     fn parse_ok(args: &[&str]) -> ParsedArgs {

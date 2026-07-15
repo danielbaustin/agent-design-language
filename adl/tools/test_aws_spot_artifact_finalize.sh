@@ -3,9 +3,7 @@ set -euo pipefail
 
 ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)"
 FINALIZER="$ROOT/adl/tools/aws_spot_artifact_finalize.py"
-TMP_ROOT="${TMPDIR:-$ROOT/.adl/tmp}"
-mkdir -p "$TMP_ROOT"
-TMP="$(mktemp -d "$TMP_ROOT/aws-spot-artifact-finalize-test.XXXXXX")"
+TMP="$(mktemp -d)"
 trap 'rm -rf "$TMP"' EXIT
 
 source_commit="$(git -C "$ROOT" rev-parse HEAD)"
@@ -27,7 +25,7 @@ payload = {
   "launch": {"purchase_option": "spot", "instance_id": "i-0123456789abcdef0"},
   "cache_volume": {"created": False, "attachment_state": "attached", "mount_path": "/mnt/adl-cache", "volume_id": "vol-0123456789abcdef0"},
   "cleanup": {"termination_attempted": True, "final_instance_state": "terminated", "termination_error": None},
-  "launch_surface": {"ssh_debug_enabled": True, "ssh_allowed_cidr": "47.146.81.109/32", "vpc_id": "vpc-0123456789abcdef0", "subnet_id": "subnet-0123456789abcdef0", "security_group_id": "sg-0123456789abcdef0"},
+  "launch_surface": {"ssh_debug_enabled": True, "vpc_id": "vpc-0123456789abcdef0", "subnet_id": "subnet-0123456789abcdef0", "security_group_id": "sg-0123456789abcdef0"},
   "timings": {"total_seconds": 120, "launch_seconds": 20, "ssm_ready_seconds": 10, "remote_command_seconds": 80, "teardown_seconds": 10},
   "remote_summary": {"builder_proof": {
     "builder_image_immutable": True,
@@ -51,7 +49,7 @@ PY
 status=ssh_debug_ready instance_id=i-0123456789abcdef0 public_ip=192.0.2.10
 status=ssh_tail_started instance_id=i-0123456789abcdef0 public_ip=192.0.2.10
 LOG
-  echo 'account=123456789012 arn:aws:iam::123456789012:role/test i-0123456789abcdef0 temporary_key=ASIAABCDEFGHIJKLMNOP' >"$root/artifacts/events.jsonl"
+  echo 'account=123456789012 arn:aws:iam::123456789012:role/test i-0123456789abcdef0' >"$root/artifacts/events.jsonl"
 }
 
 run_finalizer() {
@@ -84,7 +82,7 @@ assert wrapper["self_verification"]["passed"] is True
 assert wrapper["cache_target_preexisting_entries"] == 42
 assert wrapper["cost"]["estimated_compute_cost_usd"] == 0.005
 PY
-if rg -n '123456789012|arn:aws:|i-0123456789abcdef0|192\.0\.2\.10|ASIAABCDEFGHIJKLMNOP' "$pass/artifacts" -g '!control-summary.json' >/dev/null; then
+if rg -n '123456789012|arn:aws:|i-0123456789abcdef0|192\.0\.2\.10' "$pass/artifacts" -g '!control-summary.json' >/dev/null; then
   echo "public artifact retained an AWS identity" >&2
   exit 1
 fi
@@ -112,43 +110,6 @@ if run_finalizer "$ssh_failure" >"$ssh_failure/out" 2>"$ssh_failure/err"; then
   exit 1
 fi
 grep -F 'ssh_recovery_not_proven' "$ssh_failure/err" >/dev/null
-
-ssm_fallback="$TMP/ssm-fallback"
-make_fixture "$ssm_fallback"
-cat >"$ssm_fallback/artifacts/command-status.log" <<'LOG'
-status=ssh_debug_skip reason=operator_allowlist_ssm_fallback
-status=ssm_output channel=stdout bytes=123
-status=ssm_output channel=stderr bytes=45
-LOG
-run_finalizer "$ssm_fallback" >"$ssm_fallback/finalize.out"
-python3 - "$ssm_fallback/artifacts/wrapper-final-summary.json" <<'PY'
-import json, sys
-verification = json.load(open(sys.argv[1], encoding="utf-8"))["self_verification"]
-assert verification["passed"] is True
-assert verification["live_logs_verified"] is True
-assert verification["live_ssh_tail_verified"] is False
-assert verification["ssm_live_logs_verified"] is True
-PY
-
-ssm_missing_allowlist="$TMP/ssm-missing-allowlist"
-make_fixture "$ssm_missing_allowlist"
-python3 - "$ssm_missing_allowlist/summary.json" <<'PY'
-import json, sys
-path = sys.argv[1]
-data = json.load(open(path, encoding="utf-8"))
-data["launch_surface"].pop("ssh_allowed_cidr")
-open(path, "w", encoding="utf-8").write(json.dumps(data) + "\n")
-PY
-cat >"$ssm_missing_allowlist/artifacts/command-status.log" <<'LOG'
-status=ssh_debug_skip reason=operator_allowlist_ssm_fallback
-status=ssm_output channel=stdout bytes=123
-status=ssm_output channel=stderr bytes=45
-LOG
-if run_finalizer "$ssm_missing_allowlist" >"$ssm_missing_allowlist/out" 2>"$ssm_missing_allowlist/err"; then
-  echo "expected missing operator allowlist proof to fail closed" >&2
-  exit 1
-fi
-grep -F 'ssh_operator_allowlist_not_proven' "$ssm_missing_allowlist/err" >/dev/null
 
 missing_builder="$TMP/builder"
 make_fixture "$missing_builder"
@@ -190,16 +151,7 @@ remote = data["remote_summary"]
 data["remote_summary"] = {}
 Path(sys.argv[1]).write_text(json.dumps(data))
 Path(sys.argv[2]).write_text(
-    "ADL_AWS_REMOTE_SUMMARY_BEGIN\n"
-    + json.dumps(remote)
-    + "\nADL_AWS_REMOTE_SUMMARY_END\n"
-    + "ADL_SPOT_COVERAGE_SUMMARY_BEGIN\n"
-    + json.dumps({
-        "schema": "adl.aws_spot_coverage_summary.v1",
-        "source_commit": remote["builder_proof"]["source_commit"],
-        "totals": {"lines": {"count": 100, "covered": 91, "percent": 91.0}},
-    })
-    + "\nADL_SPOT_COVERAGE_SUMMARY_END\n"
+    "ADL_AWS_REMOTE_SUMMARY_BEGIN\n" + json.dumps(remote) + "\nADL_AWS_REMOTE_SUMMARY_END\n"
 )
 PY
 mv "$attempt_layout/artifacts/command-status.log" "$attempt_layout/artifacts/attempt-0/command-status.log"
@@ -212,18 +164,14 @@ python3 "$FINALIZER" \
   --expected-cache-volume-id-sha256 "$cache_volume_hash" \
   --estimated-hourly-cost-usd 0.21 \
   --runner-exit-code 0 >/dev/null
-python3 - <<'PY' "$attempt_layout/wrapper.json" "$attempt_layout/artifacts/coverage-summary.json"
+python3 - <<'PY' "$attempt_layout/wrapper.json"
 import json
 import sys
 
 data = json.load(open(sys.argv[1], encoding="utf-8"))
-coverage = json.load(open(sys.argv[2], encoding="utf-8"))
 assert data["status"] == "passed", data
 assert data["self_verification"]["live_logs_verified"] is True, data
 assert data["self_verification"]["immutable_builder_image_verified"] is True, data
-assert data["coverage_summary_retained"] is True, data
-assert coverage["schema"] == "adl.aws_spot_coverage_summary.v1", coverage
-assert coverage["totals"]["lines"]["percent"] == 91.0, coverage
 PY
 
 echo "PASS test_aws_spot_artifact_finalize_attempt_layout"

@@ -58,7 +58,6 @@ fi
 
 : "${ADL_REMOTE_REPO_DIR:?ADL_REMOTE_REPO_DIR is required}"
 : "${ADL_RUN_ROOT:?ADL_RUN_ROOT is required}"
-: "${ADL_SPOT_CONTROL_ROOT:?ADL_SPOT_CONTROL_ROOT is required}"
 : "${ADL_CACHE_VOLUME_MOUNT_PATH:?ADL_CACHE_VOLUME_MOUNT_PATH is required}"
 
 stage() {
@@ -110,12 +109,7 @@ CACHE_ROOT="$CACHE_MOUNT/adl-aws-remote-validation/shared"
 TARGET_DIR="$CACHE_ROOT/target"
 SCCACHE_DIR="$CACHE_ROOT/sccache"
 CARGO_HOME_DIR="$CACHE_ROOT/cargo-home"
-RUN_TMP_KEY="$(basename "$ADL_RUN_ROOT")"
-[[ "$RUN_TMP_KEY" =~ ^[A-Za-z0-9._-]+$ ]] || {
-  echo "spot_builder_image_validation: run output directory name is unsafe for temp isolation" >&2
-  exit 1
-}
-TMP_DIR="$CACHE_ROOT/tmp/$RUN_TMP_KEY"
+TMP_DIR="$CACHE_ROOT/tmp"
 CACHE_TARGET_PREEXISTING_ENTRIES=0
 CACHE_TARGET_PREEXISTING_BYTES=0
 if [[ -d "$TARGET_DIR" ]]; then
@@ -123,9 +117,7 @@ if [[ -d "$TARGET_DIR" ]]; then
   CACHE_TARGET_PREEXISTING_KIB="$(du -sk "$TARGET_DIR" 2>/dev/null | awk '{print $1}')"
   CACHE_TARGET_PREEXISTING_BYTES="$((CACHE_TARGET_PREEXISTING_KIB * 1024))"
 fi
-mkdir -p "$TARGET_DIR" "$SCCACHE_DIR" "$CARGO_HOME_DIR"
-rm -rf "$TMP_DIR"
-mkdir -p "$TMP_DIR"
+mkdir -p "$TARGET_DIR" "$SCCACHE_DIR" "$CARGO_HOME_DIR" "$TMP_DIR"
 
 CURRENT_STAGE="ensure_container_runtime"
 stage "$CURRENT_STAGE"
@@ -134,7 +126,6 @@ if ! command -v docker >/dev/null 2>&1; then
     || sudo yum install -y docker >/tmp/adl-docker-install.log 2>&1
 fi
 sudo systemctl enable --now docker >/tmp/adl-docker-service.log 2>&1
-sudo systemctl restart docker >/tmp/adl-docker-restart.log 2>&1
 DOCKER=(sudo docker)
 
 if ! command -v aws >/dev/null 2>&1; then
@@ -166,44 +157,20 @@ if [[ "$IMAGE_ID" != sha256:* ]]; then
   exit 1
 fi
 
-CURRENT_STAGE="probe_builder_container"
-stage "$CURRENT_STAGE"
-timeout 60s "${DOCKER[@]}" run --rm \
-  --network none \
-  --cap-drop ALL \
-  --security-opt no-new-privileges \
-  --entrypoint /bin/true \
-  "$IMAGE"
-
 CURRENT_STAGE="verify_builder_toolchain"
 stage "$CURRENT_STAGE"
 TOOLCHAIN_OUTPUT="$ADL_RUN_ROOT/builder-toolchain.log"
-"${DOCKER[@]}" run --rm \
-  --cap-drop ALL \
-  --security-opt no-new-privileges \
-  --entrypoint /bin/bash "$IMAGE" -lc "
+"${DOCKER[@]}" run --rm --entrypoint /bin/bash "$IMAGE" -lc "
   set -euo pipefail
   test \"\$(uname -m)\" = '$EXPECTED_UNAME_ARCH'
-  test \"\$(awk '/^CapEff:/ {print \$2}' /proc/self/status)\" = '0000000000000000'
-  test \"\$(awk '/^NoNewPrivs:/ {print \$2}' /proc/self/status)\" = '1'
-  permission_probe=\"\$(mktemp -d)\"
-  chmod 0555 \"\$permission_probe\"
-  if touch \"\$permission_probe/should-fail\" 2>/dev/null; then
-    echo 'permission probe unexpectedly succeeded' >&2
-    exit 1
-  fi
-  chmod 0755 \"\$permission_probe\"
-  rmdir \"\$permission_probe\"
-  echo 'CapEff=0 NoNewPrivs=1 permission-probe=denied'
   rustc --version
   cargo --version
   cargo nextest --version
-  gh --version
   sccache --version
   ld.lld --version | head -n 1
   aws --version
 " >"$TOOLCHAIN_OUTPUT" 2>&1
-for required in 'CapEff=0 NoNewPrivs=1 permission-probe=denied' rustc cargo cargo-nextest 'gh version' sccache LLD aws-cli; do
+for required in rustc cargo cargo-nextest sccache LLD aws-cli; do
   grep -F "$required" "$TOOLCHAIN_OUTPUT" >/dev/null || {
     echo "spot_builder_image_validation: builder toolchain verification missing $required" >&2
     exit 1
@@ -215,15 +182,10 @@ stage "$CURRENT_STAGE"
 VALIDATION_START="$(date +%s)"
 VALIDATION_UID="$(id -u)"
 VALIDATION_GID="$(id -g)"
-set +e
 "${DOCKER[@]}" run --rm \
-  --init \
   --user "$VALIDATION_UID:$VALIDATION_GID" \
-  --cap-drop ALL \
-  --security-opt no-new-privileges \
   --workdir /workspace \
   --volume "$ADL_REMOTE_REPO_DIR:/workspace" \
-  --volume "$ADL_SPOT_CONTROL_ROOT:/adl-control:ro" \
   --volume "$CACHE_ROOT:/cache-root" \
   --volume "$TMP_DIR:/tmp" \
   --volume "$ADL_RUN_ROOT:/run-output" \
@@ -235,18 +197,9 @@ set +e
   --env RUSTC_WRAPPER=sccache \
   --env RUSTFLAGS= \
   --env CARGO_INCREMENTAL=0 \
-  --env ADL_SPOT_CONTROL_ROOT=/adl-control \
-  --env ADL_SPOT_SOURCE_ROOT=/workspace \
-  --env ADL_SPOT_RUN_OUTPUT=/run-output \
   --entrypoint /bin/bash \
   "$IMAGE" -lc "set +e; $COMMAND; status=\$?; sccache --show-stats > /run-output/sccache-stats.log 2>&1 || true; exit \$status"
-VALIDATION_STATUS="$?"
-set -e
 VALIDATION_END="$(date +%s)"
-rm -rf "$TMP_DIR"
-if [[ "$VALIDATION_STATUS" -ne 0 ]]; then
-  exit "$VALIDATION_STATUS"
-fi
 
 CURRENT_STAGE="write_builder_summary"
 stage "$CURRENT_STAGE"

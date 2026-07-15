@@ -1,0 +1,39 @@
+schema_version: adl.release_gate_disposition.v1
+issue: 5191
+decision: approved_for_merge_after_green_checks_live_spot_proof_satisfied
+disposition: approved_for_merge_after_green_checks_live_spot_proof_satisfied
+changed_release_gate_surfaces:
+  - .github/workflows/aws-spot-remote-validation.yaml
+reviewer_or_review_mode: bounded pre-PR review plus focused local release-gate validation
+focused_validation_run: >
+  Focused local proof passed after rebase: bash
+  adl/tools/test_run_aws_spot_remote_validation_lane.sh; bash
+  adl/tools/test_aws_spot_artifact_finalize.sh; bash
+  adl/tools/test_aws_spot_lifecycle_controls.sh; bash
+  adl/tools/test_run_aws_spot_builder_image_validation.sh; cargo fmt
+  --manifest-path adl/Cargo.toml --all --check; cargo test --manifest-path
+  tools/aws_remote_validation/Cargo.toml --bin adl-aws-remote-validation --
+  --nocapture; and git diff --check.
+residual_ci_proof_required_before_merge: required
+live_spot_proof: >
+  SATISFIED on 2026-07-13 with two consecutive live Agent Logic Spot runs at
+  pushed commit ec6880c4842e4e902b309831c2ae8def82238bef. Retained artifacts:
+  .adl/local-artifacts/issue-5191-live/proof1-ec6880c48b/artifacts/wrapper-final-summary.json
+  and .adl/local-artifacts/issue-5191-live/proof2-ec6880c48b/artifacts/wrapper-final-summary.json.
+  Both runs verified Spot purchase, immutable builder image, exact source
+  commit, retained warm-cache identity and mount health, SSH/live-tail evidence,
+  benchmark execution, cleanup, compute termination, and cost/timing evidence.
+  The GitHub workflow/OIDC path remains covered by ordinary PR checks and the
+  manual workflow contract; this proof used the repo-native local operator
+  wrapper against the Agent Logic AWS account.
+publication_scope: >
+  This disposition allows PR publication and merge consideration for the manual
+  Spot validation workflow and related wrapper/docs/tests after required PR
+  checks are green. It does not waive ordinary review or required GitHub checks.
+notes:
+  - The workflow remains an explicit operator-triggered validation lane, not ordinary push/PR CI.
+  - The branch uses the fixed builder image path and immutable digest verification.
+  - Local tests use fake account data and do not expose credentials, account ids, or raw ARNs.
+  - The retained warm EBS cache must not be deleted or recreated without explicit operator approval.
+  - A stale retained-cache shape default and stale owner-binary selection were repaired before live proof.
+  - The second same-commit run demonstrated warm-cache reuse: benchmark total dropped from 160 seconds to 3 seconds.

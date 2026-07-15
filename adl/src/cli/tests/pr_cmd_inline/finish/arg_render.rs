@@ -6058,6 +6058,48 @@ fn finish_validation_profile_accepts_ready_profile_with_registered_nessus_remote
 }
 
 #[test]
+fn finish_validation_profile_accepts_ready_profile_with_registered_spot_remote_validation_command()
+{
+    let temp = unique_temp_dir("adl-pr-finish-publishable-spot-remote-validation-command");
+    let repo = temp.join("repo");
+    fs::create_dir_all(repo.join("adl/config")).expect("adl config dir");
+    let command = "bash adl/tools/test_run_aws_spot_remote_validation_lane.sh && bash adl/tools/test_run_aws_spot_builder_image_validation.sh && bash adl/tools/test_aws_spot_artifact_finalize.sh && bash adl/tools/test_aws_spot_lifecycle_controls.sh && bash -n tools/aws_remote_validation/scripts/remote_validation_runner.sh && bash -n tools/aws_remote_validation/scripts/ssh_debug_control.sh && cargo check --manifest-path tools/aws_remote_validation/Cargo.toml --bin adl-aws-remote-validation && cargo test --manifest-path tools/aws_remote_validation/Cargo.toml --bin adl-aws-remote-validation -- --nocapture";
+    fs::write(
+        repo.join("adl/config/validation_lane_selector.v0.91.6.json"),
+        format!(
+            r#"{{"schema_version":"adl.validation_lane_selector.v1","lanes":[{{"id":"aws_spot_remote_validation","run_command":{command:?}}}]}}"#
+        ),
+    )
+    .expect("validation manifest");
+    let profile = FinishValidationProfile {
+        selected_profile: "aws_spot_remote_validation".to_string(),
+        status: "ready_to_run".to_string(),
+        pr_publication_sufficient: true,
+        validation_split: None,
+        run: vec![FinishValidationProfileRunItem {
+            lane_id: "aws_spot_remote_validation".to_string(),
+            command: command.to_string(),
+            reason: "fixture".to_string(),
+            matched_paths: vec![".github/workflows/aws-spot-remote-validation.yaml".to_string()],
+            vpp_record: None,
+        }],
+        not_run: Vec::new(),
+        deferred: Vec::new(),
+        escalation: FinishValidationProfileEscalation {
+            required: false,
+            reasons: Vec::new(),
+        },
+    };
+
+    ensure_finish_validation_profile_is_runnable(
+        &repo,
+        &profile,
+        &[".github/workflows/aws-spot-remote-validation.yaml".to_string()],
+    )
+    .expect("registered Spot remote validation command should be publishable");
+}
+
+#[test]
 fn finish_validation_profile_accepts_ready_profile_with_registered_builder_image_command() {
     let temp = unique_temp_dir("adl-pr-finish-publishable-builder-image-command");
     let repo = temp.join("repo");

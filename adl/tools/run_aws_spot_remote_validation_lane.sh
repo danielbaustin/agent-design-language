@@ -1,12 +1,12 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-ORIGINAL_ARGS=("$@")
-
 ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)"
 COMMON_GIT_DIR="$(git -C "$ROOT" rev-parse --path-format=absolute --git-common-dir 2>/dev/null || true)"
 PRIMARY_ROOT="${COMMON_GIT_DIR:+$(dirname "$COMMON_GIT_DIR")}"
 PROCESS_BIN="${ADL_PROCESS_BIN:-${PRIMARY_ROOT:-$ROOT}/adl/target/debug/adl}"
+SCRIPT_PATH="$ROOT/adl/tools/run_aws_spot_remote_validation_lane.sh"
+ORIGINAL_ARGS=("$@")
 
 ACTION="plan"
 if [[ $# -gt 0 ]]; then
@@ -21,7 +21,7 @@ fi
 PROFILE="${AWS_PROFILE:-agent-logic-admin}"
 REGION="${AWS_REGION:-us-west-2}"
 ISSUE="5191"
-RUN_ID=""
+RUN_ID="adl-wp-5191-aws-spot-$(date -u +%Y%m%d%H%M%S)"
 COMMAND=""
 GIT_REF=""
 SOURCE_COMMIT=""
@@ -37,16 +37,13 @@ JSON=false
 PRINT_COMMAND=false
 FOLLOW=false
 INSTANCE_TYPES=()
-INSTANCE_TYPES_INPUT=""
 CACHE_VOLUME_NAME="${ADL_AWS_REMOTE_VALIDATION_CACHE_VOLUME_NAME:-adl-aws-remote-validation-cache-volume}"
-CACHE_VOLUME_SIZE_GIB="${ADL_AWS_REMOTE_VALIDATION_CACHE_VOLUME_SIZE_GIB:-1000}"
+CACHE_VOLUME_SIZE_GIB="${ADL_AWS_REMOTE_VALIDATION_CACHE_VOLUME_SIZE_GIB:-500}"
 CACHE_VOLUME_TYPE="${ADL_AWS_REMOTE_VALIDATION_CACHE_VOLUME_TYPE:-gp3}"
 CACHE_VOLUME_IOPS="${ADL_AWS_REMOTE_VALIDATION_CACHE_VOLUME_IOPS:-3000}"
 CACHE_VOLUME_THROUGHPUT_MBPS="${ADL_AWS_REMOTE_VALIDATION_CACHE_VOLUME_THROUGHPUT_MBPS:-125}"
 CACHE_VOLUME_DEVICE_NAME="${ADL_AWS_REMOTE_VALIDATION_CACHE_VOLUME_DEVICE_NAME:-/dev/sdf}"
 CACHE_VOLUME_MOUNT_PATH="${ADL_AWS_REMOTE_VALIDATION_CACHE_VOLUME_MOUNT_PATH:-/mnt/adl-cache}"
-REMOTE_COMMAND_TIMEOUT_SECONDS="${ADL_AWS_REMOTE_VALIDATION_COMMAND_TIMEOUT_SECONDS:-900}"
-MAX_RUN_SECONDS="${ADL_AWS_REMOTE_VALIDATION_MAX_RUN_SECONDS:-1800}"
 SSH_KEY_NAME="${ADL_AWS_REMOTE_VALIDATION_SSH_KEY_NAME:-adl-wp06-spot-ssh-debug-20260704}"
 SSH_PRIVATE_KEY_PATH="${ADL_AWS_REMOTE_VALIDATION_SSH_PRIVATE_KEY_PATH:-$HOME/.ssh/adl-4603-ssh-debug-20260701.pem}"
 SSH_USER="${ADL_AWS_REMOTE_VALIDATION_SSH_USER:-ec2-user}"
@@ -54,7 +51,7 @@ SSH_ALLOWED_CIDR="${ADL_AWS_REMOTE_VALIDATION_SSH_ALLOWED_CIDR:-}"
 SSH_BIN="${ADL_SSH_BIN:-ssh}"
 BUILDER_IMAGE="${ADL_AWS_SPOT_BUILDER_IMAGE:-}"
 BUILDER_IMAGE_REPOSITORY="${ADL_AWS_SPOT_BUILDER_IMAGE_REPOSITORY:-adl-builder}"
-BUILDER_IMAGE_TAG="${ADL_AWS_SPOT_BUILDER_IMAGE_TAG:-v0.91.7-coverage-5243}"
+BUILDER_IMAGE_TAG="${ADL_AWS_SPOT_BUILDER_IMAGE_TAG:-v0.91.7-fixed}"
 EXPECTED_ARCHITECTURE="${ADL_AWS_SPOT_EXPECTED_ARCHITECTURE:-x86_64}"
 MIN_CACHE_FREE_GIB="${ADL_AWS_SPOT_MIN_CACHE_FREE_GIB:-10}"
 ESTIMATED_HOURLY_COST_USD="${ADL_AWS_SPOT_ESTIMATED_HOURLY_COST_USD:-}"
@@ -84,10 +81,8 @@ Options:
   --out <path>                  Summary JSON path. Defaults under .adl/tmp.
   --artifact-dir <dir>          Artifact root. Defaults beside --out.
   --instance-type <type>        Add an allowed EC2 instance type.
-  --instance-types <types>      Comma-separated ordered Spot capacity pool.
-  --max-run-seconds <seconds>   Hard wall-clock limit for the manager process.
   --cache-volume-name <name>    Warm EBS cache volume name. Defaults to retained WP-06 cache.
-  --cache-volume-size-gib <gib> Cache volume size when created. Defaults to 1000.
+  --cache-volume-size-gib <gib> Cache volume size when created. Defaults to 500.
   --cache-volume-type <type>    Cache volume type. Defaults to gp3.
   --cache-volume-iops <iops>    Cache volume IOPS. Defaults to 3000.
   --cache-volume-throughput-mbps <mbps>
@@ -103,9 +98,9 @@ Options:
                                 Defaults to retained Agent Logic debug key.
   --ssh-private-key-path <path>  Private key for live remote-tail logging.
   --ssh-user <user>              SSH user. Defaults to ec2-user.
-  --ssh-allowed-cidr <cidr>      SSH source CIDR. Defaults to the current public IP only.
+  --ssh-allowed-cidr <cidr>      SSH source CIDR. Defaults to auto-detected operator IP.
   --builder-image <uri@digest>   Immutable builder image. Defaults to resolving
-                                adl-builder:v0.91.7-coverage-5243 in Agent Logic ECR.
+                                adl-builder:v0.91.7-fixed in Agent Logic ECR.
   --builder-image-repository <name>
                                 ECR repository used for default digest resolution.
   --builder-image-tag <tag>      ECR tag resolved once to an immutable digest.
@@ -186,14 +181,6 @@ while [[ $# -gt 0 ]]; do
       ;;
     --instance-type)
       INSTANCE_TYPES+=("${2:-}")
-      shift 2
-      ;;
-    --instance-types)
-      INSTANCE_TYPES_INPUT="${2:-}"
-      shift 2
-      ;;
-    --max-run-seconds)
-      MAX_RUN_SECONDS="${2:-}"
       shift 2
       ;;
     --cache-volume-name)
@@ -313,14 +300,8 @@ elif [[ "$ACTION" == "run" && "$RUN" != true ]]; then
   exit 2
 fi
 
-if [[ -n "$INSTANCE_TYPES_INPUT" ]]; then
-  IFS=',' read -r -a INSTANCE_TYPES <<<"$INSTANCE_TYPES_INPUT"
-elif [[ ${#INSTANCE_TYPES[@]} -eq 0 ]]; then
+if [[ ${#INSTANCE_TYPES[@]} -eq 0 ]]; then
   INSTANCE_TYPES=("m7a.2xlarge" "c7a.2xlarge" "c7i.2xlarge")
-fi
-
-if [[ -z "$RUN_ID" ]]; then
-  RUN_ID="adl-wp-${ISSUE}-aws-spot-$(date -u +%Y%m%d%H%M%S)"
 fi
 
 if [[ -z "$PROFILE" ]]; then
@@ -337,20 +318,6 @@ if [[ ! "$MIN_CACHE_FREE_GIB" =~ ^[0-9]+$ ]] || [[ "$MIN_CACHE_FREE_GIB" -lt 1 ]
   echo "run_aws_spot_remote_validation_lane: --min-cache-free-gib must be a positive integer" >&2
   exit 2
 fi
-if [[ ! "$REMOTE_COMMAND_TIMEOUT_SECONDS" =~ ^[0-9]+$ ]] || (( REMOTE_COMMAND_TIMEOUT_SECONDS < 1 || REMOTE_COMMAND_TIMEOUT_SECONDS > 900 )); then
-  echo "run_aws_spot_remote_validation_lane: command timeout must be between 1 and 900 seconds" >&2
-  exit 2
-fi
-if [[ ! "$MAX_RUN_SECONDS" =~ ^[0-9]+$ ]] || (( MAX_RUN_SECONDS < 30 || MAX_RUN_SECONDS > 3600 )); then
-  echo "run_aws_spot_remote_validation_lane: max run must be between 30 and 3600 seconds" >&2
-  exit 2
-fi
-for instance_type in ${INSTANCE_TYPES[@]+"${INSTANCE_TYPES[@]}"}; do
-  if [[ ! "$instance_type" =~ ^[a-z][a-z0-9-]*\.[0-9]+xlarge$ ]]; then
-    echo "run_aws_spot_remote_validation_lane: invalid EC2 instance type: $instance_type" >&2
-    exit 2
-  fi
-done
 if [[ -n "$ESTIMATED_HOURLY_COST_USD" ]] && [[ ! "$ESTIMATED_HOURLY_COST_USD" =~ ^[0-9]+([.][0-9]+)?$ ]]; then
   echo "run_aws_spot_remote_validation_lane: --estimated-hourly-cost-usd must be numeric" >&2
   exit 2
@@ -359,11 +326,8 @@ fi
 if [[ -z "$GIT_REF" ]]; then
   GIT_REF="$(git -C "$ROOT" symbolic-ref --quiet --short HEAD 2>/dev/null || git -C "$ROOT" rev-parse HEAD)"
 fi
-SOURCE_COMMIT="$(git -C "$ROOT" rev-parse --verify "${GIT_REF}^{commit}" 2>/dev/null || true)"
-if [[ ! "$SOURCE_COMMIT" =~ ^[0-9a-f]{40}$ ]]; then
-  SOURCE_COMMIT="$(git -C "$ROOT" rev-parse --verify "refs/remotes/origin/${GIT_REF}^{commit}" 2>/dev/null || true)"
-fi
-if [[ ( "$RUN" == true || "$ACTION" == "preflight" ) && ! "$SOURCE_COMMIT" =~ ^[0-9a-f]{40}$ ]]; then
+SOURCE_COMMIT="$(git -C "$ROOT" rev-parse "${GIT_REF}^{commit}" 2>/dev/null || true)"
+if [[ "$RUN" == true && ! "$SOURCE_COMMIT" =~ ^[0-9a-f]{40}$ ]]; then
   echo "run_aws_spot_remote_validation_lane: --git-ref must resolve to a committed source revision" >&2
   exit 2
 fi
@@ -375,13 +339,12 @@ fi
 if [[ -z "$ARTIFACT_DIR" ]]; then
   ARTIFACT_DIR="$(dirname "$OUT_PATH")/artifacts"
 fi
-export ADL_SSH_KNOWN_HOSTS_FILE="$ARTIFACT_DIR/ssh-known-hosts"
 
 if [[ -z "$LANE_BIN" ]]; then
-  if [[ -x "${PRIMARY_ROOT:-$ROOT}/.adl/bin/adl-aws-remote-validation" ]]; then
-    LANE_BIN="${PRIMARY_ROOT:-$ROOT}/.adl/bin/adl-aws-remote-validation"
-  elif [[ -x "$ROOT/tools/aws_remote_validation/target/debug/adl-aws-remote-validation" ]]; then
+  if [[ -x "$ROOT/tools/aws_remote_validation/target/debug/adl-aws-remote-validation" ]]; then
     LANE_BIN="$ROOT/tools/aws_remote_validation/target/debug/adl-aws-remote-validation"
+  elif [[ -x "${PRIMARY_ROOT:-$ROOT}/.adl/bin/adl-aws-remote-validation" ]]; then
+    LANE_BIN="${PRIMARY_ROOT:-$ROOT}/.adl/bin/adl-aws-remote-validation"
   elif [[ -x "$ROOT/adl/target/debug/adl-aws-remote-validation" ]]; then
     LANE_BIN="$ROOT/adl/target/debug/adl-aws-remote-validation"
   else
@@ -389,35 +352,13 @@ if [[ -z "$LANE_BIN" ]]; then
   fi
 fi
 
-verify_lane_binary_compatibility() {
-  local capabilities_json
-  if [[ ! -x "$LANE_BIN" ]]; then
-    echo "run_aws_spot_remote_validation_lane: remote validation binary is unavailable: $LANE_BIN" >&2
-    return 1
-  fi
-  if ! capabilities_json="$("$LANE_BIN" capabilities 2>/dev/null)" || \
-      ! ADL_AWS_REMOTE_CAPABILITIES="$capabilities_json" python3 - <<'PY' >/dev/null 2>&1
-import json
-import os
-
-payload = json.loads(os.environ["ADL_AWS_REMOTE_CAPABILITIES"])
-assert payload.get("schema") == "adl.aws_remote_validation.capabilities.v1"
-assert "embedded_control_bundle_v1" in payload.get("capabilities", [])
-assert "spot_only_v1" in payload.get("capabilities", [])
-PY
-  then
-    echo "run_aws_spot_remote_validation_lane: remote validation binary is stale; install the current owner binary or set ADL_AWS_REMOTE_VALIDATION_BIN" >&2
-    return 1
-  fi
-}
-
 check_account() {
   local identity_json
   local aws_profile_args=()
   if [[ "$PROFILE" != "env" && "$PROFILE" != "environment" ]]; then
     aws_profile_args=(--profile "$PROFILE")
   fi
-  if ! identity_json="$("$AWS_CLI" sts get-caller-identity ${aws_profile_args[@]+"${aws_profile_args[@]}"} --output json)"; then
+  if ! identity_json="$("$AWS_CLI" sts get-caller-identity "${aws_profile_args[@]}" --output json)"; then
     return 1
   fi
   local account_status=0
@@ -465,8 +406,8 @@ resolve_builder_image() {
     profile_args=(--profile "$PROFILE")
   fi
   local account digest
-  account="$("$AWS_CLI" sts get-caller-identity ${profile_args[@]+"${profile_args[@]}"} --query Account --output text)"
-  digest="$("$AWS_CLI" ecr describe-images ${profile_args[@]+"${profile_args[@]}"} --region "$REGION" \
+  account="$("$AWS_CLI" sts get-caller-identity "${profile_args[@]}" --query Account --output text)"
+  digest="$("$AWS_CLI" ecr describe-images "${profile_args[@]}" --region "$REGION" \
     --repository-name "$BUILDER_IMAGE_REPOSITORY" \
     --image-ids "imageTag=$BUILDER_IMAGE_TAG" \
     --query 'imageDetails[0].imageDigest' --output text)"
@@ -487,7 +428,7 @@ resolve_spot_hourly_cost() {
   fi
   local price_json
   price_json="$("$AWS_CLI" ec2 describe-spot-price-history \
-    ${profile_args[@]+"${profile_args[@]}"} --region "$REGION" --instance-types "${INSTANCE_TYPES[@]}" \
+    "${profile_args[@]}" --region "$REGION" --instance-types "${INSTANCE_TYPES[@]}" \
     --product-descriptions Linux/UNIX --max-items 20 --output json)"
   ESTIMATED_HOURLY_COST_USD="$(python3 -c 'import json,sys; values=[float(x["SpotPrice"]) for x in json.load(sys.stdin).get("SpotPriceHistory",[])]; print(max(values) if values else "")' <<<"$price_json")"
   if [[ ! "$ESTIMATED_HOURLY_COST_USD" =~ ^[0-9]+([.][0-9]+)?$ ]]; then
@@ -537,21 +478,21 @@ PY
     echo "run_aws_spot_remote_validation_lane: retained proof cache identity mismatch" >&2
     return 1
   }
-  volume_state="$("$AWS_CLI" ec2 describe-volumes ${profile_args[@]+"${profile_args[@]}"} --region "$REGION" \
+  volume_state="$("$AWS_CLI" ec2 describe-volumes "${profile_args[@]}" --region "$REGION" \
     --volume-ids "$proof_volume_id" --query 'Volumes[0].State' --output text)"
-  volume_name="$("$AWS_CLI" ec2 describe-volumes ${profile_args[@]+"${profile_args[@]}"} --region "$REGION" \
+  volume_name="$("$AWS_CLI" ec2 describe-volumes "${profile_args[@]}" --region "$REGION" \
     --volume-ids "$proof_volume_id" --query 'Volumes[0].Tags[?Key==`Name`].Value|[0]' --output text)"
-  volume_az="$("$AWS_CLI" ec2 describe-volumes ${profile_args[@]+"${profile_args[@]}"} --region "$REGION" \
+  volume_az="$("$AWS_CLI" ec2 describe-volumes "${profile_args[@]}" --region "$REGION" \
     --volume-ids "$proof_volume_id" --query 'Volumes[0].AvailabilityZone' --output text)"
-  volume_size="$("$AWS_CLI" ec2 describe-volumes ${profile_args[@]+"${profile_args[@]}"} --region "$REGION" \
+  volume_size="$("$AWS_CLI" ec2 describe-volumes "${profile_args[@]}" --region "$REGION" \
     --volume-ids "$proof_volume_id" --query 'Volumes[0].Size' --output text)"
-  volume_type="$("$AWS_CLI" ec2 describe-volumes ${profile_args[@]+"${profile_args[@]}"} --region "$REGION" \
+  volume_type="$("$AWS_CLI" ec2 describe-volumes "${profile_args[@]}" --region "$REGION" \
     --volume-ids "$proof_volume_id" --query 'Volumes[0].VolumeType' --output text)"
-  volume_iops="$("$AWS_CLI" ec2 describe-volumes ${profile_args[@]+"${profile_args[@]}"} --region "$REGION" \
+  volume_iops="$("$AWS_CLI" ec2 describe-volumes "${profile_args[@]}" --region "$REGION" \
     --volume-ids "$proof_volume_id" --query 'Volumes[0].Iops' --output text)"
-  volume_throughput="$("$AWS_CLI" ec2 describe-volumes ${profile_args[@]+"${profile_args[@]}"} --region "$REGION" \
+  volume_throughput="$("$AWS_CLI" ec2 describe-volumes "${profile_args[@]}" --region "$REGION" \
     --volume-ids "$proof_volume_id" --query 'Volumes[0].Throughput' --output text)"
-  subnet_az="$("$AWS_CLI" ec2 describe-subnets ${profile_args[@]+"${profile_args[@]}"} --region "$REGION" \
+  subnet_az="$("$AWS_CLI" ec2 describe-subnets "${profile_args[@]}" --region "$REGION" \
     --subnet-ids "$SUBNET_ID" --query 'Subnets[0].AvailabilityZone' --output text)"
   [[ "$volume_state" == "available" ]] || {
     echo "run_aws_spot_remote_validation_lane: retained cache volume is not exclusively available" >&2
@@ -561,7 +502,7 @@ PY
     echo "run_aws_spot_remote_validation_lane: retained cache volume and subnet topology mismatch" >&2
     return 1
   }
-  matching_volume_count="$("$AWS_CLI" ec2 describe-volumes ${profile_args[@]+"${profile_args[@]}"} --region "$REGION" \
+  matching_volume_count="$("$AWS_CLI" ec2 describe-volumes "${profile_args[@]}" --region "$REGION" \
     --filters "Name=tag:Name,Values=$CACHE_VOLUME_NAME" "Name=availability-zone,Values=$volume_az" \
     --query 'length(Volumes)' --output text)"
   [[ "$matching_volume_count" == "1" ]] || {
@@ -574,7 +515,7 @@ PY
     return 1
   }
   if [[ -z "$AMI_ID" ]]; then
-    AMI_ID="$("$AWS_CLI" ssm get-parameter ${profile_args[@]+"${profile_args[@]}"} --region "$REGION" \
+    AMI_ID="$("$AWS_CLI" ssm get-parameter "${profile_args[@]}" --region "$REGION" \
       --name /aws/service/ami-amazon-linux-latest/al2023-ami-kernel-default-x86_64 \
       --query 'Parameter.Value' --output text)"
   fi
@@ -594,7 +535,7 @@ verify_ssh_recovery_key() {
     echo "run_aws_spot_remote_validation_lane: SSH recovery key is not configured" >&2
     return 1
   }
-  key_mode="$(stat -c '%a' "$SSH_PRIVATE_KEY_PATH" 2>/dev/null || stat -f '%Lp' "$SSH_PRIVATE_KEY_PATH")"
+  key_mode="$(stat -f '%Lp' "$SSH_PRIVATE_KEY_PATH" 2>/dev/null || stat -c '%a' "$SSH_PRIVATE_KEY_PATH")"
   [[ "$key_mode" == "600" || "$key_mode" == "400" ]] || {
     echo "run_aws_spot_remote_validation_lane: SSH private key permissions must be 600 or 400" >&2
     return 1
@@ -634,10 +575,10 @@ private_command_status_path() {
 }
 
 run_status_action() {
-  if [[ -f "$ARTIFACT_DIR/wrapper-final-summary.json" ]]; then
-    cat "$ARTIFACT_DIR/wrapper-final-summary.json"
-  elif manager_is_active; then
+  if manager_is_active; then
     printf 'status=running run_id=%s\n' "$RUN_ID"
+  elif [[ -f "$ARTIFACT_DIR/wrapper-final-summary.json" ]]; then
+    cat "$ARTIFACT_DIR/wrapper-final-summary.json"
   elif [[ -d "$ARTIFACT_DIR" ]]; then
     printf 'status=incomplete run_id=%s action=inspect_logs_or_cleanup\n' "$RUN_ID"
     return 1
@@ -680,7 +621,7 @@ run_ssh_action() {
     return 1
   }
   verify_ssh_recovery_key
-  exec "$SSH_BIN" -o BatchMode=yes -o StrictHostKeyChecking=accept-new -o UserKnownHostsFile="$ADL_SSH_KNOWN_HOSTS_FILE" \
+  exec "$SSH_BIN" -o BatchMode=yes -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null \
     -o ServerAliveInterval=5 -o ServerAliveCountMax=2 \
     -i "$SSH_PRIVATE_KEY_PATH" "$SSH_USER@$public_ip"
 }
@@ -688,49 +629,42 @@ run_ssh_action() {
 run_stop_action() {
   check_account
   local status_path instance_id observed_run_id
+  status_path="$(private_command_status_path)"
+  [[ -f "$status_path" ]] || {
+    echo "run_aws_spot_remote_validation_lane: no private instance control state for $RUN_ID" >&2
+    return 1
+  }
+  instance_id="$(sed -nE 's/.*instance_id=(i-[0-9a-f]+).*/\1/p' "$status_path" | tail -n 1)"
+  [[ "$instance_id" =~ ^i-[0-9a-f]{8,17}$ ]] || {
+    echo "run_aws_spot_remote_validation_lane: invalid instance control state" >&2
+    return 1
+  }
   local profile_args=()
   if [[ "$PROFILE" != "env" && "$PROFILE" != "environment" ]]; then
     profile_args=(--profile "$PROFILE")
   fi
-  status_path="$(private_command_status_path)"
-  instance_id=""
-  if [[ -f "$status_path" ]]; then
-    instance_id="$(sed -nE 's/.*instance_id=(i-[0-9a-f]+).*/\1/p' "$status_path" | tail -n 1)"
-  fi
-  if [[ -z "$instance_id" ]]; then
-    instance_id="$("$AWS_CLI" ec2 describe-instances ${profile_args[@]+"${profile_args[@]}"} --region "$REGION" \
-      --filters "Name=tag:adl:run_id,Values=$RUN_ID" \
-        "Name=instance-state-name,Values=pending,running,stopping,stopped" \
-      --query 'Reservations[].Instances[].InstanceId' --output text)"
-  fi
-  if [[ -z "$instance_id" || "$instance_id" == "None" ]]; then
-    printf 'status=already_terminated run_id=%s retained_cache_preserved=true\n' "$RUN_ID"
-    return 0
-  fi
-  [[ "$instance_id" =~ ^i-[0-9a-f]{8,17}$ ]] || {
-    echo "run_aws_spot_remote_validation_lane: active instance state is invalid or ambiguous" >&2
-    return 1
-  }
-  observed_run_id="$("$AWS_CLI" ec2 describe-instances ${profile_args[@]+"${profile_args[@]}"} --region "$REGION" \
+  observed_run_id="$("$AWS_CLI" ec2 describe-instances "${profile_args[@]}" --region "$REGION" \
     --instance-ids "$instance_id" --query 'Reservations[0].Instances[0].Tags[?Key==`adl:run_id`].Value|[0]' --output text)"
   [[ "$observed_run_id" == "$RUN_ID" ]] || {
     echo "run_aws_spot_remote_validation_lane: instance run-id tag mismatch; refusing termination" >&2
     return 1
   }
-  "$AWS_CLI" ec2 terminate-instances ${profile_args[@]+"${profile_args[@]}"} --region "$REGION" --instance-ids "$instance_id" >/dev/null
-  "$AWS_CLI" ec2 wait instance-terminated ${profile_args[@]+"${profile_args[@]}"} --region "$REGION" --instance-ids "$instance_id"
+  "$AWS_CLI" ec2 terminate-instances "${profile_args[@]}" --region "$REGION" --instance-ids "$instance_id" >/dev/null
+  "$AWS_CLI" ec2 wait instance-terminated "${profile_args[@]}" --region "$REGION" --instance-ids "$instance_id"
   printf 'status=terminated run_id=%s retained_cache_preserved=true\n' "$RUN_ID"
 }
 
 run_cleanup_action() {
-  run_stop_action
+  if manager_is_active; then
+    run_stop_action
+  fi
   local profile_args=()
   if [[ "$PROFILE" != "env" && "$PROFILE" != "environment" ]]; then
     profile_args=(--profile "$PROFILE")
   fi
   check_account
   local volume_state
-  volume_state="$("$AWS_CLI" ec2 describe-volumes ${profile_args[@]+"${profile_args[@]}"} --region "$REGION" \
+  volume_state="$("$AWS_CLI" ec2 describe-volumes "${profile_args[@]}" --region "$REGION" \
     --filters "Name=tag:Name,Values=$CACHE_VOLUME_NAME" \
     --query 'Volumes[0].State' --output text)"
   [[ "$volume_state" == "available" || "$volume_state" == "in-use" ]] || {
@@ -747,10 +681,6 @@ case "$ACTION" in
   stop) run_stop_action; exit $? ;;
   cleanup) run_cleanup_action; exit $? ;;
 esac
-
-if [[ "$RUN" == true || "$ACTION" == "preflight" ]]; then
-  verify_lane_binary_compatibility
-fi
 
 if [[ "$CHECK_ACCOUNT" == true || "$RUN" == true ]]; then
   check_account
@@ -817,7 +747,6 @@ cmd=(
   --cache-volume-throughput-mbps "$CACHE_VOLUME_THROUGHPUT_MBPS"
   --cache-volume-device-name "$CACHE_VOLUME_DEVICE_NAME"
   --cache-volume-mount-path "$CACHE_VOLUME_MOUNT_PATH"
-  --command-timeout-seconds "$REMOTE_COMMAND_TIMEOUT_SECONDS"
   --ami-id "$AMI_ID"
   --subnet-id "$SUBNET_ID"
 )
@@ -833,18 +762,12 @@ fi
 
 if [[ -n "$COMMAND" ]]; then
   if [[ "$RUN" == true ]]; then
-    validation_command="$COMMAND"
-    case "$validation_command" in
-      "bash adl/tools/run_aws_spot_ci_profile.sh "*)
-        validation_command='bash "${ADL_SPOT_CONTROL_ROOT:?}/adl/tools/run_aws_spot_ci_profile.sh" '"${validation_command#bash adl/tools/run_aws_spot_ci_profile.sh }"
-        ;;
-    esac
-    remote_command='bash "${ADL_SPOT_CONTROL_ROOT:?}/adl/tools/run_aws_spot_builder_image_validation.sh"'
+    remote_command="bash adl/tools/run_aws_spot_builder_image_validation.sh"
     remote_command+=" --image $(shell_quote "$BUILDER_IMAGE")"
     remote_command+=" --expected-ref $(shell_quote "$SOURCE_COMMIT")"
     remote_command+=" --expected-architecture $(shell_quote "$EXPECTED_ARCHITECTURE")"
     remote_command+=" --min-cache-free-gib $(shell_quote "$MIN_CACHE_FREE_GIB")"
-    remote_command+=" --command $(shell_quote "$validation_command")"
+    remote_command+=" --command $(shell_quote "$COMMAND")"
     cmd+=(--command "$remote_command")
   else
     cmd+=(--command "$COMMAND")
@@ -854,7 +777,6 @@ fi
 for instance_type in ${INSTANCE_TYPES[@]+"${INSTANCE_TYPES[@]}"}; do
   cmd+=(--instance-type "$instance_type")
 done
-cmd+=(--max-spot-retries "${ADL_AWS_REMOTE_VALIDATION_MAX_SPOT_RETRIES:-2}")
 
 if [[ "$JSON" == true ]]; then
   cmd+=(--json)
@@ -883,34 +805,7 @@ execute_run() {
   local runner_status finalize_status wrapper_summary
 
   set +e
-  python3 - "$MAX_RUN_SECONDS" "${cmd[@]}" >"$runner_stdout" 2>"$runner_stderr" <<'PY'
-import os
-import signal
-import subprocess
-import sys
-
-deadline = int(sys.argv[1])
-command = sys.argv[2:]
-process = subprocess.Popen(command, start_new_session=True)
-try:
-    process.wait(timeout=deadline)
-except subprocess.TimeoutExpired:
-    print(f"status=max_runtime_exceeded max_run_seconds={deadline}", file=sys.stderr)
-    try:
-        os.killpg(process.pid, signal.SIGTERM)
-    except ProcessLookupError:
-        pass
-    try:
-        process.wait(timeout=30)
-    except subprocess.TimeoutExpired:
-        try:
-            os.killpg(process.pid, signal.SIGKILL)
-        except ProcessLookupError:
-            pass
-        process.wait()
-    raise SystemExit(124)
-raise SystemExit(process.returncode)
-PY
+  "${cmd[@]}" >"$runner_stdout" 2>"$runner_stderr"
   runner_status="$?"
   set -e
 
@@ -958,22 +853,7 @@ for container_key in ("command",):
 print(json.dumps(payload, indent=2, sort_keys=False))
 PY
 
-  python3 - <<'PY' "$ROOT" "$runner_stderr" >&2
-import importlib.util
-import sys
-from pathlib import Path
-
-root = Path(sys.argv[1])
-path = Path(sys.argv[2])
-spec = importlib.util.spec_from_file_location(
-    "aws_spot_artifact_finalize",
-    root / "adl" / "tools" / "aws_spot_artifact_finalize.py",
-)
-module = importlib.util.module_from_spec(spec)
-assert spec.loader is not None
-spec.loader.exec_module(module)
-print(module.redact_text(path.read_text(encoding="utf-8", errors="replace")), end="")
-PY
+  cat "$runner_stderr" >&2
   cat "$ARTIFACT_DIR/finalize.err" >&2
   printf 'aws_spot_remote_validation_wrapper_summary=%s\n' "$wrapper_summary" >&2
   if [[ "$runner_status" -ne 0 ]]; then
@@ -984,55 +864,48 @@ PY
   return "$finalize_status"
 }
 
-if [[ "$ACTION" == "launch" && "${ADL_SPOT_MANAGER_MODE:-0}" != "1" ]]; then
+if [[ "$ACTION" == "launch" ]]; then
   mkdir -p "$(dirname "$OUT_PATH")" "$ARTIFACT_DIR"
-  launch_lock="$ARTIFACT_DIR/.launch-lock"
-  if ! mkdir "$launch_lock" 2>/dev/null; then
-    echo "run_aws_spot_remote_validation_lane: run id launch lock is already held" >&2
-    exit 1
+  launch_args=("${ORIGINAL_ARGS[@]}")
+  if [[ "${launch_args[0]:-}" == "launch" ]]; then
+    launch_args[0]="run"
+  else
+    launch_args=("run" "${launch_args[@]}")
   fi
-  trap 'rmdir "$launch_lock" 2>/dev/null || true' EXIT
-  if [[ -f "$ARTIFACT_DIR/wrapper-final-summary.json" || -f "$ARTIFACT_DIR/manager.exit-code" ]]; then
-    echo "run_aws_spot_remote_validation_lane: run id already has terminal manager state" >&2
-    exit 1
-  fi
-  if manager_is_active; then
-    echo "run_aws_spot_remote_validation_lane: run id already has an active manager" >&2
-    exit 1
-  fi
-  if [[ -f "$ARTIFACT_DIR/manager.pid" || -f "$ARTIFACT_DIR/resume-state.json" \
-      || -d "$ARTIFACT_DIR/attempt-0" ]]; then
-    echo "run_aws_spot_remote_validation_lane: run id has incomplete manager state; inspect or clean up before using a new run id" >&2
-    exit 1
-  fi
-  manager_pid="$(ADL_SPOT_MANAGER_MODE=1 python3 - \
-    "$ARTIFACT_DIR/manager.stdout.log" \
-    "$ARTIFACT_DIR/manager.stderr.log" \
-    "$0" "${ORIGINAL_ARGS[@]}" <<'PY'
-import os
-import subprocess
+  launch_args+=("--run")
+  python3 - "$ARTIFACT_DIR/launch-state.json" "$RUN_ID" <<'PY'
+import json
 import sys
+from pathlib import Path
 
-stdout_path, stderr_path, script, *args = sys.argv[1:]
-with open(stdout_path, "ab", buffering=0) as stdout, open(stderr_path, "ab", buffering=0) as stderr:
-    process = subprocess.Popen(
-        ["bash", script, *args],
-        stdin=subprocess.DEVNULL,
-        stdout=stdout,
-        stderr=stderr,
-        close_fds=True,
-        start_new_session=True,
-        env=os.environ.copy(),
-    )
-print(process.pid)
+Path(sys.argv[1]).write_text(json.dumps({
+    "schema": "adl.aws_spot_launch_state.v1",
+    "status": "launching",
+    "run_id": sys.argv[2],
+}, indent=2, sort_keys=True) + "\n", encoding="utf-8")
 PY
-)"
+  nohup "${BASH:-bash}" "$SCRIPT_PATH" "${launch_args[@]}" \
+    >"$ARTIFACT_DIR/manager.stdout.log" \
+    2>"$ARTIFACT_DIR/manager.stderr.log" \
+    </dev/null &
+  manager_pid="$!"
   printf '%s\n' "$manager_pid" >"$ARTIFACT_DIR/manager.pid"
-  rmdir "$launch_lock"
-  trap - EXIT
+  python3 - "$ARTIFACT_DIR/launch-state.json" "$RUN_ID" "$manager_pid" <<'PY'
+import json
+import sys
+from pathlib import Path
+
+path = Path(sys.argv[1])
+payload = {
+    "schema": "adl.aws_spot_launch_state.v1",
+    "status": "launched",
+    "run_id": sys.argv[2],
+    "manager_pid": int(sys.argv[3]),
+}
+path.write_text(json.dumps(payload, indent=2, sort_keys=True) + "\n", encoding="utf-8")
+PY
   printf 'status=launched run_id=%s pid=%s\n' "$RUN_ID" "$manager_pid"
-  printf 'next_status=bash adl/tools/run_aws_spot_remote_validation_lane.sh status --run-id %q --out %q --artifact-dir %q\n' \
-    "$RUN_ID" "$OUT_PATH" "$ARTIFACT_DIR"
+  printf 'next_status=bash adl/tools/run_aws_spot_remote_validation_lane.sh status --run-id %q\n' "$RUN_ID"
   exit 0
 fi
 

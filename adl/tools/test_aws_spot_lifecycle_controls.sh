@@ -3,9 +3,7 @@ set -euo pipefail
 
 ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)"
 SCRIPT="$ROOT/adl/tools/run_aws_spot_remote_validation_lane.sh"
-TMP_ROOT="${TMPDIR:-$ROOT/.adl/tmp}"
-mkdir -p "$TMP_ROOT"
-TMP="$(mktemp -d "$TMP_ROOT/aws-spot-lifecycle-test.XXXXXX")"
+TMP="$(mktemp -d)"
 trap 'rm -rf "$TMP"' EXIT
 
 account="123456789012"

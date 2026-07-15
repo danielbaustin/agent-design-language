@@ -9,9 +9,7 @@ trap 'rm -rf "$TMP"' EXIT
 FAKE_BIN="$TMP/fake-bin"
 RUN_ROOT="$TMP/run"
 CACHE_MOUNT="$TMP/cache"
-CONTROL_ROOT="$TMP/control"
-mkdir -p "$FAKE_BIN" "$RUN_ROOT" "$CACHE_MOUNT" "$CONTROL_ROOT/adl/tools"
-export ADL_SPOT_CONTROL_ROOT="$CONTROL_ROOT"
+mkdir -p "$FAKE_BIN" "$RUN_ROOT" "$CACHE_MOUNT"
 
 cat >"$FAKE_BIN/mountpoint" <<'EOF'
 #!/usr/bin/env bash
@@ -42,12 +40,6 @@ cat >"$FAKE_BIN/sudo" <<'EOF'
 exec "$@"
 EOF
 
-cat >"$FAKE_BIN/timeout" <<'EOF'
-#!/usr/bin/env bash
-shift
-exec "$@"
-EOF
-
 cat >"$FAKE_BIN/aws" <<'EOF'
 #!/usr/bin/env bash
 if [[ "$1 $2" == "ecr get-login-password" ]]; then
@@ -74,24 +66,15 @@ case "$1" in
     ;;
   run)
     args="$*"
-    if [[ "$args" == *"--entrypoint /bin/true"* ]]; then
-      exit 0
-    fi
     if [[ "$args" == *"rustc --version"* ]]; then
-      [[ "$args" == *"--cap-drop ALL"* && "$args" == *"--security-opt no-new-privileges"* ]] || {
-        echo "toolchain preflight did not constrain container privileges" >&2
-        exit 2
-      }
       if [[ "${ADL_FAKE_TOOLCHAIN_OK:-1}" != "1" ]]; then
         echo "rustc 1.96.0"
         exit 0
       fi
       cat <<'TOOLS'
-CapEff=0 NoNewPrivs=1 permission-probe=denied
 rustc 1.96.0
 cargo 1.96.0
 cargo-nextest 0.9.140
-gh version 2.45.0
 sccache 0.16.0
 Ubuntu LLD 18.1.3
 aws-cli/2.35.15
@@ -102,32 +85,16 @@ TOOLS
       echo "validation container did not preserve the known-good Rust flags" >&2
       exit 2
     }
-    [[ "$args" == *"--init"* && "$args" == *"--user "* && "$args" == *"--cap-drop ALL"* && "$args" == *"--security-opt no-new-privileges"* && "$args" == *"AWS_EC2_METADATA_DISABLED=true"* ]] || {
-      echo "validation container did not constrain permissions and EC2 role discovery" >&2
+    [[ "$args" == *"--user "* && "$args" == *"AWS_EC2_METADATA_DISABLED=true"* ]] || {
+      echo "validation container did not isolate root permissions and EC2 role discovery" >&2
       exit 2
     }
     [[ "$args" == *":/cache-root"* && "$args" == *"CARGO_TARGET_DIR=/cache-root/target"* && "$args" == *"SCCACHE_DIR=/cache-root/sccache"* && "$args" == *"CARGO_HOME=/cache-root/cargo-home"* ]] || {
       echo "validation container did not preserve the known-good cache layout" >&2
       exit 2
     }
-    [[ "$args" == *"/adl-aws-remote-validation/shared/tmp/"*":/tmp"* && "$args" == *"TMPDIR=/tmp"* ]] || {
-      echo "validation container did not mount isolated EBS-backed temp space" >&2
-      exit 2
-    }
-    tmp_mount=""
-    previous=""
-    for arg in "$@"; do
-      if [[ "$previous" == "--volume" && "$arg" == *:/tmp ]]; then
-        tmp_mount="${arg%:/tmp}"
-      fi
-      previous="$arg"
-    done
-    [[ -n "$tmp_mount" && ! -e "$tmp_mount/stale-sentinel" ]] || {
-      echo "validation container received stale per-run temp state" >&2
-      exit 2
-    }
-    [[ "$args" == *"$ADL_SPOT_CONTROL_ROOT:/adl-control:ro"* && "$args" == *"ADL_SPOT_CONTROL_ROOT=/adl-control"* && "$args" == *"ADL_SPOT_SOURCE_ROOT=/workspace"* ]] || {
-      echo "validation container did not mount the trusted control bundle read-only" >&2
+    [[ "$args" == *"/adl-aws-remote-validation/shared/tmp:/tmp"* && "$args" == *"TMPDIR=/tmp"* ]] || {
+      echo "validation container did not mount EBS-backed temp space" >&2
       exit 2
     }
     run_root=""
@@ -151,11 +118,6 @@ chmod +x "$FAKE_BIN"/*
 commit="$(git -C "$ROOT" rev-parse HEAD)"
 digest="sha256:$(printf 'a%.0s' {1..64})"
 image="123456789012.dkr.ecr.us-west-2.amazonaws.com/adl-builder@$digest"
-selected_tmp="$CACHE_MOUNT/adl-aws-remote-validation/shared/tmp/$(basename "$RUN_ROOT")"
-other_tmp="$CACHE_MOUNT/adl-aws-remote-validation/shared/tmp/other-run"
-mkdir -p "$selected_tmp" "$other_tmp"
-: >"$selected_tmp/stale-sentinel"
-: >"$other_tmp/preserve-sentinel"
 
 run_fixture() {
   local command="${1:-cargo nextest run --workspace}"
@@ -172,8 +134,6 @@ run_fixture() {
 
 run_fixture >"$TMP/pass.out" 2>"$TMP/pass.err"
 grep -F 'ADL_SPOT_BUILDER_PROOF=' "$TMP/pass.out" >/dev/null
-test ! -d "$CACHE_MOUNT/adl-aws-remote-validation/shared/tmp/$(basename "$RUN_ROOT")"
-test -f "$other_tmp/preserve-sentinel"
 python3 - "$RUN_ROOT/spot-builder-summary.json" "$commit" <<'PY'
 import json
 import sys
@@ -240,6 +200,5 @@ if ADL_FAKE_VALIDATION_EXIT=17 run_fixture >"$TMP/validation.out" 2>"$TMP/valida
   echo "expected validation failure to propagate" >&2
   exit 1
 fi
-test ! -d "$CACHE_MOUNT/adl-aws-remote-validation/shared/tmp/$(basename "$RUN_ROOT")"
 
 echo "PASS test_run_aws_spot_builder_image_validation"

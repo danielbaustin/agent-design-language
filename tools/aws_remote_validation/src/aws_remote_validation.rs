@@ -9,16 +9,13 @@ use aws_sdk_iam as iam;
 use aws_sdk_servicequotas as servicequotas;
 use aws_sdk_ssm as ssm;
 use aws_sdk_sts as sts;
-use base64::{engine::general_purpose::STANDARD as BASE64_STANDARD, Engine as _};
 use chrono::{DateTime, Datelike, Duration as ChronoDuration, Timelike, Utc};
-use flate2::{write::GzEncoder, Compression};
 use once_cell::sync::Lazy;
 use serde::{Deserialize, Serialize};
 use sha2::{Digest, Sha256};
 use std::fmt;
 use std::fs::OpenOptions;
 use std::io::Write;
-use std::net::{IpAddr, Ipv4Addr};
 use std::path::{Path, PathBuf};
 use std::process::Command as StdCommand;
 use std::sync::{Arc, Mutex};
@@ -26,10 +23,9 @@ use std::time::{Duration, Instant};
 use tokio::fs;
 use tokio::io::{AsyncBufReadExt, BufReader};
 use tokio::process::{Child, Command as TokioCommand};
-use tokio::time::{sleep, timeout as tokio_timeout};
+use tokio::time::sleep;
 
 const SPOT_QUOTA_NAME: &str = "All Standard (A, C, D, H, I, M, R, T, Z) Spot Instance Requests";
-const SSM_OUTPUT_CONTENT_LIMIT_BYTES: usize = 24 * 1024;
 const ON_DEMAND_QUOTA_NAME: &str =
     "Running On-Demand Standard (A, C, D, H, I, M, R, T, Z) instances";
 const CACHE_ROLE_POLICY_NAME: &str = "AdlAwsRemoteValidationCacheAccess";
@@ -135,7 +131,6 @@ struct SshDebugConfig {
     private_key_path: PathBuf,
     user: String,
     allowed_cidr: String,
-    probe_enabled: bool,
 }
 
 impl AwsRemoteValidationConfig {
@@ -720,17 +715,6 @@ impl fmt::Display for AwsAdapterError {
 }
 
 impl std::error::Error for AwsAdapterError {}
-
-fn command_timeout_error(command_id: &str, timeout: Duration) -> AwsAdapterError {
-    AwsAdapterError {
-        code: Some("CommandTimedOut".to_string()),
-        message: format!(
-            "command {command_id} did not reach terminal state within {:?}",
-            timeout
-        ),
-        spot_fallback_permitted: false,
-    }
-}
 
 #[async_trait]
 pub trait AwsRemoteValidationAdapter {
@@ -1442,43 +1426,6 @@ fn append_command_status_line(status: &str, detail: impl Into<String>) {
     let _ = writeln!(file, "{timestamp} status={status} {}", detail.into());
 }
 
-fn append_live_command_output(channel: &str, content: &str, offset: &mut usize) {
-    if content.len() <= *offset {
-        return;
-    }
-    let Some(chunk) = content.get(*offset..) else {
-        *offset = content.len();
-        return;
-    };
-    let Some(status_path) = LIVE_COMMAND_STATUS_LOG_PATH
-        .lock()
-        .ok()
-        .and_then(|guard| guard.clone())
-    else {
-        return;
-    };
-    let output_path = status_path
-        .parent()
-        .unwrap_or_else(|| Path::new("."))
-        .join("remote-tail.log");
-    if let Ok(mut file) = OpenOptions::new()
-        .create(true)
-        .append(true)
-        .open(output_path)
-    {
-        let _ = writeln!(file, "{} channel={channel}", Utc::now().to_rfc3339());
-        let _ = file.write_all(chunk.as_bytes());
-        if !chunk.ends_with('\n') {
-            let _ = writeln!(file);
-        }
-    }
-    append_command_status_line(
-        "ssm_output",
-        format!("channel={channel} bytes={}", chunk.len()),
-    );
-    *offset = content.len();
-}
-
 fn sha256_hex(value: &str) -> String {
     let mut hasher = Sha256::new();
     hasher.update(value.as_bytes());
@@ -1487,34 +1434,6 @@ fn sha256_hex(value: &str) -> String {
 
 fn preview(text: &str) -> String {
     text.lines().take(8).collect::<Vec<_>>().join(" | ")
-}
-
-fn validate_ssh_allowed_cidr(value: &str) -> Result<String> {
-    let (ip_text, prefix) = value
-        .trim()
-        .split_once('/')
-        .ok_or_else(|| anyhow!("SSH allowed CIDR must be an IPv4 /32"))?;
-    if prefix != "32" {
-        return Err(anyhow!("SSH allowed CIDR must use an exact /32 source"));
-    }
-    let ip = ip_text
-        .parse::<IpAddr>()
-        .context("SSH allowed CIDR must contain a valid IPv4 address")?;
-    let IpAddr::V4(ip) = ip else {
-        return Err(anyhow!("SSH allowed CIDR must contain an IPv4 address"));
-    };
-    if ip == Ipv4Addr::UNSPECIFIED
-        || ip.is_loopback()
-        || ip.is_multicast()
-        || ip.is_private()
-        || ip.is_link_local()
-        || ip == Ipv4Addr::BROADCAST
-    {
-        return Err(anyhow!(
-            "SSH allowed CIDR must contain a reachable public IPv4 address"
-        ));
-    }
-    Ok(format!("{ip}/32"))
 }
 
 fn build_ssh_debug_config(config: &AwsRemoteValidationConfig) -> Result<Option<SshDebugConfig>> {
@@ -1529,9 +1448,8 @@ fn build_ssh_debug_config(config: &AwsRemoteValidationConfig) -> Result<Option<S
         .ssh_user
         .clone()
         .unwrap_or_else(|| "ec2-user".to_string());
-    let probe_enabled = config.ssh_allowed_cidr.is_none();
     let allowed_cidr = match config.ssh_allowed_cidr.clone() {
-        Some(value) => validate_ssh_allowed_cidr(&value)?,
+        Some(value) => value,
         None => {
             let output = StdCommand::new("curl")
                 .args(["-fsSL", "https://checkip.amazonaws.com"])
@@ -1542,14 +1460,13 @@ fn build_ssh_debug_config(config: &AwsRemoteValidationConfig) -> Result<Option<S
             }
             let ip = String::from_utf8(output.stdout)
                 .context("failed to decode public IP response for SSH debug mode")?;
-            validate_ssh_allowed_cidr(&format!("{}/32", ip.trim()))?
+            format!("{}/32", ip.trim())
         }
     };
     Ok(Some(SshDebugConfig {
         private_key_path,
         user,
         allowed_cidr,
-        probe_enabled,
     }))
 }
 
@@ -1616,15 +1533,6 @@ fn build_remote_command_script(config: &AwsRemoteValidationConfig) -> String {
         "/tmp/adl-aws-remote-bootstrap/{}/agent-design-language",
         config.run_id
     ));
-    let escaped_control_root =
-        shell_single_quote(&format!("/tmp/adl-aws-remote-control/{}", config.run_id));
-    let remote_runner_bundle = gzip_base64(include_str!("../scripts/remote_validation_runner.sh"));
-    let builder_validation_bundle = gzip_base64(include_str!(
-        "../../../adl/tools/run_aws_spot_builder_image_validation.sh"
-    ));
-    let ci_profile_bundle = gzip_base64(include_str!(
-        "../../../adl/tools/run_aws_spot_ci_profile.sh"
-    ));
     let needs_nextest = if config.command.contains("nextest") {
         "1"
     } else {
@@ -1639,24 +1547,7 @@ fn build_remote_command_script(config: &AwsRemoteValidationConfig) -> String {
         r#"set -euo pipefail
 RUN_ROOT={run_root}
 CHECKOUT_DIR={checkout_root}
-CONTROL_ROOT={control_root}
-mkdir -p "$RUN_ROOT" "$CHECKOUT_DIR" \
-  "$CONTROL_ROOT/tools/aws_remote_validation/scripts" \
-  "$CONTROL_ROOT/adl/tools"
-
-materialize_control_file() {{
-  local encoded="$1"
-  local destination="$2"
-  printf '%s' "$encoded" | base64 --decode | gzip -dc >"$destination"
-  chmod 0755 "$destination"
-}}
-
-materialize_control_file {remote_runner_bundle} \
-  "$CONTROL_ROOT/tools/aws_remote_validation/scripts/remote_validation_runner.sh"
-materialize_control_file {builder_validation_bundle} \
-  "$CONTROL_ROOT/adl/tools/run_aws_spot_builder_image_validation.sh"
-materialize_control_file {ci_profile_bundle} \
-  "$CONTROL_ROOT/adl/tools/run_aws_spot_ci_profile.sh"
+mkdir -p "$RUN_ROOT" "$CHECKOUT_DIR"
 
 log_progress() {{
   local message="$1"
@@ -1692,7 +1583,6 @@ export ADL_RUN_ID={run_id}
 export ADL_RUN_ROOT="$RUN_ROOT"
 export ADL_PROGRESS_ROOT="$RUN_ROOT"
 export ADL_REMOTE_REPO_DIR="$CHECKOUT_DIR"
-export ADL_SPOT_CONTROL_ROOT="$CONTROL_ROOT"
 export ADL_REMOTE_COMMAND={command}
 export ADL_CACHE_BUCKET={cache_bucket}
 export ADL_CACHE_PREFIX={cache_prefix}
@@ -1706,13 +1596,9 @@ export ADL_REGION={region}
 
 CURRENT_STAGE="tracked_remote_runner"
 log_progress "stage=tracked_remote_runner"
-bash "$CONTROL_ROOT/tools/aws_remote_validation/scripts/remote_validation_runner.sh""#,
+bash "$CHECKOUT_DIR/tools/aws_remote_validation/scripts/remote_validation_runner.sh""#,
         run_root = escaped_run_root,
         checkout_root = escaped_checkout_root,
-        control_root = escaped_control_root,
-        remote_runner_bundle = shell_single_quote(&remote_runner_bundle),
-        builder_validation_bundle = shell_single_quote(&builder_validation_bundle),
-        ci_profile_bundle = shell_single_quote(&ci_profile_bundle),
         repo_url = escaped_repo_url,
         git_ref = escaped_git_ref,
         run_id = shell_single_quote(&config.run_id),
@@ -1726,18 +1612,6 @@ bash "$CONTROL_ROOT/tools/aws_remote_validation/scripts/remote_validation_runner
         needs_nextest = needs_nextest,
         command = escaped_command,
         region = shell_single_quote(&config.region),
-    )
-}
-
-fn gzip_base64(value: &str) -> String {
-    let mut encoder = GzEncoder::new(Vec::new(), Compression::best());
-    encoder
-        .write_all(value.as_bytes())
-        .expect("writing to an in-memory gzip encoder cannot fail");
-    BASE64_STANDARD.encode(
-        encoder
-            .finish()
-            .expect("finishing an in-memory gzip encoder cannot fail"),
     )
 }
 
@@ -1850,29 +1724,6 @@ impl LiveAwsRemoteValidationAdapter {
             .and_then(|reservation| reservation.instances().first())
             .and_then(|instance| instance.public_ip_address())
             .map(ToOwned::to_owned))
-    }
-
-    async fn cancel_remote_command(&self, instance_id: &str, command_id: &str) {
-        let cancel = self
-            .ssm
-            .cancel_command()
-            .command_id(command_id)
-            .instance_ids(instance_id)
-            .send();
-        match tokio_timeout(Duration::from_secs(10), cancel).await {
-            Ok(Ok(_)) => append_command_status_line(
-                "command_cancel_requested",
-                format!("instance_id={instance_id} command_id={command_id}"),
-            ),
-            Ok(Err(err)) => append_command_status_line(
-                "command_cancel_failed",
-                format!("instance_id={instance_id} command_id={command_id} detail={err}"),
-            ),
-            Err(_) => append_command_status_line(
-                "command_cancel_failed",
-                format!("instance_id={instance_id} command_id={command_id} detail=cancel_timeout"),
-            ),
-        }
     }
 
     async fn subnet_availability_zone(&self, subnet_id: &str) -> Result<String> {
@@ -2314,14 +2165,6 @@ impl LiveAwsRemoteValidationAdapter {
             ),
         );
         Ok(Some(child))
-    }
-
-    async fn stop_ssh_tail(child: &mut Option<Child>) {
-        if let Some(process) = child.as_mut() {
-            let _ = process.start_kill();
-            let _ = process.wait().await;
-        }
-        *child = None;
     }
 
     pub async fn prepare_launch_surface(
@@ -2958,18 +2801,6 @@ impl AwsRemoteValidationAdapter for LiveAwsRemoteValidationAdapter {
                             .value(&spec.run_id)
                             .build(),
                     )
-                    .tags(
-                        ec2::types::Tag::builder()
-                            .key("adl:managed")
-                            .value("true")
-                            .build(),
-                    )
-                    .tags(
-                        ec2::types::Tag::builder()
-                            .key("adl:lane")
-                            .value("spot-remote-validation")
-                            .build(),
-                    )
                     .build(),
             );
         if let Some(key_name) = spec.ssh_key_name.as_deref() {
@@ -3152,20 +2983,7 @@ impl AwsRemoteValidationAdapter for LiveAwsRemoteValidationAdapter {
         poll_interval: Duration,
     ) -> std::result::Result<CommandExecutionResult, AwsAdapterError> {
         let run_root = extract_run_root(command);
-        if run_root.is_some()
-            && self
-                .ssh_debug
-                .as_ref()
-                .is_some_and(|ssh_debug| !ssh_debug.probe_enabled)
-        {
-            append_command_status_line("ssh_debug_skip", "reason=operator_allowlist_ssm_fallback");
-        }
-        let ssh_tail_ready = if run_root.is_some()
-            && self
-                .ssh_debug
-                .as_ref()
-                .is_some_and(|ssh_debug| ssh_debug.probe_enabled)
-        {
+        let ssh_tail_ready = if run_root.is_some() && self.ssh_debug.is_some() {
             match self
                 .wait_for_ssh_debug_ready(instance_id, Duration::from_secs(90), poll_interval)
                 .await
@@ -3200,7 +3018,7 @@ impl AwsRemoteValidationAdapter for LiveAwsRemoteValidationAdapter {
         } else {
             None
         };
-        let output = match self
+        let output = self
             .ssm
             .send_command()
             .document_name("AWS-RunShellScript")
@@ -3214,13 +3032,7 @@ impl AwsRemoteValidationAdapter for LiveAwsRemoteValidationAdapter {
             )
             .send()
             .await
-        {
-            Ok(output) => output,
-            Err(err) => {
-                Self::stop_ssh_tail(&mut ssh_tail_child).await;
-                return Err(classify_ssm_error(err));
-            }
-        };
+            .map_err(classify_ssm_error)?;
         let command_id = output
             .command()
             .and_then(|command| command.command_id())
@@ -3231,36 +3043,15 @@ impl AwsRemoteValidationAdapter for LiveAwsRemoteValidationAdapter {
             format!("instance_id={instance_id} command_id={command_id}"),
         );
         let start = Instant::now();
-        let mut stdout_offset = 0_usize;
-        let mut stderr_offset = 0_usize;
-        let mut stdout_truncation_reported = false;
-        let mut stderr_truncation_reported = false;
         loop {
-            let invocation_request = self
+            let invocation = match self
                 .ssm
                 .get_command_invocation()
                 .command_id(&command_id)
                 .instance_id(instance_id)
-                .send();
-            let invocation_result = if let Some(timeout) = timeout {
-                let remaining = timeout.saturating_sub(start.elapsed());
-                if remaining.is_zero() {
-                    self.cancel_remote_command(instance_id, &command_id).await;
-                    Self::stop_ssh_tail(&mut ssh_tail_child).await;
-                    return Err(command_timeout_error(&command_id, timeout));
-                }
-                match tokio_timeout(remaining, invocation_request).await {
-                    Ok(result) => result,
-                    Err(_) => {
-                        self.cancel_remote_command(instance_id, &command_id).await;
-                        Self::stop_ssh_tail(&mut ssh_tail_child).await;
-                        return Err(command_timeout_error(&command_id, timeout));
-                    }
-                }
-            } else {
-                invocation_request.await
-            };
-            let invocation = match invocation_result {
+                .send()
+                .await
+            {
                 Ok(invocation) => invocation,
                 Err(err) => {
                     let detail = err.to_string();
@@ -3275,8 +3066,6 @@ impl AwsRemoteValidationAdapter for LiveAwsRemoteValidationAdapter {
                         sleep(poll_interval).await;
                         continue;
                     }
-                    self.cancel_remote_command(instance_id, &command_id).await;
-                    Self::stop_ssh_tail(&mut ssh_tail_child).await;
                     return Err(classify_ssm_error(err));
                 }
             };
@@ -3285,24 +3074,6 @@ impl AwsRemoteValidationAdapter for LiveAwsRemoteValidationAdapter {
                 .or_else(|| invocation.status().map(|value| value.as_str()))
                 .unwrap_or("Unknown")
                 .to_string();
-            let stdout = invocation.standard_output_content().unwrap_or_default();
-            let stderr = invocation.standard_error_content().unwrap_or_default();
-            append_live_command_output("stdout", stdout, &mut stdout_offset);
-            append_live_command_output("stderr", stderr, &mut stderr_offset);
-            if stdout.len() >= SSM_OUTPUT_CONTENT_LIMIT_BYTES && !stdout_truncation_reported {
-                append_command_status_line(
-                    "ssm_output_truncated",
-                    format!("channel=stdout limit_bytes={SSM_OUTPUT_CONTENT_LIMIT_BYTES}"),
-                );
-                stdout_truncation_reported = true;
-            }
-            if stderr.len() >= SSM_OUTPUT_CONTENT_LIMIT_BYTES && !stderr_truncation_reported {
-                append_command_status_line(
-                    "ssm_output_truncated",
-                    format!("channel=stderr limit_bytes={SSM_OUTPUT_CONTENT_LIMIT_BYTES}"),
-                );
-                stderr_truncation_reported = true;
-            }
             append_command_status_line(
                 "command_poll",
                 format!(
@@ -3323,33 +3094,21 @@ impl AwsRemoteValidationAdapter for LiveAwsRemoteValidationAdapter {
                     command_id,
                     status,
                     response_code: Some(invocation.response_code()),
-                    stdout: stdout.to_string(),
-                    stderr: stderr.to_string(),
+                    stdout: invocation
+                        .standard_output_content()
+                        .unwrap_or_default()
+                        .to_string(),
+                    stderr: invocation
+                        .standard_error_content()
+                        .unwrap_or_default()
+                        .to_string(),
                 });
             }
-            let instance_state = if let Some(timeout) = timeout {
-                let remaining = timeout.saturating_sub(start.elapsed());
-                if remaining.is_zero() {
-                    self.cancel_remote_command(instance_id, &command_id).await;
-                    Self::stop_ssh_tail(&mut ssh_tail_child).await;
-                    return Err(command_timeout_error(&command_id, timeout));
-                }
-                match tokio_timeout(remaining, self.instance_state(instance_id)).await {
-                    Ok(state) => state?,
-                    Err(_) => {
-                        self.cancel_remote_command(instance_id, &command_id).await;
-                        Self::stop_ssh_tail(&mut ssh_tail_child).await;
-                        return Err(command_timeout_error(&command_id, timeout));
-                    }
-                }
-            } else {
-                self.instance_state(instance_id).await?
-            };
+            let instance_state = self.instance_state(instance_id).await?;
             if matches!(
                 instance_state.as_deref(),
                 Some("shutting-down") | Some("terminated") | Some("stopping") | Some("stopped")
             ) {
-                self.cancel_remote_command(instance_id, &command_id).await;
                 if let Some(child) = ssh_tail_child.as_mut() {
                     let _ = child.start_kill();
                 }
@@ -3364,11 +3123,17 @@ impl AwsRemoteValidationAdapter for LiveAwsRemoteValidationAdapter {
             }
             if let Some(timeout) = timeout {
                 if start.elapsed() >= timeout {
-                    self.cancel_remote_command(instance_id, &command_id).await;
                     if let Some(child) = ssh_tail_child.as_mut() {
                         let _ = child.start_kill();
                     }
-                    return Err(command_timeout_error(&command_id, timeout));
+                    return Err(AwsAdapterError {
+                        code: Some("CommandTimedOut".to_string()),
+                        message: format!(
+                            "command {command_id} did not reach terminal state within {:?}",
+                            timeout
+                        ),
+                        spot_fallback_permitted: false,
+                    });
                 }
             }
             sleep(poll_interval).await;
@@ -4289,19 +4054,7 @@ mod tests {
             "export ADL_REMOTE_COMMAND='cargo test --manifest-path tools/aws_remote_validation/Cargo.toml --bin adl-aws-remote-validation -- --nocapture'"
         ));
         assert!(script.contains("CURRENT_STAGE=\"tracked_remote_runner\""));
-        assert!(script.contains("ADL_SPOT_CONTROL_ROOT"));
-        assert!(script.contains(
-            "$CONTROL_ROOT/tools/aws_remote_validation/scripts/remote_validation_runner.sh"
-        ));
-        assert!(script.contains("$CONTROL_ROOT/adl/tools/run_aws_spot_builder_image_validation.sh"));
-        assert!(script.contains("$CONTROL_ROOT/adl/tools/run_aws_spot_ci_profile.sh"));
-        assert!(!script.contains(
-            "$CHECKOUT_DIR/tools/aws_remote_validation/scripts/remote_validation_runner.sh"
-        ));
-        assert!(
-            script.len() < 24_000,
-            "SSM command exceeds the safe size budget"
-        );
+        assert!(script.contains("remote_validation_runner.sh"));
 
         let tracked_runner = include_str!("../scripts/remote_validation_runner.sh");
         assert!(tracked_runner.contains("os.environ[\"COMMAND_EXIT\"]"));
@@ -4330,9 +4083,8 @@ mod tests {
         assert!(tracked_runner.contains("immutable_builder_image_only"));
         assert!(tracked_runner
             .contains("PERSISTENT_CHECKOUT=\"$TOOLCHAIN_ROOT/source/agent-design-language\""));
-        assert!(
-            tracked_runner.contains("if [ \"$CURRENT_PERSISTENT_COMMIT\" != \"$SOURCE_COMMIT\" ]")
-        );
+        assert!(tracked_runner
+            .contains("if [ \"$CURRENT_PERSISTENT_COMMIT\" != \"$SOURCE_COMMIT\" ]"));
     }
 
     #[test]
@@ -4369,26 +4121,6 @@ mod tests {
             shell_single_quote("it's complicated"),
             "'it'\"'\"'s complicated'"
         );
-    }
-
-    #[test]
-    fn ssh_allowed_cidr_requires_one_reachable_ipv4_address() {
-        assert_eq!(
-            validate_ssh_allowed_cidr("47.146.81.109/32").expect("valid CIDR"),
-            "47.146.81.109/32"
-        );
-        for value in [
-            "47.146.81.109/24",
-            "0.0.0.0/0",
-            "10.0.0.1/32",
-            "999.999.999.999/32",
-            "::1/128",
-        ] {
-            assert!(
-                validate_ssh_allowed_cidr(value).is_err(),
-                "accepted {value}"
-            );
-        }
     }
 
     #[test]

@@ -5,7 +5,6 @@ from __future__ import annotations
 
 import argparse
 import hashlib
-import ipaddress
 import json
 import os
 from pathlib import Path
@@ -16,8 +15,6 @@ from typing import Any
 
 SUMMARY_BEGIN = "ADL_AWS_REMOTE_SUMMARY_BEGIN"
 SUMMARY_END = "ADL_AWS_REMOTE_SUMMARY_END"
-COVERAGE_SUMMARY_BEGIN = "ADL_SPOT_COVERAGE_SUMMARY_BEGIN"
-COVERAGE_SUMMARY_END = "ADL_SPOT_COVERAGE_SUMMARY_END"
 SENSITIVE_KEYS = {
     "account_id",
     "arn",
@@ -43,7 +40,7 @@ def redact_text(value: str) -> str:
         (r"\bi-[0-9a-f]{8,17}\b", "<ec2-instance-id-redacted>"),
         (r"\bvol-[0-9a-f]{8,17}\b", "<ebs-volume-id-redacted>"),
         (r"\b(?:vpc|subnet|sg|sir)-[0-9a-f]{8,17}\b", "<aws-resource-id-redacted>"),
-        (r"\b(?:AKIA|ASIA)[0-9A-Z]{16}\b", "<aws-access-key-redacted>"),
+        (r"\bAKIA[0-9A-Z]{16}\b", "<aws-access-key-redacted>"),
         (r"(?i)\b(Bearer|Basic)\s+[A-Za-z0-9._~+/=-]+", r"\1 <credential-redacted>"),
         (r"\b(?:\d{1,3}\.){3}\d{1,3}\b", "<ip-address-redacted>"),
     )
@@ -74,22 +71,6 @@ def extract_remote_summary(path: Path) -> dict[str, Any]:
     if start < 0 or end <= start:
         return {}
     body = text[start + len(SUMMARY_BEGIN) : end].strip()
-    try:
-        payload = json.loads(body)
-    except json.JSONDecodeError:
-        return {}
-    return payload if isinstance(payload, dict) else {}
-
-
-def extract_coverage_summary(path: Path) -> dict[str, Any]:
-    if not path.is_file():
-        return {}
-    text = path.read_text(encoding="utf-8", errors="replace")
-    start = text.rfind(COVERAGE_SUMMARY_BEGIN)
-    end = text.rfind(COVERAGE_SUMMARY_END)
-    if start < 0 or end <= start:
-        return {}
-    body = text[start + len(COVERAGE_SUMMARY_BEGIN) : end].strip()
     try:
         payload = json.loads(body)
     except json.JSONDecodeError:
@@ -168,7 +149,6 @@ def main() -> int:
     if extracted:
         remote = extracted
     builder = remote.get("builder_proof") if isinstance(remote.get("builder_proof"), dict) else {}
-    coverage_summary = extract_coverage_summary(attempt_artifact_dir / "command-stdout.log")
     expected_digest = args.expected_image.rsplit("@", 1)[-1]
     expected_digest_hash = sha256(expected_digest)
 
@@ -206,30 +186,8 @@ def main() -> int:
     require(cleanup.get("final_instance_state") == "terminated", failures, "compute_not_terminated")
     require(not cleanup.get("termination_error"), failures, "compute_termination_error")
     require(launch_surface.get("ssh_debug_enabled") is True, failures, "ssh_debug_not_enabled")
-    ssh_recovery_proven = "status=ssh_debug_ready" in command_status
-    ssm_fallback_used = (
-        "status=ssh_debug_skip reason=operator_allowlist_ssm_fallback" in command_status
-        and "status=ssm_output channel=stdout" in command_status
-        and "status=ssm_output channel=stderr" in command_status
-    )
-    operator_allowlist = launch_surface.get("ssh_allowed_cidr")
-    try:
-        operator_allowlist_configured = (
-            isinstance(operator_allowlist, str)
-            and ipaddress.ip_interface(operator_allowlist).version == 4
-            and ipaddress.ip_interface(operator_allowlist).network.prefixlen == 32
-            and ipaddress.ip_interface(operator_allowlist).ip.is_global
-        )
-    except ValueError:
-        operator_allowlist_configured = False
-    if ssm_fallback_used:
-        require(operator_allowlist_configured, failures, "ssh_operator_allowlist_not_proven")
-    require(ssh_recovery_proven or ssm_fallback_used, failures, "ssh_recovery_not_proven")
-    require(
-        "status=ssh_tail_started" in command_status or ssm_fallback_used,
-        failures,
-        "live_ssh_tail_not_proven",
-    )
+    require("status=ssh_debug_ready" in command_status, failures, "ssh_recovery_not_proven")
+    require("status=ssh_tail_started" in command_status, failures, "live_ssh_tail_not_proven")
     require(builder.get("builder_image_immutable") is True, failures, "builder_image_not_immutable")
     require(builder.get("builder_image_digest_sha256") == expected_digest_hash, failures, "builder_image_digest_mismatch")
     require(builder.get("toolchain_verified") is True, failures, "builder_toolchain_not_verified")
@@ -252,10 +210,8 @@ def main() -> int:
         "retained_cache_verified": cache.get("created") is False and cache.get("attachment_state") == "attached",
         "retained_cache_identity_verified": sha256(cache_volume_id) == args.expected_cache_volume_id_sha256,
         "cache_mount_health_verified": builder.get("cache_mount_verified") is True and builder.get("cache_writable") is True,
-        "ssh_recovery_verified": ssh_recovery_proven,
-        "live_logs_verified": "status=ssh_tail_started" in command_status or ssm_fallback_used,
-        "live_ssh_tail_verified": "status=ssh_tail_started" in command_status,
-        "ssm_live_logs_verified": ssm_fallback_used,
+        "ssh_recovery_verified": "status=ssh_debug_ready" in command_status,
+        "live_logs_verified": "status=ssh_tail_started" in command_status,
         "compute_teardown_verified": cleanup.get("final_instance_state") == "terminated" and not cleanup.get("termination_error"),
         "host_validation_tools_installed": builder.get("host_validation_tools_installed"),
     }
@@ -289,19 +245,12 @@ def main() -> int:
         "interrupted_attempt_count": len(interrupted_attempts),
         "resumed_after_interruption": str(raw.get("status", "")).lower() == "resumed_after_interruption",
         "next_action": resume.get("next_action"),
-        "coverage_summary_retained": bool(coverage_summary),
     }
 
     redacted = redact_json(raw)
     args.summary.parent.mkdir(parents=True, exist_ok=True)
     args.summary.write_text(json.dumps(redacted, indent=2, sort_keys=True) + "\n", encoding="utf-8")
     redact_artifact_logs(args.artifact_dir)
-    if coverage_summary:
-        coverage_path = args.artifact_dir / "coverage-summary.json"
-        coverage_path.write_text(
-            json.dumps(redact_json(coverage_summary), indent=2, sort_keys=True) + "\n",
-            encoding="utf-8",
-        )
     args.wrapper_summary.write_text(json.dumps(wrapper, indent=2, sort_keys=True) + "\n", encoding="utf-8")
     if failures:
         print("aws_spot_artifact_finalize: self-verification failed: " + ", ".join(failures), file=sys.stderr)

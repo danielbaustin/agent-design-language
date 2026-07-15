@@ -5,14 +5,9 @@ ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)"
 SCRIPT="$ROOT/adl/tools/run_aws_spot_remote_validation_lane.sh"
 SETUP_SCRIPT="$ROOT/adl/tools/setup_aws_spot_remote_validation_github_resources.sh"
 WORKFLOW="$ROOT/.github/workflows/aws-spot-remote-validation.yaml"
-
-grep -F 'stat -c '\''%a'\'' "$SSH_PRIVATE_KEY_PATH" 2>/dev/null || stat -f '\''%Lp'\''' "$SCRIPT" >/dev/null
-grep -F 'RUN_ID="adl-wp-${ISSUE}-aws-spot-$(date -u +%Y%m%d%H%M%S)"' "$SCRIPT" >/dev/null
-grep -F 'refs/remotes/origin/${GIT_REF}^{commit}' "$SCRIPT" >/dev/null
-grep -F "'+refs/remotes/origin/*:refs/remotes/origin/*'" "$ROOT/tools/aws_remote_validation/scripts/remote_validation_runner.sh" >/dev/null
-TMP_ROOT="${TMPDIR:-$ROOT/.adl/tmp}"
-mkdir -p "$TMP_ROOT"
-TMP="$(mktemp -d "$TMP_ROOT/aws-spot-remote-validation-test.XXXXXX")"
+TMP_PARENT="$ROOT/.adl/tmp/aws-spot-remote-validation-tests"
+mkdir -p "$TMP_PARENT"
+TMP="$(mktemp -d "$TMP_PARENT/test.XXXXXX")"
 trap 'rm -rf "$TMP"' EXIT
 
 account="123456789012"
@@ -60,7 +55,7 @@ elif [[ "$1 $2" == "ec2 describe-volumes" ]]; then
     *'Volumes[0].State'*) echo available ;;
     *'Volumes[0].Tags'*) echo adl-aws-remote-validation-cache-volume ;;
     *'Volumes[0].AvailabilityZone'*) echo us-west-2a ;;
-    *'Volumes[0].Size'*) echo 1000 ;;
+    *'Volumes[0].Size'*) echo 500 ;;
     *'Volumes[0].VolumeType'*) echo gp3 ;;
     *'Volumes[0].Iops'*) echo 3000 ;;
     *'Volumes[0].Throughput'*) echo 125 ;;
@@ -69,16 +64,6 @@ elif [[ "$1 $2" == "ec2 describe-volumes" ]]; then
   esac
 elif [[ "$1 $2" == "ec2 describe-subnets" ]]; then
   echo us-west-2a
-elif [[ "$1 $2" == "ec2 describe-instances" ]]; then
-  if [[ "$*" == *'Reservations[].Instances[].InstanceId'* ]]; then
-    printf '%s\n' "${ADL_FAKE_ACTIVE_INSTANCE_ID:-None}"
-  else
-    printf '%s\n' "${ADL_FAKE_RUN_ID:-fixture-orphan}"
-  fi
-elif [[ "$1 $2" == "ec2 terminate-instances" ]]; then
-  :
-elif [[ "$1 $2 $3" == "ec2 wait instance-terminated" ]]; then
-  :
 elif [[ "$1 $2" == "ssm get-parameter" ]]; then
   echo ami-0123456789abcdef0
 else
@@ -90,14 +75,6 @@ EOF
 cat >"$fake_bin/adl-aws-remote-validation" <<'EOF'
 #!/usr/bin/env bash
 set -euo pipefail
-if [[ "${1:-}" == "help" ]]; then
-  echo 'adl-aws-remote-validation run [--spot-only]'
-  exit 0
-fi
-if [[ "${1:-}" == "capabilities" ]]; then
-  echo '{"schema":"adl.aws_remote_validation.capabilities.v1","capabilities":["embedded_control_bundle_v1","spot_only_v1"]}'
-  exit 0
-fi
 printf '%s\n' "$@" >"${ADL_FAKE_AWS_REMOTE_ARGS:?}"
 out=""
 artifact_dir=""
@@ -116,7 +93,6 @@ while [[ $# -gt 0 ]]; do
       ;;
   esac
 done
-sleep "${ADL_FAKE_AWS_REMOTE_SLEEP:-0}"
 mkdir -p "$(dirname "$out")" "$artifact_dir"
 status="${ADL_FAKE_AWS_REMOTE_STATUS:-passed}"
 cat >"$out" <<JSON
@@ -317,7 +293,6 @@ fi
 ADL_AWS_CLI="$fake_bin/aws" \
 bash "$SCRIPT" preflight \
   --expected-proof "$proof" \
-  --bin "$fake_bin/adl-aws-remote-validation" \
   --builder-image "$builder_image" \
   --estimated-hourly-cost-usd 0.15 \
   --ssh-private-key-path "$test_ssh_key" \
@@ -335,35 +310,6 @@ assert payload["ssh_recovery_configured"] is True
 assert payload["aws_resources_created"] is False
 PY
 
-cat >"$fake_bin/stale-adl-aws-remote-validation" <<'EOF'
-#!/usr/bin/env bash
-echo 'adl-aws-remote-validation run [--spot-only]'
-EOF
-chmod +x "$fake_bin/stale-adl-aws-remote-validation"
-if ADL_AWS_CLI="$fake_bin/aws" bash "$SCRIPT" preflight \
-    --expected-proof "$proof" \
-    --bin "$fake_bin/stale-adl-aws-remote-validation" \
-    --builder-image "$builder_image" \
-    --estimated-hourly-cost-usd 0.15 \
-    --ssh-private-key-path "$test_ssh_key" \
-    --git-ref origin/main >"$TMP/stale-preflight.out" 2>"$TMP/stale-preflight.err"; then
-  echo "expected stale remote validation binary to fail preflight" >&2
-  exit 1
-fi
-grep -F 'remote validation binary is stale' "$TMP/stale-preflight.err" >/dev/null
-
-if ADL_AWS_CLI="$fake_bin/aws" bash "$SCRIPT" preflight \
-    --expected-proof "$proof" \
-    --bin "$fake_bin/adl-aws-remote-validation" \
-    --builder-image "$builder_image" \
-    --estimated-hourly-cost-usd 0.15 \
-    --ssh-private-key-path "$test_ssh_key" \
-    --git-ref codex/nonexistent-proof-ref >"$TMP/missing-ref.out" 2>"$TMP/missing-ref.err"; then
-  echo "expected unresolved preflight ref to fail closed" >&2
-  exit 1
-fi
-grep -F -- '--git-ref must resolve to a committed source revision' "$TMP/missing-ref.err" >/dev/null
-
 ADL_FAKE_AWS_REMOTE_ARGS="$TMP/args.txt" \
 ADL_FAKE_EXPECTED_SOURCE="$(git -C "$ROOT" rev-parse origin/main)" \
 ADL_FAKE_EXPECTED_IMAGE_DIGEST_HASH="$(python3 -c 'import hashlib,sys; print(hashlib.sha256(sys.argv[1].encode()).hexdigest())' "$builder_digest")" \
@@ -378,7 +324,6 @@ bash "$SCRIPT" \
   --ssh-private-key-path "$test_ssh_key" \
   --command "cargo test --manifest-path adl/Cargo.toml provider_communication -- --nocapture" \
   --git-ref origin/main \
-  --instance-types m7a.2xlarge,c7a.2xlarge \
   --out "$TMP/summary.json" \
   --artifact-dir "$TMP/artifacts" \
   --instance-type m7a.2xlarge \
@@ -394,7 +339,6 @@ grep -Fx -- "--issue" "$TMP/args.txt" >/dev/null
 grep -Fx -- "5191" "$TMP/args.txt" >/dev/null
 grep -Fx -- "--instance-type" "$TMP/args.txt" >/dev/null
 grep -Fx -- "m7a.2xlarge" "$TMP/args.txt" >/dev/null
-grep -Fx -- "c7a.2xlarge" "$TMP/args.txt" >/dev/null
 grep -Fx -- "--spot-only" "$TMP/args.txt" >/dev/null
 grep -F 'INSTANCE_TYPES=("m7a.2xlarge" "c7a.2xlarge" "c7i.2xlarge")' "$SCRIPT" >/dev/null
 grep -Fx -- "--cache-volume-id" "$TMP/args.txt" >/dev/null
@@ -402,7 +346,7 @@ grep -Fx -- "vol-0123456789abcdef0" "$TMP/args.txt" >/dev/null
 grep -Fx -- "--cache-volume-name" "$TMP/args.txt" >/dev/null
 grep -Fx -- "adl-aws-remote-validation-cache-volume" "$TMP/args.txt" >/dev/null
 grep -Fx -- "--cache-volume-size-gib" "$TMP/args.txt" >/dev/null
-grep -Fx -- "1000" "$TMP/args.txt" >/dev/null
+grep -Fx -- "500" "$TMP/args.txt" >/dev/null
 grep -Fx -- "--cache-volume-type" "$TMP/args.txt" >/dev/null
 grep -Fx -- "gp3" "$TMP/args.txt" >/dev/null
 grep -Fx -- "--cache-volume-iops" "$TMP/args.txt" >/dev/null
@@ -413,27 +357,6 @@ grep -Fx -- "--cache-volume-device-name" "$TMP/args.txt" >/dev/null
 grep -Fx -- "/dev/sdf" "$TMP/args.txt" >/dev/null
 grep -Fx -- "--cache-volume-mount-path" "$TMP/args.txt" >/dev/null
 grep -Fx -- "/mnt/adl-cache" "$TMP/args.txt" >/dev/null
-grep -Fx -- "--command-timeout-seconds" "$TMP/args.txt" >/dev/null
-grep -Fx -- "900" "$TMP/args.txt" >/dev/null
-grep -Fx -- "--max-spot-retries" "$TMP/args.txt" >/dev/null
-grep -Fx -- "2" "$TMP/args.txt" >/dev/null
-
-if ADL_AWS_REMOTE_VALIDATION_MAX_RUN_SECONDS=29 \
-  bash "$SCRIPT" preflight --expected-proof "$proof" --bin "$fake_bin/adl-aws-remote-validation" \
-    --builder-image "$builder_image" --estimated-hourly-cost-usd 0.15 --git-ref origin/main >/dev/null 2>"$TMP/max-run.err"; then
-  echo "expected max run below 30 seconds to fail closed" >&2
-  exit 1
-fi
-grep -F -- 'max run must be between 30 and 3600 seconds' "$TMP/max-run.err" >/dev/null
-if ADL_AWS_REMOTE_VALIDATION_COMMAND_TIMEOUT_SECONDS=901 \
-  bash "$SCRIPT" preflight --expected-proof "$proof" --bin "$fake_bin/adl-aws-remote-validation" \
-    --run-id fixture-run --builder-image "$builder_image" --git-ref origin/main \
-    --estimated-hourly-cost-usd 0.15 >/dev/null 2>"$TMP/timeout.err"; then
-  echo "expected timeout override above 900 seconds to fail closed" >&2
-  exit 1
-fi
-grep -F "command timeout must be between 1 and 900 seconds" "$TMP/timeout.err" >/dev/null
-grep -F 'status=max_runtime_exceeded max_run_seconds=' "$SCRIPT" >/dev/null
 grep -Fx -- "--ssh-key-name" "$TMP/args.txt" >/dev/null
 grep -Fx -- "adl-wp06-spot-ssh-debug-20260704" "$TMP/args.txt" >/dev/null
 grep -Fx -- "--ssh-private-key-path" "$TMP/args.txt" >/dev/null
@@ -448,7 +371,7 @@ import sys
 args = open(sys.argv[1], encoding="utf-8").read().splitlines()
 command = args[args.index("--command") + 1]
 parts = shlex.split(command)
-assert parts[:2] == ["bash", "${ADL_SPOT_CONTROL_ROOT:?}/adl/tools/run_aws_spot_builder_image_validation.sh"]
+assert parts[:2] == ["bash", "adl/tools/run_aws_spot_builder_image_validation.sh"]
 assert parts[parts.index("--image") + 1] == sys.argv[2]
 assert len(parts[parts.index("--expected-ref") + 1]) == 40
 assert parts[parts.index("--expected-architecture") + 1] == "x86_64"
@@ -471,7 +394,6 @@ assert payload["resumed_after_interruption"] is False
 PY
 
 ADL_FAKE_AWS_REMOTE_ARGS="$TMP/launch-args.txt" \
-ADL_FAKE_AWS_REMOTE_SLEEP=0.5 \
 ADL_FAKE_EXPECTED_SOURCE="$(git -C "$ROOT" rev-parse origin/main)" \
 ADL_FAKE_EXPECTED_IMAGE_DIGEST_HASH="$(python3 -c 'import hashlib,sys; print(hashlib.sha256(sys.argv[1].encode()).hexdigest())' "$builder_digest")" \
 ADL_AWS_CLI="$fake_bin/aws" \
@@ -489,47 +411,6 @@ bash "$SCRIPT" launch \
   --instance-type m7a.2xlarge \
   --json >"$TMP/launch.out"
 grep -F 'status=launched run_id=fixture-launch' "$TMP/launch.out" >/dev/null
-grep -F -- "--out $TMP/launch-summary.json --artifact-dir $TMP/launch-artifacts" "$TMP/launch.out" >/dev/null
-manager_pid="$(cat "$TMP/launch-artifacts/manager.pid")"
-kill -0 "$manager_pid"
-if ADL_FAKE_AWS_REMOTE_ARGS="$TMP/duplicate-launch-args.txt" \
-  ADL_FAKE_EXPECTED_SOURCE="$(git -C "$ROOT" rev-parse origin/main)" \
-  ADL_FAKE_EXPECTED_IMAGE_DIGEST_HASH="$(python3 -c 'import hashlib,sys; print(hashlib.sha256(sys.argv[1].encode()).hexdigest())' "$builder_digest")" \
-  ADL_AWS_CLI="$fake_bin/aws" \
-  bash "$SCRIPT" launch \
-    --expected-proof "$proof" \
-    --bin "$fake_bin/adl-aws-remote-validation" \
-    --run-id fixture-launch \
-    --builder-image "$builder_image" \
-    --estimated-hourly-cost-usd 0.15 \
-    --ssh-private-key-path "$test_ssh_key" \
-    --command "cargo nextest run --workspace" \
-    --git-ref origin/main \
-    --out "$TMP/launch-summary.json" \
-    --artifact-dir "$TMP/launch-artifacts" \
-    --instance-type m7a.2xlarge \
-    --json >"$TMP/duplicate-launch.out" 2>"$TMP/duplicate-launch.err"; then
-  echo "expected duplicate detached launch to fail closed" >&2
-  exit 1
-fi
-grep -E 'active manager|incomplete manager state' "$TMP/duplicate-launch.err" >/dev/null
-mkdir -p "$TMP/locked-artifacts/.launch-lock"
-if ADL_FAKE_AWS_REMOTE_ARGS="$TMP/locked-launch-args.txt" \
-  ADL_FAKE_EXPECTED_SOURCE="$(git -C "$ROOT" rev-parse origin/main)" \
-  ADL_FAKE_EXPECTED_IMAGE_DIGEST_HASH="$(python3 -c 'import hashlib,sys; print(hashlib.sha256(sys.argv[1].encode()).hexdigest())' "$builder_digest")" \
-  ADL_AWS_CLI="$fake_bin/aws" \
-  bash "$SCRIPT" launch \
-    --expected-proof "$proof" --bin "$fake_bin/adl-aws-remote-validation" \
-    --run-id fixture-locked --builder-image "$builder_image" \
-    --estimated-hourly-cost-usd 0.15 --ssh-private-key-path "$test_ssh_key" \
-    --command "cargo nextest run --workspace" --git-ref origin/main \
-    --out "$TMP/locked-summary.json" --artifact-dir "$TMP/locked-artifacts" \
-    --instance-type m7a.2xlarge --json \
-    >"$TMP/locked-launch.out" 2>"$TMP/locked-launch.err"; then
-  echo "expected contended launch lock to fail closed" >&2
-  exit 1
-fi
-grep -F 'run id launch lock is already held' "$TMP/locked-launch.err" >/dev/null
 for _ in $(seq 1 50); do
   [[ -f "$TMP/launch-artifacts/wrapper-final-summary.json" ]] && break
   sleep 0.1
@@ -579,19 +460,6 @@ assert "123456789012" not in text
 assert "arn:aws:" not in text
 PY
 
-ADL_FAKE_ACTIVE_INSTANCE_ID=i-0123456789abcdef0 \
-ADL_FAKE_RUN_ID=fixture-orphan \
-ADL_AWS_CLI="$fake_bin/aws" \
-bash "$SCRIPT" cleanup \
-  --check-account \
-  --profile env \
-  --run-id fixture-orphan \
-  --expected-proof "$proof" \
-  --out "$TMP/orphan-summary.json" \
-  --artifact-dir "$TMP/orphan-artifacts" >"$TMP/orphan-cleanup.out"
-grep -F 'status=terminated run_id=fixture-orphan retained_cache_preserved=true' "$TMP/orphan-cleanup.out" >/dev/null
-grep -F 'status=clean retained_cache_preserved=true cache_state=available run_id=fixture-orphan' "$TMP/orphan-cleanup.out" >/dev/null
-
 if bash "$SCRIPT" --extra-arg --profile >"$TMP/extra.out" 2>"$TMP/extra.err"; then
   echo "expected --extra-arg to be rejected" >&2
   exit 1
@@ -623,10 +491,7 @@ grep -F -- "git_ref must be a branch, tag, or SHA; HEAD is ambiguous" "$WORKFLOW
 grep -F -- "--profile env" "$WORKFLOW" >/dev/null
 grep -F -- "--check-account" "$WORKFLOW" >/dev/null
 grep -F -- "--json" "$WORKFLOW" >/dev/null
-grep -F -- "Sanitize and verify Spot artifact redaction" "$WORKFLOW" >/dev/null
-grep -F 'SPOT_RUN_ID: adl-wp-${{ inputs.issue_number }}-gha-${{ github.run_id }}-${{ github.run_attempt }}' "$WORKFLOW" >/dev/null
-grep -F -- 'name: Ensure Spot compute cleanup' "$WORKFLOW" >/dev/null
-grep -F -- "--run-id \"\$SPOT_RUN_ID\"" "$WORKFLOW" >/dev/null
+grep -F -- "Verify Spot artifact redaction" "$WORKFLOW" >/dev/null
 grep -F -- "AWS_SPOT_REMOTE_VALIDATION_SSH_PRIVATE_KEY_B64" "$WORKFLOW" >/dev/null
 grep -F -- "ssh-keygen -y -P ''" "$WORKFLOW" >/dev/null
 grep -F -- "include-hidden-files: false" "$WORKFLOW" >/dev/null
@@ -652,11 +517,6 @@ grep -F -- "AWS_SPOT_REMOTE_VALIDATION_REGION" "$SETUP_SCRIPT" >/dev/null
 grep -F -- "ADL_AWS_REMOTE_VALIDATION_SSH_ALLOWED_CIDR" "$SETUP_SCRIPT" >/dev/null
 grep -F -- "repo:{repo}:ref:refs/heads/main" "$SETUP_SCRIPT" >/dev/null
 grep -F -- "repo:{repo}:ref:refs/heads/codex/*" "$SETUP_SCRIPT" >/dev/null
-grep -F -- "repo:{repo}:environment:adl-spot-ci" "$SETUP_SCRIPT" >/dev/null
-if grep -F -- "repo:{repo}:pull_request" "$SETUP_SCRIPT" >/dev/null; then
-  echo "Spot OIDC trust must use the protected environment, not a repository-wide pull_request subject" >&2
-  exit 1
-fi
 grep -F -- "AdlAwsRemoteValidationBuilderImageEcrRead" "$ROOT/adl/src/aws_remote_validation.rs" >/dev/null
 grep -F -- "ecr:GetAuthorizationToken" "$ROOT/adl/src/aws_remote_validation.rs" >/dev/null
 grep -F -- "repository/adl-builder" "$ROOT/adl/src/aws_remote_validation.rs" >/dev/null
