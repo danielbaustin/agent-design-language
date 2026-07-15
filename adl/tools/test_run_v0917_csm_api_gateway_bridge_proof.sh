@@ -125,6 +125,9 @@ assert summary["api_gateway"]["integration_count"] >= 1
 assert summary["bridge"]["endpoint"] == "/api-gateway-bridge"
 assert summary["bridge"]["response_schema"] == "adl.csm.runtime_api.api_gateway_bridge.v1"
 assert summary["live_negative_cases"]["missing_token"] == "api_gateway_authorization_denied"
+assert summary["live_negative_cases"]["missing_token_http_status"] in {401, 403}
+assert summary["live_negative_cases"]["malformed_request"] == "api_gateway_malformed_request"
+assert summary["live_negative_cases"]["malformed_request_http_status"] in {401, 403}
 for required in [
     "sts get-caller-identity",
     "apigatewayv2 get-apis",

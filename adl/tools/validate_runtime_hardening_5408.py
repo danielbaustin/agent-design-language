@@ -27,6 +27,8 @@ require(
     "file.sync_all()",
     "libc::geteuid",
     "libc::getpwuid",
+    "sync_governed_stop_ledger_parent",
+    "File::open(parent)",
     '"authorization_verified": true',
     '"operator_identity_verified": true',
     '"os_identity_verified": true',

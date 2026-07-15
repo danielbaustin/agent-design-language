@@ -146,6 +146,12 @@ def main() -> None:
     live_negative = summary.get("live_negative_cases", {})
     if live_negative.get("missing_token") != "api_gateway_authorization_denied":
         fail("live missing-token negative case must classify authorization denial")
+    if live_negative.get("missing_token_http_status") not in {401, 403}:
+        fail("live missing-token negative case must retain an HTTP 401 or 403")
+    if live_negative.get("malformed_request") != "api_gateway_malformed_request":
+        fail("live malformed-token negative case must classify malformed request")
+    if live_negative.get("malformed_request_http_status") not in {401, 403}:
+        fail("live malformed-token negative case must retain an HTTP 401 or 403")
     if live_negative.get("raw_error_recorded") is not False:
         fail("live negative case must not retain raw provider error")
 
