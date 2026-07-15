@@ -866,12 +866,18 @@ fn run_negative_cases(options: &ApiGatewayBridgeOptions, correlation_id: &str) -
     {
         bail!("API Gateway malformed-token negative case returned an unexpected denial schema");
     }
+    if malformed.body.get("error_class").and_then(Value::as_str)
+        != Some("api_gateway_malformed_request")
+    {
+        bail!("API Gateway malformed-token negative case returned an unexpected error class");
+    }
     assert_api_response_redacted(&malformed.body)?;
     Ok(json!({
         "missing_token": missing_token["missing_token"],
         "missing_token_http_status": missing_token["http_status"],
         "malformed_request": "api_gateway_malformed_request",
         "malformed_request_http_status": malformed.status_code,
+        "malformed_request_error_class": "api_gateway_malformed_request",
         "upstream_failure": "deferred_to_injected_upstream_fixture",
         "degraded_csm_state": "deferred_to_injected_degraded_fixture",
         "throttling": "deferred_to_aws_quota_or_gateway_integration_fixture",
@@ -1297,7 +1303,9 @@ case "$url" in
   */status|*/health|*/ready|*/metrics|*/events|*/chronosense|*/weather|*/shepherd|*/cav|*/curiosity|*/acip|*/freedom-gate|*/reasoning|*/api-gateway-bridge|*/persistence|*/constructability) ;;
   *) printf '%s\\n%s' '{{"schema":"adl.csm.api_gateway_bridge.unknown_route.v1","status":"not_found"}}' "404"; exit 0 ;;
 esac
-if [ "$auth" = "present" ]; then
+if [ "$auth" = "malformed" ]; then
+  printf '%s\n%s' '{{"schema":"adl.csm.api_gateway_bridge.denied.v1","status":"denied","error_class":"api_gateway_malformed_request"}}' "{negative_status}"
+elif [ "$auth" = "present" ]; then
   printf '%s\n%s' '{{"schema":"adl.csm.runtime_api.api_gateway_bridge.v1","runtime_owner":"csm","agent_instance_id":"{agent_instance_id}","status":"available","runtime_api_path":"/api-gateway-bridge","polis_ingress":{{"polis_id":"{agent_instance_id}","ingress_model":"one_api_gateway_api_per_polis","route_target":"authorized_api_gateway_to_csm_loopback_runtime_api","per_polis_api":true}},"redaction":{{"secret_material":"not_returned"}}}}' "200"
 else
   printf '%s\n%s' '{{"schema":"adl.csm.api_gateway_bridge.denied.v1","status":"denied"}}' "{negative_status}"
