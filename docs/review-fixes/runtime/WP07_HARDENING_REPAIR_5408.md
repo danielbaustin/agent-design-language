@@ -2,19 +2,22 @@
 
 ## Authority Boundary
 
-The `csm governed-stop` command now fails closed unless both conditions hold:
+The `csm governed-stop` command now fails closed unless all conditions hold:
 
-- `ADL_CSM_GOVERNED_STOP_AUTHORITY` is configured and exactly matches the
-  supplied authorization value.
-- The supplied operator identity is listed in the comma-separated
-  `ADL_CSM_GOVERNED_STOP_OPERATORS` allowlist.
+- The agent has a pre-established locked spec.
+- `safety.governed_stop_authority.public_key_b64` in that locked spec is a
+  valid Ed25519 public key.
+- The authorization is an Ed25519 signature over the agent/request tuple,
+  including operator, intent, timestamp, and reason.
+- The operator identity is listed in the locked spec policy and matches the
+  authenticated process OS identity from `USER` or `USERNAME`.
 - The supplied operator identity matches the authenticated process OS identity
   from `USER` or `USERNAME`.
 
 The raw authorization value is never retained. The stop artifact records only
-its SHA-256 reference and records that authorization and operator verification
-passed. Missing configuration, a forged authorization, or an unlisted caller
-is rejected before checkpoint or stop artifacts are written.
+its SHA-256 reference and records that signature, authority, operator, and OS
+identity verification passed. Missing policy, a forged signature, or an
+unlisted caller is rejected before checkpoint or stop artifacts are written.
 
 ## API Gateway Proof Boundary
 
@@ -32,8 +35,8 @@ status is `bounded_smoke`, not `passed`.
 
 - `cargo test --manifest-path adl/Cargo.toml api_gateway_bridge --lib`
 - `python3 adl/tools/validate_runtime_hardening_5408.py`
-- Focused governed-stop CLI coverage must provide the two authority environment
-  variables and includes forged-authority and missing-operator negatives.
+- Focused governed-stop coverage includes a valid spec-bound signature and a
+  forged-signature negative.
 
 The authority and allowlist variables are supervisor-owned process configuration,
 not caller-supplied request fields. The final CSM coherence gate remains owned by the broad milestone review lock;

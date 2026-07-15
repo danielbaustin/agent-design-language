@@ -16,12 +16,14 @@ def require(path: str, *needles: str) -> None:
 
 require(
     "adl/src/long_lived_agent.rs",
-    'ADL_CSM_GOVERNED_STOP_AUTHORITY',
-    'ADL_CSM_GOVERNED_STOP_OPERATORS',
-    "does not match the configured governed authority",
-    "operator is not present",
+    'GOVERNED_STOP_POLICY_KEY',
+    'GOVERNED_STOP_POLICY_PUBLIC_KEY',
+    "authorization signature verification failed",
+    "operator is not present in the locked agent spec policy",
+    "governed_stop_authorization_payload",
     '"authorization_verified": true',
     '"operator_identity_verified": true',
+    '"os_identity_verified": true',
 )
 require(
     "adl/src/csm_api_gateway_bridge.rs",
@@ -29,5 +31,12 @@ require(
     '"default_route_is_not_substituted": true',
     '"malformed_request": "api_gateway_malformed_request"',
     '"upstream_failure": "deferred_to_injected_upstream_fixture"',
+)
+require(
+    "docs/review-fixes/runtime/WP07_COHERENCE_GATE_DISPOSITION_5408.md",
+    "#4906",
+    "blocked_with_evidence",
+    "explicit hold",
+    "not a waiver",
 )
 print("WP-07 runtime hardening contract passed")

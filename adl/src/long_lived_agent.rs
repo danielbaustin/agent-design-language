@@ -12,7 +12,10 @@ use adl_runtime::determinism::{
 use adl_runtime::observability::{ObservabilityConfig, ObservabilityRuntime};
 use adl_runtime::shutdown::{GovernedShutdownState, ShutdownPhase, ShutdownStepOutcome};
 use anyhow::{anyhow, Context, Result};
+use base64::engine::general_purpose::STANDARD as BASE64;
+use base64::Engine;
 use chrono::{DateTime, Duration as ChronoDuration, Utc};
+use ed25519_dalek::{Signature, Verifier, VerifyingKey};
 use serde::Serialize;
 use serde_json::{json, Value};
 use sha2::{Digest, Sha256};
@@ -57,8 +60,9 @@ pub use types::{
 };
 
 const DAEMON_DEFAULT_INTERVAL_SECS: u64 = 3;
-const GOVERNED_STOP_AUTHORITY_ENV: &str = "ADL_CSM_GOVERNED_STOP_AUTHORITY";
-const GOVERNED_STOP_OPERATORS_ENV: &str = "ADL_CSM_GOVERNED_STOP_OPERATORS";
+const GOVERNED_STOP_POLICY_KEY: &str = "governed_stop_authority";
+const GOVERNED_STOP_POLICY_PUBLIC_KEY: &str = "public_key_b64";
+const GOVERNED_STOP_POLICY_OPERATORS: &str = "operators";
 
 fn utc_now() -> DateTime<Utc> {
     Utc::now()
@@ -1241,9 +1245,15 @@ pub struct GovernedStopRequest {
 }
 
 pub fn governed_stop(spec_path: &Path, request: GovernedStopRequest) -> Result<Value> {
-    validate_governed_stop_request(&request)?;
     let loaded = load_spec(spec_path)?;
+    if !locked_spec_path(&loaded).exists() {
+        return Err(anyhow!(
+            "csm governed-stop requires a pre-established locked spec policy"
+        ));
+    }
     ensure_state_root(&loaded)?;
+    ensure_locked_spec(&loaded)?;
+    validate_governed_stop_request(&loaded, &request)?;
     let runtime_context = CsmRuntimeContext::observer()?;
     let restart_count = daemon_restart_count_hint(&loaded);
     let governed_stop_id = governed_stop_id(&loaded, &request);
@@ -1331,9 +1341,9 @@ pub fn governed_stop(spec_path: &Path, request: GovernedStopRequest) -> Result<V
             "required_fields": ["reason", "operator_identity", "authorization", "intent", "requested_at"],
             "ordinary_api_requests_can_stop_runtime": false,
             "runtime_budget": "not_applicable",
-            "authority_source": "environment_configured_governed_authority",
-            "authority_source_ref": GOVERNED_STOP_AUTHORITY_ENV,
-            "operator_allowlist_source": GOVERNED_STOP_OPERATORS_ENV,
+            "authority_source": "ed25519_locked_agent_spec",
+            "authority_source_ref": "agent_spec.locked.json:safety.governed_stop_authority.public_key_b64",
+            "operator_allowlist_source": "agent_spec.locked.json:safety.governed_stop_authority.operators",
             "authorization_verified": true,
             "operator_identity_verified": true,
             "os_identity_verified": true
@@ -1451,7 +1461,10 @@ pub fn governed_stop(spec_path: &Path, request: GovernedStopRequest) -> Result<V
     }))
 }
 
-fn validate_governed_stop_request(request: &GovernedStopRequest) -> Result<()> {
+fn validate_governed_stop_request(
+    loaded: &LoadedAgentSpec,
+    request: &GovernedStopRequest,
+) -> Result<()> {
     let fields = [
         ("--reason", request.reason.as_str()),
         ("--operator", request.operator_identity.as_str()),
@@ -1472,31 +1485,44 @@ fn validate_governed_stop_request(request: &GovernedStopRequest) -> Result<()> {
             "csm governed-stop unsupported --intent '{intent}' (expected emergency_polis_stop, operator_safety_stop, or recoverability_drill)"
         ));
     }
-    let configured_authority = env::var(GOVERNED_STOP_AUTHORITY_ENV)
-        .ok()
+    let policy = loaded
+        .spec
+        .safety
+        .get(GOVERNED_STOP_POLICY_KEY)
+        .ok_or_else(|| anyhow!("csm governed-stop policy is missing from the locked agent spec"))?;
+    let public_key_b64 = policy
+        .get(GOVERNED_STOP_POLICY_PUBLIC_KEY)
+        .and_then(Value::as_str)
         .filter(|value| !value.trim().is_empty())
-        .ok_or_else(|| {
-            anyhow!(
-                "csm governed-stop is disabled until {GOVERNED_STOP_AUTHORITY_ENV} is configured"
-            )
-        })?;
-    if configured_authority.trim() != request.authorization.trim() {
-        return Err(anyhow!(
-            "csm governed-stop authorization does not match the configured governed authority"
-        ));
-    }
-    let operator_allowed = env::var(GOVERNED_STOP_OPERATORS_ENV)
-        .ok()
-        .map(|value| {
-            value
-                .split(',')
-                .map(str::trim)
-                .any(|operator| operator == request.operator_identity.trim())
-        })
-        .unwrap_or(false);
+        .ok_or_else(|| anyhow!("csm governed-stop policy has no public key"))?;
+    let public_key_bytes = BASE64
+        .decode(public_key_b64)
+        .map_err(|_| anyhow!("csm governed-stop policy public key is not valid base64"))?;
+    let public_key_bytes: [u8; 32] = public_key_bytes
+        .try_into()
+        .map_err(|_| anyhow!("csm governed-stop policy public key must be 32 bytes"))?;
+    let public_key = VerifyingKey::from_bytes(&public_key_bytes)
+        .map_err(|_| anyhow!("csm governed-stop policy public key is invalid"))?;
+    let signature_bytes = BASE64
+        .decode(request.authorization.trim())
+        .map_err(|_| anyhow!("csm governed-stop authorization signature is not valid base64"))?;
+    let signature = Signature::from_slice(&signature_bytes)
+        .map_err(|_| anyhow!("csm governed-stop authorization signature is invalid"))?;
+    let signed_payload =
+        governed_stop_authorization_payload(&loaded.spec.agent_instance_id, request);
+    public_key
+        .verify(signed_payload.as_bytes(), &signature)
+        .map_err(|_| anyhow!("csm governed-stop authorization signature verification failed"))?;
+    let operator_allowed = policy
+        .get(GOVERNED_STOP_POLICY_OPERATORS)
+        .and_then(Value::as_array)
+        .into_iter()
+        .flatten()
+        .filter_map(Value::as_str)
+        .any(|operator| operator == request.operator_identity.trim());
     if !operator_allowed {
         return Err(anyhow!(
-            "csm governed-stop operator is not present in {GOVERNED_STOP_OPERATORS_ENV}"
+            "csm governed-stop operator is not present in the locked agent spec policy"
         ));
     }
     let os_identity = env::var("USER")
@@ -1508,6 +1534,19 @@ fn validate_governed_stop_request(request: &GovernedStopRequest) -> Result<()> {
         ));
     }
     Ok(())
+}
+
+fn governed_stop_authorization_payload(
+    agent_instance_id: &str,
+    request: &GovernedStopRequest,
+) -> String {
+    format!(
+        "adl.csm.governed_stop.authorization.v1\n{agent_instance_id}\n{}\n{}\n{}\n{}",
+        request.operator_identity.trim(),
+        request.intent.trim(),
+        request.requested_at.to_rfc3339(),
+        request.reason.trim()
+    )
 }
 
 fn governed_stop_id(loaded: &LoadedAgentSpec, request: &GovernedStopRequest) -> String {
