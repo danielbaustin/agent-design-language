@@ -871,6 +871,12 @@ fn run_negative_cases(options: &ApiGatewayBridgeOptions, correlation_id: &str) -
     {
         bail!("API Gateway malformed-token negative case returned an unexpected error class");
     }
+    emit_bridge_event(
+        "malformed_request",
+        "blocked",
+        &options.run_id,
+        Some("api_gateway_malformed_request"),
+    );
     assert_api_response_redacted(&malformed.body)?;
     Ok(json!({
         "missing_token": missing_token["missing_token"],
