@@ -8,6 +8,7 @@ description = "Independent supervised component runtime kernel proof for ADL"
 [dependencies]
 async-trait = "0.1"
 axum = "0.8"
+axum-server = { version = "0.8", features = ["tls-rustls"] }
 blake3 = "1"
 ed25519-dalek = "3"
 futures = "0.3"
@@ -29,7 +30,9 @@ uuid = { version = "1", features = ["v4"] }
 libc = "0.2"
 
 [dev-dependencies]
+rcgen = "0.14"
 tempfile = "3"
+tokio-rustls = "0.26"
 tracing-subscriber = "0.3"
 
 [[bin]]

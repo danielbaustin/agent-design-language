@@ -2,7 +2,7 @@ use std::{
     collections::{BTreeMap, BTreeSet},
     future::Future,
     io::Write,
-    net::IpAddr,
+    net::{IpAddr, SocketAddr},
     sync::Arc,
     sync::Mutex,
     time::Duration,
@@ -25,7 +25,7 @@ use tracing::Instrument;
 
 use crate::{
     BootstrapEvent, KernelControl, KernelExit, ObservabilityHealth, RuntimeRecorder,
-    RuntimeSnapshot, WeatherHealthReport,
+    RuntimeSnapshot, RuntimeTlsInitConfig, WeatherHealthReport,
 };
 
 pub const CONTROL_COMMAND_SCHEMA: &str = "adl.runtime.control_command.v1";
@@ -33,6 +33,18 @@ pub const CONTROL_RESPONSE_SCHEMA: &str = "adl.runtime.control_response.v1";
 pub const OBSERVATORY_FEED_SCHEMA: &str = "adl.runtime_v3.observatory_feed.v1";
 pub const DEFAULT_CONTROL_API_PORT: u16 = 20_997;
 pub const MAX_SHUTDOWN_GRACE_MILLIS: u64 = 60_000;
+pub const CONTROL_API_SHUTDOWN_GRACE: Duration = Duration::from_secs(2);
+
+pub fn control_ready_event(instance_id: &str, address: SocketAddr) -> String {
+    assert!(
+        is_safe_identifier(instance_id),
+        "runtime instance id must be bounded"
+    );
+    format!(
+        "adl_event schema=adl.runtime.instance.v1 event=control_ready instance_id={instance_id} port={}",
+        address.port()
+    )
+}
 
 #[derive(Clone, Copy, Debug, Eq, Ord, PartialEq, PartialOrd, Serialize, Deserialize)]
 #[serde(rename_all = "snake_case")]
@@ -238,6 +250,7 @@ pub struct ControlService<C> {
     weather: Mutex<Option<WeatherHealthReport>>,
     observatory_allowed_origins: BTreeSet<String>,
     agent_population: AgentPopulationFeed,
+    control_addr: Mutex<SocketAddr>,
 }
 
 impl<C: LifecycleControl + 'static> ControlService<C> {
@@ -307,6 +320,7 @@ impl<C: LifecycleControl + 'static> ControlService<C> {
             weather: Mutex::new(None),
             observatory_allowed_origins,
             agent_population,
+            control_addr: Mutex::new(SocketAddr::from(([127, 0, 0, 1], DEFAULT_CONTROL_API_PORT))),
         }
     }
 
@@ -325,6 +339,13 @@ impl<C: LifecycleControl + 'static> ControlService<C> {
         *self.weather.lock().expect("weather mutex poisoned") = Some(report);
     }
 
+    pub fn set_control_addr(&self, address: SocketAddr) {
+        *self
+            .control_addr
+            .lock()
+            .expect("control address mutex poisoned") = address;
+    }
+
     pub fn observatory_feed(&self) -> ObservatoryFeed {
         let snapshot = self.recorder.snapshot();
         let observability_ready = !matches!(snapshot.observability, ObservabilityHealth::Pending);
@@ -337,7 +358,11 @@ impl<C: LifecycleControl + 'static> ControlService<C> {
             default_runtime_changed: false,
             runtime_selection: "runtime_v3_explicit_opt_in".to_owned(),
             control: ObservatoryControlFeed {
-                port: DEFAULT_CONTROL_API_PORT,
+                port: self
+                    .control_addr
+                    .lock()
+                    .expect("control address mutex poisoned")
+                    .port(),
                 read_endpoint: "/v1/observatory".to_owned(),
                 signed_command_endpoint: "/v1/control".to_owned(),
                 signed_commands_required_for_mutation: true,
@@ -538,40 +563,111 @@ pub struct ObservatoryFeed {
     pub events: Vec<BootstrapEvent>,
 }
 
+pub async fn load_control_tls(
+    config: &RuntimeTlsInitConfig,
+) -> Result<axum_server::tls_rustls::RustlsConfig, ControlApiError> {
+    axum_server::tls_rustls::RustlsConfig::from_pem_file(
+        &config.certificate_chain_path,
+        &config.private_key_path,
+    )
+    .await
+    .map_err(|error| ControlApiError::Tls(error.to_string()))
+}
+
 pub async fn serve_control_api<C: LifecycleControl + 'static>(
     service: Arc<ControlService<C>>,
     bind_ip: IpAddr,
+    tls: axum_server::tls_rustls::RustlsConfig,
 ) -> Result<(), ControlApiError> {
     let listener = tokio::net::TcpListener::bind((bind_ip, DEFAULT_CONTROL_API_PORT))
         .await
         .map_err(|error| ControlApiError::Bind(error.to_string()))?;
-    serve_control_listener(service, listener).await
+    serve_control_listener(service, listener, tls).await
 }
 
 pub async fn serve_control_listener<C: LifecycleControl + 'static>(
     service: Arc<ControlService<C>>,
     listener: tokio::net::TcpListener,
+    tls: axum_server::tls_rustls::RustlsConfig,
 ) -> Result<(), ControlApiError> {
-    serve_control_listener_until(service, listener, std::future::pending()).await
+    serve_control_listener_until(service, listener, tls, std::future::pending()).await
 }
 
 pub async fn serve_control_listener_until<C, F>(
     service: Arc<ControlService<C>>,
     listener: tokio::net::TcpListener,
+    tls: axum_server::tls_rustls::RustlsConfig,
     shutdown: F,
 ) -> Result<(), ControlApiError>
 where
     C: LifecycleControl + 'static,
     F: Future<Output = ()> + Send + 'static,
 {
+    serve_control_listener_until_inner(service, listener, tls, None, shutdown).await
+}
+
+pub async fn serve_control_listener_until_ready<C, F>(
+    service: Arc<ControlService<C>>,
+    listener: tokio::net::TcpListener,
+    tls: axum_server::tls_rustls::RustlsConfig,
+    ready: tokio::sync::oneshot::Sender<SocketAddr>,
+    shutdown: F,
+) -> Result<(), ControlApiError>
+where
+    C: LifecycleControl + 'static,
+    F: Future<Output = ()> + Send + 'static,
+{
+    serve_control_listener_until_inner(service, listener, tls, Some(ready), shutdown).await
+}
+
+async fn serve_control_listener_until_inner<C, F>(
+    service: Arc<ControlService<C>>,
+    listener: tokio::net::TcpListener,
+    tls: axum_server::tls_rustls::RustlsConfig,
+    ready: Option<tokio::sync::oneshot::Sender<SocketAddr>>,
+    shutdown: F,
+) -> Result<(), ControlApiError>
+where
+    C: LifecycleControl + 'static,
+    F: Future<Output = ()> + Send + 'static,
+{
+    let address = listener
+        .local_addr()
+        .map_err(|error| ControlApiError::Bind(error.to_string()))?;
+    service.set_control_addr(address);
+    let listener = listener
+        .into_std()
+        .map_err(|error| ControlApiError::Bind(error.to_string()))?;
     let router = Router::new()
         .route("/v1/observatory", get(observatory_feed_handler::<C>))
         .route("/v1/control", post(control_handler::<C>))
         .with_state(service);
-    axum::serve(listener, router)
-        .with_graceful_shutdown(shutdown)
+    let handle = axum_server::Handle::new();
+    let shutdown_handle = handle.clone();
+    let shutdown_task = tokio::spawn(async move {
+        shutdown.await;
+        shutdown_handle.graceful_shutdown(Some(CONTROL_API_SHUTDOWN_GRACE));
+    });
+    let server = axum_server::from_tcp_rustls(listener, tls)
+        .map_err(|error| ControlApiError::Bind(error.to_string()))?
+        .handle(handle.clone());
+    let readiness_task = ready.map(|ready| {
+        let readiness_handle = handle.clone();
+        tokio::spawn(async move {
+            if let Some(address) = readiness_handle.listening().await {
+                let _ = ready.send(address);
+            }
+        })
+    });
+    let result = server
+        .serve(router.into_make_service())
         .await
-        .map_err(|error| ControlApiError::Serve(error.to_string()))
+        .map_err(|error| ControlApiError::Serve(error.to_string()));
+    shutdown_task.abort();
+    if let Some(task) = readiness_task {
+        task.abort();
+    }
+    result
 }
 
 async fn observatory_feed_handler<C: LifecycleControl + 'static>(
@@ -747,6 +843,8 @@ pub enum ControlError {
 pub enum ControlApiError {
     #[error("control API bind failed: {0}")]
     Bind(String),
+    #[error("control API TLS configuration failed: {0}")]
+    Tls(String),
     #[error("control API server failed: {0}")]
     Serve(String),
 }

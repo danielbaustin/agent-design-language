@@ -8,22 +8,69 @@ use std::{
 };
 
 use adl_runtime_kernel::{
-    channel, serve_control_listener, serve_control_listener_until, write_observability_event,
-    write_payload, ClockAuthority, ComponentId, ComponentRegistry, ContinuityHead, ControlAction,
-    ControlAuthority, ControlCapability, ControlError, ControlExit, ControlObservabilityEvent,
-    ControlOutcome, ControlService, DiskWeather, Kernel, KernelExit, LifecycleControl,
-    ObservabilityDegradation, ObservabilityHealth, Observation, ResourceState, RuntimeEvent,
-    RuntimeRecorder, ShutdownDecision, SignedControlCommand, TrustedControlKey, WeatherConfig,
+    channel, load_control_tls, serve_control_listener, serve_control_listener_until,
+    serve_control_listener_until_ready, write_observability_event, write_payload, ClockAuthority,
+    ComponentId, ComponentRegistry, ContinuityHead, ControlAction, ControlAuthority,
+    ControlCapability, ControlError, ControlExit, ControlObservabilityEvent, ControlOutcome,
+    ControlService, DiskWeather, Kernel, KernelExit, LifecycleControl, ObservabilityDegradation,
+    ObservabilityHealth, Observation, ResourceState, RuntimeEvent, RuntimeRecorder,
+    RuntimeTlsInitConfig, ShutdownDecision, SignedControlCommand, TrustedControlKey, WeatherConfig,
     WeatherHealthReport, WeatherSample,
 };
 use async_trait::async_trait;
 use ed25519_dalek::SigningKey;
+use rcgen::{generate_simple_self_signed, CertifiedKey};
 use tokio::{
     io::{AsyncReadExt, AsyncWriteExt},
     sync::Notify,
 };
+use tokio_rustls::{
+    rustls::{
+        pki_types::{CertificateDer, ServerName},
+        ClientConfig, RootCertStore,
+    },
+    TlsConnector,
+};
 
-const TEST_BIND_HOST: &str = "localhost";
+const TEST_BIND_HOST: &str = "127.0.0.1";
+
+async fn test_https() -> (axum_server::tls_rustls::RustlsConfig, TlsConnector) {
+    let CertifiedKey { cert, signing_key } =
+        generate_simple_self_signed(["localhost".to_owned(), TEST_BIND_HOST.to_owned()]).unwrap();
+    let certificate = cert.pem();
+    let server = axum_server::tls_rustls::RustlsConfig::from_pem(
+        certificate.as_bytes().to_vec(),
+        signing_key.serialize_pem().into_bytes(),
+    )
+    .await
+    .unwrap();
+    let mut roots = RootCertStore::empty();
+    roots
+        .add(CertificateDer::from(cert.der().to_vec()))
+        .unwrap();
+    let client = TlsConnector::from(Arc::new(
+        ClientConfig::builder()
+            .with_root_certificates(roots)
+            .with_no_client_auth(),
+    ));
+    (server, client)
+}
+
+async fn https_request(
+    client: &TlsConnector,
+    address: std::net::SocketAddr,
+    request: &[u8],
+) -> String {
+    let stream = tokio::net::TcpStream::connect(address).await.unwrap();
+    let mut stream = client
+        .connect(ServerName::try_from("localhost").unwrap(), stream)
+        .await
+        .unwrap();
+    stream.write_all(request).await.unwrap();
+    let mut response = Vec::new();
+    stream.read_to_end(&mut response).await.unwrap();
+    String::from_utf8(response).unwrap()
+}
 
 struct FakeLifecycle {
     calls: Arc<AtomicUsize>,
@@ -300,31 +347,32 @@ async fn axum_adapter_serves_signed_control_payloads() {
         .await
         .unwrap();
     let address = listener.local_addr().unwrap();
-    let server = tokio::spawn(serve_control_listener(service, listener));
+    let (tls, client) = test_https().await;
+    let (ready_sender, ready_receiver) = tokio::sync::oneshot::channel();
+    let server = tokio::spawn(serve_control_listener_until_ready(
+        service,
+        listener,
+        tls,
+        ready_sender,
+        std::future::pending(),
+    ));
+    assert_eq!(ready_receiver.await.unwrap(), address);
     let body = serde_json::to_vec(&signed(&key, "read-http", ControlAction::Snapshot)).unwrap();
-    let mut stream = tokio::net::TcpStream::connect(address).await.unwrap();
-    let headers = format!(
-        "POST /v1/control HTTP/1.1\r\nHost: localhost\r\nContent-Type: application/json\r\nContent-Length: {}\r\nConnection: close\r\n\r\n",
-        body.len()
+    let request = format!(
+        "POST /v1/control HTTP/1.1\r\nHost: localhost\r\nContent-Type: application/json\r\nContent-Length: {}\r\nConnection: close\r\n\r\n{}",
+        body.len(),
+        String::from_utf8(body).unwrap()
     );
-    stream.write_all(headers.as_bytes()).await.unwrap();
-    stream.write_all(&body).await.unwrap();
-    let mut bytes = Vec::new();
-    stream.read_to_end(&mut bytes).await.unwrap();
-    let response = String::from_utf8(bytes).unwrap();
+    let response = https_request(&client, address, request.as_bytes()).await;
     assert!(response.starts_with("HTTP/1.1 200 OK"));
     assert!(response.contains(adl_runtime_kernel::CONTROL_RESPONSE_SCHEMA));
 
-    let mut stream = tokio::net::TcpStream::connect(address).await.unwrap();
-    stream
-        .write_all(
-            b"POST /v1/control HTTP/1.1\r\nHost: localhost\r\nContent-Type: application/json\r\nContent-Length: 1\r\nConnection: close\r\n\r\n{",
-        )
-        .await
-        .unwrap();
-    let mut bytes = Vec::new();
-    stream.read_to_end(&mut bytes).await.unwrap();
-    let response = String::from_utf8(bytes).unwrap();
+    let response = https_request(
+        &client,
+        address,
+        b"POST /v1/control HTTP/1.1\r\nHost: localhost\r\nContent-Type: application/json\r\nContent-Length: 1\r\nConnection: close\r\n\r\n{",
+    )
+    .await;
     assert!(response.starts_with("HTTP/1.1 400 Bad Request"));
     assert!(response.contains("adl.runtime.control_error.v1"));
     server.abort();
@@ -420,22 +468,21 @@ async fn observatory_feed_serves_runtime_owned_read_projection_without_mutation_
         .await
         .unwrap();
     let address = listener.local_addr().unwrap();
-    let server = tokio::spawn(serve_control_listener(service, listener));
-    let mut stream = tokio::net::TcpStream::connect(address).await.unwrap();
-    stream
-        .write_all(b"GET /v1/observatory HTTP/1.1\r\nHost: localhost\r\nOrigin: https://localhost:8765\r\nConnection: close\r\n\r\n")
-        .await
-        .unwrap();
-    let mut bytes = Vec::new();
-    stream.read_to_end(&mut bytes).await.unwrap();
-    let response = String::from_utf8(bytes).unwrap();
+    let (tls, client) = test_https().await;
+    let server = tokio::spawn(serve_control_listener(service, listener, tls));
+    let response = https_request(
+        &client,
+        address,
+        b"GET /v1/observatory HTTP/1.1\r\nHost: localhost\r\nOrigin: https://localhost:8765\r\nConnection: close\r\n\r\n",
+    )
+    .await;
     assert!(response.starts_with("HTTP/1.1 200 OK"));
     assert!(response.contains("access-control-allow-origin: https://localhost:8765"));
     assert!(response.contains(adl_runtime_kernel::OBSERVATORY_FEED_SCHEMA));
     assert!(response.contains("\"runtime_selection\":\"runtime_v3_explicit_opt_in\""));
     assert!(response.contains("\"signed_commands_required_for_mutation\":true"));
     assert!(response.contains("\"browser_mutation_authority\":false"));
-    assert!(response.contains("\"port\":20997"));
+    assert!(response.contains(&format!("\"port\":{}", address.port())));
     assert!(response.contains("\"event\":\"state:Running\""));
     assert!(response.contains("\"event\":\"clock_authority_updated\""));
     assert!(response.contains("\"accepted_through\":99"));
@@ -503,28 +550,25 @@ async fn observatory_cors_allows_only_configured_origins_and_reports_canonical_p
         .await
         .unwrap();
     let address = listener.local_addr().unwrap();
-    let server = tokio::spawn(serve_control_listener(service, listener));
+    let (tls, client) = test_https().await;
+    let server = tokio::spawn(serve_control_listener(service, listener, tls));
 
-    let mut stream = tokio::net::TcpStream::connect(address).await.unwrap();
-    stream
-        .write_all(b"GET /v1/observatory HTTP/1.1\r\nHost: localhost\r\nOrigin: https://observatory.example.test\r\nConnection: close\r\n\r\n")
-        .await
-        .unwrap();
-    let mut bytes = Vec::new();
-    stream.read_to_end(&mut bytes).await.unwrap();
-    let response = String::from_utf8(bytes).unwrap();
+    let response = https_request(
+        &client,
+        address,
+        b"GET /v1/observatory HTTP/1.1\r\nHost: localhost\r\nOrigin: https://observatory.example.test\r\nConnection: close\r\n\r\n",
+    )
+    .await;
     assert!(response.starts_with("HTTP/1.1 200 OK"));
     assert!(response.contains("access-control-allow-origin: https://observatory.example.test"));
-    assert!(response.contains("\"port\":20997"));
+    assert!(response.contains(&format!("\"port\":{}", address.port())));
 
-    let mut stream = tokio::net::TcpStream::connect(address).await.unwrap();
-    stream
-        .write_all(b"GET /v1/observatory HTTP/1.1\r\nHost: localhost\r\nOrigin: https://other.example.test\r\nConnection: close\r\n\r\n")
-        .await
-        .unwrap();
-    let mut bytes = Vec::new();
-    stream.read_to_end(&mut bytes).await.unwrap();
-    let response = String::from_utf8(bytes).unwrap();
+    let response = https_request(
+        &client,
+        address,
+        b"GET /v1/observatory HTTP/1.1\r\nHost: localhost\r\nOrigin: https://other.example.test\r\nConnection: close\r\n\r\n",
+    )
+    .await;
     assert!(response.starts_with("HTTP/1.1 200 OK"));
     assert!(!response.contains("access-control-allow-origin"));
 
@@ -552,9 +596,11 @@ async fn graceful_api_shutdown_drains_an_active_control_response() {
         .unwrap();
     let address = listener.local_addr().unwrap();
     let shutdown = tokio_util::sync::CancellationToken::new();
+    let (tls, client) = test_https().await;
     let server = tokio::spawn(serve_control_listener_until(
         service,
         listener,
+        tls,
         shutdown.clone().cancelled_owned(),
     ));
     let body = serde_json::to_vec(&signed(
@@ -564,22 +610,92 @@ async fn graceful_api_shutdown_drains_an_active_control_response() {
     ))
     .unwrap();
     let client = tokio::spawn(async move {
-        let mut stream = tokio::net::TcpStream::connect(address).await.unwrap();
-        let headers = format!(
-            "POST /v1/control HTTP/1.1\r\nHost: localhost\r\nContent-Type: application/json\r\nContent-Length: {}\r\nConnection: close\r\n\r\n",
-            body.len()
+        let request = format!(
+            "POST /v1/control HTTP/1.1\r\nHost: localhost\r\nContent-Type: application/json\r\nContent-Length: {}\r\nConnection: close\r\n\r\n{}",
+            body.len(),
+            String::from_utf8(body).unwrap()
         );
-        stream.write_all(headers.as_bytes()).await.unwrap();
-        stream.write_all(&body).await.unwrap();
-        let mut response = Vec::new();
-        stream.read_to_end(&mut response).await.unwrap();
-        String::from_utf8(response).unwrap()
+        https_request(&client, address, request.as_bytes()).await
     });
     started.notified().await;
     shutdown.cancel();
     release.notify_one();
     assert!(client.await.unwrap().starts_with("HTTP/1.1 200 OK"));
     server.await.unwrap().unwrap();
+}
+
+#[tokio::test]
+async fn tls_configuration_fails_closed_for_missing_and_mismatched_pem_material() {
+    let temp = tempfile::tempdir().unwrap();
+    let missing = RuntimeTlsInitConfig {
+        certificate_chain_path: temp.path().join("missing-cert.pem"),
+        private_key_path: temp.path().join("missing-key.pem"),
+    };
+    assert!(load_control_tls(&missing).await.is_err());
+
+    let first = generate_simple_self_signed(["localhost".to_owned()]).unwrap();
+    let second = generate_simple_self_signed(["localhost".to_owned()]).unwrap();
+    let certificate = temp.path().join("cert.pem");
+    let wrong_key = temp.path().join("wrong-key.pem");
+    std::fs::write(&certificate, first.cert.pem()).unwrap();
+    std::fs::write(&wrong_key, second.signing_key.serialize_pem()).unwrap();
+    let mismatched = RuntimeTlsInitConfig {
+        certificate_chain_path: certificate,
+        private_key_path: wrong_key,
+    };
+    assert!(load_control_tls(&mismatched).await.is_err());
+}
+
+#[tokio::test]
+async fn tls_shutdown_is_bounded_with_a_stalled_active_response() {
+    let key = SigningKey::from_bytes(&[18; 32]);
+    let started = Arc::new(Notify::new());
+    let release = Arc::new(Notify::new());
+    let service = Arc::new(ControlService::new(
+        "instance-1",
+        RuntimeRecorder::new(4),
+        BlockingLifecycle {
+            calls: Arc::new(AtomicUsize::new(0)),
+            started: started.clone(),
+            release,
+        },
+        authority(&key, [ControlCapability::Stop]),
+        4,
+    ));
+    let listener = tokio::net::TcpListener::bind((TEST_BIND_HOST, 0))
+        .await
+        .unwrap();
+    let address = listener.local_addr().unwrap();
+    let shutdown = tokio_util::sync::CancellationToken::new();
+    let (tls, client) = test_https().await;
+    let server = tokio::spawn(serve_control_listener_until(
+        service,
+        listener,
+        tls,
+        shutdown.clone().cancelled_owned(),
+    ));
+    let body = serde_json::to_vec(&signed(
+        &key,
+        "stop-stalled",
+        ControlAction::Shutdown { grace_millis: 5 },
+    ))
+    .unwrap();
+    let client = tokio::spawn(async move {
+        let request = format!(
+            "POST /v1/control HTTP/1.1\r\nHost: localhost\r\nContent-Type: application/json\r\nContent-Length: {}\r\nConnection: close\r\n\r\n{}",
+            body.len(),
+            String::from_utf8(body).unwrap()
+        );
+        https_request(&client, address, request.as_bytes()).await
+    });
+    started.notified().await;
+    shutdown.cancel();
+    tokio::time::timeout(Duration::from_secs(3), server)
+        .await
+        .expect("TLS shutdown exceeded its bound")
+        .unwrap()
+        .unwrap();
+    client.abort();
 }
 
 #[test]
@@ -602,6 +718,15 @@ fn runtime_identity_and_shutdown_bounds_are_owned_by_standard_crates() {
         &key,
     );
     assert_eq!(result.unwrap_err(), ControlError::InvalidBounds);
+}
+
+#[test]
+fn ready_event_reports_the_bound_ephemeral_port() {
+    let address = std::net::SocketAddr::from(([127, 0, 0, 1], 43_123));
+    let event = adl_runtime_kernel::control_ready_event("instance-1", address);
+    assert!(event.contains("event=control_ready"));
+    assert!(event.contains("port=43123"));
+    assert!(!event.contains("port=20997"));
 }
 
 #[test]

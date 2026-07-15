@@ -1,0 +1,32 @@
+{
+  "identity": {
+    "schema_version": "1.0.0",
+    "template_version": "1.0.0",
+    "issue": 5330,
+    "repository": "danielbaustin/agent-design-language",
+    "title": "[runtime-v3][ci] Give Runtime v3 an independent fast validation lane",
+    "slug": "runtime-v3-independent-fast-validation-lane",
+    "version": "v0.91.7",
+    "generation": 11
+  },
+  "status": "draft",
+  "content": {
+    "card_kind": "srp",
+    "values": {
+      "review_scope": ".github/workflows/ci.yaml\nadl/config/validation_lane_selector.v0.91.6.json\nadl/tools/ci_path_policy.sh\nadl/tools/test_ci_path_policy.sh\ndocs/architecture/runtime_v3_fast_validation_5330.md\ndocs/architecture/runtime_v3_fast_validation_5330.mmd",
+      "review_revision": "git-blake3:432e215a629053e67c6b2c2daaad026ed2ddba9c:98079187ad1a61a444d25ba94f6e144a097d90c22d1fdeebcf0b6abc32775d67",
+      "reviewer": "codex-review",
+      "review_prompts": [
+        "Does the selector fail closed for unmapped v3 paths?",
+        "Does a mixed diff retain legacy validation?",
+        "Is the v3 lane independent and bounded?",
+        "Are the fixtures deterministic and fast?"
+      ],
+      "findings": [],
+      "residual_risk": [
+        "The merged implementation PR was a mixed CI-policy change; the dedicated Runtime v3-only lane was proven locally and is selected only for exact v3-only paths."
+      ],
+      "review_result": "pass"
+    }
+  }
+}

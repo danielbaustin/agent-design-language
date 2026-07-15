@@ -1,0 +1,745 @@
+{
+  "schema": "csdlc.issue.index.v1",
+  "issue": 5390,
+  "repository": "danielbaustin/agent-design-language",
+  "initialization_digest": "a1ce191172a445886835ae006aeeacd5a05ac2cd4c6ee5ee10060bcd8436f21f",
+  "phase": "closed_out",
+  "generation": 37,
+  "digest": "00463934ebcd914dbb080aaf239ba8815bfa16355474d3dfaee96d2e3a2a6105",
+  "claim": null,
+  "review_assignment": {
+    "reviewer": "subagents-019f66d7-019f66f8-and-019f671d",
+    "assigned_by": "codex",
+    "revision": "git-blake3:699da9a4c5ea9643e64da599bf06f5d1b7286040:9415c94595c369c529d50dd3556148dc5b7528c584dbe2adc49d0ae8bd978ea7",
+    "scope": [
+      "adl-runtime-kernel",
+      "adl-runtime/src/guardian.rs",
+      "adl/src/cli/runtime_v3_cmd.rs",
+      "demos/v0.91.7/html-observatory",
+      "docs/architecture/RUNTIME_V3_ENTRYPOINT_SWITCH.md",
+      "docs/architecture/RUNTIME_V3_GUARDIAN_AND_SOAK.md",
+      "docs/architecture/RUNTIME_V3_GUARDIAN_FALLBACK_DECISION.md",
+      "docs/architecture/runtime_v3_guardian_fallback_matrix.v1.json",
+      "docs/architecture/runtime_v3_guardian_matrix.v1.json",
+      "docs/milestones/v0.91.7/DEMO_MATRIX_v0.91.7.md",
+      "infra/horust",
+      "infra/runtime-v3",
+      "infra/rustysd/adl-runtime-kernel.service",
+      "infra/systemd/adl-runtime-kernel.service",
+      "adl/tools/check_coverage_impact.sh",
+      "adl/tools/run_pr_fast_coverage_lane.sh",
+      "adl/tools/test_check_coverage_impact.sh",
+      "adl/tools/test_run_pr_fast_coverage_lane.sh"
+    ]
+  },
+  "review": {
+    "reviewer": "subagents-019f66d7-019f66f8-and-019f671d",
+    "scope": [
+      "adl-runtime-kernel",
+      "adl-runtime/src/guardian.rs",
+      "adl/src/cli/runtime_v3_cmd.rs",
+      "demos/v0.91.7/html-observatory",
+      "docs/architecture/RUNTIME_V3_ENTRYPOINT_SWITCH.md",
+      "docs/architecture/RUNTIME_V3_GUARDIAN_AND_SOAK.md",
+      "docs/architecture/RUNTIME_V3_GUARDIAN_FALLBACK_DECISION.md",
+      "docs/architecture/runtime_v3_guardian_fallback_matrix.v1.json",
+      "docs/architecture/runtime_v3_guardian_matrix.v1.json",
+      "docs/milestones/v0.91.7/DEMO_MATRIX_v0.91.7.md",
+      "infra/horust",
+      "infra/runtime-v3",
+      "infra/rustysd/adl-runtime-kernel.service",
+      "infra/systemd/adl-runtime-kernel.service",
+      "adl/tools/check_coverage_impact.sh",
+      "adl/tools/run_pr_fast_coverage_lane.sh",
+      "adl/tools/test_check_coverage_impact.sh",
+      "adl/tools/test_run_pr_fast_coverage_lane.sh"
+    ],
+    "reviewed_revision": "git-blake3:699da9a4c5ea9643e64da599bf06f5d1b7286040:9415c94595c369c529d50dd3556148dc5b7528c584dbe2adc49d0ae8bd978ea7",
+    "findings": [
+      {
+        "id": "R-5390-1",
+        "severity": "p1",
+        "summary": "Selector and guardian/service launch contracts retained plaintext or omitted explicit init configuration.",
+        "actionable": true,
+        "in_scope": true,
+        "disposition": "fixed",
+        "fix_revision": "git-blake3:699da9a4c5ea9643e64da599bf06f5d1b7286040:9415c94595c369c529d50dd3556148dc5b7528c584dbe2adc49d0ae8bd978ea7",
+        "route": null
+      },
+      {
+        "id": "R-5390-2",
+        "severity": "p2",
+        "summary": "Local Observatory instructions, TLS failure proof, and graceful TLS shutdown were incomplete.",
+        "actionable": true,
+        "in_scope": true,
+        "disposition": "fixed",
+        "fix_revision": "git-blake3:699da9a4c5ea9643e64da599bf06f5d1b7286040:9415c94595c369c529d50dd3556148dc5b7528c584dbe2adc49d0ae8bd978ea7",
+        "route": null
+      },
+      {
+        "id": "R-5390-3",
+        "severity": "p2",
+        "summary": "Guardian duplicated endpoint state and readiness preceded server-owned listening truth.",
+        "actionable": true,
+        "in_scope": true,
+        "disposition": "fixed",
+        "fix_revision": "git-blake3:699da9a4c5ea9643e64da599bf06f5d1b7286040:9415c94595c369c529d50dd3556148dc5b7528c584dbe2adc49d0ae8bd978ea7",
+        "route": null
+      },
+      {
+        "id": "R-5390-4",
+        "severity": "p2",
+        "summary": "Guardian wire schema and retained machine-readable guardian contracts did not disclose changed or superseded truth.",
+        "actionable": true,
+        "in_scope": true,
+        "disposition": "fixed",
+        "fix_revision": "git-blake3:699da9a4c5ea9643e64da599bf06f5d1b7286040:9415c94595c369c529d50dd3556148dc5b7528c584dbe2adc49d0ae8bd978ea7",
+        "route": null
+      },
+      {
+        "id": "R-5390-5",
+        "severity": "p1",
+        "summary": "Runtime v3 guardian and selector changes lacked manifest-correct PR-fast coverage mappings, and the first combined mapping sent an adl-runtime binary selector to the adl workspace.",
+        "actionable": true,
+        "in_scope": true,
+        "disposition": "fixed",
+        "fix_revision": "git-blake3:699da9a4c5ea9643e64da599bf06f5d1b7286040:9415c94595c369c529d50dd3556148dc5b7528c584dbe2adc49d0ae8bd978ea7",
+        "route": null
+      },
+      {
+        "id": "R-5390-6",
+        "severity": "p1",
+        "summary": "The Runtime v3 selector report path remained below the required changed-source coverage threshold.",
+        "actionable": true,
+        "in_scope": true,
+        "disposition": "fixed",
+        "fix_revision": "git-blake3:699da9a4c5ea9643e64da599bf06f5d1b7286040:9415c94595c369c529d50dd3556148dc5b7528c584dbe2adc49d0ae8bd978ea7",
+        "route": null
+      },
+      {
+        "id": "R-5390-7",
+        "severity": "p2",
+        "summary": "Selector output-path tests initially raised coverage without asserting meaningful text or JSON output.",
+        "actionable": true,
+        "in_scope": true,
+        "disposition": "fixed",
+        "fix_revision": "git-blake3:699da9a4c5ea9643e64da599bf06f5d1b7286040:9415c94595c369c529d50dd3556148dc5b7528c584dbe2adc49d0ae8bd978ea7",
+        "route": null
+      }
+    ],
+    "residual_risks": [
+      "Operators must provision browser-trusted certificates and private keys; no private key or trust-store mutation is retained in the repository.",
+      "Environment-dependent Horust, systemd, remote, and GPU tests remain outside this local proof; retained Horust qualification remains explicitly blocked by upstream restart-budget behavior."
+    ],
+    "completed": true,
+    "non_substantive_proof": null
+  },
+  "publication": {
+    "repository": "danielbaustin/agent-design-language",
+    "issue": 5390,
+    "pull_request": 5396,
+    "url": "https://github.com/danielbaustin/agent-design-language/pull/5396",
+    "base": "main",
+    "head": "codex/5390-runtime-v3-local-https-bound-address",
+    "revision": "git-blake3:699da9a4c5ea9643e64da599bf06f5d1b7286040:9415c94595c369c529d50dd3556148dc5b7528c584dbe2adc49d0ae8bd978ea7",
+    "draft": true,
+    "observed_state": "open"
+  },
+  "readiness": {
+    "pull_request": 5396,
+    "head_sha": "699da9a4c5ea9643e64da599bf06f5d1b7286040",
+    "checks": [
+      {
+        "name": "adl-ci",
+        "requirement": "required",
+        "conclusion": "success",
+        "details_url": "https://github.com/danielbaustin/agent-design-language/actions/runs/29444225089/job/87453000775"
+      },
+      {
+        "name": "adl-coverage",
+        "requirement": "required",
+        "conclusion": "success",
+        "details_url": "https://github.com/danielbaustin/agent-design-language/actions/runs/29444225089/job/87450541717"
+      },
+      {
+        "name": "adl-demo-proof",
+        "requirement": "required",
+        "conclusion": "success",
+        "details_url": "https://github.com/danielbaustin/agent-design-language/actions/runs/29444225089/job/87450571242"
+      },
+      {
+        "name": "adl-path-policy",
+        "requirement": "required",
+        "conclusion": "success",
+        "details_url": "https://github.com/danielbaustin/agent-design-language/actions/runs/29444225089/job/87450541775"
+      },
+      {
+        "name": "adl-runtime-v3-fast",
+        "requirement": "optional",
+        "conclusion": "skipped",
+        "details_url": "https://github.com/danielbaustin/agent-design-language/actions/runs/29444225089/job/87450572177"
+      },
+      {
+        "name": "adl-rust-fmt-clippy",
+        "requirement": "optional",
+        "conclusion": "success",
+        "details_url": "https://github.com/danielbaustin/agent-design-language/actions/runs/29444225089/job/87450571368"
+      },
+      {
+        "name": "adl-rust-tests",
+        "requirement": "optional",
+        "conclusion": "success",
+        "details_url": "https://github.com/danielbaustin/agent-design-language/actions/runs/29444225089/job/87450571294"
+      },
+      {
+        "name": "adl-slow-proof (1)",
+        "requirement": "optional",
+        "conclusion": "success",
+        "details_url": "https://github.com/danielbaustin/agent-design-language/actions/runs/29444225089/job/87450571339"
+      },
+      {
+        "name": "adl-slow-proof (2)",
+        "requirement": "optional",
+        "conclusion": "success",
+        "details_url": "https://github.com/danielbaustin/agent-design-language/actions/runs/29444225089/job/87450571277"
+      },
+      {
+        "name": "adl-slow-proof (3)",
+        "requirement": "optional",
+        "conclusion": "success",
+        "details_url": "https://github.com/danielbaustin/agent-design-language/actions/runs/29444225089/job/87450571325"
+      },
+      {
+        "name": "adl-slow-proof (4)",
+        "requirement": "optional",
+        "conclusion": "success",
+        "details_url": "https://github.com/danielbaustin/agent-design-language/actions/runs/29444225089/job/87450571285"
+      },
+      {
+        "name": "adl-tooling-contracts",
+        "requirement": "required",
+        "conclusion": "success",
+        "details_url": "https://github.com/danielbaustin/agent-design-language/actions/runs/29444225089/job/87450571293"
+      }
+    ],
+    "review_state": "not_required",
+    "conflict_state": "clean",
+    "post_publication_findings": [],
+    "ready": true,
+    "blockers": []
+  },
+  "terminal": {
+    "pull_request": 5396,
+    "disposition": "merged",
+    "observed_sha": "699da9a4c5ea9643e64da599bf06f5d1b7286040",
+    "observed_state": "merged",
+    "receipt_path": "/Volumes/FastWork/adl-5390-control/.git/csdlc-v2/closeout/5390.json",
+    "released_branch": "codex/5390-runtime-v3-local-https-bound-address",
+    "released_worktree": ".worktrees/adl-wp-5390",
+    "released_protected_paths": [
+      "adl-runtime-kernel/Cargo.toml",
+      "adl-runtime-kernel/Cargo.lock",
+      "adl-runtime-kernel/src/bin/adl-runtime-kernel.rs",
+      "adl-runtime-kernel/src/config.rs",
+      "adl-runtime-kernel/src/control.rs",
+      "adl-runtime-kernel/tests/configuration.rs",
+      "adl-runtime-kernel/tests/control.rs",
+      "demos/v0.91.7/html-observatory/app.js",
+      "infra/runtime-v3/runtime-init.toml",
+      "docs/architecture/RUNTIME_V3_ENTRYPOINT_SWITCH.md"
+    ]
+  },
+  "migration": null,
+  "design_path": ".csdlc/issues/5390/design.md",
+  "diagram_path": ".csdlc/issues/5390/diagram.mmd",
+  "design_review": {
+    "approved": {
+      "reviewer": "codex",
+      "revision": "e31afda442f196edcf70e7b2cb021f7b3aab723485a6677ccd2e9d829e95528a"
+    }
+  },
+  "cards": {
+    "sip": {
+      "values_digest": "53508f87382e4a0fcfe189c1b2bddae8b458feee0c06cfe2f550db1e04da3dc5",
+      "rendered_digest": "ff68d2f1d6e56599397260c1edb8e6e01d7513d078d0250e7877298ecd84d8aa",
+      "ast_digest": "5224dce45e10edd30ea8292bd2cbe94728bcf21f98a6a8d9a5e7fae2bb0de091"
+    },
+    "stp": {
+      "values_digest": "227c451ce2d8164938461455925fcdf107790e59e95618e473db23b36b4e8cd9",
+      "rendered_digest": "767441e6e7a9e4fb02dedc0981a6550cfa818dc3c6681235983227616943b4e9",
+      "ast_digest": "67697393ecf942dd3297cabe2232689c6102b0706c3315ddffe54642d0d7bd67"
+    },
+    "spp": {
+      "values_digest": "b7fe5fd1fce7d48c1ac1a576f93a8f1a0c6b8f23af455128244e3c5d833790c5",
+      "rendered_digest": "eb33d53d98b4f6235d6811db5c3979a3edc213cfa9e44868f1768ebd389bf108",
+      "ast_digest": "953646f726cb52ae26de70b16400ab237a3666771f803c0dff2d72eb5365d074"
+    },
+    "vpp": {
+      "values_digest": "3fdf01ae0be421723d98e7683ddc9cb527159b48121abc29438baaaab266a9f6",
+      "rendered_digest": "3c53aecc7718437fcdcd9d049da5482781ef52b855ba70480ea15fa352bfb432",
+      "ast_digest": "a69af00dbf1cad312a5580dde63222536d296f4c3eab151bd5699d5ad4a96dd0"
+    },
+    "srp": {
+      "values_digest": "38b88501c741bcff6b5a583c345963568199686dea7f29a55eecc627af8327a1",
+      "rendered_digest": "78de0fc397027d5eb9c43c1eb5115091536cc7a249fa6e28c1407c3571002598",
+      "ast_digest": "969b2716d91da4c5d6c5c7b55d5d568f3ac28843499934ed69ae15c12f5e196e"
+    },
+    "sor": {
+      "values_digest": "6a5f9213111f05559e27c3412fa9eb77a7159ebfa54b82c34dbb862e99226900",
+      "rendered_digest": "6a52f9b2d9ea2d222420ca44b94c5a6dd4731ee7862419d30fbc645d08a2c7e0",
+      "ast_digest": "fd5367b6673128305daa8a538186b9227e73ea9bf8eae269c0611bdade147082"
+    }
+  },
+  "transitions": [
+    {
+      "sequence": 1,
+      "from": "initialized",
+      "to": "ready",
+      "actor": "codex",
+      "reason": "automatic readiness verification"
+    },
+    {
+      "sequence": 2,
+      "from": "ready",
+      "to": "bound",
+      "actor": "codex",
+      "reason": "verified Git worktree binding"
+    },
+    {
+      "sequence": 3,
+      "from": "bound",
+      "to": "implemented",
+      "actor": "codex",
+      "reason": "Implementation and focused validation are complete; advance to exact-revision review"
+    },
+    {
+      "sequence": 4,
+      "from": "implemented",
+      "to": "reviewed",
+      "actor": "codex",
+      "reason": "Exact-revision subagent review passed with all actionable findings fixed"
+    },
+    {
+      "sequence": 5,
+      "from": "reviewed",
+      "to": "implemented",
+      "actor": "codex",
+      "reason": "Lifecycle-only review metadata commit changed HEAD; recover and bind review to the current clean revision"
+    },
+    {
+      "sequence": 6,
+      "from": "implemented",
+      "to": "reviewed",
+      "actor": "codex",
+      "reason": "Exact-revision subagent review passed with all actionable findings fixed"
+    },
+    {
+      "sequence": 7,
+      "from": "reviewed",
+      "to": "published",
+      "actor": "codex",
+      "reason": "observed exact draft PR after current review"
+    },
+    {
+      "sequence": 8,
+      "from": "published",
+      "to": "implemented",
+      "actor": "codex",
+      "reason": "Published CI exposed missing Runtime v3 coverage mappings; recover stale review and publication truth before exact-revision re-review"
+    },
+    {
+      "sequence": 9,
+      "from": "implemented",
+      "to": "reviewed",
+      "actor": "codex",
+      "reason": "Composite exact-revision subagent review passed after the manifest-correct coverage repair"
+    },
+    {
+      "sequence": 10,
+      "from": "reviewed",
+      "to": "published",
+      "actor": "codex",
+      "reason": "observed exact draft PR after current review"
+    },
+    {
+      "sequence": 11,
+      "from": "published",
+      "to": "implemented",
+      "actor": "codex",
+      "reason": "Published CI exposed insufficient selector report-path coverage; recover stale review and publication truth before exact-revision re-review"
+    },
+    {
+      "sequence": 12,
+      "from": "implemented",
+      "to": "reviewed",
+      "actor": "codex",
+      "reason": "Exact-revision composite review passed after selector coverage and output-assertion repairs"
+    },
+    {
+      "sequence": 13,
+      "from": "reviewed",
+      "to": "published",
+      "actor": "codex",
+      "reason": "observed exact draft PR after current review"
+    },
+    {
+      "sequence": 14,
+      "from": "published",
+      "to": "merge_ready",
+      "actor": "codex",
+      "reason": "observed required checks, review, and conflict readiness"
+    },
+    {
+      "sequence": 15,
+      "from": "merge_ready",
+      "to": "implemented",
+      "actor": "codex",
+      "reason": "GitHub required a clean merge-base update before merge; recover stale exact-revision review, publication, and readiness truth for the updated head"
+    },
+    {
+      "sequence": 16,
+      "from": "implemented",
+      "to": "reviewed",
+      "actor": "codex",
+      "reason": "Exact-revision composite review passed after the required clean merge-base update"
+    },
+    {
+      "sequence": 17,
+      "from": "reviewed",
+      "to": "published",
+      "actor": "codex",
+      "reason": "observed exact draft PR after current review"
+    },
+    {
+      "sequence": 18,
+      "from": "published",
+      "to": "merge_ready",
+      "actor": "codex",
+      "reason": "observed required checks, review, and conflict readiness"
+    },
+    {
+      "sequence": 19,
+      "from": "merge_ready",
+      "to": "merged",
+      "actor": "codex",
+      "reason": "observed exact PR merged"
+    },
+    {
+      "sequence": 20,
+      "from": "merged",
+      "to": "closed_out",
+      "actor": "codex",
+      "reason": "terminal truth recorded and claim released"
+    }
+  ],
+  "audit": [
+    {
+      "sequence": 1,
+      "generation": 0,
+      "actor": "codex",
+      "reason": "initialize issue record and all six cards",
+      "operation": "bootstrap"
+    },
+    {
+      "sequence": 2,
+      "generation": 0,
+      "actor": "codex",
+      "reason": "bind branch/worktree and activate claim",
+      "operation": "bind"
+    },
+    {
+      "sequence": 3,
+      "generation": 1,
+      "actor": "codex",
+      "reason": "Record bounded Runtime v3 HTTPS and bound-address implementation truth",
+      "operation": "{\"operation\":\"record_execution\",\"summary\":\"Runtime v3 now terminates HTTPS through the maintained Axum Rustls server adapter and reports the actual listener port to readiness and Observatory consumers.\",\"changes\":[\"Added fail-closed PEM certificate and private-key paths to Runtime v3 init configuration.\",\"Replaced the plaintext Axum serving path with axum-server Rustls while preserving graceful shutdown.\",\"Propagated TcpListener::local_addr() into the ready event and Observatory feed.\",\"Converted control integration tests to real TLS and corrected local Observatory documentation and URLs.\"],\"artifacts\":[\"adl-runtime-kernel/src/control.rs\",\"adl-runtime-kernel/src/config.rs\",\"infra/runtime-v3/runtime-init.toml\",\"docs/architecture/RUNTIME_V3_ENTRYPOINT_SWITCH.md\",\"demos/v0.91.7/html-observatory/README.md\"]}"
+    },
+    {
+      "sequence": 4,
+      "generation": 2,
+      "actor": "codex",
+      "reason": "Record full Runtime v3 crate validation",
+      "operation": "{\"operation\":\"record_validation\",\"result\":{\"command\":[\"cargo\",\"test\",\"--manifest-path\",\"adl-runtime-kernel/Cargo.toml\"],\"purpose\":\"Full independent Runtime v3 crate regression suite, including real TLS, CORS, graceful shutdown, and ephemeral-port proofs\",\"outcome\":\"passed\",\"evidence_ref\":\"local FastWork target: 142 passed, 8 environment-dependent ignored, 0 failed\"}}"
+    },
+    {
+      "sequence": 5,
+      "generation": 3,
+      "actor": "codex",
+      "reason": "Record Runtime v3 lint validation",
+      "operation": "{\"operation\":\"record_validation\",\"result\":{\"command\":[\"cargo\",\"clippy\",\"--manifest-path\",\"adl-runtime-kernel/Cargo.toml\",\"--all-targets\",\"--\",\"-D\",\"warnings\"],\"purpose\":\"Reject Runtime v3 compiler and Clippy warnings across all targets\",\"outcome\":\"passed\",\"evidence_ref\":\"local FastWork target: finished successfully with warnings denied\"}}"
+    },
+    {
+      "sequence": 6,
+      "generation": 4,
+      "actor": "codex",
+      "reason": "Record HTML Observatory contract validation",
+      "operation": "{\"operation\":\"record_validation\",\"result\":{\"command\":[\"bash\",\"adl/tools/test_v0917_html_observatory_integrated_proof.sh\"],\"purpose\":\"Verify the v0.91.7 HTML Observatory integrated proof remains valid\",\"outcome\":\"passed\",\"evidence_ref\":\"local output: v0.91.7 HTML Observatory integrated proof passed\"}}"
+    },
+    {
+      "sequence": 7,
+      "generation": 5,
+      "actor": "codex",
+      "reason": "Implementation and focused validation are complete; advance to exact-revision review",
+      "operation": "{\"operation\":\"advance_phase\",\"phase\":\"implemented\"}"
+    },
+    {
+      "sequence": 8,
+      "generation": 6,
+      "actor": "codex",
+      "reason": "Record disposition of mandatory pre-PR review findings",
+      "operation": "{\"operation\":\"record_execution\",\"summary\":\"Runtime v3 HTTPS and bound-address repair completed with all first-pass review findings fixed.\",\"changes\":[\"Updated executable Runtime v3 selector output and launch command to HTTPS plus explicit init.\",\"Updated guardian, systemd, and retained rustysd contracts to pass explicit init and capsule paths and classify TLS config exit 78 as non-restartable.\",\"Added a concrete Caddy HTTPS Observatory command without repository trust-store mutation.\",\"Bounded TLS graceful drain and proved stalled-response termination.\",\"Proved missing and mismatched PEM material fails before Runtime v3 readiness.\"],\"artifacts\":[\"adl/src/cli/runtime_v3_cmd.rs\",\"adl-runtime/src/guardian.rs\",\"infra/systemd/adl-runtime-kernel.service\",\"infra/rustysd/adl-runtime-kernel.service\",\"adl-runtime-kernel/tests/control.rs\",\"demos/v0.91.7/html-observatory/README.md\"]}"
+    },
+    {
+      "sequence": 9,
+      "generation": 7,
+      "actor": "codex",
+      "reason": "Record final full Runtime v3 regression",
+      "operation": "{\"operation\":\"record_validation\",\"result\":{\"command\":[\"cargo\",\"test\",\"--manifest-path\",\"adl-runtime-kernel/Cargo.toml\"],\"purpose\":\"Final full Runtime v3 crate regression after review fixes\",\"outcome\":\"passed\",\"evidence_ref\":\"FastWork target: 144 passed, 8 environment-dependent ignored, 0 failed\"}}"
+    },
+    {
+      "sequence": 10,
+      "generation": 8,
+      "actor": "codex",
+      "reason": "Record guardian integration validation",
+      "operation": "{\"operation\":\"record_validation\",\"result\":{\"command\":[\"cargo\",\"test\",\"--manifest-path\",\"adl-runtime/Cargo.toml\",\"guardian\"],\"purpose\":\"Verify guardian init/capsule launch contract and non-restartable configuration exits\",\"outcome\":\"passed\",\"evidence_ref\":\"FastWork target: 9 guardian tests passed, 0 failed\"}}"
+    },
+    {
+      "sequence": 11,
+      "generation": 9,
+      "actor": "codex",
+      "reason": "Record executable selector validation",
+      "operation": "{\"operation\":\"record_validation\",\"result\":{\"command\":[\"cargo\",\"test\",\"--manifest-path\",\"adl/Cargo.toml\",\"runtime_v3_cmd\"],\"purpose\":\"Verify executable Runtime v3 selector advertises HTTPS and explicit init\",\"outcome\":\"passed\",\"evidence_ref\":\"FastWork cold target: selector tests passed; compile 2m29s, test execution under 1s\"}}"
+    },
+    {
+      "sequence": 12,
+      "generation": 10,
+      "actor": "codex",
+      "reason": "Record final Observatory validation",
+      "operation": "{\"operation\":\"record_validation\",\"result\":{\"command\":[\"bash\",\"adl/tools/test_v0917_html_observatory_integrated_proof.sh\"],\"purpose\":\"Final HTML Observatory contract validation after HTTPS runbook repair\",\"outcome\":\"passed\",\"evidence_ref\":\"local output: v0.91.7 HTML Observatory integrated proof passed\"}}"
+    },
+    {
+      "sequence": 13,
+      "generation": 11,
+      "actor": "codex",
+      "reason": "Record final pre-publication review dispositions",
+      "operation": "{\"operation\":\"record_execution\",\"summary\":\"Final review repairs make runtime-owned listening state and init configuration the only endpoint authorities.\",\"changes\":[\"Removed duplicate hard-coded control endpoint fields from guardian config and outcomes and versioned the changed guardian wire schema as v2.\",\"Changed control readiness to use axum-server Handle::listening() and propagate its bound address.\",\"Completed Horust init-file instructions and marked retained fixed-endpoint guardian matrices historical and superseded.\",\"Updated the issue design and diagram to show selector, guardian, init, native TLS, readiness, and Observatory flow.\"],\"artifacts\":[\"adl-runtime-kernel/src/control.rs\",\"adl-runtime-kernel/src/bin/adl-runtime-kernel.rs\",\"adl-runtime/src/guardian.rs\",\"infra/horust/README.md\",\"docs/architecture/runtime_v3_guardian_fallback_matrix.v1.json\",\".csdlc/issues/5390/diagram.mmd\"]}"
+    },
+    {
+      "sequence": 14,
+      "generation": 12,
+      "actor": "codex",
+      "reason": "Correct final execution record after lifecycle design guard",
+      "operation": "{\"operation\":\"record_execution\",\"summary\":\"Runtime v3 HTTPS repair is implemented; approved design artifacts remain unchanged and current.\",\"changes\":[\"Correction to the prior execution entry: the attempted late design/diagram update was reverted after the lifecycle guard rejected stale approval; no design or diagram change landed.\",\"Guardian outcome wire format is versioned as adl.runtime_v3.external_guardian.v2.\",\"Runtime readiness now comes from axum-server Handle::listening() rather than a pre-serve local signal.\"],\"artifacts\":[\"adl-runtime/src/guardian.rs\",\"adl-runtime-kernel/src/control.rs\",\"adl-runtime-kernel/src/bin/adl-runtime-kernel.rs\"]}"
+    },
+    {
+      "sequence": 15,
+      "generation": 13,
+      "actor": "codex",
+      "reason": "Record exact final Runtime v3 test state",
+      "operation": "{\"operation\":\"record_validation\",\"result\":{\"command\":[\"cargo\",\"test\",\"--manifest-path\",\"adl-runtime-kernel/Cargo.toml\"],\"purpose\":\"Exact final Runtime v3 crate regression after server-owned readiness change\",\"outcome\":\"passed\",\"evidence_ref\":\"FastWork target: 144 passed, 8 environment-dependent ignored, 0 failed\"}}"
+    },
+    {
+      "sequence": 16,
+      "generation": 14,
+      "actor": "codex",
+      "reason": "Record exact final guardian test state",
+      "operation": "{\"operation\":\"record_validation\",\"result\":{\"command\":[\"cargo\",\"test\",\"--manifest-path\",\"adl-runtime/Cargo.toml\",\"guardian\"],\"purpose\":\"Exact final guardian v2 wire and init/capsule contract regression\",\"outcome\":\"passed\",\"evidence_ref\":\"FastWork target: 8 guardian tests passed, 0 failed\"}}"
+    },
+    {
+      "sequence": 17,
+      "generation": 15,
+      "actor": "codex",
+      "reason": "Record exact final lint state",
+      "operation": "{\"operation\":\"record_validation\",\"result\":{\"command\":[\"cargo\",\"clippy\",\"--manifest-path\",\"adl-runtime-kernel/Cargo.toml\",\"--all-targets\",\"--\",\"-D\",\"warnings\"],\"purpose\":\"Exact final Runtime v3 lint gate\",\"outcome\":\"passed\",\"evidence_ref\":\"FastWork target: completed successfully with warnings denied; adl-runtime --lib also passed\"}}"
+    },
+    {
+      "sequence": 18,
+      "generation": 15,
+      "actor": "codex",
+      "reason": "assign bounded exact-revision review",
+      "operation": "assign_review"
+    },
+    {
+      "sequence": 19,
+      "generation": 16,
+      "actor": "codex",
+      "reason": "atomically record review evidence and SRP projection",
+      "operation": "record_review"
+    },
+    {
+      "sequence": 20,
+      "generation": 17,
+      "actor": "codex",
+      "reason": "Exact-revision subagent review passed with all actionable findings fixed",
+      "operation": "{\"operation\":\"advance_phase\",\"phase\":\"reviewed\"}"
+    },
+    {
+      "sequence": 21,
+      "generation": 18,
+      "actor": "codex",
+      "reason": "Lifecycle-only review metadata commit changed HEAD; recover and bind review to the current clean revision",
+      "operation": "recover_review"
+    },
+    {
+      "sequence": 22,
+      "generation": 18,
+      "actor": "codex",
+      "reason": "assign bounded exact-revision review",
+      "operation": "assign_review"
+    },
+    {
+      "sequence": 23,
+      "generation": 19,
+      "actor": "codex",
+      "reason": "atomically record review evidence and SRP projection",
+      "operation": "record_review"
+    },
+    {
+      "sequence": 24,
+      "generation": 20,
+      "actor": "codex",
+      "reason": "Exact-revision subagent review passed with all actionable findings fixed",
+      "operation": "{\"operation\":\"advance_phase\",\"phase\":\"reviewed\"}"
+    },
+    {
+      "sequence": 25,
+      "generation": 21,
+      "actor": "codex",
+      "reason": "atomically record observed GitHub publication and SOR projection",
+      "operation": "record_publication"
+    },
+    {
+      "sequence": 26,
+      "generation": 22,
+      "actor": "codex",
+      "reason": "Published CI exposed missing Runtime v3 coverage mappings; recover stale review and publication truth before exact-revision re-review",
+      "operation": "recover_review"
+    },
+    {
+      "sequence": 27,
+      "generation": 22,
+      "actor": "codex",
+      "reason": "assign bounded exact-revision review",
+      "operation": "assign_review"
+    },
+    {
+      "sequence": 28,
+      "generation": 23,
+      "actor": "codex",
+      "reason": "atomically record review evidence and SRP projection",
+      "operation": "record_review"
+    },
+    {
+      "sequence": 29,
+      "generation": 24,
+      "actor": "codex",
+      "reason": "Composite exact-revision subagent review passed after the manifest-correct coverage repair",
+      "operation": "{\"operation\":\"advance_phase\",\"phase\":\"reviewed\"}"
+    },
+    {
+      "sequence": 30,
+      "generation": 25,
+      "actor": "codex",
+      "reason": "atomically record observed GitHub publication and SOR projection",
+      "operation": "record_publication"
+    },
+    {
+      "sequence": 31,
+      "generation": 26,
+      "actor": "codex",
+      "reason": "Published CI exposed insufficient selector report-path coverage; recover stale review and publication truth before exact-revision re-review",
+      "operation": "recover_review"
+    },
+    {
+      "sequence": 32,
+      "generation": 26,
+      "actor": "codex",
+      "reason": "assign bounded exact-revision review",
+      "operation": "assign_review"
+    },
+    {
+      "sequence": 33,
+      "generation": 27,
+      "actor": "codex",
+      "reason": "atomically record review evidence and SRP projection",
+      "operation": "record_review"
+    },
+    {
+      "sequence": 34,
+      "generation": 28,
+      "actor": "codex",
+      "reason": "Exact-revision composite review passed after selector coverage and output-assertion repairs",
+      "operation": "{\"operation\":\"advance_phase\",\"phase\":\"reviewed\"}"
+    },
+    {
+      "sequence": 35,
+      "generation": 29,
+      "actor": "codex",
+      "reason": "atomically record observed GitHub publication and SOR projection",
+      "operation": "record_publication"
+    },
+    {
+      "sequence": 36,
+      "generation": 30,
+      "actor": "codex",
+      "reason": "record normalized remote readiness without replacing pre-publication review",
+      "operation": "record_readiness"
+    },
+    {
+      "sequence": 37,
+      "generation": 31,
+      "actor": "codex",
+      "reason": "record normalized remote readiness without replacing pre-publication review",
+      "operation": "record_readiness"
+    },
+    {
+      "sequence": 38,
+      "generation": 32,
+      "actor": "codex",
+      "reason": "GitHub required a clean merge-base update before merge; recover stale exact-revision review, publication, and readiness truth for the updated head",
+      "operation": "recover_review"
+    },
+    {
+      "sequence": 39,
+      "generation": 32,
+      "actor": "codex",
+      "reason": "assign bounded exact-revision review",
+      "operation": "assign_review"
+    },
+    {
+      "sequence": 40,
+      "generation": 33,
+      "actor": "codex",
+      "reason": "atomically record review evidence and SRP projection",
+      "operation": "record_review"
+    },
+    {
+      "sequence": 41,
+      "generation": 34,
+      "actor": "codex",
+      "reason": "Exact-revision composite review passed after the required clean merge-base update",
+      "operation": "{\"operation\":\"advance_phase\",\"phase\":\"reviewed\"}"
+    },
+    {
+      "sequence": 42,
+      "generation": 35,
+      "actor": "codex",
+      "reason": "atomically record observed GitHub publication and SOR projection",
+      "operation": "record_publication"
+    },
+    {
+      "sequence": 43,
+      "generation": 36,
+      "actor": "codex",
+      "reason": "record normalized remote readiness without replacing pre-publication review",
+      "operation": "record_readiness"
+    },
+    {
+      "sequence": 44,
+      "generation": 37,
+      "actor": "codex",
+      "reason": "atomically finalize SOR/index and release claim/protected paths",
+      "operation": "record_terminal"
+    }
+  ]
+}

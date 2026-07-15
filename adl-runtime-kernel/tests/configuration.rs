@@ -192,6 +192,10 @@ schema = "adl.runtime_v3.init.v1"
 address = "localhost:20997"
 public_base_url = "https://runtime-gateway.example.test/prod"
 
+[api.tls]
+certificate_chain_path = ".adl/runtime-v3/tls/test-cert.pem"
+private_key_path = ".adl/runtime-v3/tls/test-key.pem"
+
 [observatory]
 allowed_origins = ["https://localhost:8765", "https://observatory.example.test"]
 
@@ -213,6 +217,10 @@ sample_limit = 6
     assert_eq!(
         init.api.public_base_url,
         "https://runtime-gateway.example.test/prod"
+    );
+    assert_eq!(
+        init.api.tls.certificate_chain_path,
+        std::path::PathBuf::from(".adl/runtime-v3/tls/test-cert.pem")
     );
     let agents = init.agent_population();
     assert_eq!(agents.total_count, 10_000);
@@ -298,6 +306,30 @@ schema = "adl.runtime_v3.init.v1"
 
 [api]
 public_base_url = "https://runtime-gateway.example.test?debug=1"
+"#,
+    ];
+
+    for case in cases {
+        assert!(adl_runtime_kernel::RuntimeInitConfig::from_toml_str(case).is_err());
+    }
+}
+
+#[test]
+fn runtime_init_rejects_missing_or_reused_tls_paths() {
+    let cases = [
+        r#"
+schema = "adl.runtime_v3.init.v1"
+
+[api.tls]
+certificate_chain_path = ""
+private_key_path = "key.pem"
+"#,
+        r#"
+schema = "adl.runtime_v3.init.v1"
+
+[api.tls]
+certificate_chain_path = "same.pem"
+private_key_path = "same.pem"
 "#,
     ];
 

@@ -1,0 +1,15 @@
+{"sequence":1,"generation":0,"actor":"codex","reason":"initialize issue record and all six cards","operation":"bootstrap"}
+{"sequence":2,"generation":0,"actor":"codex","reason":"bind branch/worktree and activate claim","operation":"bind"}
+{"sequence":3,"generation":1,"actor":"codex","reason":"record merged Runtime v3 CI lane implementation","operation":"{\"operation\":\"record_execution\",\"summary\":\"Implemented independent Runtime v3 fast validation routing and CI job.\",\"changes\":[\"Added runtime_v3_fast path-policy profile routing\",\"Added dedicated adl-runtime-v3-fast CI job\",\"Added v3-only, mixed-diff, and unmapped-path fixtures\",\"Added Runtime v3 Observatory proof to focused lane\"],\"artifacts\":[\"PR #5397\",\"commit 53ca54d2d9c6f55eb97a70f89a8d86358d20834f\"]}"}
+{"sequence":4,"generation":2,"actor":"codex","reason":"record implementation complete after merged PR 5397","operation":"{\"operation\":\"advance_phase\",\"phase\":\"implemented\"}"}
+{"sequence":5,"generation":2,"actor":"codex","reason":"assign bounded exact-revision review","operation":"assign_review"}
+{"sequence":6,"generation":3,"actor":"codex","reason":"record focused Runtime v3 validation evidence","operation":"{\"operation\":\"record_validation\",\"result\":{\"command\":[\"bash\",\"adl/tools/test_ci_path_policy.sh\"],\"purpose\":\"prove Runtime v3-only, mixed, and unmapped path routing\",\"outcome\":\"passed\",\"evidence_ref\":\"local:test_ci_path_policy\"}}"}
+{"sequence":7,"generation":4,"actor":"codex","reason":"atomically record review evidence and SRP projection","operation":"record_review"}
+{"sequence":8,"generation":5,"actor":"codex","reason":"review completed with no actionable findings","operation":"{\"operation\":\"advance_phase\",\"phase\":\"reviewed\"}"}
+{"sequence":9,"generation":6,"actor":"codex","reason":"Reopen typed review after lifecycle-only record commit changed the revision identity; re-review current clean tree before publication.","operation":"recover_review"}
+{"sequence":10,"generation":6,"actor":"codex","reason":"assign bounded exact-revision review","operation":"assign_review"}
+{"sequence":11,"generation":7,"actor":"codex-review","reason":"atomically record review evidence and SRP projection","operation":"record_review"}
+{"sequence":12,"generation":8,"actor":"codex","reason":"Current clean implementation tree reviewed with no actionable findings.","operation":"{\"operation\":\"advance_phase\",\"phase\":\"reviewed\"}"}
+{"sequence":13,"generation":9,"actor":"codex","reason":"atomically record observed GitHub publication and SOR projection","operation":"record_publication"}
+{"sequence":14,"generation":10,"actor":"codex","reason":"record normalized remote readiness without replacing pre-publication review","operation":"record_readiness"}
+{"sequence":15,"generation":11,"actor":"codex","reason":"atomically finalize SOR/index and release claim/protected paths","operation":"record_terminal"}

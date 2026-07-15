@@ -26,13 +26,13 @@ It tests two options against the same contract:
    and configuration
 
 That follow-on must stay outside Runtime v2 and must preserve the same
-`adl-runtime-kernel serve <continuity-path>` child contract.
+`adl-runtime-kernel serve --init <init-path> --capsule <continuity-path>` child contract.
 
 ## Guardian Contract
 
 The runtime kernel process remains the boundary:
 
-- the guardian starts `adl-runtime-kernel serve <continuity-path>`
+- the guardian starts `adl-runtime-kernel serve --init <init-path> --capsule <continuity-path>`
 - the guardian owns environment injection, stdout/stderr capture, signal
   delivery, child reaping, restart delay, and process restart
 - the child owns component supervision, typed channels, readiness, continuity,
@@ -96,7 +96,7 @@ boundary.
 #5225 should first attempt the `rust-tokio-supervisor` adoption path.
 The most promising shape is a wrapper task: `rust-tokio-supervisor` supervises
 one guardian task, and that task owns a `tokio::process::Child` for
-`adl-runtime-kernel serve <continuity-path>`. The wrapper translates child
+`adl-runtime-kernel serve --init <init-path> --capsule <continuity-path>`. The wrapper translates child
 exit, configuration exit, signal handling, readiness, output capture, and
 restart-budget results into the crate's task-result model.
 
@@ -109,7 +109,7 @@ Either path should be constrained to the smallest surface that satisfies the
 existing contract:
 
 1. load a small declarative child spec
-2. spawn `adl-runtime-kernel serve <continuity-path>` with `tokio::process`
+2. spawn `adl-runtime-kernel serve --init <init-path> --capsule <continuity-path>` with `tokio::process`
 3. capture stdout and stderr through the existing logging contract
 4. forward `SIGINT` and `SIGTERM`
 5. reap the child and fail closed on unsupported platform guarantees

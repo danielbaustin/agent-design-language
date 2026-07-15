@@ -1,0 +1,12 @@
+{
+  "schema": "csdlc.publication_intent.v1",
+  "issue": 5390,
+  "repository": "danielbaustin/agent-design-language",
+  "base": "main",
+  "head": "codex/5390-runtime-v3-local-https-bound-address",
+  "title": "fix(runtime-v3): serve Observatory over native HTTPS",
+  "body": "## Summary\n- terminate Runtime v3 control traffic with Axum plus the maintained Rustls server adapter\n- report server-owned bound address truth to readiness and the Observatory feed\n- pass explicit init configuration through selector and guardian/service launch paths\n- repair local HTTPS Observatory instructions and retained guardian truth\n- map Runtime v3 selector and guardian changes to manifest-correct PR-fast coverage lanes\n\n## Validation\n- full `adl-runtime-kernel` suite: 144 passed, 8 environment-dependent ignored\n- focused `adl-runtime` guardian suite: 8 passed\n- Runtime v3 selector tests: 7 passed\n- Runtime v3 Clippy with warnings denied: passed\n- HTML Observatory integrated validator: passed\n- coverage contract suites: passed\n- combined local coverage-impact preflight: passed\n- `guardian.rs`: 83.13% line coverage\n- `runtime_v3_cmd.rs`: 97.08% line coverage\n- composite exact-revision subagent review: all findings fixed\n\nCloses #5390",
+  "draft": true,
+  "revision": "git-blake3:699da9a4c5ea9643e64da599bf06f5d1b7286040:9415c94595c369c529d50dd3556148dc5b7528c584dbe2adc49d0ae8bd978ea7",
+  "commit_sha": "699da9a4c5ea9643e64da599bf06f5d1b7286040"
+}

@@ -225,6 +225,7 @@ impl RuntimeInitConfig {
             api: RuntimeApiInitConfig {
                 address: default_runtime_api_address_option(),
                 public_base_url: default_runtime_public_base_url(),
+                tls: RuntimeTlsInitConfig::default(),
             },
             observatory: ObservatoryInitConfig {
                 allowed_origins: default_local_observatory_origins(),
@@ -344,6 +345,8 @@ pub struct RuntimeApiInitConfig {
     pub address: Option<String>,
     #[serde(default = "default_runtime_public_base_url")]
     pub public_base_url: String,
+    #[serde(default)]
+    pub tls: RuntimeTlsInitConfig,
 }
 
 impl Default for RuntimeApiInitConfig {
@@ -351,6 +354,7 @@ impl Default for RuntimeApiInitConfig {
         Self {
             address: default_runtime_api_address_option(),
             public_base_url: default_runtime_public_base_url(),
+            tls: RuntimeTlsInitConfig::default(),
         }
     }
 }
@@ -358,6 +362,37 @@ impl Default for RuntimeApiInitConfig {
 impl RuntimeApiInitConfig {
     fn validate(&self) -> Result<(), RuntimeInitError> {
         validate_https_base_url("api.public_base_url", &self.public_base_url)?;
+        self.tls.validate()?;
+        Ok(())
+    }
+}
+
+#[derive(Clone, Debug, Eq, PartialEq, Serialize, Deserialize)]
+#[serde(deny_unknown_fields)]
+pub struct RuntimeTlsInitConfig {
+    #[serde(default = "default_runtime_tls_certificate_chain_path")]
+    pub certificate_chain_path: PathBuf,
+    #[serde(default = "default_runtime_tls_private_key_path")]
+    pub private_key_path: PathBuf,
+}
+
+impl Default for RuntimeTlsInitConfig {
+    fn default() -> Self {
+        Self {
+            certificate_chain_path: default_runtime_tls_certificate_chain_path(),
+            private_key_path: default_runtime_tls_private_key_path(),
+        }
+    }
+}
+
+impl RuntimeTlsInitConfig {
+    fn validate(&self) -> Result<(), RuntimeInitError> {
+        if self.certificate_chain_path.as_os_str().is_empty()
+            || self.private_key_path.as_os_str().is_empty()
+            || self.certificate_chain_path == self.private_key_path
+        {
+            return Err(RuntimeInitError::InvalidTlsPaths);
+        }
         Ok(())
     }
 }
@@ -393,6 +428,14 @@ fn default_runtime_api_address_option() -> Option<String> {
 
 fn default_runtime_public_base_url() -> String {
     "https://runtime-gateway-host".to_owned()
+}
+
+fn default_runtime_tls_certificate_chain_path() -> PathBuf {
+    PathBuf::from(".adl/runtime-v3/tls/localhost-cert.pem")
+}
+
+fn default_runtime_tls_private_key_path() -> PathBuf {
+    PathBuf::from(".adl/runtime-v3/tls/localhost-key.pem")
 }
 
 fn default_local_observatory_origins() -> Vec<String> {
@@ -483,6 +526,8 @@ pub enum RuntimeInitError {
     InvalidOrigin(String),
     #[error("runtime init bind address did not resolve: {0}")]
     BindAddress(String),
+    #[error("runtime init TLS certificate and private-key paths must be non-empty and distinct")]
+    InvalidTlsPaths,
     #[error("runtime init agents.count and agents.sample_limit must be positive, with sample_limit <= 100")]
     InvalidAgentPopulation,
 }

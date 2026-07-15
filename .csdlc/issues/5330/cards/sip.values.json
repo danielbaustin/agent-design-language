@@ -1,0 +1,34 @@
+{
+  "identity": {
+    "schema_version": "1.0.0",
+    "template_version": "1.0.0",
+    "issue": 5330,
+    "repository": "danielbaustin/agent-design-language",
+    "title": "[runtime-v3][ci] Give Runtime v3 an independent fast validation lane",
+    "slug": "runtime-v3-independent-fast-validation-lane",
+    "version": "v0.91.7",
+    "generation": 11
+  },
+  "status": "ready",
+  "content": {
+    "card_kind": "sip",
+    "values": {
+      "goal": "Make Runtime v3 path changes select a small, independent, reliable CI validation lane.",
+      "required_outcome": "Runtime v3-only diffs run only the v3 lane; mixed diffs retain required legacy validation; unmapped v3 paths fail closed.",
+      "declared_scope": [
+        ".github/workflows/ci.yaml",
+        "adl/tools/select_validation_lanes.py",
+        "adl/tools/run_pr_fast_test_lane.sh",
+        "adl/tools/test_run_pr_fast_test_lane.sh",
+        "docs/architecture/runtime_v3_fast_validation_5330.md",
+        "docs/architecture/runtime_v3_fast_validation_5330.mmd"
+      ],
+      "authority_boundary": [
+        "Path-policy selection is authoritative for lane selection",
+        "Runtime v3 proof commands remain explicit argv and Rust-owned where possible"
+      ],
+      "initial_assumptions": [],
+      "operator_constraints": []
+    }
+  }
+}

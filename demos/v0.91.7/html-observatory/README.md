@@ -100,8 +100,26 @@ adl-runtime-kernel serve --init infra/runtime-v3/runtime-init.toml
 ```
 
 The default init file keeps the Runtime v3 listener on `localhost:20997`.
-Runtime v3 browser/API access is HTTPS-only through the configured API Gateway
-base URL.
+Runtime v3 browser/API access is HTTPS-only. Before launch, provision a
+localhost certificate and private key at the `[api.tls]` paths in the init file;
+the repository does not retain private keys. Serve this Observatory from the
+allowed HTTPS origin `https://localhost:8765`, then open:
+
+```text
+https://localhost:8765/demos/v0.91.7/html-observatory/?runtime=v3&runtimeApiBase=https://localhost:20997&live=1
+```
+
+Both certificates must be trusted by the browser. The kernel terminates its own
+TLS connection; a local API Gateway or sidecar is not required.
+
+One COTS way to serve the Observatory over local HTTPS is Caddy:
+
+```sh
+caddy file-server --root . --domain localhost --listen :8765
+```
+
+Caddy provisions the local HTTPS listener; browser trust remains an explicit
+operator prerequisite and this repository does not modify the host trust store.
 
 The default init file also configures a high-cardinality Runtime v3 agent
 population with `count = 10000` and a bounded sample. The Observatory shows the
@@ -110,10 +128,11 @@ create 10,000 DOM nodes.
 
 For an externally reachable polis, copy that init file to an operator-local
 path, set `[api].address` to the runtime host interface, set
-`[api].public_base_url` to the HTTPS API Gateway route, and add the dashboard
-origin to `[observatory].allowed_origins`. Public routing is provided by the
-operator's ingress layer, such as an Elastic IP or API Gateway route, not by
-hardcoded Runtime v3 source addresses.
+`[api].public_base_url` to the HTTPS public route, set `[api.tls]` to that
+route's certificate and key paths, and add the dashboard origin to
+`[observatory].allowed_origins`. Public routing may be provided by the
+operator's ingress layer, such as an Elastic IP or API Gateway route, but is not
+hardcoded in Runtime v3 source.
 
 ```text
 https://<observatory-host>/demos/v0.91.7/html-observatory/?runtime=v3&runtimeApiBase=https://<runtime-gateway-host>&live=1

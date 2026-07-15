@@ -6,9 +6,9 @@ use std::{
 };
 
 use adl_runtime_kernel::{
-    execute_loop, generate_runtime_instance_id,
+    execute_loop, generate_runtime_instance_id, load_control_tls,
     proof::{build_proof_runtime, load_capsule, run_proof},
-    serve_control_listener_until, verifying_key_from_hex, AdaptationState, ControlAuthority,
+    serve_control_listener_until_ready, verifying_key_from_hex, AdaptationState, ControlAuthority,
     ControlCapability, ControlService, KernelExit, LoopDefinition, LoopStatus, ReasoningEdge,
     ReasoningGraphDefinition, ReasoningNode, RecordedObservation, ResourceState, RuntimeInitConfig,
     SysinfoWeatherObserver, TrustedControlKey, ValidatedReasoningGraph, WeatherConfig,
@@ -34,6 +34,13 @@ async fn main() -> ExitCode {
                 Ok(config) => config,
                 Err(error) => {
                     eprintln!("runtime init invalid: {error}");
+                    return ExitCode::from(78);
+                }
+            };
+            let tls = match load_control_tls(&init.api.tls).await {
+                Ok(config) => config,
+                Err(error) => {
+                    eprintln!("{error}");
                     return ExitCode::from(78);
                 }
             };
@@ -91,12 +98,8 @@ async fn main() -> ExitCode {
                 }
             };
             let instance_id = generate_runtime_instance_id();
-            eprintln!(
-                "adl_event schema=adl.runtime.instance.v1 event=control_ready instance_id={instance_id} port={}",
-                adl_runtime_kernel::DEFAULT_CONTROL_API_PORT
-            );
             let service = Arc::new(ControlService::new_with_observatory_config_and_agents(
-                instance_id,
+                instance_id.clone(),
                 proof.recorder,
                 handle.control(),
                 authority,
@@ -111,11 +114,27 @@ async fn main() -> ExitCode {
                 ResourceState::Healthy,
             ));
             let api_shutdown = tokio_util::sync::CancellationToken::new();
-            let mut api = tokio::spawn(serve_control_listener_until(
+            let (ready_sender, ready_receiver) = tokio::sync::oneshot::channel();
+            let mut api = tokio::spawn(serve_control_listener_until_ready(
                 service,
                 listener,
+                tls,
+                ready_sender,
                 api_shutdown.clone().cancelled_owned(),
             ));
+            let bound_address = match ready_receiver.await {
+                Ok(address) => address,
+                Err(_) => {
+                    eprintln!("runtime control API failed before readiness");
+                    let _ = handle.shutdown(std::time::Duration::from_secs(10)).await;
+                    drain_control_api(&mut api).await;
+                    return ExitCode::from(70);
+                }
+            };
+            eprintln!(
+                "{}",
+                adl_runtime_kernel::control_ready_event(&instance_id, bound_address)
+            );
             tokio::select! {
                 signal = shutdown_signal() => {
                     if let Err(error) = signal {
@@ -413,7 +432,7 @@ fn process_exit(exit: KernelExit) -> ExitCode {
 async fn drain_control_api(
     api: &mut tokio::task::JoinHandle<Result<(), adl_runtime_kernel::ControlApiError>>,
 ) {
-    if tokio::time::timeout(std::time::Duration::from_secs(2), &mut *api)
+    if tokio::time::timeout(std::time::Duration::from_secs(3), &mut *api)
         .await
         .is_err()
     {

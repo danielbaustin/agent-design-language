@@ -1,0 +1,45 @@
+{
+  "identity": {
+    "schema_version": "1.0.0",
+    "template_version": "1.0.0",
+    "issue": 5330,
+    "repository": "danielbaustin/agent-design-language",
+    "title": "[runtime-v3][ci] Give Runtime v3 an independent fast validation lane",
+    "slug": "runtime-v3-independent-fast-validation-lane",
+    "version": "v0.91.7",
+    "generation": 11
+  },
+  "status": "complete",
+  "content": {
+    "card_kind": "sor",
+    "values": {
+      "summary": "Implemented independent Runtime v3 fast validation routing and CI job.",
+      "actual_changes": [
+        "Added runtime_v3_fast path-policy profile routing",
+        "Added dedicated adl-runtime-v3-fast CI job",
+        "Added v3-only, mixed-diff, and unmapped-path fixtures",
+        "Added Runtime v3 Observatory proof to focused lane"
+      ],
+      "artifacts": [
+        "PR #5397",
+        "commit 53ca54d2d9c6f55eb97a70f89a8d86358d20834f"
+      ],
+      "actual_validation": [
+        {
+          "command": [
+            "bash",
+            "adl/tools/test_ci_path_policy.sh"
+          ],
+          "purpose": "prove Runtime v3-only, mixed, and unmapped path routing",
+          "outcome": "passed",
+          "evidence_ref": "local:test_ci_path_policy"
+        }
+      ],
+      "integration_state": "merged",
+      "publication_state": "closed",
+      "merge_state": "merged",
+      "closeout_state": "complete",
+      "follow_ups": []
+    }
+  }
+}

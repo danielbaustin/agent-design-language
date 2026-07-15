@@ -580,7 +580,7 @@ async function fetchRuntimeEndpoint(apiBase, endpoint) {
 async function fetchRuntimeSnapshot(apiBase) {
   if (requestedRuntimeSelection() === "v3") {
     if (!isRuntimeV3ApiBase(apiBase)) {
-      throw new Error("Runtime v3 selection requires a configured HTTPS API Gateway base.");
+      throw new Error("Runtime v3 selection requires a configured HTTPS runtime API base.");
     }
     return fetchRuntimeV3ObservatorySnapshot(apiBase);
   }
@@ -608,7 +608,7 @@ async function fetchRuntimeSnapshot(apiBase) {
 async function fetchRuntimeV3ObservatorySnapshot(apiBase) {
   const base = normalizeApiBase(apiBase);
   if (!isRuntimeV3ApiBase(base)) {
-    throw new Error("Runtime v3 selection requires a configured HTTPS API Gateway base.");
+    throw new Error("Runtime v3 selection requires a configured HTTPS runtime API base.");
   }
   const response = await fetch(`${base}${RUNTIME_V3_OBSERVATORY_ENDPOINT}`, { method: "GET" });
   if (!response.ok) {

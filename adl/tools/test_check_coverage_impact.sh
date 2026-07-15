@@ -287,6 +287,19 @@ grep -Fx "runtime_v2_unified_runtime_kernel" "$unified_runtime_kernel_filters" >
 unified_runtime_kernel_expression="$(bash "$SCRIPT" --changed-files "$unified_runtime_kernel_changed" --print-risk-nextest-expression)"
 grep -F "test(runtime_v2_unified_runtime_kernel)" <<<"$unified_runtime_kernel_expression" >/dev/null
 
+runtime_v3_surfaces_changed="$TMP/runtime-v3-surfaces-changed.txt"
+cat >"$runtime_v3_surfaces_changed" <<'EOF'
+M	adl/src/cli/runtime_v3_cmd.rs
+M	adl-runtime/src/guardian.rs
+EOF
+runtime_v3_expression="$(bash "$SCRIPT" --changed-files "$runtime_v3_surfaces_changed" --print-risk-nextest-expression)"
+grep -F "binary_id(adl::bin/adl) and test(/^cli::runtime_v3_cmd::tests::/)" <<<"$runtime_v3_expression" >/dev/null
+grep -F "test(/^guardian::tests::/)" <<<"$runtime_v3_expression" >/dev/null
+if grep -Fq "binary_id(adl-runtime)" <<<"$runtime_v3_expression"; then
+  echo "Runtime v3 guardian mapping must remain parseable in the adl workspace" >&2
+  exit 1
+fi
+
 split_acc_changed="$TMP/split-acc-changed.txt"
 printf 'A\tadl/src/acc/validation.rs\n' >"$split_acc_changed"
 split_acc_filters="$TMP/split-acc-filters.txt"

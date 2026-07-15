@@ -1,0 +1,34 @@
+{
+  "identity": {
+    "schema_version": "1.0.0",
+    "template_version": "1.0.0",
+    "issue": 5390,
+    "repository": "danielbaustin/agent-design-language",
+    "title": "Make Runtime v3 Observatory local HTTPS and report bound control address",
+    "slug": "runtime-v3-local-https-bound-address",
+    "version": "v0.91.7",
+    "generation": 37
+  },
+  "status": "ready",
+  "content": {
+    "card_kind": "sip",
+    "values": {
+      "goal": "Repair the integrated Runtime v3 local control and Observatory path without a gateway or hard-coded port.",
+      "required_outcome": "Runtime v3 serves its control API through native TLS and all discovery data reflects the actual bound socket.",
+      "declared_scope": [
+        "Runtime v3 TLS init configuration",
+        "Native Rustls control serving",
+        "Bound-address propagation",
+        "HTML Observatory local HTTPS documentation and validation"
+      ],
+      "authority_boundary": [
+        "No plain-HTTP production listener",
+        "No external TLS gateway or sidecar",
+        "No committed private key or automatic trust-store mutation",
+        "Runtime v3 remains explicit opt-in and Runtime v2 remains default"
+      ],
+      "initial_assumptions": [],
+      "operator_constraints": []
+    }
+  }
+}

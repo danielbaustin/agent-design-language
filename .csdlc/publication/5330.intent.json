@@ -1,0 +1,12 @@
+{
+  "schema": "csdlc.publication_intent.v1",
+  "issue": 5330,
+  "repository": "danielbaustin/agent-design-language",
+  "base": "main",
+  "head": "codex/5330-runtime-v3-fast-validation",
+  "title": "[v0.91.7][csdlc] Reconcile #5330 lifecycle closeout records",
+  "body": "Follow-up lifecycle reconciliation for #5330.\n\nThe Runtime v3 fast validation implementation is already merged in PR #5397; this draft records the typed v2 publication and closeout truth.",
+  "draft": true,
+  "revision": "git-blake3:432e215a629053e67c6b2c2daaad026ed2ddba9c:98079187ad1a61a444d25ba94f6e144a097d90c22d1fdeebcf0b6abc32775d67",
+  "commit_sha": "432e215a629053e67c6b2c2daaad026ed2ddba9c"
+}

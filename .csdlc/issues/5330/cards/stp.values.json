@@ -1,0 +1,45 @@
+{
+  "identity": {
+    "schema_version": "1.0.0",
+    "template_version": "1.0.0",
+    "issue": 5330,
+    "repository": "danielbaustin/agent-design-language",
+    "title": "[runtime-v3][ci] Give Runtime v3 an independent fast validation lane",
+    "slug": "runtime-v3-independent-fast-validation-lane",
+    "version": "v0.91.7",
+    "generation": 11
+  },
+  "status": "ready",
+  "content": {
+    "card_kind": "stp",
+    "values": {
+      "task_boundary": "Add and prove the Runtime v3 fast path-policy profile without redesigning the entire CI topology.",
+      "deliverables": [
+        "Runtime v3 fast selector/profile",
+        "v3-only, mixed, and unmapped fixtures",
+        "operator documentation and design diagram"
+      ],
+      "acceptance_criteria": [
+        "Runtime v3-only paths select only the independent v3 lane",
+        "Mixed Runtime v3 plus legacy paths select both required profiles",
+        "Unmapped v3 paths fail closed",
+        "Focused proof runs quickly and does not invoke unrelated broad jobs"
+      ],
+      "dependencies": [
+        "Existing CI path-policy workflow",
+        "adl-runtime-kernel Cargo manifest"
+      ],
+      "repo_inputs": [
+        ".github/workflows/ci.yaml",
+        "adl/tools/select_validation_lanes.py",
+        "adl-runtime-kernel/Cargo.toml",
+        "adl/tools/test_run_pr_fast_test_lane.sh"
+      ],
+      "non_goals": [
+        "Deleting legacy validation",
+        "Changing Runtime v3 behavior",
+        "Redesigning all CI topology"
+      ]
+    }
+  }
+}

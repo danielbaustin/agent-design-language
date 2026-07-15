@@ -1,0 +1,18 @@
+{
+  "issue": 5330,
+  "base_branch": "main",
+  "branch": "codex/5330-runtime-v3-fast-validation",
+  "worktree": ".worktrees/adl-wp-5330",
+  "claim": {
+    "id": "claim-5330-runtime-v3-fast",
+    "owner": "codex",
+    "generation": 0,
+    "acquired_unix_seconds": 1784139673,
+    "expires_unix_seconds": 1784143273,
+    "heartbeat_unix_seconds": 1784139673,
+    "branch": "codex/5330-runtime-v3-fast-validation",
+    "worktree": ".worktrees/adl-wp-5330",
+    "protected_paths": [".github/workflows/ci.yaml", "adl/tools/select_validation_lanes.py", "adl/tools/run_pr_fast_test_lane.sh", "adl/tools/test_run_pr_fast_test_lane.sh", "docs/architecture/runtime_v3_fast_validation_5330.md", "docs/architecture/runtime_v3_fast_validation_5330.mmd"],
+    "purpose": "Implement the independent Runtime v3 fast validation lane"
+  }
+}

@@ -5,7 +5,7 @@ After=network.target
 [Service]
 Type=simple
 ExecStartPre=/bin/sleep 2
-ExecStart=/usr/local/bin/adl-runtime-kernel serve /var/lib/adl/runtime-kernel-continuity.json
+ExecStart=/usr/local/bin/adl-runtime-kernel serve --init /etc/adl/runtime-v3.toml --capsule /var/lib/adl/runtime-kernel-continuity.json
 Restart=always
 
 [Install]

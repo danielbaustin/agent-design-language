@@ -82,6 +82,10 @@ assert_current_coverage_workflow_contract() {
   assert_file_has "$workflow" "needs.adl_path_policy.outputs.skill_author_contracts_required == 'true'"
   assert_file_has "$workflow" "Aggregate split adl-ci lanes"
   assert_file_has "$workflow" 'Stable required check \`adl-ci\` is an aggregator over parallel lanes.'
+  assert_file_has "$workflow" 'name: adl-runtime-v3-fast'
+  assert_file_has "$workflow" "if: needs.adl_path_policy.outputs.runtime_v3_fast_required == 'true'"
+  assert_file_has "$workflow" 'cargo test --manifest-path adl-runtime-kernel/Cargo.toml'
+  assert_file_has "$workflow" 'adl_runtime_v3_fast:${{ needs.adl_runtime_v3_fast.result }}'
   assert_file_has "$workflow" 'Full workspace coverage gate deferred for PR'
   assert_file_has "$workflow" 'adl/target/coverage-impact-summary.json'
   assert_file_not_has "$workflow" '--authority "adl_coverage_always_on"'
@@ -217,6 +221,44 @@ assert profile["selected_profile"] == "docs_diff_check_profile"
 assert profile["status"] == "ready_to_run"
 assert [item["lane_id"] for item in profile["run"]] == ["docs_diff_check"]
 PY
+
+  git checkout -q -b runtime-v3-only "$base_sha"
+  mkdir -p infra/runtime-v3
+  printf 'api_base = "https://observatory.example.test"\n' > infra/runtime-v3/runtime-init.toml
+  git add infra/runtime-v3/runtime-init.toml
+  git commit -q -m runtime-v3-only
+  runtime_v3_head="$(git rev-parse HEAD)"
+  runtime_v3_output="$($POLICY --event-name pull_request --base "$base_sha" --head "$runtime_v3_head" --ref "refs/pull/1/merge")"
+  assert_has "$runtime_v3_output" "runtime_v3_fast_required=true"
+  assert_has "$runtime_v3_output" "rust_required=false"
+  assert_has "$runtime_v3_output" "coverage_required=false"
+  assert_has "$runtime_v3_output" "full_coverage_required=false"
+  assert_has "$runtime_v3_output" "demo_smoke_required=false"
+  assert_has "$runtime_v3_output" "ci_contracts_required=false"
+  assert_has "$runtime_v3_output" "validation_profile_run_lanes=runtime_kernel_contracts"
+  assert_has "$runtime_v3_output" "reason=runtime_v3_only_change_runs_independent_runtime_kernel_fast_lane"
+
+  git checkout -q -b runtime-v3-mixed "$base_sha"
+  mkdir -p infra/runtime-v3
+  printf 'api_base = "https://observatory.example.test"\n' > infra/runtime-v3/runtime-init.toml
+  printf 'pub fn legacy_change() -> bool { true }\n' >> adl/src/lib.rs
+  git add infra/runtime-v3/runtime-init.toml adl/src/lib.rs
+  git commit -q -m runtime-v3-mixed
+  runtime_v3_mixed_head="$(git rev-parse HEAD)"
+  runtime_v3_mixed_output="$($POLICY --event-name pull_request --base "$base_sha" --head "$runtime_v3_mixed_head" --ref "refs/pull/1/merge")"
+  assert_has "$runtime_v3_mixed_output" "runtime_v3_fast_required=false"
+  assert_has "$runtime_v3_mixed_output" "rust_required=true"
+
+  git checkout -q -b runtime-v3-unmapped "$base_sha"
+  mkdir -p infra/runtime-v3-extra
+  printf 'unknown = true\n' > infra/runtime-v3-extra/config.toml
+  git add infra/runtime-v3-extra/config.toml
+  git commit -q -m runtime-v3-unmapped
+  runtime_v3_unmapped_head="$(git rev-parse HEAD)"
+  runtime_v3_unmapped_output="$($POLICY --event-name pull_request --base "$base_sha" --head "$runtime_v3_unmapped_head" --ref "refs/pull/1/merge")"
+  assert_has "$runtime_v3_unmapped_output" "runtime_v3_fast_required=false"
+  assert_has "$runtime_v3_unmapped_output" "full_coverage_required=true"
+  assert_has "$runtime_v3_unmapped_output" "fail_closed=true"
 
   git checkout -q -b release-version-only "$base_sha"
   python3 - <<'PY'

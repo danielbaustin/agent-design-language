@@ -2,7 +2,7 @@ use anyhow::{anyhow, Result};
 use serde::Serialize;
 
 const DEFAULT_RUNTIME: RuntimeSelection = RuntimeSelection::V2;
-const RUNTIME_V3_CONTROL_HOST: &str = "127.0.0.1";
+const RUNTIME_V3_CONTROL_HOST: &str = "localhost";
 const RUNTIME_V3_CONTROL_PORT: u16 = 20_997;
 const RUNTIME_V3_KERNEL_BIN: &str = "adl-runtime-kernel";
 
@@ -102,27 +102,25 @@ fn select_runtime(args: &[String]) -> Result<()> {
     };
 
     let report = selection_report(selected, source);
-    if json {
-        println!("{}", serde_json::to_string_pretty(&report)?);
-    } else {
-        println!("SELECTED_RUNTIME={}", report.selected_runtime);
-        println!("DEFAULT_RUNTIME={}", report.default_runtime);
-        println!("SELECTOR_SOURCE={}", report.selector_source);
-        println!("DEFAULT_CHANGED={}", report.default_changed);
-        println!(
-            "SELECTION_DIFFERS_FROM_DEFAULT={}",
-            report.selection_differs_from_default
-        );
-        println!(
-            "RUNTIME_V3_CONTROL_ENDPOINT={}",
-            report.runtime_v3_control_endpoint
-        );
-        println!(
-            "RUNTIME_V3_KERNEL_COMMAND={}",
-            report.runtime_v3_kernel_command.join(" ")
-        );
-    }
+    println!("{}", render_selection_report(&report, json)?);
     Ok(())
+}
+
+fn render_selection_report(report: &RuntimeV3SelectionReport, json: bool) -> Result<String> {
+    if json {
+        return Ok(serde_json::to_string_pretty(report)?);
+    }
+
+    Ok(format!(
+        "SELECTED_RUNTIME={}\nDEFAULT_RUNTIME={}\nSELECTOR_SOURCE={}\nDEFAULT_CHANGED={}\nSELECTION_DIFFERS_FROM_DEFAULT={}\nRUNTIME_V3_CONTROL_ENDPOINT={}\nRUNTIME_V3_KERNEL_COMMAND={}",
+        report.selected_runtime,
+        report.default_runtime,
+        report.selector_source,
+        report.default_changed,
+        report.selection_differs_from_default,
+        report.runtime_v3_control_endpoint,
+        report.runtime_v3_kernel_command.join(" ")
+    ))
 }
 
 fn selection_report(
@@ -141,9 +139,14 @@ fn selection_report(
         runtime_v3_control_host: RUNTIME_V3_CONTROL_HOST,
         runtime_v3_control_port: RUNTIME_V3_CONTROL_PORT,
         runtime_v3_control_endpoint: format!(
-            "http://{RUNTIME_V3_CONTROL_HOST}:{RUNTIME_V3_CONTROL_PORT}"
+            "https://{RUNTIME_V3_CONTROL_HOST}:{RUNTIME_V3_CONTROL_PORT}"
         ),
-        runtime_v3_kernel_command: vec![RUNTIME_V3_KERNEL_BIN, "serve"],
+        runtime_v3_kernel_command: vec![
+            RUNTIME_V3_KERNEL_BIN,
+            "serve",
+            "--init",
+            "infra/runtime-v3/runtime-init.toml",
+        ],
         compatibility_boundary:
             "explicit selector only; Runtime v2 remains the default until the cutover gate changes it",
     }
@@ -158,8 +161,8 @@ Environment:\n\
   ADL_RUNTIME_SELECTION=v3 selects Runtime v3 when --runtime is omitted.\n\n\
 Notes:\n\
   Runtime v2 remains the default unless --runtime v3 or ADL_RUNTIME_SELECTION=v3 is supplied.\n\
-  Runtime v3 uses the local control API endpoint http://127.0.0.1:20997.\n\
-  Launch the Runtime v3 kernel with: adl-runtime-kernel serve"
+  Runtime v3 uses the local control API endpoint https://localhost:20997.\n\
+  Launch the Runtime v3 kernel with: adl-runtime-kernel serve --init infra/runtime-v3/runtime-init.toml"
 }
 
 #[cfg(test)]
@@ -185,10 +188,18 @@ mod tests {
         assert!(report.selection_differs_from_default);
         assert!(report.runtime_v2_available);
         assert!(report.runtime_v3_available);
-        assert_eq!(report.runtime_v3_control_endpoint, "http://127.0.0.1:20997");
+        assert_eq!(
+            report.runtime_v3_control_endpoint,
+            "https://localhost:20997"
+        );
         assert_eq!(
             report.runtime_v3_kernel_command,
-            ["adl-runtime-kernel", "serve"]
+            [
+                "adl-runtime-kernel",
+                "serve",
+                "--init",
+                "infra/runtime-v3/runtime-init.toml"
+            ]
         );
     }
 
@@ -198,5 +209,66 @@ mod tests {
         assert!(err
             .to_string()
             .contains("unsupported runtime selection 'v4'"));
+    }
+
+    #[test]
+    fn runtime_aliases_are_accepted() {
+        assert_eq!(
+            RuntimeSelection::parse("runtime-v2", "test").unwrap(),
+            RuntimeSelection::V2
+        );
+        assert_eq!(
+            RuntimeSelection::parse("runtime-v3", "test").unwrap(),
+            RuntimeSelection::V3
+        );
+    }
+
+    #[test]
+    fn command_help_paths_succeed() {
+        assert!(runtime_v3_usage().contains("https://localhost:20997"));
+        real_runtime_v3(&["help".to_string()]).unwrap();
+        select_runtime(&["--help".to_string()]).unwrap();
+    }
+
+    #[test]
+    fn explicit_selection_exercises_text_and_json_reports() {
+        let v2_report = selection_report(RuntimeSelection::V2, "--runtime");
+        let text = render_selection_report(&v2_report, false).unwrap();
+        assert!(text.contains("SELECTED_RUNTIME=runtime-v2"));
+        assert!(text.contains("RUNTIME_V3_CONTROL_ENDPOINT=https://localhost:20997"));
+        select_runtime(&["--runtime".to_string(), "v2".to_string()]).unwrap();
+
+        let v3_report = selection_report(RuntimeSelection::V3, "--runtime");
+        let json = render_selection_report(&v3_report, true).unwrap();
+        let value: serde_json::Value = serde_json::from_str(&json).unwrap();
+        assert_eq!(value["selected_runtime"], "runtime-v3");
+        assert_eq!(
+            value["runtime_v3_control_endpoint"],
+            "https://localhost:20997"
+        );
+        select_runtime(&[
+            "--runtime".to_string(),
+            "runtime-v3".to_string(),
+            "--json".to_string(),
+        ])
+        .unwrap();
+    }
+
+    #[test]
+    fn command_arguments_fail_closed() {
+        let unknown_command = real_runtime_v3(&["launch".to_string()]).unwrap_err();
+        assert!(unknown_command
+            .to_string()
+            .contains("unknown runtime-v3 command 'launch'"));
+
+        let missing_runtime = select_runtime(&["--runtime".to_string()]).unwrap_err();
+        assert!(missing_runtime
+            .to_string()
+            .contains("requires --runtime <v2|v3>"));
+
+        let unknown_arg = select_runtime(&["--bogus".to_string()]).unwrap_err();
+        assert!(unknown_arg
+            .to_string()
+            .contains("unknown arg for runtime-v3 select: --bogus"));
     }
 }
