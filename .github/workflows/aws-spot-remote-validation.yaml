@@ -32,7 +32,7 @@ on:
         type: string
       instance_types:
         required: false
-        default: ""
+        default: "c7a.8xlarge,m7a.8xlarge,c7i.8xlarge"
         type: string
       max_run_seconds:
         required: false
