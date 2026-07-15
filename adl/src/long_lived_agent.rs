@@ -17,6 +17,7 @@ use serde::Serialize;
 use serde_json::{json, Value};
 use sha2::{Digest, Sha256};
 use std::collections::BTreeMap;
+use std::env;
 use std::fs::{self, File, OpenOptions};
 use std::io::{BufRead, BufReader, Write};
 use std::path::{Path, PathBuf};
@@ -56,6 +57,8 @@ pub use types::{
 };
 
 const DAEMON_DEFAULT_INTERVAL_SECS: u64 = 3;
+const GOVERNED_STOP_AUTHORITY_ENV: &str = "ADL_CSM_GOVERNED_STOP_AUTHORITY";
+const GOVERNED_STOP_OPERATORS_ENV: &str = "ADL_CSM_GOVERNED_STOP_OPERATORS";
 
 fn utc_now() -> DateTime<Utc> {
     Utc::now()
@@ -1327,7 +1330,12 @@ pub fn governed_stop(spec_path: &Path, request: GovernedStopRequest) -> Result<V
         "authorization_policy": {
             "required_fields": ["reason", "operator_identity", "authorization", "intent", "requested_at"],
             "ordinary_api_requests_can_stop_runtime": false,
-            "runtime_budget": "not_applicable"
+            "runtime_budget": "not_applicable",
+            "authority_source": "environment_configured_governed_authority",
+            "authority_source_ref": GOVERNED_STOP_AUTHORITY_ENV,
+            "operator_allowlist_source": GOVERNED_STOP_OPERATORS_ENV,
+            "authorization_verified": true,
+            "operator_identity_verified": true
         }
     });
     write_json_pretty(&governed_stop_path(&loaded), &governed_stop)?;
@@ -1461,6 +1469,33 @@ fn validate_governed_stop_request(request: &GovernedStopRequest) -> Result<()> {
     ) {
         return Err(anyhow!(
             "csm governed-stop unsupported --intent '{intent}' (expected emergency_polis_stop, operator_safety_stop, or recoverability_drill)"
+        ));
+    }
+    let configured_authority = env::var(GOVERNED_STOP_AUTHORITY_ENV)
+        .ok()
+        .filter(|value| !value.trim().is_empty())
+        .ok_or_else(|| {
+            anyhow!(
+                "csm governed-stop is disabled until {GOVERNED_STOP_AUTHORITY_ENV} is configured"
+            )
+        })?;
+    if configured_authority.trim() != request.authorization.trim() {
+        return Err(anyhow!(
+            "csm governed-stop authorization does not match the configured governed authority"
+        ));
+    }
+    let operator_allowed = env::var(GOVERNED_STOP_OPERATORS_ENV)
+        .ok()
+        .map(|value| {
+            value
+                .split(',')
+                .map(str::trim)
+                .any(|operator| operator == request.operator_identity.trim())
+        })
+        .unwrap_or(false);
+    if !operator_allowed {
+        return Err(anyhow!(
+            "csm governed-stop operator is not present in {GOVERNED_STOP_OPERATORS_ENV}"
         ));
     }
     Ok(())

@@ -270,7 +270,8 @@ fn reserve_ephemeral_csm_test_port(label: &str) -> (std::net::TcpListener, Strin
 }
 
 fn request_governed_stop_and_wait(spec: &std::path::Path, child: &mut std::process::Child) {
-    let stop = run_csm(&[
+    let stop = run_csm_with_env(
+        &[
         "governed-stop",
         "--spec",
         spec.to_str().expect("utf8 spec"),
@@ -285,7 +286,12 @@ fn request_governed_stop_and_wait(spec: &std::path::Path, child: &mut std::proce
         "--requested-at",
         "2026-07-07T16:00:00Z",
         "--json",
-    ]);
+        ],
+        &[
+            ("ADL_CSM_GOVERNED_STOP_AUTHORITY", "test-governed-stop"),
+            ("ADL_CSM_GOVERNED_STOP_OPERATORS", "cli-smoke"),
+        ],
+    );
     assert!(
         stop.status.success(),
         "governed stop stderr:\n{}",
@@ -3995,6 +4001,8 @@ memory:
             ("ADL_CSM_NOTICE_CONTROL_PLANE_MODE", "mock"),
             ("ADL_CSM_NOTICE_CONTROL_PLANE_TARGET", "eventbridge"),
             ("ADL_CSM_NOTICE_EVENT_BUS", "adl-csm-notice-bus-5005"),
+            ("ADL_CSM_GOVERNED_STOP_AUTHORITY", "test-approval-ticket-5005"),
+            ("ADL_CSM_GOVERNED_STOP_OPERATORS", "codex-test-operator"),
         ],
     );
     assert!(
@@ -4138,6 +4146,58 @@ memory:
     ]);
     assert!(!missing_operator.status.success());
     assert!(String::from_utf8_lossy(&missing_operator.stderr).contains("--operator"));
+
+    let forged_authority = run_csm_with_env(
+        &[
+            "governed-stop",
+            "--spec",
+            spec.to_str().expect("utf8 spec"),
+            "--reason",
+            "forged authority must fail",
+            "--operator",
+            "codex-test-operator",
+            "--authorization",
+            "forged-ticket",
+            "--intent",
+            "emergency_polis_stop",
+            "--requested-at",
+            "2026-07-07T16:00:00Z",
+            "--json",
+        ],
+        &[
+            ("ADL_CSM_GOVERNED_STOP_AUTHORITY", "test-approval-ticket-5005"),
+            ("ADL_CSM_GOVERNED_STOP_OPERATORS", "codex-test-operator"),
+        ],
+    );
+    assert!(!forged_authority.status.success());
+    assert!(String::from_utf8_lossy(&forged_authority.stderr)
+        .contains("does not match the configured governed authority"));
+
+    let forged_operator = run_csm_with_env(
+        &[
+            "governed-stop",
+            "--spec",
+            spec.to_str().expect("utf8 spec"),
+            "--reason",
+            "forged operator must fail",
+            "--operator",
+            "unlisted-operator",
+            "--authorization",
+            "test-approval-ticket-5005",
+            "--intent",
+            "emergency_polis_stop",
+            "--requested-at",
+            "2026-07-07T16:00:00Z",
+            "--json",
+        ],
+        &[
+            ("ADL_CSM_GOVERNED_STOP_AUTHORITY", "test-approval-ticket-5005"),
+            ("ADL_CSM_GOVERNED_STOP_OPERATORS", "codex-test-operator"),
+        ],
+    );
+    assert!(!forged_operator.status.success());
+    assert!(String::from_utf8_lossy(&forged_operator.stderr)
+        .contains("operator is not present in ADL_CSM_GOVERNED_STOP_OPERATORS"));
 }
 
 #[test]
