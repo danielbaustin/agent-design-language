@@ -22,6 +22,35 @@ Roll out in four stages:
 The existing `.github/workflows/ci.yaml` remains the rollback path during this
 issue. Do not remove its hosted jobs.
 
+### Runtime And Capacity Guardrails
+
+Every live Spot invocation has a hard manager wall-clock limit. The workflow
+default is 1800 seconds; the remote command itself remains bounded at 600
+seconds. A timeout returns a failed check and runs the cleanup step rather than
+leaving a paid builder running indefinitely. The limit can be lowered for a
+known-fast shadow, but the workflow rejects values below 300 seconds or above
+3600 seconds; the lower-level wrapper also fail-closes values below 30 seconds.
+
+The workflow passes an ordered capacity pool instead of relying on one EC2
+shape. The default pool is `c7a.8xlarge,m7a.8xlarge,c7i.8xlarge`; Spot tries
+each type in order and never silently falls back to on-demand because the
+workflow invokes the launcher with `--spot-only`. Keep the pool in the same
+availability-zone-compatible topology as the retained EBS volume.
+
+New builders receive both `adl:managed=true` and
+`adl:lane=spot-remote-validation` tags. The cleanup step runs
+`adl/tools/sweep_aws_spot_orphans.sh --run --run-id <exact-run-id>
+--max-age-minutes 90` after the run-specific cleanup. The live sweep is
+deliberately narrow: it only considers those two tags plus the exact run ID,
+requires a 30-minute minimum age, records hashed instance identities, and never
+modifies the retained EBS volume. A broad sweep without `--run` is a dry-run
+and is the preferred diagnostic mode.
+
+The exact-run cleanup path still honors the age gate: it proves ownership with
+the generated run ID and can terminate a genuinely stale instance after
+primary cleanup fails. A broad live sweep is intentionally unsupported; use
+the default dry-run to discover candidates for operator review.
+
 ## Cutover Runbook
 
 Advance only when the current phase is green:
@@ -54,6 +83,13 @@ verified, the retained volume is not exclusively available, required tools are
 missing, cleanup is incomplete, artifact sanitization fails, or a stable check
 has no selected backend. Do not remove the hosted implementation during this
 milestone.
+
+If the retained cache is unavailable, unhealthy, or fails its identity and
+mount checks, the lane fails closed before EC2 launch. For a deliberate cold
+cache measurement, use a separately named proof run and record it as cold; do
+not detach, recreate, or overwrite the production retained volume during a
+normal PR validation. A builder image or Rust toolchain change requires a new
+immutable image digest and a new cache qualification run.
 
 ## AWS And GitHub Setup
 
@@ -113,6 +149,9 @@ For the operational apples-to-apples run:
 - `base_ref`: merge base or `origin/main`
 - `source_event_name`: `pull_request` for a PR shadow
 - `instance_type`: `c7a.8xlarge` (36 vCPUs; the production parallel profile)
+- `instance_types`: `c7a.8xlarge,m7a.8xlarge,c7i.8xlarge` (ordered Spot
+  capacity pool)
+- `max_run_seconds`: `1800` (hard manager limit)
 - `validation_command`: blank
 
 The combined profile starts path-policy `adl-ci` and policy-selected

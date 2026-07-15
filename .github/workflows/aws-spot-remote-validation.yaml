@@ -30,6 +30,14 @@ on:
         required: false
         default: "c7a.8xlarge"
         type: string
+      instance_types:
+        required: false
+        default: ""
+        type: string
+      max_run_seconds:
+        required: false
+        default: "1800"
+        type: string
       builder_image_tag:
         required: false
         default: "v0.91.7-coverage-5243"
@@ -82,6 +90,14 @@ on:
         description: "Primary EC2 instance type"
         required: true
         default: "c7a.8xlarge"
+      instance_types:
+        description: "Ordered comma-separated Spot capacity pool"
+        required: true
+        default: "c7a.8xlarge,m7a.8xlarge,c7i.8xlarge"
+      max_run_seconds:
+        description: "Hard wall-clock limit for one Spot manager process"
+        required: true
+        default: "1800"
       builder_image_tag:
         description: "ECR image tag; the default contains the CI and coverage toolchains"
         required: true
@@ -111,6 +127,8 @@ jobs:
       AWS_SPOT_REMOTE_VALIDATION_SSH_PRIVATE_KEY_B64: ${{ secrets.AWS_SPOT_REMOTE_VALIDATION_SSH_PRIVATE_KEY_B64 }}
       AWS_SPOT_REMOTE_VALIDATION_SSH_ALLOWED_CIDR: ${{ vars.AWS_SPOT_REMOTE_VALIDATION_SSH_ALLOWED_CIDR }}
       ISSUE_NUMBER: ${{ inputs.issue_number }}
+      INSTANCE_TYPES: ${{ inputs.instance_types || inputs.instance_type }}
+      MAX_RUN_SECONDS: ${{ inputs.max_run_seconds || '1800' }}
       SPOT_RUN_ID: adl-wp-${{ inputs.issue_number }}-gha-${{ github.run_id }}-${{ github.run_attempt }}-${{ inputs.profile }}
     steps:
       - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4
@@ -195,6 +213,14 @@ jobs:
             echo "::error::validation_command is available only for the custom profile"
             exit 2
           fi
+          if ! [[ "$INSTANCE_TYPES" =~ ^[a-z0-9.-]+(,[a-z0-9.-]+)*$ ]]; then
+            echo "::error::instance_types must be a comma-separated EC2 instance-type list"
+            exit 2
+          fi
+          if ! [[ "$MAX_RUN_SECONDS" =~ ^[0-9]+$ ]] || [ "$MAX_RUN_SECONDS" -lt 300 ] || [ "$MAX_RUN_SECONDS" -gt 3600 ]; then
+            echo "::error::max_run_seconds must be between 300 and 3600 seconds"
+            exit 2
+          fi
 
       - name: Configure Agent Logic AWS credentials
         id: aws-credentials
@@ -270,6 +296,8 @@ jobs:
             --git-ref "$GIT_REF" \
             --command "$VALIDATION_COMMAND" \
             --instance-type "$INSTANCE_TYPE" \
+            --instance-types "$INSTANCE_TYPES" \
+            --max-run-seconds "$MAX_RUN_SECONDS" \
             --builder-image-tag "$BUILDER_IMAGE_TAG" \
             --out .adl/tmp/aws-spot-remote-validation/summary.json \
             --artifact-dir .adl/tmp/aws-spot-remote-validation/artifacts \
@@ -306,6 +334,8 @@ jobs:
             --git-ref "$GIT_REF" \
             --command "$VALIDATION_COMMAND" \
             --instance-type "$INSTANCE_TYPE" \
+            --instance-types "$INSTANCE_TYPES" \
+            --max-run-seconds "$MAX_RUN_SECONDS" \
             --builder-image-tag "$BUILDER_IMAGE_TAG" \
             --ssh-private-key-path "$SSH_KEY_PATH" \
             --ssh-allowed-cidr "$AWS_SPOT_REMOTE_VALIDATION_SSH_ALLOWED_CIDR" \
@@ -316,13 +346,26 @@ jobs:
       - name: Ensure Spot compute cleanup
         if: always() && inputs.mode == 'start-run' && steps.aws-credentials.outcome == 'success'
         run: |
+          cleanup_status=0
           bash adl/tools/run_aws_spot_remote_validation_lane.sh cleanup \
             --check-account \
             --profile env \
             --region "$AWS_SPOT_REMOTE_VALIDATION_REGION" \
             --run-id "$SPOT_RUN_ID" \
             --out .adl/tmp/aws-spot-remote-validation/summary.json \
-            --artifact-dir .adl/tmp/aws-spot-remote-validation/artifacts
+            --artifact-dir .adl/tmp/aws-spot-remote-validation/artifacts || cleanup_status=$?
+          sweep_status=0
+          bash adl/tools/sweep_aws_spot_orphans.sh \
+            --profile env \
+            --region "$AWS_SPOT_REMOTE_VALIDATION_REGION" \
+            --run \
+            --run-id "$SPOT_RUN_ID" \
+            --max-age-minutes 90 \
+            --artifact-dir .adl/tmp/aws-spot-remote-validation/orphan-sweep || sweep_status=$?
+          if [ "$cleanup_status" -ne 0 ] || [ "$sweep_status" -ne 0 ]; then
+            echo "::error::Spot cleanup failed cleanup_status=$cleanup_status sweep_status=$sweep_status"
+            exit 1
+          fi
 
       - name: Spot remote validation summary
         if: always()

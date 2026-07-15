@@ -2958,6 +2958,18 @@ impl AwsRemoteValidationAdapter for LiveAwsRemoteValidationAdapter {
                             .value(&spec.run_id)
                             .build(),
                     )
+                    .tags(
+                        ec2::types::Tag::builder()
+                            .key("adl:managed")
+                            .value("true")
+                            .build(),
+                    )
+                    .tags(
+                        ec2::types::Tag::builder()
+                            .key("adl:lane")
+                            .value("spot-remote-validation")
+                            .build(),
+                    )
                     .build(),
             );
         if let Some(key_name) = spec.ssh_key_name.as_deref() {

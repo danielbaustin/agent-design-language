@@ -37,6 +37,7 @@ JSON=false
 PRINT_COMMAND=false
 FOLLOW=false
 INSTANCE_TYPES=()
+INSTANCE_TYPES_INPUT=""
 CACHE_VOLUME_NAME="${ADL_AWS_REMOTE_VALIDATION_CACHE_VOLUME_NAME:-adl-aws-remote-validation-cache-volume}"
 CACHE_VOLUME_SIZE_GIB="${ADL_AWS_REMOTE_VALIDATION_CACHE_VOLUME_SIZE_GIB:-1000}"
 CACHE_VOLUME_TYPE="${ADL_AWS_REMOTE_VALIDATION_CACHE_VOLUME_TYPE:-gp3}"
@@ -45,6 +46,7 @@ CACHE_VOLUME_THROUGHPUT_MBPS="${ADL_AWS_REMOTE_VALIDATION_CACHE_VOLUME_THROUGHPU
 CACHE_VOLUME_DEVICE_NAME="${ADL_AWS_REMOTE_VALIDATION_CACHE_VOLUME_DEVICE_NAME:-/dev/sdf}"
 CACHE_VOLUME_MOUNT_PATH="${ADL_AWS_REMOTE_VALIDATION_CACHE_VOLUME_MOUNT_PATH:-/mnt/adl-cache}"
 REMOTE_COMMAND_TIMEOUT_SECONDS="${ADL_AWS_REMOTE_VALIDATION_COMMAND_TIMEOUT_SECONDS:-600}"
+MAX_RUN_SECONDS="${ADL_AWS_REMOTE_VALIDATION_MAX_RUN_SECONDS:-1800}"
 SSH_KEY_NAME="${ADL_AWS_REMOTE_VALIDATION_SSH_KEY_NAME:-adl-wp06-spot-ssh-debug-20260704}"
 SSH_PRIVATE_KEY_PATH="${ADL_AWS_REMOTE_VALIDATION_SSH_PRIVATE_KEY_PATH:-$HOME/.ssh/adl-4603-ssh-debug-20260701.pem}"
 SSH_USER="${ADL_AWS_REMOTE_VALIDATION_SSH_USER:-ec2-user}"
@@ -82,6 +84,8 @@ Options:
   --out <path>                  Summary JSON path. Defaults under .adl/tmp.
   --artifact-dir <dir>          Artifact root. Defaults beside --out.
   --instance-type <type>        Add an allowed EC2 instance type.
+  --instance-types <types>      Comma-separated ordered Spot capacity pool.
+  --max-run-seconds <seconds>   Hard wall-clock limit for the manager process.
   --cache-volume-name <name>    Warm EBS cache volume name. Defaults to retained WP-06 cache.
   --cache-volume-size-gib <gib> Cache volume size when created. Defaults to 1000.
   --cache-volume-type <type>    Cache volume type. Defaults to gp3.
@@ -182,6 +186,14 @@ while [[ $# -gt 0 ]]; do
       ;;
     --instance-type)
       INSTANCE_TYPES+=("${2:-}")
+      shift 2
+      ;;
+    --instance-types)
+      INSTANCE_TYPES_INPUT="${2:-}"
+      shift 2
+      ;;
+    --max-run-seconds)
+      MAX_RUN_SECONDS="${2:-}"
       shift 2
       ;;
     --cache-volume-name)
@@ -301,7 +313,9 @@ elif [[ "$ACTION" == "run" && "$RUN" != true ]]; then
   exit 2
 fi
 
-if [[ ${#INSTANCE_TYPES[@]} -eq 0 ]]; then
+if [[ -n "$INSTANCE_TYPES_INPUT" ]]; then
+  IFS=',' read -r -a INSTANCE_TYPES <<<"$INSTANCE_TYPES_INPUT"
+elif [[ ${#INSTANCE_TYPES[@]} -eq 0 ]]; then
   INSTANCE_TYPES=("m7a.2xlarge" "c7a.2xlarge" "c7i.2xlarge")
 fi
 
@@ -327,6 +341,16 @@ if [[ ! "$REMOTE_COMMAND_TIMEOUT_SECONDS" =~ ^[0-9]+$ ]] || (( REMOTE_COMMAND_TI
   echo "run_aws_spot_remote_validation_lane: command timeout must be between 1 and 600 seconds" >&2
   exit 2
 fi
+if [[ ! "$MAX_RUN_SECONDS" =~ ^[0-9]+$ ]] || (( MAX_RUN_SECONDS < 30 || MAX_RUN_SECONDS > 3600 )); then
+  echo "run_aws_spot_remote_validation_lane: max run must be between 30 and 3600 seconds" >&2
+  exit 2
+fi
+for instance_type in ${INSTANCE_TYPES[@]+"${INSTANCE_TYPES[@]}"}; do
+  if [[ ! "$instance_type" =~ ^[a-z][a-z0-9-]*\.[0-9]+xlarge$ ]]; then
+    echo "run_aws_spot_remote_validation_lane: invalid EC2 instance type: $instance_type" >&2
+    exit 2
+  fi
+done
 if [[ -n "$ESTIMATED_HOURLY_COST_USD" ]] && [[ ! "$ESTIMATED_HOURLY_COST_USD" =~ ^[0-9]+([.][0-9]+)?$ ]]; then
   echo "run_aws_spot_remote_validation_lane: --estimated-hourly-cost-usd must be numeric" >&2
   exit 2
@@ -830,6 +854,7 @@ fi
 for instance_type in ${INSTANCE_TYPES[@]+"${INSTANCE_TYPES[@]}"}; do
   cmd+=(--instance-type "$instance_type")
 done
+cmd+=(--max-spot-retries "${ADL_AWS_REMOTE_VALIDATION_MAX_SPOT_RETRIES:-2}")
 
 if [[ "$JSON" == true ]]; then
   cmd+=(--json)
@@ -858,7 +883,34 @@ execute_run() {
   local runner_status finalize_status wrapper_summary
 
   set +e
-  "${cmd[@]}" >"$runner_stdout" 2>"$runner_stderr"
+  python3 - "$MAX_RUN_SECONDS" "${cmd[@]}" >"$runner_stdout" 2>"$runner_stderr" <<'PY'
+import os
+import signal
+import subprocess
+import sys
+
+deadline = int(sys.argv[1])
+command = sys.argv[2:]
+process = subprocess.Popen(command, start_new_session=True)
+try:
+    process.wait(timeout=deadline)
+except subprocess.TimeoutExpired:
+    print(f"status=max_runtime_exceeded max_run_seconds={deadline}", file=sys.stderr)
+    try:
+        os.killpg(process.pid, signal.SIGTERM)
+    except ProcessLookupError:
+        pass
+    try:
+        process.wait(timeout=30)
+    except subprocess.TimeoutExpired:
+        try:
+            os.killpg(process.pid, signal.SIGKILL)
+        except ProcessLookupError:
+            pass
+        process.wait()
+    raise SystemExit(124)
+raise SystemExit(process.returncode)
+PY
   runner_status="$?"
   set -e
 

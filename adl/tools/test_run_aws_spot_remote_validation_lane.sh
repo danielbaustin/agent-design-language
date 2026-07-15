@@ -378,6 +378,7 @@ bash "$SCRIPT" \
   --ssh-private-key-path "$test_ssh_key" \
   --command "cargo test --manifest-path adl/Cargo.toml provider_communication -- --nocapture" \
   --git-ref origin/main \
+  --instance-types m7a.2xlarge,c7a.2xlarge \
   --out "$TMP/summary.json" \
   --artifact-dir "$TMP/artifacts" \
   --instance-type m7a.2xlarge \
@@ -393,6 +394,7 @@ grep -Fx -- "--issue" "$TMP/args.txt" >/dev/null
 grep -Fx -- "5191" "$TMP/args.txt" >/dev/null
 grep -Fx -- "--instance-type" "$TMP/args.txt" >/dev/null
 grep -Fx -- "m7a.2xlarge" "$TMP/args.txt" >/dev/null
+grep -Fx -- "c7a.2xlarge" "$TMP/args.txt" >/dev/null
 grep -Fx -- "--spot-only" "$TMP/args.txt" >/dev/null
 grep -F 'INSTANCE_TYPES=("m7a.2xlarge" "c7a.2xlarge" "c7i.2xlarge")' "$SCRIPT" >/dev/null
 grep -Fx -- "--cache-volume-id" "$TMP/args.txt" >/dev/null
@@ -413,6 +415,16 @@ grep -Fx -- "--cache-volume-mount-path" "$TMP/args.txt" >/dev/null
 grep -Fx -- "/mnt/adl-cache" "$TMP/args.txt" >/dev/null
 grep -Fx -- "--command-timeout-seconds" "$TMP/args.txt" >/dev/null
 grep -Fx -- "600" "$TMP/args.txt" >/dev/null
+grep -Fx -- "--max-spot-retries" "$TMP/args.txt" >/dev/null
+grep -Fx -- "2" "$TMP/args.txt" >/dev/null
+
+if ADL_AWS_REMOTE_VALIDATION_MAX_RUN_SECONDS=29 \
+  bash "$SCRIPT" preflight --expected-proof "$proof" --bin "$fake_bin/adl-aws-remote-validation" \
+    --builder-image "$builder_image" --estimated-hourly-cost-usd 0.15 --git-ref origin/main >/dev/null 2>"$TMP/max-run.err"; then
+  echo "expected max run below 30 seconds to fail closed" >&2
+  exit 1
+fi
+grep -F -- 'max run must be between 30 and 3600 seconds' "$TMP/max-run.err" >/dev/null
 if ADL_AWS_REMOTE_VALIDATION_COMMAND_TIMEOUT_SECONDS=601 \
   bash "$SCRIPT" preflight --expected-proof "$proof" --bin "$fake_bin/adl-aws-remote-validation" \
     --run-id fixture-run --builder-image "$builder_image" --git-ref origin/main \
@@ -421,6 +433,7 @@ if ADL_AWS_REMOTE_VALIDATION_COMMAND_TIMEOUT_SECONDS=601 \
   exit 1
 fi
 grep -F "command timeout must be between 1 and 600 seconds" "$TMP/timeout.err" >/dev/null
+grep -F 'status=max_runtime_exceeded max_run_seconds=' "$SCRIPT" >/dev/null
 grep -Fx -- "--ssh-key-name" "$TMP/args.txt" >/dev/null
 grep -Fx -- "adl-wp06-spot-ssh-debug-20260704" "$TMP/args.txt" >/dev/null
 grep -Fx -- "--ssh-private-key-path" "$TMP/args.txt" >/dev/null
