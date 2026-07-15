@@ -20,9 +20,10 @@ use serde::Serialize;
 use serde_json::{json, Value};
 use sha2::{Digest, Sha256};
 use std::collections::BTreeMap;
+#[cfg(windows)]
 use std::env;
 use std::fs::{self, File, OpenOptions};
-use std::io::{BufRead, BufReader, Write};
+use std::io::{BufRead, BufReader, Read, Seek, SeekFrom, Write};
 use std::path::{Path, PathBuf};
 use std::sync::Mutex;
 use std::thread;
@@ -1535,9 +1536,7 @@ fn validate_governed_stop_request(
             "csm governed-stop operator is not present in the locked agent spec policy"
         ));
     }
-    let os_identity = env::var("USER")
-        .or_else(|_| env::var("USERNAME"))
-        .unwrap_or_default();
+    let os_identity = authenticated_os_identity();
     if os_identity.trim().is_empty() || os_identity.trim() != request.operator_identity.trim() {
         return Err(anyhow!(
             "csm governed-stop operator does not match the authenticated OS identity"
@@ -1552,22 +1551,84 @@ fn consume_governed_stop_authorization(
 ) -> Result<()> {
     let authorization_ref = governed_authorization_ref(&request.authorization);
     let path = loaded.state_root.join(GOVERNED_STOP_AUTHORIZATION_LEDGER);
-    let existing = fs::read_to_string(&path).unwrap_or_default();
+    let mut file = OpenOptions::new()
+        .create(true)
+        .read(true)
+        .write(true)
+        .open(&path)
+        .with_context(|| format!("open governed-stop authorization ledger {}", path.display()))?;
+    lock_governed_stop_ledger(&file)?;
+    let mut existing = String::new();
+    file.seek(SeekFrom::Start(0))?;
+    file.read_to_string(&mut existing)?;
     if existing
         .lines()
         .any(|line| line.trim() == authorization_ref)
     {
+        unlock_governed_stop_ledger(&file)?;
         return Err(anyhow!(
             "csm governed-stop authorization has already been consumed"
         ));
     }
-    let mut file = OpenOptions::new()
-        .create(true)
-        .append(true)
-        .open(&path)
-        .with_context(|| format!("open governed-stop authorization ledger {}", path.display()))?;
+    file.seek(SeekFrom::End(0))?;
     writeln!(file, "{authorization_ref}")
         .with_context(|| format!("record governed-stop authorization {}", path.display()))?;
+    file.sync_all().with_context(|| {
+        format!(
+            "durably record governed-stop authorization {}",
+            path.display()
+        )
+    })?;
+    unlock_governed_stop_ledger(&file)?;
+    Ok(())
+}
+
+fn authenticated_os_identity() -> String {
+    #[cfg(unix)]
+    {
+        use std::ffi::CStr;
+        use std::os::unix::ffi::OsStringExt;
+        let uid = unsafe { libc::geteuid() };
+        let passwd = unsafe { libc::getpwuid(uid) };
+        if !passwd.is_null() {
+            let name = unsafe { CStr::from_ptr((*passwd).pw_name) };
+            return std::ffi::OsString::from_vec(name.to_bytes().to_vec())
+                .to_string_lossy()
+                .into_owned();
+        }
+        return String::new();
+    }
+    #[cfg(windows)]
+    {
+        env::var("USERNAME").unwrap_or_default()
+    }
+    #[cfg(not(any(unix, windows)))]
+    {
+        String::new()
+    }
+}
+
+fn lock_governed_stop_ledger(file: &File) -> Result<()> {
+    #[cfg(unix)]
+    {
+        use std::os::fd::AsRawFd;
+        let result = unsafe { libc::flock(file.as_raw_fd(), libc::LOCK_EX) };
+        if result != 0 {
+            return Err(anyhow!("lock governed-stop authorization ledger failed"));
+        }
+    }
+    Ok(())
+}
+
+fn unlock_governed_stop_ledger(file: &File) -> Result<()> {
+    #[cfg(unix)]
+    {
+        use std::os::fd::AsRawFd;
+        let result = unsafe { libc::flock(file.as_raw_fd(), libc::LOCK_UN) };
+        if result != 0 {
+            return Err(anyhow!("unlock governed-stop authorization ledger failed"));
+        }
+    }
     Ok(())
 }
 

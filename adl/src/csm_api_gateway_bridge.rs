@@ -504,6 +504,7 @@ fn validate_required_inputs(options: &ApiGatewayBridgeOptions) -> Result<()> {
     if options.invoke_url.trim().is_empty() {
         bail!("csm cloud-control api-gateway-bridge requires --invoke-url");
     }
+    validate_curl_config_value("invoke URL", &options.invoke_url)?;
     if options
         .api_id
         .as_deref()
@@ -536,6 +537,16 @@ fn validate_required_inputs(options: &ApiGatewayBridgeOptions) -> Result<()> {
 }
 
 fn validate_curl_header_value(label: &str, value: &str) -> Result<()> {
+    if value
+        .chars()
+        .any(|character| matches!(character, '\\' | '"' | '\r' | '\n'))
+    {
+        bail!("{label} contains curl config control characters");
+    }
+    Ok(())
+}
+
+fn validate_curl_config_value(label: &str, value: &str) -> Result<()> {
     if value
         .chars()
         .any(|character| matches!(character, '\\' | '"' | '\r' | '\n'))
@@ -717,6 +728,12 @@ fn http_json(
     bearer: Option<&str>,
     correlation_id: &str,
 ) -> Result<HttpJsonResponse> {
+    validate_curl_config_value("invoke URL", base_url)?;
+    validate_curl_config_value("request path", path)?;
+    validate_curl_config_value("correlation id", correlation_id)?;
+    if let Some(token) = bearer {
+        validate_curl_header_value("operator token", token)?;
+    }
     let url = format!("{}{}", base_url.trim_end_matches('/'), path);
     let mut config = format!(
         "silent\nshow-error\nwrite-out = \"\\n%{{http_code}}\"\nheader = \"X-ADL-Correlation-Id: {correlation_id}\"\n"
@@ -1033,6 +1050,22 @@ mod tests {
             assert!(
                 super::validate_curl_header_value("operator token", unsafe_token).is_err(),
                 "unsafe token accepted: {unsafe_token:?}"
+            );
+        }
+    }
+
+    #[test]
+    fn api_gateway_curl_config_rejects_url_and_correlation_controls() {
+        for (label, value) in [
+            (
+                "invoke URL",
+                "https://example.test/\"\nheader = \"X-Evil: yes\"",
+            ),
+            ("correlation id", "run\\\nurl = \"https://evil.test\""),
+        ] {
+            assert!(
+                super::validate_curl_config_value(label, value).is_err(),
+                "unsafe curl config value accepted: {label}"
             );
         }
     }
