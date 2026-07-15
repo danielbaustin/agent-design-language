@@ -60,7 +60,8 @@ pub use readiness::{
 };
 pub use review::{
     assign_review, evaluate_publication_review, evaluate_publication_review_in_repo, record_review,
-    PublicationReviewReport, ReviewAssignmentRequest, ReviewRecordRequest,
+    recover_review, PublicationReviewReport, ReviewAssignmentRequest, ReviewRecordRequest,
+    ReviewRecoveryRequest,
 };
 pub use schema::public_schema_bundle;
 pub use soak::{

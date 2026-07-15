@@ -147,6 +147,22 @@ pub fn diagnose(store: &Store, issue: u64) -> DoctorReport {
             message: "design review does not cover the current design digest".into(),
         }),
     }
+    if matches!(
+        record.phase,
+        LifecyclePhase::Reviewed | LifecyclePhase::Published | LifecyclePhase::MergeReady
+    ) {
+        if let (Some(assignment), Some(review)) =
+            (record.review_assignment.as_ref(), record.review.as_ref())
+        {
+            let current = crate::git::substantive_revision(store.root(), &assignment.scope);
+            if current.as_ref().ok() != Some(&review.reviewed_revision) {
+                report.findings.push(Finding {
+                    code: "review_publication_dead_end".into(),
+                    message: "reviewed evidence does not match a clean current substantive commit; recover_review is required before publication".into(),
+                });
+            }
+        }
+    }
     if report.findings.is_empty() {
         report.ready = record.phase == LifecyclePhase::Initialized;
         report.next_operation = Some(
@@ -159,7 +175,18 @@ pub fn diagnose(store: &Store, issue: u64) -> DoctorReport {
         );
     } else {
         report.status = DoctorStatus::Block;
-        report.next_operation = Some("repair_design_readiness".into());
+        report.next_operation = Some(
+            if report
+                .findings
+                .iter()
+                .any(|finding| finding.code == "review_publication_dead_end")
+            {
+                "recover_review"
+            } else {
+                "repair_design_readiness"
+            }
+            .into(),
+        );
     }
     report
 }

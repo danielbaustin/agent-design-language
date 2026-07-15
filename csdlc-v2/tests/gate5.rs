@@ -1,10 +1,10 @@
 use csdlc_v2::cards::{FindingDisposition, FindingSeverity};
 use csdlc_v2::{
     assign_review, edit_issue, evaluate_publication_review, evaluate_publication_review_in_repo,
-    initialize_issue, record_review, BootstrapRequest, CardKind, Claim, EditRequest,
+    initialize_issue, record_review, BootstrapRequest, CardKind, Claim, EditRequest, ErrorCode,
     InitialCardInput, LifecyclePhase, NonSubstantiveProof, PlanningProfile,
     ReviewAssignmentRequest, ReviewEvidence, ReviewFindingEvidence, ReviewRecordRequest,
-    SemanticOperation, Store,
+    ReviewRecoveryRequest, SemanticOperation, Store,
 };
 
 fn finding(id: &str) -> ReviewFindingEvidence {
@@ -226,6 +226,209 @@ fn assignment_and_recording_update_index_and_srp_without_publication_side_effect
         )
         .ready
     );
+}
+
+#[test]
+fn dirty_substantive_tree_is_rejected_before_review_assignment() {
+    let (temp, store, record) = implemented_fixture();
+    std::fs::write(temp.path().join("docs/design.md"), "# changed design\n").expect("dirty");
+    let error = assign_review(
+        &store,
+        ReviewAssignmentRequest {
+            issue: 7,
+            expected_generation: record.generation,
+            expected_digest: record.digest,
+            claim_id: "claim".into(),
+            reviewer: "subagent".into(),
+            assigned_by: "agent".into(),
+            scope: vec!["docs".into()],
+        },
+    )
+    .expect_err("dirty review assignment must fail closed");
+    assert!(matches!(error.code, ErrorCode::UnsafeCheckout));
+}
+
+#[test]
+fn metadata_only_changes_do_not_stale_a_clean_review() {
+    let (temp, store, record) = implemented_fixture();
+    let assigned = assign_review(
+        &store,
+        ReviewAssignmentRequest {
+            issue: 7,
+            expected_generation: record.generation,
+            expected_digest: record.digest,
+            claim_id: "claim".into(),
+            reviewer: "subagent".into(),
+            assigned_by: "agent".into(),
+            scope: vec!["docs".into()],
+        },
+    )
+    .expect("clean assignment");
+    let revision = assigned
+        .review_assignment
+        .as_ref()
+        .expect("assignment")
+        .revision
+        .clone();
+    let reviewed = record_review(
+        &store,
+        ReviewRecordRequest {
+            issue: 7,
+            expected_generation: assigned.generation,
+            expected_digest: assigned.digest,
+            claim_id: "claim".into(),
+            actor: "agent".into(),
+            evidence: ReviewEvidence {
+                reviewer: "subagent".into(),
+                scope: vec!["docs".into()],
+                reviewed_revision: revision.clone(),
+                findings: vec![],
+                residual_risks: vec![],
+                completed: true,
+                non_substantive_proof: None,
+            },
+        },
+    )
+    .expect("record review");
+    std::fs::create_dir_all(temp.path().join(".csdlc/review")).expect("metadata dir");
+    std::fs::write(temp.path().join(".csdlc/review/observation.json"), "{}\n").expect("metadata");
+    let current = csdlc_v2::git::substantive_revision(temp.path(), &["docs".into()])
+        .expect("current revision");
+    assert_eq!(current, revision);
+    assert!(
+        evaluate_publication_review_in_repo(temp.path(), reviewed.review.as_ref(), &current).ready
+    );
+    edit_issue(
+        &store,
+        EditRequest {
+            issue: 7,
+            card: CardKind::Sip,
+            expected_generation: reviewed.generation,
+            expected_digest: reviewed.digest,
+            claim_id: "claim".into(),
+            actor: "agent".into(),
+            reason: "enter reviewed phase".into(),
+            operation: SemanticOperation::AdvancePhase {
+                phase: LifecyclePhase::Reviewed,
+            },
+            fail_after_backup: false,
+        },
+    )
+    .expect("reviewed phase");
+    let report = csdlc_v2::diagnose(&store, 7);
+    assert!(!report
+        .findings
+        .iter()
+        .any(|finding| finding.code == "review_publication_dead_end"));
+}
+
+#[test]
+fn reviewed_dirty_state_is_diagnosed_and_recoverable_for_clean_rereview() {
+    let (temp, store, implemented) = implemented_fixture();
+    let assigned = assign_review(
+        &store,
+        ReviewAssignmentRequest {
+            issue: 7,
+            expected_generation: implemented.generation,
+            expected_digest: implemented.digest,
+            claim_id: "claim".into(),
+            reviewer: "subagent".into(),
+            assigned_by: "agent".into(),
+            scope: vec!["docs".into()],
+        },
+    )
+    .expect("assign clean review");
+    let revision = assigned
+        .review_assignment
+        .as_ref()
+        .expect("assignment")
+        .revision
+        .clone();
+    let reviewed = record_review(
+        &store,
+        ReviewRecordRequest {
+            issue: 7,
+            expected_generation: assigned.generation,
+            expected_digest: assigned.digest,
+            claim_id: "claim".into(),
+            actor: "agent".into(),
+            evidence: ReviewEvidence {
+                reviewer: "subagent".into(),
+                scope: vec!["docs".into()],
+                reviewed_revision: revision,
+                findings: vec![],
+                residual_risks: vec![],
+                completed: true,
+                non_substantive_proof: None,
+            },
+        },
+    )
+    .expect("record review");
+    let reviewed = edit_issue(
+        &store,
+        EditRequest {
+            issue: 7,
+            card: CardKind::Sip,
+            expected_generation: reviewed.generation,
+            expected_digest: reviewed.digest.clone(),
+            claim_id: "claim".into(),
+            actor: "agent".into(),
+            reason: "enter reviewed phase".into(),
+            operation: SemanticOperation::AdvancePhase {
+                phase: LifecyclePhase::Reviewed,
+            },
+            fail_after_backup: false,
+        },
+    )
+    .expect("reviewed phase");
+    std::fs::write(temp.path().join("docs/new-proof.md"), "proof\n").expect("dirty change");
+    let report = csdlc_v2::diagnose(&store, 7);
+    assert!(matches!(
+        report.status,
+        csdlc_v2::doctor::DoctorStatus::Block
+    ));
+    assert!(report
+        .findings
+        .iter()
+        .any(|finding| finding.code == "review_publication_dead_end"));
+    assert_eq!(report.next_operation.as_deref(), Some("recover_review"));
+
+    let recovered = csdlc_v2::recover_review(
+        &store,
+        ReviewRecoveryRequest {
+            issue: 7,
+            expected_generation: reviewed.generation,
+            expected_digest: reviewed.digest,
+            claim_id: "claim".into(),
+            actor: "operator".into(),
+            reason: "re-review after finalizing substantive changes".into(),
+        },
+    )
+    .expect("recover reviewed state");
+    assert_eq!(recovered.phase, LifecyclePhase::Implemented);
+    assert!(recovered.review.is_none());
+    assert!(recovered.review_assignment.is_none());
+    assert!(recovered
+        .audit
+        .iter()
+        .any(|event| event.operation == "recover_review"));
+
+    git(temp.path(), &["add", "docs/new-proof.md"]);
+    git(temp.path(), &["commit", "-m", "finalize reviewed changes"]);
+    let reassigned = assign_review(
+        &store,
+        ReviewAssignmentRequest {
+            issue: 7,
+            expected_generation: recovered.generation,
+            expected_digest: recovered.digest,
+            claim_id: "claim".into(),
+            reviewer: "reviewer".into(),
+            assigned_by: "operator".into(),
+            scope: vec!["docs".into()],
+        },
+    )
+    .expect("reassign after clean finalize");
+    assert!(reassigned.review_assignment.is_some());
 }
 fn git(root: &std::path::Path, args: &[&str]) {
     let output = std::process::Command::new("git")

@@ -1,7 +1,7 @@
 use clap::{Parser, Subcommand};
 use csdlc_v2::{
-    assign_review, evaluate_publication_review_in_repo, record_review, ReviewAssignmentRequest,
-    ReviewEvidence, ReviewRecordRequest, Store,
+    assign_review, evaluate_publication_review_in_repo, record_review, recover_review,
+    ReviewAssignmentRequest, ReviewEvidence, ReviewRecordRequest, ReviewRecoveryRequest, Store,
 };
 use serde::Deserialize;
 use std::{fs, path::PathBuf};
@@ -19,6 +19,10 @@ enum Command {
         request: PathBuf,
     },
     Record {
+        #[arg(long)]
+        request: PathBuf,
+    },
+    Recover {
         #[arg(long)]
         request: PathBuf,
     },
@@ -44,6 +48,9 @@ fn main() {
             .and_then(json),
         Command::Record { request } => read::<ReviewRecordRequest>(&request)
             .and_then(|v| record_review(&store, v))
+            .and_then(json),
+        Command::Recover { request } => read::<ReviewRecoveryRequest>(&request)
+            .and_then(|v| recover_review(&store, v))
             .and_then(json),
         Command::Guard { request } => read::<GuardRequest>(&request).and_then(|v| {
             let current = csdlc_v2::git::substantive_revision(store.root(), &v.scope)?;

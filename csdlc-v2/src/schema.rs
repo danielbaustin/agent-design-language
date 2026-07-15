@@ -7,7 +7,9 @@ use crate::model::IssueRecord;
 use crate::publication::{PublicationIntent, PublicationRequest, RemotePullRequest};
 use crate::pvf::{ExecutionReport, ExecutionRequest, PvfManifest, ScheduleReport, ShepherdReport};
 use crate::readiness::{ReadinessReport, ReadinessRequest, TerminalObservation};
-use crate::review::{PublicationReviewReport, ReviewAssignmentRequest, ReviewRecordRequest};
+use crate::review::{
+    PublicationReviewReport, ReviewAssignmentRequest, ReviewRecordRequest, ReviewRecoveryRequest,
+};
 use crate::store::ApproveDesignRequest;
 use crate::store::{BootstrapRequest, EditRequest};
 
@@ -29,6 +31,7 @@ pub fn public_schema_bundle() -> Value {
         "shepherd_report": schemars::schema_for!(ShepherdReport),
         "review_assignment_request": schemars::schema_for!(ReviewAssignmentRequest),
         "review_record_request": schemars::schema_for!(ReviewRecordRequest),
+        "review_recovery_request": schemars::schema_for!(ReviewRecoveryRequest),
         "publication_review_report": schemars::schema_for!(PublicationReviewReport),
         "publication_request": schemars::schema_for!(PublicationRequest),
         "publication_intent": schemars::schema_for!(PublicationIntent),

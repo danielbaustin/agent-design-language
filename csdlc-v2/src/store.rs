@@ -640,6 +640,89 @@ impl Store {
         self.commit(issue, &record, &cards, false)?;
         Ok(record)
     }
+
+    pub(crate) fn commit_review_recovery(
+        &self,
+        issue: u64,
+        expected_generation: u64,
+        expected_digest: &str,
+        claim_id: &str,
+        actor: String,
+        reason: String,
+    ) -> Result<IssueRecord> {
+        let _lock = self.lock(issue)?;
+        self.recover_if_needed(issue)?;
+        let mut record = self.load_record(issue)?;
+        if record.generation != expected_generation {
+            return Err(V2Error::new(
+                ErrorCode::StaleGeneration,
+                "review recovery generation changed before commit",
+            ));
+        }
+        if record.digest != expected_digest {
+            return Err(V2Error::new(
+                ErrorCode::StaleDigest,
+                "review recovery record changed before commit",
+            ));
+        }
+        record
+            .claim
+            .as_ref()
+            .ok_or_else(|| V2Error::new(ErrorCode::MissingClaim, "claim missing"))?
+            .validate(claim_id, now_seconds()?)?;
+        if !matches!(
+            record.phase,
+            LifecyclePhase::Reviewed | LifecyclePhase::Published | LifecyclePhase::MergeReady
+        ) {
+            return Err(V2Error::new(
+                ErrorCode::InvalidTransition,
+                "review recovery requires reviewed phase",
+            ));
+        }
+        let mut cards = self.load_cards(issue)?;
+        verify_cards(self, &record, &cards)?;
+        cards.get_mut(&CardKind::Srp).expect("SRP").status = crate::cards::CardStatus::Draft;
+        let srp = match &mut cards.get_mut(&CardKind::Srp).expect("SRP").content {
+            CardContent::Srp(values) => values,
+            _ => unreachable!("SRP"),
+        };
+        srp.review_scope.clear();
+        srp.review_revision = None;
+        srp.reviewer = None;
+        srp.findings.clear();
+        srp.residual_risk.clear();
+        srp.review_result = crate::cards::ReviewResult::PreReview;
+        if let CardContent::Sor(sor) = &mut cards.get_mut(&CardKind::Sor).expect("SOR").content {
+            sor.publication_state = crate::cards::PublicationState::NotPublished;
+            sor.integration_state = crate::cards::IntegrationState::WorktreeOnly;
+            sor.merge_state = crate::cards::MergeState::NotMerged;
+            sor.closeout_state = crate::cards::CloseoutState::NotStarted;
+        }
+        record.advance(LifecyclePhase::Implemented, actor.clone(), reason.clone())?;
+        record.review_assignment = None;
+        record.review = None;
+        record.publication = None;
+        record.readiness = None;
+        record.terminal = None;
+        record.generation += 1;
+        for values in cards.values_mut() {
+            values.identity.generation = record.generation;
+        }
+        if let Some(claim) = record.claim.as_mut() {
+            claim.generation = record.generation;
+        }
+        record.audit.push(AuditEvent {
+            sequence: record.audit.len() as u64 + 1,
+            generation: record.generation,
+            actor,
+            reason,
+            operation: "recover_review".into(),
+        });
+        hydrate_projections(&mut record, &cards)?;
+        record.digest = record_digest(&record)?;
+        self.commit(issue, &record, &cards, false)?;
+        Ok(record)
+    }
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize, JsonSchema)]
@@ -885,6 +968,20 @@ pub fn edit_issue(store: &Store, request: EditRequest) -> Result<IssueRecord> {
     }
     let mut cards = store.load_cards(request.issue)?;
     verify_cards(store, &record, &cards)?;
+    if matches!(
+        record.phase,
+        LifecyclePhase::Reviewed | LifecyclePhase::Published | LifecyclePhase::MergeReady
+    ) && matches!(
+        request.operation,
+        SemanticOperation::AdvancePhase {
+            phase: LifecyclePhase::Implemented
+        }
+    ) {
+        return Err(V2Error::new(
+            ErrorCode::InvalidTransition,
+            "reviewed work must use typed csdlc-review recover",
+        ));
+    }
     authorize_card_operation(record.phase, request.card, &request.operation)?;
     let values = cards
         .get_mut(&request.card)
