@@ -89,6 +89,29 @@ git -C "$REPO" add .
 git -C "$REPO" commit -q -m "fixture"
 
 python3 "$ROOT/adl/tools/check_repo_quality_staleness.py" --repo-root "$REPO" --milestone v0.91.6 >/dev/null
+python3 "$ROOT/adl/tools/check_repo_quality_staleness.py" --repo-root "$REPO" --milestone v0.91.6 --mode release >/dev/null
+
+PLANNED_REPO="$TMP/repo-planned"
+cp -R "$REPO" "$PLANNED_REPO"
+rm "$PLANNED_REPO/docs/milestones/v0.91.6/FEATURE_DOCS_v0.91.6.md"
+python3 - "$PLANNED_REPO/docs/milestones/v0.91.6/README.md" <<'PY'
+from pathlib import Path
+import sys
+path = Path(sys.argv[1])
+text = path.read_text()
+text = text.replace("- [Feature-doc index](FEATURE_DOCS_v0.91.6.md)\n", "")
+path.write_text(text)
+PY
+
+python3 "$ROOT/adl/tools/check_repo_quality_staleness.py" --repo-root "$PLANNED_REPO" --milestone v0.91.6 --mode planned >"$TMP/planned-feature-dir.out"
+grep -F "PASS repo-quality-staleness milestone uses feature directory index:" "$TMP/planned-feature-dir.out" >/dev/null
+grep -F "repo-quality-staleness summary: PASS milestone=v0.91.6 mode=planned deferred=3" "$TMP/planned-feature-dir.out" >/dev/null
+
+python3 "$ROOT/adl/tools/check_repo_quality_staleness.py" --repo-root "$PLANNED_REPO" --milestone v0.91.6 --mode active >"$TMP/active-feature-dir.out"
+grep -F "repo-quality-staleness summary: PASS milestone=v0.91.6 mode=active" "$TMP/active-feature-dir.out" >/dev/null
+
+python3 "$ROOT/adl/tools/check_repo_quality_staleness.py" --repo-root "$PLANNED_REPO" --milestone v0.91.6 --mode release >"$TMP/release-feature-dir.out"
+grep -F "repo-quality-staleness summary: PASS milestone=v0.91.6 mode=release" "$TMP/release-feature-dir.out" >/dev/null
 
 python3 - "$REPO/README.md" <<'PY'
 from pathlib import Path
@@ -97,12 +120,31 @@ path = Path(sys.argv[1])
 path.write_text(path.read_text().replace("Active milestone: v0.91.6", "Active milestone: v0.91.5"))
 PY
 
+python3 "$ROOT/adl/tools/check_repo_quality_staleness.py" --repo-root "$REPO" --milestone v0.91.6 --mode planned >"$TMP/planned.out"
+grep -F "DEFER repo-quality-staleness root README active milestone line deferred until activation: v0.91.6" "$TMP/planned.out" >/dev/null
+grep -F "DEFER repo-quality-staleness root README current milestone link deferred until activation: docs/milestones/v0.91.6/README.md" "$TMP/planned.out" >/dev/null
+grep -F "DEFER repo-quality-staleness CHANGELOG current milestone heading deferred until activation: ## v0.91.6 (" "$TMP/planned.out" >/dev/null
+grep -F "repo-quality-staleness summary: PASS milestone=v0.91.6 mode=planned deferred=3" "$TMP/planned.out" >/dev/null
+
 if python3 "$ROOT/adl/tools/check_repo_quality_staleness.py" --repo-root "$REPO" --milestone v0.91.6 >/dev/null 2>&1; then
   echo "expected stale README milestone check to fail" >&2
   exit 1
 fi
 
 git -C "$REPO" checkout -- README.md
+python3 - "$REPO/CHANGELOG.md" <<'PY'
+from pathlib import Path
+import sys
+path = Path(sys.argv[1])
+path.write_text(path.read_text().replace("## v0.91.6 (Active bridge/readiness tranche)", "## v0.91.5 (Previous milestone)"))
+PY
+
+if python3 "$ROOT/adl/tools/check_repo_quality_staleness.py" --repo-root "$REPO" --milestone v0.91.6 --mode release >/dev/null 2>&1; then
+  echo "expected release mode stale CHANGELOG check to fail" >&2
+  exit 1
+fi
+
+git -C "$REPO" checkout -- CHANGELOG.md
 mkdir -p "$REPO/docs/__pycache__"
 touch "$REPO/docs/__pycache__/bad.pyc"
 git -C "$REPO" add docs/__pycache__/bad.pyc
