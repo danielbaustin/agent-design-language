@@ -25,8 +25,8 @@ issue. Do not remove its hosted jobs.
 ### Runtime And Capacity Guardrails
 
 Every live Spot invocation has a hard manager wall-clock limit. The workflow
-default is 1800 seconds; the remote command itself remains bounded at 600
-seconds. A timeout returns a failed check and runs the cleanup step rather than
+default is 1800 seconds; the remote command itself remains bounded at 900
+seconds (15 minutes). A timeout returns a failed check and runs the cleanup step rather than
 leaving a paid builder running indefinitely. The limit can be lowered for a
 known-fast shadow, but the workflow rejects values below 300 seconds or above
 3600 seconds; the lower-level wrapper also fail-closes values below 30 seconds.
@@ -340,10 +340,10 @@ image rollback, and alternate instance selection:
 
 - [AWS Spot Remote Execution HOW-TO](AWS_SPOT_REMOTE_EXECUTION_HOW_TO.md)
 
-The Spot wrapper enforces a 600-second remote-command deadline. The operational
+The Spot wrapper enforces a 900-second (15-minute) remote-command deadline. The operational
 performance target remains 300 seconds, but the larger kill threshold allows a
 warm-cache GitHub run to finish and report its actual timing instead of being
 cut off at the end of the target window. On timeout or instance loss it
 requests SSM `CancelCommand` before terminating the builder, so a canceled
 GitHub job does not leave a validation command running during teardown. The
-timeout override is constrained to the same 600-second maximum.
+timeout override is constrained to the same 900-second maximum.

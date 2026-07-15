@@ -414,7 +414,7 @@ grep -Fx -- "/dev/sdf" "$TMP/args.txt" >/dev/null
 grep -Fx -- "--cache-volume-mount-path" "$TMP/args.txt" >/dev/null
 grep -Fx -- "/mnt/adl-cache" "$TMP/args.txt" >/dev/null
 grep -Fx -- "--command-timeout-seconds" "$TMP/args.txt" >/dev/null
-grep -Fx -- "600" "$TMP/args.txt" >/dev/null
+grep -Fx -- "900" "$TMP/args.txt" >/dev/null
 grep -Fx -- "--max-spot-retries" "$TMP/args.txt" >/dev/null
 grep -Fx -- "2" "$TMP/args.txt" >/dev/null
 
@@ -425,14 +425,14 @@ if ADL_AWS_REMOTE_VALIDATION_MAX_RUN_SECONDS=29 \
   exit 1
 fi
 grep -F -- 'max run must be between 30 and 3600 seconds' "$TMP/max-run.err" >/dev/null
-if ADL_AWS_REMOTE_VALIDATION_COMMAND_TIMEOUT_SECONDS=601 \
+if ADL_AWS_REMOTE_VALIDATION_COMMAND_TIMEOUT_SECONDS=901 \
   bash "$SCRIPT" preflight --expected-proof "$proof" --bin "$fake_bin/adl-aws-remote-validation" \
     --run-id fixture-run --builder-image "$builder_image" --git-ref origin/main \
     --estimated-hourly-cost-usd 0.15 >/dev/null 2>"$TMP/timeout.err"; then
-  echo "expected timeout override above 600 seconds to fail closed" >&2
+  echo "expected timeout override above 900 seconds to fail closed" >&2
   exit 1
 fi
-grep -F "command timeout must be between 1 and 600 seconds" "$TMP/timeout.err" >/dev/null
+grep -F "command timeout must be between 1 and 900 seconds" "$TMP/timeout.err" >/dev/null
 grep -F 'status=max_runtime_exceeded max_run_seconds=' "$SCRIPT" >/dev/null
 grep -Fx -- "--ssh-key-name" "$TMP/args.txt" >/dev/null
 grep -Fx -- "adl-wp06-spot-ssh-debug-20260704" "$TMP/args.txt" >/dev/null
