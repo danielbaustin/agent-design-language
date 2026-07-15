@@ -14,5 +14,5 @@
     "adl/src/csdlc_prompt_editor.rs",
     "csdlc-v2/src/bin/csdlc-import.rs"
   ],
-  "required_v2_binaries":["csdlc-init","csdlc-bind","csdlc-edit","csdlc-validate","csdlc-schedule","csdlc-review","csdlc-publish","csdlc-shepherd","csdlc-closeout","csdlc-doctor"]
+  "required_v2_binaries":["csdlc-init","csdlc-bind","csdlc-edit","csdlc-validate","csdlc-schedule","csdlc-review","csdlc-publish","csdlc-shepherd","csdlc-closeout","csdlc-doctor","csdlc-install"]
 }

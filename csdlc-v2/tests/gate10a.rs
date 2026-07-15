@@ -44,12 +44,13 @@ fn installer_records_provenance_without_replacing_other_files() {
     }
     fs::write(destination_parent.path().join("v1-stays"), b"v1").unwrap();
     let receipt = install_binaries(source.path(), &destination).unwrap();
-    assert_eq!(receipt.binaries.len(), 11);
+    assert_eq!(receipt.binaries.len(), 12);
     assert_eq!(
         fs::read(destination_parent.path().join("v1-stays")).unwrap(),
         b"v1"
     );
     assert!(destination.join("install-receipt.json").is_file());
+    assert!(destination.join("csdlc-install").is_file());
     #[cfg(unix)]
     {
         use std::os::unix::fs::PermissionsExt;
@@ -105,10 +106,7 @@ fn operator_guidance_is_bound_to_manifest_and_coexistence_contract() {
         resolve_operator_generation(&root.join(".."), 5294, None).unwrap(),
         selector.default_generation
     );
-    assert_eq!(
-        resolve_operator_generation(&root.join(".."), 5294, Some(Generation::V1)).unwrap(),
-        Generation::V1
-    );
+    assert!(resolve_operator_generation(&root.join(".."), 5294, Some(Generation::V1)).is_err());
     for text in [&root_agents, &nested_agents] {
         assert!(text.contains("v1"));
         assert!(text.contains("csdlc-install"));

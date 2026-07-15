@@ -12,7 +12,8 @@
 ## Status
 
 Current status: forward planning for the later `v0.92` birthday milestone,
-after the planned `v0.91.6` readiness tranche and `v0.91.7` implementation/proof tranche.
+after the planned `v0.91.6` readiness tranche, `v0.91.7`
+implementation/proof tranche, and the new `v0.91.8` platform-acceptance bridge.
 
 - Planning: candidate package refreshed during `v0.91.4` issue `#3434` and
   pre-v0.92 dependency added during `#3506`
@@ -26,7 +27,8 @@ must not be opened until `v0.92` begins. Its boundary was rechecked during the
 `v0.91.4` docs-preparation pass so it stays about identity and birth rather
 than absorbing economics, governed tools, or constitutional citizenship
 prematurely. It now depends on `v0.91.5` release-tail closeout plus the
-`v0.91.6` readiness tranche and `v0.91.7` implementation/proof tranche before opening.
+`v0.91.6` readiness tranche, `v0.91.7` implementation/proof tranche, and
+reviewed `v0.91.8` exact-revision platform handoff before opening.
 
 ## Purpose
 
@@ -42,7 +44,8 @@ package owns the canonical `docs/milestones/v0.92/` planning surface. Issue
 `#3377` remains the first-birthday readiness source issue, but `v0.92` WP-01
 must consume the full pre-`v0.92` readiness/proof sequence: `v0.91.5` release-tail
 truth, `v0.91.5` activation-test outputs, and the `v0.91.6` / `v0.91.7`
-readiness/proof tranches before opening the final issue wave.
+readiness/proof tranches plus `v0.91.8` platform acceptance before opening the
+final issue wave.
 
 ## Milestone Role
 
@@ -116,6 +119,9 @@ v0.92 depends on:
   surfaces that must be integrated/proven, already closed with evidence,
   operator-scoped-out with evidence and approval, or blocked with evidence
   before birthday activation claims can execute
+- v0.91.8 platform acceptance for exact ADL v2, Runtime v3, C-SDLC v2,
+  selector/rollback, deletion, WP-14A child disposition, and v0.92 handoff
+  truth before birthday implementation opens
 
 ## Parallel Python Reduction Tranche
 
@@ -261,7 +267,8 @@ v0.92 is ready to execute when:
 - the activation bridge ledger says every named activation surface is
   integrated/proven, already closed with evidence, operator-scoped-out with
   evidence and approval, or blocked with evidence after the `v0.91.6`
-  readiness tranche and `v0.91.7` implementation/proof tranche execute
+  readiness tranche, `v0.91.7` implementation/proof tranche, and `v0.91.8`
+  platform-acceptance bridge execute
 - every birthday claim maps to name, identity, continuity, memory, capability,
   cognitive profile, witness, receipt, trace, or review evidence
 - negative cases clearly reject ordinary process startup as birth

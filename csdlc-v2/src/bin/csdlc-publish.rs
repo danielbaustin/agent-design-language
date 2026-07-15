@@ -132,42 +132,7 @@ async fn run(cli: &Cli) -> csdlc_v2::Result<serde_json::Value> {
 }
 
 fn resolve_token(request: &PublicationRequest) -> csdlc_v2::Result<String> {
-    if let Ok(value) = std::env::var("ADL_GITHUB_TOKEN") {
-        if !value.trim().is_empty() {
-            return Ok(value);
-        }
-    }
-    if let Ok(value) = std::env::var("GITHUB_TOKEN") {
-        if !value.trim().is_empty() {
-            return Ok(value);
-        }
-    }
-    let path = request
-        .token_file
-        .as_deref()
-        .unwrap_or("~/.config/csdlc/github.token");
-    let expanded = if let Some(rest) = path.strip_prefix("~/") {
-        PathBuf::from(
-            std::env::var("HOME")
-                .map_err(|_| V2Error::new(ErrorCode::InvalidInput, "HOME is unavailable"))?,
-        )
-        .join(rest)
-    } else {
-        PathBuf::from(path)
-    };
-    let value = fs::read_to_string(expanded).map_err(|_| {
-        V2Error::new(
-            ErrorCode::InvalidInput,
-            "GitHub token source is unavailable",
-        )
-    })?;
-    if value.trim().is_empty() {
-        return Err(V2Error::new(
-            ErrorCode::InvalidInput,
-            "GitHub token source is empty",
-        ));
-    }
-    Ok(value.trim().into())
+    csdlc_v2::github_token::resolve(request.token_file.as_deref())
 }
 
 fn persist_intent(root: &Path, intent: &PublicationIntent) -> csdlc_v2::Result<()> {

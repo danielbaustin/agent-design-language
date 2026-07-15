@@ -122,6 +122,20 @@ impl Store {
             fs::remove_dir_all(&backup)?;
         }
         write_complete(&staging, record, cards)?;
+        // Preserve authored design artifacts when they live inside the issue
+        // directory. The atomic directory swap must not discard them.
+        for authored_path in [&record.design_path, &record.diagram_path] {
+            let source = self.root.join(authored_path);
+            if let Ok(relative) = source.strip_prefix(&current) {
+                if source.is_file() {
+                    let destination = staging.join(relative);
+                    if let Some(parent) = destination.parent() {
+                        fs::create_dir_all(parent)?;
+                    }
+                    fs::copy(source, destination)?;
+                }
+            }
+        }
         if current.exists() {
             fs::rename(&current, &backup)?;
             sync_dir(current.parent().expect("issue parent"))?;
@@ -626,6 +640,89 @@ impl Store {
         self.commit(issue, &record, &cards, false)?;
         Ok(record)
     }
+
+    pub(crate) fn commit_review_recovery(
+        &self,
+        issue: u64,
+        expected_generation: u64,
+        expected_digest: &str,
+        claim_id: &str,
+        actor: String,
+        reason: String,
+    ) -> Result<IssueRecord> {
+        let _lock = self.lock(issue)?;
+        self.recover_if_needed(issue)?;
+        let mut record = self.load_record(issue)?;
+        if record.generation != expected_generation {
+            return Err(V2Error::new(
+                ErrorCode::StaleGeneration,
+                "review recovery generation changed before commit",
+            ));
+        }
+        if record.digest != expected_digest {
+            return Err(V2Error::new(
+                ErrorCode::StaleDigest,
+                "review recovery record changed before commit",
+            ));
+        }
+        record
+            .claim
+            .as_ref()
+            .ok_or_else(|| V2Error::new(ErrorCode::MissingClaim, "claim missing"))?
+            .validate(claim_id, now_seconds()?)?;
+        if !matches!(
+            record.phase,
+            LifecyclePhase::Reviewed | LifecyclePhase::Published | LifecyclePhase::MergeReady
+        ) {
+            return Err(V2Error::new(
+                ErrorCode::InvalidTransition,
+                "review recovery requires reviewed phase",
+            ));
+        }
+        let mut cards = self.load_cards(issue)?;
+        verify_cards(self, &record, &cards)?;
+        cards.get_mut(&CardKind::Srp).expect("SRP").status = crate::cards::CardStatus::Draft;
+        let srp = match &mut cards.get_mut(&CardKind::Srp).expect("SRP").content {
+            CardContent::Srp(values) => values,
+            _ => unreachable!("SRP"),
+        };
+        srp.review_scope.clear();
+        srp.review_revision = None;
+        srp.reviewer = None;
+        srp.findings.clear();
+        srp.residual_risk.clear();
+        srp.review_result = crate::cards::ReviewResult::PreReview;
+        if let CardContent::Sor(sor) = &mut cards.get_mut(&CardKind::Sor).expect("SOR").content {
+            sor.publication_state = crate::cards::PublicationState::NotPublished;
+            sor.integration_state = crate::cards::IntegrationState::WorktreeOnly;
+            sor.merge_state = crate::cards::MergeState::NotMerged;
+            sor.closeout_state = crate::cards::CloseoutState::NotStarted;
+        }
+        record.advance(LifecyclePhase::Implemented, actor.clone(), reason.clone())?;
+        record.review_assignment = None;
+        record.review = None;
+        record.publication = None;
+        record.readiness = None;
+        record.terminal = None;
+        record.generation += 1;
+        for values in cards.values_mut() {
+            values.identity.generation = record.generation;
+        }
+        if let Some(claim) = record.claim.as_mut() {
+            claim.generation = record.generation;
+        }
+        record.audit.push(AuditEvent {
+            sequence: record.audit.len() as u64 + 1,
+            generation: record.generation,
+            actor,
+            reason,
+            operation: "recover_review".into(),
+        });
+        hydrate_projections(&mut record, &cards)?;
+        record.digest = record_digest(&record)?;
+        self.commit(issue, &record, &cards, false)?;
+        Ok(record)
+    }
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize, JsonSchema)]
@@ -705,10 +802,17 @@ pub fn approve_design(store: &Store, request: ApproveDesignRequest) -> Result<Is
     let mut cards = store.load_cards(request.issue)?;
     verify_record(&record)?;
     let design_digest = digest(&fs::read(store.root.join(&record.design_path))?);
+    let diagram_digest = digest(&fs::read(store.root.join(&record.diagram_path))?);
     for kind in [CardKind::Spp, CardKind::Vpp] {
         match &mut cards.get_mut(&kind).expect("card").content {
-            CardContent::Spp(values) => values.design_digest = design_digest.clone(),
-            CardContent::Vpp(values) => values.design_digest = design_digest.clone(),
+            CardContent::Spp(values) => {
+                values.design_digest = design_digest.clone();
+                values.diagram_digest = diagram_digest.clone();
+            }
+            CardContent::Vpp(values) => {
+                values.design_digest = design_digest.clone();
+                values.diagram_digest = diagram_digest.clone();
+            }
             _ => unreachable!("design-bearing card"),
         }
     }
@@ -737,34 +841,12 @@ pub fn approve_design(store: &Store, request: ApproveDesignRequest) -> Result<Is
 }
 
 pub fn bootstrap_issue(store: &Store, request: BootstrapRequest) -> Result<IssueRecord> {
-    if request.issue == 0 || request.repository.trim().is_empty() {
-        return Err(V2Error::new(
-            ErrorCode::InvalidInput,
-            "issue and repository are required",
-        ));
-    }
-    let now = now_seconds()?;
-    if (request.design_approved && request.design_reviewer.trim().is_empty())
-        || request.claim.id.trim().is_empty()
-        || request.claim.owner.trim().is_empty()
-        || request.claim.purpose.trim().is_empty()
-        || request.claim.branch.trim().is_empty()
-        || request.claim.worktree.trim().is_empty()
-        || request.claim.generation != 0
-        || request.claim.protected_paths.is_empty()
-        || request.claim.heartbeat_unix_seconds < request.claim.acquired_unix_seconds
-        || request.claim.expires_unix_seconds <= request.claim.heartbeat_unix_seconds
-    {
-        return Err(V2Error::new(
-            ErrorCode::InvalidInput,
-            "bootstrap claim/reviewer invariants are incomplete",
-        ));
-    }
-    request.claim.validate(&request.claim.id, now)?;
+    validate_bootstrap_request(&request)?;
     let initialization_digest = digest(&serde_json::to_vec(&request)?);
     let _lock = store.lock(request.issue)?;
     store.recover_if_needed(request.issue)?;
-    if store.issue_dir(request.issue).exists() {
+    let index_path = store.issue_dir(request.issue).join("index.json");
+    if index_path.exists() {
         let existing = store.load_record(request.issue)?;
         verify_cards(store, &existing, &store.load_cards(request.issue)?)?;
         if existing.initialization_digest == initialization_digest {
@@ -828,6 +910,34 @@ pub fn bootstrap_issue(store: &Store, request: BootstrapRequest) -> Result<Issue
     Ok(record)
 }
 
+pub(crate) fn validate_bootstrap_request(request: &BootstrapRequest) -> Result<()> {
+    if request.issue == 0 || request.repository.trim().is_empty() {
+        return Err(V2Error::new(
+            ErrorCode::InvalidInput,
+            "issue and repository are required",
+        ));
+    }
+    let now = now_seconds()?;
+    if (request.design_approved && request.design_reviewer.trim().is_empty())
+        || request.claim.id.trim().is_empty()
+        || request.claim.owner.trim().is_empty()
+        || request.claim.purpose.trim().is_empty()
+        || request.claim.branch.trim().is_empty()
+        || request.claim.worktree.trim().is_empty()
+        || request.claim.generation != 0
+        || request.claim.protected_paths.is_empty()
+        || request.claim.heartbeat_unix_seconds < request.claim.acquired_unix_seconds
+        || request.claim.expires_unix_seconds <= request.claim.heartbeat_unix_seconds
+    {
+        return Err(V2Error::new(
+            ErrorCode::InvalidInput,
+            "bootstrap claim/reviewer invariants are incomplete",
+        ));
+    }
+    request.claim.validate(&request.claim.id, now)?;
+    Ok(())
+}
+
 pub fn edit_issue(store: &Store, request: EditRequest) -> Result<IssueRecord> {
     let _lock = store.lock(request.issue)?;
     store.recover_if_needed(request.issue)?;
@@ -858,7 +968,40 @@ pub fn edit_issue(store: &Store, request: EditRequest) -> Result<IssueRecord> {
     }
     let mut cards = store.load_cards(request.issue)?;
     verify_cards(store, &record, &cards)?;
+    if matches!(
+        record.phase,
+        LifecyclePhase::Reviewed | LifecyclePhase::Published | LifecyclePhase::MergeReady
+    ) && matches!(
+        request.operation,
+        SemanticOperation::AdvancePhase {
+            phase: LifecyclePhase::Implemented
+        }
+    ) {
+        return Err(V2Error::new(
+            ErrorCode::InvalidTransition,
+            "reviewed work must use typed csdlc-review recover",
+        ));
+    }
     authorize_card_operation(record.phase, request.card, &request.operation)?;
+    let replan_before = match &request.operation {
+        SemanticOperation::Replan { field, .. } => Some(current_text_value(
+            cards
+                .get(&request.card)
+                .ok_or_else(|| V2Error::new(ErrorCode::CorruptRecord, "card projection missing"))?,
+            *field,
+        )?),
+        _ => None,
+    };
+    let audit_operation = match (&request.operation, replan_before) {
+        (SemanticOperation::Replan { field, value }, Some(previous)) => serde_json::json!({
+            "operation": "replan",
+            "field": field.as_ref(),
+            "previous_value": previous,
+            "new_value": value,
+        })
+        .to_string(),
+        _ => serde_json::to_string(&request.operation)?,
+    };
     let values = cards
         .get_mut(&request.card)
         .ok_or_else(|| V2Error::new(ErrorCode::CorruptRecord, "card projection missing"))?;
@@ -887,12 +1030,31 @@ pub fn edit_issue(store: &Store, request: EditRequest) -> Result<IssueRecord> {
         generation: record.generation,
         actor: request.actor,
         reason: request.reason,
-        operation: serde_json::to_string(&request.operation)?,
+        operation: audit_operation,
     });
     hydrate_projections(&mut record, &cards)?;
     record.digest = record_digest(&record)?;
     store.commit(request.issue, &record, &cards, request.fail_after_backup)?;
     Ok(record)
+}
+
+fn current_text_value(values: &CardValues, field: crate::cards::TextField) -> Result<String> {
+    match (&values.content, field) {
+        (CardContent::Sip(value), crate::cards::TextField::Goal) => Ok(value.goal.clone()),
+        (CardContent::Sip(value), crate::cards::TextField::RequiredOutcome) => {
+            Ok(value.required_outcome.clone())
+        }
+        (CardContent::Stp(value), crate::cards::TextField::TaskBoundary) => {
+            Ok(value.task_boundary.clone())
+        }
+        (CardContent::Spp(value), crate::cards::TextField::PlanSummary) => {
+            Ok(value.summary.clone())
+        }
+        _ => Err(V2Error::new(
+            ErrorCode::FieldOwnership,
+            "replan field is not owned by the selected planning card",
+        )),
+    }
 }
 
 pub(crate) fn verify_cards(
@@ -1215,6 +1377,10 @@ fn authorize_card_operation(
             SemanticOperation::SetField { .. }
                 | SemanticOperation::AppendReference { .. }
                 | SemanticOperation::AdvanceStatus { .. },
+        ) | (
+            LifecyclePhase::Bound,
+            CardKind::Sip | CardKind::Stp | CardKind::Spp,
+            SemanticOperation::Replan { .. },
         ) | (
             LifecyclePhase::Bound,
             CardKind::Sor,

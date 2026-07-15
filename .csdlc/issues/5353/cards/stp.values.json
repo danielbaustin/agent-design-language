@@ -1,0 +1,44 @@
+{
+  "identity": {
+    "schema_version": "1.0.0",
+    "template_version": "1.0.0",
+    "issue": 5353,
+    "repository": "danielbaustin/agent-design-language",
+    "title": "[v0.91.8][WP-01][csdlc-v2] Make init and design approval safe for issue-local design paths",
+    "slug": "v0-91-8-wp01-csdlc-v2-init-design-approval-safety",
+    "version": "v0.91.8",
+    "generation": 7
+  },
+  "status": "ready",
+  "content": {
+    "card_kind": "stp",
+    "values": {
+      "task_boundary": "Repair only initialization atomicity and design/diagram digest refresh behavior.",
+      "deliverables": [
+        "focused regressions",
+        "typed partial-initialization handling",
+        "design and diagram digest parity"
+      ],
+      "acceptance_criteria": [
+        "issue-local design paths initialize safely",
+        "partial initialization fails typed and recoverably",
+        "approval refreshes SPP and VPP design and diagram digests",
+        "doctor passes after init and approval"
+      ],
+      "dependencies": [
+        "none"
+      ],
+      "repo_inputs": [
+        "csdlc-v2/src/lifecycle.rs",
+        "csdlc-v2/src/store.rs",
+        "csdlc-v2/src/cards.rs",
+        "csdlc-v2/tests"
+      ],
+      "non_goals": [
+        "ADL core rearchitecture",
+        "runtime changes",
+        "v1 wrapper restoration"
+      ]
+    }
+  }
+}

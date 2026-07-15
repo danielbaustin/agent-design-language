@@ -1,0 +1,19 @@
+schema = "adl.runtime_v3.init.v1"
+
+[api]
+address = "localhost:20997"
+public_base_url = "https://runtime-gateway-host"
+
+[api.tls]
+certificate_chain_path = ".adl/runtime-v3/tls/localhost-cert.pem"
+private_key_path = ".adl/runtime-v3/tls/localhost-key.pem"
+
+[observatory]
+allowed_origins = [
+  "https://localhost:8765",
+  "https://localhost:8766",
+]
+
+[agents]
+count = 10000
+sample_limit = 6

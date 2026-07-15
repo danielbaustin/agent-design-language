@@ -16,3 +16,7 @@ authority to mutate candidate v1 paths or execute an eligible manifest.
 The legacy AST importer remains only as an internal, one-way parity fixture for
 Gate 8 tests. The `csdlc-import` executable and operator route are sunset; no
 new lifecycle operation may invoke the importer after Gate 10D2.
+
+For pull requests created before the v1 sunset, follow
+`docs/tooling/C_SDLC_V2_V1_ORIGIN_PR_TAIL_PLAYBOOK.md`; do not revive the
+historical v1 command surface.

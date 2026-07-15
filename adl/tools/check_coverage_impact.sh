@@ -264,6 +264,12 @@ candidate_filter_for_path() {
     adl/src/cli/runtime_v2_cmd/commands.rs|adl/src/cli/runtime_v2_cmd/helpers.rs)
       printf 'runtime_v2_aee_obsmem_pvf_trace_handoff'
       ;;
+    adl/src/cli/runtime_v3_cmd.rs)
+      printf 'runtime_v3_selector'
+      ;;
+    adl-runtime/src/guardian.rs)
+      printf 'runtime_v3_guardian'
+      ;;
     adl/src/csdlc_prompt_editor.rs)
       printf 'csdlc_prompt_editor'
       ;;
@@ -398,6 +404,12 @@ nextest_expression_for_filter() {
       ;;
     runtime_v2_unified_runtime_kernel)
       printf 'test(runtime_v2_unified_runtime_kernel)'
+      ;;
+    runtime_v3_selector)
+      printf 'binary_id(adl::bin/adl) and test(/^cli::runtime_v3_cmd::tests::/)'
+      ;;
+    runtime_v3_guardian)
+      printf 'test(/^guardian::tests::/)'
       ;;
     finish)
       printf 'binary_id(adl::bin/adl-pr-finish) and test(/^cli::pr_cmd::tests::finish::arg_render::/) or binary_id(adl::bin/adl-pr-finish) and test(/^cli::pr_cmd::finish_support::tests::/)'

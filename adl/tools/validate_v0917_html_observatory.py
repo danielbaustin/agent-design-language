@@ -32,7 +32,7 @@ CSM_HEALTH_REF = "../../../docs/milestones/v0.91.7/review/runtime/csm_liveness_4
 CSM_READY_REF = "../../../docs/milestones/v0.91.7/review/runtime/csm_liveness_4976/published/api/ready.json"
 CSM_METRICS_REF = "../../../docs/milestones/v0.91.7/review/runtime/csm_liveness_4976/published/api/metrics.json"
 CSM_EVENTS_REF = "../../../docs/milestones/v0.91.7/review/runtime/csm_liveness_4976/published/api/events.json"
-RUNTIME_V3_OBSERVATORY_ENDPOINT = "http://127.0.0.1:20997/v1/observatory"
+RUNTIME_V3_OBSERVATORY_ENDPOINT = "https://runtime-gateway-host/v1/observatory"
 
 
 def fail(message: str) -> None:
@@ -145,6 +145,15 @@ def run_js_view_model(
             }}
           }},
           continuity: {{ checkpoint: {{ generation: 2, accepted_through: 19, topology_hash: "topology", config_hash: "config", integrity: "snapshot" }} }},
+          agents: {{
+            total_count: 10000,
+            rendered_sample_count: 3,
+            sample: [
+              {{ id: "agent-00001", label: "Runtime agent 1", role: "runtime agent", state: "running", detail: "sample 1 of 10000" }},
+              {{ id: "agent-00002", label: "Runtime agent 2", role: "runtime agent", state: "running", detail: "sample 2 of 10000" }},
+              {{ id: "agent-00003", label: "Runtime agent 3", role: "runtime agent", state: "running", detail: "sample 3 of 10000" }}
+            ]
+          }},
           proof: {{
             default_runtime_switch_authorized: false,
             runtime_v2_decommission_authorized: false,
@@ -156,12 +165,12 @@ def run_js_view_model(
           ]
         }});
         const livePayloads = new Map([
-          ["http://127.0.0.1:49210/status", retainedFiles.get(retainedRefs.statusRef)],
-          ["http://127.0.0.1:49210/health", retainedFiles.get(retainedRefs.healthRef)],
-          ["http://127.0.0.1:49210/ready", retainedFiles.get(retainedRefs.readyRef)],
-          ["http://127.0.0.1:49210/metrics", retainedFiles.get(retainedRefs.metricsRef)],
-          ["http://127.0.0.1:49210/events", retainedFiles.get(retainedRefs.eventsRef)],
-          ["http://127.0.0.1:20997/v1/observatory", runtimeV3Feed]
+          ["http://localhost:49210/status", retainedFiles.get(retainedRefs.statusRef)],
+          ["http://localhost:49210/health", retainedFiles.get(retainedRefs.healthRef)],
+          ["http://localhost:49210/ready", retainedFiles.get(retainedRefs.readyRef)],
+          ["http://localhost:49210/metrics", retainedFiles.get(retainedRefs.metricsRef)],
+          ["http://localhost:49210/events", retainedFiles.get(retainedRefs.eventsRef)],
+          ["https://runtime-gateway-host/v1/observatory", runtimeV3Feed]
         ]);
         const textWrites = [];
         const datasetWrites = [];
@@ -264,7 +273,7 @@ def run_js_view_model(
             ? {{ ok: false, status: 404, text: async () => "", json: async () => {{ throw new Error("missing mock payload"); }} }}
             : {{ ok: true, status: 200, text: async () => body, json: async () => JSON.parse(body) }};
         }};
-        const mockLocation = {{ search: "?csmApiBase=http://127.0.0.1:49210" }};
+        const mockLocation = {{ search: "?csmApiBase=http://localhost:49210" }};
         const context = {{
           console,
           URL,
@@ -340,18 +349,12 @@ def run_js_view_model(
         }}, packet);
         const retainedSnapshot = await context.AdlHtmlObservatory.fetchRetainedRuntimeSnapshot(retainedRefs);
         const retainedFetchPanopticon = context.AdlHtmlObservatory.buildPanopticonViewModel(retainedSnapshot, packet);
-        const liveSnapshot = await context.AdlHtmlObservatory.fetchRuntimeSnapshot("http://127.0.0.1:49210");
+        const liveSnapshot = await context.AdlHtmlObservatory.fetchRuntimeSnapshot("http://localhost:49210");
         const liveFetchPanopticon = context.AdlHtmlObservatory.buildPanopticonViewModel(liveSnapshot, packet);
-        let runtimeV3PortOnlyRejected = false;
-        try {{
-          await context.AdlHtmlObservatory.fetchRuntimeSnapshot("http://127.0.0.1:20997");
-        }} catch (_error) {{
-          runtimeV3PortOnlyRejected = true;
-        }}
-        mockLocation.search = "?runtime=v3&runtimeApiBase=http://127.0.0.1:20997";
-        const runtimeV3Snapshot = await context.AdlHtmlObservatory.fetchRuntimeSnapshot("http://127.0.0.1:20997");
+        mockLocation.search = "?runtime=v3&runtimeApiBase=https://runtime-gateway-host";
+        const runtimeV3Snapshot = await context.AdlHtmlObservatory.fetchRuntimeSnapshot("https://runtime-gateway-host");
         const runtimeV3Panopticon = context.AdlHtmlObservatory.buildPanopticonViewModel(runtimeV3Snapshot, packet);
-        mockLocation.search = "?csmApiBase=http://127.0.0.1:49210";
+        mockLocation.search = "?csmApiBase=http://localhost:49210";
         context.AdlHtmlObservatory.bindLivePanopticon(packet);
         await new Promise((resolve) => setImmediate(resolve));
         const blockedCloudwatchViewModel = context.AdlHtmlObservatory.buildIntegrationViewModel({{
@@ -382,9 +385,9 @@ def run_js_view_model(
           openAwsLinkageCount: context.AdlHtmlObservatory.AWS_LINKAGES.filter((item) => item.state === "open").length,
           operatorEnvelope,
           loopbackPolicy: {{
-            localHttp: context.AdlHtmlObservatory.isLoopbackApiBase("http://127.0.0.1:49210"),
             localhostHttp: context.AdlHtmlObservatory.isLoopbackApiBase("http://localhost:49210"),
-            ipv6Http: context.AdlHtmlObservatory.isLoopbackApiBase("http://[::1]:49210"),
+            runtimeRemoteHttps: context.AdlHtmlObservatory.isRuntimeV3ApiBase("https://runtime-gateway-host"),
+            runtimeHttp: context.AdlHtmlObservatory.isRuntimeV3ApiBase("http://localhost:20997"),
             remoteHttp: context.AdlHtmlObservatory.isLoopbackApiBase("https://example.com"),
             malformed: context.AdlHtmlObservatory.isLoopbackApiBase("not a url")
           }},
@@ -423,8 +426,8 @@ def run_js_view_model(
           runtimeV3Panopticon: {{
             mode: runtimeV3Panopticon.mode,
             runtimeSelection: runtimeV3Snapshot.runtimeSelection,
-            portOnlyRejected: runtimeV3PortOnlyRejected,
             agentLabels: runtimeV3Panopticon.agents.map((agent) => agent.label),
+            agentTotal: runtimeV3Panopticon.agentTotal,
             eventCount: runtimeV3Panopticon.events.length,
             metricCount: runtimeV3Panopticon.metrics.length,
             readyState: runtimeV3Panopticon.readyState,
@@ -558,7 +561,7 @@ def main() -> int:
     assert_contains("HTML dashboard real runtime refresh", html, 'id="dashboard-refresh-live"')
     assert_contains("HTML dashboard real runtime stop", html, 'id="dashboard-stop-live"')
     assert_contains("HTML Runtime v3 opt-in port", html, "20997")
-    assert_contains("HTML Runtime v3 explicit opt-in query", html, "runtime=v3&runtimeApiBase=http://127.0.0.1:20997")
+    assert_contains("HTML Runtime v3 explicit opt-in query", html, "runtime=v3&runtimeApiBase=https://runtime-gateway-host")
     assert_contains("HTML dashboard communication inspector", html, 'id="hero-communication-status"')
     assert_contains("HTML dashboard status bar", html, 'class="dashboard-statusbar"')
     assert_contains("HTML topbar capture time field", html, "Capture Time")
@@ -638,7 +641,6 @@ def main() -> int:
     assert_contains("JS runtime snapshot polling", js, "fetchRuntimeSnapshot")
     assert_contains("JS Runtime v3 observatory feed polling", js, "fetchRuntimeV3ObservatorySnapshot")
     assert_contains("JS Runtime v3 observatory endpoint", js, 'RUNTIME_V3_OBSERVATORY_ENDPOINT = "/v1/observatory"')
-    assert_contains("JS Runtime v3 control port", js, 'RUNTIME_V3_CONTROL_PORT = "20997"')
     assert_contains("JS Runtime v3 explicit opt-in selection", js, "runtime_v3_explicit_opt_in")
     assert_contains("JS runtime query base bootstrap", js, "getQueryApiBase")
     assert_contains("JS runtime auto-connect gate", js, "shouldAutoConnectLive")
@@ -788,10 +790,14 @@ def main() -> int:
     if envelope.get("allowed_live_check") is not None:
       fail("ACIP-SNS envelope should not claim a live /events read")
     loopback_policy = smoke["loopbackPolicy"]
-    if not all(loopback_policy[key] for key in ("localHttp", "localhostHttp", "ipv6Http")):
+    if not loopback_policy["localhostHttp"]:
       fail(f"loopback CSM API bases were not accepted: {loopback_policy!r}")
+    if not loopback_policy["runtimeRemoteHttps"]:
+      fail(f"configured Runtime v3 remote API base was not accepted: {loopback_policy!r}")
+    if loopback_policy["runtimeHttp"]:
+      fail(f"non-HTTPS Runtime v3 API base was accepted: {loopback_policy!r}")
     if loopback_policy["remoteHttp"] or loopback_policy["malformed"]:
-      fail(f"non-loopback or malformed API base was accepted: {loopback_policy!r}")
+      fail(f"non-CSM-loopback or malformed API base was accepted: {loopback_policy!r}")
     panopticon = smoke["panopticon"]
     if panopticon.get("mode") != "live":
       fail("panopticon view model did not preserve live mode")
@@ -849,7 +855,7 @@ def main() -> int:
     if int(dashboard_mirrors.get("heroEventCount", "0")) < 1:
       fail(f"dashboard event-count mirror did not expose retained events: {dashboard_mirrors!r}")
     live_binding = smoke["liveBinding"]
-    if live_binding.get("base") != "http://127.0.0.1:49210":
+    if live_binding.get("base") != "http://localhost:49210":
       fail(f"live query-param base was not mirrored into the dashboard input: {live_binding!r}")
     if live_binding.get("retainedIntervalCount") != 0:
       fail(f"retained polling interval can overwrite a supplied live runtime base: {live_binding!r}")
@@ -862,12 +868,14 @@ def main() -> int:
       fail(f"Runtime v3 observatory feed did not preserve live mode: {runtime_v3_panopticon!r}")
     if runtime_v3_panopticon.get("runtimeSelection") != "runtime_v3_explicit_opt_in":
       fail(f"Runtime v3 observatory feed did not preserve explicit opt-in selection: {runtime_v3_panopticon!r}")
-    if runtime_v3_panopticon.get("portOnlyRejected") is not True:
-      fail("Runtime v3 Observatory accepted port 20997 without explicit runtime=v3 selection")
     if runtime_v3_panopticon.get("controlPort") != 20997:
       fail(f"Runtime v3 observatory feed did not preserve control port 20997: {runtime_v3_panopticon!r}")
     if runtime_v3_panopticon.get("mutationAuthority") is not False:
       fail("Runtime v3 Observatory browser path overclaims mutation authority")
+    if runtime_v3_panopticon.get("agentTotal") != 10000:
+      fail(f"Runtime v3 Observatory did not preserve high-cardinality agent total: {runtime_v3_panopticon!r}")
+    if len(runtime_v3_panopticon.get("agentLabels", [])) != 3:
+      fail(f"Runtime v3 Observatory rendered sample should stay bounded: {runtime_v3_panopticon!r}")
     if runtime_v3_panopticon.get("defaultSwitchAuthorized") is not False:
       fail("Runtime v3 Observatory browser path overclaims default switch authorization")
     if runtime_v3_panopticon.get("decommissionAuthorized") is not False:
@@ -882,7 +890,7 @@ def main() -> int:
       fail("Runtime v3 observatory feed readiness state mismatch")
 
     secret_pattern = re.compile(
-        r"/Users/|/private/var/|localhost:[0-9]|192\\.168\\.|"
+        r"/Users/|/private/var/|192\\.168\\.|"
         r"bearer\\s+[A-Za-z0-9._-]{8,}|"
         r"(api[_-]?key|secret|token)\\s*[:=]\\s*[A-Za-z0-9._-]{8,}",
         re.IGNORECASE,

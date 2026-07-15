@@ -1,0 +1,122 @@
+{
+  "identity": {
+    "schema_version": "1.0.0",
+    "template_version": "1.0.0",
+    "issue": 5383,
+    "repository": "danielbaustin/agent-design-language",
+    "title": "[v0.91.7][planning] Restore WP-14 routing and create v0.91.8 planning package",
+    "slug": "v0-91-7-planning-restore-wp14-routing-and-create-v0-91-8-planning-package",
+    "version": "v0.91.7",
+    "generation": 18
+  },
+  "status": "ready",
+  "content": {
+    "card_kind": "vpp",
+    "values": {
+      "summary": "Execute the smallest proving validation DAG.",
+      "lanes": [
+        {
+          "lane": "issue-routing-verification",
+          "proof_role": "Verify #4641 restored and WP-14A preservation issue exists via live issue routing evidence",
+          "acceptance_ids": [
+            "AC-1"
+          ],
+          "deterministic": false,
+          "resource_profile": "small",
+          "budget_seconds": 120,
+          "budget_tokens": 1000,
+          "argv": [
+            "gh",
+            "issue",
+            "view",
+            "4641",
+            "--json",
+            "title,labels"
+          ],
+          "parallel_group": "routing",
+          "defer_reason": null
+        },
+        {
+          "lane": "planning-package-presence",
+          "proof_role": "Verify the required v0.91.8 planning package exists",
+          "acceptance_ids": [
+            "AC-2"
+          ],
+          "deterministic": true,
+          "resource_profile": "small",
+          "budget_seconds": 30,
+          "budget_tokens": 500,
+          "argv": [
+            "test",
+            "-f",
+            "docs/milestones/v0.91.8/README.md"
+          ],
+          "parallel_group": "local-docs",
+          "defer_reason": null
+        },
+        {
+          "lane": "feature-doc-presence",
+          "proof_role": "Verify v0.91.8 feature documentation surfaces exist and are reviewable",
+          "acceptance_ids": [
+            "AC-4"
+          ],
+          "deterministic": true,
+          "resource_profile": "small",
+          "budget_seconds": 30,
+          "budget_tokens": 500,
+          "argv": [
+            "test",
+            "-f",
+            "docs/milestones/v0.91.8/features/README.md"
+          ],
+          "parallel_group": "local-docs",
+          "defer_reason": null
+        },
+        {
+          "lane": "docs-diff-check",
+          "proof_role": "Whitespace and patch hygiene for docs/package edits",
+          "acceptance_ids": [
+            "AC-5"
+          ],
+          "deterministic": true,
+          "resource_profile": "small",
+          "budget_seconds": 60,
+          "budget_tokens": 1000,
+          "argv": [
+            "git",
+            "diff",
+            "--check"
+          ],
+          "parallel_group": "local-docs",
+          "defer_reason": null
+        },
+        {
+          "lane": "yaml-parse",
+          "proof_role": "Parse v0.91.8 issue wave YAML",
+          "acceptance_ids": [
+            "AC-3",
+            "AC-5"
+          ],
+          "deterministic": true,
+          "resource_profile": "small",
+          "budget_seconds": 60,
+          "budget_tokens": 1000,
+          "argv": [
+            "python3",
+            "-c",
+            "import yaml, pathlib; yaml.safe_load(pathlib.Path('docs/milestones/v0.91.8/WP_ISSUE_WAVE_v0.91.8.yaml').read_text())"
+          ],
+          "parallel_group": "local-docs",
+          "defer_reason": null
+        }
+      ],
+      "planned_validation_seconds": 7200,
+      "planned_validation_tokens": 50000,
+      "failure_policy": "Fail closed with explicit blocker rows and no readiness claim if issue routing, YAML validity, or planned-posture validation cannot be proven.",
+      "design_ref": "docs/milestones/v0.91.8/setup/5383/DESIGN.md",
+      "design_digest": "410f29ed4197e0bdd3c864b78bb0ad82513c4ab1a9eb11f47e86be3dae852c30",
+      "diagram_ref": "docs/milestones/v0.91.8/setup/5383/DIAGRAM.mmd",
+      "diagram_digest": "1d2a8731a116cf770665f674f1ab4183276a7386c6c2f0351dc98f383dc17429"
+    }
+  }
+}

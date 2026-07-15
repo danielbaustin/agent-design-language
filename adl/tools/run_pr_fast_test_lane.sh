@@ -114,7 +114,6 @@ is_relevant_fast_lane_surface() {
   case "$path" in
     adl-runtime/src/*.rs|adl-runtime/tests/*.rs|adl-runtime/examples/*.rs|adl-runtime/Cargo.toml|adl-runtime/Cargo.lock|\
     adl/src/*.rs|adl/tests/*.rs|adl/build.rs|adl/Cargo.toml|adl/Cargo.lock|\
-    docs/default_workflow.md|\
     docs/milestones/v0.90/milestone_compression/FINISH_VALIDATION_PROFILES_v0.90.md)
       return 0
       ;;
@@ -407,13 +406,6 @@ filter_token_for_path() {
       return 0
       ;;
     adl/src/cli/pr_cmd*|adl/src/cli/tests/pr_cmd*|adl/src/cli/pr_cmd/*)
-      printf 'pr_cmd'
-      return 0
-      ;;
-    docs/default_workflow.md)
-      if [ "$saw_csdlc_binary_taxonomy_surface" = true ]; then
-        return 1
-      fi
       printf 'pr_cmd'
       return 0
       ;;

@@ -39,6 +39,10 @@ name = "csdlc-shepherd"
 path = "src/bin/csdlc-shepherd.rs"
 
 [[bin]]
+name = "csdlc-pr-state"
+path = "src/bin/csdlc-pr-state.rs"
+
+[[bin]]
 name = "csdlc-review"
 path = "src/bin/csdlc-review.rs"
 

@@ -1,0 +1,37 @@
+{
+  "schema": "csdlc.sprint_review.validation_evidence.v1",
+  "repository": "danielbaustin/agent-design-language",
+  "reviewed_revision": "7c3e1e0e86a4ca982231ce91c39073530c5408e6",
+  "observed_at": "2026-07-15T15:59:06Z",
+  "toolchain": {
+    "rustc": "1.92.0 (ded5c06cf 2025-12-08)",
+    "cargo": "1.92.0 (344c4567c 2025-10-21)"
+  },
+  "environment_boundary": "Build output was isolated outside the checkout; the host-specific target path is intentionally omitted.",
+  "runs": [
+    {
+      "id": "csdlc-v2-test-locked",
+      "command": "CARGO_TARGET_DIR=<external-target-dir> cargo test --locked --manifest-path csdlc-v2/Cargo.toml --quiet",
+      "exit_code": 0,
+      "executed_tests": 101,
+      "failed_tests": 0,
+      "ignored_tests": 0,
+      "log": "evidence/cargo-test.log",
+      "log_sha256": "0e9945144337bbe4524a6f9b45fba29d505e6bb20d8a4bfddcd8af18c3f2676c"
+    },
+    {
+      "id": "csdlc-v2-clippy-locked",
+      "command": "CARGO_TARGET_DIR=<external-target-dir> cargo clippy --locked --manifest-path csdlc-v2/Cargo.toml --all-targets -- -D warnings",
+      "exit_code": 0,
+      "log": "evidence/cargo-clippy.log",
+      "log_sha256": "a41051563a4cb5fc1b1bcdd9aa0ba28ca80f7736d629d90cc138218756e8e3a9"
+    },
+    {
+      "id": "csdlc-v2-format",
+      "command": "cargo fmt --manifest-path csdlc-v2/Cargo.toml -- --check",
+      "exit_code": 0,
+      "log": "evidence/cargo-fmt.log",
+      "log_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    }
+  ]
+}

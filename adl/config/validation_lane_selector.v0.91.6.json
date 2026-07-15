@@ -219,7 +219,9 @@
         "adl/tools/setup_required_coverage_toolchain.sh",
         "adl/tools/test_setup_required_coverage_toolchain.sh",
         "adl/tools/rust_cache_env.sh",
-        "adl/tools/test_rust_cache_env.sh"
+        "adl/tools/test_rust_cache_env.sh",
+        "adl/tools/ensure_final_merge_gate.sh",
+        "adl/tools/test_ensure_final_merge_gate.sh"
       ],
       "path_hints": [
         "adl/config/validation_lane_selector.v0.91.6.json",
@@ -249,7 +251,9 @@
         "adl/tools/setup_required_coverage_toolchain.sh",
         "adl/tools/test_setup_required_coverage_toolchain.sh",
         "adl/tools/rust_cache_env.sh",
-        "adl/tools/test_rust_cache_env.sh"
+        "adl/tools/test_rust_cache_env.sh",
+        "adl/tools/ensure_final_merge_gate.sh",
+        "adl/tools/test_ensure_final_merge_gate.sh"
       ],
       "command": "bash adl/tools/test_ci_path_policy.sh && bash adl/tools/test_ci_runtime_contracts.sh && bash adl/tools/test_select_validation_lanes.sh && bash adl/tools/test_validation_manager.sh && bash adl/tools/test_run_nessus_remote_validation.sh && bash adl/tools/test_run_validation_manager_nessus_lane.sh",
       "run_command": "bash adl/tools/test_ci_path_policy.sh && bash adl/tools/test_ci_runtime_contracts.sh && bash adl/tools/test_select_validation_lanes.sh && bash adl/tools/test_validation_manager.sh && bash adl/tools/test_run_nessus_remote_validation.sh && bash adl/tools/test_run_validation_manager_nessus_lane.sh",
@@ -1238,13 +1242,19 @@
         "adl-runtime-kernel/**",
         "infra/rustysd/**",
         "infra/horust/**",
-        "infra/systemd/adl-runtime-kernel.service"
+        "infra/runtime-v3/**",
+        "infra/systemd/adl-runtime-kernel.service",
+        "adl/tools/test_v0917_html_observatory_integrated_proof.sh",
+        "adl/tools/validate_v0917_html_observatory.py"
       ],
       "path_hints": [
         "adl-runtime-kernel/**",
         "infra/rustysd/**",
         "infra/horust/**",
-        "infra/systemd/adl-runtime-kernel.service"
+        "infra/runtime-v3/**",
+        "infra/systemd/adl-runtime-kernel.service",
+        "adl/tools/test_v0917_html_observatory_integrated_proof.sh",
+        "adl/tools/validate_v0917_html_observatory.py"
       ],
       "command": "cargo test --manifest-path adl-runtime-kernel/Cargo.toml && cargo clippy --manifest-path adl-runtime-kernel/Cargo.toml --all-targets -- -D warnings",
       "run_command": "cargo test --manifest-path adl-runtime-kernel/Cargo.toml && cargo clippy --manifest-path adl-runtime-kernel/Cargo.toml --all-targets -- -D warnings",

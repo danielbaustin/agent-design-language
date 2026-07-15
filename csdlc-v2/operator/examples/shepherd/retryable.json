@@ -1,0 +1,7 @@
+{
+  "validation": "failed",
+  "dependency_wait": false,
+  "retryable_failure": true,
+  "repair_needed": false,
+  "operator_decision_needed": false
+}

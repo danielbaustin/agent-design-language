@@ -1,0 +1,77 @@
+{
+  "identity": {
+    "schema_version": "1.0.0",
+    "template_version": "1.0.0",
+    "issue": 5383,
+    "repository": "danielbaustin/agent-design-language",
+    "title": "[v0.91.7][planning] Restore WP-14 routing and create v0.91.8 planning package",
+    "slug": "v0-91-7-planning-restore-wp14-routing-and-create-v0-91-8-planning-package",
+    "version": "v0.91.7",
+    "generation": 18
+  },
+  "status": "ready",
+  "content": {
+    "card_kind": "spp",
+    "values": {
+      "plan_revision": 1,
+      "summary": "Repair live issue routing, bind a setup worktree, author the full v0.91.8 planning package, validate docs/YAML/link/placeholder truth, review, and publish.",
+      "steps": [
+        {
+          "id": "step-1",
+          "action": "Repair and verify #4641/#5384/#5383 issue routing truth",
+          "acceptance_ids": [
+            "AC-1"
+          ],
+          "status": "completed"
+        },
+        {
+          "id": "step-2",
+          "action": "Create complete v0.91.8 planned-posture milestone and feature documentation package",
+          "acceptance_ids": [
+            "AC-2",
+            "AC-3",
+            "AC-4"
+          ],
+          "status": "pending"
+        },
+        {
+          "id": "step-3",
+          "action": "Run focused docs/YAML/link/placeholder validation, review, and publish setup PR",
+          "acceptance_ids": [
+            "AC-5"
+          ],
+          "status": "pending"
+        }
+      ],
+      "affected_areas": [],
+      "invariants": [
+        "v0.91.8 is a bridge prerequisite for v0.92, not a replacement for v0.92",
+        "planning docs cannot claim implementation, deployment, parity, deletion, or release approval before evidence exists",
+        "Runtime v3 and C-SDLC v2 ownership must not be pulled back into ADL core",
+        "root checkout remains clean on main for tracked implementation work"
+      ],
+      "risks": [
+        "live issue wave and local planning package drift",
+        "overclaiming execution readiness from planning text",
+        "forgetting moved WP-14 child issues in the issue wave",
+        "stale v0.91.7 or v0.92 handoff references"
+      ],
+      "execution_estimates": {
+        "elapsed_seconds": 43200,
+        "total_tokens": 140000,
+        "validation_seconds": 7200
+      },
+      "stop_conditions": [
+        "issue routing cannot be verified after repair",
+        "v0.91.8 live issue list changes in a way that invalidates the wave map",
+        "tracked edits would have to occur on main",
+        "validation shows planning package structure is not reviewable"
+      ],
+      "replan_triggers": [],
+      "design_ref": "docs/milestones/v0.91.8/setup/5383/DESIGN.md",
+      "design_digest": "410f29ed4197e0bdd3c864b78bb0ad82513c4ab1a9eb11f47e86be3dae852c30",
+      "diagram_ref": "docs/milestones/v0.91.8/setup/5383/DIAGRAM.mmd",
+      "diagram_digest": "1d2a8731a116cf770665f674f1ab4183276a7386c6c2f0351dc98f383dc17429"
+    }
+  }
+}

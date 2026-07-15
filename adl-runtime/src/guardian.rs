@@ -1,7 +1,7 @@
 //! External Runtime v3 process guardian.
 //!
 //! This module owns the narrow OS-child boundary for
-//! `adl-runtime-kernel serve <continuity-path>`. It intentionally does not
+//! `adl-runtime-kernel serve --init <init-path> <continuity-path>`. It intentionally does not
 //! become a platform service manager and does not supervise Runtime v2.
 
 use std::path::PathBuf;
@@ -15,8 +15,7 @@ use tokio::task::JoinHandle;
 use tokio::time::{sleep, timeout};
 use tokio_util::sync::CancellationToken;
 
-pub const GUARDIAN_SCHEMA: &str = "adl.runtime_v3.external_guardian.v1";
-pub const DEFAULT_RUNTIME_V3_CONTROL_PORT: u16 = 20_997;
+pub const GUARDIAN_SCHEMA: &str = "adl.runtime_v3.external_guardian.v2";
 pub const MAX_CAPTURE_BYTES: u64 = 64 * 1024;
 
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
@@ -29,23 +28,29 @@ pub struct GuardianConfig {
     pub backoff_cap_ms: u64,
     pub shutdown_grace_ms: u64,
     pub configuration_exit_codes: Vec<i32>,
-    pub control_host: String,
-    pub control_port: u16,
 }
 
 impl GuardianConfig {
-    pub fn runtime_kernel(program: impl Into<PathBuf>, continuity_path: impl Into<String>) -> Self {
+    pub fn runtime_kernel(
+        program: impl Into<PathBuf>,
+        continuity_path: impl Into<String>,
+        init_path: impl Into<String>,
+    ) -> Self {
         Self {
             program: program.into(),
-            args: vec!["serve".to_string(), continuity_path.into()],
+            args: vec![
+                "serve".to_string(),
+                "--init".to_string(),
+                init_path.into(),
+                "--capsule".to_string(),
+                continuity_path.into(),
+            ],
             env: Vec::new(),
             restart_budget: 3,
             backoff_base_ms: 100,
             backoff_cap_ms: 5_000,
             shutdown_grace_ms: 10_000,
-            configuration_exit_codes: vec![64],
-            control_host: "127.0.0.1".to_string(),
-            control_port: DEFAULT_RUNTIME_V3_CONTROL_PORT,
+            configuration_exit_codes: vec![64, 78],
         }
     }
 
@@ -69,10 +74,6 @@ impl GuardianConfig {
         if self.shutdown_grace_ms == 0 {
             return Err(GuardianConfigError::ZeroShutdownGrace);
         }
-        if self.control_host != "127.0.0.1" || self.control_port != DEFAULT_RUNTIME_V3_CONTROL_PORT
-        {
-            return Err(GuardianConfigError::UnsupportedControlEndpoint);
-        }
         Ok(())
     }
 }
@@ -85,7 +86,6 @@ pub enum GuardianConfigError {
     ZeroBackoff,
     BackoffCapBelowBase,
     ZeroShutdownGrace,
-    UnsupportedControlEndpoint,
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Serialize, Deserialize)]
@@ -115,8 +115,6 @@ pub struct GuardianOutcome {
     pub terminal_state: GuardianTerminalState,
     pub attempts: u32,
     pub restarts: u32,
-    pub control_host: String,
-    pub control_port: u16,
     pub attempts_detail: Vec<GuardianAttempt>,
 }
 
@@ -422,7 +420,7 @@ fn backoff(config: &GuardianConfig, restarts: u32) -> Duration {
 }
 
 fn outcome(
-    config: &GuardianConfig,
+    _config: &GuardianConfig,
     terminal_state: GuardianTerminalState,
     attempts: u32,
     restarts: u32,
@@ -433,8 +431,6 @@ fn outcome(
         terminal_state,
         attempts,
         restarts,
-        control_host: config.control_host.clone(),
-        control_port: config.control_port,
         attempts_detail,
     }
 }
@@ -510,27 +506,33 @@ mod tests {
     }
 
     #[test]
-    fn runtime_kernel_config_preserves_control_port() {
-        let config = GuardianConfig::runtime_kernel("adl-runtime-kernel", "continuity.json");
-        assert_eq!(config.args, ["serve", "continuity.json"]);
-        assert_eq!(config.control_host, "127.0.0.1");
-        assert_eq!(config.control_port, DEFAULT_RUNTIME_V3_CONTROL_PORT);
+    fn runtime_kernel_config_preserves_init_and_capsule_paths() {
+        let config = GuardianConfig::runtime_kernel(
+            "adl-runtime-kernel",
+            "continuity.json",
+            "runtime-init.toml",
+        );
+        assert_eq!(
+            config.args,
+            [
+                "serve",
+                "--init",
+                "runtime-init.toml",
+                "--capsule",
+                "continuity.json"
+            ]
+        );
+        assert_eq!(config.configuration_exit_codes, [64, 78]);
         assert_eq!(config.validate(), Ok(()));
     }
 
     #[test]
-    fn invalid_control_endpoint_fails_closed() {
-        let mut config = GuardianConfig::runtime_kernel("adl-runtime-kernel", "continuity.json");
-        config.control_port = 20_998;
-        assert_eq!(
-            config.validate(),
-            Err(GuardianConfigError::UnsupportedControlEndpoint)
-        );
-    }
-
-    #[test]
     fn invalid_environment_name_fails_closed() {
-        let mut config = GuardianConfig::runtime_kernel("adl-runtime-kernel", "continuity.json");
+        let mut config = GuardianConfig::runtime_kernel(
+            "adl-runtime-kernel",
+            "continuity.json",
+            "runtime-init.toml",
+        );
         config
             .env
             .push(("BAD=NAME".to_string(), "value".to_string()));
@@ -545,7 +547,7 @@ mod tests {
     async fn captured_output_is_bounded() {
         let root = TestRoot::new("bounded-output");
         let script = root.script("noisy.sh", "#!/bin/sh\nyes x | head -c 70000\nexit 0\n");
-        let mut config = GuardianConfig::runtime_kernel(script, "unused");
+        let mut config = GuardianConfig::runtime_kernel(script, "unused", "runtime-init.toml");
         config.args.clear();
 
         let outcome = run_guardian(config, CancellationToken::new())
@@ -569,7 +571,7 @@ mod tests {
             "env.sh",
             "#!/bin/sh\necho \"$ADL_GUARDIAN_ENV_PROBE\"\nexit 0\n",
         );
-        let mut config = GuardianConfig::runtime_kernel(script, "unused");
+        let mut config = GuardianConfig::runtime_kernel(script, "unused", "runtime-init.toml");
         config.args.clear();
         config
             .env
@@ -598,7 +600,7 @@ mod tests {
                 counter = counter.display()
             ),
         );
-        let mut config = GuardianConfig::runtime_kernel(script, "unused");
+        let mut config = GuardianConfig::runtime_kernel(script, "unused", "runtime-init.toml");
         config.args.clear();
         config.restart_budget = 3;
         config.backoff_base_ms = 1;
@@ -630,7 +632,7 @@ mod tests {
     async fn restart_budget_exhaustion_is_terminal() {
         let root = TestRoot::new("budget");
         let script = root.script("fail.sh", "#!/bin/sh\necho failed >&2\nexit 7\n");
-        let mut config = GuardianConfig::runtime_kernel(script, "unused");
+        let mut config = GuardianConfig::runtime_kernel(script, "unused", "runtime-init.toml");
         config.args.clear();
         config.restart_budget = 2;
         config.backoff_base_ms = 1;
@@ -654,7 +656,7 @@ mod tests {
     async fn configuration_exit_does_not_restart() {
         let root = TestRoot::new("config");
         let script = root.script("config.sh", "#!/bin/sh\necho bad-config >&2\nexit 64\n");
-        let mut config = GuardianConfig::runtime_kernel(script, "unused");
+        let mut config = GuardianConfig::runtime_kernel(script, "unused", "runtime-init.toml");
         config.args.clear();
         config.restart_budget = 5;
 
@@ -683,7 +685,7 @@ mod tests {
                 term_file = term_file.display()
             ),
         );
-        let mut config = GuardianConfig::runtime_kernel(script, "unused");
+        let mut config = GuardianConfig::runtime_kernel(script, "unused", "runtime-init.toml");
         config.args.clear();
         config.shutdown_grace_ms = 2_000;
         let shutdown = CancellationToken::new();

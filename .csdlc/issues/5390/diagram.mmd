@@ -1,0 +1,8 @@
+flowchart LR
+  I["runtime-init.toml"] --> T["PEM TLS config"]
+  T --> L["Native Rustls listener"]
+  L --> A["Actual local_addr"]
+  A --> R["control_ready event"]
+  A --> O["Observatory feed"]
+  B["HTTPS browser Observatory"] --> L
+  G["Signed control client"] --> L

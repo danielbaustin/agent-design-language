@@ -1,5 +1,10 @@
 # C-SDLC v2
 
+`csdlc-shepherd --schema` and `--example <name>` are currently the complete
+discovery path for a JSON-input owner binary. The same affordance is planned
+for the remaining request-driven binaries as their CLI contracts are repaired;
+until then, use their typed public schema bundle and request definitions.
+
 This is the standalone clean-room C-SDLC v2 workspace. It does not depend on
 ADL or Runtime crates and does not reuse their lifecycle implementation,
 schemas, templates, tests, fixtures, or skills.

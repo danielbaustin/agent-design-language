@@ -46,6 +46,7 @@ jobs:
       validation_profile_run_lanes: ${{ steps.path-policy.outputs.validation_profile_run_lanes }}
       validation_profile_primary_reason: ${{ steps.path-policy.outputs.validation_profile_primary_reason }}
       validation_profile_escalation_lanes: ${{ steps.path-policy.outputs.validation_profile_escalation_lanes }}
+      runtime_v3_fast_required: ${{ steps.path-policy.outputs.runtime_v3_fast_required }}
     steps:
       - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4
         with:
@@ -85,6 +86,7 @@ jobs:
   adl_tooling_contracts:
     name: adl-tooling-contracts
     needs: adl_path_policy
+    if: needs.adl_path_policy.outputs.runtime_v3_fast_required != 'true'
     runs-on: ubuntu-latest
     permissions:
       contents: read
@@ -163,6 +165,9 @@ jobs:
         if: hashFiles('adl/tools/test_pr_closing_linkage.sh') != ''
         run: bash adl/tools/test_pr_closing_linkage.sh
 
+      - name: guardrail contract (final merge gate)
+        run: bash adl/tools/test_ensure_final_merge_gate.sh
+
       - name: guardrail (issue PR closing linkage)
         if: hashFiles('adl/tools/check_pr_closing_linkage.sh') != ''
         env:
@@ -220,10 +225,42 @@ jobs:
         run: bash adl/tools/check_release_version_surfaces.sh
         working-directory: .
 
+  adl_runtime_v3_fast:
+    name: adl-runtime-v3-fast
+    needs: adl_path_policy
+    if: needs.adl_path_policy.outputs.runtime_v3_fast_required == 'true'
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4
+        with:
+          fetch-depth: 0
+
+      - name: Install Rust toolchain
+        uses: dtolnay/rust-toolchain@631a55b12751854ce901bb631d5902ceb48146f7 # stable
+        with:
+          components: clippy
+
+      - name: Rust cache
+        uses: Swatinem/rust-cache@779680da715d629ac1d338a641029a2f4372abb5 # v2
+        with:
+          workspaces: |
+            adl-runtime-kernel -> target
+
+      - name: Runtime v3 focused tests
+        run: cargo test --manifest-path adl-runtime-kernel/Cargo.toml
+
+      - name: Runtime v3 focused clippy
+        run: cargo clippy --manifest-path adl-runtime-kernel/Cargo.toml --all-targets -- -D warnings
+
+      - name: Runtime v3 Observatory proof
+        run: bash adl/tools/test_v0917_html_observatory_integrated_proof.sh
+
   adl_rust_fmt_clippy:
     name: adl-rust-fmt-clippy
     needs: adl_path_policy
-    if: needs.adl_path_policy.outputs.rust_required == 'true' && ((vars.ADL_HEAVY_CI_BACKEND || 'hosted') != 'spot' || github.event_name != 'pull_request' || github.event.pull_request.head.repo.full_name != github.repository)
+    if: needs.adl_path_policy.outputs.rust_required == 'true' && needs.adl_path_policy.outputs.runtime_v3_fast_required != 'true' && ((vars.ADL_HEAVY_CI_BACKEND || 'hosted') != 'spot' || github.event_name != 'pull_request' || github.event.pull_request.head.repo.full_name != github.repository)
     runs-on: ubuntu-latest
     permissions:
       contents: read
@@ -296,7 +333,7 @@ jobs:
   adl_rust_tests:
     name: adl-rust-tests
     needs: adl_path_policy
-    if: needs.adl_path_policy.outputs.rust_required == 'true' && ((vars.ADL_HEAVY_CI_BACKEND || 'hosted') != 'spot' || github.event_name != 'pull_request' || github.event.pull_request.head.repo.full_name != github.repository)
+    if: needs.adl_path_policy.outputs.rust_required == 'true' && needs.adl_path_policy.outputs.runtime_v3_fast_required != 'true' && ((vars.ADL_HEAVY_CI_BACKEND || 'hosted') != 'spot' || github.event_name != 'pull_request' || github.event.pull_request.head.repo.full_name != github.repository)
     runs-on: ubuntu-latest
     permissions:
       contents: read
@@ -407,7 +444,7 @@ jobs:
   adl_demo_proof:
     name: adl-demo-proof
     needs: adl_path_policy
-    if: (vars.ADL_HEAVY_CI_BACKEND || 'hosted') != 'spot' || github.event_name != 'pull_request' || github.event.pull_request.head.repo.full_name != github.repository
+    if: needs.adl_path_policy.outputs.runtime_v3_fast_required != 'true' && ((vars.ADL_HEAVY_CI_BACKEND || 'hosted') != 'spot' || github.event_name != 'pull_request' || github.event.pull_request.head.repo.full_name != github.repository)
     runs-on: ubuntu-latest
     permissions:
       contents: read
@@ -466,6 +503,7 @@ jobs:
     needs:
       - adl_path_policy
       - adl_tooling_contracts
+      - adl_runtime_v3_fast
       - adl_rust_fmt_clippy
       - adl_rust_tests
       - adl_demo_proof
@@ -504,6 +542,7 @@ jobs:
           for lane in \
             "adl_path_policy:${{ needs.adl_path_policy.result }}" \
             "adl_tooling_contracts:${{ needs.adl_tooling_contracts.result }}" \
+            "adl_runtime_v3_fast:${{ needs.adl_runtime_v3_fast.result }}" \
             "adl_rust_fmt_clippy:${{ needs.adl_rust_fmt_clippy.result }}" \
             "adl_rust_tests:${{ needs.adl_rust_tests.result }}" \
             "adl_demo_proof:${{ needs.adl_demo_proof.result }}" \
@@ -527,6 +566,7 @@ jobs:
             echo "|---|---|"
             echo "| adl_path_policy | \`${{ needs.adl_path_policy.result }}\` |"
             echo "| adl_tooling_contracts | \`${{ needs.adl_tooling_contracts.result }}\` |"
+            echo "| adl_runtime_v3_fast | \`${{ needs.adl_runtime_v3_fast.result }}\` |"
             echo "| adl_rust_fmt_clippy | \`${{ needs.adl_rust_fmt_clippy.result }}\` |"
             echo "| adl_rust_tests | \`${{ needs.adl_rust_tests.result }}\` |"
             echo "| adl_demo_proof | \`${{ needs.adl_demo_proof.result }}\` |"

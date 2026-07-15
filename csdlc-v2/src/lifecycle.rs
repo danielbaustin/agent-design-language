@@ -7,7 +7,7 @@ use serde::{Deserialize, Serialize};
 use crate::error::{ErrorCode, Result, V2Error};
 use crate::git;
 use crate::model::{AuditEvent, Claim, ClaimRecovery};
-use crate::store::{bootstrap_issue, BootstrapRequest, Store};
+use crate::store::{bootstrap_issue, validate_bootstrap_request, BootstrapRequest, Store};
 
 #[derive(Debug, Clone, Serialize, Deserialize, JsonSchema)]
 pub struct BindRequest {
@@ -37,6 +37,15 @@ pub struct RecoverClaimRequest {
     pub reason: String,
 }
 
+#[derive(Debug, Clone, Serialize, Deserialize, JsonSchema)]
+pub struct HeartbeatRequest {
+    pub issue: u64,
+    pub claim_id: String,
+    pub expected_generation: u64,
+    pub now_unix_seconds: u64,
+    pub extend_seconds: u64,
+}
+
 fn clean_relative(value: &str) -> bool {
     !value.is_empty()
         && Path::new(value)
@@ -59,6 +68,21 @@ pub fn initialize_issue(
             ErrorCode::InvalidInput,
             "design and diagram paths must be repository-relative",
         ));
+    }
+    validate_bootstrap_request(&request)?;
+    validate_validation_lanes(store.root(), &request.initial.validation_lanes)?;
+    let issue_dir = store.issue_dir(request.issue);
+    for authored_path in [&request.design_path, &request.diagram_path] {
+        let path = store.root().join(authored_path);
+        if path == issue_dir.join("index.json")
+            || path == issue_dir.join("audit.jsonl")
+            || path.starts_with(issue_dir.join("cards"))
+        {
+            return Err(V2Error::new(
+                ErrorCode::InvalidInput,
+                "design and diagram paths cannot target issue control files",
+            ));
+        }
     }
     let _binding_lock = store.binding_lock()?;
     let issues = store.root().join(".csdlc/issues");
@@ -113,6 +137,34 @@ pub fn initialize_issue(
         )?;
     }
     bootstrap_issue(store, request)
+}
+
+fn validate_validation_lanes(
+    root: &std::path::Path,
+    lanes: &[crate::cards::ValidationLane],
+) -> Result<()> {
+    for lane in lanes {
+        for command in &lane.argv {
+            if !command.contains('/') {
+                continue;
+            }
+            let path = if Path::new(command).is_absolute() {
+                Path::new(command).to_path_buf()
+            } else {
+                root.join(command)
+            };
+            if !path.is_file() {
+                return Err(V2Error::new(
+                    ErrorCode::InvalidInput,
+                    format!(
+                        "validation lane {} names missing command {}",
+                        lane.lane, command
+                    ),
+                ));
+            }
+        }
+    }
+    Ok(())
 }
 
 pub fn bind_issue(store: &Store, request: BindRequest) -> Result<BindResult> {

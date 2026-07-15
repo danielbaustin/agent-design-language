@@ -1,0 +1,52 @@
+{
+  "identity": {
+    "schema_version": "1.0.0",
+    "template_version": "1.0.0",
+    "issue": 5390,
+    "repository": "danielbaustin/agent-design-language",
+    "title": "Make Runtime v3 Observatory local HTTPS and report bound control address",
+    "slug": "runtime-v3-local-https-bound-address",
+    "version": "v0.91.7",
+    "generation": 17
+  },
+  "status": "ready",
+  "content": {
+    "card_kind": "stp",
+    "values": {
+      "task_boundary": "Repair only the Runtime v3 control transport and truthful discovery path.",
+      "deliverables": [
+        "Fail-closed TLS configuration",
+        "Native HTTPS control listener",
+        "Actual bound-port readiness and feed data",
+        "Focused TLS and ephemeral-port tests",
+        "Updated init and entrypoint documentation"
+      ],
+      "acceptance_criteria": [
+        "Production serve path has no plain-HTTP control listener",
+        "TLS certificate and private-key paths are required and validated",
+        "Local HTTPS Observatory fetch succeeds without a gateway",
+        "Ephemeral listener reports its actual port",
+        "Disallowed origins receive no CORS grant",
+        "No Runtime v3 cutover or Runtime v2 deletion claim changes",
+        "Focused tests, formatting, diff checks, and review pass"
+      ],
+      "dependencies": [
+        "Runtime v3 explicit opt-in control path",
+        "axum-server 0.8.0 Rustls integration"
+      ],
+      "repo_inputs": [
+        "adl-runtime-kernel",
+        "infra/runtime-v3/runtime-init.toml",
+        "demos/v0.91.7/html-observatory/app.js",
+        "docs/architecture/RUNTIME_V3_ENTRYPOINT_SWITCH.md"
+      ],
+      "non_goals": [
+        "External gateway or sidecar",
+        "Certificate authority automation",
+        "Host trust-store mutation",
+        "Default Runtime v3 cutover",
+        "Runtime v2 deletion or decommission"
+      ]
+    }
+  }
+}

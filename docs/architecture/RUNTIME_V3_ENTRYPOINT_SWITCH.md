@@ -31,17 +31,23 @@ signal for explicit Runtime v3 use while Runtime v2 remains the default.
 
 ## Runtime v3 Control Policy
 
-Runtime v3 uses the local control API endpoint:
+Runtime v3 uses the local HTTPS control API endpoint:
 
 ```text
-http://127.0.0.1:20997
+https://localhost:20997
 ```
 
 The Runtime v3 kernel launch command reported by the selector is:
 
 ```text
-adl-runtime-kernel serve
+adl-runtime-kernel serve --init infra/runtime-v3/runtime-init.toml
 ```
+
+The kernel terminates TLS through the maintained `axum-server` Rustls adapter.
+The init file supplies the certificate-chain and private-key PEM paths; no
+private key is checked into the repository. The ready event and Observatory
+feed report the port actually bound by the listener rather than assuming
+`20997`.
 
 ## Non-Covered Surfaces
 

@@ -271,7 +271,7 @@
         "ADL Input Card",
         "Agent Execution Rules"
       ],
-      "text": "- Do not run `pr start`; use the current issue-mode `pr run` flow only if execution later becomes necessary."
+      "text": "- Do not use v1 wrappers; bind execution with `csdlc-bind` only if execution later becomes necessary."
     },
     {
       "heading_path": [
@@ -369,7 +369,7 @@
         "ADL Input Card",
         "Constraints / Policies"
       ],
-      "text": "- Use workflow-conductor for lifecycle routing."
+      "text": "- Use the typed C-SDLC v2 operator skills and Rust binaries for lifecycle routing."
     },
     {
       "heading_path": [
@@ -383,7 +383,7 @@
         "ADL Input Card",
         "Constraints / Policies"
       ],
-      "text": "- Work only in the bound issue worktree after `pr run`."
+      "text": "- Work only in the bound issue worktree after `csdlc-bind`."
     },
     {
       "heading_path": [
@@ -565,7 +565,7 @@
         "ADL Input Card",
         "Instructions to the Agent"
       ],
-      "text": "- When execution is approved, run the repo-native issue-mode `pr run` flow and then perform the work described above."
+      "text": "- When execution is approved, run `csdlc-bind` and then perform the work described above."
     },
     {
       "heading_path": [

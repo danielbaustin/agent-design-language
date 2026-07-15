@@ -8,7 +8,7 @@ The publication guard is pure and local. It accepts only completed evidence with
 
 ## Revision invalidation
 
-A new substantive revision is assigned for a fresh review, atomically clearing old evidence. The publication transition independently recomputes the scoped Git revision, so source changes invalidate review without a caller assertion. The sole exception is `review_metadata_only_v1`: the tool recomputes normalized changed paths between the named commits and accepts only `.csdlc/review/` or `.csdlc/evidence/`. Traversal, source, design, manifest, command, and product paths cannot use the exception.
+A new substantive revision is assigned for a fresh review, atomically clearing old evidence. Assignment requires a clean substantive commit, so a dirty review cannot enter the lifecycle. The publication transition independently recomputes the scoped Git revision, so source changes invalidate review without a caller assertion. A stranded `reviewed` record can use typed `csdlc-review recover` to return to `implemented` without deleting audit history, then be reassigned and reviewed at the finalized commit. The sole exception is `review_metadata_only_v1`: the tool recomputes normalized changed paths between the named commits and accepts only `.csdlc/review/` or `.csdlc/evidence/`. Traversal, source, design, manifest, command, and product paths cannot use the exception.
 
 ## Automated cards
 

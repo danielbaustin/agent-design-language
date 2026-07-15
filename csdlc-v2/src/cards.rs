@@ -487,6 +487,10 @@ pub enum TextField {
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize, JsonSchema)]
 #[serde(tag = "operation", rename_all = "snake_case")]
 pub enum SemanticOperation {
+    Replan {
+        field: TextField,
+        value: String,
+    },
     SetField {
         field: TextField,
         value: String,
@@ -750,6 +754,10 @@ pub fn apply(
     operation: &SemanticOperation,
 ) -> Result<Option<LifecyclePhase>> {
     match operation {
+        SemanticOperation::Replan { field, value } => {
+            set_text(values, *field, value.clone())?;
+            Ok(None)
+        }
         SemanticOperation::SetField { field, value } => {
             set_text(values, *field, value.clone())?;
             Ok(None)

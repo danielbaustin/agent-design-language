@@ -273,6 +273,18 @@ pub fn resolve_operator_generation(
     issue: u64,
     requested: Option<Generation>,
 ) -> Result<Generation> {
+    let coexistence: CoexistenceInventory = serde_json::from_str(COEXISTENCE).map_err(|e| {
+        V2Error::new(
+            ErrorCode::CorruptRecord,
+            format!("invalid embedded coexistence inventory: {e}"),
+        )
+    })?;
+    if coexistence.v1_sunset && requested == Some(Generation::V1) {
+        return Err(V2Error::new(
+            ErrorCode::InvalidInput,
+            "explicit v1 generation selection is forbidden after v1 sunset",
+        ));
+    }
     let manifest = SkillManifest::load()?;
     let selector_path = checked_repo_path(repo, Path::new(&manifest.generation_selector))?;
     if !is_regular_file(&selector_path) {
@@ -446,4 +458,17 @@ fn is_executable(path: &Path) -> bool {
 }
 fn io_error(error: std::io::Error) -> V2Error {
     V2Error::new(ErrorCode::Io, error.to_string())
+}
+
+#[cfg(test)]
+mod tests {
+    use super::resolve_operator_generation;
+    use crate::Generation;
+
+    #[test]
+    fn v1_override_is_rejected_after_sunset() {
+        let error = resolve_operator_generation(std::path::Path::new("."), 1, Some(Generation::V1))
+            .expect_err("sunset must reject explicit v1");
+        assert!(error.message.contains("v1 sunset"));
+    }
 }

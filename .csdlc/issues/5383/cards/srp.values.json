@@ -1,0 +1,29 @@
+{
+  "identity": {
+    "schema_version": "1.0.0",
+    "template_version": "1.0.0",
+    "issue": 5383,
+    "repository": "danielbaustin/agent-design-language",
+    "title": "[v0.91.7][planning] Restore WP-14 routing and create v0.91.8 planning package",
+    "slug": "v0-91-7-planning-restore-wp14-routing-and-create-v0-91-8-planning-package",
+    "version": "v0.91.7",
+    "generation": 18
+  },
+  "status": "draft",
+  "content": {
+    "card_kind": "srp",
+    "values": {
+      "review_scope": "",
+      "review_revision": null,
+      "reviewer": null,
+      "review_prompts": [
+        "Review whether the v0.91.8 package is complete enough for execution without implementation overclaims.",
+        "Review whether #4641/#5384 routing is clear and not lossy.",
+        "Review whether the issue-wave YAML preserves live issue topology and dependencies."
+      ],
+      "findings": [],
+      "residual_risk": [],
+      "review_result": "pre_review"
+    }
+  }
+}

@@ -79,14 +79,14 @@ M	adl-runtime/src/weather.rs
 M	docs/default_workflow.md
 EOF
 mixed_adl_runtime_docs_output="$(bash "$SCRIPT" --changed-files "$mixed_adl_runtime_docs" --print-plan)"
-assert_has "$mixed_adl_runtime_docs_output" "mode=full"
-assert_has "$mixed_adl_runtime_docs_output" "reason=mixed_adl_runtime_with_other_fast_lane_surfaces_requires_full_nextest"
+assert_has "$mixed_adl_runtime_docs_output" "mode=focused"
+assert_has "$mixed_adl_runtime_docs_output" "filter_tokens=adl_runtime"
 
 focused_control_plane="$TMP/focused_control_plane.txt"
 printf 'M\tdocs/default_workflow.md\n' >"$focused_control_plane"
 focused_control_plane_output="$(bash "$SCRIPT" --changed-files "$focused_control_plane" --print-plan)"
-assert_has "$focused_control_plane_output" "mode=focused"
-assert_has "$focused_control_plane_output" "filter_tokens=pr_cmd"
+assert_has "$focused_control_plane_output" "mode=skip"
+assert_has "$focused_control_plane_output" "reason=no_rust_surface_detected_for_fast_lane"
 
 split_control_plane="$TMP/split_control_plane.txt"
 printf 'M\tadl/src/cli/pr_cmd_cards/cards.rs\n' >"$split_control_plane"

@@ -1,0 +1,23 @@
+schema_version: adl.release_gate_disposition.v1
+issue: 5260
+decision: publishable_with_focused_local_proof_and_required_ci_before_merge
+reviewer_or_review_mode: pre_pr_subagent_review_plus_focused_local_tooling_validation
+changed_release_gate_surfaces:
+  - .github/workflows/ci.yaml
+focused_validation_run: >
+  Focused local proof passed after review fixes: bash
+  adl/tools/test_ensure_final_merge_gate.sh; bash -n
+  adl/tools/ensure_final_merge_gate.sh adl/tools/test_ensure_final_merge_gate.sh;
+  ADL_GITHUB_TOKEN_FILE=$HOME/keys/github.token bash
+  adl/tools/ensure_final_merge_gate.sh inspect --repo
+  danielbaustin/agent-design-language --branch main --json; git diff --check;
+  bash adl/tools/test_select_validation_lanes.sh.
+residual_ci_proof_required_before_merge: >
+  GitHub PR checks must pass before merge. The #5260 local proof validates the
+  final merge-gate guard tool, branch-aware repository-ruleset selection,
+  selector mapping, and CI wiring, but hosted adl-ci and adl-coverage remain
+  the required integration proof before merge.
+notes:
+  - This issue intentionally changes `.github/workflows/ci.yaml` to run the final merge-gate guardrail contract in CI.
+  - Live GitHub evidence recorded repository ruleset `main-protection` with strict required status checks enabled for `adl-ci` and `adl-coverage`.
+  - The guard sends credentials through a restrictive temporary curl config and does not print token contents.

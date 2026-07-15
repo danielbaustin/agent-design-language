@@ -87,6 +87,7 @@ validation_profile_escalation_lanes=""
 validation_profile_error=""
 validation_profile_report=""
 validation_profile_contract_lanes_selected="$bool_false"
+runtime_v3_fast_required="$bool_false"
 large_file_lines="${COVERAGE_IMPACT_LARGE_FILE_LINES:-200}"
 large_file_delta="${COVERAGE_IMPACT_LARGE_FILE_DELTA:-80}"
 pvf_slow_proof_policy_change=false
@@ -1175,6 +1176,19 @@ EOF
 
 apply_validation_manager_routing() {
   case "$validation_profile_status:$validation_profile_run_lanes:$validation_profile_escalation_required" in
+    ready_to_run:runtime_kernel_contracts:false)
+      runtime_v3_fast_required=true
+      rust_required=false
+      coverage_required=false
+      full_coverage_required=false
+      demo_smoke_required=false
+      ci_contracts_required=false
+      coverage_lane="skip"
+      coverage_authority="not_required"
+      coverage_execution_state="skipped_by_path_policy"
+      reason="runtime_v3_only_change_runs_independent_runtime_kernel_fast_lane"
+      return 0
+      ;;
     ready_to_run:ci_path_policy_contracts,docs_diff_check,rust_dependency_cache_warmup_contracts:false)
       if is_bounded_rust_dependency_cache_warmup_policy_change; then
         reason="bounded_rust_dependency_cache_warmup_policy_change_runs_python_and_path_policy_checks"
@@ -1537,6 +1551,7 @@ emit "v0913_proof_contract_required" "$v0913_proof_contract_required"
 emit "slow_proof_contract_required" "$slow_proof_contract_required"
 emit "skill_author_contracts_required" "$skill_author_contracts_required"
 emit "validation_profile_contract_lanes_selected" "$validation_profile_contract_lanes_selected"
+emit "runtime_v3_fast_required" "$runtime_v3_fast_required"
 emit "fail_closed" "$fail_closed"
 emit "coverage_lane" "$coverage_lane"
 emit "coverage_authority" "$coverage_authority"

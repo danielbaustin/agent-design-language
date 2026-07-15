@@ -259,20 +259,20 @@
             <article>
               <span class="row-kicker">CSM API</span>
               <strong id="hero-csm-api-status">pending</strong>
-              <p class="row-detail">Loopback connection can select Runtime v3 on port 20997 without changing the default mirror.</p>
+              <p class="row-detail">A configured API base can select Runtime v3 on port 20997 without changing the default mirror.</p>
               <div class="api-mini-list" id="hero-api-list" aria-label="CSM API endpoint status"></div>
             </article>
             <article class="runtime-test-card">
               <span class="row-kicker">Real Runtime Test</span>
               <strong id="dashboard-live-test-status">retained mirror</strong>
-              <label class="compact-field" for="dashboard-live-api-base">Loopback API base</label>
-              <input id="dashboard-live-api-base" type="url" inputmode="url" placeholder="http://127.0.0.1:20997">
+              <label class="compact-field" for="dashboard-live-api-base">API base</label>
+              <input id="dashboard-live-api-base" type="url" inputmode="url" placeholder="https://runtime-gateway-host">
               <div class="runtime-test-actions" aria-label="Runtime test controls">
                 <button class="button button-primary" type="button" id="dashboard-connect-live">Connect</button>
                 <button class="button button-secondary" type="button" id="dashboard-refresh-live">Refresh</button>
                 <button class="button button-secondary" type="button" id="dashboard-stop-live">Stop</button>
               </div>
-              <p class="row-detail" id="dashboard-live-test-detail">Supply `?runtime=v3&runtimeApiBase=http://127.0.0.1:20997` for explicit Runtime v3, or a local CSM API base for the retained mirror.</p>
+              <p class="row-detail" id="dashboard-live-test-detail">Supply `?runtime=v3&runtimeApiBase=https://runtime-gateway-host` for Runtime v3 API access.</p>
             </article>
             <article>
               <span class="row-kicker">Operator Channel</span>

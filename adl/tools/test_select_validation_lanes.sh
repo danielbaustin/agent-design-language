@@ -200,6 +200,17 @@ assert_has "$TMP/rust-warm-cache-surface.out" "rust_dependency_cache_warmup_cont
 assert_has "$TMP/rust-warm-cache-surface.out" "ci_path_policy_contracts status=selected"
 assert_not_has "$TMP/rust-warm-cache-surface.out" "unmapped_change_surface"
 
+final_merge_gate_surface="$TMP/final-merge-gate-surface.txt"
+cat >"$final_merge_gate_surface" <<'EOF'
+A	adl/tools/ensure_final_merge_gate.sh
+A	adl/tools/test_ensure_final_merge_gate.sh
+EOF
+bash "$SCRIPT" --changed-files "$final_merge_gate_surface" >"$TMP/final-merge-gate-surface.out"
+assert_has "$TMP/final-merge-gate-surface.out" "aggregate_status=selected"
+assert_has "$TMP/final-merge-gate-surface.out" "ci_path_policy_contracts status=selected"
+assert_has "$TMP/final-merge-gate-surface.out" "command=bash adl/tools/test_ci_path_policy.sh && bash adl/tools/test_ci_runtime_contracts.sh && bash adl/tools/test_select_validation_lanes.sh && bash adl/tools/test_validation_manager.sh && bash adl/tools/test_run_nessus_remote_validation.sh && bash adl/tools/test_run_validation_manager_nessus_lane.sh"
+assert_not_has "$TMP/final-merge-gate-surface.out" "unmapped_change_surface"
+
 issue_4603_surface="$TMP/issue-4603-surface.txt"
 cat >"$issue_4603_surface" <<'EOF'
 M	adl/Cargo.lock

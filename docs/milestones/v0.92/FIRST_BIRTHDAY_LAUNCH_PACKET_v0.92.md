@@ -19,6 +19,10 @@ complete, blocked, deferred, or routed with evidence. This packet gives WP-01
 the launch checklist, issue-wave preflight, demo rehearsal shape, negative
 suite, and reviewer handoff expected by `#3377`.
 
+Update for `#5383`: `v0.91.8` is now a required bridge prerequisite. WP-01 for
+`v0.92` must consume the reviewed `v0.91.8` handoff before treating any
+`v0.91.7` launch/birthday row as activation-ready.
+
 ## Purpose
 
 The first birthday is the symbolic center of `v0.92`, but the milestone must be
@@ -43,6 +47,9 @@ Tracked sources:
 - `docs/milestones/v0.91.6/FEATURE_DOCS_v0.91.6.md`
 - `docs/milestones/v0.91.7/FEATURE_DOCS_v0.91.7.md`
 - `docs/milestones/v0.91.7/V092_HANDOFF_v0.91.7.md`
+- `docs/milestones/v0.91.8/README.md`
+- `docs/milestones/v0.91.8/NEXT_MILESTONE_HANDOFF_v0.91.8.md`
+- `docs/milestones/v0.91.8/V092_ACTIVATION_TEST_MAP_v0.91.8.md`
 - `docs/milestones/v0.92/README.md`
 - `docs/milestones/v0.92/WBS_v0.92.md`
 - `docs/milestones/v0.92/DEMO_MATRIX_v0.92.md`
@@ -106,6 +113,7 @@ blocked, deferred, or routed with evidence before any public activation claim.
 | Affect, happiness, humor, and wellbeing claims | Preserve public claim-boundary language for affect/wellbeing and avoid inner-state overclaims. |
 | Godel mechanics | Require experiment, hypothesis, mutation, evaluation, promotion, and proof boundaries before relying on Godel mechanics. |
 | Economics context | Keep economics context-only unless a reviewed decision promotes a bounded test. |
+| v0.91.8 platform acceptance | Consume ADL v2, Runtime v3, C-SDLC v2, selector/rollback, deletion, and WP-14A exact-revision handoff truth before activation claims. |
 
 ## Requirement Map
 

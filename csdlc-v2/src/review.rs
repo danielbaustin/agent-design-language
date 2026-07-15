@@ -27,6 +27,16 @@ pub struct ReviewRecordRequest {
     pub evidence: ReviewEvidence,
 }
 
+#[derive(Debug, Clone, Serialize, Deserialize, JsonSchema)]
+pub struct ReviewRecoveryRequest {
+    pub issue: u64,
+    pub expected_generation: u64,
+    pub expected_digest: String,
+    pub claim_id: String,
+    pub actor: String,
+    pub reason: String,
+}
+
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize, JsonSchema)]
 pub struct PublicationReviewReport {
     pub schema: String,
@@ -61,6 +71,13 @@ pub fn assign_review(store: &Store, request: ReviewAssignmentRequest) -> Result<
         ));
     }
     let revision = crate::git::substantive_revision(store.root(), &request.scope)?;
+    let head = crate::git::run(store.root(), &["rev-parse", "HEAD"])?.stdout;
+    if revision != crate::git::clean_commit_revision(&head) {
+        return Err(V2Error::new(
+            ErrorCode::UnsafeCheckout,
+            "review assignment requires a clean substantive commit",
+        ));
+    }
     let assignment = ReviewAssignment {
         reviewer: request.reviewer,
         assigned_by: request.assigned_by.clone(),
@@ -72,6 +89,23 @@ pub fn assign_review(store: &Store, request: ReviewAssignmentRequest) -> Result<
         &request.expected_digest,
         &request.claim_id,
         assignment,
+    )
+}
+
+pub fn recover_review(store: &Store, request: ReviewRecoveryRequest) -> Result<IssueRecord> {
+    if request.reason.trim().is_empty() {
+        return Err(V2Error::new(
+            ErrorCode::InvalidInput,
+            "review recovery reason is required",
+        ));
+    }
+    store.commit_review_recovery(
+        request.issue,
+        request.expected_generation,
+        &request.expected_digest,
+        &request.claim_id,
+        request.actor,
+        request.reason,
     )
 }
 

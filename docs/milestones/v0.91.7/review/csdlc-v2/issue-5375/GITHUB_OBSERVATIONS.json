@@ -1,0 +1,388 @@
+{
+  "schema": "csdlc.sprint_review.github_observations.v1",
+  "repository": "danielbaustin/agent-design-language",
+  "observed_at": "2026-07-15T16:02:00Z",
+  "query_scope": {
+    "issues": [
+      5228,
+      5232,
+      5233,
+      5234,
+      5235,
+      5236,
+      5237,
+      5238,
+      5239,
+      5240,
+      5292,
+      5293,
+      5294,
+      5295,
+      5305,
+      5306,
+      5307,
+      5308
+    ],
+    "pull_requests": [
+      5231,
+      5257,
+      5263,
+      5268,
+      5270,
+      5272,
+      5274,
+      5275,
+      5290,
+      5298,
+      5301,
+      5304,
+      5316,
+      5320,
+      5331
+    ]
+  },
+  "evidence_boundary": "Normalized public GitHub delivery metadata; issue bodies, comments, reviews, and credentials are excluded.",
+  "issues": [
+    {
+      "closedAt": "2026-07-12T08:16:47Z",
+      "number": 5228,
+      "state": "CLOSED",
+      "title": "[v0.91.7][csdlc-v2] Establish clean-room architecture and retained-behavior baseline",
+      "url": "https://github.com/danielbaustin/agent-design-language/issues/5228",
+      "record_sha256": "c823b23fd246503a7f2d63bfe1dc1542bd9dfe41ab2d37501915fa36583da8ad"
+    },
+    {
+      "closedAt": "2026-07-12T11:39:04Z",
+      "number": 5232,
+      "state": "CLOSED",
+      "title": "[v0.91.7][csdlc-v2] Gate 2: clean-room state engine, automated cards, and doctor",
+      "url": "https://github.com/danielbaustin/agent-design-language/issues/5232",
+      "record_sha256": "00cb51c47d622721d21aac1a2b17d3e9b299776abb4eaee93bd72a7928fbdb62"
+    },
+    {
+      "closedAt": "2026-07-12T12:35:01Z",
+      "number": 5233,
+      "state": "CLOSED",
+      "title": "[v0.91.7][csdlc-v2] Gate 3: initialization, worktree binding, and claims",
+      "url": "https://github.com/danielbaustin/agent-design-language/issues/5233",
+      "record_sha256": "ba9b6098d3781d7f3ff05a18809bd9c33dff4411bab7060a58b1ce6112cf7ee9"
+    },
+    {
+      "closedAt": "2026-07-12T13:22:29Z",
+      "number": 5234,
+      "state": "CLOSED",
+      "title": "[v0.91.7][csdlc-v2] Gate 4: PVF, scheduler, shepherd, and validation",
+      "url": "https://github.com/danielbaustin/agent-design-language/issues/5234",
+      "record_sha256": "f10b8428ebe65673f2da346ddbd5b9c04a0895544196783b4cdf7c94eca614c9"
+    },
+    {
+      "closedAt": "2026-07-12T14:01:33Z",
+      "number": 5235,
+      "state": "CLOSED",
+      "title": "[v0.91.7][csdlc-v2] Gate 5: pre-publication review truth",
+      "url": "https://github.com/danielbaustin/agent-design-language/issues/5235",
+      "record_sha256": "caf4608df94414673ead3d629fa0c029eb2997c36b552164d455000c413bf60c"
+    },
+    {
+      "closedAt": "2026-07-12T14:31:45Z",
+      "number": 5236,
+      "state": "CLOSED",
+      "title": "[v0.91.7][csdlc-v2] Gate 6: idempotent GitHub publication",
+      "url": "https://github.com/danielbaustin/agent-design-language/issues/5236",
+      "record_sha256": "46634c7338b38e92e65b4f5f03f102e2addb25e17e3bea9ab0e1cf03642e4f82"
+    },
+    {
+      "closedAt": "2026-07-12T15:06:35Z",
+      "number": 5237,
+      "state": "CLOSED",
+      "title": "[v0.91.7][csdlc-v2] Gate 7: PR readiness and closeout",
+      "url": "https://github.com/danielbaustin/agent-design-language/issues/5237",
+      "record_sha256": "4f3b29b03f1369190bd66a796cfca0b64ca187bcdf515dc158b0e744936e006e"
+    },
+    {
+      "closedAt": "2026-07-12T15:38:50Z",
+      "number": 5238,
+      "state": "CLOSED",
+      "title": "[v0.91.7][csdlc-v2] Gate 8: legacy import and shadow parity",
+      "url": "https://github.com/danielbaustin/agent-design-language/issues/5238",
+      "record_sha256": "ac841c8bdbe59ce8e7597c6302e09c4e522795f202dc3f4be49ed1e418ca09b7"
+    },
+    {
+      "closedAt": "2026-07-12T23:37:32Z",
+      "number": 5239,
+      "state": "CLOSED",
+      "title": "[v0.91.7][csdlc-v2] Gate 9: opt-in soak and cutover decision",
+      "url": "https://github.com/danielbaustin/agent-design-language/issues/5239",
+      "record_sha256": "9a5fe4430b9d12c5644e13f752b481130c7dd848bdeca81264f2ff1153cd6e8f"
+    },
+    {
+      "closedAt": "2026-07-14T06:44:45Z",
+      "number": 5240,
+      "state": "CLOSED",
+      "title": "[v0.91.7][csdlc-v2] Gate 10: operator migration, cutover, and deletion",
+      "url": "https://github.com/danielbaustin/agent-design-language/issues/5240",
+      "record_sha256": "b332ee977a76deb7bc7102c54697ace79fb09db4fd6d709074b9e8954c43e8b6"
+    },
+    {
+      "closedAt": "2026-07-13T00:35:53Z",
+      "number": 5292,
+      "state": "CLOSED",
+      "title": "[v0.91.7][csdlc-v2] Gate 10A: coexistence contracts, skills, and stable binaries",
+      "url": "https://github.com/danielbaustin/agent-design-language/issues/5292",
+      "record_sha256": "e3048644d3e364aad2258205c01e8fec5bb9107bb20d9e404a2e42dbbbb87e68"
+    },
+    {
+      "closedAt": "2026-07-13T01:20:37Z",
+      "number": 5293,
+      "state": "CLOSED",
+      "title": "[v0.91.7][csdlc-v2] Gate 10B: pre-switch independent proof with v1 intact",
+      "url": "https://github.com/danielbaustin/agent-design-language/issues/5293",
+      "record_sha256": "3c032e2b9e16c378e3851aa70b16b482122a714557f286e583786ef292bfe0b9"
+    },
+    {
+      "closedAt": "2026-07-13T02:15:03Z",
+      "number": 5294,
+      "state": "CLOSED",
+      "title": "[v0.91.7][csdlc-v2] Gate 10C: reversible default switch with v1 retained",
+      "url": "https://github.com/danielbaustin/agent-design-language/issues/5294",
+      "record_sha256": "71a20715e33b810de6e6ad9ec4169f0168b454065e6b3a56d2b153bce4b2a984"
+    },
+    {
+      "closedAt": "2026-07-14T18:15:24Z",
+      "number": 5295,
+      "state": "CLOSED",
+      "title": "[v0.91.7][csdlc-v2] Gate 10D: deletion eligibility, bounded removal, and sunsets",
+      "url": "https://github.com/danielbaustin/agent-design-language/issues/5295",
+      "record_sha256": "a0746b4dd9c3a4756be588e99cb14f69231f564053f465ab95ef69cadee4503a"
+    },
+    {
+      "closedAt": "2026-07-13T04:21:25Z",
+      "number": 5305,
+      "state": "CLOSED",
+      "title": "[v0.91.7][csdlc-v2] Gate 10D1: non-mutating deletion eligibility and manifest",
+      "url": "https://github.com/danielbaustin/agent-design-language/issues/5305",
+      "record_sha256": "fd1e4cf24a050643e99a46fe11a20aa3cc38594aa2e18149554c0b26bc887c73"
+    },
+    {
+      "closedAt": "2026-07-14T12:26:21Z",
+      "number": 5306,
+      "state": "CLOSED",
+      "title": "[v0.91.7][csdlc-v2] Gate 10D2: approved bounded v1 deletion wave",
+      "url": "https://github.com/danielbaustin/agent-design-language/issues/5306",
+      "record_sha256": "a97b858286a7a47d8ca15592128231544fdf44a7e614d2836f7142a9c1aec315"
+    },
+    {
+      "closedAt": "2026-07-14T18:18:01Z",
+      "number": 5307,
+      "state": "CLOSED",
+      "title": "[v0.91.7][csdlc-v2] Gate 10D4: read-only importer sunset",
+      "url": "https://github.com/danielbaustin/agent-design-language/issues/5307",
+      "record_sha256": "15495ee7d99723e80030e2726c04906100428f66e6341b6ef09d468b28745288"
+    },
+    {
+      "closedAt": "2026-07-14T18:17:58Z",
+      "number": 5308,
+      "state": "CLOSED",
+      "title": "[v0.91.7][csdlc-v2] Gate 10D3: executable rollback sunset",
+      "url": "https://github.com/danielbaustin/agent-design-language/issues/5308",
+      "record_sha256": "32637abf20bc3f3f5d1f85bd9d6fb0298666f040935e345a8e9b97b304d8a33f"
+    }
+  ],
+  "pull_requests": [
+    {
+      "baseRefName": "main",
+      "headRefName": "codex/5228-v0-92-csdlc-v2-clean-room-architecture-baseline",
+      "mergeCommit": {
+        "oid": "4f53f049aa95881c5307b9966e756cd93a6cfa2a"
+      },
+      "mergedAt": "2026-07-12T08:16:46Z",
+      "number": 5231,
+      "state": "MERGED",
+      "title": "[v0.92][csdlc-v2] Establish clean-room architecture and retained-behavior baseline",
+      "url": "https://github.com/danielbaustin/agent-design-language/pull/5231",
+      "record_sha256": "852e6a54042d49361c88aca9e7305ee48bde4c9c4c7954ac0341ff9c65597ea8"
+    },
+    {
+      "baseRefName": "main",
+      "headRefName": "codex/5232-v0-91-7-csdlc-v2-gate-2-clean-room-state-engine-automated-cards-and-doctor",
+      "mergeCommit": {
+        "oid": "2b9c50f224d5f017c07e482bae8a5b5a3607473b"
+      },
+      "mergedAt": "2026-07-12T11:39:04Z",
+      "number": 5257,
+      "state": "MERGED",
+      "title": "[v0.91.7][csdlc-v2] Gate 2: clean-room state engine, automated cards, and doctor",
+      "url": "https://github.com/danielbaustin/agent-design-language/pull/5257",
+      "record_sha256": "7e70dbe7abfbbd9f087ef7b276c473129b2b8fd5ded453b904825e7992dcd2f8"
+    },
+    {
+      "baseRefName": "main",
+      "headRefName": "codex/5233-v0-91-7-csdlc-v2-gate-3-initialization-worktree-binding-and-claims",
+      "mergeCommit": {
+        "oid": "bb18b1f583166ebb573af0e482c5d7ca84bff184"
+      },
+      "mergedAt": "2026-07-12T12:35:00Z",
+      "number": 5263,
+      "state": "MERGED",
+      "title": "[v0.91.7][csdlc-v2] Gate 3: initialization, worktree binding, and claims",
+      "url": "https://github.com/danielbaustin/agent-design-language/pull/5263",
+      "record_sha256": "89549d8ade229580a66b33ce2efefeae5a15caad276cb703063b32c8b814dd3f"
+    },
+    {
+      "baseRefName": "main",
+      "headRefName": "codex/5234-v0-91-7-csdlc-v2-gate-4-pvf-scheduler-shepherd-and-validation",
+      "mergeCommit": {
+        "oid": "12caeb6ed1160b5e97a070f090407da421886ac5"
+      },
+      "mergedAt": "2026-07-12T13:22:28Z",
+      "number": 5268,
+      "state": "MERGED",
+      "title": "[v0.91.7][csdlc-v2] Gate 4: PVF, scheduler, shepherd, and validation",
+      "url": "https://github.com/danielbaustin/agent-design-language/pull/5268",
+      "record_sha256": "ebab6a937d2b81a1d77b25348e5589b7f3b03d7d3547b1bc654313f117854bdf"
+    },
+    {
+      "baseRefName": "main",
+      "headRefName": "codex/5235-v0-91-7-csdlc-v2-gate-5-pre-publication-review-truth",
+      "mergeCommit": {
+        "oid": "411172c6d471a943bf7824010e636c8b096f8673"
+      },
+      "mergedAt": "2026-07-12T14:01:32Z",
+      "number": 5270,
+      "state": "MERGED",
+      "title": "[v0.91.7][csdlc-v2] Gate 5: pre-publication review truth",
+      "url": "https://github.com/danielbaustin/agent-design-language/pull/5270",
+      "record_sha256": "a58a95cfff0d7293442d5b7cd85415c1715a7101ccad9f042ef8f23ab94e7b0b"
+    },
+    {
+      "baseRefName": "main",
+      "headRefName": "codex/5236-v0-91-7-csdlc-v2-gate-6-idempotent-github-publication",
+      "mergeCommit": {
+        "oid": "2e7b63f7445ee9b1ab5514092f03687fd81d7040"
+      },
+      "mergedAt": "2026-07-12T14:31:44Z",
+      "number": 5272,
+      "state": "MERGED",
+      "title": "[v0.91.7][csdlc-v2] Gate 6: idempotent GitHub publication",
+      "url": "https://github.com/danielbaustin/agent-design-language/pull/5272",
+      "record_sha256": "9f99704b083afd7bb39da62b0cec2231321cff9381b3f80f7305146411e223a3"
+    },
+    {
+      "baseRefName": "main",
+      "headRefName": "codex/5237-v0-91-7-csdlc-v2-gate-7-pr-readiness-and-closeout",
+      "mergeCommit": {
+        "oid": "f6627433fc126ae0641cca08aac4f36c8f7329c3"
+      },
+      "mergedAt": "2026-07-12T15:06:34Z",
+      "number": 5274,
+      "state": "MERGED",
+      "title": "[v0.91.7][csdlc-v2] Gate 7: PR readiness and closeout",
+      "url": "https://github.com/danielbaustin/agent-design-language/pull/5274",
+      "record_sha256": "85aef74609c5e36c527e8f6a2c17efac63cfe75fe8c0bd5023237cd3632f7266"
+    },
+    {
+      "baseRefName": "main",
+      "headRefName": "codex/5238-v0-91-7-csdlc-v2-gate-8-legacy-import-and-shadow-parity",
+      "mergeCommit": {
+        "oid": "493420b03e726cf5e532fec8a4f04add98084f46"
+      },
+      "mergedAt": "2026-07-12T15:38:49Z",
+      "number": 5275,
+      "state": "MERGED",
+      "title": "[v0.91.7][csdlc-v2] Gate 8: legacy import and shadow parity",
+      "url": "https://github.com/danielbaustin/agent-design-language/pull/5275",
+      "record_sha256": "7a7b1c677105a1c8e50382ef0cccfe9af24e060d63f954898a10877d3558c99a"
+    },
+    {
+      "baseRefName": "main",
+      "headRefName": "codex/5239-v0-91-7-csdlc-v2-gate-9-opt-in-soak-and-cutover-decision",
+      "mergeCommit": {
+        "oid": "a193ea7c7a4dbd841c5b86dacffb7045c017566a"
+      },
+      "mergedAt": "2026-07-12T23:37:31Z",
+      "number": 5290,
+      "state": "MERGED",
+      "title": "[v0.91.7][csdlc-v2] Gate 9: opt-in soak and cutover decision",
+      "url": "https://github.com/danielbaustin/agent-design-language/pull/5290",
+      "record_sha256": "2dbd9a572baeb28360583922aef9141bf0cbeafc0972eef7bdc23e510936e182"
+    },
+    {
+      "baseRefName": "main",
+      "headRefName": "codex/5292-v0-91-7-csdlc-v2-gate-10a-coexistence-contracts-skills-and-stable-binaries",
+      "mergeCommit": {
+        "oid": "523365f501729982f225c7bd19662d1622b63c08"
+      },
+      "mergedAt": "2026-07-13T00:35:52Z",
+      "number": 5298,
+      "state": "MERGED",
+      "title": "[v0.91.7][csdlc-v2] Gate 10A coexistence contracts, skills, and stable binaries",
+      "url": "https://github.com/danielbaustin/agent-design-language/pull/5298",
+      "record_sha256": "200651831d741cc6b902f79e3a99d36666a9766a87487a68560b3714f63e055c"
+    },
+    {
+      "baseRefName": "main",
+      "headRefName": "codex/5293-v0-91-7-csdlc-v2-gate-10b-pre-switch-independent-proof-with-v1-intact",
+      "mergeCommit": {
+        "oid": "29121db8265fbcfbde03d812b8afd462c10891ae"
+      },
+      "mergedAt": "2026-07-13T01:20:36Z",
+      "number": 5301,
+      "state": "MERGED",
+      "title": "[v0.91.7][csdlc-v2] Gate 10B pre-switch independent proof with v1 intact",
+      "url": "https://github.com/danielbaustin/agent-design-language/pull/5301",
+      "record_sha256": "56e421d2c29bca9d91f5336cd0507280f5076e2b9b475a252bf8af07803e43e4"
+    },
+    {
+      "baseRefName": "main",
+      "headRefName": "codex/5294-v0-91-7-csdlc-v2-gate-10c-reversible-default-switch-with-v1-retained",
+      "mergeCommit": {
+        "oid": "913bedd6a2cc9a241ecca2f49993ae0fe706b66d"
+      },
+      "mergedAt": "2026-07-13T02:15:02Z",
+      "number": 5304,
+      "state": "MERGED",
+      "title": "[v0.91.7][csdlc-v2] Gate 10C: reversible default switch with v1 retained",
+      "url": "https://github.com/danielbaustin/agent-design-language/pull/5304",
+      "record_sha256": "2cdca5f02dcc9af49eeec9a3787198c052fbee8db6a58cd8c13e5f199c937c59"
+    },
+    {
+      "baseRefName": "main",
+      "headRefName": "codex/5305-v0-91-7-csdlc-v2-gate-10d1-non-mutating-deletion-eligibility-and-manifest",
+      "mergeCommit": {
+        "oid": "db84d5fbcddd58d3e64edf3269b0525655fa93ac"
+      },
+      "mergedAt": "2026-07-13T04:21:24Z",
+      "number": 5316,
+      "state": "MERGED",
+      "title": "[v0.91.7][csdlc-v2] Gate 10D1: non-mutating deletion eligibility and manifest",
+      "url": "https://github.com/danielbaustin/agent-design-language/pull/5316",
+      "record_sha256": "9337983e4c8ef3e5c69d091dfb09912bf1ce9913bd1b490405c93220eeaf8410"
+    },
+    {
+      "baseRefName": "main",
+      "headRefName": "codex/5295-v0-91-7-csdlc-v2-gate-10d-deletion-eligibility-bounded-removal-and-sunsets",
+      "mergeCommit": {
+        "oid": "e6cf6d8fcc48364caa718cca1fc75af2833891ad"
+      },
+      "mergedAt": "2026-07-14T03:43:31Z",
+      "number": 5320,
+      "state": "MERGED",
+      "title": "[v0.91.7][csdlc-v2] Prepare Gate 10D child cards and designs",
+      "url": "https://github.com/danielbaustin/agent-design-language/pull/5320",
+      "record_sha256": "8906c7ca1232e40942844b6ef9d64e2e1d8971b1ab7c1e23b777caa1ed9ac3ed"
+    },
+    {
+      "baseRefName": "main",
+      "headRefName": "codex/5306-v0-91-7-csdlc-v2-gate-10d2-approved-bounded-v1-deletion-wave",
+      "mergeCommit": {
+        "oid": "7c3e1e0e86a4ca982231ce91c39073530c5408e6"
+      },
+      "mergedAt": "2026-07-14T12:26:06Z",
+      "number": 5331,
+      "state": "MERGED",
+      "title": "[v0.91.7] Complete accelerated C-SDLC v2 Gate 10D2 sunset",
+      "url": "https://github.com/danielbaustin/agent-design-language/pull/5331",
+      "record_sha256": "00647b907af4218d1addb59b7bf38dfe60c1b5d05273240094ecdbff58fdc3e0"
+    }
+  ]
+}

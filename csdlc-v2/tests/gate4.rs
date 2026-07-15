@@ -638,3 +638,48 @@ fn scheduler_and_shepherd_are_read_only_classifiers() {
     });
     assert_eq!(operator.state, ShepherdState::OperatorRequired);
 }
+
+#[test]
+fn shepherd_cli_exposes_schema_and_checked_examples() {
+    use std::process::Command;
+    let binary = env!("CARGO_BIN_EXE_csdlc-shepherd");
+    let schema = Command::new(binary)
+        .arg("--schema")
+        .output()
+        .expect("shepherd schema");
+    assert!(schema.status.success());
+    let schema: serde_json::Value = serde_json::from_slice(&schema.stdout).expect("schema json");
+    assert!(schema["properties"]["repair_needed"].is_object());
+
+    for (name, expected) in [
+        ("ready", ShepherdState::Ready),
+        ("waiting", ShepherdState::Waiting),
+        ("retryable", ShepherdState::Retryable),
+        ("repair_required", ShepherdState::RepairRequired),
+        ("operator_required", ShepherdState::OperatorRequired),
+    ] {
+        let output = Command::new(binary)
+            .args(["--example", name])
+            .output()
+            .expect("shepherd example");
+        assert!(output.status.success(), "{name}");
+        let input: ShepherdInput = serde_json::from_slice(&output.stdout).expect("example json");
+        let fixture = std::fs::read_to_string(format!(
+            "{}/operator/examples/shepherd/{name}.json",
+            env!("CARGO_MANIFEST_DIR")
+        ))
+        .expect("example fixture");
+        let fixture: serde_json::Value = serde_json::from_str(&fixture).expect("fixture json");
+        assert_eq!(
+            serde_json::to_value(&input).expect("input json"),
+            fixture,
+            "{name}"
+        );
+        assert_eq!(classify_shepherd(&input).state, expected, "{name}");
+    }
+    let invalid = Command::new(binary)
+        .args(["--example", "unknown"])
+        .output()
+        .expect("invalid example");
+    assert_eq!(invalid.status.code(), Some(64));
+}

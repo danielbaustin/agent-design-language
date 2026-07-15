@@ -1,0 +1,103 @@
+# Structured Planning Prompt
+
+Template: 1.0.0
+
+Issue: 5390
+
+Repository: danielbaustin/agent-design-language
+
+Card: spp
+
+Status: ready
+
+## Summary
+
+Add fail-closed native TLS, propagate local_addr into readiness and feed data, update local configuration/docs, and prove the integrated HTTPS path.
+
+## Plan
+
+Revision 1
+
+## Steps
+
+[
+  {
+    "id": "step-1",
+    "action": "Add and validate TLS init contract",
+    "acceptance_ids": [
+      "AC-1",
+      "AC-2"
+    ],
+    "status": "pending"
+  },
+  {
+    "id": "step-2",
+    "action": "Serve control API with native TLS and actual bound address",
+    "acceptance_ids": [
+      "AC-1",
+      "AC-3",
+      "AC-4",
+      "AC-5"
+    ],
+    "status": "pending"
+  },
+  {
+    "id": "step-3",
+    "action": "Update local init, browser path, and architecture documentation",
+    "acceptance_ids": [
+      "AC-3",
+      "AC-6"
+    ],
+    "status": "pending"
+  },
+  {
+    "id": "step-4",
+    "action": "Run focused validation and exact-revision review",
+    "acceptance_ids": [
+      "AC-7"
+    ],
+    "status": "pending"
+  }
+]
+
+## Invariants
+
+- TLS material fails closed
+- Discovery derives from the bound listener
+- CORS grants only exact configured HTTPS origins
+- Signed mutation authority is unchanged
+
+## Risks
+
+- Browser trust requires an operator-provisioned localhost certificate
+- TLS test setup could obscure transport assertions if over-abstracted
+
+## Estimates
+
+{
+  "elapsed_seconds": 21600,
+  "total_tokens": 80000,
+  "validation_seconds": 3600
+}
+
+## Design
+
+.csdlc/issues/5390/design.md
+
+Digest: e31afda442f196edcf70e7b2cb021f7b3aab723485a6677ccd2e9d829e95528a
+
+## Diagram
+
+.csdlc/issues/5390/diagram.mmd
+
+Digest: 4c4d1479748a16c61f8194585b06caef82dde84284b25deb62a363dff643adbb
+
+## Stop Conditions
+
+- Fix requires a gateway or sidecar
+- Fix weakens HTTPS or signed-control requirements
+- Fix changes default runtime selection
+
+## Handoff
+
+Proceed only after doctor readiness.

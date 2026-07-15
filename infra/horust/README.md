@@ -19,11 +19,12 @@ Install the pinned guardian outside the repository build:
 cargo install --locked horust --version 0.1.13
 ```
 
-Set the native runtime binary, continuity path, and public control identity,
+Set the native runtime binary, init file, continuity path, and public control identity,
 then run the service definition:
 
 ```sh
 export ADL_RUNTIME_BIN=/usr/local/bin/adl-runtime-kernel
+export ADL_RUNTIME_INIT="$HOME/.adl/runtime-v3/runtime-init.toml"
 export ADL_RUNTIME_CAPSULE="$HOME/.adl/runtime-v3/continuity.json"
 export ADL_RUNTIME_CONTROL_PUBLIC_KEY_HEX=<ed25519-public-key-hex>
 export ADL_RUNTIME_CONTROL_KEY_ID=operator
@@ -44,7 +45,7 @@ contract.
 Run Horust under a dedicated unprivileged host account. The service inherits
 the launcher's OS identity and resource limits; the optional systemd adapter
 adds Linux cgroup and service-account bounds. Use administrator-controlled,
-absolute binary and continuity paths without whitespace or quoting characters,
+absolute binary, init, and continuity paths without whitespace or quoting characters,
 because Horust parses the interpolated command string. Production adoption
 remains blocked by upstream issue 318. The qualification evidence and remaining
 provenance gap are recorded in

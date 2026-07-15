@@ -1,0 +1,200 @@
+milestone: v0.91.8
+version: v0.91.8
+status: planned
+setup_issue: 5383
+superseded_setup_issue: 5335
+restored_v0917_issue: 4641
+wp14a_parent_issue: 5384
+notes:
+  - "#5383 is the active v0.91.7 setup issue for this package."
+  - "#4641 remains v0.91.7 WP-14 after restoration."
+  - "#5384 preserves the v0.91.8 platform acceptance content formerly on #4641."
+  - "All entries are planned until issue-local proof says otherwise."
+wp_issue_map:
+  - {wp: WP-01, issue: 5383}
+  - {wp: WP-02, issue: 5336}
+  - {wp: WP-03, issue: 5337}
+  - {wp: WP-04, issue: 5339}
+  - {wp: WP-05, issue: 5338}
+  - {wp: WP-06, issue: 5340}
+  - {wp: WP-07, issue: 5342}
+  - {wp: WP-08, issue: 5341}
+  - {wp: WP-09, issue: 5349}
+  - {wp: WP-10, issue: 5345}
+  - {wp: WP-11, issue: 5350}
+  - {wp: WP-12, issue: 5344}
+  - {wp: WP-13, issue: 5346}
+  - {wp: WP-14A, issue: 5384}
+  - {wp: WP-15, issue: 5354}
+  - {wp: WP-16, issue: 5351}
+  - {wp: WP-17, issue: 5360}
+  - {wp: WP-18, issue: 5356}
+  - {wp: WP-19, issue: 5357}
+  - {wp: WP-20, issue: 5363}
+  - {wp: WP-21, issue: 5362}
+  - {wp: WP-21A, issue: 5355}
+  - {wp: WP-22, issue: 5359}
+  - {wp: WP-23, issue: 5348}
+sidecar_routes:
+  - {issue: 5335, route: superseded_setup_predecessor, active_owner: 5383}
+  - {issue: 5343, wp: WP-12, assignment: "Reviewed reversible ADL default switch child"}
+  - {issue: 5347, wp: WP-13, assignment: "Externally owned incumbent ADL band deletion child"}
+  - {issue: 5358, live_wp: WP-14, parent_wp: WP-14A, assignment: "C-SDLC v2 acceptance and deployment gate"}
+  - {issue: 5361, live_wp: WP-14, parent_wp: WP-14A, assignment: "Runtime v3 acceptance and deployment gate"}
+  - {issue: 5352, live_wp: WP-14, parent_wp: WP-14A, assignment: "Exact-revision v0.92 consumption handoff"}
+  - {issue: 4758, live_wp: WP-14, parent_wp: WP-14A, assignment: "Launch readiness package after platform deployment"}
+  - {issue: 4759, live_wp: WP-14, parent_wp: WP-14A, assignment: "v0.92 activation map from accepted deployed products"}
+  - {issue: 4760, live_wp: WP-14, parent_wp: WP-14A, assignment: "Memory Palace context handoff"}
+  - {issue: 4761, live_wp: WP-14, parent_wp: WP-14A, assignment: "v0.92 capability envelope"}
+  - {issue: 4762, live_wp: WP-14, parent_wp: WP-14A, assignment: "Birth witnesses and receipt package"}
+  - {issue: 4763, live_wp: WP-14, parent_wp: WP-14A, assignment: "First-birthday docs and external launch surfaces"}
+  - {issue: 5007, live_wp: WP-14, parent_wp: WP-14A, assignment: "Memory Palace ADR acceptance after complete platform proof"}
+  - {issue: 4739, live_wp: WP-14, parent_wp: WP-14A, assignment: "Unity-MCP live project and port proof"}
+  - {issue: 4741, live_wp: WP-14, parent_wp: WP-14A, assignment: "Unity editor liveness and batch proof"}
+  - {issue: 5332, live_wp: WP-14, parent_wp: WP-14A, assignment: "Unity ILPP GetDomainName loop"}
+  - {issue: 5107, live_wp: WP-14, parent_wp: WP-14A, assignment: "Adaptive Learning DAG downstream queue"}
+work_packages:
+  - wp: WP-01
+    issue: 5383
+    title: Planning package and routing repair
+    outcome: Restore #4641, preserve #5384, create this package, and align live issue-wave truth.
+    depends_on: ["v0.91.7 planning truth"]
+    deliverables: ["complete planning package", "issue routing comments", "focused validation"]
+  - wp: WP-02
+    issue: 5336
+    title: Pin incumbent baseline and approve clean-room architecture
+    outcome: Establish denominator, ownership, architecture, and deletion budgets.
+    depends_on: ["WP-01"]
+    deliverables: ["baseline packet", "architecture approval", "budget denominator"]
+  - wp: WP-03
+    issue: 5337
+    title: Build normalized characterization and determinism corpus
+    outcome: Capture compact positive/negative v1 behavior and comparison rules.
+    depends_on: ["WP-02"]
+    deliverables: ["corpus", "normalization rules", "determinism proof plan"]
+  - wp: WP-04
+    issue: 5339
+    title: Implement clean-room six-primitives language core
+    outcome: Implement typed provider, tool, agent, task, workflow, and run contracts.
+    depends_on: ["WP-02", "WP-03"]
+    deliverables: ["schemas", "parsers", "canonicalization proof"]
+  - wp: WP-05
+    issue: 5338
+    title: Implement pure deterministic ADL compiler
+    outcome: Compile validated documents into canonical ExecutionPlan.
+    depends_on: ["WP-04"]
+    deliverables: ["compiler", "stable node identity", "canonical plan fixtures"]
+  - wp: WP-06
+    issue: 5340
+    title: Implement portable bounded execution engine
+    outcome: Implement bounded scheduling, retry/failure, joins, resume, and typed ports.
+    depends_on: ["WP-05"]
+    deliverables: ["engine", "failure semantics", "port proof"]
+  - wp: WP-07
+    issue: 5342
+    title: Implement portable records signing and trust contracts
+    outcome: Implement errors, events, traces, results, artifacts, signing, and verification.
+    depends_on: ["WP-04", "WP-06"]
+    deliverables: ["record contracts", "signing profile", "verification proof"]
+  - wp: WP-08
+    issue: 5341
+    title: Implement Runtime v3 adapter
+    outcome: Connect ADL plans and engine events to Runtime v3 while preserving authority boundaries.
+    depends_on: ["WP-06", "WP-07"]
+    deliverables: ["adapter", "authority-boundary proof"]
+  - wp: WP-09
+    issue: 5349
+    title: Implement provider and governed-tool adapters
+    outcome: Implement mock, HTTP, governed-tool, and compatibility adapters behind typed ports.
+    depends_on: ["WP-06", "WP-08"]
+    deliverables: ["adapter set", "policy proof", "compatibility classification"]
+  - wp: WP-10
+    issue: 5345
+    title: Implement thin ADL CLI and authoritative selector
+    outcome: Implement validate, schema, plan, run, inspect, sign, verify, and generation selection.
+    depends_on: ["WP-04", "WP-05", "WP-06", "WP-07", "WP-08", "WP-09"]
+    deliverables: ["thin CLI", "selector", "stable install proof"]
+  - wp: WP-11
+    issue: 5350
+    title: Run exact-revision normalized shadow parity
+    outcome: Compare v1 and v2 across the approved corpus and classify every mismatch.
+    depends_on: ["WP-03", "WP-10"]
+    deliverables: ["shadow matrix", "mismatch disposition"]
+  - wp: WP-12
+    issue: 5344
+    title: Run opt-in soak and prove rollback
+    outcome: Prove opt-in scenarios, rollback to v1, and reviewed selector switch through #5343.
+    depends_on: ["WP-11"]
+    deliverables: ["soak packet", "rollback proof", "cutover gate"]
+  - wp: WP-13
+    issue: 5346
+    title: Delete replaced incumbent surfaces
+    outcome: Delete only reviewed replaced ADL compiler/CLI and external-owned bands through #5346/#5347.
+    depends_on: ["WP-12"]
+    deliverables: ["deletion manifest", "eligibility proof", "post-deletion validation"]
+  - wp: WP-14A
+    issue: 5384
+    title: Integrated platform acceptance deployment and v0.92 birthday handoff
+    outcome: Accept and deploy ADL v2, Runtime v3, and C-SDLC v2 and dispose moved handoff children.
+    depends_on: ["WP-13", "#5358", "#5361"]
+    deliverables: ["acceptance packet", "deployment proof", "v0.92 handoff ledger"]
+  - wp: WP-15
+    issue: 5354
+    title: Converge integrated ADL Runtime and C-SDLC demos
+    outcome: Demonstrate the deployed three-product stack and public claim boundaries.
+    depends_on: ["WP-14A"]
+    deliverables: ["demo packet", "claim-boundary matrix"]
+  - wp: WP-16
+    issue: 5351
+    title: Run integrated platform quality gate
+    outcome: Run integrated platform quality checks.
+    depends_on: ["WP-15"]
+    deliverables: ["quality gate packet"]
+  - wp: WP-17
+    issue: 5360
+    title: Align documentation and release truth before formal review
+    outcome: Align milestone docs, feature docs, handoff, issue wave, and deployment truth.
+    depends_on: ["WP-16"]
+    deliverables: ["docs alignment packet"]
+  - wp: WP-18
+    issue: 5356
+    title: Run internal milestone review
+    outcome: Review code, deployment, docs, proof, issue graph, and release-tail packets.
+    depends_on: ["WP-17"]
+    deliverables: ["internal review register"]
+  - wp: WP-19
+    issue: 5357
+    title: Run independent external milestone review
+    outcome: Run external review after internal review is consumable.
+    depends_on: ["WP-18"]
+    deliverables: ["external review packet"]
+  - wp: WP-20
+    issue: 5363
+    title: Remediate review findings and run release preflight
+    outcome: Fix accepted findings and rerun focused/integrated checks.
+    depends_on: ["WP-19"]
+    deliverables: ["remediation packet", "preflight proof"]
+  - wp: WP-21
+    issue: 5362
+    title: Align feature list and v0.92 planning truth
+    outcome: Prepare v0.92 inputs from reviewed deployed truth.
+    depends_on: ["WP-20"]
+    deliverables: ["v0.92 input packet"]
+  - wp: WP-21A
+    issue: 5355
+    title: Prepare next-milestone closeout plan
+    outcome: Prepare canonical closeout-planning packet.
+    depends_on: ["WP-21"]
+    deliverables: ["closeout-planning packet"]
+  - wp: WP-22
+    issue: 5359
+    title: Review next-milestone planning before opening v0.92
+    outcome: Review v0.92 inputs for blockers, stale assumptions, and overclaims.
+    depends_on: ["WP-21A"]
+    deliverables: ["next-planning review"]
+  - wp: WP-23
+    issue: 5348
+    title: Release ceremony and lifecycle closeout
+    outcome: Close milestone lifecycle with evidence-bound release truth.
+    depends_on: ["WP-22"]
+    deliverables: ["release ceremony packet", "closeout record"]

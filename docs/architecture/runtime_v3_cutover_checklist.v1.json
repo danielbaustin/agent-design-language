@@ -7,7 +7,7 @@
   "default_runtime_switch_authorized": false,
   "runtime_v2_deletion_authorized": false,
   "created_at_utc": "2026-07-12T05:40:00Z",
-  "updated_at_utc": "2026-07-12T14:20:00Z",
+  "updated_at_utc": "2026-07-15T16:49:14Z",
   "evidence": {
     "parity_matrix": "docs/architecture/runtime_v3_parity_matrix.v1.json",
     "shadow_parity_report": "docs/architecture/runtime_v3_shadow_parity_report.v1.json",
@@ -33,7 +33,7 @@
     {"issue": 5222, "state": "closed", "role": "weather_gpu_qualification", "cutover_effect": "cpu_memory_disk_weather_passed_gpu_deferred_to_5252"},
     {"issue": 5224, "state": "closed", "role": "guardian_fallback_review", "cutover_effect": "no_drop_in_cots_replacement_identified"},
     {"issue": 5225, "state": "closed", "role": "guardian_fallback_implementation", "cutover_effect": "selected_small_tokio_child_process_fallback"},
-    {"issue": 5227, "state": "open", "role": "v0_91_7_cutover_sprint_umbrella", "cutover_effect": "awaits_5220_closeout"},
+    {"issue": 5227, "state": "closed", "role": "v0_91_7_cutover_sprint_umbrella", "cutover_effect": "closed_after_5220_completed_without_authorizing_default_cutover"},
     {"issue": 5247, "state": "closed", "role": "v0_91_7_cutover_readiness_umbrella", "cutover_effect": "child_wave_complete"},
     {"issue": 5248, "state": "closed", "role": "live_black_box_parity", "cutover_effect": "retained_cutover_eligible_true_with_zero_remaining_blockers_after_5277_5278_5279_5280_5281_5282_5283_5284_5285"},
     {"issue": 5249, "state": "closed", "role": "private_state_security_equivalence", "cutover_effect": "accepted_intentional_divergence_no_raw_v2_format_claim"},

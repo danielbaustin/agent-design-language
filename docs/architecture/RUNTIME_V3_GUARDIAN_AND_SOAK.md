@@ -9,7 +9,7 @@ artifact in this packet authorizes cutover.
 
 ## Guardian-Neutral Child Contract
 
-Every guardian starts the same `adl-runtime-kernel serve <continuity-path>`
+Every guardian starts the same `adl-runtime-kernel serve --init <init-path> --capsule <continuity-path>`
 process. The child owns component supervision, readiness, typed bounded
 channels, continuity, and graceful shutdown. The external guardian owns
 environment injection, stdout/stderr capture, signal delivery, child reaping,

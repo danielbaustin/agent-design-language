@@ -1,20 +1,18 @@
 use std::{
     collections::{BTreeMap, BTreeSet},
-    net::{IpAddr, Ipv4Addr},
     path::PathBuf,
     process::ExitCode,
     sync::Arc,
 };
 
 use adl_runtime_kernel::{
-    execute_loop, generate_runtime_instance_id,
+    execute_loop, generate_runtime_instance_id, load_control_tls,
     proof::{build_proof_runtime, load_capsule, run_proof},
-    serve_control_listener_until, verifying_key_from_hex, AdaptationState, ControlAuthority,
+    serve_control_listener_until_ready, verifying_key_from_hex, AdaptationState, ControlAuthority,
     ControlCapability, ControlService, KernelExit, LoopDefinition, LoopStatus, ReasoningEdge,
-    ReasoningGraphDefinition, ReasoningNode, RecordedObservation, ResourceState,
+    ReasoningGraphDefinition, ReasoningNode, RecordedObservation, ResourceState, RuntimeInitConfig,
     SysinfoWeatherObserver, TrustedControlKey, ValidatedReasoningGraph, WeatherConfig,
-    WeatherHealthReport, WeatherObserver, DEFAULT_CONTROL_API_PORT, MAX_SHADOW_FIXTURE_BYTES,
-    REASONING_GRAPH_SCHEMA,
+    WeatherHealthReport, WeatherObserver, MAX_SHADOW_FIXTURE_BYTES, REASONING_GRAPH_SCHEMA,
 };
 use tokio_util::sync::CancellationToken;
 
@@ -22,14 +20,38 @@ use tokio_util::sync::CancellationToken;
 async fn main() -> ExitCode {
     let mut args = std::env::args().skip(1);
     let command = args.next().unwrap_or_else(|| "demo".to_owned());
-    let capsule = args
-        .next()
-        .map(PathBuf::from)
-        .unwrap_or_else(|| PathBuf::from("adl-runtime-kernel-continuity.json"));
 
     match command.as_str() {
         "serve" => {
-            let proof = match build_proof_runtime(&capsule, 3) {
+            let serve_args = match ServeArgs::parse(args) {
+                Ok(args) => args,
+                Err(error) => {
+                    eprintln!("{error}");
+                    return ExitCode::from(64);
+                }
+            };
+            let init = match RuntimeInitConfig::load(serve_args.init_path.clone()) {
+                Ok(config) => config,
+                Err(error) => {
+                    eprintln!("runtime init invalid: {error}");
+                    return ExitCode::from(78);
+                }
+            };
+            let tls = match load_control_tls(&init.api.tls).await {
+                Ok(config) => config,
+                Err(error) => {
+                    eprintln!("{error}");
+                    return ExitCode::from(78);
+                }
+            };
+            let socket_addrs = match init.socket_addrs() {
+                Ok(addrs) => addrs,
+                Err(error) => {
+                    eprintln!("runtime init invalid: {error}");
+                    return ExitCode::from(78);
+                }
+            };
+            let proof = match build_proof_runtime(&serve_args.capsule, 3) {
                 Ok(proof) => proof,
                 Err(error) => {
                     eprintln!("runtime topology invalid: {error}");
@@ -61,12 +83,7 @@ async fn main() -> ExitCode {
                     ]),
                 },
             )]));
-            let listener = match tokio::net::TcpListener::bind((
-                IpAddr::V4(Ipv4Addr::LOCALHOST),
-                DEFAULT_CONTROL_API_PORT,
-            ))
-            .await
-            {
+            let listener = match tokio::net::TcpListener::bind(socket_addrs.as_slice()).await {
                 Ok(listener) => listener,
                 Err(error) => {
                     eprintln!("runtime control API bind failed: {error}");
@@ -81,15 +98,14 @@ async fn main() -> ExitCode {
                 }
             };
             let instance_id = generate_runtime_instance_id();
-            eprintln!(
-                "adl_event schema=adl.runtime.instance.v1 event=control_ready instance_id={instance_id} port=20997"
-            );
-            let service = Arc::new(ControlService::new(
-                instance_id,
+            let service = Arc::new(ControlService::new_with_observatory_config_and_agents(
+                instance_id.clone(),
                 proof.recorder,
                 handle.control(),
                 authority,
                 1024,
+                init.observatory_allowed_origins(),
+                init.agent_population(),
             ));
             let mut weather_observer = SysinfoWeatherObserver::default();
             service.set_weather_report(WeatherHealthReport::from_sample(
@@ -98,11 +114,27 @@ async fn main() -> ExitCode {
                 ResourceState::Healthy,
             ));
             let api_shutdown = tokio_util::sync::CancellationToken::new();
-            let mut api = tokio::spawn(serve_control_listener_until(
+            let (ready_sender, ready_receiver) = tokio::sync::oneshot::channel();
+            let mut api = tokio::spawn(serve_control_listener_until_ready(
                 service,
                 listener,
+                tls,
+                ready_sender,
                 api_shutdown.clone().cancelled_owned(),
             ));
+            let bound_address = match ready_receiver.await {
+                Ok(address) => address,
+                Err(_) => {
+                    eprintln!("runtime control API failed before readiness");
+                    let _ = handle.shutdown(std::time::Duration::from_secs(10)).await;
+                    drain_control_api(&mut api).await;
+                    return ExitCode::from(70);
+                }
+            };
+            eprintln!(
+                "{}",
+                adl_runtime_kernel::control_ready_event(&instance_id, bound_address)
+            );
             tokio::select! {
                 signal = shutdown_signal() => {
                     if let Err(error) = signal {
@@ -150,23 +182,26 @@ async fn main() -> ExitCode {
                 },
             }
         }
-        "demo" => match run_proof(&capsule, 3).await {
-            Ok((exit, continuity)) => {
-                println!(
-                    "{}",
-                    serde_json::json!({
-                        "schema": "adl.runtime_kernel.proof.v1",
-                        "exit": format!("{exit:?}"),
-                        "capsule": continuity,
-                    })
-                );
-                ExitCode::SUCCESS
+        "demo" => {
+            let capsule = capsule_arg(args);
+            match run_proof(&capsule, 3).await {
+                Ok((exit, continuity)) => {
+                    println!(
+                        "{}",
+                        serde_json::json!({
+                            "schema": "adl.runtime_kernel.proof.v1",
+                            "exit": format!("{exit:?}"),
+                            "capsule": continuity,
+                        })
+                    );
+                    ExitCode::SUCCESS
+                }
+                Err(error) => {
+                    eprintln!("runtime kernel proof failed: {error}");
+                    ExitCode::from(70)
+                }
             }
-            Err(error) => {
-                eprintln!("runtime kernel proof failed: {error}");
-                ExitCode::from(70)
-            }
-        },
+        }
         "shadow-loop" => match run_shadow_loop().await {
             Ok(value) => {
                 println!("{value}");
@@ -178,6 +213,7 @@ async fn main() -> ExitCode {
             }
         },
         "fatal-once" => {
+            let capsule = capsule_arg(args);
             let marker = capsule.with_extension("fatal-once");
             if !marker.exists() {
                 if let Err(error) = run_proof(&capsule, 3).await {
@@ -212,11 +248,59 @@ async fn main() -> ExitCode {
         }
         _ => {
             eprintln!(
-                "usage: adl-runtime-kernel [serve|demo|shadow-loop|fatal-once] [capsule-path]"
+                "usage: adl-runtime-kernel [serve [--init path] [--capsule path]|demo [capsule-path]|shadow-loop|fatal-once [capsule-path]]"
             );
             ExitCode::from(64)
         }
     }
+}
+
+struct ServeArgs {
+    capsule: PathBuf,
+    init_path: Option<PathBuf>,
+}
+
+impl ServeArgs {
+    fn parse(args: impl Iterator<Item = String>) -> Result<Self, String> {
+        let mut init_path = None;
+        let mut capsule = None;
+        let mut args = args.peekable();
+        while let Some(arg) = args.next() {
+            match arg.as_str() {
+                "--init" => {
+                    let Some(path) = args.next() else {
+                        return Err("--init requires a runtime init file path".to_owned());
+                    };
+                    init_path = Some(PathBuf::from(path));
+                }
+                "--capsule" => {
+                    let Some(path) = args.next() else {
+                        return Err("--capsule requires a continuity capsule path".to_owned());
+                    };
+                    capsule = Some(PathBuf::from(path));
+                }
+                other if other.starts_with('-') => {
+                    return Err(format!("unknown serve option: {other}"));
+                }
+                path => {
+                    if capsule.is_some() {
+                        return Err("serve accepts only one continuity capsule path".to_owned());
+                    }
+                    capsule = Some(PathBuf::from(path));
+                }
+            }
+        }
+        Ok(Self {
+            capsule: capsule.unwrap_or_else(|| PathBuf::from("adl-runtime-kernel-continuity.json")),
+            init_path,
+        })
+    }
+}
+
+fn capsule_arg(mut args: impl Iterator<Item = String>) -> PathBuf {
+    args.next()
+        .map(PathBuf::from)
+        .unwrap_or_else(|| PathBuf::from("adl-runtime-kernel-continuity.json"))
 }
 
 async fn shutdown_signal() -> std::io::Result<()> {
@@ -348,7 +432,7 @@ fn process_exit(exit: KernelExit) -> ExitCode {
 async fn drain_control_api(
     api: &mut tokio::task::JoinHandle<Result<(), adl_runtime_kernel::ControlApiError>>,
 ) {
-    if tokio::time::timeout(std::time::Duration::from_secs(2), &mut *api)
+    if tokio::time::timeout(std::time::Duration::from_secs(3), &mut *api)
         .await
         .is_err()
     {

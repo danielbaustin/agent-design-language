@@ -104,6 +104,21 @@ fn fixture() -> (TempDir, Store, csdlc_v2::IssueRecord) {
 }
 
 #[test]
+fn bootstrap_rejects_missing_vpp_command_before_authoring_files() {
+    let temp = tempfile::tempdir().expect("tempdir");
+    let store = Store::new(temp.path());
+    let mut request = request();
+    request.initial.validation_lanes[0].argv = vec![
+        "bash".into(),
+        "adl/tools/validate_planning_templates.sh".into(),
+    ];
+    let error = csdlc_v2::initialize_issue(&store, request).expect_err("missing command");
+    assert!(matches!(error.code, ErrorCode::InvalidInput));
+    assert!(!temp.path().join("docs/design.md").exists());
+    assert!(!temp.path().join(".csdlc/issues/42").exists());
+}
+
+#[test]
 fn bind_creates_and_idempotently_reuses_typed_worktree() {
     let (temp, store, record) = fixture();
     git(temp.path(), &["init", "-b", "main"]);
@@ -370,6 +385,110 @@ fn semantic_edit_updates_one_owned_projection_atomically() {
 }
 
 #[test]
+fn bound_replan_is_typed_claimed_and_limited_to_planning_cards() {
+    let (temp, store, record) = fixture();
+    git(temp.path(), &["init", "-b", "main"]);
+    git(
+        temp.path(),
+        &["config", "user.email", "test@example.invalid"],
+    );
+    git(temp.path(), &["config", "user.name", "test"]);
+    git(temp.path(), &["add", "."]);
+    git(temp.path(), &["commit", "-m", "fixture"]);
+    let claim = record.claim.clone().expect("claim");
+    csdlc_v2::bind_issue(
+        &store,
+        csdlc_v2::BindRequest {
+            issue: 42,
+            base_branch: "main".into(),
+            branch: "issue-42".into(),
+            worktree: ".worktrees/issue-42".into(),
+            claim,
+        },
+    )
+    .expect("bind");
+    let bound_record = store.load_record(42).expect("bound record");
+    let updated = edit_issue(
+        &store,
+        EditRequest {
+            issue: 42,
+            card: CardKind::Spp,
+            expected_generation: bound_record.generation,
+            expected_digest: bound_record.digest.clone(),
+            claim_id: "claim-1".into(),
+            actor: "agent".into(),
+            reason: "revise bounded plan after scope clarification".into(),
+            operation: SemanticOperation::Replan {
+                field: csdlc_v2::cards::TextField::PlanSummary,
+                value: "Replanned bounded execution.".into(),
+            },
+            fail_after_backup: false,
+        },
+    )
+    .expect("replan");
+    assert!(updated.generation > bound_record.generation);
+    let replan_audit = updated.audit.last().expect("audit").operation.clone();
+    assert!(replan_audit.contains("replan"));
+    assert!(replan_audit.contains("previous_value"));
+    assert!(replan_audit.contains("Build then diagnose."));
+    let sip = edit_issue(
+        &store,
+        EditRequest {
+            issue: 42,
+            card: CardKind::Sip,
+            expected_generation: updated.generation,
+            expected_digest: updated.digest,
+            claim_id: "claim-1".into(),
+            actor: "agent".into(),
+            reason: "revise intent".into(),
+            operation: SemanticOperation::Replan {
+                field: csdlc_v2::cards::TextField::Goal,
+                value: "Replanned goal.".into(),
+            },
+            fail_after_backup: false,
+        },
+    )
+    .expect("SIP replan");
+    let stp = edit_issue(
+        &store,
+        EditRequest {
+            issue: 42,
+            card: CardKind::Stp,
+            expected_generation: sip.generation,
+            expected_digest: sip.digest,
+            claim_id: "claim-1".into(),
+            actor: "agent".into(),
+            reason: "revise task boundary".into(),
+            operation: SemanticOperation::Replan {
+                field: csdlc_v2::cards::TextField::TaskBoundary,
+                value: "Replanned task boundary.".into(),
+            },
+            fail_after_backup: false,
+        },
+    )
+    .expect("STP replan");
+    let sor = edit_issue(
+        &store,
+        EditRequest {
+            issue: 42,
+            card: CardKind::Sor,
+            expected_generation: stp.generation,
+            expected_digest: stp.digest,
+            claim_id: "claim-1".into(),
+            actor: "agent".into(),
+            reason: "unauthorized bound replan".into(),
+            operation: SemanticOperation::Replan {
+                field: csdlc_v2::cards::TextField::SorSummary,
+                value: "nope".into(),
+            },
+            fail_after_backup: false,
+        },
+    )
+    .expect_err("SOR replan must be rejected");
+    assert!(matches!(sor.code, ErrorCode::InvalidTransition));
+}
+
+#[test]
 fn field_ownership_violation_fails_without_generation_change() {
     let (_temp, store, record) = fixture();
     let error = edit_issue(
@@ -575,6 +694,24 @@ fn placeholder_design_is_pending_then_can_be_completed_approved_and_bound() {
     assert!(
         matches!(approved.design_review, csdlc_v2::DesignReview::Approved { reviewer, .. } if reviewer == "architect")
     );
+    let cards = store.load_cards(42).expect("approved cards");
+    let design_digest =
+        csdlc_v2::cards::digest(&fs::read(temp.path().join("docs/design.md")).expect("design"));
+    let diagram_digest =
+        csdlc_v2::cards::digest(&fs::read(temp.path().join("docs/diagram.mmd")).expect("diagram"));
+    for kind in [CardKind::Spp, CardKind::Vpp] {
+        match &cards[&kind].content {
+            csdlc_v2::cards::CardContent::Spp(values) => {
+                assert_eq!(values.design_digest, design_digest);
+                assert_eq!(values.diagram_digest, diagram_digest);
+            }
+            csdlc_v2::cards::CardContent::Vpp(values) => {
+                assert_eq!(values.design_digest, design_digest);
+                assert_eq!(values.diagram_digest, diagram_digest);
+            }
+            _ => unreachable!("design-bearing card"),
+        }
+    }
     assert!(diagnose(&store, 42).ready);
     git(temp.path(), &["init", "-b", "main"]);
     git(
@@ -600,6 +737,41 @@ fn placeholder_design_is_pending_then_can_be_completed_approved_and_bound() {
         store.load_record(42).expect("record").phase,
         csdlc_v2::LifecyclePhase::Bound
     );
+}
+
+#[test]
+fn issue_local_design_paths_do_not_look_like_existing_records() {
+    let temp = tempfile::tempdir().expect("tempdir");
+    let store = Store::new(temp.path());
+    let mut bootstrap = request();
+    bootstrap.design_path = ".csdlc/issues/42/design.md".into();
+    bootstrap.diagram_path = ".csdlc/issues/42/diagram.mmd".into();
+    bootstrap.design_approved = false;
+
+    let record = csdlc_v2::initialize_issue(&store, bootstrap).expect("issue-local init");
+    assert_eq!(record.issue, 42);
+    assert!(store.issue_dir(42).join("index.json").exists());
+    assert!(store.issue_dir(42).join("design.md").exists());
+    assert!(store.issue_dir(42).join("diagram.mmd").exists());
+    assert!(!matches!(
+        diagnose(&store, 42).status,
+        csdlc_v2::doctor::DoctorStatus::Corrupt
+    ));
+}
+
+#[test]
+fn invalid_issue_local_init_fails_before_creating_artifacts() {
+    let temp = tempfile::tempdir().expect("tempdir");
+    let store = Store::new(temp.path());
+    let mut bootstrap = request();
+    bootstrap.issue = 43;
+    bootstrap.claim.owner.clear();
+    bootstrap.design_path = ".csdlc/issues/43/design.md".into();
+    bootstrap.diagram_path = ".csdlc/issues/43/diagram.mmd".into();
+
+    let error = csdlc_v2::initialize_issue(&store, bootstrap).expect_err("invalid claim");
+    assert!(matches!(error.code, ErrorCode::InvalidInput));
+    assert!(!store.issue_dir(43).exists());
 }
 
 #[test]

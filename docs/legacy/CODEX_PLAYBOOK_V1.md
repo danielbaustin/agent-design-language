@@ -1,0 +1,254 @@
+# Codex Operating Procedure for ADL
+
+## Purpose
+Codex is a **builder/operator** for this repo. It executes well-scoped work (edits, tests, refactors, examples) while **ADL remains the blueprint**: deterministic, auditable, versioned.
+
+---
+
+## Collaboration Workflow (Canonical)
+
+Source-of-truth governance: `../CONTRIBUTING.md` (canonical).
+
+Workflow loop:
+
+```
+init -> ready -> run -> review -> finish -> merge -> cleanup
+```
+
+Card semantics:
+- The canonical local draft prompt bundle lives under `.adl/<scope>/tasks/<task-id>__<slug>/`.
+- Input/output cards are **local-only** trace artifacts under `.adl/cards/` (not committed).
+- The canonical local draft prompt bundle is `.adl/<scope>/tasks/<task-id>__<slug>/`.
+- Until workflow tooling writes that layout directly, `.adl/cards/` and `.adl/issues/...` remain compatibility inputs that should be synced into the canonical bundle view.
+- Compatibility links remain under `.adl/cards/` for adjacent tooling during migration.
+- GitHub issue state is the source of truth for whether a card is active or complete.
+- Active/current issue cards stay flat under `.adl/cards/<issue>/` while the milestone is in flight.
+- Closed/completed cards may be archived under `.adl/cards/completed/<milestone>/<issue>/` after or as part of milestone closeout so the active top-level card list stays workable.
+- C-SDLC prompt templates live under `docs/templates/prompts/1.0.0/`; legacy
+  SIP/SOR compatibility templates remain under `adl/templates/cards/`.
+- Tasks can be non-code; the same card-based trace applies.
+
+Fast path (copy/paste):
+
+```bash
+adl/tools/pr.sh init <issue>
+adl/tools/pr.sh ready <issue>
+adl/tools/pr.sh run <issue>
+# do the work + tests
+adl/tools/pr.sh finish <issue> --title "adl: <short description>" \
+  -f .adl/v0.85/tasks/<task-id>__<slug>/sip.md \
+  --output-card .adl/v0.85/tasks/<task-id>__<slug>/sor.md
+```
+
+Recovery (common pitfalls):
+- **Wrong branch:** `git switch main` -> rerun the appropriate `pr run <issue>` bind step
+- **Finish after manual commit:** `adl/tools/pr.sh finish ...` still works; it will commit staged changes.
+- **Issue vs PR number confusion:** always use the **issue** number for cards/branches.
+
+---
+
+## ADL Philosophy (Read First)
+
+ADL is not an agent framework implementation detail.
+ADL is a **blueprint language for agent computation**.
+
+Core principles:
+
+- Deterministic resolution
+- Deterministic prompt assembly
+- Deterministic execution (within version constraints)
+- Full traceability of runs and steps
+- Schema-first evolution
+- Security and audit are first-class design constraints
+
+ADL is now stabilized through v0.6. Version-specific semantics live in milestone docs under `docs/milestones/` and in ADRs under `docs/adr/`. This playbook does not restate release notes or feature lists.
+
+Concurrency is allowed in schema but **must fail clearly** when gated by version.
+
+---
+
+## Non-Negotiable Invariants
+
+Codex must preserve these unless explicitly told otherwise.
+
+### 1. Determinism First
+- Resolution and execution must be deterministic.
+- Step IDs must be stable.
+- Prompt assembly must be reproducible.
+
+### 2. Traceability
+If behavior changes:
+- Update trace events
+- Update trace tests
+- Never silently change execution semantics
+
+### 3. Schema Discipline
+- Schema, structs, fixtures, and examples must stay aligned.
+- All examples must parse.
+- Schema validation must remain strict.
+
+### 4. Hermetic Tests
+Tests must:
+- Not require network access
+- Not require real providers
+- Use mocks (e.g. mock ollama)
+- Use temp directories when touching filesystem
+
+### 5. Clear Failures
+Errors must explain:
+- What failed
+- Why it failed
+- What the user should do next
+
+Especially important:
+- Version-gated features
+- Provider failures
+- Input materialization failures
+
+### 6. Minimal Surface Area Changes
+Prefer:
+- Smallest safe patch
+- Tests proving behavior
+- Follow-up notes instead of speculative refactors
+
+---
+
+## What Codex SHOULD Do
+
+Codex is ideal for:
+
+- Implementing clearly scoped issues
+- Adding or fixing tests
+- Maintaining examples and fixtures
+- Mechanical refactors
+- Coverage improvements
+- CLI polish
+- Documentation consistency
+
+---
+
+## What Codex MUST NOT Do (Without Explicit Instruction)
+
+Do NOT:
+
+- Invent new ADL primitives
+- Change ADL semantics "because it seems better"
+- Introduce concurrency early
+- Perform broad renames across repo
+- Rewrite architecture without design doc + acceptance criteria
+- Remove trace events
+- Loosen validation rules
+
+---
+
+## Standard Task Workflow (Mandatory)
+
+For every task:
+
+### 1. Restate Goal
+Return:
+- Goal
+- Acceptance criteria
+- Scope boundaries
+
+### 2. Repo Scan
+Identify:
+- Relevant modules in `adl/src/`
+- Existing tests
+- Schema touch points
+- CLI behavior (if relevant)
+
+### 3. Plan Smallest Correct Change
+Explain:
+- Files to modify
+- Tests to add/update
+- Why this is minimal + correct
+
+### 4. Implement
+
+### 5. Verify (Required Commands)
+Run:
+
+```
+cargo fmt --all -- --check
+cargo clippy --all-targets -- -D warnings
+cargo test
+```
+
+If CLI behavior changed, also run:
+
+```
+cargo run -- examples/adl-0.1.yaml --run
+cargo run -- examples/adl-0.1.yaml --run --trace
+```
+
+### 6. Report Back
+
+Return:
+
+- Status: pass / fail
+- Files changed
+- Tests added or updated
+- Risk notes
+- Follow-up suggestions (optional)
+
+---
+
+## Branch / Commit Hygiene
+
+- One branch per task
+- Prefer 1-3 commits:
+  1. Implementation
+  2. Tests
+  3. Docs (optional)
+
+Never commit:
+- Coverage HTML
+- Generated artifacts
+- Temp outputs
+
+Unless explicitly requested.
+
+---
+
+## Governance Reminder
+
+This document defines execution mechanics only.
+
+Process, coverage discipline, documentation ownership, and repository-wide rules are defined in:
+
+- `../CONTRIBUTING.md`
+
+If any instruction here conflicts with the root CONTRIBUTING file, the root file takes precedence.
+
+---
+
+## Definition of Done
+
+A change is complete only if:
+
+- Builds clean
+- Clippy clean (warnings = errors)
+- Tests fully green
+- Behavior changes covered by tests
+- Errors remain actionable
+- Examples still parse and run
+
+---
+
+## Required Repo Reading Order (For Codex Sessions)
+
+Before editing, Codex must read:
+
+1. `adl/README.md`
+2. `docs/design_goals.md`
+3. `adl/examples/`
+4. `adl/tests/`
+
+Then identify:
+- Modules to change
+# C-SDLC v2 authority
+
+For current C-SDLC issue work, use the independent Rust binaries and typed
+skills under `csdlc-v2/`. The legacy `pr.sh` examples in this document are
+historical migration evidence and are not an operational route.

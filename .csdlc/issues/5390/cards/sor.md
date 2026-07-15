@@ -1,0 +1,197 @@
+# Structured Output Record
+
+Template: 1.0.0
+
+Issue: 5390
+
+Repository: danielbaustin/agent-design-language
+
+Card: sor
+
+Status: pre_phase
+
+## Summary
+
+Runtime v3 HTTPS repair is implemented; approved design artifacts remain unchanged and current.
+
+## Artifacts
+
+- adl-runtime-kernel/src/control.rs
+- adl-runtime-kernel/src/config.rs
+- infra/runtime-v3/runtime-init.toml
+- docs/architecture/RUNTIME_V3_ENTRYPOINT_SWITCH.md
+- demos/v0.91.7/html-observatory/README.md
+- adl/src/cli/runtime_v3_cmd.rs
+- adl-runtime/src/guardian.rs
+- infra/systemd/adl-runtime-kernel.service
+- infra/rustysd/adl-runtime-kernel.service
+- adl-runtime-kernel/tests/control.rs
+- demos/v0.91.7/html-observatory/README.md
+- adl-runtime-kernel/src/control.rs
+- adl-runtime-kernel/src/bin/adl-runtime-kernel.rs
+- adl-runtime/src/guardian.rs
+- infra/horust/README.md
+- docs/architecture/runtime_v3_guardian_fallback_matrix.v1.json
+- .csdlc/issues/5390/diagram.mmd
+- adl-runtime/src/guardian.rs
+- adl-runtime-kernel/src/control.rs
+- adl-runtime-kernel/src/bin/adl-runtime-kernel.rs
+
+## Execution
+
+- Added fail-closed PEM certificate and private-key paths to Runtime v3 init configuration.
+- Replaced the plaintext Axum serving path with axum-server Rustls while preserving graceful shutdown.
+- Propagated TcpListener::local_addr() into the ready event and Observatory feed.
+- Converted control integration tests to real TLS and corrected local Observatory documentation and URLs.
+- Updated executable Runtime v3 selector output and launch command to HTTPS plus explicit init.
+- Updated guardian, systemd, and retained rustysd contracts to pass explicit init and capsule paths and classify TLS config exit 78 as non-restartable.
+- Added a concrete Caddy HTTPS Observatory command without repository trust-store mutation.
+- Bounded TLS graceful drain and proved stalled-response termination.
+- Proved missing and mismatched PEM material fails before Runtime v3 readiness.
+- Removed duplicate hard-coded control endpoint fields from guardian config and outcomes and versioned the changed guardian wire schema as v2.
+- Changed control readiness to use axum-server Handle::listening() and propagate its bound address.
+- Completed Horust init-file instructions and marked retained fixed-endpoint guardian matrices historical and superseded.
+- Updated the issue design and diagram to show selector, guardian, init, native TLS, readiness, and Observatory flow.
+- Correction to the prior execution entry: the attempted late design/diagram update was reverted after the lifecycle guard rejected stale approval; no design or diagram change landed.
+- Guardian outcome wire format is versioned as adl.runtime_v3.external_guardian.v2.
+- Runtime readiness now comes from axum-server Handle::listening() rather than a pre-serve local signal.
+
+## Validation
+
+[
+  {
+    "command": [
+      "cargo",
+      "test",
+      "--manifest-path",
+      "adl-runtime-kernel/Cargo.toml"
+    ],
+    "purpose": "Full independent Runtime v3 crate regression suite, including real TLS, CORS, graceful shutdown, and ephemeral-port proofs",
+    "outcome": "passed",
+    "evidence_ref": "local FastWork target: 142 passed, 8 environment-dependent ignored, 0 failed"
+  },
+  {
+    "command": [
+      "cargo",
+      "clippy",
+      "--manifest-path",
+      "adl-runtime-kernel/Cargo.toml",
+      "--all-targets",
+      "--",
+      "-D",
+      "warnings"
+    ],
+    "purpose": "Reject Runtime v3 compiler and Clippy warnings across all targets",
+    "outcome": "passed",
+    "evidence_ref": "local FastWork target: finished successfully with warnings denied"
+  },
+  {
+    "command": [
+      "bash",
+      "adl/tools/test_v0917_html_observatory_integrated_proof.sh"
+    ],
+    "purpose": "Verify the v0.91.7 HTML Observatory integrated proof remains valid",
+    "outcome": "passed",
+    "evidence_ref": "local output: v0.91.7 HTML Observatory integrated proof passed"
+  },
+  {
+    "command": [
+      "cargo",
+      "test",
+      "--manifest-path",
+      "adl-runtime-kernel/Cargo.toml"
+    ],
+    "purpose": "Final full Runtime v3 crate regression after review fixes",
+    "outcome": "passed",
+    "evidence_ref": "FastWork target: 144 passed, 8 environment-dependent ignored, 0 failed"
+  },
+  {
+    "command": [
+      "cargo",
+      "test",
+      "--manifest-path",
+      "adl-runtime/Cargo.toml",
+      "guardian"
+    ],
+    "purpose": "Verify guardian init/capsule launch contract and non-restartable configuration exits",
+    "outcome": "passed",
+    "evidence_ref": "FastWork target: 9 guardian tests passed, 0 failed"
+  },
+  {
+    "command": [
+      "cargo",
+      "test",
+      "--manifest-path",
+      "adl/Cargo.toml",
+      "runtime_v3_cmd"
+    ],
+    "purpose": "Verify executable Runtime v3 selector advertises HTTPS and explicit init",
+    "outcome": "passed",
+    "evidence_ref": "FastWork cold target: selector tests passed; compile 2m29s, test execution under 1s"
+  },
+  {
+    "command": [
+      "bash",
+      "adl/tools/test_v0917_html_observatory_integrated_proof.sh"
+    ],
+    "purpose": "Final HTML Observatory contract validation after HTTPS runbook repair",
+    "outcome": "passed",
+    "evidence_ref": "local output: v0.91.7 HTML Observatory integrated proof passed"
+  },
+  {
+    "command": [
+      "cargo",
+      "test",
+      "--manifest-path",
+      "adl-runtime-kernel/Cargo.toml"
+    ],
+    "purpose": "Exact final Runtime v3 crate regression after server-owned readiness change",
+    "outcome": "passed",
+    "evidence_ref": "FastWork target: 144 passed, 8 environment-dependent ignored, 0 failed"
+  },
+  {
+    "command": [
+      "cargo",
+      "test",
+      "--manifest-path",
+      "adl-runtime/Cargo.toml",
+      "guardian"
+    ],
+    "purpose": "Exact final guardian v2 wire and init/capsule contract regression",
+    "outcome": "passed",
+    "evidence_ref": "FastWork target: 8 guardian tests passed, 0 failed"
+  },
+  {
+    "command": [
+      "cargo",
+      "clippy",
+      "--manifest-path",
+      "adl-runtime-kernel/Cargo.toml",
+      "--all-targets",
+      "--",
+      "-D",
+      "warnings"
+    ],
+    "purpose": "Exact final Runtime v3 lint gate",
+    "outcome": "passed",
+    "evidence_ref": "FastWork target: completed successfully with warnings denied; adl-runtime --lib also passed"
+  }
+]
+
+## Integration
+
+not_started
+
+## Publication
+
+Publication: not_published
+
+Merge: not_merged
+
+## Closeout
+
+not_started
+
+## Follow Ups
+
+- none

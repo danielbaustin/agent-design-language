@@ -1,6 +1,8 @@
 {
   "schema": "adl.runtime_v3.guardian_matrix.v1",
   "issue": 5175,
+  "status": "historical_superseded",
+  "superseded_by": "#5390: endpoint truth comes from the runtime init, bound-listener readiness event, and Observatory feed",
   "child_contract": {
     "command": "adl-runtime-kernel",
     "fatal_exit": 70,

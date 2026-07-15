@@ -377,32 +377,7 @@ fn client(token_file: Option<&str>) -> csdlc_v2::Result<octocrab::Octocrab> {
         .map_err(remote)
 }
 fn resolve_token(path: Option<&str>) -> csdlc_v2::Result<String> {
-    for key in ["ADL_GITHUB_TOKEN", "GITHUB_TOKEN"] {
-        if let Ok(value) = std::env::var(key) {
-            if !value.trim().is_empty() {
-                return Ok(value);
-            }
-        }
-    }
-    let path = path.ok_or_else(|| {
-        V2Error::new(
-            ErrorCode::InvalidInput,
-            "GitHub token source is unavailable",
-        )
-    })?;
-    let value = fs::read_to_string(path).map_err(|_| {
-        V2Error::new(
-            ErrorCode::InvalidInput,
-            "GitHub token source is unavailable",
-        )
-    })?;
-    if value.trim().is_empty() {
-        return Err(V2Error::new(
-            ErrorCode::InvalidInput,
-            "GitHub token source is empty",
-        ));
-    }
-    Ok(value.trim().into())
+    csdlc_v2::github_token::resolve(path)
 }
 fn remote(error: octocrab::Error) -> V2Error {
     V2Error::new(

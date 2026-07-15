@@ -1,0 +1,7 @@
+{
+  "validation": "local_pass",
+  "dependency_wait": false,
+  "retryable_failure": false,
+  "repair_needed": false,
+  "operator_decision_needed": false
+}

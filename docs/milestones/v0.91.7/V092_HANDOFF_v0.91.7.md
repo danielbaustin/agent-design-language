@@ -7,13 +7,20 @@
 - Version: `v0.91.7`
 - Date: `2026-06-21`
 - Owner: ADL maintainers
-- Related issues: `#3825`, `#4368`, `#3982`, `#3780`
+- Related issues: `#3825`, `#4368`, `#3982`, `#3780`, `#5383`, `#5384`
 
 ## Purpose
 
 Record the second-tranche implementation/proof surfaces that `#3780` / `v0.92` may consume
 after `v0.91.7` docs-package completion. This is a handoff record, not runtime
 implementation proof.
+
+Update for `#5383`: `v0.91.8` is now the planned bridge prerequisite between
+this handoff and `v0.92`. `v0.92` should not consume `v0.91.7` launch/birthday
+handoff rows directly as activation approval. It must first consume the
+reviewed `v0.91.8` exact-revision handoff, including ADL v2, Runtime v3,
+C-SDLC v2, selector/rollback, WP-14A child disposition, and explicit non-claim
+truth.
 
 Before `v0.92` consumes this handoff, `v0.91.7` WP-01 must consume
 `V0916_TO_V0917_HANDOFF_ADDENDUM_3982.md`, the failed-but-closed v0.91.6
@@ -35,6 +42,17 @@ For product/runtime surfaces inherited from `v0.91.6`, `doc-ready` is not
 runtime completion. Those surfaces require an explicit completion class from
 [`../v0.91.6/OPERATIONAL_COMPLETION_GATE_v0.91.6.md`](../v0.91.6/OPERATIONAL_COMPLETION_GATE_v0.91.6.md),
 and only `integrated_proven` counts as operational completion.
+
+## v0.91.8 Bridge Routing
+
+| Bridge item | Required v0.91.8 source | v0.92 consumption rule |
+| --- | --- | --- |
+| Active v0.91.8 setup package | `#5383`, `docs/milestones/v0.91.8/` | Consume as planning source only until merged and reviewed. |
+| Integrated platform acceptance | `#5384` / WP-14A | Required before birthday-facing platform readiness claims. |
+| ADL v2 acceptance | `#5336`-`#5350`, `#5343`, `#5344` | Required before ADL v2 language/compiler/CLI claims. |
+| Runtime v3 acceptance | `#5341`, `#5361` | Required before runtime execution claims. |
+| C-SDLC v2 acceptance | `#5358` | Required before lifecycle-governance claims. |
+| v0.92 handoff | `#5352`, `#5362`, `NEXT_MILESTONE_HANDOFF_v0.91.8.md` | Required before opening birthday implementation issues. |
 
 ## Surface Dispositions
 

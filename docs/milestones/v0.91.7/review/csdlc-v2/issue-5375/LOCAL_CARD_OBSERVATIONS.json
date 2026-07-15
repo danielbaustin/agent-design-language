@@ -1,0 +1,1553 @@
+{
+  "schema": "csdlc.sprint_review.local_card_observations.v1",
+  "repository": "danielbaustin/agent-design-language",
+  "reviewed_revision": "7c3e1e0e86a4ca982231ce91c39073530c5408e6",
+  "observed_at": "2026-07-15T15:58:00Z",
+  "evidence_boundary": "Sanitized normalized fields and content hashes from ignored machine-local cards; raw cards are intentionally not retained.",
+  "collection_command": "find exact 18 issue directories; hash six Markdown cards; record Git tracking/ignore status; extract status, review, integration, publication, merge, and closeout fields",
+  "entry_count": 108,
+  "entries": [
+    {
+      "issue": 5228,
+      "card": "sip",
+      "logical_path": ".adl/v0.91.7/tasks/issue-5228__v0-91-7-csdlc-v2-clean-room-architecture-baseline/sip.md",
+      "sha256": "f424f6b3c8c69117f5b3db5f252740569b7ba1065b9ce6ce6a8ca723957bce32",
+      "tracked": false,
+      "ignored": true,
+      "observed_fields": [
+        "Card Status: ready"
+      ]
+    },
+    {
+      "issue": 5228,
+      "card": "stp",
+      "logical_path": ".adl/v0.91.7/tasks/issue-5228__v0-91-7-csdlc-v2-clean-room-architecture-baseline/stp.md",
+      "sha256": "693bad82e83165a6753ce3c3a695b5b02e630a15c13ac3338d5de5bd821cd9bb",
+      "tracked": false,
+      "ignored": true,
+      "observed_fields": [
+        "status: \"complete\""
+      ]
+    },
+    {
+      "issue": 5228,
+      "card": "spp",
+      "logical_path": ".adl/v0.91.7/tasks/issue-5228__v0-91-7-csdlc-v2-clean-room-architecture-baseline/spp.md",
+      "sha256": "a024fb7ace2b4922a827c298da2fba4930e7a19939f002696bcf9549420e507f",
+      "tracked": false,
+      "ignored": true,
+      "observed_fields": [
+        "status: \"ready\"",
+        "    status: \"pending\"",
+        "    status: \"pending\"",
+        "    status: \"pending\"",
+        "    status: \"pending\"",
+        "    status: \"pending\""
+      ]
+    },
+    {
+      "issue": 5228,
+      "card": "vpp",
+      "logical_path": ".adl/v0.91.7/tasks/issue-5228__v0-91-7-csdlc-v2-clean-room-architecture-baseline/vpp.md",
+      "sha256": "caaf888522bd3671ac7917368885146711f841104f76e667b1f8518e4c26fb5e",
+      "tracked": false,
+      "ignored": true,
+      "observed_fields": [
+        "status: \"ready\""
+      ]
+    },
+    {
+      "issue": 5228,
+      "card": "srp",
+      "logical_path": ".adl/v0.91.7/tasks/issue-5228__v0-91-7-csdlc-v2-clean-room-architecture-baseline/srp.md",
+      "sha256": "f187ac5ee92416e79a6b7095616f7585497678b150972028d8c1f324a85fcc98",
+      "tracked": false,
+      "ignored": true,
+      "observed_fields": [
+        "status: draft",
+        "  findings_status: no_findings",
+        "  recommended_outcome: pass",
+        "  findings_status: \"no_findings | findings_present | review_unavailable | review_timeout | review_cancelled | review_failed\"",
+        "  recommended_outcome: \"pass | block | needs_followup\"",
+        "- Not run yet; implementation has not been bound."
+      ]
+    },
+    {
+      "issue": 5228,
+      "card": "sor",
+      "logical_path": ".adl/v0.91.7/tasks/issue-5228__v0-91-7-csdlc-v2-clean-room-architecture-baseline/sor.md",
+      "sha256": "9af14f92bfac216c7984ec25cba9a0fb068aa1fb65e1c21991a23a05b3822e62",
+      "tracked": false,
+      "ignored": true,
+      "observed_fields": [
+        "Card Status: draft",
+        "Status: DONE",
+        "- Integration state: merged",
+        "- Closeout state: not_started",
+        "- PR state: not_open",
+        "    status: PASS",
+        "    status: NOT_RUN",
+        "    status: PARTIAL",
+        "    status: PASS",
+        "    status: PASS",
+        "    findings_status: no_findings",
+        "    recommended_outcome: pass",
+        "    status: PASS",
+        "    findings_status: no_findings",
+        "    recommended_outcome: pass",
+        "    - Not run yet; implementation has not been bound."
+      ]
+    },
+    {
+      "issue": 5232,
+      "card": "sip",
+      "logical_path": ".adl/v0.91.7/tasks/issue-5232__v0-91-7-csdlc-v2-gate-2-clean-room-state-engine-automated-cards-and-doctor/sip.md",
+      "sha256": "5eca9c089fb42fbfdccc502839f8bbd62b53b66ea1452eb59fb179a52a466246",
+      "tracked": false,
+      "ignored": true,
+      "observed_fields": [
+        "Card Status: ready"
+      ]
+    },
+    {
+      "issue": 5232,
+      "card": "stp",
+      "logical_path": ".adl/v0.91.7/tasks/issue-5232__v0-91-7-csdlc-v2-gate-2-clean-room-state-engine-automated-cards-and-doctor/stp.md",
+      "sha256": "e0225e11f670828873fd00eb0ccc17ce1feb11016d1c598ad7a7b67e068fb973",
+      "tracked": false,
+      "ignored": true,
+      "observed_fields": [
+        "status: \"complete\""
+      ]
+    },
+    {
+      "issue": 5232,
+      "card": "spp",
+      "logical_path": ".adl/v0.91.7/tasks/issue-5232__v0-91-7-csdlc-v2-gate-2-clean-room-state-engine-automated-cards-and-doctor/spp.md",
+      "sha256": "3b28c4d20d147f2a837573684b6c160fbfcf1f79503a5d14f1483a6115456392",
+      "tracked": false,
+      "ignored": true,
+      "observed_fields": [
+        "status: \"ready\"",
+        "    status: \"pending\"",
+        "    status: \"pending\"",
+        "    status: \"pending\"",
+        "    status: \"pending\"",
+        "    status: \"pending\""
+      ]
+    },
+    {
+      "issue": 5232,
+      "card": "vpp",
+      "logical_path": ".adl/v0.91.7/tasks/issue-5232__v0-91-7-csdlc-v2-gate-2-clean-room-state-engine-automated-cards-and-doctor/vpp.md",
+      "sha256": "b4a3f3e159f225e38b67bf0ff7047e0d7c81f93dfee9186d701daa720ca2bd08",
+      "tracked": false,
+      "ignored": true,
+      "observed_fields": [
+        "status: \"ready\""
+      ]
+    },
+    {
+      "issue": 5232,
+      "card": "srp",
+      "logical_path": ".adl/v0.91.7/tasks/issue-5232__v0-91-7-csdlc-v2-gate-2-clean-room-state-engine-automated-cards-and-doctor/srp.md",
+      "sha256": "f363197fbe6bd47ea219efbedb31dea7a47d5caf6901673f2fd077c89bd36d71",
+      "tracked": false,
+      "ignored": true,
+      "observed_fields": [
+        "status: draft",
+        "  findings_status: no_findings",
+        "  recommended_outcome: pass",
+        "  findings_status: \"no_findings | findings_present | review_unavailable | review_timeout | review_cancelled | review_failed\"",
+        "  recommended_outcome: \"pass | block | needs_followup\"",
+        "- Not run yet; implementation has not been bound."
+      ]
+    },
+    {
+      "issue": 5232,
+      "card": "sor",
+      "logical_path": ".adl/v0.91.7/tasks/issue-5232__v0-91-7-csdlc-v2-gate-2-clean-room-state-engine-automated-cards-and-doctor/sor.md",
+      "sha256": "ce9a5ae7a2896ee7ba85f30c67190fd17e29dc7224554887fa2b460dff289747",
+      "tracked": false,
+      "ignored": true,
+      "observed_fields": [
+        "Card Status: completed",
+        "Status: DONE",
+        "- Integration state: merged",
+        "    status: PASS",
+        "    status: PASS",
+        "    status: PARTIAL",
+        "    status: PASS",
+        "    status: PASS",
+        "    findings_status: no_findings",
+        "    recommended_outcome: pass",
+        "    - Not run yet; implementation has not been bound."
+      ]
+    },
+    {
+      "issue": 5233,
+      "card": "sip",
+      "logical_path": ".adl/v0.91.7/tasks/issue-5233__v0-91-7-csdlc-v2-gate-3-initialization-worktree-binding-and-claims/sip.md",
+      "sha256": "a2cc0e2726e1d5bf2ce92c263a983b6deb6ec5705063645b2d9f69226f29bb2f",
+      "tracked": false,
+      "ignored": true,
+      "observed_fields": [
+        "Card Status: ready"
+      ]
+    },
+    {
+      "issue": 5233,
+      "card": "stp",
+      "logical_path": ".adl/v0.91.7/tasks/issue-5233__v0-91-7-csdlc-v2-gate-3-initialization-worktree-binding-and-claims/stp.md",
+      "sha256": "d05c53dbafe8d16711c92e7b026fe0f6b116c69a79057cd51e12fc843db95f4f",
+      "tracked": false,
+      "ignored": true,
+      "observed_fields": [
+        "status: \"complete\""
+      ]
+    },
+    {
+      "issue": 5233,
+      "card": "spp",
+      "logical_path": ".adl/v0.91.7/tasks/issue-5233__v0-91-7-csdlc-v2-gate-3-initialization-worktree-binding-and-claims/spp.md",
+      "sha256": "6420856761abcea96dcb4b2264d8998de89bf5efd92a6a5b57c770ddf887e6b1",
+      "tracked": false,
+      "ignored": true,
+      "observed_fields": [
+        "status: \"ready\"",
+        "    status: \"pending\"",
+        "    status: \"pending\"",
+        "    status: \"pending\"",
+        "    status: \"pending\"",
+        "    status: \"pending\""
+      ]
+    },
+    {
+      "issue": 5233,
+      "card": "vpp",
+      "logical_path": ".adl/v0.91.7/tasks/issue-5233__v0-91-7-csdlc-v2-gate-3-initialization-worktree-binding-and-claims/vpp.md",
+      "sha256": "d7b6f7a9fc13fb744d856601ecae4444163c8250b5f7ab22ca8430216e3c3277",
+      "tracked": false,
+      "ignored": true,
+      "observed_fields": [
+        "status: \"ready\""
+      ]
+    },
+    {
+      "issue": 5233,
+      "card": "srp",
+      "logical_path": ".adl/v0.91.7/tasks/issue-5233__v0-91-7-csdlc-v2-gate-3-initialization-worktree-binding-and-claims/srp.md",
+      "sha256": "4bba452fc00b6a2a465cad04cfb2ff7b89ed895acad61a84592a56fd55c69661",
+      "tracked": false,
+      "ignored": true,
+      "observed_fields": [
+        "status: draft",
+        "  findings_status: no_findings",
+        "  recommended_outcome: pass",
+        "  findings_status: \"no_findings | findings_present | review_unavailable | review_timeout | review_cancelled | review_failed\"",
+        "  recommended_outcome: \"pass | block | needs_followup\"",
+        "- Not run yet; implementation has not been bound."
+      ]
+    },
+    {
+      "issue": 5233,
+      "card": "sor",
+      "logical_path": ".adl/v0.91.7/tasks/issue-5233__v0-91-7-csdlc-v2-gate-3-initialization-worktree-binding-and-claims/sor.md",
+      "sha256": "eb4e852fcd86d91063e9d03159bdd52d7b8665e9f593afa2f04c949133c1c983",
+      "tracked": false,
+      "ignored": true,
+      "observed_fields": [
+        "Card Status: completed",
+        "Status: DONE",
+        "- Integration state: merged",
+        "- Closeout state: complete",
+        "- PR state: merged",
+        "    status: PASS",
+        "    status: NOT_RUN",
+        "    status: PARTIAL",
+        "    status: PASS",
+        "    status: PASS",
+        "    findings_status: no_findings",
+        "    recommended_outcome: pass",
+        "    - Not run yet; implementation has not been bound."
+      ]
+    },
+    {
+      "issue": 5234,
+      "card": "sip",
+      "logical_path": ".adl/v0.91.7/tasks/issue-5234__v0-91-7-csdlc-v2-gate-4-pvf-scheduler-shepherd-and-validation/sip.md",
+      "sha256": "b45a84106b37c26264df4ca64683df57936330d05926e21b6a4377b79d472b4a",
+      "tracked": false,
+      "ignored": true,
+      "observed_fields": [
+        "Card Status: ready"
+      ]
+    },
+    {
+      "issue": 5234,
+      "card": "stp",
+      "logical_path": ".adl/v0.91.7/tasks/issue-5234__v0-91-7-csdlc-v2-gate-4-pvf-scheduler-shepherd-and-validation/stp.md",
+      "sha256": "7116b427f2e3150ff86827843ec20232b80e68890e75b6328163c1cc94d93f6e",
+      "tracked": false,
+      "ignored": true,
+      "observed_fields": [
+        "status: \"complete\""
+      ]
+    },
+    {
+      "issue": 5234,
+      "card": "spp",
+      "logical_path": ".adl/v0.91.7/tasks/issue-5234__v0-91-7-csdlc-v2-gate-4-pvf-scheduler-shepherd-and-validation/spp.md",
+      "sha256": "af02f7cffe2880390678d64ff785521558f6ee2b14cf14dc8e00731771ecde5b",
+      "tracked": false,
+      "ignored": true,
+      "observed_fields": [
+        "status: \"ready\"",
+        "    status: \"pending\"",
+        "    status: \"pending\"",
+        "    status: \"pending\"",
+        "    status: \"pending\"",
+        "    status: \"pending\""
+      ]
+    },
+    {
+      "issue": 5234,
+      "card": "vpp",
+      "logical_path": ".adl/v0.91.7/tasks/issue-5234__v0-91-7-csdlc-v2-gate-4-pvf-scheduler-shepherd-and-validation/vpp.md",
+      "sha256": "d206fe0e51eef56675559b22afe6fbfa1f5cdeff7cbdd3d95d6cf336f453ee5d",
+      "tracked": false,
+      "ignored": true,
+      "observed_fields": [
+        "status: \"ready\""
+      ]
+    },
+    {
+      "issue": 5234,
+      "card": "srp",
+      "logical_path": ".adl/v0.91.7/tasks/issue-5234__v0-91-7-csdlc-v2-gate-4-pvf-scheduler-shepherd-and-validation/srp.md",
+      "sha256": "10683d326cb741e1bdf3ad2a6091d5e700190cc30d3b50f8ee4cf5f28d05fbfa",
+      "tracked": false,
+      "ignored": true,
+      "observed_fields": [
+        "status: draft",
+        "  findings_status: no_findings",
+        "  recommended_outcome: pass",
+        "  findings_status: \"no_findings | findings_present | review_unavailable | review_timeout | review_cancelled | review_failed\"",
+        "  recommended_outcome: \"pass | block | needs_followup\"",
+        "- Not run yet; implementation has not been bound."
+      ]
+    },
+    {
+      "issue": 5234,
+      "card": "sor",
+      "logical_path": ".adl/v0.91.7/tasks/issue-5234__v0-91-7-csdlc-v2-gate-4-pvf-scheduler-shepherd-and-validation/sor.md",
+      "sha256": "f7cd341054488fbd43404269a81725b902fad5a35ee042c105aaa94580187b55",
+      "tracked": false,
+      "ignored": true,
+      "observed_fields": [
+        "Card Status: completed",
+        "Status: DONE",
+        "- Integration state: merged",
+        "- Closeout state: complete",
+        "- PR state: merged",
+        "    status: PASS",
+        "    status: NOT_RUN",
+        "    status: PARTIAL",
+        "    status: PASS",
+        "    status: PASS",
+        "    findings_status: no_findings",
+        "    recommended_outcome: pass",
+        "    - Not run yet; implementation has not been bound."
+      ]
+    },
+    {
+      "issue": 5235,
+      "card": "sip",
+      "logical_path": ".adl/v0.91.7/tasks/issue-5235__v0-91-7-csdlc-v2-gate-5-pre-publication-review-truth/sip.md",
+      "sha256": "8ae7cd112549d4899d4ebc1002b696fad599ba06095e89cc8cadb095cf93548a",
+      "tracked": false,
+      "ignored": true,
+      "observed_fields": [
+        "Card Status: ready"
+      ]
+    },
+    {
+      "issue": 5235,
+      "card": "stp",
+      "logical_path": ".adl/v0.91.7/tasks/issue-5235__v0-91-7-csdlc-v2-gate-5-pre-publication-review-truth/stp.md",
+      "sha256": "0d476e72d1cb332844f90919b0b4e2955973916fb6bba48c5d04bf667bf4457b",
+      "tracked": false,
+      "ignored": true,
+      "observed_fields": [
+        "status: \"complete\""
+      ]
+    },
+    {
+      "issue": 5235,
+      "card": "spp",
+      "logical_path": ".adl/v0.91.7/tasks/issue-5235__v0-91-7-csdlc-v2-gate-5-pre-publication-review-truth/spp.md",
+      "sha256": "89f06514d8609aa41f0d744021cd121c36a172a04456a79ef01b328452c279b8",
+      "tracked": false,
+      "ignored": true,
+      "observed_fields": [
+        "status: \"ready\"",
+        "    status: \"pending\"",
+        "    status: \"pending\"",
+        "    status: \"pending\"",
+        "    status: \"pending\"",
+        "    status: \"pending\""
+      ]
+    },
+    {
+      "issue": 5235,
+      "card": "vpp",
+      "logical_path": ".adl/v0.91.7/tasks/issue-5235__v0-91-7-csdlc-v2-gate-5-pre-publication-review-truth/vpp.md",
+      "sha256": "0eb2cc8545837748b7be09cebc76b5e23fd067b1211c89c231a2524b57cd8da3",
+      "tracked": false,
+      "ignored": true,
+      "observed_fields": [
+        "status: \"ready\""
+      ]
+    },
+    {
+      "issue": 5235,
+      "card": "srp",
+      "logical_path": ".adl/v0.91.7/tasks/issue-5235__v0-91-7-csdlc-v2-gate-5-pre-publication-review-truth/srp.md",
+      "sha256": "2964fdbab5989d0525f65366834c7ba7fe316613ce4b3278cb42783f599791f9",
+      "tracked": false,
+      "ignored": true,
+      "observed_fields": [
+        "status: draft",
+        "  findings_status: no_findings",
+        "  recommended_outcome: pass",
+        "  findings_status: \"no_findings | findings_present | review_unavailable | review_timeout | review_cancelled | review_failed\"",
+        "  recommended_outcome: \"pass | block | needs_followup\"",
+        "- Not run yet; implementation has not been bound."
+      ]
+    },
+    {
+      "issue": 5235,
+      "card": "sor",
+      "logical_path": ".adl/v0.91.7/tasks/issue-5235__v0-91-7-csdlc-v2-gate-5-pre-publication-review-truth/sor.md",
+      "sha256": "4ffc1a11c500e7aa25d21e171e86a1298d1567e68995234a5e2510f95d75488f",
+      "tracked": false,
+      "ignored": true,
+      "observed_fields": [
+        "Card Status: completed",
+        "Status: DONE",
+        "- Integration state: merged",
+        "- Closeout state: complete",
+        "- PR state: merged",
+        "    status: PASS",
+        "    status: NOT_RUN",
+        "    status: PARTIAL",
+        "    status: PASS",
+        "    status: PASS",
+        "    findings_status: no_findings",
+        "    recommended_outcome: pass",
+        "    - Not run yet; implementation has not been bound."
+      ]
+    },
+    {
+      "issue": 5236,
+      "card": "sip",
+      "logical_path": ".adl/v0.91.7/tasks/issue-5236__v0-91-7-csdlc-v2-gate-6-idempotent-github-publication/sip.md",
+      "sha256": "b5ffdc8be449e8c119b15600c765e9c148064563fbce4aa11b951ccf5a4f3702",
+      "tracked": false,
+      "ignored": true,
+      "observed_fields": [
+        "Card Status: ready"
+      ]
+    },
+    {
+      "issue": 5236,
+      "card": "stp",
+      "logical_path": ".adl/v0.91.7/tasks/issue-5236__v0-91-7-csdlc-v2-gate-6-idempotent-github-publication/stp.md",
+      "sha256": "175b5fb15147ed9b7330c5ca0d59c7b8d1c4197ef99f5431445e04cbb621eb2a",
+      "tracked": false,
+      "ignored": true,
+      "observed_fields": [
+        "status: \"complete\""
+      ]
+    },
+    {
+      "issue": 5236,
+      "card": "spp",
+      "logical_path": ".adl/v0.91.7/tasks/issue-5236__v0-91-7-csdlc-v2-gate-6-idempotent-github-publication/spp.md",
+      "sha256": "6911c65f909ae24692af353f4432dc518595d9b63c289f91bcf9252c462a8ad6",
+      "tracked": false,
+      "ignored": true,
+      "observed_fields": [
+        "status: \"ready\"",
+        "    status: \"pending\"",
+        "    status: \"pending\"",
+        "    status: \"pending\"",
+        "    status: \"pending\"",
+        "    status: \"pending\""
+      ]
+    },
+    {
+      "issue": 5236,
+      "card": "vpp",
+      "logical_path": ".adl/v0.91.7/tasks/issue-5236__v0-91-7-csdlc-v2-gate-6-idempotent-github-publication/vpp.md",
+      "sha256": "21cf607db424731fdd4c6b15dceefbe2819c14160c32b29e4c1717e27bc1fa17",
+      "tracked": false,
+      "ignored": true,
+      "observed_fields": [
+        "status: \"ready\""
+      ]
+    },
+    {
+      "issue": 5236,
+      "card": "srp",
+      "logical_path": ".adl/v0.91.7/tasks/issue-5236__v0-91-7-csdlc-v2-gate-6-idempotent-github-publication/srp.md",
+      "sha256": "9ca3a0746c9d60a16d803eced56c7096cc79b9eb6150c09c71cc3210c9ba6100",
+      "tracked": false,
+      "ignored": true,
+      "observed_fields": [
+        "status: draft",
+        "  findings_status: no_findings",
+        "  recommended_outcome: pass",
+        "  findings_status: \"no_findings | findings_present | review_unavailable | review_timeout | review_cancelled | review_failed\"",
+        "  recommended_outcome: \"pass | block | needs_followup\"",
+        "- Not run yet; implementation has not been bound."
+      ]
+    },
+    {
+      "issue": 5236,
+      "card": "sor",
+      "logical_path": ".adl/v0.91.7/tasks/issue-5236__v0-91-7-csdlc-v2-gate-6-idempotent-github-publication/sor.md",
+      "sha256": "db10ceb889ce6dd08a7fb9276dce97967d7e751906e44c90d4a9f737eb89d1ac",
+      "tracked": false,
+      "ignored": true,
+      "observed_fields": [
+        "Card Status: ready",
+        "Status: DONE",
+        "- Integration state: merged",
+        "- Closeout state: not_started",
+        "    status: PASS",
+        "    status: NOT_RUN",
+        "    status: PARTIAL",
+        "    status: PASS",
+        "    status: PASS",
+        "    findings_status: no_findings",
+        "    recommended_outcome: pass",
+        "    - Not run yet; implementation has not been bound."
+      ]
+    },
+    {
+      "issue": 5237,
+      "card": "sip",
+      "logical_path": ".adl/v0.91.7/tasks/issue-5237__v0-91-7-csdlc-v2-gate-7-pr-readiness-and-closeout/sip.md",
+      "sha256": "3861651f1c21b47e1ee14fe2d28d7bfb2fd87ed0f202cd579d8a85971633aad5",
+      "tracked": false,
+      "ignored": true,
+      "observed_fields": [
+        "Card Status: ready"
+      ]
+    },
+    {
+      "issue": 5237,
+      "card": "stp",
+      "logical_path": ".adl/v0.91.7/tasks/issue-5237__v0-91-7-csdlc-v2-gate-7-pr-readiness-and-closeout/stp.md",
+      "sha256": "07b8d8b03d1de5d37aa8512631e8636f8c5755d4d19f962a238d7533b5c5c3ce",
+      "tracked": false,
+      "ignored": true,
+      "observed_fields": [
+        "status: \"complete\""
+      ]
+    },
+    {
+      "issue": 5237,
+      "card": "spp",
+      "logical_path": ".adl/v0.91.7/tasks/issue-5237__v0-91-7-csdlc-v2-gate-7-pr-readiness-and-closeout/spp.md",
+      "sha256": "104b12a9b17505f7bff6f29a357452353ecbcb8cacc5de030d6f69a328f83cdc",
+      "tracked": false,
+      "ignored": true,
+      "observed_fields": [
+        "status: \"ready\"",
+        "    status: \"pending\"",
+        "    status: \"pending\"",
+        "    status: \"pending\"",
+        "    status: \"pending\"",
+        "    status: \"pending\""
+      ]
+    },
+    {
+      "issue": 5237,
+      "card": "vpp",
+      "logical_path": ".adl/v0.91.7/tasks/issue-5237__v0-91-7-csdlc-v2-gate-7-pr-readiness-and-closeout/vpp.md",
+      "sha256": "7200d482c81aba962e8c552e9cf76054e4e42d5f284d117130a7ce0862d5def4",
+      "tracked": false,
+      "ignored": true,
+      "observed_fields": [
+        "status: \"ready\""
+      ]
+    },
+    {
+      "issue": 5237,
+      "card": "srp",
+      "logical_path": ".adl/v0.91.7/tasks/issue-5237__v0-91-7-csdlc-v2-gate-7-pr-readiness-and-closeout/srp.md",
+      "sha256": "c9a7a9fedf63141ec3e03f6c28f16d972cfc8518c0d9a6c0677842170828accd",
+      "tracked": false,
+      "ignored": true,
+      "observed_fields": [
+        "status: draft",
+        "  findings_status: no_findings",
+        "  recommended_outcome: pass",
+        "  findings_status: \"no_findings | findings_present | review_unavailable | review_timeout | review_cancelled | review_failed\"",
+        "  recommended_outcome: \"pass | block | needs_followup\"",
+        "- Not run yet; implementation has not been bound."
+      ]
+    },
+    {
+      "issue": 5237,
+      "card": "sor",
+      "logical_path": ".adl/v0.91.7/tasks/issue-5237__v0-91-7-csdlc-v2-gate-7-pr-readiness-and-closeout/sor.md",
+      "sha256": "318fd5208e7c0ed6512399635dad3b9c5e11b73f39625783d05979387acafedf",
+      "tracked": false,
+      "ignored": true,
+      "observed_fields": [
+        "Card Status: ready",
+        "Status: DONE",
+        "- Integration state: merged",
+        "- Closeout state: not_started",
+        "    status: PASS",
+        "    status: NOT_RUN",
+        "    status: PARTIAL",
+        "    status: PASS",
+        "    status: PASS",
+        "    findings_status: no_findings",
+        "    recommended_outcome: pass",
+        "    - Not run yet; implementation has not been bound."
+      ]
+    },
+    {
+      "issue": 5238,
+      "card": "sip",
+      "logical_path": ".adl/v0.91.7/tasks/issue-5238__v0-91-7-csdlc-v2-gate-8-legacy-import-and-shadow-parity/sip.md",
+      "sha256": "bb2c9f20ff713821b858c673ebf275cb2e4aa66637a40c5ce7957577856a4600",
+      "tracked": false,
+      "ignored": true,
+      "observed_fields": [
+        "Card Status: ready"
+      ]
+    },
+    {
+      "issue": 5238,
+      "card": "stp",
+      "logical_path": ".adl/v0.91.7/tasks/issue-5238__v0-91-7-csdlc-v2-gate-8-legacy-import-and-shadow-parity/stp.md",
+      "sha256": "5165544d69a294690a0d87875f9afca46dd8e9478a956b158164dd8deb068fcf",
+      "tracked": false,
+      "ignored": true,
+      "observed_fields": [
+        "status: \"complete\""
+      ]
+    },
+    {
+      "issue": 5238,
+      "card": "spp",
+      "logical_path": ".adl/v0.91.7/tasks/issue-5238__v0-91-7-csdlc-v2-gate-8-legacy-import-and-shadow-parity/spp.md",
+      "sha256": "bf07d7bcfa3326101c4251afbb2d805ffa927976be5d0aeb54d8c6fda077421c",
+      "tracked": false,
+      "ignored": true,
+      "observed_fields": [
+        "status: \"ready\"",
+        "    status: \"pending\"",
+        "    status: \"pending\"",
+        "    status: \"pending\"",
+        "    status: \"pending\"",
+        "    status: \"pending\""
+      ]
+    },
+    {
+      "issue": 5238,
+      "card": "vpp",
+      "logical_path": ".adl/v0.91.7/tasks/issue-5238__v0-91-7-csdlc-v2-gate-8-legacy-import-and-shadow-parity/vpp.md",
+      "sha256": "b92ab3f565b325551dc82dc7a0cc155023d7dae04e92f2e45762925268a336a5",
+      "tracked": false,
+      "ignored": true,
+      "observed_fields": [
+        "status: \"ready\""
+      ]
+    },
+    {
+      "issue": 5238,
+      "card": "srp",
+      "logical_path": ".adl/v0.91.7/tasks/issue-5238__v0-91-7-csdlc-v2-gate-8-legacy-import-and-shadow-parity/srp.md",
+      "sha256": "4e4a997be2cc90e0e6192af5e3487846d48208b44bc0449b8526a4db05a921d2",
+      "tracked": false,
+      "ignored": true,
+      "observed_fields": [
+        "status: draft",
+        "  findings_status: no_findings",
+        "  recommended_outcome: pass",
+        "  findings_status: \"no_findings | findings_present | review_unavailable | review_timeout | review_cancelled | review_failed\"",
+        "  recommended_outcome: \"pass | block | needs_followup\"",
+        "- Not run yet; implementation has not been bound."
+      ]
+    },
+    {
+      "issue": 5238,
+      "card": "sor",
+      "logical_path": ".adl/v0.91.7/tasks/issue-5238__v0-91-7-csdlc-v2-gate-8-legacy-import-and-shadow-parity/sor.md",
+      "sha256": "c73bde04c417b665c16c60d9c38ee9f6c424690718c0a570ca07eb68cac47446",
+      "tracked": false,
+      "ignored": true,
+      "observed_fields": [
+        "Card Status: ready",
+        "Status: DONE",
+        "- Integration state: merged",
+        "- Closeout state: not_started",
+        "    status: PASS",
+        "    status: NOT_RUN",
+        "    status: PARTIAL",
+        "    status: PASS",
+        "    status: PASS",
+        "    findings_status: no_findings",
+        "    recommended_outcome: pass",
+        "    - Not run yet; implementation has not been bound."
+      ]
+    },
+    {
+      "issue": 5239,
+      "card": "sip",
+      "logical_path": ".adl/v0.91.7/tasks/issue-5239__v0-91-7-csdlc-v2-gate-9-opt-in-soak-and-cutover-decision/sip.md",
+      "sha256": "98799217cf77b2a2442c3611168e346d927c2c1abd216b3c99fb3db7a96d2215",
+      "tracked": false,
+      "ignored": true,
+      "observed_fields": [
+        "Card Status: ready"
+      ]
+    },
+    {
+      "issue": 5239,
+      "card": "stp",
+      "logical_path": ".adl/v0.91.7/tasks/issue-5239__v0-91-7-csdlc-v2-gate-9-opt-in-soak-and-cutover-decision/stp.md",
+      "sha256": "02ed69002b62a3cec52e16d74dfa8bb7cd8fa05e6db30055e0436e313019de41",
+      "tracked": false,
+      "ignored": true,
+      "observed_fields": [
+        "status: \"complete\""
+      ]
+    },
+    {
+      "issue": 5239,
+      "card": "spp",
+      "logical_path": ".adl/v0.91.7/tasks/issue-5239__v0-91-7-csdlc-v2-gate-9-opt-in-soak-and-cutover-decision/spp.md",
+      "sha256": "668d35a163a2cda6e3961d3167feaa9cde521149b1561c2bf25c53b2a4e1ba36",
+      "tracked": false,
+      "ignored": true,
+      "observed_fields": [
+        "status: \"ready\"",
+        "    status: \"pending\"",
+        "    status: \"pending\"",
+        "    status: \"pending\"",
+        "    status: \"pending\"",
+        "    status: \"pending\""
+      ]
+    },
+    {
+      "issue": 5239,
+      "card": "vpp",
+      "logical_path": ".adl/v0.91.7/tasks/issue-5239__v0-91-7-csdlc-v2-gate-9-opt-in-soak-and-cutover-decision/vpp.md",
+      "sha256": "d2a1d483e69c54d8879fb94173a551e5b8eddb07127a3effeb2fa3b2d83f832e",
+      "tracked": false,
+      "ignored": true,
+      "observed_fields": [
+        "status: \"ready\""
+      ]
+    },
+    {
+      "issue": 5239,
+      "card": "srp",
+      "logical_path": ".adl/v0.91.7/tasks/issue-5239__v0-91-7-csdlc-v2-gate-9-opt-in-soak-and-cutover-decision/srp.md",
+      "sha256": "23b864984d60afc4b6db0ea0a02bde47ee07fefdc86cad2fc3c665758f14a986",
+      "tracked": false,
+      "ignored": true,
+      "observed_fields": [
+        "status: draft",
+        "  findings_status: no_findings",
+        "  recommended_outcome: pass",
+        "  findings_status: \"no_findings | findings_present | review_unavailable | review_timeout | review_cancelled | review_failed\"",
+        "  recommended_outcome: \"pass | block | needs_followup\"",
+        "- Not run yet; implementation has not been bound."
+      ]
+    },
+    {
+      "issue": 5239,
+      "card": "sor",
+      "logical_path": ".adl/v0.91.7/tasks/issue-5239__v0-91-7-csdlc-v2-gate-9-opt-in-soak-and-cutover-decision/sor.md",
+      "sha256": "69c24e15b43b9906ac4bb2d64300dcfb57d88ce4812bd24fa39c87d141c8e3f0",
+      "tracked": false,
+      "ignored": true,
+      "observed_fields": [
+        "Card Status: ready",
+        "Status: DONE",
+        "- Integration state: merged",
+        "- Closeout state: not_started",
+        "- PR state: not_published",
+        "    status: PASS",
+        "    status: NOT_RUN",
+        "    status: PARTIAL",
+        "    status: PASS",
+        "    status: PASS",
+        "    findings_status: no_findings",
+        "    recommended_outcome: pass",
+        "    - Not run yet; implementation has not been bound."
+      ]
+    },
+    {
+      "issue": 5240,
+      "card": "sip",
+      "logical_path": ".adl/v0.91.7/tasks/issue-5240__v0-91-7-csdlc-v2-gate-10-operator-migration-cutover-and-deletion/sip.md",
+      "sha256": "23fad8ef2c0a2c90ef4464c255b056593eefb268cd6ceaa0e1f6e4db20e97f56",
+      "tracked": false,
+      "ignored": true,
+      "observed_fields": [
+        "Card Status: ready"
+      ]
+    },
+    {
+      "issue": 5240,
+      "card": "stp",
+      "logical_path": ".adl/v0.91.7/tasks/issue-5240__v0-91-7-csdlc-v2-gate-10-operator-migration-cutover-and-deletion/stp.md",
+      "sha256": "19b5035451da3f63d9b4c374894a1f4369706197e1782c7a62d1e8c034535b84",
+      "tracked": false,
+      "ignored": true,
+      "observed_fields": [
+        "status: \"draft\""
+      ]
+    },
+    {
+      "issue": 5240,
+      "card": "spp",
+      "logical_path": ".adl/v0.91.7/tasks/issue-5240__v0-91-7-csdlc-v2-gate-10-operator-migration-cutover-and-deletion/spp.md",
+      "sha256": "d73d0d7404bad45d6a5afe6ba8ecac8548cb6aa35708e8f86a6421075c352033",
+      "tracked": false,
+      "ignored": true,
+      "observed_fields": [
+        "status: \"ready\"",
+        "    status: \"pending\"",
+        "    status: \"pending\"",
+        "    status: \"pending\"",
+        "    status: \"pending\"",
+        "    status: \"pending\""
+      ]
+    },
+    {
+      "issue": 5240,
+      "card": "vpp",
+      "logical_path": ".adl/v0.91.7/tasks/issue-5240__v0-91-7-csdlc-v2-gate-10-operator-migration-cutover-and-deletion/vpp.md",
+      "sha256": "3f836bbd0b640bd39add17d189ce1feb3308e9c2c242eacdf196f9c373ae5aa6",
+      "tracked": false,
+      "ignored": true,
+      "observed_fields": [
+        "status: \"ready\""
+      ]
+    },
+    {
+      "issue": 5240,
+      "card": "srp",
+      "logical_path": ".adl/v0.91.7/tasks/issue-5240__v0-91-7-csdlc-v2-gate-10-operator-migration-cutover-and-deletion/srp.md",
+      "sha256": "49175f2ee4b3123c36b88c76f33632b3f1d6edc810c464ff74519fd48b761226",
+      "tracked": false,
+      "ignored": true,
+      "observed_fields": [
+        "status: \"draft\"",
+        "  findings_status: \"not_run\"",
+        "  recommended_outcome: \"not_run\"",
+        "  findings_status: \"no_findings | findings_present | review_unavailable | review_timeout | review_cancelled | review_failed\"",
+        "  recommended_outcome: \"pass | block | needs_followup\"",
+        "- Not run yet; implementation has not been bound."
+      ]
+    },
+    {
+      "issue": 5240,
+      "card": "sor",
+      "logical_path": ".adl/v0.91.7/tasks/issue-5240__v0-91-7-csdlc-v2-gate-10-operator-migration-cutover-and-deletion/sor.md",
+      "sha256": "94ed23dc784053234da3745ded4a883ddcd445ae3356b6806e1686a87047e05b",
+      "tracked": false,
+      "ignored": true,
+      "observed_fields": [
+        "Card Status: ready",
+        "Status: IN_PROGRESS",
+        "- Integration state: merged",
+        "    status: PASS",
+        "    status: NOT_RUN",
+        "    status: PARTIAL",
+        "    status: PASS"
+      ]
+    },
+    {
+      "issue": 5292,
+      "card": "sip",
+      "logical_path": ".adl/v0.91.7/tasks/issue-5292__v0-91-7-csdlc-v2-gate-10a-coexistence-contracts-skills-and-stable-binaries/sip.md",
+      "sha256": "23568cd5623620585331c091cf995dfef88821721ae0e5d05843248c7bdd087b",
+      "tracked": false,
+      "ignored": true,
+      "observed_fields": [
+        "Card Status: ready"
+      ]
+    },
+    {
+      "issue": 5292,
+      "card": "stp",
+      "logical_path": ".adl/v0.91.7/tasks/issue-5292__v0-91-7-csdlc-v2-gate-10a-coexistence-contracts-skills-and-stable-binaries/stp.md",
+      "sha256": "af694352005bd24deb7f5a7cc541ebc3092977e7b3ef74833dc36a9ba2b2eaff",
+      "tracked": false,
+      "ignored": true,
+      "observed_fields": [
+        "status: \"complete\""
+      ]
+    },
+    {
+      "issue": 5292,
+      "card": "spp",
+      "logical_path": ".adl/v0.91.7/tasks/issue-5292__v0-91-7-csdlc-v2-gate-10a-coexistence-contracts-skills-and-stable-binaries/spp.md",
+      "sha256": "ba729594440bcf699ac8b844dc99a1e8a5e43fc16cd22ee7caec86d87e7b768e",
+      "tracked": false,
+      "ignored": true,
+      "observed_fields": [
+        "status: \"ready\"",
+        "    status: \"pending\"",
+        "    status: \"pending\"",
+        "    status: \"pending\"",
+        "    status: \"pending\"",
+        "    status: \"pending\""
+      ]
+    },
+    {
+      "issue": 5292,
+      "card": "vpp",
+      "logical_path": ".adl/v0.91.7/tasks/issue-5292__v0-91-7-csdlc-v2-gate-10a-coexistence-contracts-skills-and-stable-binaries/vpp.md",
+      "sha256": "3340521a48ac6b8d4839a567ff2c5a4faa05ec4e53c81a0df8a111b0b5e50e78",
+      "tracked": false,
+      "ignored": true,
+      "observed_fields": [
+        "status: \"ready\""
+      ]
+    },
+    {
+      "issue": 5292,
+      "card": "srp",
+      "logical_path": ".adl/v0.91.7/tasks/issue-5292__v0-91-7-csdlc-v2-gate-10a-coexistence-contracts-skills-and-stable-binaries/srp.md",
+      "sha256": "bfd1d6c46fa7e8b4008f572d95ceab79e5a6542c4667aeac839dba51d515de2c",
+      "tracked": false,
+      "ignored": true,
+      "observed_fields": [
+        "status: draft",
+        "  findings_status: no_findings",
+        "  recommended_outcome: pass",
+        "  findings_status: \"no_findings | findings_present | review_unavailable | review_timeout | review_cancelled | review_failed\"",
+        "  recommended_outcome: \"pass | block | needs_followup\"",
+        "- Not run yet; implementation has not been bound."
+      ]
+    },
+    {
+      "issue": 5292,
+      "card": "sor",
+      "logical_path": ".adl/v0.91.7/tasks/issue-5292__v0-91-7-csdlc-v2-gate-10a-coexistence-contracts-skills-and-stable-binaries/sor.md",
+      "sha256": "ce23a877f43fdab5ede8272b9febb0f8023af26c645a67c374ac2e1b61bc1530",
+      "tracked": false,
+      "ignored": true,
+      "observed_fields": [
+        "Card Status: draft",
+        "Status: DONE",
+        "- Integration state: merged",
+        "    status: PASS",
+        "    status: NOT_RUN",
+        "    status: PARTIAL",
+        "    status: PASS"
+      ]
+    },
+    {
+      "issue": 5293,
+      "card": "sip",
+      "logical_path": ".adl/v0.91.7/tasks/issue-5293__v0-91-7-csdlc-v2-gate-10b-pre-switch-independent-proof-with-v1-intact/sip.md",
+      "sha256": "92d0f21bcb5394e709e5dce482a24c0061e5b88f8b25bc50459b5b192903c8b3",
+      "tracked": false,
+      "ignored": true,
+      "observed_fields": [
+        "Card Status: ready"
+      ]
+    },
+    {
+      "issue": 5293,
+      "card": "stp",
+      "logical_path": ".adl/v0.91.7/tasks/issue-5293__v0-91-7-csdlc-v2-gate-10b-pre-switch-independent-proof-with-v1-intact/stp.md",
+      "sha256": "121dc3c01252c1d61e71761374ce103d9ff50f945a539649a34761dc0a201013",
+      "tracked": false,
+      "ignored": true,
+      "observed_fields": [
+        "status: \"complete\""
+      ]
+    },
+    {
+      "issue": 5293,
+      "card": "spp",
+      "logical_path": ".adl/v0.91.7/tasks/issue-5293__v0-91-7-csdlc-v2-gate-10b-pre-switch-independent-proof-with-v1-intact/spp.md",
+      "sha256": "1354d90ed2632782f321705512f3b756a2f5eae1a9e8b12c534db7defdda0916",
+      "tracked": false,
+      "ignored": true,
+      "observed_fields": [
+        "status: \"ready\"",
+        "    status: \"pending\"",
+        "    status: \"pending\"",
+        "    status: \"pending\"",
+        "    status: \"pending\"",
+        "    status: \"pending\""
+      ]
+    },
+    {
+      "issue": 5293,
+      "card": "vpp",
+      "logical_path": ".adl/v0.91.7/tasks/issue-5293__v0-91-7-csdlc-v2-gate-10b-pre-switch-independent-proof-with-v1-intact/vpp.md",
+      "sha256": "f52cc4bd18a774f6d0907e3c9cb46d5cca323de91511911a2261aca2b6046f28",
+      "tracked": false,
+      "ignored": true,
+      "observed_fields": [
+        "status: \"ready\""
+      ]
+    },
+    {
+      "issue": 5293,
+      "card": "srp",
+      "logical_path": ".adl/v0.91.7/tasks/issue-5293__v0-91-7-csdlc-v2-gate-10b-pre-switch-independent-proof-with-v1-intact/srp.md",
+      "sha256": "bb9316922048240c72676e92bb311510cf6653b374c884b2e8012e7676cf63b4",
+      "tracked": false,
+      "ignored": true,
+      "observed_fields": [
+        "status: draft",
+        "  findings_status: no_findings",
+        "  recommended_outcome: pass",
+        "  findings_status: \"no_findings | findings_present | review_unavailable | review_timeout | review_cancelled | review_failed\"",
+        "  recommended_outcome: \"pass | block | needs_followup\"",
+        "- Not run yet; implementation has not been bound."
+      ]
+    },
+    {
+      "issue": 5293,
+      "card": "sor",
+      "logical_path": ".adl/v0.91.7/tasks/issue-5293__v0-91-7-csdlc-v2-gate-10b-pre-switch-independent-proof-with-v1-intact/sor.md",
+      "sha256": "eebf0033f4d9d6cfb4bc6adeb8144d116a2280f132e5ddfdbfcbb78af1913873",
+      "tracked": false,
+      "ignored": true,
+      "observed_fields": [
+        "Card Status: draft",
+        "Status: DONE",
+        "- Integration state: merged",
+        "- Closeout state: completed",
+        "- PR state: merged",
+        "    status: PASS",
+        "    status: NOT_RUN",
+        "    status: PARTIAL",
+        "    status: PASS"
+      ]
+    },
+    {
+      "issue": 5294,
+      "card": "sip",
+      "logical_path": ".adl/v0.91.7/tasks/issue-5294__v0-91-7-csdlc-v2-gate-10c-reversible-default-switch-with-v1-retained/sip.md",
+      "sha256": "381d6044febf7458de54a9560ef46ea76fad63d9976bda80745fc49fdbecaae2",
+      "tracked": false,
+      "ignored": true,
+      "observed_fields": [
+        "Card Status: ready"
+      ]
+    },
+    {
+      "issue": 5294,
+      "card": "stp",
+      "logical_path": ".adl/v0.91.7/tasks/issue-5294__v0-91-7-csdlc-v2-gate-10c-reversible-default-switch-with-v1-retained/stp.md",
+      "sha256": "220002a3b1133cf6a6eb1b413329c35f78f728283817b94b01b5858bfd09780f",
+      "tracked": false,
+      "ignored": true,
+      "observed_fields": [
+        "status: \"complete\""
+      ]
+    },
+    {
+      "issue": 5294,
+      "card": "spp",
+      "logical_path": ".adl/v0.91.7/tasks/issue-5294__v0-91-7-csdlc-v2-gate-10c-reversible-default-switch-with-v1-retained/spp.md",
+      "sha256": "4b6fcfe695f286d9853a5f81a5dbcb7206d68e39a30c9783ddc0a79f57351861",
+      "tracked": false,
+      "ignored": true,
+      "observed_fields": [
+        "status: \"ready\"",
+        "    status: \"pending\"",
+        "    status: \"pending\"",
+        "    status: \"pending\"",
+        "    status: \"pending\"",
+        "    status: \"pending\""
+      ]
+    },
+    {
+      "issue": 5294,
+      "card": "vpp",
+      "logical_path": ".adl/v0.91.7/tasks/issue-5294__v0-91-7-csdlc-v2-gate-10c-reversible-default-switch-with-v1-retained/vpp.md",
+      "sha256": "b3334a9515ae79b68f8f1bf4e2439385dd0d944b3196458570c7a45b7c59bc5d",
+      "tracked": false,
+      "ignored": true,
+      "observed_fields": [
+        "status: \"ready\""
+      ]
+    },
+    {
+      "issue": 5294,
+      "card": "srp",
+      "logical_path": ".adl/v0.91.7/tasks/issue-5294__v0-91-7-csdlc-v2-gate-10c-reversible-default-switch-with-v1-retained/srp.md",
+      "sha256": "1855dadcaf6cf3a6f5b3c905d8b6eeaf049f95c57da4e2093a4d1147eba477f0",
+      "tracked": false,
+      "ignored": true,
+      "observed_fields": [
+        "status: draft",
+        "  findings_status: no_findings",
+        "  recommended_outcome: pass",
+        "  findings_status: \"no_findings | findings_present | review_unavailable | review_timeout | review_cancelled | review_failed\"",
+        "  recommended_outcome: \"pass | block | needs_followup\"",
+        "- Not run yet; implementation has not been bound."
+      ]
+    },
+    {
+      "issue": 5294,
+      "card": "sor",
+      "logical_path": ".adl/v0.91.7/tasks/issue-5294__v0-91-7-csdlc-v2-gate-10c-reversible-default-switch-with-v1-retained/sor.md",
+      "sha256": "138b695db9caf43de9a3ca9eeae72754fb3e5e811620266d82ed87bc0d5a5da6",
+      "tracked": false,
+      "ignored": true,
+      "observed_fields": [
+        "Card Status: ready",
+        "Status: DONE",
+        "- Integration state: merged",
+        "- Closeout state: not_started",
+        "- PR state: not_opened",
+        "    status: PASS",
+        "    status: NOT_RUN",
+        "    status: PARTIAL",
+        "    status: PASS",
+        "    status: NOT_RUN",
+        "    findings_status: no_findings",
+        "    recommended_outcome: pass",
+        "    - Not run yet; implementation has not been bound."
+      ]
+    },
+    {
+      "issue": 5295,
+      "card": "sip",
+      "logical_path": ".adl/v0.91.7/tasks/issue-5295__v0-91-7-csdlc-v2-gate-10d-deletion-eligibility-bounded-removal-and-sunsets/sip.md",
+      "sha256": "14825fe59071c9315cb51ed845a911d76bd3299e1323be6ca08fd36f8d462b87",
+      "tracked": false,
+      "ignored": true,
+      "observed_fields": [
+        "Card Status: ready"
+      ]
+    },
+    {
+      "issue": 5295,
+      "card": "stp",
+      "logical_path": ".adl/v0.91.7/tasks/issue-5295__v0-91-7-csdlc-v2-gate-10d-deletion-eligibility-bounded-removal-and-sunsets/stp.md",
+      "sha256": "5f562a4c663271365e00075ca454120ddc0a3732e51cf74e1519336baff856c6",
+      "tracked": false,
+      "ignored": true,
+      "observed_fields": [
+        "status: \"draft\""
+      ]
+    },
+    {
+      "issue": 5295,
+      "card": "spp",
+      "logical_path": ".adl/v0.91.7/tasks/issue-5295__v0-91-7-csdlc-v2-gate-10d-deletion-eligibility-bounded-removal-and-sunsets/spp.md",
+      "sha256": "fb961c8bebf907706e9af9b343a919441e7db398131ff226936566a3b3e899e2",
+      "tracked": false,
+      "ignored": true,
+      "observed_fields": [
+        "status: \"ready\"",
+        "    status: \"pending\"",
+        "    status: \"pending\"",
+        "    status: \"pending\"",
+        "    status: \"pending\"",
+        "    status: \"pending\""
+      ]
+    },
+    {
+      "issue": 5295,
+      "card": "vpp",
+      "logical_path": ".adl/v0.91.7/tasks/issue-5295__v0-91-7-csdlc-v2-gate-10d-deletion-eligibility-bounded-removal-and-sunsets/vpp.md",
+      "sha256": "d9e165e778fcc107ba59bb052c6a649668bae4e47bb913b6b03f6e2484ee7e1e",
+      "tracked": false,
+      "ignored": true,
+      "observed_fields": [
+        "status: \"ready\""
+      ]
+    },
+    {
+      "issue": 5295,
+      "card": "srp",
+      "logical_path": ".adl/v0.91.7/tasks/issue-5295__v0-91-7-csdlc-v2-gate-10d-deletion-eligibility-bounded-removal-and-sunsets/srp.md",
+      "sha256": "6d7eb98d4ed02d2f90e6f1a2bfb143db6ead7d0bb44342d8fdb9c40e46d0bd8e",
+      "tracked": false,
+      "ignored": true,
+      "observed_fields": [
+        "status: draft",
+        "  findings_status: no_findings",
+        "  recommended_outcome: pass",
+        "  findings_status: \"no_findings | findings_present | review_unavailable | review_timeout | review_cancelled | review_failed\"",
+        "  recommended_outcome: \"pass | block | needs_followup\"",
+        "- Not run yet; implementation has not been bound."
+      ]
+    },
+    {
+      "issue": 5295,
+      "card": "sor",
+      "logical_path": ".adl/v0.91.7/tasks/issue-5295__v0-91-7-csdlc-v2-gate-10d-deletion-eligibility-bounded-removal-and-sunsets/sor.md",
+      "sha256": "244e5d944ecda33a970f0aa8d15442fff5810abf22fbd27b4bb41ccf51e8db00",
+      "tracked": false,
+      "ignored": true,
+      "observed_fields": [
+        "Card Status: ready",
+        "Status: DONE",
+        "- Integration state: merged",
+        "- Closeout state: setup_session_complete_issue_open",
+        "- PR state: merged",
+        "    status: PASS",
+        "    status: NOT_RUN",
+        "    status: PARTIAL",
+        "    status: PASS",
+        "    status: PASS",
+        "    findings_status: no_findings",
+        "    recommended_outcome: pass",
+        "    - Not run yet; implementation has not been bound."
+      ]
+    },
+    {
+      "issue": 5305,
+      "card": "sip",
+      "logical_path": ".adl/v0.91.7/tasks/issue-5305__v0-91-7-csdlc-v2-gate-10d1-non-mutating-deletion-eligibility-and-manifest/sip.md",
+      "sha256": "9b6f0116a33ff0ced5e8d7ff011d29eefacc2d110500569872ff60d972da7537",
+      "tracked": false,
+      "ignored": true,
+      "observed_fields": [
+        "Card Status: ready"
+      ]
+    },
+    {
+      "issue": 5305,
+      "card": "stp",
+      "logical_path": ".adl/v0.91.7/tasks/issue-5305__v0-91-7-csdlc-v2-gate-10d1-non-mutating-deletion-eligibility-and-manifest/stp.md",
+      "sha256": "1787c9dd8575797f7a8b49297a6f9724f8884bf27c80df072c23b6fa59986c76",
+      "tracked": false,
+      "ignored": true,
+      "observed_fields": [
+        "status: \"complete\""
+      ]
+    },
+    {
+      "issue": 5305,
+      "card": "spp",
+      "logical_path": ".adl/v0.91.7/tasks/issue-5305__v0-91-7-csdlc-v2-gate-10d1-non-mutating-deletion-eligibility-and-manifest/spp.md",
+      "sha256": "65db3f0ee36f61d9c8fa1f4ffec41c8686f5ed294add3bfcd3695341425e8aaf",
+      "tracked": false,
+      "ignored": true,
+      "observed_fields": [
+        "status: \"ready\"",
+        "    status: \"pending\"",
+        "    status: \"pending\"",
+        "    status: \"pending\"",
+        "    status: \"pending\"",
+        "    status: \"pending\""
+      ]
+    },
+    {
+      "issue": 5305,
+      "card": "vpp",
+      "logical_path": ".adl/v0.91.7/tasks/issue-5305__v0-91-7-csdlc-v2-gate-10d1-non-mutating-deletion-eligibility-and-manifest/vpp.md",
+      "sha256": "baaa64c5e0971f4ad74ad93be80dd5f3fe29bc8f0f159b6b4a58297961edbab1",
+      "tracked": false,
+      "ignored": true,
+      "observed_fields": [
+        "status: \"ready\""
+      ]
+    },
+    {
+      "issue": 5305,
+      "card": "srp",
+      "logical_path": ".adl/v0.91.7/tasks/issue-5305__v0-91-7-csdlc-v2-gate-10d1-non-mutating-deletion-eligibility-and-manifest/srp.md",
+      "sha256": "18801bc161686f1b5f8e4e0a5fa9df8c082a6ed51bcebffa72dfc93fb4f1a4a4",
+      "tracked": false,
+      "ignored": true,
+      "observed_fields": [
+        "status: approved",
+        "  findings_status: no_findings",
+        "  recommended_outcome: pass",
+        "  findings_status: \"no_findings | findings_present | review_unavailable | review_timeout | review_cancelled | review_failed\"",
+        "  recommended_outcome: \"pass | block | needs_followup\"",
+        "- Not run yet; implementation has not been bound."
+      ]
+    },
+    {
+      "issue": 5305,
+      "card": "sor",
+      "logical_path": ".adl/v0.91.7/tasks/issue-5305__v0-91-7-csdlc-v2-gate-10d1-non-mutating-deletion-eligibility-and-manifest/sor.md",
+      "sha256": "19dbccafe8efa5cac5f1a03a2661e9c9a0a6ded5bbc3345241a065aa136bbb51",
+      "tracked": false,
+      "ignored": true,
+      "observed_fields": [
+        "Card Status: completed",
+        "Status: DONE",
+        "- Integration state: merged",
+        "    status: PASS",
+        "    status: NOT_RUN",
+        "    status: PARTIAL",
+        "    status: PASS"
+      ]
+    },
+    {
+      "issue": 5306,
+      "card": "sip",
+      "logical_path": ".adl/v0.91.7/tasks/issue-5306__v0-91-7-csdlc-v2-gate-10d2-approved-bounded-v1-deletion-wave/sip.md",
+      "sha256": "d5768bbdeb4205c675aa024c0810d17fa769a0eac9b2ae983ab779ce9ec03b09",
+      "tracked": false,
+      "ignored": true,
+      "observed_fields": [
+        "Card Status: ready"
+      ]
+    },
+    {
+      "issue": 5306,
+      "card": "stp",
+      "logical_path": ".adl/v0.91.7/tasks/issue-5306__v0-91-7-csdlc-v2-gate-10d2-approved-bounded-v1-deletion-wave/stp.md",
+      "sha256": "946105882eb2b6935b35df334e009a8b546ea0d243afb682537f8fdb0d346ecf",
+      "tracked": false,
+      "ignored": true,
+      "observed_fields": [
+        "status: \"draft\""
+      ]
+    },
+    {
+      "issue": 5306,
+      "card": "spp",
+      "logical_path": ".adl/v0.91.7/tasks/issue-5306__v0-91-7-csdlc-v2-gate-10d2-approved-bounded-v1-deletion-wave/spp.md",
+      "sha256": "8ed261268b6d30144fc8c2837b3a3192b6ef9c2779804a8012331d49cb96ad6a",
+      "tracked": false,
+      "ignored": true,
+      "observed_fields": [
+        "status: \"ready\"",
+        "    status: \"pending\"",
+        "    status: \"pending\"",
+        "    status: \"pending\"",
+        "    status: \"pending\"",
+        "    status: \"pending\""
+      ]
+    },
+    {
+      "issue": 5306,
+      "card": "vpp",
+      "logical_path": ".adl/v0.91.7/tasks/issue-5306__v0-91-7-csdlc-v2-gate-10d2-approved-bounded-v1-deletion-wave/vpp.md",
+      "sha256": "263145a231c80b6a6a47505a06c6b26132ad5d9fedb98b11e01d33b4dbd7cfc2",
+      "tracked": false,
+      "ignored": true,
+      "observed_fields": [
+        "status: \"ready\""
+      ]
+    },
+    {
+      "issue": 5306,
+      "card": "srp",
+      "logical_path": ".adl/v0.91.7/tasks/issue-5306__v0-91-7-csdlc-v2-gate-10d2-approved-bounded-v1-deletion-wave/srp.md",
+      "sha256": "05c13e92c14ded4deea8dab482f3708a77680d7fee51bcdd9aaf43ea3b0c7207",
+      "tracked": false,
+      "ignored": true,
+      "observed_fields": [
+        "status: \"draft\"",
+        "  findings_status: \"not_run\"",
+        "  recommended_outcome: \"not_run\"",
+        "  findings_status: \"no_findings | findings_present | review_unavailable | review_timeout | review_cancelled | review_failed\"",
+        "  recommended_outcome: \"pass | block | needs_followup\"",
+        "- Not run yet; implementation has not been bound."
+      ]
+    },
+    {
+      "issue": 5306,
+      "card": "sor",
+      "logical_path": ".adl/v0.91.7/tasks/issue-5306__v0-91-7-csdlc-v2-gate-10d2-approved-bounded-v1-deletion-wave/sor.md",
+      "sha256": "78b77d3efae039f217f51c9c2684cedbcfc1278fa8eac7ea4d99a70af7915606",
+      "tracked": false,
+      "ignored": true,
+      "observed_fields": [
+        "Card Status: draft",
+        "Status: NOT_STARTED",
+        "- Integration state: worktree_only",
+        "    status: PASS",
+        "    status: NOT_RUN",
+        "    status: PARTIAL",
+        "    status: PASS"
+      ]
+    },
+    {
+      "issue": 5307,
+      "card": "sip",
+      "logical_path": ".adl/v0.91.7/tasks/issue-5307__v0-91-7-csdlc-v2-gate-10d4-read-only-importer-sunset/sip.md",
+      "sha256": "54ab172d0bb276416b5c295168ab2d9c8c61b6172ff665df75923b3b7fa0cb9d",
+      "tracked": false,
+      "ignored": true,
+      "observed_fields": [
+        "Card Status: ready"
+      ]
+    },
+    {
+      "issue": 5307,
+      "card": "stp",
+      "logical_path": ".adl/v0.91.7/tasks/issue-5307__v0-91-7-csdlc-v2-gate-10d4-read-only-importer-sunset/stp.md",
+      "sha256": "f7b1518934783820163742c6551366378cdee536d90029ee5f49777167feef41",
+      "tracked": false,
+      "ignored": true,
+      "observed_fields": [
+        "status: \"draft\""
+      ]
+    },
+    {
+      "issue": 5307,
+      "card": "spp",
+      "logical_path": ".adl/v0.91.7/tasks/issue-5307__v0-91-7-csdlc-v2-gate-10d4-read-only-importer-sunset/spp.md",
+      "sha256": "33bac764d3a7ea08520b28277604abec7f3169f8bda9a7d6db83fb78e3cec8c7",
+      "tracked": false,
+      "ignored": true,
+      "observed_fields": [
+        "status: \"ready\"",
+        "    status: \"pending\"",
+        "    status: \"pending\"",
+        "    status: \"pending\"",
+        "    status: \"pending\"",
+        "    status: \"pending\""
+      ]
+    },
+    {
+      "issue": 5307,
+      "card": "vpp",
+      "logical_path": ".adl/v0.91.7/tasks/issue-5307__v0-91-7-csdlc-v2-gate-10d4-read-only-importer-sunset/vpp.md",
+      "sha256": "190eba4d994bb5ced9331ded0ceaff3b9793d9541d4b7f264c04031530f0ff9e",
+      "tracked": false,
+      "ignored": true,
+      "observed_fields": [
+        "status: \"ready\""
+      ]
+    },
+    {
+      "issue": 5307,
+      "card": "srp",
+      "logical_path": ".adl/v0.91.7/tasks/issue-5307__v0-91-7-csdlc-v2-gate-10d4-read-only-importer-sunset/srp.md",
+      "sha256": "23147b85a516fe5b2b822e16881e16e9307f7f8400d6e9002c82d61f608dcd43",
+      "tracked": false,
+      "ignored": true,
+      "observed_fields": [
+        "status: \"draft\"",
+        "  findings_status: \"not_run\"",
+        "  recommended_outcome: \"not_run\"",
+        "  findings_status: \"no_findings | findings_present | review_unavailable | review_timeout | review_cancelled | review_failed\"",
+        "  recommended_outcome: \"pass | block | needs_followup\"",
+        "- Not run yet; implementation has not been bound."
+      ]
+    },
+    {
+      "issue": 5307,
+      "card": "sor",
+      "logical_path": ".adl/v0.91.7/tasks/issue-5307__v0-91-7-csdlc-v2-gate-10d4-read-only-importer-sunset/sor.md",
+      "sha256": "720db3e2f00ee6902a2496558a9122caf0797cc6b387157b84464886f594f81a",
+      "tracked": false,
+      "ignored": true,
+      "observed_fields": [
+        "Card Status: draft",
+        "Status: NOT_STARTED",
+        "- Integration state: worktree_only",
+        "    status: PASS",
+        "    status: NOT_RUN",
+        "    status: PARTIAL",
+        "    status: PASS"
+      ]
+    },
+    {
+      "issue": 5308,
+      "card": "sip",
+      "logical_path": ".adl/v0.91.7/tasks/issue-5308__v0-91-7-csdlc-v2-gate-10d3-executable-rollback-sunset/sip.md",
+      "sha256": "277e177bb64bdc4c82f4975d54ef484398f137b850d5dd10eeeb020309c2e073",
+      "tracked": false,
+      "ignored": true,
+      "observed_fields": [
+        "Card Status: ready"
+      ]
+    },
+    {
+      "issue": 5308,
+      "card": "stp",
+      "logical_path": ".adl/v0.91.7/tasks/issue-5308__v0-91-7-csdlc-v2-gate-10d3-executable-rollback-sunset/stp.md",
+      "sha256": "e2192340104e90947718369e8a439a43fcdd786a3908246eb75856a7122cede2",
+      "tracked": false,
+      "ignored": true,
+      "observed_fields": [
+        "status: \"draft\""
+      ]
+    },
+    {
+      "issue": 5308,
+      "card": "spp",
+      "logical_path": ".adl/v0.91.7/tasks/issue-5308__v0-91-7-csdlc-v2-gate-10d3-executable-rollback-sunset/spp.md",
+      "sha256": "3608e763a13534b6bd39c57d47c228ffda07812594faf7e1515ff85d8dc5ada8",
+      "tracked": false,
+      "ignored": true,
+      "observed_fields": [
+        "status: \"ready\"",
+        "    status: \"pending\"",
+        "    status: \"pending\"",
+        "    status: \"pending\"",
+        "    status: \"pending\"",
+        "    status: \"pending\""
+      ]
+    },
+    {
+      "issue": 5308,
+      "card": "vpp",
+      "logical_path": ".adl/v0.91.7/tasks/issue-5308__v0-91-7-csdlc-v2-gate-10d3-executable-rollback-sunset/vpp.md",
+      "sha256": "0bfe903aa7969603ec6d52ab872d48dafbf860973aecfd56f6e50ec447e7ffc4",
+      "tracked": false,
+      "ignored": true,
+      "observed_fields": [
+        "status: \"ready\""
+      ]
+    },
+    {
+      "issue": 5308,
+      "card": "srp",
+      "logical_path": ".adl/v0.91.7/tasks/issue-5308__v0-91-7-csdlc-v2-gate-10d3-executable-rollback-sunset/srp.md",
+      "sha256": "4a6d2d77fd21f992f643219afdcfcf899deb7b5aae49b2c1656c52774a40ad70",
+      "tracked": false,
+      "ignored": true,
+      "observed_fields": [
+        "status: \"draft\"",
+        "  findings_status: \"not_run\"",
+        "  recommended_outcome: \"not_run\"",
+        "  findings_status: \"no_findings | findings_present | review_unavailable | review_timeout | review_cancelled | review_failed\"",
+        "  recommended_outcome: \"pass | block | needs_followup\"",
+        "- Not run yet; implementation has not been bound."
+      ]
+    },
+    {
+      "issue": 5308,
+      "card": "sor",
+      "logical_path": ".adl/v0.91.7/tasks/issue-5308__v0-91-7-csdlc-v2-gate-10d3-executable-rollback-sunset/sor.md",
+      "sha256": "c6b4a0daa19090c0a153deea980c0240d9feaf0037adf09ede190afce4bc34fb",
+      "tracked": false,
+      "ignored": true,
+      "observed_fields": [
+        "Card Status: draft",
+        "Status: NOT_STARTED",
+        "- Integration state: worktree_only",
+        "    status: PASS",
+        "    status: NOT_RUN",
+        "    status: PARTIAL",
+        "    status: PASS"
+      ]
+    }
+  ]
+}

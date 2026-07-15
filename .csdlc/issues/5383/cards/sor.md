@@ -1,0 +1,133 @@
+# Structured Output Record
+
+Template: 1.0.0
+
+Issue: 5383
+
+Repository: danielbaustin/agent-design-language
+
+Card: sor
+
+Status: pre_phase
+
+## Summary
+
+Restored #4641 to v0.91.7 WP-14, created #5384 as v0.91.8 WP-14A preservation parent, created #5383 as the active v0.91.7 setup issue, and authored the v0.91.8 planned-posture milestone package.
+
+## Artifacts
+
+- docs/milestones/v0.91.8/README.md
+- docs/milestones/v0.91.8/WP_ISSUE_WAVE_v0.91.8.yaml
+- docs/milestones/v0.91.8/features/README.md
+- docs/milestones/v0.91.7/V092_HANDOFF_v0.91.7.md
+- docs/milestones/v0.92/FIRST_BIRTHDAY_LAUNCH_PACKET_v0.92.md
+- docs/milestones/v0.92/README.md
+
+## Execution
+
+- Created new v0.91.8 milestone docs and feature package under docs/milestones/v0.91.8
+- Updated v0.91.7 and v0.92 handoff docs to consume v0.91.8 as bridge prerequisite
+- Recorded live issue routing for #4641, #5383, #5384, and superseded #5335
+- Renamed sidecar route fields to live_wp and parent_wp so live WP-14 labels are preserved while routing through WP-14A
+
+## Validation
+
+[
+  {
+    "command": [
+      "git",
+      "diff",
+      "--check"
+    ],
+    "purpose": "Verify whitespace and patch hygiene for planning docs and C-SDLC records",
+    "outcome": "passed",
+    "evidence_ref": "local:git-diff-check"
+  },
+  {
+    "command": [
+      "ruby",
+      "-e",
+      "require 'yaml'; YAML.load_file('docs/milestones/v0.91.8/WP_ISSUE_WAVE_v0.91.8.yaml'); puts 'yaml ok'"
+    ],
+    "purpose": "Verify the v0.91.8 issue wave is parseable YAML",
+    "outcome": "passed",
+    "evidence_ref": "local:ruby-yaml-parse"
+  },
+  {
+    "command": [
+      "ruby",
+      "-e",
+      "root=Dir.pwd; missing=[]; Dir['docs/milestones/v0.91.8/**/*.md'].each do |f| dir=File.dirname(f); File.read(f).scan(/\\[[^\\]]+\\]\\(([^)]+)\\)/).flatten.each do |href| next if href =~ /^(https?:|#)/; path=href.split('#',2)[0]; next if path.empty?; target=File.expand_path(path, dir); missing << [f, href] unless File.exist?(target); end; end; if missing.empty?; puts 'links ok'; else; missing.each{|m| puts m.join(': ')}; exit 1; end"
+    ],
+    "purpose": "Verify local Markdown links in the v0.91.8 package resolve",
+    "outcome": "passed",
+    "evidence_ref": "local:ruby-v0918-link-check"
+  },
+  {
+    "command": [
+      "ruby",
+      "-e",
+      "require 'yaml'; y=YAML.load_file('docs/milestones/v0.91.8/WP_ISSUE_WAVE_v0.91.8.yaml'); abort('bad') unless y['wp_issue_map'].size == 24; puts 'wp map ok'"
+    ],
+    "purpose": "Verify the primary work-package map has 24 entries",
+    "outcome": "passed",
+    "evidence_ref": "local:ruby-wp-map-check"
+  },
+  {
+    "command": [
+      "gh",
+      "issue",
+      "view",
+      "4641",
+      "--json",
+      "number,title,labels"
+    ],
+    "purpose": "Verify #4641 is restored to v0.91.7 WP-14 title and labels",
+    "outcome": "passed",
+    "evidence_ref": "live-github:issue-4641-routing"
+  },
+  {
+    "command": [
+      "gh",
+      "issue",
+      "view",
+      "5383",
+      "--json",
+      "number,title,labels"
+    ],
+    "purpose": "Verify #5383 is the v0.91.7 setup issue",
+    "outcome": "passed",
+    "evidence_ref": "live-github:issue-5383-routing"
+  },
+  {
+    "command": [
+      "gh",
+      "issue",
+      "view",
+      "5384",
+      "--json",
+      "number,title,labels"
+    ],
+    "purpose": "Verify #5384 is the v0.91.8 WP-14A preservation issue",
+    "outcome": "passed",
+    "evidence_ref": "live-github:issue-5384-routing"
+  }
+]
+
+## Integration
+
+worktree_only
+
+## Publication
+
+Publication: not_published
+
+Merge: not_merged
+
+## Closeout
+
+not_started
+
+## Follow Ups
+
+- none
