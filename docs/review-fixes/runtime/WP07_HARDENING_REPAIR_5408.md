@@ -10,11 +10,12 @@ The `csm governed-stop` command now fails closed unless all conditions hold:
 - The authorization is an Ed25519 signature over the agent/request tuple,
   including operator, intent, timestamp, and reason.
 - The operator identity is listed in the locked spec policy and matches the
-  authenticated process OS identity from `USER` or `USERNAME`.
+  authenticated Unix account resolved from the process effective UID via
+  `geteuid()` and `getpwuid()` (with the platform-specific account resolver on
+  non-Unix hosts).
 - The signed request is fresh and its authorization reference is consumed once
   in the state-root ledger, preventing replay.
-- The supplied operator identity matches the authenticated process OS identity
-  from `USER` or `USERNAME`.
+- The supplied operator identity matches that authenticated account identity.
 
 The raw authorization value is never retained. The stop artifact records only
 its SHA-256 reference and records that signature, authority, operator, and OS
@@ -31,7 +32,8 @@ throttling require injected live fixtures and are retained as deferred failure
 matrix cases until those fixtures exist.
 
 Because the full failure matrix is not live-proven by this repair, the summary
-status is `bounded_smoke`, not `passed`.
+status is `bounded_smoke`; the retained proof validators use that same truthful
+status rather than claiming a full live pass.
 
 Service-manager shutdown uses the internal lifecycle stop record; it does not
 forge an operator emergency-stop authorization. Operator emergency stop uses

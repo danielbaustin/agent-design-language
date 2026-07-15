@@ -23,7 +23,7 @@ def main() -> None:
     expected = {
         "schema": "adl.csm.api_gateway_bridge_proof.v1",
         "issue": 5039,
-        "status": "passed",
+        "status": "bounded_smoke",
         "aws_profile": "agent-logic-admin",
         "aws_region": "us-west-2",
     }

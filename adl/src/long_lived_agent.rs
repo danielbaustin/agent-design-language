@@ -1579,6 +1579,7 @@ fn consume_governed_stop_authorization(
             path.display()
         )
     })?;
+    sync_governed_stop_ledger_parent(&path)?;
     unlock_governed_stop_ledger(&file)?;
     Ok(())
 }
@@ -1628,6 +1629,25 @@ fn unlock_governed_stop_ledger(file: &File) -> Result<()> {
         if result != 0 {
             return Err(anyhow!("unlock governed-stop authorization ledger failed"));
         }
+    }
+    Ok(())
+}
+
+fn sync_governed_stop_ledger_parent(path: &Path) -> Result<()> {
+    #[cfg(unix)]
+    {
+        let parent = path
+            .parent()
+            .ok_or_else(|| anyhow!("governed-stop authorization ledger has no parent"))?;
+        File::open(parent)
+            .with_context(|| format!("open governed-stop ledger directory {}", parent.display()))?
+            .sync_all()
+            .with_context(|| {
+                format!(
+                    "durably record governed-stop ledger entry {}",
+                    path.display()
+                )
+            })?;
     }
     Ok(())
 }

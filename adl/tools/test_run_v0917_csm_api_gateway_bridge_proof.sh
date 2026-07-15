@@ -51,7 +51,9 @@ config="$(cat)"
 case "$config" in
   *"Authorization: Bearer"*) auth="present" ;;
 esac
-if [ "$auth" = "present" ]; then
+if [[ "$config" == *"Bearer malformed-token"* ]]; then
+  printf '%s\n%s' '{"schema":"adl.csm.api_gateway_bridge.denied.v1","status":"denied","error":"malformed token"}' "401"
+elif [ "$auth" = "present" ]; then
   printf '%s\n%s' '{"schema":"adl.csm.runtime_api.api_gateway_bridge.v1","runtime_owner":"csm","agent_instance_id":"api-agent","status":"available","runtime_api_path":"/api-gateway-bridge","polis_ingress":{"polis_id":"api-agent","ingress_model":"one_api_gateway_api_per_polis","route_target":"authorized_api_gateway_to_csm_loopback_runtime_api","per_polis_api":true},"redaction":{"secret_material":"not_returned"}}' "200"
 else
   printf '%s\n%s' '{"schema":"adl.csm.api_gateway_bridge.denied.v1","status":"denied"}' "403"
@@ -104,7 +106,7 @@ aws_log = Path(sys.argv[2]).read_text()
 curl_log = Path(sys.argv[3]).read_text()
 
 assert summary["schema"] == "adl.csm.api_gateway_bridge_proof.v1"
-assert summary["status"] == "passed"
+assert summary["status"] == "bounded_smoke"
 assert summary["polis_ingress"]["ingress_model"] == "one_api_gateway_api_per_polis"
 assert summary["polis_ingress"]["route_target"] == "authorized_api_gateway_to_csm_loopback_runtime_api"
 assert summary["polis_ingress"]["per_polis_api"] is True

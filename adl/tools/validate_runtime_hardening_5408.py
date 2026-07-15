@@ -23,6 +23,10 @@ require(
     "governed_stop_authorization_payload",
     "GOVERNED_STOP_MAX_AGE_SECS",
     "consume_governed_stop_authorization",
+    "libc::flock",
+    "file.sync_all()",
+    "libc::geteuid",
+    "libc::getpwuid",
     '"authorization_verified": true',
     '"operator_identity_verified": true',
     '"os_identity_verified": true',
@@ -30,6 +34,7 @@ require(
 require(
     "adl/src/csm_api_gateway_bridge.rs",
     'status: "bounded_smoke"',
+    "validate_curl_config_value",
     '"default_route_is_not_substituted": true',
     '"malformed_request": "api_gateway_malformed_request"',
     '"upstream_failure": "deferred_to_injected_upstream_fixture"',
