@@ -7,9 +7,9 @@
     "title": "Make Runtime v3 Observatory local HTTPS and report bound control address",
     "slug": "runtime-v3-local-https-bound-address",
     "version": "v0.91.7",
-    "generation": 17
+    "generation": 37
   },
-  "status": "pre_phase",
+  "status": "complete",
   "content": {
     "card_kind": "sor",
     "values": {
@@ -173,10 +173,10 @@
           "evidence_ref": "FastWork target: completed successfully with warnings denied; adl-runtime --lib also passed"
         }
       ],
-      "integration_state": "not_started",
-      "publication_state": "not_published",
-      "merge_state": "not_merged",
-      "closeout_state": "not_started",
+      "integration_state": "merged",
+      "publication_state": "closed",
+      "merge_state": "merged",
+      "closeout_state": "complete",
       "follow_ups": []
     }
   }

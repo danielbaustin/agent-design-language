@@ -7,15 +7,15 @@
     "title": "Make Runtime v3 Observatory local HTTPS and report bound control address",
     "slug": "runtime-v3-local-https-bound-address",
     "version": "v0.91.7",
-    "generation": 17
+    "generation": 37
   },
-  "status": "pre_phase",
+  "status": "draft",
   "content": {
     "card_kind": "srp",
     "values": {
-      "review_scope": "adl-runtime-kernel\nadl-runtime/src/guardian.rs\nadl/src/cli/runtime_v3_cmd.rs\ndemos/v0.91.7/html-observatory\ndocs/architecture/RUNTIME_V3_ENTRYPOINT_SWITCH.md\ndocs/architecture/RUNTIME_V3_GUARDIAN_AND_SOAK.md\ndocs/architecture/RUNTIME_V3_GUARDIAN_FALLBACK_DECISION.md\ndocs/architecture/runtime_v3_guardian_fallback_matrix.v1.json\ndocs/architecture/runtime_v3_guardian_matrix.v1.json\ndocs/milestones/v0.91.7/DEMO_MATRIX_v0.91.7.md\ninfra/horust\ninfra/runtime-v3\ninfra/rustysd/adl-runtime-kernel.service\ninfra/systemd/adl-runtime-kernel.service",
-      "review_revision": "git-blake3:af050de4a0e8b06928e359a5336e2cb7e59e3a2b:9c32015ffa306fcbcf242f6d6c381536ca46d630447e6cac3359ebd2832a98f4",
-      "reviewer": "subagent-019f66d7",
+      "review_scope": "adl-runtime-kernel\nadl-runtime/src/guardian.rs\nadl/src/cli/runtime_v3_cmd.rs\ndemos/v0.91.7/html-observatory\ndocs/architecture/RUNTIME_V3_ENTRYPOINT_SWITCH.md\ndocs/architecture/RUNTIME_V3_GUARDIAN_AND_SOAK.md\ndocs/architecture/RUNTIME_V3_GUARDIAN_FALLBACK_DECISION.md\ndocs/architecture/runtime_v3_guardian_fallback_matrix.v1.json\ndocs/architecture/runtime_v3_guardian_matrix.v1.json\ndocs/milestones/v0.91.7/DEMO_MATRIX_v0.91.7.md\ninfra/horust\ninfra/runtime-v3\ninfra/rustysd/adl-runtime-kernel.service\ninfra/systemd/adl-runtime-kernel.service\nadl/tools/check_coverage_impact.sh\nadl/tools/run_pr_fast_coverage_lane.sh\nadl/tools/test_check_coverage_impact.sh\nadl/tools/test_run_pr_fast_coverage_lane.sh",
+      "review_revision": "git-blake3:699da9a4c5ea9643e64da599bf06f5d1b7286040:9415c94595c369c529d50dd3556148dc5b7528c584dbe2adc49d0ae8bd978ea7",
+      "reviewer": "subagents-019f66d7-019f66f8-and-019f671d",
       "review_prompts": [
         "Review TLS trust boundaries, private-key handling, and absence of plain-HTTP production paths.",
         "Review bound-address propagation and ephemeral-port test truth.",
@@ -29,7 +29,7 @@
           "actionable": true,
           "in_scope": true,
           "disposition": "fixed",
-          "fix_revision": "git-blake3:af050de4a0e8b06928e359a5336e2cb7e59e3a2b:9c32015ffa306fcbcf242f6d6c381536ca46d630447e6cac3359ebd2832a98f4",
+          "fix_revision": "git-blake3:699da9a4c5ea9643e64da599bf06f5d1b7286040:9415c94595c369c529d50dd3556148dc5b7528c584dbe2adc49d0ae8bd978ea7",
           "route": null
         },
         {
@@ -39,7 +39,7 @@
           "actionable": true,
           "in_scope": true,
           "disposition": "fixed",
-          "fix_revision": "git-blake3:af050de4a0e8b06928e359a5336e2cb7e59e3a2b:9c32015ffa306fcbcf242f6d6c381536ca46d630447e6cac3359ebd2832a98f4",
+          "fix_revision": "git-blake3:699da9a4c5ea9643e64da599bf06f5d1b7286040:9415c94595c369c529d50dd3556148dc5b7528c584dbe2adc49d0ae8bd978ea7",
           "route": null
         },
         {
@@ -49,7 +49,7 @@
           "actionable": true,
           "in_scope": true,
           "disposition": "fixed",
-          "fix_revision": "git-blake3:af050de4a0e8b06928e359a5336e2cb7e59e3a2b:9c32015ffa306fcbcf242f6d6c381536ca46d630447e6cac3359ebd2832a98f4",
+          "fix_revision": "git-blake3:699da9a4c5ea9643e64da599bf06f5d1b7286040:9415c94595c369c529d50dd3556148dc5b7528c584dbe2adc49d0ae8bd978ea7",
           "route": null
         },
         {
@@ -59,7 +59,37 @@
           "actionable": true,
           "in_scope": true,
           "disposition": "fixed",
-          "fix_revision": "git-blake3:af050de4a0e8b06928e359a5336e2cb7e59e3a2b:9c32015ffa306fcbcf242f6d6c381536ca46d630447e6cac3359ebd2832a98f4",
+          "fix_revision": "git-blake3:699da9a4c5ea9643e64da599bf06f5d1b7286040:9415c94595c369c529d50dd3556148dc5b7528c584dbe2adc49d0ae8bd978ea7",
+          "route": null
+        },
+        {
+          "id": "R-5390-5",
+          "severity": "p1",
+          "summary": "Runtime v3 guardian and selector changes lacked manifest-correct PR-fast coverage mappings, and the first combined mapping sent an adl-runtime binary selector to the adl workspace.",
+          "actionable": true,
+          "in_scope": true,
+          "disposition": "fixed",
+          "fix_revision": "git-blake3:699da9a4c5ea9643e64da599bf06f5d1b7286040:9415c94595c369c529d50dd3556148dc5b7528c584dbe2adc49d0ae8bd978ea7",
+          "route": null
+        },
+        {
+          "id": "R-5390-6",
+          "severity": "p1",
+          "summary": "The Runtime v3 selector report path remained below the required changed-source coverage threshold.",
+          "actionable": true,
+          "in_scope": true,
+          "disposition": "fixed",
+          "fix_revision": "git-blake3:699da9a4c5ea9643e64da599bf06f5d1b7286040:9415c94595c369c529d50dd3556148dc5b7528c584dbe2adc49d0ae8bd978ea7",
+          "route": null
+        },
+        {
+          "id": "R-5390-7",
+          "severity": "p2",
+          "summary": "Selector output-path tests initially raised coverage without asserting meaningful text or JSON output.",
+          "actionable": true,
+          "in_scope": true,
+          "disposition": "fixed",
+          "fix_revision": "git-blake3:699da9a4c5ea9643e64da599bf06f5d1b7286040:9415c94595c369c529d50dd3556148dc5b7528c584dbe2adc49d0ae8bd978ea7",
           "route": null
         }
       ],

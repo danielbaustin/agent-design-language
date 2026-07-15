@@ -8,7 +8,7 @@ Repository: danielbaustin/agent-design-language
 
 Card: srp
 
-Status: pre_phase
+Status: draft
 
 ## Scope
 
@@ -26,6 +26,10 @@ infra/horust
 infra/runtime-v3
 infra/rustysd/adl-runtime-kernel.service
 infra/systemd/adl-runtime-kernel.service
+adl/tools/check_coverage_impact.sh
+adl/tools/run_pr_fast_coverage_lane.sh
+adl/tools/test_check_coverage_impact.sh
+adl/tools/test_run_pr_fast_coverage_lane.sh
 
 ## Prompts
 
@@ -43,7 +47,7 @@ infra/systemd/adl-runtime-kernel.service
     "actionable": true,
     "in_scope": true,
     "disposition": "fixed",
-    "fix_revision": "git-blake3:af050de4a0e8b06928e359a5336e2cb7e59e3a2b:9c32015ffa306fcbcf242f6d6c381536ca46d630447e6cac3359ebd2832a98f4",
+    "fix_revision": "git-blake3:699da9a4c5ea9643e64da599bf06f5d1b7286040:9415c94595c369c529d50dd3556148dc5b7528c584dbe2adc49d0ae8bd978ea7",
     "route": null
   },
   {
@@ -53,7 +57,7 @@ infra/systemd/adl-runtime-kernel.service
     "actionable": true,
     "in_scope": true,
     "disposition": "fixed",
-    "fix_revision": "git-blake3:af050de4a0e8b06928e359a5336e2cb7e59e3a2b:9c32015ffa306fcbcf242f6d6c381536ca46d630447e6cac3359ebd2832a98f4",
+    "fix_revision": "git-blake3:699da9a4c5ea9643e64da599bf06f5d1b7286040:9415c94595c369c529d50dd3556148dc5b7528c584dbe2adc49d0ae8bd978ea7",
     "route": null
   },
   {
@@ -63,7 +67,7 @@ infra/systemd/adl-runtime-kernel.service
     "actionable": true,
     "in_scope": true,
     "disposition": "fixed",
-    "fix_revision": "git-blake3:af050de4a0e8b06928e359a5336e2cb7e59e3a2b:9c32015ffa306fcbcf242f6d6c381536ca46d630447e6cac3359ebd2832a98f4",
+    "fix_revision": "git-blake3:699da9a4c5ea9643e64da599bf06f5d1b7286040:9415c94595c369c529d50dd3556148dc5b7528c584dbe2adc49d0ae8bd978ea7",
     "route": null
   },
   {
@@ -73,7 +77,37 @@ infra/systemd/adl-runtime-kernel.service
     "actionable": true,
     "in_scope": true,
     "disposition": "fixed",
-    "fix_revision": "git-blake3:af050de4a0e8b06928e359a5336e2cb7e59e3a2b:9c32015ffa306fcbcf242f6d6c381536ca46d630447e6cac3359ebd2832a98f4",
+    "fix_revision": "git-blake3:699da9a4c5ea9643e64da599bf06f5d1b7286040:9415c94595c369c529d50dd3556148dc5b7528c584dbe2adc49d0ae8bd978ea7",
+    "route": null
+  },
+  {
+    "id": "R-5390-5",
+    "severity": "p1",
+    "summary": "Runtime v3 guardian and selector changes lacked manifest-correct PR-fast coverage mappings, and the first combined mapping sent an adl-runtime binary selector to the adl workspace.",
+    "actionable": true,
+    "in_scope": true,
+    "disposition": "fixed",
+    "fix_revision": "git-blake3:699da9a4c5ea9643e64da599bf06f5d1b7286040:9415c94595c369c529d50dd3556148dc5b7528c584dbe2adc49d0ae8bd978ea7",
+    "route": null
+  },
+  {
+    "id": "R-5390-6",
+    "severity": "p1",
+    "summary": "The Runtime v3 selector report path remained below the required changed-source coverage threshold.",
+    "actionable": true,
+    "in_scope": true,
+    "disposition": "fixed",
+    "fix_revision": "git-blake3:699da9a4c5ea9643e64da599bf06f5d1b7286040:9415c94595c369c529d50dd3556148dc5b7528c584dbe2adc49d0ae8bd978ea7",
+    "route": null
+  },
+  {
+    "id": "R-5390-7",
+    "severity": "p2",
+    "summary": "Selector output-path tests initially raised coverage without asserting meaningful text or JSON output.",
+    "actionable": true,
+    "in_scope": true,
+    "disposition": "fixed",
+    "fix_revision": "git-blake3:699da9a4c5ea9643e64da599bf06f5d1b7286040:9415c94595c369c529d50dd3556148dc5b7528c584dbe2adc49d0ae8bd978ea7",
     "route": null
   }
 ]
@@ -89,8 +123,8 @@ Every actionable finding requires a terminal disposition.
 
 ## Review Result
 
-Revision: Some("git-blake3:af050de4a0e8b06928e359a5336e2cb7e59e3a2b:9c32015ffa306fcbcf242f6d6c381536ca46d630447e6cac3359ebd2832a98f4")
+Revision: Some("git-blake3:699da9a4c5ea9643e64da599bf06f5d1b7286040:9415c94595c369c529d50dd3556148dc5b7528c584dbe2adc49d0ae8bd978ea7")
 
-Reviewer: Some("subagent-019f66d7")
+Reviewer: Some("subagents-019f66d7-019f66f8-and-019f671d")
 
 Result: pass
