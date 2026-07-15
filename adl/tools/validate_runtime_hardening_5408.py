@@ -21,6 +21,8 @@ require(
     "authorization signature verification failed",
     "operator is not present in the locked agent spec policy",
     "governed_stop_authorization_payload",
+    "GOVERNED_STOP_MAX_AGE_SECS",
+    "consume_governed_stop_authorization",
     '"authorization_verified": true',
     '"operator_identity_verified": true',
     '"os_identity_verified": true',
@@ -38,5 +40,10 @@ require(
     "blocked_with_evidence",
     "explicit hold",
     "not a waiver",
+)
+require(
+    "adl/src/cli/csm_service_cmd.rs",
+    "record_service_stop",
+    "Internal lifecycle shutdown is distinct from operator-authorized emergency stop",
 )
 print("WP-07 runtime hardening contract passed")

@@ -1,5 +1,6 @@
 use super::*;
 use base64::Engine;
+use ed25519_dalek::{Signer, SigningKey};
 use sha2::{Digest, Sha256};
 use std::collections::BTreeMap;
 use std::hash::{Hash, Hasher};
@@ -3870,6 +3871,12 @@ memory:
 fn csm_governed_stop_records_checkpoint_safe_fail_lifelog_and_notices() {
     let root = unique_test_temp_dir("csm-governed-stop");
     let spec = root.join("agent.yaml");
+    let signing_key = SigningKey::from_bytes(&[7_u8; 32]);
+    let public_key_b64 =
+        base64::engine::general_purpose::STANDARD.encode(signing_key.verifying_key().to_bytes());
+    let operator = std::env::var("USER")
+        .or_else(|_| std::env::var("USERNAME"))
+        .expect("test process OS identity");
     fs::write(
         &spec,
         r#"schema: adl.long_lived_agent_spec.v1
@@ -3894,10 +3901,16 @@ safety:
   require_public_artifact_sanitization: true
   financial_advice: false
   max_cycle_runtime_secs: 120
+  governed_stop_authority:
+    public_key_b64: "__PUBLIC_KEY__"
+    operators:
+      - "__OPERATOR__"
 memory:
   namespace: smoke/governed-stop-agent
   write_policy: append_only
-"#,
+"#
+        .replace("__PUBLIC_KEY__", &public_key_b64)
+        .replace("__OPERATOR__", &operator),
     )
     .expect("write agent spec");
     let service_root = root.join("service");
@@ -3965,21 +3978,30 @@ memory:
     );
     std::thread::sleep(std::time::Duration::from_millis(1500));
 
+    let reason = "operator requested recoverable polis stop";
+    let intent = "emergency_polis_stop";
+    let requested_at = chrono::Utc::now().to_rfc3339();
+    let payload = format!(
+        "adl.csm.governed_stop.authorization.v1\ngoverned-stop-agent\n{}\n{}\n{}\n{}",
+        operator, intent, requested_at, reason
+    );
+    let authorization = base64::engine::general_purpose::STANDARD
+        .encode(signing_key.sign(payload.as_bytes()).to_bytes());
     let stop = run_csm_with_env(
         &[
             "governed-stop",
             "--spec",
             spec.to_str().expect("utf8 spec"),
             "--reason",
-            "operator requested recoverable polis stop",
+            reason,
             "--operator",
-            "codex-test-operator",
+            &operator,
             "--authorization",
-            "test-approval-ticket-5005",
+            &authorization,
             "--intent",
-            "emergency_polis_stop",
+            intent,
             "--requested-at",
-            "2026-07-07T16:00:00Z",
+            &requested_at,
             "--json",
         ],
         &[

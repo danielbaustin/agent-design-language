@@ -10,6 +10,7 @@ surfaces in this issue:
 
 - governed emergency-stop authorization is verified with an Ed25519 signature
   against the pre-established locked agent spec;
+- signed authorizations are freshness-limited and single-use;
 - named API Gateway route and negative-case proof is retained, with incomplete
   live failure-matrix coverage classified as `bounded_smoke`;
 - forged authorization, wrong operator, route omission, malformed denial, and

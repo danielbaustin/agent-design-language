@@ -63,6 +63,8 @@ const DAEMON_DEFAULT_INTERVAL_SECS: u64 = 3;
 const GOVERNED_STOP_POLICY_KEY: &str = "governed_stop_authority";
 const GOVERNED_STOP_POLICY_PUBLIC_KEY: &str = "public_key_b64";
 const GOVERNED_STOP_POLICY_OPERATORS: &str = "operators";
+const GOVERNED_STOP_MAX_AGE_SECS: i64 = 300;
+const GOVERNED_STOP_AUTHORIZATION_LEDGER: &str = "governed_stop_authorizations.jsonl";
 
 fn utc_now() -> DateTime<Utc> {
     Utc::now()
@@ -1254,6 +1256,7 @@ pub fn governed_stop(spec_path: &Path, request: GovernedStopRequest) -> Result<V
     ensure_state_root(&loaded)?;
     ensure_locked_spec(&loaded)?;
     validate_governed_stop_request(&loaded, &request)?;
+    consume_governed_stop_authorization(&loaded, &request)?;
     let runtime_context = CsmRuntimeContext::observer()?;
     let restart_count = daemon_restart_count_hint(&loaded);
     let governed_stop_id = governed_stop_id(&loaded, &request);
@@ -1513,6 +1516,13 @@ fn validate_governed_stop_request(
     public_key
         .verify(signed_payload.as_bytes(), &signature)
         .map_err(|_| anyhow!("csm governed-stop authorization signature verification failed"))?;
+    let age = (Utc::now() - request.requested_at).num_seconds().abs();
+    if age > GOVERNED_STOP_MAX_AGE_SECS {
+        return Err(anyhow!(
+            "csm governed-stop authorization is outside the {} second freshness window",
+            GOVERNED_STOP_MAX_AGE_SECS
+        ));
+    }
     let operator_allowed = policy
         .get(GOVERNED_STOP_POLICY_OPERATORS)
         .and_then(Value::as_array)
@@ -1533,6 +1543,31 @@ fn validate_governed_stop_request(
             "csm governed-stop operator does not match the authenticated OS identity"
         ));
     }
+    Ok(())
+}
+
+fn consume_governed_stop_authorization(
+    loaded: &LoadedAgentSpec,
+    request: &GovernedStopRequest,
+) -> Result<()> {
+    let authorization_ref = governed_authorization_ref(&request.authorization);
+    let path = loaded.state_root.join(GOVERNED_STOP_AUTHORIZATION_LEDGER);
+    let existing = fs::read_to_string(&path).unwrap_or_default();
+    if existing
+        .lines()
+        .any(|line| line.trim() == authorization_ref)
+    {
+        return Err(anyhow!(
+            "csm governed-stop authorization has already been consumed"
+        ));
+    }
+    let mut file = OpenOptions::new()
+        .create(true)
+        .append(true)
+        .open(&path)
+        .with_context(|| format!("open governed-stop authorization ledger {}", path.display()))?;
+    writeln!(file, "{authorization_ref}")
+        .with_context(|| format!("record governed-stop authorization {}", path.display()))?;
     Ok(())
 }
 

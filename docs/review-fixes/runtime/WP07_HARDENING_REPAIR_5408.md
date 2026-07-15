@@ -11,6 +11,8 @@ The `csm governed-stop` command now fails closed unless all conditions hold:
   including operator, intent, timestamp, and reason.
 - The operator identity is listed in the locked spec policy and matches the
   authenticated process OS identity from `USER` or `USERNAME`.
+- The signed request is fresh and its authorization reference is consumed once
+  in the state-root ledger, preventing replay.
 - The supplied operator identity matches the authenticated process OS identity
   from `USER` or `USERNAME`.
 
@@ -30,6 +32,10 @@ matrix cases until those fixtures exist.
 
 Because the full failure matrix is not live-proven by this repair, the summary
 status is `bounded_smoke`, not `passed`.
+
+Service-manager shutdown uses the internal lifecycle stop record; it does not
+forge an operator emergency-stop authorization. Operator emergency stop uses
+the signed policy path above.
 
 ## Validation
 
