@@ -3018,7 +3018,7 @@ impl AwsRemoteValidationAdapter for LiveAwsRemoteValidationAdapter {
         } else {
             None
         };
-        let output = self
+        let mut send_command = self
             .ssm
             .send_command()
             .document_name("AWS-RunShellScript")
@@ -3029,7 +3029,14 @@ impl AwsRemoteValidationAdapter for LiveAwsRemoteValidationAdapter {
                     .lines()
                     .map(|line| line.to_string())
                     .collect::<Vec<_>>(),
-            )
+            );
+        if let Some(timeout) = timeout {
+            send_command = send_command.parameters(
+                "executionTimeout",
+                vec![timeout.as_secs().to_string()],
+            );
+        }
+        let output = send_command
             .send()
             .await
             .map_err(classify_ssm_error)?;

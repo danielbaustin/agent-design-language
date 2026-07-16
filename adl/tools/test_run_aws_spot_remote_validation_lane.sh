@@ -568,5 +568,6 @@ grep -F -- "repo:{repo}:ref:refs/heads/codex/*" "$SETUP_SCRIPT" >/dev/null
 grep -F -- "AdlAwsRemoteValidationBuilderImageEcrRead" "$ROOT/adl/src/aws_remote_validation.rs" >/dev/null
 grep -F -- "ecr:GetAuthorizationToken" "$ROOT/adl/src/aws_remote_validation.rs" >/dev/null
 grep -F -- "repository/adl-builder" "$ROOT/adl/src/aws_remote_validation.rs" >/dev/null
+grep -F -- '"executionTimeout"' "$ROOT/tools/aws_remote_validation/src/aws_remote_validation.rs" >/dev/null
 
 echo "PASS test_run_aws_spot_remote_validation_lane"
