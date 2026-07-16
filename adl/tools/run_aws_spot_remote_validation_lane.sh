@@ -81,6 +81,8 @@ Options:
   --out <path>                  Summary JSON path. Defaults under .adl/tmp.
   --artifact-dir <dir>          Artifact root. Defaults beside --out.
   --instance-type <type>        Add an allowed EC2 instance type.
+  --instance-types <type1,type2,...>
+                                Add a comma-separated EC2 instance-type list.
   --cache-volume-name <name>    Warm EBS cache volume name. Defaults to retained WP-06 cache.
   --cache-volume-size-gib <gib> Cache volume size when created. Defaults to 500.
   --cache-volume-type <type>    Cache volume type. Defaults to gp3.
@@ -181,6 +183,21 @@ while [[ $# -gt 0 ]]; do
       ;;
     --instance-type)
       INSTANCE_TYPES+=("${2:-}")
+      shift 2
+      ;;
+    --instance-types)
+      if [[ -z "${2:-}" || "$2" == ,* || "$2" == *, || "$2" == *,,* ]]; then
+        echo "run_aws_spot_remote_validation_lane: --instance-types must contain non-empty comma-separated values" >&2
+        exit 2
+      fi
+      IFS=',' read -r -a requested_instance_types <<< "${2:-}"
+      for instance_type in "${requested_instance_types[@]}"; do
+        if [[ ! "$instance_type" =~ ^[a-z0-9.-]+$ ]]; then
+          echo "run_aws_spot_remote_validation_lane: --instance-types contains an invalid instance type" >&2
+          exit 2
+        fi
+        INSTANCE_TYPES+=("$instance_type")
+      done
       shift 2
       ;;
     --cache-volume-name)

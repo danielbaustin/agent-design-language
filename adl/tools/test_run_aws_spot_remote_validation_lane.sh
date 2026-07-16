@@ -340,7 +340,14 @@ grep -Fx -- "5191" "$TMP/args.txt" >/dev/null
 grep -Fx -- "--instance-type" "$TMP/args.txt" >/dev/null
 grep -Fx -- "m7a.2xlarge" "$TMP/args.txt" >/dev/null
 grep -Fx -- "--spot-only" "$TMP/args.txt" >/dev/null
+grep -F -- '--instance-types <type1,type2,...>' "$SCRIPT" >/dev/null
 grep -F 'INSTANCE_TYPES=("m7a.2xlarge" "c7a.2xlarge" "c7i.2xlarge")' "$SCRIPT" >/dev/null
+for invalid_types in 'm7a.2xlarge,' ',m7a.2xlarge' 'm7a.2xlarge,,c7a.2xlarge' 'm7a.2xlarge, ,c7a.2xlarge' 'M7A.2XLARGE' ''; do
+  if bash "$SCRIPT" --instance-types "$invalid_types" >/dev/null 2>"$TMP/invalid-instance-types.err"; then
+    echo "expected invalid instance list to fail: <$invalid_types>" >&2
+    exit 1
+  fi
+done
 grep -Fx -- "--cache-volume-id" "$TMP/args.txt" >/dev/null
 grep -Fx -- "vol-0123456789abcdef0" "$TMP/args.txt" >/dev/null
 grep -Fx -- "--cache-volume-name" "$TMP/args.txt" >/dev/null
