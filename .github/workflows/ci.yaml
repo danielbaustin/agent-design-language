@@ -494,6 +494,7 @@ jobs:
       base_ref: ${{ github.event.pull_request.base.sha || github.event.before || github.sha }}
       source_event_name: ${{ github.event_name }}
       instance_type: c7a.4xlarge
+      max_run_seconds: "1800"
       builder_image_tag: v0.91.7-coverage-5243
       issue_number: ${{ github.event.pull_request.number }}
     secrets: inherit
