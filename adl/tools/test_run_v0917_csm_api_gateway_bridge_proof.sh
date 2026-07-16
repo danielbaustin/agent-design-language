@@ -153,4 +153,19 @@ assert "fixture.execute-api" not in text
 assert "fixture-token" not in text
 PY
 
+python3 - "$TMP/proof/api_gateway_bridge_summary.json" "$ROOT/adl/tools/validate_v0917_csm_api_gateway_bridge_proof.py" <<'PY'
+import json
+import subprocess
+import sys
+from pathlib import Path
+
+summary = json.loads(Path(sys.argv[1]).read_text())
+summary["api_gateway"]["supported_route_keys"] = ["$default"]
+probe = Path(sys.argv[1]).with_name("default-route-only-summary.json")
+probe.write_text(json.dumps(summary))
+result = subprocess.run([sys.executable, sys.argv[2], str(probe)], capture_output=True, text=True)
+assert result.returncode != 0, "validator accepted $default as a substitute for named routes"
+assert "GET /status" in result.stderr
+PY
+
 echo "PASS test_run_v0917_csm_api_gateway_bridge_proof"

@@ -73,7 +73,7 @@ def main() -> None:
         "GET /api-gateway-bridge",
         "GET /persistence",
     ]:
-        if route not in api.get("supported_route_keys", []) and "$default" not in api.get("supported_route_keys", []):
+        if route not in api.get("supported_route_keys", []):
             fail(f"api_gateway.supported_route_keys missing {route}")
     if "GET /acip" not in api.get("planned_route_keys", []):
         fail("api_gateway.planned_route_keys must retain planned /acip route truth")
