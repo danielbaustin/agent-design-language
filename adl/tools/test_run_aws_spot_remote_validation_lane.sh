@@ -39,6 +39,12 @@ test_ssh_key="$TMP/spot-key"
 ssh-keygen -q -t ed25519 -N '' -f "$test_ssh_key"
 chmod 600 "$test_ssh_key"
 
+key_mode="$(stat -c '%a' "$test_ssh_key" 2>/dev/null || stat -f '%Lp' "$test_ssh_key")"
+case "$key_mode" in
+  600|400) ;;
+  *) echo "expected passphraseless test key to have a restricted mode, got $key_mode" >&2; exit 1 ;;
+esac
+
 cat >"$fake_bin/aws" <<'EOF'
 #!/usr/bin/env bash
 set -euo pipefail
@@ -241,6 +247,20 @@ esac
 EOF
 chmod +x "$fake_bin/aws" "$fake_bin/adl-aws-remote-validation" "$fake_bin/curl"
 
+cat >"$fake_bin/stat" <<'EOF'
+#!/usr/bin/env bash
+set -euo pipefail
+if [[ "${1:-}" == "-c" ]]; then
+  exit 1
+fi
+if [[ "${1:-}" == "-f" ]]; then
+  printf '600\n'
+  exit 0
+fi
+exit 1
+EOF
+chmod +x "$fake_bin/stat"
+
 ADL_FAKE_GITHUB_API_LOG="$TMP/github-api.log" \
 ADL_GITHUB_API_BIN="$fake_bin/curl" \
 ADL_GITHUB_API_URL="https://api.github.test" \
@@ -315,6 +335,7 @@ ADL_FAKE_AWS_REMOTE_ARGS="$TMP/args.txt" \
 ADL_FAKE_EXPECTED_SOURCE="$(git -C "$ROOT" rev-parse origin/main)" \
 ADL_FAKE_EXPECTED_IMAGE_DIGEST_HASH="$(python3 -c 'import hashlib,sys; print(hashlib.sha256(sys.argv[1].encode()).hexdigest())' "$builder_digest")" \
 ADL_AWS_CLI="$fake_bin/aws" \
+PATH="$fake_bin:$PATH" \
 bash "$SCRIPT" \
   --run \
   --expected-proof "$proof" \
