@@ -350,6 +350,7 @@ bash "$SCRIPT" \
   --out "$TMP/summary.json" \
   --artifact-dir "$TMP/artifacts" \
   --instance-type m7a.2xlarge \
+  --instance-types "c7a.4xlarge,m7a.4xlarge" \
   --json >"$TMP/run.out"
 
 grep -F "fixture remote validation passed" "$TMP/run.out" >/dev/null
@@ -367,6 +368,15 @@ grep -Fx -- "--command-timeout-seconds" "$TMP/args.txt" >/dev/null
 grep -Fx -- "900" "$TMP/args.txt" >/dev/null
 grep -F -- '--instance-types <type1,type2,...>' "$SCRIPT" >/dev/null
 grep -F 'INSTANCE_TYPES=("m7a.2xlarge" "c7a.2xlarge" "c7i.2xlarge")' "$SCRIPT" >/dev/null
+test "$(grep -Fc 'default: "c7a.4xlarge,m7a.4xlarge,c7i.4xlarge"' "$WORKFLOW")" -eq 2
+test "$(grep -Fc 'default: "c7a.4xlarge"' "$WORKFLOW")" -eq 2
+grep -F 'instance_type: c7a.4xlarge' "$ROOT/.github/workflows/ci.yaml" >/dev/null
+python3 - "$TMP/args.txt" <<'PY'
+import sys
+args = open(sys.argv[1], encoding="utf-8").read().splitlines()
+instance_type_positions = [i for i, value in enumerate(args) if value == "--instance-type"]
+assert [args[i + 1] for i in instance_type_positions] == ["m7a.2xlarge", "c7a.4xlarge", "m7a.4xlarge"]
+PY
 for invalid_types in 'm7a.2xlarge,' ',m7a.2xlarge' 'm7a.2xlarge,,c7a.2xlarge' 'm7a.2xlarge, ,c7a.2xlarge' 'M7A.2XLARGE' ''; do
   if bash "$SCRIPT" --instance-types "$invalid_types" >/dev/null 2>"$TMP/invalid-instance-types.err"; then
     echo "expected invalid instance list to fail: <$invalid_types>" >&2
@@ -529,7 +539,7 @@ grep -F -- "git_ref must be a branch, tag, or SHA; HEAD is ambiguous" "$WORKFLOW
 grep -F -- "--profile env" "$WORKFLOW" >/dev/null
 grep -F -- "--check-account" "$WORKFLOW" >/dev/null
 grep -F -- "--json" "$WORKFLOW" >/dev/null
-grep -F -- "Verify Spot artifact redaction" "$WORKFLOW" >/dev/null
+grep -F -- "Sanitize and verify Spot artifact redaction" "$WORKFLOW" >/dev/null
 grep -F -- "AWS_SPOT_REMOTE_VALIDATION_SSH_PRIVATE_KEY_B64" "$WORKFLOW" >/dev/null
 grep -F -- "ssh-keygen -y -P ''" "$WORKFLOW" >/dev/null
 grep -F -- "include-hidden-files: false" "$WORKFLOW" >/dev/null
