@@ -35,6 +35,7 @@ grep -F 'getconf _NPROCESSORS_ONLN' "$SCRIPT" >/dev/null
 grep -F 'per_partition_threads=$((aggregate_coverage_threads / partition_count))' "$SCRIPT" >/dev/null
 grep -F 'coverage partition count exceeds the host thread budget' "$SCRIPT" >/dev/null
 grep -F 'ADL_AUTHORITATIVE_COVERAGE_TEST_THREADS exceeds the per-partition host budget' "$SCRIPT" >/dev/null
+grep -F 'pr_fast_threads=$((host_cpus / 2))' "$SCRIPT" >/dev/null
 grep -F 'ADL_COVERAGE_TEST_THREADS exceeds the host PR-fast budget' "$SCRIPT" >/dev/null
 grep -F 'ADL_SPOT_RESET_COVERAGE_CACHE:-1' "$SCRIPT" >/dev/null
 grep -F 'ADL_SPOT_CACHE_PRUNE scope=coverage' "$SCRIPT" >/dev/null
@@ -144,7 +145,7 @@ fi
 budget_log="$combined_tmp/budget.log"
 ADL_TEST_HOST_CPUS=16 ADL_SPOT_SOURCE_ROOT="$combined_root" CARGO_TARGET_DIR="$combined_root/cache/target" ADL_TEST_LOG="$budget_log" PATH="$fake_bin:$PATH" \
   bash "$combined_root/adl/tools/run_aws_spot_ci_profile.sh" adl-coverage --base HEAD --head HEAD >/dev/null
-grep -F 'coverage_threads=16 authoritative_threads=8 partitions=2' "$budget_log" >/dev/null
+grep -F 'coverage_threads=8 authoritative_threads=8 partitions=2' "$budget_log" >/dev/null
 : >"$budget_log"
 ADL_TEST_HOST_CPUS=64 ADL_SPOT_SOURCE_ROOT="$combined_root" CARGO_TARGET_DIR="$combined_root/cache/target" ADL_TEST_LOG="$budget_log" PATH="$fake_bin:$PATH" \
   bash "$combined_root/adl/tools/run_aws_spot_ci_profile.sh" adl-coverage --base HEAD --head HEAD >/dev/null

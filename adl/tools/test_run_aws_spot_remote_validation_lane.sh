@@ -547,7 +547,7 @@ grep -F -- "Build Spot remote validation binary" "$WORKFLOW" >/dev/null
 grep -F -- "tools/aws_remote_validation/Cargo.toml" "$WORKFLOW" >/dev/null
 grep -F -- "adl-aws-remote-validation-cache-volume:/mnt/adl-cache" "$WORKFLOW" >/dev/null
 grep -F -- "ssh tail" "$WORKFLOW" >/dev/null
-grep -F -- "ADL_AWS_REMOTE_VALIDATION_SSH_ALLOWED_CIDR" "$WORKFLOW" >/dev/null
+grep -F -- "AWS_SPOT_REMOTE_VALIDATION_SSH_ALLOWED_CIDR" "$WORKFLOW" >/dev/null
 grep -F -- "if-no-files-found: warn" "$WORKFLOW" >/dev/null
 grep -F -- "ec2:RunInstances" "$SETUP_SCRIPT" >/dev/null
 if grep -F -- '"ec2:CreateVolume"' "$SETUP_SCRIPT" >/dev/null; then

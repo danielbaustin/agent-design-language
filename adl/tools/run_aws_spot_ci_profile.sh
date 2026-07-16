@@ -174,7 +174,10 @@ run_adl_coverage() {
     exit 2
   fi
   per_partition_threads=$((aggregate_coverage_threads / partition_count))
-  pr_fast_threads="$host_cpus"
+  pr_fast_threads=$((host_cpus / 2))
+  if (( pr_fast_threads < 1 )); then
+    pr_fast_threads=1
+  fi
   if (( pr_fast_threads > 18 )); then
     pr_fast_threads=18
   fi

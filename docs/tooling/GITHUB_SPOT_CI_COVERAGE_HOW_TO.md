@@ -194,8 +194,11 @@ proof historically measured on `c7a.8xlarge` in 257 seconds with CI and
 1238/1238 focused coverage tests passing. Full authoritative coverage remains required for
 push/main and non-PR evidence events. The full lane uses two concurrent
 nextest partitions by default, with an aggregate host-aware budget capped at
-36 threads and divided across partitions. On the default 16-vCPU builder,
-two partitions use 8 threads each; a 36-vCPU builder uses 18 each. Both
+36 threads and divided across partitions. The concurrent PR-fast lane uses
+half the host CPU count, capped at 18, so the default 16-vCPU builder uses 8
+coverage threads while a 36-vCPU builder uses 18. Authoritative coverage
+uses that aggregate budget divided across partitions: two partitions use 8
+threads each on the default builder and 18 each on a 36-vCPU builder. Both
 partitions must pass before the single coverage result is emitted; override
 `ADL_AUTHORITATIVE_COVERAGE_PARTITIONS` and
 `ADL_AUTHORITATIVE_COVERAGE_TEST_THREADS` only for a measured builder shape;
