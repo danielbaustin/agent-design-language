@@ -152,8 +152,19 @@ def main() -> None:
         fail("live malformed-token negative case must classify malformed request")
     if live_negative.get("malformed_request_http_status") not in {401, 403}:
         fail("live malformed-token negative case must retain an HTTP 401 or 403")
+    if live_negative.get("malformed_request_error_class") != "api_gateway_malformed_request":
+        fail("live malformed-token negative case must retain its exact error class")
     if live_negative.get("raw_error_recorded") is not False:
         fail("live negative case must not retain raw provider error")
+
+    probes = summary.get("live_route_probes", {})
+    if probes.get("default_route_is_not_substituted") is not True:
+        fail("live_route_probes must prove $default was not substituted")
+    for key in ["required_routes", "probed", "missing"]:
+        if not isinstance(probes.get(key), list):
+            fail(f"live_route_probes.{key} must be retained as a list")
+    if not probes["required_routes"]:
+        fail("live_route_probes.required_routes must retain required route truth")
 
     policy = summary.get("local_csm_api_policy", {})
     if policy.get("embedded_daemon_api") != "loopback_only":

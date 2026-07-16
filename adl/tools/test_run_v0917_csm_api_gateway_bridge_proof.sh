@@ -52,7 +52,7 @@ case "$config" in
   *"Authorization: Bearer"*) auth="present" ;;
 esac
 if [[ "$config" == *"Bearer malformed-token"* ]]; then
-  printf '%s\n%s' '{"schema":"adl.csm.api_gateway_bridge.denied.v1","status":"denied","error":"malformed token"}' "401"
+  printf '%s\n%s' '{"schema":"adl.csm.api_gateway_bridge.denied.v1","status":"denied","error_class":"api_gateway_malformed_request"}' "401"
 elif [ "$auth" = "present" ]; then
   printf '%s\n%s' '{"schema":"adl.csm.runtime_api.api_gateway_bridge.v1","runtime_owner":"csm","agent_instance_id":"api-agent","status":"available","runtime_api_path":"/api-gateway-bridge","polis_ingress":{"polis_id":"api-agent","ingress_model":"one_api_gateway_api_per_polis","route_target":"authorized_api_gateway_to_csm_loopback_runtime_api","per_polis_api":true},"redaction":{"secret_material":"not_returned"}}' "200"
 else
@@ -128,6 +128,12 @@ assert summary["live_negative_cases"]["missing_token"] == "api_gateway_authoriza
 assert summary["live_negative_cases"]["missing_token_http_status"] in {401, 403}
 assert summary["live_negative_cases"]["malformed_request"] == "api_gateway_malformed_request"
 assert summary["live_negative_cases"]["malformed_request_http_status"] in {401, 403}
+assert summary["live_negative_cases"]["malformed_request_error_class"] == "api_gateway_malformed_request"
+probes = summary["live_route_probes"]
+assert probes["default_route_is_not_substituted"] is True
+assert isinstance(probes["required_routes"], list) and probes["required_routes"]
+assert isinstance(probes["probed"], list)
+assert isinstance(probes["missing"], list)
 for required in [
     "sts get-caller-identity",
     "apigatewayv2 get-apis",
