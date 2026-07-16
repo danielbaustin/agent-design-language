@@ -3030,16 +3030,10 @@ impl AwsRemoteValidationAdapter for LiveAwsRemoteValidationAdapter {
                     .map(|line| line.to_string())
                     .collect::<Vec<_>>(),
             );
-        if let Some(timeout) = timeout {
-            send_command = send_command.parameters(
-                "executionTimeout",
-                vec![timeout.as_secs().to_string()],
-            );
+        if let Some(parameters) = ssm_execution_timeout_parameters(timeout) {
+            send_command = send_command.parameters("executionTimeout", parameters);
         }
-        let output = send_command
-            .send()
-            .await
-            .map_err(classify_ssm_error)?;
+        let output = send_command.send().await.map_err(classify_ssm_error)?;
         let command_id = output
             .command()
             .and_then(|command| command.command_id())
@@ -3380,6 +3374,10 @@ impl AwsRemoteValidationAdapter for LiveAwsRemoteValidationAdapter {
                 .map(ToOwned::to_owned),
         }))
     }
+}
+
+fn ssm_execution_timeout_parameters(timeout: Option<Duration>) -> Option<Vec<String>> {
+    timeout.map(|value| vec![value.as_secs().to_string()])
 }
 
 fn classify_run_instances_error(
@@ -4090,8 +4088,18 @@ mod tests {
         assert!(tracked_runner.contains("immutable_builder_image_only"));
         assert!(tracked_runner
             .contains("PERSISTENT_CHECKOUT=\"$TOOLCHAIN_ROOT/source/agent-design-language\""));
-        assert!(tracked_runner
-            .contains("if [ \"$CURRENT_PERSISTENT_COMMIT\" != \"$SOURCE_COMMIT\" ]"));
+        assert!(
+            tracked_runner.contains("if [ \"$CURRENT_PERSISTENT_COMMIT\" != \"$SOURCE_COMMIT\" ]")
+        );
+    }
+
+    #[test]
+    fn ssm_execution_timeout_parameters_forward_seconds() {
+        assert_eq!(
+            ssm_execution_timeout_parameters(Some(Duration::from_secs(1_800))),
+            Some(vec!["1800".to_string()])
+        );
+        assert_eq!(ssm_execution_timeout_parameters(None), None);
     }
 
     #[test]
