@@ -1553,6 +1553,7 @@ fn consume_governed_stop_authorization(
     let path = loaded.state_root.join(GOVERNED_STOP_AUTHORIZATION_LEDGER);
     let mut file = OpenOptions::new()
         .create(true)
+        .truncate(false)
         .read(true)
         .write(true)
         .open(&path)
@@ -1597,7 +1598,7 @@ fn authenticated_os_identity() -> String {
                 .to_string_lossy()
                 .into_owned();
         }
-        return String::new();
+        String::new()
     }
     #[cfg(windows)]
     {
