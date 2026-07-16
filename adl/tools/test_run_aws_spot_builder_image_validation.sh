@@ -134,6 +134,8 @@ run_fixture() {
 
 run_fixture >"$TMP/pass.out" 2>"$TMP/pass.err"
 grep -F 'ADL_SPOT_BUILDER_PROOF=' "$TMP/pass.out" >/dev/null
+test -f "$RUN_ROOT/validation-command.stdout.log"
+test -f "$RUN_ROOT/validation-command.stderr.log"
 python3 - "$RUN_ROOT/spot-builder-summary.json" "$commit" <<'PY'
 import json
 import sys

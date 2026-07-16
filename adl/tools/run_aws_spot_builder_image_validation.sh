@@ -182,6 +182,8 @@ stage "$CURRENT_STAGE"
 VALIDATION_START="$(date +%s)"
 VALIDATION_UID="$(id -u)"
 VALIDATION_GID="$(id -g)"
+VALIDATION_STDOUT="$ADL_RUN_ROOT/validation-command.stdout.log"
+VALIDATION_STDERR="$ADL_RUN_ROOT/validation-command.stderr.log"
 set +e
 "${DOCKER[@]}" run --rm \
   --user "$VALIDATION_UID:$VALIDATION_GID" \
@@ -199,9 +201,17 @@ set +e
   --env RUSTFLAGS= \
   --env CARGO_INCREMENTAL=0 \
   --entrypoint /bin/bash \
-  "$IMAGE" -lc "set +e; $COMMAND; status=\$?; sccache --show-stats > /run-output/sccache-stats.log 2>&1 || true; exit \$status"
+  "$IMAGE" -lc "set +e; $COMMAND; status=\$?; sccache --show-stats > /run-output/sccache-stats.log 2>&1 || true; exit \$status" \
+  >"$VALIDATION_STDOUT" 2>"$VALIDATION_STDERR"
 VALIDATION_EXIT="$?"
 VALIDATION_END="$(date +%s)"
+
+# Keep SSM output bounded while retaining the durable full logs on the run
+# volume. The structured proof below is emitted after these tails.
+printf 'ADL_SPOT_VALIDATION_LOGS stdout=%s stderr=%s\n' \
+  "$VALIDATION_STDOUT" "$VALIDATION_STDERR" >&2
+tail -n 40 "$VALIDATION_STDOUT" >&2 || true
+tail -n 40 "$VALIDATION_STDERR" >&2 || true
 
 CURRENT_STAGE="write_builder_summary"
 stage "$CURRENT_STAGE"
