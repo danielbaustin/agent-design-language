@@ -160,6 +160,11 @@ if ADL_TEST_HOST_CPUS=16 ADL_AUTHORITATIVE_COVERAGE_TEST_THREADS=9 ADL_SPOT_SOUR
   echo "oversized authoritative thread override unexpectedly passed" >&2
   exit 1
 fi
+if ADL_TEST_HOST_CPUS=16 ADL_COVERAGE_TEST_THREADS=9 ADL_SPOT_SOURCE_ROOT="$combined_root" CARGO_TARGET_DIR="$combined_root/cache/target" ADL_TEST_LOG="$budget_log" PATH="$fake_bin:$PATH" \
+  bash "$combined_root/adl/tools/run_aws_spot_ci_profile.sh" adl-coverage --base HEAD --head HEAD >/dev/null 2>&1; then
+  echo "oversized PR-fast thread override unexpectedly passed" >&2
+  exit 1
+fi
 rm -rf "$combined_tmp"
 
 grep -F 'profile:' "$WORKFLOW" >/dev/null
