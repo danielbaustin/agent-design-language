@@ -271,20 +271,44 @@ fn reserve_ephemeral_csm_test_port(label: &str) -> (std::net::TcpListener, Strin
 }
 
 fn request_governed_stop_and_wait(spec: &std::path::Path, child: &mut std::process::Child) {
+    let locked_spec: serde_json::Value = serde_json::from_slice(
+        &fs::read(
+            spec.parent()
+                .expect("shutdown probe spec parent")
+                .join("state/agent_spec.locked.json"),
+        )
+        .expect("read locked shutdown probe spec"),
+    )
+    .expect("parse locked shutdown probe spec");
+    let agent_id = locked_spec["agent_instance_id"]
+        .as_str()
+        .expect("locked shutdown probe agent id");
+    let operator = std::env::var("USER")
+        .or_else(|_| std::env::var("USERNAME"))
+        .expect("test process OS identity");
+    let reason = "test cleanup requested governed runtime stop";
+    let intent = "recoverability_drill";
+    let requested_at = chrono::Utc::now().to_rfc3339();
+    let payload = format!(
+        "adl.csm.governed_stop.authorization.v1\n{agent_id}\n{operator}\n{intent}\n{requested_at}\n{reason}"
+    );
+    let signing_key = SigningKey::from_bytes(&[7_u8; 32]);
+    let authorization = base64::engine::general_purpose::STANDARD
+        .encode(signing_key.sign(payload.as_bytes()).to_bytes());
     let stop = run_csm(&[
         "governed-stop",
         "--spec",
         spec.to_str().expect("utf8 spec"),
         "--reason",
-        "test cleanup requested governed runtime stop",
+        reason,
         "--operator",
-        "cli-smoke",
+        &operator,
         "--authorization",
-        "test-governed-stop",
+        &authorization,
         "--intent",
         "recoverability_drill",
         "--requested-at",
-        "2026-07-07T16:00:00Z",
+        &requested_at,
         "--json",
     ]);
     assert!(
@@ -316,6 +340,12 @@ fn wait_for_governed_shutdown_child(child: &mut std::process::Child) {
 
 fn write_shutdown_probe_spec(root: &std::path::Path, agent_id: &str) -> std::path::PathBuf {
     let spec = root.join("agent.yaml");
+    let signing_key = SigningKey::from_bytes(&[7_u8; 32]);
+    let public_key_b64 =
+        base64::engine::general_purpose::STANDARD.encode(signing_key.verifying_key().to_bytes());
+    let operator = std::env::var("USER")
+        .or_else(|_| std::env::var("USERNAME"))
+        .expect("test process OS identity");
     fs::write(
         &spec,
         format!(
@@ -339,6 +369,10 @@ safety:
   financial_advice: false
   max_cycle_runtime_secs: 120
   max_consecutive_failures: 2
+  governed_stop_authority:
+    public_key_b64: {public_key_b64}
+    operators:
+      - {operator}
 memory:
   namespace: smoke/{agent_id}
   write_policy: append_only
@@ -351,6 +385,7 @@ memory:
 
 fn wait_for_shutdown_probe_running(root: &std::path::Path) {
     let status_path = root.join("state/daemon_status.json");
+    let locked_spec_path = root.join("state/agent_spec.locked.json");
     let started = std::time::Instant::now();
     loop {
         let running = fs::read(&status_path)
@@ -364,7 +399,7 @@ fn wait_for_shutdown_probe_running(root: &std::path::Path) {
             })
             .as_deref()
             == Some("running");
-        if running {
+        if running && locked_spec_path.is_file() {
             return;
         }
         assert!(
@@ -1013,9 +1048,16 @@ memory:
 fn csm_runtime_api_serves_status_health_ready_metrics_and_events() {
     let root = unique_test_temp_dir("csm-runtime-api");
     let spec = root.join("agent.yaml");
+    let signing_key = SigningKey::from_bytes(&[7_u8; 32]);
+    let public_key_b64 =
+        base64::engine::general_purpose::STANDARD.encode(signing_key.verifying_key().to_bytes());
+    let operator = std::env::var("USER")
+        .or_else(|_| std::env::var("USERNAME"))
+        .expect("test process OS identity");
     fs::write(
         &spec,
-        r#"schema: adl.long_lived_agent_spec.v1
+        format!(
+            r#"schema: adl.long_lived_agent_spec.v1
 agent_instance_id: api-agent
 display_name: API Agent
 state_root: state
@@ -1038,10 +1080,15 @@ safety:
   financial_advice: false
   max_cycle_runtime_secs: 120
   max_consecutive_failures: 2
+  governed_stop_authority:
+    public_key_b64: {public_key_b64}
+    operators:
+      - {operator}
 memory:
   namespace: smoke/api-agent
   write_policy: append_only
-"#,
+"#
+        ),
     )
     .expect("write API agent spec");
 
