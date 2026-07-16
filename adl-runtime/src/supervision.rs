@@ -41,6 +41,7 @@ pub enum ComponentId {
     Cav,
     FreedomGate,
     ReasoningRuntime,
+    ResidentAgents,
     ConstructabilityGate,
     Aee,
     Checkpoint,
@@ -50,7 +51,7 @@ pub enum ComponentId {
 }
 
 impl ComponentId {
-    pub const ALL: [ComponentId; 15] = [
+    pub const ALL: [ComponentId; 16] = [
         ComponentId::RuntimeApi,
         ComponentId::Chronosense,
         ComponentId::Scheduler,
@@ -60,6 +61,7 @@ impl ComponentId {
         ComponentId::Cav,
         ComponentId::FreedomGate,
         ComponentId::ReasoningRuntime,
+        ComponentId::ResidentAgents,
         ComponentId::ConstructabilityGate,
         ComponentId::Aee,
         ComponentId::Checkpoint,
@@ -79,6 +81,7 @@ impl ComponentId {
             ComponentId::Cav => "cav",
             ComponentId::FreedomGate => "freedom_gate",
             ComponentId::ReasoningRuntime => "reasoning_runtime",
+            ComponentId::ResidentAgents => "resident_agents",
             ComponentId::ConstructabilityGate => "constructability_gate",
             ComponentId::Aee => "aee",
             ComponentId::Checkpoint => "checkpoint",
@@ -283,6 +286,18 @@ pub fn default_component_supervision() -> Vec<ComponentSupervisionPolicy> {
             degradation_behavior: "quarantine_offending_graph_and_preserve_input_evidence",
             escalation_target: "recoverable_agent_state_with_quarantine_notice",
             readiness_impact: "ready_true_when_unaffected_graphs_continue",
+            critical_for_continuity: false,
+            telemetry_can_degrade: false,
+        },
+        ComponentSupervisionPolicy {
+            component: ComponentId::ResidentAgents,
+            restart_policy: ComponentRestartPolicy::RestartWithBackoff,
+            backoff_base_ms: 250,
+            backoff_cap_ms: 10_000,
+            escalation_interval_failures: 1,
+            degradation_behavior: "close_provider_agent_admission_without_stopping_core_runtime",
+            escalation_target: "runtime_api_auth_freedom_gate_and_operator_notice",
+            readiness_impact: "ready_false_for_resident_agent_admission",
             critical_for_continuity: false,
             telemetry_can_degrade: false,
         },

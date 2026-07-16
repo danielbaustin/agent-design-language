@@ -104,12 +104,19 @@ impl RuntimeApiCredentialStore {
     pub fn ensure(&self) -> Result<RuntimeApiCredentialMetadata, String> {
         if self.path.exists() {
             let (_, metadata) = self.load()?;
+            if metadata.revoked {
+                return Err(
+                    "runtime API credential is revoked; explicit rotation required".to_string(),
+                );
+            }
             let renew = metadata.expires_at_epoch_secs.is_some_and(|expires| {
                 now_epoch_secs().is_ok_and(|now| {
-                    expires <= now.saturating_add(CSM_RUNTIME_API_CREDENTIAL_RENEWAL_WINDOW_SECS)
+                    expires > now
+                        && expires
+                            <= now.saturating_add(CSM_RUNTIME_API_CREDENTIAL_RENEWAL_WINDOW_SECS)
                 })
             });
-            if renew || metadata.revoked {
+            if renew {
                 return self.rotate();
             }
             return Ok(metadata);
@@ -125,16 +132,24 @@ impl RuntimeApiCredentialStore {
     }
 
     pub fn authorize(&self, authorization: Option<&str>) -> RuntimeApiAuthDecision {
+        let (_, current_metadata) = match self.load() {
+            Ok(value) => value,
+            Err(reason) => return RuntimeApiAuthDecision::Unavailable { reason },
+        };
+        if current_metadata.revoked {
+            return RuntimeApiAuthDecision::Rejected {
+                reason: "credential_revoked",
+                metadata: Some(current_metadata),
+            };
+        }
+        let _metadata = match self.ensure() {
+            Ok(metadata) => metadata,
+            Err(reason) => return RuntimeApiAuthDecision::Unavailable { reason },
+        };
         let (expected, metadata) = match self.load() {
             Ok(value) => value,
             Err(reason) => return RuntimeApiAuthDecision::Unavailable { reason },
         };
-        if metadata.revoked {
-            return RuntimeApiAuthDecision::Rejected {
-                reason: "credential_revoked",
-                metadata: Some(metadata),
-            };
-        }
         if metadata
             .expires_at_epoch_secs
             .is_some_and(|expires| now_epoch_secs().is_ok_and(|now| now >= expires))
@@ -491,6 +506,7 @@ mod tests {
                 ..
             }
         ));
+        assert!(store.ensure().is_err());
         let serialized = serde_json::to_string(&second).unwrap();
         assert!(!serialized.contains(first_token.expose_secret()));
     }
@@ -541,6 +557,35 @@ mod tests {
         let renewed = store.ensure().unwrap();
         assert_eq!(renewed.generation, first.generation + 1);
         assert!(renewed.expires_at_epoch_secs.unwrap() > now_epoch_secs().unwrap() + 60);
+    }
+
+    #[test]
+    fn authorization_renews_a_long_lived_server_before_expiry() {
+        let root = tempdir().unwrap();
+        let store = RuntimeApiCredentialStore::for_state_root(root.path());
+        let first = store.ensure().unwrap();
+        let (token, metadata) = store.load().unwrap();
+        let near_expiry = StoredCredential {
+            schema: CSM_RUNTIME_API_AUTH_SCHEMA.to_string(),
+            generation: metadata.generation,
+            token: token.expose_secret().to_string(),
+            created_at_epoch_secs: metadata.created_at_epoch_secs,
+            expires_at_epoch_secs: Some(now_epoch_secs().unwrap() + 60),
+            revoked: false,
+        };
+        write_private_json_atomic(store.path(), &near_expiry).unwrap();
+        let decision = store.authorize(Some(&format!("Bearer {}", token.expose_secret())));
+        assert!(matches!(
+            decision,
+            RuntimeApiAuthDecision::Rejected {
+                reason: "invalid_bearer_token",
+                ..
+            }
+        ));
+        assert_eq!(
+            store.metadata().unwrap().unwrap().generation,
+            first.generation + 1
+        );
     }
 
     #[cfg(unix)]
