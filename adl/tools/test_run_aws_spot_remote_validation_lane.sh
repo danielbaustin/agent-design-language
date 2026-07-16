@@ -295,6 +295,7 @@ bash "$SCRIPT" preflight \
   --expected-proof "$proof" \
   --builder-image "$builder_image" \
   --estimated-hourly-cost-usd 0.15 \
+  --max-run-seconds 900 \
   --ssh-private-key-path "$test_ssh_key" \
   --git-ref origin/main >"$TMP/preflight.out"
 python3 - "$TMP/preflight.out" <<'PY'
@@ -321,6 +322,7 @@ bash "$SCRIPT" \
   --run-id fixture-run \
   --builder-image "$builder_image" \
   --estimated-hourly-cost-usd 0.15 \
+  --max-run-seconds 900 \
   --ssh-private-key-path "$test_ssh_key" \
   --command "cargo test --manifest-path adl/Cargo.toml provider_communication -- --nocapture" \
   --git-ref origin/main \
@@ -340,11 +342,19 @@ grep -Fx -- "5191" "$TMP/args.txt" >/dev/null
 grep -Fx -- "--instance-type" "$TMP/args.txt" >/dev/null
 grep -Fx -- "m7a.2xlarge" "$TMP/args.txt" >/dev/null
 grep -Fx -- "--spot-only" "$TMP/args.txt" >/dev/null
+grep -Fx -- "--command-timeout-seconds" "$TMP/args.txt" >/dev/null
+grep -Fx -- "900" "$TMP/args.txt" >/dev/null
 grep -F -- '--instance-types <type1,type2,...>' "$SCRIPT" >/dev/null
 grep -F 'INSTANCE_TYPES=("m7a.2xlarge" "c7a.2xlarge" "c7i.2xlarge")' "$SCRIPT" >/dev/null
 for invalid_types in 'm7a.2xlarge,' ',m7a.2xlarge' 'm7a.2xlarge,,c7a.2xlarge' 'm7a.2xlarge, ,c7a.2xlarge' 'M7A.2XLARGE' ''; do
   if bash "$SCRIPT" --instance-types "$invalid_types" >/dev/null 2>"$TMP/invalid-instance-types.err"; then
     echo "expected invalid instance list to fail: <$invalid_types>" >&2
+    exit 1
+  fi
+done
+for invalid_timeout in 299 3601 nope ''; do
+  if bash "$SCRIPT" --max-run-seconds "$invalid_timeout" >/dev/null 2>"$TMP/invalid-timeout.err"; then
+    echo "expected invalid max-run-seconds to fail: <$invalid_timeout>" >&2
     exit 1
   fi
 done

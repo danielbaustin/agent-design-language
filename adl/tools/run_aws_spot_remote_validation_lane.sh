@@ -55,6 +55,7 @@ BUILDER_IMAGE_TAG="${ADL_AWS_SPOT_BUILDER_IMAGE_TAG:-v0.91.7-fixed}"
 EXPECTED_ARCHITECTURE="${ADL_AWS_SPOT_EXPECTED_ARCHITECTURE:-x86_64}"
 MIN_CACHE_FREE_GIB="${ADL_AWS_SPOT_MIN_CACHE_FREE_GIB:-10}"
 ESTIMATED_HOURLY_COST_USD="${ADL_AWS_SPOT_ESTIMATED_HOURLY_COST_USD:-}"
+MAX_RUN_SECONDS="${ADL_AWS_SPOT_MAX_RUN_SECONDS:-1800}"
 AMI_ID="${ADL_AWS_REMOTE_VALIDATION_AMI_ID:-}"
 SUBNET_ID="${ADL_AWS_REMOTE_VALIDATION_SUBNET_ID:-}"
 EXPECTED_CACHE_VOLUME_ID_SHA256="${ADL_AWS_REMOTE_VALIDATION_CACHE_VOLUME_ID_SHA256:-}"
@@ -110,6 +111,8 @@ Options:
   --min-cache-free-gib <gib>     Required warm-cache headroom. Defaults 10.
   --estimated-hourly-cost-usd <usd>
                                 Override the pre-run Spot hourly price estimate.
+  --max-run-seconds <seconds>    Remote command timeout. Defaults to 1800;
+                                must be between 300 and 3600 seconds.
   --ami-id <id>                 Explicit AMI. Defaults to the current AL2023 SSM image.
   --subnet-id <id>              Explicit subnet. Defaults to retained hot-cache proof topology.
   --expected-cache-volume-id-sha256 <hash>
@@ -268,6 +271,10 @@ while [[ $# -gt 0 ]]; do
       ESTIMATED_HOURLY_COST_USD="${2:-}"
       shift 2
       ;;
+    --max-run-seconds)
+      MAX_RUN_SECONDS="${2:-}"
+      shift 2
+      ;;
     --ami-id)
       AMI_ID="${2:-}"
       shift 2
@@ -323,6 +330,11 @@ fi
 
 if [[ -z "$PROFILE" ]]; then
   echo "run_aws_spot_remote_validation_lane: --profile must not be empty" >&2
+  exit 2
+fi
+
+if [[ ! "$MAX_RUN_SECONDS" =~ ^[0-9]+$ ]] || [ "$MAX_RUN_SECONDS" -lt 300 ] || [ "$MAX_RUN_SECONDS" -gt 3600 ]; then
+  echo "run_aws_spot_remote_validation_lane: --max-run-seconds must be between 300 and 3600 seconds" >&2
   exit 2
 fi
 
@@ -764,6 +776,7 @@ cmd=(
   --cache-volume-throughput-mbps "$CACHE_VOLUME_THROUGHPUT_MBPS"
   --cache-volume-device-name "$CACHE_VOLUME_DEVICE_NAME"
   --cache-volume-mount-path "$CACHE_VOLUME_MOUNT_PATH"
+  --command-timeout-seconds "$MAX_RUN_SECONDS"
   --ami-id "$AMI_ID"
   --subnet-id "$SUBNET_ID"
 )
