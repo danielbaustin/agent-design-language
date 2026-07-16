@@ -201,7 +201,6 @@ set +e
   --entrypoint /bin/bash \
   "$IMAGE" -lc "set +e; $COMMAND; status=\$?; sccache --show-stats > /run-output/sccache-stats.log 2>&1 || true; exit \$status"
 VALIDATION_EXIT="$?"
-set -e
 VALIDATION_END="$(date +%s)"
 
 CURRENT_STAGE="write_builder_summary"
