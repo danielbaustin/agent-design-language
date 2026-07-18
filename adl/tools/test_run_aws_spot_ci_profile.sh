@@ -174,7 +174,12 @@ if grep -F 'GIT_REF: ${{ inputs.git_ref || github.sha }}' "$WORKFLOW" >/dev/null
   echo "Spot workflow must clone an advertised branch ref, not a raw commit SHA" >&2
   exit 1
 fi
-grep -F "vars.ADL_HEAVY_CI_BACKEND || 'hosted'" "$CI_WORKFLOW" >/dev/null
+grep -F "HEAVY_CI_BACKEND: \${{ vars.ADL_HEAVY_CI_BACKEND || 'hosted' }}" "$CI_WORKFLOW" >/dev/null
+grep -F "heavy_ci_backend: \${{ steps.path-policy.outputs.heavy_ci_backend }}" "$CI_WORKFLOW" >/dev/null
+grep -F 'echo "heavy_ci_backend=$backend" >> "$GITHUB_OUTPUT"' "$CI_WORKFLOW" >/dev/null
+grep -F "BACKEND: \${{ needs.adl_path_policy.outputs.heavy_ci_backend }}" "$CI_WORKFLOW" >/dev/null
+grep -F "needs.adl_path_policy.outputs.heavy_ci_backend == 'spot'" "$CI_WORKFLOW" >/dev/null
+grep -F "needs.adl_path_policy.outputs.heavy_ci_backend != 'spot'" "$CI_WORKFLOW" >/dev/null
 grep -F 'uses: ./.github/workflows/aws-spot-remote-validation.yaml' "$CI_WORKFLOW" >/dev/null
 grep -F 'github.event.pull_request.head.repo.full_name == github.repository' "$CI_WORKFLOW" >/dev/null
 grep -F "github.event_name == 'pull_request' && github.event.pull_request.head.repo.full_name == github.repository" "$CI_WORKFLOW" >/dev/null
