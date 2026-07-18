@@ -3,13 +3,13 @@
   "issue": 4641,
   "repository": "danielbaustin/agent-design-language",
   "initialization_digest": "57a995b4e8def457743bbb6195a56ad30c43e0e9bec2d90766fd1dee105a19f1",
-  "phase": "published",
-  "generation": 11,
-  "digest": "bc5fcb25ab55c036d36843e1c93db38468d6ee404243da177f9133779f8710fc",
+  "phase": "implemented",
+  "generation": 12,
+  "digest": "07e266345811b2c8da7d78baa7fab846cdb7934f01a7e03a8863cb28587c1005",
   "claim": {
     "id": "claim-4641-v0-91-7-wp14-launch-v092-birthday-handoff",
     "owner": "codex:019f3d65-2216-7832-804a-26339473b27d",
-    "generation": 11,
+    "generation": 12,
     "acquired_unix_seconds": 1784360472,
     "expires_unix_seconds": 1784965272,
     "heartbeat_unix_seconds": 1784360472,
@@ -22,47 +22,9 @@
     ],
     "purpose": "Prepare and later execute WP-14 without claiming completion from setup"
   },
-  "review_assignment": {
-    "reviewer": "codex-review",
-    "assigned_by": "codex:019f3d65-2216-7832-804a-26339473b27d",
-    "revision": "git-blake3:0ebd08383f8618f60878f1ef845c1515d5c499ae:1e4d3a76ce818ded610437f141dccb9f48a1d443ad93454f9c8867318da4b7b8",
-    "scope": [
-      ".csdlc/issues/4641",
-      ".csdlc/prepared/issues/4641",
-      "docs/milestones/v0.91.7/V092_HANDOFF_v0.91.7.md",
-      "docs/milestones/v0.91.7/review/V0917_WP14_LAUNCH_BIRTHDAY_HANDOFF_4641.md",
-      "docs/milestones/v0.91.7/review/wp14_launch_birthday_4641/ledger.yaml"
-    ]
-  },
-  "review": {
-    "reviewer": "codex-review",
-    "scope": [
-      ".csdlc/issues/4641",
-      ".csdlc/prepared/issues/4641",
-      "docs/milestones/v0.91.7/V092_HANDOFF_v0.91.7.md",
-      "docs/milestones/v0.91.7/review/V0917_WP14_LAUNCH_BIRTHDAY_HANDOFF_4641.md",
-      "docs/milestones/v0.91.7/review/wp14_launch_birthday_4641/ledger.yaml"
-    ],
-    "reviewed_revision": "git-blake3:0ebd08383f8618f60878f1ef845c1515d5c499ae:1e4d3a76ce818ded610437f141dccb9f48a1d443ad93454f9c8867318da4b7b8",
-    "findings": [],
-    "residual_risks": [
-      "WP-14 child implementation/proof issues #4758-#4763 remain open and must close with integrated evidence before v0.92 consumes launch, activation, Memory Palace, capability-envelope, witness/receipt, or birthday-doc readiness.",
-      "Review and validation were bounded to documentation, issue graph, and typed C-SDLC state; runtime, provider, Observatory, Unity, AWS, and v0.92 activation validation were not run."
-    ],
-    "completed": true,
-    "non_substantive_proof": null
-  },
-  "publication": {
-    "repository": "danielbaustin/agent-design-language",
-    "issue": 4641,
-    "pull_request": 5493,
-    "url": "https://github.com/danielbaustin/agent-design-language/pull/5493",
-    "base": "main",
-    "head": "codex/4641-v0917-launch-birthday-handoff",
-    "revision": "git-blake3:0ebd08383f8618f60878f1ef845c1515d5c499ae:1e4d3a76ce818ded610437f141dccb9f48a1d443ad93454f9c8867318da4b7b8",
-    "draft": true,
-    "observed_state": "open"
-  },
+  "review_assignment": null,
+  "review": null,
+  "publication": null,
   "readiness": null,
   "terminal": null,
   "migration": null,
@@ -76,34 +38,34 @@
   },
   "cards": {
     "sip": {
-      "values_digest": "f92bfe3d83e1941e665644d69eb6c69ffb480354e4eeaf15cabc87095e15c3e1",
+      "values_digest": "64c810cf974fb9d2ef153dd2f1fdcce08fda745d47093c23a4c1943445cbbe6a",
       "rendered_digest": "d0e0eb3db34314cd9797e7b269d901093fb6333694550c4753b2739ab54332c3",
       "ast_digest": "e7eb79d44243b7c51f3efdc625402b0f5a55f844b19aa8a5a21eb5fd88ce3346"
     },
     "stp": {
-      "values_digest": "f1d030d9c65cd19e3b399dfa35fed93b7a309dfc43b4fb61c98a97aaf24a42cd",
+      "values_digest": "c1498c8ef11d8fcd3851967aa8f720e637ed8f23eb4604986997ef70f4b57520",
       "rendered_digest": "40eb8a20828f9f337899f785088fa1592fb9df68ee12d8305785a4c554729b63",
       "ast_digest": "45ed6103e30a3c1c701947d17223559c9f1a74cfdac74d24d61f416c967e01ea"
     },
     "spp": {
-      "values_digest": "4f85cdc6998e1d4898628600b41736ca69aa4ac83e2019eb3c4a4bfeba9982d0",
+      "values_digest": "3c31289c3e02f11db79ff7e6081a817d83bdb2040396035f96611251d15a6f4f",
       "rendered_digest": "e9618c9b332a0d35a368b354295dea46e3a3a489e3277e44b4d4374e12ada510",
       "ast_digest": "794a8c90a1488d7e53be4bcda67e399c02db3eb74d0050be00bcf6e3a7eae334"
     },
     "vpp": {
-      "values_digest": "a18f73484d221f5456371eda0889c8165e3b27e838fb9cc98192d173b0f9b9f4",
+      "values_digest": "7cdc602273ec7b7d5de381f5bc80edd4c85e8a5cf308e0dabf23dcdf99bba77f",
       "rendered_digest": "27d967627fa7e6c0bd62a6370b653f4b20dc886b6843b77d0c250f09721449ec",
       "ast_digest": "17bd283e76dcac1b720572e6aba7687a48fe6f9afd731f513fd41f39b21eb6fb"
     },
     "srp": {
-      "values_digest": "929b116de5c20477b2d67bf56ba52fdab2053d81018f58dec21b9a10e25f1234",
-      "rendered_digest": "5dbcb426d782d83c97d0c117142a8ae37bc47b75c9df665fbf4e557be9548fb1",
-      "ast_digest": "b7b4ff1a3ce076333e313cc1b240784967ffae14c40baa8fc51a36fa8df8a2ea"
+      "values_digest": "45484d491f0e413e1ff3ccc0c9087cf25a9c3576c2be002c6037f569342c4e61",
+      "rendered_digest": "04e07a323345a1f9897bfb9e26d4b87549a57bbc943c703360374543a32042c6",
+      "ast_digest": "09e9acfd4208e7bacd7d01f2536a3d77e0af6ddd4b7ef4ebd2586cb3e1de78b7"
     },
     "sor": {
-      "values_digest": "7242f25f3c466c18d2f378dc0f9b52884d2938b2a9cdb5070a2ae63ce35f493c",
-      "rendered_digest": "c6914dcf09623fcfb2f88fa74cb4db9f56955a01f22a7d43509c785cc78a5ddd",
-      "ast_digest": "ab330410f8d73ef6bf01196720f4cde8921e3cce1e43234873e6f26e6878f72f"
+      "values_digest": "facf85fc6825a8d3e916d4c565f2903ad2bebfacb924cefa50156722e457d825",
+      "rendered_digest": "dbdf85a9565b16bcc65cc7ca3790e12bf5ab8b8e82a151d2bcab96f42bc97349",
+      "ast_digest": "1df5cc7fd971570937b99c3c5983f0f895394b580dfb3d6b7466b17a24b06360"
     }
   },
   "transitions": [
@@ -155,6 +117,13 @@
       "to": "published",
       "actor": "codex:019f3d65-2216-7832-804a-26339473b27d",
       "reason": "observed exact draft PR after current review"
+    },
+    {
+      "sequence": 8,
+      "from": "published",
+      "to": "implemented",
+      "actor": "codex:019f3d65-2216-7832-804a-26339473b27d",
+      "reason": "Typed publication metadata advanced HEAD after the reviewed publication revision; recover for exact current-head lifecycle-metadata review without changing WP-14 substance."
     }
   ],
   "audit": [
@@ -262,6 +231,13 @@
       "actor": "codex:019f3d65-2216-7832-804a-26339473b27d",
       "reason": "atomically record observed GitHub publication and SOR projection",
       "operation": "record_publication"
+    },
+    {
+      "sequence": 16,
+      "generation": 12,
+      "actor": "codex:019f3d65-2216-7832-804a-26339473b27d",
+      "reason": "Typed publication metadata advanced HEAD after the reviewed publication revision; recover for exact current-head lifecycle-metadata review without changing WP-14 substance.",
+      "operation": "recover_review"
     }
   ]
 }

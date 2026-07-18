@@ -68,11 +68,11 @@ WP-14 produced a launch/birthday handoff packet and machine-readable ledger that
 
 ## Integration
 
-pr_open
+worktree_only
 
 ## Publication
 
-Publication: draft
+Publication: not_published
 
 Merge: not_merged
 
