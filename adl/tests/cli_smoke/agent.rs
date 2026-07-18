@@ -3751,6 +3751,7 @@ memory:
                         || value == "curiosity_engine_not_ready"
                         || value == "reasoning_runtime_starting"
                         || value == "constructability_gate_blocked"
+                        || value == "constructability_gate_not_ready"
                         || value == "cav_security_validation_fail_closed"
                 })
             }),
