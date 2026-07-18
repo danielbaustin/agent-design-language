@@ -1,0 +1,20 @@
+{
+  "issue": 5521,
+  "expected_generation": 5,
+  "expected_digest": "1538c8df28a4a8aeecd3c632842fcdc9dd583a8205a46c275812ab8fb063b87b",
+  "claim_id": "claim-5521-terminal-plan-repair",
+  "actor": "subagent:019f7581-a4bf-7fb3-a900-3d71dfea4abc",
+  "evidence": {
+    "reviewer": "subagent:019f7581-a4bf-7fb3-a900-3d71dfea4abc",
+    "scope": [
+      ".csdlc/issues/5518",
+      ".csdlc/issues/5521",
+      ".csdlc/prepared/issues/5521"
+    ],
+    "reviewed_revision": "git-blake3:85d85b4b00ca6f0002c89919d20b654fa6807cbc:9bab6b07d4d76609df4caaf96aebb6c66c9b58e2f7bcb6855fdc570706f30ebe",
+    "findings": [],
+    "residual_risks": [],
+    "completed": true,
+    "non_substantive_proof": null
+  }
+}

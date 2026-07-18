@@ -1,0 +1,13 @@
+{
+  "authority_issue": 5521,
+  "target_issue": 5518,
+  "expected_authority_generation": 0,
+  "expected_authority_digest": "872248fd3c113cff0e6f00ef149b5881815b581b3c24d0cc20a03226bb5ae2c9",
+  "expected_target_generation": 28,
+  "expected_target_digest": "d70365c6721fa2d878414dc1c7525c71689c4d509a47567b45dd35c419a3085f",
+  "expected_receipt_digest": "a37d8add2db64c5897e7434466ef92509232ad05a533e5bc2c7dc2e504ded8ac",
+  "authority_claim_id": "claim-5521-terminal-plan-repair",
+  "actor": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+  "step_id": "S4",
+  "fail_after_stage": null
+}

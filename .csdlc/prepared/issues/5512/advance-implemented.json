@@ -1,0 +1,13 @@
+{
+  "issue": 5512,
+  "card": "sor",
+  "expected_generation": 3,
+  "expected_digest": "ae267abe1d62a2bdfdc5fe569557388efae462c50fa62144d0e8cb82d96d7c4b",
+  "claim_id": "claim-5512-runtime-v3-csm-coverage-filter",
+  "actor": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+  "reason": "The owning-crate coverage split and exact regression proof are complete.",
+  "operation": {
+    "operation": "advance_phase",
+    "phase": "implemented"
+  }
+}

@@ -1,0 +1,7 @@
+{
+  "issue": 5521,
+  "expected_generation": 4,
+  "expected_digest": "42bb50f0cac61a5615463111b23e96ca5ec1a3e85f7c1ea8640752845c41e041",
+  "claim_id": "claim-5521-terminal-plan-repair",
+  "reviewer": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d"
+}

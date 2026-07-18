@@ -1,0 +1,22 @@
+{
+  "issue": 4643,
+  "base_branch": "main",
+  "branch": "codex/4643-v0917-quality-gate",
+  "worktree": ".worktrees/adl-wp-4643",
+  "claim": {
+    "id": "claim-4643-v0-91-7-wp16-coverage-quality-gate",
+    "owner": "codex:019f3d65-2216-7832-804a-26339473b27d",
+    "generation": 0,
+    "acquired_unix_seconds": 1784360472,
+    "expires_unix_seconds": 1784965272,
+    "heartbeat_unix_seconds": 1784360472,
+    "branch": "codex/4643-v0917-quality-gate",
+    "worktree": ".worktrees/adl-wp-4643",
+    "protected_paths": [
+      "docs/milestones/v0.91.7/review/V0917_WP16_QUALITY_GATE_4643.md",
+      "docs/milestones/v0.91.7/review/wp16_quality_gate_4643",
+      ".csdlc/issues/4643"
+    ],
+    "purpose": "Prepare and later execute WP-16 without claiming completion from setup"
+  }
+}

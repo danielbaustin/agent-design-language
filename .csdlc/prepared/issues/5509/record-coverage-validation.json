@@ -1,0 +1,18 @@
+{
+  "issue": 5509,
+  "card": "sor",
+  "expected_generation": 2,
+  "expected_digest": "b9d907e74d5db6b8fcb166ac4e659a88e125d80e57300c86c20a2a3fe1d5b731",
+  "claim_id": "claim-5509-runtime-v3-csm-fast-lane",
+  "actor": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+  "reason": "The composed focused coverage contracts passed.",
+  "operation": {
+    "operation": "record_validation",
+    "result": {
+      "command": ["bash", "adl/tools/test_run_pr_fast_coverage_lane.sh"],
+      "purpose": "Prove both crate coverage runs and summaries are composed without Runtime v2 selection",
+      "outcome": "passed",
+      "evidence_ref": "local:5509-focused-coverage-composition-pass"
+    }
+  }
+}

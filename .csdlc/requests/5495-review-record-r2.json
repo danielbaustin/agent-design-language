@@ -1,0 +1,16 @@
+{
+  "issue": 5495,
+  "expected_generation": 8,
+  "expected_digest": "d7ca22f94f5362a8409439923336fdb4312296d99a3f3af591ea18aa99154dff",
+  "claim_id": "claim-5495-publication-metadata",
+  "actor": "review_5495",
+  "evidence": {
+    "reviewer": "review_5495",
+    "scope": ["csdlc-v2/src/git.rs", "csdlc-v2/src/review.rs", "csdlc-v2/src/doctor.rs", "csdlc-v2/tests/gate5.rs", ".csdlc/issues/5495/retained/design.md", ".csdlc/issues/5495/retained/diagram.mmd"],
+    "reviewed_revision": "git-blake3:1ef7bb7eebcc0c6421d1e02c319ca4b45614149c:a2c283b0d7ecc77ffcd29fa9bebc43a59e99086c80b3df20a90ef6ef2664824b",
+    "findings": [],
+    "residual_risks": ["Typed request manifests are treated as lifecycle metadata only when they use a numeric issue prefix and JSON suffix."],
+    "completed": true,
+    "non_substantive_proof": null
+  }
+}

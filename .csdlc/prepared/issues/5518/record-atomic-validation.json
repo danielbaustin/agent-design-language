@@ -1,0 +1,18 @@
+{
+  "issue": 5518,
+  "card": "sor",
+  "expected_generation": 2,
+  "expected_digest": "1679651a323da850a19e58afbce616d2e6696923941e196b6787ba8fabbb2f7b",
+  "claim_id": "claim-5518-terminal-plan-repair",
+  "actor": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+  "reason": "The live injected rollback and successful #5516 repair preserve exact terminal parity.",
+  "operation": {
+    "operation": "record_validation",
+    "result": {
+      "command": ["csdlc-closeout", "repair-plan-step", "--request", ".csdlc/prepared/issues/5518/repair-5516-plan-step-rollback-test.json"],
+      "purpose": "Prove post-projection interruption rolls back both target and receipt, then prove successful #5516 S3 repair and doctor parity",
+      "outcome": "passed",
+      "evidence_ref": "local: injected exit 69 restored #5516 generation 18 and receipt c1e5a632; successful repair produced generation 19 digest 317cf0e0, S3 completed in card and receipt, doctor pass"
+    }
+  }
+}

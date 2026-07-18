@@ -1,0 +1,340 @@
+{
+  "schema": "csdlc.issue.index.v1",
+  "issue": 5521,
+  "repository": "danielbaustin/agent-design-language",
+  "initialization_digest": "0f4f5b5ddef2db077364eb43801ab33059a3a5ad11cf235c657b3b349b76d6b3",
+  "phase": "closed_out",
+  "generation": 14,
+  "digest": "dc3302229ff37c282e7ee017c130188e864c5f4cb52498644980323ec8bb9762",
+  "claim": null,
+  "review_assignment": {
+    "reviewer": "subagent:019f7581-a4bf-7fb3-a900-3d71dfea4abc",
+    "assigned_by": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+    "revision": "git-blake3:f21e98155441271d095c9d1d43d8d4d343aaac4b:051bbcf7496fe0268cb83b54a9b085e64750358991ad16b77d97e1f36f43868c",
+    "scope": [
+      ".csdlc/issues/5518",
+      ".csdlc/issues/5521",
+      ".csdlc/prepared/issues/5521"
+    ]
+  },
+  "review": {
+    "reviewer": "subagent:019f7581-a4bf-7fb3-a900-3d71dfea4abc",
+    "scope": [
+      ".csdlc/issues/5518",
+      ".csdlc/issues/5521",
+      ".csdlc/prepared/issues/5521"
+    ],
+    "reviewed_revision": "git-blake3:f21e98155441271d095c9d1d43d8d4d343aaac4b:051bbcf7496fe0268cb83b54a9b085e64750358991ad16b77d97e1f36f43868c",
+    "findings": [],
+    "residual_risks": [],
+    "completed": true,
+    "non_substantive_proof": null
+  },
+  "publication": {
+    "repository": "danielbaustin/agent-design-language",
+    "issue": 5521,
+    "pull_request": 5522,
+    "url": "https://github.com/danielbaustin/agent-design-language/pull/5522",
+    "base": "main",
+    "head": "codex/5521-terminal-plan-repair",
+    "revision": "git-blake3:f21e98155441271d095c9d1d43d8d4d343aaac4b:051bbcf7496fe0268cb83b54a9b085e64750358991ad16b77d97e1f36f43868c",
+    "draft": false,
+    "observed_state": "merged"
+  },
+  "readiness": {
+    "pull_request": 5522,
+    "head_sha": "f21e98155441271d095c9d1d43d8d4d343aaac4b",
+    "checks": [
+      {
+        "name": "adl-ci",
+        "requirement": "required",
+        "conclusion": "success",
+        "details_url": "https://github.com/danielbaustin/agent-design-language/actions/runs/29651354643/job/88098202848"
+      },
+      {
+        "name": "adl-coverage",
+        "requirement": "required",
+        "conclusion": "success",
+        "details_url": "https://github.com/danielbaustin/agent-design-language/actions/runs/29651354643/job/88098158757"
+      },
+      {
+        "name": "adl-tooling-contracts",
+        "requirement": "required",
+        "conclusion": "success",
+        "details_url": "https://github.com/danielbaustin/agent-design-language/actions/runs/29651354643/job/88098146656"
+      },
+      {
+        "name": "adl-path-policy",
+        "requirement": "required",
+        "conclusion": "success",
+        "details_url": "https://github.com/danielbaustin/agent-design-language/actions/runs/29651354643/job/88098129782"
+      },
+      {
+        "name": "adl-demo-proof",
+        "requirement": "required",
+        "conclusion": "success",
+        "details_url": "https://github.com/danielbaustin/agent-design-language/actions/runs/29651354643/job/88098145059"
+      }
+    ],
+    "review_state": "not_required",
+    "conflict_state": "clean",
+    "post_publication_findings": [],
+    "ready": true,
+    "blockers": []
+  },
+  "terminal": {
+    "pull_request": 5522,
+    "disposition": "merged",
+    "observed_sha": "f21e98155441271d095c9d1d43d8d4d343aaac4b",
+    "observed_state": "merged",
+    "receipt_path": "csdlc-v2/closeout/5521.json",
+    "released_branch": "codex/5521-terminal-plan-repair",
+    "released_worktree": ".",
+    "released_protected_paths": [
+      ".csdlc/issues/5518",
+      ".csdlc/issues/5521",
+      ".csdlc/prepared/issues/5521"
+    ]
+  },
+  "migration": null,
+  "design_path": ".csdlc/prepared/issues/5521/design.md",
+  "diagram_path": ".csdlc/prepared/issues/5521/diagram.mmd",
+  "design_review": {
+    "approved": {
+      "reviewer": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+      "revision": "bca59d332085ea9340f70b847ad980d51593af155c7347e8174bb5d5ee1d470e"
+    }
+  },
+  "cards": {
+    "sip": {
+      "values_digest": "388dc3ecea24c09f7934cbcad599be787ada9f792a8356de15ff11617592fda0",
+      "rendered_digest": "84bf39e00364a59f75467a1f712270bcb75c495a27c403326b1f0ad878427685",
+      "ast_digest": "ebc9a31f3e172a685e99bce689b85011ec3d6f321b53b51112ce451e195fc7e3"
+    },
+    "stp": {
+      "values_digest": "f10284487a2f9a6782b8bd03e401564839c59c998548ae36426571ebe7a3be1f",
+      "rendered_digest": "c1ccd91287311f17331d53c59b32f9c09a18c4ee5390d4809d37efa4130b0dae",
+      "ast_digest": "408042d7b4035d8838dea95e1f81d91520af24b501b76b0c5da6e2127e0bd717"
+    },
+    "spp": {
+      "values_digest": "ad3269f112ae78a26f31aa090509e7cd4376ad8b9bc2c4ffaa257c73ded9272a",
+      "rendered_digest": "8066b782a3c5557f6d04d694a410aa2655b82614a5f2d5491008d169ac6e3e60",
+      "ast_digest": "156b3f70e5dea728f1dbb334952a88afb19e11d1ea54070dee4f69a342502416"
+    },
+    "vpp": {
+      "values_digest": "69091738be95b26e24749608f6beedbe924a167c3db8ced4d36229a1ebb41de1",
+      "rendered_digest": "cbf9b3b34403dc7af5a7dfbe5610cad408d3b04e0129bcb48ce3def97133c45a",
+      "ast_digest": "b6910f03d68429e878303156331015bd5532e0078ba66cc6080db129b3677496"
+    },
+    "srp": {
+      "values_digest": "12d458732ff02a8148068efcab488a3efdc03841ecc5720253d9eb56a9010d00",
+      "rendered_digest": "53ce3340c6ab9efa357c94aa89bc262d6856ea68f2bc162c65772597661dd560",
+      "ast_digest": "d263a1126bd40092f8688c88b8073f5498dc24ac2a7199587e55730a3f4a2606"
+    },
+    "sor": {
+      "values_digest": "3c48764cb820cc8b3146e6f1f8801984e2e55e29ec55628e1e7d8a5ce54e991a",
+      "rendered_digest": "c95c4a9e77d4b390a561b397fd91040b3d9e95b298d9fbd4f563055932e3fda4",
+      "ast_digest": "6d122c78528a01d702dc75507a4f822505425cf2ac43d32b323a56f0cc0d217e"
+    }
+  },
+  "transitions": [
+    {
+      "sequence": 1,
+      "from": "initialized",
+      "to": "ready",
+      "actor": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+      "reason": "automatic readiness verification"
+    },
+    {
+      "sequence": 2,
+      "from": "ready",
+      "to": "bound",
+      "actor": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+      "reason": "verified Git worktree binding"
+    },
+    {
+      "sequence": 3,
+      "from": "bound",
+      "to": "implemented",
+      "actor": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+      "reason": "The records-only terminal repair and validation are complete with no source changes."
+    },
+    {
+      "sequence": 4,
+      "from": "implemented",
+      "to": "reviewed",
+      "actor": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+      "reason": "Exact records-only review is clean with no findings or residual risks."
+    },
+    {
+      "sequence": 5,
+      "from": "reviewed",
+      "to": "implemented",
+      "actor": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+      "reason": "Recover exact review identity after committing typed review metadata so PR head f21e98155 receives publication review."
+    },
+    {
+      "sequence": 6,
+      "from": "implemented",
+      "to": "reviewed",
+      "actor": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+      "reason": "Exact PR-head review is clean with no findings or publication blockers."
+    },
+    {
+      "sequence": 7,
+      "from": "reviewed",
+      "to": "published",
+      "actor": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+      "reason": "observed exact PR after current review"
+    },
+    {
+      "sequence": 8,
+      "from": "published",
+      "to": "merge_ready",
+      "actor": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+      "reason": "observed required checks, review, and conflict readiness"
+    },
+    {
+      "sequence": 9,
+      "from": "merge_ready",
+      "to": "merged",
+      "actor": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+      "reason": "observed exact PR merged"
+    },
+    {
+      "sequence": 10,
+      "from": "merged",
+      "to": "closed_out",
+      "actor": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+      "reason": "terminal truth recorded and claim released"
+    }
+  ],
+  "audit": [
+    {
+      "sequence": 1,
+      "generation": 0,
+      "actor": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+      "reason": "initialize issue record and all six cards",
+      "operation": "bootstrap"
+    },
+    {
+      "sequence": 2,
+      "generation": 0,
+      "actor": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+      "reason": "bind branch/worktree and activate claim",
+      "operation": "bind"
+    },
+    {
+      "sequence": 3,
+      "generation": 1,
+      "actor": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+      "reason": "Use the merged typed terminal repair to complete #5518 SPP S4.",
+      "operation": "{\"operation\":\"record_execution\",\"summary\":\"Advance only #5518 SPP S4 to completed and atomically refresh its terminal receipt.\",\"changes\":[\"Repair #5518 S4 from pending to completed\",\"Regenerate #5518 card projections, audit, generation, and digests\",\"Replace #5518 retained receipt atomically\"],\"artifacts\":[\".csdlc/issues/5518\",\".csdlc/issues/5521\",\".csdlc/prepared/issues/5521\"]}"
+    },
+    {
+      "sequence": 4,
+      "generation": 2,
+      "actor": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+      "reason": "#5518 and #5521 typed doctors pass with exact S4 and receipt parity.",
+      "operation": "{\"operation\":\"record_validation\",\"result\":{\"command\":[\"csdlc-doctor\",\"--issue\",\"5518\"],\"purpose\":\"Prove #5518 remains closed out with S4 completed and exact retained receipt parity\",\"outcome\":\"passed\",\"evidence_ref\":\"local: #5518 generation 29 digest 49c61e6e; receipt digest 7158360c; both #5518 and #5521 doctor reports pass\"}}"
+    },
+    {
+      "sequence": 5,
+      "generation": 3,
+      "actor": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+      "reason": "#5518 S4 repair and exact terminal parity validation are complete.",
+      "operation": "{\"operation\":\"update_plan_step\",\"step_id\":\"S2\",\"status\":\"completed\"}"
+    },
+    {
+      "sequence": 6,
+      "generation": 4,
+      "actor": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+      "reason": "The records-only terminal repair and validation are complete with no source changes.",
+      "operation": "{\"operation\":\"advance_phase\",\"phase\":\"implemented\"}"
+    },
+    {
+      "sequence": 7,
+      "generation": 5,
+      "actor": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+      "reason": "reapprove changed issue design",
+      "operation": "approve_design"
+    },
+    {
+      "sequence": 8,
+      "generation": 5,
+      "actor": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+      "reason": "assign bounded exact-revision review",
+      "operation": "assign_review"
+    },
+    {
+      "sequence": 9,
+      "generation": 6,
+      "actor": "subagent:019f7581-a4bf-7fb3-a900-3d71dfea4abc",
+      "reason": "atomically record review evidence and SRP projection",
+      "operation": "record_review"
+    },
+    {
+      "sequence": 10,
+      "generation": 7,
+      "actor": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+      "reason": "Exact records-only review is clean with no findings or residual risks.",
+      "operation": "{\"operation\":\"advance_phase\",\"phase\":\"reviewed\"}"
+    },
+    {
+      "sequence": 11,
+      "generation": 8,
+      "actor": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+      "reason": "Recover exact review identity after committing typed review metadata so PR head f21e98155 receives publication review.",
+      "operation": "recover_review"
+    },
+    {
+      "sequence": 12,
+      "generation": 8,
+      "actor": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+      "reason": "assign bounded exact-revision review",
+      "operation": "assign_review"
+    },
+    {
+      "sequence": 13,
+      "generation": 9,
+      "actor": "subagent:019f7581-a4bf-7fb3-a900-3d71dfea4abc",
+      "reason": "atomically record review evidence and SRP projection",
+      "operation": "record_review"
+    },
+    {
+      "sequence": 14,
+      "generation": 10,
+      "actor": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+      "reason": "Exact PR-head review is clean with no findings or publication blockers.",
+      "operation": "{\"operation\":\"advance_phase\",\"phase\":\"reviewed\"}"
+    },
+    {
+      "sequence": 15,
+      "generation": 11,
+      "actor": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+      "reason": "atomically record observed GitHub publication and SOR projection",
+      "operation": "record_publication"
+    },
+    {
+      "sequence": 16,
+      "generation": 12,
+      "actor": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+      "reason": "atomically record observed merged GitHub publication and SOR projection",
+      "operation": "record_merged_publication"
+    },
+    {
+      "sequence": 17,
+      "generation": 13,
+      "actor": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+      "reason": "record normalized remote readiness without replacing pre-publication review",
+      "operation": "record_readiness"
+    },
+    {
+      "sequence": 18,
+      "generation": 14,
+      "actor": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+      "reason": "atomically finalize SOR/index and release claim/protected paths",
+      "operation": "record_terminal"
+    }
+  ]
+}

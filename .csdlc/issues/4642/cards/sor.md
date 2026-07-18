@@ -1,0 +1,63 @@
+# Structured Output Record
+
+Template: 1.0.0
+
+Issue: 4642
+
+Repository: danielbaustin/agent-design-language
+
+Card: sor
+
+Status: pre_phase
+
+## Summary
+
+Added the WP-15 demo convergence packet, feature proof coverage index, machine-readable coverage ledger, and demo matrix row. The artifacts explicitly answer that v0.91.7 does not have a reviewer-facing demo for every new feature: Observatory/HTML/Unity are demo-backed, Curiosity and Constructability are proof-backed without visible demo rows, WP-11 is proof-backed with partial demo/handoff evidence, and WP-13 is boundary/handoff or scoped-out non-claim evidence.
+
+## Artifacts
+
+- docs/milestones/v0.91.7/review/V0917_WP15_DEMO_CONVERGENCE_4642.md
+- docs/milestones/v0.91.7/FEATURE_PROOF_COVERAGE_v0.91.7.md
+- docs/milestones/v0.91.7/review/wp15_demo_convergence_4642/feature_proof_coverage_4642.json
+- docs/milestones/v0.91.7/DEMO_MATRIX_v0.91.7.md
+
+## Execution
+
+- Add WP-15 convergence packet with current issue/dependency truth and demo/non-demo classifications
+- Add v0.91.7 feature proof coverage index
+- Add machine-readable feature proof coverage ledger with demo_for_every_new_feature=false
+- Update the demo matrix with D10 WP-15 convergence coverage
+
+## Validation
+
+[
+  {
+    "command": [
+      "git diff --check",
+      "python3 -m json.tool docs/milestones/v0.91.7/review/wp15_demo_convergence_4642/feature_proof_coverage_4642.json",
+      "/Users/daniel/git/agent-design-language/.adl/bin/csdlc-v2/csdlc-doctor --repo . --issue 4642",
+      "rg demo/proof coverage anchors across WP-15 artifacts"
+    ],
+    "purpose": "Prove WP-15 docs have clean diff hygiene, valid JSON coverage, passing typed C-SDLC state, and explicit demo-versus-proof classifications.",
+    "outcome": "passed",
+    "evidence_ref": "local:4642-wp15-docs-json-doctor-demo-coverage"
+  }
+]
+
+## Integration
+
+worktree_only
+
+## Publication
+
+Publication: not_published
+
+Merge: not_merged
+
+## Closeout
+
+not_started
+
+## Follow Ups
+
+- none

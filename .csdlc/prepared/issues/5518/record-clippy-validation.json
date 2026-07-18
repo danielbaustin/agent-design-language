@@ -1,0 +1,18 @@
+{
+  "issue": 5518,
+  "card": "sor",
+  "expected_generation": 3,
+  "expected_digest": "9a4d5b68aabf1528175cb4f2ba488d1937e477e5af63e8ebc4984ded0c0e9b4f",
+  "claim_id": "claim-5518-terminal-plan-repair",
+  "actor": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+  "reason": "All C-SDLC v2 targets pass strict Clippy on FastWork.",
+  "operation": {
+    "operation": "record_validation",
+    "result": {
+      "command": ["cargo", "clippy", "--manifest-path", "csdlc-v2/Cargo.toml", "--all-targets", "--", "-D", "warnings"],
+      "purpose": "Prove warning-free typed terminal repair code across all targets",
+      "outcome": "passed",
+      "evidence_ref": "local FastWork: all C-SDLC v2 targets passed strict Clippy"
+    }
+  }
+}

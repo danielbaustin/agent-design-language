@@ -1,0 +1,20 @@
+{
+  "issue": 5518,
+  "card": "sor",
+  "expected_generation": 9,
+  "expected_digest": "76b4f9185b47f29c9d706a107ec8c693f4803ba59dd5cc71ed0caebfa30d75d0",
+  "claim_id": "claim-5518-terminal-plan-repair",
+  "actor": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+  "reason": "Fix the final pre-publication concurrency review finding.",
+  "operation": {
+    "operation": "record_execution",
+    "summary": "Serialize every terminal receipt writer through the shared git-common-dir terminal transaction lock.",
+    "changes": [
+      "Acquire the shared terminal repair lock before the issue-local lock in retain_terminal_receipt",
+      "Acquire the shared terminal repair lock before the issue-local lock in reconcile_terminal"
+    ],
+    "artifacts": [
+      "csdlc-v2/src/store.rs"
+    ]
+  }
+}

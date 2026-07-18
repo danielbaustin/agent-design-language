@@ -131,6 +131,23 @@ mark_pr_fast_rust_validation() {
   reason="runtime_or_rust_test_change_runs_pr_fast_validation"
 }
 
+mark_runtime_v3_csm_focused_validation() {
+  rust_required=true
+  coverage_required=true
+  full_coverage_required=false
+  demo_smoke_required=true
+  ci_contracts_required=true
+  coverage_lane="pr_fast_coverage"
+  coverage_authority="focused_runtime_v3_csm"
+  coverage_execution_state="focused_pr_coverage_required"
+  reason="bounded_runtime_v3_csm_bridge_runs_independent_focused_validation"
+  validation_profile_selected="bounded_runtime_v3_csm_profile"
+  validation_profile_status="ready_to_run"
+  validation_profile_pr_publication_sufficient=true
+  validation_profile_escalation_required=false
+  validation_profile_escalation_lanes=""
+}
+
 mark_policy_surface_full_coverage() {
   local authority="$1"
   local reason_value="$2"
@@ -997,6 +1014,42 @@ manager_profile_is_csdlc_owner_pr_fast_escalation() {
   return 0
 }
 
+is_bounded_runtime_v3_csm_bridge_change() {
+  local saw_runtime_v3=false
+  local saw_csm=false
+  local path
+  while IFS= read -r path; do
+    [ -n "$path" ] || continue
+    case "$path" in
+      adl-runtime/src/runtime_api_auth.rs|\
+      adl-runtime/src/supervision.rs|\
+      adl-runtime/src/topology.rs)
+        saw_runtime_v3=true
+        ;;
+      adl/src/cli/csmctl_cmd.rs|\
+      adl/src/csm_runtime_api.rs|\
+      adl/src/long_lived_agent.rs|\
+      adl/src/long_lived_agent/tests.rs)
+        saw_csm=true
+        ;;
+      .csdlc/issues/[0-9]*/*|\
+      .csdlc/issues/[0-9]*/*/*|\
+      .csdlc/prepared/issues/[0-9]*/*|\
+      .csdlc/locks/[0-9]*.lock|\
+      docs/milestones/v0.91.7/review/*|\
+      docs/milestones/v0.91.7/review/*/*|\
+      docs/review-fixes/runtime/*)
+        ;;
+      *)
+        return 1
+        ;;
+    esac
+  done <<EOF
+$changed_files
+EOF
+  [ "$saw_runtime_v3" = true ] && [ "$saw_csm" = true ]
+}
+
 validation_profile_includes_lane() {
   local lane="$1"
   case ",$validation_profile_run_lanes," in
@@ -1175,6 +1228,12 @@ EOF
 }
 
 apply_validation_manager_routing() {
+  if [ "$validation_profile_status" = "escalation_required" ] \
+    && [ "$validation_profile_escalation_lanes" = "rust_pr_fast" ] \
+    && is_bounded_runtime_v3_csm_bridge_change; then
+    mark_runtime_v3_csm_focused_validation
+    return 0
+  fi
   case "$validation_profile_status:$validation_profile_run_lanes:$validation_profile_escalation_required" in
     ready_to_run:runtime_kernel_contracts:false)
       runtime_v3_fast_required=true

@@ -1,0 +1,10 @@
+{
+  "issue": 5495,
+  "card": "sip",
+  "expected_generation": 3,
+  "expected_digest": "6bf6fc65925e1a402a99ccbf475deecd557012b0e640787df205e4a5f7ed5c76",
+  "claim_id": "claim-5495-publication-metadata",
+  "actor": "codex",
+  "reason": "Implementation and focused validation are complete; advance to review.",
+  "operation": {"operation":"advance_phase","phase":"implemented"}
+}

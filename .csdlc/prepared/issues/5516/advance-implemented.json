@@ -1,0 +1,13 @@
+{
+  "issue": 5516,
+  "card": "sor",
+  "expected_generation": 2,
+  "expected_digest": "2fe485d6f4a0c92fa2d6cae38fe5122a294caaeec3ac2dbada9bb9ef848baa5b",
+  "claim_id": "claim-5516-5494-terminal-design-repair",
+  "actor": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+  "reason": "The bounded retained-design correction and focused typed validation are complete.",
+  "operation": {
+    "operation": "advance_phase",
+    "phase": "implemented"
+  }
+}

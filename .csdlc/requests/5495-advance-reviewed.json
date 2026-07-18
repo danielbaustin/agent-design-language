@@ -1,0 +1,10 @@
+{
+  "issue": 5495,
+  "card": "sip",
+  "expected_generation": 5,
+  "expected_digest": "58cffaa984073ddffe476c4810174d4f4ad27bdce61209619991d5c2b88329f8",
+  "claim_id": "claim-5495-publication-metadata",
+  "actor": "codex",
+  "reason": "Bounded review completed with no findings; advance to reviewed.",
+  "operation": {"operation":"advance_phase","phase":"reviewed"}
+}

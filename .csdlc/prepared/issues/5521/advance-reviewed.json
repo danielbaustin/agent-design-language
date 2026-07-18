@@ -1,0 +1,13 @@
+{
+  "issue": 5521,
+  "card": "sor",
+  "expected_generation": 6,
+  "expected_digest": "488dcd20c04bb27b8fe3f6ce51897b5048513c648c9d9f8d31dd0ac4f536f196",
+  "claim_id": "claim-5521-terminal-plan-repair",
+  "actor": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+  "reason": "Exact records-only review is clean with no findings or residual risks.",
+  "operation": {
+    "operation": "advance_phase",
+    "phase": "reviewed"
+  }
+}

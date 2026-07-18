@@ -1,0 +1,125 @@
+{
+  "issue": 5514,
+  "repository": "danielbaustin/agent-design-language",
+  "design_path": ".csdlc/prepared/issues/5514/design.md",
+  "diagram_path": ".csdlc/prepared/issues/5514/diagram.mmd",
+  "design_reviewer": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+  "design_approved": true,
+  "claim": {
+    "id": "claim-5514-complete-csm-coverage",
+    "owner": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+    "generation": 0,
+    "acquired_unix_seconds": 1784380117,
+    "expires_unix_seconds": 1784466517,
+    "heartbeat_unix_seconds": 1784380117,
+    "branch": "codex/5514-complete-csm-coverage",
+    "worktree": ".",
+    "protected_paths": [
+      "adl/tools/run_pr_fast_coverage_lane.sh",
+      "adl/tools/test_run_pr_fast_coverage_lane.sh"
+    ],
+    "purpose": "Preserve complete ADL CSM coverage while partitioning Runtime v3 selectors"
+  },
+  "initial": {
+    "title": "[v0.91.7][tooling][coverage] Preserve the complete ADL CSM suite in Runtime v3 bridge coverage",
+    "slug": "v0-91-7-complete-csm-coverage",
+    "version": "v0.91.7",
+    "goal": "Make the bounded Runtime v3/CSM route pass the changed-source coverage gate without foreign selectors.",
+    "required_outcome": "The exact mixed expression runs the complete valid ADL CSM selector family plus the owning Runtime v3 tests and produces an 80-percent-or-better changed-source result.",
+    "declared_scope": [
+      "adl/tools/run_pr_fast_coverage_lane.sh",
+      "adl/tools/test_run_pr_fast_coverage_lane.sh"
+    ],
+    "authority_boundary": [
+      "Issue #5514 owns only completeness of the #5512 workspace partition",
+      "Issue #5494 owns Runtime v3 and CSM implementation",
+      "Issue #5409 owns WP-07A acceptance truth"
+    ],
+    "task_boundary": "Restore all valid ADL CSM selectors in the exact bridge partition without changing runtime behavior, coverage thresholds, Runtime v2, or AWS lanes.",
+    "deliverables": [
+      "Complete owning-workspace ADL CSM expression",
+      "Regression assertion for every retained ADL selector",
+      "Passing #5504 changed-source coverage proof"
+    ],
+    "acceptance_criteria": [
+      "AC-1: Exact canonical-expression matching remains fail closed",
+      "AC-2: Every valid ADL CSM selector in the canonical expression reaches the ADL workspace",
+      "AC-3: Runtime v3 auth, supervision, and topology selectors reach only adl-runtime",
+      "AC-4: The nonexistent adl::cli_smoke selector and Runtime v2 remain absent",
+      "AC-5: The #5504 changed-source coverage gate passes without lowering thresholds"
+    ],
+    "dependencies": [
+      "Issue #5512 workspace partition merged",
+      "PR #5504 run 29645093147 retained failure evidence"
+    ],
+    "repo_inputs": [
+      "adl/tools/run_pr_fast_coverage_lane.sh",
+      "adl/tools/test_run_pr_fast_coverage_lane.sh",
+      "GitHub run 29645093147 job 88081915666"
+    ],
+    "non_goals": [
+      "Production runtime changes",
+      "Runtime v2 source or tests",
+      "Coverage threshold changes",
+      "AWS execution"
+    ],
+    "plan_summary": "Retain exact-expression routing, expand the ADL partition to the complete valid CSM family, lock the command contract, and rerun #5504 CI.",
+    "steps": [
+      {
+        "id": "S1",
+        "action": "Expand the exact bridge ADL partition to every valid owning selector",
+        "status": "pending",
+        "acceptance_ids": ["AC-1", "AC-2", "AC-3", "AC-4", "AC-5"]
+      },
+      {
+        "id": "S2",
+        "action": "Strengthen the command-level regression contract and validate locally",
+        "status": "pending",
+        "acceptance_ids": ["AC-1", "AC-2", "AC-3", "AC-4"]
+      },
+      {
+        "id": "S3",
+        "action": "Review, merge, rebase #5504, and prove the changed-source gate",
+        "status": "pending",
+        "acceptance_ids": ["AC-1", "AC-2", "AC-3", "AC-4", "AC-5"]
+      }
+    ],
+    "risks": [
+      "A retained selector could still name the wrong binary",
+      "A weak test could verify only parse success rather than suite completeness",
+      "A broad detector could alter unrelated expressions"
+    ],
+    "invariants": [
+      "Only the exact canonical mixed expression is specialized",
+      "Each workspace receives only tests it owns",
+      "Coverage thresholds are unchanged",
+      "Runtime v2 and AWS remain outside scope"
+    ],
+    "stop_conditions": [
+      "The repair requires production runtime changes",
+      "The repair requires Runtime v2 changes",
+      "Validation requires AWS"
+    ],
+    "review_prompts": [
+      "Does the ADL partition preserve every valid selector from the canonical expression?",
+      "Can a foreign selector reach either workspace?",
+      "Does exact matching still reject near matches?",
+      "Does the regression prove command completeness and summary composition?"
+    ],
+    "planning_profile": "small",
+    "validation_lanes": [
+      {
+        "lane": "pr-fast-coverage-contract",
+        "proof_role": "Prove complete workspace partitioning and exact command construction",
+        "deterministic": true,
+        "resource_profile": "small",
+        "parallel_group": "tooling-contracts",
+        "budget_seconds": 300,
+        "budget_tokens": 2000,
+        "argv": ["bash", "adl/tools/test_run_pr_fast_coverage_lane.sh"],
+        "acceptance_ids": ["AC-1", "AC-2", "AC-3", "AC-4", "AC-5"]
+      }
+    ],
+    "failure_policy": "Fail closed if any canonical ADL CSM selector is discarded, any foreign selector reaches an owning workspace, exact matching weakens, thresholds change, or Runtime v2/AWS enters scope."
+  }
+}

@@ -1,0 +1,24 @@
+{
+  "issue": 5516,
+  "base_branch": "main",
+  "branch": "codex/5516-5494-terminal-design-repair",
+  "worktree": ".",
+  "claim": {
+    "id": "claim-5516-5494-terminal-design-repair",
+    "owner": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+    "generation": 0,
+    "acquired_unix_seconds": 1784386103,
+    "expires_unix_seconds": 1784472503,
+    "heartbeat_unix_seconds": 1784386103,
+    "branch": "codex/5516-5494-terminal-design-repair",
+    "worktree": ".",
+    "protected_paths": [
+      ".csdlc/issues/5494",
+      ".csdlc/issues/5516",
+      ".csdlc/prepared/issues/5494/reconcile-terminal.json",
+      "docs/review-fixes/runtime/WP07A_REARCHITECTURE_REPAIR_5409.md",
+      "docs/milestones/v0.91.7/review/V0917_SPRINT_REVIEW_REGISTER.md"
+    ],
+    "purpose": "Correct the retained #5494 Runtime v3 design and diagram through typed terminal repair"
+  }
+}

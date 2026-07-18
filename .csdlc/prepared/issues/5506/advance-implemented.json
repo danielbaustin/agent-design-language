@@ -1,0 +1,13 @@
+{
+  "issue": 5506,
+  "card": "sor",
+  "expected_generation": 4,
+  "expected_digest": "02d226f6fb11752618917d15bd0803a636bbff7b710cc5099fd683e55bdef8b6",
+  "claim_id": "claim-5506-runtime-auth-coverage-map",
+  "actor": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+  "reason": "The bounded coverage mapping and focused proof are complete.",
+  "operation": {
+    "operation": "advance_phase",
+    "phase": "implemented"
+  }
+}

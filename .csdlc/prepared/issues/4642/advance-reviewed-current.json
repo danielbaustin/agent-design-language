@@ -1,0 +1,13 @@
+{
+  "issue": 4642,
+  "card": "sor",
+  "expected_generation": 7,
+  "expected_digest": "c69923379bded6f92de3145cd691d63130ccaf335d2e69e4a6ef1ae8bc40234d",
+  "claim_id": "claim-4642-v0-91-7-wp15-demo-matrix-proof-coverage",
+  "actor": "codex-root",
+  "reason": "Current substantive docs/ledger review completed with no findings after metadata-only recovery.",
+  "operation": {
+    "operation": "advance_phase",
+    "phase": "reviewed"
+  }
+}

@@ -65,8 +65,17 @@ ADL_RUST_WARM_CACHE_OUTPUT="${ADL_PR_FAST_COVERAGE_WARM_CACHE_OUTPUT:-$ADL_DIR/p
 printf 'PR-fast coverage expression: %s\n' "$FILTER_EXPRESSION"
 printf 'PR-fast coverage target: %s\n' "$CARGO_TARGET_DIR"
 guardian_filter='test(/^guardian::tests::/)'
+runtime_auth_filter='test(/^runtime_api_auth::tests::/)'
+runtime_v3_csm_bridge_filter='test(/^runtime_api_auth::tests::/) or (binary_id(adl) and (test(/^csm_runtime_api::/) or test(/^csm_backpressure::/) or test(/^csm_cav::/) or test(/^csm_constructability_gate::/) or test(/^csm_freedom_gate::/) or test(/^csm_godel_snapshot::/) or test(/^csm_shepherd_agent::/) or test(/^long_lived_agent::/) or test(/^cli::csm_service_cmd::/) or test(/^cli::csm_cmd::tests::/)) or binary_id(adl::cli_smoke) and test(/^agent::csm_/)) and not test(governed_notice_retains_spool_and_cursor_for_ambiguous_timeout) or test(csmctl) or test(csm_service)'
+bounded_runtime_v3_csm_bridge=false
+adl_filter_expression="$FILTER_EXPRESSION"
+if [ "$FILTER_EXPRESSION" = "$runtime_v3_csm_bridge_filter" ]; then
+  bounded_runtime_v3_csm_bridge=true
+  adl_filter_expression='((binary_id(adl) and (test(/^csm_runtime_api::/) or test(/^csm_backpressure::/) or test(/^csm_cav::/) or test(/^csm_constructability_gate::/) or test(/^csm_freedom_gate::/) or test(/^csm_godel_snapshot::/) or test(/^csm_shepherd_agent::/) or test(/^long_lived_agent::/))) and not test(governed_notice_retains_spool_and_cursor_for_ambiguous_timeout)) or (binary_id(adl::bin/adl) and (test(/^cli::csm_service_cmd::/) or test(/^cli::csm_cmd::tests::/) or test(csmctl) or test(csm_service)))'
+  printf 'PR-fast coverage ADL bridge expression: %s\n' "$adl_filter_expression"
+fi
 adl_coverage_ran=false
-if [ "$FILTER_EXPRESSION" != "$guardian_filter" ]; then
+if [ "$FILTER_EXPRESSION" != "$guardian_filter" ] && [ "$FILTER_EXPRESSION" != "$runtime_auth_filter" ]; then
   coverage_args=(
     llvm-cov nextest
   )
@@ -80,7 +89,7 @@ if [ "$FILTER_EXPRESSION" != "$guardian_filter" ]; then
     --status-level all
     --final-status-level slow
     --no-report
-    -E "$FILTER_EXPRESSION"
+    -E "$adl_filter_expression"
   )
   if [ -n "$TEST_THREADS" ]; then
     coverage_args+=(--test-threads "$TEST_THREADS")
@@ -96,7 +105,10 @@ fi
 
 runtime_expression=""
 runtime_companion=""
-if grep -Fq 'test(/^csm_cav::/)' <<<"$FILTER_EXPRESSION"; then
+if [ "$bounded_runtime_v3_csm_bridge" = true ]; then
+  runtime_expression='test(/^runtime_api_auth::/) or test(/^supervision::/) or test(/^topology::/)'
+  runtime_companion="adl-runtime Runtime v3 CSM bridge tests"
+elif grep -Fq 'test(/^csm_cav::/)' <<<"$FILTER_EXPRESSION"; then
   runtime_expression='test(/^cav::/) or test(/^runtime_api::/) or test(/^supervision::/) or test(/^topology::/)'
   runtime_companion="adl-runtime CAV tests"
   printf 'PR-fast coverage companion: WP-12 access and SSM validators\n'
@@ -111,13 +123,24 @@ if grep -Fq 'test(/^csm_cav::/)' <<<"$FILTER_EXPRESSION"; then
       --parent-gate docs/milestones/v0.91.7/review/security/wp12_security_cav_gate_4656.json
   )
 fi
-if grep -Fq 'test(/^guardian::tests::/)' <<<"$FILTER_EXPRESSION"; then
+if [ "$bounded_runtime_v3_csm_bridge" = false ] \
+  && grep -Fq 'test(/^guardian::tests::/)' <<<"$FILTER_EXPRESSION"; then
   if [ -n "$runtime_expression" ]; then
     runtime_expression="$runtime_expression or test(/^guardian::tests::/)"
     runtime_companion="$runtime_companion and Runtime v3 guardian tests"
   else
     runtime_expression='test(/^guardian::tests::/)'
     runtime_companion="adl-runtime Runtime v3 guardian tests"
+  fi
+fi
+if [ "$bounded_runtime_v3_csm_bridge" = false ] \
+  && grep -Fq 'test(/^runtime_api_auth::tests::/)' <<<"$FILTER_EXPRESSION"; then
+  if [ -n "$runtime_expression" ]; then
+    runtime_expression="$runtime_expression or test(/^runtime_api_auth::tests::/)"
+    runtime_companion="$runtime_companion and Runtime v3 API auth tests"
+  else
+    runtime_expression='test(/^runtime_api_auth::tests::/)'
+    runtime_companion="adl-runtime Runtime v3 API auth tests"
   fi
 fi
 

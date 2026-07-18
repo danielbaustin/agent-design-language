@@ -1,0 +1,36 @@
+{
+  "identity": {
+    "schema_version": "1.0.0",
+    "template_version": "1.0.0",
+    "issue": 5494,
+    "repository": "danielbaustin/agent-design-language",
+    "title": "[v0.91.7][review-fix][WP-07A] Complete the unfinished #5409 runtime acceptance boundary",
+    "slug": "v0-91-7-wp07a-complete-5409-runtime-acceptance",
+    "version": "v0.91.7",
+    "generation": 62
+  },
+  "status": "ready",
+  "content": {
+    "card_kind": "sip",
+    "values": {
+      "goal": "Make the Runtime v2 production topology, readiness, soak, and credential renewal satisfy #5409 truthfully.",
+      "required_outcome": "Production uses supervised tasks, readiness consumes observed health, the soak exercises running assembly behavior, and credential rotation has bounded overlap.",
+      "declared_scope": [
+        "adl-runtime/src/runtime_api_auth.rs",
+        "adl-runtime/src/supervision.rs",
+        "adl-runtime/src/topology.rs",
+        "adl/src/csm_runtime_api.rs",
+        "adl/src/long_lived_agent.rs",
+        "docs/review-fixes/runtime/WP07A_REARCHITECTURE_REPAIR_5409.md",
+        "docs/milestones/v0.91.7/review/V0917_SPRINT_REVIEW_REGISTER.md"
+      ],
+      "authority_boundary": [
+        "GitHub #5409 remains the product acceptance issue",
+        "Retained #5409 terminal evidence is immutable premature-closeout history",
+        "Issue #5494 is the corrective execution authority"
+      ],
+      "initial_assumptions": [],
+      "operator_constraints": []
+    }
+  }
+}

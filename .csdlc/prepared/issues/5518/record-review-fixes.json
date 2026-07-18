@@ -1,0 +1,20 @@
+{
+  "issue": 5518,
+  "card": "sor",
+  "expected_generation": 7,
+  "expected_digest": "81d664d10247fe2d9fcadd3459232a1c755bddf5e1e31bfdb9f795fe9edbba44",
+  "claim_id": "claim-5518-terminal-plan-repair",
+  "actor": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+  "reason": "Fix all three actionable pre-publication review findings.",
+  "operation": {
+    "operation": "record_execution",
+    "summary": "Constrain terminal repair authority, serialize terminal repair CAS across worktrees, and add repeatable Store-level atomicity coverage.",
+    "changes": [
+      "Require the authority claim to own the exact .csdlc/issues/<target> path",
+      "Hold a git-common-dir terminal-repairs lock across repair CAS, projection commit, and receipt replacement",
+      "Share that lock with identity and terminal design repair operations",
+      "Add Store-level tests for scope rejection, injected rollback, success parity, stale target, stale receipt, and nonterminal target rejection"
+    ],
+    "artifacts": ["csdlc-v2/src/store.rs", "csdlc-v2/tests/gate7_lifecycle.rs"]
+  }
+}

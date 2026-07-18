@@ -10,7 +10,7 @@ use axum::{
     Router,
 };
 use chrono::{DateTime, Utc};
-use serde_json::{json, Value};
+use serde_json::{json, Map, Value};
 use std::env;
 use std::fs::{self, OpenOptions};
 use std::io::Write;
@@ -35,6 +35,7 @@ use crate::csm_resident_agents;
 use crate::csm_shepherd_agent::{self, CSM_SHEPHERD_STATUS_REF};
 use crate::long_lived_agent::{load_spec, AgentStatusState, LoadedAgentSpec, StatusRecord};
 use crate::{csm_freedom_gate, csm_freedom_gate::CSM_FREEDOM_GATE_STATUS_REF};
+use adl_runtime::backpressure::{runtime_channel_policy, RuntimeChannelId};
 use adl_runtime::continuity_history::{
     CheckpointStore, DomainHealth, LifelogStore, CHECKPOINT_DB_FILE, CHECKPOINT_SCHEMA_V1,
     LIFELOG_DB_FILE, LIFELOG_SCHEMA_V1,
@@ -44,6 +45,7 @@ use adl_runtime::runtime_api_auth::{
     RuntimeApiAuthDecision, RuntimeApiCredentialStore, VerifiedRuntimeApiGatewayIdentity,
     CSM_RUNTIME_API_AUTH_EVENTS_FILE,
 };
+use adl_runtime::supervision::{policy_for, ComponentId};
 
 pub use adl_runtime::runtime_api::{
     CSM_RUNTIME_API_ACIP_SCHEMA, CSM_RUNTIME_API_API_GATEWAY_BRIDGE_SCHEMA,
@@ -93,19 +95,6 @@ async fn serve_runtime_api_async(
         bail!("CSM runtime API test request limit must be greater than zero");
     }
     let loaded = load_spec(&options.spec_path).context("load CSM runtime API owner spec")?;
-    let auth_store = RuntimeApiCredentialStore::for_state_root(&loaded.state_root);
-    let auth_metadata = auth_store
-        .ensure()
-        .map_err(anyhow::Error::msg)
-        .context("initialize CSM runtime API credential")?;
-    let auth_events_path = loaded.state_root.join(CSM_RUNTIME_API_AUTH_EVENTS_FILE);
-    append_runtime_api_auth_event(
-        &auth_events_path,
-        "credential_ready",
-        None,
-        None,
-        Some(&auth_metadata),
-    )?;
     let listener_config = resolve_main_runtime_api_listener(
         Some(&options.bind),
         options.test_max_requests.is_some()
@@ -130,6 +119,19 @@ async fn serve_runtime_api_async(
         .local_addr()
         .context("read CSM API local address")?;
     validate_loopback_bind(&addr)?;
+    let auth_store = RuntimeApiCredentialStore::for_state_root(&loaded.state_root);
+    let auth_metadata = auth_store
+        .ensure()
+        .map_err(anyhow::Error::msg)
+        .context("initialize CSM runtime API credential")?;
+    let auth_events_path = loaded.state_root.join(CSM_RUNTIME_API_AUTH_EVENTS_FILE);
+    append_runtime_api_auth_event(
+        &auth_events_path,
+        "credential_ready",
+        None,
+        None,
+        Some(&auth_metadata),
+    )?;
     println!(
         "{}",
         serde_json::to_string(&json!({
@@ -275,6 +277,7 @@ async fn runtime_api_axum_handler(
                 let gateway_identity = match state.auth_store.verify_gateway_identity(
                     request.gateway_identity.as_deref(),
                     request.gateway_signature.as_deref(),
+                    &metadata,
                 ) {
                     Ok(identity) => identity,
                     Err(reason) => {
@@ -528,6 +531,7 @@ fn status_response(loaded: &LoadedAgentSpec, options: &CsmRuntimeApiOptions) -> 
             "cloud_account_identifiers": "not_returned"
         }
     });
+    response["component_health"] = component_health_projection(&response);
     if checkpoint_persistence_blocks_readiness(&response) {
         response["status"] = json!("degraded");
     }
@@ -1691,7 +1695,208 @@ fn readiness_blockers(status: &Value) -> Vec<String> {
     {
         blockers.push("constructability_gate_validation_failed".to_string());
     }
+    if let Some(components) = status.get("component_health").and_then(Value::as_object) {
+        for component in ComponentId::CSM {
+            let policy = policy_for(component);
+            if policy.telemetry_can_degrade {
+                continue;
+            }
+            if components
+                .get(component.as_str())
+                .and_then(|value| value.get("state"))
+                .and_then(Value::as_str)
+                != Some("ready")
+            {
+                blockers.push(format!("{}_not_ready", component.as_str()));
+            }
+        }
+    }
+    blockers.extend(typed_channel_observation_blockers(status));
+    blockers.sort();
+    blockers.dedup();
     blockers
+}
+
+fn component_health_projection(status: &Value) -> Value {
+    let mut components = Map::new();
+    for component in ComponentId::CSM {
+        let (source, state) = match component {
+            ComponentId::RuntimeApi => ("request_handler", "ready"),
+            ComponentId::Chronosense => (
+                "/chronosense/time_sync",
+                if status
+                    .pointer("/chronosense/time_sync")
+                    .is_some_and(|value| !time_sync_value_blocks_ready(value))
+                {
+                    "ready"
+                } else {
+                    "not_ready"
+                },
+            ),
+            ComponentId::Scheduler => (
+                "/scheduler/status",
+                state_when_eq(status, "/scheduler/status", "integrated"),
+            ),
+            ComponentId::Weather => unreachable!("Runtime v3 owns weather, not CSM"),
+            ComponentId::AcipCarrier => (
+                "/acip_carrier",
+                if state_is(status, "/acip_carrier/readiness", &["ready"])
+                    && state_is(status, "/acip_carrier/validation/status", &["passed"])
+                {
+                    "ready"
+                } else {
+                    "not_ready"
+                },
+            ),
+            ComponentId::CuriosityEngine => (
+                "/curiosity_engine",
+                if state_is(status, "/curiosity_engine/value/readiness", &["ready"])
+                    && state_is(status, "/curiosity_engine/validation/status", &["passed"])
+                {
+                    "ready"
+                } else {
+                    "not_ready"
+                },
+            ),
+            ComponentId::Cav => (
+                "/cav/validation/status",
+                if state_is(status, "/cav/validation/status", &["valid", "passed"]) {
+                    "ready"
+                } else {
+                    "not_ready"
+                },
+            ),
+            ComponentId::FreedomGate => (
+                "/freedom_gate/retained_artifact_validation/status",
+                state_when_eq(
+                    status,
+                    "/freedom_gate/retained_artifact_validation/status",
+                    "accepted",
+                ),
+            ),
+            ComponentId::ReasoningRuntime => (
+                "/reasoning_runtime/value/health",
+                state_when_eq(status, "/reasoning_runtime/value/health", "ready"),
+            ),
+            ComponentId::ResidentAgents => (
+                "/resident_agents/status",
+                state_when_eq(status, "/resident_agents/status", "available"),
+            ),
+            ComponentId::ConstructabilityGate => (
+                "/constructability_gate",
+                if state_is(
+                    status,
+                    "/constructability_gate/value/readiness",
+                    &["active"],
+                ) && state_is(
+                    status,
+                    "/constructability_gate/validation/status",
+                    &["passed"],
+                ) {
+                    "ready"
+                } else {
+                    "not_ready"
+                },
+            ),
+            ComponentId::Aee => (
+                "/aee_resilience/status",
+                state_when_eq(status, "/aee_resilience/status", "integrated"),
+            ),
+            ComponentId::Checkpoint => (
+                "/persistence/checkpoint_continuity/status",
+                if status
+                    .pointer("/continuity/checkpoint/status")
+                    .and_then(Value::as_str)
+                    == Some("serialized")
+                    && state_is(
+                        status,
+                        "/persistence/checkpoint_continuity/status",
+                        &["healthy", "not_initialized"],
+                    )
+                {
+                    "ready"
+                } else {
+                    "not_ready"
+                },
+            ),
+            ComponentId::CloudBridge => (
+                "/api_gateway_bridge/status",
+                if state_is(status, "/api_gateway_bridge/status", &["serialized"]) {
+                    "ready"
+                } else {
+                    "degraded"
+                },
+            ),
+            ComponentId::Lifelog => (
+                "/persistence/autobiographical_lifelog/status",
+                if state_is(
+                    status,
+                    "/persistence/autobiographical_lifelog/status",
+                    &["healthy", "not_initialized"],
+                ) {
+                    "ready"
+                } else {
+                    "not_ready"
+                },
+            ),
+            ComponentId::Observability => (
+                "/runtime_stack/observability_pipeline",
+                if state_is(
+                    status,
+                    "/runtime_stack/observability_pipeline/status",
+                    &["integrated", "active"],
+                ) {
+                    "ready"
+                } else {
+                    "degraded"
+                },
+            ),
+        };
+        let policy = policy_for(component);
+        components.insert(
+            component.as_str().to_string(),
+            json!({
+                "state": state,
+                "source": source,
+                "required_for_runtime_ready": !policy.telemetry_can_degrade
+            }),
+        );
+    }
+    Value::Object(components)
+}
+
+fn state_when_eq(status: &Value, pointer: &str, expected: &str) -> &'static str {
+    if state_is(status, pointer, &[expected]) {
+        "ready"
+    } else {
+        "not_ready"
+    }
+}
+
+fn state_is(status: &Value, pointer: &str, expected: &[&str]) -> bool {
+    status
+        .pointer(pointer)
+        .and_then(Value::as_str)
+        .is_some_and(|value| expected.contains(&value))
+}
+
+fn typed_channel_observation_blockers(status: &Value) -> Vec<String> {
+    let channels = status
+        .pointer("/typed_channels/channels")
+        .and_then(Value::as_array);
+    RuntimeChannelId::ALL
+        .into_iter()
+        .filter(|channel| runtime_channel_policy(*channel).priority.is_required())
+        .filter_map(|channel| {
+            let ready = channels.is_some_and(|entries| {
+                entries.iter().any(|entry| {
+                    entry.get("channel").and_then(Value::as_str) == Some(channel.as_str())
+                        && entry.get("readiness").and_then(Value::as_str) == Some("ready")
+                })
+            });
+            (!ready).then(|| format!("typed_channel_{}_not_ready", channel.as_str()))
+        })
+        .collect()
 }
 
 fn checkpoint_persistence_blocks_readiness(status: &Value) -> bool {
@@ -2197,15 +2402,28 @@ memory: {}
                 "last_event": "test_fixture_ready",
                 "last_receipt": null,
                 "summary": {
-                    "channel_count": 0,
+                    "channel_count": RuntimeChannelId::ALL.len(),
                     "queue_depth": 0,
                     "durable_spool_depth": 0,
                     "blocked_count": 0,
                     "throttled_count": 0,
                     "shed_count": 0
                 },
-                "channels": [],
+                "channels": RuntimeChannelId::ALL.into_iter().map(|channel| json!({
+                    "channel": channel.as_str(),
+                    "readiness": "ready"
+                })).collect::<Vec<_>>(),
                 "updated_at": Utc::now()
+            }))
+            .unwrap(),
+        )
+        .unwrap();
+        fs::write(
+            state.join("csm_backpressure_state.json"),
+            serde_json::to_string_pretty(&json!({
+                "schema": "adl.csm.backpressure_state.v1",
+                "storage_pressure": {"state": "normal"},
+                "summary": {"health": "ready"}
             }))
             .unwrap(),
         )
@@ -2319,14 +2537,17 @@ memory: {}
                 "last_event": "test_ready_fixture",
                 "last_receipt": null,
                 "summary": {
-                    "channel_count": 0,
+                    "channel_count": RuntimeChannelId::ALL.len(),
                     "queue_depth": 0,
                     "durable_spool_depth": 0,
                     "blocked_count": 0,
                     "throttled_count": 0,
                     "shed_count": 0
                 },
-                "channels": [],
+                "channels": RuntimeChannelId::ALL.into_iter().map(|channel| json!({
+                    "channel": channel.as_str(),
+                    "readiness": "ready"
+                })).collect::<Vec<_>>(),
                 "updated_at": Utc::now()
             }))
             .unwrap(),
@@ -2453,15 +2674,37 @@ memory: {}
             );
         }
 
+        let overlap_gateway_headers = api_gateway_bridge::prepare_runtime_gateway_identity_headers(
+            &loaded.state_root,
+            "operator@example.invalid",
+        )
+        .unwrap();
+        let mut overlapping_gateway_request = valid_headers.clone();
+        overlapping_gateway_request.insert(
+            "x-adl-gateway-identity",
+            HeaderValue::from_str(&overlap_gateway_headers.identity).unwrap(),
+        );
+        overlapping_gateway_request.insert(
+            "x-adl-gateway-signature",
+            HeaderValue::from_str(&overlap_gateway_headers.signature).unwrap(),
+        );
         store.rotate().unwrap();
-        let stale = runtime_api_axum_handler(
+        let overlapping = runtime_api_axum_handler(
             State(state.clone()),
             Method::GET,
             Uri::from_static("/status"),
-            valid_headers,
+            valid_headers.clone(),
         )
         .await;
-        assert_eq!(stale.status(), StatusCode::UNAUTHORIZED);
+        assert_eq!(overlapping.status(), StatusCode::OK);
+        let overlapping_gateway = runtime_api_axum_handler(
+            State(state.clone()),
+            Method::GET,
+            Uri::from_static("/api-gateway-bridge"),
+            overlapping_gateway_request,
+        )
+        .await;
+        assert_eq!(overlapping_gateway.status(), StatusCode::OK);
         let second_token = store
             .with_bearer_token(str::to_string)
             .expect("read rotated test token");
@@ -2538,6 +2781,14 @@ memory: {}
         assert_eq!(partial.status(), StatusCode::UNAUTHORIZED);
 
         store.revoke().unwrap();
+        let revoked_previous = runtime_api_axum_handler(
+            State(state.clone()),
+            Method::GET,
+            Uri::from_static("/status"),
+            valid_headers,
+        )
+        .await;
+        assert_eq!(revoked_previous.status(), StatusCode::UNAUTHORIZED);
         let revoked = runtime_api_axum_handler(
             State(state),
             Method::GET,
@@ -3615,6 +3866,8 @@ memory: {}
             "updated_at": Utc::now(),
             "last_checkpoint_at": Utc::now(),
             "runtime_capabilities": {
+                    "scheduler_watcher": {"status": "integrated"},
+                    "aee": {"status": "integrated"},
                     "chronosense": {
                         "status": "integrated",
                         "time_sync": {
@@ -3634,15 +3887,6 @@ memory: {}
             state.join("continuity_checkpoint.json"),
             serde_json::to_string_pretty(&json!({
                 "schema": "adl.csm.continuity_checkpoint.v1"
-            }))
-            .unwrap(),
-        )
-        .unwrap();
-        fs::write(
-            state.join("csm_typed_channel_state.json"),
-            serde_json::to_string_pretty(&json!({
-                "schema": "adl.csm.typed_channel_state.v1",
-                "status": "ready"
             }))
             .unwrap(),
         )
@@ -3675,6 +3919,31 @@ memory: {}
             otel_status_path: None,
             otel_log_path: None,
         };
+        let status = runtime_api_response(&options, "/status").unwrap();
+        assert_eq!(
+            status["component_health"].as_object().unwrap().len(),
+            ComponentId::CSM.len()
+        );
+        assert!(status["component_health"].get("weather").is_none());
+        assert!(status["component_health"]
+            .as_object()
+            .unwrap()
+            .values()
+            .filter(|component| component["required_for_runtime_ready"] == true)
+            .all(|component| component["state"] == "ready"));
+        for required in RuntimeChannelId::ALL
+            .into_iter()
+            .filter(|channel| runtime_channel_policy(*channel).priority.is_required())
+        {
+            let mut missing_channel = status.clone();
+            missing_channel["typed_channels"]["channels"]
+                .as_array_mut()
+                .unwrap()
+                .retain(|channel| channel["channel"] != required.as_str());
+            assert!(readiness_blockers(&missing_channel)
+                .contains(&format!("typed_channel_{}_not_ready", required.as_str())));
+        }
+
         let response = runtime_api_response(&options, "/ready").unwrap();
         assert_eq!(response["ready"], "ready", "response: {response}");
         assert!(response["blocking_reasons"].as_array().unwrap().is_empty());
@@ -4088,6 +4357,8 @@ memory: {}
                 "updated_at": Utc::now(),
                 "last_checkpoint_at": Utc::now(),
                 "runtime_capabilities": {
+                    "scheduler_watcher": {"status": "integrated"},
+                    "aee": {"status": "integrated"},
                     "chronosense": {
                         "status": "integrated",
                         "service_schema": "chronosense_runtime_service.v1",

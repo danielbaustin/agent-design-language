@@ -1,0 +1,13 @@
+{
+  "issue": 5494,
+  "card": "sor",
+  "expected_generation": 18,
+  "expected_digest": "b785c77a3a475960cbf5881fc50632bee03a406cccc06ee647c2a3aace8b5eec",
+  "claim_id": "claim-5494-wp07a-completion",
+  "actor": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+  "reason": "Exact publication-head review passed after all eight actionable findings were fixed.",
+  "operation": {
+    "operation": "advance_phase",
+    "phase": "reviewed"
+  }
+}

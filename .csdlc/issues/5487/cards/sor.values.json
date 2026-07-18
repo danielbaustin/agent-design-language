@@ -1,0 +1,65 @@
+{
+  "identity": {
+    "schema_version": "1.0.0",
+    "template_version": "1.0.0",
+    "issue": 5487,
+    "repository": "danielbaustin/agent-design-language",
+    "title": "[v0.91.7][csdlc-v2][closeout] Add typed terminal design repair before receipt reconciliation",
+    "slug": "typed-terminal-design-repair",
+    "version": "v0.91.7",
+    "generation": 9
+  },
+  "status": "pre_phase",
+  "content": {
+    "card_kind": "sor",
+    "values": {
+      "summary": "Closed-out design repair now performs authority/CAS/hash checks, markdown AST validation, journaled projection and receipt replacement, and typed reconciliation materializes repaired #5467 artifacts.",
+      "actual_changes": [
+        "Add TerminalDesignRepairRequest and csdlc-closeout repair-design.",
+        "Atomically update terminal record, SPP/VPP digests, receipt, authored artifacts, and audit.",
+        "Repair #5467 retained design and diagram with the approved SSM/EBS/IAM scope."
+      ],
+      "artifacts": [
+        "csdlc-v2/src/store.rs",
+        "csdlc-v2/src/bin/csdlc-closeout.rs",
+        ".csdlc/issues/5467/retained/design.md",
+        ".csdlc/issues/5467/retained/diagram.mmd"
+      ],
+      "actual_validation": [
+        {
+          "command": [
+            "cargo",
+            "test",
+            "--locked",
+            "--manifest-path",
+            "csdlc-v2/Cargo.toml",
+            "--test",
+            "gate7_lifecycle"
+          ],
+          "purpose": "Prove terminal transaction recovery and lifecycle invariants; clippy and diff checks also pass.",
+          "outcome": "passed",
+          "evidence_ref": "gate7_lifecycle: 6 tests passed; cargo clippy --all-targets -D warnings; git diff --check"
+        },
+        {
+          "command": [
+            "cargo",
+            "test",
+            "--locked",
+            "--manifest-path",
+            "csdlc-v2/Cargo.toml",
+            "--test",
+            "gate7_terminal_design_repair_5487"
+          ],
+          "purpose": "Verify the typed repair request covers committed #5467 design and diagram artifacts with stable digests and Mermaid shape.",
+          "outcome": "passed",
+          "evidence_ref": "gate7_terminal_design_repair_5487: 1 test passed"
+        }
+      ],
+      "integration_state": "pr_open",
+      "publication_state": "draft",
+      "merge_state": "not_merged",
+      "closeout_state": "not_started",
+      "follow_ups": []
+    }
+  }
+}

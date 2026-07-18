@@ -1,0 +1,21 @@
+{
+  "issue": 5464,
+  "base_branch": "main",
+  "branch": "codex/5464-nextest-install-contract",
+  "worktree": ".worktrees/adl-wp-5464",
+  "claim": {
+    "id": "claim-5464-nextest-install-contract",
+    "owner": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+    "generation": 0,
+    "acquired_unix_seconds": 1784358000,
+    "expires_unix_seconds": 1784444400,
+    "heartbeat_unix_seconds": 1784358000,
+    "branch": "codex/5464-nextest-install-contract",
+    "worktree": ".worktrees/adl-wp-5464",
+    "protected_paths": [
+      ".github/workflows/ci.yaml",
+      "adl/tools/test_ci_runtime_contracts.sh"
+    ],
+    "purpose": "Make cargo-nextest installation immutable and fail closed without cargo-binstall fallback"
+  }
+}

@@ -1,0 +1,25 @@
+{
+  "issue": 5494,
+  "card": "sor",
+  "expected_generation": 43,
+  "expected_digest": "f70d148a392f20027ba4a94664e5545d9238f53ff9fec97e8183c7ef9ca09962",
+  "claim_id": "claim-5494-wp07a-completion",
+  "actor": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+  "reason": "Keep the behavioral acceptance proof bounded while preserving production and Runtime v3 execution evidence.",
+  "operation": {
+    "operation": "record_execution",
+    "summary": "Replace 100 repeated legacy daemon startups with a fast Runtime v3 supervision and typed-channel soak plus a bounded production-daemon failure/recovery integration test.",
+    "changes": [
+      "Run 100 supervised Runtime v3 task cycles and 101 attempts through every real RuntimeChannelFabric channel",
+      "Retain injected failure, restart, recovery, and durable lifecycle replay assertions",
+      "Exercise the unmodified production daemon entrypoint for three real ticks with one injected workflow failure and recovery",
+      "Remove the issue-local helper from the 4.7K-line legacy daemon source"
+    ],
+    "artifacts": [
+      "adl-runtime/src/topology.rs",
+      "adl/src/long_lived_agent/tests.rs",
+      "docs/review-fixes/runtime/WP07A_REARCHITECTURE_REPAIR_5409.md",
+      "docs/milestones/v0.91.7/review/V0917_SPRINT_REVIEW_REGISTER.md"
+    ]
+  }
+}

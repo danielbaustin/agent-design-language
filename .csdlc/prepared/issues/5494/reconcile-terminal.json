@@ -1,0 +1,9 @@
+{
+  "issue": 5494,
+  "expected_initialization_digest": "6f14e4c9ea83d3837e27c54efaab81a25e4b801f231b3750c4ebe1bde2a0a415",
+  "expected_branch": "codex/5494-terminal-reconcile",
+  "expected_worktree": "/Users/daniel/git/agent-design-language/.worktrees/adl-wp-5494",
+  "actor": "codex-terminal-reconcile",
+  "reason": "Materialize the retained terminal receipt after merged PR #5504 and closed issue #5494, then release the completed WP-07A acceptance paths.",
+  "follow_ups": []
+}

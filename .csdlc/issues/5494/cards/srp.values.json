@@ -1,0 +1,32 @@
+{
+  "identity": {
+    "schema_version": "1.0.0",
+    "template_version": "1.0.0",
+    "issue": 5494,
+    "repository": "danielbaustin/agent-design-language",
+    "title": "[v0.91.7][review-fix][WP-07A] Complete the unfinished #5409 runtime acceptance boundary",
+    "slug": "v0-91-7-wp07a-complete-5409-runtime-acceptance",
+    "version": "v0.91.7",
+    "generation": 62
+  },
+  "status": "complete",
+  "content": {
+    "card_kind": "srp",
+    "values": {
+      "review_scope": "adl-runtime/src/runtime_api_auth.rs\nadl-runtime/src/supervision.rs\nadl-runtime/src/topology.rs\nadl/src/cli/csmctl_cmd.rs\nadl/src/csm_runtime_api.rs\nadl/src/long_lived_agent/tests.rs\ndocs/review-fixes/runtime/WP07A_REARCHITECTURE_REPAIR_5409.md\ndocs/milestones/v0.91.7/review/V0917_SPRINT_REVIEW_REGISTER.md",
+      "review_revision": "git-blake3:d6e55367ec3b9fe9c8908f4ca8fe499e4b0a693c:8deb79e8fd9aa554fad8d9641aad8b876aa99341b32e0dac1b9bbdcc03141efa",
+      "reviewer": "subagent:019f7581-a4bf-7fb3-a900-3d71dfea4abc",
+      "review_prompts": [
+        "Does production execute rather than merely describe the assembly?",
+        "Can any required missing or unhealthy observation leave readiness green?",
+        "Does the soak drive real tasks, channels, failure, and recovery?",
+        "Is credential overlap bounded without weakening revocation?"
+      ],
+      "findings": [],
+      "residual_risk": [
+        "Hosted CI must confirm the listener-readiness ordering repair before merge."
+      ],
+      "review_result": "pass"
+    }
+  }
+}

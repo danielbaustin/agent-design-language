@@ -1,0 +1,18 @@
+{
+  "issue": 5464,
+  "card": "sor",
+  "expected_generation": 11,
+  "expected_digest": "2f4acdfc227b5b2940f7669d31172d6eaccd228d9255611457c7698e3d80a967",
+  "claim_id": "claim-5464-nextest-install-contract",
+  "actor": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+  "reason": "The structural YAML contract and all adversarial fixtures pass after F-5464-4 repair.",
+  "operation": {
+    "operation": "record_validation",
+    "result": {
+      "command": ["bash", "adl/tools/test_ci_runtime_contracts.sh"],
+      "purpose": "Prove structural nextest enforcement covers quoted installer scalars and fully inline workflow steps",
+      "outcome": "passed",
+      "evidence_ref": "local:5464-structural-yaml-regression-pass"
+    }
+  }
+}

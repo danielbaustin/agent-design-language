@@ -1,0 +1,18 @@
+{
+  "issue": 5464,
+  "card": "sor",
+  "expected_generation": 14,
+  "expected_digest": "63d0e1daedc5cc1f426abc7cdc6ae9526448ead11dcc1b9c164243bc8c1885e2",
+  "claim_id": "claim-5464-nextest-install-contract",
+  "actor": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+  "reason": "The structural contract passes with all multi-tool regression fixtures.",
+  "operation": {
+    "operation": "record_validation",
+    "result": {
+      "command": ["bash", "adl/tools/test_ci_runtime_contracts.sh"],
+      "purpose": "Prove comma- and whitespace-separated tool lists cannot hide nextest or cargo-nextest",
+      "outcome": "passed",
+      "evidence_ref": "local:5464-multitool-regression-pass"
+    }
+  }
+}

@@ -181,6 +181,42 @@ pub struct ReconcileTerminalRequest {
 }
 
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize, JsonSchema)]
+pub struct TerminalDesignRepairRequest {
+    pub authority_issue: u64,
+    pub target_issue: u64,
+    pub expected_authority_generation: u64,
+    pub expected_authority_digest: String,
+    pub expected_target_generation: u64,
+    pub expected_target_digest: String,
+    pub expected_receipt_digest: String,
+    pub authority_claim_id: String,
+    pub actor: String,
+    pub reviewer: String,
+    pub source_design_path: String,
+    pub source_diagram_path: String,
+    pub expected_design_digest: String,
+    pub expected_diagram_digest: String,
+    #[serde(default)]
+    pub fail_after_stage: Option<String>,
+}
+
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize, JsonSchema)]
+pub struct TerminalPlanStepRepairRequest {
+    pub authority_issue: u64,
+    pub target_issue: u64,
+    pub expected_authority_generation: u64,
+    pub expected_authority_digest: String,
+    pub expected_target_generation: u64,
+    pub expected_target_digest: String,
+    pub expected_receipt_digest: String,
+    pub authority_claim_id: String,
+    pub actor: String,
+    pub step_id: String,
+    #[serde(default)]
+    pub fail_after_stage: Option<String>,
+}
+
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize, JsonSchema)]
 pub struct MigrationEvidence {
     pub schema: String,
     pub imported_unix_seconds: u64,

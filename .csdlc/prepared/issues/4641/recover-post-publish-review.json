@@ -1,0 +1,8 @@
+{
+  "issue": 4641,
+  "expected_generation": 11,
+  "expected_digest": "bc5fcb25ab55c036d36843e1c93db38468d6ee404243da177f9133779f8710fc",
+  "claim_id": "claim-4641-v0-91-7-wp14-launch-v092-birthday-handoff",
+  "actor": "codex:019f3d65-2216-7832-804a-26339473b27d",
+  "reason": "Typed publication metadata advanced HEAD after the reviewed publication revision; recover for exact current-head lifecycle-metadata review without changing WP-14 substance."
+}

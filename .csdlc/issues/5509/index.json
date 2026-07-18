@@ -1,0 +1,203 @@
+{
+  "schema": "csdlc.issue.index.v1",
+  "issue": 5509,
+  "repository": "danielbaustin/agent-design-language",
+  "initialization_digest": "99451b4d927edcf6b76df84be0dca94bd2abe78310226631423b8360b922925a",
+  "phase": "reviewed",
+  "generation": 7,
+  "digest": "f8098da0cbd3400e61118dafe3bf6da34a388098223edc1379595ce5770898cf",
+  "claim": {
+    "id": "claim-5509-runtime-v3-csm-fast-lane",
+    "owner": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+    "generation": 7,
+    "acquired_unix_seconds": 1784375319,
+    "expires_unix_seconds": 1784461719,
+    "heartbeat_unix_seconds": 1784375319,
+    "branch": "codex/5509-runtime-v3-csm-fast-lane",
+    "worktree": ".",
+    "protected_paths": [
+      "adl/tools/ci_path_policy.sh",
+      "adl/tools/run_pr_fast_test_lane.sh",
+      "adl/tools/run_pr_fast_coverage_lane.sh",
+      "adl/tools/test_ci_path_policy.sh",
+      "adl/tools/test_run_pr_fast_test_lane.sh",
+      "adl/tools/test_run_pr_fast_coverage_lane.sh"
+    ],
+    "purpose": "Route bounded mixed Runtime v3 and CSM changes through independent focused validation"
+  },
+  "review_assignment": {
+    "reviewer": "subagent:019f751d-2d23-70d1-b40f-69c756ed58d0",
+    "assigned_by": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+    "revision": "git-blake3:209a2c14f7db7c977ffb79b0864c0a11807415c9:3d42c4164fd38abe0faf62a31ef9ba3cb7b387b9a08932e92dbb84654e2161dc",
+    "scope": [
+      "adl/tools/ci_path_policy.sh",
+      "adl/tools/run_pr_fast_test_lane.sh",
+      "adl/tools/test_ci_path_policy.sh",
+      "adl/tools/test_run_pr_fast_coverage_lane.sh",
+      "adl/tools/test_run_pr_fast_test_lane.sh"
+    ]
+  },
+  "review": {
+    "reviewer": "subagent:019f751d-2d23-70d1-b40f-69c756ed58d0",
+    "scope": [
+      "adl/tools/ci_path_policy.sh",
+      "adl/tools/run_pr_fast_test_lane.sh",
+      "adl/tools/test_ci_path_policy.sh",
+      "adl/tools/test_run_pr_fast_coverage_lane.sh",
+      "adl/tools/test_run_pr_fast_test_lane.sh"
+    ],
+    "reviewed_revision": "git-blake3:209a2c14f7db7c977ffb79b0864c0a11807415c9:3d42c4164fd38abe0faf62a31ef9ba3cb7b387b9a08932e92dbb84654e2161dc",
+    "findings": [],
+    "residual_risks": [
+      "Hosted CI remains the final proof that the focused llvm-cov route interoperates with the GitHub runner toolchain."
+    ],
+    "completed": true,
+    "non_substantive_proof": null
+  },
+  "publication": null,
+  "readiness": null,
+  "terminal": null,
+  "migration": null,
+  "design_path": ".csdlc/prepared/issues/5509/design.md",
+  "diagram_path": ".csdlc/prepared/issues/5509/diagram.mmd",
+  "design_review": {
+    "approved": {
+      "reviewer": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+      "revision": "b62620c42c4c68aa5ab6b70aec61c63346098008aeea9ad3751820d2e07d770a"
+    }
+  },
+  "cards": {
+    "sip": {
+      "values_digest": "a1b2b02b5611ce6d75fd574b47eeb888e2c0989f5a87470a85a2a20b541fdf46",
+      "rendered_digest": "33277b1be6e0ea353119eee7352bcdb20d78d05700abc8634231d40447535aff",
+      "ast_digest": "bbc90e79859496ea951db7642bb58d4385e4fcb071ea07d59bc297f1d4aed907"
+    },
+    "stp": {
+      "values_digest": "d90524602d01eeb6a96d1edde1dda4b507ce45370a79bc3c8ca78237f6ed98bf",
+      "rendered_digest": "58a712a9ee968e85c7e274bb50004fba71c8debd499b16c009f82631d0c7a286",
+      "ast_digest": "59d06a6734cd8095abcfe07224301c3b638b5d8dd0c3b6f15029213ce84292c5"
+    },
+    "spp": {
+      "values_digest": "ccc6ed39af7c67d27185131fc7ef8358ea673a350de0b66f1b89819988b0b2e2",
+      "rendered_digest": "9851c436936d343189c3f2a94b5a703d1183992402ed5f6055197f95f9ecbe66",
+      "ast_digest": "d81ebcc123f7732145c1ad4b9c3c3479bac5e9d9ef4a8566b65114d8698fb126"
+    },
+    "vpp": {
+      "values_digest": "eba9da5776b7094e730c641283c0304d6d41bd85ed51ba24dcf6074304589d49",
+      "rendered_digest": "0836299c83560cd724781ff94f168ac9f8366dc32624f7f164cd7e1cf2feb817",
+      "ast_digest": "134da84d187edb12fe50e05f3553467a3fe44f881537ccccad6a3ab1e83414fb"
+    },
+    "srp": {
+      "values_digest": "176f2ed1bdc648be5750daf2ea1cafdb16d9bef913eb325ebeace45703890d03",
+      "rendered_digest": "5dfd14ce2ee79d244da9dae71eb4835b4dc28388a11a1535bdca01739fcfed5e",
+      "ast_digest": "40fa1ca8e421130865ca4e481441f1cf3b064fdaf9d08b20de05312b6bbc39c9"
+    },
+    "sor": {
+      "values_digest": "7b07eb739d361fdec384a3fdf4e5105d187c503edc5982b7e0ca620ffff6c184",
+      "rendered_digest": "dc566ddc0da835fe0e04579e57022a64c861c45eb550182a77989266a72ab800",
+      "ast_digest": "29012c517791b9530827148bea4d3f9ea6deee794d8711403c73fcb07276c13f"
+    }
+  },
+  "transitions": [
+    {
+      "sequence": 1,
+      "from": "initialized",
+      "to": "ready",
+      "actor": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+      "reason": "automatic readiness verification"
+    },
+    {
+      "sequence": 2,
+      "from": "ready",
+      "to": "bound",
+      "actor": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+      "reason": "verified Git worktree binding"
+    },
+    {
+      "sequence": 3,
+      "from": "bound",
+      "to": "implemented",
+      "actor": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+      "reason": "The bounded mixed-crate route and its positive and negative proof are complete."
+    },
+    {
+      "sequence": 4,
+      "from": "implemented",
+      "to": "reviewed",
+      "actor": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+      "reason": "Exact-revision subagent review found no actionable findings."
+    }
+  ],
+  "audit": [
+    {
+      "sequence": 1,
+      "generation": 0,
+      "actor": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+      "reason": "initialize issue record and all six cards",
+      "operation": "bootstrap"
+    },
+    {
+      "sequence": 2,
+      "generation": 0,
+      "actor": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+      "reason": "bind branch/worktree and activate claim",
+      "operation": "bind"
+    },
+    {
+      "sequence": 3,
+      "generation": 1,
+      "actor": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+      "reason": "Implemented the bounded mixed Runtime v3 and CSM validation route.",
+      "operation": "{\"operation\":\"record_execution\",\"summary\":\"Route the closed Runtime v3/CSM bridge family through independent focused tests and composed coverage while retaining fail-closed behavior for every other mixed-crate change.\",\"changes\":[\"Add a mixed_focused two-crate test plan for the Runtime v3/CSM bridge family\",\"Execute ADL CSM tests and Runtime v3 tests in their owning crates\",\"Select focused composed coverage for the closed path family\",\"Preserve full-validation fallback when any unrelated Rust path is present\",\"Add positive, execution, coverage-composition, and negative routing contracts\"],\"artifacts\":[\"adl/tools/ci_path_policy.sh\",\"adl/tools/run_pr_fast_test_lane.sh\",\"adl/tools/test_ci_path_policy.sh\",\"adl/tools/test_run_pr_fast_coverage_lane.sh\",\"adl/tools/test_run_pr_fast_test_lane.sh\"]}"
+    },
+    {
+      "sequence": 4,
+      "generation": 2,
+      "actor": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+      "reason": "The mixed two-crate planner and execution contracts passed.",
+      "operation": "{\"operation\":\"record_validation\",\"result\":{\"command\":[\"bash\",\"adl/tools/test_run_pr_fast_test_lane.sh\"],\"purpose\":\"Prove the bounded bridge runs focused tests in both owning crates and rejects unrelated mixed paths\",\"outcome\":\"passed\",\"evidence_ref\":\"local:5509-pr-fast-two-crate-contract-pass\"}}"
+    },
+    {
+      "sequence": 5,
+      "generation": 3,
+      "actor": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+      "reason": "The composed focused coverage contracts passed.",
+      "operation": "{\"operation\":\"record_validation\",\"result\":{\"command\":[\"bash\",\"adl/tools/test_run_pr_fast_coverage_lane.sh\"],\"purpose\":\"Prove both crate coverage runs and summaries are composed without Runtime v2 selection\",\"outcome\":\"passed\",\"evidence_ref\":\"local:5509-focused-coverage-composition-pass\"}}"
+    },
+    {
+      "sequence": 6,
+      "generation": 4,
+      "actor": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+      "reason": "The end-to-end path-policy contract passed.",
+      "operation": "{\"operation\":\"record_validation\",\"result\":{\"command\":[\"bash\",\"adl/tools/test_ci_path_policy.sh\"],\"purpose\":\"Prove the exact bridge family selects focused coverage and unrelated additions remain fail closed\",\"outcome\":\"passed\",\"evidence_ref\":\"local:5509-ci-path-policy-contract-pass\"}}"
+    },
+    {
+      "sequence": 7,
+      "generation": 5,
+      "actor": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+      "reason": "The bounded mixed-crate route and its positive and negative proof are complete.",
+      "operation": "{\"operation\":\"advance_phase\",\"phase\":\"implemented\"}"
+    },
+    {
+      "sequence": 8,
+      "generation": 5,
+      "actor": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+      "reason": "assign bounded exact-revision review",
+      "operation": "assign_review"
+    },
+    {
+      "sequence": 9,
+      "generation": 6,
+      "actor": "subagent:019f751d-2d23-70d1-b40f-69c756ed58d0",
+      "reason": "atomically record review evidence and SRP projection",
+      "operation": "record_review"
+    },
+    {
+      "sequence": 10,
+      "generation": 7,
+      "actor": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+      "reason": "Exact-revision subagent review found no actionable findings.",
+      "operation": "{\"operation\":\"advance_phase\",\"phase\":\"reviewed\"}"
+    }
+  ]
+}

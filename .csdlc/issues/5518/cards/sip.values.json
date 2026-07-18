@@ -1,0 +1,33 @@
+{
+  "identity": {
+    "schema_version": "1.0.0",
+    "template_version": "1.0.0",
+    "issue": 5518,
+    "repository": "danielbaustin/agent-design-language",
+    "title": "[v0.91.7][csdlc-v2][closeout] Repair stale terminal plan-step truth atomically",
+    "slug": "v0-91-7-csdlc-v2-terminal-plan-step-repair",
+    "version": "v0.91.7",
+    "generation": 29
+  },
+  "status": "ready",
+  "content": {
+    "card_kind": "sip",
+    "values": {
+      "goal": "Provide one fail-closed typed repair for stale completed work in a closed-out SPP.",
+      "required_outcome": "The typed operation atomically completes #5516 SPP S3 and refreshes its terminal receipt without permitting general terminal mutation.",
+      "declared_scope": [
+        "csdlc-v2 terminal repair store and CLI",
+        "focused terminal repair tests",
+        "#5516 terminal plan and receipt",
+        "#5518 lifecycle records"
+      ],
+      "authority_boundary": [
+        "#5518 is the active repair authority",
+        "#5516 is the closed-out target",
+        "Only forward SPP step completion is allowed"
+      ],
+      "initial_assumptions": [],
+      "operator_constraints": []
+    }
+  }
+}

@@ -1,0 +1,25 @@
+{
+  "issue": 5516,
+  "card": "sor",
+  "expected_generation": 0,
+  "expected_digest": "b1d7458f0652d3f5579f719dd38fb2e30449c3f52ea17102f0fce20b221188c5",
+  "claim_id": "claim-5516-5494-terminal-design-repair",
+  "actor": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+  "reason": "Correct the retained #5494 architecture through the typed terminal design-repair route.",
+  "operation": {
+    "operation": "record_execution",
+    "summary": "Repair #5494 retained design truth to show the implemented Runtime v3 supervision, typed-channel, readiness, and weather ownership boundaries alongside the CSM production-daemon proof.",
+    "changes": [
+      "Replace the stale Runtime v2-only retained design claim with the merged Runtime v3 and CSM proof paths",
+      "Add a retained Mermaid diagram covering Runtime v3 supervised channels, CSM daemon recovery, and observed readiness",
+      "Record Runtime v3 as the sole host-weather owner without adding a duplicate service",
+      "Preserve the merged implementation, review, CI, publication, and terminal closeout truth"
+    ],
+    "artifacts": [
+      ".csdlc/issues/5494/retained/design.md",
+      ".csdlc/issues/5494/retained/diagram.mmd",
+      ".csdlc/issues/5494/index.json",
+      "csdlc-v2/closeout/5494.json"
+    ]
+  }
+}

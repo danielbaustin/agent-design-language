@@ -1,0 +1,19 @@
+{
+  "issue": 5518,
+  "expected_generation": 21,
+  "expected_digest": "ee7bc00d37a56ae28a524350c291fcfb2867a1a7cb320c3ba428bb4950057a8c",
+  "claim_id": "claim-5518-terminal-plan-repair",
+  "reviewer": "subagent:019f7581-a4bf-7fb3-a900-3d71dfea4abc",
+  "assigned_by": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+  "scope": [
+    ".csdlc/issues/5516",
+    ".csdlc/issues/5518",
+    ".csdlc/prepared/issues/5518",
+    "csdlc-v2/src/bin/csdlc-closeout.rs",
+    "csdlc-v2/src/lib.rs",
+    "csdlc-v2/src/model.rs",
+    "csdlc-v2/src/schema.rs",
+    "csdlc-v2/src/store.rs",
+    "csdlc-v2/tests/gate7_lifecycle.rs"
+  ]
+}

@@ -1,0 +1,9 @@
+flowchart TD
+  K["Tokio runtime"] --> V3["Runtime v3 supervised task cycles"]
+  V3 --> CH["RuntimeChannelFabric typed channels"]
+  CH --> REPLAY["Retained lifecycle sequence and readiness replay"]
+  K --> CSM["CSM production daemon"]
+  CSM --> TICKS["Real ticks with injected failure and recovery"]
+  V3 --> READY["Observed fail-closed readiness"]
+  CSM --> READY
+  WEATHER["Runtime v3 weather service sole owner"] -. "not duplicated" .-> CSM

@@ -1,0 +1,18 @@
+{
+  "issue": 5495,
+  "card": "vpp",
+  "expected_generation": 6,
+  "expected_digest": "9ab97a88b2952f7bb715c164feb2051c7cffa698bc06cff38117948f0b4a28cc",
+  "claim_id": "claim-5495-publication-metadata",
+  "actor": "codex",
+  "reason": "Focused and full Rust validation passed after review hardening.",
+  "operation": {
+    "operation": "record_validation",
+    "result": {
+      "command": ["cargo", "test", "--locked", "--manifest-path", "csdlc-v2/Cargo.toml"],
+      "purpose": "Prove review metadata classification, card projection pairing, doctor reconciliation, and the full C-SDLC v2 suite.",
+      "outcome": "passed",
+      "evidence_ref": "25 unit tests plus all integration suites passed; gate5 12 tests passed; cargo clippy --all-targets -D warnings; git diff --check"
+    }
+  }
+}

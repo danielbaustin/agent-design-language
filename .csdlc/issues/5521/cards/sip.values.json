@@ -1,0 +1,31 @@
+{
+  "identity": {
+    "schema_version": "1.0.0",
+    "template_version": "1.0.0",
+    "issue": 5521,
+    "repository": "danielbaustin/agent-design-language",
+    "title": "[v0.91.7][csdlc-v2][closeout] Complete #5518 terminal plan-step truth",
+    "slug": "v0-91-7-csdlc-v2-complete-5518-terminal-plan-step",
+    "version": "v0.91.7",
+    "generation": 14
+  },
+  "status": "ready",
+  "content": {
+    "card_kind": "sip",
+    "values": {
+      "goal": "Complete the sole stale plan step in closed-out issue #5518.",
+      "required_outcome": "#5518 SPP S4 is completed with exact card, index, audit, and retained receipt parity.",
+      "declared_scope": [
+        "#5518 terminal plan and receipt",
+        "#5521 lifecycle records"
+      ],
+      "authority_boundary": [
+        "#5521 is the active repair authority",
+        "#5518 is the closed-out claim-free target",
+        "Only S4 pending to completed is allowed"
+      ],
+      "initial_assumptions": [],
+      "operator_constraints": []
+    }
+  }
+}

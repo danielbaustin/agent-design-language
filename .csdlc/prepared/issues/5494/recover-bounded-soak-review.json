@@ -1,0 +1,8 @@
+{
+  "issue": 5494,
+  "expected_generation": 42,
+  "expected_digest": "d81ef9c88679fb00c6089a4ad921e24e8a39b933eb0be3391a3b838100e10074",
+  "claim_id": "claim-5494-wp07a-completion",
+  "actor": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+  "reason": "Recover stale review after replacing the costly repeated-daemon soak with bounded production integration and a real Runtime v3 typed-channel soak."
+}

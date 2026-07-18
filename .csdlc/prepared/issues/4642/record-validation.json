@@ -1,0 +1,23 @@
+{
+  "issue": 4642,
+  "card": "sor",
+  "expected_generation": 1,
+  "expected_digest": "b6da4b516346255d837a5db0ae760360d24f65c1af40f0eca6a7977719726682",
+  "claim_id": "claim-4642-v0-91-7-wp15-demo-matrix-proof-coverage",
+  "actor": "codex-root",
+  "reason": "Focused WP-15 documentation and ledger validation passed.",
+  "operation": {
+    "operation": "record_validation",
+    "result": {
+      "command": [
+        "git diff --check",
+        "python3 -m json.tool docs/milestones/v0.91.7/review/wp15_demo_convergence_4642/feature_proof_coverage_4642.json",
+        "/Users/daniel/git/agent-design-language/.adl/bin/csdlc-v2/csdlc-doctor --repo . --issue 4642",
+        "rg demo/proof coverage anchors across WP-15 artifacts"
+      ],
+      "purpose": "Prove WP-15 docs have clean diff hygiene, valid JSON coverage, passing typed C-SDLC state, and explicit demo-versus-proof classifications.",
+      "outcome": "passed",
+      "evidence_ref": "local:4642-wp15-docs-json-doctor-demo-coverage"
+    }
+  }
+}

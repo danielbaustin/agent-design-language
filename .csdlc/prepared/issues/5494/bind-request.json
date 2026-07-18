@@ -1,0 +1,26 @@
+{
+  "issue": 5494,
+  "base_branch": "main",
+  "branch": "codex/5494-wp07a-completion",
+  "worktree": ".",
+  "claim": {
+    "id": "claim-5494-wp07a-completion",
+    "owner": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+    "generation": 0,
+    "acquired_unix_seconds": 1784362098,
+    "expires_unix_seconds": 1784448498,
+    "heartbeat_unix_seconds": 1784362098,
+    "branch": "codex/5494-wp07a-completion",
+    "worktree": ".",
+    "protected_paths": [
+      "adl-runtime/src/runtime_api_auth.rs",
+      "adl-runtime/src/supervision.rs",
+      "adl-runtime/src/topology.rs",
+      "adl/src/csm_runtime_api.rs",
+      "adl/src/long_lived_agent.rs",
+      "docs/review-fixes/runtime/WP07A_REARCHITECTURE_REPAIR_5409.md",
+      "docs/milestones/v0.91.7/review/V0917_SPRINT_REVIEW_REGISTER.md"
+    ],
+    "purpose": "Complete the unfinished #5409 production supervision, observed readiness, assembled soak, and credential-overlap acceptance boundary"
+  }
+}

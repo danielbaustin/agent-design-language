@@ -1,0 +1,13 @@
+{
+  "issue": 5518,
+  "card": "sor",
+  "expected_generation": 19,
+  "expected_digest": "df17af0dc69d9543c0496e0360abb84bbd8768a54eadba6ed815e2960c74452a",
+  "claim_id": "claim-5518-terminal-plan-repair",
+  "actor": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+  "reason": "Exact metadata-head review is clean; substantive code and tests remain byte-identical to the reviewed implementation.",
+  "operation": {
+    "operation": "advance_phase",
+    "phase": "reviewed"
+  }
+}

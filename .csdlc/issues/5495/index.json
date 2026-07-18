@@ -1,0 +1,277 @@
+{
+  "schema": "csdlc.issue.index.v1",
+  "issue": 5495,
+  "repository": "danielbaustin/agent-design-language",
+  "initialization_digest": "f7ca62455b8ab2f07d97e34fed8502d2f59f4b77b96f04808837080769efaaba",
+  "phase": "published",
+  "generation": 11,
+  "digest": "ed1112a13a88a0d344a70a00f7cf41432f6855102436b1e200ec50c1dafdf2d4",
+  "claim": {
+    "id": "claim-5495-publication-metadata",
+    "owner": "codex",
+    "generation": 11,
+    "acquired_unix_seconds": 1784415805,
+    "expires_unix_seconds": 1784423005,
+    "heartbeat_unix_seconds": 1784415805,
+    "branch": "codex/5495-publication-metadata",
+    "worktree": ".",
+    "protected_paths": [
+      "csdlc-v2/src/git.rs",
+      "csdlc-v2/src/review.rs",
+      "csdlc-v2/tests/gate5.rs",
+      ".csdlc/issues/5495/retained/design.md",
+      ".csdlc/issues/5495/retained/diagram.mmd"
+    ],
+    "purpose": "Allow typed lifecycle metadata commits without masking substantive review drift"
+  },
+  "review_assignment": {
+    "reviewer": "review_5495",
+    "assigned_by": "codex",
+    "revision": "git-blake3:1ef7bb7eebcc0c6421d1e02c319ca4b45614149c:a2c283b0d7ecc77ffcd29fa9bebc43a59e99086c80b3df20a90ef6ef2664824b",
+    "scope": [
+      "csdlc-v2/src/git.rs",
+      "csdlc-v2/src/review.rs",
+      "csdlc-v2/src/doctor.rs",
+      "csdlc-v2/tests/gate5.rs",
+      ".csdlc/issues/5495/retained/design.md",
+      ".csdlc/issues/5495/retained/diagram.mmd"
+    ]
+  },
+  "review": {
+    "reviewer": "review_5495",
+    "scope": [
+      "csdlc-v2/src/git.rs",
+      "csdlc-v2/src/review.rs",
+      "csdlc-v2/src/doctor.rs",
+      "csdlc-v2/tests/gate5.rs",
+      ".csdlc/issues/5495/retained/design.md",
+      ".csdlc/issues/5495/retained/diagram.mmd"
+    ],
+    "reviewed_revision": "git-blake3:1ef7bb7eebcc0c6421d1e02c319ca4b45614149c:a2c283b0d7ecc77ffcd29fa9bebc43a59e99086c80b3df20a90ef6ef2664824b",
+    "findings": [],
+    "residual_risks": [
+      "Typed request manifests are treated as lifecycle metadata only when they use a numeric issue prefix and JSON suffix."
+    ],
+    "completed": true,
+    "non_substantive_proof": null
+  },
+  "publication": {
+    "repository": "danielbaustin/agent-design-language",
+    "issue": 5495,
+    "pull_request": 5525,
+    "url": "https://github.com/danielbaustin/agent-design-language/pull/5525",
+    "base": "main",
+    "head": "codex/5495-publication-metadata",
+    "revision": "git-blake3:1ef7bb7eebcc0c6421d1e02c319ca4b45614149c:a2c283b0d7ecc77ffcd29fa9bebc43a59e99086c80b3df20a90ef6ef2664824b",
+    "draft": true,
+    "observed_state": "open"
+  },
+  "readiness": null,
+  "terminal": null,
+  "migration": null,
+  "design_path": ".csdlc/issues/5495/retained/design.md",
+  "diagram_path": ".csdlc/issues/5495/retained/diagram.mmd",
+  "design_review": {
+    "approved": {
+      "reviewer": "codex",
+      "revision": "68e7e87969ff9a80c12e15a24e6fde8d4c4f1b9bd1f6dd7329ce94edf680a965"
+    }
+  },
+  "cards": {
+    "sip": {
+      "values_digest": "7eedf3f55a7e4aa4d6a313cca0ec7f7f8e017666ed4f67af71d5f7696d3727b7",
+      "rendered_digest": "cb401f8487b08c8a2dc68ae4f17cad42dca364cbe66caf9df4c23bf0a4e40b32",
+      "ast_digest": "e8824dc91c6e97c92de9cd48410482fa55f44758e09ee9eb0332ae947c1475d6"
+    },
+    "stp": {
+      "values_digest": "613bdf8f0e602dc366136bc2d223b850cad9b42bec895839f505e196486ae7b4",
+      "rendered_digest": "c8093297dc0a72cc2bf3673f22ce5e690f5de8be3735b34491ceca4951e878ed",
+      "ast_digest": "a448d0a017ba0aa26e4abf01f1db9f9967f96e1de924a98f959462909e5be6b4"
+    },
+    "spp": {
+      "values_digest": "b60d6952950a672b3ef65520192a2b5afcf56b85fb6236546b87c000196c363e",
+      "rendered_digest": "58102ee2d11e4e4cdddd17775324578a1a17e6c68da26c63f84f497ac55233f4",
+      "ast_digest": "ca85aa1a7ef524762574af8d3d2797000a1d565c25511816a7de7e7d813b9770"
+    },
+    "vpp": {
+      "values_digest": "115e63fc4f851365b6efdf6d9252ed6e39fed590982b158e9a42400d6dd23f5d",
+      "rendered_digest": "157f7891da11f14fb26a9e1108809ce6530e976966752ecefae8df1e1913b0db",
+      "ast_digest": "18c1e215a7e8256795b140ebf1ece34da01b9826e94e8d83f7e81e7e204d84f0"
+    },
+    "srp": {
+      "values_digest": "e66de5ea5fca397054ff1e0ec2ab99ed4ae4c42fb39d4669d975e7a9b525c38c",
+      "rendered_digest": "ff4e9f4ed966870e5cb235fa7e8c3c39c1855b2ef3a2b551065f1c85f1588405",
+      "ast_digest": "e94fd16983ba8c1cc07f6816fb5519b6aadd3229e6a7f8bf427f62296f601f58"
+    },
+    "sor": {
+      "values_digest": "153a33a8e9a0325ff631a2c2f78aa4b174957b779215f1565ea9e3a1a751b785",
+      "rendered_digest": "c3adeeea232480a2157d01f9bc887376170c54ce8db26dfc026d267c4176f25d",
+      "ast_digest": "861e8f38b482e1326bcc2e4b233b0ff144fae74a07350049470b8cf2a78dddca"
+    }
+  },
+  "transitions": [
+    {
+      "sequence": 1,
+      "from": "initialized",
+      "to": "ready",
+      "actor": "codex",
+      "reason": "Bootstrap cards and design are complete; advance to ready for local binding."
+    },
+    {
+      "sequence": 2,
+      "from": "ready",
+      "to": "bound",
+      "actor": "codex",
+      "reason": "verified Git worktree binding"
+    },
+    {
+      "sequence": 3,
+      "from": "bound",
+      "to": "implemented",
+      "actor": "codex",
+      "reason": "Implementation and focused validation are complete; advance to review."
+    },
+    {
+      "sequence": 4,
+      "from": "implemented",
+      "to": "reviewed",
+      "actor": "codex",
+      "reason": "Bounded review completed with no findings; advance to reviewed."
+    },
+    {
+      "sequence": 5,
+      "from": "reviewed",
+      "to": "published",
+      "actor": "codex",
+      "reason": "observed exact PR after current review"
+    },
+    {
+      "sequence": 6,
+      "from": "published",
+      "to": "implemented",
+      "actor": "codex",
+      "reason": "Publication metadata follow-up changed the reviewed head; require typed re-review before continuing closeout."
+    },
+    {
+      "sequence": 7,
+      "from": "implemented",
+      "to": "reviewed",
+      "actor": "codex",
+      "reason": "Follow-up review completed with no findings; advance to reviewed for publication reconciliation."
+    },
+    {
+      "sequence": 8,
+      "from": "reviewed",
+      "to": "published",
+      "actor": "codex",
+      "reason": "observed exact PR after current review"
+    }
+  ],
+  "audit": [
+    {
+      "sequence": 1,
+      "generation": 0,
+      "actor": "codex",
+      "reason": "initialize issue record and all six cards",
+      "operation": "bootstrap"
+    },
+    {
+      "sequence": 2,
+      "generation": 1,
+      "actor": "codex",
+      "reason": "Bootstrap cards and design are complete; advance to ready for local binding.",
+      "operation": "{\"operation\":\"advance_phase\",\"phase\":\"ready\"}"
+    },
+    {
+      "sequence": 3,
+      "generation": 1,
+      "actor": "codex",
+      "reason": "bind branch/worktree and activate claim",
+      "operation": "bind"
+    },
+    {
+      "sequence": 4,
+      "generation": 2,
+      "actor": "codex",
+      "reason": "Implement bounded lifecycle metadata classification and automatic metadata-only review proof.",
+      "operation": "{\"operation\":\"record_execution\",\"summary\":\"Publication review now recognizes exact typed lifecycle metadata commits while keeping source drift fail closed.\",\"changes\":[\"Bound safe metadata paths to generated lifecycle surfaces.\",\"Derive automatic non-substantive proof only for exact metadata-only commit transitions.\",\"Preserve explicit-proof validation and substantive review_stale behavior.\"],\"artifacts\":[\"csdlc-v2/src/git.rs\",\"csdlc-v2/src/review.rs\",\"csdlc-v2/tests/gate5.rs\"]}"
+    },
+    {
+      "sequence": 5,
+      "generation": 3,
+      "actor": "codex",
+      "reason": "Gate 5 metadata/publication regression proof passed.",
+      "operation": "{\"operation\":\"record_validation\",\"result\":{\"command\":[\"cargo\",\"test\",\"--locked\",\"--manifest-path\",\"csdlc-v2/Cargo.toml\",\"--test\",\"gate5\"],\"purpose\":\"Prove recognized typed lifecycle metadata commits do not stale review while source drift remains blocked; explicit malformed proof remains fail closed.\",\"outcome\":\"passed\",\"evidence_ref\":\"gate5: 11 tests passed; cargo clippy --all-targets -D warnings; git diff --check\"}}"
+    },
+    {
+      "sequence": 6,
+      "generation": 4,
+      "actor": "codex",
+      "reason": "Implementation and focused validation are complete; advance to review.",
+      "operation": "{\"operation\":\"advance_phase\",\"phase\":\"implemented\"}"
+    },
+    {
+      "sequence": 7,
+      "generation": 4,
+      "actor": "codex",
+      "reason": "assign bounded exact-revision review",
+      "operation": "assign_review"
+    },
+    {
+      "sequence": 8,
+      "generation": 5,
+      "actor": "review_5495",
+      "reason": "atomically record review evidence and SRP projection",
+      "operation": "record_review"
+    },
+    {
+      "sequence": 9,
+      "generation": 6,
+      "actor": "codex",
+      "reason": "Bounded review completed with no findings; advance to reviewed.",
+      "operation": "{\"operation\":\"advance_phase\",\"phase\":\"reviewed\"}"
+    },
+    {
+      "sequence": 10,
+      "generation": 7,
+      "actor": "codex",
+      "reason": "atomically record observed GitHub publication and SOR projection",
+      "operation": "record_publication"
+    },
+    {
+      "sequence": 11,
+      "generation": 8,
+      "actor": "codex",
+      "reason": "Publication metadata follow-up changed the reviewed head; require typed re-review before continuing closeout.",
+      "operation": "recover_review"
+    },
+    {
+      "sequence": 12,
+      "generation": 8,
+      "actor": "codex",
+      "reason": "assign bounded exact-revision review",
+      "operation": "assign_review"
+    },
+    {
+      "sequence": 13,
+      "generation": 9,
+      "actor": "review_5495",
+      "reason": "atomically record review evidence and SRP projection",
+      "operation": "record_review"
+    },
+    {
+      "sequence": 14,
+      "generation": 10,
+      "actor": "codex",
+      "reason": "Follow-up review completed with no findings; advance to reviewed for publication reconciliation.",
+      "operation": "{\"operation\":\"advance_phase\",\"phase\":\"reviewed\"}"
+    },
+    {
+      "sequence": 15,
+      "generation": 11,
+      "actor": "codex",
+      "reason": "atomically record observed GitHub publication and SOR projection",
+      "operation": "record_publication"
+    }
+  ]
+}

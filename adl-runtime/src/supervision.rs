@@ -70,6 +70,24 @@ impl ComponentId {
         ComponentId::Observability,
     ];
 
+    pub const CSM: [ComponentId; 15] = [
+        ComponentId::RuntimeApi,
+        ComponentId::Chronosense,
+        ComponentId::Scheduler,
+        ComponentId::AcipCarrier,
+        ComponentId::CuriosityEngine,
+        ComponentId::Cav,
+        ComponentId::FreedomGate,
+        ComponentId::ReasoningRuntime,
+        ComponentId::ResidentAgents,
+        ComponentId::ConstructabilityGate,
+        ComponentId::Aee,
+        ComponentId::Checkpoint,
+        ComponentId::CloudBridge,
+        ComponentId::Lifelog,
+        ComponentId::Observability,
+    ];
+
     pub fn as_str(self) -> &'static str {
         match self {
             ComponentId::RuntimeApi => "runtime_api",

@@ -1,0 +1,18 @@
+{
+  "issue": 5494,
+  "card": "sor",
+  "expected_generation": 8,
+  "expected_digest": "614e35e01bb873b7b65ec57ab4c70408499790ad8e714a3dba131106e2811031",
+  "claim_id": "claim-5494-wp07a-completion",
+  "actor": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+  "reason": "The production daemon cycle completes the required behavioral soak and recovers after an injected real failure.",
+  "operation": {
+    "operation": "record_validation",
+    "result": {
+      "command": ["cargo", "test", "--manifest-path", "adl/Cargo.toml", "long_lived_agent::tests::production_daemon_cycle_soak_runs_real_ticks_channels_and_recovery", "--", "--exact", "--nocapture"],
+      "purpose": "Prove 100 production tick cycles over typed Runtime v3 channels with one injected failure and recovery on the same context",
+      "outcome": "passed",
+      "evidence_ref": "local FastWork: 100 successful production cycles, one injected failure, recovery, 27.78 seconds"
+    }
+  }
+}

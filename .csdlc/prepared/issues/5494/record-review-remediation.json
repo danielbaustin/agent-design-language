@@ -1,0 +1,30 @@
+{
+  "issue": 5494,
+  "card": "sor",
+  "expected_generation": 5,
+  "expected_digest": "b53dd30c00cc0b52cafe84bda88dab823f9604e3c5e49bdbcf062d5e2bfa03dd",
+  "claim_id": "claim-5494-wp07a-completion",
+  "actor": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+  "reason": "Fixed all six actionable first-review findings without duplicating Runtime v3 weather.",
+  "operation": {
+    "operation": "record_execution",
+    "summary": "Made the WP-07A acceptance path use the production daemon cycle, policy-required typed channels, recoverable credential renewal, and the existing Runtime v3 weather ownership boundary.",
+    "changes": [
+      "Renew expired non-revoked credentials and report the actual clipped overlap duration",
+      "Derive required readiness directly from runtime channel policy, including Audit and Evidence",
+      "Keep weather in Runtime v3 and limit the CSM production assembly to its fifteen owned components",
+      "Exercise the exact production daemon cycle for 100 real ticks with injected failure and recovery",
+      "Correct the retained repair document and sprint register to match the proving implementation"
+    ],
+    "artifacts": [
+      "adl-runtime/src/runtime_api_auth.rs",
+      "adl-runtime/src/supervision.rs",
+      "adl-runtime/src/topology.rs",
+      "adl/src/csm_runtime_api.rs",
+      "adl/src/long_lived_agent.rs",
+      "adl/src/long_lived_agent/tests.rs",
+      "docs/review-fixes/runtime/WP07A_REARCHITECTURE_REPAIR_5409.md",
+      "docs/milestones/v0.91.7/review/V0917_SPRINT_REVIEW_REGISTER.md"
+    ]
+  }
+}

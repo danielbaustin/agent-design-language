@@ -1,0 +1,18 @@
+{
+  "issue": 5494,
+  "card": "sor",
+  "expected_generation": 2,
+  "expected_digest": "9b999ebadd24e0472f2597b54c1abdfa6e96ca0bb203616ec728d659f22d5d4d",
+  "claim_id": "claim-5494-wp07a-completion",
+  "actor": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+  "reason": "The integrated CSM runtime API acceptance surface passed on FastWork.",
+  "operation": {
+    "operation": "record_validation",
+    "result": {
+      "command": ["cargo", "test", "--manifest-path", "adl/Cargo.toml", "csm_runtime_api"],
+      "purpose": "Prove observed component/channel readiness, fail-closed missing observations, and HTTP credential overlap/revocation",
+      "outcome": "passed",
+      "evidence_ref": "local FastWork: 44 focused CSM runtime API tests passed"
+    }
+  }
+}

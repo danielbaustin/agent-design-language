@@ -1,0 +1,7 @@
+flowchart LR
+  AUTH["Active repair authority"] --> CHECKS["CAS, claim, terminal receipt, and step checks"]
+  TARGET["Closed-out target"] --> CHECKS
+  CHECKS --> STEP["SPP step completed"]
+  STEP --> PROJ["Cards, index, audit, and digests regenerated"]
+  PROJ --> RECEIPT["Terminal receipt refreshed atomically"]
+  RECEIPT -. "rollback on failure" .-> TARGET

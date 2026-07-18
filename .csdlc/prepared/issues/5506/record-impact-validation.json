@@ -1,0 +1,18 @@
+{
+  "issue": 5506,
+  "card": "sor",
+  "expected_generation": 1,
+  "expected_digest": "25af870e1acd73755a1de5582459fce92eb43073f488d5f01c538a46e0c4637b",
+  "claim_id": "claim-5506-runtime-auth-coverage-map",
+  "actor": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+  "reason": "The coverage impact mapping and expression contracts passed.",
+  "operation": {
+    "operation": "record_validation",
+    "result": {
+      "command": ["bash", "adl/tools/test_check_coverage_impact.sh"],
+      "purpose": "Prove Runtime v3 API-auth source selects the focused runtime_v3_auth expression",
+      "outcome": "passed",
+      "evidence_ref": "local:5506-coverage-impact-contract-pass"
+    }
+  }
+}

@@ -1,0 +1,24 @@
+{
+  "issue": 5518,
+  "card": "sor",
+  "expected_generation": 14,
+  "expected_digest": "bbecb7ac625138ab0d96316abe69d84bcb937290bb185f371edc4fb9b20e05b5",
+  "claim_id": "claim-5518-terminal-plan-repair",
+  "actor": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+  "reason": "Journal-before-projection ordering passes durability, repair, formatting, and lint validation.",
+  "operation": {
+    "operation": "record_validation",
+    "result": {
+      "command": [
+        "cargo",
+        "test",
+        "--manifest-path",
+        "csdlc-v2/Cargo.toml",
+        "terminal_projection_and_receipt_recover_at_each_durable_boundary"
+      ],
+      "purpose": "Prove the original projection and receipt remain intact when interrupted immediately after journal durability",
+      "outcome": "passed",
+      "evidence_ref": "local FastWork: six-boundary durability test, focused terminal repair tests, strict all-target Clippy, cargo fmt check, and git diff check passed"
+    }
+  }
+}

@@ -1,0 +1,16 @@
+{
+  "authority_issue": 5516,
+  "authority_claim_id": "claim-5516-5494-terminal-design-repair",
+  "expected_authority_generation": 4,
+  "expected_authority_digest": "d5689d39a7819bf71f0129a313843279d14dac39eeafa2fe2962d72932c71b5e",
+  "target_issue": 5494,
+  "expected_target_generation": 61,
+  "expected_target_digest": "c8a6d419234685b1e4c0d898ffc885152e3edbfd6530d91866f617224db21ab0",
+  "expected_receipt_digest": "c621bdc0d00420a61222abc9b0e8247b2cf417e8b9915b0921faeab6dad0695b",
+  "expected_design_digest": "d35dc188153a0cfb654d3bc99e5fef6e3672974f725e60d4f8dbd189f4e9a13d",
+  "expected_diagram_digest": "d2edc9d5ff9516383e01aa249b3b10fca568be5db3a38f210f8b2681960b16b0",
+  "source_design_path": ".csdlc/prepared/issues/5516/design.md",
+  "source_diagram_path": ".csdlc/prepared/issues/5516/diagram.mmd",
+  "actor": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+  "reviewer": "subagent:019f7581-a4bf-7fb3-a900-3d71dfea4abc"
+}

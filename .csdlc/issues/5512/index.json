@@ -1,0 +1,250 @@
+{
+  "schema": "csdlc.issue.index.v1",
+  "issue": 5512,
+  "repository": "danielbaustin/agent-design-language",
+  "initialization_digest": "6a72c9067697b3b298b9ee9ad97efc1a57d61a7b5674ba9b4b6f737dc246c769",
+  "phase": "implemented",
+  "generation": 12,
+  "digest": "1b4d3fa40426a9eab8c10aa2edb92a8b9ded4647a16caed6c059d514d87bbac1",
+  "claim": {
+    "id": "claim-5512-runtime-v3-csm-coverage-filter",
+    "owner": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+    "generation": 12,
+    "acquired_unix_seconds": 1784377277,
+    "expires_unix_seconds": 1784463677,
+    "heartbeat_unix_seconds": 1784377277,
+    "branch": "codex/5512-runtime-v3-csm-coverage-filter",
+    "worktree": ".",
+    "protected_paths": [
+      "adl/tools/run_pr_fast_coverage_lane.sh",
+      "adl/tools/test_ci_runtime_contracts.sh",
+      "adl/tools/test_run_pr_fast_coverage_lane.sh"
+    ],
+    "purpose": "Keep foreign Runtime v3 and nonexistent binary selectors out of ADL focused coverage"
+  },
+  "review_assignment": null,
+  "review": null,
+  "publication": null,
+  "readiness": null,
+  "terminal": null,
+  "migration": null,
+  "design_path": ".csdlc/prepared/issues/5512/design.md",
+  "diagram_path": ".csdlc/prepared/issues/5512/diagram.mmd",
+  "design_review": {
+    "approved": {
+      "reviewer": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+      "revision": "389e313a0101bd380a9294b090884d97ad96e2933198b03831d3cdac1f5ced55"
+    }
+  },
+  "cards": {
+    "sip": {
+      "values_digest": "5abfafd6f4e46645555c50ca4c7e10eb3bb29ba2bcc31b3a49d02e3e58f0c3ea",
+      "rendered_digest": "1899d3145001e0d19020adbf8ef7a6408ec31c46c54245320c071fa3da96dff0",
+      "ast_digest": "50f89b85216f5fe0b17aa25ff4886f4ab0305e4de152b6acbbee1f1d2f3e5469"
+    },
+    "stp": {
+      "values_digest": "4609d6a76e1aa9030fbb633cc0b7fb15fc7a425e21c08071cc1e5e18bfbe82e8",
+      "rendered_digest": "d448e2be59e3c1eeaeffaa44b942a899a65cd095ca54414a44fcfb15482dfd15",
+      "ast_digest": "be3895138b394fddc09253e37415b8ecfe8583efed941511ec139556ef7821af"
+    },
+    "spp": {
+      "values_digest": "0dcf283cc735bbc3ab8195f97a449e603f79f52f069bbc66906e546ca377b5c2",
+      "rendered_digest": "aa91ef921b704440f821f2b8f33c032e74e2ed6f7d92ab57beea36f42b5c605f",
+      "ast_digest": "580adce886185b6ee4c7ac72cfabd54ea818161e0d2d28e0ed4f43cb0b82983b"
+    },
+    "vpp": {
+      "values_digest": "f174d6b07bf1f51e76bf62f6c9532ed75cf6300135d84bfa2ae995f5608f9c27",
+      "rendered_digest": "39ab0b825756d8ee00677186a4a524e1b390e01964514176a036dce520806eb0",
+      "ast_digest": "a6a84925634ffd8d4fe33250d97467498156a95030bd25ebb2ea4b152f51cee5"
+    },
+    "srp": {
+      "values_digest": "5f1543a3c218684e16aab8b776f497a406e6611c8084521a5ac7094577b9bb79",
+      "rendered_digest": "7195047d8344aa765b655327c5cfd75c2573fdd9a0b1c4a16ee5be38e2afbab9",
+      "ast_digest": "3390b613025d3adc612a1646e5d5fb7c6b0aa6ef1e802460681e228118f9b9ae"
+    },
+    "sor": {
+      "values_digest": "0beadbb3b2592d06c7a300a09fdc293f46f3e3fab0612ecce5c1ab8e5c13b115",
+      "rendered_digest": "cf5bed2a13b0e6c6f6cb310570a5d395c9bdcc7b12a726b068ce848c014a6127",
+      "ast_digest": "b1bffb4691ec1de5d1709e4d0578d035a4682ef67a761181ba07a6af4576ce73"
+    }
+  },
+  "transitions": [
+    {
+      "sequence": 1,
+      "from": "initialized",
+      "to": "ready",
+      "actor": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+      "reason": "automatic readiness verification"
+    },
+    {
+      "sequence": 2,
+      "from": "ready",
+      "to": "bound",
+      "actor": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+      "reason": "verified Git worktree binding"
+    },
+    {
+      "sequence": 3,
+      "from": "bound",
+      "to": "implemented",
+      "actor": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+      "reason": "The owning-crate coverage split and exact regression proof are complete."
+    },
+    {
+      "sequence": 4,
+      "from": "implemented",
+      "to": "reviewed",
+      "actor": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+      "reason": "Both review findings are fixed and the exact-head re-review is clean."
+    },
+    {
+      "sequence": 5,
+      "from": "reviewed",
+      "to": "implemented",
+      "actor": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+      "reason": "Recover exact review identity after committing typed review metadata; both substantive tooling blobs are byte-identical."
+    },
+    {
+      "sequence": 6,
+      "from": "implemented",
+      "to": "reviewed",
+      "actor": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+      "reason": "The exact metadata head is covered by non-substantive proof and the substantive repair remains review-clean."
+    },
+    {
+      "sequence": 7,
+      "from": "reviewed",
+      "to": "published",
+      "actor": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+      "reason": "observed exact PR after current review"
+    },
+    {
+      "sequence": 8,
+      "from": "published",
+      "to": "implemented",
+      "actor": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+      "reason": "Recover implementation after hosted CI exposed a stale static contract for the reviewed owning-crate coverage variable."
+    }
+  ],
+  "audit": [
+    {
+      "sequence": 1,
+      "generation": 0,
+      "actor": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+      "reason": "initialize issue record and all six cards",
+      "operation": "bootstrap"
+    },
+    {
+      "sequence": 2,
+      "generation": 0,
+      "actor": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+      "reason": "bind branch/worktree and activate claim",
+      "operation": "bind"
+    },
+    {
+      "sequence": 3,
+      "generation": 1,
+      "actor": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+      "reason": "Split the bounded Runtime v3 and CSM coverage expression by owning crate.",
+      "operation": "{\"operation\":\"record_execution\",\"summary\":\"Replace the invalid mixed coverage expression with valid ADL and Runtime v3 owning-crate expressions only for the bounded bridge route.\",\"changes\":[\"Detect the already bounded Runtime v3 and CSM bridge selector family\",\"Run the ADL coverage invocation with only CSM, long-lived-agent, and csmctl selectors\",\"Run auth, supervision, and topology selectors only through adl-runtime\",\"Use the exact failed GitHub expression as the regression fixture\"],\"artifacts\":[\"adl/tools/run_pr_fast_coverage_lane.sh\",\"adl/tools/test_run_pr_fast_coverage_lane.sh\"]}"
+    },
+    {
+      "sequence": 4,
+      "generation": 2,
+      "actor": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+      "reason": "The exact failed-expression coverage contract passed.",
+      "operation": "{\"operation\":\"record_validation\",\"result\":{\"command\":[\"bash\",\"adl/tools/test_run_pr_fast_coverage_lane.sh\"],\"purpose\":\"Prove owning-crate filter splitting, foreign-selector exclusion, and composed summaries\",\"outcome\":\"passed\",\"evidence_ref\":\"local:5512-exact-29644007246-expression-contract-pass\"}}"
+    },
+    {
+      "sequence": 5,
+      "generation": 3,
+      "actor": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+      "reason": "The surrounding path-policy and fast-test contracts passed.",
+      "operation": "{\"operation\":\"record_validation\",\"result\":{\"command\":[\"bash\",\"adl/tools/test_ci_path_policy.sh\"],\"purpose\":\"Prove the narrow repair preserves existing validation routing contracts\",\"outcome\":\"passed\",\"evidence_ref\":\"local:5512-ci-path-policy-contract-pass\"}}"
+    },
+    {
+      "sequence": 6,
+      "generation": 4,
+      "actor": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+      "reason": "The owning-crate coverage split and exact regression proof are complete.",
+      "operation": "{\"operation\":\"advance_phase\",\"phase\":\"implemented\"}"
+    },
+    {
+      "sequence": 7,
+      "generation": 4,
+      "actor": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+      "reason": "assign bounded exact-revision review",
+      "operation": "assign_review"
+    },
+    {
+      "sequence": 8,
+      "generation": 5,
+      "actor": "subagent:019f7532-dfd0-7b52-a750-7df6cce35b42",
+      "reason": "atomically record review evidence and SRP projection",
+      "operation": "record_review"
+    },
+    {
+      "sequence": 9,
+      "generation": 6,
+      "actor": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+      "reason": "Both review findings are fixed and the exact-head re-review is clean.",
+      "operation": "{\"operation\":\"advance_phase\",\"phase\":\"reviewed\"}"
+    },
+    {
+      "sequence": 10,
+      "generation": 7,
+      "actor": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+      "reason": "Recover exact review identity after committing typed review metadata; both substantive tooling blobs are byte-identical.",
+      "operation": "recover_review"
+    },
+    {
+      "sequence": 11,
+      "generation": 7,
+      "actor": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+      "reason": "assign bounded exact-revision review",
+      "operation": "assign_review"
+    },
+    {
+      "sequence": 12,
+      "generation": 8,
+      "actor": "subagent:019f7532-dfd0-7b52-a750-7df6cce35b42",
+      "reason": "atomically record review evidence and SRP projection",
+      "operation": "record_review"
+    },
+    {
+      "sequence": 13,
+      "generation": 9,
+      "actor": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+      "reason": "The exact metadata head is covered by non-substantive proof and the substantive repair remains review-clean.",
+      "operation": "{\"operation\":\"advance_phase\",\"phase\":\"reviewed\"}"
+    },
+    {
+      "sequence": 14,
+      "generation": 10,
+      "actor": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+      "reason": "atomically record observed GitHub publication and SOR projection",
+      "operation": "record_publication"
+    },
+    {
+      "sequence": 15,
+      "generation": 11,
+      "actor": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+      "reason": "Recover implementation after hosted CI exposed a stale static contract for the reviewed owning-crate coverage variable.",
+      "operation": "recover_review"
+    },
+    {
+      "sequence": 16,
+      "generation": 11,
+      "actor": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+      "reason": "Align the static CI runtime contract with the reviewed owning-crate coverage variable exposed by hosted CI.",
+      "operation": "{\"add_protected_paths\":[\"adl/tools/test_ci_runtime_contracts.sh\"],\"operation\":\"amend_claim_scope\"}"
+    },
+    {
+      "sequence": 17,
+      "generation": 12,
+      "actor": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+      "reason": "The static CI runtime contract now verifies the owning-crate ADL coverage expression.",
+      "operation": "{\"operation\":\"record_validation\",\"result\":{\"command\":[\"bash\",\"adl/tools/test_ci_runtime_contracts.sh\"],\"purpose\":\"Prove the CI contract accepts the reviewed owning-crate coverage variable\",\"outcome\":\"passed\",\"evidence_ref\":\"local:5512-ci-runtime-contract-pass\"}}"
+    }
+  ]
+}

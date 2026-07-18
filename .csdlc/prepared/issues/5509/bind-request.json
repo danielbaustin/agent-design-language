@@ -1,0 +1,25 @@
+{
+  "issue": 5509,
+  "base_branch": "main",
+  "branch": "codex/5509-runtime-v3-csm-fast-lane",
+  "worktree": ".",
+  "claim": {
+    "id": "claim-5509-runtime-v3-csm-fast-lane",
+    "owner": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+    "generation": 0,
+    "acquired_unix_seconds": 1784375319,
+    "expires_unix_seconds": 1784461719,
+    "heartbeat_unix_seconds": 1784375319,
+    "branch": "codex/5509-runtime-v3-csm-fast-lane",
+    "worktree": ".",
+    "protected_paths": [
+      "adl/tools/ci_path_policy.sh",
+      "adl/tools/run_pr_fast_test_lane.sh",
+      "adl/tools/run_pr_fast_coverage_lane.sh",
+      "adl/tools/test_ci_path_policy.sh",
+      "adl/tools/test_run_pr_fast_test_lane.sh",
+      "adl/tools/test_run_pr_fast_coverage_lane.sh"
+    ],
+    "purpose": "Route bounded mixed Runtime v3 and CSM changes through independent focused validation"
+  }
+}

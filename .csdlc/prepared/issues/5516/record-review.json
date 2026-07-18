@@ -1,0 +1,35 @@
+{
+  "issue": 5516,
+  "expected_generation": 5,
+  "expected_digest": "ebee7a2bb714ce795ce27150854c9fb86df52ea4418784ace06b74b40aaa3ec2",
+  "claim_id": "claim-5516-5494-terminal-design-repair",
+  "actor": "subagent:019f7581-a4bf-7fb3-a900-3d71dfea4abc",
+  "evidence": {
+    "reviewer": "subagent:019f7581-a4bf-7fb3-a900-3d71dfea4abc",
+    "scope": [
+      ".csdlc/issues/5494/retained/design.md",
+      ".csdlc/issues/5494/retained/diagram.mmd",
+      ".csdlc/issues/5494/index.json",
+      ".csdlc/issues/5516",
+      ".csdlc/prepared/issues/5516",
+      "docs/review-fixes/runtime/WP07A_REARCHITECTURE_REPAIR_5409.md",
+      "docs/milestones/v0.91.7/review/V0917_SPRINT_REVIEW_REGISTER.md"
+    ],
+    "reviewed_revision": "git-blake3:735ee4e4b179e7672603342c67d45dcb9c9a0f4c:07ab1cf39b48be5e60fa0fae22649ddf3153304f5ae586bc9ac8400d6486b6e1",
+    "findings": [
+      {
+        "id": "F-5516-1",
+        "severity": "p2",
+        "summary": "The implemented terminal repair initially left SPP step S2 pending and later required exact prepared-artifact digest reapproval after whitespace normalization.",
+        "actionable": true,
+        "in_scope": true,
+        "disposition": "fixed",
+        "fix_revision": "git-blake3:735ee4e4b179e7672603342c67d45dcb9c9a0f4c:07ab1cf39b48be5e60fa0fae22649ddf3153304f5ae586bc9ac8400d6486b6e1",
+        "route": null
+      }
+    ],
+    "residual_risks": [],
+    "completed": true,
+    "non_substantive_proof": null
+  }
+}

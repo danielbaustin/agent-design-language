@@ -1,0 +1,18 @@
+{
+  "issue": 5494,
+  "card": "sor",
+  "expected_generation": 39,
+  "expected_digest": "b162cb31e6773fe0ae722f2af25763325e547be954c5c511c39fae9da00312b6",
+  "claim_id": "claim-5494-wp07a-completion",
+  "actor": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+  "reason": "The authenticated client and delayed-listener regressions pass with the explicit bounded response deadline.",
+  "operation": {
+    "operation": "record_validation",
+    "result": {
+      "command": ["cargo", "test", "--manifest-path", "adl/Cargo.toml", "csmctl_authenticated_api_client_", "--", "--nocapture"],
+      "purpose": "Prove normal authenticated access and delayed listener startup remain correct with the coverage-tolerant deadline",
+      "outcome": "passed",
+      "evidence_ref": "local FastWork: 2 focused csmctl authenticated API tests passed"
+    }
+  }
+}

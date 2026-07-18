@@ -1,0 +1,517 @@
+{
+  "schema": "csdlc.issue.index.v1",
+  "issue": 5464,
+  "repository": "danielbaustin/agent-design-language",
+  "initialization_digest": "ae3e72f2513ddf93bede427c2ef36d2b067ddb7c1bd59bd1003a94f2e520d5fb",
+  "phase": "closed_out",
+  "generation": 30,
+  "digest": "8efe1964d85d0a6e3fa341ae1e24e927ce93cd85f53c19f707229d2dd40337f3",
+  "claim": null,
+  "review_assignment": {
+    "reviewer": "bounded-subagent-review-5464",
+    "assigned_by": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+    "revision": "git-blake3:cd1a7c902d5a9475786213df4a8499ef411acc80:664471ad93686440b4d01c42cd3418ddf7b18479e95f29357a03bd25c4546db5",
+    "scope": [
+      ".github/workflows/ci.yaml",
+      "adl/tools/test_ci_runtime_contracts.sh"
+    ]
+  },
+  "review": {
+    "reviewer": "bounded-subagent-review-5464",
+    "scope": [
+      ".github/workflows/ci.yaml",
+      "adl/tools/test_ci_runtime_contracts.sh"
+    ],
+    "reviewed_revision": "git-blake3:cd1a7c902d5a9475786213df4a8499ef411acc80:664471ad93686440b4d01c42cd3418ddf7b18479e95f29357a03bd25c4546db5",
+    "findings": [],
+    "residual_risks": [],
+    "completed": true,
+    "non_substantive_proof": null
+  },
+  "publication": {
+    "repository": "danielbaustin/agent-design-language",
+    "issue": 5464,
+    "pull_request": 5490,
+    "url": "https://github.com/danielbaustin/agent-design-language/pull/5490",
+    "base": "main",
+    "head": "codex/5464-nextest-install-contract",
+    "revision": "git-blake3:cd1a7c902d5a9475786213df4a8499ef411acc80:664471ad93686440b4d01c42cd3418ddf7b18479e95f29357a03bd25c4546db5",
+    "draft": false,
+    "observed_state": "merged"
+  },
+  "readiness": {
+    "pull_request": 5490,
+    "head_sha": "cd1a7c902d5a9475786213df4a8499ef411acc80",
+    "checks": [
+      {
+        "name": "adl-ci",
+        "requirement": "required",
+        "conclusion": "success",
+        "details_url": "https://github.com/danielbaustin/agent-design-language/actions/runs/29636221202/job/88059371151"
+      },
+      {
+        "name": "adl-coverage",
+        "requirement": "required",
+        "conclusion": "success",
+        "details_url": "https://github.com/danielbaustin/agent-design-language/actions/runs/29636221202/job/88059333430"
+      },
+      {
+        "name": "adl-tooling-contracts",
+        "requirement": "required",
+        "conclusion": "success",
+        "details_url": "https://github.com/danielbaustin/agent-design-language/actions/runs/29636221202/job/88059321217"
+      },
+      {
+        "name": "adl-path-policy",
+        "requirement": "required",
+        "conclusion": "success",
+        "details_url": "https://github.com/danielbaustin/agent-design-language/actions/runs/29636221202/job/88059309751"
+      },
+      {
+        "name": "adl-demo-proof",
+        "requirement": "required",
+        "conclusion": "success",
+        "details_url": "https://github.com/danielbaustin/agent-design-language/actions/runs/29636221202/job/88059321207"
+      },
+      {
+        "name": "adl-coverage-hosted",
+        "requirement": "optional",
+        "conclusion": "success",
+        "details_url": "https://github.com/danielbaustin/agent-design-language/actions/runs/29636221202/job/88059321223"
+      },
+      {
+        "name": "adl-spot-ci-and-coverage",
+        "requirement": "optional",
+        "conclusion": "skipped",
+        "details_url": "https://github.com/danielbaustin/agent-design-language/actions/runs/29636221202/job/88059321462"
+      }
+    ],
+    "review_state": "not_required",
+    "conflict_state": "clean",
+    "post_publication_findings": [],
+    "ready": true,
+    "blockers": []
+  },
+  "terminal": {
+    "pull_request": 5490,
+    "disposition": "merged",
+    "observed_sha": "cd1a7c902d5a9475786213df4a8499ef411acc80",
+    "observed_state": "merged",
+    "receipt_path": "csdlc-v2/closeout/5464.json",
+    "released_branch": "codex/5464-nextest-install-contract",
+    "released_worktree": ".worktrees/adl-wp-5464",
+    "released_protected_paths": [
+      ".github/workflows/ci.yaml",
+      "adl/tools/test_ci_runtime_contracts.sh"
+    ]
+  },
+  "migration": null,
+  "design_path": ".csdlc/issues/5464/retained/design.md",
+  "diagram_path": ".csdlc/issues/5464/retained/diagram.mmd",
+  "design_review": {
+    "approved": {
+      "reviewer": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+      "revision": "7b4911b3d2706584d0f30221dc602dd7e4928f6749d0945ab70fb700dcf3d503"
+    }
+  },
+  "cards": {
+    "sip": {
+      "values_digest": "a7dfbebfd8bd583e42db464dd09479bc43940c76a43ce16cad31e3635e347ad4",
+      "rendered_digest": "a2fb478ef4bd13ba429e8c0f8c544110e67e901a6de718d2cf148eca1f55f1a6",
+      "ast_digest": "5c565f0762207eecbe4664aff60df4a55a8349758e22cc60254ac86f612dc1c6"
+    },
+    "stp": {
+      "values_digest": "513e9d14ef292585c31c9f46c2b67a0be86ec28766b5f79492ade69456374d97",
+      "rendered_digest": "fc4b91f3228586ba35da574b082470293a7bf1b5145fea2dc54b5ca65c5c9d38",
+      "ast_digest": "564b0df1e2c6093cb771e9b8d15562dd48d1ce5df66fb3477e27ad87a9cfd372"
+    },
+    "spp": {
+      "values_digest": "84e10ad5960208c33c46a6cdcfb1bff4cba9737552a26c347b472bfe42684cac",
+      "rendered_digest": "4747cf9a03d8ffd1935e448ab637f737ba0d85cf539b3d9e93633a39f9586e82",
+      "ast_digest": "a11e62e396f15db86e91f1c6087bf47c1c64d37e8dc15b890fc4dc684eddcf0b"
+    },
+    "vpp": {
+      "values_digest": "d274bf0039d7a1b4ca23c06a2c013b2ad852a7431d71220e76e09854dceafa8e",
+      "rendered_digest": "af285e1853e0c70310735ec1d4b37d2403063c9b4a0d40fea3b5c7c14b4a15d9",
+      "ast_digest": "a0e5edacd95872cddf925e747164b0736609631195ab5b710158fac05b60bfa0"
+    },
+    "srp": {
+      "values_digest": "ce3ad04632bf245dca33f001ac8e28e4edba0dccb798cce9a43c9c984c3d62da",
+      "rendered_digest": "5425dac5aafe27f28b1be3edf940650084b3d8b46d82c3e2ad5ea4daff4979c2",
+      "ast_digest": "dda1cb64458a52b9eeebc60216b2b33138e98064906578bee5872a1117d53e3b"
+    },
+    "sor": {
+      "values_digest": "ef15eb6843f176837efe2b7d981aa39fb30a13ceee92433b54add6b96060618f",
+      "rendered_digest": "a502c1ef81afc26df93a5948c65b5ae947a99e2df88e271e66a72838e611c98c",
+      "ast_digest": "134452ce6fb145763082b4a3c075e7df5e612d2f041c8d89cc1050201a0db9fc"
+    }
+  },
+  "transitions": [
+    {
+      "sequence": 1,
+      "from": "initialized",
+      "to": "ready",
+      "actor": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+      "reason": "automatic readiness verification"
+    },
+    {
+      "sequence": 2,
+      "from": "ready",
+      "to": "bound",
+      "actor": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+      "reason": "verified Git worktree binding"
+    },
+    {
+      "sequence": 3,
+      "from": "bound",
+      "to": "implemented",
+      "actor": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+      "reason": "The bounded nextest installer repair and focused local proof are complete."
+    },
+    {
+      "sequence": 4,
+      "from": "implemented",
+      "to": "reviewed",
+      "actor": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+      "reason": "Exact current-revision review passed after all five actionable findings were fixed."
+    },
+    {
+      "sequence": 5,
+      "from": "reviewed",
+      "to": "implemented",
+      "actor": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+      "reason": "Recover from review identity staleness after committing review lifecycle metadata; substantive scope is unchanged."
+    },
+    {
+      "sequence": 6,
+      "from": "implemented",
+      "to": "reviewed",
+      "actor": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+      "reason": "Publication-head exact review passed with protected scope unchanged and focused validation green."
+    },
+    {
+      "sequence": 7,
+      "from": "reviewed",
+      "to": "published",
+      "actor": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+      "reason": "observed exact draft PR after current review"
+    },
+    {
+      "sequence": 8,
+      "from": "published",
+      "to": "implemented",
+      "actor": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+      "reason": "Recover publication review after committing the publication receipt so the actual final PR head receives exact review."
+    },
+    {
+      "sequence": 9,
+      "from": "implemented",
+      "to": "reviewed",
+      "actor": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+      "reason": "Exact final PR-head review passed with protected scope unchanged and focused validation green."
+    },
+    {
+      "sequence": 10,
+      "from": "reviewed",
+      "to": "published",
+      "actor": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+      "reason": "observed exact draft PR after current review"
+    },
+    {
+      "sequence": 11,
+      "from": "published",
+      "to": "merge_ready",
+      "actor": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+      "reason": "observed required checks, review, and conflict readiness"
+    },
+    {
+      "sequence": 12,
+      "from": "merge_ready",
+      "to": "merged",
+      "actor": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+      "reason": "observed exact PR merged"
+    },
+    {
+      "sequence": 13,
+      "from": "merged",
+      "to": "closed_out",
+      "actor": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+      "reason": "terminal truth recorded and claim released"
+    }
+  ],
+  "audit": [
+    {
+      "sequence": 1,
+      "generation": 0,
+      "actor": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+      "reason": "initialize issue record and all six cards",
+      "operation": "bootstrap"
+    },
+    {
+      "sequence": 2,
+      "generation": 0,
+      "actor": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+      "reason": "bind branch/worktree and activate claim",
+      "operation": "bind"
+    },
+    {
+      "sequence": 3,
+      "generation": 1,
+      "actor": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+      "reason": "Implemented the bounded fail-closed nextest installation contract.",
+      "operation": "{\"operation\":\"record_execution\",\"summary\":\"Replaced the stale nextest installer manifest with the immutable v2.82.10 revision that contains nextest 0.9.140 and disabled fallback on every hosted install.\",\"changes\":[\"Pin all four nextest install steps to install-action v2.82.10 commit 50414676f9f5d50a65992c6dd2ed02641263226c\",\"Set fallback to none on every nextest install step\",\"Require the canonical installer, nextest version, fallback policy, and complete four-step inventory in the CI runtime contract\"],\"artifacts\":[\".github/workflows/ci.yaml\",\"adl/tools/test_ci_runtime_contracts.sh\"]}"
+    },
+    {
+      "sequence": 4,
+      "generation": 2,
+      "actor": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+      "reason": "The focused nextest installation contract passed without dispatching any workflow.",
+      "operation": "{\"operation\":\"record_validation\",\"result\":{\"command\":[\"bash\",\"adl/tools/test_ci_runtime_contracts.sh\"],\"purpose\":\"Prove every hosted nextest install uses the supported immutable manifest, pins 0.9.140, and disables fallback\",\"outcome\":\"passed\",\"evidence_ref\":\"local:5464-nextest-install-contract-pass\"}}"
+    },
+    {
+      "sequence": 5,
+      "generation": 3,
+      "actor": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+      "reason": "The bounded nextest installer repair and focused local proof are complete.",
+      "operation": "{\"operation\":\"advance_phase\",\"phase\":\"implemented\"}"
+    },
+    {
+      "sequence": 6,
+      "generation": 3,
+      "actor": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+      "reason": "assign bounded exact-revision review",
+      "operation": "assign_review"
+    },
+    {
+      "sequence": 7,
+      "generation": 4,
+      "actor": "bounded-subagent-review-5464",
+      "reason": "atomically record review evidence and SRP projection",
+      "operation": "record_review"
+    },
+    {
+      "sequence": 8,
+      "generation": 5,
+      "actor": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+      "reason": "Fixed F-5464-1 by enforcing whole-workflow nextest inventory and adding bypass fixtures.",
+      "operation": "{\"operation\":\"record_execution\",\"summary\":\"Close alternate YAML-form escapes by coupling canonical named-block checks to exact whole-workflow nextest selection counts.\",\"changes\":[\"Require exactly four nextest selections and exactly four 0.9.140 selections across the whole workflow\",\"Reject the alternate cargo-nextest alias\",\"Add negative fixtures for unnamed, quoted, inline-map, floating-installer, and fallback-enabled forms\"],\"artifacts\":[\"adl/tools/test_ci_runtime_contracts.sh\"]}"
+    },
+    {
+      "sequence": 9,
+      "generation": 6,
+      "actor": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+      "reason": "The nextest contract and all alternate-form negative fixtures pass after F-5464-1 repair.",
+      "operation": "{\"operation\":\"record_validation\",\"result\":{\"command\":[\"bash\",\"adl/tools/test_ci_runtime_contracts.sh\"],\"purpose\":\"Prove unnamed, quoted, inline, floating-installer, and fallback-enabled nextest forms cannot escape enforcement\",\"outcome\":\"passed\",\"evidence_ref\":\"local:5464-nextest-bypass-regression-pass\"}}"
+    },
+    {
+      "sequence": 10,
+      "generation": 6,
+      "actor": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+      "reason": "assign bounded exact-revision review",
+      "operation": "assign_review"
+    },
+    {
+      "sequence": 11,
+      "generation": 7,
+      "actor": "bounded-subagent-review-5464",
+      "reason": "atomically record review evidence and SRP projection",
+      "operation": "record_review"
+    },
+    {
+      "sequence": 12,
+      "generation": 8,
+      "actor": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+      "reason": "Fixed F-5464-2 and F-5464-3 by inventorying every install-action step and testing both unversioned aliases.",
+      "operation": "{\"operation\":\"record_execution\",\"summary\":\"Validate all install-action steps before classifying normalized nextest and cargo-nextest tool values.\",\"changes\":[\"Require each install-action use to occupy its own named step\",\"Normalize block-style tool scalars and classify versioned and unversioned nextest aliases\",\"Add negative fixtures for unversioned nextest and cargo-nextest aliases\"],\"artifacts\":[\"adl/tools/test_ci_runtime_contracts.sh\"]}"
+    },
+    {
+      "sequence": 13,
+      "generation": 9,
+      "actor": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+      "reason": "The focused contract passes with unversioned alias regression fixtures.",
+      "operation": "{\"operation\":\"record_validation\",\"result\":{\"command\":[\"bash\",\"adl/tools/test_ci_runtime_contracts.sh\"],\"purpose\":\"Prove every install-action step is inventoried and both unversioned nextest aliases fail closed\",\"outcome\":\"passed\",\"evidence_ref\":\"local:5464-unversioned-alias-regression-pass\"}}"
+    },
+    {
+      "sequence": 14,
+      "generation": 9,
+      "actor": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+      "reason": "assign bounded exact-revision review",
+      "operation": "assign_review"
+    },
+    {
+      "sequence": 15,
+      "generation": 10,
+      "actor": "bounded-subagent-review-5464",
+      "reason": "atomically record review evidence and SRP projection",
+      "operation": "record_review"
+    },
+    {
+      "sequence": 16,
+      "generation": 11,
+      "actor": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+      "reason": "Fixed F-5464-4 by replacing line-oriented nextest inspection with structural YAML parsing.",
+      "operation": "{\"operation\":\"record_execution\",\"summary\":\"Use Ruby Psych to normalize all workflow step and input forms before enforcing the nextest contract.\",\"changes\":[\"Parse ci.yaml with YAML.safe_load instead of regex for nextest installer enforcement\",\"Traverse every job step and normalize quoted, block, and inline mappings\",\"Add quoted installer and fully inline step bypass fixtures\"],\"artifacts\":[\"adl/tools/test_ci_runtime_contracts.sh\"]}"
+    },
+    {
+      "sequence": 17,
+      "generation": 12,
+      "actor": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+      "reason": "The structural YAML contract and all adversarial fixtures pass after F-5464-4 repair.",
+      "operation": "{\"operation\":\"record_validation\",\"result\":{\"command\":[\"bash\",\"adl/tools/test_ci_runtime_contracts.sh\"],\"purpose\":\"Prove structural nextest enforcement covers quoted installer scalars and fully inline workflow steps\",\"outcome\":\"passed\",\"evidence_ref\":\"local:5464-structural-yaml-regression-pass\"}}"
+    },
+    {
+      "sequence": 18,
+      "generation": 12,
+      "actor": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+      "reason": "assign bounded exact-revision review",
+      "operation": "assign_review"
+    },
+    {
+      "sequence": 19,
+      "generation": 13,
+      "actor": "bounded-subagent-review-5464",
+      "reason": "atomically record review evidence and SRP projection",
+      "operation": "record_review"
+    },
+    {
+      "sequence": 20,
+      "generation": 14,
+      "actor": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+      "reason": "Fixed F-5464-5 by tokenizing install-action tool lists using comma and whitespace semantics.",
+      "operation": "{\"operation\":\"record_execution\",\"summary\":\"Classify every install-action tool token independently and reject nextest-bearing multi-tool steps.\",\"changes\":[\"Split tool inputs on commas and whitespace\",\"Require nextest-bearing steps to select only nextest@0.9.140\",\"Add comma-list, whitespace-list, and cargo-nextest multi-tool fixtures\"],\"artifacts\":[\"adl/tools/test_ci_runtime_contracts.sh\"]}"
+    },
+    {
+      "sequence": 21,
+      "generation": 15,
+      "actor": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+      "reason": "The structural contract passes with all multi-tool regression fixtures.",
+      "operation": "{\"operation\":\"record_validation\",\"result\":{\"command\":[\"bash\",\"adl/tools/test_ci_runtime_contracts.sh\"],\"purpose\":\"Prove comma- and whitespace-separated tool lists cannot hide nextest or cargo-nextest\",\"outcome\":\"passed\",\"evidence_ref\":\"local:5464-multitool-regression-pass\"}}"
+    },
+    {
+      "sequence": 22,
+      "generation": 15,
+      "actor": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+      "reason": "assign bounded exact-revision review",
+      "operation": "assign_review"
+    },
+    {
+      "sequence": 23,
+      "generation": 16,
+      "actor": "bounded-subagent-review-5464",
+      "reason": "atomically record review evidence and SRP projection",
+      "operation": "record_review"
+    },
+    {
+      "sequence": 24,
+      "generation": 17,
+      "actor": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+      "reason": "Exact current-revision review passed after all five actionable findings were fixed.",
+      "operation": "{\"operation\":\"advance_phase\",\"phase\":\"reviewed\"}"
+    },
+    {
+      "sequence": 25,
+      "generation": 18,
+      "actor": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+      "reason": "Recover from review identity staleness after committing review lifecycle metadata; substantive scope is unchanged.",
+      "operation": "recover_review"
+    },
+    {
+      "sequence": 26,
+      "generation": 18,
+      "actor": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+      "reason": "assign bounded exact-revision review",
+      "operation": "assign_review"
+    },
+    {
+      "sequence": 27,
+      "generation": 19,
+      "actor": "bounded-subagent-review-5464",
+      "reason": "atomically record review evidence and SRP projection",
+      "operation": "record_review"
+    },
+    {
+      "sequence": 28,
+      "generation": 20,
+      "actor": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+      "reason": "Publication-head exact review passed with protected scope unchanged and focused validation green.",
+      "operation": "{\"operation\":\"advance_phase\",\"phase\":\"reviewed\"}"
+    },
+    {
+      "sequence": 29,
+      "generation": 21,
+      "actor": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+      "reason": "atomically record observed GitHub publication and SOR projection",
+      "operation": "record_publication"
+    },
+    {
+      "sequence": 30,
+      "generation": 22,
+      "actor": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+      "reason": "Recover publication review after committing the publication receipt so the actual final PR head receives exact review.",
+      "operation": "recover_review"
+    },
+    {
+      "sequence": 31,
+      "generation": 22,
+      "actor": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+      "reason": "assign bounded exact-revision review",
+      "operation": "assign_review"
+    },
+    {
+      "sequence": 32,
+      "generation": 23,
+      "actor": "bounded-subagent-review-5464",
+      "reason": "atomically record review evidence and SRP projection",
+      "operation": "record_review"
+    },
+    {
+      "sequence": 33,
+      "generation": 24,
+      "actor": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+      "reason": "Exact final PR-head review passed with protected scope unchanged and focused validation green.",
+      "operation": "{\"operation\":\"advance_phase\",\"phase\":\"reviewed\"}"
+    },
+    {
+      "sequence": 34,
+      "generation": 25,
+      "actor": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+      "reason": "atomically record observed GitHub publication and SOR projection",
+      "operation": "record_publication"
+    },
+    {
+      "sequence": 35,
+      "generation": 26,
+      "actor": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+      "reason": "GitHub-hosted installer proof completed successfully with no fallback warning or annotations.",
+      "operation": "{\"operation\":\"record_validation\",\"result\":{\"command\":[\"gh\",\"api\",\"repos/danielbaustin/agent-design-language/actions/jobs/88059440377/logs\"],\"purpose\":\"Prove nextest 0.9.140 downloads directly from the supported release asset, verifies SHA-256, and emits no unsupported-binary or cargo-binstall fallback warning\",\"outcome\":\"passed\",\"evidence_ref\":\"github-actions:run-29636408536:job-88059440377:direct-nextest-install:annotations-empty:spot-skipped\"}}"
+    },
+    {
+      "sequence": 36,
+      "generation": 27,
+      "actor": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+      "reason": "record normalized remote readiness without replacing pre-publication review",
+      "operation": "record_readiness"
+    },
+    {
+      "sequence": 37,
+      "generation": 28,
+      "actor": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+      "reason": "record normalized remote readiness without replacing pre-publication review",
+      "operation": "record_readiness"
+    },
+    {
+      "sequence": 38,
+      "generation": 29,
+      "actor": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+      "reason": "atomically finalize SOR/index and release claim/protected paths",
+      "operation": "record_terminal"
+    },
+    {
+      "sequence": 39,
+      "generation": 30,
+      "actor": "codex-terminal-closeout",
+      "reason": "Materialize the retained terminal receipt after merged PR #5490 and closed issue #5464.",
+      "operation": "reconcile_terminal"
+    }
+  ]
+}

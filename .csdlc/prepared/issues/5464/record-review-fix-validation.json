@@ -1,0 +1,18 @@
+{
+  "issue": 5464,
+  "card": "sor",
+  "expected_generation": 5,
+  "expected_digest": "981da9817477e64bebcb37d4031cac3e25d5b6f46058f19f085d733e313ced04",
+  "claim_id": "claim-5464-nextest-install-contract",
+  "actor": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+  "reason": "The nextest contract and all alternate-form negative fixtures pass after F-5464-1 repair.",
+  "operation": {
+    "operation": "record_validation",
+    "result": {
+      "command": ["bash", "adl/tools/test_ci_runtime_contracts.sh"],
+      "purpose": "Prove unnamed, quoted, inline, floating-installer, and fallback-enabled nextest forms cannot escape enforcement",
+      "outcome": "passed",
+      "evidence_ref": "local:5464-nextest-bypass-regression-pass"
+    }
+  }
+}

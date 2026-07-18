@@ -1,0 +1,81 @@
+{
+  "identity": {
+    "schema_version": "1.0.0",
+    "template_version": "1.0.0",
+    "issue": 5509,
+    "repository": "danielbaustin/agent-design-language",
+    "title": "[v0.91.7][tooling][CI] Keep mixed Runtime v3 and CSM validation out of Runtime v2 coverage",
+    "slug": "v0-91-7-runtime-v3-csm-fast-lane",
+    "version": "v0.91.7",
+    "generation": 7
+  },
+  "status": "ready",
+  "content": {
+    "card_kind": "spp",
+    "values": {
+      "plan_revision": 1,
+      "summary": "Recognize the exact Runtime v3/CSM family, execute each crate's focused tests independently, compose coverage, and preserve the existing fallback.",
+      "steps": [
+        {
+          "id": "S1",
+          "action": "Add the bounded mixed-crate classifier and execution plan",
+          "acceptance_ids": [
+            "AC-1",
+            "AC-2",
+            "AC-4",
+            "AC-5"
+          ],
+          "status": "pending"
+        },
+        {
+          "id": "S2",
+          "action": "Align focused coverage routing and summary composition",
+          "acceptance_ids": [
+            "AC-3",
+            "AC-4"
+          ],
+          "status": "pending"
+        },
+        {
+          "id": "S3",
+          "action": "Run contract tests, review, publish, and merge",
+          "acceptance_ids": [
+            "AC-1",
+            "AC-2",
+            "AC-3",
+            "AC-4",
+            "AC-5"
+          ],
+          "status": "pending"
+        }
+      ],
+      "affected_areas": [],
+      "invariants": [
+        "Every accepted path belongs to the declared Runtime v3 or CSM family",
+        "Both crates run when both crates change",
+        "All other mixed-crate shapes retain existing fail-closed behavior",
+        "No Runtime v2 source is modified"
+      ],
+      "risks": [
+        "An overly broad classifier could suppress required full validation",
+        "A single-crate runner could silently omit half of the change",
+        "Coverage summary composition could report only one crate"
+      ],
+      "execution_estimates": {
+        "elapsed_seconds": 21600,
+        "total_tokens": 80000,
+        "validation_seconds": 3600
+      },
+      "stop_conditions": [
+        "The route requires modifying Runtime v2",
+        "The accepted family cannot be expressed as a closed path set",
+        "Validation requires AWS"
+      ],
+      "replan_triggers": [],
+      "design_ref": ".csdlc/prepared/issues/5509/design.md",
+      "design_digest": "b62620c42c4c68aa5ab6b70aec61c63346098008aeea9ad3751820d2e07d770a",
+      "diagram_ref": ".csdlc/prepared/issues/5509/diagram.mmd",
+      "diagram_digest": "574be616d68a4104dc22f7ff9836dd5a2ac93f84dcb1731268bc1384a263c68c"
+    }
+  }
+}

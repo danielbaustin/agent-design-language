@@ -1,0 +1,18 @@
+{
+  "issue": 5506,
+  "card": "sor",
+  "expected_generation": 2,
+  "expected_digest": "f799317fb236524f3e086ee0dec9161828aa021a9d576271ac09cf6ea8f74ded",
+  "claim_id": "claim-5506-runtime-auth-coverage-map",
+  "actor": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+  "reason": "The PR-fast manifest-routing contracts passed.",
+  "operation": {
+    "operation": "record_validation",
+    "result": {
+      "command": ["bash", "adl/tools/test_run_pr_fast_coverage_lane.sh"],
+      "purpose": "Prove auth-only coverage uses adl-runtime while mixed expressions retain the ADL workspace",
+      "outcome": "passed",
+      "evidence_ref": "local:5506-pr-fast-routing-contract-pass"
+    }
+  }
+}

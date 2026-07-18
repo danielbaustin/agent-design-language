@@ -1,0 +1,48 @@
+{
+  "identity": {
+    "schema_version": "1.0.0",
+    "template_version": "1.0.0",
+    "issue": 5409,
+    "repository": "danielbaustin/agent-design-language",
+    "title": "[v0.91.7][review-fix][WP-07A] Complete and prove the #5121 runtime rearchitecture",
+    "slug": "v0-91-7-review-fix-wp07a-complete-prove-5121-runtime-rearchitecture",
+    "version": "v0.91.7",
+    "generation": 15
+  },
+  "status": "ready",
+  "content": {
+    "card_kind": "stp",
+    "values": {
+      "task_boundary": "Complete the runtime-owned topology, readiness, credential-renewal, and soak surfaces without redesigning unrelated provider or AWS infrastructure.",
+      "deliverables": [
+        "Production assembly aligned with the supervised component topology",
+        "Readiness health covering every required component/channel",
+        "Credential overlap renewal tests and assembled-runtime soak evidence"
+      ],
+      "acceptance_criteria": [
+        "Emergency stop accepts only a verifiable governed authority and rejects forged or wrong-authority credentials",
+        "API Gateway proof exercises /status, /health, /ready, /metrics, /events, and /chronosense plus required failure cases, or is explicitly classified as bounded smoke",
+        "#4906 records integrated closure or an operator-approved release disposition",
+        "WP-07 readiness consumers remain blocked until the final gate is truthful",
+        "Updated proof and review evidence is retained"
+      ],
+      "dependencies": [
+        "#5121 runtime rearchitecture implementation",
+        "adl-runtime supervision and topology modules",
+        "runtime API credential policy"
+      ],
+      "repo_inputs": [
+        "adl-runtime/src/runtime_api_auth.rs",
+        "adl-runtime/src/supervision.rs",
+        "adl-runtime/src/topology.rs",
+        "adl/src/long_lived_agent.rs",
+        "adl/src/csm_runtime_api.rs"
+      ],
+      "non_goals": [
+        "Unrelated WP-07 hardening or API Gateway changes",
+        "New AWS infrastructure",
+        "Provider and model work"
+      ]
+    }
+  }
+}

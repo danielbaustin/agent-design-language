@@ -1,0 +1,8 @@
+{
+  "issue": 5494,
+  "expected_generation": 23,
+  "expected_digest": "190cebaa872004d1a85ebfe6fb919a5d8fefb7d550d4660ff69a5d4451ecbe32",
+  "claim_id": "claim-5494-wp07a-completion",
+  "actor": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+  "reason": "Recover review after rebasing onto merged #5506 so the runtime-only publication head receives exact review."
+}

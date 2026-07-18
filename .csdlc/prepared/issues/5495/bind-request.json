@@ -1,0 +1,18 @@
+{
+  "issue": 5495,
+  "base_branch": "main",
+  "branch": "codex/5495-publication-metadata",
+  "worktree": ".",
+  "claim": {
+    "id": "claim-5495-publication-metadata",
+    "owner": "codex",
+    "generation": 1,
+    "acquired_unix_seconds": 1784415805,
+    "expires_unix_seconds": 1784423005,
+    "heartbeat_unix_seconds": 1784415805,
+    "branch": "codex/5495-publication-metadata",
+    "worktree": ".",
+    "protected_paths": ["csdlc-v2/src/git.rs", "csdlc-v2/src/review.rs", "csdlc-v2/tests/gate5.rs", ".csdlc/issues/5495/retained/design.md", ".csdlc/issues/5495/retained/diagram.mmd"],
+    "purpose": "Allow typed lifecycle metadata commits without masking substantive review drift"
+  }
+}

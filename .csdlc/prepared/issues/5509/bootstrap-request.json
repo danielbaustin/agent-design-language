@@ -1,0 +1,145 @@
+{
+  "issue": 5509,
+  "repository": "danielbaustin/agent-design-language",
+  "design_path": ".csdlc/prepared/issues/5509/design.md",
+  "diagram_path": ".csdlc/prepared/issues/5509/diagram.mmd",
+  "design_reviewer": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+  "design_approved": true,
+  "claim": {
+    "id": "claim-5509-runtime-v3-csm-fast-lane",
+    "owner": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+    "generation": 0,
+    "acquired_unix_seconds": 1784375319,
+    "expires_unix_seconds": 1784461719,
+    "heartbeat_unix_seconds": 1784375319,
+    "branch": "codex/5509-runtime-v3-csm-fast-lane",
+    "worktree": ".",
+    "protected_paths": [
+      "adl/tools/ci_path_policy.sh",
+      "adl/tools/run_pr_fast_test_lane.sh",
+      "adl/tools/run_pr_fast_coverage_lane.sh",
+      "adl/tools/test_ci_path_policy.sh",
+      "adl/tools/test_run_pr_fast_test_lane.sh",
+      "adl/tools/test_run_pr_fast_coverage_lane.sh"
+    ],
+    "purpose": "Route bounded mixed Runtime v3 and CSM changes through independent focused validation"
+  },
+  "initial": {
+    "title": "[v0.91.7][tooling][CI] Keep mixed Runtime v3 and CSM validation out of Runtime v2 coverage",
+    "slug": "v0-91-7-runtime-v3-csm-fast-lane",
+    "version": "v0.91.7",
+    "goal": "Prove mixed Runtime v3 and CSM changes without executing unrelated Runtime v2 coverage.",
+    "required_outcome": "A narrowly recognized mixed-crate family runs focused tests and composed coverage in each owning crate.",
+    "declared_scope": [
+      "adl/tools/ci_path_policy.sh",
+      "adl/tools/run_pr_fast_test_lane.sh",
+      "adl/tools/run_pr_fast_coverage_lane.sh",
+      "adl/tools/test_ci_path_policy.sh",
+      "adl/tools/test_run_pr_fast_test_lane.sh",
+      "adl/tools/test_run_pr_fast_coverage_lane.sh"
+    ],
+    "authority_boundary": [
+      "Issue #5509 owns CI routing only",
+      "Issue #5494 owns the Runtime v3 and CSM implementation",
+      "Issue #5409 owns WP-07A acceptance truth"
+    ],
+    "task_boundary": "Add one bounded mixed Runtime v3 and CSM validation route without weakening other fail-closed classifications.",
+    "deliverables": [
+      "Mixed Runtime v3 and CSM source classifier",
+      "Independent focused test execution for both crates",
+      "Composed focused coverage execution",
+      "Regression contracts preserving unrelated mixed-crate fail-closed behavior"
+    ],
+    "acceptance_criteria": [
+      "AC1: The #5504 source shape selects bounded PR-fast validation",
+      "AC2: Focused tests execute in both owning crates",
+      "AC3: Focused coverage composes both crate summaries",
+      "AC4: Runtime v2 tests are not selected",
+      "AC5: Unrelated or unmapped mixed-crate changes still fail closed"
+    ],
+    "dependencies": [
+      "Existing PR-fast nextest runner",
+      "Existing PR-fast coverage summary composition",
+      "Existing validation manager and path policy"
+    ],
+    "repo_inputs": [
+      "PR #5504 CI run 29642366877",
+      "Issue #5509",
+      "Issue #5494"
+    ],
+    "non_goals": [
+      "Runtime v2 source changes",
+      "AWS execution",
+      "General mixed-crate validation relaxation"
+    ],
+    "plan_summary": "Recognize the exact Runtime v3/CSM family, execute each crate's focused tests independently, compose coverage, and preserve the existing fallback.",
+    "steps": [
+      {
+        "id": "S1",
+        "action": "Add the bounded mixed-crate classifier and execution plan",
+        "status": "pending",
+        "acceptance_ids": ["AC-1", "AC-2", "AC-4", "AC-5"]
+      },
+      {
+        "id": "S2",
+        "action": "Align focused coverage routing and summary composition",
+        "status": "pending",
+        "acceptance_ids": ["AC-3", "AC-4"]
+      },
+      {
+        "id": "S3",
+        "action": "Run contract tests, review, publish, and merge",
+        "status": "pending",
+        "acceptance_ids": ["AC-1", "AC-2", "AC-3", "AC-4", "AC-5"]
+      }
+    ],
+    "risks": [
+      "An overly broad classifier could suppress required full validation",
+      "A single-crate runner could silently omit half of the change",
+      "Coverage summary composition could report only one crate"
+    ],
+    "invariants": [
+      "Every accepted path belongs to the declared Runtime v3 or CSM family",
+      "Both crates run when both crates change",
+      "All other mixed-crate shapes retain existing fail-closed behavior",
+      "No Runtime v2 source is modified"
+    ],
+    "stop_conditions": [
+      "The route requires modifying Runtime v2",
+      "The accepted family cannot be expressed as a closed path set",
+      "Validation requires AWS"
+    ],
+    "review_prompts": [
+      "Can an unrelated mixed-crate change enter the bounded route?",
+      "Does each changed crate execute its own tests?",
+      "Can coverage omit one crate while still reporting success?",
+      "Are Runtime v2 tests excluded by construction?"
+    ],
+    "planning_profile": "medium",
+    "validation_lanes": [
+      {
+        "lane": "ci-path-policy-contracts",
+        "proof_role": "Prove narrow route selection and fail-closed fallback",
+        "deterministic": true,
+        "resource_profile": "small",
+        "parallel_group": "tooling-contracts",
+        "budget_seconds": 300,
+        "budget_tokens": 2000,
+        "argv": ["bash", "adl/tools/test_ci_path_policy.sh"],
+        "acceptance_ids": ["AC-1", "AC-4", "AC-5"]
+      },
+      {
+        "lane": "pr-fast-runner-contracts",
+        "proof_role": "Prove independent test and coverage execution",
+        "deterministic": true,
+        "resource_profile": "small",
+        "parallel_group": "tooling-contracts",
+        "budget_seconds": 300,
+        "budget_tokens": 2000,
+        "argv": ["bash", "adl/tools/test_run_pr_fast_test_lane.sh"],
+        "acceptance_ids": ["AC-2", "AC-3", "AC-4"]
+      }
+    ],
+    "failure_policy": "Fail closed if the bounded path family is incomplete, either crate is omitted, Runtime v2 is selected, or unrelated mixed-crate shapes become focused."
+  }
+}

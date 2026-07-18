@@ -1,0 +1,10 @@
+{
+  "issue": 5494,
+  "card": "sor",
+  "expected_generation": 3,
+  "expected_digest": "e1a49760e87903bf16a840e26eaa770be287d9a522e292e201f0a549d03b9263",
+  "claim_id": "claim-5494-wp07a-completion",
+  "actor": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+  "reason": "Bounded implementation and proving local validation are complete.",
+  "operation": {"operation": "advance_phase", "phase": "implemented"}
+}

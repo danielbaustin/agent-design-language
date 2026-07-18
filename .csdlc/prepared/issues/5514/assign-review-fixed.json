@@ -1,0 +1,12 @@
+{
+  "issue": 5514,
+  "expected_generation": 3,
+  "expected_digest": "dad085b8e07a458c8bef339959f792fb568dfb5d9f39db5ff9c7729e020671ab",
+  "claim_id": "claim-5514-complete-csm-coverage",
+  "reviewer": "subagent:019f755e-caed-72b0-b9fb-21366bf78332",
+  "assigned_by": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+  "scope": [
+    "adl/tools/run_pr_fast_coverage_lane.sh",
+    "adl/tools/test_run_pr_fast_coverage_lane.sh"
+  ]
+}

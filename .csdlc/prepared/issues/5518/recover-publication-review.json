@@ -1,0 +1,8 @@
+{
+  "issue": 5518,
+  "expected_generation": 20,
+  "expected_digest": "cc5d5d7241481588fbb5c9286b029f77d0a91e5591d731ea05bb62df476dc71f",
+  "claim_id": "claim-5518-terminal-plan-repair",
+  "actor": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+  "reason": "Recover exact review identity after committing metadata-head review so PR head 45a6348f4 receives current publication review."
+}

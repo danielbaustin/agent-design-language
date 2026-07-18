@@ -1,0 +1,18 @@
+{
+  "issue": 5487,
+  "card": "sor",
+  "expected_generation": 5,
+  "expected_digest": "d693718a6aa1f00b6f1375d366f90f93ddab8e92ee9910b5100ed03b22888a9d",
+  "claim_id": "claim-5487-terminal-design-repair",
+  "actor": "codex",
+  "reason": "Focused repair artifact contract validation passed.",
+  "operation": {
+    "operation": "record_validation",
+    "result": {
+      "command": ["cargo", "test", "--locked", "--manifest-path", "csdlc-v2/Cargo.toml", "--test", "gate7_terminal_design_repair_5487"],
+      "purpose": "Verify the typed repair request covers committed #5467 design and diagram artifacts with stable digests and Mermaid shape.",
+      "outcome": "passed",
+      "evidence_ref": "gate7_terminal_design_repair_5487: 1 test passed"
+    }
+  }
+}

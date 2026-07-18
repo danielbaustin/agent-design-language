@@ -1,0 +1,46 @@
+{
+  "identity": {
+    "schema_version": "1.0.0",
+    "template_version": "1.0.0",
+    "issue": 5495,
+    "repository": "danielbaustin/agent-design-language",
+    "title": "[v0.91.7][csdlc-v2][publish] Avoid stale review loop after publication metadata commit",
+    "slug": "publication-metadata-review-loop",
+    "version": "v0.91.7",
+    "generation": 11
+  },
+  "status": "ready",
+  "content": {
+    "card_kind": "stp",
+    "values": {
+      "task_boundary": "Classify typed publication metadata commits and preserve fail-closed substantive drift behavior.",
+      "deliverables": [
+        "Bounded metadata path classifier",
+        "Automatic metadata-only review proof",
+        "Regression tests for publication metadata and substantive drift"
+      ],
+      "acceptance_criteria": [
+        "Recognized lifecycle metadata commits do not stale a clean review",
+        "Substantive changes still produce review_stale",
+        "Malformed explicit proof remains fail closed",
+        "Merged reconciliation remains identity protected"
+      ],
+      "dependencies": [
+        "Review evidence and publication guard",
+        "Git revision and changed-path helpers"
+      ],
+      "repo_inputs": [
+        "csdlc-v2/src/git.rs",
+        "csdlc-v2/src/review.rs",
+        "csdlc-v2/src/publication.rs",
+        "csdlc-v2/src/doctor.rs",
+        "csdlc-v2/tests/gate5.rs"
+      ],
+      "non_goals": [
+        "Changing substantive review policy",
+        "Broadly allowing arbitrary .csdlc files",
+        "AWS or remote infrastructure work"
+      ]
+    }
+  }
+}

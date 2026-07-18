@@ -1,0 +1,33 @@
+{
+  "identity": {
+    "schema_version": "1.0.0",
+    "template_version": "1.0.0",
+    "issue": 4641,
+    "repository": "danielbaustin/agent-design-language",
+    "title": "[v0.91.7][WP-14] Launch and v0.92 birthday handoff",
+    "slug": "v0-91-7-wp14-launch-v092-birthday-handoff",
+    "version": "v0.91.7",
+    "generation": 19
+  },
+  "status": "complete",
+  "content": {
+    "card_kind": "srp",
+    "values": {
+      "review_scope": ".csdlc/issues/4641\n.csdlc/prepared/issues/4641\ndocs/milestones/v0.91.7/V092_HANDOFF_v0.91.7.md\ndocs/milestones/v0.91.7/review/V0917_WP14_LAUNCH_BIRTHDAY_HANDOFF_4641.md\ndocs/milestones/v0.91.7/review/wp14_launch_birthday_4641/ledger.yaml",
+      "review_revision": "git-blake3:d0ded4ef1c22f07b9bf57dcff80630270fa14af7:c432a365105e58d6742fe570dcf313c6d1363f8e27cd047d87bed43b59ea40ff",
+      "reviewer": "codex-review",
+      "review_prompts": [
+        "Does the issue stay within its WP scope?",
+        "Are claims supported by retained or fresh evidence?",
+        "Are skipped and unproven surfaces explicit?",
+        "Are sibling WP and release/activation non-claims preserved?"
+      ],
+      "findings": [],
+      "residual_risk": [
+        "WP-14 child implementation/proof issues #4758-#4763 remain open and must close with integrated evidence before v0.92 consumes launch, activation, Memory Palace, capability-envelope, witness/receipt, or birthday-doc readiness.",
+        "Review and validation were bounded to documentation, issue graph, typed C-SDLC state, and lifecycle-publication metadata churn; runtime, provider, Observatory, Unity, AWS, and v0.92 activation validation were not run."
+      ],
+      "review_result": "pass"
+    }
+  }
+}

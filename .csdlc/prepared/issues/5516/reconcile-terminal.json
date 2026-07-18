@@ -1,0 +1,9 @@
+{
+  "issue": 5516,
+  "expected_initialization_digest": "7bdd347c560965375b7f0a7d9b112887e4beef8851bf44eae2936b487467fc97",
+  "expected_branch": "codex/5516-5494-terminal-design-repair",
+  "expected_worktree": "/Users/daniel/git/agent-design-language/.worktrees/adl-wp-5494",
+  "actor": "codex-terminal-reconcile",
+  "reason": "Materialize the retained terminal receipt after merged PR #5517 and closed issue #5516, then preserve the corrected #5494 Runtime v3 architecture truth.",
+  "follow_ups": []
+}

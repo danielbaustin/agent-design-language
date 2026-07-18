@@ -54,6 +54,19 @@ and only `integrated_proven` counts as operational completion.
 | C-SDLC v2 acceptance | `#5358` | Required before lifecycle-governance claims. |
 | v0.92 handoff | `#5352`, `#5362`, `NEXT_MILESTONE_HANDOFF_v0.91.8.md` | Required before opening birthday implementation issues. |
 
+## WP-14 Launch / Birthday Handoff Refresh
+
+`#4641` / WP-14 now exits as `routed_with_evidence` through
+`review/V0917_WP14_LAUNCH_BIRTHDAY_HANDOFF_4641.md` and the machine-readable
+ledger at `review/wp14_launch_birthday_4641/ledger.yaml`.
+
+This refresh does not make `v0.92` activation-ready. It records that the
+launch, activation, Memory Palace, capability envelope, witness/receipt, and
+birthday-doc surfaces are owned by the open v0.91.8 WP-14 child issues
+`#4758`-`#4763`. `v0.92` may consume this WP-14 packet only as routing,
+blocker, and public-claim-boundary truth until those child issues close with
+integrated evidence and review.
+
 ## Surface Dispositions
 
 | Surface | Handoff state | v0.92 consumption limit | Source doc |

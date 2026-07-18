@@ -1,0 +1,25 @@
+{
+  "issue": 4641,
+  "expected_generation": 8,
+  "expected_digest": "4c2f609717b59765cb8e28e5d473289d9f4193c633c26b9a7c8efcb269c39011",
+  "claim_id": "claim-4641-v0-91-7-wp14-launch-v092-birthday-handoff",
+  "actor": "codex-review",
+  "evidence": {
+    "reviewer": "codex-review",
+    "scope": [
+      ".csdlc/issues/4641",
+      ".csdlc/prepared/issues/4641",
+      "docs/milestones/v0.91.7/V092_HANDOFF_v0.91.7.md",
+      "docs/milestones/v0.91.7/review/V0917_WP14_LAUNCH_BIRTHDAY_HANDOFF_4641.md",
+      "docs/milestones/v0.91.7/review/wp14_launch_birthday_4641/ledger.yaml"
+    ],
+    "reviewed_revision": "git-blake3:0ebd08383f8618f60878f1ef845c1515d5c499ae:1e4d3a76ce818ded610437f141dccb9f48a1d443ad93454f9c8867318da4b7b8",
+    "findings": [],
+    "residual_risks": [
+      "WP-14 child implementation/proof issues #4758-#4763 remain open and must close with integrated evidence before v0.92 consumes launch, activation, Memory Palace, capability-envelope, witness/receipt, or birthday-doc readiness.",
+      "Review and validation were bounded to documentation, issue graph, and typed C-SDLC state; runtime, provider, Observatory, Unity, AWS, and v0.92 activation validation were not run."
+    ],
+    "completed": true,
+    "non_substantive_proof": null
+  }
+}

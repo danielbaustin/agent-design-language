@@ -1,0 +1,10 @@
+{
+  "issue": 5464,
+  "card": "sor",
+  "expected_generation": 19,
+  "expected_digest": "0f9bf2dbaa8af1738d11144457d7648fbb12f7fc39bbfdc5a18d965af1e2369e",
+  "claim_id": "claim-5464-nextest-install-contract",
+  "actor": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+  "reason": "Publication-head exact review passed with protected scope unchanged and focused validation green.",
+  "operation": {"operation": "advance_phase", "phase": "reviewed"}
+}

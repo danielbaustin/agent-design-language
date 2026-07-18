@@ -1,0 +1,12 @@
+{
+  "issue": 5512,
+  "claim_id": "claim-5512-runtime-v3-csm-coverage-filter",
+  "expected_generation": 11,
+  "expected_digest": "3c581b672f6bb39122d2e85d0bb8caf9aacdd684aa7bb2ed10b48c14eeb1cd84",
+  "now_unix_seconds": 1784378583,
+  "actor": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+  "reason": "Align the static CI runtime contract with the reviewed owning-crate coverage variable exposed by hosted CI.",
+  "add_protected_paths": [
+    "adl/tools/test_ci_runtime_contracts.sh"
+  ]
+}

@@ -1,0 +1,8 @@
+{
+  "issue": 5464,
+  "expected_generation": 21,
+  "expected_digest": "49e91ac857b8788314b72b98667366b285bf13d172ddccbe6c6a92db58ccaee0",
+  "claim_id": "claim-5464-nextest-install-contract",
+  "actor": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+  "reason": "Recover publication review after committing the publication receipt so the actual final PR head receives exact review."
+}

@@ -1,0 +1,13 @@
+{
+  "issue": 4641,
+  "card": "srp",
+  "expected_generation": 9,
+  "expected_digest": "b710b9dd2ed6d75fc34790b0d8d80c70debfe093863ddd5238513d142eb883aa",
+  "claim_id": "claim-4641-v0-91-7-wp14-launch-v092-birthday-handoff",
+  "actor": "codex:019f3d65-2216-7832-804a-26339473b27d",
+  "reason": "Advance #4641 after current-head review returned no actionable findings.",
+  "operation": {
+    "operation": "advance_phase",
+    "phase": "reviewed"
+  }
+}

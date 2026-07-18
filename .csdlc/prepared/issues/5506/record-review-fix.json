@@ -1,0 +1,19 @@
+{
+  "issue": 5506,
+  "card": "sor",
+  "expected_generation": 6,
+  "expected_digest": "2ba54ae22334bb8d1c71483856c4b966c08e2bcab086fdb60c28014b1f9141db",
+  "claim_id": "claim-5506-runtime-auth-coverage-map",
+  "actor": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+  "reason": "Fixed F-5506-1 with an explicit mixed Runtime v3 auth plus ADL routing regression.",
+  "operation": {
+    "operation": "record_execution",
+    "summary": "Prove mixed API-auth and ADL selectors execute both coverage workspaces and emit both summaries.",
+    "changes": [
+      "Add a mixed csm_runtime_api plus runtime_api_auth expression",
+      "Assert both ADL workspace and adl-runtime nextest commands execute",
+      "Assert both component coverage summaries are emitted"
+    ],
+    "artifacts": ["adl/tools/test_run_pr_fast_coverage_lane.sh"]
+  }
+}

@@ -1,0 +1,30 @@
+{
+  "identity": {
+    "schema_version": "1.0.0",
+    "template_version": "1.0.0",
+    "issue": 5512,
+    "repository": "danielbaustin/agent-design-language",
+    "title": "[v0.91.7][tooling][CI] Remove foreign binary selectors from Runtime v3 CSM coverage",
+    "slug": "v0-91-7-runtime-v3-csm-coverage-filter",
+    "version": "v0.91.7",
+    "generation": 12
+  },
+  "status": "draft",
+  "content": {
+    "card_kind": "srp",
+    "values": {
+      "review_scope": "",
+      "review_revision": null,
+      "reviewer": null,
+      "review_prompts": [
+        "Can a foreign binary selector still reach the ADL workspace?",
+        "Can the detector trigger for an unrelated expression?",
+        "Does the runtime companion retain auth, supervision, and topology coverage?",
+        "Are both summaries still emitted?"
+      ],
+      "findings": [],
+      "residual_risk": [],
+      "review_result": "pre_review"
+    }
+  }
+}

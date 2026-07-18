@@ -1,0 +1,78 @@
+{
+  "identity": {
+    "schema_version": "1.0.0",
+    "template_version": "1.0.0",
+    "issue": 5409,
+    "repository": "danielbaustin/agent-design-language",
+    "title": "[v0.91.7][review-fix][WP-07A] Complete and prove the #5121 runtime rearchitecture",
+    "slug": "v0-91-7-review-fix-wp07a-complete-prove-5121-runtime-rearchitecture",
+    "version": "v0.91.7",
+    "generation": 15
+  },
+  "status": "ready",
+  "content": {
+    "card_kind": "spp",
+    "values": {
+      "plan_revision": 1,
+      "summary": "Map the #5121 topology boundary, integrate production supervision/readiness and proactive credential renewal, then retain assembled-runtime soak proof.",
+      "steps": [
+        {
+          "id": "S1",
+          "action": "Map the #5121 topology, readiness, credential, and soak surfaces",
+          "acceptance_ids": [
+            "AC-1",
+            "AC-2",
+            "AC-3",
+            "AC-4"
+          ],
+          "status": "pending"
+        },
+        {
+          "id": "S2",
+          "action": "Implement runtime-owned topology, readiness, and credential renewal changes",
+          "acceptance_ids": [
+            "AC-1",
+            "AC-2",
+            "AC-3",
+            "AC-4"
+          ],
+          "status": "pending"
+        },
+        {
+          "id": "S3",
+          "action": "Run focused runtime/proof validation and record retained evidence",
+          "acceptance_ids": [
+            "AC-5"
+          ],
+          "status": "pending"
+        }
+      ],
+      "affected_areas": [],
+      "invariants": [
+        "Production assembly and reported supervised topology agree",
+        "Readiness observes every required component/channel",
+        "Credential renewal preserves overlap before expiry",
+        "Soak proof is retained and reproducible"
+      ],
+      "risks": [
+        "API Gateway live resources may require a bounded downgrade if the full matrix cannot be exercised",
+        "The final gate may remain blocked until an explicit operator disposition exists"
+      ],
+      "execution_estimates": {
+        "elapsed_seconds": 21600,
+        "total_tokens": 80000,
+        "validation_seconds": 3600
+      },
+      "stop_conditions": [
+        "A finding requires new AWS infrastructure or operator-approved scope expansion",
+        "A required live proof cannot be produced or truthfully downgraded",
+        "Focused validation exposes an unrelated runtime defect"
+      ],
+      "replan_triggers": [],
+      "design_ref": ".csdlc/issues/5409/retained/design.md",
+      "design_digest": "b334a90e062a7a63b62f49592afe43dd01031ba51be1fda9902814822ea252a3",
+      "diagram_ref": ".csdlc/issues/5409/retained/diagram.mmd",
+      "diagram_digest": "efb71e84624a77422732103e8e9bd91cf760c4ced239ccbdf3d11db31f75766f"
+    }
+  }
+}

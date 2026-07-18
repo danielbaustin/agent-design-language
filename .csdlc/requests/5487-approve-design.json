@@ -1,0 +1,7 @@
+{
+  "issue": 5487,
+  "expected_generation": 1,
+  "expected_digest": "16b0f95cf01d48366ea9ca189b0c4eba1c696db797f709084bdfc97285e222b5",
+  "claim_id": "claim-5487-terminal-design-repair",
+  "reviewer": "codex"
+}

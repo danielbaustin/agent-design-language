@@ -2,6 +2,7 @@
 use super::*;
 use crate::observability::test_env_lock;
 use crate::runtime_aws_signal::mock_signal_artifact_path;
+use adl_runtime::backpressure::runtime_channel_policy;
 use adl_runtime::determinism::verify_retained_cycle_record;
 use std::env;
 use std::ffi::OsString;
@@ -77,6 +78,60 @@ fn wait_for_json_state(path: &Path, pointer: &str, expected: &str) -> Value {
 
 fn write_spec(root: &Path) -> PathBuf {
     write_spec_with_workflow_kind(root, "demo_adapter")
+}
+
+#[test]
+fn production_daemon_executes_real_ticks_and_recovers_after_child_failure() {
+    let root = temp_dir("production-daemon-recovery");
+    let spec = write_spec(&root);
+    let loaded = load_spec(&spec).expect("load soak spec");
+    let mut injected_failures = 0_u32;
+    let daemon_options = DaemonOptions {
+        bounded_test_restart_limit: Some(0),
+        checkpoint_interval_secs: 1,
+        interval_secs: Some(1),
+        api_bind: None,
+        no_sleep: true,
+        recover_stale_lease: true,
+        api_otel_status_path: None,
+        api_otel_log_path: None,
+    };
+
+    for cycle in 0..3_u64 {
+        if cycle == 1 {
+            write_spec_with_workflow_kind(&root, "unsupported_soak_injection");
+            assert!(daemon(&spec, daemon_options.clone()).is_err());
+            injected_failures += 1;
+            write_spec(&root);
+        }
+        let status = daemon(&spec, daemon_options.clone())
+            .expect("production daemon entrypoint recovers and completes");
+        assert_eq!(status.state, "completed");
+    }
+
+    let status = read_status(&loaded).unwrap().unwrap();
+    assert_eq!(status.completed_cycle_count, 3);
+    assert_eq!(injected_failures, 1);
+    let channel_state: Value = serde_json::from_slice(
+        &fs::read(loaded.state_root.join("csm_typed_channel_state.json")).unwrap(),
+    )
+    .unwrap();
+    assert_eq!(
+        channel_state["summary"]["channel_count"],
+        RuntimeChannelId::ALL.len()
+    );
+    assert!(channel_state["channels"]
+        .as_array()
+        .unwrap()
+        .iter()
+        .filter(|channel| {
+            let id = channel["channel"].as_str().unwrap();
+            RuntimeChannelId::ALL
+                .into_iter()
+                .find(|candidate| candidate.as_str() == id)
+                .is_some_and(|candidate| runtime_channel_policy(candidate).priority.is_required())
+        })
+        .all(|channel| channel["readiness"] == "ready"));
 }
 
 fn write_spec_with_workflow_kind(root: &Path, workflow_kind: &str) -> PathBuf {

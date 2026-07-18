@@ -1,0 +1,327 @@
+{
+  "schema": "csdlc.issue.index.v1",
+  "issue": 5409,
+  "repository": "danielbaustin/agent-design-language",
+  "initialization_digest": "f4295f97c8e571585f0305df75e892cebea12d84197bb8475779c6916601c699",
+  "phase": "closed_out",
+  "generation": 15,
+  "digest": "edbb73bfb7646166ea7451a3c8321ac03aa39dbfb2c650b369288f3e45928b06",
+  "claim": null,
+  "review_assignment": {
+    "reviewer": "subagents-019f6850-4a05-7060-9eff-d582ac25d18f",
+    "assigned_by": "codex",
+    "revision": "git-blake3:373cbbde8c34655035e1d5ae4b739a177f67f760:94a0127ffc3509e9bea64ec7f10cd6de40840c0d52f78d40d5b02a136b96d5c5",
+    "scope": [
+      "adl-runtime/src/runtime_api_auth.rs",
+      "adl-runtime/src/supervision.rs",
+      "adl-runtime/src/topology.rs",
+      "docs/review-fixes/runtime/WP07A_REARCHITECTURE_REPAIR_5409.md"
+    ]
+  },
+  "review": {
+    "reviewer": "subagents-019f6850-4a05-7060-9eff-d582ac25d18f",
+    "scope": [
+      "adl-runtime/src/runtime_api_auth.rs",
+      "adl-runtime/src/supervision.rs",
+      "adl-runtime/src/topology.rs",
+      "docs/review-fixes/runtime/WP07A_REARCHITECTURE_REPAIR_5409.md"
+    ],
+    "reviewed_revision": "git-blake3:373cbbde8c34655035e1d5ae4b739a177f67f760:94a0127ffc3509e9bea64ec7f10cd6de40840c0d52f78d40d5b02a136b96d5c5",
+    "findings": [],
+    "residual_risks": [
+      "RuntimeReadiness is a static assembly capability projection; live component health remains owned by supervision outcomes and runtime API health routes.",
+      "The separately governed #4906 assembled-runtime coherence gate remains outside this issue and is not claimed closed."
+    ],
+    "completed": true,
+    "non_substantive_proof": null
+  },
+  "publication": {
+    "repository": "danielbaustin/agent-design-language",
+    "issue": 5409,
+    "pull_request": 5420,
+    "url": "https://github.com/danielbaustin/agent-design-language/pull/5420",
+    "base": "main",
+    "head": "codex/5409-wp07a-runtime-rearchitecture",
+    "revision": "git-blake3:373cbbde8c34655035e1d5ae4b739a177f67f760:94a0127ffc3509e9bea64ec7f10cd6de40840c0d52f78d40d5b02a136b96d5c5",
+    "draft": false,
+    "observed_state": "merged"
+  },
+  "readiness": {
+    "pull_request": 5420,
+    "head_sha": "373cbbde8c34655035e1d5ae4b739a177f67f760",
+    "checks": [
+      {
+        "name": "adl-ci",
+        "requirement": "required",
+        "conclusion": "success",
+        "details_url": "https://github.com/danielbaustin/agent-design-language/actions/runs/29461602003/job/87506173169"
+      },
+      {
+        "name": "adl-coverage",
+        "requirement": "required",
+        "conclusion": "success",
+        "details_url": "https://github.com/danielbaustin/agent-design-language/actions/runs/29461602003/job/87506072658"
+      }
+    ],
+    "review_state": "not_required",
+    "conflict_state": "clean",
+    "post_publication_findings": [],
+    "ready": true,
+    "blockers": []
+  },
+  "terminal": {
+    "pull_request": 5420,
+    "disposition": "merged",
+    "observed_sha": "373cbbde8c34655035e1d5ae4b739a177f67f760",
+    "observed_state": "merged",
+    "receipt_path": "csdlc-v2/closeout/5409.json",
+    "released_branch": "codex/5409-wp07a-runtime-rearchitecture",
+    "released_worktree": ".worktrees/adl-wp-5409",
+    "released_protected_paths": [
+      "adl-runtime/src/runtime_api_auth.rs",
+      "adl-runtime/src/supervision.rs",
+      "adl-runtime/src/topology.rs"
+    ]
+  },
+  "migration": null,
+  "design_path": ".csdlc/issues/5409/retained/design.md",
+  "diagram_path": ".csdlc/issues/5409/retained/diagram.mmd",
+  "design_review": {
+    "approved": {
+      "reviewer": "operator-assigned-review-fix",
+      "revision": "b334a90e062a7a63b62f49592afe43dd01031ba51be1fda9902814822ea252a3"
+    }
+  },
+  "cards": {
+    "sip": {
+      "values_digest": "2d828457d68bd5b9710f7e8ca0509d7e84db4ce24c6044c1fef7c0dea2dc92ad",
+      "rendered_digest": "8986e97713db5b242832e55ff2f79b1398c61753d10376ad016aa9a93e03d172",
+      "ast_digest": "b9d0eb3d6aa9f24f4acd14802b2a561baac3f2bab9e6c05e5a591a392d23eb9f"
+    },
+    "stp": {
+      "values_digest": "bb954f53009dadb55c80e117cd2376270e61d3efa9f7e25a9f0f9156931dadab",
+      "rendered_digest": "b45ea2fd775b7c29cc432cc1f84be813b67826e102091789f4343f363a1f978d",
+      "ast_digest": "e99eaa77e70ecf9aa6e95eed76d641627319b99bd6a64b082edebd61d13b7064"
+    },
+    "spp": {
+      "values_digest": "6d9d307e38df1d9fd6422316e74508bd541ff9d4d98a179dbaf37ad43411d7b8",
+      "rendered_digest": "92f3367791e2857e3659f5440dfa462b2417ee93c9787a1e14688d6e91b19671",
+      "ast_digest": "ad6481adce83c3edf4c291861bfb05784b11af0e53471f88b09f790a96557c02"
+    },
+    "vpp": {
+      "values_digest": "bc7ea425bbe0b978c76243c2525c88b06c8041cc4a7e7323d8fd25ba327e67b5",
+      "rendered_digest": "cab0defdc4b8588282da0e46f9815ea292d494fa0fd4b053685af11308b52f27",
+      "ast_digest": "d350ccf701eb82c306b505fcf8b0d567b799b70be3ce7741de6e3877320b7c2a"
+    },
+    "srp": {
+      "values_digest": "20ccb1f24531a1142f9c677529a23699496b78ed9d359ee9ba2357f96fec4aab",
+      "rendered_digest": "e5e87612c75b4062fbc0e4450582c59b281d77edbf2b4432a38a4867e66bb098",
+      "ast_digest": "98dfa001985805c3ba194abeb1422398bdecab014ea30622a1c98b922d7e8f41"
+    },
+    "sor": {
+      "values_digest": "0174eb59e1a3cb38f95366922c06471aa6733bab9758ce579f6d4aa9465fc5d9",
+      "rendered_digest": "524353f8b246c5743c9debefe56b41edd3ba970cb3a64d98835134331093807b",
+      "ast_digest": "b650d5d632df9fb38054988c1e0c5997eb5401ef6c125ede2e0ddfeb393a6b00"
+    }
+  },
+  "transitions": [
+    {
+      "sequence": 1,
+      "from": "initialized",
+      "to": "ready",
+      "actor": "codex",
+      "reason": "automatic readiness verification"
+    },
+    {
+      "sequence": 2,
+      "from": "ready",
+      "to": "bound",
+      "actor": "codex",
+      "reason": "verified Git worktree binding"
+    },
+    {
+      "sequence": 3,
+      "from": "bound",
+      "to": "implemented",
+      "actor": "codex",
+      "reason": "Focused implementation and validation are complete; advance #5409 to exact-revision review."
+    },
+    {
+      "sequence": 4,
+      "from": "implemented",
+      "to": "reviewed",
+      "actor": "codex",
+      "reason": "Exact-revision pre-publication review completed with no unresolved findings."
+    },
+    {
+      "sequence": 5,
+      "from": "reviewed",
+      "to": "published",
+      "actor": "codex",
+      "reason": "observed exact draft PR after current review"
+    },
+    {
+      "sequence": 6,
+      "from": "published",
+      "to": "merge_ready",
+      "actor": "codex",
+      "reason": "observed required checks, review, and conflict readiness"
+    },
+    {
+      "sequence": 7,
+      "from": "merge_ready",
+      "to": "merged",
+      "actor": "codex",
+      "reason": "observed exact PR merged"
+    },
+    {
+      "sequence": 8,
+      "from": "merged",
+      "to": "closed_out",
+      "actor": "codex",
+      "reason": "terminal truth recorded and claim released"
+    }
+  ],
+  "audit": [
+    {
+      "sequence": 1,
+      "generation": 0,
+      "actor": "codex",
+      "reason": "initialize issue record and all six cards",
+      "operation": "bootstrap"
+    },
+    {
+      "sequence": 2,
+      "generation": 0,
+      "actor": "codex",
+      "reason": "bind branch/worktree and activate claim",
+      "operation": "bind"
+    },
+    {
+      "sequence": 3,
+      "generation": 0,
+      "actor": "codex",
+      "reason": "Recover the expired #5409 execution claim in the same bound worktree before recording the completed implementation and proof.",
+      "operation": "{\"previous_owner\":\"codex\",\"observed_expiry_unix_seconds\":1784159170,\"recovery_actor\":\"codex\",\"reason\":\"Recover the expired #5409 execution claim in the same bound worktree before recording the completed implementation and proof.\"}"
+    },
+    {
+      "sequence": 4,
+      "generation": 1,
+      "actor": "codex",
+      "reason": "Record the typed runtime assembly, full readiness coverage, credential renewal, and bounded soak implementation.",
+      "operation": "{\"operation\":\"record_execution\",\"summary\":\"WP-07A now assembles the complete supervised CSM component set with typed-channel coverage and truthful readiness.\",\"changes\":[\"Add resident_agents to the supervised component identity set with an explicit provider-admission policy.\",\"Add CsmRuntimeAssembly::production with component/policy parity and complete typed-channel validation.\",\"Expose deterministic RuntimeReadiness for every supervised component and channel.\",\"Retain a bounded 100-cycle assembled-readiness soak and proactive credential-renewal proof.\"],\"artifacts\":[\"adl-runtime/src/topology.rs\",\"adl-runtime/src/supervision.rs\",\"adl-runtime/src/runtime_api_auth.rs\",\"docs/review-fixes/runtime/WP07A_REARCHITECTURE_REPAIR_5409.md\"]}"
+    },
+    {
+      "sequence": 5,
+      "generation": 2,
+      "actor": "codex",
+      "reason": "Record focused runtime assembly, readiness, renewal, and compile proof.",
+      "operation": "{\"operation\":\"record_validation\",\"result\":{\"command\":[\"cargo test --manifest-path adl-runtime/Cargo.toml\",\"CARGO_TARGET_DIR=/Volumes/FastWork/adl-wp-5409-target cargo check --manifest-path adl/Cargo.toml\",\"git diff --check\"],\"purpose\":\"Prove complete supervised topology, typed-channel readiness, proactive credential renewal, and assembled-runtime stability.\",\"outcome\":\"passed\",\"evidence_ref\":\"adl-runtime: 118 unit tests and 1 independence test passed; adl cargo check passed; 100-cycle readiness soak passed\"}}"
+    },
+    {
+      "sequence": 6,
+      "generation": 3,
+      "actor": "codex",
+      "reason": "Focused implementation and validation are complete; advance #5409 to exact-revision review.",
+      "operation": "{\"operation\":\"advance_phase\",\"phase\":\"implemented\"}"
+    },
+    {
+      "sequence": 7,
+      "generation": 3,
+      "actor": "codex",
+      "reason": "assign bounded exact-revision review",
+      "operation": "assign_review"
+    },
+    {
+      "sequence": 8,
+      "generation": 4,
+      "actor": "codex",
+      "reason": "Refresh retained proof count after the final credential and readiness fixes.",
+      "operation": "{\"operation\":\"record_validation\",\"result\":{\"command\":[\"cargo test --manifest-path adl-runtime/Cargo.toml\",\"CARGO_TARGET_DIR=/Volumes/FastWork/adl-wp-5409-target cargo check --manifest-path adl/Cargo.toml\",\"git diff --check\"],\"purpose\":\"Re-prove terminal revocation, request-time renewal, complete static assembly readiness, and deterministic soak.\",\"outcome\":\"passed\",\"evidence_ref\":\"adl-runtime: 119 unit tests and 1 independence test passed; adl cargo check passed; 100-cycle readiness soak passed\"}}"
+    },
+    {
+      "sequence": 9,
+      "generation": 5,
+      "actor": "codex",
+      "reason": "atomically record review evidence and SRP projection",
+      "operation": "record_review"
+    },
+    {
+      "sequence": 10,
+      "generation": 6,
+      "actor": "codex",
+      "reason": "Exact-revision pre-publication review completed with no unresolved findings.",
+      "operation": "{\"operation\":\"advance_phase\",\"phase\":\"reviewed\"}"
+    },
+    {
+      "sequence": 11,
+      "generation": 7,
+      "actor": "codex",
+      "reason": "atomically record observed GitHub publication and SOR projection",
+      "operation": "record_publication"
+    },
+    {
+      "sequence": 12,
+      "generation": 8,
+      "actor": "codex",
+      "reason": "record normalized remote readiness without replacing pre-publication review",
+      "operation": "record_readiness"
+    },
+    {
+      "sequence": 13,
+      "generation": 8,
+      "actor": "codex",
+      "reason": "Refresh expired claim before recording terminal closeout for merged PR #5420.",
+      "operation": "{\"previous_owner\":\"codex\",\"observed_expiry_unix_seconds\":1784164888,\"recovery_actor\":\"codex\",\"reason\":\"Refresh expired claim before recording terminal closeout for merged PR #5420.\"}"
+    },
+    {
+      "sequence": 14,
+      "generation": 9,
+      "actor": "codex",
+      "reason": "record normalized remote readiness without replacing pre-publication review",
+      "operation": "record_readiness"
+    },
+    {
+      "sequence": 15,
+      "generation": 10,
+      "actor": "codex",
+      "reason": "record normalized remote readiness without replacing pre-publication review",
+      "operation": "record_readiness"
+    },
+    {
+      "sequence": 16,
+      "generation": 11,
+      "actor": "codex",
+      "reason": "atomically finalize SOR/index and release claim/protected paths",
+      "operation": "record_terminal"
+    },
+    {
+      "sequence": 17,
+      "generation": 12,
+      "actor": "csdlc-closeout",
+      "reason": "normalize legacy terminal receipt path to portable reference",
+      "operation": "normalize_terminal_receipt_ref"
+    },
+    {
+      "sequence": 18,
+      "generation": 13,
+      "actor": "codex-root",
+      "reason": "Reconcile the retained merged terminal receipt into canonical publication and card truth.",
+      "operation": "reconcile_terminal"
+    },
+    {
+      "sequence": 19,
+      "generation": 14,
+      "actor": "codex-root",
+      "reason": "Reconcile the retained merged terminal receipt into canonical publication and card truth.",
+      "operation": "reconcile_terminal"
+    },
+    {
+      "sequence": 20,
+      "generation": 15,
+      "actor": "codex",
+      "reason": "Reconcile the retained merged #5409 terminal receipt into the tracked C-SDLC projection from a dedicated closeout branch.",
+      "operation": "reconcile_terminal"
+    }
+  ]
+}

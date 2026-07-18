@@ -1,0 +1,9 @@
+{
+  "issue": 4641,
+  "expected_initialization_digest": "57a995b4e8def457743bbb6195a56ad30c43e0e9bec2d90766fd1dee105a19f1",
+  "expected_branch": "codex/4641-terminal-reconcile",
+  "expected_worktree": "/Users/daniel/git/agent-design-language/.worktrees/adl-wp-4641-closeout",
+  "actor": "codex:019f3d65-2216-7832-804a-26339473b27d",
+  "reason": "Materialize terminal receipt for merged #4641 after PR #5493 closed the issue.",
+  "follow_ups": []
+}

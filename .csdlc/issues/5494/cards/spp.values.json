@@ -1,0 +1,82 @@
+{
+  "identity": {
+    "schema_version": "1.0.0",
+    "template_version": "1.0.0",
+    "issue": 5494,
+    "repository": "danielbaustin/agent-design-language",
+    "title": "[v0.91.7][review-fix][WP-07A] Complete the unfinished #5409 runtime acceptance boundary",
+    "slug": "v0-91-7-wp07a-complete-5409-runtime-acceptance",
+    "version": "v0.91.7",
+    "generation": 62
+  },
+  "status": "ready",
+  "content": {
+    "card_kind": "spp",
+    "values": {
+      "plan_revision": 1,
+      "summary": "Wire observed supervised assembly into production readiness, add a behavioral soak, implement bounded credential overlap, and retain exact proof.",
+      "steps": [
+        {
+          "id": "S1",
+          "action": "Implement observed supervised production assembly and readiness",
+          "acceptance_ids": [
+            "AC-1",
+            "AC-2"
+          ],
+          "status": "pending"
+        },
+        {
+          "id": "S2",
+          "action": "Implement behavioral assembled-runtime soak with failure and recovery",
+          "acceptance_ids": [
+            "AC-3"
+          ],
+          "status": "pending"
+        },
+        {
+          "id": "S3",
+          "action": "Implement bounded credential overlap and revocation tests",
+          "acceptance_ids": [
+            "AC-4"
+          ],
+          "status": "pending"
+        },
+        {
+          "id": "S4",
+          "action": "Validate, review, publish, and reconcile #5409/register truth",
+          "acceptance_ids": [
+            "AC-5"
+          ],
+          "status": "pending"
+        }
+      ],
+      "affected_areas": [],
+      "invariants": [
+        "Missing required health fails closed",
+        "Revocation is terminal for all credential generations",
+        "No secrets enter logs or retained proof",
+        "No Runtime v3 or AWS changes"
+      ],
+      "risks": [
+        "Supervision integration could duplicate existing long-lived task ownership",
+        "Readiness could over-constrain optional degraded components",
+        "Credential overlap could accidentally weaken explicit revocation"
+      ],
+      "execution_estimates": {
+        "elapsed_seconds": 43200,
+        "total_tokens": 140000,
+        "validation_seconds": 7200
+      },
+      "stop_conditions": [
+        "A required runtime component has no observable health source",
+        "Production integration requires changes outside the protected Runtime v2 paths",
+        "Validation would require AWS"
+      ],
+      "replan_triggers": [],
+      "design_ref": ".csdlc/issues/5494/retained/design.md",
+      "design_digest": "d35dc188153a0cfb654d3bc99e5fef6e3672974f725e60d4f8dbd189f4e9a13d",
+      "diagram_ref": ".csdlc/issues/5494/retained/diagram.mmd",
+      "diagram_digest": "d2edc9d5ff9516383e01aa249b3b10fca568be5db3a38f210f8b2681960b16b0"
+    }
+  }
+}

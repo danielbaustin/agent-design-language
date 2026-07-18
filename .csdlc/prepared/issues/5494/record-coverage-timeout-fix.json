@@ -1,0 +1,20 @@
+{
+  "issue": 5494,
+  "card": "sor",
+  "expected_generation": 38,
+  "expected_digest": "ca5e6b546b93c943641333c068376aef863118732907fe5c5694fa590184dde8",
+  "claim_id": "claim-5494-wp07a-completion",
+  "actor": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+  "reason": "Make the authenticated admin API client resilient to bounded instrumentation and production scheduling delay.",
+  "operation": {
+    "operation": "record_execution",
+    "summary": "Replace the implicit five-second authenticated API response timeout with an explicit fifteen-second bounded deadline.",
+    "changes": [
+      "Keep the existing two-second connection timeout and bounded connection retry loop",
+      "Allow a listening runtime up to fifteen seconds to produce an authenticated response under heavy instrumentation load"
+    ],
+    "artifacts": [
+      "adl/src/cli/csmctl_cmd.rs"
+    ]
+  }
+}

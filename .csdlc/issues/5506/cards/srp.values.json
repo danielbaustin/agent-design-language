@@ -1,0 +1,31 @@
+{
+  "identity": {
+    "schema_version": "1.0.0",
+    "template_version": "1.0.0",
+    "issue": 5506,
+    "repository": "danielbaustin/agent-design-language",
+    "title": "[v0.91.7][tooling][coverage] Register Runtime v3 API-auth coverage without mixed-lane escalation",
+    "slug": "v0-91-7-runtime-v3-auth-coverage-map",
+    "version": "v0.91.7",
+    "generation": 18
+  },
+  "status": "complete",
+  "content": {
+    "card_kind": "srp",
+    "values": {
+      "review_scope": "adl/tools/check_coverage_impact.sh\nadl/tools/run_pr_fast_coverage_lane.sh\nadl/tools/test_check_coverage_impact.sh\nadl/tools/test_run_pr_fast_coverage_lane.sh",
+      "review_revision": "git-blake3:5620c6e920dcbb232c4160c171c5bf3f4e60f845:1fd30361d1d46debae0269d0d84fc878c6d136f704d2fcab8abc7f2b93e8bab0",
+      "reviewer": "subagent:019f74a4-d2d6-7e51-b69d-e92676e69394",
+      "review_prompts": [
+        "Can auth-only routing skip required ADL tests for a mixed change?",
+        "Does the Runtime v3 expression select the intended tests?",
+        "Did any runtime source enter the diff?"
+      ],
+      "findings": [],
+      "residual_risk": [
+        "Actual llvm-cov interoperability remains hosted CI proof."
+      ],
+      "review_result": "pass"
+    }
+  }
+}

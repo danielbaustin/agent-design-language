@@ -1,0 +1,18 @@
+{
+  "issue": 5521,
+  "card": "sor",
+  "expected_generation": 1,
+  "expected_digest": "dc0dd5aa5e87b6c22cb63e2e588ddaecafe7445ef0f56969845ad8ab721883d6",
+  "claim_id": "claim-5521-terminal-plan-repair",
+  "actor": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+  "reason": "#5518 and #5521 typed doctors pass with exact S4 and receipt parity.",
+  "operation": {
+    "operation": "record_validation",
+    "result": {
+      "command": ["csdlc-doctor", "--issue", "5518"],
+      "purpose": "Prove #5518 remains closed out with S4 completed and exact retained receipt parity",
+      "outcome": "passed",
+      "evidence_ref": "local: #5518 generation 29 digest 49c61e6e; receipt digest 7158360c; both #5518 and #5521 doctor reports pass"
+    }
+  }
+}

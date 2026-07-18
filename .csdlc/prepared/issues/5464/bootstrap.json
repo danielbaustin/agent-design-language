@@ -1,0 +1,121 @@
+{
+  "issue": 5464,
+  "repository": "danielbaustin/agent-design-language",
+  "design_path": ".csdlc/prepared/issues/5464/design.md",
+  "diagram_path": ".csdlc/prepared/issues/5464/diagram.mmd",
+  "design_reviewer": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+  "design_approved": true,
+  "claim": {
+    "id": "claim-5464-nextest-install-contract",
+    "owner": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+    "generation": 0,
+    "acquired_unix_seconds": 1784358000,
+    "expires_unix_seconds": 1784444400,
+    "heartbeat_unix_seconds": 1784358000,
+    "branch": "codex/5464-nextest-install-contract",
+    "worktree": ".worktrees/adl-wp-5464",
+    "protected_paths": [
+      ".github/workflows/ci.yaml",
+      "adl/tools/test_ci_runtime_contracts.sh"
+    ],
+    "purpose": "Make cargo-nextest installation immutable and fail closed without cargo-binstall fallback"
+  },
+  "initial": {
+    "title": "[v0.91.7][ci] Remove cargo-nextest 0.9.140 unsupported-binary fallback",
+    "slug": "v0-91-7-ci-nextest-install-contract",
+    "version": "v0.91.7",
+    "goal": "Install cargo-nextest 0.9.140 directly from a supported immutable manifest without fallback.",
+    "required_outcome": "Every hosted nextest install uses the reviewed manifest, fails closed if unsupported, and emits no cargo-binstall fallback warning.",
+    "declared_scope": [
+      ".github/workflows/ci.yaml",
+      "adl/tools/test_ci_runtime_contracts.sh"
+    ],
+    "authority_boundary": [
+      "GitHub run 29632957768 is warning evidence",
+      "Official nextest release assets and install-action manifests are installation authority",
+      "Repository CI runtime contracts preserve the canonical pin and fallback policy"
+    ],
+    "task_boundary": "Update only nextest installer steps and their static contract, then prove the warning absent on GitHub-hosted CI.",
+    "deliverables": [
+      "Reviewed immutable installer pin",
+      "Fail-closed nextest install configuration",
+      "Static regression contract",
+      "Hosted warning-free proof"
+    ],
+    "acceptance_criteria": [
+      "AC1: Every nextest install uses an immutable installer manifest that contains nextest 0.9.140 for x86_64 Linux",
+      "AC2: Every nextest install sets fallback to none",
+      "AC3: Static validation rejects stale pins, floating pins, missing fallback policy, and version drift",
+      "AC4: GitHub-hosted CI emits no unsupported-binary or cargo-binstall fallback warning"
+    ],
+    "dependencies": [
+      "GitHub-hosted Actions runner",
+      "Official nextest release metadata",
+      "Official taiki-e/install-action manifest"
+    ],
+    "repo_inputs": [
+      ".github/workflows/ci.yaml",
+      "adl/tools/test_ci_runtime_contracts.sh",
+      "GitHub run 29632957768"
+    ],
+    "non_goals": [
+      "AWS execution",
+      "AWS-backed validation",
+      "Changing nextest version",
+      "Unrelated test-lane changes"
+    ],
+    "plan_summary": "Pin nextest steps to an installer manifest that supports 0.9.140, disable fallback, strengthen static contracts, and inspect hosted proof.",
+    "steps": [
+      {"id": "S1", "action": "Verify official release asset and supported installer manifest", "status": "pending", "acceptance_ids": ["AC-1"]},
+      {"id": "S2", "action": "Update nextest installer pins and enforce fallback none", "status": "pending", "acceptance_ids": ["AC-1", "AC-2", "AC-3"]},
+      {"id": "S3", "action": "Run static proof and inspect hosted CI output", "status": "pending", "acceptance_ids": ["AC-3", "AC-4"]}
+    ],
+    "risks": [
+      "A partial update could leave one lane on the stale manifest",
+      "A future nextest version could be selected before the pinned manifest supports it"
+    ],
+    "invariants": [
+      "Every third-party action remains pinned to a 40-hex commit",
+      "Checksum verification remains enabled",
+      "No AWS execution occurs",
+      "Test-lane behavior is otherwise unchanged"
+    ],
+    "stop_conditions": [
+      "The selected official manifest does not contain nextest 0.9.140",
+      "The selected action revision requires unrelated workflow changes",
+      "Hosted proof requires AWS execution"
+    ],
+    "review_prompts": [
+      "Are all nextest install steps updated?",
+      "Does every step fail closed instead of falling back?",
+      "Does the static contract detect partial or future drift?",
+      "Is the hosted warning genuinely absent?"
+    ],
+    "planning_profile": "small",
+    "validation_lanes": [
+      {
+        "lane": "ci-runtime-contract",
+        "proof_role": "Prove canonical nextest pin, version, and fallback policy",
+        "deterministic": true,
+        "resource_profile": "small",
+        "parallel_group": "local",
+        "budget_seconds": 120,
+        "budget_tokens": 1000,
+        "argv": ["bash", "adl/tools/test_ci_runtime_contracts.sh"],
+        "acceptance_ids": ["AC-1", "AC-2", "AC-3"]
+      },
+      {
+        "lane": "hosted-warning-proof",
+        "proof_role": "Prove unsupported-binary and cargo-binstall fallback warnings are absent",
+        "deterministic": false,
+        "resource_profile": "small",
+        "parallel_group": "github-hosted",
+        "budget_seconds": 600,
+        "budget_tokens": 1000,
+        "argv": ["gh", "pr", "checks", "PR"],
+        "acceptance_ids": ["AC-4"]
+      }
+    ],
+    "failure_policy": "Fail closed on floating or stale pins, partial replacement, missing fallback none, contract failure, or any hosted fallback warning."
+  }
+}

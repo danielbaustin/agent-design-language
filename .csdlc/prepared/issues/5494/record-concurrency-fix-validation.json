@@ -1,0 +1,18 @@
+{
+  "issue": 5494,
+  "card": "sor",
+  "expected_generation": 14,
+  "expected_digest": "0ab034ada9e7f03fba89e92b78822bc1d68be3a3a7cadc7bcd61454172b0a364",
+  "claim_id": "claim-5494-wp07a-completion",
+  "actor": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+  "reason": "The full credential suite passes with concurrent terminal-revocation proof.",
+  "operation": {
+    "operation": "record_validation",
+    "result": {
+      "command": ["cargo", "test", "--manifest-path", "adl-runtime/Cargo.toml", "runtime_api_auth::tests"],
+      "purpose": "Prove all credential lifecycle behavior plus concurrent rotation and terminal revocation serialization",
+      "outcome": "passed",
+      "evidence_ref": "local FastWork: 10 credential-store tests passed"
+    }
+  }
+}

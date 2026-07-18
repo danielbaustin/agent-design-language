@@ -1,0 +1,19 @@
+{
+  "issue": 5494,
+  "card": "sor",
+  "expected_generation": 10,
+  "expected_digest": "2afe9694da0d2829404cad1735bc388ef158af5138bc6dc6904c7bcc6ee22ea8",
+  "claim_id": "claim-5494-wp07a-completion",
+  "actor": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+  "reason": "Fixed F-5494-7 with one rotation timestamp for overlap clipping and replacement creation.",
+  "operation": {
+    "operation": "record_execution",
+    "summary": "Eliminate the near-expiry credential-store race by using one captured timestamp for the complete rotation transaction.",
+    "changes": [
+      "Delegate public rotation to a deterministic rotate_at transaction",
+      "Use the same timestamp for prior-generation overlap and replacement creation",
+      "Add a deterministic one-second-overlap regression test"
+    ],
+    "artifacts": ["adl-runtime/src/runtime_api_auth.rs"]
+  }
+}

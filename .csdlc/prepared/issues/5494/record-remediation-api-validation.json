@@ -1,0 +1,18 @@
+{
+  "issue": 5494,
+  "card": "sor",
+  "expected_generation": 7,
+  "expected_digest": "67b8db9fb389487a1850a43e1d1604fddec649651979dc5b042c62efd0c749ae",
+  "claim_id": "claim-5494-wp07a-completion",
+  "actor": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+  "reason": "The integrated CSM API acceptance surface passes after review remediation.",
+  "operation": {
+    "operation": "record_validation",
+    "result": {
+      "command": ["cargo", "test", "--manifest-path", "adl/Cargo.toml", "csm_runtime_api"],
+      "purpose": "Prove all policy-required channel blockers, fifteen CSM component observations, credential renewal, and revocation",
+      "outcome": "passed",
+      "evidence_ref": "local FastWork: 44 focused CSM runtime API tests passed"
+    }
+  }
+}

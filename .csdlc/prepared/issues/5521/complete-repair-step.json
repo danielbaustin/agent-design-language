@@ -1,0 +1,14 @@
+{
+  "issue": 5521,
+  "card": "spp",
+  "expected_generation": 2,
+  "expected_digest": "54d97cd9719c24df2069beea68fc132e2b9ebc9594bd1307ad4cc3d9b1830619",
+  "claim_id": "claim-5521-terminal-plan-repair",
+  "actor": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+  "reason": "#5518 S4 repair and exact terminal parity validation are complete.",
+  "operation": {
+    "operation": "update_plan_step",
+    "step_id": "S2",
+    "status": "completed"
+  }
+}

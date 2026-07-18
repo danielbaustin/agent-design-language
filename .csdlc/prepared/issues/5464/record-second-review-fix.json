@@ -1,0 +1,19 @@
+{
+  "issue": 5464,
+  "card": "sor",
+  "expected_generation": 7,
+  "expected_digest": "bb9bf8e47e327289cd623925bcc9fbc4b2274a58db58857056a7657bffb55662",
+  "claim_id": "claim-5464-nextest-install-contract",
+  "actor": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+  "reason": "Fixed F-5464-2 and F-5464-3 by inventorying every install-action step and testing both unversioned aliases.",
+  "operation": {
+    "operation": "record_execution",
+    "summary": "Validate all install-action steps before classifying normalized nextest and cargo-nextest tool values.",
+    "changes": [
+      "Require each install-action use to occupy its own named step",
+      "Normalize block-style tool scalars and classify versioned and unversioned nextest aliases",
+      "Add negative fixtures for unversioned nextest and cargo-nextest aliases"
+    ],
+    "artifacts": ["adl/tools/test_ci_runtime_contracts.sh"]
+  }
+}

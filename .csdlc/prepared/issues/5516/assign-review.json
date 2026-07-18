@@ -1,0 +1,17 @@
+{
+  "issue": 5516,
+  "expected_generation": 5,
+  "expected_digest": "141f5a335ba4519e2a8eccef2a09d1ce956d530b725b767148902e40300e1d21",
+  "claim_id": "claim-5516-5494-terminal-design-repair",
+  "reviewer": "subagent:019f7581-a4bf-7fb3-a900-3d71dfea4abc",
+  "assigned_by": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+  "scope": [
+    ".csdlc/issues/5494/retained/design.md",
+    ".csdlc/issues/5494/retained/diagram.mmd",
+    ".csdlc/issues/5494/index.json",
+    ".csdlc/issues/5516",
+    ".csdlc/prepared/issues/5516",
+    "docs/review-fixes/runtime/WP07A_REARCHITECTURE_REPAIR_5409.md",
+    "docs/milestones/v0.91.7/review/V0917_SPRINT_REVIEW_REGISTER.md"
+  ]
+}

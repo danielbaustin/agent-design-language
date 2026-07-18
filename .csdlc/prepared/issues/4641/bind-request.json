@@ -1,0 +1,22 @@
+{
+  "issue": 4641,
+  "base_branch": "main",
+  "branch": "codex/4641-v0917-launch-birthday-handoff",
+  "worktree": ".worktrees/adl-wp-4641",
+  "claim": {
+    "id": "claim-4641-v0-91-7-wp14-launch-v092-birthday-handoff",
+    "owner": "codex:019f3d65-2216-7832-804a-26339473b27d",
+    "generation": 0,
+    "acquired_unix_seconds": 1784360472,
+    "expires_unix_seconds": 1784965272,
+    "heartbeat_unix_seconds": 1784360472,
+    "branch": "codex/4641-v0917-launch-birthday-handoff",
+    "worktree": ".worktrees/adl-wp-4641",
+    "protected_paths": [
+      "docs/milestones/v0.91.7/review/V0917_WP14_LAUNCH_BIRTHDAY_HANDOFF_4641.md",
+      "docs/milestones/v0.91.7/review/wp14_launch_birthday_4641",
+      ".csdlc/issues/4641"
+    ],
+    "purpose": "Prepare and later execute WP-14 without claiming completion from setup"
+  }
+}

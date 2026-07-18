@@ -1,0 +1,13 @@
+{
+  "issue": 5516,
+  "card": "sor",
+  "expected_generation": 6,
+  "expected_digest": "dd4cbc5173e50db1bbbae254dc407b5923ca955bd781cdb4e194bdee58d07eb5",
+  "claim_id": "claim-5516-5494-terminal-design-repair",
+  "actor": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+  "reason": "Exact staged re-review passed after the sole lifecycle finding was fixed through typed SPP and design reapproval operations.",
+  "operation": {
+    "operation": "advance_phase",
+    "phase": "reviewed"
+  }
+}
