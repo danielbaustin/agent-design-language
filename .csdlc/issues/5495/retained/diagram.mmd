@@ -1,0 +1,6 @@
+flowchart LR
+  reviewed["reviewed commit"] --> diff["exact commit diff"]
+  diff --> classify["bounded lifecycle metadata classifier"]
+  classify -->|only recognized metadata| publish["publication remains allowed"]
+  classify -->|source, retained design, unknown path| block["review_stale / recover_review"]
+  publish --> merge["merged reconciliation keeps identity guards"]

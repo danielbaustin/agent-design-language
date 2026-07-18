@@ -1,0 +1,53 @@
+{
+  "identity": {
+    "schema_version": "1.0.0",
+    "template_version": "1.0.0",
+    "issue": 5495,
+    "repository": "danielbaustin/agent-design-language",
+    "title": "[v0.91.7][csdlc-v2][publish] Avoid stale review loop after publication metadata commit",
+    "slug": "publication-metadata-review-loop",
+    "version": "v0.91.7",
+    "generation": 11
+  },
+  "status": "ready",
+  "content": {
+    "card_kind": "vpp",
+    "values": {
+      "summary": "Execute the smallest proving validation DAG.",
+      "lanes": [
+        {
+          "lane": "gate5-publication-metadata",
+          "proof_role": "review/publication stale-loop regression and fail-closed source drift",
+          "acceptance_ids": [
+            "AC-1",
+            "AC-2",
+            "AC-3",
+            "AC-4"
+          ],
+          "deterministic": true,
+          "resource_profile": "small",
+          "budget_seconds": 600,
+          "budget_tokens": 6000,
+          "argv": [
+            "cargo",
+            "test",
+            "--locked",
+            "--manifest-path",
+            "csdlc-v2/Cargo.toml",
+            "--test",
+            "gate5"
+          ],
+          "parallel_group": "csdlc-v2",
+          "defer_reason": null
+        }
+      ],
+      "planned_validation_seconds": 1200,
+      "planned_validation_tokens": 10000,
+      "failure_policy": "Fail closed on unknown paths, malformed proof, revision mismatch, or substantive changes.",
+      "design_ref": ".csdlc/issues/5495/retained/design.md",
+      "design_digest": "68e7e87969ff9a80c12e15a24e6fde8d4c4f1b9bd1f6dd7329ce94edf680a965",
+      "diagram_ref": ".csdlc/issues/5495/retained/diagram.mmd",
+      "diagram_digest": "b30d358fcc11c8e15db132997d4600948b7acbe41b21974f8d19989b3b6633e5"
+    }
+  }
+}

@@ -1,0 +1,16 @@
+{
+  "schema": "csdlc.publication_request.v1",
+  "issue": 5495,
+  "expected_generation": 10,
+  "expected_digest": "9af9069bd7479692db58a7c5f9173d0510df2e79aa24c63d784ca9642294406e",
+  "claim_id": "claim-5495-publication-metadata",
+  "actor": "codex",
+  "repository": "danielbaustin/agent-design-language",
+  "base": "main",
+  "head": "codex/5495-publication-metadata",
+  "title": "[v0.91.7][csdlc-v2][publish] Avoid stale review loop after publication metadata commit",
+  "body": "Closes #5495\n\nAllows typed C-SDLC publication metadata commits to reconcile without a stale-review dead end while keeping substantive source and card-prose drift fail closed. Adds focused and full Rust regression proof.",
+  "draft": true,
+  "remote": "origin",
+  "token_file": null
+}

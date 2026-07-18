@@ -1,0 +1,23 @@
+{
+  "issue": 4643,
+  "card": "sor",
+  "expected_generation": 1,
+  "expected_digest": "feae88784c8c207e1cb08ef841485a75377dfc38d0f35ff4261d44cae7fadf08",
+  "claim_id": "claim-4643-v0-91-7-wp16-coverage-quality-gate",
+  "actor": "codex-root",
+  "reason": "Focused WP-16 quality-gate validation passed.",
+  "operation": {
+    "operation": "record_validation",
+    "result": {
+      "command": [
+        "python3 docs/milestones/v0.91.7/review/wp16_quality_gate_4643/quality_gate_4643.py --root . --output docs/milestones/v0.91.7/review/wp16_quality_gate_4643/quality_gate_4643.json",
+        "python3 -m json.tool docs/milestones/v0.91.7/review/wp16_quality_gate_4643/quality_gate_4643.json",
+        "git diff --check",
+        "csdlc-doctor --repo . --issue 4643"
+      ],
+      "purpose": "Prove WP-16 has retained quality-gate evidence, valid JSON output, clean diff hygiene, and passing typed C-SDLC state while preserving downstream blocker truth.",
+      "outcome": "passed",
+      "evidence_ref": "local:4643-wp16-quality-gate-json-diff-doctor"
+    }
+  }
+}

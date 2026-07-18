@@ -7,6 +7,7 @@ use strum::{AsRefStr, Display, EnumIter, EnumString};
 use crate::cards::digest;
 use crate::error::{ErrorCode, Result, V2Error};
 use crate::model::{DesignReview, LifecyclePhase};
+use crate::review::evaluate_publication_review_in_repo;
 use crate::store::{now_seconds, verify_cards, verify_record, Store};
 
 #[derive(
@@ -155,7 +156,13 @@ pub fn diagnose(store: &Store, issue: u64) -> DoctorReport {
             (record.review_assignment.as_ref(), record.review.as_ref())
         {
             let current = crate::git::substantive_revision(store.root(), &assignment.scope);
-            if current.as_ref().ok() != Some(&review.reviewed_revision) {
+            let stale = current.as_ref().is_ok_and(|current| {
+                evaluate_publication_review_in_repo(store.root(), Some(review), current)
+                    .blocker_codes
+                    .iter()
+                    .any(|code| code == "review_stale")
+            });
+            if stale {
                 report.findings.push(Finding {
                     code: "review_publication_dead_end".into(),
                     message: "reviewed evidence does not match a clean current substantive commit; recover_review is required before publication".into(),

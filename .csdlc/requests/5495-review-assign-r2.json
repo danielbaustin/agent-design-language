@@ -1,0 +1,16 @@
+{
+  "issue": 5495,
+  "expected_generation": 8,
+  "expected_digest": "336a0457b0e17f72648dd379a2c5e023a2550ddb809be44be7444159e721d7d2",
+  "claim_id": "claim-5495-publication-metadata",
+  "reviewer": "review_5495",
+  "assigned_by": "codex",
+  "scope": [
+    "csdlc-v2/src/git.rs",
+    "csdlc-v2/src/review.rs",
+    "csdlc-v2/src/doctor.rs",
+    "csdlc-v2/tests/gate5.rs",
+    ".csdlc/issues/5495/retained/design.md",
+    ".csdlc/issues/5495/retained/diagram.mmd"
+  ]
+}

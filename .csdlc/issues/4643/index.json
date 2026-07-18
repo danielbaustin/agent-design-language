@@ -1,0 +1,131 @@
+{
+  "schema": "csdlc.issue.index.v1",
+  "issue": 4643,
+  "repository": "danielbaustin/agent-design-language",
+  "initialization_digest": "27a589f56d939921778467b4b57e218fe9bc89225f19cf93200ca51c9076fb24",
+  "phase": "implemented",
+  "generation": 3,
+  "digest": "b9a30c70975c98a4724d6c7f6421e6e3555509b086d22c3f436ff1c35e5b45e2",
+  "claim": {
+    "id": "claim-4643-v0-91-7-wp16-coverage-quality-gate",
+    "owner": "codex:019f3d65-2216-7832-804a-26339473b27d",
+    "generation": 3,
+    "acquired_unix_seconds": 1784360472,
+    "expires_unix_seconds": 1784965272,
+    "heartbeat_unix_seconds": 1784360472,
+    "branch": "codex/4643-v0917-quality-gate",
+    "worktree": ".worktrees/adl-wp-4643",
+    "protected_paths": [
+      "docs/milestones/v0.91.7/review/V0917_WP16_QUALITY_GATE_4643.md",
+      "docs/milestones/v0.91.7/review/wp16_quality_gate_4643",
+      ".csdlc/issues/4643"
+    ],
+    "purpose": "Prepare and later execute WP-16 without claiming completion from setup"
+  },
+  "review_assignment": null,
+  "review": null,
+  "publication": null,
+  "readiness": null,
+  "terminal": null,
+  "migration": null,
+  "design_path": ".csdlc/prepared/issues/4643/design.md",
+  "diagram_path": ".csdlc/prepared/issues/4643/diagram.mmd",
+  "design_review": {
+    "approved": {
+      "reviewer": "codex-prep-only",
+      "revision": "9ac9658a95e22d40d3da6f021041580d316847de319545a5e70099d5dbff32c7"
+    }
+  },
+  "cards": {
+    "sip": {
+      "values_digest": "71f363b86b8515a5ebd9f56a2781ba3a01a69a53a6f636b8fec5b71dd88302b5",
+      "rendered_digest": "b6d87a9c6751d0f088c233908915894622369680c1326cad4284e2af7303b81d",
+      "ast_digest": "39891ae20fe3cb13dc17d4420becc30b5787cf1b25809ebb7cdec1e0c3771a40"
+    },
+    "stp": {
+      "values_digest": "657cc20eeb9983ea1c3384feaab4a46e1f3780facc786b865a60df595b301cbd",
+      "rendered_digest": "a8e42d6251d5219ad1b4009dc2f5fd5b9ce26dc58daf645145d71d304e9fdefb",
+      "ast_digest": "8194485180014336ff6c9d346ba7e1c08ebda6e00f19742a14dba96c0bfc233a"
+    },
+    "spp": {
+      "values_digest": "5596f9caee48730b65e115a4eb93bc7e921b933cd12415b0627fefdcf519e851",
+      "rendered_digest": "54c4712e9b7679250b607b130915f28f53dccc21f11c4a703df8f2436bbb7596",
+      "ast_digest": "f1a73a8041d3743283096140d1dde5e96e4059712600b0f9f761ab30ad50e8cb"
+    },
+    "vpp": {
+      "values_digest": "387890bb330248e234ca38cb8ccd6956c077999d53d07d4dd1b486d62c288f70",
+      "rendered_digest": "ff7ad494479f598f3327b8031221b7fa963f6a6cf9575d8e452db542c777733c",
+      "ast_digest": "5a2be2b5f6755ff047afa150c045bb33ed39060618633415924b8880a47e6e14"
+    },
+    "srp": {
+      "values_digest": "b984109145e2f6e47b17cbbd61612af1ada72f8da20c78090325e73da95e6a8b",
+      "rendered_digest": "a2dd879f143c55b4b01310725b0ba798a8cd75d715f9a79d82ae5db9369270f9",
+      "ast_digest": "e932067239e9f897c717f9223a0c3aa02e773ec4f02ef566d7f86a24c36190d7"
+    },
+    "sor": {
+      "values_digest": "e30b64a46042585216faeb5eaae570bab0e5c6aebee8fc87ffe31eb785486e5c",
+      "rendered_digest": "a1a033d9dbaae06e14cb54b6915bc7a7456c67bd5542c08f4b33e5c86ea2d2fe",
+      "ast_digest": "da2d3baf81d8d6ad31c7268f7c27e70d2eba548747cfa1d7a7b33d265479509f"
+    }
+  },
+  "transitions": [
+    {
+      "sequence": 1,
+      "from": "initialized",
+      "to": "ready",
+      "actor": "codex:019f3d65-2216-7832-804a-26339473b27d",
+      "reason": "automatic readiness verification"
+    },
+    {
+      "sequence": 2,
+      "from": "ready",
+      "to": "bound",
+      "actor": "codex:019f3d65-2216-7832-804a-26339473b27d",
+      "reason": "verified Git worktree binding"
+    },
+    {
+      "sequence": 3,
+      "from": "bound",
+      "to": "implemented",
+      "actor": "codex-root",
+      "reason": "The bounded WP-16 quality gate is implemented and locally validated with retained evidence."
+    }
+  ],
+  "audit": [
+    {
+      "sequence": 1,
+      "generation": 0,
+      "actor": "codex:019f3d65-2216-7832-804a-26339473b27d",
+      "reason": "initialize issue record and all six cards",
+      "operation": "bootstrap"
+    },
+    {
+      "sequence": 2,
+      "generation": 0,
+      "actor": "codex:019f3d65-2216-7832-804a-26339473b27d",
+      "reason": "bind branch/worktree and activate claim",
+      "operation": "bind"
+    },
+    {
+      "sequence": 3,
+      "generation": 1,
+      "actor": "codex-root",
+      "reason": "WP-16 quality-gate packet and deterministic checker were written on the bound issue worktree.",
+      "operation": "{\"operation\":\"record_execution\",\"summary\":\"Added the WP-16 quality-gate packet, retained deterministic checker, and generated machine-readable result. The gate consumes merged WP-14 launch/birthday handoff evidence and WP-15 demo/proof coverage evidence, passes with explicit downstream gates still open, and records no v0.91.7 release-readiness or v0.92 activation-readiness claim.\",\"changes\":[\"Add WP-16 quality-gate packet with consumed WP-14/WP-15 inputs and blocker register\",\"Add deterministic quality-gate checker for required paths, feature coverage, non-claims, launch handoff, and downstream gate truth\",\"Generate retained JSON quality-gate result with status passed_with_open_downstream_gates\",\"Record downstream open gates #4644, #4645, #4646, #4647, and #4650 as release blockers rather than WP-16 failures\"],\"artifacts\":[\"docs/milestones/v0.91.7/review/V0917_WP16_QUALITY_GATE_4643.md\",\"docs/milestones/v0.91.7/review/wp16_quality_gate_4643/quality_gate_4643.py\",\"docs/milestones/v0.91.7/review/wp16_quality_gate_4643/quality_gate_4643.json\"]}"
+    },
+    {
+      "sequence": 4,
+      "generation": 2,
+      "actor": "codex-root",
+      "reason": "Focused WP-16 quality-gate validation passed.",
+      "operation": "{\"operation\":\"record_validation\",\"result\":{\"command\":[\"python3 docs/milestones/v0.91.7/review/wp16_quality_gate_4643/quality_gate_4643.py --root . --output docs/milestones/v0.91.7/review/wp16_quality_gate_4643/quality_gate_4643.json\",\"python3 -m json.tool docs/milestones/v0.91.7/review/wp16_quality_gate_4643/quality_gate_4643.json\",\"git diff --check\",\"/Users/daniel/git/agent-design-language/.adl/bin/csdlc-v2/csdlc-doctor --repo . --issue 4643\"],\"purpose\":\"Prove WP-16 has retained quality-gate evidence, valid JSON output, clean diff hygiene, and passing typed C-SDLC state while preserving downstream blocker truth.\",\"outcome\":\"passed\",\"evidence_ref\":\"local:4643-wp16-quality-gate-json-diff-doctor\"}}"
+    },
+    {
+      "sequence": 5,
+      "generation": 3,
+      "actor": "codex-root",
+      "reason": "The bounded WP-16 quality gate is implemented and locally validated with retained evidence.",
+      "operation": "{\"operation\":\"advance_phase\",\"phase\":\"implemented\"}"
+    }
+  ]
+}

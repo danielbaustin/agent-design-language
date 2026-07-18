@@ -1,0 +1,24 @@
+{
+  "issue": 4643,
+  "card": "sor",
+  "expected_generation": 0,
+  "expected_digest": "2ec08529fa60df23dfb87f9c5007108959902cde68aa12d96aeb2049f66b387b",
+  "claim_id": "claim-4643-v0-91-7-wp16-coverage-quality-gate",
+  "actor": "codex-root",
+  "reason": "WP-16 quality-gate packet and deterministic checker were written on the bound issue worktree.",
+  "operation": {
+    "operation": "record_execution",
+    "summary": "Added the WP-16 quality-gate packet, retained deterministic checker, and generated machine-readable result. The gate consumes merged WP-14 launch/birthday handoff evidence and WP-15 demo/proof coverage evidence, passes with explicit downstream gates still open, and records no v0.91.7 release-readiness or v0.92 activation-readiness claim.",
+    "changes": [
+      "Add WP-16 quality-gate packet with consumed WP-14/WP-15 inputs and blocker register",
+      "Add deterministic quality-gate checker for required paths, feature coverage, non-claims, launch handoff, and downstream gate truth",
+      "Generate retained JSON quality-gate result with status passed_with_open_downstream_gates",
+      "Record downstream open gates #4644, #4645, #4646, #4647, and #4650 as release blockers rather than WP-16 failures"
+    ],
+    "artifacts": [
+      "docs/milestones/v0.91.7/review/V0917_WP16_QUALITY_GATE_4643.md",
+      "docs/milestones/v0.91.7/review/wp16_quality_gate_4643/quality_gate_4643.py",
+      "docs/milestones/v0.91.7/review/wp16_quality_gate_4643/quality_gate_4643.json"
+    ]
+  }
+}
