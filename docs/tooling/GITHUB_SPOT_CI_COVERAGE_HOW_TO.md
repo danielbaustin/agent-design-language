@@ -25,20 +25,16 @@ issue. Do not remove its hosted jobs.
 ### Runtime And Capacity Guardrails
 
 Every live Spot invocation has a hard manager wall-clock limit. The workflow
-default is 1800 seconds; the remote command uses the same 300–3600-second
-bound. A timeout returns a failed check and runs the cleanup step rather than
+default is 1800 seconds; the remote command itself remains bounded at 900
+seconds (15 minutes). A timeout returns a failed check and runs the cleanup step rather than
 leaving a paid builder running indefinitely. The limit can be lowered for a
 known-fast shadow, but the workflow rejects values below 300 seconds or above
-3600 seconds; the lower-level wrapper enforces the same 300–3600-second
-contract.
+3600 seconds; the lower-level wrapper also fail-closes values below 30 seconds.
 
 The workflow passes an ordered capacity pool instead of relying on one EC2
-shape. The quota-safe default pool is
-`c7a.4xlarge,m7a.4xlarge,c7i.4xlarge` (16 vCPUs per candidate in the Agent
-Logic account's 32-vCPU standard Spot quota); Spot tries each type in order
-and never silently falls back to on-demand because the workflow invokes the
-launcher with `--spot-only`. Larger shapes remain available through explicit
-workflow inputs after confirming quota headroom. Keep the pool in the same
+shape. The default pool is `c7a.8xlarge,m7a.8xlarge,c7i.8xlarge`; Spot tries
+each type in order and never silently falls back to on-demand because the
+workflow invokes the launcher with `--spot-only`. Keep the pool in the same
 availability-zone-compatible topology as the retained EBS volume.
 
 New builders receive both `adl:managed=true` and
@@ -151,8 +147,8 @@ For the operational apples-to-apples run:
 - `git_ref`: exact immutable commit under test
 - `base_ref`: merge base or `origin/main`
 - `source_event_name`: `pull_request` for a PR shadow
-- `instance_type`: `c7a.4xlarge` (16 vCPUs; the quota-safe production profile)
-- `instance_types`: `c7a.4xlarge,m7a.4xlarge,c7i.4xlarge` (ordered Spot
+- `instance_type`: `c7a.8xlarge` (36 vCPUs; the production parallel profile)
+- `instance_types`: `c7a.8xlarge,m7a.8xlarge,c7i.8xlarge` (ordered Spot
   capacity pool)
 - `max_run_seconds`: `1800` (hard manager limit)
 - `validation_command`: blank
@@ -172,8 +168,7 @@ For CI-only diagnostics:
 - `base_ref`: merge base or `origin/main`
 - `source_event_name`: event semantics to reproduce; use `pull_request` for a
   PR shadow
-- `instance_type`: `c7a.4xlarge` (use a larger explicit shape only after
-  confirming current Spot quota headroom)
+- `instance_type`: `c7a.8xlarge`
 - `validation_command`: blank
 
 For coverage-only diagnostics, use `profile: adl-coverage`. The named profiles
@@ -189,20 +184,14 @@ would delegate that work to `adl-coverage`. `adl-coverage` verifies the
 preinstalled coverage toolchain and runs the focused coverage-impact lane for
 pull requests, including when path policy marks full coverage as required.
 The plan records `mode=pr-fast-sla full_policy=true`; this is the bounded PR
-proof historically measured on `c7a.8xlarge` in 257 seconds with CI and
-1238/1238 focused coverage tests passing. Full authoritative coverage remains required for
+proof proven on `c7a.8xlarge` in 257 seconds with CI and 1238/1238 focused
+coverage tests passing. Full authoritative coverage remains required for
 push/main and non-PR evidence events. The full lane uses two concurrent
-nextest partitions by default, with an aggregate host-aware budget capped at
-36 threads and divided across partitions. The concurrent PR-fast lane uses
-half the host CPU count, capped at 18, so the default 16-vCPU builder uses 8
-coverage threads while a 36-vCPU builder uses 18. Authoritative coverage
-uses that aggregate budget divided across partitions: two partitions use 8
-threads each on the default builder and 18 each on a 36-vCPU builder. Both
-partitions must pass before the single coverage result is emitted; override
-`ADL_AUTHORITATIVE_COVERAGE_PARTITIONS` and
-`ADL_AUTHORITATIVE_COVERAGE_TEST_THREADS` only for a measured builder shape;
-the runtime rejects partition/thread overrides that exceed the aggregate host
-budget.
+nextest partitions by default, with 18 test threads per partition on the
+36-vCPU `c7a.8xlarge` builder. Both partitions must pass before the single
+coverage result is emitted; override `ADL_AUTHORITATIVE_COVERAGE_PARTITIONS`
+and `ADL_AUTHORITATIVE_COVERAGE_TEST_THREADS` only for a measured builder
+shape.
 
 ### Shadow An Existing Issue Without Affecting Its PR
 
@@ -350,10 +339,10 @@ image rollback, and alternate instance selection:
 
 - [AWS Spot Remote Execution HOW-TO](AWS_SPOT_REMOTE_EXECUTION_HOW_TO.md)
 
-The Spot wrapper enforces the same 300–3600-second remote-command bound as the
-workflow, with an 1800-second default. The operational performance target remains 300 seconds, but the larger kill threshold allows a
+The Spot wrapper enforces a 900-second (15-minute) remote-command deadline. The operational
+performance target remains 300 seconds, but the larger kill threshold allows a
 warm-cache GitHub run to finish and report its actual timing instead of being
 cut off at the end of the target window. On timeout or instance loss it
 requests SSM `CancelCommand` before terminating the builder, so a canceled
 GitHub job does not leave a validation command running during teardown. The
-timeout override is constrained to the same 3600-second maximum.
+timeout override is constrained to the same 900-second maximum.

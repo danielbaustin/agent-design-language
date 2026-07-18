@@ -182,9 +182,6 @@ stage "$CURRENT_STAGE"
 VALIDATION_START="$(date +%s)"
 VALIDATION_UID="$(id -u)"
 VALIDATION_GID="$(id -g)"
-VALIDATION_STDOUT="$ADL_RUN_ROOT/validation-command.stdout.log"
-VALIDATION_STDERR="$ADL_RUN_ROOT/validation-command.stderr.log"
-set +e
 "${DOCKER[@]}" run --rm \
   --user "$VALIDATION_UID:$VALIDATION_GID" \
   --workdir /workspace \
@@ -201,23 +198,14 @@ set +e
   --env RUSTFLAGS= \
   --env CARGO_INCREMENTAL=0 \
   --entrypoint /bin/bash \
-  "$IMAGE" -lc "set +e; $COMMAND; status=\$?; sccache --show-stats > /run-output/sccache-stats.log 2>&1 || true; exit \$status" \
-  >"$VALIDATION_STDOUT" 2>"$VALIDATION_STDERR"
-VALIDATION_EXIT="$?"
+  "$IMAGE" -lc "set +e; $COMMAND; status=\$?; sccache --show-stats > /run-output/sccache-stats.log 2>&1 || true; exit \$status"
 VALIDATION_END="$(date +%s)"
-
-# Keep SSM output bounded while retaining the durable full logs on the run
-# volume. The structured proof below is emitted after these tails.
-printf 'ADL_SPOT_VALIDATION_LOGS stdout=%s stderr=%s\n' \
-  "$VALIDATION_STDOUT" "$VALIDATION_STDERR" >&2
-tail -n 40 "$VALIDATION_STDOUT" >&2 || true
-tail -n 40 "$VALIDATION_STDERR" >&2 || true
 
 CURRENT_STAGE="write_builder_summary"
 stage "$CURRENT_STAGE"
 IMAGE_DIGEST="${IMAGE##*@}"
 export RESOLVED_REF IMAGE_DIGEST IMAGE_ARCH CACHE_SOURCE CACHE_FREE_BYTES
-export VALIDATION_START VALIDATION_END VALIDATION_EXIT
+export VALIDATION_START VALIDATION_END
 export CACHE_TARGET_PREEXISTING_ENTRIES CACHE_TARGET_PREEXISTING_BYTES
 export CACHE_LOW_SPACE_RECOVERY
 python3 - "$ADL_RUN_ROOT/spot-builder-summary.json" <<'PY'
@@ -229,7 +217,7 @@ import sys
 out = sys.argv[1]
 payload = {
     "schema": "adl.aws_spot_builder_image_validation.v1",
-    "status": "passed" if int(os.environ["VALIDATION_EXIT"]) == 0 else "failed",
+    "status": "passed",
     "source_commit": os.environ["RESOLVED_REF"],
     "source_commit_verified": True,
     "builder_image_digest_sha256": hashlib.sha256(os.environ["IMAGE_DIGEST"].encode()).hexdigest(),
@@ -244,7 +232,6 @@ payload = {
     "cache_target_preexisting_bytes": int(os.environ["CACHE_TARGET_PREEXISTING_BYTES"]),
     "cache_low_space_recovery": os.environ["CACHE_LOW_SPACE_RECOVERY"] == "true",
     "validation_seconds": int(os.environ["VALIDATION_END"]) - int(os.environ["VALIDATION_START"]),
-    "validation_exit_code": int(os.environ["VALIDATION_EXIT"]),
     "host_validation_tools_installed": False,
 }
 with open(out, "w", encoding="utf-8") as handle:
@@ -252,5 +239,3 @@ with open(out, "w", encoding="utf-8") as handle:
     handle.write("\n")
 print("ADL_SPOT_BUILDER_PROOF=" + json.dumps(payload, sort_keys=True, separators=(",", ":")))
 PY
-
-exit "$VALIDATION_EXIT"

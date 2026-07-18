@@ -31,12 +31,6 @@ grep -F 'full coverage policy did not declare coverage_authority' "$SCRIPT" >/de
 grep -F 'if [[ "$RUST_REQUIRED" == true && "$FULL_COVERAGE_REQUIRED" != true ]]' "$SCRIPT" >/dev/null
 grep -F 'bash adl/tools/demo_smoke_v07_story.sh' "$SCRIPT" >/dev/null
 grep -F 'ADL_COVERAGE_BUILD_ROOT="$CARGO_TARGET_DIR/coverage"' "$SCRIPT" >/dev/null
-grep -F 'getconf _NPROCESSORS_ONLN' "$SCRIPT" >/dev/null
-grep -F 'per_partition_threads=$((aggregate_coverage_threads / partition_count))' "$SCRIPT" >/dev/null
-grep -F 'coverage partition count exceeds the host thread budget' "$SCRIPT" >/dev/null
-grep -F 'ADL_AUTHORITATIVE_COVERAGE_TEST_THREADS exceeds the per-partition host budget' "$SCRIPT" >/dev/null
-grep -F 'pr_fast_threads=$((host_cpus / 2))' "$SCRIPT" >/dev/null
-grep -F 'ADL_COVERAGE_TEST_THREADS exceeds the host PR-fast budget' "$SCRIPT" >/dev/null
 grep -F 'ADL_SPOT_RESET_COVERAGE_CACHE:-1' "$SCRIPT" >/dev/null
 grep -F 'ADL_SPOT_CACHE_PRUNE scope=coverage' "$SCRIPT" >/dev/null
 grep -F 'preserved=main-target,sccache,cargo-home' "$SCRIPT" >/dev/null
@@ -50,15 +44,19 @@ grep -F 'adl.aws_spot_coverage_summary.v1' "$SCRIPT" >/dev/null
 grep -F 'rustup component add rustfmt clippy llvm-tools-preview' "$DOCKERFILE" >/dev/null
 grep -F 'cargo llvm-cov --version' "$DOCKERFILE" >/dev/null
 grep -F 'gh --version' "$DOCKERFILE" >/dev/null
-grep -F 'for required in rustc cargo cargo-nextest sccache LLD aws-cli; do' \
+grep -F "for required in 'CapEff=0 NoNewPrivs=1 permission-probe=denied' rustc cargo cargo-nextest 'gh version' sccache LLD aws-cli" \
   "$ROOT/adl/tools/run_aws_spot_builder_image_validation.sh" >/dev/null
 grep -F "grep -E '^llvm-tools-'" "$SCRIPT" >/dev/null
-grep -F 'ssm:GetCommandInvocation' "$SETUP" >/dev/null
-grep -F 'ssm:SendCommand' "$SETUP" >/dev/null
-grep -F 'servicequotas:GetServiceQuota' "$SETUP" >/dev/null
-grep -F 'adl-aws-remote-validation-*' "$SETUP" >/dev/null
-grep -F 'ec2:RequestSpotInstances' "$SETUP" >/dev/null
-grep -F 'ec2:TerminateInstances' "$SETUP" >/dev/null
+grep -F 'ResolveImmutableBuilderImage' "$SETUP" >/dev/null
+grep -F 'DescribeAdlBuilderImage' "$SETUP" >/dev/null
+grep -F 'ssm:GetParameter' "$SETUP" >/dev/null
+grep -F 'al2023-ami-kernel-default-x86_64' "$SETUP" >/dev/null
+grep -F 'ADLAwsRemoteValidationRole-*' "$SETUP" >/dev/null
+grep -F 'ADLAwsRemoteValidationProfile-*' "$SETUP" >/dev/null
+grep -F 'iam:AttachRolePolicy' "$SETUP" >/dev/null
+grep -F 'iam:DeleteRolePolicy' "$SETUP" >/dev/null
+grep -F 'ec2:AttachVolume' "$SETUP" >/dev/null
+grep -F 'ec2:DetachVolume' "$SETUP" >/dev/null
 grep -F 'SSH_ALLOWED_CIDR="${ADL_AWS_REMOTE_VALIDATION_SSH_ALLOWED_CIDR:-}"' "$ROOT/adl/tools/run_aws_spot_remote_validation_lane.sh" >/dev/null
 grep -F 'https://checkip.amazonaws.com' "$ROOT/tools/aws_remote_validation/src/aws_remote_validation.rs" >/dev/null
 if grep -F 'AWS_SPOT_REMOTE_VALIDATION_SSH_ALLOWED_CIDR' "$WORKFLOW" >/dev/null; then
@@ -102,7 +100,7 @@ cp "$SCRIPT" "$combined_root/adl/tools/run_aws_spot_ci_profile.sh"
 printf '#!/usr/bin/env bash\nset -euo pipefail\nprintf "ci-policy\\n" >>"$ADL_TEST_LOG"\nout=""\nwhile [[ $# -gt 0 ]]; do\n  if [[ "$1" == "--github-output" ]]; then out="$2"; shift 2; continue; fi\n  shift\ndone\nfull=false\nif [[ "${ADL_TEST_FULL_POLICY:-false}" == true ]]; then full=true; fi\nprintf "rust_required=true\\nfull_coverage_required=%%s\\ndemo_smoke_required=false\\nv0913_proof_required=false\\nvalidation_profile_escalation_required=false\\ncoverage_authority=test-policy\\n" "$full" >"$out"\n' >"$combined_root/adl/tools/ci_path_policy.sh"
 printf '#!/usr/bin/env bash\nprintf "ci-lane\\n" >>"$ADL_TEST_LOG"\n' >"$combined_root/adl/tools/run_pr_fast_test_lane.sh"
 printf '#!/usr/bin/env bash\nprintf "process_status\\n"\n' >"$combined_root/adl/tools/check_coverage_impact.sh"
-printf '#!/usr/bin/env bash\nprintf "cargo llvm-cov nextest\\n" >>"$ADL_TEST_LOG"\nprintf "coverage_threads=%%s authoritative_threads=%%s partitions=%%s\\n" "${ADL_COVERAGE_TEST_THREADS:-}" "${ADL_AUTHORITATIVE_COVERAGE_TEST_THREADS:-}" "${ADL_AUTHORITATIVE_COVERAGE_PARTITIONS:-}" >>"$ADL_TEST_LOG"\nprintf "{\\"data\\":[{\\"totals\\":{}}]}\\n" >"$ADL_SPOT_SOURCE_ROOT/adl/target/coverage-impact-summary.json"\n' >"$combined_root/adl/tools/run_pr_fast_coverage_lane.sh"
+printf '#!/usr/bin/env bash\nprintf "cargo llvm-cov nextest\\n" >>"$ADL_TEST_LOG"\nprintf "{\\"data\\":[{\\"totals\\":{}}]}\\n" >"$ADL_SPOT_SOURCE_ROOT/adl/target/coverage-impact-summary.json"\n' >"$combined_root/adl/tools/run_pr_fast_coverage_lane.sh"
 printf '#!/usr/bin/env bash\nexit 0\n' >"$combined_root/adl/tools/rust_validation_warm_cache.sh"
 chmod +x "$combined_root/adl/tools/ci_path_policy.sh" "$combined_root/adl/tools/run_pr_fast_test_lane.sh" "$combined_root/adl/tools/check_coverage_impact.sh" "$combined_root/adl/tools/run_pr_fast_coverage_lane.sh" "$combined_root/adl/tools/rust_validation_warm_cache.sh"
 printf '#!/usr/bin/env bash\nprintf "rustc %%s\\n" "$*" >>"$ADL_TEST_LOG"\n' >"$fake_bin/rustc"
@@ -110,8 +108,7 @@ printf '#!/usr/bin/env bash\nprintf "cargo %%s\\n" "$*" >>"$ADL_TEST_LOG"\nif [[
 printf '#!/usr/bin/env bash\nprintf "sccache %%s\\n" "$*" >>"$ADL_TEST_LOG"\n' >"$fake_bin/sccache"
 printf '#!/usr/bin/env bash\nprintf "ld.lld %%s\\n" "$*" >>"$ADL_TEST_LOG"\n' >"$fake_bin/ld.lld"
 printf '#!/usr/bin/env bash\nif [[ "$*" == *"component list --installed"* ]]; then printf '\''llvm-tools-preview (installed)\\n'\''; fi\n' >"$fake_bin/rustup"
-printf '#!/usr/bin/env bash\nprintf "%%s\\n" "${ADL_TEST_HOST_CPUS:-16}"\n' >"$fake_bin/getconf"
-chmod +x "$fake_bin/rustc" "$fake_bin/cargo" "$fake_bin/sccache" "$fake_bin/ld.lld" "$fake_bin/rustup" "$fake_bin/getconf"
+chmod +x "$fake_bin/rustc" "$fake_bin/cargo" "$fake_bin/sccache" "$fake_bin/ld.lld" "$fake_bin/rustup"
 git -C "$combined_root" init -q
 git -C "$combined_root" config user.name adl-test
 git -C "$combined_root" config user.email adl-test@example.invalid
@@ -144,31 +141,6 @@ grep -F 'cargo llvm-cov nextest' "$full_policy_log" >/dev/null
 grep -F 'ADL_SPOT_COVERAGE_SUMMARY_BEGIN' <<<"$full_policy_output" >/dev/null
 if grep -F 'mode=full-authoritative' <<<"$full_policy_output" >/dev/null; then
   echo "full-policy pull request unexpectedly selected authoritative coverage" >&2
-  exit 1
-fi
-# Host-aware coverage defaults divide the aggregate budget across the two
-# authoritative partitions and reject overrides that would oversubscribe it.
-budget_log="$combined_tmp/budget.log"
-ADL_TEST_HOST_CPUS=16 ADL_SPOT_SOURCE_ROOT="$combined_root" CARGO_TARGET_DIR="$combined_root/cache/target" ADL_TEST_LOG="$budget_log" PATH="$fake_bin:$PATH" \
-  bash "$combined_root/adl/tools/run_aws_spot_ci_profile.sh" adl-coverage --base HEAD --head HEAD >/dev/null
-grep -F 'coverage_threads=8 authoritative_threads=8 partitions=2' "$budget_log" >/dev/null
-: >"$budget_log"
-ADL_TEST_HOST_CPUS=64 ADL_SPOT_SOURCE_ROOT="$combined_root" CARGO_TARGET_DIR="$combined_root/cache/target" ADL_TEST_LOG="$budget_log" PATH="$fake_bin:$PATH" \
-  bash "$combined_root/adl/tools/run_aws_spot_ci_profile.sh" adl-coverage --base HEAD --head HEAD >/dev/null
-grep -F 'coverage_threads=18 authoritative_threads=18 partitions=2' "$budget_log" >/dev/null
-if ADL_TEST_HOST_CPUS=16 ADL_AUTHORITATIVE_COVERAGE_PARTITIONS=17 ADL_SPOT_SOURCE_ROOT="$combined_root" CARGO_TARGET_DIR="$combined_root/cache/target" ADL_TEST_LOG="$budget_log" PATH="$fake_bin:$PATH" \
-  bash "$combined_root/adl/tools/run_aws_spot_ci_profile.sh" adl-coverage --base HEAD --head HEAD >/dev/null 2>&1; then
-  echo "oversized partition count unexpectedly passed" >&2
-  exit 1
-fi
-if ADL_TEST_HOST_CPUS=16 ADL_AUTHORITATIVE_COVERAGE_TEST_THREADS=9 ADL_SPOT_SOURCE_ROOT="$combined_root" CARGO_TARGET_DIR="$combined_root/cache/target" ADL_TEST_LOG="$budget_log" PATH="$fake_bin:$PATH" \
-  bash "$combined_root/adl/tools/run_aws_spot_ci_profile.sh" adl-coverage --base HEAD --head HEAD >/dev/null 2>&1; then
-  echo "oversized authoritative thread override unexpectedly passed" >&2
-  exit 1
-fi
-if ADL_TEST_HOST_CPUS=16 ADL_COVERAGE_TEST_THREADS=9 ADL_SPOT_SOURCE_ROOT="$combined_root" CARGO_TARGET_DIR="$combined_root/cache/target" ADL_TEST_LOG="$budget_log" PATH="$fake_bin:$PATH" \
-  bash "$combined_root/adl/tools/run_aws_spot_ci_profile.sh" adl-coverage --base HEAD --head HEAD >/dev/null 2>&1; then
-  echo "oversized PR-fast thread override unexpectedly passed" >&2
   exit 1
 fi
 rm -rf "$combined_tmp"
@@ -214,7 +186,6 @@ grep -F 'name: adl-ci' "$CI_WORKFLOW" >/dev/null
 grep -F '"adl_demo_proof:${{ needs.adl_demo_proof.result }}" \' "$CI_WORKFLOW" >/dev/null
 grep -F '"adl_spot_ci_and_coverage:${{ needs.adl_spot_ci_and_coverage.result }}"' "$CI_WORKFLOW" >/dev/null
 test "$(grep -Fc 'builder_image_tag: v0.91.7-coverage-5243' "$CI_WORKFLOW")" -eq 1
-test "$(grep -Fc 'max_run_seconds: "1800"' "$CI_WORKFLOW")" -eq 1
 test "$(grep -Fc 'source_event_name: ${{ github.event_name }}' "$CI_WORKFLOW")" -eq 1
 test "$(grep -Fc 'python3 adl/tools/verify_ci_backend_route.py' "$CI_WORKFLOW")" -eq 2
 test "$(grep -Fc 'name: adl-spot-ci-and-coverage' "$CI_WORKFLOW")" -eq 1

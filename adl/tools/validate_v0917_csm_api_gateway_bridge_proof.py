@@ -57,7 +57,7 @@ def main() -> None:
             fail(f"api_gateway.{key} must be a 16-character hash")
     if api.get("selected_protocol_type") not in {"HTTP", "REST", "WEBSOCKET"}:
         fail("api_gateway.selected_protocol_type must be a known API Gateway protocol")
-    for route in [
+    required_routes = [
         "GET /status",
         "GET /health",
         "GET /ready",
@@ -66,15 +66,20 @@ def main() -> None:
         "GET /chronosense",
         "GET /weather",
         "GET /shepherd",
+        "GET /cav",
         "GET /curiosity",
         "GET /acip",
         "GET /freedom-gate",
         "GET /reasoning",
         "GET /api-gateway-bridge",
+        "GET /constructability",
         "GET /persistence",
-    ]:
+    ]
+    for route in required_routes:
         if route not in api.get("supported_route_keys", []):
             fail(f"api_gateway.supported_route_keys missing {route}")
+    if "$default" in api.get("supported_route_keys", []):
+        fail("api_gateway.supported_route_keys must not substitute $default for named routes")
     if "GET /acip" not in api.get("planned_route_keys", []):
         fail("api_gateway.planned_route_keys must retain planned /acip route truth")
     if "GET /acip/ws" in api.get("planned_route_keys", []):
@@ -89,6 +94,10 @@ def main() -> None:
         fail("api_gateway.planned_route_keys must retain planned /freedom-gate route truth")
     if "GET /reasoning" not in api.get("planned_route_keys", []):
         fail("api_gateway.planned_route_keys must retain planned /reasoning route truth")
+    if "GET /cav" not in api.get("planned_route_keys", []):
+        fail("api_gateway.planned_route_keys must retain planned /cav route truth")
+    if "GET /constructability" not in api.get("planned_route_keys", []):
+        fail("api_gateway.planned_route_keys must retain planned /constructability route truth")
     if int(api.get("route_target_count", 0)) < 1:
         fail("api_gateway.route_target_count must prove API Gateway route targets")
     if int(api.get("integration_count", 0)) < 1:
@@ -163,8 +172,14 @@ def main() -> None:
     for key in ["required_routes", "probed", "missing"]:
         if not isinstance(probes.get(key), list):
             fail(f"live_route_probes.{key} must be retained as a list")
-    if not probes["required_routes"]:
-        fail("live_route_probes.required_routes must retain required route truth")
+    if probes["required_routes"] != required_routes:
+        fail("live_route_probes.required_routes must match the runtime API Gateway route authority")
+    if probes["missing"]:
+        fail(f"live_route_probes.missing must be empty for retained proof: {probes['missing']!r}")
+    probed_routes = [entry.get("route") for entry in probes["probed"] if isinstance(entry, dict)]
+    for route in required_routes:
+        if route not in probed_routes:
+            fail(f"live_route_probes.probed missing {route}")
 
     policy = summary.get("local_csm_api_policy", {})
     if policy.get("embedded_daemon_api") != "loopback_only":

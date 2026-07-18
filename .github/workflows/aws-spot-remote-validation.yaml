@@ -28,11 +28,11 @@ on:
         type: string
       instance_type:
         required: false
-        default: "c7a.4xlarge"
+        default: "c7a.8xlarge"
         type: string
       instance_types:
         required: false
-        default: "c7a.4xlarge,m7a.4xlarge,c7i.4xlarge"
+        default: "c7a.8xlarge,m7a.8xlarge,c7i.8xlarge"
         type: string
       max_run_seconds:
         required: false
@@ -89,11 +89,11 @@ on:
       instance_type:
         description: "Primary EC2 instance type"
         required: true
-        default: "c7a.4xlarge"
+        default: "c7a.8xlarge"
       instance_types:
         description: "Ordered comma-separated Spot capacity pool"
         required: true
-        default: "c7a.4xlarge,m7a.4xlarge,c7i.4xlarge"
+        default: "c7a.8xlarge,m7a.8xlarge,c7i.8xlarge"
       max_run_seconds:
         description: "Hard wall-clock limit for one Spot manager process"
         required: true

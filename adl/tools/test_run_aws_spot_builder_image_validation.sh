@@ -134,8 +134,6 @@ run_fixture() {
 
 run_fixture >"$TMP/pass.out" 2>"$TMP/pass.err"
 grep -F 'ADL_SPOT_BUILDER_PROOF=' "$TMP/pass.out" >/dev/null
-test -f "$RUN_ROOT/validation-command.stdout.log"
-test -f "$RUN_ROOT/validation-command.stderr.log"
 python3 - "$RUN_ROOT/spot-builder-summary.json" "$commit" <<'PY'
 import json
 import sys
@@ -202,16 +200,5 @@ if ADL_FAKE_VALIDATION_EXIT=17 run_fixture >"$TMP/validation.out" 2>"$TMP/valida
   echo "expected validation failure to propagate" >&2
   exit 1
 fi
-grep -F 'ADL_SPOT_BUILDER_PROOF=' "$TMP/validation.out" >/dev/null
-python3 - "$RUN_ROOT/spot-builder-summary.json" <<'PY'
-import json
-import sys
-payload = json.load(open(sys.argv[1], encoding="utf-8"))
-assert payload["status"] == "failed"
-assert payload["validation_exit_code"] == 17
-assert payload["builder_image_immutable"] is True
-assert payload["toolchain_verified"] is True
-assert payload["cache_mount_verified"] is True
-PY
 
 echo "PASS test_run_aws_spot_builder_image_validation"

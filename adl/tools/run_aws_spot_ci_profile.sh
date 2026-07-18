@@ -151,53 +151,9 @@ run_adl_coverage() {
     exit 1
   }
   : "${CARGO_TARGET_DIR:?CARGO_TARGET_DIR is required for retained EBS coverage}"
-  local host_cpus partition_count aggregate_coverage_threads per_partition_threads pr_fast_threads
-  host_cpus="$(getconf _NPROCESSORS_ONLN 2>/dev/null)" || {
-    echo "run_aws_spot_ci_profile: unable to determine host CPU count" >&2
-    exit 2
-  }
-  [[ "$host_cpus" =~ ^[1-9][0-9]*$ ]] || {
-    echo "run_aws_spot_ci_profile: host CPU count is invalid" >&2
-    exit 2
-  }
-  partition_count="${ADL_AUTHORITATIVE_COVERAGE_PARTITIONS:-2}"
-  if [[ ! "$partition_count" =~ ^[1-9][0-9]*$ ]]; then
-    echo "run_aws_spot_ci_profile: ADL_AUTHORITATIVE_COVERAGE_PARTITIONS must be a positive integer" >&2
-    exit 2
-  fi
-  aggregate_coverage_threads="$host_cpus"
-  if (( aggregate_coverage_threads > 36 )); then
-    aggregate_coverage_threads=36
-  fi
-  if (( partition_count > aggregate_coverage_threads )); then
-    echo "run_aws_spot_ci_profile: coverage partition count exceeds the host thread budget" >&2
-    exit 2
-  fi
-  per_partition_threads=$((aggregate_coverage_threads / partition_count))
-  pr_fast_threads=$((host_cpus / 2))
-  if (( pr_fast_threads < 1 )); then
-    pr_fast_threads=1
-  fi
-  if (( pr_fast_threads > 18 )); then
-    pr_fast_threads=18
-  fi
-  export ADL_AUTHORITATIVE_COVERAGE_PARTITIONS="$partition_count"
-  if [[ -n "${ADL_COVERAGE_TEST_THREADS:-}" ]]; then
-    if [[ ! "$ADL_COVERAGE_TEST_THREADS" =~ ^[1-9][0-9]*$ ]] || (( ADL_COVERAGE_TEST_THREADS > pr_fast_threads )); then
-      echo "run_aws_spot_ci_profile: ADL_COVERAGE_TEST_THREADS exceeds the host PR-fast budget" >&2
-      exit 2
-    fi
-  else
-    export ADL_COVERAGE_TEST_THREADS="$pr_fast_threads"
-  fi
-  if [[ -n "${ADL_AUTHORITATIVE_COVERAGE_TEST_THREADS:-}" ]]; then
-    if [[ ! "$ADL_AUTHORITATIVE_COVERAGE_TEST_THREADS" =~ ^[1-9][0-9]*$ ]] || (( ADL_AUTHORITATIVE_COVERAGE_TEST_THREADS > per_partition_threads )); then
-      echo "run_aws_spot_ci_profile: ADL_AUTHORITATIVE_COVERAGE_TEST_THREADS exceeds the per-partition host budget" >&2
-      exit 2
-    fi
-  else
-    export ADL_AUTHORITATIVE_COVERAGE_TEST_THREADS="$per_partition_threads"
-  fi
+  export ADL_COVERAGE_TEST_THREADS="${ADL_COVERAGE_TEST_THREADS:-18}"
+  export ADL_AUTHORITATIVE_COVERAGE_TEST_THREADS="${ADL_AUTHORITATIVE_COVERAGE_TEST_THREADS:-16}"
+  export ADL_AUTHORITATIVE_COVERAGE_PARTITIONS="${ADL_AUTHORITATIVE_COVERAGE_PARTITIONS:-2}"
   export ADL_COVERAGE_BUILD_ROOT="$CARGO_TARGET_DIR/coverage"
   WARM_SOURCE_TARGET="$CARGO_TARGET_DIR"
   # The instrumented target is derived from the retained main target and is

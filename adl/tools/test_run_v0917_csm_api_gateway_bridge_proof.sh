@@ -23,7 +23,7 @@ case "$1 $2" in
     printf '%s\n' '{"Items":[{"StageName":"prod","AutoDeploy":true}]}'
     ;;
   "apigatewayv2 get-routes")
-    printf '%s\n' '{"Items":[{"RouteKey":"GET /status","Target":"integrations/int-1234567890"},{"RouteKey":"GET /health","Target":"integrations/int-1234567890"},{"RouteKey":"GET /ready","Target":"integrations/int-1234567890"},{"RouteKey":"GET /metrics","Target":"integrations/int-1234567890"},{"RouteKey":"GET /events","Target":"integrations/int-1234567890"},{"RouteKey":"GET /chronosense","Target":"integrations/int-1234567890"},{"RouteKey":"GET /weather","Target":"integrations/int-1234567890"},{"RouteKey":"GET /shepherd","Target":"integrations/int-1234567890"},{"RouteKey":"GET /curiosity","Target":"integrations/int-1234567890"},{"RouteKey":"GET /acip","Target":"integrations/int-1234567890"},{"RouteKey":"GET /freedom-gate","Target":"integrations/int-1234567890"},{"RouteKey":"GET /reasoning","Target":"integrations/int-1234567890"},{"RouteKey":"GET /api-gateway-bridge","Target":"integrations/int-1234567890"},{"RouteKey":"GET /persistence","Target":"integrations/int-1234567890"}]}'
+    printf '%s\n' '{"Items":[{"RouteKey":"GET /status","Target":"integrations/int-1234567890"},{"RouteKey":"GET /health","Target":"integrations/int-1234567890"},{"RouteKey":"GET /ready","Target":"integrations/int-1234567890"},{"RouteKey":"GET /metrics","Target":"integrations/int-1234567890"},{"RouteKey":"GET /events","Target":"integrations/int-1234567890"},{"RouteKey":"GET /chronosense","Target":"integrations/int-1234567890"},{"RouteKey":"GET /weather","Target":"integrations/int-1234567890"},{"RouteKey":"GET /shepherd","Target":"integrations/int-1234567890"},{"RouteKey":"GET /cav","Target":"integrations/int-1234567890"},{"RouteKey":"GET /curiosity","Target":"integrations/int-1234567890"},{"RouteKey":"GET /acip","Target":"integrations/int-1234567890"},{"RouteKey":"GET /freedom-gate","Target":"integrations/int-1234567890"},{"RouteKey":"GET /reasoning","Target":"integrations/int-1234567890"},{"RouteKey":"GET /api-gateway-bridge","Target":"integrations/int-1234567890"},{"RouteKey":"GET /constructability","Target":"integrations/int-1234567890"},{"RouteKey":"GET /persistence","Target":"integrations/int-1234567890"}]}'
     ;;
   "apigatewayv2 get-integrations")
     printf '%s\n' '{"Items":[{"IntegrationId":"int-1234567890","IntegrationType":"HTTP_PROXY","IntegrationUri":"https://loopback-proxy.invalid/csm"}]}'
@@ -111,13 +111,17 @@ assert summary["polis_ingress"]["ingress_model"] == "one_api_gateway_api_per_pol
 assert summary["polis_ingress"]["route_target"] == "authorized_api_gateway_to_csm_loopback_runtime_api"
 assert summary["polis_ingress"]["per_polis_api"] is True
 assert summary["polis_ingress"]["runtime_identity_verified"] is True
-assert summary["api_gateway"]["route_target_count"] >= 7
+assert summary["api_gateway"]["route_target_count"] >= 16
 assert "GET /weather" in summary["api_gateway"]["supported_route_keys"]
 assert "GET /weather" in summary["api_gateway"]["planned_route_keys"]
+assert "GET /cav" in summary["api_gateway"]["supported_route_keys"]
+assert "GET /cav" in summary["api_gateway"]["planned_route_keys"]
 assert "GET /reasoning" in summary["api_gateway"]["supported_route_keys"]
 assert "GET /reasoning" in summary["api_gateway"]["planned_route_keys"]
 assert "GET /acip" in summary["api_gateway"]["supported_route_keys"]
 assert "GET /acip" in summary["api_gateway"]["planned_route_keys"]
+assert "GET /constructability" in summary["api_gateway"]["supported_route_keys"]
+assert "GET /constructability" in summary["api_gateway"]["planned_route_keys"]
 assert "GET /persistence" in summary["api_gateway"]["supported_route_keys"]
 assert "GET /persistence" in summary["api_gateway"]["planned_route_keys"]
 assert "GET /acip/ws" not in summary["api_gateway"]["planned_route_keys"]
@@ -133,7 +137,10 @@ probes = summary["live_route_probes"]
 assert probes["default_route_is_not_substituted"] is True
 assert isinstance(probes["required_routes"], list) and probes["required_routes"]
 assert isinstance(probes["probed"], list)
-assert isinstance(probes["missing"], list)
+assert probes["missing"] == []
+for route in ["GET /cav", "GET /constructability"]:
+    assert route in probes["required_routes"]
+    assert route in [entry["route"] for entry in probes["probed"]]
 for required in [
     "sts get-caller-identity",
     "apigatewayv2 get-apis",
@@ -166,6 +173,18 @@ probe.write_text(json.dumps(summary))
 result = subprocess.run([sys.executable, sys.argv[2], str(probe)], capture_output=True, text=True)
 assert result.returncode != 0, "validator accepted $default as a substitute for named routes"
 assert "GET /status" in result.stderr
+
+summary = json.loads(Path(sys.argv[1]).read_text())
+summary["live_route_probes"]["missing"] = ["GET /constructability"]
+summary["live_route_probes"]["probed"] = [
+    entry for entry in summary["live_route_probes"]["probed"]
+    if entry.get("route") != "GET /constructability"
+]
+probe = Path(sys.argv[1]).with_name("missing-constructability-summary.json")
+probe.write_text(json.dumps(summary))
+result = subprocess.run([sys.executable, sys.argv[2], str(probe)], capture_output=True, text=True)
+assert result.returncode != 0, "validator accepted missing constructability route"
+assert "live_route_probes.missing" in result.stderr
 PY
 
 echo "PASS test_run_v0917_csm_api_gateway_bridge_proof"

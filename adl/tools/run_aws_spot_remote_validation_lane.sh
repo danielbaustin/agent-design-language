@@ -63,7 +63,7 @@ BUILDER_IMAGE_TAG="${ADL_AWS_SPOT_BUILDER_IMAGE_TAG:-v0.91.7-fixed}"
 EXPECTED_ARCHITECTURE="${ADL_AWS_SPOT_EXPECTED_ARCHITECTURE:-x86_64}"
 MIN_CACHE_FREE_GIB="${ADL_AWS_SPOT_MIN_CACHE_FREE_GIB:-10}"
 ESTIMATED_HOURLY_COST_USD="${ADL_AWS_SPOT_ESTIMATED_HOURLY_COST_USD:-}"
-MAX_RUN_SECONDS="${ADL_AWS_SPOT_MAX_RUN_SECONDS:-1800}"
+MAX_RUN_SECONDS=""
 AMI_ID="${ADL_AWS_REMOTE_VALIDATION_AMI_ID:-}"
 SUBNET_ID="${ADL_AWS_REMOTE_VALIDATION_SUBNET_ID:-}"
 EXPECTED_CACHE_VOLUME_ID_SHA256="${ADL_AWS_REMOTE_VALIDATION_CACHE_VOLUME_ID_SHA256:-}"
@@ -90,10 +90,9 @@ Options:
   --out <path>                  Summary JSON path. Defaults under .adl/tmp.
   --artifact-dir <dir>          Artifact root. Defaults beside --out.
   --instance-type <type>        Add an allowed EC2 instance type.
-  --instance-types <type1,type2,...>
-                                Add a comma-separated EC2 instance-type list.
+  --instance-types <list>       Add comma-separated allowed EC2 instance types.
   --cache-volume-name <name>    Warm EBS cache volume name. Defaults to retained WP-06 cache.
-  --cache-volume-size-gib <gib> Cache volume size when created. Defaults to 1000.
+  --cache-volume-size-gib <gib> Cache volume size when created. Defaults to 500.
   --cache-volume-type <type>    Cache volume type. Defaults to gp3.
   --cache-volume-iops <iops>    Cache volume IOPS. Defaults to 3000.
   --cache-volume-throughput-mbps <mbps>
@@ -119,8 +118,7 @@ Options:
   --min-cache-free-gib <gib>     Required warm-cache headroom. Defaults 10.
   --estimated-hourly-cost-usd <usd>
                                 Override the pre-run Spot hourly price estimate.
-  --max-run-seconds <seconds>    Remote command timeout. Defaults to 1800;
-                                must be between 300 and 3600 seconds.
+  --max-run-seconds <seconds>   Remote validation command timeout in seconds.
   --ami-id <id>                 Explicit AMI. Defaults to the current AL2023 SSM image.
   --subnet-id <id>              Explicit subnet. Defaults to retained hot-cache proof topology.
   --expected-cache-volume-id-sha256 <hash>
@@ -197,17 +195,11 @@ while [[ $# -gt 0 ]]; do
       shift 2
       ;;
     --instance-types)
-      if [[ -z "${2:-}" || "$2" == ,* || "$2" == *, || "$2" == *,,* ]]; then
-        echo "run_aws_spot_remote_validation_lane: --instance-types must contain non-empty comma-separated values" >&2
-        exit 2
-      fi
       IFS=',' read -r -a requested_instance_types <<<"${2:-}"
-      for instance_type in "${requested_instance_types[@]}"; do
-        if [[ ! "$instance_type" =~ ^[a-z0-9.-]+$ ]]; then
-          echo "run_aws_spot_remote_validation_lane: --instance-types contains an invalid instance type" >&2
-          exit 2
+      for requested_instance_type in "${requested_instance_types[@]}"; do
+        if [[ -n "$requested_instance_type" ]]; then
+          INSTANCE_TYPES+=("$requested_instance_type")
         fi
-        INSTANCE_TYPES+=("$instance_type")
       done
       shift 2
       ;;
@@ -342,11 +334,6 @@ fi
 
 if [[ -z "$PROFILE" ]]; then
   echo "run_aws_spot_remote_validation_lane: --profile must not be empty" >&2
-  exit 2
-fi
-
-if [[ ! "$MAX_RUN_SECONDS" =~ ^[0-9]+$ ]] || [ "$MAX_RUN_SECONDS" -lt 300 ] || [ "$MAX_RUN_SECONDS" -gt 3600 ]; then
-  echo "run_aws_spot_remote_validation_lane: --max-run-seconds must be between 300 and 3600 seconds" >&2
   exit 2
 fi
 
@@ -613,8 +600,6 @@ verify_ssh_recovery_key() {
     echo "run_aws_spot_remote_validation_lane: SSH recovery key is not configured" >&2
     return 1
   }
-  # GNU stat's -f reports filesystem metadata, so prefer its file-mode form on
-  # Linux and retain BSD stat as the portable fallback for macOS.
   key_mode="$(stat -c '%a' "$SSH_PRIVATE_KEY_PATH" 2>/dev/null || stat -f '%Lp' "$SSH_PRIVATE_KEY_PATH")"
   [[ "$key_mode" == "600" || "$key_mode" == "400" ]] || {
     echo "run_aws_spot_remote_validation_lane: SSH private key permissions must be 600 or 400" >&2
