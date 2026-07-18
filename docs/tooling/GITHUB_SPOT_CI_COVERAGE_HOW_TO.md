@@ -105,8 +105,6 @@ repository and approved branches/environments. The workflow requires:
 - repository secret `AWS_SPOT_REMOTE_VALIDATION_ROLE_ARN`
 - repository variable `AWS_SPOT_REMOTE_VALIDATION_REGION` (defaults to
   `us-west-2`)
-- repository variable `AWS_SPOT_REMOTE_VALIDATION_SSH_ALLOWED_CIDR`, set to the
-  operator's current public `/32` address
 - protected GitHub environment `adl-spot-ci`; configure it before cutover and
   do not rely on GitHub's unprotected auto-created environment default
 
@@ -119,6 +117,12 @@ must not wait for a deployment approval. The workflow still requires a
 same-repository PR head and explicitly routes fork pull requests to hosted
 runners, so no untrusted fork code can enter the Spot job.
 
+For live runs, the remote-validation binary resolves the current hosted
+runner's public IPv4 address through the AWS HTTPS check-IP endpoint and grants
+only that ephemeral `/32` access to the temporary SSH security group. The
+workflow must not reuse an operator workstation CIDR or persist the runner
+address as a repository variable.
+
 Do not store AWS access keys in GitHub. The role needs the bounded EC2, EBS,
 SSM, IAM, ECR-read, and cleanup permissions already created for the Spot lane.
 Its OIDC trust includes the dedicated `adl-spot-ci` environment subject so
@@ -126,15 +130,10 @@ automatic pull-request calls do not require a repository-wide
 `pull_request` subject. Keep the no-policy environment setting paired with the
 workflow's same-repository guard; do not remove that guard.
 
-The live workflow always enables port 22 using the configured operator CIDR;
-it does not widen ingress to the ephemeral GitHub runner address. The retained
-passphraseless key is the same key used by the local SSH recovery command.
-GitHub-side execution uses SSM as a second, retained log channel because the
-operator-only SSH ingress is intentionally not reachable from the hosted
-runner. The finalizer requires either a successful SSH probe and tail (the
-local/operator path) or the explicit operator-allowlist SSM fallback with
-both stdout and stderr records (the GitHub path). This keeps SSH recovery
-available to the operator without weakening the security group.
+The retained passphraseless key is the same key used by the local SSH recovery
+command. GitHub-side execution also retains SSM as an independent command and
+log channel. The finalizer requires successful SSH recovery and live-tail proof
+for the hosted path in addition to the retained SSM output records.
 
 This is a public repository. Keep privileged Spot dispatch on trusted
 `workflow_dispatch`, protected branches, or an approval-gated environment.

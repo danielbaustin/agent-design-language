@@ -61,8 +61,14 @@ grep -F 'ec2:RequestSpotInstances' "$SETUP" >/dev/null
 grep -F 'ec2:TerminateInstances' "$SETUP" >/dev/null
 grep -F 'SSH_ALLOWED_CIDR="${ADL_AWS_REMOTE_VALIDATION_SSH_ALLOWED_CIDR:-}"' "$ROOT/adl/tools/run_aws_spot_remote_validation_lane.sh" >/dev/null
 grep -F 'https://checkip.amazonaws.com' "$ROOT/tools/aws_remote_validation/src/aws_remote_validation.rs" >/dev/null
-grep -F 'AWS_SPOT_REMOTE_VALIDATION_SSH_ALLOWED_CIDR' "$WORKFLOW" >/dev/null
-grep -F -- '--ssh-allowed-cidr "$AWS_SPOT_REMOTE_VALIDATION_SSH_ALLOWED_CIDR"' "$WORKFLOW" >/dev/null
+if grep -F 'AWS_SPOT_REMOTE_VALIDATION_SSH_ALLOWED_CIDR' "$WORKFLOW" >/dev/null; then
+  echo "hosted Spot workflow must let the runner auto-detect its ephemeral SSH CIDR" >&2
+  exit 1
+fi
+if grep -F -- '--ssh-allowed-cidr' "$WORKFLOW" >/dev/null; then
+  echo "hosted Spot workflow must not override runner SSH CIDR auto-detection" >&2
+  exit 1
+fi
 
 ci_plan="$(bash "$SCRIPT" adl-ci --base HEAD --head HEAD --print-command)"
 coverage_plan="$(bash "$SCRIPT" adl-coverage --base HEAD --head HEAD --print-command)"

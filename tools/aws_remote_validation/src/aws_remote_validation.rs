@@ -10,12 +10,14 @@ use aws_sdk_servicequotas as servicequotas;
 use aws_sdk_ssm as ssm;
 use aws_sdk_sts as sts;
 use chrono::{DateTime, Datelike, Duration as ChronoDuration, Timelike, Utc};
+use ip_network::IpNetwork;
 use once_cell::sync::Lazy;
 use serde::{Deserialize, Serialize};
 use sha2::{Digest, Sha256};
 use std::fmt;
 use std::fs::OpenOptions;
 use std::io::Write;
+use std::net::Ipv4Addr;
 use std::path::{Path, PathBuf};
 use std::process::Command as StdCommand;
 use std::sync::{Arc, Mutex};
@@ -1436,6 +1438,21 @@ fn preview(text: &str) -> String {
     text.lines().take(8).collect::<Vec<_>>().join(" | ")
 }
 
+fn public_ipv4_cidr(response: &[u8]) -> Result<String> {
+    let text = std::str::from_utf8(response)
+        .context("failed to decode public IP response for SSH debug mode")?;
+    let ip: Ipv4Addr = text
+        .trim()
+        .parse()
+        .context("public IP response for SSH debug mode is not IPv4")?;
+    if !IpNetwork::from(ip).is_global() || ip == Ipv4Addr::new(192, 88, 99, 2) {
+        return Err(anyhow!(
+            "public IP response for SSH debug mode is not globally routable"
+        ));
+    }
+    Ok(format!("{ip}/32"))
+}
+
 fn build_ssh_debug_config(config: &AwsRemoteValidationConfig) -> Result<Option<SshDebugConfig>> {
     let Some(_key_name) = config.ssh_key_name.as_deref() else {
         return Ok(None);
@@ -1458,9 +1475,7 @@ fn build_ssh_debug_config(config: &AwsRemoteValidationConfig) -> Result<Option<S
             if !output.status.success() {
                 return Err(anyhow!("failed to detect public IP for SSH debug mode"));
             }
-            let ip = String::from_utf8(output.stdout)
-                .context("failed to decode public IP response for SSH debug mode")?;
-            format!("{}/32", ip.trim())
+            public_ipv4_cidr(&output.stdout)?
         }
     };
     Ok(Some(SshDebugConfig {
@@ -3443,6 +3458,35 @@ mod tests {
     use super::*;
     use std::collections::VecDeque;
     use std::sync::Mutex;
+
+    #[test]
+    fn public_ipv4_cidr_accepts_one_global_address() {
+        for (response, expected) in [
+            (b"8.8.8.8\n".as_slice(), "8.8.8.8/32"),
+            (b"192.0.0.9\n".as_slice(), "192.0.0.9/32"),
+            (b"192.0.0.10\n".as_slice(), "192.0.0.10/32"),
+        ] {
+            assert_eq!(public_ipv4_cidr(response).expect("global IPv4"), expected);
+        }
+    }
+
+    #[test]
+    fn public_ipv4_cidr_rejects_non_global_or_malformed_responses() {
+        for response in [
+            b"127.0.0.1\n".as_slice(),
+            b"10.0.0.1\n".as_slice(),
+            b"0.0.0.1\n".as_slice(),
+            b"192.88.99.2\n".as_slice(),
+            b"2001:4860:4860::8888\n".as_slice(),
+            b"not-an-ip\n".as_slice(),
+        ] {
+            assert!(
+                public_ipv4_cidr(response).is_err(),
+                "accepted non-global response: {:?}",
+                String::from_utf8_lossy(response)
+            );
+        }
+    }
 
     struct FakeAdapter {
         quota: QuotaSnapshot,
