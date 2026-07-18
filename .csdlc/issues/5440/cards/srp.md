@@ -8,7 +8,7 @@ Repository: danielbaustin/agent-design-language
 
 Card: srp
 
-Status: draft
+Status: complete
 
 ## Scope
 
@@ -31,7 +31,7 @@ csdlc-v2/tests/gate2.rs
     "actionable": true,
     "in_scope": true,
     "disposition": "fixed",
-    "fix_revision": "git-blake3:2d70cf48fc39d5ae900a78c83f82d5cccc20031c:8ff617d72b90bd6a8e3602e9d60685ee8ae8ded4b5da7f4dce176d9d342faf63",
+    "fix_revision": "git-blake3:77fafde96e9681b1b4871d1c033de532adc7df32:b4bda44216c140ff6b6356a8296c4d906b28e279471c9e883bbd4f6002fa7cf5",
     "route": null
   }
 ]
@@ -46,7 +46,7 @@ Every actionable finding requires a terminal disposition.
 
 ## Review Result
 
-Revision: Some("git-blake3:2d70cf48fc39d5ae900a78c83f82d5cccc20031c:8ff617d72b90bd6a8e3602e9d60685ee8ae8ded4b5da7f4dce176d9d342faf63")
+Revision: Some("git-blake3:77fafde96e9681b1b4871d1c033de532adc7df32:b4bda44216c140ff6b6356a8296c4d906b28e279471c9e883bbd4f6002fa7cf5")
 
 Reviewer: Some("codex-subagent-019f6d31")
 

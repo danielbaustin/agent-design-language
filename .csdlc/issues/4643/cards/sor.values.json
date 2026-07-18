@@ -7,9 +7,9 @@
     "title": "[v0.91.7][WP-16][quality] Coverage and quality gate",
     "slug": "v0-91-7-wp16-coverage-quality-gate",
     "version": "v0.91.7",
-    "generation": 3
+    "generation": 10
   },
-  "status": "pre_phase",
+  "status": "complete",
   "content": {
     "card_kind": "sor",
     "values": {
@@ -31,17 +31,17 @@
             "python3 docs/milestones/v0.91.7/review/wp16_quality_gate_4643/quality_gate_4643.py --root . --output docs/milestones/v0.91.7/review/wp16_quality_gate_4643/quality_gate_4643.json",
             "python3 -m json.tool docs/milestones/v0.91.7/review/wp16_quality_gate_4643/quality_gate_4643.json",
             "git diff --check",
-                        "csdlc-doctor --repo . --issue 4643"
+            "csdlc-doctor --repo . --issue 4643"
           ],
           "purpose": "Prove WP-16 has retained quality-gate evidence, valid JSON output, clean diff hygiene, and passing typed C-SDLC state while preserving downstream blocker truth.",
           "outcome": "passed",
           "evidence_ref": "local:4643-wp16-quality-gate-json-diff-doctor"
         }
       ],
-      "integration_state": "not_started",
-      "publication_state": "not_published",
-      "merge_state": "not_merged",
-      "closeout_state": "not_started",
+      "integration_state": "merged",
+      "publication_state": "closed",
+      "merge_state": "merged",
+      "closeout_state": "complete",
       "follow_ups": []
     }
   }

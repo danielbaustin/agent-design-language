@@ -3,33 +3,104 @@
   "issue": 4643,
   "repository": "danielbaustin/agent-design-language",
   "initialization_digest": "27a589f56d939921778467b4b57e218fe9bc89225f19cf93200ca51c9076fb24",
-  "phase": "implemented",
-  "generation": 3,
-  "digest": "b9a30c70975c98a4724d6c7f6421e6e3555509b086d22c3f436ff1c35e5b45e2",
-  "claim": {
-    "id": "claim-4643-v0-91-7-wp16-coverage-quality-gate",
-    "owner": "codex:019f3d65-2216-7832-804a-26339473b27d",
-    "generation": 3,
-    "acquired_unix_seconds": 1784360472,
-    "expires_unix_seconds": 1784965272,
-    "heartbeat_unix_seconds": 1784360472,
-    "branch": "codex/4643-v0917-quality-gate",
-    "worktree": ".worktrees/adl-wp-4643",
-    "protected_paths": [
+  "phase": "closed_out",
+  "generation": 10,
+  "digest": "56262693593f1e60933f79cde61b89dd61ceeae3cb9d323da091b63d110bb3fd",
+  "claim": null,
+  "review_assignment": {
+    "reviewer": "subagent:019f7776-8160-73f0-8815-7804e9924cfe",
+    "assigned_by": "codex-root",
+    "revision": "git-blake3:5c356ff5f7cf95d9545726a55b99fc826f7972d7:0a6514cc248eb45cda02344e55c0f98f381f322107413f87dc0d5e6ab5033e43",
+    "scope": [
+      "docs/milestones/v0.91.7/review/V0917_WP16_QUALITY_GATE_4643.md",
+      "docs/milestones/v0.91.7/review/wp16_quality_gate_4643/quality_gate_4643.py",
+      "docs/milestones/v0.91.7/review/wp16_quality_gate_4643/quality_gate_4643.json"
+    ]
+  },
+  "review": {
+    "reviewer": "subagent:019f7776-8160-73f0-8815-7804e9924cfe",
+    "scope": [
+      "docs/milestones/v0.91.7/review/V0917_WP16_QUALITY_GATE_4643.md",
+      "docs/milestones/v0.91.7/review/wp16_quality_gate_4643/quality_gate_4643.py",
+      "docs/milestones/v0.91.7/review/wp16_quality_gate_4643/quality_gate_4643.json"
+    ],
+    "reviewed_revision": "git-blake3:5c356ff5f7cf95d9545726a55b99fc826f7972d7:0a6514cc248eb45cda02344e55c0f98f381f322107413f87dc0d5e6ab5033e43",
+    "findings": [],
+    "residual_risks": [
+      "WP-17 through WP-23 remain open downstream gates and prevent release approval."
+    ],
+    "completed": true,
+    "non_substantive_proof": null
+  },
+  "publication": {
+    "repository": "danielbaustin/agent-design-language",
+    "issue": 4643,
+    "pull_request": 5524,
+    "url": "https://github.com/danielbaustin/agent-design-language/pull/5524",
+    "base": "main",
+    "head": "codex/4643-v0917-quality-gate",
+    "revision": "git-blake3:5c356ff5f7cf95d9545726a55b99fc826f7972d7:0a6514cc248eb45cda02344e55c0f98f381f322107413f87dc0d5e6ab5033e43",
+    "draft": false,
+    "observed_state": "merged"
+  },
+  "readiness": {
+    "pull_request": 5524,
+    "head_sha": "5c356ff5f7cf95d9545726a55b99fc826f7972d7",
+    "checks": [
+      {
+        "name": "adl-ci",
+        "requirement": "required",
+        "conclusion": "success",
+        "details_url": "https://github.com/danielbaustin/agent-design-language/actions/runs/29664733537/job/88133198798"
+      },
+      {
+        "name": "adl-coverage",
+        "requirement": "required",
+        "conclusion": "success",
+        "details_url": "https://github.com/danielbaustin/agent-design-language/actions/runs/29664733537/job/88133169249"
+      },
+      {
+        "name": "adl-tooling-contracts",
+        "requirement": "required",
+        "conclusion": "success",
+        "details_url": "https://github.com/danielbaustin/agent-design-language/actions/runs/29664733537/job/88133154035"
+      },
+      {
+        "name": "adl-path-policy",
+        "requirement": "required",
+        "conclusion": "success",
+        "details_url": "https://github.com/danielbaustin/agent-design-language/actions/runs/29664733537/job/88133144613"
+      },
+      {
+        "name": "adl-demo-proof",
+        "requirement": "required",
+        "conclusion": "success",
+        "details_url": "https://github.com/danielbaustin/agent-design-language/actions/runs/29664733537/job/88133154041"
+      }
+    ],
+    "review_state": "not_required",
+    "conflict_state": "clean",
+    "post_publication_findings": [],
+    "ready": true,
+    "blockers": []
+  },
+  "terminal": {
+    "pull_request": 5524,
+    "disposition": "merged",
+    "observed_sha": "5c356ff5f7cf95d9545726a55b99fc826f7972d7",
+    "observed_state": "merged",
+    "receipt_path": "csdlc-v2/closeout/4643.json",
+    "released_branch": "codex/4643-v0917-quality-gate",
+    "released_worktree": ".worktrees/adl-wp-4643",
+    "released_protected_paths": [
       "docs/milestones/v0.91.7/review/V0917_WP16_QUALITY_GATE_4643.md",
       "docs/milestones/v0.91.7/review/wp16_quality_gate_4643",
       ".csdlc/issues/4643"
-    ],
-    "purpose": "Prepare and later execute WP-16 without claiming completion from setup"
+    ]
   },
-  "review_assignment": null,
-  "review": null,
-  "publication": null,
-  "readiness": null,
-  "terminal": null,
   "migration": null,
-  "design_path": ".csdlc/prepared/issues/4643/design.md",
-  "diagram_path": ".csdlc/prepared/issues/4643/diagram.mmd",
+  "design_path": ".csdlc/issues/4643/retained/design.md",
+  "diagram_path": ".csdlc/issues/4643/retained/diagram.mmd",
   "design_review": {
     "approved": {
       "reviewer": "codex-prep-only",
@@ -38,34 +109,34 @@
   },
   "cards": {
     "sip": {
-      "values_digest": "71f363b86b8515a5ebd9f56a2781ba3a01a69a53a6f636b8fec5b71dd88302b5",
+      "values_digest": "e778382ad38a8d870e23155d77ed4a136a9931e86c6d358c16a6637abb2d40f8",
       "rendered_digest": "b6d87a9c6751d0f088c233908915894622369680c1326cad4284e2af7303b81d",
       "ast_digest": "39891ae20fe3cb13dc17d4420becc30b5787cf1b25809ebb7cdec1e0c3771a40"
     },
     "stp": {
-      "values_digest": "657cc20eeb9983ea1c3384feaab4a46e1f3780facc786b865a60df595b301cbd",
+      "values_digest": "0f9e59f63c3b11a8e7f6a5f3553739b42ae3266b80f03d2009797256b2a37a85",
       "rendered_digest": "a8e42d6251d5219ad1b4009dc2f5fd5b9ce26dc58daf645145d71d304e9fdefb",
       "ast_digest": "8194485180014336ff6c9d346ba7e1c08ebda6e00f19742a14dba96c0bfc233a"
     },
     "spp": {
-      "values_digest": "5596f9caee48730b65e115a4eb93bc7e921b933cd12415b0627fefdcf519e851",
-      "rendered_digest": "54c4712e9b7679250b607b130915f28f53dccc21f11c4a703df8f2436bbb7596",
-      "ast_digest": "f1a73a8041d3743283096140d1dde5e96e4059712600b0f9f761ab30ad50e8cb"
+      "values_digest": "260d524f1a6717ff619be4b90a803f101631b8750fdd7f7cdcd263be004ee264",
+      "rendered_digest": "6048f4854bcfdbb6e9f293b548878cffc4f266af8a7bf7384768d9bf2022cc22",
+      "ast_digest": "b03f76182589ed27f08755435132dd243cbbc2787ea1e1be2740536e52cf8d8d"
     },
     "vpp": {
-      "values_digest": "387890bb330248e234ca38cb8ccd6956c077999d53d07d4dd1b486d62c288f70",
-      "rendered_digest": "ff7ad494479f598f3327b8031221b7fa963f6a6cf9575d8e452db542c777733c",
-      "ast_digest": "5a2be2b5f6755ff047afa150c045bb33ed39060618633415924b8880a47e6e14"
+      "values_digest": "4a3f2bced20d48cd2d338ed935453df80539e3471e93f86b709894c14ed8cfd2",
+      "rendered_digest": "c2914f9d3ca66e5f82f91be265e368bd872bd1f6d5d4808919cf496d1cce6e62",
+      "ast_digest": "2d195ab3d64d420aa56ace960a94081b05ade13fe06c1d968a5281fdb8d79ca7"
     },
     "srp": {
-      "values_digest": "b984109145e2f6e47b17cbbd61612af1ada72f8da20c78090325e73da95e6a8b",
-      "rendered_digest": "a2dd879f143c55b4b01310725b0ba798a8cd75d715f9a79d82ae5db9369270f9",
-      "ast_digest": "e932067239e9f897c717f9223a0c3aa02e773ec4f02ef566d7f86a24c36190d7"
+      "values_digest": "da49997523872e0eedbeac95fc94553ea6fd961ff0bef6c7000faa07e3e5562e",
+      "rendered_digest": "7227aa053441519966f53dcb85732375b0bcacd558b98ec36eebabfb920fffbf",
+      "ast_digest": "88333e4a8617af5ad032cf03ee069c4ffe6bfff9b85eebeba12cc2af3194b8f1"
     },
     "sor": {
-      "values_digest": "e30b64a46042585216faeb5eaae570bab0e5c6aebee8fc87ffe31eb785486e5c",
-      "rendered_digest": "a1a033d9dbaae06e14cb54b6915bc7a7456c67bd5542c08f4b33e5c86ea2d2fe",
-      "ast_digest": "da2d3baf81d8d6ad31c7268f7c27e70d2eba548747cfa1d7a7b33d265479509f"
+      "values_digest": "f66ee2114a15b7073a1068066924cbfee1cc8d4091bc04217bec9bebbabfb03d",
+      "rendered_digest": "898fc33ae81da4e96f03e17e6ea2bf14abae23e0ef7ff7f611725c82ee57cb5f",
+      "ast_digest": "07c947b286a99e9a340354c6f57b7fd6f5b93e3e455bde729cf785570d005820"
     }
   },
   "transitions": [
@@ -89,6 +160,41 @@
       "to": "implemented",
       "actor": "codex-root",
       "reason": "The bounded WP-16 quality gate is implemented and locally validated with retained evidence."
+    },
+    {
+      "sequence": 4,
+      "from": "implemented",
+      "to": "reviewed",
+      "actor": "codex-root",
+      "reason": "Bounded pre-PR review completed, findings were fixed, and verification returned no findings."
+    },
+    {
+      "sequence": 5,
+      "from": "reviewed",
+      "to": "published",
+      "actor": "codex-root",
+      "reason": "observed exact PR after current review"
+    },
+    {
+      "sequence": 6,
+      "from": "published",
+      "to": "merge_ready",
+      "actor": "codex-closeout-audit",
+      "reason": "observed required checks, review, and conflict readiness"
+    },
+    {
+      "sequence": 7,
+      "from": "merge_ready",
+      "to": "merged",
+      "actor": "codex-closeout-audit",
+      "reason": "observed exact PR merged"
+    },
+    {
+      "sequence": 8,
+      "from": "merged",
+      "to": "closed_out",
+      "actor": "codex-closeout-audit",
+      "reason": "terminal truth recorded and claim released"
     }
   ],
   "audit": [
@@ -126,6 +232,62 @@
       "actor": "codex-root",
       "reason": "The bounded WP-16 quality gate is implemented and locally validated with retained evidence.",
       "operation": "{\"operation\":\"advance_phase\",\"phase\":\"implemented\"}"
+    },
+    {
+      "sequence": 6,
+      "generation": 3,
+      "actor": "codex-root",
+      "reason": "assign bounded exact-revision review",
+      "operation": "assign_review"
+    },
+    {
+      "sequence": 7,
+      "generation": 4,
+      "actor": "subagent:019f7776-8160-73f0-8815-7804e9924cfe",
+      "reason": "atomically record review evidence and SRP projection",
+      "operation": "record_review"
+    },
+    {
+      "sequence": 8,
+      "generation": 5,
+      "actor": "codex-root",
+      "reason": "Bounded pre-PR review completed, findings were fixed, and verification returned no findings.",
+      "operation": "{\"operation\":\"advance_phase\",\"phase\":\"reviewed\"}"
+    },
+    {
+      "sequence": 9,
+      "generation": 6,
+      "actor": "codex-root",
+      "reason": "atomically record observed GitHub publication and SOR projection",
+      "operation": "record_publication"
+    },
+    {
+      "sequence": 10,
+      "generation": 7,
+      "actor": "codex-closeout-audit",
+      "reason": "atomically record observed merged GitHub publication and SOR projection",
+      "operation": "record_merged_publication"
+    },
+    {
+      "sequence": 11,
+      "generation": 8,
+      "actor": "codex-closeout-audit",
+      "reason": "record normalized remote readiness without replacing pre-publication review",
+      "operation": "record_readiness"
+    },
+    {
+      "sequence": 12,
+      "generation": 9,
+      "actor": "codex-closeout-audit",
+      "reason": "atomically finalize SOR/index and release claim/protected paths",
+      "operation": "record_terminal"
+    },
+    {
+      "sequence": 13,
+      "generation": 10,
+      "actor": "codex-closeout-audit",
+      "reason": "Materialize the retained terminal receipt after merged PR #5524 and closed issue #4643.",
+      "operation": "reconcile_terminal"
     }
   ]
 }

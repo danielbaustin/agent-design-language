@@ -10,3 +10,12 @@
 {"sequence":10,"generation":6,"actor":"codex-root","reason":"assign bounded exact-revision review","operation":"assign_review"}
 {"sequence":11,"generation":7,"actor":"subagent:019f745c-23d3-7820-8e91-084314fbc95f","reason":"atomically record review evidence and SRP projection","operation":"record_review"}
 {"sequence":12,"generation":8,"actor":"codex-root","reason":"Current substantive docs/ledger review completed with no findings after metadata-only recovery.","operation":"{\"operation\":\"advance_phase\",\"phase\":\"reviewed\"}"}
+{"sequence":13,"generation":9,"actor":"codex-root","reason":"The committed C-SDLC review metadata advanced HEAD after the substantive docs/ledger review; recover to implemented so review can be re-recorded against the current clean committed head before publication.","operation":"recover_review"}
+{"sequence":14,"generation":9,"actor":"codex-root","reason":"assign bounded exact-revision review","operation":"assign_review"}
+{"sequence":15,"generation":10,"actor":"subagent:019f745c-23d3-7820-8e91-084314fbc95f","reason":"atomically record review evidence and SRP projection","operation":"record_review"}
+{"sequence":16,"generation":11,"actor":"codex-root","reason":"Current committed head review completed with no findings after metadata-only recovery.","operation":"{\"operation\":\"advance_phase\",\"phase\":\"reviewed\"}"}
+{"sequence":17,"generation":12,"actor":"codex-root","reason":"atomically record observed GitHub publication and SOR projection","operation":"record_publication"}
+{"sequence":18,"generation":13,"actor":"codex-closeout-audit","reason":"atomically record observed merged GitHub publication and SOR projection","operation":"record_merged_publication"}
+{"sequence":19,"generation":14,"actor":"codex-closeout-audit","reason":"record normalized remote readiness without replacing pre-publication review","operation":"record_readiness"}
+{"sequence":20,"generation":15,"actor":"codex-closeout-audit","reason":"atomically finalize SOR/index and release claim/protected paths","operation":"record_terminal"}
+{"sequence":21,"generation":16,"actor":"codex-closeout-audit","reason":"Materialize the retained terminal receipt after merged PR #5503 and closed issue #4642.","operation":"reconcile_terminal"}

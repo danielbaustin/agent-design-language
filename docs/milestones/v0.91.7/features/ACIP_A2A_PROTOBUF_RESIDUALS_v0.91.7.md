@@ -4,7 +4,7 @@
 
 - Feature Name: ACIP/A2A Protobuf Implementation Decisions
 - Milestone Target: `v0.91.7`
-- Status: schema/projection finalized; transport and access residuals remain
+- Status: bounded schema, transport, and access proof retained; broader protocol readiness not claimed
 - Owner: ADL maintainers
 - Doc Role: primary
 - Feature Types: architecture, schema, policy

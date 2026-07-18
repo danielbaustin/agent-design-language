@@ -2,8 +2,11 @@
 
 ## Status
 
-Feature documents listed here define the final pre-`v0.92` implementation/readiness tranche.
-They are planning and proof-requirement documents, not runtime implementation proof by themselves.
+Feature documents listed here define the final pre-`v0.92`
+implementation/readiness tranche. Their owning WP-10 through WP-13 umbrellas
+are closed, but the documents remain claim boundaries rather than standalone
+runtime proof. Consume the retained review packets and the v0.91.7
+feature-proof coverage index with them.
 
 ## Feature Docs
 

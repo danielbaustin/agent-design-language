@@ -7,9 +7,9 @@
     "title": "[v0.91.7][tooling][CI] Keep mixed Runtime v3 and CSM validation out of Runtime v2 coverage",
     "slug": "v0-91-7-runtime-v3-csm-fast-lane",
     "version": "v0.91.7",
-    "generation": 7
+    "generation": 16
   },
-  "status": "pre_phase",
+  "status": "complete",
   "content": {
     "card_kind": "sor",
     "values": {
@@ -57,10 +57,10 @@
           "evidence_ref": "local:5509-ci-path-policy-contract-pass"
         }
       ],
-      "integration_state": "not_started",
-      "publication_state": "not_published",
-      "merge_state": "not_merged",
-      "closeout_state": "not_started",
+      "integration_state": "merged",
+      "publication_state": "closed",
+      "merge_state": "merged",
+      "closeout_state": "complete",
       "follow_ups": []
     }
   }

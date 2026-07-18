@@ -2,12 +2,20 @@
 
 Issue: #4989
 
+WP-17 verification: 2026-07-18
+
 ## Summary
 
 This index records the v0.91.7 ADR disposition for the architecture decisions
 named by #4989. It writes the required v0.91.7 ADR set while preserving
 existing ADR baselines and explicitly deferring decisions that do not yet have
 implementation evidence.
+
+WP-17 verified that every path in the written set exists in `docs/adr/`, ADR
+0043 through ADR 0050 are listed by the accepted-record index, and ADR 0051 is
+listed as deferred. Candidate ADRs 0030, 0031, 0034, and 0040 remain in
+`docs/architecture/adr/` with candidate status; this index does not silently
+promote them.
 
 ## Written In This Issue
 

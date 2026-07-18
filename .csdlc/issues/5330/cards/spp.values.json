@@ -7,7 +7,7 @@
     "title": "[runtime-v3][ci] Give Runtime v3 an independent fast validation lane",
     "slug": "runtime-v3-independent-fast-validation-lane",
     "version": "v0.91.7",
-    "generation": 11
+    "generation": 13
   },
   "status": "ready",
   "content": {
@@ -66,9 +66,9 @@
         "Subagent review has no actionable findings"
       ],
       "replan_triggers": [],
-      "design_ref": "docs/architecture/runtime_v3_fast_validation_5330.md",
+      "design_ref": ".csdlc/issues/5330/retained/design.md",
       "design_digest": "2c67572989196c90c30460bdbdb61e647aa476b8412ca26f5bbe8dbba8623bb5",
-      "diagram_ref": "docs/architecture/runtime_v3_fast_validation_5330.mmd",
+      "diagram_ref": ".csdlc/issues/5330/retained/diagram.mmd",
       "diagram_digest": "db3c563d6efe48791bbde045fef45d732d8a74be8db285f4fe34e6ef9d7d6c0f"
     }
   }

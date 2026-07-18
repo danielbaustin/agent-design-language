@@ -4,7 +4,7 @@
 
 - Feature Name: Affect And Happiness Implementation Boundary
 - Milestone Target: `v0.91.7`
-- Status: boundary_defined
+- Status: `boundary_proven` through closed #4752; subjective affect and wellbeing remain non-claims
 - Owner: ADL maintainers
 - Doc Role: primary
 - Feature Types: policy, architecture, runtime

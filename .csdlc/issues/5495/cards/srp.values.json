@@ -7,9 +7,9 @@
     "title": "[v0.91.7][csdlc-v2][publish] Avoid stale review loop after publication metadata commit",
     "slug": "publication-metadata-review-loop",
     "version": "v0.91.7",
-    "generation": 11
+    "generation": 16
   },
-  "status": "draft",
+  "status": "complete",
   "content": {
     "card_kind": "srp",
     "values": {

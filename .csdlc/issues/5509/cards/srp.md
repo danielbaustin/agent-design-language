@@ -8,7 +8,7 @@ Repository: danielbaustin/agent-design-language
 
 Card: srp
 
-Status: pre_phase
+Status: complete
 
 ## Scope
 
@@ -27,7 +27,18 @@ adl/tools/test_run_pr_fast_test_lane.sh
 
 ## Findings
 
-[]
+[
+  {
+    "id": "F-5509-1",
+    "severity": "p1",
+    "summary": "The committed review metadata changed HEAD without an exact non-substantive proof.",
+    "actionable": true,
+    "in_scope": true,
+    "disposition": "fixed",
+    "fix_revision": "git-blake3:23fbe8a6de84734c2b517c3d36220b3fd960a4db:05b5b27993b947dbf821abcb156dd5f22a6b251761c2a9eefd485fa5a7476afd",
+    "route": null
+  }
+]
 
 ## Dispositions
 
@@ -39,7 +50,7 @@ Every actionable finding requires a terminal disposition.
 
 ## Review Result
 
-Revision: Some("git-blake3:209a2c14f7db7c977ffb79b0864c0a11807415c9:3d42c4164fd38abe0faf62a31ef9ba3cb7b387b9a08932e92dbb84654e2161dc")
+Revision: Some("git-blake3:23fbe8a6de84734c2b517c3d36220b3fd960a4db:05b5b27993b947dbf821abcb156dd5f22a6b251761c2a9eefd485fa5a7476afd")
 
 Reviewer: Some("subagent:019f751d-2d23-70d1-b40f-69c756ed58d0")
 

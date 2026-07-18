@@ -1,0 +1,14 @@
+{
+  "issue": 4644,
+  "card": "spp",
+  "expected_generation": 7,
+  "expected_digest": "c03f27b18ca814712a6abcea8279875d0bf3c15c998514521ce4b0e2ca5b0b9c",
+  "claim_id": "claim-4644-v0-91-7-wp17-docs-adoption-review",
+  "actor": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+  "reason": "SOR records exact execution and validation, SRP records the clean exact-revision subagent review, and all release/activation/runtime/cloud/security/affect/adaptive-learning non-claims remain explicit.",
+  "operation": {
+    "operation": "update_plan_step",
+    "step_id": "S4",
+    "status": "completed"
+  }
+}

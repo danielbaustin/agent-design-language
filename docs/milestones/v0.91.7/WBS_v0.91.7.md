@@ -5,7 +5,7 @@
 - Milestone: `v0.91.7`
 - Version: `v0.91.7`
 - Date: `2026-06-21`
-- Status: WP issue wave opened for final pre-`v0.92` implementation and integrated-proof tranche
+- Status: closeout tail active; WP-01 through WP-16 closed, WP-17 through WP-20 and WP-23 open
 - Setup lineage: `#3801`, `#3825`, `#4368`
 - Source capture: `PLANNING_SOURCE_CAPTURE_v0.91.7.md`
 - Release-tail handoff addendum: `V0916_TO_V0917_HANDOFF_ADDENDUM_3982.md`
@@ -13,6 +13,12 @@
 ## Status
 
 WP allocation is promoted into the v0.91.7 issue wave. WP-01 is `#4628`; WP-02 through WP-23 are `#4629` through `#4650`. Existing v0.91.7 issues are assigned rather than duplicated: `#4603` belongs to WP-06, `#4617` belongs to WP-04, `#4622` belongs to WP-02, and integrated logging/OTel proof `#4718` belongs to WP-07 with WP-08/WP-09 consumers. `#4622` is closed and delivered the repo-native PR inventory command required for release-tail review.
+
+Live WP truth refreshed on 2026-07-18: WP-01 through WP-16 are closed;
+WP-17 through WP-20 are open; WP-21 and WP-22 are closed retained planning
+evidence; and WP-23 is open. This sequence snapshot is issue-state truth only.
+Review cleanliness and release consumption remain governed by
+`review/V0917_SPRINT_REVIEW_REGISTER.md` and issue-local proof packets.
 
 WP-01 consumes this document, `PLANNING_SOURCE_CAPTURE_v0.91.7.md`, and [WP_ISSUE_WAVE_v0.91.7.yaml](WP_ISSUE_WAVE_v0.91.7.yaml), then keeps the opened issue wave and planning truth aligned before dependent execution begins.
 

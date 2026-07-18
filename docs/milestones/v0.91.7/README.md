@@ -14,7 +14,26 @@
 
 ## Status
 
-Current status: milestone issue wave opened for the final pre-`v0.92` implementation and integrated-proof tranche.
+Current status: closeout tail active after the implementation and demo waves.
+
+Live issue truth was refreshed by WP-17 on 2026-07-18. WP-01 through WP-16
+are closed. WP-17 through WP-20 remain open, WP-21 and WP-22 are closed
+retained planning evidence, and WP-23 remains open. Closed issue state does
+not by itself mean review-clean or release-ready; the sprint-review register
+and issue-local proof packets retain findings and non-claims.
+
+| Closeout gate | Issue | Live state | Consumption boundary |
+| --- | ---: | --- | --- |
+| WP-14 launch/birthday handoff | #4641 | closed | Routing and claim-boundary evidence only. |
+| WP-15 demo convergence | #4642 | closed | Demo/proof coverage, not release approval. |
+| WP-16 quality gate | #4643 | closed | Passed with downstream gates open; retained packet is `review/V0917_WP16_QUALITY_GATE_4643.md`. |
+| WP-17 documentation alignment | #4644 | open | Current issue; alignment packet is under `review/`. |
+| WP-18 internal review | #4645 | open | Starts after WP-17. |
+| WP-19 external review | #4646 | open | Starts after internal-review readiness. |
+| WP-20 remediation/preflight | #4647 | open | Owns later review findings. |
+| WP-21 next-milestone planning | #4648 | closed | Retained planning evidence; current v0.91.8 authority supersedes direct activation use. |
+| WP-22 next-milestone review | #4649 | closed | Retained review evidence, not release approval. |
+| WP-23 release ceremony | #4650 | open | Final gate after required review/remediation truth. |
 
 - Initial planning package: created by earlier v0.91.7 setup work.
 - Source-capture refresh: `#4368`.
@@ -47,10 +66,10 @@ Current status: milestone issue wave opened for the final pre-`v0.92` implementa
   - `#4652` covers Unity demo surfaces.
   - `#4653` covers dspark speculative decoding evaluation with Qwen and Gemma.
   - `#4654` covers deepseek-v4-flash-dspark smoke testing on ephemeral 2xH100 EC2 with teardown/cost proof.
-- Execution: the issue wave is active. WP-01, WP-02, WP-05, WP-06, WP-07, and
-  supporting tools/runtime child issues have executed in parallel with remaining
-  v0.91.7 work; this package should be read as a living milestone surface, not
-  as the original pre-execution planning snapshot.
+- Execution: WP-01 through WP-16 are closed with issue-local evidence and
+  retained limitations. The remaining active work is the WP-17 through WP-20
+  quality/review/remediation chain and WP-23 release ceremony. This package is
+  a living milestone surface, not the original pre-execution planning snapshot.
 - Validation: validation truth is issue-local; completed child issues retain
   their focused proof surfaces, while remaining open issues must provide their
   own validation before closeout.

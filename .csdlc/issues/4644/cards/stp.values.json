@@ -1,0 +1,44 @@
+{
+  "identity": {
+    "schema_version": "1.0.0",
+    "template_version": "1.0.0",
+    "issue": 4644,
+    "repository": "danielbaustin/agent-design-language",
+    "title": "[v0.91.7][WP-17][docs] Docs and adoption review pass",
+    "slug": "v0-91-7-wp17-docs-adoption-review",
+    "version": "v0.91.7",
+    "generation": 15
+  },
+  "status": "ready",
+  "content": {
+    "card_kind": "stp",
+    "values": {
+      "task_boundary": "Prepare and later execute only WP-17; do not absorb sibling WPs or release-readiness claims.",
+      "deliverables": [
+        "Docs alignment packet",
+        "Repaired planning surfaces"
+      ],
+      "acceptance_criteria": [
+        "AC-1: WP-17 executes only within its declared scope and protected output paths",
+        "AC-2: Deliverables are retained on tracked paths with evidence-bound claims",
+        "AC-3: Validation records distinguish fresh checks, retained proof, skipped checks, and unproven surfaces",
+        "AC-4: Sibling WP work, v0.91.7 release readiness, and v0.92 activation readiness are not silently claimed"
+      ],
+      "dependencies": [
+        "WP-16 quality-gate output"
+      ],
+      "repo_inputs": [
+        "docs/milestones/v0.91.7/README.md",
+        "docs/milestones/v0.91.7/WBS_v0.91.7.md",
+        "docs/milestones/v0.91.7/WP_ISSUE_WAVE_v0.91.7.yaml",
+        "docs/planning/ADL_FEATURE_LIST.md"
+      ],
+      "non_goals": [
+        "Do not execute this work during preparation",
+        "Do not implement sibling WP work",
+        "Do not use AWS or paid remote validation lanes for preparation",
+        "Do not claim release readiness from setup cards"
+      ]
+    }
+  }
+}

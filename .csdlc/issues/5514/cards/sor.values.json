@@ -7,9 +7,9 @@
     "title": "[v0.91.7][tooling][coverage] Preserve the complete ADL CSM suite in Runtime v3 bridge coverage",
     "slug": "v0-91-7-complete-csm-coverage",
     "version": "v0.91.7",
-    "generation": 5
+    "generation": 13
   },
-  "status": "pre_phase",
+  "status": "complete",
   "content": {
     "card_kind": "sor",
     "values": {
@@ -35,10 +35,10 @@
           "evidence_ref": "local:5514-pr-fast-coverage-contract-pass"
         }
       ],
-      "integration_state": "not_started",
-      "publication_state": "not_published",
-      "merge_state": "not_merged",
-      "closeout_state": "not_started",
+      "integration_state": "merged",
+      "publication_state": "closed",
+      "merge_state": "merged",
+      "closeout_state": "complete",
       "follow_ups": []
     }
   }

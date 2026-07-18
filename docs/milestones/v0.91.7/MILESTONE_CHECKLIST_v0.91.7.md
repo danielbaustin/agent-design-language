@@ -11,7 +11,10 @@
 
 ## Status
 
-Forward checklist. Items are intentionally unchecked because `v0.91.7` execution has not started.
+Live checklist refreshed on 2026-07-18. Checked items below have direct
+issue/packet evidence; unchecked items remain unverified or belong to open
+quality/review/release gates. This checklist does not infer completion merely
+from a closed issue.
 
 ## Planning
 
@@ -23,7 +26,7 @@ Forward checklist. Items are intentionally unchecked because `v0.91.7` execution
 - [ ] Closed ADR release-tail issues `#4324` and `#4369`-`#4376` consumed, and open tooling remediation `#4378` closed with evidence or explicitly blocked with evidence and operator approval.
 - [ ] `PLANNING_SOURCE_CAPTURE_v0.91.7.md` reviewed.
 - [ ] Candidate WBS reviewed and promoted or corrected.
-- [ ] Candidate issue wave opened with C-SDLC card bundles.
+- [x] Candidate issue wave opened with C-SDLC card bundles (`#4628`).
 - [ ] Every source-capture row is integrated/proven, already closed with evidence, operator-scoped-out with evidence and approval, or blocked with evidence and operator approval.
 - [ ] `#3780` activation refresh remains blocked until required surfaces are integrated/proven, operator-scoped-out with evidence, or blocked with evidence and operator approval.
 
@@ -42,9 +45,9 @@ Forward checklist. Items are intentionally unchecked because `v0.91.7` execution
 - [ ] Goal-state and nested-goal continuity inputs are implemented/proven or blocked with evidence and operator approval.
 - [ ] Cognitive scheduler and economics inputs are implemented/proven or blocked with evidence and operator approval.
 - [ ] Provider/local-agent suitability and model-routing proof is current.
-- [ ] Runtime fire-up / Soak #2 packet is concrete and reviewed before execution starts.
+- [x] Runtime fire-up / Soak #2 execution and review evidence is retained by closed `#4682`.
   - Tracked execution packet: `RUNTIME_SOAK_2_EXECUTION_PACKET_v0.91.7.md`
-- [ ] Integrated logging/OTel proof `#4718` is complete before v0.92 consumes runtime, provider, control-plane, AWS/signal, Observatory, or Unity readiness.
+- [x] Integrated logging/OTel proof `#4718` is closed with bounded retained evidence; broader production telemetry and Unity readiness are not inferred.
   - Required proof: current integrated runtime/provider/control-plane events, stdout/stderr separation, redaction/path hygiene, OTel-compatible boundary truth, and Observatory/Unity event consumption.
 - [ ] Runtime AWS/heartbeat/ACIP-SNS/SSM/S3 archive proof is concrete or blocked with evidence and operator approval.
 - [ ] Nessus/CodeBuild/EC2 Spot or alternate remote validation and local build-throughput decisions are proven or explicitly blocked with evidence and operator approval.
@@ -62,7 +65,7 @@ Forward checklist. Items are intentionally unchecked because `v0.91.7` execution
 - [ ] Economics-context decision completed or blocked with evidence and operator approval.
 - [ ] Guild foundation boundary implemented/proven through `#4755`, with v0.93 constitutional governance, polis authority, delegated authority, and public product readiness explicitly not claimed.
 - [ ] Paper/publication boundary recorded through `#4757`, with public launch approval, papers, customer-facing CodeFriend/report readiness, autonomous review authority, and unbounded WP-13 claims explicitly not claimed unless a later tracked issue promotes a bounded artifact with evidence, redaction/public-claim review, and human approval.
-- [ ] WP-13 parent closeout reconciled through `#4640` and `docs/milestones/v0.91.7/review/wp13_closeout_4640.md`.
+- [x] WP-13 parent closeout reconciled through `#4640` and `docs/milestones/v0.91.7/review/wp13_closeout_4640.md`.
 - [ ] Memory Palace/context problem status is visible for v0.92 as proof or evidence-backed blocker.
 
 ## Demo And Launch Readiness
@@ -84,15 +87,15 @@ Forward checklist. Items are intentionally unchecked because `v0.91.7` execution
 
 ## Review And Closeout
 
-- [ ] Demo convergence completed, public-claim-bounded/operator-scoped-out with evidence, or blocked with evidence and operator approval.
+- [x] Demo convergence completed with explicit public-claim boundaries through `#4642` and `review/V0917_WP15_DEMO_CONVERGENCE_4642.md`.
 - [ ] Quality gate completed with blockers recorded.
 - [ ] Documentation alignment completed before formal review.
 - [ ] Bounded internal review completed.
 - [ ] External review completed or explicitly blocked with evidence according to release policy and operator approval.
 - [ ] Internal/external findings fixed or recorded as evidence-backed blockers with operator approval.
 - [ ] Remediation/preflight packet completed.
-- [ ] v0.92 next-milestone planning completed.
-- [ ] v0.92 next-milestone planning reviewed.
+- [x] Next-milestone planning retained through closed `#4648`; current v0.91.8 planning supersedes direct activation use.
+- [x] Next-milestone planning review retained through closed `#4649`; it is not release approval.
 - [ ] Release ceremony packet completed.
 - [ ] Bridge-ledger dispositions refreshed or handed off.
 - [ ] `#3780` has the tracked activation inputs it needs.

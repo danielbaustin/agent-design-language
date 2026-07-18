@@ -3,29 +3,14 @@
   "issue": 5440,
   "repository": "danielbaustin/agent-design-language",
   "initialization_digest": "76c01aff9cfa5df1cb78fa58763e7de29d43b0e9a9dd02de411a2953b7b4f8d2",
-  "phase": "published",
-  "generation": 13,
-  "digest": "a08f6aa621ab77b2dc04dae27ee7b422e1e73bf6de7f108b0c6646f2d14eef2a",
-  "claim": {
-    "id": "claim-5440-design-reapproval",
-    "owner": "codex",
-    "generation": 13,
-    "acquired_unix_seconds": 1784242974,
-    "expires_unix_seconds": 1784329374,
-    "heartbeat_unix_seconds": 1784242974,
-    "branch": "codex/5440-csdlc-design-reapproval",
-    "worktree": ".worktrees/adl-wp-5440",
-    "protected_paths": [
-      "csdlc-v2/src/store.rs",
-      "csdlc-v2/tests/gate2.rs",
-      "docs/reviews/v0.91.7/csdlc-v2-5440"
-    ],
-    "purpose": "Add audited post-readiness design reapproval without weakening exact-revision review."
-  },
+  "phase": "closed_out",
+  "generation": 20,
+  "digest": "1c7a06f7f649febebbaecc799393b591cc1b45c014452be2e31affe3491f6862",
+  "claim": null,
   "review_assignment": {
     "reviewer": "codex-subagent-019f6d31",
     "assigned_by": "codex",
-    "revision": "git-blake3:2d70cf48fc39d5ae900a78c83f82d5cccc20031c:8ff617d72b90bd6a8e3602e9d60685ee8ae8ded4b5da7f4dce176d9d342faf63",
+    "revision": "git-blake3:77fafde96e9681b1b4871d1c033de532adc7df32:b4bda44216c140ff6b6356a8296c4d906b28e279471c9e883bbd4f6002fa7cf5",
     "scope": [
       "csdlc-v2/src/store.rs",
       "csdlc-v2/tests/gate2.rs"
@@ -37,7 +22,7 @@
       "csdlc-v2/src/store.rs",
       "csdlc-v2/tests/gate2.rs"
     ],
-    "reviewed_revision": "git-blake3:2d70cf48fc39d5ae900a78c83f82d5cccc20031c:8ff617d72b90bd6a8e3602e9d60685ee8ae8ded4b5da7f4dce176d9d342faf63",
+    "reviewed_revision": "git-blake3:77fafde96e9681b1b4871d1c033de532adc7df32:b4bda44216c140ff6b6356a8296c4d906b28e279471c9e883bbd4f6002fa7cf5",
     "findings": [
       {
         "id": "P1-projection-drift",
@@ -46,7 +31,7 @@
         "actionable": true,
         "in_scope": true,
         "disposition": "fixed",
-        "fix_revision": "git-blake3:2d70cf48fc39d5ae900a78c83f82d5cccc20031c:8ff617d72b90bd6a8e3602e9d60685ee8ae8ded4b5da7f4dce176d9d342faf63",
+        "fix_revision": "git-blake3:77fafde96e9681b1b4871d1c033de532adc7df32:b4bda44216c140ff6b6356a8296c4d906b28e279471c9e883bbd4f6002fa7cf5",
         "route": null
       }
     ],
@@ -61,15 +46,62 @@
     "url": "https://github.com/danielbaustin/agent-design-language/pull/5441",
     "base": "main",
     "head": "codex/5440-csdlc-design-reapproval",
-    "revision": "git-blake3:2d70cf48fc39d5ae900a78c83f82d5cccc20031c:8ff617d72b90bd6a8e3602e9d60685ee8ae8ded4b5da7f4dce176d9d342faf63",
-    "draft": true,
-    "observed_state": "open"
+    "revision": "git-blake3:77fafde96e9681b1b4871d1c033de532adc7df32:b4bda44216c140ff6b6356a8296c4d906b28e279471c9e883bbd4f6002fa7cf5",
+    "draft": false,
+    "observed_state": "merged"
   },
-  "readiness": null,
-  "terminal": null,
+  "readiness": {
+    "pull_request": 5441,
+    "head_sha": "77fafde96e9681b1b4871d1c033de532adc7df32",
+    "checks": [
+      {
+        "name": "adl-ci",
+        "requirement": "required",
+        "conclusion": "success",
+        "details_url": "https://github.com/danielbaustin/agent-design-language/actions/runs/29541754277"
+      },
+      {
+        "name": "adl-coverage",
+        "requirement": "required",
+        "conclusion": "success",
+        "details_url": "https://github.com/danielbaustin/agent-design-language/actions/runs/29541754277"
+      },
+      {
+        "name": "adl-tooling-contracts",
+        "requirement": "required",
+        "conclusion": "success",
+        "details_url": "https://github.com/danielbaustin/agent-design-language/actions/runs/29541754277"
+      },
+      {
+        "name": "adl-path-policy",
+        "requirement": "required",
+        "conclusion": "success",
+        "details_url": "https://github.com/danielbaustin/agent-design-language/actions/runs/29541754277"
+      }
+    ],
+    "review_state": "not_required",
+    "conflict_state": "clean",
+    "post_publication_findings": [],
+    "ready": true,
+    "blockers": []
+  },
+  "terminal": {
+    "pull_request": 5441,
+    "disposition": "merged",
+    "observed_sha": "77fafde96e9681b1b4871d1c033de532adc7df32",
+    "observed_state": "merged",
+    "receipt_path": "csdlc-v2/closeout/5440.json",
+    "released_branch": "codex/5440-csdlc-design-reapproval",
+    "released_worktree": ".worktrees/adl-wp-5440",
+    "released_protected_paths": [
+      "csdlc-v2/src/store.rs",
+      "csdlc-v2/tests/gate2.rs",
+      "docs/reviews/v0.91.7/csdlc-v2-5440"
+    ]
+  },
   "migration": null,
-  "design_path": "docs/reviews/v0.91.7/csdlc-v2-5440/DESIGN.md",
-  "diagram_path": "docs/reviews/v0.91.7/csdlc-v2-5440/DIAGRAM.mmd",
+  "design_path": ".csdlc/issues/5440/retained/design.md",
+  "diagram_path": ".csdlc/issues/5440/retained/diagram.mmd",
   "design_review": {
     "approved": {
       "reviewer": "codex-issue-design-review",
@@ -78,34 +110,34 @@
   },
   "cards": {
     "sip": {
-      "values_digest": "751dd5b5687cbca7e00307e4423ae0444d3e4cb2f0851d20ae6ec57b68a91ca1",
+      "values_digest": "f78fbc1a68cbcddea59acfce077527f505eaab7dabf4ccf89e0b0af28cf634bd",
       "rendered_digest": "9f8c4a3246eacc23abc0a68aac64038d2f03b965999b6c59bb4c661c021bce78",
       "ast_digest": "abee1c62fb70501f0b2b03d10cf3255da1fd38676504ed3dbab492613cd838b6"
     },
     "stp": {
-      "values_digest": "7c3d550d53de9337cd4a3eb8ad9952f2591c2863d16b4eda5be0661d65fd249a",
+      "values_digest": "f161f85dfba47ef5301b33a5fe50676222ab3a8001b04495bb06e03b00761726",
       "rendered_digest": "6378644229260b73c894c783c9f01b296c12f61fc48ae2b8a7eb1176b0ef62fd",
       "ast_digest": "3b56186d8e43419ead065aedc5ebe2d7a95ab0410641c3d9dc05d771bc956d6e"
     },
     "spp": {
-      "values_digest": "b607b4c5c6e20b9d8fed9a502d835ded35b18c0ae6ed102ea2269e192b80edbd",
-      "rendered_digest": "0f161e1c4f7e88470e167663862d0c425a5116bebf54e5d2d67f940ac7a33ce9",
-      "ast_digest": "4808d58da59af1a265dec3c5ecfa652ae2c8c87fb19dbe13869a51f599ad86b4"
+      "values_digest": "41210ebc9f9ca41f3bed905dbf53042ee68da0d51e8e8a5b7a39701754d1297f",
+      "rendered_digest": "e46c65a136028dabc2893c09fdbf0d412c2d6aa1fd62620b3e6a635485be8096",
+      "ast_digest": "e1d047a4fc2b898982e3a6c4f5e4785447721b3c03ed94ab40abbc14690e62fc"
     },
     "vpp": {
-      "values_digest": "27720550d3bc502fa07af049e6f75532e0a46db714576de52e252109e665a0a1",
-      "rendered_digest": "0d6bf082bb871a42727caea94b77333a24c71c3162e70c47740d428d32ecba11",
-      "ast_digest": "0b503b8a491926748916d0c13cd6a2ead4d9d8f7e0631d15fa91ad788ea16e6b"
+      "values_digest": "250ac1c2ad6c93f759bee925cb598059da4f9f5eb289eb30622caabd2d517ae2",
+      "rendered_digest": "f49f84b68d2bfa7ab1742cdedb0760a84ffb6aa0acffaacd70b6833ebd3e4e3a",
+      "ast_digest": "3953f8d5d3bcc66bae228585d9ba4e5cd5c41e66f7eb45a0f902b01d072a06a0"
     },
     "srp": {
-      "values_digest": "008e74c790573d9c794626a12aa0689ee0e43ab4bf913b669111930b800eec06",
-      "rendered_digest": "e1782e4e7f76d562cf7bb84263516b9eb3dd7d3c2f8f38e080e41a8ac6ac1ec2",
-      "ast_digest": "8bf3530cc6503e9510a57899aad86933f028c6ec5a9cee56cf2d08c4fcaa13ba"
+      "values_digest": "5269bb781d4584af3b56c0c62477aefd67de55573396537bc68a6e29e66417f1",
+      "rendered_digest": "688ebb43b869f6108f7b245ded842b3238f957910c4bc3194984b9a7e3ed37fd",
+      "ast_digest": "b22cff7b13e7a79280fc3f067bb7664686036e55994b72d2a3c749e545248f3a"
     },
     "sor": {
-      "values_digest": "5929fbfe7a340a7f007a73f284657c7e1f768db7b4222f8d18a343c40fa8a1b7",
-      "rendered_digest": "8ad4582d2e9034e1cbb60e491d06b3e0ca1d9165dc22b2eb73291f1455fa8556",
-      "ast_digest": "f86625607d8231d6c922e55792bc5e1e339e9c3957eac93771b90214d67946de"
+      "values_digest": "3d88f5e356cbcd685c38f417b44e47e2f7fcc8c0c19bcc37c58a305224d86883",
+      "rendered_digest": "2d7a36d0f1929a31f93b5e0239db3a6fd8dddb81102f91b4d62efad127f5bb13",
+      "ast_digest": "22bbf3ebe424e59f61074fba7a2ca047340ada0c53157e461258e4b6dd56b050"
     }
   },
   "transitions": [
@@ -157,6 +189,48 @@
       "to": "published",
       "actor": "codex",
       "reason": "observed exact draft PR after current review"
+    },
+    {
+      "sequence": 8,
+      "from": "published",
+      "to": "implemented",
+      "actor": "codex",
+      "reason": "refresh review after publication metadata commit"
+    },
+    {
+      "sequence": 9,
+      "from": "implemented",
+      "to": "reviewed",
+      "actor": "codex",
+      "reason": "final exact-revision review passed"
+    },
+    {
+      "sequence": 10,
+      "from": "reviewed",
+      "to": "published",
+      "actor": "codex",
+      "reason": "observed exact draft PR after current review"
+    },
+    {
+      "sequence": 11,
+      "from": "published",
+      "to": "merge_ready",
+      "actor": "codex",
+      "reason": "observed required checks, review, and conflict readiness"
+    },
+    {
+      "sequence": 12,
+      "from": "merge_ready",
+      "to": "merged",
+      "actor": "codex",
+      "reason": "observed exact PR merged"
+    },
+    {
+      "sequence": 13,
+      "from": "merged",
+      "to": "closed_out",
+      "actor": "codex",
+      "reason": "terminal truth recorded and claim released"
     }
   ],
   "audit": [
@@ -271,6 +345,62 @@
       "actor": "codex",
       "reason": "atomically record observed GitHub publication and SOR projection",
       "operation": "record_publication"
+    },
+    {
+      "sequence": 17,
+      "generation": 14,
+      "actor": "codex",
+      "reason": "refresh review after publication metadata commit",
+      "operation": "recover_review"
+    },
+    {
+      "sequence": 18,
+      "generation": 14,
+      "actor": "codex",
+      "reason": "assign bounded exact-revision review",
+      "operation": "assign_review"
+    },
+    {
+      "sequence": 19,
+      "generation": 15,
+      "actor": "codex",
+      "reason": "atomically record review evidence and SRP projection",
+      "operation": "record_review"
+    },
+    {
+      "sequence": 20,
+      "generation": 16,
+      "actor": "codex",
+      "reason": "final exact-revision review passed",
+      "operation": "{\"operation\":\"advance_phase\",\"phase\":\"reviewed\"}"
+    },
+    {
+      "sequence": 21,
+      "generation": 17,
+      "actor": "codex",
+      "reason": "atomically record observed GitHub publication and SOR projection",
+      "operation": "record_publication"
+    },
+    {
+      "sequence": 22,
+      "generation": 18,
+      "actor": "codex",
+      "reason": "record normalized remote readiness without replacing pre-publication review",
+      "operation": "record_readiness"
+    },
+    {
+      "sequence": 23,
+      "generation": 19,
+      "actor": "codex",
+      "reason": "atomically finalize SOR/index and release claim/protected paths",
+      "operation": "record_terminal"
+    },
+    {
+      "sequence": 24,
+      "generation": 20,
+      "actor": "codex-closeout-audit",
+      "reason": "Materialize the retained terminal receipt during the complete v0.91.7 closed-issue audit.",
+      "operation": "reconcile_terminal"
     }
   ]
 }

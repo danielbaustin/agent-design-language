@@ -7,14 +7,14 @@
     "title": "[v0.91.7][tooling][CI] Keep mixed Runtime v3 and CSM validation out of Runtime v2 coverage",
     "slug": "v0-91-7-runtime-v3-csm-fast-lane",
     "version": "v0.91.7",
-    "generation": 7
+    "generation": 16
   },
-  "status": "pre_phase",
+  "status": "complete",
   "content": {
     "card_kind": "srp",
     "values": {
       "review_scope": "adl/tools/ci_path_policy.sh\nadl/tools/run_pr_fast_test_lane.sh\nadl/tools/test_ci_path_policy.sh\nadl/tools/test_run_pr_fast_coverage_lane.sh\nadl/tools/test_run_pr_fast_test_lane.sh",
-      "review_revision": "git-blake3:209a2c14f7db7c977ffb79b0864c0a11807415c9:3d42c4164fd38abe0faf62a31ef9ba3cb7b387b9a08932e92dbb84654e2161dc",
+      "review_revision": "git-blake3:23fbe8a6de84734c2b517c3d36220b3fd960a4db:05b5b27993b947dbf821abcb156dd5f22a6b251761c2a9eefd485fa5a7476afd",
       "reviewer": "subagent:019f751d-2d23-70d1-b40f-69c756ed58d0",
       "review_prompts": [
         "Can an unrelated mixed-crate change enter the bounded route?",
@@ -22,7 +22,18 @@
         "Can coverage omit one crate while still reporting success?",
         "Are Runtime v2 tests excluded by construction?"
       ],
-      "findings": [],
+      "findings": [
+        {
+          "id": "F-5509-1",
+          "severity": "p1",
+          "summary": "The committed review metadata changed HEAD without an exact non-substantive proof.",
+          "actionable": true,
+          "in_scope": true,
+          "disposition": "fixed",
+          "fix_revision": "git-blake3:23fbe8a6de84734c2b517c3d36220b3fd960a4db:05b5b27993b947dbf821abcb156dd5f22a6b251761c2a9eefd485fa5a7476afd",
+          "route": null
+        }
+      ],
       "residual_risk": [
         "Hosted CI remains the final proof that the focused llvm-cov route interoperates with the GitHub runner toolchain."
       ],

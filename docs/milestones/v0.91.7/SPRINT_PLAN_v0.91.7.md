@@ -7,12 +7,18 @@
 - Start date: not scheduled
 - End date: not scheduled
 - Owner: ADL maintainers
-- Status: issue wave opened
+- Status: closeout tail active
 - Source capture: `PLANNING_SOURCE_CAPTURE_v0.91.7.md`
 
 ## Status
 
-The canonical WP issue wave is open. This document defines execution order; it does not by itself start runtime work.
+The canonical WP issue wave is in its closeout tail. This document defines
+execution order and records live issue-state alignment; it does not approve
+release readiness.
+
+As verified on 2026-07-18, WP-01 through WP-16 are closed, WP-17 through WP-20
+are open, WP-21 and WP-22 are closed retained planning evidence, and WP-23 is
+open. Closed work may still carry retained findings or non-claims.
 
 Opened WP issues:
 
@@ -57,16 +63,16 @@ remediation truth.
 
 | Order | Sprint / workstream | Primary WPs | Parallelism notes | Status |
 | --- | --- | --- | --- | --- |
-| 1 | Planning promotion, closeout-truth, and ADR release-tail gate | WP-01, WP-02 | Must start first; consume `V0916_TO_V0917_HANDOFF_ADDENDUM_3982.md`, failed-but-closed WP-15 truth, closed WP-16 / `#4620` / `#4621` truth, the repo-native PR inventory command from `#4622`, issue-list/source-capture checks, and ADR checks before dependent execution. | planned |
-| 2 | v0.91.6 C-SDLC integration control-plane truth gate | WP-02, WP-03, WP-04 | Consume v0.91.6 `#4388`-`#4398` plus late `#4405`, `#4412`-`#4413`, `#4417`-`#4421` plus `#4425`, `#4431`, `#4441`, `#4433`-`#4438`, and `#4442`-`#4443`: VPP defaults, externalized PVF lanes, SEP automation, session ledger, forward metric capture, bounded v0.91.6 metric backfill, GitHub/octocrab convergence, prompt-card/template edge repair, runtime dependency disposition, logging/reliability rough edges, watcher/lifecycle automation, operational adoption, lifecycle shepherding, and FastContext evaluation. Only create v0.91.7 follow-ons for incomplete or explicitly blocked surfaces. | planned |
-| 3 | Scheduler/provider/local-agent sprint | WP-05 | Can run alongside build-throughput work after WP-03 boundaries are stable. | planned |
-| 4 | Build throughput and validation-cost sprint | WP-06 | Can run in parallel with scheduler/provider work; isolate CI/workflow changes carefully. Prove EC2 Spot or an alternate disposable remote-builder path early, with `sccache`, time/cost, interruption, and cleanup evidence before treating it as release-critical. | planned |
-| 5 | Runtime fire-up, logging/OTel, and Soak #2 sprint | WP-07, WP-08 | Starts after enough scheduler/build/runtime substrate is ready; AWS/SSM/SNS work can parallelize with local soak proof. Execution packet: `RUNTIME_SOAK_2_EXECUTION_PACKET_v0.91.7.md`. `#4718` is the required integrated logging/OTel proof gate for runtime, provider, control-plane, AWS/signal, Observatory, and Unity readiness claims. | planned |
-| 6 | Observatory and birthday-visible demo sprint | WP-09 | Can overlap late runtime work if data contracts are stable. | planned |
-| 7 | Cognitive implementation sprint | WP-10, WP-11, WP-13 | Curiosity, Constructability, reasoning graph, affect/Godel/economics/guilds can be split across agents with shared public-claim review. | planned |
-| 8 | Security and protocol implementation sprint | WP-12 | Can overlap cognitive implementation but must feed final handoff. | planned |
-| 9 | Launch and v0.92 handoff sprint | WP-14 | Depends on all prior dispositions; planning/public-facing language must be reviewed carefully. | planned |
-| 10 | Canonical closeout-tail sprint | WP-15 through WP-23 | Demo convergence, quality gate, docs alignment, internal review, external review, remediation/preflight, next milestone planning/review, and release ceremony should stay as separate issues; review and remediation lanes can parallelize after each gate is opened. | planned |
+| 1 | Planning promotion, closeout-truth, and ADR release-tail gate | WP-01, WP-02 | Must start first; consume `V0916_TO_V0917_HANDOFF_ADDENDUM_3982.md`, failed-but-closed WP-15 truth, closed WP-16 / `#4620` / `#4621` truth, the repo-native PR inventory command from `#4622`, issue-list/source-capture checks, and ADR checks before dependent execution. | closed with retained evidence |
+| 2 | v0.91.6 C-SDLC integration control-plane truth gate | WP-02, WP-03, WP-04 | Consume v0.91.6 `#4388`-`#4398` plus late `#4405`, `#4412`-`#4413`, `#4417`-`#4421` plus `#4425`, `#4431`, `#4441`, `#4433`-`#4438`, and `#4442`-`#4443`: VPP defaults, externalized PVF lanes, SEP automation, session ledger, forward metric capture, bounded v0.91.6 metric backfill, GitHub/octocrab convergence, prompt-card/template edge repair, runtime dependency disposition, logging/reliability rough edges, watcher/lifecycle automation, operational adoption, lifecycle shepherding, and FastContext evaluation. Only create v0.91.7 follow-ons for incomplete or explicitly blocked surfaces. | closed; review register retains residuals |
+| 3 | Scheduler/provider/local-agent sprint | WP-05 | Can run alongside build-throughput work after WP-03 boundaries are stable. | closed; review-remediated |
+| 4 | Build throughput and validation-cost sprint | WP-06 | Can run in parallel with scheduler/provider work; isolate CI/workflow changes carefully. Remote-builder proof remains bounded by its retained evidence and non-claims. | closed; review-remediated |
+| 5 | Runtime fire-up, logging/OTel, and Soak #2 sprint | WP-07, WP-08 | `#4718` and retained Soak/runtime packets provide bounded proof; unresolved WP-07 hardening remains tracked by open `#5408`. | closed umbrellas; residual open |
+| 6 | Observatory and birthday-visible demo sprint | WP-09 | Demo and Observatory claims remain bounded by WP-09 and WP-15 retained packets. | closed with retained limitations |
+| 7 | Cognitive implementation sprint | WP-10, WP-11, WP-13 | Curiosity, Constructability, reasoning graph, affect/Godel/economics/guild proof and boundary packets are retained. | closed with claim boundaries |
+| 8 | Security and protocol implementation sprint | WP-12 | Security/protocol proof and remediation are retained; broader activation remains evidence-bound. | closed and review-remediated |
+| 9 | Launch and v0.92 handoff sprint | WP-14 | `#4641` routes bounded handoff truth into v0.91.8; it does not approve v0.92 activation. | closed as routed-with-evidence |
+| 10 | Canonical closeout-tail sprint | WP-15 through WP-23 | WP-15, WP-16, WP-21, and WP-22 are closed. WP-17 through WP-20 and WP-23 remain open and preserve the required docs/review/remediation/release gates. | active |
 
 ## Execution Policy
 

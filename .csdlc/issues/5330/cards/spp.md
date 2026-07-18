@@ -72,13 +72,13 @@ Revision 1
 
 ## Design
 
-docs/architecture/runtime_v3_fast_validation_5330.md
+.csdlc/issues/5330/retained/design.md
 
 Digest: 2c67572989196c90c30460bdbdb61e647aa476b8412ca26f5bbe8dbba8623bb5
 
 ## Diagram
 
-docs/architecture/runtime_v3_fast_validation_5330.mmd
+.csdlc/issues/5330/retained/diagram.mmd
 
 Digest: db3c563d6efe48791bbde045fef45d732d8a74be8db285f4fe34e6ef9d7d6c0f
 

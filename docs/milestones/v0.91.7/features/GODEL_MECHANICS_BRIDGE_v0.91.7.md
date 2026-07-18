@@ -4,7 +4,7 @@
 
 - Feature Name: Godel Mechanics Implementation Boundary
 - Milestone Target: `v0.91.7`
-- Status: boundary_defined
+- Status: `boundary_proven` through closed #4753 and review remediation #5405
 - Owner: ADL maintainers
 - Doc Role: primary
 - Feature Types: architecture, policy, runtime-boundary

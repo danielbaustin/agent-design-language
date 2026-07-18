@@ -15,6 +15,10 @@ Define the final pre-`v0.92` implementation/readiness tranche. `v0.91.7` exists 
 remaining conceptual surfaces become tracked, reviewable, and issue-ready
 before birthday activation begins.
 
+Lifecycle note (2026-07-18): this vision is the retained milestone baseline.
+It should be read with the current closeout-tail snapshot in `README.md`, not
+as a claim that the milestone is still in planning.
+
 ## Overview
 
 `v0.91.7` moves ADL from first-tranche readiness into required implementation

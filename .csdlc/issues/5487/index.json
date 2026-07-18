@@ -3,31 +3,14 @@
   "issue": 5487,
   "repository": "danielbaustin/agent-design-language",
   "initialization_digest": "7c8abbf996795f4d33022b527e2915bc79bae567af2c6bb105b31fd6ab8598c2",
-  "phase": "published",
-  "generation": 9,
-  "digest": "c8809bbbc83a56e0dacfadd25cf9996db05ca32ebbfecc3d8c57227459fc27d4",
-  "claim": {
-    "id": "claim-5487-terminal-design-repair",
-    "owner": "codex",
-    "generation": 9,
-    "acquired_unix_seconds": 1784360100,
-    "expires_unix_seconds": 1784367300,
-    "heartbeat_unix_seconds": 1784360100,
-    "branch": "codex/5487-terminal-design-repair",
-    "worktree": ".",
-    "protected_paths": [
-      "csdlc-v2/src/store.rs",
-      "csdlc-v2/src/bin/csdlc-closeout.rs",
-      "csdlc-v2/tests/gate7_terminal_design_repair_5487.rs",
-      ".csdlc/issues/5487/retained/design.md",
-      ".csdlc/issues/5487/retained/diagram.mmd"
-    ],
-    "purpose": "Add typed terminal design and diagram repair with atomic receipt reconciliation"
-  },
+  "phase": "closed_out",
+  "generation": 17,
+  "digest": "b9f95dc2aa2cf90cfa522353ba10da36c8ba2bdbc1a1c1399f3dc66d9b879740",
+  "claim": null,
   "review_assignment": {
     "reviewer": "review_5427",
     "assigned_by": "codex",
-    "revision": "git-blake3:a394594d447790d2ea1200d28ae7108c75f66784:915248a2577f4777bca37e2d8b260eecc7213c001a464cb4daa8ee71e07cb3e4",
+    "revision": "git-blake3:0119c2efbf573c7711eae8d725f5799e5c3d85ab:f0f35265c3b163801a6ca920edf66b48ee08b65e70c5c2bddf269e7cdf92431c",
     "scope": [
       "csdlc-v2/src/store.rs",
       "csdlc-v2/src/bin/csdlc-closeout.rs",
@@ -45,7 +28,7 @@
       ".csdlc/issues/5467/retained/design.md",
       ".csdlc/issues/5467/retained/diagram.mmd"
     ],
-    "reviewed_revision": "git-blake3:a394594d447790d2ea1200d28ae7108c75f66784:915248a2577f4777bca37e2d8b260eecc7213c001a464cb4daa8ee71e07cb3e4",
+    "reviewed_revision": "git-blake3:0119c2efbf573c7711eae8d725f5799e5c3d85ab:f0f35265c3b163801a6ca920edf66b48ee08b65e70c5c2bddf269e7cdf92431c",
     "findings": [],
     "residual_risks": [
       "Crash recovery remains bounded by the existing filesystem durability contract."
@@ -60,12 +43,73 @@
     "url": "https://github.com/danielbaustin/agent-design-language/pull/5491",
     "base": "main",
     "head": "codex/5487-terminal-design-repair",
-    "revision": "git-blake3:a394594d447790d2ea1200d28ae7108c75f66784:915248a2577f4777bca37e2d8b260eecc7213c001a464cb4daa8ee71e07cb3e4",
-    "draft": true,
-    "observed_state": "open"
+    "revision": "git-blake3:0119c2efbf573c7711eae8d725f5799e5c3d85ab:f0f35265c3b163801a6ca920edf66b48ee08b65e70c5c2bddf269e7cdf92431c",
+    "draft": false,
+    "observed_state": "merged"
   },
-  "readiness": null,
-  "terminal": null,
+  "readiness": {
+    "pull_request": 5491,
+    "head_sha": "0119c2efbf573c7711eae8d725f5799e5c3d85ab",
+    "checks": [
+      {
+        "name": "adl-ci",
+        "requirement": "required",
+        "conclusion": "success",
+        "details_url": null
+      },
+      {
+        "name": "adl-coverage",
+        "requirement": "required",
+        "conclusion": "success",
+        "details_url": null
+      },
+      {
+        "name": "adl-tooling-contracts",
+        "requirement": "required",
+        "conclusion": "success",
+        "details_url": null
+      },
+      {
+        "name": "adl-demo-proof",
+        "requirement": "required",
+        "conclusion": "success",
+        "details_url": null
+      },
+      {
+        "name": "adl-coverage-hosted",
+        "requirement": "required",
+        "conclusion": "success",
+        "details_url": null
+      },
+      {
+        "name": "adl-path-policy",
+        "requirement": "required",
+        "conclusion": "success",
+        "details_url": null
+      }
+    ],
+    "review_state": "not_required",
+    "conflict_state": "clean",
+    "post_publication_findings": [],
+    "ready": true,
+    "blockers": []
+  },
+  "terminal": {
+    "pull_request": 5491,
+    "disposition": "merged",
+    "observed_sha": "0119c2efbf573c7711eae8d725f5799e5c3d85ab",
+    "observed_state": "merged",
+    "receipt_path": "csdlc-v2/closeout/5487.json",
+    "released_branch": "codex/5487-terminal-design-repair",
+    "released_worktree": ".",
+    "released_protected_paths": [
+      "csdlc-v2/src/store.rs",
+      "csdlc-v2/src/bin/csdlc-closeout.rs",
+      "csdlc-v2/tests/gate7_terminal_design_repair_5487.rs",
+      ".csdlc/issues/5487/retained/design.md",
+      ".csdlc/issues/5487/retained/diagram.mmd"
+    ]
+  },
   "migration": null,
   "design_path": ".csdlc/issues/5487/retained/design.md",
   "diagram_path": ".csdlc/issues/5487/retained/diagram.mmd",
@@ -77,34 +121,34 @@
   },
   "cards": {
     "sip": {
-      "values_digest": "093b7cf661e3ee02fa3213f5f1b46fdd49c6ed8c06063fc74d68bfccb81115a3",
+      "values_digest": "56de8209cb509019cd799980499c75bd11c0755ea78340a72eeb745e5f512371",
       "rendered_digest": "80ddb726ea098e53b247b6b7ef6a23d0c10ab9466b4efaec3d78b7bb2f95d796",
       "ast_digest": "c1ed38486537316029d56c3414ac20dee07fa0575ae75e52bab9aad80a0b0fc0"
     },
     "stp": {
-      "values_digest": "ad27e82f77c390ce35633a57daee3b5634c5f0a6cabdce488bfac2a30f6d229e",
+      "values_digest": "ebeac7fae9104daafa278bf37d1090c76d41950da937aee0b8d2754844197eea",
       "rendered_digest": "d339f52f34c59d8c1d8c57eae6418fec6c7bbee6a8e1f711296db36a34ff316f",
       "ast_digest": "14242e803ab4baea4178dff757963d70ca7ac1fb21865bb98a67c9fef1e366fb"
     },
     "spp": {
-      "values_digest": "dd082f8b3338fbe240f1942c831e6ec6d9af16bb1f70e82b09dbae04bda88073",
+      "values_digest": "72d4a025e9b0d736cfbc47ab33054e41f8b8acafe6f11fd1c54e870cafd6f3a6",
       "rendered_digest": "2a63ed153f38ae794a7823f83f16ba957ab20688b06e63a506f8f336fedb50e1",
       "ast_digest": "44971f6391c44480a012554b33e1cab7043e3fca43903bf922b12abd4ae70571"
     },
     "vpp": {
-      "values_digest": "8fcd9c4705c2b0e5696be22987549ea36856a4f481efbba8613403928ecaaaf5",
+      "values_digest": "f9da72ae0ed9932bc54f6d98e3e61d80c6178842c7736b30a98f6bb45747c2ea",
       "rendered_digest": "9989e0e9e5d0ece92e567f88f6a2a1497f2a00221977a68b843e0e302b20fa9c",
       "ast_digest": "88da1229ef057dd8a42aa36cd5a7a2f6a8c4e9f0d0f37a5102db2b3d02781dc9"
     },
     "srp": {
-      "values_digest": "ee4aeaca37487f61430b6986ec5f20487ccd60745e0b2be688dc905c5fb7e3e1",
-      "rendered_digest": "1b43d448fed21ca60a8a2348da8c81219157c0dac58e3e430d99b53b90758a56",
-      "ast_digest": "b4db4462b5c611a4f16aca214381fbf3223ea6ba4a85aa32979c8ac1cc0b1139"
+      "values_digest": "cf2bfaa613b006ba06b7824bdf7976d945547368e8aa00aae7a39aac7bc16f69",
+      "rendered_digest": "84c75c118c24b9dbfbc8d3c478cfe7fbf9170aa4d15d3a52aff7e4b7a008c59c",
+      "ast_digest": "cd436a89266269ef993557aaffb3d2947980bf9e948f91e715e21311f2933b10"
     },
     "sor": {
-      "values_digest": "fc0f52c5ecf4fc5de0974e77565b995b0aa42933e4b752227ae83a80d9bd5cf9",
-      "rendered_digest": "7c936cb9e401a8c3738f8ca04a4d5e3602bb37bb6e3cc7ee9e30c8f8ee51cc48",
-      "ast_digest": "8a7e59ece95c6576ddc64cc028ffeabc19e3843ade1e35ef4868290740469af1"
+      "values_digest": "fb2032faa5bb575d6a1f7b18d8b2ee25aad47a3e4f1ae76b1ebc13d0fadb4f8a",
+      "rendered_digest": "8202129b50f7dc3c885b0d8d4e3a249b1bec82391bc3f394c5790e73bdc3dec4",
+      "ast_digest": "87b9ace513641ab5d554c51931290feb464612d982f6166f713f088be68a6899"
     }
   },
   "transitions": [
@@ -142,6 +186,48 @@
       "to": "published",
       "actor": "codex",
       "reason": "observed exact PR after current review"
+    },
+    {
+      "sequence": 6,
+      "from": "published",
+      "to": "implemented",
+      "actor": "codex",
+      "reason": "Publication metadata commit changed the reviewed revision; recover review truth before reapproval."
+    },
+    {
+      "sequence": 7,
+      "from": "implemented",
+      "to": "reviewed",
+      "actor": "codex",
+      "reason": "Re-review of the final publication metadata revision completed with no findings; advance to reviewed."
+    },
+    {
+      "sequence": 8,
+      "from": "reviewed",
+      "to": "published",
+      "actor": "codex",
+      "reason": "observed exact merged PR after current review"
+    },
+    {
+      "sequence": 9,
+      "from": "published",
+      "to": "merge_ready",
+      "actor": "codex",
+      "reason": "observed required checks, review, and conflict readiness"
+    },
+    {
+      "sequence": 10,
+      "from": "merge_ready",
+      "to": "merged",
+      "actor": "codex",
+      "reason": "observed exact PR merged"
+    },
+    {
+      "sequence": 11,
+      "from": "merged",
+      "to": "closed_out",
+      "actor": "codex",
+      "reason": "terminal truth recorded and claim released"
     }
   ],
   "audit": [
@@ -228,6 +314,69 @@
       "actor": "codex",
       "reason": "atomically record observed GitHub publication and SOR projection",
       "operation": "record_publication"
+    },
+    {
+      "sequence": 13,
+      "generation": 10,
+      "actor": "codex",
+      "reason": "Publication metadata commit changed the reviewed revision; recover review truth before reapproval.",
+      "operation": "recover_review"
+    },
+    {
+      "sequence": 14,
+      "generation": 10,
+      "actor": "codex",
+      "reason": "assign bounded exact-revision review",
+      "operation": "assign_review"
+    },
+    {
+      "sequence": 15,
+      "generation": 11,
+      "actor": "review_5427",
+      "reason": "atomically record review evidence and SRP projection",
+      "operation": "record_review"
+    },
+    {
+      "sequence": 16,
+      "generation": 12,
+      "actor": "codex",
+      "reason": "Re-review of the final publication metadata revision completed with no findings; advance to reviewed.",
+      "operation": "{\"operation\":\"advance_phase\",\"phase\":\"reviewed\"}"
+    },
+    {
+      "sequence": 17,
+      "generation": 13,
+      "actor": "codex",
+      "reason": "atomically record observed merged GitHub publication and SOR projection",
+      "operation": "record_merged_publication"
+    },
+    {
+      "sequence": 18,
+      "generation": 14,
+      "actor": "codex",
+      "reason": "record normalized remote readiness without replacing pre-publication review",
+      "operation": "record_readiness"
+    },
+    {
+      "sequence": 19,
+      "generation": 15,
+      "actor": "codex",
+      "reason": "record normalized remote readiness without replacing pre-publication review",
+      "operation": "record_readiness"
+    },
+    {
+      "sequence": 20,
+      "generation": 16,
+      "actor": "codex",
+      "reason": "atomically finalize SOR/index and release claim/protected paths",
+      "operation": "record_terminal"
+    },
+    {
+      "sequence": 21,
+      "generation": 17,
+      "actor": "codex-closeout-audit",
+      "reason": "Materialize the retained terminal receipt during the complete v0.91.7 closed-issue audit.",
+      "operation": "reconcile_terminal"
     }
   ]
 }

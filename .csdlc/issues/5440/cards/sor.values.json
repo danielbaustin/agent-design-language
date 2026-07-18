@@ -7,9 +7,9 @@
     "title": "[v0.91.7][csdlc-v2][design] Support audited post-readiness design reapproval",
     "slug": "v0-91-7-csdlc-v2-post-readiness-design-reapproval",
     "version": "v0.91.7",
-    "generation": 13
+    "generation": 20
   },
-  "status": "pre_phase",
+  "status": "complete",
   "content": {
     "card_kind": "sor",
     "values": {
@@ -59,10 +59,10 @@
           "evidence_ref": "local: clippy passed"
         }
       ],
-      "integration_state": "pr_open",
-      "publication_state": "draft",
-      "merge_state": "not_merged",
-      "closeout_state": "not_started",
+      "integration_state": "merged",
+      "publication_state": "closed",
+      "merge_state": "merged",
+      "closeout_state": "complete",
       "follow_ups": []
     }
   }

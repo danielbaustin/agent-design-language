@@ -7,9 +7,9 @@
     "title": "[v0.91.7][csdlc-v2][publish] Avoid stale review loop after publication metadata commit",
     "slug": "publication-metadata-review-loop",
     "version": "v0.91.7",
-    "generation": 11
+    "generation": 16
   },
-  "status": "pre_phase",
+  "status": "complete",
   "content": {
     "card_kind": "sor",
     "values": {
@@ -40,10 +40,10 @@
           "evidence_ref": "gate5: 11 tests passed; cargo clippy --all-targets -D warnings; git diff --check"
         }
       ],
-      "integration_state": "pr_open",
-      "publication_state": "draft",
-      "merge_state": "not_merged",
-      "closeout_state": "not_started",
+      "integration_state": "merged",
+      "publication_state": "closed",
+      "merge_state": "merged",
+      "closeout_state": "complete",
       "follow_ups": []
     }
   }

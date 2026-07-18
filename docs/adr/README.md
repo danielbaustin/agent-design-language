@@ -6,6 +6,12 @@ Candidate ADRs live in `docs/architecture/adr/` until they are reviewed and
 promoted. ADR 0020 through ADR 0028 were authored as candidates during the
 v0.91.2 ADR planning pass and accepted during the v0.91.3 review tail.
 
+The v0.91.7 ADR set is indexed by
+`docs/milestones/v0.91.7/review/V0917_ADR_INDEX_4989.md`. ADR 0043 through ADR
+0050 are accepted records. ADR 0051 is intentionally retained as a deferred
+Chronosense/Memory Palace disposition; it must not be promoted without the
+implementation evidence named by that record.
+
 ## Accepted Records
 
 - `0001-determinism.md`

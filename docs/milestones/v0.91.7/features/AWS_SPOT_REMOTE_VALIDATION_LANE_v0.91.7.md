@@ -4,7 +4,7 @@
 
 - Feature Name: AWS Spot Remote Validation Lane
 - Milestone Target: `v0.91.7`
-- Status: implemented
+- Status: retained historical implementation/proof; AWS execution currently not authorized
 - Owner: ADL maintainers
 - Doc Role: retained implementation and proof-update surface
 - Feature Types: tooling, build-throughput, aws, validation
@@ -16,6 +16,13 @@ Provide an ADL-owned disposable EC2 build/test lane that can launch through AWS
 Spot when capacity allows, fall back deterministically to on-demand when Spot
 is blocked, run one focused ADL validation command over SSM, retain timing plus
 `sccache` evidence, and terminate the builder cleanly.
+
+## Current Operator Posture
+
+This document preserves historical v0.91.7 implementation and proof truth. It
+does not authorize a new run. The current operator direction is to use no AWS
+services for validation or other work, so this lane is inactive unless a later
+explicit instruction changes that boundary.
 
 ## Implemented Surface
 

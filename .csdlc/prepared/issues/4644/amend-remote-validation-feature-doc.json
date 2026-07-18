@@ -1,0 +1,12 @@
+{
+  "issue": 4644,
+  "claim_id": "claim-4644-v0-91-7-wp17-docs-adoption-review",
+  "expected_generation": 1,
+  "expected_digest": "d2e982a25da0da33a9d52aa69100adc6ee57e4e601efa52a20747c443076343b",
+  "now_unix_seconds": 1784416694,
+  "actor": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+  "reason": "Protect the remaining v0.91.7 feature document so the complete feature-doc audit records the operator's current no-AWS execution posture without altering retained historical proof.",
+  "add_protected_paths": [
+    "docs/milestones/v0.91.7/features/AWS_SPOT_REMOTE_VALIDATION_LANE_v0.91.7.md"
+  ]
+}

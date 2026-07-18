@@ -1,0 +1,14 @@
+{
+  "issue": 4644,
+  "card": "spp",
+  "expected_generation": 1,
+  "expected_digest": "1e4fbfd27ca39ca9ef40cfe47843629e5d591b4be2d9d6a86c7f6f5197e2ec1d",
+  "claim_id": "claim-4644-v0-91-7-wp17-docs-adoption-review",
+  "actor": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+  "reason": "Aligned all declared WP-17 documentation entry points, audited every README and v0.91.7 feature document, and wrote the issue-owned report and machine-readable ledger.",
+  "operation": {
+    "operation": "update_plan_step",
+    "step_id": "S2",
+    "status": "completed"
+  }
+}

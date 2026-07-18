@@ -8,7 +8,7 @@ Repository: danielbaustin/agent-design-language
 
 Card: srp
 
-Status: pre_phase
+Status: complete
 
 ## Scope
 
@@ -32,7 +32,7 @@ adl/tools/test_run_pr_fast_coverage_lane.sh
     "actionable": true,
     "in_scope": true,
     "disposition": "fixed",
-    "fix_revision": "git-blake3:b77a18257d67e50de64bf7563eb054213d7e005f:bd4f3f160b735d68364732e8ee79f362b61517c81590b29cf35db96c62900ce4",
+    "fix_revision": "git-blake3:6787d12a21a81e99bd441590ccd113c220a43a60:f517ce58bc10d33d441404b4b40a108b50b0a65f5369223270115e4a66c98abc",
     "route": null
   }
 ]
@@ -47,7 +47,7 @@ Every actionable finding requires a terminal disposition.
 
 ## Review Result
 
-Revision: Some("git-blake3:b77a18257d67e50de64bf7563eb054213d7e005f:bd4f3f160b735d68364732e8ee79f362b61517c81590b29cf35db96c62900ce4")
+Revision: Some("git-blake3:6787d12a21a81e99bd441590ccd113c220a43a60:f517ce58bc10d33d441404b4b40a108b50b0a65f5369223270115e4a66c98abc")
 
 Reviewer: Some("subagent:019f755e-caed-72b0-b9fb-21366bf78332")
 

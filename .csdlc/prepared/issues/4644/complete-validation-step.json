@@ -1,0 +1,14 @@
+{
+  "issue": 4644,
+  "card": "spp",
+  "expected_generation": 2,
+  "expected_digest": "4cd291491b682422a1b3ddeb8014ff5485544aba9e3704854402c7cf46180839",
+  "claim_id": "claim-4644-v0-91-7-wp17-docs-adoption-review",
+  "actor": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+  "reason": "Local README-link, JSON/YAML, Cargo metadata, ADR integrity, diff hygiene, typed PVF, and C-SDLC doctor checks passed; WP-16 #4643 is now closed and no dependency blocker remains.",
+  "operation": {
+    "operation": "update_plan_step",
+    "step_id": "S3",
+    "status": "completed"
+  }
+}

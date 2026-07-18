@@ -1,0 +1,33 @@
+{
+  "issue": 4644,
+  "expected_generation": 6,
+  "expected_digest": "5267cd8cb4c1bdd8858e8b30b8f041f03c5894339a6cd6ba04ebc71ecd21456d",
+  "claim_id": "claim-4644-v0-91-7-wp17-docs-adoption-review",
+  "actor": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+  "evidence": {
+    "reviewer": "codex-subagent:019f7789-9ed8-7790-b8da-8922d5291b7f",
+    "scope": [
+      ".csdlc/issues/4644",
+      ".csdlc/prepared/issues/4644",
+      ".csdlc/evidence/4644",
+      "README.md",
+      "REVIEW.md",
+      "docs/README.md",
+      "docs/adr/README.md",
+      "docs/milestones/v0.8/README.md",
+      "docs/milestones/v0.91/features/README.md",
+      "docs/milestones/v0.91.7",
+      "docs/planning/ADL_FEATURE_LIST.md"
+    ],
+    "reviewed_revision": "git-blake3:1e5201ec4228ae3acbfbd7e0686b7be6a8eec0b7:17ad4dd316d5c9c098ed7da5ee007855da3119a1aea11ecf0a5b1fdccf3ec424",
+    "findings": [],
+    "residual_risks": [
+      "No full Rust test suite or GitHub CI was run locally; CI remains publication-time evidence.",
+      "Historical runtime, remote, cloud, corruption, provider, Unity, and activation proofs were not rerun by this documentation issue.",
+      "Runtime hardening remediation #5408 and downstream WP-18 through WP-20 and WP-23 remain independent open gates.",
+      "No AWS command or service was used, and the current operator direction continues to prohibit AWS execution."
+    ],
+    "completed": true,
+    "non_substantive_proof": null
+  }
+}

@@ -1,0 +1,398 @@
+{
+  "schema": "csdlc.issue.index.v1",
+  "issue": 4644,
+  "repository": "danielbaustin/agent-design-language",
+  "initialization_digest": "a439a2c9121dc18fc0f5e1a1f5425432c3cf9c0d0f83632e7b03f2d18f2a6d80",
+  "phase": "published",
+  "generation": 15,
+  "digest": "41f54ab21b7bb9b260cb6d94139a325a07c909fba2d628d97181b912dcf02f2e",
+  "claim": {
+    "id": "claim-4644-v0-91-7-wp17-docs-adoption-review",
+    "owner": "codex:019f3d65-2216-7832-804a-26339473b27d",
+    "generation": 15,
+    "acquired_unix_seconds": 1784360472,
+    "expires_unix_seconds": 1784965272,
+    "heartbeat_unix_seconds": 1784360472,
+    "branch": "codex/4644-v0917-docs-alignment",
+    "worktree": ".worktrees/adl-wp-4644",
+    "protected_paths": [
+      ".csdlc/evidence/4644",
+      ".csdlc/issues/4644",
+      ".csdlc/prepared/issues/4644",
+      "README.md",
+      "REVIEW.md",
+      "docs/README.md",
+      "docs/adr/README.md",
+      "docs/milestones/v0.8/README.md",
+      "docs/milestones/v0.91.7/DECISIONS_v0.91.7.md",
+      "docs/milestones/v0.91.7/DESIGN_v0.91.7.md",
+      "docs/milestones/v0.91.7/FEATURE_DOCS_v0.91.7.md",
+      "docs/milestones/v0.91.7/MILESTONE_CHECKLIST_v0.91.7.md",
+      "docs/milestones/v0.91.7/PLANNING_SOURCE_CAPTURE_v0.91.7.md",
+      "docs/milestones/v0.91.7/README.md",
+      "docs/milestones/v0.91.7/RELEASE_NOTES_v0.91.7.md",
+      "docs/milestones/v0.91.7/RELEASE_PLAN_v0.91.7.md",
+      "docs/milestones/v0.91.7/REVIEW_AND_VALIDATION_CHECKLIST_v0.91.7.md",
+      "docs/milestones/v0.91.7/RUNTIME_SOAK_2_EXECUTION_PACKET_v0.91.7.md",
+      "docs/milestones/v0.91.7/SPRINT_PLAN_v0.91.7.md",
+      "docs/milestones/v0.91.7/V0916_TO_V0917_HANDOFF_ADDENDUM_3982.md",
+      "docs/milestones/v0.91.7/V092_HANDOFF_v0.91.7.md",
+      "docs/milestones/v0.91.7/VISION_v0.91.7.md",
+      "docs/milestones/v0.91.7/WBS_v0.91.7.md",
+      "docs/milestones/v0.91.7/WP_ISSUE_WAVE_v0.91.7.yaml",
+      "docs/milestones/v0.91.7/features/ACIP_A2A_PROTOBUF_RESIDUALS_v0.91.7.md",
+      "docs/milestones/v0.91.7/features/AFFECT_HAPPINESS_BRIDGE_v0.91.7.md",
+      "docs/milestones/v0.91.7/features/AWS_SPOT_REMOTE_VALIDATION_LANE_v0.91.7.md",
+      "docs/milestones/v0.91.7/features/GODEL_MECHANICS_BRIDGE_v0.91.7.md",
+      "docs/milestones/v0.91.7/features/README.md",
+      "docs/milestones/v0.91.7/features/REASONING_GRAPH_LOOP_SKILL_STANDARD_BRIDGE_v0.91.7.md",
+      "docs/milestones/v0.91.7/features/SECURITY_RESIDUAL_READINESS_v0.91.7.md",
+      "docs/milestones/v0.91.7/review/V0917_ADR_INDEX_4989.md",
+      "docs/milestones/v0.91.7/review/V0917_SPRINT_REVIEW_REGISTER.md",
+      "docs/milestones/v0.91.7/review/V0917_WP17_DOCS_ALIGNMENT_4644.md",
+      "docs/milestones/v0.91.7/review/wp17_docs_alignment_4644",
+      "docs/milestones/v0.91/features/README.md",
+      "docs/planning/ADL_FEATURE_LIST.md"
+    ],
+    "purpose": "Prepare and later execute WP-17 without claiming completion from setup"
+  },
+  "review_assignment": {
+    "reviewer": "codex-subagent:019f7789-9ed8-7790-b8da-8922d5291b7f",
+    "assigned_by": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+    "revision": "git-blake3:bd001c0c565aa9012ffa3627fed1d96eb5fbf923:11a8f36b74d7a27f61e7605c515f3b37b1c92339ac823da78832f9654d432d9d",
+    "scope": [
+      ".csdlc/issues/4644",
+      ".csdlc/prepared/issues/4644"
+    ]
+  },
+  "review": {
+    "reviewer": "codex-subagent:019f7789-9ed8-7790-b8da-8922d5291b7f",
+    "scope": [
+      ".csdlc/issues/4644",
+      ".csdlc/prepared/issues/4644"
+    ],
+    "reviewed_revision": "git-blake3:bd001c0c565aa9012ffa3627fed1d96eb5fbf923:11a8f36b74d7a27f61e7605c515f3b37b1c92339ac823da78832f9654d432d9d",
+    "findings": [],
+    "residual_risks": [
+      "The reviewed delta is lifecycle metadata only; substantive documentation remains covered by the exact-revision review of commit 1e5201ec4228ae3acbfbd7e0686b7be6a8eec0b7.",
+      "No full Rust test suite or GitHub CI was run locally; CI remains publication-time evidence.",
+      "Historical runtime, remote, cloud, corruption, provider, Unity, and activation proofs were not rerun by this documentation issue.",
+      "Runtime hardening remediation #5408 and downstream WP-18 through WP-20 and WP-23 remain independent open gates.",
+      "No AWS command or service was used, and the current operator direction continues to prohibit AWS execution."
+    ],
+    "completed": true,
+    "non_substantive_proof": {
+      "policy": "metadata_only_review_projection",
+      "from_revision": "git-blake3:1e5201ec4228ae3acbfbd7e0686b7be6a8eec0b7:17ad4dd316d5c9c098ed7da5ee007855da3119a1aea11ecf0a5b1fdccf3ec424",
+      "to_revision": "git-blake3:bd001c0c565aa9012ffa3627fed1d96eb5fbf923:11a8f36b74d7a27f61e7605c515f3b37b1c92339ac823da78832f9654d432d9d",
+      "from_commit": "1e5201ec4228ae3acbfbd7e0686b7be6a8eec0b7",
+      "to_commit": "bd001c0c565aa9012ffa3627fed1d96eb5fbf923",
+      "changed_paths": [
+        ".csdlc/issues/4644/audit.jsonl",
+        ".csdlc/issues/4644/cards/sip.values.json",
+        ".csdlc/issues/4644/cards/sor.values.json",
+        ".csdlc/issues/4644/cards/spp.md",
+        ".csdlc/issues/4644/cards/spp.values.json",
+        ".csdlc/issues/4644/cards/srp.md",
+        ".csdlc/issues/4644/cards/srp.values.json",
+        ".csdlc/issues/4644/cards/stp.values.json",
+        ".csdlc/issues/4644/cards/vpp.values.json",
+        ".csdlc/issues/4644/index.json",
+        ".csdlc/prepared/issues/4644/advance-reviewed.json",
+        ".csdlc/prepared/issues/4644/assign-current-review.json",
+        ".csdlc/prepared/issues/4644/complete-review-records-step.json",
+        ".csdlc/prepared/issues/4644/record-final-review.json",
+        ".csdlc/prepared/issues/4644/recover-final-review.json"
+      ]
+    }
+  },
+  "publication": {
+    "repository": "danielbaustin/agent-design-language",
+    "issue": 4644,
+    "pull_request": 5539,
+    "url": "https://github.com/danielbaustin/agent-design-language/pull/5539",
+    "base": "main",
+    "head": "codex/4644-v0917-docs-alignment",
+    "revision": "git-blake3:bd001c0c565aa9012ffa3627fed1d96eb5fbf923:11a8f36b74d7a27f61e7605c515f3b37b1c92339ac823da78832f9654d432d9d",
+    "draft": true,
+    "observed_state": "open"
+  },
+  "readiness": null,
+  "terminal": null,
+  "migration": null,
+  "design_path": ".csdlc/prepared/issues/4644/design.md",
+  "diagram_path": ".csdlc/prepared/issues/4644/diagram.mmd",
+  "design_review": {
+    "approved": {
+      "reviewer": "codex-prep-only",
+      "revision": "d6dfacf79a560868acc7d12c0a6bc07d4530bec55ea686cf5cf0d8f7f50365c4"
+    }
+  },
+  "cards": {
+    "sip": {
+      "values_digest": "157ebf01e41ee904b77ac8b66daf6c4c50568e805da7e24a1d02e231d09ffc95",
+      "rendered_digest": "63b53a4e6fd3bfaba255bd3dd647c1ae6376c3d2e947c684eb8ef09e8c7985eb",
+      "ast_digest": "e734d0f00431978db7959b07ba2134fb1cd337c27ed35e631fb7b2a72c4c9cf0"
+    },
+    "stp": {
+      "values_digest": "aa89570e0224943ee0e76e0a979dfc9666822d2d02ef1979d4e09bd620897553",
+      "rendered_digest": "56cf0fe1236b49979e24e0a6ea1ac286ea316a39fb54e07bdfb5d2c4b0acc87e",
+      "ast_digest": "3443ca4461b30b6e773c52aab9c4fb699acf2f0e273f8dcd71113c8f237460f9"
+    },
+    "spp": {
+      "values_digest": "f21d2b7bd5abff76ef5fbe4c89678c9273953839a01850fba71e7dd4d4a4c2ba",
+      "rendered_digest": "2eed870eb6551b8bff4a8ddc7c2706419545051eb022f034f1eafe197da966d3",
+      "ast_digest": "c201c70114a153284b880337bc69a979c6815a3be9ba2ade1caaaf2178b56432"
+    },
+    "vpp": {
+      "values_digest": "71a7e58f8696dc66d0a7409c9f88a827e5d080621fb620391adea45dd44b3148",
+      "rendered_digest": "8aa3e4c140f1871535c57531453c5974c462a87c70fd08c33a09b8f036dbfd0b",
+      "ast_digest": "c171889e3eb3835d1cbef176aa431936d2049dba5eb3a9065ab06f27edf360eb"
+    },
+    "srp": {
+      "values_digest": "fc1d898f05a0a2b306d0144248fb0b3999e776303864f5806890c9f34b5661b1",
+      "rendered_digest": "90ed718c173b5ff9d18f9470e054431aa2dd84bfcdb78ff5e6258ec65aeca72d",
+      "ast_digest": "602ba8a5abaa90a48a90c01937e425ae47beaa3fffd6c3fde2f8f2b99ee8d110"
+    },
+    "sor": {
+      "values_digest": "2516d7f723e5b26baaabd0e2084588a51a745a8caca697352b276b244dfd0625",
+      "rendered_digest": "4918ffa95c99f3256a5ae68dcab3e425f42cbc2822b1366b58e52bd768a4204a",
+      "ast_digest": "cf323f22eb640f05bb2e12399552309d8a377be2ccd79bff6f16087a68d2e412"
+    }
+  },
+  "transitions": [
+    {
+      "sequence": 1,
+      "from": "initialized",
+      "to": "ready",
+      "actor": "codex:019f3d65-2216-7832-804a-26339473b27d",
+      "reason": "automatic readiness verification"
+    },
+    {
+      "sequence": 2,
+      "from": "ready",
+      "to": "bound",
+      "actor": "codex:019f3d65-2216-7832-804a-26339473b27d",
+      "reason": "verified Git worktree binding"
+    },
+    {
+      "sequence": 3,
+      "from": "bound",
+      "to": "implemented",
+      "actor": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+      "reason": "The bounded WP-17 documentation alignment is implemented and locally validated with retained executable evidence."
+    },
+    {
+      "sequence": 4,
+      "from": "implemented",
+      "to": "reviewed",
+      "actor": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+      "reason": "Advance #4644 after the exact-revision bounded review confirmed all findings resolved and returned no actionable findings."
+    },
+    {
+      "sequence": 5,
+      "from": "reviewed",
+      "to": "implemented",
+      "actor": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+      "reason": "Committed typed review metadata advanced HEAD after the substantive clean review; recover for an exact current-head metadata-delta review before publication."
+    },
+    {
+      "sequence": 6,
+      "from": "implemented",
+      "to": "reviewed",
+      "actor": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+      "reason": "Advance #4644 after the exact current-head metadata review was recorded, the SRP was completed, and the SOR retained truthful pre-publication worktree-only state."
+    },
+    {
+      "sequence": 7,
+      "from": "reviewed",
+      "to": "published",
+      "actor": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+      "reason": "observed exact PR after current review"
+    }
+  ],
+  "audit": [
+    {
+      "sequence": 1,
+      "generation": 0,
+      "actor": "codex:019f3d65-2216-7832-804a-26339473b27d",
+      "reason": "initialize issue record and all six cards",
+      "operation": "bootstrap"
+    },
+    {
+      "sequence": 2,
+      "generation": 0,
+      "actor": "codex:019f3d65-2216-7832-804a-26339473b27d",
+      "reason": "bind branch/worktree and activate claim",
+      "operation": "bind"
+    },
+    {
+      "sequence": 3,
+      "generation": 0,
+      "actor": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+      "reason": "Protect the canonical milestone and roadmap documents explicitly named by WP-17 for live-truth alignment.",
+      "operation": "{\"add_protected_paths\":[\"docs/milestones/v0.91.7/README.md\",\"docs/milestones/v0.91.7/WBS_v0.91.7.md\",\"docs/milestones/v0.91.7/SPRINT_PLAN_v0.91.7.md\",\"docs/milestones/v0.91.7/MILESTONE_CHECKLIST_v0.91.7.md\",\"docs/milestones/v0.91.7/V092_HANDOFF_v0.91.7.md\",\"docs/milestones/v0.91.7/WP_ISSUE_WAVE_v0.91.7.yaml\",\"docs/milestones/v0.91.7/FEATURE_DOCS_v0.91.7.md\",\"docs/milestones/v0.91.7/review/V0917_SPRINT_REVIEW_REGISTER.md\",\"docs/planning/ADL_FEATURE_LIST.md\"],\"operation\":\"amend_claim_scope\"}"
+    },
+    {
+      "sequence": 4,
+      "generation": 1,
+      "actor": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+      "reason": "Confirmed live WP issue truth and recorded that WP-16 #4643 remains open while WP-14 and WP-15 are closed.",
+      "operation": "{\"operation\":\"update_plan_step\",\"step_id\":\"S1\",\"status\":\"completed\"}"
+    },
+    {
+      "sequence": 5,
+      "generation": 1,
+      "actor": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+      "reason": "Protect the repository documentation entrypoints and ADR indexes explicitly added to the WP-17 alignment scope.",
+      "operation": "{\"add_protected_paths\":[\"README.md\",\"REVIEW.md\",\"docs/README.md\",\"docs/adr/README.md\",\"docs/milestones/v0.91.7/features/README.md\",\"docs/milestones/v0.91.7/review/V0917_ADR_INDEX_4989.md\"],\"operation\":\"amend_claim_scope\"}"
+    },
+    {
+      "sequence": 6,
+      "generation": 1,
+      "actor": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+      "reason": "Protect current status-bearing v0.91.7 documents found stale by the full milestone documentation audit.",
+      "operation": "{\"add_protected_paths\":[\"docs/milestones/v0.91.7/DECISIONS_v0.91.7.md\",\"docs/milestones/v0.91.7/DESIGN_v0.91.7.md\",\"docs/milestones/v0.91.7/PLANNING_SOURCE_CAPTURE_v0.91.7.md\",\"docs/milestones/v0.91.7/RELEASE_NOTES_v0.91.7.md\",\"docs/milestones/v0.91.7/RELEASE_PLAN_v0.91.7.md\",\"docs/milestones/v0.91.7/REVIEW_AND_VALIDATION_CHECKLIST_v0.91.7.md\",\"docs/milestones/v0.91.7/RUNTIME_SOAK_2_EXECUTION_PACKET_v0.91.7.md\",\"docs/milestones/v0.91.7/V0916_TO_V0917_HANDOFF_ADDENDUM_3982.md\",\"docs/milestones/v0.91.7/VISION_v0.91.7.md\",\"docs/milestones/v0.91.7/features/ACIP_A2A_PROTOBUF_RESIDUALS_v0.91.7.md\",\"docs/milestones/v0.91.7/features/AFFECT_HAPPINESS_BRIDGE_v0.91.7.md\",\"docs/milestones/v0.91.7/features/GODEL_MECHANICS_BRIDGE_v0.91.7.md\",\"docs/milestones/v0.91.7/features/REASONING_GRAPH_LOOP_SKILL_STANDARD_BRIDGE_v0.91.7.md\",\"docs/milestones/v0.91.7/features/SECURITY_RESIDUAL_READINESS_v0.91.7.md\"],\"operation\":\"amend_claim_scope\"}"
+    },
+    {
+      "sequence": 7,
+      "generation": 1,
+      "actor": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+      "reason": "Protect the two historical milestone README files with broken local links found by the complete tracked README audit requested for WP-17.",
+      "operation": "{\"add_protected_paths\":[\"docs/milestones/v0.8/README.md\",\"docs/milestones/v0.91/features/README.md\"],\"operation\":\"amend_claim_scope\"}"
+    },
+    {
+      "sequence": 8,
+      "generation": 1,
+      "actor": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+      "reason": "Protect the remaining v0.91.7 feature document so the complete feature-doc audit records the operator's current no-AWS execution posture without altering retained historical proof.",
+      "operation": "{\"add_protected_paths\":[\"docs/milestones/v0.91.7/features/AWS_SPOT_REMOTE_VALIDATION_LANE_v0.91.7.md\"],\"operation\":\"amend_claim_scope\"}"
+    },
+    {
+      "sequence": 9,
+      "generation": 2,
+      "actor": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+      "reason": "Aligned all declared WP-17 documentation entry points, audited every README and v0.91.7 feature document, and wrote the issue-owned report and machine-readable ledger.",
+      "operation": "{\"operation\":\"update_plan_step\",\"step_id\":\"S2\",\"status\":\"completed\"}"
+    },
+    {
+      "sequence": 10,
+      "generation": 3,
+      "actor": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+      "reason": "Local README-link, JSON/YAML, Cargo metadata, ADR integrity, diff hygiene, typed PVF, and C-SDLC doctor checks passed; WP-16 #4643 is now closed and no dependency blocker remains.",
+      "operation": "{\"operation\":\"update_plan_step\",\"step_id\":\"S3\",\"status\":\"completed\"}"
+    },
+    {
+      "sequence": 11,
+      "generation": 3,
+      "actor": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+      "reason": "Protect the issue-local typed request and PVF evidence paths that must be retained with WP-17 lifecycle truth.",
+      "operation": "{\"add_protected_paths\":[\".csdlc/prepared/issues/4644\",\".csdlc/evidence/4644\"],\"operation\":\"amend_claim_scope\"}"
+    },
+    {
+      "sequence": 12,
+      "generation": 4,
+      "actor": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+      "reason": "WP-17 aligned the complete declared documentation surface and retained an executable audit packet in the bound worktree.",
+      "operation": "{\"operation\":\"record_execution\",\"summary\":\"Aligned root and milestone documentation to live v0.91.7 closeout truth; audited all 208 case-insensitive README Markdown files, all v0.91.7 feature docs and structured artifacts, six Cargo manifests, and the accepted/deferred ADR indexes; repaired seven broken README links; retained an executable validator and machine-readable ledger; and preserved release, activation, cloud, runtime, security, affect, and adaptive-learning non-claims.\",\"changes\":[\"Align root README, REVIEW, docs README, v0.91.7 milestone entry points, handoff, checklist, sprint register, feature index, and roadmap to live issue/proof truth\",\"Audit every README Markdown file and repair seven historical relative-link defects\",\"Reconcile all ten v0.91.7 feature documents and the canonical feature index with closed proof issues, open #5408, and the current no-AWS execution boundary\",\"Verify 47 accepted ADR index entries, nine v0.91.7 ADR entries, deferred ADR 0051, and unpromoted candidates\",\"Add an executable local documentation validator, retained JSON audit ledger, and machine-readable PVF receipt\"],\"artifacts\":[\"docs/milestones/v0.91.7/review/V0917_WP17_DOCS_ALIGNMENT_4644.md\",\"docs/milestones/v0.91.7/review/wp17_docs_alignment_4644/audit.json\",\".csdlc/prepared/issues/4644/validate_docs_alignment.rb\",\".csdlc/evidence/4644/validation-receipt.json\"]}"
+    },
+    {
+      "sequence": 13,
+      "generation": 5,
+      "actor": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+      "reason": "The final merged WP-17 documentation inventory, links, structured artifacts, ADRs, Cargo manifests, and diff hygiene passed the executable typed PVF lane.",
+      "operation": "{\"operation\":\"record_validation\",\"result\":{\"command\":[\"ruby .csdlc/prepared/issues/4644/validate_docs_alignment.rb .\",\"csdlc-validate --request .csdlc/prepared/issues/4644/validate-docs.json\",\"csdlc-doctor --repo . --issue 4644\"],\"purpose\":\"Prove complete README and v0.91.7 documentation alignment with reproducible path digests, resolved local links, expected structured-evidence exceptions only, ADR integrity, locked Cargo metadata, diff hygiene, and passing typed lifecycle state.\",\"outcome\":\"passed\",\"evidence_ref\":\".csdlc/evidence/4644/validation-receipt.json\"}}"
+    },
+    {
+      "sequence": 14,
+      "generation": 6,
+      "actor": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+      "reason": "The bounded WP-17 documentation alignment is implemented and locally validated with retained executable evidence.",
+      "operation": "{\"operation\":\"advance_phase\",\"phase\":\"implemented\"}"
+    },
+    {
+      "sequence": 15,
+      "generation": 6,
+      "actor": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+      "reason": "assign bounded exact-revision review",
+      "operation": "assign_review"
+    },
+    {
+      "sequence": 16,
+      "generation": 6,
+      "actor": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+      "reason": "assign bounded exact-revision review",
+      "operation": "assign_review"
+    },
+    {
+      "sequence": 17,
+      "generation": 7,
+      "actor": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+      "reason": "atomically record review evidence and SRP projection",
+      "operation": "record_review"
+    },
+    {
+      "sequence": 18,
+      "generation": 8,
+      "actor": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+      "reason": "SOR records exact execution and validation, SRP records the clean exact-revision subagent review, and all release/activation/runtime/cloud/security/affect/adaptive-learning non-claims remain explicit.",
+      "operation": "{\"operation\":\"update_plan_step\",\"step_id\":\"S4\",\"status\":\"completed\"}"
+    },
+    {
+      "sequence": 19,
+      "generation": 9,
+      "actor": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+      "reason": "Advance #4644 after the exact-revision bounded review confirmed all findings resolved and returned no actionable findings.",
+      "operation": "{\"operation\":\"advance_phase\",\"phase\":\"reviewed\"}"
+    },
+    {
+      "sequence": 20,
+      "generation": 10,
+      "actor": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+      "reason": "Committed typed review metadata advanced HEAD after the substantive clean review; recover for an exact current-head metadata-delta review before publication.",
+      "operation": "recover_review"
+    },
+    {
+      "sequence": 21,
+      "generation": 10,
+      "actor": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+      "reason": "assign bounded exact-revision review",
+      "operation": "assign_review"
+    },
+    {
+      "sequence": 22,
+      "generation": 11,
+      "actor": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+      "reason": "atomically record review evidence and SRP projection",
+      "operation": "record_review"
+    },
+    {
+      "sequence": 23,
+      "generation": 12,
+      "actor": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+      "reason": "The assigned exact-revision metadata review is complete, has no open findings, and is recorded in the SRP projection.",
+      "operation": "{\"operation\":\"advance_status\",\"status\":\"ready\"}"
+    },
+    {
+      "sequence": 24,
+      "generation": 13,
+      "actor": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+      "reason": "Complete the SRP because the exact reviewed revision, reviewer identity, passing result, and resolved-finding truth are all retained.",
+      "operation": "{\"operation\":\"advance_status\",\"status\":\"complete\"}"
+    },
+    {
+      "sequence": 25,
+      "generation": 14,
+      "actor": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+      "reason": "Advance #4644 after the exact current-head metadata review was recorded, the SRP was completed, and the SOR retained truthful pre-publication worktree-only state.",
+      "operation": "{\"operation\":\"advance_phase\",\"phase\":\"reviewed\"}"
+    },
+    {
+      "sequence": 26,
+      "generation": 15,
+      "actor": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+      "reason": "atomically record observed GitHub publication and SOR projection",
+      "operation": "record_publication"
+    }
+  ]
+}

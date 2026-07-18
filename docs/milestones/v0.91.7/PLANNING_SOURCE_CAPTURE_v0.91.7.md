@@ -6,7 +6,7 @@
 - Version: `v0.91.7`
 - Date: `2026-06-21`
 - Issue: `#4368`
-- Status: planning-source ledger for v0.91.7 scheduling
+- Status: retained planning-source ledger; current closeout truth lives in issue-local packets and the sprint-review register
 - Release-tail refresh: `#3982` / `V0916_TO_V0917_HANDOFF_ADDENDUM_3982.md`
 - WP-02 closeout-consumption packet: `review/V0917_WP02_V0916_CLOSEOUT_TRUTH_CONSUMPTION_4661.md`
 

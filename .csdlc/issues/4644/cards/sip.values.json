@@ -1,0 +1,32 @@
+{
+  "identity": {
+    "schema_version": "1.0.0",
+    "template_version": "1.0.0",
+    "issue": 4644,
+    "repository": "danielbaustin/agent-design-language",
+    "title": "[v0.91.7][WP-17][docs] Docs and adoption review pass",
+    "slug": "v0-91-7-wp17-docs-adoption-review",
+    "version": "v0.91.7",
+    "generation": 15
+  },
+  "status": "ready",
+  "content": {
+    "card_kind": "sip",
+    "values": {
+      "goal": "Prepare and execute v0.91.7 documentation alignment before formal review.",
+      "required_outcome": "README, feature docs, WBS, sprint plan, checklist, handoff, issue wave, and feature-list/roadmap truth are aligned or blockers are retained with evidence.",
+      "declared_scope": [
+        "v0.91.7 milestone documentation and adoption surfaces",
+        "feature-list and roadmap truth",
+        "release-tail handoff docs"
+      ],
+      "authority_boundary": [
+        "Issue #4644 owns WP-17 execution",
+        "docs/milestones/v0.91.7/WP_ISSUE_WAVE_v0.91.7.yaml and WBS_v0.91.7.md define the work package",
+        "Preparation is not execution or completion evidence"
+      ],
+      "initial_assumptions": [],
+      "operator_constraints": []
+    }
+  }
+}

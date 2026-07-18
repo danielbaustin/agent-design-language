@@ -9,8 +9,9 @@
 
 ## How To Use
 
-Use this as the release-tail checklist once `v0.91.7` execution begins. This
-planning package does not publish a release by itself.
+Use this as the active release-tail checklist. WP-01 through WP-16 are closed;
+WP-17 through WP-20 and WP-23 remain the live docs, review, remediation, and
+ceremony gates. This document does not publish a release by itself.
 
 ## 0. Release-Tail Convergence
 

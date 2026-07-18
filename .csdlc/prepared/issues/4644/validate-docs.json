@@ -1,0 +1,51 @@
+{
+  "manifest": {
+    "schema": "csdlc.pvf.manifest.v1",
+    "lanes": [
+      {
+        "id": "wp17-docs-alignment",
+        "proof_role": "Local documentation alignment proof",
+        "purpose": "Prove README links, v0.91.7 structured artifacts, ADR paths, Cargo manifests, inventory digests, and diff hygiene",
+        "determinism": "deterministic",
+        "resources": {
+          "cpu_units": 1,
+          "memory_mib": 128,
+          "tokens": 100
+        },
+        "credentials": [],
+        "network": "denied",
+        "dependencies": [],
+        "parallel_group": "wp17-docs-local",
+        "release_gate": "required",
+        "execution": "local",
+        "timeout_seconds": 60,
+        "executable": "/usr/bin/ruby",
+        "argv": [
+          ".csdlc/prepared/issues/4644/validate_docs_alignment.rb",
+          "."
+        ],
+        "evidence": {
+          "max_log_bytes": 32768,
+          "redact_values": [],
+          "require_relative_paths": true
+        }
+      }
+    ]
+  },
+  "selection": {
+    "requested_lanes": [
+      "wp17-docs-alignment"
+    ],
+    "allow_network": false,
+    "available_credentials": []
+  },
+  "budget": {
+    "max_parallel": 1,
+    "cpu_units": 1,
+    "memory_mib": 128,
+    "tokens": 100
+  },
+  "root": ".",
+  "evidence_dir": ".csdlc/evidence/4644",
+  "cancellation_file": null
+}

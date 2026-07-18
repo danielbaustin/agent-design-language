@@ -13,3 +13,5 @@
 {"sequence":13,"generation":9,"actor":"codex","reason":"atomically record observed GitHub publication and SOR projection","operation":"record_publication"}
 {"sequence":14,"generation":10,"actor":"codex","reason":"record normalized remote readiness without replacing pre-publication review","operation":"record_readiness"}
 {"sequence":15,"generation":11,"actor":"codex","reason":"atomically finalize SOR/index and release claim/protected paths","operation":"record_terminal"}
+{"sequence":16,"generation":12,"actor":"csdlc-closeout","reason":"normalize legacy terminal receipt path to portable reference","operation":"normalize_terminal_receipt_ref"}
+{"sequence":17,"generation":13,"actor":"codex-closeout-audit","reason":"Materialize the retained terminal receipt during the complete v0.91.7 closed-issue audit.","operation":"reconcile_terminal"}

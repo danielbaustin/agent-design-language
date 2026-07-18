@@ -7,7 +7,7 @@
     "title": "[v0.91.7][WP-15][demo] Demo matrix and proof coverage",
     "slug": "v0-91-7-wp15-demo-matrix-proof-coverage",
     "version": "v0.91.7",
-    "generation": 8
+    "generation": 16
   },
   "status": "ready",
   "content": {
@@ -60,9 +60,9 @@
       "planned_validation_seconds": 3600,
       "planned_validation_tokens": 25000,
       "failure_policy": "Fail closed on stale live truth, missing retained evidence, overclaim, or dependency ambiguity.",
-      "design_ref": ".csdlc/prepared/issues/4642/design.md",
+      "design_ref": ".csdlc/issues/4642/retained/design.md",
       "design_digest": "d2d45d1c81544d2091ed194a98305fe028b7853c3a9aff4ec63eb05219cc7a66",
-      "diagram_ref": ".csdlc/prepared/issues/4642/diagram.mmd",
+      "diagram_ref": ".csdlc/issues/4642/retained/diagram.mmd",
       "diagram_digest": "d935b4041903115f967c30685ddbbe57679cb86c596af027e0dc098fcc18d687"
     }
   }

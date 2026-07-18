@@ -7,14 +7,14 @@
     "title": "[v0.91.7][csdlc-v2][design] Support audited post-readiness design reapproval",
     "slug": "v0-91-7-csdlc-v2-post-readiness-design-reapproval",
     "version": "v0.91.7",
-    "generation": 13
+    "generation": 20
   },
-  "status": "draft",
+  "status": "complete",
   "content": {
     "card_kind": "srp",
     "values": {
       "review_scope": "csdlc-v2/src/store.rs\ncsdlc-v2/tests/gate2.rs",
-      "review_revision": "git-blake3:2d70cf48fc39d5ae900a78c83f82d5cccc20031c:8ff617d72b90bd6a8e3602e9d60685ee8ae8ded4b5da7f4dce176d9d342faf63",
+      "review_revision": "git-blake3:77fafde96e9681b1b4871d1c033de532adc7df32:b4bda44216c140ff6b6356a8296c4d906b28e279471c9e883bbd4f6002fa7cf5",
       "reviewer": "codex-subagent-019f6d31",
       "review_prompts": [
         "Verify review authority cannot survive a later-phase design change",
@@ -29,7 +29,7 @@
           "actionable": true,
           "in_scope": true,
           "disposition": "fixed",
-          "fix_revision": "git-blake3:2d70cf48fc39d5ae900a78c83f82d5cccc20031c:8ff617d72b90bd6a8e3602e9d60685ee8ae8ded4b5da7f4dce176d9d342faf63",
+          "fix_revision": "git-blake3:77fafde96e9681b1b4871d1c033de532adc7df32:b4bda44216c140ff6b6356a8296c4d906b28e279471c9e883bbd4f6002fa7cf5",
           "route": null
         }
       ],

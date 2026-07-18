@@ -13,3 +13,8 @@
 {"sequence":13,"generation":9,"actor":"review_5495","reason":"atomically record review evidence and SRP projection","operation":"record_review"}
 {"sequence":14,"generation":10,"actor":"codex","reason":"Follow-up review completed with no findings; advance to reviewed for publication reconciliation.","operation":"{\"operation\":\"advance_phase\",\"phase\":\"reviewed\"}"}
 {"sequence":15,"generation":11,"actor":"codex","reason":"atomically record observed GitHub publication and SOR projection","operation":"record_publication"}
+{"sequence":16,"generation":12,"actor":"codex-closeout-audit","reason":"atomically record observed merged GitHub publication and SOR projection","operation":"record_merged_publication"}
+{"sequence":17,"generation":13,"actor":"codex-closeout-audit","reason":"record normalized remote readiness without replacing pre-publication review","operation":"record_readiness"}
+{"sequence":18,"generation":14,"actor":"codex-closeout-audit","reason":"record normalized remote readiness without replacing pre-publication review","operation":"record_readiness"}
+{"sequence":19,"generation":15,"actor":"codex-closeout-audit","reason":"atomically finalize SOR/index and release claim/protected paths","operation":"record_terminal"}
+{"sequence":20,"generation":16,"actor":"codex-closeout-audit","reason":"Materialize the retained terminal receipt after merged PR #5525 and closed issue #5495.","operation":"reconcile_terminal"}

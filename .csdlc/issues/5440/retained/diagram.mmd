@@ -1,0 +1,6 @@
+flowchart LR
+    D["Design or diagram changes"] --> P{"Lifecycle phase"}
+    P -->|"bound or implemented"| A["Typed approve-design"]
+    A --> R["Refresh SPP and VPP digests"]
+    R --> U["Append audit and increment generation"]
+    P -->|"reviewed or later"| F["Fail closed"]

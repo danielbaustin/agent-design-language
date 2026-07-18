@@ -7,7 +7,7 @@
     "title": "[v0.91.7][tooling][CI] Keep mixed Runtime v3 and CSM validation out of Runtime v2 coverage",
     "slug": "v0-91-7-runtime-v3-csm-fast-lane",
     "version": "v0.91.7",
-    "generation": 7
+    "generation": 16
   },
   "status": "ready",
   "content": {
@@ -57,9 +57,9 @@
       "planned_validation_seconds": 3600,
       "planned_validation_tokens": 25000,
       "failure_policy": "Fail closed if the bounded path family is incomplete, either crate is omitted, Runtime v2 is selected, or unrelated mixed-crate shapes become focused.",
-      "design_ref": ".csdlc/prepared/issues/5509/design.md",
+      "design_ref": ".csdlc/issues/5509/retained/design.md",
       "design_digest": "b62620c42c4c68aa5ab6b70aec61c63346098008aeea9ad3751820d2e07d770a",
-      "diagram_ref": ".csdlc/prepared/issues/5509/diagram.mmd",
+      "diagram_ref": ".csdlc/issues/5509/retained/diagram.mmd",
       "diagram_digest": "574be616d68a4104dc22f7ff9836dd5a2ac93f84dcb1731268bc1384a263c68c"
     }
   }

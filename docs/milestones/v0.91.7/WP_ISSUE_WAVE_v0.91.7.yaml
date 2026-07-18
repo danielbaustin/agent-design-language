@@ -1,6 +1,6 @@
 milestone: v0.91.7
 version: v0.91.7
-status: issue_wave_opened
+status: closeout_tail_active
 created_by_issues:
   - 3801
   - 3825
@@ -15,6 +15,13 @@ notes:
   - "Keep v0.92 birthday implementation out of this planning package."
   - "Every activation-path source-capture input must exit integrated/proven, already closed with evidence, operator-scoped-out with evidence and approval, or blocked with evidence and operator approval."
   - "WP-01 must consume failed-but-closed WP-15 #3980 external-review truth, closed WP-16 #3981/#4620/#4621 remediation truth, closed v0.91.7 tooling fix #4622, WP-14A #4582, and closed WP-14A remediation #4609-#4612 truth before dependent execution starts."
+  - "Live WP truth refreshed by #4644 on 2026-07-18: WP-01 through WP-16 closed; WP-17 through WP-20 open; WP-21 and WP-22 closed retained evidence; WP-23 open."
+closeout_tail_truth:
+  verified_on: 2026-07-18
+  closed_wps: [WP-01, WP-02, WP-03, WP-04, WP-05, WP-06, WP-07, WP-08, WP-09, WP-10, WP-11, WP-12, WP-13, WP-14, WP-15, WP-16, WP-21, WP-22]
+  open_wps: [WP-17, WP-18, WP-19, WP-20, WP-23]
+  release_ready: false
+  evidence: docs/milestones/v0.91.7/review/V0917_WP17_DOCS_ALIGNMENT_4644.md
 wp_issue_map:
   - {wp: WP-01, issue: 4628}
   - {wp: WP-02, issue: 4629}

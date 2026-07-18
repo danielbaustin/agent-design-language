@@ -3,29 +3,14 @@
   "issue": 4642,
   "repository": "danielbaustin/agent-design-language",
   "initialization_digest": "244b74908e673c30461d55dcae29719064e60a609856bed8a12e8a2afccb9893",
-  "phase": "reviewed",
-  "generation": 8,
-  "digest": "1fa862de1e6fd4e6610eab29175907b909488c7247da5410a7f04aad4c09a464",
-  "claim": {
-    "id": "claim-4642-v0-91-7-wp15-demo-matrix-proof-coverage",
-    "owner": "codex:019f3d65-2216-7832-804a-26339473b27d",
-    "generation": 8,
-    "acquired_unix_seconds": 1784360472,
-    "expires_unix_seconds": 1784965272,
-    "heartbeat_unix_seconds": 1784360472,
-    "branch": "codex/4642-v0917-demo-convergence",
-    "worktree": ".worktrees/adl-wp-4642",
-    "protected_paths": [
-      "docs/milestones/v0.91.7/review/V0917_WP15_DEMO_CONVERGENCE_4642.md",
-      "docs/milestones/v0.91.7/review/wp15_demo_convergence_4642",
-      ".csdlc/issues/4642"
-    ],
-    "purpose": "Prepare and later execute WP-15 without claiming completion from setup"
-  },
+  "phase": "closed_out",
+  "generation": 16,
+  "digest": "f8cf7a8870baaaefee25b7e15e0e1e0b2508e7a3f829f46cad11ddbe1712560b",
+  "claim": null,
   "review_assignment": {
     "reviewer": "subagent:019f745c-23d3-7820-8e91-084314fbc95f",
     "assigned_by": "codex-root",
-    "revision": "git-blake3:383ee3af22a4bd40e3664d8d5593ba97fb0b3b93:a9dc99739805141509d5d61badc9bd336b8d7d41bce314d602506ac3b0aab420",
+    "revision": "git-blake3:60d9070863afc9b394d46eba5984529243464642:c43cbcf274420d773e5a13db91f378a0d78f0ea3da611918f844b0e6e0f71e5e",
     "scope": [
       "docs/milestones/v0.91.7/DEMO_MATRIX_v0.91.7.md",
       "docs/milestones/v0.91.7/FEATURE_PROOF_COVERAGE_v0.91.7.md",
@@ -41,18 +26,81 @@
       "docs/milestones/v0.91.7/review/V0917_WP15_DEMO_CONVERGENCE_4642.md",
       "docs/milestones/v0.91.7/review/wp15_demo_convergence_4642/feature_proof_coverage_4642.json"
     ],
-    "reviewed_revision": "git-blake3:383ee3af22a4bd40e3664d8d5593ba97fb0b3b93:a9dc99739805141509d5d61badc9bd336b8d7d41bce314d602506ac3b0aab420",
+    "reviewed_revision": "git-blake3:60d9070863afc9b394d46eba5984529243464642:c43cbcf274420d773e5a13db91f378a0d78f0ea3da611918f844b0e6e0f71e5e",
     "findings": [],
     "residual_risks": [],
     "completed": true,
     "non_substantive_proof": null
   },
-  "publication": null,
-  "readiness": null,
-  "terminal": null,
+  "publication": {
+    "repository": "danielbaustin/agent-design-language",
+    "issue": 4642,
+    "pull_request": 5503,
+    "url": "https://github.com/danielbaustin/agent-design-language/pull/5503",
+    "base": "main",
+    "head": "codex/4642-v0917-demo-convergence",
+    "revision": "git-blake3:60d9070863afc9b394d46eba5984529243464642:c43cbcf274420d773e5a13db91f378a0d78f0ea3da611918f844b0e6e0f71e5e",
+    "draft": false,
+    "observed_state": "merged"
+  },
+  "readiness": {
+    "pull_request": 5503,
+    "head_sha": "60d9070863afc9b394d46eba5984529243464642",
+    "checks": [
+      {
+        "name": "adl-ci",
+        "requirement": "required",
+        "conclusion": "success",
+        "details_url": "https://github.com/danielbaustin/agent-design-language/actions/runs/29637995725/job/88063661991"
+      },
+      {
+        "name": "adl-coverage",
+        "requirement": "required",
+        "conclusion": "success",
+        "details_url": "https://github.com/danielbaustin/agent-design-language/actions/runs/29637995725/job/88063626285"
+      },
+      {
+        "name": "adl-tooling-contracts",
+        "requirement": "required",
+        "conclusion": "success",
+        "details_url": "https://github.com/danielbaustin/agent-design-language/actions/runs/29637995725/job/88063607405"
+      },
+      {
+        "name": "adl-path-policy",
+        "requirement": "required",
+        "conclusion": "success",
+        "details_url": "https://github.com/danielbaustin/agent-design-language/actions/runs/29637995725/job/88063596503"
+      },
+      {
+        "name": "adl-demo-proof",
+        "requirement": "required",
+        "conclusion": "success",
+        "details_url": "https://github.com/danielbaustin/agent-design-language/actions/runs/29637995725/job/88063607403"
+      }
+    ],
+    "review_state": "not_required",
+    "conflict_state": "clean",
+    "post_publication_findings": [],
+    "ready": true,
+    "blockers": []
+  },
+  "terminal": {
+    "pull_request": 5503,
+    "disposition": "merged",
+    "observed_sha": "60d9070863afc9b394d46eba5984529243464642",
+    "observed_state": "merged",
+    "receipt_path": "csdlc-v2/closeout/4642.json",
+    "released_branch": "codex/4642-v0917-demo-convergence",
+    "released_worktree": ".worktrees/adl-wp-4642",
+    "released_protected_paths": [
+      "docs/milestones/v0.91.7/review/V0917_WP15_DEMO_CONVERGENCE_4642.md",
+      "docs/milestones/v0.91.7/review/wp15_demo_convergence_4642",
+      ".csdlc/issues/4642"
+    ]
+  },
   "migration": null,
-  "design_path": ".csdlc/prepared/issues/4642/design.md",
-  "diagram_path": ".csdlc/prepared/issues/4642/diagram.mmd",
+  "design_path": ".csdlc/issues/4642/retained/design.md",
+  "diagram_path": ".csdlc/issues/4642/retained/diagram.mmd",
   "design_review": {
     "approved": {
       "reviewer": "codex-prep-only",
@@ -61,34 +109,34 @@
   },
   "cards": {
     "sip": {
-      "values_digest": "f435b9ca6c0de22eb7a4dad632d3290c10f454b97d1ab32fa25000df6df92a06",
+      "values_digest": "79bf6f11dfa6197cb2c484df795ae75e120979d1c956047e8ff3ce2fd9ed2576",
       "rendered_digest": "f0922d773bc001619cf7fb1e4ecc78c84bce92e1f071953d369504877aeb7aac",
       "ast_digest": "dd291a4085de6f5fa09b2e5472376f808377e2fe8c0838a2ef787b3a086b6330"
     },
     "stp": {
-      "values_digest": "88f3ac2f7bd1e7d7b52f96181b8617394444309a43df50f06edcfa5c66a75f32",
+      "values_digest": "ce9d6e22dc29fd9f1f2b7842c6e76084841c03ee49a1d576f08b611863f3b188",
       "rendered_digest": "de7795f08869f7635e458eea1f381603c4339f2417011c0251e95f67b015325c",
       "ast_digest": "7759915ddb35d2c9483c0f4aba7ca404c83dfdd784e22e8a27b73de1c4a83bb7"
     },
     "spp": {
-      "values_digest": "b740a2ebbc5d6ed58d303805c1f1bb2ce8128793aa3129b6cea0f627005f98b9",
-      "rendered_digest": "ed43ad11c12ab1db4b675d417e398e1071e9781e9442e375316378d60105f6a3",
-      "ast_digest": "472a617ae82a6b4619e170d42b36e22f2f8e7336e4b61a29d8f63d86cf668350"
+      "values_digest": "b7cb0cbd888ab25c08b67a9b82a52202737bbd5086e6152a430a267ef9adf9d9",
+      "rendered_digest": "5f97988c2fcd30085a3c45bcca7af24c01fdad47c91abf1bf633c04ab7dd25dc",
+      "ast_digest": "8de2fc0c3c18c99a4c4e9f3f1fc0828be3585de6746792cd6ae75386e3e1a4ca"
     },
     "vpp": {
-      "values_digest": "f6562ab46015379bdb1f339249a460dbd53ae5fc818a56e990bf5e4b4777fa5f",
-      "rendered_digest": "f1cd1021f1be65dfbdd020ee76a86947e15bcff0bd4e74f3ec6aa783e20fc863",
-      "ast_digest": "6dc57789c8695d0f84cdc7490276b6ff918f0189a039083aac5f220eb96fa2a3"
+      "values_digest": "bb3c0bfcf0b95d815cb1e4c20e053a3b31bc6e1dc69b2ec2f2b65e7cd67ae53b",
+      "rendered_digest": "b7a56e758fe1b5504b7c3604ffed5a247d6deb6b89726bc1390d10ff36d3391e",
+      "ast_digest": "d73486874d83a9e412a92cbd64050fb6d213320b60d24d61047c8dd6d8c4b0da"
     },
     "srp": {
-      "values_digest": "3c1cfbf33686cd0c0767e37c8f9cd4190554d1d1d80cf5473880beb0a43f7057",
-      "rendered_digest": "8b99f9ddf95ff0d592a6ecd5462917e10d39a1723d2cd5ed8abac9cb0b691d83",
-      "ast_digest": "c7957dc8ec6736db01f66c490491e2a3101adf14ad4fc48ef18bef2fb0c5b7af"
+      "values_digest": "0583b94de68a24f15dc84866ee106ead0bfec9a831f7394cb860a2202b674469",
+      "rendered_digest": "7fa57961fbbadd9e97116639743eecf18e87bc6fd06276e09b6752215c9c85e0",
+      "ast_digest": "34a046017a43ee254af2dd9d5215658e57b63c54d072cf458ca52d2efe8fcd7d"
     },
     "sor": {
-      "values_digest": "36196c952795d8e6fccd475a420033f8c40e7387b591156425eb438e21ed7825",
-      "rendered_digest": "0ead22db27db34399d4d4855d2f9392bd2f5ec68f1e5bf248c346c983b263dc4",
-      "ast_digest": "f2eb86adf3d32cf0edce3827c19ed37e88bc8abc60bc547f4adb6a49b8404756"
+      "values_digest": "885d880c559d8e697937f3f4e806f8b83df30124215e6302e8b2f3f792be2b18",
+      "rendered_digest": "97496081934fadc4c084c025922183f13801a8d442cab9c5eb190d4312481606",
+      "ast_digest": "878248aba89f5564a39b1898bf423d0aa26a62f02481e8c10dadc63512520212"
     }
   },
   "transitions": [
@@ -133,6 +181,48 @@
       "to": "reviewed",
       "actor": "codex-root",
       "reason": "Current substantive docs/ledger review completed with no findings after metadata-only recovery."
+    },
+    {
+      "sequence": 7,
+      "from": "reviewed",
+      "to": "implemented",
+      "actor": "codex-root",
+      "reason": "The committed C-SDLC review metadata advanced HEAD after the substantive docs/ledger review; recover to implemented so review can be re-recorded against the current clean committed head before publication."
+    },
+    {
+      "sequence": 8,
+      "from": "implemented",
+      "to": "reviewed",
+      "actor": "codex-root",
+      "reason": "Current committed head review completed with no findings after metadata-only recovery."
+    },
+    {
+      "sequence": 9,
+      "from": "reviewed",
+      "to": "published",
+      "actor": "codex-root",
+      "reason": "observed exact draft PR after current review"
+    },
+    {
+      "sequence": 10,
+      "from": "published",
+      "to": "merge_ready",
+      "actor": "codex-closeout-audit",
+      "reason": "observed required checks, review, and conflict readiness"
+    },
+    {
+      "sequence": 11,
+      "from": "merge_ready",
+      "to": "merged",
+      "actor": "codex-closeout-audit",
+      "reason": "observed exact PR merged"
+    },
+    {
+      "sequence": 12,
+      "from": "merged",
+      "to": "closed_out",
+      "actor": "codex-closeout-audit",
+      "reason": "terminal truth recorded and claim released"
     }
   ],
   "audit": [
@@ -219,6 +309,69 @@
       "actor": "codex-root",
       "reason": "Current substantive docs/ledger review completed with no findings after metadata-only recovery.",
       "operation": "{\"operation\":\"advance_phase\",\"phase\":\"reviewed\"}"
+    },
+    {
+      "sequence": 13,
+      "generation": 9,
+      "actor": "codex-root",
+      "reason": "The committed C-SDLC review metadata advanced HEAD after the substantive docs/ledger review; recover to implemented so review can be re-recorded against the current clean committed head before publication.",
+      "operation": "recover_review"
+    },
+    {
+      "sequence": 14,
+      "generation": 9,
+      "actor": "codex-root",
+      "reason": "assign bounded exact-revision review",
+      "operation": "assign_review"
+    },
+    {
+      "sequence": 15,
+      "generation": 10,
+      "actor": "subagent:019f745c-23d3-7820-8e91-084314fbc95f",
+      "reason": "atomically record review evidence and SRP projection",
+      "operation": "record_review"
+    },
+    {
+      "sequence": 16,
+      "generation": 11,
+      "actor": "codex-root",
+      "reason": "Current committed head review completed with no findings after metadata-only recovery.",
+      "operation": "{\"operation\":\"advance_phase\",\"phase\":\"reviewed\"}"
+    },
+    {
+      "sequence": 17,
+      "generation": 12,
+      "actor": "codex-root",
+      "reason": "atomically record observed GitHub publication and SOR projection",
+      "operation": "record_publication"
+    },
+    {
+      "sequence": 18,
+      "generation": 13,
+      "actor": "codex-closeout-audit",
+      "reason": "atomically record observed merged GitHub publication and SOR projection",
+      "operation": "record_merged_publication"
+    },
+    {
+      "sequence": 19,
+      "generation": 14,
+      "actor": "codex-closeout-audit",
+      "reason": "record normalized remote readiness without replacing pre-publication review",
+      "operation": "record_readiness"
+    },
+    {
+      "sequence": 20,
+      "generation": 15,
+      "actor": "codex-closeout-audit",
+      "reason": "atomically finalize SOR/index and release claim/protected paths",
+      "operation": "record_terminal"
+    },
+    {
+      "sequence": 21,
+      "generation": 16,
+      "actor": "codex-closeout-audit",
+      "reason": "Materialize the retained terminal receipt after merged PR #5503 and closed issue #4642.",
+      "operation": "reconcile_terminal"
     }
   ]
 }

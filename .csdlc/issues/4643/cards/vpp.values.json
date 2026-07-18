@@ -7,7 +7,7 @@
     "title": "[v0.91.7][WP-16][quality] Coverage and quality gate",
     "slug": "v0-91-7-wp16-coverage-quality-gate",
     "version": "v0.91.7",
-    "generation": 3
+    "generation": 10
   },
   "status": "ready",
   "content": {
@@ -27,7 +27,7 @@
           "budget_seconds": 300,
           "budget_tokens": 3000,
           "argv": [
-                        "csdlc-doctor",
+            "csdlc-doctor",
             "--repo",
             ".",
             "--issue",
@@ -60,9 +60,9 @@
       "planned_validation_seconds": 3600,
       "planned_validation_tokens": 25000,
       "failure_policy": "Fail closed on stale live truth, missing retained evidence, overclaim, or dependency ambiguity.",
-      "design_ref": ".csdlc/prepared/issues/4643/design.md",
+      "design_ref": ".csdlc/issues/4643/retained/design.md",
       "design_digest": "9ac9658a95e22d40d3da6f021041580d316847de319545a5e70099d5dbff32c7",
-      "diagram_ref": ".csdlc/prepared/issues/4643/diagram.mmd",
+      "diagram_ref": ".csdlc/issues/4643/retained/diagram.mmd",
       "diagram_digest": "077ef5a835db2e7c1106ff5c5bb69e04e4b8cac239cdb43415dd07308f55c941"
     }
   }

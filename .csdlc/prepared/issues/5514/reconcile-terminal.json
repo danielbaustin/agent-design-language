@@ -1,0 +1,9 @@
+{
+  "issue": 5514,
+  "expected_initialization_digest": "0ac7f243c9cdabc81f435bc523ae859b6886558d3e83a11e327ce4c4b29442ba",
+  "expected_branch": "codex/5514-closeout-audit",
+  "expected_worktree": "/Users/daniel/git/agent-design-language/.worktrees/adl-wp-5514-closeout",
+  "actor": "codex-closeout-audit",
+  "reason": "Materialize the retained terminal receipt after merged PR #5515 and closed issue #5514.",
+  "follow_ups": []
+}

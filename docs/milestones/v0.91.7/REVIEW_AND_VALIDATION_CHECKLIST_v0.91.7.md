@@ -9,7 +9,9 @@
 
 ## Status
 
-Candidate review checklist for docs/planning and second-tranche bridge work.
+Active review checklist for the v0.91.7 closeout tail. WP-17 applies this to
+all tracked milestone Markdown, all tracked repository READMEs, package
+manifests, ADR indexes, and the current documentation entrypoints.
 
 ## Required Local Validation
 

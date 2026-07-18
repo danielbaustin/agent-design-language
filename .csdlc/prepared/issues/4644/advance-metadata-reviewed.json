@@ -1,0 +1,13 @@
+{
+  "issue": 4644,
+  "card": "srp",
+  "expected_generation": 13,
+  "expected_digest": "fd79176497e64d4fcb5bb3b310ce29f8b874b424e973863278c493e2388e2bb6",
+  "claim_id": "claim-4644-v0-91-7-wp17-docs-adoption-review",
+  "actor": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+  "reason": "Advance #4644 after the exact current-head metadata review was recorded, the SRP was completed, and the SOR retained truthful pre-publication worktree-only state.",
+  "operation": {
+    "operation": "advance_phase",
+    "phase": "reviewed"
+  }
+}

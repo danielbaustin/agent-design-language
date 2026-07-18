@@ -4,7 +4,7 @@
 
 - Milestone: `v0.91.7`
 - Version: `v0.91.7`
-- Status: `ready_to_execute`
+- Status: `executed_retained_evidence`
 - Source issue: `#4549`
 - Upstream runtime sprint authority: `docs/milestones/v0.91.6/RUNTIME_INTEGRATION_SOAK_SPRINT_v0.91.6.md`
 
@@ -14,8 +14,11 @@ Make Soak #2 executable as the full feature-list integration gate before
 `v0.92` activation or birthday-readiness claims consume runtime planning as if
 it were runtime proof.
 
-This packet is planning and issue-setup truth only. It does not execute Soak #2
-and does not claim `v0.92` readiness.
+This packet began as planning and issue-setup truth. Soak #2 execution evidence
+is now retained by closed `#4682` under
+`review/runtime/soak2_4682/`; the feature-list matrix and blocker register
+retain its bounded results. This packet itself does not claim `v0.92`
+readiness or a fresh WP-17 rerun.
 
 ## Handoff Rule
 

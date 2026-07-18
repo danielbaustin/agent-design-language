@@ -7,7 +7,7 @@
     "title": "[v0.91.7][tooling][coverage] Preserve the complete ADL CSM suite in Runtime v3 bridge coverage",
     "slug": "v0-91-7-complete-csm-coverage",
     "version": "v0.91.7",
-    "generation": 5
+    "generation": 13
   },
   "status": "ready",
   "content": {
@@ -40,9 +40,9 @@
       "planned_validation_seconds": 1200,
       "planned_validation_tokens": 10000,
       "failure_policy": "Fail closed if any canonical ADL CSM selector is discarded, any foreign selector reaches an owning workspace, exact matching weakens, thresholds change, or Runtime v2/AWS enters scope.",
-      "design_ref": ".csdlc/prepared/issues/5514/design.md",
+      "design_ref": ".csdlc/issues/5514/retained/design.md",
       "design_digest": "5bffbfb561d33dc342a1030ca018ec053fe51d3195ecdb8c4f419ab0ccf10c11",
-      "diagram_ref": ".csdlc/prepared/issues/5514/diagram.mmd",
+      "diagram_ref": ".csdlc/issues/5514/retained/diagram.mmd",
       "diagram_digest": "b620e1d89dd7dffe09577589bdd6b73c7bcfb69e7c4fd1a0a698ad4e86643e8d"
     }
   }

@@ -4,7 +4,7 @@
 
 - Feature Name: Security Implementation Readiness
 - Milestone Target: `v0.91.7`
-- Status: gate recorded; #4657 operations and #4658 schema projection integrated; other child blockers open
+- Status: WP-12 children #4656-#4660 and review remediation #5404/#5406 closed; activation remains proof-bound
 - Owner: ADL maintainers
 - Doc Role: primary
 - Feature Types: policy, architecture
