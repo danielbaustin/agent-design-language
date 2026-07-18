@@ -8,7 +8,7 @@ Repository: danielbaustin/agent-design-language
 
 Card: srp
 
-Status: pre_phase
+Status: draft
 
 ## Scope
 
@@ -28,38 +28,7 @@ csdlc-v2/tests/gate7_lifecycle.rs
 
 ## Findings
 
-[
-  {
-    "id": "F-5466-1",
-    "severity": "p1",
-    "summary": "Observed fork or missing head/base repository identity could satisfy branch and SHA checks.",
-    "actionable": true,
-    "in_scope": true,
-    "disposition": "fixed",
-    "fix_revision": "git-blake3:06d2992ffbbeab8c57f8abfcd01f6ffe6ba5f0d1:4ce4735b018ad3476ff98769feb95bc44069c4ff589b18105f4006da80d85670",
-    "route": null
-  },
-  {
-    "id": "F-5466-2",
-    "severity": "p2",
-    "summary": "Merged reconciliation request was private and absent from the public versioned schema bundle.",
-    "actionable": true,
-    "in_scope": true,
-    "disposition": "fixed",
-    "fix_revision": "git-blake3:06d2992ffbbeab8c57f8abfcd01f6ffe6ba5f0d1:4ce4735b018ad3476ff98769feb95bc44069c4ff589b18105f4006da80d85670",
-    "route": null
-  },
-  {
-    "id": "F-5466-3",
-    "severity": "p2",
-    "summary": "Merged publication evidence was initially projected into SOR as an open PR with draft-oriented audit truth.",
-    "actionable": true,
-    "in_scope": true,
-    "disposition": "fixed",
-    "fix_revision": "git-blake3:06d2992ffbbeab8c57f8abfcd01f6ffe6ba5f0d1:4ce4735b018ad3476ff98769feb95bc44069c4ff589b18105f4006da80d85670",
-    "route": null
-  }
-]
+[]
 
 ## Dispositions
 
@@ -71,7 +40,7 @@ Every actionable finding requires a terminal disposition.
 
 ## Review Result
 
-Revision: Some("git-blake3:06d2992ffbbeab8c57f8abfcd01f6ffe6ba5f0d1:4ce4735b018ad3476ff98769feb95bc44069c4ff589b18105f4006da80d85670")
+Revision: Some("git-blake3:53092f4a89f4a5ba9cc138543a4c83d5654a6214:9f594f29bba2202c0dd01fe7c5eb8f9ea1dc38fbecb9fe2d5855786ffb19943e")
 
 Reviewer: Some("bounded-subagent-review-5466")
 

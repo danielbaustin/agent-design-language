@@ -1,0 +1,12 @@
+{
+  "issue": 5466,
+  "expected_generation": 14,
+  "expected_digest": "fcaa90ecd5bfb465c28cfb8a9eb9445b17472199225023573d773562aac3a0c9",
+  "claim_id": "claim-5466-merged-head-closeout",
+  "actor": "codex-root",
+  "repository": "danielbaustin/agent-design-language",
+  "pull_request": 5472,
+  "required_checks": ["adl-ci", "adl-coverage"],
+  "require_review": false,
+  "token_file": null
+}

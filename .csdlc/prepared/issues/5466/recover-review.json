@@ -1,0 +1,8 @@
+{
+  "issue": 5466,
+  "expected_generation": 9,
+  "expected_digest": "51c06f12dd4685a86404a9551d8384f39d6c30b1645c5fc5082ee663bc77202a",
+  "claim_id": "claim-5466-merged-head-closeout",
+  "actor": "codex-root",
+  "reason": "Committed typed review metadata advanced HEAD after the source review; recover for exact current-head metadata-delta review before publication."
+}

@@ -3,13 +3,13 @@
   "issue": 5466,
   "repository": "danielbaustin/agent-design-language",
   "initialization_digest": "8c5521ae75dafa28fe8cd6cc7f503e041324db141a312cb95204863e51b9a8b5",
-  "phase": "reviewed",
-  "generation": 9,
-  "digest": "51c06f12dd4685a86404a9551d8384f39d6c30b1645c5fc5082ee663bc77202a",
+  "phase": "published",
+  "generation": 14,
+  "digest": "fcaa90ecd5bfb465c28cfb8a9eb9445b17472199225023573d773562aac3a0c9",
   "claim": {
     "id": "claim-5466-merged-head-closeout",
     "owner": "codex-root",
-    "generation": 9,
+    "generation": 14,
     "acquired_unix_seconds": 1784354668,
     "expires_unix_seconds": 1784959468,
     "heartbeat_unix_seconds": 1784354668,
@@ -29,7 +29,7 @@
   "review_assignment": {
     "reviewer": "bounded-subagent-review-5466",
     "assigned_by": "codex-root",
-    "revision": "git-blake3:06d2992ffbbeab8c57f8abfcd01f6ffe6ba5f0d1:4ce4735b018ad3476ff98769feb95bc44069c4ff589b18105f4006da80d85670",
+    "revision": "git-blake3:53092f4a89f4a5ba9cc138543a4c83d5654a6214:9f594f29bba2202c0dd01fe7c5eb8f9ea1dc38fbecb9fe2d5855786ffb19943e",
     "scope": [
       "csdlc-v2/src/bin/csdlc-publish.rs",
       "csdlc-v2/src/lib.rs",
@@ -51,45 +51,102 @@
       "csdlc-v2/tests/gate6.rs",
       "csdlc-v2/tests/gate7_lifecycle.rs"
     ],
-    "reviewed_revision": "git-blake3:06d2992ffbbeab8c57f8abfcd01f6ffe6ba5f0d1:4ce4735b018ad3476ff98769feb95bc44069c4ff589b18105f4006da80d85670",
-    "findings": [
-      {
-        "id": "F-5466-1",
-        "severity": "p1",
-        "summary": "Observed fork or missing head/base repository identity could satisfy branch and SHA checks.",
-        "actionable": true,
-        "in_scope": true,
-        "disposition": "fixed",
-        "fix_revision": "git-blake3:06d2992ffbbeab8c57f8abfcd01f6ffe6ba5f0d1:4ce4735b018ad3476ff98769feb95bc44069c4ff589b18105f4006da80d85670",
-        "route": null
-      },
-      {
-        "id": "F-5466-2",
-        "severity": "p2",
-        "summary": "Merged reconciliation request was private and absent from the public versioned schema bundle.",
-        "actionable": true,
-        "in_scope": true,
-        "disposition": "fixed",
-        "fix_revision": "git-blake3:06d2992ffbbeab8c57f8abfcd01f6ffe6ba5f0d1:4ce4735b018ad3476ff98769feb95bc44069c4ff589b18105f4006da80d85670",
-        "route": null
-      },
-      {
-        "id": "F-5466-3",
-        "severity": "p2",
-        "summary": "Merged publication evidence was initially projected into SOR as an open PR with draft-oriented audit truth.",
-        "actionable": true,
-        "in_scope": true,
-        "disposition": "fixed",
-        "fix_revision": "git-blake3:06d2992ffbbeab8c57f8abfcd01f6ffe6ba5f0d1:4ce4735b018ad3476ff98769feb95bc44069c4ff589b18105f4006da80d85670",
-        "route": null
-      }
-    ],
+    "reviewed_revision": "git-blake3:53092f4a89f4a5ba9cc138543a4c83d5654a6214:9f594f29bba2202c0dd01fe7c5eb8f9ea1dc38fbecb9fe2d5855786ffb19943e",
+    "findings": [],
     "residual_risks": [],
     "completed": true,
     "non_substantive_proof": null
   },
-  "publication": null,
-  "readiness": null,
+  "publication": {
+    "repository": "danielbaustin/agent-design-language",
+    "issue": 5466,
+    "pull_request": 5472,
+    "url": "https://github.com/danielbaustin/agent-design-language/pull/5472",
+    "base": "main",
+    "head": "codex/5466-merged-head-closeout-recovery",
+    "revision": "git-blake3:53092f4a89f4a5ba9cc138543a4c83d5654a6214:9f594f29bba2202c0dd01fe7c5eb8f9ea1dc38fbecb9fe2d5855786ffb19943e",
+    "draft": true,
+    "observed_state": "open"
+  },
+  "readiness": {
+    "pull_request": 5472,
+    "head_sha": "53092f4a89f4a5ba9cc138543a4c83d5654a6214",
+    "checks": [
+      {
+        "name": "adl-ci",
+        "requirement": "required",
+        "conclusion": "success",
+        "details_url": "https://github.com/danielbaustin/agent-design-language/actions/runs/29633973060/job/88052894674"
+      },
+      {
+        "name": "adl-coverage",
+        "requirement": "required",
+        "conclusion": "success",
+        "details_url": "https://github.com/danielbaustin/agent-design-language/actions/runs/29633973060/job/88052860356"
+      },
+      {
+        "name": "adl-coverage-hosted",
+        "requirement": "optional",
+        "conclusion": "success",
+        "details_url": "https://github.com/danielbaustin/agent-design-language/actions/runs/29633973060/job/88052838268"
+      },
+      {
+        "name": "adl-demo-proof",
+        "requirement": "optional",
+        "conclusion": "success",
+        "details_url": "https://github.com/danielbaustin/agent-design-language/actions/runs/29633973060/job/88052838261"
+      },
+      {
+        "name": "adl-path-policy",
+        "requirement": "optional",
+        "conclusion": "success",
+        "details_url": "https://github.com/danielbaustin/agent-design-language/actions/runs/29633973060/job/88052826372"
+      },
+      {
+        "name": "adl-runtime-v3-fast",
+        "requirement": "optional",
+        "conclusion": "skipped",
+        "details_url": "https://github.com/danielbaustin/agent-design-language/actions/runs/29633973060/job/88052838717"
+      },
+      {
+        "name": "adl-rust-fmt-clippy",
+        "requirement": "optional",
+        "conclusion": "skipped",
+        "details_url": "https://github.com/danielbaustin/agent-design-language/actions/runs/29633973060/job/88052838502"
+      },
+      {
+        "name": "adl-rust-tests",
+        "requirement": "optional",
+        "conclusion": "skipped",
+        "details_url": "https://github.com/danielbaustin/agent-design-language/actions/runs/29633973060/job/88052838715"
+      },
+      {
+        "name": "adl-slow-proof",
+        "requirement": "optional",
+        "conclusion": "skipped",
+        "details_url": "https://github.com/danielbaustin/agent-design-language/actions/runs/29633973060/job/88052838581"
+      },
+      {
+        "name": "adl-spot-ci-and-coverage",
+        "requirement": "optional",
+        "conclusion": "skipped",
+        "details_url": "https://github.com/danielbaustin/agent-design-language/actions/runs/29633973060/job/88052838733"
+      },
+      {
+        "name": "adl-tooling-contracts",
+        "requirement": "optional",
+        "conclusion": "success",
+        "details_url": "https://github.com/danielbaustin/agent-design-language/actions/runs/29633973060/job/88052838248"
+      }
+    ],
+    "review_state": "not_required",
+    "conflict_state": "unknown",
+    "post_publication_findings": [],
+    "ready": false,
+    "blockers": [
+      "conflict_state_not_clean"
+    ]
+  },
   "terminal": null,
   "migration": null,
   "design_path": ".csdlc/prepared/issues/5466/design.md",
@@ -102,34 +159,34 @@
   },
   "cards": {
     "sip": {
-      "values_digest": "b3c5803fd5c0c020823eb79abc3c8bed434a2c74553e79896b6c89ab6276d28e",
+      "values_digest": "feb72576cb813bbf15ae22c25423617ec064e42fa4eac94010fa47658a5d577b",
       "rendered_digest": "50460e2da18413aa1781f6cced61f4994d4572d26e47be102bbf0f78138656ae",
       "ast_digest": "b25ada4c74c917b4545c92a1d9d3e989a77507ad8f5e7fd8ea568a7ad3bd4dd5"
     },
     "stp": {
-      "values_digest": "4d549c4b669e3e5bddc98d7cc9d764b12c7ba846e3a5d66a8483e60acede2add",
+      "values_digest": "8829284899453584f87bad5c2d28268d4fba54337e892699c1a79f249c638111",
       "rendered_digest": "1ff5baecdc669e6fda34d464722e0ac7488d1d3f3a1b11ae44b60677f00b93af",
       "ast_digest": "a890398d95986c17761a499c0f3188f5ccad4149b929b4f0ad28233a3e860706"
     },
     "spp": {
-      "values_digest": "17a7e272e6d00c3f92bbd38cb56ac5415099d4368ef64b3cb5e3eb5fc96715c2",
+      "values_digest": "33831c4fb525fe5b6ca5d9f94c3e17e6477e0d1dac6c159c8c1a7869cd54b24e",
       "rendered_digest": "1d50ee529ba098ba8b2c7b9bb246578b10ccf08153667589ae7b77d0885d3c00",
       "ast_digest": "fbcce6de941035f21b3d4ee1f1116e7c88b7799b3e11a315cc4c97937c30da03"
     },
     "vpp": {
-      "values_digest": "8600132d3c0a1d86979e5d43d40a779907d4a28d90de2d915e8c8fff2fb6111b",
+      "values_digest": "151428cc135f4d17551eda510e27b650dc2165c4d4784b8b9dbc0d1b488c1b8e",
       "rendered_digest": "86a02e830e2463ceba10e44774999593edee76abd81323d079dbf3bdaa7c9017",
       "ast_digest": "4cd72b4661a5d8b6cdac11b8b7f28908aef48e0a62cde2ac0e560231c6bf54f5"
     },
     "srp": {
-      "values_digest": "7547ec59ee07d51f192cf17008dc4af1722c0a0322c962854e5004c3036c0aea",
-      "rendered_digest": "3e464250a20891f3298e982fc96663e7ca1190cb7a417e241bcdb22b98aeb8b6",
-      "ast_digest": "46f58c75c091e1a1c052e08e8bcbb020cbb217acb20c58ddc1e97835adbe4bec"
+      "values_digest": "ad33c7ed3375a3b0752e70c62c8d399d7889af90604808c2ae05c389357f40ad",
+      "rendered_digest": "e3b70b4675919b37c4865d5e8c40101cda6d1c96a1b4dfc75ea02859ae6c749b",
+      "ast_digest": "b498a15cde6f165dfaaf7accc381355fbff3fa065334f5115b9746a830ebb490"
     },
     "sor": {
-      "values_digest": "0b0073f1458e8af82620e5b821fee93abf177487726012a87f50ea25ed5d74ec",
-      "rendered_digest": "15c1a8ca2ab1b06c385946755d4dc356276010698fbe09e0f05dcbda135de832",
-      "ast_digest": "2bee116267c8a8e159821a3c6099cdead216209c3a08fe103123af6ab6951b94"
+      "values_digest": "1cbdddbdb98b439d78428d357626884ba548ed8e90916f8ea66a10e69f1cf629",
+      "rendered_digest": "622316c0744d9455ff43f92a92ebfe9c99ee673d126cd3fbd25a15d0a151192e",
+      "ast_digest": "b547aeaa10ba23be28c72a96481050b7f6fc8d342f5d3760f02db59b2d549c75"
     }
   },
   "transitions": [
@@ -160,6 +217,27 @@
       "to": "reviewed",
       "actor": "codex-root",
       "reason": "Exact-revision bounded review passed after all three actionable findings were fixed."
+    },
+    {
+      "sequence": 5,
+      "from": "reviewed",
+      "to": "implemented",
+      "actor": "codex-root",
+      "reason": "Committed typed review metadata advanced HEAD after the source review; recover for exact current-head metadata-delta review before publication."
+    },
+    {
+      "sequence": 6,
+      "from": "implemented",
+      "to": "reviewed",
+      "actor": "codex-root",
+      "reason": "Exact current-head review passed; the committed delta after the source review contains typed lifecycle metadata only."
+    },
+    {
+      "sequence": 7,
+      "from": "reviewed",
+      "to": "published",
+      "actor": "codex-root",
+      "reason": "observed exact PR after current review"
     }
   ],
   "audit": [
@@ -274,6 +352,48 @@
       "actor": "codex-root",
       "reason": "Exact-revision bounded review passed after all three actionable findings were fixed.",
       "operation": "{\"operation\":\"advance_phase\",\"phase\":\"reviewed\"}"
+    },
+    {
+      "sequence": 17,
+      "generation": 10,
+      "actor": "codex-root",
+      "reason": "Committed typed review metadata advanced HEAD after the source review; recover for exact current-head metadata-delta review before publication.",
+      "operation": "recover_review"
+    },
+    {
+      "sequence": 18,
+      "generation": 10,
+      "actor": "codex-root",
+      "reason": "assign bounded exact-revision review",
+      "operation": "assign_review"
+    },
+    {
+      "sequence": 19,
+      "generation": 11,
+      "actor": "bounded-subagent-review-5466",
+      "reason": "atomically record review evidence and SRP projection",
+      "operation": "record_review"
+    },
+    {
+      "sequence": 20,
+      "generation": 12,
+      "actor": "codex-root",
+      "reason": "Exact current-head review passed; the committed delta after the source review contains typed lifecycle metadata only.",
+      "operation": "{\"operation\":\"advance_phase\",\"phase\":\"reviewed\"}"
+    },
+    {
+      "sequence": 21,
+      "generation": 13,
+      "actor": "codex-root",
+      "reason": "atomically record observed GitHub publication and SOR projection",
+      "operation": "record_publication"
+    },
+    {
+      "sequence": 22,
+      "generation": 14,
+      "actor": "codex-root",
+      "reason": "record normalized remote readiness without replacing pre-publication review",
+      "operation": "record_readiness"
     }
   ]
 }

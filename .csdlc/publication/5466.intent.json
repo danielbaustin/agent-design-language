@@ -1,0 +1,12 @@
+{
+  "schema": "csdlc.publication_intent.v1",
+  "issue": 5466,
+  "repository": "danielbaustin/agent-design-language",
+  "base": "main",
+  "head": "codex/5466-merged-head-closeout-recovery",
+  "title": "[v0.91.7][csdlc-v2][closeout] Reconcile merged PR after a late reviewed-head advance",
+  "body": "Closes #5466\n\nAdds a typed fail-closed reconciliation path for an already-merged PR after exact final-head review. It verifies same-repository head/base identity, merged state, exact final SHA and mutable PR identity; records merged publication and SOR truth atomically; preserves normal draft publication behavior; and uses no AWS validation.",
+  "draft": true,
+  "revision": "git-blake3:53092f4a89f4a5ba9cc138543a4c83d5654a6214:9f594f29bba2202c0dd01fe7c5eb8f9ea1dc38fbecb9fe2d5855786ffb19943e",
+  "commit_sha": "53092f4a89f4a5ba9cc138543a4c83d5654a6214"
+}

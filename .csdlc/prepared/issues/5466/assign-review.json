@@ -1,7 +1,7 @@
 {
   "issue": 5466,
-  "expected_generation": 7,
-  "expected_digest": "7495fe351adbbdbc4183dfb9c9668271840a8d651867918c2e42dded4df8fda4",
+  "expected_generation": 10,
+  "expected_digest": "22eea84e6e8442e190fe6d9cbf11c0ea5d1c2561d32ee15a7c4ffdabc3f4dac6",
   "claim_id": "claim-5466-merged-head-closeout",
   "reviewer": "bounded-subagent-review-5466",
   "assigned_by": "codex-root",

@@ -70,11 +70,11 @@ Added a typed reconcile-merged publication command that observes an explicit mer
 
 ## Integration
 
-not_started
+pr_open
 
 ## Publication
 
-Publication: not_published
+Publication: draft
 
 Merge: not_merged
 
