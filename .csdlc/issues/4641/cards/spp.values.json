@@ -7,7 +7,7 @@
     "title": "[v0.91.7][WP-14] Launch and v0.92 birthday handoff",
     "slug": "v0-91-7-wp14-launch-v092-birthday-handoff",
     "version": "v0.91.7",
-    "generation": 12
+    "generation": 19
   },
   "status": "ready",
   "content": {
@@ -78,9 +78,9 @@
         "AWS or paid remote validation would be required for preparation"
       ],
       "replan_triggers": [],
-      "design_ref": ".csdlc/prepared/issues/4641/design.md",
+      "design_ref": ".csdlc/issues/4641/retained/design.md",
       "design_digest": "81201aebef52effe741c3ecf69e531133aec9526caf8823f13699bf10b210d1a",
-      "diagram_ref": ".csdlc/prepared/issues/4641/diagram.mmd",
+      "diagram_ref": ".csdlc/issues/4641/retained/diagram.mmd",
       "diagram_digest": "b67777fae192af9512bdd1ebc5b12e541355b120c064c94fd13f7264863c9f3d"
     }
   }

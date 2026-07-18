@@ -7,9 +7,9 @@
     "title": "[v0.91.7][WP-14] Launch and v0.92 birthday handoff",
     "slug": "v0-91-7-wp14-launch-v092-birthday-handoff",
     "version": "v0.91.7",
-    "generation": 12
+    "generation": 19
   },
-  "status": "pre_phase",
+  "status": "complete",
   "content": {
     "card_kind": "sor",
     "values": {
@@ -61,10 +61,10 @@
           "evidence_ref": "local command output: status pass, phase implemented, generation 4, no findings"
         }
       ],
-      "integration_state": "worktree_only",
-      "publication_state": "not_published",
-      "merge_state": "not_merged",
-      "closeout_state": "not_started",
+      "integration_state": "merged",
+      "publication_state": "closed",
+      "merge_state": "merged",
+      "closeout_state": "complete",
       "follow_ups": []
     }
   }
