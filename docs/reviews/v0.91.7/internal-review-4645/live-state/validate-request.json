@@ -1,0 +1,104 @@
+{
+  "manifest": {
+    "schema": "csdlc.pvf.manifest.v1",
+    "lanes": [
+      {
+        "id": "diff-check",
+        "proof_role": "Whitespace and patch hygiene for #4645 review artifacts",
+        "purpose": "Verify review artifact diff has no whitespace errors",
+        "determinism": "deterministic",
+        "resources": {
+          "cpu_units": 1,
+          "memory_mib": 128,
+          "tokens": 0
+        },
+        "credentials": [],
+        "network": "denied",
+        "dependencies": [],
+        "parallel_group": "local",
+        "release_gate": "required",
+        "execution": "local",
+        "timeout_seconds": 60,
+        "executable": "git",
+        "argv": ["diff", "--check"],
+        "evidence": {
+          "max_log_bytes": 12000,
+          "redact_values": [],
+          "require_relative_paths": true
+        }
+      },
+      {
+        "id": "summary-json",
+        "proof_role": "Validate live-state summary JSON",
+        "purpose": "Verify summary snapshot is valid JSON",
+        "determinism": "deterministic",
+        "resources": {
+          "cpu_units": 1,
+          "memory_mib": 128,
+          "tokens": 0
+        },
+        "credentials": [],
+        "network": "denied",
+        "dependencies": [],
+        "parallel_group": "local",
+        "release_gate": "required",
+        "execution": "local",
+        "timeout_seconds": 60,
+        "executable": "python3",
+        "argv": [
+          "-m",
+          "json.tool",
+          "docs/reviews/v0.91.7/internal-review-4645/live-state/summary.json"
+        ],
+        "evidence": {
+          "max_log_bytes": 12000,
+          "redact_values": [],
+          "require_relative_paths": true
+        }
+      },
+      {
+        "id": "dependency-json",
+        "proof_role": "Validate #5408/#5419 dependency JSON",
+        "purpose": "Verify dependency snapshot is valid JSON",
+        "determinism": "controlled_external",
+        "resources": {
+          "cpu_units": 1,
+          "memory_mib": 128,
+          "tokens": 0
+        },
+        "credentials": [],
+        "network": "denied",
+        "dependencies": [],
+        "parallel_group": "local",
+        "release_gate": "required",
+        "execution": "local",
+        "timeout_seconds": 60,
+        "executable": "python3",
+        "argv": [
+          "-m",
+          "json.tool",
+          "docs/reviews/v0.91.7/internal-review-4645/live-state/dependency_5408_5419.json"
+        ],
+        "evidence": {
+          "max_log_bytes": 12000,
+          "redact_values": [],
+          "require_relative_paths": true
+        }
+      }
+    ]
+  },
+  "selection": {
+    "requested_lanes": ["diff-check", "summary-json", "dependency-json"],
+    "allow_network": false,
+    "available_credentials": []
+  },
+  "budget": {
+    "max_parallel": 2,
+    "cpu_units": 2,
+    "memory_mib": 512,
+    "tokens": 0
+  },
+  "root": ".",
+  "evidence_dir": "docs/reviews/v0.91.7/internal-review-4645/validation",
+  "cancellation_file": null
+}

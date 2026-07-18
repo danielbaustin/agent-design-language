@@ -1,0 +1,23 @@
+{
+    "dependency_5408_state": {
+        "issue_state": "OPEN",
+        "pr_check_conclusions": {
+            "IN_PROGRESS": 2,
+            "SKIPPED": 2,
+            "SUCCESS": 8
+        },
+        "pr_is_draft": true,
+        "pr_state": "OPEN"
+    },
+    "github_issue_open_counts": {
+        "title_v0917": 19,
+        "version_label": 7
+    },
+    "github_issue_query_counts": {
+        "title_v0917": 488,
+        "version_label": 425
+    },
+    "github_pr_count": 438,
+    "local_cards_missing": [],
+    "local_csdlc_issue_count": 41
+}

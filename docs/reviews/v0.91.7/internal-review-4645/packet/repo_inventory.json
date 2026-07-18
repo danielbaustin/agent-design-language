@@ -1,0 +1,367 @@
+{
+  "ci": [
+    ".github/workflows/aws-codefriend-build.yaml",
+    ".github/workflows/aws-spot-remote-validation.yaml",
+    ".github/workflows/ci.yaml",
+    ".github/workflows/nightly-coverage-ratchet.yaml",
+    ".github/workflows/v0871_milestone_closeout_gate.yaml"
+  ],
+  "docs": [
+    ".adl/v0.91.7/tasks/issue-4630__v0-91-7-wp-03-consume-c-sdlc-integration-control-plane-truth/vpp.md",
+    ".csdlc/issues/4641/cards/sip.md",
+    ".csdlc/issues/4641/cards/sor.md",
+    ".csdlc/issues/4641/cards/spp.md",
+    ".csdlc/issues/4641/cards/srp.md",
+    ".csdlc/issues/4641/cards/stp.md",
+    ".csdlc/issues/4641/cards/vpp.md",
+    ".csdlc/issues/4641/retained/design.md",
+    ".csdlc/issues/4642/cards/sip.md",
+    ".csdlc/issues/4642/cards/sor.md",
+    ".csdlc/issues/4642/cards/spp.md",
+    ".csdlc/issues/4642/cards/srp.md",
+    ".csdlc/issues/4642/cards/stp.md",
+    ".csdlc/issues/4642/cards/vpp.md",
+    ".csdlc/issues/4643/cards/sip.md",
+    ".csdlc/issues/4643/cards/sor.md",
+    ".csdlc/issues/4643/cards/spp.md",
+    ".csdlc/issues/4643/cards/srp.md",
+    ".csdlc/issues/4643/cards/stp.md",
+    ".csdlc/issues/4643/cards/vpp.md",
+    ".csdlc/issues/4645/cards/sip.md",
+    ".csdlc/issues/4645/cards/sor.md",
+    ".csdlc/issues/4645/cards/spp.md",
+    ".csdlc/issues/4645/cards/srp.md",
+    ".csdlc/issues/4645/cards/stp.md",
+    ".csdlc/issues/4645/cards/vpp.md",
+    ".csdlc/issues/5306/cards/sip.md",
+    ".csdlc/issues/5306/cards/sor.md",
+    ".csdlc/issues/5306/cards/spp.md",
+    ".csdlc/issues/5306/cards/srp.md",
+    ".csdlc/issues/5306/cards/stp.md",
+    ".csdlc/issues/5306/cards/vpp.md",
+    ".csdlc/issues/5330/cards/sip.md",
+    ".csdlc/issues/5330/cards/sor.md",
+    ".csdlc/issues/5330/cards/spp.md",
+    ".csdlc/issues/5330/cards/srp.md",
+    ".csdlc/issues/5330/cards/stp.md",
+    ".csdlc/issues/5330/cards/vpp.md",
+    ".csdlc/issues/5353/cards/sip.md",
+    ".csdlc/issues/5353/cards/sor.md"
+  ],
+  "extension_counts": {
+    ".asset": 23,
+    ".b64": 3,
+    ".cs": 11,
+    ".css": 8,
+    ".csv": 1,
+    ".example": 8,
+    ".gz": 1,
+    ".hcl": 1,
+    ".html": 10,
+    ".inc": 12,
+    ".java": 1,
+    ".js": 11,
+    ".json": 2419,
+    ".jsonl": 378,
+    ".lock": 24,
+    ".log": 62,
+    ".md": 2963,
+    ".meta": 26,
+    ".mmd": 105,
+    ".patch": 1,
+    ".pdf": 1,
+    ".plist": 2,
+    ".png": 12,
+    ".ps1": 1,
+    ".py": 156,
+    ".rs": 720,
+    ".segment": 4,
+    ".service": 2,
+    ".sh": 449,
+    ".svg": 17,
+    ".tf": 9,
+    ".toml": 10,
+    ".tss": 1,
+    ".tsv": 1,
+    ".txt": 19,
+    ".unity": 3,
+    ".uss": 3,
+    ".uxml": 2,
+    ".xml": 1,
+    ".yaml": 279,
+    ".yaml\"": 2,
+    ".yml": 1,
+    "<no_ext>": 10
+  },
+  "file_count": 7773,
+  "is_worktree": true,
+  "largest_code_files": [
+    {
+      "line_count": 10061,
+      "path": "adl/src/cli/tests/pr_cmd_inline/finish/arg_render.rs"
+    },
+    {
+      "line_count": 5527,
+      "path": "adl/src/long_lived_agent.rs"
+    },
+    {
+      "line_count": 5278,
+      "path": "adl/src/resilience.rs"
+    },
+    {
+      "line_count": 5144,
+      "path": "adl/src/aws_remote_validation.rs"
+    },
+    {
+      "line_count": 4998,
+      "path": "adl/tests/cli_smoke/agent.rs"
+    },
+    {
+      "line_count": 4664,
+      "path": "adl/src/csm_runtime_api.rs"
+    },
+    {
+      "line_count": 4474,
+      "path": "adl/src/cli/tests/pr_cmd_inline/basics.rs"
+    },
+    {
+      "line_count": 4302,
+      "path": "tools/aws_remote_validation/src/aws_remote_validation.rs"
+    },
+    {
+      "line_count": 4121,
+      "path": "adl/src/scheduler.rs"
+    },
+    {
+      "line_count": 3350,
+      "path": "adl/src/runtime_aws_signal.rs"
+    },
+    {
+      "line_count": 3282,
+      "path": "adl/src/cli/tests/pr_cmd_inline/lifecycle/start_ready.rs"
+    },
+    {
+      "line_count": 3022,
+      "path": "adl/src/provider_adapter.rs"
+    },
+    {
+      "line_count": 3011,
+      "path": "csdlc-v2/src/store.rs"
+    },
+    {
+      "line_count": 2911,
+      "path": "adl/src/long_lived_agent/tests.rs"
+    },
+    {
+      "line_count": 2640,
+      "path": "adl/tools/test_sprint_conductor_helpers.sh"
+    },
+    {
+      "line_count": 2530,
+      "path": "adl/src/agent_comms/tests.inc"
+    },
+    {
+      "line_count": 2320,
+      "path": "adl/src/execute/tests.rs"
+    },
+    {
+      "line_count": 2153,
+      "path": "adl/src/cli/csm_service_cmd.rs"
+    },
+    {
+      "line_count": 2042,
+      "path": "adl/src/cli/runtime_v2_cmd/tests.rs"
+    },
+    {
+      "line_count": 1962,
+      "path": "adl/src/csm_continuity_capsule.rs"
+    }
+  ],
+  "largest_files": [
+    {
+      "line_count": 26521,
+      "path": "docs/milestones/v0.91.5/review/openrouter_matrix/catalog_snapshot_2026-06-14.json"
+    },
+    {
+      "line_count": 14776,
+      "path": "demos/v0.91.6/unity-observatory/Assets/Scenes/FlagshipObservatoryStage.unity"
+    },
+    {
+      "line_count": 10061,
+      "path": "adl/src/cli/tests/pr_cmd_inline/finish/arg_render.rs"
+    },
+    {
+      "line_count": 9141,
+      "path": "docs/milestones/v0.90.3/assets/csm_observatory_multimode_ui_mockups.png"
+    },
+    {
+      "line_count": 8754,
+      "path": "docs/milestones/v0.91.7/review/unity_observatory_4703/4703-flagship-observatory-investor-hero.png"
+    },
+    {
+      "line_count": 8474,
+      "path": "docs/milestones/v0.91.7/review/unity_observatory_4704/flagship-wide-observatory-camera-4704.png"
+    },
+    {
+      "line_count": 6232,
+      "path": "docs/milestones/v0.91.7/review/runtime/final_csm_coherence_4906/live_api/events.json"
+    },
+    {
+      "line_count": 6021,
+      "path": "docs/milestones/v0.91.7/review/unity_observatory_4652/flagship-shell-main-camera-4652.png"
+    },
+    {
+      "line_count": 5957,
+      "path": "docs/milestones/v0.91.7/review/runtime/csm_runtime_governance_operational_view_5068.png"
+    },
+    {
+      "line_count": 5527,
+      "path": "adl/src/long_lived_agent.rs"
+    },
+    {
+      "line_count": 5389,
+      "path": "adl/Cargo.lock"
+    },
+    {
+      "line_count": 5278,
+      "path": "adl/src/resilience.rs"
+    },
+    {
+      "line_count": 5250,
+      "path": "docs/milestones/v0.91.7/review/runtime/csm_liveness_4976/published/state/safe_fail_bundle_snapshot.json"
+    },
+    {
+      "line_count": 5144,
+      "path": "adl/src/aws_remote_validation.rs"
+    },
+    {
+      "line_count": 4998,
+      "path": "adl/tests/cli_smoke/agent.rs"
+    },
+    {
+      "line_count": 4872,
+      "path": "docs/milestones/v0.91.7/review/runtime/csm_liveness_4980/live/api/events.json"
+    },
+    {
+      "line_count": 4664,
+      "path": "adl/src/csm_runtime_api.rs"
+    },
+    {
+      "line_count": 4474,
+      "path": "adl/src/cli/tests/pr_cmd_inline/basics.rs"
+    },
+    {
+      "line_count": 4352,
+      "path": "docs/milestones/v0.91.7/review/runtime/csm_liveness_4976/published/api/events.json"
+    },
+    {
+      "line_count": 4302,
+      "path": "tools/aws_remote_validation/src/aws_remote_validation.rs"
+    }
+  ],
+  "likely_code_roots": [
+    "adl",
+    "csdlc-v2",
+    "adl-runtime-kernel",
+    "adl-runtime",
+    "demos",
+    "docs",
+    "infra",
+    "tools"
+  ],
+  "manifests": [
+    ".csdlc/locks/4642.lock",
+    ".csdlc/locks/4643.lock",
+    ".csdlc/locks/5383.lock",
+    ".csdlc/locks/5403.lock",
+    ".csdlc/locks/5410.lock",
+    ".csdlc/locks/5411.lock",
+    ".csdlc/locks/5423.lock",
+    ".csdlc/locks/5426.lock",
+    ".csdlc/locks/5440.lock",
+    ".csdlc/locks/5463.lock",
+    ".csdlc/locks/5494.lock",
+    ".csdlc/locks/5506.lock",
+    ".csdlc/locks/5509.lock",
+    ".csdlc/locks/5512.lock",
+    ".csdlc/locks/5516.lock",
+    ".csdlc/locks/5518.lock",
+    ".csdlc/locks/5521.lock",
+    ".csdlc/locks/bindings.lock",
+    "adl-runtime-kernel/Cargo.lock",
+    "adl-runtime-kernel/Cargo.toml",
+    "adl-runtime/Cargo.lock",
+    "adl-runtime/Cargo.toml",
+    "adl/Cargo.lock",
+    "adl/Cargo.toml",
+    "adl/docker/adl-builder/Dockerfile",
+    "csdlc-v2/Cargo.lock",
+    "csdlc-v2/Cargo.toml",
+    "demos/transpiler_demo/Cargo.lock",
+    "demos/transpiler_demo/Cargo.toml",
+    "docs/milestones/v0.91.2/review/code_modernization/fixture/use_diamond_operator_demo/pom.xml",
+    "tools/aws_remote_validation/Cargo.lock",
+    "tools/aws_remote_validation/Cargo.toml"
+  ],
+  "repo_name": "agent-design-language",
+  "schema": "codebuddy.repo_packet.inventory.v1",
+  "tests": [
+    "\"adl/tests/fixtures/\\343\\203\\246\\343\\203\\213\\343\\202\\263\\343\\203\\274\\343\\203\\211/include-fragment.adl.yaml\"",
+    "\"adl/tests/fixtures/\\343\\203\\246\\343\\203\\213\\343\\202\\263\\343\\203\\274\\343\\203\\211/include-root.adl.yaml\"",
+    "adl-runtime-kernel/tests/assembly.rs",
+    "adl-runtime-kernel/tests/cognition.rs",
+    "adl-runtime-kernel/tests/configuration.rs",
+    "adl-runtime-kernel/tests/continuity.rs",
+    "adl-runtime-kernel/tests/contracts.rs",
+    "adl-runtime-kernel/tests/control.rs",
+    "adl-runtime-kernel/tests/governance.rs",
+    "adl-runtime-kernel/tests/guardian_soak.rs",
+    "adl-runtime-kernel/tests/identity_memory.rs",
+    "adl-runtime-kernel/tests/kernel.rs",
+    "adl-runtime-kernel/tests/live_continuity.rs",
+    "adl-runtime-kernel/tests/operations.rs",
+    "adl-runtime-kernel/tests/parity.rs",
+    "adl-runtime-kernel/tests/private_state.rs",
+    "adl-runtime-kernel/tests/reasoning.rs",
+    "adl-runtime-kernel/tests/time.rs",
+    "adl-runtime/tests/independence.rs",
+    "adl-spec/spec/1.0/contracts.md",
+    "adl-spec/spec/1.0/core-concepts.md",
+    "adl-spec/spec/1.0/normative-language.md",
+    "adl-spec/spec/README.md",
+    "adl/src/cli/identity_cmd/tests/adversarial_contracts.rs",
+    "adl/src/cli/identity_cmd/tests/dispatch.rs",
+    "adl/src/cli/identity_cmd/tests/helper_functions.rs",
+    "adl/src/cli/identity_cmd/tests/profile.rs",
+    "adl/src/cli/identity_cmd/tests/skill_contracts.rs",
+    "adl/src/cli/identity_cmd/tests/temporal_contracts.rs",
+    "adl/src/cli/tests/artifact_builders/agency_execution.rs",
+    "adl/src/cli/tests/artifact_builders/cognitive.rs",
+    "adl/src/cli/tests/artifact_builders/learning_runtime.rs",
+    "adl/src/cli/tests/artifact_builders/learning_runtime/artifact_models.rs",
+    "adl/src/cli/tests/artifact_builders/learning_runtime/decision_surfaces.rs",
+    "adl/src/cli/tests/artifact_builders/learning_runtime/run_status.rs",
+    "adl/src/cli/tests/artifact_builders/learning_runtime/scores_io.rs",
+    "adl/src/cli/tests/artifact_builders/mod.rs",
+    "adl/src/cli/tests/artifact_builders/summary.rs",
+    "adl/src/cli/tests/godel.rs",
+    "adl/src/cli/tests/internal_commands.rs"
+  ],
+  "top_level_dirs": {
+    "\"adl": 2,
+    ".": 8,
+    ".adl": 1,
+    ".csdlc": 1133,
+    ".github": 6,
+    "adl": 1742,
+    "adl-runtime": 24,
+    "adl-runtime-kernel": 45,
+    "adl-spec": 39,
+    "csdlc-v2": 76,
+    "demos": 250,
+    "docs": 4416,
+    "infra": 24,
+    "tools": 7
+  },
+  "worktree_name": "adl-wp-4645"
+}
