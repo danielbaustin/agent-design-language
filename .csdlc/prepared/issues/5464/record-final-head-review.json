@@ -1,0 +1,16 @@
+{
+  "issue": 5464,
+  "expected_generation": 22,
+  "expected_digest": "76415b1c235932f8cbc6e8c4a0fefe0bf5506ae656493544a5d45be0d80cad9f",
+  "claim_id": "claim-5464-nextest-install-contract",
+  "actor": "bounded-subagent-review-5464",
+  "evidence": {
+    "reviewer": "bounded-subagent-review-5464",
+    "scope": [".github/workflows/ci.yaml", "adl/tools/test_ci_runtime_contracts.sh"],
+    "reviewed_revision": "git-blake3:cd1a7c902d5a9475786213df4a8499ef411acc80:664471ad93686440b4d01c42cd3418ddf7b18479e95f29357a03bd25c4546db5",
+    "findings": [],
+    "residual_risks": [],
+    "completed": true,
+    "non_substantive_proof": null
+  }
+}

@@ -4,8 +4,8 @@
   "repository": "danielbaustin/agent-design-language",
   "initialization_digest": "2ad38313de373e32d209f2a3d3ed3f31060f4b2763fd10f58df6b26c6bb9831f",
   "phase": "closed_out",
-  "generation": 18,
-  "digest": "dcff0b0973830e32b1b2c30850988f13828d794691536ac94954b6a4c607aaeb",
+  "generation": 19,
+  "digest": "488e0c78eddd48e94c5c2037e9c40f38c76b0f174acd52ec012cea27ab2a7f90",
   "claim": null,
   "review_assignment": {
     "reviewer": "bounded-subagent-review-5467",
@@ -123,38 +123,38 @@
   "diagram_path": ".csdlc/issues/5467/retained/diagram.mmd",
   "design_review": {
     "approved": {
-      "reviewer": "codex-root-design-review",
-      "revision": "de8434266e09af78b8938b5e7fde26f38633d8a4977af4f5c398f580d11c97ce"
+      "reviewer": "codex",
+      "revision": "62bbed696fe9543370e826598729a077a149767c2a8057f7226d275d7f5a61b5"
     }
   },
   "cards": {
     "sip": {
-      "values_digest": "c84d8b17c1680b40f3b0c118283d936e238ef05a8fe04d470d69efcff279d0ed",
+      "values_digest": "d5dbccf5ce66f4496b78ced6105e8ecd217d1ca0965ecba960a6b1232a5a72fe",
       "rendered_digest": "178febf3b5cfdb4b8e7964c67773681647514cc6af6caebf0b643e6cc01f122f",
       "ast_digest": "a81b26e7ff519e7ceadcd67efb7ded9d44a20d01d3e94d4839d431c7752cb7e5"
     },
     "stp": {
-      "values_digest": "b3b23c0e69d99f96ac465e833b2ff207d1150189afde63b2d6640feb8b5fc7dd",
+      "values_digest": "53a1de36835533fc8c7aa1b1ad4846860db3ae54a82bd2d43b3889c15eadde02",
       "rendered_digest": "c06a469a2a42e85d566b0e5abd1dd53eaff5254b105e217c14114f9c223a5748",
       "ast_digest": "58c6ea760265ad9c19fe15dcdcf48e4c4636fd9cd0ac659a9c90647a7d49e4e9"
     },
     "spp": {
-      "values_digest": "9845ffc139a58bdcf03a254ee8928f02848d4ebc23d4ac728f6804c3133d7826",
-      "rendered_digest": "45117d13edfd397e48b4c0afa942f07523793d3edd2d985e64aff52a30daaa82",
-      "ast_digest": "d6daa3e0992f30df48c994de4b85bc334ad8026838a3c948c842e779033c82de"
+      "values_digest": "8f123a0ce99a8d024a8901d4542d748146f67d933a5eb5c3f1737ed21af74455",
+      "rendered_digest": "a3188f5c0925e31381e4aea4e8e2a77f25adb364373c563da4d4b8a39579b268",
+      "ast_digest": "abf46b153ac2b9957dbd01cb2a996401a06d8a2922eecb3a5ad92c1451481926"
     },
     "vpp": {
-      "values_digest": "a1c768ddd1fab45ef724caebd8561333448f14e248306610ab7b266e2d60479a",
+      "values_digest": "14398ee0aec429032140c01f6a7408a49e982dab4904d94144e3db38301706cd",
       "rendered_digest": "6b6854ea74150858dc99c6c105a3d00b263a5b2d3cd9dcec95902840bec09d3a",
       "ast_digest": "8a1dd0f999b1402ca0e1053cd48e7759ba189663f357af7e332a6886b54a9a0f"
     },
     "srp": {
-      "values_digest": "17afa57068354ab10b7713af941125a8a4f0a84baf850e6302285a01540d0b50",
+      "values_digest": "f89b9cdd78fbe803daea2a7649d89af3961249c0b123628bcbf98736585fb92a",
       "rendered_digest": "ba3e3b675efc2097c46ff38421cf671ba2abee324887c877ccad7f80fcdde478",
       "ast_digest": "2fb8891a3169e4a13bae78fc976088ea9b137c3c964fc4456c2b97a5129b603c"
     },
     "sor": {
-      "values_digest": "16500cb348440eb7bb86afbe23ac9a6dd80ed0b2d583466a5eb586fbf370a85c",
+      "values_digest": "2375cd7d6176f3abe86f2d9fbb1562aae71cb6828ad847dfbafd1753d488d0e0",
       "rendered_digest": "0d6ef2e041c6e743c2fc87a0d7785c4792d9a5d4bc4ac5d365716a90f4099e9c",
       "ast_digest": "755726a346d47bc42f6eccd2aca47fe5b1285d5130af5cc13d9643d7d8ffff32"
     }
@@ -399,6 +399,13 @@
       "actor": "codex-root-closeout",
       "reason": "Materialize the retained terminal receipt after merged PR #5485 and closed issue #5467.",
       "operation": "reconcile_terminal"
+    },
+    {
+      "sequence": 25,
+      "generation": 19,
+      "actor": "codex",
+      "reason": "typed terminal design repair authorized by issue 5487",
+      "operation": "repair_terminal_design"
     }
   ]
 }

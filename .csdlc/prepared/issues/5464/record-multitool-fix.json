@@ -1,0 +1,19 @@
+{
+  "issue": 5464,
+  "card": "sor",
+  "expected_generation": 13,
+  "expected_digest": "43916735144a13d3de3cc45cc302b81e0ed7876d98fec79eeeb39a0e4667f093",
+  "claim_id": "claim-5464-nextest-install-contract",
+  "actor": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+  "reason": "Fixed F-5464-5 by tokenizing install-action tool lists using comma and whitespace semantics.",
+  "operation": {
+    "operation": "record_execution",
+    "summary": "Classify every install-action tool token independently and reject nextest-bearing multi-tool steps.",
+    "changes": [
+      "Split tool inputs on commas and whitespace",
+      "Require nextest-bearing steps to select only nextest@0.9.140",
+      "Add comma-list, whitespace-list, and cargo-nextest multi-tool fixtures"
+    ],
+    "artifacts": ["adl/tools/test_ci_runtime_contracts.sh"]
+  }
+}

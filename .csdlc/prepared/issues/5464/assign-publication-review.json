@@ -1,0 +1,9 @@
+{
+  "issue": 5464,
+  "expected_generation": 18,
+  "expected_digest": "eaa1f630802993d406cbbcdd6b1526cefcdd776b569e2fc5c35bcc209d81f7c7",
+  "claim_id": "claim-5464-nextest-install-contract",
+  "reviewer": "bounded-subagent-review-5464",
+  "assigned_by": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+  "scope": [".github/workflows/ci.yaml", "adl/tools/test_ci_runtime_contracts.sh"]
+}

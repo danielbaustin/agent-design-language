@@ -1,0 +1,22 @@
+{
+  "issue": 5464,
+  "card": "sor",
+  "expected_generation": 0,
+  "expected_digest": "d8378a4a53ba2e3afaba825ac78f8ab647d4c93f691ee2abd8e5bcb6aa4cd3e9",
+  "claim_id": "claim-5464-nextest-install-contract",
+  "actor": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+  "reason": "Implemented the bounded fail-closed nextest installation contract.",
+  "operation": {
+    "operation": "record_execution",
+    "summary": "Replaced the stale nextest installer manifest with the immutable v2.82.10 revision that contains nextest 0.9.140 and disabled fallback on every hosted install.",
+    "changes": [
+      "Pin all four nextest install steps to install-action v2.82.10 commit 50414676f9f5d50a65992c6dd2ed02641263226c",
+      "Set fallback to none on every nextest install step",
+      "Require the canonical installer, nextest version, fallback policy, and complete four-step inventory in the CI runtime contract"
+    ],
+    "artifacts": [
+      ".github/workflows/ci.yaml",
+      "adl/tools/test_ci_runtime_contracts.sh"
+    ]
+  }
+}

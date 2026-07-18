@@ -1,0 +1,18 @@
+{
+  "issue": 5464,
+  "card": "sor",
+  "expected_generation": 25,
+  "expected_digest": "7f88b2eac3cfaf974cc11565c2e513c93346deb83daeba5ca8a5aac81b20453f",
+  "claim_id": "claim-5464-nextest-install-contract",
+  "actor": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+  "reason": "GitHub-hosted installer proof completed successfully with no fallback warning or annotations.",
+  "operation": {
+    "operation": "record_validation",
+    "result": {
+      "command": ["gh", "api", "repos/danielbaustin/agent-design-language/actions/jobs/88059440377/logs"],
+      "purpose": "Prove nextest 0.9.140 downloads directly from the supported release asset, verifies SHA-256, and emits no unsupported-binary or cargo-binstall fallback warning",
+      "outcome": "passed",
+      "evidence_ref": "github-actions:run-29636408536:job-88059440377:direct-nextest-install:annotations-empty:spot-skipped"
+    }
+  }
+}

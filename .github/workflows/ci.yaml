@@ -113,9 +113,10 @@ jobs:
 
       - name: Install cargo-nextest for CI contract checks
         if: needs.adl_path_policy.outputs.ci_contract_toolchain_required == 'true'
-        uses: taiki-e/install-action@e5c52b603cc5f5e9b52b6a43afad8e9fe0527090 # install-action
+        uses: taiki-e/install-action@50414676f9f5d50a65992c6dd2ed02641263226c # v2.82.10
         with:
           tool: nextest@0.9.140
+          fallback: none
 
       - name: tooling sanity (bash -n)
         run: bash -n adl/tools/*.sh
@@ -404,9 +405,10 @@ jobs:
 
       - name: Install cargo-nextest
         if: needs.adl_path_policy.outputs.full_coverage_required != 'true'
-        uses: taiki-e/install-action@e5c52b603cc5f5e9b52b6a43afad8e9fe0527090 # install-action
+        uses: taiki-e/install-action@50414676f9f5d50a65992c6dd2ed02641263226c # v2.82.10
         with:
           tool: nextest@0.9.140
+          fallback: none
 
       - name: test
         if: needs.adl_path_policy.outputs.full_coverage_required != 'true' && needs.adl_path_policy.outputs.validation_profile_escalation_required != 'true'
@@ -633,9 +635,10 @@ jobs:
             ~/.cache/sccache
 
       - name: Install cargo-nextest
-        uses: taiki-e/install-action@e5c52b603cc5f5e9b52b6a43afad8e9fe0527090 # install-action
+        uses: taiki-e/install-action@50414676f9f5d50a65992c6dd2ed02641263226c # v2.82.10
         with:
           tool: nextest@0.9.140
+          fallback: none
 
       - name: Slow proof shard
         run: |
@@ -745,9 +748,10 @@ jobs:
 
       - name: Install cargo-nextest for coverage
         if: steps.path-policy.outputs.full_coverage_required == 'true' || steps.coverage-impact.outputs.needs_fast_summary == 'true'
-        uses: taiki-e/install-action@e5c52b603cc5f5e9b52b6a43afad8e9fe0527090 # install-action
+        uses: taiki-e/install-action@50414676f9f5d50a65992c6dd2ed02641263226c # v2.82.10
         with:
           tool: nextest@0.9.140
+          fallback: none
 
       - name: Install sccache for coverage
         if: steps.path-policy.outputs.full_coverage_required == 'true' || steps.coverage-impact.outputs.needs_fast_summary == 'true'

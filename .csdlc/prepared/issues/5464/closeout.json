@@ -1,0 +1,12 @@
+{
+  "issue": 5464,
+  "expected_generation": 28,
+  "expected_digest": "34d625f4bf7d52d53055e13d4b21a0e9cdab5c3c3ee157e528f13c0b7cd48415",
+  "claim_id": "claim-5464-nextest-install-contract",
+  "actor": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+  "repository": "danielbaustin/agent-design-language",
+  "pull_request": 5490,
+  "disposition": "merged",
+  "approved_no_pr_reason": null,
+  "token_file": null
+}

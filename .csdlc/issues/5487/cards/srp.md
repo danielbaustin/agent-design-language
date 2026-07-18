@@ -1,0 +1,46 @@
+# Structured Review Prompt
+
+Template: 1.0.0
+
+Issue: 5487
+
+Repository: danielbaustin/agent-design-language
+
+Card: srp
+
+Status: pre_phase
+
+## Scope
+
+csdlc-v2/src/store.rs
+csdlc-v2/src/bin/csdlc-closeout.rs
+csdlc-v2/tests/gate7_terminal_design_repair_5487.rs
+.csdlc/issues/5467/retained/design.md
+.csdlc/issues/5467/retained/diagram.mmd
+
+## Prompts
+
+- Can an unauthorized or stale request mutate a closed-out receipt?
+- Are all artifact and card digests checked atomically?
+- Does every injected failure leave the old receipt and artifacts intact?
+- Does reconcile-terminal materialize exactly the repaired artifacts?
+
+## Findings
+
+[]
+
+## Dispositions
+
+Every actionable finding requires a terminal disposition.
+
+## Residual Risk
+
+- Crash recovery remains bounded by the existing filesystem durability contract.
+
+## Review Result
+
+Revision: Some("git-blake3:a394594d447790d2ea1200d28ae7108c75f66784:915248a2577f4777bca37e2d8b260eecc7213c001a464cb4daa8ee71e07cb3e4")
+
+Reviewer: Some("review_5427")
+
+Result: pass
