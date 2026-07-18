@@ -416,7 +416,6 @@ impl Store {
         };
         self.write_terminal_transaction_journal(&journal)?;
         if request.fail_after_stage.as_deref() == Some("after_journal") {
-            self.remove_terminal_transaction_journal(request.target_issue)?;
             return Err(V2Error::new(
                 ErrorCode::InterruptedTransaction,
                 "injected repair failure",

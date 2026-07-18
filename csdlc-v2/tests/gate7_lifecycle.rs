@@ -1,5 +1,5 @@
 use csdlc_v2::cards::{
-    CardContent, EvidenceOutcome, IntegrationState, MergeState, PlanStep, ResourceProfile,
+    digest, CardContent, EvidenceOutcome, IntegrationState, MergeState, PlanStep, ResourceProfile,
     StepStatus, ValidationLane, ValidationResult,
 };
 use csdlc_v2::{
@@ -8,7 +8,7 @@ use csdlc_v2::{
     EditRequest, InitialCardInput, LifecyclePhase, PlanningProfile, PublicationIntent,
     PublicationRequest, ReadinessRequest, ReconcileTerminalRequest, RemotePullRequest,
     ReviewAssignmentRequest, ReviewEvidence, ReviewRecordRequest, SemanticOperation, Store,
-    TerminalDisposition, TerminalObservation,
+    TerminalDesignRepairRequest, TerminalDisposition, TerminalObservation,
 };
 
 fn git(root: &std::path::Path, args: &[&str]) {
@@ -545,6 +545,219 @@ fn terminal_projection_and_receipt_recover_at_each_durable_boundary() {
 }
 
 #[test]
+fn terminal_design_repair_after_journal_interruption_preserves_recoverable_journal() {
+    let issue = 5_467;
+    let (temp, store, mut target, sha) = fixture_with_validation_history_and_publication(
+        issue,
+        "Terminal repair target fixture",
+        "terminal-repair-target",
+        vec![ValidationResult {
+            command: vec!["cargo".into(), "test".into()],
+            purpose: "terminal repair proof".into(),
+            outcome: EvidenceOutcome::Passed,
+            evidence_ref: "terminal-repair-proof.json".into(),
+        }],
+        true,
+    );
+    let authority_issue = 5_487;
+    let authority = initialize_issue(
+        &store,
+        BootstrapRequest {
+            issue: authority_issue,
+            repository: "example/repo".into(),
+            design_path: "docs/design.md".into(),
+            diagram_path: "docs/diagram.mmd".into(),
+            design_reviewer: "architect".into(),
+            design_approved: true,
+            claim: Claim {
+                id: "claim".into(),
+                owner: "agent".into(),
+                generation: 0,
+                acquired_unix_seconds: 1,
+                expires_unix_seconds: u64::MAX,
+                heartbeat_unix_seconds: 1,
+                branch: "issue-7".into(),
+                worktree: temp.path().to_string_lossy().into_owned(),
+                protected_paths: vec!["authority".into()],
+                purpose: "terminal repair authority".into(),
+            },
+            initial: InitialCardInput {
+                title: "Terminal repair authority fixture".into(),
+                slug: "terminal-repair-authority".into(),
+                version: "v0.91.7".into(),
+                goal: "authorize terminal design repair".into(),
+                required_outcome: "repair authority".into(),
+                declared_scope: vec!["terminal repair authority".into()],
+                authority_boundary: vec!["no merge".into()],
+                task_boundary: "authorize fixture repair".into(),
+                deliverables: vec!["authority record".into()],
+                acceptance_criteria: vec!["authority exists".into()],
+                dependencies: vec!["none".into()],
+                repo_inputs: vec!["docs/design.md".into()],
+                non_goals: vec!["network".into()],
+                plan_summary: "authorize terminal repair".into(),
+                steps: vec![PlanStep {
+                    id: "one".into(),
+                    action: "authorize".into(),
+                    acceptance_ids: vec!["AC-1".into()],
+                    status: StepStatus::Pending,
+                }],
+                invariants: vec!["same store".into()],
+                risks: vec!["stale target".into()],
+                planning_profile: PlanningProfile::Small,
+                stop_conditions: vec!["mismatch".into()],
+                validation_lanes: vec![ValidationLane {
+                    lane: "focused".into(),
+                    proof_role: "terminal repair authority".into(),
+                    acceptance_ids: vec!["AC-1".into()],
+                    deterministic: true,
+                    resource_profile: ResourceProfile::Small,
+                    budget_seconds: 30,
+                    budget_tokens: 100,
+                    argv: vec!["cargo".into(), "test".into()],
+                    parallel_group: "local".into(),
+                    defer_reason: None,
+                }],
+                failure_policy: "fail closed".into(),
+                review_prompts: vec!["review".into()],
+            },
+        },
+    )
+    .unwrap();
+    target = record_readiness(
+        &store,
+        ReadinessRequest {
+            schema: "csdlc.readiness_request.v1".into(),
+            issue,
+            expected_generation: target.generation,
+            expected_digest: target.digest.clone(),
+            claim_id: "claim".into(),
+            actor: "shepherd".into(),
+            pull_request: 70,
+            head_sha: sha.clone(),
+            required_checks: vec!["fast".into()],
+            require_review: true,
+            checks: vec![csdlc_v2::CheckObservation {
+                name: "fast".into(),
+                requirement: csdlc_v2::CheckRequirement::Required,
+                conclusion: csdlc_v2::CheckConclusion::Success,
+                details_url: None,
+            }],
+            review_state: csdlc_v2::RemoteReviewState::Approved,
+            conflict_state: csdlc_v2::ConflictState::Clean,
+            post_publication_findings: vec![],
+        },
+    )
+    .unwrap();
+    record_merged_publication(
+        &store,
+        &PublicationRequest {
+            schema: "csdlc.publication_request.v1".into(),
+            issue,
+            expected_generation: target.generation,
+            expected_digest: target.digest.clone(),
+            claim_id: "claim".into(),
+            actor: "publisher".into(),
+            repository: "example/repo".into(),
+            base: "main".into(),
+            head: "issue-7".into(),
+            title: "Fixture".into(),
+            body: format!("Closes #{issue}"),
+            draft: true,
+            remote: "origin".into(),
+            token_file: None,
+        },
+        &PublicationIntent {
+            schema: "csdlc.publication_intent.v1".into(),
+            issue,
+            repository: "example/repo".into(),
+            base: "main".into(),
+            head: "issue-7".into(),
+            title: "Fixture".into(),
+            body: format!("Closes #{issue}"),
+            draft: false,
+            revision: target.review.as_ref().unwrap().reviewed_revision.clone(),
+            commit_sha: sha.clone(),
+        },
+        RemotePullRequest {
+            number: 70,
+            url: "https://example.invalid/70".into(),
+            repository: "example/repo".into(),
+            base: "main".into(),
+            head: "issue-7".into(),
+            title: "Fixture".into(),
+            body: format!("Closes #{issue}"),
+            draft: false,
+            state: "merged".into(),
+            head_sha: sha.clone(),
+        },
+    )
+    .unwrap();
+    let current = store.load_record(issue).unwrap();
+    closeout_issue(
+        &store,
+        TerminalObservation {
+            schema: "csdlc.terminal_observation.v1".into(),
+            issue,
+            expected_generation: current.generation,
+            expected_digest: current.digest,
+            claim_id: "claim".into(),
+            actor: "closer".into(),
+            pull_request: Some(70),
+            disposition: TerminalDisposition::Merged,
+            observed_sha: Some(sha),
+            observed_state: "merged".into(),
+            approved_no_pr_reason: None,
+            receipt_path: format!("csdlc-v2/closeout/{issue}.json"),
+        },
+    )
+    .unwrap();
+    let target = store.load_record(issue).unwrap();
+    let receipt = store.retain_terminal_receipt(issue).unwrap();
+    let design = std::fs::read(temp.path().join("docs/design.md")).unwrap();
+    let diagram = std::fs::read(temp.path().join("docs/diagram.mmd")).unwrap();
+    let mut repair_request = TerminalDesignRepairRequest {
+        authority_issue: authority.issue,
+        target_issue: issue,
+        expected_authority_generation: authority.generation,
+        expected_authority_digest: authority.digest,
+        expected_target_generation: target.generation,
+        expected_target_digest: target.digest.clone(),
+        expected_receipt_digest: receipt.digest,
+        authority_claim_id: "claim".into(),
+        actor: "codex".into(),
+        reviewer: "reviewer".into(),
+        source_design_path: "docs/design.md".into(),
+        source_diagram_path: "docs/diagram.mmd".into(),
+        expected_design_digest: digest(&design),
+        expected_diagram_digest: digest(&diagram),
+        fail_after_stage: Some("after_journal".into()),
+    };
+    let interrupted = store
+        .repair_terminal_design(repair_request.clone())
+        .unwrap_err();
+    assert!(matches!(
+        interrupted.code,
+        csdlc_v2::ErrorCode::InterruptedTransaction
+    ));
+    let journal = temp
+        .path()
+        .join(".git/csdlc-v2/terminal-transactions")
+        .join(format!("{issue}.json"));
+    assert!(journal.is_file(), "repair journal must remain recoverable");
+    repair_request.fail_after_stage = None;
+    let recovered = store.repair_terminal_design(repair_request).unwrap();
+    assert!(
+        !journal.exists(),
+        "repair journal should clear after recovery"
+    );
+    assert_eq!(recovered.phase, LifecyclePhase::ClosedOut);
+    assert_ne!(recovered.digest, target.digest);
+    let recovered_receipt = store.load_terminal_receipt(issue).unwrap().unwrap();
+    assert_eq!(recovered_receipt.record.digest, recovered.digest);
+}
+
+#[test]
 fn later_pass_supersedes_waiting_validation_through_terminal_closeout() {
     let identity = || ValidationResult {
         command: vec!["cargo".into(), "test".into()],
@@ -562,7 +775,6 @@ fn later_pass_supersedes_waiting_validation_through_terminal_closeout() {
         vec![identity(), passed],
     );
 }
-
 #[test]
 fn later_failure_blocks_merged_and_closed_unmerged_terminal_closeout() {
     for (issue, disposition) in [
