@@ -19,17 +19,17 @@ def require_nextest_contract(source)
   install_steps = steps.select do |step|
     step.fetch("uses", "").start_with?("taiki-e/install-action@")
   end
-  nextest_steps = install_steps.select do |step|
-    tool = step.fetch("with", {}).fetch("tool", "").to_s.strip
-    tool.match?(/\A(?:cargo-)?nextest(?:@.*)?\z/)
+  nextest_steps = install_steps.each_with_object([]) do |step, selected|
+    tools = step.fetch("with", {}).fetch("tool", "").to_s.split(/[\s,]+/).reject(&:empty?)
+    selected << [step, tools] if tools.any? { |tool| tool.match?(/\A(?:cargo-)?nextest(?:@.*)?\z/) }
   end
   raise NextestContractError, "CI must retain exactly four declared nextest install steps" unless nextest_steps.length == 4
 
-  nextest_steps.each do |step|
+  nextest_steps.each do |step, tools|
     name = step.fetch("name", "unnamed nextest install")
     raise NextestContractError, "#{name} must use the supported immutable installer" unless step["uses"] == NEXTTEST_INSTALLER
     inputs = step.fetch("with", {})
-    raise NextestContractError, "#{name} must pin nextest 0.9.140" unless inputs["tool"] == "nextest@0.9.140"
+    raise NextestContractError, "#{name} must select only nextest 0.9.140" unless tools == ["nextest@0.9.140"]
     raise NextestContractError, "#{name} must disable installer fallback" unless inputs["fallback"] == "none"
   end
 end
@@ -51,7 +51,10 @@ fixtures = [
   workflow.sub("fallback: none", "fallback: cargo-install"),
   workflow + %Q(\n      - name: Floating nextest alias\n        uses: taiki-e/install-action@v2\n        with: {tool: nextest, fallback: cargo-install}\n),
   workflow + %Q(\n      - name: Floating cargo-nextest alias\n        uses: "taiki-e/install-action@v2"\n        with:\n          tool: cargo-nextest\n          fallback: cargo-install\n),
-  workflow + %Q(\n      - {name: Inline nextest, uses: taiki-e/install-action@v2, with: {tool: nextest, fallback: cargo-install}}\n)
+  workflow + %Q(\n      - {name: Inline nextest, uses: taiki-e/install-action@v2, with: {tool: nextest, fallback: cargo-install}}\n),
+  workflow + %Q(\n      - name: Comma-list nextest\n        uses: taiki-e/install-action@v2\n        with: {tool: "sccache,nextest@0.9.140", fallback: cargo-install}\n),
+  workflow + %Q(\n      - name: Space-list nextest\n        uses: taiki-e/install-action@v2\n        with: {tool: "sccache nextest@0.9.140", fallback: cargo-install}\n),
+  workflow + %Q(\n      - name: Multi-tool cargo-nextest alias\n        uses: taiki-e/install-action@v2\n        with: {tool: "sccache,cargo-nextest@0.9.140", fallback: cargo-install}\n)
 ]
 fixtures.each do |fixture|
   begin

@@ -4,12 +4,12 @@
   "repository": "danielbaustin/agent-design-language",
   "initialization_digest": "ae3e72f2513ddf93bede427c2ef36d2b067ddb7c1bd59bd1003a94f2e520d5fb",
   "phase": "implemented",
-  "generation": 12,
-  "digest": "236e648ad2005c2f50155757587bfe478a80a1895143973f70822e7a8fbe9c76",
+  "generation": 15,
+  "digest": "dbfe7c70ede6debf49f9d737ee9100e1adf0790ea10f8f5474499582f9d56925",
   "claim": {
     "id": "claim-5464-nextest-install-contract",
     "owner": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
-    "generation": 12,
+    "generation": 15,
     "acquired_unix_seconds": 1784358000,
     "expires_unix_seconds": 1784444400,
     "heartbeat_unix_seconds": 1784358000,
@@ -24,7 +24,7 @@
   "review_assignment": {
     "reviewer": "bounded-subagent-review-5464",
     "assigned_by": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
-    "revision": "git-blake3:aaad5ad6b7ce63f267f0dde29b911f9db4861626:eb60f68256fa7d3558fa00e01cbd78d67bda47d2ca66c74606828a3cd2194e5d",
+    "revision": "git-blake3:563c796a1b2db53165a8d055192ed172a5a29f44:64aa68041155f50dad8c84c7ab253ea5786c3ccc4d4508b5f5a0200f2d0682d1",
     "scope": [
       ".github/workflows/ci.yaml",
       "adl/tools/test_ci_runtime_contracts.sh"
@@ -36,12 +36,12 @@
       ".github/workflows/ci.yaml",
       "adl/tools/test_ci_runtime_contracts.sh"
     ],
-    "reviewed_revision": "git-blake3:aaad5ad6b7ce63f267f0dde29b911f9db4861626:eb60f68256fa7d3558fa00e01cbd78d67bda47d2ca66c74606828a3cd2194e5d",
+    "reviewed_revision": "git-blake3:563c796a1b2db53165a8d055192ed172a5a29f44:64aa68041155f50dad8c84c7ab253ea5786c3ccc4d4508b5f5a0200f2d0682d1",
     "findings": [
       {
-        "id": "F-5464-4",
+        "id": "F-5464-5",
         "severity": "p2",
-        "summary": "Quoted installer scalars and fully inline YAML steps escape line-oriented install-action inventory.",
+        "summary": "Comma- and whitespace-separated multi-tool selections can hide nextest from whole-value matching.",
         "actionable": true,
         "in_scope": true,
         "disposition": "open",
@@ -67,34 +67,34 @@
   },
   "cards": {
     "sip": {
-      "values_digest": "4645fb890af742fe61e7eaa87ef2e0b143479d92b1ace9d289980dbdfafef1ff",
+      "values_digest": "f8c7a7af71cf762cfc6c0a666049b0e6635521dc99bf17a4b9c2770e81f3b834",
       "rendered_digest": "a2fb478ef4bd13ba429e8c0f8c544110e67e901a6de718d2cf148eca1f55f1a6",
       "ast_digest": "5c565f0762207eecbe4664aff60df4a55a8349758e22cc60254ac86f612dc1c6"
     },
     "stp": {
-      "values_digest": "87a0adf98e274700ac0ecb7e5886eec54472c7a34fd0b25278c1be227eb4dfa5",
+      "values_digest": "22555e67458cc03b3b1afb4d719b36babc73ac192f9193fb6592584cfedd26c5",
       "rendered_digest": "fc4b91f3228586ba35da574b082470293a7bf1b5145fea2dc54b5ca65c5c9d38",
       "ast_digest": "564b0df1e2c6093cb771e9b8d15562dd48d1ce5df66fb3477e27ad87a9cfd372"
     },
     "spp": {
-      "values_digest": "67759058202e921c34bff17e1c364e5cec6ce1bf7bff443d98e504e8733f8885",
+      "values_digest": "b29f9e48133b9849b8a62796fcbc3331751d0c517a63da8077a0cffbcd3a058d",
       "rendered_digest": "7343cfe8e4dafed0a0e53405f81df92f00f78fae0b9094b9230b1b7f5781dbb8",
       "ast_digest": "269a7d90989ca87bf68e0d1775dafa72639584e93ae11cf70c7c4d2e2a4f18f7"
     },
     "vpp": {
-      "values_digest": "9af8a412b8edc6c36f8173b7c8e57cc1247bb37165f999d00693d04ee9e96fa9",
+      "values_digest": "9886c5f6d9dd953d6f713fb177639c42747d84852f7cb32b27ad04c4adcfb304",
       "rendered_digest": "d5cc78ce07b13e4f45c7727f07c44991f89a55815257d63068f374a7c1b017a9",
       "ast_digest": "de9357a2a9bc9a4c0fa064b5efb770a71e03195446b8fc79607366093d535464"
     },
     "srp": {
-      "values_digest": "30c28c8ad73b8a8606fda6158bd00b4a507ad62705a24116426e20b9dae6fc76",
-      "rendered_digest": "44ec02c60c852e47c3109245d658c12d2d96e125e8e50f672596d45436aca4c4",
-      "ast_digest": "612c4a29414fecdbcce4b0bf27c9f2e2088f02f5cf1774e379cedac8f319d143"
+      "values_digest": "0eda93bd1b71c6c1d58d4500933f821043678ad8a5a464e69b4a88d32a58721a",
+      "rendered_digest": "b60384c97c27653804b4957563bea73f905b8946ca5e0c073e6f190003c8f171",
+      "ast_digest": "0d0076ee8d11297f4fbad1da9dbddcc8e3ebfbf6f4dcffa82c7fbd9734391aa4"
     },
     "sor": {
-      "values_digest": "c9a93c77566857be49e8c7bf4c42f084f2e997d253516d55bd8ed62489642d71",
-      "rendered_digest": "1537bfd6b9098a62257e21281837cb1c77e64c340a1ca9ac37a7b3b3be199300",
-      "ast_digest": "7abd6fad59f45c5dfc8233cdb43dba1f53dfe8cf2b9d602f0d34d9ec5fcb101d"
+      "values_digest": "e2bf151dae173e0c771d85995d6e8d96dc374b53d62df2fb41f7f7be35ead30f",
+      "rendered_digest": "d23ed4526962c4d4453d19202db58464bce38f28fb35867f33d077f741e25449",
+      "ast_digest": "f05eaaf2642949b677a95b59b0bbb2185a13e4e7498034843d212098f8bf219e"
     }
   },
   "transitions": [
@@ -239,6 +239,34 @@
       "actor": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
       "reason": "The structural YAML contract and all adversarial fixtures pass after F-5464-4 repair.",
       "operation": "{\"operation\":\"record_validation\",\"result\":{\"command\":[\"bash\",\"adl/tools/test_ci_runtime_contracts.sh\"],\"purpose\":\"Prove structural nextest enforcement covers quoted installer scalars and fully inline workflow steps\",\"outcome\":\"passed\",\"evidence_ref\":\"local:5464-structural-yaml-regression-pass\"}}"
+    },
+    {
+      "sequence": 18,
+      "generation": 12,
+      "actor": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+      "reason": "assign bounded exact-revision review",
+      "operation": "assign_review"
+    },
+    {
+      "sequence": 19,
+      "generation": 13,
+      "actor": "bounded-subagent-review-5464",
+      "reason": "atomically record review evidence and SRP projection",
+      "operation": "record_review"
+    },
+    {
+      "sequence": 20,
+      "generation": 14,
+      "actor": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+      "reason": "Fixed F-5464-5 by tokenizing install-action tool lists using comma and whitespace semantics.",
+      "operation": "{\"operation\":\"record_execution\",\"summary\":\"Classify every install-action tool token independently and reject nextest-bearing multi-tool steps.\",\"changes\":[\"Split tool inputs on commas and whitespace\",\"Require nextest-bearing steps to select only nextest@0.9.140\",\"Add comma-list, whitespace-list, and cargo-nextest multi-tool fixtures\"],\"artifacts\":[\"adl/tools/test_ci_runtime_contracts.sh\"]}"
+    },
+    {
+      "sequence": 21,
+      "generation": 15,
+      "actor": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+      "reason": "The structural contract passes with all multi-tool regression fixtures.",
+      "operation": "{\"operation\":\"record_validation\",\"result\":{\"command\":[\"bash\",\"adl/tools/test_ci_runtime_contracts.sh\"],\"purpose\":\"Prove comma- and whitespace-separated tool lists cannot hide nextest or cargo-nextest\",\"outcome\":\"passed\",\"evidence_ref\":\"local:5464-multitool-regression-pass\"}}"
     }
   ]
 }

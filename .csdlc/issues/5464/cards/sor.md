@@ -12,11 +12,12 @@ Status: pre_phase
 
 ## Summary
 
-Use Ruby Psych to normalize all workflow step and input forms before enforcing the nextest contract.
+Classify every install-action tool token independently and reject nextest-bearing multi-tool steps.
 
 ## Artifacts
 
 - .github/workflows/ci.yaml
+- adl/tools/test_ci_runtime_contracts.sh
 - adl/tools/test_ci_runtime_contracts.sh
 - adl/tools/test_ci_runtime_contracts.sh
 - adl/tools/test_ci_runtime_contracts.sh
@@ -36,6 +37,9 @@ Use Ruby Psych to normalize all workflow step and input forms before enforcing t
 - Parse ci.yaml with YAML.safe_load instead of regex for nextest installer enforcement
 - Traverse every job step and normalize quoted, block, and inline mappings
 - Add quoted installer and fully inline step bypass fixtures
+- Split tool inputs on commas and whitespace
+- Require nextest-bearing steps to select only nextest@0.9.140
+- Add comma-list, whitespace-list, and cargo-nextest multi-tool fixtures
 
 ## Validation
 
@@ -75,6 +79,15 @@ Use Ruby Psych to normalize all workflow step and input forms before enforcing t
     "purpose": "Prove structural nextest enforcement covers quoted installer scalars and fully inline workflow steps",
     "outcome": "passed",
     "evidence_ref": "local:5464-structural-yaml-regression-pass"
+  },
+  {
+    "command": [
+      "bash",
+      "adl/tools/test_ci_runtime_contracts.sh"
+    ],
+    "purpose": "Prove comma- and whitespace-separated tool lists cannot hide nextest or cargo-nextest",
+    "outcome": "passed",
+    "evidence_ref": "local:5464-multitool-regression-pass"
   }
 ]
 

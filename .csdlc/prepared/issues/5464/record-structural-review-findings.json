@@ -1,0 +1,27 @@
+{
+  "issue": 5464,
+  "expected_generation": 12,
+  "expected_digest": "0fe93dd7753ecce080d56552891e29c5dae355b8dac36a29c0e96d4ff0d7dc80",
+  "claim_id": "claim-5464-nextest-install-contract",
+  "actor": "bounded-subagent-review-5464",
+  "evidence": {
+    "reviewer": "bounded-subagent-review-5464",
+    "scope": [".github/workflows/ci.yaml", "adl/tools/test_ci_runtime_contracts.sh"],
+    "reviewed_revision": "git-blake3:563c796a1b2db53165a8d055192ed172a5a29f44:64aa68041155f50dad8c84c7ab253ea5786c3ccc4d4508b5f5a0200f2d0682d1",
+    "findings": [
+      {
+        "id": "F-5464-5",
+        "severity": "p2",
+        "summary": "Comma- and whitespace-separated multi-tool selections can hide nextest from whole-value matching.",
+        "actionable": true,
+        "in_scope": true,
+        "disposition": "open",
+        "fix_revision": null,
+        "route": null
+      }
+    ],
+    "residual_risks": [],
+    "completed": true,
+    "non_substantive_proof": null
+  }
+}

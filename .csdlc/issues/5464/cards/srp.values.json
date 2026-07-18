@@ -7,14 +7,14 @@
     "title": "[v0.91.7][ci] Remove cargo-nextest 0.9.140 unsupported-binary fallback",
     "slug": "v0-91-7-ci-nextest-install-contract",
     "version": "v0.91.7",
-    "generation": 12
+    "generation": 15
   },
   "status": "pre_phase",
   "content": {
     "card_kind": "srp",
     "values": {
       "review_scope": ".github/workflows/ci.yaml\nadl/tools/test_ci_runtime_contracts.sh",
-      "review_revision": "git-blake3:aaad5ad6b7ce63f267f0dde29b911f9db4861626:eb60f68256fa7d3558fa00e01cbd78d67bda47d2ca66c74606828a3cd2194e5d",
+      "review_revision": "git-blake3:563c796a1b2db53165a8d055192ed172a5a29f44:64aa68041155f50dad8c84c7ab253ea5786c3ccc4d4508b5f5a0200f2d0682d1",
       "reviewer": "bounded-subagent-review-5464",
       "review_prompts": [
         "Are all nextest install steps updated?",
@@ -24,9 +24,9 @@
       ],
       "findings": [
         {
-          "id": "F-5464-4",
+          "id": "F-5464-5",
           "severity": "p2",
-          "summary": "Quoted installer scalars and fully inline YAML steps escape line-oriented install-action inventory.",
+          "summary": "Comma- and whitespace-separated multi-tool selections can hide nextest from whole-value matching.",
           "actionable": true,
           "in_scope": true,
           "disposition": "open",
