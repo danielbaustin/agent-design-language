@@ -2,6 +2,12 @@ name: ci
 
 on:
   pull_request:
+    types:
+      - opened
+      - synchronize
+      - reopened
+      - labeled
+      - unlabeled
   push:
     branches:
       - main
@@ -260,7 +266,7 @@ jobs:
   adl_rust_fmt_clippy:
     name: adl-rust-fmt-clippy
     needs: adl_path_policy
-    if: needs.adl_path_policy.outputs.rust_required == 'true' && needs.adl_path_policy.outputs.runtime_v3_fast_required != 'true' && ((vars.ADL_HEAVY_CI_BACKEND || 'hosted') != 'spot' || github.event_name != 'pull_request' || github.event.pull_request.head.repo.full_name != github.repository)
+    if: needs.adl_path_policy.outputs.rust_required == 'true' && needs.adl_path_policy.outputs.runtime_v3_fast_required != 'true' && ((vars.ADL_HEAVY_CI_BACKEND || 'hosted') != 'spot' || github.event_name != 'pull_request' || github.event.pull_request.head.repo.full_name != github.repository || !contains(github.event.pull_request.labels.*.name, 'ci:spot'))
     runs-on: ubuntu-latest
     permissions:
       contents: read
@@ -333,7 +339,7 @@ jobs:
   adl_rust_tests:
     name: adl-rust-tests
     needs: adl_path_policy
-    if: needs.adl_path_policy.outputs.rust_required == 'true' && needs.adl_path_policy.outputs.runtime_v3_fast_required != 'true' && ((vars.ADL_HEAVY_CI_BACKEND || 'hosted') != 'spot' || github.event_name != 'pull_request' || github.event.pull_request.head.repo.full_name != github.repository)
+    if: needs.adl_path_policy.outputs.rust_required == 'true' && needs.adl_path_policy.outputs.runtime_v3_fast_required != 'true' && ((vars.ADL_HEAVY_CI_BACKEND || 'hosted') != 'spot' || github.event_name != 'pull_request' || github.event.pull_request.head.repo.full_name != github.repository || !contains(github.event.pull_request.labels.*.name, 'ci:spot'))
     runs-on: ubuntu-latest
     permissions:
       contents: read
@@ -444,7 +450,7 @@ jobs:
   adl_demo_proof:
     name: adl-demo-proof
     needs: adl_path_policy
-    if: needs.adl_path_policy.outputs.runtime_v3_fast_required != 'true' && ((vars.ADL_HEAVY_CI_BACKEND || 'hosted') != 'spot' || github.event_name != 'pull_request' || github.event.pull_request.head.repo.full_name != github.repository)
+    if: needs.adl_path_policy.outputs.runtime_v3_fast_required != 'true' && ((vars.ADL_HEAVY_CI_BACKEND || 'hosted') != 'spot' || github.event_name != 'pull_request' || github.event.pull_request.head.repo.full_name != github.repository || !contains(github.event.pull_request.labels.*.name, 'ci:spot'))
     runs-on: ubuntu-latest
     permissions:
       contents: read
@@ -481,7 +487,7 @@ jobs:
   adl_spot_ci_and_coverage:
     name: adl-spot-ci-and-coverage
     needs: adl_path_policy
-    if: (vars.ADL_HEAVY_CI_BACKEND || 'hosted') == 'spot' && github.event_name == 'pull_request' && github.event.pull_request.head.repo.full_name == github.repository && (needs.adl_path_policy.outputs.rust_required == 'true' || needs.adl_path_policy.outputs.demo_smoke_required == 'true' || needs.adl_path_policy.outputs.v0913_proof_required == 'true' || needs.adl_path_policy.outputs.coverage_required == 'true')
+    if: (vars.ADL_HEAVY_CI_BACKEND || 'hosted') == 'spot' && github.event_name == 'pull_request' && github.event.pull_request.head.repo.full_name == github.repository && contains(github.event.pull_request.labels.*.name, 'ci:spot') && (needs.adl_path_policy.outputs.rust_required == 'true' || needs.adl_path_policy.outputs.demo_smoke_required == 'true' || needs.adl_path_policy.outputs.v0913_proof_required == 'true' || needs.adl_path_policy.outputs.coverage_required == 'true')
     permissions:
       contents: read
       id-token: write
@@ -520,6 +526,7 @@ jobs:
           BACKEND: ${{ vars.ADL_HEAVY_CI_BACKEND || 'hosted' }}
           EVENT_NAME: ${{ github.event_name }}
           SAME_REPO_PR: ${{ github.event_name == 'pull_request' && github.event.pull_request.head.repo.full_name == github.repository }}
+          SPOT_OPT_IN: ${{ github.event_name == 'pull_request' && contains(github.event.pull_request.labels.*.name, 'ci:spot') }}
           WORK_REQUIRED: ${{ needs.adl_path_policy.outputs.rust_required == 'true' || needs.adl_path_policy.outputs.demo_smoke_required == 'true' || needs.adl_path_policy.outputs.v0913_proof_required == 'true' }}
           RUST_REQUIRED: ${{ needs.adl_path_policy.outputs.rust_required == 'true' }}
           DEMO_REQUIRED: ${{ needs.adl_path_policy.outputs.demo_smoke_required == 'true' || needs.adl_path_policy.outputs.v0913_proof_required == 'true' }}
@@ -530,6 +537,7 @@ jobs:
             --backend "$BACKEND" \
             --event-name "$EVENT_NAME" \
             --same-repo-pr "$SAME_REPO_PR" \
+            --spot-opt-in "$SPOT_OPT_IN" \
             --work-required "$WORK_REQUIRED" \
             --rust-required "$RUST_REQUIRED" \
             --demo-required "$DEMO_REQUIRED" \
@@ -628,7 +636,7 @@ jobs:
 
   adl_coverage_hosted:
     name: adl-coverage-hosted
-    if: (vars.ADL_HEAVY_CI_BACKEND || 'hosted') != 'spot' || github.event_name != 'pull_request' || github.event.pull_request.head.repo.full_name != github.repository
+    if: (vars.ADL_HEAVY_CI_BACKEND || 'hosted') != 'spot' || github.event_name != 'pull_request' || github.event.pull_request.head.repo.full_name != github.repository || !contains(github.event.pull_request.labels.*.name, 'ci:spot')
     runs-on: ubuntu-latest
     permissions:
       contents: read
@@ -931,6 +939,7 @@ jobs:
           BACKEND: ${{ vars.ADL_HEAVY_CI_BACKEND || 'hosted' }}
           EVENT_NAME: ${{ github.event_name }}
           SAME_REPO_PR: ${{ github.event_name == 'pull_request' && github.event.pull_request.head.repo.full_name == github.repository }}
+          SPOT_OPT_IN: ${{ github.event_name == 'pull_request' && contains(github.event.pull_request.labels.*.name, 'ci:spot') }}
           WORK_REQUIRED: ${{ needs.adl_path_policy.outputs.coverage_required == 'true' }}
         run: |
           set -euo pipefail
@@ -939,6 +948,7 @@ jobs:
             --backend "$BACKEND" \
             --event-name "$EVENT_NAME" \
             --same-repo-pr "$SAME_REPO_PR" \
+            --spot-opt-in "$SPOT_OPT_IN" \
             --work-required "$WORK_REQUIRED" \
             --path-policy-result "${{ needs.adl_path_policy.result }}" \
             --spot-result "${{ needs.adl_spot_ci_and_coverage.result }}" \

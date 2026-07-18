@@ -23,6 +23,7 @@ parser.add_argument("--surface", choices=("adl-ci", "adl-coverage"), required=Tr
 parser.add_argument("--backend", required=True)
 parser.add_argument("--event-name", required=True)
 parser.add_argument("--same-repo-pr", type=parse_bool, required=True)
+parser.add_argument("--spot-opt-in", type=parse_bool, default=False)
 parser.add_argument("--work-required", type=parse_bool, required=True)
 parser.add_argument("--rust-required", type=parse_bool, default=False)
 parser.add_argument("--demo-required", type=parse_bool, default=False)
@@ -39,6 +40,7 @@ spot_selected = (
     args.backend == "spot"
     and args.event_name == "pull_request"
     and args.same_repo_pr
+    and args.spot_opt_in
 )
 hosted_results = dict(args.hosted_result)
 

@@ -66,14 +66,15 @@ Advance only when the current phase is green:
    interruption still terminate EC2, remove temporary IAM/network resources,
    return the retained EBS volume to `available`, sanitize artifacts, and leave
    stable checks red rather than skipped-success.
-4. **Canary route.** Set `ADL_HEAVY_CI_BACKEND=spot` for one controlled
-   same-repository PR and verify exactly one Spot launch runs both profiles;
-   the stable `adl-ci` and `adl-coverage` contexts aggregate that same result.
-   Fork PRs and non-PR coverage must remain hosted.
-5. **Broad route.** Keep the variable at `spot` for trusted same-repository PRs
-   only after two consecutive canary PRs complete without operator repair.
-   Monitor launch latency, workload time, interruption rate, cache headroom,
-   and cleanup residue.
+4. **Canary route.** Set `ADL_HEAVY_CI_BACKEND=spot` and add the explicit
+   `ci:spot` label to one controlled same-repository PR. Verify exactly one Spot
+   launch runs both profiles, and that the stable `adl-ci` and `adl-coverage`
+   contexts aggregate that same result. Same-repository PRs without `ci:spot`,
+   fork PRs, and non-PR coverage must remain hosted.
+5. **Broad route.** Keep the variable at `spot` for trusted same-repository PRs,
+   but add `ci:spot` only to PRs selected for the Spot lane after two consecutive
+   canary PRs complete without operator repair. Monitor launch latency, workload
+   time, interruption rate, cache headroom, and cleanup residue.
 6. **Rollback rehearsal.** Set `ADL_HEAVY_CI_BACKEND=hosted`, rerun checks, and
    verify the hosted graph owns both stable contexts. Deleting the variable
    must produce the same fail-safe result.
@@ -283,9 +284,10 @@ finalization was interrupted.
 Do not rename `adl-ci` or `adl-coverage`; branch protection depends on those
 stable contexts. The stable aggregators accept exactly one selected backend:
 the existing hosted job graph or the reusable Spot workflow. Repository
-variable `ADL_HEAVY_CI_BACKEND` is the route switch. Its absent/default value
-is `hosted`; set it to `spot` only after the proof gates below pass. Same-repo
-PR checks may use Spot. Push-to-main, schedule/nightly, and workflow-dispatch
+variable `ADL_HEAVY_CI_BACKEND` enables the Spot route, but it is not sufficient
+on its own. Its absent/default value is `hosted`; when it is set to `spot`, a
+same-repository PR still uses the hosted path unless the PR also carries the
+explicit `ci:spot` label. Push-to-main, schedule/nightly, and workflow-dispatch
 coverage remains hosted so LCOV and Codecov publication behavior is unchanged.
 Fork PRs always remain on
 the unprivileged hosted path even when the repository variable is `spot`. The
@@ -322,10 +324,10 @@ artifact return, check reporting, or cleanup regresses:
 The fallback is not removed in this issue. Removing it requires later sustained
 operational evidence.
 
-The fastest rollback requires no source edit: set repository variable
-`ADL_HEAVY_CI_BACKEND=hosted`, then rerun the failed checks. The workflow also
-defaults to hosted when the variable is absent or has any value other than
-`spot`, so deleting the variable is fail-safe rollback.
+The fastest rollback requires no source edit: remove the `ci:spot` PR label or
+set repository variable `ADL_HEAVY_CI_BACKEND=hosted`, then rerun the failed
+checks. The workflow also defaults to hosted when the variable is absent or has
+any value other than `spot`, so deleting the variable is fail-safe rollback.
 
 ## Concurrency And Operations
 
