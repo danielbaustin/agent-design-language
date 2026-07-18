@@ -26,9 +26,19 @@ adl/tools/test_ci_runtime_contracts.sh
 
 [
   {
-    "id": "F-5464-1",
+    "id": "F-5464-2",
     "severity": "p2",
-    "summary": "Unnamed, quoted, or inline YAML nextest steps can bypass the block-only static contract.",
+    "summary": "Unversioned nextest and cargo-nextest tool aliases escape the @-based inventory.",
+    "actionable": true,
+    "in_scope": true,
+    "disposition": "open",
+    "fix_revision": null,
+    "route": null
+  },
+  {
+    "id": "F-5464-3",
+    "severity": "p3",
+    "summary": "The alternate cargo-nextest alias has no negative fixture.",
     "actionable": true,
     "in_scope": true,
     "disposition": "open",
@@ -47,7 +57,7 @@ Every actionable finding requires a terminal disposition.
 
 ## Review Result
 
-Revision: Some("git-blake3:6f72414262eb807200379440c13580aa43651f02:1fd9200c4b6534ed30f7ec17d25546ae8ec0cd2b1aa8707fd708f25c0a012a49")
+Revision: Some("git-blake3:e2574403da44cda7f6e5f7ec31a2b92a97147e81:f8549e0b1836ee40d5245827e32b1ca8791e6b0c56bdadf7840f3d5463f14b2a")
 
 Reviewer: Some("bounded-subagent-review-5464")
 

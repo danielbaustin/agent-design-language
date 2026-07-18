@@ -4,12 +4,12 @@
   "repository": "danielbaustin/agent-design-language",
   "initialization_digest": "ae3e72f2513ddf93bede427c2ef36d2b067ddb7c1bd59bd1003a94f2e520d5fb",
   "phase": "implemented",
-  "generation": 6,
-  "digest": "e320919011ab507f497913129e60691beb8f6f58ce425ad1663624e5672e4970",
+  "generation": 9,
+  "digest": "fa690691f71b53b11034d05ea318fc7c6f128ee59beba48b9d6dd3dbfca1600a",
   "claim": {
     "id": "claim-5464-nextest-install-contract",
     "owner": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
-    "generation": 6,
+    "generation": 9,
     "acquired_unix_seconds": 1784358000,
     "expires_unix_seconds": 1784444400,
     "heartbeat_unix_seconds": 1784358000,
@@ -24,7 +24,7 @@
   "review_assignment": {
     "reviewer": "bounded-subagent-review-5464",
     "assigned_by": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
-    "revision": "git-blake3:6f72414262eb807200379440c13580aa43651f02:1fd9200c4b6534ed30f7ec17d25546ae8ec0cd2b1aa8707fd708f25c0a012a49",
+    "revision": "git-blake3:e2574403da44cda7f6e5f7ec31a2b92a97147e81:f8549e0b1836ee40d5245827e32b1ca8791e6b0c56bdadf7840f3d5463f14b2a",
     "scope": [
       ".github/workflows/ci.yaml",
       "adl/tools/test_ci_runtime_contracts.sh"
@@ -36,12 +36,22 @@
       ".github/workflows/ci.yaml",
       "adl/tools/test_ci_runtime_contracts.sh"
     ],
-    "reviewed_revision": "git-blake3:6f72414262eb807200379440c13580aa43651f02:1fd9200c4b6534ed30f7ec17d25546ae8ec0cd2b1aa8707fd708f25c0a012a49",
+    "reviewed_revision": "git-blake3:e2574403da44cda7f6e5f7ec31a2b92a97147e81:f8549e0b1836ee40d5245827e32b1ca8791e6b0c56bdadf7840f3d5463f14b2a",
     "findings": [
       {
-        "id": "F-5464-1",
+        "id": "F-5464-2",
         "severity": "p2",
-        "summary": "Unnamed, quoted, or inline YAML nextest steps can bypass the block-only static contract.",
+        "summary": "Unversioned nextest and cargo-nextest tool aliases escape the @-based inventory.",
+        "actionable": true,
+        "in_scope": true,
+        "disposition": "open",
+        "fix_revision": null,
+        "route": null
+      },
+      {
+        "id": "F-5464-3",
+        "severity": "p3",
+        "summary": "The alternate cargo-nextest alias has no negative fixture.",
         "actionable": true,
         "in_scope": true,
         "disposition": "open",
@@ -67,34 +77,34 @@
   },
   "cards": {
     "sip": {
-      "values_digest": "08e2064636c7f1a8a17a01b7dc5c6b4a0685c1333af6cbc34aa0593cc496bb96",
+      "values_digest": "cebf0ada921769b58ad3ad014964cb8f0d253927f001b997795147f0af2ff3d3",
       "rendered_digest": "a2fb478ef4bd13ba429e8c0f8c544110e67e901a6de718d2cf148eca1f55f1a6",
       "ast_digest": "5c565f0762207eecbe4664aff60df4a55a8349758e22cc60254ac86f612dc1c6"
     },
     "stp": {
-      "values_digest": "d9c8713d3a95247104e2e82e5161f1bd792df0c1c3ec10e436e13cb71710e516",
+      "values_digest": "0fdb90d13ff9b0f96f70e9d0473810f14103870f2131d4bcb627f3abbd90d9ba",
       "rendered_digest": "fc4b91f3228586ba35da574b082470293a7bf1b5145fea2dc54b5ca65c5c9d38",
       "ast_digest": "564b0df1e2c6093cb771e9b8d15562dd48d1ce5df66fb3477e27ad87a9cfd372"
     },
     "spp": {
-      "values_digest": "2bbad69a9bb4f7befa72b85f12a5171786f0f6dc5d89bfb4e26b31ab019a04b6",
+      "values_digest": "c43f276e83584a116481d0ee233dab76062819f2d2addd20df1a94e8a6aa4690",
       "rendered_digest": "7343cfe8e4dafed0a0e53405f81df92f00f78fae0b9094b9230b1b7f5781dbb8",
       "ast_digest": "269a7d90989ca87bf68e0d1775dafa72639584e93ae11cf70c7c4d2e2a4f18f7"
     },
     "vpp": {
-      "values_digest": "1683451ffdbf9f1cd45ece8d021b57c64a35e4e12b28c8d3602f507a2f7fa0dd",
+      "values_digest": "436cc442cf18ec5610998717e6a0d59e8231beeefcc0eb0b72bc229f7341ff81",
       "rendered_digest": "d5cc78ce07b13e4f45c7727f07c44991f89a55815257d63068f374a7c1b017a9",
       "ast_digest": "de9357a2a9bc9a4c0fa064b5efb770a71e03195446b8fc79607366093d535464"
     },
     "srp": {
-      "values_digest": "83408f7a4700c7df4d3d45b2b800f936f5571f6e84ce315811a6e5ca8af63908",
-      "rendered_digest": "2b0e2e3e6ee63a718a2a01c0eb257b2402b23dd1e9f365645066535604758df3",
-      "ast_digest": "74fe20b4aadc553143f8178c92a4056dae0cfc1767256547b8d0d3fb545ab353"
+      "values_digest": "032ade60400bb678eb868409684fcb273498b491f024e549af671d6a871a68f4",
+      "rendered_digest": "66c806f309a0f3331a08805b999f846e5e782084d572be5f48c3931705f370a8",
+      "ast_digest": "b8d4f1696a123062e9a9340ec41a250aebcff961780d85d88a3f94efbe9823c0"
     },
     "sor": {
-      "values_digest": "13dff708819f21705c135f6f573932b5d11375c17a53367523ad1d615e1c5310",
-      "rendered_digest": "8c4493d8e7b68f9902fb67edd27bd574caa37983b95c3b277be61bf0736400ee",
-      "ast_digest": "9318ee93cf07cabd1b5ce7b39aa2d5b813afa0cb959638222774607094fbbd38"
+      "values_digest": "03d27632efccab6eaf1c9400c04588f548a3f0a6acfbd99ffd2004880dee1517",
+      "rendered_digest": "8de44105d9d11a338f0df24aa87902a1e6943ead1b4bf063c06e9910079bbfae",
+      "ast_digest": "0cf80ef5c31ccdb7601d7ba8e847d32ab52a326ad595029c45b328492b401fee"
     }
   },
   "transitions": [
@@ -183,6 +193,34 @@
       "actor": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
       "reason": "The nextest contract and all alternate-form negative fixtures pass after F-5464-1 repair.",
       "operation": "{\"operation\":\"record_validation\",\"result\":{\"command\":[\"bash\",\"adl/tools/test_ci_runtime_contracts.sh\"],\"purpose\":\"Prove unnamed, quoted, inline, floating-installer, and fallback-enabled nextest forms cannot escape enforcement\",\"outcome\":\"passed\",\"evidence_ref\":\"local:5464-nextest-bypass-regression-pass\"}}"
+    },
+    {
+      "sequence": 10,
+      "generation": 6,
+      "actor": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+      "reason": "assign bounded exact-revision review",
+      "operation": "assign_review"
+    },
+    {
+      "sequence": 11,
+      "generation": 7,
+      "actor": "bounded-subagent-review-5464",
+      "reason": "atomically record review evidence and SRP projection",
+      "operation": "record_review"
+    },
+    {
+      "sequence": 12,
+      "generation": 8,
+      "actor": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+      "reason": "Fixed F-5464-2 and F-5464-3 by inventorying every install-action step and testing both unversioned aliases.",
+      "operation": "{\"operation\":\"record_execution\",\"summary\":\"Validate all install-action steps before classifying normalized nextest and cargo-nextest tool values.\",\"changes\":[\"Require each install-action use to occupy its own named step\",\"Normalize block-style tool scalars and classify versioned and unversioned nextest aliases\",\"Add negative fixtures for unversioned nextest and cargo-nextest aliases\"],\"artifacts\":[\"adl/tools/test_ci_runtime_contracts.sh\"]}"
+    },
+    {
+      "sequence": 13,
+      "generation": 9,
+      "actor": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+      "reason": "The focused contract passes with unversioned alias regression fixtures.",
+      "operation": "{\"operation\":\"record_validation\",\"result\":{\"command\":[\"bash\",\"adl/tools/test_ci_runtime_contracts.sh\"],\"purpose\":\"Prove every install-action step is inventoried and both unversioned nextest aliases fail closed\",\"outcome\":\"passed\",\"evidence_ref\":\"local:5464-unversioned-alias-regression-pass\"}}"
     }
   ]
 }

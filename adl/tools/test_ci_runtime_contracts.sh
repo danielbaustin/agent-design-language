@@ -152,22 +152,41 @@ for action, count in seen.items():
 nextest_installer = "taiki-e/install-action@50414676f9f5d50a65992c6dd2ed02641263226c"
 
 def require_nextest_contract(candidate: str) -> None:
-    if candidate.count("nextest@") != 4 or candidate.count("nextest@0.9.140") != 4:
-        raise SystemExit("CI must retain exactly four nextest@0.9.140 selections")
-    if "cargo-nextest@" in candidate:
-        raise SystemExit("CI must use the canonical nextest tool alias")
-    blocks = [
+    named_blocks = [
         match.group(0)
         for match in re.finditer(
             r"^      - name: .+\n(?:(?!^      - name: ).*\n)*",
             candidate,
             re.MULTILINE,
         )
-        if re.search(r"^\s+tool:\s+nextest@", match.group(0), re.MULTILINE)
     ]
-    if len(blocks) != 4:
-        raise SystemExit("Every nextest selection must use the canonical named block form")
-    for block in blocks:
+    install_blocks = [
+        block
+        for block in named_blocks
+        if re.search(r"^\s+uses:\s+taiki-e/install-action@", block, re.MULTILINE)
+    ]
+    install_uses = re.findall(
+        r"^\s+(?:-\s+)?uses:\s+taiki-e/install-action@",
+        candidate,
+        re.MULTILINE,
+    )
+    if len(install_blocks) != len(install_uses):
+        raise SystemExit("Every install-action use must be an independently named step")
+
+    nextest_blocks = []
+    for block in install_blocks:
+        if not re.search(r"^\s+with:\s*$", block, re.MULTILINE):
+            continue
+        tool_match = re.search(r"^\s+tool:\s+(.+?)\s*(?:#.*)?$", block, re.MULTILINE)
+        if not tool_match:
+            raise SystemExit("install-action with inputs must use a block-style tool scalar")
+        tool = tool_match.group(1).strip().strip("'\"")
+        if tool in {"nextest", "cargo-nextest"} or tool.startswith(("nextest@", "cargo-nextest@")):
+            nextest_blocks.append(block)
+
+    if len(nextest_blocks) != 4:
+        raise SystemExit("CI must retain exactly four declared nextest install steps")
+    for block in nextest_blocks:
         name = re.search(r"^\s+- name:\s+(.+)$", block, re.MULTILINE).group(1)
         if not re.search(
             rf"^\s+uses:\s+{re.escape(nextest_installer)}(?:\s+#.*)?$",
@@ -194,6 +213,8 @@ nextest_bypass_fixtures = (
     ),
     workflow.replace(nextest_installer, "taiki-e/install-action@v2", 1),
     workflow.replace("fallback: none", "fallback: cargo-install", 1),
+    workflow + "\n      - name: Floating nextest alias\n        uses: taiki-e/install-action@v2\n        with:\n          tool: nextest\n          fallback: cargo-install\n",
+    workflow + "\n      - name: Floating cargo-nextest alias\n        uses: taiki-e/install-action@v2\n        with:\n          tool: cargo-nextest\n          fallback: cargo-install\n",
 )
 for fixture in nextest_bypass_fixtures:
     try:

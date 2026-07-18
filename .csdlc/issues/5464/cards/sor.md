@@ -12,11 +12,12 @@ Status: pre_phase
 
 ## Summary
 
-Close alternate YAML-form escapes by coupling canonical named-block checks to exact whole-workflow nextest selection counts.
+Validate all install-action steps before classifying normalized nextest and cargo-nextest tool values.
 
 ## Artifacts
 
 - .github/workflows/ci.yaml
+- adl/tools/test_ci_runtime_contracts.sh
 - adl/tools/test_ci_runtime_contracts.sh
 - adl/tools/test_ci_runtime_contracts.sh
 
@@ -28,6 +29,9 @@ Close alternate YAML-form escapes by coupling canonical named-block checks to ex
 - Require exactly four nextest selections and exactly four 0.9.140 selections across the whole workflow
 - Reject the alternate cargo-nextest alias
 - Add negative fixtures for unnamed, quoted, inline-map, floating-installer, and fallback-enabled forms
+- Require each install-action use to occupy its own named step
+- Normalize block-style tool scalars and classify versioned and unversioned nextest aliases
+- Add negative fixtures for unversioned nextest and cargo-nextest aliases
 
 ## Validation
 
@@ -49,6 +53,15 @@ Close alternate YAML-form escapes by coupling canonical named-block checks to ex
     "purpose": "Prove unnamed, quoted, inline, floating-installer, and fallback-enabled nextest forms cannot escape enforcement",
     "outcome": "passed",
     "evidence_ref": "local:5464-nextest-bypass-regression-pass"
+  },
+  {
+    "command": [
+      "bash",
+      "adl/tools/test_ci_runtime_contracts.sh"
+    ],
+    "purpose": "Prove every install-action step is inventoried and both unversioned nextest aliases fail closed",
+    "outcome": "passed",
+    "evidence_ref": "local:5464-unversioned-alias-regression-pass"
   }
 ]
 
