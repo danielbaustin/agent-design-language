@@ -540,6 +540,7 @@ jobs:
           SAME_REPO_PR: ${{ github.event_name == 'pull_request' && github.event.pull_request.head.repo.full_name == github.repository }}
           SPOT_OPT_IN: ${{ github.event_name == 'pull_request' && contains(github.event.pull_request.labels.*.name, 'ci:spot') }}
           WORK_REQUIRED: ${{ needs.adl_path_policy.outputs.rust_required == 'true' || needs.adl_path_policy.outputs.demo_smoke_required == 'true' || needs.adl_path_policy.outputs.v0913_proof_required == 'true' }}
+          SPOT_WORK_REQUIRED: ${{ needs.adl_path_policy.outputs.rust_required == 'true' || needs.adl_path_policy.outputs.demo_smoke_required == 'true' || needs.adl_path_policy.outputs.v0913_proof_required == 'true' || needs.adl_path_policy.outputs.coverage_required == 'true' }}
           RUST_REQUIRED: ${{ needs.adl_path_policy.outputs.rust_required == 'true' }}
           DEMO_REQUIRED: ${{ needs.adl_path_policy.outputs.demo_smoke_required == 'true' || needs.adl_path_policy.outputs.v0913_proof_required == 'true' }}
         run: |
@@ -551,6 +552,7 @@ jobs:
             --same-repo-pr "$SAME_REPO_PR" \
             --spot-opt-in "$SPOT_OPT_IN" \
             --work-required "$WORK_REQUIRED" \
+            --spot-work-required "$SPOT_WORK_REQUIRED" \
             --rust-required "$RUST_REQUIRED" \
             --demo-required "$DEMO_REQUIRED" \
             --path-policy-result "${{ needs.adl_path_policy.result }}" \
@@ -954,6 +956,7 @@ jobs:
           SAME_REPO_PR: ${{ github.event_name == 'pull_request' && github.event.pull_request.head.repo.full_name == github.repository }}
           SPOT_OPT_IN: ${{ github.event_name == 'pull_request' && contains(github.event.pull_request.labels.*.name, 'ci:spot') }}
           WORK_REQUIRED: ${{ needs.adl_path_policy.outputs.coverage_required == 'true' }}
+          SPOT_WORK_REQUIRED: ${{ needs.adl_path_policy.outputs.coverage_required == 'true' }}
         run: |
           set -euo pipefail
           python3 adl/tools/verify_ci_backend_route.py \
@@ -963,6 +966,7 @@ jobs:
             --same-repo-pr "$SAME_REPO_PR" \
             --spot-opt-in "$SPOT_OPT_IN" \
             --work-required "$WORK_REQUIRED" \
+            --spot-work-required "$SPOT_WORK_REQUIRED" \
             --path-policy-result "${{ needs.adl_path_policy.result }}" \
             --spot-result "${{ needs.adl_spot_ci_and_coverage.result }}" \
             --hosted-result "coverage=${{ needs.adl_coverage_hosted.result }}"

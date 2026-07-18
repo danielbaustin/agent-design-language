@@ -25,6 +25,7 @@ parser.add_argument("--event-name", required=True)
 parser.add_argument("--same-repo-pr", type=parse_bool, required=True)
 parser.add_argument("--spot-opt-in", type=parse_bool, default=False)
 parser.add_argument("--work-required", type=parse_bool, required=True)
+parser.add_argument("--spot-work-required", type=parse_bool)
 parser.add_argument("--rust-required", type=parse_bool, default=False)
 parser.add_argument("--demo-required", type=parse_bool, default=False)
 parser.add_argument("--path-policy-result", required=True)
@@ -43,9 +44,12 @@ spot_selected = (
     and args.spot_opt_in
 )
 hosted_results = dict(args.hosted_result)
+spot_work_required = args.spot_work_required
+if spot_work_required is None:
+    spot_work_required = args.work_required
 
 if spot_selected:
-    expected_spot_result = "success" if args.work_required else "skipped"
+    expected_spot_result = "success" if spot_work_required else "skipped"
     if args.spot_result != expected_spot_result:
         errors.append(f"selected Spot lane expected {expected_spot_result}: {args.spot_result}")
     for lane, result in hosted_results.items():

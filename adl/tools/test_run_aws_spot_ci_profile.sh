@@ -201,6 +201,8 @@ test "$(grep -Fc 'source_event_name: ${{ github.event_name }}' "$CI_WORKFLOW")" 
 test "$(grep -Fc 'python3 adl/tools/verify_ci_backend_route.py' "$CI_WORKFLOW")" -eq 2
 test "$(grep -Fc 'SPOT_OPT_IN: ${{ github.event_name == '"'"'pull_request'"'"' && contains(github.event.pull_request.labels.*.name, '"'"'ci:spot'"'"') }}' "$CI_WORKFLOW")" -eq 2
 test "$(grep -Fc -- '--spot-opt-in "$SPOT_OPT_IN"' "$CI_WORKFLOW")" -eq 2
+test "$(grep -Fc 'SPOT_WORK_REQUIRED:' "$CI_WORKFLOW")" -eq 2
+test "$(grep -Fc -- '--spot-work-required "$SPOT_WORK_REQUIRED"' "$CI_WORKFLOW")" -eq 2
 test "$(grep -Fc 'name: adl-spot-ci-and-coverage' "$CI_WORKFLOW")" -eq 1
 grep -F "profile: \${{ needs.adl_path_policy.outputs.coverage_required == 'true' && 'adl-ci-and-coverage' || 'adl-ci' }}" "$CI_WORKFLOW" >/dev/null
 if grep -E 'name: adl-spot-(ci|coverage)$' "$CI_WORKFLOW" >/dev/null; then
@@ -273,6 +275,15 @@ python3 "$VERIFY_BACKEND_ROUTE" --surface adl-coverage --backend spot \
   --spot-opt-in true \
   --path-policy-result success --spot-result skipped \
   --hosted-result coverage=skipped >/dev/null
+python3 "$VERIFY_BACKEND_ROUTE" --surface adl-ci --backend spot \
+  --event-name pull_request --same-repo-pr true --work-required false \
+  --spot-work-required true \
+  --spot-opt-in true \
+  --rust-required false --demo-required false \
+  --path-policy-result success --spot-result success \
+  --hosted-result rust-fmt-clippy=skipped \
+  --hosted-result rust-tests=skipped \
+  --hosted-result demo-proof=skipped >/dev/null
 for invalid_route in \
   'adl-coverage spot pull_request true true success skipped coverage=skipped' \
   'adl-coverage hosted push false true skipped skipped coverage=success' \
