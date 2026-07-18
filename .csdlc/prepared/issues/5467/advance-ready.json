@@ -1,0 +1,1 @@
+{"issue":5467,"card":"sip","expected_generation":0,"expected_digest":"878137e72836d356004512c2cb854ffbbd63906c71a532ffd59237ebdc4f230a","claim_id":"claim-5467-backend-snapshot-contract","actor":"codex-root","reason":"All six typed cards and the approved bounded local-only design are ready.","operation":{"operation":"advance_phase","phase":"ready"}}

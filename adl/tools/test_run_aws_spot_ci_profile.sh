@@ -10,6 +10,7 @@ SETUP="$ROOT/adl/tools/setup_aws_spot_remote_validation_github_resources.sh"
 REDACTION_VERIFY="$ROOT/adl/tools/aws_spot_artifact_redaction_verify.py"
 VERIFY_ADVERTISED_REF="$ROOT/adl/tools/verify_spot_advertised_ref.sh"
 VERIFY_BACKEND_ROUTE="$ROOT/adl/tools/verify_ci_backend_route.py"
+RESOLVE_CI_BACKEND="$ROOT/adl/tools/resolve_ci_backend.sh"
 
 bash -n "$SCRIPT"
 if grep -F 'ADL_PR_FAST_ALLOW_FULL_NEXTEST=1' "$SCRIPT" >/dev/null; then
@@ -44,19 +45,18 @@ grep -F 'adl.aws_spot_coverage_summary.v1' "$SCRIPT" >/dev/null
 grep -F 'rustup component add rustfmt clippy llvm-tools-preview' "$DOCKERFILE" >/dev/null
 grep -F 'cargo llvm-cov --version' "$DOCKERFILE" >/dev/null
 grep -F 'gh --version' "$DOCKERFILE" >/dev/null
-grep -F "for required in rustc cargo cargo-nextest sccache LLD aws-cli" \
+grep -F 'for required in rustc cargo cargo-nextest sccache LLD aws-cli; do' \
   "$ROOT/adl/tools/run_aws_spot_builder_image_validation.sh" >/dev/null
 grep -F "grep -E '^llvm-tools-'" "$SCRIPT" >/dev/null
-grep -F 'sts get-caller-identity' "$SETUP" >/dev/null
-grep -F 'token.actions.githubusercontent.com' "$SETUP" >/dev/null
-grep -F 'AWS_SPOT_REMOTE_VALIDATION_REGION' "$SETUP" >/dev/null
-grep -F 'ADL_AWS_REMOTE_VALIDATION_SSH_ALLOWED_CIDR' "$SETUP" >/dev/null
-grep -F 'RemoteValidationEc2Lifecycle' "$SETUP" >/dev/null
-grep -F 'ec2:RequestSpotInstances' "$SETUP" >/dev/null
-grep -F 'RemoteValidationSsmCommands' "$SETUP" >/dev/null
-grep -F 'ssm:SendCommand' "$SETUP" >/dev/null
-grep -F 'RemoteValidationEphemeralInstanceProfiles' "$SETUP" >/dev/null
-grep -F 'iam:PutRolePolicy' "$SETUP" >/dev/null
+grep -F 'ssm get-parameter' "$ROOT/adl/tools/run_aws_spot_remote_validation_lane.sh" >/dev/null
+grep -F 'al2023-ami-kernel-default-x86_64' "$ROOT/adl/tools/run_aws_spot_remote_validation_lane.sh" >/dev/null
+grep -F '"ssm:GetParameter"' "$SETUP" >/dev/null
+grep -F '.attach_volume()' "$ROOT/tools/aws_remote_validation/src/aws_remote_validation.rs" >/dev/null
+grep -F '"ec2:AttachVolume"' "$SETUP" >/dev/null
+grep -F '.delete_role_policy()' "$ROOT/tools/aws_remote_validation/src/aws_remote_validation.rs" >/dev/null
+grep -F '"iam:DeleteRolePolicy"' "$SETUP" >/dev/null
+grep -F 'role/adl-aws-remote-validation-*' "$SETUP" >/dev/null
+grep -F 'instance-profile/adl-aws-remote-validation-*' "$SETUP" >/dev/null
 grep -F 'SSH_ALLOWED_CIDR="${ADL_AWS_REMOTE_VALIDATION_SSH_ALLOWED_CIDR:-}"' "$ROOT/adl/tools/run_aws_spot_remote_validation_lane.sh" >/dev/null
 grep -F 'https://checkip.amazonaws.com' "$ROOT/tools/aws_remote_validation/src/aws_remote_validation.rs" >/dev/null
 if grep -F 'AWS_SPOT_REMOTE_VALIDATION_SSH_ALLOWED_CIDR' "$WORKFLOW" >/dev/null; then
@@ -174,28 +174,47 @@ if grep -F 'GIT_REF: ${{ inputs.git_ref || github.sha }}' "$WORKFLOW" >/dev/null
   echo "Spot workflow must clone an advertised branch ref, not a raw commit SHA" >&2
   exit 1
 fi
-grep -F "HEAVY_CI_BACKEND: \${{ vars.ADL_HEAVY_CI_BACKEND || 'hosted' }}" "$CI_WORKFLOW" >/dev/null
-grep -F "heavy_ci_backend: \${{ steps.path-policy.outputs.heavy_ci_backend }}" "$CI_WORKFLOW" >/dev/null
-grep -F 'echo "heavy_ci_backend=$backend" >> "$GITHUB_OUTPUT"' "$CI_WORKFLOW" >/dev/null
-grep -F "BACKEND: \${{ needs.adl_path_policy.outputs.heavy_ci_backend }}" "$CI_WORKFLOW" >/dev/null
-grep -F "needs.adl_path_policy.outputs.heavy_ci_backend == 'spot'" "$CI_WORKFLOW" >/dev/null
-grep -F "needs.adl_path_policy.outputs.heavy_ci_backend != 'spot'" "$CI_WORKFLOW" >/dev/null
-grep -F 'uses: ./.github/workflows/aws-spot-remote-validation.yaml' "$CI_WORKFLOW" >/dev/null
-grep -F 'github.event.pull_request.head.repo.full_name == github.repository' "$CI_WORKFLOW" >/dev/null
-grep -F "github.event_name == 'pull_request' && github.event.pull_request.head.repo.full_name == github.repository" "$CI_WORKFLOW" >/dev/null
-grep -F "github.event_name != 'pull_request' || github.event.pull_request.head.repo.full_name != github.repository" "$CI_WORKFLOW" >/dev/null
-grep -F "contains(github.event.pull_request.labels.*.name, 'ci:spot')" "$CI_WORKFLOW" >/dev/null
-grep -F -- "--spot-opt-in \"\$SPOT_OPT_IN\"" "$CI_WORKFLOW" >/dev/null
-grep -F "if: needs.adl_path_policy.outputs.rust_required == 'true' && needs.adl_path_policy.outputs.runtime_v3_fast_required != 'true' && (needs.adl_path_policy.outputs.heavy_ci_backend != 'spot' || github.event_name != 'pull_request' || github.event.pull_request.head.repo.full_name != github.repository || !contains(github.event.pull_request.labels.*.name, 'ci:spot'))" "$CI_WORKFLOW" >/dev/null
-grep -F "if: needs.adl_path_policy.outputs.runtime_v3_fast_required != 'true' && (needs.adl_path_policy.outputs.demo_smoke_required == 'true' || needs.adl_path_policy.outputs.v0913_proof_required == 'true') && (needs.adl_path_policy.outputs.heavy_ci_backend != 'spot' || github.event_name != 'pull_request' || github.event.pull_request.head.repo.full_name != github.repository || !contains(github.event.pull_request.labels.*.name, 'ci:spot'))" "$CI_WORKFLOW" >/dev/null
-grep -F "if: needs.adl_path_policy.outputs.heavy_ci_backend == 'spot' && github.event_name == 'pull_request' && github.event.pull_request.head.repo.full_name == github.repository && contains(github.event.pull_request.labels.*.name, 'ci:spot') && (needs.adl_path_policy.outputs.rust_required == 'true' || needs.adl_path_policy.outputs.demo_smoke_required == 'true' || needs.adl_path_policy.outputs.v0913_proof_required == 'true' || needs.adl_path_policy.outputs.coverage_required == 'true')" "$CI_WORKFLOW" >/dev/null
-grep -F "if: needs.adl_path_policy.outputs.coverage_required == 'true' && (needs.adl_path_policy.outputs.heavy_ci_backend != 'spot' || github.event_name != 'pull_request' || github.event.pull_request.head.repo.full_name != github.repository || !contains(github.event.pull_request.labels.*.name, 'ci:spot'))" "$CI_WORKFLOW" >/dev/null
-grep -F 'name: adl-coverage-hosted' "$CI_WORKFLOW" >/dev/null
-grep -F 'name: Aggregate hosted or Spot coverage lane' "$CI_WORKFLOW" >/dev/null
-grep -F 'name: adl-coverage' "$CI_WORKFLOW" >/dev/null
-grep -F 'name: adl-ci' "$CI_WORKFLOW" >/dev/null
-grep -F '"adl_demo_proof:${{ needs.adl_demo_proof.result }}" \' "$CI_WORKFLOW" >/dev/null
-grep -F '"adl_spot_ci_and_coverage:${{ needs.adl_spot_ci_and_coverage.result }}"' "$CI_WORKFLOW" >/dev/null
+backend_snapshot_checks=0
+assert_backend_snapshot() {
+  "$@" >/dev/null
+  backend_snapshot_checks=$((backend_snapshot_checks + 1))
+}
+assert_backend_snapshot grep -F "HEAVY_CI_BACKEND: \${{ vars.ADL_HEAVY_CI_BACKEND || 'hosted' }}" "$CI_WORKFLOW"
+assert_backend_snapshot grep -F 'backend="$(bash adl/tools/resolve_ci_backend.sh "${HEAVY_CI_BACKEND:-hosted}")"' "$CI_WORKFLOW"
+assert_backend_snapshot grep -F "heavy_ci_backend: \${{ steps.path-policy.outputs.heavy_ci_backend }}" "$CI_WORKFLOW"
+assert_backend_snapshot grep -F 'echo "heavy_ci_backend=$backend" >> "$GITHUB_OUTPUT"' "$CI_WORKFLOW"
+assert_backend_snapshot grep -F "BACKEND: \${{ needs.adl_path_policy.outputs.heavy_ci_backend }}" "$CI_WORKFLOW"
+assert_backend_snapshot grep -F "needs.adl_path_policy.outputs.heavy_ci_backend == 'spot'" "$CI_WORKFLOW"
+assert_backend_snapshot grep -F "needs.adl_path_policy.outputs.heavy_ci_backend != 'spot'" "$CI_WORKFLOW"
+assert_backend_snapshot grep -F 'uses: ./.github/workflows/aws-spot-remote-validation.yaml' "$CI_WORKFLOW"
+assert_backend_snapshot grep -F 'github.event.pull_request.head.repo.full_name == github.repository' "$CI_WORKFLOW"
+assert_backend_snapshot grep -F "github.event_name == 'pull_request' && github.event.pull_request.head.repo.full_name == github.repository" "$CI_WORKFLOW"
+assert_backend_snapshot grep -F "github.event_name != 'pull_request' || github.event.pull_request.head.repo.full_name != github.repository" "$CI_WORKFLOW"
+assert_backend_snapshot grep -F 'name: adl-coverage-hosted' "$CI_WORKFLOW"
+assert_backend_snapshot grep -F 'name: Aggregate hosted or Spot coverage lane' "$CI_WORKFLOW"
+assert_backend_snapshot grep -F 'name: adl-coverage' "$CI_WORKFLOW"
+assert_backend_snapshot grep -F 'name: adl-ci' "$CI_WORKFLOW"
+assert_backend_snapshot grep -F '"adl_demo_proof:${{ needs.adl_demo_proof.result }}" \' "$CI_WORKFLOW"
+assert_backend_snapshot grep -F '"adl_spot_ci_and_coverage:${{ needs.adl_spot_ci_and_coverage.result }}"' "$CI_WORKFLOW"
+assert_backend_snapshot grep -F "contains(github.event.pull_request.labels.*.name, 'ci:spot')" "$CI_WORKFLOW"
+assert_backend_snapshot grep -F -- "--spot-opt-in \"\$SPOT_OPT_IN\"" "$CI_WORKFLOW"
+assert_backend_snapshot grep -F "if: needs.adl_path_policy.outputs.rust_required == 'true' && needs.adl_path_policy.outputs.runtime_v3_fast_required != 'true' && (needs.adl_path_policy.outputs.heavy_ci_backend != 'spot' || github.event_name != 'pull_request' || github.event.pull_request.head.repo.full_name != github.repository || !contains(github.event.pull_request.labels.*.name, 'ci:spot'))" "$CI_WORKFLOW"
+assert_backend_snapshot grep -F "if: needs.adl_path_policy.outputs.runtime_v3_fast_required != 'true' && (needs.adl_path_policy.outputs.demo_smoke_required == 'true' || needs.adl_path_policy.outputs.v0913_proof_required == 'true') && (needs.adl_path_policy.outputs.heavy_ci_backend != 'spot' || github.event_name != 'pull_request' || github.event.pull_request.head.repo.full_name != github.repository || !contains(github.event.pull_request.labels.*.name, 'ci:spot'))" "$CI_WORKFLOW"
+assert_backend_snapshot grep -F "if: needs.adl_path_policy.outputs.heavy_ci_backend == 'spot' && github.event_name == 'pull_request' && github.event.pull_request.head.repo.full_name == github.repository && contains(github.event.pull_request.labels.*.name, 'ci:spot') && (needs.adl_path_policy.outputs.rust_required == 'true' || needs.adl_path_policy.outputs.demo_smoke_required == 'true' || needs.adl_path_policy.outputs.v0913_proof_required == 'true' || needs.adl_path_policy.outputs.coverage_required == 'true')" "$CI_WORKFLOW"
+assert_backend_snapshot grep -F "if: needs.adl_path_policy.outputs.coverage_required == 'true' && (needs.adl_path_policy.outputs.heavy_ci_backend != 'spot' || github.event_name != 'pull_request' || github.event.pull_request.head.repo.full_name != github.repository || !contains(github.event.pull_request.labels.*.name, 'ci:spot'))" "$CI_WORKFLOW"
+[[ "$backend_snapshot_checks" -eq 23 ]]
+
+[[ "$(bash "$RESOLVE_CI_BACKEND")" == hosted ]]
+[[ "$(bash "$RESOLVE_CI_BACKEND" hosted)" == hosted ]]
+[[ "$(bash "$RESOLVE_CI_BACKEND" spot)" == spot ]]
+invalid_backend_log="$(mktemp "${TMPDIR:-/tmp}/adl-invalid-ci-backend.XXXXXX")"
+set +e
+bash "$RESOLVE_CI_BACKEND" invalid >"$invalid_backend_log" 2>&1
+invalid_backend_status=$?
+set -e
+[[ "$invalid_backend_status" -eq 2 ]]
+grep -F 'ADL_HEAVY_CI_BACKEND must be hosted or spot, got: invalid' "$invalid_backend_log" >/dev/null
+rm -f "$invalid_backend_log"
 test "$(grep -Fc 'builder_image_tag: v0.91.7-coverage-5243' "$CI_WORKFLOW")" -eq 1
 test "$(grep -Fc 'source_event_name: ${{ github.event_name }}' "$CI_WORKFLOW")" -eq 1
 test "$(grep -Fc 'python3 adl/tools/verify_ci_backend_route.py' "$CI_WORKFLOW")" -eq 2

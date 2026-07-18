@@ -1,0 +1,25 @@
+{
+  "issue": 5467,
+  "card": "sor",
+  "expected_generation": 2,
+  "expected_digest": "e9f1962d1cac53bd8bc9c6f5003408c0c84601ec9a6cc237583021f9e7969ea5",
+  "claim_id": "claim-5467-backend-snapshot-contract",
+  "actor": "codex-root",
+  "reason": "Repaired the unreachable local CI contract and added pure local backend behavior proof without AWS.",
+  "operation": {
+    "operation": "record_execution",
+    "summary": "Made the backend snapshot contract reachable, removed false setup assertions, and extracted backend selection into a locally testable fail-closed helper.",
+    "changes": [
+      "Update the stale builder validation assertion to its current owner contract",
+      "Remove ten false setup assertions whose target strings never existed in the named script",
+      "Count and require execution of all seventeen backend workflow snapshot assertions",
+      "Prove default hosted, explicit hosted, Spot-selected, and invalid backend behavior locally",
+      "Keep CI backend selection semantics in a pure helper used by the workflow"
+    ],
+    "artifacts": [
+      ".github/workflows/ci.yaml",
+      "adl/tools/resolve_ci_backend.sh",
+      "adl/tools/test_run_aws_spot_ci_profile.sh"
+    ]
+  }
+}

@@ -1,0 +1,21 @@
+{
+  "issue": 5467,
+  "card": "sor",
+  "expected_generation": 5,
+  "expected_digest": "5d71d93a046cd001168f6967247f4466e9025ddcbb4f06cf0e9601a1467b55d8",
+  "claim_id": "claim-5467-backend-snapshot-contract",
+  "actor": "codex-root",
+  "reason": "Resolved both exact-revision review findings with local policy-owner assertions and exact invalid exit-status proof.",
+  "operation": {
+    "operation": "record_execution",
+    "summary": "Restored meaningful live capability coverage at its actual source and policy owners, repaired missing least-privilege permissions, and asserted invalid backend exit status exactly.",
+    "changes": [
+      "Require SSM parameter lookup in both the live lane source and GitHub role policy",
+      "Require retained EBS attachment in both the Rust owner and GitHub role policy",
+      "Require inline role-policy cleanup in both the Rust owner and GitHub role policy",
+      "Retain current ephemeral role and instance-profile resource-pattern assertions",
+      "Assert invalid backend exits with status 2"
+    ],
+    "artifacts": ["adl/tools/setup_aws_spot_remote_validation_github_resources.sh", "adl/tools/test_run_aws_spot_ci_profile.sh"]
+  }
+}

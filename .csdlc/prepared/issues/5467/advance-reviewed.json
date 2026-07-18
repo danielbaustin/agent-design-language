@@ -1,0 +1,10 @@
+{
+  "issue": 5467,
+  "card": "srp",
+  "expected_generation": 8,
+  "expected_digest": "0744165c4a81f70b09c26ecabd9eecaeb7f5dbb951d73d320ce08dd5941a6433",
+  "claim_id": "claim-5467-backend-snapshot-contract",
+  "actor": "codex-root",
+  "reason": "Final exact-revision review passed after both findings were fixed and locally revalidated without AWS.",
+  "operation": {"operation": "advance_phase", "phase": "reviewed"}
+}

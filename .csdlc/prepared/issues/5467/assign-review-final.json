@@ -1,0 +1,9 @@
+{
+  "issue": 5467,
+  "expected_generation": 7,
+  "expected_digest": "2c30c0a45475ba58ae5d2a2851635d8b001f193b2f4f250e3b920cd8056467d7",
+  "claim_id": "claim-5467-backend-snapshot-contract",
+  "reviewer": "bounded-subagent-review-5467",
+  "assigned_by": "codex-root",
+  "scope": [".github/workflows/ci.yaml", "adl/tools/resolve_ci_backend.sh", "adl/tools/setup_aws_spot_remote_validation_github_resources.sh", "adl/tools/test_run_aws_spot_ci_profile.sh", ".csdlc/issues/5467"]
+}

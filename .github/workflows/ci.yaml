@@ -70,14 +70,7 @@ jobs:
             --head "${{ github.event.pull_request.head.sha }}" \
             --ref "${{ github.ref }}" \
             --github-output "$GITHUB_OUTPUT"
-          backend="${HEAVY_CI_BACKEND:-hosted}"
-          case "$backend" in
-            hosted|spot) ;;
-            *)
-              echo "::error::ADL_HEAVY_CI_BACKEND must be hosted or spot, got: $backend"
-              exit 1
-              ;;
-          esac
+          backend="$(bash adl/tools/resolve_ci_backend.sh "${HEAVY_CI_BACKEND:-hosted}")"
           echo "heavy_ci_backend=$backend" >> "$GITHUB_OUTPUT"
         working-directory: .
 

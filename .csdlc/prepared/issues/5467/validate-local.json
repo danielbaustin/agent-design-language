@@ -1,0 +1,27 @@
+{
+  "manifest": {
+    "schema": "csdlc.pvf.manifest.v1",
+    "lanes": [{
+      "id": "backend-snapshot-local",
+      "proof_role": "Local contract and backend-routing proof",
+      "purpose": "Prove every backend snapshot assertion and local backend value behavior without AWS",
+      "determinism": "deterministic",
+      "resources": {"cpu_units": 1, "memory_mib": 256, "tokens": 1000},
+      "credentials": [],
+      "network": "denied",
+      "dependencies": [],
+      "parallel_group": "ci-contract-local",
+      "release_gate": "required",
+      "execution": "local",
+      "timeout_seconds": 600,
+      "executable": "/bin/bash",
+      "argv": ["adl/tools/test_run_aws_spot_ci_profile.sh"],
+      "evidence": {"max_log_bytes": 32768, "redact_values": [], "require_relative_paths": true}
+    }]
+  },
+  "selection": {"requested_lanes": ["backend-snapshot-local"], "allow_network": false, "available_credentials": []},
+  "budget": {"max_parallel": 1, "cpu_units": 1, "memory_mib": 256, "tokens": 1000},
+  "root": ".",
+  "evidence_dir": ".csdlc/evidence/5467",
+  "cancellation_file": null
+}

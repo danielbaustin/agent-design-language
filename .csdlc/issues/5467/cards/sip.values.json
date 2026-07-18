@@ -1,0 +1,29 @@
+{
+  "identity": {
+    "schema_version": "1.0.0",
+    "template_version": "1.0.0",
+    "issue": 5467,
+    "repository": "danielbaustin/agent-design-language",
+    "title": "Repair unreachable backend-snapshot contract assertions",
+    "slug": "backend-snapshot-contract",
+    "version": "v0.91.7",
+    "generation": 10
+  },
+  "status": "ready",
+  "content": {
+    "card_kind": "sip",
+    "values": {
+      "goal": "Make the CI backend snapshot contract reachable and behaviorally prove its routing cases using local fixtures only.",
+      "required_outcome": "The contract reaches every backend-snapshot assertion and locally proves hosted, Spot-selected, and invalid backend inputs without AWS access.",
+      "declared_scope": [
+        "adl/tools/test_run_aws_spot_ci_profile.sh",
+        ".github/workflows/ci.yaml"
+      ],
+      "authority_boundary": [
+        "Local shell contract and GitHub-hosted CI only"
+      ],
+      "initial_assumptions": [],
+      "operator_constraints": []
+    }
+  }
+}

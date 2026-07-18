@@ -1,0 +1,10 @@
+{
+  "issue": 5467,
+  "claim_id": "claim-5467-backend-snapshot-contract",
+  "expected_generation": 5,
+  "expected_digest": "c7351fdcb763b716e6c4c2480bd7183f4af9ca1112d4c05895fd11a2274076e0",
+  "now_unix_seconds": 1784359000,
+  "actor": "codex-root",
+  "reason": "Protect the setup policy whose missing live SSM, EBS attachment, and inline-policy cleanup permissions were exposed by exact-revision review.",
+  "add_protected_paths": ["adl/tools/setup_aws_spot_remote_validation_github_resources.sh"]
+}

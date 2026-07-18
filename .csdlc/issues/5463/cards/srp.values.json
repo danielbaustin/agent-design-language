@@ -7,14 +7,14 @@
     "title": "[v0.91.7][ci] Upgrade pinned Actions away from deprecated Node 20 runtime",
     "slug": "v0-91-7-ci-node24-action-pins",
     "version": "v0.91.7",
-    "generation": 10
+    "generation": 19
   },
-  "status": "pre_phase",
+  "status": "complete",
   "content": {
     "card_kind": "srp",
     "values": {
       "review_scope": ".github/workflows/aws-codefriend-build.yaml\n.github/workflows/aws-spot-remote-validation.yaml\n.github/workflows/ci.yaml\n.github/workflows/nightly-coverage-ratchet.yaml\n.github/workflows/v0871_milestone_closeout_gate.yaml\nadl/tools/test_ci_runtime_contracts.sh\nadl/tools/test_ci_path_policy.sh\ndocs/tooling/GITHUB_ACTIONS_RUNTIME_PIN_INVENTORY.md",
-      "review_revision": "git-blake3:7c19d5461d71c79e8a4b9c4ba1a3f7d4f7c991ac:b785ae5945c851b62e70638a0713b7a9d0773a531e0329c20f6035ee19667fa2",
+      "review_revision": "git-blake3:e3829a5a18db93b18ba0940fdd8e30fd2ff727cf:ac535a46baee767e7444ff08f7125b34c58be12d22a7d38865641bcbfb06c44d",
       "reviewer": "bounded-subagent-review-5463",
       "review_prompts": [
         "Are all annotated occurrences replaced?",
@@ -30,7 +30,7 @@
           "actionable": true,
           "in_scope": true,
           "disposition": "fixed",
-          "fix_revision": "git-blake3:7c19d5461d71c79e8a4b9c4ba1a3f7d4f7c991ac:b785ae5945c851b62e70638a0713b7a9d0773a531e0329c20f6035ee19667fa2",
+          "fix_revision": "git-blake3:e3829a5a18db93b18ba0940fdd8e30fd2ff727cf:ac535a46baee767e7444ff08f7125b34c58be12d22a7d38865641bcbfb06c44d",
           "route": null
         },
         {
@@ -39,13 +39,13 @@
           "summary": "Rejected negative fixtures increment real workflow occurrence counts and can mask action disappearance.",
           "actionable": true,
           "in_scope": true,
-          "disposition": "open",
-          "fix_revision": null,
+          "disposition": "fixed",
+          "fix_revision": "git-blake3:e3829a5a18db93b18ba0940fdd8e30fd2ff727cf:ac535a46baee767e7444ff08f7125b34c58be12d22a7d38865641bcbfb06c44d",
           "route": null
         }
       ],
       "residual_risk": [],
-      "review_result": "changes_required"
+      "review_result": "pass"
     }
   }
 }

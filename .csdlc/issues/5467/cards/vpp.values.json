@@ -1,0 +1,49 @@
+{
+  "identity": {
+    "schema_version": "1.0.0",
+    "template_version": "1.0.0",
+    "issue": 5467,
+    "repository": "danielbaustin/agent-design-language",
+    "title": "Repair unreachable backend-snapshot contract assertions",
+    "slug": "backend-snapshot-contract",
+    "version": "v0.91.7",
+    "generation": 10
+  },
+  "status": "ready",
+  "content": {
+    "card_kind": "vpp",
+    "values": {
+      "summary": "Execute the smallest proving validation DAG.",
+      "lanes": [
+        {
+          "lane": "backend-snapshot-local",
+          "proof_role": "Local contract and backend-routing proof",
+          "acceptance_ids": [
+            "AC-1",
+            "AC-2",
+            "AC-3",
+            "AC-4",
+            "AC-5"
+          ],
+          "deterministic": true,
+          "resource_profile": "small",
+          "budget_seconds": 600,
+          "budget_tokens": 5000,
+          "argv": [
+            "bash",
+            "adl/tools/test_run_aws_spot_ci_profile.sh"
+          ],
+          "parallel_group": "ci-contract-local",
+          "defer_reason": null
+        }
+      ],
+      "planned_validation_seconds": 1200,
+      "planned_validation_tokens": 10000,
+      "failure_policy": "Fail closed when the workflow snapshot changes, any assertion is bypassed, or backend input is invalid.",
+      "design_ref": ".csdlc/prepared/issues/5467/design.md",
+      "design_digest": "de8434266e09af78b8938b5e7fde26f38633d8a4977af4f5c398f580d11c97ce",
+      "diagram_ref": ".csdlc/prepared/issues/5467/diagram.mmd",
+      "diagram_digest": "6b41c17778163f5ed0e28be47eba40294f57ddccb660b1afc7b48766b48d5382"
+    }
+  }
+}

@@ -8,7 +8,7 @@ Repository: danielbaustin/agent-design-language
 
 Card: srp
 
-Status: pre_phase
+Status: complete
 
 ## Scope
 
@@ -38,7 +38,7 @@ docs/tooling/GITHUB_ACTIONS_RUNTIME_PIN_INVENTORY.md
     "actionable": true,
     "in_scope": true,
     "disposition": "fixed",
-    "fix_revision": "git-blake3:7c19d5461d71c79e8a4b9c4ba1a3f7d4f7c991ac:b785ae5945c851b62e70638a0713b7a9d0773a531e0329c20f6035ee19667fa2",
+    "fix_revision": "git-blake3:e3829a5a18db93b18ba0940fdd8e30fd2ff727cf:ac535a46baee767e7444ff08f7125b34c58be12d22a7d38865641bcbfb06c44d",
     "route": null
   },
   {
@@ -47,8 +47,8 @@ docs/tooling/GITHUB_ACTIONS_RUNTIME_PIN_INVENTORY.md
     "summary": "Rejected negative fixtures increment real workflow occurrence counts and can mask action disappearance.",
     "actionable": true,
     "in_scope": true,
-    "disposition": "open",
-    "fix_revision": null,
+    "disposition": "fixed",
+    "fix_revision": "git-blake3:e3829a5a18db93b18ba0940fdd8e30fd2ff727cf:ac535a46baee767e7444ff08f7125b34c58be12d22a7d38865641bcbfb06c44d",
     "route": null
   }
 ]
@@ -63,8 +63,8 @@ Every actionable finding requires a terminal disposition.
 
 ## Review Result
 
-Revision: Some("git-blake3:7c19d5461d71c79e8a4b9c4ba1a3f7d4f7c991ac:b785ae5945c851b62e70638a0713b7a9d0773a531e0329c20f6035ee19667fa2")
+Revision: Some("git-blake3:e3829a5a18db93b18ba0940fdd8e30fd2ff727cf:ac535a46baee767e7444ff08f7125b34c58be12d22a7d38865641bcbfb06c44d")
 
 Reviewer: Some("bounded-subagent-review-5463")
 
-Result: changes_required
+Result: pass

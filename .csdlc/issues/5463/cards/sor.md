@@ -8,7 +8,7 @@ Repository: danielbaustin/agent-design-language
 
 Card: sor
 
-Status: pre_phase
+Status: complete
 
 ## Summary
 
@@ -77,22 +77,32 @@ Move occurrence accounting after canonical SHA validation so rejected fixtures c
     "purpose": "Prove rejected negative fixtures cannot mask disappearance of a real canonical action occurrence",
     "outcome": "passed",
     "evidence_ref": "local:5463-occurrence-accounting-regression-pass"
+  },
+  {
+    "command": [
+      "gh",
+      "api",
+      "repos/danielbaustin/agent-design-language/actions/runs/29634999391/jobs"
+    ],
+    "purpose": "Prove hosted execution emits no Node.js 20 deprecation annotation and performs no AWS validation",
+    "outcome": "passed",
+    "evidence_ref": "github-actions:run-29634999391:all-check-annotations-empty:spot-skipped"
   }
 ]
 
 ## Integration
 
-not_started
+merged
 
 ## Publication
 
-Publication: not_published
+Publication: closed
 
-Merge: not_merged
+Merge: merged
 
 ## Closeout
 
-not_started
+complete
 
 ## Follow Ups
 

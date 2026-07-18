@@ -1,0 +1,8 @@
+{
+  "issue": 5467,
+  "expected_generation": 7,
+  "expected_digest": "2c30c0a45475ba58ae5d2a2851635d8b001f193b2f4f250e3b920cd8056467d7",
+  "claim_id": "claim-5467-backend-snapshot-contract",
+  "actor": "codex-root",
+  "reason": "The first exact-revision review produced two findings that are now fixed in a new substantive commit; recover for final-head review."
+}

@@ -1,0 +1,10 @@
+{
+  "issue": 5467,
+  "card": "sor",
+  "expected_generation": 4,
+  "expected_digest": "3066d8facf8e962cfc5e1c7d4ea2b3c049e503387e4e4ebaa034ca1536b7e0c9",
+  "claim_id": "claim-5467-backend-snapshot-contract",
+  "actor": "codex-root",
+  "reason": "The bounded implementation and typed local no-network PVF lane pass all acceptance criteria without AWS.",
+  "operation": {"operation": "advance_phase", "phase": "implemented"}
+}

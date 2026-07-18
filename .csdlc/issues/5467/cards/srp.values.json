@@ -1,0 +1,29 @@
+{
+  "identity": {
+    "schema_version": "1.0.0",
+    "template_version": "1.0.0",
+    "issue": 5467,
+    "repository": "danielbaustin/agent-design-language",
+    "title": "Repair unreachable backend-snapshot contract assertions",
+    "slug": "backend-snapshot-contract",
+    "version": "v0.91.7",
+    "generation": 10
+  },
+  "status": "draft",
+  "content": {
+    "card_kind": "srp",
+    "values": {
+      "review_scope": "",
+      "review_revision": null,
+      "reviewer": null,
+      "review_prompts": [
+        "Can the new assertions remain unreachable?",
+        "Do fixtures prove behavior rather than grep only?",
+        "Can any case invoke AWS?"
+      ],
+      "findings": [],
+      "residual_risk": [],
+      "review_result": "pre_review"
+    }
+  }
+}

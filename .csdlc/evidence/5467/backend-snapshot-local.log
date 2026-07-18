@@ -1,0 +1,2 @@
+PASS advertised_ref_commit_bound branch=codex/test
+PASS test_run_aws_spot_ci_profile

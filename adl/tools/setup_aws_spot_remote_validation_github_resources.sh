@@ -337,6 +337,7 @@ write(policy_path, {
         "Effect": "Allow",
         "Action": [
             "ec2:AuthorizeSecurityGroupIngress",
+            "ec2:AttachVolume",
             "ec2:CancelSpotInstanceRequests",
             "ec2:CreateSecurityGroup",
             "ec2:CreateTags",
@@ -355,6 +356,7 @@ write(policy_path, {
             "ssm:CancelCommand",
             "ssm:DescribeInstanceInformation",
             "ssm:GetCommandInvocation",
+            "ssm:GetParameter",
             "ssm:ListCommandInvocations",
             "ssm:SendCommand",
         ],
@@ -368,6 +370,7 @@ write(policy_path, {
             "iam:CreateRole",
             "iam:DeleteInstanceProfile",
             "iam:DeleteRole",
+            "iam:DeleteRolePolicy",
             "iam:GetInstanceProfile",
             "iam:GetRole",
             "iam:PassRole",

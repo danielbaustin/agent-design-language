@@ -1,0 +1,18 @@
+{
+  "issue": 5467,
+  "card": "sor",
+  "expected_generation": 3,
+  "expected_digest": "882559c47afcc63b50ffffbad1f9a8b421b4a621d147b570015dde80269b03e6",
+  "claim_id": "claim-5467-backend-snapshot-contract",
+  "actor": "codex-root",
+  "reason": "The focused local shell contract, all backend behavior cases, exact invalid exit status, and diff hygiene passed without AWS.",
+  "operation": {
+    "operation": "record_validation",
+    "result": {
+      "command": ["bash", "adl/tools/test_run_aws_spot_ci_profile.sh"],
+      "purpose": "Prove all backend snapshots are reachable and default hosted, explicit hosted, Spot-selected, and invalid backend values behave locally without AWS",
+      "outcome": "passed",
+      "evidence_ref": "local:5467-backend-snapshot-contract-shell-syntax-behavior-exit2-diff-check"
+    }
+  }
+}

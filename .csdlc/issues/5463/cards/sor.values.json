@@ -7,9 +7,9 @@
     "title": "[v0.91.7][ci] Upgrade pinned Actions away from deprecated Node 20 runtime",
     "slug": "v0-91-7-ci-node24-action-pins",
     "version": "v0.91.7",
-    "generation": 10
+    "generation": 19
   },
-  "status": "pre_phase",
+  "status": "complete",
   "content": {
     "card_kind": "sor",
     "values": {
@@ -73,12 +73,22 @@
           "purpose": "Prove rejected negative fixtures cannot mask disappearance of a real canonical action occurrence",
           "outcome": "passed",
           "evidence_ref": "local:5463-occurrence-accounting-regression-pass"
+        },
+        {
+          "command": [
+            "gh",
+            "api",
+            "repos/danielbaustin/agent-design-language/actions/runs/29634999391/jobs"
+          ],
+          "purpose": "Prove hosted execution emits no Node.js 20 deprecation annotation and performs no AWS validation",
+          "outcome": "passed",
+          "evidence_ref": "github-actions:run-29634999391:all-check-annotations-empty:spot-skipped"
         }
       ],
-      "integration_state": "not_started",
-      "publication_state": "not_published",
-      "merge_state": "not_merged",
-      "closeout_state": "not_started",
+      "integration_state": "merged",
+      "publication_state": "closed",
+      "merge_state": "merged",
+      "closeout_state": "complete",
       "follow_ups": []
     }
   }

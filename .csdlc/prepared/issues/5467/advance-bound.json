@@ -1,0 +1,1 @@
+{"issue":5467,"card":"sip","expected_generation":1,"expected_digest":"56cbbd309a592ac4f267dd4bc2ff42432ecc852a4ef412c75f32a0987dd72504","claim_id":"claim-5467-backend-snapshot-contract","actor":"codex-root","reason":"The dedicated issue branch and worktree are verified; issue-local binding avoids all main writes.","operation":{"operation":"advance_phase","phase":"bound"}}

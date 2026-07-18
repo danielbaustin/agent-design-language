@@ -1,0 +1,8 @@
+{
+  "issue": 5467,
+  "expected_generation": 9,
+  "expected_digest": "417b8a4a12c394293a06731a59e93e24d841e4e48ddaee288609a70e1486a53c",
+  "claim_id": "claim-5467-backend-snapshot-contract",
+  "actor": "codex-root",
+  "reason": "Rebase and committed lifecycle metadata changed revision identity after substantive review; recover for exact final-head review before publication."
+}

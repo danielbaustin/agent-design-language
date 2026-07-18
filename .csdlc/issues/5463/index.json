@@ -3,34 +3,14 @@
   "issue": 5463,
   "repository": "danielbaustin/agent-design-language",
   "initialization_digest": "f8acfa7ae245012c2e6017e2b33f50c8af46f755be2cb30c945a79c4173be0c5",
-  "phase": "implemented",
-  "generation": 10,
-  "digest": "edf5d7868ca8b09c3c1a8f9c1e369f85ca09de7f4e4bc449e6f918904ca7090e",
-  "claim": {
-    "id": "claim-5463-node24-action-pins",
-    "owner": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
-    "generation": 10,
-    "acquired_unix_seconds": 1784356628,
-    "expires_unix_seconds": 1784443028,
-    "heartbeat_unix_seconds": 1784356628,
-    "branch": "codex/5463-node24-action-pins",
-    "worktree": ".worktrees/adl-wp-5463",
-    "protected_paths": [
-      ".github/workflows/aws-codefriend-build.yaml",
-      ".github/workflows/aws-spot-remote-validation.yaml",
-      ".github/workflows/ci.yaml",
-      ".github/workflows/nightly-coverage-ratchet.yaml",
-      ".github/workflows/v0871_milestone_closeout_gate.yaml",
-      "adl/tools/test_ci_runtime_contracts.sh",
-      "adl/tools/test_ci_path_policy.sh",
-      "docs/tooling/GITHUB_ACTIONS_RUNTIME_PIN_INVENTORY.md"
-    ],
-    "purpose": "Upgrade deprecated Node 20 GitHub Action pins to reviewed Node 24 revisions"
-  },
+  "phase": "closed_out",
+  "generation": 19,
+  "digest": "f0e8de590b5ddca8fed15268f7d3f269666f89e1bf9fc37e18e1c817ca29d907",
+  "claim": null,
   "review_assignment": {
     "reviewer": "bounded-subagent-review-5463",
     "assigned_by": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
-    "revision": "git-blake3:7c19d5461d71c79e8a4b9c4ba1a3f7d4f7c991ac:b785ae5945c851b62e70638a0713b7a9d0773a531e0329c20f6035ee19667fa2",
+    "revision": "git-blake3:e3829a5a18db93b18ba0940fdd8e30fd2ff727cf:ac535a46baee767e7444ff08f7125b34c58be12d22a7d38865641bcbfb06c44d",
     "scope": [
       ".github/workflows/aws-codefriend-build.yaml",
       ".github/workflows/aws-spot-remote-validation.yaml",
@@ -54,7 +34,7 @@
       "adl/tools/test_ci_path_policy.sh",
       "docs/tooling/GITHUB_ACTIONS_RUNTIME_PIN_INVENTORY.md"
     ],
-    "reviewed_revision": "git-blake3:7c19d5461d71c79e8a4b9c4ba1a3f7d4f7c991ac:b785ae5945c851b62e70638a0713b7a9d0773a531e0329c20f6035ee19667fa2",
+    "reviewed_revision": "git-blake3:e3829a5a18db93b18ba0940fdd8e30fd2ff727cf:ac535a46baee767e7444ff08f7125b34c58be12d22a7d38865641bcbfb06c44d",
     "findings": [
       {
         "id": "F-5463-1",
@@ -63,7 +43,7 @@
         "actionable": true,
         "in_scope": true,
         "disposition": "fixed",
-        "fix_revision": "git-blake3:7c19d5461d71c79e8a4b9c4ba1a3f7d4f7c991ac:b785ae5945c851b62e70638a0713b7a9d0773a531e0329c20f6035ee19667fa2",
+        "fix_revision": "git-blake3:e3829a5a18db93b18ba0940fdd8e30fd2ff727cf:ac535a46baee767e7444ff08f7125b34c58be12d22a7d38865641bcbfb06c44d",
         "route": null
       },
       {
@@ -72,8 +52,8 @@
         "summary": "Rejected negative fixtures increment real workflow occurrence counts and can mask action disappearance.",
         "actionable": true,
         "in_scope": true,
-        "disposition": "open",
-        "fix_revision": null,
+        "disposition": "fixed",
+        "fix_revision": "git-blake3:e3829a5a18db93b18ba0940fdd8e30fd2ff727cf:ac535a46baee767e7444ff08f7125b34c58be12d22a7d38865641bcbfb06c44d",
         "route": null
       }
     ],
@@ -81,12 +61,116 @@
     "completed": true,
     "non_substantive_proof": null
   },
-  "publication": null,
-  "readiness": null,
-  "terminal": null,
+  "publication": {
+    "repository": "danielbaustin/agent-design-language",
+    "issue": 5463,
+    "pull_request": 5483,
+    "url": "https://github.com/danielbaustin/agent-design-language/pull/5483",
+    "base": "main",
+    "head": "codex/5463-node24-action-pins",
+    "revision": "git-blake3:e3829a5a18db93b18ba0940fdd8e30fd2ff727cf:ac535a46baee767e7444ff08f7125b34c58be12d22a7d38865641bcbfb06c44d",
+    "draft": false,
+    "observed_state": "merged"
+  },
+  "readiness": {
+    "pull_request": 5483,
+    "head_sha": "e3829a5a18db93b18ba0940fdd8e30fd2ff727cf",
+    "checks": [
+      {
+        "name": "adl-ci",
+        "requirement": "required",
+        "conclusion": "success",
+        "details_url": "https://github.com/danielbaustin/agent-design-language/actions/runs/29634999391/job/88055759699"
+      },
+      {
+        "name": "adl-coverage",
+        "requirement": "required",
+        "conclusion": "success",
+        "details_url": "https://github.com/danielbaustin/agent-design-language/actions/runs/29634999391/job/88055713291"
+      },
+      {
+        "name": "adl-tooling-contracts",
+        "requirement": "required",
+        "conclusion": "success",
+        "details_url": "https://github.com/danielbaustin/agent-design-language/actions/runs/29634999391/job/88055696260"
+      },
+      {
+        "name": "adl-path-policy",
+        "requirement": "required",
+        "conclusion": "success",
+        "details_url": "https://github.com/danielbaustin/agent-design-language/actions/runs/29634999391/job/88055678461"
+      },
+      {
+        "name": "adl-demo-proof",
+        "requirement": "required",
+        "conclusion": "success",
+        "details_url": "https://github.com/danielbaustin/agent-design-language/actions/runs/29634999391/job/88055696283"
+      },
+      {
+        "name": "adl-coverage-hosted",
+        "requirement": "optional",
+        "conclusion": "success",
+        "details_url": "https://github.com/danielbaustin/agent-design-language/actions/runs/29634999391/job/88055696324"
+      },
+      {
+        "name": "adl-runtime-v3-fast",
+        "requirement": "optional",
+        "conclusion": "skipped",
+        "details_url": "https://github.com/danielbaustin/agent-design-language/actions/runs/29634999391/job/88055697059"
+      },
+      {
+        "name": "adl-rust-fmt-clippy",
+        "requirement": "optional",
+        "conclusion": "skipped",
+        "details_url": "https://github.com/danielbaustin/agent-design-language/actions/runs/29634999391/job/88055696625"
+      },
+      {
+        "name": "adl-rust-tests",
+        "requirement": "optional",
+        "conclusion": "skipped",
+        "details_url": "https://github.com/danielbaustin/agent-design-language/actions/runs/29634999391/job/88055696597"
+      },
+      {
+        "name": "adl-slow-proof",
+        "requirement": "optional",
+        "conclusion": "skipped",
+        "details_url": "https://github.com/danielbaustin/agent-design-language/actions/runs/29634999391/job/88055696524"
+      },
+      {
+        "name": "adl-spot-ci-and-coverage",
+        "requirement": "optional",
+        "conclusion": "skipped",
+        "details_url": "https://github.com/danielbaustin/agent-design-language/actions/runs/29634999391/job/88055696686"
+      }
+    ],
+    "review_state": "not_required",
+    "conflict_state": "clean",
+    "post_publication_findings": [],
+    "ready": true,
+    "blockers": []
+  },
+  "terminal": {
+    "pull_request": 5483,
+    "disposition": "merged",
+    "observed_sha": "e3829a5a18db93b18ba0940fdd8e30fd2ff727cf",
+    "observed_state": "merged",
+    "receipt_path": "csdlc-v2/closeout/5463.json",
+    "released_branch": "codex/5463-node24-action-pins",
+    "released_worktree": ".worktrees/adl-wp-5463",
+    "released_protected_paths": [
+      ".github/workflows/aws-codefriend-build.yaml",
+      ".github/workflows/aws-spot-remote-validation.yaml",
+      ".github/workflows/ci.yaml",
+      ".github/workflows/nightly-coverage-ratchet.yaml",
+      ".github/workflows/v0871_milestone_closeout_gate.yaml",
+      "adl/tools/test_ci_runtime_contracts.sh",
+      "adl/tools/test_ci_path_policy.sh",
+      "docs/tooling/GITHUB_ACTIONS_RUNTIME_PIN_INVENTORY.md"
+    ]
+  },
   "migration": null,
-  "design_path": ".csdlc/prepared/issues/5463/design.md",
-  "diagram_path": ".csdlc/prepared/issues/5463/diagram.mmd",
+  "design_path": ".csdlc/issues/5463/retained/design.md",
+  "diagram_path": ".csdlc/issues/5463/retained/diagram.mmd",
   "design_review": {
     "approved": {
       "reviewer": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
@@ -95,34 +179,34 @@
   },
   "cards": {
     "sip": {
-      "values_digest": "a086ee6f65ca50e7016bfe051256df75a093631f04706b64c5644b1cc754a6f7",
+      "values_digest": "07fd995ec1dc8db2cd2f4d1f4c1b2bbb55ae2b874e524aac8ac40d1d96675dd4",
       "rendered_digest": "116ecd514fd218a6b2bfeafeceba5897f833cd75eecca4906aa596c663a42ad1",
       "ast_digest": "055c88cb431f309965d18d1b03e53b285236d3274271fbf29637501e28513148"
     },
     "stp": {
-      "values_digest": "be84b20e55f99aa294efd00f62edd619bc709d9d3d25a5f1109a087c59796305",
+      "values_digest": "a36bcf34f044b0fd2931db05b394ac6cdedb27e2facdf1a03fab50f78961325b",
       "rendered_digest": "65c8dc354b936414b8a32edecb10f2c7c786b25a25ecfae40ae7f184fa2f7c3d",
       "ast_digest": "091ab560afbb4b9b8cf99d8062958bf060cc2071b488261c653bebf9029d190e"
     },
     "spp": {
-      "values_digest": "4b0c73a7fa4daeae78e10417882b920dc9716003e58e987a7e2fdb353f4cab17",
-      "rendered_digest": "e90ef2d4205cb124b557e22c1c43ea52d7770fb4c97deea49ace098a1fcdfab2",
-      "ast_digest": "cfa727ea5ef308c202c0ecea492b419bb70f5cebeb9991ececd775f4f39ddf92"
+      "values_digest": "3a02325ba25731d06520c8de53383a4b736a2ae44e227f860a21e1fd39f5ae88",
+      "rendered_digest": "34b9b0ad9474471e9c6f42472aef814f2708cfbe6795bef7f5a36da54bd65968",
+      "ast_digest": "4d3f89d2301e803c3586f463007604f1d9cc605a4dd8509b11ac6193ac124d37"
     },
     "vpp": {
-      "values_digest": "c914acf8c07656c74ec3181e66b6f98e9f417f9cc0a9b344d715cca5e51894c4",
-      "rendered_digest": "9916975d95eaed7aaf8f51caabbda183377af039827c88793385d7761329815e",
-      "ast_digest": "8f6f00a2dfc4e8878be02995b0924ea97025a2b98c88520bd6f8991ffd0d3f65"
+      "values_digest": "daf14336bb692a93091d0cba06e7a85a27fc4146b4bdd6332c679f14b55934d3",
+      "rendered_digest": "87487a7bf345b870256b0cd16ae0f6397a186529a5d5265d7655acf773237858",
+      "ast_digest": "2bd3394f064c84198f94ff93b4636a645fc9edee892936961be966fd2288b316"
     },
     "srp": {
-      "values_digest": "b25e2d845350fc5f5ff67e78f6bc4e1b7022c487f63f8b114958194a0754bee2",
-      "rendered_digest": "51874519eeeb38975cb4e173ea0cfe7c7cc8bb7d05cc9122c8d9fc8bdb9e4d99",
-      "ast_digest": "93d1309752f4459e2824c92b519c656a8cf62394760a38f6edc60ab78cb08428"
+      "values_digest": "2bdb65d8f0127cedeb1b96bd6c72d3c1ed91d3cacf9b37ce4874005a9ad97c45",
+      "rendered_digest": "134ef3aa0207c6048b32153afa503332ce2f38e1b0709e148a85b65403b46713",
+      "ast_digest": "9b9e416e388f81e970aa81e59f4be1a4e55d2fe551cbfa7e35ebf6d0543e0da3"
     },
     "sor": {
-      "values_digest": "aa57e139b93a55db3589cebda9c95161b78b7631cbf318b70ea83f4e0c59de07",
-      "rendered_digest": "aef83baad4fc3d94d7c400a0ee45884310ad114aa392ada90198794e67ea4f99",
-      "ast_digest": "bdec276a8d96c6d654297521963854b208c7879d53eae3da75ece380afd2a489"
+      "values_digest": "2d099a7c4bd7f70216d393020986bd9d826c1b983980f5c99aa2c0f256ac71b0",
+      "rendered_digest": "05fe5007676132eaf0f00ce00886093e74b4b7a5f2cb3c98333122db87cbcfff",
+      "ast_digest": "6c52bd8b3c9db98bb1cc41f33ee7a694840cc59f26bfd09743c50d906fdbc65b"
     }
   },
   "transitions": [
@@ -146,6 +230,41 @@
       "to": "implemented",
       "actor": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
       "reason": "The bounded action runtime upgrade, retained inventory, and focused local proof are complete."
+    },
+    {
+      "sequence": 4,
+      "from": "implemented",
+      "to": "reviewed",
+      "actor": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+      "reason": "Exact current-revision review passed after both actionable findings were fixed."
+    },
+    {
+      "sequence": 5,
+      "from": "reviewed",
+      "to": "published",
+      "actor": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+      "reason": "observed exact draft PR after current review"
+    },
+    {
+      "sequence": 6,
+      "from": "published",
+      "to": "merge_ready",
+      "actor": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+      "reason": "observed required checks, review, and conflict readiness"
+    },
+    {
+      "sequence": 7,
+      "from": "merge_ready",
+      "to": "merged",
+      "actor": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+      "reason": "observed exact PR merged"
+    },
+    {
+      "sequence": 8,
+      "from": "merged",
+      "to": "closed_out",
+      "actor": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+      "reason": "terminal truth recorded and claim released"
     }
   ],
   "audit": [
@@ -246,6 +365,76 @@
       "actor": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
       "reason": "The canonical runtime contract passes with fixture-isolated occurrence accounting.",
       "operation": "{\"operation\":\"record_validation\",\"result\":{\"command\":[\"bash\",\"adl/tools/test_ci_runtime_contracts.sh\"],\"purpose\":\"Prove rejected negative fixtures cannot mask disappearance of a real canonical action occurrence\",\"outcome\":\"passed\",\"evidence_ref\":\"local:5463-occurrence-accounting-regression-pass\"}}"
+    },
+    {
+      "sequence": 15,
+      "generation": 10,
+      "actor": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+      "reason": "assign bounded exact-revision review",
+      "operation": "assign_review"
+    },
+    {
+      "sequence": 16,
+      "generation": 11,
+      "actor": "bounded-subagent-review-5463",
+      "reason": "atomically record review evidence and SRP projection",
+      "operation": "record_review"
+    },
+    {
+      "sequence": 17,
+      "generation": 12,
+      "actor": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+      "reason": "Exact current-revision review passed after both actionable findings were fixed.",
+      "operation": "{\"operation\":\"advance_phase\",\"phase\":\"reviewed\"}"
+    },
+    {
+      "sequence": 18,
+      "generation": 13,
+      "actor": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+      "reason": "atomically record observed GitHub publication and SOR projection",
+      "operation": "record_publication"
+    },
+    {
+      "sequence": 19,
+      "generation": 14,
+      "actor": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+      "reason": "GitHub-hosted run 29634999391 completed green with empty annotations for every check; the AWS Spot lane was skipped.",
+      "operation": "{\"operation\":\"record_validation\",\"result\":{\"command\":[\"gh\",\"api\",\"repos/danielbaustin/agent-design-language/actions/runs/29634999391/jobs\"],\"purpose\":\"Prove hosted execution emits no Node.js 20 deprecation annotation and performs no AWS validation\",\"outcome\":\"passed\",\"evidence_ref\":\"github-actions:run-29634999391:all-check-annotations-empty:spot-skipped\"}}"
+    },
+    {
+      "sequence": 20,
+      "generation": 15,
+      "actor": "bounded-subagent-review-5463",
+      "reason": "atomically record review evidence and SRP projection",
+      "operation": "record_review"
+    },
+    {
+      "sequence": 21,
+      "generation": 16,
+      "actor": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+      "reason": "record normalized remote readiness without replacing pre-publication review",
+      "operation": "record_readiness"
+    },
+    {
+      "sequence": 22,
+      "generation": 17,
+      "actor": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+      "reason": "record normalized remote readiness without replacing pre-publication review",
+      "operation": "record_readiness"
+    },
+    {
+      "sequence": 23,
+      "generation": 18,
+      "actor": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+      "reason": "atomically finalize SOR/index and release claim/protected paths",
+      "operation": "record_terminal"
+    },
+    {
+      "sequence": 24,
+      "generation": 19,
+      "actor": "codex:019f4b3e-6c61-7653-957b-7a2a6042a80d",
+      "reason": "Materialize the retained #5463 terminal receipt after merged PR #5483.",
+      "operation": "reconcile_terminal"
     }
   ]
 }

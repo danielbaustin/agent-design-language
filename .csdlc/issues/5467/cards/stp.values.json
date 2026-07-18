@@ -1,0 +1,45 @@
+{
+  "identity": {
+    "schema_version": "1.0.0",
+    "template_version": "1.0.0",
+    "issue": 5467,
+    "repository": "danielbaustin/agent-design-language",
+    "title": "Repair unreachable backend-snapshot contract assertions",
+    "slug": "backend-snapshot-contract",
+    "version": "v0.91.7",
+    "generation": 10
+  },
+  "status": "ready",
+  "content": {
+    "card_kind": "stp",
+    "values": {
+      "task_boundary": "Repair and prove only the local backend-snapshot CI contract.",
+      "deliverables": [
+        "Repaired contract assertion",
+        "Reachability proof for all snapshot checks",
+        "Three local backend behavior cases"
+      ],
+      "acceptance_criteria": [
+        "AC-1: Repair the stale builder-script assertion",
+        "AC-2: Prove every backend-snapshot assertion executes",
+        "AC-3: Locally prove hosted and Spot-selected routing",
+        "AC-4: Invalid backend fails closed",
+        "AC-5: No AWS execution or inspection"
+      ],
+      "dependencies": [
+        "#5412 final-head review finding routed to #5467"
+      ],
+      "repo_inputs": [
+        "adl/tools/test_run_aws_spot_ci_profile.sh",
+        ".github/workflows/ci.yaml",
+        "adl/tools/run_aws_spot_builder_image_validation.sh",
+        "adl/tools/verify_ci_backend_route.py"
+      ],
+      "non_goals": [
+        "No AWS execution, inspection, cleanup, or credentials",
+        "No Runtime v3 product changes",
+        "No remote workflow invocation"
+      ]
+    }
+  }
+}

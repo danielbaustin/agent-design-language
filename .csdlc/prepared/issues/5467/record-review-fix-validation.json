@@ -1,0 +1,18 @@
+{
+  "issue": 5467,
+  "card": "sor",
+  "expected_generation": 6,
+  "expected_digest": "960900be9217dc3d55e27484de943d787a501112fddf988644c85c9e04f99f66",
+  "claim_id": "claim-5467-backend-snapshot-contract",
+  "actor": "codex-root",
+  "reason": "The locally executable contract and syntax checks pass after both review fixes; no AWS was used.",
+  "operation": {
+    "operation": "record_validation",
+    "result": {
+      "command": ["bash", "adl/tools/test_run_aws_spot_ci_profile.sh"],
+      "purpose": "Prove reachable backend snapshots, local routing behavior, exact invalid exit status, and source-to-policy coverage for live SSM, EBS attach, and IAM cleanup capabilities",
+      "outcome": "passed",
+      "evidence_ref": "local:5467-review-fixes-backend-policy-owner-contract"
+    }
+  }
+}
