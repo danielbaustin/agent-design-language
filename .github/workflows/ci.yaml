@@ -651,7 +651,7 @@ jobs:
   adl_coverage_hosted:
     name: adl-coverage-hosted
     needs: adl_path_policy
-    if: needs.adl_path_policy.outputs.heavy_ci_backend != 'spot' || github.event_name != 'pull_request' || github.event.pull_request.head.repo.full_name != github.repository || !contains(github.event.pull_request.labels.*.name, 'ci:spot')
+    if: needs.adl_path_policy.outputs.coverage_required == 'true' && (needs.adl_path_policy.outputs.heavy_ci_backend != 'spot' || github.event_name != 'pull_request' || github.event.pull_request.head.repo.full_name != github.repository || !contains(github.event.pull_request.labels.*.name, 'ci:spot'))
     runs-on: ubuntu-latest
     permissions:
       contents: read
