@@ -204,11 +204,13 @@ fn validate_validation_lanes(
 }
 
 pub fn bind_issue(store: &Store, request: BindRequest) -> Result<BindResult> {
+    let issue_local = request.worktree == "."
+        && git::current_branch(store.root()).is_ok_and(|branch| branch == request.branch);
     if request.branch == "main"
         || request.branch == request.base_branch
         || request.claim.branch != request.branch
         || request.claim.worktree != request.worktree
-        || !clean_relative(&request.worktree)
+        || (!issue_local && !clean_relative(&request.worktree))
         || request
             .claim
             .protected_paths
@@ -221,13 +223,17 @@ pub fn bind_issue(store: &Store, request: BindRequest) -> Result<BindResult> {
         ));
     }
     let _binding_lock = store.binding_lock()?;
-    if git::current_branch(store.root())? != request.base_branch {
+    if !issue_local && git::current_branch(store.root())? != request.base_branch {
         return Err(V2Error::new(
             ErrorCode::UnsafeCheckout,
             "primary checkout is not on the declared base branch",
         ));
     }
-    let wanted = store.root().join(&request.worktree);
+    let wanted = if issue_local {
+        store.root().to_path_buf()
+    } else {
+        store.root().join(&request.worktree)
+    };
     let wanted_compare = if wanted.exists() {
         fs::canonicalize(&wanted)?
     } else {
@@ -313,7 +319,7 @@ pub fn bind_issue(store: &Store, request: BindRequest) -> Result<BindResult> {
             "issue phase cannot be bound",
         ));
     }
-    let created = !wanted.exists();
+    let created = !issue_local && !wanted.exists();
     if created {
         let base = request.base_branch.as_str();
         let branch = request.branch.as_str();

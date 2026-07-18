@@ -1,0 +1,249 @@
+{
+  "schema": "csdlc.issue.index.v1",
+  "issue": 5412,
+  "repository": "danielbaustin/agent-design-language",
+  "initialization_digest": "2379ef2e66d7cbb7b2aaacd517fd705df312bd5ada080cb87ce4e09975944b31",
+  "phase": "reviewed",
+  "generation": 8,
+  "digest": "be86a552d9726414619dac2889f68b6f578ebefa7a70d1eec4f1c8c24b28025b",
+  "claim": {
+    "id": "claim-5412-runtime-v3-authenticity",
+    "owner": "codex-root",
+    "generation": 8,
+    "acquired_unix_seconds": 1784350834,
+    "expires_unix_seconds": 1784955634,
+    "heartbeat_unix_seconds": 1784350834,
+    "branch": "codex/5412-runtime-v3-state-authenticity",
+    "worktree": ".worktrees/adl-wp-5412",
+    "protected_paths": [
+      "adl-runtime-kernel/src/identity_memory.rs",
+      "adl-runtime-kernel/src/private_state.rs",
+      "adl-runtime-kernel/tests/identity_memory.rs",
+      "adl-runtime-kernel/tests/private_state.rs",
+      "adl-runtime-kernel/tests/guardian_soak.rs",
+      "adl/tools/run_runtime_v3_guardian_soak.sh",
+      "adl/tools/report_runtime_v3_loc.sh",
+      "docs/architecture/RUNTIME_V3_STATE_AUTHENTICITY_5412.md",
+      "docs/architecture/runtime_v3_state_authenticity_5412.v1.json"
+    ],
+    "purpose": "Resolve #5247 Runtime v3 state-authenticity and readiness findings"
+  },
+  "review_assignment": {
+    "reviewer": "bounded-subagent-review-5412",
+    "assigned_by": "codex-root",
+    "revision": "git-blake3:a995c185255b041c4215d163630eee7374225983:8f5704ab088e16e4c09c9317d8e3963e3180e77c8dc16bcde623717255324a90",
+    "scope": [
+      "adl-runtime-kernel/src/identity_memory.rs",
+      "adl-runtime-kernel/src/private_state.rs",
+      "adl-runtime-kernel/tests/identity_memory.rs",
+      "adl-runtime-kernel/tests/private_state.rs",
+      "adl/tools/run_runtime_v3_guardian_soak.sh",
+      "adl/tools/test_run_runtime_v3_guardian_soak.sh",
+      "adl/tools/report_runtime_v3_loc.sh",
+      "docs/architecture/RUNTIME_V3_STATE_AUTHENTICITY_5412.md",
+      "docs/architecture/runtime_v3_state_authenticity_5412.v1.json"
+    ]
+  },
+  "review": {
+    "reviewer": "bounded-subagent-review-5412",
+    "scope": [
+      "adl-runtime-kernel/src/identity_memory.rs",
+      "adl-runtime-kernel/src/private_state.rs",
+      "adl-runtime-kernel/tests/identity_memory.rs",
+      "adl-runtime-kernel/tests/private_state.rs",
+      "adl/tools/run_runtime_v3_guardian_soak.sh",
+      "adl/tools/test_run_runtime_v3_guardian_soak.sh",
+      "adl/tools/report_runtime_v3_loc.sh",
+      "docs/architecture/RUNTIME_V3_STATE_AUTHENTICITY_5412.md",
+      "docs/architecture/runtime_v3_state_authenticity_5412.v1.json"
+    ],
+    "reviewed_revision": "git-blake3:a995c185255b041c4215d163630eee7374225983:8f5704ab088e16e4c09c9317d8e3963e3180e77c8dc16bcde623717255324a90",
+    "findings": [
+      {
+        "id": "F-5412-REVIEW-1",
+        "severity": "p2",
+        "summary": "Signed checkpoint fields changed the wire contract without advancing the checkpoint schema or defining legacy-v1 behavior.",
+        "actionable": true,
+        "in_scope": true,
+        "disposition": "fixed",
+        "fix_revision": "git-blake3:a995c185255b041c4215d163630eee7374225983:8f5704ab088e16e4c09c9317d8e3963e3180e77c8dc16bcde623717255324a90",
+        "route": null
+      },
+      {
+        "id": "F-5412-REVIEW-2",
+        "severity": "p2",
+        "summary": "The soak wrapper could accept stale or semantically invalid report evidence after a successful command exit.",
+        "actionable": true,
+        "in_scope": true,
+        "disposition": "fixed",
+        "fix_revision": "git-blake3:a995c185255b041c4215d163630eee7374225983:8f5704ab088e16e4c09c9317d8e3963e3180e77c8dc16bcde623717255324a90",
+        "route": null
+      }
+    ],
+    "residual_risks": [
+      "Runtime v3 remains above the 10,000-line target at 12,034 physical Rust source lines; the bounded exception and v0.91.8 reduction ownership remain explicit."
+    ],
+    "completed": true,
+    "non_substantive_proof": null
+  },
+  "publication": null,
+  "readiness": null,
+  "terminal": null,
+  "migration": null,
+  "design_path": ".csdlc/prepared/issues/5412/design.md",
+  "diagram_path": ".csdlc/prepared/issues/5412/diagram.mmd",
+  "design_review": {
+    "approved": {
+      "reviewer": "codex-root-design-reapproval",
+      "revision": "4e517a54c8639a8255091cc924403fa5b66721b42878507b50c1a03d12ddcc27"
+    }
+  },
+  "cards": {
+    "sip": {
+      "values_digest": "8192e74695137cfb3d04422dc41127f821cb386a34b3cf248af3bf75a8889ef0",
+      "rendered_digest": "47525451e9f17970dee88a3ec45a701d52cf3b59bac9aa9c4877f6f6f8eb7817",
+      "ast_digest": "39e6679c6808a294122e30c0e4dfcce85244464080515e5283904f935889caad"
+    },
+    "stp": {
+      "values_digest": "33fce4284c134b3debe50309fbb2c77e89d2ea387f757f4be7ccc8c7ac510aae",
+      "rendered_digest": "1220d87f1f840e46b6a2ea0273c09772dc4832216a522721560efc7bfab8ca8c",
+      "ast_digest": "6ed5674859e51639317bdd9af33eed0627b3b3e657e41f95bbf89125cde4aac5"
+    },
+    "spp": {
+      "values_digest": "91fddc76231f07f89818ee949d4597667c30f91e1c7a9700a2238d63bc9ec0ca",
+      "rendered_digest": "b2b805bc42accf79f5a883975b0212c1ccd2b242b907485065693c08c2776231",
+      "ast_digest": "c9a74bbecea6dc5e6259db7cfcab9749686700758bc5a43b660202e260dee306"
+    },
+    "vpp": {
+      "values_digest": "3b915b4cf18ed6784cd52961135fb7b7ec17e2d6ce7229de44393de59ad279fa",
+      "rendered_digest": "b6aaa583a69ebe12dc05365e7fc27725dd2061e8c6028a5defb592372510513d",
+      "ast_digest": "8d687895701858d61b738793006ad2faf533454d3707a219257ce0f38f03bbbf"
+    },
+    "srp": {
+      "values_digest": "56b84d2af590019b25e4b01e4d9b8dde8713905f33a59210fc49c05def840c84",
+      "rendered_digest": "e989bc54338aedd78a12907d6e42e185ecdede9e85fed8b82765320485f09244",
+      "ast_digest": "1d94aec369fe2f1c718dd8080ece251e4b33d05dcd0aadbc5ffbfd32852e597c"
+    },
+    "sor": {
+      "values_digest": "206443b9de97f9c5b0d5d414537e993e41cf17b89db5dce9843f001c765afc70",
+      "rendered_digest": "0ec27c367acbee329973d0ea22afcec6284d4d22c2eea91ab1643cbb84345eb6",
+      "ast_digest": "1c710e541b9d9021b5197408840937f2c2948998b75885ee9f6a7a1388f73d48"
+    }
+  },
+  "transitions": [
+    {
+      "sequence": 1,
+      "from": "initialized",
+      "to": "ready",
+      "actor": "codex-root",
+      "reason": "Typed initialization and doctor readiness passed for the bounded #5412 security/readiness repair."
+    },
+    {
+      "sequence": 2,
+      "from": "ready",
+      "to": "bound",
+      "actor": "codex-root",
+      "reason": "verified Git worktree binding"
+    },
+    {
+      "sequence": 3,
+      "from": "bound",
+      "to": "implemented",
+      "actor": "codex-root",
+      "reason": "All four #5247 remediation outcomes are implemented and their focused, full-suite, real-soak, lint, format, and source-budget evidence is recorded."
+    },
+    {
+      "sequence": 4,
+      "from": "implemented",
+      "to": "reviewed",
+      "actor": "codex-root",
+      "reason": "Exact-revision bounded review passed after both actionable findings were fixed and revalidated."
+    }
+  ],
+  "audit": [
+    {
+      "sequence": 1,
+      "generation": 0,
+      "actor": "codex-root",
+      "reason": "initialize issue record and all six cards",
+      "operation": "bootstrap"
+    },
+    {
+      "sequence": 2,
+      "generation": 1,
+      "actor": "codex-root",
+      "reason": "Typed initialization and doctor readiness passed for the bounded #5412 security/readiness repair.",
+      "operation": "{\"operation\":\"advance_phase\",\"phase\":\"ready\"}"
+    },
+    {
+      "sequence": 3,
+      "generation": 1,
+      "actor": "codex-root",
+      "reason": "bind branch/worktree and activate claim",
+      "operation": "bind"
+    },
+    {
+      "sequence": 4,
+      "generation": 2,
+      "actor": "codex-root",
+      "reason": "Record the completed bounded #5412 implementation before final validation and review.",
+      "operation": "{\"operation\":\"record_execution\",\"summary\":\"Authenticated complete Runtime v3 memory checkpoints, required verified accepted-lineage membership for private projections, added the explicit real guardian-soak release lane, and retained a bounded source-size exception with reduction ownership.\",\"changes\":[\"signed and verified complete MemoryCheckpoint payloads with exact identity-key binding\",\"made private projection require trusted signature verification and exact accepted-lineage membership\",\"added focused forgery substitution and non-membership regressions\",\"added an explicit 100-cycle scheduled/release guardian-soak runner\",\"added reproducible Runtime v3 source counting and a v0.91.8-bounded reduction disposition\"],\"artifacts\":[\"adl-runtime-kernel/src/identity_memory.rs\",\"adl-runtime-kernel/src/private_state.rs\",\"adl-runtime-kernel/tests/identity_memory.rs\",\"adl-runtime-kernel/tests/private_state.rs\",\"adl/tools/run_runtime_v3_guardian_soak.sh\",\"adl/tools/report_runtime_v3_loc.sh\",\"docs/architecture/RUNTIME_V3_STATE_AUTHENTICITY_5412.md\",\"docs/architecture/runtime_v3_state_authenticity_5412.v1.json\"]}"
+    },
+    {
+      "sequence": 5,
+      "generation": 3,
+      "actor": "codex-root",
+      "reason": "Record completed focused, full-suite, soak, source-budget, formatting, and lint validation.",
+      "operation": "{\"operation\":\"record_validation\",\"result\":{\"command\":[\"cargo test --manifest-path adl-runtime-kernel/Cargo.toml\",\"cargo clippy --manifest-path adl-runtime-kernel/Cargo.toml --all-targets -- -D warnings\",\"cargo fmt --manifest-path adl-runtime-kernel/Cargo.toml -- --check\",\"ADL_RUNTIME_V3_SOAK_REPORT=/tmp/5412-guardian-soak-final.json bash adl/tools/run_runtime_v3_guardian_soak.sh\",\"bash adl/tools/report_runtime_v3_loc.sh\",\"python3 -m json.tool docs/architecture/runtime_v3_state_authenticity_5412.v1.json\",\"git diff --check\"],\"purpose\":\"Prove the complete #5412 authenticity, accepted-lineage, real-soak, and bounded source-size outcome.\",\"outcome\":\"passed\",\"evidence_ref\":\"/tmp/5412-guardian-soak-final.json and local exact-worktree validation output\"}}"
+    },
+    {
+      "sequence": 6,
+      "generation": 4,
+      "actor": "codex-root",
+      "reason": "All four #5247 remediation outcomes are implemented and their focused, full-suite, real-soak, lint, format, and source-budget evidence is recorded.",
+      "operation": "{\"operation\":\"advance_phase\",\"phase\":\"implemented\"}"
+    },
+    {
+      "sequence": 7,
+      "generation": 5,
+      "actor": "codex-root-design-reapproval",
+      "reason": "reapprove changed issue design",
+      "operation": "approve_design"
+    },
+    {
+      "sequence": 8,
+      "generation": 6,
+      "actor": "codex-root",
+      "reason": "Durably route the stale stable C-SDLC v2 owner-binary provenance defect discovered during exact-review preparation.",
+      "operation": "{\"operation\":\"record_finding\",\"finding\":{\"id\":\"F-5412-TOOLING-1\",\"severity\":\"p1\",\"summary\":\"Stable installed csdlc-edit lagged current tracked implemented-phase design reapproval semantics.\",\"actionable\":false,\"in_scope\":false,\"disposition\":\"out_of_scope\",\"fix_revision\":null,\"route\":\"https://github.com/danielbaustin/agent-design-language/issues/5455\"}}"
+    },
+    {
+      "sequence": 9,
+      "generation": 6,
+      "actor": "codex-root",
+      "reason": "assign bounded exact-revision review",
+      "operation": "assign_review"
+    },
+    {
+      "sequence": 10,
+      "generation": 6,
+      "actor": "codex-root",
+      "reason": "assign bounded exact-revision review",
+      "operation": "assign_review"
+    },
+    {
+      "sequence": 11,
+      "generation": 7,
+      "actor": "codex-root",
+      "reason": "atomically record review evidence and SRP projection",
+      "operation": "record_review"
+    },
+    {
+      "sequence": 12,
+      "generation": 8,
+      "actor": "codex-root",
+      "reason": "Exact-revision bounded review passed after both actionable findings were fixed and revalidated.",
+      "operation": "{\"operation\":\"advance_phase\",\"phase\":\"reviewed\"}"
+    }
+  ]
+}

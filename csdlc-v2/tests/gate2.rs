@@ -165,6 +165,55 @@ fn bind_creates_and_idempotently_reuses_typed_worktree() {
 }
 
 #[test]
+fn bind_supports_issue_local_state_without_touching_primary_checkout() {
+    let temp = tempfile::tempdir().unwrap();
+    fs::create_dir_all(temp.path().join("docs")).unwrap();
+    fs::write(temp.path().join("docs/design.md"), "# design\n").unwrap();
+    fs::write(
+        temp.path().join("docs/diagram.mmd"),
+        "flowchart LR\n A-->B\n",
+    )
+    .unwrap();
+    let mut initial = request();
+    initial.claim.worktree = ".".into();
+    let store = Store::new(temp.path());
+    let record = csdlc_v2::initialize_issue(&store, initial).unwrap();
+    git(temp.path(), &["init", "-b", "main"]);
+    git(
+        temp.path(),
+        &["config", "user.email", "test@example.invalid"],
+    );
+    git(temp.path(), &["config", "user.name", "C-SDLC Test"]);
+    git(temp.path(), &["add", "docs"]);
+    git(temp.path(), &["commit", "-m", "fixture"]);
+    git(temp.path(), &["switch", "-c", "issue-42"]);
+    let claim = record.claim.clone().expect("claim");
+    let request = csdlc_v2::BindRequest {
+        issue: 42,
+        base_branch: "main".into(),
+        branch: "issue-42".into(),
+        worktree: ".".into(),
+        claim,
+    };
+    let result = csdlc_v2::bind_issue(&store, request).expect("issue-local bind");
+    assert!(!result.created);
+    assert_eq!(
+        store.load_record(42).unwrap().phase,
+        csdlc_v2::LifecyclePhase::Bound
+    );
+    assert_eq!(git_branch(temp.path()), "issue-42");
+}
+
+fn git_branch(root: &std::path::Path) -> String {
+    let output = std::process::Command::new("git")
+        .current_dir(root)
+        .args(["branch", "--show-current"])
+        .output()
+        .unwrap();
+    String::from_utf8(output.stdout).unwrap().trim().into()
+}
+
+#[test]
 fn bind_refuses_primary_checkout_and_worktree_mismatch() {
     let (temp, store, record) = fixture();
     git(temp.path(), &["init", "-b", "wrong"]);

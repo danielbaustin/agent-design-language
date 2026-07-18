@@ -1,0 +1,83 @@
+{
+  "identity": {
+    "schema_version": "1.0.0",
+    "template_version": "1.0.0",
+    "issue": 5412,
+    "repository": "danielbaustin/agent-design-language",
+    "title": "[v0.91.7][review-fix][runtime-v3][security] Resolve #5247 state authenticity and readiness findings",
+    "slug": "v0-91-7-runtime-v3-state-authenticity-readiness",
+    "version": "v0.91.7",
+    "generation": 8
+  },
+  "status": "ready",
+  "content": {
+    "card_kind": "spp",
+    "values": {
+      "plan_revision": 1,
+      "summary": "Authenticate both state paths first, add focused forgery/lineage tests, route the real soak through a bounded release lane, then close the LoC finding with a reproducible disposition.",
+      "steps": [
+        {
+          "id": "S1",
+          "action": "Implement signed checkpoint canonicalization and verification",
+          "acceptance_ids": [
+            "AC-1"
+          ],
+          "status": "pending"
+        },
+        {
+          "id": "S2",
+          "action": "Require verified accepted-lineage membership for private projection",
+          "acceptance_ids": [
+            "AC-2"
+          ],
+          "status": "pending"
+        },
+        {
+          "id": "S3",
+          "action": "Add and prove the bounded real-soak release lane",
+          "acceptance_ids": [
+            "AC-3"
+          ],
+          "status": "pending"
+        },
+        {
+          "id": "S4",
+          "action": "Recount source and retain reviewed LoC disposition/reduction plan",
+          "acceptance_ids": [
+            "AC-4"
+          ],
+          "status": "pending"
+        }
+      ],
+      "affected_areas": [],
+      "invariants": [
+        "No unauthenticated state enters restore or projection",
+        "Lineage membership is proven by the owning lineage object",
+        "Ordinary PR validation remains bounded",
+        "No default-cutover claim is introduced"
+      ],
+      "risks": [
+        "Checkpoint schema evolution can break retained fixtures",
+        "Projection API changes can require caller migration",
+        "The real soak may expose latent timing failures",
+        "LoC reduction can tempt unrelated refactoring"
+      ],
+      "execution_estimates": {
+        "elapsed_seconds": 21600,
+        "total_tokens": 80000,
+        "validation_seconds": 3600
+      },
+      "stop_conditions": [
+        "Compatibility requires trusting unsigned checkpoints",
+        "Lineage membership cannot be proven without widening authority",
+        "Soak lane would become a mandatory ordinary-PR cost",
+        "LoC work requires unrelated product redesign"
+      ],
+      "replan_triggers": [],
+      "design_ref": ".csdlc/prepared/issues/5412/design.md",
+      "design_digest": "4e517a54c8639a8255091cc924403fa5b66721b42878507b50c1a03d12ddcc27",
+      "diagram_ref": ".csdlc/prepared/issues/5412/diagram.mmd",
+      "diagram_digest": "c760b13c5f9ce35098e218cbd2c7d26a5537aaa23d8339391b5b31d4224a8cf6"
+    }
+  }
+}

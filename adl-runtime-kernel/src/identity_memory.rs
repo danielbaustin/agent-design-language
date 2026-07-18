@@ -6,7 +6,8 @@ use thiserror::Error;
 
 pub const IDENTITY_BINDING_SCHEMA: &str = "adl.runtime.identity.binding.v1";
 pub const MEMORY_EVENT_SCHEMA: &str = "adl.runtime.memory.event.v1";
-pub const MEMORY_CHECKPOINT_SCHEMA: &str = "adl.runtime.memory.checkpoint.v1";
+pub const LEGACY_MEMORY_CHECKPOINT_SCHEMA: &str = "adl.runtime.memory.checkpoint.v1";
+pub const MEMORY_CHECKPOINT_SCHEMA: &str = "adl.runtime.memory.checkpoint.v2";
 pub const LIFELOG_ENTRY_SCHEMA: &str = "adl.runtime.lifelog.entry.v1";
 const GENESIS_HASH: &str = "0000000000000000000000000000000000000000000000000000000000000000";
 
@@ -55,6 +56,12 @@ pub struct MemoryCheckpoint {
     pub head_hash: String,
     pub facts: BTreeMap<String, String>,
     pub private_refs: Vec<String>,
+    #[serde(default)]
+    pub signing_algorithm: String,
+    #[serde(default)]
+    pub signing_key_id: String,
+    #[serde(default)]
+    pub signature: String,
 }
 
 #[derive(Clone, Debug, Eq, PartialEq, Serialize, Deserialize)]
@@ -191,8 +198,14 @@ impl MemoryLedger {
         &self,
         binding: &IdentityBinding,
         trusted_keys: &BTreeMap<String, VerifyingKey>,
+        authority: &IdentityAuthority,
     ) -> Result<MemoryCheckpoint, IdentityMemoryError> {
         verify_binding(binding, trusted_keys)?;
+        if authority.key_id != binding.signing_key_id
+            || trusted_keys.get(&authority.key_id) != Some(&authority.verifying_key())
+        {
+            return Err(IdentityMemoryError::UnauthorizedIdentity);
+        }
         self.check_owner(binding)?;
         let events = self.events.get(&binding.continuity_id);
         let summary = self.restored_summaries.get(&binding.continuity_id);
@@ -225,7 +238,7 @@ impl MemoryLedger {
                 accepted_through = last.sequence;
             }
         }
-        Ok(MemoryCheckpoint {
+        let mut checkpoint = MemoryCheckpoint {
             schema: MEMORY_CHECKPOINT_SCHEMA.to_owned(),
             citizen_id: binding.citizen_id.clone(),
             runtime_id: binding.runtime_id.clone(),
@@ -238,7 +251,17 @@ impl MemoryLedger {
                 .unwrap_or_else(|| GENESIS_HASH.to_owned()),
             facts,
             private_refs: private_refs.into_iter().collect(),
-        })
+            signing_algorithm: "ed25519".to_owned(),
+            signing_key_id: authority.key_id.clone(),
+            signature: String::new(),
+        };
+        checkpoint.signature = hex::encode(
+            authority
+                .signing_key
+                .sign(&unsigned_checkpoint_bytes(&checkpoint)?)
+                .to_bytes(),
+        );
+        Ok(checkpoint)
     }
 
     pub fn lifelog(
@@ -288,10 +311,12 @@ impl MemoryLedger {
         trusted_keys: &BTreeMap<String, VerifyingKey>,
     ) -> Result<Self, IdentityMemoryError> {
         verify_binding(binding, trusted_keys)?;
+        verify_checkpoint(checkpoint, trusted_keys)?;
         if checkpoint.schema != MEMORY_CHECKPOINT_SCHEMA
             || checkpoint.citizen_id != binding.citizen_id
             || checkpoint.runtime_id != binding.runtime_id
             || checkpoint.continuity_id != binding.continuity_id
+            || checkpoint.signing_key_id != binding.signing_key_id
             || checkpoint.accepted_through == 0
             || !is_hash(&checkpoint.head_hash)
         {
@@ -439,6 +464,42 @@ fn unsigned_binding_bytes(binding: &IdentityBinding) -> Result<Vec<u8>, Identity
     let mut unsigned = binding.clone();
     unsigned.signature.clear();
     serde_json::to_vec(&unsigned).map_err(|error| IdentityMemoryError::Encoding(error.to_string()))
+}
+
+fn unsigned_checkpoint_bytes(
+    checkpoint: &MemoryCheckpoint,
+) -> Result<Vec<u8>, IdentityMemoryError> {
+    let mut unsigned = checkpoint.clone();
+    unsigned.signature.clear();
+    serde_json::to_vec(&unsigned).map_err(|error| IdentityMemoryError::Encoding(error.to_string()))
+}
+
+fn verify_checkpoint(
+    checkpoint: &MemoryCheckpoint,
+    trusted_keys: &BTreeMap<String, VerifyingKey>,
+) -> Result<(), IdentityMemoryError> {
+    if checkpoint.schema != MEMORY_CHECKPOINT_SCHEMA
+        || !safe_id(&checkpoint.citizen_id)
+        || !safe_id(&checkpoint.runtime_id)
+        || !safe_id(&checkpoint.continuity_id)
+        || checkpoint.accepted_through == 0
+        || !is_hash(&checkpoint.head_hash)
+        || checkpoint.signing_algorithm != "ed25519"
+        || !safe_id(&checkpoint.signing_key_id)
+        || checkpoint
+            .private_refs
+            .iter()
+            .any(|value| validate_private_ref(value).is_err())
+    {
+        return Err(IdentityMemoryError::ContinuityMismatch);
+    }
+    let key = trusted_keys
+        .get(&checkpoint.signing_key_id)
+        .ok_or(IdentityMemoryError::UnauthorizedIdentity)?;
+    let bytes = hex::decode(&checkpoint.signature).map_err(|_| IdentityMemoryError::Signature)?;
+    let signature = Signature::from_slice(&bytes).map_err(|_| IdentityMemoryError::Signature)?;
+    key.verify(&unsigned_checkpoint_bytes(checkpoint)?, &signature)
+        .map_err(|_| IdentityMemoryError::Signature)
 }
 
 fn memory_event_hash(event: &MemoryEvent) -> Result<String, IdentityMemoryError> {

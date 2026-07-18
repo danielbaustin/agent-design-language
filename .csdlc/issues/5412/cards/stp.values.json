@@ -1,0 +1,50 @@
+{
+  "identity": {
+    "schema_version": "1.0.0",
+    "template_version": "1.0.0",
+    "issue": 5412,
+    "repository": "danielbaustin/agent-design-language",
+    "title": "[v0.91.7][review-fix][runtime-v3][security] Resolve #5247 state authenticity and readiness findings",
+    "slug": "v0-91-7-runtime-v3-state-authenticity-readiness",
+    "version": "v0.91.7",
+    "generation": 8
+  },
+  "status": "ready",
+  "content": {
+    "card_kind": "stp",
+    "values": {
+      "task_boundary": "Repair the four #5247 findings without changing Runtime v3 cutover defaults or absorbing Observatory/live-parity work from #5413.",
+      "deliverables": [
+        "Checkpoint signing and verification",
+        "Lineage-bound projection API",
+        "Scheduled/release soak runner and retained contract",
+        "Reviewed reproducible LoC disposition",
+        "Focused negative and compatibility tests"
+      ],
+      "acceptance_criteria": [
+        "Full checkpoint contents identity sequence head and lineage are authenticated",
+        "Private projection requires a verified record accepted into the exact lineage",
+        "A bounded release or scheduled lane executes the real 100-cycle soak",
+        "Source LoC is below 10K or a reviewed exception and reduction plan is retained"
+      ],
+      "dependencies": [
+        "#5247 review evidence",
+        "ed25519-dalek authority patterns",
+        "Runtime v3 validation lane inventory"
+      ],
+      "repo_inputs": [
+        "docs/reviews/v0.91.7/remaining-sprints-5403/RUNTIME_V3_READINESS_REVIEW_5247.md",
+        "adl-runtime-kernel/src/identity_memory.rs",
+        "adl-runtime-kernel/src/private_state.rs",
+        "adl-runtime-kernel/tests/guardian_soak.rs",
+        "docs/architecture/runtime_v3_parity_matrix.v1.json"
+      ],
+      "non_goals": [
+        "Runtime v2 deletion",
+        "Default Runtime v3 cutover",
+        "Observatory browser/feed work owned by #5413",
+        "Reconstructing historical six-card bundles owned by #5406"
+      ]
+    }
+  }
+}

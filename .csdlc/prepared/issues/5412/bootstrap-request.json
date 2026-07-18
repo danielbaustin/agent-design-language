@@ -1,0 +1,63 @@
+{
+  "issue": 5412,
+  "repository": "danielbaustin/agent-design-language",
+  "design_path": ".csdlc/prepared/issues/5412/design.md",
+  "diagram_path": ".csdlc/prepared/issues/5412/diagram.mmd",
+  "design_reviewer": "codex-root",
+  "design_approved": true,
+  "claim": {
+    "id": "claim-5412-runtime-v3-authenticity",
+    "owner": "codex-root",
+    "generation": 0,
+    "acquired_unix_seconds": 1784350834,
+    "expires_unix_seconds": 1784955634,
+    "heartbeat_unix_seconds": 1784350834,
+    "branch": "codex/5412-runtime-v3-state-authenticity",
+    "worktree": ".worktrees/adl-wp-5412",
+    "protected_paths": [
+      "adl-runtime-kernel/src/identity_memory.rs",
+      "adl-runtime-kernel/src/private_state.rs",
+      "adl-runtime-kernel/tests/identity_memory.rs",
+      "adl-runtime-kernel/tests/private_state.rs",
+      "adl-runtime-kernel/tests/guardian_soak.rs",
+      "adl/tools/run_runtime_v3_guardian_soak.sh",
+      "adl/tools/report_runtime_v3_loc.sh",
+      "docs/architecture/RUNTIME_V3_STATE_AUTHENTICITY_5412.md",
+      "docs/architecture/runtime_v3_state_authenticity_5412.v1.json"
+    ],
+    "purpose": "Resolve #5247 Runtime v3 state-authenticity and readiness findings"
+  },
+  "initial": {
+    "title": "[v0.91.7][review-fix][runtime-v3][security] Resolve #5247 state authenticity and readiness findings",
+    "slug": "v0-91-7-runtime-v3-state-authenticity-readiness",
+    "version": "v0.91.7",
+    "goal": "Close every #5247 Runtime v3 authenticity, soak-readiness, and source-budget finding with executable proof.",
+    "required_outcome": "Memory restore and private projection fail closed without authentic accepted-lineage evidence; the real soak has a declared bounded lane; and the 10K source target has a reviewed disposition.",
+    "declared_scope": ["Signed memory checkpoints", "Authenticated accepted-lineage private projection", "Real guardian soak release lane", "Runtime v3 source LoC disposition"],
+    "authority_boundary": ["Issue #5412 acceptance criteria", "#5247 review packet", "Runtime v3 owns runtime state; C-SDLC v2 owns lifecycle records"],
+    "task_boundary": "Repair the four #5247 findings without changing Runtime v3 cutover defaults or absorbing Observatory/live-parity work from #5413.",
+    "deliverables": ["Checkpoint signing and verification", "Lineage-bound projection API", "Scheduled/release soak runner and retained contract", "Reviewed reproducible LoC disposition", "Focused negative and compatibility tests"],
+    "acceptance_criteria": ["Full checkpoint contents identity sequence head and lineage are authenticated", "Private projection requires a verified record accepted into the exact lineage", "A bounded release or scheduled lane executes the real 100-cycle soak", "Source LoC is below 10K or a reviewed exception and reduction plan is retained"],
+    "dependencies": ["#5247 review evidence", "ed25519-dalek authority patterns", "Runtime v3 validation lane inventory"],
+    "repo_inputs": ["docs/reviews/v0.91.7/remaining-sprints-5403/RUNTIME_V3_READINESS_REVIEW_5247.md", "adl-runtime-kernel/src/identity_memory.rs", "adl-runtime-kernel/src/private_state.rs", "adl-runtime-kernel/tests/guardian_soak.rs", "docs/architecture/runtime_v3_parity_matrix.v1.json"],
+    "non_goals": ["Runtime v2 deletion", "Default Runtime v3 cutover", "Observatory browser/feed work owned by #5413", "Reconstructing historical six-card bundles owned by #5406"],
+    "plan_summary": "Authenticate both state paths first, add focused forgery/lineage tests, route the real soak through a bounded release lane, then close the LoC finding with a reproducible disposition.",
+    "steps": [
+      {"id":"S1","action":"Implement signed checkpoint canonicalization and verification","acceptance_ids":["AC-1"],"status":"pending"},
+      {"id":"S2","action":"Require verified accepted-lineage membership for private projection","acceptance_ids":["AC-2"],"status":"pending"},
+      {"id":"S3","action":"Add and prove the bounded real-soak release lane","acceptance_ids":["AC-3"],"status":"pending"},
+      {"id":"S4","action":"Recount source and retain reviewed LoC disposition/reduction plan","acceptance_ids":["AC-4"],"status":"pending"}
+    ],
+    "invariants": ["No unauthenticated state enters restore or projection", "Lineage membership is proven by the owning lineage object", "Ordinary PR validation remains bounded", "No default-cutover claim is introduced"],
+    "risks": ["Checkpoint schema evolution can break retained fixtures", "Projection API changes can require caller migration", "The real soak may expose latent timing failures", "LoC reduction can tempt unrelated refactoring"],
+    "planning_profile": "medium",
+    "stop_conditions": ["Compatibility requires trusting unsigned checkpoints", "Lineage membership cannot be proven without widening authority", "Soak lane would become a mandatory ordinary-PR cost", "LoC work requires unrelated product redesign"],
+    "validation_lanes": [
+      {"lane":"runtime-v3-authenticity","proof_role":"Focused checkpoint and private-state positive/negative proof","acceptance_ids":["AC-1","AC-2"],"deterministic":true,"resource_profile":"small","budget_seconds":1200,"budget_tokens":10000,"argv":["cargo","test","--manifest-path","adl-runtime-kernel/Cargo.toml","--test","identity_memory","--test","private_state"],"parallel_group":"runtime-v3-focused","defer_reason":null},
+      {"lane":"runtime-v3-real-soak","proof_role":"Explicit bounded 100-cycle guardian soak","acceptance_ids":["AC-3"],"deterministic":true,"resource_profile":"medium","budget_seconds":1800,"budget_tokens":5000,"argv":["bash","adl/tools/run_runtime_v3_guardian_soak.sh"],"parallel_group":"runtime-v3-soak","defer_reason":null},
+      {"lane":"runtime-v3-loc","proof_role":"Reproducible source count and reviewed disposition","acceptance_ids":["AC-4"],"deterministic":true,"resource_profile":"small","budget_seconds":120,"budget_tokens":1000,"argv":["bash","adl/tools/report_runtime_v3_loc.sh"],"parallel_group":"runtime-v3-focused","defer_reason":null}
+    ],
+    "failure_policy": "Fail closed on signature, identity, sequence, head, lineage, soak, or budget uncertainty; preserve opt-in cutover truth.",
+    "review_prompts": ["Can any checkpoint field be altered without signature failure?", "Can a validly signed but unaccepted or wrong-lineage record be projected?", "Does the scheduled lane execute the real ignored soak rather than a retained packet assertion?", "Is the LoC disposition reproducible, owned, and bounded?"]
+  }
+}

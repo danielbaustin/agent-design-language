@@ -1,0 +1,33 @@
+{
+  "identity": {
+    "schema_version": "1.0.0",
+    "template_version": "1.0.0",
+    "issue": 5412,
+    "repository": "danielbaustin/agent-design-language",
+    "title": "[v0.91.7][review-fix][runtime-v3][security] Resolve #5247 state authenticity and readiness findings",
+    "slug": "v0-91-7-runtime-v3-state-authenticity-readiness",
+    "version": "v0.91.7",
+    "generation": 8
+  },
+  "status": "ready",
+  "content": {
+    "card_kind": "sip",
+    "values": {
+      "goal": "Close every #5247 Runtime v3 authenticity, soak-readiness, and source-budget finding with executable proof.",
+      "required_outcome": "Memory restore and private projection fail closed without authentic accepted-lineage evidence; the real soak has a declared bounded lane; and the 10K source target has a reviewed disposition.",
+      "declared_scope": [
+        "Signed memory checkpoints",
+        "Authenticated accepted-lineage private projection",
+        "Real guardian soak release lane",
+        "Runtime v3 source LoC disposition"
+      ],
+      "authority_boundary": [
+        "Issue #5412 acceptance criteria",
+        "#5247 review packet",
+        "Runtime v3 owns runtime state; C-SDLC v2 owns lifecycle records"
+      ],
+      "initial_assumptions": [],
+      "operator_constraints": []
+    }
+  }
+}

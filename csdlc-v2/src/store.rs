@@ -1,4 +1,4 @@
-use std::collections::BTreeMap;
+use std::collections::{BTreeMap, BTreeSet};
 use std::fs::{self, File, OpenOptions};
 use std::io::Write;
 use std::path::{Path, PathBuf};
@@ -430,7 +430,7 @@ impl Store {
                 "local initialization digest differs from reconciliation request",
             ));
         }
-        let receipt = self
+        let mut receipt = self
             .load_terminal_receipt(request.issue)?
             .ok_or_else(|| V2Error::new(ErrorCode::InvalidInput, "terminal receipt missing"))?;
         if receipt.initialization_digest != local.initialization_digest
@@ -441,8 +441,43 @@ impl Store {
                 "terminal receipt identity differs from local issue",
             ));
         }
+        let requested_follow_ups = request
+            .follow_ups
+            .iter()
+            .map(|value| value.trim())
+            .filter(|value| !value.is_empty())
+            .map(str::to_owned)
+            .collect::<BTreeSet<_>>();
+        if requested_follow_ups.len() != request.follow_ups.len() {
+            return Err(V2Error::new(
+                ErrorCode::InvalidInput,
+                "terminal follow-ups must be non-empty and unique",
+            ));
+        }
+        let existing_follow_ups = match receipt
+            .cards
+            .get(&CardKind::Sor)
+            .map(|values| &values.content)
+        {
+            Some(CardContent::Sor(values)) => {
+                values.follow_ups.iter().cloned().collect::<BTreeSet<_>>()
+            }
+            _ => BTreeSet::new(),
+        };
+        let local_integrity = (|| -> Result<bool> {
+            verify_record(&local)?;
+            let current_cards = self.load_cards(request.issue)?;
+            let mut checked = local.clone();
+            hydrate_projections(&mut checked, &current_cards)?;
+            Ok(checked.digest == record_digest(&checked)?
+                && checked.digest == local.digest
+                && checked.cards == receipt.record.cards)
+        })()
+        .unwrap_or(false);
         if local.phase == LifecyclePhase::ClosedOut
             && local.terminal == receipt.record.terminal
+            && existing_follow_ups == requested_follow_ups
+            && local_integrity
             && local.audit.last().is_some_and(|event| {
                 event.operation == "reconcile_terminal"
                     && event.actor == request.actor
@@ -453,6 +488,20 @@ impl Store {
         }
         let mut projection = receipt.record;
         let mut cards = receipt.cards;
+        let routed = match cards.get(&CardKind::Srp).map(|values| &values.content) {
+            Some(CardContent::Srp(values)) => values
+                .residual_risk
+                .iter()
+                .cloned()
+                .collect::<BTreeSet<_>>(),
+            _ => BTreeSet::new(),
+        };
+        if !requested_follow_ups.is_subset(&routed) {
+            return Err(V2Error::new(
+                ErrorCode::InvalidInput,
+                "terminal follow-ups must be routed by SRP residual risk",
+            ));
+        }
         let design = receipt
             .authored_artifacts
             .get(&projection.design_path)
@@ -480,6 +529,14 @@ impl Store {
                 _ => unreachable!("design card"),
             }
         }
+        if !requested_follow_ups.is_empty() {
+            match &mut cards.get_mut(&CardKind::Sor).expect("SOR card").content {
+                CardContent::Sor(values) => {
+                    values.follow_ups = requested_follow_ups.into_iter().collect();
+                }
+                _ => unreachable!("SOR card"),
+            }
+        }
         projection.generation += 1;
         for values in cards.values_mut() {
             values.identity.generation = projection.generation;
@@ -501,6 +558,18 @@ impl Store {
         hydrate_projections(&mut projection, &cards)?;
         projection.digest = record_digest(&projection)?;
         let retained_artifacts = BTreeMap::from([(design_path, design), (diagram_path, diagram)]);
+        let original_cards = self.load_cards(request.issue)?;
+        let receipt_path = self.terminal_receipt_path(request.issue)?;
+        let receipt_parent = receipt_path.parent().expect("receipt parent");
+        let receipt_lock = OpenOptions::new()
+            .create(true)
+            .truncate(false)
+            .read(true)
+            .write(true)
+            .open(receipt_parent.join("receipts.lock"))?;
+        receipt_lock.lock_exclusive()?;
+        let original_receipt = fs::read(&receipt_path)?;
+        drop(receipt_lock);
         self.commit_with_authored(
             request.issue,
             &projection,
@@ -508,6 +577,54 @@ impl Store {
             false,
             Some(&retained_artifacts),
         )?;
+        receipt.record = projection.clone();
+        receipt.cards = cards.clone();
+        receipt.authored_artifacts = retained_artifacts.clone();
+        receipt.digest.clear();
+        let mut refreshed_bytes = Vec::new();
+        let refresh = (|| -> Result<()> {
+            receipt.digest = terminal_receipt_digest(&receipt)?;
+            validate_terminal_receipt(&receipt)?;
+            let parent = receipt_path.parent().expect("receipt parent");
+            let lock = OpenOptions::new()
+                .create(true)
+                .truncate(false)
+                .read(true)
+                .write(true)
+                .open(parent.join("receipts.lock"))?;
+            lock.lock_exclusive()?;
+            let temporary = receipt_path.with_extension("json.reconcile-tmp");
+            refreshed_bytes = serde_json::to_vec_pretty(&receipt)?;
+            fs::write(&temporary, &refreshed_bytes)?;
+            fs::rename(temporary, &receipt_path)?;
+            Ok(())
+        })();
+        if let Err(error) = refresh {
+            let rollback =
+                self.commit_with_authored(request.issue, &local, &original_cards, false, None);
+            let restore = (|| -> Result<()> {
+                let parent = receipt_path.parent().expect("receipt parent");
+                let lock = OpenOptions::new()
+                    .create(true)
+                    .truncate(false)
+                    .read(true)
+                    .write(true)
+                    .open(parent.join("receipts.lock"))?;
+                lock.lock_exclusive()?;
+                if fs::read(&receipt_path)? != refreshed_bytes {
+                    return Ok(());
+                }
+                fs::write(&receipt_path, &original_receipt)?;
+                Ok(())
+            })();
+            if rollback.is_err() || restore.is_err() {
+                return Err(V2Error::new(
+                    ErrorCode::ReconciliationRequired,
+                    "terminal reconciliation failed and rollback requires operator recovery",
+                ));
+            }
+            return Err(error);
+        }
         Ok(projection)
     }
 

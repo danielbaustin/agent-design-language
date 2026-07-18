@@ -1,8 +1,8 @@
 use std::collections::{BTreeMap, BTreeSet};
 
 use adl_runtime_kernel::{
-    project_private_state, record_hash, PrivateStateAuthority, PrivateStateError,
-    PrivateStateLineage, PrivateStateSealRequest, ProjectionRequest, SanctuaryPolicy,
+    project_private_state, PrivateStateAuthority, PrivateStateError, PrivateStateLineage,
+    PrivateStateSealRequest, ProjectionRequest, SanctuaryPolicy,
 };
 
 fn authority() -> PrivateStateAuthority {
@@ -65,8 +65,9 @@ fn signed_private_state_projection_hides_raw_payload_and_authorizes_redacted_vie
     let record_hash = lineage.append(&record, &trusted_keys(&authority)).unwrap();
 
     let view = project_private_state(
+        &lineage,
+        &trusted_keys(&authority),
         &record,
-        &record_hash,
         &projection(),
         &policy(),
         &ProjectionRequest {
@@ -184,13 +185,15 @@ fn unauthorized_reads_raw_export_and_sanctuary_policy_fail_closed() {
             3,
         ))
         .unwrap();
-    let record_hash = record_hash(&record).unwrap();
+    let mut lineage = PrivateStateLineage::default();
+    lineage.append(&record, &trusted_keys(&authority)).unwrap();
     let mut allowed_policy = policy();
     allowed_policy.max_sanctuary_level = 4;
 
     let unauthorized = project_private_state(
+        &lineage,
+        &trusted_keys(&authority),
         &record,
-        &record_hash,
         &projection(),
         &allowed_policy,
         &ProjectionRequest {
@@ -203,8 +206,9 @@ fn unauthorized_reads_raw_export_and_sanctuary_policy_fail_closed() {
     assert_eq!(unauthorized, PrivateStateError::Unauthorized);
 
     let raw = project_private_state(
+        &lineage,
+        &trusted_keys(&authority),
         &record,
-        &record_hash,
         &projection(),
         &allowed_policy,
         &ProjectionRequest {
@@ -217,8 +221,9 @@ fn unauthorized_reads_raw_export_and_sanctuary_policy_fail_closed() {
     assert_eq!(raw, PrivateStateError::RawExport);
 
     let sanctuary = project_private_state(
+        &lineage,
+        &trusted_keys(&authority),
         &record,
-        &record_hash,
         &projection(),
         &policy(),
         &ProjectionRequest {
@@ -232,7 +237,7 @@ fn unauthorized_reads_raw_export_and_sanctuary_policy_fail_closed() {
 }
 
 #[test]
-fn projection_rejects_forged_record_hash() {
+fn projection_rejects_unaccepted_and_forged_records() {
     let authority = authority();
     let record = authority
         .issue_record(seal_request(
@@ -244,8 +249,9 @@ fn projection_rejects_forged_record_hash() {
         .unwrap();
 
     let err = project_private_state(
+        &PrivateStateLineage::default(),
+        &trusted_keys(&authority),
         &record,
-        "ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff",
         &projection(),
         &policy(),
         &ProjectionRequest {
@@ -255,5 +261,24 @@ fn projection_rejects_forged_record_hash() {
         },
     )
     .unwrap_err();
-    assert_eq!(err, PrivateStateError::Projection);
+    assert_eq!(err, PrivateStateError::Lineage);
+
+    let mut lineage = PrivateStateLineage::default();
+    lineage.append(&record, &trusted_keys(&authority)).unwrap();
+    let mut forged = record.clone();
+    forged.projection_hash = "f".repeat(64);
+    let err = project_private_state(
+        &lineage,
+        &trusted_keys(&authority),
+        &forged,
+        &projection(),
+        &policy(),
+        &ProjectionRequest {
+            principal: "shepherd".to_owned(),
+            requested_fields: BTreeSet::from(["mood".to_owned()]),
+            raw_export: false,
+        },
+    )
+    .unwrap_err();
+    assert_eq!(err, PrivateStateError::Signature);
 }

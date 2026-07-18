@@ -153,15 +153,27 @@ impl PrivateStateLineage {
     pub fn head(&self, lineage_id: &str) -> Option<&str> {
         self.heads.get(lineage_id).map(String::as_str)
     }
+
+    fn contains(&self, record: &PrivateStateRecord, hash: &str) -> bool {
+        self.positions
+            .get(&(record.lineage_id.clone(), record.sequence))
+            .is_some_and(|accepted| accepted == hash)
+    }
 }
 
 pub fn project_private_state(
+    lineage: &PrivateStateLineage,
+    trusted_keys: &BTreeMap<String, VerifyingKey>,
     record: &PrivateStateRecord,
-    record_hash: &str,
     available_projection: &BTreeMap<String, String>,
     policy: &SanctuaryPolicy,
     request: &ProjectionRequest,
 ) -> Result<PrivateStateProjection, PrivateStateError> {
+    verify_record(record, trusted_keys)?;
+    let record_hash = self::record_hash(record)?;
+    if !lineage.contains(record, &record_hash) {
+        return Err(PrivateStateError::Lineage);
+    }
     if !policy.allowed_principals.contains(&request.principal) {
         return Err(PrivateStateError::Unauthorized);
     }
@@ -170,9 +182,6 @@ pub fn project_private_state(
     }
     if record.sanctuary_level > policy.max_sanctuary_level {
         return Err(PrivateStateError::Sanctuary);
-    }
-    if record_hash != self::record_hash(record)? {
-        return Err(PrivateStateError::Projection);
     }
     if digest_json(available_projection)? != record.projection_hash {
         return Err(PrivateStateError::Projection);
@@ -192,7 +201,7 @@ pub fn project_private_state(
         subject_id: record.subject_id.clone(),
         lineage_id: record.lineage_id.clone(),
         sequence: record.sequence,
-        record_hash: record_hash.to_owned(),
+        record_hash,
         visible_fields,
         redacted_fields,
     })

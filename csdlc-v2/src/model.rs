@@ -176,6 +176,8 @@ pub struct ReconcileTerminalRequest {
     pub expected_worktree: String,
     pub actor: String,
     pub reason: String,
+    #[serde(default)]
+    pub follow_ups: Vec<String>,
 }
 
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize, JsonSchema)]

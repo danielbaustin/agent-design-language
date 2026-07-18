@@ -230,7 +230,7 @@ fn fixture_with_validation_history_and_publication(
                 scope: vec!["docs".into()],
                 reviewed_revision: revision.clone(),
                 findings: vec![],
-                residual_risks: vec![],
+                residual_risks: vec!["#5411 follow-up".into()],
                 completed: true,
                 non_substantive_proof: None,
             },
@@ -637,6 +637,7 @@ fn run_complete_lifecycle_with_validation_history(
             expected_worktree: temp.path().to_string_lossy().into_owned(),
             actor: "closeout-retainer".into(),
             reason: "must not mutate primary checkout".into(),
+            follow_ups: vec!["#5411 follow-up".into()],
         })
         .unwrap_err();
     assert!(matches!(
@@ -654,6 +655,7 @@ fn run_complete_lifecycle_with_validation_history(
             expected_worktree: temp.path().to_string_lossy().into_owned(),
             actor: "closeout-retainer".into(),
             reason: "materialize shared terminal authority".into(),
+            follow_ups: vec!["#5411 follow-up".into()],
         })
         .unwrap();
     assert_eq!(reconciled.phase, LifecyclePhase::ClosedOut);
@@ -678,9 +680,16 @@ fn run_complete_lifecycle_with_validation_history(
             expected_worktree: temp.path().to_string_lossy().into_owned(),
             actor: "closeout-retainer".into(),
             reason: "materialize shared terminal authority".into(),
+            follow_ups: vec!["#5411 follow-up".into()],
         })
         .unwrap();
     assert_eq!(repeated, reconciled);
+    let reconciled_receipt = store.load_terminal_receipt(issue).unwrap().unwrap();
+    let sor = match &reconciled_receipt.cards[&CardKind::Sor].content {
+        csdlc_v2::cards::CardContent::Sor(values) => values,
+        _ => panic!("expected SOR card"),
+    };
+    assert_eq!(sor.follow_ups, vec!["#5411 follow-up"]);
     assert!(store.load_record(issue).unwrap().claim.is_none());
     let doctor = csdlc_v2::diagnose(&store, issue);
     assert_eq!(doctor.phase, Some(LifecyclePhase::ClosedOut));

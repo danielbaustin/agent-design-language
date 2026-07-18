@@ -1,0 +1,18 @@
+{
+  "issue": 5412,
+  "base_branch": "main",
+  "branch": "codex/5412-runtime-v3-state-authenticity",
+  "worktree": ".worktrees/adl-wp-5412",
+  "claim": {
+    "id": "claim-5412-runtime-v3-authenticity",
+    "owner": "codex-root",
+    "generation": 1,
+    "acquired_unix_seconds": 1784350834,
+    "expires_unix_seconds": 1784955634,
+    "heartbeat_unix_seconds": 1784350834,
+    "branch": "codex/5412-runtime-v3-state-authenticity",
+    "worktree": ".worktrees/adl-wp-5412",
+    "protected_paths": ["adl-runtime-kernel/src/identity_memory.rs", "adl-runtime-kernel/src/private_state.rs", "adl-runtime-kernel/tests/identity_memory.rs", "adl-runtime-kernel/tests/private_state.rs", "adl-runtime-kernel/tests/guardian_soak.rs", "adl/tools/run_runtime_v3_guardian_soak.sh", "adl/tools/report_runtime_v3_loc.sh", "docs/architecture/RUNTIME_V3_STATE_AUTHENTICITY_5412.md", "docs/architecture/runtime_v3_state_authenticity_5412.v1.json"],
+    "purpose": "Resolve #5247 Runtime v3 state-authenticity and readiness findings"
+  }
+}
